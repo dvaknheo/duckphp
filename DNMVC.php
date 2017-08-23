@@ -1,9 +1,7 @@
 <?php
+//dvaknheo@github.com
 
-if(!defined('DN_PATH_PUBLIC')){
-	define('DN_PATH_PUBLIC',realpath(__DIR__ .'/../').'/');
-}
-class DNSingletoner
+class DNSingleton
 {
 	protected static $_instances=array();
 	public static function G($object=null)
@@ -22,7 +20,7 @@ class DNSingletoner
 	}
 	
 }
-class DNAutoLoad extends DNSingletoner
+class DNAutoLoad extends DNSingleton
 {
 	public $path;
 	public $path_common;
@@ -30,9 +28,6 @@ class DNAutoLoad extends DNSingletoner
 	{
 		$this->path=$path;
 		$this->path_common=$path_common;
-		if(!$this->path_common){
-			$this->path_common=realpath(__DIR__.'/../').'/';
-		}
 	}
 	public function autoLoad()
 	{
@@ -78,7 +73,7 @@ class DNAutoLoad extends DNSingletoner
 	}
 }
 
-class DNRoute extends DNSingletoner
+class DNRoute extends DNSingleton
 {
 	protected $site='';
 	protected $route_handels=array();
@@ -265,7 +260,7 @@ class DNRoute extends DNSingletoner
 	}
 
 }
-class DNConfig extends DNSingletoner
+class DNConfig extends DNSingleton
 {
 	public static function Setting($key)
 	{
@@ -390,7 +385,7 @@ class DNException extends Exception
 		throw $ex;
 	}
 }
-class DNView extends DNSingletoner
+class DNView extends DNSingleton
 {
 	protected $head_file;
 	protected $foot_file;
@@ -480,7 +475,7 @@ class DNView extends DNSingletoner
 	}
 }
 
-class DNDB extends DNSingletoner
+class DNDB extends DNSingleton
 {
 	protected $pdo;
 	protected $rowCount;
@@ -611,12 +606,13 @@ class DNDB extends DNSingletoner
 		return $ret;
 	}
 }
-class DNMVC extends DNSingletoner
+class DNMVCS extends DNSingleton
 {
 	protected  $services=array();
 	protected  $models=array();
 	
 	protected $path='';
+	protected $path_common='';
 	
 	public static function Service($name)
 	{
@@ -702,55 +698,40 @@ class DNMVC extends DNSingletoner
 	}
 	
 	//@override
-	public function init($path,$options=array())
+	public function init($path,$path_common='')
 	{
-		//所有初始化都放这里		
-		$default_option=array(
-			'path_project'=>'',
-			'path_common'=>'',
-			'path_www'=>'',
-			
-			'path_config'=>'',
-			'path_default_config'=>'',
-			
-			'path_view'=>'',
-			'path_controller'=>'',
-			
-		);
-		$options=array_merge($default_option,$options);
-		
+		if(!$path_common){
+			$path_common=$path.'common/';
+		}
+		$this->path=$path;
+		$this->path_common=$path_common;
 		
 		DNAutoLoad::G()->init($path,'');
 		DNAutoLoad::G()->autoLoad();
-		$this->path=$path;
-
+		
 		DNException::HandelAllException();
 		DNException::DefaultHandel(array($this,'onOtherException'));
 		DNException::SetMyHandel(array($this,'onException'));
 		
+		DNRoute::G()->init($path.'controller/');
+		DNRoute::G()->set404(array($this,'onShow404'));		
 		
 		DNView::G()->setPath($path.'view/');
 		DNView::G()->setWrapper("inc-head","inc-foot");
+		DNView::G()->setBeforeShow(array($this,'onBeforeShow'));
+		DNView::G()->isDev=$this->isDev();
 		
 		
 		DNConfig::G()->init($path.'config/',$path.'../common/config/');
 		$db_config=DNConfig::Setting('db');
 		
 		DNDB::G()->init($db_config);
-		DNView::G()->setBeforeShow(array($this,'onBeforeShow'));
-		
-		DNRoute::G()->init($path.'controller/');
-		DNRoute::G()->set404(array($this,'onShow404'));
-		DNView::G()->isDev=$this->isDev();
 		
 		set_error_handler(array($this,'onErrorHandler'));
-
 	}
 
-	//@override
 	public function run()
 	{
-		// 这里要把所有变量连接起来
 		DNRoute::G()->run();
 	}
 	
@@ -833,19 +814,19 @@ class DNMVC extends DNSingletoner
 class DNController
 {
 }
-class DNService extends DNSingletoner
+class DNService extends DNSingleton
 {
 }
-class DNModel extends DNSingletoner
+class DNModel extends DNSingleton
 {
 }
 
 //helper 和系统相关
-class DNHelperBase extends DNSingletoner
+class DNHelperBase extends DNSingleton
 {
 
 }
 // utils 和系统无关
-class DNUtilsBase extends DNSingletoner
+class DNUtilsBase extends DNSingleton
 {
 }
