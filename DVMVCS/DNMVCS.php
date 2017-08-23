@@ -29,7 +29,7 @@ class DNAutoLoad extends DNSingleton
 		$this->path=$path;
 		$this->path_common=$path_common;
 	}
-	public function autoLoad()
+	public function run()
 	{
 		spl_autoload_register(function($classname){
 			if($classname!=basename($classname)){return false;}
@@ -121,7 +121,7 @@ class DNRoute extends DNSingleton
 	{
 		$this->on404Handel=$callback;
 	}
-	public function getRouteCallback()
+	protected function getRouteCallback()
 	{
 		$callback=null;
 		foreach($this->route_handels as $handel){
@@ -262,6 +262,8 @@ class DNRoute extends DNSingleton
 }
 class DNConfig extends DNSingleton
 {
+	protected $path;
+	protected $path_common;
 	public static function Setting($key)
 	{
 		return self::G()->getSetting($key);
@@ -274,10 +276,10 @@ class DNConfig extends DNSingleton
 	{
 		return self::G()->loadConfig($file_basename);
 	}
-	public function init($path,$path_public=null)
+	public function init($path,$path_common=null)
 	{
 		$this->path=$path;
-		$this->path_public=$path_public;
+		$this->path_common=$path_common;
 	}
 	
 	//隔离变量
@@ -292,8 +294,8 @@ class DNConfig extends DNSingleton
 		if(isset($setting[$key])){return $setting[$key];}
 		if(null===$setting){
 			$base_config=array();
-			if($this->path_public){
-				$base_setting=$this->include_file($this->path_public.'setting.php');
+			if($this->path_common){
+				$base_setting=$this->include_file($this->path_common.'setting.php');
 				$base_setting=is_array($base_setting)?$base_setting:array();
 			}
 			$setting=$this->include_file($this->path.'setting.php');
@@ -313,8 +315,8 @@ class DNConfig extends DNSingleton
 		static $all_config=array();
 		if(isset($all_config[$file_basename])){return $all_config[$file_basename];}
 		$base_config=array();
-		if($this->path_public){
-			$base_config=$this->include_file($this->path_public.$file_basename.'.php');
+		if($this->path_common){
+			$base_config=$this->include_file($this->path_common.$file_basename.'.php');
 			$base_config=is_array($base_config)?$base_config:array();
 		}
 		$config=$this->include_file($this->path.$file_basename.'.php');
@@ -400,11 +402,6 @@ class DNView extends DNSingleton
 	}
 	
 	public function init($path)
-	{
-		$this->path=$path;
-		
-	}
-	public function setPath($path)
 	{
 		$this->path=$path;
 		
@@ -613,6 +610,7 @@ class DNMVCS extends DNSingleton
 	
 	protected $path='';
 	protected $path_common='';
+	protected $auto_close_db=true;
 	
 	public static function Service($name)
 	{
@@ -654,7 +652,6 @@ class DNMVCS extends DNSingleton
 	}
 	
 
-	protected $auto_close_db=true;
 	
 	//@override
 	public function onShow404()
@@ -707,7 +704,7 @@ class DNMVCS extends DNSingleton
 		$this->path_common=$path_common;
 		
 		DNAutoLoad::G()->init($path,'');
-		DNAutoLoad::G()->autoLoad();
+		DNAutoLoad::G()->run();
 		
 		DNException::HandelAllException();
 		DNException::DefaultHandel(array($this,'onOtherException'));
@@ -716,7 +713,7 @@ class DNMVCS extends DNSingleton
 		DNRoute::G()->init($path.'controller/');
 		DNRoute::G()->set404(array($this,'onShow404'));		
 		
-		DNView::G()->setPath($path.'view/');
+		DNView::G()->init($path.'view/');
 		DNView::G()->setWrapper("inc-head","inc-foot");
 		DNView::G()->setBeforeShow(array($this,'onBeforeShow'));
 		DNView::G()->isDev=$this->isDev();
