@@ -2,7 +2,6 @@
 
 if(!defined('DN_PATH_PUBLIC')){
 	define('DN_PATH_PUBLIC',realpath(__DIR__ .'/../').'/');
-	define('DN_PATH_PUBLIC_LIB',realpath(__DIR__ .'/../lib/').'/');
 }
 class DNSingletoner
 {
@@ -23,23 +22,7 @@ class DNSingletoner
 	}
 	
 }
-class DNMVCBase extends DNSingletoner
-{
-	protected $is_production;
-	protected $path;
-
-	public function init($path,$options=array())
-	{	
-		$this->path=$path;
-	}
-
-	public function run()
-	{
-		return;
-	}
-
-}
-class DNAutoLoadBase extends DNSingletoner
+class DNAutoLoad extends DNSingletoner
 {
 	public $path;
 	public $path_common;
@@ -70,20 +53,24 @@ class DNAutoLoadBase extends DNSingletoner
 					$flag=include($file);
 					return true;
 				}
-			}
-			if(!$m[1]){
-				//normal
-				$file=$this->path.strtolower($m[2]).'/'.$classname.'.php';
-				if(!file_exists($file)){return false;}
-				$flag=include($file);
-				return true;
-			}else{
-				// core
 				
-				$file=$this->path_common.strtolower($m[2]).'/'.$classname.'.php';
-				if(!file_exists($file)){return false;}
-				$flag=include($file);
-				return true;
+			}else{
+			
+				if(!$m[1]){
+					//normal
+					$file=$this->path.strtolower($m[2]).'/'.$classname.'.php';
+					if(!file_exists($file)){return false;}
+					$flag=include($file);
+					return true;
+				}else{
+					// core
+					
+					$file=$this->path_common.strtolower($m[2]).'/'.$classname.'.php';
+					if(!file_exists($file)){return false;}
+					$flag=include($file);
+					return true;
+				}
+			
 			}
 			
 			
@@ -91,15 +78,19 @@ class DNAutoLoadBase extends DNSingletoner
 	}
 }
 
-class DNRouteBase extends DNSingletoner
+class DNRoute extends DNSingletoner
 {
 	protected $site='';
 	protected $route_handels=array();
 	protected $dispatches=array();
 	protected $on404Handel;
 	
-	//独立的功能
+	//独立的功能 ,我们可以替换，比如  #! 模式
 	public static function URL($url=null)
+	{
+		return self::G()->_url($url);
+	}
+	public function _url($url=null)
 	{
 		static $basepath;
 		if(null===$url){return $_SERVER['REQUEST_URI'];}
@@ -107,13 +98,10 @@ class DNRouteBase extends DNSingletoner
 		$url=preg_replace('/^\//','',$url);
 		
 		if(null===$basepath){
-			$basepath=rtrim(str_replace('\\','/',dirname($_SERVER['SCRIPT_NAME'])),'/').'/';
-			if(defined('DN_EMU_ROUTE')){
-				$flag=preg_match('/\/_([a-z0-9+]*)/',$_SERVER['REQUEST_URI'],$m);
-				$basepath=$m[0].'/';
-			}
+			$basepath=rtrim(str_replace('\\','/',$_SERVER['SCRIPT_NAME']),'/').'/';
 		}
-		
+		if($basepath=='/index.php'){$basepath='/';}
+		if($basepath=='/index.php/'){$basepath='/';}
 		
 		if('/'==$url{0}){
 			return $url;
@@ -163,46 +151,55 @@ class DNRouteBase extends DNSingletoner
 	
 	public function defaltRouteHandle()
 	{
-		$path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
-		
-		
-		if(defined('DN_EMU_ROUTE')){
-			$path_info=preg_replace('/^\/[^\/]*/','',$path_info);
-		}
-		
+/*
+
+/index 
+/Test => Test::index  Main::Test
+/Test/index  Test/index::index
+/Test/Method1  	Test::Method1 Test\Method1::index
+/Test/Class2/index
+//*/
+
+		$default_controller='Main';
+		$default_method='index';
 		
 		$is_post=($_SERVER['REQUEST_METHOD']=='POST')?true:false;
-		
 		$site=$this->site?$this->site.'/':'';
 		
+		$path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
+		
+		if(substr($path_info,-1)=='/'){
+			$path_info.='index';
+		}
+		if($path_info=='/index.php'){$path_info='/';}
 		list($default,$c,$m)=array_pad(explode('/',$path_info),3,null);
 		
-		if($m===null){
-			$file=$this->path.$site.$c.'.php';
-			if(is_file($file)){
-				$class=$c;
-				$method='index';
-			}else{
-				$file=$this->path.$site.'Main.php';
-				if(is_file($file)){
-					$class='Main';
-					$method=$c?$c:'index';
-				}
-			}
+		//我们扩展到全部。
+		
+		$p=preg_match('/(.*)?\/([^\/]*)$/',$path_info,$mm);
+		$full_class='';
+		if(!$p){
+			$full_class=$default_controller;
+			$method=$default_method;
 		}else{
-			$class=$c;
-			$method=$m;
-			if(null==$m){$method='index';}
-			
-			$file=$this->path.$site.$class.'.php';
-			if(!is_file($file)){
-				return null;
-			}
+			$full_class=$mm[1];
+			$method=$mm[2];
 		}
-
+		if(!$full_class){
+			$full_class=$default_controller;
+			
+		}
+		//if(substr($full_class,0,1)=='/'){
+		//	substr($full_class,0,1)
+		//}
+		$class=basename($full_class);
+		
+		$file=$this->path.$site.$full_class.'.php';
+		if(!is_file($file)){
+			return null;
+		}
 		include $file;
 		$obj=new $class;
-		
 		//POST ，添加定位到 do_*上来。TODO GET do_* 就不允许 GET 方法了。
 		if($is_post){
 			if(method_exists ($obj,'do_'.$method)){
@@ -230,18 +227,26 @@ class DNRouteBase extends DNSingletoner
 	{
 		$this->route_handels[]=$callback;
 	}
-	
-	public function defaltDispathHandle()
+
+	protected function match_path_info($pattern,$path_info)
 	{
 		//'POST:/xx*/'
 		//'GET:/xxf*saf[a-z]fdsfds';
 		//'GET:~afasdf/bdfdsafs/;
 		//'~a.b;
+		if($pattern==$path_info){return true;}
+		if($pattern==$_SERVER['HTTP_METHOD'].':'.$path_info){return true;}
+		
+		return false;
+	}
+	public function defaltDispathHandle()
+	{
+		
 		
 		$path_info=$_SERVER['PATH_INFO'];
 		$ret=null;
 		foreach($this->dispatches as $pattern =>$callback){
-			if($pattern==$path_info){
+			if($this->match_path_info($pattern,$path_info)){
 				$ret=$callback;
 			}
 			if($ret){break;}
@@ -260,7 +265,7 @@ class DNRouteBase extends DNSingletoner
 	}
 
 }
-class DNConfigBase extends DNSingletoner
+class DNConfig extends DNSingletoner
 {
 	public static function Setting($key)
 	{
@@ -293,10 +298,10 @@ class DNConfigBase extends DNSingletoner
 		if(null===$setting){
 			$base_config=array();
 			if($this->path_public){
-				$base_setting=$this->include_file($this->path_public.'config/setting.php');
+				$base_setting=$this->include_file($this->path_public.'setting.php');
 				$base_setting=is_array($base_setting)?$base_setting:array();
 			}
-			$setting=$this->include_file($this->path.'config/setting.php');
+			$setting=$this->include_file($this->path.'setting.php');
 			$setting=array_merge($base_setting,$setting);
 		}
 		return isset($setting[$key])?$setting[$key]:null;
@@ -314,10 +319,10 @@ class DNConfigBase extends DNSingletoner
 		if(isset($all_config[$file_basename])){return $all_config[$file_basename];}
 		$base_config=array();
 		if($this->path_public){
-			$base_config=$this->include_file($this->path_public.'config/'.$file_basename.'.php');
+			$base_config=$this->include_file($this->path_public.$file_basename.'.php');
 			$base_config=is_array($base_config)?$base_config:array();
 		}
-		$config=$this->include_file($this->path.'config/'.$file_basename.'.php');
+		$config=$this->include_file($this->path.$file_basename.'.php');
 		$config=array_merge($base_config,$config);
 		
 		$all_config[$file_basename]=$config;
@@ -332,10 +337,10 @@ class DNConfigBase extends DNSingletoner
 if(!function_exists('url')){
 function URL($url)
 {
-	return DNRouteBase::URL($url);
+	return DNRoute::URL($url);
 }
 }
-class DNExceptionBase extends Exception
+class DNException extends Exception
 {
 	public static $is_handeling;
 	public static $default_handel;
@@ -344,29 +349,29 @@ class DNExceptionBase extends Exception
 	public static function ThrowOn($flag,$message,$code=0)
 	{
 		if(!$flag){return;}
-		if(!DNExceptionBase::$is_handeling){
-			DNExceptionBase::HandelAllException();
+		if(!DNException::$is_handeling){
+			DNException::HandelAllException();
 		}
 		$class=static::class;
 		throw new $class($message,$code);
 	}
 	public static function DefaultHandel($callback)
 	{
-		DNExceptionBase::$default_handel=$callback;
+		DNException::$default_handel=$callback;
 	}
 	public static function HandelAllException()
 	{
-		DNExceptionBase::$is_handeling=true;
+		DNException::$is_handeling=true;
 		set_exception_handler(array(__CLASS__,'ManageException'));
 	}
 	public static function ManageException($ex)
 	{
 		$class=get_class($ex);
 		if(is_callable(array($class,'OnException'))){
-			$class->OnException($ex);
+			$class::OnException($ex);
 		}else{
-			if(DNExceptionBase::$default_handel){
-				call_user_func(DNExceptionBase::$default_handel,$ex);
+			if(DNException::$default_handel){
+				call_user_func(DNException::$default_handel,$ex);
 			}else{
 				throw $ex;
 			}
@@ -385,9 +390,7 @@ class DNExceptionBase extends Exception
 		throw $ex;
 	}
 }
-
-
-class DNViewBase extends DNSingletoner
+class DNView extends DNSingletoner
 {
 	protected $head_file;
 	protected $foot_file;
@@ -457,9 +460,27 @@ class DNViewBase extends DNSingletoner
 		$this->head_file=$head_file;
 		$this->foot_file=$foot_file;
 	}
+	public static function return_json($ret)
+	{
+		header('content-type:text/json');
+		echo json_encode($ret,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
+		exit;
+	}
+	public static function return_redirect($url)
+	{
+		//TODO 判断跳转地址.
+		header('location: '.$url);
+		exit;
+	}
+	public static function return_route_to($url)
+	{
+		//TODO 判断跳转地址.
+		header('location: '.URL($url));
+		exit;
+	}
 }
 
-class DNDBBase extends DNSingletoner
+class DNDB extends DNSingletoner
 {
 	protected $pdo;
 	protected $rowCount;
@@ -590,12 +611,59 @@ class DNDBBase extends DNSingletoner
 		return $ret;
 	}
 }
-class DNMVC extends DNMVCBase
+class DNMVC extends DNSingletoner
 {
+	protected  $services=array();
+	protected  $models=array();
+	
+	protected $path='';
+	
+	public static function Service($name)
+	{
+		return self::G()->_load($name,'service');
+	}
+	public static function Model($name)
+	{
+		return self::G()->_load($name,'model');
+	}
+	public function _load($name,$type)
+	{
+		if($type=='service'){
+			$containner=&$this->services;
+		}
+		if($type=='model'){
+			$containner=&$this->models;
+		}
+		if(isset($containner[$name])){
+			return $container[$name];
+		}
+		$filename=$this->path.$type.'/'.$name.'.php';
+		$data=file_get_contents($filename);
+		
+		$data=preg_replace('/\/\*(.*?)\*\//s','',$data);
+		$data=preg_replace('/\/\/.*$/m','',$data);
+		
+		$flag=preg_match('/^s*namespace\s*(\w+)/m',$data,$m);
+		$namespace=$flag?$m[1]:'';
+		$flag=preg_match('/^s*class\s*(\w+)/m',$data,$m);
+		$class=$flag?$m[1]:'';
+		$fullclass=$namespace?$namespace.'\\'.$class:$class;
+		
+		include $filename;
+		
+		$ret=new $fullclass();
+		
+		$container[$name]=$ret;
+		return $ret;
+	}
+	
+
 	protected $auto_close_db=true;
+	
 	//@override
 	public function onShow404()
 	{
+		header("HTTP/1.1 404 Not Found");
 		DNView::Show('_sys/error-404',array(),false);
 	}
 	public function onException($ex)
@@ -617,6 +685,14 @@ class DNMVC extends DNMVCBase
 		$data['ex']=$ex;
 		DNView::Show('_sys/error-500',$data,false);
 	}
+	public function onDebugError($errno, $errstr, $errfile)
+	{
+		$data=array();
+		$data['message']=$errstr;
+		$data['code']=$errno;
+		DNView::G()->showBlock('_sys/error-debug',$data,false);
+	}
+	
 	// view 之前关闭数据库
 	public function onBeforeShow()
 	{
@@ -628,9 +704,7 @@ class DNMVC extends DNMVCBase
 	//@override
 	public function init($path,$options=array())
 	{
-		//所有初始化都放这里
-		parent::init($path,$options);
-		
+		//所有初始化都放这里		
 		$default_option=array(
 			'path_project'=>'',
 			'path_common'=>'',
@@ -648,6 +722,7 @@ class DNMVC extends DNMVCBase
 		
 		DNAutoLoad::G()->init($path,'');
 		DNAutoLoad::G()->autoLoad();
+		$this->path=$path;
 
 		DNException::HandelAllException();
 		DNException::DefaultHandel(array($this,'onOtherException'));
@@ -658,7 +733,7 @@ class DNMVC extends DNMVCBase
 		DNView::G()->setWrapper("inc-head","inc-foot");
 		
 		
-		DNConfig::G()->init($this->path,DN_PATH_PUBLIC);
+		DNConfig::G()->init($path.'config/',$path.'../common/config/');
 		$db_config=DNConfig::Setting('db');
 		
 		DNDB::G()->init($db_config);
@@ -667,12 +742,14 @@ class DNMVC extends DNMVCBase
 		DNRoute::G()->init($path.'controller/');
 		DNRoute::G()->set404(array($this,'onShow404'));
 		DNView::G()->isDev=$this->isDev();
+		
+		set_error_handler(array($this,'onErrorHandler'));
+
 	}
 
 	//@override
 	public function run()
 	{
-		set_error_handler(array($this,'onErrorHandler'));
 		// 这里要把所有变量连接起来
 		DNRoute::G()->run();
 	}
@@ -683,10 +760,7 @@ class DNMVC extends DNMVCBase
 		$is_dev=DNConfig::Setting('is_dev');
 		return $is_dev?true:false;
 	}
-	public function onDebugError()
-	{
-		
-	}
+
 	public function onErrorHandler($errno, $errstr, $errfile, $errline)
 	{
 		if (!(error_reporting() & $errno)) {
@@ -705,10 +779,7 @@ class DNMVC extends DNMVCBase
 				//我们在日志里记录下错误，然后返回
 				break;
 			}
-			$data=array();
-			$data['message']=$errstr;
-			$data['code']=$errno;
-			DNView::G()->showBlock('_sys/error-debug',$data,false);
+			$this->onDebugError($errno, $errstr, $errfile);
 			break;
 		default:
 			echo "Unknown error type: [$errno] $errstr<br />\n";
@@ -718,65 +789,63 @@ class DNMVC extends DNMVCBase
 		/* Don't execute PHP internal error handler */
 		return true;
 	}
-	
+	//单独使用
+	public static function CallAPI($service,$method,$input)
+	{
+		$f=array(
+			'int'=>FILTER_VALIDATE_INT,
+			'float'=>FILTER_VALIDATE_FLOAT,
+			'string'=>FILTER_SANITIZE_STRING,
+		);
+		
+		$reflect = new ReflectionMethod($service,$method);
+		
+		$params=$reflect->getParameters();
+		$args=array();
+		foreach ($params as $i => $param) {
+			$name=$param->getName();
+			if(isset($input[$name])){
+				$type=$param->getType();
+				if(null!==$type){
+					$type=''.$type;
+					if(in_array($type,array_keys($f))){
+						$flag=filter_var($input[$name],$f[$type],FILTER_NULL_ON_FAILURE);
+						DNException::ThrowOn($flag===null,"参数类型错误: {$name}");
+					}
+					
+				}
+				$args[]=$input[$name];
+				continue;
+			}else if($param->isDefaultValueAvailable()){
+				$args[]=$param->getDefaultValue();
+			}else{
+				DNException::ThrowOn(true,"缺少参数: {$name}");
+			}
+			
+		}
+		
+		$ret=$reflect->invokeArgs(new $service(), $args);
+		return $ret;
+	}
 }
-
-
 /////////////////////////
-////
-class DNRoute extends DNRouteBase
-{
-}
-class DNConfig extends DNConfigBase
-{
-}
-class DNAutoLoad extends DNAutoLoadBase
-{
-}
-// 前台 View ，后台view
-//View 页眉唯一单例
-class DNView extends DNViewBase
-{
-}
 
-class DNModel extends DNModelBase
+class DNController
 {
 }
-
-class DNController extends DNControllerBase
+class DNService extends DNSingletoner
 {
 }
-class DNService extends DNServiceBase
+class DNModel extends DNSingletoner
 {
 }
-class DNDB extends DNDBBase
-{
-}
-
-class DNException extends DNExceptionBase
-{
-}
-/**
-//*/
-
 
 //helper 和系统相关
-class DNHelperBase
+class DNHelperBase extends DNSingletoner
 {
 
 }
 // utils 和系统无关
-class DNUtilsBase
+class DNUtilsBase extends DNSingletoner
 {
-}
-class DNModelBase extends DNSingletoner
-{
-
-}
-
-class DNServiceBase extends DNSingletoner
-{
-}class DNControllerBase //extends DNSingletoner
-{
-
 }
