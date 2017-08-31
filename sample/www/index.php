@@ -1,5 +1,5 @@
 <?php
-require('../../DVMVCS/DNMVCS.php');
+require('../../DNMVCS/DNMVCS.php');
 $path=realpath('../');
 DNMVCS::G()->init($path);
 
