@@ -842,13 +842,3 @@ class DNService extends DNSingleton
 class DNModel extends DNSingleton
 {
 }
-
-//helper 和系统相关
-class DNHelperBase extends DNSingleton
-{
-
-}
-// utils 和系统无关
-class DNUtilsBase extends DNSingleton
-{
-}

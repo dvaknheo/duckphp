@@ -1,11 +1,21 @@
 # DNMVCS
 ## DNMVCS 是什么
-一个 PHP 简单框架，
+一个 PHP Web 简单框架 比通常的Model Controller View 多了 Service
+拟补了 常见 Web 框架少的缺层 
 ## DNMVCS 做了什么
+
 ## DNMVCS 不做什么
+ORM ，和各种屏蔽 sql 的行为
+模板引擎，PHP本身就是模板引擎
+Widget ， 和 MVC 分离违背
+系统行为 ，POST，GET 。
+
+
 ## DNMVCS 如何使用
+
 ## DNMVCS 的各个类说明
 DNSingleton
+
 
 DNAutoLoad
 autoLoad
