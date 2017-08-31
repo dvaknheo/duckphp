@@ -298,6 +298,14 @@ class DNConfig extends DNSingleton
 				$base_setting=is_array($base_setting)?$base_setting:array();
 			}
 			$setting=$this->include_file($this->path.'setting.php');
+			if($setting===false){
+				echo ( 'DNMVCS ERROR: no setting file!');
+				exit;
+			}
+			if(!is_array($setting)){
+				echo ( 'DNMVCS ERROR: need return array !');
+				exit;
+			}
 			$setting=array_merge($base_setting,$setting);
 		}
 		return isset($setting[$key])?$setting[$key]:null;
@@ -308,6 +316,7 @@ class DNConfig extends DNSingleton
 		$config=$this->loadConfig($file_basename);
 		return isset($config[$key])?$config[$key]:null;
 	}
+	//TODO 合法性判断
 	public function loadConfig($file_basename='config')
 	{
 		//多文件多配置？
@@ -351,7 +360,7 @@ class DNException extends Exception
 		$class=static::class;
 		throw new $class($message,$code);
 	}
-	public static function DefaultHandel($callback)
+	public static function SetDefaultAllExceptionHandel($callback)
 	{
 		DNException::$default_handel=$callback;
 	}
@@ -374,7 +383,7 @@ class DNException extends Exception
 		}
 		
 	}
-	public static function SetMyHandel($error_handel)
+	public static function SetErrorHandel($error_handel)
 	{
 		self::$error_handel=$error_handel;
 	}
@@ -494,6 +503,10 @@ class DNDB extends DNSingleton
 	{
 		return $this->pdo;
 	}
+	public function setPDO($pdo)
+	{
+		$this->pdo=$pdo;
+	}
 	public function close()
 	{
 		if(null===$this->pdo){return;}
@@ -607,6 +620,7 @@ class DNMVCS extends DNSingleton
 	protected  $services=array();
 	protected  $models=array();
 	
+	protected $path;
 	protected $auto_close_db=true;
 	
 	public static function Service($name)
@@ -654,6 +668,13 @@ class DNMVCS extends DNSingleton
 	public function onShow404()
 	{
 		header("HTTP/1.1 404 Not Found");
+		if(is_file('_sys/error-404')){
+			DNView::Show('_sys/error-404',array(),false);
+			return;
+		}
+echo <<<EOT
+
+EOT;
 		DNView::Show('_sys/error-404',array(),false);
 	}
 	public function onException($ex)
@@ -661,9 +682,11 @@ class DNMVCS extends DNSingleton
 		$data=array();
 		$data['message']=$ex->getMessage();
 		$data['code']=$ex->getCode();
-		$data['ex']=$ex;
-debug_print_backtrace();
+		$data['ex']=$ex;		
 		DNView::Show('_sys/error-exception',$data,false);
+echo <<<EOT
+
+EOT;
 	}
 	public function onOtherException($ex)
 	{
@@ -674,8 +697,13 @@ debug_print_backtrace();
 		$data['message']=$message;
 		$data['code']=$code;
 		$data['ex']=$ex;
+		
+		DNException::ThrowOn(true,'You Need A View name _sys/error-500 ');
+
 		DNView::Show('_sys/error-500',$data,false);
-debug_print_backtrace();
+echo <<<EOT
+
+EOT;
 	}
 	public function onDebugError($errno, $errstr, $errfile)
 	{
@@ -694,15 +722,18 @@ debug_print_backtrace();
 	}
 	
 	//@override
-	public function init($path,$path_common='')
+	public function init($path='',$path_common='')
 	{
+		$path=$path!=''?$path:realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
+		$path=rtrim($path,'/').'/';
+		$this->path=$path;
 		
 		DNAutoLoad::G()->init($path,$path_common?$path_common:'');
 		DNAutoLoad::G()->run();
 		
 		DNException::HandelAllException();
-		DNException::DefaultHandel(array($this,'onOtherException'));
-		DNException::SetMyHandel(array($this,'onException'));
+		DNException::SetDefaultAllExceptionHandel(array($this,'onOtherException'));
+		DNException::SetErrorHandel(array($this,'onException'));
 		
 		DNRoute::G()->init($path.'controller/');
 		DNRoute::G()->set404(array($this,'onShow404'));	
