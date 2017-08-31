@@ -38,7 +38,7 @@ class DNAutoLoad extends DNSingleton
 			$flag=preg_match('/(Common)?(Service|Model)$/',$classname,$m);
 			if(!$flag){
 				$file=$this->path_common.'lib'.'/'.$classname.'.php';
-				if(file_exists($file)){
+				if($this->path_common && file_exists($file)){
 					$flag=include($file);
 					return true;
 				}
@@ -50,7 +50,6 @@ class DNAutoLoad extends DNSingleton
 				}
 				
 			}else{
-			
 				if(!$m[1]){
 					//normal
 					$file=$this->path.strtolower($m[2]).'/'.$classname.'.php';
@@ -58,7 +57,7 @@ class DNAutoLoad extends DNSingleton
 					$flag=include($file);
 					return true;
 				}else{
-					// core
+					DNException::ThrowOn(!$this->path_common,'CommonService/CommonModel need path_common');
 					
 					$file=$this->path_common.strtolower($m[2]).'/'.$classname.'.php';
 					if(!file_exists($file)){return false;}
@@ -293,7 +292,7 @@ class DNConfig extends DNSingleton
 		static $setting;
 		if(isset($setting[$key])){return $setting[$key];}
 		if(null===$setting){
-			$base_config=array();
+			$base_setting=array();
 			if($this->path_common){
 				$base_setting=$this->include_file($this->path_common.'setting.php');
 				$base_setting=is_array($base_setting)?$base_setting:array();
@@ -608,8 +607,6 @@ class DNMVCS extends DNSingleton
 	protected  $services=array();
 	protected  $models=array();
 	
-	protected $path='';
-	protected $path_common='';
 	protected $auto_close_db=true;
 	
 	public static function Service($name)
@@ -665,6 +662,7 @@ class DNMVCS extends DNSingleton
 		$data['message']=$ex->getMessage();
 		$data['code']=$ex->getCode();
 		$data['ex']=$ex;
+debug_print_backtrace();
 		DNView::Show('_sys/error-exception',$data,false);
 	}
 	public function onOtherException($ex)
@@ -677,6 +675,7 @@ class DNMVCS extends DNSingleton
 		$data['code']=$code;
 		$data['ex']=$ex;
 		DNView::Show('_sys/error-500',$data,false);
+debug_print_backtrace();
 	}
 	public function onDebugError($errno, $errstr, $errfile)
 	{
@@ -697,13 +696,8 @@ class DNMVCS extends DNSingleton
 	//@override
 	public function init($path,$path_common='')
 	{
-		if(!$path_common){
-			$path_common=$path.'common/';
-		}
-		$this->path=$path;
-		$this->path_common=$path_common;
 		
-		DNAutoLoad::G()->init($path,'');
+		DNAutoLoad::G()->init($path,$path_common?$path_common:'');
 		DNAutoLoad::G()->run();
 		
 		DNException::HandelAllException();
@@ -711,7 +705,9 @@ class DNMVCS extends DNSingleton
 		DNException::SetMyHandel(array($this,'onException'));
 		
 		DNRoute::G()->init($path.'controller/');
-		DNRoute::G()->set404(array($this,'onShow404'));		
+		DNRoute::G()->set404(array($this,'onShow404'));	
+		
+		DNConfig::G()->init($path.'config/',$path_common?$path_common.'config/':'');
 		
 		DNView::G()->init($path.'view/');
 		DNView::G()->setWrapper("inc-head","inc-foot");
@@ -719,9 +715,7 @@ class DNMVCS extends DNSingleton
 		DNView::G()->isDev=$this->isDev();
 		
 		
-		DNConfig::G()->init($path.'config/',$path.'../common/config/');
 		$db_config=DNConfig::Setting('db');
-		
 		DNDB::G()->init($db_config);
 		
 		set_error_handler(array($this,'onErrorHandler'));
