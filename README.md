@@ -2,6 +2,7 @@
 ## DNMVCS 是什么
 一个 PHP Web 简单框架 比通常的Model Controller View 多了 Service
 拟补了 常见 Web 框架少的缺层 
+专注于业务逻辑
 
 ## DNMVCS 做了什么
 简单可扩展灵活的路由方式。
@@ -102,16 +103,26 @@ class DNRoute extends DNSingleton
 默认的分发型路由，类似 nodejs 那种
         public function addDispathRoute($key,$callback)
 添加 分发路由形式的路由
-		
-class DNConfig extends DNSingleton
+class DNView extends DNSingleton
+        public static function Show($view,$data=array(),$close_db=true)
+        public static function return_json($ret)
+        public static function return_redirect($url)
+        public static function return_route_to($url)
+        public function _Show($view,$data=array(),$use_wrapper=true)
+        public function init($path)
+        public function setBeforeShow($callback)
+        public function showBlock($view,$data)
+        public function assign($key,$value)
+        public function setWrapper($head_file,$foot_file)
 
+class DNConfig extends DNSingleton
         public static function Setting($key)
         public static function Get($key,$file_basename='config')
         public static function Load($file_basename)
         public function init($path,$path_common=null)
-        public function getSetting($key)
-        public function getConfig($key,$file_basename='config')
-        public function loadConfig($file_basename='config')
+        public function _Setting($key)
+        public function _Get($key,$file_basename='config')
+        public function _Load($file_basename='config')
 		
 class DNException extends Exception
 
@@ -122,17 +133,7 @@ class DNException extends Exception
         public static function SetErrorHandel($error_handel)
         public static function OnException($ex)
 		
-class DNDB extends DNSingleton
-        public static function Show($view,$data=array(),$close_db=true)
-        public static function return_json($ret)
-        public static function return_redirect($url)
-        public static function return_route_to($url)
-        public function _show($view,$data=array(),$use_wrapper=true)
-        public function init($path)
-        public function setBeforeShow($callback)
-        public function showBlock($view,$data)
-        public function assign($key,$value)
-        public function setWrapper($head_file,$foot_file)
+
 
 
 class DNDB extends DNSingleton

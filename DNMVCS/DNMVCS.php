@@ -681,12 +681,20 @@ EOT;
 		$data=array();
 		$data['message']=$ex->getMessage();
 		$data['code']=$ex->getCode();
-		$data['ex']=$ex;		
-		DNView::Show('_sys/error-exception',$data,false);
-echo <<<EOT
- 
-EOT;
+		$data['ex']=$ex;
+		$data['trace']=$ex->getTraceAsString();
 
+		DNView::Show('_sys/error-exception',$data,false);
+		if(!is_file($this->path.'view/'.'_sys/error-exception'.'.php')){
+echo <<<EOT
+<div>
+DNMVCS::Tip: You Need A View name _sys/error-exception in view path;
+</div>
+<pre>
+{$data['trace']}
+</pre>
+EOT;
+		}
 	}
 	public function onOtherException($ex)
 	{
@@ -697,13 +705,19 @@ EOT;
 		$data['message']=$message;
 		$data['code']=$code;
 		$data['ex']=$ex;
-		
-		DNException::ThrowOn(true,'You Need A View name _sys/error-500 ');
-
+		$data['trace']=$ex->getTraceAsString();
 		DNView::Show('_sys/error-500',$data,false);
+		if(!is_file($this->path.'view/'.'_sys/error-500'.'.php')){
 echo <<<EOT
- 
+<div>
+DNMVCS::Tip: You Need A View name _sys/error-500 in view path;
+</div>
+<pre>
+{$data['trace']}
+</pre>
 EOT;
+//debug_print_backtrace();
+		}
 	}
 	public function onDebugError($errno, $errstr, $errfile)
 	{
@@ -711,6 +725,14 @@ EOT;
 		$data['message']=$errstr;
 		$data['code']=$errno;
 		DNView::G()->showBlock('_sys/error-debug',$data,false);
+		if(!is_file($this->path.'view/'.'_sys/error-debug'.'.php')){
+echo <<<EOT
+<div>
+DNMVCS::Tip: You Need A View name _sys/error-debug in view path;<br />
+[ $errstr, $errfile:$errno]
+</div>
+EOT;
+		}
 	}
 	
 	// view 之前关闭数据库
@@ -741,7 +763,7 @@ EOT;
 		DNConfig::G()->init($path.'config/',$path_common?$path_common.'config/':'');
 		
 		DNView::G()->init($path.'view/');
-		DNView::G()->setWrapper("inc-head","inc-foot");
+		//DNView::G()->setWrapper("inc-head","inc-foot");
 		DNView::G()->setBeforeShow(array($this,'onBeforeShow'));
 		DNView::G()->isDev=$this->isDev();
 		
