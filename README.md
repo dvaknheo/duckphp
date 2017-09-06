@@ -2,6 +2,7 @@
 ## DNMVCS 是什么
 一个 PHP Web 简单框架 比通常的Model Controller View 多了 Service
 拟补了 常见 Web 框架少的缺层 
+
 ## DNMVCS 做了什么
 简单可扩展灵活的路由方式。
 简单的数据库类
@@ -121,16 +122,18 @@ class DNException extends Exception
         public static function SetErrorHandel($error_handel)
         public static function OnException($ex)
 		
+class DNDB extends DNSingleton
         public static function Show($view,$data=array(),$close_db=true)
-        public function init($path)
-        public function setBeforeShow($callback)
-        public function _show($view,$data=array(),$use_wrapper=true)
-        public function showBlock($view,$data)
-        public function _assign($key,$value)
-        public function setWrapper($head_file,$foot_file)
         public static function return_json($ret)
         public static function return_redirect($url)
         public static function return_route_to($url)
+        public function _show($view,$data=array(),$use_wrapper=true)
+        public function init($path)
+        public function setBeforeShow($callback)
+        public function showBlock($view,$data)
+        public function assign($key,$value)
+        public function setWrapper($head_file,$foot_file)
+
 
 class DNDB extends DNSingleton
         public function init($config)

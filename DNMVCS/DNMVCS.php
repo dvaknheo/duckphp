@@ -82,9 +82,9 @@ class DNRoute extends DNSingleton
 	//独立的功能 ,我们可以替换，比如  #! 模式
 	public static function URL($url=null)
 	{
-		return self::G()->_url($url);
+		return self::G()->_URL($url);
 	}
-	public function _url($url=null)
+	public function _URL($url=null)
 	{
 		static $basepath;
 		if(null===$url){return $_SERVER['REQUEST_URI'];}
@@ -259,141 +259,12 @@ class DNRoute extends DNSingleton
 	}
 
 }
-class DNConfig extends DNSingleton
-{
-	protected $path;
-	protected $path_common;
-	public static function Setting($key)
-	{
-		return self::G()->getSetting($key);
-	}
-	public static function Get($key,$file_basename='config')
-	{
-		return self::G()->getConfig($file_basename);
-	}
-	public static function Load($file_basename)
-	{
-		return self::G()->loadConfig($file_basename);
-	}
-	public function init($path,$path_common=null)
-	{
-		$this->path=$path;
-		$this->path_common=$path_common;
-	}
-	
-	//隔离变量
-	protected function include_file($file)
-	{
-		return include($file);
-	}
-	public function getSetting($key)
-	{
-		//不做多文件的 setting;
-		static $setting;
-		if(isset($setting[$key])){return $setting[$key];}
-		if(null===$setting){
-			$base_setting=array();
-			if($this->path_common){
-				$base_setting=$this->include_file($this->path_common.'setting.php');
-				$base_setting=is_array($base_setting)?$base_setting:array();
-			}
-			$setting=$this->include_file($this->path.'setting.php');
-			if($setting===false){
-				echo ( 'DNMVCS ERROR: no setting file!');
-				exit;
-			}
-			if(!is_array($setting)){
-				echo ( 'DNMVCS ERROR: need return array !');
-				exit;
-			}
-			$setting=array_merge($base_setting,$setting);
-		}
-		return isset($setting[$key])?$setting[$key]:null;
-	}
-	
-	public function getConfig($key,$file_basename='config')
-	{
-		$config=$this->loadConfig($file_basename);
-		return isset($config[$key])?$config[$key]:null;
-	}
-	//TODO 合法性判断
-	public function loadConfig($file_basename='config')
-	{
-		//多文件多配置？
-		static $all_config=array();
-		if(isset($all_config[$file_basename])){return $all_config[$file_basename];}
-		$base_config=array();
-		if($this->path_common){
-			$base_config=$this->include_file($this->path_common.$file_basename.'.php');
-			$base_config=is_array($base_config)?$base_config:array();
-		}
-		$config=$this->include_file($this->path.$file_basename.'.php');
-		$config=array_merge($base_config,$config);
-		
-		$all_config[$file_basename]=$config;
-		return $config;
-		
-	}
-}
-
-
-
 //OK，懒得写字用。
 if(!function_exists('url')){
 function URL($url)
 {
 	return DNRoute::URL($url);
 }
-}
-class DNException extends Exception
-{
-	public static $is_handeling;
-	public static $default_handel;
-	
-	public static $error_handel;
-	public static function ThrowOn($flag,$message,$code=0)
-	{
-		if(!$flag){return;}
-		if(!DNException::$is_handeling){
-			DNException::HandelAllException();
-		}
-		$class=static::class;
-		throw new $class($message,$code);
-	}
-	public static function SetDefaultAllExceptionHandel($callback)
-	{
-		DNException::$default_handel=$callback;
-	}
-	public static function HandelAllException()
-	{
-		DNException::$is_handeling=true;
-		set_exception_handler(array(__CLASS__,'ManageException'));
-	}
-	public static function ManageException($ex)
-	{
-		$class=get_class($ex);
-		if(is_callable(array($class,'OnException'))){
-			$class::OnException($ex);
-		}else{
-			if(DNException::$default_handel){
-				call_user_func(DNException::$default_handel,$ex);
-			}else{
-				throw $ex;
-			}
-		}
-		
-	}
-	public static function SetErrorHandel($error_handel)
-	{
-		self::$error_handel=$error_handel;
-	}
-	public static function OnException($ex)
-	{
-		if(self::$error_handel){
-			return call_user_func(self::$error_handel,$ex);
-		}
-		throw $ex;
-	}
 }
 class DNView extends DNSingleton
 {
@@ -406,19 +277,29 @@ class DNView extends DNSingleton
 	//这个静态函数背后调用动态函数了，因为要继承一些东西
 	public static function Show($view,$data=array(),$close_db=true)
 	{
-		self::G()->_show($view,$data,$close_db);
+		self::G()->_Show($view,$data,$close_db);
+	}
+
+	public static function return_json($ret)
+	{
+		header('content-type:text/json');
+		echo json_encode($ret,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
+		exit;
+	}
+	public static function return_redirect($url)
+	{
+		//TODO 判断跳转地址.
+		header('location: '.$url);
+		exit;
+	}
+	public static function return_route_to($url)
+	{
+		//TODO 判断跳转地址.
+		header('location: '.URL($url));
+		exit;
 	}
 	
-	public function init($path)
-	{
-		$this->path=$path;
-		
-	}
-	public function setBeforeShow($callback)
-	{
-		$this->onBeforeShow=$callback;
-	}
-	public function _show($view,$data=array(),$use_wrapper=true)
+	public function _Show($view,$data=array(),$use_wrapper=true)
 	{
 		if(is_callable($this->onBeforeShow)){
 			$t=$this->onBeforeShow;
@@ -444,42 +325,109 @@ class DNView extends DNSingleton
 			include($this->path.$this->foot_file.'.php');
 		}
 	}
-	public function showBlock($view,$data)
+	public function init($path)
 	{
-		error_reporting(error_reporting() & ~E_NOTICE);
-		extract($data);
-		include($this->path.$view.'.php');
+		$this->path=$path;
 	}
-	public function _assign($key,$value)
+	public function setBeforeShow($callback)
 	{
-		//不建议在普通方法里用。
-		$this->data[$key]=$value;
+		$this->onBeforeShow=$callback;
 	}
 	public function setWrapper($head_file,$foot_file)
 	{
 		$this->head_file=$head_file;
 		$this->foot_file=$foot_file;
 	}
-	public static function return_json($ret)
+	public function showBlock($view,$data)
 	{
-		header('content-type:text/json');
-		echo json_encode($ret,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
-		exit;
+		error_reporting(error_reporting() & ~E_NOTICE);
+		extract($data);
+		include($this->path.$view.'.php');
 	}
-	public static function return_redirect($url)
+	public function assign($key,$value)
 	{
-		//TODO 判断跳转地址.
-		header('location: '.$url);
-		exit;
+		//不建议在普通方法里用。
+		$this->data[$key]=$value;
 	}
-	public static function return_route_to($url)
-	{
-		//TODO 判断跳转地址.
-		header('location: '.URL($url));
-		exit;
-	}
+	
 }
 
+class DNConfig extends DNSingleton
+{
+	protected $path;
+	protected $path_common;
+	public static function Setting($key)
+	{
+		return self::G()->_Setting($key);
+	}
+	public static function Get($key,$file_basename='config')
+	{
+		return self::G()->_Get($file_basename);
+	}
+	public static function Load($file_basename)
+	{
+		return self::G()->_Load($file_basename);
+	}
+	public function init($path,$path_common=null)
+	{
+		$this->path=$path;
+		$this->path_common=$path_common;
+	}
+	
+	//隔离变量
+	protected function include_file($file)
+	{
+		return include($file);
+	}
+	public function _Setting($key)
+	{
+		//不做多文件的 setting;
+		static $setting;
+		if(isset($setting[$key])){return $setting[$key];}
+		if(null===$setting){
+			$base_setting=array();
+			if($this->path_common){
+				$base_setting=$this->include_file($this->path_common.'setting.php');
+				$base_setting=is_array($base_setting)?$base_setting:array();
+			}
+			$setting=$this->include_file($this->path.'setting.php');
+			if($setting===false){
+				echo ( 'DNMVCS ERROR: no setting file!');
+				exit;
+			}
+			if(!is_array($setting)){
+				echo ( 'DNMVCS ERROR: need return array !');
+				exit;
+			}
+			$setting=array_merge($base_setting,$setting);
+		}
+		return isset($setting[$key])?$setting[$key]:null;
+	}
+	
+	public function _Get($key,$file_basename='config')
+	{
+		$config=$this->_Load($file_basename);
+		return isset($config[$key])?$config[$key]:null;
+	}
+	//TODO 合法性判断
+	public function _Load($file_basename='config')
+	{
+		//多文件多配置？
+		static $all_config=array();
+		if(isset($all_config[$file_basename])){return $all_config[$file_basename];}
+		$base_config=array();
+		if($this->path_common){
+			$base_config=$this->include_file($this->path_common.$file_basename.'.php');
+			$base_config=is_array($base_config)?$base_config:array();
+		}
+		$config=$this->include_file($this->path.$file_basename.'.php');
+		$config=array_merge($base_config,$config);
+		
+		$all_config[$file_basename]=$config;
+		return $config;
+		
+	}
+}
 class DNDB extends DNSingleton
 {
 	protected $pdo;
@@ -615,6 +563,57 @@ class DNDB extends DNSingleton
 		return $ret;
 	}
 }
+class DNException extends Exception
+{
+	public static $is_handeling;
+	public static $default_handel;
+	
+	public static $error_handel;
+	public static function ThrowOn($flag,$message,$code=0)
+	{
+		if(!$flag){return;}
+		if(!DNException::$is_handeling){
+			DNException::HandelAllException();
+		}
+		$class=static::class;
+		throw new $class($message,$code);
+	}
+	public static function SetDefaultAllExceptionHandel($callback)
+	{
+		DNException::$default_handel=$callback;
+	}
+	public static function HandelAllException()
+	{
+		DNException::$is_handeling=true;
+		set_exception_handler(array(__CLASS__,'ManageException'));
+	}
+	public static function ManageException($ex)
+	{
+		$class=get_class($ex);
+		if(is_callable(array($class,'OnException'))){
+			$class::OnException($ex);
+		}else{
+			if(DNException::$default_handel){
+				call_user_func(DNException::$default_handel,$ex);
+			}else{
+				throw $ex;
+			}
+		}
+		
+	}
+	public static function SetErrorHandel($error_handel)
+	{
+		self::$error_handel=$error_handel;
+	}
+	public static function OnException($ex)
+	{
+		if(self::$error_handel){
+			return call_user_func(self::$error_handel,$ex);
+		}
+		throw $ex;
+	}
+}
+
 class DNMVCS extends DNSingleton
 {
 	protected  $services=array();
@@ -685,8 +684,9 @@ EOT;
 		$data['ex']=$ex;		
 		DNView::Show('_sys/error-exception',$data,false);
 echo <<<EOT
-
+ 
 EOT;
+
 	}
 	public function onOtherException($ex)
 	{
@@ -702,7 +702,7 @@ EOT;
 
 		DNView::Show('_sys/error-500',$data,false);
 echo <<<EOT
-
+ 
 EOT;
 	}
 	public function onDebugError($errno, $errstr, $errfile)
