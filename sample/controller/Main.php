@@ -3,7 +3,8 @@ class Main
 {
 	public function index()
 	{
-		$data=TestService::G()->foo();
-		var_dump($data);
+		$data=array();
+		$data['var']=TestService::G()->foo();
+		DNView::Show('main',$data);
 	}
 }
