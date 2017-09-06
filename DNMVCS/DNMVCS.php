@@ -433,6 +433,8 @@ class DNDB extends DNSingleton
 	protected $pdo;
 	protected $rowCount;
 	
+	
+	
 	public function init($config)
 	{
 		$this->host=$config['host'];
@@ -444,6 +446,8 @@ class DNDB extends DNSingleton
 	public function check_connect()
 	{
 		if($this->pdo){return;}
+		//TODO 这里检查配置是否有误。
+		
 		$dsn="mysql:host={$this->host};port={$this->port};dbname={$this->dbname};charset=utf8";
 		$this->pdo= new PDO($dsn, $this->user, $this->password,array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION));
 	}
