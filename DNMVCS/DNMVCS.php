@@ -671,13 +671,17 @@ class DNMVCS extends DNSingleton
 	public function onShow404()
 	{
 		header("HTTP/1.1 404 Not Found");
-		if(is_file('_sys/error-404')){
-			DNView::Show('_sys/error-404',array(),false);
-			return;
-		}
+		DNView::Show('_sys/error-404',$data,false);
+		if(!is_file($this->path.'view/'.'_sys/error-404'.'.php')){
 echo <<<EOT
-
+<div>
+DNMVCS::Tip: You Need A View name _sys/error-404 in view path;
+</div>
+<pre>
+{$data['trace']}
+</pre>
 EOT;
+		｝
 		DNView::Show('_sys/error-404',array(),false);
 	}
 	public function onException($ex)
