@@ -10,4 +10,9 @@ class Main
 		DNView::Show('main',$data);
 		
 	}
+	public function foo()
+	{
+		$ret=TestService::G()->insert();
+		var_dump($ret);
+	}
 }

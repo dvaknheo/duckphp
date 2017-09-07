@@ -10,5 +10,5 @@ $db=array(
 	'user'=>'',
 	'password'=>'',
 );
-
+$data['db']=$db;
 return $data;

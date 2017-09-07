@@ -392,11 +392,11 @@ class DNConfig extends DNSingleton
 			}
 			$setting=$this->include_file($this->path.'setting.php');
 			if($setting===false){
-				echo ( 'DNMVCS ERROR: no setting file!');
+				echo('DNMVCS ERROR: no setting file!');
 				exit;
 			}
 			if(!is_array($setting)){
-				echo ( 'DNMVCS ERROR: need return array !');
+				echo('DNMVCS ERROR: need return array !');
 				exit;
 			}
 			$setting=array_merge($base_setting,$setting);
@@ -433,23 +433,27 @@ class DNDB extends DNSingleton
 	protected $pdo;
 	protected $rowCount;
 	
-	
+	protected $config;
 	
 	public function init($config)
 	{
-		$this->host=$config['host'];
-		$this->port=$config['port'];
-		$this->dbname=$config['dbname'];
-		$this->user=$config['user'];
-		$this->password=$config['password'];
+		$this->config=$config;
 	}
 	public function check_connect()
 	{
 		if($this->pdo){return;}
 		//TODO 这里检查配置是否有误。
-		
-		$dsn="mysql:host={$this->host};port={$this->port};dbname={$this->dbname};charset=utf8";
-		$this->pdo= new PDO($dsn, $this->user, $this->password,array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION));
+		if(empty($this->config)){
+			echo('DNMVCS ERROR: database not setting!');
+			exit;
+		}
+		$config=$this->config;
+		if(!isset($config['dsn'])){
+			$dsn="mysql:host={$config['host']};port={$config['port']};dbname={$config['dbname']};charset=utf8";
+		}else{
+			$dsn=$config['dsn'];
+		}
+		$this->pdo= new PDO($dsn, $config['user'], $config['password'],array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION));
 	}
 	public function getPDO()
 	{
@@ -579,7 +583,7 @@ class DNException extends Exception
 		if(!DNException::$is_handeling){
 			DNException::HandelAllException();
 		}
-		$class=static::class;
+		$class=get_class();//static::class; // 兼容旧版
 		throw new $class($message,$code);
 	}
 	public static function SetDefaultAllExceptionHandel($callback)
@@ -678,10 +682,10 @@ echo <<<EOT
 DNMVCS::Tip: You Need A View name _sys/error-404 in view path;
 </div>
 <pre>
-{$data['trace']}
+404!
 </pre>
 EOT;
-		｝
+		}
 		DNView::Show('_sys/error-404',array(),false);
 	}
 	public function onException($ex)
@@ -699,6 +703,8 @@ echo <<<EOT
 DNMVCS::Tip: You Need A View name _sys/error-exception in view path;
 </div>
 <pre>
+{$data['message']}
+{$data['code']}
 {$data['trace']}
 </pre>
 EOT;
@@ -721,6 +727,8 @@ echo <<<EOT
 DNMVCS::Tip: You Need A View name _sys/error-500 in view path;
 </div>
 <pre>
+{$data['message']}
+{$data['code']}
 {$data['trace']}
 </pre>
 EOT;
