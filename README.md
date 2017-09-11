@@ -104,26 +104,44 @@ class DNRoute extends DNSingleton
         public function addDispathRoute($key,$callback)
 添加 分发路由形式的路由
 class DNView extends DNSingleton
-        public static function Show($view,$data=array(),$close_db=true)
+VIew 类
+        public static function Show($view,$data=array(),$use_wrapper=true)
+显示数据，第一个为不带 .php 结尾的 view 文件，第二个为传递过去的数据，第三个参数是是否使用页眉页脚
         public static function return_json($ret)
+反悔 json 数据，自带 exit
         public static function return_redirect($url)
+跳转结束，自带 exit
         public static function return_route_to($url)
+跳转到 DnRoute::URL 自带 exit;——这是唯一破坏耦合性的函数
         public function _Show($view,$data=array(),$use_wrapper=true)
+Show 静态方法的实现，你也可以替换他
         public function init($path)
+初始化， view 的路径
         public function setBeforeShow($callback)
+设置在显示前的回调，在 DNMVCS 类中，设置成开始输出前关闭 mysql
         public function showBlock($view,$data)
+显示一小块 view
         public function assign($key,$value)
-        public function setWrapper($head_file,$foot_file)
-
-class DNConfig extends DNSingleton
-        public static function Setting($key)
-        public static function Get($key,$file_basename='config')
-        public static function Load($file_basename)
-        public function init($path,$path_common=null)
-        public function _Setting($key)
-        public function _Get($key,$file_basename='config')
-        public function _Load($file_basename='config')
 		
+设置 key-value 模式的数据，不推荐
+		public function setWrapper($head_file,$foot_file)
+设置页眉页脚
+class DNConfig extends DNSingleton
+配置类
+        public static function Setting($key)
+读取 设置, 不用 set 是避免和 get 对称
+        public static function Get($key,$file_basename='config')
+获取配置
+        public static function Load($file_basename)
+加载配置文件
+        public function init($path,$path_common=null)
+初始化
+        public function _Setting($key)
+setting 的实现函数
+        public function _Get($key,$file_basename='config')
+get 的实现函数
+        public function _Load($file_basename='config')
+load  的实现函数
 class DNException extends Exception
 
         public static function ThrowOn($flag,$message,$code=0)

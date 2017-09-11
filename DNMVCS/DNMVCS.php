@@ -275,9 +275,9 @@ class DNView extends DNSingleton
 	public $path;
 	
 	//这个静态函数背后调用动态函数了，因为要继承一些东西
-	public static function Show($view,$data=array(),$close_db=true)
+	public static function Show($view,$data=array(),$use_wrapper=true)
 	{
-		self::G()->_Show($view,$data,$close_db);
+		self::G()->_Show($view,$data,$use_wrapper);
 	}
 
 	public static function return_json($ret)
