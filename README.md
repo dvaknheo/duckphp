@@ -176,17 +176,17 @@ class DNDB extends DNSingleton
 class DNMVCS extends DNSingleton
         public static function Service($name)
         public static function Model($name)
+        public static function CallAPI($service,$method,$input)
         public function _load($name,$type)
         public function onShow404()
         public function onException($ex)
         public function onOtherException($ex)
         public function onDebugError($errno, $errstr, $errfile)
         public function onBeforeShow()
+        public function onErrorHandler($errno, $errstr, $errfile, $errline)
         public function init($path='',$path_common='')
         public function run()
         public function isDev()
-        public function onErrorHandler($errno, $errstr, $errfile, $errline)
-        public static function CallAPI($service,$method,$input)
 class DNController
 class DNService extends DNSingleton
 class DNModel extends DNSingleton
