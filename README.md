@@ -104,11 +104,11 @@ class DNRoute extends DNSingleton
         public function addDispathRoute($key,$callback)
 添加 分发路由形式的路由
 class DNView extends DNSingleton
-VIew 类
+View 类
         public static function Show($view,$data=array(),$use_wrapper=true)
 显示数据，第一个为不带 .php 结尾的 view 文件，第二个为传递过去的数据，第三个参数是是否使用页眉页脚
         public static function return_json($ret)
-反悔 json 数据，自带 exit
+返回 json 数据，自带 exit
         public static function return_redirect($url)
 跳转结束，自带 exit
         public static function return_route_to($url)
@@ -143,23 +143,37 @@ get 的实现函数
         public function _Load($file_basename='config')
 load  的实现函数
 class DNException extends Exception
-
+异常处理
         public static function ThrowOn($flag,$message,$code=0)
+如果 $flag为真，则抛出异常。 用于减少 if 语句
+如 MyException::ThrowOn(true,"test",-110); 
         public static function SetDefaultAllExceptionHandel($callback)
+公用，用于设置默认的异常
         public static function HandelAllException()
+接管异常
         public static function ManageException($ex)
+给扩展类默认的异常方法
         public static function SetErrorHandel($error_handel)
+设置错误 
         public static function OnException($ex)
-		
+默认异常
 
 
 
 class DNDB extends DNSingleton
+数据库类，只有开始查询才会连接
+主从服务器，不在这里处理， 推荐用 mycat 处理主从服务器
         public function init($config)
+初始化数据库
+如果 config 有 dsn ，那么用 dsn ，否则按配置来
         public function check_connect()
+检查是否连接
         public function getPDO()
+获得 pdo
         public function setPDO($pdo)
+设置 pdo 当你另外有自己 pdo 的时候
         public function close()
+关闭数据库，在输出 view 前关闭
         public function quote($string)
         public function quote_array($array)
         public function fetchAll($sql)

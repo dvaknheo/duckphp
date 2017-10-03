@@ -830,6 +830,10 @@ EOT;
 		/* Don't execute PHP internal error handler */
 		return true;
 	}
+	
+}
+class DNMVCSEx
+{
 	//单独使用
 	public static function CallAPI($service,$method,$input)
 	{
@@ -866,6 +870,48 @@ EOT;
 		}
 		
 		$ret=$reflect->invokeArgs(new $service(), $args);
+		return $ret;
+	}
+	
+	protected  $services=array();
+	protected  $models=array();
+	
+	public static function Service($name)
+	{
+		return self::G()->_load($name,'service');
+	}
+	public static function Model($name)
+	{
+		return self::G()->_load($name,'model');
+	}
+	public function _load($name,$type)
+	{
+		if($type=='service'){
+			$containner=&$this->services;
+		}
+		if($type=='model'){
+			$containner=&$this->models;
+		}
+		if(isset($containner[$name])){
+			return $container[$name];
+		}
+		$filename=$this->path.$type.'/'.$name.'.php';
+		$data=file_get_contents($filename);
+		
+		$data=preg_replace('/\/\*(.*?)\*\//s','',$data);
+		$data=preg_replace('/\/\/.*$/m','',$data);
+		
+		$flag=preg_match('/^s*namespace\s*(\w+)/m',$data,$m);
+		$namespace=$flag?$m[1]:'';
+		$flag=preg_match('/^s*class\s*(\w+)/m',$data,$m);
+		$class=$flag?$m[1]:'';
+		$fullclass=$namespace?$namespace.'\\'.$class:$class;
+		
+		include $filename;
+		
+		$ret=new $fullclass();
+		
+		$container[$name]=$ret;
 		return $ret;
 	}
 }
