@@ -18,6 +18,7 @@ ORM ，和各种屏蔽 sql 的行为
 Widget ， 和 MVC 分离违背
 系统行为 ，接管替代默认的POST，GET 。
 
+
 ## DNMVCS 如何使用
 model 按数据库表走
 view 按页面走
@@ -38,6 +39,23 @@ controller ,service ,model 都可能抛出异常
 2 添加后缀为 XModel 用于表示这个 Model 是多个表的，如 MyXModel。
 
 库 service  和 联表 model 并没有单独目录。
+## DNMVCS 的简化调用流程
+简化的 DNMVC 层级关系图
+```
+		   /-> View
+Controller --> Service ------------------------------> Model   
+					  \                \             /
+					   \-> LibService --> ExModel --/
+```
+Controller 目录是 处理url 路由的，调用 Service
+一般来说 一个 Controller 的方法调用一个 Service 方法
+例外的情况是 展示的内容的时候，可能要灵活拆分
+
+Service 用来作为单元测试，业务核心
+Service 之间不能相互调用， 为此，LibService 就是供各个 Service 调用的
+如 S1 S2 的差别很小，但应用不同怎么办， 就构造一个 lib service 供这两个 service 调用
+
+
 ## DNMVCS 的目录结构
 
 ## DNMVCS 的各个类说明
@@ -175,23 +193,27 @@ class DNDB extends DNSingleton
         public function close()
 关闭数据库，在输出 view 前关闭
         public function quote($string)
+编码
         public function quote_array($array)
+对一系列数组编码
         public function fetchAll($sql)
+读取全部数据
         public function fetch($sql)
+读取一行数据
         public function fetchColumn($sql)
+读取一个数据
         public function exec($sql)
+执行sql
         public function rowCount()
+上一结果的行数
         public function lastInsertId()
         public function get($table_name,$id,$key='id')
         public function insert($table_name,$data,$return_last_id=true)
         public function delete($table,$id,$key='id')
         public function update($table_name,$id,$data,$key='id')
-		
+
 class DNMVCS extends DNSingleton
-        public static function Service($name)
-        public static function Model($name)
-        public static function CallAPI($service,$method,$input)
-        public function _load($name,$type)
+把所有函数粘合的主类
         public function onShow404()
         public function onException($ex)
         public function onOtherException($ex)
@@ -201,6 +223,13 @@ class DNMVCS extends DNSingleton
         public function init($path='',$path_common='')
         public function run()
         public function isDev()
+
+class DNMVCSEx extends DNMVCS
+额外功能类，目前实现了 API 接口的模式
+        public static function Service($name)
+        public static function Model($name)
+        public function _load($name,$type)
+        public static function CallAPI($service,$method,$input)
 class DNController
 class DNService extends DNSingleton
 class DNModel extends DNSingleton
