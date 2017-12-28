@@ -15,4 +15,20 @@ class Main
 		$ret=TestService::G()->insert();
 		var_dump($ret);
 	}
+	public function login()
+	{
+	}
+	public function logout()
+	{
+	}
+	public function reg()
+	{
+		
+	}
+	public function do_reg()
+	{
+	}
+	public function do_login()
+	{
+	}
 }
