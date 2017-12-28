@@ -48,17 +48,22 @@ Controller --> Service ------------------------------> Model
 					   \-> LibService --> ExModel --/
 ```
 Controller 目录是 处理url 路由的，调用 Service
+
 一般来说 一个 Controller 的方法调用一个 Service 方法
+
 例外的情况是 展示的内容的时候，可能要灵活拆分
 
 Service 用来作为单元测试，业务核心
+
 Service 之间不能相互调用， 为此，LibService 就是供各个 Service 调用的
+
 如 S1 S2 的差别很小，但应用不同怎么办， 就构造一个 lib service 供这两个 service 调用
 
 
 ## DNMVCS 的目录结构
 
 ## DNMVCS 的各个类说明
+```
 class DNSingleton
 各个类基本都要继承的类。
         public static function G($url=null)
@@ -233,7 +238,7 @@ class DNMVCSEx extends DNMVCS
 class DNController
 class DNService extends DNSingleton
 class DNModel extends DNSingleton
-
+```
 
 
 
