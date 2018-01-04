@@ -43,7 +43,7 @@ controller ,service ,model 都可能抛出异常
 简化的 DNMVC 层级关系图
 ```
 		   /-> View
-Controller --> Service ------------------------------> Model   
+Controller --> Service ---------------------------------------------------> Model   
 					  \                \             /
 					   \-> LibService --> ExModel --/
 ```
