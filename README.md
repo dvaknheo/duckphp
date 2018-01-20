@@ -13,17 +13,17 @@
 所有这些仅仅是在主类里耦合。
 
 ## DNMVCS 不做什么
-ORM ，和各种屏蔽 sql 的行为
-模板引擎，PHP本身就是模板引擎
-Widget ， 和 MVC 分离违背
-系统行为 ，接管替代默认的POST，GET 。
+* ORM ，和各种屏蔽 sql 的行为
+* 模板引擎，PHP本身就是模板引擎
+* Widget ， 和 MVC 分离违背
+* 系统行为 ，接管替代默认的POST，GET 。
 
 
 ## DNMVCS 如何使用
-model 按数据库表走
-view 按页面走
-controller 按url入口走
-service 按业务走
+* model 按数据库表走
+* view 按页面走
+* controller 按url入口走
+* service 按业务走
 
 controller 调用 view 和service
 service 调用 model 和其他第三方代码
@@ -63,6 +63,7 @@ Service 之间不能相互调用， 为此，LibService 就是供各个 Service 
 ## DNMVCS 的目录结构
 
 ## DNMVCS 的各个类说明
+### DnSingleton 单例基类
 ```
 class DNSingleton
 各个类基本都要继承的类。
@@ -79,9 +80,10 @@ MyClass 把 MyBaseClass 的 foo 方法替换了。
 接下来后面这样的代码，其实也是 MyClass 的 foo2.
 MyBaseClass::G()->foo2();
 
-为什么不是 GetInstance ? 因为，太长。
-
-
+为什么不是 GetInstance ? 因为，太长，这个方法太经常用.
+```
+### DnAutoLoad 自动加载类
+```
 class DNAutoLoad extends DNSingleton
 自动加载函数的类
         public function init($path,$path_common='')
@@ -98,125 +100,167 @@ service
 你可以在子网站的类里扩展这些共享类。
         public function run()
 执行。
-
+```
+### DnRoute 路由类
+```
 class DNRoute extends DNSingleton
 核心的路由类。
 除了默认的按文件目录走的路由类，还支持类似 nodejs 的方式
 
         public static function URL($url=null)
-路由了，要找到相对的 URL 用这个静态函数
-顺便，这也写成全局函数，方便在 view 里调用。
-尽管我不太支持在 view 里写代码，但这里是为了方便起见
+        路由了，要找到相对的 URL 用这个静态函数
+        顺便，这也写成全局函数，方便在 view 里调用。
+        尽管我不太支持在 view 里写代码，但这里是为了方便起见
+        
         public function _url($url=null)
-静态函数 URL 的实现函数。
+        静态函数 URL 的实现函数。
 
         public function init($path)
-初始化，设定目录
+        初始化，设定目录
+
         public function set404($callback)
-设置 404 的回调函数
+        设置 404 的回调函数
+
         public function run()
-运行
-这才开始
+        运行
+        这才开始
+
         public function defaltRouteHandle()
-默认的路由方法，公开是为了回调
+        默认的路由方法，公开是为了回调
+
         public function addDefaultRoute($callback)
-添加其他路由方式
+        添加其他路由方式
+
         public function defaltDispathHandle()
-		
-默认的分发型路由，类似 nodejs 那种
+        默认的分发型路由，类似 nodejs 那种
+        
         public function addDispathRoute($key,$callback)
-添加 分发路由形式的路由
+        添加 分发路由形式的路由
+```
+### DNView 视图类
+```
 class DNView extends DNSingleton
 View 类
         public static function Show($view,$data=array(),$use_wrapper=true)
-显示数据，第一个为不带 .php 结尾的 view 文件，第二个为传递过去的数据，第三个参数是是否使用页眉页脚
+        显示数据，第一个为不带 .php 结尾的 view 文件，第二个为传递过去的数据，第三个参数是是否使用页眉页脚
+
         public static function return_json($ret)
-返回 json 数据，自带 exit
+        返回 json 数据，自带 exit
+
         public static function return_redirect($url)
-跳转结束，自带 exit
+        跳转结束，自带 exit
+
         public static function return_route_to($url)
-跳转到 DnRoute::URL 自带 exit;——这是唯一破坏耦合性的函数
+        跳转到 DnRoute::URL 自带 exit;——这是唯一破坏耦合性的函数
+
         public function _Show($view,$data=array(),$use_wrapper=true)
-Show 静态方法的实现，你也可以替换他
+        Show 静态方法的实现，你也可以替换他
+
         public function init($path)
-初始化， view 的路径
+        初始化， view 的路径
+
         public function setBeforeShow($callback)
-设置在显示前的回调，在 DNMVCS 类中，设置成开始输出前关闭 mysql
+        设置在显示前的回调，在 DNMVCS 类中，设置成开始输出前关闭 mysql
+
         public function showBlock($view,$data)
-显示一小块 view
+        显示一小块 view
+
         public function assign($key,$value)
-		
-设置 key-value 模式的数据，不推荐
-		public function setWrapper($head_file,$foot_file)
-设置页眉页脚
+        设置 key-value 模式的数据，不推荐使用
+
+	public function setWrapper($head_file,$foot_file)
+        设置页眉页脚
+
+```
+### DNConfig 配置类
+```
 class DNConfig extends DNSingleton
 配置类
         public static function Setting($key)
-读取 设置, 不用 set 是避免和 get 对称
+        读取 设置, 不用 set 是避免和 get 对称
+
         public static function Get($key,$file_basename='config')
-获取配置
+        获取配置
+
         public static function Load($file_basename)
-加载配置文件
+        加载配置文件
+
         public function init($path,$path_common=null)
-初始化
+        初始化
+
         public function _Setting($key)
-setting 的实现函数
+        setting 的实现函数
+
         public function _Get($key,$file_basename='config')
-get 的实现函数
+        get 的实现函数
+
         public function _Load($file_basename='config')
-load  的实现函数
+        load  的实现函数
+
+```
+### DNException 异常处理类
+```
 class DNException extends Exception
 异常处理
         public static function ThrowOn($flag,$message,$code=0)
-如果 $flag为真，则抛出异常。 用于减少 if 语句
-如 MyException::ThrowOn(true,"test",-110); 
+        如果 $flag为真，则抛出异常。 用于减少 if 语句
+        如 MyException::ThrowOn(true,"test",-110);
+
         public static function SetDefaultAllExceptionHandel($callback)
-公用，用于设置默认的异常
+        公用，用于设置默认的异常
+
         public static function HandelAllException()
-接管异常
+        接管异常
+
         public static function ManageException($ex)
-给扩展类默认的异常方法
+        给扩展类默认的异常方法
+
         public static function SetErrorHandel($error_handel)
-设置错误 
+        设置错误 
+
         public static function OnException($ex)
-默认异常
-
-
+        默认异常
+```
+### DNDB 数据库类
+```
 
 class DNDB extends DNSingleton
 数据库类，只有开始查询才会连接
 主从服务器，不在这里处理， 推荐用 mycat 处理主从服务器
         public function init($config)
-初始化数据库
-如果 config 有 dsn ，那么用 dsn ，否则按配置来
+        初始化数据库
+        如果 config 有 dsn ，那么用 dsn ，否则按配置来
         public function check_connect()
-检查是否连接
+        检查是否连接
         public function getPDO()
-获得 pdo
+        获得 pdo
         public function setPDO($pdo)
-设置 pdo 当你另外有自己 pdo 的时候
+        设置 pdo 当你另外有自己 pdo 的时候
         public function close()
-关闭数据库，在输出 view 前关闭
+        关闭数据库，在输出 view 前关闭
         public function quote($string)
-编码
+        编码
         public function quote_array($array)
-对一系列数组编码
+        对一系列数组编码
         public function fetchAll($sql)
-读取全部数据
+        读取全部数据
         public function fetch($sql)
-读取一行数据
+        读取一行数据
         public function fetchColumn($sql)
-读取一个数据
+        读取一个数据
         public function exec($sql)
-执行sql
+        执行sql
         public function rowCount()
-上一结果的行数
+        上一结果的行数
+        
         public function lastInsertId()
         public function get($table_name,$id,$key='id')
         public function insert($table_name,$data,$return_last_id=true)
         public function delete($table,$id,$key='id')
         public function update($table_name,$id,$data,$key='id')
-
+```
+### DNMVCS 入口类
+```
 class DNMVCS extends DNSingleton
 把所有函数粘合的主类
         public function onShow404()
@@ -228,7 +272,9 @@ class DNMVCS extends DNSingleton
         public function init($path='',$path_common='')
         public function run()
         public function isDev()
-
+```
+### DNMVSEx 扩展类
+```
 class DNMVCSEx extends DNMVCS
 额外功能类，目前实现了 API 接口的模式
         public static function Service($name)
@@ -245,3 +291,5 @@ class DNModel extends DNSingleton
 
 
 ## 还有什么要说的
+
+使用他，赞扬我，让我有写下去的动力
