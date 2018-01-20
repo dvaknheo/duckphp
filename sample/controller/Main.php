@@ -5,8 +5,6 @@ class Main
 	{
 		$data=array();
 		$data['var']=TestService::G()->foo();
-		
-		$xx=CC;
 		DNView::Show('main',$data);
 		
 	}
