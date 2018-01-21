@@ -741,7 +741,7 @@ EOT;
 		
 		$db_config=DNConfig::Setting('db');
 		DNDB::G()->init($db_config);
-		
+		//我们做一个设定，如果没404 页面，使用默认的 404
 		set_error_handler(array($this,'onErrorHandler'));
 	}
 

@@ -5,11 +5,11 @@
 专注于业务逻辑
 
 ## DNMVCS 做了什么
-简单可扩展灵活的路由方式。
-简单的数据库类
-扩展接管默认错误出来
-简单的加载类
-简单的额配置类
+* 简单可扩展灵活的路由方式
+* 简单的数据库类
+* 扩展接管默认错误处理
+* 简单的加载类
+* 简单的配置类
 所有这些仅仅是在主类里耦合。
 
 ## DNMVCS 不做什么
@@ -19,26 +19,29 @@
 * 系统行为 ，接管替代默认的POST，GET 。
 
 
-## DNMVCS 如何使用
+## DNMVCS 使用理念
 * model 按数据库表走
 * view 按页面走
 * controller 按url入口走
 * service 按业务走
-
-controller 调用 view 和service
-service 调用 model 和其他第三方代码
-model 只实现和当前表相关的操作
-controller ,service ,model 都可能抛出异常
+----
+* controller 调用 view 和service。
+* service 调用 model 和其他第三方代码。
+* model 只实现和当前表相关的操作。
+* controller ,service ,model 都可能抛出异常。
 
 如果 service 相互调用怎么办?
+
 添加后缀为 LibService 用于 service 共享调用，不对外，如MyLibService
 
 如果跨表怎么办?
+
 两种解决方案
-1 在主表里附加
-2 添加后缀为 XModel 用于表示这个 Model 是多个表的，如 MyXModel。
+1. 在主表里附加
+2. 添加后缀为 XModel 用于表示这个 Model 是多个表的，如 MyXModel。
 
 库 service  和 联表 model 并没有单独目录。
+
 ## DNMVCS 的简化调用流程
 简化的 DNMVC 层级关系图
 ```
@@ -58,54 +61,76 @@ Service 用来作为单元测试，业务核心
 Service 之间不能相互调用， 为此，LibService 就是供各个 Service 调用的
 
 如 S1 S2 的差别很小，但应用不同怎么办， 就构造一个 lib service 供这两个 service 调用
+## DNMVCS 使用
 
+## DNMVCS 还要做什么
+* 符合 psr 标准的 log 类，尽管很多项目会自己写，带一个简单的无妨.
+* 调试类，同上面原因。
+* composer 安装模式，本人还没学会
+* 范例，例子还太简单了
+* 脚手架，决定写在 DNMVCSEx 里够了。
+* Namespace , 使用命名空间，这
 
-## DNMVCS 的目录结构
-
+## DNMVCS 的目录结构约定
+sample 目录就是一般典型目录
+```
++---DNMVCS  系统目录，这里面的内容不要修改
++---sample  站点名称
+|   +---config 配置目录
+|   +---controller 控制器目录
+|   +---lib 用到的库目录
+|   +---model Model 目录
+|   +---service Service 目录
+|   +---view
+|   |   \---_sys 系统模版目录
+|   \---www  Web 入口
+```
+config 目录 有 config ,setting 两个文件，其中 setting 是不存放在 
 ## DNMVCS 的各个类说明
 ### DnSingleton 单例基类
+各个类基本都要继承的类。写Model,Service 的时候可以方便的扩展。
 ```
 class DNSingleton
-各个类基本都要继承的类。
         public static function G($url=null)
-如果没有这个 G 方法 你可能会怎么写代码：
-(new MyClass())->foo();
-继承了 DNSingleton 后，这么写
-MyClass::G()->foo();
 
-另一个隐藏功能：
-MyBaseClass::G(new MyClass())->foo();
-MyClass 把 MyBaseClass 的 foo 方法替换了。
+        如果没有这个 G 方法 你可能会怎么写代码：
+        (new MyClass())->foo();
+        继承了 DNSingleton 后，这么写
+        MyClass::G()->foo();
 
-接下来后面这样的代码，其实也是 MyClass 的 foo2.
-MyBaseClass::G()->foo2();
+        另一个隐藏功能：
+        MyBaseClass::G(new MyClass())->foo();
+        MyClass 把 MyBaseClass 的 foo 方法替换了。
 
-为什么不是 GetInstance ? 因为，太长，这个方法太经常用.
+        接下来后面这样的代码，其实也是 MyClass 的 foo2.
+        MyBaseClass::G()->foo2();
+
+        为什么不是 GetInstance ? 因为太长，这个方法太经常用。
 ```
 ### DnAutoLoad 自动加载类
+自动加载函数的类
 ```
 class DNAutoLoad extends DNSingleton
-自动加载函数的类
         public function init($path,$path_common='')
-初始化
-设定 mvc 的目录， 和共享目录
-共享目录主要用于多网站配合
-目录中有
-model
-后缀 CommonModel
-service
-后缀 CommonService
-为什么名字这么长
-因为经常用到这么长名字说明你错了
-你可以在子网站的类里扩展这些共享类。
+        初始化
+        设定 mvc 的目录， 和共享目录
+        共享目录主要用于多网站配合
+        目录中有
+        model
+        后缀 CommonModel
+        service
+        后缀 CommonService
+        为什么名字这么长
+        因为经常用到这么长名字说明你错了
+        你可以在子网站的类里扩展这些共享类。
         public function run()
-执行。
+        执行。
 ```
 ### DnRoute 路由类
+核心的路由类。
+
 ```
 class DNRoute extends DNSingleton
-核心的路由类。
-除了默认的按文件目录走的路由类，还支持类似 nodejs 的方式
 
         public static function URL($url=null)
         路由了，要找到相对的 URL 用这个静态函数
@@ -200,8 +225,8 @@ class DNConfig extends DNSingleton
 ```
 ### DNException 异常处理类
 ```
+异常处理。
 class DNException extends Exception
-异常处理
         public static function ThrowOn($flag,$message,$code=0)
         如果 $flag为真，则抛出异常。 用于减少 if 语句
         如 MyException::ThrowOn(true,"test",-110);
@@ -219,7 +244,7 @@ class DNException extends Exception
         设置错误 
 
         public static function OnException($ex)
-        默认异常
+        默认异常，扩展类里重载这个静态方法以实现自己的异常处理方式
 ```
 ### DNDB 数据库类
 ```
@@ -274,6 +299,7 @@ class DNMVCS extends DNSingleton
         public function isDev()
 ```
 ### DNMVSEx 扩展类
+额外对 DNMVCS 的扩展类
 ```
 class DNMVCSEx extends DNMVCS
 额外功能类，目前实现了 API 接口的模式
@@ -292,4 +318,4 @@ class DNModel extends DNSingleton
 
 ## 还有什么要说的
 
-使用他，赞扬我，让我有写下去的动力
+使用它，赞扬我，让我有写下去的动力
