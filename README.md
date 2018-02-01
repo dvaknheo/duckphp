@@ -77,15 +77,21 @@ sample 目录就是一般典型目录
 +---DNMVCS  系统目录，这里面的内容不要修改
 +---sample  站点名称
 |   +---config 配置目录
+|   |   +---config.sample.php 配置文件
+|   |   \---setting.sample.php 设置文件
 |   +---controller 控制器目录
 |   +---lib 用到的库目录
 |   +---model Model 目录
 |   +---service Service 目录
 |   +---view
 |   |   \---_sys 系统模版目录
+|   |       +---error_404.php
+|   |       +---error_404.php
 |   \---www  Web 入口
+|           +---index.php
 ```
-config 目录 有 config ,setting 两个文件，其中 setting 是不存放在 
+config 目录 有 config ,setting 两个文件，其中 setting 是不存放在版本管理系统里的 
+
 ## DNMVCS 的各个类说明
 ### DnSingleton 单例基类
 各个类基本都要继承的类。写Model,Service 的时候可以方便的扩展。
