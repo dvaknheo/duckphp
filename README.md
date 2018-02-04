@@ -1,7 +1,9 @@
 # DNMVCS
 ## DNMVCS 是什么
 一个 PHP Web 简单框架 比通常的Model Controller View 多了 Service
-拟补了 常见 Web 框架少的缺层 
+拟补了 常见 Web 框架少的缺层
+这个缺层导致了很糟糕的境地。你会发现很多人在 Contorller 里写一堆代码，或者在 Model 里写一堆代码。
+
 专注于业务逻辑
 
 ## DNMVCS 做了什么
@@ -13,17 +15,17 @@
 所有这些仅仅是在主类里耦合。
 
 ## DNMVCS 不做什么
-* ORM ，和各种屏蔽 sql 的行为
+* ORM ，和各种屏蔽 sql 的行为，根据日志查 sql 方便多了。
 * 模板引擎，PHP本身就是模板引擎
 * Widget ， 和 MVC 分离违背
-* 系统行为 ，接管替代默认的POST，GET 。
-
+* 系统行为 ，接管替代默认的POST，GET。
 
 ## DNMVCS 使用理念
 * model 按数据库表走
 * view 按页面走
 * controller 按url入口走
 * service 按业务走
+
 ----
 * controller 调用 view 和service。
 * service 调用 model 和其他第三方代码。
@@ -60,7 +62,7 @@ Service 用来作为单元测试，业务核心
 
 Service 之间不能相互调用， 为此，LibService 就是供各个 Service 调用的
 
-如 S1 S2 的差别很小，但应用不同怎么办， 就构造一个 lib service 供这两个 service 调用
+如 Serice1 和 Service2 的差别很小，但应用不同怎么办， 就构造一个 lib service 供这两个 service 调用
 ## DNMVCS 使用
 
 ## DNMVCS 还要做什么
@@ -77,7 +79,7 @@ sample 目录就是一般典型目录
 +---DNMVCS  系统目录，这里面的内容不要修改
 +---sample  站点名称
 |   +---config 配置目录
-|   |   +---config.sample.php 配置文件
+|   |   +---config.php 配置文件
 |   |   \---setting.sample.php 设置文件
 |   +---controller 控制器目录
 |   +---lib 用到的库目录
@@ -86,12 +88,27 @@ sample 目录就是一般典型目录
 |   +---view
 |   |   \---_sys 系统模版目录
 |   |       +---error_404.php
-|   |       +---error_404.php
+|   |       +---error_500.php
+|   |       +---error_debug.php
+|   |       +---error_exception.php
 |   \---www  Web 入口
 |           +---index.php
 ```
-config 目录 有 config ,setting 两个文件，其中 setting 是不存放在版本管理系统里的 
+config 目录 
+config.php 是各种配置，无敏感信息
 
+setting.sample.php 改名为 setting.php  是不存放在版本管理系统里的
+
+setting.sample.php 演示了 数据库的配置，和设置是否在调试状态
+
+www 目录
+
+index.php 就两句话
+```
+//DNView::G(new MyView()); //替换默认组件,其他类也这么处理
+DNMVCS::G()->init($path); //初始化
+DNMVCS::G()->run(); //运行
+```
 ## DNMVCS 的各个类说明
 ### DnSingleton 单例基类
 各个类基本都要继承的类。写Model,Service 的时候可以方便的扩展。
@@ -128,7 +145,7 @@ class DNAutoLoad extends DNSingleton
         后缀 CommonService
         为什么名字这么长
         因为经常用到这么长名字说明你错了
-        你可以在子网站的类里扩展这些共享类。
+        你应该在子网站的类里扩展这些共享类。
         public function run()
         执行。
 ```
@@ -157,7 +174,18 @@ class DNRoute extends DNSingleton
         这才开始
 
         public function defaltRouteHandle()
-        默认的路由方法，公开是为了回调
+        默认的路由方法，公开是为了回调支持下面几种
+
+/index 
+/Test => Test::index  Main::Test
+/Test/index  Test/index::index
+/Test/Method1  	Test::Method1 Test\Method1::index
+/Test/Class2/index
+DNRoute 选择支持了多级路由，而不是二级路由，那么
+AA/view/123456?foo 这样的就不容易处理了
+
+默认的路由实现中，也实现了
+POST ，添加定位到 do_*上。
 
         public function addDefaultRoute($callback)
         添加其他路由方式
@@ -194,10 +222,10 @@ View 类
         设置在显示前的回调，在 DNMVCS 类中，设置成开始输出前关闭 mysql
 
         public function showBlock($view,$data)
-        显示一小块 view
+        显示一小块 view，用于调试
 
-        public function assign($key,$value)
-        设置 key-value 模式的数据，不推荐使用
+        public function _assign($key,$value)
+        设置 key-value 模式的数据，不推荐使用，你应该传入整个数组
 
 	public function setWrapper($head_file,$foot_file)
         设置页眉页脚
@@ -257,7 +285,7 @@ class DNException extends Exception
 
 class DNDB extends DNSingleton
 数据库类，只有开始查询才会连接
-主从服务器，不在这里处理， 推荐用 mycat 处理主从服务器
+主从服务器，不在这里处理， 推荐用 MyCat 处理主从服务器
         public function init($config)
         初始化数据库
         如果 config 有 dsn ，那么用 dsn ，否则按配置来
@@ -272,7 +300,7 @@ class DNDB extends DNSingleton
         public function quote($string)
         编码
         public function quote_array($array)
-        对一系列数组编码
+        对一系列数组编码，注意 key 是没转码的
         public function fetchAll($sql)
         读取全部数据
         public function fetch($sql)
@@ -324,4 +352,4 @@ class DNModel extends DNSingleton
 
 ## 还有什么要说的
 
-使用它，赞扬我，让我有写下去的动力
+使用它，鼓励我，让我有写下去的动力

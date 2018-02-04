@@ -79,7 +79,6 @@ class DNRoute extends DNSingleton
 	protected $dispatches=array();
 	protected $on404Handel;
 	
-	//独立的功能 ,我们可以替换，比如  #! 模式
 	public static function URL($url=null)
 	{
 		return self::G()->_URL($url);
@@ -113,8 +112,7 @@ class DNRoute extends DNSingleton
 	}
 	protected function default404()
 	{
-		// 这里了也应该调
-		throw new Exception("404 ,找不到地址");
+		throw new Exception("DNMVCS Notice: 404 , Develop should override this");
 	}
 	public function set404($callback)
 	{
@@ -168,7 +166,7 @@ class DNRoute extends DNSingleton
 		if($path_info=='/index.php'){$path_info='/';}
 		list($default,$c,$m)=array_pad(explode('/',$path_info),3,null);
 		
-		//我们扩展到全部。
+		//extends all
 		
 		$p=preg_match('/(.*)?\/([^\/]*)$/',$path_info,$mm);
 		$full_class='';
@@ -194,7 +192,7 @@ class DNRoute extends DNSingleton
 		}
 		include $file;
 		$obj=new $class;
-		//POST ，添加定位到 do_*上来。TODO GET do_* 就不允许 GET 方法了。
+		// do_X => post X
 		if($is_post){
 			if(method_exists ($obj,'do_'.$method)){
 				$method='do_'.$method;
@@ -259,7 +257,7 @@ class DNRoute extends DNSingleton
 	}
 
 }
-//OK，懒得写字用。
+//OK，Lazy
 if(!function_exists('url')){
 function URL($url)
 {
@@ -274,7 +272,6 @@ class DNView extends DNSingleton
 	public $onBeforeShow=null;
 	public $path;
 	
-	//这个静态函数背后调用动态函数了，因为要继承一些东西
 	public static function Show($view,$data=array(),$use_wrapper=true)
 	{
 		self::G()->_Show($view,$data,$use_wrapper);
@@ -288,13 +285,13 @@ class DNView extends DNSingleton
 	}
 	public static function return_redirect($url)
 	{
-		//TODO 判断跳转地址.
+		//TODO check redirect safe.
 		header('location: '.$url);
 		exit;
 	}
 	public static function return_route_to($url)
 	{
-		//TODO 判断跳转地址.
+		//TODO check redirect safe.
 		header('location: '.URL($url));
 		exit;
 	}
@@ -305,8 +302,7 @@ class DNView extends DNSingleton
 			$t=$this->onBeforeShow;
 			$t($view,$data,$use_wrapper);
 		}
-		//这里最好还要用 OB 函数，使得 500 错误的时候只输出 500 错误
-		// 屏蔽 notice 级别的错误。
+		// stop notice 
 		error_reporting(error_reporting() & ~E_NOTICE);
 		
 		// TODO 这里的 extract 和本地变量的结合
@@ -344,9 +340,8 @@ class DNView extends DNSingleton
 		extract($data);
 		include($this->path.$view.'.php');
 	}
-	public function assign($key,$value)
+	public function _assign($key,$value)
 	{
-		//不建议在普通方法里用。
 		$this->data[$key]=$value;
 	}
 	
@@ -374,14 +369,14 @@ class DNConfig extends DNSingleton
 		$this->path_common=$path_common;
 	}
 	
-	//隔离变量
+	// variable indived
 	protected function include_file($file)
 	{
 		return include($file);
 	}
 	public function _Setting($key)
 	{
-		//不做多文件的 setting;
+		//on file setting;
 		static $setting;
 		if(isset($setting[$key])){return $setting[$key];}
 		if(null===$setting){
@@ -392,12 +387,10 @@ class DNConfig extends DNSingleton
 			}
 			$setting=$this->include_file($this->path.'setting.php');
 			if($setting===false){
-				echo('DNMVCS ERROR: no setting file!');
-				exit;
+				throw new Exception('DNMVCS Notice: no setting file!,change setting.sample.php to setting.php');
 			}
 			if(!is_array($setting)){
-				echo('DNMVCS ERROR: need return array !');
-				exit;
+				throw new Exception('DNMVCS Notice: need return array !');
 			}
 			$setting=array_merge($base_setting,$setting);
 		}
@@ -444,8 +437,7 @@ class DNDB extends DNSingleton
 		if($this->pdo){return;}
 		//TODO 这里检查配置是否有误。
 		if(empty($this->config)){
-			echo('DNMVCS ERROR: database not setting!');
-			exit;
+			throw new Exception('DNMVCS Notice: database not setting!');
 		}
 		$config=$this->config;
 		if(!isset($config['dsn'])){
@@ -475,7 +467,7 @@ class DNDB extends DNSingleton
 		$this->check_connect();
 		return $this->pdo->quote($string);
 	}
-	//注意，这里的key是没转码的哦.
+	//Warnning, escape the key
 	public function quote_array($array)
 	{
 		$this->check_connect();
@@ -557,7 +549,7 @@ class DNDB extends DNSingleton
 	}
 	public function delete($table,$id,$key='id')
 	{
-		throw new Exception("不建议删除！");
+		throw new Exception("DNMVCS Notice : override me to delete");
 		$sql="delete from {$table_name} where {$key}=? limit 1";
 		return $this->exec($sql,$id);
 	}
@@ -709,8 +701,10 @@ EOT;
 	// view 之前关闭数据库
 	public function onBeforeShow()
 	{
-		if($this->auto_close_db){
+		if(!$this->auto_close_db){ return ;}
+		try{
 			DNDB::G()->close();
+		}catch($ex){
 		}
 	}
 	
@@ -741,13 +735,14 @@ EOT;
 		
 		$db_config=DNConfig::Setting('db');
 		DNDB::G()->init($db_config);
-		//我们做一个设定，如果没404 页面，使用默认的 404
 		set_error_handler(array($this,'onErrorHandler'));
 	}
 
 	public function run()
 	{
+		ob_start();
 		DNRoute::G()->run();
+		ob_end_flush();
 	}
 	
 
@@ -772,7 +767,6 @@ EOT;
 		case E_USER_NOTICE:
 		case E_NOTICE:
 			if(!$this->isDev()){
-				//我们在日志里记录下错误，然后返回
 				break;
 			}
 			$this->onDebugError($errno, $errstr, $errfile);
