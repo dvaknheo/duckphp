@@ -81,4 +81,8 @@ class DNMVCSEx extends DNMVCS
 		$container[$name]=$ret;
 		return $ret;
 	}
+	public function template()
+	{
+		
+	}
 }

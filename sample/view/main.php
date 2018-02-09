@@ -1,6 +1,6 @@
 <!doctype html>
 <html>
 <body>
-<?php echo $var;?>
+Time Now is <?php echo $var;?>
 </body>
 </html>

@@ -704,7 +704,7 @@ EOT;
 		if(!$this->auto_close_db){ return ;}
 		try{
 			DNDB::G()->close();
-		}catch($ex){
+		}catch( Exception $ex){
 		}
 	}
 	
