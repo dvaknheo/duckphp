@@ -83,6 +83,18 @@ class DNMVCSEx extends DNMVCS
 	}
 	public function template()
 	{
-		
+		$files=array(
+			'config/config.php',
+			'config/setting.php',
+			'controller/Main.php',
+			'model/TestModel.php',
+			'service/TestService.php',
+			'view/main.php',
+			'view/_sys/error-404.php',
+			'view/_sys/error-500.php',
+			'view/_sys/error-debug.php',
+			'view/_sys/error-exception.php',
+			'www/index.php',
+		);
 	}
 }

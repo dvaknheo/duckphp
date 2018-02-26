@@ -440,12 +440,7 @@ class DNDB extends DNSingleton
 			throw new Exception('DNMVCS Notice: database not setting!');
 		}
 		$config=$this->config;
-		if(!isset($config['dsn'])){
-			$dsn="mysql:host={$config['host']};port={$config['port']};dbname={$config['dbname']};charset=utf8";
-		}else{
-			$dsn=$config['dsn'];
-		}
-		$this->pdo= new PDO($dsn, $config['user'], $config['password'],array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION));
+		$this->pdo= new PDO($config['dsn'], $config['user'], $config['password'],array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION));
 	}
 	public function getPDO()
 	{
