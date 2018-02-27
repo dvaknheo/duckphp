@@ -1,5 +1,5 @@
 <?php
-//这个目录是自动加载的目录
+//Place You Class Here
 class TestClass
 {
 	public function foo()

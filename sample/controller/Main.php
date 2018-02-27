@@ -8,25 +8,8 @@ class Main
 		DNView::Show('main',$data);
 		
 	}
-	public function foo()
+	public function i()
 	{
-		$ret=TestService::G()->insert();
-		var_dump($ret);
-	}
-	public function login()
-	{
-	}
-	public function logout()
-	{
-	}
-	public function reg()
-	{
-		
-	}
-	public function do_reg()
-	{
-	}
-	public function do_login()
-	{
+		phpinfo();
 	}
 }
