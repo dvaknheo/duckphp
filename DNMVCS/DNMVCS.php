@@ -387,6 +387,7 @@ class DNConfig extends DNSingleton
 			}
 			$setting=$this->include_file($this->path.'setting.php');
 			if($setting===false){
+				echo '<h1>'.'DNMVCS Notice: no setting file!,change setting.sample.php to setting.php !'.'</h1>';
 				throw new Exception('DNMVCS Notice: no setting file!,change setting.sample.php to setting.php');
 			}
 			if(!is_array($setting)){
@@ -405,7 +406,7 @@ class DNConfig extends DNSingleton
 	//TODO 合法性判断
 	public function _Load($file_basename='config')
 	{
-		//多文件多配置？
+		//multi file?
 		static $all_config=array();
 		if(isset($all_config[$file_basename])){return $all_config[$file_basename];}
 		$base_config=array();
@@ -435,7 +436,6 @@ class DNDB extends DNSingleton
 	public function check_connect()
 	{
 		if($this->pdo){return;}
-		//TODO 这里检查配置是否有误。
 		if(empty($this->config)){
 			throw new Exception('DNMVCS Notice: database not setting!');
 		}
@@ -462,7 +462,7 @@ class DNDB extends DNSingleton
 		$this->check_connect();
 		return $this->pdo->quote($string);
 	}
-	//Warnning, escape the key
+	//Warnning, escape the key by yourself
 	public function quote_array($array)
 	{
 		$this->check_connect();
@@ -570,7 +570,7 @@ class DNException extends Exception
 		if(!DNException::$is_handeling){
 			DNException::HandelAllException();
 		}
-		$class=get_class();//static::class; // 兼容旧版
+		$class=get_class();//static::class; //
 		throw new $class($message,$code);
 	}
 	public static function SetDefaultAllExceptionHandel($callback)
@@ -693,7 +693,7 @@ EOT;
 		}
 	}
 	
-	// view 之前关闭数据库
+	//  close database before show;
 	public function onBeforeShow()
 	{
 		if(!$this->auto_close_db){ return ;}
@@ -767,7 +767,7 @@ EOT;
 			$this->onDebugError($errno, $errstr, $errfile);
 			break;
 		default:
-			echo "Unknown error type: [$errno] $errstr<br />\n";
+			echo "DNMVCS Notice: Unknown error type: [$errno] $errstr<br />\n";
 			break;
 		}
 

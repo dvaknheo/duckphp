@@ -1,10 +1,12 @@
 # DNMVCS
 ## DNMVCS 是什么
-一个 PHP Web 简单框架 比通常的Model Controller View 多了 Service
-拟补了 常见 Web 框架少的缺层
+一个 PHP Web 简单框架 比通常的Model Controller View 多了 Service 。
+
+拟补了 常见 Web 框架少的缺层。
+
 这个缺层导致了很糟糕的境地。你会发现很多人在 Contorller 里写一堆代码，或者在 Model 里写一堆代码。
 
-专注于业务逻辑
+使得网站开发者专注于业务逻辑
 
 ## DNMVCS 做了什么
 * 简单可扩展灵活的路由方式
@@ -63,8 +65,6 @@ Service 用来作为单元测试，业务核心
 Service 之间不能相互调用， 为此，LibService 就是供各个 Service 调用的
 
 如 Serice1 和 Service2 的差别很小，但应用不同怎么办， 就构造一个 lib service 供这两个 service 调用
-## DNMVCS 使用
-
 ## DNMVCS 还要做什么
 * 符合 psr 标准的 log 类，尽管很多项目会自己写，带一个简单的无妨.
 * 调试类，同上面原因。
@@ -109,6 +109,17 @@ index.php 就两句话
 DNMVCS::G()->init($path); //初始化
 DNMVCS::G()->run(); //运行
 ```
+## DNMVCS 使用方法
+1. 把 sample/www 配置为你的站点目录。
+2. 将 sample/config/setting.sample.php 改为 sample/config/setting.php
+3. 用浏览器打开网站，出现 Hello DNMVCS 就成功了。
+4. 接下来细心看 sample 目录的代码，怎么用就基本了解了。
+
+* 为什么要步骤2 ？ 设置文件放在版本管理里不安全。 如果没有做步骤二会怎么养？，会有一个报错提示
+* 建议做新站点的时候不要更改 sample 目录的文件，而是把 sample 目录内容复制新的目录。
+* 我不想做全站，只是做子目录， 这也可以。把 www/index.php 的文件引用调整好就行。
+
+
 ## DNMVCS 的各个类说明
 ### DnSingleton 单例基类
 各个类基本都要继承的类。写Model,Service 的时候可以方便的扩展。

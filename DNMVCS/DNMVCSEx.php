@@ -1,5 +1,12 @@
 <?php
-
+/**
+ 这个类是单独使用的
+ 
+ call api 调用　api　的时候会很方便，　input 参数传入　$_GET　就行了。利用好 PHP　的反射
+ serverice ,model ,两个调用方法提供的是 nodejs 方式的调用
+ DNMVCSEx::Service('MyService')
+ DNMVCSEx::Model('Model')
+*/
 class DNMVCSEx extends DNMVCS
 {
 	protected  $services=array();
@@ -81,7 +88,4 @@ class DNMVCSEx extends DNMVCS
 		$container[$name]=$ret;
 		return $ret;
 	}
-///////////////////
-
-	
 }
