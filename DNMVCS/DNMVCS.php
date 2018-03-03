@@ -149,25 +149,9 @@ class DNRoute extends DNSingleton
 		
 		return call_user_func_array($callback,$this->param);
 	}
-	// variable indived
-	protected function include_file($file)
-	{
-		return include($file);
-	}
-	public function getParam()
-	{
-		return $this->param;
-	}
+
 	public function defaltRouteHandle()
 	{
-/*
-
-/index 
-/Test => Test::index  Main::Test
-/Test/index  Test/index::index
-/Test/Method1  	Test::Method1 Test\Method1::index
-/Test/Class2/index
-//*/
 		$default_controller='Main';
 		$default_method='index';
 
@@ -187,6 +171,7 @@ class DNRoute extends DNSingleton
 		$param='';
 		for($i=0;$i<$l;$i++){
 			$v=$blocks[$i];
+			$method=$v;
 			if(''==$v){break;}
 			if(!preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/',$v)){
 				return null;
@@ -195,12 +180,12 @@ class DNRoute extends DNSingleton
 			$full_file=$dir.'.php';
 			if(is_file($full_file)){
 				$current_class=implode('/',array_slice($blocks,0,$i+1));
+				$method=isset($blocks[$i+1])?$blocks[$i+1]:'';
 			}
 			if(is_dir($dir)){
 				$prefix.=$v.'/';
 				continue;
 			}
-			$method=$v;
 			break;
 		}
 		
@@ -212,18 +197,29 @@ class DNRoute extends DNSingleton
 		$method=$method?$method:'index';
 		$current_class=$current_class?$current_class:'Main';
 		$file=$this->path.$site.$current_class.'.php';
-		$this->include_file($file);
 		
-		//got file ,got class;
-		////////////////////////
-		return $this->getMethodToCall($file,$class,$method);
+		$this->includeControllerFile($file);
+		$obj=$this->getObecjectToCall($current_class);
+		
+		if(null==$obj){return null;}
+		return $this->getMethodToCall($obj,$method);
 	}
-	protected function getMethodToCall($file,$class,$method)
+	// You can subject it; variable indived
+	protected function includeControllerFile($file)
 	{
-		$obj=new DnAction();
-		
+		return include($file);
+	}
+	// You can subject it;
+	protected function getObecjectToCall($class)
+	{
+		if(substr(basename($class),0,1)=='_'){return null;}
+		$obj=new DnController();
+		return $obj;
+	}
+	protected function getMethodToCall($obj,$method)
+	{
+		if(substr($method,0,2)=='__'){return null;}
 		$is_post=($_SERVER['REQUEST_METHOD']=='POST')?true:false;
-		// do_X => post X
 		if($is_post){
 			if(method_exists ($obj,'do_'.$method)){
 				$method='do_'.$method;
@@ -805,7 +801,7 @@ EOT;
 
 /////////////////////////
 
-class DNController
+class DNControllerBase
 {
 }
 class DNService extends DNSingleton

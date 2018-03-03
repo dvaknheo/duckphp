@@ -1,5 +1,5 @@
 <?php
-class DnAction
+class DnController
 {
 	public function index()
 	{
