@@ -69,6 +69,21 @@ class DNAutoLoad extends DNSingleton
 			
 			
 		});
+		//Controller
+		spl_autoload_register(function ($class) {
+			$prefix = 'DnController\\';
+			$base_dir =$this->path.'Controller/';
+
+			$len = strlen($prefix);
+			if (strncmp($prefix, $class, $len) !== 0) {
+				return;
+			}
+			$relative_class = substr($class, $len);
+			$file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+			if (is_file($file)) {
+				require $file;
+			}
+		});
 	}
 }
 
@@ -210,9 +225,16 @@ class DNRoute extends DNSingleton
 		return include($file);
 	}
 	// You can subject it;
-	protected function getObecjectToCall($class)
+	protected function getObecjectToCall($class_name)
 	{
-		if(substr(basename($class),0,1)=='_'){return null;}
+		if(substr(basename($class_name),0,1)=='_'){return null;}
+		/*
+		$cls='\DnController\\'.str_replace('/','\\',$class_name);
+		if(class_exists($class_name)){
+			$obj=new $classname();
+			return $obj;
+		}
+		*/
 		$obj=new DnController();
 		return $obj;
 	}
@@ -242,21 +264,30 @@ class DNRoute extends DNSingleton
 		$this->route_handels[]=$callback;
 	}
 
-	protected function match_path_info($pattern,$path_info)
+	protected function match_path_info($pattern_url,$path_info)
 	{
-		$pattern='/^(([A-Z_]+)\s+)?(~)?\/?(.*)$/';
-		$path_info=rtrim($path_info,'/').'/';
-		$flag=preg_match($pattern,$path_info,$m);
+		//var_dump($pattern_url,$path_info);exit;
+		$pattern='/^(([A-Z_]+)\s+)?(~)?\/?(.*)\/?$/';
+		$flag=preg_match($pattern,$pattern_url,$m);
 		if(!$flag){return false;}
 		$method=$m[2];
 		$is_reg=$m[3];
-		$url=$m[5];
-		if($method && !$ $method!==$_SERVER['HTTP_METHOD']){return false;}
-		if(!$is_reg && $url===$path_info){return true;}
-		
-		$p='/^'.str_replace('/','\/',$url).'$';
+		$url=$m[4];
+		if($method && $method!==$_SERVER['REQUEST_METHOD']){return false;}
+		if(!$is_reg){
+			$params=explode('/',$path_info);
+			array_shift($params);
+			$url_params=explode('/',$url);
+			if($url_params === array_slice($params,0,count($url_params))){
+				$this->params=array_slice($params,0,count($url_params));
+				return true;
+			}else{
+				return false;
+			}
+			
+		}
+		$p='/^\/'.str_replace('/','\/',$url).'/';
 		$flag=preg_match($p,$path_info,$m);
-		
 		array_shift($m);
 		$this->param=$m;
 		
