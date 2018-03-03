@@ -170,9 +170,15 @@ class DNRoute extends DNSingleton
         路由了，要找到相对的 URL 用这个静态函数
         顺便，这也写成全局函数，方便在 view 里调用。
         尽管我不太支持在 view 里写代码，但这里是为了方便起见
-        
-        public function _url($url=null)
+
+        public static function Param()
+        获取路由之后后面的分段。
+
+        public function _URL($url=null)
         静态函数 URL 的实现函数。
+
+        public static function Param()
+        静态函数 Param 的实现函数。
 
         public function init($path)
         初始化，设定目录
@@ -185,27 +191,25 @@ class DNRoute extends DNSingleton
         这才开始
 
         public function defaltRouteHandle()
-        默认的路由方法，公开是为了回调支持下面几种
-
-/index 
-/Test => Test::index  Main::Test
-/Test/index  Test/index::index
-/Test/Method1  	Test::Method1 Test\Method1::index
-/Test/Class2/index
-DNRoute 选择支持了多级路由，而不是二级路由，那么
-AA/view/123456?foo 这样的就不容易处理了
-
-默认的路由实现中，也实现了
-POST ，添加定位到 do_*上。
+        默认的路由方法，支持多级子目录路由
+        和通常每个路由类一个名字不同的是，DNMVCS 的控制器类都用 DnController 这个名字。
+        而不是单独名字，原因是不希望控制器之间调来调去。
+        Param 的数据也会附到 调用的方法上去
+        _ 开头的文件，不会被调用
+        __ 开头的方法，不会被调用。
+        POST的数据 ，会添加定位到 do_*上。
 
         public function addDefaultRoute($callback)
-        添加其他路由方式
+        添加其他路由方式，默认的 404 之后你可以在这里添加路由
 
         public function defaltDispathHandle()
-        默认的分发型路由，类似 nodejs 那种
-        
+        系统内部调用，默认的分发型路由，类似 nodejs 那种
+
         public function addDispathRoute($key,$callback)
-        添加 分发路由形式的路由
+        添加 分发路由形式的回调
+        /ABC
+        GET /ABC 
+        POST ~[a-z+] // 正则方式调用
 ```
 ### DNView 视图类
 ```

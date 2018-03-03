@@ -244,14 +244,23 @@ class DNRoute extends DNSingleton
 
 	protected function match_path_info($pattern,$path_info)
 	{
-		//'POST:/xx*/'
-		//'GET:/xxf*saf[a-z]fdsfds';
-		//'GET:~afasdf/bdfdsafs/;
-		//'~a.b;
-		if($pattern==$path_info){return true;}
-		if($pattern==$_SERVER['HTTP_METHOD'].':'.$path_info){return true;}
+		$pattern='/^(([A-Z_]+)\s+)?(~)?\/?(.*)$/';
+		$path_info=rtrim($path_info,'/').'/';
+		$flag=preg_match($pattern,$path_info,$m);
+		if(!$flag){return false;}
+		$method=$m[2];
+		$is_reg=$m[3];
+		$url=$m[5];
+		if($method && !$ $method!==$_SERVER['HTTP_METHOD']){return false;}
+		if(!$is_reg && $url===$path_info){return true;}
 		
-		return false;
+		$p='/^'.str_replace('/','\/',$url).'$';
+		$flag=preg_match($p,$path_info,$m);
+		
+		array_shift($m);
+		$this->param=$m;
+		
+		return $flag;
 	}
 	public function defaltDispathHandle()
 	{
