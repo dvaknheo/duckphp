@@ -74,7 +74,7 @@ class DNAutoLoad extends DNSingleton
 
 class DNRoute extends DNSingleton
 {
-	protected $site='';
+	protected $site=''; //for sites in a controller
 	protected $route_handels=array();
 	protected $dispatches=array();
 	protected $on404Handel;
@@ -91,8 +91,9 @@ class DNRoute extends DNSingleton
 		$url=preg_replace('/^\//','',$url);
 		
 		if(null===$basepath){
-			$basepath=rtrim(str_replace('\\','/',$_SERVER['SCRIPT_NAME']),'/').'/';
+			$basepath=substr(rtrim(str_replace('\\','/',$_SERVER['SCRIPT_FILENAME']),'/').'/',strlen($_SERVER['DOCUMENT_ROOT']));
 		}
+		
 		if($basepath=='/index.php'){$basepath='/';}
 		if($basepath=='/index.php/'){$basepath='/';}
 		
@@ -169,6 +170,7 @@ class DNRoute extends DNSingleton
 		array_shift($blocks);
 		$prefix=$this->path.$site;
 		$l=count($blocks);
+		$file='';
 		for($i=0;$i<$l;$i++){
 			$v=$blocks[$i];
 			if(!$v){break;}
