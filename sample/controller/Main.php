@@ -1,5 +1,5 @@
 <?php
-class Main
+class DnAction
 {
 	public function index()
 	{

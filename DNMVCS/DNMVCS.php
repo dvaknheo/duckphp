@@ -140,7 +140,11 @@ class DNRoute extends DNSingleton
 		}
 		return $callback();
 	}
-	
+	// variable indived
+	protected function include_file($file)
+	{
+		return include($file);
+	}
 	public function defaltRouteHandle()
 	{
 /*
@@ -151,21 +155,48 @@ class DNRoute extends DNSingleton
 /Test/Method1  	Test::Method1 Test\Method1::index
 /Test/Class2/index
 //*/
-
 		$default_controller='Main';
 		$default_method='index';
-		
-		$is_post=($_SERVER['REQUEST_METHOD']=='POST')?true:false;
+
 		$site=$this->site?$this->site.'/':'';
-		
+		$site='';
 		$path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
-		
-		if(substr($path_info,-1)=='/'){
-			$path_info.='index';
+		//if(substr($path_info,-1)=='/'){
+		//	$path_info.='index';
+		//}
+		//if($path_info=='/index.php'){$path_info='/';}
+		$blocks=explode('/',$path_info);		
+		array_shift($blocks);
+		$prefix=$this->path.$site;
+		$l=count($blocks);
+		for($i=0;$i<$l;$i++){
+			$v=$blocks[$i];
+			if(!$v){break;}
+			
+			$dir=$prefix.$v;
+			$full_file=$dir.'.php';
+			if(is_file($full_file)){
+				//OK,done ,get method
+				$file=$full_file;
+				$class=$v;
+				$method=isset($blocks[$i+1])?$blocks[$i+1]:$default_method;
+				break;
+			}
+			if(is_dir($dir)){
+				$prefix=$dir.'/';
+				continue;
+			}
+			
+			$class=$default_controller;
+			$method=isset($blocks[0])?$blocks[0]:$default_method;
+			$file=$prefix.$class.'.php';
+			break;
 		}
-		if($path_info=='/index.php'){$path_info='/';}
-		list($default,$c,$m)=array_pad(explode('/',$path_info),3,null);
+		if(!$file){return null;}
+		//var_dump($file);
+		/*
 		
+		list($default,$c,$m)=array_pad(explode('/',$path_info),3,null);
 		//extends all
 		
 		$p=preg_match('/(.*)?\/([^\/]*)$/',$path_info,$mm);
@@ -190,8 +221,20 @@ class DNRoute extends DNSingleton
 		if(!is_file($file)){
 			return null;
 		}
-		include $file;
-		$obj=new $class;
+		//*/
+		
+		$this->include_file($file);
+		
+		//got file ,got class;
+		////////////////////////
+
+		return $this->getMethodToCall($file,$class,$method);
+	}
+	protected function getMethodToCall($file,$class,$method)
+	{
+		$obj=new DnAction();
+		
+		$is_post=($_SERVER['REQUEST_METHOD']=='POST')?true:false;
 		// do_X => post X
 		if($is_post){
 			if(method_exists ($obj,'do_'.$method)){
@@ -201,6 +244,7 @@ class DNRoute extends DNSingleton
 			}
 			
 		}else{
+
 			if(!method_exists ($obj,$method)){
 				return null;
 			}
@@ -210,10 +254,8 @@ class DNRoute extends DNSingleton
 			
 			return null;
 		}
-		
 		return array($obj,$method);
 	}
-	
 	
 	public function addDefaultRoute($callback)
 	{
