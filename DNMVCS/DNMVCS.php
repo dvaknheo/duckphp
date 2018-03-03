@@ -78,10 +78,14 @@ class DNRoute extends DNSingleton
 	protected $route_handels=array();
 	protected $dispatches=array();
 	protected $on404Handel;
-	
+	protected $param=array();
 	public static function URL($url=null)
 	{
 		return self::G()->_URL($url);
+	}
+	public static function Param()
+	{
+		return self::G()->_Param();
 	}
 	public function _URL($url=null)
 	{
@@ -105,7 +109,10 @@ class DNRoute extends DNSingleton
 		}
 		return $basepath.$url;
 	}
-	
+	public function _Param()
+	{
+		return $this->param;
+	}
 	public function init($path)
 	{	
 		$this->path=$path;
@@ -139,12 +146,17 @@ class DNRoute extends DNSingleton
 			$t=$this->on404Handel;
 			return $t();
 		}
-		return $callback();
+		
+		return call_user_func_array($callback,$this->param);
 	}
 	// variable indived
 	protected function include_file($file)
 	{
 		return include($file);
+	}
+	public function getParam()
+	{
+		return $this->param;
 	}
 	public function defaltRouteHandle()
 	{
@@ -166,70 +178,44 @@ class DNRoute extends DNSingleton
 		//	$path_info.='index';
 		//}
 		//if($path_info=='/index.php'){$path_info='/';}
-		$blocks=explode('/',$path_info);		
+		$blocks=explode('/',$path_info);
 		array_shift($blocks);
 		$prefix=$this->path.$site;
 		$l=count($blocks);
-		$file='';
+		$current_class='';
+		$method='';
+		$param='';
 		for($i=0;$i<$l;$i++){
 			$v=$blocks[$i];
-			if(!$v){break;}
-			
+			if(''==$v){break;}
+			if(!preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/',$v)){
+				return null;
+			}
 			$dir=$prefix.$v;
 			$full_file=$dir.'.php';
 			if(is_file($full_file)){
-				//OK,done ,get method
-				$file=$full_file;
-				$class=$v;
-				$method=isset($blocks[$i+1])?$blocks[$i+1]:$default_method;
-				break;
+				$current_class=implode('/',array_slice($blocks,0,$i+1));
 			}
 			if(is_dir($dir)){
-				$prefix=$dir.'/';
+				$prefix.=$v.'/';
 				continue;
 			}
-			
-			$class=$default_controller;
-			$method=isset($blocks[0])?$blocks[0]:$default_method;
-			$file=$prefix.$class.'.php';
+			$method=$v;
 			break;
 		}
-		if(!$file){return null;}
-		//var_dump($file);
-		/*
 		
-		list($default,$c,$m)=array_pad(explode('/',$path_info),3,null);
-		//extends all
+		$param=array_slice($blocks,count(explode('/',$current_class))+1);
+		if($param==array(0=>'')){$param=array();}
+		$this->param=$param;
 		
-		$p=preg_match('/(.*)?\/([^\/]*)$/',$path_info,$mm);
-		$full_class='';
-		if(!$p){
-			$full_class=$default_controller;
-			$method=$default_method;
-		}else{
-			$full_class=$mm[1];
-			$method=$mm[2];
-		}
-		if(!$full_class){
-			$full_class=$default_controller;
-			
-		}
-		//if(substr($full_class,0,1)=='/'){
-		//	substr($full_class,0,1)
-		//}
-		$class=basename($full_class);
-		
-		$file=$this->path.$site.$full_class.'.php';
-		if(!is_file($file)){
-			return null;
-		}
-		//*/
-		
+		$class='';
+		$method=$method?$method:'index';
+		$current_class=$current_class?$current_class:'Main';
+		$file=$this->path.$site.$current_class.'.php';
 		$this->include_file($file);
 		
 		//got file ,got class;
 		////////////////////////
-
 		return $this->getMethodToCall($file,$class,$method);
 	}
 	protected function getMethodToCall($file,$class,$method)
@@ -244,16 +230,12 @@ class DNRoute extends DNSingleton
 			}else if(! method_exists ($obj,$method)){
 				return null;
 			}
-			
 		}else{
-
 			if(!method_exists ($obj,$method)){
 				return null;
 			}
 		}
-		
 		if(!is_callable(array($obj,$method))){
-			
 			return null;
 		}
 		return array($obj,$method);
