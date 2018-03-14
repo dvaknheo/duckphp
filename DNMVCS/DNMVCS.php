@@ -91,7 +91,7 @@ class DNRoute extends DNSingleton
 {
 	protected $site=''; //for sites in a controller
 	protected $route_handels=array();
-	protected $dispatches=array();
+	protected $routeMap=array();
 	protected $on404Handel;
 	protected $param=array();
 	public static function URL($url=null)
@@ -228,13 +228,12 @@ class DNRoute extends DNSingleton
 	protected function getObecjectToCall($class_name)
 	{
 		if(substr(basename($class_name),0,1)=='_'){return null;}
-		/*
-		$cls='\DnController\\'.str_replace('/','\\',$class_name);
+		$cls='\DNControllerNamespace\\'.str_replace('/','\\',$class_name);
 		if(class_exists($class_name)){
 			$obj=new $classname();
 			return $obj;
 		}
-		*/
+		
 		$obj=new DnController();
 		return $obj;
 	}
@@ -295,12 +294,16 @@ class DNRoute extends DNSingleton
 	}
 	public function defaltDispathHandle()
 	{
-		
-		
 		$path_info=$_SERVER['PATH_INFO'];
 		$ret=null;
-		foreach($this->dispatches as $pattern =>$callback){
+		foreach($this->routeMap as $pattern =>$callback){
 			if($this->match_path_info($pattern,$path_info)){
+				if(!is_callable($callback)){
+					list($class,$method)=explode('$',$callback);
+					$obj=new $class;
+					$callback=array($obj,$method);
+					//DNException::ThrowOn(true,"...");
+				}
 				$ret=$callback;
 			}
 			if($ret){break;}
@@ -312,10 +315,17 @@ class DNRoute extends DNSingleton
 	
 	public function addDispathRoute($key,$callback)
 	{
-		if(empty($this->dispatches)){
+		if(empty($this->routeMap)){
 			array_push($this->route_handels,array($this,'defaltDispathHandle'));
 		}
-		$this->dispatches[$key]=$callback;
+		$this->routeMap[$key]=$callback;
+	}
+	public function mapRoutes($map)
+	{
+		if(empty($this->routeMap)){
+			array_push($this->route_handels,array($this,'defaltDispathHandle'));
+		}
+		$this->routeMap=$map;
 	}
 
 }
@@ -367,8 +377,6 @@ class DNView extends DNSingleton
 		// stop notice 
 		error_reporting(error_reporting() & ~E_NOTICE);
 		
-		// TODO 这里的 extract 和本地变量的结合
-		//页面，页脚
 		$this->data=$this->data?$this->data:array();
 		$this->data=array_merge($this->data,$data);
 		unset($data);
@@ -465,7 +473,7 @@ class DNConfig extends DNSingleton
 		$config=$this->_Load($file_basename);
 		return isset($config[$key])?$config[$key]:null;
 	}
-	//TODO 合法性判断
+	
 	public function _Load($file_basename='config')
 	{
 		//multi file?
@@ -673,25 +681,14 @@ class DNException extends Exception
 
 class DNMVCS extends DNSingleton
 {
-	
 	protected $path;
 	protected $auto_close_db=true;
-	
+	protected $config;
 	//@override
 	public function onShow404()
 	{
 		header("HTTP/1.1 404 Not Found");
 		DNView::Show('_sys/error-404',array(),false);
-		if(!is_file($this->path.'view/'.'_sys/error-404'.'.php')){
-echo <<<EOT
-<div>
-DNMVCS::Tip: You Need A View name _sys/error-404 in view path;
-</div>
-<pre>
-404!
-</pre>
-EOT;
-		}
 	}
 	public function onException($ex)
 	{
@@ -702,18 +699,6 @@ EOT;
 		$data['trace']=$ex->getTraceAsString();
 
 		DNView::Show('_sys/error-exception',$data,false);
-		if(!is_file($this->path.'view/'.'_sys/error-exception'.'.php')){
-echo <<<EOT
-<div>
-DNMVCS::Tip: You Need A View name _sys/error-exception in view path;
-</div>
-<pre>
-{$data['message']}
-{$data['code']}
-{$data['trace']}
-</pre>
-EOT;
-		}
 	}
 	public function onOtherException($ex)
 	{
@@ -725,34 +710,16 @@ EOT;
 		$data['code']=$code;
 		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
+		
 		DNView::Show('_sys/error-500',$data,false);
-		if(!is_file($this->path.'view/'.'_sys/error-500'.'.php')){
-echo <<<EOT
-<div>
-DNMVCS::Tip: You Need A View name _sys/error-500 in view path;
-</div>
-<pre>
-{$data['message']}
-{$data['code']}
-{$data['trace']}
-</pre>
-EOT;
-		}
 	}
 	public function onDebugError($errno, $errstr, $errfile)
 	{
 		$data=array();
 		$data['message']=$errstr;
 		$data['code']=$errno;
+		
 		DNView::G()->showBlock('_sys/error-debug',$data,false);
-		if(!is_file($this->path.'view/'.'_sys/error-debug'.'.php')){
-echo <<<EOT
-<div>
-DNMVCS::Tip: You Need A View name _sys/error-debug in view path;<br />
-[ $errstr, $errfile:$errno]
-</div>
-EOT;
-		}
 	}
 	
 	//  close database before show;
@@ -766,8 +733,9 @@ EOT;
 	}
 	
 	//@override
-	public function init($path='',$path_common='')
+	public function init($path='',$path_common='',$config=array())
 	{
+		$this->config=$config;
 		$path=$path!=''?$path:realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
 		$path=rtrim($path,'/').'/';
 		$this->path=$path;

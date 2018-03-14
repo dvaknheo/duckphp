@@ -192,8 +192,16 @@ class DNRoute extends DNSingleton
 
         public function defaltRouteHandle()
         默认的路由方法，支持多级子目录路由
+        / 会响应到 controller/Main.php 里 index 方法。
+        /AA/BB 会响应到 controller/AA.php 的 BB 方法。
+        /AA/BB/CC/DD 会响应到 controller/AA/BB.php 的 CC 方法。
+        如果有 controller/AA.php ，那么会覆盖 controller/AA/ 目录里的文件就不会被调用
+
         和通常每个路由类一个名字不同的是，DNMVCS 的控制器类都用 DnController 这个名字。
         而不是单独名字，原因是不希望控制器之间调来调去。
+        
+        优先使用 psr-4 的模式。命名空间以 DNControllerNamespace 开头的多级子目录。psr-4模式优先。
+
         Param 的数据也会附到 调用的方法上去
         _ 开头的文件，不会被调用
         __ 开头的方法，不会被调用。
@@ -206,10 +214,17 @@ class DNRoute extends DNSingleton
         系统内部调用，默认的分发型路由，类似 nodejs 那种
 
         public function addDispathRoute($key,$callback)
-        添加 分发路由形式的回调
-        /ABC
-        GET /ABC 
-        POST ~[a-z+] // 正则方式调用
+        添加 分发路由形式的回调,路由表模式适用.
+         /ABC => POST 和 GET 都用到 统一到一起
+        GET /ABC  => 只用于 GET
+        POST ~view([a-z+]) => ~ 开头的是正则，Param 会被正则表达式替换。
+        
+        $callback 特意添加了如果是 $ 在中间，则自动 new 的方式。
+        如 'MyClass$foo' 会对应 new 一个 MyClass 的实例。
+
+        public function mapRoutes($route_array)
+        上面方法的合并版本，不用写多条，放一个数组够了。
+
 ```
 ### DNView 视图类
 ```
@@ -360,9 +375,6 @@ class DNController
 class DNService extends DNSingleton
 class DNModel extends DNSingleton
 ```
-
-
-
 
 
 ## 还有什么要说的
