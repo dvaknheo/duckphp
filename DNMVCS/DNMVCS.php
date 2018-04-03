@@ -219,12 +219,12 @@ class DNRoute extends DNSingleton
 		if(null==$obj){return null;}
 		return $this->getMethodToCall($obj,$method);
 	}
-	// You can subject it; variable indived
+	// You can override it; variable indived
 	protected function includeControllerFile($file)
 	{
 		return include($file);
 	}
-	// You can subject it;
+	// You can override it;
 	protected function getObecjectToCall($class_name)
 	{
 		if(substr(basename($class_name),0,1)=='_'){return null;}
@@ -562,7 +562,7 @@ class DNDB extends DNSingleton
 		
 		$sth = $this->pdo->prepare($sql);
 		$sth->execute($args);
-		$ret=$sth->fetch(PDO::FETCH_ASSOC);
+		$ret=$sth->fetch(PDO::FETCH_ASSOC);// todo : object mode
 		return $ret;
 	}
 	public function fetchColumn($sql)
