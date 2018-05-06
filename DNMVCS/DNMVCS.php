@@ -228,8 +228,8 @@ class DNRoute extends DNSingleton
 	protected function getObecjectToCall($class_name)
 	{
 		if(substr(basename($class_name),0,1)=='_'){return null;}
-		$cls='\DNControllerNamespace\\'.str_replace('/','\\',$class_name);
-		if(class_exists($class_name)){
+		$classname='\DNControllerNamespace\\'.str_replace('/','\\',$class_name);
+		if(class_exists($classname)){
 			$obj=new $classname();
 			return $obj;
 		}
