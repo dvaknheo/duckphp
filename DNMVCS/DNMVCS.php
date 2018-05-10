@@ -57,7 +57,7 @@ class DNAutoLoad extends DNSingleton
 					$flag=include($file);
 					return true;
 				}else{
-					DNException::ThrowOn(!$this->path_common,'CommonService/CommonModel need path_common');
+					DNException::ThrowOn(!$this->path_common,'CommonService/CommonModel need path_common'); // 
 					
 					$file=$this->path_common.strtolower($m[2]).'/'.$classname.'.php';
 					if(!file_exists($file)){return false;}
@@ -330,10 +330,16 @@ class DNRoute extends DNSingleton
 
 }
 //OK，Lazy
-if(!function_exists('url')){
+if(!function_exists('URL')){
 function URL($url)
 {
 	return DNRoute::URL($url);
+}
+}
+if(!function_exists('H')){
+function H($str)
+{
+	return htmlspecialchars( $str, ENT_QUOTES );
 }
 }
 class DNView extends DNSingleton
@@ -361,6 +367,7 @@ class DNView extends DNSingleton
 		header('location: '.$url);
 		exit;
 	}
+	//outter function url()
 	public static function return_route_to($url)
 	{
 		//TODO check redirect safe.
@@ -607,6 +614,7 @@ class DNDB extends DNSingleton
 	public function insert($table_name,$data,$return_last_id=true)
 	{
 		$sql="insert into {$table_name} set ".$this->quote_array($data);
+		echo  $sql;
 		$ret=$this->exec($sql);
 		if(!$return_last_id){return $ret;}
 		$ret=DNDB::G()->lastInsertId();
@@ -640,7 +648,8 @@ class DNException extends Exception
 		if(!DNException::$is_handeling){
 			DNException::HandelAllException();
 		}
-		$class=get_class();//static::class; //
+		//$class=get_class();//static::class; //
+		$class=get_called_class();
 		throw new $class($message,$code);
 	}
 	public static function SetDefaultAllExceptionHandel($callback)
