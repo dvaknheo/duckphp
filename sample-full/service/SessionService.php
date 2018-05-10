@@ -1,6 +1,7 @@
 <?php
 class SessionService extends DnService
 {
+	// 注意这里是有状态的
 	public function __construct()
 	{
 		session_name('x');

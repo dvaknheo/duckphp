@@ -3,17 +3,22 @@ class DnController
 {
 	public function __construct()
 	{
-		//把错误处理都放在这里。
+		DNException::SetSpecial('UserException',function($ex){
+			var_dump($ex->getMessage());
+		});
 	}
+
 	public function index()
 	{
 		$page=isset($_GET['page'])?$_GET['page']:1;
 		$page=intval($page);
 		$page=$page<1?1:$page;
+
 		$data=ArticleService::G()->getRecentArticle($page);
 		$user=SessionService::G()->getCurrentUser();
-		$data['user']=$user;
 		
+		$data['user']=$user;
+
 		$data['url_reg']=URL('/reg');
 		$data['url_login']=URL('/login');
 		$data['url_logout']=URL('/logout');
@@ -33,13 +38,14 @@ class DnController
 	public function logout()
 	{
 		SessionService::G()->logout();
-		
+		//MYView::ShowMessage("登录成功",'/');
 		DNView::return_route_to('/');
 	}
 	
 	public function do_reg()
 	{
 		$user=UserService::G()->reg($_POST['username'],$_POST['password']);
+		
 		SessionService::G()->setCurrentUser($user);
 		DNView::return_route_to('/');
 	}

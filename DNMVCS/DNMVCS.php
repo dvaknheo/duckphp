@@ -642,6 +642,8 @@ class DNException extends Exception
 	public static $default_handel;
 	
 	public static $error_handel;
+	public static $specail_exceptions=array();
+	
 	public static function ThrowOn($flag,$message,$code=0)
 	{
 		if(!$flag){return;}
@@ -661,17 +663,26 @@ class DNException extends Exception
 		DNException::$is_handeling=true;
 		set_exception_handler(array(__CLASS__,'ManageException'));
 	}
+	public static function SetSpecial($class,$callback)
+	{
+		DNException::$specail_exceptions[$class]=$callback;
+	}
 	public static function ManageException($ex)
 	{
 		$class=get_class($ex);
+
+		if(isset(DNException::$specail_exceptions[$class])){
+			call_user_func(DNException::$specail_exceptions[$class],$ex);
+			return;
+		}
 		if(is_callable(array($class,'OnException'))){
 			$class::OnException($ex);
+			return;
+		}
+		if(DNException::$default_handel){
+			call_user_func(DNException::$default_handel,$ex);
 		}else{
-			if(DNException::$default_handel){
-				call_user_func(DNException::$default_handel,$ex);
-			}else{
-				throw $ex;
-			}
+			throw $ex;
 		}
 		
 	}

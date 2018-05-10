@@ -2,9 +2,7 @@
 class UserService extends DNService
 {
 	public function reg($username,$password)
-	{
-		UserException::ThrowOn(true,"我就是想报错");
-		
+	{		
 		$user=UserModel::G()->getUserByName($username);
 		UserException::ThrowOn($user,"用户已经存在");
 		$id=UserModel::G()->addUser($username,$password);
