@@ -103,11 +103,19 @@ setting.sample.php 演示了 数据库的配置，和设置是否在调试状态
 
 www 目录
 
-index.php 就两句话
+index.php
 ```
-//DNView::G(new MyView()); //替换默认组件,其他类也这么处理
-DNMVCS::G()->init($path); //初始化
+require('../../DNMVCS/DNMVCS.php');
+$path=realpath('../');
 DNMVCS::G()->run(); //运行
+```
+另一个版本的
+```
+require('../../DNMVCS/DNMVCS.php');
+$path=realpath('../');
+DNMVCS::G()->autoload($path); // autoloader 自动加载器
+// 这里就可以子类化了 DNMVCS::G(CoreMVCS::G())  之类
+DNMVCS::G(CoreMVCS::G())->init($path)->run();
 ```
 ## DNMVCS 使用方法
 1. 把 sample/www 配置为你的站点目录。
@@ -301,6 +309,9 @@ class DNException extends Exception
         public static function HandelAllException()
         接管异常
 
+        public static function SetSpecial($class,$callback)
+        为特定异常设置错误处理方法，通常用于控制器初始化里对单一类型异常处理
+
         public static function ManageException($ex)
         给扩展类默认的异常方法
 
@@ -352,15 +363,42 @@ class DNDB extends DNSingleton
 ```
 class DNMVCS extends DNSingleton
 把所有函数粘合的主类
+        public static function RunQuickly($path='')
+        无参数快速启动。$path 用于子目录的情况
+
         public function onShow404()
+        接管404 错误
+
         public function onException($ex)
+        通用的异常，非调试状态显示 
+
         public function onOtherException($ex)
+        语法错误的异常
+
         public function onDebugError($errno, $errstr, $errfile)
+        Notice 级别的错误在这里，调试的时候显示
+
         public function onBeforeShow()
+        用于显示输出之前关闭数据库。
+
         public function onErrorHandler($errno, $errstr, $errfile, $errline)
+        接管错误报告一般不需要动。
+
         public function init($path='',$path_common='')
+        初始化，主要的方法，扩展这个类的精髓
+
         public function run()
+        接管路由，运行
+
         public function isDev()
+        判断是否开发环境，只是读取一个配置选项而已。
+
+```
+### 函数
+附属函数是为了节省体力活用的
+```
+H => htmlspecialchars( $str, ENT_QUOTES ); 系统函数太长了，用这个缩写
+URL =>DNRoute::URL($url); 在 controller 里用，View 里不严格要求无计算也可使用
 ```
 ### DNMVSEx 扩展类
 额外对 DNMVCS 的扩展类
@@ -371,6 +409,7 @@ class DNMVCSEx extends DNMVCS
         public static function Model($name)
         public function _load($name,$type)
         public static function CallAPI($service,$method,$input)
+        调用 service 的 api ，配合 $_GET ,$_SET 使用
 class DNController
 class DNService extends DNSingleton
 class DNModel extends DNSingleton
