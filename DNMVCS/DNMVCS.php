@@ -704,6 +704,11 @@ class DNMVCS extends DNSingleton
 	protected $path;
 	protected $auto_close_db=true;
 	protected $config;
+	protected $has_autoload=false;
+	public function RunQuickly($path='')
+	{
+		return DNMVCS::G()->init($path)->run();
+	}
 	//@override
 	public function onShow404()
 	{
@@ -751,7 +756,15 @@ class DNMVCS extends DNSingleton
 		}catch( Exception $ex){
 		}
 	}
-	
+	public function autoload($path,$path_common='')
+	{
+		$path=$path!=''?$path:realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
+		$path=rtrim($path,'/').'/';
+		DNAutoLoad::G()->init($path,$path_common?$path_common:'');
+		DNAutoLoad::G()->run();
+		
+		return $this;
+	}
 	//@override
 	public function init($path='',$path_common='',$config=array())
 	{
@@ -760,8 +773,11 @@ class DNMVCS extends DNSingleton
 		$path=rtrim($path,'/').'/';
 		$this->path=$path;
 		
-		DNAutoLoad::G()->init($path,$path_common?$path_common:'');
-		DNAutoLoad::G()->run();
+		if(!$this->has_autoload){
+			$this->has_autoload=true;
+			DNAutoLoad::G()->init($path,$path_common?$path_common:'');
+			DNAutoLoad::G()->run();
+		}
 		
 		DNException::HandelAllException();
 		DNException::SetDefaultAllExceptionHandel(array($this,'onOtherException'));
@@ -781,6 +797,8 @@ class DNMVCS extends DNSingleton
 		$db_config=DNConfig::Setting('db');
 		DNDB::G()->init($db_config);
 		set_error_handler(array($this,'onErrorHandler'));
+		
+		return $this;
 	}
 
 	public function run()
@@ -788,6 +806,7 @@ class DNMVCS extends DNSingleton
 		ob_start();
 		DNRoute::G()->run();
 		ob_end_flush();
+		return $this;
 	}
 	
 
