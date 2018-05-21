@@ -1,10 +1,11 @@
 <?php
 class SessionService extends DnService
 {
-	// 注意这里是有状态的
+	// 注意这里是有状态的，和其他 Service 不同。
+	// 属于特殊的 Service
 	public function __construct()
 	{
-		session_name('x');
+		session_name('dnfull');
 		session_start();
 		
 	
@@ -20,7 +21,7 @@ class SessionService extends DnService
 	}
 	public function logout()
 	{
-		//unset($_SESSION):
+		//unset($_SESSION);
 		session_destroy();
 	}
 }

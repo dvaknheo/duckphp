@@ -1,6 +1,10 @@
 <?php
 class AdminService()
 {
+	public function reset()
+	{
+		AdminModel::G()->
+	}
 	public function changePassword()
 	{
 	}

@@ -8,7 +8,7 @@ class UserService extends DNService
 		$id=UserModel::G()->addUser($username,$password);
 		UserException::ThrowOn(!$id,"注册失败");
 		
-		ActionLogModel::G()->log("$username 注册");
+		ActionLogModel::G()->log("$username 注册",'reg');
 		
 		return UserModel::G()->getUserDirect($id);
 	}
