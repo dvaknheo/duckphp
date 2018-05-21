@@ -18,7 +18,7 @@ class UserModel extends DNModel
 	{
 		$password=password_hash($pass, PASSWORD_BCRYPT);
 		$date=date('Y-m-d H:i:s');
-		$data=array('username'=>$username,'password'=>$password,'ctime'=>$date);
+		$data=array('username'=>$username,'password'=>$password,'created_at'=>$date);
 		$ret=DNDB::G()->insert('Users',$data);
 		return $ret;
 	}

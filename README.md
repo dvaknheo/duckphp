@@ -302,6 +302,7 @@ class DNException extends Exception
         public static function ThrowOn($flag,$message,$code=0)
         如果 $flag为真，则抛出异常。 用于减少 if 语句
         如 MyException::ThrowOn(true,"test",-110);
+        等价于 if(true){throw new MyException}
 
         public static function SetDefaultAllExceptionHandel($callback)
         公用，用于设置默认的异常
@@ -394,14 +395,14 @@ class DNMVCS extends DNSingleton
         判断是否开发环境，只是读取一个配置选项而已。
 
 ```
-### 函数
+### 附属函数
 附属函数是为了节省体力活用的
 ```
 H => htmlspecialchars( $str, ENT_QUOTES ); 系统函数太长了，用这个缩写
 URL =>DNRoute::URL($url); 在 controller 里用，View 里不严格要求无计算也可使用
 ```
 ### DNMVSEx 扩展类
-额外对 DNMVCS 的扩展类
+额外对 DNMVCS 的扩展类，需要手动引用
 ```
 class DNMVCSEx extends DNMVCS
 额外功能类，目前实现了 API 接口的模式

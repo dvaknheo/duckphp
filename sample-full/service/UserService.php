@@ -8,6 +8,8 @@ class UserService extends DNService
 		$id=UserModel::G()->addUser($username,$password);
 		UserException::ThrowOn(!$id,"注册失败");
 		
+		ActionLogModel::G()->log("$username 注册");
+		
 		return UserModel::G()->getUserDirect($id);
 	}
 	public function login($username,$password)
@@ -17,6 +19,8 @@ class UserService extends DNService
 		
 		$flag=UserModel::G()->checkPass($password,$user['password']);
 		UserException::ThrowOn(!$flag,"密码错误");
+		
+		ActionLogModel::G()->log("$username 登录成功");
 		unset($user['password']);
 		return $user;
 	}
