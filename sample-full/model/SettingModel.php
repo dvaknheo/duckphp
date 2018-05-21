@@ -1,5 +1,5 @@
 <?php
-class AdminModel extends DnModel
+class SettingModel extends DnModel
 {
 	public function get($key)
 	{

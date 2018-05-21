@@ -1,5 +1,5 @@
 <?php
-class AdminModel extends DnModel
+class x extends DnModel
 {
 	public function reset()
 	{

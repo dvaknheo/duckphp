@@ -72,7 +72,7 @@ class DNAutoLoad extends DNSingleton
 		//Controller
 		spl_autoload_register(function ($class) {
 			$prefix = 'DnController\\';
-			$base_dir =$this->path.'Controller/';
+			$base_dir =$this->path.'controller/';
 
 			$len = strlen($prefix);
 			if (strncmp($prefix, $class, $len) !== 0) {
@@ -82,6 +82,7 @@ class DNAutoLoad extends DNSingleton
 			$file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
 			if (is_file($file)) {
 				require $file;
+				return true;
 			}
 		});
 	}
