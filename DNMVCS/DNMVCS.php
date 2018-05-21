@@ -605,7 +605,6 @@ class DNDB extends DNSingleton
 		return $this->pdo->lastInsertId();
 	}
 	
-	
 	public function get($table_name,$id,$key='id')
 	{
 		$sql="select {$table_name} from terms where {$key}=? limit 1";
@@ -614,8 +613,7 @@ class DNDB extends DNSingleton
 	
 	public function insert($table_name,$data,$return_last_id=true)
 	{
-		$sql="insert into {$table_name} set ".$this->quote_array($data);
-		echo  $sql;
+		$sql="insert into {$table_name} set ".DNDB::G()->quote_array($data);
 		$ret=$this->exec($sql);
 		if(!$return_last_id){return $ret;}
 		$ret=DNDB::G()->lastInsertId();
@@ -630,7 +628,7 @@ class DNDB extends DNSingleton
 	
 	public function update($table_name,$id,$data,$key='id')
 	{
-		if($data[$key]){unset($data[$key]);}
+		if(isset($data[$key])){unset($data[$key]);}
 		$frag=DNDB::G()->quote_array($data);
 		$sql="update {$table_name} set ".$frag." where {$key}=?";
 		$ret=DNDB::G()->exec($sql,$id);
