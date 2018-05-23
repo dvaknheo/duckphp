@@ -1,3 +1,4 @@
+
 <?php
 //dvaknheo@github.com
 
@@ -83,6 +84,16 @@ class DNAutoLoad extends DNSingleton
 			if (is_file($file)) {
 				require $file;
 				return true;
+			}
+		});
+		
+		spl_autoload_register(function ($class) {
+			if(substr($class,0,strlen('Core'))=='Core'){
+				$file = $this->path.'core/'.$class . '.php';
+				if (is_file($file)) {
+					require $file;
+					return true;
+				}
 			}
 		});
 	}

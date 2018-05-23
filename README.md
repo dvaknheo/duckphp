@@ -328,6 +328,7 @@ class DNException extends Exception
 class DNDB extends DNSingleton
 数据库类，只有开始查询才会连接
 主从服务器，不在这里处理， 推荐用 MyCat 处理主从服务器
+你也可以不使用这个数据库类，推荐使用 medoo
         public function init($config)
         初始化数据库
         如果 config 有 dsn ，那么用 dsn ，否则按配置来
