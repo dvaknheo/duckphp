@@ -179,16 +179,17 @@ class DNRoute extends DNSingleton
 
 	public function defaltRouteHandle()
 	{
+		$path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
+		return $this->mapPathToFunction($path_info);
+	}
+	public function mapPathToFunction($path_info)
+	{
 		$default_controller='Main';
 		$default_method='index';
 
 		$site=$this->site?$this->site.'/':'';
 		$site='';
-		$path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
-		//if(substr($path_info,-1)=='/'){
-		//	$path_info.='index';
-		//}
-		//if($path_info=='/index.php'){$path_info='/';}
+		
 		$blocks=explode('/',$path_info);
 		array_shift($blocks);
 		$prefix=$this->path.$site;
