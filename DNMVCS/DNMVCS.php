@@ -1,4 +1,3 @@
-
 <?php
 //dvaknheo@github.com
 
@@ -105,7 +104,7 @@ class DNRoute extends DNSingleton
 	protected $route_handels=array();
 	protected $routeMap=array();
 	protected $on404Handel;
-	protected $param=array();
+	protected $params=array();
 	public static function URL($url=null)
 	{
 		return self::G()->_URL($url);
@@ -138,7 +137,7 @@ class DNRoute extends DNSingleton
 	}
 	public function _Param()
 	{
-		return $this->param;
+		return $this->params;
 	}
 	public function init($path)
 	{	
@@ -174,7 +173,7 @@ class DNRoute extends DNSingleton
 			return $t();
 		}
 		
-		return call_user_func_array($callback,$this->param);
+		return call_user_func_array($callback,$this->params);
 	}
 
 	public function defaltRouteHandle()
@@ -196,7 +195,7 @@ class DNRoute extends DNSingleton
 		$l=count($blocks);
 		$current_class='';
 		$method='';
-		$param='';
+		
 		for($i=0;$i<$l;$i++){
 			$v=$blocks[$i];
 			$method=$v;
@@ -217,9 +216,11 @@ class DNRoute extends DNSingleton
 			break;
 		}
 		
-		$param=array_slice($blocks,count(explode('/',$current_class))+1);
+		$param=array_slice($blocks,count(explode('/',$current_class))+($current_class?1:0));
+		
 		if($param==array(0=>'')){$param=array();}
-		$this->param=$param;
+		
+		$this->params=$param;
 		
 		$class='';
 		$method=$method?$method:'index';
@@ -301,7 +302,7 @@ class DNRoute extends DNSingleton
 		$p='/^\/'.str_replace('/','\/',$url).'/';
 		$flag=preg_match($p,$path_info,$m);
 		array_shift($m);
-		$this->param=$m;
+		$this->params=$m;
 		
 		return $flag;
 	}
