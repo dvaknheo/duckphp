@@ -105,6 +105,7 @@ class DNRoute extends DNSingleton
 	protected $routeMap=array();
 	protected $on404Handel;
 	protected $params=array();
+	protected $method_calling=null;
 	public static function URL($url=null)
 	{
 		return self::G()->_URL($url);
@@ -226,12 +227,17 @@ class DNRoute extends DNSingleton
 		$method=$method?$method:'index';
 		$current_class=$current_class?$current_class:'Main';
 		$file=$this->path.$site.$current_class.'.php';
-		
+		$this->method_calling=$method;
 		$this->includeControllerFile($file);
 		$obj=$this->getObecjectToCall($current_class);
 		
+		
 		if(null==$obj){return null;}
 		return $this->getMethodToCall($obj,$method);
+	}
+	public function getMethodCalling()
+	{
+		return $this->method_calling;
 	}
 	// You can override it; variable indived
 	protected function includeControllerFile($file)
