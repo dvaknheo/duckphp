@@ -105,7 +105,7 @@ class DNRoute extends DNSingleton
 	protected $routeMap=array();
 	protected $on404Handel;
 	protected $params=array();
-	protected $method_calling=null;
+	public $method_calling=null;
 	public static function URL($url=null)
 	{
 		return self::G()->_URL($url);
