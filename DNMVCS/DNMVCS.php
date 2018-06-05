@@ -441,7 +441,10 @@ class DNView extends DNSingleton
 	{
 		$this->data[$key]=$value;
 	}
-	
+	public function _setData($data)
+	{
+		$this->data=$data;
+	}
 }
 
 class DNConfig extends DNSingleton
@@ -530,7 +533,7 @@ class DNDB extends DNSingleton
 	{
 		$this->config=$config;
 	}
-	public function check_connect()
+	protected function check_connect()
 	{
 		if($this->pdo){return;}
 		if(empty($this->config)){

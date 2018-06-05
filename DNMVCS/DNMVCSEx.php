@@ -88,4 +88,38 @@ class DNMVCSEx extends DNMVCS
 		$container[$name]=$ret;
 		return $ret;
 	}
+	
+	// 这是个内部用的函数，获取 参数名称的关联数组
+	protected function getArgAssoc()
+	{
+		$trace=debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT ,2);
+		$top=array_pop($trace);
+		
+		//TODO ，和类相分离 这里写得不通用
+		$reflect=new ReflectionMethod($top['object'],$top['function']);
+		$params=$reflect->getParameters();
+		$names=array();
+		foreach($params as $v){
+			$names[]=$v->getName();
+		}
+		
+		return $names;
+	}
+	// 这个就连带调用 __FUNCTION__._with_names 了
+	protected function callWithNames()
+	{
+		$trace=debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT ,2);
+		$top=array_pop($trace);
+		
+		$reflect=new ReflectionMethod($top['object'],$top['function']);
+		$params=$reflect->getParameters();
+		$names=array();
+		foreach($params as $v){
+			$names[]=$v->getName();
+		}
+		
+		$func=$top['function'];
+		$func_in=$func.'_with_names';
+		return $this->$func_in($names);
+	}
 }
