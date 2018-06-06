@@ -1,6 +1,18 @@
 <?php
 //dvaknheo@github.com
-
+//OK，Lazy
+if(!function_exists('URL')){
+function URL($url)
+{
+	return DNRoute::URL($url);
+}
+}
+if(!function_exists('H')){
+function H($str)
+{
+	return htmlspecialchars( $str, ENT_QUOTES );
+}
+}
 class DNSingleton
 {
 	protected static $_instances=array();
@@ -349,19 +361,7 @@ class DNRoute extends DNSingleton
 	}
 
 }
-//OK，Lazy
-if(!function_exists('URL')){
-function URL($url)
-{
-	return DNRoute::URL($url);
-}
-}
-if(!function_exists('H')){
-function H($str)
-{
-	return htmlspecialchars( $str, ENT_QUOTES );
-}
-}
+
 class DNView extends DNSingleton
 {
 	protected $head_file;
@@ -629,7 +629,7 @@ class DNDB extends DNSingleton
 	
 	public function get($table_name,$id,$key='id')
 	{
-		$sql="select {$table_name} from terms where {$key}=? limit 1";
+		$sql="select * from {$table_name} where {$key}=? limit 1";
 		return $this->fetch($sql,$id);
 	}
 	
@@ -777,39 +777,40 @@ class DNMVCS extends DNSingleton
 		}catch( Exception $ex){
 		}
 	}
-	public function autoload($path,$path_common='')
+	protected function init_path($path)
 	{
 		$path=$path!=''?$path:realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
 		$path=rtrim($path,'/').'/';
-		DNAutoLoad::G()->init($path,$path_common?$path_common:'');
+		$this->path=$path;
+	}
+	public function autoload($path,$path_common='')
+	{
+		$this->has_autoload=true;
+		$this->init_path($path);
+		DNAutoLoad::G()->init($this->path,$path_common?$path_common:'');
 		DNAutoLoad::G()->run();
-		
 		return $this;
 	}
 	//@override
 	public function init($path='',$path_common='',$config=array())
 	{
 		$this->config=$config;
-		$path=$path!=''?$path:realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
-		$path=rtrim($path,'/').'/';
-		$this->path=$path;
-		
 		if(!$this->has_autoload){
-			$this->has_autoload=true;
-			DNAutoLoad::G()->init($path,$path_common?$path_common:'');
-			DNAutoLoad::G()->run();
+			$this->autoload($path,$path_common);
+		}else{
+			$this->init_path($path);
 		}
 		
 		DNException::HandelAllException();
 		DNException::SetDefaultAllExceptionHandel(array($this,'onOtherException'));
 		DNException::SetErrorHandel(array($this,'onException'));
 		
-		DNRoute::G()->init($path.'controller/');
+		DNRoute::G()->init($this->path.'controller/');
 		DNRoute::G()->set404(array($this,'onShow404'));	
 		
-		DNConfig::G()->init($path.'config/',$path_common?$path_common.'config/':'');
+		DNConfig::G()->init($this->path.'config/',$path_common?$path_common.'config/':'');
 		
-		DNView::G()->init($path.'view/');
+		DNView::G()->init($this->path.'view/');
 		//DNView::G()->setWrapper("inc-head","inc-foot");
 		DNView::G()->setBeforeShow(array($this,'onBeforeShow'));
 		DNView::G()->isDev=$this->isDev();

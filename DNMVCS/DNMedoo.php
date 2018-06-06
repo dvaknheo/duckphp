@@ -1,4 +1,18 @@
 <?php
+
+if(!function_exists('ORM')){
+function ORM()
+{
+	return DNMedoo::ORM();
+}
+}
+if(!function_exists('DB')){
+function ORM()
+{
+	return DNMedoo::G();
+}
+}
+
 class MedooFixed extends \Medoo\Medoo
 {
 	public function exec($query, $map = [])
@@ -12,7 +26,7 @@ class MedooFixed extends \Medoo\Medoo
 	}
 }
 //准备用这个方法来替换默认的 DNDB
-class DNMedoo extends DNSingleton
+class DNMedoo extends MedooFixed
 {
 	protected $medoo;
 	public static function ORM()
@@ -24,10 +38,6 @@ class DNMedoo extends DNSingleton
 			self::$medoo=$db;
 		}
 		return self::$medoo;
-	}
-	public function __construct()
-	{
-		
 	}
 	protected function check_connect()
 	{
@@ -72,26 +82,25 @@ class DNMedoo extends DNSingleton
 		$args=func_get_args();
 		array_shift($args);
 		unset($args[0]);
-		return self::$medoo->query ($sql,args)->fetchAll();
+		return self::$medoo->query($sql,args)->fetchAll();
 	}
 	public function fetch($sql)
 	{
 		$args=func_get_args();
 		array_shift($args);
 		unset($args[0]);
-		return self::$medoo->query ($sql,args)->fetch();
+		return self::$medoo->query($sql,args)->fetch();
 	}
 	public function fetchColumn($sql)
 	{
 		$args=func_get_args();
 		array_shift($args);
 		unset($args[0]);
-		return self::$medoo->query ($sql,args)->fetchColumn();
+		return self::$medoo->query($sql,args)->fetchColumn();
 	}
 	
 	public function exec($sql)
 	{
-		$this->check_connect();
 		$args=func_get_args();
 		array_shift($args);
 		
@@ -140,16 +149,4 @@ class DNMedoo extends DNSingleton
 		return $ret;
 	}
 
-}
-if(!function_exists('ORM')){
-function ORM()
-{
-	return DNMedoo::ORM();
-}
-}
-if(!function_exists('DB')){
-function ORM()
-{
-	return DNMedoo::G();
-}
 }
