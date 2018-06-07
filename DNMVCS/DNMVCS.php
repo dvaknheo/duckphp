@@ -1,6 +1,7 @@
 <?php
 //dvaknheo@github.com
 //OK，Lazy
+
 if(!function_exists('URL')){
 function URL($url)
 {
@@ -13,6 +14,7 @@ function H($str)
 	return htmlspecialchars( $str, ENT_QUOTES );
 }
 }
+
 trait DNSingleton
 {
 	protected static $_instances=array();
@@ -160,9 +162,9 @@ class DNRoute
 		$this->path=$path;
 		array_push($this->route_handels,array($this,'defaltRouteHandle'));
 	}
-	protected function default404()
+	public function _default404()
 	{
-		throw new Exception("DNMVCS Notice: 404 , Develop should override this");
+		throw new Excepion("DNMVCS Notice: 404 , Develop should override this");
 	}
 	public function set404($callback)
 	{
@@ -182,7 +184,7 @@ class DNRoute
 		$callback=$this->getRouteCallback();
 		if(null===$callback){
 			if(!$this->on404Handel){
-				$this->default404();
+				$this->_default404();
 				return;
 			}
 			$t=$this->on404Handel;
@@ -668,12 +670,6 @@ class DNDB
 }
 class DNException extends Exception
 {
-	public static $is_handeling;
-	public static $default_handel;
-	
-	public static $error_handel;
-	public static $specail_exceptions=array();
-	
 	public static function ThrowOn($flag,$message,$code=0)
 	{
 		if(!$flag){return;}
@@ -684,33 +680,42 @@ class DNException extends Exception
 		$class=get_called_class();
 		throw new $class($message,$code);
 	}
+}
+class DNExceptionManager
+{
+	public static $is_handeling;
+	public static $default_handel;
+	
+	public static $error_handel;
+	public static $specail_exceptions=array();
+	
 	public static function SetDefaultAllExceptionHandel($callback)
 	{
-		DNException::$default_handel=$callback;
+		self::$default_handel=$callback;
 	}
 	public static function HandelAllException()
 	{
-		DNException::$is_handeling=true;
+		self::$is_handeling=true;
 		set_exception_handler(array(__CLASS__,'ManageException'));
 	}
-	public static function SetSpecial($class,$callback)
+	public static function SetSpecialErrorCallback($class,$callback)
 	{
-		DNException::$specail_exceptions[$class]=$callback;
+		self::$specail_exceptions[$class]=$callback;
 	}
 	public static function ManageException($ex)
 	{
 		$class=get_class($ex);
 
-		if(isset(DNException::$specail_exceptions[$class])){
-			call_user_func(DNException::$specail_exceptions[$class],$ex);
+		if(isset(self::$specail_exceptions[$class])){
+			call_user_func(self::$specail_exceptions[$class],$ex);
 			return;
 		}
 		if(is_callable(array($class,'OnException'))){
 			$class::OnException($ex);
 			return;
 		}
-		if(DNException::$default_handel){
-			call_user_func(DNException::$default_handel,$ex);
+		if(self::$default_handel){
+			call_user_func(self::$default_handel,$ex);
 		}else{
 			throw $ex;
 		}
@@ -729,11 +734,65 @@ class DNException extends Exception
 	}
 }
 
+
+trait DNMVCSGlue
+{
+	//route
+	public static function URL($url=null)
+	{
+		return DNRoute::G()->_URL($url);
+	}
+	public static function Param()
+	{
+		return DNRoute::G()->_Param();
+	}
+	//view
+	public static function Show($view,$data=array(),$use_wrapper=true)
+	{
+		return DNView::G()->_Show($view,$data,$use_wrapper);
+	}
+
+	public static function return_json($ret)
+	{
+		return DNView::G()->return_json($ret);
+	}
+	public static function return_redirect($url)
+	{
+		return DNView::G()->return_redirect($ret);
+	}
+	//outter function url()
+	public static function return_route_to($url)
+	{
+		return DNView::G()->return_route_to($ret);
+	}
+	//config
+	public static function Setting($key)
+	{
+		return DNConfig::G()->_Setting($key);
+	}
+	public static function Get($key,$file_basename='config')
+	{
+		return DNConfig::G()->_Get($file_basename);
+	}
+	public static function Load($file_basename)
+	{
+		return DNConfig::G()->_Load($file_basename);
+	}
+	
+	public static function SetSpecialErrorCallback($class,$callback)
+	{
+		return DNExceptionManager::SetSpecialErrorCallback($class,$callback)
+	}
+}
+
 class DNMVCS
 {
 	use DNSingleton;
+	use DNMVCSGlue;
 	
-	protected $path;
+	protected $path=null;
+	protected $path_common=null;
+	
 	protected $auto_close_db=true;
 	protected $config;
 	protected $has_autoload=false;
@@ -813,9 +872,9 @@ class DNMVCS
 			$this->init_path($path);
 		}
 		
-		DNException::HandelAllException();
-		DNException::SetDefaultAllExceptionHandel(array($this,'onOtherException'));
-		DNException::SetErrorHandel(array($this,'onException'));
+		DNExceptionManager::HandelAllException();
+		DNExceptionManager::SetDefaultAllExceptionHandel(array($this,'onOtherException'));
+		DNExceptionManager::SetErrorHandel(array($this,'onException'));
 		
 		DNRoute::G()->init($this->path.'controller/');
 		DNRoute::G()->set404(array($this,'onShow404'));	
@@ -823,7 +882,6 @@ class DNMVCS
 		DNConfig::G()->init($this->path.'config/',$path_common?$path_common.'config/':'');
 		
 		DNView::G()->init($this->path.'view/');
-		//DNView::G()->setWrapper("inc-head","inc-foot");
 		DNView::G()->setBeforeShow(array($this,'onBeforeShow'));
 		DNView::G()->isDev=$this->isDev();
 		
