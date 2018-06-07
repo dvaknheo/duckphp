@@ -13,7 +13,7 @@ function H($str)
 	return htmlspecialchars( $str, ENT_QUOTES );
 }
 }
-class DNSingleton
+trait DNSingleton
 {
 	protected static $_instances=array();
 	public static function G($object=null)
@@ -32,8 +32,9 @@ class DNSingleton
 	}
 	
 }
-class DNAutoLoad extends DNSingleton
+class DNAutoLoad
 {
+	use DNSingleton;
 	public $path;
 	public $path_common;
 	public function init($path,$path_common='')
@@ -110,8 +111,10 @@ class DNAutoLoad extends DNSingleton
 	}
 }
 
-class DNRoute extends DNSingleton
+class DNRoute
 {
+	use DNSingleton;
+	
 	protected $site=''; //for sites in a controller
 	protected $route_handels=array();
 	protected $routeMap=array();
@@ -362,8 +365,10 @@ class DNRoute extends DNSingleton
 
 }
 
-class DNView extends DNSingleton
+class DNView
 {
+	use DNSingleton;
+
 	protected $head_file;
 	protected $foot_file;
 	protected $data=array();
@@ -447,8 +452,10 @@ class DNView extends DNSingleton
 	}
 }
 
-class DNConfig extends DNSingleton
+class DNConfig
 {
+	use DNSingleton;
+
 	protected $path;
 	protected $path_common;
 	public static function Setting($key)
@@ -522,8 +529,10 @@ class DNConfig extends DNSingleton
 		
 	}
 }
-class DNDB extends DNSingleton
+class DNDB
 {
+	use DNSingleton;
+
 	protected $pdo;
 	protected $rowCount;
 	
@@ -720,8 +729,10 @@ class DNException extends Exception
 	}
 }
 
-class DNMVCS extends DNSingleton
+class DNMVCS
 {
+	use DNSingleton;
+	
 	protected $path;
 	protected $auto_close_db=true;
 	protected $config;
@@ -874,9 +885,11 @@ class DNMVCS extends DNSingleton
 class DNControllerBase
 {
 }
-class DNService extends DNSingleton
+class DNService
 {
+	use DNSingleton;
 }
-class DNModel extends DNSingleton
+class DNModel
 {
+	use DNSingleton;
 }
