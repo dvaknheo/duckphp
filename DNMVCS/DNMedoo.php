@@ -31,13 +31,13 @@ class DNMedoo extends MedooFixed
 	protected $medoo;
 	public static function ORM()
 	{
-		if(!self::$medoo){
+		if(!$this){
 			$config=DNConfig::Setting('db');
 			$db = new MedooFixed();
 			$db->pdo= new PDO($config['dsn'], $config['user'], $config['password'],array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION));
-			self::$medoo=$db;
+			$this=$db;
 		}
-		return self::$medoo;
+		return $this;
 	}
 	protected function check_connect()
 	{
@@ -62,11 +62,6 @@ class DNMedoo extends MedooFixed
 	public function close()
 	{
 	}
-	public function quote($string)
-	{
-		$this->check_connect();
-		return $this->pdo->quote($string);
-	}
 	//Warnning, escape the key by yourself
 	public function quote_array($array)
 	{
@@ -82,23 +77,24 @@ class DNMedoo extends MedooFixed
 		$args=func_get_args();
 		array_shift($args);
 		unset($args[0]);
-		return self::$medoo->query($sql,args)->fetchAll();
+		return $this->query($sql,args)->fetchAll();
 	}
 	public function fetch($sql)
 	{
 		$args=func_get_args();
 		array_shift($args);
 		unset($args[0]);
-		return self::$medoo->query($sql,args)->fetch();
+		return $this->query($sql,args)->fetch();
 	}
 	public function fetchColumn($sql)
 	{
 		$args=func_get_args();
 		array_shift($args);
 		unset($args[0]);
-		return self::$medoo->query($sql,args)->fetchColumn();
+		return $this->query($sql,args)->fetchColumn();
 	}
 	
+	//!
 	public function exec($sql)
 	{
 		$args=func_get_args();
@@ -112,11 +108,7 @@ class DNMedoo extends MedooFixed
 	}
 	public function rowCount()
 	{
-		return $this->rowCount;
-	}
-	public function lastInsertId()
-	{
-		return $this->pdo->lastInsertId();
+		//return $this->rowCount;
 	}
 	
 	public function get($table_name,$id,$key='id')

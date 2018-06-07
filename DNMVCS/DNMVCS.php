@@ -794,6 +794,7 @@ class DNMVCS extends DNSingleton
 	//@override
 	public function init($path='',$path_common='',$config=array())
 	{
+		//子类化之后，路径还是存在问题
 		$this->config=$config;
 		if(!$this->has_autoload){
 			$this->autoload($path,$path_common);

@@ -185,7 +185,7 @@ class DNRoute extends DNSingleton
         public function _URL($url=null)
         静态函数 URL 的实现函数。
 
-        public static function Param()
+        public static function _Param()
         静态函数 Param 的实现函数。
 
         public function init($path)
@@ -302,7 +302,7 @@ class DNException extends Exception
         public static function ThrowOn($flag,$message,$code=0)
         如果 $flag为真，则抛出异常。 用于减少 if 语句
         如 MyException::ThrowOn(true,"test",-110);
-        等价于 if(true){throw new MyException}
+        等价于 if(true){throw new MyException("test",-110);}
 
         public static function SetDefaultAllExceptionHandel($callback)
         公用，用于设置默认的异常
@@ -328,7 +328,6 @@ class DNException extends Exception
 class DNDB extends DNSingleton
 数据库类，只有开始查询才会连接
 主从服务器，不在这里处理， 推荐用 MyCat 处理主从服务器
-你也可以不使用这个数据库类，推荐使用 medoo
         public function init($config)
         初始化数据库
         如果 config 有 dsn ，那么用 dsn ，否则按配置来
