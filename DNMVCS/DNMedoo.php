@@ -1,18 +1,4 @@
 <?php
-
-if(!function_exists('ORM')){
-function ORM()
-{
-	return DNMedoo::ORM();
-}
-}
-if(!function_exists('DB')){
-function ORM()
-{
-	return DNMedoo::G();
-}
-}
-
 class MedooFixed extends \Medoo\Medoo
 {
 	public function exec($query, $map = [])
@@ -110,35 +96,4 @@ class DNMedoo extends MedooFixed
 	{
 		//return $this->rowCount;
 	}
-	
-	public function get($table_name,$id,$key='id')
-	{
-		$sql="select {$table_name} from terms where {$key}=? limit 1";
-		return $this->fetch($sql,$id);
-	}
-	
-	public function insert($table_name,$data,$return_last_id=true)
-	{
-		$sql="insert into {$table_name} set ".DNDB::G()->quote_array($data);
-		$ret=$this->exec($sql);
-		if(!$return_last_id){return $ret;}
-		$ret=DNDB::G()->lastInsertId();
-		return $ret;
-	}
-	public function delete($table,$id,$key='id')
-	{
-		throw new Exception("DNMVCS Notice : override me to delete");
-		$sql="delete from {$table_name} where {$key}=? limit 1";
-		return $this->exec($sql,$id);
-	}
-	
-	public function update($table_name,$id,$data,$key='id')
-	{
-		if(isset($data[$key])){unset($data[$key]);}
-		$frag=DNDB::G()->quote_array($data);
-		$sql="update {$table_name} set ".$frag." where {$key}=?";
-		$ret=DNDB::G()->exec($sql,$id);
-		return $ret;
-	}
-
 }

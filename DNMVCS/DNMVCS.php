@@ -1,19 +1,35 @@
 <?php
 //dvaknheo@github.com
 //OK，Lazy
+if(!defined('DN_NOT_USE_FUNC')){
 
-if(!function_exists('URL')){
-function URL($url)
-{
-	return DNRoute::G()->_URL($url);
+	function URL($url)
+	{
+		return DNMVCS::URL($url);
+	}
+	function H($str)
+	{
+		return htmlspecialchars( $str, ENT_QUOTES );
+	}
+	function show($data)
+	{
+		return DNMVCS::show();
+	}
+	function DB()
+	{
+	
+		return DNMVCS::DB_R();
+	}
+	function DB_R()
+	{
+		return DNMVCS::DB_R();
+	}
+	function DB_W()
+	{
+		return DNMVCS::DB_W();
+	}
 }
-}
-if(!function_exists('H')){
-function H($str)
-{
-	return htmlspecialchars( $str, ENT_QUOTES );
-}
-}
+
 
 trait DNSingleton
 {
@@ -163,6 +179,7 @@ class DNRoute
 	{
 		$this->on404Handel=$callback;
 	}
+	//for run ,you can 
 	protected function getRouteCallback()
 	{
 		$callback=null;
@@ -322,7 +339,7 @@ class DNRoute
 		
 		return $flag;
 	}
-	public function defaltDispathHandle()
+	public function defalt_dispath_handle()
 	{
 		$path_info=$_SERVER['PATH_INFO'];
 		$ret=null;
@@ -332,7 +349,7 @@ class DNRoute
 					list($class,$method)=explode('$',$callback);
 					$obj=new $class;
 					$callback=array($obj,$method);
-					//DNException::ThrowOn(true,"...");
+					//DNException::ThrowOn(true,"...for debug");
 				}
 				$ret=$callback;
 			}
@@ -343,21 +360,17 @@ class DNRoute
 		return $ret;
 	}
 	
-	public function addDispathRoute($key,$callback)
+	public function assignRoute($key,$callback=null)
 	{
 		if(empty($this->routeMap)){
-			array_push($this->route_handels,array($this,'defaltDispathHandle'));
+			array_push($this->route_handels,array($this,'defalt_dispath_handle'));
 		}
-		$this->routeMap[$key]=$callback;
-	}
-	public function mapRoutes($map)
-	{
-		if(empty($this->routeMap)){
-			array_push($this->route_handels,array($this,'defaltDispathHandle'));
+		if(is_array($key)&& $callback===null){
+			$this->routeMap=array_merge($this->routeMap,$key);
+		}else{
+			$this->routeMap[$key]=$callback;
 		}
-		$this->routeMap=$map;
 	}
-
 }
 
 class DNView
@@ -381,19 +394,15 @@ class DNView
 		echo json_encode($ret,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
 		exit;
 	}
-	public static function return_redirect($url)
+	public static function return_redirect($url,$only_in_site=true)
 	{
-		//TODO check redirect safe.
+		if($only_in_site && parse_url($url,PHP_URL_HOST)){
+			throw new Exception('safe check false');
+		}
 		header('location: '.$url);
 		exit;
 	}
 	//outter function url()
-	public static function return_route_to($url)
-	{
-		//TODO check redirect safe.
-		header('location: '.URL($url));
-		exit;
-	}
 	
 	public function _Show($view,$data=array(),$use_wrapper=true)
 	{
@@ -437,17 +446,15 @@ class DNView
 		extract($data);
 		include($this->path.$view.'.php');
 	}
-	public function _assign($key,$value=null)
+	public function assignViewData($key,$value=null)
 	{
 		if(is_array($key)&& $value===null){
 			$this->data=array_merge($this->$data,$key);
+		}else{
+			$this->data[$key]=$value;
 		}
-		$this->data[$key]=$value;
 	}
-	public function _setData($data)
-	{
-		$this->data=$data;
-	}
+
 }
 
 class DNConfig
@@ -705,11 +712,10 @@ class DNExceptionManager
 			
 		}
 		$class=get_class($ex);
-		//如果是错误，我们走 error ，否则走 异常
 		if(isset(self::$specail_exceptions[$class])){
 			return (self::$specail_exceptions[$class])($ex);
 		}
-		(self::$OnException)($ex);
+		return (self::$OnException)($ex);
 		
 		//throw $ex;
 	}
@@ -759,6 +765,10 @@ trait DNMVCS_Glue
 	{
 		return DNRoute::G()->_Param();
 	}
+	public function assignRoute($key,$value=null)
+	{
+		return DNRoute::G()->assignRoute($key,$value);
+	}
 	//view
 	public static function Show($view,$data=array(),$use_wrapper=true)
 	{
@@ -769,15 +779,27 @@ trait DNMVCS_Glue
 	{
 		return DNView::G()->return_json($ret);
 	}
-	public static function return_redirect($url)
+	public static function return_redirect($url,$only_in_site=true)
 	{
-		return DNView::G()->return_redirect($ret);
+		return DNView::G()->return_redirect($ret,$only_in_site);
 	}
-	//outter function url()
-	public static function return_route_to($url)
+	public static function return_route_to($url,$only_in_site=true)
 	{
-		return DNView::G()->return_route_to($ret);
+		return DNView::G()->return_redirect(self::URL($ret),$only_in_site=true);
 	}
+	public function setViewWrapper($head_file=null,$foot_file=null)
+	{
+		return DNView::G()->setWrapper($head_file,$foot_file);
+	}
+	public function showBlock($view,$data)
+	{
+		return DNView::G()->return_redirect($view,$data);
+	}
+	public function assignViewData($key,$value=null)
+	{
+		return DNView::G()->assignViewData($key,$value);
+	}
+	
 	//config
 	public static function Setting($key)
 	{
@@ -792,22 +814,36 @@ trait DNMVCS_Glue
 		return DNConfig::G()->_LoadConfig($file_basename);
 	}
 	
-	public static function SetSpecialErrorCallback($class,$callback)
+	//exception manager
+	public static function SetSpecialErrorCallback($classes,$callback=null)
 	{
-		return DNExceptionManager::SetSpecialErrorCallback($class,$callback);
+		return DNExceptionManager::SetSpecialErrorCallback($classes,$callback);
 	}
+	
 	public static function DB()
 	{
-		//return DNDB::G();
+		// return DNDB::G();
 	}
 	public static function DB_R()
 	{
-		//
+		// return DNDB::G();
 	}
 	public static function DB_W()
 	{
-		//
+		// return DNDB::G();
 	}
+	public static function Render($data=array(),$viewfile=null)
+	{
+		if(null==$viewfile){
+			//
+		}
+		return DNView::G()->_Show($viewfile,$data);
+	}
+	public static function H($str)
+	{
+		return htmlspecialchars( $str, ENT_QUOTES );
+	}
+	
 }
 trait DNMVCS_handel
 {
@@ -842,7 +878,7 @@ trait DNMVCS_handel
 	}
 	public function onDebugError($errno, $errstr, $errfile, $errline)
 	{
-		if(!$this->isDev()){return;}
+		if(!$this->isDev){return;}
 			
 		$data=array();
 		$data['message']=$errstr;
@@ -878,7 +914,7 @@ class DNMVCS
 	protected $auto_close_db=true;
 	protected $has_autoload=false;
 	protected $config;
-	protected $isDev=false;
+	public $isDev=false;
 	
 	public function RunQuickly($path='')
 	{
@@ -920,7 +956,7 @@ class DNMVCS
 		DNRoute::G()->set404(array($this,'onShow404'));	
 		
 		DNConfig::G()->init($this->path.'config/',$path_common?$path_common.'config/':'');
-		
+		$this->is_dev=DNConfig::G()->_Setting('is_dev')?true:false;
 		DNView::G()->init($this->path.'view/');
 		DNView::G()->setBeforeShow([$this,'onBeforeShow']);
 		DNView::G()->isDev=$this->isDev();
@@ -931,6 +967,10 @@ class DNMVCS
 		return $this;
 	}
 
+	public function isDev()
+	{
+		return $this->isDev;
+	}
 	public function run()
 	{
 		ob_start();
@@ -940,11 +980,7 @@ class DNMVCS
 	}
 	
 
-	public function isDev()
-	{
-		$is_dev=DNConfig::G()->_Setting('is_dev');
-		return $is_dev?true:false;
-	}
+	
 }
 
 /////////////////////////
