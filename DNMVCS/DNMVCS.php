@@ -17,7 +17,7 @@ function H($str)
 
 trait DNSingleton
 {
-	protected static $_instances=array();
+	protected static $_instances=[];
 	public static function G($object=null)
 	{
 		$class=get_called_class();
@@ -72,7 +72,7 @@ class DNAutoLoad
 					$flag=include($file);
 					return true;
 				}else{
-					DNException::ThrowOn(!$this->path_common,'CommonService/CommonModel need path_common'); // 
+					if(!$this->path_common){throw new Exception('CommonService/CommonModel need path_common');} 
 					
 					$file=$this->path_common.strtolower($m[2]).'/'.$classname.'.php';
 					if(!file_exists($file)){return false;}
@@ -118,10 +118,10 @@ class DNRoute
 	use DNSingleton;
 	
 	protected $site=''; //for sites in a controller
-	protected $route_handels=array();
-	protected $routeMap=array();
+	protected $route_handels=[];
+	protected $routeMap=[];
 	protected $on404Handel;
-	protected $params=array();
+	protected $params=[];
 	public $method_calling=null;
 	public static function URL($url=null)
 	{
@@ -668,74 +668,85 @@ class DNDB
 		return $ret;
 	}
 }
-class DNException extends Exception
-{
-	public static function ThrowOn($flag,$message,$code=0)
-	{
-		if(!$flag){return;}
-		if(!DNException::$is_handeling){
-			DNException::HandelAllException();
-		}
-		//$class=get_class();//static::class; //
-		$class=get_called_class();
-		throw new $class($message,$code);
-	}
-}
 class DNExceptionManager
 {
 	public static $is_handeling;
-	public static $default_handel;
 	
-	public static $error_handel;
+	public static $OnErrorException;
+	public static $OnException;
+	
+	public static $OnError;
+	public static $OnDevError;
+	
 	public static $specail_exceptions=array();
 	
-	public static function SetDefaultAllExceptionHandel($callback)
-	{
-		self::$default_handel=$callback;
-	}
-	public static function HandelAllException()
+	public static function HandelAllException($OnErrorException,$OnException)
 	{
 		self::$is_handeling=true;
 		set_exception_handler(array(__CLASS__,'ManageException'));
+		
+		self::$OnErrorException=$OnErrorException;
+		self::$OnException=$OnException;
 	}
 	public static function SetSpecialErrorCallback($class,$callback)
 	{
-		self::$specail_exceptions[$class]=$callback;
+		$class=is_string($class)?array($class):$class;
+		foreach($class as $v){
+			self::$specail_exceptions[$v]=$callback;
+		}
 	}
+
 	public static function ManageException($ex)
 	{
+		if(is_a($ex,'Error')){
+			return (self::$OnErrorException)($ex);
+			
+		}
 		$class=get_class($ex);
-
+		//如果是错误，我们走 error ，否则走 异常
 		if(isset(self::$specail_exceptions[$class])){
-			call_user_func(self::$specail_exceptions[$class],$ex);
-			return;
+			return (self::$specail_exceptions[$class])($ex);
 		}
-		if(is_callable(array($class,'OnException'))){
-			$class::OnException($ex);
-			return;
-		}
-		if(self::$default_handel){
-			call_user_func(self::$default_handel,$ex);
-		}else{
-			throw $ex;
-		}
+		(self::$OnException)($ex);
 		
+		//throw $ex;
 	}
-	public static function SetErrorHandel($error_handel)
+	
+	public function HandelAllError($OnError,$OnDevError)
 	{
-		self::$error_handel=$error_handel;
+		set_error_handler(array(__CLASS__,'onErrorHandler'));
+		self::$OnError=$OnError;
+		self::$OnDevError=$OnDevError;
 	}
-	public static function OnException($ex)
+	public function onErrorHandler($errno, $errstr, $errfile, $errline)
 	{
-		if(self::$error_handel){
-			return call_user_func(self::$error_handel,$ex);
+		if (!(error_reporting() & $errno)) {
+			return false;
 		}
-		throw $ex;
+		switch ($errno) {
+		case E_ERROR:
+		case E_USER_ERROR:
+			(self::$OnError)($errno, $errstr, $errfile, $errline);
+			break;
+		case E_USER_WARNING:
+		case E_WARNING:
+		case E_USER_NOTICE:
+		case E_NOTICE:
+			(self::$OnDevError)($errno, $errstr, $errfile, $errline);
+			break;
+		default:
+			//echo "DNMVCS Notice: Unknown error type: [$errno] $errstr<br />\n";
+			(self::$OnError)($errno, $errstr, $errfile, $errline);
+			break;
+		}
+
+		/* Don't execute PHP internal error handler */
+		return true;
 	}
 }
 
 
-trait DNMVCSGlue
+trait DNMVCS_Glue
 {
 	//route
 	public static function URL($url=null)
@@ -781,30 +792,28 @@ trait DNMVCSGlue
 	
 	public static function SetSpecialErrorCallback($class,$callback)
 	{
-		return DNExceptionManager::SetSpecialErrorCallback($class,$callback)
+		return DNExceptionManager::SetSpecialErrorCallback($class,$callback);
+	}
+	public static function DB()
+	{
+		//return DNDB::G();
+	}
+	public static function DB_R()
+	{
+		//
+	}
+	public static function DB_W()
+	{
+		//
 	}
 }
-
-class DNMVCS
+trait DNMVCS_handel
 {
-	use DNSingleton;
-	use DNMVCSGlue;
-	
-	protected $path=null;
-	protected $path_common=null;
-	
-	protected $auto_close_db=true;
-	protected $config;
-	protected $has_autoload=false;
-	public function RunQuickly($path='')
-	{
-		return DNMVCS::G()->init($path)->run();
-	}
 	//@override
 	public function onShow404()
 	{
 		header("HTTP/1.1 404 Not Found");
-		DNView::Show('_sys/error-404',array(),false);
+		DNView::G()->_Show('_sys/error-404',array(),false);
 	}
 	public function onException($ex)
 	{
@@ -814,9 +823,9 @@ class DNMVCS
 		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
 
-		DNView::Show('_sys/error-exception',$data,false);
+		DNView::G()->_Show('_sys/error-exception',$data,false);
 	}
-	public function onOtherException($ex)
+	public function onErrorException($ex)
 	{
 		$message=$ex->getMessage();
 		$code=$ex->getCode();
@@ -827,15 +836,21 @@ class DNMVCS
 		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
 		
-		DNView::Show('_sys/error-500',$data,false);
+		DNView::G()->_Show('_sys/error-500',$data,false);
 	}
-	public function onDebugError($errno, $errstr, $errfile)
+	public function onDebugError($errno, $errstr, $errfile, $errline)
 	{
+		if(!$this->isDev()){return;}
+			
 		$data=array();
 		$data['message']=$errstr;
 		$data['code']=$errno;
 		
 		DNView::G()->showBlock('_sys/error-debug',$data,false);
+	}
+	public function onErrorHandel($errno, $errstr, $errfile, $errline)
+	{
+		throw new Error($errstr,$errno);
 	}
 	
 	//  close database before show;
@@ -844,7 +859,31 @@ class DNMVCS
 		if(!$this->auto_close_db){ return ;}
 		try{
 			DNDB::G()->close();
-		}catch( Exception $ex){
+		}catch(Error $ex){
+		}catch(Exception $ex){
+		}
+	}
+}
+class DNMVCS
+{
+	use DNSingleton;
+	use DNMVCS_Glue;
+	use DNMVCS_handel;
+	
+	protected $path=null;
+	protected $path_common=null;
+	
+	protected $auto_close_db=true;
+	protected $has_autoload=false;
+	protected $config;
+	protected $isDev=false;
+	
+	public function RunQuickly($path='')
+	{
+		if(class_exists('APP')){
+			return DNMVCS::G(APP::G())->init($path)->run();
+		}else{
+			return DNMVCS::G()->init($path)->run();
 		}
 	}
 	protected function init_path($path)
@@ -864,17 +903,16 @@ class DNMVCS
 	//@override
 	public function init($path='',$path_common='',$config=array())
 	{
-		//子类化之后，路径还是存在问题
 		$this->config=$config;
 		if(!$this->has_autoload){
 			$this->autoload($path,$path_common);
 		}else{
-			$this->init_path($path);
+			//path bug ?
+			$this->init_path($path,$path_common);
 		}
 		
-		DNExceptionManager::HandelAllException();
-		DNExceptionManager::SetDefaultAllExceptionHandel(array($this,'onOtherException'));
-		DNExceptionManager::SetErrorHandel(array($this,'onException'));
+		DNExceptionManager::HandelAllException([$this,'onErrorException'],[$this,'onException']);
+		DNExceptionManager::HandelAllError([$this,'onErrorHandel'],[$this,'onDebugError']);
 		
 		DNRoute::G()->init($this->path.'controller/');
 		DNRoute::G()->set404(array($this,'onShow404'));	
@@ -882,13 +920,11 @@ class DNMVCS
 		DNConfig::G()->init($this->path.'config/',$path_common?$path_common.'config/':'');
 		
 		DNView::G()->init($this->path.'view/');
-		DNView::G()->setBeforeShow(array($this,'onBeforeShow'));
+		DNView::G()->setBeforeShow([$this,'onBeforeShow']);
 		DNView::G()->isDev=$this->isDev();
-		
 		
 		$db_config=DNConfig::Setting('db');
 		DNDB::G()->init($db_config);
-		set_error_handler(array($this,'onErrorHandler'));
 		
 		return $this;
 	}
@@ -907,39 +943,22 @@ class DNMVCS
 		$is_dev=DNConfig::Setting('is_dev');
 		return $is_dev?true:false;
 	}
-
-	public function onErrorHandler($errno, $errstr, $errfile, $errline)
-	{
-		if (!(error_reporting() & $errno)) {
-			return false;
-		}
-		switch ($errno) {
-		case E_ERROR:
-		case E_USER_ERROR:
-			throw new Exception($errstr,$errno);
-			exit;
-		case E_USER_WARNING:
-		case E_WARNING:
-		case E_USER_NOTICE:
-		case E_NOTICE:
-			if(!$this->isDev()){
-				break;
-			}
-			$this->onDebugError($errno, $errstr, $errfile);
-			break;
-		default:
-			echo "DNMVCS Notice: Unknown error type: [$errno] $errstr<br />\n";
-			break;
-		}
-
-		/* Don't execute PHP internal error handler */
-		return true;
-	}
-	
 }
 
 /////////////////////////
-
+trait DNThrowOn
+{
+	public static function ThrowOn($flag,$message,$code=0)
+	{
+		if(!$flag){return;}
+		$class=get_called_class();
+		throw new $class($message,$code);
+	}
+}
+class DNException extends Exception
+{
+	use DNThrowOn;
+}
 class DNControllerBase
 {
 }
