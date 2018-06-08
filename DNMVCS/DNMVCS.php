@@ -5,7 +5,7 @@
 if(!function_exists('URL')){
 function URL($url)
 {
-	return DNRoute::URL($url);
+	return DNRoute::G()->_URL($url);
 }
 }
 if(!function_exists('H')){
@@ -123,14 +123,7 @@ class DNRoute
 	protected $on404Handel;
 	protected $params=[];
 	public $method_calling=null;
-	public static function URL($url=null)
-	{
-		return self::G()->_URL($url);
-	}
-	public static function Param()
-	{
-		return self::G()->_Param();
-	}
+
 	public function _URL($url=null)
 	{
 		static $basepath;
@@ -373,7 +366,7 @@ class DNView
 
 	protected $head_file;
 	protected $foot_file;
-	protected $data=array();
+	public $data=array();
 	public $onBeforeShow=null;
 	public $path;
 	
@@ -444,8 +437,11 @@ class DNView
 		extract($data);
 		include($this->path.$view.'.php');
 	}
-	public function _assign($key,$value)
+	public function _assign($key,$value=null)
 	{
+		if(is_array($key)&& $value===null){
+			$this->data=array_merge($this->$data,$key);
+		}
 		$this->data[$key]=$value;
 	}
 	public function _setData($data)
@@ -460,18 +456,7 @@ class DNConfig
 
 	protected $path;
 	protected $path_common;
-	public static function Setting($key)
-	{
-		return self::G()->_Setting($key);
-	}
-	public static function Get($key,$file_basename='config')
-	{
-		return self::G()->_Get($file_basename);
-	}
-	public static function Load($file_basename)
-	{
-		return self::G()->_Load($file_basename);
-	}
+	
 	public function init($path,$path_common=null)
 	{
 		$this->path=$path;
@@ -513,7 +498,7 @@ class DNConfig
 		return isset($config[$key])?$config[$key]:null;
 	}
 	
-	public function _Load($file_basename='config')
+	public function _LoadConfig($file_basename='config')
 	{
 		//multi file?
 		static $all_config=array();
@@ -533,13 +518,30 @@ class DNConfig
 }
 class DNDB
 {
-	use DNSingleton;
-
+	
 	protected $pdo;
 	protected $rowCount;
 	
 	protected $config;
 	
+	use DNSingleton;
+	/*
+	protected $_instances=[];
+	public static function G($object=null)
+	{
+		$class=get_called_class();
+		if($object){
+			self::$_instances[$class]=$object;
+			return $object;
+		}
+		$me=isset(self::$_instances[$class])?self::$_instances[$class]:null;
+		if(null===$me){
+			$me=new $class();
+			self::$_instances[$class]=$me;
+		}
+		return $me;
+	}
+	//*/
 	public function init($config)
 	{
 		$this->config=$config;
@@ -781,13 +783,13 @@ trait DNMVCS_Glue
 	{
 		return DNConfig::G()->_Setting($key);
 	}
-	public static function Get($key,$file_basename='config')
+	public static function GetConfig($key,$file_basename='config')
 	{
 		return DNConfig::G()->_Get($file_basename);
 	}
-	public static function Load($file_basename)
+	public static function LoadConfig($file_basename)
 	{
-		return DNConfig::G()->_Load($file_basename);
+		return DNConfig::G()->_LoadConfig($file_basename);
 	}
 	
 	public static function SetSpecialErrorCallback($class,$callback)
@@ -923,7 +925,7 @@ class DNMVCS
 		DNView::G()->setBeforeShow([$this,'onBeforeShow']);
 		DNView::G()->isDev=$this->isDev();
 		
-		$db_config=DNConfig::Setting('db');
+		$db_config=DNConfig::G()->_Setting('db');
 		DNDB::G()->init($db_config);
 		
 		return $this;
@@ -940,7 +942,7 @@ class DNMVCS
 
 	public function isDev()
 	{
-		$is_dev=DNConfig::Setting('is_dev');
+		$is_dev=DNConfig::G()->_Setting('is_dev');
 		return $is_dev?true:false;
 	}
 }
