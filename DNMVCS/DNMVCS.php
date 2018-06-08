@@ -984,7 +984,7 @@ class DNMVCS
 }
 
 /////////////////////////
-trait DNThrowOn
+trait DNThrowQuickly
 {
 	public static function ThrowOn($flag,$message,$code=0)
 	{
@@ -995,7 +995,7 @@ trait DNThrowOn
 }
 class DNException extends Exception
 {
-	use DNThrowOn;
+	use DNThrowQuickly;
 }
 class DNControllerBase
 {

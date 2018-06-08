@@ -128,27 +128,83 @@ DNMVCS::G(CoreMVCS::G())->init($path)->run();
 * 我不想做全站，只是做子目录， 这也可以。把 www/index.php 的文件引用调整好就行。
 
 
+
+## 关于魔改
+## 关于 namespace
 ## DNMVCS 的各个类说明
-### DnSingleton 单例基类
-各个类基本都要继承的类。写Model,Service 的时候可以方便的扩展。
+### DNMVCS 入口类
+6月8日提示
+入口类做了很多更改，一般情况下用入口类的方法就够了。
+如果入口类不满足需求，那么扩展入口类，如果扩展了入口类还不满足，那么扩展用到的组件类。
 ```
-class DNSingleton
+class DNMVCS extends DNSingleton
+把所有函数粘合的主类
+        public static function RunQuickly($path='')
+        无参数快速启动。$path 用于子目录的情况
+
+        public function onShow404()
+        接管404 错误
+
+        public function onException($ex)
+        通用的异常，非调试状态显示 
+
+        public function onOtherException($ex)
+        语法错误的异常
+
+        public function onDebugError($errno, $errstr, $errfile)
+        Notice 级别的错误在这里，调试的时候显示
+
+        public function onBeforeShow()
+        用于显示输出之前关闭数据库。
+
+        public function onErrorHandler($errno, $errstr, $errfile, $errline)
+        接管错误报告一般不需要动。
+
+        public function init($path='',$path_common='')
+        初始化，主要的方法，扩展这个类的精髓
+
+        public function run()
+        接管路由，运行
+
+        public function isDev()
+        判断是否开发环境，只是读取一个配置选项而已。
+
+```
+### 附属函数
+附属函数是为了节省体力活用的
+```
+H => htmlspecialchars( $str, ENT_QUOTES ); 系统函数太长了，用这个缩写
+URL =>DNRoute::URL($url); 在 controller 里用，View 里不严格要求无计算也可使用
+```
+
+### DnSingleton 单例 trait
+各个类基本都要用到的 trait。写Model,Service 的时候可以方便的扩展。
+
+本来写成基类的，用上 PHP 的 trait 特性更自由。
+```
+trait DNSingleton
         public static function G($url=null)
 
         如果没有这个 G 方法 你可能会怎么写代码：
         (new MyClass())->foo();
-        继承了 DNSingleton 后，这么写
+        绑定 DNSingleton 后，这么写
         MyClass::G()->foo();
 
         另一个隐藏功能：
         MyBaseClass::G(new MyClass())->foo();
         MyClass 把 MyBaseClass 的 foo 方法替换了。
 
-        接下来后面这样的代码，其实也是 MyClass 的 foo2.
+        接下来后面这样的代码，也是调用 MyClass 的 foo2.
         MyBaseClass::G()->foo2();
 
         为什么不是 GetInstance ? 因为太长，这个方法太经常用。
 ```
+### DNExcpetion 错误处理类
+class DNException extends Exception
+        public static function ThrowOn($flag,$message,$code=0)
+        如果 $flag为真，则抛出异常。 用于减少 if 语句
+        如 MyException::ThrowOn(true,"test",-110);
+        等价于 if(true){throw new MyException("test",-110);}
 ### DnAutoLoad 自动加载类
 自动加载函数的类
 ```
@@ -239,7 +295,6 @@ class DNRoute extends DNSingleton
 class DNView extends DNSingleton
 View 类
         public static function Show($view,$data=array(),$use_wrapper=true)
-        显示数据，第一个为不带 .php 结尾的 view 文件，第二个为传递过去的数据，第三个参数是是否使用页眉页脚
 
         public static function return_json($ret)
         返回 json 数据，自带 exit
@@ -251,7 +306,7 @@ View 类
         跳转到 DnRoute::URL 自带 exit;——这是唯一破坏耦合性的函数
 
         public function _Show($view,$data=array(),$use_wrapper=true)
-        Show 静态方法的实现，你也可以替换他
+        显示数据，第一个为不带 .php 结尾的 view 文件，第二个为传递过去的数据，第三个参数是是否使用页眉页脚
 
         public function init($path)
         初始化， view 的路径
@@ -359,47 +414,6 @@ class DNDB extends DNSingleton
         public function insert($table_name,$data,$return_last_id=true)
         public function delete($table,$id,$key='id')
         public function update($table_name,$id,$data,$key='id')
-```
-### DNMVCS 入口类
-```
-class DNMVCS extends DNSingleton
-把所有函数粘合的主类
-        public static function RunQuickly($path='')
-        无参数快速启动。$path 用于子目录的情况
-
-        public function onShow404()
-        接管404 错误
-
-        public function onException($ex)
-        通用的异常，非调试状态显示 
-
-        public function onOtherException($ex)
-        语法错误的异常
-
-        public function onDebugError($errno, $errstr, $errfile)
-        Notice 级别的错误在这里，调试的时候显示
-
-        public function onBeforeShow()
-        用于显示输出之前关闭数据库。
-
-        public function onErrorHandler($errno, $errstr, $errfile, $errline)
-        接管错误报告一般不需要动。
-
-        public function init($path='',$path_common='')
-        初始化，主要的方法，扩展这个类的精髓
-
-        public function run()
-        接管路由，运行
-
-        public function isDev()
-        判断是否开发环境，只是读取一个配置选项而已。
-
-```
-### 附属函数
-附属函数是为了节省体力活用的
-```
-H => htmlspecialchars( $str, ENT_QUOTES ); 系统函数太长了，用这个缩写
-URL =>DNRoute::URL($url); 在 controller 里用，View 里不严格要求无计算也可使用
 ```
 ### DNMVSEx 扩展类
 额外对 DNMVCS 的扩展类，需要手动引用
