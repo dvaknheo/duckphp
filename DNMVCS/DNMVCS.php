@@ -28,6 +28,12 @@ if(!defined('DN_NOT_USE_FUNC')){
 	{
 		return DNMVCS::DB_W();
 	}
+	function return_json()
+	{
+	}
+	function return_route()
+	{
+	}
 }
 
 
@@ -769,6 +775,16 @@ trait DNMVCS_Glue
 	{
 		return DNRoute::G()->assignRoute($key,$value);
 	}
+	public function getCallingPath()
+	{
+	}
+	public function getCallingClass()
+	{
+	}
+	public function getCallingMethod()
+	{
+	}
+	
 	//view
 	public static function Show($view,$data=array(),$use_wrapper=true)
 	{
@@ -781,11 +797,11 @@ trait DNMVCS_Glue
 	}
 	public static function return_redirect($url,$only_in_site=true)
 	{
-		return DNView::G()->return_redirect($ret,$only_in_site);
+		return DNView::G()->return_redirect($url,$only_in_site);
 	}
 	public static function return_route_to($url,$only_in_site=true)
 	{
-		return DNView::G()->return_redirect(self::URL($ret),$only_in_site=true);
+		return DNView::G()->return_redirect(self::URL($url),$only_in_site=true);
 	}
 	public function setViewWrapper($head_file=null,$foot_file=null)
 	{
