@@ -82,67 +82,36 @@ class DNAutoLoad
 	}
 	public function run()
 	{
-		spl_autoload_register(function($classname){
-			if($classname!=basename($classname)){return false;}
-			
-			
-			$flag=preg_match('/(Common)?(Service|Model)$/',$classname,$m);
-			if(!$flag){
-				$file=$this->path_common.'lib'.'/'.$classname.'.php';
-				if($this->path_common && file_exists($file)){
-					$flag=include($file);
-					return true;
-				}
-				
-				$file=$this->path.'lib'.'/'.$classname.'.php';
-				if(file_exists($file)){
-					$flag=include($file);
-					return true;
-				}
-				
-			}else{
-				if(!$m[1]){
-					//normal
-					$file=$this->path.$m[2].'/'.$classname.'.php';
-					if(!file_exists($file)){return false;}
-					$flag=include($file);
-					return true;
-				}else{
-					if(!$this->path_common){throw new \Exception('CommonService/CommonModel need path_common');} 
-					
-					$file=$this->path_common.strtolower($m[2]).'/'.$classname.'.php';
-					if(!file_exists($file)){return false;}
-					$flag=include($file);
-					return true;
-				}
-			
-			}
-			
-			
-		});
-		//Controller
 		spl_autoload_register(function ($class) {
-			$prefix = 'DnController\\';
-			$base_dir =$this->path.'controller/';
-
+			// project-specific namespace prefix
+			$prefix = $this->namespace.'\\';
+			// base directory for the namespace prefix
+			$base_dir = $this->path . 'App/';
+			
+			// does the class use the namespace prefix?
 			$len = strlen($prefix);
 			if (strncmp($prefix, $class, $len) !== 0) {
+				// no, move to the next registered autoloader
 				return;
 			}
+			// get the relative class name
 			$relative_class = substr($class, $len);
+			
+			// replace the namespace prefix with the base directory, replace namespace
+			// separators with directory separators in the relative class name, append
+			// with .php
 			$file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-			if (is_file($file)) {
+			
+			// if the file exists, require it
+			if (file_exists($file)) {
 				require $file;
-				return true;
 			}
 		});
-		
 		spl_autoload_register(function ($class) {
-			if(substr($class,0,strlen('Core'))=='Core'){
-				$file = $this->path.'core/'.$class . '.php';
-				if (is_file($file)) {
+			if(strpos($class,'\\')===false){
+				$file=$this->path .'classes/'.$class.'.php';
+				if (file_exists($file)) {
 					require $file;
-					return true;
 				}
 			}
 		});
@@ -158,8 +127,8 @@ class DNRoute
 	protected $routeMap=[];
 	protected $on404Handel;
 	protected $params=[];
-	public $namepspace='\DN\Controller';
-	
+	public $namespace='';
+	public $default_class='DNController';
 	public $enable_param=true;
 	public $calling_path='';
 	public $calling_class='';
@@ -191,10 +160,11 @@ class DNRoute
 	{
 		return $this->params;
 	}
-	public function init($path)
+	public function init($path,$namespace='')
 	{	
 		$this->path=$path;
 		array_push($this->route_handels,array($this,'defaltRouteHandle'));
+		$this->namespace=$namespace;
 	}
 	public function _default404()
 	{
@@ -302,20 +272,22 @@ class DNRoute
 	// You can override it; variable indived
 	protected function includeControllerFile($file)
 	{
-		return include($file);
+		//var_dump("")
+		//return include($file);
 	}
 	// You can override it;
 	protected function getObecjectToCall($class_name)
 	{
 		if(substr(basename($class_name),0,1)=='_'){return null;}
-		$classname=$this->namepspace.'\\'.str_replace('/','\\',$class_name);
-		if(class_exists($classname)){
-			$this->calling_class=$classname;
-			$obj=new $classname();
+		$fullclass=$this->namespace.'\\'.str_replace('/','\\',$class_name);
+		if(class_exists($fullclass)){
+			$this->calling_class=$fullclass;
+			$obj=new $fullclass();
 			return $obj;
 		}
-		$this->calling_class='DnController';
-		$obj=new \DnController();
+		$default_class=$this->namespace.'\\'.str_replace('/','\\',$this->default_class);
+		$this->calling_class=$default_class;
+		$obj=new $default_class();
 		return $obj;
 	}
 	protected function getMethodToCall($obj,$method)
@@ -985,8 +957,8 @@ class DNMVCS
 	public function RunQuickly($path='')
 	{
 		DNMVCS::G()->autoload($path);
-		if(class_exists('APP')){
-			return DNMVCS::G(APP::G())->init($path)->run();
+		if(class_exists('\MY\APP')){
+			return DNMVCS::G(\MY\APP::G())->init($path)->run();
 		}else{
 			return DNMVCS::G()->init($path)->run();
 		}
@@ -998,7 +970,7 @@ class DNMVCS
 		$path=$path!=''?$path:realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
 		$path=rtrim($path,'/').'/';
 		
-		DNAutoLoad::G()->init($path,$path_common?$path_common:'');
+		DNAutoLoad::G()->init($path,$namespace,$path_common?$path_common:'');
 		DNAutoLoad::G()->run();
 		return $this;
 	}
@@ -1029,7 +1001,7 @@ class DNMVCS
 		
 		
 		
-		DNRoute::G()->init($this->path.'Controller/');
+		DNRoute::G()->init($this->path.'/App/Controller/',$this->namespace.'\Controller');
 		DNRoute::G()->set404(array($this,'onShow404'));	
 		
 		DNView::G()->init($this->path.'view/');
