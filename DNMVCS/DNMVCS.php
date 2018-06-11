@@ -86,7 +86,7 @@ class DNAutoLoad
 			// project-specific namespace prefix
 			$prefix = $this->namespace.'\\';
 			// base directory for the namespace prefix
-			$base_dir = $this->path . 'App/';
+			$base_dir = $this->path . 'app/';
 			
 			// does the class use the namespace prefix?
 			$len = strlen($prefix);
@@ -1001,7 +1001,7 @@ class DNMVCS
 		
 		
 		
-		DNRoute::G()->init($this->path.'/App/Controller/',$this->namespace.'\Controller');
+		DNRoute::G()->init($this->path.'/app/Controller/',$this->namespace.'\Controller');
 		DNRoute::G()->set404(array($this,'onShow404'));	
 		
 		DNView::G()->init($this->path.'view/');
