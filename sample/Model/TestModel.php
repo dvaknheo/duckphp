@@ -1,5 +1,7 @@
 <?php
-class TestModel extends DNModel
+use DNMVCS as DN;
+
+class TestModel extends DN\DNModel
 {
 	public function foo()
 	{

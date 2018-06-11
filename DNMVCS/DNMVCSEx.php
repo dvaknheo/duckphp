@@ -89,13 +89,16 @@ class DNMVCSEx extends DNMVCS
 		return $ret;
 	}
 	
-	// 这是个内部用的函数，获取 参数名称的关联数组
+	// 这是个内部用的函数，获取 参数名称的关联数组 // TODDo 转移到 trait;
+	// 父亲类 foo_assoc($args);
+	// 子类1 foo($id=1,$title=2)=>; =>foo_assoc($this->getArgAssoc());
+	// 子类2 foo($name=>'a')
 	protected function getArgAssoc()
 	{
 		$trace=debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT ,2);
 		$top=array_pop($trace);
 		
-		//TODO ，和类相分离 这里写得不通用
+		//只在类里用
 		$reflect=new ReflectionMethod($top['object'],$top['function']);
 		$params=$reflect->getParameters();
 		$names=array();
@@ -105,6 +108,7 @@ class DNMVCSEx extends DNMVCS
 		
 		return $names;
 	}
+
 	// 这个就连带调用 __FUNCTION__._with_names 了
 	protected function callWithNames()
 	{
@@ -120,6 +124,6 @@ class DNMVCSEx extends DNMVCS
 		
 		$func=$top['function'];
 		$func_in=$func.'_with_names';
-		return $this->$func_in($names);
+		return ($this->$func_in)($names);
 	}
 }

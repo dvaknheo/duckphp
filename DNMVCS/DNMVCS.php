@@ -1,50 +1,52 @@
 <?php
 //dvaknheo@github.com
 //OK，Lazy
-if(!defined('DN_NOT_USE_FUNC')){
+namespace DNMVCS;
 
-	function URL($url)
-	{
-		return DNMVCS::URL($url);
-	}
-	function H($str)
-	{
-		return DNMVCS::H($str);
-	}
+// for short
 
-	function DB()
-	{
-		return DNMVCS::DB();
-	}
-	function DB_W()
-	{
-		return DNMVCS::DB_W();
-	}
-	function DB_R()
-	{
-		return DNMVCS::DB_R();
-	}
-	function Show($data,$view=null)
-	{
-		return DNMVCS::Show($data,$view);
-	}
-	function ExitJson($ret)
-	{
-		return DNMVCS::return_json($ret);
-	}
-	function ExitRouteTo($url)
-	{
-		return DNMVCS::return_route_to($url);
-	}
-	function ExitRedirect($url)
-	{
-		return DNMVCS::return_redirect($url);
-	}
-	function Import($file)
-	{
-		return DNMVCS::Import($file);
-	}
+function URL($url)
+{
+	return DNMVCS::URL($url);
 }
+function H($str)
+{
+	return DNMVCS::H($str);
+}
+
+function DB()
+{
+	return DNMVCS::DB();
+}
+function DB_W()
+{
+	return DNMVCS::DB_W();
+}
+function DB_R()
+{
+	return DNMVCS::DB_R();
+}
+function Show($data,$view=null)
+{
+	return DNMVCS::Show($data,$view);
+}
+function ExitJson($ret)
+{
+	return DNMVCS::return_json($ret);
+}
+function ExitRouteTo($url)
+{
+	return DNMVCS::return_route_to($url);
+}
+function ExitRedirect($url)
+{
+	return DNMVCS::return_redirect($url);
+}
+function Import($file)
+{
+	return DNMVCS::Import($file);
+}
+
 
 
 trait DNSingleton
@@ -106,7 +108,7 @@ class DNAutoLoad
 					$flag=include($file);
 					return true;
 				}else{
-					if(!$this->path_common){throw new Exception('CommonService/CommonModel need path_common');} 
+					if(!$this->path_common){throw new \Exception('CommonService/CommonModel need path_common');} 
 					
 					$file=$this->path_common.strtolower($m[2]).'/'.$classname.'.php';
 					if(!file_exists($file)){return false;}
@@ -313,7 +315,7 @@ class DNRoute
 			return $obj;
 		}
 		$this->calling_class='DnController';
-		$obj=new DnController();
+		$obj=new \DnController();
 		return $obj;
 	}
 	protected function getMethodToCall($obj,$method)
@@ -429,7 +431,7 @@ class DNView
 	public static function return_redirect($url,$only_in_site=true)
 	{
 		if($only_in_site && parse_url($url,PHP_URL_HOST)){
-			throw new Exception('safe check false');
+			throw new \Exception('safe check false');
 		}
 		header('location: '.$url);
 		exit;
@@ -446,19 +448,22 @@ class DNView
 		$this->data=array_merge($this->data,$data);
 		unset($data);
 		//
-		$this->view_file=$this->path.$view.'.php';
+		$view=rtrim($view,'.php').'.php';
+		$this->view_file=$this->path.$view;
 		$this->show_include();
 	}
 	protected function show_include()
 	{
 		extract($this->data);
 		if( $this->head_file){
-			include($this->path.$this->head_file.'.php');
+			$this->head_file=rtrim($this->head_file,'.php').'.php';
+			include($this->path.$this->head_file);
 		}
 		include($this->view_file);
 		
 		if( $this->foot_file){
-			include($this->path.$this->foot_file.'.php');
+			$this->foot_file=rtrim($this->foot_file,'.php').'.php';
+			include($this->path.$this->foot_file);
 		}
 	}
 	public function init($path)
@@ -523,10 +528,10 @@ class DNConfig
 			$setting=$this->include_file($this->path.'setting.php');
 			if($setting===false){
 				echo '<h1>'.'DNMVCS Notice: no setting file!,change setting.sample.php to setting.php !'.'</h1>';
-				throw new Exception('DNMVCS Notice: no setting file!,change setting.sample.php to setting.php');
+				throw new \Exception('DNMVCS Notice: no setting file!,change setting.sample.php to setting.php');
 			}
 			if(!is_array($setting)){
-				throw new Exception('DNMVCS Notice: need return array !');
+				throw new \Exception('DNMVCS Notice: need return array !');
 			}
 			$setting=array_merge($base_setting,$setting);
 		}
@@ -573,7 +578,7 @@ class DNDB
 	{
 		if($this->pdo){return;}
 		if(empty($this->config)){
-			throw new Exception('DNMVCS Notice: database not setting!');
+			throw new \Exception('DNMVCS Notice: database not setting!');
 		}
 		$config=$this->config;
 		$this->pdo= new PDO($config['dsn'], $config['user'], $config['password'],array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION));
@@ -653,13 +658,6 @@ class DNDB
 	{
 		return $this->pdo->lastInsertId();
 	}
-	
-	public function get($table_name,$id,$key='id')
-	{
-		$sql="select * from {$table_name} where {$key}=? limit 1";
-		return $this->fetch($sql,$id);
-	}
-	
 	public function insert($table_name,$data,$return_last_id=true)
 	{
 		$sql="insert into {$table_name} set ".DNDB::G()->quote_array($data);
@@ -670,7 +668,7 @@ class DNDB
 	}
 	public function delete($table,$id,$key='id')
 	{
-		throw new Exception("DNMVCS Notice : override me to delete");
+		throw new \Exception("DNMVCS Notice : override me to delete");
 		$sql="delete from {$table_name} where {$key}=? limit 1";
 		return $this->exec($sql,$id);
 	}
@@ -754,7 +752,7 @@ class DNExceptionManager
 			(self::$OnError)($errno, $errstr, $errfile, $errline);
 			break;
 		}
-//var_dump($errno, $errstr, $errfile, $errline);
+		//var_dump($errno, $errstr, $errfile, $errline);
 		/* Don't execute PHP internal error handler */
 		return true;
 	}
@@ -763,7 +761,6 @@ trait DNMVCS_DBManager
 {	
 	public $db=null;
 	public $db_r=null;
-	public $db_w=null;
 	public function _DB()
 	{
 		if($this->db){return $this->db;}
@@ -775,6 +772,11 @@ trait DNMVCS_DBManager
 		
 		return $this->db;
 	}
+	public function _DB_W()
+	{
+		return $this->_DB();
+	}
+	
 	public function _DB_R()
 	{
 		if($this->db_r){return $this->db_r;}
@@ -785,19 +787,11 @@ trait DNMVCS_DBManager
 		$this->db_r=$db;
 		return $this->db_r;
 	}
-	public function _DB_W()
-	{
-		$db_config=DNConfig::G()->_Setting('db_w');
-		$db=new DNDB();
-		$db->init($db_config);
-		$this->db_w=$db;
-		return $this->db_w;
-	}
+	
 	public function closeAllDB()
 	{
 		if($this->db!==null){$this->db->close();$this->db=null;}
 		if($this->db_r!==null){$this->db_r->close();$this->db_r=null;}
-		if($this->db_w!==null){$this->db_w->close();$this->db_w=null;}
 	}
 }
 
@@ -867,26 +861,51 @@ trait DNMVCS_Glue
 	//exception manager
 	public static function SetSpecialErrorCallback($classes,$callback=null)
 	{
-		return DNExceptionManager::SetSpecialErrorCallback($classes,$callback);
+		return self::G()->_DealException($classes,$callback);
 	}
 	public static function H($str)
 	{
 		return htmlspecialchars( $str, ENT_QUOTES );
 	}
-	public function DB()
+	public static function DB()
 	{
 		return self::G()->_DB();
 	}
-	public function DB_W()
+	public static function DB_W()
 	{
 		return self::G()->_DB_W();
 	}
-	public function DB_R()
+	public static function DB_R()
 	{
 		return self::G()->_DB_R();
 	}
+	public static function Import($file)
+	{
+		return self::G()->_Import($file);
+	}
 }
-
+trait DNMVCS_Misc
+{
+	public  function _Import($file)
+	{
+		$file=rtrim($file,'.php').'.php';
+		require_once($this->path.'lib/'.$file);
+	}
+	//exception manager
+	public  function _DealException($classes,$callback=null)
+	{
+		return DNExceptionManager::SetSpecialErrorCallback($classes,$callback);
+	}
+	public function recordset_url($data,$cols_map)
+	{
+		//foreach($data as &$v
+	}
+	public function recordset_h($data,$cols)
+	{
+	
+	}
+	
+}
 trait DNMVCS_Handel
 {
 	//@override
@@ -950,7 +969,7 @@ class DNMVCS
 	use DNMVCS_Glue;
 	use DNMVCS_Handel;
 	use DNMVCS_DBManager;
-	
+	use DNMVCS_Misc;
 	
 	protected $path=null;
 	protected $path_common=null;
@@ -1047,7 +1066,7 @@ trait DNThrowQuickly
 		throw new $class($message,$code);
 	}
 }
-class DNException extends Exception
+class DNException extends \Exception
 {
 	use DNThrowQuickly;
 }
