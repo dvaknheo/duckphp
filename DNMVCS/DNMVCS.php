@@ -14,7 +14,7 @@ if(!defined('DN_NOT_USE_FUNC')){
 
 	function DB()
 	{
-		return DNMVCS::DB_W();
+		return DNMVCS::DB();
 	}
 	function DB_W()
 	{
@@ -554,29 +554,11 @@ class DNConfig
 class DNDB
 {
 	
-	protected $pdo;
+	public $pdo;
 	protected $rowCount;
 	
 	protected $config;
 	
-	use DNSingleton;
-	/*
-	protected $_instances=[];
-	public static function G($object=null)
-	{
-		$class=get_called_class();
-		if($object){
-			self::$_instances[$class]=$object;
-			return $object;
-		}
-		$me=isset(self::$_instances[$class])?self::$_instances[$class]:null;
-		if(null===$me){
-			$me=new $class();
-			self::$_instances[$class]=$me;
-		}
-		return $me;
-	}
-	//*/
 	public function init($config)
 	{
 		$this->config=$config;
@@ -590,18 +572,9 @@ class DNDB
 		$config=$this->config;
 		$this->pdo= new PDO($config['dsn'], $config['user'], $config['password'],array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION));
 	}
-	public function getPDO()
-	{
-		return $this->pdo;
-	}
-	public function setPDO($pdo)
-	{
-		$this->pdo=$pdo;
-	}
+
 	public function close()
 	{
-		if(null===$this->pdo){return;}
-		
 		$this->rowCount=0;
 		$this->pdo=null;
 	}
@@ -686,7 +659,7 @@ class DNDB
 		$sql="insert into {$table_name} set ".DNDB::G()->quote_array($data);
 		$ret=$this->exec($sql);
 		if(!$return_last_id){return $ret;}
-		$ret=DNDB::G()->lastInsertId();
+		$ret=$this->lastInsertId();
 		return $ret;
 	}
 	public function delete($table,$id,$key='id')
@@ -699,9 +672,9 @@ class DNDB
 	public function update($table_name,$id,$data,$key='id')
 	{
 		if(isset($data[$key])){unset($data[$key]);}
-		$frag=DNDB::G()->quote_array($data);
+		$frag=$this->quote_array($data);
 		$sql="update {$table_name} set ".$frag." where {$key}=?";
-		$ret=DNDB::G()->exec($sql,$id);
+		$ret=$this->exec($sql,$id);
 		return $ret;
 	}
 }
@@ -780,7 +753,47 @@ class DNExceptionManager
 		return true;
 	}
 }
-
+trait DNMVCS_DBManager
+{	
+	public $db=null;
+	public $db_r=null;
+	public $db_w=null;
+	public function _DB()
+	{
+		if($this->db){return $this->db;}
+		
+		$db_config=DNConfig::G()->_Setting('db');
+		$db=new DNDB();
+		$db->init($db_config);
+		$this->db=$db;
+		
+		return $this->db;
+	}
+	public function _DB_R()
+	{
+		if($this->db_r){return $this->db_r;}
+		
+		$db_config=DNConfig::G()->_Setting('db_r');
+		$db=new DNDB();
+		$db->init($db_config);
+		$this->db_r=$db;
+		return $this->db_r;
+	}
+	public function _DB_W()
+	{
+		$db_config=DNConfig::G()->_Setting('db_w');
+		$db=new DNDB();
+		$db->init($db_config);
+		$this->db_w=$db;
+		return $this->db_w;
+	}
+	public function closeAllDB()
+	{
+		if($this->db!==null){$this->db->close();$this->db=null;}
+		if($this->db_r!==null){$this->db_r->close();$this->db_r=null;}
+		if($this->db_w!==null){$this->db_w->close();$this->db_w=null;}
+	}
+}
 
 trait DNMVCS_Glue
 {
@@ -838,7 +851,7 @@ trait DNMVCS_Glue
 	}
 	public static function GetConfig($key,$file_basename='config')
 	{
-		return DNConfig::G()->_Get($file_basename);
+		return DNConfig::G()->_Get($key,$file_basename);
 	}
 	public static function LoadConfig($file_basename)
 	{
@@ -850,26 +863,25 @@ trait DNMVCS_Glue
 	{
 		return DNExceptionManager::SetSpecialErrorCallback($classes,$callback);
 	}
-	
-	public static function DB()
-	{
-		// return DNDB::G();
-	}
-	public static function DB_R()
-	{
-		// return DNDB::G();
-	}
-	public static function DB_W()
-	{
-		// return DNDB::G();
-	}
 	public static function H($str)
 	{
 		return htmlspecialchars( $str, ENT_QUOTES );
 	}
-	
+	public function DB()
+	{
+		return self::G()->_DB();
+	}
+	public function DB_W()
+	{
+		return self::G()->_DB_W();
+	}
+	public function DB_R()
+	{
+		return self::G()->_DB_R();
+	}
 }
-trait DNMVCS_handel
+
+trait DNMVCS_Handel
 {
 	//@override
 	public function onShow404()
@@ -903,8 +915,6 @@ trait DNMVCS_handel
 	public function onDebugError($errno, $errstr, $errfile, $errline)
 	{
 		if(!$this->isDev){return;}
-					var_dump(__FILE__);
-	var_dump($data);
 		$data=array();
 		$data['message']=$errstr;
 		$data['code']=$errno;
@@ -913,7 +923,7 @@ trait DNMVCS_handel
 	}
 	public function onErrorHandel($errno, $errstr, $errfile, $errline)
 	{
-		var_dump($errno, $errstr, $errfile, $errline);
+		//var_dump($errno, $errstr, $errfile, $errline);
 		throw new Error($errstr,$errno);
 	}
 	
@@ -922,7 +932,7 @@ trait DNMVCS_handel
 	{
 		if(!$this->auto_close_db){ return ;}
 		try{
-			DNDB::G()->close();
+			$this->closeAllDB();
 		}catch(Error $ex){
 		}catch(Exception $ex){
 		}
@@ -932,8 +942,8 @@ class DNMVCS
 {
 	use DNSingleton;
 	use DNMVCS_Glue;
-	use DNMVCS_handel;
-	
+	use DNMVCS_Handel;
+	use DNMVCS_DBManager;
 	protected $path=null;
 	protected $path_common=null;
 	
@@ -987,8 +997,7 @@ class DNMVCS
 		DNView::G()->setBeforeShow([$this,'onBeforeShow']);
 		DNView::G()->isDev=$this->isDev();
 		
-		$db_config=DNConfig::G()->_Setting('db');
-		DNDB::G()->init($db_config);
+		
 		
 		return $this;
 	}
