@@ -11,28 +11,34 @@ if(!defined('DN_NOT_USE_FUNC')){
 	{
 		return htmlspecialchars( $str, ENT_QUOTES );
 	}
-	function show($data)
-	{
-		return DNMVCS::show();
-	}
+
 	function DB()
 	{
-	
-		return DNMVCS::DB_R();
-	}
-	function DB_R()
-	{
-		return DNMVCS::DB_R();
+		return DNMVCS::DB_W();
 	}
 	function DB_W()
 	{
 		return DNMVCS::DB_W();
 	}
-	function return_json()
+	function DB_R()
 	{
+		return DNMVCS::DB_R();
 	}
-	function return_route()
+	function Show($data,$view=null)
 	{
+		return DNMVCS::Show($data,$view);
+	}
+	function ExitJson($ret)
+	{
+		return DNMVCS::return_json($ret);
+	}
+	function ExitRouteTo($url)
+	{
+		return DNMVCS::return_route_to($url);
+	}
+	function ExitRedirect($url)
+	{
+		return DNMVCS::return_redirect($url);
 	}
 }
 
@@ -144,7 +150,11 @@ class DNRoute
 	protected $routeMap=[];
 	protected $on404Handel;
 	protected $params=[];
-	public $method_calling=null;
+	
+	public $enable_param=true;
+	public $calling_path='';
+	public $calling_class='';
+	public $calling_method='';
 
 	public function _URL($url=null)
 	{
@@ -249,29 +259,38 @@ class DNRoute
 			}
 			break;
 		}
+		if($this->enable_param){
+			$param=array_slice($blocks,count(explode('/',$current_class))+($current_class?1:0));
+			if($param==array(0=>'')){$param=array();}
+			$this->params=$param;
+			
+			$this->calling_path=ltrim($current_class.'/'.$method,'/');
+
+		}else{
+			$this->calling_path=$path;
+		}
 		
-		$param=array_slice($blocks,count(explode('/',$current_class))+($current_class?1:0));
-		
-		if($param==array(0=>'')){$param=array();}
-		
-		$this->params=$param;
 		
 		$class='';
 		$method=$method?$method:'index';
 		$current_class=$current_class?$current_class:'Main';
+		
+		$this->calling_method=$method;
+		$this->calling_class=$current_class;
+		
 		$file=$this->path.$site.$current_class.'.php';
 		$this->method_calling=$method;
+		
+		
 		$this->includeControllerFile($file);
 		$obj=$this->getObecjectToCall($current_class);
 		
-		
 		if(null==$obj){return null;}
+		
 		return $this->getMethodToCall($obj,$method);
 	}
-	public function getMethodCalling()
-	{
-		return $this->method_calling;
-	}
+	
+
 	// You can override it; variable indived
 	protected function includeControllerFile($file)
 	{
@@ -283,10 +302,11 @@ class DNRoute
 		if(substr(basename($class_name),0,1)=='_'){return null;}
 		$classname='\DNControllerNamespace\\'.str_replace('/','\\',$class_name);
 		if(class_exists($classname)){
+			$this->calling_class=$classname;
 			$obj=new $classname();
 			return $obj;
 		}
-		
+		$this->calling_class='DnController';
 		$obj=new DnController();
 		return $obj;
 	}
@@ -318,18 +338,21 @@ class DNRoute
 
 	protected function match_path_info($pattern_url,$path_info)
 	{
-		//var_dump($pattern_url,$path_info);exit;
 		$pattern='/^(([A-Z_]+)\s+)?(~)?\/?(.*)\/?$/';
 		$flag=preg_match($pattern,$pattern_url,$m);
 		if(!$flag){return false;}
 		$method=$m[2];
-		$is_reg=$m[3];
+		$is_regex=$m[3];
 		$url=$m[4];
 		if($method && $method!==$_SERVER['REQUEST_METHOD']){return false;}
-		if(!$is_reg){
+		if(!$is_regex){
+			//if(enable_param)
 			$params=explode('/',$path_info);
 			array_shift($params);
 			$url_params=explode('/',$url);
+			if(!$this->enable_param){
+				return ($url_params===$params)?true:false;
+			}
 			if($url_params === array_slice($params,0,count($url_params))){
 				$this->params=array_slice($params,0,count($url_params));
 				return true;
@@ -385,15 +408,12 @@ class DNView
 
 	protected $head_file;
 	protected $foot_file;
+	protected $view_file;
 	public $data=array();
 	public $onBeforeShow=null;
 	public $path;
+	public $isDev=false;
 	
-	public static function Show($view,$data=array(),$use_wrapper=true)
-	{
-		self::G()->_Show($view,$data,$use_wrapper);
-	}
-
 	public static function return_json($ret)
 	{
 		header('content-type:text/json');
@@ -407,14 +427,11 @@ class DNView
 		}
 		header('location: '.$url);
 		exit;
-	}
-	//outter function url()
-	
-	public function _Show($view,$data=array(),$use_wrapper=true)
+	}	
+	public function _Show($data=array(),$view)
 	{
-		if(is_callable($this->onBeforeShow)){
-			$t=$this->onBeforeShow;
-			$t($view,$data,$use_wrapper);
+		if(isset($this->onBeforeShow)){
+			($this->onBeforeShow)($view,$data);
 		}
 		// stop notice 
 		error_reporting(error_reporting() & ~E_NOTICE);
@@ -422,14 +439,19 @@ class DNView
 		$this->data=$this->data?$this->data:array();
 		$this->data=array_merge($this->data,$data);
 		unset($data);
+		//
+		$this->view_file=$this->path.$view.'.php';
+		$this->show_include();
+	}
+	protected function show_include()
+	{
 		extract($this->data);
-		
-		if( $use_wrapper && $this->head_file){
+		if( $this->head_file){
 			include($this->path.$this->head_file.'.php');
 		}
-		include( $this->path.$view.'.php');
+		include($this->view_file);
 		
-		if( $use_wrapper && $this->foot_file){
+		if( $this->foot_file){
 			include($this->path.$this->foot_file.'.php');
 		}
 	}
@@ -753,7 +775,7 @@ class DNExceptionManager
 			(self::$OnError)($errno, $errstr, $errfile, $errline);
 			break;
 		}
-
+//var_dump($errno, $errstr, $errfile, $errline);
 		/* Don't execute PHP internal error handler */
 		return true;
 	}
@@ -775,20 +797,13 @@ trait DNMVCS_Glue
 	{
 		return DNRoute::G()->assignRoute($key,$value);
 	}
-	public function getCallingPath()
-	{
-	}
-	public function getCallingClass()
-	{
-	}
-	public function getCallingMethod()
-	{
-	}
-	
 	//view
-	public static function Show($view,$data=array(),$use_wrapper=true)
+	public static function Show($data=array(),$view=null)
 	{
-		return DNView::G()->_Show($view,$data,$use_wrapper);
+		if($view===null){
+			$view=DNRoute::G()->calling_path;
+		}
+		return DNView::G()->_Show($data,$view);
 	}
 
 	public static function return_json($ret)
@@ -809,7 +824,7 @@ trait DNMVCS_Glue
 	}
 	public function showBlock($view,$data)
 	{
-		return DNView::G()->return_redirect($view,$data);
+		return DNView::G()->showBlock($view,$data);
 	}
 	public function assignViewData($key,$value=null)
 	{
@@ -848,13 +863,6 @@ trait DNMVCS_Glue
 	{
 		// return DNDB::G();
 	}
-	public static function Render($data=array(),$viewfile=null)
-	{
-		if(null==$viewfile){
-			//
-		}
-		return DNView::G()->_Show($viewfile,$data);
-	}
 	public static function H($str)
 	{
 		return htmlspecialchars( $str, ENT_QUOTES );
@@ -867,7 +875,7 @@ trait DNMVCS_handel
 	public function onShow404()
 	{
 		header("HTTP/1.1 404 Not Found");
-		DNView::G()->_Show('_sys/error-404',array(),false);
+		DNView::G()->_Show([],'_sys/error-404');
 	}
 	public function onException($ex)
 	{
@@ -877,7 +885,7 @@ trait DNMVCS_handel
 		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
 
-		DNView::G()->_Show('_sys/error-exception',$data,false);
+		DNView::G()->_Show($data,'_sys/error-exception');
 	}
 	public function onErrorException($ex)
 	{
@@ -890,20 +898,22 @@ trait DNMVCS_handel
 		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
 		
-		DNView::G()->_Show('_sys/error-500',$data,false);
+		DNView::G()->_Show($data,'_sys/error-500');
 	}
 	public function onDebugError($errno, $errstr, $errfile, $errline)
 	{
 		if(!$this->isDev){return;}
-			
+					var_dump(__FILE__);
+	var_dump($data);
 		$data=array();
 		$data['message']=$errstr;
 		$data['code']=$errno;
 		
-		DNView::G()->showBlock('_sys/error-debug',$data,false);
+		DNView::G()->showBlock('_sys/error-debug',$data);
 	}
 	public function onErrorHandel($errno, $errstr, $errfile, $errline)
 	{
+		var_dump($errno, $errstr, $errfile, $errline);
 		throw new Error($errstr,$errno);
 	}
 	
