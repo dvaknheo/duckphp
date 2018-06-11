@@ -5,7 +5,7 @@ class DnController
 	{
 		$data=array();
 		$data['var']=TestService::G()->foo();
-		DNView::Show('main',$data);
+		Show($data,'main');
 		
 	}
 	public function i()
