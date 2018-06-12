@@ -2,52 +2,7 @@
 //dvaknheo@github.com
 //OK，Lazy
 namespace DNMVCS;
-
-// for short
-
-function URL($url)
-{
-	return DNMVCS::URL($url);
-}
-function H($str)
-{
-	return DNMVCS::H($str);
-}
-
-function DB()
-{
-	return DNMVCS::DB();
-}
-function DB_W()
-{
-	return DNMVCS::DB_W();
-}
-function DB_R()
-{
-	return DNMVCS::DB_R();
-}
-function Show($data,$view=null)
-{
-	return DNMVCS::Show($data,$view);
-}
-function ExitJson($ret)
-{
-	return DNMVCS::return_json($ret);
-}
-function ExitRouteTo($url)
-{
-	return DNMVCS::return_route_to($url);
-}
-function ExitRedirect($url)
-{
-	return DNMVCS::return_redirect($url);
-}
-function Import($file)
-{
-	return DNMVCS::Import($file);
-}
-
-
+use \PDO;
 
 trait DNSingleton
 {
@@ -74,6 +29,7 @@ class DNAutoLoad
 	public $path;
 	public $namespace;
 	public $path_common;
+	public $is_loaded=false;
 	public function init($path,$namespace='MY',$path_common='')
 	{
 		$this->path=$path;
@@ -82,6 +38,15 @@ class DNAutoLoad
 	}
 	public function run()
 	{
+		if($this->is_loaded){return;}
+		$this->is_loaded=true;
+		$this->regist_psr4();
+		$this->regist_simple_mode();
+		$this->regist_classes();
+	}
+	protected function regist_psr4()
+	{
+//var_dump("regist_psr4~~~");
 		spl_autoload_register(function ($class) {
 			// project-specific namespace prefix
 			$prefix = $this->namespace.'\\';
@@ -104,16 +69,41 @@ class DNAutoLoad
 			
 			// if the file exists, require it
 			if (file_exists($file)) {
-				require $file;
+				require_once $file; // buggy must require_once ， I don't found the bug;
 			}
 		});
-		spl_autoload_register(function ($class) {
-			if(strpos($class,'\\')===false){
-				$file=$this->path .'classes/'.$class.'.php';
-				if (file_exists($file)) {
-					require $file;
-				}
+	}
+	protected function regist_simple_mode()
+	{
+		spl_autoload_register(function($class){
+			if(strpos($class,'\\')!==false){ return; }
+			$path=$this->path;
+			$path_common=$this->path_common;
+			
+			$flag=preg_match('/(Common)?(Service|Model)$/',$class,$m);
+			if(!$flag){return;}
+			$file='';
+			if(!$m[1]){
+				//normal
+				$file=$this->path.$m[2].'/'.$class.'.php';
+				require $file;
+			}else{
+				if(!$path_common){throw new Exception('CommonService/CommonModel need path_common');} 
+				$file=$path_common.strtolower($m[2]).'/'.$class.'.php';
 			}
+			if (!$file || !file_exists($file)) {return;}
+			require $file;
+		});
+	}
+	protected function regist_classes()
+	{
+		spl_autoload_register(function ($class) {
+			if(strpos($class,'\\')!==false){ return; }
+			$file=$this->path .'classes/'.$class.'.php';
+			if (file_exists($file)) {
+				require $file;
+			}
+			
 		});
 	}
 }
@@ -272,8 +262,7 @@ class DNRoute
 	// You can override it; variable indived
 	protected function includeControllerFile($file)
 	{
-		//var_dump("")
-		//return include($file);
+		require ($file);
 	}
 	// You can override it;
 	protected function getObecjectToCall($class_name)
@@ -966,10 +955,10 @@ class DNMVCS
 	public function autoload($path,$namespace='MY',$path_common='')
 	{
 		$this->has_autoload=true;
-
 		$path=$path!=''?$path:realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
 		$path=rtrim($path,'/').'/';
 		
+
 		DNAutoLoad::G()->init($path,$namespace,$path_common?$path_common:'');
 		DNAutoLoad::G()->run();
 		return $this;
