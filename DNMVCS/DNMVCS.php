@@ -46,7 +46,6 @@ class DNAutoLoad
 	}
 	protected function regist_psr4()
 	{
-//var_dump("regist_psr4~~~");
 		spl_autoload_register(function ($class) {
 			// project-specific namespace prefix
 			$prefix = $this->namespace.'\\';
@@ -69,7 +68,7 @@ class DNAutoLoad
 			
 			// if the file exists, require it
 			if (file_exists($file)) {
-				require_once $file; // buggy must require_once ， I don't found the bug;
+				require $file;
 			}
 		});
 	}
@@ -262,14 +261,15 @@ class DNRoute
 	// You can override it; variable indived
 	protected function includeControllerFile($file)
 	{
-		require ($file);
+		require($file);
 	}
 	// You can override it;
 	protected function getObecjectToCall($class_name)
 	{
 		if(substr(basename($class_name),0,1)=='_'){return null;}
 		$fullclass=$this->namespace.'\\'.str_replace('/','\\',$class_name);
-		if(class_exists($fullclass)){
+		$flag=class_exists($fullclass,false);
+		if($flag){
 			$this->calling_class=$fullclass;
 			$obj=new $fullclass();
 			return $obj;
@@ -974,7 +974,7 @@ class DNMVCS
 		$this->path_common=DNAutoLoad::G()->path_common;
 		$this->namespace=DNAutoLoad::G()->namespace;
 	}
-	//@override
+	//@override me
 	public function init($env=array())
 	{
 		DNExceptionManager::HandelAllException([$this,'onErrorException'],[$this,'onException']);
@@ -982,7 +982,6 @@ class DNMVCS
 		
 		//override me to autoload; 
 		$this->dealLoad($env);
-		
 		
 		DNConfig::G()->init($this->path.'config/',$this->path_common?$this->path_common.'config/':'');
 		$this->config=$config;
