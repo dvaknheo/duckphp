@@ -3,6 +3,7 @@
 //OK，Lazy
 namespace DNMVCS;
 use \PDO;
+use \Exception;
 
 trait DNSingleton
 {
@@ -28,13 +29,34 @@ class DNAutoLoad
 	use DNSingleton;
 	public $path;
 	public $namespace;
-	public $path_common;
 	public $is_loaded=false;
-	public function init($path,$namespace='MY',$path_common='')
+	
+	public $options=[];
+	public $path_namespace;
+	public $path_autoload;
+	public $path_framework_simple;
+	public $path_framework_common;
+	
+	public function init($path,$options=array())
 	{
+		$default_options=array(
+			'namespace'=>'MY',
+			'path_namespace'=>'app',
+			'path_autoload'=>'classes',
+			'path_framework_simple'=>'app',
+			'fullpath_framework_common'=>'',
+		);
+		$options=array_merge($default_options,$options);
+		$this->options=$options;
+		
 		$this->path=$path;
-		$this->namespace=$namespace;
-		$this->path_common=$path_common;
+		$this->namespace=$options['namespace'];
+		$this->path_namespace=$path.rtrim($options['path_namespace'],'/').'/';
+		$this->path_autoload=$path.rtrim($options['path_autoload'],'/').'/';
+		$this->path_framework_simple=$path.rtrim($options['path_framework_simple'],'/').'/';
+		
+		//remark No the prefix
+		$this->path_framework_common=rtrim($options['fullpath_framework_common'],'/').'/';
 	}
 	public function run()
 	{
@@ -47,47 +69,32 @@ class DNAutoLoad
 	protected function regist_psr4()
 	{
 		spl_autoload_register(function ($class) {
-			// project-specific namespace prefix
 			$prefix = $this->namespace.'\\';
-			// base directory for the namespace prefix
-			$base_dir = $this->path . 'app/';
+			$base_dir = $this->path_namespace;
 			
-			// does the class use the namespace prefix?
-			$len = strlen($prefix);
-			if (strncmp($prefix, $class, $len) !== 0) {
-				// no, move to the next registered autoloader
-				return;
-			}
-			// get the relative class name
-			$relative_class = substr($class, $len);
-			
-			// replace the namespace prefix with the base directory, replace namespace
-			// separators with directory separators in the relative class name, append
-			// with .php
+			if (strncmp($prefix, $class, strlen($prefix)) !== 0) { return; }
+			$relative_class = substr($class, strlen($prefix));
 			$file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-			
-			// if the file exists, require it
-			if (file_exists($file)) {
-				require $file;
-			}
+			if (!file_exists($file)) { return; }
+			require $file;
 		});
 	}
 	protected function regist_simple_mode()
 	{
 		spl_autoload_register(function($class){
 			if(strpos($class,'\\')!==false){ return; }
-			$path=$this->path;
-			$path_common=$this->path_common;
+			$path_simple=$this->path_framework_simple;
+			$path_common=$this->path_framework_common;
 			
 			$flag=preg_match('/(Common)?(Service|Model)$/',$class,$m);
 			if(!$flag){return;}
 			$file='';
 			if(!$m[1]){
-				//normal
-				$file=$this->path.$m[2].'/'.$class.'.php';
-				require $file;
+				$file=$path_simple.$m[2].'/'.$class.'.php';
+				
 			}else{
-				if(!$path_common){throw new Exception('CommonService/CommonModel need path_common');} 
+				if(!$path_common){return;}
+				//if(!$path_common){throw new Exception('CommonService/CommonModel need path_common');} 
 				$file=$path_common.strtolower($m[2]).'/'.$class.'.php';
 			}
 			if (!$file || !file_exists($file)) {return;}
@@ -98,10 +105,10 @@ class DNAutoLoad
 	{
 		spl_autoload_register(function ($class) {
 			if(strpos($class,'\\')!==false){ return; }
-			$file=$this->path .'classes/'.$class.'.php';
-			if (file_exists($file)) {
-				require $file;
-			}
+			$path_autoload=$this->path_autoload;
+			$file=$this->path_autoload .$class.'.php';
+			if (!file_exists($file)) { return; }
+			require $file;
 			
 		});
 	}
@@ -111,14 +118,21 @@ class DNRoute
 {
 	use DNSingleton;
 	
-	protected $site=''; //for sites in a controller
+	//protected $site=''; //for sites in a controller
 	protected $route_handels=[];
 	protected $routeMap=[];
 	protected $on404Handel;
 	protected $params=[];
-	public $namespace='';
+	public $options;
+	
+	public $namespace='MY';
 	public $default_class='DNController';
+	
+	public $default_controller='Main';
+	public $default_method='index';
 	public $enable_param=true;
+	public $enable_simple_mode=true;
+	
 	public $calling_path='';
 	public $calling_class='';
 	public $calling_method='';
@@ -149,11 +163,25 @@ class DNRoute
 	{
 		return $this->params;
 	}
-	public function init($path,$namespace='')
-	{	
+	public function init($path,$options)
+	{
+		$default_options=array(
+			'namespace_controller'=>'MY\Controller',
+			'enable_paramters'=>false,
+			'enable_simple_mode'=>true,
+		);
+
+		$options=array_merge($default_options,$options);
+		$this->options=$options;
+		
+		
 		$this->path=$path;
+		$this->namespace=$options['namespace_controller'];
+		$this->enable_param=$options['enable_paramters'];
+		$this->enable_simple_mode=$options['enable_simple_mode'];
+
+		
 		array_push($this->route_handels,array($this,'defaltRouteHandle'));
-		$this->namespace=$namespace;
 	}
 	public function _default404()
 	{
@@ -197,13 +225,10 @@ class DNRoute
 	{
 		$default_controller='Main';
 		$default_method='index';
-
-		$site=$this->site?$this->site.'/':'';
-		$site='';
 		
 		$blocks=explode('/',$path_info);
 		array_shift($blocks);
-		$prefix=$this->path.$site;
+		$prefix=$this->path;
 		$l=count($blocks);
 		$current_class='';
 		$method='';
@@ -212,7 +237,7 @@ class DNRoute
 			$v=$blocks[$i];
 			$method=$v;
 			if(''==$v){break;}
-			if(!preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/',$v)){
+			if(!preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/',$v)){ //just for php classname;
 				return null;
 			}
 			$dir=$prefix.$v;
@@ -233,20 +258,17 @@ class DNRoute
 			$this->params=$param;
 			
 			$this->calling_path=ltrim($current_class.'/'.$method,'/');
-
 		}else{
-			$this->calling_path=$path;
+			$this->calling_path=$path_info;
 		}
 		
-		
-		$class='';
-		$method=$method?$method:'index';
-		$current_class=$current_class?$current_class:'Main';
+		$method=$method?$method:$default_method;
+		$current_class=$current_class?$current_class:$default_controller;
 		
 		$this->calling_method=$method;
 		$this->calling_class=$current_class;
 		
-		$file=$this->path.$site.$current_class.'.php';
+		$file=$this->path.$current_class.'.php';
 		$this->method_calling=$method;
 		
 		$this->includeControllerFile($file);
@@ -267,16 +289,26 @@ class DNRoute
 	protected function getObecjectToCall($class_name)
 	{
 		if(substr(basename($class_name),0,1)=='_'){return null;}
+		if($this->enable_simple_mode){
+			$fullclass=str_replace('/','__',$class_name);
+			$flag=class_exists($fullclass,false);
+			if(!$flag){
+				$fullclass=str_replace('/','__',$this->default_class);
+			}
+			$flag=class_exists($fullclass,false);
+			if($flag){
+				$this->calling_class=$fullclass;
+				$obj=new $fullclass();
+				return $obj;
+			}
+		}
 		$fullclass=$this->namespace.'\\'.str_replace('/','\\',$class_name);
 		$flag=class_exists($fullclass,false);
-		if($flag){
-			$this->calling_class=$fullclass;
-			$obj=new $fullclass();
-			return $obj;
+		if(!$flag){
+			$fullclass=$this->namespace.'\\'.str_replace('/','\\',$this->default_class);
 		}
-		$default_class=$this->namespace.'\\'.str_replace('/','\\',$this->default_class);
-		$this->calling_class=$default_class;
-		$obj=new $default_class();
+		$this->calling_class=$fullclass;
+		$obj=new $fullclass();
 		return $obj;
 	}
 	protected function getMethodToCall($obj,$method)
@@ -339,6 +371,8 @@ class DNRoute
 	}
 	public function defalt_dispath_handle()
 	{
+		//for callback do not use;
+		
 		$path_info=$_SERVER['PATH_INFO'];
 		$ret=null;
 		foreach($this->routeMap as $pattern =>$callback){
@@ -615,33 +649,16 @@ class DNDB
 	{
 		return $this->rowCount;
 	}
-	public function id()
-	{
-		return $this->pdo->lastInsertId();
-	}
+	
 	public function insert($table_name,$data,$return_last_id=true)
 	{
 		$sql="insert into {$table_name} set ".DNDB::G()->quote_array($data);
 		$ret=$this->exec($sql);
 		if(!$return_last_id){return $ret;}
-		$ret=$this->lastInsertId();
+		$ret=$this->pdo->lastInsertId();
 		return $ret;
 	}
-	public function delete($table,$id,$key='id')
-	{
-		throw new \Exception("DNMVCS Notice : override me to delete");
-		$sql="delete from {$table_name} where {$key}=? limit 1";
-		return $this->exec($sql,$id);
-	}
-	
-	public function update($table_name,$id,$data,$key='id')
-	{
-		if(isset($data[$key])){unset($data[$key]);}
-		$frag=$this->quote_array($data);
-		$sql="update {$table_name} set ".$frag." where {$key}=?";
-		$ret=$this->exec($sql,$id);
-		return $ret;
-	}
+
 }
 class DNExceptionManager
 {
@@ -933,13 +950,12 @@ class DNMVCS
 	use DNMVCS_Misc;
 	
 	protected $path=null;
-	protected $path_common=null;
-	protected $namespace=null;
 	
 	protected $auto_close_db=true;
 	protected $has_autoload=false;
 	
 	
+	public $options;
 	public $config;
 	public $isDev=false;
 	
@@ -952,14 +968,13 @@ class DNMVCS
 			return DNMVCS::G()->init($path)->run();
 		}
 	}
-	public function autoload($path,$namespace='MY',$path_common='')
+	public function autoload($path,$options=array())
 	{
 		$this->has_autoload=true;
 		$path=$path!=''?$path:realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
 		$path=rtrim($path,'/').'/';
 		
-
-		DNAutoLoad::G()->init($path,$namespace,$path_common?$path_common:'');
+		DNAutoLoad::G()->init($path,$options);
 		DNAutoLoad::G()->run();
 		return $this;
 	}
@@ -971,35 +986,70 @@ class DNMVCS
 		}
 		//remark: this is for subclass. do not use $this
 		$this->path=DNAutoLoad::G()->path; 
-		$this->path_common=DNAutoLoad::G()->path_common;
-		$this->namespace=DNAutoLoad::G()->namespace;
+		//$this->options=array_merge($this->options,$this->options,$options);
 	}
 	//@override me
-	public function init($env=array())
+	public function init($options=array())
 	{
+		$default_options=array(
+			'namesapce'=>'MY',
+			
+			'path_namespace'=>'app',
+			'path_autoload'=>'classes',
+			'path_framework_simple'=>'app',
+			'fullpath_framework_common'=>'common/app',
+			
+			'path_config'=>'config',
+			'fullpath_config_common'=>'common/config',
+			
+			'enable_simple_mode'=>true,
+			'enable_paramters'=>true,
+			
+			'path_controller'=>'app/Controller',
+			'namespace_subcontroller'=>'Controller',
+			'path_controller_simple'=>'app/Controller',
+			'path_view'=>'view',
+		);
+		$this->options=$options;	
+		
 		DNExceptionManager::HandelAllException([$this,'onErrorException'],[$this,'onException']);
 		DNExceptionManager::HandelAllError([$this,'onErrorHandel'],[$this,'onDebugError']);
 		
 		//override me to autoload; 
-		$this->dealLoad($env);
+		$this->dealLoad($options);
+		//dealLoad may change the options
+		$options=array_merge($default_options,$this->options,$options);
+		$this->options=$options;		
+		$path=$this->path;
 		
-		DNConfig::G()->init($this->path.'config/',$this->path_common?$this->path_common.'config/':'');
+		$path_view=$path.rtrim($options['path_view'],'/').'/';
+		$path_config=$path.rtrim($options['path_config'],'/').'/';
+		$fullpath_config_common=rtrim($options['fullpath_config_common'],'/').'/';
+		
+		$namespace_controller=$options['namesapce'].'\\'.$options['namespace_subcontroller'];
+
+		$path_controller=$path.rtrim($options['path_controller'],'/').'/';
+		
+		DNConfig::G()->init($path_config,$fullpath_config_common);
+		
 		$this->config=$config;
 		$this->isDev=DNConfig::G()->_Setting('is_dev')?true:false;
 		
+		DNRoute::G()->init($path_controller,array(
+			'namespace_controller'=>$namespace_controller,
+			'enable_simple_mode'=>$options['enable_simple_mode'],
+			'enable_paramters'=>$options['enable_paramters'],
+		));
 		
-		
-		DNRoute::G()->init($this->path.'/app/Controller/',$this->namespace.'\Controller');
 		DNRoute::G()->set404(array($this,'onShow404'));	
 		
-		DNView::G()->init($this->path.'view/');
+		DNView::G()->init($path_view);
 		DNView::G()->setBeforeShow([$this,'onBeforeShow']);
 		DNView::G()->isDev=$this->isDev;
 		
 		
 		return $this;
 	}
-
 	public function isDev()
 	{
 		return $this->isDev;
@@ -1011,9 +1061,6 @@ class DNMVCS
 		ob_end_flush();
 		return $this;
 	}
-	
-
-	
 }
 
 /////////////////////////
