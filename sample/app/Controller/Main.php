@@ -1,7 +1,7 @@
 <?php
 namespace MY\Controller;
 
-use DNMVCS as DN;
+use DNMVCS\DNMVCS as DN;
 use MY\Service as S;
 
 class DnController
@@ -10,7 +10,7 @@ class DnController
 	{
 		$data=array();
 		$data['var']=S\TestService::G()->foo();
-		DN\Show($data,'main');
+		DN::Show($data,'main');
 		
 	}
 	public function i()

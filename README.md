@@ -1,3 +1,4 @@
+# 改了很多东西，准备改文档
 # DNMVCS
 ## DNMVCS 是什么
 一个 PHP Web 简单框架 比通常的Model Controller View 多了 Service 。
@@ -72,6 +73,8 @@ Service 之间不能相互调用， 为此，LibService 就是供各个 Service 
 * 范例，例子还太简单了
 * 脚手架，决定写在 DNMVCSEx 里够了。
 * Namespace , 使用命名空间，这
+----
+当前版本做了很多改动，后面资料已经过时
 
 ## DNMVCS 的目录结构约定
 sample 目录就是一般典型目录
