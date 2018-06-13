@@ -27,29 +27,40 @@ trait DNSingleton
 class DNAutoLoad
 {
 	use DNSingleton;
+	
 	public $path;
 	public $namespace;
 	public $is_loaded=false;
-	
 	public $options=[];
-	public $path_namespace;
-	public $path_autoload;
-	public $path_framework_simple;
-	public $path_framework_common;
 	
-	public function init($path,$options=array())
+	protected $path_namespace;
+	protected $path_autoload;
+	protected $path_framework_simple;
+	protected $path_framework_common;
+	protected $enable_simple_mode=true;
+	
+	public function init($options=array())
 	{
 		$default_options=array(
+			'path'	=>'',
+			
 			'namespace'=>'MY',
 			'path_namespace'=>'app',
 			'path_autoload'=>'classes',
 			'path_framework_simple'=>'app',
 			'fullpath_framework_common'=>'',
+			'enable_simple_mode'=>true,
 		);
 		$options=array_merge($default_options,$options);
 		$this->options=$options;
 		
-		$this->path=$path;
+		if(!$options['path']){
+			$path=realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
+			$options['path']=rtrim($path,'/').'/';
+		}
+		$this->path=$options['path'];
+		$path=$this->path;
+		
 		$this->namespace=$options['namespace'];
 		$this->path_namespace=$path.rtrim($options['path_namespace'],'/').'/';
 		$this->path_autoload=$path.rtrim($options['path_autoload'],'/').'/';
@@ -57,13 +68,19 @@ class DNAutoLoad
 		
 		//remark No the prefix
 		$this->path_framework_common=rtrim($options['fullpath_framework_common'],'/').'/';
+		
+		$this->enable_simple_mode=$options['enable_simple_mode'];
+		
+		return $this;
 	}
 	public function run()
 	{
 		if($this->is_loaded){return;}
 		$this->is_loaded=true;
 		$this->regist_psr4();
-		$this->regist_simple_mode();
+		if($this->enable_simple_mode){
+			$this->regist_simple_mode();
+		}
 		$this->regist_classes();
 	}
 	protected function regist_psr4()
@@ -873,7 +890,7 @@ trait DNMVCS_Misc
 	public function _Import($file)
 	{
 		$file=rtrim($file,'.php').'.php';
-		require_once($this->path.'lib/'.$file);
+		require_once($this->path_lib.$file);
 	}
 	public function _H($str)
 	{
@@ -950,50 +967,36 @@ class DNMVCS
 	use DNSingleton;
 	use DNMVCS_Glue;
 	use DNMVCS_Handel;
-	use DNMVCS_DBManager;
 	use DNMVCS_Misc;
 	
 	protected $path=null;
 	
 	protected $auto_close_db=true;
 	protected $has_autoload=false;
+	protected $path_lib;
 	
-	
-	public $options;
+	public $options=[];
 	public $config;
 	public $isDev=false;
-	
+//$this->path_lib
 	public static function RunQuickly($path='')
 	{
-		DNMVCS::G()->autoload($path);
+		DNMVCS::G()->autoload();
 		if(class_exists('\MY\APP')){
 			return DNMVCS::G(\MY\APP::G())->init()->run();
 		}else{
 			return DNMVCS::G()->init()->run();
 		}
 	}
-	public function autoload($path,$options=array())
+	public function autoload($options=array())
 	{
+		if($this->has_autoload){return;}
 		$this->has_autoload=true;
-		$path=$path!=''?$path:realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
-		$path=rtrim($path,'/').'/';
-		
-		DNAutoLoad::G()->init($path,$options);
-		DNAutoLoad::G()->run();
+		DNAutoLoad::G()->init($options)->run();
 		return $this;
 	}
 	
-	protected function dealLoad($config)
-	{
-		if(!$this->has_autoload){
-			$this->autoload();
-		}
-		//remark: this is for subclass. do not use $this
-		$this->path=DNAutoLoad::G()->path; 
-		//$this->options=array_merge($this->options,$this->options,$options);
-	}
-	//@override me
-	public function init($options=array())
+	protected function init_options($options)
 	{
 		$default_options=array(
 			'namesapce'=>'MY',
@@ -1002,42 +1005,46 @@ class DNMVCS
 			'path_autoload'=>'classes',
 			'path_framework_simple'=>'app',
 			'fullpath_framework_common'=>'common/app',
-			
-			'path_config'=>'config',
-			'fullpath_config_common'=>'common/config',
-			
 			'enable_simple_mode'=>true,
-			'enable_paramters'=>true,
 			
 			'path_controller'=>'app/Controller',
 			'namespace_subcontroller'=>'Controller',
 			'path_controller_simple'=>'app/Controller',
+			
+			'path_config'=>'config',
+			'fullpath_config_common'=>'',
+			
+			'enable_paramters'=>true,
+			
+
 			'path_view'=>'view',
+			'path_lib'=>'lib',
 		);
-		$this->options=$options;	
-		
+		$this->options=array_merge($default_options,$options);
+	}
+	//@override me
+	public function init($options=array())
+	{
 		DNExceptionManager::HandelAllException([$this,'onErrorException'],[$this,'onException']);
 		DNExceptionManager::HandelAllError([$this,'onErrorHandel'],[$this,'onDebugError']);
 		
-		//override me to autoload; 
-		$this->dealLoad($options);
-		//dealLoad may change the options
-		$options=array_merge($default_options,$this->options,$options);
-		$this->options=$options;		
-		$path=$this->path;
+		$this->init_options($options);
 		
-		$path_view=$path.rtrim($options['path_view'],'/').'/';
+		//override me to autoload; 
+		$this->autoload($options);
+		$this->path=DNAutoLoad::G()->path; 
+		$path=$this->path;
+		$options=$this->options;
 		$path_config=$path.rtrim($options['path_config'],'/').'/';
 		$fullpath_config_common=rtrim($options['fullpath_config_common'],'/').'/';
 		
-		$namespace_controller=$options['namesapce'].'\\'.$options['namespace_subcontroller'];
-
-		$path_controller=$path.rtrim($options['path_controller'],'/').'/';
-		
 		DNConfig::G()->init($path_config,$fullpath_config_common);
-		
 		$this->config=$config;
 		$this->isDev=DNConfig::G()->_Setting('is_dev')?true:false;
+		
+		
+		$namespace_controller=$options['namesapce'].'\\'.$options['namespace_subcontroller'];
+		$path_controller=$path.rtrim($options['path_controller'],'/').'/';
 		
 		DNRoute::G()->init($path_controller,array(
 			'namespace_controller'=>$namespace_controller,
@@ -1047,10 +1054,12 @@ class DNMVCS
 		
 		DNRoute::G()->set404(array($this,'onShow404'));	
 		
+		$path_view=$path.rtrim($options['path_view'],'/').'/';
 		DNView::G()->init($path_view);
 		DNView::G()->setBeforeShow([$this,'onBeforeShow']);
 		DNView::G()->isDev=$this->isDev;
 		
+		$this->path_lib=$options['path_lib'];
 		
 		return $this;
 	}
