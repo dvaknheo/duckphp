@@ -318,11 +318,11 @@ class DNRoute
 		if($is_post){
 			if(method_exists ($obj,'do_'.$method)){
 				$method='do_'.$method;
-			}else if(! method_exists ($obj,$method)){
+			}else if(!method_exists($obj,$method)){
 				return null;
 			}
 		}else{
-			if(!method_exists ($obj,$method)){
+			if(!method_exists($obj,$method)){
 				return null;
 			}
 		}
@@ -417,13 +417,13 @@ class DNView
 	public $path;
 	public $isDev=false;
 	
-	public static function return_json($ret)
+	public function _ExitJson($ret)
 	{
 		header('content-type:text/json');
 		echo json_encode($ret,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
 		exit;
 	}
-	public static function return_redirect($url,$only_in_site=true)
+	public function _ExitRedirect($url,$only_in_site=true)
 	{
 		if($only_in_site && parse_url($url,PHP_URL_HOST)){
 			throw new \Exception('safe check false');
@@ -469,7 +469,7 @@ class DNView
 	{
 		$this->onBeforeShow=$callback;
 	}
-	public function setWrapper($head_file,$foot_file)
+	public function setViewWrapper($head_file,$foot_file)
 	{
 		$this->head_file=$head_file;
 		$this->foot_file=$foot_file;
@@ -682,9 +682,9 @@ class DNExceptionManager
 	}
 	public static function SetSpecialErrorCallback($class,$callback)
 	{
-		$class=is_string($class)?array($class):$class;
-		foreach($class as $v){
-			self::$specail_exceptions[$v]=$callback;
+		$class=is_string($class)?array($class=>$callback):$class;
+		foreach($class as $k=>$v){
+			self::$specail_exceptions[$k]=$v;
 		}
 	}
 
@@ -703,7 +703,7 @@ class DNExceptionManager
 		//throw $ex;
 	}
 	
-	public function HandelAllError($OnError,$OnDevError)
+	public static function HandelAllError($OnError,$OnDevError)
 	{
 		set_error_handler(array(__CLASS__,'onErrorHandler'));
 		self::$OnError=$OnError;
@@ -735,10 +735,15 @@ class DNExceptionManager
 		return true;
 	}
 }
-trait DNMVCS_DBManager
-{	
+class DNDBManager
+{
+	use DNSingleton;
+	
 	public $db=null;
 	public $db_r=null;
+	public function __construct()
+	{
+	}
 	public function _DB()
 	{
 		if($this->db){return $this->db;}
@@ -797,13 +802,13 @@ trait DNMVCS_Glue
 		return DNView::G()->_Show($data,$view);
 	}
 
-	public static function return_json($ret)
+	public static function ExitJson($ret)
 	{
-		return DNView::G()->return_json($ret);
+		return DNView::G()->_ExitJson($ret);
 	}
-	public static function return_redirect($url,$only_in_site=true)
+	public static function ExitRedirect($url,$only_in_site=true)
 	{
-		return DNView::G()->return_redirect($url,$only_in_site);
+		return DNView::G()->_ExitRedirect($url,$only_in_site);
 	}
 	public static function return_route_to($url,$only_in_site=true)
 	{
@@ -811,7 +816,7 @@ trait DNMVCS_Glue
 	}
 	public function setViewWrapper($head_file=null,$foot_file=null)
 	{
-		return DNView::G()->setWrapper($head_file,$foot_file);
+		return DNView::G()->setViewWrapper($head_file,$foot_file);
 	}
 	public function showBlock($view,$data)
 	{
@@ -837,25 +842,26 @@ trait DNMVCS_Glue
 	}
 	
 	//exception manager
-	public static function SetSpecialErrorCallback($classes,$callback=null)
+	public function assignExceptionHandel($classes,$callback=null)
 	{
-		return self::G()->_DealException($classes,$callback);
+		return DNExceptionManager::SetSpecialErrorCallback($classes,$callback);
 	}
+	
 	public static function H($str)
 	{
-		return htmlspecialchars( $str, ENT_QUOTES );
+		return self::G()->_H($str);
 	}
 	public static function DB()
 	{
-		return self::G()->_DB();
+		return DNDBManager::G()->_DB();
 	}
 	public static function DB_W()
 	{
-		return self::G()->_DB_W();
+		return DNDBManager::G()->_DB_W();
 	}
 	public static function DB_R()
 	{
-		return self::G()->_DB_R();
+		return DNDBManager::G()->_DB_R();
 	}
 	public static function Import($file)
 	{
@@ -864,19 +870,17 @@ trait DNMVCS_Glue
 }
 trait DNMVCS_Misc
 {
-	public  function _Import($file)
+	public function _Import($file)
 	{
 		$file=rtrim($file,'.php').'.php';
 		require_once($this->path.'lib/'.$file);
 	}
-	//exception manager
-	public  function _DealException($classes,$callback=null)
+	public function _H($str)
 	{
-		return DNExceptionManager::SetSpecialErrorCallback($classes,$callback);
+		return htmlspecialchars( $str, ENT_QUOTES );
 	}
 	public function recordset_url($data,$cols_map)
 	{
-		//foreach($data as &$v
 	}
 	public function recordset_h($data,$cols)
 	{
@@ -935,7 +939,7 @@ trait DNMVCS_Handel
 	{
 		if(!$this->auto_close_db){ return ;}
 		try{
-			$this->closeAllDB();
+			DNDBManager::G()->closeAllDB();
 		}catch(Error $ex){
 		}catch(Exception $ex){
 		}
@@ -959,13 +963,13 @@ class DNMVCS
 	public $config;
 	public $isDev=false;
 	
-	public function RunQuickly($path='')
+	public static function RunQuickly($path='')
 	{
 		DNMVCS::G()->autoload($path);
 		if(class_exists('\MY\APP')){
-			return DNMVCS::G(\MY\APP::G())->init($path)->run();
+			return DNMVCS::G(\MY\APP::G())->init()->run();
 		}else{
-			return DNMVCS::G()->init($path)->run();
+			return DNMVCS::G()->init()->run();
 		}
 	}
 	public function autoload($path,$options=array())
