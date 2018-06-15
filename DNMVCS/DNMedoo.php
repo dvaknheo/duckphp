@@ -51,7 +51,7 @@ class DNMedoo extends MedooFixed
 	}
 
 }
-class MedooDBManager extends DN\DNDBManager
+class MedooDBManager extends DNDBManager
 {
 	public function _DB()
 	{
