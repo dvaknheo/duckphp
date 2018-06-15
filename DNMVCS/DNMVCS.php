@@ -251,7 +251,6 @@ class DNRoute
 	}
 	public function mapPathToFunction($path_info)
 	{
-		
 		$blocks=explode('/',$path_info);
 		array_shift($blocks);
 		$prefix=$this->path;
@@ -1015,7 +1014,7 @@ class DNMVCS
 			DNAutoLoad::G()->init($this->options)->run();
 		}
 		$this->options['path']=DNAutoLoad::G()->path; 
-		$this->path_lib=$this->options['path_lib'];
+		$this->path_lib=$this->options['path'].$this->options['path_lib'].'/';
 
 		return $this;
 	}
