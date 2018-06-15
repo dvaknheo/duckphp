@@ -43,13 +43,13 @@ class DNAutoLoad
 	{
 		$default_options=array(
 			'path'	=>'',
-			
 			'namespace'=>'MY',
-			'path_namespace'=>'app',
-			'path_autoload'=>'classes',
-			'path_framework_simple'=>'app',
-			'fullpath_framework_common'=>'',
 			'enable_simple_mode'=>true,
+			'path_autoload'=>'classes',
+			
+			'path_framework_simple'=>'app',
+			'path_namespace'=>'app',
+			'fullpath_framework_common'=>'',
 		);
 		$options=array_merge($default_options,$options);
 		$this->options=$options;
@@ -143,10 +143,10 @@ class DNRoute
 	public $options;
 	
 	public $namespace='MY';
-	public $default_class='DNController';
+	protected $default_class='DNController';
 	
-	public $default_controller='Main';
-	public $default_method='index';
+	protected $default_controller='Main';
+	protected $default_method='index';
 	public $enable_param=true;
 	public $enable_simple_mode=true;
 	
@@ -156,7 +156,7 @@ class DNRoute
 	
 	public function _URL($url=null)
 	{
-		static $basepath;
+		static $basepath; //TODO do not static ?
 		if(null===$url){return $_SERVER['REQUEST_URI'];}
 		if(''===$url){return $_SERVER['REQUEST_URI'];}
 		$url=preg_replace('/^\//','',$url);
@@ -180,20 +180,25 @@ class DNRoute
 	{
 		return $this->params;
 	}
-	public function init($path,$options)
+	public function init($options)
 	{
 		$default_options=array(
-			'namespace_controller'=>'MY\Controller',
+			//'path'=>'',
+			'namespace'=>'MY',
 			'enable_paramters'=>false,
 			'enable_simple_mode'=>true,
+			
+			'path_contorller'=>'app/Controller',
+			'namespace_controller'=>'Controller',
+
 		);
 
 		$options=array_merge($default_options,$options);
 		$this->options=$options;
 		
 		
-		$this->path=$path;
-		$this->namespace=$options['namespace_controller'];
+		$this->path=$options['path'].$options['path_contorller'].'/';
+		$this->namespace=$options['namespace'].'\\'.$options['namespace_controller'];
 		$this->enable_param=$options['enable_paramters'];
 		$this->enable_simple_mode=$options['enable_simple_mode'];
 
@@ -240,8 +245,6 @@ class DNRoute
 	}
 	public function mapPathToFunction($path_info)
 	{
-		$default_controller='Main';
-		$default_method='index';
 		
 		$blocks=explode('/',$path_info);
 		array_shift($blocks);
@@ -279,8 +282,8 @@ class DNRoute
 			$this->calling_path=$path_info;
 		}
 		
-		$method=$method?$method:$default_method;
-		$current_class=$current_class?$current_class:$default_controller;
+		$method=$method?$method:$this->default_method;
+		$current_class=$current_class?$current_class:$this->default_controller;
 		
 		$this->calling_method=$method;
 		$this->calling_class=$current_class;
@@ -540,10 +543,12 @@ class DNConfig
 			$setting=$this->include_file($this->path.'setting.php');
 			if($setting===false){
 				echo '<h1>'.'DNMVCS Notice: no setting file!,change setting.sample.php to setting.php !'.'</h1>';
-				throw new \Exception('DNMVCS Notice: no setting file!,change setting.sample.php to setting.php');
+				exit;
+				//throw new \Exception('DNMVCS Notice: no setting file!,change setting.sample.php to setting.php');
 			}
 			if(!is_array($setting)){
 				throw new \Exception('DNMVCS Notice: need return array !');
+				exit;
 			}
 			$setting=array_merge($base_setting,$setting);
 		}
@@ -650,7 +655,7 @@ class DNDB
 		$ret=$sth->fetchColumn();
 		return $ret;
 	}
-	public function exec($sql)
+	public function execQuick($sql,$compa_medoo=array())
 	{
 		$this->check_connect();
 		$args=func_get_args();
@@ -695,7 +700,8 @@ class DNExceptionManager
 		set_exception_handler(array(__CLASS__,'ManageException'));
 		
 		self::$OnErrorException=$OnErrorException;
-		self::$OnException=$OnException;
+		
+		self::SetException($OnException);
 	}
 	public static function SetSpecialErrorCallback($class,$callback)
 	{
@@ -704,7 +710,10 @@ class DNExceptionManager
 			self::$specail_exceptions[$k]=$v;
 		}
 	}
-
+	public static function SetException($OnException)
+	{
+		self::$OnException=$OnException;
+	}
 	public static function ManageException($ex)
 	{
 		if(is_a($ex,'Error')){
@@ -859,9 +868,13 @@ trait DNMVCS_Glue
 	}
 	
 	//exception manager
-	public function assignExceptionHandel($classes,$callback=null)
+	public function assignException($classes,$callback=null)
 	{
 		return DNExceptionManager::SetSpecialErrorCallback($classes,$callback);
+	}
+	public function setException($Exception)
+	{
+		return DNExceptionManager::SetException($classes,$callback);
 	}
 	
 	public static function H($str)
@@ -978,7 +991,7 @@ class DNMVCS
 	public $options=[];
 	public $config;
 	public $isDev=false;
-//$this->path_lib
+	
 	public static function RunQuickly($path='')
 	{
 		DNMVCS::G()->autoload();
@@ -998,29 +1011,29 @@ class DNMVCS
 	
 	protected function init_options($options)
 	{
-		$default_options=array(
+		$default_options=[
 			'namesapce'=>'MY',
 			
 			'path_namespace'=>'app',
 			'path_autoload'=>'classes',
-			'path_framework_simple'=>'app',
-			'fullpath_framework_common'=>'common/app',
+			'fullpath_framework_common'=>'',
+			
 			'enable_simple_mode'=>true,
+		];
+		$default_options_other=[
+			'path_framework_simple'=>'app',
 			
 			'path_controller'=>'app/Controller',
-			'namespace_subcontroller'=>'Controller',
-			'path_controller_simple'=>'app/Controller',
+			'namespace_controller'=>'Controller',
+			
 			
 			'path_config'=>'config',
 			'fullpath_config_common'=>'',
-			
 			'enable_paramters'=>true,
-			
-
 			'path_view'=>'view',
 			'path_lib'=>'lib',
-		);
-		$this->options=array_merge($default_options,$options);
+		];
+		$this->options=array_merge($default_options,$default_options_other,$options);
 	}
 	//@override me
 	public function init($options=array())
@@ -1031,35 +1044,44 @@ class DNMVCS
 		$this->init_options($options);
 		
 		//override me to autoload; 
-		$this->autoload($options);
-		$this->path=DNAutoLoad::G()->path; 
-		$path=$this->path;
-		$options=$this->options;
-		$path_config=$path.rtrim($options['path_config'],'/').'/';
-		$fullpath_config_common=rtrim($options['fullpath_config_common'],'/').'/';
+		$this->autoload($this->options);
+		$this->options['path']=DNAutoLoad::G()->path; 
+		$this->path=$this->options['path'];
+		$this->path_lib=$options['path_lib'];
 		
+		$options=$this->options;
+		
+		$path_view=$this->path.rtrim($options['path_view'],'/').'/';
+		DNView::G()->init($path_view);
+		DNView::G()->setBeforeShow([$this,'onBeforeShow']);
+		
+		$path_config=$this->path.rtrim($options['path_config'],'/').'/';
+		$fullpath_config_common=rtrim($options['fullpath_config_common'],'/').'/';
 		DNConfig::G()->init($path_config,$fullpath_config_common);
 		$this->config=$config;
 		$this->isDev=DNConfig::G()->_Setting('is_dev')?true:false;
+		DNView::G()->isDev=$this->isDev;
 		
-		
-		$namespace_controller=$options['namesapce'].'\\'.$options['namespace_subcontroller'];
-		$path_controller=$path.rtrim($options['path_controller'],'/').'/';
-		
-		DNRoute::G()->init($path_controller,array(
-			'namespace_controller'=>$namespace_controller,
+		DNRoute::G()->init(array(
+			'path'=>$options['path'],
+			'namesapce'=>$options['namesapce'],
+			
+			'path_namespace'=>$options['path_namespace'],
+			
+			'path_controller'=>$options['path_controller'],
+			'namespace_controller'=>$options['namespace_controller'],
+			
 			'enable_simple_mode'=>$options['enable_simple_mode'],
 			'enable_paramters'=>$options['enable_paramters'],
 		));
 		
 		DNRoute::G()->set404(array($this,'onShow404'));	
 		
-		$path_view=$path.rtrim($options['path_view'],'/').'/';
-		DNView::G()->init($path_view);
-		DNView::G()->setBeforeShow([$this,'onBeforeShow']);
-		DNView::G()->isDev=$this->isDev;
+
 		
-		$this->path_lib=$options['path_lib'];
+		
+		
+		
 		
 		return $this;
 	}
