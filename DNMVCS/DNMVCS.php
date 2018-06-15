@@ -31,6 +31,7 @@ class DNAutoLoad
 	public $path;
 	public $namespace;
 	public $is_loaded=false;
+	public $inited=false;
 	public $options=[];
 	
 	protected $path_namespace;
@@ -39,8 +40,13 @@ class DNAutoLoad
 	protected $path_framework_common;
 	protected $enable_simple_mode=true;
 	
+
 	public function init($options=array())
 	{
+$this->inited=true;
+//if($this->is_loaded){return;}
+//$this->is_loaded=true;
+//var_dump('DNAutoLoad init');
 		$default_options=array(
 			'path'	=>'',
 			'namespace'=>'MY',
@@ -1003,9 +1009,14 @@ class DNMVCS
 	}
 	public function autoload($options=array())
 	{
-		if($this->has_autoload){return;}
-		$this->has_autoload=true;
-		DNAutoLoad::G()->init($options)->run();
+		$this->init_options($options);
+		
+		if(! DNAutoLoad::G()->inited){
+			DNAutoLoad::G()->init($this->options)->run();
+		}
+		$this->options['path']=DNAutoLoad::G()->path; 
+		$this->path_lib=$this->options['path_lib'];
+
 		return $this;
 	}
 	
@@ -1041,13 +1052,11 @@ class DNMVCS
 		DNExceptionManager::HandelAllException([$this,'onErrorException'],[$this,'onException']);
 		DNExceptionManager::HandelAllError([$this,'onErrorHandel'],[$this,'onDebugError']);
 		
-		$this->init_options($options);
+		
 		
 		//override me to autoload; 
 		$this->autoload($this->options);
-		$this->options['path']=DNAutoLoad::G()->path; 
 		$this->path=$this->options['path'];
-		$this->path_lib=$options['path_lib'];
 		
 		$options=$this->options;
 		
