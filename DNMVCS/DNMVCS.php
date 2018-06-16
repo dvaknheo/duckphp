@@ -211,8 +211,21 @@ class DNRoute
 		$this->enable_param=$options['enable_paramters'];
 		$this->enable_simple_mode=$options['enable_simple_mode'];
 		
-		$this->path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
-		$this->request_method=$_SERVER['REQUEST_METHOD'];
+		
+		if(PHP_SAPI==='cli'){
+			$argv=$_SERVER['argv'];
+			if(count($argv)>=2){
+				$this->path_info='/'.ltrim($argv[1],'/');
+				array_shift($argv);
+				array_shift($argv);
+				$this->params=$argv;
+			}
+			
+		}else{
+			$this->path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
+			$this->request_method=$_SERVER['REQUEST_METHOD'];
+		}
+		
 		array_push($this->route_handels,array($this,'defaltRouteHandle'));
 	}
 	public function _default404()
