@@ -4,7 +4,7 @@ namespace MY\Controller;
 use DNMVCS\DNMVCS as DN;
 use MY\Service as S;
 
-class DnController
+class DNController
 {
 	public function index()
 	{

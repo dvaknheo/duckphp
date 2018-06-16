@@ -794,6 +794,7 @@ class DNDBManager
 		if($this->db_r){return $this->db_r;}
 		
 		$db_config=DNConfig::G()->_Setting('db_r');
+		if(!$db_config){return $this->_DB();}
 		$db=new DNDB();
 		$db->init($db_config);
 		$this->db_r=$db;
@@ -839,7 +840,7 @@ trait DNMVCS_Glue
 	{
 		return DNView::G()->_ExitRedirect($url,$only_in_site);
 	}
-	public static function return_route_to($url,$only_in_site=true)
+	public static function return_route_to($url)
 	{
 		return DNView::G()->return_redirect(self::URL($url),$only_in_site=true);
 	}
@@ -875,9 +876,13 @@ trait DNMVCS_Glue
 	{
 		return DNExceptionManager::SetSpecialErrorCallback($classes,$callback);
 	}
-	public function setException($Exception)
+	public function setDefaultExceptionHandel($Exception)
 	{
 		return DNExceptionManager::SetException($classes,$callback);
+	}
+	public static function ThrowOn($flag,$msg,$code=0)
+	{
+		return DNException::ThrowOn($flag,$msg,$code);
 	}
 	
 	public static function H($str)
@@ -900,9 +905,11 @@ trait DNMVCS_Glue
 	{
 		return self::G()->_Import($file);
 	}
+	
 }
 trait DNMVCS_Misc
 {
+	
 	public function _Import($file)
 	{
 		$file=rtrim($file,'.php').'.php';
@@ -1042,7 +1049,14 @@ class DNMVCS
 			'path_view'=>'view',
 			'path_lib'=>'lib',
 		];
+		
+		if(!isset($options['path']) || !($options['path'])){
+			$path=realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
+			$options['path']=rtrim($path,'/').'/';
+		}
 		$this->options=array_merge($default_options,$default_options_other,$options);
+		
+		
 	}
 	//@override me
 	public function init($options=array())
@@ -1054,7 +1068,6 @@ class DNMVCS
 		
 		//override me to autoload; 
 		$this->autoload($this->options);
-		
 		$options=$this->options;
 		
 		$path_view=$this->path.rtrim($options['path_view'],'/').'/';

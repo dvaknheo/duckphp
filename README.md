@@ -1,5 +1,5 @@
-# 改了很多东西，准备改文档
 # DNMVCS
+* Guide.md 已经基本完善*
 ## DNMVCS 是什么
 一个 PHP Web 简单框架 比通常的Model Controller View 多了 Service 。
 
