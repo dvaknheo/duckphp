@@ -74,4 +74,8 @@ class MedooDBManager extends DNDBManager
 		$this->db=DNMedoo::Create($db_config);
 		return $this->db;
 	}
+	public function _DB_R()
+	{
+		return $this->_DB();
+	}
 }

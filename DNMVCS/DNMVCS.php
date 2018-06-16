@@ -43,10 +43,8 @@ class DNAutoLoad
 
 	public function init($options=array())
 	{
-$this->inited=true;
-//if($this->is_loaded){return;}
-//$this->is_loaded=true;
-//var_dump('DNAutoLoad init');
+		$this->inited=true;
+		
 		$default_options=array(
 			'path'	=>'',
 			'namespace'=>'MY',
@@ -160,6 +158,11 @@ class DNRoute
 	public $calling_class='';
 	public $calling_method='';
 	
+	protected $path_info='';
+	protected $request_method='';
+	protected $enable_post_prefix=true;
+			
+			
 	public function _URL($url=null)
 	{
 		static $basepath; //TODO do not static ?
@@ -209,7 +212,7 @@ class DNRoute
 		$this->enable_simple_mode=$options['enable_simple_mode'];
 		
 		$this->path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
-
+		$this->request_method=$_SERVER['REQUEST_METHOD'];
 		array_push($this->route_handels,array($this,'defaltRouteHandle'));
 	}
 	public function _default404()
@@ -337,9 +340,8 @@ class DNRoute
 	protected function getMethodToCall($obj,$method)
 	{
 		if(substr($method,0,2)=='__'){return null;}
-		$is_post=($_SERVER['REQUEST_METHOD']=='POST')?true:false;
-		if($is_post){
-			if(method_exists ($obj,'do_'.$method)){
+		if($this->request_method==='POST'){
+			if($this->enable_post_prefix &&method_exists ($obj,'do_'.$method)){
 				$method='do_'.$method;
 			}else if(!method_exists($obj,$method)){
 				return null;
@@ -368,7 +370,7 @@ class DNRoute
 		$method=$m[2];
 		$is_regex=$m[3];
 		$url=$m[4];
-		if($method && $method!==$_SERVER['REQUEST_METHOD']){return false;}
+		if($method && $method!==$this->request_method){return false;}
 		if(!$is_regex){
 			//if(enable_param)
 			$params=explode('/',$path_info);
