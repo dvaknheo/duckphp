@@ -23,19 +23,19 @@ class DNMedoo extends MedooFixed
 	public function fetchAll($sql)
 	{
 		$args=func_get_args();
-		unset($args[0]);
+		array_shift($args);
 		return $this->query($sql,$args)->fetchAll();
 	}
 	public function fetch($sql)
 	{
 		$args=func_get_args();
-		unset($args[0]);
+		array_shift($args);
 		return $this->query($sql,$args)->fetch();
 	}
 	public function fetchColumn($sql)
 	{
 		$args=func_get_args();
-		unset($args[0]);
+		array_shift($args);
 		return $this->query($sql,$args)->fetchColumn();
 	}
 	public function execQuick($sql)
@@ -49,14 +49,8 @@ class DNMedoo extends MedooFixed
 		$this->rowCount=$sth->rowCount();
 		return $ret;
 	}
-
-}
-class MedooDBManager extends DNDBManager
-{
-	public function _DB()
+	public static function Create($db_config)
 	{
-		if($this->db){return $this->db;}
-		$db_config=DNConfig::G()->_Setting('medoo');
 		$dsn=$db_config['dsn'];
 		list($driver,$dsn)=explode(':',$dsn);
 		$dsn=rtrim($dsn,';');
@@ -67,8 +61,17 @@ class MedooDBManager extends DNDBManager
 			$dsn_array[$key]=$value;
 		}
 		$db_config['dsn']=$dsn_array;
-		$this->db=new DNMedoo($db_config);
-		
+		return new DNMedoo($db_config);
+	}
+
+}
+class MedooDBManager extends DNDBManager
+{
+	public function _DB()
+	{
+		if($this->db){return $this->db;}
+		$db_config=DNConfig::G()->_Setting('medoo');
+		$this->db=DNMedoo::Create($db_config);
 		return $this->db;
 	}
 }

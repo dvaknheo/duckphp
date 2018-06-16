@@ -207,8 +207,9 @@ class DNRoute
 		$this->namespace=$options['namespace'].'\\'.$options['namespace_controller'];
 		$this->enable_param=$options['enable_paramters'];
 		$this->enable_simple_mode=$options['enable_simple_mode'];
-
 		
+		$this->path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
+
 		array_push($this->route_handels,array($this,'defaltRouteHandle'));
 	}
 	public function _default404()
@@ -246,11 +247,8 @@ class DNRoute
 
 	public function defaltRouteHandle()
 	{
-		$path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
-		return $this->mapPathToFunction($path_info);
-	}
-	public function mapPathToFunction($path_info)
-	{
+		$path_info=$this->path_info;
+		
 		$blocks=explode('/',$path_info);
 		array_shift($blocks);
 		$prefix=$this->path;
@@ -396,9 +394,7 @@ class DNRoute
 	}
 	public function defalt_dispath_handle()
 	{
-		//for callback do not use;
-		
-		$path_info=$_SERVER['PATH_INFO'];
+		$path_info=$this->path_info;
 		$ret=null;
 		foreach($this->routeMap as $pattern =>$callback){
 			if($this->match_path_info($pattern,$path_info)){
@@ -1013,8 +1009,9 @@ class DNMVCS
 		if(! DNAutoLoad::G()->inited){
 			DNAutoLoad::G()->init($this->options)->run();
 		}
-		$this->options['path']=DNAutoLoad::G()->path; 
-		$this->path_lib=$this->options['path'].$this->options['path_lib'].'/';
+		$this->options=array_merge($this->options,DNAutoLoad::G()->options); 
+		$this->path=$this->options['path'];
+		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
 
 		return $this;
 	}
@@ -1055,7 +1052,6 @@ class DNMVCS
 		
 		//override me to autoload; 
 		$this->autoload($this->options);
-		$this->path=$this->options['path'];
 		
 		$options=$this->options;
 		
@@ -1085,12 +1081,6 @@ class DNMVCS
 		
 		DNRoute::G()->set404(array($this,'onShow404'));	
 		
-
-		
-		
-		
-		
-		
 		return $this;
 	}
 	public function isDev()
@@ -1104,6 +1094,12 @@ class DNMVCS
 		ob_end_flush();
 		return $this;
 	}
+	public static function LoadExt($file)
+	{
+		$fullfile=__DIR__.'/'.basename($file,'.php').'.php';
+		require_once($fullfile);
+	}
+	
 }
 
 /////////////////////////
