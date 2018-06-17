@@ -1,53 +1,19 @@
 # DNMVCS
 * Guide.md 已经基本完善*
 ## DNMVCS 是什么
-一个 PHP Web 简单框架 比通常的Model Controller View 多了 Service 。
-
-拟补了 常见 Web 框架少的缺层。
-
+一个 PHP Web 简单框架 比通常的 Model Controller View 多了 Service 。拟补了 常见 Web 框架少的缺层。
 这个缺层导致了很糟糕的境地。你会发现很多人在 Contorller 里写一堆代码，或者在 Model 里写一堆代码。
+使得网站开发者专注于业务逻辑。
 
-使得网站开发者专注于业务逻辑
+另一点是为偷懒者写的。一个文件夹带走，不做一大堆外部依赖。
+小就是性能。
 
-## DNMVCS 做了什么
-* 简单可扩展灵活的路由方式
-* 简单的数据库类
-* 扩展接管默认错误处理
-* 简单的加载类
-* 简单的配置类
-所有这些仅仅是在主类里耦合。
-
-## DNMVCS 不做什么
-* ORM ，和各种屏蔽 sql 的行为，根据日志查 sql 方便多了。
-* 模板引擎，PHP本身就是模板引擎
-* Widget ， 和 MVC 分离违背
-* 系统行为 ，接管替代默认的POST，GET。
-
+## 关于 Servivce 层
+MVC 结构的时候，你们业务逻辑放在哪里？
+新手 controller ，后来的放到 model ，后来觉得 model 和数据库混一起太乱， 搞个 Dao 层吧.
+所以，Service 按业务走，model 层按数据库走，这就是 DNMVCS 的理念， 还有， 去你的 dao.
 ## DNMVCS 使用理念
-* model 按数据库表走
-* view 按页面走
-* controller 按url入口走
-* service 按业务走
-
-----
-* controller 调用 view 和service。
-* service 调用 model 和其他第三方代码。
-* model 只实现和当前表相关的操作。
-* controller ,service ,model 都可能抛出异常。
-
-如果 service 相互调用怎么办?
-
-添加后缀为 LibService 用于 service 共享调用，不对外，如MyLibService
-
-如果跨表怎么办?
-
-两种解决方案
-1. 在主表里附加
-2. 添加后缀为 XModel 用于表示这个 Model 是多个表的，如 MyXModel。
-
-库 service  和 联表 model 并没有单独目录。
-
-## DNMVCS 的简化调用流程
+DNMVCS 的最大意义是思想，只要思想在，什么框架你都可以用
 简化的 DNMVC 层级关系图
 ```
 		   /-> View
@@ -55,47 +21,65 @@ Controller --> Service ---------------------------------------------------> Mode
 					  \                \             /
 					   \-> LibService --> ExModel --/
 ```
+* Controller 按 url 入口走 调用 view 和service
+* Service 按业务走 ,调用 model 和其他第三方代码。
+* Model 按数据库表走，只实现和当前表相关的操作。有些时候
+* View 按页面走
+* 不建议 Model 抛异常
+1. 如果 Service 相互调用怎么办?
+添加后缀为 LibService 用于 Service 共享调用，不对外，如MyLibService
+2. 如果跨表怎么办?
+
+两种解决方案
+1. 在主表里附加
+2. 添加后缀为 ExModel 用于表示这个 Model 是多个表的，如 UserExModel。或者单独和数据库不一致 UserAndPlayerRelationModel
+
+## 理解 DNMVCS 
+
 Controller 目录是 处理url 路由的，调用 Service
-
 一般来说 一个 Controller 的方法调用一个 Service 方法
-
 例外的情况是 展示的内容的时候，可能要灵活拆分
-
 Service 用来作为单元测试，业务核心
-
 Service 之间不能相互调用， 为此，LibService 就是供各个 Service 调用的
-
 如 Serice1 和 Service2 的差别很小，但应用不同怎么办， 就构造一个 lib service 供这两个 service 调用
+
+## DNMVCS 做了什么
+* 简单可扩展灵活的路由方式 => 要不是为了 url 美化，我才不做这个。
+* 简单的数据库类 => 这个现在推荐整合 Medoo 食用
+* 扩展接管默认错误处理 => 你也自己处理异常错误
+* 简单的配置类  => setting 就是一个数组， config 就是动态配置，setting 
+* 简单的加载类  => 
+
+所有这些仅仅是在主类里耦合。
+
+## DNMVCS 不做什么
+* ORM ，和各种屏蔽 sql 的行为，根据日志查 sql 方便多了。 自己简单封装了 pdo 。
+* 模板引擎，PHP本身就是模板引擎
+* Widget ， 和 MVC 分离违背
+* 接管替代默认的POST，GET，SESSION 系统提供给你就用，不要折腾这些。
+
+
+
 ## DNMVCS 还要做什么
-* 符合 psr 标准的 log 类，尽管很多项目会自己写，带一个简单的无妨.
-* 调试类，同上面原因。
+
 * composer 安装模式，本人还没学会
 * 范例，例子还太简单了
-* 脚手架，决定写在 DNMVCSEx 里够了。
-* Namespace , 使用命名空间，这
+## DNMVCS 的 缺点
+1. 不优雅。万恶之源。 
+2. 调用堆栈层级太少，不够 Java 。
+3. 虽然实现了标准的 PSR 规范实现，但是还给懒鬼们开了后门。
+4. 错误报告页面很丑陋。 想华丽自己写一个。不用 IDE 的直接看就懂。
+5. 没有中间件。 重写 controller 啊，要什么中间件。
+6. 没有强大的全局依赖注入容器，只有万能的 G 函数。
+7. 没有灵活强大的 AOP ，只有万能的 G 函数。
+8. 这框架什么都没做啊。 居然只支持 PHP5.6+，甚至 PHP7 
+
 ----
-当前版本做了很多改动，后面资料已经过时
 
 ## DNMVCS 的目录结构约定
 sample 目录就是一般典型目录
 ```
 +---DNMVCS  系统目录，这里面的内容不要修改
-+---sample  站点名称
-|   +---config 配置目录
-|   |   +---config.php 配置文件
-|   |   \---setting.sample.php 设置文件
-|   +---controller 控制器目录
-|   +---lib 用到的库目录
-|   +---model Model 目录
-|   +---service Service 目录
-|   +---view
-|   |   \---_sys 系统模版目录
-|   |       +---error_404.php
-|   |       +---error_500.php
-|   |       +---error_debug.php
-|   |       +---error_exception.php
-|   \---www  Web 入口
-|           +---index.php
 ```
 config 目录 
 config.php 是各种配置，无敏感信息
@@ -124,11 +108,13 @@ DNMVCS::G(CoreMVCS::G())->init($path)->run();
 1. 把 sample/www 配置为你的站点目录。
 2. 将 sample/config/setting.sample.php 改为 sample/config/setting.php
 3. 用浏览器打开网站，出现 Hello DNMVCS 就成功了。
-4. 接下来细心看 sample 目录的代码，怎么用就基本了解了。
+4. 接下来细心看 sample 目录的代码，怎么用就基本了解了。 
+// 解压， setting.php 的 demo 打开， 直接 www/index.php?r=test/test.
 
 * 为什么要步骤2 ？ 设置文件放在版本管理里不安全。 如果没有做步骤二会怎么养？，会有一个报错提示
 * 建议做新站点的时候不要更改 sample 目录的文件，而是把 sample 目录内容复制新的目录。
 * 我不想做全站，只是做子目录， 这也可以。把 www/index.php 的文件引用调整好就行。
+
 
 
 
@@ -387,10 +373,6 @@ class DNDB extends DNSingleton
 数据库类，只有开始查询才会连接
 主从服务器，不在这里处理， 推荐用 MyCat 处理主从服务器
         public function init($config)
-        初始化数据库
-        如果 config 有 dsn ，那么用 dsn ，否则按配置来
-        public function check_connect()
-        检查是否连接
         public function getPDO()
         获得 pdo
         public function setPDO($pdo)
@@ -413,10 +395,7 @@ class DNDB extends DNSingleton
         上一结果的行数
         
         public function lastInsertId()
-        public function get($table_name,$id,$key='id')
-        public function insert($table_name,$data,$return_last_id=true)
-        public function delete($table,$id,$key='id')
-        public function update($table_name,$id,$data,$key='id')
+
 ```
 ### DNMVSEx 扩展类
 额外对 DNMVCS 的扩展类，需要手动引用
