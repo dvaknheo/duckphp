@@ -107,11 +107,11 @@ db_r， 配置读写分离的数据库
 medoo ，配置 medoo 数据库，见 和 medoo 配合这一步骤讲解。
 medoo_r 配置 medoo 只读数据库
 
-## 路由和控制器
+## 理解路由和控制器
 DNMVCS 的控制器有点像CI，不需要继承什么，就这么简单。
 甚至连名字都不用，用默认的 DNController 就够了。
 而且支持子命名空间多级目录。如果开启简单模式，也可用 __代替 \ 切分。
-DNContoller 重名了怎么办，比如我要相互引用？ 
+DNController 重名了怎么办，比如我要相互引用？ 
 1 那是你不应该这么做，2 你也可以采取名称对应的啊。
 
 DNMVCS 还支持路由映射。 
@@ -124,6 +124,39 @@ Parameter 切片会直接传递进 方法里作为参数
 
 如果你想加其他功能，可以继承 DNRoute 类。
 比如 路由不用 path_info 用 $_GET['r'] 等，很简单的。
+## 开始自己的代码
+```php
+<?php
+/// app/Controller/about.php
+class DNController
+{
+    public function foo()
+    {
+        echo MiscService::G()->foo();
+    }
+}
+// app/Service/MiscService.php
+class MiscService
+{
+    public function foo()
+    {
+        //log something.
+        $time=MiscModel::G()->getTime();
+        $ret='Now is'.$time;
+        return $ret;
+    }
+}
+// app/Model/MiscModel
+class MiscService
+{
+    public function foo()
+    {
+        return DATE(DATE_ATOM);
+    }
+}
+```
+## 重写 错误页面
+
 ## 核心函数
 这里的方法是入口函数。很初级的地方。
 

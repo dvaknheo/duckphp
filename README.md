@@ -1,5 +1,4 @@
 # DNMVCS
-* Guide.md 已经基本完善*
 ## DNMVCS 是什么
 一个 PHP Web 简单框架 比通常的 Model Controller View 多了 Service 。拟补了 常见 Web 框架少的缺层。
 这个缺层导致了很糟糕的境地。你会发现很多人在 Contorller 里写一堆代码，或者在 Model 里写一堆代码。
@@ -34,23 +33,15 @@ Controller --> Service ---------------------------------------------------> Mode
 1. 在主表里附加
 2. 添加后缀为 ExModel 用于表示这个 Model 是多个表的，如 UserExModel。或者单独和数据库不一致 UserAndPlayerRelationModel
 
-## 理解 DNMVCS 
-
-Controller 目录是 处理url 路由的，调用 Service
-一般来说 一个 Controller 的方法调用一个 Service 方法
-例外的情况是 展示的内容的时候，可能要灵活拆分
-Service 用来作为单元测试，业务核心
-Service 之间不能相互调用， 为此，LibService 就是供各个 Service 调用的
-如 Serice1 和 Service2 的差别很小，但应用不同怎么办， 就构造一个 lib service 供这两个 service 调用
-
 ## DNMVCS 做了什么
 * 简单可扩展灵活的路由方式 => 要不是为了 url 美化，我才不做这个。
 * 简单的数据库类 => 这个现在推荐整合 Medoo 食用
 * 扩展接管默认错误处理 => 你也自己处理异常错误
-* 简单的配置类  => setting 就是一个数组， config 就是动态配置，setting 
-* 简单的加载类  => 
-
+* 简单的配置类  => setting 就是一个数组， config 就是动态配置
+* 简单的加载类  => 只满足自己需要
 所有这些仅仅是在主类里耦合。
+
+##  入门(Guide.md)
 
 ## DNMVCS 不做什么
 * ORM ，和各种屏蔽 sql 的行为，根据日志查 sql 方便多了。 自己简单封装了 pdo 。
@@ -64,7 +55,9 @@ Service 之间不能相互调用， 为此，LibService 就是供各个 Service 
 
 * composer 安装模式，本人还没学会
 * 范例，例子还太简单了
+
 ## DNMVCS 的 缺点
+
 1. 不优雅。万恶之源。 
 2. 调用堆栈层级太少，不够 Java 。
 3. 虽然实现了标准的 PSR 规范实现，但是还给懒鬼们开了后门。
