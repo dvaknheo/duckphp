@@ -163,7 +163,8 @@ class MiscService
 ##
 
 run 开始使用路由。
-##
+# DNMVCS 主类
+## 入口方法
 ```
 static G($object=null)   
     G 单例函数是整个系统最有趣的地方。
@@ -204,7 +205,7 @@ URL($url=null)
     获得某路由的正确显示方式
     当你重写 DNRoute 类后，你可能需要重写这个方法来展示
 Param()
-    //获得路径切片
+    //获得路径切片 
 Setting($key)
     //读取设置
 GetConfig($key)
@@ -258,23 +259,24 @@ isDev
 
 ```
 onBeforeShow()
-在输出 view 开始前处理，默认只是关闭数据库。
+    在输出 view 开始前处理，默认只是关闭数据库。
 onShow404()
-404 回调。这里没传各种参数，需要的时候从外部获取。
+    404 回调。这里没传各种参数，需要的时候从外部获取。
 onException($ex)
-发生未处理异常的处理函数。
+    发生未处理异常的处理函数。
 onErrorException($ex)
-处理错误，显示500错误。
+    处理错误，显示500错误。
 onDebugError($errno, $errstr, $errfile, $errline)
-处理 Notice 错误。
+    处理 Notice 错误。
 onErrorHandel($errno, $errstr, $errfile, $errline)
-处理 PHP 错误
+    处理 PHP 错误
 ```
 
 # 进一步扩展
 ## 子类化和 G 方法
 G 函数，单例模式。
-来自 trait DNSingleton 
+来自 trait DNSingleton
+
 如果没有这个 G 方法 你可能会怎么写代码：
 ```
 (new MyClass())->foo();
@@ -292,7 +294,7 @@ MyClass 把 MyBaseClass 的 foo 方法替换了。
 ```
 MyBaseClass::G()->foo2();
 ```
-*但是静态方法不替换，请注意这一点。 DNMVSC::Show() 和 DNView::Show 的差异注意一下 *
+注意 * 但是静态方法不替换，请注意这一点。 DNMVSC::Show() 和 DNView::Show 的差异注意一下 *
 
 为什么不是 GetInstance ? 因为太长，这个方法太经常用。
 所以你可以扩展各种内部类以实现不同功能。
@@ -301,33 +303,36 @@ MyBaseClass::G()->foo2();
 DNRoute::G(MYRoute::G());
 这样 MYRoute 就接管了 DNRoute 了。
 
+DNView::G(AdminView::G());
+这样 AdminView 就接管了 DNView 了。
+
+## 类的分类
+DNMVCS 主类里一些函数，是调用其他类的实现。基本都可以用 G 方法替换
+
+- DNAutoLoad 加载类
+- DNRoute 路由类
+- DNView 视图类
+- DNConfig 配置类
+- DNDBManger 数据库管理类
+- DNExceptionManager 异常管理类 
+    异常管理类都是静态方法，基本上没人会接管这个类吧。要不覆盖 DNMVCS 的 init 方法呗
+
+- DNDB 简单实现的一个数据库类。封装了 PD 和 Medoo 兼容，也少了 Medoo 的很多功能。 
+- DNMedoo 这个类需要手动调用，在另外一个文件，是 Medoo 的一个简单扩展，和 DNDB 接口一致。
+
 ## 异常的快速处理
 
 使用 trait DNThrowQuickly
 ```
 MyException::ThrowOn($flag,$message,$code);
 ```
-## 类的分类
-DNMVCS 主类里一些函数，是调用其他类的实现。
-
-DNAutoLoad 加载类
-DNRoute 路由类
-DNView 视图类
-DNConfig 配置类
-
-DNDBManger 数据库管理类
-DNExceptionManager 异常管理类
-异常管理类都是静态方法，基本上没人会接管这个类吧。要不覆盖 DNMVCS 的 init 方法呗
-
-DNDB 简单实现的一个数据库类。封装了 PD 和 Medoo 兼容，也少了 Medoo 的很多功能。 
-DNMedoo 这个类需要手动调用，在另外一个文件，是 Medoo 的一个简单扩展，和 DNDB 接口一致。
-
+注意到这会使得 debug_backtrace 调用堆栈不同。
 ## 和 Medoo 配合
 
 ## 奇淫巧技
 DNMVCSEx 里有几个方法是实验性的
 
-1. 简单的实现 api 接口。
+1. 简单的实现 api 接口。 利用反射
 2. 不同的类参数，实现同一调用
 3. 我想修改 G 函数，让 DB 只能被 Model , ExModel 调用。Model 只能被 ExModel(?) ,Service 调用 。 LibService 只能被Service 调用  Service只能被 Controller 调用
 
@@ -341,10 +346,11 @@ DNView 视图类
     $this->isDev
 
 DNDBManger 数据库管理类
-这个也许会经常改动。比如用自己公司的 DB 类，要在这里做一个包装。
+    这个也许会经常改动。比如用自己公司的 DB 类，要在这里做一个包装。
 
 DNExceptionManager 异常管理类
-这个
+    这个不建议改
 DNRoute 路由类
-这应该会被扩展,加上权限判断等设置
-DNException
+    这应该会被扩展,加上权限判断等设置
+DNException 异常类
+    你自己的类应该 use  DNThrowQuickly

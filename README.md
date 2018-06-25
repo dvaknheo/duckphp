@@ -114,44 +114,7 @@ DNMVCS::G(CoreMVCS::G())->init($path)->run();
 ## 关于魔改
 ## 关于 namespace
 ## DNMVCS 的各个类说明
-### DNMVCS 入口类
-6月8日提示
-入口类做了很多更改，一般情况下用入口类的方法就够了。
-如果入口类不满足需求，那么扩展入口类，如果扩展了入口类还不满足，那么扩展用到的组件类。
-```
-class DNMVCS extends DNSingleton
-把所有函数粘合的主类
-        public static function RunQuickly($path='')
-        无参数快速启动。$path 用于子目录的情况
 
-        public function onShow404()
-        接管404 错误
-
-        public function onException($ex)
-        通用的异常，非调试状态显示 
-
-        public function onOtherException($ex)
-        语法错误的异常
-
-        public function onDebugError($errno, $errstr, $errfile)
-        Notice 级别的错误在这里，调试的时候显示
-
-        public function onBeforeShow()
-        用于显示输出之前关闭数据库。
-
-        public function onErrorHandler($errno, $errstr, $errfile, $errline)
-        接管错误报告一般不需要动。
-
-        public function init($path='',$path_common='')
-        初始化，主要的方法，扩展这个类的精髓
-
-        public function run()
-        接管路由，运行
-
-        public function isDev()
-        判断是否开发环境，只是读取一个配置选项而已。
-
-```
 ### 附属函数
 附属函数是为了节省体力活用的
 ```
@@ -159,28 +122,7 @@ H => htmlspecialchars( $str, ENT_QUOTES ); 系统函数太长了，用这个缩�
 URL =>DNRoute::URL($url); 在 controller 里用，View 里不严格要求无计算也可使用
 ```
 
-### DnSingleton 单例 trait
-各个类基本都要用到的 trait。写Model,Service 的时候可以方便的扩展。
 
-本来写成基类的，用上 PHP 的 trait 特性更自由。
-```
-trait DNSingleton
-        public static function G($url=null)
-
-        如果没有这个 G 方法 你可能会怎么写代码：
-        (new MyClass())->foo();
-        绑定 DNSingleton 后，这么写
-        MyClass::G()->foo();
-
-        另一个隐藏功能：
-        MyBaseClass::G(new MyClass())->foo();
-        MyClass 把 MyBaseClass 的 foo 方法替换了。
-
-        接下来后面这样的代码，也是调用 MyClass 的 foo2.
-        MyBaseClass::G()->foo2();
-
-        为什么不是 GetInstance ? 因为太长，这个方法太经常用。
-```
 ### DNExcpetion 错误处理类
 class DNException extends Exception
         public static function ThrowOn($flag,$message,$code=0)
@@ -361,50 +303,6 @@ class DNException extends Exception
 ```
 ### DNDB 数据库类
 ```
-
-class DNDB extends DNSingleton
-数据库类，只有开始查询才会连接
-主从服务器，不在这里处理， 推荐用 MyCat 处理主从服务器
-        public function init($config)
-        public function getPDO()
-        获得 pdo
-        public function setPDO($pdo)
-        设置 pdo 当你另外有自己 pdo 的时候
-        public function close()
-        关闭数据库，在输出 view 前关闭
-        public function quote($string)
-        编码
-        public function quote_array($array)
-        对一系列数组编码，注意 key 是没转码的
-        public function fetchAll($sql)
-        读取全部数据
-        public function fetch($sql)
-        读取一行数据
-        public function fetchColumn($sql)
-        读取一个数据
-        public function exec($sql)
-        执行sql
-        public function rowCount()
-        上一结果的行数
-        
-        public function lastInsertId()
-
-```
-### DNMVSEx 扩展类
-额外对 DNMVCS 的扩展类，需要手动引用
-```
-class DNMVCSEx extends DNMVCS
-额外功能类，目前实现了 API 接口的模式
-        public static function Service($name)
-        public static function Model($name)
-        public function _load($name,$type)
-        public static function CallAPI($service,$method,$input)
-        调用 service 的 api ，配合 $_GET ,$_SET 使用
-class DNController
-class DNService extends DNSingleton
-class DNModel extends DNSingleton
-```
-
 
 ## 还有什么要说的
 
