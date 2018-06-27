@@ -928,6 +928,11 @@ trait DNMVCS_Misc
 		$file=rtrim($file,'.php').'.php';
 		require_once($this->path_lib.$file);
 	}
+	public static function ImportSys($file)
+	{
+		$file=rtrim($file,'.php').'.php';
+		require_once(__DIR__.'/'.$file);
+	}
 	public function _H($str)
 	{
 		return htmlspecialchars( $str, ENT_QUOTES );
@@ -1015,7 +1020,7 @@ class DNMVCS
 	public $config;
 	public $isDev=false;
 	
-	public static function RunQuickly($path='')
+	public static function RunQuickly()
 	{
 		DNMVCS::G()->autoload();
 		if(class_exists('\MY\APP')){
@@ -1143,9 +1148,6 @@ trait DNThrowQuickly
 class DNException extends \Exception
 {
 	use DNThrowQuickly;
-}
-class DNControllerBase
-{
 }
 class DNService
 {

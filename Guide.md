@@ -12,7 +12,6 @@ Time Now is 2018-06-14T22:16:38+08:00
 ```
 DNMVCS Notice: no setting file!,change setting.sample.php to setting.php !
 ```
-DNMVCS Notice: no setting file!,change setting.sample.php to setting.php !
 ### 后续的工作
 新建工程怎么做？ 复制 sample 目录到你工程目录就行，修改 index.php ，使得引入正确的库
 
@@ -77,6 +76,7 @@ run(); 开始路由
 4. 魔改。
 
 ## 设置
+init([]) 方法的参数是可配置的，默认设置如下
 默认设置
 ```php
 [
@@ -88,9 +88,11 @@ run(); 开始路由
     //无命名空间下， CommonModel,CommonService 后缀的绝对加载路径用于多网站配合的情况。
 ];
 ```
-* 一些高级配置，用于魔改的请自己去翻看代码。 *
-启用无命名空间模式 ，就是不想写那么多命名空间的代码， *Service,  *Model 这样结尾的类直接自动加载
-配置文件 setting.sample.php
+** 一些高级配置，用于魔改的请自己去翻看代码。 *
+启用无命名空间模式 ，就是不想写那么多带命名空间的代码， *Service,  *Model 这样结尾的类直接自动加载
+
+工程的设置文件是样例 setting.sample.php 。
+
 ```php
 $data=array();
 $data['is_dev']=true;
@@ -106,7 +108,51 @@ db ，配置数据库。
 db_r， 配置读写分离的数据库
 medoo ，配置 medoo 数据库，见 和 medoo 配合这一步骤讲解。
 medoo_r 配置 medoo 只读数据库
-
+## 开始自己的代码
+以 /about/foo 为例，使用无命名空间模式
+首先我们要写相关控制器
+```php
+<?php
+// app/Controller/about.php
+class DNController
+{
+    public function foo()
+    {
+        echo MiscService::G()->foo();
+    }
+}
+```
+在控制器里，我们调用了 MiscService 这个服务
+MiscService 调用 MiscModel 的实现。此外，我们要调整 返回值的内容
+我们用 DNSingleton单例，避免 new .
+```php
+<?php
+// app/Service/MiscService.php
+class MiscService
+{
+    use \DNMVCS\DNSingleton;
+    public function foo()
+    {
+        //log something.
+        $time=MiscModel::G()->getTime();
+        $ret='Now is'.$time;
+        return $ret;
+    }
+}
+```
+完成 MiscModel
+```php
+// app/Model/MiscModel
+class MiscService
+{
+    use \DNMVCS\DNSingleton;
+    public function getTime()
+    {
+        return DATE(DATE_ATOM);
+    }
+}
+```
+这就是 DNMVC 下的简单流程了。其他开发类似
 ## 理解路由和控制器
 DNMVCS 的控制器有点像CI，不需要继承什么，就这么简单。
 甚至连名字都不用，用默认的 DNController 就够了。
@@ -124,39 +170,8 @@ Parameter 切片会直接传递进 方法里作为参数
 
 如果你想加其他功能，可以继承 DNRoute 类。
 比如 路由不用 path_info 用 $_GET['r'] 等，很简单的。
-## 开始自己的代码
-```php
-<?php
-/// app/Controller/about.php
-class DNController
-{
-    public function foo()
-    {
-        echo MiscService::G()->foo();
-    }
-}
-// app/Service/MiscService.php
-class MiscService
-{
-    public function foo()
-    {
-        //log something.
-        $time=MiscModel::G()->getTime();
-        $ret='Now is'.$time;
-        return $ret;
-    }
-}
-// app/Model/MiscModel
-class MiscService
-{
-    public function foo()
-    {
-        return DATE(DATE_ATOM);
-    }
-}
-```
 ## 重写 错误页面
-
+错误页面在
 ## 核心函数
 这里的方法是入口函数。很初级的地方。
 
@@ -226,6 +241,8 @@ H($str)
     html 编码 这个函数常用了。
 Import($file)
     手动导入默认lib 目录下的包含文件 函数
+ImportSys($file)
+    手动导DNMVCS目录下的包含文件 函数。DNMVCS库目录默认不包含其他非必要的文件
 TODO recordset_h($data,$cols) 给一排 sql 数组 html 编码
 TODO recordset_url($data,$cols_map) 给一排 sql 返回数组 加url
 
@@ -234,7 +251,7 @@ TODO recordset_url($data,$cols_map) 给一排 sql 返回数组 加url
 ## 非静态方法
 这里的方法偶尔会用到，所以没静态化 。
 在 controller 的构建函数，你可能会用到。
-assign 函数，都有两个模式 func($map)，和 func($key,$value); 模式
+assign 系列函数，都有两个模式 func($map)，和 func($key,$value); 模式
 方便大量导入。
 
 ```
@@ -245,7 +262,7 @@ setViewWrapper($head_file=null,$foot_file=null)
 assignViewData($key,$value=null)
     给 view 加数据，不推荐用这个函数
 showBlock($view,$data)
-    展示一块 view ，不是
+    展示一块 view ，用于调试的场合
 assignException($classes,$callback=null)
     分配异常回调。
 setDefaultExceptionHandel()
@@ -321,33 +338,39 @@ DNMVCS 主类里一些函数，是调用其他类的实现。基本都可以用 
 - DNMedoo 这个类需要手动调用，在另外一个文件，是 Medoo 的一个简单扩展，和 DNDB 接口一致。
 
 ## 异常的快速处理
-
 使用 trait DNThrowQuickly
 ```
 MyException::ThrowOn($flag,$message,$code);
 ```
+等价于下面，少写了好多东西
+```
+if($flag){throw new MyException($message,$code);}
+```
+
 注意到这会使得 debug_backtrace 调用堆栈不同。
 ## 和 Medoo 配合
+DNMedoo.php 就是用 Medoo 代替默认的 DNDB 类。
+但是用 DNMedoo 前你要手动添加 Medoo 的引用和手动引用 DNMedoo.php
+然后 DNDBManager::G(MedooDBManager::G());
+DNMedoo 类的除了默认的 Medoo 方法，还扩展了几个方法
 
 ## 奇淫巧技
 DNMVCSEx 里有几个方法是实验性的
 
 1. 简单的实现 api 接口。 利用反射
 2. 不同的类参数，实现同一调用
-3. 我想修改 G 函数，让 DB 只能被 Model , ExModel 调用。Model 只能被 ExModel(?) ,Service 调用 。 LibService 只能被Service 调用  Service只能被 Controller 调用
+3. 我想修改 G 函数，让 DB 只能被 Model , ExModel 调用。Model 只能被 ExModel,Service 调用 。 LibService 只能被Service 调用  Service只能被 Controller 调用
 
 # 扩展你的类
 DNAutoLoad 加载类
 DNAutoLoad 不建议扩展。因为你要有新类进来才有能处理加载关系，不如自己再加个加载类呢。
 
 DNConfig 配置类
-
+    DNConfig 类获得配置设置
 DNView 视图类
     $this->isDev
-
 DNDBManger 数据库管理类
-    这个也许会经常改动。比如用自己公司的 DB 类，要在这里做一个包装。
-
+    这个也许会经常改动。比如用自己公司的 DB 类，要在这里做一个封装。
 DNExceptionManager 异常管理类
     这个不建议改
 DNRoute 路由类
