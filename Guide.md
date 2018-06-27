@@ -168,8 +168,9 @@ DNMVCS 支持 Paramter，你可以在设置里关掉。
 Parameter 切片会直接传递进 方法里作为参数
 路由表里，用正则切分会传递进方法，不管是否开启 enable_paramters
 
-如果你想加其他功能，可以继承 DNRoute 类。
-比如 路由不用 path_info 用 $_GET['r'] 等，很简单的。
+如果你想加其他功能，可以继承 DNRoute 类。 
+比如 路由不用 path_info 用 $_GET['_r'] 等，很简单的。 DNSimpleRoute 库已经实现。
+
 ## 重写 错误页面
 错误页面在
 ## 核心函数
@@ -360,6 +361,7 @@ DNMVCSEx 里有几个方法是实验性的
 1. 简单的实现 api 接口。 利用反射
 2. 不同的类参数，实现同一调用
 3. 我想修改 G 函数，让 DB 只能被 Model , ExModel 调用。Model 只能被 ExModel,Service 调用 。 LibService 只能被Service 调用  Service只能被 Controller 调用
+DNDebugSingleton 已经实现。
 
 # 扩展你的类
 DNAutoLoad 加载类

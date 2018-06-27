@@ -7,9 +7,14 @@ use \Exception;
 
 trait DNSingleton
 {
+	protected static function _before_instance($object)
+	{
+		//for override;
+	}
 	protected static $_instances=[];
 	public static function G($object=null)
 	{
+		self::_before_instance($object);
 		$class=get_called_class();
 		if($object){
 			self::$_instances[$class]=$object;
@@ -199,7 +204,7 @@ class DNRoute
 			
 			'path_contorller'=>'app/Controller',
 			'namespace_controller'=>'Controller',
-
+			'default_controller_class'=>'DNController',
 		);
 
 		$options=array_merge($default_options,$options);
@@ -210,6 +215,8 @@ class DNRoute
 		$this->namespace=$options['namespace'].'\\'.$options['namespace_controller'];
 		$this->enable_param=$options['enable_paramters'];
 		$this->enable_simple_mode=$options['enable_simple_mode'];
+		
+		$this->default_class=$options['default_controller_class'];
 		
 		
 		if(PHP_SAPI==='cli'){
@@ -783,9 +790,7 @@ class DNDBManager
 	
 	public $db=null;
 	public $db_r=null;
-	public function __construct()
-	{
-	}
+
 	public function _DB()
 	{
 		if($this->db){return $this->db;}
@@ -1066,6 +1071,7 @@ class DNMVCS
 			'enable_paramters'=>true,
 			'path_view'=>'view',
 			'path_lib'=>'lib',
+			'default_controller_class'=>'DNController',
 		];
 		
 		if(!isset($options['path']) || !($options['path'])){
