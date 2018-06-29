@@ -166,7 +166,7 @@ class DNRoute
 	protected $path_info='';
 	protected $request_method='';
 	protected $enable_post_prefix=true;
-			
+	protected $disable_default_class_outside=false;
 			
 	public function _URL($url=null)
 	{
@@ -217,8 +217,9 @@ class DNRoute
 		$this->enable_simple_mode=$options['enable_simple_mode'];
 		
 		$this->default_class=$options['default_controller_class'];
-		
-		
+		$this->disable_default_class_outside=isset($options['disable_default_class_outside'])?$options['disable_default_class_outside']:$this->disable_default_class_outside;
+		$this->enable_post_prefix=isset($options['enable_post_prefix'])?$options['enable_post_prefix']:$this->enable_post_prefix;
+
 		if(PHP_SAPI==='cli'){
 			$argv=$_SERVER['argv'];
 			if(count($argv)>=2){
@@ -308,6 +309,9 @@ class DNRoute
 			$this->calling_path=$path_info;
 		}
 		
+		if($this->disable_default_class_outside && $current_class===$this->default_controller && $method===$this->default_method){
+			return null;
+		}
 		$method=$method?$method:$this->default_method;
 		$current_class=$current_class?$current_class:$this->default_controller;
 		
@@ -1025,13 +1029,14 @@ class DNMVCS
 	public $config;
 	public $isDev=false;
 	
-	public static function RunQuickly()
+	public static function RunQuickly($options=array())
 	{
-		DNMVCS::G()->autoload();
-		if(class_exists('\MY\APP')){
-			return DNMVCS::G(\MY\APP::G())->init()->run();
+		DNMVCS::G()->autoload($options);
+		$framework_class=isset($options['framework_class'])?$options['framework_class']:'\\MY\\Framework\\Main';
+		if(class_exists($framework_class)){
+			return DNMVCS::G($framework_class::G())->init($options)->run();
 		}else{
-			return DNMVCS::G()->init()->run();
+			return DNMVCS::G()->init($options)->run();
 		}
 	}
 	public function autoload($options=array())
