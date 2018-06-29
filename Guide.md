@@ -16,7 +16,8 @@ DNMVCS Notice: no setting file!,change setting.sample.php to setting.php !
 新建工程怎么做？ 复制 sample 目录到你工程目录就行，修改 index.php ，使得引入正确的库
 
 还有哪些没检查的？ 服务器配置 path_info 对了没有。 数据库也没配置和检查。
-想要更多东西，可以检出  dnmvcs-full 这个工程，里面有全部的测试
+想要更多东西，可以检出  dnmvcs-full 这个工程，里面有全部的测试样例。
+
 开始学习吧
 
 ### 目录结构
@@ -171,22 +172,26 @@ Parameter 切片会直接传递进 方法里作为参数
 如果你想加其他功能，可以继承 DNRoute 类。 
 比如 路由不用 path_info 用 $_GET['_r'] 等，很简单的。 DNSimpleRoute 库已经实现。
 
+路由这块很多东西，300 行代码不是这么简单描述的
 ## 重写 错误页面
-错误页面在
-## 核心函数
-这里的方法是入口函数。很初级的地方。
+错误页面在 view/_sys 里。你可以修改相应的错误页面方法。
+比如 404 是 view/404.php
+高级一点，你可以 扩展 DNMVCS 的主类实现
 
 ##
+run 开始使用路由。 如果你不想要路由。只想要特定结构的目录， 不调用 run 就可以了。
+比如我一个样例，只想要 db 类等等。
 
-run 开始使用路由。
 # DNMVCS 主类
-## 入口方法
+## 基本方法
 ```
 static G($object=null)   
     G 单例函数是整个系统最有趣的地方。
     传入 $object 将替代默认的单例。
-static RunQuickly($path='')
+	比 PHP-DI简洁
+static RunQuickly($options)
     DNMVCS::RunQuickly () 相当于 DNMVCS::G()->init()->run();结束。
+	默认配置 framework_class \\MY\\Framework\\Main 如果有这个类，就替换这个类进行。
 autoload($path,$options=array())
     自动加载。处理自动加载机制。 得找到自动加载才把子类化的文件载入进来，所以这个方法单列出来。
 init($options=[]]) 
@@ -210,7 +215,7 @@ Show($data=array(),$view=null)
     * 高级开发者注意，这里的 $view 为空是在静态方法里处理的，子类化需要注意 *
 DB()
     返回数据库,实质调用 DBManager::G()->_DB();
-    数据库 DNManager 里配置的
+    数据库管理类 DNManager 里配置的
 DB_W()
     返回写入的数据 实质调用 DBManager::G()->_DB();
     默认和 DB() 函数一样
@@ -239,21 +244,25 @@ ThrowOn($flag,$message,$code);
     如果是你自己的异常类 ，可以 use DNThrowQuickly 实现 ThrowOn 静态方法。
 
 H($str)
-    html 编码 这个函数常用了。
+    html 编码 这个函数常用，所以缩写。
 Import($file)
     手动导入默认lib 目录下的包含文件 函数
 ImportSys($file)
     手动导DNMVCS目录下的包含文件 函数。DNMVCS库目录默认不包含其他非必要的文件
-TODO recordset_h($data,$cols) 给一排 sql 数组 html 编码
-TODO recordset_url($data,$cols_map) 给一排 sql 返回数组 加url
+	因为需求不常用，所以没自动加载
+	比如在调试状态下的奇淫巧技：限定各 G 函数的调用。
+	
+TODO 代码未完成 recordset_h($data,$cols) 给一排 sql 数组 html 编码
+TODO 代码未完成  recordset_url($data,$cols_map) 给一排 sql 返回数组 加url
 
 ```
 
 ## 非静态方法
 这里的方法偶尔会用到，所以没静态化 。
 在 controller 的构建函数，你可能会用到。
-assign 系列函数，都有两个模式 func($map)，和 func($key,$value); 模式
+assign 系列函数，都有两个模式 func($map)，和 func($key,$value) 模式
 方便大量导入。
+
 
 ```
 assignRoute($key,$value=null)
@@ -312,7 +321,7 @@ MyClass 把 MyBaseClass 的 foo 方法替换了。
 ```
 MyBaseClass::G()->foo2();
 ```
-注意 * 但是静态方法不替换，请注意这一点。 DNMVSC::Show() 和 DNView::Show 的差异注意一下 *
+注意 * 但是静态方法不替换，请注意这一点。 DNMVSC::Show() 和 DNView::Show) 的差异注意一下 *
 
 为什么不是 GetInstance ? 因为太长，这个方法太经常用。
 所以你可以扩展各种内部类以实现不同功能。
@@ -358,12 +367,13 @@ DNMedoo 类的除了默认的 Medoo 方法，还扩展了几个方法
 ## 奇淫巧技
 DNMVCSEx 里有几个方法是实验性的
 
-1. 简单的实现 api 接口。 利用反射
-2. 不同的类参数，实现同一调用
+1. 简单的实现 api 接口。 
+2. 利用反射不同的类参数，实现同一调用
 3. 我想修改 G 函数，让 DB 只能被 Model , ExModel 调用。Model 只能被 ExModel,Service 调用 。 LibService 只能被Service 调用  Service只能被 Controller 调用
-DNDebugSingleton 已经实现。
+ 系统里的 DNDebugSingleton 已经实现。详细可以自己去子类化
 
 # 扩展你的类
+```
 DNAutoLoad 加载类
 DNAutoLoad 不建议扩展。因为你要有新类进来才有能处理加载关系，不如自己再加个加载类呢。
 
@@ -378,4 +388,5 @@ DNExceptionManager 异常管理类
 DNRoute 路由类
     这应该会被扩展,加上权限判断等设置
 DNException 异常类
-    你自己的类应该 use  DNThrowQuickly
+    你自己的异常类应该 use  DNThrowQuickly 没必要继承 DNException
+```
