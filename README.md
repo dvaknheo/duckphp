@@ -23,7 +23,7 @@ DNMVCS 的最大意义是思想，只要思想在，什么框架你都可以用
 
 ```
 		   /-> View
-Controller --> Service ---------------------------------------------------> Model   
+Controller --> Service ---------------------------------> Model   
 					  \                \             /
 					   \-> LibService --> ExModel --/
 ```
@@ -316,7 +316,7 @@ assign 系列函数，都有两个模式 func(\$map)，和 func(\$key,\$value) �
 
 
 ```
-assignRoute($key,$value=null)
+assignRoute($route,$callback=null)
     给路由加回调。
 setViewWrapper($head_file=null,$foot_file=null)
     给输出 view 加页眉页脚
@@ -372,7 +372,7 @@ MyClass 把 MyBaseClass 的 foo 方法替换了。
 ```
 MyBaseClass::G()->foo2();
 ```
-注意 * 但是静态方法不替换，请注意这一点。 DNMVSC::Show() 和 DNView::Show) 的差异注意一下 *
+注意 *但是静态方法不替换，请注意这一点。 DNMVSC::Show() 和 DNView::Show) 的差异注意一下*
 
 为什么不是 GetInstance ? 因为太长，这个方法太经常用。
 所以你可以扩展各种内部类以实现不同功能。
@@ -392,6 +392,7 @@ DNMVCS 主类里一些函数，是调用其他类的实现。基本都可以用 
 - DNView 视图类
 - DNConfig 配置类
 - DNDBManger 数据库管理类
+    这里主要是数据库的扩展
 - DNExceptionManager 异常管理类 
     异常管理类都是静态方法，基本上没人会接管这个类吧。要不覆盖 DNMVCS 的 init 方法呗
 
