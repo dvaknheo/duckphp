@@ -1,4 +1,4 @@
-# DNMVCS
+# DNMVCS 介绍
 ## DNMVCS 是什么
 一个 PHP Web 简单框架 
 * 主要卖点：比通常的 Model Controller View 多了 Service 。拟补了 常见 Web 框架少的缺层。
@@ -8,17 +8,19 @@
 * 为偷懒者写的。只需要引用一个文件，不做一大堆外部依赖。composer 安装正在学习中。
 * 小就是性能。
 * 替代 Codeiginter 这个PHP4 时代的框架，只限于新工程。
-* 不仅仅支持全站路由，还支持局部路径路由和非 path_info 路由
+* 不仅仅支持全站路由，还支持局部路径路由和非 path_info 路由,不需要配服务器也能用
 * 扩展灵活方便，魔改容易
 
 ## 关于 Servivce 层
 MVC 结构的时候，你们业务逻辑放在哪里？
-新手 controller ，后来的放到 model ，后来觉得 model 和数据库混一起太乱， 搞个 DAO 层吧.
-所以，Service 按业务走，model 层按数据库走，这就是 DNMVCS 的理念， 还有， 去你的 DAO.
-## DNMVCS 使用理念
+新手放在 Controller ，后来的放到 Model ，后来觉得 model 和数据库混一起太乱， 搞个 DAO 层吧。
+可是 一般的 PHP 框架不提供这个功能。
+所以，Service 按业务走，Model 层按数据库走，这就是 DNMVCS 的理念。
 DNMVCS 的最大意义是思想，只要思想在，什么框架你都可以用
+你可以不用 DNMVCS 实现 Controller-Service-Model 架构。
+只要有这个思路就成功
+## 简化的 DNMVC 层级关系图
 
-简化的 DNMVC 层级关系图
 ```
 		   /-> View
 Controller --> Service ---------------------------------------------------> Model   
@@ -32,11 +34,9 @@ Controller --> Service ---------------------------------------------------> Mode
 * 不建议 Model 抛异常
 1. 如果 Service 相互调用怎么办?
 添加后缀为 LibService 用于 Service 共享调用，不对外，如MyLibService
-2. 如果跨表怎么办?
-
-两种解决方案
-1. 在主表里附加
-2. 添加后缀为 ExModel 用于表示这个 Model 是多个表的，如 UserExModel。或者单独和数据库不一致如取名 UserAndPlayerRelationModel
+2. 如果跨表怎么办?，两种解决方案
+    1. 在主表里附加
+    2. 添加后缀为 ExModel 用于表示这个 Model 是多个表的，如 UserExModel。或者单独和数据库不一致如取名 UserAndPlayerRelationModel
 
 ## DNMVCS 做了什么
 * 简单可扩展灵活的路由方式 => 要不是为了 URL 美化，我才不做这个。
@@ -243,7 +243,7 @@ static G($object=null)
 	比 PHP-DI简洁
 static RunQuickly($options)
     DNMVCS::RunQuickly () 相当于 DNMVCS::G()->init()->run();结束。
-	默认配置 framework_class \\MY\\Framework\\Main 如果有这个类，就替换这个类进行。
+    默认配置 framework_class \\MY\\Framework\\Main 如果有这个类，就替换这个类进行。
 autoload($path,$options=array())
     自动加载。处理自动加载机制。 得找到自动加载才把子类化的文件载入进来，所以这个方法单列出来。
 init($options=[]]) 
@@ -441,3 +441,4 @@ DNRoute 路由类
 DNException 异常类
     你自己的异常类应该 use  DNThrowQuickly 没必要继承 DNException
 ```
+## 常见问题
