@@ -275,7 +275,7 @@ showBlock($view,$data)
     展示一块 view ，用于调试的场合
 assignException($classes,$callback=null)
     分配异常回调。
-setDefaultExceptionHandel()
+setDefaultExceptionHandel($calllback)
     接管默认的异常处理
 isDev
 实际读设置里的，判断是否在开发状态。
