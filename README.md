@@ -303,10 +303,6 @@ ImportSys($file)
     手动导DNMVCS目录下的包含文件 函数。DNMVCS库目录默认不包含其他非必要的文件
 	因为需求不常用，所以没自动加载
 	比如在调试状态下的奇淫巧技：限定各 G 函数的调用。
-	
-TODO 代码未完成 recordset_h($data,$cols) 给一排 sql 数组 html 编码
-TODO 代码未完成  recordset_url($data,$cols_map) 给一排 sql 返回数组 加url
-
 ```
 
 ## 非静态方法
@@ -330,6 +326,10 @@ setDefaultExceptionHandel($calllback)
     接管默认的异常处理
 isDev
 实际读设置里的，判断是否在开发状态。
+recordset_h($data,$cols=[])
+    给  sql 查询返回数组 html 编码，如果 cols 为空，则全部字段
+recordset_url($data,$cols_map) 
+    给sql 返回数组 加url 比如  url_edit=>"edit/{id}",则该行添加 url_edit =>"edit/1" 等类似。
 
 ```
 ## 事件方法
@@ -386,7 +386,7 @@ DNView::G(AdminView::G());
 
 ## 类的分类
 DNMVCS 主类里一些函数，是调用其他类的实现。基本都可以用 G 方法替换
-
+DNMVCS 的各子类都是独立的。现实应该不会拿出来单用吧
 - DNAutoLoad 加载类
 - DNRoute 路由类
 - DNView 视图类

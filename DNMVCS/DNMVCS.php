@@ -948,10 +948,34 @@ trait DNMVCS_Misc
 	}
 	public function recordset_url($data,$cols_map)
 	{
+		//todo more quickly;
+		if($data===[]){return $data;}
+		if($cols_map===[]){return $data;}
+		$keys=array_keys($data[0]);
+		array_walk($keys,function(&$val,$k){$val='{'.$val.'}';});
+		foreach($data as &$v){
+			foreach($cols_map as $k=>$r){
+				$values=array_values($v);
+				$v[$k]=str_replace($keys,$values,$r);
+				
+			}
+		}
+		unset($v);
+		return $data;
 	}
-	public function recordset_h($data,$cols)
+	public function recordset_h($data,$cols=array())
 	{
-	
+		if($data===[]){return $data;}
+		$cols=is_array($cols)?$cols:array($cols);
+		if($cols===[]){
+			$cols=array_keys($data[0]);
+		}
+		foreach($data as &$v){
+			foreach($cols as $k){
+				$v[$k]=htmlspecialchars( $v[$k], ENT_QUOTES );
+			}
+		}
+		return $data;
 	}
 	
 }
@@ -1137,13 +1161,7 @@ class DNMVCS
 		DNRoute::G()->run();
 		ob_end_flush();
 		return $this;
-	}
-	public static function LoadExt($file)
-	{
-		$fullfile=__DIR__.'/'.basename($file,'.php').'.php';
-		require_once($fullfile);
-	}
-	
+	}	
 }
 
 /////////////////////////
