@@ -1056,7 +1056,7 @@ class DNMVCS
 	public static function RunQuickly($options=array())
 	{
 		DNMVCS::G()->autoload($options);
-		$framework_class=isset($options['framework_class'])?$options['framework_class']:'\\MY\\Framework\\Main';
+		$framework_class=isset($options['framework_class'])?$options['framework_class']:'\\MY\\Framework\\App';
 		if(class_exists($framework_class)){
 			return DNMVCS::G($framework_class::G())->init($options)->run();
 		}else{

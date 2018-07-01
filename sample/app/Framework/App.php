@@ -1,6 +1,6 @@
 <?php
 namespace MY\Framework;
-class Main extends \DNMVCS\DNMVCS
+class App extends \DNMVCS\DNMVCS
 {
 	public function init($options=array())
 	{

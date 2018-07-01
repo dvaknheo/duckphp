@@ -243,7 +243,7 @@ static G($object=null)
 	比 PHP-DI简洁
 static RunQuickly($options)
     DNMVCS::RunQuickly () 相当于 DNMVCS::G()->init()->run();结束。
-    默认配置 framework_class \\MY\\Framework\\Main 如果有这个类，就替换这个类进行。
+    默认配置 framework_class \\MY\\Framework\\App 如果有这个类，就替换这个类进行。
 autoload($path,$options=array())
     自动加载。处理自动加载机制。 得找到自动加载才把子类化的文件载入进来，所以这个方法单列出来。
 init($options=[]]) 
