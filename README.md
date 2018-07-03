@@ -222,13 +222,15 @@ Parameter 切片会直接传递进 方法里作为参数
 路由表里，用正则切分会传递进方法，不管是否开启 enable_paramters
 
 如果你想加其他功能，可以继承 DNRoute 类。 
-比如 路由不用 path_info 用 $_GET['_r'] 等，很简单的。 DNSimpleRoute 库已经实现。
+比如 路由不用 path_info 用 $_GET['_r'] 等，很简单的。
+simple_route_key 开启 _GET 模式路由（原先是在单独类里实现，后来整合了
 
 路由这块很多东西，300 行代码不是这么简单描述的
 ## 重写 错误页面
 错误页面在 view/_sys 里。你可以修改相应的错误页面方法。
 比如 404 是 view/404.php
 高级一点，你可以 扩展 DNMVCS 的主类实现
+
 
 ##
 run 开始使用路由。 如果你不想要路由。只想要特定结构的目录， 不调用 run 就可以了。
@@ -454,21 +456,24 @@ DNMVCSEx 里有几个方法是实验性的
  系统里的 DNDebugSingleton 已经实现。详细可以自己去子类化
 
 ## 扩展你的类
-
+DNMVCS 是用各自独立的类合起来的
+各类接口可参加 DNInterface.php，没去加载，因为只有参考意义，没实际意义。
+各类之间是独立的
 ```
 DNAutoLoad 加载类
-DNAutoLoad 不建议扩展。因为你要有新类进来才有能处理加载关系，不如自己再加个加载类呢。
-
-DNConfig 配置类
-    DNConfig 类获得配置设置
+    DNAutoLoad 不建议扩展。因为你要有新类进来才有能处理加载关系，不如自己再加个加载类呢。
+DNRoute 路由类
+    这应该会被扩展,加上权限判断等设置
 DNView 视图类
     $this->isDev
+DNConfig 配置类
+    DNConfig 类获得配置设置
 DNDBManger 数据库管理类
     这个也许会经常改动。比如用自己公司的 DB 类，要在这里做一个封装。
 DNExceptionManager 异常管理类
     这个不建议改
-DNRoute 路由类
-    这应该会被扩展,加上权限判断等设置
+DNMVCS
+    、、
 DNException 异常类
     你自己的异常类应该 use  DNThrowQuickly 没必要继承 DNException
 ```
@@ -479,10 +484,6 @@ DNInterface
     子类化参考
 DNMedoo
     使用 DNMedoo  的类
-DNSimpleRoute
-这个类用 $_GET['_r'] 替换默认 PATH_INFO 来实现路由
-class DNSimpleRoute extends \DNMVCS\DNRoute
-
 
 DNMVCEx  一个奇淫巧技的参考类，本来能工作，后来的版本调整了不可工作了
 

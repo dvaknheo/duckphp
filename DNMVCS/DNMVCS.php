@@ -34,10 +34,10 @@ class DNAutoLoad
 	use DNSingleton;
 	
 	public $path;
-	public $namespace;
-	public $is_loaded=false;
-	public $inited=false;
 	public $options=[];
+	protected $namespace;
+	protected $is_loaded=false;
+	protected $is_inited=false;
 	
 	protected $path_namespace;
 	protected $path_autoload;
@@ -48,7 +48,7 @@ class DNAutoLoad
 
 	public function init($options=array())
 	{
-		$this->inited=true;
+		$this->is_inited=true;
 		
 		$default_options=array(
 			'path'	=>'',
@@ -81,6 +81,10 @@ class DNAutoLoad
 		$this->enable_simple_mode=$options['enable_simple_mode'];
 		
 		return $this;
+	}
+	public function isInited()
+	{
+		return $this->is_inited;
 	}
 	public function run()
 	{
@@ -120,7 +124,7 @@ class DNAutoLoad
 				
 			}else{
 				if(!$path_common){return;}
-				//if(!$path_common){throw new Exception('CommonService/CommonModel need path_common');} 
+				//ref: if(!$path_common){throw new Exception('CommonService/CommonModel need path_common');} 
 				$file=$path_common.strtolower($m[2]).'/'.$class.'.php';
 			}
 			if (!$file || !file_exists($file)) {return;}
@@ -151,7 +155,7 @@ class DNRoute
 	protected $params=[];
 	public $options;
 	
-	public $namespace='MY';
+	protected $namespace='MY';
 	protected $default_class='DNController';
 	
 	protected $default_controller='Main';
@@ -167,9 +171,14 @@ class DNRoute
 	protected $request_method='';
 	protected $enable_post_prefix=true;
 	protected $disable_default_class_outside=false;
-			
+	
+	protected $simple_route_key=null;
 	public function _URL($url=null)
 	{
+		if($this->simple_route_key!==null){
+			//for simple_route_mode
+			return $this->_url_simple_mode($url);
+		}
 		static $basepath; //TODO do not static ?
 		if(null===$url){return $_SERVER['REQUEST_URI'];}
 		if(''===$url){return $_SERVER['REQUEST_URI'];}
@@ -189,6 +198,18 @@ class DNRoute
 			return $basepath.$path_info.$url;
 		}
 		return $basepath.$url;
+	}
+	protected function _url_simple_mode()
+	{
+		$path=parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
+		if($url===null || $url==='' || $url==='/'){return $path;}
+		$url='/'.ltrim($url,'/');
+		$c=parse_url($url,PHP_URL_PATH);
+		$q=parse_url($url,PHP_URL_QUERY);
+		
+		$q=$q?'&'.$q:''; //TODO if this->route_key= 
+		$url=$path.'?'.$this->simple_route_key.'='.$c.$q;
+		return $url;
 	}
 	public function _Param()
 	{
@@ -219,6 +240,7 @@ class DNRoute
 		$this->default_class=$options['default_controller_class'];
 		$this->disable_default_class_outside=isset($options['disable_default_class_outside'])?$options['disable_default_class_outside']:$this->disable_default_class_outside;
 		$this->enable_post_prefix=isset($options['enable_post_prefix'])?$options['enable_post_prefix']:$this->enable_post_prefix;
+		$this->enable_post_prefix=isset($options['simple_route_key'])?$options['simple_route_key']:$this->simple_route_key;
 
 		if(PHP_SAPI==='cli'){
 			$argv=$_SERVER['argv'];
@@ -228,17 +250,22 @@ class DNRoute
 				array_shift($argv);
 				$this->params=$argv;
 			}
-			
 		}else{
-			$this->path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
-			$this->request_method=$_SERVER['REQUEST_METHOD'];
+			if($this->simple_route_key===null){
+				$this->path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
+				$this->request_method=$_SERVER['REQUEST_METHOD'];
+			}else{
+				$path_info=isset($_GET[$this->simple_route_key])?$_GET[$this->simple_route_key]:'';
+				$path_info='/'.ltrim($path_info,'/');
+				$this->path_info=$path_info;
+			}
 		}
 		
 		array_push($this->route_handels,array($this,'defaltRouteHandle'));
 	}
 	public function _default404()
 	{
-		throw new Excepion("DNMVCS Notice: 404 , Develop should override this");
+		DNSytemExcepion("DNMVCS Notice: 404 , Develop should override this");
 	}
 	public function set404($callback)
 	{
@@ -428,7 +455,7 @@ class DNRoute
 					list($class,$method)=explode('$',$callback);
 					$obj=new $class;
 					$callback=array($obj,$method);
-					//DNException::ThrowOn(true,"...for debug");
+					//DN::ThrowOn(true,"...for debug");
 				}
 				$ret=$callback;
 			}
@@ -473,7 +500,7 @@ class DNView
 	public function _ExitRedirect($url,$only_in_site=true)
 	{
 		if($only_in_site && parse_url($url,PHP_URL_HOST)){
-			throw new \Exception('safe check false');
+			DNSystemException::ThrowOn(true,' DnSystem safe check false');
 		}
 		header('location: '.$url);
 		exit;
@@ -574,7 +601,7 @@ class DNConfig
 				//throw new \Exception('DNMVCS Notice: no setting file!,change setting.sample.php to setting.php');
 			}
 			if(!is_array($setting)){
-				throw new \Exception('DNMVCS Notice: need return array !');
+				DNSystemException::ThrowOn(true,'DNMVCS Notice: need return array !');
 				exit;
 			}
 			$setting=array_merge($base_setting,$setting);
@@ -582,7 +609,7 @@ class DNConfig
 		return isset($setting[$key])?$setting[$key]:null;
 	}
 	
-	public function _Get($key,$file_basename='config')
+	public function _GetConfig($key,$file_basename='config')
 	{
 		$config=$this->_Load($file_basename);
 		return isset($config[$key])?$config[$key]:null;
@@ -622,7 +649,7 @@ class DNDB
 	{
 		if($this->pdo){return;}
 		if(empty($this->config)){
-			throw new \Exception('DNMVCS Notice: database not setting!');
+			DNSystemException::ThrowOn(true,'DNMVCS Notice: database not setting!');
 		}
 		$config=$this->config;
 		$this->pdo= new PDO($config['dsn'], $config['user'], $config['password'],array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION));
@@ -682,7 +709,7 @@ class DNDB
 		$ret=$sth->fetchColumn();
 		return $ret;
 	}
-	public function execQuick($sql,$compa_medoo=array())
+	public function execQuick($sql)
 	{
 		$this->check_connect();
 		$args=func_get_args();
@@ -719,7 +746,7 @@ class DNExceptionManager
 	public static $OnError;
 	public static $OnDevError;
 	
-	public static $specail_exceptions=array();
+	public static $SpecailExceptionMap=array();
 	
 	public static function HandelAllException($OnErrorException,$OnException)
 	{
@@ -730,11 +757,11 @@ class DNExceptionManager
 		
 		self::SetException($OnException);
 	}
-	public static function SetSpecialErrorCallback($class,$callback)
+	public static function AssignExceptionHandel($class,$callback)
 	{
 		$class=is_string($class)?array($class=>$callback):$class;
 		foreach($class as $k=>$v){
-			self::$specail_exceptions[$k]=$v;
+			self::$SpecailExceptionMap[$k]=$v;
 		}
 	}
 	public static function SetException($OnException)
@@ -748,8 +775,8 @@ class DNExceptionManager
 			
 		}
 		$class=get_class($ex);
-		if(isset(self::$specail_exceptions[$class])){
-			return (self::$specail_exceptions[$class])($ex);
+		if(isset(self::$SpecailExceptionMap[$class])){
+			return (self::$SpecailExceptionMap[$class])($ex);
 		}
 		return (self::$OnException)($ex);
 		
@@ -862,9 +889,9 @@ trait DNMVCS_Glue
 	{
 		return DNView::G()->_ExitRedirect($url,$only_in_site);
 	}
-	public static function return_route_to($url)
+	public static function ExitRedirectRouteTo($url)
 	{
-		return DNView::G()->return_redirect(self::URL($url),$only_in_site=true);
+		return DNView::G()->_ExitRedirect(self::URL($url),$only_in_site=true);
 	}
 	public function setViewWrapper($head_file=null,$foot_file=null)
 	{
@@ -886,7 +913,7 @@ trait DNMVCS_Glue
 	}
 	public static function GetConfig($key,$file_basename='config')
 	{
-		return DNConfig::G()->_Get($key,$file_basename);
+		return DNConfig::G()->_GetConfig($key,$file_basename);
 	}
 	public static function LoadConfig($file_basename)
 	{
@@ -894,9 +921,9 @@ trait DNMVCS_Glue
 	}
 	
 	//exception manager
-	public function assignException($classes,$callback=null)
+	public function assignExceptionHandel($classes,$callback=null)
 	{
-		return DNExceptionManager::SetSpecialErrorCallback($classes,$callback);
+		return DNExceptionManager::AssignExceptionHandel($classes,$callback);
 	}
 	public function setDefaultExceptionHandel($Exception)
 	{
@@ -1067,7 +1094,7 @@ class DNMVCS
 	{
 		$this->init_options($options);
 		
-		if(! DNAutoLoad::G()->inited){
+		if(! DNAutoLoad::G()->isInited()){
 			DNAutoLoad::G()->init($this->options)->run();
 		}
 		$this->options=array_merge($this->options,DNAutoLoad::G()->options); 
@@ -1175,6 +1202,10 @@ trait DNThrowQuickly
 	}
 }
 class DNException extends \Exception
+{
+	use DNThrowQuickly;
+}
+class DNSystemException extends \Exception
 {
 	use DNThrowQuickly;
 }
