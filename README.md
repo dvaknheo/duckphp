@@ -408,13 +408,42 @@ MyException::ThrowOn($flag,$message,$code);
 ```
 if($flag){throw new MyException($message,$code);}
 ```
-
 注意到这会使得 debug_backtrace 调用堆栈不同。
-## 和 Medoo 配合
+## DB 类
+DNMVCS 自带了一个简单的 DB 类
+DN::DB()得到的就是这个 DNDB 类
+DB 的配置在 setting.sample.php 里有。
+
+下面主要说 DB 类的用法
+```
+close
+    关闭数据库
+quote
+    转码
+quote_array
+    对数组转码
+fetchAll
+fetch
+fetchColumn
+    这三个是动态参数
+($sql,...$args);
+    获得的是数组（其实有时候还是觉得直接用 object $v->id 之类方便多了。
+
+execQuick
+    执行 pdo 结果，为什么不用 exec ? 因为  medoo用了。
+rowCount
+    获得
+insert($table_name,$data,$return_last_id=true)
+    获得插入数据。
+```
+### DB类 和 Medoo 配合
 DNMedoo.php 就是用 Medoo 代替默认的 DNDB 类。
-但是用 DNMedoo 前你要手动添加 Medoo 的引用和手动引用 DNMedoo.php
+但是用 DNMedoo 前你要手动添加 Medoo 的引用
+DN::ImportSys('DNMedoo');
+
 然后 DNDBManager::G(MedooDBManager::G());
-DNMedoo 类的除了默认的 Medoo 方法，还扩展了几个方法
+这样 DN::DB() 得到的就是
+DNMedoo 类的除了默认的 Medoo 方法，还扩展了 DNDB 类同名方法。
 
 ## 奇淫巧技
 DNMVCSEx 里有几个方法是实验性的
@@ -424,7 +453,8 @@ DNMVCSEx 里有几个方法是实验性的
 3. 我想修改 G 函数，让 DB 只能被 Model , ExModel 调用。Model 只能被 ExModel,Service 调用 。 LibService 只能被Service 调用  Service只能被 Controller 调用
  系统里的 DNDebugSingleton 已经实现。详细可以自己去子类化
 
-# 扩展你的类
+## 扩展你的类
+
 ```
 DNAutoLoad 加载类
 DNAutoLoad 不建议扩展。因为你要有新类进来才有能处理加载关系，不如自己再加个加载类呢。
@@ -442,4 +472,22 @@ DNRoute 路由类
 DNException 异常类
     你自己的异常类应该 use  DNThrowQuickly 没必要继承 DNException
 ```
+## 其他文件
+DNDebugSinglton
+    
+DNInterface
+    子类化参考
+DNMedoo
+    使用 DNMedoo  的类
+DNSimpleRoute
+这个类用 $_GET['_r'] 替换默认 PATH_INFO 来实现路由
+class DNSimpleRoute extends \DNMVCS\DNRoute
+
+
+DNMVCEx  一个奇淫巧技的参考类，本来能工作，后来的版本调整了不可工作了
+
 ## 常见问题
+
+- Session 要怎么处理 
+    - 一般来说 Session 的处理，放在 SessionService 里，这是唯一和状态有关的 Service 例外。
+    
