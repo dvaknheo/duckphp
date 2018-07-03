@@ -973,7 +973,7 @@ trait DNMVCS_Misc
 	{
 		return htmlspecialchars( $str, ENT_QUOTES );
 	}
-	public function recordset_url($data,$cols_map)
+	public function recordset_url(&$data,$cols_map)
 	{
 		//todo more quickly;
 		if($data===[]){return $data;}
@@ -990,7 +990,7 @@ trait DNMVCS_Misc
 		unset($v);
 		return $data;
 	}
-	public function recordset_h($data,$cols=array())
+	public function recordset_h(&$data,$cols=array())
 	{
 		if($data===[]){return $data;}
 		$cols=is_array($cols)?$cols:array($cols);
