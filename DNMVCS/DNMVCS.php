@@ -12,7 +12,7 @@ trait DNSingleton
 		//for override;
 	}
 	protected static $_instances=[];
-	public static function G($object=null)
+	public static function G($object=null,$args=[])
 	{
 		self::_before_instance($object);
 		$class=get_called_class();
@@ -22,7 +22,9 @@ trait DNSingleton
 		}
 		$me=isset(self::$_instances[$class])?self::$_instances[$class]:null;
 		if(null===$me){
-			$me=new $class();
+			$ref = new \ReflectionClass($class);
+			$me=$ref->newInstanceArgs($args);
+			//$me=new $class();
 			self::$_instances[$class]=$me;
 		}
 		return $me;

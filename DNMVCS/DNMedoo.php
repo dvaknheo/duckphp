@@ -49,7 +49,12 @@ class DNMedoo extends MedooFixed
 		$this->rowCount=$sth->rowCount();
 		return $ret;
 	}
-	public static function Create($db_config)
+	
+
+}
+class MedooDBManager extends DNDBManager
+{
+	public static function GetMedooInstance($db_config)
 	{
 		$dsn=$db_config['dsn'];
 		list($driver,$dsn)=explode(':',$dsn);
@@ -63,15 +68,11 @@ class DNMedoo extends MedooFixed
 		$db_config['dsn']=$dsn_array;
 		return new DNMedoo($db_config);
 	}
-
-}
-class MedooDBManager extends DNDBManager
-{
 	public function _DB()
 	{
 		if($this->db){return $this->db;}
 		$db_config=DNConfig::G()->_Setting('medoo');
-		$this->db=DNMedoo::Create($db_config);
+		$this->db=self::GetMedooInstance($db_config);
 		return $this->db;
 	}
 	public function _DB_R()
