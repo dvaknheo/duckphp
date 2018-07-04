@@ -22,10 +22,10 @@ DNMVCS 的最大意义是思想，只要思想在，什么框架你都可以用
 ## 简化的 DNMVC 层级关系图
 
 ```
-		   /-> View
+           /-> View
 Controller --> Service ---------------------------------> Model   
-					  \                \             /
-					   \-> LibService --> ExModel --/
+                      \                \             /
+                       \-> LibService --> ExModel --/
 ```
 * Controller 按 url 入口走 调用 view 和service
 * Service 按业务走 ,调用 model 和其他第三方代码。
@@ -77,27 +77,29 @@ DNMVCS Notice: no setting file!,change setting.sample.php to setting.php !
 ```
 +---app // psr-4 标准的自动加载目录
 |   +---Controller  // 路由控制器
-|   |       Main.php    // 默认入口文件
-|   +---Model
+|   |       Main.php    // 默认控制器入口文件
+|   +---FrameWork   // 基类放在这里
+|   |       App.php    // 默认框架入口文件
+|   +---Model       // 模型放在里
 |   |       TestModel.php   // 测试 Model 
-|   \---Service
+|   \---Service     // 服务放在这里
 |           TestService.php //测试 Service
-+---classes
++---classes         //自动加载的类，放在这里
 |       ForAutoLoad.php // 测试自动加载
-+---config
++---config          // 配置文件 放这里
 |       config.php  // 配置，目前是空数组
 |       setting.php // 设置，敏感文件，不放在版本管理里
 |       setting.sample.php  // 设置，对比来
-+---lib
++---lib             // 手动加载的文件放这里
 |       ForImport.php //用于测试导入文件
-+---view
++---view            // 视图文件放这里
 |   |   main.php  // 视图文件
-|   \---_sys
+|   \---_sys        // 系统错误视图文件放这里
 |           error-404.php  // 404 
 |           error-500.php  // 500 出错了
 |           error-debug.php // 调试的时候显示的视图
 |           error-exception.php // 出异常了，和 500 不同是 这里是未处理的异常。
-\---www
+\---www             //  网站目录放这里
         index.php // 主页面
 ```
 解读
@@ -141,7 +143,7 @@ init([]) 方法的参数是可配置的，默认设置如下
     //无命名空间下， CommonModel,CommonService 后缀的绝对加载路径用于多网站配合的情况。
 ];
 ```
-** 一些高级配置，用于魔改的请自己去翻看代码。 *
+** 一些高级配置，用于魔改的请自己暂时去翻看代码。 *
 启用无命名空间模式 ，就是不想写那么多带命名空间的代码， *Service,  *Model 这样结尾的类直接自动加载
 
 工程的设置文件是样例 setting.sample.php 。
@@ -210,6 +212,7 @@ class MiscService
 DNMVCS 的控制器有点像CI，不需要继承什么，就这么简单。
 甚至连名字都不用，用默认的 DNController 就够了。
 而且支持子命名空间多级目录。如果开启简单模式，也可用 __代替 \ 切分。
+
 DNController 重名了怎么办，比如我要相互引用？ 
 1 那是你不应该这么做，2 你也可以采取名称对应的啊。
 
@@ -312,21 +315,20 @@ ImportSys($file)
 在 controller 的构建函数，你可能会用到。
 assign 系列函数，都有两个模式 func(\$map)，和 func(\$key,\$value) 模式方便大量导入。
 
-
 ```
 assignRoute($route,$callback=null)
     给路由加回调。
 setViewWrapper($head_file=null,$foot_file=null)
     给输出 view 加页眉页脚
 assignViewData($key,$value=null)
-    给 view 加数据，不推荐用这个函数
+    给 view 加数据， 这函数用于特定数据，不推荐用这个函数
 showBlock($view,$data)
     展示一块 view ，用于调试的场合
-assignException($classes,$callback=null)
+assignExceptionHandel($classes,$callback=null)
     分配异常回调。
 setDefaultExceptionHandel($calllback)
     接管默认的异常处理
-isDev
+isDev()
 实际读设置里的，判断是否在开发状态。
 recordset_h($data,$cols=[])
     给  sql 查询返回数组 html 编码，如果 cols 为空，则全部字段
@@ -386,6 +388,9 @@ DNRoute::G(MYRoute::G());
 DNView::G(AdminView::G());
 这样 AdminView 就接管了 DNView 了。
 
+G 函数的缺点：IDE 上没法做类型提示，这对一些人来说很重要。
+
+service , model 上 用  static 函数代替 G 函数实例方式或许也是一种办法
 ## 类的分类
 DNMVCS 主类里一些函数，是调用其他类的实现。基本都可以用 G 方法替换
 DNMVCS 的各子类都是独立的。现实应该不会拿出来单用吧
@@ -400,7 +405,21 @@ DNMVCS 的各子类都是独立的。现实应该不会拿出来单用吧
 
 - DNDB 简单实现的一个数据库类。封装了 PD 和 Medoo 兼容，也少了 Medoo 的很多功能。 
 - DNMedoo 这个类需要手动调用，在另外一个文件，是 Medoo 的一个简单扩展，和 DNDB 接口一致。
-
+DNMVCSEx 的类和方法需要手动引入文件才行，你需要  DNMVCS::ImportSys()
+- trait DNWrapper 
+    DNWrapper::W(MyOBj::G()); 包裹一个对象，在 __call 里做一些操作，然后 call_the_object($method,$args)
+- DNDebugService
+    调试状态下，允许 service 调用 libservice 不允许 service 调用 service ,不允许 model 调用 service
+- DNDebugModel
+    调试状态下，只允许 Service 或者 ExModel 调用 Model
+- DNDebugDBManager
+    包裹 DNDBManger::G(DNDebugDBManager::W(DNDBManger::G())); 后，实现
+    不允许 Controller, Service 调用 DB
+DNDebugAPI
+    几个杂项类
+- CallAPI
+- GetCalledAssoc
+-calledWithMyAssoc
 ## 异常的快速处理
 使用 trait DNThrowQuickly
 ```
@@ -435,9 +454,8 @@ execQuick
     执行 pdo 结果，为什么不用 exec ? 因为  medoo用了。
 rowCount
     获得
-insert($table_name,$data,$return_last_id=true)
-    获得插入数据。
 ```
+DB 类没扩展 update,insert delete 功能，因为怕和 medoo 的冲突。，todo 把这几个功能放在 ex 里。
 ### DB类 和 Medoo 配合
 DNMedoo.php 就是用 Medoo 代替默认的 DNDB 类。
 但是用 DNMedoo 前你要手动添加 Medoo 的引用
@@ -478,14 +496,14 @@ DNException 异常类
     你自己的异常类应该 use  DNThrowQuickly 没必要继承 DNException
 ```
 ## 其他文件
-DNDebugSinglton
+- DNDebugSinglton
     
-DNInterface
+- DNInterface
     子类化参考
-DNMedoo
+- DNMedoo
     使用 DNMedoo  的类
 
-DNMVCEx  一个奇淫巧技的参考类，本来能工作，后来的版本调整了不可工作了
+DNMVCEx  一个奇淫巧技的参考类
 
 ## 常见问题
 
