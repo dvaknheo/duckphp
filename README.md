@@ -256,7 +256,7 @@ init($options=[])
 run()
     开始路由，执行。这个方法拆分出来是为了，不想要路由，只是为了加载一些类的需求的。
 ```
-TODO  'framework_class'=>'\MY\\Framework\App'  可以在 init 方法里用，使得替换默认方法
+'framework_class'=>'\MY\\Framework\App'  可以在 init 方法里用，使得替换默认类。
 ##
 
 ## 常用静态方法方法

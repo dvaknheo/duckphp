@@ -1174,11 +1174,27 @@ class DNMVCS
 		DNExceptionManager::HandelAllException([$this,'onErrorException'],[$this,'onException']);
 		DNExceptionManager::HandelAllError([$this,'onErrorHandel'],[$this,'onDebugError']);
 	}
+	protected function checkOverrideFrameworkClass($options)
+	{
+		if(!isset($options['framework_class'])){return null;}
+		$framework_class=$options['framework_class'];
+		$self=get_called_class();
+		$framework_class=ltrim($framework_class,'\\');
+		$self=ltrim($self,'\\');
+		if($framework_class!=$self){
+			$this->autoload($options);
+			//$framework_class='\\'.$framework_class;
+			return DNMVCS::G($framework_class::G())->init($options);
+		}
+		return null;
+	}
 	//@override me
 	public function init($options=array())
 	{
-		$this->initExceptionManager();
+		$object=$this->checkOverrideFrameworkClass($options);
+		if($object){return $object;}
 		
+		$this->initExceptionManager();
 		//override me to autoload; 
 		$this->autoload($options);
 		
