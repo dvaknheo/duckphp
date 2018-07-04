@@ -28,7 +28,7 @@ trait DNWrapper
 class DNDebugService
 {
 	use DNSingleton;
-	public static function _before_instance($object)
+	public static function _before_instance($object,$args=[])
 	{
 		if(!DNMVCS::G()->isDev){return;}
 		$class=get_called_class();
@@ -63,7 +63,7 @@ class DNDebugService
 class DNDebugModel
 {
 	use DNSingleton;
-	public static function _before_instance($object)
+	public static function _before_instance($object,$args=[])
 	{
 	
 		if(!DNMVCS::G()->isDev){return;}

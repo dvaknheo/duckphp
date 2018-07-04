@@ -7,7 +7,7 @@ use \Exception;
 
 trait DNSingleton
 {
-	protected static function _before_instance($object)
+	protected static function _before_instance($object,$args=[])
 	{
 		//for override;
 	}
@@ -22,9 +22,12 @@ trait DNSingleton
 		}
 		$me=isset(self::$_instances[$class])?self::$_instances[$class]:null;
 		if(null===$me){
-			$ref = new \ReflectionClass($class);
-			$me=$ref->newInstanceArgs($args);
-			//$me=new $class();
+			if($args===[]){
+				$me=new $class();
+			}else{
+				$ref=new \ReflectionClass($class);
+				$me=$ref->newInstanceArgs($args);
+			}
 			self::$_instances[$class]=$me;
 		}
 		return $me;
