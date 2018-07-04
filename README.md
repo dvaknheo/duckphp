@@ -8,12 +8,12 @@
 * 为偷懒者写的。只需要引用一个文件，不做一大堆外部依赖。composer 安装正在学习中。
 * 小就是性能。
 * 替代 Codeiginter 这个PHP4 时代的框架，只限于新工程。
-* 不仅仅支持全站路由，还支持局部路径路由和非 path_info 路由,不需要配服务器也能用
+* 不仅仅支持全站路由，还支持局部路径路由和非 PATH_INFO 路由,不需要配服务器也能用
 * 耦合松散，扩展灵活方便，魔改容易
 
 ## 关于 Servivce 层
 MVC 结构的时候，你们业务逻辑放在哪里？
-新手放在 Controller ，后来的放到 Model ，后来觉得 model 和数据库混一起太乱， 搞个 DAO 层吧。
+新手放在 Controller ，后来的放到 Model ，后来觉得 Model 和数据库混一起太乱， 搞个 DAO 层吧。
 可是 一般的 PHP 框架不提供这个功能。
 所以，Service 按业务走，Model 层按数据库走，这就是 DNMVCS 的理念。
 DNMVCS 的最大意义是思想，只要思想在，什么框架你都可以用
@@ -24,10 +24,10 @@ DNMVCS 的最大意义是思想，只要思想在，什么框架你都可以用
 ```
            /-> View
 Controller --> Service ---------------------------------> Model   
-                      \                \             /
+                      \               \              /
                        \-> LibService --> ExModel --/
 ```
-* Controller 按 url 入口走 调用 view 和service
+* Controller 按 URL 入口走 调用 view 和service
 * Service 按业务走 ,调用 model 和其他第三方代码。
 * Model 按数据库表走，只实现和当前表相关的操作。有些时候
 * View 按页面走
@@ -39,12 +39,23 @@ Controller --> Service ---------------------------------> Model
     2. 添加后缀为 ExModel 用于表示这个 Model 是多个表的，如 UserExModel。或者单独和数据库不一致如取名 UserAndPlayerRelationModel
 
 ## DNMVCS 做了什么
-* 简单可扩展灵活的路由方式 => 要不是为了 URL 美化，我才不做这个。
-* 简单的数据库类 => 这个现在推荐整合 Medoo 食用
-* 扩展接管默认错误处理 => 你也自己处理异常错误
-* 简单的配置类  => setting 就是一个数组， config 就是动态配置
-* 简单的加载类  => 只满足自己需要.
-所有这些仅仅是在主类里耦合。
+* 简单可扩展灵活的路由方式
+    * 全站 PATH_INFO 模式
+    * 局部 PATH_INFO 模式
+    * GET 参数的路由模式
+    * 路由表的路由模式
+* 简单可扩充的数据库管理类
+    * 支持主从(手动)
+    * 可扩充
+    * 轻松整合 Medoo
+* 简单的视图
+    * PHP 本身就是模版
+    * 轻松处理页眉页脚
+* 扩展接管默认错误处理
+* 简单的配置类
+    * setting 就是一个数组， config 就是动态配置
+* 简单的加载类 
+* 所有这些仅仅是在主类里耦合。
 
 ## 还有什么要说的
 
@@ -67,8 +78,8 @@ DNMVCS Notice: no setting file!,change setting.sample.php to setting.php !
 ### 后续的工作
 新建工程怎么做？ 复制 sample 目录到你工程目录就行，修改 index.php ，使得引入正确的库
 
-还有哪些没检查的？ 服务器配置 path_info 对了没有。 数据库也没配置和检查。
-想要更多东西，可以检出  dnmvcs-full 这个工程，里面有全部的测试样例。
+还有哪些没检查的？ 服务器配置 PATH_INFO 对了没有。 数据库也没配置和检查。
+想要更多东西，可以检出  dnmvcs-full 这个工程，里面有全部的测试样例。 *尚未完成*
 
 开始学习吧
 
@@ -202,11 +213,12 @@ db_r， 配置读写分离的数据库
 配置，非敏感信息
 
 ## 开始自己的代码
-以 /about/foo 为例，使用无命名空间模式
+以 /about/foo 为例，使用无命名空间模式，这省掉一些代码
 首先我们要写相关控制器
+
+::app/Controller/about.php
 ```php
 <?php
-// app/Controller/about.php
 class DNController
 {
     public function foo()
@@ -215,12 +227,14 @@ class DNController
     }
 }
 ```
-在控制器里，我们调用了 MiscService 这个服务
+在控制器里，我们调用了 MiscService 这个服务。
 MiscService 调用 MiscModel 的实现。此外，我们要调整 返回值的内容
-我们用 DNSingleton单例，避免 new .
+我们用 DNSingleton单例。
+
+::app/Service/MiscService.php
 ```php
 <?php
-// app/Service/MiscService.php
+// 
 class MiscService
 {
     use \DNMVCS\DNSingleton;
@@ -234,8 +248,11 @@ class MiscService
 }
 ```
 完成 MiscModel
+Model 类是实现基本功能的
+
+::app/Model/MiscModel
 ```php
-// app/Model/MiscModel
+// 
 class MiscService
 {
     use \DNMVCS\DNSingleton;
@@ -245,7 +262,8 @@ class MiscService
     }
 }
 ```
-这就是 DNMVC 下的简单流程了。其他开发类似
+这就是 DNMVC 下的简单流程了。其他开发类似。
+
 ## 理解路由和控制器
 DNMVCS 的控制器有点像CI，不需要继承什么，就这么简单。
 甚至连名字都不用，用默认的 DNController 就够了。
@@ -593,4 +611,5 @@ W($object);
 
 - Session 要怎么处理 
     - 一般来说 Session 的处理，放在 SessionService 里，这是唯一和状态有关的 Service 例外。
-    
+- 后台里，我要判断权限，只有几个公共方法能无权限访问
+    - 构造函数里获得 $method=DNRoute::G()->calling_method; 然后进行后处理
