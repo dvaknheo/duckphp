@@ -233,9 +233,7 @@ simple_route_key 开启 _GET 模式路由（原先是在单独类里实现，后
 比如 404 是 view/404.php
 高级一点，你可以 扩展 DNMVCS 的主类实现
 
-
-##
-run 开始使用路由。 如果你不想要路由。只想要特定结构的目录， 不调用 run 就可以了。
+run() 方法开始使用路由。 如果你不想要路由。只想要特定结构的目录， 不调用 run 就可以了。
 比如我一个样例，只想要 db 类等等。
 
 # DNMVCS 主类
@@ -244,11 +242,10 @@ run 开始使用路由。 如果你不想要路由。只想要特定结构的目
 static G($object=null,$args=[])   
     G 单例函数是整个系统最有趣的地方。
     传入 $object 将替代默认的单例。
-	比 PHP-DI简洁
+	比 PHP-DI简洁，后面的文档 会有详细介绍
 static RunQuickly($optionss=[])
     DNMVCS::RunQuickly ($options) 相当于 DNMVCS::G()->init($options)->run();
-    额外的不同是多出这个额外配置。
-    默认配置 'framework_class'=>'\MY\\Framework\App' 如果有这个类，就替换这个类进行。
+    默认配置 'framework_class'=>'\MY\\Framework\App' 如果有 framework_class 那就用来子类化。
 autoload($optionss=[])
     自动加载。处理自动加载机制。 得找到自动加载才把子类化的文件载入进来，所以这个方法单列出来。
 init($options=[])
@@ -259,7 +256,7 @@ init($options=[])
 run()
     开始路由，执行。这个方法拆分出来是为了，不想要路由，只是为了加载一些类的需求的。
 ```
-
+TODO  'framework_class'=>'\MY\\Framework\App'  可以在 init 方法里用，使得替换默认方法
 ##
 
 ## 常用静态方法方法
@@ -269,7 +266,7 @@ run()
 
 Show($data=array(),$view=null)
     显示视图 实质调用 DNView::G()->_Show();
-    视图的文件在 ::/view 目录底下.
+    视图的文件在 ::view 目录底下.
     为什么数据放前面，DN::Show(get_defined_vars());把 controller 的变量都整合进来，并用默认路径作为 view 文件。
     高级开发者注意，这里的 $view 为空是在静态方法里处理的，子类化需要注意
 DB()
@@ -283,7 +280,8 @@ DB_R()
 URL($url=null)
     获得调整路由后的url地址 实质调用DNRoute::G()->_URL();
     当你重写 DNRoute 类后，你可能需要重写这个方法来展示
-    比如 simple_route_key 开启后， url('class/method?foo=bar') 将会是 ?r=class/method&foo=bar ，而不是 /class/method?foo=bar
+    比如 simple_route_key 开启后， URL('class/method?foo=bar') 
+    将会是 ?r=class/method&foo=bar ，而不是 /class/method?foo=bar
 _Parameters()
     获得路径切片 实质调用 DNRoute::G()->_URL();
     当用正则匹配路由的时候，匹配结果放在这里。
@@ -305,7 +303,8 @@ ExitJson($ret)
 ExitRedirect($url)
     跳转到另一个url 并且退出 实质调用 DNView::G()->ExitRedirect();
 ExitRouteTo($url)
-    跳转到 URL()函数包裹的 url。应用到 DNView::G()->ExitRedirect(); 和 DNRoute::G()->URL.
+    跳转到 URL()函数包裹的 url。
+    应用到 DNView::G()->ExitRedirect(); 和 DNRoute::G()->URL
     高级开发者注意，这是静态方法里处理的，子类化需要注意
 ThrowOn($flag,$message,$code);
     如果 flag 成立则抛出 DNException 异常。 调用 DNException::ThrowOn
@@ -387,8 +386,9 @@ DNMVCS 的各子类都是独立的。现实中应该不会拿出来单用吧
 ## trait DNSingleton | 子类化和 G 方法
 ```
 trait DNSingleton
-    G();
-    _before_instance($object,$args=[])
+    static G();
+    static _before_instance($object)
+    static _create_instance($class)
 ```
 G 函数，单例模式。
 来自 
@@ -410,30 +410,41 @@ MyClass 把 MyBaseClass 的 foo 方法替换了。
 ```
 MyBaseClass::G()->foo2();
 ```
-注意 *但是静态方法不替换，请注意这一点。 DNMVSC::Show() 和 DNView::Show) 的差异注意一下*
+**注意但是静态方法不替换，请注意这一点。 DNMVSC::Show() 和 DNView::Show) 的差异注意一下**
 
 为什么不是 GetInstance ? 因为太长，这个方法太经常用。
-所以你可以扩展各种内部类以实现不同功能。
-比如你要自己的路由方法在 autoload 类后，init 里。
 
-DNRoute::G(MYRoute::G());
+所以你可以扩展各种内部类以实现不同功能。
+
+比如你要自己的路由方法在 autoload 类后，init 里。
+```php
+public function init($options=[])
+{
+    parent::init($options);
+    DNRoute::G(MYRoute::G());
+}
+```
 这样 MYRoute 就接管了 DNRoute 了。
 
-DNView::G(AdminView::G());
-这样 AdminView 就接管了 DNView 了。
+DNView::G(AdminView::G()); 这样 AdminView 就接管了 DNView 了。
 
 G 函数的缺点：IDE 上没法做类型提示，这对一些人来说很重要。
 
 service , model 上 用  static 函数代替 G 函数实例方式或许也是一种办法
 
-G函数的第二个参数， 用于传递构造函数的参数。
+ _before_instance($object) 被 G 函数调用，返回 $object。用于一些扩展
+
+ _create_instance($class) 被 G 函数调用，用于创建实例，如果你的类构造方法带参数，需要重新写这个方法
 
 ## DNAutoLoad 加载类
 DNAutoLoad 不建议扩展。因为你要有新类进来才有能处理加载关系，不如自己再加个加载类呢。
-    init()
 
+    init(options)
+    run()
 ## DNRoute 路由类
     这应该会被扩展,加上权限判断等设置
+    
+    路由类是很强大扩展性很强的类。
 ## DNView 视图类
     $this->isDev
 ## DNConfig 配置类
@@ -450,19 +461,25 @@ MyException::ThrowOn($flag,$message,$code);
 if($flag){throw new MyException($message,$code);}
 ```
 注意到这会使得 debug_backtrace 调用堆栈不同。
-你自己的异常类应该 use DNThrowQuickly 没必要继承 DNException
-原因是只处理你自己熟悉的异常
+你自己的异常类应该 use DNThrowQuickly 没必要继承 DNException。
+原因是你应该只处理你自己熟悉的异常
 
 ## DNDBManger 数据库管理类
     这里主要是数据库的扩展
     这个也许会经常改动。比如用自己公司的 DB 类，要在这里做一个封装。
+
+    installDBClass($callback);   $callback($config) 返回 DB 实例。方便扩展
+    $db
+    $db_r 
 ## DB 类
 DNMVCS 自带了一个简单的 DB 类
 DN::DB()得到的就是这个 DNDB 类
 DB 的配置在 setting.sample.php 里有。
-
+db 和 db_r ，如果是读取的数据库，则用 db_r 字段。
+DNDB 简单实现的一个数据库类。封装了 PDO， 和 Medoo 兼容，也少了 Medoo 的很多功能。
 下面主要说 DB 类的用法
 ```
+pdo 这是个公开成员变量而不是方法，是的，你可以操作 pdo
 close
     关闭数据库
 quote
@@ -479,9 +496,9 @@ fetchColumn
 execQuick
     执行 pdo 结果，为什么不用 exec ? 因为  medoo用了。
 rowCount
-    获得
+    获得结果行数
 ```
-DB 类没扩展 update,insert delete 功能，因为怕和 medoo 的冲突。，todo 把这几个功能放在 ex 里。
+DB 类没扩展 update,insert delete 功能，因为怕和 medoo 的冲突。，todo 把这几个功能放在 DNDBEx 里。
 # 额外的类
 ## DNInterface.php
 提供了 DNMVCS.php 里扩展类的接口， PHP 的接口实质只是参照作用。所以没引入。
@@ -491,19 +508,20 @@ DNMedoo 是 Medoo 的一个简单扩展，和 DNDB 接口一致。
 DNMedoo 类的除了默认的 Medoo 方法，还扩展了 DNDB 类同名方法。
 
 ### 使用方法：
-在你的 DNMVCS->init() 后面段加上
+在你的 DNMVCS->init() 后面段加上下面代码，
+使得 DNMedoo 替换 DNDB
 ```php
 self::Import('Medoo');
 self::ImportSys('DNMedoo');	
 \DNMVCS\DNDBManager::G()->installDBClass(['\DNMVCS\DNMedoo','CreateDBInstance']);
 ```
+DNMedoo extends Medoo implement IDNDB.
 
-DNDB 简单实现的一个数据库类。封装了 PD 和 Medoo 兼容，也少了 Medoo 的很多功能。
 
 ## DNDebugSingleton.php  | 额外类应用和说明
 DNMVCSEx 的类和方法需要手动引入文件才行，你需要  DNMVCS::ImportSys('DNMVCSEx')
 
-DNMVCSEx 有的奇淫巧技
+奇淫巧技
 我想让 DB 只能被 Model , ExModel 调用。Model 只能被 ExModel,Service 调用 。 LibService 只能被Service 调用  Service只能被 Controller 调用
 
 可以,你的 Service  继承 DNDebugService. Model 继承 DNDebugModel  初始化里 加这一句
@@ -514,7 +532,10 @@ DNMVCSEx 有的奇淫巧技
 
 为什么不作为框架的默认行为。 主要考虑性能因数，而且自由，无依赖性
 ## trait DNWrapper 
-    DNWrapper::W(MyOBj::G()); 包裹一个对象，在 __call 里做一些操作，然后 call_the_object($method,$args)
+W($object);
+    
+    DNWrapper::W(MyOBj::G()); 包裹一个对象，在 __call 里做一些操作，然后调用 call_the_object($method,$args)
+
 ## DNDebugService
     调试状态下，允许 service 调用 libservice 不允许 service 调用 service ,不允许 model 调用 service
 ## DNDebugModel
@@ -522,23 +543,12 @@ DNMVCSEx 有的奇淫巧技
 ## DNDebugDBManager
     包裹 DNDBManger::G(DNDebugDBManager::W(DNDBManger::G())); 后，实现
     不允许 Controller, Service 调用 DB
-DNDebugAPI
+## DNDebugAPI
     几个杂项类
 - CallAPI
 - GetCalledAssoc
--calledWithMyAssoc
+- calledWithMyAssoc
 
-
-
-## 其他文件
-- DNDebugSinglton
-    
-- DNInterface
-    子类化参考
-- DNMedoo
-    使用 DNMedoo  的类
-
-DNMVCEx  一个奇淫巧技的参考类
 
 ## 常见问题
 

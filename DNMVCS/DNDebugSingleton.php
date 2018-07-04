@@ -4,11 +4,11 @@ trait DNWrapper
 {
 	protected static $objects=[];
 	protected $obj;
-	protected function wrap_the_object($object)
+	protected function _wrap_the_object($object)
 	{
 		$this->obj=$object;
 	}
-	protected function call_the_object($method,$args)
+	protected function _call_the_object($method,$args)
 	{
 		return call_user_func_array([$this->obj,$method],$args);
 	}
@@ -19,7 +19,7 @@ trait DNWrapper
 			return self::$objects[$caller];
 		}
 		$self=new $caller();
-		$self->wrap_the_object($object);
+		$self->_wrap_the_object($object);
 		self::$objects[$caller]=$self;
 		return $self;
 	} 
@@ -28,9 +28,9 @@ trait DNWrapper
 class DNDebugService
 {
 	use DNSingleton;
-	public static function _before_instance($object,$args=[])
+	public static function _before_instance($object)
 	{
-		if(!DNMVCS::G()->isDev){return;}
+		if(!DNMVCS::G()->isDev){return $object;}
 		$class=get_called_class();
 		list($_0,$_1,$caller)=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,3);
 		$caller_class=$caller['class'];
@@ -58,15 +58,16 @@ class DNDebugService
 				
 			}while(false);
 		}
+		return $object;
 	}	
 }
 class DNDebugModel
 {
 	use DNSingleton;
-	public static function _before_instance($object,$args=[])
+	public static function _before_instance($object)
 	{
-	
-		if(!DNMVCS::G()->isDev){return;}
+		
+		if(!DNMVCS::G()->isDev){return $object;}
 		list($_0,$_1,$caller)=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,3);
 		$caller_class=$caller['class'];
 		$namespace=DNMVCS::G()->options['namespace'];
@@ -76,6 +77,7 @@ class DNDebugModel
 			if(substr($caller_class,0,0-strlen("ExModel"))=="ExModel"){break;}
 			DNMVCS::ThrowOn(true,"Model Can Only call by Service or ExModel!");
 		}while(false);
+		return $object;
 	}
 }
 

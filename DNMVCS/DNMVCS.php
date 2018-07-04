@@ -7,14 +7,20 @@ use \Exception;
 
 trait DNSingleton
 {
-	protected static function _before_instance($object,$args=[])
+	protected static function _before_instance($object)
 	{
-		//for override;
+		return $object;
+	}
+	protected static function _create_instance($class)
+	{
+		return new $class();
+		//$ref=new \ReflectionClass($class);
+		//$me=$ref->newInstanceArgs($args);
 	}
 	protected static $_instances=[];
-	public static function G($object=null,$args=[])
+	public static function G($object=null)
 	{
-		self::_before_instance($object,$args);
+		$object=self::_before_instance($object);
 		$class=get_called_class();
 		if($object){
 			self::$_instances[$class]=$object;
@@ -22,12 +28,7 @@ trait DNSingleton
 		}
 		$me=isset(self::$_instances[$class])?self::$_instances[$class]:null;
 		if(null===$me){
-			if($args===[]){
-				$me=new $class();
-			}else{
-				$ref=new \ReflectionClass($class);
-				$me=$ref->newInstanceArgs($args);
-			}
+			$me=self::_create_instance($class);
 			self::$_instances[$class]=$me;
 		}
 		return $me;
@@ -1122,15 +1123,19 @@ class DNMVCS
 	
 	protected function init_options($options)
 	{
-		$default_options=[
-			'namesapce'=>'MY',
+		$default_options_autoload=[
+			'namespace'=>'MY',
 			
 			'path_namespace'=>'app',
 			'path_autoload'=>'classes',
 			'fullpath_framework_common'=>'',
 			
 			'enable_simple_mode'=>true,
+			
+			'path_framework_simple'=>'app',
 		];
+		
+		
 		$default_options_other=[
 			'path_framework_simple'=>'app',
 			
@@ -1150,49 +1155,41 @@ class DNMVCS
 			$path=realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
 			$options['path']=rtrim($path,'/').'/';
 		}
-		$this->options=array_merge($default_options,$default_options_other,$options);
+		$this->options=array_merge($default_options_autoload,$default_options_other,$options);
 		
 		
+	}
+	protected function initExceptionManager()
+	{
+		DNExceptionManager::HandelAllException([$this,'onErrorException'],[$this,'onException']);
+		DNExceptionManager::HandelAllError([$this,'onErrorHandel'],[$this,'onDebugError']);
 	}
 	//@override me
 	public function init($options=array())
 	{
-		DNExceptionManager::HandelAllException([$this,'onErrorException'],[$this,'onException']);
-		DNExceptionManager::HandelAllError([$this,'onErrorHandel'],[$this,'onDebugError']);
-		
-		
+		$this->initExceptionManager();
 		
 		//override me to autoload; 
-		$this->autoload($this->options);
+		$this->autoload($options);
+		
 		$options=$this->options;
 		
 		$path_view=$this->path.rtrim($options['path_view'],'/').'/';
+		$path_config=$this->path.rtrim($options['path_config'],'/').'/';
+		$fullpath_config_common=rtrim($options['fullpath_config_common'],'/').'/';
+		
 		DNView::G()->init($path_view);
 		DNView::G()->setBeforeShow([$this,'onBeforeShow']);
 		
-		$path_config=$this->path.rtrim($options['path_config'],'/').'/';
-		$fullpath_config_common=rtrim($options['fullpath_config_common'],'/').'/';
+		
 		DNConfig::G()->init($path_config,$fullpath_config_common);
 		$this->config=$config;
 		$this->isDev=DNConfig::G()->_Setting('is_dev')?true:false;
 		
-		DNView::G()->isDev=$this->isDev;
-		
-		DNRoute::G()->init(array(
-			'path'=>$options['path'],
-			'namesapce'=>$options['namesapce'],
-			
-			'path_namespace'=>$options['path_namespace'],
-			
-			'path_controller'=>$options['path_controller'],
-			'namespace_controller'=>$options['namespace_controller'],
-			
-			'enable_simple_mode'=>$options['enable_simple_mode'],
-			'enable_paramters'=>$options['enable_paramters'],
-		));
-		
+		DNRoute::G()->init($options);
 		DNRoute::G()->set404(array($this,'onShow404'));	
 		
+		DNView::G()->isDev=$this->isDev;
 		return $this;
 	}
 	public function isDev()
