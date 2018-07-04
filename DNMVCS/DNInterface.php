@@ -18,7 +18,7 @@ interface IDNRoute
 	//public $calling_class='';
 	//public $calling_method='';
 	public function _URL($url=null);
-	public function _Param();
+	public function _Parameters();
 	public function init($options);
 	public function _default404();
 	public function set404($callback);

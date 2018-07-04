@@ -161,8 +161,6 @@ return $data;
 只有一个设置项目 is_dev 用于 判断是否是开发状态，默认并没使用到。
 db ，配置数据库。
 db_r， 配置读写分离的数据库
-medoo ，配置 medoo 数据库，见 和 medoo 配合这一步骤讲解。
-medoo_r 配置 medoo 只读数据库
 ## 开始自己的代码
 以 /about/foo 为例，使用无命名空间模式
 首先我们要写相关控制器
@@ -242,21 +240,22 @@ run 开始使用路由。 如果你不想要路由。只想要特定结构的目
 # DNMVCS 主类
 ## 基本方法
 ```
-static G($object=null)   
+static G($object=null,$args=[])   
     G 单例函数是整个系统最有趣的地方。
     传入 $object 将替代默认的单例。
 	比 PHP-DI简洁
-static RunQuickly($options)
-    DNMVCS::RunQuickly () 相当于 DNMVCS::G()->init()->run();结束。
+static RunQuickly($optionss=[])
+    DNMVCS::RunQuickly ($options) 相当于 DNMVCS::G()->init($options)->run();
+    额外的不同是下面这个配置。
     默认配置 framework_class \\MY\\Framework\\App 如果有这个类，就替换这个类进行。
-autoload($path,$options=array())
+autoload($optionss=[])
     自动加载。处理自动加载机制。 得找到自动加载才把子类化的文件载入进来，所以这个方法单列出来。
-init($options=[]]) 
+init($options=[]) 
     初始化，这是最经常子类化完成自己功能的方法。我已经尽量简化简化了。
-    如果在初始化之前没有 autoload 会在这里执行，如果已经执行了 autoload 会把 默认配置合并 autoload 的配置以及参数的配置作为配置使用。
+    如果在初始化之前没有 autoload 会在这里执行。
+    如果已经执行了 autoload 会把 默认配置合并 autoload 的配置以及参数的配置作为配置使用。
 run()
     开始路由，执行。这个方法拆分出来是为了。不想要路由，只是为了加载一些类的需求的。
-##
 ```
 
 ##
@@ -282,7 +281,7 @@ URL($url=null)
     调用 DNRoute::G()->_URL();
     获得某路由的正确显示方式
     当你重写 DNRoute 类后，你可能需要重写这个方法来展示
-Param()
+_Parameters()
     //获得路径切片 
 Setting($key)
     //读取设置
@@ -307,7 +306,7 @@ Import($file)
 ImportSys($file)
     手动导DNMVCS目录下的包含文件 函数。DNMVCS库目录默认不包含其他非必要的文件
 	因为需求不常用，所以没自动加载
-	比如在调试状态下的奇淫巧技：限定各 G 函数的调用。
+	比如在调试状态下的奇淫巧技：限定各 G 函数的调用。以及DNMedoo ，用 Medoo类
 ```
 
 ## 非静态方法
@@ -342,6 +341,7 @@ recordset_url($data,$cols_map)
 ```
 onBeforeShow()
     在输出 view 开始前处理，默认只是关闭数据库。
+    因为如果请求时间很长，没关闭数据库会导致连接被占用。
 onShow404()
     404 回调。这里没传各种参数，需要的时候从外部获取。
 onException($ex)
@@ -391,6 +391,9 @@ DNView::G(AdminView::G());
 G 函数的缺点：IDE 上没法做类型提示，这对一些人来说很重要。
 
 service , model 上 用  static 函数代替 G 函数实例方式或许也是一种办法
+
+G函数的第二个参数， 用于传递构造函数的参数。
+
 ## 类的分类
 DNMVCS 主类里一些函数，是调用其他类的实现。基本都可以用 G 方法替换
 DNMVCS 的各子类都是独立的。现实应该不会拿出来单用吧
@@ -405,6 +408,11 @@ DNMVCS 的各子类都是独立的。现实应该不会拿出来单用吧
 
 - DNDB 简单实现的一个数据库类。封装了 PD 和 Medoo 兼容，也少了 Medoo 的很多功能。 
 - DNMedoo 这个类需要手动调用，在另外一个文件，是 Medoo 的一个简单扩展，和 DNDB 接口一致。
+```php
+self::Import('Medoo');
+self::ImportSys('DNMedoo');	
+\DNMVCS\DNDBManager::G()->installDBClass(['\DNMVCS\DNMedoo','CreateDBInstance']);
+```
 DNMVCSEx 的类和方法需要手动引入文件才行，你需要  DNMVCS::ImportSys()
 - trait DNWrapper 
     DNWrapper::W(MyOBj::G()); 包裹一个对象，在 __call 里做一些操作，然后 call_the_object($method,$args)

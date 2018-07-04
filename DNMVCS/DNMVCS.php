@@ -14,7 +14,7 @@ trait DNSingleton
 	protected static $_instances=[];
 	public static function G($object=null,$args=[])
 	{
-		self::_before_instance($object);
+		self::_before_instance($object,$args);
 		$class=get_called_class();
 		if($object){
 			self::$_instances[$class]=$object;
@@ -216,7 +216,7 @@ class DNRoute
 		$url=$path.'?'.$this->simple_route_key.'='.$c.$q;
 		return $url;
 	}
-	public function _Param()
+	public function _Parameters()
 	{
 		return $this->params;
 	}
@@ -640,15 +640,20 @@ class DNConfig
 }
 class DNDB
 {
-	
 	public $pdo;
 	protected $rowCount;
-	
 	protected $config;
 	
 	public function init($config)
 	{
 		$this->config=$config;
+	}
+	public static function CreateDBInstance($db_config)
+	{
+		$class=get_called_class();
+		$db=new $class();
+		$db->init($db_config);
+		return $db;
 	}
 	protected function check_connect()
 	{
@@ -824,17 +829,22 @@ class DNDBManager
 {
 	use DNSingleton;
 	
+	protected $callback_create_db=null;
 	public $db=null;
 	public $db_r=null;
-
+	public function installDBClass($callback)
+	{
+		$this->callback_create_db=$callback;
+	}
 	public function _DB()
 	{
 		if($this->db){return $this->db;}
 		
 		$db_config=DNConfig::G()->_Setting('db');
-		$db=new DNDB();
-		$db->init($db_config);
-		$this->db=$db;
+		if($this->callback_create_db===null){
+			$this->installDBClass(['\DNMVCS\DNDB','CreateDBInstance']);
+		}
+		$this->db=($this->callback_create_db)($db_config);
 		
 		return $this->db;
 	}
@@ -849,9 +859,10 @@ class DNDBManager
 		
 		$db_config=DNConfig::G()->_Setting('db_r');
 		if(!$db_config){return $this->_DB();}
-		$db=new DNDB();
-		$db->init($db_config);
-		$this->db_r=$db;
+		if($this->callback_create_db===null){
+			$this->installDBClass(['\DNMVCS\DNDB','CreateDBInstance']);
+		}
+		$this->db_r=($this->callback_create_db)($db_config);
 		return $this->db_r;
 	}
 	
@@ -869,9 +880,9 @@ trait DNMVCS_Glue
 	{
 		return DNRoute::G()->_URL($url);
 	}
-	public static function Param()
+	public static function Parameters()
 	{
-		return DNRoute::G()->_Param();
+		return DNRoute::G()->_Parameters();
 	}
 	public function assignRoute($key,$value=null)
 	{
@@ -1164,6 +1175,7 @@ class DNMVCS
 		DNConfig::G()->init($path_config,$fullpath_config_common);
 		$this->config=$config;
 		$this->isDev=DNConfig::G()->_Setting('is_dev')?true:false;
+		
 		DNView::G()->isDev=$this->isDev;
 		
 		DNRoute::G()->init(array(
