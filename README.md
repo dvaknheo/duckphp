@@ -130,7 +130,7 @@ run(); 开始路由
 3. 继承接管特定类实现目的
 4. 魔改。
 
-## 设置
+## 选项
 init([]) 方法的参数是可配置的，默认设置如下
 默认选项
 ```php
@@ -145,8 +145,41 @@ init([]) 方法的参数是可配置的，默认设置如下
 ```
 ** 一些高级配置，用于魔改的请自己暂时去翻看代码。 *
 启用无命名空间模式 ，就是不想写那么多带命名空间的代码， *Service,  *Model 这样结尾的类直接自动加载
+```php
+$default_options_autoload=[
+    'namespace'=>'MY', // 默认的命名空间
+    
+        'path_namespace'=>'app',
+        'path_autoload'=>'classes',
+    'fullpath_framework_common'=>'',
+    
+    'enable_simple_mode'=>true,
+        'path_framework_simple'=>'app',
+];
 
-工程的设置文件是样例 setting.sample.php 。
+$default_options_route=array(
+    'namespace'=>'MY',
+        'enable_paramters'=>false,
+    'enable_simple_mode'=>true,
+    
+        'path_controller'=>'app/Controller',
+        'namespace_controller'=>'Controller',
+        'default_controller_class'=>'DNController',
+    
+        'enable_post_prefix'=>true,
+        'disable_default_class_outside'=>false,
+    'key_for_simple_route'=>null,
+);
+
+$default_options_framework=[
+    'framework_class'=>null,
+    'fullpath_config_common'=>'',
+        'path_view'=>'view',
+      'path_lib'=>'lib',
+     'path_config'=>'config',
+];
+```
+工程的设置文件样例 setting.sample.php 。
 
 ```php
 <?php
@@ -162,6 +195,12 @@ return $data;
 只有一个设置项目 is_dev 用于 判断是否是开发状态，默认并没使用到。
 db ，配置数据库。
 db_r， 配置读写分离的数据库
+
+选项，设置，配置的区别
+选项，代码里的设置
+设置，敏感信息
+配置，非敏感信息
+
 ## 开始自己的代码
 以 /about/foo 为例，使用无命名空间模式
 首先我们要写相关控制器
@@ -256,7 +295,7 @@ init($options=[])
 run()
     开始路由，执行。这个方法拆分出来是为了，不想要路由，只是为了加载一些类的需求的。
 ```
-'framework_class'=>'\MY\\Framework\App'  可以在 init 方法里用，使得替换默认类。
+'framework_class'=>'\MY\Framework\App'  可以在 init 方法里用，使得替换默认类。
 ##
 
 ## 常用静态方法方法
