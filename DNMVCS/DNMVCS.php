@@ -178,10 +178,10 @@ class DNRoute
 	protected $enable_post_prefix=true;
 	protected $disable_default_class_outside=false;
 	
-	protected $simple_route_key=null;
+	protected $key_for_simple_route=null;
 	public function _URL($url=null)
 	{
-		if($this->simple_route_key!==null){
+		if($this->key_for_simple_route!==null){
 			//for simple_route_mode
 			return $this->_url_simple_mode($url);
 		}
@@ -214,7 +214,7 @@ class DNRoute
 		$q=parse_url($url,PHP_URL_QUERY);
 		
 		$q=$q?'&'.$q:''; //TODO if this->route_key= 
-		$url=$path.'?'.$this->simple_route_key.'='.$c.$q;
+		$url=$path.'?'.$this->key_for_simple_route.'='.$c.$q;
 		return $url;
 	}
 	public function _Parameters()
@@ -224,29 +224,32 @@ class DNRoute
 	public function init($options)
 	{
 		$default_options=array(
-			//'path'=>'',
 			'namespace'=>'MY',
 			'enable_paramters'=>false,
 			'enable_simple_mode'=>true,
 			
-			'path_contorller'=>'app/Controller',
+			'path_controller'=>'app/Controller',
 			'namespace_controller'=>'Controller',
 			'default_controller_class'=>'DNController',
+			
+			'enable_post_prefix'=>true,
+			'disable_default_class_outside'=>false,
+			'key_for_simple_route'=>null,
 		);
 
 		$options=array_merge($default_options,$options);
 		$this->options=$options;
 		
-		
-		$this->path=$options['path'].$options['path_contorller'].'/';
+		$this->path=$options['path'].$options['path_controller'].'/';
 		$this->namespace=$options['namespace'].'\\'.$options['namespace_controller'];
 		$this->enable_param=$options['enable_paramters'];
 		$this->enable_simple_mode=$options['enable_simple_mode'];
 		
 		$this->default_class=$options['default_controller_class'];
-		$this->disable_default_class_outside=isset($options['disable_default_class_outside'])?$options['disable_default_class_outside']:$this->disable_default_class_outside;
-		$this->enable_post_prefix=isset($options['enable_post_prefix'])?$options['enable_post_prefix']:$this->enable_post_prefix;
-		$this->enable_post_prefix=isset($options['simple_route_key'])?$options['simple_route_key']:$this->simple_route_key;
+		
+		$this->enable_post_prefix=$options['enable_post_prefix'];
+		$this->disable_default_class_outside=$options['disable_default_class_outside'];
+		$this->key_for_simple_route=$options['key_for_simple_route'];
 
 		if(PHP_SAPI==='cli'){
 			$argv=$_SERVER['argv'];
@@ -257,11 +260,11 @@ class DNRoute
 				$this->params=$argv;
 			}
 		}else{
-			if($this->simple_route_key===null){
+			if($this->key_for_simple_route===null){
 				$this->path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
 				$this->request_method=$_SERVER['REQUEST_METHOD'];
 			}else{
-				$path_info=isset($_GET[$this->simple_route_key])?$_GET[$this->simple_route_key]:'';
+				$path_info=isset($_GET[$this->key_for_simple_route])?$_GET[$this->key_for_simple_route]:'';
 				$path_info='/'.ltrim($path_info,'/');
 				$this->path_info=$path_info;
 			}
@@ -1117,7 +1120,6 @@ class DNMVCS
 		$this->options=array_merge($this->options,DNAutoLoad::G()->options); 
 		$this->path=$this->options['path'];
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
-
 		return $this;
 	}
 	
@@ -1131,31 +1133,36 @@ class DNMVCS
 			'fullpath_framework_common'=>'',
 			
 			'enable_simple_mode'=>true,
-			
 			'path_framework_simple'=>'app',
 		];
-		
-		
-		$default_options_other=[
-			'path_framework_simple'=>'app',
+
+		$default_options_route=array(
+			'namespace'=>'MY',
+			'enable_paramters'=>false,
+			'enable_simple_mode'=>true,
 			
 			'path_controller'=>'app/Controller',
 			'namespace_controller'=>'Controller',
+			'default_controller_class'=>'DNController',
 			
-			
-			'path_config'=>'config',
+			'enable_post_prefix'=>true,
+			'disable_default_class_outside'=>false,
+			'key_for_simple_route'=>null,
+		);
+		
+		$default_options_framework=[
+
 			'fullpath_config_common'=>'',
-			'enable_paramters'=>true,
 			'path_view'=>'view',
 			'path_lib'=>'lib',
-			'default_controller_class'=>'DNController',
+			'path_config'=>'config',
 		];
 		
 		if(!isset($options['path']) || !($options['path'])){
 			$path=realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
 			$options['path']=rtrim($path,'/').'/';
 		}
-		$this->options=array_merge($default_options_autoload,$default_options_other,$options);
+		$this->options=array_merge($default_options_autoload,$default_options_route,$default_options_framework,$options);
 		
 		
 	}
@@ -1172,21 +1179,18 @@ class DNMVCS
 		//override me to autoload; 
 		$this->autoload($options);
 		
-		$options=$this->options;
-		
-		$path_view=$this->path.rtrim($options['path_view'],'/').'/';
-		$path_config=$this->path.rtrim($options['path_config'],'/').'/';
-		$fullpath_config_common=rtrim($options['fullpath_config_common'],'/').'/';
+		$path_view=$this->path.rtrim($this->options['path_view'],'/').'/';
+		$path_config=$this->path.rtrim($this->options['path_config'],'/').'/';
+		$fullpath_config_common=rtrim($this->options['fullpath_config_common'],'/').'/';
 		
 		DNView::G()->init($path_view);
 		DNView::G()->setBeforeShow([$this,'onBeforeShow']);
-		
 		
 		DNConfig::G()->init($path_config,$fullpath_config_common);
 		$this->config=$config;
 		$this->isDev=DNConfig::G()->_Setting('is_dev')?true:false;
 		
-		DNRoute::G()->init($options);
+		DNRoute::G()->init($this->options);
 		DNRoute::G()->set404(array($this,'onShow404'));	
 		
 		DNView::G()->isDev=$this->isDev;
