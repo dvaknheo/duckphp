@@ -662,7 +662,7 @@ class DNDB
 			DNSystemException::ThrowOn(true,'DNMVCS Notice: database not setting!');
 		}
 		$config=$this->config;
-		$this->pdo= new PDO($config['dsn'], $config['user'], $config['password'],array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION));
+		$this->pdo= new PDO($config['dsn'], $config['username'], $config['password'],array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION));
 	}
 
 	public function close()

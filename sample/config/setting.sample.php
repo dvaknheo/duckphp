@@ -4,7 +4,7 @@ $data=array();
 $data['is_dev']=true;
 $data['db']=array(
 	'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
-	'user'=>'???',
+	'username'=>'???',
 	'password'=>'???',
 );
 return $data;

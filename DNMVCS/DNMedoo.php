@@ -62,8 +62,6 @@ class DNMedoo extends MedooFixed
 		}
 		$db_config['dsn']=$dsn_array;
 		$db_config['database_type']='mysql';
-		$db_config['username']=$db_config['user'];
-		//$db_config['user'];
 		
 		return new DNMedoo($db_config);
 	}
