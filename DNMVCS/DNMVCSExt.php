@@ -25,7 +25,7 @@ trait DNWrapper
 	} 
 }
 
-class DNDebugService
+class StrictService
 {
 	use DNSingleton;
 	public static function _before_instance($object)
@@ -61,7 +61,7 @@ class DNDebugService
 		return $object;
 	}	
 }
-class DNDebugModel
+class StrictModel
 {
 	use DNSingleton;
 	public static function _before_instance($object)
@@ -82,8 +82,9 @@ class DNDebugModel
 }
 
 
-class DNDebugDBManager extends DNWrapper
+class StrictDBManager extends DNDBManager
 {
+	use DNWrapper;
 	public function __call($method,$args)
 	{
 		if(in_array($method,['_DB','_DB_W','_DB_R'])){
@@ -115,86 +116,18 @@ class DNDebugDBManager extends DNWrapper
 		}while(false);
 	}
 }
-class DNDebugAPI
+class DBExt extends DNDB
 {
-	public static function CallAPI($class,$method,$input)
+	//Warnning, escape the key by yourself
+	protected function quote_array($array)
 	{
-		$f=array(
-			'int'=>FILTER_VALIDATE_INT,
-			'float'=>FILTER_VALIDATE_FLOAT,
-			'string'=>FILTER_SANITIZE_STRING,
-		);
-		
-		$reflect = new ReflectionMethod($class,$method);
-		
-		$params=$reflect->getParameters();
-		$args=array();
-		foreach ($params as $i => $param) {
-			$name=$param->getName();
-			if(isset($input[$name])){
-				$type=$param->getType();
-				if(null!==$type){
-					$type=''.$type;
-					if(in_array($type,array_keys($f))){
-						$flag=filter_var($input[$name],$f[$type],FILTER_NULL_ON_FAILURE);
-						DNMVCS::ThrowOn($flag===null,"参数类型错误: {$name}",-1);
-					}
-					
-				}
-				$args[]=$input[$name];
-				continue;
-			}else if($param->isDefaultValueAvailable()){
-				$args[]=$param->getDefaultValue();
-			}else{
-				DNMVCS::ThrowOn(true,"缺少参数: {$name}",-2);
-			}
-			
+		$this->check_connect();
+		$a=array();
+		foreach($array as $k =>$v){
+			$a[]=$k.'='.$this->pdo->quote($v);
 		}
-		
-		$ret=$reflect->invokeArgs(new $service(), $args);
-		return $ret;
+		return implode(',',$a);
 	}
-
-	// 这是个内部用的函数，获取 参数名称的关联数组 // TODDo 转移到 trait;
-	// 父类  foo_with_names($assoc);
-	// 子类1 foo($id=1,$title=2)=>_with_names($this->getArgAssoc());
-	// 子类2 foo($name=>'a',$value=>"")=> DNDebugCallWithMyAssoc::GO($this->foo_with_names);
-	// 
-	public static function GetCalledAssoc()
-	{
-		$trace=debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT ,2);
-		list($top,$_)=$trace;
-		DNMVCS::ThrowOn(!$top['object'],"必须在类里调用");
-		
-		$reflect=new ReflectionMethod($top['object'],$top['function']);
-		$params=$reflect->getParameters();
-		$names=array();
-		foreach($params as $v){
-			$names[]=$v->getName();
-		}
-		
-		return $names;
-	}
-
-	// 这个就连带调用 __FUNCTION__._with_names 了
-	protected function calledWithMyAssoc($callback)
-	{
-		$trace=debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT ,2);
-		list($top,$_)=$trace;
-		DNMVCS::ThrowOn(!$top['object'],"必须在类里调用");
-		
-		$reflect=new ReflectionMethod($top['object'],$top['function']);
-		$params=$reflect->getParameters();
-		$names=array();
-		foreach($params as $v){
-			$names[]=$v->getName();
-		}
-		return ($callback)($names);
-	}
-}
-
-class DNDBEx extends DNDB
-{
 	public function get($table_name,$id,$key='id')
 	{
 		$sql="select {$table_name} from terms where {$key}=? limit 1";
@@ -204,7 +137,6 @@ class DNDBEx extends DNDB
 	public function insert($table_name,$data,$return_last_id=true)
 	{
 		$sql="insert into {$table_name} set ".$this->quote_array($data);
-		echo  $sql;
 		$ret=$this->exec($sql);
 		if(!$return_last_id){return $ret;}
 		$ret=DNDB::G()->lastInsertId();
@@ -226,3 +158,80 @@ class DNDBEx extends DNDB
 		return $ret;
 	}
 }
+
+
+class API
+{
+	protected static function GetTypeFilter()
+	{
+		return [
+			'int'=>FILTER_VALIDATE_INT,
+			'float'=>FILTER_VALIDATE_FLOAT,
+			'string'=>FILTER_SANITIZE_STRING,
+		];
+	}
+	public static function Call($class,$method,$input)
+	{
+		$f=self::GetTypeFilter();
+		$reflect = new ReflectionMethod($class,$method);
+		
+		$params=$reflect->getParameters();
+		$args=array();
+		foreach ($params as $i => $param) {
+			$name=$param->getName();
+			if(isset($input[$name])){
+				$type=$param->getType();
+				if(null!==$type){
+					$type=''.$type;
+					if(in_array($type,array_keys($f))){
+						$flag=filter_var($input[$name],$f[$type],FILTER_NULL_ON_FAILURE);
+						DNMVCS::ThrowOn($flag===null,"Type Unmatch: {$name}",-1);
+					}
+					
+				}
+				$args[]=$input[$name];
+				continue;
+			}else if($param->isDefaultValueAvailable()){
+				$args[]=$param->getDefaultValue();
+			}else{
+				DNMVCS::ThrowOn(true,"Need Parameter: {$name}",-2);
+			}
+			
+		}
+		
+		$ret=$reflect->invokeArgs(new $service(), $args);
+		return $ret;
+	}
+}
+class MyArgsAssoc
+{
+	protected static function GetCalledAssocByTrace($trace)
+	{
+		list($top,$_)=$trace;
+		if($top['object']){
+			$reflect=new ReflectionMethod($top['object'],$top['function']);
+		}else{
+			$reflect=new ReflectionFunction($top['function']);
+		}
+		$params=$reflect->getParameters();
+		$names=array();
+		foreach($params as $v){
+			$names[]=$v->getName();
+		}
+		return $name;
+	}
+	
+	public static function GetMyArgsAssoc()
+	{
+		$trace=debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT ,2);
+		return self::GetCalledAssocByTrace($trace);
+	}
+	
+	public static function CallWithMyArgsAssoc($callback)
+	{
+		$trace=debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT ,2);
+		$names=self::GetCalledAssocByTrace($trace);
+		return ($callback)($names);
+	}
+}
+

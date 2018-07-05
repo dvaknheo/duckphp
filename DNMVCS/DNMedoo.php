@@ -49,6 +49,7 @@ class DNMedoo extends MedooFixed
 		$this->rowCount=$sth->rowCount();
 		return $ret;
 	}
+	//@impelement
 	public static function CreateDBInstance($db_config)
 	{
 		$dsn=$db_config['dsn'];

@@ -607,7 +607,7 @@ class DNConfig
 			if($setting===false){
 				echo '<h1>'.'DNMVCS Notice: no setting file!,change setting.sample.php to setting.php !'.'</h1>';
 				exit;
-				//throw new \Exception('DNMVCS Notice: no setting file!,change setting.sample.php to setting.php');
+				//DNSystemException::ThrowOn(true,'DNMVCS Notice: no setting file!,change setting.sample.php to setting.php');
 			}
 			if(!is_array($setting)){
 				DNSystemException::ThrowOn(true,'DNMVCS Notice: need return array !');
@@ -679,16 +679,7 @@ class DNDB
 		$this->check_connect();
 		return $this->pdo->quote($string);
 	}
-	//Warnning, escape the key by yourself
-	protected function quote_array($array)
-	{
-		$this->check_connect();
-		$a=array();
-		foreach($array as $k =>$v){
-			$a[]=$k.'='.$this->pdo->quote($v);
-		}
-		return implode(',',$a);
-	}
+
 	public function fetchAll($sql)
 	{
 		$this->check_connect();
@@ -740,14 +731,7 @@ class DNDB
 		return $this->rowCount;
 	}
 	
-	public function insert($table_name,$data,$return_last_id=true)
-	{
-		$sql="insert into {$table_name} set ".DNDB::G()->quote_array($data);
-		$ret=$this->exec($sql);
-		if(!$return_last_id){return $ret;}
-		$ret=$this->pdo->lastInsertId();
-		return $ret;
-	}
+	
 
 }
 class DNExceptionManager
@@ -841,6 +825,9 @@ class DNDBManager
 	public $db_r=null;
 	public function installDBClass($callback)
 	{
+		if(is_string($callback) && class_exists($callback,false)){
+			$callback=([$callback,'CreateDBInstance']);
+		}
 		$this->callback_create_db=$callback;
 	}
 	public function _DB()
@@ -1123,6 +1110,12 @@ class DNMVCS
 		$this->options=array_merge($this->options,DNAutoLoad::G()->options); 
 		$this->path=$this->options['path'];
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
+		if($this->options['use_ext']){
+			self::ImportSys('DNMVCSExt');
+			if($this->options['use_ext_db']){
+				DNDBManager::G()->installDBClass('\DNMVCS\DBExt');
+			}
+		}
 		return $this;
 	}
 	
@@ -1154,11 +1147,13 @@ class DNMVCS
 		);
 		
 		$default_options_framework=[
-
-			'fullpath_config_common'=>'',
+			'framework_class'=>null,
 			'path_view'=>'view',
-			'path_lib'=>'lib',
 			'path_config'=>'config',
+			'fullpath_config_common'=>'',
+			'path_lib'=>'lib',
+			'use_ext'=>false,
+			'use_ext_db'=>false,
 		];
 		
 		if(!isset($options['path']) || !($options['path'])){

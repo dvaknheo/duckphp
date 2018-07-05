@@ -181,21 +181,23 @@ init([]) 方法的参数是可配置的，默认设置如下
 ```
 ** 一些高级配置，用于魔改的请自己暂时去翻看代码。 *
 启用无命名空间模式 ，就是不想写那么多带命名空间的代码， *Service,  *Model 这样结尾的类直接自动加载
+## 全部默认选项详解。
+多余的缩进是不建议修改的
 ```php
 $default_options_autoload=[
-    'namespace'=>'MY', // 默认的命名空间
+    'namespace'=>'MY', // 默认的命名空间改成你的工程名字
     
-        'path_namespace'=>'app',
-        'path_autoload'=>'classes',
-    'fullpath_framework_common'=>'',
+        'path_namespace'=>'app', 	
+        'path_autoload'=>'classes',	//
+    'fullpath_framework_common'=>''//通用的路径
     
-    'enable_simple_mode'=>true,
+    'enable_simple_mode'=>true, 	//
         'path_framework_simple'=>'app',
 ];
 
 $default_options_route=array(
-    'namespace'=>'MY',
-        'enable_paramters'=>false,
+    'namespace'=>'MY',	 // 默认的命名空间改成你的工程名字
+	'enable_paramters'=>false, //支持切片模式
     'enable_simple_mode'=>true,
     
         'path_controller'=>'app/Controller',
@@ -209,13 +211,16 @@ $default_options_route=array(
 
 $default_options_framework=[
     'framework_class'=>null,
+	
     'fullpath_config_common'=>'',
         'path_view'=>'view',
-      'path_lib'=>'lib',
-     'path_config'=>'config',
+		'path_lib'=>'lib',
+		'path_config'=>'config',
+	'use_ext'=>false,
+	'use_ext_db'=>false,
 ];
 ```
-工程的设置文件样例 setting.sample.php 。
+工程的设置文件样例 setting.sample.php 。选项很少
 
 ```php
 <?php
@@ -514,19 +519,18 @@ G 函数的缺点：IDE 上没法做类型提示，这对一些人来说很重�
 
 service , model 上 用  static 函数代替 G 函数实例方式或许也是一种办法
 
- _before_instance($object) 被 G 函数调用，返回 $object。用于一些扩展
+_before_instance($object) 被 G 函数调用，返回 $object。用于一些扩展
 
- _create_instance($class) 被 G 函数调用，用于创建实例，如果你的类构造方法带参数，需要重新写这个方法
+_create_instance($class) 被 G 函数调用，用于创建实例，如果你的类构造方法带参数，需要重新写这个方法
 
 ## DNAutoLoad 加载类
 DNAutoLoad 不建议扩展。因为你要有新类进来才有能处理加载关系，不如自己再加个加载类呢。
-
     init(options)
     run()
 ## DNRoute 路由类
     这应该会被扩展,加上权限判断等设置
     
-    路由类是很强大扩展性很强的类。
+    路由类是很强大扩展性很强的类。单独篇章介绍
 ## DNView 视图类
     $this->isDev
 ## DNConfig 配置类
@@ -566,8 +570,7 @@ close
     关闭数据库
 quote
     转码
-quote_array
-    对数组转码
+
 fetchAll
 fetch
 fetchColumn
@@ -593,15 +596,15 @@ DNMedoo 类的除了默认的 Medoo 方法，还扩展了 DNDB 类同名方法�
 在你的 DNMVCS->init() 后面段加上下面代码，
 使得 DNMedoo 替换 DNDB
 ```php
-self::Import('Medoo');
-self::ImportSys('DNMedoo');	
-\DNMVCS\DNDBManager::G()->installDBClass(['\DNMVCS\DNMedoo','CreateDBInstance']);
+self::Import('Medoo');  //请选择正确的 Medoo 载入方式
+self::ImportSys('DNMedoo'); //DNMedoo 依赖 Medoo，所以需要手动加载
+DNDBManager::G()->installDBClass('\DNMVCS\DNMedoo'); // 将 DNMVCS::DB 等替换成 DNMedoo类。
 ```
 DNMedoo extends Medoo implement IDNDB.
 
 
-## DNDebugSingleton.php  | 额外类应用和说明
-DNMVCSEx 的类和方法需要手动引入文件才行，你需要  DNMVCS::ImportSys('DNMVCSEx')
+## DNMVCSExt.php  | 额外类应用和说明
+DNMVCSExt 的类和方法需要手动引入文件才行，你需要  DNMVCS::ImportSys('DNMVCSEx')
 
 奇淫巧技
 我想让 DB 只能被 Model , ExModel 调用。Model 只能被 ExModel,Service 调用 。 LibService 只能被Service 调用  Service只能被 Controller 调用
@@ -612,25 +615,40 @@ DNMVCSEx 的类和方法需要手动引入文件才行，你需要  DNMVCS::Impo
 ```
 调试模式下那些 **新手** 就不能乱来了。
 
+
 为什么不作为框架的默认行为。 主要考虑性能因数，而且自由，无依赖性
+
 ## trait DNWrapper 
 W($object);
     
     DNWrapper::W(MyOBj::G()); 包裹一个对象，在 __call 里做一些操作，然后调用 call_the_object($method,$args)
 
-## DNDebugService
-    调试状态下，允许 service 调用 libservice 不允许 service 调用 service ,不允许 model 调用 service
-## DNDebugModel
+## StrictService
+    你的 Service 继承这个类
+	调试状态下，允许 service 调用 libservice 不允许 service 调用 service ,不允许 model 调用 service
+	
+## StrictModel
+	你的 Service 继承这个类
     调试状态下，只允许 Service 或者 ExModel 调用 Model
-## DNDebugDBManager
+## StrictDBManager
     包裹 DNDBManger::G(DNDebugDBManager::W(DNDBManger::G())); 后，实现
     不允许 Controller, Service 调用 DB
-## DNDebugAPI
-    几个杂项类
-- CallAPI
-- GetCalledAssoc
-- calledWithMyAssoc
+	如果使用 Medoo ，在 DNMedoo::Install(); 后面执行。
+## DBExt
+	DNMedoo::Install();
+	加了额外方法的DB类，注意和 Medoo 不兼容
+quote_array
+//str_in_array
+get insert update delete
 
+
+## API 用于 api 服务快速调用。实际应用你应该缓存
+	public static function Call($class,$method,$input)
+	protected static function GetTypeFilter()
+
+## MyArgsAssoc
+- GetMyArgsAssoc 获得当前函数的命名参数数组
+- CallWithMyArgsAssoc($callback)  获得当前函数的命名参数数组并回调
 
 ## 常见问题
 
