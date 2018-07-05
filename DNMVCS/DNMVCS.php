@@ -54,6 +54,7 @@ class DNAutoLoad
 
 	public function init($options=array())
 	{
+		if($this->is_inited){return $this;}
 		$this->is_inited=true;
 		
 		$default_options=array(
@@ -302,7 +303,7 @@ class DNRoute
 			return $t();
 		}
 		
-		return call_user_func_array($callback,$this->params);
+		return ($callback)(...$this->params);
 	}
 
 	public function defaltRouteHandle()
@@ -634,6 +635,7 @@ class DNConfig
 			$base_config=$this->include_file($this->path_common.$file_basename.'.php');
 			$base_config=is_array($base_config)?$base_config:array();
 		}
+		
 		$config=$this->include_file($this->path.$file_basename.'.php');
 		$config=array_merge($base_config,$config);
 		
@@ -789,6 +791,7 @@ class DNExceptionManager
 	}
 	public function onErrorHandler($errno, $errstr, $errfile, $errline)
 	{
+//var_dump($errno, $errstr, $errfile, $errline);//TODO test more
 		if (!(error_reporting() & $errno)) {
 			return false;
 		}
@@ -799,6 +802,7 @@ class DNExceptionManager
 			break;
 		case E_USER_WARNING:
 		case E_WARNING:
+			(self::$OnDevError)($errno, $errstr, $errfile, $errline);
 		case E_USER_NOTICE:
 		case E_NOTICE:
 		case E_STRICT:
@@ -823,6 +827,13 @@ class DNDBManager
 	protected $callback_create_db=null;
 	public $db=null;
 	public $db_r=null;
+	protected $db_config=array();
+	protected $db_r_config=array();
+	public function init($db_config,$db_r_config)
+	{
+		$this->db_config=$db_config;
+		$this->db_r_config=$db_r_config;
+	}
 	public function installDBClass($callback)
 	{
 		if(is_string($callback) && class_exists($callback,false)){
@@ -834,11 +845,10 @@ class DNDBManager
 	{
 		if($this->db){return $this->db;}
 		
-		$db_config=DNConfig::G()->_Setting('db');
 		if($this->callback_create_db===null){
 			$this->installDBClass(['\DNMVCS\DNDB','CreateDBInstance']);
 		}
-		$this->db=($this->callback_create_db)($db_config);
+		$this->db=($this->callback_create_db)($this->db_config);
 		
 		return $this->db;
 	}
@@ -851,12 +861,11 @@ class DNDBManager
 	{
 		if($this->db_r){return $this->db_r;}
 		
-		$db_config=DNConfig::G()->_Setting('db_r');
-		if(!$db_config){return $this->_DB();}
+		if(!$this->db_r_config){return $this->_DB();}
 		if($this->callback_create_db===null){
 			$this->installDBClass(['\DNMVCS\DNDB','CreateDBInstance']);
 		}
-		$this->db_r=($this->callback_create_db)($db_config);
+		$this->db_r=($this->callback_create_db)($this->db_r_config);
 		return $this->db_r;
 	}
 	
@@ -1102,11 +1111,12 @@ class DNMVCS
 	}
 	public function autoload($options=array())
 	{
+		//TODO ，just call one time;
 		$this->init_options($options);
 		
-		if(! DNAutoLoad::G()->isInited()){
+		//if(! DNAutoLoad::G()->isInited()){
 			DNAutoLoad::G()->init($this->options)->run();
-		}
+		//}
 		$this->options=array_merge($this->options,DNAutoLoad::G()->options); 
 		$this->path=$this->options['path'];
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
@@ -1195,17 +1205,22 @@ class DNMVCS
 		
 		$path_view=$this->path.rtrim($this->options['path_view'],'/').'/';
 		$path_config=$this->path.rtrim($this->options['path_config'],'/').'/';
-		$fullpath_config_common=rtrim($this->options['fullpath_config_common'],'/').'/';
+		$fullpath_config_common=$this->options['fullpath_config_common']?rtrim($this->options['fullpath_config_common'],'/').'/':'';
 		
 		DNView::G()->init($path_view);
 		DNView::G()->setBeforeShow([$this,'onBeforeShow']);
 		
 		DNConfig::G()->init($path_config,$fullpath_config_common);
-		$this->config=$config;
+		$this->config=DNConfig::G()->_LoadConfig();
 		$this->isDev=DNConfig::G()->_Setting('is_dev')?true:false;
 		
 		DNRoute::G()->init($this->options);
 		DNRoute::G()->set404(array($this,'onShow404'));	
+		
+		$db_config=DNConfig::G()->_Setting('db');
+		$db_r_config=DNConfig::G()->_Setting('db_r');
+		DNDBManager::G()->init($db_config,$db_r_config);
+		
 		
 		DNView::G()->isDev=$this->isDev;
 		return $this;
