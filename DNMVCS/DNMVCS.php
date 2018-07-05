@@ -89,10 +89,6 @@ class DNAutoLoad
 		
 		return $this;
 	}
-	public function isInited()
-	{
-		return $this->is_inited;
-	}
 	public function run()
 	{
 		if($this->is_loaded){return;}
@@ -1111,12 +1107,10 @@ class DNMVCS
 	}
 	public function autoload($options=array())
 	{
-		//TODO ，just call one time;
 		$this->init_options($options);
 		
-		//if(! DNAutoLoad::G()->isInited()){
-			DNAutoLoad::G()->init($this->options)->run();
-		//}
+		DNAutoLoad::G()->init($this->options)->run();
+		
 		$this->options=array_merge($this->options,DNAutoLoad::G()->options); 
 		$this->path=$this->options['path'];
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
@@ -1187,7 +1181,7 @@ class DNMVCS
 		$framework_class=ltrim($framework_class,'\\');
 		$self=ltrim($self,'\\');
 		if($framework_class!=$self){
-			$this->autoload($options);
+			DNAutoLoad::G()->init($options)->run();
 			//$framework_class='\\'.$framework_class;
 			return DNMVCS::G($framework_class::G())->init($options);
 		}
