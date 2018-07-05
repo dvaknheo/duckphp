@@ -233,7 +233,7 @@ $data['db']=array(
 );
 return $data;
 ```
-只有一个设置项目 is_dev 用于 判断是否是开发状态，默认并没使用到。
+只有一个设置项目 is_dev 用于 判断是否是开发状态，默认并没使用到，在额外库里用到
 db ，配置数据库。
 db_r， 配置读写分离的数据库
 
@@ -419,6 +419,9 @@ assign 系列函数，都有两个模式 func(\$map)，和 func(\$key,\$value) �
 assignRoute($route,$callback=null)
     给路由加回调。实质调用 DNRoute::G()->assignRoute
     关于回调模式的路由。详细情况看介绍
+getCallingMethod()
+    获得路由中正在调用的方法。
+    用于控制器里判断方法以便于权限管理。
 setViewWrapper($head_file=null,$foot_file=null)
     给输出 view 加页眉页脚 实质调用 DNView::G()->setViewWrapper
     view 里的变量和页眉页脚的域是一样的。
@@ -570,7 +573,8 @@ close
     关闭数据库
 quote
     转码
-
+quote_array
+    对数组转码
 fetchAll
 fetch
 fetchColumn
@@ -598,7 +602,7 @@ DNMedoo 类的除了默认的 Medoo 方法，还扩展了 DNDB 类同名方法�
 ```php
 self::Import('Medoo');  //请选择正确的 Medoo 载入方式
 self::ImportSys('DNMedoo'); //DNMedoo 依赖 Medoo，所以需要手动加载
-DNDBManager::G()->installDBClass('\DNMVCS\DNMedoo'); // 将 DNMVCS::DB 等替换成 DNMedoo类。
+\DNMVCS\DNMVCS::G()->installDBClass('\DNMVCS\DNMedoo');
 ```
 DNMedoo extends Medoo implement IDNDB.
 
@@ -656,3 +660,5 @@ get insert update delete
     - 一般来说 Session 的处理，放在 SessionService 里，这是唯一和状态有关的 Service 例外。
 - 后台里，我要判断权限，只有几个公共方法能无权限访问
     - 构造函数里获得 $method=DNRoute::G()->calling_method; 然后进行后处理
+- 为什么不把 DNMVCS 里那些子功能类作为DNMVCS类的属性， 如 $this->View=DNView::G();
+    - 静态方法里调用。 self::G()->View->_Show() 比 DNView::G()->_Show() 之类更麻烦。非静态方法里也就懒得加引用了

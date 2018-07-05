@@ -483,6 +483,18 @@ class DNRoute
 			$this->routeMap[$key]=$callback;
 		}
 	}
+	public function getRouteCallingPath()
+	{
+		return $this->calling_path;
+	}
+	public function getRouteCallingClass()
+	{
+		return $this->calling_class;
+	}
+	public function getRouteCallingMethod()
+	{
+		return $this->calling_method;
+	}
 }
 
 class DNView
@@ -571,7 +583,7 @@ class DNView
 
 }
 
-class DNConfig
+class DNConfiger
 {
 	use DNSingleton;
 
@@ -887,6 +899,10 @@ trait DNMVCS_Glue
 	{
 		return DNRoute::G()->assignRoute($key,$value);
 	}
+	public function getRouteCallingMethod()
+	{
+		return DNRoute::G()->getRouteCallingMethod();
+	}
 	//view
 	public static function Show($data=array(),$view=null)
 	{
@@ -924,15 +940,15 @@ trait DNMVCS_Glue
 	//config
 	public static function Setting($key)
 	{
-		return DNConfig::G()->_Setting($key);
+		return DNConfiger::G()->_Setting($key);
 	}
 	public static function GetConfig($key,$file_basename='config')
 	{
-		return DNConfig::G()->_GetConfig($key,$file_basename);
+		return DNConfiger::G()->_GetConfig($key,$file_basename);
 	}
 	public static function LoadConfig($file_basename)
 	{
-		return DNConfig::G()->_LoadConfig($file_basename);
+		return DNConfiger::G()->_LoadConfig($file_basename);
 	}
 	
 	//exception manager
@@ -948,11 +964,13 @@ trait DNMVCS_Glue
 	{
 		return DNException::ThrowOn($flag,$msg,$code);
 	}
-	
-	public static function H($str)
+	//DB
+	public function installDBClass($class)
 	{
-		return self::G()->_H($str);
+		return DNDBManager::G()->installDBClass($class);
 	}
+	
+
 	public static function DB()
 	{
 		return DNDBManager::G()->_DB();
@@ -973,7 +991,10 @@ trait DNMVCS_Glue
 }
 trait DNMVCS_Misc
 {
-	
+	public static function H($str)
+	{
+		return self::G()->_H($str);
+	}
 	public function _Import($file)
 	{
 		$file=rtrim($file,'.php').'.php';
@@ -984,11 +1005,11 @@ trait DNMVCS_Misc
 		$file=rtrim($file,'.php').'.php';
 		require_once(__DIR__.'/'.$file);
 	}
-	public function _H($str)
+	public static function _H($str)
 	{
 		return htmlspecialchars( $str, ENT_QUOTES );
 	}
-	public function recordset_url(&$data,$cols_map)
+	public static function RecordsetUrl(&$data,$cols_map)
 	{
 		//todo more quickly;
 		if($data===[]){return $data;}
@@ -1005,7 +1026,7 @@ trait DNMVCS_Misc
 		unset($v);
 		return $data;
 	}
-	public function recordset_h(&$data,$cols=array())
+	public function RecordsetH(&$data,$cols=array())
 	{
 		if($data===[]){return $data;}
 		$cols=is_array($cols)?$cols:array($cols);
@@ -1204,15 +1225,15 @@ class DNMVCS
 		DNView::G()->init($path_view);
 		DNView::G()->setBeforeShow([$this,'onBeforeShow']);
 		
-		DNConfig::G()->init($path_config,$fullpath_config_common);
-		$this->config=DNConfig::G()->_LoadConfig();
-		$this->isDev=DNConfig::G()->_Setting('is_dev')?true:false;
+		DNConfiger::G()->init($path_config,$fullpath_config_common);
+		$this->config=DNConfiger::G()->_LoadConfig();
+		$this->isDev=DNConfiger::G()->_Setting('is_dev')?true:false;
 		
 		DNRoute::G()->init($this->options);
 		DNRoute::G()->set404(array($this,'onShow404'));	
 		
-		$db_config=DNConfig::G()->_Setting('db');
-		$db_r_config=DNConfig::G()->_Setting('db_r');
+		$db_config=DNConfiger::G()->_Setting('db');
+		$db_r_config=DNConfiger::G()->_Setting('db_r');
 		DNDBManager::G()->init($db_config,$db_r_config);
 		
 		
