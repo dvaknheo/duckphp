@@ -608,14 +608,14 @@ DNMedoo extends Medoo implement IDNDB.
 
 
 ## DNMVCSExt.php  | 额外类应用和说明
-DNMVCSExt 的类和方法需要手动引入文件才行，你需要  DNMVCS::ImportSys('DNMVCSEx')
-
-奇淫巧技
+DNMVCSExtt 的类和方法
+    选项 use_ext=true 引入，选项 user_ext_db=true 用 DBext ,额外扩展的db类
+### 奇淫巧技
 我想让 DB 只能被 Model , ExModel 调用。Model 只能被 ExModel,Service 调用 。 LibService 只能被Service 调用  Service只能被 Controller 调用
 
 可以,你的 Service  继承 DNDebugService. Model 继承 DNDebugModel  初始化里 加这一句
 ```php
-\DNMVCS\DNDBManger::G(\DNMVCS\DNDebugDBManager::W(\DNMVCS\DNDBManger::G()));
+\DNMVCS\DNDBManger::G(\DNMVCS\StrictDBManager::W(\DNMVCS\DNDBManger::G()));
 ```
 调试模式下那些 **新手** 就不能乱来了。
 
@@ -630,25 +630,25 @@ W($object);
 ## StrictService
     你的 Service 继承这个类
 	调试状态下，允许 service 调用 libservice 不允许 service 调用 service ,不允许 model 调用 service
-	
 ## StrictModel
-	你的 Service 继承这个类
+	你的 Model 继承这个类
     调试状态下，只允许 Service 或者 ExModel 调用 Model
 ## StrictDBManager
     包裹 DNDBManger::G(DNDebugDBManager::W(DNDBManger::G())); 后，实现
     不允许 Controller, Service 调用 DB
 	如果使用 Medoo ，在 DNMedoo::Install(); 后面执行。
 ## DBExt
-	DNMedoo::Install();
 	加了额外方法的DB类，注意和 Medoo 不兼容
-quote_array
-//str_in_array
-get insert update delete
+    多出的方法有 
+    quote_array， //str_in_array get， insert， update， delete
+    等
+    user_ext_db 选项自动安装，手动安装用
+    \DNMVCS\DNMVCS::G()->installDBClass('\DNMVCS\DBExt');
 
 
-## API 用于 api 服务快速调用。实际应用你应该缓存
+## API 用于 api 服务快速调用
 	public static function Call($class,$method,$input)
-	protected static function GetTypeFilter()
+	protected static function GetTypeFilter() 重写这个方法限定你的类型
 
 ## MyArgsAssoc
 - GetMyArgsAssoc 获得当前函数的命名参数数组
