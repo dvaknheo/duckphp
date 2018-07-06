@@ -165,6 +165,8 @@ class API
 	protected static function GetTypeFilter()
 	{
 		return [
+			'boolean'=>FILTER_VALIDATE_BOOLEAN  ,
+			'bool'=>FILTER_VALIDATE_BOOLEAN  ,
 			'int'=>FILTER_VALIDATE_INT,
 			'float'=>FILTER_VALIDATE_FLOAT,
 			'string'=>FILTER_SANITIZE_STRING,

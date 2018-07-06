@@ -662,3 +662,6 @@ W($object);
     - 构造函数里获得 $method=DNRoute::G()->calling_method; 然后进行后处理
 - 为什么不把 DNMVCS 里那些子功能类作为DNMVCS类的属性， 如 $this->View=DNView::G();
     - 静态方法里调用。 self::G()->View->_Show() 比 DNView::G()->_Show() 之类更麻烦。非静态方法里也就懒得加引用了
+- 我用 static 方法不行么，不想用 G() 函数于 Model ,Service
+	- 可以，Model可以用。不过不推荐Service 用
+
