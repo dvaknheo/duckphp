@@ -35,7 +35,7 @@ trait DNSingleton
 	}
 	
 }
-class DNAutoLoad
+class DNAutoLoader
 {
 	use DNSingleton;
 	const DEFAULT_OPTIONS=[
@@ -1140,9 +1140,9 @@ class DNMVCS
 	{
 		$this->init_options($options);
 		
-		DNAutoLoad::G()->init($this->options)->run();
+		DNAutoLoader::G()->init($this->options)->run();
 		
-		$this->options=array_merge($this->options,DNAutoLoad::G()->options); 
+		$this->options=array_merge($this->options,DNAutoLoader::G()->options); 
 		$this->path=$this->options['path'];
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
 		if($this->options['use_ext']){
@@ -1160,7 +1160,7 @@ class DNMVCS
 			$path=realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
 			$options['path']=rtrim($path,'/').'/';
 		}
-		$this->options=array_merge(DNAutoload::DEFAULT_OPTIONS,DNRoute::DEFAULT_OPTIONS,self::DEFAULT_OPTIONS,$options);
+		$this->options=array_merge(DNAutoLoader::DEFAULT_OPTIONS,DNRoute::DEFAULT_OPTIONS,self::DEFAULT_OPTIONS,$options);
 		
 		
 	}
@@ -1177,7 +1177,7 @@ class DNMVCS
 		$system_class=ltrim($system_class,'\\');
 		$self=ltrim($self,'\\');
 		if($system_class!=$self){
-			DNAutoLoad::G()->init($options)->run();
+			DNAutoLoader::G()->init($options)->run();
 			//$system_class='\\'.$system_class;
 			return DNMVCS::G($system_class::G())->init($options);
 		}

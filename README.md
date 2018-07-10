@@ -526,8 +526,8 @@ _before_instance($object) 被 G 函数调用，返回 $object。用于一些扩�
 
 _create_instance($class) 被 G 函数调用，用于创建实例，如果你的类构造方法带参数，需要重新写这个方法
 
-## DNAutoLoad 加载类
-DNAutoLoad 不建议扩展。因为你要有新类进来才有能处理加载关系，不如自己再加个加载类呢。
+## DNAutoLoader 加载类
+DNAutoLoader 不建议扩展。因为你要有新类进来才有能处理加载关系，不如自己再加个加载类呢。
     init(options)
     run()
 ## DNRoute 路由类
@@ -664,4 +664,4 @@ W($object);
     - 静态方法里调用。 self::G()->View->_Show() 比 DNView::G()->_Show() 之类更麻烦。非静态方法里也就懒得加引用了
 - 我用 static 方法不行么，不想用 G() 函数于 Model ,Service
 	- 可以，Model可以用。不过不推荐Service 用
-
+	- 琢磨了一阵如何不改 static 调用强行塞  strict 模式，还是没找到方法，切换 namespace 代理的方式可以搞定，但还是要手工改代码.
