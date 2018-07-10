@@ -181,45 +181,42 @@ init([]) 方法的参数是可配置的，默认设置如下
 ```
 ** 一些高级配置，用于魔改的请自己暂时去翻看代码。 *
 启用无命名空间模式 ，就是不想写那么多带命名空间的代码， *Service,  *Model 这样结尾的类直接自动加载
-## 全部默认选项详解。
-多余的缩进是不建议修改的
+### 全部默认选项详解。
+    多余的缩进里的选项是不建议修改的
 ```php
 $default_options_autoload=[
     'namespace'=>'MY', // 默认的命名空间改成你的工程名字
-    
-        'path_namespace'=>'app', 	
-        'path_autoload'=>'classes',	//
-    'fullpath_framework_common'=>''//通用的路径
-    
-    'enable_simple_mode'=>true, 	//
-        'path_framework_simple'=>'app',
+        'path_namespace'=>'app', 	// 命名空间根目录
+        'path_autoload'=>'classes',	// 无命名空间的类存放目录
+    'fullpath_framework_common'=>'' // 通用类文件目录，用于多工程
+    'enable_simple_mode'=>true, 	// 简单模式，无命名空间直接 controller, service,model
+        'path_framework_simple'=>'app', // 简单模式的基本目录
 ];
 
 $default_options_route=array(
     'namespace'=>'MY',	 // 默认的命名空间改成你的工程名字
 	'enable_paramters'=>false, //支持切片模式
-    'enable_simple_mode'=>true,
-    
-        'path_controller'=>'app/Controller',
-        'namespace_controller'=>'Controller',
-        'default_controller_class'=>'DNController',
-    
-        'enable_post_prefix'=>true,
-        'disable_default_class_outside'=>false,
-    'key_for_simple_route'=>null,
+    'enable_simple_mode'=>true, //共享简单模式
+        'path_controller'=>'app/Controller', //controller 的目录
+        'namespace_controller'=>'Controller',   //controller 的命名空间
+        'default_controller_class'=>'DNController', //默认controller 名字
+        'enable_post_prefix'=>true, // 把 POST 的 映射为 do 方法
+        'disable_default_class_outside'=>false, // 屏蔽  Main/index  第二访问模式
+    'key_for_simple_route'=>null,   //切换成支持 _GET  模式路由 _r=about/foo 这样的
 );
 
 $default_options_system=[
-    'system_class'=>null,
+    'system_class'=>null,   // override 重写 系统入口类代替 DNMVCS 类。
 	
-    'fullpath_config_common'=>'',
+    'fullpath_config_common'=>'', // 通用配置的目录，用于多工程
         'path_view'=>'view',
-		'path_lib'=>'lib',
-		'path_config'=>'config',
+		'path_lib'=>'lib',  // 用于
+		'path_config'=>'config',    // 配置的路径
 	'use_ext'=>false,  //加载 DNMVCSExt
 	'use_ext_db'=>false,  //用 DBExt 代替 DNDB 数据库类
 ];
 ```
+### 设置文件
 工程的设置文件样例 setting.sample.php 。选项很少
 
 ```php
@@ -233,17 +230,18 @@ $data['db']=array(
 );
 return $data;
 ```
-只有一个设置项目 is_dev 用于 判断是否是开发状态，默认并没使用到，在额外库里用到
-db ，配置数据库。
-db_r， 配置读写分离的数据库
+    只有一个设置项目 is_dev 用于 判断是否是开发状态，默认并没使用到，在额外库里用到
+    db，配置数据库。
+    db_r， 配置读写分离的数据库
 
-选项，设置，配置的区别
-选项，代码里的设置
-设置，敏感信息
-配置，非敏感信息
+### 选项，设置，配置的区别
+    选项，代码里的设置
+    设置，敏感信息
+    配置，非敏感信息
 
 ## 开始自己的代码
 以 /about/foo 为例，使用无命名空间模式，这省掉一些代码
+
 首先我们要写相关控制器
 
 ::app/Controller/about.php
@@ -270,7 +268,7 @@ class MiscService
     use \DNMVCS\DNSingleton;
     public function foo()
     {
-        //log something.
+        //TODO log something.
         $time=MiscModel::G()->getTime();
         $ret='Now is'.$time;
         return $ret;
@@ -315,13 +313,13 @@ Parameter 切片会直接传递进 方法里作为参数
 simple_route_key 开启 _GET 模式路由（原先是在单独类里实现，后来整合了
 
 路由这块很多东西，300 行代码不是这么简单描述的
+
+run() 方法开始使用路由。 如果你不想要路由。只想要特定结构的目录， 不调用 run 就可以了。
+比如我一个样例，只想要 db 类等等。
 ## 重写 错误页面
 错误页面在 view/_sys 里。你可以修改相应的错误页面方法。
 比如 404 是 view/404.php
 高级一点，你可以 扩展 DNMVCS 的主类实现
-
-run() 方法开始使用路由。 如果你不想要路由。只想要特定结构的目录， 不调用 run 就可以了。
-比如我一个样例，只想要 db 类等等。
 
 # DNMVCS 主类
 ## 基本方法
@@ -344,71 +342,90 @@ run()
     开始路由，执行。这个方法拆分出来是为了，不想要路由，只是为了加载一些类的需求的。
 ```
 'system_class'=>'\MY\System\App'  可以在 init 方法里用，使得替换默认类。
-##
 
 ## 常用静态方法方法
 这些方法因为太常用，所以静态化了。
 包括 视图view,路由，数据库，配置 ，
-```
 
 Show($data=array(),$view=null)
+
     显示视图 实质调用 DNView::G()->_Show();
     视图的文件在 ::view 目录底下.
     为什么数据放前面，DN::Show(get_defined_vars());把 controller 的变量都整合进来，并用默认路径作为 view 文件。
     高级开发者注意，这里的 $view 为空是在静态方法里处理的，子类化需要注意
 DB()
+
     返回数据库,实质调用 DBManager::G()->_DB();
     数据库管理类 DNManager 里配置的
 DB_W()
+
     返回写入的数据 实质调用 DBManager::G()->_DB();
     默认和 DB() 函数一样
 DB_R()
+
     读取用的数据库 和默认配置一样。
 URL($url=null)
+
     获得调整路由后的url地址 实质调用DNRoute::G()->_URL();
     当你重写 DNRoute 类后，你可能需要重写这个方法来展示
     比如 simple_route_key 开启后， URL('class/method?foo=bar') 
     将会是 ?r=class/method&foo=bar ，而不是 /class/method?foo=bar
 _Parameters()
+
     获得路径切片 实质调用 DNRoute::G()->_URL();
     当用正则匹配路由的时候，匹配结果放在这里。
     如果开启了 eanbale_parameter 匹配选项也会在这里。
 Setting($key)
+
     读取设置 实质调用 DNConfig::G()->Setting();
     设置在 ::/config/setting.php 里，php 格式
     配置非敏感信息，放在版本管理中，设置是敏感信息，不存在版本管理中
 GetConfig($key)
+
     读取配置 实质调用 DNConfig::G()->GetConfig();
     配置放在 config/config.php 里，php 格式
     配置非敏感信息，放在版本管理中，设置是敏感信息，不存在版本管理中
 LoadConfig($file_basename)
+
     加载其他配置 实质调用 DNConfig::G()->LoadConfig();
     如果很多配置文件，手动加载其他配置
 ExitJson($ret)
+
     打印 json_encode($ret) 并且退出 实质调用 DNView::G()->ExitJson();
     这里的 json 为人眼友好模式。
 ExitRedirect($url)
+
     跳转到另一个url 并且退出 实质调用 DNView::G()->ExitRedirect();
 ExitRouteTo($url)
+
     跳转到 URL()函数包裹的 url。
     应用到 DNView::G()->ExitRedirect(); 和 DNRoute::G()->URL
     高级开发者注意，这是静态方法里处理的，子类化需要注意
 ThrowOn($flag,$message,$code);
+
     如果 flag 成立则抛出 DNException 异常。 调用 DNException::ThrowOn
     减少代码量。如果没这个函数，你要写
     if($flag){throw new DNException($message,$code);}
     折腾
     如果是你自己的异常类 ，可以 use DNThrowQuickly 实现 ThrowOn 静态方法。
-H($str)
-    html 编码 这个函数常用，所以缩写。用了 utf-8的模式
 Import($file)
+
     手动导入默认lib 目录下的包含文件 函数 实质调用 self::G()->_Import();
 ImportSys($file)
     
     手动导DNMVCS目录下的包含文件 函数。DNMVCS库目录默认不包含其他非必要的文件
 	因为需求不常用，所以没自动加载
 	比如在调试状态下的奇淫巧技：限定各 G 函数的调用。以及DNMedoo ，用 Medoo类
-```
+H($str)
+
+    html 编码 这个函数常用，所以缩写。用了 utf-8的模式
+RecordsetH($data,$cols=[])
+
+    给 sql 查询返回数组 html 编码，
+RecordsetURL($data,$cols_map) 
+
+    给 sql 返回数组 加url 比如  url_edit=>"edit/{id}",则该行添加 url_edit =>"edit/1" 等类似。
+
 
 ## 非静态方法
 这里的方法偶尔会用到，所以没静态化 。
@@ -440,11 +457,6 @@ setDefaultExceptionHandel($calllback)
     用于控制器里控制特定错误类型。
 isDev()
     实际读设置里的 is_dev ，判断是否在开发状态。
-recordset_h($data,$cols=[])
-    给 sql 查询返回数组 html 编码，
-recordset_url($data,$cols_map) 
-    给 sql 返回数组 加url 比如  url_edit=>"edit/{id}",则该行添加 url_edit =>"edit/1" 等类似。
-
 ```
 ## 事件方法
 实现了默认事件回调的方法。扩展以展现不同事件的显示。
@@ -510,8 +522,8 @@ MyBaseClass::G()->foo2();
 ```php
 public function init($options=[])
 {
-    parent::init($options);
     DNRoute::G(MYRoute::G());
+    parent::init($options);
 }
 ```
 这样 MYRoute 就接管了 DNRoute 了。
@@ -526,6 +538,12 @@ _before_instance($object) 被 G 函数调用，返回 $object。用于一些扩�
 
 _create_instance($class) 被 G 函数调用，用于创建实例，如果你的类构造方法带参数，需要重新写这个方法
 
+组件在后续使用，记得初始化：
+
+    在 Controller 里想替换 DNView ，记得在之前初始化
+    MYView::G()->init(DNView::G()->path);
+    DNView::G(MYView::G());
+    或者在 MYView _create_instance 里复制 init 方法过来
 ## DNAutoLoader 加载类
 DNAutoLoader 不建议扩展。因为你要有新类进来才有能处理加载关系，不如自己再加个加载类呢。
     init(options)
@@ -613,7 +631,7 @@ DNMVCSExtt 的类和方法
 ### 奇淫巧技
 我想让 DB 只能被 Model , ExModel 调用。Model 只能被 ExModel,Service 调用 。 LibService 只能被Service 调用  Service只能被 Controller 调用
 
-可以,你的 Service  继承 DNDebugService. Model 继承 DNDebugModel  初始化里 加这一句
+可以,你的 Service  继承 StrictService. Model 继承 StrictModel  初始化里 加这一句
 ```php
 \DNMVCS\DNDBManger::G(\DNMVCS\StrictDBManager::W(\DNMVCS\DNDBManger::G()));
 ```
@@ -622,35 +640,38 @@ DNMVCSExtt 的类和方法
 
 为什么不作为框架的默认行为。 主要考虑性能因数，而且自由，无依赖性
 
-## trait DNWrapper 
+### trait DNWrapper 
 W($object);
     
     DNWrapper::W(MyOBj::G()); 包裹一个对象，在 __call 里做一些操作，然后调用 call_the_object($method,$args)
 
-## StrictService
+### StrictService
     你的 Service 继承这个类
 	调试状态下，允许 service 调用 libservice 不允许 service 调用 service ,不允许 model 调用 service
-## StrictModel
+### StrictModel
 	你的 Model 继承这个类
     调试状态下，只允许 Service 或者 ExModel 调用 Model
-## StrictDBManager
+### StrictDBManager
     包裹 DNDBManger::G(DNDebugDBManager::W(DNDBManger::G())); 后，实现
     不允许 Controller, Service 调用 DB
 	如果使用 Medoo ，在 DNMedoo::Install(); 后面执行。
-## DBExt
+### DBExt
 	加了额外方法的DB类，注意和 Medoo 不兼容
     多出的方法有 
     quote_array， //str_in_array get， insert， update， delete
     等
     user_ext_db 选项自动安装，手动安装用
     \DNMVCS\DNMVCS::G()->installDBClass('\DNMVCS\DBExt');
+### MedooSimpleIntaller
+    CreateDBInstance
+        用于加载 medoo 类代替默认的 db 类，注意这使得不兼容 db 类
 
 
-## API 用于 api 服务快速调用
-	public static function Call($class,$method,$input)
+### API 用于 api 服务快速调用
+	public static function Call($class,$method,$input)  input 是关联数组
 	protected static function GetTypeFilter() 重写这个方法限定你的类型
 
-## MyArgsAssoc
+### MyArgsAssoc
 - GetMyArgsAssoc 获得当前函数的命名参数数组
 - CallWithMyArgsAssoc($callback)  获得当前函数的命名参数数组并回调
 
