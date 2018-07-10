@@ -114,12 +114,12 @@ DNMVCS Notice: no setting file!,change setting.sample.php to setting.php !
 +---app // psr-4 标准的自动加载目录
 |   +---Controller  // 路由控制器
 |   |       Main.php    // 默认控制器入口文件
-|   +---FrameWork   // 基类放在这里
-|   |       App.php    // 默认框架入口文件
 |   +---Model       // 模型放在里
 |   |       TestModel.php   // 测试 Model 
-|   \---Service     // 服务放在这里
-|           TestService.php //测试 Service
+|   +---Service     // 服务放在这里
+|   |       TestService.php //测试 Service
+|   \---System   // 基类放在这里
+|          App.php    // 默认框架入口文件
 +---classes         //自动加载的类，放在这里
 |       ForAutoLoad.php // 测试自动加载
 +---config          // 配置文件 放这里
@@ -209,15 +209,15 @@ $default_options_route=array(
     'key_for_simple_route'=>null,
 );
 
-$default_options_framework=[
-    'framework_class'=>null,
+$default_options_system=[
+    'system_class'=>null,
 	
     'fullpath_config_common'=>'',
         'path_view'=>'view',
 		'path_lib'=>'lib',
 		'path_config'=>'config',
-	'use_ext'=>false,
-	'use_ext_db'=>false,
+	'use_ext'=>false,  //加载 DNMVCSExt
+	'use_ext_db'=>false,  //用 DBExt 代替 DNDB 数据库类
 ];
 ```
 工程的设置文件样例 setting.sample.php 。选项很少
@@ -343,7 +343,7 @@ init($options=[])
 run()
     开始路由，执行。这个方法拆分出来是为了，不想要路由，只是为了加载一些类的需求的。
 ```
-'framework_class'=>'\MY\Framework\App'  可以在 init 方法里用，使得替换默认类。
+'system_class'=>'\MY\System\App'  可以在 init 方法里用，使得替换默认类。
 ##
 
 ## 常用静态方法方法

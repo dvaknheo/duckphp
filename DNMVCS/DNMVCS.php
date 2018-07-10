@@ -38,7 +38,17 @@ trait DNSingleton
 class DNAutoLoad
 {
 	use DNSingleton;
-	
+	const DEFAULT_OPTIONS=[
+			'namespace'=>'MY',
+			
+			'path_namespace'=>'app',
+			'path_autoload'=>'classes',
+			'fullpath_framework_common'=>'',
+			
+			'enable_simple_mode'=>true,
+			'path_framework_simple'=>'app',
+		];
+
 	public $path;
 	public $options=[];
 	protected $namespace;
@@ -57,17 +67,7 @@ class DNAutoLoad
 		if($this->is_inited){return $this;}
 		$this->is_inited=true;
 		
-		$default_options=array(
-			'path'	=>'',
-			'namespace'=>'MY',
-			'enable_simple_mode'=>true,
-			'path_autoload'=>'classes',
-			
-			'path_framework_simple'=>'app',
-			'path_namespace'=>'app',
-			'fullpath_framework_common'=>'',
-		);
-		$options=array_merge($default_options,$options);
+		$options=array_merge(self::DEFAULT_OPTIONS,$options);
 		$this->options=$options;
 		
 		if(!$options['path']){
@@ -151,7 +151,20 @@ class DNRoute
 {
 	use DNSingleton;
 	
-	//protected $site=''; //for sites in a controller
+	const DEFAULT_OPTIONS=[
+			'namespace'=>'MY',
+			'enable_paramters'=>false,
+			'enable_simple_mode'=>true,
+			
+			'path_controller'=>'app/Controller',
+			'namespace_controller'=>'Controller',
+			'default_controller_class'=>'DNController',
+			
+			'enable_post_prefix'=>true,
+			'disable_default_class_outside'=>false,
+			'key_for_simple_route'=>null,
+		];
+	
 	protected $route_handels=[];
 	protected $routeMap=[];
 	protected $on404Handel;
@@ -220,21 +233,7 @@ class DNRoute
 	}
 	public function init($options)
 	{
-		$default_options=array(
-			'namespace'=>'MY',
-			'enable_paramters'=>false,
-			'enable_simple_mode'=>true,
-			
-			'path_controller'=>'app/Controller',
-			'namespace_controller'=>'Controller',
-			'default_controller_class'=>'DNController',
-			
-			'enable_post_prefix'=>true,
-			'disable_default_class_outside'=>false,
-			'key_for_simple_route'=>null,
-		);
-
-		$options=array_merge($default_options,$options);
+		$options=array_merge(self::DEFAULT_OPTIONS,$options);
 		$this->options=$options;
 		
 		$this->path=$options['path'].$options['path_controller'].'/';
@@ -525,6 +524,7 @@ class DNView
 	}	
 	public function _Show($data=array(),$view)
 	{
+		ob_start();
 		if(isset($this->onBeforeShow)){
 			($this->onBeforeShow)($view,$data);
 		}
@@ -538,6 +538,7 @@ class DNView
 		$view=rtrim($view,'.php').'.php';
 		$this->view_file=$this->path.$view;
 		$this->show_include();
+		ob_end_flush();
 	}
 	protected function show_include()
 	{
@@ -1026,7 +1027,7 @@ trait DNMVCS_Misc
 		unset($v);
 		return $data;
 	}
-	public function RecordsetH(&$data,$cols=array())
+	public static function RecordsetH(&$data,$cols=array())
 	{
 		if($data===[]){return $data;}
 		$cols=is_array($cols)?$cols:array($cols);
@@ -1106,6 +1107,15 @@ class DNMVCS
 	use DNMVCS_Handel;
 	use DNMVCS_Misc;
 	
+	const DEFAULT_OPTIONS=[
+			'system_class'=>null,
+			'path_view'=>'view',
+			'path_config'=>'config',
+			'fullpath_config_common'=>'',
+			'path_lib'=>'lib',
+			'use_ext'=>false,
+			'use_ext_db'=>false,
+		];
 	protected $path=null;
 	
 	protected $auto_close_db=true;
@@ -1119,9 +1129,9 @@ class DNMVCS
 	public static function RunQuickly($options=array())
 	{
 		DNMVCS::G()->autoload($options);
-		$framework_class=isset($options['framework_class'])?$options['framework_class']:'\\MY\\Framework\\App';
-		if(class_exists($framework_class)){
-			return DNMVCS::G($framework_class::G())->init($options)->run();
+		$system_class=isset($options['system_class'])?$options['system_class']:'\\MY\\System\\App';
+		if(class_exists($system_class)){
+			return DNMVCS::G($system_class::G())->init($options)->run();
 		}else{
 			return DNMVCS::G()->init($options)->run();
 		}
@@ -1146,46 +1156,11 @@ class DNMVCS
 	
 	protected function init_options($options)
 	{
-		$default_options_autoload=[
-			'namespace'=>'MY',
-			
-			'path_namespace'=>'app',
-			'path_autoload'=>'classes',
-			'fullpath_framework_common'=>'',
-			
-			'enable_simple_mode'=>true,
-			'path_framework_simple'=>'app',
-		];
-
-		$default_options_route=array(
-			'namespace'=>'MY',
-			'enable_paramters'=>false,
-			'enable_simple_mode'=>true,
-			
-			'path_controller'=>'app/Controller',
-			'namespace_controller'=>'Controller',
-			'default_controller_class'=>'DNController',
-			
-			'enable_post_prefix'=>true,
-			'disable_default_class_outside'=>false,
-			'key_for_simple_route'=>null,
-		);
-		
-		$default_options_framework=[
-			'framework_class'=>null,
-			'path_view'=>'view',
-			'path_config'=>'config',
-			'fullpath_config_common'=>'',
-			'path_lib'=>'lib',
-			'use_ext'=>false,
-			'use_ext_db'=>false,
-		];
-		
 		if(!isset($options['path']) || !($options['path'])){
 			$path=realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
 			$options['path']=rtrim($path,'/').'/';
 		}
-		$this->options=array_merge($default_options_autoload,$default_options_route,$default_options_framework,$options);
+		$this->options=array_merge(DNAutoload::DEFAULT_OPTIONS,DNRoute::DEFAULT_OPTIONS,self::DEFAULT_OPTIONS,$options);
 		
 		
 	}
@@ -1194,24 +1169,24 @@ class DNMVCS
 		DNExceptionManager::HandelAllException([$this,'onErrorException'],[$this,'onException']);
 		DNExceptionManager::HandelAllError([$this,'onErrorHandel'],[$this,'onDebugError']);
 	}
-	protected function checkOverrideFrameworkClass($options)
+	protected function checkOverrideSystemClass($options)
 	{
-		if(!isset($options['framework_class'])){return null;}
-		$framework_class=$options['framework_class'];
+		if(!isset($options['system_class'])){return null;}
+		$system_class=$options['system_class'];
 		$self=get_called_class();
-		$framework_class=ltrim($framework_class,'\\');
+		$system_class=ltrim($system_class,'\\');
 		$self=ltrim($self,'\\');
-		if($framework_class!=$self){
+		if($system_class!=$self){
 			DNAutoLoad::G()->init($options)->run();
-			//$framework_class='\\'.$framework_class;
-			return DNMVCS::G($framework_class::G())->init($options);
+			//$system_class='\\'.$system_class;
+			return DNMVCS::G($system_class::G())->init($options);
 		}
 		return null;
 	}
 	//@override me
 	public function init($options=array())
 	{
-		$object=$this->checkOverrideFrameworkClass($options);
+		$object=$this->checkOverrideSystemClass($options);
 		if($object){return $object;}
 		
 		$this->initExceptionManager();
@@ -1246,10 +1221,7 @@ class DNMVCS
 	}
 	public function run()
 	{
-		ob_start();
 		DNRoute::G()->run();
-		ob_end_flush();
-		return $this;
 	}	
 }
 

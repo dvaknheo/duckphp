@@ -205,6 +205,25 @@ class API
 		return $ret;
 	}
 }
+class MedooSimpleInstaller
+{
+	public static function CreateDBInstance($db_config)
+	{
+		$dsn=$db_config['dsn'];
+		list($driver,$dsn)=explode(':',$dsn);
+		$dsn=rtrim($dsn,';');
+		$a=explode(';',$dsn);
+		$dsn_array['driver']=$driver;
+		foreach($a as $v){
+			list($key,$value)=explode('=',$v);
+			$dsn_array[$key]=$value;
+		}
+		$db_config['dsn']=$dsn_array;
+		$db_config['database_type']='mysql';
+		
+		return new Medoo($db_config);
+	}
+}
 class MyArgsAssoc
 {
 	protected static function GetCalledAssocByTrace($trace)
@@ -220,7 +239,7 @@ class MyArgsAssoc
 		foreach($params as $v){
 			$names[]=$v->getName();
 		}
-		return $name;
+		return $names;
 	}
 	
 	public static function GetMyArgsAssoc()

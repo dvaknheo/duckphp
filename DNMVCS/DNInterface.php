@@ -61,7 +61,10 @@ interface IDNDB
 	public function fetchColumn($sql);
 	public function execQuick($sql);
 	public function rowCount();
-	public function insert($table_name,$data,$return_last_id=true);
+}
+interface IDNDBInstaller
+{
+	public static function CreateDBInstance();
 }
 interface IDNExceptionManager
 {
