@@ -457,7 +457,7 @@ class DNRoute
 		foreach($this->routeMap as $pattern =>$callback){
 			if($this->match_path_info($pattern,$path_info)){
 				if(!is_callable($callback)){
-					list($class,$method)=explode('$',$callback);
+					list($class,$method)=explode('->',$callback);
 					$obj=new $class;
 					$callback=array($obj,$method);
 					//DN::ThrowOn(true,"...for debug");

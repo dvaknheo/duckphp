@@ -294,28 +294,31 @@ class MiscService
 
 ## 理解路由和控制器
 DNMVCS 的控制器有点像CI，不需要继承什么，就这么简单。
+1
 甚至连名字都不用，用默认的 DNController 就够了。
 而且支持子命名空间多级目录。如果开启简单模式，也可用 __代替 \ 切分。
-
+2
 DNController 重名了怎么办，比如我要相互引用？ 
 1 那是你不应该这么做，2 你也可以采取名称对应的类，而不偷懒啊啊。
 
-DNMVCS 还支持路由映射。 
+3 DNMVCS 还支持路由映射。 
 正则用 ~
 要指定 GET/POST 在最前面加http 方法.
 
+    DN::assignRoute('GET ~article/(\d+)','article->get');
+    *用->表示类调用而不是警惕调用
 DNMVCS 支持 Paramter，你可以在设置里关掉。
 Parameter 切片会直接传递进 方法里作为参数
 路由表里，用正则切分会传递进方法，不管是否开启 enable_paramters
 
-如果你想加其他功能，可以继承 DNRoute 类。 
 比如 路由不用 path_info 用 $_GET['_r'] 等，很简单的。
 simple_route_key 开启 _GET 模式路由（原先是在单独类里实现，后来整合了
+如果你想加其他功能，可以继承 DNRoute 类。 
 
 路由这块很多东西，300 行代码不是这么简单描述的
 
 run() 方法开始使用路由。 如果你不想要路由。只想要特定结构的目录， 不调用 run 就可以了。
-比如我一个样例，只想要 db 类等等。
+    比如我一个样例，只想要 db 类等等。
 ## 重写 错误页面
 错误页面在 view/_sys 里。你可以修改相应的错误页面方法。
 比如 404 是 view/404.php
@@ -678,7 +681,8 @@ W($object);
 ## 常见问题
 
 - Session 要怎么处理 
-    - 一般来说 Session 的处理，放在 SessionService 里，这是唯一和状态有关的 Service 例外。
+	一般来说 Session 的处理，放在 SessionService 里，这是唯一和状态有关的 Service 例外。
+	在构造函数里做 session_start 相关代码
 - 后台里，我要判断权限，只有几个公共方法能无权限访问
     - 构造函数里获得 $method=DNRoute::G()->calling_method; 然后进行后处理
 - 为什么不把 DNMVCS 里那些子功能类作为DNMVCS类的属性， 如 $this->View=DNView::G();
@@ -686,3 +690,6 @@ W($object);
 - 我用 static 方法不行么，不想用 G() 函数于 Model ,Service
 	- 可以，Model可以用。不过不推荐Service 用
 	- 琢磨了一阵如何不改 static 调用强行塞  strict 模式，还是没找到方法，切换 namespace 代理的方式可以搞定，但还是要手工改代码.
+- 思考：子域名作为子目录
+	想把某个子目录作为域名独立出去。只改底层代码如何改
+
