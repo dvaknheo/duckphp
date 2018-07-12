@@ -432,6 +432,7 @@ RecordsetURL($data,$cols_map)
 
 ## 非静态方法
 这里的方法偶尔会用到，所以没静态化 。
+
 在 controller 的构建函数，你可能会用到。
 assign 系列函数，都有两个模式 func(\$map)，和 func(\$key,\$value) 模式方便大量导入。
 
@@ -442,6 +443,7 @@ assignRoute($route,$callback=null)
 getCallingMethod()
     获得路由中正在调用的方法。
     用于控制器里判断方法以便于权限管理。
+    也适用于重写URL后判断是否是直接访问
 setViewWrapper($head_file=null,$foot_file=null)
     给输出 view 加页眉页脚 实质调用 DNView::G()->setViewWrapper
     view 里的变量和页眉页脚的域是一样的。
@@ -578,9 +580,10 @@ if($flag){throw new MyException($message,$code);}
     这里主要是数据库的扩展
     这个也许会经常改动。比如用自己公司的 DB 类，要在这里做一个封装。
 
-    installDBClass($callback);   $callback($config) 返回 DB 实例。方便扩展
-    $db
-    $db_r 
+installDBClass($callback);
+
+    $callback($config) 返回 DB 实例。方便扩展
+
 ## DB 类
 DNMVCS 自带了一个简单的 DB 类
 DN::DB()得到的就是这个 DNDB 类
@@ -629,7 +632,8 @@ DNMedoo extends Medoo implement IDNDB.
 
 
 ## DNMVCSExt.php  | 额外类应用和说明
-DNMVCSExtt 的类和方法
+DNMVCSExt 的类和方法
+
     选项 use_ext=true 引入，选项 user_ext_db=true 用 DBext ,额外扩展的db类
 ### 奇淫巧技
 我想让 DB 只能被 Model , ExModel 调用。Model 只能被 ExModel,Service 调用 。 LibService 只能被Service 调用  Service只能被 Controller 调用
@@ -667,7 +671,7 @@ W($object);
     \DNMVCS\DNMVCS::G()->installDBClass('\DNMVCS\DBExt');
 ### MedooSimpleIntaller
     CreateDBInstance
-        用于加载 medoo 类代替默认的 db 类，注意这使得不兼容 db 类
+        用于加载 medoo 类代替默认的 db 类，注意这使得不兼容默认 db 类
 
 
 ### API 用于 api 服务快速调用
@@ -678,7 +682,7 @@ W($object);
 - GetMyArgsAssoc 获得当前函数的命名参数数组
 - CallWithMyArgsAssoc($callback)  获得当前函数的命名参数数组并回调
 
-## 常见问题
+# 常见问题
 
 - Session 要怎么处理 
 	一般来说 Session 的处理，放在 SessionService 里，这是唯一和状态有关的 Service 例外。
