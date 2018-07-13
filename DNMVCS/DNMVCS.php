@@ -1223,8 +1223,7 @@ class DNMVCS
 		$db_config=DNConfiger::G()->_Setting('db');
 		$db_r_config=DNConfiger::G()->_Setting('db_r');
 		if($this->options['use_ext'] && $this->options['use_ext_db']){
-				$dbm->installDBClass('\DNMVCS\DBExt');
-			}
+			$dbm->installDBClass('\DNMVCS\DBExt');
 		}
 		$dbm->init($db_config,$db_r_config);
 	}
