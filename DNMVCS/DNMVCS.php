@@ -1147,9 +1147,6 @@ class DNMVCS
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
 		if($this->options['use_ext']){
 			self::ImportSys('DNMVCSExt');
-			if($this->options['use_ext_db']){
-				DNDBManager::G()->installDBClass('\DNMVCS\DBExt');
-			}
 		}
 		return $this;
 	}
@@ -1193,27 +1190,43 @@ class DNMVCS
 		//override me to autoload; 
 		$this->autoload($options);
 		
-		$path_view=$this->path.rtrim($this->options['path_view'],'/').'/';
+		$this->initConfiger(DNConfiger::G());
+		$this->initView(DNView::G());
+		$this->initRoute(DNRoute::G());
+		$this->initDBManger(DNDBManager::G());
+		
+		return $this;
+	}
+	public function initConfiger($configer)
+	{
 		$path_config=$this->path.rtrim($this->options['path_config'],'/').'/';
 		$fullpath_config_common=$this->options['fullpath_config_common']?rtrim($this->options['fullpath_config_common'],'/').'/':'';
+		$configer->init($path_config,$fullpath_config_common);
 		
-		DNView::G()->init($path_view);
-		DNView::G()->setBeforeShow([$this,'onBeforeShow']);
-		
-		DNConfiger::G()->init($path_config,$fullpath_config_common);
-		$this->config=DNConfiger::G()->_LoadConfig();
-		$this->isDev=DNConfiger::G()->_Setting('is_dev')?true:false;
-		
-		DNRoute::G()->init($this->options);
-		DNRoute::G()->set404(array($this,'onShow404'));	
-		
+		$this->config=$configer->_LoadConfig();
+		$this->isDev=$configer->_Setting('is_dev')?true:false;
+	}
+	public function initView($view)
+	{
+		$path_view=$this->path.rtrim($this->options['path_view'],'/').'/';
+		$view->init($path_view);
+		$view->setBeforeShow([$this,'onBeforeShow']);
+		$view->isDev=$this->isDev;
+	}
+	public function initRoute($route)
+	{
+		$route->init($this->options);
+		$route->set404(array($this,'onShow404'));	
+	}
+	public function initDBManger($dbm)
+	{
 		$db_config=DNConfiger::G()->_Setting('db');
 		$db_r_config=DNConfiger::G()->_Setting('db_r');
-		DNDBManager::G()->init($db_config,$db_r_config);
-		
-		
-		DNView::G()->isDev=$this->isDev;
-		return $this;
+		if($this->options['use_ext'] && $this->options['use_ext_db']){
+				$dbm->installDBClass('\DNMVCS\DBExt');
+			}
+		}
+		$dbm->init($db_config,$db_r_config);
 	}
 	public function isDev()
 	{

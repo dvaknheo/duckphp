@@ -525,6 +525,7 @@ MyBaseClass::G()->foo2();
 
 比如你要自己的路由方法在 autoload 类后，init 里。
 ```php
+//MYMVCS::init
 public function init($options=[])
 {
     DNRoute::G(MYRoute::G());
@@ -544,11 +545,16 @@ _before_instance($object) 被 G 函数调用，返回 $object。用于一些扩�
 _create_instance($class) 被 G 函数调用，用于创建实例，如果你的类构造方法带参数，需要重新写这个方法
 
 组件在后续使用，记得初始化：
-
-    在 Controller 里想替换 DNView ，记得在之前初始化
-    MYView::G()->init(DNView::G()->path);
+    DNMVCS 一共有 4个组件初始化
+    initConfiger(DNConfiger::G());
+    initView(DNView::G());
+    initRoute(DNRoute::G());
+    initDBManger(DNDBManager::G());
+    你不需要 override 这几个函数，你需要在相应的初始化函数里调用这些方方初始化就是
+    如
+    DNMVCS::G()->initView(MYView::G()); // 别忘了这一句。
     DNView::G(MYView::G());
-    或者在 MYView _create_instance 里复制 init 方法过来
+    * 因为 autoloader 不建议替换，所以没有 initAutoloader();
 ## DNAutoLoader 加载类
 DNAutoLoader 不建议扩展。因为你要有新类进来才有能处理加载关系，不如自己再加个加载类呢。
     init(options)
