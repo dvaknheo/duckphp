@@ -209,8 +209,8 @@ $default_options_system=[
     'system_class'=>null,   // override 重写 系统入口类代替 DNMVCS 类。
 	
     'fullpath_config_common'=>'', // 通用配置的目录，用于多工程
-        'path_view'=>'view',
-		'path_lib'=>'lib',  // 用于
+        'path_view'=>'view',  //视图目录
+		'path_lib'=>'lib',  // 用于 import
 		'path_config'=>'config',    // 配置的路径
 	'use_ext'=>false,  //加载 DNMVCSExt
 	'use_ext_db'=>false,  //用 DBExt 代替 DNDB 数据库类
@@ -686,6 +686,7 @@ W($object);
 
 - Session 要怎么处理 
 	一般来说 Session 的处理，放在 SessionService 里，这是唯一和状态有关的 Service 例外。
+    或者是 SesionModel
 	在构造函数里做 session_start 相关代码
 - 后台里，我要判断权限，只有几个公共方法能无权限访问
     - 构造函数里获得 $method=DNRoute::G()->calling_method; 然后进行后处理

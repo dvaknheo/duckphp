@@ -588,8 +588,8 @@ class DNConfiger
 {
 	use DNSingleton;
 
-	protected $path;
-	protected $path_common;
+	public $path;
+	public $path_common;
 	
 	public function init($path,$path_common=null)
 	{
@@ -656,8 +656,8 @@ class DNConfiger
 class DNDB
 {
 	public $pdo;
+	public $config;
 	protected $rowCount;
-	protected $config;
 	
 	public function init($config)
 	{
@@ -836,8 +836,8 @@ class DNDBManager
 	protected $callback_create_db=null;
 	public $db=null;
 	public $db_r=null;
-	protected $db_config=array();
-	protected $db_r_config=array();
+	public $db_config=array();
+	public $db_r_config=array();
 	public function init($db_config,$db_r_config)
 	{
 		$this->db_config=$db_config;
