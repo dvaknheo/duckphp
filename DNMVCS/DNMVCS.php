@@ -62,7 +62,7 @@ class DNAutoLoader
 	protected $enable_simple_mode=true;
 	
 
-	public function init($options=array())
+	public function init($options=[])
 	{
 		if($this->is_inited){return $this;}
 		$this->is_inited=true;
@@ -333,7 +333,7 @@ class DNRoute
 		}
 		if($this->enable_param){
 			$param=array_slice($blocks,count(explode('/',$current_class))+($current_class?1:0));
-			if($param==array(0=>'')){$param=array();}
+			if($param==array(0=>'')){$param=[];}
 			$this->params=$param;
 			
 			$this->calling_path=ltrim($current_class.'/'.$method,'/');
@@ -503,7 +503,7 @@ class DNView
 	protected $head_file;
 	protected $foot_file;
 	protected $view_file;
-	public $data=array();
+	public $data=[];
 	public $onBeforeShow=null;
 	public $path;
 	public $isDev=false;
@@ -522,7 +522,7 @@ class DNView
 		header('location: '.$url);
 		exit;
 	}	
-	public function _Show($data=array(),$view)
+	public function _Show($data=[],$view)
 	{
 		ob_start();
 		if(isset($this->onBeforeShow)){
@@ -531,7 +531,7 @@ class DNView
 		// stop notice 
 		error_reporting(error_reporting() & ~E_NOTICE);
 		
-		$this->data=$this->data?$this->data:array();
+		$this->data=$this->data?$this->data:[];
 		$this->data=array_merge($this->data,$data);
 		unset($data);
 		//
@@ -608,10 +608,10 @@ class DNConfiger
 		static $setting;
 		if(isset($setting[$key])){return $setting[$key];}
 		if(null===$setting){
-			$base_setting=array();
+			$base_setting=[];
 			if($this->path_common){
 				$base_setting=$this->include_file($this->path_common.'setting.php');
-				$base_setting=is_array($base_setting)?$base_setting:array();
+				$base_setting=is_array($base_setting)?$base_setting:[];
 			}
 			$setting=$this->include_file($this->path.'setting.php');
 			if($setting===false){
@@ -637,12 +637,12 @@ class DNConfiger
 	public function _LoadConfig($file_basename='config')
 	{
 		//multi file?
-		static $all_config=array();
+		static $all_config=[];
 		if(isset($all_config[$file_basename])){return $all_config[$file_basename];}
-		$base_config=array();
+		$base_config=[];
 		if($this->path_common){
 			$base_config=$this->include_file($this->path_common.$file_basename.'.php');
-			$base_config=is_array($base_config)?$base_config:array();
+			$base_config=is_array($base_config)?$base_config:[];
 		}
 		
 		$config=$this->include_file($this->path.$file_basename.'.php');
@@ -755,7 +755,7 @@ class DNExceptionManager
 	public static $OnError;
 	public static $OnDevError;
 	
-	public static $SpecailExceptionMap=array();
+	public static $SpecailExceptionMap=[];
 	
 	public static function HandelAllException($OnErrorException,$OnException)
 	{
@@ -836,8 +836,8 @@ class DNDBManager
 	protected $callback_create_db=null;
 	public $db=null;
 	public $db_r=null;
-	public $db_config=array();
-	public $db_r_config=array();
+	public $db_config=[];
+	public $db_r_config=[];
 	public function init($db_config,$db_r_config)
 	{
 		$this->db_config=$db_config;
@@ -905,7 +905,7 @@ trait DNMVCS_Glue
 		return DNRoute::G()->getRouteCallingMethod();
 	}
 	//view
-	public static function Show($data=array(),$view=null)
+	public static function Show($data=[],$view=null)
 	{
 		if($view===null){
 			$view=DNRoute::G()->calling_path;
@@ -1027,7 +1027,7 @@ trait DNMVCS_Misc
 		unset($v);
 		return $data;
 	}
-	public static function RecordsetH(&$data,$cols=array())
+	public static function RecordsetH(&$data,$cols=[])
 	{
 		if($data===[]){return $data;}
 		$cols=is_array($cols)?$cols:array($cols);
@@ -1053,7 +1053,7 @@ trait DNMVCS_Handel
 	}
 	public function onException($ex)
 	{
-		$data=array();
+		$data=[];
 		$data['message']=$ex->getMessage();
 		$data['code']=$ex->getCode();
 		$data['ex']=$ex;
@@ -1066,7 +1066,7 @@ trait DNMVCS_Handel
 		$message=$ex->getMessage();
 		$code=$ex->getCode();
 		
-		$data=array();
+		$data=[];
 		$data['message']=$message;
 		$data['code']=$code;
 		$data['ex']=$ex;
@@ -1077,7 +1077,7 @@ trait DNMVCS_Handel
 	public function onDebugError($errno, $errstr, $errfile, $errline)
 	{
 		if(!$this->isDev){return;}
-		$data=array();
+		$data=[];
 		$data['message']=$errstr;
 		$data['code']=$errno;
 		
@@ -1126,7 +1126,7 @@ class DNMVCS
 	public $config;
 	public $isDev=false;
 	
-	public static function RunQuickly($options=array())
+	public static function RunQuickly($options=[])
 	{
 		DNMVCS::G()->autoload($options);
 		$system_class=isset($options['system_class'])?$options['system_class']:'\\MY\\System\\App';
@@ -1136,7 +1136,7 @@ class DNMVCS
 			return DNMVCS::G()->init($options)->run();
 		}
 	}
-	public function autoload($options=array())
+	public function autoload($options=[])
 	{
 		$this->init_options($options);
 		
@@ -1184,7 +1184,7 @@ class DNMVCS
 		return null;
 	}
 	//@override me
-	public function init($options=array())
+	public function init($options=[])
 	{
 		$object=$this->checkOverrideSystemClass($options);
 		if($object){return $object;}
