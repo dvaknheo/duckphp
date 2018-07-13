@@ -1119,11 +1119,9 @@ class DNMVCS
 	protected $path=null;
 	
 	protected $auto_close_db=true;
-	protected $has_autoload=false;
 	protected $path_lib;
 	
 	public $options=[];
-	public $config;
 	public $isDev=false;
 	
 	public static function RunQuickly($options=[])
@@ -1138,7 +1136,11 @@ class DNMVCS
 	}
 	public function autoload($options=[])
 	{
-		$this->init_options($options);
+		if(!isset($options['path']) || !($options['path'])){
+			$path=realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
+			$options['path']=rtrim($path,'/').'/';
+		}
+		$this->options=array_merge(DNAutoLoader::DEFAULT_OPTIONS,DNRoute::DEFAULT_OPTIONS,self::DEFAULT_OPTIONS,$options);
 		
 		DNAutoLoader::G()->init($this->options)->run();
 		
@@ -1151,16 +1153,6 @@ class DNMVCS
 		return $this;
 	}
 	
-	protected function init_options($options)
-	{
-		if(!isset($options['path']) || !($options['path'])){
-			$path=realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
-			$options['path']=rtrim($path,'/').'/';
-		}
-		$this->options=array_merge(DNAutoLoader::DEFAULT_OPTIONS,DNRoute::DEFAULT_OPTIONS,self::DEFAULT_OPTIONS,$options);
-		
-		
-	}
 	protected function initExceptionManager()
 	{
 		DNExceptionManager::HandelAllException([$this,'onErrorException'],[$this,'onException']);
@@ -1187,6 +1179,7 @@ class DNMVCS
 		if($object){return $object;}
 		
 		$this->initExceptionManager();
+		
 		//override me to autoload; 
 		$this->autoload($options);
 		
@@ -1203,7 +1196,6 @@ class DNMVCS
 		$fullpath_config_common=$this->options['fullpath_config_common']?rtrim($this->options['fullpath_config_common'],'/').'/':'';
 		$configer->init($path_config,$fullpath_config_common);
 		
-		$this->config=$configer->_LoadConfig();
 		$this->isDev=$configer->_Setting('is_dev')?true:false;
 	}
 	public function initView($view)
