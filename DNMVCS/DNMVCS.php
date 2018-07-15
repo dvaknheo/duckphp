@@ -1108,31 +1108,29 @@ class DNMVCS
 	}
 	public function autoload($options=[])
 	{
-		//todo rip me
-		if(!isset($options['path']) || !($options['path'])){
-			$path=realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
-			$options['path']=rtrim($path,'/').'/';
-		}
-		
 		DNAutoLoader::G()->init($options)->run();
-		
+		//todo rip me
+
 		$this->options=array_merge(DNAutoLoader::DEFAULT_OPTIONS,DNRoute::DEFAULT_OPTIONS,self::DEFAULT_OPTIONS,$options);
 		$this->options=array_merge($this->options,DNAutoLoader::G()->options); 
+		
+		$this->options['path']=DNAutoLoader::G()->path;
 		
 		$this->path=$this->options['path'];
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
 		
-		
+		return $this;
+	}
+	protected function initOptions()
+	{
 		// todo move me
 		if($this->options['use_ext']){
 			self::ImportSys('DNMVCSExt');
 		}
-		if($this->options['key_for_simple_route']){
+		if(isset($this->options['key_for_simple_route'])){
 			self::ImportSys('DNMVCSExt');
 			DNRoute::G(SimpleRoute::G());
 		}
-		
-		return $this;
 	}
 	
 	protected function initExceptionManager()
@@ -1157,11 +1155,11 @@ class DNMVCS
 		$object=$this->checkOverrideSystemClass($options);
 		if($object){return $object;}
 		
-		$this->initExceptionManager();
-		
-		//override me to autoload; 
 		$this->autoload($options);
 		
+		$this->initExceptionManager();
+		
+		$this->initOptions();
 		$this->initConfiger(DNConfiger::G());
 		$this->initView(DNView::G());
 		$this->initRoute(DNRoute::G());
