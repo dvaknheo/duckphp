@@ -603,7 +603,7 @@ class DNConfiger
 		return isset($setting[$key])?$setting[$key]:null;
 	}
 	
-	public function _GetConfig($key,$file_basename='config')
+	public function _Config($key,$file_basename='config')
 	{
 		$config=$this->_Load($file_basename);
 		return isset($config[$key])?$config[$key]:null;
@@ -917,9 +917,9 @@ trait DNMVCS_Glue
 	{
 		return DNConfiger::G()->_Setting($key);
 	}
-	public static function GetConfig($key,$file_basename='config')
+	public static function Config($key,$file_basename='config')
 	{
-		return DNConfiger::G()->_GetConfig($key,$file_basename);
+		return DNConfiger::G()->Config($key,$file_basename);
 	}
 	public static function LoadConfig($file_basename)
 	{
@@ -1179,13 +1179,13 @@ class DNMVCS
 	{
 		$path_view=$this->path.rtrim($this->options['path_view'],'/').'/';
 		$view->init($path_view);
-		$view->setBeforeShow([$this,'onBeforeShow']);
+		$view->setBeforeShow(function(){return $this->onBeforeShow;});
 		$view->isDev=$this->isDev;
 	}
 	public function initRoute($route)
 	{
 		$route->init($this->options);
-		$route->set404(array($this,'onShow404'));	
+		$route->set404(function(){return $this->onShow404;});	
 	}
 	public function initDBManger($dbm)
 	{

@@ -380,12 +380,12 @@ _Parameters()
     如果开启了 eanbale_parameter 匹配选项也会在这里。
 Setting($key)
 
-    读取设置 实质调用 DNConfig::G()->Setting();
+    读取设置 实质调用 DNConfig::G()->_Setting();
     设置在 ::/config/setting.php 里，php 格式
     配置非敏感信息，放在版本管理中，设置是敏感信息，不存在版本管理中
-GetConfig($key)
+Config($key)
 
-    读取配置 实质调用 DNConfig::G()->GetConfig();
+    读取配置 实质调用 DNConfig::G()->_Config();
     配置放在 config/config.php 里，php 格式
     配置非敏感信息，放在版本管理中，设置是敏感信息，不存在版本管理中
 LoadConfig($file_basename)
@@ -399,7 +399,7 @@ ExitJson($ret)
 ExitRedirect($url)
 
     跳转到另一个url 并且退出 实质调用 DNView::G()->ExitRedirect();
-ExitRouteTo($url)
+ExitRedirectRouteTo($url)
 
     跳转到 URL()函数包裹的 url。
     应用到 DNView::G()->ExitRedirect(); 和 DNRoute::G()->URL
@@ -477,7 +477,7 @@ onException($ex)
 onErrorException($ex)
     处理错误，显示500错误。
 onDebugError($errno, $errstr, $errfile, $errline)
-    处理 Notice 错误。 TODO  这里应该 不仅是 Notice ，还有其他类型也加进来
+    处理 Notice 错误。
 onErrorHandel($errno, $errstr, $errfile, $errline)
     处理 PHP 错误
 ```
@@ -725,6 +725,7 @@ intConfigeer,
 initView
 在 onBeforeShow 的时候，处理传递 null;
 Route
+
 DBMM
 
 run 的时候就调用 DNRoute::Run()；就行了
