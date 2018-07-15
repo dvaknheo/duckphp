@@ -70,7 +70,7 @@ class DNAutoLoader
 		$options=array_merge(self::DEFAULT_OPTIONS,$options);
 		$this->options=$options;
 		
-		if(!$options['path']){
+		if(!isset($options['path']) || !$options['path']){
 			$path=realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
 			$options['path']=rtrim($path,'/').'/';
 		}
@@ -512,7 +512,7 @@ class DNView
 		unset($data);
 		//
 		$view=rtrim($this->view,'.php').'.php';
-		$this->view_file=$this->path.$this->view;
+		$this->view_file=$this->path.$view;
 		$this->show_include();
 		ob_end_flush();
 	}
@@ -814,10 +814,12 @@ class DNDBManager
 	public $db_r=null;
 	public $db_config=[];
 	public $db_r_config=[];
-	public function init($db_config,$db_r_config)
+	public $default_db_class=null;
+	public function init($db_config,$db_r_config,$default_db_class)
 	{
 		$this->db_config=$db_config;
 		$this->db_r_config=$db_r_config;
+		$this->default_db_class=$default_db_class;
 	}
 	public function installDBClass($callback)
 	{
@@ -831,7 +833,7 @@ class DNDBManager
 		if($this->db){return $this->db;}
 		
 		if($this->callback_create_db===null){
-			$this->installDBClass(['\DNMVCS\DNDB','CreateDBInstance']);
+			$this->installDBClass($this->default_db_class);
 		}
 		$this->db=($this->callback_create_db)($this->db_config);
 		
@@ -848,7 +850,7 @@ class DNDBManager
 		
 		if(!$this->db_r_config){return $this->_DB();}
 		if($this->callback_create_db===null){
-			$this->installDBClass(['\DNMVCS\DNDB','CreateDBInstance']);
+			$this->installDBClass($this->default_db_class);
 		}
 		$this->db_r=($this->callback_create_db)($this->db_r_config);
 		return $this->db_r;
@@ -1085,7 +1087,7 @@ class DNMVCS
 	use DNMVCS_Misc;
 	
 	const DEFAULT_OPTIONS=[
-			'system_class'=>null,
+			'system_class'=>'MY\System\App',
 			'path_view'=>'view',
 			'path_config'=>'config',
 			'fullpath_config_common'=>'',
@@ -1103,27 +1105,26 @@ class DNMVCS
 	
 	public static function RunQuickly($options=[])
 	{
-		DNMVCS::G()->autoload($options);
-		$system_class=isset($options['system_class'])?$options['system_class']:'\\MY\\System\\App';
-		if(class_exists($system_class)){
-			return DNMVCS::G($system_class::G())->init($options)->run();
-		}else{
-			return DNMVCS::G()->init($options)->run();
-		}
+		return DNMVCS::G()->init($options)->run();
 	}
 	public function autoload($options=[])
 	{
+		//todo rip me
 		if(!isset($options['path']) || !($options['path'])){
 			$path=realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
 			$options['path']=rtrim($path,'/').'/';
 		}
+		
+		DNAutoLoader::G()->init($options)->run();
+		
 		$this->options=array_merge(DNAutoLoader::DEFAULT_OPTIONS,DNRoute::DEFAULT_OPTIONS,self::DEFAULT_OPTIONS,$options);
-		
-		DNAutoLoader::G()->init($this->options)->run();
-		
 		$this->options=array_merge($this->options,DNAutoLoader::G()->options); 
+		
 		$this->path=$this->options['path'];
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
+		
+		
+		// todo move me
 		if($this->options['use_ext']){
 			self::ImportSys('DNMVCSExt');
 		}
@@ -1131,6 +1132,7 @@ class DNMVCS
 			self::ImportSys('DNMVCSExt');
 			DNRoute::G(SimpleRoute::G());
 		}
+		
 		return $this;
 	}
 	
@@ -1141,22 +1143,18 @@ class DNMVCS
 	}
 	protected function checkOverrideSystemClass($options)
 	{
-		if(!isset($options['system_class'])){return null;}
-		$system_class=$options['system_class'];
 		$self=get_called_class();
-		$system_class=ltrim($system_class,'\\');
-		$self=ltrim($self,'\\');
-		//if($system_class!=self::class){}
-		if($system_class!=$self){
-			DNAutoLoader::G()->init($options)->run();
-			//$system_class='\\'.$system_class;
-			return DNMVCS::G($system_class::G())->init($options);
-		}
-		return null;
+		if($self!==self::class){return null;}
+		
+		$system_class=isset($options['system_class'])?$options['system_class']:self::DEFAULT_OPTIONS['system_class'];
+		if(!class_exists($system_class)){return null;}
+		return DNMVCS::G($system_class::G())->init($options);
 	}
 	//@override me
 	public function init($options=[])
 	{
+		DNAutoLoader::G()->init($options)->run();
+		
 		$object=$this->checkOverrideSystemClass($options);
 		if($object){return $object;}
 		
@@ -1196,12 +1194,13 @@ class DNMVCS
 	{
 		$db_config=DNConfiger::G()->_Setting('db');
 		$db_r_config=DNConfiger::G()->_Setting('db_r');
-		$dbm->init($db_config,$db_r_config);
-		if($this->options['use_ext'] && $this->options['use_ext_db']){
-			//TODO fixed ? $dbm->default_db_class=\DNMVCS\DBExt::class
-			$dbm->installDBClass(\DNMVCS\DBExt::class);
-		}
 		
+		$db_class=DNDB::class;
+		if($this->options['use_ext'] && $this->options['use_ext_db']){
+			$db_class=DBExt::class;
+		}
+		$dbm->init($db_config,$db_r_config,$db_class);
+
 	}
 	public function isDev()
 	{

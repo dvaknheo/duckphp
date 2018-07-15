@@ -207,7 +207,7 @@ $default_options_route=array(
 );
 
 $default_options_system=[
-    'system_class'=>null,   // override 重写 系统入口类代替 DNMVCS 类。
+    'system_class'=>'MY\System\App',   // override 重写 系统入口类代替 DNMVCS 类。
 	
     'fullpath_config_common'=>'', // 通用配置的目录，用于多工程
         'path_view'=>'view',  //视图目录
