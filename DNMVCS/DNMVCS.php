@@ -188,17 +188,11 @@ class DNRoute
 	protected $enable_post_prefix=true;
 	protected $disable_default_class_outside=false;
 	
-	protected $key_for_simple_route=null;
 	public function _URL($url=null)
 	{
-		if($this->key_for_simple_route!==null){
-			//for simple_route_mode
-			return $this->_url_simple_mode($url);
-		}
 		static $basepath; //TODO do not static ?
 		if(null===$url){return $_SERVER['REQUEST_URI'];}
 		if(''===$url){return $_SERVER['REQUEST_URI'];}
-		$url=preg_replace('/^\//','',$url);
 		
 		if(null===$basepath){
 			$basepath=substr(rtrim(str_replace('\\','/',$_SERVER['SCRIPT_FILENAME']),'/').'/',strlen($_SERVER['DOCUMENT_ROOT']));
@@ -207,25 +201,12 @@ class DNRoute
 		if($basepath=='/index.php'){$basepath='/';}
 		if($basepath=='/index.php/'){$basepath='/';}
 		
-		if('/'==$url{0}){
-			return $url;
-		};
+		if('/'==$url{0}){ return $url;};
+		$url='/'.ltrim($url,'/');
 		if('?'==$url{0} || '#'==$url{0}){
 			return $basepath.$path_info.$url;
 		}
 		return $basepath.$url;
-	}
-	protected function _url_simple_mode()
-	{
-		$path=parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
-		if($url===null || $url==='' || $url==='/'){return $path;}
-		$url='/'.ltrim($url,'/');
-		$c=parse_url($url,PHP_URL_PATH);
-		$q=parse_url($url,PHP_URL_QUERY);
-		
-		$q=$q?'&'.$q:''; //TODO if this->route_key= 
-		$url=$path.'?'.$this->key_for_simple_route.'='.$c.$q;
-		return $url;
 	}
 	public function _Parameters()
 	{
@@ -245,7 +226,6 @@ class DNRoute
 		
 		$this->enable_post_prefix=$options['enable_post_prefix'];
 		$this->disable_default_class_outside=$options['disable_default_class_outside'];
-		$this->key_for_simple_route=$options['key_for_simple_route'];
 
 		if(PHP_SAPI==='cli'){
 			$argv=$_SERVER['argv'];
@@ -256,14 +236,8 @@ class DNRoute
 				$this->params=$argv;
 			}
 		}else{
-			if($this->key_for_simple_route===null){
-				$this->path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
-				$this->request_method=$_SERVER['REQUEST_METHOD'];
-			}else{
-				$path_info=isset($_GET[$this->key_for_simple_route])?$_GET[$this->key_for_simple_route]:'';
-				$path_info='/'.ltrim($path_info,'/');
-				$this->path_info=$path_info;
-			}
+			$this->path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
+			$this->request_method=$_SERVER['REQUEST_METHOD'];
 		}
 		
 		array_push($this->route_handels,array($this,'defaltRouteHandle'));
@@ -1150,6 +1124,10 @@ class DNMVCS
 		if($this->options['use_ext']){
 			self::ImportSys('DNMVCSExt');
 		}
+		if($this->options['key_for_simple_route']){
+			self::ImportSys('DNMVCSExt');
+			DNRoute::G(SimpleRoute::G());
+		}
 		return $this;
 	}
 	
@@ -1165,6 +1143,7 @@ class DNMVCS
 		$self=get_called_class();
 		$system_class=ltrim($system_class,'\\');
 		$self=ltrim($self,'\\');
+		//if($system_class!=self::class){}
 		if($system_class!=$self){
 			DNAutoLoader::G()->init($options)->run();
 			//$system_class='\\'.$system_class;
@@ -1214,10 +1193,12 @@ class DNMVCS
 	{
 		$db_config=DNConfiger::G()->_Setting('db');
 		$db_r_config=DNConfiger::G()->_Setting('db_r');
-		if($this->options['use_ext'] && $this->options['use_ext_db']){
-			$dbm->installDBClass('\DNMVCS\DBExt');
-		}
 		$dbm->init($db_config,$db_r_config);
+		if($this->options['use_ext'] && $this->options['use_ext_db']){
+			//TODO fixed ? $dbm->default_db_class=\DNMVCS\DBExt::class
+			$dbm->installDBClass(\DNMVCS\DBExt::class);
+		}
+		
 	}
 	public function isDev()
 	{

@@ -80,7 +80,34 @@ class StrictModel
 		return $object;
 	}
 }
-
+class SimpleRoute extends DNRoute
+{
+	public $options;
+	protected $key_for_simple_route='_r';
+	
+	public function _URL($url=null)
+	{
+		if('/'==$url{0}){ return $url;};
+		$path=parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
+		if($url===null || $url==='' || $url==='/'){return $path;}
+		$url='/'.ltrim($url,'/');
+		$c=parse_url($url,PHP_URL_PATH);
+		$q=parse_url($url,PHP_URL_QUERY);
+		
+		$q=$q?'&'.$q:''; //TODO if this->route_key= 
+		$url=$path.'?'.$this->key_for_simple_route.'='.$c.$q;
+		return $url;
+	}
+	public function init($options)
+	{
+		parent::init($options);
+		$this->key_for_simple_route=$options['key_for_simple_route'];
+		
+		$path_info=isset($_GET[$this->key_for_simple_route])?$_GET[$this->key_for_simple_route]:'';
+		$path_info='/'.ltrim($path_info,'/');
+		$this->path_info=$path_info;
+	}
+}
 
 class StrictDBManager extends DNDBManager
 {
