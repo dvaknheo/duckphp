@@ -162,7 +162,6 @@ class DNRoute
 			
 			'enable_post_prefix'=>true,
 			'disable_default_class_outside'=>false,
-			'key_for_simple_route'=>null,
 		];
 	
 	protected $route_handels=[];

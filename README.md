@@ -704,3 +704,27 @@ W($object);
 - 思考：子域名作为子目录
 	想把某个子目录作为域名独立出去。只改底层代码如何改
 
+## DNMVCS 的代码流程
+DNMVCS是主类，单向调用这几个组件，各组件基本是独立的，例外是单例模式和抛异常的时候都会用到 DNSystemException
+    
+    DNAutoloader
+    DNRoute
+    DNView
+    DNConfiger
+    DNDBManger -> DNDB
+    DNExceptionManager
+    DNSystemException
+
+## 流程
+init 里初始化。
+先 autoloader 自动化加载类
+然后 checksystem 如果是可用子类，就用子类自动化 init 
+接着 
+initExceptionManager
+intConfigeer, 
+initView
+在 onBeforeShow 的时候，处理传递 null;
+Route
+DBMM
+
+run 的时候就调用 DNRoute::Run()；就行了
