@@ -19,7 +19,8 @@ MVC 结构的时候，你们业务逻辑放在哪里？
 DNMVCS 的最大意义是思想，只要思想在，什么框架你都可以用
 你可以不用 DNMVCS 实现 Controller-Service-Model 架构。
 只要有这个思路就成功
-## 简化的 DNMVC 层级关系图
+## 理解 DNMVCS 的原则
+DNMVCS 层级关系图
 
 ```
            /-> View
