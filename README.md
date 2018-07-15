@@ -145,7 +145,7 @@ www/index.php  入口 PHP 文件,内容如下
 ```php
 <?php
 require('../../DNMVCS/DNMVCS.php');
-\DNMVCS\DNMVCS::RunQuickly();
+\DNMVCS\DNMVCS::RunQuickly([]);
 
 //$path=realpath('../');
 //\DNMVCS\DNMVCS::G()->autoload(['path'=>$path])->init([])->run();
@@ -180,7 +180,7 @@ init([]) 方法的参数是可配置的，默认设置如下
     //无命名空间下， CommonModel,CommonService 后缀的绝对加载路径用于多网站配合的情况。
 ];
 ```
-** 一些高级配置，用于魔改的请自己暂时去翻看代码。 *
+*一些高级配置，用于魔改的请自己暂时去翻看代码。*
 启用无命名空间模式 ，就是不想写那么多带命名空间的代码， *Service,  *Model 这样结尾的类直接自动加载
 ### 全部默认选项详解。
     多余的缩进里的选项是不建议修改的
@@ -307,19 +307,18 @@ DNController 重名了怎么办，比如我要相互引用？
 要指定 GET/POST 在最前面加http 方法.
 
     DN::assignRoute('GET ~article/(\d+)','article->get');
-    *用->表示类调用而不是警惕调用
+*用->表示类调用而不是静态调用*
 DNMVCS 支持 Paramter，你可以在设置里关掉。
 Parameter 切片会直接传递进 方法里作为参数
 路由表里，用正则切分会传递进方法，不管是否开启 enable_paramters
 
 比如 路由不用 path_info 用 $_GET['_r'] 等，很简单的。
-simple_route_key 开启 _GET 模式路由（原先是在单独类里实现，后来整合了
+simple_route_key 开启 _GET 模式路由
 如果你想加其他功能，可以继承 DNRoute 类。 
 
-路由这块很多东西，300 行代码不是这么简单描述的
 
 run() 方法开始使用路由。 如果你不想要路由。只想要特定结构的目录， 不调用 run 就可以了。
-    比如我一个样例，只想要 db 类等等。
+比如我一个样例，只想要 db 类等等。
 ## 重写 错误页面
 错误页面在 view/_sys 里。你可以修改相应的错误页面方法。
 比如 404 是 view/404.php
@@ -345,8 +344,6 @@ init($options=[])
 run()
     开始路由，执行。这个方法拆分出来是为了，不想要路由，只是为了加载一些类的需求的。
 ```
-'system_class'=>'\MY\System\App'  可以在 init 方法里用，使得替换默认类。
-
 ## 常用静态方法方法
 这些方法因为太常用，所以静态化了。
 包括 视图view,路由，数据库，配置 ，
@@ -373,7 +370,7 @@ URL($url=null)
     当你重写 DNRoute 类后，你可能需要重写这个方法来展示
     比如 simple_route_key 开启后， URL('class/method?foo=bar') 
     将会是 ?r=class/method&foo=bar ，而不是 /class/method?foo=bar
-_Parameters()
+Parameters()
 
     获得路径切片 实质调用 DNRoute::G()->_URL();
     当用正则匹配路由的时候，匹配结果放在这里。
@@ -404,7 +401,7 @@ ExitRedirectRouteTo($url)
     跳转到 URL()函数包裹的 url。
     应用到 DNView::G()->ExitRedirect(); 和 DNRoute::G()->URL
     高级开发者注意，这是静态方法里处理的，子类化需要注意 // TODO 静态方法不再处理，去耦合
-ThrowOn($flag,$message,$code);
+ThrowOn(\$flag,\$message,\$code);
 
     如果 flag 成立则抛出 DNException 异常。 调用 DNException::ThrowOn
     减少代码量。如果没这个函数，你要写
@@ -468,7 +465,8 @@ isDev()
 
 ```
 onBeforeShow()
-    在输出 view 开始前处理，默认只是关闭数据库。
+    在输出 view 开始前处理.
+    默认处理空模板为当前类和方法，默认关闭数据库。
     因为如果请求时间很长，页面数据量很大。没关闭数据库会导致连接被占用。
 onShow404()
     404 回调。这里没传各种参数，需要的时候从外部获取。
@@ -540,7 +538,7 @@ G 函数的缺点：IDE 上没法做类型提示，这对一些人来说很重�
 
 service , model 上 用  static 函数代替 G 函数实例方式或许也是一种办法
 
-_before_instance($object) 被 G 函数调用，返回 $object。用于一些扩展
+_before_instance(\$object) 被 G 函数调用，返回 $object。用于一些扩展
 
 _create_instance($class) 被 G 函数调用，用于创建实例，如果你的类构造方法带参数，需要重新写这个方法
 
@@ -557,6 +555,7 @@ _create_instance($class) 被 G 函数调用，用于创建实例，如果你的�
     * 因为 autoloader 不建议替换，所以没有 initAutoloader();
 ## DNAutoLoader 加载类
 DNAutoLoader 不建议扩展。因为你要有新类进来才有能处理加载关系，不如自己再加个加载类呢。
+
     init(options)
     run()
 ## DNRoute 路由类
@@ -564,7 +563,7 @@ DNAutoLoader 不建议扩展。因为你要有新类进来才有能处理加载�
     
     路由类是很强大扩展性很强的类。单独篇章介绍
 ## DNView 视图类
-    $this->isDev
+    $this->isDev 来自DMMVCS 主类。判断是否在测试环境
 ## DNConfig 配置类
     DNConfig 类获得配置设置
 ## DNExceptionManager 异常管理类
@@ -583,8 +582,8 @@ if($flag){throw new MyException($message,$code);}
 原因是你应该只处理你自己熟悉的异常
 
 ## DNDBManger 数据库管理类
-    这里主要是数据库的扩展
-    这个也许会经常改动。比如用自己公司的 DB 类，要在这里做一个封装。
+这里主要是数据库的扩展
+这个也许会经常改动。比如用自己公司的 DB 类，要在这里做一个封装。
 
 installDBClass($callback);
 
@@ -594,7 +593,7 @@ installDBClass($callback);
 DNMVCS 自带了一个简单的 DB 类
 DN::DB()得到的就是这个 DNDB 类
 DB 的配置在 setting.sample.php 里有。
-db 和 db_r ，如果是读取的数据库，则用 db_r 字段。
+$db 和 $db_r ，如果是读取的数据库，则用 $db_r 字段。
 DNDB 简单实现的一个数据库类。封装了 PDO， 和 Medoo 兼容，也少了 Medoo 的很多功能。
 下面主要说 DB 类的用法
 ```
@@ -603,11 +602,9 @@ close
     关闭数据库
 quote
     转码
-quote_array
-    对数组转码
-fetchAll
-fetch
-fetchColumn
+fetchAll($sql,...$args)
+fetch($sql,...$args)
+fetchColumn($sql,...$args)
     这三个是动态参数
 ($sql,...$args);
     获得的是数组（其实有时候还是觉得直接用 object $v->id 之类方便多了。
@@ -617,7 +614,6 @@ execQuick
 rowCount
     获得结果行数
 ```
-DB 类没扩展 update,insert delete 功能，因为怕和 medoo 的冲突。这几个功能放在 DBEx 里。
 # 额外的类
 ## DNInterface.php
 提供了 DNMVCS.php 里扩展类的接口， PHP 的接口实质只是参照作用。所以没引入。
@@ -726,6 +722,6 @@ initView
 在 onBeforeShow 的时候，处理传递 null;
 Route
 
-DBMM
-
+DBM
 run 的时候就调用 DNRoute::Run()；就行了
+路由的过程
