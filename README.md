@@ -356,7 +356,6 @@ Show($data=array(),$view=null)
     显示视图 实质调用 DNView::G()->_Show();
     视图的文件在 ::view 目录底下.
     为什么数据放前面，DN::Show(get_defined_vars());把 controller 的变量都整合进来，并用默认路径作为 view 文件。
-    高级开发者注意，这里的 $view 为空是在静态方法里处理的，子类化需要注意
 DB()
 
     返回数据库,实质调用 DBManager::G()->_DB();
@@ -404,7 +403,7 @@ ExitRouteTo($url)
 
     跳转到 URL()函数包裹的 url。
     应用到 DNView::G()->ExitRedirect(); 和 DNRoute::G()->URL
-    高级开发者注意，这是静态方法里处理的，子类化需要注意
+    高级开发者注意，这是静态方法里处理的，子类化需要注意 // TODO 静态方法不再处理，去耦合
 ThrowOn($flag,$message,$code);
 
     如果 flag 成立则抛出 DNException 异常。 调用 DNException::ThrowOn
@@ -618,7 +617,7 @@ execQuick
 rowCount
     获得结果行数
 ```
-DB 类没扩展 update,insert delete 功能，因为怕和 medoo 的冲突。，todo 把这几个功能放在 DNDBEx 里。
+DB 类没扩展 update,insert delete 功能，因为怕和 medoo 的冲突。这几个功能放在 DBEx 里。
 # 额外的类
 ## DNInterface.php
 提供了 DNMVCS.php 里扩展类的接口， PHP 的接口实质只是参照作用。所以没引入。

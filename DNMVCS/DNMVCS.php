@@ -481,7 +481,8 @@ class DNView
 	public $onBeforeShow=null;
 	public $path;
 	public $isDev=false;
-	
+
+	public $view=null;
 	public function _ExitJson($ret)
 	{
 		header('content-type:text/json');
@@ -499,8 +500,9 @@ class DNView
 	public function _Show($data=[],$view)
 	{
 		ob_start();
+		$this->view=$view;
 		if(isset($this->onBeforeShow)){
-			($this->onBeforeShow)($view,$data);
+			($this->onBeforeShow)($data,$this->view);
 		}
 		// stop notice 
 		error_reporting(error_reporting() & ~E_NOTICE);
@@ -509,8 +511,8 @@ class DNView
 		$this->data=array_merge($this->data,$data);
 		unset($data);
 		//
-		$view=rtrim($view,'.php').'.php';
-		$this->view_file=$this->path.$view;
+		$view=rtrim($this->view,'.php').'.php';
+		$this->view_file=$this->path.$this->view;
 		$this->show_include();
 		ob_end_flush();
 	}
@@ -881,9 +883,6 @@ trait DNMVCS_Glue
 	//view
 	public static function Show($data=[],$view=null)
 	{
-		if($view===null){
-			$view=DNRoute::G()->calling_path;
-		}
 		return DNView::G()->_Show($data,$view);
 	}
 
@@ -1064,8 +1063,12 @@ trait DNMVCS_Handel
 	}
 	
 	//  close database before show;
-	public function onBeforeShow()
+	public function onBeforeShow($data,$view)
 	{
+		if($view===null){
+			DNView::G()->view=DNRoute::G()->getRouteCallingPath();
+		}
+		
 		if(!$this->auto_close_db){ return ;}
 		try{
 			DNDBManager::G()->closeAllDB();
