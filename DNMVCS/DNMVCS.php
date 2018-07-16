@@ -260,13 +260,10 @@ class DNRoute
 	public function run()
 	{
 		$callback=$this->getRouteHandel();
-		
 		if(null!==$callback){
 			return ($callback)(...$this->params);
 		}
-		
-		DNSystemException::ThrowOn( !$this->on404Handel ,"DNMVCS Notice: 404  You need set 404 Handel",-1);
-		
+		DNSystemException::ThrowOn(!$this->on404Handel,"DNMVCS Notice: 404  You need set 404 Handel",-1);
 		return ($this->on404Handel)();
 	}
 
@@ -418,22 +415,18 @@ class DNRoute
 	protected function getRouteHandelByMap()
 	{
 		$path_info=$this->path_info;
-		$ret=null;
 		foreach($this->routeMap as $pattern =>$callback){
-			if($this->matchRoute($pattern,$path_info)){
-				if(!is_callable($callback)){
-					list($class,$method)=explode('->',$callback);
-					$obj=new $class;
-					$callback=array($obj,$method);
-					//DN::ThrowOn(true,"...for debug");
-				}
-				$ret=$callback;
+			if(!$this->matchRoute($pattern,$path_info)){continue;}
+			if(!is_callable($callback)){
+				list($class,$method)=explode('->',$callback);
+				$obj=new $class;
+				$callback=array($obj,$method);
+				//DN::ThrowOn(true,"...for debug");
 			}
-			if($ret){break;}
-			
+			if($callback){return $callback;}
 		}
 		
-		return $ret;
+		return null;
 	}
 	
 	public function assignRoute($key,$callback=null)
@@ -501,10 +494,10 @@ class DNView
 		//
 		$view=rtrim($this->view,'.php').'.php';
 		$this->view_file=$this->path.$view;
-		$this->show_include();
+		$this->includeShowFiles();
 		ob_end_flush();
 	}
-	protected function show_include()
+	protected function includeShowFiles()
 	{
 		extract($this->data);
 		if( $this->head_file){
@@ -637,11 +630,9 @@ class DNDB
 	protected function check_connect()
 	{
 		if($this->pdo){return;}
-		if(empty($this->config)){
-			DNSystemException::ThrowOn(true,'DNMVCS Notice: database not setting!');
-		}
+		DNSystemException::ThrowOn(empty($this->config),'DNMVCS Notice: database not setting!');
 		$config=$this->config;
-		$this->pdo= new PDO($config['dsn'], $config['username'], $config['password'],array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION));
+		$this->pdo=new PDO($config['dsn'], $config['username'], $config['password'],array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC));
 	}
 
 	public function close()
@@ -655,45 +646,37 @@ class DNDB
 		return $this->pdo->quote($string);
 	}
 
-	public function fetchAll($sql)
+	public function fetchAll($sql,...$args)
 	{
 		$this->check_connect();
-		$args=func_get_args();
-		array_shift($args);
 		
 		$sth = $this->pdo->prepare($sql);
 		$sth->execute($args);
 		
-		$ret=$sth->fetchAll(PDO::FETCH_ASSOC);
+		$ret=$sth->fetchAll();
 		return $ret;
 	}
-	public function fetch($sql)
+	public function fetch($sql,...$args)
 	{
 		$this->check_connect();
-		$args=func_get_args();
-		array_shift($args);
 		
 		$sth = $this->pdo->prepare($sql);
 		$sth->execute($args);
-		$ret=$sth->fetch(PDO::FETCH_ASSOC);// todo : object mode
+		$ret=$sth->fetch();
 		return $ret;
 	}
-	public function fetchColumn($sql)
+	public function fetchColumn($sql,...$args)
 	{
 		$this->check_connect();
-		$args=func_get_args();
-		array_shift($args);
 		
 		$sth = $this->pdo->prepare($sql);
 		$sth->execute($args);
 		$ret=$sth->fetchColumn();
 		return $ret;
 	}
-	public function execQuick($sql)
+	public function execQuick($sql,...$args)
 	{
 		$this->check_connect();
-		$args=func_get_args();
-		array_shift($args);
 		
 		$sth = $this->pdo->prepare($sql);
 		$ret=$sth->execute($args);
@@ -705,9 +688,6 @@ class DNDB
 	{
 		return $this->rowCount;
 	}
-	
-	
-
 }
 class DNExceptionManager
 {
