@@ -43,10 +43,10 @@ class DNAutoLoader
 			
 			'path_namespace'=>'app',
 			'path_autoload'=>'classes',
-			'fullpath_framework_common'=>'',
+			'fullpath_project_share_common'=>'',
 			
 			'with_no_namespace_mode'=>true,
-			'path_framework_simple'=>'app',
+			'path_no_namespace_mode'=>'app',
 		];
 
 	public $path;
@@ -57,8 +57,8 @@ class DNAutoLoader
 	
 	protected $path_namespace;
 	protected $path_autoload;
-	protected $path_framework_simple;
-	protected $path_framework_common;
+	protected $path_no_namespace_mode;
+	protected $path_project_share_common;
 	protected $with_no_namespace_mode=true;
 	
 
@@ -80,10 +80,10 @@ class DNAutoLoader
 		$this->namespace=$options['namespace'];
 		$this->path_namespace=$path.rtrim($options['path_namespace'],'/').'/';
 		$this->path_autoload=$path.rtrim($options['path_autoload'],'/').'/';
-		$this->path_framework_simple=$path.rtrim($options['path_framework_simple'],'/').'/';
+		$this->path_no_namespace_mode=$path.rtrim($options['path_no_namespace_mode'],'/').'/';
 		
 		//remark No the prefix
-		$this->path_framework_common=rtrim($options['fullpath_framework_common'],'/').'/';
+		$this->path_project_share_common=rtrim($options['fullpath_project_share_common'],'/').'/';
 		
 		$this->with_no_namespace_mode=$options['with_no_namespace_mode'];
 		
@@ -116,8 +116,8 @@ class DNAutoLoader
 	{
 		spl_autoload_register(function($class){
 			if(strpos($class,'\\')!==false){ return; }
-			$path_simple=$this->path_framework_simple;
-			$path_common=$this->path_framework_common;
+			$path_simple=$this->path_no_namespace_mode;
+			$path_common=$this->path_project_share_common;
 			
 			$flag=preg_match('/(Common)?(Service|Model)$/',$class,$m);
 			if(!$flag){return;}
@@ -164,9 +164,8 @@ class DNRoute
 			'disable_default_class_outside'=>false,
 		];
 	
-	protected $route_handels=[];
 	protected $routeMap=[];
-	protected $on404Handel;
+	protected $on404Handel=null;
 	protected $params=[];
 	public $options;
 	
@@ -239,42 +238,39 @@ class DNRoute
 			$this->request_method=$_SERVER['REQUEST_METHOD'];
 		}
 		
-		array_push($this->route_handels,array($this,'defaltRouteHandle'));
-	}
-	public function _default404()
-	{
-		DNSytemExcepion("DNMVCS Notice: 404 , Develop should override this");
 	}
 	public function set404($callback)
 	{
 		$this->on404Handel=$callback;
 	}
 	//for run ,you can 
-	protected function getRouteCallback()
+	protected function getRouteHandel()
 	{
 		$callback=null;
-		foreach($this->route_handels as $handel){
-			$callback=$handel();
+		while(true){
+			$callback=$this->getRouteHandelByMap();
 			if($callback){break;}
+			$callback=$this->getRouteHandelByFile();
+			if($callback){break;}
+			break;
 		}
+		
 		return $callback;
 	}
 	public function run()
 	{
-		$callback=$this->getRouteCallback();
-		if(null===$callback){
-			if(!$this->on404Handel){
-				$this->_default404();
-				return;
-			}
-			$t=$this->on404Handel;
-			return $t();
+		$callback=$this->getRouteHandel();
+		
+		if(null!==$callback){
+			return ($callback)(...$this->params);
 		}
 		
-		return ($callback)(...$this->params);
+		DNSystemException::ThrowOn( !$this->on404Handel ,"DNMVCS Notice: 404  You need set 404 Handel",-1);
+		
+		return ($this->on404Handel)();
 	}
 
-	public function defaltRouteHandle()
+	protected function getRouteHandelByFile()
 	{
 		$path_info=$this->path_info;
 		
@@ -321,14 +317,14 @@ class DNRoute
 		$current_class=$current_class?$current_class:$this->default_controller;
 		
 		$this->calling_method=$method;
-		$this->calling_class=$current_class;
+		
 		
 		$file=$this->path.$current_class.'.php';
 		$this->method_calling=$method;
 		
 		$this->includeControllerFile($file);
 		$obj=$this->getObecjectToCall($current_class);
-		
+		//$this->calling_class=$current_class;  in $obj
 		if(null==$obj){return null;}
 		
 		return $this->getMethodToCall($obj,$method);
@@ -386,12 +382,8 @@ class DNRoute
 		return array($obj,$method);
 	}
 	
-	public function addDefaultRoute($callback)
-	{
-		$this->route_handels[]=$callback;
-	}
 
-	protected function match_path_info($pattern_url,$path_info)
+	protected function matchRoute($pattern_url,$path_info)
 	{
 		$pattern='/^(([A-Z_]+)\s+)?(~)?\/?(.*)\/?$/';
 		$flag=preg_match($pattern,$pattern_url,$m);
@@ -423,12 +415,12 @@ class DNRoute
 		
 		return $flag;
 	}
-	public function defalt_dispath_handle()
+	protected function getRouteHandelByMap()
 	{
 		$path_info=$this->path_info;
 		$ret=null;
 		foreach($this->routeMap as $pattern =>$callback){
-			if($this->match_path_info($pattern,$path_info)){
+			if($this->matchRoute($pattern,$path_info)){
 				if(!is_callable($callback)){
 					list($class,$method)=explode('->',$callback);
 					$obj=new $class;
@@ -446,9 +438,6 @@ class DNRoute
 	
 	public function assignRoute($key,$callback=null)
 	{
-		if(empty($this->routeMap)){
-			array_push($this->route_handels,array($this,'defalt_dispath_handle'));
-		}
 		if(is_array($key)&& $callback===null){
 			$this->routeMap=array_merge($this->routeMap,$key);
 		}else{

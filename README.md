@@ -178,10 +178,10 @@ run(); 开始路由
 const DNAutoLoader::DEFAULT_OPTIONS=[
     'namespace'=>'MY',                  // 默认的命名空间，你可以自定义工程的命名空间
     'with_no_namespace_mode'=>true,     // 简单模式，无命名空间直接 controller, service,model
-    'fullpath_framework_common'=>''     // 通用类文件目录，用于多工程
+    'fullpath_project_share_common'=>''     // 通用类文件目录，用于多工程
         'path_namespace'=>'app', 	    // 命名空间根目录
         'path_autoload'=>'classes',	    // 无命名空间的类存放目录
-        'path_framework_simple'=>'app', // 简单模式的基本目录
+        'path_no_namespace_mode'=>'app', // 简单模式的基本目录
 ];
 ```
 
@@ -311,9 +311,9 @@ class App extends \DNMVCS\DNMVCS
 	public function init($options=array())
 	{
         // switch  me , DNView::G(MYView::G());
-        $ret=parent::init($options);
+        parent::init($options);
         // switch  me , $this->initView(DNView::G(MYView::G());
-        return $ret;
+        return $this;
 	}
 }
 ```
@@ -661,23 +661,19 @@ DNAutoLoader 做了防多次加载和多次初始化。
 	_URL($url=null)
 	_Parameters()
     run()
-    protected getRouteCallback()
-以上在前面有过介绍。 getRouteCallback 用于 run 函数，查 handel 数组
-	public function _default404()
-	public function set404($callback)
-set404 设置404 回调， _default404() 给默认实现。
+ 	set404($callback)
+set404 设置404 回调
+   protected getRouteHandel()
+ getRouteHandel 获取回调,然后 run 运行
 
-	public function defaltRouteHandle()
-    默认的RouteHandle实现。
-
+    protected getRouteHandelByFile
 	protected  getObecjectToCall($class_name)
 	protected  getMethodToCall($obj,$method)
+文件模式的路由
 
-	public function addDefaultRoute($callback)
-// 这个函数 本意 用于扩展。
-	defalt_dispath_handle()
-//内部函数 实现路由表防守的路由
-	public function assignRoute($key,$callback=null)
+    protected getRouteHandelByMap
+	public  assignRoute($key,$callback=null)
+映射模式的路由。
 
 	getRouteCallingPath()
 	getRouteCallingClass()
