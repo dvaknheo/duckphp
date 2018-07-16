@@ -45,7 +45,7 @@ class DNAutoLoader
 			'path_autoload'=>'classes',
 			'fullpath_framework_common'=>'',
 			
-			'enable_simple_mode'=>true,
+			'with_no_namespace_mode'=>true,
 			'path_framework_simple'=>'app',
 		];
 
@@ -59,7 +59,7 @@ class DNAutoLoader
 	protected $path_autoload;
 	protected $path_framework_simple;
 	protected $path_framework_common;
-	protected $enable_simple_mode=true;
+	protected $with_no_namespace_mode=true;
 	
 
 	public function init($options=[])
@@ -85,7 +85,7 @@ class DNAutoLoader
 		//remark No the prefix
 		$this->path_framework_common=rtrim($options['fullpath_framework_common'],'/').'/';
 		
-		$this->enable_simple_mode=$options['enable_simple_mode'];
+		$this->with_no_namespace_mode=$options['with_no_namespace_mode'];
 		
 		return $this;
 	}
@@ -94,7 +94,7 @@ class DNAutoLoader
 		if($this->is_loaded){return;}
 		$this->is_loaded=true;
 		$this->regist_psr4();
-		if($this->enable_simple_mode){
+		if($this->with_no_namespace_mode){
 			$this->regist_simple_mode();
 		}
 		$this->regist_classes();
@@ -154,7 +154,7 @@ class DNRoute
 	const DEFAULT_OPTIONS=[
 			'namespace'=>'MY',
 			'enable_paramters'=>false,
-			'enable_simple_mode'=>true,
+			'with_no_namespace_mode'=>true,
 			
 			'path_controller'=>'app/Controller',
 			'namespace_controller'=>'Controller',
@@ -176,7 +176,7 @@ class DNRoute
 	protected $default_controller='Main';
 	protected $default_method='index';
 	public $enable_param=true;
-	public $enable_simple_mode=true;
+	public $with_no_namespace_mode=true;
 	
 	public $calling_path='';
 	public $calling_class='';
@@ -219,7 +219,7 @@ class DNRoute
 		$this->path=$options['path'].$options['path_controller'].'/';
 		$this->namespace=$options['namespace'].'\\'.$options['namespace_controller'];
 		$this->enable_param=$options['enable_paramters'];
-		$this->enable_simple_mode=$options['enable_simple_mode'];
+		$this->with_no_namespace_mode=$options['with_no_namespace_mode'];
 		
 		$this->default_class=$options['default_controller_class'];
 		
@@ -344,7 +344,7 @@ class DNRoute
 	protected function getObecjectToCall($class_name)
 	{
 		if(substr(basename($class_name),0,1)=='_'){return null;}
-		if($this->enable_simple_mode){
+		if($this->with_no_namespace_mode){
 			$fullclass=str_replace('/','__',$class_name);
 			$flag=class_exists($fullclass,false);
 			if(!$flag){
@@ -1163,7 +1163,7 @@ class DNMVCS
 		$this->initConfiger(DNConfiger::G());
 		$this->initView(DNView::G());
 		$this->initRoute(DNRoute::G());
-		$this->initDBManger(DNDBManager::G());
+		$this->initDBManager(DNDBManager::G());
 		
 		return $this;
 	}
@@ -1179,15 +1179,15 @@ class DNMVCS
 	{
 		$path_view=$this->path.rtrim($this->options['path_view'],'/').'/';
 		$view->init($path_view);
-		$view->setBeforeShow(function(){return $this->onBeforeShow;});
+		$view->setBeforeShow([$this,'onBeforeShow']);
 		$view->isDev=$this->isDev;
 	}
 	public function initRoute($route)
 	{
 		$route->init($this->options);
-		$route->set404(function(){return $this->onShow404;});	
+		$route->set404([$this,'onShow404']);	
 	}
-	public function initDBManger($dbm)
+	public function initDBManager($dbm)
 	{
 		$db_config=DNConfiger::G()->_Setting('db');
 		$db_r_config=DNConfiger::G()->_Setting('db_r');

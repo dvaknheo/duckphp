@@ -1,5 +1,5 @@
 <?php
-namespace MY\Framework;
+namespace MY\System;
 class App extends \DNMVCS\DNMVCS
 {
 	public function init($options=array())
