@@ -200,7 +200,8 @@ class DNRoute
 		if($basepath=='/index.php/'){$basepath='/';}
 		
 		if('/'==$url{0}){ return $url;};
-		$url='/'.ltrim($url,'/');
+		//$url='/'.ltrim($url,'/');
+		
 		if('?'==$url{0} || '#'==$url{0}){
 			return $basepath.$path_info.$url;
 		}
@@ -468,7 +469,7 @@ class DNView
 	public function _ExitRedirect($url,$only_in_site=true)
 	{
 		if($only_in_site && parse_url($url,PHP_URL_HOST)){
-			DNSystemException::ThrowOn(true,' DnSystem safe check false');
+			//DNSystemException::ThrowOn(true,' DnSystem safe check false '.$url);
 		}
 		header('location: '.$url);
 		exit;
