@@ -534,7 +534,7 @@ class DNView
 	public function assignViewData($key,$value=null)
 	{
 		if(is_array($key)&& $value===null){
-			$this->data=array_merge($this->$data,$key);
+				$this->data=array_merge($this->data,$key);
 		}else{
 			$this->data[$key]=$value;
 		}
