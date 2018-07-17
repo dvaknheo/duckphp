@@ -865,9 +865,9 @@ trait DNMVCS_Glue
 	{
 		return DNView::G()->_ExitRedirect($url,$only_in_site);
 	}
-	public static function ExitRedirectRouteTo($url)
+	public static function ExitRouteTo($url)
 	{
-		return DNView::G()->_ExitRedirect(self::URL($url),$only_in_site=true);
+		return DNView::G()->_ExitRedirect(self::URL($url),true);
 	}
 	public function setViewWrapper($head_file=null,$foot_file=null)
 	{
@@ -1056,7 +1056,7 @@ class DNMVCS
 	use DNMVCS_Misc;
 	
 	const DEFAULT_OPTIONS=[
-			'system_class'=>'MY\System\App',
+			'base_class'=>'MY\Base\App',
 			'path_view'=>'view',
 			'path_config'=>'config',
 			'fullpath_config_common'=>'',
@@ -1108,21 +1108,21 @@ class DNMVCS
 		DNExceptionManager::HandelAllException([$this,'onErrorException'],[$this,'onException']);
 		DNExceptionManager::HandelAllError([$this,'onErrorHandel'],[$this,'onDebugError']);
 	}
-	protected function checkOverrideSystemClass($options)
+	protected function checkOverride($options)
 	{
 		$self=get_called_class();
 		if($self!==self::class){return null;}
 		
-		$system_class=isset($options['system_class'])?$options['system_class']:self::DEFAULT_OPTIONS['system_class'];
-		if(!class_exists($system_class)){return null;}
-		return DNMVCS::G($system_class::G())->init($options);
+		$base_class=isset($options['base_class'])?$options['base_class']:self::DEFAULT_OPTIONS['base_class'];
+		if(!class_exists($base_class)){return null;}
+		return DNMVCS::G($base_class::G())->init($options);
 	}
 	//@override me
 	public function init($options=[])
 	{
 		DNAutoLoader::G()->init($options)->run();
 		
-		$object=$this->checkOverrideSystemClass($options);
+		$object=$this->checkOverride($options);
 		if($object){return $object;}
 		
 		$this->autoload($options);

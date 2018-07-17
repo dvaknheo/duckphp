@@ -112,14 +112,15 @@ DNMVCS Notice: no setting file!,change setting.sample.php to setting.php !
 工程的目录结构
 ```
 +---app // psr-4 标准的自动加载目录
+|   +---Base   // 基类放在这里
+|   |      App.php    // 默认框架入口文件
 |   +---Controller  // 路由控制器
 |   |       Main.php    // 默认控制器入口文件
 |   +---Model       // 模型放在里
 |   |       TestModel.php   // 测试 Model 
-|   +---Service     // 服务放在这里
-|   |       TestService.php //测试 Service
-|   \---System   // 基类放在这里
-|          App.php    // 默认框架入口文件
+|   \---Service     // 服务放在这里
+|           TestService.php //测试 Service
+
 +---classes         //自动加载的类，放在这里
 |       ForAutoLoad.php // 测试自动加载
 +---config          // 配置文件 放这里
@@ -186,7 +187,7 @@ const DNAutoLoader::DEFAULT_OPTIONS=[
 
 ```php
 const DNMVCS::DEFAULT_OPTIONS=[
-    'system_class'=>'MY\System\App',    // override 重写 系统入口类代替 DNMVCS 类。
+    'base_class'=>'MY\Base\App',    // override 重写 系统入口类代替 DNMVCS 类。
     'use_ext'=>false,                   // 加载扩展库  DNMVCSExt
 	'use_ext_db'=>false,                // 用扩展库 的 DBExt 代替 DNDB 数据库类
     'fullpath_config_common'=>'',       // 通用配置的目录，用于多工程
@@ -195,7 +196,7 @@ const DNMVCS::DEFAULT_OPTIONS=[
 		'path_config'=>'config',        // 配置的目录
 ];
 ```
-    关于 system_class 选项。
+    关于 base_class 选项。
     你可以写 DNMVCS 的子类 用这个子类来替换DNMVCS 的入口。详情见后面。
     fullpath_framework_common 和 fullpath_config_common 用于多站点中共享配置和共享文件引用。
     use_ext 会加载 DBExt 实现一些扩展性的功能， use_ext_db 的 DBExt 将会替代 DNDB 数据库类。
@@ -298,13 +299,13 @@ class MiscService
 }
 ```
 附加，在初始化里我们要做其他事情。
-根据 system_class 选项，我们有。
+根据 base_class 选项，我们有。
 
 
-::app/System/App.php 
+::app/Base/App.php 
 ```php
 <?php
-namespace MY\System;
+namespace MY\Base;
 class App extends \DNMVCS\DNMVCS
 {
 	public function init($options=array())
@@ -431,11 +432,11 @@ ExitJson($ret)
 ExitRedirect($url)
 
     跳转到另一个url 并且退出 实质调用 DNView::G()->ExitRedirect();
-ExitRedirectRouteTo($url)
+ExitRouteTo($url)
 
     跳转到 URL()函数包裹的 url。
     应用到 DNView::G()->ExitRedirect(); 和 DNRoute::G()->URL
-    高级开发者注意，这是静态方法里处理的，子类化需要注意 // TODO 静态方法不再处理，去耦合
+    高级开发者注意，这是静态方法里处理的，子类化需要注意
 ThrowOn(\$flag,\$message,\$code);
 
     如果 flag 成立则抛出 DNException 异常。 调用 DNException::ThrowOn
@@ -628,7 +629,7 @@ DNMVCS 一共有 4个组件初始化。
 下面就是个初始化 route 和 view 的例子。
 ```php
 <?php
-namespace MY\System;
+namespace MY\Base;
 class App extends \DNMVCS\DNMVCS
 {
 	public function init($options=array())
@@ -831,7 +832,7 @@ W($object);
 ```
 DN::init
     autoload
-    checkkOverrideSystemClass
+    checkkOverride
     initExceptionManager
     initConfiger,initView,initRoute,initDBManager
 
