@@ -6,11 +6,10 @@
 使得网站开发者专注于业务逻辑。
 
 * 为偷懒者写的。只需要引用一个文件，不做一大堆外部依赖。composer 安装正在学习中。
-* 小就是性能。
 * 替代 Codeiginter 这个PHP4 时代的框架，只限于新工程。
 * 不仅仅支持全站路由，还支持局部路径路由和非 PATH_INFO 路由,不需要配服务器也能用
 * 耦合松散，扩展灵活方便，魔改容易
-
+* 小就是性能。（不过也上千行代码了）
 ## 关于 Servivce 层
 MVC 结构的时候，你们业务逻辑放在哪里？
 新手放在 Controller ，后来的放到 Model ，后来觉得 Model 和数据库混一起太乱， 搞个 DAO 层吧。
@@ -18,7 +17,7 @@ MVC 结构的时候，你们业务逻辑放在哪里？
 所以，Service 按业务走，Model 层按数据库走，这就是 DNMVCS 的理念。
 DNMVCS 的最大意义是思想，只要思想在，什么框架你都可以用
 你可以不用 DNMVCS 实现 Controller-Service-Model 架构。
-只要有这个思路就成功
+只要有这个思想就是理念成功了。
 ## 理解 DNMVCS 的原则
 DNMVCS 层级关系图
 
@@ -501,7 +500,6 @@ setDefaultExceptionHandel($calllback)
     接管默认的异常处理，所有异常都归回调管，而不是显示 500 页面。
     用于控制器里控制特定错误类型。比如 api 调用
 isDev()
-
     实际读设置里的 is_dev ，判断是否在开发状态。
 ```
 ## 事件方法
@@ -525,15 +523,23 @@ onErrorHandel($errno, $errstr, $errfile, $errline)
 ```
 ## 组件初始化
 初始化组件，供扩展组件时初始化用。
-
+```
 initConfiger(DNConfiger $configer)
-
+    初始化配置。
+    配置路径。
+    设置是否是开发状态
 initView(DNView $view)
-
+    初始化视图。
+    做了两件事
+    配置路径
+    绑定 onBeforeshow
+    设置是否是开发状态
 initRoute(DNRoute $route)
-
-initDBManager(DBManger $dbm)
-
+    初始化路由 配置选项。
+initDBManager(DNDBManger $dbm)
+    初始化数据库管理器
+    如果是 use_db_ext 则用 DBExt 代替末日的 DNDB
+```
 # 进一步扩展
 ## 总说
 DNMVCS 系统 是用各自独立的类合起来的。
@@ -663,6 +669,7 @@ DNAutoLoader 做了防多次加载和多次初始化。
     run()
  	set404($callback)
 set404 设置404 回调
+
    protected getRouteHandel()
  getRouteHandel 获取回调,然后 run 运行
 
@@ -683,9 +690,25 @@ set404 设置404 回调
 当前类如果为空，说明是 rewrite 过来的。
 当前路径用于如果是切片的，找回未切片的路径。
 ## DNView 视图类
+	public function _ExitJson($ret)
+	public function _ExitRedirect($url,$only_in_site=true)
+	public function _Show($data=[],$view)
+	protected function includeShowFiles()
+	public function init($path)
+	public function setBeforeShow($callback)
+	public function setViewWrapper($head_file,$foot_file)
+	public function showBlock($view,$data)
+	public function assignViewData($key,$value=null)
+
     $this->isDev 来自DMMVCS 主类。判断是否在测试环境
-## DNConfig 配置类
-    DNConfig 类获得配置设置
+## DNConfiger 配置类
+	public function init($path,$path_common=null)
+	protected function include_file($file)
+	public function _Setting($key)
+	public function _Config($key,$file_basename='config')
+	public function _LoadConfig($file_basename='config')
+
+    DNConfiger 类获得配置设置
 ## DNExceptionManager 异常管理类
     异常管理类都是静态方法，基本上没人会接管这个类吧。或者你可以覆盖 DNMVCS 的 init 的方法。
 
@@ -698,9 +721,12 @@ installDBClass($callback);
     $callback($config) 返回 DB 实例。方便扩展
     $callback 也可以是类，带上静态方法为 CreateDBInstance。
 
+closeAllDB
+
+    关闭所有数据库，在显示输出之前关闭
 ## DB 类
-DNMVCS 自带了一个简单的 DB 类
-DN::DB()得到的就是这个 DNDB 类
+DNMVCS 自带了一个简单的 DB 类。
+DN::DB()得到的就是这个 DNDB 类。
 DB 的配置在 setting.sample.php 里有。
 $db 和 $db_r ，如果是读取的数据库，则用 $db_r 字段。
 DNDB 简单实现的一个数据库类。封装了 PDO， 和 Medoo 兼容，也少了 Medoo 的很多功能。
@@ -718,10 +744,14 @@ fetchColumn($sql,...$args)
 ($sql,...$args);
     获得的是数组（其实有时候还是觉得直接用 object $v->id 之类方便多了。
 
-execQuick
-    执行 pdo 结果，为什么不用 exec ? 因为  medoo用了。
-rowCount
+execQuick($sql,...$args)
+    执行 pdo 结果，获得 PDOStatement 为什么不用 exec ? 因为  Medoo用了。
+rowCount()
     获得结果行数
+	public function init($config)
+	public static function CreateDBInstance($db_config)
+	protected function check_connect()
+
 ```
 # 额外的类
 ## DNInterface.php
@@ -746,14 +776,14 @@ self::ImportSys('DNMedoo'); //DNMedoo 依赖 Medoo，所以需要手动加载
 DNMVCSExt 的类和方法
 
     选项 use_ext=true 引入，选项 user_ext_db=true 用 DBext ,额外扩展的db类
-### 奇淫巧技
+### 严格模式
 我想让 DB 只能被 Model , ExModel 调用。Model 只能被 ExModel,Service 调用 。 LibService 只能被Service 调用  Service只能被 Controller 调用
 
 可以,你的 Service  继承 StrictService. Model 继承 StrictModel  初始化里 加这一句
 ```php
 \DNMVCS\DNDBManger::G(\DNMVCS\StrictDBManager::W(\DNMVCS\DNDBManger::G()));
 ```
-调试模式下那些 **新手** 就不能乱来了。
+严格模式下那些 **新手** 就不能乱来了。
 
 
 为什么不作为框架的默认行为。 主要考虑性能因数，而且自由，无依赖性
@@ -797,20 +827,25 @@ W($object);
 - GetMyArgsAssoc 获得当前函数的命名参数数组
 - CallWithMyArgsAssoc($callback)  获得当前函数的命名参数数组并回调
 # DNMVCS 的代码流程讲解
-init 里初始化。
-先 autoloader 自动化加载类
-然后 checkOverrideSystemClass 如果是可用子类，就用子类自动化 init 
-接着 
-initExceptionManager
-intConfigeer, 
-initView
-在 onBeforeShow 的时候，处理传递 null;
-Route
+大致用图表现如下
+```
+DN::init
+    autoload
+    checkkOverrideSystemClass
+    initExceptionManager
+    initConfiger,initView,initRoute,initDBManager
 
-DBM
-run 的时候就调用 DNRoute::Run()；就行了
-路由的过程
-
+DN::run(DNRoute::run)
+    getRouteHandelByMap
+    getRouteHandelByFile
+    $callbackByHandel()
+DNRoute::getRouteHandelByMap
+    match each(assignRoute()) -> return;
+DNRoute::getRouteHandelByFile
+    match class/method -> return;
+DN::DB
+    DBManager::installDBClass
+```
 # 常见问题
 
 - Session 要怎么处理 

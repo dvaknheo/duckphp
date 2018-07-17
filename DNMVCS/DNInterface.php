@@ -99,8 +99,8 @@ interface IDNMVCS
 	
 	public function _Import($file);
 	public function _H($str);
-	public function recordset_url($data,$cols_map);
-	public function recordset_h($data,$cols=array());
+	public function RecordsetURL($data,$cols_map);
+	public function RecordsetH($data,$cols=array());
 	public function onShow404();
 	public function onException($ex);
 	public function onErrorException($ex);

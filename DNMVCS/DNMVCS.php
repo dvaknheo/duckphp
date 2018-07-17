@@ -246,14 +246,9 @@ class DNRoute
 	//for run ,you can 
 	protected function getRouteHandel()
 	{
-		$callback=null;
-		while(true){
-			$callback=$this->getRouteHandelByMap();
-			if($callback){break;}
-			$callback=$this->getRouteHandelByFile();
-			if($callback){break;}
-			break;
-		}
+		$callback=$this->getRouteHandelByMap();
+		if($callback){return $callback;}
+		$callback=$this->getRouteHandelByFile();
 		
 		return $callback;
 	}
