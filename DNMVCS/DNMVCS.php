@@ -174,7 +174,7 @@ class DNRoute
 	
 	protected $default_controller='Main';
 	protected $default_method='index';
-	public $enable_param=true;
+	public $enable_paramters=false;
 	public $with_no_namespace_mode=true;
 	
 	public $calling_path='';
@@ -218,7 +218,7 @@ class DNRoute
 		
 		$this->path=$options['path'].$options['path_controller'].'/';
 		$this->namespace=$options['namespace'].'\\'.$options['namespace_controller'];
-		$this->enable_param=$options['enable_paramters'];
+		$this->enable_paramters=$options['enable_paramters'];
 		$this->with_no_namespace_mode=$options['with_no_namespace_mode'];
 		
 		$this->default_class=$options['default_controller_class'];
@@ -293,14 +293,19 @@ class DNRoute
 			}
 			break;
 		}
-		if($this->enable_param){
+		if($this->enable_paramters){
 			$param=array_slice($blocks,count(explode('/',$current_class))+($current_class?1:0));
 			if($param==array(0=>'')){$param=[];}
 			$this->params=$param;
 			
 			$this->calling_path=ltrim($current_class.'/'.$method,'/');
 		}else{
-			$this->calling_path=$path_info;
+			//TODO fixed enable_paramters
+			$this->calling_path=trim($current_class.'/'.$method,'/');
+			$x_path_info=trim($path_info,'/');
+			if($x_path_info!=$this->calling_path){
+				return null;
+			}
 		}
 		
 		if($this->disable_default_class_outside && $current_class===$this->default_controller && $method===$this->default_method){
