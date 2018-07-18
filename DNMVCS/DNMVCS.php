@@ -564,15 +564,15 @@ class DNConfiger
 		if(null===$setting){
 			$base_setting=[];
 			if($this->path_common){
-				$base_setting=$this->include_file($this->path_common.'setting.php');
+				$base_setting=@$this->include_file($this->path_common.'setting.php');
 				$base_setting=is_array($base_setting)?$base_setting:[];
 			}
-			$setting=$this->include_file($this->path.'setting.php');
-			if($setting===false){
+			if(!is_file($this->path.'setting.php')){
 				echo '<h1>'.'DNMVCS Notice: no setting file!,change setting.sample.php to setting.php !'.'</h1>';
 				exit;
 				//DNSystemException::ThrowOn(true,'DNMVCS Notice: no setting file!,change setting.sample.php to setting.php');
 			}
+			$setting=$this->include_file($this->path.'setting.php');
 			if(!is_array($setting)){
 				DNSystemException::ThrowOn(true,'DNMVCS Notice: need return array !');
 				exit;
@@ -1015,6 +1015,7 @@ trait DNMVCS_Handel
 		$data['code']=$code;
 		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
+		var_dump($data['trace']);exit;
 		DNView::G()->setViewWrapper(null,null);
 		DNView::G()->_Show($data,'_sys/error-500');
 	}
@@ -1042,7 +1043,7 @@ trait DNMVCS_Handel
 	public function onErrorHandel($errno, $errstr, $errfile, $errline)
 	{
 		//var_dump($errno, $errstr, $errfile, $errline);
-		throw new Error($errstr,$errno);
+		throw new \Error($errstr,$errno);
 	}
 	
 	//  close database before show;
