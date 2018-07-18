@@ -989,6 +989,7 @@ trait DNMVCS_Handel
 	//@override
 	public function onShow404()
 	{
+		$this->is404=true;
 		header("HTTP/1.1 404 Not Found");
 		
 		DNView::G()->setViewWrapper(null,null);
@@ -1082,7 +1083,7 @@ class DNMVCS
 	
 	public $options=[];
 	public $isDev=false;
-	
+	public $is404=false;
 	public static function RunQuickly($options=[])
 	{
 		return DNMVCS::G()->init($options)->run();
