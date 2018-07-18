@@ -190,7 +190,6 @@ class DNRoute
 	{
 		static $basepath; //TODO do not static ?
 		if(null===$url){return $_SERVER['REQUEST_URI'];}
-		if(''===$url){return $_SERVER['REQUEST_URI'];}
 		
 		if(null===$basepath){
 			$basepath=substr(rtrim(str_replace('\\','/',$_SERVER['SCRIPT_FILENAME']),'/').'/',strlen($_SERVER['DOCUMENT_ROOT']));
@@ -199,6 +198,7 @@ class DNRoute
 		if($basepath=='/index.php'){$basepath='/';}
 		if($basepath=='/index.php/'){$basepath='/';}
 		
+		if(''===$url){return $basepath;}
 		if('/'==$url{0}){ return $url;};
 		//$url='/'.ltrim($url,'/');
 		
