@@ -1,4 +1,8 @@
-error-debug
+<fieldset>
+	<legend><?="$error_desc($errno)"?></legend>
 <pre>
-<?php debug_print_backtrace(); ?>
+<?="$error_shortfile:$errline "?>
+
+<?=$errstr?>
 </pre>
+</fieldset>

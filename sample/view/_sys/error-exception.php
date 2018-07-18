@@ -1,7 +1,10 @@
-exception
+<?php if(DN::G()->isDev()){ ?>
+<fieldset>
+	<legend>Exception(<?=get_class($ex);?>:<?php echo($ex->getCode());?>)</legend>
+	<?php echo($ex->getMessage());?>
 <pre>
-<?php debug_print_backtrace(); ?>
+--
+<?php echo($trace);?>
 </pre>
-<pre>
-<?php var_export($ex->getTrace())?>
-</pre>
+</fieldset>
+<?php }?>

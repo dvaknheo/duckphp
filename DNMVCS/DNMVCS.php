@@ -752,7 +752,8 @@ class DNExceptionManager
 			break;
 		case E_USER_WARNING:
 		case E_WARNING:
-			(self::$OnDevError)($errno, $errstr, $errfile, $errline);
+			(self::$OnError)($errno, $errstr, $errfile, $errline);
+			break;
 		case E_USER_NOTICE:
 		case E_NOTICE:
 		case E_STRICT:
@@ -1000,6 +1001,7 @@ trait DNMVCS_Handel
 		$data['code']=$ex->getCode();
 		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
+		DNView::G()->setViewWrapper(null,null);
 		DNView::G()->_Show($data,'_sys/error-exception');
 	}
 	public function onErrorException($ex)
@@ -1018,9 +1020,22 @@ trait DNMVCS_Handel
 	public function onDebugError($errno, $errstr, $errfile, $errline)
 	{
 		if(!$this->isDev){return;}
-		$data=[];
-		$data['message']=$errstr;
-		$data['code']=$errno;
+		$descs=array(
+			E_USER_NOTICE=>'E_USER_NOTICE',
+			E_NOTICE=>'E_NOTICE',
+			E_STRICT=>'E_STRICT',
+			E_DEPRECATED=>'E_DEPRECATED',
+			E_USER_DEPRECATED=>'E_USER_DEPRECATED',
+		);
+		$error_shortfile=(substr($errfile,0,strlen($this->path))==$this->path)?substr($errfile,strlen($this->path)):$errfile;
+		$data=array(
+			'errno'=>$errno,
+			'errstr'=>$errstr, 
+			'errfile'=>$errfile, 
+			'errline'=>$errline,
+			'error_desc'=>$descs[$errno],
+			'error_shortfile'=>$error_shortfile,
+		);
 		DNView::G()->showBlock('_sys/error-debug',$data);
 	}
 	public function onErrorHandel($errno, $errstr, $errfile, $errline)
