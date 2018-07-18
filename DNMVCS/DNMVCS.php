@@ -1015,7 +1015,6 @@ trait DNMVCS_Handel
 		$data['code']=$code;
 		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
-		var_dump($data['trace']);exit;
 		DNView::G()->setViewWrapper(null,null);
 		DNView::G()->_Show($data,'_sys/error-500');
 	}
