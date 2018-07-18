@@ -188,24 +188,20 @@ class DNRoute
 	
 	public function _URL($url=null)
 	{
-		static $basepath; //TODO do not static ?
 		if(null===$url){return $_SERVER['REQUEST_URI'];}
 		
-		if(null===$basepath){
-			$basepath=substr(rtrim(str_replace('\\','/',$_SERVER['SCRIPT_FILENAME']),'/').'/',strlen($_SERVER['DOCUMENT_ROOT']));
-		}
 		
+		$basepath=substr(rtrim(str_replace('\\','/',$_SERVER['SCRIPT_FILENAME']),'/').'/',strlen($_SERVER['DOCUMENT_ROOT']));
 		if($basepath=='/index.php'){$basepath='/';}
 		if($basepath=='/index.php/'){$basepath='/';}
 		
 		if(''===$url){return $basepath;}
 		if('/'==$url{0}){ return $url;};
-		//$url='/'.ltrim($url,'/');
 		
-		if('?'==$url{0} || '#'==$url{0}){
-			return $basepath.$path_info.$url;
-		}
+		if('?'==$url{0}){ return $basepath.ltrim($this->path_info,'/').$url; }
+		if('#'==$url{0}){ return $basepath.ltrim($this->path_info,'/').$url; }
 		return $basepath.$url;
+		
 	}
 	public function _Parameters()
 	{
@@ -993,6 +989,8 @@ trait DNMVCS_Handel
 	public function onShow404()
 	{
 		header("HTTP/1.1 404 Not Found");
+		
+		DNView::G()->setViewWrapper(null,null);
 		DNView::G()->_Show([],'_sys/error-404');
 	}
 	public function onException($ex)
@@ -1002,7 +1000,6 @@ trait DNMVCS_Handel
 		$data['code']=$ex->getCode();
 		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
-
 		DNView::G()->_Show($data,'_sys/error-exception');
 	}
 	public function onErrorException($ex)
@@ -1015,7 +1012,7 @@ trait DNMVCS_Handel
 		$data['code']=$code;
 		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
-		
+		DNView::G()->setViewWrapper(null,null);
 		DNView::G()->_Show($data,'_sys/error-500');
 	}
 	public function onDebugError($errno, $errstr, $errfile, $errline)
@@ -1024,7 +1021,6 @@ trait DNMVCS_Handel
 		$data=[];
 		$data['message']=$errstr;
 		$data['code']=$errno;
-		
 		DNView::G()->showBlock('_sys/error-debug',$data);
 	}
 	public function onErrorHandel($errno, $errstr, $errfile, $errline)
