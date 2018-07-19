@@ -262,7 +262,6 @@ class DNRoute
 	protected function getRouteHandelByFile()
 	{
 		$path_info=$this->path_info;
-		
 		$blocks=explode('/',$path_info);
 		array_shift($blocks);
 		$prefix=$this->path;
@@ -377,7 +376,7 @@ class DNRoute
 	}
 	
 
-	protected function matchRoute($pattern_url,$path_info)
+	protected function matchRouteAndRewrite($pattern_url,$path_info,$callback)
 	{
 		$pattern='/^(([A-Z_]+)\s+)?(~)?\/?(.*)\/?$/';
 		$flag=preg_match($pattern,$pattern_url,$m);
@@ -391,7 +390,7 @@ class DNRoute
 			$params=explode('/',$path_info);
 			array_shift($params);
 			$url_params=explode('/',$url);
-			if(!$this->enable_param){
+			if(!$this->enable_paramters){
 				return ($url_params===$params)?true:false;
 			}
 			if($url_params === array_slice($params,0,count($url_params))){
@@ -404,23 +403,37 @@ class DNRoute
 		}
 		$p='/^\/'.str_replace('/','\/',$url).'/';
 		$flag=preg_match($p,$path_info,$m);
+		if(!$flag){return false;}
 		array_shift($m);
 		$this->params=$m;
 		
-		return $flag;
+		//ugly but work
+		if(false!==strpos($callback,'/')){
+				$callback=str_replace('$','\\',$callback);
+				$url=preg_replace($p,$callback,$this->path_info);
+				$this->path_info=parse_url($url,PHP_URL_PATH);
+				$q=parse_url($url,PHP_URL_QUERY);
+				parse_str($q,$get);
+				$_GET=array_merge($get,$_GET);
+				return false;
+		}
+		return true;
 	}
 	protected function getRouteHandelByMap()
 	{
 		$path_info=$this->path_info;
 		foreach($this->routeMap as $pattern =>$callback){
-			if(!$this->matchRoute($pattern,$path_info)){continue;}
-			if(!is_callable($callback)){
-				list($class,$method)=explode('->',$callback);
+			if(!$this->matchRouteAndRewrite($pattern,$path_info,$callback)){continue;}
+			if(!is_string($callback)){return $callback;}
+			if(false!==strpos($callback,'->')){
 				$obj=new $class;
-				$callback=array($obj,$method);
-				//DN::ThrowOn(true,"...for debug");
+				return array($obj,$method);
 			}
-			if($callback){return $callback;}
+			if(false!==strpos($callback,'/')){
+				//TODO REWRITE
+				
+				return null;
+			}
 		}
 		
 		return null;
