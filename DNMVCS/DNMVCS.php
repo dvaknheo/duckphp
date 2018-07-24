@@ -181,10 +181,14 @@ class DNRoute
 	public $calling_class='';
 	public $calling_method='';
 	
-	protected $path_info='';
-	protected $request_method='';
+	public $path_info='';
+	public $request_method='';
+	
 	protected $enable_post_prefix=true;
 	protected $disable_default_class_outside=false;
+	
+	protected $routeHandels=[];
+	public $callback=null;
 	
 	public function _URL($url=null)
 	{
@@ -249,8 +253,19 @@ class DNRoute
 		
 		return $callback;
 	}
+	public function addRouteHandel($handel,$prepend=false)
+	{
+		if(!$prepend){
+			array_push($this->routeHandels[],$handel);
+		}else{
+			array_unshift($this->routeHandels[],$handel);
+		}
+	}
 	public function run()
 	{
+		foreach($this->routeHandels as $handel){
+			($handel)($this);
+		}
 		$callback=$this->getRouteHandel();
 		if(null!==$callback){
 			return ($callback)(...$this->params);
@@ -1002,7 +1017,7 @@ trait DNMVCS_Misc
 	}
 	public static function RecordsetH(&$data,$cols=[])
 	{
-		return self::G()->_RecordsetH($data,$cols_map);
+		return self::G()->_RecordsetH($data,$cols);
 	}
 	public static function _RecordsetH(&$data,$cols=[])
 	{
