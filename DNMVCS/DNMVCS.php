@@ -190,22 +190,24 @@ class DNRoute
 	protected $routeHandels=[];
 	public $callback=null;
 	
-	public function _URL($url=null)
+	public $onURL=null;
+	
+	public function _URL($url=null,$innerCall=false)
 	{
-		if(null===$url){return $_SERVER['REQUEST_URI'];}
-		
-		
+		if(!$innerCall && $this->onURL){return $this->onURL($url,true);}
+
 		$basepath=substr(rtrim(str_replace('\\','/',$_SERVER['SCRIPT_FILENAME']),'/').'/',strlen($_SERVER['DOCUMENT_ROOT']));
 		if($basepath=='/index.php'){$basepath='/';}
 		if($basepath=='/index.php/'){$basepath='/';}
 		
 		if(''===$url){return $basepath;}
+
 		if('/'==$url{0}){ return $url;};
 		
-		if('?'==$url{0}){ return $basepath.ltrim($this->path_info,'/').$url; }
-		if('#'==$url{0}){ return $basepath.ltrim($this->path_info,'/').$url; }
-		return $basepath.$url;
+		if('?'==$url{0}){ return $basepath.$this->path_info.$url; }
+		if('#'==$url{0}){ return $basepath.$this->path_info.$url; }
 		
+		return $basepath.$url;
 	}
 	public function _Parameters()
 	{
@@ -244,6 +246,10 @@ class DNRoute
 	public function set404($callback)
 	{
 		$this->on404Handel=$callback;
+	}
+	public function setURLHandel($callback)
+	{
+		$this->onURL=$callback;
 	}
 	public function addRouteHandel($handel,$prepend=false)
 	{
@@ -1049,7 +1055,7 @@ trait DNMVCS_Handel
 	}
 	public function onErrorHandel($errno, $errstr, $errfile, $errline)
 	{
-		//($errno, $errstr, $errfile, $errline);
+		//var_dump($errno, $errstr, $errfile, $errline);
 		throw new \Error($errstr,$errno);
 	}
 	

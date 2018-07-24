@@ -832,18 +832,15 @@ W($object);
 ```
 DN::init
     autoload
-    checkkOverride
+    checkOverride
     initExceptionManager
     initConfiger,initView,initRoute,initDBManager
 
 DN::run(DNRoute::run)
-
+	(RouteHandle)($this); ->rewriteMapHandel routeMapHandel->handel 
     getRouteHandelByFile
     (DNRoute->callback)()
-DNRoute::getRouteHandelByMap
-    match each(assignRoute()) -> return;
-DNRoute::getRouteHandelByFile
-    match class/method -> return;
+
 DN::DB
     DBManager::installDBClass
 ```

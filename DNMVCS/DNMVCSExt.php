@@ -29,7 +29,7 @@ class SimpleRoute extends DNRoute
 	public $options;
 	protected $key_for_simple_route='_r';
 	
-	public function _URL($url=null)
+	public function _URL($url=null,$innerCall=false)
 	{
 		if('/'==$url{0}){ return $url;};
 		$path=parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
@@ -50,6 +50,32 @@ class SimpleRoute extends DNRoute
 		$path_info=isset($_GET[$this->key_for_simple_route])?$_GET[$this->key_for_simple_route]:'';
 		$path_info=ltrim($path_info,'/');
 		$this->path_info=$path_info;
+	}
+}
+//TODO Test
+class SimpleRouteRewriteHandel
+{
+	public $key_for_simple_route='_r';
+	public function onURL($url=null,$innerCall=false)
+	{
+		$path=parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
+		if($url===null || $url==='' || $url==='/'){return $path;}
+		$url='/'.ltrim($url,'/');
+		$c=parse_url($url,PHP_URL_PATH);
+		$q=parse_url($url,PHP_URL_QUERY);
+		
+		$q=$q?'&'.$q:''; // if this->route_key= 
+		$url=$path.'?'.$this->key_for_simple_route.'='.$c.$q;
+		return $url;
+	}
+	public function handel($route)
+	{
+		$route->setURLHandel([$this,'onURL']);
+		$this->key_for_simple_route=$route->options['key_for_simple_route'];
+		
+		$path_info=isset($_GET[$route->key_for_simple_route])?$_GET[$route->key_for_simple_route]:'';
+		$path_info=ltrim($path_info,'/');
+		$route->path_info=$path_info;
 	}
 }
 class RouteMapHandel
