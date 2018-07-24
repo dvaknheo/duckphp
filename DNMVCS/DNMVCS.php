@@ -257,9 +257,9 @@ class DNRoute
 	public function addRouteHandel($handel,$prepend=false)
 	{
 		if(!$prepend){
-			array_push($this->routeHandels[],$handel);
+			array_push($this->routeHandels,$handel);
 		}else{
-			array_unshift($this->routeHandels[],$handel);
+			array_unshift($this->routeHandels,$handel);
 		}
 	}
 	public function run()
@@ -269,10 +269,15 @@ class DNRoute
 		}
 		$callback=$this->getRouteHandel();
 		if(null!==$callback){
-			return ($callback)(...$this->parameters);
+			($callback)(...$this->parameters);
+			return true;
 		}
-		DNSystemException::ThrowOn(!$this->on404Handel,"DNMVCS Notice: 404  You need set 404 Handel",-1);
-		return ($this->on404Handel)();
+		if(!$this->on404Handel){
+			echo "DNMVCS Notice: 404  You need set 404 Handel";
+			exit;
+		}
+		($this->on404Handel)();
+		return false;
 	}
 
 	protected function getRouteHandelByFile()
@@ -311,7 +316,6 @@ class DNRoute
 			
 			$this->calling_path=ltrim($current_class.'/'.$method,'/');
 		}else{
-			//TODO fixed enable_paramters
 			$this->calling_path=trim($current_class.'/'.$method,'/');
 			$x_path_info=trim($path_info,'/');
 			if($x_path_info!=$this->calling_path){
@@ -334,6 +338,7 @@ class DNRoute
 		$this->includeControllerFile($file);
 		$obj=$this->getObecjectToCall($current_class);
 		//$this->calling_class=$current_class;  in $obj
+
 		if(null==$obj){return null;}
 		
 		return $this->getMethodToCall($obj,$method);
@@ -495,7 +500,7 @@ class DNView
 	public function _ExitRedirect($url,$only_in_site=true)
 	{
 		if($only_in_site && parse_url($url,PHP_URL_HOST)){
-			//DNSystemException::ThrowOn(true,' DnSystem safe check false '.$url);
+			exit;
 		}
 		header('location: '.$url);
 		exit;
@@ -597,11 +602,10 @@ class DNConfiger
 			if(!is_file($this->path.'setting.php')){
 				echo '<h1>'.'DNMVCS Notice: no setting file!,change setting.sample.php to setting.php !'.'</h1>';
 				exit;
-				//DNSystemException::ThrowOn(true,'DNMVCS Notice: no setting file!,change setting.sample.php to setting.php');
 			}
 			$setting=$this->include_file($this->path.'setting.php');
 			if(!is_array($setting)){
-				DNSystemException::ThrowOn(true,'DNMVCS Notice: need return array !');
+				echo '<h1>'.'DNMVCS Notice: need return array !'.'</h1>';
 				exit;
 			}
 			$setting=array_merge($base_setting,$setting);
@@ -654,7 +658,10 @@ class DNDB
 	protected function check_connect()
 	{
 		if($this->pdo){return;}
-		DNSystemException::ThrowOn(empty($this->config),'DNMVCS Notice: database not setting!');
+		if(empty($this->config)){
+			echo ('DNMVCS Notice: database not setting!');
+			exit;
+		}
 		$config=$this->config;
 		$this->pdo=new PDO($config['dsn'], $config['username'], $config['password'],array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC));
 	}
@@ -869,7 +876,13 @@ trait DNMVCS_Glue
 	}
 	public function assignRewrite($key,$value=null)
 	{
-		//TODO
+		static $inited;
+		if(!$inited){
+			self::ImportSyS('DNMVCSExt');
+			DNRoute::G()->addRouteHandel([RouteRewriteHandel::G(),'handel'],true);
+			$inited=true;
+		}
+		RouteRewriteHandel::G()->assignRewrite($key,$value);
 	}
 	public function assignRoute($key,$value=null)
 	{
@@ -984,8 +997,13 @@ trait DNMVCS_Misc
 			$str=htmlspecialchars( $str, ENT_QUOTES );
 			return $str;
 		}
+		if(is_array($str)){
+			foreach($str as $k =>&$v){
+				self::_H($v);
+			}
+			return $str;
+		}
 		
-		//ugly
 		if(is_object($str)){
 			$arr=get_object_vars($str);
 			foreach($arr as $k =>&$v){
@@ -993,12 +1011,7 @@ trait DNMVCS_Misc
 			}
 			return $arr;
 		}
-		if(is_array($str)){
-			foreach($str as $k =>&$v){
-				$this->_H($v);
-			}
-			return $str;
-		}
+
 		return $str;
 	}
 	public static function RecordsetUrl(&$data,$cols_map=[])
@@ -1047,7 +1060,6 @@ trait DNMVCS_Handel
 	//@override
 	public function onShow404()
 	{
-		$this->is404=true;
 		header("HTTP/1.1 404 Not Found");
 		
 		DNView::G()->setViewWrapper(null,null);
@@ -1099,7 +1111,7 @@ trait DNMVCS_Handel
 	}
 	public function onErrorHandel($errno, $errstr, $errfile, $errline)
 	{
-		//var_dump($errno, $errstr, $errfile, $errline);
+		//($errno, $errstr, $errfile, $errline);
 		throw new \Error($errstr,$errno);
 	}
 	
@@ -1141,7 +1153,6 @@ class DNMVCS
 	
 	public $options=[];
 	public $isDev=false;
-	public $is404=false;
 	public static function RunQuickly($options=[])
 	{
 		return DNMVCS::G()->init($options)->run();
@@ -1260,10 +1271,6 @@ trait DNThrowQuickly
 	}
 }
 class DNException extends \Exception
-{
-	use DNThrowQuickly;
-}
-class DNSystemException extends \Exception
 {
 	use DNThrowQuickly;
 }

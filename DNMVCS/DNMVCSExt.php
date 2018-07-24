@@ -91,9 +91,8 @@ class RouteMapHandel
 	}
 	protected function getRouteHandelByMap($route)
 	{
-		$path_info=ltrim('/',$this->path_info);
 		foreach($this->routeMap as $pattern =>$callback){
-			if(!$this->matchRoute($pattern,$path_info,$callback)){continue;}
+			if(!$this->matchRoute($pattern,$path_info,$route)){continue;}
 			if(!is_string($callback)){return $callback;}
 			if(false!==strpos($callback,'->')){
 				$obj=new $class;
@@ -136,13 +135,11 @@ class RouteRewriteHandel
 		
 		$url=preg_replace($p,$new_url,$path_info);
 		if($url===$path_info){return false;}
-		$path_info=$url;
 		
-		$path_info=parse_url($path_info,PHP_URL_PATH);
-		$q=parse_url($path_info,PHP_URL_QUERY);
+		$path_info=parse_url($url,PHP_URL_PATH);
+		$q=parse_url($url,PHP_URL_QUERY);
 		parse_str($q,$get);
 		$_GET=array_merge($get,$_GET);
-		
 		$route->path_info=$path_info;
 		return true;
 	}
