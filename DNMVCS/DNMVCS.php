@@ -606,13 +606,24 @@ class DNDB
 	}
 	public function quote($string)
 	{
+		if(is_array($string)){
+			array_walk($string,function(&$v,$k){
+				$v=is_string($v)?$this->quote($v):(string)$v;
+			});
+		}
+		if(!is_string($string)){return $string;}
 		$this->check_connect();
 		return $this->pdo->quote($string);
 	}
-	//public function str_in($array)
-	//{
-	//	if(empty($array))
-	//}
+	public function in($array)
+	{
+		$this->check_connect();
+		if(empty($array)){return 'NULL';}
+		array_walk($array,function(&$v,$k){
+			$v=is_string($v)?$this->quote($v):(string)$v;
+		});
+		return implode(',',$array);
+	}
 	public function fetchAll($sql,...$args)
 	{
 		if(count($args)===1 &&is_array($args[0])){$args=$args[0];}
