@@ -376,7 +376,7 @@ class DNRoute
 	}
 	
 
-	protected function matchRouteAndRewrite($pattern_url,$path_info,$callback)
+	protected function matchRoute($pattern_url,$path_info,$callback)
 	{
 		$pattern='/^(([A-Z_]+)\s+)?(~)?\/?(.*)\/?$/';
 		$flag=preg_match($pattern,$pattern_url,$m);
@@ -386,9 +386,7 @@ class DNRoute
 		$url=$m[4];
 		if($method && $method!==$this->request_method){return false;}
 		if(!$is_regex){
-			//if(enable_param)
 			$params=explode('/',$path_info);
-			array_shift($params);
 			$url_params=explode('/',$url);
 			if(!$this->enable_paramters){
 				return ($url_params===$params)?true:false;
@@ -401,13 +399,15 @@ class DNRoute
 			}
 			
 		}
-		$p='/^\/'.str_replace('/','\/',$url).'/';
+		
+		$p='/'.str_replace('/','\/',$url).'/';
 		$flag=preg_match($p,$path_info,$m);
 		if(!$flag){return false;}
 		array_shift($m);
 		$this->params=$m;
+		return true;
 		
-		//ugly but work
+		//stop rewrite;
 		if(false!==strpos($callback,'/')){
 				$callback=str_replace('$','\\',$callback);
 				$url=preg_replace($p,$callback,$this->path_info);
@@ -421,19 +421,15 @@ class DNRoute
 	}
 	protected function getRouteHandelByMap()
 	{
-		$path_info=$this->path_info;
+		$path_info=ltrim('/',$this->path_info);
 		foreach($this->routeMap as $pattern =>$callback){
-			if(!$this->matchRouteAndRewrite($pattern,$path_info,$callback)){continue;}
+			if(!$this->matchRoute($pattern,$path_info,$callback)){continue;}
 			if(!is_string($callback)){return $callback;}
 			if(false!==strpos($callback,'->')){
 				$obj=new $class;
 				return array($obj,$method);
 			}
-			if(false!==strpos($callback,'/')){
-				//TODO REWRITE
-				
-				return null;
-			}
+			return $callback;
 		}
 		
 		return null;
@@ -960,11 +956,34 @@ trait DNMVCS_Misc
 		$file=rtrim($file,'.php').'.php';
 		require_once(__DIR__.'/'.$file);
 	}
-	public static function _H($str)
+	public function _H(&$str)
 	{
-		return htmlspecialchars( $str, ENT_QUOTES );
+		if(is_string($str)){
+			$str=htmlspecialchars( $str, ENT_QUOTES );
+			return $str;
+		}
+		
+		//ugly
+		if(is_object($str)){
+			$arr=get_object_vars($str);
+			foreach($arr as $k =>&$v){
+				self::_H($v);
+			}
+			return $arr;
+		}
+		if(is_array($str)){
+			foreach($str as $k =>&$v){
+				$this->_H($v);
+			}
+			return $str;
+		}
+		return $str;
 	}
-	public static function RecordsetUrl(&$data,$cols_map)
+	public static function RecordsetUrl(&$data,$cols_map=[])
+	{
+		return self::G()->_RecordsetUrl($data,$cols_map);
+	}
+	public function _RecordsetUrl(&$data,$cols_map)
 	{
 		//todo more quickly;
 		if($data===[]){return $data;}
@@ -974,7 +993,7 @@ trait DNMVCS_Misc
 		foreach($data as &$v){
 			foreach($cols_map as $k=>$r){
 				$values=array_values($v);
-				$v[$k]=str_replace($keys,$values,$r);
+				$v[$k]=self::URL(str_replace($keys,$values,$r));
 				
 			}
 		}
@@ -983,6 +1002,10 @@ trait DNMVCS_Misc
 	}
 	public static function RecordsetH(&$data,$cols=[])
 	{
+		return self::G()->_RecordsetH($data,$cols_map);
+	}
+	public static function _RecordsetH(&$data,$cols=[])
+	{
 		if($data===[]){return $data;}
 		$cols=is_array($cols)?$cols:array($cols);
 		if($cols===[]){
@@ -990,7 +1013,7 @@ trait DNMVCS_Misc
 		}
 		foreach($data as &$v){
 			foreach($cols as $k){
-				$v[$k]=htmlspecialchars( $v[$k], ENT_QUOTES );
+				$v[$k]=self::H( $v[$k], ENT_QUOTES );
 			}
 		}
 		return $data;
