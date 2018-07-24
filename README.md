@@ -715,7 +715,7 @@ set404 设置404 回调
 
     DNConfiger 类获得配置设置
 ## DNExceptionManager 异常管理类
-    异常管理类都是静态方法，基本上没人会接管这个类吧。或者你可以覆盖 DNMVCS 的 init 的方法。
+    异常管理类都是静态方法，基本上没人会接管这个类吧。或者你可以覆盖 DNMVCS 的 initExceptionManager 的方法。
 
 ## DNDBManger 数据库管理类
 这里主要是数据库的扩展

@@ -977,7 +977,7 @@ trait DNMVCS_Misc
 	{
 		return self::G()->_RecordsetUrl($data,$cols_map);
 	}
-	public function _RecordsetUrl(&$data,$cols_map)
+	public function _RecordsetUrl(&$data,$cols_map=[])
 	{
 		//need more quickly;
 		if($data===[]){return $data;}
@@ -1134,10 +1134,6 @@ class DNMVCS
 	{
 		if($this->options['use_ext']){
 			self::ImportSys('DNMVCSExt');
-		}
-		if(isset($this->options['key_for_simple_route'])){
-			self::ImportSys('DNMVCSExt');
-			DNRoute::G(SimpleRoute::G());
 		}
 	}
 	

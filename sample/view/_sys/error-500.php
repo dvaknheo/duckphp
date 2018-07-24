@@ -1,11 +1,12 @@
 500
-<?php if(DN::G()->isDev()){ ?>
+<fieldset>
+	<legend>Error(<?=get_class($ex);?>:<?php echo($ex->getCode());?>)</legend>
+	<?php echo($ex->getMessage());?>
+<pre>
+<?=($ex->getFile());?>:<?=($ex->getLine());?>
 
-<pre>
-<?php debug_print_backtrace(); ?>
+
+--
+<?php echo($trace);?>
 </pre>
-<hr />
-<pre>
-<?php var_dump($ex);?>
-</pre>
-<?php }?>
+</fieldset>

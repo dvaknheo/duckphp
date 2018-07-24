@@ -24,7 +24,9 @@ trait DNWrapper
 		return $self;
 	} 
 }
-class SimpleRoute extends DNRoute
+
+//not use ,you can use SimpleRouteHandel
+class SimpleRoute extends DNRoute 
 {
 	public $options;
 	protected $key_for_simple_route='_r';
