@@ -34,9 +34,10 @@ Controller --> Service ---------------------------------> Model
 * 不建议 Model 抛异常
 1. 如果 Service 相互调用怎么办?
 添加后缀为 LibService 用于 Service 共享调用，不对外，如MyLibService
-2. 如果跨表怎么办?，两种解决方案
-    1. 在主表里附加
-    2. 添加后缀为 ExModel 用于表示这个 Model 是多个表的，如 UserExModel。或者单独和数据库不一致如取名 UserAndPlayerRelationModel
+2. 如果跨表怎么办?，三种解决方案
+    1. 在主表里附加，其他表估计用不到的情况。
+    2. 添加后缀为 ExModel 用于表示这个 Model 是多个表的，如 UserExModel。
+    3. 或者单独和数据库不一致如取名 UserAndPlayerRelationModel
 
 ## DNMVCS 做了什么
 * 简单可扩展灵活的路由方式
@@ -59,9 +60,9 @@ Controller --> Service ---------------------------------> Model
 
 ## DNMVCS 不做什么
 * ORM ，和各种屏蔽 sql 的行为，根据日志查 sql 方便多了。 自己简单封装了 pdo 。
-* 模板引擎，PHP本身就是模板引擎
-* Widget ， 和 MVC 分离违背
-* 接管替代默认的POST，GET，SESSION 系统提供给你就用，不要折腾这些。
+* 模板引擎，PHP本身就是模板引擎。
+* Widget ， 和 MVC 分离违背。
+* 接管替代默认的POST，GET，SESSION 。系统提供给你就用，不要折腾这些。
 
 
 
@@ -79,7 +80,7 @@ Controller --> Service ---------------------------------> Model
 5. 没有中间件。 重写 controller 啊，要什么中间件。
 6. 没有强大的全局依赖注入容器，只有万能的 G 函数。
 7. 没有灵活强大的 AOP ，只有万能的 G 函数。
-8. 这框架什么都没做啊。 居然只支持 PHP5.6+，甚至 PHP7 
+8. 这框架什么都没做啊。 居然只支持 PHP7 
 
 
 ## 还有什么要说的
@@ -354,8 +355,8 @@ run() 方法开始使用路由。 如果你不想要路由。只想要特定结�
 ## 重写 错误页面
 
 错误页面在 view/_sys 里。你可以修改相应的错误页面方法。
-比如 404 是 view/404.php
-高级一点，你可以 扩展 DNMVCS 的主类实现 
+比如 404 是 view/404.php 。
+高级一点，你可以 扩展 DNMVCS 的主类实现。
 
 DNMVCS 的报错页面还是很丑陋，需要调整一下
 # DNMVCS 主类
@@ -376,7 +377,7 @@ init($options=[])
     你可以扩展这个类，添加工程里的其他初始化。
 run()
     开始路由，执行。这个方法拆分出来是为了，不想要路由，只是为了加载一些类的需求的。
-	如果404 则返回false;其他返回 true
+    如果404 则返回false;其他返回 true
 ```
 ## 常用静态方法方法
 这些方法因为太常用，所以静态化了。
@@ -459,9 +460,9 @@ H($str)
 RecordsetH($data,$cols=[])
 
     给 sql 查询返回数组 html 编码
-RecordsetURL($data,$cols_map) 
+RecordsetURL($data,$cols_map=[]) 
 
-    给 sql 返回数组 加url 比如  url_edit=>"edit/{id}",则该行添加 url_edit =>"edit/1" 等类似。
+    给 sql 返回数组 加url 比如  url_edit=>"edit/{id}",则该行添加 url_edit =>DN::URL("edit/1") 等类似。
 
 
 ## 非静态方法
@@ -475,6 +476,9 @@ assignRoute($route,$callback=null)
 
     给路由加回调。实质调用 DNRoute::G()->assignRoute
     关于回调模式的路由。详细情况看介绍
+    assigenRoute 之后，将会使用高级模式
+assignRewrite($old_url,$new_url=null)
+    rewrite  重写 path_info
 getCallingMethod()
 
     获得路由中正在调用的方法。
@@ -503,6 +507,8 @@ setDefaultExceptionHandel($calllback)
     用于控制器里控制特定错误类型。比如 api 调用
 isDev()
     实际读设置里的 is_dev ，判断是否在开发状态。
+addRouteHandel($handel,$prepend=false)
+    扩展 route 方法
 ```
 ## 事件方法
 实现了默认事件回调的方法。扩展以展现不同事件的显示。
@@ -550,12 +556,10 @@ DNMVCS 主类，单向调用这几个组件，各组件是独立的。
 
     DNAutoloader
     DNConfiger
-    DNRoute
+    DNRoute  -> RouteHandel::handel();
     DNView
     DNDBManager -> DNDB
     DNExceptionManager
-
-    DNSystemException
 
 各类接口可参加 DNInterface.php，没去加载，因为只有参考意义，没实际意义。
 各类之间是独立的。
@@ -743,7 +747,8 @@ fetch($sql,...$args)
 fetchColumn($sql,...$args)
     这三个是动态参数
 ($sql,...$args);
-    获得的是数组（其实有时候还是觉得直接用 object $v->id 之类方便多了。
+    获得的是数组
+    （有时候还是觉得直接用 object $v->id 之类方便多了,你可以在 pdo 里调整。
 
 execQuick($sql,...$args)
     执行 pdo 结果，获得 PDOStatement 为什么不用 exec ? 因为  Medoo用了。
@@ -859,13 +864,8 @@ DN::DB
 	- 琢磨了一阵如何不改 static 调用强行塞  strict 模式，还是没找到方法，切换 namespace 代理的方式可以搞定，但还是要手工改代码.
 - 思考：子域名作为子目录
 	想把某个子目录作为域名独立出去。只改底层代码如何改
-
-## DNMVCS 的代码流程
-
-
-
+- 三处 DNMVCS Notice 报错退出的地方
+    设置没找到，设置非数组，数据库没找到
 ## 和其他框架的整合
-修改Main/index ，返回空页面给其他框架用
-修改 onShow404
-如果是 404 无返回
-在框架结束后如果是 404 页面返回的则继续
+修改 onShow404 空内容。
+run() 方法 得到 false 表示 404 里，后续就是其他框架的事情了
