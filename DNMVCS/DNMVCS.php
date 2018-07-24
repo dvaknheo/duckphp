@@ -289,9 +289,9 @@ class DNRoute
 			$v=$blocks[$i];
 			$method=$v;
 			if(''==$v){break;}
-			if(!preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/',$v)){ //just for php classname;
-				return null;
-			}
+			///if(!preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/',$v)){ //just for php classname;
+			///	return null;
+			///}
 			$dir=$prefix.$v;
 			$full_file=$dir.'.php';
 			if(is_file($full_file)){
@@ -589,7 +589,9 @@ class DNConfiger
 		if(null===$setting){
 			$base_setting=[];
 			if($this->path_common){
-				$base_setting=@$this->include_file($this->path_common.'setting.php');
+				if(is_file($this->path_common.'setting.php')){
+					$base_setting=$this->include_file($this->path_common.'setting.php');
+				}
 				$base_setting=is_array($base_setting)?$base_setting:[];
 			}
 			if(!is_file($this->path.'setting.php')){
@@ -1243,7 +1245,7 @@ class DNMVCS
 	}
 	public function run()
 	{
-		DNRoute::G()->run();
+		return DNRoute::G()->run();
 	}	
 }
 

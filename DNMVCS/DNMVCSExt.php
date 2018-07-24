@@ -48,7 +48,7 @@ class SimpleRoute extends DNRoute
 		$this->key_for_simple_route=$options['key_for_simple_route'];
 		
 		$path_info=isset($_GET[$this->key_for_simple_route])?$_GET[$this->key_for_simple_route]:'';
-		$path_info='/'.ltrim($path_info,'/');
+		$path_info=ltrim($path_info,'/');
 		$this->path_info=$path_info;
 	}
 }
