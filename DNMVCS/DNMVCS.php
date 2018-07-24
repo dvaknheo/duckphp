@@ -194,7 +194,7 @@ class DNRoute
 	
 	public function _URL($url=null,$innerCall=false)
 	{
-		if(!$innerCall && $this->onURL){return $this->onURL($url,true);}
+		if(!$innerCall && $this->onURL){return ($this->onURL)($url,true);}
 
 		$basepath=substr(rtrim(str_replace('\\','/',$_SERVER['SCRIPT_FILENAME']),'/').'/',strlen($_SERVER['DOCUMENT_ROOT']));
 		if($basepath=='/index.php'){$basepath='/';}
@@ -842,6 +842,10 @@ trait DNMVCS_Glue
 			$inited=true;
 		}
 		RouteMapHandel::G()->assignRoute($key,$value);
+	}
+	public function addRouteHandel($handel,$prepend=false)
+	{
+		return DNRoute::G()->addRouteHandel($handel,$prepend);
 	}
 	public function getRouteCallingMethod()
 	{
