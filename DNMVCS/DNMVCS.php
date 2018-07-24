@@ -166,7 +166,7 @@ class DNRoute
 	
 	protected $routeMap=[];
 	protected $on404Handel=null;
-	protected $params=[];
+	protected $parameters=[];
 	public $options;
 	
 	protected $namespace='MY';
@@ -209,7 +209,7 @@ class DNRoute
 	}
 	public function _Parameters()
 	{
-		return $this->params;
+		return $this->parameters;
 	}
 	public function init($options)
 	{
@@ -229,16 +229,17 @@ class DNRoute
 		if(PHP_SAPI==='cli'){
 			$argv=$_SERVER['argv'];
 			if(count($argv)>=2){
-				$this->path_info='/'.ltrim($argv[1],'/');
+				$this->path_info=$argv[1];
 				array_shift($argv);
 				array_shift($argv);
-				$this->params=$argv;
+				$this->parameters=$argv;
 			}
 		}else{
 			$this->path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
 			$this->request_method=$_SERVER['REQUEST_METHOD'];
 		}
-		
+		$this->path_info=ltrim($this->path_info,'/');
+
 	}
 	public function set404($callback)
 	{
@@ -268,7 +269,7 @@ class DNRoute
 		}
 		$callback=$this->getRouteHandel();
 		if(null!==$callback){
-			return ($callback)(...$this->params);
+			return ($callback)(...$this->parameters);
 		}
 		DNSystemException::ThrowOn(!$this->on404Handel,"DNMVCS Notice: 404  You need set 404 Handel",-1);
 		return ($this->on404Handel)();
@@ -278,7 +279,7 @@ class DNRoute
 	{
 		$path_info=$this->path_info;
 		$blocks=explode('/',$path_info);
-		array_shift($blocks);
+		//array_shift($blocks);
 		$prefix=$this->path;
 		$l=count($blocks);
 		$current_class='';
@@ -306,7 +307,7 @@ class DNRoute
 		if($this->enable_paramters){
 			$param=array_slice($blocks,count(explode('/',$current_class))+($current_class?1:0));
 			if($param==array(0=>'')){$param=[];}
-			$this->params=$param;
+			$this->parameters=$param;
 			
 			$this->calling_path=ltrim($current_class.'/'.$method,'/');
 		}else{
@@ -407,7 +408,7 @@ class DNRoute
 				return ($url_params===$params)?true:false;
 			}
 			if($url_params === array_slice($params,0,count($url_params))){
-				$this->params=array_slice($params,0,count($url_params));
+				$this->parameters=array_slice($params,0,count($url_params));
 				return true;
 			}else{
 				return false;
@@ -419,7 +420,7 @@ class DNRoute
 		$flag=preg_match($p,$path_info,$m);
 		if(!$flag){return false;}
 		array_shift($m);
-		$this->params=$m;
+		$this->parameters=$m;
 		return true;
 		
 		//stop rewrite;
@@ -863,6 +864,10 @@ trait DNMVCS_Glue
 	public static function Parameters()
 	{
 		return DNRoute::G()->_Parameters();
+	}
+	public function assignRewrite($key,$value=null)
+	{
+		//TODO
 	}
 	public function assignRoute($key,$value=null)
 	{
