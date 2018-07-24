@@ -38,7 +38,7 @@ class SimpleRoute extends DNRoute
 		$c=parse_url($url,PHP_URL_PATH);
 		$q=parse_url($url,PHP_URL_QUERY);
 		
-		$q=$q?'&'.$q:''; //TODO if this->route_key= 
+		$q=$q?'&'.$q:''; // if this->route_key= 
 		$url=$path.'?'.$this->key_for_simple_route.'='.$c.$q;
 		return $url;
 	}
@@ -59,7 +59,6 @@ class RouteMapHandel
 	
 	protected function matchRoute($pattern_url,$path_info,$route)
 	{
-
 		$pattern='/^(([A-Z_]+)\s+)?(~)?\/?(.*)\/?$/';
 		$flag=preg_match($pattern,$pattern_url,$m);
 		if(!$flag){return false;}
@@ -84,15 +83,16 @@ class RouteMapHandel
 		
 		$p='/'.str_replace('/','\/',$url).'/';
 		$flag=preg_match($p,$path_info,$m);
+		
 		if(!$flag){return false;}
 		array_shift($m);
-		$this->parameters=$m;
+		$route->parameters=$m;
 		return true;
 	}
 	protected function getRouteHandelByMap($route)
 	{
 		foreach($this->routeMap as $pattern =>$callback){
-			if(!$this->matchRoute($pattern,$path_info,$route)){continue;}
+			if(!$this->matchRoute($pattern,$route->path_info,$route)){continue;}
 			if(!is_string($callback)){return $callback;}
 			if(false!==strpos($callback,'->')){
 				$obj=new $class;

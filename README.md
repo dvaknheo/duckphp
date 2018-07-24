@@ -680,7 +680,6 @@ set404 设置404 回调
 	protected  getMethodToCall($obj,$method)
 文件模式的路由
 
-    protected getRouteHandelByMap
 	public  assignRoute($key,$callback=null)
 映射模式的路由。
 
@@ -838,9 +837,9 @@ DN::init
     initConfiger,initView,initRoute,initDBManager
 
 DN::run(DNRoute::run)
-    getRouteHandelByMap
+
     getRouteHandelByFile
-    $callbackByHandel()
+    (DNRoute->callback)()
 DNRoute::getRouteHandelByMap
     match each(assignRoute()) -> return;
 DNRoute::getRouteHandelByFile

@@ -24,25 +24,28 @@ class DNMedoo extends MedooFixed
 	{
 		$args=func_get_args();
 		array_shift($args);
+		if(count($args)===1 &&is_array($args[0])){$args=$args[0];}
 		return $this->query($sql,$args)->fetchAll();
 	}
 	public function fetch($sql)
 	{
 		$args=func_get_args();
 		array_shift($args);
+		if(count($args)===1 &&is_array($args[0])){$args=$args[0];}
 		return $this->query($sql,$args)->fetch();
 	}
 	public function fetchColumn($sql)
 	{
 		$args=func_get_args();
 		array_shift($args);
+		if(count($args)===1 &&is_array($args[0])){$args=$args[0];}
 		return $this->query($sql,$args)->fetchColumn();
 	}
 	public function execQuick($sql)
 	{
 		$args=func_get_args();
 		array_shift($args);
-		
+		if(count($args)===1 &&is_array($args[0])){$args=$args[0];}
 		$sth = $this->pdo->prepare($sql);
 		$ret=$sth->execute($args);
 		

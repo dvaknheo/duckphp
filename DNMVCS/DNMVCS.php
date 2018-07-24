@@ -166,7 +166,7 @@ class DNRoute
 	
 	protected $routeMap=[];
 	protected $on404Handel=null;
-	protected $parameters=[];
+	public $parameters=[];
 	public $options;
 	
 	protected $namespace='MY';
@@ -245,15 +245,6 @@ class DNRoute
 	{
 		$this->on404Handel=$callback;
 	}
-	//for run ,you can 
-	protected function getRouteHandel()
-	{
-		$callback=$this->getRouteHandelByMap();
-		if($callback){return $callback;}
-		$callback=$this->getRouteHandelByFile();
-		
-		return $callback;
-	}
 	public function addRouteHandel($handel,$prepend=false)
 	{
 		if(!$prepend){
@@ -267,9 +258,11 @@ class DNRoute
 		foreach($this->routeHandels as $handel){
 			($handel)($this);
 		}
-		$callback=$this->getRouteHandel();
-		if(null!==$callback){
-			($callback)(...$this->parameters);
+		if(null===$this->callback){
+			$this->callback=$this->getRouteHandelByFile();
+		}
+		if(null!==$this->callback){
+			($this->callback)(...$this->parameters);
 			return true;
 		}
 		if(!$this->on404Handel){
@@ -397,73 +390,7 @@ class DNRoute
 	}
 	
 
-	protected function matchRoute($pattern_url,$path_info,$callback)
-	{
-		$pattern='/^(([A-Z_]+)\s+)?(~)?\/?(.*)\/?$/';
-		$flag=preg_match($pattern,$pattern_url,$m);
-		if(!$flag){return false;}
-		$method=$m[2];
-		$is_regex=$m[3];
-		$url=$m[4];
-		if($method && $method!==$this->request_method){return false;}
-		if(!$is_regex){
-			$params=explode('/',$path_info);
-			$url_params=explode('/',$url);
-			if(!$this->enable_paramters){
-				return ($url_params===$params)?true:false;
-			}
-			if($url_params === array_slice($params,0,count($url_params))){
-				$this->parameters=array_slice($params,0,count($url_params));
-				return true;
-			}else{
-				return false;
-			}
-			
-		}
-		
-		$p='/'.str_replace('/','\/',$url).'/';
-		$flag=preg_match($p,$path_info,$m);
-		if(!$flag){return false;}
-		array_shift($m);
-		$this->parameters=$m;
-		return true;
-		
-		//stop rewrite;
-		if(false!==strpos($callback,'/')){
-				$callback=str_replace('$','\\',$callback);
-				$url=preg_replace($p,$callback,$this->path_info);
-				$this->path_info=parse_url($url,PHP_URL_PATH);
-				$q=parse_url($url,PHP_URL_QUERY);
-				parse_str($q,$get);
-				$_GET=array_merge($get,$_GET);
-				return false;
-		}
-		return true;
-	}
-	protected function getRouteHandelByMap()
-	{
-		$path_info=ltrim('/',$this->path_info);
-		foreach($this->routeMap as $pattern =>$callback){
-			if(!$this->matchRoute($pattern,$path_info,$callback)){continue;}
-			if(!is_string($callback)){return $callback;}
-			if(false!==strpos($callback,'->')){
-				$obj=new $class;
-				return array($obj,$method);
-			}
-			return $callback;
-		}
-		
-		return null;
-	}
-	
-	public function assignRoute($key,$callback=null)
-	{
-		if(is_array($key)&& $callback===null){
-			$this->routeMap=array_merge($this->routeMap,$key);
-		}else{
-			$this->routeMap[$key]=$callback;
-		}
-	}
+
 	public function getRouteCallingPath()
 	{
 		return $this->calling_path;
@@ -560,7 +487,7 @@ class DNView
 	public function assignViewData($key,$value=null)
 	{
 		if(is_array($key)&& $value===null){
-				$this->data=array_merge($this->data,$key);
+			$this->data=array_merge($this->data,$key);
 		}else{
 			$this->data[$key]=$value;
 		}
@@ -676,9 +603,13 @@ class DNDB
 		$this->check_connect();
 		return $this->pdo->quote($string);
 	}
-
+	//public function str_in($array)
+	//{
+	//	if(empty($array))
+	//}
 	public function fetchAll($sql,...$args)
 	{
+		if(count($args)===1 &&is_array($args[0])){$args=$args[0];}
 		$this->check_connect();
 		
 		$sth = $this->pdo->prepare($sql);
@@ -689,6 +620,7 @@ class DNDB
 	}
 	public function fetch($sql,...$args)
 	{
+		if(count($args)===1 &&is_array($args[0])){$args=$args[0];}
 		$this->check_connect();
 		
 		$sth = $this->pdo->prepare($sql);
@@ -698,6 +630,7 @@ class DNDB
 	}
 	public function fetchColumn($sql,...$args)
 	{
+		if(count($args)===1 &&is_array($args[0])){$args=$args[0];}
 		$this->check_connect();
 		
 		$sth = $this->pdo->prepare($sql);
@@ -707,6 +640,7 @@ class DNDB
 	}
 	public function execQuick($sql,...$args)
 	{
+		if(count($args)===1 &&is_array($args[0])){$args=$args[0];}
 		$this->check_connect();
 		
 		$sth = $this->pdo->prepare($sql);
@@ -775,7 +709,6 @@ class DNExceptionManager
 	}
 	public function onErrorHandler($errno, $errstr, $errfile, $errline)
 	{
-//var_dump($errno, $errstr, $errfile, $errline);//TODO test more
 		if (!(error_reporting() & $errno)) {
 			return false;
 		}
@@ -800,7 +733,6 @@ class DNExceptionManager
 			(self::$OnError)($errno, $errstr, $errfile, $errline);
 			break;
 		}
-		//var_dump($errno, $errstr, $errfile, $errline);
 		/* Don't execute PHP internal error handler */
 		return true;
 	}
@@ -886,7 +818,13 @@ trait DNMVCS_Glue
 	}
 	public function assignRoute($key,$value=null)
 	{
-		return DNRoute::G()->assignRoute($key,$value);
+		static $inited;
+		if(!$inited){
+			self::ImportSyS('DNMVCSExt');
+			DNRoute::G()->addRouteHandel([RouteMapHandel::G(),'handel'],true);
+			$inited=true;
+		}
+		RouteMapHandel::G()->assignRoute($key,$value);
 	}
 	public function getRouteCallingMethod()
 	{
@@ -1020,7 +958,7 @@ trait DNMVCS_Misc
 	}
 	public function _RecordsetUrl(&$data,$cols_map)
 	{
-		//todo more quickly;
+		//need more quickly;
 		if($data===[]){return $data;}
 		if($cols_map===[]){return $data;}
 		$keys=array_keys($data[0]);
@@ -1160,7 +1098,6 @@ class DNMVCS
 	public function autoload($options=[])
 	{
 		DNAutoLoader::G()->init($options)->run();
-		//todo rip me
 
 		$this->options=array_merge(DNAutoLoader::DEFAULT_OPTIONS,DNRoute::DEFAULT_OPTIONS,self::DEFAULT_OPTIONS,$options);
 		$this->options=array_merge($this->options,DNAutoLoader::G()->options); 
@@ -1174,7 +1111,6 @@ class DNMVCS
 	}
 	protected function initOptions()
 	{
-		// todo move me
 		if($this->options['use_ext']){
 			self::ImportSys('DNMVCSExt');
 		}
