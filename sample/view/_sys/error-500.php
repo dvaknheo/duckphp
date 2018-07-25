@@ -1,4 +1,5 @@
 500
+<?php if(DN::G()->isDev()){ ?>
 <fieldset>
 	<legend>Error(<?=get_class($ex);?>:<?php echo($ex->getCode());?>)</legend>
 	<?php echo($ex->getMessage());?>
@@ -10,3 +11,4 @@
 <?php echo($trace);?>
 </pre>
 </fieldset>
+<?php }?>
