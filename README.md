@@ -474,11 +474,15 @@ assign 系列函数，都有两个模式 func(\$map)，和 func(\$key,\$value) �
 ```
 assignRoute($route,$callback=null)
 
-    给路由加回调。实质调用 DNRoute::G()->assignRoute
-    关于回调模式的路由。详细情况看介绍
+    给路由加回调。
+    关于回调模式的路由。详细情况看之前介绍
     assigenRoute 之后，将会使用高级模式
 assignRewrite($old_url,$new_url=null)
+
     rewrite  重写 path_info
+    不区分 request method , 重写后可以用 ? query 参数
+    ~ 开始表示是正则 ,为了简单用 / 代替普通正则的 \/
+    替换的url ，用 $1 $2 表示参数
 getCallingMethod()
 
     获得路由中正在调用的方法。
@@ -670,14 +674,11 @@ DNAutoLoader 做了防多次加载和多次初始化。
 这应该会被扩展,加上权限判断等设置
 路由类是很强大扩展性很强的类。
 
-	_URL($url=null)
+	_URL($url=null,$innerCall=false)
 	_Parameters()
     run()
  	set404($callback)
 set404 设置404 回调
-
-   protected getRouteHandel()
- getRouteHandel 获取回调,然后 run 运行
 
     protected getRouteHandelByFile
 	protected  getObecjectToCall($class_name)
@@ -689,11 +690,17 @@ set404 设置404 回调
 
 	getRouteCallingPath()
 	getRouteCallingClass()
-    getRouteCallingMethod()
+	getRouteCallingMethod()
 以上三组，是当前路径，当前类，当前方法。
 当前方法用于权限的判断。如跳过login 方法其他都要权限。
 当前类如果为空，说明是 rewrite 过来的。
 当前路径用于如果是切片的，找回未切片的路径。
+高级模式
+
+    setURLHandel
+	 _URL的 innerCall 就是调用这个 setURLHandel 的 onURL 
+    addRouteHandel
+	添加路由的hook
 ## DNView 视图类
 	public function _ExitJson($ret)
 	public function _ExitRedirect($url,$only_in_site=true)
@@ -798,10 +805,15 @@ DNMVCSExt 的类和方法
 W($object);
     
     DNWrapper::W(MyOBj::G()); 包裹一个对象，在 __call 里做一些操作，然后调用 call_the_object($method,$args)
-### SimpleRoute
-
+### SimpleRoute SimpleRoute
+    已经废弃，请用 SimpleRouteHandel
+### SimpleRouteHandel
     SimpleRoute 用于指定 _GET 里某个 key 作为 控制器分配.
     使用 $options['key_for_simple_route'] 来打开他。
+### RouteRewriteHandel
+    实现 assignRewrite
+### RouteMapHandel
+    实现 assignRoute 功能
 ### StrictService
     你的 Service 继承这个类
 	调试状态下，允许 service 调用 libservice 不允许 service 调用 service ,不允许 model 调用 service
@@ -815,7 +827,7 @@ W($object);
 ### DBExt
 	加了额外方法的DB类，注意和 Medoo 不兼容
     多出的方法有 
-    quote_array， //str_in_array get， insert， update， delete
+    quote_array， get， insert， update， delete
     等
     user_ext_db 选项自动安装，手动安装用
     \DNMVCS\DNMVCS::G()->installDBClass(\DNMVCS\DBExt::class);
