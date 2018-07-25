@@ -135,7 +135,7 @@ class RouteMapHook
 		
 		return null;
 	}
-	public function  handel($route)
+	public function  hook($route)
 	{
 		$route->callback=$this->getRouteHandelByMap($route);
 	}
