@@ -56,7 +56,7 @@ class SimpleRoute extends DNRoute
 		$this->path_info=$path_info;
 	}
 }
-class SimpleRouteHandel
+class SimpleRouteHook
 {
 	use DNSingleton;
 
@@ -84,7 +84,7 @@ class SimpleRouteHandel
 		$route->path_info=$path_info;
 	}
 }
-class RouteMapHandel
+class RouteMapHook
 {
 	use DNSingleton;
 	protected $routeMap=[];
@@ -148,7 +148,7 @@ class RouteMapHandel
 		}
 	}
 }
-class RouteRewriteHandel
+class RouteRewriteHook
 {
 	use DNSingleton;
 	protected $rewriteMap=[];
@@ -175,7 +175,7 @@ class RouteRewriteHandel
 		$route->path_info=$path_info;
 		return true;
 	}
-	public function  handel($route)
+	public function  hook($route)
 	{
 		foreach($this->rewriteMap as $old_url =>$new_url){
 			if($this->matchRewrite($old_url,$new_url,$route)){

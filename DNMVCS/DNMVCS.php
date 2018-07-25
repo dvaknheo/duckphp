@@ -187,7 +187,7 @@ class DNRoute
 	protected $enable_post_prefix=true;
 	protected $disable_default_class_outside=false;
 	
-	protected $routeHandels=[];
+	protected $routeHooks=[];
 	public $callback=null;
 	
 	public $onURL=null;
@@ -251,18 +251,18 @@ class DNRoute
 	{
 		$this->onURL=$callback;
 	}
-	public function addRouteHandel($handel,$prepend=false)
+	public function addRouteHook($hook,$prepend=false)
 	{
 		if(!$prepend){
-			array_push($this->routeHandels,$handel);
+			array_push($this->routeHooks,$hook);
 		}else{
-			array_unshift($this->routeHandels,$handel);
+			array_unshift($this->routeHooks,$hook);
 		}
 	}
 	public function run()
 	{
-		foreach($this->routeHandels as $handel){
-			($handel)($this);
+		foreach($this->routeHooks as $hook){
+			($hook)($this);
 		}
 		if(null===$this->callback){
 			$this->callback=$this->getRouteHandelByFile();
@@ -828,24 +828,24 @@ trait DNMVCS_Glue
 		static $inited;
 		if(!$inited){
 			self::ImportSyS('DNMVCSExt');
-			DNRoute::G()->addRouteHandel([RouteRewriteHandel::G(),'handel'],true);
+			DNRoute::G()->addRouteHook([RouteRewriteHook::G(),'hook'],true);
 			$inited=true;
 		}
-		RouteRewriteHandel::G()->assignRewrite($key,$value);
+		RouteRewriteHook::G()->assignRewrite($key,$value);
 	}
 	public function assignRoute($key,$value=null)
 	{
 		static $inited;
 		if(!$inited){
 			self::ImportSyS('DNMVCSExt');
-			DNRoute::G()->addRouteHandel([RouteMapHandel::G(),'handel'],true);
+			DNRoute::G()->addRouteHook([RouteMapHook::G(),'hook'],true);
 			$inited=true;
 		}
-		RouteMapHandel::G()->assignRoute($key,$value);
+		RouteMapHook::G()->assignRoute($key,$value);
 	}
-	public function addRouteHandel($handel,$prepend=false)
+	public function addRouteHook($hook,$prepend=false)
 	{
-		return DNRoute::G()->addRouteHandel($handel,$prepend);
+		return DNRoute::G()->addRouteHook($hook,$prepend);
 	}
 	public function getRouteCallingMethod()
 	{

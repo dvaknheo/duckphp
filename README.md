@@ -510,9 +510,11 @@ setDefaultExceptionHandel($calllback)
     接管默认的异常处理，所有异常都归回调管，而不是显示 500 页面。
     用于控制器里控制特定错误类型。比如 api 调用
 isDev()
+
     实际读设置里的 is_dev ，判断是否在开发状态。
-addRouteHandel($handel,$prepend=false)
-    扩展 route 方法
+addRouteHook($hook,$prepend=false)
+
+    下钩子扩展 route 方法
 ```
 ## 事件方法
 实现了默认事件回调的方法。扩展以展现不同事件的显示。
@@ -560,7 +562,7 @@ DNMVCS 主类，单向调用这几个组件，各组件是独立的。
 
     DNAutoloader
     DNConfiger
-    DNRoute  -> RouteHandel::handel();
+    DNRoute  -> RouteHook::hook();
     DNView
     DNDBManager -> DNDB
     DNExceptionManager
@@ -699,7 +701,8 @@ set404 设置404 回调
 
     setURLHandel
 	 _URL的 innerCall 就是调用这个 setURLHandel 的 onURL 
-    addRouteHandel
+    
+	addRouteHook
 	添加路由的hook
 ## DNView 视图类
 	public function _ExitJson($ret)
