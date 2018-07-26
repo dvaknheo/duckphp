@@ -97,7 +97,7 @@ Hello DNMVCS
 
 Time Now is 2018-06-14T22:16:38+08:00
 ```
-如果漏了修改 config.setting.php 会提示：
+如果漏了修改 config/setting.php 会提示：
 ```
 DNMVCS Notice: no setting file!,change setting.sample.php to setting.php !
 ```
@@ -192,7 +192,7 @@ const DNMVCS::DEFAULT_OPTIONS=[
     'use_ext'=>false,                   // 加载扩展库  DNMVCSExt
 	'use_ext_db'=>false,                // 用扩展库 的 DBExt 代替 DNDB 数据库类
     'fullpath_config_common'=>'',       // 通用配置的目录，用于多工程
-        'path_view'=>'view',            // 视图目录
+        'path_view'=>'view',            // 视图目录，或许会有人改到 app/View
 		'path_lib'=>'lib',              // 用于手动导入 Import() 的类的目录
 		'path_config'=>'config',        // 配置的目录
 ];
@@ -333,6 +333,7 @@ DNMVCS 的控制器有点像CodeInigter，不需要继承什么，就这么简�
     2. 你也可以采取名称对应的类，而不偷懒啊啊。
 
 3. DNMVCS 还支持路由映射。 
+
     正则用 ~
     要指定 GET/POST 在最前面加http 方法.
 
@@ -454,13 +455,14 @@ ImportSys($file)
     手动导DNMVCS目录下的包含文件 函数。DNMVCS库目录默认不包含其他非必要的文件
 	因为需求不常用，所以没自动加载
 	比如在调试状态下的奇淫巧技：限定各 G 函数的调用。以及DNMedoo ，用 Medoo类
-H($str)
+H(&$str)
 
-    html 编码 这个函数常用，所以缩写。用了 utf-8的模式
-RecordsetH($data,$cols=[])
+    html 编码 这个函数常用，所以缩写。H 函数还支持 数组
+RecordsetH(&$data,$cols=[])
 
     给 sql 查询返回数组 html 编码
-RecordsetURL($data,$cols_map=[]) 
+	$colss 指定 要转码的列名
+RecordsetURL(&$data,$cols_map=[]) 
 
     给 sql 返回数组 加url 比如  url_edit=>"edit/{id}",则该行添加 url_edit =>DN::URL("edit/1") 等类似。
 
@@ -483,6 +485,8 @@ assignRewrite($old_url,$new_url=null)
     不区分 request method , 重写后可以用 ? query 参数
     ~ 开始表示是正则 ,为了简单用 / 代替普通正则的 \/
     替换的url ，用 $1 $2 表示参数
+    assignRewrite 之后，将会使用高级模式
+
 getCallingMethod()
 
     获得路由中正在调用的方法。
@@ -492,6 +496,8 @@ setViewWrapper($head_file=null,$foot_file=null)
 
     给输出 view 加页眉页脚 实质调用 DNView::G()->setViewWrapper
     view 里的变量和页眉页脚的域是一样的。
+	页眉页脚的变量和 view 页面是同域的。
+	有时候你需要 setViewWrapper(null,null) 清理页眉页脚
 assignViewData($key,$value=null)
 
     给 view 分配数据，实质调用 DNView::G()->assignViewData
@@ -514,7 +520,7 @@ isDev()
     实际读设置里的 is_dev ，判断是否在开发状态。
 addRouteHook($hook,$prepend=false)
 
-    下钩子扩展 route 方法
+    下钩子扩展 route 方法,实质调用 DNRoute 的
 ```
 ## 事件方法
 实现了默认事件回调的方法。扩展以展现不同事件的显示。
@@ -552,7 +558,7 @@ initRoute(DNRoute $route)
     初始化路由 配置选项。
 initDBManager(DNDBManger $dbm)
     初始化数据库管理器
-    如果是 use_db_ext 则用 DBExt 代替末日的 DNDB
+    如果是 use_db_ext 则用 DBExt 代替默认的 DNDB
 ```
 # 进一步扩展
 ## 总说
@@ -564,7 +570,7 @@ DNMVCS 主类，单向调用这几个组件，各组件是独立的。
     DNConfiger
     DNRoute  -> RouteHook::hook();
     DNView
-    DNDBManager -> DNDB
+    DNDBManager -> DNDB::CreateDBInstence()
     DNExceptionManager
 
 各类接口可参加 DNInterface.php，没去加载，因为只有参考意义，没实际意义。
@@ -809,13 +815,13 @@ W($object);
     
     DNWrapper::W(MyOBj::G()); 包裹一个对象，在 __call 里做一些操作，然后调用 call_the_object($method,$args)
 ### SimpleRoute SimpleRoute
-    已经废弃，请用 SimpleRouteHandel
-### SimpleRouteHandel
+    已经废弃，请用 SimpleRouteHook
+### SimpleRouteHook
     SimpleRoute 用于指定 _GET 里某个 key 作为 控制器分配.
     使用 $options['key_for_simple_route'] 来打开他。
-### RouteRewriteHandel
+### RouteRewriteHook
     实现 assignRewrite
-### RouteMapHandel
+### RouteMapHook
     实现 assignRoute 功能
 ### StrictService
     你的 Service 继承这个类
@@ -840,7 +846,8 @@ W($object);
     用于加载 medoo 类代替默认的 db 类，注意 medoo 类 不兼容默认 db 类
 
 
-### API 用于 api 服务快速调用
+### API
+	用于 api 服务快速调用
 	public static function Call($class,$method,$input)  input 是关联数组
 	protected static function GetTypeFilter() 重写这个方法限定你的类型
 
@@ -857,7 +864,9 @@ DN::init
     initConfiger,initView,initRoute,initDBManager
 
 DN::run(DNRoute::run)
-	(RouteHandle)($this); ->rewriteMapHandel routeMapHandel->handel 
+	(RouteHandle)($this);
+		RouteRewriteHook->hook
+		RouteMapHook->hook 
     getRouteHandelByFile
     (DNRoute->callback)()
 
@@ -883,4 +892,4 @@ DN::DB
     设置没找到，设置非数组，数据库没找到
 ## 和其他框架的整合
 修改 onShow404 空内容。
-run() 方法 得到 false 表示 404 里，后续就是其他框架的事情了
+run() 方法 得到 false 表示 404 了，后续就是其他框架的事情了

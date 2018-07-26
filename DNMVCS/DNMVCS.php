@@ -907,7 +907,8 @@ trait DNMVCS_Glue
 	}
 	public static function ThrowOn($flag,$msg,$code=0)
 	{
-		return DNException::ThrowOn($flag,$msg,$code);
+		if(!$flag){return;}
+		throw new DNException($message,$code);
 	}
 	//DB
 	public function installDBClass($class)
