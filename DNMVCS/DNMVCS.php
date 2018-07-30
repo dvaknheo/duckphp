@@ -772,7 +772,7 @@ class DNDBManager
 	}
 	public function installDBClass($callback)
 	{
-		if(is_string($callback) && class_exists($callback,false)){
+		if(is_string($callback) && class_exists($callback)){
 			$callback=([$callback,'CreateDBInstance']);
 		}
 		$this->callback_create_db=$callback;
