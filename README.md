@@ -450,6 +450,10 @@ ImportSys($file)
     手动导DNMVCS目录下的包含文件 函数。DNMVCS库目录默认不包含其他非必要的文件
 	因为需求不常用，所以没自动加载
 	比如在调试状态下的奇淫巧技：限定各 G 函数的调用。以及DNMedoo ，用 Medoo类
+
+## 独立杂项静态方法
+这几个方法独立，为了方便操作，放在这里。
+
 H(&$str)
 
     html 编码 这个函数常用，所以缩写。H 函数还支持 数组
@@ -460,7 +464,6 @@ RecordsetH(&$data,$cols=[])
 RecordsetURL(&$data,$cols_map=[]) 
 
     给 sql 返回数组 加url 比如  url_edit=>"edit/{id}",则该行添加 url_edit =>DN::URL("edit/1") 等类似。
-
 
 ## 非静态方法
 这里的方法偶尔会用到，所以没静态化 。
@@ -666,12 +669,6 @@ if($flag){throw new MyException($message,$code);}
 你自己的异常类应该 use DNThrowQuickly 没必要继承 DNException。
 原因是你应该只处理你自己熟悉的异常
 
-## DNAutoLoader 加载类
-DNAutoLoader 不建议扩展。因为你要有新类进来才有能处理加载关系，不如自己再加个加载类呢。
-
-    init($options)
-    run()
-DNAutoLoader 做了防多次加载和多次初始化。
 
 ## DNRoute 路由类
 这应该会被扩展,加上权限判断等设置
@@ -701,7 +698,7 @@ set404 设置404 回调
 高级模式
 
     setURLHandel
-	 _URL的 innerCall 就是调用这个 setURLHandel 的 onURL 
+	_URL的 innerCall 就是调用这个 setURLHandel 的 onURL 
     
 	addRouteHook
 	添加路由的hook
@@ -732,15 +729,17 @@ set404 设置404 回调
 这里主要是数据库的扩展
 这个也许会经常改动。比如用自己公司的 DB 类，要在这里做一个封装。
 
-installDBClass($callback);
+installDBClass($callback)
 
     $callback($config) 返回 DB 实例。方便扩展
+    setting 里的 db, db_r 会传到这里。
+
     $callback 也可以是类，带上静态方法为 CreateDBInstance。
 
-closeAllDB
+closeAllDB()
 
     关闭所有数据库，在显示输出之前关闭
-## DB 类
+## DNDB 类
 DNMVCS 自带了一个简单的 DB 类。
 DN::DB()得到的就是这个 DNDB 类。
 DB 的配置在 setting.sample.php 里有。
@@ -751,25 +750,33 @@ DNDB 简单实现的一个数据库类。封装了 PDO， 和 Medoo 兼容，也
 pdo 这是个公开成员变量而不是方法，是的，你可以操作 pdo
 close
     关闭数据库
-quote
-    转码
-fetchAll($sql,...$args)
-fetch($sql,...$args)
-fetchColumn($sql,...$args)
-    这三个是动态参数
-($sql,...$args);
+public function quote($string)
+    转码,如果是数组，则值部分会转码。
+public function fetchAll($sql,...$args)
+public function fetch($sql,...$args)
+public function fetchColumn($sql,...$args)
+    这三个是动态参数，直接查询
     获得的是数组
     （有时候还是觉得直接用 object $v->id 之类方便多了,你可以在 pdo 里调整。
-
-execQuick($sql,...$args)
+public function execQuick($sql,...$args)
     执行 pdo 结果，获得 PDOStatement 为什么不用 exec ? 因为  Medoo用了。
-rowCount()
+    返回  PDOStatement 对象
+public function  rowCount()
     获得结果行数
-	public function init($config)
-	public static function CreateDBInstance($db_config)
-	protected function check_connect()
-
+public function init($config)
+    初始化
+protected function check_connect()
+    DNDB 是使用的时候才连接的，不是一上来就连接数据库
+public static function CreateDBInstance($db_config)
+    用于创建DB类
 ```
+## DNAutoLoader 加载类
+DNAutoLoader 不建议扩展。因为你要有新类进来才有能处理加载关系，不如自己再加个加载类呢。
+
+    init($options)
+    run()
+DNAutoLoader 做了防多次加载和多次初始化。
+
 # 额外的类
 ## DNInterface.php
 提供了 DNMVCS.php 里扩展类的接口， PHP 的接口实质只是参照作用。所以没引入。
@@ -861,7 +868,7 @@ DN::init
     initConfiger,initView,initRoute,initDBManager
 
 DN::run(DNRoute::run)
-	(RouteHandle)($this);
+	(RouteHook)($this);
 		RouteRewriteHook->hook
 		RouteMapHook->hook 
     getRouteHandelByFile
@@ -877,16 +884,17 @@ DN::DB
     或者是 SesionModel
 	在构造函数里做 session_start 相关代码
 - 后台里，我要判断权限，只有几个公共方法能无权限访问
-    - 构造函数里获得 $method=DNRoute::G()->calling_method; 然后进行后处理
+    - 构造函数里获得 $method=DNMVCS::G()->getRouteCallingMethod; 然后进行后处理
 - 为什么不把 DNMVCS 里那些子功能类作为DNMVCS类的属性， 如 $this->View=DNView::G();
     - 静态方法里调用。 self::G()->View->_Show() 比 DNView::G()->_Show() 之类更麻烦。非静态方法里也就懒得加引用了
 - 我用 static 方法不行么，不想用 G() 函数于 Model ,Service
 	- 可以，Model可以用。不过不推荐Service 用
 	- 琢磨了一阵如何不改 static 调用强行塞  strict 模式，还是没找到方法，切换 namespace 代理的方式可以搞定，但还是要手工改代码.
+   - DNStaticCall 由于 php7 的限制， protected funtion 才能 static call
 - 思考：子域名作为子目录
 	想把某个子目录作为域名独立出去。只改底层代码如何改
 - 三处 DNMVCS Notice 报错退出的地方
     设置没找到，设置非数组，数据库没找到
 ## 和其他框架的整合
-修改 onShow404 空内容。
+修改 override DNMVCS::onShow404 => function(){} 。 
 run() 方法 得到 false 表示 404 了，后续就是其他框架的事情了
