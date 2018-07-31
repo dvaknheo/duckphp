@@ -25,6 +25,17 @@ trait DNWrapper
 	} 
 }
 
+//use with DNSingleton
+trait DNStaticCall
+{
+	//remark ，method do not public
+	public static function __callStatic($method, $params)
+    {
+		$classname=get_called_class();
+        $class=$classname::G();
+		return ([$class, $method])(...$params);
+    }
+}
 //not use ,you can use SimpleRouteHandel
 class SimpleRoute extends DNRoute 
 {
@@ -74,7 +85,7 @@ class SimpleRouteHook
 		$url=$path.'?'.$this->key_for_simple_route.'='.$c.$q;
 		return $url;
 	}
-	public function handel($route)
+	public function hook($route)
 	{
 		$route->setURLHandel([$this,'onURL']);
 		$this->key_for_simple_route=isset($route->options['key_for_simple_route'])?$route->options['key_for_simple_route']:$this->key_for_simple_route;
