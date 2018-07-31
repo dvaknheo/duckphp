@@ -2,7 +2,6 @@
 require('../../DNMVCS/DNMVCS.php');
 $options=[
 ];
-\DNMVCS\DNMVCS::G($options)->RunQuickly();
+\DNMVCS\DNMVCS::RunQuickly($options);
 //$path=realpath('../');
-//\DNMVCS\DNMVCS::G()->autoload(['path']=>$path);
-//\DNMVCS\DNMVCS::G()->init([])->run();
+//\DNMVCS\DNMVCS::G()->init(['path'=>$path])->run();

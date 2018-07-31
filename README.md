@@ -148,9 +148,8 @@ www/index.php  入口 PHP 文件,内容如下
 require('../../DNMVCS/DNMVCS.php');
 $options=[
 ];
-\DNMVCS\DNMVCS::G($options)->RunQuickly();
+\DNMVCS\DNMVCS::RunQuickly($options);
 //$path=realpath('../');
-//\DNMVCS\DNMVCS::G()->autoload(['path']=>$path);
 //\DNMVCS\DNMVCS::G()->init([])->run();
 ```
 被注释掉部分 和 实际调用部分实际相同。是个链式调用。
@@ -158,7 +157,6 @@ DNMVCS\DNMVCS::G(); 单例模式。
 DNMVCS\DNMVCS 主类，在后面有好多其他方法详细介绍。
 这些方法背后是不同的你可以改写的类。
 
-autoload(['path'=>$path]);  注册加载类。拆分出来是为了方便扩展子类化处理。
 init([]);初始化，这部分入口选项见后面章节详细介绍
 run(); 开始路由
 
@@ -369,12 +367,9 @@ static G($object=null,$args=[])
 	比 PHP-DI简洁，后面的文档 会有详细介绍
 static RunQuickly($optionss=[])
     DNMVCS::RunQuickly ($options) 相当于 DNMVCS::G()->init($options)->run();
-autoload($optionss=[])
-    自动加载。处理自动加载机制。 得找到自动加载才把子类化的文件载入进来，所以这个方法单列出来。
+
 init($options=[])
     初始化，这是最经常子类化完成自己功能的方法。
-    如果在初始化之前没有 autoload 会在这里执行。
-    如果已经执行了 autoload 会把 默认配置合并 autoload 的配置以及参数的配置作为配置使用。
     你可以扩展这个类，添加工程里的其他初始化。
 run()
     开始路由，执行。这个方法拆分出来是为了，不想要路由，只是为了加载一些类的需求的。
@@ -614,7 +609,7 @@ MyBaseClass::G()->foo2();
 
 所以你可以扩展各种内部类以实现不同功能。
 
-比如你要自己的路由方法在 autoload 类后，init 里。
+比如你要自己的路由方法.在 init 里。
 ```php
 //MYMVCS::init
 public function init($options=[])
@@ -814,6 +809,8 @@ DNMVCSExt 的类和方法
 W($object);
     
     DNWrapper::W(MyOBj::G()); 包裹一个对象，在 __call 里做一些操作，然后调用 call_the_object($method,$args)
+### trait DNStaticCall
+    Facade 的trait 引用到 DNSingleton，由于 php7 的限制， protected funtion 才能 static call
 ### SimpleRoute SimpleRoute
     已经废弃，请用 SimpleRouteHook
 ### SimpleRouteHook

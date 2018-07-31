@@ -1117,10 +1117,8 @@ class DNMVCS
 	{
 		return DNMVCS::G()->init($options)->run();
 	}
-	public function autoload($options=[])
+	protected function initPath($options=[])
 	{
-		DNAutoLoader::G()->init($options)->run();
-
 		$this->options=array_merge(DNAutoLoader::DEFAULT_OPTIONS,DNRoute::DEFAULT_OPTIONS,self::DEFAULT_OPTIONS,$options);
 		$this->options=array_merge($this->options,DNAutoLoader::G()->options); 
 		
@@ -1128,8 +1126,6 @@ class DNMVCS
 		
 		$this->path=$this->options['path'];
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
-		
-		return $this;
 	}
 	protected function initOptions()
 	{
@@ -1160,7 +1156,7 @@ class DNMVCS
 		$object=$this->checkOverride($options);
 		if($object){return $object;}
 		
-		$this->autoload($options);
+		$this->initPath($options);
 		
 		$this->initExceptionManager();
 		
