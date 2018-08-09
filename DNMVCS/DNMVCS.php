@@ -74,12 +74,12 @@ class DNAutoLoader
 			$path=realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
 			$options['path']=rtrim($path,'/').'/';
 		}
-		$this->path=$options['path'];
-		$path=$this->path;
+		$this->options['path']=$options['path'];
+		$this->path=$this->options['path'];
 		
 		$this->namespace=$options['namespace'];
-		$this->path_namespace=$path.rtrim($options['path_namespace'],'/').'/';
-		$this->path_autoload=$path.rtrim($options['path_autoload'],'/').'/';
+		$this->path_namespace=$this->path.rtrim($options['path_namespace'],'/').'/';
+		$this->path_autoload=$this->path.rtrim($options['path_autoload'],'/').'/';
 		$this->path_no_namespace_mode=$path.rtrim($options['path_no_namespace_mode'],'/').'/';
 		
 		//remark No the prefix
@@ -500,7 +500,7 @@ class DNView
 	}
 	public function hasView($view)
 	{
-		$view=$this->path.$rtrim($view,'.php').'.php';
+		$view=$this->path.rtrim($view,'.php').'.php';
 		return is_file($view)?true:false;
 	}
 }
@@ -1035,7 +1035,8 @@ trait DNMVCS_Handel
 	{
 		header("HTTP/1.1 404 Not Found");
 		if(!DNView::G()->hasView('_sys/error-404')){
-			
+			echo "DNMVCS File Not Found";
+			return;
 		}
 		DNView::G()->setViewWrapper(null,null);
 		DNView::G()->_Show([],'_sys/error-404');
@@ -1156,7 +1157,6 @@ class DNMVCS
 		$autoloader_options=DNAutoLoader::G()->options;
 		$this->options=array_merge($this->options,$autoloader_options); 
 		
-		$this->options['path']=DNAutoLoader::G()->path;
 		$this->path=$this->options['path'];
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
 		
