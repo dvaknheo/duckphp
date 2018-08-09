@@ -513,6 +513,7 @@ class DNConfiger
 	public $path_common;
 	public $setting_file='setting.php';
 	protected $setting=[];
+	protected $all_config=[];
 	protected $inited=false;
 	protected $skip_setting_file=false;
 	public function init($path,$path_common=null,$ext_setting=[],$skip_setting_file=false)
@@ -562,24 +563,25 @@ class DNConfiger
 	
 	public function _Config($key,$file_basename='config')
 	{
-		$config=$this->_Load($file_basename);
+		$config=$this->_LoadConfig($file_basename);
 		return isset($config[$key])?$config[$key]:null;
 	}
 	
 	public function _LoadConfig($file_basename='config')
 	{
-		static $all_config=[];
-		if(isset($all_config[$file_basename])){return $all_config[$file_basename];}
+		if(isset($this->all_config[$file_basename])){return $this->all_config[$file_basename];}
 		$base_config=[];
 		if($this->path_common){
-			$base_config=$this->include_file($this->path_common.$file_basename.'.php');
+			if(is_file($this->path_common.$file_basename.'.php')){
+				$base_config=$this->include_file($this->path_common.$file_basename.'.php');
+			}
 			$base_config=is_array($base_config)?$base_config:[];
 		}
 		
 		$config=$this->include_file($this->path.$file_basename.'.php');
 		$config=array_merge($base_config,$config);
 		
-		$all_config[$file_basename]=$config;
+		$this->all_config[$file_basename]=$config;
 		return $config;
 		
 	}
