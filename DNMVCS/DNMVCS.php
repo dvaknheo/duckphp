@@ -511,7 +511,7 @@ class DNConfiger
 
 	public $path;
 	public $path_common;
-	public $setting_file='setting.php';
+	public $setting_file='setting';
 	protected $setting=[];
 	protected $all_config=[];
 	protected $inited=false;
@@ -538,18 +538,14 @@ class DNConfiger
 			return $this->setting[$key]??null;
 		}
 		$base_setting=[];
-		
 		if($this->path_common){
-			if(is_file($this->path_common.$this->setting_file)){
-				$base_setting=$this->include_file($this->path_common.$this->setting_file);
-			}
-			$base_setting=is_array($base_setting)?$base_setting:[];
+			$base_setting=$this->load_file($this->path_common,$this->setting_file);
 		}
-		if(!is_file($this->path.$this->setting_file)){
-			echo '<h1>'.'DNMVCS Notice: no setting file!,change setting.sample.php to '.$this->setting_file.' !'.'</h1>';
+		if(!is_file($this->path.$this->setting_file.'.php')){
+			echo '<h1>'.'DNMVCS Notice: no setting file!,change '.$this->setting_file.'.sample.php to '.$this->setting_file.'.php !'.'</h1>';
 			exit;
 		}
-		$setting=$this->include_file($this->path.$this->setting_file);
+		$setting=$this->load_file($this->path,$this->setting_file,false);
 		if(!is_array($setting)){
 			echo '<h1>'.'DNMVCS Notice: need return array !'.'</h1>';
 			exit;
@@ -566,24 +562,27 @@ class DNConfiger
 		$config=$this->_LoadConfig($file_basename);
 		return isset($config[$key])?$config[$key]:null;
 	}
-	
 	public function _LoadConfig($file_basename='config')
 	{
 		if(isset($this->all_config[$file_basename])){return $this->all_config[$file_basename];}
+		
 		$base_config=[];
 		if($this->path_common){
-			if(is_file($this->path_common.$file_basename.'.php')){
-				$base_config=$this->include_file($this->path_common.$file_basename.'.php');
-			}
-			$base_config=is_array($base_config)?$base_config:[];
+			$base_config=$this->load_file($this->path_common,$file_basename);
 		}
 		
-		$config=$this->include_file($this->path.$file_basename.'.php');
+		$config=$this->load_file($this->path,$file_basename,false);
 		$config=array_merge($base_config,$config);
 		
 		$this->all_config[$file_basename]=$config;
 		return $config;
-		
+	}
+	protected function load_file($path,$basename,$checkfile=true)
+	{	
+		$file=$path.$basename.'.php';
+		if($checkfile && !is_file($file)){return null;}
+		$ret=(function($file){return include($file);})($file);
+		return $ret;
 	}
 }
 class DNDB
@@ -1051,7 +1050,8 @@ trait DNMVCS_Handel
 		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
 		if(!DNView::G()->hasView('_sys/error-exception')){
-			
+			var_dump($ex);
+			return;
 		}
 		DNView::G()->setViewWrapper(null,null);
 		DNView::G()->_Show($data,'_sys/error-exception');
@@ -1067,7 +1067,8 @@ trait DNMVCS_Handel
 		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
 		if(!DNView::G()->hasView('_sys/error-500')){
-			
+			var_dump($ex);
+			return;
 		}
 		DNView::G()->setViewWrapper(null,null);
 		DNView::G()->_Show($data,'_sys/error-500');
