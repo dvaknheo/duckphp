@@ -511,11 +511,15 @@ class DNConfiger
 
 	public $path;
 	public $path_common;
-	protected $setting_file='setting.php';
-	public function init($path,$path_common=null)
+	public $setting_file='setting.php';
+	protected $setting=[];
+	protected $inited=false;
+	protected $skip_setting_file=false;
+	public function init($path,$path_common=null,$ext_setting=[],$skip_setting_file=false)
 	{
 		$this->path=$path;
 		$this->path_common=$path_common;
+		$this->setting=$ext_setting;
 	}
 	
 	// variable indived
@@ -525,28 +529,35 @@ class DNConfiger
 	}
 	public function _Setting($key)
 	{
-		static $setting;
-		if(isset($setting[$key])){return $setting[$key];}
-		if(null===$setting){
-			$base_setting=[];
-			if($this->path_common){
-				if(is_file($this->path_common.$this->setting_file)){
-					$base_setting=$this->include_file($this->path_common.$this->setting_file);
-				}
-				$base_setting=is_array($base_setting)?$base_setting:[];
-			}
-			if(!is_file($this->path.$this->setting_file)){
-				echo '<h1>'.'DNMVCS Notice: no setting file!,change setting.sample.php to '.$this->setting_file.' !'.'</h1>';
-				exit;
-			}
-			$setting=$this->include_file($this->path.$this->setting_file);
-			if(!is_array($setting)){
-				echo '<h1>'.'DNMVCS Notice: need return array !'.'</h1>';
-				exit;
-			}
-			$setting=array_merge($base_setting,$setting);
+		if($this->inited){
+			return $this->setting[$key]??null;
 		}
-		return $setting[$key]??null;
+		if($this->skip_setting_file){
+			$this->$inited=true;
+			return $this->setting[$key]??null;
+		}
+		$base_setting=[];
+		
+		if($this->path_common){
+			if(is_file($this->path_common.$this->setting_file)){
+				$base_setting=$this->include_file($this->path_common.$this->setting_file);
+			}
+			$base_setting=is_array($base_setting)?$base_setting:[];
+		}
+		if(!is_file($this->path.$this->setting_file)){
+			echo '<h1>'.'DNMVCS Notice: no setting file!,change setting.sample.php to '.$this->setting_file.' !'.'</h1>';
+			exit;
+		}
+		$setting=$this->include_file($this->path.$this->setting_file);
+		if(!is_array($setting)){
+			echo '<h1>'.'DNMVCS Notice: need return array !'.'</h1>';
+			exit;
+		}
+		
+		$this->setting=array_merge($this->setting,$base_setting,$setting);
+		$this->inited=true;
+		
+		return $this->setting[$key]??null;
 	}
 	
 	public function _Config($key,$file_basename='config')
@@ -891,7 +902,7 @@ trait DNMVCS_Glue
 	}
 	public static function Config($key,$file_basename='config')
 	{
-		return DNConfiger::G()->Config($key,$file_basename);
+		return DNConfiger::G()->_Config($key,$file_basename);
 	}
 	public static function LoadConfig($file_basename)
 	{
@@ -1078,7 +1089,16 @@ trait DNMVCS_Handel
 			'error_shortfile'=>$error_shortfile,
 		);
 		if(!DNView::G()->hasView('_sys/error-debug')){
-			
+			echo  <<<EOT
+<fieldset class="_DNMVC_DEBUG">
+	<legend>$error_desc($errno)</legend>
+<pre>
+$error_shortfile:$errline
+$errstr
+</pre>
+</fieldset>
+EOT;
+			return;
 		}
 		DNView::G()->showBlock('_sys/error-debug',$data);
 	}
@@ -1130,18 +1150,16 @@ class DNMVCS
 	{
 		return DNMVCS::G()->init($options)->run();
 	}
-	protected function initPath($options=[])
+	protected function initOptions($options=[])
 	{
 		$this->options=array_merge(DNAutoLoader::DEFAULT_OPTIONS,DNRoute::DEFAULT_OPTIONS,self::DEFAULT_OPTIONS,$options);
-		$this->options=array_merge($this->options,DNAutoLoader::G()->options); 
+		$autoloader_options=DNAutoLoader::G()->options;
+		$this->options=array_merge($this->options,$autoloader_options); 
 		
 		$this->options['path']=DNAutoLoader::G()->path;
-		
 		$this->path=$this->options['path'];
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
-	}
-	protected function initOptions()
-	{
+		
 		if($this->options['use_ext']){
 			self::ImportSys('DNMVCSExt');
 		}
@@ -1169,11 +1187,9 @@ class DNMVCS
 		$object=$this->checkOverride($options);
 		if($object){return $object;}
 		
-		$this->initPath($options);
-		
 		$this->initExceptionManager();
+		$this->initOptions($options);
 		
-		$this->initOptions();
 		$this->initConfiger(DNConfiger::G());
 		$this->initView(DNView::G());
 		$this->initRoute(DNRoute::G());
