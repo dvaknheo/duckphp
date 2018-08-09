@@ -498,7 +498,11 @@ class DNView
 			$this->data[$key]=$value;
 		}
 	}
-
+	public function hasView($view)
+	{
+		$view=$this->path.$rtrim($view,'.php').'.php';
+		return is_file($view)?true:false;
+	}
 }
 
 class DNConfiger
@@ -507,7 +511,7 @@ class DNConfiger
 
 	public $path;
 	public $path_common;
-	
+	protected $setting_file='setting.php';
 	public function init($path,$path_common=null)
 	{
 		$this->path=$path;
@@ -521,29 +525,28 @@ class DNConfiger
 	}
 	public function _Setting($key)
 	{
-		//on file setting;
 		static $setting;
 		if(isset($setting[$key])){return $setting[$key];}
 		if(null===$setting){
 			$base_setting=[];
 			if($this->path_common){
-				if(is_file($this->path_common.'setting.php')){
-					$base_setting=$this->include_file($this->path_common.'setting.php');
+				if(is_file($this->path_common.$this->setting_file)){
+					$base_setting=$this->include_file($this->path_common.$this->setting_file);
 				}
 				$base_setting=is_array($base_setting)?$base_setting:[];
 			}
-			if(!is_file($this->path.'setting.php')){
-				echo '<h1>'.'DNMVCS Notice: no setting file!,change setting.sample.php to setting.php !'.'</h1>';
+			if(!is_file($this->path.$this->setting_file)){
+				echo '<h1>'.'DNMVCS Notice: no setting file!,change setting.sample.php to '.$this->setting_file.' !'.'</h1>';
 				exit;
 			}
-			$setting=$this->include_file($this->path.'setting.php');
+			$setting=$this->include_file($this->path.$this->setting_file);
 			if(!is_array($setting)){
 				echo '<h1>'.'DNMVCS Notice: need return array !'.'</h1>';
 				exit;
 			}
 			$setting=array_merge($base_setting,$setting);
 		}
-		return isset($setting[$key])?$setting[$key]:null;
+		return $setting[$key]??null;
 	}
 	
 	public function _Config($key,$file_basename='config')
@@ -554,7 +557,6 @@ class DNConfiger
 	
 	public function _LoadConfig($file_basename='config')
 	{
-		//multi file?
 		static $all_config=[];
 		if(isset($all_config[$file_basename])){return $all_config[$file_basename];}
 		$base_config=[];
@@ -1021,7 +1023,9 @@ trait DNMVCS_Handel
 	public function onShow404()
 	{
 		header("HTTP/1.1 404 Not Found");
-		
+		if(!DNView::G()->hasView('_sys/error-404')){
+			
+		}
 		DNView::G()->setViewWrapper(null,null);
 		DNView::G()->_Show([],'_sys/error-404');
 	}
@@ -1032,6 +1036,9 @@ trait DNMVCS_Handel
 		$data['code']=$ex->getCode();
 		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
+		if(!DNView::G()->hasView('_sys/error-exception')){
+			
+		}
 		DNView::G()->setViewWrapper(null,null);
 		DNView::G()->_Show($data,'_sys/error-exception');
 	}
@@ -1045,6 +1052,9 @@ trait DNMVCS_Handel
 		$data['code']=$code;
 		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
+		if(!DNView::G()->hasView('_sys/error-500')){
+			
+		}
 		DNView::G()->setViewWrapper(null,null);
 		DNView::G()->_Show($data,'_sys/error-500');
 	}
@@ -1067,6 +1077,9 @@ trait DNMVCS_Handel
 			'error_desc'=>$descs[$errno],
 			'error_shortfile'=>$error_shortfile,
 		);
+		if(!DNView::G()->hasView('_sys/error-debug')){
+			
+		}
 		DNView::G()->showBlock('_sys/error-debug',$data);
 	}
 	public function onErrorHandel($errno, $errstr, $errfile, $errline)
