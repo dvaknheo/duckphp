@@ -513,15 +513,14 @@ class OneFileModeApp extends DNMVCS
 	public function init($options=[])
 	{
 		$options['setting_file_basename']=$options['setting_file_basename']??'';
-		$options['key_action_request_act']=$options['key_action_request_act']??'act';
+		$options['key_for_simple_route']=$options['key_for_simple_route']??'act';
 		$options['use_function_view']=$options['use_function_view']??true;
 		if($options['use_function_view']){
 			DNView::G(OneFileModeAppView::G());
 		}
 		parent::init($options);
-		DNRoute::G()->addRouteHook(function($route){
-			$route->path_info=$_REQUEST[$this->options['key_action_request_act']]??'';
-		});
+		// 这里应该用 SimpleRouteHook
+			DNRoute::G()->addRouteHook([SimpleRouteHook::G(),'hook']);
 		return $this;
 	}
 	public static function ShowDataInMain($data)
