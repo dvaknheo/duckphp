@@ -62,7 +62,7 @@ class SimpleRoute extends DNRoute
 		parent::init($options);
 		$this->key_for_simple_route=$options['key_for_simple_route'];
 		
-		$path_info=isset($_GET[$this->key_for_simple_route])?$_GET[$this->key_for_simple_route]:'';
+		$path_info=isset($_REQUEST[$this->key_for_simple_route])?$_GET[$this->key_for_simple_route]:'';
 		$path_info=ltrim($path_info,'/');
 		$this->path_info=$path_info;
 	}
@@ -90,7 +90,7 @@ class SimpleRouteHook
 		$route->setURLHandel([$this,'onURL']);
 		$this->key_for_simple_route=isset($route->options['key_for_simple_route'])?$route->options['key_for_simple_route']:$this->key_for_simple_route;
 		
-		$path_info=isset($_GET[$this->key_for_simple_route])?$_GET[$this->key_for_simple_route]:'';
+		$path_info=isset($_REQUEST[$this->key_for_simple_route])?$_GET[$this->key_for_simple_route]:'';
 		$path_info=ltrim($path_info,'/');
 		$route->path_info=$path_info;
 	}
@@ -223,10 +223,10 @@ class StrictService
 		}else{
 			do{
 				if(substr($caller_class,0,strlen("\\$namespace\\Service\\"))=="\\$namespace\\Service\\"){
-					DNMVCS::ThrowOn(true,"ServiceCan not call Service");
+					DNMVCS::ThrowOn(true,"Service Can not call Service");
 				}
 				if(substr($caller_class,0,strlen("Service"))=="Service"){
-					DNMVCS::ThrowOn(true,"ServiceCan not call Service");
+					DNMVCS::ThrowOn(true,"Service Can not call Service");
 				}
 				if(substr($caller_class,0,strlen("\\$namespace\\Model\\"))=="\\$namespace\\Model\\"){
 					DNMVCS::ThrowOn(true,"Service Can not call by Model");
@@ -509,7 +509,7 @@ class FunctionView extends DNView
 }
 class AppEx extends DNMVCS
 {
-	protected static $data=array();
+	protected static $data_to_show=null;
 	public function init($options=[])
 	{
 		$options['setting_file_basename']=$options['setting_file_basename']??'';
@@ -518,6 +518,7 @@ class AppEx extends DNMVCS
 		$options['use_function_view']=$options['use_function_view']??true;
 		$options['use_common_configer']=$options['use_common_configer']??false;
 		$options['use_common_autoloader']=$options['use_common_autoloader']??false;
+		$options['use_ext_db']=$options['use_ext_db']??false;
 		
 		if($options['use_common_configer']){
 			ProjectCommonAutoloader::G()->init($options)->run();
@@ -530,18 +531,21 @@ class AppEx extends DNMVCS
 		if($options['use_function_view']){
 			DNView::G(FunctionView::G());
 		}
+		if($options['use_ext_db']){
+			$options['db_class'] =DBExt::class;
+		}
 		parent::init($options);
 		
 		DNRoute::G()->addRouteHook([SimpleRouteHook::G(),'hook']);
 		return $this;
 	}
-	public static function ShowDataInMain($data)
+	public static function ShowDataInMain($data_to_show)
 	{
-		self::$data=$data;
+		self::$data_to_show=$data_to_show;
 	}
-	public static function Data()
+	public static function DataToShow()
 	{
-		return self::$data;
+		return self::$data_to_show;
 	}
 }
 //mysqldump -uroot -p123456 DnSample -d --opt --skip-dump-date --skip-comments | sed 's/ AUTO_INCREMENT=[0-9]*\b//g' >../data/database.sql

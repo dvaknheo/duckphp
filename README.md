@@ -898,7 +898,7 @@ DN::DB
 	error-500 是引入的文件有语法错误之类。 error-exception 是抛出了错误没处理，用 setExceptionHandel 可以自行处理。
 - 三处 DNMVCS Notice 报错退出的地方
 
-- 多工程处理已经移除.放到了 DNMVCSExt，待测试
+- 多工程处理已经移除.放到了 DNMVCSExt AppEx 里
 	
 	'fullpath_config_common'=>'',       // 通用配置的目录，用于多工程
 		DNConfiger::G(ProjectCommonConfiger::G()); // 
@@ -906,12 +906,16 @@ DN::DB
 	'fullpath_project_share_common'=>''     // 通用类文件目录，用于多工程
 		ProjectCommonAutoloader::G()->init(DNMVCS::G()->options)->run();
 		只处理了 CommonService 和 CommonModel 而且是无命名空间的。
-- 特殊需求，单文件使用 DNMVCS
+- 特殊需求，单文件使用 DNMVCS 放到了 DNMVCSExt AppEx 里
+	'key_for_simple_route'
+	用 act 表示方法。 SimpleRouteHook key_for_simple_route
 	
-	用 act 表示方法。
 	view 写在同文件里，不同 view 用 view_$action($data){extract($data);...} 这样来。
-	DNController 里使用 act.
-	URL 整合，返回默认的。
+	//使用 FunctionView view_header view_footer
+	ShowDataInMain DataToShow
+	
+
+URL 整合，返回默认的。
 	这个单独处理中。
 ## 和其他框架的整合
 

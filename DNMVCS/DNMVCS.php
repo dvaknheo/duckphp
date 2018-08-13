@@ -1110,11 +1110,11 @@ class DNMVCS
 			'path_config'=>'config',
 			'path_lib'=>'lib',
 			'use_ext'=>false,
-			'use_ext_db'=>false,
 			'is_dev'=>false,
 			'all_config'=>[],
 			'setting'=>[],
 			'setting_file_basename'=>'setting',
+			'db_class'=>null,
 		];
 	protected $path=null;
 	
@@ -1125,6 +1125,11 @@ class DNMVCS
 	public $isDev=false;
 	public static function RunQuickly($options=[])
 	{
+		$options['ext_mode']=$options['ext_mode']??false;
+		if($options['ext_mode']){
+			self::ImportSys();
+			return AppEx::G()->init($options)->run();
+		}
 		return self::G()->init($options)->run();
 	}
 	protected function initOptions($options=[])
@@ -1195,11 +1200,8 @@ class DNMVCS
 	{
 		$db_config=DNConfiger::G()->_Setting('db');
 		$db_r_config=DNConfiger::G()->_Setting('db_r');
+		$db_class=$this->options['db_class']?$this->options['db_class']:DNDB::class;
 		
-		$db_class=DNDB::class;
-		if($this->options['use_ext'] && $this->options['use_ext_db']){
-			$db_class=DBExt::class;
-		}
 		$dbm->init($db_config,$db_r_config,$db_class);
 	}
 	public function isDev()
