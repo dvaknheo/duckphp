@@ -893,6 +893,8 @@ DN::DB
    - DNStaticCall 由于 php7 的限制， protected funtion 才能 static call
 - 思考：子域名作为子目录
 	想把某个子目录作为域名独立出去。只改底层代码如何改
+- error-exception 和 error-500 有什么不同
+	error-500 是引入的文件有语法错误之类。 error-exception 是抛出了错误没处理，用 setExceptionHandel 可以自行处理。
 - 三处 DNMVCS Notice 报错退出的地方
     设置没找到，设置非数组，数据库没找到
 - 扩展这个框架，使得工程设置无需特定文件，setting.php,_view 目录都不需要。

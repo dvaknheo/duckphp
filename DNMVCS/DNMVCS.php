@@ -272,7 +272,8 @@ class DNRoute
 			return true;
 		}
 		if(!$this->on404Handel){
-			echo "DNMVCS Notice: 404  You need set 404 Handel";
+			echo "404 File Not Found.\n";
+			echo "DNRoute Notice: 404  You need set 404 Handel";
 			exit;
 		}
 		($this->on404Handel)();
@@ -1036,7 +1037,8 @@ trait DNMVCS_Handel
 	{
 		header("HTTP/1.1 404 Not Found");
 		if(!DNView::G()->hasView('_sys/error-404')){
-			echo "DNMVCS File Not Found";
+			echo "File Not Found\n";
+			echo "<!--DNMVCS  use view/_sys/error-404.php to overrid me -->";
 			return;
 		}
 		DNView::G()->setViewWrapper(null,null);
@@ -1050,7 +1052,12 @@ trait DNMVCS_Handel
 		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
 		if(!DNView::G()->hasView('_sys/error-exception')){
-			var_dump($ex);
+			if($this->isDev){
+				echo "DNMVCS 500 internal error!\n";
+			}else{
+				echo "<!--DNMVCS  use view/_sys/error-exception.php to overrid me -->\n";
+				var_dump($ex);
+			}
 			return;
 		}
 		DNView::G()->setViewWrapper(null,null);
@@ -1067,7 +1074,8 @@ trait DNMVCS_Handel
 		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
 		if(!DNView::G()->hasView('_sys/error-500')){
-			var_dump($ex);
+			echo "500 internal error.";
+			echo "<!--DNMVCS  use view/_sys/error-500.php to overrid me -->\n";
 			return;
 		}
 		DNView::G()->setViewWrapper(null,null);
@@ -1218,7 +1226,7 @@ class DNMVCS
 	public function initRoute($route)
 	{
 		$route->init($this->options);
-		$route->set404([$this,'onShow404']);	
+		$route->set404([$this,'onShow404']);
 	}
 	public function initDBManager($dbm)
 	{
