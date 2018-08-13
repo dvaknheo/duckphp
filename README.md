@@ -177,7 +177,6 @@ run(); 开始路由
 const DNAutoLoader::DEFAULT_OPTIONS=[
     'namespace'=>'MY',                  // 默认的命名空间，你可以自定义工程的命名空间
     'with_no_namespace_mode'=>true,     // 简单模式，无命名空间直接 controller, service,model
-    'fullpath_project_share_common'=>''     // 通用类文件目录，用于多工程
         'path_namespace'=>'app', 	    // 命名空间根目录
         'path_autoload'=>'classes',	    // 无命名空间的类存放目录
         'path_no_namespace_mode'=>'app', // 简单模式的基本目录
@@ -189,10 +188,12 @@ const DNMVCS::DEFAULT_OPTIONS=[
     'base_class'=>'MY\Base\App',    // override 重写 系统入口类代替 DNMVCS 类。
     'use_ext'=>false,                   // 加载扩展库  DNMVCSExt
 	'use_ext_db'=>false,                // 用扩展库 的 DBExt 代替 DNDB 数据库类
-    'fullpath_config_common'=>'',       // 通用配置的目录，用于多工程
         'path_view'=>'view',            // 视图目录，或许会有人改到 app/View
 		'path_lib'=>'lib',              // 用于手动导入 Import() 的类的目录
-		'path_config'=>'config',        // 配置的目录
+	'setting'=>[],        				// 设置 
+	'all_config'=>[],        			// 配置，每个配置用 key  分割。
+		'setting_file_basename'=>'setting',        // 设置的文件名，如果为'' 则不读取设置文件
+	'is_dev'=>false,					是否在开发状态，设置文件里填写的将会覆盖这一选项
 ];
 ```
     关于 base_class 选项。
@@ -896,9 +897,24 @@ DN::DB
 - error-exception 和 error-500 有什么不同
 	error-500 是引入的文件有语法错误之类。 error-exception 是抛出了错误没处理，用 setExceptionHandel 可以自行处理。
 - 三处 DNMVCS Notice 报错退出的地方
-    设置没找到，设置非数组，数据库没找到
-- 扩展这个框架，使得工程设置无需特定文件，setting.php,_view 目录都不需要。
-	正在处理中
+
+- 多工程处理已经移除.放到了 DNMVCSExt，待测试
+	
+	'fullpath_config_common'=>'',       // 通用配置的目录，用于多工程
+		DNConfiger::G(ProjectCommonConfiger::G()); // 
+		设置和配置会先读取相应的文件，合并到同目录来
+	'fullpath_project_share_common'=>''     // 通用类文件目录，用于多工程
+		ProjectCommonAutoloader::G()->init(DNMVCS::G()->options)->run();
+		只处理了 CommonService 和 CommonModel 而且是无命名空间的。
+- 特殊需求，单文件使用 DNMVCS
+	
+	用 act 表示方法。
+	view 写在同文件里，不同 view 用 view_$action($data){extract($data);...} 这样来。
+	DNController 里使用 act.
+	URL 整合，返回默认的。
+	这个单独处理中。
 ## 和其他框架的整合
+
 修改 override DNMVCS::onShow404 => function(){} 。 
+
 run() 方法 得到 false 表示 404 了，后续就是其他框架的事情了

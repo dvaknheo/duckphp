@@ -43,7 +43,6 @@ class DNAutoLoader
 			
 			'path_namespace'=>'app',
 			'path_autoload'=>'classes',
-			'fullpath_project_share_common'=>'',
 			
 			'with_no_namespace_mode'=>true,
 			'path_no_namespace_mode'=>'app',
@@ -82,9 +81,6 @@ class DNAutoLoader
 		$this->path_autoload=$this->path.rtrim($options['path_autoload'],'/').'/';
 		$this->path_no_namespace_mode=$path.rtrim($options['path_no_namespace_mode'],'/').'/';
 		
-		//remark No the prefix
-		$this->path_project_share_common=rtrim($options['fullpath_project_share_common'],'/').'/';
-		
 		$this->with_no_namespace_mode=$options['with_no_namespace_mode'];
 		
 		return $this;
@@ -117,19 +113,10 @@ class DNAutoLoader
 		spl_autoload_register(function($class){
 			if(strpos($class,'\\')!==false){ return; }
 			$path_simple=$this->path_no_namespace_mode;
-			$path_common=$this->path_project_share_common;
 			
-			$flag=preg_match('/(Common)?(Service|Model)$/',$class,$m);
+			$flag=preg_match('/(Service|Model)$/',$class,$m);
 			if(!$flag){return;}
-			$file='';
-			if(!$m[1]){
-				$file=$path_simple.$m[2].'/'.$class.'.php';
-				
-			}else{
-				if(!$path_common){return;}
-				//ref: if(!$path_common){throw new Exception('CommonService/CommonModel need path_common');} 
-				$file=$path_common.strtolower($m[2]).'/'.$class.'.php';
-			}
+			$file=$path_simple.$m[1].'/'.$class.'.php';
 			if (!$file || !file_exists($file)) {return;}
 			require $file;
 		});
@@ -422,7 +409,6 @@ class DNView
 	public $data=[];
 	public $onBeforeShow=null;
 	public $path;
-	public $isDev=false;
 
 	public $view=null;
 	public function _ExitJson($ret)
@@ -511,50 +497,28 @@ class DNConfiger
 	use DNSingleton;
 
 	public $path;
-	public $path_common;
-	public $setting_file='setting';
+	protected $setting_file_basename='setting';
 	protected $setting=[];
 	protected $all_config=[];
-	protected $inited=false;
-	protected $skip_setting_file=false;
-	public function init($path,$path_common=null,$ext_setting=[],$skip_setting_file=false)
+	
+	public function init($path,$options)
 	{
 		$this->path=$path;
-		$this->path_common=$path_common;
-		$this->setting=$ext_setting;
-	}
-	
-	// variable indived
-	protected function include_file($file)
-	{
-		return include($file);
+		$this->setting=$options['setting']??[];
+		$this->all_config=$options['all_config']??[];
+		$this->setting_file_basename=$options['setting_file_basename']??'setting';
 	}
 	public function _Setting($key)
 	{
-		if($this->inited){
-			return $this->setting[$key]??null;
-		}
-		if($this->skip_setting_file){
-			$this->$inited=true;
-			return $this->setting[$key]??null;
-		}
-		$base_setting=[];
-		if($this->path_common){
-			$base_setting=$this->load_file($this->path_common,$this->setting_file);
-		}
-		if(!is_file($this->path.$this->setting_file.'.php')){
-			echo '<h1>'.'DNMVCS Notice: no setting file!,change '.$this->setting_file.'.sample.php to '.$this->setting_file.'.php !'.'</h1>';
+		static $inited;
+		if($inited || !$this->setting_file_basename){ return $this->setting[$key]??null; }
+		$basename=$this->setting_file_basename;
+		if(!is_file($this->path.$basename.'.php')){
+			echo '<h1>'.'DNMVCS Notice: no setting file!,change '.$basename.'.sample.php to '.$basename.'.php !'.'</h1>';
 			exit;
 		}
-		$setting=$this->load_file($this->path,$this->setting_file,false);
-		if(!is_array($setting)){
-			echo '<h1>'.'DNMVCS Notice: need return array !'.'</h1>';
-			exit;
-		}
-		
-		$this->setting=array_merge($this->setting,$base_setting,$setting);
-		$this->inited=true;
-		
+		$this->setting=$this->loadFile($basename,false);
+		$inited=true;
 		return $this->setting[$key]??null;
 	}
 	
@@ -566,21 +530,13 @@ class DNConfiger
 	public function _LoadConfig($file_basename='config')
 	{
 		if(isset($this->all_config[$file_basename])){return $this->all_config[$file_basename];}
-		
-		$base_config=[];
-		if($this->path_common){
-			$base_config=$this->load_file($this->path_common,$file_basename);
-		}
-		
-		$config=$this->load_file($this->path,$file_basename,false);
-		$config=array_merge($base_config,$config);
-		
+		$config=$this->loadFile($file_basename,false);
 		$this->all_config[$file_basename]=$config;
 		return $config;
 	}
-	protected function load_file($path,$basename,$checkfile=true)
+	protected function loadFile($basename,$checkfile=true)
 	{	
-		$file=$path.$basename.'.php';
+		$file=$this->path.$basename.'.php';
 		if($checkfile && !is_file($file)){return null;}
 		$ret=(function($file){return include($file);})($file);
 		return $ret;
@@ -606,10 +562,6 @@ class DNDB
 	protected function check_connect()
 	{
 		if($this->pdo){return;}
-		if(empty($this->config)){
-			echo ('DNMVCS Notice: database not setting!');
-			exit;
-		}
 		$config=$this->config;
 		$this->pdo=new PDO($config['dsn'], $config['username'], $config['password'],array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC));
 	}
@@ -842,7 +794,7 @@ trait DNMVCS_Glue
 	{
 		static $inited;
 		if(!$inited){
-			self::ImportSyS('DNMVCSExt');
+			self::ImportSys();
 			DNRoute::G()->addRouteHook([RouteRewriteHook::G(),'hook'],true);
 			$inited=true;
 		}
@@ -852,7 +804,7 @@ trait DNMVCS_Glue
 	{
 		static $inited;
 		if(!$inited){
-			self::ImportSyS('DNMVCSExt');
+			self::ImportSys();
 			DNRoute::G()->addRouteHook([RouteMapHook::G(),'hook'],true);
 			$inited=true;
 		}
@@ -961,8 +913,9 @@ trait DNMVCS_Misc
 		$file=rtrim($file,'.php').'.php';
 		require_once($this->path_lib.$file);
 	}
-	public static function ImportSys($file)
+	public static function ImportSys($file=null)
 	{
+		$file=$file??'DNMVCSExt';
 		$file=rtrim($file,'.php').'.php';
 		require_once(__DIR__.'/'.$file);
 	}
@@ -1052,7 +1005,7 @@ trait DNMVCS_Handel
 		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
 		if(!DNView::G()->hasView('_sys/error-exception')){
-			if($this->isDev){
+			if(!$this->isDev){
 				echo "DNMVCS 500 internal error!\n";
 			}else{
 				echo "<!--DNMVCS  use view/_sys/error-exception.php to overrid me -->\n";
@@ -1074,8 +1027,13 @@ trait DNMVCS_Handel
 		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
 		if(!DNView::G()->hasView('_sys/error-500')){
-			echo "500 internal error.";
-			echo "<!--DNMVCS  use view/_sys/error-500.php to overrid me -->\n";
+			if(!$this->isDev){
+				echo "DNMVCS 500 internal error!\n";
+				var_dump($ex);
+			}else{
+				echo "<!--DNMVCS  use view/_sys/error-exception.php to overrid me -->\n";
+				var_dump($ex);
+			}
 			return;
 		}
 		DNView::G()->setViewWrapper(null,null);
@@ -1146,10 +1104,13 @@ class DNMVCS
 			'base_class'=>'MY\Base\App',
 			'path_view'=>'view',
 			'path_config'=>'config',
-			'fullpath_config_common'=>'',
 			'path_lib'=>'lib',
 			'use_ext'=>false,
 			'use_ext_db'=>false,
+			'is_dev'=>false,
+			'all_config'=>[],
+			'setting'=>[],
+			'setting_file_basename'=>'setting',
 		];
 	protected $path=null;
 	
@@ -1170,9 +1131,9 @@ class DNMVCS
 		
 		$this->path=$this->options['path'];
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
-		
+		$this->isDev=$this->options['is_dev'];
 		if($this->options['use_ext']){
-			self::ImportSys('DNMVCSExt');
+			self::ImportSys();
 		}
 	}
 	
@@ -1210,18 +1171,16 @@ class DNMVCS
 	}
 	public function initConfiger($configer)
 	{
-		$path_config=$this->path.rtrim($this->options['path_config'],'/').'/';
-		$fullpath_config_common=$this->options['fullpath_config_common']?rtrim($this->options['fullpath_config_common'],'/').'/':'';
-		$configer->init($path_config,$fullpath_config_common);
+		$path=$this->path.rtrim($this->options['path_config'],'/').'/';
+		$configer->init($path,$this->options);
 		
-		$this->isDev=$configer->_Setting('is_dev')?true:false;
+		$this->isDev=$configer->_Setting('is_dev')??$this->isDev;
 	}
 	public function initView($view)
 	{
 		$path_view=$this->path.rtrim($this->options['path_view'],'/').'/';
 		$view->init($path_view);
 		$view->setBeforeShow([$this,'onBeforeShow']);
-		$view->isDev=$this->isDev;
 	}
 	public function initRoute($route)
 	{
@@ -1238,7 +1197,6 @@ class DNMVCS
 			$db_class=DBExt::class;
 		}
 		$dbm->init($db_config,$db_r_config,$db_class);
-
 	}
 	public function isDev()
 	{
@@ -1249,7 +1207,6 @@ class DNMVCS
 		return DNRoute::G()->run();
 	}	
 }
-
 /////////////////////////
 trait DNThrowQuickly
 {

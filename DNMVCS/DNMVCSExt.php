@@ -433,13 +433,54 @@ class MyArgsAssoc
 		return ($callback)($names);
 	}
 }
-class OneFileSetting extends DNConfiger
+class ProjectCommonAutoloader
 {
-	public function _Setting($key)
+	use DNSingleton;
+	protected $path_common;
+	public function init($options)
 	{
-		return DNMVCS::G()->options['setting'][$key]??null;
+		$this->path_common=isset($options['fullpath_project_share_common'])??'';
+		return $this;
+	}
+	public function run()
+	{
+		spl_autoload_register(function($class){
+			if(strpos($class,'\\')!==false){ return; }
+			$path_common=$this->path_common;
+			if(!$path_common);return;
+			$flag=preg_match('/Common(Service|Model)$/',$class,$m);
+			if(!$flag){return;}
+			$file=$path_common.'/'.$class.'.php';
+			if (!$file || !file_exists($file)) {return;}
+			require $file;
+		});
 	}
 }
+class ProjectCommonConfiger
+{
+	public $fullpath_config_common;
 
+	public function init($path,$options)
+	{
+		$this->fullpath_config_common=isset($options['fullpath_config_common'])??'';
+		return parent::init($path,$options);
+	}
+	protected function loadFile($basename,$checkfile=true)
+	{	
+		$common_config=[];
+		if($this->fullpath_config_common){
+			$file=$this->fullpath_config_common.$basename.'.php';
+			if(is_file($file)){
+				$common_config=(function($file){return include($file);})($file);
+			}
+		}
+		$ret=parent::loadFile($basename,$checkfile);
+		$ret=array_merge($common_config,$ret);
+		return $ret;
+	}
+	
+}
+
+// use ();
 //mysqldump -uroot -p123456 DnSample -d --opt --skip-dump-date --skip-comments | sed 's/ AUTO_INCREMENT=[0-9]*\b//g' >../data/database.sql
 
