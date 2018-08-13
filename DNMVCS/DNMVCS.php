@@ -1163,6 +1163,8 @@ class DNMVCS
 		$this->initOptions($options);
 		
 		$this->initConfiger(DNConfiger::G());
+		$this->isDev=$configer->_Setting('is_dev')??$this->isDev;
+		
 		$this->initView(DNView::G());
 		$this->initRoute(DNRoute::G());
 		$this->initDBManager(DNDBManager::G());
@@ -1173,8 +1175,6 @@ class DNMVCS
 	{
 		$path=$this->path.rtrim($this->options['path_config'],'/').'/';
 		$configer->init($path,$this->options);
-		
-		$this->isDev=$configer->_Setting('is_dev')??$this->isDev;
 	}
 	public function initView($view)
 	{
