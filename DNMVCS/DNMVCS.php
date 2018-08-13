@@ -868,11 +868,11 @@ trait DNMVCS_Glue
 	{
 		return DNExceptionManager::AssignExceptionHandel($classes,$callback);
 	}
-	public function setDefaultExceptionHandel($Exception)
+	public function setDefaultExceptionHandel($callback)
 	{
-		return DNExceptionManager::SetException($classes,$callback);
+		return DNExceptionManager::SetException($callback);
 	}
-	public static function ThrowOn($flag,$msg,$code=0)
+	public static function ThrowOn($flag,$message,$code=0)
 	{
 		if(!$flag){return;}
 		throw new DNException($message,$code);
@@ -1059,7 +1059,10 @@ trait DNMVCS_Handel
 			'error_shortfile'=>$error_shortfile,
 		);
 		if(!DNView::G()->hasView('_sys/error-debug')){
+			extract($data);
 			echo  <<<EOT
+
+<!--DNMVCS  use view/_sys/error-debug.php to overrid me -->
 <fieldset class="_DNMVC_DEBUG">
 	<legend>$error_desc($errno)</legend>
 <pre>
@@ -1067,7 +1070,6 @@ $error_shortfile:$errline
 $errstr
 </pre>
 </fieldset>
-<!--DNMVCS  use view/_sys/error-debug.php to overrid me -->
 
 EOT;
 			return;
@@ -1123,7 +1125,7 @@ class DNMVCS
 	public $isDev=false;
 	public static function RunQuickly($options=[])
 	{
-		return DNMVCS::G()->init($options)->run();
+		return self::G()->init($options)->run();
 	}
 	protected function initOptions($options=[])
 	{

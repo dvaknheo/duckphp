@@ -480,7 +480,58 @@ class ProjectCommonConfiger
 	}
 	
 }
-
-// use ();
+class OneFileModeAppView extends DNView
+{
+	protected $head_callback='view_header';
+	protected $foot_callback='view_footer';
+	public function setViewWrapper($head_callback,$foot_callback)
+	{
+		$this->head_callback=$head_callback;
+		$this->foot_callback=$foot_callback;
+	}
+	protected function includeShowFiles()
+	{
+		if(isset($this->head_callback) && is_callable($this->head_callback)){
+			($this->head_callback)($this->data);
+		}
+		$callback='view_'.$this->view;
+		if(is_callable($callback)){
+			$callback($this->data);
+		}
+		if(isset($this->foot_callback) && is_callable($this->foot_callback)){
+			($this->foot_callback)($this->data);
+		}
+	}
+	public function hasView($view)
+	{
+		return false;
+	}
+}
+class OneFileModeApp extends DNMVCS
+{
+	protected static $data=array();
+	public function init($options=[])
+	{
+		$options['setting_file_basename']=$options['setting_file_basename']??'';
+		$options['key_action_request_act']=$options['key_action_request_act']??'act';
+		$options['use_function_view']=$options['use_function_view']??true;
+		if($options['use_function_view']){
+			DNView::G(OneFileModeAppView::G());
+		}
+		parent::init($options);
+		DNRoute::G()->addRouteHook(function($route){
+			$route->path_info=$_REQUEST[$this->options['key_action_request_act']]??'';
+		});
+		return $this;
+	}
+	public static function ShowDataInMain($data)
+	{
+		self::$data=$data;
+	}
+	public static function Data()
+	{
+		return self::$data;
+	}
+}
 //mysqldump -uroot -p123456 DnSample -d --opt --skip-dump-date --skip-comments | sed 's/ AUTO_INCREMENT=[0-9]*\b//g' >../data/database.sql
 
