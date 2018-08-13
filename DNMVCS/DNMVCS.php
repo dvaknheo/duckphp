@@ -1067,6 +1067,8 @@ $error_shortfile:$errline
 $errstr
 </pre>
 </fieldset>
+<!--DNMVCS  use view/_sys/error-debug.php to overrid me -->
+
 EOT;
 			return;
 		}
