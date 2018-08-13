@@ -1165,7 +1165,7 @@ class DNMVCS
 		$this->initOptions($options);
 		
 		$this->initConfiger(DNConfiger::G());
-		$this->isDev=$configer->_Setting('is_dev')??$this->isDev;
+		$this->isDev=DNConfiger::G()->_Setting('is_dev')??$this->isDev;
 		
 		$this->initView(DNView::G());
 		$this->initRoute(DNRoute::G());
