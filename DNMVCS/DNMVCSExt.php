@@ -480,7 +480,7 @@ class ProjectCommonConfiger
 	}
 	
 }
-class OneFileModeAppView extends DNView
+class FunctionView extends DNView
 {
 	protected $head_callback='view_header';
 	protected $foot_callback='view_footer';
@@ -507,20 +507,32 @@ class OneFileModeAppView extends DNView
 		return false;
 	}
 }
-class OneFileModeApp extends DNMVCS
+class AppEx extends DNMVCS
 {
 	protected static $data=array();
 	public function init($options=[])
 	{
 		$options['setting_file_basename']=$options['setting_file_basename']??'';
 		$options['key_for_simple_route']=$options['key_for_simple_route']??'act';
+		
 		$options['use_function_view']=$options['use_function_view']??true;
+		$options['use_common_configer']=$options['use_common_configer']??false;
+		$options['use_common_autoloader']=$options['use_common_autoloader']??false;
+		
+		if($options['use_common_configer']){
+			ProjectCommonAutoloader::G()->init($options)->run();
+		}
+		
+		if($options['use_common_configer']){
+			DNConfiger::G(ProjectCommonConfiger::G());
+		}
+		
 		if($options['use_function_view']){
-			DNView::G(OneFileModeAppView::G());
+			DNView::G(FunctionView::G());
 		}
 		parent::init($options);
-		// 这里应该用 SimpleRouteHook
-			DNRoute::G()->addRouteHook([SimpleRouteHook::G(),'hook']);
+		
+		DNRoute::G()->addRouteHook([SimpleRouteHook::G(),'hook']);
 		return $this;
 	}
 	public static function ShowDataInMain($data)
