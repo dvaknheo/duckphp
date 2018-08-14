@@ -913,7 +913,24 @@ DN::DB
 	view 写在同文件里，不同 view 用 view_$action($data){extract($data);...} 这样来。
 	//使用 FunctionView view_header view_footer
 	ShowDataInMain DataToShow
-	
+## 额外模式
+
+    ext_mode 模式的时候，会使用 DNMVCS\AppEx 做入口的模式。自动使用扩展文件
+    额外的设置有。
+		setting_file_basename  默认不再是 setting ,而是为空 用于单一文件解决问题
+		key_for_simple_route = act 这个选项，不用 path_info 了，我们用 $_REQUEST['act']，
+		
+        use_function_dispatch 不用 DNController::$xx 了，直接 action_$xx
+		use_function_view  不用 view 文件了，我们用 view_$xx 来表示view
+		
+		use_common_configer 额外配置文件，多工程共享配置用
+        fullpath_config_common 配合上面的使用， 公共文件会被本工程覆盖
+		use_common_autoloader 额外loader ，多工程共享配置用
+        fullpath_project_share_common
+
+		use_ext_db 使用 \DNMVCS\DBExt 代替  \DNMVCS\DNDB
+    这些功能，用于，1 单一文件解决问题，2 多工程配置，3 使用更好的 db
+
 
 URL 整合，返回默认的。
 	这个单独处理中。
