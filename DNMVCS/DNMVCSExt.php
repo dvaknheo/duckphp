@@ -37,6 +37,19 @@ trait DNStaticCall
     }
 }
 //not use ,you can use SimpleRouteHandel
+function _url_by_key($key_for_simple_route)
+{
+	$path=parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
+	$path=substr($path,0,0-strlen($_SERVER['PATH_INFO']));
+	if($url===null || $url==='' || $url==='/'){return $path;}
+	$url='/'.ltrim($url,'/');
+	$c=parse_url($url,PHP_URL_PATH);
+	$q=parse_url($url,PHP_URL_QUERY);
+	
+	$q=$q?'&'.$q:'';
+	$url=$path.'?'.$key_for_simple_route.'='.$c.$q;
+	return $url;
+}
 class SimpleRoute extends DNRoute 
 {
 	public $options;
@@ -45,17 +58,7 @@ class SimpleRoute extends DNRoute
 	public function _URL($url=null,$innerCall=false)
 	{
 		if(!$innerCall && $this->onURL){return ($this->onURL)($url,true);}
-
-		$path=parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
-		$path=substr($path,0,0-strlen($_SERVER['PATH_INFO']));
-		if($url===null || $url==='' || $url==='/'){return $path;}
-		$url='/'.ltrim($url,'/');
-		$c=parse_url($url,PHP_URL_PATH);
-		$q=parse_url($url,PHP_URL_QUERY);
-		
-		$q=$q?'&'.$q:'';
-		$url=$path.'?'.$this->key_for_simple_route.'='.$c.$q;
-		return $url;
+		return _url_by_key($this->key_for_simple_route);
 	}
 	public function init($options)
 	{
@@ -72,18 +75,11 @@ class SimpleRouteHook
 	use DNSingleton;
 
 	public $key_for_simple_route='_r';
+	protected $onURL=null;
 	public function onURL($url=null,$innerCall=false)
 	{
-		$path=parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
-		$path=substr($path,0,0-strlen($_SERVER['PATH_INFO']));
-		if($url===null || $url==='' || $url==='/'){return $path;}
-		$url='/'.ltrim($url,'/');
-		$c=parse_url($url,PHP_URL_PATH);
-		$q=parse_url($url,PHP_URL_QUERY);
-		
-		$q=$q?'&'.$q:'';
-		$url=$path.'?'.$this->key_for_simple_route.'='.$c.$q;
-		return $url;
+		if(!$innerCall && $this->onURL){return ($this->onURL)($url,true);}
+		return _url_by_key($this->key_for_simple_route);
 	}
 	public function hook($route)
 	{
@@ -306,7 +302,7 @@ class DBExt extends DNDB
 		}
 		return implode(',',$a);
 	}
-	public function get($table_name,$id,$key='id')
+	public function find($table_name,$id,$key='id')
 	{
 		$sql="select {$table_name} from terms where {$key}=? limit 1";
 		return $this->fetch($sql,$id);
@@ -516,6 +512,7 @@ class AppEx extends DNMVCS
 		$options['key_for_simple_route']=$options['key_for_simple_route']??'act';
 		
 		$options['use_function_view']=$options['use_function_view']??true;
+		$options['use_function_dispatch']=$options['use_function_dispatch']??false;
 		$options['use_common_configer']=$options['use_common_configer']??false;
 		$options['use_common_autoloader']=$options['use_common_autoloader']??false;
 		$options['use_ext_db']=$options['use_ext_db']??false;
@@ -536,7 +533,12 @@ class AppEx extends DNMVCS
 		}
 		parent::init($options);
 		
+		//TODO 404
 		DNRoute::G()->addRouteHook([SimpleRouteHook::G(),'hook']);
+		
+		//if($options['use_function_dispatch']){
+			//DNRoute::G()->addRouteHook([SimpleRouteHook::G(),'hook']);
+		//}
 		return $this;
 	}
 	public static function ShowDataInMain($data_to_show)
