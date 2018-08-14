@@ -152,7 +152,7 @@ class DNRoute
 		];
 	
 	protected $routeMap=[];
-	protected $on404Handel=null;
+	public $on404Handel=null;
 	public $parameters=[];
 	public $options;
 	

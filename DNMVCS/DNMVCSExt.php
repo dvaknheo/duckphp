@@ -476,6 +476,29 @@ class ProjectCommonConfiger
 	}
 	
 }
+class FunctionDispatcher 
+{
+	use DNSingleton;
+	
+	protected $path_info;
+	public function hook($route)
+	{
+		$this->path_info=$route->path_info;
+		$route->callback=function(){
+			$callback='action_'.$this->path_info;
+			if(is_callable($callback)){
+				($callback)();
+			}else{
+				if(is_callable('action_index')){
+					action_index();
+				}else{
+					(DNRoute::G()->on404Handel)();
+				}
+			}
+		};
+	}
+	
+}
 class FunctionView extends DNView
 {
 	protected $head_callback='view_header';
@@ -536,9 +559,9 @@ class AppEx extends DNMVCS
 		//TODO 404
 		DNRoute::G()->addRouteHook([SimpleRouteHook::G(),'hook']);
 		
-		//if($options['use_function_dispatch']){
-			//DNRoute::G()->addRouteHook([SimpleRouteHook::G(),'hook']);
-		//}
+		if($options['use_function_dispatch']){
+			DNRoute::G()->addRouteHook([FunctionDispatcher::G(),'hook']);
+		}
 		return $this;
 	}
 	public static function ShowDataInMain($data_to_show)
