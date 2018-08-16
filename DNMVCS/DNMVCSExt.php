@@ -485,7 +485,8 @@ class FunctionDispatcher
 	{
 		$this->path_info=$route->path_info;
 		$route->callback=function(){
-			$callback='action_'.$this->path_info;
+			$post=$_POST?'do_':'';
+			$callback='action_'.$post.$this->path_info;
 			if(is_callable($callback)){
 				($callback)();
 			}else{
