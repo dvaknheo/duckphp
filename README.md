@@ -1,7 +1,7 @@
 # DNMVCS 介绍
 ## DNMVCS 是什么
 一个 PHP Web 简单框架 
-* 主要卖点：比通常的 Model Controller View 多了 Service 。拟补了 常见 Web 框架少的缺层。
+* 主要特点：比通常的 Model Controller View 多了 Service 。拟补了 常见 Web 框架少的缺层。
 这个缺层导致了很糟糕的境地。你会发现很多人在 Contorller 里写一堆代码，或者在 Model 里写一堆代码。
 使得网站开发者专注于业务逻辑。
 
@@ -29,7 +29,7 @@ Controller --> Service ---------------------------------> Model
 ```
 * Controller 按 URL 入口走 调用 view 和service
 * Service 按业务走 ,调用 model 和其他第三方代码。
-* Model 按数据库表走，只实现和当前表相关的操作。有些时候
+* Model 按数据库表走，基本上只实现和当前表相关的操作。
 * View 按页面走
 * 不建议 Model 抛异常
 1. 如果 Service 相互调用怎么办?
@@ -64,8 +64,6 @@ Controller --> Service ---------------------------------> Model
 * Widget ， 和 MVC 分离违背。
 * 接管替代默认的POST，GET，SESSION 。系统提供给你就用，不要折腾这些。
 
-
-
 ## DNMVCS 还要做什么
 
 * composer 安装模式，本人还没学会
@@ -81,7 +79,6 @@ Controller --> Service ---------------------------------> Model
 6. 没有强大的全局依赖注入容器，只有万能的 G 函数。
 7. 没有灵活强大的 AOP ，只有万能的 G 函数。
 8. 这框架什么都没做啊。 居然只支持 PHP7 
-
 
 ## 还有什么要说的
 
@@ -187,19 +184,18 @@ const DNAutoLoader::DEFAULT_OPTIONS=[
 const DNMVCS::DEFAULT_OPTIONS=[
     'base_class'=>'MY\Base\App',    // override 重写 系统入口类代替 DNMVCS 类。
     'use_ext'=>false,                   // 加载扩展库  DNMVCSExt
-	'use_ext_db'=>false,                // 用扩展库 的 DBExt 代替 DNDB 数据库类
         'path_view'=>'view',            // 视图目录，或许会有人改到 app/View
 		'path_lib'=>'lib',              // 用于手动导入 Import() 的类的目录
-	'setting'=>[],        				// 设置 
+	'setting'=>[],        				// 设置，设置文件里填写的将会覆盖这一选项
 	'all_config'=>[],        			// 配置，每个配置用 key  分割。
 		'setting_file_basename'=>'setting',        // 设置的文件名，如果为'' 则不读取设置文件
-	'is_dev'=>false,					是否在开发状态，设置文件里填写的将会覆盖这一选项
+	'is_dev'=>false,					//是否在开发状态，设置文件里填写的将会覆盖这一选项
+	'db_class' =>'', 					// DB 类，为空的时候，默认用 DNDB::class;
 ];
 ```
     关于 base_class 选项。
     你可以写 DNMVCS 的子类 用这个子类来替换DNMVCS 的入口。详情见后面。
-    fullpath_framework_common 和 fullpath_config_common 用于多站点中共享配置和共享文件引用。
-    use_ext 会加载 DBExt 实现一些扩展性的功能， use_ext_db 的 DBExt 将会替代 DNDB 数据库类。
+    use_ext 会加载 DNMVCSExt 实现一些扩展性的功能。
     并不是所有项目都会用到，所以放到扩展里。
 ```php
 const DNRoute::DEFAULT_OPTIONS=[
@@ -207,7 +203,6 @@ const DNRoute::DEFAULT_OPTIONS=[
     'with_no_namespace_mode'=>true,     // 简单模式，无命名空间直接 controller, service,model
     'enable_paramters'=>false,          // 支持切片模式
     'enable_post_prefix'=>true,         // 把 POST 的 映射为 do_$action 方法
-    'key_for_simple_route'=>null,       // 切换成支持 _GET  模式路由 _r=about/foo 这样的
         'path_controller'=>'app/Controller',    //controller 的目录
         'namespace_controller'=>'Controller',   //controller 的命名空间 MY\Controller
         'default_controller_class'=>'DNController', //默认 controller 名字为 DNController
@@ -228,9 +223,9 @@ const DNRoute::DEFAULT_OPTIONS=[
 return [
 	'is_dev'=>true,
 	'db'=>[
-	'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
-	'username'=>'???',
-	'password'=>'???',
+        'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
+        'username'=>'???',
+        'password'=>'???',
 	],
 	'db_r'=>null,
 ];
@@ -359,6 +354,7 @@ run() 方法开始使用路由。 如果你不想要路由。只想要特定结�
 高级一点，你可以 扩展 DNMVCS 的主类实现。
 
 DNMVCS 的报错页面还是很丑陋，需要调整一下
+无错误页面模式
 # DNMVCS 主类
 ## 基本方法
 ```
@@ -388,7 +384,7 @@ Show($data=array(),$view=null)
 DB()
 
     返回数据库,实质调用 DBManager::G()->_DB();
-    数据库管理类 DNManager 里配置的
+    数据库管理类 DNManager 里配置的数据库类
 DB_W()
 
     返回写入的数据 实质调用 DBManager::G()->_DB_W();
@@ -548,8 +544,7 @@ initConfiger(DNConfiger $configer)
     配置路径。
     设置是否是开发状态
 initView(DNView $view)
-    初始化视图。
-    做了两件事
+    初始化视图。 做了两件事
     配置路径
     绑定 onBeforeshow
     设置是否是开发状态
@@ -557,7 +552,7 @@ initRoute(DNRoute $route)
     初始化路由 配置选项。
 initDBManager(DNDBManger $dbm)
     初始化数据库管理器
-    如果是 use_db_ext 则用 DBExt 代替默认的 DNDB
+    db_class
 ```
 # 进一步扩展
 ## 总说
@@ -800,7 +795,7 @@ self::ImportSys('DNMedoo'); //DNMedoo 依赖 Medoo，所以需要手动加载
 ## DNMVCSExt.php  | 额外类应用和说明
 DNMVCSExt 的类和方法
 
-    选项 use_ext=true 引入，选项 user_ext_db=true 用 DBext ,额外扩展的db类
+    选项 use_ext=true 引入
 ### 严格模式
 我想让 DB 只能被 Model , ExModel 调用。Model 只能被 ExModel,Service 调用 。 LibService 只能被Service 调用  Service只能被 Controller 调用
 
@@ -835,7 +830,7 @@ W($object);
 	你的 Model 继承这个类
     调试状态下，只允许 Service 或者 ExModel 调用 Model
 ### StrictDBManager
-    包裹 DNDBManger::G(DNDebugDBManager::W(DNDBManger::G())); 后，实现
+    包裹 DNDBManger::G(DNMedoo::W(DNDBManger::G())); 后，实现
     不允许 Controller, Service 调用 DB
 	如果使用 Medoo ，请在 installDBClass(DNMedoo::class); 后面执行。
 ### DBExt
@@ -859,7 +854,9 @@ W($object);
 ### MyArgsAssoc
 - GetMyArgsAssoc 获得当前函数的命名参数数组
 - CallWithMyArgsAssoc($callback)  获得当前函数的命名参数数组并回调
+
 # DNMVCS 的代码流程讲解
+
 大致用图表现如下
 ```
 DN::init

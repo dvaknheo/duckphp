@@ -1114,7 +1114,7 @@ class DNMVCS
 			'all_config'=>[],
 			'setting'=>[],
 			'setting_file_basename'=>'setting',
-			'db_class'=>null,
+			'db_class'=>'',
 		];
 	protected $path=null;
 	
