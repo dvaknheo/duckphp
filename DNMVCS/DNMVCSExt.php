@@ -37,12 +37,13 @@ trait DNStaticCall
     }
 }
 //not use ,you can use SimpleRouteHandel
-function _url_by_key($key_for_simple_route)
+function _url_by_key($url,$key_for_simple_route)
 {
 	$path=parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
-	$path=substr($path,0,0-strlen($_SERVER['PATH_INFO']));
+	if(strlen($_SERVER['PATH_INFO'])){
+		$path=substr($path,0,0-strlen($_SERVER['PATH_INFO']));
+	}
 	if($url===null || $url==='' || $url==='/'){return $path;}
-	$url='/'.ltrim($url,'/');
 	$c=parse_url($url,PHP_URL_PATH);
 	$q=parse_url($url,PHP_URL_QUERY);
 	
@@ -58,7 +59,7 @@ class SimpleRoute extends DNRoute
 	public function _URL($url=null,$innerCall=false)
 	{
 		if(!$innerCall && $this->onURL){return ($this->onURL)($url,true);}
-		return _url_by_key($this->key_for_simple_route);
+		return _url_by_key($url,$this->key_for_simple_route);
 	}
 	public function init($options)
 	{
@@ -79,7 +80,7 @@ class SimpleRouteHook
 	public function onURL($url=null,$innerCall=false)
 	{
 		if(!$innerCall && $this->onURL){return ($this->onURL)($url,true);}
-		return _url_by_key($this->key_for_simple_route);
+		return _url_by_key($url,$this->key_for_simple_route);
 	}
 	public function hook($route)
 	{
@@ -89,6 +90,7 @@ class SimpleRouteHook
 		$path_info=isset($_REQUEST[$this->key_for_simple_route])?$_GET[$this->key_for_simple_route]:'';
 		$path_info=ltrim($path_info,'/');
 		$route->path_info=$path_info;
+		$route->calling_path=$path_info;
 	}
 }
 class RouteMapHook
@@ -529,18 +531,21 @@ class FunctionView extends DNView
 }
 class AppEx extends DNMVCS
 {
-	protected static $data_to_show=null;
+	const DEFAULT_OPTIONS_EX=[
+			'setting_file_basename'=>'',
+			'key_for_simple_route'=>'act',
+			
+			'use_function_view'=>false,
+			'use_function_dispatch'=>false,
+			'use_common_configer'=>false,
+			'use_common_autoloader'=>false,
+			
+			'use_ext_db'=>false,
+		];
 	public function init($options=[])
 	{
-		$options['setting_file_basename']=$options['setting_file_basename']??'';
-		$options['key_for_simple_route']=$options['key_for_simple_route']??'act';
-		
-		$options['use_function_view']=$options['use_function_view']??true;
-		$options['use_function_dispatch']=$options['use_function_dispatch']??false;
-		$options['use_common_configer']=$options['use_common_configer']??false;
-		$options['use_common_autoloader']=$options['use_common_autoloader']??false;
-		$options['use_ext_db']=$options['use_ext_db']??false;
-		
+		$options=array_merge(self::DEFAULT_OPTIONS_EX,$options);
+
 		if($options['use_common_configer']){
 			ProjectCommonAutoloader::G()->init($options)->run();
 		}
@@ -557,22 +562,15 @@ class AppEx extends DNMVCS
 		}
 		parent::init($options);
 		
-		//TODO 404
+		//TODO test for 404
+		SimpleRouteHook::G()->key_for_simple_route=$this->options['key_for_simple_route'];
 		DNRoute::G()->addRouteHook([SimpleRouteHook::G(),'hook']);
-		
 		if($options['use_function_dispatch']){
 			DNRoute::G()->addRouteHook([FunctionDispatcher::G(),'hook']);
 		}
 		return $this;
 	}
-	public static function ShowDataInMain($data_to_show)
-	{
-		self::$data_to_show=$data_to_show;
-	}
-	public static function DataToShow()
-	{
-		return self::$data_to_show;
-	}
+
 }
 //mysqldump -uroot -p123456 DnSample -d --opt --skip-dump-date --skip-comments | sed 's/ AUTO_INCREMENT=[0-9]*\b//g' >../data/database.sql
 

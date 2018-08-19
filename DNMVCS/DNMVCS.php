@@ -1128,7 +1128,9 @@ class DNMVCS
 		$options['ext_mode']=$options['ext_mode']??false;
 		if($options['ext_mode']){
 			self::ImportSys();
-			return AppEx::G()->init($options)->run();
+			if(!isset($options['base_class'])){
+				$options['base_class']='DNMVCS\AppEx';
+			}
 		}
 		return self::G()->init($options)->run();
 	}
