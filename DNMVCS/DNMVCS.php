@@ -1134,6 +1134,18 @@ class DNMVCS
 		}
 		return self::G()->init($options)->run();
 	}
+	public static function RunOneFileMode($options=[])
+	{
+		$default_options=[
+			'ext_mode'=>true,
+			'use_function_dispatch'=>true,
+			'use_function_view'=>true,
+			'setting_file_basename'=>'',
+			//'path_view'=>'',
+		];
+		$options=array_merge($default_options,$options);
+		return self::RunQuickly($options);
+	}
 	protected function initOptions($options=[])
 	{
 		$this->options=array_merge(DNAutoLoader::DEFAULT_OPTIONS,DNRoute::DEFAULT_OPTIONS,self::DEFAULT_OPTIONS,$options);

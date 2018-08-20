@@ -483,17 +483,20 @@ class FunctionDispatcher
 	use DNSingleton;
 	
 	protected $path_info;
+	public $post_prefix='do_';
+	public $prefix='action_';
+	public $default_callback='action_index';
 	public function hook($route)
 	{
 		$this->path_info=$route->path_info;
 		$route->callback=function(){
-			$post=$_POST?'do_':'';
-			$callback='action_'.$post.$this->path_info;
+			$post=($_SERVER['REQUEST_METHOD']==='POST')?$this->post_prefix:'';
+			$callback=$this->prefix.$post.$this->path_info;
 			if(is_callable($callback)){
 				($callback)();
 			}else{
-				if(is_callable('action_index')){
-					action_index();
+				if(is_callable($this->default_callback)){
+					($this->default_callback)();
 				}else{
 					(DNRoute::G()->on404Handel)();
 				}
@@ -504,30 +507,76 @@ class FunctionDispatcher
 }
 class FunctionView extends DNView
 {
-	protected $head_callback='view_header';
-	protected $foot_callback='view_footer';
-	public function setViewWrapper($head_callback,$foot_callback)
+	public $prefix='view_';
+	public $head_callback;
+	public $foot_callback;
+	
+	private $callback;
+	
+	public function init($path)
 	{
-		$this->head_callback=$head_callback;
-		$this->foot_callback=$foot_callback;
+		$ret=parent::init($path);
+		$options=DNMVCS::G()->options;
+		$this->head_callback=$options['function_view_head']??'';
+		$this->foot_callback=$options['function_view_foot']??'';
+		return $ret;
 	}
 	protected function includeShowFiles()
 	{
-		if(isset($this->head_callback) && is_callable($this->head_callback)){
-			($this->head_callback)($this->data);
+		extract($this->data);
+		
+		if($this->head_callback){
+			if(is_callable($this->head_callback)){
+				($this->head_callback)($this->data);
+			}
+		}else{
+			if($this->head_file){
+				$this->head_file=rtrim($this->head_file,'.php').'.php';
+				include($this->path.$this->head_file);
+			}
 		}
-		$callback='view_'.$this->view;
-		if(is_callable($callback)){
-			$callback($this->data);
+		
+		$this->callback=$this->prefix.$this->view;
+		if(is_callable($this->callback)){
+			($this->callback)($this->data);
+		}else{
+			include($this->view_file);
 		}
-		if(isset($this->foot_callback) && is_callable($this->foot_callback)){
-			($this->foot_callback)($this->data);
+		
+		if($this->head_callback){
+			if(is_callable($this->foot_callback)){
+				($this->foot_callback)($this->data);
+			}
+		}else{
+			if($this->foot_file){
+				$this->foot_file=rtrim($this->foot_file,'.php').'.php';
+				include($this->path.$this->foot_file);
+			}
 		}
 	}
 	public function hasView($view)
 	{
-		return false;
+		$ret=parent::hasView($view);
+		return $ret;
+		//return false;
 	}
+}
+class FunctionWrapper
+{
+	protected static $header=null;
+	protected static $footer=null;
+	public static function Wrap($header=null,$footer=null)
+	{
+		self::$header=$header;
+		self::$footer=$footer;
+	}
+	public static function __callStatic($method, $params)
+    {
+		if(isset(self::$header)){(self::$header)(...$params);}
+		$ret=($method)(...$params);
+		if(isset(self::$footer)){(self::$footer)(...$params);}
+		return $ret;
+    }
 }
 class AppEx extends DNMVCS
 {
@@ -536,6 +585,8 @@ class AppEx extends DNMVCS
 			'key_for_simple_route'=>'act',
 			
 			'use_function_view'=>false,
+				'function_view_head'=>'view_header',
+				'function_view_foot'=>'view_footer',
 			'use_function_dispatch'=>false,
 			'use_common_configer'=>false,
 			'use_common_autoloader'=>false,
