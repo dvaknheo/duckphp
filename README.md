@@ -166,7 +166,9 @@ run(); 开始路由
 ## 单文件模式
 
 不想依赖这么多，一个文件解决？可以。
-    
+## 不用 path_info 的模式
+
+## 一个文件带走的模式 
 
 ## 选项
     init($options) 方法的参数是可配置的，默认设置是分三个类别的组合。
@@ -857,6 +859,19 @@ W($object);
 - GetMyArgsAssoc 获得当前函数的命名参数数组
 - CallWithMyArgsAssoc($callback)  获得当前函数的命名参数数组并回调
 
+### ProjectCommonAutoloader
+    实现通用文件加载
+### ProjectCommonConfiger
+    实现通用配置加载
+### FunctionDispatcher
+    函数方式的 controller
+### FunctionView
+    函数方式的 view
+### FunctionWrapper
+    包裹函数，实现 aop
+    FuctionWrapper::Wrap($before_call,$after_call)
+    Function::AnyFunction(...$args);
+    将会依次调用  before_call(...$args),AnyFunction(...$args),after_call(...$args)，返回原先值
 # DNMVCS 的代码流程讲解
 
 大致用图表现如下
@@ -932,7 +947,6 @@ DN::DB
 
 
 URL 整合，返回默认的。
-	这个单独处理中。
 ## 和其他框架的整合
 
 修改 override DNMVCS::onShow404 => function(){} 。 

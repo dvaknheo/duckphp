@@ -1134,10 +1134,22 @@ class DNMVCS
 		}
 		return self::G()->init($options)->run();
 	}
+	public static function RunWithoutPathInfo($options=[])
+	{
+		$default_options=[
+			'ext_mode'=>true,
+			'key_for_simple_route'=>'_r',
+			'setting_file_basename'=>'setting',
+			//'path_view'=>'',
+		];
+		$options=array_merge($default_options,$options);
+		return self::RunQuickly($options);
+	}
 	public static function RunOneFileMode($options=[])
 	{
 		$default_options=[
 			'ext_mode'=>true,
+			'key_for_simple_route'=>'act',
 			'use_function_dispatch'=>true,
 			'use_function_view'=>true,
 			'setting_file_basename'=>'',

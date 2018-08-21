@@ -454,7 +454,7 @@ class ProjectCommonAutoloader
 		});
 	}
 }
-class ProjectCommonConfiger
+class ProjectCommonConfiger extends DNConfiger
 {
 	public $fullpath_config_common;
 
@@ -581,16 +581,17 @@ class FunctionWrapper
 class AppEx extends DNMVCS
 {
 	const DEFAULT_OPTIONS_EX=[
-			'setting_file_basename'=>'',
-			'key_for_simple_route'=>'act',
+			'setting_file_basename'=>'setting',
+			'key_for_simple_route'=>null,
 			
 			'use_function_view'=>false,
 				'function_view_head'=>'view_header',
 				'function_view_foot'=>'view_footer',
 			'use_function_dispatch'=>false,
 			'use_common_configer'=>false,
+				'fullpath_project_share_common'=>'',
 			'use_common_autoloader'=>false,
-			
+				'fullpath_config_common'=>'',
 			'use_ext_db'=>false,
 		];
 	public function init($options=[])
