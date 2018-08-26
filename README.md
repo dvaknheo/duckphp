@@ -868,11 +868,18 @@ W($object);
     函数方式的 controller
 ### FunctionView
     函数方式的 view
-### FunctionWrapper
+### FuncWrapper
     包裹函数，实现 aop
     FuctionWrapper::Wrap($before_call,$after_call)
     Function::AnyFunction(...$args);
     将会依次调用  before_call(...$args),AnyFunction(...$args),after_call(...$args)，返回原先值
+### Session
+    独立类，用于不想出现 $_SESSION
+	Start()
+	Get($k)
+	Set($k,$v)
+	Remove($k)
+	均可以用 G 函数重载
 # DNMVCS 的代码流程讲解
 
 大致用图表现如下

@@ -578,6 +578,42 @@ class FunctionWrapper
 		return $ret;
     }
 }
+class Session
+{
+	use DNSingleton;
+	public static function Start()
+	{
+		return self::G()->_Start();
+	}
+	public static function Get($k)
+	{
+		return self::G()->_Get($k);
+	}
+	public static function Set($k,$v)
+	{
+		return self::G()->_Set($k,$v);
+	}
+	public static function Remove($k)
+	{
+		return self::G()->_Remove($k);
+	}
+	public function _Get($k)
+	{
+		return $_SESSION[$k];
+	}
+	public function _Set($k,$v)
+	{
+		$_SESSION[$k]=$v;
+	}
+	public function _Remove($k)
+	{
+		unset($_SESSION[$k]);
+	}
+	public function _Start()
+	{
+		session_start();
+	}
+}
 class AppEx extends DNMVCS
 {
 	const DEFAULT_OPTIONS_EX=[
