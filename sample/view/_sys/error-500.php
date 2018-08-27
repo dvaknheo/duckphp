@@ -1,3 +1,4 @@
+<?php use \DNMVCS\DNMVCS as DN ;?>
 500
 <?php if(DN::G()->isDev()){ ?>
 <fieldset>

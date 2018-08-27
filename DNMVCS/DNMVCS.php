@@ -691,7 +691,7 @@ class DNExceptionManager
 		self::$OnError=$OnError;
 		self::$OnDevError=$OnDevError;
 	}
-	public function onErrorHandler($errno, $errstr, $errfile, $errline)
+	public static function onErrorHandler($errno, $errstr, $errfile, $errline)
 	{
 		if (!(error_reporting() & $errno)) {
 			return false;
