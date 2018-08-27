@@ -225,7 +225,7 @@ class DNRoute
 			}
 		}else{
 			$this->path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
-			$this->request_method=$_SERVER['REQUEST_METHOD'];
+			$this->request_method=isset($_SERVER['REQUEST_METHOD'])?$_SERVER['REQUEST_METHOD']:'GET';
 		}
 		$this->path_info=ltrim($this->path_info,'/');
 
