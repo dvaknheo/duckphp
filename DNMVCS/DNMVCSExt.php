@@ -66,7 +66,7 @@ class SimpleRoute extends DNRoute
 		parent::init($options);
 		$this->key_for_simple_route=$options['key_for_simple_route'];
 		
-		$path_info=isset($_REQUEST[$this->key_for_simple_route])?$_GET[$this->key_for_simple_route]:'';
+		$path_info=isset($_REQUEST[$this->key_for_simple_route])?$_REQUEST[$this->key_for_simple_route]:'';
 		$path_info=ltrim($path_info,'/');
 		$this->path_info=$path_info;
 	}
@@ -87,7 +87,7 @@ class SimpleRouteHook
 		$route->setURLHandel([$this,'onURL']);
 		$this->key_for_simple_route=isset($route->options['key_for_simple_route'])?$route->options['key_for_simple_route']:$this->key_for_simple_route;
 		
-		$path_info=isset($_REQUEST[$this->key_for_simple_route])?$_GET[$this->key_for_simple_route]:'';
+		$path_info=isset($_REQUEST[$this->key_for_simple_route])?$_REQUEST[$this->key_for_simple_route]:'';
 		$path_info=ltrim($path_info,'/');
 		$route->path_info=$path_info;
 		$route->calling_path=$path_info;
