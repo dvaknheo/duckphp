@@ -79,7 +79,7 @@ class DNAutoLoader
 		$this->namespace=$options['namespace'];
 		$this->path_namespace=$this->path.rtrim($options['path_namespace'],'/').'/';
 		$this->path_autoload=$this->path.rtrim($options['path_autoload'],'/').'/';
-		$this->path_no_namespace_mode=$path.rtrim($options['path_no_namespace_mode'],'/').'/';
+		$this->path_no_namespace_mode=$this->path.rtrim($options['path_no_namespace_mode'],'/').'/';
 		
 		$this->with_no_namespace_mode=$options['with_no_namespace_mode'];
 		
