@@ -13,48 +13,42 @@ class SwooleApp extends DNMVCS
 		//关闭默认处理。stop default feature
 		return;
 	}
-	public static function BindSwooleHttpServer($server,$options)
+	public function onRequest($req,$res)
 	{
+		try{
+			SwooleRoute::G(new SwooleRoute()); // 不复用
+			SwooleRoute::G()->initSwoole($req,$res);
+			DNRoute::G(SwooleRoute::G());
+			DNMVCS::G()->initRoute(DNRoute::G());
+			DNView::G(new DNView()); // 不复用
+			self::G()->initView(DNView::G());
+
+			SwooleRoute::G()->run();
+
+		}catch(\Throwable  $ex){
+			self::G()->onException($ex);
+		}
+	}
+	public static function RunSwooleQuickly($server,$options,$file='')
+	{
+		DNMVCS::G(SwooleApp::G())->init($options);
 		$server->on('request',
-			function($req,$res)use($options){
+			function($req,$res)use($options,$file){
 				ob_start(function($str)use($res){
 					$res->write($str);
 				});
-				try{
-				
-					SwooleRoute::G(new SwooleRoute()); // 不复用
-					SwooleRoute::G()->initSwoole($req,$res);
-					DNRoute::G(SwooleRoute::G());
-					SwooleApp::G(new SwooleApp());  // 不复用
-					
-					DNMVCS::G(SwooleApp::G())->init($options)->run();
-				}catch(\Throwable  $ex){
-					SwooleApp::G()->onException($ex);
+				if(!$file){
+					self::G()->onRequest($req,$res);
+				}else{
+					include($file);
 				}
 				ob_end_flush();
 				$res->end();
 			}
 		);
+		$server->start();
 	}
-	public static function BindWithFile($server,$options,$file)
-	{
-		$server->on('request',
-			function($req,$res)use($options){
-				ob_start(function($str)use($res){
-					$res->write($str);
-				});
-				try{
-					require($file);
-					
-				}catch(\Throwable  $ex){
-					DNMVCS::G()->onException($ex);
-				}
-				ob_end_flush();
-				$res->end();
-			}
-		);
-	}
-	public static function RunSwooleQuickly($server,$options)
+	public static function RunSwooleQuicklyx($server,$options)
 	{
 		self::BindSwooleHttpServer($server,$options);
 		$server->start();
