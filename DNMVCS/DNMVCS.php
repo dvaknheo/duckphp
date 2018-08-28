@@ -257,6 +257,7 @@ class DNRoute
 		}
 		if(null!==$this->callback){
 			($this->callback)(...$this->parameters);
+			$this->cleanUp();
 			return true;
 		}
 		if(!$this->on404Handel){
@@ -265,7 +266,12 @@ class DNRoute
 			exit;
 		}
 		($this->on404Handel)();
+		$this->cleanUp();
 		return false;
+	}
+	protected function cleanUp()
+	{
+		
 	}
 
 	protected function getRouteHandelByFile()
@@ -431,6 +437,7 @@ class DNView
 	public $path;
 
 	public $view=null;
+	
 	public function _ExitJson($ret)
 	{
 		header('content-type:text/json');
@@ -463,6 +470,15 @@ class DNView
 		$this->view_file=$this->path.$view;
 		$this->includeShowFiles();
 		ob_end_flush();
+		
+		$this->cleanUp();
+	}
+	protected function cleanUp()
+	{
+		$this->data=[];
+		$this->head_file=null;
+		$this->foot_file=null;
+		$this->view=null;
 	}
 	protected function includeShowFiles()
 	{

@@ -20,9 +20,7 @@ class SwooleApp extends DNMVCS
 			SwooleRoute::G()->initSwoole($req,$res);
 			DNRoute::G(SwooleRoute::G());
 			DNMVCS::G()->initRoute(DNRoute::G());
-			DNView::G(new DNView()); // 不复用
-			self::G()->initView(DNView::G());
-
+			
 			SwooleRoute::G()->run();
 
 		}catch(\Throwable  $ex){
