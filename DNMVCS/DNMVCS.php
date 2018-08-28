@@ -70,7 +70,7 @@ class DNAutoLoader
 		$this->options=$options;
 		
 		if(!isset($options['path']) || !$options['path']){
-			$path=realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
+			$path=realpath(getcwd().'/../');
 			$options['path']=rtrim($path,'/').'/';
 		}
 		$this->options['path']=$options['path'];
@@ -183,7 +183,7 @@ class DNRoute
 	{
 		if(!$innerCall && $this->onURL){return ($this->onURL)($url,true);}
 
-		$basepath=substr(rtrim(str_replace('\\','/',$_SERVER['SCRIPT_FILENAME']),'/').'/',strlen($_SERVER['DOCUMENT_ROOT']));
+		$basepath=substr(rtrim(str_replace('\\','/',$this->_SERVER('SCRIPT_FILENAME')),'/').'/',strlen($this->_SERVER('DOCUMENT_ROOT')));
 		if($basepath=='/index.php'){$basepath='/';}
 		if($basepath=='/index.php/'){$basepath='/';}
 		
@@ -200,6 +200,7 @@ class DNRoute
 	{
 		return $this->parameters;
 	}
+	
 	public function init($options)
 	{
 		$options=array_merge(self::DEFAULT_OPTIONS,$options);
@@ -215,8 +216,8 @@ class DNRoute
 		$this->enable_post_prefix=$options['enable_post_prefix'];
 		$this->disable_default_class_outside=$options['disable_default_class_outside'];
 
-		if(PHP_SAPI==='cli'){
-			$argv=$_SERVER['argv'];
+		$argv=$this->_SERVER('argv');
+		if(isset($argv)){
 			if(count($argv)>=2){
 				$this->path_info=$argv[1];
 				array_shift($argv);
@@ -224,8 +225,8 @@ class DNRoute
 				$this->parameters=$argv;
 			}
 		}else{
-			$this->path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
-			$this->request_method=isset($_SERVER['REQUEST_METHOD'])?$_SERVER['REQUEST_METHOD']:'GET';
+			$this->path_info=$this->_SERVER('PATH_INFO')??'';
+			$this->request_method=$this->_SERVER('REQUEST_METHOD')??'';
 		}
 		$this->path_info=ltrim($this->path_info,'/');
 
@@ -383,7 +384,26 @@ class DNRoute
 		return array($obj,$method);
 	}
 	
-
+	public function _SERVER($key)
+	{
+		//for no superGlobals;
+		return  isset($_SERVER[$key])?$_SERVER[$key]:null;
+	}
+	public function _GET($key)
+	{
+		//for no superGlobals;
+		return  isset($_GET[$key])?$_GET[$key]:null;
+	}
+	public function _POST($key)
+	{
+		//for no superGlobals;
+		return  isset($_POST[$key])?$_POST[$key]:null;
+	}
+	public function _REQUEST($key)
+	{
+		//for no superGlobals;
+		return  isset($_REQUEST[$key])?$_REQUEST[$key]:null;
+	}
 
 	public function getRouteCallingPath()
 	{

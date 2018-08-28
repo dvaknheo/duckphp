@@ -935,6 +935,8 @@ DN::DB
 	view 写在同文件里，不同 view 用 view_$action($data){extract($data);...} 这样来。
 	//使用 FunctionView view_header view_footer
 	ShowDataInMain DataToShow
+- 为什么拆分文件，按 composer ,psr-4 目录布局
+	因为不想太多零碎文件，而且还没想到什么应用要拆分
 ## 额外模式
 
     ext_mode 模式的时候，会使用 DNMVCS\AppEx 做入口的模式。自动使用扩展文件

@@ -36,12 +36,12 @@ trait DNStaticCall
 		return ([$class, $method])(...$params);
     }
 }
-//not use ,you can use SimpleRouteHandel
 function _url_by_key($url,$key_for_simple_route)
 {
-	$path=parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
-	if(strlen($_SERVER['PATH_INFO'])){
-		$path=substr($path,0,0-strlen($_SERVER['PATH_INFO']));
+	$path=parse_url(DNRoute::G()->_SERVER('REQUEST_URI'),PHP_URL_PATH);
+	$path_info=DNRoute::G()->_SERVER('PATH_INFO');
+	if(strlen($path_info)){
+		$path=substr($path,0,0-strlen($path_info));
 	}
 	if($url===null || $url==='' || $url==='/'){return $path;}
 	$c=parse_url($url,PHP_URL_PATH);
@@ -66,7 +66,7 @@ class SimpleRoute extends DNRoute
 		parent::init($options);
 		$this->key_for_simple_route=$options['key_for_simple_route'];
 		
-		$path_info=isset($_REQUEST[$this->key_for_simple_route])?$_REQUEST[$this->key_for_simple_route]:'';
+		$path_info=DNRoute::G()->_REQUEST($this->key_for_simple_route)??'';
 		$path_info=ltrim($path_info,'/');
 		$this->path_info=$path_info;
 	}
@@ -87,7 +87,7 @@ class SimpleRouteHook
 		$route->setURLHandel([$this,'onURL']);
 		$this->key_for_simple_route=isset($route->options['key_for_simple_route'])?$route->options['key_for_simple_route']:$this->key_for_simple_route;
 		
-		$path_info=isset($_REQUEST[$this->key_for_simple_route])?$_REQUEST[$this->key_for_simple_route]:'';
+		$path_info==DNRoute::G()->_REQUEST($this->key_for_simple_route)??'';
 		$path_info=ltrim($path_info,'/');
 		$route->path_info=$path_info;
 		$route->calling_path=$path_info;
@@ -161,6 +161,10 @@ class RouteRewriteHook
 {
 	use DNSingleton;
 	protected $rewriteMap=[];
+	protected function mergeHttpGet($get)
+	{
+		$_GET=array_merge($get,$_GET);
+	}
 	public function matchRewrite($old_url,$new_url,$route)
 	{
 		$path_info=$route->path_info;
@@ -180,7 +184,7 @@ class RouteRewriteHook
 		$path_info=parse_url($url,PHP_URL_PATH);
 		$q=parse_url($url,PHP_URL_QUERY);
 		parse_str($q,$get);
-		$_GET=array_merge($get,$_GET);
+		$this->mergeHttpGet($get);
 		$route->path_info=$path_info;
 		return true;
 	}
@@ -490,7 +494,7 @@ class FunctionDispatcher
 	{
 		$this->path_info=$route->path_info;
 		$route->callback=function(){
-			$post=($_SERVER['REQUEST_METHOD']==='POST')?$this->post_prefix:'';
+			$post=($route->_SERVER('REQUEST_METHOD')==='POST')?$this->post_prefix:'';
 			$callback=$this->prefix.$post.$this->path_info;
 			if(is_callable($callback)){
 				($callback)();
@@ -554,12 +558,6 @@ class FunctionView extends DNView
 			}
 		}
 	}
-	public function hasView($view)
-	{
-		$ret=parent::hasView($view);
-		return $ret;
-		//return false;
-	}
 }
 class FunctionWrapper
 {
@@ -577,42 +575,6 @@ class FunctionWrapper
 		if(isset(self::$footer)){(self::$footer)(...$params);}
 		return $ret;
     }
-}
-class Session
-{
-	use DNSingleton;
-	public static function Start()
-	{
-		return self::G()->_Start();
-	}
-	public static function Get($k)
-	{
-		return self::G()->_Get($k);
-	}
-	public static function Set($k,$v)
-	{
-		return self::G()->_Set($k,$v);
-	}
-	public static function Remove($k)
-	{
-		return self::G()->_Remove($k);
-	}
-	public function _Get($k)
-	{
-		return $_SESSION[$k];
-	}
-	public function _Set($k,$v)
-	{
-		$_SESSION[$k]=$v;
-	}
-	public function _Remove($k)
-	{
-		unset($_SESSION[$k]);
-	}
-	public function _Start()
-	{
-		session_start();
-	}
 }
 class AppEx extends DNMVCS
 {
