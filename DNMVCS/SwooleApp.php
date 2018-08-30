@@ -1,6 +1,5 @@
 <?php
 namespace DNMVCS;
-require_once(__DIR__.'/DNMVCSExt.php');
 
 /////// 用于 swoole;还要多测试。
 class SwooleRequest // extends \swoole_http_request
@@ -60,17 +59,15 @@ class SwooleApp
 	public $onDoRequest=null;
 	protected function doRequestRun($req,$res)
 	{
-		SwooleRequest::G(SwooleRequest::W($req));
-		SwooleResponse::G(SwooleResponse::W($res));
-		SwooleResponse::G()->init();
-		SwooleRequest::G()->init();
+		SwooleResponse::G(SwooleResponse::W($res))->init();
+		SwooleRequest::G(SwooleRequest::W($req))->init();
 		if($this->onDoRequest){
 			$ret=($this->onDoRequest)($req,$res);
 			$this->doRequestCleanUp();
 			return $ret;
 		}
-		DNMVCS::G()->run();
 		
+		DNMVCS::G()->run();
 		$this->doRequestCleanUp();
 	}
 	protected function doRequestCleanUp()
