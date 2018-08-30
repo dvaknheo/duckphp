@@ -181,13 +181,7 @@ class SwooleApp
 	public static function BindSwooleHttpServer($server,$options)
 	{
 		DNMVCS::G()->init($options);
-		DNMVCS::G()->addRouteHook(
-			function($route){
-				$route->options['default_controller_reuse']=false;
-				$route->path_info=$route->_SERVER('PATH_INFO')??'';
-				$route->request_method=$route->_SERVER('REQUEST_METHOD')??'';
-				$route->path_info=ltrim($route->path_info,'/');
-			},true);
+		DNMVCS::G()->addRouteHook([ReuseRouteHook::class,'hook'],true);
 		$server->on('request',[self::G(),'onRequest']);
 	}
 	public static function RunSwooleQuickly($server,$options,$file='')

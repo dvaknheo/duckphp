@@ -214,6 +214,15 @@ class RouteRewriteHook
 		}
 	}
 }
+class ReuseRouteHook
+{
+	public static function hook($route){
+		$route->options['default_controller_reuse']=false;
+		$route->path_info=$route->_SERVER('PATH_INFO')??'';
+		$route->request_method=$route->_SERVER('REQUEST_METHOD')??'';
+		$route->path_info=ltrim($route->path_info,'/');
+	}
+}
 class StrictService
 {
 	use DNSingleton;
