@@ -257,7 +257,6 @@ class DNRoute
 		}
 		if(null!==$this->callback){
 			($this->callback)(...$this->parameters);
-			$this->cleanUp();
 			return true;
 		}
 		if(!$this->on404Handel){
@@ -266,12 +265,14 @@ class DNRoute
 			exit;
 		}
 		($this->on404Handel)();
-		$this->cleanUp();
 		return false;
 	}
-	protected function cleanUp()
+	public function cleanUp()
 	{
-		
+		$this->calling_path='';
+		$this->calling_class='';
+		$this->calling_method='';
+		$this->callback=null;
 	}
 
 	protected function getRouteHandelByFile()
@@ -325,10 +326,7 @@ class DNRoute
 		
 		$this->calling_method=$method;
 		
-		
 		$file=$this->path.$current_class.'.php';
-		$this->method_calling=$method;
-		
 		$this->includeControllerFile($file);
 		$obj=$this->getObecjectToCall($current_class);
 		//$this->calling_class=$current_class;  in $obj
@@ -438,6 +436,8 @@ class DNView
 
 	public $view=null;
 	
+	protected $temp_view_file;
+	protected $error_reporting_old;
 	public function _ExitJson($ret)
 	{
 		header('content-type:text/json');
@@ -454,31 +454,26 @@ class DNView
 	}	
 	public function _Show($data=[],$view)
 	{
-		ob_start();
 		$this->view=$view;
 		if(isset($this->onBeforeShow)){
 			($this->onBeforeShow)($data,$this->view);
 		}
-		// stop notice 
-		error_reporting(error_reporting() & ~E_NOTICE);
-		
-		$this->data=$this->data?$this->data:[];
 		$this->data=array_merge($this->data,$data);
-		unset($data);
-		//
-		$view=rtrim($this->view,'.php').'.php';
-		$this->view_file=$this->path.$view;
+		$this->view_file=$this->path.rtrim($this->view,'.php').'.php';
+		
+		ob_start();
+		$this->error_reporting_old=error_reporting();
+		error_reporting($this->error_reporting_old & ~E_NOTICE);
 		$this->includeShowFiles();
 		ob_end_flush();
-		
-		$this->cleanUp();
 	}
-	protected function cleanUp()
+	public function cleanUp()
 	{
 		$this->data=[];
 		$this->head_file=null;
 		$this->foot_file=null;
 		$this->view=null;
+		error_reporting($this->error_reporting_old);
 	}
 	protected function includeShowFiles()
 	{
@@ -509,9 +504,12 @@ class DNView
 	}
 	public function showBlock($view,$data)
 	{
-		error_reporting(error_reporting() & ~E_NOTICE);
+		$this->temp_view_file=$this->path.$view.'.php';
+		$this->error_reporting_old=error_reporting();
+		error_reporting($this->error_reporting_old & ~E_NOTICE);
 		extract($data);
-		include($this->path.$view.'.php');
+		include($this->temp_view_file);
+		error_reporting($this->error_reporting_old);
 	}
 	public function assignViewData($key,$value=null)
 	{
@@ -1024,7 +1022,9 @@ trait DNMVCS_Handel
 	//@override
 	public function onShow404()
 	{
-		header("HTTP/1.1 404 Not Found");
+		if(PHP_SAPI!=='cli'){
+			header("HTTP/1.1 404 Not Found");
+		}
 		if(!DNView::G()->hasView('_sys/error-404')){
 			echo "File Not Found\n";
 			echo "<!--DNMVCS  use view/_sys/error-404.php to overrid me -->";
@@ -1054,6 +1054,9 @@ trait DNMVCS_Handel
 	}
 	public function onErrorException($ex)
 	{
+		if(PHP_SAPI!=='cli'){
+			header("HTTP/1.1 500 Internal Error");
+		}
 		$message=$ex->getMessage();
 		$code=$ex->getCode();
 		

@@ -12,6 +12,7 @@ trait DNWrapper
 	{
 		return call_user_func_array([$this->obj,$method],$args);
 	}
+
 	public static function W($object=null)
 	{
 		$caller=get_called_class();
@@ -22,12 +23,19 @@ trait DNWrapper
 		$self->_wrap_the_object($object);
 		self::$objects[$caller]=$self;
 		return $self;
-	} 
+	}
+	public function __set($name,$value){
+		$this->obj->$name=$value;
+	}
+	public function __get($name){
+		return $this->obj->$name;
+	}
 }
 
 //use with DNSingleton
 trait DNStaticCall
 {
+	use DNSingleton;
 	//remark ，method do not public
 	public static function __callStatic($method, $params)
     {
@@ -163,7 +171,7 @@ class RouteRewriteHook
 	protected $rewriteMap=[];
 	protected function mergeHttpGet($get)
 	{
-		$_GET=array_merge($get,$_GET);
+		$_GET=array_merge($get,$_GET??[]);
 	}
 	public function matchRewrite($old_url,$new_url,$route)
 	{
@@ -262,15 +270,16 @@ class StrictModel
 	}
 }
 
-class StrictDBManager extends DNDBManager
+class StrictDBManager // extends DNDBManager 这里不需要了
 {
 	use DNWrapper;
+	// bug ? _get ,_set ?
 	public function __call($method,$args)
 	{
 		if(in_array($method,['_DB','_DB_W','_DB_R'])){
 			$this->checkPermission();
 		}
-		return parent::__call([$this->obj,$method],$args);
+		return ($this->obj->$method)(...$args);
 	}
 	protected function checkPermission()
 	{
@@ -576,6 +585,23 @@ class FunctionWrapper
 		return $ret;
     }
 }
+
+class FunctionReplacer
+{
+	//TODO Test
+	protected static $Replacements=[];
+	public static function Replace($func,$callback)
+	{
+		self::$Replacements[$func]=$callback;
+	}
+	public static function __callStatic($method, $params)
+    {
+		$method=self::$Replacements[$func]??$method;
+		return ($method)(...$params);
+		
+    } 
+}
+
 class AppEx extends DNMVCS
 {
 	const DEFAULT_OPTIONS_EX=[

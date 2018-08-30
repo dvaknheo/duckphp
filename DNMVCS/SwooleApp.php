@@ -11,9 +11,13 @@ class SwooleRequest // extends \swoole_http_request
 	public function init()
 	{
 		$this->init_server=$_SERVER;
+		$_SERVER=[];
+		unset($_SERVER['argc']);
+		unset($_SERVER['argv']);
 		foreach($this->obj->server as $k=>$v){
 			$_SERVER[strtoupper($k)]=$v;
 		}
+		
 		$_GET=$this->obj->get??[];
 		$_POST=$this->obj->post??[];
 		$_REQUEST=array_merge($_GET,$_POST);
@@ -25,7 +29,7 @@ class SwooleRequest // extends \swoole_http_request
 		$_GET=[];
 		$_POST=[];
 		$_REQUEST=[];
-		// cookie, session  and other super globals
+		//TODO cookie, session  and other super globals
 	}
 }
 class SwooleResponse // extends \swoole_http_response
@@ -39,7 +43,8 @@ class SwooleResponse // extends \swoole_http_response
 	public static function init()
 	{
 		ob_start(function($str){
-		SwooleResponse::G()->write($str); });
+			SwooleResponse::G()->write($str);
+		});
 	}
 	public static function cleanUp()
 	{
@@ -85,13 +90,11 @@ class SwooleApp
 	}
 	public function onRequest($req,$res)
 	{
-		//ob_start(function($str)use($res){ $res->write($str); });
 		try{
 			$this->doRequestRun($req,$res);
 		}catch(\Throwable  $ex){
 			$this->doRequestException($ex);
 		}
-		//ob_end_flush();
 	}
 	public static function BindSwooleHttpServer($server,$options)
 	{
