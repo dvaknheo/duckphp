@@ -36,6 +36,8 @@ class SwooleResponse // extends \swoole_http_response
 {
 	use DNSingleton;
 	use DNWrapper;
+	
+	//remark ,must declear this
 	public function write($str)
 	{
 		return $this->obj->write($str);
@@ -67,16 +69,13 @@ class SwooleApp
 			$this->doRequestCleanUp();
 			return $ret;
 		}
-		//DNRoute::G()->swoolehook();
-		DNMVCS::G()->initRoute(DNRoute::G());
-		DNRoute::G()->run();
+		DNMVCS::G()->run();
+		
 		$this->doRequestCleanUp();
 	}
 	protected function doRequestCleanUp()
 	{
-		DNView::G()->cleanUp();
-		DNRoute::G()->cleanUp();
-		
+		DNMVCS::G()->cleanUp();
 		SwooleRequest::G()->cleanUp();
 		SwooleResponse::G()->cleanUp();
 		
@@ -92,14 +91,21 @@ class SwooleApp
 	{
 		try{
 			$this->doRequestRun($req,$res);
-		}catch(\Throwable  $ex){
+		}catch(\Throwable $ex){
 			$this->doRequestException($ex);
 		}
 	}
 	public static function BindSwooleHttpServer($server,$options)
 	{
-		DNRoute::G(SwooleRoute::G());
 		DNMVCS::G()->init($options);
+		DNMVCS::G()->addRouteHook(
+			function($route){
+				$route->options['default_controller_reuse']=false;
+				$route->path_info=$route->_SERVER('PATH_INFO')??'';
+				$route->request_method=$route->_SERVER('REQUEST_METHOD')??'';
+				$route->path_info=ltrim($route->path_info,'/');
+			},true);
+
 		$server->on('request',[self::G(),'onRequest']);
 	}
 	public static function RunSwooleQuickly($server,$options,$file='')
@@ -111,20 +117,5 @@ class SwooleApp
 			};
 		}
 		$server->start();
-	}
-}
-
-class SwooleRoute extends DNRoute
-{
-	public function swoolehook()
-	{
-		$this->path_info=$this->_SERVER('PATH_INFO')??'';
-		$this->request_method=$this->_SERVER('REQUEST_METHOD')??'';
-		return $this;
-	}
-	protected function includeControllerFile($file)
-	{
-		//我们只包含一次。重复文件不用偷懒的  DNContorller 模式在这里不能用了
-		require_once($file);
 	}
 }

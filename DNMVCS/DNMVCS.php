@@ -149,18 +149,20 @@ class DNRoute
 			
 			'enable_post_prefix'=>true,
 			'disable_default_class_outside'=>false,
+			
+			'default_controller_reuse'=>true, //en , something bad
 		];
 	
-	protected $routeMap=[];
 	public $on404Handel=null;
 	public $parameters=[];
 	public $options;
 	
 	protected $namespace='MY';
-	protected $default_class='DNController';
+	protected $default_controller_class='DNController';
 	
-	protected $default_controller='Main';
+	protected $wellcome_controller='Main';
 	protected $default_method='index';
+	
 	public $enable_paramters=false;
 	public $with_no_namespace_mode=true;
 	
@@ -211,7 +213,7 @@ class DNRoute
 		$this->enable_paramters=$options['enable_paramters'];
 		$this->with_no_namespace_mode=$options['with_no_namespace_mode'];
 		
-		$this->default_class=$options['default_controller_class'];
+		$this->default_controller_class=$options['default_controller_class'];
 		
 		$this->enable_post_prefix=$options['enable_post_prefix'];
 		$this->disable_default_class_outside=$options['disable_default_class_outside'];
@@ -318,11 +320,11 @@ class DNRoute
 			}
 		}
 		
-		if($this->disable_default_class_outside && $current_class===$this->default_controller && $method===$this->default_method){
+		if($this->disable_default_class_outside && $current_class===$this->wellcome_controller && $method===$this->default_method){
 			return null;
 		}
 		$method=$method?$method:$this->default_method;
-		$current_class=$current_class?$current_class:$this->default_controller;
+		$current_class=$current_class?$current_class:$this->wellcome_controller;
 		
 		$this->calling_method=$method;
 		
@@ -340,7 +342,12 @@ class DNRoute
 	// You can override it; variable indived
 	protected function includeControllerFile($file)
 	{
-		require($file);
+		$reuse=$this->options['default_controller_reuse']??false;
+		if(!$reuse){
+			require_once($file);
+		}else{
+			require($file);
+		}
 	}
 	// You can override it;
 	protected function getObecjectToCall($class_name)
@@ -350,7 +357,7 @@ class DNRoute
 			$fullclass=str_replace('/','__',$class_name);
 			$flag=class_exists($fullclass,false);
 			if(!$flag){
-				$fullclass=str_replace('/','__',$this->default_class);
+				$fullclass=str_replace('/','__',$this->default_controller_class);
 			}
 			$flag=class_exists($fullclass,false);
 			if($flag){
@@ -362,7 +369,7 @@ class DNRoute
 		$fullclass=$this->namespace.'\\'.str_replace('/','\\',$class_name);
 		$flag=class_exists($fullclass,false);
 		if(!$flag){
-			$fullclass=$this->namespace.'\\'.str_replace('/','\\',$this->default_class);
+			$fullclass=$this->namespace.'\\'.str_replace('/','\\',$this->default_controller_class);
 		}
 		$this->calling_class=$fullclass;
 		$obj=new $fullclass();
@@ -1276,7 +1283,12 @@ class DNMVCS
 	public function run()
 	{
 		return DNRoute::G()->run();
-	}	
+	}
+	public function cleanUp()
+	{
+		DNView::G()->cleanUp();
+		DNRoute::G()->cleanUp();
+	}
 }
 /////////////////////////
 trait DNThrowQuickly
