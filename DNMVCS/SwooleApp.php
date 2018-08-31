@@ -59,6 +59,8 @@ class SwooleHttpRequest // extends \swoole_http_request
 		$_POST=[];
 		$_REQUEST=[];
 		//TODO cookie, session  and other super globals
+				SwooleHttpRequest::G(SwooleHttpRequest::W(new \stdClass())); // cleanup
+
 	}
 }
 class SwooleHttpResponse // extends \swoole_http_response
@@ -80,6 +82,7 @@ class SwooleHttpResponse // extends \swoole_http_response
 	public static function cleanUp()
 	{
 		ob_end_flush();
+		SwooleHttpResponse::G(SwooleHttpResponse::W(new \stdClass())); //cleanup
 	}
 }
 ////////////////
@@ -130,107 +133,73 @@ class SwooleWebSocketSession // extends \swoole_http_response
 	public static function cleanUp()
 	{
 		ob_end_flush();
+
 	}
 }
 ///////////
 class SwooleApp
 {
 	use DNSingleton;
-	public $onDoRequest=null;
 	
-	public function onHttpRequestRun()
-	{
-		DNMVCS::G()->run();
-	}
-	public function onHttpRequestException($ex)
-	{
-		DNMVCS::G()->onException($ex);
-	}
-	public function onHttpRequestCleanUp()
-	{
-		DNMVCS::G()->cleanUp();
-	}
-	protected function doRequestCleanUp()
-	{
-		$this->onHttpRequestCleanUp();
-		
-		SwooleHttpRequest::G()->cleanUp();
-		SwooleHttpResponse::G()->cleanUp();
-		
-		SwooleHttpRequest::G(SwooleHttpRequest::W(new \stdClass())); // cleanup
-		SwooleHttpResponse::G(SwooleHttpResponse::W(new \stdClass())); //cleanup
-	}
+	public $onHttpRun=null;
+	public $onHttpException=null;
+	public $onHttpCleanUp=null;
+	public $onWebSoketRun=null;
+	public $onWebSoketException=null;
+	public $onWebSoketCleanUp=null;
+
 	public function onRequest($req,$res)
 	{
+	
+		//SwooleHttpResponse::G(SwooleHttpResponse::W($res))->init();
+		ob_start(function($str)use($res){
+			$res->write($str);
+		});
+		
+		SwooleHttpRequest::G(SwooleHttpRequest::W($req))->init();
 		try{
-			SwooleHttpResponse::G(SwooleHttpResponse::W($res))->init();
-			SwooleHttpRequest::G(SwooleHttpRequest::W($req))->init();
-			if($this->onDoRequest){
-				$ret=($this->onDoRequest)($req,$res);
-				$this->doRequestCleanUp();
-				return $ret;
-			}
-			
-			$this->onHttpRequestRun();
-			$this->doRequestCleanUp();
+			($this->onHttpRun)();
 		}catch(\Throwable $ex){
-			$this->onHttpRequestException($ex);
-			$this->doRequestCleanUp();
+			fwrite(STDERR,$ex);
+			($this->onHttpException)($ex);
 		}
-	}
-	public static function BindSwooleHttpServer($server,$options)
-	{
-		DNMVCS::G()->init($options);
-		DNMVCS::G()->addRouteHook([ReuseRouteHook::class,'hook'],true);
-		$server->on('request',[self::G(),'onRequest']);
-	}
-	public static function RunSwooleQuickly($server,$options,$file='')
-	{
-		self::BindSwooleHttpServer($server,$options);
-		if($file!=''){
-			self::G()->onDoRequest=function($req,$res)use($file){
-				include($file);
-			};
-		}
-		SwooleServer::G(SwooleServer::W($server));
+		($this->onHttpCleanUp)();
 		
-		$server->on('open', function ( $server, $request) {
-			echo "server: open handshake success with fd{$request->fd}\n";
-		});
+		SwooleHttpRequest::G()->cleanUp();
 		
-		$server->on('message', function ( $server, $frame) {
-			self::G()->onMessage($server,$frame);
-		});
+		ob_end_flush();
+		//SwooleHttpResponse::G()->cleanUp();
+		
 
-		$server->on('close', function ($ser, $fd) {
-			echo "client {$fd} closed\n";
-		});
-		
-		$server->start();
 	}
+	public function bindHttp($server,$onHttpRun,$onHttpException,$onHttpCleanUp)
+	{
+		$server->on('request',[$this,'onRequest']);
+		$this->onHttpRun=$onHttpRun;
+		$this->onHttpException=$onHttpException;
+		$this->onHttpCleanUp=$onHttpCleanUp;
+		return $this;
+	}
+
+
 /////////////////////////////////
-	public function onWebSocketMessageRun()
-	{
-		$data=SwooleWebSocketSession::G()->getData();
-	}
-	public function onWebSocketMessageException($ex)
-	{
-		echo $ex;
-	}
-	public function onWebSocketMessageCleanUp()
-	{
-	}
 	public function onMessage($server,$frame)
 	{		
+		SwooleWebSocketSession::G()->init($server,$frame);
 		try{
-			SwooleWebSocketSession::G()->init($server,$frame);
-			$this->onWebSocketMessageRun($server,$frame);
-			$this->onWebSocketMessageCleanUp();
-			SwooleWebSocketSession::G()->cleanUp();
+			($this->onWebSoketRun)($server,$frame);
 		}catch(\Throwable $ex){
-			$this->onWebSocketMessageException($ex);
-			SwooleWebSocketSession::G()->cleanUp();
-			
+			($this->onWebSoketException)($ex);
 		}
+		($this->onWebSoketCleanUp)();
+		SwooleWebSocketSession::G()->cleanUp();
+	}
+	public function bindWebSocket($server,$onWebSoketRun,$onWebSoketException,$onWebSoketCleanUp)
+	{
+		$server->on('message',[$this,'onMessage']);
+		$this->onWebSoketRun=$onWebSoketRun;
+		$this->onWebSoketException=$onWebSoketException;
+		$this->onWebSoketCleanUp=$onWebSoketCleanUp;
+		
 	}
 }
