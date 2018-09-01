@@ -43,12 +43,12 @@ class SwooleHttpRequest // extends \swoole_http_request
 		$_SERVER=[];
 		unset($_SERVER['argc']);
 		unset($_SERVER['argv']);
-		foreach($this->obj->server as $k=>$v){
+		foreach($this->_object_wrapping->server as $k=>$v){
 			$_SERVER[strtoupper($k)]=$v;
 		}
 		
-		$_GET=$this->obj->get??[];
-		$_POST=$this->obj->post??[];
+		$_GET=$this->_object_wrapping->get??[];
+		$_POST=$this->_object_wrapping->post??[];
 		$_REQUEST=array_merge($_GET,$_POST);
 		
 	}
@@ -75,7 +75,7 @@ class SwooleHttpResponse // extends \swoole_http_response
 	{
 		return $this->_object_wrapping->end(...$args);
 	}
-	public static function init()
+	public function init()
 	{
 		$res=$this->_object_wrapping;
 		ob_start(function($str) use($res){
@@ -95,22 +95,10 @@ class SwooleFrame
 	use DNSingleton;
 	use DNWrapper;
 }
-class SwooleWebSocketRequest // extends \swoole_http_request
-{
-	use DNSingleton;
-	use DNWrapper;
-	public function init($server,$frame)
-	{
-	}
-	public function cleanUp()
-	{
 
-	}
-}
 class SwooleWebSocketSession // extends \swoole_http_response
 {
 	use DNSingleton;
-	use DNWrapper;
 	
 	public $server;
 	public $frame;
@@ -136,7 +124,8 @@ class SwooleWebSocketSession // extends \swoole_http_response
 	public static function cleanUp()
 	{
 		ob_end_flush();
-
+		$this->server=null;
+		$this->frame=null;
 	}
 }
 ///////////
@@ -144,6 +133,7 @@ class SwooleApp
 {
 	use DNSingleton;
 	
+	public $onWorkerStart=null;
 	public $onHttpRun=null;
 	public $onHttpException=null;
 	public $onHttpCleanUp=null;
@@ -167,9 +157,12 @@ class SwooleApp
 		SwooleHttpResponse::G()->cleanUp();
 
 	}
-	public function bindHttp($server,$onHttpRun,$onHttpException,$onHttpCleanUp)
+	public function bindHttp($server,$start,$onHttpRun,$onHttpException,$onHttpCleanUp)
 	{
+		$this->onWorkerStart=$start ;
+		
 		$server->on('request',[$this,'onRequest']);
+		$server->on('WorkerStart', $this->onWorkerStart);
 		$this->onHttpRun=$onHttpRun;
 		$this->onHttpException=$onHttpException;
 		$this->onHttpCleanUp=$onHttpCleanUp;

@@ -1236,8 +1236,11 @@ class DNMVCS
 	public function init($options=[])
 	{
 		DNAutoLoader::G()->init($options)->run();
-		
-		$object=$this->checkOverride($options);
+		$skip_check_override=$options['skip_check_override']??false;
+		unset($options['skip_check_override']);
+		if(!$skip_check_override){
+			$object=$this->checkOverride($options);
+		}
 		if($object){return $object;}
 		
 		$this->initExceptionManager();
