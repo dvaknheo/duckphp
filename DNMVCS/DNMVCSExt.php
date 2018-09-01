@@ -3,14 +3,14 @@ namespace DNMVCS;
 trait DNWrapper
 {
 	protected static $objects=[];
-	protected $obj;
+	protected $_object_wrapping;
 	protected function _wrap_the_object($object)
 	{
-		$this->obj=$object;
+		$this->_object_wrapping=$object;
 	}
 	protected function _call_the_object($method,$args)
 	{
-		return call_user_func_array([$this->obj,$method],$args);
+		return call_user_func_array([$this->_object_wrapping,$method],$args);
 	}
 
 	public static function W($object=null)
@@ -25,10 +25,10 @@ trait DNWrapper
 		return $self;
 	}
 	public function __set($name,$value){
-		$this->obj->$name=$value;
+		$this->_object_wrapping->$name=$value;
 	}
 	public function __get($name){
-		return $this->obj->$name;
+		return $this->_object_wrapping->$name;
 	}
 }
 

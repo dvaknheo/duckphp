@@ -59,8 +59,6 @@ class SwooleHttpRequest // extends \swoole_http_request
 		$_POST=[];
 		$_REQUEST=[];
 		//TODO cookie, session  and other super globals
-				SwooleHttpRequest::G(SwooleHttpRequest::W(new \stdClass())); // cleanup
-
 	}
 }
 class SwooleHttpResponse // extends \swoole_http_response
@@ -71,18 +69,23 @@ class SwooleHttpResponse // extends \swoole_http_response
 	//remark ,must declear this
 	public function write($str)
 	{
-		return $this->obj->write($str);
+		return $this->_object_wrapping->write($str);
+	}
+	public function end(...$args)
+	{
+		return $this->_object_wrapping->end(...$args);
 	}
 	public static function init()
 	{
-		ob_start(function($str){
-			SwooleHttpResponse::G()->write($str);
+		$res=$this->_object_wrapping;
+		ob_start(function($str) use($res){
+			$res->write($str);
 		});
 	}
 	public static function cleanUp()
 	{
 		ob_end_flush();
-		SwooleHttpResponse::G(SwooleHttpResponse::W(new \stdClass())); //cleanup
+		SwooleHttpResponse::G()->end(true);
 	}
 }
 ////////////////
@@ -150,26 +153,18 @@ class SwooleApp
 
 	public function onRequest($req,$res)
 	{
-	
-		//SwooleHttpResponse::G(SwooleHttpResponse::W($res))->init();
-		ob_start(function($str)use($res){
-			$res->write($str);
-		});
 		
+		SwooleHttpResponse::G(SwooleHttpResponse::W($res))->init();
 		SwooleHttpRequest::G(SwooleHttpRequest::W($req))->init();
 		try{
-			($this->onHttpRun)();
+			($this->onHttpRun)($req,$res);
 		}catch(\Throwable $ex){
-			fwrite(STDERR,$ex);
 			($this->onHttpException)($ex);
 		}
 		($this->onHttpCleanUp)();
 		
 		SwooleHttpRequest::G()->cleanUp();
-		
-		ob_end_flush();
-		//SwooleHttpResponse::G()->cleanUp();
-		
+		SwooleHttpResponse::G()->cleanUp();
 
 	}
 	public function bindHttp($server,$onHttpRun,$onHttpException,$onHttpCleanUp)
