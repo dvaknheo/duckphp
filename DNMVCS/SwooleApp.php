@@ -79,13 +79,14 @@ class SwooleHttpResponse // extends \swoole_http_response
 	{
 		$res=$this->_object_wrapping;
 		ob_start(function($str) use($res){
+			if(''===$str){return;}
 			$res->write($str);
 		});
 	}
-	public function cleanUp()
+	public function cleanUp($is_exception=false)
 	{
-		ob_end_clean();
-		$this->_object_wrapping->end();
+		ob_end_flush();
+		if(!$is_exception)$this->_object_wrapping->end();
 		$this->_object_wrapping=null;
 	}
 }
@@ -147,15 +148,17 @@ class SwooleApp
 		
 		SwooleHttpResponse::G(SwooleHttpResponse::W($res))->init();
 		SwooleHttpRequest::G(SwooleHttpRequest::W($req))->init();
+		$is_exception=false;
 		try{
 			($this->onHttpRun)($req,$res);
 		}catch(\Throwable $ex){
 			($this->onHttpException)($ex);
+			$is_exception=true;
 		}
 		($this->onHttpCleanUp)();
 		
 		SwooleHttpRequest::G()->cleanUp();
-		SwooleHttpResponse::G()->cleanUp();
+		SwooleHttpResponse::G()->cleanUp($is_exception);
 
 	}
 	public function bindHttp($server,$start,$onHttpRun,$onHttpException,$onHttpCleanUp)
