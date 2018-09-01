@@ -44,6 +44,36 @@ trait DNStaticCall
 		return ([$class, $method])(...$params);
     }
 }
+class DNFuncionModifer
+{
+	protected $FunctionMap=[];
+	public static function __callStatic($method, $params)
+    {
+		$temp=self::$FunctionMap[$method]??null;
+		if(null==$temp){
+			return ($method)(...$params);
+		}
+		list($func,$header,$footer)=$temp;
+		if(null!==$header){($header)(...$params);}
+		if(null!==$func){
+			$ret=($func)(...$params);
+		}else{
+			$ret=($method)(...$params);
+		}
+		if(null!==$footer){($footer)(...$params);}
+		return $ret;
+    }
+	public static function Assign($functionName,$callback=null,$header=null,$footer=null)
+	{
+		if(null===$callback && null===$header && null===$footer){
+			unset(self::$FunctionMap[$functionName]);
+			return;
+		}
+		self::$FunctionMap[$functionName]=[$callback,$header,$footer];
+		
+	}
+}
+
 function _url_by_key($url,$key_for_simple_route)
 {
 	$path=parse_url(DNRoute::G()->_SERVER('REQUEST_URI'),PHP_URL_PATH);
@@ -577,40 +607,6 @@ class FunctionView extends DNView
 		}
 	}
 }
-class FunctionWrapper
-{
-	protected static $header=null;
-	protected static $footer=null;
-	public static function Wrap($header=null,$footer=null)
-	{
-		self::$header=$header;
-		self::$footer=$footer;
-	}
-	public static function __callStatic($method, $params)
-    {
-		if(isset(self::$header)){(self::$header)(...$params);}
-		$ret=($method)(...$params);
-		if(isset(self::$footer)){(self::$footer)(...$params);}
-		return $ret;
-    }
-}
-
-class FunctionReplacer
-{
-	//TODO Test
-	protected static $Replacements=[];
-	public static function Replace($func,$callback)
-	{
-		self::$Replacements[$func]=$callback;
-	}
-	public static function __callStatic($method, $params)
-    {
-		$method=self::$Replacements[$func]??$method;
-		return ($method)(...$params);
-		
-    } 
-}
-
 class AppEx extends DNMVCS
 {
 	const DEFAULT_OPTIONS_EX=[
