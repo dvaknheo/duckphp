@@ -82,10 +82,11 @@ class SwooleHttpResponse // extends \swoole_http_response
 			$res->write($str);
 		});
 	}
-	public static function cleanUp()
+	public function cleanUp()
 	{
-		ob_end_flush();
-		SwooleHttpResponse::G()->end(true);
+		ob_end_clean();
+		$this->_object_wrapping->end();
+		$this->_object_wrapping=null;
 	}
 }
 ////////////////
