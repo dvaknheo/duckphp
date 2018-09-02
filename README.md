@@ -962,3 +962,12 @@ URL 整合，返回默认的。
 修改 override DNMVCS::onShow404 => function(){} 。 
 
 run() 方法 得到 false 表示 404 了，后续就是其他框架的事情了
+
+## Swoole
+
+$options['path']=指定路径;
+$server => swoole_http_server;
+SwooleAppBase::RunWithServer($server,$options);
+
+要点 超全局变量不能用了，用 SupperGlobal 文件提供的 HTTP_GET HTTP_POST 等替代。
+需要文档
