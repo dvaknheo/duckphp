@@ -31,7 +31,7 @@ class SuperGlobal
 	}
 	public function _Remove($k)
 	{
-		unset($this->data[$k];);
+		unset($this->data[$k]);
 	}
 	public function _All()
 	{

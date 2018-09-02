@@ -22,6 +22,7 @@ class SwooleApp
 	
 	public $frame=null;
 	protected $isInHttpException=false;
+	
 	public static function Server()
 	{
 		return self::G()->server;
@@ -80,23 +81,9 @@ class SwooleApp
 	protected function initRequest($request)
 	{
 		$this->request=$request;
-		
-		$this->serverArray=$_SERVER;
-		$_SERVER=[];
-		foreach($this->request->server as $k=>$v){
-			$_SERVER[strtoupper($k)]=$v;
-		}
-		
-		$_GET=$this->request->get??[];
-		$_POST=$this->request->post??[];
-		$_REQUEST=array_merge($_GET,$_POST);
 	}
 	protected function cleanUpRequest()
 	{
-		$_SERVER=$this->serverArray;
-		$_GET=[];
-		$_POST=[];
-		$_REQUEST=[];
 		
 		$this->request=null;
 	}
