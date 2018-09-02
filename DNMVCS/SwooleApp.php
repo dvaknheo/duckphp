@@ -66,7 +66,6 @@ class SwooleHttpResponse // extends \swoole_http_response
 	use DNSingleton;
 	use DNWrapper;
 	
-	//remark ,must declear this
 	public function write($str)
 	{
 		return $this->_object_wrapping->write($str);
@@ -135,17 +134,21 @@ class SwooleApp
 {
 	use DNSingleton;
 	
-	public $onWorkerStart=null;
+	public $onInit=null;
 	public $onHttpRun=null;
 	public $onHttpException=null;
 	public $onHttpCleanUp=null;
 	public $onWebSoketRun=null;
 	public $onWebSoketException=null;
 	public $onWebSoketCleanUp=null;
-
+	public $isInited=false;
+	
 	public function onRequest($req,$res)
 	{
-		
+		if(!$this->isInited){
+			($this->onInit)();
+			$this->isInited=true;
+		}
 		SwooleHttpResponse::G(SwooleHttpResponse::W($res))->init();
 		SwooleHttpRequest::G(SwooleHttpRequest::W($req))->init();
 		$is_exception=false;
@@ -161,19 +164,16 @@ class SwooleApp
 		SwooleHttpResponse::G()->cleanUp($is_exception);
 
 	}
-	public function bindHttp($server,$start,$onHttpRun,$onHttpException,$onHttpCleanUp)
+	public function bindHttp($server,$onInit,$onHttpRun,$onHttpException,$onHttpCleanUp)
 	{
-		$this->onWorkerStart=$start ;
-		
-		$server->on('request',[$this,'onRequest']);
-		$server->on('WorkerStart', $this->onWorkerStart);
+		$this->onInit=$onInit ;
 		$this->onHttpRun=$onHttpRun;
 		$this->onHttpException=$onHttpException;
 		$this->onHttpCleanUp=$onHttpCleanUp;
+		
+		$server->on('request',[$this,'onRequest']);
 		return $this;
 	}
-
-
 /////////////////////////////////
 	public function onMessage($server,$frame)
 	{		
