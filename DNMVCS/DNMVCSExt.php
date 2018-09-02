@@ -247,6 +247,26 @@ class RouteRewriteHook
 class StrictService
 {
 	use DNSingleton;
+	public static function G($object=null)
+	{
+		$object=self::_before_instance($object);
+		////
+		global $_DNSingleton_Custumer_G;
+		if($_DNSingleton_Custumer_G){
+			return  ($_DNSingleton_Custumer_G)($object,static::class);
+		}
+		if($object){
+			self::$_instances[static::class]=$object;
+			return $object;
+		}
+		$me=self::$_instances[static::class]??null;
+		if(null===$me){
+			$me=new static();
+			self::$_instances[static::class]=$me;
+		}
+		return $me;
+	}
+	
 	public static function _before_instance($object)
 	{
 		if(!DNMVCS::G()->isDev){return $object;}

@@ -5,35 +5,27 @@ namespace DNMVCS;
 use \PDO;
 use \Exception;
 
+global $_DNSingleton_Custumer_G;
 trait DNSingleton
 {
-	protected static function _before_instance($object)
-	{
-		return $object;
-	}
-	protected static function _create_instance($class)
-	{
-		return new $class();
-		//$ref=new \ReflectionClass($class);
-		//$me=$ref->newInstanceArgs($args);
-	}
 	protected static $_instances=[];
 	public static function G($object=null)
 	{
-		$object=self::_before_instance($object);
-		$class=get_called_class();
+		global $_DNSingleton_Custumer_G;
+		if($_DNSingleton_Custumer_G){
+			return  ($_DNSingleton_Custumer_G)($object,static::class);
+		}
 		if($object){
-			self::$_instances[$class]=$object;
+			self::$_instances[static::class]=$object;
 			return $object;
 		}
-		$me=isset(self::$_instances[$class])?self::$_instances[$class]:null;
+		$me=self::$_instances[static::class]??null;
 		if(null===$me){
-			$me=self::_create_instance($class);
-			self::$_instances[$class]=$me;
+			$me=new static();
+			self::$_instances[static::class]=$me;
 		}
 		return $me;
 	}
-	
 }
 class DNAutoLoader
 {
