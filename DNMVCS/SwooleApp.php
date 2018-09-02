@@ -1,22 +1,6 @@
 <?php
 namespace DNMVCS;
-//server
-class SwooleServer
-{
-	use DNSingleton;
-	use DNWrapper;
-	public static function InitSingleton($server)
-	{
-		self::G(self::W($server));
-	}
-	public function getServer()
-	{
-		return $this->_object_wrapping;
-	}
-}
-/////////////////////
 
-///////////
 class SwooleApp
 {
 	use DNSingleton;
@@ -140,10 +124,12 @@ class SwooleApp
 	}
 	public function bindWebSocket($server,$onWebSoketRun,$onWebSoketException,$onWebSoketCleanUp)
 	{
-		$server->on('message',[$this,'onMessage']);
+		$this->server=$server;
 		$this->onWebSoketRun=$onWebSoketRun;
 		$this->onWebSoketException=$onWebSoketException;
 		$this->onWebSoketCleanUp=$onWebSoketCleanUp;
+		
+		$server->on('message',[$this,'onMessage']);
 	}
 	public function run()
 	{
