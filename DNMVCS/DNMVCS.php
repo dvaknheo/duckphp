@@ -533,7 +533,7 @@ class DNConfiger
 	protected $setting_file_basename='setting';
 	protected $setting=[];
 	protected $all_config=[];
-	
+	protected $inited=false;
 	public function init($path,$options)
 	{
 		$this->path=$path;
@@ -543,15 +543,14 @@ class DNConfiger
 	}
 	public function _Setting($key)
 	{
-		static $inited;
-		if($inited || !$this->setting_file_basename){ return $this->setting[$key]??null; }
+		if($this->inited || !$this->setting_file_basename){ return $this->setting[$key]??null; }
 		$basename=$this->setting_file_basename;
 		if(!is_file($this->path.$basename.'.php')){
 			echo '<h1>'.'DNMVCS Notice: no setting file!,change '.$basename.'.sample.php to '.$basename.'.php !'.'</h1>';
 			exit;
 		}
 		$this->setting=$this->loadFile($basename,false);
-		$inited=true;
+		$this->inited=true;
 		return $this->setting[$key]??null;
 	}
 	
@@ -583,6 +582,7 @@ class DNDB
 	
 	public function init($config)
 	{
+
 		$this->config=$config;
 	}
 	public static function CreateDBInstance($db_config)
@@ -766,6 +766,7 @@ class DNDBManager
 	public $default_db_class=null;
 	public function init($db_config,$db_r_config,$default_db_class)
 	{
+
 		$this->db_config=$db_config;
 		$this->db_r_config=$db_r_config;
 		$this->default_db_class=$default_db_class;
@@ -823,23 +824,23 @@ trait DNMVCS_Glue
 	{
 		return DNRoute::G()->_Parameters();
 	}
+	protected $inited_rewrite=false;
 	public function assignRewrite($key,$value=null)
 	{
-		static $inited;
-		if(!$inited){
+		if(!$this->inited_rewrite){
 			self::ImportSys();
 			DNRoute::G()->addRouteHook([RouteRewriteHook::G(),'hook'],true);
-			$inited=true;
+			$this->inited_rewrite=true;
 		}
 		RouteRewriteHook::G()->assignRewrite($key,$value);
 	}
+	protected $inited_routehook=false;
 	public function assignRoute($key,$value=null)
 	{
-		static $inited;
-		if(!$inited){
+		if(!$this->inited_routehook){
 			self::ImportSys();
 			DNRoute::G()->addRouteHook([RouteMapHook::G(),'hook'],true);
-			$inited=true;
+			$this->inited_routehook=true;
 		}
 		RouteMapHook::G()->assignRoute($key,$value);
 	}

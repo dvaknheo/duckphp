@@ -85,13 +85,55 @@ class SwooleReuseRouteHook
 
 class SwooleAppBase extends DNMVCS
 {
+	public static function CoroutineSingleton($object=null,$class)
+	{
+
+		$cid = \Swoole\Coroutine::getuid();
+		if($cid<0){return null;}
+		if($cid){
+			$key="cid-$cid";
+			self::$_instances[$key]=self::$_instances[$key]??[];
+			
+			if($object){
+				self::$_instances[$key][$class]=$object;
+				return $object;
+			}
+			$me=self::$_instances[$key][$class]??null;
+			if(null===$me){
+				$me=new $class();
+				self::$_instances[$key][$class]=$me;
+			}
+			return $me;
+		}else{
+			if($object){
+				self::$_instances[$class]=$object;
+				return $object;
+			}
+			$me=self::$_instances[$class]??null;
+			if(null===$me){
+				$me=new $class();
+				self::$_instances[$class]=$me;
+			}
+		}
+	}
+	public static function CleanCoroutineSingleton()
+	{
+		$cid = \Swoole\Coroutine::getuid();
+		if($cid<=0){return null;}
+		$key="cid-$cid";
+//fwrite(STDERR,var_export(array_keys(self::$_instances[$key]),true));
+		self::$_instances[$key]=[];
+	}
 	public function init($options=[])
 	{
 		$options['default_controller_reuse']=false;
 		DN::ImportSys('SuperGlobal');
+		
 		DNRoute::G(RouteWithSuperGlobal::G());
 		RouteRewriteHook::G(RouteRewriteHookWithSuperGlobal::G());
+		
 		parent::init($options);
+		
 		$this->addRouteHook([SwooleReuseRouteHook::class,'hook']);
 		
 		return $this;
@@ -114,21 +156,25 @@ class SwooleAppBase extends DNMVCS
 	{
 		SwooleHttpd::G()->bindHttp(
 			$server,
-			function()use($options){
-				DN::G()->init($options);
+			function(){
+				global $_DNSingleton_Custumer_G;
+				$_DNSingleton_Custumer_G=[static::class,'CoroutineSingleton'];
 			},
-			function($request,$response){
+			function($request,$response)use($options){
+				DN::G(DN::G()->init($options));
 				DN::G()->options['request']=$request;
 				DN::G()->options['response']=$response;
 				DN::G()->run();
 			},
 			function($ex){
+
 				DN::G()->onException($ex);
 			},
 			function(){
 				DN::G()->options['request']=null;
 				DN::G()->options['response']=null;
 				DN::G()->cleanUp();
+				self::CleanCoroutineSingleton();
 			}
 		);
 		$server->start();
