@@ -35,11 +35,15 @@ class SwooleSuperGlobalServer extends SuperGlobal
 {
 	public function init($request)
 	{
+		foreach($request->header as $k=>$v){
+			$k='HTTP_'.str_replace('-','_',strtoupper($k));
+			$this->data[$k]=$v;
+		}
 		foreach($request->server as $k=>$v){
 			$this->data[strtoupper($k)]=$v;
 		}
+		
 	}
-	// 把 header 也引进来。
 }
 
 class SwooleSuperGlobalGet extends SuperGlobal
