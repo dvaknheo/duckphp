@@ -1,7 +1,7 @@
 <?php
 namespace DNMVCS;
 
-class DNSwooleHttpServer
+class SwooleHttpd
 {
 	use DNSingleton;
 	

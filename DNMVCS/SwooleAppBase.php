@@ -112,7 +112,7 @@ class SwooleAppBase extends DNMVCS
 	
 	public function RunWithServer($server,$options)
 	{
-		DNSwooleHttpServer::G()->bindHttp(
+		SwooleHttpd::G()->bindHttp(
 			$server,
 			function()use($options){
 				DN::G()->init($options);
