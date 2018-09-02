@@ -41,8 +41,6 @@ class SwooleHttpRequest // extends \swoole_http_request
 	{
 		$this->init_server=$_SERVER;
 		$_SERVER=[];
-		unset($_SERVER['argc']);
-		unset($_SERVER['argv']);
 		foreach($this->_object_wrapping->server as $k=>$v){
 			$_SERVER[strtoupper($k)]=$v;
 		}
@@ -59,34 +57,6 @@ class SwooleHttpRequest // extends \swoole_http_request
 		$_POST=[];
 		$_REQUEST=[];
 		//TODO cookie, session  and other super globals
-	}
-}
-class SwooleHttpResponse // extends \swoole_http_response
-{
-	use DNSingleton;
-	use DNWrapper;
-	
-	public function write($str)
-	{
-		return $this->_object_wrapping->write($str);
-	}
-	public function end(...$args)
-	{
-		return $this->_object_wrapping->end(...$args);
-	}
-	public function init()
-	{
-		$res=$this->_object_wrapping;
-		ob_start(function($str) use($res){
-			if(''===$str){return;}
-			$res->write($str);
-		});
-	}
-	public function cleanUp($is_exception=false)
-	{
-		ob_end_flush();
-		if(!$is_exception)$this->_object_wrapping->end();
-		$this->_object_wrapping=null;
 	}
 }
 ////////////////
@@ -143,14 +113,23 @@ class SwooleApp
 	public $onWebSoketCleanUp=null;
 	public $isInited=false;
 	
+	public $request=null;
+	public $response=null;
 	public function onRequest($req,$res)
 	{
+		$this->response=$res;
+		
+		ob_start(function($str) use($res){
+			if(''===$str){return;}
+			$res->write($str);
+		});
+		
 		if(!$this->isInited){
 			($this->onInit)();
 			$this->isInited=true;
 		}
-		SwooleHttpResponse::G(SwooleHttpResponse::W($res))->init();
 		SwooleHttpRequest::G(SwooleHttpRequest::W($req))->init();
+		
 		$is_exception=false;
 		try{
 			($this->onHttpRun)($req,$res);
@@ -161,8 +140,12 @@ class SwooleApp
 		($this->onHttpCleanUp)();
 		
 		SwooleHttpRequest::G()->cleanUp();
-		SwooleHttpResponse::G()->cleanUp($is_exception);
-
+		
+		ob_end_flush();
+		if(!$is_exception){ $this->response->end(); }
+		
+		//$this->request=null;
+		$this->response=null;
 	}
 	public function bindHttp($server,$onInit,$onHttpRun,$onHttpException,$onHttpCleanUp)
 	{
