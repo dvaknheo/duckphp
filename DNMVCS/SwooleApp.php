@@ -1,7 +1,7 @@
 <?php
 namespace DNMVCS;
 
-class SwooleApp
+class DNSwooleHttpServer
 {
 	use DNSingleton;
 	
@@ -18,7 +18,6 @@ class SwooleApp
 	
 	public $request=null;
 	public $response=null;
-	public $serverArray=[];
 	
 	public $frame=null;
 	protected $isInHttpException=false;
@@ -56,7 +55,7 @@ class SwooleApp
 		$this->onHttpRun=$onHttpRun;
 		$this->onHttpException=$onHttpException;
 		$this->onHttpCleanUp=$onHttpCleanUp;
-		
+		$this->server->on('message',[$this,'onMessage']);
 		$this->server->on('request',[$this,'onRequest']);
 		return $this;
 	}

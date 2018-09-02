@@ -1,6 +1,6 @@
 <?php
 namespace DNMVCS;
-
+use \DNMVCS\DNMVCS as DN;
 class RouteWithSuperGlobal extends DNRoute
 {
 	public function _SERVER($key)
@@ -74,15 +74,25 @@ class SwooleSuperGlobalCookie extends SuperGlobal
 		$this->data=$request->cookie??[];
 	}
 }
+class SwooleReuseRouteHook
+{
+	public static function hook($route){
+		$route->path_info=$route->_SERVER('PATH_INFO')??'';
+		$route->request_method=$route->_SERVER('REQUEST_METHOD')??'';
+		$route->path_info=ltrim($route->path_info,'/');
+	}
+}
+
 class SwooleAppBase extends DNMVCS
 {
 	public function init($options=[])
 	{
 		$options['default_controller_reuse']=false;
-		DNMVCS::ImportSys('SuperGlobal');
+		DN::ImportSys('SuperGlobal');
 		DNRoute::G(RouteWithSuperGlobal::G());
 		RouteRewriteHook::G(RouteRewriteHookWithSuperGlobal::G());
 		parent::init($options);
+		$this->addRouteHook([SwooleReuseRouteHook::class,'hook']);
 		
 		return $this;
 	}
@@ -94,8 +104,33 @@ class SwooleAppBase extends DNMVCS
 		HTTP_POST::G(SwooleSuperGlobalPost::G())->init($request);
 		HTTP_REQUEST::G(SwooleSuperGlobalRequest::G())->init($request);
 		COOKIE::G(SwooleSuperGlobalCookie::G())->init($request);
-		SERVER::Set('DOCUMENT_ROOT',$this->options['path']);
+		SERVER::Set('DOCUMENT_ROOT',rtrim($this->options['path'],'/'));
 		SERVER::Set('SCRIPT_FILENAME',$this->options['path'].'index.php');
+		
 		return parent::run();
+	}
+	
+	public function RunWithServer($server,$options)
+	{
+		DNSwooleHttpServer::G()->bindHttp(
+			$server,
+			function()use($options){
+				DN::G()->init($options);
+			},
+			function($request,$response){
+				DN::G()->options['request']=$request;
+				DN::G()->options['response']=$response;
+				DN::G()->run();
+			},
+			function($ex){
+				DN::G()->onException($ex);
+			},
+			function(){
+				DN::G()->options['request']=null;
+				DN::G()->options['response']=null;
+				DN::G()->cleanUp();
+			}
+		);
+		$server->start();
 	}
 }
