@@ -1,7 +1,5 @@
 <?php
 namespace DNMVCS;
-
-/////// 用于 swoole;还要多测试。
 //server
 class SwooleServer
 {
@@ -11,98 +9,19 @@ class SwooleServer
 	{
 		self::G(self::W($server));
 	}
-}
-class SwooleHttpServer
-{
-	use DNSingleton;
-	use DNWrapper;
-	public static function InitSingleton($server)
+	public function getServer()
 	{
-		self::G(self::W($server));
-	}
-}
-class SwooleWebSocketServer
-{
-	use DNSingleton;
-	use DNWrapper;
-	public static function InitSingleton($server)
-	{
-		self::G(self::W($server));
+		return $this->_object_wrapping;
 	}
 }
 /////////////////////
-//Http
-class SwooleHttpRequest // extends \swoole_http_request
-{
-	use DNSingleton;
-	use DNWrapper;
-	public $init_server;
-	public function init()
-	{
-		$this->init_server=$_SERVER;
-		$_SERVER=[];
-		foreach($this->_object_wrapping->server as $k=>$v){
-			$_SERVER[strtoupper($k)]=$v;
-		}
-		
-		$_GET=$this->_object_wrapping->get??[];
-		$_POST=$this->_object_wrapping->post??[];
-		$_REQUEST=array_merge($_GET,$_POST);
-		
-	}
-	public function cleanUp()
-	{
-		$_SERVER=$this->init_server;
-		$_GET=[];
-		$_POST=[];
-		$_REQUEST=[];
-		//TODO cookie, session  and other super globals
-	}
-}
-////////////////
-//WebSocket
-class SwooleFrame
-{
-	use DNSingleton;
-	use DNWrapper;
-}
 
-class SwooleWebSocketSession // extends \swoole_http_response
-{
-	use DNSingleton;
-	
-	public $server;
-	public $frame;
-
-	public function init($server,$frame)
-	{
-		$this->server=$server;
-		$this->frame=$frame;
-		ob_start(function($str){
-				SwooleWebSocketSession::G()->server->push(
-				SwooleWebSocketSession::G()->frame->fd,$str
-			);
-		});
-	}
-	public function getFD()
-	{
-		return $this->frame->fd;
-	}
-	public function getData()
-	{
-		return $this->frame->data;
-	}
-	public static function cleanUp()
-	{
-		ob_end_flush();
-		$this->server=null;
-		$this->frame=null;
-	}
-}
 ///////////
 class SwooleApp
 {
 	use DNSingleton;
+	
+	public $server=null;
 	
 	public $onInit=null;
 	public $onHttpRun=null;
@@ -115,59 +34,109 @@ class SwooleApp
 	
 	public $request=null;
 	public $response=null;
-	public function onRequest($req,$res)
+	public $serverArray=[];
+	
+	public $frame=null;
+	protected $isInHttpException=false;
+	public static function Server()
 	{
-		$this->response=$res;
-		
-		ob_start(function($str) use($res){
-			if(''===$str){return;}
-			$res->write($str);
-		});
+		return self::G()->server;
+	}
+	public function onRequest($request,$response)
+	{
+		$this->initResponse($response);
+		$this->initRequest($request);
 		
 		if(!$this->isInited){
 			($this->onInit)();
 			$this->isInited=true;
 		}
-		SwooleHttpRequest::G(SwooleHttpRequest::W($req))->init();
-		
-		$is_exception=false;
 		try{
-			($this->onHttpRun)($req,$res);
+			$this->isInHttpException=false;
+			($this->onHttpRun)($request,$response);
 		}catch(\Throwable $ex){
 			($this->onHttpException)($ex);
-			$is_exception=true;
+			$this->isInHttpException=true;
 		}
 		($this->onHttpCleanUp)();
 		
-		SwooleHttpRequest::G()->cleanUp();
-		
-		ob_end_flush();
-		if(!$is_exception){ $this->response->end(); }
-		
-		//$this->request=null;
-		$this->response=null;
+		$this->cleanUpRequest();
+		$this->cleanUpResponse();
+
 	}
 	public function bindHttp($server,$onInit,$onHttpRun,$onHttpException,$onHttpCleanUp)
 	{
+		$this->server=$server;
 		$this->onInit=$onInit ;
 		$this->onHttpRun=$onHttpRun;
 		$this->onHttpException=$onHttpException;
 		$this->onHttpCleanUp=$onHttpCleanUp;
 		
-		$server->on('request',[$this,'onRequest']);
+		$this->server->on('request',[$this,'onRequest']);
 		return $this;
 	}
+	
+	protected function initResponse($response)
+	{
+		$this->response=$response;
+		ob_start(function($str) use($response){
+			if(''===$str){return;}
+			$response->write($str);
+		});
+	}
+	public function cleanUpResponse()
+	{
+		ob_end_flush();
+		if(!$this->isInHttpException){ 
+			$this->response->end();
+		}
+		
+		$this->response=null;
+	}
+	protected function initRequest($request)
+	{
+		$this->request=$request;
+		
+		$this->serverArray=$_SERVER;
+		$_SERVER=[];
+		foreach($this->request->server as $k=>$v){
+			$_SERVER[strtoupper($k)]=$v;
+		}
+		
+		$_GET=$this->request->get??[];
+		$_POST=$this->request->post??[];
+		$_REQUEST=array_merge($_GET,$_POST);
+	}
+	protected function cleanUpRequest()
+	{
+		$_SERVER=$this->serverArray;
+		$_GET=[];
+		$_POST=[];
+		$_REQUEST=[];
+		
+		$this->request=null;
+	}
+	
+	
 /////////////////////////////////
 	public function onMessage($server,$frame)
-	{		
-		SwooleWebSocketSession::G()->init($server,$frame);
+	{
+		$this->frame=$frame;
+		$fd=$frame->fd;
+		ob_start(function($str)use($fd){
+				$this->server->push($fd,$str);
+		});
+		
 		try{
 			($this->onWebSoketRun)($server,$frame);
 		}catch(\Throwable $ex){
 			($this->onWebSoketException)($ex);
 		}
 		($this->onWebSoketCleanUp)();
-		SwooleWebSocketSession::G()->cleanUp();
+		
+		
+		ob_end_flush();
+		$this->frame=null;
 	}
 	public function bindWebSocket($server,$onWebSoketRun,$onWebSoketException,$onWebSoketCleanUp)
 	{
@@ -175,6 +144,9 @@ class SwooleApp
 		$this->onWebSoketRun=$onWebSoketRun;
 		$this->onWebSoketException=$onWebSoketException;
 		$this->onWebSoketCleanUp=$onWebSoketCleanUp;
-		
+	}
+	public function run()
+	{
+		$this->server->start();
 	}
 }
