@@ -20,17 +20,6 @@ class RouteWithSuperGlobal extends DNRoute
 		return  REQUEST::Get($key);
 	}
 }
-
-class RouteRewriteHookWithSuperGlobal extends RouteRewriteHook
-{
-	protected function mergeHttpGet($get)
-	{
-		foreach($get as $k=>$v){
-			HTTP_GET::Set($k,$v);
-		}
-	}
-}
-
 class SwooleSuperGlobalServer extends SuperGlobal
 {
 	public function init($request)
@@ -131,16 +120,13 @@ class SwooleAppBase extends DNMVCS
 		
 		DNRoute::G(RouteWithSuperGlobal::G());
 		RouteRewriteHook::G(RouteRewriteHookWithSuperGlobal::G());
-		
 		parent::init($options);
-		
-		$this->addRouteHook([SwooleReuseRouteHook::class,'hook']);
-		
 		return $this;
 	}
 	public function run()
 	{
 		$request=$this->options['request'];
+		
 		SERVER::G(SwooleSuperGlobalServer::G())->init($request);
 		HTTP_GET::G(SwooleSuperGlobalGet::G())->init($request);
 		HTTP_POST::G(SwooleSuperGlobalPost::G())->init($request);
@@ -148,6 +134,12 @@ class SwooleAppBase extends DNMVCS
 		COOKIE::G(SwooleSuperGlobalCookie::G())->init($request);
 		SERVER::Set('DOCUMENT_ROOT',rtrim($this->options['path'],'/'));
 		SERVER::Set('SCRIPT_FILENAME',$this->options['path'].'index.php');
+		
+		//reuse;
+		$route=DNRoute::G();
+		$route->path_info=$route->_SERVER('PATH_INFO')??'';
+		$route->request_method=$route->_SERVER('REQUEST_METHOD')??'';
+		$route->path_info=ltrim($route->path_info,'/');
 		
 		return parent::run();
 	}
@@ -162,12 +154,12 @@ class SwooleAppBase extends DNMVCS
 			},
 			function($request,$response)use($options){
 				DN::G(DN::G()->init($options));
+				
 				DN::G()->options['request']=$request;
 				DN::G()->options['response']=$response;
 				DN::G()->run();
 			},
 			function($ex){
-
 				DN::G()->onException($ex);
 			},
 			function(){
