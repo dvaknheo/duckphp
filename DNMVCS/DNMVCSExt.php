@@ -309,7 +309,7 @@ class StrictModel
 	}
 }
 
-class StrictDBManager // extends DNDBManager 这里不需要了
+class StrictDBManager // extends DNDBManager 这里不需要了 需要多测试
 {
 	use DNWrapper;
 	// bug ? _get ,_set ?

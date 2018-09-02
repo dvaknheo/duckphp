@@ -1,9 +1,10 @@
 <?php
 namespace DNMVCS;
-//未使用，用于不想用 PHP 的超级变量的场合
+// 用于不想用 PHP 的超级变量的场合 在 swoole 应用里用到
 class SuperGlobal
 {
 	use \DNMVCS\DNSingleton;
+	protected $data=[];
 	public static function Get($k)
 	{
 		return self::G()->_Get($k);
@@ -22,21 +23,23 @@ class SuperGlobal
 	}
 	public function _Get($k)
 	{
-		throw new \Exception('No impelement');
+		return $this->data[$k];
 	}
 	public function _Set($k,$v)
 	{
-		throw new \Exception('No impelement');
+		$this->data[$k]=$v;
 	}
 	public function _Remove($k)
 	{
-		throw new \Exception('No impelement');
+		unset($this->data[$k];);
 	}
-	public static function _All()
+	public function _All()
 	{
-		throw new \Exception('No impelement');
+		return $this->data;
 	}
 }
+
+
 class HTTP_GET extends  SuperGlobal
 {
 	public function _Get($k)
@@ -51,7 +54,7 @@ class HTTP_GET extends  SuperGlobal
 	{
 		unset($_GET[$k]);
 	}
-	public static function _All()
+	public function _All()
 	{
 		return $_GET;
 	}
@@ -70,7 +73,7 @@ class HTTP_POST extends SuperGlobal
 	{
 		unset($_POST[$k]);
 	}
-	public static function _All()
+	public function _All()
 	{
 		return $_POST;
 	}
@@ -89,7 +92,7 @@ class HTTP_REQUEST extends SuperGlobal
 	{
 		unset($_REQUEST[$k]);
 	}
-	public static function _All()
+	public function _All()
 	{
 		return $_REQUEST;
 	}
@@ -108,7 +111,7 @@ class SERVER extends SuperGlobal
 	{
 		unset($_SERVER[$k]);
 	}
-	public static function _All()
+	public function _All()
 	{
 		return $_SERVER;
 	}
@@ -119,19 +122,19 @@ class COOKIE extends SuperGlobal
 	{
 		return $_COOKIE[$k];
 	}
-	public static function _All()
+	public function _All()
 	{
 		return $_COOKIE;
 	}
 }
 
-class ENV exetends SuperGlobal
+class ENV extends SuperGlobal
 {
 	public function _Get($k)
 	{
 		return $_ENV[$k];
 	}
-	public static function _All()
+	public function _All()
 	{
 		return $_ENV;
 	}
@@ -150,7 +153,7 @@ class SESSION extends SuperGlobal
 	{
 		unset($_SESSION[$k]);
 	}
-	public static function _All()
+	public function _All()
 	{
 		return $SESSION;
 	}
