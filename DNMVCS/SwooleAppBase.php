@@ -153,7 +153,7 @@ fwrite(STDERR,"-- $class ~ ".$class2.";\n");
 			}
 		}
 	}
-	public static function CleanCoroutineSingleton()
+	public static function CleanUp()
 	{
 		$cid = \Swoole\Coroutine::getuid();
 		if($cid<=0){return;}
@@ -163,22 +163,39 @@ fwrite(STDERR,"-- $class ~ ".$class2.";\n");
 }
 class SwooleAppBase extends DNMVCS
 {
+	protected $rewriteMap=[];
+	protected $RouteMap=[];
+	public function assignRewrite($key,$value=null)
+	{
+		RouteRewriteHook::G()->assignRewrite($key,$value);
+	}
+	protected $inited_routehook=false;
+	public function assignRoute($key,$value=null)
+	{
+		
+		RouteMapHook::G()->assignRoute($key,$value);
+	}
+	
 	public function init($options=[])
 	{
 		$options['default_controller_reuse']=false;
-		DN::ImportSys('SuperGlobal');
-		
-		DNRoute::G(RouteWithSuperGlobal::G());
-		RouteRewriteHook::G(RouteRewriteHookWithSuperGlobal::G());
-		
 		parent::init($options);
+		
+		DNSingletonStaticClass::DeleteInstance(DNRoute::class);
+		DNSingletonStaticClass::DeleteInstance(RouteRewriteHookWithSuperGlobal::class);
+		DNSingletonStaticClass::DeleteInstance(RouteRewriteHook::class);
+		
 		return $this;
 	}
 	public function run()
 	{
-		$request=$this->options['request'];
+		$request=$this->request;
 		
-
+		DNRoute::G(RouteWithSuperGlobal::G());
+		//RouteRewriteHook::G(RouteRewriteHookWithSuperGlobal::G());
+		
+		$this->initRoute(DNRoute::G());
+		$this->initView(DNView::G());
 		
 		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G())->init($request);
 		SuperGlobal\GET::G(SwooleSuperGlobalGet::G())->init($request);
@@ -193,49 +210,44 @@ class SwooleAppBase extends DNMVCS
 		$route->path_info=$route->_SERVER('PATH_INFO')??'';
 		$route->request_method=$route->_SERVER('REQUEST_METHOD')??'';
 		$route->path_info=ltrim($route->path_info,'/');
-		
-		return parent::run();
+//fwrite(STDERR,var_export($route,true).";\n");
+
+		return $route->run();
+	}
+	protected function initExceptionManager()
+	{
 	}
 	public static function OnRequest($request,$response)
 	{
-		$options=self::$_options;
-		//CoroutineSingleton::Dump();
 		$isInHttpException=false;
 		ob_start(function($str) use($response){
 			if(''===$str){return;}
 			$response->write($str);
 		});
 		try{
-			DN::G()->init($options);
-			DN::G()->options['request']=$request;
-			DN::G()->options['response']=$response;
+			DN::G()->request=$request;
 			DN::G()->run();
 		}catch(\Throwable $ex){
 			$isInHttpException=true;
-			DN::G()->onException($ex);
+			if($ex instanceof  \Swoole\ExitException){
+			}else{
+				DN::G()->onException($ex);
+			}
 		}
-		DN::G()->options['request']=null;
-		DN::G()->options['response']=null;
-		DN::G()->cleanUp();
-
-		
+		DN::G()->request=null;
 		ob_end_flush();
 		if(!$isInHttpException){ 
 			$response->end();
 		}
+		CoroutineSingleton::CleanUp();
 		//$response=null;
 	}
 	public static $_options;
 	public static function RunWithServer($server,$options)
 	{
-		DNAutoLoader::G()->init($options)->run();
-		$opt=array_merge(self::DEFAULT_OPTIONS,$options);
-		$base_class=$opt['base_class'];
-		DN::G(new $base_class());
-		//DN::G()->init($options);
-		
+		DN::G(DN::G()->init($options));
+		//Swoole\Runtime::enableCoroutine();
 		CoroutineSingleton::ReplaceDefaultSingletonHandel();
-		self::$_options=$options;
 		$server->on('request',[static::class,'OnRequest']);
 		$server->start();
 	}

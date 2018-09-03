@@ -1059,7 +1059,7 @@ trait DNMVCS_Handel
 		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
 		if(!DNView::G()->hasView('_sys/error-exception')){
-			if(false && !$this->isDev){
+			if(!$this->isDev){
 				echo "DNMVCS 500 internal error!\n";
 			}else{
 				echo "<!--DNMVCS  use view/_sys/error-exception.php to overrid me -->\n";
