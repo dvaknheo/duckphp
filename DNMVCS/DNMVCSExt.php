@@ -654,6 +654,34 @@ class FunctionView extends DNView
 		}
 	}
 }
+class RouteWithSuperGlobal extends DNRoute
+{
+	public function init($options)
+	{
+		parent::init($options);
+		$this->path_info=$this->_SERVER('PATH_INFO')??'';
+		$this->request_method=$this->_SERVER('REQUEST_METHOD')??'';
+		$this->path_info=ltrim($this->path_info,'/');
+		return $this;
+	}
+	public function _SERVER($key)
+	{
+		return  SuperGlobal\SERVER::Get($key);
+	}
+	public function _GET($key)
+	{
+		return  SuperGlobal\GET::Get($key);
+	}
+	public function _POST($key)
+	{
+		return  SuperGlobal\POST::Get($key);
+	}
+	public function _REQUEST($key)
+	{
+		return  SuperGlobal\REQUEST::Get($key);
+	}
+}
+
 class AppEx extends DNMVCS
 {
 	const DEFAULT_OPTIONS_EX=[
@@ -669,6 +697,7 @@ class AppEx extends DNMVCS
 			'use_common_autoloader'=>false,
 				'fullpath_config_common'=>'',
 			'use_ext_db'=>false,
+			//TODO 'use_super_global'=>false,
 		];
 	public function init($options=[])
 	{
@@ -688,7 +717,8 @@ class AppEx extends DNMVCS
 		if($options['use_ext_db']){
 			$options['db_class'] =DBExt::class;
 		}
-		parent::init($options);
+		
+		parent::init($options); // TODO move down;
 		
 		//TODO test for 404
 		SimpleRouteHook::G()->key_for_simple_route=$this->options['key_for_simple_route'];

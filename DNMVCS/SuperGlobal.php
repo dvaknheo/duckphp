@@ -23,7 +23,7 @@ class SuperGlobalBase
 	}
 	public function _Get($k)
 	{
-		return $this->data[$k];
+		return $this->data[$k]??null;
 	}
 	public function _Set($k,$v)
 	{
