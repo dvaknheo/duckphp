@@ -40,7 +40,7 @@ class SuperGlobalBase
 }
 
 
-class HTTP_GET extends  SuperGlobalBase
+class GET extends  SuperGlobalBase
 {
 	public function _Get($k)
 	{
@@ -59,7 +59,7 @@ class HTTP_GET extends  SuperGlobalBase
 		return $_GET;
 	}
 }
-class HTTP_POST extends SuperGlobalBase
+class POST extends SuperGlobalBase
 {
 	public function _Get($k)
 	{
@@ -78,7 +78,7 @@ class HTTP_POST extends SuperGlobalBase
 		return $_POST;
 	}
 }
-class HTTP_REQUEST extends SuperGlobalBase
+class REQUEST extends SuperGlobalBase
 {
 	public function _Get($k)
 	{

@@ -12,11 +12,11 @@ class RouteWithSuperGlobal extends DNRoute
 	}
 	public function _GET($key)
 	{
-		return  SuperGlobal\HTTP_GET::Get($key);
+		return  SuperGlobal\GET::Get($key);
 	}
 	public function _POST($key)
 	{
-		return  SuperGlobal\HTTP_POST::Get($key);
+		return  SuperGlobal\POST::Get($key);
 	}
 	public function _REQUEST($key)
 	{
@@ -73,9 +73,9 @@ class RouteRewriteHookWithSuperGlobal extends RouteRewriteHook
 	protected function mergeHttpGet($get)
 	{
 		//$_GET=array_merge($get,$_GET??[]);
-		$data=array_merge($get,HTTP_GET::All());
+		$data=array_merge($get, SuperGlobal\GET::All());
 		foreach($data as $k=>$v){
-			HTTP_GET::Set($k,$v);
+			SuperGlobal\GET::Set($k,$v);
 		}
 	}
 }
@@ -176,9 +176,9 @@ class SwooleAppBase extends DNMVCS
 		$request=$this->options['request'];
 		
 		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G())->init($request);
-		SuperGlobal\HTTP_GET::G(SwooleSuperGlobalGet::G())->init($request);
-		SuperGlobal\HTTP_POST::G(SwooleSuperGlobalPost::G())->init($request);
-		SuperGlobal\HTTP_REQUEST::G(SwooleSuperGlobalRequest::G())->init($request);
+		SuperGlobal\GET::G(SwooleSuperGlobalGet::G())->init($request);
+		SuperGlobal\POST::G(SwooleSuperGlobalPost::G())->init($request);
+		SuperGlobal\REQUEST::G(SwooleSuperGlobalRequest::G())->init($request);
 		SuperGlobal\COOKIE::G(SwooleSuperGlobalCookie::G())->init($request);
 		SuperGlobal\SERVER::Set('DOCUMENT_ROOT',rtrim($this->options['path'],'/'));
 		SuperGlobal\SERVER::Set('SCRIPT_FILENAME',$this->options['path'].'index.php');
