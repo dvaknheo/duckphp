@@ -32,6 +32,10 @@ final class DNSingletonStaticClass
 		}
 		return $me;
 	}
+	public static function DeleteInstance($class)
+	{
+		unset(self::$_instances[$class]);
+	}
 }
 class DNAutoLoader
 {
@@ -940,6 +944,14 @@ trait DNMVCS_Glue
 	{
 		return self::G()->_Import($file);
 	}
+	public static function DI($name)
+	{
+		return self::G()->_DI($name);
+	}
+	public function _DI($name)
+	{
+		//DN::ThrowOn(true,"Implement Me TODO Anything You Like");
+	}
 	
 }
 trait DNMVCS_Misc
@@ -1047,7 +1059,7 @@ trait DNMVCS_Handel
 		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
 		if(!DNView::G()->hasView('_sys/error-exception')){
-			if(!$this->isDev){
+			if(false && !$this->isDev){
 				echo "DNMVCS 500 internal error!\n";
 			}else{
 				echo "<!--DNMVCS  use view/_sys/error-exception.php to overrid me -->\n";

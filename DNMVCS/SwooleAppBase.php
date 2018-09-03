@@ -111,17 +111,21 @@ class CoroutineSingleton
 			DNSingletonStaticClass::$_instances[$key][$class]=$me;
 			return $me;
 		}else{
+		
+		
 			$master=DNSingletonStaticClass::$_instances[$class]??null;
 			if($master){
-				throw new \ErrorException("CoroutineSingleton false:: $class has singletonOutside use CoroutineSingleton::SingletonInCoOnly('') ");
+				throw new \ErrorException("CoroutineSingleton fail:: $class use CreateInstance instead");
 			}
 			DNSingletonStaticClass::$_instances[$key][$class]=$object;
 			return $object;
 		}
 	}
-	public static function CreateInstance($class)
+	public static function CreateInstance($class,$object=null)
 	{
-		$me=new $class();
+		$cid = \Swoole\Coroutine::getuid();
+		$key="cid=$cid";
+		$me=$object??new $class();
 		DNSingletonStaticClass::$_instances[$key]=DNSingletonStaticClass::$_instances[$key]??[];
 		DNSingletonStaticClass::$_instances[$key][$class]=$me;
 		return $me;
@@ -129,6 +133,10 @@ class CoroutineSingleton
 	public static function DeleteInstance($class)
 	{
 		unset(DNSingletonStaticClass::$_instances[$key][$class]);
+	}
+	public static function ReplaceDefaultSingletonHandel()
+	{
+		DNSingletonStaticClass::$Replacer=[CoroutineSingleton::class,'GetInstance'];
 	}
 	public static function Dump()
 	{
@@ -162,12 +170,15 @@ class SwooleAppBase extends DNMVCS
 		
 		DNRoute::G(RouteWithSuperGlobal::G());
 		RouteRewriteHook::G(RouteRewriteHookWithSuperGlobal::G());
+		
 		parent::init($options);
 		return $this;
 	}
 	public function run()
 	{
 		$request=$this->options['request'];
+		
+
 		
 		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G())->init($request);
 		SuperGlobal\GET::G(SwooleSuperGlobalGet::G())->init($request);
@@ -185,16 +196,17 @@ class SwooleAppBase extends DNMVCS
 		
 		return parent::run();
 	}
-	public static function onRequest($request,$response)
+	public static function OnRequest($request,$response)
 	{
 		$options=self::$_options;
+		//CoroutineSingleton::Dump();
 		$isInHttpException=false;
 		ob_start(function($str) use($response){
 			if(''===$str){return;}
 			$response->write($str);
 		});
 		try{
-			DN::G(DN::G()->init($options));
+			DN::G()->init($options);
 			DN::G()->options['request']=$request;
 			DN::G()->options['response']=$response;
 			DN::G()->run();
@@ -216,9 +228,15 @@ class SwooleAppBase extends DNMVCS
 	public static $_options;
 	public static function RunWithServer($server,$options)
 	{
-		DNSingletonStaticClass::$Replacer=[CoroutineSingleton::class,'GetInstance'];
+		DNAutoLoader::G()->init($options)->run();
+		$opt=array_merge(self::DEFAULT_OPTIONS,$options);
+		$base_class=$opt['base_class'];
+		DN::G(new $base_class());
+		//DN::G()->init($options);
+		
+		CoroutineSingleton::ReplaceDefaultSingletonHandel();
 		self::$_options=$options;
-		$server->on('request',[self::class,'onRequest']);
+		$server->on('request',[static::class,'OnRequest']);
 		$server->start();
 	}
 }
