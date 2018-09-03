@@ -90,46 +90,45 @@ class SwooleReuseRouteHook
 
 class CoroutineSingleton
 {
-	public static function G($object=null,$class)
+	public static function GetInstance($class,$object)
 	{
-		if($object===null){
-			$me=DNSingletonStaticClass::$_instances[$class]??null;
-			if($me){return $object;}
-		}
 		$cid = \Swoole\Coroutine::getuid();
 		if($cid<=0){
-			if($object){
-				DNSingletonStaticClass::$_instances[$class]=$object;
-				return $object;
-			}
-			$me=DNSingletonStaticClass::$_instances[$class]??null;
-			if(null===$me){
-				$me=new $class();
-				DNSingletonStaticClass::$_instances[$class]=$me;
-			}
-			return $me;
+			return DNSingletonStaticClass::GetInstance($class,$object);
 		}
 		
 		$key="cid=$cid";
 		DNSingletonStaticClass::$_instances[$key]=DNSingletonStaticClass::$_instances[$key]??[];
-		if($object){
+		
+		if($object===null){
+			$me=DNSingletonStaticClass::$_instances[$key][$class]??null;
+			if($me!==null){return $me;}
+			
+			$me=DNSingletonStaticClass::$_instances[$class]??null;
+			if($me!==null){return $me;}
+			
+			$me=new $class();
+			DNSingletonStaticClass::$_instances[$key][$class]=$me;
+			return $me;
+		}else{
+			$master=DNSingletonStaticClass::$_instances[$class]??null;
+			if($master){
+				throw new \ErrorException("CoroutineSingleton false:: $class has singletonOutside use CoroutineSingleton::SingletonInCoOnly('') ");
+			}
 			DNSingletonStaticClass::$_instances[$key][$class]=$object;
 			return $object;
 		}
-		$me=DNSingletonStaticClass::$_instances[$key][$class]??null;
-		if(null===$me){
-			$master=DNSingletonStaticClass::$_instances[$class]??null;
-			if(null!==$master){return $master;}
-			$me=new $class();
-			DNSingletonStaticClass::$_instances[$key][$class]=$me;
-		}
-		return $me;
-		
 	}
-	public static function HasSingletonOutSide($class)
+	public static function CreateInstance($class)
 	{
-		$me=DNSingletonStaticClass::$_instances[$class]??null;
-		return $me?true:false;
+		$me=new $class();
+		DNSingletonStaticClass::$_instances[$key]=DNSingletonStaticClass::$_instances[$key]??[];
+		DNSingletonStaticClass::$_instances[$key][$class]=$me;
+		return $me;
+	}
+	public static function DeleteInstance($class)
+	{
+		unset(DNSingletonStaticClass::$_instances[$key][$class]);
 	}
 	public static function Dump()
 	{
@@ -153,11 +152,6 @@ fwrite(STDERR,"-- $class ~ ".$class2.";\n");
 		$key="cid-$cid";
 		DNSingletonStaticClass::$_instances[$key]=[];
 	}
-}
-class T
-{
-	use DNSingleton;
-	public function foo(){}
 }
 class SwooleAppBase extends DNMVCS
 {
@@ -191,33 +185,40 @@ class SwooleAppBase extends DNMVCS
 		
 		return parent::run();
 	}
-	
-	public function RunWithServer($server,$options)
+	public static function onRequest($request,$response)
 	{
-		DNSingletonStaticClass::$Replacer=[CoroutineSingleton::class,'G'];
-		(new SwooleHttpd())->bindHttp(
-			$server,
-			function(){},
-			function($request,$response)use($options){
+		$options=self::$_options;
+		$isInHttpException=false;
+		ob_start(function($str) use($response){
+			if(''===$str){return;}
+			$response->write($str);
+		});
+		try{
+			DN::G(DN::G()->init($options));
+			DN::G()->options['request']=$request;
+			DN::G()->options['response']=$response;
+			DN::G()->run();
+		}catch(\Throwable $ex){
+			$isInHttpException=true;
+			DN::G()->onException($ex);
+		}
+		DN::G()->options['request']=null;
+		DN::G()->options['response']=null;
+		DN::G()->cleanUp();
 
-
-				DN::G(DN::G()->init($options));
-				
-				DN::G()->options['request']=$request;
-				DN::G()->options['response']=$response;
-				DN::G()->run();
-			},
-			function($ex){
-				DN::G()->onException($ex);
-			},
-			function(){
-				DN::G()->options['request']=null;
-				DN::G()->options['response']=null;
-				DN::G()->cleanUp();
-
-				CoroutineSingleton::CleanCoroutineSingleton();
-			}
-		);
+		
+		ob_end_flush();
+		if(!$isInHttpException){ 
+			$response->end();
+		}
+		//$response=null;
+	}
+	public static $_options;
+	public static function RunWithServer($server,$options)
+	{
+		DNSingletonStaticClass::$Replacer=[CoroutineSingleton::class,'GetInstance'];
+		self::$_options=$options;
+		$server->on('request',[self::class,'onRequest']);
 		$server->start();
 	}
 }

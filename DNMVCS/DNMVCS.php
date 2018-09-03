@@ -10,16 +10,16 @@ trait DNSingleton
 	public static function G($object=null)
 	{
 		if(DNSingletonStaticClass::$Replacer!==null){
-			return  (DNSingletonStaticClass::$Replacer)($object,static::class);
+			return  (DNSingletonStaticClass::$Replacer)(static::class,$object);
 		}
-		return DNSingletonStaticClass::G($object,static::class);
+		return DNSingletonStaticClass::GetInstance(static::class,$object);
 	}
 }
 final class DNSingletonStaticClass
 {
 	public static $Replacer=null;
 	public static $_instances=[];
-	public static function G($object=null,$class)
+	public static function GetInstance($class,$object)
 	{
 		if($object){
 			self::$_instances[$class]=$object;
