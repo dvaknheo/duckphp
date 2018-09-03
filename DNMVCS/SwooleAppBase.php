@@ -6,6 +6,14 @@ use \DNMVCS\SuperGlobal;
 
 class RouteWithSuperGlobal extends DNRoute
 {
+	public function init($options)
+	{
+		parent::init($options);
+		$this->path_info=$this->_SERVER('PATH_INFO')??'';
+		$this->request_method=$this->_SERVER('REQUEST_METHOD')??'';
+		$this->path_info=ltrim($this->path_info,'/');
+		return $this;
+	}
 	public function _SERVER($key)
 	{
 		return  SuperGlobal\SERVER::Get($key);
@@ -77,14 +85,6 @@ class RouteRewriteHookWithSuperGlobal extends RouteRewriteHook
 		foreach($data as $k=>$v){
 			SuperGlobal\GET::Set($k,$v);
 		}
-	}
-}
-class SwooleReuseRouteHook
-{
-	public static function hook($route){
-		$route->path_info=$route->_SERVER('PATH_INFO')??'';
-		$route->request_method=$route->_SERVER('REQUEST_METHOD')??'';
-		$route->path_info=ltrim($route->path_info,'/');
 	}
 }
 
@@ -163,74 +163,42 @@ fwrite(STDERR,"-- $class ~ ".$class2.";\n");
 }
 class SwooleAppBase extends DNMVCS
 {
-	protected $rewriteMap=[];
-	protected $routeMap=[];
-	public function assignRewrite($key,$value=null)
-	{
-		if(is_array($key)&& $value===null){
-			$this->rewriteMap=array_merge($this->rewriteMap,$key);
-		}else{
-			$this->rewriteMap[$key]=$value;
-		}
-	}
-	public function assignRoute($key,$value=null)
-	{
-		if(is_array($key)&& $value===null){
-			$this->routeMap=array_merge($this->routeMap,$key);
-		}else{
-			$this->routeMap[$key]=$value;
-		}
-	}
-	
+	public $request=null;
+	public $response=null;
 	protected $inited_routehooks=[];
+	
 	public function init($options=[])
 	{
 		$options['default_controller_reuse']=false;
 		parent::init($options);
 		
+		$this->inited_routehooks=DNRoute::G()->routeHooks;
+		
 		DNSingletonStaticClass::DeleteInstance(DNView::class);
 		DNSingletonStaticClass::DeleteInstance(DNRoute::class);
-		
-		DNSingletonStaticClass::DeleteInstance(RouteRewriteHookWithSuperGlobal::class);
-		DNSingletonStaticClass::DeleteInstance(RouteRewriteHook::class);
 		
 		return $this;
 	}
 	public function run()
 	{
 		$request=$this->request;
-		
-		DNRoute::G(RouteWithSuperGlobal::G());
-		//RouteRewriteHook::G(RouteRewriteHookWithSuperGlobal::G());
-		
-		$this->initRoute(DNRoute::G());
-		$this->initView(DNView::G());
-		
-		DNRoute::G()->addRouteHook([RouteMapHook::G(),'hook'],true);
-		DNRoute::G()->addRouteHook([RouteRewriteHook::G(),'hook'],true);
-		foreach($this->rewriteMap as $key=>$value){
-			RouteRewriteHook::G()->assignRewrite($key,$value);
-		}
-		foreach($this->routeMap as $key=>$value){
-			RouteMapHook::G()->assignRoute($key,$value);
-		}
-		
 		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G())->init($request);
 		SuperGlobal\GET::G(SwooleSuperGlobalGet::G())->init($request);
 		SuperGlobal\POST::G(SwooleSuperGlobalPost::G())->init($request);
 		SuperGlobal\REQUEST::G(SwooleSuperGlobalRequest::G())->init($request);
 		SuperGlobal\COOKIE::G(SwooleSuperGlobalCookie::G())->init($request);
+		
 		SuperGlobal\SERVER::Set('DOCUMENT_ROOT',rtrim($this->options['path'],'/'));
 		SuperGlobal\SERVER::Set('SCRIPT_FILENAME',$this->options['path'].'index.php');
 		
-		//reuse;
-		$route=DNRoute::G();
-		$route->path_info=$route->_SERVER('PATH_INFO')??'';
-		$route->request_method=$route->_SERVER('REQUEST_METHOD')??'';
-		$route->path_info=ltrim($route->path_info,'/');
-//fwrite(STDERR,var_export($route,true).";\n");
-
-		return $route->run();
+		$this->initView(DNView::G());
+		$this->initRoute(DNRoute::G(RouteWithSuperGlobal::G()));
+		
+		DNRoute::G()->routeHooks=$this->inited_routehooks;
+		
+		
+		
+		return parent::run();
 	}
 	protected function initExceptionManager()
 	{
@@ -238,6 +206,9 @@ class SwooleAppBase extends DNMVCS
 	public static function OnRequest($request,$response)
 	{
 		$isInHttpException=false;
+		
+		DN::G()->request=$request;
+		DN::G()->response=$response;
 		ob_start(function($str) use($response){
 			if(''===$str){return;}
 			$response->write($str);
@@ -253,6 +224,7 @@ class SwooleAppBase extends DNMVCS
 			}
 		}
 		DN::G()->request=null;
+		DN::G()->response=null;
 		ob_end_flush();
 		if(!$isInHttpException){ 
 			$response->end();
@@ -260,13 +232,13 @@ class SwooleAppBase extends DNMVCS
 		CoroutineSingleton::CleanUp();
 		//$response=null;
 	}
-	public static $_options;
 	public static function RunWithServer($server,$options)
 	{
 		DN::G(DN::G()->init($options));
 		//Swoole\Runtime::enableCoroutine();
 		CoroutineSingleton::ReplaceDefaultSingletonHandel();
 		$server->on('request',[static::class,'OnRequest']);
+		
 		$server->start();
 	}
 }

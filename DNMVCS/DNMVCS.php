@@ -178,7 +178,7 @@ class DNRoute
 	protected $enable_post_prefix=true;
 	protected $disable_default_class_outside=false;
 	
-	protected $routeHooks=[];
+	public $routeHooks=[];
 	public $callback=null;
 	
 	public $onURL=null;
@@ -277,6 +277,8 @@ class DNRoute
 		$this->calling_class='';
 		$this->calling_method='';
 		$this->callback=null;
+		$this->routeHooks=[];
+		
 	}
 
 	protected function getRouteHandelByFile()
@@ -834,25 +836,24 @@ trait DNMVCS_Glue
 	{
 		return DNRoute::G()->_Parameters();
 	}
-	protected $inited_rewrite=false;
+	
+	protected $rewriteMap=[];
+	protected $routeMap=[];
 	public function assignRewrite($key,$value=null)
 	{
-		if(!$this->inited_rewrite){
-			self::ImportSys();
-			DNRoute::G()->addRouteHook([RouteRewriteHook::G(),'hook'],true);
-			$this->inited_rewrite=true;
+		if(is_array($key)&& $value===null){
+			$this->rewriteMap=array_merge($this->rewriteMap,$key);
+		}else{
+			$this->rewriteMap[$key]=$value;
 		}
-		RouteRewriteHook::G()->assignRewrite($key,$value);
 	}
-	protected $inited_routehook=false;
-	public function assignRoute($key,$value=null)
+	public function assignRoute($key,$callback=null)
 	{
-		if(!$this->inited_routehook){
-			self::ImportSys();
-			DNRoute::G()->addRouteHook([RouteMapHook::G(),'hook'],true);
-			$this->inited_routehook=true;
+		if(is_array($key)&& $callback===null){
+			$this->routeMap=array_merge($this->routeMap,$key);
+		}else{
+			$this->routeMap[$key]=$callback;
 		}
-		RouteMapHook::G()->assignRoute($key,$value);
 	}
 	public function addRouteHook($hook,$prepend=false)
 	{
@@ -1296,6 +1297,11 @@ class DNMVCS
 	}
 	public function run()
 	{
+		if($this->rewriteMap || $this->routeMap){
+			self::ImportSys();
+			RouteRewriteHook::G()->install($this->rewriteMap);
+			RouteMapHook::G()->install($this->routeMap);
+		}
 		return DNRoute::G()->run();
 	}
 	public function cleanUp()

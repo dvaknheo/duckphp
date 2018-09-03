@@ -154,6 +154,15 @@ class RouteMapHook
 	use DNSingleton;
 	protected $routeMap=[];
 	
+	protected $is_installed=false;	
+	public function install($routeMap)
+	{
+		if($this->is_installed){return;}
+		$this->is_installed=true;
+		$this->assignRoute($routeMap);
+		
+		DNRoute::G()->addRouteHook([$this,'hook'],true);
+	}
 	protected function matchRoute($pattern_url,$path_info,$route)
 	{
 		$pattern='/^(([A-Z_]+)\s+)?(~)?\/?(.*)\/?$/';
@@ -217,6 +226,15 @@ class RouteRewriteHook
 {
 	use DNSingleton;
 	protected $rewriteMap=[];
+	protected $is_installed=false;
+	public function install($rewriteMap)
+	{
+		if($this->is_installed){return;}
+		$this->is_installed=true;
+		$this->assignRewrite($rewriteMap);
+		
+		DNRoute::G()->addRouteHook([$this,'hook'],true);
+	}
 	protected function mergeHttpGet($get)
 	{
 		$_GET=array_merge($get,$_GET??[]);
