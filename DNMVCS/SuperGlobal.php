@@ -1,7 +1,7 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\SuperGlobal;
 // 用于不想用 PHP 的超级变量的场合 在 swoole 应用里用到
-class SuperGlobal
+class SuperGlobalBase
 {
 	use \DNMVCS\DNSingleton;
 	protected $data=[];
@@ -40,7 +40,7 @@ class SuperGlobal
 }
 
 
-class HTTP_GET extends  SuperGlobal
+class HTTP_GET extends  SuperGlobalBase
 {
 	public function _Get($k)
 	{
@@ -59,7 +59,7 @@ class HTTP_GET extends  SuperGlobal
 		return $_GET;
 	}
 }
-class HTTP_POST extends SuperGlobal
+class HTTP_POST extends SuperGlobalBase
 {
 	public function _Get($k)
 	{
@@ -78,7 +78,7 @@ class HTTP_POST extends SuperGlobal
 		return $_POST;
 	}
 }
-class HTTP_REQUEST extends SuperGlobal
+class HTTP_REQUEST extends SuperGlobalBase
 {
 	public function _Get($k)
 	{
@@ -97,7 +97,7 @@ class HTTP_REQUEST extends SuperGlobal
 		return $_REQUEST;
 	}
 }
-class SERVER extends SuperGlobal
+class SERVER extends SuperGlobalBase
 {
 	public function _Get($k)
 	{
@@ -116,7 +116,7 @@ class SERVER extends SuperGlobal
 		return $_SERVER;
 	}
 }
-class COOKIE extends SuperGlobal
+class COOKIE extends SuperGlobalBase
 {
 	public function _Get($k)
 	{
@@ -128,7 +128,7 @@ class COOKIE extends SuperGlobal
 	}
 }
 
-class ENV extends SuperGlobal
+class ENV extends SuperGlobalBase
 {
 	public function _Get($k)
 	{
@@ -139,7 +139,7 @@ class ENV extends SuperGlobal
 		return $_ENV;
 	}
 }
-class SESSION extends SuperGlobal
+class SESSION extends SuperGlobalBase
 {
 	public function _Get($k)
 	{

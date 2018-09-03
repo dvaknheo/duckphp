@@ -16,7 +16,6 @@ class SwooleHttpd
 	public $onWebSoketCleanUp=null;
 	public $isInited=false;
 	
-	public $request=null;
 	public $response=null;
 	
 	public $frame=null;
@@ -29,7 +28,6 @@ class SwooleHttpd
 	public function onRequest($request,$response)
 	{
 		$this->initResponse($response);
-		$this->initRequest($request);
 		
 		if(!$this->isInited){
 			($this->onInit)();
@@ -44,7 +42,6 @@ class SwooleHttpd
 		}
 		($this->onHttpCleanUp)();
 		
-		$this->cleanUpRequest();
 		$this->cleanUpResponse();
 
 	}
@@ -55,7 +52,7 @@ class SwooleHttpd
 		$this->onHttpRun=$onHttpRun;
 		$this->onHttpException=$onHttpException;
 		$this->onHttpCleanUp=$onHttpCleanUp;
-		$this->server->on('message',[$this,'onMessage']);
+
 		$this->server->on('request',[$this,'onRequest']);
 		return $this;
 	}
@@ -76,15 +73,6 @@ class SwooleHttpd
 		}
 		
 		$this->response=null;
-	}
-	protected function initRequest($request)
-	{
-		$this->request=$request;
-	}
-	protected function cleanUpRequest()
-	{
-		
-		$this->request=null;
 	}
 	
 	

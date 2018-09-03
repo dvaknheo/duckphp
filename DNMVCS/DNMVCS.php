@@ -5,24 +5,30 @@ namespace DNMVCS;
 use \PDO;
 use \Exception;
 
-global $_DNSingleton_Custumer_G;
 trait DNSingleton
 {
-	protected static $_instances=[];
 	public static function G($object=null)
 	{
-		global $_DNSingleton_Custumer_G;
-		if($_DNSingleton_Custumer_G){
-			return  ($_DNSingleton_Custumer_G)($object,static::class);
+		if(DNSingletonStaticClass::$Replacer!==null){
+			return  (DNSingletonStaticClass::$Replacer)($object,static::class);
 		}
+		return DNSingletonStaticClass::G($object,static::class);
+	}
+}
+final class DNSingletonStaticClass
+{
+	public static $Replacer=null;
+	public static $_instances=[];
+	public static function G($object=null,$class)
+	{
 		if($object){
-			self::$_instances[static::class]=$object;
+			self::$_instances[$class]=$object;
 			return $object;
 		}
-		$me=self::$_instances[static::class]??null;
+		$me=self::$_instances[$class]??null;
 		if(null===$me){
-			$me=new static();
-			self::$_instances[static::class]=$me;
+			$me=new $class();
+			self::$_instances[$class]=$me;
 		}
 		return $me;
 	}

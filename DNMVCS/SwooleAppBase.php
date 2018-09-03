@@ -1,26 +1,28 @@
 <?php
 namespace DNMVCS;
 use \DNMVCS\DNMVCS as DN;
+use \DNMVCS\SuperGlobal\SuperGlobalBase;
+
 class RouteWithSuperGlobal extends DNRoute
 {
 	public function _SERVER($key)
 	{
-		return  SERVER::Get($key);
+		return  SuperGlobal\SERVER::Get($key);
 	}
 	public function _GET($key)
 	{
-		return  HTTP_GET::Get($key);
+		return  SuperGlobal\HTTP_GET::Get($key);
 	}
 	public function _POST($key)
 	{
-		return  HTTP_POST::Get($key);
+		return  SuperGlobal\HTTP_POST::Get($key);
 	}
 	public function _REQUEST($key)
 	{
-		return  REQUEST::Get($key);
+		return  SuperGlobal\REQUEST::Get($key);
 	}
 }
-class SwooleSuperGlobalServer extends SuperGlobal
+class SwooleSuperGlobalServer extends SuperGlobalBase
 {
 	public function init($request)
 	{
@@ -35,28 +37,28 @@ class SwooleSuperGlobalServer extends SuperGlobal
 	}
 }
 
-class SwooleSuperGlobalGet extends SuperGlobal
+class SwooleSuperGlobalGet extends SuperGlobalBase
 {
 	public function init($request)
 	{
 		$this->data=$request->get??[];
 	}
 }
-class SwooleSuperGlobalPost extends SuperGlobal
+class SwooleSuperGlobalPost extends SuperGlobalBase
 {
 	public function init($request)
 	{
 		$this->data=$request->post??[];
 	}
 }
-class SwooleSuperGlobalRequest extends SuperGlobal
+class SwooleSuperGlobalRequest extends SuperGlobalBase
 {
 	public function init($request)
 	{
 		$this->data=array_merge($request->get??[],$request->post??[]);
 	}
 }
-class SwooleSuperGlobalCookie extends SuperGlobal
+class SwooleSuperGlobalCookie extends SuperGlobalBase
 {
 	public function init($request)
 	{
@@ -72,38 +74,42 @@ class SwooleReuseRouteHook
 	}
 }
 
-class SwooleAppBase extends DNMVCS
+class CoroutineSingleton
 {
-	public static function CoroutineSingleton($object=null,$class)
+	public static function G($object=null,$class)
 	{
 
 		$cid = \Swoole\Coroutine::getuid();
 		if($cid<0){return null;}
-		if($cid){
-			$key="cid-$cid";
-			self::$_instances[$key]=self::$_instances[$key]??[];
-			
+		if($cid===0){
 			if($object){
-				self::$_instances[$key][$class]=$object;
-				return $object;
+			DNSingletonStaticClass::$_instances[$class]=$object;
+			return $object;
 			}
-			$me=self::$_instances[$key][$class]??null;
+			$me=DNSingletonStaticClass::$_instances[$class]??null;
 			if(null===$me){
 				$me=new $class();
-				self::$_instances[$key][$class]=$me;
+				DNSingletonStaticClass::$_instances[$class]=$me;
 			}
 			return $me;
-		}else{
-			if($object){
-				self::$_instances[$class]=$object;
-				return $object;
-			}
-			$me=self::$_instances[$class]??null;
-			if(null===$me){
-				$me=new $class();
-				self::$_instances[$class]=$me;
-			}
 		}
+		
+		$key="cid-$cid";
+		DNSingletonStaticClass::$_instances[$key]=self::$_instances[$key]??[];
+		if($object){
+			DNSingletonStaticClass::$_instances[$key][$class]=$object;
+			return $object;
+		}
+		$me=DNSingletonStaticClass::$_instances[$key][$class]??null;
+		if(null===$me){
+			$object=DNSingletonStaticClass::[$class]??null;
+			if(null!==$object){return $object;}
+		
+			$me=new $class();
+			DNSingletonStaticClass::$_instances[$key][$class]=$me;
+		}
+		return $me;
+		
 	}
 	public static function CleanCoroutineSingleton()
 	{
@@ -111,8 +117,11 @@ class SwooleAppBase extends DNMVCS
 		if($cid<=0){return null;}
 		$key="cid-$cid";
 //fwrite(STDERR,var_export(array_keys(self::$_instances[$key]),true));
-		self::$_instances[$key]=[];
+		DNSingletonStaticClass::$_instances[$key]=[];
 	}
+}
+class SwooleAppBase extends DNMVCS
+{
 	public function init($options=[])
 	{
 		$options['default_controller_reuse']=false;
@@ -146,12 +155,10 @@ class SwooleAppBase extends DNMVCS
 	
 	public function RunWithServer($server,$options)
 	{
+		DNSingletonStaticClass::$Replacer=[CoroutineSingleton::class,'G'];
 		SwooleHttpd::G()->bindHttp(
 			$server,
-			function(){
-				global $_DNSingleton_Custumer_G;
-				$_DNSingleton_Custumer_G=[static::class,'CoroutineSingleton'];
-			},
+			function(){},
 			function($request,$response)use($options){
 				DN::G(DN::G()->init($options));
 				
@@ -166,7 +173,7 @@ class SwooleAppBase extends DNMVCS
 				DN::G()->options['request']=null;
 				DN::G()->options['response']=null;
 				DN::G()->cleanUp();
-				self::CleanCoroutineSingleton();
+				CoroutineSingleton::CleanCoroutineSingleton();
 			}
 		);
 		$server->start();
