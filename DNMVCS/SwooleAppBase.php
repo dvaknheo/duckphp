@@ -144,11 +144,12 @@ class SwooleAppBase
 	public function after_init($options=[])
 	{
 		CoroutineSingleton::ReplaceDefaultSingletonHandel();
-		$this->inited_routehooks=DNRoute::G()->routeHooks;
+		DN::G()->inited_routehooks=DNRoute::G()->routeHooks;
 		
 		DNSingletonStaticClass::DeleteInstance(DNView::class);
 		DNSingletonStaticClass::DeleteInstance(DNRoute::class);
 		
+		DNSingletonStaticClass::DeleteInstance(SwooleAppBase::class);
 		return $this;
 	}
 	public function before_run()
@@ -167,7 +168,7 @@ class SwooleAppBase
 		DN::G()->options['default_controller_reuse']=false;
 		DN::G()->initView(DNView::G());
 		DN::G()->initRoute(DNRoute::G(RouteWithSuperGlobal::G()));
-		DNRoute::G()->routeHooks=$this->inited_routehooks;
+		DNRoute::G()->routeHooks=DN::G()->inited_routehooks;
 	
 		
 		//return parent::run();
@@ -188,6 +189,7 @@ class SwooleAppBase
 		}catch(\Throwable $ex){
 			$isInHttpException=true;
 			if($ex instanceof  \Swoole\ExitException){
+				//OK we exit
 			}else{
 				DN::G()->onException($ex);
 			}
