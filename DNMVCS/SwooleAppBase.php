@@ -103,6 +103,14 @@ class CoroutineSingleton
 		DNSingletonStaticClass::$_instances[$key][$class]=$me;
 		return $me;
 	}
+	public static function CloneInstance($class)
+	{
+		$cid = \Swoole\Coroutine::getuid();
+		$key="cid=$cid";
+		DNSingletonStaticClass::$_instances[$key]=DNSingletonStaticClass::$_instances[$key]??[];
+		DNSingletonStaticClass::$_instances[$key][$class]=clone DNSingletonStaticClass::$_instances[$class];
+	}
+	
 	public static function DeleteInstance($class)
 	{
 		unset(DNSingletonStaticClass::$_instances[$key][$class]);
@@ -134,27 +142,61 @@ fwrite(STDERR,"-- $class ~ ".$class2.";\n");
 		DNSingletonStaticClass::$_instances[$key]=[];
 	}
 }
-class SwooleAppBase
+class SwooleHttp
 {
 	use DNSingleton;
 	public $request=null;
 	public $response=null;
-	protected $inited_routehooks=[];
+	public static function Request()
+	{
+		return self::G()->request;
+	}
+	
+	public static function Response()
+	{
+		return self::G()->response;
+	}
+	public static function Init($request,$response)
+	{
+		return self::G()->_Init($request,$response);
+	}
+	public static function CleanUp()
+	{
+		return self::G()->_CleanUp();
+	}
+	public function _Init($request,$response)
+	{
+		$this->request=$request;
+		$this->response=$response;
+	}
+	public function _CleanUp()
+	{
+		$this->request=null;
+		$this->response=null;
+	}
+}
 
+class SwooleAppBase
+{
+	use DNSingleton;
+
+	protected $inited_routehooks=[];
+	protected $replacedClass=[];
 	public function after_init($options=[])
 	{
 		CoroutineSingleton::ReplaceDefaultSingletonHandel();
-		DN::G()->inited_routehooks=DNRoute::G()->routeHooks;
+		$this->inited_routehooks=DNRoute::G()->routeHooks;
 		
-		DNSingletonStaticClass::DeleteInstance(DNView::class);
+		$this->replacedClass[DNView::class]=get_class(DNView::G());
+		$this->replacedClass[DNRoute::class]=get_class(DNRoute::G());
+		
+		//CoroutineSingleton::DeleteInstance(DNView::class);
 		DNSingletonStaticClass::DeleteInstance(DNRoute::class);
-		
-		DNSingletonStaticClass::DeleteInstance(SwooleAppBase::class);
-		return $this;
 	}
 	public function before_run()
 	{
-		$request=$this->request;
+		$request=SwooleHttp::Request();
+		
 		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G())->init($request);
 		SuperGlobal\GET::G(SwooleSuperGlobalGet::G())->init($request);
 		SuperGlobal\POST::G(SwooleSuperGlobalPost::G())->init($request);
@@ -165,20 +207,18 @@ class SwooleAppBase
 		SuperGlobal\SERVER::Set('DOCUMENT_ROOT',rtrim($path,'/'));
 		SuperGlobal\SERVER::Set('SCRIPT_FILENAME',$path.'index.php');
 		
-		DN::G()->options['default_controller_reuse']=false;
-		DN::G()->initView(DNView::G());
-		DN::G()->initRoute(DNRoute::G(RouteWithSuperGlobal::G()));
-		DNRoute::G()->routeHooks=DN::G()->inited_routehooks;
-	
+		CoroutineSingleton::CloneInstance(DNView::class);
+		//CoroutineSingleton::CloneInstance(DNRoute::class);
 		
-		//return parent::run();
+		DN::G()->initRoute(DNRoute::G(RouteWithSuperGlobal::G()));
+		DNRoute::G()->routeHooks=$this->inited_routehooks;
+		
 	}
 	public static function OnRequest($request,$response)
 	{
 		$isInHttpException=false;
-		
-		SwooleAppBase::G()->request=$request;
-		SwooleAppBase::G()->response=$response;
+		SwooleHttp::Init($request,$response);
+
 		ob_start(function($str) use($response){
 			if(''===$str){return;}
 			$response->write($str);
@@ -188,24 +228,25 @@ class SwooleAppBase
 			DN::G()->run();
 		}catch(\Throwable $ex){
 			$isInHttpException=true;
-			if($ex instanceof  \Swoole\ExitException){
-				//OK we exit
-			}else{
+			if( !($ex instanceof  \Swoole\ExitException) ){
+			
 				DN::G()->onException($ex);
 			}
 		}
-		SwooleAppBase::G()->request=null;
-		SwooleAppBase::G()->response=null;
+		SwooleHttp::CleanUp();
 		
 		ob_end_flush();
 		if(!$isInHttpException){ 
 			$response->end();
 		}
 		CoroutineSingleton::CleanUp();
-		//$response=null;
 	}
 	public static function RunWithServer($server,$options)
 	{
+	
+		$options['default_controller_reuse']=false;
+		
+		//DNRoute::G(RouteWithSuperGlobal::G());
 		DN::G(DN::G()->init($options));
 		SwooleAppBase::G()->after_init($options);
 		//Swoole\Runtime::enableCoroutine();
