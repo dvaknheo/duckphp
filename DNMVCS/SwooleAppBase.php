@@ -164,24 +164,33 @@ fwrite(STDERR,"-- $class ~ ".$class2.";\n");
 class SwooleAppBase extends DNMVCS
 {
 	protected $rewriteMap=[];
-	protected $RouteMap=[];
+	protected $routeMap=[];
 	public function assignRewrite($key,$value=null)
 	{
-		RouteRewriteHook::G()->assignRewrite($key,$value);
+		if(is_array($key)&& $value===null){
+			$this->rewriteMap=array_merge($this->rewriteMap,$key);
+		}else{
+			$this->rewriteMap[$key]=$value;
+		}
 	}
-	protected $inited_routehook=false;
 	public function assignRoute($key,$value=null)
 	{
-		
-		RouteMapHook::G()->assignRoute($key,$value);
+		if(is_array($key)&& $value===null){
+			$this->routeMap=array_merge($this->routeMap,$key);
+		}else{
+			$this->routeMap[$key]=$value;
+		}
 	}
 	
+	protected $inited_routehooks=[];
 	public function init($options=[])
 	{
 		$options['default_controller_reuse']=false;
 		parent::init($options);
 		
+		DNSingletonStaticClass::DeleteInstance(DNView::class);
 		DNSingletonStaticClass::DeleteInstance(DNRoute::class);
+		
 		DNSingletonStaticClass::DeleteInstance(RouteRewriteHookWithSuperGlobal::class);
 		DNSingletonStaticClass::DeleteInstance(RouteRewriteHook::class);
 		
@@ -196,6 +205,15 @@ class SwooleAppBase extends DNMVCS
 		
 		$this->initRoute(DNRoute::G());
 		$this->initView(DNView::G());
+		
+		DNRoute::G()->addRouteHook([RouteMapHook::G(),'hook'],true);
+		DNRoute::G()->addRouteHook([RouteRewriteHook::G(),'hook'],true);
+		foreach($this->rewriteMap as $key=>$value){
+			RouteRewriteHook::G()->assignRewrite($key,$value);
+		}
+		foreach($this->routeMap as $key=>$value){
+			RouteMapHook::G()->assignRoute($key,$value);
+		}
 		
 		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G())->init($request);
 		SuperGlobal\GET::G(SwooleSuperGlobalGet::G())->init($request);
