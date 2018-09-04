@@ -745,13 +745,13 @@ class DNDBManager
 	public $db_r=null;
 	public $db_config=[];
 	public $db_r_config=[];
-	public $default_db_class=null;
-	public function init($db_config,$db_r_config,$default_db_class)
+	public $db_loader=null;
+	public function init($db_config,$db_r_config,$db_loader)
 	{
 
 		$this->db_config=$db_config;
 		$this->db_r_config=$db_r_config;
-		$this->default_db_class=$default_db_class;
+		$this->db_loader=$db_loader;
 	}
 	public function installDBClass($onDBCreate,$onDBClose=null)
 	{
@@ -768,7 +768,7 @@ class DNDBManager
 		if($this->db){return $this->db;}
 		
 		if($this->onDBCreate===null){
-			$this->installDBClass($this->default_db_class);
+			$this->installDBClass($this->db_loader);
 		}
 		$this->db=($this->onDBCreate)($this->db_config);
 		return $this->db;
@@ -783,7 +783,7 @@ class DNDBManager
 		
 		if(!$this->db_r_config){return $this->_DB();}
 		if($this->onDBCreate===null){
-			$this->installDBClass($this->default_db_class);
+			$this->installDBClass($this->db_loader);
 		}
 		$this->db_r=($this->onDBCreate)($this->db_r_config);
 		return $this->db_r;
@@ -1149,7 +1149,7 @@ class DNMVCS
 			'all_config'=>[],
 			'setting'=>[],
 			'setting_file_basename'=>'setting',
-			'db_class'=>'',
+			'db_loader'=>'',
 		];
 	protected $path=null;
 	
@@ -1159,7 +1159,7 @@ class DNMVCS
 	public $options=[];
 	public $isDev=false;
 	protected $initObLevel=0;
-	
+	protected $db_loader=null;
 	
 	public static function RunQuickly($options=[])
 	{
@@ -1201,7 +1201,7 @@ class DNMVCS
 		$this->path=$this->options['path'];
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
 		$this->isDev=$this->options['is_dev'];
-		//DB_Class
+		$this->db_loader=$this->options['db_loader']?:DNDB::class;
 	}
 	
 	protected function initExceptionManager()
@@ -1265,9 +1265,9 @@ class DNMVCS
 	{
 		$db_config=DNConfiger::G()->_Setting('db');
 		$db_r_config=DNConfiger::G()->_Setting('db_r');
-		$db_class=$this->options['db_class']?$this->options['db_class']:DNDB::class;
+		$db_loader=$this->db_loader;
 		
-		$dbm->init($db_config,$db_r_config,$db_class);
+		$dbm->init($db_config,$db_r_config,$db_loader);
 	}
 	public function isDev()
 	{

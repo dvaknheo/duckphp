@@ -196,7 +196,7 @@ const DNMVCS::DEFAULT_OPTIONS=[
 	'all_config'=>[],        			// 配置，每个配置用 key  分割。
 		'setting_file_basename'=>'setting',        // 设置的文件名，如果为'' 则不读取设置文件
 	'is_dev'=>false,					//是否在开发状态，设置文件里填写的将会覆盖这一选项
-	'db_class' =>'', 					// DB 类，为空的时候，默认用 DNDB::class;
+	'db_loader' =>'', 					// DB 类，为空的时候，默认用 DNDB::class;
 ];
 ```
     关于 base_class 选项。
@@ -564,7 +564,7 @@ initRoute(DNRoute $route)
     初始化路由 配置选项。
 initDBManager(DNDBManger $dbm)
     初始化数据库管理器
-    db_class
+    db_loader 会用在这里
 ```
 # 进一步扩展
 ## 总说
