@@ -127,7 +127,7 @@ fwrite(STDERR,"-- $class ~ ".$class2.";\n");
 		DNSingletonStaticClass::$_instances[$key]=[];
 	}
 }
-class SwooleHttp
+class SwooleHttpContext
 {
 	use DNSingleton;
 	public $request=null;
@@ -184,7 +184,7 @@ class SwooleBasicServer
 	{
 		$InitObLevel=ob_get_level();
 		ob_start(function($str) use($response){
-			if(''===$str){return;}
+			//if(''===$str){return;}
 			$response->write($str);
 		});
 		try{
@@ -195,12 +195,11 @@ class SwooleBasicServer
 			}
 		}
 		$this->httpRunner->onHttpCleanUp();
-		
 		for($i=ob_get_level();$i>$InitObLevel;$i--){
 			ob_end_flush();
 		}
 		$response->end();
-		//response 被使用到就要手动 end ，不知道是不是 swoole 的 bug
+		//response 被使用到，而且出错就要手动 end  还是 OB 层级问题？
 		//onHttpRun(null,null) 则不需要用
 	}
 	public function onMessage($server,$frame)
@@ -238,7 +237,7 @@ class SwooleBasicServer
 	}
 	public function run()
 	{
-		fwrite(STDOUT,get_class($this)." run...\n");
+		fwrite(STDOUT,get_class($this)." run at ".DATE(DATE_ATOM)." ...\n");
 		$this->server->start();
 	}
 }
@@ -253,12 +252,13 @@ class SwooleAppBase implements IHttpRunner
 	}
 	public static function Request()
 	{
-		return SwooleHttp::G()->request;
+		return SwooleHttpContext::G()->request;
 	}
 	public static function Response()
 	{
-		return SwooleHttp::G()->response;
+		return SwooleHttpContext::G()->response;
 	}
+	
 	public function init($server_or_options,$options)
 	{
 		$server=$server_or_options;
@@ -280,7 +280,12 @@ class SwooleAppBase implements IHttpRunner
 	}
 	public function onHttpRun($request=null,$response=null)
 	{
-		
+		SwooleHttpContext::Init($request,$response);
+		$this->run();
+	}
+	public function run()
+	{
+		$request= SwooleHttpContext::G()->request;
 		CoroutineSingleton::CloneInstance(DNView::class);
 		CoroutineSingleton::CloneInstance(DNRoute::class);
 		
@@ -289,7 +294,6 @@ class SwooleAppBase implements IHttpRunner
 		SuperGlobal\POST::G(SwooleSuperGlobalPost::G())->init($request);
 		SuperGlobal\REQUEST::G(SwooleSuperGlobalRequest::G())->init($request);
 		SuperGlobal\COOKIE::G(SwooleSuperGlobalCookie::G())->init($request);
-		
 		
 		$path=DN::G()->options['path'];
 		SuperGlobal\SERVER::Set('DOCUMENT_ROOT',rtrim($path,'/'));
@@ -308,29 +312,8 @@ class SwooleAppBase implements IHttpRunner
 	}
 	public function onHttpCleanUp()
 	{
-		SwooleHttp::CleanUp();
+		SwooleHttpContext::CleanUp();
 		CoroutineSingleton::CleanUp();
-	}
-	public function onRequest($request,$response)
-	{
-	SwooleHttp::Init($request,$response);
-		$InitObLevel=ob_get_level();
-		ob_start(function($str) use($response){
-			if(''===$str){return;}
-			$response->write($str);
-		});
-		try{
-			$this->onHttpRun($request,$response);
-		}catch(\Throwable $ex){
-			if( !($ex instanceof  \Swoole\ExitException) ){
-				//$this->onHttpException($ex);
-				DN::G()->onException($ex);
-			}
-		}
-		for($i=ob_get_level();$i>$InitObLevel;$i--){
-			ob_end_flush();
-		}
-
 	}
 	public static function RunWithServer($server_or_options,$options)
 	{
