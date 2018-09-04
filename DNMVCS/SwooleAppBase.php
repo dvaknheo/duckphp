@@ -195,9 +195,13 @@ class SwooleBasicServer
 			}
 		}
 		$this->httpRunner->onHttpCleanUp();
+		
 		for($i=ob_get_level();$i>$InitObLevel;$i--){
 			ob_end_flush();
 		}
+		$response->end();
+		//response 被使用到就要手动 end ，不知道是不是 swoole 的 bug
+		//onHttpRun(null,null) 则不需要用
 	}
 	public function onMessage($server,$frame)
 	{
@@ -300,7 +304,7 @@ class SwooleAppBase implements IHttpRunner
 	}
 	public function onHttpException($ex)
 	{
-		
+		DN::G()->onException($ex);
 	}
 	public function onHttpCleanUp()
 	{
@@ -326,18 +330,11 @@ class SwooleAppBase implements IHttpRunner
 		for($i=ob_get_level();$i>$InitObLevel;$i--){
 			ob_end_flush();
 		}
-		SwooleHttp::CleanUp();
-		CoroutineSingleton::CleanUp();
 
 	}
 	public static function RunWithServer($server_or_options,$options)
 	{
 		self::G()->init($server_or_options,$options);
-		$server=self::Server();
-		$server->on('request',[self::G(),'onRequest']);
-		$server->start();
-		return;
-		SwooleBasicServer::G()->init($server,self::G())->run();
-		
+		SwooleBasicServer::G()->init(self::Server(),self::G())->run();
 	}
 }
