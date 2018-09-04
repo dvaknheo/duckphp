@@ -91,7 +91,13 @@ class DNFuncionModifer
 		
 	}
 }
-
+function _HTTP_REQUEST($k)
+{
+	if(class_exists(__NAMESPACE__.'\SuperGlobal\REQUEST' ,false)){
+		return SuperGlobal\REQUEST::Get($k);
+	}
+	return $_REQUEST[$k]??null;
+}
 function _url_by_key($url,$key_for_simple_route)
 {
 	$path=parse_url(DNRoute::G()->_SERVER('REQUEST_URI'),PHP_URL_PATH);
@@ -122,7 +128,7 @@ class SimpleRoute extends DNRoute
 		parent::init($options);
 		$this->key_for_simple_route=$options['key_for_simple_route'];
 		
-		$path_info=DNRoute::G()->_REQUEST($this->key_for_simple_route)??'';
+		$path_info=_HTTP_REQUEST($this->key_for_simple_route)??'';
 		$path_info=ltrim($path_info,'/');
 		$this->path_info=$path_info;
 	}
@@ -143,7 +149,7 @@ class SimpleRouteHook
 		$route->setURLHandel([$this,'onURL']);
 		$this->key_for_simple_route=isset($route->options['key_for_simple_route'])?$route->options['key_for_simple_route']:$this->key_for_simple_route;
 		
-		$path_info==DNRoute::G()->_REQUEST($this->key_for_simple_route)??'';
+		$path_info==_HTTP_REQUEST($this->key_for_simple_route)??'';
 		$path_info=ltrim($path_info,'/');
 		$route->path_info=$path_info;
 		$route->calling_path=$path_info;
@@ -237,6 +243,13 @@ class RouteRewriteHook
 	}
 	protected function mergeHttpGet($get)
 	{
+		if(class_exists(__NAMESPACE__.'\SuperGlobal\GET' ,false)){
+			$data=array_merge($get, SuperGlobal\GET::All());
+			foreach($data as $k=>$v){
+				SuperGlobal\GET::Set($k,$v);
+			}
+			return;
+		}
 		$_GET=array_merge($get,$_GET??[]);
 	}
 	public function matchRewrite($old_url,$new_url,$route)

@@ -182,7 +182,7 @@ class DNRoute
 	public $callback=null;
 	
 	public $onURL=null;
-	
+	public $onServerArray=null;
 	public function _URL($url=null,$innerCall=false)
 	{
 		if(!$innerCall && $this->onURL){return ($this->onURL)($url,true);}
@@ -401,25 +401,12 @@ class DNRoute
 	
 	public function _SERVER($key)
 	{
-		//for no superGlobals;
+		if($this->onServerArray){
+			return ($this->onServerArray)($key);
+		}
 		return  isset($_SERVER[$key])?$_SERVER[$key]:null;
+	
 	}
-	public function _GET($key)
-	{
-		//for no superGlobals;
-		return  isset($_GET[$key])?$_GET[$key]:null;
-	}
-	public function _POST($key)
-	{
-		//for no superGlobals;
-		return  isset($_POST[$key])?$_POST[$key]:null;
-	}
-	public function _REQUEST($key)
-	{
-		//for no superGlobals;
-		return  isset($_REQUEST[$key])?$_REQUEST[$key]:null;
-	}
-
 	public function getRouteCallingPath()
 	{
 		return $this->calling_path;
@@ -1054,6 +1041,7 @@ trait DNMVCS_Handel
 	}
 	public function onException($ex)
 	{
+		$this->_cleanBuffer();
 		$data=[];
 		$data['message']=$ex->getMessage();
 		$data['code']=$ex->getCode();
@@ -1073,6 +1061,7 @@ trait DNMVCS_Handel
 	}
 	public function onErrorException($ex)
 	{
+		$this->_cleanBuffer();
 		if(PHP_SAPI!=='cli'){
 			header("HTTP/1.1 500 Internal Error");
 		}
@@ -1087,7 +1076,6 @@ trait DNMVCS_Handel
 		if(!DNView::G()->hasView('_sys/error-500')){
 			if(!$this->isDev){
 				echo "DNMVCS 500 internal error!\n";
-				var_dump($ex);
 			}else{
 				echo "<!--DNMVCS  use view/_sys/error-exception.php to overrid me -->\n";
 				var_dump($ex);
@@ -1181,6 +1169,7 @@ class DNMVCS
 	
 	public $options=[];
 	public $isDev=false;
+	protected $initObLevel=0;
 	public static function RunQuickly($options=[])
 	{
 		$options['ext_mode']=$options['ext_mode']??false;
@@ -1297,12 +1286,24 @@ class DNMVCS
 	}
 	public function run()
 	{
+		$this->initObLevel=ob_get_level();
 		if($this->rewriteMap || $this->routeMap){
 			self::ImportSys();
 			RouteRewriteHook::G()->install($this->rewriteMap);
 			RouteMapHook::G()->install($this->routeMap);
 		}
-		return DNRoute::G()->run();
+		$ret=DNRoute::G()->run();
+		
+		for($i=ob_get_level();$i>$this->initObLevel;$i--){
+			ob_end_flush();
+		}
+		return $ret;
+	}
+	public function _cleanBuffer()
+	{
+		for($i=ob_get_level();$i>$this->initObLevel;$i--){
+			ob_end_clean();
+		}
 	}
 	public function cleanUp()
 	{

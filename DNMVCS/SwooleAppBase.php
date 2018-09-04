@@ -47,19 +47,6 @@ class SwooleSuperGlobalCookie extends SuperGlobalBase
 		$this->data=$request->cookie??[];
 	}
 }
-class RouteRewriteHookWithSuperGlobal extends RouteRewriteHook
-{
-	use DNSingleton;
-	protected $rewriteMap=[];
-	protected function mergeHttpGet($get)
-	{
-		//$_GET=array_merge($get,$_GET??[]);
-		$data=array_merge($get, SuperGlobal\GET::All());
-		foreach($data as $k=>$v){
-			SuperGlobal\GET::Set($k,$v);
-		}
-	}
-}
 
 class CoroutineSingleton
 {
@@ -84,8 +71,6 @@ class CoroutineSingleton
 			DNSingletonStaticClass::$_instances[$key][$class]=$me;
 			return $me;
 		}else{
-		
-		
 			$master=DNSingletonStaticClass::$_instances[$class]??null;
 			if($master){
 				throw new \ErrorException("CoroutineSingleton fail:: $class use CreateInstance instead");
@@ -190,8 +175,7 @@ class SwooleAppBase
 		$this->replacedClass[DNView::class]=get_class(DNView::G());
 		$this->replacedClass[DNRoute::class]=get_class(DNRoute::G());
 		
-		//CoroutineSingleton::DeleteInstance(DNView::class);
-		DNSingletonStaticClass::DeleteInstance(DNRoute::class);
+		DNRoute::G()->onServerArray=[SuperGlobal\SERVER::class,'Get'];
 	}
 	public function before_run()
 	{
@@ -208,17 +192,17 @@ class SwooleAppBase
 		SuperGlobal\SERVER::Set('SCRIPT_FILENAME',$path.'index.php');
 		
 		CoroutineSingleton::CloneInstance(DNView::class);
-		//CoroutineSingleton::CloneInstance(DNRoute::class);
+		CoroutineSingleton::CloneInstance(DNRoute::class);
 		
-		DN::G()->initRoute(DNRoute::G(RouteWithSuperGlobal::G()));
-		DNRoute::G()->routeHooks=$this->inited_routehooks;
-		
+		$route=DNRoute::G();
+		$route->path_info=$route->_SERVER('PATH_INFO')??'';
+		$route->request_method=$route->_SERVER('REQUEST_METHOD')??'';
+		$route->path_info=ltrim($route->path_info,'/');
 	}
 	public static function OnRequest($request,$response)
 	{
-		$isInHttpException=false;
 		SwooleHttp::Init($request,$response);
-
+		$InitObLevel=ob_get_level();
 		ob_start(function($str) use($response){
 			if(''===$str){return;}
 			$response->write($str);
@@ -227,18 +211,14 @@ class SwooleAppBase
 			SwooleAppBase::G()->before_run();
 			DN::G()->run();
 		}catch(\Throwable $ex){
-			$isInHttpException=true;
 			if( !($ex instanceof  \Swoole\ExitException) ){
-			
 				DN::G()->onException($ex);
 			}
 		}
-		SwooleHttp::CleanUp();
-		
-		ob_end_flush();
-		if(!$isInHttpException){ 
-			$response->end();
+		for($i=ob_get_level();$i>$InitObLevel;$i--){
+			ob_end_flush();
 		}
+		SwooleHttp::CleanUp();
 		CoroutineSingleton::CleanUp();
 	}
 	public static function RunWithServer($server,$options)
