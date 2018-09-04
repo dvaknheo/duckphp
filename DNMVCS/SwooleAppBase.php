@@ -167,7 +167,7 @@ class SwooleAppBase
 
 	protected $inited_routehooks=[];
 	protected $replacedClass=[];
-	public function after_init($options=[])
+	public function afterInit($options=[])
 	{
 		CoroutineSingleton::ReplaceDefaultSingletonHandel();
 		$this->inited_routehooks=DNRoute::G()->routeHooks;
@@ -177,7 +177,7 @@ class SwooleAppBase
 		
 		DNRoute::G()->onServerArray=[SuperGlobal\SERVER::class,'Get'];
 	}
-	public function before_run()
+	public function beforeRun()
 	{
 		$request=SwooleHttp::Request();
 		
@@ -199,7 +199,7 @@ class SwooleAppBase
 		$route->request_method=$route->_SERVER('REQUEST_METHOD')??'';
 		$route->path_info=ltrim($route->path_info,'/');
 	}
-	public static function OnRequest($request,$response)
+	public static function onRequest($request,$response)
 	{
 		SwooleHttp::Init($request,$response);
 		$InitObLevel=ob_get_level();
@@ -208,7 +208,7 @@ class SwooleAppBase
 			$response->write($str);
 		});
 		try{
-			SwooleAppBase::G()->before_run();
+			$this->beforeRun();
 			DN::G()->run();
 		}catch(\Throwable $ex){
 			if( !($ex instanceof  \Swoole\ExitException) ){
@@ -221,18 +221,33 @@ class SwooleAppBase
 		SwooleHttp::CleanUp();
 		CoroutineSingleton::CleanUp();
 	}
-	public static function RunWithServer($server,$options)
+	public function bindWithServer($server_or_options,$options)
 	{
-	
-		$options['default_controller_reuse']=false;
+		$server=$server_or_options;
+		if(!is_object($server_or_options)){
+			$server=new swoole_http_server($server_or_options['Host'], $server_or_options['Port']);
+			unset($server_or_options['Host']);
+			unset($server_or_options['Port']);
+			$server->set($server_or_options);
+		}
 		
-		//DNRoute::G(RouteWithSuperGlobal::G());
+		Swoole\Runtime::enableCoroutine();
 		DN::G()->init($options);
-		SwooleAppBase::G()->after_init($options);
-		//Swoole\Runtime::enableCoroutine();
+		$this->afterInit($options);
+		$server->on('request',[$this,'onRequest']);
 		
-		$server->on('request',[static::class,'OnRequest']);
+	}
+	public static function RunWithServer($server_or_options,$options)
+	{
+		$server=$server_or_options;
+		if(!is_object($server_or_options)){
+			$server=new swoole_http_server($server_or_options['Host'], $server_or_options['Port']);
+			unset($server_or_options['Host']);
+			unset($server_or_options['Port']);
+			$server->set($server_or_options);
+		}
 		
+		self::G()->bindWithServer($server_or_options,$options);
 		$server->start();
 	}
 }

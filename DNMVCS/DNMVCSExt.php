@@ -702,9 +702,9 @@ class RouteWithSuperGlobal extends DNRoute
 		return  SuperGlobal\REQUEST::Get($key);
 	}
 }
-
-class AppEx 
+class AppExt
 {
+	use DNSingleton;
 	const DEFAULT_OPTIONS_EX=[
 			'setting_file_basename'=>'setting',
 			'key_for_simple_route'=>null,
@@ -720,11 +720,21 @@ class AppEx
 			'use_ext_db'=>false,
 			//TODO 'use_super_global'=>false,
 		];
-	public static function DealExtOptions($ext_options)
+	public static function AfterInit()
 	{
+		return self::G()->_AfterInit();
+	}
+	public static function BeforeRun()
+	{
+		return self::G()->_BeforeRun();
+	}
+	public static function _AfterInit()
+	{
+		$dn=DNMVCS::G();
+		$ext_options=$dn->options['ext'];
+		
 		$options=array_merge(self::DEFAULT_OPTIONS_EX,$ext_options);
 		
-		$dn=DNMVCS::G();
 		if($options['use_common_autoloader']){
 			ProjectCommonAutoloader::G()->init($options)->run();
 		}
@@ -749,13 +759,34 @@ class AppEx
 			DNRoute::G()->addRouteHook([FunctionDispatcher::G(),'hook']);
 		}
 	}
-	public static function DealRewriteAndRouteMap()
+	public static function _BeforeRun()
 	{
-		$dn=DNMVCS::G();
-		if($dn->rewriteMap || $dn->routeMap){
-			RouteRewriteHook::G()->install($dn->rewriteMap);
-			RouteMapHook::G()->install($dn->routeMap);
+		$ext_options=DNMVCS::G()->options['ext']??[];
+		$rewriteMap=$ext_options['rewriteMap']??null;
+		if($rewriteMap){
+			RouteRewriteHook::G()->install($ext_options['rewriteMap']);
 		}
+		$routeMap=$ext_options['routeMap']??null;
+		if($rewriteMap){
+			RouteMapHook::G()->install($ext_options['routeMap']);
+		}
+	}
+	public function cleanUp()
+	{
+		$route=DNRoute::G();
+		$route->calling_path='';
+		$route->calling_class='';
+		$route->calling_method='';
+		$route->callback=null;
+		$route->routeHooks=[];
+		
+		$view=DNView::G();
+		$view->data=[];
+		$view->head_file=null;
+		$view->foot_file=null;
+		$view->view=null;
+		error_reporting($this->error_reporting_old);
+		//TODO ob_cleanUp();
 	}
 }
 //mysqldump -uroot -p123456 DnSample -d --opt --skip-dump-date --skip-comments | sed 's/ AUTO_INCREMENT=[0-9]*\b//g' >../data/database.sql

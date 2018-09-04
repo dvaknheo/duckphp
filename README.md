@@ -58,7 +58,7 @@ Controller --> Service ---------------------------------> Model
     * setting 就是一个数组， config 就是动态配置
 * 简单的加载类 
 * 所有这些仅仅是在主类里耦合。
-
+* *支持Swoole*
 ## DNMVCS 不做什么
 * ORM ，和各种屏蔽 sql 的行为，根据日志查 sql 方便多了。 自己简单封装了 pdo 。
 * 模板引擎，PHP本身就是模板引擎。
@@ -345,7 +345,7 @@ DNMVCS 的控制器有点像CodeInigter，不需要继承什么，就这么简�
 4. 不用 PATH_INFO
     比如 路由不用 path_info 用 $_GET['_r'] 等，很简单的。
     simple_route_key 开启 _GET 模式路由
-    如果你想加其他功能，可以继承 DNRoute 自行扩展类。 
+    如果你想加其他功能，可以 添加钩子， 继承 DNRoute 自行扩展类。  两种方式灵活扩展
 
 
 run() 方法开始使用路由。 如果你不想要路由。只想要特定结构的目录， 不调用 run 就可以了。
@@ -359,7 +359,7 @@ run() 方法开始使用路由。 如果你不想要路由。只想要特定结�
 高级一点，你可以 扩展 DNMVCS 的主类实现。
 
 DNMVCS 的报错页面还是很丑陋，需要调整一下
-无错误页面模式
+无错误页面模式，会自己显示末日错误
 # DNMVCS 主类
 ## 基本方法
 ```
@@ -367,8 +367,6 @@ static G($object=null,$args=[])
     G 单例函数是整个系统最有趣的地方。
     传入 $object 将替代默认的单例。
 	比 PHP-DI简洁，后面的文档 会有详细介绍
-static RunQuickly($optionss=[])
-    DNMVCS::RunQuickly ($options) 相当于 DNMVCS::G()->init($options)->run();
 
 init($options=[])
     初始化，这是最经常子类化完成自己功能的方法。
@@ -376,6 +374,14 @@ init($options=[])
 run()
     开始路由，执行。这个方法拆分出来是为了，不想要路由，只是为了加载一些类的需求的。
     如果404 则返回false;其他返回 true
+static RunQuickly($optionss=[])
+    DNMVCS::RunQuickly ($options) 相当于 DNMVCS::G()->init($options)->run();
+static RunOneFileMode($optionss=[])
+    单一文件模式，不需要其他文件，设置内容请放在
+    $options['setting'] 里
+static RunWithoutPathInfo()
+
+    不需要 PathInfo 的模式。用 _r 来表示 Path_Info
 ```
 ## 常用静态方法方法
 这些方法因为太常用，所以静态化了。
@@ -451,7 +457,7 @@ ImportSys($file)
     
     手动导DNMVCS目录下的包含文件 函数。DNMVCS库目录默认不包含其他非必要的文件
 	因为需求不常用，所以没自动加载
-	比如在调试状态下的奇淫巧技：限定各 G 函数的调用。以及DNMedoo ，用 Medoo类
+	比如在调试状态下：限定各 G 函数的调用。以及DNMedoo ，用 Medoo类
 
 ## 独立杂项静态方法
 这几个方法独立，为了方便操作，放在这里。
@@ -462,10 +468,10 @@ H(&$str)
 RecordsetH(&$data,$cols=[])
 
     给 sql 查询返回数组 html 编码
-	$colss 指定 要转码的列名
+	$cols 指定 要转码的列名
 RecordsetURL(&$data,$cols_map=[]) 
 
-    给 sql 返回数组 加url 比如  url_edit=>"edit/{id}",则该行添加 url_edit =>DN::URL("edit/1") 等类似。
+    给 sql 返回数组 加url 比如  url_edit=>"edit/{id}",则该行添加 url_edit =>DN::URL("edit/".$data[]['id']) 等类似。
 
 ## 非静态方法
 这里的方法偶尔会用到，所以没静态化 。
@@ -492,6 +498,7 @@ getCallingMethod()
     获得路由中正在调用的方法。
     用于控制器里判断方法以便于权限管理。
     也适用于重写URL后判断是否是直接访问
+    实质调用 DNRoute 的 getCallingMethod
 setViewWrapper($head_file=null,$foot_file=null)
 
     给输出 view 加页眉页脚 实质调用 DNView::G()->setViewWrapper
@@ -520,7 +527,7 @@ isDev()
     实际读设置里的 is_dev ，判断是否在开发状态。
 addRouteHook($hook,$prepend=false)
 
-    下钩子扩展 route 方法,实质调用 DNRoute 的
+    下钩子扩展 route 方法,实质调用 DNRoute 的 addRouteHook
 ```
 ## 事件方法
 实现了默认事件回调的方法。扩展以展现不同事件的显示。
@@ -657,6 +664,11 @@ class App extends \DNMVCS\DNMVCS
     }
 }
 ```
+## 更高级的 G 函数
+
+final class DNSingletonStaticClass
+
+DNSwooleApp 用到了这个，使得在协程的里的和协程外的单例不是同一个。
 ## DNException 异常类 | trait DNThrowQuickly
 使用 trait DNThrowQuickly
 ```php
@@ -800,7 +812,7 @@ self::ImportSys('DNMedoo'); //DNMedoo 依赖 Medoo，所以需要手动加载
 ## DNMVCSExt.php  | 额外类应用和说明
 DNMVCSExt 的类和方法
 
-    选项 use_ext=true 引入
+    选项 $options['ext'] 不为空数组就 引入
 ### 严格模式
 我想让 DB 只能被 Model , ExModel 调用。Model 只能被 ExModel,Service 调用 。 LibService 只能被Service 调用  Service只能被 Controller 调用
 
@@ -849,7 +861,8 @@ W($object);
     CreateDBInstance
     \DNMVCS\DNMVCS::G()->installDBClass(MedooSimpleIntaller::class)
     用于加载 medoo 类代替默认的 db 类，注意 medoo 类 不兼容默认 db 类
-
+    CloseDBInstance
+    关闭数据库
 
 ### API
 	用于 api 服务快速调用
@@ -873,21 +886,14 @@ W($object);
     FuctionWrapper::Wrap($before_call,$after_call)
     Function::AnyFunction(...$args);
     将会依次调用  before_call(...$args),AnyFunction(...$args),after_call(...$args)，返回原先值
-### Session
-    独立类，用于不想出现 $_SESSION
-	Start()
-	Get($k)
-	Set($k,$v)
-	Remove($k)
-	均可以用 G 函数重载
 # DNMVCS 的代码流程讲解
 
 大致用图表现如下
 ```
 DN::init
-    autoload
-    checkOverride
-    initExceptionManager
+    autoload 自动加载
+    checkOverride 如果子类，则 G函数替换为子类。
+    initExceptionManager 初始化异常。
     initConfiger,initView,initRoute,initDBManager
 
 DN::run(DNRoute::run)
@@ -913,12 +919,30 @@ DN::DB
 - 我用 static 方法不行么，不想用 G() 函数于 Model ,Service
 	- 可以，Model可以用。不过不推荐Service 用
 	- 琢磨了一阵如何不改 static 调用强行塞  strict 模式，还是没找到方法，切换 namespace 代理的方式可以搞定，但还是要手工改代码.
-   - DNStaticCall 由于 php7 的限制， protected funtion 才能 static call
+    - DNStaticCall 由于 php7 的限制， protected funtion 才能 static call
 - 思考：子域名作为子目录
 	想把某个子目录作为域名独立出去。只改底层代码如何改
 - error-exception 和 error-500 有什么不同
 	error-500 是引入的文件有语法错误之类。 error-exception 是抛出了错误没处理，用 setExceptionHandel 可以自行处理。
-- 三处 DNMVCS Notice 报错退出的地方
+
+- 为什么不拆分文件，按 composer ,psr-4 目录布局
+	因为不想太多零碎文件，而且还没想到什么应用要拆分
+## 额外模式
+    配置字段 ext 数组有数据的时候，会进入高级模式。自动使用扩展文件
+    额外的设置有。
+		setting_file_basename  默认不再是 setting ,而是为空 用于单一文件解决问题
+		key_for_simple_route = act 这个选项，不用 path_info 了，我们用 $_REQUEST['act']，
+		
+        use_function_dispatch 不用 DNController::$xx 了，直接 action_$xx
+		use_function_view  不用 view 文件了，我们用 view_$xx 来表示view
+		
+		use_common_configer 额外配置文件，多工程共享配置用
+        fullpath_config_common 配合上面的使用， 公共文件会被本工程覆盖
+		use_common_autoloader 额外loader ，多工程共享配置用
+        fullpath_project_share_common
+
+		use_ext_db 使用 \DNMVCS\DBExt 代替  \DNMVCS\DNDB
+    这些功能，用于，1 单一文件解决问题，2 多工程配置，3 使用更好的 db
 
 - 多工程处理已经移除.放到了 DNMVCSExt AppEx 里
 	
@@ -935,27 +959,6 @@ DN::DB
 	view 写在同文件里，不同 view 用 view_$action($data){extract($data);...} 这样来。
 	//使用 FunctionView view_header view_footer
 	ShowDataInMain DataToShow
-- 为什么拆分文件，按 composer ,psr-4 目录布局
-	因为不想太多零碎文件，而且还没想到什么应用要拆分
-## 额外模式
-
-    ext_mode 模式的时候，会使用 DNMVCS\AppEx 做入口的模式。自动使用扩展文件
-    额外的设置有。
-		setting_file_basename  默认不再是 setting ,而是为空 用于单一文件解决问题
-		key_for_simple_route = act 这个选项，不用 path_info 了，我们用 $_REQUEST['act']，
-		
-        use_function_dispatch 不用 DNController::$xx 了，直接 action_$xx
-		use_function_view  不用 view 文件了，我们用 view_$xx 来表示view
-		
-		use_common_configer 额外配置文件，多工程共享配置用
-        fullpath_config_common 配合上面的使用， 公共文件会被本工程覆盖
-		use_common_autoloader 额外loader ，多工程共享配置用
-        fullpath_project_share_common
-
-		use_ext_db 使用 \DNMVCS\DBExt 代替  \DNMVCS\DNDB
-    这些功能，用于，1 单一文件解决问题，2 多工程配置，3 使用更好的 db
-
-
 URL 整合，返回默认的。
 ## 和其他框架的整合
 

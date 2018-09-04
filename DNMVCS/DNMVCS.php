@@ -269,15 +269,7 @@ class DNRoute
 		($this->on404Handel)();
 		return false;
 	}
-	public function cleanUp()
-	{
-		$this->calling_path='';
-		$this->calling_class='';
-		$this->calling_method='';
-		$this->callback=null;
-		$this->routeHooks=[];
-		
-	}
+	
 
 	protected function getRouteHandelByFile()
 	{
@@ -428,7 +420,7 @@ class DNView
 	public $view=null;
 	
 	protected $temp_view_file;
-	protected $error_reporting_old;
+	public $error_reporting_old;
 	public function _ExitJson($ret)
 	{
 		header('content-type:text/json');
@@ -454,18 +446,11 @@ class DNView
 		
 		ob_start();
 		$this->error_reporting_old=error_reporting();
-		error_reporting($this->error_reporting_old & ~E_NOTICE);
+		error_reporting(error_reporting() & ~E_NOTICE);
 		$this->includeShowFiles();
 		ob_end_flush();
 	}
-	public function cleanUp()
-	{
-		$this->data=[];
-		$this->head_file=null;
-		$this->foot_file=null;
-		$this->view=null;
-		error_reporting($this->error_reporting_old);
-	}
+	
 	protected function includeShowFiles()
 	{
 		extract($this->data);
@@ -826,22 +811,27 @@ trait DNMVCS_Glue
 		return DNRoute::G()->_Parameters();
 	}
 	
-	public $rewriteMap=[];
-	public $routeMap=[];
+	
 	public function assignRewrite($key,$value=null)
 	{
+		$this->options['ext']=$this->options['ext']??[];
+		$this->options['ext']['rewriteMap']=$this->options['ext']['rewriteMap']??[];
+		
 		if(is_array($key)&& $value===null){
-			$this->rewriteMap=array_merge($this->rewriteMap,$key);
+			$this->options['ext']['rewriteMap']=array_merge($this->options['ext']['rewriteMap'],$key);
 		}else{
-			$this->rewriteMap[$key]=$value;
+			$this->options['ext']['rewriteMap'][$key]=$value;
 		}
 	}
 	public function assignRoute($key,$callback=null)
 	{
+		$this->options['ext']=$this->options['ext']??[];
+		$this->options['ext']['routeMap']=$this->options['ext']['routeMap']??[];
+		
 		if(is_array($key)&& $callback===null){
-			$this->routeMap=array_merge($this->routeMap,$key);
+			$this->options['ext']['routeMap']=array_merge($this->options['ext']['routeMap'],$key);
 		}else{
-			$this->routeMap[$key]=$callback;
+			$this->options['ext']['routeMap'][$key]=$callback;
 		}
 	}
 	public function addRouteHook($hook,$prepend=false)
@@ -1251,7 +1241,7 @@ class DNMVCS
 		
 		if(!empty($this->options['ext'])){
 			self::ImportSys();
-			AppEx::DealExtOptions($this->options['ext']);
+			AppExt::AfterInit();
 		}
 		return $this;
 	}
@@ -1285,9 +1275,9 @@ class DNMVCS
 	}
 	public function run()
 	{
-		if($this->rewriteMap || $this->routeMap){
+		if(!empty($this->options['ext'])){
 			self::ImportSys();
-			AppEx::DealRewriteAndRouteMap();
+			AppExt::BeforeRun();
 		}
 		
 		$this->initObLevel=ob_get_level();
@@ -1304,11 +1294,6 @@ class DNMVCS
 		for($i=ob_get_level();$i>$this->initObLevel;$i--){
 			ob_end_clean();
 		}
-	}
-	public function cleanUp()
-	{
-		DNView::G()->cleanUp();
-		DNRoute::G()->cleanUp();
 	}
 }
 /////////////////////////
