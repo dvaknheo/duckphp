@@ -714,9 +714,15 @@ class AppEx extends DNMVCS
 		];
 	public function init($options=[])
 	{
-		$options=array_merge(self::DEFAULT_OPTIONS_EX,$options);
+		$this->onBeforeInit($options,$this);
+		$ret=parent::init($options);
+		$this->onAfterInit($options,$this);
+	}
+	public function onBeforeInit($options,$dn)
+	{
+		$options=array_merge(self::DEFAULT_OPTIONS_EX,$dn->options);
 
-		if($options['use_common_configer']){
+		if($options['use_common_autoloader']){
 			ProjectCommonAutoloader::G()->init($options)->run();
 		}
 		
@@ -730,18 +736,23 @@ class AppEx extends DNMVCS
 		if($options['use_ext_db']){
 			$options['db_class'] =DBExt::class;
 		}
-		
-		parent::init($options); // TODO move down;
-		
+	}
+	public function onAfterInit($options,$dn)
+	{
+		$options=array_merge(self::DEFAULT_OPTIONS_EX,$options);
 		//TODO test for 404
-		SimpleRouteHook::G()->key_for_simple_route=$this->options['key_for_simple_route'];
+		SimpleRouteHook::G()->key_for_simple_route=$options['key_for_simple_route'];
 		DNRoute::G()->addRouteHook([SimpleRouteHook::G(),'hook']);
 		if($options['use_function_dispatch']){
 			DNRoute::G()->addRouteHook([FunctionDispatcher::G(),'hook']);
 		}
 		return $this;
 	}
-
+	public function bind($dn)
+	{
+		$dn->onBeforeInit=[$this,'onBeforeInit'];
+		$dn->onAfterInit=[$this,'onBeforeInit'];
+	}
 }
 //mysqldump -uroot -p123456 DnSample -d --opt --skip-dump-date --skip-comments | sed 's/ AUTO_INCREMENT=[0-9]*\b//g' >../data/database.sql
 

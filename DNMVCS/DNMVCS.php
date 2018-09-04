@@ -1170,6 +1170,12 @@ class DNMVCS
 	public $options=[];
 	public $isDev=false;
 	protected $initObLevel=0;
+	
+	public $onBeforeInit=null;
+	public $onAfterInit=null;
+	public $onBeforeRun=null;
+	public $onAfterRun=null;
+	
 	public static function RunQuickly($options=[])
 	{
 		$options['ext_mode']=$options['ext_mode']??false;
@@ -1244,6 +1250,8 @@ class DNMVCS
 		}
 		if($object){return $object;}
 		
+		if($this->onBeforeInit){($this->onBeforeInit)($this->options,$this);}
+		
 		$this->initExceptionManager();
 		$this->initOptions($options);
 		
@@ -1253,6 +1261,8 @@ class DNMVCS
 		$this->initView(DNView::G());
 		$this->initRoute(DNRoute::G());
 		$this->initDBManager(DNDBManager::G());
+		
+		if($this->onAfterInit){($this->onAfterInit)($this->options,$this);}
 		
 		return $this;
 	}
@@ -1286,13 +1296,15 @@ class DNMVCS
 	}
 	public function run()
 	{
-		$this->initObLevel=ob_get_level();
 		if($this->rewriteMap || $this->routeMap){
 			self::ImportSys();
 			RouteRewriteHook::G()->install($this->rewriteMap);
 			RouteMapHook::G()->install($this->routeMap);
 		}
+		
+		$this->initObLevel=ob_get_level();
 		$ret=DNRoute::G()->run();
+		
 		
 		for($i=ob_get_level();$i>$this->initObLevel;$i--){
 			ob_end_flush();

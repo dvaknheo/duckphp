@@ -227,7 +227,7 @@ class SwooleAppBase
 		$options['default_controller_reuse']=false;
 		
 		//DNRoute::G(RouteWithSuperGlobal::G());
-		DN::G(DN::G()->init($options));
+		DN::G()->init($options);
 		SwooleAppBase::G()->after_init($options);
 		//Swoole\Runtime::enableCoroutine();
 		
