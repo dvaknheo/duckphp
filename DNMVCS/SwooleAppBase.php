@@ -160,8 +160,86 @@ class SwooleHttp
 		$this->response=null;
 	}
 }
+interface IHttpRunner
+{
+	public function onHttpRun($request,$response);
+	public function onHttpException($ex);
+	public function onHttpCleanUp();
+}
+interface IWebSocketRunner
+{
+	public function onWebSoketRun($request,$response);
+	public function onWebSoketException($ex);
+	public function onWebSoketCleanUp();
+}
+class SwooleBasicServer
+{
+	use DNSingleton;
+	
+	public $server=null;
+	public $httpRunner=null;
+	public $webSocketRunner=null;
 
-class SwooleAppBase
+	public function onRequest($request,$response)
+	{
+		$InitObLevel=ob_get_level();
+		ob_start(function($str) use($response){
+			if(''===$str){return;}
+			$response->write($str);
+		});
+		try{
+			$this->httpRunner->onHttpRun($request,$response);
+		}catch(\Throwable $ex){
+			if( !($ex instanceof  \Swoole\ExitException) ){
+				$this->httpRunner->onHttpException($ex);
+			}
+		}
+		$this->httpRunner->onHttpCleanUp();
+		for($i=ob_get_level();$i>$InitObLevel;$i--){
+			ob_end_flush();
+		}
+	}
+	public function onMessage($server,$frame)
+	{
+		$fd=$frame->fd;
+		ob_start(function($str)use($server,$fd){
+			if(''===$str){return;}
+			$server->push($fd,$str);
+		});
+		try{
+			$this->onWebSoketRun($server,$frame);
+		}catch(\Throwable $ex){
+			if( !($ex instanceof  \Swoole\ExitException) ){
+				$this->onWebSoketException($ex);
+			}
+		}
+		$this->onWebSoketCleanUp();
+		for($i=ob_get_level();$i>$InitObLevel;$i--){
+			ob_end_flush();
+		}
+	}
+	
+	public function init($server,$httpRunner=null,$webSocketRunner=null)
+	{
+		$this->server=$server;
+		if($httpRunner){
+		$this->httpRunner=$httpRunner;
+		$this->server->on('request',[$this,'onRequest']);
+		}
+		if($webSocketRunner){
+			$this->webSocketRunner=$webSocketRunner;
+			$this->server->on('mmessage',[$this,'onMessage']);
+		}
+		return $this;
+	}
+	public function run()
+	{
+		fwrite(STDOUT,get_class($this)." run...\n");
+		$this->server->start();
+	}
+}
+
+class SwooleAppBase implements IHttpRunner
 {
 	use DNSingleton;
 	public $server;
@@ -193,10 +271,12 @@ class SwooleAppBase
 		CoroutineSingleton::ReplaceDefaultSingletonHandel();
 		DN::G()->init($options);
 		DNRoute::G()->onServerArray=[SuperGlobal\SERVER::class,'Get'];
+		
+		return $this;
 	}
 	public function onHttpRun($request=null,$response=null)
 	{
-		SwooleHttp::Init($request,$response);
+		
 		CoroutineSingleton::CloneInstance(DNView::class);
 		CoroutineSingleton::CloneInstance(DNRoute::class);
 		
@@ -220,7 +300,7 @@ class SwooleAppBase
 	}
 	public function onHttpException($ex)
 	{
-		DN::G()->onException($ex);
+		
 	}
 	public function onHttpCleanUp()
 	{
@@ -229,6 +309,7 @@ class SwooleAppBase
 	}
 	public function onRequest($request,$response)
 	{
+	SwooleHttp::Init($request,$response);
 		$InitObLevel=ob_get_level();
 		ob_start(function($str) use($response){
 			if(''===$str){return;}
@@ -238,13 +319,16 @@ class SwooleAppBase
 			$this->onHttpRun($request,$response);
 		}catch(\Throwable $ex){
 			if( !($ex instanceof  \Swoole\ExitException) ){
-				$this->onHttpException($ex);
+				//$this->onHttpException($ex);
+				DN::G()->onException($ex);
 			}
 		}
-			$this->onHttpCleanUp();
 		for($i=ob_get_level();$i>$InitObLevel;$i--){
 			ob_end_flush();
 		}
+		SwooleHttp::CleanUp();
+		CoroutineSingleton::CleanUp();
+
 	}
 	public static function RunWithServer($server_or_options,$options)
 	{
@@ -252,5 +336,8 @@ class SwooleAppBase
 		$server=self::Server();
 		$server->on('request',[self::G(),'onRequest']);
 		$server->start();
+		return;
+		SwooleBasicServer::G()->init($server,self::G())->run();
+		
 	}
 }
