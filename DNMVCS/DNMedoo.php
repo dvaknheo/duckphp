@@ -61,5 +61,9 @@ class DNMedoo extends MedooFixed
 		
 		return new DNMedoo($db_config);
 	}
+	public static function CloseDBInstance($db)
+	{
+		$db->close();
+	}
 
 }

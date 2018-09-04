@@ -511,6 +511,10 @@ class MedooSimpleInstaller
 		
 		return new Medoo($db_config);
 	}
+	public static function CloseDBInstance($db)
+	{
+		$db->close();
+	}
 }
 class MyArgsAssoc
 {
@@ -695,7 +699,7 @@ class RouteWithSuperGlobal extends DNRoute
 	}
 }
 
-class AppEx extends DNMVCS
+class AppEx 
 {
 	const DEFAULT_OPTIONS_EX=[
 			'setting_file_basename'=>'setting',
@@ -712,46 +716,42 @@ class AppEx extends DNMVCS
 			'use_ext_db'=>false,
 			//TODO 'use_super_global'=>false,
 		];
-	public function init($options=[])
+	public static function DealExtOptions($ext_options)
 	{
-		$this->onBeforeInit($options,$this);
-		$ret=parent::init($options);
-		$this->onAfterInit($options,$this);
-	}
-	public function onBeforeInit($options,$dn)
-	{
-		$options=array_merge(self::DEFAULT_OPTIONS_EX,$dn->options);
-
+		$options=array_merge(self::DEFAULT_OPTIONS_EX,$ext_options);
+		
+		$dn=DNMVCS::G();
 		if($options['use_common_autoloader']){
 			ProjectCommonAutoloader::G()->init($options)->run();
 		}
 		
 		if($options['use_common_configer']){
-			DNConfiger::G(ProjectCommonConfiger::G());
+			$dn->initConfiger(DNConfiger::G(ProjectCommonConfiger::G()));
+			$dn->isDev=DNConfiger::G()->_Setting('is_dev')??$dn->isDev;
 		}
-		
 		if($options['use_function_view']){
-			DNView::G(FunctionView::G());
+			$dn->initView(DNView::G(FunctionView::G()));
 		}
 		if($options['use_ext_db']){
 			$options['db_class'] =DBExt::class;
+			$dn->initDBManager(DNDBManager::G());
 		}
-	}
-	public function onAfterInit($options,$dn)
-	{
-		$options=array_merge(self::DEFAULT_OPTIONS_EX,$options);
-		//TODO test for 404
-		SimpleRouteHook::G()->key_for_simple_route=$options['key_for_simple_route'];
-		DNRoute::G()->addRouteHook([SimpleRouteHook::G(),'hook']);
+		if($options['key_for_simple_route']){
+			SimpleRouteHook::G()->key_for_simple_route=$options['key_for_simple_route'];
+			DNRoute::G()->addRouteHook([SimpleRouteHook::G(),'hook']);
+		}
 		if($options['use_function_dispatch']){
 			DNRoute::G()->addRouteHook([FunctionDispatcher::G(),'hook']);
 		}
 		return $this;
 	}
-	public function bind($dn)
+	public static function DealRewriteAndRouteMap()
 	{
-		$dn->onBeforeInit=[$this,'onBeforeInit'];
-		$dn->onAfterInit=[$this,'onBeforeInit'];
+		$dn=DNMVCS::G();
+		if($dn->rewriteMap || $dn->routeMap){
+			RouteRewriteHook::G()->install($dn->rewriteMap);
+			RouteMapHook::G()->install($dn->routeMap);
+		}
 	}
 }
 //mysqldump -uroot -p123456 DnSample -d --opt --skip-dump-date --skip-comments | sed 's/ AUTO_INCREMENT=[0-9]*\b//g' >../data/database.sql

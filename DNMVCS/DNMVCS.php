@@ -151,8 +151,6 @@ class DNRoute
 			
 			'enable_post_prefix'=>true,
 			'disable_default_class_outside'=>false,
-			
-			'default_controller_reuse'=>true, //en , something bad
 		];
 	
 	public $on404Handel=null;
@@ -346,12 +344,7 @@ class DNRoute
 	// You can override it; variable indived
 	protected function includeControllerFile($file)
 	{
-		$reuse=$this->options['default_controller_reuse']??false;
-		if(!$reuse){
-			require_once($file);
-		}else{
-			require($file);
-		}
+		require_once($file);
 	}
 	// You can override it;
 	protected function getObecjectToCall($class_name)
@@ -591,6 +584,10 @@ class DNDB
 		$db->init($db_config);
 		return $db;
 	}
+	public static function CloseDBInstance($db)
+	{
+		$db->close();
+	}
 	protected function check_connect()
 	{
 		if($this->pdo){return;}
@@ -757,7 +754,8 @@ class DNDBManager
 {
 	use DNSingleton;
 	
-	protected $callback_create_db=null;
+	public $onDBCreate=null;
+	public $onDBClose=null;	
 	public $db=null;
 	public $db_r=null;
 	public $db_config=[];
@@ -770,45 +768,49 @@ class DNDBManager
 		$this->db_r_config=$db_r_config;
 		$this->default_db_class=$default_db_class;
 	}
-	public function installDBClass($callback)
+	public function installDBClass($onDBCreate,$onDBClose=null)
 	{
-		if(is_string($callback) && class_exists($callback)){
-			$callback=([$callback,'CreateDBInstance']);
+		if($onDBClose===null){
+			$this->onDBCreate=[$onDBCreate,'CreateDBInstance'];
+			$this->onDBClose=[$onDBCreate,'CloseDBInstance'];
+		}else{
+			$this->onDBCreate=$onDBCreate;
+			$this->onDBClose=$onDBClose;
 		}
-		$this->callback_create_db=$callback;
 	}
 	public function _DB()
 	{
 		if($this->db){return $this->db;}
 		
-		if($this->callback_create_db===null){
+		if($this->onDBCreate===null){
 			$this->installDBClass($this->default_db_class);
 		}
-		$this->db=($this->callback_create_db)($this->db_config);
-		
+		$this->db=($this->onDBCreate)($this->db_config);
 		return $this->db;
 	}
 	public function _DB_W()
 	{
 		return $this->_DB();
 	}
-	
 	public function _DB_R()
 	{
 		if($this->db_r){return $this->db_r;}
 		
 		if(!$this->db_r_config){return $this->_DB();}
-		if($this->callback_create_db===null){
+		if($this->onDBCreate===null){
 			$this->installDBClass($this->default_db_class);
 		}
-		$this->db_r=($this->callback_create_db)($this->db_r_config);
+		$this->db_r=($this->onDBCreate)($this->db_r_config);
 		return $this->db_r;
 	}
-	
 	public function closeAllDB()
 	{
-		if($this->db!==null){$this->db->close();$this->db=null;}
-		if($this->db_r!==null){$this->db_r->close();$this->db_r=null;}
+		if($this->db!==null){
+			($this->onDBClose)($this->db);
+		}
+		if($this->db_r!==null){
+			($this->onDBClose)($this->db);
+		}
 	}
 }
 
@@ -824,8 +826,8 @@ trait DNMVCS_Glue
 		return DNRoute::G()->_Parameters();
 	}
 	
-	protected $rewriteMap=[];
-	protected $routeMap=[];
+	public $rewriteMap=[];
+	public $routeMap=[];
 	public function assignRewrite($key,$value=null)
 	{
 		if(is_array($key)&& $value===null){
@@ -939,6 +941,7 @@ trait DNMVCS_Glue
 	public function _DI($name)
 	{
 		//DN::ThrowOn(true,"Implement Me TODO Anything You Like");
+		return null;
 	}
 	
 }
@@ -1136,11 +1139,7 @@ EOT;
 		}
 		
 		if(!$this->auto_close_db){ return ;}
-		try{
-			DNDBManager::G()->closeAllDB();
-		}catch(Error $ex){
-		}catch(Exception $ex){
-		}
+		DNDBManager::G()->closeAllDB();
 	}
 }
 class DNMVCS
@@ -1171,44 +1170,34 @@ class DNMVCS
 	public $isDev=false;
 	protected $initObLevel=0;
 	
-	public $onBeforeInit=null;
-	public $onAfterInit=null;
-	public $onBeforeRun=null;
-	public $onAfterRun=null;
 	
 	public static function RunQuickly($options=[])
 	{
-		$options['ext_mode']=$options['ext_mode']??false;
-		if($options['ext_mode']){
-			self::ImportSys();
-			if(!isset($options['base_class'])){
-				$options['base_class']='DNMVCS\AppEx';
-			}
-		}
 		return self::G()->init($options)->run();
 	}
 	public static function RunWithoutPathInfo($options=[])
 	{
 		$default_options=[
-			'ext_mode'=>true,
-			'key_for_simple_route'=>'_r',
-			'setting_file_basename'=>'setting',
+			'ext'=>[
+				'key_for_simple_route'=>'_r',
+			]
 			//'path_view'=>'',
 		];
-		$options=array_merge($default_options,$options);
+		$options=array_merge_recursive($default_options,$options);
 		return self::RunQuickly($options);
 	}
 	public static function RunOneFileMode($options=[])
 	{
 		$default_options=[
-			'ext_mode'=>true,
-			'key_for_simple_route'=>'act',
-			'use_function_dispatch'=>true,
-			'use_function_view'=>true,
 			'setting_file_basename'=>'',
-			//'path_view'=>'',
+			'ext'=>[
+				'key_for_simple_route'=>'act',
+				'use_function_dispatch'=>true,
+				'use_function_view'=>true,
+				
+			]
 		];
-		$options=array_merge($default_options,$options);
+		$options=array_merge_recursive($default_options,$options);
 		return self::RunQuickly($options);
 	}
 	protected function initOptions($options=[])
@@ -1220,9 +1209,7 @@ class DNMVCS
 		$this->path=$this->options['path'];
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
 		$this->isDev=$this->options['is_dev'];
-		if($this->options['use_ext']){
-			self::ImportSys();
-		}
+		//DB_Class
 	}
 	
 	protected function initExceptionManager()
@@ -1250,8 +1237,6 @@ class DNMVCS
 		}
 		if($object){return $object;}
 		
-		if($this->onBeforeInit){($this->onBeforeInit)($this->options,$this);}
-		
 		$this->initExceptionManager();
 		$this->initOptions($options);
 		
@@ -1262,8 +1247,10 @@ class DNMVCS
 		$this->initRoute(DNRoute::G());
 		$this->initDBManager(DNDBManager::G());
 		
-		if($this->onAfterInit){($this->onAfterInit)($this->options,$this);}
-		
+		if(!empty($this->options['ext'])){
+			self::ImportSys();
+			AppEx::DealExtOptions($this->options['ext']);
+		}
 		return $this;
 	}
 	public function initConfiger($configer)
@@ -1298,8 +1285,7 @@ class DNMVCS
 	{
 		if($this->rewriteMap || $this->routeMap){
 			self::ImportSys();
-			RouteRewriteHook::G()->install($this->rewriteMap);
-			RouteMapHook::G()->install($this->routeMap);
+			AppEx::DealRewriteAndRouteMap();
 		}
 		
 		$this->initObLevel=ob_get_level();
