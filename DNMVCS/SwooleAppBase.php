@@ -164,64 +164,20 @@ class SwooleHttp
 class SwooleAppBase
 {
 	use DNSingleton;
-
-	protected $inited_routehooks=[];
-	protected $replacedClass=[];
-	public function afterInit($options=[])
+	public $server;
+	public static function Server()
 	{
-		CoroutineSingleton::ReplaceDefaultSingletonHandel();
-		$this->inited_routehooks=DNRoute::G()->routeHooks;
-		
-		$this->replacedClass[DNView::class]=get_class(DNView::G());
-		$this->replacedClass[DNRoute::class]=get_class(DNRoute::G());
-		
-		DNRoute::G()->onServerArray=[SuperGlobal\SERVER::class,'Get'];
+		return self::G()->server;
 	}
-	public function beforeRun()
+	public static function Request()
 	{
-		$request=SwooleHttp::Request();
-		
-		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G())->init($request);
-		SuperGlobal\GET::G(SwooleSuperGlobalGet::G())->init($request);
-		SuperGlobal\POST::G(SwooleSuperGlobalPost::G())->init($request);
-		SuperGlobal\REQUEST::G(SwooleSuperGlobalRequest::G())->init($request);
-		SuperGlobal\COOKIE::G(SwooleSuperGlobalCookie::G())->init($request);
-		
-		$path=DN::G()->options['path'];
-		SuperGlobal\SERVER::Set('DOCUMENT_ROOT',rtrim($path,'/'));
-		SuperGlobal\SERVER::Set('SCRIPT_FILENAME',$path.'index.php');
-		
-		CoroutineSingleton::CloneInstance(DNView::class);
-		CoroutineSingleton::CloneInstance(DNRoute::class);
-		
-		$route=DNRoute::G();
-		$route->path_info=$route->_SERVER('PATH_INFO')??'';
-		$route->request_method=$route->_SERVER('REQUEST_METHOD')??'';
-		$route->path_info=ltrim($route->path_info,'/');
+		return SwooleHttp::G()->request;
 	}
-	public static function onRequest($request,$response)
+	public static function Response()
 	{
-		SwooleHttp::Init($request,$response);
-		$InitObLevel=ob_get_level();
-		ob_start(function($str) use($response){
-			if(''===$str){return;}
-			$response->write($str);
-		});
-		try{
-			$this->beforeRun();
-			DN::G()->run();
-		}catch(\Throwable $ex){
-			if( !($ex instanceof  \Swoole\ExitException) ){
-				DN::G()->onException($ex);
-			}
-		}
-		for($i=ob_get_level();$i>$InitObLevel;$i--){
-			ob_end_flush();
-		}
-		SwooleHttp::CleanUp();
-		CoroutineSingleton::CleanUp();
+		return SwooleHttp::G()->response;
 	}
-	public function bindWithServer($server_or_options,$options)
+	public function init($server_or_options,$options)
 	{
 		$server=$server_or_options;
 		if(!is_object($server_or_options)){
@@ -231,15 +187,70 @@ class SwooleAppBase
 			$server->set($server_or_options);
 		}
 		
-		Swoole\Runtime::enableCoroutine();
-		DN::G()->init($options);
-		$this->afterInit($options);
-		$server->on('request',[$this,'onRequest']);
+		$this->server=$server;
+		\Swoole\Runtime::enableCoroutine();
 		
+		CoroutineSingleton::ReplaceDefaultSingletonHandel();
+		DN::G()->init($options);
+		DNRoute::G()->onServerArray=[SuperGlobal\SERVER::class,'Get'];
+	}
+	public function onHttpRun($request=null,$response=null)
+	{
+		SwooleHttp::Init($request,$response);
+		CoroutineSingleton::CloneInstance(DNView::class);
+		CoroutineSingleton::CloneInstance(DNRoute::class);
+		
+		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G())->init($request);
+		SuperGlobal\GET::G(SwooleSuperGlobalGet::G())->init($request);
+		SuperGlobal\POST::G(SwooleSuperGlobalPost::G())->init($request);
+		SuperGlobal\REQUEST::G(SwooleSuperGlobalRequest::G())->init($request);
+		SuperGlobal\COOKIE::G(SwooleSuperGlobalCookie::G())->init($request);
+		
+		
+		$path=DN::G()->options['path'];
+		SuperGlobal\SERVER::Set('DOCUMENT_ROOT',rtrim($path,'/'));
+		SuperGlobal\SERVER::Set('SCRIPT_FILENAME',$path.'index.php');
+		
+		$route=DNRoute::G();
+		$route->path_info=$route->_SERVER('PATH_INFO')??'';
+		$route->request_method=$route->_SERVER('REQUEST_METHOD')??'';
+		$route->path_info=ltrim($route->path_info,'/');
+		///////////////
+		DN::G()->run();
+	}
+	public function onHttpException($ex)
+	{
+		DN::G()->onException($ex);
+	}
+	public function onHttpCleanUp()
+	{
+		SwooleHttp::CleanUp();
+		CoroutineSingleton::CleanUp();
+	}
+	public function onRequest($request,$response)
+	{
+		$InitObLevel=ob_get_level();
+		ob_start(function($str) use($response){
+			if(''===$str){return;}
+			$response->write($str);
+		});
+		try{
+			$this->onHttpRun($request,$response);
+		}catch(\Throwable $ex){
+			if( !($ex instanceof  \Swoole\ExitException) ){
+				$this->onHttpException($ex);
+			}
+		}
+			$this->onHttpCleanUp();
+		for($i=ob_get_level();$i>$InitObLevel;$i--){
+			ob_end_flush();
+		}
 	}
 	public static function RunWithServer($server_or_options,$options)
 	{
-		self::G()->bindWithServer($server_or_options,$options);
+		self::G()->init($server_or_options,$options);
+		$server=self::Server();
+		$server->on('request',[self::G(),'onRequest']);
 		$server->start();
 	}
 }
