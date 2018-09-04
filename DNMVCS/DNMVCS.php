@@ -1052,7 +1052,7 @@ trait DNMVCS_Handel
 		$data['trace']=$ex->getTraceAsString();
 		if(!DNView::G()->hasView('_sys/error-exception')){
 			if(!$this->isDev){
-				echo "DNMVCS 500 internal error!\n";
+				echo "DNMVCS 500 internal error\n";
 			}else{
 				echo "<!--DNMVCS  use view/_sys/error-exception.php to overrid me -->\n";
 				var_dump($ex);
@@ -1173,6 +1173,7 @@ class DNMVCS
 	
 	public static function RunQuickly($options=[])
 	{
+
 		return self::G()->init($options)->run();
 	}
 	public static function RunWithoutPathInfo($options=[])
@@ -1190,6 +1191,7 @@ class DNMVCS
 	{
 		$default_options=[
 			'setting_file_basename'=>'',
+			'base_class'=>'',
 			'ext'=>[
 				'key_for_simple_route'=>'act',
 				'use_function_dispatch'=>true,

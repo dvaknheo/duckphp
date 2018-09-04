@@ -126,7 +126,7 @@ class SimpleRoute extends DNRoute
 	public function init($options)
 	{
 		parent::init($options);
-		$this->key_for_simple_route=$options['key_for_simple_route'];
+		$this->key_for_simple_route=$options['ext']['key_for_simple_route'];
 		
 		$path_info=_HTTP_REQUEST($this->key_for_simple_route)??'';
 		$path_info=ltrim($path_info,'/');
@@ -147,9 +147,8 @@ class SimpleRouteHook
 	public function hook($route)
 	{
 		$route->setURLHandel([$this,'onURL']);
-		$this->key_for_simple_route=isset($route->options['key_for_simple_route'])?$route->options['key_for_simple_route']:$this->key_for_simple_route;
-		
-		$path_info==_HTTP_REQUEST($this->key_for_simple_route)??'';
+
+		$path_info=_HTTP_REQUEST($this->key_for_simple_route)??'';
 		$path_info=ltrim($path_info,'/');
 		$route->path_info=$path_info;
 		$route->calling_path=$path_info;
@@ -605,19 +604,24 @@ class FunctionDispatcher
 	public function hook($route)
 	{
 		$this->path_info=$route->path_info;
-		$route->callback=function(){
-			$post=($route->_SERVER('REQUEST_METHOD')==='POST')?$this->post_prefix:'';
-			$callback=$this->prefix.$post.$this->path_info;
-			if(is_callable($callback)){
-				($callback)();
+		$route->callback=[$this,'runRoute'];
+	}
+	public function runRoute()
+	{
+		//TODO 和
+		$post=(DNRoute::G()->_SERVER('REQUEST_METHOD')==='POST')?$this->post_prefix:'';
+		$callback=$this->prefix.$post.$this->path_info;
+		if(is_callable($callback)){
+			($callback)();
+		}else{
+			if(is_callable($this->default_callback)){
+				($this->default_callback)();
 			}else{
-				if(is_callable($this->default_callback)){
-					($this->default_callback)();
-				}else{
-					(DNRoute::G()->on404Handel)();
-				}
+				(DNRoute::G()->on404Handel)();
+				return false;
 			}
-		};
+		}
+		return true;;
 	}
 	
 }
@@ -728,6 +732,7 @@ class AppEx
 		if($options['use_common_configer']){
 			$dn->initConfiger(DNConfiger::G(ProjectCommonConfiger::G()));
 			$dn->isDev=DNConfiger::G()->_Setting('is_dev')??$dn->isDev;
+			// 可能要调整测试状态
 		}
 		if($options['use_function_view']){
 			$dn->initView(DNView::G(FunctionView::G()));
@@ -743,7 +748,6 @@ class AppEx
 		if($options['use_function_dispatch']){
 			DNRoute::G()->addRouteHook([FunctionDispatcher::G(),'hook']);
 		}
-		return $this;
 	}
 	public static function DealRewriteAndRouteMap()
 	{
