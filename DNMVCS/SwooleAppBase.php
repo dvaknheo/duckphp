@@ -239,14 +239,6 @@ class SwooleAppBase
 	}
 	public static function RunWithServer($server_or_options,$options)
 	{
-		$server=$server_or_options;
-		if(!is_object($server_or_options)){
-			$server=new swoole_http_server($server_or_options['Host'], $server_or_options['Port']);
-			unset($server_or_options['Host']);
-			unset($server_or_options['Port']);
-			$server->set($server_or_options);
-		}
-		
 		self::G()->bindWithServer($server_or_options,$options);
 		$server->start();
 	}
