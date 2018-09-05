@@ -824,6 +824,9 @@ trait DNMVCS_Glue
 		}else{
 			$this->options['ext']['rewriteMap'][$key]=$value;
 		}
+		
+		self::ImportSys();
+		AppExt::G()->installHook($this);
 	}
 	public function assignRoute($key,$callback=null)
 	{
@@ -835,6 +838,9 @@ trait DNMVCS_Glue
 		}else{
 			$this->options['ext']['routeMap'][$key]=$callback;
 		}
+		
+		self::ImportSys();
+		AppExt::G()->installHook($this);
 	}
 	public function addRouteHook($hook,$prepend=false)
 	{
@@ -934,6 +940,10 @@ trait DNMVCS_Glue
 	{
 		//DN::ThrowOn(true,"Implement Me TODO Anything You Like");
 		return null;
+	}
+	public function addHook($callback)
+	{
+		array_unshift($this->hooks,$callback);
 	}
 	
 }
@@ -1162,7 +1172,7 @@ class DNMVCS
 	public $isDev=false;
 	protected $initObLevel=0;
 	protected $db_loader=null;
-	
+	protected $hooks=[];
 	public static function RunQuickly($options=[])
 	{
 
@@ -1243,7 +1253,7 @@ class DNMVCS
 		
 		if(!empty($this->options['ext'])){
 			self::ImportSys();
-			AppExt::AfterInit();
+			AppExt::G()->installHook($this);
 		}
 		return $this;
 	}
@@ -1277,9 +1287,8 @@ class DNMVCS
 	}
 	public function run()
 	{
-		if(!empty($this->options['ext'])){
-			self::ImportSys();
-			AppExt::BeforeRun();
+		foreach($this->hooks as $hook){
+			($hook)();
 		}
 		
 		$this->initObLevel=ob_get_level();

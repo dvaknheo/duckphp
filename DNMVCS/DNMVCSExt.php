@@ -720,15 +720,15 @@ class AppExt
 			'use_ext_db'=>false,
 			//TODO 'use_super_global'=>false,
 		];
-	public static function AfterInit()
+	protected $is_installed=false;
+	public function installHook($dn)
 	{
-		return self::G()->_AfterInit();
+		if($this->is_installed){return;}
+		$this->is_installed=true;
+		$this->afterInit();
+		DNMVCS::G()->addHook([$this,'hook']);
 	}
-	public static function BeforeRun()
-	{
-		return self::G()->_BeforeRun();
-	}
-	public static function _AfterInit()
+	protected function afterInit()
 	{
 		$dn=DNMVCS::G();
 		$ext_options=$dn->options['ext'];
@@ -759,7 +759,7 @@ class AppExt
 			DNRoute::G()->addRouteHook([FunctionDispatcher::G(),'hook']);
 		}
 	}
-	public static function _BeforeRun()
+	public function hook()
 	{
 		$ext_options=DNMVCS::G()->options['ext']??[];
 		$rewriteMap=$ext_options['rewriteMap']??null;
