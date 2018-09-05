@@ -284,7 +284,9 @@ class DNRoute
 		for($i=0;$i<$l;$i++){
 			$v=$blocks[$i];
 			$method=$v;
-			if(''==$v){break;}
+			if(''===$v){break;}
+			if('.'===$v){ return null;}
+			if('..'===$v){ return null;}
 			///if(!preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/',$v)){ //just for php classname;
 			///	return null;
 			///}
@@ -317,8 +319,8 @@ class DNRoute
 		if($this->disable_default_class_outside && $current_class===$this->wellcome_controller && $method===$this->default_method){
 			return null;
 		}
-		$method=$method?$method:$this->default_method;
-		$current_class=$current_class?$current_class:$this->wellcome_controller;
+		$method=$method?:$this->default_method;
+		$current_class=$current_class?:$this->wellcome_controller;
 		
 		$this->calling_method=$method;
 		
