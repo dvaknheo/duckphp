@@ -1,5 +1,6 @@
 <?php
 namespace DNMVCS;
+use DNMVCS\SuperGlobal\SuperGlobalBase;
 // 用于不想用 PHP 的超级变量的场合 在 swoole 应用里用到
 class SwooleSuperGlobalServer extends SuperGlobalBase
 {

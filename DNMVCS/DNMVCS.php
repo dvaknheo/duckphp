@@ -528,7 +528,7 @@ class DNConfiger
 		if($this->inited || !$this->setting_file_basename){ return $this->setting[$key]??null; }
 		$basename=$this->setting_file_basename;
 		if(!is_file($this->path.$basename.'.php')){
-			echo '<h1>'.'DNMVCS Notice: no setting file!,change '.$basename.'.sample.php to '.$basename.'.php !'.'</h1>';
+			echo '<h1>'.'DNMVCS Fatal: no setting file!,change '.$basename.'.sample.php to '.$basename.'.php !'.'</h1>';
 			exit;
 		}
 		$this->setting=$this->loadFile($basename,false);
@@ -732,7 +732,7 @@ class DNExceptionManager
 			(self::$OnDevError)($errno, $errstr, $errfile, $errline);
 			break;
 		default:
-			//echo "DNMVCS Notice: Unknown error type: [$errno] $errstr<br />\n";
+			//echo "DNMVCS Fatal: Unknown error type: [$errno] $errstr<br />\n";
 			(self::$OnError)($errno, $errstr, $errfile, $errline);
 			break;
 		}

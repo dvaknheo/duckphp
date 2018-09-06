@@ -1,7 +1,6 @@
 <?php
 namespace DNMVCS;
 use \DNMVCS\DNMVCS as DN;
-use \DNMVCS\SuperGlobal\SuperGlobalBase;
 class CoroutineSingleton
 {
 	public static function GetInstance($class,$object)
@@ -206,7 +205,7 @@ class DNSwooleHttpServer
 			$request_uri=SuperGlobal\SERVER::Get("REQUEST_URI");
 			SuperGlobal\SERVER::Set("PATH_INFO",$request_uri);
 			SuperGlobal\SERVER::Set("DOCUMENT_ROOT",dirname($http_handler_file));
-			
+			chdir(dirname($http_handler_file));
 			(function($file){include($file);})($http_handler_file);
 			return;
 		}
@@ -233,6 +232,7 @@ class DNSwooleHttpServer
 				
 				$document_root=$this->static_root?:rtrim($php_root,'/');
 				SuperGlobal\SERVER::Set("DOCUMENT_ROOT",$document_root);
+				chdir(dirname($file));
 				(function($file){include($file);})($file);
 			}else{
 				SuperGlobal\SERVER::Set("SCRIPT_NAME",'/index.php');
@@ -241,6 +241,7 @@ class DNSwooleHttpServer
 				SuperGlobal\SERVER::Set("SCRIPT_FILENAME",$file);
 				$document_root=dirname($file);
 				SuperGlobal\SERVER::Set("DOCUMENT_ROOT",$document_root);
+				chdir(dirname($file));
 				(function($file){include($file);})($file);
 			}
 		}
@@ -261,7 +262,7 @@ class DNSwooleHttpServer
 				echo $ex;
 			}
 		}else{
-			foreach($shutdown_function_array as $v){
+			foreach($this->shutdown_function_array as $v){
 				$func=array_shift($v);
 				$func($v);
 			}
@@ -313,6 +314,7 @@ class DNSwooleHttpServer
 	
 	public function init($options=[])
 	{
+		require_once(__DIR__.'/SuperGlobal.php');
 		require_once(__DIR__.'/SwooleSuperGlobal.php');
 
 		$this->options=array_merge(self::DEFAULT_OPTIONS,$options);

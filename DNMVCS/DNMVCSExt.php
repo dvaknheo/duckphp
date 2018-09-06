@@ -431,7 +431,7 @@ class DBExt extends DNDB
 	}
 	public function delete($table,$id,$key='id')
 	{
-		throw new Exception("DNMVCS Notice : override me to delete");
+		throw new Exception("DNMVCS Fatal : override me to delete");
 		$sql="delete from {$table_name} where {$key}=? limit 1";
 		return $this->execQuick($sql,$id);
 	}
