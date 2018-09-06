@@ -25,7 +25,7 @@ class CoroutineSingleton
 			return $me;
 		}else{
 			$master=DNSingletonStaticClass::$_instances[$class]??null;
-			if($master){
+			if($master && !isset(DNSingletonStaticClass::$_instances[$key][$class])){
 				throw new \ErrorException("CoroutineSingleton fail:: $class use CreateInstance instead");
 			}
 			DNSingletonStaticClass::$_instances[$key][$class]=$object;
@@ -46,7 +46,11 @@ class CoroutineSingleton
 		$cid = \Swoole\Coroutine::getuid();
 		$key="cid=$cid";
 		DNSingletonStaticClass::$_instances[$key]=DNSingletonStaticClass::$_instances[$key]??[];
-		DNSingletonStaticClass::$_instances[$key][$class]=clone DNSingletonStaticClass::$_instances[$class];
+		
+		$master= DNSingletonStaticClass::$_instances[$class]??null;
+		if(!$master){return false;}
+		DNSingletonStaticClass::$_instances[$key][$class]=clone $master;
+		return true;
 	}
 	
 	public static function DeleteInstance($class)
@@ -187,8 +191,16 @@ class DNSwooleHttpServer
 	public function onHttpRun($request,$response)
 	{
 		SwooleHttpContext::Init($request,$response);
+		CoroutineSingleton::CloneInstance(SuperGlobal\SERVER::class);
+		CoroutineSingleton::CloneInstance(SuperGlobal\GET::class);
+		CoroutineSingleton::CloneInstance(SuperGlobal\POST::class);
+		CoroutineSingleton::CloneInstance(SuperGlobal\REQUEST::class);
+		CoroutineSingleton::CloneInstance(SuperGlobal\COOKIE::class);
+		
+		//SuperGlobal\SERVER::G();
 		
 		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G())->init($request);
+		
 		SuperGlobal\GET::G(SwooleSuperGlobalGet::G())->init($request);
 		SuperGlobal\POST::G(SwooleSuperGlobalPost::G())->init($request);
 		SuperGlobal\REQUEST::G(SwooleSuperGlobalRequest::G())->init($request);
