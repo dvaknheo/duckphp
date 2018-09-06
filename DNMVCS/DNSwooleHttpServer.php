@@ -2,51 +2,6 @@
 namespace DNMVCS;
 use \DNMVCS\DNMVCS as DN;
 use \DNMVCS\SuperGlobal\SuperGlobalBase;
-use \DNMVCS\SuperGlobal;
-
-class SwooleSuperGlobalServer extends SuperGlobalBase
-{
-	public function init($request)
-	{
-		foreach($request->header as $k=>$v){
-			$k='HTTP_'.str_replace('-','_',strtoupper($k));
-			$this->data[$k]=$v;
-		}
-		foreach($request->server as $k=>$v){
-			$this->data[strtoupper($k)]=$v;
-		}
-	}
-}
-
-class SwooleSuperGlobalGet extends SuperGlobalBase
-{
-	public function init($request)
-	{
-		$this->data=$request->get??[];
-	}
-}
-class SwooleSuperGlobalPost extends SuperGlobalBase
-{
-	public function init($request)
-	{
-		$this->data=$request->post??[];
-	}
-}
-class SwooleSuperGlobalRequest extends SuperGlobalBase
-{
-	public function init($request)
-	{
-		$this->data=array_merge($request->get??[],$request->post??[]);
-	}
-}
-class SwooleSuperGlobalCookie extends SuperGlobalBase
-{
-	public function init($request)
-	{
-		$this->data=$request->cookie??[];
-	}
-}
-
 class CoroutineSingleton
 {
 	public static function GetInstance($class,$object)
@@ -358,6 +313,8 @@ class DNSwooleHttpServer
 	
 	public function init($options=[])
 	{
+		require_once(__DIR__.'/SwooleSuperGlobal.php');
+
 		$this->options=array_merge(self::DEFAULT_OPTIONS,$options);
 		
 		$this->http_handler=$this->options['http_handler'];
@@ -372,6 +329,7 @@ class DNSwooleHttpServer
 		}
 		
 		$this->server=$server;
+		$this->options['server']=$server->setting;
 		$this->server->on('request',[$this,'onRequest']);
 		if($server->setting['enable_static_handler']??false){
 			$this->static_root=$server->setting['document_root'];
