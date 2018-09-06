@@ -737,6 +737,11 @@ class DNExceptionManager
 		return true;
 	}
 }
+interface IDNDBInstaller
+{
+	public function CreateDBInstance():object;
+	public function CloseDBInstance();
+}
 class DNDBManager
 {
 	use DNSingleton;
@@ -758,8 +763,9 @@ class DNDBManager
 	public function installDBClass($onDBCreate,$onDBClose=null)
 	{
 		if($onDBClose===null){
-			$this->onDBCreate=[$onDBCreate,'CreateDBInstance'];
-			$this->onDBClose=[$onDBCreate,'CloseDBInstance'];
+			$installer=$onDBCreate;
+			$this->onDBCreate=[$installer,'CreateDBInstance'];
+			$this->onDBClose=[$installer,'CloseDBInstance'];
 		}else{
 			$this->onDBCreate=$onDBCreate;
 			$this->onDBClose=$onDBClose;
