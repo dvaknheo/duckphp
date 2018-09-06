@@ -811,36 +811,22 @@ trait DNMVCS_Glue
 	public static function Parameters()
 	{
 		return DNRoute::G()->_Parameters();
-	}
-	
-	
+	}	
 	public function assignRewrite($key,$value=null)
 	{
-		$this->options['ext']=$this->options['ext']??[];
-		$this->options['ext']['rewriteMap']=$this->options['ext']['rewriteMap']??[];
-		
 		if(is_array($key)&& $value===null){
-			$this->options['ext']['rewriteMap']=array_merge($this->options['ext']['rewriteMap'],$key);
+			$this->options['rewrite_list']=array_merge($this->options['rewrite_list'],$key);
 		}else{
-			$this->options['ext']['rewriteMap'][$key]=$value;
+			$this->options['rewrite_list'][$key]=$value;
 		}
-		
-		self::ImportSys();
-		AppExt::G()->installHook($this);
 	}
-	public function assignRoute($key,$callback=null)
+	public function assignRoute($key,$value=null)
 	{
-		$this->options['ext']=$this->options['ext']??[];
-		$this->options['ext']['routeMap']=$this->options['ext']['routeMap']??[];
-		
-		if(is_array($key)&& $callback===null){
-			$this->options['ext']['routeMap']=array_merge($this->options['ext']['routeMap'],$key);
+		if(is_array($key)&& $value===null){
+			$this->options['route_list']=array_merge($this->options['route_list'],$key);
 		}else{
-			$this->options['ext']['routeMap'][$key]=$callback;
+			$this->options['route_list'][$key]=$value;
 		}
-		
-		self::ImportSys();
-		AppExt::G()->installHook($this);
 	}
 	public function addRouteHook($hook,$prepend=false)
 	{
@@ -1162,6 +1148,9 @@ class DNMVCS
 			'setting'=>[],
 			'setting_file_basename'=>'setting',
 			'db_loader'=>'',
+			
+			'rewrite_list'=>[],
+			'route_list'=>[],
 		];
 	protected $path=null;
 	
@@ -1170,6 +1159,8 @@ class DNMVCS
 	
 	public $options=[];
 	public $isDev=false;
+	public $isAdvance=false;
+	protected $hasAdvance=false;
 	protected $initObLevel=0;
 	protected $db_loader=null;
 	protected $hooks=[];
@@ -1285,8 +1276,23 @@ class DNMVCS
 	{
 		return $this->isDev;
 	}
+	public function useAdvance()
+	{
+		if($this->hasAdvance){return;}
+		$this->hasAdvance=true;
+		self::ImportSys('DNRouteAdvance');
+		DNRouteAdvance::G()->init();
+	}
+	protected function runAdvanceHook()
+	{
+		DNRouteAdvance::G()->run();
+	}
 	public function run()
 	{
+		if($this->isAdvance || $this->options['rewrite_list'] || $this->options['route_list'] ){
+			$this->useAdvance();
+			$this->runAdvanceHook();
+		}
 		foreach($this->hooks as $hook){
 			($hook)();
 		}

@@ -206,11 +206,13 @@ class DNSwooleHttpServer
 	public function onHttpRun($request,$response)
 	{
 		SwooleHttpContext::Init($request,$response);
+		
 		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G())->init($request);
 		SuperGlobal\GET::G(SwooleSuperGlobalGet::G())->init($request);
 		SuperGlobal\POST::G(SwooleSuperGlobalPost::G())->init($request);
 		SuperGlobal\REQUEST::G(SwooleSuperGlobalRequest::G())->init($request);
 		SuperGlobal\COOKIE::G(SwooleSuperGlobalCookie::G())->init($request);
+		// not env msession
 		$this->runHttpHandeler();
 	}
 	protected function runHttpHandeler()
@@ -221,7 +223,7 @@ class DNSwooleHttpServer
 	}
 	public function onHttpException($ex)
 	{
-		if( !($ex instanceof  \Swoole\ExitException) ){
+		if( !($ex instanceof \Swoole\ExitException) ){
 			if($this->exception_handler){
 				($this->exception_handler)($ex);
 			}else{
@@ -358,6 +360,8 @@ class SwooleMainAppHook
 	public function installHook()
 	{
 		DNRoute::G()->onServerArray=[SuperGlobal\SERVER::class,'Get'];
+		//DNMVCS::useRouteAdvance();
+		//DNRouteAdvance::G();// for do not dumlicatt
 		DNMVCS::G()->addHook([$this,'hook']);
 		return $this;
 	}
@@ -366,9 +370,12 @@ class SwooleMainAppHook
 		CoroutineSingleton::CloneInstance(DNView::class);
 		CoroutineSingleton::CloneInstance(DNRoute::class);
 		
+		
 		$path=DN::G()->options['path'];
 		SuperGlobal\SERVER::Set('DOCUMENT_ROOT',rtrim($path,'/'));
 		SuperGlobal\SERVER::Set('SCRIPT_FILENAME',$path.'index.php');
+		
+		
 		
 		$route=DNRoute::G();
 		$route->path_info=$route->_SERVER('PATH_INFO')??'';
