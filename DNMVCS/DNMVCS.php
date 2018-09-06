@@ -391,6 +391,9 @@ class DNRoute
 		if($this->onServerArray){
 			return ($this->onServerArray)($key);
 		}
+		if(class_exists('\DNMVCS\SuperGlobal\SERVER' ,false)){
+			return SuperGlobal\SERVER::Get($key);
+		}
 		return  isset($_SERVER[$key])?$_SERVER[$key]:null;
 	
 	}
@@ -1157,6 +1160,7 @@ class DNMVCS
 			
 			'rewrite_list'=>[],
 			'route_list'=>[],
+			'use_super_global'=>false,
 		];
 	protected $path=null;
 	
@@ -1248,10 +1252,7 @@ class DNMVCS
 		$this->initRoute(DNRoute::G());
 		$this->initDBManager(DNDBManager::G());
 		
-		if(!empty($this->options['ext'])){
-			self::ImportSys();
-			AppExt::G()->installHook($this);
-		}
+		$this->initMisc();
 		return $this;
 	}
 	public function initConfiger($configer)
@@ -1277,6 +1278,16 @@ class DNMVCS
 		$db_loader=$this->db_loader;
 		
 		$dbm->init($db_config,$db_r_config,$db_loader);
+	}
+	protected function initMisc()
+	{
+		if($this->options['use_super_global']){
+			self::ImportSys('SuperGlobal');
+		}
+		if(!empty($this->options['ext'])){
+			self::ImportSys();
+			AppExt::G()->installHook($this);
+		}
 	}
 	public function isDev()
 	{

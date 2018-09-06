@@ -15,8 +15,6 @@ class SwooleSuperGlobalServer extends SuperGlobalBase
 		foreach($request->server as $k=>$v){
 			$this->data[strtoupper($k)]=$v;
 		}
-		
-		//OK,other as document_root,php_root
 	}
 }
 
@@ -171,13 +169,30 @@ class DNSwooleHttpServer
 {
 	use DNSingleton;
 	
+	const DEFAULT_OPTIONS=[
+			'server'=>null,
+			'host'=>null,
+			'port'=>null,
+			
+			'static_root'=>null,
+			'php_root'=>null,
+			'http_handler_file'=>null,
+			
+			'http_handler'=>null,
+			'exception_handler'=>null,
+			
+			'websocket_runner'=>null,
+		];
 	public $server=null;
-	public $httpRunner=null;
 	public $webSocketRunner=null;
-
+	
+	public $http_handler=null;
 	public $exception_handler=null;
 	public $shutdown_function_array=[];
 	
+	protected $static_root=null;
+	protected $php_root=null;
+
 	public static function Server()
 	{
 		return self::G()->server;
@@ -200,7 +215,19 @@ class DNSwooleHttpServer
 	}
 	public function register_shutdown_function(callable $callback,...$args)
 	{
-		$this->shutdownFunctions[]=func_get_args();
+		$this->shutdown_function_array[]=func_get_args();
+	}
+	public function header(string $string, bool $replace = true , int $http_response_code =0)
+	{
+		list($key,$value)=explode(':',$string);
+		SwooleHttpContext::G()->response->header($key, $value);
+		if($http_response_code){
+			SwooleHttpContext::G()->response->status($http_status_code);
+		}
+	}
+	public function setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
+	{
+		return SwooleHttpContext::G()->response->cookie($key,$value,$expire,$path,$domain,$secure,$httponly );
 	}
 	
 	public function onHttpRun($request,$response)
@@ -212,14 +239,62 @@ class DNSwooleHttpServer
 		SuperGlobal\POST::G(SwooleSuperGlobalPost::G())->init($request);
 		SuperGlobal\REQUEST::G(SwooleSuperGlobalRequest::G())->init($request);
 		SuperGlobal\COOKIE::G(SwooleSuperGlobalCookie::G())->init($request);
-		// not env msession
-		$this->runHttpHandeler();
+		
+		if($this->http_handler){
+			$this->runHttpHandeler();
+			return;
+		}
+		if($this->options['http_handler_file']){
+		
+			$http_handler_file=$this->options['http_handler_file'];
+			SuperGlobal\SERVER::Set("SCRIPT_FILENAME",$http_handler_file);
+			$request_uri=SuperGlobal\SERVER::Get("REQUEST_URI");
+			SuperGlobal\SERVER::Set("PATH_INFO",$request_uri);
+			SuperGlobal\SERVER::Set("DOCUMENT_ROOT",dirname($http_handler_file));
+			
+			(function($file){include($file);})($http_handler_file);
+			return;
+		}
+		if($this->options['php_root']){
+			$php_root=$this->options['php_root'];
+			$php_root=rtrim($php_root,'/').'/';
+			$request_uri=SuperGlobal\SERVER::Get("REQUEST_URI");
+			$pos=strpos($request_uri,'.php');
+			if($pos!==false){
+				$script_name=substr($request_uri,0,$pos);
+				$path_info=substr($request_uri,$pos+strlen('.php'));
+				$file=$php_root.$script_name;
+				if(strpos($file,'/../')!==false || strpos($file,'/./')!==false){
+					echo "bad file";
+					return;
+				}
+				if(!is_file($file)){
+					echo "404";
+					return;
+				}
+				SuperGlobal\SERVER::Set("SCRIPT_NAME",$SCRIPT_NAME);
+				SuperGlobal\SERVER::Set("PATH_INFO",$path_info);
+				SuperGlobal\SERVER::Set("SCRIPT_FILENAME",$file);
+				
+				$document_root=$this->static_root?:rtrim($php_root,'/');
+				SuperGlobal\SERVER::Set("DOCUMENT_ROOT",$document_root);
+				(function($file){include($file);})($file);
+			}else{
+				SuperGlobal\SERVER::Set("SCRIPT_NAME",'/index.php');
+				SuperGlobal\SERVER::Set("PATH_INFO",$request_uri);
+				$file=$php_root.'index.php';
+				SuperGlobal\SERVER::Set("SCRIPT_FILENAME",$file);
+				$document_root=dirname($file);
+				SuperGlobal\SERVER::Set("DOCUMENT_ROOT",$document_root);
+				(function($file){include($file);})($file);
+			}
+		}
 	}
+	
 	protected function runHttpHandeler()
 	{
 		if(!$this->http_handler){return;}
 		($this->http_handler)();
-		
 	}
 	public function onHttpException($ex)
 	{
@@ -246,7 +321,7 @@ class DNSwooleHttpServer
 	{
 		$InitObLevel=ob_get_level();
 		ob_start(function($str) use($response){
-			if(''===$str){return;}
+			if(''===$str){return;} // 防止ongoing数据报 warnning;
 			$response->write($str);
 		});
 		try{
@@ -281,9 +356,14 @@ class DNSwooleHttpServer
 		}
 	}
 	
-	public function init($server_or_options,$options=[])
+	public function init($options=[])
 	{
-		$server=$server_or_options;
+		$this->options=array_merge(self::DEFAULT_OPTIONS,$options);
+		
+		$this->http_handler=$this->options['http_handler'];
+		$this->exception_handler=$this->options['exception_handler'];
+		
+		$server=$this->options['server'];
 		if(!is_object($server)){
 			$server=new \swoole_http_server($server_or_options['Host'], $server_or_options['Port']);
 			unset($server_or_options['Host']);
@@ -293,13 +373,10 @@ class DNSwooleHttpServer
 		
 		$this->server=$server;
 		$this->server->on('request',[$this,'onRequest']);
-		
-		$this->http_handler=$options['http_handler']??null;
-		$this->exception_handler=$options['exception_handler']??null;
-		
-		$this->webSocketRunner=$options['websocket_runner']??null;
-		if($this->webSocketRunner){
-			$this->server->on('message',[$this,'onMessage']);
+		if($server->setting['enable_static_handler']??false){
+			$this->static_root=$server->setting['document_root'];
+		}else{
+			$this->static_root=$this->options['static_root'];
 		}
 		
 		if(is_callable('\Swoole\Runtime::enableCoroutine')){
@@ -307,72 +384,54 @@ class DNSwooleHttpServer
 		}
 		CoroutineSingleton::ReplaceDefaultSingletonHandel();
 		
+		$this->webSocketRunner=$this->options['websocket_runner'];
+		if($this->webSocketRunner){
+			$this->server->on('message',[$this,'onMessage']);
+		}
 		return $this;
 	}
 	public function run()
 	{
 		define('DN_SWOOLE_SERVER_RUNNING',true);
 		fwrite(STDOUT,get_class($this)." run at ".DATE(DATE_ATOM)." ...\n");
-		$this->server->start();
+		$t=$this->server->start();
+		fwrite(STDOUT,get_class($this)." run end ".DATE(DATE_ATOM)." ...\n");
 	}
 	
-	public static function RunWithServer($swoole_erver_or_options,$dn_options=[],$server_options=[])
+	public static function RunWithServer($server_options,$dn_options=[])
 	{
-		DNMVCS::G()->init($dn_options);
-		SwooleMainAppHook::G()->installHook(DNMVCS::G());
-		
-		$server_options=[];
-		$server_options['http_handler']=[DNMVCS::G(),'run'];
-		$server_options['exception_handler']=[DNMVCS::G(),'onException'];
-		
-		self::G()->init($swoole_erver_or_options,$server_options)->run();
+		if($dn_options){
+			DNMVCS::ImportSys('SuperGlobal');
+			DNMVCS::G()->init($dn_options);
+			SwooleMainAppHook::G()->installHook(DNMVCS::G());
+			$server_options['http_handler']=[DNMVCS::G(),'run'];
+			$server_options['exception_handler']=[DNMVCS::G(),'onException'];
+		}
+		self::G()->init($server_options)->run();
 	}
-}
-class SwooleBasicServerDefaultHandel
-{
-	use DNSingleton;
-	const DEFAULT_OPTIONS=[
-			'doucment_root'=>null,
-			'php_root'=>null,
-			'php_file'=>null,
-		];
-	
-	protected $doucment_root;
-	protected $php_root;
-	protected $php_file;
-	public function init($options)
-	{
-		$options=array_merge(self::DEFAULT_OPTIONS,$options);
-		
-		$this->doucment_root=$options['doucment_root'];
-		$this->php_root=$options['php_root'];
-		$this->php_file=$options['php_file'];
-
-		return $this;
-	}
-	
 }
 
 class SwooleMainAppHook
 {
 	use DNSingleton;
 	
-	public function installHook()
+	public function installHook($dn)
 	{
-		DNRoute::G()->onServerArray=[SuperGlobal\SERVER::class,'Get'];
-		DNMVCS::G()->useRouteAdvance();
-		DNMVCS::G()->addAppHook([$this,'hook']);
+		
+		if($dn->options['rewrite_list']|| $dn->options['route_list']){
+			$dn->useRouteAdvance();
+		}
+		$dn->addAppHook([$this,'beforeMainAppRun']);
 		return $this;
 	}
-	public function hook()
+	public function beforeMainAppRun()
 	{
+		$path=DNMVCS::G()->options['path'];
+		SuperGlobal\SERVER::Set('DOCUMENT_ROOT',$path.'/www');
+		SuperGlobal\SERVER::Set('SCRIPT_FILENAME',$path.'/www/index.php');
+		
 		CoroutineSingleton::CloneInstance(DNView::class);
 		CoroutineSingleton::CloneInstance(DNRoute::class);
-		
-		$path=DN::G()->options['path'];
-		SuperGlobal\SERVER::Set('DOCUMENT_ROOT',rtrim($path,'/www/'));
-		SuperGlobal\SERVER::Set('SCRIPT_FILENAME',$path.'index.php');
-		
 		
 		$route=DNRoute::G();
 		$route->path_info=$route->_SERVER('PATH_INFO')??'';

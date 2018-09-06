@@ -8,7 +8,7 @@ class RouteRewriteHook
 	protected $rewriteMap=[];
 	protected function mergeHttpGet($get)
 	{
-		if(class_exists('SuperGlobal\GET',false)){
+		if(class_exists('\DNMVCS\SuperGlobal\GET',false)){
 			$data=array_merge($get, SuperGlobal\GET::All());
 			foreach($data as $k=>$v){
 				SuperGlobal\GET::Set($k,$v);
