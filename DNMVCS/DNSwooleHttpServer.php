@@ -246,7 +246,7 @@ class DNSwooleHttpServer
 	{
 		$InitObLevel=ob_get_level();
 		ob_start(function($str) use($response){
-			//if(''===$str){return;}
+			if(''===$str){return;}
 			$response->write($str);
 		});
 		try{
@@ -360,9 +360,8 @@ class SwooleMainAppHook
 	public function installHook()
 	{
 		DNRoute::G()->onServerArray=[SuperGlobal\SERVER::class,'Get'];
-		//DNMVCS::useRouteAdvance();
-		//DNRouteAdvance::G();// for do not dumlicatt
-		DNMVCS::G()->addHook([$this,'hook']);
+		DNMVCS::G()->useRouteAdvance();
+		DNMVCS::G()->addAppHook([$this,'hook']);
 		return $this;
 	}
 	public function hook()
@@ -370,11 +369,9 @@ class SwooleMainAppHook
 		CoroutineSingleton::CloneInstance(DNView::class);
 		CoroutineSingleton::CloneInstance(DNRoute::class);
 		
-		
 		$path=DN::G()->options['path'];
-		SuperGlobal\SERVER::Set('DOCUMENT_ROOT',rtrim($path,'/'));
+		SuperGlobal\SERVER::Set('DOCUMENT_ROOT',rtrim($path,'/www/'));
 		SuperGlobal\SERVER::Set('SCRIPT_FILENAME',$path.'index.php');
-		
 		
 		
 		$route=DNRoute::G();

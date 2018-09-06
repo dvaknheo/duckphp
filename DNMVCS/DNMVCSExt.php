@@ -726,7 +726,7 @@ class AppExt
 		if($this->is_installed){return;}
 		$this->is_installed=true;
 		$this->afterInit();
-		DNMVCS::G()->addHook([$this,'hook']);
+		DNMVCS::G()->addAppHook([$this,'hook']);
 	}
 	protected function afterInit()
 	{

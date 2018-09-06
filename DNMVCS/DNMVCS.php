@@ -933,7 +933,7 @@ trait DNMVCS_Glue
 		//DN::ThrowOn(true,"Implement Me TODO Anything You Like");
 		return null;
 	}
-	public function addHook($callback)
+	public function addAppHook($callback)
 	{
 		array_unshift($this->hooks,$callback);
 	}
@@ -1282,7 +1282,7 @@ class DNMVCS
 	{
 		return $this->isDev;
 	}
-	public function useAdvance()
+	public function useRouteAdvance()
 	{
 		if($this->hasAdvance){return;}
 		$this->hasAdvance=true;
@@ -1291,12 +1291,13 @@ class DNMVCS
 	}
 	protected function runAdvanceHook()
 	{
+		self::ImportSys('DNRouteAdvance');
 		DNRouteAdvance::G()->run();
 	}
 	public function run()
 	{
 		if($this->isAdvance || $this->options['rewrite_list'] || $this->options['route_list'] ){
-			$this->useAdvance();
+			$this->useRouteAdvance();
 			$this->runAdvanceHook();
 		}
 		foreach($this->hooks as $hook){
