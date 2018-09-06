@@ -93,7 +93,7 @@ class DNFuncionModifer
 }
 function _HTTP_REQUEST($k)
 {
-	if(class_exists(__NAMESPACE__.'\SuperGlobal\REQUEST' ,false)){
+	if(class_exists('SuperGlobal\REQUEST' ,false)){
 		return SuperGlobal\REQUEST::Get($k);
 	}
 	return $_REQUEST[$k]??null;
@@ -242,7 +242,7 @@ class RouteRewriteHook
 	}
 	protected function mergeHttpGet($get)
 	{
-		if(class_exists(__NAMESPACE__.'\SuperGlobal\GET' ,false)){
+		if(class_exists('SuperGlobal\GET' ,false)){
 			$data=array_merge($get, SuperGlobal\GET::All());
 			foreach($data as $k=>$v){
 				SuperGlobal\GET::Set($k,$v);
