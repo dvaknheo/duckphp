@@ -16,6 +16,7 @@ class SwooleSuperGlobalServer extends SuperGlobalBase
 			$this->data[strtoupper($k)]=$v;
 		}
 		
+		//OK,other as document_root,php_root
 	}
 }
 
@@ -160,19 +161,13 @@ class SwooleHttpContext
 		$this->response=null;
 	}
 }
-interface IHttpRunner
-{
-	public function onHttpRun($request,$response);
-	public function onHttpException($ex);
-	public function onHttpCleanUp();
-}
 interface IWebSocketRunner
 {
 	public function onWebSoketRun($request,$response);
 	public function onWebSoketException($ex);
 	public function onWebSoketCleanUp();
 }
-class SwooleBasicServer
+class DNSwooleHttpServer
 {
 	use DNSingleton;
 	
@@ -180,6 +175,71 @@ class SwooleBasicServer
 	public $httpRunner=null;
 	public $webSocketRunner=null;
 
+	public $exception_handler=null;
+	public $shutdown_function_array=[];
+	
+	public static function Server()
+	{
+		return self::G()->server;
+	}
+	public static function Request()
+	{
+		return SwooleHttpContext::G()->request;
+	}
+	public static function Response()
+	{
+		return SwooleHttpContext::G()->response;
+	}
+	public static function Context()
+	{
+		return SwooleHttpContext::G();
+	}
+	public function set_exception_handler(callable $exception_handler)
+	{
+		$this->exception_handler=$exception_handler;
+	}
+	public function register_shutdown_function(callable $callback,...$args)
+	{
+		$this->shutdownFunctions[]=func_get_args();
+	}
+	
+	public function onHttpRun($request,$response)
+	{
+		SwooleHttpContext::Init($request,$response);
+		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G())->init($request);
+		SuperGlobal\GET::G(SwooleSuperGlobalGet::G())->init($request);
+		SuperGlobal\POST::G(SwooleSuperGlobalPost::G())->init($request);
+		SuperGlobal\REQUEST::G(SwooleSuperGlobalRequest::G())->init($request);
+		SuperGlobal\COOKIE::G(SwooleSuperGlobalCookie::G())->init($request);
+		$this->runHttpHandeler();
+	}
+	protected function runHttpHandeler()
+	{
+		if(!$this->http_handler){return;}
+		($this->http_handler)();
+		
+	}
+	public function onHttpException($ex)
+	{
+		if( !($ex instanceof  \Swoole\ExitException) ){
+			if($this->exception_handler){
+				($this->exception_handler)($ex);
+			}else{
+				echo "DNSwooleServer Error ";
+				echo $ex;
+			}
+		}else{
+			foreach($shutdown_function_array as $v){
+				$func=array_shift($v);
+				$func($v);
+			}
+		}
+	}
+	public function onHttpClean()
+	{
+		SwooleHttpContext::CleanUp();
+		CoroutineSingleton::CleanUp();
+	}
 	public function onRequest($request,$response)
 	{
 		$InitObLevel=ob_get_level();
@@ -188,13 +248,10 @@ class SwooleBasicServer
 			$response->write($str);
 		});
 		try{
-			$this->httpRunner->onHttpRun($request,$response);
+			$this->onHttpRun($request,$response);
 		}catch(\Throwable $ex){
-			if( !($ex instanceof  \Swoole\ExitException) ){
-				$this->httpRunner->onHttpException($ex);
-			}
+			$this->onHttpException($ex);
 		}
-		$this->httpRunner->onHttpCleanUp();
 		for($i=ob_get_level();$i>$InitObLevel;$i--){
 			ob_end_flush();
 		}
@@ -222,78 +279,92 @@ class SwooleBasicServer
 		}
 	}
 	
-	public function init($server,$httpRunner=null,$webSocketRunner=null)
-	{
-		$this->server=$server;
-		if($httpRunner){
-		$this->httpRunner=$httpRunner;
-		$this->server->on('request',[$this,'onRequest']);
-		}
-		if($webSocketRunner){
-			$this->webSocketRunner=$webSocketRunner;
-			$this->server->on('mmessage',[$this,'onMessage']);
-		}
-		return $this;
-	}
-	public function run()
-	{
-		fwrite(STDOUT,get_class($this)." run at ".DATE(DATE_ATOM)." ...\n");
-		$this->server->start();
-	}
-}
-
-class SwooleAppBase implements IHttpRunner
-{
-	use DNSingleton;
-	public $server;
-	public static function Server()
-	{
-		return self::G()->server;
-	}
-	public static function Request()
-	{
-		return SwooleHttpContext::G()->request;
-	}
-	public static function Response()
-	{
-		return SwooleHttpContext::G()->response;
-	}
-	
-	public function init($server_or_options,$options)
+	public function init($server_or_options,$options=[])
 	{
 		$server=$server_or_options;
-		if(!is_object($server_or_options)){
-			$server=new swoole_http_server($server_or_options['Host'], $server_or_options['Port']);
+		if(!is_object($server)){
+			$server=new \swoole_http_server($server_or_options['Host'], $server_or_options['Port']);
 			unset($server_or_options['Host']);
 			unset($server_or_options['Port']);
 			$server->set($server_or_options);
 		}
 		
 		$this->server=$server;
-		\Swoole\Runtime::enableCoroutine();
+		$this->server->on('request',[$this,'onRequest']);
 		
+		$this->http_handler=$options['http_handler']??null;
+		$this->exception_handler=$options['exception_handler']??null;
+		
+		$this->webSocketRunner=$options['websocket_runner']??null;
+		if($this->webSocketRunner){
+			$this->server->on('message',[$this,'onMessage']);
+		}
+		
+		if(is_callable('\Swoole\Runtime::enableCoroutine')){
+			\Swoole\Runtime::enableCoroutine();
+		}
 		CoroutineSingleton::ReplaceDefaultSingletonHandel();
-		DN::G()->init($options);
-		DNRoute::G()->onServerArray=[SuperGlobal\SERVER::class,'Get'];
 		
 		return $this;
 	}
-	public function onHttpRun($request=null,$response=null)
-	{
-		SwooleHttpContext::Init($request,$response);
-		$this->run();
-	}
 	public function run()
 	{
-		$request= SwooleHttpContext::G()->request;
+		define('DN_SWOOLE_SERVER_RUNNING',true);
+		fwrite(STDOUT,get_class($this)." run at ".DATE(DATE_ATOM)." ...\n");
+		$this->server->start();
+	}
+	
+	public static function RunWithServer($swoole_erver_or_options,$dn_options=[],$server_options=[])
+	{
+		DNMVCS::G()->init($dn_options);
+		SwooleMainAppHook::G()->installHook(DNMVCS::G());
+		
+		$server_options=[];
+		$server_options['http_handler']=[DNMVCS::G(),'run'];
+		$server_options['exception_handler']=[DNMVCS::G(),'onException'];
+		
+		self::G()->init($swoole_erver_or_options,$server_options)->run();
+	}
+}
+class SwooleBasicServerDefaultHandel
+{
+	use DNSingleton;
+	const DEFAULT_OPTIONS=[
+			'doucment_root'=>null,
+			'php_root'=>null,
+			'php_file'=>null,
+		];
+	
+	protected $doucment_root;
+	protected $php_root;
+	protected $php_file;
+	public function init($options)
+	{
+		$options=array_merge(self::DEFAULT_OPTIONS,$options);
+		
+		$this->doucment_root=$options['doucment_root'];
+		$this->php_root=$options['php_root'];
+		$this->php_file=$options['php_file'];
+
+		return $this;
+	}
+	
+}
+
+class SwooleMainAppHook
+{
+	use DNSingleton;
+	
+	public function installHook()
+	{
+		DNRoute::G()->onServerArray=[SuperGlobal\SERVER::class,'Get'];
+		DNMVCS::G()->addHook([$this,'hook']);
+		return $this;
+	}
+	public function hook()
+	{
 		CoroutineSingleton::CloneInstance(DNView::class);
 		CoroutineSingleton::CloneInstance(DNRoute::class);
-		
-		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G())->init($request);
-		SuperGlobal\GET::G(SwooleSuperGlobalGet::G())->init($request);
-		SuperGlobal\POST::G(SwooleSuperGlobalPost::G())->init($request);
-		SuperGlobal\REQUEST::G(SwooleSuperGlobalRequest::G())->init($request);
-		SuperGlobal\COOKIE::G(SwooleSuperGlobalCookie::G())->init($request);
 		
 		$path=DN::G()->options['path'];
 		SuperGlobal\SERVER::Set('DOCUMENT_ROOT',rtrim($path,'/'));
@@ -303,21 +374,8 @@ class SwooleAppBase implements IHttpRunner
 		$route->path_info=$route->_SERVER('PATH_INFO')??'';
 		$route->request_method=$route->_SERVER('REQUEST_METHOD')??'';
 		$route->path_info=ltrim($route->path_info,'/');
-		///////////////
-		DN::G()->run();
-	}
-	public function onHttpException($ex)
-	{
-		DN::G()->onException($ex);
-	}
-	public function onHttpCleanUp()
-	{
-		SwooleHttpContext::CleanUp();
-		CoroutineSingleton::CleanUp();
-	}
-	public static function RunWithServer($server_or_options,$options)
-	{
-		self::G()->init($server_or_options,$options);
-		SwooleBasicServer::G()->init(self::Server(),self::G())->run();
 	}
 }
+/*
+SwooleServer::G()->init($server,$http_options)->bindApp($option)->run();
+//*/
