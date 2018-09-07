@@ -129,8 +129,8 @@ class DNSwooleHttpServer
 	
 	const DEFAULT_OPTIONS=[
 			'server'=>null,
-			'host'=>null,
-			'port'=>null,
+			'host'=>'0.0.0.0',
+			'port'=>9528,
 			
 			'static_root'=>null,
 			'php_root'=>null,
@@ -336,9 +336,7 @@ class DNSwooleHttpServer
 		
 		$server=$this->options['server'];
 		if(!is_object($server)){
-			$server=new \swoole_http_server($server_or_options['Host'], $server_or_options['Port']);
-			unset($server_or_options['Host']);
-			unset($server_or_options['Port']);
+			$server=new \swoole_http_server($this->options['host'], $options['port']);
 			$server->set($server_or_options);
 		}
 		
