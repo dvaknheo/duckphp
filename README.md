@@ -11,6 +11,8 @@
 * 耦合松散，扩展灵活方便，魔改容易
 * 小就是性能。（不过也上千行代码了）
 * 无第三方依赖，你不必担心第三方依赖改动而大费周折。
+*
+* 和 Swoole 整合实现高性能 web 服务器。
 ## 关于 Servivce 层
 MVC 结构的时候，你们业务逻辑放在哪里？
 新手放在 Controller ，后来的放到 Model ，后来觉得 Model 和数据库混一起太乱， 搞个 DAO 层吧。
@@ -60,7 +62,7 @@ Controller --> Service ---------------------------------> Model
 * 所有这些仅仅是在主类里耦合。
 * *支持Swoole*
 ## DNMVCS 不做什么
-* ORM ，和各种屏蔽 sql 的行为，根据日志查 sql 方便多了。 自己简单封装了 pdo 。
+* ORM ，和各种屏蔽 sql 的行为，根据日志查 sql 方便多了。 自己简单封装了 pdo 。你也可以使用自己的DB类。
 * 模板引擎，PHP本身就是模板引擎。
 * Widget ， 和 MVC 分离违背。
 * 接管替代默认的POST，GET，SESSION 。系统提供给你就用，不要折腾这些。
@@ -74,12 +76,12 @@ Controller --> Service ---------------------------------> Model
 
 1. 不优雅。万恶之源。 
 2. 调用堆栈层级太少，不够 Java 。
-3. 虽然实现了标准的 PSR 规范实现，但是还给懒鬼们开了后门。
+3. 虽然实现了标准的 PSR-4 规范实现，但是还给懒鬼们开了后门。
 4. 错误报告页面很丑陋。 想华丽自己写一个。不用 IDE 的直接看就懂。
-5. 没有中间件。 重写 controller 啊，要什么中间件。
+5. 没有中间件。 重写 Controller 啊，要什么中间件。
 6. 没有强大的全局依赖注入容器，只有万能的 G 函数。
 7. 没有灵活强大的 AOP ，只有万能的 G 函数。
-8. 这框架什么都没做啊。 居然只支持 PHP7 
+8. 这框架什么都没做啊。 居然只支持 PHP7 。
 
 ## 还有什么要说的
 
@@ -97,8 +99,9 @@ Time Now is 2018-06-14T22:16:38+08:00
 ```
 如果漏了修改 config/setting.php 会提示：
 ```
-DNMVCS Notice: no setting file!,change setting.sample.php to setting.php !
+DNMVCS Fatal: no setting file!,change setting.sample.php to setting.php !
 ```
+*DNMVCS并非一定要外置设置文件，有选项可改为使用内置设置选项。*
 ### 后续的工作
 新建工程怎么做？ 复制 sample 目录到你工程目录就行，修改 index.php ，使得引入正确的库
 
@@ -144,10 +147,11 @@ www/index.php  入口 PHP 文件,内容如下
 ```php
 <?php
 require('../../DNMVCS/DNMVCS.php');
+//$path=realpath('../');
+
 $options=[
 ];
 \DNMVCS\DNMVCS::RunQuickly($options);
-//$path=realpath('../');
 //\DNMVCS\DNMVCS::G()->init([])->run();
 ```
 被注释掉部分 和 实际调用部分实际相同。是个链式调用。
@@ -165,11 +169,12 @@ run(); 开始路由
 3. 继承接管特定类实现目的
 4. 魔改。
 ## 单文件模式
+\DNMVCS\DNMVCS::RunQuickly($options);
 
 不想依赖这么多，一个文件解决？可以。
-## 不用 path_info 的模式
+### 不用 path_info 的模式
 
-## 一个文件带走的模式 
+### 一个文件带走的模式 
 
 ## 选项
     init($options) 方法的参数是可配置的，默认设置是分三个类别的组合。
@@ -179,30 +184,34 @@ run(); 开始路由
 ```php
 const DNAutoLoader::DEFAULT_OPTIONS=[
     'namespace'=>'MY',                  // 默认的命名空间，你可以自定义工程的命名空间
-    'with_no_namespace_mode'=>true,     // 简单模式，无命名空间直接 controller, service,model
         'path_namespace'=>'app', 	    // 命名空间根目录
         'path_autoload'=>'classes',	    // 无命名空间的类存放目录
+    'with_no_namespace_mode'=>true,     // 简单模式，无命名空间直接 controller, service,model
         'path_no_namespace_mode'=>'app', // 简单模式的基本目录
 ];
 ```
+autoload 自动加载相关的选项
 
 ```php
 const DNMVCS::DEFAULT_OPTIONS=[
     'base_class'=>'MY\Base\App',    // override 重写 系统入口类代替 DNMVCS 类。
-    'use_ext'=>false,                   // 加载扩展库  DNMVCSExt
         'path_view'=>'view',            // 视图目录，或许会有人改到 app/View
-		'path_lib'=>'lib',              // 用于手动导入 Import() 的类的目录
+		'path_lib'=>'lib',              // 用于手动导入 DNMVCS::Import() 的类的目录
 	'setting'=>[],        				// 设置，设置文件里填写的将会覆盖这一选项
 	'all_config'=>[],        			// 配置，每个配置用 key  分割。
 		'setting_file_basename'=>'setting',        // 设置的文件名，如果为'' 则不读取设置文件
 	'is_dev'=>false,					//是否在开发状态，设置文件里填写的将会覆盖这一选项
-	'db_loader' =>'', 					// DB 类，为空的时候，默认用 DNDB::class;
+    'db_loader' =>'', 					// DB 类，为空的时候，默认用 DNDB::class;
+    'ext'=>[],                          //默认不使用扩展
+    'rewrite_list'=>[],
+    'route_list'=>[],
+			'use_super_global'=>false, // 高级，和 superGlobal 整合
 ];
 ```
     关于 base_class 选项。
     你可以写 DNMVCS 的子类 用这个子类来替换DNMVCS 的入口。详情见后面。
-    use_ext 会加载 DNMVCSExt 实现一些扩展性的功能。
-    并不是所有项目都会用到，所以放到扩展里。
+    ext 会加载 DNMVCSExt 实现一些扩展性的功能。后面章节会说明。
+
 ```php
 const DNRoute::DEFAULT_OPTIONS=[
     'namespace'=>'MY',                  // 默认的命名空间，你可以自定义工程的命名空间
@@ -241,7 +250,7 @@ return [
     关于 db_r， 配置读写分离的数据库。
     默认配置为空，这使得 DNMVCS::DB_R() 和 DNMVCS::DB 的函数表现一致。都是从主数据库里读的。
 
-选项，设置，配置的区别
+### 选项，设置，配置的区别
     
 * options 选项，代码里的设置
 * setting 设置，敏感信息
@@ -380,7 +389,6 @@ static RunOneFileMode($optionss=[])
     单一文件模式，不需要其他文件，设置内容请放在
     $options['setting'] 里
 static RunWithoutPathInfo()
-
     不需要 PathInfo 的模式。用 _r 来表示 Path_Info
 ```
 ## 常用静态方法方法
@@ -389,55 +397,67 @@ static RunWithoutPathInfo()
 
 Show($data=array(),$view=null)
 
-    显示视图 实质调用 DNView::G()->_Show();
+    显示视图 
     视图的文件在 ::view 目录底下.
     为什么数据放前面，DN::Show(get_defined_vars());把 controller 的变量都整合进来，并用默认路径作为 view 文件。
+    实质调用 DNView::G()->_Show();
 DB()
 
-    返回数据库,实质调用 DBManager::G()->_DB();
+    数据库
     数据库管理类 DNManager 里配置的数据库类
+    实质调用 DBManager::G()->_DB();
 DB_W()
 
-    返回写入的数据 实质调用 DBManager::G()->_DB_W();
+    返回写入的数据 
     默认和 DB() 函数一样
+    实质调用 DBManager::G()->_DB_W();
 DB_R()
 
-    返回写入的数据 实质调用 DBManager::G()->_DB_R();
     读取用的数据库
+    实质调用 DBManager::G()->_DB_R();
 URL($url=null)
 
-    获得调整路由后的url地址 实质调用DNRoute::G()->_URL();
+    获得调整路由后的url地址 
     当你重写 DNRoute 类后，你可能需要重写这个方法来展示
     比如 simple_route_key 开启后， URL('class/method?foo=bar') 
     将会是 ?r=class/method&foo=bar ，而不是 /class/method?foo=bar
-    如果是 / 开始的，将是从网站根目录开始。
+    如果是 / 开始的 URL ，将是从网站根目录开始。
+
+    实质调用 DNRoute::G()->_URL();
 Parameters()
 
-    获得路径切片 实质调用 DNRoute::G()->_Parameters();
+    获得路径切片 
     当用正则匹配路由的时候，匹配结果放在这里。
     如果开启了 eanbale_parameter 匹配选项也会在这里。
     这会使得 /about/foo/123/456 路由调用方法为 => about->foo(123,456)
+    实质调用 DNRoute::G()->_Parameters();
 Setting($key)
 
-    读取设置 实质调用 DNConfig::G()->_Setting();
+    读取设置
     设置在 ::/config/setting.php 里，php 格式
-    配置非敏感信息，放在版本管理中，设置是敏感信息，不存在版本管理中
-Config($key)
+    配置非敏感信息，放在版本管理中，设置是敏感信息，不保存在版本管理中
+    实质调用 DNConfig::G()->_Setting();
+Config($key,$file_basename='config')
 
-    读取配置 实质调用 DNConfig::G()->_Config();
+    读取配置 
     配置放在 config/config.php 里，php 格式
-    配置非敏感信息，放在版本管理中，设置是敏感信息，不存在版本管理中
+    配置非敏感信息，放在版本管理中
+    实质调用 DNConfig::G()->_Config();
 LoadConfig($file_basename)
 
-    加载其他配置 实质调用 DNConfig::G()->LoadConfig();
+    加载其他配置
     如果很多配置文件，手动加载其他配置
+    实质调用 DNConfig::G()->LoadConfig();
 ExitJson($ret)
 
-    打印 json_encode($ret) 并且退出 实质调用 DNView::G()->ExitJson();
+    打印 json_encode($ret) 并且退出。
     这里的 json 为人眼友好模式。
+
+    实质调用 DNView::G()->ExitJson();
 ExitRedirect($url)
 
-    跳转到另一个url 并且退出 实质调用 DNView::G()->ExitRedirect();
+    跳转到另一个url 并且退出。
+    实质调用 DNView::G()->ExitRedirect();
 ExitRouteTo($url)
 
     跳转到 URL()函数包裹的 url。
@@ -445,14 +465,15 @@ ExitRouteTo($url)
     高级开发者注意，这是静态方法里处理的，子类化需要注意
 ThrowOn(\$flag,\$message,\$code);
 
-    如果 flag 成立则抛出 DNException 异常。 调用 DNException::ThrowOn
+    如果 flag 成立则抛出 DNException 异常。
     减少代码量。如果没这个函数，你要写
     if($flag){throw new DNException($message,$code);}
     折腾
     如果是你自己的异常类 ，可以 use DNThrowQuickly 实现 ThrowOn 静态方法。
 Import($file)
 
-    手动导入默认lib 目录下的包含文件 函数 实质调用 self::G()->_Import();
+    手动导入默认lib 目录下的包含文件
+    实质调用 self::G()->_Import();
 ImportSys($file)
     
     手动导DNMVCS目录下的包含文件 函数。DNMVCS库目录默认不包含其他非必要的文件
@@ -465,10 +486,12 @@ ImportSys($file)
 H(&$str)
 
     html 编码 这个函数常用，所以缩写。H 函数还支持 数组
+
 RecordsetH(&$data,$cols=[])
 
     给 sql 查询返回数组 html 编码
 	$cols 指定 要转码的列名
+
 RecordsetURL(&$data,$cols_map=[]) 
 
     给 sql 返回数组 加url 比如  url_edit=>"edit/{id}",则该行添加 url_edit =>DN::URL("edit/".$data[]['id']) 等类似。
@@ -482,16 +505,19 @@ assign 系列函数，都有两个模式 func(\$map)，和 func(\$key,\$value) �
 ```
 assignRoute($route,$callback=null)
 
+    
     给路由加回调。
     关于回调模式的路由。详细情况看之前介绍
-    assigenRoute 之后，将会使用高级模式
+    和在 options['route'] 添加数据一样
+    assigenRoute 之后，会引用 DNRouteHookAdvance.php
 assignRewrite($old_url,$new_url=null)
 
     rewrite  重写 path_info
     不区分 request method , 重写后可以用 ? query 参数
     ~ 开始表示是正则 ,为了简单用 / 代替普通正则的 \/
     替换的url ，用 $1 $2 表示参数
-    assignRewrite 之后，将会使用高级模式
+
+    assignRewrite 之后，会引用 DNRouteHookAdvance.php
 
 getCallingMethod()
 
@@ -501,23 +527,27 @@ getCallingMethod()
     实质调用 DNRoute 的 getCallingMethod
 setViewWrapper($head_file=null,$foot_file=null)
 
-    给输出 view 加页眉页脚 实质调用 DNView::G()->setViewWrapper
+    给输出 view 加页眉页脚 
     view 里的变量和页眉页脚的域是一样的。
 	页眉页脚的变量和 view 页面是同域的。
 	有时候你需要 setViewWrapper(null,null) 清理页眉页脚
+
+    实质调用 DNView::G()->setViewWrapper
 assignViewData($key,$value=null)
 
     给 view 分配数据，实质调用 DNView::G()->assignViewData
     这函数用于控制器构造函数添加统一视图数据
 showBlock($view,$data)
 
-    展示一块 view ，用于调试的场合。实质调用 DNView::G()->showBlock
+    展示一块 view ，用于调试的场合。
     展示view不理会页眉页脚，也不做展示的后处理，如关闭数据库。
     注意这里是 $view 在前面， $data 在后面，和 show 函数不一致哦。
+    实质调用 DNView::G()->showBlock
 assignExceptionHandel($classes,$callback=null)
 
     分配特定异常回调。
-    用于控制器里控制特定错误类型。 // TODO 优化 多个 classes  名称共享一个
+    用于控制器里控制特定错误类型。 
+    // TODO 优化 多个 classes  名称共享一个
 setDefaultExceptionHandel($calllback)
 
     接管默认的异常处理，所有异常都归回调管，而不是显示 500 页面。
@@ -528,6 +558,12 @@ isDev()
 addRouteHook($hook,$prepend=false)
 
     下钩子扩展 route 方法,实质调用 DNRoute 的 addRouteHook
+
+高级方法
+addAppHook($hook)
+    添加在run 之前执行的钩子函数
+_cleanBuffer()
+    用于异常
 ```
 ## 事件方法
 实现了默认事件回调的方法。扩展以展现不同事件的显示。
@@ -564,7 +600,7 @@ initRoute(DNRoute $route)
     初始化路由 配置选项。
 initDBManager(DNDBManger $dbm)
     初始化数据库管理器
-    db_loader 会用在这里
+    db_loader
 ```
 # 进一步扩展
 ## 总说
@@ -637,9 +673,6 @@ G 函数的缺点：IDE 上没法做类型提示，这对一些人来说很重�
 
 service , model 上 用  static 函数代替 G 函数实例方式或许也是一种办法
 
-_before_instance(\$object) 被 G 函数调用，返回 $object。用于一些扩展
-
-_create_instance($class) 被 G 函数调用，用于创建实例，如果你的类构造方法带参数，需要重新写这个方法
 
 组件在后续使用，记得初始化：
 
@@ -669,6 +702,9 @@ class App extends \DNMVCS\DNMVCS
 final class DNSingletonStaticClass
 
 DNSwooleApp 用到了这个，使得在协程的里的和协程外的单例不是同一个。
+
+DWAnotherSinglton AppExt 里实现了这个， 最简化的实现。
+
 ## DNException 异常类 | trait DNThrowQuickly
 使用 trait DNThrowQuickly
 ```php
@@ -791,8 +827,6 @@ DNAutoLoader 不建议扩展。因为你要有新类进来才有能处理加载�
 DNAutoLoader 做了防多次加载和多次初始化。
 
 # 额外的类
-## DNInterface.php
-提供了 DNMVCS.php 里扩展类的接口， PHP 的接口实质只是参照作用。所以没引入。
 ## DNMedoo.php
 DNMedoo 是 Medoo 的一个简单扩展，和 DNDB 接口一致。
 因为 DNMedoo 对 Medoo 有依赖关系，所以单独放在一个文件。
@@ -810,9 +844,48 @@ self::ImportSys('DNMedoo'); //DNMedoo 依赖 Medoo，所以需要手动加载
 
 
 ## DNMVCSExt.php  | 额外类应用和说明
-DNMVCSExt 的类和方法
-
     选项 $options['ext'] 不为空数组就 引入
+### 额外模式
+```
+const DEFAULT_OPTIONS_EX=[
+    'key_for_simple_route'=>'_r',
+    
+    'use_function_view'=>false,
+        'function_view_head'=>'view_header',
+        'function_view_foot'=>'view_footer',
+    'use_function_dispatch'=>false,
+    'use_common_configer'=>false,
+        'fullpath_project_share_common'=>'',
+    'use_common_autoloader'=>false,
+        'fullpath_config_common'=>'',
+    'use_ext_db'=>false,
+];
+```
+    配置字段 ext 数组有数据的时候，会进入高级模式。自动使用扩展文件
+    额外的设置有。
+		key_for_simple_route = act 这个选项，不用 path_info 了，我们用 $_REQUEST['act']，
+        use_function_dispatch 不用 DNController::$xx 了，直接 action_$xx
+		use_function_view  不用 view 文件了，我们用 view_$xx 来表示view
+		'function_view_head'=>'view_header',
+        'function_view_foot'=>'view_footer',
+		use_common_configer 额外配置文件，多工程共享配置用
+            fullpath_config_common 配合上面的使用， 公共文件会被本工程覆盖
+		use_common_autoloader 额外loader ，多工程共享配置用
+            fullpath_project_share_common
+		use_ext_db 使用 \DNMVCS\DBExt 代替  \DNMVCS\DNDB
+    这些功能，用于，1 单一文件解决问题，2 多工程配置，3 使用更好的 db
+
+	
+	'fullpath_config_common'=>'',       // 通用配置的目录，用于多工程
+		DNConfiger::G(ProjectCommonConfiger::G()); // 
+		设置和配置会先读取相应的文件，合并到同目录来
+	'fullpath_project_share_common'=>''     // 通用类文件目录，用于多工程
+		ProjectCommonAutoloader::G()->init(DNMVCS::G()->options)->run();
+		只处理了 CommonService 和 CommonModel 而且是无命名空间的。
+	
+	view 写在同文件里，不同 view 用 view_$action($data){extract($data);...} 这样来。
+	//使用 FunctionView view_header view_footer
+
 ### 严格模式
 我想让 DB 只能被 Model , ExModel 调用。Model 只能被 ExModel,Service 调用 。 LibService 只能被Service 调用  Service只能被 Controller 调用
 
@@ -836,9 +909,9 @@ W($object);
 ### SimpleRouteHook
     SimpleRoute 用于指定 _GET 里某个 key 作为 控制器分配.
     使用 $options['key_for_simple_route'] 来打开他。
-### RouteRewriteHook
+### RouteRewriteHook （已经迁移到其他文件）
     实现 assignRewrite
-### RouteMapHook
+### RouteMapHook （已经迁移到其他文件）
     实现 assignRoute 功能
 ### StrictService
     你的 Service 继承这个类
@@ -868,10 +941,11 @@ W($object);
 	用于 api 服务快速调用
 	public static function Call($class,$method,$input)  input 是关联数组
 	protected static function GetTypeFilter() 重写这个方法限定你的类型
-
+    在项目里未使用
 ### MyArgsAssoc
 - GetMyArgsAssoc 获得当前函数的命名参数数组
 - CallWithMyArgsAssoc($callback)  获得当前函数的命名参数数组并回调
+    在项目里未使用
 
 ### ProjectCommonAutoloader
     实现通用文件加载
@@ -881,11 +955,35 @@ W($object);
     函数方式的 controller
 ### FunctionView
     函数方式的 view
-### FuncWrapper
+### FuncWrapper (过时)
     包裹函数，实现 aop
-    FuctionWrapper::Wrap($before_call,$after_call)
-    Function::AnyFunction(...$args);
-    将会依次调用  before_call(...$args),AnyFunction(...$args),after_call(...$args)，返回原先值
+----
+
+
+## DNRouteAdvance.php
+    这个文件是用于自定义 route 和 rewrite 的
+## SuperGlobal.php
+    对超全局数组的封装
+## SwooleSuperGlobal
+    超全局数组的 swoole 替换层
+## DNSwooleHttpServer
+    Swoole 的 Http 服务器。
+```
+const DEFAULT_OPTIONS=[
+			'server'=>null,
+			//'host'=>null,
+			//'port'=>null,
+			
+			'static_root'=>null,
+			'php_root'=>null,
+			'http_handler_file'=>null,
+			
+			'http_handler'=>null,
+			'exception_handler'=>null,
+			
+			'websocket_runner'=>null,
+		];
+```
 # DNMVCS 的代码流程讲解
 
 大致用图表现如下
@@ -922,44 +1020,13 @@ DN::DB
     - DNStaticCall 由于 php7 的限制， protected funtion 才能 static call
 - 思考：子域名作为子目录
 	想把某个子目录作为域名独立出去。只改底层代码如何改
+    或者 v1/api v2/api 等等
 - error-exception 和 error-500 有什么不同
 	error-500 是引入的文件有语法错误之类。 error-exception 是抛出了错误没处理，用 setExceptionHandel 可以自行处理。
 
 - 为什么不拆分文件，按 composer ,psr-4 目录布局
 	因为不想太多零碎文件，而且还没想到什么应用要拆分
-## 额外模式
-    配置字段 ext 数组有数据的时候，会进入高级模式。自动使用扩展文件
-    额外的设置有。
-		setting_file_basename  默认不再是 setting ,而是为空 用于单一文件解决问题
-		key_for_simple_route = act 这个选项，不用 path_info 了，我们用 $_REQUEST['act']，
-		
-        use_function_dispatch 不用 DNController::$xx 了，直接 action_$xx
-		use_function_view  不用 view 文件了，我们用 view_$xx 来表示view
-		
-		use_common_configer 额外配置文件，多工程共享配置用
-        fullpath_config_common 配合上面的使用， 公共文件会被本工程覆盖
-		use_common_autoloader 额外loader ，多工程共享配置用
-        fullpath_project_share_common
 
-		use_ext_db 使用 \DNMVCS\DBExt 代替  \DNMVCS\DNDB
-    这些功能，用于，1 单一文件解决问题，2 多工程配置，3 使用更好的 db
-
-- 多工程处理已经移除.放到了 DNMVCSExt AppEx 里
-	
-	'fullpath_config_common'=>'',       // 通用配置的目录，用于多工程
-		DNConfiger::G(ProjectCommonConfiger::G()); // 
-		设置和配置会先读取相应的文件，合并到同目录来
-	'fullpath_project_share_common'=>''     // 通用类文件目录，用于多工程
-		ProjectCommonAutoloader::G()->init(DNMVCS::G()->options)->run();
-		只处理了 CommonService 和 CommonModel 而且是无命名空间的。
-- 特殊需求，单文件使用 DNMVCS 放到了 DNMVCSExt AppEx 里
-	'key_for_simple_route'
-	用 act 表示方法。 SimpleRouteHook key_for_simple_route
-	
-	view 写在同文件里，不同 view 用 view_$action($data){extract($data);...} 这样来。
-	//使用 FunctionView view_header view_footer
-	ShowDataInMain DataToShow
-URL 整合，返回默认的。
 ## 和其他框架的整合
 
 修改 override DNMVCS::onShow404 => function(){} 。 
@@ -974,3 +1041,4 @@ SwooleAppBase::RunWithServer($server,$options);
 
 要点 超全局变量不能用了，用 SupperGlobal 文件提供的 HTTP_GET HTTP_POST 等替代。
 需要文档
+# Swoole 整合
