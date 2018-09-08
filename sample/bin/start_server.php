@@ -1,10 +1,11 @@
 <?php
 use \DNMVCS\DNSwooleServer as Server;
 
-$path="/mnt/d/MyWork/sites/";
-require_once($path.'DNMVCS/DNMVCS/DNMVCS.php');
-require_once($path.'DNMVCS/DNMVCS/SuperGlobal.php');
-require_once($path.'DNMVCS/DNMVCS/DNSwooleHttpServer.php');
+$path=realpath(dirname(__DIR__).'/../').'/';
+
+require_once($path.'DNMVCS/DNMVCS.php');
+require_once($path.'DNMVCS/SuperGlobal.php');
+require_once($path.'DNMVCS/DNSwooleHttpServer.php');
 
 //$server=new swoole_http_server('0.0.0.0', 9528);
 $path=realpath(__DIR__.'/../').'/';
