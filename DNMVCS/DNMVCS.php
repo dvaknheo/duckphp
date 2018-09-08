@@ -1205,6 +1205,11 @@ class DNMVCS
 		$options=array_merge_recursive($default_options,$options);
 		return self::RunQuickly($options);
 	}
+	public static function RunAsServer($server_options,$dn_options)
+	{
+		self::ImportSys('DNSwooleHttpServer');
+		DNSwooleHttpServer:: RunWithServer($server_options,$dn_options);
+	}
 	protected function initOptions($options=[])
 	{
 		$this->options=array_merge(DNAutoLoader::DEFAULT_OPTIONS,DNRoute::DEFAULT_OPTIONS,self::DEFAULT_OPTIONS,$options);

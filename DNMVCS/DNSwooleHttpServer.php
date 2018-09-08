@@ -300,6 +300,7 @@ class DNSwooleHttpServer
 		for($i=ob_get_level();$i>$InitObLevel;$i--){
 			ob_end_flush();
 		}
+		$this->onHttpClean();
 		$response->end();
 		//response 被使用到，而且出错就要手动 end  还是 OB 层级问题？
 		//onHttpRun(null,null) 则不需要用
@@ -334,17 +335,19 @@ class DNSwooleHttpServer
 		$this->http_handler=$this->options['http_handler'];
 		$this->exception_handler=$this->options['exception_handler'];
 		
-		$server=$this->options['server'];
-		if(!is_object($server)){
-			$server=new \swoole_http_server($this->options['host'], $options['port']);
-			$server->set($server_or_options);
+		$this->server=$this->options['swoole_server'];
+	
+		if(!$this->server){
+			$this->server=new \swoole_http_server($this->options['host'], $options['port']);
+		}
+		if($this->options['swoole_server_options']){
+			$this->server->set($this->options['swoole_server_options']);
 		}
 		
-		$this->server=$server;
-		$this->options['server']=$server->setting;
+		$this->options['server']=$this->server->setting;
 		$this->server->on('request',[$this,'onRequest']);
-		if($server->setting['enable_static_handler']??false){
-			$this->static_root=$server->setting['document_root'];
+		if($this->server->setting['enable_static_handler']??false){
+			$this->static_root=$this->server->setting['document_root'];
 		}else{
 			$this->static_root=$this->options['static_root'];
 		}
@@ -397,12 +400,11 @@ class SwooleMainAppHook
 	public function beforeMainAppRun()
 	{
 		$path=DNMVCS::G()->options['path'];
+		//CoroutineSingleton::CloneInstance(SuperGlobal\SERVER::class)->init($request);
 		SuperGlobal\SERVER::Set('DOCUMENT_ROOT',$path.'/www');
 		SuperGlobal\SERVER::Set('SCRIPT_FILENAME',$path.'/www/index.php');
-		
 		CoroutineSingleton::CloneInstance(DNView::class);
 		CoroutineSingleton::CloneInstance(DNRoute::class);
-		
 		$route=DNRoute::G();
 		$route->path_info=$route->_SERVER('PATH_INFO')??'';
 		$route->request_method=$route->_SERVER('REQUEST_METHOD')??'';
