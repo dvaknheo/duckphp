@@ -146,7 +146,7 @@ class SimpleRouteHook
 	}
 	public function hook($route)
 	{
-		$route->setURLHandel([$this,'onURL']);
+		$route->setURLHandler([$this,'onURL']);
 
 		$path_info=_HTTP_REQUEST($this->key_for_simple_route)??'';
 		$path_info=ltrim($path_info,'/');
@@ -200,7 +200,7 @@ class RouteMapHook
 		$route->parameters=$m;
 		return true;
 	}
-	protected function getRouteHandelByMap($route)
+	protected function getRouteHandlerByMap($route)
 	{
 		foreach($this->routeMap as $pattern =>$callback){
 			if(!$this->matchRoute($pattern,$route->path_info,$route)){continue;}
@@ -216,7 +216,7 @@ class RouteMapHook
 	}
 	public function  hook($route)
 	{
-		$route->callback=$this->getRouteHandelByMap($route);
+		$route->callback=$this->getRouteHandlerByMap($route);
 	}
 	public function assignRoute($key,$callback=null)
 	{
@@ -617,7 +617,7 @@ class FunctionDispatcher
 			if(is_callable($this->default_callback)){
 				($this->default_callback)();
 			}else{
-				(DNRoute::G()->on404Handel)();
+				(DNRoute::G()->on404Handler)();
 				return false;
 			}
 		}

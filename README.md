@@ -13,6 +13,7 @@
 * 无第三方依赖，你不必担心第三方依赖改动而大费周折。
 *
 * 和 Swoole 整合实现高性能 web 服务器。
+
 ## 关于 Servivce 层
 MVC 结构的时候，你们业务逻辑放在哪里？
 新手放在 Controller ，后来的放到 Model ，后来觉得 Model 和数据库混一起太乱， 搞个 DAO 层吧。
@@ -543,12 +544,12 @@ showBlock($view,$data)
     展示view不理会页眉页脚，也不做展示的后处理，如关闭数据库。
     注意这里是 $view 在前面， $data 在后面，和 show 函数不一致哦。
     实质调用 DNView::G()->showBlock
-assignExceptionHandel($classes,$callback=null)
+assignExceptionHandler($classes,$callback=null)
 
     分配特定异常回调。
     用于控制器里控制特定错误类型。 
     // TODO 优化 多个 classes  名称共享一个
-setDefaultExceptionHandel($calllback)
+setDefaultExceptionHandler($calllback)
 
     接管默认的异常处理，所有异常都归回调管，而不是显示 500 页面。
     用于控制器里控制特定错误类型。比如 api 调用
@@ -581,7 +582,7 @@ onErrorException($ex)
     处理错误，显示500错误。
 onDebugError($errno, $errstr, $errfile, $errline)
     处理 Notice 错误。
-onErrorHandel($errno, $errstr, $errfile, $errline)
+onErrorHandler($errno, $errstr, $errfile, $errline)
     处理 PHP 错误
 ```
 ## 组件初始化
@@ -729,7 +730,7 @@ if($flag){throw new MyException($message,$code);}
  	set404($callback)
 set404 设置404 回调
 
-    protected getRouteHandelByFile
+    protected getRouteHandlerByFile
 	protected  getObecjectToCall($class_name)
 	protected  getMethodToCall($obj,$method)
 文件模式的路由
@@ -746,8 +747,8 @@ set404 设置404 回调
 当前路径用于如果是切片的，找回未切片的路径。
 高级模式
 
-    setURLHandel
-	_URL的 innerCall 就是调用这个 setURLHandel 的 onURL 
+    setURLHandler
+	_URL的 innerCall 就是调用这个 setURLHandler 的 onURL 
     
 	addRouteHook
 	添加路由的hook
@@ -998,7 +999,7 @@ DN::run(DNRoute::run)
 	(RouteHook)($this);
 		RouteRewriteHook->hook
 		RouteMapHook->hook 
-    getRouteHandelByFile
+    getRouteHandlerByFile
     (DNRoute->callback)()
 
 DN::DB
@@ -1022,7 +1023,7 @@ DN::DB
 	想把某个子目录作为域名独立出去。只改底层代码如何改
     或者 v1/api v2/api 等等
 - error-exception 和 error-500 有什么不同
-	error-500 是引入的文件有语法错误之类。 error-exception 是抛出了错误没处理，用 setExceptionHandel 可以自行处理。
+	error-500 是引入的文件有语法错误之类。 error-exception 是抛出了错误没处理，用 setExceptionHandler 可以自行处理。
 
 - 为什么不拆分文件，按 composer ,psr-4 目录布局
 	因为不想太多零碎文件，而且还没想到什么应用要拆分

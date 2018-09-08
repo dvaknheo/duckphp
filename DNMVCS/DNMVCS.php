@@ -153,7 +153,7 @@ class DNRoute
 			'disable_default_class_outside'=>false,
 		];
 	
-	public $on404Handel=null;
+	public $on404Handler=null;
 	public $parameters=[];
 	public $options;
 	
@@ -235,9 +235,9 @@ class DNRoute
 	}
 	public function set404($callback)
 	{
-		$this->on404Handel=$callback;
+		$this->on404Handler=$callback;
 	}
-	public function setURLHandel($callback)
+	public function setURLHandler($callback)
 	{
 		$this->onURL=$callback;
 	}
@@ -255,23 +255,23 @@ class DNRoute
 			($hook)($this);
 		}
 		if(null===$this->callback){
-			$this->callback=$this->getRouteHandelByFile();
+			$this->callback=$this->getRouteHandlerByFile();
 		}
 		if(null!==$this->callback){
 			($this->callback)(...$this->parameters);
 			return true;
 		}
-		if(!$this->on404Handel){
+		if(!$this->on404Handler){
 			echo "404 File Not Found.\n";
-			echo "DNRoute Notice: 404  You need set 404 Handel";
+			echo "DNRoute Notice: 404  You need set 404 Handler";
 			exit;
 		}
-		($this->on404Handel)();
+		($this->on404Handler)();
 		return false;
 	}
 	
 
-	protected function getRouteHandelByFile()
+	protected function getRouteHandlerByFile()
 	{
 		$path_info=$this->path_info;
 		$blocks=explode('/',$path_info);
@@ -669,7 +669,7 @@ class DNExceptionManager
 	
 	public static $SpecailExceptionMap=[];
 	
-	public static function HandelAllException($OnErrorException,$OnException)
+	public static function HandleAllException($OnErrorException,$OnException)
 	{
 		self::$is_handeling=true;
 		set_exception_handler(array(__CLASS__,'ManageException'));
@@ -678,7 +678,7 @@ class DNExceptionManager
 		
 		self::SetException($OnException);
 	}
-	public static function AssignExceptionHandel($class,$callback)
+	public static function AssignExceptionHandler($class,$callback)
 	{
 		$class=is_string($class)?array($class=>$callback):$class;
 		foreach($class as $k=>$v){
@@ -704,13 +704,13 @@ class DNExceptionManager
 		//throw $ex;
 	}
 	
-	public static function HandelAllError($OnError,$OnDevError)
+	public static function HandleAllError($OnError,$OnDevError)
 	{
-		set_error_handler(array(__CLASS__,'onErrorHandler'));
+		set_error_handler(array(__CLASS__,'onErrorHandlerr'));
 		self::$OnError=$OnError;
 		self::$OnDevError=$OnDevError;
 	}
-	public static function onErrorHandler($errno, $errstr, $errfile, $errline)
+	public static function onErrorHandlerr($errno, $errstr, $errfile, $errline)
 	{
 		if (!(error_reporting() & $errno)) {
 			return false;
@@ -891,11 +891,11 @@ trait DNMVCS_Glue
 	}
 	
 	//exception manager
-	public function assignExceptionHandel($classes,$callback=null)
+	public function assignExceptionHandler($classes,$callback=null)
 	{
-		return DNExceptionManager::AssignExceptionHandel($classes,$callback);
+		return DNExceptionManager::AssignExceptionHandler($classes,$callback);
 	}
-	public function setDefaultExceptionHandel($callback)
+	public function setDefaultExceptionHandler($callback)
 	{
 		return DNExceptionManager::SetException($callback);
 	}
@@ -905,7 +905,7 @@ trait DNMVCS_Glue
 		throw new DNException($message,$code);
 	}
 	//DB
-	public function installDBClass($class)
+	public function installDB($createHandler,$closeHandler)
 	{
 		return DNDBManager::G()->installDBClass($class);
 	}
@@ -1023,7 +1023,7 @@ trait DNMVCS_Misc
 	}
 	
 }
-trait DNMVCS_Handel
+trait DNMVCS_Handler
 {
 	//@override
 	public function onShow404()
@@ -1122,7 +1122,7 @@ EOT;
 		}
 		DNView::G()->showBlock('_sys/error-debug',$data);
 	}
-	public function onErrorHandel($errno, $errstr, $errfile, $errline)
+	public function onErrorHandler($errno, $errstr, $errfile, $errline)
 	{
 		//var_dump($errno, $errstr, $errfile, $errline);
 		throw new \Error($errstr,$errno);
@@ -1143,7 +1143,7 @@ class DNMVCS
 {
 	use DNSingleton;
 	use DNMVCS_Glue;
-	use DNMVCS_Handel;
+	use DNMVCS_Handler;
 	use DNMVCS_Misc;
 	
 	const DEFAULT_OPTIONS=[
@@ -1224,8 +1224,8 @@ class DNMVCS
 	
 	protected function initExceptionManager()
 	{
-		DNExceptionManager::HandelAllException([$this,'onErrorException'],[$this,'onException']);
-		DNExceptionManager::HandelAllError([$this,'onErrorHandel'],[$this,'onDebugError']);
+		DNExceptionManager::HandleAllException([$this,'onErrorException'],[$this,'onException']);
+		DNExceptionManager::HandleAllError([$this,'onErrorHandler'],[$this,'onDebugError']);
 	}
 	protected function checkOverride($options)
 	{

@@ -57,7 +57,7 @@ class CoroutineSingleton
 	{
 		unset(DNSingletonStaticClass::$_instances[$key][$class]);
 	}
-	public static function ReplaceDefaultSingletonHandel()
+	public static function ReplaceDefaultSingletonHandler()
 	{
 		DNSingletonStaticClass::$Replacer=[CoroutineSingleton::class,'GetInstance'];
 	}
@@ -133,11 +133,11 @@ class DNSwooleHttpServer
 			'port'=>9528,
 			
 			'static_root'=>null,
+			
 			'php_root'=>null,
 			'http_handler_file'=>null,
-			
 			'http_handler'=>null,
-			'exception_handler'=>null,
+			'http_exception_handler'=>null,
 			
 			'websocket_runner'=>null,
 		];
@@ -145,7 +145,7 @@ class DNSwooleHttpServer
 	public $webSocketRunner=null;
 	
 	public $http_handler=null;
-	public $exception_handler=null;
+	public $http_exception_handler=null;
 	public $shutdown_function_array=[];
 	
 	protected $static_root=null;
@@ -169,7 +169,7 @@ class DNSwooleHttpServer
 	}
 	public function set_exception_handler(callable $exception_handler)
 	{
-		$this->exception_handler=$exception_handler;
+		$this->http_exception_handler=$exception_handler;
 	}
 	public function register_shutdown_function(callable $callback,...$args)
 	{
@@ -207,7 +207,7 @@ class DNSwooleHttpServer
 		SuperGlobal\COOKIE::G(SwooleSuperGlobalCookie::G())->init($request);
 		
 		if($this->http_handler){
-			$this->runHttpHandeler();
+			$this->runHttpHandler();
 			return;
 		}
 		if($this->options['http_handler_file']){
@@ -259,7 +259,7 @@ class DNSwooleHttpServer
 		}
 	}
 	
-	protected function runHttpHandeler()
+	protected function runHttpHandler()
 	{
 		if(!$this->http_handler){return;}
 		($this->http_handler)();
@@ -267,8 +267,8 @@ class DNSwooleHttpServer
 	public function onHttpException($ex)
 	{
 		if( !($ex instanceof \Swoole\ExitException) ){
-			if($this->exception_handler){
-				($this->exception_handler)($ex);
+			if($this->http_exception_handler){
+				($this->http_exception_handler)($ex);
 			}else{
 				echo "DNSwooleServer Error ";
 				echo $ex;
@@ -333,7 +333,7 @@ class DNSwooleHttpServer
 		$this->options=array_merge(self::DEFAULT_OPTIONS,$options);
 		
 		$this->http_handler=$this->options['http_handler'];
-		$this->exception_handler=$this->options['exception_handler'];
+		$this->http_exception_handler=$this->options['http_exception_handler'];
 		
 		$this->server=$this->options['swoole_server'];
 	
@@ -355,7 +355,7 @@ class DNSwooleHttpServer
 		if(is_callable('\Swoole\Runtime::enableCoroutine')){
 			\Swoole\Runtime::enableCoroutine();
 		}
-		CoroutineSingleton::ReplaceDefaultSingletonHandel();
+		CoroutineSingleton::ReplaceDefaultSingletonHandler();
 		
 		$this->webSocketRunner=$this->options['websocket_runner'];
 		if($this->webSocketRunner){
@@ -378,7 +378,7 @@ class DNSwooleHttpServer
 			DNMVCS::G()->init($dn_options);
 			SwooleMainAppHook::G()->installHook(DNMVCS::G());
 			$server_options['http_handler']=[DNMVCS::G(),'run'];
-			$server_options['exception_handler']=[DNMVCS::G(),'onException'];
+			$server_options['http_exception_handler']=[DNMVCS::G(),'onException'];
 		}
 		self::G()->init($server_options)->run();
 	}
