@@ -160,7 +160,7 @@ class DNRoute
 	protected $namespace='MY';
 	protected $default_controller_class='DNController';
 	
-	protected $wellcome_controller='Main';
+	protected $welcome_controller='Main';
 	protected $default_method='index';
 	
 	public $enable_paramters=false;
@@ -316,11 +316,11 @@ class DNRoute
 			}
 		}
 		
-		if($this->disable_default_class_outside && $current_class===$this->wellcome_controller && $method===$this->default_method){
+		if($this->disable_default_class_outside && $current_class===$this->welcome_controller && $method===$this->default_method){
 			return null;
 		}
 		$method=$method?:$this->default_method;
-		$current_class=$current_class?:$this->wellcome_controller;
+		$current_class=$current_class?:$this->welcome_controller;
 		
 		$this->calling_method=$method;
 		

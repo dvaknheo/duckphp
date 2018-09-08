@@ -84,7 +84,7 @@ fwrite(STDERR,"-- $class ~ ".$class2.";\n");
 		DNSingletonStaticClass::$_instances[$key]=[];
 	}
 }
-class SwooleHttpContext
+class SwooleContext
 {
 	use DNSingleton;
 	public $request=null;
@@ -117,35 +117,34 @@ class SwooleHttpContext
 		$this->response=null;
 	}
 }
-interface IWebSocketRunner
-{
-	public function onWebSoketRun($request,$response);
-	public function onWebSoketException($ex);
-	public function onWebSoketCleanUp();
-}
 class DNSwooleHttpServer
 {
 	use DNSingleton;
 	
 	const DEFAULT_OPTIONS=[
-			'server'=>null,
-			'host'=>'0.0.0.0',
-			'port'=>9528,
+			'swoole_server'=>null,
+			'swoole_options'=>[],
+			
+			'host'=>'127.0.0.1',
+			'port'=>0,
 			
 			'static_root'=>null,
-			
 			'php_root'=>null,
 			'http_handler_file'=>null,
 			'http_handler'=>null,
 			'http_exception_handler'=>null,
 			
-			'websocket_runner'=>null,
+			'websocket_handler'=>null,
+			'websocket_exception_handler'=>null,
 		];
 	public $server=null;
-	public $webSocketRunner=null;
 	
 	public $http_handler=null;
 	public $http_exception_handler=null;
+	
+	public $websocket_handler=null;
+	public $websocket_exception_handler=null;
+	
 	public $shutdown_function_array=[];
 	
 	protected $static_root=null;
@@ -157,15 +156,15 @@ class DNSwooleHttpServer
 	}
 	public static function Request()
 	{
-		return SwooleHttpContext::G()->request;
+		return SwooleContext::G()->request;
 	}
 	public static function Response()
 	{
-		return SwooleHttpContext::G()->response;
+		return SwooleContext::G()->response;
 	}
 	public static function Context()
 	{
-		return SwooleHttpContext::G();
+		return SwooleContext::G();
 	}
 	public function set_exception_handler(callable $exception_handler)
 	{
@@ -178,19 +177,19 @@ class DNSwooleHttpServer
 	public function header(string $string, bool $replace = true , int $http_response_code =0)
 	{
 		list($key,$value)=explode(':',$string);
-		SwooleHttpContext::G()->response->header($key, $value);
+		SwooleContext::G()->response->header($key, $value);
 		if($http_response_code){
-			SwooleHttpContext::G()->response->status($http_status_code);
+			SwooleContext::G()->response->status($http_status_code);
 		}
 	}
 	public function setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
 	{
-		return SwooleHttpContext::G()->response->cookie($key,$value,$expire,$path,$domain,$secure,$httponly );
+		return SwooleContext::G()->response->cookie($key,$value,$expire,$path,$domain,$secure,$httponly );
 	}
 	
 	public function onHttpRun($request,$response)
 	{
-		SwooleHttpContext::Init($request,$response);
+		SwooleContext::Init($request,$response);
 		CoroutineSingleton::CloneInstance(SuperGlobal\SERVER::class);
 		CoroutineSingleton::CloneInstance(SuperGlobal\GET::class);
 		CoroutineSingleton::CloneInstance(SuperGlobal\POST::class);
@@ -198,7 +197,6 @@ class DNSwooleHttpServer
 		CoroutineSingleton::CloneInstance(SuperGlobal\COOKIE::class);
 		
 		//SuperGlobal\SERVER::G();
-		
 		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G())->init($request);
 		
 		SuperGlobal\GET::G(SwooleSuperGlobalGet::G())->init($request);
@@ -282,7 +280,7 @@ class DNSwooleHttpServer
 	}
 	public function onHttpClean()
 	{
-		SwooleHttpContext::CleanUp();
+		SwooleContext::CleanUp();
 		CoroutineSingleton::CleanUp();
 	}
 	public function onRequest($request,$response)
@@ -335,7 +333,7 @@ class DNSwooleHttpServer
 		$this->http_handler=$this->options['http_handler'];
 		$this->http_exception_handler=$this->options['http_exception_handler'];
 		
-		$this->server=$this->options['swoole_server'];
+		$this->server=$this->options[''];
 	
 		if(!$this->server){
 			$this->server=new \swoole_http_server($this->options['host'], $options['port']);
@@ -357,10 +355,12 @@ class DNSwooleHttpServer
 		}
 		CoroutineSingleton::ReplaceDefaultSingletonHandler();
 		
+		/*
 		$this->webSocketRunner=$this->options['websocket_runner'];
 		if($this->webSocketRunner){
 			$this->server->on('message',[$this,'onMessage']);
 		}
+		//*/
 		return $this;
 	}
 	public function run()

@@ -13,7 +13,6 @@
 * 无第三方依赖，你不必担心第三方依赖改动而大费周折。
 *
 * 和 Swoole 整合实现高性能 web 服务器。
-
 ## 关于 Servivce 层
 MVC 结构的时候，你们业务逻辑放在哪里？
 新手放在 Controller ，后来的放到 Model ，后来觉得 Model 和数据库混一起太乱， 搞个 DAO 层吧。
@@ -544,12 +543,12 @@ showBlock($view,$data)
     展示view不理会页眉页脚，也不做展示的后处理，如关闭数据库。
     注意这里是 $view 在前面， $data 在后面，和 show 函数不一致哦。
     实质调用 DNView::G()->showBlock
-assignExceptionHandler($classes,$callback=null)
+assignExceptionHandel($classes,$callback=null)
 
     分配特定异常回调。
     用于控制器里控制特定错误类型。 
     // TODO 优化 多个 classes  名称共享一个
-setDefaultExceptionHandler($calllback)
+setDefaultExceptionHandel($calllback)
 
     接管默认的异常处理，所有异常都归回调管，而不是显示 500 页面。
     用于控制器里控制特定错误类型。比如 api 调用
@@ -582,7 +581,7 @@ onErrorException($ex)
     处理错误，显示500错误。
 onDebugError($errno, $errstr, $errfile, $errline)
     处理 Notice 错误。
-onErrorHandler($errno, $errstr, $errfile, $errline)
+onErrorHandel($errno, $errstr, $errfile, $errline)
     处理 PHP 错误
 ```
 ## 组件初始化
@@ -730,7 +729,7 @@ if($flag){throw new MyException($message,$code);}
  	set404($callback)
 set404 设置404 回调
 
-    protected getRouteHandlerByFile
+    protected getRouteHandelByFile
 	protected  getObecjectToCall($class_name)
 	protected  getMethodToCall($obj,$method)
 文件模式的路由
@@ -747,8 +746,8 @@ set404 设置404 回调
 当前路径用于如果是切片的，找回未切片的路径。
 高级模式
 
-    setURLHandler
-	_URL的 innerCall 就是调用这个 setURLHandler 的 onURL 
+    setURLHandel
+	_URL的 innerCall 就是调用这个 setURLHandel 的 onURL 
     
 	addRouteHook
 	添加路由的hook
@@ -999,7 +998,7 @@ DN::run(DNRoute::run)
 	(RouteHook)($this);
 		RouteRewriteHook->hook
 		RouteMapHook->hook 
-    getRouteHandlerByFile
+    getRouteHandelByFile
     (DNRoute->callback)()
 
 DN::DB
@@ -1023,7 +1022,7 @@ DN::DB
 	想把某个子目录作为域名独立出去。只改底层代码如何改
     或者 v1/api v2/api 等等
 - error-exception 和 error-500 有什么不同
-	error-500 是引入的文件有语法错误之类。 error-exception 是抛出了错误没处理，用 setExceptionHandler 可以自行处理。
+	error-500 是引入的文件有语法错误之类。 error-exception 是抛出了错误没处理，用 setExceptionHandel 可以自行处理。
 
 - 为什么不拆分文件，按 composer ,psr-4 目录布局
 	因为不想太多零碎文件，而且还没想到什么应用要拆分
@@ -1034,12 +1033,50 @@ DN::DB
 
 run() 方法 得到 false 表示 404 了，后续就是其他框架的事情了
 
-## Swoole
+# Swoole 整合指南(临时文档)
+启动代码
+```
+require_once($path.'DNMVCS/DNMVCS.php');
 
-$options['path']=指定路径;
-$server => swoole_http_server;
-SwooleAppBase::RunWithServer($server,$options);
+\DNMVCS\DNMVCS::RunAsServer($server_options,$dn_options);
+```
+$server_options 的选项
+```
+	const DEFAULT_OPTIONS=[
+			'swoole_server'=>null, // swoole_http_server 对象，留空，则用 host,port 创建
+			'swoole_options'=>[],   //swoole_http_server 的配置，合并如 server
 
-要点 超全局变量不能用了，用 SupperGlobal 文件提供的 HTTP_GET HTTP_POST 等替代。
-需要文档
-# Swoole 整合
+			'host'=>'0.0.0.0',  // IP
+			'port'=>0,          //端口
+			
+			'static_root'=>null,            //静态目录，默认是从 swoole_http_server  里读取
+			'php_root'=>null,               // php 的目录和静态目录的不相同，留空
+			'http_handler_file'=>null,      // 启动文件 留空将会使用 http_handler
+			'http_handler'=>null,           // 启动方法， DNMVCS 已经占用
+			'http_exception_handler'=>null, // 异常处理方法,DNMVCS 已经占用
+			
+			'websocket_handler'=>null,      // websocket，尚未启用
+			'websocket_exception_handler'=>null, // 	websocket 异常处理方法 ，尚未启用 
+    ];
+```
+RunAsServer 实际等同于 DNSwooleHttpServer :: RunWithServer()
+
+DNSwooleHttpServer::()->init($server_options);
+启用 SuperGlobal 
+然后设置  http_handler http_exception_handler 为 DNMVCS  的 run, onException
+
+扩展理解: 
+如果 http_handler 为空，有 http_handler_file 则直接 include  http_handler_file 运行，和 DNMVCS 系统无关
+可以设置成 http_handler_file 从 DNMVCS  web  路径里开始哦。这样 DNMVCS 就全运行在线程态
+如果 http_handler_file 也为空，那从 php_root 里读取路径文件 也和 DNMVCS 系统无关
+
+DNSwooleHttpServer 和 DNMVCS 主类主要关系是在 G 函数 的实现，如果没这个 G 函数，两者是完全独立的。
+DNMVCS 在 swoole 下运行的时候，加了 SwooleMainAppHook
+
+还记得 _SERVER,_GET,_POST 超全局变量在 swoole 协程下无法使用么。
+你要用 DNMVCS\SuperGlobal\SERVER:: Get($key), Set($key,$value)代替
+
+
+想要获得当前 的 request ,response 用 DNSwooleHttpServer::Request() ,Response
+
+exit 函数可以 用 header 函数不能用了，你得用 DNSwooleHttpServer::G()->header .还有 setcookie ,set_exception_handler 类似。
