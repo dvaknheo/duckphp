@@ -201,7 +201,8 @@ const DNMVCS::DEFAULT_OPTIONS=[
 	'all_config'=>[],        			// 配置，每个配置用 key  分割。
 		'setting_file_basename'=>'setting',        // 设置的文件名，如果为'' 则不读取设置文件
 	'is_dev'=>false,					//是否在开发状态，设置文件里填写的将会覆盖这一选项
-    'db_loader' =>'', 					// DB 类，为空的时候，默认用 DNDB::class;
+    'db_create_handler' =>'',			// 创建DB 的回调 默认用 DNDB::class
+    'db_close_handler' =>'', 			// 关闭DB 类的回调。
     'ext'=>[],                          //默认不使用扩展
     'rewrite_list'=>[],
     'route_list'=>[],
@@ -214,12 +215,11 @@ const DNMVCS::DEFAULT_OPTIONS=[
 
 ```php
 const DNRoute::DEFAULT_OPTIONS=[
-    'namespace'=>'MY',                  // 默认的命名空间，你可以自定义工程的命名空间
     'with_no_namespace_mode'=>true,     // 简单模式，无命名空间直接 controller, service,model
     'enable_paramters'=>false,          // 支持切片模式
     'enable_post_prefix'=>true,         // 把 POST 的 映射为 do_$action 方法
         'path_controller'=>'app/Controller',    //controller 的目录
-        'namespace_controller'=>'Controller',   //controller 的命名空间 MY\Controller
+        'namespace_controller'=>'MY\Controller',   //controller 的命名空间 MY\Controller
         'default_controller_class'=>'DNController', //默认 controller 名字为 DNController
         'disable_default_class_outside'=>false, // 屏蔽  Main/index  第二访问模式
 ];

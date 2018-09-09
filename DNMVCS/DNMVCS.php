@@ -141,12 +141,11 @@ class DNRoute
 	use DNSingleton;
 	
 	const DEFAULT_OPTIONS=[
-			'namespace'=>'MY',
 			'enable_paramters'=>false,
 			'with_no_namespace_mode'=>true,
 			
 			'path_controller'=>'app/Controller',
-			'namespace_controller'=>'Controller',
+			'namespace_controller'=>'MY\Controller',
 			'default_controller_class'=>'DNController',
 			
 			'enable_post_prefix'=>true,
@@ -157,7 +156,8 @@ class DNRoute
 	public $parameters=[];
 	public $options;
 	
-	protected $namespace='MY';
+	protected $namespaceController='';
+	
 	protected $default_controller_class='DNController';
 	
 	protected $welcome_controller='Main';
@@ -212,7 +212,7 @@ class DNRoute
 		$this->options=$options;
 		
 		$this->path=$options['path'].$options['path_controller'].'/';
-		$this->namespace=$options['namespace'].'\\'.$options['namespace_controller'];
+		$this->namespaceController=$options['namespace_controller'];
 		$this->enable_paramters=$options['enable_paramters'];
 		$this->with_no_namespace_mode=$options['with_no_namespace_mode'];
 		
@@ -364,10 +364,10 @@ class DNRoute
 				return $obj;
 			}
 		}
-		$fullclass=$this->namespace.'\\'.str_replace('/','\\',$class_name);
+		$fullclass=$this->namespaceController.'\\'.str_replace('/','\\',$class_name);
 		$flag=class_exists($fullclass,false);
 		if(!$flag){
-			$fullclass=$this->namespace.'\\'.str_replace('/','\\',$this->default_controller_class);
+			$fullclass=$this->namespaceController.'\\'.str_replace('/','\\',$this->default_controller_class);
 		}
 		$this->calling_class=$fullclass;
 		$obj=new $fullclass();
