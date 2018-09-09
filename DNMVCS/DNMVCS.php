@@ -179,12 +179,15 @@ class DNRoute
 	public $routeHooks=[];
 	public $callback=null;
 	
-	public $onURL=null;
-	public $onServerArray=null;
-	public function _URL($url=null,$innerCall=false)
+	public $urlHandler=null;
+	public $serverArrayHandler=null;
+	public function _URL($url=null)
 	{
-		if(!$innerCall && $this->onURL){return ($this->onURL)($url,true);}
-
+		if($this->urlHandler){return ($this->urlHandler)($url,true);}
+		return $this->defaultURLHandler($url);
+	}
+	public function defaultURLHandler($url=null)
+	{
 		$basepath=substr(rtrim(str_replace('\\','/',$this->_SERVER('SCRIPT_FILENAME')),'/').'/',strlen($this->_SERVER('DOCUMENT_ROOT')));
 		if($basepath=='/index.php'){$basepath='/';}
 		if($basepath=='/index.php/'){$basepath='/';}
@@ -239,7 +242,11 @@ class DNRoute
 	}
 	public function setURLHandler($callback)
 	{
-		$this->onURL=$callback;
+		$this->urlHandler=$callback;
+	}
+	public function getURLHandler()
+	{
+		return $this->urlHandler;
 	}
 	public function addRouteHook($hook,$prepend=false)
 	{
@@ -388,8 +395,8 @@ class DNRoute
 	
 	public function _SERVER($key)
 	{
-		if($this->onServerArray){
-			return ($this->onServerArray)($key);
+		if($this->serverArrayHandler){
+			return ($this->serverArrayHandler)($key);
 		}
 		if(class_exists('\DNMVCS\SuperGlobal\SERVER' ,false)){
 			return SuperGlobal\SERVER::Get($key);
@@ -755,33 +762,26 @@ class DNDBManager
 	public $db_r=null;
 	public $db_config=[];
 	public $db_r_config=[];
-	public $db_loader=null;
-	public function init($db_config,$db_r_config,$db_loader)
+	public $db_create_handler=null;
+	public $db_close_handler=null;
+	public function init($db_config,$db_r_config,$db_create_handler,$db_close_handler)
 	{
 
 		$this->db_config=$db_config;
 		$this->db_r_config=$db_r_config;
-		$this->db_loader=$db_loader;
+		$this->db_create_handler=$db_create_handler;
+		$this->db_close_handler=$db_close_handler;
 	}
-	public function installDBClass($onDBCreate,$onDBClose=null)
+	public function setDBHandler($db_create_handler,$db_close_handler=null)
 	{
-		if($onDBClose===null){
-			$installer=$onDBCreate;
-			$this->onDBCreate=[$installer,'CreateDBInstance'];
-			$this->onDBClose=[$installer,'CloseDBInstance'];
-		}else{
-			$this->onDBCreate=$onDBCreate;
-			$this->onDBClose=$onDBClose;
-		}
+		$this->db_create_handler=$db_create_handler;
+		$this->db_close_handler=$db_close_handler;
 	}
 	public function _DB()
 	{
 		if($this->db){return $this->db;}
 		
-		if($this->onDBCreate===null){
-			$this->installDBClass($this->db_loader);
-		}
-		$this->db=($this->onDBCreate)($this->db_config);
+		$this->db=($this->db_create_handler)($this->db_config);
 		return $this->db;
 	}
 	public function _DB_W()
@@ -793,19 +793,17 @@ class DNDBManager
 		if($this->db_r){return $this->db_r;}
 		
 		if(!$this->db_r_config){return $this->_DB();}
-		if($this->onDBCreate===null){
-			$this->installDBClass($this->db_loader);
-		}
-		$this->db_r=($this->onDBCreate)($this->db_r_config);
+		
+		$this->db_r=($this->db_create_handler)($this->db_r_config);
 		return $this->db_r;
 	}
 	public function closeAllDB()
 	{
-		if($this->db!==null){
-			($this->onDBClose)($this->db);
+		if($this->db!==null && $this->db_close_handler){
+			($this->db_close_handler)($this->db);
 		}
-		if($this->db_r!==null){
-			($this->onDBClose)($this->db);
+		if($this->db_r!==null && $this->db_close_handler){
+			($this->db_close_handler)($this->db);
 		}
 	}
 }
@@ -905,9 +903,9 @@ trait DNMVCS_Glue
 		throw new DNException($message,$code);
 	}
 	//DB
-	public function installDB($createHandler,$closeHandler)
+	public function setDBHandler($createHandler,$closeHandler)
 	{
-		return DNDBManager::G()->installDBClass($class);
+		return DNDBManager::G()->setDBHandler($createHandler,$closeHandler);
 	}
 	
 
@@ -1160,7 +1158,8 @@ class DNMVCS
 			'all_config'=>[],
 			'setting'=>[],
 			'setting_file_basename'=>'setting',
-			'db_loader'=>'',
+			'db_create_handler'=>'',
+			'db_close_handler'=>'',
 			
 			'rewrite_list'=>[],
 			'route_list'=>[],
@@ -1176,7 +1175,8 @@ class DNMVCS
 	public $isAdvance=false;
 	protected $hasAdvance=false;
 	protected $initObLevel=0;
-	protected $db_loader=null;
+	protected $db_create_handler=null;
+	protected $db_close_handler=null;
 	protected $hooks=[];
 	public static function RunQuickly($options=[])
 	{
@@ -1223,7 +1223,8 @@ class DNMVCS
 		$this->path=$this->options['path'];
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
 		$this->isDev=$this->options['is_dev'];
-		$this->db_loader=$this->options['db_loader']?:DNDB::class;
+		$this->db_create_handler=$this->options['db_create_handler']?:[DNDB::class,'CreateDBInstance'];
+		$this->db_close_handler=$this->options['db_close_handler']?:[DNDB::class,'CloseDBInstance'];
 	}
 	
 	protected function initExceptionManager()
@@ -1284,9 +1285,10 @@ class DNMVCS
 	{
 		$db_config=DNConfiger::G()->_Setting('db');
 		$db_r_config=DNConfiger::G()->_Setting('db_r');
-		$db_loader=$this->db_loader;
+		$db_create_handler=$this->db_create_handler;
+		$db_close_handler=$this->db_close_handler;
 		
-		$dbm->init($db_config,$db_r_config,$db_loader);
+		$dbm->init($db_config,$db_r_config,$db_create_handler,$db_close_handler);
 	}
 	protected function initMisc()
 	{

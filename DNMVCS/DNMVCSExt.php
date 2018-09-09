@@ -118,9 +118,8 @@ class SimpleRoute extends DNRoute
 	public $options;
 	protected $key_for_simple_route='_r';
 	
-	public function _URL($url=null,$innerCall=false)
+	public function _URL($url=null)
 	{
-		if(!$innerCall && $this->onURL){return ($this->onURL)($url,true);}
 		return _url_by_key($url,$this->key_for_simple_route);
 	}
 	public function init($options)
@@ -138,10 +137,8 @@ class SimpleRouteHook
 	use DNSingleton;
 
 	public $key_for_simple_route='_r';
-	protected $onURL=null;
-	public function onURL($url=null,$innerCall=false)
+	public function onURL($url=null)
 	{
-		if(!$innerCall && $this->onURL){return ($this->onURL)($url,true);}
 		return _url_by_key($url,$this->key_for_simple_route);
 	}
 	public function hook($route)

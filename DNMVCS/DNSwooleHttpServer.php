@@ -322,12 +322,22 @@ class DNSwooleHttpServer
 			ob_end_flush();
 		}
 	}
-	
+	///////////
+	public function checkInclude($file)
+	{
+		$a=get_included_files();
+		return in_array($a,realpath($file))?true:false;
+	}
+	/////////////////////////
 	public function init($options=[])
 	{
-		require_once(__DIR__.'/SuperGlobal.php');
-		require_once(__DIR__.'/SwooleSuperGlobal.php');
-
+		if(class_exists('\DNMVCS\SuperGlobal\SERVER' ,false)){
+			require_once(__DIR__.'/SuperGlobal.php');
+		}
+		if(class_exists('\DNMVCS\SwooleSuperGlobal\SERVER' ,false)){
+			require_once(__DIR__.'/SwooleSuperGlobal.php');
+		}
+		
 		$this->options=array_merge(self::DEFAULT_OPTIONS,$options);
 		
 		$this->http_handler=$this->options['http_handler'];
