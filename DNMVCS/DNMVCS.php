@@ -931,10 +931,14 @@ trait DNMVCS_Glue
 	{
 		return self::G()->_DI($name);
 	}
-	public function _DI($name)
+	protected $container;
+	public function _DI($name,$object=null)
 	{
-		//DN::ThrowOn(true,"Implement Me TODO Anything You Like");
-		return null;
+		if(null===$object){
+			return $this->container[$name];
+		}
+		$this->container[$name]=$object;
+		return $object;
 	}
 	public function addAppHook($callback)
 	{

@@ -44,7 +44,7 @@ trait DNStaticCall
 		return ([$class, $method])(...$params);
     }
 }
-trait DNAnotherSingleton
+trait DNSimpleSingleton
 {
 	protected static $_instances=[];
 	public static function G($object=null)
