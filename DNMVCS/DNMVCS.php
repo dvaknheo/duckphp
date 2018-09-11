@@ -435,7 +435,11 @@ class DNView
 	public $error_reporting_old;
 	public function _ExitJson($ret)
 	{
-		header('content-type:text/json');
+		if(true){
+			header('content-type:text/json');
+		}else{
+			//
+		}
 		echo json_encode($ret,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
 		exit;
 	}
@@ -444,7 +448,11 @@ class DNView
 		if($only_in_site && parse_url($url,PHP_URL_HOST)){
 			exit;
 		}
-		header('location: '.$url);
+		if(true){
+			header('location: '.$url);
+		}else{
+			//
+		}
 		exit;
 	}	
 	public function _Show($data=[],$view)
@@ -460,6 +468,7 @@ class DNView
 		$this->error_reporting_old=error_reporting();
 		error_reporting(error_reporting() & ~E_NOTICE);
 		$this->includeShowFiles();
+		error_reporting($this->error_reporting_old);
 		ob_end_flush();
 	}
 	
@@ -571,7 +580,6 @@ class DNDB
 	
 	public function init($config)
 	{
-
 		$this->config=$config;
 	}
 	public static function CreateDBInstance($db_config)
@@ -719,6 +727,7 @@ class DNExceptionManager
 	}
 	public static function onErrorHandlerr($errno, $errstr, $errfile, $errline)
 	{
+	//TODO ,for php7
 		if (!(error_reporting() & $errno)) {
 			return false;
 		}
@@ -747,17 +756,10 @@ class DNExceptionManager
 		return true;
 	}
 }
-interface IDNDBInstaller
-{
-	public function CreateDBInstance():object;
-	public function CloseDBInstance();
-}
 class DNDBManager
 {
 	use DNSingleton;
 	
-	public $onDBCreate=null;
-	public $onDBClose=null;	
 	public $db=null;
 	public $db_r=null;
 	public $db_config=[];
