@@ -98,10 +98,17 @@ function _HTTP_REQUEST($k)
 	}
 	return $_REQUEST[$k]??null;
 }
+
 function _url_by_key($url,$key_for_simple_route)
 {
-	$path=parse_url(DNRoute::G()->_SERVER('REQUEST_URI'),PHP_URL_PATH);
-	$path_info=DNRoute::G()->_SERVER('PATH_INFO');
+	$path='';
+	if(class_exists('\DNMVCS\SuperGlobal\SERVER' ,false)){
+		$path=SuperGlobal\_SERVER::Get('REQUEST_URI');
+	}else{
+		$path=$_SERVER['REQUEST_URI'];
+	}
+	$path=parse_url($path,PHP_URL_PATH);
+	$path_info=DNRoute::G()->path_info;
 	if(strlen($path_info)){
 		$path=substr($path,0,0-strlen($path_info));
 	}
@@ -468,7 +475,7 @@ class FunctionDispatcher
 	public function runRoute()
 	{
 		//TODO 和
-		$post=(DNRoute::G()->_SERVER('REQUEST_METHOD')==='POST')?$this->post_prefix:'';
+		$post=(DNRoute::G()->request_method==='POST')?$this->post_prefix:'';
 		$callback=$this->prefix.$post.$this->path_info;
 		if(is_callable($callback)){
 			($callback)();
@@ -476,7 +483,7 @@ class FunctionDispatcher
 			if(is_callable($this->default_callback)){
 				($this->default_callback)();
 			}else{
-				(DNRoute::G()->on404Handler)();
+				(DNRoute::G()->the404Handler)();
 				return false;
 			}
 		}
@@ -532,33 +539,6 @@ class FunctionView extends DNView
 				include($this->path.$this->foot_file);
 			}
 		}
-	}
-}
-class RouteWithSuperGlobal extends DNRoute
-{
-	public function init($options)
-	{
-		parent::init($options);
-		$this->path_info=$this->_SERVER('PATH_INFO')??'';
-		$this->request_method=$this->_SERVER('REQUEST_METHOD')??'';
-		$this->path_info=ltrim($this->path_info,'/');
-		return $this;
-	}
-	public function _SERVER($key)
-	{
-		return  SuperGlobal\SERVER::Get($key);
-	}
-	public function _GET($key)
-	{
-		return  SuperGlobal\GET::Get($key);
-	}
-	public function _POST($key)
-	{
-		return  SuperGlobal\POST::Get($key);
-	}
-	public function _REQUEST($key)
-	{
-		return  SuperGlobal\REQUEST::Get($key);
 	}
 }
 class AppExt

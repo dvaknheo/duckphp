@@ -337,13 +337,14 @@ class DNSwooleHttpServer
 		if(class_exists('\DNMVCS\SwooleSuperGlobal\SERVER' ,false)){
 			require_once(__DIR__.'/SwooleSuperGlobal.php');
 		}
+		require_once(__DIR__.'/SwooleSuperGlobal.php');
 		
 		$this->options=array_merge(self::DEFAULT_OPTIONS,$options);
 		
 		$this->http_handler=$this->options['http_handler'];
 		$this->http_exception_handler=$this->options['http_exception_handler'];
 		
-		$this->server=$this->options[''];
+		$this->server=$this->options['server'];
 	
 		if(!$this->server){
 			$this->server=new \swoole_http_server($this->options['host'], $options['port']);
@@ -416,8 +417,13 @@ class SwooleMainAppHook
 		CoroutineSingleton::CloneInstance(DNView::class);
 		CoroutineSingleton::CloneInstance(DNRoute::class);
 		$route=DNRoute::G();
-		$route->path_info=$route->_SERVER('PATH_INFO')??'';
-		$route->request_method=$route->_SERVER('REQUEST_METHOD')??'';
+		
+		
+		$route->script_filename=SuperGlobal\SERVER::Get('SCRIPT_FILENAME')??'';
+		$route->document_root=SuperGlobal\SERVER::Get('DOCUMENT_ROOT')??'';
+		
+		$route->path_info=SuperGlobal\SERVER::Get('PATH_INFO')??'';
+		$route->request_method=SuperGlobal\SERVER::Get('REQUEST_METHOD')??'';
 		$route->path_info=ltrim($route->path_info,'/');
 	}
 }

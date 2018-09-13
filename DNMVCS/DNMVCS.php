@@ -152,7 +152,7 @@ class DNRoute
 			'disable_default_class_outside'=>false,
 		];
 	
-	public $on404Handler=null;
+	public $the404Handler=null;
 	public $parameters=[];
 	public $options;
 	
@@ -172,7 +172,9 @@ class DNRoute
 	
 	public $path_info='';
 	public $request_method='';
-	
+	public $script_filename='';
+	public $doucment_root='';
+
 	protected $enable_post_prefix=true;
 	protected $disable_default_class_outside=false;
 	
@@ -180,7 +182,6 @@ class DNRoute
 	public $callback=null;
 	
 	public $urlHandler=null;
-	public $serverArrayHandler=null;
 	public function _URL($url=null)
 	{
 		if($this->urlHandler){return ($this->urlHandler)($url,true);}
@@ -188,7 +189,8 @@ class DNRoute
 	}
 	public function defaultURLHandler($url=null)
 	{
-		$basepath=substr(rtrim(str_replace('\\','/',$this->_SERVER('SCRIPT_FILENAME')),'/').'/',strlen($this->_SERVER('DOCUMENT_ROOT')));
+		$basepath=substr(rtrim(str_replace('\\','/',$this->script_filename),'/').'/',strlen($this->document_root));
+
 		if($basepath=='/index.php'){$basepath='/';}
 		if($basepath=='/index.php/'){$basepath='/';}
 		
@@ -221,8 +223,11 @@ class DNRoute
 		$this->enable_post_prefix=$options['enable_post_prefix'];
 		$this->disable_default_class_outside=$options['disable_default_class_outside'];
 
-		$argv=$this->_SERVER('argv');
-		if(isset($argv)){
+		$this->script_filename=$_SERVER['SCRIPT_FILENAME']??'';
+		$this->document_root=$_SERVER['DOCUMENT_ROOT']??'';
+		
+		if(PHP_SAPI==='cli'){
+			$argv=$_SERVER['argv'];
 			if(count($argv)>=2){
 				$this->path_info=$argv[1];
 				array_shift($argv);
@@ -230,15 +235,14 @@ class DNRoute
 				$this->parameters=$argv;
 			}
 		}else{
-			$this->path_info=$this->_SERVER('PATH_INFO')??'';
-			$this->request_method=$this->_SERVER('REQUEST_METHOD')??'';
+			$this->path_info=$_SERVER['PATH_INFO']??'';
+			$this->request_method=$_SERVER['REQUEST_METHOD']??'GET';
 		}
 		$this->path_info=ltrim($this->path_info,'/');
-
 	}
 	public function set404($callback)
 	{
-		$this->on404Handler=$callback;
+		$this->the404Handler=$callback;
 	}
 	public function setURLHandler($callback)
 	{
@@ -268,12 +272,12 @@ class DNRoute
 			($this->callback)(...$this->parameters);
 			return true;
 		}
-		if(!$this->on404Handler){
+		if(!$this->the404Handler){
 			echo "404 File Not Found.\n";
 			echo "DNRoute Notice: 404  You need set 404 Handler";
 			exit;
 		}
-		($this->on404Handler)();
+		($this->the404Handler)();
 		return false;
 	}
 	
@@ -392,18 +396,6 @@ class DNRoute
 		}
 		return array($obj,$method);
 	}
-	
-	public function _SERVER($key)
-	{
-		if($this->serverArrayHandler){
-			return ($this->serverArrayHandler)($key);
-		}
-		if(class_exists('\DNMVCS\SuperGlobal\SERVER' ,false)){
-			return SuperGlobal\SERVER::Get($key);
-		}
-		return  isset($_SERVER[$key])?$_SERVER[$key]:null;
-	
-	}
 	public function getRouteCallingPath()
 	{
 		return $this->calling_path;
@@ -425,9 +417,11 @@ class DNView
 	protected $head_file;
 	protected $foot_file;
 	protected $view_file;
-	public $data=[];
-	public $onBeforeShow=null;
+	
 	public $path;
+	
+	public $data=[];
+	public $beforeShowHandler=null;
 
 	public $view=null;
 	
@@ -458,8 +452,8 @@ class DNView
 	public function _Show($data=[],$view)
 	{
 		$this->view=$view;
-		if(isset($this->onBeforeShow)){
-			($this->onBeforeShow)($data,$this->view);
+		if(isset($this->beforeShowHandler)){
+			($this->beforeShowHandler)($data,$this->view);
 		}
 		$this->data=array_merge($this->data,$data);
 		$this->view_file=$this->path.rtrim($this->view,'.php').'.php';
@@ -492,7 +486,7 @@ class DNView
 	}
 	public function setBeforeShow($callback)
 	{
-		$this->onBeforeShow=$callback;
+		$this->beforeShowHandler=$callback;
 	}
 	public function setViewWrapper($head_file,$foot_file)
 	{
