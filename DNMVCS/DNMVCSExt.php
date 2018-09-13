@@ -108,11 +108,12 @@ function _url_by_key($url,$key_for_simple_route)
 		$path=$_SERVER['REQUEST_URI'];
 	}
 	$path=parse_url($path,PHP_URL_PATH);
-	$path_info=DNRoute::G()->path_info;
+	
+	$path_info=$_SERVER['PATH_INFO']??''; //不能用 DNRoute->path_info;
 	if(strlen($path_info)){
 		$path=substr($path,0,0-strlen($path_info));
 	}
-	if($url===null || $url==='' || $url==='/'){return $path;}
+	if($url===null || $url===''){return $path;}
 	$c=parse_url($url,PHP_URL_PATH);
 	$q=parse_url($url,PHP_URL_QUERY);
 	
