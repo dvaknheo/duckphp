@@ -89,6 +89,9 @@ class SwooleContext
 	use DNSingleton;
 	public $request=null;
 	public $response=null;
+	public $fd=-1;
+	public $frame=null;
+	
 	public static function Request()
 	{
 		return self::G()->request;
@@ -111,10 +114,32 @@ class SwooleContext
 		$this->request=$request;
 		$this->response=$response;
 	}
+	public function onWebSocketOpen($request)
+	{
+		$this->request=$request;
+		// echo "server: handshake success with fd{$request->fd}\n";
+
+		$this->fd=$request->fd;
+	}
+	public function onWebSocketMessage($frame)
+	{
+		$this->frame=$frame;
+	}
 	public function _CleanUp()
 	{
 		$this->request=null;
 		$this->response=null;
+		$thid->fd=-1;
+		$this->frame=null;
+	}
+}
+class DNSwooleException extends \Exception
+{
+	public static function ThrowOn($flag,$message,$code=0)
+	{
+		if(!$flag){return;}
+		$class=get_called_class();
+		throw new $class($message,$code);
 	}
 }
 class DNSwooleHttpServer
@@ -196,7 +221,6 @@ class DNSwooleHttpServer
 		CoroutineSingleton::CloneInstance(SuperGlobal\REQUEST::class);
 		CoroutineSingleton::CloneInstance(SuperGlobal\COOKIE::class);
 		
-		//SuperGlobal\SERVER::G();
 		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G())->init($request);
 		
 		SuperGlobal\GET::G(SwooleSuperGlobalGet::G())->init($request);
@@ -229,11 +253,11 @@ class DNSwooleHttpServer
 				$path_info=substr($request_uri,$pos+strlen('.php'));
 				$file=$php_root.$script_name;
 				if(strpos($file,'/../')!==false || strpos($file,'/./')!==false){
-					echo "bad file";
+					throw new DNSwooleException("404 Not Found",404);
 					return;
 				}
 				if(!is_file($file)){
-					echo "404";
+					throw new DNSwooleException("404 Not Found!",404);
 					return;
 				}
 				SuperGlobal\SERVER::Set("SCRIPT_NAME",$SCRIPT_NAME);
@@ -268,7 +292,7 @@ class DNSwooleHttpServer
 			if($this->http_exception_handler){
 				($this->http_exception_handler)($ex);
 			}else{
-				echo "DNSwooleServer Error ";
+				echo "DNSwooleHttp Server Error: \n";
 				echo $ex;
 			}
 		}else{
@@ -287,7 +311,7 @@ class DNSwooleHttpServer
 	{
 		$InitObLevel=ob_get_level();
 		ob_start(function($str) use($response){
-			if(''===$str){return;} // 防止ongoing数据报 warnning;
+			if(''===$str){return;} // stop warnning;
 			$response->write($str);
 		});
 		try{
@@ -344,16 +368,20 @@ class DNSwooleHttpServer
 		$this->http_handler=$this->options['http_handler'];
 		$this->http_exception_handler=$this->options['http_exception_handler'];
 		
-		$this->server=$this->options['server'];
+		$this->server=$this->options['swoole_server'];
 	
 		if(!$this->server){
-			$this->server=new \swoole_http_server($this->options['host'], $options['port']);
+			if(!$this->options['websocket_handler']){
+				$this->server=new \swoole_http_server($this->options['host'], $options['port']);
+			}else{
+				$this->server=new \swoole_websocket_server($this->options['host'], $options['port']);
+			}
 		}
 		if($this->options['swoole_server_options']){
 			$this->server->set($this->options['swoole_server_options']);
 		}
 		
-		$this->options['server']=$this->server->setting;
+		$this->options['swoole_server']=$this->server->setting;
 		$this->server->on('request',[$this,'onRequest']);
 		if($this->server->setting['enable_static_handler']??false){
 			$this->static_root=$this->server->setting['document_root'];
@@ -361,17 +389,19 @@ class DNSwooleHttpServer
 			$this->static_root=$this->options['static_root'];
 		}
 		
+		$this->websocket_handler=$this->options['websocket_handler'];
+		$this->websocket_exception_handler=$this->options['websocket_exception_handler'];
+		
+		if($this->websocket_handler){
+			$this->server->on('mesage',[$this,'onMessage']);
+		}
+		
 		if(is_callable('\Swoole\Runtime::enableCoroutine')){
 			\Swoole\Runtime::enableCoroutine();
 		}
+		
 		CoroutineSingleton::ReplaceDefaultSingletonHandler();
 		
-		/*
-		$this->webSocketRunner=$this->options['websocket_runner'];
-		if($this->webSocketRunner){
-			$this->server->on('message',[$this,'onMessage']);
-		}
-		//*/
 		return $this;
 	}
 	public function run()

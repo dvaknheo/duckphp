@@ -235,16 +235,23 @@ class StrictModel
 	}
 }
 
-class StrictDBManager // extends DNDBManager 这里不需要了 需要多测试
+class StrictDBManager extends DNDBManager
 {
 	use DNWrapper;
-	// bug ? _get ,_set ?
-	public function __call($method,$args)
+	public function _DB()
 	{
-		if(in_array($method,['_DB','_DB_W','_DB_R'])){
-			$this->checkPermission();
-		}
-		return ($this->obj->$method)(...$args);
+		$this->checkPermission();
+		return parent::_DB();
+	}
+	public function _DB_W()
+	{
+		$this->checkPermission();
+		return parent::_DB_W();
+	}
+	public function _DB_R()
+	{
+		$this->checkPermission();
+		return parent::_DB_R();
 	}
 	protected function checkPermission()
 	{
@@ -558,7 +565,8 @@ class AppExt
 			'use_common_autoloader'=>false,
 				'fullpath_config_common'=>'',
 			'use_ext_db'=>false,
-			//TODO 'use_super_global'=>false,
+			'use_strict_db'=>false,
+			'use_super_global'=>false,
 		];
 	protected $is_installed=false;
 	public function installHook($dn)
@@ -587,10 +595,21 @@ class AppExt
 		if($options['use_function_view']){
 			$dn->initView(DNView::G(FunctionView::G()));
 		}
+		$ReInitDB=false;
+		if($options['use_strict_db']){
+			DNDBManager::G(StrictDBManager::G());
+			$ReInitDB=true;
+		}
+		
 		if($options['use_ext_db']){
-			$options['db_class'] =DBExt::class;
+			$options['db_create_handler'] =[DBExt::class,'CreateDBInstance'];
+			$options['db_close_handler'] =[DBExt::class,'CloseDBInstance'];
+			$ReInitDB=true;
+		}
+		if($ReInitDB=true){
 			$dn->initDBManager(DNDBManager::G());
 		}
+		
 		if($options['key_for_simple_route']){
 			SimpleRouteHook::G()->key_for_simple_route=$options['key_for_simple_route'];
 			DNRoute::G()->addRouteHook([SimpleRouteHook::G(),'hook']);
