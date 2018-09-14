@@ -606,7 +606,7 @@ class AppExt
 			$options['db_close_handler'] =[DBExt::class,'CloseDBInstance'];
 			$ReInitDB=true;
 		}
-		if($ReInitDB=true){
+		if($ReInitDB){
 			$dn->initDBManager(DNDBManager::G());
 		}
 		

@@ -429,23 +429,30 @@ class DNView
 	public $error_reporting_old;
 	public function _ExitJson($ret)
 	{
+		if(isset($this->beforeShowHandler)){
+			($this->beforeShowHandler)($data,$this->view);
+		}
 		if(true){
 			header('content-type:text/json');
 		}else{
-			//
+			//$this->header_handler('content-type:text/json');
 		}
 		echo json_encode($ret,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
 		exit;
 	}
 	public function _ExitRedirect($url,$only_in_site=true)
 	{
+		if(isset($this->beforeShowHandler)){
+			($this->beforeShowHandler)($data,$this->view);
+		}
+		
 		if($only_in_site && parse_url($url,PHP_URL_HOST)){
 			exit;
 		}
 		if(true){
 			header('location: '.$url);
 		}else{
-			//
+			//$this->header_handler('location: '.$url);
 		}
 		exit;
 	}	

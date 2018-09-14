@@ -153,8 +153,7 @@ class DNSwooleHttpServer
 			'host'=>'127.0.0.1',
 			'port'=>0,
 			
-			'static_root'=>null,
-			'php_root'=>null,
+			'http_handler_root'=>null,
 			'http_handler_file'=>null,
 			'http_handler'=>null,
 			'http_exception_handler'=>null,
@@ -173,7 +172,8 @@ class DNSwooleHttpServer
 	public $shutdown_function_array=[];
 	
 	protected $static_root=null;
-	protected $php_root=null;
+	
+	protected $http_handler_root=null;
 
 	public static function Server()
 	{
@@ -233,52 +233,42 @@ class DNSwooleHttpServer
 			return;
 		}
 		if($this->options['http_handler_file']){
-		
-			$http_handler_file=$this->options['http_handler_file'];
-			SuperGlobal\SERVER::Set("SCRIPT_FILENAME",$http_handler_file);
-			$request_uri=SuperGlobal\SERVER::Get("REQUEST_URI");
-			SuperGlobal\SERVER::Set("PATH_INFO",$request_uri);
-			SuperGlobal\SERVER::Set("DOCUMENT_ROOT",dirname($http_handler_file));
-			chdir(dirname($http_handler_file));
-			(function($file){include($file);})($http_handler_file);
-			return;
-		}
-		if($this->options['php_root']){
-			$php_root=$this->options['php_root'];
-			$php_root=rtrim($php_root,'/').'/';
-			$request_uri=SuperGlobal\SERVER::Get("REQUEST_URI");
-			$pos=strpos($request_uri,'.php');
-			if($pos!==false){
-				$script_name=substr($request_uri,0,$pos);
+			$path_info=SuperGlobal\SERVER::Get('REQUEST_URI');
+			$file=$this->options['http_handler_file'];
+			$document_root=dirname($file);
+		}else if($this->options['http_handler_root']){
+			//mime_content_type
+			$http_handler_root=$this->options['http_handler_root'];
+			$http_handler_root=rtrim($http_handler_root,'/').'/';
+			$document_root=$this->static_root?:rtrim($http_handler_root,'/');
+			
+			$request_uri=SuperGlobal\SERVER::Get('REQUEST_URI');
+			$path=parse_url($request_uri,PHP_URL_PATH);
+			$pos=strpos($path,'.php');
+			
+			// todo  mime_content_type
+			//xx.phpdfdf/
+			if($pos===false){
+				$path_info=$request_uri;
+				$file=$http_handler_root.'index.php';
+				$document_root=dirname($file);
+			}else{
 				$path_info=substr($request_uri,$pos+strlen('.php'));
-				$file=$php_root.$script_name;
+				$file=$http_handler_root.substr($request_uri,0,$pos);
+				
 				if(strpos($file,'/../')!==false || strpos($file,'/./')!==false){
 					throw new DNSwooleException("404 Not Found",404);
-					return;
 				}
 				if(!is_file($file)){
 					throw new DNSwooleException("404 Not Found!",404);
-					return;
 				}
-				SuperGlobal\SERVER::Set("SCRIPT_NAME",$SCRIPT_NAME);
-				SuperGlobal\SERVER::Set("PATH_INFO",$path_info);
-				SuperGlobal\SERVER::Set("SCRIPT_FILENAME",$file);
-				
-				$document_root=$this->static_root?:rtrim($php_root,'/');
-				SuperGlobal\SERVER::Set("DOCUMENT_ROOT",$document_root);
-				chdir(dirname($file));
-				(function($file){include($file);})($file);
-			}else{
-				SuperGlobal\SERVER::Set("SCRIPT_NAME",'/index.php');
-				SuperGlobal\SERVER::Set("PATH_INFO",$request_uri);
-				$file=$php_root.'index.php';
-				SuperGlobal\SERVER::Set("SCRIPT_FILENAME",$file);
-				$document_root=dirname($file);
-				SuperGlobal\SERVER::Set("DOCUMENT_ROOT",$document_root);
-				chdir(dirname($file));
-				(function($file){include($file);})($file);
 			}
 		}
+		SuperGlobal\SERVER::Set('PATH_INFO',$path_info);
+		SuperGlobal\SERVER::Set('DOCUMENT_ROOT',$document_root);
+		SuperGlobal\SERVER::Set('SCRIPT_FILENAME',$file);
+		chdir(dirname($file));
+		(function($file){include($file);})($file);
 	}
 	
 	protected function runHttpHandler()
@@ -364,33 +354,35 @@ class DNSwooleHttpServer
 		require_once(__DIR__.'/SwooleSuperGlobal.php');
 		
 		$this->options=array_merge(self::DEFAULT_OPTIONS,$options);
+		$options=$this->options;
 		
-		$this->http_handler=$this->options['http_handler'];
-		$this->http_exception_handler=$this->options['http_exception_handler'];
+		$this->http_handler=$options['http_handler'];
+		$this->http_exception_handler=$options['http_exception_handler'];
 		
-		$this->server=$this->options['swoole_server'];
+		$this->server=$options['swoole_server'];
 	
 		if(!$this->server){
-			if(!$this->options['websocket_handler']){
-				$this->server=new \swoole_http_server($this->options['host'], $options['port']);
+			if(!$options['port']){
+				throw new DNSwooleException("No Port ,set the port");
+			}
+			if(!$options['websocket_handler']){
+				$this->server=new \swoole_http_server($options['host'], $options['port']);
 			}else{
-				$this->server=new \swoole_websocket_server($this->options['host'], $options['port']);
+				$this->server=new \swoole_websocket_server($options['host'], $options['port']);
 			}
 		}
-		if($this->options['swoole_server_options']){
-			$this->server->set($this->options['swoole_server_options']);
+		if($options['swoole_server_options']){
+			$this->server->set($options['swoole_server_options']);
 		}
 		
 		$this->options['swoole_server']=$this->server->setting;
 		$this->server->on('request',[$this,'onRequest']);
 		if($this->server->setting['enable_static_handler']??false){
 			$this->static_root=$this->server->setting['document_root'];
-		}else{
-			$this->static_root=$this->options['static_root'];
 		}
 		
-		$this->websocket_handler=$this->options['websocket_handler'];
-		$this->websocket_exception_handler=$this->options['websocket_exception_handler'];
+		$this->websocket_handler=$options['websocket_handler'];
+		$this->websocket_exception_handler=$options['websocket_exception_handler'];
 		
 		if($this->websocket_handler){
 			$this->server->on('mesage',[$this,'onMessage']);
@@ -448,12 +440,11 @@ class SwooleMainAppHook
 		CoroutineSingleton::CloneInstance(DNRoute::class);
 		$route=DNRoute::G();
 		
-		
 		$route->script_filename=SuperGlobal\SERVER::Get('SCRIPT_FILENAME')??'';
 		$route->document_root=SuperGlobal\SERVER::Get('DOCUMENT_ROOT')??'';
-		
 		$route->path_info=SuperGlobal\SERVER::Get('PATH_INFO')??'';
 		$route->request_method=SuperGlobal\SERVER::Get('REQUEST_METHOD')??'';
+		
 		$route->path_info=ltrim($route->path_info,'/');
 	}
 }
