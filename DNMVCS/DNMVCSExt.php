@@ -565,8 +565,8 @@ class AppExt
 			'use_common_autoloader'=>false,
 				'fullpath_config_common'=>'',
 			'use_ext_db'=>false,
-			'use_strict_db'=>false,
-			'use_super_global'=>false,
+			'use_strict_db_manager'=>false,
+			//'use_super_global'=>false,
 		];
 	protected $is_installed=false;
 	public function installHook($dn)
@@ -596,7 +596,7 @@ class AppExt
 			$dn->initView(DNView::G(FunctionView::G()));
 		}
 		$ReInitDB=false;
-		if($options['use_strict_db']){
+		if($options['use_strict_db_manager']){
 			DNDBManager::G(StrictDBManager::G());
 			$ReInitDB=true;
 		}

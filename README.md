@@ -395,7 +395,7 @@ static RunWithoutPathInfo()
 这些方法因为太常用，所以静态化了。
 包括 视图view,路由，数据库，配置 ，
 
-Show($data=array(),$view=null)
+Show($data=[]],$view=null)
 
     显示视图 
     视图的文件在 ::view 目录底下.
@@ -415,7 +415,7 @@ DB_R()
 
     读取用的数据库
     实质调用 DBManager::G()->_DB_R();
-URL($url=null)
+URL($url)
 
     获得调整路由后的url地址 
     当你重写 DNRoute 类后，你可能需要重写这个方法来展示
@@ -612,13 +612,13 @@ DNMVCS 主类，单向调用这几个组件，各组件是独立的。
     DNConfiger
     DNRoute  -> RouteHook::hook();
     DNView
-    DNDBManager -> DNDB::CreateDBInstence()
+    DNDBManager -> DNDB::CreateDBInstence(),DNDB::CloseDBInstence()
     DNExceptionManager
 
-各类接口可参加 DNInterface.php，没去加载，因为只有参考意义，没实际意义。
-各类之间是独立的。
 DNMVCS 主类里一些函数，是调用其他类的实现。基本都可以用 G 方法替换
+
 DNMVCS 的各子类都是独立的。现实中应该不会拿出来单用吧
+
 DNDBManger 调用 DNDB 类，用于管理数据库
 
 ## trait DNSingleton | 子类化和 G 方法
@@ -703,7 +703,7 @@ final class DNSingletonStaticClass
 
 DNSwooleApp 用到了这个，使得在协程的里的和协程外的单例不是同一个。
 
-DWAnotherSinglton AppExt 里实现了这个， 最简化的实现。
+DNSimpleSinglton DNAppExt.php 里实现了这个， 最简化的实现。
 
 ## DNException 异常类 | trait DNThrowQuickly
 使用 trait DNThrowQuickly
@@ -723,10 +723,11 @@ if($flag){throw new MyException($message,$code);}
 这应该会被扩展,加上权限判断等设置
 路由类是很强大扩展性很强的类。
 
-	_URL($url=null,$innerCall=false)
+	_URL($url=null)
 	_Parameters()
     run()
  	set404($callback)
+    defaultURLHandler()
 set404 设置404 回调
 
     protected getRouteHandelByFile
@@ -764,7 +765,7 @@ set404 设置404 回调
 
     $this->isDev 来自DMMVCS 主类。判断是否在测试环境
 ## DNConfiger 配置类
-	public function init($path,$path_common=null)
+	public function init($path)
 	protected function include_file($file)
 	public function _Setting($key)
 	public function _Config($key,$file_basename='config')
@@ -778,12 +779,13 @@ set404 设置404 回调
 这里主要是数据库的扩展
 这个也许会经常改动。比如用自己公司的 DB 类，要在这里做一个封装。
 
-installDBClass($callback)
+installDBClass($db_create_handler,$db_close_handler)
 
-    $callback($config) 返回 DB 实例。方便扩展
+    安装DB类
+    $db_create_handler($config) 返回 DB 实例。方便扩展
     setting 里的 db, db_r 会传到这里。
-
-    $callback 也可以是类，带上静态方法为 CreateDBInstance。
+    
+    $db_close_handler($db) 关闭数据库
 
 closeAllDB()
 
@@ -838,7 +840,10 @@ DNMedoo 类的除了默认的 Medoo 方法，还扩展了 DNDB 类同名方法�
 ```php
 self::Import('Medoo');  //请选择正确的 Medoo 载入方式
 self::ImportSys('DNMedoo'); //DNMedoo 依赖 Medoo，所以需要手动加载
-\DNMVCS\DNMVCS::G()->installDBClass(\DNMVCS\DNMedoo::class);
+\DNMVCS\DNMVCS::G()->installDBClass(
+    [\DNMVCS\DNMedoo::class,'CreateDBInstance']
+    [\DNMVCS\DNMedoo::class,'CloseDBInstance']
+);
 ```
 其中 DNMedoo extends Medoo implement IDNDB.
 
@@ -846,7 +851,7 @@ self::ImportSys('DNMedoo'); //DNMedoo 依赖 Medoo，所以需要手动加载
 ## DNMVCSExt.php  | 额外类应用和说明
     选项 $options['ext'] 不为空数组就 引入
 ### 额外模式
-```
+```php
 const DEFAULT_OPTIONS_EX=[
     'key_for_simple_route'=>'_r',
     
@@ -859,6 +864,8 @@ const DEFAULT_OPTIONS_EX=[
     'use_common_autoloader'=>false,
         'fullpath_config_common'=>'',
     'use_ext_db'=>false,
+    'use_strict_db_manager'=>false,
+    //todo use_superglobal=>false,
 ];
 ```
     配置字段 ext 数组有数据的时候，会进入高级模式。自动使用扩展文件
@@ -889,10 +896,8 @@ const DEFAULT_OPTIONS_EX=[
 ### 严格模式
 我想让 DB 只能被 Model , ExModel 调用。Model 只能被 ExModel,Service 调用 。 LibService 只能被Service 调用  Service只能被 Controller 调用
 
-可以,你的 Service  继承 StrictService. Model 继承 StrictModel  初始化里 加这一句
-```php
-\DNMVCS\DNDBManger::G(\DNMVCS\StrictDBManager::W(\DNMVCS\DNDBManger::G()));
-```
+可以,你的 Service  继承 StrictService. Model 继承 StrictModel  初始化里开启
+$options['ext']['use_strict_db_manager']=true;
 严格模式下那些 **新手** 就不能乱来了。
 
 
@@ -909,10 +914,6 @@ W($object);
 ### SimpleRouteHook
     SimpleRoute 用于指定 _GET 里某个 key 作为 控制器分配.
     使用 $options['key_for_simple_route'] 来打开他。
-### RouteRewriteHook （已经迁移到其他文件）
-    实现 assignRewrite
-### RouteMapHook （已经迁移到其他文件）
-    实现 assignRoute 功能
 ### StrictService
     你的 Service 继承这个类
 	调试状态下，允许 service 调用 libservice 不允许 service 调用 service ,不允许 model 调用 service
@@ -932,18 +933,18 @@ W($object);
     \DNMVCS\DNMVCS::G()->installDBClass(\DNMVCS\DBExt::class);
 ### MedooSimpleIntaller
     CreateDBInstance
-    \DNMVCS\DNMVCS::G()->installDBClass(MedooSimpleIntaller::class)
+    TODO \DNMVCS\DNMVCS::G()->installDBClass([MedooSimpleIntaller::class,CreateDBInstance])
     用于加载 medoo 类代替默认的 db 类，注意 medoo 类 不兼容默认 db 类
     CloseDBInstance
     关闭数据库
 
 ### API
-	用于 api 服务快速调用
+	用于 api 服务快速调用 无引用
 	public static function Call($class,$method,$input)  input 是关联数组
 	protected static function GetTypeFilter() 重写这个方法限定你的类型
     在项目里未使用
 ### MyArgsAssoc
-- GetMyArgsAssoc 获得当前函数的命名参数数组
+- GetMyArgsAssoc 获得当前函数的命名参数数组 无引用
 - CallWithMyArgsAssoc($callback)  获得当前函数的命名参数数组并回调
     在项目里未使用
 
@@ -962,28 +963,13 @@ W($object);
 
 ## DNRouteAdvance.php
     这个文件是用于自定义 route 和 rewrite 的
+// 
 ## SuperGlobal.php
     对超全局数组的封装
 ## SwooleSuperGlobal
     超全局数组的 swoole 替换层
 ## DNSwooleHttpServer
-    Swoole 的 Http 服务器。
-```
-const DEFAULT_OPTIONS=[
-			'server'=>null,
-			//'host'=>null,
-			//'port'=>null,
-			
-			'static_root'=>null,
-			'php_root'=>null,
-			'http_handler_file'=>null,
-			
-			'http_handler'=>null,
-			'exception_handler'=>null,
-			
-			'websocket_runner'=>null,
-		];
-```
+    Swoole 的 Http 服务器,单独章节介绍
 # DNMVCS 的代码流程讲解
 
 大致用图表现如下
@@ -994,10 +980,13 @@ DN::init
     initExceptionManager 初始化异常。
     initConfiger,initView,initRoute,initDBManager
 
-DN::run(DNRoute::run)
+DN::run
+    $AppHook();
+        RouteRewriteHook->hook
+		RouteMapHook->hook
+    (DNRoute::run)
 	(RouteHook)($this);
-		RouteRewriteHook->hook
-		RouteMapHook->hook 
+		 
     getRouteHandelByFile
     (DNRoute->callback)()
 
@@ -1029,7 +1018,7 @@ DN::DB
 
 ## 和其他框架的整合
 
-修改 override DNMVCS::onShow404 => function(){} 。 
+override DNMVCS::onShow404 => function(){} 。 
 
 run() 方法 得到 false 表示 404 了，后续就是其他框架的事情了
 
@@ -1041,7 +1030,7 @@ require_once($path.'DNMVCS/DNMVCS.php');
 \DNMVCS\DNMVCS::RunAsServer($server_options,$dn_options);
 ```
 $server_options 的选项
-```
+```php
 	const DEFAULT_OPTIONS=[
 			'swoole_server'=>null, // swoole_http_server 对象，留空，则用 host,port 创建
 			'swoole_options'=>[],   //swoole_http_server 的配置，合并如 server
@@ -1049,8 +1038,7 @@ $server_options 的选项
 			'host'=>'0.0.0.0',  // IP
 			'port'=>0,          //端口
 			
-			'static_root'=>null,            //静态目录，默认是从 swoole_http_server  里读取
-			'php_root'=>null,               // php 的目录和静态目录的不相同，留空
+			'http_handler_root'=>null,               // php 的目录和静态目录的不相同，留空
 			'http_handler_file'=>null,      // 启动文件 留空将会使用 http_handler
 			'http_handler'=>null,           // 启动方法， DNMVCS 已经占用
 			'http_exception_handler'=>null, // 异常处理方法,DNMVCS 已经占用
@@ -1059,7 +1047,7 @@ $server_options 的选项
 			'websocket_exception_handler'=>null, // 	websocket 异常处理方法 ，尚未启用 
     ];
 ```
-RunAsServer 实际等同于 DNSwooleHttpServer :: RunWithServer()
+DNMVCS::RunAsServer 实际等同于 DNSwooleHttpServer :: RunWithServer()
 
 DNSwooleHttpServer::()->init($server_options);
 启用 SuperGlobal 
@@ -1068,7 +1056,7 @@ DNSwooleHttpServer::()->init($server_options);
 扩展理解: 
 如果 http_handler 为空，有 http_handler_file 则直接 include  http_handler_file 运行，和 DNMVCS 系统无关
 可以设置成 http_handler_file 从 DNMVCS  web  路径里开始哦。这样 DNMVCS 就全运行在线程态
-如果 http_handler_file 也为空，那从 php_root 里读取路径文件 也和 DNMVCS 系统无关
+如果 http_handler_file 也为空，那从 http_handler_root 里读取路径文件 也和 DNMVCS 系统无关
 
 DNSwooleHttpServer 和 DNMVCS 主类主要关系是在 G 函数 的实现，如果没这个 G 函数，两者是完全独立的。
 DNMVCS 在 swoole 下运行的时候，加了 SwooleMainAppHook
@@ -1079,4 +1067,4 @@ DNMVCS 在 swoole 下运行的时候，加了 SwooleMainAppHook
 
 想要获得当前 的 request ,response 用 DNSwooleHttpServer::Request() ,Response
 
-exit 函数可以 用 header 函数不能用了，你得用 DNSwooleHttpServer::G()->header .还有 setcookie ,set_exception_handler 类似。
+exit 函数可以用。但 header 函数不能用了，你得用 DNSwooleHttpServer::G()->header .还有 setcookie ,set_exception_handler 类似。
