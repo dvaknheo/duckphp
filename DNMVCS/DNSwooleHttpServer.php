@@ -345,12 +345,7 @@ class DNSwooleHttpServer
 	/////////////////////////
 	public function init($options=[])
 	{
-		if(class_exists('\DNMVCS\SuperGlobal\SERVER' ,false)){
-			require_once(__DIR__.'/SuperGlobal.php');
-		}
-		if(class_exists('\DNMVCS\SwooleSuperGlobal\SERVER' ,false)){
-			require_once(__DIR__.'/SwooleSuperGlobal.php');
-		}
+		require_once(__DIR__.'/SuperGlobal.php');
 		require_once(__DIR__.'/SwooleSuperGlobal.php');
 		
 		$this->options=array_merge(self::DEFAULT_OPTIONS,$options);
@@ -423,7 +418,6 @@ class SwooleMainAppHook
 	
 	public function installHook($dn)
 	{
-		
 		if($dn->options['rewrite_list']|| $dn->options['route_list']){
 			$dn->useRouteAdvance();
 		}
@@ -442,12 +436,9 @@ class SwooleMainAppHook
 		
 		$route->script_filename=SuperGlobal\SERVER::Get('SCRIPT_FILENAME')??'';
 		$route->document_root=SuperGlobal\SERVER::Get('DOCUMENT_ROOT')??'';
-		$route->path_info=SuperGlobal\SERVER::Get('PATH_INFO')??'';
 		$route->request_method=SuperGlobal\SERVER::Get('REQUEST_METHOD')??'';
+		$route->path_info=SuperGlobal\SERVER::Get('PATH_INFO')??'';
 		
 		$route->path_info=ltrim($route->path_info,'/');
 	}
 }
-/*
-SwooleServer::G()->init($server,$http_options)->bindApp($option)->run();
-//*/

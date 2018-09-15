@@ -206,7 +206,6 @@ const DNMVCS::DEFAULT_OPTIONS=[
     'ext'=>[],                          //默认不使用扩展
     'rewrite_list'=>[],
     'route_list'=>[],
-			'use_super_global'=>false, // 高级，和 superGlobal 整合
 ];
 ```
     关于 base_class 选项。
@@ -703,7 +702,7 @@ final class DNSingletonStaticClass
 
 DNSwooleApp 用到了这个，使得在协程的里的和协程外的单例不是同一个。
 
-DNSimpleSinglton DNAppExt.php 里实现了这个， 最简化的实现。
+DNSimpleSinglton DNMVCSExt.php 里实现了这个， 最简化的实现。
 
 ## DNException 异常类 | trait DNThrowQuickly
 使用 trait DNThrowQuickly
@@ -865,7 +864,7 @@ const DEFAULT_OPTIONS_EX=[
         'fullpath_config_common'=>'',
     'use_ext_db'=>false,
     'use_strict_db_manager'=>false,
-    //todo use_superglobal=>false,
+	'use_super_global'=>false, // 高级，和 superGlobal 整合
 ];
 ```
     配置字段 ext 数组有数据的时候，会进入高级模式。自动使用扩展文件

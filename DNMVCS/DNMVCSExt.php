@@ -566,7 +566,7 @@ class AppExt
 				'fullpath_config_common'=>'',
 			'use_ext_db'=>false,
 			'use_strict_db_manager'=>false,
-			//'use_super_global'=>false,
+			'use_super_global'=>false,
 		];
 	protected $is_installed=false;
 	public function installHook($dn)
@@ -609,6 +609,9 @@ class AppExt
 		if($ReInitDB){
 			$dn->initDBManager(DNDBManager::G());
 		}
+		if($options['use_super_global']){
+			self::ImportSys('SuperGlobal');
+		}
 		
 		if($options['key_for_simple_route']){
 			SimpleRouteHook::G()->key_for_simple_route=$options['key_for_simple_route'];
@@ -644,7 +647,7 @@ class AppExt
 		$view->head_file=null;
 		$view->foot_file=null;
 		$view->view=null;
-		error_reporting($this->error_reporting_old);
+		//error_reporting($view->error_reporting_old);
 		//TODO ob_cleanUp();
 	}
 }

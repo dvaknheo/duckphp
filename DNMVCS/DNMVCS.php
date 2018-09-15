@@ -1264,8 +1264,8 @@ class DNMVCS
 		$this->initView(DNView::G());
 		$this->initRoute(DNRoute::G());
 		$this->initDBManager(DNDBManager::G());
-		
 		$this->initMisc();
+		
 		return $this;
 	}
 	public function initConfiger($configer)
@@ -1295,9 +1295,6 @@ class DNMVCS
 	}
 	protected function initMisc()
 	{
-		if($this->options['use_super_global']){
-			self::ImportSys('SuperGlobal');
-		}
 		if(!empty($this->options['ext'])){
 			self::ImportSys();
 			AppExt::G()->installHook($this);
