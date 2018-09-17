@@ -159,6 +159,24 @@ class SimpleRouteHook
 		$route->calling_path=$path_info;
 	}
 }
+class SuperGlobalRouteHook
+{
+	use DNSingleton;
+	protected $installed=false;
+	public function hook($route)
+	{
+		if($this->installed){return;}
+		$this->installed=true;
+		//$route=DNRoute::G();
+		$route->script_filename=SuperGlobal\SERVER::Get('SCRIPT_FILENAME')??'';
+		$route->document_root=SuperGlobal\SERVER::Get('DOCUMENT_ROOT')??'';
+		$route->request_method=SuperGlobal\SERVER::Get('REQUEST_METHOD')??'';
+		$route->path_info=SuperGlobal\SERVER::Get('PATH_INFO')??'';
+		
+		$route->path_info=ltrim($route->path_info,'/');
+		
+	}
+}
 class StrictService
 {
 	use DNSingleton;
@@ -610,7 +628,9 @@ class AppExt
 			$dn->initDBManager(DNDBManager::G());
 		}
 		if($options['use_super_global']){
-			self::ImportSys('SuperGlobal');
+			DNMVCS::ImportSys('SuperGlobal');
+			//TODO 顺序问题
+			//DNRoute::G()->addRouteHook([SuperGlobalRouteHook::G(),'hook'],true);
 		}
 		
 		if($options['key_for_simple_route']){

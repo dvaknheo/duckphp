@@ -129,7 +129,7 @@ class SwooleContext
 	{
 		$this->request=null;
 		$this->response=null;
-		$thid->fd=-1;
+		$this->fd=-1;
 		$this->frame=null;
 	}
 }
@@ -158,6 +158,7 @@ class DNSwooleHttpServer
 			'http_handler'=>null,
 			'http_exception_handler'=>null,
 			
+			'websocket_open_handler'=>null,
 			'websocket_handler'=>null,
 			'websocket_exception_handler'=>null,
 		];
@@ -236,34 +237,64 @@ class DNSwooleHttpServer
 			$path_info=SuperGlobal\SERVER::Get('REQUEST_URI');
 			$file=$this->options['http_handler_file'];
 			$document_root=dirname($file);
-		}else if($this->options['http_handler_root']){
+			$this->includeHttpFile($file,$document_root,$path_info);
+			return;
+		}
+		if($this->options['http_handler_root']){
 			//mime_content_type
 			$http_handler_root=$this->options['http_handler_root'];
 			$http_handler_root=rtrim($http_handler_root,'/').'/';
+			
 			$document_root=$this->static_root?:rtrim($http_handler_root,'/');
 			
 			$request_uri=SuperGlobal\SERVER::Get('REQUEST_URI');
-			$path=parse_url($request_uri,PHP_URL_PATH);
-			$pos=strpos($path,'.php');
 			
-			// todo  mime_content_type
-			//xx.phpdfdf/
-			if($pos===false){
-				$path_info=$request_uri;
-				$file=$http_handler_root.'index.php';
-				$document_root=dirname($file);
-			}else{
-				$path_info=substr($request_uri,$pos+strlen('.php'));
-				$file=$http_handler_root.substr($request_uri,0,$pos);
-				
-				if(strpos($file,'/../')!==false || strpos($file,'/./')!==false){
-					throw new DNSwooleException("404 Not Found",404);
+			$path=parse_url($request_uri,PHP_URL_PATH);
+			if(strpos($path,'/../')!==false || strpos($path,'/./')!==false){
+				throw new DNSwooleException("404 Not Found",404);
+			}
+			
+			$full_file=$document_root.$path;
+			if($path==='/'){
+				$this->includeHttpFile($document_root.'/index.php',$document_root,'');
+				return;
+			}
+			if(is_file($full_file)){
+				//mime_content_type
+				$ext=pathinfo($full_file,PATHINFO_EXTENSION);
+				if($ext==='php'){
+					$file=$full_file;
+					$path_info='';
+					$this->includeHttpFile($file,$document_root,$path_info);
+					return;
 				}
-				if(!is_file($file)){
-					throw new DNSwooleException("404 Not Found!",404);
+				$mime=mime_content_type($fullfile);
+				SwooleContext::G()->response->header('Content-Type',$mime);
+				SwooleContext::G()->response->sendfile($full_file);
+				return;
+			}
+			
+			$max=20;
+			$offset=0;
+			for($i=0;$i<$max;$i++){
+				$offset=strpos($path,'.php/',$offset);
+				if(false===$offset){break;}
+				$offset++;
+				$file=substr($path,0,$offset).'.php';
+				$path_info=substr($path,$offset+strlen('.php'));
+				$file=$document_root.$file;
+				if(is_file($file)){
+					$this->includeHttpFile($file,$document_root,$path_info);
+					return;
 				}
 			}
+			throw new DNSwooleException("404 Not Found!",404);
+			
 		}
+		$this->includeHttpFile($file,$document_root,$path_info);
+	}
+	protected function includeHttpFile($file,$document_root,$path_info)
+	{
 		SuperGlobal\SERVER::Set('PATH_INFO',$path_info);
 		SuperGlobal\SERVER::Set('DOCUMENT_ROOT',$document_root);
 		SuperGlobal\SERVER::Set('SCRIPT_FILENAME',$file);
@@ -313,7 +344,7 @@ class DNSwooleHttpServer
 			ob_end_flush();
 		}
 		$this->onHttpClean();
-		$response->end();
+		$response->end('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
 		//response 被使用到，而且出错就要手动 end  还是 OB 层级问题？
 		//onHttpRun(null,null) 则不需要用
 	}
@@ -403,6 +434,7 @@ class DNSwooleHttpServer
 	{
 		if($dn_options){
 			DNMVCS::ImportSys('SuperGlobal');
+			$dn_options['ext']['use_super_global']=true;
 			DNMVCS::G()->init($dn_options);
 			SwooleMainAppHook::G()->installHook(DNMVCS::G());
 			$server_options['http_handler']=[DNMVCS::G(),'run'];
