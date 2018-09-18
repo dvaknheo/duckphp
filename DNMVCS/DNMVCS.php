@@ -1175,7 +1175,6 @@ class DNMVCS
 	
 	public $options=[];
 	public $isDev=false;
-	public $isAdvance=false;
 	protected $hasAdvance=false;
 	protected $initObLevel=0;
 	protected $db_create_handler=null;
@@ -1304,7 +1303,7 @@ class DNMVCS
 	{
 		return $this->isDev;
 	}
-	public function useRouteAdvance()
+	public function useRouteAdvance($force=false)
 	{
 		if($this->hasAdvance){return;}
 		$this->hasAdvance=true;
@@ -1318,7 +1317,7 @@ class DNMVCS
 	}
 	public function run()
 	{
-		if($this->isAdvance || $this->options['rewrite_list'] || $this->options['route_list'] ){
+		if($this->options['rewrite_list'] || $this->options['route_list'] ){
 			$this->useRouteAdvance();
 			$this->runAdvanceHook();
 		}
