@@ -344,7 +344,7 @@ class DNSwooleHttpServer
 			ob_end_flush();
 		}
 		$this->onHttpClean();
-		$response->end('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+		$response->end();
 		//response 被使用到，而且出错就要手动 end  还是 OB 层级问题？
 		//onHttpRun(null,null) 则不需要用
 	}
