@@ -101,29 +101,26 @@ class SwooleContext
 	{
 		return self::G()->response;
 	}
-	public static function Init($request,$response)
-	{
-		return self::G()->_Init($request,$response);
-	}
+
 	public static function CleanUp()
 	{
 		return self::G()->_CleanUp();
 	}
-	public function _Init($request,$response)
+	public function initHttp($request,$response)
 	{
 		$this->request=$request;
 		$this->response=$response;
 	}
-	public function onWebSocketOpen($request)
-	{
-		$this->request=$request;
-		// echo "server: handshake success with fd{$request->fd}\n";
 
-		$this->fd=$request->fd;
-	}
-	public function onWebSocketMessage($frame)
+	public function initWebSocket($frame)
 	{
 		$this->frame=$frame;
+		$this->fd=$frame->fd;
+		
+	}
+	public function isWebSocketClosing()
+	{
+		return $this->frame->opcode == 0x08?true:false;
 	}
 	public function _CleanUp()
 	{
@@ -161,6 +158,8 @@ class DNSwooleHttpServer
 			'websocket_open_handler'=>null,
 			'websocket_handler'=>null,
 			'websocket_exception_handler'=>null,
+			'websocket_close_handler'=>null,
+
 		];
 	public $server=null;
 	
@@ -215,7 +214,7 @@ class DNSwooleHttpServer
 	
 	public function onHttpRun($request,$response)
 	{
-		SwooleContext::Init($request,$response);
+		SwooleContext::G()->initHttp($request,$response);
 		CoroutineSingleton::CloneInstance(SuperGlobal\SERVER::class);
 		CoroutineSingleton::CloneInstance(SuperGlobal\GET::class);
 		CoroutineSingleton::CloneInstance(SuperGlobal\POST::class);
@@ -348,21 +347,32 @@ class DNSwooleHttpServer
 		//response 被使用到，而且出错就要手动 end  还是 OB 层级问题？
 		//onHttpRun(null,null) 则不需要用
 	}
+	public function onOpen(swoole_websocket_server $server, swoole_http_request $request)
+	{
+		if(!$this->websocket_open_handler){ return; }
+		SwooleContext::G()->initHttp(request,null);
+		($this->websocket_open_handler)();
+	}
 	public function onMessage($server,$frame)
 	{
+		SwooleContext::G()->initWebSocket($frame);
+		
 		$fd=$frame->fd;
 		ob_start(function($str)use($server,$fd){
 			if(''===$str){return;}
 			$server->push($fd,$str);
 		});
 		try{
-			$this->onWebSoketRun($server,$frame);
+			if($frame->opcode != 0x08  || !$this->websocket_close_handler) {
+				($this->websocket_handler)();
+			}else{
+				($this->websocket_close_handler)();
+			}
 		}catch(\Throwable $ex){
 			if( !($ex instanceof  \Swoole\ExitException) ){
-				$this->onWebSoketException($ex);
+				($this->websocket_exception_handler)($ex);
 			}
 		}
-		$this->onWebSoketCleanUp();
 		for($i=ob_get_level();$i>$InitObLevel;$i--){
 			ob_end_flush();
 		}
@@ -411,7 +421,9 @@ class DNSwooleHttpServer
 		$this->websocket_exception_handler=$options['websocket_exception_handler'];
 		
 		if($this->websocket_handler){
+			$this->server->set(['open_websocket_close_frame'=>true]);
 			$this->server->on('mesage',[$this,'onMessage']);
+			$this->server->on('open',[$this,'onOpen']);
 		}
 		
 		if(is_callable('\Swoole\Runtime::enableCoroutine')){
