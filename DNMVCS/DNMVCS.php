@@ -1238,6 +1238,7 @@ class DNMVCS
 	
 	protected function initExceptionManager()
 	{
+		if(defined('DN_SWOOLE_SERVER_RUNNING')){return;}
 		DNExceptionManager::HandleAllException([$this,'onErrorException'],[$this,'onException']);
 		DNExceptionManager::HandleAllError([$this,'onErrorHandler'],[$this,'onDebugError']);
 	}
@@ -1301,6 +1302,10 @@ class DNMVCS
 	}
 	protected function initMisc()
 	{
+		if(defined('DN_SWOOLE_SERVER_RUNNING')){
+			$this->options['ext']['use_super_global']=true;
+		}
+
 		if(!empty($this->options['ext'])){
 			self::ImportSys();
 			AppExt::G()->installHook($this);
@@ -1317,17 +1322,18 @@ class DNMVCS
 		self::ImportSys('DNRouteAdvance');
 		DNRouteAdvance::G()->init();
 	}
-	protected function runAdvanceHook()
-	{
-		self::ImportSys('DNRouteAdvance');
-		DNRouteAdvance::G()->run();
-	}
-	public function run()
+	protected function checkRouteAdvance()
 	{
 		if($this->options['rewrite_list'] || $this->options['route_list'] ){
 			$this->useRouteAdvance();
-			$this->runAdvanceHook();
+			DNRouteAdvance::G()->run();
 		}
+	}
+	public function run()
+	{
+		//this is run before other hooks;
+		$this->checkRouteAdvance();
+		
 		foreach($this->hooks as $hook){
 			($hook)();
 		}

@@ -159,7 +159,7 @@ class SimpleRouteHook
 		$route->calling_path=$path_info;
 	}
 }
-class SuperGlobalRouteHook
+class SuperGlobalRouteFakeHook
 {
 	use DNSingleton;
 	protected $installed=false;
@@ -167,7 +167,11 @@ class SuperGlobalRouteHook
 	{
 		if($this->installed){return;}
 		$this->installed=true;
-		//$route=DNRoute::G();
+		
+		$path=DNMVCS::G()->options['path'];
+		SuperGlobal\SERVER::Set('DOCUMENT_ROOT',$path.'/www');
+		SuperGlobal\SERVER::Set('SCRIPT_FILENAME',$path.'/www/index.php');
+
 		$route->script_filename=SuperGlobal\SERVER::Get('SCRIPT_FILENAME')??'';
 		$route->document_root=SuperGlobal\SERVER::Get('DOCUMENT_ROOT')??'';
 		$route->request_method=SuperGlobal\SERVER::Get('REQUEST_METHOD')??'';
@@ -587,6 +591,8 @@ class AppExt
 			'use_super_global'=>false,
 		];
 	protected $is_installed=false;
+	protected $use_super_global=false;
+	protected $is_super_global_hooked=false;
 	public function installHook($dn)
 	{
 		if($this->is_installed){return;}
@@ -629,8 +635,7 @@ class AppExt
 		}
 		if($options['use_super_global']){
 			DNMVCS::ImportSys('SuperGlobal');
-			//TODO 顺序问题
-			//DNRoute::G()->addRouteHook([SuperGlobalRouteHook::G(),'hook'],true);
+			$this->use_super_global=true;
 		}
 		
 		if($options['key_for_simple_route']){
@@ -643,15 +648,9 @@ class AppExt
 	}
 	public function hook()
 	{
-		$ext_options=DNMVCS::G()->options['ext']??[];
-		$rewriteMap=$ext_options['rewriteMap']??null;
-		if($rewriteMap){
-			RouteRewriteHook::G()->install($ext_options['rewriteMap']);
-		}
-		$routeMap=$ext_options['routeMap']??null;
-		if($rewriteMap){
-			RouteMapHook::G()->install($ext_options['routeMap']);
-		}
+		if(!$this->use_super_global){return;}
+		SuperGlobalRouteFakeHook::G()->hook(DNRoute::G());
+		return;
 	}
 	public function cleanUp()
 	{

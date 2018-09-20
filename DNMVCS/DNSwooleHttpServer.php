@@ -222,11 +222,11 @@ class DNSwooleHttpServer
 		CoroutineSingleton::CloneInstance(SuperGlobal\COOKIE::class);
 		
 		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G())->init($request);
-		
 		SuperGlobal\GET::G(SwooleSuperGlobalGet::G())->init($request);
 		SuperGlobal\POST::G(SwooleSuperGlobalPost::G())->init($request);
 		SuperGlobal\REQUEST::G(SwooleSuperGlobalRequest::G())->init($request);
 		SuperGlobal\COOKIE::G(SwooleSuperGlobalCookie::G())->init($request);
+		//session ,event;
 		
 		if($this->http_handler){
 			$this->runHttpHandler();
@@ -445,44 +445,20 @@ class DNSwooleHttpServer
 	public static function RunWithServer($server_options,$dn_options=[])
 	{
 		if($dn_options){
-			DNMVCS::ImportSys('SuperGlobal');
+			require_once(__DIR__.'/SuperGlobal.php');
+			require_once(__DIR__.'/SwooleSuperGlobal.php');
+			SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G());
+			
 			$dn_options['ext']['use_super_global']=true;
+			
 			DNMVCS::G()->init($dn_options);
-			SwooleMainAppHook::G()->installHook(DNMVCS::G());
+			DNMVCS::G()->addAppHook(function(){
+				CoroutineSingleton::CloneInstance(DNView::class);
+				CoroutineSingleton::CloneInstance(DNRoute::class);
+			});
 			$server_options['http_handler']=[DNMVCS::G(),'run'];
 			$server_options['http_exception_handler']=[DNMVCS::G(),'onException'];
 		}
 		self::G()->init($server_options)->run();
-	}
-}
-
-class SwooleMainAppHook
-{
-	use DNSingleton;
-	
-	public function installHook($dn)
-	{
-		if($dn->options['rewrite_list']|| $dn->options['route_list']){
-			$dn->useRouteAdvance();
-		}
-		$dn->addAppHook([$this,'beforeMainAppRun']);
-		return $this;
-	}
-	public function beforeMainAppRun()
-	{
-		$path=DNMVCS::G()->options['path'];
-		//CoroutineSingleton::CloneInstance(SuperGlobal\SERVER::class)->init($request);
-		SuperGlobal\SERVER::Set('DOCUMENT_ROOT',$path.'/www');
-		SuperGlobal\SERVER::Set('SCRIPT_FILENAME',$path.'/www/index.php');
-		CoroutineSingleton::CloneInstance(DNView::class);
-		CoroutineSingleton::CloneInstance(DNRoute::class);
-		$route=DNRoute::G();
-		
-		$route->script_filename=SuperGlobal\SERVER::Get('SCRIPT_FILENAME')??'';
-		$route->document_root=SuperGlobal\SERVER::Get('DOCUMENT_ROOT')??'';
-		$route->request_method=SuperGlobal\SERVER::Get('REQUEST_METHOD')??'';
-		$route->path_info=SuperGlobal\SERVER::Get('PATH_INFO')??'';
-		
-		$route->path_info=ltrim($route->path_info,'/');
 	}
 }
