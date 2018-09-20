@@ -1047,10 +1047,9 @@ trait DNMVCS_Handler
 	public function onException($ex)
 	{
 		$this->_cleanBuffer();
-		if($this->auto_close_db){}
+		if($this->auto_close_db){
 			DNDBManager::G()->closeAllDB();
 		}
-		
 		$data=[];
 		$data['message']=$ex->getMessage();
 		$data['code']=$ex->getCode();
@@ -1071,7 +1070,7 @@ trait DNMVCS_Handler
 	public function onErrorException($ex)
 	{
 		$this->_cleanBuffer();
-		if($this->auto_close_db){}
+		if($this->auto_close_db){
 			DNDBManager::G()->closeAllDB();
 		}
 		
