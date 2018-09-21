@@ -784,7 +784,7 @@ class DNDBManager
 	{
 		if($this->db){return $this->db;}
 		
-		$this->db=($this->db_create_handler)($this->db_config);
+		$this->db=($this->db_create_handler)($this->db_config,'write');
 		return $this->db;
 	}
 	public function _DB_W()
@@ -797,16 +797,18 @@ class DNDBManager
 		
 		if(!$this->db_r_config){return $this->_DB();}
 		
-		$this->db_r=($this->db_create_handler)($this->db_r_config);
+		$this->db_r=($this->db_create_handler)($this->db_r_config,'read');
 		return $this->db_r;
 	}
 	public function closeAllDB()
 	{
 		if($this->db!==null && $this->db_close_handler){
-			($this->db_close_handler)($this->db);
+			($this->db_close_handler)($this->db,'write');
+			$this->db=null;
 		}
 		if($this->db_r!==null && $this->db_close_handler){
-			($this->db_close_handler)($this->db);
+			($this->db_close_handler)($this->db,'read');
+			$this->db_r=null;
 		}
 	}
 }
