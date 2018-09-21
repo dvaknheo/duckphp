@@ -767,6 +767,7 @@ class DNDBManager
 	public $db_r_config=[];
 	public $db_create_handler=null;
 	public $db_close_handler=null;
+	public $use_only_one_db=false;
 	public function init($db_config,$db_r_config,$db_create_handler,$db_close_handler)
 	{
 
@@ -795,7 +796,10 @@ class DNDBManager
 	{
 		if($this->db_r){return $this->db_r;}
 		
-		if(!$this->db_r_config){return $this->_DB();}
+		if(!$this->db_r_config){
+			$this->use_only_one_db=true;
+			return $this->_DB();
+		}
 		
 		$this->db_r=($this->db_create_handler)($this->db_r_config,'read');
 		return $this->db_r;
@@ -805,6 +809,10 @@ class DNDBManager
 		if($this->db!==null && $this->db_close_handler){
 			($this->db_close_handler)($this->db,'write');
 			$this->db=null;
+		}
+		if($this->use_only_one_db){
+			$this->db_r=null;
+			return;
 		}
 		if($this->db_r!==null && $this->db_close_handler){
 			($this->db_close_handler)($this->db,'read');
@@ -1092,7 +1100,7 @@ trait DNMVCS_Handler
 				echo "DNMVCS 500 internal error!\n";
 			}else{
 				echo "<!--DNMVCS  use view/_sys/error-exception.php to overrid me -->\n";
-				var_dump($ex);
+				echo($ex);
 			}
 			return;
 		}
