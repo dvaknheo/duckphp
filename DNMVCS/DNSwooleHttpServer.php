@@ -139,6 +139,73 @@ class DNSwooleException extends \Exception
 		throw new $class($message,$code);
 	}
 }
+class DBConnectPoolProxy
+{
+	use DNSingleton;
+	
+	protected $db_create_handler;
+	protected $db_close_handler;
+	protected $db_queue_write;
+	protected $db_queue_write_time;
+	protected $db_queue_read;
+	protected $db_queue_read_time;
+	public $max_length=100;
+	public $timeout=5;
+	public function __construct()
+	{
+		$this->db_queue_write=new \SplQueue();
+		$this->db_queue_write_time=new \SplQueue();
+		$this->db_queue_read=new \SplQueue();
+		$this->db_queue_read_time=new \SplQueue();
+	}
+	public function setDBHandler($db_create_handler,$db_close_handler=null)
+	{
+		$this->db_create_handler=$db_create_handler;
+		$this->db_close_handler=$db_close_handler;
+	}
+	public function getObject($queue,$queue_time,$db_config,$tag)
+	{
+		if($queue->isEmpty()){
+			return ($this->db_create_handler)($db_config,$tag);
+		}
+		$db=$queue->shift();
+		$time=$queue_time->shift();
+		$now=time();
+		$is_timeout =($now-$time)>$this->timeout?true:false;
+		if($is_timeout){
+			($this->db_close_handler)($db,$tag);
+			return ($this->db_create_handler)($db_config,$tag);
+		}
+		return $db;
+		
+	}
+	public function reuseObject($queue,$queue_time,$db)
+	{
+		if(count($queue)>=$this->max_length){
+			($this->db_close_handler)($db,$tag);
+			return;
+		}
+		$time=time();
+		$queue->push($db);
+		$queue_time->push($time);
+	}
+	public function onCreate($db_config,$tag)
+	{
+		if($tag==='write'){
+			return $this->getObject($this->db_queue_write,$this->db_queue_write_time,$db_config,$tag);
+		}else{
+			return $this->getObject($this->db_queue_read,$this->db_queue_read_time,$db_config,$tag);
+		}
+	}
+	public function onClose($db,$tag)
+	{
+		if($tag==='write'){
+			return $this->reuseObject($this->db_queue_write,$this->db_queue_write_time,$db);
+		}else{
+			return $this->reuseObject($this->db_queue_read,$this->db_queue_read_time,$db);
+		}
+	}
+}
 class DNSwooleHttpServer
 {
 	use DNSingleton;
@@ -452,6 +519,11 @@ class DNSwooleHttpServer
 			$dn_options['ext']['use_super_global']=true;
 			
 			DNMVCS::G()->init($dn_options);
+			
+			$dbm=DNDBManager::G();
+			DBConnectPoolProxy::G()->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
+			DNDBManager::G()->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
+			
 			DNMVCS::G()->addAppHook(function(){
 				CoroutineSingleton::CloneInstance(DNView::class);
 				CoroutineSingleton::CloneInstance(DNRoute::class);
