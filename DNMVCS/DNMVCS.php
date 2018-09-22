@@ -914,12 +914,6 @@ trait DNMVCS_Glue
 		if(!$flag){return;}
 		throw new DNException($message,$code);
 	}
-	//DB
-	public function setDBHandler($createHandler,$closeHandler)
-	{
-		return DNDBManager::G()->setDBHandler($createHandler,$closeHandler);
-	}
-	
 
 	public static function DB()
 	{

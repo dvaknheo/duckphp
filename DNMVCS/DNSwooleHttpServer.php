@@ -139,6 +139,7 @@ class DNSwooleException extends \Exception
 		throw new $class($message,$code);
 	}
 }
+
 class DBConnectPoolProxy
 {
 	use DNSingleton;
@@ -206,9 +207,45 @@ class DBConnectPoolProxy
 		}
 	}
 }
+trait DNSwooleHttpServer_Static
+{
+	public static function Server()
+	{
+		return self::G()->server;
+	}
+	public static function Request()
+	{
+		return SwooleContext::G()->request;
+	}
+	public static function Response()
+	{
+		return SwooleContext::G()->response;
+	}
+	public static function Context()
+	{
+		return SwooleContext::G();
+	}
+}
+trait DNSwooleHttpServer_GlobalFunc
+{
+	public function header(string $string, bool $replace = true , int $http_response_code =0)
+	{
+		list($key,$value)=explode(':',$string);
+		SwooleContext::G()->response->header($key, $value);
+		if($http_response_code){
+			SwooleContext::G()->response->status($http_status_code);
+		}
+	}
+	public function setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
+	{
+		return SwooleContext::G()->response->cookie($key,$value,$expire,$path,$domain,$secure,$httponly );
+	}
+}
 class DNSwooleHttpServer
 {
 	use DNSingleton;
+	use DNSwooleHttpServer_Static;
+	use DNSwooleHttpServer_GlobalFunc;
 	
 	const DEFAULT_OPTIONS=[
 			'swoole_server'=>null,
@@ -226,38 +263,20 @@ class DNSwooleHttpServer
 			'websocket_handler'=>null,
 			'websocket_exception_handler'=>null,
 			'websocket_close_handler'=>null,
-
 		];
 	public $server=null;
 	
 	public $http_handler=null;
 	public $http_exception_handler=null;
+	protected $static_root=null;  //TODO
 	
+	public $websocket_open_handler=null;
 	public $websocket_handler=null;
 	public $websocket_exception_handler=null;
+	public $websocket_close_handler=null;
 	
 	public $shutdown_function_array=[];
-	
-	protected $static_root=null;
-	
-	protected $http_handler_root=null;
 
-	public static function Server()
-	{
-		return self::G()->server;
-	}
-	public static function Request()
-	{
-		return SwooleContext::G()->request;
-	}
-	public static function Response()
-	{
-		return SwooleContext::G()->response;
-	}
-	public static function Context()
-	{
-		return SwooleContext::G();
-	}
 	public function set_exception_handler(callable $exception_handler)
 	{
 		$this->http_exception_handler=$exception_handler;
@@ -266,18 +285,7 @@ class DNSwooleHttpServer
 	{
 		$this->shutdown_function_array[]=func_get_args();
 	}
-	public function header(string $string, bool $replace = true , int $http_response_code =0)
-	{
-		list($key,$value)=explode(':',$string);
-		SwooleContext::G()->response->header($key, $value);
-		if($http_response_code){
-			SwooleContext::G()->response->status($http_status_code);
-		}
-	}
-	public function setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
-	{
-		return SwooleContext::G()->response->cookie($key,$value,$expire,$path,$domain,$secure,$httponly );
-	}
+
 	
 	public function onHttpRun($request,$response)
 	{
@@ -484,8 +492,10 @@ class DNSwooleHttpServer
 			$this->static_root=$this->server->setting['document_root'];
 		}
 		
+		$this->websocket_open_handler=$options['websocket_open_handler'];
 		$this->websocket_handler=$options['websocket_handler'];
 		$this->websocket_exception_handler=$options['websocket_exception_handler'];
+		$this->websocket_close_handler=$options['websocket_close_handler'];
 		
 		if($this->websocket_handler){
 			$this->server->set(['open_websocket_close_frame'=>true]);
@@ -510,26 +520,34 @@ class DNSwooleHttpServer
 	}
 	public function afteAppInit()
 	{
-			$dbm=DNDBManager::G();
+		
+		$dbm=DNDBManager::G();
+		$options=DNMVCS::G()->options;
+		$db_reuse_size=$options['db_reuse_size']??0;
+		if($db_reuse_size){
+			$db_reuse_timeout=$options['db_reuse_timeout']??5;
+			
+			DBConnectPoolProxy::G()->max_length=$$db_reuse_size;
+			DBConnectPoolProxy::G()->timeout=$db_reuse_timeout;
+			
 			DBConnectPoolProxy::G()->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
 			DNDBManager::G()->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
-			
-			DNMVCS::G()->addAppHook(function(){
-				CoroutineSingleton::CloneInstance(DNView::class);
-				CoroutineSingleton::CloneInstance(DNRoute::class);
-			});
-			
-			require_once(__DIR__.'/SwooleSuperGlobal.php');
-			SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G());
-			
+		}
+		DNMVCS::G()->addAppHook(function(){
+			CoroutineSingleton::CloneInstance(DNView::class);
+			CoroutineSingleton::CloneInstance(DNRoute::class);
+		});
+		
+		require_once(__DIR__.'/SwooleSuperGlobal.php');
+		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G());
 	}
 	public static function RunWithServer($server_options,$dn_options=[])
 	{
 		if($dn_options){
-		
 			$dn_options['ext']['use_super_global']=true;
 			DNMVCS::G()->init($dn_options);
 			self::G()->afteAppInit();
+			
 			$server_options['http_handler']=[DNMVCS::G(),'run'];
 			$server_options['http_exception_handler']=[DNMVCS::G(),'onException'];
 		}
