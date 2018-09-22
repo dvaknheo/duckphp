@@ -944,11 +944,6 @@ trait DNMVCS_Glue
 		$this->container[$name]=$object;
 		return $object;
 	}
-	public function addAppHook($callback)
-	{
-		array_unshift($this->hooks,$callback);
-	}
-	
 }
 trait DNMVCS_Misc
 {
@@ -1183,7 +1178,7 @@ class DNMVCS
 	protected $initObLevel=0;
 	protected $db_create_handler=null;
 	protected $db_close_handler=null;
-	protected $hooks=[];
+	public $before_run_handler=null;
 	public static function RunQuickly($options=[])
 	{
 
@@ -1323,14 +1318,17 @@ class DNMVCS
 			$this->hasAdvance=true;
 		}
 	}
+	public function setBeforeRunHandler($before_run_handler)
+	{
+		$this->before_run_handler=$before_run_handler;
+	}
 	public function run()
 	{
 		$this->checkAndInstallDefaultRouteHooks();
 		
-		foreach($this->hooks as $hook){
-			($hook)();
+		if($this->before_run_handler){
+			($this->before_run_handler)();
 		}
-		
 		$this->initObLevel=ob_get_level();
 		ob_start();
 		$ret=DNRoute::G()->run();

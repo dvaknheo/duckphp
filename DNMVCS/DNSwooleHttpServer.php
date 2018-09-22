@@ -533,7 +533,7 @@ class DNSwooleHttpServer
 			DBConnectPoolProxy::G()->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
 			DNDBManager::G()->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
 		}
-		DNMVCS::G()->addAppHook(function(){
+		DNMVCS::G()->setBeforeRunHandler(function(){
 			CoroutineSingleton::CloneInstance(DNView::class);
 			CoroutineSingleton::CloneInstance(DNRoute::class);
 		});
