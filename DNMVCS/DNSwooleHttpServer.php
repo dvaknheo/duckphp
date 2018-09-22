@@ -544,7 +544,7 @@ class DNSwooleHttpServer
 	public static function RunWithServer($server_options,$dn_options=[])
 	{
 		if($dn_options){
-			$dn_options['ext']['use_super_global']=true;
+			$dn_options['swoole_mode']=true;
 			DNMVCS::G()->init($dn_options);
 			self::G()->afteAppInit();
 			

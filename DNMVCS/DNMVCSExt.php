@@ -589,16 +589,7 @@ class AppExt
 			'use_strict_db_manager'=>false,
 			'use_super_global'=>false,
 		];
-	protected $is_installed=false;
-	protected $use_super_global=false;
-	protected $is_super_global_hooked=false;
-	public function installHook($dn)
-	{
-		if($this->is_installed){return;}
-		$this->is_installed=true;
-		$this->afterInit();
-	}
-	protected function afterInit()
+	public function afterInit()
 	{
 		$dn=DNMVCS::G();
 		$ext_options=$dn->options['ext'];
@@ -647,6 +638,7 @@ class AppExt
 			DNRoute::G()->addRouteHook([SuperGlobalRouteHook::G(),'hook'],true);
 		}
 	}
+	/* NotUsed
 	public function cleanUp()
 	{
 		$route=DNRoute::G();
@@ -664,6 +656,7 @@ class AppExt
 		//error_reporting($view->error_reporting_old);
 		//TODO ob_cleanUp();
 	}
+	//*/
 }
 //mysqldump -uroot -p123456 DnSample -d --opt --skip-dump-date --skip-comments | sed 's/ AUTO_INCREMENT=[0-9]*\b//g' >../data/database.sql
 

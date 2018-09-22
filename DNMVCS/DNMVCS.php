@@ -1165,23 +1165,21 @@ class DNMVCS
 			
 			'rewrite_list'=>[],
 			'route_list'=>[],
-			'use_super_global'=>false,
+			
+			'swoole_mode'=>false,
 		];
-	protected $path=null;
+	public $options=[];
+	public $isDev=false;
+	public $before_run_handler=null;
 	
+	protected $path=null;
 	protected $auto_close_db=true;
 	protected $path_lib;
 	
-	public $options=[];
-	public $isDev=false;
 	protected $hasAdvance=false;
 	protected $initObLevel=0;
-	protected $db_create_handler=null;
-	protected $db_close_handler=null;
-	public $before_run_handler=null;
 	public static function RunQuickly($options=[])
 	{
-
 		return self::G()->init($options)->run();
 	}
 	public static function RunWithoutPathInfo($options=[])
@@ -1224,8 +1222,6 @@ class DNMVCS
 		$this->path=$this->options['path'];
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
 		$this->isDev=$this->options['is_dev'];
-		$this->db_create_handler=$this->options['db_create_handler']?:[DNDB::class,'CreateDBInstance'];
-		$this->db_close_handler=$this->options['db_close_handler']?:[DNDB::class,'CloseDBInstance'];
 	}
 	
 	protected function initExceptionManager()
@@ -1254,6 +1250,7 @@ class DNMVCS
 		}
 		if($object){return $object;}
 		
+		$this->initObLevel=ob_get_level();
 		$this->initExceptionManager();
 		$this->initOptions($options);
 		
@@ -1287,20 +1284,25 @@ class DNMVCS
 	{
 		$db_config=DNConfiger::G()->_Setting('db');
 		$db_r_config=DNConfiger::G()->_Setting('db_r');
-		$db_create_handler=$this->db_create_handler;
-		$db_close_handler=$this->db_close_handler;
+		
+		$db_create_handler=$this->options['db_create_handler']?:[DNDB::class,'CreateDBInstance'];
+		$db_close_handler=$this->options['db_close_handler']?:[DNDB::class,'CloseDBInstance'];
 		
 		$dbm->init($db_config,$db_r_config,$db_create_handler,$db_close_handler);
 	}
 	protected function initMisc()
 	{
+		
+		if($this->options['swoole_mode']??false){
+			$this->options['ext']['use_super_global']=true;
+		}
 		if(defined('DN_SWOOLE_SERVER_RUNNING')){
 			$this->options['ext']['use_super_global']=true;
 		}
-
+		
 		if(!empty($this->options['ext'])){
 			self::ImportSys();
-			AppExt::G()->installHook($this);
+			AppExt::G()->afterInit($this);
 		}
 	}
 	public function isDev()
@@ -1324,12 +1326,11 @@ class DNMVCS
 	}
 	public function run()
 	{
-		$this->checkAndInstallDefaultRouteHooks();
-		
 		if($this->before_run_handler){
 			($this->before_run_handler)();
 		}
-		$this->initObLevel=ob_get_level();
+		$this->checkAndInstallDefaultRouteHooks();
+		
 		ob_start();
 		$ret=DNRoute::G()->run();
 		ob_end_flush();
