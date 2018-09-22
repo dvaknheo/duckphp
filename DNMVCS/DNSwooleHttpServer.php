@@ -508,18 +508,8 @@ class DNSwooleHttpServer
 		$t=$this->server->start();
 		fwrite(STDOUT,get_class($this)." run end ".DATE(DATE_ATOM)." ...\n");
 	}
-	
-	public static function RunWithServer($server_options,$dn_options=[])
+	public function afteAppInit()
 	{
-		if($dn_options){
-			require_once(__DIR__.'/SuperGlobal.php');
-			require_once(__DIR__.'/SwooleSuperGlobal.php');
-			SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G());
-			
-			$dn_options['ext']['use_super_global']=true;
-			
-			DNMVCS::G()->init($dn_options);
-			
 			$dbm=DNDBManager::G();
 			DBConnectPoolProxy::G()->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
 			DNDBManager::G()->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
@@ -528,6 +518,18 @@ class DNSwooleHttpServer
 				CoroutineSingleton::CloneInstance(DNView::class);
 				CoroutineSingleton::CloneInstance(DNRoute::class);
 			});
+			
+			require_once(__DIR__.'/SwooleSuperGlobal.php');
+			SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G());
+			
+	}
+	public static function RunWithServer($server_options,$dn_options=[])
+	{
+		if($dn_options){
+		
+			$dn_options['ext']['use_super_global']=true;
+			DNMVCS::G()->init($dn_options);
+			self::G()->afteAppInit();
 			$server_options['http_handler']=[DNMVCS::G(),'run'];
 			$server_options['http_exception_handler']=[DNMVCS::G(),'onException'];
 		}
