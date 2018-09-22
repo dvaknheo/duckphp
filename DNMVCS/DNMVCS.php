@@ -1312,24 +1312,20 @@ class DNMVCS
 	{
 		return $this->isDev;
 	}
-	public function useRouteAdvance($force=false)
+	
+	public function checkAndInstallDefaultRouteHooks($force_install=false)
 	{
 		if($this->hasAdvance){return;}
-		$this->hasAdvance=true;
-		self::ImportSys('DNRouteAdvance');
-		DNRouteAdvance::G()->init();
-	}
-	protected function checkRouteAdvance()
-	{
-		if($this->options['rewrite_list'] || $this->options['route_list'] ){
-			$this->useRouteAdvance();
-			DNRouteAdvance::G()->run();
+		
+		if($force_install ||$this->options['rewrite_list'] || $this->options['route_list'] ){
+			self::ImportSys('DNRouteAdvance');
+			DNRouteAdvance::G()->install();
+			$this->hasAdvance=true;
 		}
 	}
 	public function run()
 	{
-		//this is run before other hooks;
-		$this->checkRouteAdvance();
+		$this->checkAndInstallDefaultRouteHooks();
 		
 		foreach($this->hooks as $hook){
 			($hook)();

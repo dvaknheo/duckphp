@@ -159,26 +159,25 @@ class SimpleRouteHook
 		$route->calling_path=$path_info;
 	}
 }
-class SuperGlobalRouteFakeHook
+class SuperGlobalRouteHook
 {
 	use DNSingleton;
-	protected $installed=false;
 	public function hook($route)
 	{
-		if($this->installed){return;}
-		$this->installed=true;
-		
 		$path=DNMVCS::G()->options['path'];
-		SuperGlobal\SERVER::Set('DOCUMENT_ROOT',$path.'/www');
-		SuperGlobal\SERVER::Set('SCRIPT_FILENAME',$path.'/www/index.php');
-
+		if(!SuperGlobal\SERVER::Get('DOCUMENT_ROOT')){
+			SuperGlobal\SERVER::Set('DOCUMENT_ROOT',$path.'www');
+		
+		}
+		if(!SuperGlobal\SERVER::Get('SCRIPT_FILENAME')){
+			SuperGlobal\SERVER::Set('SCRIPT_FILENAME',$path.'www/index.php');
+		}
 		$route->script_filename=SuperGlobal\SERVER::Get('SCRIPT_FILENAME')??'';
 		$route->document_root=SuperGlobal\SERVER::Get('DOCUMENT_ROOT')??'';
 		$route->request_method=SuperGlobal\SERVER::Get('REQUEST_METHOD')??'';
 		$route->path_info=SuperGlobal\SERVER::Get('PATH_INFO')??'';
 		
 		$route->path_info=ltrim($route->path_info,'/');
-		
 	}
 }
 class StrictService
@@ -598,7 +597,6 @@ class AppExt
 		if($this->is_installed){return;}
 		$this->is_installed=true;
 		$this->afterInit();
-		DNMVCS::G()->addAppHook([$this,'hook']);
 	}
 	protected function afterInit()
 	{
@@ -633,10 +631,6 @@ class AppExt
 		if($ReInitDB){
 			$dn->initDBManager(DNDBManager::G());
 		}
-		if($options['use_super_global']){
-			DNMVCS::ImportSys('SuperGlobal');
-			$this->use_super_global=true;
-		}
 		
 		if($options['key_for_simple_route']){
 			SimpleRouteHook::G()->key_for_simple_route=$options['key_for_simple_route'];
@@ -645,12 +639,13 @@ class AppExt
 		if($options['use_function_dispatch']){
 			DNRoute::G()->addRouteHook([FunctionDispatcher::G(),'hook']);
 		}
-	}
-	public function hook()
-	{
-		if(!$this->use_super_global){return;}
-		SuperGlobalRouteFakeHook::G()->hook(DNRoute::G());
-		return;
+		
+		////////////////////
+		if($options['use_super_global']){
+			DNMVCS::ImportSys('SuperGlobal');
+			$dn->checkAndInstallDefaultRouteHooks(true);
+			DNRoute::G()->addRouteHook([SuperGlobalRouteHook::G(),'hook'],true);
+		}
 	}
 	public function cleanUp()
 	{
