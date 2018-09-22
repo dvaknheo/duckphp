@@ -427,15 +427,16 @@ class DNView
 	
 	protected $temp_view_file;
 	public $error_reporting_old;
+	public $header_handler=null;
 	public function _ExitJson($ret)
 	{
 		if(isset($this->beforeShowHandler)){
 			($this->beforeShowHandler)($data,$this->view);
 		}
-		if(true){
+		if(!$this->header_handler){
 			header('content-type:text/json');
 		}else{
-			//$this->header_handler('content-type:text/json');
+			($this->header_handler)('content-type:text/json');
 		}
 		echo json_encode($ret,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
 		exit;
@@ -449,10 +450,10 @@ class DNView
 		if($only_in_site && parse_url($url,PHP_URL_HOST)){
 			exit;
 		}
-		if(true){
+		if(!$this->header_handler){
 			header('location: '.$url);
 		}else{
-			//$this->header_handler('location: '.$url);
+			($this->header_handler)('location: '.$url);
 		}
 		exit;
 	}	
@@ -465,12 +466,10 @@ class DNView
 		$this->data=array_merge($this->data,$data);
 		$this->view_file=$this->path.rtrim($this->view,'.php').'.php';
 		
-		ob_start();
 		$this->error_reporting_old=error_reporting();
 		error_reporting(error_reporting() & ~E_NOTICE);
 		$this->includeShowFiles();
 		error_reporting($this->error_reporting_old);
-		ob_end_flush();
 	}
 	
 	protected function includeShowFiles()
@@ -1056,10 +1055,7 @@ trait DNMVCS_Handler
 	}
 	public function onException($ex)
 	{
-		$this->_cleanBuffer();
-		if($this->auto_close_db){
-			DNDBManager::G()->closeAllDB();
-		}
+		$this->flushBuffer();
 		$data=[];
 		$data['message']=$ex->getMessage();
 		$data['code']=$ex->getCode();
@@ -1079,10 +1075,7 @@ trait DNMVCS_Handler
 	}
 	public function onErrorException($ex)
 	{
-		$this->_cleanBuffer();
-		if($this->auto_close_db){
-			DNDBManager::G()->closeAllDB();
-		}
+		$this->flushBuffer();
 		
 		if(PHP_SAPI!=='cli'){
 			header("HTTP/1.1 500 Internal Error");
@@ -1099,7 +1092,7 @@ trait DNMVCS_Handler
 			if(!$this->isDev){
 				echo "DNMVCS 500 internal error!\n";
 			}else{
-				echo "<!--DNMVCS  use view/_sys/error-exception.php to overrid me -->\n";
+				echo "<!--DNMVCS  use view/_sys/error-500.php to overrid me -->\n";
 				echo($ex);
 			}
 			return;
@@ -1349,15 +1342,14 @@ class DNMVCS
 		}
 		
 		$this->initObLevel=ob_get_level();
+		ob_start();
 		$ret=DNRoute::G()->run();
+		ob_end_flush();
 		
-		
-		for($i=ob_get_level();$i>$this->initObLevel;$i--){
-			ob_end_flush();
-		}
+		$this->flushBuffer();
 		return $ret;
 	}
-	public function _cleanBuffer()
+	public function flushBuffer()
 	{
 		for($i=ob_get_level();$i>$this->initObLevel;$i--){
 			ob_end_clean();
