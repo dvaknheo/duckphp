@@ -91,48 +91,57 @@ class DNAutoLoader
 	{
 		if($this->is_loaded){return;}
 		$this->is_loaded=true;
-		$this->regist_psr4();
-		if($this->with_no_namespace_mode){
-			$this->regist_simple_mode();
+		spl_autoload_register([$this,'autoload']);
+	}
+	public function autoload($class)
+	{
+		$this->regist_psr4($class);
+		$this->regist_simple_mode($class);
+		$this->regist_system($class);
+		$this->regist_classes($class);
+	}
+	protected function regist_psr4($class)
+	{
+		$prefix = $this->namespace.'\\';
+		$base_dir = $this->path_namespace;
+		
+		if (strncmp($prefix, $class, strlen($prefix)) !== 0) { return; }
+		$relative_class = substr($class, strlen($prefix));
+		$file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+		if (!file_exists($file)) { return; }
+		require $file;
+	}
+	protected function regist_simple_mode($class)
+	{
+		if(!$this->with_no_namespace_mode){return;}
+		if(strpos($class,'\\')!==false){ return; }
+		$path_simple=$this->path_no_namespace_mode;
+		
+		$flag=preg_match('/(Service|Model)$/',$class,$m);
+		if(!$flag){return;}
+		$file=$path_simple.$m[1].'/'.$class.'.php';
+		if (!$file || !file_exists($file)) {return;}
+		require $file;
+	}
+	protected function regist_system($class)
+	{
+		if(substr($class,0,strlen('DNMVCS\\'))!=='DNMVCS\\'){ return; }
+		
+		$it = new \DirectoryIterator(__DIR__);
+		foreach($it as $v){
+			if($v->getExtension()==='php'){
+				if($v->getFilename()==='DNMedoo.php'){ continue; }
+				require_once($v->getPathname());
+			}
 		}
-		$this->regist_classes();
 	}
-	protected function regist_psr4()
+	protected function regist_classes($class)
 	{
-		spl_autoload_register(function ($class) {
-			$prefix = $this->namespace.'\\';
-			$base_dir = $this->path_namespace;
-			
-			if (strncmp($prefix, $class, strlen($prefix)) !== 0) { return; }
-			$relative_class = substr($class, strlen($prefix));
-			$file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-			if (!file_exists($file)) { return; }
-			require $file;
-		});
-	}
-	protected function regist_simple_mode()
-	{
-		spl_autoload_register(function($class){
-			if(strpos($class,'\\')!==false){ return; }
-			$path_simple=$this->path_no_namespace_mode;
-			
-			$flag=preg_match('/(Service|Model)$/',$class,$m);
-			if(!$flag){return;}
-			$file=$path_simple.$m[1].'/'.$class.'.php';
-			if (!$file || !file_exists($file)) {return;}
-			require $file;
-		});
-	}
-	protected function regist_classes()
-	{
-		spl_autoload_register(function ($class) {
-			if(strpos($class,'\\')!==false){ return; }
-			$path_autoload=$this->path_autoload;
-			$file=$this->path_autoload .$class.'.php';
-			if (!file_exists($file)) { return; }
-			require $file;
-			
-		});
+		if(strpos($class,'\\')!==false){ return; }
+		$path_autoload=$this->path_autoload;
+		$file=$this->path_autoload .$class.'.php';
+		if (!file_exists($file)) { return; }
+		require $file;
 	}
 }
 
@@ -419,19 +428,17 @@ class DNView
 	protected $view_file;
 	
 	public $path;
-	
 	public $data=[];
-	public $beforeShowHandler=null;
-
 	public $view=null;
 	
-	protected $temp_view_file;
 	public $error_reporting_old;
-	public $header_handler=null;
+	protected $temp_view_file;
+	protected $before_show_handler=null;
+	protected $header_handler=null;
 	public function _ExitJson($ret)
 	{
-		if(isset($this->beforeShowHandler)){
-			($this->beforeShowHandler)($data,$this->view);
+		if(isset($this->before_show_handler)){
+			($this->before_show_handler)($data,$this->view);
 		}
 		if(!$this->header_handler){
 			header('content-type:text/json');
@@ -443,8 +450,8 @@ class DNView
 	}
 	public function _ExitRedirect($url,$only_in_site=true)
 	{
-		if(isset($this->beforeShowHandler)){
-			($this->beforeShowHandler)($data,$this->view);
+		if(isset($this->before_show_handler)){
+			($this->before_show_handler)($data,$this->view);
 		}
 		
 		if($only_in_site && parse_url($url,PHP_URL_HOST)){
@@ -460,8 +467,8 @@ class DNView
 	public function _Show($data=[],$view)
 	{
 		$this->view=$view;
-		if(isset($this->beforeShowHandler)){
-			($this->beforeShowHandler)($data,$this->view);
+		if(isset($this->before_show_handler)){
+			($this->before_show_handler)($data,$this->view);
 		}
 		$this->data=array_merge($this->data,$data);
 		$this->view_file=$this->path.rtrim($this->view,'.php').'.php';
@@ -490,9 +497,13 @@ class DNView
 	{
 		$this->path=$path;
 	}
-	public function setBeforeShow($callback)
+	public function setbefore_show_handler($callback)
 	{
-		$this->beforeShowHandler=$callback;
+		$this->before_show_handler=$callback;
+	}
+	public function setHeaderHandler($header_handler)
+	{
+		$this->header_handler=$header_handler;
 	}
 	public function setViewWrapper($head_file,$foot_file)
 	{
@@ -1024,7 +1035,11 @@ trait DNMVCS_Misc
 		}
 		return $data;
 	}
-	
+	public static function HasInclude($file)
+	{
+		$a=get_included_files();
+		return in_array($a,realpath($file))?true:false;
+	}
 }
 trait DNMVCS_Handler
 {
@@ -1167,8 +1182,8 @@ class DNMVCS
 			'route_list'=>[],
 			
 			'swoole_mode'=>false,
-			'db_reuse_size'=>0,
-			'db_reuse_timeout'=>5,
+			'swoole_db_reuse_size'=>0,
+			'swoole_db_reuse_timeout'=>5,
 		];
 	public $options=[];
 	public $isDev=false;
@@ -1274,7 +1289,7 @@ class DNMVCS
 	{
 		$path_view=$this->path.rtrim($this->options['path_view'],'/').'/';
 		$view->init($path_view);
-		$view->setBeforeShow([$this,'onBeforeShow']);
+		$view->setbefore_show_handler([$this,'onBeforeShow']);
 	}
 	public function initRoute($route)
 	{

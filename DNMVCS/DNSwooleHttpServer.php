@@ -468,17 +468,11 @@ class DNSwooleHttpServer
 			ob_end_flush();
 		}
 	}
-	///////////
-	public function checkInclude($file)
-	{
-		$a=get_included_files();
-		return in_array($a,realpath($file))?true:false;
-	}
 	/////////////////////////
 	public function init($options)
 	{
-		require_once(__DIR__.'/SuperGlobal.php');
-		require_once(__DIR__.'/SwooleSuperGlobal.php');
+		DNMVCS::ImportSys('SuperGlobal');
+		DNMVCS::ImportSys('SwooleSuperGlobal');
 		
 		$this->options=array_merge(self::DEFAULT_OPTIONS,$options);
 		$options=$this->options;
@@ -539,9 +533,9 @@ class DNSwooleHttpServer
 		$this->options['http_exception_handler']=$this->http_exception_handler=[DNMVCS::G(),'onException'];
 		
 		$dbm=DNDBManager::G();
-		$db_reuse_size=$dn_options['db_reuse_size']??0;
+		$db_reuse_size=$dn_options['swoole_db_reuse_size']??0;
 		if($db_reuse_size){
-			$db_reuse_timeout=$dn_options['db_reuse_timeout']??5;
+			$db_reuse_timeout=$dn_options['swoole_reuse_timeout']??5;
 			
 			DBConnectPoolProxy::G()->init($db_reuse_size,$db_reuse_timeout)->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
 			$dbm->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
@@ -553,7 +547,6 @@ class DNSwooleHttpServer
 			CoroutineSingleton::CloneInstance(DNRoute::class);
 		});
 		
-		require_once(__DIR__.'/SwooleSuperGlobal.php');
 		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G());
 		
 		return $this;

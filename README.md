@@ -211,8 +211,8 @@ const DNMVCS::DEFAULT_OPTIONS=[
     'rewrite_list'=>[],
     'route_list'=>[],
         'swoole_mode'=>false,               // swoole_mode 模式，和 superGlobal 整合
-        'db_reuse_size'=>0,                 // swoole_mode 模式下生效,大于0复用数据库连接
-        'db_reuse_timeout'=>5,              // swoole_mode 模式下生效,复用数据库连接超时秒数
+        'swoole_db_reuse_size'=>0,                 // swoole_mode 模式下生效,大于0复用数据库连接
+        'swoole_reuse_timeout'=>5,              // swoole_mode 模式下生效,复用数据库连接超时秒数
 ];
 ```
     关于 base_class 选项。
