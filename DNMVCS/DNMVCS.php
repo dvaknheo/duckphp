@@ -1176,7 +1176,6 @@ class DNMVCS
 	protected $auto_close_db=true;
 	protected $path_lib;
 	
-	protected $hasAdvance=false;
 	protected $initObLevel=0;
 	public static function RunQuickly($options=[])
 	{
@@ -1312,12 +1311,9 @@ class DNMVCS
 	
 	public function checkAndInstallDefaultRouteHooks($force_install=false)
 	{
-		if($this->hasAdvance){return;}
-		
 		if($force_install ||$this->options['rewrite_list'] || $this->options['route_list'] ){
 			self::ImportSys('DNRouteAdvance');
 			DNRouteAdvance::G()->install();
-			$this->hasAdvance=true;
 		}
 	}
 	public function setBeforeRunHandler($before_run_handler)
