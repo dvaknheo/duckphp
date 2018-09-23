@@ -184,7 +184,7 @@ class DNRoute
 	public $urlHandler=null;
 	public function _URL($url=null)
 	{
-		if($this->urlHandler){return ($this->urlHandler)($url,true);}
+		if($this->urlHandler){return ($this->urlHandler)($url);}
 		return $this->defaultURLHandler($url);
 	}
 	public function defaultURLHandler($url=null)
@@ -227,7 +227,7 @@ class DNRoute
 		$this->document_root=$_SERVER['DOCUMENT_ROOT']??'';
 		
 		if(PHP_SAPI==='cli'){
-			$argv=$_SERVER['argv'];
+			$argv=$_SERVER['argv']??[];
 			if(count($argv)>=2){
 				$this->path_info=$argv[1];
 				array_shift($argv);
@@ -931,9 +931,9 @@ trait DNMVCS_Glue
 	{
 		return self::G()->_Import($file);
 	}
-	public static function DI($name)
+	public static function DI($name,$object=null)
 	{
-		return self::G()->_DI($name);
+		return self::G()->_DI($name,$object);
 	}
 	protected $container;
 	public function _DI($name,$object=null)
@@ -1167,6 +1167,8 @@ class DNMVCS
 			'route_list'=>[],
 			
 			'swoole_mode'=>false,
+			'db_reuse_size'=>0,
+			'db_reuse_timeout'=>5,
 		];
 	public $options=[];
 	public $isDev=false;

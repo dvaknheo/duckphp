@@ -169,11 +169,15 @@ run(); 开始路由
 3. 继承接管特定类实现目的
 4. 魔改。
 ## 单文件模式
-\DNMVCS\DNMVCS::RunQuickly($options);
-
+```php
+\DNMVCS\DNMVCS::RunOneFileMode([]);
+```
 不想依赖这么多，一个文件解决？可以。
 ### 不用 path_info 的模式
 
+```php
+\DNMVCS\DNMVCS::RunWithoutPathInfo([]);
+```
 ### 一个文件带走的模式 
 
 ## 选项
@@ -206,7 +210,9 @@ const DNMVCS::DEFAULT_OPTIONS=[
     'ext'=>[],                          //默认不使用扩展
     'rewrite_list'=>[],
     'route_list'=>[],
-	'swoole_mode'=>false, // swoole_mode 模式，和 superGlobal 整合
+        'swoole_mode'=>false,               // swoole_mode 模式，和 superGlobal 整合
+        'db_reuse_size'=>0,                 // swoole_mode 模式下生效,大于0复用数据库连接
+        'db_reuse_timeout'=>5,              // swoole_mode 模式下生效,复用数据库连接超时秒数
 ];
 ```
     关于 base_class 选项。
@@ -272,6 +278,8 @@ class DNController
     }
 }
 ```
+非 swoole 模式下，控制器可以不用和路由一样的名称，用默认的 DNController
+
 在控制器里，我们调用了 MiscService 这个服务。
 MiscService 调用 MiscModel 的实现。此外，我们要调整 返回值的内容
 我们用 DNSingleton单例。
@@ -390,6 +398,8 @@ static RunOneFileMode($optionss=[])
     $options['setting'] 里
 static RunWithoutPathInfo()
     不需要 PathInfo 的模式。用 _r 来表示 Path_Info
+static DI($name,$object=null)
+    你们想要的 container。如果 $object 不为null 是写，否则是读。
 ```
 ## 常用静态方法方法
 这些方法因为太常用，所以静态化了。
