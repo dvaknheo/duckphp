@@ -279,13 +279,14 @@ class StrictDBManager extends DNDBManager
 		if(!DNMVCS::G()->isDev){return;}
 		list($_0,$_1,$_2,$caller,$bak)=$backtrace=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,5);
 		$caller_class=$caller['class'];
-		$namespace=DNMVCS::G()->options['namespace'];
+		$namespace_controller=DNMVCS::G()->options['namespace_controller'];
 		$default_controller_class=DNMVCS::G()->options['default_controller_class'];
+		$namespace_controller.='\\';
 		do{
 			if($caller_class==$default_controller_class){
 				DNMVCS::ThrowOn(true,"DB Can not Call By Controller");
 			}
-			if(substr($caller_class,0,strlen("\\$namespace\\Controller\\"))=="\\$namespace\\Controller\\"){
+			if(substr($caller_class,0,strlen($namespace_controller))==$namespace_controller){
 				DNMVCS::ThrowOn(true,"DB Can not Call By Controller");
 			}
 			
