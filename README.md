@@ -750,10 +750,9 @@ set404 设置404 回调
 高级模式
 
     setURLHandel
-	_URL的 innerCall 就是调用这个 setURLHandel 的 onURL 
-    
+    替换 URL（）函数的实现。
 	addRouteHook
-	添加路由的hook
+	添加路由的hook,$preprend  在最前面加 
 ## DNView 视图类
 	public function _ExitJson($ret)
 	public function _ExitRedirect($url,$only_in_site=true)
@@ -784,10 +783,10 @@ set404 设置404 回调
 installDBClass($db_create_handler,$db_close_handler)
 
     安装DB类
-    $db_create_handler($config) 返回 DB 实例。方便扩展
+    $db_create_handler($config,$tag) 返回 DB 实例。方便扩展
     setting 里的 db, db_r 会传到这里。
     
-    $db_close_handler($db) 关闭数据库
+    $db_close_handler($db,$tag) 关闭数据库
 
 closeAllDB()
 
@@ -934,10 +933,9 @@ W($object);
     quote_array， get， insert， update， delete
     等
     user_ext_db 选项自动安装，手动安装用
-    \DNMVCS\DNMVCS::G()->installDBClass([DBExt::class,'CreateDBInstance']， [DBExt::class,'CreateDBInstance']);
+    \DNMVCS\DNDBManager::G()->installDBClass([DBExt::class,'CreateDBInstance']， [DBExt::class,'CloseDBInstance']);
 ### MedooSimpleIntaller
-
-    \DNMVCS\DNMVCS::G()->installDBClass([DBExt::class,'CreateDBInstance']， [DBExt::class,'CreateDBInstance']);
+    \DNMVCS\DNDBManager::G()->installDBClass([DBExt::class,'CreateDBInstance']， [DBExt::class,'CloseDBInstance']);
     用于加载 medoo 类代替默认的 db 类，注意 medoo 类 不兼容默认 db 类
 ### API
 	用于 api 服务快速调用 无引用
@@ -979,12 +977,10 @@ DN::init
     autoload 自动加载
     checkOverride 如果子类，则 G函数替换为子类。
     initExceptionManager 初始化异常。
-    initConfiger,initView,initRoute,initDBManager
+    initConfiger,initView,initRoute,initDBManager 初始化组件
 
 DN::run
-    $AppHook();
-        RouteRewriteHook->hook
-		RouteMapHook->hook
+    RouteAdvance->hook
     (DNRoute::run)
 	(RouteHook)($this);
 		 
@@ -1034,8 +1030,8 @@ $server_options 的选项
 ```php
 	const DEFAULT_OPTIONS=[
 			'swoole_server'=>null, // swoole_http_server 对象，留空，则用 host,port 创建
-			'swoole_options'=>[],   //swoole_http_server 的配置，合并如 server
-
+            'swoole_options'=>[],   //swoole_http_server 的配置，合并如 server
+            
 			'host'=>'0.0.0.0',  // IP
 			'port'=>0,          //端口
 			
@@ -1072,5 +1068,49 @@ exit 函数可以用。但 header 函数不能用了，你得用 DNSwooleHttpSer
 
 
 ## class CoroutineSingleton
+
+用于 每协程单例
+
+	public static function GetInstance($class,$object)
+	public static function CreateInstance($class,$object=null)
+	public static function CloneInstance($class)
+	public static function DeleteInstance($class)
+	public static function ReplaceDefaultSingletonHandler()
+	public static function CleanUp()
+	public static function Dump()
+
 ## class SwooleContext
+	public static function Request()
+	public static function Response()
+	public static function CleanUp()
+	public function initHttp($request,$response)
+	public function initWebSocket($frame)
+	public function isWebSocketClosing()
+## class DNSwooleException
+	public static function ThrowOn($flag,$message,$code=0)
+
 ## class DBConnectPoolProxy
+	public function setDBHandler($db_create_handler,$db_close_handler=null)
+	public function onCreate($db_config,$tag)
+	public function onClose($db,$tag)
+
+## trait DNSwooleHttpServer_Static
+
+	public static function Server()
+	public static function Request()
+	public static function Response()
+	public static function Context()
+## trait DNSwooleHttpServer_GlobalFunc
+
+	public function header(string $string, bool $replace = true , int $http_response_code =0)
+	public function setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
+	public function set_exception_handler(callable $exception_handler)
+	public function register_shutdown_function(callable $callback,...$args)
+## trait DNSwooleHttpServer_SimpleHttpd
+
+## class DNSwooleHttpServer
+	public function init($options)
+	public function bindDN($dn_options)
+	public function run()
+	public static function RunWithServer($server_options,$dn_options=[])
+

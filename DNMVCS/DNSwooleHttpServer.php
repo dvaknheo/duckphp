@@ -159,12 +159,18 @@ class DBConnectPoolProxy
 		$this->db_queue_read=new \SplQueue();
 		$this->db_queue_read_time=new \SplQueue();
 	}
+	public function init($max_length=10,$timeout=5)
+	{
+		$this->max_length=$max_length;
+		$this->timeout=$timeout;
+		return $this;
+	}
 	public function setDBHandler($db_create_handler,$db_close_handler=null)
 	{
 		$this->db_create_handler=$db_create_handler;
 		$this->db_close_handler=$db_close_handler;
 	}
-	public function getObject($queue,$queue_time,$db_config,$tag)
+	protected function getObject($queue,$queue_time,$db_config,$tag)
 	{
 		if($queue->isEmpty()){
 			return ($this->db_create_handler)($db_config,$tag);
@@ -180,7 +186,7 @@ class DBConnectPoolProxy
 		return $db;
 		
 	}
-	public function reuseObject($queue,$queue_time,$db)
+	protected function reuseObject($queue,$queue_time,$db)
 	{
 		if(count($queue)>=$this->max_length){
 			($this->db_close_handler)($db,$tag);
@@ -228,6 +234,8 @@ trait DNSwooleHttpServer_Static
 }
 trait DNSwooleHttpServer_GlobalFunc
 {
+	public $http_exception_handler=null;
+	public $shutdown_function_array=[];
 	public function header(string $string, bool $replace = true , int $http_response_code =0)
 	{
 		list($key,$value)=explode(':',$string);
@@ -240,11 +248,48 @@ trait DNSwooleHttpServer_GlobalFunc
 	{
 		return SwooleContext::G()->response->cookie($key,$value,$expire,$path,$domain,$secure,$httponly );
 	}
+	public function set_exception_handler(callable $exception_handler)
+	{
+		$this->http_exception_handler=$exception_handler;
+	}
+	public function register_shutdown_function(callable $callback,...$args)
+	{
+		$this->shutdown_function_array[]=func_get_args();
+	}
+}
+trait DNSwooleHttpServer_SimpleHttpd
+{
+	
+	protected function onHttpRun($request,$response){throw new DNSwooleException("Impelement Me");}
+	protected function onHttpException($ex){throw new DNSwooleException("Impelement Me");}
+	protected function onHttpClean(){throw new DNSwooleException("Impelement Me");}
+	
+	public function onRequest($request,$response)
+	{
+		$InitObLevel=ob_get_level();
+		ob_start(function($str) use($response){
+			if(''===$str){return;} // stop warnning;
+			$response->write($str);
+		});
+		try{
+			$this->onHttpRun($request,$response);
+		}catch(\Throwable $ex){
+			$this->onHttpException($ex);
+		}
+		for($i=ob_get_level();$i>$InitObLevel;$i--){
+			ob_end_flush();
+		}
+		$this->onHttpClean();
+		$response->end();
+		//response 被使用到，而且出错就要手动 end  还是 OB 层级问题？
+		//onHttpRun(null,null) 则不需要用
+	}
 }
 class DNSwooleHttpServer
 {
 	use DNSingleton;
 	use DNSwooleHttpServer_Static;
+	use DNSwooleHttpServer_SimpleHttpd;
 	use DNSwooleHttpServer_GlobalFunc;
 	
 	const DEFAULT_OPTIONS=[
@@ -268,6 +313,7 @@ class DNSwooleHttpServer
 	
 	public $http_handler=null;
 	public $http_exception_handler=null;
+	
 	protected $static_root=null;  //TODO
 	
 	public $websocket_open_handler=null;
@@ -275,19 +321,8 @@ class DNSwooleHttpServer
 	public $websocket_exception_handler=null;
 	public $websocket_close_handler=null;
 	
-	public $shutdown_function_array=[];
-
-	public function set_exception_handler(callable $exception_handler)
-	{
-		$this->http_exception_handler=$exception_handler;
-	}
-	public function register_shutdown_function(callable $callback,...$args)
-	{
-		$this->shutdown_function_array[]=func_get_args();
-	}
-
 	
-	public function onHttpRun($request,$response)
+	protected function onHttpRun($request,$response)
 	{
 		SwooleContext::G()->initHttp($request,$response);
 		CoroutineSingleton::CloneInstance(SuperGlobal\SERVER::class);
@@ -381,7 +416,7 @@ class DNSwooleHttpServer
 		if(!$this->http_handler){return;}
 		($this->http_handler)();
 	}
-	public function onHttpException($ex)
+	protected function onHttpException($ex)
 	{
 		if( !($ex instanceof \Swoole\ExitException) ){
 			if($this->http_exception_handler){
@@ -397,31 +432,12 @@ class DNSwooleHttpServer
 			}
 		}
 	}
-	public function onHttpClean()
+	protected function onHttpClean()
 	{
 		SwooleContext::CleanUp();
 		CoroutineSingleton::CleanUp();
 	}
-	public function onRequest($request,$response)
-	{
-		$InitObLevel=ob_get_level();
-		ob_start(function($str) use($response){
-			if(''===$str){return;} // stop warnning;
-			$response->write($str);
-		});
-		try{
-			$this->onHttpRun($request,$response);
-		}catch(\Throwable $ex){
-			$this->onHttpException($ex);
-		}
-		for($i=ob_get_level();$i>$InitObLevel;$i--){
-			ob_end_flush();
-		}
-		$this->onHttpClean();
-		$response->end();
-		//response 被使用到，而且出错就要手动 end  还是 OB 层级问题？
-		//onHttpRun(null,null) 则不需要用
-	}
+
 	public function onOpen(swoole_websocket_server $server, swoole_http_request $request)
 	{
 		if(!$this->websocket_open_handler){ return; }
@@ -459,7 +475,7 @@ class DNSwooleHttpServer
 		return in_array($a,realpath($file))?true:false;
 	}
 	/////////////////////////
-	public function init($options=[])
+	public function init($options)
 	{
 		require_once(__DIR__.'/SuperGlobal.php');
 		require_once(__DIR__.'/SwooleSuperGlobal.php');
@@ -511,28 +527,27 @@ class DNSwooleHttpServer
 		
 		return $this;
 	}
-	public function run()
+	public function bindDN($dn_options)
 	{
-		define('DN_SWOOLE_SERVER_RUNNING',true);
-		fwrite(STDOUT,get_class($this)." run at ".DATE(DATE_ATOM)." ...\n");
-		$t=$this->server->start();
-		fwrite(STDOUT,get_class($this)." run end ".DATE(DATE_ATOM)." ...\n");
-	}
-	public function afteAppInit()
-	{
+		if(!$dn_options){return;}
+		
+		$dn_options['swoole_mode']=true;
+		DNMVCS::G()->init($dn_options);
+		///////////////////////////////
+		
+		$this->options['http_handler']=$this->http_handler =[DNMVCS::G(),'run'];
+		$this->options['http_exception_handler']=$this->http_exception_handler=[DNMVCS::G(),'onException'];
 		
 		$dbm=DNDBManager::G();
-		$options=DNMVCS::G()->options;
-		$db_reuse_size=$options['db_reuse_size']??0;
+		$db_reuse_size=$dn_options['db_reuse_size']??0;
 		if($db_reuse_size){
-			$db_reuse_timeout=$options['db_reuse_timeout']??5;
+			$db_reuse_timeout=$dn_options['db_reuse_timeout']??5;
 			
-			DBConnectPoolProxy::G()->max_length=$$db_reuse_size;
-			DBConnectPoolProxy::G()->timeout=$db_reuse_timeout;
-			
-			DBConnectPoolProxy::G()->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
-			DNDBManager::G()->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
+			DBConnectPoolProxy::G()->init($db_reuse_size,$db_reuse_timeout)->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
+			$dbm->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
 		}
+		DNView::G()->header_handler=[self::G(),'header'];
+		
 		DNMVCS::G()->setBeforeRunHandler(function(){
 			CoroutineSingleton::CloneInstance(DNView::class);
 			CoroutineSingleton::CloneInstance(DNRoute::class);
@@ -540,17 +555,18 @@ class DNSwooleHttpServer
 		
 		require_once(__DIR__.'/SwooleSuperGlobal.php');
 		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G());
+		
+		return $this;
+	}
+	public function run()
+	{
+		define('DN_SWOOLE_SERVER_RUNNING',true);
+		fwrite(STDOUT,get_class($this)." run at ".DATE(DATE_ATOM)." ...\n");
+		$t=$this->server->start();
+		fwrite(STDOUT,get_class($this)." run end ".DATE(DATE_ATOM)." ...\n");
 	}
 	public static function RunWithServer($server_options,$dn_options=[])
 	{
-		if($dn_options){
-			$dn_options['swoole_mode']=true;
-			DNMVCS::G()->init($dn_options);
-			self::G()->afteAppInit();
-			
-			$server_options['http_handler']=[DNMVCS::G(),'run'];
-			$server_options['http_exception_handler']=[DNMVCS::G(),'onException'];
-		}
-		self::G()->init($server_options)->run();
+		return self::G()->init($server_options)->bindDN($dn_options)->run();
 	}
 }
