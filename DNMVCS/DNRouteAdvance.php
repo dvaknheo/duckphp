@@ -12,9 +12,9 @@ class DNRouteAdvance
 			foreach($data as $k=>$v){
 				SuperGlobal\GET::Set($k,$v);
 			}
+			if(defined('DN_SWOOLE_SERVER_RUNNING')){return;}
 		}
 		$_GET=array_merge($get,$_GET??[]);
-		// $_GET 无用的情况？
 	}
 	public function matchRewrite($old_url,$new_url,$route)
 	{
