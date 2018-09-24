@@ -540,7 +540,7 @@ class DNSwooleHttpServer
 			DBConnectPoolProxy::G()->init($db_reuse_size,$db_reuse_timeout)->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
 			$dbm->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
 		}
-		DNView::G()->header_handler=[self::G(),'header'];
+		DNView::G()->setHeaderHandler([self::G(),'header']);
 		
 		DNMVCS::G()->setBeforeRunHandler(function(){
 			CoroutineSingleton::CloneInstance(DNView::class);

@@ -1,19 +1,20 @@
 <?php
+declare(strict_types=1);
 namespace DNMVCS\SuperGlobal;
 // 用于不想用 PHP 的超级变量的场合 在 swoole 应用里用到
 class SuperGlobalBase
 {
 	use \DNMVCS\DNSingleton;
 	protected $data=[];
-	public static function Get($k)
+	public static function Get(string $k)
 	{
 		return self::G()->_Get($k);
 	}
-	public static function Set($k,$v)
+	public static function Set(string $k,$v)
 	{
 		return self::G()->_Set($k,$v);
 	}
-	public static function Remove($k)
+	public static function Remove(string $k)
 	{
 		return self::G()->_Remove($k);
 	}
@@ -21,15 +22,15 @@ class SuperGlobalBase
 	{
 		return self::G()->_All();
 	}
-	public function _Get($k)
+	public function _Get(string $k)
 	{
 		return $this->data[$k]??null;
 	}
-	public function _Set($k,$v)
+	public function _Set(string $k,$v)
 	{
 		$this->data[$k]=$v;
 	}
-	public function _Remove($k)
+	public function _Remove(string $k)
 	{
 		unset($this->data[$k]);
 	}
@@ -42,15 +43,15 @@ class SuperGlobalBase
 
 class GET extends  SuperGlobalBase
 {
-	public function _Get($k)
+	public function _Get(string $k)
 	{
 		return $_GET[$k];
 	}
-	public function _Set($k,$v)
+	public function _Set(string $k,$v)
 	{
 		$_GET[$k]=$v;
 	}
-	public function _Remove($k)
+	public function _Remove(string $k)
 	{
 		unset($_GET[$k]);
 	}
@@ -61,15 +62,15 @@ class GET extends  SuperGlobalBase
 }
 class POST extends SuperGlobalBase
 {
-	public function _Get($k)
+	public function _Get(string $k)
 	{
 		return $_POST[$k];
 	}
-	public function _Set($k,$v)
+	public function _Set(string $k,$v)
 	{
 		$_POST[$k]=$v;
 	}
-	public function _Remove($k)
+	public function _Remove(string $k)
 	{
 		unset($_POST[$k]);
 	}
@@ -80,15 +81,15 @@ class POST extends SuperGlobalBase
 }
 class REQUEST extends SuperGlobalBase
 {
-	public function _Get($k)
+	public function _Get(string $k)
 	{
 		return $_REQUEST[$k];
 	}
-	public function _Set($k,$v)
+	public function _Set(string $k,$v)
 	{
 		$_REQUEST[$k]=$v;
 	}
-	public function _Remove($k)
+	public function _Remove(string $k)
 	{
 		unset($_REQUEST[$k]);
 	}
@@ -99,15 +100,15 @@ class REQUEST extends SuperGlobalBase
 }
 class SERVER extends SuperGlobalBase
 {
-	public function _Get($k)
+	public function _Get(string $k)
 	{
 		return $_SERVER[$k];
 	}
-	public function _Set($k,$v)
+	public function _Set(string $k,$v)
 	{
 		$_SERVER[$k]=$v;
 	}
-	public function _Remove($k)
+	public function _Remove(string $k)
 	{
 		unset($_SERVER[$k]);
 	}
@@ -118,7 +119,7 @@ class SERVER extends SuperGlobalBase
 }
 class COOKIE extends SuperGlobalBase
 {
-	public function _Get($k)
+	public function _Get(string $k)
 	{
 		return $_COOKIE[$k];
 	}
@@ -130,7 +131,7 @@ class COOKIE extends SuperGlobalBase
 
 class ENV extends SuperGlobalBase
 {
-	public function _Get($k)
+	public function _Get(string $k)
 	{
 		return $_ENV[$k];
 	}
@@ -141,15 +142,15 @@ class ENV extends SuperGlobalBase
 }
 class SESSION extends SuperGlobalBase
 {
-	public function _Get($k)
+	public function _Get(string $k)
 	{
 		return $_SESSION[$k];
 	}
-	public function _Set($k,$v)
+	public function _Set(string $k,$v)
 	{
 		$_SESSION[$k]=$v;
 	}
-	public function _Remove($k)
+	public function _Remove(string $k)
 	{
 		unset($_SESSION[$k]);
 	}
