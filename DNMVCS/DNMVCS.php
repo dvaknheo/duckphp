@@ -717,10 +717,6 @@ class DNExceptionManager
 	}
 	public static function ManageException($ex)
 	{
-		if(is_a($ex,'Error')){
-			return (self::$OnErrorException)($ex);
-			
-		}
 		$class=get_class($ex);
 		if(isset(self::$SpecailExceptionMap[$class])){
 			return (self::$SpecailExceptionMap[$class])($ex);
@@ -730,27 +726,18 @@ class DNExceptionManager
 		//throw $ex;
 	}
 	
-	public static function HandleAllError($OnError,$OnDevError)
+	public static function HandleAllError($OnDevError)
 	{
 		set_error_handler(array(__CLASS__,'onErrorHandlerr'));
-		self::$OnError=$OnError;
 		self::$OnDevError=$OnDevError;
 	}
 	public static function onErrorHandlerr($errno, $errstr, $errfile, $errline)
 	{
-	//TODO ,for php7
 		if (!(error_reporting() & $errno)) {
 			return false;
 		}
 		switch ($errno) {
-		case E_ERROR:
-		case E_USER_ERROR:
-			(self::$OnError)($errno, $errstr, $errfile, $errline);
-			break;
-		case E_USER_WARNING:
-		case E_WARNING:
-			(self::$OnError)($errno, $errstr, $errfile, $errline);
-			break;
+		
 		case E_USER_NOTICE:
 		case E_NOTICE:
 		case E_STRICT:
@@ -758,9 +745,13 @@ class DNExceptionManager
 		case E_USER_DEPRECATED:
 			(self::$OnDevError)($errno, $errstr, $errfile, $errline);
 			break;
+		case E_USER_WARNING:
+		case E_WARNING:
+			//
+		case E_ERROR:
+		case E_USER_ERROR:
 		default:
-			//echo "DNMVCS Fatal: Unknown error type: [$errno] $errstr<br />\n";
-			(self::$OnError)($errno, $errstr, $errfile, $errline);
+			throw new \ErrorException($errstr,$errno, $errno, $errfile, $errline); 
 			break;
 		}
 		/* Don't execute PHP internal error handler */
@@ -1059,50 +1050,33 @@ trait DNMVCS_Handler
 	}
 	public function onException($ex)
 	{
-		$this->flushBuffer();
-		$data=[];
-		$data['message']=$ex->getMessage();
-		$data['code']=$ex->getCode();
-		$data['ex']=$ex;
-		$data['trace']=$ex->getTraceAsString();
-		if(!DNView::G()->hasView('_sys/error-exception')){
-			if(!$this->isDev){
-				echo "DNMVCS 500 internal error\n";
-			}else{
-				echo "<!--DNMVCS  use view/_sys/error-exception.php to overrid me -->\n";
-				var_dump($ex);
-			}
-			return;
-		}
-		DNView::G()->setViewWrapper(null,null);
-		DNView::G()->_Show($data,'_sys/error-exception');
-	}
-	public function onErrorException($ex)
-	{
+		$is_error=is_a($ex,'Error') || is_a($ex,'ErrorException')?true:false;		
 		$this->flushBuffer();
 		
 		if(PHP_SAPI!=='cli'){
 			header("HTTP/1.1 500 Internal Error");
 		}
-		$message=$ex->getMessage();
-		$code=$ex->getCode();
 		
+		$view=$is_error?'_sys/error-500':'_sys/error-exception';
 		$data=[];
-		$data['message']=$message;
-		$data['code']=$code;
+		$data['message']=$ex->getMessage();
+		$data['code']=$ex->getCode();
 		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
-		if(!DNView::G()->hasView('_sys/error-500')){
+		if(!DNView::G()->hasView($view)){
 			if(!$this->isDev){
-				echo "DNMVCS 500 internal error!\n";
+				$desc=$is_error?'error':'exception';
+				echo "DNMVCS $desc internal error\n";
 			}else{
-				echo "<!--DNMVCS  use view/_sys/error-500.php to overrid me -->\n";
-				echo($ex);
+				echo "<!--DNMVCS  use view '$view' to overrid me -->\n";
+				echo "\n<pre>\n";
+				echo $data['trace'];
+				echo "\n</pre>\n";
 			}
 			return;
 		}
 		DNView::G()->setViewWrapper(null,null);
-		DNView::G()->_Show($data,'_sys/error-500');
+		DNView::G()->_Show($data,'_sys/error-exception');
 	}
 	public function onDebugError($errno, $errstr, $errfile, $errline)
 	{
@@ -1143,6 +1117,7 @@ EOT;
 	}
 	public function onErrorHandler($errno, $errstr, $errfile, $errline)
 	{
+	
 		//var_dump($errno, $errstr, $errfile, $errline);
 		throw new \Error($errstr,$errno);
 	}
@@ -1242,9 +1217,9 @@ class DNMVCS
 	
 	protected function initExceptionManager()
 	{
+		DNExceptionManager::HandleAllError([$this,'onDebugError']);
 		if(defined('DN_SWOOLE_SERVER_RUNNING')){return;}
-		DNExceptionManager::HandleAllException([$this,'onErrorException'],[$this,'onException']);
-		DNExceptionManager::HandleAllError([$this,'onErrorHandler'],[$this,'onDebugError']);
+		DNExceptionManager::HandleAllException([$this,'onException'],[$this,'onException']);
 	}
 	protected function checkOverride($options)
 	{

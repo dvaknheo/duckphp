@@ -419,6 +419,8 @@ class DNSwooleHttpServer
 	protected function onHttpException($ex)
 	{
 		if( !($ex instanceof \Swoole\ExitException) ){
+			//$this->header("HTTP/1.1 500 Internal Error");
+			SwooleContext::G()->response->status(500);
 			if($this->http_exception_handler){
 				($this->http_exception_handler)($ex);
 			}else{
