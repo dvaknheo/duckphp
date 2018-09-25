@@ -122,7 +122,6 @@ DNMVCS Fatal: no setting file!,change setting.sample.php to setting.php !
 |   |       TestModel.php   // 测试 Model 
 |   \---Service     // 服务放在这里
 |           TestService.php //测试 Service
-
 +---classes         //自动加载的类，放在这里
 |       ForAutoLoad.php // 测试自动加载
 +---config          // 配置文件 放这里
@@ -183,8 +182,8 @@ run(); 开始路由
 ## 选项
     init($options) 方法的参数是可配置的，默认设置是分三个类别的组合。
     多余的缩进里的选项是不建议修改的。
-    *一些高级配置，用于魔改的请自己暂时去翻看代码。*
     下面是默认的配置详解
+
 ```php
 const DNAutoLoader::DEFAULT_OPTIONS=[
     'namespace'=>'MY',                  // 默认的命名空间，你可以自定义工程的命名空间
@@ -198,7 +197,7 @@ autoload 自动加载相关的选项
 
 ```php
 const DNMVCS::DEFAULT_OPTIONS=[
-    'base_class'=>'MY\Base\App',    // override 重写 系统入口类代替 DNMVCS 类。
+    'base_class'=>'MY\Base\App',        // override 重写 系统入口类代替 DNMVCS 类。
         'path_view'=>'view',            // 视图目录，或许会有人改到 app/View
 		'path_lib'=>'lib',              // 用于手动导入 DNMVCS::Import() 的类的目录
 	'setting'=>[],        				// 设置，设置文件里填写的将会覆盖这一选项
@@ -211,8 +210,8 @@ const DNMVCS::DEFAULT_OPTIONS=[
     'rewrite_list'=>[],
     'route_list'=>[],
         'swoole_mode'=>false,               // swoole_mode 模式，和 superGlobal 整合
-        'swoole_db_reuse_size'=>0,                 // swoole_mode 模式下生效,大于0复用数据库连接
-        'swoole_reuse_timeout'=>5,              // swoole_mode 模式下生效,复用数据库连接超时秒数
+        'db_reuse_size'=>0,                 // swoole_mode 模式下生效,大于0复用数据库连接
+        'db_reuse_timeout'=>5,              // swoole_mode 模式下生效,复用数据库连接超时秒数
 ];
 ```
     关于 base_class 选项。
@@ -236,6 +235,8 @@ const DNRoute::DEFAULT_OPTIONS=[
     enable_post_prefix 默认把 POST 的方法映射到 do_$action 这样处理起来方便些。
 
 ### 设置文件
+    默认情况下会读取 ::/config/setting.php 里的设置。
+    你可以用过 setting_file_basename='' 使得不读取这里的设置
     工程的设置文件样例 setting.sample.php 。选项很少
 
 ```php
@@ -287,7 +288,6 @@ MiscService 调用 MiscModel 的实现。此外，我们要调整 返回值的�
 ::app/Service/MiscService.php
 ```php
 <?php
-// 
 class MiscService
 {
     use \DNMVCS\DNSingleton;
@@ -303,9 +303,9 @@ class MiscService
 完成 MiscModel
 Model 类是实现基本功能的
 
-::app/Model/MiscModel
+::app/Model/MiscModel.php
 ```php
-// 
+<?php
 class MiscService
 {
     use \DNMVCS\DNSingleton;
@@ -317,7 +317,6 @@ class MiscService
 ```
 附加，在初始化里我们要做其他事情。
 根据 base_class 选项，我们有。
-
 
 ::app/Base/App.php 
 ```php
@@ -343,7 +342,7 @@ DNMVCS 的控制器有点像CodeInigter，不需要继承什么，就这么简�
     甚至连名字都不用，用默认的 DNController 就够了。
     而且支持子命名空间多级目录。如果开启简单模式，也可用 __ 双下划线代替 \ 切分。
 2. 处理同名
-
+    Swoole 兼容不可以用这种偷懒模式)
     DNController 重名了怎么办，比如我要相互引用？ 
     1. 那是你不应该这么做，
     2. 你也可以采取名称对应的类，而不偷懒啊啊。
@@ -354,9 +353,12 @@ DNMVCS 的控制器有点像CodeInigter，不需要继承什么，就这么简�
     要指定 GET/POST 在最前面加http 方法.
 
     DN::G()->assignRoute('GET ~article/(\d+)','article->get');
+
     *用->表示类调用而不是静态调用*
     DNMVCS 支持 Paramter，你可以在设置里关掉。
-    Parameter 切片会直接传递进 方法里作为参数
+
+    Parameter 切片会直接传递进 方法里作为参数。
+
     路由表里，用正则切分会传递进方法，不管是否开启 enable_paramters
     
 4. 不用 PATH_INFO
@@ -364,19 +366,18 @@ DNMVCS 的控制器有点像CodeInigter，不需要继承什么，就这么简�
     simple_route_key 开启 _GET 模式路由
     如果你想加其他功能，可以 添加钩子， 继承 DNRoute 自行扩展类。  两种方式灵活扩展
 
-
 run() 方法开始使用路由。 如果你不想要路由。只想要特定结构的目录， 不调用 run 就可以了。
 比如只想要 db 类等等。
 
 
 ## 重写 错误页面
 
-错误页面在 view/_sys 里。你可以修改相应的错误页面方法。
+错误页面在 ::view/_sys/ 目录下 里。你可以修改相应的错误页面方法。
 比如 404 是 view/404.php 。
 高级一点，你可以 扩展 DNMVCS 的主类实现。
 
 DNMVCS 的报错页面还是很丑陋，需要调整一下
-无错误页面模式，会自己显示末日错误
+无错误页面模式，会自己显示默认错误
 # DNMVCS 主类
 ## 基本方法
 ```
@@ -450,8 +451,8 @@ Setting($key)
 Config($key,$file_basename='config')
 
     读取配置 
-    配置放在 config/config.php 里，php 格式
-    配置非敏感信息，放在版本管理中
+    配置放在 config/$file_basename.php 里，php 格式
+    配置是放在非敏感信息，放在版本管理中
     实质调用 DNConfig::G()->_Config();
 LoadConfig($file_basename)
 
@@ -463,15 +464,15 @@ ExitJson($ret)
     打印 json_encode($ret) 并且退出。
     这里的 json 为人眼友好模式。
 
-    实质调用 DNView::G()->ExitJson();
+    实质调用 DNView::G()->_ExitJson();
 ExitRedirect($url)
 
     跳转到另一个url 并且退出。
-    实质调用 DNView::G()->ExitRedirect();
+    实质调用 DNView::G()->_ExitRedirect();
 ExitRouteTo($url)
 
     跳转到 URL()函数包裹的 url。
-    应用到 DNView::G()->ExitRedirect(); 和 DNRoute::G()->URL
+    应用到 DNView::G()->ExitRedirect(); 和 DNRoute::G()->URL();
     高级开发者注意，这是静态方法里处理的，子类化需要注意
 ThrowOn(\$flag,\$message,\$code);
 
@@ -486,8 +487,9 @@ Import($file)
     实质调用 self::G()->_Import();
 ImportSys($file)
     
-    手动导DNMVCS目录下的包含文件 函数。DNMVCS库目录默认不包含其他非必要的文件
-	因为需求不常用，所以没自动加载
+    手动导DNMVCS目录下的包含文件 函数。
+    目前应用只有一个： 延迟加载  DNMedoo .
+
 	比如在调试状态下：限定各 G 函数的调用。以及DNMedoo ，用 Medoo类
 
 ## 独立杂项静态方法
@@ -535,11 +537,6 @@ getRouteCallingMethod()
     也适用于重写URL后判断是否是直接访问
 
     实质调用 DNRoute 的 getRouteCallingMethod
-addRouteHook($hook,$prepend=false)
-
-    下钩子扩展 route 方法
-    实质调用 DNRoute 的 addRouteHook
-	
 setViewWrapper($head_file=null,$foot_file=null)
 
     给输出 view 加页眉页脚 
@@ -563,7 +560,10 @@ assignExceptionHandel($classes,$callback=null)
     分配特定异常回调。
     用于控制器里控制特定错误类型。 
     // TODO 优化 多个 classes  名称共享一个
+addRouteHook($hook,$prepend=false)
 
+    下钩子扩展 route 方法
+    实质调用 DNRoute 的 addRouteHook
 setDefaultExceptionHandel($calllback)
 
     接管默认的异常处理，所有异常都归回调管，而不是显示 500 页面。
@@ -579,10 +579,13 @@ onBeforeShow()
 onShow404()
     404 回调。这里没传各种参数，需要的时候从外部获取。
 onException($ex)
-	\Throwable $ex
-    发生默认异常的处理函数。显示 exception 页面 或者是500 页面。
-onDevErrorHandler($errno, $errstr, $errfile, $errline)
-    处理 Notice,decrapted 等开发期错误。
+    发生未处理异常的处理函数。显示 exception 页面
+onErrorException($ex)
+    处理错误，显示500错误。
+onDebugError($errno, $errstr, $errfile, $errline)
+    处理 Notice 错误。
+onErrorHandel($errno, $errstr, $errfile, $errline)
+    处理 PHP 错误
 ```
 ## 组件初始化
 初始化组件，供扩展组件时初始化用。
@@ -609,15 +612,19 @@ initMisc
     如果 ext 启用 AppExt
 ```
 ## 高级方法
+
+高级方法是一般不会用到的方法。
+
 setBeforeRunHandler($before_run_handler)
+
     在run之前执行回调。 SwooleHttpServer 用到这个。
 checkAndInstallDefaultRouteHooks($force_install=false)
+
     安装默认的路由钩子，默认是路由和 rewrite。
     你也可以重写。
 flushBuffer()
-    清理缓存。一般不用自己管理。
-dealDefautExceptionHandle
-dealExceptionHandelers
+
+    清理OB缓存。一般不用自己管理。在异常处理中你可能要用到这个
 # 进一步扩展
 ## 总说
 DNMVCS 系统 是用各自独立的类合起来的。
@@ -680,7 +687,9 @@ public function init($options=[])
 ```
 这样 MYRoute 就接管了 DNRoute 了。
 
-DNView::G(AdminView::G()); 这样 AdminView 就接管了 DNView 了。
+
+DNView::G(AdminView::G());
+这样 AdminView 就接管了 DNView 了。
 
 G 函数的缺点：IDE 上没法做类型提示，这对一些人来说很重要。
 
@@ -758,12 +767,15 @@ set404 设置404 回调
 当前方法用于权限的判断。如跳过login 方法其他都要权限。
 当前类如果为空，说明是 rewrite 过来的。
 当前路径用于如果是切片的，找回未切片的路径。
+
 高级模式
 
-    setURLHandel
-    替换 URL（）函数的实现。
-	addRouteHook
-	添加路由的hook,$preprend  在最前面加 
+setURLHandel
+    
+    替换 URL()函数的实现。
+addRouteHook
+	
+    添加路由的hook,$preprend  在最前面加 
 ## DNView 视图类
 	public function _ExitJson($ret)
 	public function _ExitRedirect($url,$only_in_site=true)
@@ -784,8 +796,8 @@ set404 设置404 回调
 	public function _LoadConfig($file_basename='config')
 
     DNConfiger 类获得配置设置
-## DNExceptionManager 异常管理类
-    异常管理类都是静态方法，基本上没人会接管这个类吧。或者你可以覆盖 DNMVCS 的 initExceptionManager 的方法。
+## 异常管理 trait DMMVCS_ExceptionManager
+    异常管理已经变更，文档待补完
 
 ## DNDBManger 数据库管理类
 这里主要是数据库的扩展
@@ -980,6 +992,7 @@ DNFuncionModifer
     超全局数组的 swoole 替换层
 ## DNSwooleHttpServer
     Swoole 的 Http 服务器,单独章节介绍
+
 # DNMVCS 的代码流程讲解
 
 大致用图表现如下
@@ -1080,7 +1093,7 @@ exit 函数可以用。但 header 函数不能用了，你得用 DNSwooleHttpSer
 
 ## class CoroutineSingleton
 
-用于 每协程单例
+用于协程单例
 
 	public static function GetInstance($class,$object)
 	public static function CreateInstance($class,$object=null)
@@ -1120,7 +1133,7 @@ exit 函数可以用。但 header 函数不能用了，你得用 DNSwooleHttpSer
 ## trait DNSwooleHttpServer_SimpleHttpd
 
 ## class DNSwooleHttpServer
-	public function init($options)
+	public function init($server_options)
 	public function bindDN($dn_options)
 	public function run()
 	public static function RunWithServer($server_options,$dn_options=[])
