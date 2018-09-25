@@ -535,6 +535,11 @@ getRouteCallingMethod()
     也适用于重写URL后判断是否是直接访问
 
     实质调用 DNRoute 的 getRouteCallingMethod
+addRouteHook($hook,$prepend=false)
+
+    下钩子扩展 route 方法
+    实质调用 DNRoute 的 addRouteHook
+	
 setViewWrapper($head_file=null,$foot_file=null)
 
     给输出 view 加页眉页脚 
@@ -558,10 +563,7 @@ assignExceptionHandel($classes,$callback=null)
     分配特定异常回调。
     用于控制器里控制特定错误类型。 
     // TODO 优化 多个 classes  名称共享一个
-addRouteHook($hook,$prepend=false)
 
-    下钩子扩展 route 方法
-    实质调用 DNRoute 的 addRouteHook
 setDefaultExceptionHandel($calllback)
 
     接管默认的异常处理，所有异常都归回调管，而不是显示 500 页面。
@@ -577,13 +579,10 @@ onBeforeShow()
 onShow404()
     404 回调。这里没传各种参数，需要的时候从外部获取。
 onException($ex)
-    发生未处理异常的处理函数。显示 exception 页面
-onErrorException($ex)
-    处理错误，显示500错误。
-onDebugError($errno, $errstr, $errfile, $errline)
-    处理 Notice 错误。
-onErrorHandel($errno, $errstr, $errfile, $errline)
-    处理 PHP 错误
+	\Throwable $ex
+    发生默认异常的处理函数。显示 exception 页面 或者是500 页面。
+onDevErrorHandler($errno, $errstr, $errfile, $errline)
+    处理 Notice,decrapted 等开发期错误。
 ```
 ## 组件初始化
 初始化组件，供扩展组件时初始化用。
@@ -617,6 +616,8 @@ checkAndInstallDefaultRouteHooks($force_install=false)
     你也可以重写。
 flushBuffer()
     清理缓存。一般不用自己管理。
+dealDefautExceptionHandle
+dealExceptionHandelers
 # 进一步扩展
 ## 总说
 DNMVCS 系统 是用各自独立的类合起来的。

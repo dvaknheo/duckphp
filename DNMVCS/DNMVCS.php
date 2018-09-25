@@ -683,81 +683,8 @@ class DNDB
 		return $this->rowCount;
 	}
 }
-class DNExceptionManager
-{
-	public static $is_handeling;
-	
-	public static $OnErrorException;
-	public static $OnException;
-	
-	public static $OnError;
-	public static $OnDevError;
-	
-	public static $SpecailExceptionMap=[];
-	
-	public static function HandleAllException($OnErrorException,$OnException)
-	{
-		self::$is_handeling=true;
-		set_exception_handler(array(__CLASS__,'ManageException'));
-		
-		self::$OnErrorException=$OnErrorException;
-		
-		self::SetException($OnException);
-	}
-	public static function AssignExceptionHandler($class,$callback)
-	{
-		$class=is_string($class)?array($class=>$callback):$class;
-		foreach($class as $k=>$v){
-			self::$SpecailExceptionMap[$k]=$v;
-		}
-	}
-	public static function SetException($OnException)
-	{
-		self::$OnException=$OnException;
-	}
-	public static function ManageException($ex)
-	{
-		$class=get_class($ex);
-		if(isset(self::$SpecailExceptionMap[$class])){
-			return (self::$SpecailExceptionMap[$class])($ex);
-		}
-		return (self::$OnException)($ex);
-		
-		//throw $ex;
-	}
-	
-	public static function HandleAllError($OnDevError)
-	{
-		set_error_handler(array(__CLASS__,'onErrorHandlerr'));
-		self::$OnDevError=$OnDevError;
-	}
-	public static function onErrorHandlerr($errno, $errstr, $errfile, $errline)
-	{
-		if (!(error_reporting() & $errno)) {
-			return false;
-		}
-		switch ($errno) {
-		
-		case E_USER_NOTICE:
-		case E_NOTICE:
-		case E_STRICT:
-		case E_DEPRECATED:
-		case E_USER_DEPRECATED:
-			(self::$OnDevError)($errno, $errstr, $errfile, $errline);
-			break;
-		case E_USER_WARNING:
-		case E_WARNING:
-			//
-		case E_ERROR:
-		case E_USER_ERROR:
-		default:
-			throw new \ErrorException($errstr,$errno, $errno, $errfile, $errline); 
-			break;
-		}
-		/* Don't execute PHP internal error handler */
-		return true;
-	}
-}
+
+
 class DNDBManager
 {
 	use DNSingleton;
@@ -887,7 +814,6 @@ trait DNMVCS_Glue
 	{
 		return DNView::G()->assignViewData($key,$value);
 	}
-	
 	//config
 	public static function Setting($key)
 	{
@@ -901,16 +827,17 @@ trait DNMVCS_Glue
 	{
 		return DNConfiger::G()->_LoadConfig($file_basename);
 	}
-	
+	/*
 	//exception manager
 	public function assignExceptionHandler($classes,$callback=null)
 	{
-		return DNExceptionManager::AssignExceptionHandler($classes,$callback);
+		return DNExceptionManager::G()->assignExceptionHandler($classes,$callback);
 	}
 	public function setDefaultExceptionHandler($callback)
 	{
-		return DNExceptionManager::SetException($callback);
+		return DNExceptionManager::G()->SetException($callback);
 	}
+	*/
 	public static function ThrowOn($flag,$message,$code=0)
 	{
 		if(!$flag){return;}
@@ -1032,6 +959,83 @@ trait DNMVCS_Misc
 		return in_array($a,realpath($file))?true:false;
 	}
 }
+trait DNMVCS_ExceptionManager
+{
+	protected $errorHandlers=[];
+	public $default_exception_handler=null;
+	public $running_exception_handler=null;
+	protected $dev_error_handler=null;
+	protected $exception_error_handler=null;
+	public function setDefaultExceptionHandler($default_exception_handler)
+	{
+		return $this->default_exception_handler=$default_exception_handler;
+	}
+	public function assignExceptionHandler($class,$callback=null)
+	{
+		$class=is_string($class)?array($class=>$callback):$class;
+		foreach($class as $k=>$v){
+			$this->errorHandlers[$k]=$v;
+		}
+	}
+	public function setMultiExceptionHandler(array $classes,$callback)
+	{
+		foreach($classes as $k){
+			$this->errorHandlers[$class]=$callback;
+		}
+	}
+	public function dealDefautExceptionHandle($ex)
+	{
+		if(!$this->default_exception_handler){return false;}
+		
+		$this->running_exception_handler=$this->default_exception_handler;
+		$this->default_exception_handler=null;
+		($this->runinng_exception_handler)($ex);
+		return true;
+	}
+	public function dealExceptionHandelers($ex)
+	{
+		$exception_class=get_class($ex);
+		foreach($this->errorHandlers as $class =>$callback){
+			if($class===$exception_class){
+				($callback)($ex);
+				return true;
+			}
+		}
+		return false;
+	}
+	public function on_error_handler($errno, $errstr, $errfile, $errline)
+	{
+		if (!(error_reporting() & $errno)){
+			return false;
+		}
+		switch ($errno) {
+			case E_USER_NOTICE:
+			case E_NOTICE:
+			case E_STRICT:
+			case E_DEPRECATED:
+			case E_USER_DEPRECATED:
+				($this->dev_error_handler)($errno, $errstr, $errfile, $errline);
+				break;
+			default:
+				$ex=new \ErrorException($errstr,$errno,$errno,$errfile, $errline); 
+				//throw $ex; TODO ,throw
+				($this->exception_error_handler)($ex);
+				break;
+		}
+		/* Don't execute PHP internal error handler */
+		return true;
+	}
+	public function installExceptionManager($exception_handler,$dev_error_handler)
+	{
+		$this->dev_error_handler=$dev_error_handler;
+		$this->exception_error_handler=$exception_handler;
+		
+		set_error_handler([$this,'on_error_handler']);
+		set_exception_handler([$this,'onException']);
+	}
+	//public function onException($ex){}
+	//public function onDevErrorHandler($errno, $errstr, $errfile, $errline){}
+}
 trait DNMVCS_Handler
 {
 	//@override
@@ -1048,20 +1052,36 @@ trait DNMVCS_Handler
 		DNView::G()->setViewWrapper(null,null);
 		DNView::G()->_Show([],'_sys/error-404');
 	}
+	
+	//  close database before show;
+	public function onBeforeShow($data,$view)
+	{
+		if($view===null){
+			DNView::G()->view=DNRoute::G()->getRouteCallingPath();
+		}
+		
+		if(!$this->auto_close_db){ return ;}
+		DNDBManager::G()->closeAllDB();
+	}
 	public function onException($ex)
 	{
+		$flag=$this->dealDefautExceptionHandle($ex);
+		if($flag){return;}
+		$flag=$this->dealExceptionHandelers($ex);
+		if($flag){return;}
+		
 		$is_error=is_a($ex,'Error') || is_a($ex,'ErrorException')?true:false;		
 		$this->flushBuffer();
 		
 		if(PHP_SAPI!=='cli'){
 			header("HTTP/1.1 500 Internal Error");
 		}
-		
 		$view=$is_error?'_sys/error-500':'_sys/error-exception';
 		$data=[];
+		$data['ex']=$ex;
+		
 		$data['message']=$ex->getMessage();
 		$data['code']=$ex->getCode();
-		$data['ex']=$ex;
 		$data['trace']=$ex->getTraceAsString();
 		if(!DNView::G()->hasView($view)){
 			if(!$this->isDev){
@@ -1078,7 +1098,7 @@ trait DNMVCS_Handler
 		DNView::G()->setViewWrapper(null,null);
 		DNView::G()->_Show($data,'_sys/error-exception');
 	}
-	public function onDebugError($errno, $errstr, $errfile, $errline)
+	public function onDevErrorHandler($errno, $errstr, $errfile, $errline)
 	{
 		if(!$this->isDev){return;}
 		$descs=array(
@@ -1113,24 +1133,8 @@ $errstr
 EOT;
 			return;
 		}
-		DNView::G()->showBlock('_sys/error-debug',$data);
-	}
-	public function onErrorHandler($errno, $errstr, $errfile, $errline)
-	{
-	
-		//var_dump($errno, $errstr, $errfile, $errline);
-		throw new \Error($errstr,$errno);
-	}
-	
-	//  close database before show;
-	public function onBeforeShow($data,$view)
-	{
-		if($view===null){
-			DNView::G()->view=DNRoute::G()->getRouteCallingPath();
-		}
 		
-		if(!$this->auto_close_db){ return ;}
-		DNDBManager::G()->closeAllDB();
+		DNView::G()->showBlock('_sys/error-debug',$data);
 	}
 }
 class DNMVCS
@@ -1139,6 +1143,7 @@ class DNMVCS
 	use DNMVCS_Glue;
 	use DNMVCS_Handler;
 	use DNMVCS_Misc;
+	use DNMVCS_ExceptionManager;
 	
 	const DEFAULT_OPTIONS=[
 			'base_class'=>'MY\Base\App',
@@ -1217,9 +1222,7 @@ class DNMVCS
 	
 	protected function initExceptionManager()
 	{
-		DNExceptionManager::HandleAllError([$this,'onDebugError']);
-		if(defined('DN_SWOOLE_SERVER_RUNNING')){return;}
-		DNExceptionManager::HandleAllException([$this,'onException'],[$this,'onException']);
+		$this->installExceptionManager([$this,'onException'],[$this,'onDevErrorHandler']);
 	}
 	protected function checkOverride($options)
 	{
