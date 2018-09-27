@@ -90,8 +90,12 @@ Controller --> Service ---------------------------------> Model
 # DNMVCS 使用手册
 ## 开始
 ### 第一步
-把 web 目录设置为 DNMVCS sample/www 目录 复制 config/setting.sample.php 为 config/setting.php
-浏览器中打开主页出现欢迎页面就表示执行完成
+跑起来。
+1. 下载 DNMVCS。
+2. 把 web 目录设置为 sample/www 目录。
+3. 复制 config/setting.sample.php 为 config/setting.php
+4. 浏览器中打开主页出现下面的欢迎就表示基本成功
+
 ```
 Hello DNMVCS
 
@@ -106,11 +110,13 @@ DNMVCS Fatal: no setting file!,change setting.sample.php to setting.php !
 新建工程怎么做？ 复制 sample 目录到你工程目录就行，修改 index.php ，使得引入正确的库
 
 还有哪些没检查的？ 服务器配置 PATH_INFO 对了没有。 数据库也没配置和检查。
+
 想要更多东西，可以检出  dnmvcs-full 这个工程，里面有全部的测试样例。 *尚未完成*
 
-开始学习吧
+开始学习吧！
 
 ### 目录结构
+
 工程的目录结构
 ```
 +---app // psr-4 标准的自动加载目录
@@ -147,11 +153,10 @@ www/index.php  入口 PHP 文件,内容如下
 <?php
 require('../../DNMVCS/DNMVCS.php');
 //$path=realpath('../');
-
 $options=[
 ];
 \DNMVCS\DNMVCS::RunQuickly($options);
-//\DNMVCS\DNMVCS::G()->init([])->run();
+//\DNMVCS\DNMVCS::G()->init($options)->run();
 ```
 被注释掉部分 和 实际调用部分实际相同。是个链式调用。
 DNMVCS\DNMVCS::G(); 单例模式。 
