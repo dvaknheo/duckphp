@@ -238,6 +238,7 @@ trait DNSwooleHttpServer_GlobalFunc
 	public $shutdown_function_array=[];
 	public function header(string $string, bool $replace = true , int $http_response_code =0)
 	{
+		if(strpos($string,':')===false){return;} // 404,500 so on
 		list($key,$value)=explode(':',$string);
 		SwooleContext::G()->response->header($key, $value);
 		if($http_response_code){

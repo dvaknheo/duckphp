@@ -437,33 +437,35 @@ class DNView
 	protected $header_handler=null;
 	public function _ExitJson($ret)
 	{
-		if(isset($this->before_show_handler)){
+		$this->header('content-type:text/json');
+		if($this->before_show_handler){
 			($this->before_show_handler)($data,$this->view);
-		}
-		if(!$this->header_handler){
-			header('content-type:text/json');
-		}else{
-			($this->header_handler)('content-type:text/json');
 		}
 		echo json_encode($ret,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
 		exit;
 	}
 	public function _ExitRedirect($url,$only_in_site=true)
 	{
-		if(isset($this->before_show_handler)){
-			($this->before_show_handler)($data,$this->view);
-		}
-		
 		if($only_in_site && parse_url($url,PHP_URL_HOST)){
+			//something  wrong
 			exit;
 		}
-		if(!$this->header_handler){
-			header('location: '.$url);
-		}else{
-			($this->header_handler)('location: '.$url);
+		$this->header('location: '.$url);
+		if($this->before_show_handler){
+			($this->before_show_handler)($data,$this->view);
 		}
 		exit;
-	}	
+	}
+	public function header($output)
+	{
+		if(!$this->header_handler){
+			if(PHP_SAPI!=='cli'){
+				header($output);
+			}
+			return;
+		}
+		($this->header_handler)($output);
+	}
 	public function _Show($data=[],$view)
 	{
 		$this->view=$view;
@@ -1026,9 +1028,8 @@ trait DNMVCS_ExceptionManager
 				($this->dev_error_handler)($errno, $errstr, $errfile, $errline);
 				break;
 			default:
-				$ex=new \ErrorException($errstr,$errno,$errno,$errfile, $errline); 
-				//throw $ex; TODO ,throw
-				($this->exception_error_handler)($ex);
+				throw new \ErrorException($errstr,$errno,$errno,$errfile, $errline);
+				//TODO test more in swoole;
 				break;
 		}
 		/* Don't execute PHP internal error handler */
@@ -1050,10 +1051,9 @@ trait DNMVCS_Handler
 	//@override
 	public function onShow404()
 	{
-		if(PHP_SAPI!=='cli'){
-			header("HTTP/1.1 404 Not Found");
-		}
-		if(!DNView::G()->hasView('_sys/error-404')){
+		
+		DNView::G()->header("HTTP/1.1 404 Not Found");
+		if(false && !DNView::G()->hasView('_sys/error-404')){
 			echo "File Not Found\n";
 			echo "<!--DNMVCS  use view/_sys/error-404.php to overrid me -->";
 			return;
@@ -1080,9 +1080,8 @@ trait DNMVCS_Handler
 		
 		$is_error=is_a($ex,'Error') || is_a($ex,'ErrorException')?true:false;		
 		
-		if(PHP_SAPI!=='cli'){
-			header("HTTP/1.1 500 Internal Error");
-		}
+		DNView::G()->header("HTTP/1.1 500 Internal Error");
+		
 		$view=$is_error?'_sys/error-500':'_sys/error-exception';
 		$data=[];
 		$data['ex']=$ex;
@@ -1189,7 +1188,7 @@ class DNMVCS
 		$default_options=[
 			'ext'=>[
 				'key_for_simple_route'=>'_r',
-			]
+			],
 			//'path_view'=>'',
 		];
 		$options=array_merge_recursive($default_options,$options);
@@ -1247,15 +1246,13 @@ class DNMVCS
 		unset($options['skip_check_override']);
 		if(!$skip_check_override){
 			$object=$this->checkOverride($options);
+			if($object){return $object;}
 		}
-		if($object){return $object;}
 		
-		$this->initExceptionManager();
 		$this->initOptions($options);
+		$this->initExceptionManager();
 		
 		$this->initConfiger(DNConfiger::G());
-		$this->isDev=DNConfiger::G()->_Setting('is_dev')??$this->isDev;
-		
 		$this->initView(DNView::G());
 		$this->initRoute(DNRoute::G());
 		$this->initDBManager(DNDBManager::G());
@@ -1291,10 +1288,11 @@ class DNMVCS
 	}
 	protected function initMisc()
 	{
-		
+		$this->isDev=DNConfiger::G()->_Setting('is_dev')??$this->isDev;		
 		if($this->options['swoole_mode']??false){
 			$this->options['ext']['use_super_global']=true;
 		}
+		
 		if(defined('DN_SWOOLE_SERVER_RUNNING')){
 			$this->options['ext']['use_super_global']=true;
 		}
