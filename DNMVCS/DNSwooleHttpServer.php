@@ -285,11 +285,51 @@ trait DNSwooleHttpServer_SimpleHttpd
 		//onHttpRun(null,null) 则不需要用
 	}
 }
+trait DNSwooleHttpServer_WebSocket
+{
+	public $websocket_open_handler=null;
+	public $websocket_handler=null;
+	public $websocket_exception_handler=null;
+	public $websocket_close_handler=null;
+	
+	public function onOpen(swoole_websocket_server $server, swoole_http_request $request)
+	{
+		SwooleContext::G()->initHttp($request,null);
+		if(!$this->websocket_open_handler){ return; }
+		($this->websocket_open_handler)();
+	}
+	public function onMessage($server,$frame)
+	{
+		$InitObLevel=ob_get_level();
+		SwooleContext::G()->initWebSocket($frame);
+		
+		$fd=$frame->fd;
+		ob_start(function($str)use($server,$fd){
+			if(''===$str){return;}
+			$server->push($fd,$str);
+		});
+		try{
+			if($frame->opcode != 0x08  || !$this->websocket_close_handler) {
+				($this->websocket_handler)();
+			}else{
+				($this->websocket_close_handler)();
+			}
+		}catch(\Throwable $ex){
+			if( !($ex instanceof  \Swoole\ExitException) ){
+				($this->websocket_exception_handler)($ex);
+			}
+		}
+		for($i=ob_get_level();$i>$InitObLevel;$i--){
+			ob_end_flush();
+		}
+	}
+}
 class DNSwooleHttpServer
 {
 	use DNSingleton;
 	use DNSwooleHttpServer_Static;
 	use DNSwooleHttpServer_SimpleHttpd;
+	use DNSwooleHttpServer_WebSocket;
 	use DNSwooleHttpServer_GlobalFunc;
 	
 	const DEFAULT_OPTIONS=[
@@ -315,12 +355,6 @@ class DNSwooleHttpServer
 	public $http_exception_handler=null;
 	
 	protected $static_root=null;  //TODO
-	
-	public $websocket_open_handler=null;
-	public $websocket_handler=null;
-	public $websocket_exception_handler=null;
-	public $websocket_close_handler=null;
-	
 	
 	protected function onHttpRun($request,$response)
 	{
@@ -350,7 +384,6 @@ class DNSwooleHttpServer
 			return;
 		}
 		if($this->options['http_handler_root']){
-			//mime_content_type
 			$http_handler_root=$this->options['http_handler_root'];
 			$http_handler_root=rtrim($http_handler_root,'/').'/';
 			
@@ -369,7 +402,6 @@ class DNSwooleHttpServer
 				return;
 			}
 			if(is_file($full_file)){
-				//mime_content_type
 				$ext=pathinfo($full_file,PATHINFO_EXTENSION);
 				if($ext==='php'){
 					$file=$full_file;
@@ -438,37 +470,6 @@ class DNSwooleHttpServer
 	{
 		SwooleContext::CleanUp();
 		CoroutineSingleton::CleanUp();
-	}
-
-	public function onOpen(swoole_websocket_server $server, swoole_http_request $request)
-	{
-		if(!$this->websocket_open_handler){ return; }
-		SwooleContext::G()->initHttp(request,null);
-		($this->websocket_open_handler)();
-	}
-	public function onMessage($server,$frame)
-	{
-		SwooleContext::G()->initWebSocket($frame);
-		
-		$fd=$frame->fd;
-		ob_start(function($str)use($server,$fd){
-			if(''===$str){return;}
-			$server->push($fd,$str);
-		});
-		try{
-			if($frame->opcode != 0x08  || !$this->websocket_close_handler) {
-				($this->websocket_handler)();
-			}else{
-				($this->websocket_close_handler)();
-			}
-		}catch(\Throwable $ex){
-			if( !($ex instanceof  \Swoole\ExitException) ){
-				($this->websocket_exception_handler)($ex);
-			}
-		}
-		for($i=ob_get_level();$i>$InitObLevel;$i--){
-			ob_end_flush();
-		}
 	}
 	/////////////////////////
 	public function init($options)
