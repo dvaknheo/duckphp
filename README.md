@@ -1027,11 +1027,13 @@ DN::DB
 	在构造函数里做 session_start 相关代码
 - 后台里，我要判断权限，只有几个公共方法能无权限访问
     - 构造函数里获得 $method=DNMVCS::G()->getRouteCallingMethod(); 然后进行后处理
+	
 - 为什么不把 DNMVCS 里那些子功能类作为DNMVCS类的属性， 如 $this->View=DNView::G();
     - 静态方法里调用。 self::G()->View->_Show() 比 DNView::G()->_Show() 之类更麻烦。非静态方法里也就懒得加引用了
 - 我用 static 方法不行么，不想用 G() 函数于 Model ,Service
-	- 可以，Model可以用。不过不推荐Service 用
+	- 可以，Model可以用。不过不推荐 Service 用
 	- 琢磨了一阵如何不改 static 调用强行塞  strict 模式，还是没找到方法，切换 namespace 代理的方式可以搞定，但还是要手工改代码.
+!!!2018-09-30 12:09:57 已经想出来了，改 autoloader ，配合 class alias 。测试 DEMO已过，有空添加
     - DNStaticCall 由于 php7 的限制， protected funtion 才能 static call
 - 思考：子域名作为子目录
 	想把某个子目录作为域名独立出去。只改底层代码如何改
