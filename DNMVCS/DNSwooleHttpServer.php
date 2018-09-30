@@ -81,7 +81,7 @@ fwrite(STDERR,"-- $class ~ ".$class2.";\n");
 		$cid = \Swoole\Coroutine::getuid();
 		if($cid<=0){return;}
 		$key="cid-$cid";
-		DNSingletonStaticClass::$_instances[$key]=[];
+		unset(DNSingletonStaticClass::$_instances[$key]);
 	}
 }
 class SwooleContext
