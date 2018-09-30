@@ -473,7 +473,7 @@ class DNSwooleHttpServer
 		CoroutineSingleton::CleanUp();
 	}
 	/////////////////////////
-	public function init($options)
+	public function init($options,$server)
 	{
 		DNMVCS::ImportSys('SuperGlobal');
 		DNMVCS::ImportSys('SwooleSuperGlobal');
@@ -484,7 +484,7 @@ class DNSwooleHttpServer
 		$this->http_handler=$options['http_handler'];
 		$this->http_exception_handler=$options['http_exception_handler'];
 		
-		$this->server=$options['swoole_server'];
+		$this->server=$server?:$options['swoole_server'];
 	
 		if(!$this->server){
 			if(!$options['port']){
@@ -562,8 +562,8 @@ class DNSwooleHttpServer
 		$t=$this->server->start();
 		fwrite(STDOUT,get_class($this)." run end ".DATE(DATE_ATOM)." ...\n");
 	}
-	public static function RunWithServer($server_options,$dn_options=[])
+	public static function RunWithServer($server_options,$dn_options=[],$server=null)
 	{
-		return self::G()->init($server_options)->bindDN($dn_options)->run();
+		return self::G()->init($server_options,$server)->bindDN($dn_options)->run();
 	}
 }

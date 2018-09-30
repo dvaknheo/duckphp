@@ -1135,7 +1135,7 @@ trait DNMVCS_Handler
 			'error_shortfile'=>$error_shortfile,
 		);
 		$error_view=$this->options['error_debug'];
-		$flag=$this->checkAndRunDefaultError($error_view,$data);
+		$flag=$this->checkAndRunDefaultErrorHandler($error_view,$data);
 		if(!$flag){
 			extract($data);
 			echo  <<<EOT
@@ -1226,10 +1226,10 @@ class DNMVCS
 		$options=array_merge_recursive($default_options,$options);
 		return self::RunQuickly($options);
 	}
-	public static function RunAsServer($server_options,$dn_options)
+	public static function RunAsServer($server_options,$dn_options,$server=null)
 	{
 		self::ImportSys('DNSwooleHttpServer');
-		DNSwooleHttpServer:: RunWithServer($server_options,$dn_options);
+		DNSwooleHttpServer:: RunWithServer($server_options,$dn_options,$server);
 	}
 	protected function initOptions($options=[])
 	{
