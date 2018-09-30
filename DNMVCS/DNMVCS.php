@@ -497,7 +497,7 @@ class DNView
 	{
 		$this->path=$path;
 	}
-	public function setbefore_show_handler($callback)
+	public function onBeforeShow($callback)
 	{
 		$this->before_show_handler=$callback;
 	}
@@ -759,9 +759,17 @@ trait DNMVCS_Glue
 	public static function Parameters()
 	{
 		return DNRoute::G()->_Parameters();
-	}	
+	}
+	public function checkAndInstallDefaultRouteHooks($force_install=false)
+	{
+		// as protected ,but use outside
+		if($force_install ||$this->options['rewrite_list'] || $this->options['route_list'] ){
+			DNRouteAdvance::G()->install();
+		}
+	}
 	public function assignRewrite($key,$value=null)
 	{
+		$this->checkAndInstallDefaultRouteHooks();
 		if(is_array($key)&& $value===null){
 			$this->options['rewrite_list']=array_merge($this->options['rewrite_list'],$key);
 		}else{
@@ -770,6 +778,7 @@ trait DNMVCS_Glue
 	}
 	public function assignRoute($key,$value=null)
 	{
+		$this->checkAndInstallDefaultRouteHooks();
 		if(is_array($key)&& $value===null){
 			$this->options['route_list']=array_merge($this->options['route_list'],$key);
 		}else{
@@ -1060,7 +1069,6 @@ trait DNMVCS_Handler
 			DNView::G()->view=DNRoute::G()->getRouteCallingPath();
 		}
 		
-		if(!$this->auto_close_db){ return ;}
 		DNDBManager::G()->closeAllDB();
 	}
 	public function onException($ex)
@@ -1071,7 +1079,6 @@ trait DNMVCS_Handler
 		if($flag){return;}
 		
 		$is_error=is_a($ex,'Error') || is_a($ex,'ErrorException')?true:false;		
-		$this->flushBuffer();
 		
 		if(PHP_SAPI!=='cli'){
 			header("HTTP/1.1 500 Internal Error");
@@ -1170,7 +1177,6 @@ class DNMVCS
 	public $before_run_handler=null;
 	
 	protected $path=null;
-	protected $auto_close_db=true;
 	protected $path_lib;
 	
 	protected $initObLevel=0;
@@ -1244,7 +1250,6 @@ class DNMVCS
 		}
 		if($object){return $object;}
 		
-		$this->initObLevel=ob_get_level();
 		$this->initExceptionManager();
 		$this->initOptions($options);
 		
@@ -1267,7 +1272,7 @@ class DNMVCS
 	{
 		$path_view=$this->path.rtrim($this->options['path_view'],'/').'/';
 		$view->init($path_view);
-		$view->setbefore_show_handler([$this,'onBeforeShow']);
+		$view->onBeforeShow([$this,'onBeforeShow']);
 	}
 	public function initRoute($route)
 	{
@@ -1295,7 +1300,7 @@ class DNMVCS
 		}
 		
 		if(!empty($this->options['ext'])){
-			self::ImportSys();
+			//self::ImportSys();
 			AppExt::G()->afterInit($this);
 		}
 	}
@@ -1304,14 +1309,7 @@ class DNMVCS
 		return $this->isDev;
 	}
 	
-	public function checkAndInstallDefaultRouteHooks($force_install=false)
-	{
-		if($force_install ||$this->options['rewrite_list'] || $this->options['route_list'] ){
-			self::ImportSys('DNRouteAdvance');
-			DNRouteAdvance::G()->install();
-		}
-	}
-	public function setBeforeRunHandler($before_run_handler)
+	public function onBeforeRun($before_run_handler)
 	{
 		$this->before_run_handler=$before_run_handler;
 	}
@@ -1320,20 +1318,9 @@ class DNMVCS
 		if($this->before_run_handler){
 			($this->before_run_handler)();
 		}
-		$this->checkAndInstallDefaultRouteHooks();
 		
-		ob_start();
 		$ret=DNRoute::G()->run();
-		ob_end_flush();
-		
-		$this->flushBuffer();
 		return $ret;
-	}
-	public function flushBuffer()
-	{
-		for($i=ob_get_level();$i>$this->initObLevel;$i--){
-			ob_end_clean();
-		}
 	}
 }
 /////////////////////////

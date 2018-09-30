@@ -443,7 +443,7 @@ class AppExt
 		
 		////////////////////
 		if($options['use_super_global']){
-			DNMVCS::ImportSys('SuperGlobal');
+			//DNMVCS::ImportSys('SuperGlobal');
 			$dn->checkAndInstallDefaultRouteHooks(true);
 			DNRoute::G()->addRouteHook([SuperGlobalRouteHook::G(),'hook'],true);
 		}

@@ -10,7 +10,7 @@ class CoroutineSingleton
 			return DNSingletonStaticClass::GetInstance($class,$object);
 		}
 		
-		$key="cid=$cid";
+		$key="cid-$cid";
 		DNSingletonStaticClass::$_instances[$key]=DNSingletonStaticClass::$_instances[$key]??[];
 		
 		if($object===null){
@@ -35,7 +35,7 @@ class CoroutineSingleton
 	public static function CreateInstance($class,$object=null)
 	{
 		$cid = \Swoole\Coroutine::getuid();
-		$key="cid=$cid";
+		$key="cid-$cid";
 		$me=$object??new $class();
 		DNSingletonStaticClass::$_instances[$key]=DNSingletonStaticClass::$_instances[$key]??[];
 		DNSingletonStaticClass::$_instances[$key][$class]=$me;
@@ -44,7 +44,7 @@ class CoroutineSingleton
 	public static function CloneInstance($class)
 	{
 		$cid = \Swoole\Coroutine::getuid();
-		$key="cid=$cid";
+		$key="cid-$cid";
 		DNSingletonStaticClass::$_instances[$key]=DNSingletonStaticClass::$_instances[$key]??[];
 		
 		$master= DNSingletonStaticClass::$_instances[$class]??null;
@@ -544,7 +544,7 @@ class DNSwooleHttpServer
 		}
 		DNView::G()->setHeaderHandler([self::G(),'header']);
 		
-		DNMVCS::G()->setBeforeRunHandler(function(){
+		DNMVCS::G()->onBeforeRun(function(){
 			CoroutineSingleton::CloneInstance(DNView::class);
 			CoroutineSingleton::CloneInstance(DNRoute::class);
 		});
