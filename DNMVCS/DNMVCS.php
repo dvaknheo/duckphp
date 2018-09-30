@@ -458,13 +458,12 @@ class DNView
 	}
 	public function header($output)
 	{
-		if(!$this->header_handler){
-			if(PHP_SAPI!=='cli'){
-				header($output);
-			}
-			return;
+		if($this->header_handler){
+			return ($this->header_handler)($output);
 		}
-		($this->header_handler)($output);
+		if(PHP_SAPI==='cli'){ return; }
+		if(headers_sent()){ return; }
+		return header($output);
 	}
 	public function _Show($data=[],$view)
 	{
@@ -528,11 +527,6 @@ class DNView
 		}else{
 			$this->data[$key]=$value;
 		}
-	}
-	public function hasView($view)
-	{
-		$view=$this->path.rtrim($view,'.php').'.php';
-		return is_file($view)?true:false;
 	}
 }
 
@@ -1048,20 +1042,6 @@ trait DNMVCS_ExceptionManager
 }
 trait DNMVCS_Handler
 {
-	//@override
-	public function onShow404()
-	{
-		
-		DNView::G()->header("HTTP/1.1 404 Not Found");
-		if(false && !DNView::G()->hasView('_sys/error-404')){
-			echo "File Not Found\n";
-			echo "<!--DNMVCS  use view/_sys/error-404.php to overrid me -->";
-			return;
-		}
-		DNView::G()->setViewWrapper(null,null);
-		DNView::G()->_Show([],'_sys/error-404');
-	}
-	
 	//  close database before show;
 	public function onBeforeShow($data,$view)
 	{
@@ -1071,6 +1051,35 @@ trait DNMVCS_Handler
 		
 		DNDBManager::G()->closeAllDB();
 	}
+	
+	protected function checkAndRunDefaultErrorHandler($error_view,$data)
+	{
+		if(!is_string($error_view) || !$error_view){
+			if($error_view){
+				($error_view)($data);
+			}
+			return true;
+		}
+		return false;
+	}
+	//@override
+	public function onShow404()
+	{
+		$error_404=$this->options['error_404'];
+		
+		$view=DNView::G();
+		$view->header("HTTP/1.1 404 Not Found");
+		
+		$flag=$this->checkAndRunDefaultErrorHandler($error_404,[]);
+		if(!$flag){
+			echo "File Not Found\n<!--DNMVCS -->\n";
+			return;
+		}
+		if(!is_string($error_404)){ return; }
+		$view->setViewWrapper(null,null);
+		$view->_Show([],$error_404);
+	}
+	
 	public function onException($ex)
 	{
 		$flag=$this->dealDefautExceptionHandle($ex);
@@ -1078,31 +1087,33 @@ trait DNMVCS_Handler
 		$flag=$this->dealExceptionHandelers($ex);
 		if($flag){return;}
 		
-		$is_error=is_a($ex,'Error') || is_a($ex,'ErrorException')?true:false;		
+		$view=DNView::G();
+		$view->header("HTTP/1.1 500 Internal Error");
 		
-		DNView::G()->header("HTTP/1.1 500 Internal Error");
-		
-		$view=$is_error?'_sys/error-500':'_sys/error-exception';
 		$data=[];
 		$data['ex']=$ex;
-		
 		$data['message']=$ex->getMessage();
 		$data['code']=$ex->getCode();
 		$data['trace']=$ex->getTraceAsString();
-		if(!DNView::G()->hasView($view)){
-			if(!$this->isDev){
-				$desc=$is_error?'error':'exception';
-				echo "DNMVCS $desc internal error\n";
-			}else{
-				echo "<!--DNMVCS  use view '$view' to overrid me -->\n";
-				echo "\n<pre>\n";
+		
+		$is_error=is_a($ex,'Error') || is_a($ex,'ErrorException')?true:false;		
+		$error_view=$is_error?$this->options['error_500']:$this->options['error_exception'];
+		$this->checkAndRunDefaultErrorHandler($error_view,$data);
+		if(!$flag){
+			$desc=$is_error?'Error':'Exception';
+			echo "Internal $desc \n<!--DNMVCS -->\n";
+			if($this->isDev){
+				echo "<hr />";
+				echo "\n<pre>Debug On\n\n";
 				echo $data['trace'];
 				echo "\n</pre>\n";
 			}
 			return;
 		}
-		DNView::G()->setViewWrapper(null,null);
-		DNView::G()->_Show($data,'_sys/error-exception');
+		if(!is_string($error_view)){ return; }
+		
+		$view->setViewWrapper(null,null);
+		$view->_Show($data,$error_view);
 	}
 	public function onDevErrorHandler($errno, $errstr, $errfile, $errline)
 	{
@@ -1123,10 +1134,11 @@ trait DNMVCS_Handler
 			'error_desc'=>$descs[$errno],
 			'error_shortfile'=>$error_shortfile,
 		);
-		if(!DNView::G()->hasView('_sys/error-debug')){
+		$error_view=$this->options['error_debug'];
+		$flag=$this->checkAndRunDefaultError($error_view,$data);
+		if(!$flag){
 			extract($data);
 			echo  <<<EOT
-
 <!--DNMVCS  use view/_sys/error-debug.php to overrid me -->
 <fieldset class="_DNMVC_DEBUG">
 	<legend>$error_desc($errno)</legend>
@@ -1139,8 +1151,8 @@ $errstr
 EOT;
 			return;
 		}
-		
-		DNView::G()->showBlock('_sys/error-debug',$data);
+		if(!is_string($error_view)){ return; }
+		DNView::G()->showBlock($error_view,$data);
 	}
 }
 class DNMVCS
@@ -1170,6 +1182,11 @@ class DNMVCS
 			'swoole_mode'=>false,
 			'swoole_db_reuse_size'=>0,
 			'swoole_db_reuse_timeout'=>5,
+			
+			'error_404'=>'_sys/error-404',
+			'error_500'=>'_sys/error-500',
+			'error_exception'=>'_sys/error-exception',
+			'error_debug'=>'_sys/error_debug',
 		];
 	public $options=[];
 	public $isDev=false;
@@ -1278,8 +1295,9 @@ class DNMVCS
 	}
 	public function initDBManager($dbm)
 	{
-		$db_config=DNConfiger::G()->_Setting('db');
-		$db_r_config=DNConfiger::G()->_Setting('db_r');
+		$configer=DNConfiger::G();
+		$db_config=$configer->_Setting('db');
+		$db_r_config=$configer->_Setting('db_r');
 		
 		$db_create_handler=$this->options['db_create_handler']?:[DNDB::class,'CreateDBInstance'];
 		$db_close_handler=$this->options['db_close_handler']?:[DNDB::class,'CloseDBInstance'];

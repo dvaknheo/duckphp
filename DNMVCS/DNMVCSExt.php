@@ -73,7 +73,7 @@ class SuperGlobalRouteHook
 }
 class StrictService
 {
-	use DNSingleton { G as public  parentG;}
+	use DNSingleton { G as public parentG;}
 	public static function G($object=null)
 	{
 		$object=self::_before_instance($object);
@@ -82,8 +82,7 @@ class StrictService
 	
 	public static function _before_instance($object)
 	{
-		var_dump("Hit!");
-		if(!DNMVCS::G()->isDev){return $object;}
+		if(!DNMVCS::G()->isDev()){return $object;}
 		$class=get_called_class();
 		list($_0,$_1,$caller)=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,3);
 		$caller_class=$caller['class'];
@@ -116,7 +115,7 @@ class StrictService
 }
 class StrictModel
 {
-	use DNSingleton { G as public  parentG;}
+	use DNSingleton { G as public parentG;}
 	public static function G($object=null)
 	{
 		$object=self::_before_instance($object);
@@ -125,7 +124,7 @@ class StrictModel
 	public static function _before_instance($object)
 	{
 		
-		if(!DNMVCS::G()->isDev){return $object;}
+		if(!DNMVCS::G()->isDev()){return $object;}
 		list($_0,$_1,$caller)=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,3);
 		$caller_class=$caller['class'];
 		$namespace=DNMVCS::G()->options['namespace'];
@@ -158,7 +157,8 @@ class StrictDBManager extends DNDBManager
 	}
 	protected function checkPermission()
 	{
-		if(!DNMVCS::G()->isDev){return;}
+		if(!DNMVCS::G()->isDev()){return;}
+		
 		list($_0,$_1,$_2,$caller,$bak)=$backtrace=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,5);
 		$caller_class=$caller['class'];
 		$namespace=DNMVCS::G()->options['namespace'];
