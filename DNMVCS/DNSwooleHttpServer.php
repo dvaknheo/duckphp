@@ -549,6 +549,7 @@ class DNSwooleHttpServer
 		DNMVCS::G()->onBeforeRun(function(){
 			CoroutineSingleton::CloneInstance(DNView::class);
 			CoroutineSingleton::CloneInstance(DNRoute::class);
+			CoroutineSingleton::CloneInstance(DNExceptionManager::class);
 		});
 		
 		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G());
