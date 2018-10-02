@@ -763,7 +763,6 @@ trait DNMVCS_Glue
 	}
 	public function assignRewrite($key,$value=null)
 	{
-		$this->checkAndInstallDefaultRouteHooks();
 		if(is_array($key)&& $value===null){
 			$this->options['rewrite_list']=array_merge($this->options['rewrite_list'],$key);
 		}else{
@@ -772,7 +771,6 @@ trait DNMVCS_Glue
 	}
 	public function assignRoute($key,$value=null)
 	{
-		$this->checkAndInstallDefaultRouteHooks();
 		if(is_array($key)&& $value===null){
 			$this->options['route_list']=array_merge($this->options['route_list'],$key);
 		}else{

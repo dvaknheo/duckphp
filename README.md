@@ -215,8 +215,13 @@ const DNMVCS::DEFAULT_OPTIONS=[
     'rewrite_list'=>[],
     'route_list'=>[],
         'swoole_mode'=>false,               // swoole_mode 模式，和 superGlobal 整合
-        'db_reuse_size'=>0,                 // swoole_mode 模式下生效,大于0复用数据库连接
-        'db_reuse_timeout'=>5,              // swoole_mode 模式下生效,复用数据库连接超时秒数
+        'swoole_db_reuse_size'=>0,                 // swoole_mode 模式下生效,大于0表示复用数据库连接
+        'swoole_db_reuse_timeout'=>5,              // swoole_mode 模式下生效,复用数据库连接超时秒数
+
+		'error_404'=>'_sys/error-404',      // 404 错误处理，传入字符串表示用的 view,如果传入 callable 则用 callback,view 优先
+        'error_500'=>'_sys/error-500',      // 500 代码有语法错误等的页面，和 404 的内容一样
+	    'error_exception'=>'_sys/error-exception',  // 默认的异常处理。和前面类似
+	    'error_debug'=>'_sys/error_debug',  // 调试模式下出错的处理。和前面类似
 ];
 ```
     关于 base_class 选项。
@@ -397,7 +402,7 @@ init($options=[])
 run()
     开始路由，执行。这个方法拆分出来是为了，不想要路由，只是为了加载一些类的需求的。
     如果404 则返回false;其他返回 true
-static RunQuickly($optionss=[])
+static RunQuickly($options=[])
     DNMVCS::RunQuickly ($options) 相当于 DNMVCS::G()->init($options)->run();
 static RunOneFileMode($optionss=[])
     单一文件模式，不需要其他文件，设置内容请放在
@@ -594,8 +599,9 @@ onErrorHandel($errno, $errstr, $errfile, $errline)
 ```
 ## 组件初始化
 初始化组件，供扩展组件时初始化用。
-```
+
 initConfiger(DNConfiger $configer)
+
     初始化配置。
     配置路径。
     设置是否是开发状态
@@ -615,8 +621,8 @@ initDBManager(DNDBManger $dbm)
 initMisc
     如果 swoole_mode 启用  use_super_global
     如果 ext 启用 AppExt
-```
-## 高级方法
+
+## 其他方法
 
 高级方法是一般不会用到的方法。
 
@@ -627,22 +633,23 @@ checkAndInstallDefaultRouteHooks($force_install=false)
 
     安装默认的路由钩子，默认是路由和 rewrite。
     你也可以重写。
-flushBuffer()
-
-    清理OB缓存。一般不用自己管理。在异常处理中你可能要用到这个
 # 进一步扩展
 ## 总说
 DNMVCS 系统 是用各自独立的类合起来的。
 DNMVCS 主类，单向调用这几个组件，各组件是独立的。
 例外是单例模式和抛异常的时候都会用到 
-
+```
+DNMVCS->init
     DNAutoloader
-    DNConfiger
+    init DNConfiger
+
+DNMVCS->run
     DNRoute  -> RouteHook::hook();
+    
     DNView
     DNDBManager -> DNDB::CreateDBInstence(),DNDB::CloseDBInstence()
     DNExceptionManager
-
+```
 DNMVCS 主类里一些函数，是调用其他类的实现。基本都可以用 G 方法替换
 
 DNMVCS 的各子类都是独立的。现实中应该不会拿出来单用吧
@@ -752,14 +759,15 @@ if($flag){throw new MyException($message,$code);}
 
 	_URL($url=null)
 	_Parameters()
+    init($options)
     run()
  	set404($callback)
     defaultURLHandler()
-set404 设置404 回调
+    set404 设置404 回调
 
     protected getRouteHandelByFile
-	protected  getObecjectToCall($class_name)
-	protected  getMethodToCall($obj,$method)
+	protected getObecjectToCall($class_name)
+	protected getMethodToCall($obj,$method)
 文件模式的路由
 
 	public  assignRoute($key,$callback=null)
@@ -785,14 +793,14 @@ addRouteHook
 	public function _ExitJson($ret)
 	public function _ExitRedirect($url,$only_in_site=true)
 	public function _Show($data=[],$view)
-	protected function includeShowFiles()
+
 	public function init($path)
 	public function setBeforeShow($callback)
 	public function setViewWrapper($head_file,$foot_file)
 	public function showBlock($view,$data)
 	public function assignViewData($key,$value=null)
+	protected function includeShowFiles()
 
-    $this->isDev 来自DMMVCS 主类。判断是否在测试环境
 ## DNConfiger 配置类
 	public function init($path)
 	protected function include_file($file)
@@ -805,7 +813,7 @@ addRouteHook
     异常管理已经变更，文档待补完
 
 ## DNDBManger 数据库管理类
-这里主要是数据库的扩展
+DNMVCS 采用
 这个也许会经常改动。比如用自己公司的 DB 类，要在这里做一个封装。
 
 installDBClass($db_create_handler,$db_close_handler)
@@ -878,73 +886,44 @@ self::ImportSys('DNMedoo'); //DNMedoo 依赖 Medoo，所以需要手动加载
 
 
 ## DNMVCSExt.php  | 额外类应用和说明
-    选项 $options['ext'] 不为空数组就 引入
+    DNMVCS 的选项 $options['ext'] 不为空数组就 引入
+    配置字段 ext 数组有数据的时候，会进入高级模式。自动使用扩展文件
+    这些功能，用于，1 单一文件解决问题，2 多工程配置，3 使用更好的 db
+
 ### 额外模式
 ```php
 const DEFAULT_OPTIONS_EX=[
-    'key_for_simple_route'=>'_r',
+    'key_for_simple_route'=>'_r', //act 这个选项，不用 path_info 了，我们用 $_REQUEST['act']，
     
-    'use_function_view'=>false,
-        'function_view_head'=>'view_header',
-        'function_view_foot'=>'view_footer',
-    'use_function_dispatch'=>false,
-    'use_common_configer'=>false,
-        'fullpath_project_share_common'=>'',
-    'use_common_autoloader'=>false,
-        'fullpath_config_common'=>'',
-    'use_ext_db'=>false,
-    'use_strict_db_manager'=>false,
-    'use_superglobal'=>false,
+    'use_function_view'=>false,   //不用 view 文件了，我们用 view_$xx 来表示view
+        'function_view_head'=>'view_header', // 页眉函数
+        'function_view_foot'=>'view_footer', // 页脚函数
+    'use_function_dispatch'=>false, //路由上不用 DNController->$xx 了，直接 action_$xx
+    'use_common_configer'=>false,  //额外配置文件，多工程共享配置用
+        'fullpath_project_share_common'=>'',  //配合上面的使用， 公共文件会被本工程覆盖
+    'use_common_autoloader'=>false,  // 额外 loader ，多工程共享配置用
+        'fullpath_config_common'=>'',  //配合上面的使用， 公共文件会被本工程覆盖
+    'use_ext_db'=>false,  //使用 \DNMVCS\DBExt 代替  \DNMVCS\DNDB
+    'use_strict_db_manager'=>false, // 严格模式
+    'use_superglobal'=>false, //用 SuperGlobal 代替默认的 超级变量。
 ];
 ```
-    配置字段 ext 数组有数据的时候，会进入高级模式。自动使用扩展文件
-    额外的设置有。
-		key_for_simple_route = act 这个选项，不用 path_info 了，我们用 $_REQUEST['act']，
-        use_function_dispatch 不用 DNController::$xx 了，直接 action_$xx
-		use_function_view  不用 view 文件了，我们用 view_$xx 来表示view
-		'function_view_head'=>'view_header',
-        'function_view_foot'=>'view_footer',
-		use_common_configer 额外配置文件，多工程共享配置用
-            fullpath_config_common 配合上面的使用， 公共文件会被本工程覆盖
-		use_common_autoloader 额外loader ，多工程共享配置用
-            fullpath_project_share_common
-		use_ext_db 使用 \DNMVCS\DBExt 代替  \DNMVCS\DNDB
-    这些功能，用于，1 单一文件解决问题，2 多工程配置，3 使用更好的 db
+'fullpath_config_common'=>'',  
+    DNConfiger::G(ProjectCommonConfiger::G()); // 
+    设置和配置会先读取相应的文件，合并到同目录来
+'fullpath_project_share_common'=>''     // 通用类文件目录，用于多工程
+    ProjectCommonAutoloader::G()->init(DNMVCS::G()->options)->run();
+    只处理了 CommonService 和 CommonModel 而且是无命名空间的。
 
-	
-	'fullpath_config_common'=>'',       // 通用配置的目录，用于多工程
-		DNConfiger::G(ProjectCommonConfiger::G()); // 
-		设置和配置会先读取相应的文件，合并到同目录来
-	'fullpath_project_share_common'=>''     // 通用类文件目录，用于多工程
-		ProjectCommonAutoloader::G()->init(DNMVCS::G()->options)->run();
-		只处理了 CommonService 和 CommonModel 而且是无命名空间的。
-	
-	view 写在同文件里，不同 view 用 view_$action($data){extract($data);...} 这样来。
-	//使用 FunctionView view_header view_footer
-use_superglobal 用 SuperGlobal 代替默认的 超级变量。
 ### 严格模式
 我想让 DB 只能被 Model , ExModel 调用。Model 只能被 ExModel,Service 调用 。 LibService 只能被Service 调用  Service只能被 Controller 调用
 
 可以,你的 Service  继承 StrictService. Model 继承 StrictModel  初始化里 加这一句
-use_strict_db_managerB
+use_strict_db_manager
 严格模式下那些 **新手** 就不能乱来了。
 
 
 为什么不作为框架的默认行为。 主要考虑性能因数，而且自由，无依赖性
-
-### trait DNWrapper 
-W($object);
-    
-    DNWrapper::W(MyOBj::G()); 包裹一个对象，在 __call 里做一些操作，然后调用 call_the_object($method,$args)
-    未使用。
-### trait DNStaticCall
-    Facade 的trait 引用到 DNSingleton，由于 php7 的限制， protected funtion 才能 static call
-    未使用
-### SimpleRoute SimpleRoute
-    未使用,仅供参考，请用 SimpleRouteHook
-### SimpleRouteHook
-    SimpleRoute 用于指定 _GET 里某个 key 作为 控制器分配.
-    使用 $options['key_for_simple_route'] 来打开他。
 ### StrictService
     你的 Service 继承这个类
 	调试状态下，允许 service 调用 libservice 不允许 service 调用 service ,不允许 model 调用 service
@@ -962,6 +941,32 @@ W($object);
     等
     user_ext_db 选项自动安装，手动安装用
     \DNMVCS\DNDBManager::G()->installDBClass([DBExt::class,'CreateDBInstance']， [DBExt::class,'CloseDBInstance']);
+### ProjectCommonAutoloader
+    实现通用文件加载
+### ProjectCommonConfiger
+    实现通用配置加载
+### FunctionDispatcher
+    函数方式的 controller
+### FunctionView
+    函数方式的 view
+
+## Tookit.php 未使用用于参考的工具箱类。
+
+### trait DNWrapper 
+W($object);
+    
+    DNWrapper::W(MyOBj::G()); 包裹一个对象，在 __call 里做一些操作，然后调用 call_the_object($method,$args)
+    未使用。
+### trait DNStaticCall
+
+    Facade 的trait 引用到 DNSingleton，由于 php7 的限制， protected funtion 才能 static call
+    未使用
+### SimpleRoute SimpleRoute
+    未使用,仅供参考，请用 SimpleRouteHook
+### SimpleRouteHook
+    SimpleRoute 用于指定 _GET 里某个 key 作为 控制器分配.
+    使用 $options['key_for_simple_route'] 来打开他。
+
 ### MedooSimpleIntaller
     \DNMVCS\DNDBManager::G()->installDBClass([DBExt::class,'CreateDBInstance']， [DBExt::class,'CloseDBInstance']);
     用于加载 medoo 类代替默认的 db 类，注意 medoo 类 不兼容默认 db 类
@@ -971,28 +976,20 @@ W($object);
 	protected static function GetTypeFilter() 重写这个方法限定你的类型
     在项目里未使用
 ### MyArgsAssoc
-- GetMyArgsAssoc 获得当前函数的命名参数数组 无引用
-- CallWithMyArgsAssoc($callback)  获得当前函数的命名参数数组并回调
+    GetMyArgsAssoc 获得当前函数的命名参数数组 无引用
+    CallWithMyArgsAssoc($callback)  获得当前函数的命名参数数组并回调
     在项目里未使用
-
-### ProjectCommonAutoloader
-    实现通用文件加载
-### ProjectCommonConfiger
-    实现通用配置加载
-### FunctionDispatcher
-    函数方式的 controller
-### FunctionView
-    函数方式的 view
 ### DNFuncionModifer
     包裹函数，实现 aop
+
 ----
 
 
 ## DNRouteAdvance.php
     这个文件是用于自定义 route 和 rewrite 的
-DNFuncionModifer
 ## SuperGlobal.php
     对超全局数组的封装
+
 ## SwooleSuperGlobal
     超全局数组的 swoole 替换层
 ## DNSwooleHttpServer
@@ -1046,17 +1043,29 @@ DN::DB
 
 ## 和其他框架的整合
 
-override DNMVCS::onShow404 => function(){} 。 //或者 DNRoute::G()->set404Handel(function(){});
-
-run() 方法 得到 false 表示 404 了，后续就是其他框架的事情了
-
-# Swoole 整合指南(临时文档)
-启动代码
 ```php
-require_once($path.'DNMVCS/DNMVCS.php');
-
-\DNMVCS\DNMVCS::RunAsServer($server_options,$dn_options);
+<?php
+$options['error_404']=function(){};
+$flag=DNMVCS::G()->init($options)->run();
+if($flag){return;}
+// 其他框架代码
 ```
+
+
+# Swoole 整合指南
+## DNSwooleHttpServer
+DNSwooleHttpServer 是设计成几乎和 DNMVCS 无关的框架。
+
+DNSwooleHttpServer 和 DNMVCS 主类主要关系是在 G 函数 的实现，如果没这个 G 函数，两者是完全独立的。
+
+还记得 _SERVER,_GET,_POST 超全局变量在 swoole 协程下无法使用么。
+你要用 DNMVCS\SuperGlobal\SERVER:: Get($key), Set($key,$value)代替
+
+## 三种模式
+
+### 作为和DNMVCS无关的 DNSwooleHttpServer
+如果 http_handler 为空，有 http_handler_file 则直接 include  http_handler_file 运行，和 DNMVCS 系统无关
+
 $server_options 的选项
 ```php
 	const DEFAULT_OPTIONS=[
@@ -1066,34 +1075,52 @@ $server_options 的选项
 			'host'=>'0.0.0.0',  // IP
 			'port'=>0,          //端口
 			
-			'http_handler_root'=>null,               // php 的目录和静态目录的不相同，留空
+			'http_handler_root'=>null,      // php 的目录和静态目录的不相同，留空
 			'http_handler_file'=>null,      // 启动文件 留空将会使用 http_handler
-			'http_handler'=>null,           // 启动方法， DNMVCS 已经占用
+			'http_handler'=>null,           // 启动方法，
 			'http_exception_handler'=>null, // 异常处理方法,DNMVCS 已经占用  // http_handler_root 的异常也是这里处理
 			
-			'websocket_handler'=>null,      // websocket，尚未启用
-			'websocket_exception_handler'=>null, // 	websocket 异常处理方法 ，尚未启用 
+			'websocket_open_handler'=>null,  //websocket 打开
+			'websocket_handler'=>null,          //websocket 
+			'websocket_exception_handler'=>null,    //websocket 异常处理
+			'websocket_close_handler'=>null,        //websocket 关闭
     ];
 ```
-DNMVCS::RunAsServer 实际等同于 DNSwooleHttpServer :: RunWithServer()
+想要获得当前 的 request ,response 用 DNSwooleHttpServer::Request() ,Response（）；
 
-DNSwooleHttpServer::()->init($server_options);
-启用 SuperGlobal 
-然后设置  http_handler http_exception_handler 为 DNMVCS  的 run, onException
-
-扩展理解: 
-如果 http_handler 为空，有 http_handler_file 则直接 include  http_handler_file 运行，和 DNMVCS 系统无关
-可以设置成 http_handler_file 从 DNMVCS  web  路径里开始哦。这样 DNMVCS 就全运行在线程态
-如果 http_handler_file 也为空，那从 http_handler_root 里读取路径文件 也和 DNMVCS 系统无关
-
-DNSwooleHttpServer 和 DNMVCS 主类主要关系是在 G 函数 的实现，如果没这个 G 函数，两者是完全独立的。
-DNMVCS 在 swoole 下运行的时候，加了 SwooleMainAppHook
+DNSwooleHttpServer 运行 DNMVCS 可以有三种模式
+1. http_handler_root
+    这和document_root 一样。读取php文件，然后运行的模式
+2. http_handler_file
+    这种模式是把 url 都转向 文件如 index.php 来处理
+3. http_handler
+    所有url请求都到这个函数处理。
+    重点模式
+    DNSwooleHttpServer->bindDN($dn_options) 就是把请求定到 DNMVCS 里处理。
+    这模式和上面两种模式的区别，就是常驻内存,
+    然后设置  http_handler http_exception_handler 为 DNMVCS  的 run, onException
 
 还记得 _SERVER,_GET,_POST 超全局变量在 swoole 协程下无法使用么。
 你要用 DNMVCS\SuperGlobal\SERVER:: Get($key), Set($key,$value)代替
 
 
-想要获得当前 的 request ,response 用 DNSwooleHttpServer::Request() ,Response（）；
+### DNMVCS 整合到 DNSwooleServer
+
+```php
+
+<?php
+
+\DNMVCS\DNMVCS::RunAsServer($server_options,$dn_options);
+// 展开模式 \DNMVCS\DNSwooleServer::G()->init($server_options,$server)->bindDN($dn_options)->run();
+
+DNSwooleHttpServer::()->init($server_options);
+```
+
+
+
+扩展理解: 
+可以设置成 http_handler_file 从 DNMVCS  web  路径里开始哦。这样 DNMVCS 就全运行在线程态
+
 
 exit 函数可以用。但 header 函数不能用了，你得用 DNSwooleHttpServer::G()->header .还有 setcookie ,set_exception_handler 类似。
 
@@ -1110,22 +1137,22 @@ exit 函数可以用。但 header 函数不能用了，你得用 DNSwooleHttpSer
 	public static function CleanUp()
 	public static function Dump()
 
-## class SwooleContext
+### class SwooleContext
 	public static function Request()
 	public static function Response()
 	public static function CleanUp()
 	public function initHttp($request,$response)
 	public function initWebSocket($frame)
 	public function isWebSocketClosing()
-## class DNSwooleException
+### class DNSwooleException
 	public static function ThrowOn($flag,$message,$code=0)
 
-## class DBConnectPoolProxy
+### class DBConnectPoolProxy
 	public function setDBHandler($db_create_handler,$db_close_handler=null)
 	public function onCreate($db_config,$tag)
 	public function onClose($db,$tag)
 
-## trait DNSwooleHttpServer_Static
+### trait DNSwooleHttpServer_Static
 
 	public static function Server()
 	public static function Request()
