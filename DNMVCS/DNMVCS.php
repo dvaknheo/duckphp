@@ -2,8 +2,6 @@
 //dvaknheo@github.com
 //OK，Lazy
 namespace DNMVCS;
-use \PDO;
-use \Exception;
 
 trait DNSingleton
 {
@@ -604,7 +602,7 @@ class DNDB
 	{
 		if($this->pdo){return;}
 		$config=$this->config;
-		$this->pdo=new PDO($config['dsn'], $config['username'], $config['password'],array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC));
+		$this->pdo=new \PDO($config['dsn'], $config['username'], $config['password'],array(\PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION,\PDO::ATTR_DEFAULT_FETCH_MODE=>\PDO::FETCH_ASSOC));
 	}
 
 	public function close()
@@ -832,7 +830,7 @@ trait DNMVCS_Glue
 	{
 		return DNConfiger::G()->_LoadConfig($file_basename);
 	}
-	/*
+	
 	//exception manager
 	public function assignExceptionHandler($classes,$callback=null)
 	{
@@ -840,9 +838,8 @@ trait DNMVCS_Glue
 	}
 	public function setDefaultExceptionHandler($callback)
 	{
-		return DNExceptionManager::G()->SetException($callback);
+		return DNExceptionManager::G()->setDefaultExceptionHandler($callback);
 	}
-	*/
 	public static function ThrowOn($flag,$message,$code=0)
 	{
 		if(!$flag){return;}
@@ -964,16 +961,18 @@ trait DNMVCS_Misc
 		return in_array($a,realpath($file))?true:false;
 	}
 }
-trait DNMVCS_ExceptionManager
+class DNExceptionManager
 {
+	use DNSingleton;
+	
 	protected $errorHandlers=[];
-	public $default_exception_handler=null;
-	public $running_exception_handler=null;
 	protected $dev_error_handler=null;
+	protected $exception_error_handler_init=null;
 	protected $exception_error_handler=null;
+	
 	public function setDefaultExceptionHandler($default_exception_handler)
 	{
-		return $this->default_exception_handler=$default_exception_handler;
+		return $this->exception_error_handler=$default_exception_handler;
 	}
 	public function assignExceptionHandler($class,$callback=null)
 	{
@@ -987,26 +986,6 @@ trait DNMVCS_ExceptionManager
 		foreach($classes as $k){
 			$this->errorHandlers[$class]=$callback;
 		}
-	}
-	public function dealDefautExceptionHandle($ex)
-	{
-		if(!$this->default_exception_handler){return false;}
-		
-		$this->running_exception_handler=$this->default_exception_handler;
-		$this->default_exception_handler=null;
-		($this->runinng_exception_handler)($ex);
-		return true;
-	}
-	public function dealExceptionHandelers($ex)
-	{
-		$exception_class=get_class($ex);
-		foreach($this->errorHandlers as $class =>$callback){
-			if($class===$exception_class){
-				($callback)($ex);
-				return true;
-			}
-		}
-		return false;
 	}
 	public function on_error_handler($errno, $errstr, $errfile, $errline)
 	{
@@ -1029,16 +1008,40 @@ trait DNMVCS_ExceptionManager
 		/* Don't execute PHP internal error handler */
 		return true;
 	}
-	public function installExceptionManager($exception_handler,$dev_error_handler)
+	public function checkAndRunErrorHandlers($ex,$inDefault)
+	{
+		$exception_class=get_class($ex);
+		foreach($this->errorHandlers as $class =>$callback){
+			if($class===$exception_class){
+				($callback)($ex);
+				return true;
+			}
+		}
+		if($inDefault){
+			if($this->exception_error_handler != $this->exception_error_handler_init){
+				($this->exception_error_handler)($ex);
+				return true;
+			}
+			
+		}
+		
+		return false;
+	}
+	public function on_exception($ex)
+	{
+		$flag=$this->checkAndRunErrorHandlers($ex,false);
+		if($flag){return;}
+		($this->exception_error_handler)($ex);
+	}
+	public function init($exception_handler,$dev_error_handler)
 	{
 		$this->dev_error_handler=$dev_error_handler;
 		$this->exception_error_handler=$exception_handler;
+		$this->exception_error_handler_init=$exception_handler;
 		
 		set_error_handler([$this,'on_error_handler']);
-		set_exception_handler([$this,'onException']);
+		set_exception_handler([$this,'on_exception']);
 	}
-	//public function onException($ex){}
-	//public function onDevErrorHandler($errno, $errstr, $errfile, $errline){}
 }
 trait DNMVCS_Handler
 {
@@ -1082,9 +1085,7 @@ trait DNMVCS_Handler
 	
 	public function onException($ex)
 	{
-		$flag=$this->dealDefautExceptionHandle($ex);
-		if($flag){return;}
-		$flag=$this->dealExceptionHandelers($ex);
+		$flag=DNExceptionManager::G()->checkAndRunErrorHandlers($ex,true);
 		if($flag){return;}
 		
 		$view=DNView::G();
@@ -1099,7 +1100,7 @@ trait DNMVCS_Handler
 		$is_error=is_a($ex,'Error') || is_a($ex,'ErrorException')?true:false;		
 		$error_view=$is_error?$this->options['error_500']:$this->options['error_exception'];
 		$this->checkAndRunDefaultErrorHandler($error_view,$data);
-		if(!$flag){
+		if(!$is_error){
 			$desc=$is_error?'Error':'Exception';
 			echo "Internal $desc \n<!--DNMVCS -->\n";
 			if($this->isDev){
@@ -1161,7 +1162,6 @@ class DNMVCS
 	use DNMVCS_Glue;
 	use DNMVCS_Handler;
 	use DNMVCS_Misc;
-	use DNMVCS_ExceptionManager;
 	
 	const DEFAULT_OPTIONS=[
 			'base_class'=>'MY\Base\App',
@@ -1244,7 +1244,7 @@ class DNMVCS
 	
 	protected function initExceptionManager()
 	{
-		$this->installExceptionManager([$this,'onException'],[$this,'onDevErrorHandler']);
+		DNExceptionManager::G()->init([$this,'onException'],[$this,'onDevErrorHandler']);
 	}
 	protected function checkOverride($options)
 	{

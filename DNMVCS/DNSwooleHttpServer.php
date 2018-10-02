@@ -536,11 +536,10 @@ class DNSwooleHttpServer
 		$this->options['http_handler']=$this->http_handler =[DNMVCS::G(),'run'];
 		$this->options['http_exception_handler']=$this->http_exception_handler=[DNMVCS::G(),'onException'];
 		
-		$dbm=DNDBManager::G();
 		$db_reuse_size=$dn_options['swoole_db_reuse_size']??0;
 		if($db_reuse_size){
 			$db_reuse_timeout=$dn_options['swoole_reuse_timeout']??5;
-			
+			$dbm=DNDBManager::G();
 			DBConnectPoolProxy::G()->init($db_reuse_size,$db_reuse_timeout)->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
 			$dbm->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
 		}
@@ -549,6 +548,7 @@ class DNSwooleHttpServer
 		DNMVCS::G()->onBeforeRun(function(){
 			CoroutineSingleton::CloneInstance(DNView::class);
 			CoroutineSingleton::CloneInstance(DNRoute::class);
+			CoroutineSingleton::CloneInstance(DNExceptionManager::class);
 		});
 		
 		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G());
