@@ -92,37 +92,18 @@ class SwooleContext
 	public $fd=-1;
 	public $frame=null;
 	
-	public static function Request()
-	{
-		return self::G()->request;
-	}
-	
-	public static function Response()
-	{
-		return self::G()->response;
-	}
-
-	public static function CleanUp()
-	{
-		return self::G()->_CleanUp();
-	}
 	public function initHttp($request,$response)
 	{
 		$this->request=$request;
 		$this->response=$response;
 	}
-
 	public function initWebSocket($frame)
 	{
 		$this->frame=$frame;
 		$this->fd=$frame->fd;
 		
 	}
-	public function isWebSocketClosing()
-	{
-		return $this->frame->opcode == 0x08?true:false;
-	}
-	public function _CleanUp()
+	public function cleanUp()
 	{
 		$this->request=null;
 		$this->response=null;
@@ -227,16 +208,28 @@ trait DNSwooleHttpServer_Static
 	{
 		return SwooleContext::G()->response;
 	}
-	public static function Context()
+	public static function Frame()
 	{
-		return SwooleContext::G();
+		return SwooleContext::G()->frame;
+	}
+	public static function FD()
+	{
+		return SwooleContext::G()->fd;
+	}
+	public static function IsClosing()
+	{
+		return SwooleContext::G()->frame->opcode == 0x08?true:false;
+	}
+	public static function CloneInstance($class)
+	{
+		return CoroutineSingleton::CloneInstance($class);
 	}
 }
 trait DNSwooleHttpServer_GlobalFunc
 {
 	public $http_exception_handler=null;
 	public $shutdown_function_array=[];
-	public function header(string $string, bool $replace = true , int $http_response_code =0)
+	public static function header(string $string, bool $replace = true , int $http_response_code =0)
 	{
 		if(strpos($string,':')===false){return;} // 404,500 so on
 		list($key,$value)=explode(':',$string);
@@ -245,17 +238,17 @@ trait DNSwooleHttpServer_GlobalFunc
 			SwooleContext::G()->response->status($http_status_code);
 		}
 	}
-	public function setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
+	public static function setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
 	{
 		return SwooleContext::G()->response->cookie($key,$value,$expire,$path,$domain,$secure,$httponly );
 	}
-	public function set_exception_handler(callable $exception_handler)
+	public static function set_exception_handler(callable $exception_handler)
 	{
-		$this->http_exception_handler=$exception_handler;
+		self::G()->http_exception_handler=$exception_handler;
 	}
-	public function register_shutdown_function(callable $callback,...$args)
+	public static function register_shutdown_function(callable $callback,...$args)
 	{
-		$this->shutdown_function_array[]=func_get_args();
+		self::G()->shutdown_function_array[]=func_get_args();
 	}
 }
 trait DNSwooleHttpServer_SimpleHttpd
@@ -356,7 +349,6 @@ class DNSwooleHttpServer
 	public $http_exception_handler=null;
 	
 	protected $static_root=null;  //TODO
-	
 	protected function onHttpRun($request,$response)
 	{
 		SwooleContext::G()->initHttp($request,$response);
@@ -469,7 +461,7 @@ class DNSwooleHttpServer
 	}
 	protected function onHttpClean()
 	{
-		SwooleContext::CleanUp();
+		SwooleContext::G()->cleanUp();
 		CoroutineSingleton::CleanUp();
 	}
 	/////////////////////////
@@ -543,7 +535,7 @@ class DNSwooleHttpServer
 			DBConnectPoolProxy::G()->init($db_reuse_size,$db_reuse_timeout)->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
 			$dbm->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
 		}
-		DNView::G()->setHeaderHandler([self::G(),'header']);
+		DNView::G()->setHeaderHandler([self::class,'header']);
 		
 		DNMVCS::G()->onBeforeRun(function(){
 			CoroutineSingleton::CloneInstance(DNView::class);

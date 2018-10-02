@@ -204,11 +204,11 @@ autoload 自动加载相关的选项
 const DNMVCS::DEFAULT_OPTIONS=[
     'base_class'=>'MY\Base\App',        // override 重写 系统入口类代替 DNMVCS 类。
         'path_view'=>'view',            // 视图目录，或许会有人改到 app/View
-		'path_lib'=>'lib',              // 用于手动导入 DNMVCS::Import() 的类的目录
-	'setting'=>[],        				// 设置，设置文件里填写的将会覆盖这一选项
-	'all_config'=>[],        			// 配置，每个配置用 key  分割。
-		'setting_file_basename'=>'setting',        // 设置的文件名，如果为'' 则不读取设置文件
-	'is_dev'=>false,					//是否在开发状态，设置文件里填写的将会覆盖这一选项
+        'path_lib'=>'lib',              // 用于手动导入 DNMVCS::Import() 的类的目录
+    'setting'=>[],        				// 设置，设置文件里填写的将会覆盖这一选项
+    'all_config'=>[],        			// 配置，每个配置用 key  分割。
+        'setting_file_basename'=>'setting',        // 设置的文件名，如果为'' 则不读取设置文件
+    'is_dev'=>false,					//是否在开发状态，设置文件里填写的将会覆盖这一选项
     'db_create_handler' =>'',			// 创建DB 的回调 默认用 DNDB::class
     'db_close_handler' =>'', 			// 关闭DB 类的回调。
     'ext'=>[],                          //默认不使用扩展
@@ -218,10 +218,10 @@ const DNMVCS::DEFAULT_OPTIONS=[
         'swoole_db_reuse_size'=>0,                 // swoole_mode 模式下生效,大于0表示复用数据库连接
         'swoole_db_reuse_timeout'=>5,              // swoole_mode 模式下生效,复用数据库连接超时秒数
 
-		'error_404'=>'_sys/error-404',      // 404 错误处理，传入字符串表示用的 view,如果传入 callable 则用 callback,view 优先
+        'error_404'=>'_sys/error-404',      // 404 错误处理，传入字符串表示用的 view,如果传入 callable 则用 callback,view 优先
         'error_500'=>'_sys/error-500',      // 500 代码有语法错误等的页面，和 404 的内容一样
-	    'error_exception'=>'_sys/error-exception',  // 默认的异常处理。和前面类似
-	    'error_debug'=>'_sys/error_debug',  // 调试模式下出错的处理。和前面类似
+        'error_exception'=>'_sys/error-exception',  // 默认的异常处理。和前面类似
+        'error_debug'=>'_sys/error_debug',  // 调试模式下出错的处理。和前面类似
 ];
 ```
     关于 base_class 选项。
@@ -253,13 +253,13 @@ const DNRoute::DEFAULT_OPTIONS=[
 <?php
 // copy me to "setting.php"
 return [
-	'is_dev'=>true,
-	'db'=>[
+    'is_dev'=>true,
+    'db'=>[
         'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
         'username'=>'???',
         'password'=>'???',
-	],
-	'db_r'=>null,
+    ],
+    'db_r'=>null,
 ];
 ```
     关于 is_dev ，这个标记用于判断是否在开发状态，影响 DNMVCS::G()->isDev();
@@ -334,13 +334,13 @@ class MiscService
 namespace MY\Base;
 class App extends \DNMVCS\DNMVCS
 {
-	public function init($options=array())
-	{
+    public function init($options=array())
+    {
         // switch  me , DNView::G(MYView::G());
         parent::init($options);
         // switch  me , $this->initView(DNView::G(MYView::G());
         return $this;
-	}
+    }
 }
 ```
 这就是 DNMVCS 下的简单流程了。其他开发类似。
@@ -394,7 +394,7 @@ DNMVCS 的报错页面还是很丑陋，需要调整一下
 static G($object=null,$args=[])   
     G 单例函数是整个系统最有趣的地方。
     传入 $object 将替代默认的单例。
-	比 PHP-DI简洁，后面的文档 会有详细介绍
+    比 PHP-DI简洁，后面的文档 会有详细介绍
 
 init($options=[])
     初始化，这是最经常子类化完成自己功能的方法。
@@ -500,7 +500,7 @@ ImportSys($file)
     手动导DNMVCS目录下的包含文件 函数。
     目前应用只有一个： 延迟加载  DNMedoo .
 
-	比如在调试状态下：限定各 G 函数的调用。以及DNMedoo ，用 Medoo类
+    比如在调试状态下：限定各 G 函数的调用。以及DNMedoo ，用 Medoo类
 
 ## 独立杂项静态方法
 这几个方法独立，为了方便操作，放在这里。
@@ -512,7 +512,7 @@ H(&$str)
 RecordsetH(&$data,$cols=[])
 
     给 sql 查询返回数组 html 编码
-	$cols 指定 要转码的列名
+    $cols 指定 要转码的列名
 
 RecordsetURL(&$data,$cols_map=[]) 
 
@@ -551,8 +551,8 @@ setViewWrapper($head_file=null,$foot_file=null)
 
     给输出 view 加页眉页脚 
     view 里的变量和页眉页脚的域是一样的。
-	页眉页脚的变量和 view 页面是同域的。
-	有时候你需要 setViewWrapper(null,null) 清理页眉页脚
+    页眉页脚的变量和 view 页面是同域的。
+    有时候你需要 setViewWrapper(null,null) 清理页眉页脚
 
     实质调用 DNView::G()->setViewWrapper
 assignViewData($key,$value=null)
@@ -722,8 +722,8 @@ DNMVCS 一共有 4个组件初始化。
 namespace MY\Base;
 class App extends \DNMVCS\DNMVCS
 {
-	public function init($options=array())
-	{
+    public function init($options=array())
+    {
         \DNMVCS\DNRoute::G(Route::G());
         parent::init($options);
         $this->initView(\DNMVCS\DNView::G(View::G()));
@@ -757,25 +757,25 @@ if($flag){throw new MyException($message,$code);}
 这应该会被扩展,加上权限判断等设置
 路由类是很强大扩展性很强的类。
 
-	_URL($url=null)
-	_Parameters()
+    _URL($url=null)
+    _Parameters()
     init($options)
     run()
- 	set404($callback)
+    set404($callback)
     defaultURLHandler()
     set404 设置404 回调
 
     protected getRouteHandelByFile
-	protected getObecjectToCall($class_name)
-	protected getMethodToCall($obj,$method)
+    protected getObecjectToCall($class_name)
+    protected getMethodToCall($obj,$method)
 文件模式的路由
 
-	public  assignRoute($key,$callback=null)
+    public  assignRoute($key,$callback=null)
 映射模式的路由。
 
-	getRouteCallingPath()
-	getRouteCallingClass()
-	getRouteCallingMethod()
+    getRouteCallingPath()
+    getRouteCallingClass()
+    getRouteCallingMethod()
 以上三组，是当前路径，当前类，当前方法。
 当前方法用于权限的判断。如跳过login 方法其他都要权限。
 当前类如果为空，说明是 rewrite 过来的。
@@ -787,26 +787,26 @@ setURLHandel
     
     替换 URL()函数的实现。
 addRouteHook
-	
+    
     添加路由的hook,$preprend  在最前面加 
 ## DNView 视图类
-	public function _ExitJson($ret)
-	public function _ExitRedirect($url,$only_in_site=true)
-	public function _Show($data=[],$view)
+    public function _ExitJson($ret)
+    public function _ExitRedirect($url,$only_in_site=true)
+    public function _Show($data=[],$view)
 
-	public function init($path)
-	public function setBeforeShow($callback)
-	public function setViewWrapper($head_file,$foot_file)
-	public function showBlock($view,$data)
-	public function assignViewData($key,$value=null)
-	protected function includeShowFiles()
+    public function init($path)
+    public function setBeforeShow($callback)
+    public function setViewWrapper($head_file,$foot_file)
+    public function showBlock($view,$data)
+    public function assignViewData($key,$value=null)
+    protected function includeShowFiles()
 
 ## DNConfiger 配置类
-	public function init($path)
-	protected function include_file($file)
-	public function _Setting($key)
-	public function _Config($key,$file_basename='config')
-	public function _LoadConfig($file_basename='config')
+    public function init($path)
+    protected function include_file($file)
+    public function _Setting($key)
+    public function _Config($key,$file_basename='config')
+    public function _LoadConfig($file_basename='config')
 
     DNConfiger 类获得配置设置
 ## 异常管理 trait DMMVCS_ExceptionManager
@@ -926,16 +926,16 @@ use_strict_db_manager
 为什么不作为框架的默认行为。 主要考虑性能因数，而且自由，无依赖性
 ### StrictService
     你的 Service 继承这个类
-	调试状态下，允许 service 调用 libservice 不允许 service 调用 service ,不允许 model 调用 service
+    调试状态下，允许 service 调用 libservice 不允许 service 调用 service ,不允许 model 调用 service
 ### StrictModel
-	你的 Model 继承这个类
+    你的 Model 继承这个类
     调试状态下，只允许 Service 或者 ExModel 调用 Model
 ### StrictDBManager
     包裹 DNDBManger::G(DNMedoo::W(DNDBManger::G())); 后，实现
     不允许 Controller, Service 调用 DB
-	如果使用 Medoo ，请在 installDBClass(DNMedoo::class); 后面执行。
+    如果使用 Medoo ，请在 installDBClass(DNMedoo::class); 后面执行。
 ### DBExt
-	加了额外方法的DB类，注意和 Medoo 不兼容
+    加了额外方法的DB类，注意和 Medoo 不兼容
     多出的方法有 
     quote_array， get， insert， update， delete
     等
@@ -971,9 +971,9 @@ W($object);
     \DNMVCS\DNDBManager::G()->installDBClass([DBExt::class,'CreateDBInstance']， [DBExt::class,'CloseDBInstance']);
     用于加载 medoo 类代替默认的 db 类，注意 medoo 类 不兼容默认 db 类
 ### API
-	用于 api 服务快速调用 无引用
-	public static function Call($class,$method,$input)  input 是关联数组
-	protected static function GetTypeFilter() 重写这个方法限定你的类型
+    用于 api 服务快速调用 无引用
+    public static function Call($class,$method,$input)  input 是关联数组
+    protected static function GetTypeFilter() 重写这个方法限定你的类型
     在项目里未使用
 ### MyArgsAssoc
     GetMyArgsAssoc 获得当前函数的命名参数数组 无引用
@@ -1008,8 +1008,8 @@ DN::init
 DN::run
     RouteAdvance->hook
     (DNRoute::run)
-	(RouteHook)($this);
-		 
+    (RouteHook)($this);
+         
     getRouteHandelByFile
     (DNRoute->callback)()
 
@@ -1019,27 +1019,27 @@ DN::DB
 # 常见问题
 
 - Session 要怎么处理 
-	一般来说 Session 的处理，放在 SessionService 里，这是唯一和状态有关的 Service 例外。
+    一般来说 Session 的处理，放在 SessionService 里，这是唯一和状态有关的 Service 例外。
     或者是 SesionModel
-	在构造函数里做 session_start 相关代码
+    在构造函数里做 session_start 相关代码
 - 后台里，我要判断权限，只有几个公共方法能无权限访问
     - 构造函数里获得 $method=DNMVCS::G()->getRouteCallingMethod(); 然后进行后处理
-	
+    
 - 为什么不把 DNMVCS 里那些子功能类作为DNMVCS类的属性， 如 $this->View=DNView::G();
     - 静态方法里调用。 self::G()->View->_Show() 比 DNView::G()->_Show() 之类更麻烦。非静态方法里也就懒得加引用了
 - 我用 static 方法不行么，不想用 G() 函数于 Model ,Service
-	- 可以，Model可以用。不过不推荐 Service 用
-	- 琢磨了一阵如何不改 static 调用强行塞  strict 模式，还是没找到方法，切换 namespace 代理的方式可以搞定，但还是要手工改代码.
+    - 可以，Model可以用。不过不推荐 Service 用
+    - 琢磨了一阵如何不改 static 调用强行塞  strict 模式，还是没找到方法，切换 namespace 代理的方式可以搞定，但还是要手工改代码.
 !!!2018-09-30 12:09:57 已经想出来了，改 autoloader ，配合 class alias 。测试 DEMO已过，有空添加
     - DNStaticCall 由于 php7 的限制， protected funtion 才能 static call
 - 思考：子域名作为子目录
-	想把某个子目录作为域名独立出去。只改底层代码如何改
+    想把某个子目录作为域名独立出去。只改底层代码如何改
     或者 v1/api v2/api 等等
 - error-exception 和 error-500 有什么不同
-	error-500 是引入的文件有语法错误之类。 error-exception 是抛出了错误没处理，用 setExceptionHandel 可以自行处理。
+    error-500 是引入的文件有语法错误之类。 error-exception 是抛出了错误没处理，用 setExceptionHandel 可以自行处理。
 
 - 为什么不拆分文件，按 composer ,psr-4 目录布局
-	因为不想太多零碎文件，而且还没想到什么应用要拆分
+    因为不想太多零碎文件，而且还没想到什么应用要拆分
 
 ## 和其他框架的整合
 
@@ -1057,7 +1057,7 @@ if($flag){return;}
 DNSwooleHttpServer 是设计成几乎和 DNMVCS 无关的框架。
 
 DNSwooleHttpServer 和 DNMVCS 主类主要关系是在 G 函数 的实现，如果没这个 G 函数，两者是完全独立的。
-
+DNSwooleHttpServer  重写了 G 函数的实现，使得做到协程单例。
 还记得 _SERVER,_GET,_POST 超全局变量在 swoole 协程下无法使用么。
 你要用 DNMVCS\SuperGlobal\SERVER:: Get($key), Set($key,$value)代替
 
@@ -1068,25 +1068,28 @@ DNSwooleHttpServer 和 DNMVCS 主类主要关系是在 G 函数 的实现，如�
 
 $server_options 的选项
 ```php
-	const DEFAULT_OPTIONS=[
-			'swoole_server'=>null, // swoole_http_server 对象，留空，则用 host,port 创建
+    const DEFAULT_OPTIONS=[
+            'swoole_server'=>null, // swoole_http_server 对象，留空，则用 host,port 创建
             'swoole_options'=>[],   //swoole_http_server 的配置，合并如 server
             
-			'host'=>'0.0.0.0',  // IP
-			'port'=>0,          //端口
-			
-			'http_handler_root'=>null,      // php 的目录和静态目录的不相同，留空
-			'http_handler_file'=>null,      // 启动文件 留空将会使用 http_handler
-			'http_handler'=>null,           // 启动方法，
-			'http_exception_handler'=>null, // 异常处理方法,DNMVCS 已经占用  // http_handler_root 的异常也是这里处理
-			
-			'websocket_open_handler'=>null,  //websocket 打开
-			'websocket_handler'=>null,          //websocket 
-			'websocket_exception_handler'=>null,    //websocket 异常处理
-			'websocket_close_handler'=>null,        //websocket 关闭
+            'host'=>'0.0.0.0',  // IP
+            'port'=>0,          //端口
+            
+            'http_handler_root'=>null,      // php 的目录和静态目录的不相同，留空
+            'http_handler_file'=>null,      // 启动文件 留空将会使用 http_handler
+            'http_handler'=>null,           // 启动方法，
+            'http_exception_handler'=>null, // 异常处理方法,DNMVCS 已经占用  // http_handler_root 的异常也是这里处理
+            
+            'websocket_open_handler'=>null,  //websocket 打开
+            'websocket_handler'=>null,          //websocket 
+            'websocket_exception_handler'=>null,    //websocket 异常处理
+            'websocket_close_handler'=>null,        //websocket 关闭
     ];
 ```
 想要获得当前 的 request ,response 用 DNSwooleHttpServer::Request() ,Response（）；
+还记得 _SERVER,_GET,_POST 超全局变量在 swoole 协程下无法使用么。
+你要用 DNMVCS\SuperGlobal\SERVER:: Get($key), Set($key,$value)代替
+exit 函数可以用。但 header 函数不能用了，你得用 DNSwooleHttpServer::G()->header .还有 setcookie ,set_exception_handler 类似。
 
 DNSwooleHttpServer 运行 DNMVCS 可以有三种模式
 1. http_handler_root
@@ -1100,14 +1103,13 @@ DNSwooleHttpServer 运行 DNMVCS 可以有三种模式
     这模式和上面两种模式的区别，就是常驻内存,
     然后设置  http_handler http_exception_handler 为 DNMVCS  的 run, onException
 
-还记得 _SERVER,_GET,_POST 超全局变量在 swoole 协程下无法使用么。
-你要用 DNMVCS\SuperGlobal\SERVER:: Get($key), Set($key,$value)代替
+
+DNSwooleHttpServer 可以让你用 echo 直接输出。
 
 
 ### DNMVCS 整合到 DNSwooleServer
 
 ```php
-
 <?php
 
 \DNMVCS\DNMVCS::RunAsServer($server_options,$dn_options);
@@ -1115,60 +1117,68 @@ DNSwooleHttpServer 运行 DNMVCS 可以有三种模式
 
 DNSwooleHttpServer::()->init($server_options);
 ```
-
-
-
-扩展理解: 
-可以设置成 http_handler_file 从 DNMVCS  web  路径里开始哦。这样 DNMVCS 就全运行在线程态
-
-
-exit 函数可以用。但 header 函数不能用了，你得用 DNSwooleHttpServer::G()->header .还有 setcookie ,set_exception_handler 类似。
-
-
-## class CoroutineSingleton
-
-用于协程单例
-
-	public static function GetInstance($class,$object)
-	public static function CreateInstance($class,$object=null)
-	public static function CloneInstance($class)
-	public static function DeleteInstance($class)
-	public static function ReplaceDefaultSingletonHandler()
-	public static function CleanUp()
-	public static function Dump()
-
-### class SwooleContext
-	public static function Request()
-	public static function Response()
-	public static function CleanUp()
-	public function initHttp($request,$response)
-	public function initWebSocket($frame)
-	public function isWebSocketClosing()
-### class DNSwooleException
-	public static function ThrowOn($flag,$message,$code=0)
-
-### class DBConnectPoolProxy
-	public function setDBHandler($db_create_handler,$db_close_handler=null)
-	public function onCreate($db_config,$tag)
-	public function onClose($db,$tag)
+## class DNSwooleHttpServer
+    public function init($server_options,$server=null)
+    public function bindDN($dn_options)
+    public function run()
+    public static function RunWithServer($server_options,$dn_options=[])
 
 ### trait DNSwooleHttpServer_Static
 
-	public static function Server()
-	public static function Request()
-	public static function Response()
-	public static function Context()
+静态函数列表
+
+    public static function Server()
+    获得当前 swoole_server 对象
+    public static function Request()
+    获得当前  swoole_request
+    public static function Response()
+    获得当前  swoole_response    
+    public static function Frame()
+    获得当前  frame （websocket 生效 ）  
+    public static function FD( 生效)
+    获得当前  fd  （websocket 生效）
+    public static function IsClosing()
+    判断是否是关闭的包 （websocket 生效）
+    public static function CloneInstance()
+    把主进程单例复制到协程单例
+    
 ## trait DNSwooleHttpServer_GlobalFunc
+全局函数的替代。 作为 DNSwooleHttpServer 的一部分
+对应PHP手册上的函数
+    header(string $string, bool $replace = true , int $http_response_code =0)
+    setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
+    set_exception_handler(callable $exception_handler)
+    register_shutdown_function(callable $callback,...$args)
 
-	public function header(string $string, bool $replace = true , int $http_response_code =0)
-	public function setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
-	public function set_exception_handler(callable $exception_handler)
-	public function register_shutdown_function(callable $callback,...$args)
+## class DNSwooleException
+    public static function ThrowOn($flag,$message,$code=0)
+404 错误是用 code=404 那个
+没端口会报错
+
+
+## class DBConnectPoolProxy
+DB连接代理
+    public function setDBHandler($db_create_handler,$db_close_handler=null)
+    public function onCreate($db_config,$tag)
+    public function onClose($db,$tag)
+
+## class SwooleContext
+    协程单例。Swoole 的运行信息
+
+
 ## trait DNSwooleHttpServer_SimpleHttpd
+单独使用这个 trait 你可以实现一个 http 服务器
+public function onRequest($request,$response)
+## trait DNSwooleHttpServer_WebSocket
+public function onRequest($request,$response)
+单独使用这个 trait 你可以实现一个 websocket 服务器
 
-## class DNSwooleHttpServer
-	public function init($server_options)
-	public function bindDN($dn_options)
-	public function run()
-	public static function RunWithServer($server_options,$dn_options=[])
-
+## class CoroutineSingleton
+用于协程单例
+    public static function GetInstance($class,$object)
+    public static function CreateInstance($class,$object=null)
+    public static function CloneInstance($class)
+    public static function DeleteInstance($class)
+    public static function ReplaceDefaultSingletonHandler()
+    public static function CleanUp()
+    public static function Dump()
