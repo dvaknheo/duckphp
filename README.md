@@ -1019,9 +1019,8 @@ DN::DB
 # 常见问题
 
 - Session 要怎么处理 
-    一般来说 Session 的处理，放在 SessionService 里，这是唯一和状态有关的 Service 例外。
-    或者是 SesionModel
-    在构造函数里做 session_start 相关代码
+    一般来说 Session 的处理，放在 SesionModel 里。在构造函数里做 session_start 相关代码
+
 - 后台里，我要判断权限，只有几个公共方法能无权限访问
     - 构造函数里获得 $method=DNMVCS::G()->getRouteCallingMethod(); 然后进行后处理
     
@@ -1030,7 +1029,9 @@ DN::DB
 - 我用 static 方法不行么，不想用 G() 函数于 Model ,Service
     - 可以，Model可以用。不过不推荐 Service 用
     - 琢磨了一阵如何不改 static 调用强行塞  strict 模式，还是没找到方法，切换 namespace 代理的方式可以搞定，但还是要手工改代码.
+
 !!!2018-09-30 12:09:57 已经想出来了，改 autoloader ，配合 class alias 。测试 DEMO已过，有空添加
+!!!2018-10-02 21:10:09 失败，因为 alias 之后，还要调用原来的类。
     - DNStaticCall 由于 php7 的限制， protected funtion 才能 static call
 - 思考：子域名作为子目录
     想把某个子目录作为域名独立出去。只改底层代码如何改
@@ -1106,6 +1107,7 @@ DNSwooleHttpServer 运行 DNMVCS 可以有三种模式
 
 DNSwooleHttpServer 可以让你用 echo 直接输出。
 
+http_exception_handler，单文件模式和目录模式，你可以在这里处理 404。
 
 ### DNMVCS 整合到 DNSwooleServer
 
@@ -1128,23 +1130,31 @@ DNSwooleHttpServer::()->init($server_options);
 静态函数列表
 
     public static function Server()
+
     获得当前 swoole_server 对象
     public static function Request()
+
     获得当前  swoole_request
     public static function Response()
+
     获得当前  swoole_response    
     public static function Frame()
+
     获得当前  frame （websocket 生效 ）  
     public static function FD( 生效)
+
     获得当前  fd  （websocket 生效）
     public static function IsClosing()
     判断是否是关闭的包 （websocket 生效）
+
     public static function CloneInstance()
+
     把主进程单例复制到协程单例
     
 ## trait DNSwooleHttpServer_GlobalFunc
 全局函数的替代。 作为 DNSwooleHttpServer 的一部分
-对应PHP手册上的函数
+对应PHP手册的函数
+
     header(string $string, bool $replace = true , int $http_response_code =0)
     setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
     set_exception_handler(callable $exception_handler)
