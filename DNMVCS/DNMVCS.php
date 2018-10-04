@@ -448,20 +448,20 @@ class DNView
 			//something  wrong
 			exit;
 		}
-		$this->header('location: '.$url);
+		$this->header('location: '.$url,true,302);
 		if($this->before_show_handler){
 			($this->before_show_handler)($data,$this->view);
 		}
 		exit;
 	}
-	public function header($output)
+	public function header($output ,bool $replace = true , int $http_response_code)
 	{
 		if($this->header_handler){
-			return ($this->header_handler)($output);
+			return ($this->header_handler)($output,$replace,$http_response_code);
 		}
 		if(PHP_SAPI==='cli'){ return; }
 		if(headers_sent()){ return; }
-		return header($output);
+		return header($output,$replace,$http_response_code);
 	}
 	public function _Show($data=[],$view)
 	{
@@ -602,7 +602,12 @@ class DNDB
 	{
 		if($this->pdo){return;}
 		$config=$this->config;
-		$this->pdo=new \PDO($config['dsn'], $config['username'], $config['password'],array(\PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION,\PDO::ATTR_DEFAULT_FETCH_MODE=>\PDO::FETCH_ASSOC));
+		$this->pdo=new \PDO($config['dsn'], $config['username'], $config['password']
+			,[
+				\PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION,
+				\PDO::ATTR_DEFAULT_FETCH_MODE=>\PDO::FETCH_ASSOC
+			]
+		);
 	}
 
 	public function close()
@@ -802,6 +807,11 @@ trait DNMVCS_Glue
 	public static function ExitRouteTo($url)
 	{
 		return DNView::G()->_ExitRedirect(self::URL($url),true);
+	}
+	public static function Exit404()
+	{
+		static::G()->onShow404();
+		exit;
 	}
 	public function setViewWrapper($head_file=null,$foot_file=null)
 	{
