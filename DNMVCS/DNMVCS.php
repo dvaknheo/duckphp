@@ -435,7 +435,7 @@ class DNView
 	protected $header_handler=null;
 	public function _ExitJson($ret)
 	{
-		$this->header('content-type:text/json');
+		$this->header('Content-Type:text/json');
 		if($this->before_show_handler){
 			($this->before_show_handler)($data,$this->view);
 		}
@@ -448,13 +448,14 @@ class DNView
 			//something  wrong
 			exit;
 		}
-		$this->header('location: '.$url,true,302);
+		$this->header('',true,302);
+		$this->header('location: '.$url);
 		if($this->before_show_handler){
 			($this->before_show_handler)($data,$this->view);
 		}
 		exit;
 	}
-	public function header($output ,bool $replace = true , int $http_response_code)
+	public function header($output ,bool $replace = true , int $http_response_code=0)
 	{
 		if($this->header_handler){
 			return ($this->header_handler)($output,$replace,$http_response_code);
@@ -1079,7 +1080,7 @@ trait DNMVCS_Handler
 		$error_404=$this->options['error_404'];
 		
 		$view=DNView::G();
-		$view->header("HTTP/1.1 404 Not Found");
+		$view->header('',true,404);
 		
 		$flag=$this->checkAndRunDefaultErrorHandler($error_404,[]);
 		if(!$flag){
@@ -1097,7 +1098,7 @@ trait DNMVCS_Handler
 		if($flag){return;}
 		
 		$view=DNView::G();
-		$view->header("HTTP/1.1 500 Internal Error");
+		$view->header('',true,500);
 		
 		$data=[];
 		$data['ex']=$ex;

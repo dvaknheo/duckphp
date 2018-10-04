@@ -92,7 +92,7 @@ Controller --> Service ---------------------------------> Model
 ### 第一步
 跑起来。
 1. 下载 DNMVCS。
-2. 把 web 目录设置为 sample/www 目录。
+2. 把 web 目录设置为 sample/public 目录。
 3. 复制 config/setting.sample.php 为 config/setting.php
 4. 浏览器中打开主页出现下面的欢迎就表示基本成功
 
@@ -143,12 +143,12 @@ DNMVCS Fatal: no setting file!,change setting.sample.php to setting.php !
 |           error-500.php  // 500 出错了
 |           error-debug.php // 调试的时候显示的视图
 |           error-exception.php // 出异常了，和 500 不同是 这里是未处理的异常。
-\---www             //  网站目录放这里
+\---public             //  网站目录放这里
         index.php // 主页面
 ```
 解读
 
-www/index.php  入口 PHP 文件,内容如下
+public/index.php  入口 PHP 文件,内容如下
 ```php
 <?php
 require('../../DNMVCS/DNMVCS.php');
