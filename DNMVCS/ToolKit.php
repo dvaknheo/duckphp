@@ -16,7 +16,7 @@ trait DNWrapper
 
 	public static function W($object=null)
 	{
-		$caller=get_called_class();
+		$caller=static::class;
 		if($object==null){
 			return self::$objects[$caller];
 		}
@@ -40,7 +40,7 @@ trait DNStaticCall
 	//remark ，method do not public
 	public static function __callStatic($method, $params)
     {
-		$classname=get_called_class();
+		$classname=static::class;
         $class=$classname::G();
 		return ([$class, $method])(...$params);
     }

@@ -8,19 +8,19 @@ class SuperGlobalBase
 	protected $data=[];
 	public static function Get(string $k)
 	{
-		return self::G()->_Get($k);
+		return static::G()->_Get($k);
 	}
 	public static function Set(string $k,$v)
 	{
-		return self::G()->_Set($k,$v);
+		return static::G()->_Set($k,$v);
 	}
 	public static function Remove(string $k)
 	{
-		return self::G()->_Remove($k);
+		return static::G()->_Remove($k);
 	}
 	public static function All()
 	{
-		return self::G()->_All();
+		return static::G()->_All();
 	}
 	public function _Get(string $k)
 	{
@@ -160,7 +160,7 @@ class SESSION extends SuperGlobalBase
 	}
 	public function Start()
 	{
-		return self::G()->_Start();
+		return static::G()->_Start();
 	}
 	public function _Start()
 	{

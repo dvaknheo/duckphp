@@ -114,7 +114,7 @@ class DNRouteAdvance
 	{
 		if($this->is_installed){return;}
 		$this->is_installed=true;
-		DNRoute::G()->addRouteHook([self::G(),'hook'],true);
+		DNRoute::G()->addRouteHook([static::G(),'hook'],true);
 		return $this;
 	}
 }

@@ -589,7 +589,7 @@ class DNDB
 	}
 	public static function CreateDBInstance($db_config)
 	{
-		$class=get_called_class();
+		$class=static::class;
 		$db=new $class();
 		$db->init($db_config);
 		return $db;
@@ -858,11 +858,11 @@ trait DNMVCS_Glue
 	}
 	public static function Import($file)
 	{
-		return self::G()->_Import($file);
+		return static::G()->_Import($file);
 	}
 	public static function DI($name,$object=null)
 	{
-		return self::G()->_DI($name,$object);
+		return static::G()->_DI($name,$object);
 	}
 	protected $container;
 	public function _DI($name,$object=null)
@@ -878,7 +878,7 @@ trait DNMVCS_Misc
 {
 	public static function H($str)
 	{
-		return self::G()->_H($str);
+		return static::G()->_H($str);
 	}
 	public function _Import($file)
 	{
@@ -916,7 +916,7 @@ trait DNMVCS_Misc
 	}
 	public static function RecordsetUrl(&$data,$cols_map=[])
 	{
-		return self::G()->_RecordsetUrl($data,$cols_map);
+		return static::G()->_RecordsetUrl($data,$cols_map);
 	}
 	public function _RecordsetUrl(&$data,$cols_map=[])
 	{
@@ -937,7 +937,7 @@ trait DNMVCS_Misc
 	}
 	public static function RecordsetH(&$data,$cols=[])
 	{
-		return self::G()->_RecordsetH($data,$cols);
+		return static::G()->_RecordsetH($data,$cols);
 	}
 	public static function _RecordsetH(&$data,$cols=[])
 	{
@@ -1171,6 +1171,7 @@ class DNMVCS
 			'all_config'=>[],
 			'setting'=>[],
 			'setting_file_basename'=>'setting',
+			
 			'db_create_handler'=>'',
 			'db_close_handler'=>'',
 			
@@ -1196,7 +1197,7 @@ class DNMVCS
 	protected $initObLevel=0;
 	public static function RunQuickly($options=[])
 	{
-		return self::G()->init($options)->run();
+		return static::G()->init($options)->run();
 	}
 	public static function RunWithoutPathInfo($options=[])
 	{
@@ -1229,6 +1230,7 @@ class DNMVCS
 		self::ImportSys('DNSwooleHttpServer');
 		DNSwooleHttpServer:: RunWithServer($server_options,$dn_options,$server);
 	}
+	
 	protected function initOptions($options=[])
 	{
 		$this->options=array_merge(DNAutoLoader::DEFAULT_OPTIONS,DNRoute::DEFAULT_OPTIONS,self::DEFAULT_OPTIONS,$options);
@@ -1239,15 +1241,9 @@ class DNMVCS
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
 		$this->isDev=$this->options['is_dev'];
 	}
-	
-	protected function initExceptionManager()
-	{
-		DNExceptionManager::G()->init([$this,'onException'],[$this,'onDevErrorHandler']);
-	}
 	protected function checkOverride($options)
 	{
-		$self=get_called_class();
-		if($self!==self::class){return null;}
+		if(static::class!==self::class){return null;}
 		
 		$base_class=isset($options['base_class'])?$options['base_class']:self::DEFAULT_OPTIONS['base_class'];
 		if(!class_exists($base_class)){return null;}
@@ -1265,7 +1261,7 @@ class DNMVCS
 		}
 		
 		$this->initOptions($options);
-		$this->initExceptionManager();
+		$this->initExceptionManager(DNExceptionManager::G());
 		
 		$this->initConfiger(DNConfiger::G());
 		$this->initView(DNView::G());
@@ -1274,6 +1270,10 @@ class DNMVCS
 		$this->initMisc();
 		
 		return $this;
+	}
+	public function initExceptionManager($exception_manager)
+	{
+		$exception_manager->init([$this,'onException'],[$this,'onDevErrorHandler']);
 	}
 	public function initConfiger($configer)
 	{
@@ -1315,7 +1315,7 @@ class DNMVCS
 		
 		if(!empty($this->options['ext'])){
 			//self::ImportSys();
-			AppExt::G()->afterInit($this);
+			DNMVCSExt::G()->afterInit($this);
 		}
 	}
 	public function isDev()
@@ -1343,7 +1343,7 @@ trait DNThrowQuickly
 	public static function ThrowOn($flag,$message,$code=0)
 	{
 		if(!$flag){return;}
-		$class=get_called_class();
+		$class=static::class;
 		throw new $class($message,$code);
 	}
 }

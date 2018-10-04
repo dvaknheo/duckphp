@@ -113,12 +113,7 @@ class SwooleContext
 }
 class DNSwooleException extends \Exception
 {
-	public static function ThrowOn($flag,$message,$code=0)
-	{
-		if(!$flag){return;}
-		$class=get_called_class();
-		throw new $class($message,$code);
-	}
+	use DNThrowQuickly;
 }
 
 class DBConnectPoolProxy
@@ -198,7 +193,7 @@ trait DNSwooleHttpServer_Static
 {
 	public static function Server()
 	{
-		return self::G()->server;
+		return static::G()->server;
 	}
 	public static function Request()
 	{
@@ -244,11 +239,11 @@ trait DNSwooleHttpServer_GlobalFunc
 	}
 	public static function set_exception_handler(callable $exception_handler)
 	{
-		self::G()->http_exception_handler=$exception_handler;
+		static::G()->http_exception_handler=$exception_handler;
 	}
 	public static function register_shutdown_function(callable $callback,...$args)
 	{
-		self::G()->shutdown_function_array[]=func_get_args();
+		static::G()->shutdown_function_array[]=func_get_args();
 	}
 }
 trait DNSwooleHttpServer_SimpleHttpd
@@ -556,6 +551,6 @@ class DNSwooleHttpServer
 	}
 	public static function RunWithServer($server_options,$dn_options=[],$server=null)
 	{
-		return self::G()->init($server_options,$server)->bindDN($dn_options)->run();
+		return static::G()->init($server_options,$server)->bindDN($dn_options)->run();
 	}
 }

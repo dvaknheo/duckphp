@@ -3,10 +3,15 @@ namespace DNMVCS;
 
 class Pager
 {
-	private $page_size;
+	use DNSingleton;
+	
+	protected $page_size;
 	private $total_pages;
 	public $key='page';
-	public function __construct($total_nums,$page_size)
+	
+	//xx/{$page}
+	//xx/
+	public function init($page_url,$total_nums,$page_size)
 	{
 		$this->page_size=$page_size;
 		$this->nums=$total_nums;
@@ -39,42 +44,44 @@ class Pager
 		$window_length=3;
 		$page_window_begin=$this->current_page-floor($window_length/2);
 		$page_window_begin=$page_window_begin>1?$page_window_begin:1;
+		
 		$page_window_end=$page_window_begin+($window_length-1);
 		$page_window_end=$page_window_end<=$this->total_pages?$page_window_end:$this->total_pages;
 		
+		$url_first=$this->get_url(1);
+		$url_last=$this->get_url($this->total_pages);
+		
 		$html='<span class="page_wraper">';
-			$spliter="<span class='page_spliter'></span>";
-			if($page_window_begin>1){
-				$url=$this->get_url(1);
-				$html.="<a href='$url' class='page'>1</a>";
-				if($page_window_begin>2){
-					$html.="<span class='page_blank'>...</span>";
-				}else{
-					$html.=$spliter;
-				}
+		$spliter="<span class='page_spliter'>|</span>";
+		if($page_window_begin>1){
+			$html.="<a href='$url_first' class='page'>1</a>";
+			if($page_window_begin>2){
+				$html.="<span class='page_blank'>...</span>";
+			}else{
+				$html.=$spliter;
 			}
-			$page_htmls=array();
-			for($i=$page_window_begin;$i<=$page_window_end;$i++){
-				
-				if($i==$this->current_page){
-					$page_htmls[]="<span class='current'>$i</span>";
-				}else{
-					$url=$this->get_url($i);
-					$page_htmls[]="<a href='$url' class='page'>$i</a>";
-				}
+		}
+		$page_htmls=array();
+		for($i=$page_window_begin;$i<=$page_window_end;$i++){
+			if($i==$this->current_page){
+				$page_htmls[]="<span class='current'>$i</span>";
+			}else{
+				$url=$this->get_url($i);
+				$page_htmls[]="<a href='$url' class='page'>$i</a>";
 			}
+		}
+		
+		$html.=implode($spliter,$page_htmls);
+		
+		if($page_window_end<$this->total_pages){
+			if($page_window_end<$this->total_pages-1){
+				$html.="<span class='page_blank'>...</span>";
+			}else{
+				$html.=$spliter;
+			}
+			$html.="<a href='$url_last' class='page'>{$this->total_pages}</a>";
 			
-			$html.=implode($spliter,$page_htmls);
-			if($page_window_end<$this->total_pages){
-				$url=$this->get_url($this->total_pages);
-				if($page_window_end<$this->total_pages-1){
-					$html.="<span class='page_blank'>...</span>";
-				}else{
-					$html.=$spliter;
-				}
-				$html.="<a href='$url' class='page'>{$this->total_pages}</a>";
-				
-			}
+		}
 		$html.='</span>';
 		return $html;
 	}

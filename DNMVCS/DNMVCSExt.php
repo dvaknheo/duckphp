@@ -83,7 +83,7 @@ class StrictService
 	public static function _before_instance($object)
 	{
 		if(!DNMVCS::G()->isDev()){return $object;}
-		$class=get_called_class();
+		$class=static::class;
 		list($_0,$_1,$caller)=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,3);
 		$caller_class=$caller['class'];
 		$namespace=DNMVCS::G()->options['namespace'];
@@ -380,7 +380,7 @@ class FunctionView extends DNView
 		}
 	}
 }
-class AppExt
+class DNMVCSExt
 {
 	use DNSingleton;
 	const DEFAULT_OPTIONS_EX=[
