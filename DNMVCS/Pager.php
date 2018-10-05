@@ -24,20 +24,36 @@ class Pager
 	protected $current_page=null;
 	protected $url='';
 	protected $key='page';
-
+	
+	protected $handel_get_url=null;
+	
 	public function init($options)
 	{
 		$this->url=$options['url']??$_SERVER['REQUEST_URI'];
 		$this->key=$options['key']??$this->key;
 		$this->page_size=$options['page_size']??$this->page_size;
 		
-		//TODO 如果是 rewrite 模式
-		$this->current_page=intval($_GET[$this->key]??1);
-		$this->current_page=$this->current_page>1?$this->current_page:1;
+		$this->handel_get_url=$options['rewrite']??$this->handel_get_url;
 		
+		$this->current_page=$options['current']??intval($_GET[$this->key]??1);
+		$this->current_page=$this->current_page>1?$this->current_page:1;
+
 	}
 	public function getUrl($page)
 	{
+		if($this->handel_get_url){
+			return ($this->handel_get_url)($page);
+		}
+		return $this->defaultGetUrl($page);
+	}
+	public function defaultGetUrl($page)
+	{
+		$flag=strpos($this->url,'{'.$this->key.'}');
+		if($flag!==false){
+			$page=$page!=1?$page:'';
+			return str_replace('{'.$this->key.'}',$page,$this->url);
+			
+		}
 		$path=parse_url($this->url,PHP_URL_PATH);
 		$query=parse_url($this->url,PHP_URL_QUERY);
 		
@@ -53,7 +69,8 @@ class Pager
 	}
 	public function _render($total,$options=[])
 	{
-		if($options){$this->init($options);}
+		$this->init($options);
+		
 		$current_page=$this->_current();
 		$total_pages=ceil($total/$this->page_size);
 		if($total_pages<=1){return '';}
