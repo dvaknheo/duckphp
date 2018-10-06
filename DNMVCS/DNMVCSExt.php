@@ -18,8 +18,13 @@ function _url_by_key($url,$key_for_simple_route)
 		$path=$_SERVER['REQUEST_URI'];
 	}
 	$path=parse_url($path,PHP_URL_PATH);
+
+	if(class_exists('\DNMVCS\SuperGlobal\SERVER' ,false)){
+		$path_info=SuperGlobal\SERVER::Get('PATH_INFO');
+	}else{
+		$path_info=$_SERVER['PATH_INFO'];
+	}
 	
-	$path_info=$_SERVER['PATH_INFO']??''; //不能用 DNRoute->path_info;
 	if(strlen($path_info)){
 		$path=substr($path,0,0-strlen($path_info));
 	}

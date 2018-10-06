@@ -157,6 +157,8 @@ class DNRoute
 			
 			'enable_post_prefix'=>true,
 			'disable_default_class_outside'=>false,
+			
+			'strict_route_mode'=>false,
 		];
 	
 	public $the404Handler=null;
@@ -298,6 +300,10 @@ class DNRoute
 		$l=count($blocks);
 		$current_class='';
 		$method='';
+		
+		if($this->options['strict_route_mode']){
+		
+		}
 		
 		for($i=0;$i<$l;$i++){
 			$v=$blocks[$i];
