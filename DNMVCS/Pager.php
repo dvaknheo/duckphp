@@ -9,7 +9,7 @@ class Pager
 	{
 		return static::G()->_Current();
 	}
-	public static function Render($total,$options)
+	public static function Render($total,$options=[])
 	{
 		return static::G()->_Render($total,$options);
 	}

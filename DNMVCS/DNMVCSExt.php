@@ -31,6 +31,42 @@ function _url_by_key($url,$key_for_simple_route)
 	$url=$path.'?'.$key_for_simple_route.'='.$c.$q;
 	return $url;
 }
+class RecordsetMisc
+{
+	use DNSingleton;
+	
+	public function _RecordsetUrl(&$data,$cols_map=[])
+	{
+		//need more quickly;
+		if($data===[]){return $data;}
+		if($cols_map===[]){return $data;}
+		$keys=array_keys($data[0]);
+		array_walk($keys,function(&$val,$k){$val='{'.$val.'}';});
+		foreach($data as &$v){
+			foreach($cols_map as $k=>$r){
+				$values=array_values($v);
+				$v[$k]=DNMVCS::URL(str_replace($keys,$values,$r));
+				
+			}
+		}
+		unset($v);
+		return $data;
+	}
+	public static function _RecordsetH(&$data,$cols=[])
+	{
+		if($data===[]){return $data;}
+		$cols=is_array($cols)?$cols:array($cols);
+		if($cols===[]){
+			$cols=array_keys($data[0]);
+		}
+		foreach($data as &$v){
+			foreach($cols as $k){
+				$v[$k]=DNMVCS::H( $v[$k], ENT_QUOTES );
+			}
+		}
+		return $data;
+	}
+}
 class SimpleRouteHook
 {
 	use DNSingleton;
