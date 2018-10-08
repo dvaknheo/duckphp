@@ -440,7 +440,7 @@ class DNMVCSExt
 			'use_strict_db_manager'=>false,
 			'use_super_global'=>false,
 		];
-	public function afterInit()
+	public function afterInit($dn)
 	{
 		$dn=DNMVCS::G();
 		$ext_options=$dn->options['ext'];

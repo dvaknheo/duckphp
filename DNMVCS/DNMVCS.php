@@ -1167,9 +1167,7 @@ class DNMVCS
 			'rewrite_list'=>[],
 			'route_list'=>[],
 			
-			'swoole_mode'=>false,
-			'swoole_db_reuse_size'=>0,
-			'swoole_db_reuse_timeout'=>5,
+			'swoole'=>[],
 			
 			'error_404'=>'_sys/error-404',
 			'error_500'=>'_sys/error-500',
@@ -1293,12 +1291,9 @@ class DNMVCS
 	}
 	protected function initMisc()
 	{
-		$this->isDev=DNConfiger::G()->_Setting('is_dev')??$this->isDev;		
-		if($this->options['swoole_mode']??false){
-			$this->options['ext']['use_super_global']=true;
-		}
+		$this->isDev=DNConfiger::G()->_Setting('is_dev')??$this->isDev;
 		
-		if(defined('DN_SWOOLE_SERVER_RUNNING')){
+		if(defined('DN_SWOOLE_SERVER_RUNNING') || $this->options['swoole']?true:false){
 			$this->options['ext']['use_super_global']=true;
 		}
 		

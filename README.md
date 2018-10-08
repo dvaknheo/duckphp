@@ -214,9 +214,8 @@ const DNMVCS::DEFAULT_OPTIONS=[
     'ext'=>[],                          //默认不使用扩展
     'rewrite_list'=>[],
     'route_list'=>[],
-        'swoole_mode'=>false,               // swoole_mode 模式，和 superGlobal 整合
-        'swoole_db_reuse_size'=>0,                 // swoole_mode 模式下生效,大于0表示复用数据库连接
-        'swoole_db_reuse_timeout'=>5,              // swoole_mode 模式下生效,复用数据库连接超时秒数
+    'swoole'=>[],               // swoole_mode 模式，和 superGlobal 整合
+
 
         'error_404'=>'_sys/error-404',      // 404 错误处理，传入字符串表示用的 view,如果传入 callable 则用 callback,view 优先
         'error_500'=>'_sys/error-500',      // 500 代码有语法错误等的页面，和 404 的内容一样
@@ -1069,24 +1068,34 @@ DNSwooleHttpServer  重写了 G 函数的实现，使得做到协程单例。
 
 $server_options 的选项
 ```php
-    const DEFAULT_OPTIONS=[
-            'swoole_server'=>null, // swoole_http_server 对象，留空，则用 host,port 创建
-            'swoole_options'=>[],   //swoole_http_server 的配置，合并如 server
-            
-            'host'=>'0.0.0.0',  // IP
-            'port'=>0,          //端口
-            
-            'http_handler_root'=>null,      // php 的目录和静态目录的不相同，留空
-            'http_handler_file'=>null,      // 启动文件 留空将会使用 http_handler
-            'http_handler'=>null,           // 启动方法，
-            'http_exception_handler'=>null, // 异常处理方法,DNMVCS 已经占用  // http_handler_root 的异常也是这里处理
-            
-            'websocket_open_handler'=>null,  //websocket 打开
-            'websocket_handler'=>null,          //websocket 
-            'websocket_exception_handler'=>null,    //websocket 异常处理
-            'websocket_close_handler'=>null,        //websocket 关闭
+const DEFAULT_OPTIONS=[
+        'swoole_server'=>null, // swoole_http_server 对象，留空，则用 host,port 创建
+        'swoole_options'=>[],   //swoole_http_server 的配置，合并如 server
+        
+        'host'=>'0.0.0.0',  // IP
+        'port'=>0,          //端口
+        
+        'http_handler_root'=>null,      // php 的目录和静态目录的不相同，留空
+        'http_handler_file'=>null,      // 启动文件 留空将会使用 http_handler
+        'http_handler'=>null,           // 启动方法，
+        'http_exception_handler'=>null, // 异常处理方法,DNMVCS 已经占用  // http_handler_root 的异常也是这里处理
+        
+        'websocket_open_handler'=>null,  //websocket 打开
+        'websocket_handler'=>null,          //websocket 
+        'websocket_exception_handler'=>null,    //websocket 异常处理
+        'websocket_close_handler'=>null,        //websocket 关闭
+];
+```
+swoole 下， DNMVCS  入口选项 ['swoole']的选项
+```php
+const DEFAULT_DN_OPTIONS=[
+        'not_empty'=>true,  //用于数组不空
+        'db_reuse_size'=>0,                 // 大于0表示复用数据库连接
+        'db_reuse_timeout'=>5,              // 复用数据库连接超时秒数
+
     ];
 ```
+
 想要获得当前 的 request ,response 用 DNSwooleHttpServer::Request() ,Response（）；
 还记得 _SERVER,_GET,_POST 超全局变量在 swoole 协程下无法使用么。
 你要用 DNMVCS\SuperGlobal\SERVER:: Get($key), Set($key,$value)代替

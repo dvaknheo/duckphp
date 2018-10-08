@@ -338,6 +338,11 @@ class DNSwooleHttpServer
 			'websocket_exception_handler'=>null,
 			'websocket_close_handler'=>null,
 		];
+	const DEFAULT_DN_OPTIONS=[
+			'not_empty'=>true,
+			'db_reuse_size'=>0,
+			'db_reuse_timeout'=>5,
+		];
 	public $server=null;
 	
 	public $http_handler=null;
@@ -516,16 +521,17 @@ class DNSwooleHttpServer
 	{
 		if(!$dn_options){return;}
 		
-		$dn_options['swoole_mode']=true;
+		$dn_options=array_merge_recursive(static::DEFAULT_DN_OPTIONS,$dn_options);
+		$dn_swoole_options=$dn_options['swoole'];
 		DNMVCS::G()->init($dn_options);
 		///////////////////////////////
 		
 		$this->options['http_handler']=$this->http_handler =[DNMVCS::G(),'run'];
 		$this->options['http_exception_handler']=$this->http_exception_handler=[DNMVCS::G(),'onException'];
 		
-		$db_reuse_size=$dn_options['swoole_db_reuse_size']??0;
+		$db_reuse_size=$dn_swoole_options['db_reuse_size']??0;
 		if($db_reuse_size){
-			$db_reuse_timeout=$dn_options['swoole_reuse_timeout']??5;
+			$db_reuse_timeout=$dn_swoole_options['db_reuse_timeout']??5;
 			$dbm=DNDBManager::G();
 			DBConnectPoolProxy::G()->init($db_reuse_size,$db_reuse_timeout)->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
 			$dbm->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
