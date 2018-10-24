@@ -520,8 +520,8 @@ class DNSwooleHttpServer
 	public function bindDN($dn_options)
 	{
 		if(!$dn_options){return;}
-		
-		$dn_options=array_merge_recursive(static::DEFAULT_DN_OPTIONS,$dn_options);
+		$dn_options['swoole']=$dn_options['swoole']??[];
+		$dn_options['swoole']=array_merge_recursive(static::DEFAULT_DN_OPTIONS,$dn_options['swoole']);
 		$dn_swoole_options=$dn_options['swoole'];
 		DNMVCS::G()->init($dn_options);
 		///////////////////////////////
