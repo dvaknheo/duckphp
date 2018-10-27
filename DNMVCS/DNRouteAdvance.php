@@ -1,6 +1,5 @@
 <?php
 namespace DNMVCS;
-use \DNMVCS\DNMVCS as DN;
 
 class DNRouteAdvance
 {
@@ -92,7 +91,7 @@ class DNRouteAdvance
 	}
 	protected function hookRewrite($route)
 	{
-		$rewriteMap=DN::G()->options['rewrite_list'];
+		$rewriteMap=DNMVCS::G()->options['rewrite_list'];
 		foreach($rewriteMap as $old_url =>$new_url){
 			if($this->matchRewrite($old_url,$new_url,$route)){
 				break;
@@ -101,7 +100,7 @@ class DNRouteAdvance
 	}
 	protected function hookRouteMap($route)
 	{
-		$route->callback=$this->getRouteHandelByMap($route,DN::G()->options['route_list']);
+		$route->callback=$this->getRouteHandelByMap($route,DNMVCS::G()->options['route_list']);
 	}
 	public function hook($route)
 	{

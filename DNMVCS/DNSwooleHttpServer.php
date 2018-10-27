@@ -1,34 +1,45 @@
 <?php
 namespace DNMVCS;
-use \DNMVCS\DNMVCS as DN;
+
 class CoroutineSingleton
 {
+	protected static $_instances=[];
+	
 	public static function GetInstance($class,$object)
 	{
 		$cid = \Swoole\Coroutine::getuid();
 		if($cid<=0){
-			return DNSingletonStaticClass::GetInstance($class,$object);
+			if($object){
+				self::$_instances[$class]=$object;
+				return $object;
+			}
+			$me=self::$_instances[$class]??null;
+			if(null===$me){
+				$me=new $class();
+				self::$_instances[$class]=$me;
+			}
+			return $me;
 		}
 		
 		$key="cid-$cid";
-		DNSingletonStaticClass::$_instances[$key]=DNSingletonStaticClass::$_instances[$key]??[];
+		self::$_instances[$key]=self::$_instances[$key]??[];
 		
 		if($object===null){
-			$me=DNSingletonStaticClass::$_instances[$key][$class]??null;
+			$me=self::$_instances[$key][$class]??null;
 			if($me!==null){return $me;}
 			
-			$me=DNSingletonStaticClass::$_instances[$class]??null;
+			$me=self::$_instances[$class]??null;
 			if($me!==null){return $me;}
 			
 			$me=new $class();
-			DNSingletonStaticClass::$_instances[$key][$class]=$me;
+			self::$_instances[$key][$class]=$me;
 			return $me;
 		}else{
-			$master=DNSingletonStaticClass::$_instances[$class]??null;
-			if($master && !isset(DNSingletonStaticClass::$_instances[$key][$class])){
+			$master=self::$_instances[$class]??null;
+			if($master && !isset(self::$_instances[$key][$class])){
 				throw new \ErrorException("CoroutineSingleton fail:: $class use CreateInstance instead");
 			}
-			DNSingletonStaticClass::$_instances[$key][$class]=$object;
+			self::$_instances[$key][$class]=$object;
 			return $object;
 		}
 	}
@@ -37,35 +48,34 @@ class CoroutineSingleton
 		$cid = \Swoole\Coroutine::getuid();
 		$key="cid-$cid";
 		$me=$object??new $class();
-		DNSingletonStaticClass::$_instances[$key]=DNSingletonStaticClass::$_instances[$key]??[];
-		DNSingletonStaticClass::$_instances[$key][$class]=$me;
+		self::$_instances[$key]=self::$_instances[$key]??[];
+		self::$_instances[$key][$class]=$me;
 		return $me;
 	}
 	public static function CloneInstance($class)
 	{
 		$cid = \Swoole\Coroutine::getuid();
 		$key="cid-$cid";
-		DNSingletonStaticClass::$_instances[$key]=DNSingletonStaticClass::$_instances[$key]??[];
+		self::$_instances[$key]=self::$_instances[$key]??[];
 		
-		$master= DNSingletonStaticClass::$_instances[$class]??null;
+		$master= self::$_instances[$class]??null;
 		if(!$master){return false;}
-		DNSingletonStaticClass::$_instances[$key][$class]=clone $master;
+		self::$_instances[$key][$class]=clone $master;
 		return true;
 	}
 	
-	public static function DeleteInstance($class)
-	{
-		unset(DNSingletonStaticClass::$_instances[$key][$class]);
-	}
+
 	public static function ReplaceDefaultSingletonHandler()
 	{
-		DNSingletonStaticClass::$Replacer=[CoroutineSingleton::class,'GetInstance'];
+		define('DNMVCS_DNSINGLETON_REPALACER' ,self::class . '::'.'GetInstance');
 	}
+	
+
 	public static function Dump()
 	{
 		$cid = \Swoole\Coroutine::getuid();
 fwrite(STDERR,"====CoroutineSingletonList cid-{$cid}====".";\n");
-		$t=DNSingletonStaticClass::$_instances;
+		$t=self::$_instances;
 		foreach($t as $class=>$v){
 			if(!is_array($v)){
 fwrite(STDERR,"+ ".$class.";\n");
@@ -81,7 +91,7 @@ fwrite(STDERR,"-- $class ~ ".$class2.";\n");
 		$cid = \Swoole\Coroutine::getuid();
 		if($cid<=0){return;}
 		$key="cid-$cid";
-		unset(DNSingletonStaticClass::$_instances[$key]);
+		unset(self::$_instances[$key]);
 	}
 }
 class SwooleContext
@@ -224,14 +234,15 @@ trait DNSwooleHttpServer_GlobalFunc
 {
 	public $http_exception_handler=null;
 	public $shutdown_function_array=[];
-	public static function header(string $string, bool $replace = true , int $http_response_code =0)
+	public static function header(string $string, bool $replace = true , int $http_status_code =0)
 	{
+		if($http_status_code){
+			SwooleContext::G()->response->status($http_status_code);
+		}
 		if(strpos($string,':')===false){return;} // 404,500 so on
 		list($key,$value)=explode(':',$string);
 		SwooleContext::G()->response->header($key, $value);
-		if($http_response_code){
-			SwooleContext::G()->response->status($http_status_code);
-		}
+		
 	}
 	public static function setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
 	{

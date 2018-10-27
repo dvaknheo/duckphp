@@ -5,36 +5,26 @@ namespace DNMVCS;
 
 trait DNSingleton
 {
+	protected static $_instances=[];
 	public static function G($object=null)
 	{
-		if(DNSingletonStaticClass::$Replacer!==null){
-			return  (DNSingletonStaticClass::$Replacer)(static::class,$object);
+		if(defined('DNSINGLETON_REPALACER')){
+			$callback=DNSINGLETON_REPALACER;
+			return ($callback)(static::class,$object);
 		}
-		return DNSingletonStaticClass::GetInstance(static::class,$object);
-	}
-}
-final class DNSingletonStaticClass
-{
-	public static $Replacer=null;
-	public static $_instances=[];
-	public static function GetInstance($class,$object)
-	{
 		if($object){
-			self::$_instances[$class]=$object;
+			self::$_instances[static::class]=$object;
 			return $object;
 		}
-		$me=self::$_instances[$class]??null;
+		$me=self::$_instances[static::class]??null;
 		if(null===$me){
-			$me=new $class();
-			self::$_instances[$class]=$me;
+			$me=new static();
+			self::$_instances[static::class]=$me;
 		}
 		return $me;
 	}
-	public static function DeleteInstance($class)
-	{
-		unset(self::$_instances[$class]);
-	}
 }
+
 class DNAutoLoader
 {
 	use DNSingleton;
@@ -302,7 +292,7 @@ class DNRoute
 		$method='';
 		
 		if($this->options['strict_route_mode']){
-		
+			//
 		}
 		
 		for($i=0;$i<$l;$i++){
@@ -443,7 +433,7 @@ class DNView
 	{
 		$this->header('Content-Type:text/json');
 		if($this->before_show_handler){
-			($this->before_show_handler)($data,$this->view);
+			($this->before_show_handler)([],$this->view);
 		}
 		echo json_encode($ret,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
 		exit;
@@ -454,10 +444,10 @@ class DNView
 			//something  wrong
 			exit;
 		}
-		$this->header('',true,302);
 		$this->header('location: '.$url);
+		$this->header('',true,302);
 		if($this->before_show_handler){
-			($this->before_show_handler)($data,$this->view);
+			($this->before_show_handler)([],$this->view);
 		}
 		exit;
 	}
@@ -1166,6 +1156,7 @@ class DNMVCS
 			
 			'rewrite_list'=>[],
 			'route_list'=>[],
+			'use_super_global'=>false,
 			
 			'swoole'=>[],
 			
@@ -1293,13 +1284,14 @@ class DNMVCS
 	{
 		$this->isDev=DNConfiger::G()->_Setting('is_dev')??$this->isDev;
 		
-		if(defined('DN_SWOOLE_SERVER_RUNNING') || $this->options['swoole']?true:false){
-			$this->options['ext']['use_super_global']=true;
-		}
-		
 		if(!empty($this->options['ext'])){
 			//self::ImportSys();
 			DNMVCSExt::G()->afterInit($this);
+		}
+		if(defined('DN_SWOOLE_SERVER_RUNNING') || $this->options['swoole'] || $this->options['use_super_global']){
+			//TODO restruct
+			$this->checkAndInstallDefaultRouteHooks(true);
+			DNRoute::G()->addRouteHook([DNSuperGlobalRouteHook::G(),'hook'],true);
 		}
 	}
 	public function isDev()

@@ -1,7 +1,18 @@
 <?php
 declare(strict_types=1);
-namespace DNMVCS\SuperGlobal;
-// 用于不想用 PHP 的超级变量的场合 在 swoole 应用里用到
+namespace DNMVCS 
+{
+	class SuperGlobal
+	{
+		use DNSingleton;
+		public static function Init()
+		{
+			//Just for Load This file.
+		}
+	}
+}
+namespace DNMVCS\SuperGlobal
+{
 class SuperGlobalBase
 {
 	use \DNMVCS\DNSingleton;
@@ -166,4 +177,6 @@ class SESSION extends SuperGlobalBase
 	{
 		if(session_status() !== PHP_SESSION_ACTIVE ){session_start();}
 	}
+}
+
 }
