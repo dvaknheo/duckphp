@@ -167,7 +167,7 @@ class SESSION extends SuperGlobalBase
 	}
 	public function _All()
 	{
-		return $SESSION;
+		return $_SESSION;
 	}
 	public function Start()
 	{

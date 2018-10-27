@@ -1,6 +1,13 @@
 <?php
 namespace DNMVCS;
-
+class Toolkit
+{
+	use DNSingleton;
+	// OK Do nothing ,just for autoload
+	public static function Init()
+	{
+	}
+}
 trait DNWrapper
 {
 	protected static $objects=[];
