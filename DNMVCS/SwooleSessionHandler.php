@@ -1,72 +1,56 @@
 <?php
 namespace DNMVCS;
-use SuperGlobal;
 
-class SwooleSessionHandler extends \SessionHandler
+class SwooleSessionHandler implements \SessionHandlerInterface
 {
 	use DNSingleton;
 	
-	public static function Init()
-	{
-		ini_set('session.use_cookies',0);
-		session_set_save_handler(self::G(),false);
-		DNSwooleHttpServer::register_shutdown_function([self::G(),'writeClose']);
-	}
-	public function writeClose()
-	{
-		$session_id=session_id();
-		
-		$this->write($session_id,'');
-		$this->close();
-	}
-	public function open($savePath,$sessionName)
-	{
-		$ret=parent::open($savePath, $sessionName);
-		
-		$session_id=SuperGlobal\COOKIE::Get($sessionName);
-		
-		if($session_id===null || ! preg_match('/[a-zA-Z0-9,-]+/',$session_id)){
-			$session_id=$this->create_sid();
-		}
-		session_id($session_id);
-		
-		////
-		DNSwooleHttpServer::setcookie($sessionName,$session_id
-			,time()+ini_get('session.cookie_lifetime')
-			,ini_get('session.cookie_path')
-			,ini_get('session.cookie_domain')
-			,ini_get('session.cookie_secure')
-			,ini_get('session.cookie_httponly')
-		);
-		
-		return $ret;
-	}
-	
-	public function read($session_id)
-	{
-		$ret=parent::read($session_id);
-		$data=session_decode($ret);
-		
-		foreach($data as $k=>$v){
-			SuperGlobal\SESSION::Set($k,$v);
-		}
-		return session_encode([]);
-	}
+    private $savePath;
 
-	public function write( $session_id, $session_data)
-	{
-		$session_data=session_encode(SuperGlobal\SESSION::All());
-		$ret=parent::write($session_id,$session_data);
-		
-		return $ret;
-	}
-	public function destroy($session_id)
-	{
-		$ret=parent::destroy($session_id);
-		
-		$sessionName=session_name();
-		DNSwooleHttpServer::setcookie($sessionName,$session_id,strtotime('-30 days'));
-		
-		return $ret;
-	}
+    public function open($savePath, $sessionName)
+    {
+        $this->savePath = $savePath;
+        if (!is_dir($this->savePath)) {
+            mkdir($this->savePath, 0777);
+        }
+
+        return true;
+    }
+
+    public function close()
+    {
+        return true;
+    }
+
+    public function read($id)
+    {
+        return (string)@file_get_contents("$this->savePath/sess_$id");
+    }
+
+    public function write($id, $data)
+    {
+        return file_put_contents("$this->savePath/sess_$id", $data,LOCK_EX) === false ? false : true;
+    }
+
+    public function destroy($id)
+    {
+        $file = "$this->savePath/sess_$id";
+        if (file_exists($file)) {
+            unlink($file);
+        }
+
+        return true;
+    }
+
+    public function gc($maxlifetime)
+    {
+        foreach (glob("$this->savePath/sess_*") as $file) {
+            if (filemtime($file) + $maxlifetime < time() && file_exists($file)) {
+                unlink($file);
+            }
+        }
+
+        return true;
+    }
 }
+

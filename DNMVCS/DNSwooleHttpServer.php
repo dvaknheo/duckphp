@@ -276,6 +276,12 @@ trait DNSwooleHttpServer_SimpleHttpd
 		}catch(\Throwable $ex){
 			$this->onHttpException($ex);
 		}
+		
+		foreach($this->shutdown_function_array as $v){
+			$func=array_shift($v);
+			$func($v);
+		}
+		
 		for($i=ob_get_level();$i>$InitObLevel;$i--){
 			ob_end_flush();
 		}
@@ -374,7 +380,8 @@ class DNSwooleHttpServer
 		SuperGlobal\POST::G(SwooleSuperGlobalPost::G())->init($request);
 		SuperGlobal\REQUEST::G(SwooleSuperGlobalRequest::G())->init($request);
 		SuperGlobal\COOKIE::G(SwooleSuperGlobalCookie::G())->init($request);
-		//session ,event;
+		
+		SuperGlobal\SESSION::G(SwooleSuperGlobalSession::G())->init($request);
 		
 		if($this->http_handler){
 			$this->runHttpHandler();
@@ -454,24 +461,22 @@ class DNSwooleHttpServer
 	}
 	protected function onHttpException($ex)
 	{
-		if( !($ex instanceof \Swoole\ExitException) ){
-			//$this->header("HTTP/1.1 500 Internal Error");
-			SwooleContext::G()->response->status(500);
-			if($this->http_exception_handler){
-				($this->http_exception_handler)($ex);
-			}else{
-				echo "DNSwooleHttp Server Error: \n";
-				echo $ex;
-			}
-		}else{
-			foreach($this->shutdown_function_array as $v){
-				$func=array_shift($v);
-				$func($v);
-			}
+		if($ex instanceof \Swoole\ExitException){
+			return;
 		}
+		//$this->header("HTTP/1.1 500 Internal Error");
+		SwooleContext::G()->response->status(500);
+		if($this->http_exception_handler){
+			($this->http_exception_handler)($ex);
+		}else{
+			echo "DNSwooleHttp Server Error: \n";
+			echo $ex;
+		}
+			
 	}
 	protected function onHttpClean()
 	{
+		SwooleSuperGlobalSession::G()->writeClose();
 		SwooleContext::G()->cleanUp();
 		CoroutineSingleton::CleanUp();
 	}

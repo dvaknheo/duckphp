@@ -173,9 +173,18 @@ class SESSION extends SuperGlobalBase
 	{
 		return static::G()->_Start();
 	}
+	public function Destroy()
+	{
+		return static::G()->_Destroy();
+	}
+	
 	public function _Start()
 	{
 		if(session_status() !== PHP_SESSION_ACTIVE ){session_start();}
+	}
+	public function _Destroy()
+	{
+		session_destroy();
 	}
 }
 
