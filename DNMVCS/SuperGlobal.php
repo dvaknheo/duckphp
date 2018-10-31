@@ -1,62 +1,71 @@
 <?php
-declare(strict_types=1);
-namespace DNMVCS 
+namespace DNMVCS;
+
+class SuperGlobal
 {
-	class SuperGlobal
+	use DNSingleton;
+	
+	public static function GET($k)
 	{
-		use DNSingleton;
-		public static function Init()
-		{
-			//Just for Load This file.
-		}
-		public static function GET($key)
-		{
-			return  SuperGlobal\GET::Get($key);
-		}
-		public static function POST($key)
-		{
-			return  SuperGlobal\POST::Get($key);
-		}
-		public static function REQUEST($key)
-		{
-			return  SuperGlobal\GET::Get($key);
-		}
-		public static function COOKIE($key)
-		{
-			return  SuperGlobal\GET::Get($key);
-		}
-		public static function SERVER($key)
-		{
-			return  SuperGlobal\SERVER::Get($key);
-		}
-		public static function ENV($key)
-		{
-			return  SuperGlobal\ENV::Get($key);
-		}
-		public static function SESSION($key)
-		{
-			return  SuperGlobal\SESSION::Get($key);
-		}
-		public static function SetSession($key,$value)
-		{
-			return  SuperGlobal\SESSION::Set($key,$value);
-		}
-		public static function StartSession()
-		{
-			return  SuperGlobal\SESSION::Start();
-		}
-		public static function DestroySession()
-		{
-			return  SuperGlobal\SESSION::Destroy();
-		}
+		return  SuperGlobalGET::Get($k);
+	}
+	public static function POST($k)
+	{
+		return  SuperGlobalPOST::Get($k);
+	}
+	public static function REQUEST($k)
+	{
+		return  SuperGlobalREQUEST::Get($k);
+	}
+	public static function COOKIE($k)
+	{
+		return  SuperGlobalCOOKIE::Get($k);
+	}
+	public static function SERVER($k)
+	{
+		return  SuperGlobalSERVER::Get($k);
+	}
+	public static function ENV($k)
+	{
+		return  SuperGlobalENV::Get($k);
+	}
+	public static function SESSION($k)
+	{
+		return  SuperGlobalSESSION::Get($k);
+	}
+///////////////////////////////
+	public static function StartSession()
+	{
+		return SuperGlobalSESSION::Start();
+	}
+	public static function DestroySession()
+	{
+		return SuperGlobalSESSION::Destroy();
+	}
+//////////////////////////////////////////
+	public function setGet($k,$v)
+	{
+		return SuperGlobalGET::Set($k,$v);
+	}
+	public function setServer($k,$v)
+	{
+		return SuperGlobalSERVER::Set($k,$v);
 	}
 }
-namespace DNMVCS\SuperGlobal
-{
 class SuperGlobalBase
 {
-	use \DNMVCS\DNSingleton;
-	protected $data=[];
+
+	use DNSingleton;
+	public $data=[];
+	
+	public function __construct()
+	{
+		$this->init();
+	}
+	public function init()
+	{
+		throw \Exception("Impelement Me!");
+	}
 	public static function Get(string $k)
 	{
 		return static::G()->_Get($k);
@@ -91,133 +100,62 @@ class SuperGlobalBase
 	}
 }
 
-
-class GET extends  SuperGlobalBase
+class SuperGlobalGET extends SuperGlobalBase
 {
-	public function _Get(string $k)
+	public function init()
 	{
-		return $_GET[$k];
-	}
-	public function _Set(string $k,$v)
-	{
-		$_GET[$k]=$v;
-	}
-	public function _Remove(string $k)
-	{
-		unset($_GET[$k]);
-	}
-	public function _All()
-	{
-		return $_GET;
+		$this->data=$_GET??[];
 	}
 }
-class POST extends SuperGlobalBase
+class SuperGlobalPOST extends SuperGlobalBase
 {
-	public function _Get(string $k)
+	public function init()
 	{
-		return $_POST[$k];
-	}
-	public function _Set(string $k,$v)
-	{
-		$_POST[$k]=$v;
-	}
-	public function _Remove(string $k)
-	{
-		unset($_POST[$k]);
-	}
-	public function _All()
-	{
-		return $_POST;
+		$this->data=$_POST??[];
 	}
 }
-class REQUEST extends SuperGlobalBase
+class SuperGlobalCOOKIE extends SuperGlobalBase
 {
-	public function _Get(string $k)
+	public function init()
 	{
-		return $_REQUEST[$k];
-	}
-	public function _Set(string $k,$v)
-	{
-		$_REQUEST[$k]=$v;
-	}
-	public function _Remove(string $k)
-	{
-		unset($_REQUEST[$k]);
-	}
-	public function _All()
-	{
-		return $_REQUEST;
+		$this->data=$_GET??[];
 	}
 }
-class SERVER extends SuperGlobalBase
+class SuperGlobalREQUEST extends SuperGlobalBase
 {
-	public function _Get(string $k)
+	public function init()
 	{
-		return $_SERVER[$k];
-	}
-	public function _Set(string $k,$v)
-	{
-		$_SERVER[$k]=$v;
-	}
-	public function _Remove(string $k)
-	{
-		unset($_SERVER[$k]);
-	}
-	public function _All()
-	{
-		return $_SERVER;
+		$this->data=$_REQUEST??[];
 	}
 }
-class COOKIE extends SuperGlobalBase
+class SuperGlobalSERVER extends SuperGlobalBase
 {
-	public function _Get(string $k)
+	public function init()
 	{
-		return $_COOKIE[$k];
-	}
-	public function _All()
-	{
-		return $_COOKIE;
+		$this->data=$_SERVER;
 	}
 }
-
-class ENV extends SuperGlobalBase
+class SuperGlobalENV extends SuperGlobalBase
 {
-	public function _Get(string $k)
+	public function init()
 	{
-		return $_ENV[$k];
-	}
-	public function _All()
-	{
-		return $_ENV;
+		$this->data=$_ENV;
 	}
 }
-class SESSION extends SuperGlobalBase
+class SuperGlobalSESSION extends SuperGlobalBase
 {
-	public function _Get(string $k)
+	public function init()
 	{
-		return $_SESSION[$k];
+		$this->data=$_SESSION??[];
 	}
-	public function _Set(string $k,$v)
-	{
-		$_SESSION[$k]=$v;
-	}
-	public function _Remove(string $k)
-	{
-		unset($_SESSION[$k]);
-	}
-	public function _All()
-	{
-		return $_SESSION;
-	}
-	public function Start()
+	public static function Start()
 	{
 		return static::G()->_Start();
 	}
-	public function Destroy()
+	public static function Destroy()
 	{
 		return static::G()->_Destroy();
 	}
-	
 	public function _Start()
 	{
 		if(session_status() !== PHP_SESSION_ACTIVE ){session_start();}
@@ -225,7 +163,5 @@ class SESSION extends SuperGlobalBase
 	public function _Destroy()
 	{
 		session_destroy();
-	}
-}
-
+	}	
 }

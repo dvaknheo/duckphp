@@ -1222,7 +1222,8 @@ class DNMVCS
 	}
 	public static function RunAsServer($server_options,$dn_options,$server=null)
 	{
-		DNSwooleHttpServer:: RunWithServer($server_options,$dn_options,$server);
+		DNAutoLoader::G()->init($dn_options)->run();
+		DNSwooleHttpServer::RunWithServer($server_options,$dn_options,$server);
 	}
 	
 	protected function initOptions($options=[])

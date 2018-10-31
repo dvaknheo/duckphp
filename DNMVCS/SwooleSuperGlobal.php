@@ -1,20 +1,45 @@
 <?php
 namespace DNMVCS;
-use DNMVCS\SuperGlobal\SuperGlobalBase;
 
-class SwooleSuperGlobal
+class SwooleSuperGlobal extends SuperGlobal
 {
-	use DNSingleton;
-	public static function Init()
-	{
-		//Just for Load This file.
-	}
+
 }
 
-class SwooleSuperGlobalServer extends SuperGlobalBase
+class SwooleSuperGlobalGET extends SuperGlobalBase
 {
-	public function init($request)
+	public function init()
 	{
+		$this->data=DNSwooleHttpServer::Request()->get??[];
+	}
+}
+class SwooleSuperGlobalPost extends SuperGlobalBase
+{
+	public function init()
+	{
+		$this->data=DNSwooleHttpServer::Request()->post??[];
+	}
+}
+class SwooleSuperGlobalCOOKIE extends SuperGlobalBase
+{
+	public function init()
+	{
+		$this->data=DNSwooleHttpServer::Request()->cookie??[];
+	}
+}
+class SwooleSuperGlobalREQUEST extends SuperGlobalBase
+{
+	public function init()
+	{
+		$request=DNSwooleHttpServer::Request();
+		$this->data=array_merge($request->get??[],$request->post??[]);
+	}
+}
+class SwooleSuperGlobalSERVER extends SuperGlobalBase
+{
+	public function init()
+	{
+		$request=DNSwooleHttpServer::Request();
 		foreach($request->header as $k=>$v){
 			$k='HTTP_'.str_replace('-','_',strtoupper($k));
 			$this->data[$k]=$v;
@@ -24,43 +49,24 @@ class SwooleSuperGlobalServer extends SuperGlobalBase
 		}
 	}
 }
-
-class SwooleSuperGlobalGet extends SuperGlobalBase
+class SwooleSuperGlobalENV extends SuperGlobalBase
 {
-	public function init($request)
+	public function init()
 	{
-		$this->data=$request->get??[];
-	}
-}
-class SwooleSuperGlobalPost extends SuperGlobalBase
-{
-	public function init($request)
-	{
-		$this->data=$request->post??[];
-	}
-}
-class SwooleSuperGlobalRequest extends SuperGlobalBase
-{
-	public function init($request)
-	{
-		$this->data=array_merge($request->get??[],$request->post??[]);
-	}
-}
-class SwooleSuperGlobalCookie extends SuperGlobalBase
-{
-	public function init($request)
-	{
-		$this->data=$request->cookie??[];
+		$this->data=$_ENV;
 	}
 }
 
-class SwooleSuperGlobalSession extends SuperGlobal\SESSION
+class SwooleSuperGlobalSession extends SuperGlobalBase
 {
+	use DNSingleton;
+
 	protected $handler=null;
 	protected $session_id='';
 	protected $is_started=false;
+	public $data;
 	
-	public function init($request)
+	public function init()
 	{
 		//do nothing;
 	}
@@ -74,11 +80,14 @@ class SwooleSuperGlobalSession extends SuperGlobal\SESSION
 		if(!$this->handler){
 			$this->handler=new SwooleSessionHandler();
 		}
+		
 		$this->is_started=true;
+		
+		DNSwooleHttpServer::register_shutdown_function([$this,'writeClose']);
 		$session_name=session_name();
 		$session_save_path=session_save_path();
 		
-		$session_id=SuperGlobal\COOKIE::Get($session_name);
+		$session_id=SwooleSuperGlobalCOOKIE::Get($session_name);
 		if($session_id===null || ! preg_match('/[a-zA-Z0-9,-]+/',$session_id)){
 			$session_id=$this->create_sid();
 		}
@@ -116,26 +125,5 @@ class SwooleSuperGlobalSession extends SuperGlobal\SESSION
 	protected function create_sid()
 	{
 		return md5(microtime().mt_rand());
-	}
-	
-	public static function All()
-	{
-		return static::G()->_All();
-	}
-	public function _Get(string $k)
-	{
-		return $this->data[$k]??null;
-	}
-	public function _Set(string $k,$v)
-	{
-		$this->data[$k]=$v;
-	}
-	public function _Remove(string $k)
-	{
-		unset($this->data[$k]);
-	}
-	public function _All()
-	{
-		return $this->data;
 	}
 }

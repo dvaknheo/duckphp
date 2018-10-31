@@ -277,10 +277,11 @@ trait DNSwooleHttpServer_SimpleHttpd
 			$this->onHttpException($ex);
 		}
 		
-		foreach($this->shutdown_function_array as $v){
+		foreach(array_reverse($this->shutdown_function_array) as $v){
 			$func=array_shift($v);
 			$func($v);
 		}
+		$this->shutdown_function_array=[];
 		
 		for($i=ob_get_level();$i>$InitObLevel;$i--){
 			ob_end_flush();
@@ -369,26 +370,30 @@ class DNSwooleHttpServer
 	protected function onHttpRun($request,$response)
 	{
 		SwooleContext::G()->initHttp($request,$response);
-		CoroutineSingleton::CloneInstance(SuperGlobal\SERVER::class);
-		CoroutineSingleton::CloneInstance(SuperGlobal\GET::class);
-		CoroutineSingleton::CloneInstance(SuperGlobal\POST::class);
-		CoroutineSingleton::CloneInstance(SuperGlobal\REQUEST::class);
-		CoroutineSingleton::CloneInstance(SuperGlobal\COOKIE::class);
 		
-		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G())->init($request);
-		SuperGlobal\GET::G(SwooleSuperGlobalGet::G())->init($request);
-		SuperGlobal\POST::G(SwooleSuperGlobalPost::G())->init($request);
-		SuperGlobal\REQUEST::G(SwooleSuperGlobalRequest::G())->init($request);
-		SuperGlobal\COOKIE::G(SwooleSuperGlobalCookie::G())->init($request);
+		CoroutineSingleton::CloneInstance(SuperGlobalGET::class);
+		CoroutineSingleton::CloneInstance(SuperGlobalPOST::class);
+		CoroutineSingleton::CloneInstance(SuperGlobalCOOKIE::class);
+		CoroutineSingleton::CloneInstance(SuperGlobalREQUEST::class);
+		CoroutineSingleton::CloneInstance(SuperGlobalSERVER::class);
+		CoroutineSingleton::CloneInstance(SuperGlobalENV::class);
+		CoroutineSingleton::CloneInstance(SuperGlobalSESSION::class);
 		
-		SuperGlobal\SESSION::G(SwooleSuperGlobalSession::G())->init($request);
+		SuperGlobalGET::G(SwooleSuperGlobalGET::G())->init();
+		SuperGlobalPOST::G(SwooleSuperGlobalPOST::G())->init();
+		SuperGlobalCOOKIE::G(SwooleSuperGlobalCOOKIE::G())->init();
+		SuperGlobalREQUEST::G(SwooleSuperGlobalREQUEST::G())->init();
+		SuperGlobalSERVER::G(SwooleSuperGlobalSERVER::G())->init();
+		SuperGlobalENV::G(SwooleSuperGlobalENV::G())->init();
+		SuperGlobalSESSION::G(SwooleSuperGlobalSESSION::G())->init();
+
 		
 		if($this->http_handler){
 			$this->runHttpHandler();
 			return;
 		}
 		if($this->options['http_handler_file']){
-			$path_info=SuperGlobal\SERVER::Get('REQUEST_URI');
+			$path_info=SuperGlobal::SERVER('REQUEST_URI');
 			$file=$this->options['http_handler_file'];
 			$document_root=dirname($file);
 			$this->includeHttpFile($file,$document_root,$path_info);
@@ -400,7 +405,7 @@ class DNSwooleHttpServer
 			
 			$document_root=$this->static_root?:rtrim($http_handler_root,'/');
 			
-			$request_uri=SuperGlobal\SERVER::Get('REQUEST_URI');
+			$request_uri=SuperGlobal::GET('REQUEST_URI');
 			
 			$path=parse_url($request_uri,PHP_URL_PATH);
 			if(strpos($path,'/../')!==false || strpos($path,'/./')!==false){
@@ -447,9 +452,9 @@ class DNSwooleHttpServer
 	}
 	protected function includeHttpFile($file,$document_root,$path_info)
 	{
-		SuperGlobal\SERVER::Set('PATH_INFO',$path_info);
-		SuperGlobal\SERVER::Set('DOCUMENT_ROOT',$document_root);
-		SuperGlobal\SERVER::Set('SCRIPT_FILENAME',$file);
+		SuperGlobal::G()->setSERVER('PATH_INFO',$path_info);
+		SuperGlobal::G()->setSERVER('DOCUMENT_ROOT',$document_root);
+		SuperGlobal::G()->setSERVER('SCRIPT_FILENAME',$file);
 		chdir(dirname($file));
 		(function($file){include($file);})($file);
 	}
@@ -476,15 +481,15 @@ class DNSwooleHttpServer
 	}
 	protected function onHttpClean()
 	{
-		SwooleSuperGlobalSession::G()->writeClose();
+		//SwooleSuperGlobalSession::Close();
 		SwooleContext::G()->cleanUp();
 		CoroutineSingleton::CleanUp();
 	}
 	/////////////////////////
 	public function init($options,$server)
 	{
-		SuperGlobal::Init();
-		SwooleSuperGlobal::Init();
+		SuperGlobal::G();
+		SwooleSuperGlobal::G();
 		
 		$this->options=array_merge(self::DEFAULT_OPTIONS,$options);
 		$options=$this->options;
@@ -560,7 +565,7 @@ class DNSwooleHttpServer
 			CoroutineSingleton::CloneInstance(DNExceptionManager::class);
 		});
 		
-		SuperGlobal\SERVER::G(SwooleSuperGlobalServer::G());
+		SuperGlobal::G(SwooleSuperGlobal::G());
 		
 		return $this;
 	}

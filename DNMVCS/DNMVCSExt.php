@@ -1,41 +1,6 @@
 <?php
 namespace DNMVCS;
 
-function _HTTP_REQUEST($k)
-{
-	if(class_exists('\DNMVCS\SuperGlobal\REQUEST' ,false)){
-		return SuperGlobal\REQUEST::Get($k);
-	}
-	return $_REQUEST[$k]??null;
-}
-
-function _url_by_key($url,$key_for_simple_route)
-{
-	$path='';
-	if(class_exists('\DNMVCS\SuperGlobal\SERVER' ,false)){
-		$path=SuperGlobal\_SERVER::Get('REQUEST_URI');
-	}else{
-		$path=$_SERVER['REQUEST_URI'];
-	}
-	$path=parse_url($path,PHP_URL_PATH);
-
-	if(class_exists('\DNMVCS\SuperGlobal\SERVER' ,false)){
-		$path_info=SuperGlobal\SERVER::Get('PATH_INFO');
-	}else{
-		$path_info=$_SERVER['PATH_INFO'];
-	}
-	
-	if(strlen($path_info)){
-		$path=substr($path,0,0-strlen($path_info));
-	}
-	if($url===null || $url===''){return $path;}
-	$c=parse_url($url,PHP_URL_PATH);
-	$q=parse_url($url,PHP_URL_QUERY);
-	
-	$q=$q?'&'.$q:'';
-	$url=$path.'?'.$key_for_simple_route.'='.$c.$q;
-	return $url;
-}
 class RecordsetMisc
 {
 	use DNSingleton;
@@ -79,13 +44,42 @@ class SimpleRouteHook
 	public $key_for_simple_route='_r';
 	public function onURL($url=null)
 	{
-		return _url_by_key($url,$this->key_for_simple_route);
+		$key_for_simple_route=$this->key_for_simple_route;
+		
+		$path='';
+		if(class_exists('\DNMVCS\SuperGlobal' ,false)){
+			$path=SuperGlobal::SERVER('REQUEST_URI');
+			$path_info=SuperGlobal::SERVER('PATH_INFO');
+		}else{
+			$path=$_SERVER['REQUEST_URI'];
+			$path_info=$_SERVER['PATH_INFO'];
+		}
+		$path=parse_url($path,PHP_URL_PATH);
+		
+		if(strlen($path_info)){
+			$path=substr($path,0,0-strlen($path_info));
+		}
+		if($url===null || $url===''){return $path;}
+		$c=parse_url($url,PHP_URL_PATH);
+		$q=parse_url($url,PHP_URL_QUERY);
+
+		$q=$q?'&'.$q:'';
+		$url=$path.'?'.$key_for_simple_route.'='.$c.$q;
+		return $url;
+	
 	}
 	public function hook($route)
 	{
 		$route->setURLHandler([$this,'onURL']);
 
-		$path_info=_HTTP_REQUEST($this->key_for_simple_route)??'';
+		if(class_exists('\DNMVCS\SuperGlobal' ,false)){
+			$path_info=SuperGlobal::REQUEST($k);
+		}else{
+			$path_info=$_REQUEST[$k]??null;
+		}
+	
+		
+		
 		$path_info=ltrim($path_info,'/');
 		$route->path_info=$path_info;
 		$route->calling_path=$path_info;

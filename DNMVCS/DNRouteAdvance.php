@@ -6,13 +6,13 @@ class DNRouteAdvance
 	use DNSingleton;
 	protected function mergeHttpGet($get)
 	{
-		if(class_exists('\DNMVCS\SuperGlobal\GET',false)){
-			$data=array_merge($get, SuperGlobal\GET::All());
-			foreach($data as $k=>$v){
-				SuperGlobal\GET::Set($k,$v);
+		if(class_exists('\DNMVCS\SuperGlobal',false)){
+			foreach($get as $k=>$v){
+				SuperGlobal::G()->setGET($k,$v);
 			}
-			if(defined('DN_SWOOLE_SERVER_RUNNING')){return;}
 		}
+		if(PHP_SAPI==='cli'){ return; }
+		
 		$_GET=array_merge($get,$_GET??[]);
 	}
 	public function matchRewrite($old_url,$new_url,$route)
