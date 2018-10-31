@@ -60,12 +60,12 @@ Controller --> Service ---------------------------------> Model
     * setting 就是一个数组， config 就是动态配置
 * 简单的加载类 
 * 所有这些仅仅是在主类里耦合。
-* *支持Swoole*
+* **支持Swoole** 不需要改动代码就能在swoole 里运行
 ## DNMVCS 不做什么
 * ORM ，和各种屏蔽 sql 的行为，根据日志查 sql 方便多了。 自己简单封装了 pdo 。你也可以使用自己的DB类。
 * 模板引擎，PHP本身就是模板引擎。
 * Widget ， 和 MVC 分离违背。
-* 接管替代默认的POST，GET，SESSION 。系统提供给你就用，不要折腾这些。
+* 接管替代默认的POST，GET，SESSION 。系统提供给你就用，不要折腾这些。 *为支持 swoole 你需要改动*
 
 ## DNMVCS 还要做什么
 
@@ -182,7 +182,6 @@ run(); 开始路由
 ```php
 \DNMVCS\DNMVCS::RunWithoutPathInfo([]);
 ```
-### 一个文件带走的模式 
 
 ## 选项
     init($options) 方法的参数是可配置的，默认设置是分三个类别的组合。
@@ -242,6 +241,7 @@ const DNRoute::DEFAULT_OPTIONS=[
     这段是和路由相关的。namespace 和 with_no_namespace_mode 选项也会影响路由。
     enable_paramters 切片模式。 使得 foo->a() 也支持 foo/a/b/c 这样的路由，而不是 404。
     enable_post_prefix 默认把 POST 的方法映射到 do_$action 这样处理起来方便些。
+    default_controller_class 可以设置为空
 
 ### 设置文件
     默认情况下会读取 ::/config/setting.php 里的设置。
@@ -494,13 +494,7 @@ Import($file)
 
     手动导入默认lib 目录下的包含文件
     实质调用 self::G()->_Import();
-ImportSys($file)
     
-    手动导DNMVCS目录下的包含文件 函数。
-    目前应用只有一个： 延迟加载  DNMedoo .
-
-    比如在调试状态下：限定各 G 函数的调用。以及DNMedoo ，用 Medoo类
-
 ## 独立杂项静态方法
 这几个方法独立，为了方便操作，放在这里。
 

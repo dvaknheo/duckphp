@@ -573,8 +573,9 @@ class DNConfiger
 	{
 		if($this->inited || !$this->setting_file_basename){ return $this->setting[$key]??null; }
 		$basename=$this->setting_file_basename;
-		if(!is_file($this->path.$basename.'.php')){
-			echo '<h1>'.'DNMVCS Fatal: no setting file!,change '.$basename.'.sample.php to '.$basename.'.php !'.'</h1>';
+		$full_config_file=$this->path.$basename.'.php'
+		if(!is_file($full_config_file)){
+			echo '<h1>'.'DNMVCS Fatal: no setting file['.$full_config_file.']!,change '.$basename.'.sample.php to '.$basename.'.php !'.'</h1>';
 			exit;
 		}
 		$this->setting=$this->loadFile($basename,false);
