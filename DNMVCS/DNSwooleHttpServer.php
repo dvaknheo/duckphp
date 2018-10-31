@@ -102,6 +102,7 @@ class SwooleContext
 	public $fd=-1;
 	public $frame=null;
 	
+	public $shutdown_function_array=[];
 	public function initHttp($request,$response)
 	{
 		$this->request=$request;
@@ -233,7 +234,6 @@ trait DNSwooleHttpServer_Static
 trait DNSwooleHttpServer_GlobalFunc
 {
 	public $http_exception_handler=null;
-	public $shutdown_function_array=[];
 	public static function header(string $string, bool $replace = true , int $http_status_code =0)
 	{
 		if($http_status_code){
@@ -254,7 +254,7 @@ trait DNSwooleHttpServer_GlobalFunc
 	}
 	public static function register_shutdown_function(callable $callback,...$args)
 	{
-		static::G()->shutdown_function_array[]=func_get_args();
+		SwooleContext::G()->shutdown_function_array[]=func_get_args();
 	}
 }
 trait DNSwooleHttpServer_SimpleHttpd
@@ -276,12 +276,12 @@ trait DNSwooleHttpServer_SimpleHttpd
 		}catch(\Throwable $ex){
 			$this->onHttpException($ex);
 		}
-		
-		foreach(array_reverse($this->shutdown_function_array) as $v){
+		$funcs=array_reverse(SwooleContext::G()->shutdown_function_array);
+		foreach($funcs as $v){
 			$func=array_shift($v);
 			$func($v);
 		}
-		$this->shutdown_function_array=[];
+		SwooleContext::G()->shutdown_function_array=[];
 		
 		for($i=ob_get_level();$i>$InitObLevel;$i--){
 			ob_end_flush();
