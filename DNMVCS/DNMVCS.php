@@ -77,10 +77,12 @@ class DNAutoLoader
 		
 		if(!isset($options['path']) || !$options['path']){
 			$path=realpath(getcwd().'/../');
-			$options['path']=rtrim($path,'/').'/';
+			$options['path']=$path;
 		}
+		$options['path']=rtrim($options['path'],'/').'/';
+		
 		$this->options['path']=$options['path'];
-		$this->path=$this->options['path'];
+		$this->path=$options['path'];
 		
 		$this->namespace=$options['namespace'];
 		$this->path_namespace=$this->path.rtrim($options['path_namespace'],'/').'/';
