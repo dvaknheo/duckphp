@@ -907,11 +907,7 @@ trait DNMVCS_Misc
 		$file=rtrim($file,'.php').'.php';
 		require_once($this->path_lib.$file);
 	}
-	public static function ImportSys($file='')
-	{
-		$file=rtrim($file,'.php').'.php';
-		require_once(__DIR__.'/'.$file);
-	}
+	
 	public function _H(&$str)
 	{
 		if(is_string($str)){
@@ -937,14 +933,12 @@ trait DNMVCS_Misc
 	}
 	public static function RecordsetUrl(&$data,$cols_map=[])
 	{
-		static::ImportSys('DNMVCSExt');
-		return RecordsetMisc::G()->_RecordsetUrl($data,$cols_map);
+		return DNMVCSExt::G()->_RecordsetUrl($data,$cols_map);
 	}
 	
 	public static function RecordsetH(&$data,$cols=[])
 	{
-		static::ImportSys('DNMVCSExt');
-		return RecordsetMisc::G()->_RecordsetH($data,$cols);
+		return DNMVCSExt::G()->_RecordsetH($data,$cols);
 	}
 	public static function HasInclude($file)
 	{
