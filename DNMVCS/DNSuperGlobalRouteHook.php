@@ -6,6 +6,7 @@ class DNSuperGlobalRouteHook
 	use DNSingleton;
 	public function hook($route)
 	{
+		SuperGlobal::Init();
 		$path=DNMVCS::G()->options['path'];
 		if(!SuperGlobal\SERVER::Get('DOCUMENT_ROOT')){
 			SuperGlobal\SERVER::Set('DOCUMENT_ROOT',$path.'www');

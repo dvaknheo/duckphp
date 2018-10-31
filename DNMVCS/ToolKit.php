@@ -99,26 +99,6 @@ class DNFuncionModifer
 		
 	}
 }
-
-class SimpleRoute extends DNRoute 
-{
-	public $options;
-	protected $key_for_simple_route='_r';
-	
-	public function _URL($url=null)
-	{
-		return _url_by_key($url,$this->key_for_simple_route);
-	}
-	public function init($options)
-	{
-		parent::init($options);
-		$this->key_for_simple_route=$options['ext']['key_for_simple_route'];
-		
-		$path_info=_HTTP_REQUEST($this->key_for_simple_route)??'';
-		$path_info=ltrim($path_info,'/');
-		$this->path_info=$path_info;
-	}
-}
 class API
 {
 	protected static function GetTypeFilter()

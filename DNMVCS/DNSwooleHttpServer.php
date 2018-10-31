@@ -483,8 +483,8 @@ class DNSwooleHttpServer
 	/////////////////////////
 	public function init($options,$server)
 	{
-		DNMVCS::ImportSys('SuperGlobal');
-		DNMVCS::ImportSys('SwooleSuperGlobal');
+		SuperGlobal::Init();
+		SwooleSuperGlobal::Init();
 		
 		$this->options=array_merge(self::DEFAULT_OPTIONS,$options);
 		$options=$this->options;

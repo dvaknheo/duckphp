@@ -9,6 +9,46 @@ namespace DNMVCS
 		{
 			//Just for Load This file.
 		}
+		public static function GET($key)
+		{
+			return  SuperGlobal\GET::Get($key);
+		}
+		public static function POST($key)
+		{
+			return  SuperGlobal\POST::Get($key);
+		}
+		public static function REQUEST($key)
+		{
+			return  SuperGlobal\GET::Get($key);
+		}
+		public static function COOKIE($key)
+		{
+			return  SuperGlobal\GET::Get($key);
+		}
+		public static function SERVER($key)
+		{
+			return  SuperGlobal\SERVER::Get($key);
+		}
+		public static function ENV($key)
+		{
+			return  SuperGlobal\ENV::Get($key);
+		}
+		public static function SESSION($key)
+		{
+			return  SuperGlobal\SESSION::Get($key);
+		}
+		public static function SetSession($key,$value)
+		{
+			return  SuperGlobal\SESSION::Set($key,$value);
+		}
+		public static function StartSession()
+		{
+			return  SuperGlobal\SESSION::Start();
+		}
+		public static function DestroySession()
+		{
+			return  SuperGlobal\SESSION::Destroy();
+		}
 	}
 }
 namespace DNMVCS\SuperGlobal

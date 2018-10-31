@@ -24,6 +24,22 @@ trait DNSingleton
 		return $me;
 	}
 }
+trait DNDI
+{
+	protected $_di_container;
+	public static function DI($name,$object=null)
+	{
+		return static::G()->_DI($name,$object);
+	}
+	public function _DI($name,$object=null)
+	{
+		if(null===$object){
+			return $this->_di_container[$name];
+		}
+		$this->_di_container[$name]=$object;
+		return $object;
+	}
+}
 
 class DNAutoLoader
 {
@@ -115,6 +131,13 @@ class DNAutoLoader
 	{
 		if(substr($class,0,strlen('DNMVCS\\'))!=='DNMVCS\\'){ return; }
 		
+		$base_dir=__DIR__ .'/';
+		$relative_class=substr($class,strlen('DNMVCS\\'));
+		$file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+		if (!file_exists($file)) { return; }
+		
+		require $file;
+		return;
 		$it = new \DirectoryIterator(__DIR__);
 		foreach($it as $v){
 			if($v->getExtension()==='php'){
@@ -280,9 +303,16 @@ class DNRoute
 		return false;
 	}
 	
-
+	protected function getRouteHandlerByFileStrict()
+	{
+		//TODO implement this;
+	}
 	protected function getRouteHandlerByFile()
 	{
+		if($this->options['strict_route_mode']){
+			return $this->getRouteHandlerByFileStrict();
+		}
+		
 		$path_info=$this->path_info;
 		$blocks=explode('/',$path_info);
 		//array_shift($blocks);
@@ -290,10 +320,6 @@ class DNRoute
 		$l=count($blocks);
 		$current_class='';
 		$method='';
-		
-		if($this->options['strict_route_mode']){
-			//
-		}
 		
 		for($i=0;$i<$l;$i++){
 			$v=$blocks[$i];
@@ -362,6 +388,7 @@ class DNRoute
 			$fullclass=str_replace('/','__',$class_name);
 			$flag=class_exists($fullclass,false);
 			if(!$flag){
+				if(!$this->default_controller_class){return null;}
 				$fullclass=str_replace('/','__',$this->default_controller_class);
 			}
 			$flag=class_exists($fullclass,false);
@@ -374,6 +401,7 @@ class DNRoute
 		$fullclass=$this->namespaceController.'\\'.str_replace('/','\\',$class_name);
 		$flag=class_exists($fullclass,false);
 		if(!$flag){
+			if(!$this->default_controller_class){return null;}
 			$fullclass=$this->namespaceController.'\\'.str_replace('/','\\',$this->default_controller_class);
 		}
 		$this->calling_class=$fullclass;
@@ -867,19 +895,6 @@ trait DNMVCS_Glue
 	{
 		return static::G()->_Import($file);
 	}
-	public static function DI($name,$object=null)
-	{
-		return static::G()->_DI($name,$object);
-	}
-	protected $container;
-	public function _DI($name,$object=null)
-	{
-		if(null===$object){
-			return $this->container[$name];
-		}
-		$this->container[$name]=$object;
-		return $object;
-	}
 }
 trait DNMVCS_Misc
 {
@@ -892,9 +907,8 @@ trait DNMVCS_Misc
 		$file=rtrim($file,'.php').'.php';
 		require_once($this->path_lib.$file);
 	}
-	public static function ImportSys($file=null)
+	public static function ImportSys($file='')
 	{
-		$file=$file??'DNMVCSExt';
 		$file=rtrim($file,'.php').'.php';
 		require_once(__DIR__.'/'.$file);
 	}
@@ -1135,7 +1149,10 @@ EOT;
 }
 class DNMVCS
 {
+	const VERSION = '1.0.1-alpha';
 	use DNSingleton;
+	use DNDI;
+	
 	use DNMVCS_Glue;
 	use DNMVCS_Handler;
 	use DNMVCS_Misc;
@@ -1205,7 +1222,6 @@ class DNMVCS
 	}
 	public static function RunAsServer($server_options,$dn_options,$server=null)
 	{
-		self::ImportSys('DNSwooleHttpServer');
 		DNSwooleHttpServer:: RunWithServer($server_options,$dn_options,$server);
 	}
 	
@@ -1285,7 +1301,6 @@ class DNMVCS
 		$this->isDev=DNConfiger::G()->_Setting('is_dev')??$this->isDev;
 		
 		if(!empty($this->options['ext'])){
-			//self::ImportSys();
 			DNMVCSExt::G()->afterInit($this);
 		}
 		if(defined('DN_SWOOLE_SERVER_RUNNING') || $this->options['swoole'] || $this->options['use_super_global']){
