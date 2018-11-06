@@ -121,6 +121,15 @@ class SwooleContext
 		$this->fd=-1;
 		$this->frame=null;
 	}
+	public function onShutdown()
+	{
+		$funcs=array_reverse($this->shutdown_function_array);
+		foreach($funcs as $v){
+			$func=array_shift($v);
+			$func($v);
+		}
+		$this->shutdown_function_array=[];
+	}
 }
 class DNSwooleException extends \Exception
 {
@@ -276,17 +285,14 @@ trait DNSwooleHttpServer_SimpleHttpd
 		}catch(\Throwable $ex){
 			$this->onHttpException($ex);
 		}
-		$funcs=array_reverse(SwooleContext::G()->shutdown_function_array);
-		foreach($funcs as $v){
-			$func=array_shift($v);
-			$func($v);
-		}
-		SwooleContext::G()->shutdown_function_array=[];
+		
+		SwooleContext::G()->onShutdown();
 		
 		for($i=ob_get_level();$i>$InitObLevel;$i--){
 			ob_end_flush();
 		}
 		$this->onHttpClean();
+		
 		$response->end();
 		//response 被使用到，而且出错就要手动 end  还是 OB 层级问题？
 		//onHttpRun(null,null) 则不需要用
@@ -481,7 +487,6 @@ class DNSwooleHttpServer
 	}
 	protected function onHttpClean()
 	{
-		//SwooleSuperGlobalSession::Close();
 		SwooleContext::G()->cleanUp();
 		CoroutineSingleton::CleanUp();
 	}
