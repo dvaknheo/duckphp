@@ -140,13 +140,6 @@ class DNAutoLoader
 		
 		require $file;
 		return;
-		$it = new \DirectoryIterator(__DIR__);
-		foreach($it as $v){
-			if($v->getExtension()==='php'){
-				if($v->getFilename()==='DNMedoo.php'){ continue; }
-				require_once($v->getPathname());
-			}
-		}
 	}
 	protected function regist_classes($class)
 	{
