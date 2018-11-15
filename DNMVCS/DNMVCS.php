@@ -41,6 +41,16 @@ trait DNDI
 	}
 }
 
+trait DNThrowQuickly
+{
+	public static function ThrowOn($flag,$message,$code=0)
+	{
+		if(!$flag){return;}
+		$class=static::class;
+		throw new $class($message,$code);
+	}
+}
+
 class DNAutoLoader
 {
 	use DNSingleton;
@@ -1342,15 +1352,6 @@ class DNMVCS
 	}
 }
 /////////////////////////
-trait DNThrowQuickly
-{
-	public static function ThrowOn($flag,$message,$code=0)
-	{
-		if(!$flag){return;}
-		$class=static::class;
-		throw new $class($message,$code);
-	}
-}
 class DNException extends \Exception
 {
 	use DNThrowQuickly;

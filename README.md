@@ -1196,3 +1196,28 @@ public function onRequest($request,$response)
     public static function ReplaceDefaultSingletonHandler()
     public static function CleanUp()
     public static function Dump()
+
+## SuperGlobal
+
+
+    SuperGlobal::GET($k) POST COOKIE ... 是用于超全局变量无法使用的 swoole 环境中， 也可以在 fpm 下使用
+    以上是读取，写入是用 SuperGlobalGET::Set($k,$v)  
+    写入的数据不改变系统超全局变量数据
+    swoole 条件下，你要用 DNSwooleHttpServer::setCookie 来改变 cookie
+    SuperGlobal::StartSession SuperGlobal::DestroySession  用于 session 开关,在 swoole 下代替 session_start 和 session_destroy
+
+ # DNMVCS 是怎么越做越复杂的
+
+    一开始想解决的是 MVC 缺 service 层
+    接下来是偷懒选项
+    接下来是一个文件搞定
+    接下来是为了组件可灵活替换
+    接下来是为了默认的几个组件 内部组件用户不必知道，使用即可
+    接下来是数据库管理，支持主从和可替换化
+    接下来是要应付额外的一些功能,这在 DNMVCSExt 里
+    接下来是为了高端路由。——功能太大，不放到主类里，又和 D
+
+    接下来是支持 swoole 
+    支持 swoole 需要 superglobal 选项。
+    swoole 的 session还要单独写
+    代码就这么多了。
