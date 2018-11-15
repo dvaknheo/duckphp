@@ -229,6 +229,7 @@ const DNMVCS::DEFAULT_OPTIONS=[
 ```php
 const DNRoute::DEFAULT_OPTIONS=[
     'with_no_namespace_mode'=>true,     // 简单模式，无命名空间直接 controller, service,model
+    'prefix_no_namespace_mode'=>''      // 无命名空间模式时候的类名前缀
     'enable_paramters'=>false,          // 支持切片模式
     'enable_post_prefix'=>true,         // 把 POST 的 映射为 do_$action 方法
         'path_controller'=>'app/Controller',    //controller 的目录

@@ -101,12 +101,16 @@ class DNAutoLoader
 	}
 	public function autoload($class)
 	{
-		$this->regist_psr4($class);
-		$this->regist_simple_mode($class);
-		$this->regist_system($class);
-		$this->regist_classes($class);
+		$flag=$this->load_psr4($class);
+		if($flag){return;}
+		$flag=$this->load_no_namespace_mode($class);
+		if($flag){return;}
+		$flag=$this->load_system($class);
+		if($flag){return;}
+		$flag=$this->load_classes($class);
+		if($flag){return;}
 	}
-	protected function regist_psr4($class)
+	protected function load_psr4($class)
 	{
 		$prefix = $this->namespace.'\\';
 		$base_dir = $this->path_namespace;
@@ -116,8 +120,9 @@ class DNAutoLoader
 		$file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
 		if (!file_exists($file)) { return; }
 		require $file;
+		return true;
 	}
-	protected function regist_simple_mode($class)
+	protected function load_no_namespace_mode($class)
 	{
 		if(!$this->with_no_namespace_mode){return;}
 		if(strpos($class,'\\')!==false){ return; }
@@ -128,8 +133,9 @@ class DNAutoLoader
 		$file=$path_simple.$m[1].'/'.$class.'.php';
 		if (!$file || !file_exists($file)) {return;}
 		require $file;
+		return true;
 	}
-	protected function regist_system($class)
+	protected function load_system($class)
 	{
 		if(substr($class,0,strlen('DNMVCS\\'))!=='DNMVCS\\'){ return; }
 		
@@ -139,15 +145,16 @@ class DNAutoLoader
 		if (!file_exists($file)) { return; }
 		
 		require $file;
-		return;
+		return true;
 	}
-	protected function regist_classes($class)
+	protected function load_classes($class)
 	{
 		if(strpos($class,'\\')!==false){ return; }
 		$path_autoload=$this->path_autoload;
 		$file=$this->path_autoload .$class.'.php';
 		if (!file_exists($file)) { return; }
 		require $file;
+		return true;
 	}
 }
 
@@ -158,7 +165,7 @@ class DNRoute
 	const DEFAULT_OPTIONS=[
 			'enable_paramters'=>false,
 			'with_no_namespace_mode'=>true,
-			
+			'prefix_no_namespace_mode'=>'',
 			'path_controller'=>'app/Controller',
 			'namespace_controller'=>'MY\Controller',
 			'default_controller_class'=>'DNController',
@@ -173,7 +180,7 @@ class DNRoute
 	public $parameters=[];
 	public $options;
 	
-	protected $namespaceController='';
+	protected $namespace_controller='';
 	
 	protected $default_controller_class='DNController';
 	
@@ -182,6 +189,7 @@ class DNRoute
 	
 	public $enable_paramters=false;
 	public $with_no_namespace_mode=true;
+	public $prefix_no_namespace_mode='';
 	
 	public $calling_path='';
 	public $calling_class='';
@@ -231,9 +239,10 @@ class DNRoute
 		$this->options=$options;
 		
 		$this->path=$options['path'].$options['path_controller'].'/';
-		$this->namespaceController=$options['namespace_controller'];
+		$this->namespace_controller=$options['namespace_controller'];
 		$this->enable_paramters=$options['enable_paramters'];
 		$this->with_no_namespace_mode=$options['with_no_namespace_mode'];
+		$this->prefix_no_namespace_mode=$options['prefix_no_namespace_mode'];
 		
 		$this->default_controller_class=$options['default_controller_class'];
 		
@@ -380,7 +389,7 @@ class DNRoute
 	{
 		if(substr(basename($class_name),0,1)=='_'){return null;}
 		if($this->with_no_namespace_mode){
-			$fullclass=str_replace('/','__',$class_name);
+			$fullclass=$this->prefix_no_namespace_mode . str_replace('/','__',$class_name);
 			$flag=class_exists($fullclass,false);
 			if(!$flag){
 				if(!$this->default_controller_class){return null;}
@@ -393,11 +402,11 @@ class DNRoute
 				return $obj;
 			}
 		}
-		$fullclass=$this->namespaceController.'\\'.str_replace('/','\\',$class_name);
+		$fullclass=$this->namespace_controller.'\\'.str_replace('/','\\',$class_name);
 		$flag=class_exists($fullclass,false);
 		if(!$flag){
 			if(!$this->default_controller_class){return null;}
-			$fullclass=$this->namespaceController.'\\'.str_replace('/','\\',$this->default_controller_class);
+			$fullclass=$this->namespace_controller.'\\'.str_replace('/','\\',$this->default_controller_class);
 		}
 		$this->calling_class=$fullclass;
 		$obj=new $fullclass();
@@ -780,11 +789,26 @@ trait DNMVCS_Glue
 	{
 		return DNRoute::G()->_Parameters();
 	}
-	public function checkAndInstallDefaultRouteHooks($force_install=false)
+	
+	protected $installed_DNRouteAdvance=false;
+	protected $installed_DNSuperGlobalRouteHook=false;
+	//@override
+	public function checkAndInstallDefaultRouteHooks($route,$in_init=true)
 	{
-		// as protected ,but use outside
-		if($force_install ||$this->options['rewrite_list'] || $this->options['route_list'] ){
-			DNRouteAdvance::G()->install();
+		//in init  or  in  run .
+		//little ugly.
+		if($in_init){
+			if(defined('DN_SWOOLE_SERVER_RUNNING') || $this->options['swoole'] || $this->options['use_super_global']){
+				$route->addRouteHook([DNSuperGlobalRouteHook::G(),'hook']);
+				$route->addRouteHook([DNRouteAdvance::G(),'hook']); 
+				$this->installed_DNRouteAdvance=true;
+				$this->installed_DNSuperGlobalRouteHook=true;
+			}
+		}else{
+			if($this->installed_DNRouteAdvance){return;}
+			if($this->options['rewrite_list'] || $this->options['route_list'] ){
+				$route->addRouteHook([DNRouteAdvance::G(),'hook']); 
+			}
 		}
 	}
 	public function assignRewrite($key,$value=null)
@@ -1275,6 +1299,7 @@ class DNMVCS
 	{
 		$route->init($this->options);
 		$route->set404([$this,'onShow404']);
+		$this->checkAndInstallDefaultRouteHooks($route,true);
 	}
 	public function initDBManager($dbm)
 	{
@@ -1294,11 +1319,6 @@ class DNMVCS
 		if(!empty($this->options['ext'])){
 			DNMVCSExt::G()->afterInit($this);
 		}
-		if(defined('DN_SWOOLE_SERVER_RUNNING') || $this->options['swoole'] || $this->options['use_super_global']){
-			//TODO restruct
-			$this->checkAndInstallDefaultRouteHooks(true);
-			DNRoute::G()->addRouteHook([DNSuperGlobalRouteHook::G(),'hook'],true);
-		}
 	}
 	public function isDev()
 	{
@@ -1311,7 +1331,7 @@ class DNMVCS
 	}
 	public function run()
 	{
-		$this->checkAndInstallDefaultRouteHooks();
+		$this->checkAndInstallDefaultRouteHooks(DNRoute::G(),false); //recheck;
 		
 		if($this->before_run_handler){
 			($this->before_run_handler)();

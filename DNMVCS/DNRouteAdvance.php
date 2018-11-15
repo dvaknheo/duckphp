@@ -107,13 +107,4 @@ class DNRouteAdvance
 		$this->hookRewrite($route);
 		$this->hookRouteMap($route);
 	}
-	
-	protected $is_installed=false;
-	public function install()
-	{
-		if($this->is_installed){return;}
-		$this->is_installed=true;
-		DNRoute::G()->addRouteHook([static::G(),'hook'],true);
-		return $this;
-	}
 }
