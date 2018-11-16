@@ -128,7 +128,7 @@ DNMVCS Fatal: no setting file!,change setting.sample.php to setting.php !
 |   |       TestModel.php   // 测试 Model 
 |   \---Service     // 服务放在这里
 |           TestService.php //测试 Service
-+---classes         //自动加载的类，放在这里
++---classes         //自动加载的类，放在这里(建议)
 |       ForAutoLoad.php // 测试自动加载
 +---config          // 配置文件 放这里
 |       config.php  // 配置，目前是空数组
@@ -192,7 +192,6 @@ run(); 开始路由
 const DNAutoLoader::DEFAULT_OPTIONS=[
     'namespace'=>'MY',                  // 默认的命名空间，你可以自定义工程的命名空间
         'path_namespace'=>'app', 	    // 命名空间根目录
-        'path_autoload'=>'classes',	    // 无命名空间的类存放目录
     'with_no_namespace_mode'=>true,     // 简单模式，无命名空间直接 controller, service,model
         'path_no_namespace_mode'=>'app', // 简单模式的基本目录
 ];
@@ -572,6 +571,9 @@ setDefaultExceptionHandel($calllback)
 
     接管默认的异常处理，所有异常都归回调管，而不是显示 500 页面。
     用于控制器里控制特定错误类型。比如 api 调用
+assignPathNamespace($path,$namespace=null)
+    
+    分配自动加载的命名空间的目录。
 ## 事件方法
 实现了默认事件回调的方法。扩展以展现不同事件的显示。
 
@@ -1215,7 +1217,7 @@ public function onRequest($request,$response)
     接下来是为了默认的几个组件 内部组件用户不必知道，使用即可
     接下来是数据库管理，支持主从和可替换化
     接下来是要应付额外的一些功能,这在 DNMVCSExt 里
-    接下来是为了高端路由。——功能太大，不放到主类里，又和 D
+    接下来是为了高端路由。——功能太大，不放到主类里。
 
     接下来是支持 swoole 
     支持 swoole 需要 superglobal 选项。
