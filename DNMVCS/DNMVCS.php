@@ -55,31 +55,30 @@ class DNAutoLoader
 {
 	use DNSingleton;
 	const DEFAULT_OPTIONS=[
+			'path'=>null,
 			'namespace'=>'MY',
-			
 			'path_namespace'=>'app',
-			'path_autoload'=>'classes',
-			
 			'with_no_namespace_mode'=>true,
 			'path_no_namespace_mode'=>'app',
 		];
-
-	public $path;
+		
 	public $options=[];
+	
+	public $path;
 	protected $namespace;
-	protected $is_loaded=false;
-	protected $is_inited=false;
+
 	
 	protected $path_namespace;
-	protected $path_autoload;
 	protected $path_no_namespace_mode;
-	protected $path_project_share_common;
 	protected $with_no_namespace_mode=true;
 	
-
+	protected $is_loaded=false;
+	protected $is_inited=false;
+	protected $namespace_paths=[];
+	
 	public function init($options=[])
 	{
-		if($this->is_inited){return $this;}
+		if($this->is_inited){ return $this; }
 		$this->is_inited=true;
 		
 		$options=array_merge(self::DEFAULT_OPTIONS,$options);
@@ -96,10 +95,13 @@ class DNAutoLoader
 		
 		$this->namespace=$options['namespace'];
 		$this->path_namespace=$this->path.rtrim($options['path_namespace'],'/').'/';
-		$this->path_autoload=$this->path.rtrim($options['path_autoload'],'/').'/';
 		$this->path_no_namespace_mode=$this->path.rtrim($options['path_no_namespace_mode'],'/').'/';
-		
 		$this->with_no_namespace_mode=$options['with_no_namespace_mode'];
+		
+		$this->assignPathNamespace($this->path_namespace,$this->namespace);
+		if(true){ //if by composer false
+			$this->assignPathNamespace(__DIR__,'DNMVCS');
+		}
 		
 		return $this;
 	}
@@ -111,27 +113,12 @@ class DNAutoLoader
 	}
 	public function autoload($class)
 	{
-		$flag=$this->load_psr4($class);
+		$flag=$this->loadByPath($class);
 		if($flag){return;}
 		$flag=$this->load_no_namespace_mode($class);
 		if($flag){return;}
-		$flag=$this->load_system($class);
-		if($flag){return;}
-		$flag=$this->load_classes($class);
-		if($flag){return;}
 	}
-	protected function load_psr4($class)
-	{
-		$prefix = $this->namespace.'\\';
-		$base_dir = $this->path_namespace;
-		
-		if (strncmp($prefix, $class, strlen($prefix)) !== 0) { return; }
-		$relative_class = substr($class, strlen($prefix));
-		$file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-		if (!file_exists($file)) { return; }
-		require $file;
-		return true;
-	}
+
 	protected function load_no_namespace_mode($class)
 	{
 		if(!$this->with_no_namespace_mode){return;}
@@ -145,26 +132,34 @@ class DNAutoLoader
 		require $file;
 		return true;
 	}
-	protected function load_system($class)
+	protected function loadByPath($class)
 	{
-		if(substr($class,0,strlen('DNMVCS\\'))!=='DNMVCS\\'){ return; }
-		
-		$base_dir=__DIR__ .'/';
-		$relative_class=substr($class,strlen('DNMVCS\\'));
-		$file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-		if (!file_exists($file)) { return; }
-		
-		require $file;
-		return true;
+		foreach($this->namespace_paths as $base_dir =>$prefix){
+			if($prefix!==''){ $prefix .='\\'; }
+			if (strncmp($prefix, $class, strlen($prefix)) !== 0) { continue; }
+			
+			$relative_class = substr($class, strlen($prefix));
+			$file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+			
+			if (!file_exists($file)) { continue; }
+			require $file;
+			return true;
+		}
+		return false;
 	}
-	protected function load_classes($class)
+	public function assignPathNamespace($path,$namespace=null)
 	{
-		if(strpos($class,'\\')!==false){ return; }
-		$path_autoload=$this->path_autoload;
-		$file=$this->path_autoload .$class.'.php';
-		if (!file_exists($file)) { return; }
-		require $file;
-		return true;
+		if(is_array($path)&& $namespace===null){
+			foreach($path as $k=>$v){
+				$path[$k]=($v==='')?:rtrim($path,'/').'/';
+			}
+			$this->namespace_paths=array_merge($this->paths,$path);
+		}else{
+			
+			$path=($path==='')?:rtrim($path,'/').'/';
+			$this->namespace_paths[$path]=$namespace;
+			
+		}
 	}
 }
 
@@ -924,6 +919,10 @@ trait DNMVCS_Glue
 	public static function Import($file)
 	{
 		return static::G()->_Import($file);
+	}
+	public function assignPathNamespace($path,$namespace=null)
+	{
+		return DNAutoLoader::G()->assignPathNamespace($path,$namespace);
 	}
 }
 trait DNMVCS_Misc
