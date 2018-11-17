@@ -558,7 +558,7 @@ showBlock($view,$data)
     展示view不理会页眉页脚，也不做展示的后处理，如关闭数据库。
     注意这里是 $view 在前面， $data 在后面，和 show 函数不一致哦。
     实质调用 DNView::G()->showBlock
-assignExceptionHandel($classes,$callback=null)
+assignExceptionHandle($classes,$callback=null)
 
     分配特定异常回调。
     用于控制器里控制特定错误类型。 
@@ -567,7 +567,7 @@ addRouteHook($hook,$prepend=false)
 
     下钩子扩展 route 方法
     实质调用 DNRoute 的 addRouteHook
-setDefaultExceptionHandel($calllback)
+setDefaultExceptionHandle($calllback)
 
     接管默认的异常处理，所有异常都归回调管，而不是显示 500 页面。
     用于控制器里控制特定错误类型。比如 api 调用
@@ -590,7 +590,7 @@ onErrorException($ex)
     处理错误，显示500错误。
 onDebugError($errno, $errstr, $errfile, $errline)
     处理 Notice 错误。
-onErrorHandel($errno, $errstr, $errfile, $errline)
+onErrorHandle($errno, $errstr, $errfile, $errline)
     处理 PHP 错误
 ```
 ## 组件初始化
@@ -761,7 +761,7 @@ if($flag){throw new MyException($message,$code);}
     defaultURLHandler()
     set404 设置404 回调
 
-    protected getRouteHandelByFile
+    protected getRouteHandleByFile
     protected getObecjectToCall($class_name)
     protected getMethodToCall($obj,$method)
 文件模式的路由
@@ -779,7 +779,7 @@ if($flag){throw new MyException($message,$code);}
 
 高级模式
 
-setURLHandel
+setURLHandle
     
     替换 URL()函数的实现。
 addRouteHook
@@ -1006,7 +1006,7 @@ DN::run
     (DNRoute::run)
     (RouteHook)($this);
          
-    getRouteHandelByFile
+    getRouteHandleByFile
     (DNRoute->callback)()
 
 DN::DB
@@ -1033,7 +1033,7 @@ DN::DB
     想把某个子目录作为域名独立出去。只改底层代码如何改
     或者 v1/api v2/api 等等
 - error-exception 和 error-500 有什么不同
-    error-500 是引入的文件有语法错误之类。 error-exception 是抛出了错误没处理，用 setExceptionHandel 可以自行处理。
+    error-500 是引入的文件有语法错误之类。 error-exception 是抛出了错误没处理，用 setExceptionHandle 可以自行处理。
 
 - 为什么不拆分文件，按 composer ,psr-4 目录布局
     因为不想太多零碎文件，而且还没想到什么应用要拆分

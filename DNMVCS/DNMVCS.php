@@ -102,7 +102,7 @@ class DNAutoLoader
 		$this->with_no_namespace_mode=$options['with_no_namespace_mode'];
 		
 		$this->assignPathNamespace($this->path_namespace,$this->namespace);
-		if($options['with_composer_mode']){
+		if(!$options['with_composer_mode']){
 			$this->assignPathNamespace(__DIR__,'DNMVCS');
 		}
 		
@@ -468,32 +468,10 @@ class DNView
 	public $data=[];
 	public $view=null;
 	
-	public $error_reporting_old;
 	protected $temp_view_file;
 	protected $before_show_handler=null;
 	protected $header_handler=null;
-	public function _ExitJson($ret)
-	{
-		$this->header('Content-Type:text/json');
-		if($this->before_show_handler){
-			($this->before_show_handler)([],$this->view);
-		}
-		echo json_encode($ret,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
-		exit;
-	}
-	public function _ExitRedirect($url,$only_in_site=true)
-	{
-		if($only_in_site && parse_url($url,PHP_URL_HOST)){
-			//something  wrong
-			exit;
-		}
-		$this->header('location: '.$url);
-		$this->header('',true,302);
-		if($this->before_show_handler){
-			($this->before_show_handler)([],$this->view);
-		}
-		exit;
-	}
+	
 	public function header($output ,bool $replace = true , int $http_response_code=0)
 	{
 		if($this->header_handler){
@@ -512,10 +490,7 @@ class DNView
 		$this->data=array_merge($this->data,$data);
 		$this->view_file=$this->path.rtrim($this->view,'.php').'.php';
 		
-		$this->error_reporting_old=error_reporting();
-		error_reporting(error_reporting() & ~E_NOTICE);
 		$this->includeShowFiles();
-		error_reporting($this->error_reporting_old);
 	}
 	
 	protected function includeShowFiles()
@@ -552,11 +527,8 @@ class DNView
 	public function showBlock($view,$data)
 	{
 		$this->temp_view_file=$this->path.$view.'.php';
-		$this->error_reporting_old=error_reporting();
-		error_reporting($this->error_reporting_old & ~E_NOTICE);
 		extract($data);
 		include($this->temp_view_file);
-		error_reporting($this->error_reporting_old);
 	}
 	public function assignViewData($key,$value=null)
 	{
@@ -854,15 +826,15 @@ trait DNMVCS_Glue
 
 	public static function ExitJson($ret)
 	{
-		return DNView::G()->_ExitJson($ret);
+		return DNMVCSExt::G()->_ExitJson($ret);
 	}
 	public static function ExitRedirect($url,$only_in_site=true)
 	{
-		return DNView::G()->_ExitRedirect($url,$only_in_site);
+		return DNMVCSExt::G()->_ExitRedirect($url,$only_in_site);
 	}
 	public static function ExitRouteTo($url)
 	{
-		return DNView::G()->_ExitRedirect(self::URL($url),true);
+		return DNMVCSExt::G()->_ExitRedirect(static::URL($url),true);
 	}
 	public static function Exit404()
 	{
@@ -929,6 +901,10 @@ trait DNMVCS_Glue
 	public function assignPathNamespace($path,$namespace=null)
 	{
 		return DNAutoLoader::G()->assignPathNamespace($path,$namespace);
+	}
+	public static function Debugging()
+	{
+		return static::G()->isDev();
 	}
 }
 trait DNMVCS_Misc
@@ -1073,8 +1049,8 @@ trait DNMVCS_Handler
 		}
 		
 		DNDBManager::G()->closeAllDB();
-		
-		//error_reporting(error_reporting() & ~E_NOTICE);
+		$this->error_reporting_old =error_reporting();
+		error_reporting($this->error_reporting_old & ~E_NOTICE);
 	}
 	
 	protected function checkAndRunDefaultErrorHandler($error_view,$data)
@@ -1181,6 +1157,7 @@ EOT;
 class DNMVCS
 {
 	const VERSION = '1.0.1-alpha';
+	
 	use DNSingleton;
 	use DNDI;
 	
@@ -1221,6 +1198,7 @@ class DNMVCS
 	protected $path_lib;
 	
 	protected $initObLevel=0;
+	protected $error_reporting_old;
 	public static function RunQuickly($options=[])
 	{
 		return static::G()->init($options)->run();
@@ -1348,6 +1326,7 @@ class DNMVCS
 	}
 	public function run()
 	{
+		$this->error_reporting_old=error_reporting();
 		$this->checkAndInstallDefaultRouteHooks(DNRoute::G(),false); //recheck;
 		
 		if($this->before_run_handler){
@@ -1355,6 +1334,7 @@ class DNMVCS
 		}
 		
 		$ret=DNRoute::G()->run();
+		error_reporting($this->error_reporting_old);
 		return $ret;
 	}
 }

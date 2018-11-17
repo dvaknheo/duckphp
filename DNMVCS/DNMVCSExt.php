@@ -450,6 +450,24 @@ class DNMVCSExt
 		}
 		return $data;
 	}
+	public function _ExitJson($ret)
+	{
+		DNView::G()->header('Content-Type:text/json');
+		//DNMVCS::G()->onBeforeShow();
+		echo json_encode($ret,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
+		exit;
+	}
+	public function _ExitRedirect($url,$only_in_site=true)
+	{
+		if($only_in_site && parse_url($url,PHP_URL_HOST)){
+			//something  wrong
+			exit;
+		}
+		DNView::G()->header('location: '.$url);
+		DNView::G()->header('',true,302);
+		//DNMVCS::G()->onBeforeShow();
+		exit;
+	}
 }
 //mysqldump -uroot -p123456 DnSample -d --opt --skip-dump-date --skip-comments | sed 's/ AUTO_INCREMENT=[0-9]*\b//g' >../data/database.sql
 
