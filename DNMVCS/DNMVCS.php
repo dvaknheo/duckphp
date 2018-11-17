@@ -3,6 +3,7 @@
 //OK，Lazy
 namespace DNMVCS;
 
+if(!trait_exists('DNMVCS\DNSingleton',false)){
 trait DNSingleton
 {
 	protected static $_instances=[];
@@ -23,6 +24,7 @@ trait DNSingleton
 		}
 		return $me;
 	}
+}
 }
 trait DNDI
 {
