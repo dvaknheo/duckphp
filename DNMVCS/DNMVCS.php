@@ -62,6 +62,7 @@ class DNAutoLoader
 			'path_namespace'=>'app',
 			'with_no_namespace_mode'=>true,
 			'path_no_namespace_mode'=>'app',
+			'with_composer_mode'=>false,
 		];
 		
 	public $options=[];
@@ -101,7 +102,7 @@ class DNAutoLoader
 		$this->with_no_namespace_mode=$options['with_no_namespace_mode'];
 		
 		$this->assignPathNamespace($this->path_namespace,$this->namespace);
-		if(true){ //if by composer false
+		if($options['with_composer_mode']){
 			$this->assignPathNamespace(__DIR__,'DNMVCS');
 		}
 		
@@ -183,20 +184,25 @@ class DNRoute
 			'strict_route_mode'=>false,
 		];
 	
-	public $the404Handler=null;
+	public $options=[];
 	public $parameters=[];
-	public $options;
+	public $the404Handler=null;
+	public $urlHandler=null;
 	
-	protected $namespace_controller='';
 	
-	protected $default_controller_class='DNController';
 	
 	protected $welcome_controller='Main';
 	protected $default_method='index';
 	
-	public $enable_paramters=false;
-	public $with_no_namespace_mode=true;
-	public $prefix_no_namespace_mode='';
+	protected $enable_paramters=false;
+	protected $with_no_namespace_mode=true;
+	protected $prefix_no_namespace_mode='';
+	protected $namespace_controller='';
+	protected $default_controller_class='DNController';
+	protected $enable_post_prefix=true;
+	protected $disable_default_class_outside=false;
+	
+	protected $path;
 	
 	public $calling_path='';
 	public $calling_class='';
@@ -207,13 +213,10 @@ class DNRoute
 	public $script_filename='';
 	public $doucment_root='';
 
-	protected $enable_post_prefix=true;
-	protected $disable_default_class_outside=false;
 	
 	public $routeHooks=[];
 	public $callback=null;
 	
-	public $urlHandler=null;
 	public function _URL($url=null)
 	{
 		if($this->urlHandler){return ($this->urlHandler)($url);}
@@ -373,14 +376,15 @@ class DNRoute
 		$method=$method?:$this->default_method;
 		$current_class=$current_class?:$this->welcome_controller;
 		
-		$this->calling_method=$method;
-		
+
 		$file=$this->path.$current_class.'.php';
 		$this->includeControllerFile($file);
 		$obj=$this->getObecjectToCall($current_class);
-		//$this->calling_class=$current_class;  in $obj
 
 		if(null==$obj){return null;}
+		
+		$this->calling_method=$method;
+		$this->calling_class=$this->calling_class?:get_class($obj);
 		
 		return $this->getMethodToCall($obj,$method);
 	}
@@ -1069,6 +1073,8 @@ trait DNMVCS_Handler
 		}
 		
 		DNDBManager::G()->closeAllDB();
+		
+		//error_reporting(error_reporting() & ~E_NOTICE);
 	}
 	
 	protected function checkAndRunDefaultErrorHandler($error_view,$data)

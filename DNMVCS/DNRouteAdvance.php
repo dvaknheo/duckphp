@@ -43,7 +43,7 @@ class DNRouteAdvance
 	protected function matchRoute($pattern_url,$path_info,$route)
 	{
 		$request_method=$route->request_method;
-		$enable_paramters=$route->enable_paramters;
+		$enable_paramters=$route->options['enable_paramters'];
 		
 		$pattern='/^(([A-Z_]+)\s+)?(~)?\/?(.*)\/?$/';
 		$flag=preg_match($pattern,$pattern_url,$m);
