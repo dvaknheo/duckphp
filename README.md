@@ -625,10 +625,6 @@ initMisc
 setBeforeRunHandler($before_run_handler)
 
     在run之前执行回调。 SwooleHttpServer 用到这个。
-checkAndInstallDefaultRouteHooks($force_install=false)
-
-    安装默认的路由钩子，默认是路由和 rewrite。
-    你也可以重写。
 # 进一步扩展
 ## 总说
 DNMVCS 系统 是用各自独立的类合起来的。
@@ -657,7 +653,7 @@ DNDBManger 调用 DNDB 类，用于管理数据库
 ```php
 <?php
 trait DNSingleton
-    static function G();
+    public static function G($object=null):object
 ```
 G 函数，单例模式。
 
@@ -1206,7 +1202,7 @@ public function onRequest($request,$response)
     以上是读取，写入是用 SuperGlobalGET::Set($k,$v)  
     写入的数据不改变系统超全局变量数据
     swoole 条件下，你要用 DNSwooleHttpServer::setCookie 来改变 cookie
-    SuperGlobal::StartSession SuperGlobal::DestroySession  用于 session 开关,在 swoole 下代替 session_start 和 session_destroy
+    SuperGlobal::StartSession SuperGlobal::DestroySession 用于 session 开关,在 swoole 下代替 session_start 和 session_destroy
 
  # DNMVCS 是怎么越做越复杂的
 

@@ -1,0 +1,25 @@
+{
+    "name": "dnmvcs/dnmvcs",
+    "description": "A Framework",
+    "type": "project",
+    "keywords": [
+        "framework",
+		"service"
+    ],
+    "homepage": "https://www.github.com/dvaknheo/dnmvcs",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "davknheo",
+            "email": "85811616@qq.com"
+        }
+    ],
+	"autoload": {
+        "psr-4": {
+            "DNMVCS\\": "DNMVCS/",
+        }
+    },
+    "require": {
+        "php": ">=7.0.0"
+    }
+}
