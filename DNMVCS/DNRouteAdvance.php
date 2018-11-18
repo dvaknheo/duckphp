@@ -7,8 +7,9 @@ class DNRouteAdvance
 	protected function mergeHttpGet($get)
 	{
 		if(class_exists('\DNMVCS\SuperGlobal',false)){
+			SuperGlobal::G();//for autoload
 			foreach($get as $k=>$v){
-				SuperGlobal::G()->setGET($k,$v);
+				SuperGlobalGET::Set($k,$v);
 			}
 		}
 		if(PHP_SAPI==='cli'){ return; }

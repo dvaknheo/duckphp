@@ -42,15 +42,6 @@ class SuperGlobal
 	{
 		return SuperGlobalSESSION::Destroy();
 	}
-//////////////////////////////////////////
-	public function setGet($k,$v)
-	{
-		return SuperGlobalGET::Set($k,$v);
-	}
-	public function setServer($k,$v)
-	{
-		return SuperGlobalSERVER::Set($k,$v);
-	}
 }
 class SuperGlobalBase
 {

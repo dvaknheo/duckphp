@@ -58,11 +58,15 @@ class DNAutoLoader
 	use DNSingleton;
 	const DEFAULT_OPTIONS=[
 			'path'=>null,
+			'with_composer_mode'=>false,
+			'with_composer_app_namespace'=>false,
+			
 			'namespace'=>'MY',
 			'path_namespace'=>'app',
+			
 			'with_no_namespace_mode'=>true,
 			'path_no_namespace_mode'=>'app',
-			'with_composer_mode'=>false,
+			
 		];
 		
 	public $options=[];
@@ -99,9 +103,12 @@ class DNAutoLoader
 		$this->namespace=$options['namespace'];
 		$this->path_namespace=$this->path.rtrim($options['path_namespace'],'/').'/';
 		$this->path_no_namespace_mode=$this->path.rtrim($options['path_no_namespace_mode'],'/').'/';
+		
 		$this->with_no_namespace_mode=$options['with_no_namespace_mode'];
 		
-		$this->assignPathNamespace($this->path_namespace,$this->namespace);
+		if(!$options['with_composer_app_namespace']){
+			$this->assignPathNamespace($this->path_namespace,$this->namespace);
+		}
 		if(!$options['with_composer_mode']){
 			$this->assignPathNamespace(__DIR__,'DNMVCS');
 		}
@@ -364,8 +371,8 @@ class DNRoute
 			$this->calling_path=ltrim($current_class.'/'.$method,'/');
 		}else{
 			$this->calling_path=trim($current_class.'/'.$method,'/');
-			$x_path_info=trim($path_info,'/');
-			if($x_path_info!=$this->calling_path){
+			$t_path_info=trim($path_info,'/');
+			if($t_path_info!=$this->calling_path){
 				return null;
 			}
 		}
@@ -1176,6 +1183,7 @@ class DNMVCS
 			'setting'=>[],
 			'setting_file_basename'=>'setting',
 			
+			'skip_db'=>false,
 			'db_create_handler'=>'',
 			'db_close_handler'=>'',
 			
@@ -1249,7 +1257,9 @@ class DNMVCS
 	{
 		if(static::class!==self::class){return null;}
 		
-		$base_class=isset($options['base_class'])?$options['base_class']:self::DEFAULT_OPTIONS['base_class'];
+		if(!isset($options['base_class'])){return null;}
+		
+		$base_class=$options['base_class'];
 		if(!class_exists($base_class)){return null;}
 		return DNMVCS::G($base_class::G())->init($options);
 	}
@@ -1270,7 +1280,9 @@ class DNMVCS
 		$this->initConfiger(DNConfiger::G());
 		$this->initView(DNView::G());
 		$this->initRoute(DNRoute::G());
-		$this->initDBManager(DNDBManager::G());
+		if(!$this->options['skip_db']){
+			$this->initDBManager(DNDBManager::G());
+		}
 		$this->initMisc();
 		
 		return $this;
