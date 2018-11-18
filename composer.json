@@ -1,12 +1,12 @@
 {
-    "name": "dnmvcs/dnmvcs",
+    "name": "DNMVCS/DNMVCS",
     "description": "A Framework",
     "type": "project",
     "keywords": [
         "framework",
 		"service"
     ],
-    "homepage": "https://www.github.com/dvaknheo/dnmvcs",
+    "homepage": "https://www.github.com/dvaknheo/DNMVCS",
     "license": "MIT",
     "authors": [
         {
@@ -16,7 +16,7 @@
     ],
 	"autoload": {
         "psr-4": {
-            "DNMVCS\\": "DNMVCS/",
+            "DNMVCS\\": "DNMVCS/"
         }
     },
     "require": {
@@ -24,5 +24,5 @@
 	},
 	"post-create-project-cmd": [
 		
-	],
+	]
 }
