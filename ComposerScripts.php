@@ -18,7 +18,7 @@ class ComposerScripts
 			foreach($blocks as $t){
 				$full_dir.=DIRECTORY_SEPARATOR.$t;
 				if(!is_dir($full_dir)){
-					@mkdir($full_dir);
+					mkdir($full_dir);
 				}
 			}
 			copy($file,$dest.DIRECTORY_SEPARATOR.$short_file_name);
@@ -29,13 +29,7 @@ class ComposerScripts
 		if(is_file('public/index.php')){return;}
 		$source=__DIR__.DIRECTORY_SEPARATOR.'template';
 		$dest=getcwd();
-try{
 		self::DumpDir($source, $dest);
-}catch(\RuntimeException $ex){
-	$str=$ex->getTraceAsString();
-	file_put_contents("/mnt/d/xxxxxxxxxxxx.log",$str);
-	var_dump(DATE(DATE_ATOM));
-}
 	}
 	public static function PostCreateProject()
 	{
