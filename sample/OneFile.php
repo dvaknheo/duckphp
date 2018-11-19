@@ -3,10 +3,11 @@ use \DNMVCS\DNMVCS as DN;
 use \DNMVCS\FunctionWrapper as W;
 
 // 本文件用于演示单一文件模式。
-if(is_file('../DNMVCS.php')){
-	require('../DNMVCS.php');
+$ROOT_DIR=realpath('..').'/';
+if(is_file($ROOT_DIR.'DNMVCS.php')){
+	require($ROOT_DIR.'DNMVCS.php');
 }else{
-	require('../vendor/autoload.php');
+	require($ROOT_DIR.'vendor/autoload.php');
 }
 
 
