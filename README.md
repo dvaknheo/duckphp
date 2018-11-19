@@ -207,7 +207,7 @@ const DNMVCS::DEFAULT_OPTIONS=[
     'all_config'=>[],        			// 配置，每个配置用 key  分割。
         'setting_file_basename'=>'setting',        // 设置的文件名，如果为'' 则不读取设置文件
     'is_dev'=>false,					// 是否在开发状态，设置文件里填写的将会覆盖这一选项
-		'skip_db'=>false,				// 不加载默认 DNDBManager，回收一点点性能。
+        'skip_db'=>false,				// 不加载默认 DNDBManager，回收一点点性能。
     'db_create_handler' =>'',			// 创建DB 的回调 默认用 DNDB::class
     'db_close_handler' =>'', 			// 关闭DB 类的回调。
     'ext'=>[],                          //默认不使用扩展
@@ -804,12 +804,12 @@ addRouteHook
 
     DNConfiger 类获得配置设置
 ## 异常管理 DNExceptionManager
-	public function setDefaultExceptionHandler($default_exception_handler)
-	public function assignExceptionHandler($class,$callback=null)
-	public function setMultiExceptionHandler(array $classes,$callback)
+    public function setDefaultExceptionHandler($default_exception_handler)
+    public function assignExceptionHandler($class,$callback=null)
+    public function setMultiExceptionHandler(array $classes,$callback)
 
-	public function checkAndRunErrorHandlers($ex,$inDefault)
-	public function init($exception_handler,$dev_error_handler)
+    public function checkAndRunErrorHandlers($ex,$inDefault)
+    public function init($exception_handler,$dev_error_handler)
 
 ## DNDBManager 数据库管理类
 DNMVCS 采用
@@ -1218,71 +1218,71 @@ public function onRequest($request,$response)
 ## 全部默认选项
 ```php
 const DEFAULT_OPTIONS=[
-			'path'=>null,
-			
-			'namespace'=>'MY',
-			'path_namespace'=>'app',
-			
-			'with_no_namespace_mode'=>true,
-			'path_no_namespace_mode'=>'app',
+            'path'=>null,
+            
+            'namespace'=>'MY',
+            'path_namespace'=>'app',
+            
+            'with_no_namespace_mode'=>true,
+            'path_no_namespace_mode'=>'app',
             
             'skip_app_autoload'=>false,
-			'skip_system_autoload'=>false,
+            'skip_system_autoload'=>false,
 
-			'enable_paramters'=>false,
-			'prefix_no_namespace_mode'=>'',
-			'path_controller'=>'app/Controller',
-			'namespace_controller'=>'MY\Controller',
-			'default_controller_class'=>'DNController',
-			
-			'enable_post_prefix'=>true,
-			'disable_default_class_outside'=>false,
-			
-			'strict_route_mode'=>false,
-			'base_class'=>'MY\Base\App',
-			'path_view'=>'view',
-			'path_config'=>'config',
-			'path_lib'=>'lib',
-			
-			'is_dev'=>false,
-			'all_config'=>[],
-			'setting'=>[],
-			'setting_file_basename'=>'setting',
-			
-			'skip_db'=>false,
-			'db_create_handler'=>'',
-			'db_close_handler'=>'',
-			
-			'rewrite_list'=>[],
-			'route_list'=>[],
-			'use_super_global'=>false,
-			
-			'error_404'=>'_sys/error-404',
-			'error_500'=>'_sys/error-500',
-			'error_exception'=>'_sys/error-exception',
-			'error_debug'=>'_sys/error_debug',
-			
-			'ext'=>[
-				'setting_file_basename'=>'setting',
-				'key_for_simple_route'=>null,
-				
-				'use_function_view'=>false,
-					'function_view_head'=>'view_header',
-					'function_view_foot'=>'view_footer',
-				'use_function_dispatch'=>false,
-				'use_common_configer'=>false,
-					'fullpath_project_share_common'=>'',
-				'use_common_autoloader'=>false,
-					'fullpath_config_common'=>'',
-				'use_ext_db'=>false,
-				'use_strict_db_manager'=>false,
-			],
-			'swoole'=>[
-				'not_empty'=>true,
-				'db_reuse_size'=>0,
-				'db_reuse_timeout'=>5,
-			],
-		];
+            'enable_paramters'=>false,
+            'prefix_no_namespace_mode'=>'',
+            'path_controller'=>'app/Controller',
+            'namespace_controller'=>'MY\Controller',
+            'default_controller_class'=>'DNController',
+            
+            'enable_post_prefix'=>true,
+            'disable_default_class_outside'=>false,
+            
+            'strict_route_mode'=>false,
+            'base_class'=>'MY\Base\App',
+            'path_view'=>'view',
+            'path_config'=>'config',
+            'path_lib'=>'lib',
+            
+            'is_dev'=>false,
+            'all_config'=>[],
+            'setting'=>[],
+            'setting_file_basename'=>'setting',
+            
+            'skip_db'=>false,
+            'db_create_handler'=>'',
+            'db_close_handler'=>'',
+            
+            'rewrite_list'=>[],
+            'route_list'=>[],
+            'use_super_global'=>false,
+            
+            'error_404'=>'_sys/error-404',
+            'error_500'=>'_sys/error-500',
+            'error_exception'=>'_sys/error-exception',
+            'error_debug'=>'_sys/error_debug',
+            
+            'ext'=>[
+                'setting_file_basename'=>'setting',
+                'key_for_simple_route'=>null,
+                
+                'use_function_view'=>false,
+                    'function_view_head'=>'view_header',
+                    'function_view_foot'=>'view_footer',
+                'use_function_dispatch'=>false,
+                'use_common_configer'=>false,
+                    'fullpath_project_share_common'=>'',
+                'use_common_autoloader'=>false,
+                    'fullpath_config_common'=>'',
+                'use_ext_db'=>false,
+                'use_strict_db_manager'=>false,
+            ],
+            'swoole'=>[
+                'not_empty'=>true,
+                'db_reuse_size'=>0,
+                'db_reuse_timeout'=>5,
+            ],
+        ];
 ```
  # DNMVCS 是怎么越做越复杂的
 
