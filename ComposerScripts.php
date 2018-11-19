@@ -6,9 +6,9 @@ class ComposerScripts
 	{
 		$source=realpath($source);
 		$dest=rtrim($dest,DIRECTORY_SEPARATOR);
-		$directory = new \RecursiveDirectoryIterator($source,FilesystemIterator::CURRENT_AS_PATHNAME | FilesystemIterator::SKIP_DOTS );
+		$directory = new \RecursiveDirectoryIterator($source,\FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS );
 		$iterator = new \RecursiveIteratorIterator($directory);
-		$files = iterator_to_array($iterator,false);
+		$files = \iterator_to_array($iterator,false);
 		foreach($files as $file){
 			
 			$short_file_name=substr($file,strlen($source)+1);
@@ -27,9 +27,15 @@ class ComposerScripts
 	protected static function DumpTemplateFiles()
 	{
 		if(is_file('public/index.php')){return;}
-		$source=__DIR__.DIRECTORY_SEPARATOR.'sample';
+		$source=__DIR__.DIRECTORY_SEPARATOR.'template';
 		$dest=getcwd();
+try{
 		self::DumpDir($source, $dest);
+}catch(\RuntimeException $ex){
+	$str=$ex->getTraceAsString();
+	file_put_contents("/mnt/d/xxxxxxxxxxxx.log",$str);
+	var_dump(DATE(DATE_ATOM));
+}
 	}
 	public static function PostCreateProject()
 	{
