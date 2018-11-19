@@ -92,7 +92,7 @@ Controller --> Service ---------------------------------> Model
 ### 第一步
 跑起来。
 1. 下载 DNMVCS。
-2. 把 web 目录设置为 sample/public 目录。
+2. 把 web 目录设置为 template/public 目录。
 3. 复制 config/setting.sample.php 为 config/setting.php
 4. 浏览器中打开主页出现下面的欢迎就表示基本成功
 
@@ -107,7 +107,7 @@ DNMVCS Fatal: no setting file!,change setting.sample.php to setting.php !
 ```
 *DNMVCS并非一定要外置设置文件，有选项可改为使用内置设置选项。满足单一文件模式的爱好*
 ### 后续的工作
-新建工程怎么做？ 复制 sample 目录到你工程目录就行，修改 index.php ，使得引入正确的库
+新建工程怎么做？ 复制 template 目录到你工程目录就行，修改 index.php ，使得引入正确的库
 
 还有哪些没检查的？ 服务器配置 PATH_INFO 对了没有。 数据库也没配置和检查。
 
