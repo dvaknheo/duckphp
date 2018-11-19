@@ -606,14 +606,17 @@ initView(DNView $view)
     配置路径
     绑定 onBeforeshow
 initRoute(DNRoute $route)
+
     初始化路由 配置选项。
     绑定 onShow404
 initDBManager(DNDBManger $dbm)
+
     初始化数据库管理器,skip_db 选项则跳过
     db_create_handler ，db_close_handler 用在这里。
     db_create_handler($config,$tag)
     db_close_handler($db,$tag)
 initMisc
+
     如果 swoole_mode 启用  use_super_global
     如果 ext 启用 DNMVCSExt
 # 进一步扩展
@@ -985,12 +988,14 @@ W($object);
 ----
 
 
-## DNRouteAdvance.php
+## RouteHookMapAndRewrite.php
     这个文件是用于自定义 route 和 rewrite 的
+## RouteHookSuperGlobal
+    使用 SuperGlobal 的 RouteHook
 ## SuperGlobal.php
     对超全局数组的封装
 
-## SwooleSuperGlobal
+## SwooleSuperGlobal.php
     超全局数组的 swoole 替换层
 ## DNSwooleHttpServer
     Swoole 的 Http 服务器,单独章节介绍
@@ -1164,12 +1169,12 @@ DNSwooleHttpServer::()->init($server_options);
 ## trait DNSwooleHttpServer_GlobalFunc
 全局函数的替代。 作为 DNSwooleHttpServer 的一部分
 对应PHP手册的函数
-
+```
     header(string $string, bool $replace = true , int $http_response_code =0)
     setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
     set_exception_handler(callable $exception_handler)
     register_shutdown_function(callable $callback,...$args)
-
+```
 ## class DNSwooleException
     public static function ThrowOn($flag,$message,$code=0)
 404 错误是用 code=404 那个
@@ -1296,3 +1301,5 @@ const DEFAULT_OPTIONS=[
     支持 swoole 需要 superglobal 选项。
     swoole 的 session还要单独写
     代码就这么多了。
+    接下来是支持 composer
+    
