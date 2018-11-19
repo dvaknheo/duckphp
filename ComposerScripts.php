@@ -2,7 +2,7 @@
 namespace DNMVCS;
 class ComposerScripts
 {
-	function DumpDir($source, $dest) 
+	protected static function DumpDir($source, $dest) 
 	{
 		$source=realpath($source);
 		$dest=rtrim($dest,DIRECTORY_SEPARATOR);
@@ -24,13 +24,15 @@ class ComposerScripts
 			copy($file,$dest.DIRECTORY_SEPARATOR.$short_file_name);
 		}
 	}
-	public static function PostUpdate()
+	protected static function DumpTemplateFiles()
 	{
-		echo "Post Update!";
 		if(is_file('public/index.php')){return;}
 		$source=__DIR__.DIRECTORY_SEPARATOR.'sample';
 		$dest=getcwd();
 		self::DumpDir($source, $dest);
-		var_dump(DATE(DATE_ATOM));
+	}
+	public static function PostUpdate()
+	{
+		self::DumpTemplateFiles();
 	}
 }
