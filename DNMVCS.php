@@ -1254,10 +1254,8 @@ class DNMVCS
 	{
 		if(static::class!==self::class){return null;}
 		
-		if(!isset($options['base_class'])){return null;}
-		
-		$base_class=$options['base_class'];
-		if(!class_exists($base_class)){return null;}
+		$base_class=isset($options['base_class'])?$options['base_class']:self::DEFAULT_OPTIONS['base_class'];
+		if(!$base_class || !class_exists($base_class)){return null;}
 		return DNMVCS::G($base_class::G())->init($options);
 	}
 	//@override me
