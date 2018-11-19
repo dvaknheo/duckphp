@@ -21,8 +21,5 @@
     },
     "require": {
         "php": ">=7.0.0"
-	},
-	"post-create-project-cmd": [
-		
-	]
+	}
 }

@@ -58,8 +58,6 @@ class DNAutoLoader
 	use DNSingleton;
 	const DEFAULT_OPTIONS=[
 			'path'=>null,
-			'with_composer_mode'=>false,
-			'with_composer_app_namespace'=>false,
 			
 			'namespace'=>'MY',
 			'path_namespace'=>'app',
@@ -67,8 +65,10 @@ class DNAutoLoader
 			'with_no_namespace_mode'=>true,
 			'path_no_namespace_mode'=>'app',
 			
+			'skip_system_autoload'=>false,
+			'skip_app_autoload'=>false,
 		];
-		
+	
 	public $options=[];
 	
 	public $path;
@@ -106,10 +106,11 @@ class DNAutoLoader
 		
 		$this->with_no_namespace_mode=$options['with_no_namespace_mode'];
 		
-		if(!$options['with_composer_app_namespace']){
+		if( !$options['skip_app_autoload'] ){
 			$this->assignPathNamespace($this->path_namespace,$this->namespace);
 		}
-		if(!$options['with_composer_mode']){
+		$in_composer=class_exists('Composer\Autoload\ClassLoader')?true:false;
+		if( !($in_composer || $options['skip_system_autoload']) ){
 			$this->assignPathNamespace(__DIR__,'DNMVCS');
 		}
 		
@@ -295,8 +296,13 @@ class DNRoute
 	{
 		return $this->urlHandler;
 	}
-	public function addRouteHook($hook,$prepend=false)
+	public function addRouteHook($hook,$prepend=false,$once=true)
 	{
+		if($once){
+			foreach($this->routeHooks as $v){
+				if($v==$hook){ var_dump("Hit!");return;}
+			}
+		}
 		if(!$prepend){
 			array_push($this->routeHooks,$hook);
 		}else{
@@ -779,28 +785,6 @@ trait DNMVCS_Glue
 	{
 		return DNRoute::G()->_Parameters();
 	}
-	
-	protected $installed_DNRouteAdvance=false;
-	protected $installed_DNSuperGlobalRouteHook=false;
-	//@override
-	public function checkAndInstallDefaultRouteHooks($route,$in_init=true)
-	{
-		//in init  or  in  run .
-		//little ugly.
-		if($in_init){
-			if(defined('DN_SWOOLE_SERVER_RUNNING') || $this->options['swoole'] || $this->options['use_super_global']){
-				$route->addRouteHook([DNSuperGlobalRouteHook::G(),'hook']);
-				$route->addRouteHook([DNRouteAdvance::G(),'hook']); 
-				$this->installed_DNRouteAdvance=true;
-				$this->installed_DNSuperGlobalRouteHook=true;
-			}
-		}else{
-			if($this->installed_DNRouteAdvance){return;}
-			if($this->options['rewrite_list'] || $this->options['route_list'] ){
-				$route->addRouteHook([DNRouteAdvance::G(),'hook']); 
-			}
-		}
-	}
 	public function assignRewrite($key,$value=null)
 	{
 		if(is_array($key)&& $value===null){
@@ -817,9 +801,9 @@ trait DNMVCS_Glue
 			$this->options['route_list'][$key]=$value;
 		}
 	}
-	public function addRouteHook($hook,$prepend=false)
+	public function addRouteHook($hook,$prepend=false,$once=true)
 	{
-		return DNRoute::G()->addRouteHook($hook,$prepend);
+		return DNRoute::G()->addRouteHook($hook,$prepend,$once);
 	}
 	public function getRouteCallingMethod()
 	{
@@ -1177,7 +1161,6 @@ class DNMVCS
 			'path_view'=>'view',
 			'path_config'=>'config',
 			'path_lib'=>'lib',
-			'use_ext'=>false,
 			'is_dev'=>false,
 			'all_config'=>[],
 			'setting'=>[],
@@ -1191,12 +1174,13 @@ class DNMVCS
 			'route_list'=>[],
 			'use_super_global'=>false,
 			
-			'swoole'=>[],
-			
 			'error_404'=>'_sys/error-404',
 			'error_500'=>'_sys/error-500',
 			'error_exception'=>'_sys/error-exception',
 			'error_debug'=>'_sys/error_debug',
+			
+			'ext'=>[],
+			'swoole'=>[],
 		];
 	public $options=[];
 	public $isDev=false;
@@ -1243,6 +1227,19 @@ class DNMVCS
 		DNSwooleHttpServer::RunWithServer($server_options,$dn_options,$server);
 	}
 	
+	protected function checkAndInstallDefaultRouteHooks($route,$in_init=true)
+	{
+		if($in_init){
+			if(defined('DN_SWOOLE_SERVER_RUNNING') || $this->options['swoole'] || $this->options['use_super_global']){
+				$route->addRouteHook([DNSuperGlobalRouteHook::G(),'hook'],false,true);
+				$route->addRouteHook([DNRouteAdvance::G(),'hook'],false,true); 
+			}
+		}else{
+			if($this->options['rewrite_list'] || $this->options['route_list'] ){
+				$route->addRouteHook([DNRouteAdvance::G(),'hook'],true); 
+			}
+		}
+	}
 	protected function initOptions($options=[])
 	{
 		$this->options=array_merge(DNAutoLoader::DEFAULT_OPTIONS,DNRoute::DEFAULT_OPTIONS,self::DEFAULT_OPTIONS,$options);

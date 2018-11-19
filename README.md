@@ -5,13 +5,13 @@
 这个缺层导致了很糟糕的境地。你会发现很多人在 Contorller 里写一堆代码，或者在 Model 里写一堆代码。
 使得网站开发者专注于业务逻辑。
 
-* 为偷懒者写的。只需要引用一个文件，不做一大堆外部依赖。composer 安装正在学习中。
+* 为偷懒者写的。最少只需要引用一个文件，不做一大堆外部依赖。
 * 替代 Codeiginter 这个PHP4 时代的框架，只限于新工程。
 * 不仅仅支持全站路由，还支持局部路径路由和非 PATH_INFO 路由,不需要配服务器也能用
 * 耦合松散，扩展灵活方便，魔改容易
 * 小就是性能。（不过也上千行代码了）
 * 无第三方依赖，你不必担心第三方依赖改动而大费周折。
-*
+* 支持 composer，同时无 composer 环境也可运行。
 * 和 Swoole 整合实现高性能 web 服务器。
 ## 关于 Servivce 层
 MVC 结构的时候，你们业务逻辑放在哪里？
@@ -43,6 +43,7 @@ Controller --> Service ---------------------------------> Model
     3. 或者单独和数据库不一致如取名 UserAndPlayerRelationModel
 
 ## DNMVCS 做了什么
+
 * 简单可扩展灵活的路由方式
     * 全站 PATH_INFO 模式
     * 局部 PATH_INFO 模式
@@ -65,13 +66,12 @@ Controller --> Service ---------------------------------> Model
 * ORM ，和各种屏蔽 sql 的行为，根据日志查 sql 方便多了。 自己简单封装了 pdo 。你也可以使用自己的DB类。
 * 模板引擎，PHP本身就是模板引擎。
 * Widget ， 和 MVC 分离违背。
-* 接管替代默认的POST，GET，SESSION 。系统提供给你就用，不要折腾这些。 *为支持 swoole 你需要改动*
+* 接管替代默认的POST，GET，SESSION 。系统提供给你就用，不要折腾这些。 *除非为了支持 swoole*
 
 ## DNMVCS 还要做什么
 
-* composer 安装模式，本人还没学会
 * 范例，例子还太简单了
-
+* 更多的杀手级应用
 ## DNMVCS 的 缺点
 
 1. 不优雅。万恶之源。 
@@ -105,7 +105,7 @@ Time Now is 2018-06-14T22:16:38+08:00
 ```
 DNMVCS Fatal: no setting file!,change setting.sample.php to setting.php !
 ```
-*DNMVCS并非一定要外置设置文件，有选项可改为使用内置设置选项。*
+*DNMVCS并非一定要外置设置文件，有选项可改为使用内置设置选项。满足单一文件模式的爱好*
 ### 后续的工作
 新建工程怎么做？ 复制 sample 目录到你工程目录就行，修改 index.php ，使得引入正确的库
 
@@ -128,13 +128,11 @@ DNMVCS Fatal: no setting file!,change setting.sample.php to setting.php !
 |   |       TestModel.php   // 测试 Model 
 |   \---Service     // 服务放在这里
 |           TestService.php //测试 Service
-+---classes         //自动加载的类，放在这里(建议)
-|       ForAutoLoad.php // 测试自动加载
 +---config          // 配置文件 放这里
 |       config.php  // 配置，目前是空数组
 |       setting.php // 设置，敏感文件，不放在版本管理里
-|       setting.sample.php  // 设置，对比来
-+---lib             // 手动加载的文件放这里
+|       setting.sample.php  // 设置，去除敏感信息的模板
++---lib             // 手动加载的文件放这里(非必要)
 |       ForImport.php //用于测试导入文件
 +---view            // 视图文件放这里
 |   |   main.php  // 视图文件
@@ -194,6 +192,8 @@ const DNAutoLoader::DEFAULT_OPTIONS=[
         'path_namespace'=>'app', 	    // 命名空间根目录
     'with_no_namespace_mode'=>true,     // 简单模式，无命名空间直接 controller, service,model
         'path_no_namespace_mode'=>'app', // 简单模式的基本目录
+    'skip_system_autoload'=>false,      // 如果是 composer 加载，会使用 composer 来加载系统库
+    'skip_app_autoload'=>false,         // 在工程的 composer.json 你指定了app 的 namespace 后设置为 true
 ];
 ```
 autoload 自动加载相关的选项
@@ -206,7 +206,8 @@ const DNMVCS::DEFAULT_OPTIONS=[
     'setting'=>[],        				// 设置，设置文件里填写的将会覆盖这一选项
     'all_config'=>[],        			// 配置，每个配置用 key  分割。
         'setting_file_basename'=>'setting',        // 设置的文件名，如果为'' 则不读取设置文件
-    'is_dev'=>false,					//是否在开发状态，设置文件里填写的将会覆盖这一选项
+    'is_dev'=>false,					// 是否在开发状态，设置文件里填写的将会覆盖这一选项
+		'skip_db'=>false,				// 不加载默认 DNDBManager，回收一点点性能。
     'db_create_handler' =>'',			// 创建DB 的回调 默认用 DNDB::class
     'db_close_handler' =>'', 			// 关闭DB 类的回调。
     'ext'=>[],                          //默认不使用扩展
@@ -216,13 +217,13 @@ const DNMVCS::DEFAULT_OPTIONS=[
 
 
         'error_404'=>'_sys/error-404',      // 404 错误处理，传入字符串表示用的 view,如果传入 callable 则用 callback,view 优先
-        'error_500'=>'_sys/error-500',      // 500 代码有语法错误等的页面，和 404 的内容一样
+        'error_500'=>'_sys/error-500',      // 500 代码有语法错误等的页面，和 404 的内容一样。和前面类似
         'error_exception'=>'_sys/error-exception',  // 默认的异常处理。和前面类似
         'error_debug'=>'_sys/error_debug',  // 调试模式下出错的处理。和前面类似
 ];
 ```
     关于 base_class 选项。
-    你可以写 DNMVCS 的子类 用这个子类来替换DNMVCS 的入口。详情见后面。
+    你可以写 DNMVCS 的子类 用这个子类来替换DNMVCS 的入口。留空或类不存在为使用默认DNMVCS 详情见后面。
     ext 会加载 DNMVCSExt 实现一些扩展性的功能。后面章节会说明。
 
 ```php
@@ -390,7 +391,7 @@ DNMVCS 的报错页面还是很丑陋，需要调整一下
 # DNMVCS 主类
 ## 基本方法
 ```
-static G($object=null,$args=[])   
+static G($object=null)   
     G 单例函数是整个系统最有趣的地方。
     传入 $object 将替代默认的单例。
     比 PHP-DI简洁，后面的文档 会有详细介绍
@@ -563,7 +564,7 @@ assignExceptionHandle($classes,$callback=null)
     分配特定异常回调。
     用于控制器里控制特定错误类型。 
     // TODO 优化 多个 classes  名称共享一个
-addRouteHook($hook,$prepend=false)
+addRouteHook($hook,$prepend=false,$once=true)
 
     下钩子扩展 route 方法
     实质调用 DNRoute 的 addRouteHook
@@ -1204,6 +1205,75 @@ public function onRequest($request,$response)
     swoole 条件下，你要用 DNSwooleHttpServer::setCookie 来改变 cookie
     SuperGlobal::StartSession SuperGlobal::DestroySession 用于 session 开关,在 swoole 下代替 session_start 和 session_destroy
 
+## 全部默认选项
+```php
+const DEFAULT_OPTIONS=[
+			'path'=>null,
+			
+			'namespace'=>'MY',
+			'path_namespace'=>'app',
+			
+			'with_no_namespace_mode'=>true,
+			'path_no_namespace_mode'=>'app',
+            
+            'skip_app_autoload'=>false,
+			'skip_system_autoload'=>false,
+
+			'enable_paramters'=>false,
+			'prefix_no_namespace_mode'=>'',
+			'path_controller'=>'app/Controller',
+			'namespace_controller'=>'MY\Controller',
+			'default_controller_class'=>'DNController',
+			
+			'enable_post_prefix'=>true,
+			'disable_default_class_outside'=>false,
+			
+			'strict_route_mode'=>false,
+			'base_class'=>'MY\Base\App',
+			'path_view'=>'view',
+			'path_config'=>'config',
+			'path_lib'=>'lib',
+			
+			'is_dev'=>false,
+			'all_config'=>[],
+			'setting'=>[],
+			'setting_file_basename'=>'setting',
+			
+			'skip_db'=>false,
+			'db_create_handler'=>'',
+			'db_close_handler'=>'',
+			
+			'rewrite_list'=>[],
+			'route_list'=>[],
+			'use_super_global'=>false,
+			
+			'error_404'=>'_sys/error-404',
+			'error_500'=>'_sys/error-500',
+			'error_exception'=>'_sys/error-exception',
+			'error_debug'=>'_sys/error_debug',
+			
+			'ext'=>[
+				'setting_file_basename'=>'setting',
+				'key_for_simple_route'=>null,
+				
+				'use_function_view'=>false,
+					'function_view_head'=>'view_header',
+					'function_view_foot'=>'view_footer',
+				'use_function_dispatch'=>false,
+				'use_common_configer'=>false,
+					'fullpath_project_share_common'=>'',
+				'use_common_autoloader'=>false,
+					'fullpath_config_common'=>'',
+				'use_ext_db'=>false,
+				'use_strict_db_manager'=>false,
+			],
+			'swoole'=>[
+				'not_empty'=>true,
+				'db_reuse_size'=>0,
+				'db_reuse_timeout'=>5,
+			],
+		];
+```
  # DNMVCS 是怎么越做越复杂的
 
     一开始想解决的是 MVC 缺 service 层
