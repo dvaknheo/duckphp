@@ -24,12 +24,20 @@ class ComposerScripts
 			copy($file,$dest.DIRECTORY_SEPARATOR.$short_file_name);
 		}
 	}
+	protected static function ChangeFlag($file)
+	{
+		$data=file_get_contents($file);
+		$data=str_replace('$IN_COMPOSER=false;','$IN_COMPOSER=true;',$data);
+		file_put_contents($file,$data);
+	}
 	protected static function DumpTemplateFiles()
 	{
 		if(is_file('public/index.php')){return;}
 		$source=__DIR__.DIRECTORY_SEPARATOR.'template';
 		$dest=getcwd();
 		self::DumpDir($source, $dest);
+		self::ChangeFlag('public/index.php');
+		self::ChangeFlag('public/OneFile.php');
 	}
 	public static function PostCreateProject()
 	{

@@ -1,11 +1,14 @@
 <?php
-$ROOT_DIR=realpath(__DIR__.'/../..').'/';
-if(is_file($ROOT_DIR.'DNMVCS.php')){
-	require($ROOT_DIR.'DNMVCS.php');
-}else{
-	require($ROOT_DIR.'vendor/autoload.php');
-}
+$IN_COMPOSER=false;
+
 $project_root=realpath(__DIR__.'/..');
+
+if($IN_COMPOSER){
+	require($project_root.'/vendor/autoload.php');
+}else{
+	require($project_root.'/../DNMVCS.php');
+}
+
 
 $options=[
 	'path'=>$project_root,
