@@ -1,7 +1,7 @@
 {
     "name": "DNMVCS/FrameWork",
     "description": "A Framework",
-    "type": "project",
+    "type": "library",
     "keywords": [
         "framework",
 		"service"

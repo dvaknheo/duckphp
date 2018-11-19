@@ -1,5 +1,5 @@
 <?php
-require('../../DNMVCS/DNMVCS.php');
+require('../../DNMVCS.php');
 $options=[
 ];
 \DNMVCS\DNMVCS::RunQuickly($options);
