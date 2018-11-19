@@ -31,7 +31,7 @@ class ComposerScripts
 		$dest=getcwd();
 		self::DumpDir($source, $dest);
 	}
-	public static function PostUpdate()
+	public static function PostCreateProject()
 	{
 		self::DumpTemplateFiles();
 	}
