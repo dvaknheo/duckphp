@@ -1,5 +1,9 @@
 <?php
-require('../../DNMVCS.php');
+if(is_file('../../DNMVCS.php')){
+	require('../../DNMVCS.php');
+}else{
+	require('../../vendor/autoload.php');
+}
 $options=[
 ];
 \DNMVCS\DNMVCS::RunQuickly($options);

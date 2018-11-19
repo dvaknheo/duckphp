@@ -1,7 +1,14 @@
 <?php
-require('../../DNMVCS/DNMVCS/DNMVCS.php');
 use \DNMVCS\DNMVCS as DN;
 use \DNMVCS\FunctionWrapper as W;
+
+// 本文件用于演示单一文件模式。
+if(is_file('../DNMVCS.php')){
+	require('../DNMVCS.php');
+}else{
+	require('../vendor/autoload.php');
+}
+
 
 global $view_data;
 $view_data=[];
