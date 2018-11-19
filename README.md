@@ -474,11 +474,11 @@ ExitJson($ret)
     打印 json_encode($ret) 并且退出。
     这里的 json 为人眼友好模式。
 
-    实质调用 DNView::G()->_ExitJson();
+    实质调用 DNMVCSExt::G()->_ExitJson();
 ExitRedirect($url)
 
     跳转到另一个url 并且退出。
-    实质调用 DNView::G()->_ExitRedirect();
+    实质调用 DNMVCSExt::G()->_ExitRedirect();
 ExitRouteTo($url)
 
     跳转到 URL()函数包裹的 url。
@@ -495,7 +495,6 @@ Import($file)
 
     手动导入默认lib 目录下的包含文件
     实质调用 self::G()->_Import();
-    
 ## 独立杂项静态方法
 这几个方法独立，为了方便操作，放在这里。
 
@@ -575,6 +574,9 @@ setDefaultExceptionHandle($calllback)
 assignPathNamespace($path,$namespace=null)
     
     分配自动加载的命名空间的目录。
+setBeforeRunHandler($before_run_handler)
+
+    在run之前执行回调。 SwooleHttpServer 用到这个。
 ## 事件方法
 实现了默认事件回调的方法。扩展以展现不同事件的显示。
 
@@ -601,7 +603,6 @@ initConfiger(DNConfiger $configer)
 
     初始化配置。
     配置路径。
-    设置是否是开发状态
 initView(DNView $view)
 
     初始化视图。 做了两件事
@@ -611,21 +612,13 @@ initRoute(DNRoute $route)
     初始化路由 配置选项。
     绑定 onShow404
 initDBManager(DNDBManger $dbm)
-    初始化数据库管理器
+    初始化数据库管理器,skip_db 选项则跳过
     db_create_handler ，db_close_handler 用在这里。
     db_create_handler($config,$tag)
     db_close_handler($db,$tag)
 initMisc
     如果 swoole_mode 启用  use_super_global
-    如果 ext 启用 AppExt
-
-## 其他方法
-
-高级方法是一般不会用到的方法。
-
-setBeforeRunHandler($before_run_handler)
-
-    在run之前执行回调。 SwooleHttpServer 用到这个。
+    如果 ext 启用 DNMVCSExt
 # 进一步扩展
 ## 总说
 DNMVCS 系统 是用各自独立的类合起来的。
@@ -633,16 +626,25 @@ DNMVCS 主类，单向调用这几个组件，各组件是独立的。
 例外是单例模式和抛异常的时候都会用到 
 ```
 DNMVCS->init
-    DNAutoloader
-    init DNConfiger
+
+    先运行加载器 DNAutoloader->run 
+    检查子类覆盖 checkOverride
+    初始化组件 initConfiger,initView,initRoute，initDBManager，initMisc
 
 DNMVCS->run
-    DNRoute  -> RouteHook::hook();
+    // 保存旧的错误报告
+    // 检查默认routeHook
     
-    DNView
+    DNRoute::G()->run
+        //检查钩子，
+        //根据文件来
+
+DNMVCS::DB
+
     DNDBManager -> DNDB::CreateDBInstence(),DNDB::CloseDBInstence()
-    DNExceptionManager
+    //DNExceptionManager
 ```
+
 DNMVCS 主类里一些函数，是调用其他类的实现。基本都可以用 G 方法替换
 
 DNMVCS 的各子类都是独立的。现实中应该不会拿出来单用吧
@@ -783,8 +785,7 @@ addRouteHook
     
     添加路由的hook,$preprend  在最前面加 
 ## DNView 视图类
-    public function _ExitJson($ret)
-    public function _ExitRedirect($url,$only_in_site=true)
+
     public function _Show($data=[],$view)
 
     public function init($path)
@@ -802,14 +803,19 @@ addRouteHook
     public function _LoadConfig($file_basename='config')
 
     DNConfiger 类获得配置设置
-## 异常管理 trait DMMVCS_ExceptionManager
-    异常管理已经变更，文档待补完
+## 异常管理 DNExceptionManager
+	public function setDefaultExceptionHandler($default_exception_handler)
+	public function assignExceptionHandler($class,$callback=null)
+	public function setMultiExceptionHandler(array $classes,$callback)
 
-## DNDBManger 数据库管理类
+	public function checkAndRunErrorHandlers($ex,$inDefault)
+	public function init($exception_handler,$dev_error_handler)
+
+## DNDBManager 数据库管理类
 DNMVCS 采用
 这个也许会经常改动。比如用自己公司的 DB 类，要在这里做一个封装。
 
-installDBClass($db_create_handler,$db_close_handler)
+setDBHandler($db_create_handler,$db_close_handler=null)
 
     安装DB类
     $db_create_handler($config,$tag) 返回 DB 实例。方便扩展
@@ -820,6 +826,10 @@ installDBClass($db_create_handler,$db_close_handler)
 closeAllDB()
 
     关闭所有数据库，在显示输出之前关闭
+public function _DB()
+public function _DB_W()
+public function _DB_R()
+
 ## DNDB 类
 DNMVCS 自带了一个简单的 DB 类。
 DN::DB()得到的就是这个 DNDB 类。
