@@ -103,7 +103,7 @@ Time Now is 2018-06-14T22:16:38+08:00
 ```
 如果漏了修改 config/setting.php 会提示：
 ```
-DNMVCS Fatal: no setting file!,change setting.sample.php to setting.php !
+DNMVCS Fatal: no setting file[【配置文件的完整路径】]!,change setting.sample.php to setting.php !
 ```
 *DNMVCS并非一定要外置设置文件，有选项可改为使用内置设置选项。满足单一文件模式的爱好*
 ### 后续的工作
