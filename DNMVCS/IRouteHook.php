@@ -1,7 +1,7 @@
 <?php
 namespace DNMVCS;
 
-inteface IRouteAdvance
+inteface IRouteHook
 {
 	public function hook(DNRoute $route);
 }

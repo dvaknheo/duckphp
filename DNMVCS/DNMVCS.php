@@ -1231,12 +1231,12 @@ class DNMVCS
 	{
 		if($in_init){
 			if(defined('DN_SWOOLE_SERVER_RUNNING') || $this->options['swoole'] || $this->options['use_super_global']){
-				$route->addRouteHook([DNSuperGlobalRouteHook::G(),'hook'],false,true);
-				$route->addRouteHook([DNRouteAdvance::G(),'hook'],false,true); 
+				$route->addRouteHook([RouteHookSuperGlobal::G(),'hook'],false,true);
+				$route->addRouteHook([RouteHookMapAndRewrite::G(),'hook'],false,true); 
 			}
 		}else{
 			if($this->options['rewrite_list'] || $this->options['route_list'] ){
-				$route->addRouteHook([DNRouteAdvance::G(),'hook'],true); 
+				$route->addRouteHook([RouteHookMapAndRewrite::G(),'hook'],true); 
 			}
 		}
 	}

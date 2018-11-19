@@ -1,7 +1,7 @@
 <?php
 namespace DNMVCS;
 
-class DNSuperGlobalRouteHook
+class RouteHookSuperGlobal
 {
 	use DNSingleton;
 	public function hook($route)

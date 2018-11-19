@@ -1,7 +1,7 @@
 <?php
 namespace DNMVCS;
 
-class DNRouteAdvance
+class RouteHookMapAndRewrite
 {
 	use DNSingleton;
 	protected function mergeHttpGet($get)
