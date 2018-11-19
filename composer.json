@@ -21,5 +21,11 @@
     },
     "require": {
         "php": ">=7.0.0"
-	}
+	},
+	"scripts": {
+        "post-update-cmd": [
+            "composer dump-autoload",
+            "DNMVCS\\ComposerScripts::PostUpdate"
+        ]
+    }
 }
