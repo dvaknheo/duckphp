@@ -84,20 +84,28 @@ Controller --> Service ---------------------------------> Model
 
 使用它，鼓励我，让我有写下去的动力
 
-# DNMVCS 使用手册
-## 开始
-### 第一步
-跑起来。
-1. 下载 DNMVCS。
-2. 把 web 目录设置为 template/public 目录。
-3. 复制 config/setting.sample.php 为 config/setting.php
-4. 浏览器中打开主页出现下面的欢迎就表示基本成功
+# DNMVCS 入门
+### composer 安装
 
+```
+composer create-project dnmvcs-framework
+```
+设置  ::public 为 web 目录.
+在浏览器中打开主页
+得到欢迎页
 ```
 Hello DNMVCS
 
 Time Now is 2018-06-14T22:16:38+08:00
 ```
+
+### 第一步
+跑起来。
+1. 下载 DNMVCS。
+2. 把 web 目录设置为 template/public 目录。
+3. 复制 config/setting.sample.php 为 config/setting.php
+4. 浏览器中打开主页出现欢迎页就表示基本成功
+
 如果漏了修改 config/setting.php 会提示：
 ```
 DNMVCS Fatal: no setting file[【配置文件的完整路径】]!,change setting.sample.php to setting.php !
@@ -416,9 +424,16 @@ static DI($name,$object=null)
 Show($data=[]],$view=null)
 
     显示视图 
-    视图的文件在 ::view 目录底下.
+    视图的文件在 ::view 目录底下。你可以通过选项 path_view 调整
     为什么数据放前面，DN::Show(get_defined_vars());把 controller 的变量都整合进来，并用默认路径作为 view 文件。
-    实质调用 DNView::G()->_Show();
+    实质调用 DNView::G()->_Show
+ShowBlock($view,$data=null)
+
+    展示一块 view ，用于 View 里嵌套其他 View 或调试的场合。
+    展示view不理会页眉页脚，也不做展示的后处理，如关闭数据库。
+    注意这里是 $view 在前面， $data 在后面，和 show 函数不一致哦。
+    如果 $data===null 那么会继承上级的 view 数据
+    实质调用 DNView::G()->_ShowBlock
 DB()
 
     数据库
@@ -479,7 +494,7 @@ ExitRedirect($url)
 ExitRouteTo($url)
 
     跳转到 URL()函数包裹的 url。
-    应用到 DNView::G()->ExitRedirect(); 和 DNRoute::G()->URL();
+    应用到 DNMVCSExt::G()->ExitRedirect(); 和 DNRoute::G()->URL();
     高级开发者注意，这是静态方法里处理的，子类化需要注意
 ThrowOn(\$flag,\$message,\$code);
 
@@ -549,12 +564,6 @@ assignViewData($key,$value=null)
 
     给 view 分配数据，实质调用 DNView::G()->assignViewData
     这函数用于控制器构造函数添加统一视图数据
-showBlock($view,$data)
-
-    展示一块 view ，用于调试的场合。
-    展示view不理会页眉页脚，也不做展示的后处理，如关闭数据库。
-    注意这里是 $view 在前面， $data 在后面，和 show 函数不一致哦。
-    实质调用 DNView::G()->showBlock
 assignExceptionHandle($classes,$callback=null)
 
     分配特定异常回调。
@@ -911,12 +920,13 @@ const DEFAULT_OPTIONS_EX=[
     'use_superglobal'=>false, //用 SuperGlobal 代替默认的 超级变量。
 ];
 ```
-'fullpath_config_common'=>'',  
-    DNConfiger::G(ProjectCommonConfiger::G()); // 
-    设置和配置会先读取相应的文件，合并到同目录来
-'fullpath_project_share_common'=>''     // 通用类文件目录，用于多工程
-    ProjectCommonAutoloader::G()->init(DNMVCS::G()->options)->run();
-    只处理了 CommonService 和 CommonModel 而且是无命名空间的。
+
+    'fullpath_config_common'=>'',  
+        DNConfiger::G(ProjectCommonConfiger::G()); // 
+        设置和配置会先读取相应的文件，合并到同目录来
+    'fullpath_project_share_common'=>''     // 通用类文件目录，用于多工程
+        ProjectCommonAutoloader::G()->init(DNMVCS::G()->options)->run();
+        只处理了 CommonService 和 CommonModel 而且是无命名空间的。
 
 ### 严格模式
 我想让 DB 只能被 Model , ExModel 调用。Model 只能被 ExModel,Service 调用 。 LibService 只能被Service 调用  Service只能被 Controller 调用
@@ -1044,8 +1054,10 @@ DN::DB
 - error-exception 和 error-500 有什么不同
     error-500 是引入的文件有语法错误之类。 error-exception 是抛出了错误没处理，用 setExceptionHandle 可以自行处理。
 
-- 为什么不拆分文件，按 composer ,psr-4 目录布局
-    因为不想太多零碎文件，而且还没想到什么应用要拆分
+- 为什么 DNView 等类不使用单独文件
+    因为我想 DNMVCS.php 一个入口文件就能实现基本的功能， 同理 DNSwooleHttpServer 也作为一个入口
+    但 DNSwooleHttpServer 碰到 SuperGlobal 的问题，和 Session 问题，DNSwooleHttpServer 和  DNMVCS 的交集。
+    所以就把  SwooleSuperGlobal extends SuperGlobal SwooleSessionHandler implements \SessionHandlerInterface
 
 ## 和其他框架的整合
 
@@ -1199,7 +1211,9 @@ public function onRequest($request,$response)
 单独使用这个 trait 你可以实现一个 websocket 服务器
 
 ## class CoroutineSingleton
+
 用于协程单例
+
     public static function GetInstance($class,$object)
     public static function CreateInstance($class,$object=null)
     public static function CloneInstance($class)
@@ -1216,6 +1230,27 @@ public function onRequest($request,$response)
     写入的数据不改变系统超全局变量数据
     swoole 条件下，你要用 DNSwooleHttpServer::setCookie 来改变 cookie
     SuperGlobal::StartSession SuperGlobal::DestroySession 用于 session 开关,在 swoole 下代替 session_start 和 session_destroy
+
+# 附录
+## 库文件说明
+
+    ComposerScripts.php     和 compose 相关的脚本，用于创建工程用
+    DNMVCS.php              主入口文件 DNMVCS 类，不引用其他文件 。其他类还有
+    DNMVCSExt.php           ext 主入口文件  只引用 DNMVCS 文件
+    DNMedoo.php             Medoo 数据库类的扩展
+    DNSingleton.php         单例 trait 
+    DNSwooleHttpServer.php  Swoole
+    IRouteHook.php          RouteHook 的接口
+    Pager.php               用于简单接口的分页类
+    README.md               本文档
+    RouteHookMapAndRewrite.php 用于 RouteHook 和 Rewrite
+    RouteHookSuperGlobal.php    用于支持 SuperGlobal
+    SuperGlobal.php         SuperGlobal
+    SwooleSessionHandler.php Swoole 的文件类型 Session 扩展实现
+    SwooleSuperGlobal.php   Swoole 的SuperGlobal
+    ToolKit.php             一些工具，无引用
+    composer.json           Composer
+    template                模板文件
 
 ## 全部默认选项
 ```php
@@ -1286,7 +1321,7 @@ const DEFAULT_OPTIONS=[
             ],
         ];
 ```
- # DNMVCS 是怎么越做越复杂的
+# DNMVCS 是怎么越做越复杂的
 
     一开始想解决的是 MVC 缺 service 层
     接下来是偷懒选项
@@ -1294,12 +1329,11 @@ const DEFAULT_OPTIONS=[
     接下来是为了组件可灵活替换
     接下来是为了默认的几个组件 内部组件用户不必知道，使用即可
     接下来是数据库管理，支持主从和可替换化
-    接下来是要应付额外的一些功能,这在 DNMVCSExt 里
-    接下来是为了高端路由。——功能太大，不放到主类里。
+    接下来是要应付额外的高级功能,这在 DNMVCSExt 里
+    接下来是为了支持 映射路由和重写路由，这在 DNMVCS
 
     接下来是支持 swoole 
     支持 swoole 需要 superglobal 选项。
     swoole 的 session还要单独写
     代码就这么多了。
     接下来是支持 composer
-    

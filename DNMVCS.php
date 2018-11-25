@@ -88,7 +88,8 @@ class DNAutoLoader
 		if($this->is_inited){ return $this; }
 		$this->is_inited=true;
 		
-		$options=array_merge(self::DEFAULT_OPTIONS,$options);
+		//$options=array_merge(self::DEFAULT_OPTIONS,$options);
+		$options=array_intersect_key(array_merge(self::DEFAULT_OPTIONS,$options),self::DEFAULT_OPTIONS);
 		$this->options=$options;
 		
 		if(!isset($options['path']) || !$options['path']){
@@ -179,6 +180,7 @@ class DNRoute
 	use DNSingleton;
 	
 	const DEFAULT_OPTIONS=[
+			'path'=>null,
 			'enable_paramters'=>false,
 			'with_no_namespace_mode'=>true,
 			'prefix_no_namespace_mode'=>'',
@@ -253,7 +255,8 @@ class DNRoute
 	
 	public function init($options)
 	{
-		$options=array_merge(self::DEFAULT_OPTIONS,$options);
+		//$options=array_merge(self::DEFAULT_OPTIONS,$options);
+		$options=array_intersect_key(array_merge(self::DEFAULT_OPTIONS,$options),self::DEFAULT_OPTIONS);
 		$this->options=$options;
 		
 		$this->path=$options['path'].$options['path_controller'].'/';
@@ -537,9 +540,10 @@ class DNView
 		$this->head_file=$head_file;
 		$this->foot_file=$foot_file;
 	}
-	public function showBlock($view,$data)
+	public function _ShowBlock($view,$data=null)
 	{
 		$this->temp_view_file=$this->path.$view.'.php';
+		$data=$data??$this->data;
 		extract($data);
 		include($this->temp_view_file);
 	}
@@ -836,9 +840,9 @@ trait DNMVCS_Glue
 	{
 		return DNView::G()->setViewWrapper($head_file,$foot_file);
 	}
-	public function showBlock($view,$data)
+	public static function ShowBlock($view,$data=null)
 	{
-		return DNView::G()->showBlock($view,$data);
+		return DNView::G()->_ShowBlock($view,$data);
 	}
 	public function assignViewData($key,$value=null)
 	{
@@ -1142,7 +1146,7 @@ EOT;
 			return;
 		}
 		if(!is_string($error_view)){ return; }
-		DNView::G()->showBlock($error_view,$data);
+		DNView::G()->_ShowBlock($error_view,$data);
 	}
 }
 class DNMVCS

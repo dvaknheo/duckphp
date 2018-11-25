@@ -32,15 +32,23 @@ class ComposerScripts
 	}
 	protected static function DumpTemplateFiles()
 	{
+		if(is_file('dnmvcs-installed.lock')){return;}
 		if(is_file('public/index.php')){return;}
+		
 		$source=__DIR__.DIRECTORY_SEPARATOR.'template';
 		$dest=getcwd();
 		self::DumpDir($source, $dest);
 		self::ChangeFlag('public/index.php');
 		self::ChangeFlag('public/OneFile.php');
+		copy('config/setting.sample.php','config/setting.php');
+		$data="DNMVCS Installed at ".DATE(DATE_ATOM)."\n";
+		file_put_contents('dnmvcs-installed.lock',$data);
 	}
 	public static function PostCreateProject()
 	{
 		self::DumpTemplateFiles();
+	}
+	public static function PostUpdate()
+	{
 	}
 }
