@@ -40,6 +40,7 @@ class ComposerScripts
 		self::DumpDir($source, $dest);
 		self::ChangeFlag('public/index.php');
 		self::ChangeFlag('public/OneFile.php');
+		self::ChangeFlag('bin/start_server.php');
 		copy('config/setting.sample.php','config/setting.php');
 		$data="DNMVCS Installed at ".DATE(DATE_ATOM)."\n";
 		file_put_contents('dnmvcs-installed.lock',$data);
