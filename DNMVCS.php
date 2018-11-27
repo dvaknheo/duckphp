@@ -718,6 +718,9 @@ class DNDBManager
 {
 	use DNSingleton;
 	
+	const TAG_READ='read';
+	const TAG_WRITE='write';
+	
 	public $db=null;
 	public $db_r=null;
 	public $db_config=[];
@@ -742,7 +745,7 @@ class DNDBManager
 	{
 		if($this->db){return $this->db;}
 		
-		$this->db=($this->db_create_handler)($this->db_config,'write');
+		$this->db=($this->db_create_handler)($this->db_config,self::TAG_WRITE);
 		return $this->db;
 	}
 	public function _DB_W()
@@ -758,13 +761,13 @@ class DNDBManager
 			return $this->_DB();
 		}
 		
-		$this->db_r=($this->db_create_handler)($this->db_r_config,'read');
+		$this->db_r=($this->db_create_handler)($this->db_r_config,self::TAG_READ);
 		return $this->db_r;
 	}
 	public function closeAllDB()
 	{
 		if($this->db!==null && $this->db_close_handler){
-			($this->db_close_handler)($this->db,'write');
+			($this->db_close_handler)($this->db,self::TAG_WRITE);
 			$this->db=null;
 		}
 		if($this->use_only_one_db){
@@ -772,7 +775,7 @@ class DNDBManager
 			return;
 		}
 		if($this->db_r!==null && $this->db_close_handler){
-			($this->db_close_handler)($this->db,'read');
+			($this->db_close_handler)($this->db,self::TAG_READ);
 			$this->db_r=null;
 		}
 	}
@@ -1040,7 +1043,7 @@ trait DNMVCS_Handler
 	public function onBeforeShow($data,$view)
 	{
 		if($view===null){
-			DNView::G()->view=DNRoute::G()->getRouteCallingPath();
+			DNView::G()->view=DNRoute::G()->getRouteCallingPath(); //TODO getRouteCallingClass & Method
 		}
 		
 		DNDBManager::G()->closeAllDB();
