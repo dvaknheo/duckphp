@@ -738,7 +738,7 @@ class DNDBManager
 		$this->db_create_handler=$db_create_handler;
 		$this->db_close_handler=$db_close_handler;
 	}
-	public function _DB()
+	public function _DB($tag=null)
 	{
 		if($this->db){return $this->db;}
 		
@@ -877,9 +877,9 @@ trait DNMVCS_Glue
 		throw new DNException($message,$code);
 	}
 
-	public static function DB()
+	public static function DB($tag=null)
 	{
-		return DNDBManager::G()->_DB();
+		return DNDBManager::G()->_DB($tag);
 	}
 	public static function DB_W()
 	{
