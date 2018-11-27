@@ -557,22 +557,12 @@ static G($object=null)
     G 单例函数是整个系统最有趣的地方。
     传入 $object 将替代默认的单例。
     比 PHP-DI简洁，后面的文档 会有详细介绍
-
 init($options=[])
     初始化，这是最经常子类化完成自己功能的方法。
     你可以扩展这个类，添加工程里的其他初始化。
 run()
     开始路由，执行。这个方法拆分出来是为了，不想要路由，只是为了加载一些类的需求的。
     如果404 则返回false;其他返回 true
-static RunQuickly($options=[])
-    DNMVCS::RunQuickly ($options) 相当于 DNMVCS::G()->init($options)->run();
-static RunOneFileMode($optionss=[])
-    单一文件模式，不需要其他文件，设置内容请放在
-    $options['setting'] 里
-static RunWithoutPathInfo()
-    不需要 PathInfo 的模式。用 _r 来表示 Path_Info
-static DI($name,$object=null)
-    你们想要的 container。如果 $object 不为null 是写，否则是读。
 ```
 ## 常用静态方法方法
 这些方法因为太常用，所以静态化了。
@@ -660,10 +650,23 @@ ThrowOn(\$flag,\$message,\$code);
     if($flag){throw new DNException($message,$code);}
     折腾
     如果是你自己的异常类 ，可以 use DNThrowQuickly 实现 ThrowOn 静态方法。
+DI($name,$object=null)
+
+    你们想要的 container。如果 $object 不为null 是写，否则是读。
 Import($file)
 
     手动导入默认lib 目录下的包含文件
     实质调用 self::G()->_Import();
+## 运行模式
+RunQuickly($options=[])
+    DNMVCS::RunQuickly ($options) 相当于 DNMVCS::G()->init($options)->run();
+static RunOneFileMode($optionss=[])
+    单一文件模式，不需要其他文件，设置内容请放在
+    $options['setting'] 里
+static RunWithoutPathInfo()
+    不需要 PathInfo 的模式。用 _r 来表示 Path_Info
+static RunAsServer($server_options,$dn_options,$server=null)
+    运行 swoole http 服务器
 ## 独立杂项静态方法
 这几个方法独立，为了方便操作，放在这里。
 
@@ -709,6 +712,10 @@ getRouteCallingMethod()
     也适用于重写URL后判断是否是直接访问
 
     实质调用 DNRoute 的 getRouteCallingMethod
+addRouteHook($hook,$prepend=false,$once=true)
+
+    下钩子扩展 route 方法
+    实质调用 DNRoute 的 addRouteHook
 setViewWrapper($head_file=null,$foot_file=null)
 
     给输出 view 加页眉页脚 
@@ -725,11 +732,9 @@ assignExceptionHandle($classes,$callback=null)
 
     分配特定异常回调。
     用于控制器里控制特定错误类型。 
-    // TODO 优化 多个 classes  名称共享一个
-addRouteHook($hook,$prepend=false,$once=true)
+setMultiExceptionHandler(array $classes,$callback)
 
-    下钩子扩展 route 方法
-    实质调用 DNRoute 的 addRouteHook
+    多个特定异常回调。
 setDefaultExceptionHandle($calllback)
 
     接管默认的异常处理，所有异常都归回调管，而不是显示 500 页面。

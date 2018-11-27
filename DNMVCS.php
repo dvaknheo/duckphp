@@ -870,6 +870,10 @@ trait DNMVCS_Glue
 	{
 		return DNExceptionManager::G()->assignExceptionHandler($classes,$callback);
 	}
+	public function setMultiExceptionHandler(array $classes,$callback)
+	{
+		return DNExceptionManager::G()->setMultiExceptionHandler($classes,$callback);
+	}
 	public function setDefaultExceptionHandler($callback)
 	{
 		return DNExceptionManager::G()->setDefaultExceptionHandler($callback);
