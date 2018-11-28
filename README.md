@@ -304,6 +304,7 @@ class App extends \DNMVCS\DNMVCS
 }
 ```
 这就是 DNMVCS 下的简单流程了。其他开发类似。
+
 这个例子在fulltest 里有
 ## 理解路由和控制器
 DNMVCS 的控制器有点像CodeInigter，不需要继承什么，就这么简单。
@@ -333,7 +334,7 @@ DNMVCS 的控制器有点像CodeInigter，不需要继承什么，就这么简�
     
 4. 不用 PATH_INFO
     比如 路由不用 path_info 用 $_GET['_r'] 等，很简单的。
-    simple_route_key 开启 _GET 模式路由
+    $options['ext']['key_for_simple_route'] 开启 _GET 模式路由
     如果你想加其他功能，可以 添加钩子， 继承 DNRoute 自行扩展类。  两种方式灵活扩展
 
 run() 方法开始使用路由。 如果你不想要路由。只想要特定结构的目录， 不调用 run 就可以了。
@@ -341,24 +342,25 @@ run() 方法开始使用路由。 如果你不想要路由。只想要特定结�
 ## 常见任务：URL 地址
 如果不是全站 PATH_INFO 模式， web 框架获取某个 URL 地址是常见任务。
 DNMVCS::URL($url) 函数就是用于这个任务。
-使得你不必关系是用在 /index.php 或者 /somefolder/index.php 里用 PATH_INFO
-DNMVCS::URL('about/foo') 都会得到正确的 URL 地址
+使得你不必关系是用在 /index.php 或者 /somefolder/index.php 里用 PATH_INFO 。
+DNMVCS::URL('about/foo') 都会得到正确的 URL 地址。
 
 *进阶，接管 URL 函数  .*
 ## 常见任务：View 和 View 的包含
 
-DNMVCS::Show($data,$view=null) 用于 View 的显示， $view 为空的时候，会根据当前 URL 获得相关 view 文件
+DNMVCS::Show($data,$view=null) 用于 View 的显示， $view 为空的时候，会根据当前 URL 获得相关 view 文件。
 当要在 View 里包含的时候，用 DNMVCS::ShowData($view,$data=null); $data 为 null 的时候，会把当前view 数据带过去。
 
 *进阶，接管 View .*
 ## 常见任务：读取配置和设置
-DNMVCS::Setting($key) 用于读取 config/setting.php 的内容
-DNMVCS::Config($key,$basename)用于读取 config/$basename.php 的内容。
-
+DNMVCS::Setting($key) 用于读取 config/setting.php 的 $key 
+DNMVCS::Config($key,$basename='config')用于读取 config/$basename.php  $key 。
+DNMVCS::LoadConfig($basename='config')用于载入 config/$basename.php 的内容。
+设置是敏感信息。而配置是敏感
 *进阶，更多配置和设置相关 .*
 ## 常见任务： URL 重写
-DNMVCS 选项里的 route_list ,用于 回调式路由， 除了  :: 表示类的静态方法，还 -> 符号表示的是类的动态方法
-rewrite_list 用于重写 url 
+DNMVCS 选项里的 'route_list' ,用于 回调式路由， 除了  :: 表示类的静态方法，还 -> 符号表示的是类的动态方法
+rewrite_list 用于重写 url 支持
             
 ## 常见任务：重写错误页面
 
@@ -389,12 +391,18 @@ DNDB 类仅仅是简单的封装 PDO ，作为主程序员，可能要重新调�
 DNMVCS 的默认数据库是 DNDB ,DNDB 功能很小，兼容 Medoo 这个数据库类。
 DNMVCS 的 ext use_db_ext  功能比 DNDB 强大很多，但破坏了 Medoo 的兼容性。
 ## 常见任务： 跳转
-ExitJson，ExitRedirect，ExitRouteTo
+DNMVCS::ExitJson($data) 输出 json 。
+DNMVCS::ExitRedirect($url) 用于 302 跳转。
+DNMVCS::ExitRouteTo($url) 相当于 302 跳转 DNMVCS::URL($url);
+
 
 ## 常见任务： HTML 编码辅助函数
-H() RecordsetH RecordsetURL
+H() 
+RecordsetH 
+RecordsetURL
 ## 常见任务： 抛异常
-ThrowOn()
+DNMVCS::ThrowOn($flag,$message,$code);
+if(!$flag){throw new DNException($message,$code)}
 这是 DNMVCS 应用常见的操作。
 
 ## 常见任务： 和其他框架的整合
@@ -551,12 +559,11 @@ static G($object=null)
     传入 $object 将替代默认的单例。
     比 PHP-DI简洁，后面的文档 会有详细介绍
 init($options=[])
-
     初始化，这是最经常子类化完成自己功能的方法。
     你可以扩展这个类，添加工程里的其他初始化。
 run()
 
-    开始路由，执行。这个方法拆分出来是为了，不想要路由，只是为了加载一些类的需求的。
+    开始路由，执行。这个方法拆分出来是为了特定需求, 比如只是为了加载一些类。
     如果404 则返回false;其他返回 true
 
 ## 常用静态方法
@@ -639,7 +646,7 @@ ExitRouteTo($url)
     跳转到 URL()函数包裹的 url。
     应用到 DNMVCSExt::G()->ExitRedirect(); 和 DNRoute::G()->URL();
     高级开发者注意，这是静态方法里处理的，子类化需要注意
-ThrowOn(\$flag,\$message,\$code);
+ThrowOn($flag,$message,$code);
 
     如果 flag 成立则抛出 DNException 异常。
     减少代码量。如果没这个函数，你要写
@@ -904,7 +911,7 @@ service , model 上 用  static 函数代替 G 函数实例方式或许也是一
 
 组件在后续使用，记得初始化：
 
-DNMVCS 一共有 4个组件初始化。
+DNMVCS 一共有 5个组件初始化。 DNExceptionManager DNConfig DNView DNRoute
 
 你不需要 override 这些组件初始化函数，你需要在相应的初始化函数里调用这些方方初始化就是
 
