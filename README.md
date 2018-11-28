@@ -178,7 +178,12 @@ DNMVCS\DNMVCS 主类，在后面有好多其他方法详细介绍。
 这些方法背后是不同的你可以改写的类。
 
 init($options);初始化，这部分入口选项见后面章节【 DNMVCS 配置和选项】详细介绍。
-$options 我们术语称为 DNMVCS 选项。和 setting.php 设置， config.php 配置区分开来。
+
+$options 我们术语称为 DNMVCS 选项。和 setting.php 设置， config.php 配置 区分开来。
+
+* options 选项，代码里的设置
+* setting 设置，敏感信息
+* config 配置，非敏感信息
 
 
 ### 设置文件
@@ -358,7 +363,7 @@ rewrite_list 用于重写 url
 DNMVCS 的报错页面还是很丑陋，需要调整一下
 无错误页面模式，会自己显示默认错误
 
-高级一点，你可以 扩展 DNMVCS 的主类实现。
+*进阶 错误管理.*
 ## 常见任务： 使用数据库
 使用数据库，在 DNMVCS 设置里正确设置
 ```php
@@ -393,27 +398,15 @@ ThrowOn()
 ## 总结常见任务
 把这些常见任务完成了， DNMVCS 的静态函数就都看完了。
 
-## 深入的级别
-
+从难度低到高，大概是这样的级别以实现目的
 1. 使用默认选项实现目的 
-2. 只改配置实现目的
-3. 继承接管特定类实现目的
-4. 魔改。
-### 单文件模式
-```php
-\DNMVCS\DNMVCS::RunOneFileMode([]);
-```
-不想依赖这么多，一个文件解决？可以。
-### 不用 path_info 的模式
+2. 只改选项实现目的
+3. 调用静态方法实现目的
+4. 调用动态方法实现目的
+6. 调用扩展类，组件类的动态方法实现目的
+7. 继承接管特定类实现目的
+8. 魔改，硬改 DNMVCS 的代码实现目的
 
-```php
-\DNMVCS\DNMVCS::RunWithoutPathInfo([]);
-```
-### 选项，设置，配置的区别
-    
-* options 选项，代码里的设置
-* setting 设置，敏感信息
-* config 配置，非敏感信息
 
 # DNMVCS 配置和选项
 
@@ -667,6 +660,18 @@ static RunWithoutPathInfo()
     不需要 PathInfo 的模式。用 _r 来表示 Path_Info
 static RunAsServer($server_options,$dn_options,$server=null)
     运行 swoole http 服务器
+
+### 单文件模式
+```php
+\DNMVCS\DNMVCS::RunOneFileMode([]);
+```
+不想依赖这么多，一个文件解决？可以。
+### 不用 PATH_INFO 的模式
+
+```php
+\DNMVCS\DNMVCS::RunWithoutPathInfo([]);
+``` 
+
 ## 独立杂项静态方法
 这几个方法独立，为了方便操作，放在这里。
 
