@@ -83,6 +83,10 @@ Controller --> Service ---------------------------------> Model
 ## 还有什么要说的
 
 使用它，鼓励我，让我有写下去的动力
+## 目录
+如果你感兴趣，下面是本文档的所有目录
+
+[toc]
 
 # DNMVCS 入门
 ## 安装
@@ -1109,8 +1113,6 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
             DNSwooleException extends \Exception
             DBConnectPoolProxy
         CoroutineSingleton
-    IRouteHook.php          RouteHook 的接口
-        interface IRouteHook
     Pager.php               用于简单接口的分页类
         Pager
     README.md               说明文档
