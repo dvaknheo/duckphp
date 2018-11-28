@@ -1,0 +1,4 @@
+1.0.1 到 1.0.2 变更
+ShowBlock 由类方法变成静态方法
+添加了 setmultiexception
+---
