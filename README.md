@@ -360,7 +360,6 @@ rewrite_list 用于重写 url
 
 错误页面在 ::view/_sys/ 目录下 里。你可以修改相应的错误页面方法。
 比如 404 是 view/404.php 。
-DNMVCS 的报错页面还是很丑陋，需要调整一下
 无错误页面模式，会自己显示默认错误
 
 *进阶 错误管理.*
@@ -390,11 +389,18 @@ ExitJson，ExitRedirect，ExitRouteTo
 ## 常见任务： HTML 编码辅助函数
 H() RecordsetH RecordsetURL
 ## 常见任务： 抛异常
-ThrowOn()
+ThrowOn(\$flag,\$message,\$code);
 这是 DNMVCS 应用常见的操作。
+*进阶 错误管理.*
+## 常见任务： 写兼容 swoole http 服务的代码
+swoole http 服务不能用 超全局变量，所以要用
+SuperGlobal 类来代替 
+SuperGlobal::GET($key),SuperGlobal::POST($key) 代替 GET POST读取
+如果需要写入，则要用 SuperGlobalGET::Set($ke,$value) 等具体看 SuperGlobal 部分
 
+session 处理方面，用 SuperGlobal::StartSession ,SuperGlobal::DestroySession 代替  session_start,session_destroy
 
-
+*进阶 写 swoole http 服务代码.*
 ## 总结常见任务
 把这些常见任务完成了， DNMVCS 的静态函数就都看完了。
 
@@ -403,11 +409,14 @@ ThrowOn()
 2. 只改选项实现目的
 3. 调用静态方法实现目的
 4. 调用动态方法实现目的
-6. 调用扩展类，组件类的动态方法实现目的
+5. 调用扩展类，组件类的动态方法实现目的
+6. 使用系统提供的钩子或 handle 实现目的
 7. 继承接管特定类实现目的
 8. 魔改，硬改 DNMVCS 的代码实现目的
 
+接下来还有的，比如权限配置，数据库管理等
 
+*进阶 钩子和 handle.*
 # DNMVCS 配置和选项
 
 这里是关于 DNMVCS 能用的选项介绍
