@@ -44,7 +44,7 @@ class SuperGlobal
 	}
 	public static function SetCookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
 	{
-		return static::G()->_SetCookie($key,$value,$expire,$path,$domain,$secure,$httponly)
+		return static::G()->_SetCookie($key,$value,$expire,$path,$domain,$secure,$httponly);
 	}
 	public function _SetCookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
 	{
