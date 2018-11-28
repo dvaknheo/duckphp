@@ -493,8 +493,7 @@ class DNSwooleHttpServer
 	/////////////////////////
 	public function init($options,$server)
 	{
-		SuperGlobal::G();
-		SwooleSuperGlobal::G();
+		SuperGlobal::G(SwooleSuperGlobal::G());
 		
 		$this->options=array_merge(self::DEFAULT_OPTIONS,$options);
 		$options=$this->options;
@@ -565,9 +564,11 @@ class DNSwooleHttpServer
 		DNView::G()->setHeaderHandler([self::class,'header']);
 		
 		DNMVCS::G()->onBeforeRun(function(){
+			CoroutineSingleton::CloneInstance(DNExceptionManager::class);
+			CoroutineSingleton::CloneInstance(DNConfig::class);
 			CoroutineSingleton::CloneInstance(DNView::class);
 			CoroutineSingleton::CloneInstance(DNRoute::class);
-			CoroutineSingleton::CloneInstance(DNExceptionManager::class);
+			//CoroutineSingleton::CloneInstance(DNDBManager::class);
 		});
 		
 		SuperGlobal::G(SwooleSuperGlobal::G());

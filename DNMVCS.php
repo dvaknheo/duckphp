@@ -81,7 +81,7 @@ class DNAutoLoader
 	
 	protected $is_loaded=false;
 	protected $is_inited=false;
-	protected $namespace_paths=[];
+	public $namespace_paths=[];
 	
 	public function init($options=[])
 	{
