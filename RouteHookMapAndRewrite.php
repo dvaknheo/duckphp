@@ -101,7 +101,7 @@ class RouteHookMapAndRewrite
 	}
 	protected function hookRouteMap($route)
 	{
-		$route->callback=$this->getRouteHandelByMap($route,DNMVCS::G()->options['route_list']);
+		$route->callback=$this->getRouteHandelByMap($route,DNMVCS::G()->options['route_map']);
 	}
 	public function hook($route)
 	{
