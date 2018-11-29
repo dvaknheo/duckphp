@@ -787,7 +787,7 @@ trait DNMVCS_Glue
 	public function assignRewrite($key,$value=null)
 	{
 		if(is_array($key)&& $value===null){
-			$this->options['rewrite_map']=array_merge($this->options['rewrite_list'],$key);
+			$this->options['rewrite_map']=array_merge($this->options['rewrite_map'],$key);
 		}else{
 			$this->options['rewrite_map'][$key]=$value;
 		}
@@ -795,7 +795,7 @@ trait DNMVCS_Glue
 	public function assignRoute($key,$value=null)
 	{
 		if(is_array($key)&& $value===null){
-			$this->options['route_map']=array_merge($this->options['route_list'],$key);
+			$this->options['route_map']=array_merge($this->options['route_map'],$key);
 		}else{
 			$this->options['route_map'][$key]=$value;
 		}
