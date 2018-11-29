@@ -38,6 +38,7 @@ class ComposerScripts
 		$source=__DIR__.DIRECTORY_SEPARATOR.'template';
 		$dest=getcwd();
 		self::DumpDir($source, $dest);
+		
 		self::ChangeFlag('public/index.php');
 		self::ChangeFlag('public/OneFile.php');
 		self::ChangeFlag('bin/start_server.php');
@@ -51,5 +52,6 @@ class ComposerScripts
 	}
 	public static function PostUpdate()
 	{
+		self::DumpTemplateFiles();
 	}
 }
