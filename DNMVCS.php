@@ -721,20 +721,16 @@ class DNDBManager
 	const TAG_READ='read';
 	const TAG_WRITE='write';
 	
-	public $db=null;
-	public $db_r=null;
 	public $db_config=[];
-	public $db_r_config=[];
-	public $db_create_handler=null;
-	public $db_close_handler=null;
-	public $use_only_one_db=false;
-	public function init($db_config,$db_r_config,$db_create_handler,$db_close_handler)
+	protected $databases=[];
+	protected $db_create_handler=null;
+	protected $db_close_handler=null;
+	
+	protected $is_single=true;
+	public function init($db_config=[],$is_single=true)
 	{
-
 		$this->db_config=$db_config;
-		$this->db_r_config=$db_r_config;
-		$this->db_create_handler=$db_create_handler;
-		$this->db_close_handler=$db_close_handler;
+		$this->is_single=$is_single;
 	}
 	public function setDBHandler($db_create_handler,$db_close_handler=null)
 	{
@@ -743,41 +739,28 @@ class DNDBManager
 	}
 	public function _DB($tag=null)
 	{
-		if($this->db){return $this->db;}
-		
-		$this->db=($this->db_create_handler)($this->db_config,self::TAG_WRITE);
-		return $this->db;
+		$tag=$tag??self::TAG_WRITE;
+		if(!isset($this->databases[$tag])){
+			$db_config=$this->is_single?$this->db_config:$this->db_config[$tag];
+			$this->databases[$tag]=($this->db_create_handler)($db_config,$tag);
+		}
+		return $this->databases[$tag];
 	}
 	public function _DB_W()
 	{
-		return $this->_DB();
+		return $this->_DB(self::TAG_WRITE);
 	}
 	public function _DB_R()
 	{
-		if($this->db_r){return $this->db_r;}
-		
-		if(!$this->db_r_config){
-			$this->use_only_one_db=true;
-			return $this->_DB();
-		}
-		
-		$this->db_r=($this->db_create_handler)($this->db_r_config,self::TAG_READ);
-		return $this->db_r;
+		return $this->_DB(self::TAG_READ);
 	}
 	public function closeAllDB()
 	{
-		if($this->db!==null && $this->db_close_handler){
-			($this->db_close_handler)($this->db,self::TAG_WRITE);
-			$this->db=null;
+		if(!$this->db_close_handler){ return; }
+		foreach($this->databases as $v){
+			($this->db_close_handler)($v);
 		}
-		if($this->use_only_one_db){
-			$this->db_r=null;
-			return;
-		}
-		if($this->db_r!==null && $this->db_close_handler){
-			($this->db_close_handler)($this->db,self::TAG_READ);
-			$this->db_r=null;
-		}
+		$this->databases=[];
 	}
 }
 
@@ -904,9 +887,9 @@ trait DNMVCS_Glue
 	{
 		return DNAutoLoader::G()->assignPathNamespace($path,$namespace);
 	}
-	public static function Debugging()
+	public static function Developing()
 	{
-		return static::G()->isDev();
+		return static::G()->isDev;
 	}
 }
 trait DNMVCS_Misc
@@ -1314,16 +1297,25 @@ class DNMVCS
 		$route->set404([$this,'onShow404']);
 		$this->checkAndInstallDefaultRouteHooks($route,true);
 	}
-	public function initDBManager($dbm)
+	public function initDBManager(DNDBManager $dbm)
 	{
 		$configer=DNConfiger::G();
 		$db_config=$configer->_Setting('db');
 		$db_r_config=$configer->_Setting('db_r');
 		
+		$is_single=true;
+		if($db_r_config){
+			$db_config=[
+				DNDBManager::TAG_WRITE =>$db_config,
+				DNDBManager::TAG_READ =>$db_r_config,
+			];
+			$is_single=false;
+		}
+		$dbm->init($db_config,$is_single);
+		
 		$db_create_handler=$this->options['db_create_handler']?:[DNDB::class,'CreateDBInstance'];
 		$db_close_handler=$this->options['db_close_handler']?:[DNDB::class,'CloseDBInstance'];
-		
-		$dbm->init($db_config,$db_r_config,$db_create_handler,$db_close_handler);
+		$dbm->setDBHandler($db_create_handler,$db_close_handler);
 	}
 	protected function initMisc()
 	{

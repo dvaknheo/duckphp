@@ -60,7 +60,7 @@ class StrictService
 	
 	public static function _before_instance($object)
 	{
-		if(!DNMVCS::G()->isDev()){return $object;}
+		if(!DNMVCS::Developing()){return $object;}
 		$class=static::class;
 		list($_0,$_1,$caller)=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,3);
 		$caller_class=$caller['class'];
@@ -102,7 +102,7 @@ class StrictModel
 	public static function _before_instance($object)
 	{
 		
-		if(!DNMVCS::G()->isDev()){return $object;}
+		if(!DNMVCS::Developing()){return $object;}
 		list($_0,$_1,$caller)=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,3);
 		$caller_class=$caller['class'];
 		$namespace=DNMVCS::G()->options['namespace'];
@@ -118,10 +118,10 @@ class StrictModel
 
 class StrictDBManager extends DNDBManager
 {
-	public function _DB()
+	public function _DB($tag=null)
 	{
 		$this->checkPermission();
-		return parent::_DB();
+		return parent::_DB($tag);
 	}
 	public function _DB_W()
 	{
@@ -133,9 +133,9 @@ class StrictDBManager extends DNDBManager
 		$this->checkPermission();
 		return parent::_DB_R();
 	}
-	protected function checkPermission()
+	public function checkPermission()
 	{
-		if(!DNMVCS::G()->isDev()){return;}
+		if(!DNMVCS::Developing()){return;}
 		
 		list($_0,$_1,$_2,$caller,$bak)=$backtrace=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,5);
 		$caller_class=$caller['class'];
