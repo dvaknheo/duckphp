@@ -206,12 +206,11 @@ init($options);初始化，这部分入口选项见后面章节【 DNMVCS 配置
 // copy me to "setting.php"
 return [
     'is_dev'=>true,
-    'db'=>[
+    'database_list'=>[[
         'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
         'username'=>'???',
         'password'=>'???',
-    ],
-    'db_r'=>null,
+    ]],
 ];
 ```
     关于 is_dev ，这个标记用于判断是否在开发状态，影响 DNMVCS::G()->isDev();
@@ -365,9 +364,9 @@ DNMVCS::LoadConfig($basename='config')用于载入 config/$basename.php 的内�
 设置是敏感信息。而配置是敏感
 *进阶，更多配置和设置相关 .*
 ## 常见任务： URL 重写
-DNMVCS 选项里的 'route_map' ,用于 回调式路由， 除了  :: 表示类的静态方法，还 -> 符号表示的是类的动态方法
-rewrite_map 用于重写 url 支持
-            
+$options['rewrite_map'] 用于重写 url . 以 ~ 开始的表示正则，同时省略 / 必须 转义
+$options['route_map'] ,用于 回调式路由， 除了  :: 表示类的静态方法，还 -> 符号表示的是类的动态方法
+key  可以加 GET POST 方法。            
 ## 常见任务：重写错误页面
 
 错误页面在 ::view/_sys/ 目录下 里。你可以修改相应的错误页面方法。
@@ -380,18 +379,18 @@ DNMVCS 的报错页面还是很丑陋，需要调整一下
 使用数据库，在 DNMVCS 设置里正确设置
 ```php
 return [
-'db'=>[
+'database_list'=>[[
         'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
         'username'=>'???',
         'password'=>'???',
-    ],
-'db_r'=>null,
+    ],],
 ];
 ```
+
 然后在用到的地方调用 DNMVCS::DB($tag=null) 得到的就是 DNDB 对象，用来做各种数据库操作。
-如果 db_r 设置 不为空，那么 DNMVCS::DB_R() 就是用 db_r 的设置。
 只有第一次调用 DNMVCS::DB() 的时候，才进行数据库类的创建。
 DNDB 的使用方法，看后面的参考
+
 进阶内容
 DNDB 类仅仅是简单的封装 PDO ，作为主程序员，可能要重新调整
 DNMVCS 的默认数据库是 DNDB ,DNDB 功能很小，兼容 Medoo 这个数据库类。
@@ -410,9 +409,9 @@ DNMVCS::ExitRouteTo($url) 相当于 302 跳转 DNMVCS::URL($url);
 
 
 ## 常见任务： HTML 编码辅助函数
-H() 
-RecordsetH 
-RecordsetURL
+H()   Html编码. 更专业的有 Zend\\Escaper
+RecordsetH 对一个 RecordSet 加 html 编码
+RecordsetURL  对  Record Set 加 url
 ## 常见任务： 抛异常
 DNMVCS::ThrowOn($flag,$message,$code);
 if(!$flag){throw new DNException($message,$code)}
@@ -484,9 +483,9 @@ const DNMVCS::DEFAULT_OPTIONS=[
         'error_exception'=>'_sys/error-exception',  // 默认的异常处理。和前面类似
         'error_debug'=>'_sys/error_debug',  // 调试模式下出错的处理。和前面类似
     
-        'skip_db'=>false,				// 不加载默认 DNDBManager，回收一点点性能。
         'db_create_handler' =>'',			// 创建DB 的回调 默认用 DNDB::class
         'db_close_handler' =>'', 			// 关闭DB 类的回调。
+	'database_list'=>[],					// 数据库列表
 
     'ext'=>[],                          //默认不使用扩展，如果不为空则为  
     'swoole'=>[],                       // swoole_mode 模式，和 superGlobal 整合
@@ -1028,6 +1027,7 @@ addRouteHook
 
 	public function init($db_config,$db_r_config,$db_create_handler,$db_close_handler)
 	public function setDBHandler($db_create_handler,$db_close_handler=null)
+	public function setBeforeDBHandler($before_db_handler)
 	public function _DB($tag=null)
 	public function _DB_W()
 	public function _DB_R()
@@ -1241,6 +1241,15 @@ use_strict_db_manager
 
 
 为什么不作为框架的默认行为。 主要考虑性能因数，而且自由，无依赖性
+## 主类 DNMVCSExt
+
+	public function afterInit($dn)
+	public static function CheckDBPermission() // 用于在 use_strict_db_manager 检查权限
+	public function _RecordsetUrl(&$data,$cols_map=[])
+	public function _RecordsetH(&$data,$cols=[])
+	public function _ExitJson($ret)
+	public function _ExitRedirect($url,$only_in_site=true)
+
 ## 附属类介绍
 ### StrictService
     你的 Service 继承这个类

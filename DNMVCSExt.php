@@ -328,9 +328,7 @@ class DNMVCSExt
 		}
 		$ReInitDB=false;
 		if($options['use_strict_db_manager']){
-			//DNDBManager::G(StrictDBManager::G());
 			DNDBManager::G()->setBeforeDBHandler([static::class,'CheckDBPermission']);
-			$ReInitDB=false;
 		}
 		
 		if($options['use_ext_db']){

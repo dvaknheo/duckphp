@@ -1279,9 +1279,7 @@ class DNMVCS
 		$this->initConfiger(DNConfiger::G());
 		$this->initView(DNView::G());
 		$this->initRoute(DNRoute::G());
-		if(!$this->options['skip_db']){
-			$this->initDBManager(DNDBManager::G());
-		}
+		$this->initDBManager(DNDBManager::G());
 		$this->initMisc();
 		
 		return $this;
