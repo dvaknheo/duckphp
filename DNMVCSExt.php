@@ -115,51 +115,6 @@ class StrictModel
 		return $object;
 	}
 }
-
-class StrictDBManager extends DNDBManager
-{
-	public function _DB($tag=null)
-	{
-		$this->checkPermission();
-		return parent::_DB($tag);
-	}
-	public function _DB_W()
-	{
-		$this->checkPermission();
-		return parent::_DB_W();
-	}
-	public function _DB_R()
-	{
-		$this->checkPermission();
-		return parent::_DB_R();
-	}
-	public function checkPermission()
-	{
-		if(!DNMVCS::Developing()){return;}
-		
-		list($_0,$_1,$_2,$caller,$bak)=$backtrace=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,5);
-		$caller_class=$caller['class'];
-		$namespace=DNMVCS::G()->options['namespace'];
-		$namespace_controller=DNMVCS::G()->options['namespace_controller'];
-		$default_controller_class=DNMVCS::G()->options['default_controller_class'];
-		$namespace_controller.='\\';
-		do{
-			if($caller_class==$default_controller_class){
-				DNMVCS::ThrowOn(true,"DB Can not Call By Controller");
-			}
-			if(substr($caller_class,0,strlen($namespace_controller))==$namespace_controller){
-				DNMVCS::ThrowOn(true,"DB Can not Call By Controller");
-			}
-			
-			if(substr($caller_class,0,strlen("\\$namespace\\Service\\"))=="\\$namespace\\Service\\"){
-				DNMVCS::ThrowOn(true,"DB Can not Call By Service");
-			}
-			if(substr($caller_class,0-strlen("Service"))=="Service"){
-				DNMVCS::ThrowOn(true,"DB Can not Call By Service");
-			}
-		}while(false);
-	}
-}
 class DBExt extends DNDB
 {
 	//Warnning, escape the key by yourself
@@ -373,8 +328,9 @@ class DNMVCSExt
 		}
 		$ReInitDB=false;
 		if($options['use_strict_db_manager']){
-			DNDBManager::G(StrictDBManager::G());
-			$ReInitDB=true;
+			//DNDBManager::G(StrictDBManager::G());
+			DNDBManager::G()->setBeforeDBHandler([static::class,'CheckDBPermission']);
+			$ReInitDB=false;
 		}
 		
 		if($options['use_ext_db']){
@@ -394,7 +350,34 @@ class DNMVCSExt
 			DNRoute::G()->addRouteHook([FunctionDispatcher::G(),'hook']);
 		}
 	}
-	
+	public static function CheckDBPermission()
+	{
+		if(!DNMVCS::Developing()){return;}
+		
+		list($_0,$_1,$_2,$caller,$bak)=$backtrace=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,5);
+		
+		$caller_class=$caller['class'];
+		if($caller_class===DNMVCS::class){$caller_class=$bak['class'];}
+		$namespace=DNMVCS::G()->options['namespace'];
+		$namespace_controller=DNMVCS::G()->options['namespace_controller'];
+		$default_controller_class=DNMVCS::G()->options['default_controller_class'];
+		$namespace_controller.='\\';
+		do{
+			if($caller_class==$default_controller_class){
+				DNMVCS::ThrowOn(true,"DB Can not Call By Controller");
+			}
+			if(substr($caller_class,0,strlen($namespace_controller))==$namespace_controller){
+				DNMVCS::ThrowOn(true,"DB Can not Call By Controller");
+			}
+			
+			if(substr($caller_class,0,strlen("\\$namespace\\Service\\"))=="\\$namespace\\Service\\"){
+				DNMVCS::ThrowOn(true,"DB Can not Call By Service");
+			}
+			if(substr($caller_class,0-strlen("Service"))=="Service"){
+				DNMVCS::ThrowOn(true,"DB Can not Call By Service");
+			}
+		}while(false);
+	}
 	public function _RecordsetUrl(&$data,$cols_map=[])
 	{
 		//need more quickly;

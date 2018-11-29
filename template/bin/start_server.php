@@ -1,5 +1,6 @@
 <?php
-$IN_COMPOSER=true;
+////[[[[
+$IN_COMPOSER=false;
 
 $project_root=realpath(__DIR__.'/..');
 
@@ -8,6 +9,7 @@ if($IN_COMPOSER){
 }else{
 	require($project_root.'/../DNMVCS.php');
 }
+////]]]]
 
 $server=null;
 //$server=new swoole_http_server('0.0.0.0', 9528);
@@ -23,7 +25,7 @@ $server_options=[
 	'swoole_server'=>null,
 	'swoole_server_options'=>$swoole_options,
 	//'http_handler_root'=>$path.'www/',
-	'http_handler_file'=>$path.'www/index.php',
+	//'http_handler_file'=>$path.'www/index.php',
 
 ];
 $dn_options=[

@@ -1,4 +1,5 @@
 <?php
+////[[[[
 $IN_COMPOSER=false;
 
 $project_root=realpath(__DIR__.'/..');
@@ -8,11 +9,12 @@ if($IN_COMPOSER){
 }else{
 	require($project_root.'/../DNMVCS.php');
 }
+////]]]]
 
+$path=realpath(__DIR__.'/..');
 
 $options=[
-	'path'=>$project_root,
+	'path'=>$path,
 ];
 \DNMVCS\DNMVCS::RunQuickly($options);
-//$path=realpath('../');
-//\DNMVCS\DNMVCS::G()->init(['path'=>$path])->run();
+// \DNMVCS\DNMVCS::G()->init(['path'=>$path])->run();

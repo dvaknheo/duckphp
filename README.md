@@ -1116,7 +1116,6 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
             SimpleRouteHook
             StrictService
             StrictModel
-            StrictDBManager extends DNDBManager
             DBExt extends DNDB
             ProjectCommonAutoloader
             ProjectCommonConfiger extends DNConfiger
@@ -1249,10 +1248,6 @@ use_strict_db_manager
 ### StrictModel
     你的 Model 继承这个类
     调试状态下，只允许 Service 或者 ExModel 调用 Model
-### StrictDBManager
-    包裹 DNDBManger::G(DNMedoo::W(DNDBManger::G())); 后，实现
-    不允许 Controller, Service 调用 DB
-    如果使用 Medoo ，请在 installDBClass(DNMedoo::class); 后面执行。
 ### DBExt
     加了额外方法的DB类，注意和 Medoo 不兼容
     多出的方法有 

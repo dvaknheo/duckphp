@@ -718,41 +718,50 @@ class DNDBManager
 {
 	use DNSingleton;
 	
-	const TAG_READ='read';
-	const TAG_WRITE='write';
+	public $tag_write='0';
+	public $tag_read='1';
 	
-	public $db_config=[];
+	protected $database_config_list=[];
 	protected $databases=[];
+	
 	protected $db_create_handler=null;
 	protected $db_close_handler=null;
-	
-	protected $is_single=true;
-	public function init($db_config=[],$is_single=true)
+	protected $before_db_handler=null;
+	public function init($database_config_list=[])
 	{
-		$this->db_config=$db_config;
-		$this->is_single=$is_single;
+		$this->database_config_list=$database_config_list;
 	}
 	public function setDBHandler($db_create_handler,$db_close_handler=null)
 	{
 		$this->db_create_handler=$db_create_handler;
 		$this->db_close_handler=$db_close_handler;
 	}
+	public function setBeforeDBHandler($before_db_handler)
+	{
+		$this->before_db_handler=$before_db_handler;
+	}
 	public function _DB($tag=null)
 	{
-		$tag=$tag??self::TAG_WRITE;
+		if(isset($this->before_db_handler)){ ($this->before_db_handler)(); }
+		
+		$tag=$tag??$this->tag_write;
 		if(!isset($this->databases[$tag])){
-			$db_config=$this->is_single?$this->db_config:$this->db_config[$tag];
+			$db_config=$this->database_config_list[$tag]??null;
+			if($db_config===null){return null;}
 			$this->databases[$tag]=($this->db_create_handler)($db_config,$tag);
 		}
 		return $this->databases[$tag];
 	}
 	public function _DB_W()
 	{
-		return $this->_DB(self::TAG_WRITE);
+		return $this->_DB($this->tag_write);
 	}
 	public function _DB_R()
 	{
-		return $this->_DB(self::TAG_READ);
+		if(!isset($this->database_config_list[$tag_read])){
+			return $this->_DB();
+		}
+		return $this->_DB($this->tag_read);
 	}
 	public function closeAllDB()
 	{
@@ -1160,9 +1169,9 @@ class DNMVCS
 			'setting'=>[],
 			'setting_file_basename'=>'setting',
 			
-			'skip_db'=>false,
 			'db_create_handler'=>'',
 			'db_close_handler'=>'',
+			'database_list'=>[],
 			
 			'rewrite_list'=>[],
 			'route_list'=>[],
@@ -1218,6 +1227,7 @@ class DNMVCS
 	public static function RunAsServer($server_options,$dn_options,$server=null)
 	{
 		DNAutoLoader::G()->init($dn_options)->run();
+		//todo merge swoole setting.
 		DNSwooleHttpServer::RunWithServer($server_options,$dn_options,$server);
 	}
 	
@@ -1280,18 +1290,18 @@ class DNMVCS
 	{
 		$exception_manager->init([$this,'onException'],[$this,'onDevErrorHandler']);
 	}
-	public function initConfiger($configer)
+	public function initConfiger(DNConfiger $configer)
 	{
 		$path=$this->path.rtrim($this->options['path_config'],'/').'/';
 		$configer->init($path,$this->options);
 	}
-	public function initView($view)
+	public function initView(DNView $view)
 	{
 		$path_view=$this->path.rtrim($this->options['path_view'],'/').'/';
 		$view->init($path_view);
 		$view->onBeforeShow([$this,'onBeforeShow']);
 	}
-	public function initRoute($route)
+	public function initRoute(DNRoute $route)
 	{
 		$route->init($this->options);
 		$route->set404([$this,'onShow404']);
@@ -1300,18 +1310,13 @@ class DNMVCS
 	public function initDBManager(DNDBManager $dbm)
 	{
 		$configer=DNConfiger::G();
-		$db_config=$configer->_Setting('db');
-		$db_r_config=$configer->_Setting('db_r');
+		$database_list=$configer->_Setting('database_list');
+		$database_list=$database_list??[];
+		$database_list=array_merge($this->options['database_list'],$database_list);
 		
-		$is_single=true;
-		if($db_r_config){
-			$db_config=[
-				DNDBManager::TAG_WRITE =>$db_config,
-				DNDBManager::TAG_READ =>$db_r_config,
-			];
-			$is_single=false;
-		}
-		$dbm->init($db_config,$is_single);
+		if(empty($database_list)){return;}
+		
+		$dbm->init($database_list);
 		
 		$db_create_handler=$this->options['db_create_handler']?:[DNDB::class,'CreateDBInstance'];
 		$db_close_handler=$this->options['db_close_handler']?:[DNDB::class,'CloseDBInstance'];

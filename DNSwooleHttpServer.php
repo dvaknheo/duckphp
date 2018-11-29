@@ -140,6 +140,9 @@ class DBConnectPoolProxy
 {
 	use DNSingleton;
 	
+	public $tag_write='0';
+	public $tag_read='1';
+	
 	protected $db_create_handler;
 	protected $db_close_handler;
 	protected $db_queue_write;
@@ -194,7 +197,7 @@ class DBConnectPoolProxy
 	}
 	public function onCreate($db_config,$tag)
 	{
-		if($tag==='write'){
+		if($tag!=$this->tag_write){
 			return $this->getObject($this->db_queue_write,$this->db_queue_write_time,$db_config,$tag);
 		}else{
 			return $this->getObject($this->db_queue_read,$this->db_queue_read_time,$db_config,$tag);
@@ -202,7 +205,7 @@ class DBConnectPoolProxy
 	}
 	public function onClose($db,$tag)
 	{
-		if($tag==='write'){
+		if($tag!=$this->tag_write){
 			return $this->reuseObject($this->db_queue_write,$this->db_queue_write_time,$db);
 		}else{
 			return $this->reuseObject($this->db_queue_read,$this->db_queue_read_time,$db);

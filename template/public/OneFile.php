@@ -2,6 +2,7 @@
 use \DNMVCS\DNMVCS as DN;
 use \DNMVCS\FunctionWrapper as W;
 
+////[[[[
 $IN_COMPOSER=false;
 
 $project_root=realpath(__DIR__.'/..');
@@ -11,6 +12,7 @@ if($IN_COMPOSER){
 }else{
 	require($project_root.'/../DNMVCS.php');
 }
+////]]]]
 
 global $view_data;
 $view_data=[];
