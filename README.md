@@ -366,7 +366,7 @@ DNMVCS::LoadConfig($basename='config')用于载入 config/$basename.php 的内�
 *进阶，更多配置和设置相关 .*
 ## 常见任务： URL 重写
 DNMVCS 选项里的 'route_list' ,用于 回调式路由， 除了  :: 表示类的静态方法，还 -> 符号表示的是类的动态方法
-rewrite_list 用于重写 url 支持
+rewrite_map 用于重写 url 支持
             
 ## 常见任务：重写错误页面
 
@@ -475,7 +475,7 @@ const DNMVCS::DEFAULT_OPTIONS=[
         'setting_file_basename'=>'setting',        // 设置的文件名，如果为'' 则不读取设置文件
     'is_dev'=>false,					// 是否在开发状态，设置文件里填写的将会覆盖这一选项
 
-    'rewrite_list'=>[],                 // url 重写列表
+    'rewrite_map'=>[],                 // url 重写列表
     'route_list'=>[],                   // 映射模式的 列表
         'use_super_global'=>false,
 
@@ -553,7 +553,7 @@ const DEFAULT_OPTIONS=[
             'db_create_handler'=>'',
             'db_close_handler'=>'',
             
-            'rewrite_list'=>[],
+            'rewrite_map'=>[],
             'route_list'=>[],
             'use_super_global'=>false,
             

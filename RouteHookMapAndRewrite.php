@@ -92,7 +92,7 @@ class RouteHookMapAndRewrite
 	}
 	protected function hookRewrite($route)
 	{
-		$rewriteMap=DNMVCS::G()->options['rewrite_list'];
+		$rewriteMap=DNMVCS::G()->options['rewrite_map'];
 		foreach($rewriteMap as $old_url =>$new_url){
 			if($this->matchRewrite($old_url,$new_url,$route)){
 				break;

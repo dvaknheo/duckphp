@@ -787,9 +787,9 @@ trait DNMVCS_Glue
 	public function assignRewrite($key,$value=null)
 	{
 		if(is_array($key)&& $value===null){
-			$this->options['rewrite_list']=array_merge($this->options['rewrite_list'],$key);
+			$this->options['rewrite_map']=array_merge($this->options['rewrite_list'],$key);
 		}else{
-			$this->options['rewrite_list'][$key]=$value;
+			$this->options['rewrite_map'][$key]=$value;
 		}
 	}
 	public function assignRoute($key,$value=null)
@@ -1173,7 +1173,7 @@ class DNMVCS
 			'db_close_handler'=>'',
 			'database_list'=>[],
 			
-			'rewrite_list'=>[],
+			'rewrite_map'=>[],
 			'route_list'=>[],
 			'use_super_global'=>false,
 			
@@ -1239,7 +1239,7 @@ class DNMVCS
 				$route->addRouteHook([RouteHookMapAndRewrite::G(),'hook'],false,true); 
 			}
 		}else{
-			if($this->options['rewrite_list'] || $this->options['route_list'] ){
+			if($this->options['rewrite_map'] || $this->options['route_list'] ){
 				$route->addRouteHook([RouteHookMapAndRewrite::G(),'hook'],true); 
 			}
 		}
