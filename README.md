@@ -1094,6 +1094,8 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
 ```
     ComposerScripts.php     和 compose 相关的脚本，用于创建工程用
         ComposerScripts
+	DNDB.php
+	    DNDB
     DNMVCS.php              主入口文件 DNMVCS 类，不引用其他文件。
         DNMVCS
             trait DNDI
@@ -1106,7 +1108,6 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
             DNRoute
             DNView
             DNConfiger
-            DNDB
             DNDBManager
             DNExceptionManager
             DNException extends \Exception
