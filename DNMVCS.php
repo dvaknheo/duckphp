@@ -121,14 +121,12 @@ class DNAutoLoader
 	{
 		if($this->is_loaded){return;}
 		$this->is_loaded=true;
-		spl_autoload_register([$this,'autoload']);
-	}
-	public function autoload($class)
-	{
-		$flag=$this->loadByPath($class);
-		if($flag){return;}
-		$flag=$this->load_no_namespace_mode($class);
-		if($flag){return;}
+		spl_autoload_register(function($class){
+			$flag=$this->loadByPath($class);
+			if($flag){return;}
+			$flag=$this->load_no_namespace_mode($class);
+			if($flag){return;}
+		});
 	}
 
 	protected function load_no_namespace_mode($class)

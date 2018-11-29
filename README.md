@@ -1033,7 +1033,7 @@ addRouteHook
 	public function _DB_R()
 	public function closeAllDB()
 
-这个也许会经常改动。比如用自己公司的 DB 类，要在这里做一个封装。
+比如用自己公司的 DB 类，要在这里做一个封装。
 
 setDBHandler($db_create_handler,$db_close_handler=null)
 
