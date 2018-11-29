@@ -131,10 +131,18 @@ DNMVCS Fatal: no setting file[【配置文件的完整路径】]!,change setting
 
 还有哪些没检查的？ 服务器配置 PATH_INFO 对了没有。 数据库也没配置和检查。
 
-## 开始学习
-开始学习吧！
 
-### 目录结构
+开始学习吧！
+## 术语约定
+$options 我们术语称为 DNMVCS 选项。和 setting.php 设置， config.php 配置 区分开来。
+
+* options 选项，代码里的设置
+* setting 设置，敏感信息
+* config 配置，非敏感信息
+
+后面说明我们直接省略 DNMVCS 的命名空间。
+
+## 目录结构
 
 工程的目录结构
 ```
@@ -147,10 +155,12 @@ DNMVCS Fatal: no setting file[【配置文件的完整路径】]!,change setting
 |   |       TestModel.php   // 测试 Model 
 |   \---Service         // 服务放在这里
 |           TestService.php //测试 Service
++---bin                 //
+|       start_server.php //启动 swoole
 +---config              // 配置文件 放这里
 |       config.php      // 配置，目前是空数组
 |       setting.php     // 设置，敏感文件，不放在版本管理里
-|       setting.sample.php  // 设置，去除敏感信息的模板
+|       setting.sample.php      // 设置，去除敏感信息的模板
 +---lib                 // 手动加载的文件放这里(非必要)
 |       ForImport.php   //用于测试导入文件
 +---view                // 视图文件放这里
@@ -163,6 +173,9 @@ DNMVCS Fatal: no setting file[【配置文件的完整路径】]!,change setting
 \---public              // 网站目录放这里
         index.php       // 主页面
 ```
+工程的目录结构并非不可变更
+config,view 目录可以通过选项（ $options['path_config'],$options['path_view']）调整（如调到 app 目录下）
+lib 目录可以不要(如果你没用到DNMVCS::Import )
 ## 代码解读
 
 public/index.php  入口 PHP 文件,内容如下
@@ -183,16 +196,9 @@ DNMVCS\DNMVCS 主类，在后面有好多其他方法详细介绍。
 
 init($options);初始化，这部分入口选项见后面章节【 DNMVCS 配置和选项】详细介绍。
 
-$options 我们术语称为 DNMVCS 选项。和 setting.php 设置， config.php 配置 区分开来。
-
-* options 选项，代码里的设置
-* setting 设置，敏感信息
-* config 配置，非敏感信息
-
-
 ### 设置文件
     默认情况下会读取 ::/config/setting.php 里的设置。
-    你可以用过 setting_file_basename='' 使得不读取这里的设置
+    你可以用过 setting_file_basename='' 使得不读取设置文件
     工程的设置文件样例 setting.sample.php 。选项很少
 
 ```php
@@ -234,7 +240,7 @@ class DNController
 非 swoole 模式下，控制器可以不用和路由一样的名称，用默认的 DNController
 
 在控制器里，我们调用了 MiscService 这个服务。
-MiscService 调用 MiscModel 的实现。此外，我们要调整 返回值的内容
+MiscService 调用 NoDB_MiscModel 的实现。此外，我们要调整 返回值的内容
 我们用 DNSingleton单例。
 补上view
 ::view/about/foo.php
@@ -265,7 +271,7 @@ class MiscService
 Model 类是实现基本功能的
 这里用 NoDB_ 表示和没使用到数据库
 
-::app/Model/MiscModel.php
+::app/Model/NoDB_MiscModel.php
 ```php
 <?php
 class NoDB_MiscModel
@@ -307,7 +313,7 @@ class App extends \DNMVCS\DNMVCS
 
 这个例子在fulltest 里有
 ## 理解路由和控制器
-DNMVCS 的控制器有点像CodeInigter，不需要继承什么，就这么简单。
+DNMVCS 的控制器有点像 CodeInigter，不需要继承什么，就这么简单。
 1. 按名字切分
 
     甚至连名字都不用，用默认的 DNController 就够了。
@@ -334,7 +340,7 @@ DNMVCS 的控制器有点像CodeInigter，不需要继承什么，就这么简�
     
 4. 不用 PATH_INFO
     比如 路由不用 path_info 用 $_GET['_r'] 等，很简单的。
-    $options['ext']['key_for_simple_route'] 开启 _GET 模式路由
+    $options['ext']['key_for_simple_route']='_r' 开启 _GET 模式路由
     如果你想加其他功能，可以 添加钩子， 继承 DNRoute 自行扩展类。  两种方式灵活扩展
 
 run() 方法开始使用路由。 如果你不想要路由。只想要特定结构的目录， 不调用 run 就可以了。
@@ -390,6 +396,13 @@ DNDB 的使用方法，看后面的参考
 DNDB 类仅仅是简单的封装 PDO ，作为主程序员，可能要重新调整
 DNMVCS 的默认数据库是 DNDB ,DNDB 功能很小，兼容 Medoo 这个数据库类。
 DNMVCS 的 ext use_db_ext  功能比 DNDB 强大很多，但破坏了 Medoo 的兼容性。
+```
+$sql="select 1+? as t";
+$ret=DNMVCS::DB()->fetch($sql,2);
+var_dump($ret);
+```
+
+
 ## 常见任务： 跳转
 DNMVCS::ExitJson($data) 输出 json 。
 DNMVCS::ExitRedirect($url) 用于 302 跳转。
@@ -455,22 +468,26 @@ autoload 自动加载相关的选项
 const DNMVCS::DEFAULT_OPTIONS=[
     'base_class'=>'MY\Base\App',        // override 重写 系统入口类代替 DNMVCS 类。
         'path_view'=>'view',            // 视图目录，或许会有人改到 app/View
+        'path_config'=>'config',        // 配置目录，或许会有人改到 app/View
         'path_lib'=>'lib',              // 用于手动导入 DNMVCS::Import() 的类的目录
     'setting'=>[],        				// 设置，设置文件里填写的将会覆盖这一选项
     'all_config'=>[],        			// 配置，每个配置用 key  分割。
         'setting_file_basename'=>'setting',        // 设置的文件名，如果为'' 则不读取设置文件
     'is_dev'=>false,					// 是否在开发状态，设置文件里填写的将会覆盖这一选项
-        'skip_db'=>false,				// 不加载默认 DNDBManager，回收一点点性能。
-    'db_create_handler' =>'',			// 创建DB 的回调 默认用 DNDB::class
-    'db_close_handler' =>'', 			// 关闭DB 类的回调。
+
     'rewrite_list'=>[],                 // url 重写列表
     'route_list'=>[],                   // 映射模式的 列表
-    'use_super_global'=>false,
+        'use_super_global'=>false,
 
         'error_404'=>'_sys/error-404',      // 404 错误处理，传入字符串表示用的 view,如果传入 callable 则用 callback,view 优先
         'error_500'=>'_sys/error-500',      // 500 代码有语法错误等的页面，和 404 的内容一样。和前面类似
         'error_exception'=>'_sys/error-exception',  // 默认的异常处理。和前面类似
         'error_debug'=>'_sys/error_debug',  // 调试模式下出错的处理。和前面类似
+    
+        'skip_db'=>false,				// 不加载默认 DNDBManager，回收一点点性能。
+        'db_create_handler' =>'',			// 创建DB 的回调 默认用 DNDB::class
+        'db_close_handler' =>'', 			// 关闭DB 类的回调。
+
     'ext'=>[],                          //默认不使用扩展，如果不为空则为  
     'swoole'=>[],                       // swoole_mode 模式，和 superGlobal 整合
 ];
@@ -789,6 +806,7 @@ initConfiger(DNConfiger $configer)
 
     初始化配置。
     配置路径。
+    $options['setting'],$options['all_configs'] 的数据会加入初始化
 initView(DNView $view)
 
     初始化视图。 做了两件事
