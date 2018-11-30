@@ -612,7 +612,7 @@ class DNDBManager
 	
 	protected $db_create_handler=null;
 	protected $db_close_handler=null;
-	protected $before_db_handler=null;
+	protected $before_get_db_handler=null;
 	public function init($database_config_list=[])
 	{
 		$this->database_config_list=$database_config_list;
@@ -622,13 +622,13 @@ class DNDBManager
 		$this->db_create_handler=$db_create_handler;
 		$this->db_close_handler=$db_close_handler;
 	}
-	public function setBeforeDBHandler($before_db_handler)
+	public function setBeforeGetDBHandler($before_get_db_handler)
 	{
-		$this->before_db_handler=$before_db_handler;
+		$this->before_get_db_handler=$before_get_db_handler;
 	}
 	public function _DB($tag=null)
 	{
-		if(isset($this->before_db_handler)){ ($this->before_db_handler)(); }
+		if(isset($this->before_get_db_handler)){ ($this->before_get_db_handler)(); }
 		
 		$tag=$tag??$this->tag_write;
 		if(!isset($this->databases[$tag])){

@@ -1027,7 +1027,7 @@ addRouteHook
 
 	public function init($db_config,$db_r_config,$db_create_handler,$db_close_handler)
 	public function setDBHandler($db_create_handler,$db_close_handler=null)
-	public function setBeforeDBHandler($before_db_handler)
+	public function setBeforeGetDBHandler($before_get_db_handler)
 	public function _DB($tag=null)
 	public function _DB_W()
 	public function _DB_R()
