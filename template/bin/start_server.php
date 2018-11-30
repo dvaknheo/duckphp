@@ -32,5 +32,3 @@ $dn_options=[
 	'path'=>$path,
 ];
 \DNMVCS\DNMVCS::RunAsServer($server_options,$dn_options,$server);
-
-return;

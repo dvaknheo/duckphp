@@ -124,12 +124,12 @@ class DNAutoLoader
 		spl_autoload_register(function($class){
 			$flag=$this->loadByPath($class);
 			if($flag){return;}
-			$flag=$this->load_no_namespace_mode($class);
+			$flag=$this->loadWithNoNameSpace($class);
 			if($flag){return;}
 		});
 	}
 
-	protected function load_no_namespace_mode($class)
+	protected function loadWithNoNameSpace($class)
 	{
 		if(!$this->with_no_namespace_mode){return;}
 		if(strpos($class,'\\')!==false){ return; }
@@ -329,11 +329,6 @@ class DNRoute
 		}
 		($this->the404Handler)();
 		return false;
-	}
-	
-	protected function getRouteHandlerByFileStrict()
-	{
-		//TODO implement this;
 	}
 	protected function getRouteHandlerByFile()
 	{
@@ -1218,10 +1213,6 @@ class DNMVCS
 		if(!empty($this->options['ext'])){
 			DNMVCSExt::G()->afterInit($this);
 		}
-	}
-	public function isDev()
-	{
-		return $this->isDev;
 	}
 	
 	public function onBeforeRun($before_run_handler)
