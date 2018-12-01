@@ -173,12 +173,12 @@ $options 我们术语称为 DNMVCS 选项。和 setting.php 设置， config.php
 \---public              // 网站目录放这里
         index.php       // 主页面
 ```
-工程的目录结构并非不可变更
-config,view 目录可以通过选项（ $options['path_config'],$options['path_view']）调整（如调到 app 目录下）
-lib 目录可以不要(如果你没用到DNMVCS::Import )
+工程的目录结构并非不可变更。
+config,view 目录可以通过选项（ $options['path_config'],$options['path_view']）调整（如调到 app 目录下）。
+lib 目录可以不要（如果你没用到 DNMVCS::Import）。
 ## 代码解读
 
-public/index.php  入口 PHP 文件,内容如下
+::/public/index.php  入口 PHP 文件,内容如下
 
 ```php
 <?php
@@ -210,7 +210,7 @@ return [
         'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
         'username'=>'???',
         'password'=>'???',
-    ]],
+    ],],
 ];
 ```
     关于 is_dev ，这个标记用于判断是否在开发状态，影响 DNMVCS::G()->isDev();
@@ -219,11 +219,21 @@ return [
     默认配置为空，这使得 DNMVCS::DB_R() 和 DNMVCS::DB 的函数表现一致。都是从主数据库里读的。
 
 ## 开始自己的代码
-以 /about/foo 为例，使用无命名空间模式，这省掉一些代码
+我们要显示当前时间。以 /about/foo 为例，使用无命名空间模式，这样能省掉一些代码。
+用 :: 表示工程目录
+### View 视图
+先做出要显示的样子。
+::/view/about/foo.php
+```php
+<!doctype html><html><body>
+<h1>test</h1>
+<div><?=$var ?></div>
+</body></html>
+```
+### Controller控制器
+写 /about/foo 控制器对应的内容
 
-首先我们要写相关控制器
-
-::app/Controller/about.php
+::/app/Controller/about.php
 ```php
 <?php
 class DNController
@@ -241,17 +251,11 @@ class DNController
 在控制器里，我们调用了 MiscService 这个服务。
 MiscService 调用 NoDB_MiscModel 的实现。此外，我们要调整 返回值的内容
 我们用 DNSingleton单例。
-补上view
-::view/about/foo.php
-```php
-<!doctype html><html><body>
-<h1>test</h1>
-<div><?=$var ?></div>
-</body></html>
-```
-补充service
 
-::app/Service/MiscService.php
+### Service 服务
+业务逻辑层，调用不定个数的 Model
+
+::/app/Service/MiscService.php
 ```php
 <?php
 class MiscService
@@ -259,18 +263,19 @@ class MiscService
     use \DNMVCS\DNSingleton;
     public function foo()
     {
-        //TODO log something.
-        $time=MiscModel::G()->getTime();
+        $time=NoDB_MiscModel::G()->getTime();
         $ret='Now is '.$time;
         return $ret;
     }
 }
 ```
+### Model 模型
+
 完成 NoDB_MiscModel
 Model 类是实现基本功能的
 这里用 NoDB_ 表示和没使用到数据库
 
-::app/Model/NoDB_MiscModel.php
+::/app/Model/NoDB_MiscModel.php
 ```php
 <?php
 class NoDB_MiscModel
@@ -282,18 +287,19 @@ class NoDB_MiscModel
     }
 }
 ```
-结果访问 
-about/foo
+### 结果
+访问 about/foo
 ```html
 <!doctype html><html><body>
 <h1>test</h1>
 <div>Now is 2018-11-27T10:14:13+08:00</div>
 </body></html>
 ```
-附加，在初始化里我们要做其他事情。
+### 附加
+在初始化里我们要做其他事情。
 根据 base_class 选项，我们有。
 
-::app/Base/App.php 
+::/app/Base/App.php 
 ```php
 <?php
 namespace MY\Base;
@@ -357,11 +363,12 @@ DNMVCS::Show($data,$view=null) 用于 View 的显示， $view 为空的时候，
 当要在 View 里包含的时候，用 DNMVCS::ShowData($view,$data=null); $data 为 null 的时候，会把当前view 数据带过去。
 
 *进阶，接管 View .*
+
 ## 常见任务：读取配置和设置
 DNMVCS::Setting($key) 用于读取 config/setting.php 的 $key 
 DNMVCS::Config($key,$basename='config')用于读取 config/$basename.php  $key 。
 DNMVCS::LoadConfig($basename='config')用于载入 config/$basename.php 的内容。
-设置是敏感信息。而配置是敏感
+设置是敏感信息。而配置是非敏感
 *进阶，更多配置和设置相关 .*
 ## 常见任务： URL 重写
 $options['rewrite_map'] 用于重写 url . 以 ~ 开始的表示正则，同时省略 / 必须 转义
@@ -386,35 +393,41 @@ return [
     ],],
 ];
 ```
-
+database_list 是个数组，包含多个数据库配置
 然后在用到的地方调用 DNMVCS::DB($tag=null) 得到的就是 DNDB 对象，用来做各种数据库操作。
-只有第一次调用 DNMVCS::DB() 的时候，才进行数据库类的创建。
-DNDB 的使用方法，看后面的参考
+$tag 对应 $setting['database_list'][$tag]。
 
-进阶内容
-DNDB 类仅仅是简单的封装 PDO ，作为主程序员，可能要重新调整
-DNMVCS 的默认数据库是 DNDB ,DNDB 功能很小，兼容 Medoo 这个数据库类。
-DNMVCS 的 ext use_db_ext  功能比 DNDB 强大很多，但破坏了 Medoo 的兼容性。
-```
+你不必担心每次框架初始化会连接数据库。只有第一次调用 DNMVCS::DB() 的时候，才进行数据库类的创建。
+
+DNDB 的使用方法，看后面的参考
+示例如下
+```php
 $sql="select 1+? as t";
 $ret=DNMVCS::DB()->fetch($sql,2);
 var_dump($ret);
 ```
 
+进阶内容
+
+DNDB 类仅仅是简单的封装 PDO ，作为主程序员，可能要重新调整
+DNMVCS 的默认数据库是 DNDB ,DNDB 功能很小，兼容 Medoo 这个数据库类。
+DNMVCS 的 ext use_db_ext  功能比 DNDB 强大很多，但破坏了 Medoo 的兼容性。
+
+
 
 ## 常见任务： 跳转
-DNMVCS::ExitJson($data) 输出 json 。
-DNMVCS::ExitRedirect($url) 用于 302 跳转。
-DNMVCS::ExitRouteTo($url) 相当于 302 跳转 DNMVCS::URL($url);
-
+* DNMVCS::ExitJson($data) 输出 json 。
+* DNMVCS::ExitRedirect($url) 用于 302 跳转。
+* DNMVCS::ExitRouteTo($url) 相当于 302 跳转 DNMVCS::URL($url);
 
 ## 常见任务： HTML 编码辅助函数
-H()   Html编码. 更专业的有 Zend\\Escaper
-RecordsetH 对一个 RecordSet 加 html 编码
-RecordsetURL  对  Record Set 加 url
+DNMVCS::H($str)   Html编码. 更专业的有 Zend\Escaper。你
+DNMVCS::RecordsetH 对一个 RecordSet 加 html 编码
+DNMVCS::RecordsetURL  对  RecordSet 加 url 转换
+*进阶：把 html 编码替换成 Zend\Escaper .*
 ## 常见任务： 抛异常
 DNMVCS::ThrowOn($flag,$message,$code);
-if(!$flag){throw new DNException($message,$code)}
+等价于 if(!$flag){throw new DNException($message,$code)}
 这是 DNMVCS 应用常见的操作。
 
 ## 常见任务： 和其他框架的整合
@@ -797,7 +810,6 @@ onException($ex)
 onDevErrorHandler($errno, $errstr, $errfile, $errline)
 
     处理 Notice 错误。
-
 ## 组件初始化
 初始化组件，供扩展组件时初始化用。
 
@@ -825,19 +837,7 @@ initMisc
 
     如果 swoole_mode 启用  use_super_global
     如果 ext 启用 DNMVCSExt
-# 数据库
-关于数据库的使用，这里单独一个章节
-使用 数据库，只要设置数据库
-```
-//xx
-```
-然后在用到的地方调用 DNMVCS::DB() 就行了
-```
-//
-```
-如果你配置了从数据库，你可以用 DNMVCS::DB_R() 和  DNMVCS::DB_W()
 
-第一次用到 数据库方法的时候
 ### 使用数据库进阶
 DNMVCS 的默认数据库是 DNDB ,DNDB 功能很小，兼容 Medoo 这个数据库类。
 DNMVCS 的 ext use_db_ext  功能比 DNDB 强大很多，但破坏了 Medoo 的兼容性。
@@ -1046,37 +1046,6 @@ setDBHandler($db_create_handler,$db_close_handler=null)
 closeAllDB()
 
     关闭所有数据库，在显示输出之前关闭
-## DNDB 类
-DNMVCS 自带了一个简单的 DB 类。
-DN::DB()得到的就是这个 DNDB 类。
-DB 的配置在 setting.sample.php 里有。
-$db 和 $db_r ，如果是读取的数据库，则用 $db_r 字段。
-DNDB 简单实现的一个数据库类。封装了 PDO， 和 Medoo 兼容，也少了 Medoo 的很多功能。
-下面主要说 DB 类的用法
-```
-pdo 这是个公开成员变量而不是方法，是的，你可以操作 pdo
-close
-    关闭数据库
-public function quote($string)
-    转码,如果是数组，则值部分会转码。
-public function fetchAll($sql,...$args)
-public function fetch($sql,...$args)
-public function fetchColumn($sql,...$args)
-    这三个是动态参数，直接查询
-    获得的是数组
-    （有时候还是觉得直接用 object $v->id 之类方便多了,你可以在 pdo 里调整。
-public function execQuick($sql,...$args)
-    执行 pdo 结果，获得 PDOStatement 为什么不用 exec ? 因为  Medoo用了。
-    返回  PDOStatement 对象
-public function  rowCount()
-    获得结果行数
-public function init($config)
-    初始化
-protected function check_connect()
-    DNDB 是使用的时候才连接的，不是一上来就连接数据库
-public static function CreateDBInstance($db_config)
-    用于创建DB类
-```
 ## DNAutoLoader 加载类
 DNAutoLoader 不建议扩展。因为你要有新类进来才有能处理加载关系，不如自己再加个加载类呢。
 DNAutoLoader 做了防多次加载和多次初始化。
@@ -1092,11 +1061,11 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
 特殊情况下或许会用到这些内部类。
 
 ```
-    ComposerScripts.php     和 compose 相关的脚本，用于创建工程用
+    ComposerScripts.php     // 和 compose 相关的脚本，用于创建工程用
         ComposerScripts
 	DNDB.php
 	    DNDB
-    DNMVCS.php              主入口文件 DNMVCS 类，不引用其他文件。
+    DNMVCS.php              // 主入口文件 DNMVCS 类，不引用其他文件。
         DNMVCS
             trait DNDI
             trait DNThrowQuickly
@@ -1112,7 +1081,7 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
             DNExceptionManager
             DNException extends \Exception
         DNSingleton
-    DNMVCSExt.php           ext 主入口文件  只引用 DNMVCS 文件
+    DNMVCSExt.php           // ext 主入口文件  只引用 DNMVCS 文件
         DNMVCSExt
             SimpleRouteHook
             StrictService
@@ -1176,6 +1145,41 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
     composer.json           Composer
     template/               模板文件夹
 ```
+## DNDB.php / DNDB 类
+DNMVCS 自带了一个简单的 DB 类。
+DN::DB()得到的就是这个 DNDB 类。
+DB 的配置在 setting.sample.php 里有。
+DNDB 简单实现的一个数据库类。封装了 PDO， 和 Medoo 兼容，也少了 Medoo 的很多功能。
+下面主要说 DB 类的用法
+```
+pdo 这是个公开成员变量而不是方法，是的，你可以操作 pdo
+close
+    关闭数据库
+public function quote($string)
+    转码,如果是数组，则值部分会转码。
+public function fetchAll($sql,...$args)
+public function fetch($sql,...$args)
+public function fetchColumn($sql,...$args)
+    这三个是动态参数，直接查询
+    获得的是数组
+    （有时候还是觉得直接用 object $v->id 之类方便多了,你可以在 pdo 里调整。
+public function execQuick($sql,...$args)
+    执行 pdo 结果，获得 PDOStatement 为什么不用 exec ? 因为  Medoo用了。
+    返回  PDOStatement 对象
+public function  rowCount()
+    获得结果行数
+public function init($config)
+    初始化
+protected function check_connect()
+    DNDB 是使用的时候才连接的，不是一上来就连接数据库
+public static function CreateDBInstance($db_config)
+    用于创建DB类
+```
+## DNMVCS.php
+DNMVCS 类和附属类的文件。已经在前面介绍
+## DNMVCSExt.php
+DNMVCSExt 类和附属类的文件，将在后面介绍。
+相关 $options['ext'] 的配置 用到这个类和附属类
 ## DNMedoo.php
 DNMedoo 是 Medoo 的一个简单扩展，和 DNDB 接口一致。
 因为 DNMedoo 对 Medoo 有依赖关系，所以单独放在一个文件。
@@ -1185,22 +1189,75 @@ DNMedoo 类的除了默认的 Medoo 方法，还扩展了 DNDB 类同名方法�
 在你的 DNMVCS->init() 后面段加上下面代码，
 使得 DNMedoo 替换 DNDB
 ```php
-self::Import('Medoo');  //请选择正确的 Medoo 载入方式
-self::ImportSys('DNMedoo'); //DNMedoo 依赖 Medoo，所以需要手动加载
 \DNMVCS\DNMVCS::G()->installDBClass(
     [\DNMVCS\DNMedoo::class,'CreateDBInstance']
     [\DNMVCS\DNMedoo::class,'CloseDBInstance']
 );
 ```
-其中 DNMedoo extends Medoo implement IDNDB.
 ## DNSingleton.php
 G 函数，单独提出来，为的是可能会从 DNSwooleHttpServer 开始的入口
-## IRouteHook.php
+## DNSwooleHttpServer.php
+swoole 服务，后面章节详细介绍
 ## Pager.php
-一个独立的分页类，目的是让 DEMO 有分页效果，分页是很讨厌有不相同的东西
-##SuperGlobal.php
+一个独立的分页类，目的是让 DEMO 有分页效果。
+如果你有更好方案，建议不要使用它
+## RouteHookMapAndRewrite.php
+这个文件是用于自定义 route 和 rewrite 的
+## RouteHookSuperGlobal.php
+RouteHook ,路由钩子路由里用到超全局数组改用 SuperGlobal
+## SuperGlobal.php
+SuperGlobal 类 用于代替超全局变量，目的是兼容 swoole 。
+SuperGlobal::GET($k) POST COOKIE ... 是用于超全局变量无法使用的 swoole 环境中， 也可以在 fpm 下使用
+以上是读取，写入是用 SuperGlobalGET::Set($k,$v)  等 。
+单独使用 SuperGlobalGET 等记得 SuperGlobal::G() 以 autoload.
 
-## Toolkit.php
+写入的数据不改变系统超全局变量数据.
+
+SuperGlobal::SetCookie
+
+    设置 cookie ，也是为了 swoole 兼容
+SuperGlobal::StarSession
+    替代 session_start
+SuperGlobal::DetroySession
+    替代 session_destroy
+## SwooleSessionHandler.php
+    一般不直接调用 ,swoole 下一个文件型的 session_handler
+    如果你有更好方案，用 G 函数替换实现。
+## SwooleSuperGlobal
+    Swoole 环境下SuperGlobal 的实现。
+
+## Tookit.php 未使用用于参考的工具箱类。
+
+### trait DNWrapper 
+W($object);
+    
+    DNWrapper::W(MyOBj::G()); 包裹一个对象，在 __call 里做一些操作，然后调用 call_the_object($method,$args)
+    未使用。
+### trait DNStaticCall
+
+    Facade 的trait 引用到 DNSingleton，由于 php7 的限制， protected funtion 才能 static call
+    未使用
+### SimpleRoute SimpleRoute
+    未使用,仅供参考，请用 SimpleRouteHook
+### SimpleRouteHook
+    SimpleRoute 用于指定 _GET 里某个 key 作为 控制器分配.
+    使用 $options['key_for_simple_route'] 来打开他。
+
+### MedooSimpleIntaller
+    \DNMVCS\DNDBManager::G()->installDBClass([DBExt::class,'CreateDBInstance']， [DBExt::class,'CloseDBInstance']);
+    用于加载 medoo 类代替默认的 db 类，注意 medoo 类 不兼容默认 db 类
+### API
+    用于 api 服务快速调用 无引用
+    public static function Call($class,$method,$input)  input 是关联数组
+    protected static function GetTypeFilter() 重写这个方法限定你的类型
+    在项目里未使用
+### MyArgsAssoc
+    GetMyArgsAssoc 获得当前函数的命名参数数组 无引用
+    CallWithMyArgsAssoc($callback)  获得当前函数的命名参数数组并回调
+    在项目里未使用
+### DNFuncionModifer
+    包裹函数，实现 aop
+
 
 # DNMVCSExt 扩展类和附属组件
     DNMVCS 的选项 $options['ext'] 不为空数组就 引入
@@ -1274,53 +1331,6 @@ use_strict_db_manager
 ### FunctionView
     函数方式的 view
 
-## Tookit.php 未使用用于参考的工具箱类。
-
-### trait DNWrapper 
-W($object);
-    
-    DNWrapper::W(MyOBj::G()); 包裹一个对象，在 __call 里做一些操作，然后调用 call_the_object($method,$args)
-    未使用。
-### trait DNStaticCall
-
-    Facade 的trait 引用到 DNSingleton，由于 php7 的限制， protected funtion 才能 static call
-    未使用
-### SimpleRoute SimpleRoute
-    未使用,仅供参考，请用 SimpleRouteHook
-### SimpleRouteHook
-    SimpleRoute 用于指定 _GET 里某个 key 作为 控制器分配.
-    使用 $options['key_for_simple_route'] 来打开他。
-
-### MedooSimpleIntaller
-    \DNMVCS\DNDBManager::G()->installDBClass([DBExt::class,'CreateDBInstance']， [DBExt::class,'CloseDBInstance']);
-    用于加载 medoo 类代替默认的 db 类，注意 medoo 类 不兼容默认 db 类
-### API
-    用于 api 服务快速调用 无引用
-    public static function Call($class,$method,$input)  input 是关联数组
-    protected static function GetTypeFilter() 重写这个方法限定你的类型
-    在项目里未使用
-### MyArgsAssoc
-    GetMyArgsAssoc 获得当前函数的命名参数数组 无引用
-    CallWithMyArgsAssoc($callback)  获得当前函数的命名参数数组并回调
-    在项目里未使用
-### DNFuncionModifer
-    包裹函数，实现 aop
-
-----
-
-
-## RouteHookMapAndRewrite.php
-    这个文件是用于自定义 route 和 rewrite 的
-## RouteHookSuperGlobal
-    使用 SuperGlobal 的 RouteHook
-## SuperGlobal.php
-    对超全局数组的封装
-
-## SwooleSuperGlobal.php
-    超全局数组的 swoole 替换层
-## DNSwooleHttpServer
-    Swoole 的 Http 服务器,单独章节介绍
-
 
 # DNMVCS 进阶
 
@@ -1330,10 +1340,11 @@ W($object);
 ```
 DN::init
     autoload 自动加载
-    checkOverride 如果子类，则 G函数替换为子类。
+    checkOverride 如果有子类，则 G函数替换为子类。
     initExceptionManager 初始化异常。
     initConfiger,initView,initRoute,initDBManager 初始化组件
-
+    initMisc 
+    
 DN::run
     RouteAdvance->hook
     (DNRoute::run)
@@ -1523,7 +1534,7 @@ public function onRequest($request,$response)
     public static function CleanUp()
     public static function Dump()
 
-## SuperGlobal
+## SuperGlobalSuperGlobal
     SuperGlobal::GET($k) POST COOKIE ... 是用于超全局变量无法使用的 swoole 环境中， 也可以在 fpm 下使用
     以上是读取，写入是用 SuperGlobalGET::Set($k,$v)  
     写入的数据不改变系统超全局变量数据
