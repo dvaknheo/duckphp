@@ -14,6 +14,12 @@ if($IN_COMPOSER){
 $server=null;
 //$server=new swoole_http_server('0.0.0.0', 9528);
 $path=realpath(__DIR__.'/../').'/';
+$setting_file=$path.'config/setting.php';
+$setting=[];
+if(is_file($setting_file)){
+	$setting=include($setting_file);
+}
+
 $swoole_options=[
 	//'document_root'=>$path.'static',
     //'enable_static_handler' => true,
@@ -28,7 +34,10 @@ $server_options=[
 	//'http_handler_file'=>$path.'www/index.php',
 
 ];
+
 $dn_options=[
 	'path'=>$path,
 ];
+$server_options=array_merge_recursive($server_options,$setting['server_options']??[]);
+
 \DNMVCS\DNMVCS::RunAsServer($server_options,$dn_options,$server);
