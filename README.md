@@ -6,8 +6,9 @@
 使得网站开发者专注于业务逻辑。
 * 耦合松散，扩展灵活方便，魔改容易
 * 无第三方依赖，你不必担心第三方依赖改动而大费周折。
+* 无 composer 环境也可运行，同时支持 composer 。
+* 桩代码极小，你不必在一堆杂乱代码中开始，而是像普通库那样引用
 * 不仅仅支持全站路由，还支持局部路径路由和非 PATH_INFO 路由,不需要配服务器也能用
-* 支持 composer，同时无 composer 环境也可运行。
 * 小就是性能。（不过也上千行代码了）
 * 为偷懒者写的。最少只需要引用一个文件，不做一大堆外部依赖。
 * 替代 Codeiginter 这个PHP4 时代的框架，只限于新工程。
@@ -1038,8 +1039,7 @@ addRouteHook
 setDBHandler($db_create_handler,$db_close_handler=null)
 
     安装DB类
-    $db_create_handler($config,$tag) 返回 DB 实例。方便扩展
-    setting 里的 db, db_r 会传到这里。
+    $db_create_handler($config,$tag):$db 返回 DB 实例。方便扩展
     
     $db_close_handler($db,$tag) 关闭数据库
 
