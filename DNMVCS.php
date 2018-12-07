@@ -629,7 +629,7 @@ class DNDBManager
 	}
 	public function _DB($tag=null)
 	{
-		if(isset($this->before_get_db_handler)){ ($this->before_get_db_handler)(); }
+		if(isset($this->before_get_db_handler)){ ($this->before_get_db_handler)($tag); }
 		
 		$tag=$tag??$this->tag_write;
 		if(!isset($this->databases[$tag])){
