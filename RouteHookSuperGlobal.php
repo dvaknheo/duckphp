@@ -6,14 +6,13 @@ class RouteHookSuperGlobal
 	use DNSingleton;
 	public function hook($route)
 	{
-		SuperGlobal::G(); //for autoload
 		$path=DNMVCS::G()->options['path'];
 		if(!SuperGlobal::SERVER('DOCUMENT_ROOT')){
-			SuperGlobalSERVER::Set('DOCUMENT_ROOT',$path.'www');
+			SuperGlobalSet::SetSERVER('DOCUMENT_ROOT',$path.'www');
 		
 		}
 		if(!SuperGlobal::SERVER('SCRIPT_FILENAME')){
-			SuperGlobalSERVER::Set('SCRIPT_FILENAME',$path.'www/index.php');
+			SuperGlobalSet::SetSERVER('SCRIPT_FILENAME',$path.'www/index.php');
 		}
 		$route->script_filename=SuperGlobal::SERVER('SCRIPT_FILENAME')??'';
 		$route->document_root=SuperGlobal::SERVER('DOCUMENT_ROOT')??'';

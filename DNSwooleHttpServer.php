@@ -461,9 +461,9 @@ class DNSwooleHttpServer
 	}
 	protected function includeHttpFile($file,$document_root,$path_info)
 	{
-		SuperGlobalSERVER::Set('PATH_INFO',$path_info);
-		SuperGlobalSERVER::Set('DOCUMENT_ROOT',$document_root);
-		SuperGlobalSERVER::Set('SCRIPT_FILENAME',$file);
+		SuperGlobalSet::SetSERVER('PATH_INFO',$path_info);
+		SuperGlobalSet::SetSERVER('DOCUMENT_ROOT',$document_root);
+		SuperGlobalSet::SetSERVER('SCRIPT_FILENAME',$file);
 		chdir(dirname($file));
 		(function($file){include($file);})($file);
 	}

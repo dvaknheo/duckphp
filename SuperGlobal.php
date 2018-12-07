@@ -50,6 +50,30 @@ class SuperGlobal
 	{
 		return setcookie($key,$value,$expire,$path,$domain,$secure,$httponly);
 	}
+	public static function SetGET($k,$v)
+	{
+		return SuperGlobalGET::Set($k,$v);
+	}
+	public static function SetPOST($k,$v)
+	{
+		return SuperGlobalPOST::Set($k,$v);
+	}
+	public static function SetREQUEST($k,$v)
+	{
+		return SuperGlobalREQUEST::Set($k,$v);
+	}
+	public static function SetSERVER($k,$v)
+	{
+		return SuperGlobalSERVER::Set($k,$v);
+	}
+	public static function SetSESSION($k,$v)
+	{
+		return SuperGlobalSESSION::Set($k,$v);
+	}
+	public static function GetSESSION($k)
+	{
+		return  SuperGlobalSESSION::Get($k);
+	}
 }
 class SuperGlobalBase
 {
