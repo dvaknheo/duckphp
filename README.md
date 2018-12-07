@@ -366,7 +366,7 @@ DNMVCS::Show($data,$view=null) 用于 View 的显示， $view 为空的时候，
 *进阶，接管 View .*
 
 ## 常见任务：读取配置和设置
-DNMVCS::Setting($key) 用于读取 config/setting.php 的 $key 
+DNMVCS::Setting($key) 用于读取 config/setting.php 的 $key 。
 DNMVCS::Config($key,$basename='config')用于读取 config/$basename.php  $key 。
 DNMVCS::LoadConfig($basename='config')用于载入 config/$basename.php 的内容。
 设置是敏感信息。而配置是非敏感
@@ -374,7 +374,7 @@ DNMVCS::LoadConfig($basename='config')用于载入 config/$basename.php 的内�
 ## 常见任务： URL 重写
 $options['rewrite_map'] 用于重写 url . 以 ~ 开始的表示正则，同时省略 / 必须 转义
 $options['route_map'] ,用于 回调式路由， 除了  :: 表示类的静态方法，还 -> 符号表示的是类的动态方法
-key  可以加 GET POST 方法。            
+key  可以加 GET POST 方法。
 ## 常见任务：重写错误页面
 
 错误页面在 ::view/_sys/ 目录下 里。你可以修改相应的错误页面方法。
@@ -952,6 +952,7 @@ class App extends \DNMVCS\DNMVCS
 }
 ```
 ## trait DI
+简单的容器包装
 
 ## DNException 异常类 | trait DNThrowQuickly
 使用 trait DNThrowQuickly
@@ -1022,9 +1023,9 @@ if($flag){throw new MyException($message,$code);}
 setURLHandle
     
     替换 URL()函数的实现。
-addRouteHook
+addRouteHook($callback,$prepend=false)
     
-    添加路由的hook,$preprend  在最前面加
+    添加路由的hook,$prepend  在最前面加
 ## DNDBManager 数据库管理类
 
 	public function init($db_config,$db_r_config,$db_create_handler,$db_close_handler)
@@ -1383,9 +1384,6 @@ DN::run
          
     getRouteHandleByFile
     (DNRoute->callback)()
-
-DN::DB
-    DBManager::installDBClass
 ```
 # 常见问题
 
