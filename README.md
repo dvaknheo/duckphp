@@ -642,7 +642,8 @@ Parameters()
     获得路径切片 
     当用正则匹配路由的时候，匹配结果放在这里。
     如果开启了 eanbale_parameter 匹配选项也会在这里。
-    这会使得 /about/foo/123/456 路由调用方法为 => about->foo(123,456)
+    这会使得 /about/foo/123/456 路由调用方法为 => about->foo(123,456);
+
     实质调用 DNRoute::G()->_Parameters();
 Setting($key)
 
@@ -1207,15 +1208,16 @@ swoole 服务，后面章节详细介绍
 RouteHook ,路由钩子路由里用到超全局数组改用 SuperGlobal
 ## SuperGlobal.php
 SuperGlobal 类 用于代替超全局变量，目的是兼容 swoole 。
-SuperGlobal::GET($k)
-SuperGlobal::POST($k)
-SuperGlobal::REQUEST($k)
-SuperGlobal::SERVER($k)
-SuperGlobal::ENV($k)
-SuperGlobal::COOKIE($k)
-SuperGlobal::SESSION($k)
 
-POST COOKIE ... 是用于超全局变量无法使用的 swoole 环境中， 也可以在 fpm 下使用
+    SuperGlobal::GET($k)
+    SuperGlobal::POST($k)
+    SuperGlobal::REQUEST($k)
+    SuperGlobal::SERVER($k)
+    SuperGlobal::ENV($k)
+    SuperGlobal::COOKIE($k)
+    SuperGlobal::SESSION($k)
+
+POST COOKIE ... 是用于超全局变量无法使用的 swoole 环境中， 也可以在 fpm 下使用.
 以上是读取，写入是用 SuperGlobal::SetGET($k,$v)  等 。
 单独使用 SuperGlobalGET 等记得 SuperGlobal::G() 以 autoload.
 
@@ -1225,17 +1227,24 @@ SuperGlobal::SetCookie
 
     设置 cookie ，也是为了 swoole 兼容
 SuperGlobal::StarSession
+
     替代 session_start
 SuperGlobal::DetroySession
+
     替代 session_destroy
 SuperGlobal::GetSESSION($k)
+
     读 session.
 SuperGlobal::SetSESSION($k,$v)
 
 
 SuperGlobal::SetGET($k,$v)
+
 SuperGlobal::SetPOST($k,$v)
+
+
 SuperGlobal::SetREQUEST($k,$v)
+
 SuperGlobal::SetSERVER($k,$v)
 
 	写入对象。SuperGlobal 类并没采用对称设计。因为 写入 ENV 一般是用不到的
@@ -1557,10 +1566,7 @@ public function onRequest($request,$response)
     public static function Dump()
 
 ## SuperGlobalSuperGlobal
-    SuperGlobal::GET($k) POST COOKIE ... 是用于超全局变量无法使用的 swoole 环境中， 也可以在 fpm 下使用
-    以上是读取，写入是用 SuperGlobalGET::Set($k,$v)  
-    写入的数据不改变系统超全局变量数据
-    swoole 条件下，你要用 DNSwooleHttpServer::setCookie 来改变 cookie
+    SuperGlobalSuperGlobal 是 Swoole 下 SuperGlobal 类的实现。
 
 
 # DNMVCS 是怎么越做越复杂的
