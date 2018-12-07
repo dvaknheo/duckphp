@@ -4,15 +4,17 @@ namespace DNMVCS;
 class RouteHookSuperGlobal
 {
 	use DNSingleton;
+	public $fakeRoot='public';
+	public $fakeIndex='index.php';
 	public function hook($route)
 	{
 		$path=DNMVCS::G()->options['path'];
 		if(!SuperGlobal::SERVER('DOCUMENT_ROOT')){
-			SuperGlobal::SetSERVER('DOCUMENT_ROOT',$path.'public');
+			SuperGlobal::SetSERVER('DOCUMENT_ROOT',$path.$this->fakeRoot);
 		
 		}
 		if(!SuperGlobal::SERVER('SCRIPT_FILENAME')){
-			SuperGlobal::SetSERVER('SCRIPT_FILENAME',$path.'public/index.php');
+			SuperGlobal::SetSERVER('SCRIPT_FILENAME',$path.$this->fakeRoot.'/'.$this->fakeIndex);
 		}
 		$route->script_filename=SuperGlobal::SERVER('SCRIPT_FILENAME')??'';
 		$route->document_root=SuperGlobal::SERVER('DOCUMENT_ROOT')??'';

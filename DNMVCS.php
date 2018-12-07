@@ -224,6 +224,7 @@ class DNRoute
 	
 	public $routeHooks=[];
 	public $callback=null;
+	public $prefix_post='do_';
 	
 	public function _URL($url=null)
 	{
@@ -436,8 +437,8 @@ class DNRoute
 	{
 		if(substr($method,0,2)=='__'){return null;}
 		if($this->request_method==='POST'){
-			if($this->enable_post_prefix &&method_exists ($obj,'do_'.$method)){
-				$method='do_'.$method;
+			if($this->enable_post_prefix &&method_exists ($obj,$this->prefix_post.$method)){
+				$method=$this->prefix_post.$method;
 			}else if(!method_exists($obj,$method)){
 				return null;
 			}
