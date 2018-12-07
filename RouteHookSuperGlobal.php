@@ -8,11 +8,11 @@ class RouteHookSuperGlobal
 	{
 		$path=DNMVCS::G()->options['path'];
 		if(!SuperGlobal::SERVER('DOCUMENT_ROOT')){
-			SuperGlobalSet::SetSERVER('DOCUMENT_ROOT',$path.'www');
+			SuperGlobal::SetSERVER('DOCUMENT_ROOT',$path.'public');
 		
 		}
 		if(!SuperGlobal::SERVER('SCRIPT_FILENAME')){
-			SuperGlobalSet::SetSERVER('SCRIPT_FILENAME',$path.'www/index.php');
+			SuperGlobal::SetSERVER('SCRIPT_FILENAME',$path.'public/index.php');
 		}
 		$route->script_filename=SuperGlobal::SERVER('SCRIPT_FILENAME')??'';
 		$route->document_root=SuperGlobal::SERVER('DOCUMENT_ROOT')??'';
