@@ -62,7 +62,7 @@ Controller --> Service ---------------------------------> Model
     * 可扩充
     * 轻松整合 Medoo
 * 所有这些仅仅是在主类里耦合。
-* swoole http 服务器.
+* Swoole http 服务器。
 ## DNMVCS 不做什么
 * ORM ，和各种屏蔽 sql 的行为，根据日志查 sql 方便多了。 自己简单封装了 pdo 。你也可以使用自己的DB类。 你也可以用第三方ORM
 * 模板引擎，PHP本身就是模板引擎。
@@ -620,12 +620,12 @@ DB($tag=null)
     实质调用 DBManager::G()->_DB();
 DB_W()
 
-    返回写入的数据 
+    返回写入用的的数据库 $database_list[0] 配置的数据库
     默认和 DB() 函数一样
     实质调用 DBManager::G()->_DB_W();
 DB_R()
 
-    读取用的数据库
+    返回写入用的的数据库 $database_list[1] 配置的数据库
     实质调用 DBManager::G()->_DB_R();
 URL($url)
 
@@ -1024,12 +1024,13 @@ setBeforeGetDBHandler($before_get_db_handler)
     设置 在 DB()函数前执行 $before_get_db_handler($tag)
 _DB($tag=null)
 
-    返回 DB 实例，如果
+    返回 DB 实例，如果 tag -null 则用 0 号数据库。
 _DB_W()
-
-    //
+    
+    返回写入用的数据库 
 _DB_R()
 
+    返回读取用的数据库
 closeAllDB()
 
     关闭所有数据，依次调用 $db_close_handler
