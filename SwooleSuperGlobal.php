@@ -22,13 +22,13 @@ class SwooleSuperGlobal extends SuperGlobal
 		CoroutineSingleton::CloneInstance(SuperGlobalENV::class);
 		CoroutineSingleton::CloneInstance(SuperGlobalSESSION::class);
 		
-		SuperGlobalGET::G(SwooleSuperGlobalGET::G())->init();
-		SuperGlobalPOST::G(SwooleSuperGlobalPOST::G())->init();
-		SuperGlobalCOOKIE::G(SwooleSuperGlobalCOOKIE::G())->init();
-		SuperGlobalREQUEST::G(SwooleSuperGlobalREQUEST::G())->init();
-		SuperGlobalSERVER::G(SwooleSuperGlobalSERVER::G())->init();
-		SuperGlobalENV::G(SwooleSuperGlobalENV::G())->init();
-		SuperGlobalSESSION::G(SwooleSuperGlobalSESSION::G())->init();
+		SuperGlobalGET::G(SwooleSuperGlobalGET::G());
+		SuperGlobalPOST::G(SwooleSuperGlobalPOST::G());
+		SuperGlobalCOOKIE::G(SwooleSuperGlobalCOOKIE::G());
+		SuperGlobalREQUEST::G(SwooleSuperGlobalREQUEST::G());
+		SuperGlobalSERVER::G(SwooleSuperGlobalSERVER::G());
+		SuperGlobalENV::G(SwooleSuperGlobalENV::G());
+		SuperGlobalSESSION::G(SwooleSuperGlobalSESSION::G());
 		
 		$this->bindAll();
 	}
