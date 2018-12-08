@@ -1179,7 +1179,7 @@ DNMedoo 类的除了默认的 Medoo 方法，还扩展了 DNDB 类同名方法�
 在你的 DNMVCS->init() 后面段加上下面代码，
 使得 DNMedoo 替换 DNDB
 ```php
-\DNMVCS\DNMVCS::G()->installDBClass(
+\DNMVCS\DNDBManager::G()->setDBHandler(
     [\DNMVCS\DNMedoo::class,'CreateDBInstance']
     [\DNMVCS\DNMedoo::class,'CloseDBInstance']
 );
@@ -1266,7 +1266,7 @@ W($object);
     使用 $options['key_for_simple_route'] 来打开他。
 
 ### MedooSimpleIntaller
-    \DNMVCS\DNDBManager::G()->installDBClass([DBExt::class,'CreateDBInstance']， [DBExt::class,'CloseDBInstance']);
+    \DNMVCS\DNDBManager::G()->setDBHandler([DBExt::class,'CreateDBInstance']， [DBExt::class,'CloseDBInstance']);
     用于加载 medoo 类代替默认的 db 类，注意 medoo 类 不兼容默认 db 类
 ### API
     用于 api 服务快速调用 无引用
@@ -1343,7 +1343,7 @@ use_strict_db_manager
     quote_array， get， insert， update， delete
     等
     user_ext_db 选项自动安装，手动安装用
-    \DNMVCS\DNDBManager::G()->installDBClass([DBExt::class,'CreateDBInstance']， [DBExt::class,'CloseDBInstance']);
+    \DNMVCS\DNDBManager::G()->setDBHandler([DBExt::class,'CreateDBInstance']， [DBExt::class,'CloseDBInstance']);
 ### ProjectCommonAutoloader
     实现通用文件加载
 ### ProjectCommonConfiger
