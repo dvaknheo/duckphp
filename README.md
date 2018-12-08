@@ -64,7 +64,7 @@ Controller --> Service ---------------------------------> Model
 * 所有这些仅仅是在主类里耦合。
 * swoole http 服务器.
 ## DNMVCS 不做什么
-* ORM ，和各种屏蔽 sql 的行为，根据日志查 sql 方便多了。 自己简单封装了 pdo 。你也可以使用自己的DB类。
+* ORM ，和各种屏蔽 sql 的行为，根据日志查 sql 方便多了。 自己简单封装了 pdo 。你也可以使用自己的DB类。 你也可以用第三方ORM
 * 模板引擎，PHP本身就是模板引擎。
 * Widget ， 和 MVC 分离违背。
 * 接管替代默认的POST，GET，SESSION 。系统提供给你就用，不要折腾这些。 *除非为了支持 swoole*
@@ -214,11 +214,8 @@ return [
     ],],
 ];
 ```
-    关于 is_dev ，这个标记用于判断是否在开发状态，影响 DNMVCS::G()->isDev();
-    db，配置数据库。
-    关于 db_r， 配置读写分离的数据库。
-    默认配置为空，这使得 DNMVCS::DB_R() 和 DNMVCS::DB 的函数表现一致。都是从主数据库里读的。
-
+    关于 is_dev ，这个标记用于判断是否在开发状态，影响 DNMVCS::Developing();
+    database_list，配置多个数据库。
 ## 开始自己的代码
 我们要显示当前时间。以 /about/foo 为例，使用无命名空间模式，这样能省掉一些代码。
 用 :: 表示工程目录
@@ -379,8 +376,9 @@ key  可以加 GET POST 方法。
 
 错误页面在 ::view/_sys/ 目录下 里。你可以修改相应的错误页面方法。
 比如 404 是 view/404.php 。
-DNMVCS 的报错页面还是很丑陋，需要调整一下
-无错误页面模式，会自己显示默认错误
+你可以更改 DNMVCS 的报错页面。
+无错误页面模式，会自己显示默认错误。
+你也可以修改 $options['error_404'] 指向一个函数来处理 404 错误，其他错误类似。
 
 *进阶 错误管理.*
 ## 常见任务： 使用数据库
@@ -400,7 +398,7 @@ $tag 对应 $setting['database_list'][$tag]。
 
 你不必担心每次框架初始化会连接数据库。只有第一次调用 DNMVCS::DB() 的时候，才进行数据库类的创建。
 
-DNDB 的使用方法，看后面的参考
+DNDB 的使用方法，看后面的参考。
 示例如下
 ```php
 $sql="select 1+? as t";
@@ -413,7 +411,6 @@ var_dump($ret);
 DNDB 类仅仅是简单的封装 PDO ，作为主程序员，可能要重新调整
 DNMVCS 的默认数据库是 DNDB ,DNDB 功能很小，兼容 Medoo 这个数据库类。
 DNMVCS 的 ext use_db_ext  功能比 DNDB 强大很多，但破坏了 Medoo 的兼容性。
-
 
 
 ## 常见任务： 跳转
@@ -835,46 +832,12 @@ initDBManager(DNDBManger $dbm)
     db_create_handler ，db_close_handler 用在这里。
     db_create_handler($config,$tag)
     db_close_handler($db,$tag)
-initMisc
+initMisc()
 
     如果 swoole_mode 启用  use_super_global
-    如果 ext 启用 DNMVCSExt
-
-### 使用数据库进阶
-DNMVCS 的默认数据库是 DNDB ,DNDB 功能很小，兼容 Medoo 这个数据库类。
-DNMVCS 的 ext use_db_ext  功能比 DNDB 强大很多，但破坏了 Medoo 的兼容性。
+    如果 选项  ext 启用 DNMVCSExt
 
 # DNMVCS 核心组件
-## 总说
-DNMVCS 系统 是用各自独立的类合起来的。
-DNMVCS 主类，单向调用这几个组件，各组件是独立的。
-例外是单例模式和抛异常的时候都会用到 
-```
-DNMVCS->init
-
-    先运行加载器 DNAutoloader->run 
-    检查子类覆盖 checkOverride
-    初始化组件 initConfiger,initView,initRoute，initDBManager，initMisc
-
-DNMVCS->run
-    // 保存旧的错误报告
-    // 检查默认routeHook
-    
-    DNRoute::G()->run
-        //检查钩子，
-        //根据文件来
-
-DNMVCS::DB
-
-    DNDBManager -> DNDB::CreateDBInstence(),DNDB::CloseDBInstence()
-    //DNExceptionManager
-```
-
-DNMVCS 主类里一些函数，是调用其他类的实现。基本都可以用 G 方法替换
-
-DNMVCS 的各子类都是独立的。现实中应该不会拿出来单用吧
-
-DNDBManger 调用 DNDB 类，用于管理数据库
 
 ## trait DNSingleton | 子类化和 G 方法
 **很重要的一节**
@@ -932,8 +895,6 @@ service , model 上 用  static 函数代替 G 函数实例方式或许也是一
 
 DNMVCS 一共有 5个组件初始化。 DNExceptionManager DNConfig DNView DNRoute
 
-你不需要 override 这些组件初始化函数，你需要在相应的初始化函数里调用这些方方初始化就是
-
 *因为 autoloader 不建议替换，所以没有 initAutoloader();*
 
 下面就是个初始化 route 和 view 的例子。
@@ -951,6 +912,8 @@ class App extends \DNMVCS\DNMVCS
     }
 }
 ```
+因为 MY\Base\Route 在初始化之前替换，所以不必再次初始化。
+而 MY\Base\View 在初始化之后调用，所以需要手动初始化。
 ## trait DI
 简单的容器包装
 
@@ -969,26 +932,40 @@ if($flag){throw new MyException($message,$code);}
 
 ## 异常管理 DNExceptionManager
 
-    public function init($exception_handler,$dev_error_handler)
-    public function setDefaultExceptionHandler($default_exception_handler)
-    public function assignExceptionHandler($class,$callback=null)
-    public function setMultiExceptionHandler(array $classes,$callback)
-    public function checkAndRunErrorHandlers($ex,$inDefault)
+    异常管理类一般不用接管。
+init(callback $exception_handler,$dev_error_handler)
+
+    初始化
+setDefaultExceptionHandler($default_exception_handler)
+
+    设置
+assignExceptionHandler($class,$callback=null)
+
+    //
+setMultiExceptionHandler(array $classes,$callback)
+    
+    //
+checkAndRunErrorHandlers($ex,$inDefault)
+
+    这个函数比较特殊 ,一般你不会调用他，用于检查是不是错误处理已经被接管了。
 ## DNConfiger 配置类
-    public function init($path)
-    public function _Setting($key)
-    public function _Config($key,$file_basename='config')
-    public function _LoadConfig($file_basename='config')
+init($path)
+
+_Setting($key)
+_Config($key,$file_basename='config')
+_LoadConfig($file_basename='config')
+
     protected function include_file($file)
 
     DNConfiger 类获得配置设置
 ## DNView 视图类
-    public function init($path)
-    public function _Show($data=[],$view)
-    public function _ShowBlock($view,$data=null)
-    public function assignViewData($key,$value=null)
-    public function setBeforeShow($callback)
-    public function setViewWrapper($head_file,$foot_file)
+    init($path)
+
+    _Show($data=[],$view)
+    _ShowBlock($view,$data=null)
+    assignViewData($key,$value=null)
+    setBeforeShow($callback)
+    setViewWrapper($head_file,$foot_file)
     protected function includeShowFiles()
 ## DNRoute 路由类
 这应该会被扩展,加上权限判断等设置
@@ -1023,32 +1000,36 @@ if($flag){throw new MyException($message,$code);}
 setURLHandle
     
     替换 URL()函数的实现。
-addRouteHook($callback,$prepend=false)
+addRouteHook($hook,$prepend=false)
     
     添加路由的hook,$prepend  在最前面加
 ## DNDBManager 数据库管理类
+init($database_config_list=[])
 
-	public function init($db_config,$db_r_config,$db_create_handler,$db_close_handler)
-	public function setDBHandler($db_create_handler,$db_close_handler=null)
-	public function setBeforeGetDBHandler($before_get_db_handler)
-	public function _DB($tag=null)
-	public function _DB_W()
-	public function _DB_R()
-	public function closeAllDB()
-
-比如用自己公司的 DB 类，要在这里做一个封装。
-
+    初始化，在 DNMVCS::initDBManger() 中被调用。
 setDBHandler($db_create_handler,$db_close_handler=null)
 
     安装DB类
-    $db_create_handler($config,$tag):$db 返回 DB 实例。方便扩展
-    
+    $db_create_handler($config,$tag):$db 返回 DB 实例。方便扩展.
     $db_close_handler($db,$tag) 关闭数据库
+    使用场合，比如用自己公司的 DB 类，要在这里做一个封装。
+setBeforeGetDBHandler($before_get_db_handler)
+    
+    设置 在 DB()函数前执行 $before_get_db_handler($tag)
+_DB($tag=null)
+
+    返回 DB 实例，如果
+_DB_W()
+
+    //
+_DB_R()
 
 closeAllDB()
 
-    关闭所有数据库，在显示输出之前关闭
+    关闭所有数据，依次调用 $db_close_handler
+    在 DNMVCS::onBeforeShow  显示输出前被调用。
 ## DNAutoLoader 加载类
+
 DNAutoLoader 不建议扩展。因为你要有新类进来才有能处理加载关系，不如自己再加个加载类呢。
 DNAutoLoader 做了防多次加载和多次初始化。
 
@@ -1074,7 +1055,7 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
             trait DNMVCS_Glue
             trait DNMVCS_Misc
             trait DNMVCS_Handler
-
+            
             DNAutoLoader
             DNRoute
             DNView
@@ -1128,7 +1109,7 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
                 SuperGlobalBase
     SwooleSessionHandler.php Swoole 的文件类型 Session 扩展实现
         SwooleSessionHandler implements \SessionHandlerInterface
-    SwooleSuperGlobal.php   Swoole 的SuperGlobal
+    SwooleSuperGlobal.php   Swoole 的SuperGlobal 实现
         SwooleSuperGlobal extends SuperGlobal
             SwooleSuperGlobalGET extends SuperGlobalBase
             SwooleSuperGlobalPOST extends SuperGlobalBase
@@ -1144,10 +1125,10 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
         API
         MyArgsAssoc
 
-    composer.json           Composer
+    composer.json           Composer 系统的 json 文件
     template/               模板文件夹
 ```
-## DNDB.php / DNDB 类
+## DNDB.php
 DNMVCS 自带了一个简单的 DB 类。
 DN::DB()得到的就是这个 DNDB 类。
 DB 的配置在 setting.sample.php 里有。
@@ -1220,8 +1201,6 @@ SuperGlobal 类 用于代替超全局变量，目的是兼容 swoole 。
 
 POST COOKIE ... 是用于超全局变量无法使用的 swoole 环境中， 也可以在 fpm 下使用.
 以上是读取，写入是用 SuperGlobal::SetGET($k,$v)  等 。
-单独使用 SuperGlobalGET 等记得 SuperGlobal::G() 以 autoload.
-
 写入的数据不改变系统超全局变量数据.
 
 SuperGlobal::SetCookie
@@ -1250,7 +1229,10 @@ SuperGlobal::SetSERVER($k,$v)
 
 	写入对象。SuperGlobal 类并没采用对称设计。因为 写入 ENV 一般是用不到的
 	写入 Cookie 数组不是更改 cookie ， 写入  session 和 读取 session 要对称
-	
+### 内部类
+SuperGlobalBase
+    
+SuperGlobalGET,SuperGlobalPOST ...
 
 ## SwooleSessionHandler.php
     一般不直接调用 ,swoole 下一个文件型的 session_handler
@@ -1365,7 +1347,36 @@ use_strict_db_manager
 
 
 # DNMVCS 进阶
+## 总说
+DNMVCS 系统 是用各自独立的类合起来的。
+DNMVCS 主类，单向调用这几个组件，各组件是独立的。
+例外是单例模式和抛异常的时候都会用到 
+```
+DNMVCS->init
 
+    先运行加载器 DNAutoloader->run 
+    检查子类覆盖 checkOverride
+    初始化组件 initConfiger,initView,initRoute，initDBManager，initMisc
+
+DNMVCS->run
+    // 保存旧的错误报告
+    // 检查默认routeHook
+    
+    DNRoute::G()->run
+        //检查钩子，
+        //根据文件来
+
+DNMVCS::DB
+
+    DNDBManager -> DNDB::CreateDBInstence(),DNDB::CloseDBInstence()
+    //DNExceptionManager
+```
+
+DNMVCS 主类里一些函数，是调用其他类的实现。基本都可以用 G 方法替换
+
+DNMVCS 的各子类都是独立的。现实中应该不会拿出来单用吧
+
+DNDBManger 调用 DNDB 类，用于管理数据库
 ## DNMVCS 的代码流程讲解
 
 大致用图表现如下
