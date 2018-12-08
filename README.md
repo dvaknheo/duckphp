@@ -419,6 +419,7 @@ DNMVCS 选项 $options['ext']['use_db_ext']=true 。将使用扩展的 DB 类，
 * DNMVCS::ExitJson($data) 输出 json 。
 * DNMVCS::ExitRedirect($url) 用于 302 跳转。
 * DNMVCS::ExitRouteTo($url) 相当于 302 跳转到 DNMVCS::URL($url);
+* DNMVCS::Exit404 显示404页面。
 
 ## 常见任务： HTML 编码辅助函数
 DNMVCS::H($str)   Html编码. 更专业的有 Zend\Escaper。
@@ -676,6 +677,9 @@ ExitRouteTo($url)
     跳转到 URL()函数包裹的 url。
     应用到 DNMVCSExt::G()->ExitRedirect(); 和 DNRoute::G()->URL();
     高级开发者注意，这是静态方法里处理的，子类化需要注意
+Exit404()
+
+	404 退出， 实质调用DNMVCS::G()->onShow404. 后 exit.
 ThrowOn($flag,$message,$code);
 
     如果 flag 成立则抛出 DNException 异常。
@@ -690,6 +694,10 @@ Import($file)
 
     手动导入默认lib 目录下的包含文件
     实质调用 self::G()->_Import();
+Developing()
+
+    判断是否在开发状态。默认读设置里的 is_dev ，
+
 ## 运行模式
 
 RunQuickly($options=[])
@@ -736,9 +744,7 @@ RecordsetURL(&$data,$cols_map=[])
 这里的方法偶尔会用到，所以没静态化 。
 assign 系列函数，都有两个模式 func(\$map)，和 func(\$key,\$value) 模式方便大量导入。
 
-isDev()
 
-    判断是否在开发状态。默认读设置里的 is_dev ，
 
 assignRoute($route,$callback=null)
 
