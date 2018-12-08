@@ -448,9 +448,9 @@ class DNSwooleHttpServer
 	}
 	protected function includeHttpFile($file,$document_root,$path_info)
 	{
-		SuperGlobalSet::SetSERVER('PATH_INFO',$path_info);
-		SuperGlobalSet::SetSERVER('DOCUMENT_ROOT',$document_root);
-		SuperGlobalSet::SetSERVER('SCRIPT_FILENAME',$file);
+		SuperGlobal::SetSERVER('PATH_INFO',$path_info);
+		SuperGlobal::SetSERVER('DOCUMENT_ROOT',$document_root);
+		SuperGlobal::SetSERVER('SCRIPT_FILENAME',$file);
 		chdir(dirname($file));
 		(function($file){include($file);})($file);
 	}
@@ -554,7 +554,7 @@ class DNSwooleHttpServer
 		
 		DNMVCS::G()->onBeforeRun(function(){
 			CoroutineSingleton::CloneInstance(DNExceptionManager::class);
-			CoroutineSingleton::CloneInstance(DNConfig::class);
+			//CoroutineSingleton::CloneInstance(DNConfig::class);
 			CoroutineSingleton::CloneInstance(DNView::class);
 			CoroutineSingleton::CloneInstance(DNRoute::class);
 			//CoroutineSingleton::CloneInstance(DNDBManager::class);

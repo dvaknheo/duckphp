@@ -333,9 +333,6 @@ class DNRoute
 	}
 	protected function getRouteHandlerByFile()
 	{
-		if($this->options['strict_route_mode']){
-			return $this->getRouteHandlerByFileStrict();
-		}
 		
 		$path_info=$this->path_info;
 		$blocks=explode('/',$path_info);

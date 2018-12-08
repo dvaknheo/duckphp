@@ -692,17 +692,17 @@ Import($file)
     实质调用 self::G()->_Import();
 ## 运行模式
 
-static RunQuickly($options=[])
+RunQuickly($options=[])
 
     DNMVCS::RunQuickly ($options) 相当于 DNMVCS::G()->init($options)->run();
-static RunOneFileMode($optionss=[])
+RunOneFileMode($optionss=[])
 
     单一文件模式，不需要其他文件，设置内容请放在
     $options['setting'] 里
-static RunWithoutPathInfo()
+RunWithoutPathInfo()
 
     不需要 PathInfo 的模式。用 _r 来表示 Path_Info
-static RunAsServer($server_options,$dn_options,$server=null)
+RunAsServer($server_options,$dn_options,$server=null)
 
     运行 swoole http 服务器
 ### 单文件模式
