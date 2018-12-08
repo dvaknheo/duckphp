@@ -324,6 +324,7 @@ class DNRoute
 			return true;
 		}
 		if(!$this->the404Handler){
+			header("HTTP/1.0 404 Not Found");
 			echo "404 File Not Found.\n";
 			echo "DNRoute Notice: 404  You need set 404 Handler";
 			exit;
@@ -333,37 +334,11 @@ class DNRoute
 	}
 	protected function getRouteHandlerByFile()
 	{
+		list($current_class,$method)=$this->getCurrentClassAndMethod($this->path_info,$this->path);
+		if($current_class===null and $method===null){return null;}
 		
-		$path_info=$this->path_info;
-		$blocks=explode('/',$path_info);
-		//array_shift($blocks);
-		$prefix=$this->path;
-		$l=count($blocks);
-		$current_class='';
-		$method='';
-		
-		for($i=0;$i<$l;$i++){
-			$v=$blocks[$i];
-			$method=$v;
-			if(''===$v){break;}
-			if('.'===$v){ return null;}
-			if('..'===$v){ return null;}
-			///if(!preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/',$v)){ //just for php classname;
-			///	return null;
-			///}
-			$dir=$prefix.$v;
-			$full_file=$dir.'.php';
-			if(is_file($full_file)){
-				$current_class=implode('/',array_slice($blocks,0,$i+1));
-				$method=isset($blocks[$i+1])?$blocks[$i+1]:'';
-			}
-			if(is_dir($dir)){
-				$prefix.=$v.'/';
-				continue;
-			}
-			break;
-		}
 		if($this->enable_paramters){
+			$blocks=explode('/',$this->path_info);
 			$param=array_slice($blocks,count(explode('/',$current_class))+($current_class?1:0));
 			if($param==array(0=>'')){$param=[];}
 			$this->parameters=$param;
@@ -371,7 +346,7 @@ class DNRoute
 			$this->calling_path=ltrim($current_class.'/'.$method,'/');
 		}else{
 			$this->calling_path=trim($current_class.'/'.$method,'/');
-			$t_path_info=trim($path_info,'/');
+			$t_path_info=trim($this->path_info,'/');
 			if($t_path_info!=$this->calling_path){
 				return null;
 			}
@@ -396,6 +371,38 @@ class DNRoute
 		return $this->getMethodToCall($obj,$method);
 	}
 	
+	protected function getCurrentClassAndMethod($path_info,$path)
+	{
+		$blocks=explode('/',$path_info);
+		$prefix=$path;
+		//array_shift($blocks);
+		$l=count($blocks);
+		$current_class='';
+		$method='';
+		
+		for($i=0;$i<$l;$i++){
+			$v=$blocks[$i];
+			$method=$v;
+			if(''  ===$v){ break;}
+			if('.' ===$v){ return [null,null]; }
+			if('..'===$v){ return [null,null]; }
+			///if(!preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/',$v)){ //just for php classname;
+			///	return null;
+			///}
+			$dir=$prefix.$v;
+			$full_file=$dir.'.php';
+			if(is_file($full_file)){
+				$current_class=implode('/',array_slice($blocks,0,$i+1));
+				$method=isset($blocks[$i+1])?$blocks[$i+1]:'';
+			}
+			if(is_dir($dir)){
+				$prefix.=$v.'/';
+				continue;
+			}
+			break;
+		}
+		return [$current_class,$method];
+	}
 
 	// You can override it; variable indived
 	protected function includeControllerFile($file)
