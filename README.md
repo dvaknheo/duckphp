@@ -1,4 +1,4 @@
-# DNMVCS 介绍
+# 第一章 DNMVCS 介绍
 ## DNMVCS 是什么
 一个 PHP Web 简单框架 
 * 主要特点：比通常的 Model Controller View 多了 Service 。拟补了 常见 Web 框架少的缺层。
@@ -89,7 +89,7 @@ Controller --> Service ---------------------------------> Model
 
 [toc]
 
-# DNMVCS 入门
+# 第二章 DNMVCS 入门
 ## 安装
 ### composer 安装
 ```
@@ -455,7 +455,7 @@ DNMVCS 整合其他框架：
 8. 魔改，硬改 DNMVCS 的代码实现目的
 
 
-# DNMVCS 配置和选项
+# 第三章 DNMVCS 配置和选项
 
 这里是关于 DNMVCS 能用的选项介绍
 
@@ -578,7 +578,7 @@ const DEFAULT_OPTIONS=[
             'swoole'=>[],
         ];
 ```
-# DNMVCS 核心类
+# 第四章 DNMVCS 核心类
 这一章节是说明 DNMVCS.php 里的 DNMVCS 核心类，和附属组件类。
 主要的说明文档
 ## 基本方法
@@ -843,7 +843,7 @@ initMisc()
     如果 swoole_mode 启用  use_super_global
     如果 选项  ext 启用 DNMVCSExt
 
-# DNMVCS 核心组件
+# 第五章 DNMVCS 核心组件
 
 ## trait DNSingleton | 子类化和 G 方法
 **很重要的一节**
@@ -1043,7 +1043,7 @@ DNAutoLoader 做了防多次加载和多次初始化。
     init($options)
     run()
     assignPathNamespace()
-# DNMVCS 全部文件和类说明
+# 第六章 DNMVCS 全部文件和类说明
 这个章节说明 DNMVCS 的各个文件。
 并在此把次要的类和文件展示出来
 ## 库文件说明
@@ -1281,7 +1281,7 @@ W($object);
     包裹函数，实现 aop
 
 
-# DNMVCSExt 扩展类和附属组件
+# 第七章 DNMVCSExt 扩展类和附属组件
     DNMVCS 的选项 $options['ext'] 不为空数组就 引入
     配置字段 ext 数组有数据的时候，会进入高级模式。自动使用扩展文件
     这些功能，用于，1 单一文件解决问题，2 多工程配置，3 使用更好的 db
@@ -1354,7 +1354,7 @@ use_strict_db_manager
     函数方式的 view
 
 
-# DNMVCS 进阶
+# 第八章 DNMVCS 进阶
 ## 总说
 DNMVCS 系统 是用各自独立的类合起来的。
 DNMVCS 主类，单向调用这几个组件，各组件是独立的。
@@ -1404,7 +1404,7 @@ DN::run
     getRouteHandleByFile
     (DNRoute->callback)()
 ```
-# 常见问题
+# 第九章 常见问题
 
 - Session 要怎么处理 
     一般来说 Session 的处理，放在 SesionModel 里。在构造函数里做 session_start 相关代码
@@ -1432,7 +1432,7 @@ DN::run
     但 DNSwooleHttpServer 碰到 SuperGlobal 的问题，和 Session 问题，DNSwooleHttpServer 和  DNMVCS 的交集。
     所以就把  SwooleSuperGlobal extends SuperGlobal SwooleSessionHandler implements \SessionHandlerInterface
 
-# Swoole 整合指南
+# 第十章 Swoole 整合指南
 ## DNSwooleHttpServer
 DNSwooleHttpServer 是设计成几乎和 DNMVCS 无关的框架。
 
@@ -1586,7 +1586,7 @@ public function onRequest($request,$response)
     SuperGlobalSuperGlobal 是 Swoole 下 SuperGlobal 类的实现。
 
 
-# DNMVCS 是怎么越做越复杂的
+# 第十一章 DNMVCS 是怎么越做越复杂的
 
     一开始想解决的是 MVC 缺 service 层
     接下来是偷懒选项
