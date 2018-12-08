@@ -332,11 +332,8 @@ class DNMVCSExt
 		}
 		
 		if($options['use_ext_db']){
-			$options['db_create_handler'] =[DBExt::class,'CreateDBInstance'];
-			$options['db_close_handler'] =[DBExt::class,'CloseDBInstance'];
-			$ReInitDB=true;
-		}
-		if($ReInitDB){
+			$dn->options['db_create_handler'] =[DBExt::class,'CreateDBInstance'];
+			$dn->options['db_close_handler'] =[DBExt::class,'CloseDBInstance'];
 			$dn->initDBManager(DNDBManager::G());
 		}
 		
