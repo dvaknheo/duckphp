@@ -380,22 +380,9 @@ class DNSwooleHttpServer
 	{
 		SwooleContext::G()->initHttp($request,$response);
 		
-		CoroutineSingleton::CloneInstance(SuperGlobalGET::class);
-		CoroutineSingleton::CloneInstance(SuperGlobalPOST::class);
-		CoroutineSingleton::CloneInstance(SuperGlobalCOOKIE::class);
-		CoroutineSingleton::CloneInstance(SuperGlobalREQUEST::class);
-		CoroutineSingleton::CloneInstance(SuperGlobalSERVER::class);
-		CoroutineSingleton::CloneInstance(SuperGlobalENV::class);
-		CoroutineSingleton::CloneInstance(SuperGlobalSESSION::class);
-		
-		SuperGlobalGET::G(SwooleSuperGlobalGET::G())->init();
-		SuperGlobalPOST::G(SwooleSuperGlobalPOST::G())->init();
-		SuperGlobalCOOKIE::G(SwooleSuperGlobalCOOKIE::G())->init();
-		SuperGlobalREQUEST::G(SwooleSuperGlobalREQUEST::G())->init();
-		SuperGlobalSERVER::G(SwooleSuperGlobalSERVER::G())->init();
-		SuperGlobalENV::G(SwooleSuperGlobalENV::G())->init();
-		SuperGlobalSESSION::G(SwooleSuperGlobalSESSION::G())->init();
-
+		CoroutineSingleton::CloneInstance(SuperGlobal::class);
+		CoroutineSingleton::CloneInstance(SuperGlobal::class);
+		SuperGlobal::G()->run();
 		
 		if($this->http_handler){
 			$this->runHttpHandler();
@@ -496,8 +483,6 @@ class DNSwooleHttpServer
 	/////////////////////////
 	public function init($options,$server)
 	{
-		SuperGlobal::G(SwooleSuperGlobal::G());
-		
 		$this->options=array_merge(self::DEFAULT_OPTIONS,$options);
 		$options=$this->options;
 		
@@ -542,7 +527,8 @@ class DNSwooleHttpServer
 		}
 		
 		CoroutineSingleton::ReplaceDefaultSingletonHandler();
-		
+		SuperGlobal::G(SwooleSuperGlobal::G());
+
 		return $this;
 	}
 	public function bindDN($dn_options)
@@ -573,8 +559,6 @@ class DNSwooleHttpServer
 			CoroutineSingleton::CloneInstance(DNRoute::class);
 			//CoroutineSingleton::CloneInstance(DNDBManager::class);
 		});
-		
-		SuperGlobal::G(SwooleSuperGlobal::G());
 		
 		return $this;
 	}

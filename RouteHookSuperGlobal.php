@@ -9,6 +9,7 @@ class RouteHookSuperGlobal
 	public function hook($route)
 	{
 		$path=DNMVCS::G()->options['path'];
+		SuperGlobal::CheckLoad();
 		if(!SuperGlobal::SERVER('DOCUMENT_ROOT')){
 			SuperGlobal::SetSERVER('DOCUMENT_ROOT',$path.$this->fakeRoot);
 		

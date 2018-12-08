@@ -7,6 +7,31 @@ class SwooleSuperGlobal extends SuperGlobal
 	{
 		return DNSwooleHttpServer::setcookie($key,$value,$expire,$path,$domain,$secure,$httponly);
 	}
+	
+	public function _CheckLoad()
+	{
+		//do nothing;
+	}
+	public function run()
+	{
+		CoroutineSingleton::CloneInstance(SuperGlobalGET::class);
+		CoroutineSingleton::CloneInstance(SuperGlobalPOST::class);
+		CoroutineSingleton::CloneInstance(SuperGlobalCOOKIE::class);
+		CoroutineSingleton::CloneInstance(SuperGlobalREQUEST::class);
+		CoroutineSingleton::CloneInstance(SuperGlobalSERVER::class);
+		CoroutineSingleton::CloneInstance(SuperGlobalENV::class);
+		CoroutineSingleton::CloneInstance(SuperGlobalSESSION::class);
+		
+		SuperGlobalGET::G(SwooleSuperGlobalGET::G())->init();
+		SuperGlobalPOST::G(SwooleSuperGlobalPOST::G())->init();
+		SuperGlobalCOOKIE::G(SwooleSuperGlobalCOOKIE::G())->init();
+		SuperGlobalREQUEST::G(SwooleSuperGlobalREQUEST::G())->init();
+		SuperGlobalSERVER::G(SwooleSuperGlobalSERVER::G())->init();
+		SuperGlobalENV::G(SwooleSuperGlobalENV::G())->init();
+		SuperGlobalSESSION::G(SwooleSuperGlobalSESSION::G())->init();
+		
+		$this->bindAll();
+	}
 }
 
 class SwooleSuperGlobalGET extends SuperGlobalBase

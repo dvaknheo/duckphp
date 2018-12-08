@@ -5,6 +5,45 @@ class SuperGlobal
 {
 	use DNSingleton;
 	
+	public $_GET;
+	public $_POST;
+	public $_REQUEST;
+	public $_SERVER;
+	public $_ENV;
+	public $_COOKIE;
+	public $_SESSION;
+	
+	protected function bindAll()
+	{
+		// ugly
+		$this->_GET		=SuperGlobalGET::G()->All();
+		$this->_POST	=SuperGlobalPOST::G()->All();
+		$this->_REQUEST	=SuperGlobalREQUEST::G()->All();
+		$this->_SERVER	=SuperGlobalSERVER::G()->All();
+		$this->_ENV		=SuperGlobalENV::G()->All();
+		$this->_COOKIE	=SuperGlobalCOOKIE::G()->All();
+		$this->_SESSION	=SuperGlobalSESSION::G()->All();
+		
+		SuperGlobalGET::G()->bind($this->_GET);
+		SuperGlobalPOST::G()->bind($this->_POST);
+		SuperGlobalREQUEST::G()->bind($this->_REQUEST);
+		SuperGlobalSERVER::G()->bind($this->_SERVER);
+		SuperGlobalENV::G()->bind($this->_ENV);
+		SuperGlobalCOOKIE::G()->bind($this->_COOKIE);
+		SuperGlobalSESSION::G()->bind($this->_SESSION);
+	}
+	
+	public static function CheckLoad()
+	{
+		return static::G()->_CheckLoad();
+	}
+	protected $hasBind=false;
+	public function _CheckLoad()
+	{
+		if($this->hasBind){ $this->bindAll();}
+		$this->hasBind=true;
+	}
+	
 	public static function GET($k)
 	{
 		return  SuperGlobalGET::Get($k);
@@ -88,6 +127,10 @@ class SuperGlobalBase
 	public function init()
 	{
 		throw \Exception("Impelement Me!");
+	}
+	public function bind(&$data)
+	{
+		$this->data=&$data;
 	}
 	public static function Get(string $k)
 	{
