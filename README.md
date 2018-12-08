@@ -111,7 +111,10 @@ composer create-project dnmvcs-fulltest
 ```
 这个工程，里面有全部的测试样例。 *持续施工中*
 
-
+如果从外部引用，你需要
+```
+composer require dnmvcs-framework
+```
 ### 其他方式安装
 
 1. 下载 DNMVCS。
@@ -124,14 +127,12 @@ composer create-project dnmvcs-fulltest
 DNMVCS Fatal: no setting file[【配置文件的完整路径】]!,change setting.sample.php to setting.php !
 ```
 不推荐直接在 dnmvcs 目录里开始工程。
-而是应该单独把 dnmvcs 放在独立的目录里，调整 public/index.php 的 require 语句指向 DNMVCS.php
+而是应该单独把 dnmvcs 放在独立的目录里，调整 public/index.php 的 require 语句指向 DNMVCS/DNMVCS.php
 
 *DNMVCS并非一定要外置设置文件，有选项可改为使用内置设置选项。满足单一文件模式的爱好*
 
 ### 后续的工作和可能省略的。
-
 还有哪些没检查的？ 服务器配置 PATH_INFO 对了没有。 数据库也没配置和检查。
-
 
 开始学习吧！
 ## 术语约定
@@ -145,7 +146,7 @@ $options 我们术语称为 DNMVCS 选项。和 setting.php 设置， config.php
 
 ## 目录结构
 
-工程的目录结构
+推荐的工程的目录结构
 ```
 +---app                 // psr-4 标准的自动加载目录
 |   +---Base            // 基类放在这里
@@ -183,7 +184,7 @@ lib 目录可以不要（如果你没用到 DNMVCS::Import）。
 
 ```php
 <?php
-// 省略前面 require 部分。
+// 省略前面 require 引用外部文件部分。
 //$path=realpath('../');
 $options=[
 ];
@@ -191,17 +192,17 @@ $options=[
 //\DNMVCS\DNMVCS::G()->init($options)->run();
 ```
 被注释掉部分 和 实际调用部分实际相同。是个链式调用。
-DNMVCS\DNMVCS::G(); 单例模式。 
-DNMVCS\DNMVCS 主类，在后面有好多其他方法详细介绍。
+\DNMVCS\DNMVCS::G(); 单例模式。 
+\DNMVCS\DNMVCS 主类，在后面有好多其他方法详细介绍。
 这些方法背后是不同的你可以改写的类。
 
 init($options);初始化，这部分入口选项见后面章节【 DNMVCS 配置和选项】详细介绍。
 
 ### 设置文件
-    默认情况下会读取 ::/config/setting.php 里的设置。
-    你可以用过 setting_file_basename='' 使得不读取设置文件
-    工程的设置文件样例 setting.sample.php 。选项很少
 
+默认情况下会读取 ::/config/setting.php 里的设置。
+你可以用过 setting_file_basename='' 使得不读取设置文件。
+工程的设置文件样例 setting.sample.php 。
 ```php
 <?php
 // copy me to "setting.php"
@@ -214,8 +215,9 @@ return [
     ],],
 ];
 ```
-    关于 is_dev ，这个标记用于判断是否在开发状态，影响 DNMVCS::Developing();
-    database_list，配置多个数据库。
+关于 is_dev ，这个标记用于判断是否在开发状态，影响 DNMVCS::Developing();
+database_list，配置多个数据库。
+
 ## 开始自己的代码
 我们要显示当前时间。以 /about/foo 为例，使用无命名空间模式，这样能省掉一些代码。
 用 :: 表示工程目录
@@ -369,8 +371,8 @@ DNMVCS::LoadConfig($basename='config')用于载入 config/$basename.php 的内�
 设置是敏感信息。而配置是非敏感
 *进阶，更多配置和设置相关 .*
 ## 常见任务： URL 重写
-$options['rewrite_map'] 用于重写 url . 以 ~ 开始的表示正则，同时省略 / 必须 转义
-$options['route_map'] ,用于 回调式路由， 除了  :: 表示类的静态方法，还 -> 符号表示的是类的动态方法
+$options['rewrite_map'] 用于重写 url . 以 ~ 开始的表示正则，同时省略 / 必须转义。
+$options['route_map'] ,用于 回调式路由， 除了  :: 表示类的静态方法，还 -> 符号表示的是类的动态方法。
 key  可以加 GET POST 方法。
 ## 常见任务：重写错误页面
 
@@ -378,7 +380,7 @@ key  可以加 GET POST 方法。
 比如 404 是 view/404.php 。
 你可以更改 DNMVCS 的报错页面。
 无错误页面模式，会自己显示默认错误。
-你也可以修改 $options['error_404'] 指向一个函数来处理 404 错误，其他错误类似。
+你也可以修改 $options['error_404'] 指向一个回调函数来处理 404 错误，其他错误类似。
 
 *进阶 错误管理.*
 ## 常见任务： 使用数据库
@@ -408,18 +410,18 @@ var_dump($ret);
 
 进阶内容
 
-DNDB 类仅仅是简单的封装 PDO ，作为主程序员，可能要重新调整
+DNDB 类仅仅是简单的封装 PDO ，作为主程序员，可能要重新调整。
 DNMVCS 的默认数据库是 DNDB ,DNDB 功能很小，兼容 Medoo 这个数据库类。
-DNMVCS 的 ext use_db_ext  功能比 DNDB 强大很多，但破坏了 Medoo 的兼容性。
+DNMVCS 选项 $options['ext']['use_db_ext']=true 。将使用扩展的 DB 类， 功能比 DNDB 强大很多，但破坏了 Medoo 的兼容性。
 
 
 ## 常见任务： 跳转
 * DNMVCS::ExitJson($data) 输出 json 。
 * DNMVCS::ExitRedirect($url) 用于 302 跳转。
-* DNMVCS::ExitRouteTo($url) 相当于 302 跳转 DNMVCS::URL($url);
+* DNMVCS::ExitRouteTo($url) 相当于 302 跳转到 DNMVCS::URL($url);
 
 ## 常见任务： HTML 编码辅助函数
-DNMVCS::H($str)   Html编码. 更专业的有 Zend\Escaper。你
+DNMVCS::H($str)   Html编码. 更专业的有 Zend\Escaper。
 DNMVCS::RecordsetH 对一个 RecordSet 加 html 编码
 DNMVCS::RecordsetURL  对  RecordSet 加 url 转换
 *进阶：把 html 编码替换成 Zend\Escaper .*
@@ -459,7 +461,7 @@ DNMVCS 整合其他框架：
 
     init($options) 方法的参数是可配置的，默认设置是分三个类别的组合。
     多余的缩进里的选项是不建议修改的。
-    下面是默认的配置详解
+    下面是默认的配置详解，为以下几个数组的合并
 
 ```php
 const DNAutoLoader::DEFAULT_OPTIONS=[
@@ -476,6 +478,7 @@ autoload 自动加载相关的选项
 
 ```php
 const DNMVCS::DEFAULT_OPTIONS=[
+    //'path'=>null,                     // 共享 path 配置
     'base_class'=>'MY\Base\App',        // override 重写 系统入口类代替 DNMVCS 类。
         'path_view'=>'view',            // 视图目录，或许会有人改到 app/View
         'path_config'=>'config',        // 配置目录，或许会有人改到 app/View
@@ -493,7 +496,7 @@ const DNMVCS::DEFAULT_OPTIONS=[
         'error_500'=>'_sys/error-500',      // 500 代码有语法错误等的页面，和 404 的内容一样。和前面类似
         'error_exception'=>'_sys/error-exception',  // 默认的异常处理。和前面类似
         'error_debug'=>'_sys/error_debug',  // 调试模式下出错的处理。和前面类似
-    
+
         'db_create_handler' =>'',			// 创建DB 的回调 默认用 DNDB::class
         'db_close_handler' =>'', 			// 关闭DB 类的回调。
 	'database_list'=>[],					// 数据库列表
@@ -559,7 +562,6 @@ const DEFAULT_OPTIONS=[
             'setting'=>[],
             'setting_file_basename'=>'setting',
             
-            'skip_db'=>false,
             'db_create_handler'=>'',
             'db_close_handler'=>'',
             
@@ -773,12 +775,14 @@ setViewWrapper($head_file=null,$foot_file=null)
     实质调用 DNView::G()->setViewWrapper
 assignViewData($key,$value=null)
 
-    给 view 分配数据，实质调用 DNView::G()->assignViewData
+    给 view 分配数据，
     这函数用于控制器构造函数添加统一视图数据
+    实质调用 DNView::G()->assignViewData
 assignExceptionHandle($classes,$callback=null)
 
     分配特定异常回调。
-    用于控制器里控制特定错误类型。 
+    用于控制器里控制特定错误类型。
+
 setMultiExceptionHandler(array $classes,$callback)
 
     多个特定异常回调。
@@ -786,9 +790,11 @@ setDefaultExceptionHandle($calllback)
 
     接管默认的异常处理，所有异常都归回调管，而不是显示 500 页面。
     用于控制器里控制特定错误类型。比如 api 调用
+
 assignPathNamespace($path,$namespace=null)
     
     分配自动加载的命名空间的目录。
+    实质调用 DNAutoLoader::G()->assignPathNamespace
 setBeforeRunHandler($before_run_handler)
 
     在run之前执行回调。 SwooleHttpServer 用到这个。
@@ -1241,6 +1247,7 @@ SuperGlobalGET,SuperGlobalPOST ...
     Swoole 环境下SuperGlobal 的实现。
 
 ## Tookit.php 未使用用于参考的工具箱类。
+一些可能会用到的类，需要的时候把他们复制走。
 
 ### trait DNWrapper 
 W($object);
