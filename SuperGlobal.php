@@ -26,7 +26,9 @@ class SuperGlobal
 		$this->_COOKIE	=&$_COOKIE;
 		$this->_SESSION	=&$_SESSION;
 	}
-	
+	public function  run()
+	{
+	}
 	public static function CheckLoad()
 	{
 	}
