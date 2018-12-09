@@ -1112,25 +1112,11 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
         RouteHookSuperGlobal
     SuperGlobal.php         SuperGlobal
         SuperGlobal
-            SuperGlobalGET extends SuperGlobalBase
-            SuperGlobalPOST extends SuperGlobalBase
-            SuperGlobalCOOKIE extends SuperGlobalBase
-            SuperGlobalREQUEST extends SuperGlobalBase
-            SuperGlobalSERVER extends SuperGlobalBase
-            SuperGlobalENV extends SuperGlobalBase
-            SuperGlobalSESSION extends SuperGlobalBase
-                SuperGlobalBase
     SwooleSessionHandler.php Swoole 的文件类型 Session 扩展实现
         SwooleSessionHandler implements \SessionHandlerInterface
     SwooleSuperGlobal.php   Swoole 的SuperGlobal 实现
         SwooleSuperGlobal extends SuperGlobal
-            SwooleSuperGlobalGET extends SuperGlobalBase
-            SwooleSuperGlobalPOST extends SuperGlobalBase
-            SwooleSuperGlobalCOOKIE extends SuperGlobalBase
-            SwooleSuperGlobalREQUEST extends SuperGlobalBase
-            SwooleSuperGlobalSERVER extends SuperGlobalBase
-            SwooleSuperGlobalENV extends SuperGlobalBase
-            SwooleSuperGlobalSESSION extends SuperGlobalBase
+            SwooleSuperGlobalSESSION
     ToolKit.php             一些工具，无引用
         Toolkit
         DNFuncionModifer
@@ -1242,11 +1228,6 @@ SuperGlobal::SetSERVER($k,$v)
 
 	写入对象。SuperGlobal 类并没采用对称设计。因为 写入 ENV 一般是用不到的
 	写入 Cookie 数组不是更改 cookie ， 写入  session 和 读取 session 要对称
-### 内部类
-SuperGlobalBase
-    
-SuperGlobalGET,SuperGlobalPOST ...
-
 ## SwooleSessionHandler.php
     一般不直接调用 ,swoole 下一个文件型的 session_handler
     如果你有更好方案，用 G 函数替换实现。
