@@ -358,7 +358,9 @@ class DNRoute
 		$method=$method?:$this->default_method;
 		$current_class=$current_class?:$this->welcome_controller;
 		
-
+		$this->calling_method=$method;
+		$this->calling_class=$current_class;
+		
 		$file=$this->path.$current_class.'.php';
 		$this->includeControllerFile($file);
 		$obj=$this->getObecjectToCall($current_class);
