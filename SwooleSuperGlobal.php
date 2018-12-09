@@ -33,19 +33,19 @@ class SwooleSuperGlobal extends SuperGlobal
 	public function _StartSession()
 	{
 		SwooleSuperGlobalSESSION::G()->_Start();
-		$t=SwooleSuperGlobalSESSION::G();
+		$t=SwooleSESSION::G();
 		static::G()->_SESSION=&$t->data;
 	}
 	public function _DestroySession()
 	{
-		SwooleSuperGlobalSESSION::G()->_Destroy();
+		SwooleSESSION::G()->_Destroy();
 		static::G()->_SESSION=[];
 	}
 }
 
 
 
-class SwooleSuperGlobalSESSION
+class SwooleSESSION
 {
 	use DNSingleton;
 

@@ -791,6 +791,30 @@ trait DNMVCS_Glue
 	{
 		return static::G()->isDev;
 	}
+	public function setDBHandler()
+	{
+		//
+	}
+	public function setHandlerForHeader()
+	{
+		//
+	}
+	public function setHandlerForSetCookie()
+	{
+		//
+	}
+	public function setHandlerForRegistShutdown()
+	{
+		//
+	}
+	public function setHndlerForExit()
+	{
+		//
+	}
+	public static function InSwoole()
+	{
+		//
+	}
 }
 trait DNMVCS_Misc
 {
