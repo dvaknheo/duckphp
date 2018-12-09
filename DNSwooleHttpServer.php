@@ -482,6 +482,7 @@ class DNSwooleHttpServer
 	/////////////////////////
 	public function init($options,$server)
 	{
+		if(!defined('DN_SWOOLE_SERVER_INIT')){define('DN_SWOOLE_SERVER_INIT',true);}
 		$this->options=array_merge(self::DEFAULT_OPTIONS,$options);
 		$options=$this->options;
 		
@@ -549,13 +550,14 @@ class DNSwooleHttpServer
 			DBConnectPoolProxy::G()->init($db_reuse_size,$db_reuse_timeout)->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
 			$dbm->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
 		}
-		DNView::G()->setHeaderHandler([self::class,'header']);
+		DNMVCS::G()->setHandlerForHeader([static::class,'header']);
 		
 		DNMVCS::G()->onBeforeRun(function(){
 			CoroutineSingleton::CloneInstance(DNExceptionManager::class);
-			//CoroutineSingleton::CloneInstance(DNConfig::class);
+			// CoroutineSingleton::CloneInstance(DNConfig::class);
 			CoroutineSingleton::CloneInstance(DNView::class);
 			CoroutineSingleton::CloneInstance(DNRoute::class);
+			CoroutineSingleton::CloneInstance(DNRuntimeState::class);
 			//CoroutineSingleton::CloneInstance(DNDBManager::class);
 		});
 		

@@ -484,17 +484,7 @@ class DNView
 	
 	protected $temp_view_file;
 	protected $before_show_handler=null;
-	protected $header_handler=null;
 	
-	public function header($output ,bool $replace = true , int $http_response_code=0)
-	{
-		if($this->header_handler){
-			return ($this->header_handler)($output,$replace,$http_response_code);
-		}
-		if(PHP_SAPI==='cli'){ return; }
-		if(headers_sent()){ return; }
-		return header($output,$replace,$http_response_code);
-	}
 	public function _Show($data=[],$view)
 	{
 		$this->view=$view;
@@ -525,14 +515,11 @@ class DNView
 	{
 		$this->path=$path;
 	}
-	public function onBeforeShow($callback)
+	public function setBeforeShowHandler($callback)
 	{
 		$this->before_show_handler=$callback;
 	}
-	public function setHeaderHandler($header_handler)
-	{
-		$this->header_handler=$header_handler;
-	}
+	
 	public function setViewWrapper($head_file,$foot_file)
 	{
 		$this->head_file=$head_file;
@@ -663,7 +650,43 @@ class DNDBManager
 		$this->databases=[];
 	}
 }
-
+class DNSystemWrapper
+{
+	use DNSingleton;
+	
+	public $header_handler=null;
+	public $cookie_handler=null;
+	
+	public function header($output ,bool $replace = true , int $http_response_code=0)
+	{
+		if($this->header_handler){
+			return ($this->header_handler)($output,$replace,$http_response_code);
+		}
+		if(PHP_SAPI==='cli'){ return; }
+		if(headers_sent()){ return; }
+		return header($output,$replace,$http_response_code);
+	}
+	
+	public function setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
+	{
+		if($this->cookie_handler){
+			return ($this->cookie_handler)($key,$value,$expire,$path,$domain,$secure,$httponly);
+		}
+		return setcookie($key,$value,$expire,$path,$domain,$secure,$httponly);
+	}
+	public function set_exception_handler(callable $exception_handler)
+	{
+		//static::G()->http_exception_handler=$exception_handler;
+	}
+	public function register_shutdown_function(callable $callback,...$args)
+	{
+		//SwooleContext::G()->shutdown_function_array[]=func_get_args();
+	}
+	public function exitSystem($code)
+	{
+		//TODO
+	}
+}
 trait DNMVCS_Glue
 {
 	//route
@@ -791,29 +814,44 @@ trait DNMVCS_Glue
 	{
 		return static::G()->isDev;
 	}
-	public function setDBHandler()
-	{
-		//
-	}
-	public function setHandlerForHeader()
-	{
-		//
-	}
-	public function setHandlerForSetCookie()
-	{
-		//
-	}
-	public function setHandlerForRegistShutdown()
-	{
-		//
-	}
-	public function setHndlerForExit()
-	{
-		//
-	}
 	public static function InSwoole()
 	{
-		//
+		if(defined('DN_SWOOLE_SERVER_RUNNING')){
+			return true;
+		}
+		if(defined('DN_SWOOLE_SERVER_INIT')){
+			return true;
+		}
+		// if defined()
+	}
+	public function IsRunning()
+	{
+		return DNRuntimeState::G()->isRunning();
+	}
+	public function setDBHandler($db_create_handler,$db_close_handler=null)
+	{
+		return DNDBManager::G()->setDBHandler($db_create_handler,$db_close_handler);
+	}
+	public function setBeforeGetDBHandler($before_get_db_handler)
+	{
+		return DNDBManager::G()->setBeforeGetDBHandler($before_get_db_handler);
+	}
+	
+	public static function header($output ,bool $replace = true , int $http_response_code=0)
+	{
+		return DNSystemWrapper::G()->header($output,$replace,$http_response_code);
+	}
+	public static function setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
+	{
+		return DNSystemWrapper::G()->setcookie($key,$value,$expire,$path,$domain,$secure,$httponly);
+	}
+	public function setHandlerForHeader($header_handler)
+	{
+		DNSystemWrapper::G()->header_handler=$header_handler;
+	}
+	public function setHandlerForSetCookie($cookie_handler)
+	{
+		DNSystemWrapper::G()->cookie_handler=$cookie_handler;
 	}
 }
 trait DNMVCS_Misc
@@ -951,15 +989,14 @@ class DNExceptionManager
 trait DNMVCS_Handler
 {
 	//  close database before show;
-	public function onBeforeShow($data,$view)
+	public function onBeforeShow($data,$view=null)
 	{
 		if($view===null){
 			DNView::G()->view=DNRoute::G()->getRouteCallingPath(); //TODO getRouteCallingClass & Method
 		}
 		
 		DNDBManager::G()->closeAllDB();
-		$this->error_reporting_old =error_reporting();
-		error_reporting($this->error_reporting_old & ~E_NOTICE);
+		DNRuntimeState::G()->skipNoticeError();
 	}
 	
 	protected function checkAndRunDefaultErrorHandler($error_view,$data)
@@ -977,8 +1014,7 @@ trait DNMVCS_Handler
 	{
 		$error_404=$this->options['error_404'];
 		
-		$view=DNView::G();
-		$view->header('',true,404);
+		static::header('',true,404);
 		
 		$flag=$this->checkAndRunDefaultErrorHandler($error_404,[]);
 		if(!$flag){
@@ -996,7 +1032,7 @@ trait DNMVCS_Handler
 		if($flag){return;}
 		
 		$view=DNView::G();
-		$view->header('',true,500);
+		static::header('',true,500);
 		
 		$data=[];
 		$data['ex']=$ex;
@@ -1063,9 +1099,10 @@ EOT;
 		DNView::G()->_ShowBlock($error_view,$data);
 	}
 }
+
 class DNMVCS
 {
-	const VERSION = '1.0.1';
+	const VERSION = '1.0.3';
 	
 	use DNSingleton;
 	use DNDI;
@@ -1105,9 +1142,8 @@ class DNMVCS
 	public $before_run_handler=null;
 	
 	protected $path=null;
-	protected $path_lib;
+	protected $path_lib=null;
 	
-	protected $initObLevel=0;
 	protected $error_reporting_old;
 	public static function RunQuickly($options=[])
 	{
@@ -1212,7 +1248,7 @@ class DNMVCS
 	{
 		$path_view=$this->path.rtrim($this->options['path_view'],'/').'/';
 		$view->init($path_view);
-		$view->onBeforeShow([$this,'onBeforeShow']);
+		$view->setBeforeShowHandler([$this,'onBeforeShow']);
 	}
 	public function initRoute(DNRoute $route)
 	{
@@ -1250,7 +1286,7 @@ class DNMVCS
 	}
 	public function run()
 	{
-		$this->error_reporting_old=error_reporting();
+		DNRuntimeState::G()->setState();
 		$this->checkAndInstallDefaultRouteHooks(DNRoute::G(),false); //recheck;
 		
 		if($this->before_run_handler){
@@ -1258,8 +1294,33 @@ class DNMVCS
 		}
 		
 		$ret=DNRoute::G()->run();
-		error_reporting($this->error_reporting_old);
+		DNRuntimeState::G()->unsetState();
 		return $ret;
+	}
+}
+class DNRuntimeState
+{
+	use DNSingleton;
+	protected $is_running=false;
+	protected $error_reporting_old;
+	public function isRunning()
+	{
+		return $this->is_running;
+	}
+	public function setState()
+	{
+		$this->is_running=true;
+		$this->error_reporting_old=error_reporting();
+	}
+	public function unsetState()
+	{
+		error_reporting($this->error_reporting_old);
+		$this->is_running=false;
+	}
+	public function skipNoticeError()
+	{
+		$this->error_reporting_old =error_reporting();
+		error_reporting($this->error_reporting_old & ~E_NOTICE);
 	}
 }
 /////////////////////////

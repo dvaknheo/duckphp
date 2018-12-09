@@ -32,7 +32,7 @@ class SwooleSuperGlobal extends SuperGlobal
 	}
 	public function _StartSession()
 	{
-		SwooleSuperGlobalSESSION::G()->_Start();
+		SwooleSESSION::G()->_Start();
 		$t=SwooleSESSION::G();
 		static::G()->_SESSION=&$t->data;
 	}
