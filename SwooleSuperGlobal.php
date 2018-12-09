@@ -7,85 +7,45 @@ class SwooleSuperGlobal extends SuperGlobal
 	{
 		return DNSwooleHttpServer::setcookie($key,$value,$expire,$path,$domain,$secure,$httponly);
 	}
-	
-	public function _CheckLoad()
+	public function init()
 	{
-		//do nothing;
+		//do nothing
 	}
 	public function run()
 	{
-		CoroutineSingleton::CloneInstance(SuperGlobalGET::class);
-		CoroutineSingleton::CloneInstance(SuperGlobalPOST::class);
-		CoroutineSingleton::CloneInstance(SuperGlobalCOOKIE::class);
-		CoroutineSingleton::CloneInstance(SuperGlobalREQUEST::class);
-		CoroutineSingleton::CloneInstance(SuperGlobalSERVER::class);
-		CoroutineSingleton::CloneInstance(SuperGlobalENV::class);
-		CoroutineSingleton::CloneInstance(SuperGlobalSESSION::class);
-		
-		SuperGlobalGET::G(SwooleSuperGlobalGET::G());
-		SuperGlobalPOST::G(SwooleSuperGlobalPOST::G());
-		SuperGlobalCOOKIE::G(SwooleSuperGlobalCOOKIE::G());
-		SuperGlobalREQUEST::G(SwooleSuperGlobalREQUEST::G());
-		SuperGlobalSERVER::G(SwooleSuperGlobalSERVER::G());
-		SuperGlobalENV::G(SwooleSuperGlobalENV::G());
-		SuperGlobalSESSION::G(SwooleSuperGlobalSESSION::G());
-		
-		$this->bindAll();
-	}
-}
-
-class SwooleSuperGlobalGET extends SuperGlobalBase
-{
-	public function init()
-	{
-		$this->data=DNSwooleHttpServer::Request()->get??[];
-	}
-}
-class SwooleSuperGlobalPOST extends SuperGlobalBase
-{
-	public function init()
-	{
-		$this->data=DNSwooleHttpServer::Request()->post??[];
-	}
-}
-class SwooleSuperGlobalCOOKIE extends SuperGlobalBase
-{
-	public function init()
-	{
-		$this->data=DNSwooleHttpServer::Request()->cookie??[];
-	}
-}
-class SwooleSuperGlobalREQUEST extends SuperGlobalBase
-{
-	public function init()
-	{
 		$request=DNSwooleHttpServer::Request();
-		$this->data=array_merge($request->get??[],$request->post??[]);
-	}
-}
-class SwooleSuperGlobalSERVER extends SuperGlobalBase
-{
-	public function init()
-	{
-		$request=DNSwooleHttpServer::Request();
+		
+		$this->_GET=$request->get??[];
+		$this->_POST=$request->post??[];
+		$this->_COOKIE=$request->cookie??[];
+		$this->_REQUEST=array_merge($request->get??[],$request->post??[]);
+		$this->_ENV=&$_ENV;
+		
+		$this->_SERVER=[];
 		foreach($request->header as $k=>$v){
 			$k='HTTP_'.str_replace('-','_',strtoupper($k));
-			$this->data[$k]=$v;
+			$this->_SERVER[$k]=$v;
 		}
 		foreach($request->server as $k=>$v){
-			$this->data[strtoupper($k)]=$v;
+			$this->_SERVER[strtoupper($k)]=$v;
 		}
 	}
-}
-class SwooleSuperGlobalENV extends SuperGlobalBase
-{
-	public function init()
+	public function _StartSession()
 	{
-		$this->data=$_ENV;
+		SwooleSuperGlobalSESSION::G()->_Start();
+		$t=SwooleSuperGlobalSESSION::G();
+		static::G()->_SESSION=&$t->data;
+	}
+	public function _DestroySession()
+	{
+		SwooleSuperGlobalSESSION::G()->_Destroy();
+		static::G()->_SESSION=[];
 	}
 }
 
-class SwooleSuperGlobalSESSION extends SuperGlobalBase
+
+
+class SwooleSuperGlobalSESSION
 {
 	use DNSingleton;
 
@@ -94,10 +54,6 @@ class SwooleSuperGlobalSESSION extends SuperGlobalBase
 	protected $is_started=false;
 	public $data;
 	
-	public function init()
-	{
-		//do nothing;
-	}
 	public function setHandler($handler)
 	{
 		// \SessionHandlerInterface
@@ -115,7 +71,8 @@ class SwooleSuperGlobalSESSION extends SuperGlobalBase
 		$session_name=session_name();
 		$session_save_path=session_save_path();
 		
-		$session_id=SwooleSuperGlobalCOOKIE::Get($session_name);
+		$cookies=DNSwooleHttpServer::Request()->cookie??[];
+		$session_id=$cookies[$session_name]??null;
 		if($session_id===null || ! preg_match('/[a-zA-Z0-9,-]+/',$session_id)){
 			$session_id=$this->create_sid();
 		}
@@ -143,6 +100,7 @@ class SwooleSuperGlobalSESSION extends SuperGlobalBase
 		$this->handler->destroy($this->session_id);
 		$this->data=[];
 		DNSwooleHttpServer::setcookie($session_name,'');
+		$this->is_started=false;
 	}
 	public function writeClose()
 	{
