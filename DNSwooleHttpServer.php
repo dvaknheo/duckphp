@@ -303,13 +303,14 @@ trait DNSwooleHttpServer_SimpleHttpd
 		}
 		
 		SwooleContext::G()->onShutdown();
-		
+		\defer(function()use($InitObLevel,$response){
 		for($i=ob_get_level();$i>$InitObLevel;$i--){
 			ob_end_flush();
 		}
 		$this->onHttpClean();
 		
 		$response->end();
+		});
 		//response 被使用到，而且出错就要手动 end  还是 OB 层级问题？
 		//onHttpRun(null,null) 则不需要用
 	}
@@ -536,9 +537,7 @@ class DNSwooleHttpServer
 			$this->server->on('open',[$this,'onOpen']);
 		}
 		
-		if(is_callable('\Swoole\Runtime::enableCoroutine')){
-			\Swoole\Runtime::enableCoroutine();
-		}
+		\Swoole\Runtime::enableCoroutine();
 		
 		CoroutineSingleton::ReplaceDefaultSingletonHandler();
 		SuperGlobal::G(SwooleSuperGlobal::G());
