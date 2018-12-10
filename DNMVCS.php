@@ -1018,12 +1018,14 @@ trait DNMVCS_Handler
 		
 		static::header('',true,404);
 		
-		$flag=$this->checkAndRunDefaultErrorHandler($error_404,[]);
-		if(!$flag){
+		$use_default_view=$this->checkAndRunDefaultErrorHandler($error_404,[]);
+		if($use_default_view){
 			echo "File Not Found\n<!--DNMVCS -->\n";
 			return;
 		}
 		if(!is_string($error_404)){ return; }
+		
+		$view=DNView::G();
 		$view->setViewWrapper(null,null);
 		$view->_Show([],$error_404);
 	}
@@ -1045,8 +1047,8 @@ trait DNMVCS_Handler
 		
 		$is_error=is_a($ex,'Error') || is_a($ex,'ErrorException')?true:false;		
 		$error_view=$is_error?$this->options['error_500']:$this->options['error_exception'];
-		$this->checkAndRunDefaultErrorHandler($error_view,$data);
-		if(!$is_error){
+		$use_default_view=$this->checkAndRunDefaultErrorHandler($error_view,$data);
+		if($use_default_view){
 			$desc=$is_error?'Error':'Exception';
 			echo "Internal $desc \n<!--DNMVCS -->\n";
 			if($this->isDev){
