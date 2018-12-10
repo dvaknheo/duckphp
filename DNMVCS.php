@@ -826,7 +826,7 @@ trait DNMVCS_Glue
 		}
 		return false;
 	}
-	public function IsRunning()
+	public static function IsRunning()
 	{
 		return DNRuntimeState::G()->isRunning();
 	}

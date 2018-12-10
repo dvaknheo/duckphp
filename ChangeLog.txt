@@ -1,3 +1,49 @@
+1.0.2 到 1.0.3变更
+ComposerScripts 添加 PostUpdate 方法，用于 update 更新模板
+析出 DNDB 自 DNMVCS.php ,明确 DNDB 不是 DNMVCS 的核心组件。
+修复 因 DNMVCS_DNSINGLETON_REPALACER 宏不正确导致 swoole 协程单例无效
+DNAutoLoader->namespace_paths =>public
+增加 DNRoute->prefix_post 可调整post 方法前缀
+DNRoute->getRouteHandlerByFile 抽出 getCurrentClassAndMethod 方法
+DNView->header 调整到 DNMVCS::header(DNSystemWrapper->header)
+相关的 DNView->setHeaderHandler 调整到 DNMVCS->setHandlerForHeader
+DNView->onBeforeShow => DNView->setBeforeShowHandler
+重写了 DNDBManager
+$options['rewrite_list']=$options['rewrite_map']
+$options['route_list']=$options['route_map'];
+DNMVCS::Debugging => DNMVCS::Developing
+添加
+InSwoole
+IsRunning
+setDBHandler
+setBeforeGetDBHandler
+header
+setcookie
+setHandlerForHeader
+setHandlerForSetCookie
+添加
+DNRuntimeState
+删除 $options['skip_db']
+添加 DNRuntimeState 类保存运行时间系统状态
+
+class StrictDBManager  去掉，用 setBeforeGetDBHandler DNMVCSExt CheckDBPermission 代替
+未使用的 MedooSimpleInstaller 移动到 Toolkit.php
+修复 $options['ext']['use_ext_db'] 无效
+
+添加 CoroutineSingleton::DumpString
+删除无用的 IRouteHook.php
+
+RouteHookSuperGlobal 添加 $fakeRoot $fakeIndex 可在 swoole 下设定伪路径
+
+重写 SuperGlobal 删除子类。
+相应的 SwooleSuperGlobal 重写
+
+模板文件的包含部分变更。
+
+
+todo session_name($name) 改变 session 默认名字在 swoole 下无效。
+
+----
 1.0.1 到 1.0.2 变更
 ShowBlock 由类方法变成静态方法
 添加了 setmultiexception
