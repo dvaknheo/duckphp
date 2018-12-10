@@ -38,6 +38,6 @@ $server_options=[
 $dn_options=[
 	'path'=>$path,
 ];
-$server_options=array_merge_recursive($server_options,$setting['server_options']??[]);
+$server_options=array_replace_recursive($server_options,$setting['server_options']??[]);
 
 \DNMVCS\DNMVCS::RunAsServer($server_options,$dn_options,$server);

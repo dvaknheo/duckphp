@@ -1160,7 +1160,7 @@ class DNMVCS
 			],
 			//'path_view'=>'',
 		];
-		$options=array_merge_recursive($default_options,$options);
+		$options=array_replace_recursive($default_options,$options);
 		return self::RunQuickly($options);
 	}
 	public static function RunOneFileMode($options=[])
@@ -1175,7 +1175,7 @@ class DNMVCS
 				
 			]
 		];
-		$options=array_merge_recursive($default_options,$options);
+		$options=array_replace_recursive($default_options,$options);
 		return self::RunQuickly($options);
 	}
 	public static function RunAsServer($server_options,$dn_options,$server=null)
