@@ -363,11 +363,12 @@ class DNSwooleHttpServer
 	
 	const DEFAULT_OPTIONS=[
 			'swoole_server'=>null,
-			'swoole_options'=>[],
+			'swoole_server_options'=>[],
 			
 			'host'=>'127.0.0.1',
 			'port'=>0,
 			
+			'http_handler_basepath'=>'',
 			'http_handler_root'=>null,
 			'http_handler_file'=>null,
 			'http_handler'=>null,
@@ -402,13 +403,13 @@ class DNSwooleHttpServer
 		}
 		if($this->options['http_handler_file']){
 			$path_info=SuperGlobal::SERVER('REQUEST_URI');
-			$file=$this->options['http_handler_file'];
+			$file=$this->options['http_handler_basepath'].$this->options['http_handler_file'];
 			$document_root=dirname($file);
 			$this->includeHttpFile($file,$document_root,$path_info);
 			return;
 		}
 		if($this->options['http_handler_root']){
-			$http_handler_root=$this->options['http_handler_root'];
+			$http_handler_root=$this->options['http_handler_basepath'].$this->options['http_handler_root'];
 			$http_handler_root=rtrim($http_handler_root,'/').'/';
 			
 			$document_root=$this->static_root?:rtrim($http_handler_root,'/');
@@ -550,22 +551,22 @@ class DNSwooleHttpServer
 		$dn_options['swoole']=$dn_options['swoole']??[];
 		$dn_options['swoole']=array_replace_recursive(static::DEFAULT_DN_OPTIONS,$dn_options['swoole']);
 		$dn_swoole_options=$dn_options['swoole'];
-		DNMVCS::G()->init($dn_options);
+		$dn=DNMVCS::G()->init($dn_options);
 		///////////////////////////////
 		
-		$this->options['http_handler']=$this->http_handler =[DNMVCS::G(),'run'];
-		$this->options['http_exception_handler']=$this->http_exception_handler=[DNMVCS::G(),'onException'];
+		$this->options['http_handler']=$this->http_handler =[$dn,'run'];
+		$this->options['http_exception_handler']=$this->http_exception_handler=[$dn,'onException'];
 		
 		$db_reuse_size=$dn_swoole_options['db_reuse_size']??0;
 		if($db_reuse_size){
 			$db_reuse_timeout=$dn_swoole_options['db_reuse_timeout']??5;
 			$dbm=DNDBManager::G();
 			DBConnectPoolProxy::G()->init($db_reuse_size,$db_reuse_timeout)->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
-			$dbm->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
+			$dn->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
 		}
-		DNMVCS::G()->setHandlerForHeader([static::class,'header']);
+		$dn->setHandlerForHeader([static::class,'header']);
 		
-		DNMVCS::G()->onBeforeRun(function(){
+		$dn->onBeforeRun(function(){
 			CoroutineSingleton::CloneInstance(DNExceptionManager::class);
 			// CoroutineSingleton::CloneInstance(DNConfig::class);
 			CoroutineSingleton::CloneInstance(DNView::class);
