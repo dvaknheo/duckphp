@@ -1190,6 +1190,10 @@ RouteHook ,路由钩子路由里用到超全局数组改用 SuperGlobal
 ## SuperGlobal.php
 SuperGlobal 类 用于代替超全局变量，目的是兼容 swoole 。
 
+$_GET ,$_POST 在兼容 Swoole 环境下，变成 ,SuperGlobal::G()->_GET ,SuperGlobal::G()->_POST
+*我也想缩短，但实在没法再短了。.*
+以下有以下函数方式的读写。
+
     SuperGlobal::GET($k)
     SuperGlobal::POST($k)
     SuperGlobal::REQUEST($k)
@@ -1198,41 +1202,41 @@ SuperGlobal 类 用于代替超全局变量，目的是兼容 swoole 。
     SuperGlobal::COOKIE($k)
     SuperGlobal::SESSION($k)
 
-POST COOKIE ... 是用于超全局变量无法使用的 swoole 环境中， 也可以在 fpm 下使用.
+读取 POST COOKIE ... 是用于超全局变量无法使用的 swoole 环境中， 也可以在 fpm 下使用.
 以上是读取，写入是用 SuperGlobal::SetGET($k,$v)  等 。
 写入的数据不改变系统超全局变量数据.
 
-SuperGlobal::SetCookie
+    SuperGlobal::SetGET($k,$v)
+    SuperGlobal::SetPOST($k,$v)
+    SuperGlobal::SetREQUEST($k,$v)
+    SuperGlobal::SetSERVER($k,$v)
 
-    设置 cookie ，也是为了 swoole 兼容
+写入对象。SuperGlobal 类并没采用对称设计。因为 写入 ENV 一般是用不到的。
+写入 Cookie 数组不是更改 cookie ， 写入  session 和 读取 session 要对称
+
+Session 相关
+
 SuperGlobal::StarSession
 
     替代 session_start
 SuperGlobal::DetroySession
 
     替代 session_destroy
+SuperGlobl::SetSessionHandler($handler)
+
+    替代 session_save_handler;
 SuperGlobal::GetSESSION($k)
 
     读 session.
 SuperGlobal::SetSESSION($k,$v)
 
+    写 session
 
-SuperGlobal::SetGET($k,$v)
-
-SuperGlobal::SetPOST($k,$v)
-
-
-SuperGlobal::SetREQUEST($k,$v)
-
-SuperGlobal::SetSERVER($k,$v)
-
-	写入对象。SuperGlobal 类并没采用对称设计。因为 写入 ENV 一般是用不到的
-	写入 Cookie 数组不是更改 cookie ， 写入  session 和 读取 session 要对称
 ## SwooleSessionHandler.php
     一般不直接调用 ,swoole 下一个文件型的 session_handler
-    如果你有更好方案，用 G 函数替换实现。
+    如果你有更好方案，用 SuperGlobal::SetSessionHandler($handler);替换
 ## SwooleSuperGlobal
-    Swoole 环境下SuperGlobal 的实现。
+    Swoole 环境下 SuperGlobal 的实现。
 
 ## Tookit.php 未使用用于参考的工具箱类。
 一些可能会用到的类，需要的时候把他们复制走。
