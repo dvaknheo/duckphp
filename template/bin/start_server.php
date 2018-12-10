@@ -11,33 +11,25 @@ if($IN_COMPOSER){
 }
 ////]]]]
 
-$server=null;
-//$server=new swoole_http_server('0.0.0.0', 9528);
+////[[[[
 $path=realpath(__DIR__.'/../').'/';
-$setting_file=$path.'config/setting.php';
-$setting=[];
-if(is_file($setting_file)){
-	$setting=include($setting_file);
-}
-
-$swoole_options=[
-	//'document_root'=>$path.'static',
-    //'enable_static_handler' => true,
-	//'worker_num'=>1,
-];
-//$server->set($swoole_options);
 $server_options=[
-	'port'=>9528,
-	'swoole_server'=>null,
-	'swoole_server_options'=>$swoole_options,
-	//'http_handler_root'=>$path.'www/',
-	//'http_handler_file'=>$path.'www/index.php',
-
+	//'port'=>???,
+	//'http_handler_basepath'=>$path,
 ];
 
 $dn_options=[
 	'path'=>$path,
 ];
+
+////]]]]
+
+$setting=[];
+$setting_file=$path.'config/setting.php';
+if(is_file($setting_file)){
+	$setting=include($setting_file);
+}
 $server_options=array_replace_recursive($server_options,$setting['server_options']??[]);
 
+$server=null;
 \DNMVCS\DNMVCS::RunAsServer($server_options,$dn_options,$server);
