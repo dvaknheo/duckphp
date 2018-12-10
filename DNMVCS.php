@@ -9,8 +9,8 @@ trait DNSingleton
 	protected static $_instances=[];
 	public static function G($object=null)
 	{
-		if(defined('DNSINGLETON_REPALACER')){
-			$callback=DNSINGLETON_REPALACER;
+		if(defined('DNMVCS_DNSINGLETON_REPALACER')){
+			$callback=DNMVCS_DNSINGLETON_REPALACER;
 			return ($callback)(static::class,$object);
 		}
 		if($object){

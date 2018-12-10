@@ -70,21 +70,34 @@ class CoroutineSingleton
 		define('DNMVCS_DNSINGLETON_REPALACER' ,self::class . '::'.'GetInstance');
 	}
 	
-
-	public static function Dump()
+	public static function DumpString()
 	{
 		$cid = \Swoole\Coroutine::getuid();
-fwrite(STDERR,"====CoroutineSingletonList cid-{$cid}====".";\n");
-		$t=self::$_instances;
-		foreach($t as $class=>$v){
+		$ret="==== CoroutineSingleton List Current cid [{$cid}] ==== ;\n";
+		foreach(static::$_instances as $class=>$v){
 			if(!is_array($v)){
-fwrite(STDERR,"+ ".$class.";\n");
+					$desc=($v?get_class($v):'null');
+				if($class===$desc){
+					$ret.=$class."\n";
+				}else{
+					$ret.=$class." ( ".$desc." )\n";
+				}
 			}else{
-				foreach($v as $class2=>$vv){
-fwrite(STDERR,"-- $class ~ ".$class2.";\n");
+				foreach($v as $cid_class=>$cid_object){
+					$desc=($cid_object?get_class($cid_object):'null');
+					if($cid_class===$desc){
+						$ret.="[$class]: ".$cid_class."\n";
+					}else{
+						$ret.="[$class]: ".$cid_class." ( ".$desc." )\n";
+					}
 				}
 			}
 		}
+		return "{{$ret}}";
+	}
+	public static function Dump()
+	{
+		fwrite(STDERR,static::DumpString());
 	}
 	public static function CleanUp()
 	{
