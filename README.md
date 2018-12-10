@@ -697,7 +697,6 @@ Import($file)
 Developing()
 
     判断是否在开发状态。默认读设置里的 is_dev ，
-
 ## 运行模式
 
 RunQuickly($options=[])
@@ -784,19 +783,20 @@ assignViewData($key,$value=null)
     给 view 分配数据，
     这函数用于控制器构造函数添加统一视图数据
     实质调用 DNView::G()->assignViewData
-assignExceptionHandle($classes,$callback=null)
+assignExceptionHandler($classes,$callback=null)
 
     分配特定异常回调。
     用于控制器里控制特定错误类型。
-
+    实质调用 DNExceptionManager::G()->assignExceptionHandler
 setMultiExceptionHandler(array $classes,$callback)
 
-    多个特定异常回调。
-setDefaultExceptionHandle($calllback)
+    多个特定异常回调用于多个异常统一到同一个回调的情况。
+    实质调用 DNExceptionManager::G()->setMultiExceptionHandler
+setDefaultExceptionHandler($calllback)
 
     接管默认的异常处理，所有异常都归回调管，而不是显示 500 页面。
     用于控制器里控制特定错误类型。比如 api 调用
-
+    实质调用 DNExceptionManager::G()->setDefaultExceptionHandler
 assignPathNamespace($path,$namespace=null)
     
     分配自动加载的命名空间的目录。

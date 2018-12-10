@@ -1,15 +1,5 @@
 <?php
-////[[[[
-$IN_COMPOSER=false;
-
-$project_root=realpath(__DIR__.'/..');
-
-if($IN_COMPOSER){
-	require($project_root.'/vendor/autoload.php');
-}else{
-	require($project_root.'/../DNMVCS.php');
-}
-////]]]]
+require(__DIR__.'/../boot/headfile.php');
 
 ////[[[[
 $path=realpath(__DIR__.'/../').'/';
