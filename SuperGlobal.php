@@ -79,6 +79,15 @@ class SuperGlobal
 		session_destroy();
 		static::G()->_SESSION=[];
 	}
+	public static function SetSessionHandler($handler)
+	{
+		return _SetSessionHandler($handler);
+	}
+	public function _SetSessionHandler($handler)
+	{
+		session_set_save_handler($handler);
+	}
+///////////////////////////
 	public static function SetGET($k,$v)
 	{
 		static::G()->_GET[$k]=$v;
@@ -102,13 +111,5 @@ class SuperGlobal
 	public static function GetSESSION($k)
 	{
 		return static::G()->_SESSION[$k]??null;
-	}
-	public static function SetCookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
-	{
-		return static::G()->_SetCookie($key,$value,$expire,$path,$domain,$secure,$httponly);
-	}
-	public function _SetCookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
-	{
-		return setcookie($key,$value,$expire,$path,$domain,$secure,$httponly);
 	}
 }

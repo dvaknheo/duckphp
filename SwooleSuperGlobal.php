@@ -3,10 +3,6 @@ namespace DNMVCS;
 
 class SwooleSuperGlobal extends SuperGlobal
 {
-	public function _SetCookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
-	{
-		return DNSwooleHttpServer::setcookie($key,$value,$expire,$path,$domain,$secure,$httponly);
-	}
 	public function init()
 	{
 		//do nothing
@@ -40,6 +36,10 @@ class SwooleSuperGlobal extends SuperGlobal
 	{
 		SwooleSESSION::G()->_Destroy();
 		static::G()->_SESSION=[];
+	}
+	public function _SetSessionHandler($handler)
+	{
+		SwooleSESSION::G()->setHandler($handler);
 	}
 }
 

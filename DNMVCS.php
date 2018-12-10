@@ -824,7 +824,7 @@ trait DNMVCS_Glue
 		if(defined('DN_SWOOLE_SERVER_INIT')){
 			return true;
 		}
-		// if defined()
+		return false;
 	}
 	public function IsRunning()
 	{
@@ -1033,10 +1033,11 @@ trait DNMVCS_Handler
 		$flag=DNExceptionManager::G()->checkAndRunErrorHandlers($ex,true);
 		if($flag){return;}
 		
-		$view=DNView::G();
 		static::header('',true,500);
+		$view=DNView::G();
 		
 		$data=[];
+		$data['is_developing']=static::Developing();
 		$data['ex']=$ex;
 		$data['message']=$ex->getMessage();
 		$data['code']=$ex->getCode();
