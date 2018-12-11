@@ -30,7 +30,7 @@ class ComposerScripts
 	{
 		$data=file_get_contents($file);
 		$data=str_replace('/headfile/headfile.php','/vendor/autoload.php',$data);
-		$data=str_replace("if(defined('DNMVCS_WARNING_IN_TEMPLATE'))","\/\/ if(defined('DNMVCS_WARNING_IN_TEMPLATE'))",$data);
+		$data=str_replace("if(defined('DNMVCS_WARNING_IN_TEMPLATE'))","// if(defined('DNMVCS_WARNING_IN_TEMPLATE'))",$data);
 		
 		file_put_contents($file,$data);
 	}
