@@ -7,6 +7,12 @@ class Toolkit
 	public static function Init()
 	{
 	}
+	public function DumpDatabaseTableStruct($tables)
+	{
+	}
+	public function DumpDatabaseTableData($tables)
+	{
+	}
     function Export_Database($host,$user,$pass,$name,  $tables=false, $backup_name=false )
     {
         $mysqli = new mysqli($host,$user,$pass,$name); 
