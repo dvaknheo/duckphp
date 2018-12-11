@@ -81,11 +81,19 @@ class SuperGlobal
 	}
 	public static function SetSessionHandler($handler)
 	{
-		return _SetSessionHandler($handler);
+		return static::G()->_SetSessionHandler($handler);
 	}
 	public function _SetSessionHandler($handler)
 	{
 		session_set_save_handler($handler);
+	}
+	public static function SetSessionName($name)
+	{
+		return static::G()->_SetSessionName($name);
+	}
+	public function _SetSessionName($name)
+	{
+		return session_name($name);
 	}
 ///////////////////////////
 	public static function SetGET($k,$v)

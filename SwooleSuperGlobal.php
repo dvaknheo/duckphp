@@ -41,6 +41,10 @@ class SwooleSuperGlobal extends SuperGlobal
 	{
 		SwooleSESSION::G()->setHandler($handler);
 	}
+	public function _SetSessionName($name)
+	{
+		return ini_set('session.name',$name);
+	}
 }
 
 
@@ -68,7 +72,7 @@ class SwooleSESSION
 		$this->is_started=true;
 		
 		DNSwooleHttpServer::register_shutdown_function([$this,'writeClose']);
-		$session_name=session_name();
+		$session_name=ini_get('session.name');
 		$session_save_path=session_save_path();
 		
 		$cookies=DNSwooleHttpServer::Request()->cookie??[];
@@ -96,7 +100,7 @@ class SwooleSESSION
 	}
 	public function _Destroy()
 	{
-		$session_name=session_name();
+		$session_name=ini_get('session.name');
 		$this->handler->destroy($this->session_id);
 		$this->data=[];
 		DNSwooleHttpServer::setcookie($session_name,'');
