@@ -2,7 +2,7 @@
 use \DNMVCS\DNMVCS as DN;
 use \DNMVCS\SuperGlobal as SG;
 
-require(__DIR__.'/../boot/headfile.php');
+require(__DIR__.'/../headfile/headfile.php');
 
 global $view_data;
 $view_data=[];
@@ -79,11 +79,12 @@ function action_do_add()
 function URL($url){return DN::URL($url);}
 function H($str){return DN::H($str);}
 ////////////////////////////////////
-session_start();
 $options=[
 	'path_view'=>'',
 ];
-DN::RunOneFileMode($options);
+if(defined('DNMVCS_WARNING_IN_TEMPLATE')){ echo "<div>Don't run the template file directly </div>"; }
+if(defined('DNMVCS_WARNING_IN_TEMPLATE')){ $options['setting_basename']=''; }
+DN::RunOneFileMode($options,function(){SG::StartSession();});
 
 if(!$view_data){return;} 
 extract($view_data);

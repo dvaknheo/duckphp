@@ -10,8 +10,10 @@ class ComposerScripts
 		$iterator = new \RecursiveIteratorIterator($directory);
 		$files = \iterator_to_array($iterator,false);
 		foreach($files as $file){
-			
 			$short_file_name=substr($file,strlen($source)+1);
+			if($short_file_name==='headfile/headfile.php'){continue;}
+			if($short_file_name==='config/setting.php'){continue;}
+			
 			$blocks=explode(DIRECTORY_SEPARATOR,$short_file_name);
 			array_pop($blocks);
 			$full_dir=$dest;
@@ -27,7 +29,9 @@ class ComposerScripts
 	protected static function ChangeFlag($file)
 	{
 		$data=file_get_contents($file);
-		$data=str_replace('$IN_COMPOSER=false;','$IN_COMPOSER=true;',$data);
+		$data=str_replace('/headfile/headfile.php','/vendor/autoload.php',$data);
+		$data=str_replace("if(defined('DNMVCS_WARNING_IN_TEMPLATE'))","\/\/ if(defined('DNMVCS_WARNING_IN_TEMPLATE'))",$data);
+		
 		file_put_contents($file,$data);
 	}
 	protected static function DumpTemplateFiles()
@@ -39,7 +43,9 @@ class ComposerScripts
 		$dest=getcwd();
 		self::DumpDir($source, $dest);
 		
-		self::ChangeFlag('boot/headfile.php');
+		self::ChangeFlag('public/index.php');
+		self::ChangeFlag('public/OneFile.php');
+		self::ChangeFlag('bin/start_server.php');
 		copy('config/setting.sample.php','config/setting.php');
 		$data="DNMVCS Installed at ".DATE(DATE_ATOM)."\n";
 		file_put_contents('dnmvcs-installed.lock',$data);
