@@ -58,4 +58,8 @@ class ComposerScripts
 	{
 		self::DumpTemplateFiles();
 	}
+	public static function PostInstall()
+	{
+		self::DumpTemplateFiles();
+	}
 }
