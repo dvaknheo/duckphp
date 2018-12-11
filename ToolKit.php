@@ -7,11 +7,35 @@ class Toolkit
 	public static function Init()
 	{
 	}
-	public function DumpDatabaseTableStruct($tables)
+	public function getTables()
 	{
+		$ret=[];
+		$sql="show tables";
+		$data=DN::DB()->fetchAll($sql);
+		foreach($data as $v){$ret[]=array_pop(array_values($v));}
+		
+		return $ret;
+	}
+	public function DumpDatabaseTableStruct($tables=[])
+	{
+		$ret=[];
+		if(empty($tables)){ $tables=$this->getTables(); }
+		foreach($tables as $table){
+			try{
+				$sql="SHOW CREATE TABLE $table";
+				$data=DN::DB()->fetch($sql);
+				$str=$data['Create Table'];
+				$str=preg_replace('/AUTO_INCREMENT=\d+/','AUTO_INCREMENT=1',$str);
+				$ret[$table]=$str;
+			}catch(\PDOException $ex){}
+		}
+		return implode(";\n",$ret);
 	}
 	public function DumpDatabaseTableData($tables)
 	{
+		$sql="select * from ";
+//		$header="INSERT INTO `$table` () VALUES \n ";
+//(,),
 	}
     function Export_Database($host,$user,$pass,$name,  $tables=false, $backup_name=false )
     {
