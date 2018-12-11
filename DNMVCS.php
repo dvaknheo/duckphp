@@ -1163,9 +1163,9 @@ class DNMVCS
 			//'path_view'=>'',
 		];
 		$options=array_replace_recursive($default_options,$options);
-		return self::RunQuickly($options);
+		return static::G()->init($options)->run();
 	}
-	public static function RunOneFileMode($options=[])
+	public static function RunOneFileMode($options=[],$init_function=null)
 	{
 		$default_options=[
 			'setting_file_basename'=>'',
@@ -1178,7 +1178,11 @@ class DNMVCS
 			]
 		];
 		$options=array_replace_recursive($default_options,$options);
-		return self::RunQuickly($options);
+		static::G()->init($options);
+		if($init_function){
+			($init_function)();
+		}
+		static::G()->run();
 	}
 	public static function RunAsServer($server_options,$dn_options,$server=null)
 	{
