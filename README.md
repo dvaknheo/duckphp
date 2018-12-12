@@ -697,6 +697,12 @@ Import($file)
 Developing()
 
     判断是否在开发状态。默认读设置里的 is_dev ，
+InSwoole()
+
+    判断是否在Swoole环境
+IsRunning
+
+    判断是否已经开始运行。
 ## 运行模式
 
 RunQuickly($options=[])
@@ -722,7 +728,6 @@ RunAsServer($server_options,$dn_options,$server=null)
 ```php
 \DNMVCS\DNMVCS::RunWithoutPathInfo([]);
 ``` 
-
 ## 独立杂项静态方法
 这几个方法独立，为了方便操作，放在这里。
 
@@ -738,7 +743,9 @@ RecordsetH(&$data,$cols=[])
 RecordsetURL(&$data,$cols_map=[]) 
 
     给 sql 返回数组 加url 比如  url_edit=>"edit/{id}",则该行添加 url_edit =>DN::URL("edit/".$data[]['id']) 等类似。
+HasInclude($file)
 
+    判断文件是否已经包含
 ## 非静态方法
 这里的方法偶尔会用到，所以没静态化 。
 assign 系列函数，都有两个模式 func(\$map)，和 func(\$key,\$value) 模式方便大量导入。
@@ -804,6 +811,11 @@ assignPathNamespace($path,$namespace=null)
 setBeforeRunHandler($before_run_handler)
 
     在run之前执行回调。 SwooleHttpServer 用到这个。
+## 替换函数
+static header()
+    兼容 swoole header
+static setcookie()
+    兼容 swoole setcookie
 ## 事件方法
 实现了默认事件回调的方法。扩展以展现不同事件的显示。
 
@@ -1049,6 +1061,8 @@ DNAutoLoader 做了防多次加载和多次初始化。
     init($options)
     run()
     assignPathNamespace()
+## DNRuntimeState 状态类
+用于运行时状态的保存
 # 第六章 DNMVCS 全部文件和类说明
 这个章节说明 DNMVCS 的各个文件。
 并在此把次要的类和文件展示出来
