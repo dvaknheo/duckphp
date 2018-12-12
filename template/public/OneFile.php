@@ -79,12 +79,14 @@ function action_do_add()
 function URL($url){return DN::URL($url);}
 function H($str){return DN::H($str);}
 ////////////////////////////////////
-$options=[
-	'path_view'=>'',
-];
+$options=[];
 if(defined('DNMVCS_WARNING_IN_TEMPLATE')){ echo "<div>Don't run the template file directly </div>"; }
 if(defined('DNMVCS_WARNING_IN_TEMPLATE')){ $options['setting_basename']=''; }
-DN::RunOneFileMode($options,function(){SG::StartSession();});
+DN::RunOneFileMode($options,function(){
+	SG::SetSessionName('MYSESS');
+	SG::StartSession();
+	}
+);
 
 if(!$view_data){return;} 
 extract($view_data);

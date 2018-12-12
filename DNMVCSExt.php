@@ -36,7 +36,7 @@ class SimpleRouteHook
 	public function hook($route)
 	{
 		$route->setURLHandler([$this,'onURL']);
-
+		$k=$this->key_for_simple_route;
 		if(class_exists('\DNMVCS\SuperGlobal' ,false)){
 			SuperGlobal::CheckLoad();
 			$path_info=SuperGlobal::REQUEST($k);
@@ -224,7 +224,6 @@ class FunctionDispatcher
 	}
 	public function runRoute()
 	{
-		//TODO 和
 		$post=(DNRoute::G()->request_method==='POST')?$this->post_prefix:'';
 		$callback=$this->prefix.$post.$this->path_info;
 		if(is_callable($callback)){

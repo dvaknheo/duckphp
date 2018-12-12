@@ -72,12 +72,12 @@ class SuperGlobal
 	public function _StartSession()
 	{
 		if(session_status() !== PHP_SESSION_ACTIVE ){ session_start(); }
-		static::G()->_SESSION=$_SESSION;
+		$this->_SESSION=&$_SESSION;
 	}
 	public function _DestroySession()
 	{
 		session_destroy();
-		static::G()->_SESSION=[];
+		$this->_SESSION=[];
 	}
 	public static function SetSessionHandler($handler)
 	{
