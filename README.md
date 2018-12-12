@@ -184,12 +184,16 @@ lib 目录可以不要（如果你没用到 DNMVCS::Import）。
 
 ```php
 <?php
-// 省略前面 require 引用外部文件部分。
-//$path=realpath('../');
+require(__DIR__.'/../vendor/autoload.php');
+
+$path=realpath(__DIR__.'/..');
 $options=[
+	'path'=>$path,
 ];
+// if(defined('DNMVCS_WARNING_IN_TEMPLATE')){ echo "<div>Don't run the template file directly </div>\n"; }
+// if(defined('DNMVCS_WARNING_IN_TEMPLATE')){ $options['setting_basename']=''; }
 \DNMVCS\DNMVCS::RunQuickly($options);
-//\DNMVCS\DNMVCS::G()->init($options)->run();
+// \DNMVCS\DNMVCS::G()->init($options)->run();
 ```
 被注释掉部分 和 实际调用部分实际相同。是个链式调用。
 \DNMVCS\DNMVCS::G(); 单例模式。 
@@ -708,10 +712,11 @@ IsRunning
 RunQuickly($options=[])
 
     DNMVCS::RunQuickly ($options) 相当于 DNMVCS::G()->init($options)->run();
-RunOneFileMode($optionss=[])
+RunOneFileMode($optionss=[],$init_function=null)
 
     单一文件模式，不需要其他文件，设置内容请放在
     $options['setting'] 里
+	$init_function 用于初始化之后，run 前调用，如 SuperGlobal::StartSession();
 RunWithoutPathInfo()
 
     不需要 PathInfo 的模式。用 _r 来表示 Path_Info

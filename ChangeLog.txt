@@ -1,3 +1,14 @@
+1.0.3 到 1.0.4变更
+SuperGlobal::SetSessionName($name) 代替 session_name($name);
+ComposerScripts 添加 PostInstall
+默认模版变更,现在头文件更清晰。直接运行工程模板将提示请勿直接运行，并且忽略设置文件
+修复可能存在的合并 options 错误。 array_merge_recursive => array_replace_recursive
+RunOneFileMode 添加参数 $init_function 用于初始化后修改方法
+修复 SimpleRouteHook 错误导致 OneFile.php 演示不能进行。
+首次使用 defer
+修复 SuperGlobal 默认 session 错误
+
+----
 1.0.2 到 1.0.3变更
 ComposerScripts 添加 PostUpdate 方法，用于 update 更新模板
 析出 DNDB 自 DNMVCS.php ,明确 DNDB 不是 DNMVCS 的核心组件。
