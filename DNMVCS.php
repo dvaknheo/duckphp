@@ -1001,7 +1001,7 @@ trait DNMVCS_Handler
 		DNRuntimeState::G()->skipNoticeError();
 	}
 	
-	protected function checkAndRunDefaultErrorHandler($error_view,$data)
+	protected function checkUseDefaultErrorView($error_view,$data)
 	{
 		if(!is_string($error_view) || !$error_view){
 			if($error_view){
@@ -1018,7 +1018,7 @@ trait DNMVCS_Handler
 		
 		static::header('',true,404);
 		
-		$use_default_view=$this->checkAndRunDefaultErrorHandler($error_404,[]);
+		$use_default_view=$this->checkUseDefaultErrorView($error_404,[]);
 		if($use_default_view){
 			echo "File Not Found\n<!--DNMVCS -->\n";
 			return;
@@ -1047,7 +1047,7 @@ trait DNMVCS_Handler
 		
 		$is_error=is_a($ex,'Error') || is_a($ex,'ErrorException')?true:false;		
 		$error_view=$is_error?$this->options['error_500']:$this->options['error_exception'];
-		$use_default_view=$this->checkAndRunDefaultErrorHandler($error_view,$data);
+		$use_default_view=$this->checkUseDefaultErrorView($error_view,$data);
 		if($use_default_view){
 			$desc=$is_error?'Error':'Exception';
 			echo "Internal $desc \n<!--DNMVCS -->\n";
@@ -1084,7 +1084,7 @@ trait DNMVCS_Handler
 			'error_shortfile'=>$error_shortfile,
 		);
 		$error_view=$this->options['error_debug'];
-		$flag=$this->checkAndRunDefaultErrorHandler($error_view,$data);
+		$flag=$this->checkUseDefaultErrorView($error_view,$data);
 		if(!$flag){
 			extract($data);
 			echo  <<<EOT
