@@ -317,3 +317,42 @@ class MedooSimpleInstaller
 		$db->close();
 	}
 }
+final class DidderWrapper
+{
+	public function __construct($caller,$old_args)
+	{
+		$this->caller=$caller;
+		$this->old_args=$old_args;
+	}
+	public function __call($name,$args)
+	{
+		$args=array_merge($this->old_args,$args);
+		return call_user_func_array(array($this->caller,$name),$args);
+	}
+}
+trait Didder
+{
+	public $wrapper;
+	public function did($a)
+	{
+		$this->wrapper=new DidderWrapper($this,func_get_args());
+		return $this->wrapper;
+	}
+}
+////
+class TestRoot
+{
+	use  Didder;
+	public $str='';
+	public function join($a,$b){
+		$this->str.="[$a/$b]";
+		return $this;
+	}
+	public function dump()
+	{
+		var_dump($this->str);
+		return $this;
+	}
+// $root=new TestRoot();
+// $t=$root->join("a","b")->dump()->did("c")->join("d")->dump();
+}

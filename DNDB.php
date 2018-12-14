@@ -10,6 +10,7 @@ class DNDB
 	public function init($config)
 	{
 		$this->config=$config;
+		$this->check_connect();
 	}
 	public static function CreateDBInstance($db_config)
 	{
@@ -61,7 +62,6 @@ class DNDB
 	public function fetchAll($sql,...$args)
 	{
 		if(count($args)===1 &&is_array($args[0])){$args=$args[0];}
-		$this->check_connect();
 		
 		$sth = $this->pdo->prepare($sql);
 		$sth->execute($args);
@@ -72,7 +72,6 @@ class DNDB
 	public function fetch($sql,...$args)
 	{
 		if(count($args)===1 &&is_array($args[0])){$args=$args[0];}
-		$this->check_connect();
 		
 		$sth = $this->pdo->prepare($sql);
 		$sth->execute($args);
@@ -82,7 +81,6 @@ class DNDB
 	public function fetchColumn($sql,...$args)
 	{
 		if(count($args)===1 &&is_array($args[0])){$args=$args[0];}
-		$this->check_connect();
 		
 		$sth = $this->pdo->prepare($sql);
 		$sth->execute($args);
@@ -92,7 +90,6 @@ class DNDB
 	public function execQuick($sql,...$args)
 	{
 		if(count($args)===1 &&is_array($args[0])){$args=$args[0];}
-		$this->check_connect();
 		
 		$sth = $this->pdo->prepare($sql);
 		$ret=$sth->execute($args);
