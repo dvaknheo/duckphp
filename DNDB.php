@@ -101,4 +101,42 @@ class DNDB
 	{
 		return $this->rowCount;
 	}
+	
+	public function quoteArray($array)
+	{
+		$a=array();
+		foreach($array as $k =>$v){
+			$a[]=$k.'='.$this->pdo->quote($v);
+		}
+		return implode(',',$a);
+	}
+	public function findData($table_name,$id,$key='id')
+	{
+		$sql="select {$table_name} from terms where {$key}=? limit 1";
+		return $this->fetch($sql,$id);
+	}
+	
+	public function insertData($table_name,$data,$return_last_id=true)
+	{
+		$sql="insert into {$table_name} set ".$this->quote_array($data);
+		$ret=$this->execQuick($sql);
+		if(!$return_last_id){return $ret;}
+		$ret=$this->pdo->lastInsertId();
+		return $ret;
+	}
+	public function deleteData($table,$id,$key='id')
+	{
+		throw new Exception("DNMVCS Fatal : override me to delete");
+		$sql="delete from {$table_name} where {$key}=? limit 1";
+		return $this->execQuick($sql,$id);
+	}
+	
+	public function updateData($table_name,$id,$data,$key='id')
+	{
+		if($data[$key]){unset($data[$key]);}
+		$frag=$this->quote_array($data);
+		$sql="update {$table_name} set ".$frag." where {$key}=?";
+		$ret=$this->execQuick($sql,$id);
+		return $ret;
+	}
 }

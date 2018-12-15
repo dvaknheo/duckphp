@@ -1101,7 +1101,6 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
             SimpleRouteHook
             StrictService
             StrictModel
-            DBExt extends DNDB
             ProjectCommonAutoloader
             ProjectCommonConfiger extends DNConfiger
             FunctionDispatcher
@@ -1276,7 +1275,7 @@ W($object);
     使用 $options['key_for_simple_route'] 来打开他。
 
 ### MedooSimpleIntaller
-    \DNMVCS\DNDBManager::G()->setDBHandler([DBExt::class,'CreateDBInstance']， [DBExt::class,'CloseDBInstance']);
+    \DNMVCS\DNDBManager::G()->setDBHandler([MedooSimpleIntaller::class,'CreateDBInstance']， [MedooSimpleIntaller::class,'CloseDBInstance']);
     用于加载 medoo 类代替默认的 db 类，注意 medoo 类 不兼容默认 db 类
 ### API
     用于 api 服务快速调用 无引用
@@ -1309,7 +1308,6 @@ const DEFAULT_OPTIONS_EX=[
         'fullpath_project_share_common'=>'',  //配合上面的使用， 公共文件会被本工程覆盖
     'use_common_autoloader'=>false,  // 额外 loader ，多工程共享配置用
         'fullpath_config_common'=>'',  //配合上面的使用， 公共文件会被本工程覆盖
-    'use_ext_db'=>false,  //使用 \DNMVCS\DBExt 代替  \DNMVCS\DNDB
     'use_strict_db_manager'=>false, // 严格模式
     'use_superglobal'=>false, //用 SuperGlobal 代替默认的 超级变量。
 ];
@@ -1347,13 +1345,6 @@ use_strict_db_manager
 ### StrictModel
     你的 Model 继承这个类
     调试状态下，只允许 Service 或者 ExModel 调用 Model
-### DBExt
-    加了额外方法的DB类，注意和 Medoo 不兼容
-    多出的方法有 
-    quote_array， get， insert， update， delete
-    等
-    user_ext_db 选项自动安装，手动安装用
-    \DNMVCS\DNDBManager::G()->setDBHandler([DBExt::class,'CreateDBInstance']， [DBExt::class,'CloseDBInstance']);
 ### ProjectCommonAutoloader
     实现通用文件加载
 ### ProjectCommonConfiger

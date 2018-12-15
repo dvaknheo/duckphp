@@ -117,50 +117,6 @@ class StrictModel
 		return $object;
 	}
 }
-class DBExt extends DNDB
-{
-	//Warnning, escape the key by yourself
-	protected function quote_array($array)
-	{
-		$this->check_connect();
-		$a=array();
-		foreach($array as $k =>$v){
-			$a[]=$k.'='.$this->pdo->quote($v);
-		}
-		return implode(',',$a);
-	}
-	public function find($table_name,$id,$key='id')
-	{
-		$sql="select {$table_name} from terms where {$key}=? limit 1";
-		return $this->fetch($sql,$id);
-	}
-	
-	public function insert($table_name,$data,$return_last_id=true)
-	{
-		$sql="insert into {$table_name} set ".$this->quote_array($data);
-		$ret=$this->execQuick($sql);
-		if(!$return_last_id){return $ret;}
-		$ret=$this->pdo->lastInsertId();
-		return $ret;
-	}
-	public function delete($table,$id,$key='id')
-	{
-		throw new Exception("DNMVCS Fatal : override me to delete");
-		$sql="delete from {$table_name} where {$key}=? limit 1";
-		return $this->execQuick($sql,$id);
-	}
-	
-	public function update($table_name,$id,$data,$key='id')
-	{
-		if($data[$key]){unset($data[$key]);}
-		$frag=$this->quote_array($data);
-		$sql="update {$table_name} set ".$frag." where {$key}=?";
-		$ret=$this->execQuick($sql,$id);
-		return $ret;
-	}
-}
-
-
 
 class ProjectCommonAutoloader
 {
@@ -294,7 +250,6 @@ class DNMVCSExt
 {
 	use DNSingleton;
 	const DEFAULT_OPTIONS_EX=[
-			'setting_file_basename'=>'setting',
 			'key_for_simple_route'=>null,
 			
 			'use_function_view'=>false,
@@ -305,7 +260,6 @@ class DNMVCSExt
 				'fullpath_project_share_common'=>'',
 			'use_common_autoloader'=>false,
 				'fullpath_config_common'=>'',
-			'use_ext_db'=>false,
 			'use_strict_db_manager'=>false,
 		];
 	public function afterInit($dn)
@@ -330,12 +284,6 @@ class DNMVCSExt
 		$ReInitDB=false;
 		if($options['use_strict_db_manager']){
 			DNDBManager::G()->setBeforeGetDBHandler([static::class,'CheckDBPermission']);
-		}
-		
-		if($options['use_ext_db']){
-			$dn->options['db_create_handler'] =[DBExt::class,'CreateDBInstance'];
-			$dn->options['db_close_handler'] =[DBExt::class,'CloseDBInstance'];
-			$dn->initDBManager(DNDBManager::G());
 		}
 		
 		if($options['key_for_simple_route']){
