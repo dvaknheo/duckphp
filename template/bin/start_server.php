@@ -4,7 +4,7 @@ require(__DIR__.'/../headfile/headfile.php');
 ////[[[[
 $path=realpath(__DIR__.'/../').'/';
 $server_options=[
-	//'port'=>???,
+	'port'=>9528,
 	//'http_handler_basepath'=>$path,
 ];
 

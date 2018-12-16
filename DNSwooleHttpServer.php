@@ -494,6 +494,17 @@ class DNSwooleHttpServer
 		SwooleContext::G()->cleanUp();
 		CoroutineSingleton::CleanUp();
 	}
+	protected function check_swoole()
+	{
+		if(!function_exists('swoole_version')){
+			echo 'PHP Extension swoole needed;';
+			exit;
+		}
+		if (version_compare(swoole_version(), '4.2.0', '<')) {
+			echo 'swoole >=4.2.0 needed;';
+			exit;
+		}
+	}
 	/////////////////////////
 	public function init($options,$server)
 	{
@@ -507,8 +518,11 @@ class DNSwooleHttpServer
 		$this->server=$server?:$options['swoole_server'];
 	
 		if(!$this->server){
+			$this->check_swoole();
+			
 			if(!$options['port']){
-				throw new DNSwooleException("No Port ,set the port");
+				echo 'No Port ,set the port';
+				exit;
 			}
 			if(!$options['websocket_handler']){
 				$this->server=new \swoole_http_server($options['host'], $options['port']);
