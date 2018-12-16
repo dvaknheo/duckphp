@@ -598,7 +598,7 @@ class DNDBManager
 {
 	use DNSingleton;
 	
-	public $tag_write='0';
+	public $tag_write=0;
 	public $tag_read='1';
 	
 	protected $database_config_list=[];
@@ -623,8 +623,11 @@ class DNDBManager
 	public function _DB($tag=null)
 	{
 		if(isset($this->before_get_db_handler)){ ($this->before_get_db_handler)($tag); }
+		if(!isset($tag)){
+			$t=array_keys($this->database_config_list);
+			$tag=$t[0];
+		}
 		
-		$tag=$tag??$this->tag_write;
 		if(!isset($this->databases[$tag])){
 			$db_config=$this->database_config_list[$tag]??null;
 			if($db_config===null){return null;}
@@ -638,7 +641,7 @@ class DNDBManager
 	}
 	public function _DB_R()
 	{
-		if(!isset($this->database_config_list[$tag_read])){
+		if(!isset($this->database_config_list[$this->tag_read])){
 			return $this->_DB();
 		}
 		return $this->_DB($this->tag_read);
