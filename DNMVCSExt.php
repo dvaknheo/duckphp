@@ -281,7 +281,6 @@ class DNMVCSExt
 		if($options['use_function_view']){
 			$dn->initView(DNView::G(FunctionView::G()));
 		}
-		$ReInitDB=false;
 		if($options['use_strict_db_manager']){
 			DNDBManager::G()->setBeforeGetDBHandler([static::class,'CheckDBPermission']);
 		}
