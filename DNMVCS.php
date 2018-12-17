@@ -1106,6 +1106,7 @@ EOT;
 		if(!is_string($error_view)){ return; }
 		DNView::G()->_ShowBlock($error_view,$data);
 	}
+	
 }
 
 class DNMVCS
@@ -1339,12 +1340,4 @@ class DNRuntimeState
 class DNException extends \Exception
 {
 	use DNThrowQuickly;
-}
-class DNService
-{
-	use DNSingleton;
-}
-class DNModel
-{
-	use DNSingleton;
 }
