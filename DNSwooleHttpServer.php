@@ -518,7 +518,7 @@ class DNSwooleHttpServer
 			$this->check_swoole();
 			
 			if(!$options['port']){
-				echo 'DNMVCS swoole mode: No Port ,set the port';
+				echo 'DNMVCS swoole mode: No port ,set the port';
 				exit;
 			}
 			if(!$options['websocket_handler']){
@@ -593,7 +593,7 @@ class DNSwooleHttpServer
 	}
 	public function run()
 	{
-		define('DN_SWOOLE_SERVER_RUNNING',true);
+		if(!defined('DN_SWOOLE_SERVER_RUNNING')){ define('DN_SWOOLE_SERVER_RUNNING',true); }
 		fwrite(STDOUT,get_class($this)." run at ".DATE(DATE_ATOM)." ...\n");
 		$t=$this->server->start();
 		fwrite(STDOUT,get_class($this)." run end ".DATE(DATE_ATOM)." ...\n");

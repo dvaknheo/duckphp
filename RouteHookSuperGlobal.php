@@ -6,6 +6,10 @@ class RouteHookSuperGlobal
 	use DNSingleton;
 	public $fakeRoot='public';
 	public $fakeIndex='index.php';
+	public function __construct()
+	{
+		SuperGlobal::G();
+	}
 	public function hook($route)
 	{
 		$path=DNMVCS::G()->options['path'];
