@@ -416,8 +416,6 @@ var_dump($ret);
 
 DNDB 类仅仅是简单的封装 PDO ，作为主程序员，可能要重新调整。
 DNMVCS 的默认数据库是 DNDB ,DNDB 功能很小，兼容 Medoo 这个数据库类。
-DNMVCS 选项 $options['ext']['use_db_ext']=true 。将使用扩展的 DB 类， 功能比 DNDB 强大很多，但破坏了 Medoo 的兼容性。
-
 
 ## 常见任务： 跳转
 * DNMVCS::ExitJson($data) 输出 json 。
@@ -442,7 +440,7 @@ DNMVCS 整合其他框架：
     $options['error_404']=function(){};
     $flag=DNMVCS::G()->init($options)->run();
     if($flag){ return; }
-// 其他框架代码
+    // 后面是其他框架代码
 ```
 原理是由其他框架去处理 404。
 其他框架整合 DNMVCS ,则在相应处理 404 的地方开始
@@ -684,7 +682,7 @@ ExitRouteTo($url)
 Exit404()
 
 	404 退出， 实质调用DNMVCS::G()->onShow404. 后 exit.
-ThrowOn($flag,$message,$code);
+ThrowOn($flag,$message,$code=0);
 
     如果 flag 成立则抛出 DNException 异常。
     减少代码量。如果没这个函数，你要写
@@ -698,6 +696,7 @@ Import($file)
 
     手动导入默认lib 目录下的包含文件
     实质调用 self::G()->_Import();
+## 状态判定
 Developing()
 
     判断是否在开发状态。默认读设置里的 is_dev ，
@@ -1208,26 +1207,11 @@ RouteHook ,路由钩子路由里用到超全局数组改用 SuperGlobal
 ## SuperGlobal.php
 SuperGlobal 类 用于代替超全局变量，目的是兼容 swoole 。
 
+SuperGlobal 类同时处理 Session 
+
 $_GET ,$_POST 在兼容 Swoole 环境下，变成 ,SuperGlobal::G()->_GET ,SuperGlobal::G()->_POST
 *我也想缩短，但实在没法再短了。.*
-以下有以下函数方式的读写。
 
-    SuperGlobal::GET($k)
-    SuperGlobal::POST($k)
-    SuperGlobal::REQUEST($k)
-    SuperGlobal::SERVER($k)
-    SuperGlobal::ENV($k)
-    SuperGlobal::COOKIE($k)
-    SuperGlobal::SESSION($k)
-
-读取 POST COOKIE ... 是用于超全局变量无法使用的 swoole 环境中， 也可以在 fpm 下使用.
-以上是读取，写入是用 SuperGlobal::SetGET($k,$v)  等 。
-写入的数据不改变系统超全局变量数据.
-
-    SuperGlobal::SetGET($k,$v)
-    SuperGlobal::SetPOST($k,$v)
-    SuperGlobal::SetREQUEST($k,$v)
-    SuperGlobal::SetSERVER($k,$v)
 
 写入对象。SuperGlobal 类并没采用对称设计。因为 写入 ENV 一般是用不到的。
 写入 Cookie 数组不是更改 cookie ， 写入  session 和 读取 session 要对称
@@ -1243,12 +1227,10 @@ SuperGlobal::DetroySession
 SuperGlobl::SetSessionHandler($handler)
 
     替代 session_save_handler;
-SuperGlobal::GetSESSION($k)
+SuperGlobal::SetSessionName($$name)
 
-    读 session.
-SuperGlobal::SetSESSION($k,$v)
-
-    写 session
+    替代 session_name;
+这些静态方法都是调用下划线前缀的实际类内实现。
 
 ## SwooleSessionHandler.php
     一般不直接调用 ,swoole 下一个文件型的 session_handler
@@ -1476,8 +1458,8 @@ const DEFAULT_DN_OPTIONS=[
 ```
 
 想要获得当前 的 request ,response 用 DNSwooleHttpServer::Request() ,Response（）；
-还记得 _SERVER,_GET,_POST 超全局变量在 swoole 协程下无法使用么。
-你要用 DNMVCS\SuperGlobal\SERVER:: Get($key), Set($key,$value)代替
+还记得 _SERVER,_GET,_POST 超全局变量在 swoole 协程下无法使用么。用 SuperGloal类代替。
+
 exit 函数可以用。但 header 函数不能用了，你得用 DNSwooleHttpServer::G()->header .还有 setcookie ,set_exception_handler 类似。
 
 DNSwooleHttpServer 运行 DNMVCS 可以有三种模式
