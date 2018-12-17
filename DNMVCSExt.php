@@ -12,7 +12,7 @@ class SimpleRouteHook
 		
 		$path='';
 		if(class_exists('\DNMVCS\SuperGlobal' ,false)){
-			$path=SuperGlobal::G()->_SERVER['REQUEST_URI';
+			$path=SuperGlobal::G()->_SERVER['REQUEST_URI'];
 			$path_info=SuperGlobal::G()->_SERVER['PATH_INFO'];
 		}else{
 			$path=$_SERVER['REQUEST_URI'];
