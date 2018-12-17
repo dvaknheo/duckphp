@@ -573,7 +573,6 @@ const DEFAULT_OPTIONS=[
             'enable_post_prefix'=>true,
             'disable_default_class_outside'=>false,
             
-            'strict_route_mode'=>false,
             'base_class'=>'MY\Base\App',
             'path_view'=>'view',
             'path_config'=>'config',

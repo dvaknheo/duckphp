@@ -188,8 +188,6 @@ class DNRoute
 			
 			'enable_post_prefix'=>true,
 			'disable_default_class_outside'=>false,
-			
-			'strict_route_mode'=>false,
 		];
 	
 	public $options=[];
