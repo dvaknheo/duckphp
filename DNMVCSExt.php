@@ -12,9 +12,8 @@ class SimpleRouteHook
 		
 		$path='';
 		if(class_exists('\DNMVCS\SuperGlobal' ,false)){
-			SuperGlobal::CheckLoad();
-			$path=SuperGlobal::SERVER('REQUEST_URI');
-			$path_info=SuperGlobal::SERVER('PATH_INFO');
+			$path=SuperGlobal::G()->_SERVER['REQUEST_URI';
+			$path_info=SuperGlobal::G()->_SERVER['PATH_INFO'];
 		}else{
 			$path=$_SERVER['REQUEST_URI'];
 			$path_info=$_SERVER['PATH_INFO'];
@@ -38,8 +37,7 @@ class SimpleRouteHook
 		$route->setURLHandler([$this,'onURL']);
 		$k=$this->key_for_simple_route;
 		if(class_exists('\DNMVCS\SuperGlobal' ,false)){
-			SuperGlobal::CheckLoad();
-			$path_info=SuperGlobal::REQUEST($k);
+			$path_info=SuperGlobal::G()->_REQUEST[$k]??null;
 		}else{
 			$path_info=$_REQUEST[$k]??null;
 		}

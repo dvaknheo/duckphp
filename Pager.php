@@ -16,7 +16,7 @@ class Pager
 	public function _current()
 	{
 		if($this->current_page!==null){return $this->current_page;}
-		$this->current_page=intval(SuperGlobal::GET($this->key)??1);
+		$this->current_page=intval(SuperGlobal::G()->_GET[$this->key]??1);
 		return $this->current_page;
 	}
 
@@ -29,13 +29,13 @@ class Pager
 	
 	public function init($options)
 	{
-		$this->url=$options['url']??SuperGlobal::SERVER('REQUEST_URI');
+		$this->url=$options['url']??SuperGlobal::G()->_SERVER['REQUEST_URI'];
 		$this->key=$options['key']??$this->key;
 		$this->page_size=$options['page_size']??$this->page_size;
 		
 		$this->handel_get_url=$options['rewrite']??$this->handel_get_url;
 		
-		$this->current_page=$options['current']??intval(SuperGlobal::GET($this->key)??1);
+		$this->current_page=$options['current']??intval(SuperGlobal::G()->_GET[$this->key]??1);
 		$this->current_page=$this->current_page>1?$this->current_page:1;
 
 	}

@@ -7,9 +7,8 @@ class RouteHookMapAndRewrite
 	protected function mergeHttpGet($get)
 	{
 		if(class_exists('\DNMVCS\SuperGlobal',false)){
-			SuperGlobal::CheckLoad();
 			foreach($get as $k=>$v){
-				SuperGlobal::SetGET($k,$v);
+				SuperGlobal::G()->_GET[$k]=$v;
 			}
 		}
 		if(PHP_SAPI==='cli'){ return; }

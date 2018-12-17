@@ -403,7 +403,7 @@ class DNSwooleHttpServer
 			return;
 		}
 		if($this->options['http_handler_file']){
-			$path_info=SuperGlobal::SERVER('REQUEST_URI');
+			$path_info=SuperGlobal::G()->_SERVER['REQUEST_URI'];
 			$file=$this->options['http_handler_basepath'].$this->options['http_handler_file'];
 			$document_root=dirname($file);
 			$this->includeHttpFile($file,$document_root,$path_info);
@@ -415,7 +415,7 @@ class DNSwooleHttpServer
 			
 			$document_root=$this->static_root?:rtrim($http_handler_root,'/');
 			
-			$request_uri=SuperGlobal::GET('REQUEST_URI');
+			$request_uri=SuperGlobal::G()->_GET['REQUEST_URI'];
 			
 			$path=parse_url($request_uri,PHP_URL_PATH);
 			if(strpos($path,'/../')!==false || strpos($path,'/./')!==false){
@@ -462,9 +462,9 @@ class DNSwooleHttpServer
 	}
 	protected function includeHttpFile($file,$document_root,$path_info)
 	{
-		SuperGlobal::SetSERVER('PATH_INFO',$path_info);
-		SuperGlobal::SetSERVER('DOCUMENT_ROOT',$document_root);
-		SuperGlobal::SetSERVER('SCRIPT_FILENAME',$file);
+		SuperGlobal::G()->_SERVER['PATH_INFO']=$path_info;
+		SuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=$document_root;
+		SuperGlobal::G()->_SERVER['SCRIPT_FILENAME']=$file;
 		chdir(dirname($file));
 		(function($file){include($file);})($file);
 	}

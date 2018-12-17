@@ -9,18 +9,17 @@ class RouteHookSuperGlobal
 	public function hook($route)
 	{
 		$path=DNMVCS::G()->options['path'];
-		SuperGlobal::CheckLoad();
-		if(!SuperGlobal::SERVER('DOCUMENT_ROOT')){
-			SuperGlobal::SetSERVER('DOCUMENT_ROOT',$path.$this->fakeRoot);
+		if(!isset(SuperGlobal::G()->_SERVER['DOCUMENT_ROOT'])){
+			SuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=$path.$this->fakeRoot;
 		
 		}
-		if(!SuperGlobal::SERVER('SCRIPT_FILENAME')){
-			SuperGlobal::SetSERVER('SCRIPT_FILENAME',$path.$this->fakeRoot.'/'.$this->fakeIndex);
+		if(!isset(SuperGlobal::G()->_SERVER['SCRIPT_FILENAME'])){
+			SuperGlobal::G()->_SERVER['SCRIPT_FILENAME']=$path.$this->fakeRoot.'/'.$this->fakeIndex;
 		}
-		$route->script_filename=SuperGlobal::SERVER('SCRIPT_FILENAME')??'';
-		$route->document_root=SuperGlobal::SERVER('DOCUMENT_ROOT')??'';
-		$route->request_method=SuperGlobal::SERVER('REQUEST_METHOD')??'';
-		$route->path_info=SuperGlobal::SERVER('PATH_INFO')??'';
+		$route->script_filename=SuperGlobal::G()->_SERVER['SCRIPT_FILENAME']??'';
+		$route->document_root=SuperGlobal::G()->_SERVER['DOCUMENT_ROOT']??'';
+		$route->request_method=SuperGlobal::G()->_SERVER['REQUEST_METHOD']??'';
+		$route->path_info=SuperGlobal::G()->_SERVER['PATH_INFO']??'';
 		
 		$route->path_info=ltrim($route->path_info,'/');
 	}
