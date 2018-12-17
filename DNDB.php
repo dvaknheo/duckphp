@@ -1,8 +1,19 @@
 <?php
 namespace DNMVCS;
 
-class DNDB
+interface DNDBBasicInterface
 {
+	public function close();
+	public function quote($string);
+	public function fetchAll($sql,...$args);
+	public function fetch($sql,...$args);
+	public function fetchColumn($sql,...$args);
+	public function execQuick($sql,...$args);
+}
+class DNDB implements DNDBBasicInterface
+{
+	use DNDB_Ext;
+	
 	public $pdo;
 	public $config;
 	protected $rowCount;
@@ -50,7 +61,7 @@ class DNDB
 		$this->check_connect();
 		return $this->pdo->quote($string);
 	}
-	public function in($array)
+	public function quoteIn($array)
 	{
 		$this->check_connect();
 		if(empty($array)){return 'NULL';}
@@ -59,6 +70,19 @@ class DNDB
 		});
 		return implode(',',$array);
 	}
+	public function quoteSetArray($array)
+	{
+		$a=array();
+		foreach($array as $k =>$v){
+			$a[]=$k.'='.$this->pdo->quote($v);
+		}
+		return implode(',',$a);
+	}
+	public function qouteInsertArray($array)
+	{
+		// TODO
+	}
+
 	public function fetchAll($sql,...$args)
 	{
 		if(count($args)===1 &&is_array($args[0])){$args=$args[0];}
@@ -102,14 +126,11 @@ class DNDB
 		return $this->rowCount;
 	}
 	
-	public function quoteArray($array)
-	{
-		$a=array();
-		foreach($array as $k =>$v){
-			$a[]=$k.'='.$this->pdo->quote($v);
-		}
-		return implode(',',$a);
-	}
+	
+	
+}
+trait DNDB_Ext
+{
 	public function findData($table_name,$id,$key='id')
 	{
 		$sql="select {$table_name} from terms where {$key}=? limit 1";
@@ -118,23 +139,27 @@ class DNDB
 	
 	public function insertData($table_name,$data,$return_last_id=true)
 	{
-		$sql="insert into {$table_name} set ".$this->quote_array($data);
+		$sql="insert into {$table_name} set ".$this->quoteSetArray($data);
 		$ret=$this->execQuick($sql);
 		if(!$return_last_id){return $ret;}
 		$ret=$this->pdo->lastInsertId();
 		return $ret;
 	}
-	public function deleteData($table,$id,$key='id')
+	public function deleteData($table,$id,$key='id',$key_delete='is_deleted')
 	{
-		throw new Exception("DNMVCS Fatal : override me to delete");
-		$sql="delete from {$table_name} where {$key}=? limit 1";
-		return $this->execQuick($sql,$id);
+		if($key_delete){
+			$sql="update {$table_name} set {$key_delete}=1 where {$key}=? limit 1";
+			return $this->execQuick($sql,$id);
+		}else{
+			$sql="delete from {$table_name} where {$key}=? limit 1";
+			return $this->execQuick($sql,$id);
+		}
 	}
 	
 	public function updateData($table_name,$id,$data,$key='id')
 	{
 		if($data[$key]){unset($data[$key]);}
-		$frag=$this->quote_array($data);
+		$frag=$this->quoteSetArray($data);
 		$sql="update {$table_name} set ".$frag." where {$key}=?";
 		$ret=$this->execQuick($sql,$id);
 		return $ret;
