@@ -3,8 +3,9 @@ namespace MY\Service;
 use DNMVCS as DN;
 use MY\Model as M;
 
-class TestService extends DN\DNService
+class TestService
 {
+	use \DNMVCS\DNSingleton;
 	public function foo()
 	{
 		//DN\DNMVCS::Import('ForImport');
