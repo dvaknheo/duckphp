@@ -5,11 +5,10 @@ class SwooleSuperGlobal extends SuperGlobal
 {
 	public function init()
 	{
-		//do nothing
-	}
-	public function run()
-	{
+		$cid = \Swoole\Coroutine::getuid();
+		if(!$cid){ return; }
 		$request=DNSwooleHttpServer::Request();
+		if(!$request){ return; }
 		
 		$this->_GET=$request->get??[];
 		$this->_POST=$request->post??[];

@@ -396,7 +396,7 @@ class DNSwooleHttpServer
 		SwooleContext::G()->initHttp($request,$response);
 		
 		CoroutineSingleton::CloneInstance(SuperGlobal::class);
-		SuperGlobal::G()->run();
+		SuperGlobal::G()->init();
 		
 		if($this->http_handler){
 			$this->runHttpHandler();
