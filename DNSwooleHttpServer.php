@@ -304,15 +304,13 @@ trait DNSwooleHttpServer_SimpleHttpd
 		
 		SwooleContext::G()->onShutdown();
 		\defer(function()use($InitObLevel,$response){
-		for($i=ob_get_level();$i>$InitObLevel;$i--){
-			ob_end_flush();
-		}
-		$this->onHttpClean();
-		
-		$response->end();
+			for($i=ob_get_level();$i>$InitObLevel;$i--){
+				ob_end_flush();
+			}
+			$this->onHttpClean();
+			
+			$response->end();
 		});
-		//response 被使用到，而且出错就要手动 end  还是 OB 层级问题？
-		//onHttpRun(null,null) 则不需要用
 	}
 }
 trait DNSwooleHttpServer_WebSocket
@@ -479,12 +477,11 @@ class DNSwooleHttpServer
 		if($ex instanceof \Swoole\ExitException){
 			return;
 		}
-		//$this->header("HTTP/1.1 500 Internal Error");
 		SwooleContext::G()->response->status(500);
 		if($this->http_exception_handler){
 			($this->http_exception_handler)($ex);
 		}else{
-			echo "DNSwooleHttp Server Error: \n";
+			echo "DNMVCS swoole mode: Server Error: \n";
 			echo $ex;
 		}
 			
@@ -497,11 +494,11 @@ class DNSwooleHttpServer
 	protected function check_swoole()
 	{
 		if(!function_exists('swoole_version')){
-			echo 'PHP Extension swoole needed;';
+			echo 'DNMVCS swoole mode: PHP Extension swoole needed;';
 			exit;
 		}
 		if (version_compare(swoole_version(), '4.2.0', '<')) {
-			echo 'swoole >=4.2.0 needed;';
+			echo 'DNMVCS swoole mode: swoole >=4.2.0 needed;';
 			exit;
 		}
 	}
@@ -521,7 +518,7 @@ class DNSwooleHttpServer
 			$this->check_swoole();
 			
 			if(!$options['port']){
-				echo 'No Port ,set the port';
+				echo 'DNMVCS swoole mode: No Port ,set the port';
 				exit;
 			}
 			if(!$options['websocket_handler']){
@@ -529,6 +526,7 @@ class DNSwooleHttpServer
 			}else{
 				$this->server=new \swoole_websocket_server($options['host'], $options['port']);
 			}
+			//if(start server failed);
 		}
 		if($options['swoole_server_options']){
 			$this->server->set($options['swoole_server_options']);
@@ -561,6 +559,9 @@ class DNSwooleHttpServer
 	public function bindDN($dn_options)
 	{
 		if(!$dn_options){return;}
+		
+		// if run include mode in bindDN mode.
+		
 		$dn_options['swoole']=$dn_options['swoole']??[];
 		$dn_options['swoole']=array_replace_recursive(static::DEFAULT_DN_OPTIONS,$dn_options['swoole']);
 		$dn_swoole_options=$dn_options['swoole'];
