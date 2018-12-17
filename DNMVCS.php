@@ -529,7 +529,7 @@ class DNView
 	}
 	public function _ShowBlock($view,$data=null)
 	{
-		$this->temp_view_file=$this->path.$view.'.php';
+		$this->temp_view_file=$this->path.preg_replace('/\.php$/','',$view).'.php';
 		$data=$data??$this->data;
 		extract($data);
 		include($this->temp_view_file);

@@ -116,22 +116,38 @@ composer create-project dnmvcs-fulltest
 composer require dnmvcs-framework
 ```
 ### 其他方式安装
-
+compser 安装的原理是把 template 目录复制到工程目录，并更改一些代码。
+你可以手动安装 DNMVCS
 1. 下载 DNMVCS。
 2. 把 web 目录设置为 template/public 目录。
-3. 复制 config/setting.sample.php 为 config/setting.php
-4. 浏览器中打开主页出现欢迎页就表示基本成功
+4. 浏览器中打开主页出现相似欢迎页就表示基本成功
+只不过顶行会多个警告提示
+```
+Don't run the template file directly
+```
+这警告提示请勿把 template 目录直接作为工程目录。
 
-如果漏了修改 config/setting.php 会提示：
+不推荐直接在 dnmvcs 目录里开始工程。
+
+而是应该单独把 dnmvcs 放在独立的目录里，调整 public/index.php 的 require 语句指向 DNMVCS/DNMVCS.php
+
+修改 config/setting.php ，如果少了这不会有提示：
 ```
 DNMVCS Fatal: no setting file[【配置文件的完整路径】]!,change setting.sample.php to setting.php !
 ```
-不推荐直接在 dnmvcs 目录里开始工程。
-而是应该单独把 dnmvcs 放在独立的目录里，调整 public/index.php 的 require 语句指向 DNMVCS/DNMVCS.php
-
+原因
 *DNMVCS并非一定要外置设置文件，有选项可改为使用内置设置选项。满足单一文件模式的爱好*
+### swoole 方式运行
+如果你安装了 swoole 4.2.0 以及以上扩展。
+
+在 工程的 bin 目录下运行命令行
+```
+php start_server.php
+```
+打开 127.0.0.1:9528 即可得到相同欢迎页面
 
 ### 后续的工作和可能省略的。
+
 还有哪些没检查的？ 服务器配置 PATH_INFO 对了没有。 数据库也没配置和检查。
 
 开始学习吧！
@@ -318,6 +334,9 @@ class App extends \DNMVCS\DNMVCS
     }
 }
 ```
+可以在这个类做覆盖 DNMVCS 类的事。
+
+
 这就是 DNMVCS 下的简单流程了。其他开发类似。
 
 这个例子在fulltest 里有
@@ -983,14 +1002,14 @@ _Setting($key)
 _Config($key,$file_basename='config')
 _LoadConfig($file_basename='config')
 
-    protected function include_file($file)
+ protected function loadFile($basename,$checkfile=true)
 
     DNConfiger 类获得配置设置
 ## DNView 视图类
     init($path)
 
-    _Show($data=[],$view)
-    _ShowBlock($view,$data=null)
+_Show($data=[],$view)
+_ShowBlock($view,$data=null)
     assignViewData($key,$value=null)
     setBeforeShow($callback)
     setViewWrapper($head_file,$foot_file)
@@ -999,38 +1018,49 @@ _LoadConfig($file_basename='config')
 这应该会被扩展,加上权限判断等设置
 路由类是很强大扩展性很强的类。
 
-    _URL($url=null)
-    _Parameters()
-    init($options)
-    run()
-    set404($callback)
-    defaultURLHandler()
+_URL($url=null)
+
+    获得 URL地址
+defaultURLHandler($url=null)
+
+    默认的 URL 地址
+_Parameters()
+
+    获得切片
+init($options)
+
+    初始化    
+set404($callback)
+
     set404 设置404 回调
+setURLHandler
 
-    protected getRouteHandleByFile
-    protected getObecjectToCall($class_name)
-    protected getMethodToCall($obj,$method)
-文件模式的路由
-
-    public  assignRoute($key,$callback=null)
-映射模式的路由。
-
-    getRouteCallingPath()
-    getRouteCallingClass()
-    getRouteCallingMethod()
-以上三组，是当前路径，当前类，当前方法。
-当前方法用于权限的判断。如跳过login 方法其他都要权限。
-当前类如果为空，说明是 rewrite 过来的。
-当前路径用于如果是切片的，找回未切片的路径。
-
-高级模式
-
-setURLHandle
-    
-    替换 URL()函数的实现。
+    替换 URL()函数的实现。   
+getURLHandler
+    获得 URL()函数的实现。
 addRouteHook($hook,$prepend=false)
     
     添加路由的hook,$prepend  在最前面加
+    run()
+
+getRouteCallingPath()
+
+getRouteCallingClass()
+
+getRouteCallingMethod()
+
+    以上三组，是当前路径，当前类，当前方法。
+    当前方法用于权限的判断。如跳过login 方法其他都要权限。
+    当前类如果为空，说明是 rewrite 过来的。
+    当前路径用于如果是切片的，找回未切片的路径。
+protected getRouteHandleByFile
+protected getCurrentClassAndMethod
+protected getObecjectToCall($class_name)
+protected getMethodToCall($obj,$method)
+protected includeControllerFile
+
+    以上是内部方法。
+    
 ## DNDBManager 数据库管理类
 init($database_config_list=[])
 
@@ -1067,6 +1097,8 @@ DNAutoLoader 做了防多次加载和多次初始化。
     assignPathNamespace()
 ## DNRuntimeState 状态类
 用于运行时状态的保存
+## DNSystemWrapper 系统包裹类
+用于 setcookie, header 函数的替换。
 # 第六章 DNMVCS 全部文件和类说明
 这个章节说明 DNMVCS 的各个文件。
 并在此把次要的类和文件展示出来
@@ -1538,6 +1570,7 @@ DNSwooleHttpServer::()->init($server_options);
 
 ## class DBConnectPoolProxy
 DB连接代理
+
     public function setDBHandler($db_create_handler,$db_close_handler=null)
     public function onCreate($db_config,$tag)
     public function onClose($db,$tag)
