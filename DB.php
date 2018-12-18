@@ -10,7 +10,7 @@ interface DNDBBasicInterface
 	public function fetchColumn($sql,...$args);
 	public function execQuick($sql,...$args);
 }
-class DNDB implements DNDBBasicInterface
+class DB implements DNDBBasicInterface
 {
 	use DNDB_Ext;
 	

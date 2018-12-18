@@ -1278,8 +1278,8 @@ class DNMVCS
 		
 		$dbm->init($database_list);
 		
-		$db_create_handler=$this->options['db_create_handler']?:[DNDB::class,'CreateDBInstance'];
-		$db_close_handler=$this->options['db_close_handler']?:[DNDB::class,'CloseDBInstance'];
+		$db_create_handler=$this->options['db_create_handler']?:[DB::class,'CreateDBInstance'];
+		$db_close_handler=$this->options['db_close_handler']?:[DB::class,'CloseDBInstance'];
 		$dbm->setDBHandler($db_create_handler,$db_close_handler);
 	}
 	protected function initMisc()
