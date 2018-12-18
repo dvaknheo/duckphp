@@ -14,7 +14,7 @@ class MedooFixed extends \Medoo\Medoo
 	}
 }
 
-class DNMedoo extends MedooFixed
+class MedooDB extends MedooFixed
 {
 	public function close()
 	{
