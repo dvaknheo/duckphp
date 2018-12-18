@@ -1108,8 +1108,8 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
 ```
     ComposerScripts.php     // 和 compose 相关的脚本，用于创建工程用
         ComposerScripts
-	DNDB.php
-	    DNDB
+	DB.php
+	    DB
     DNMVCS.php              // 主入口文件 DNMVCS 类，不引用其他文件。
         DNMVCS
             trait DNDI
@@ -1135,8 +1135,8 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
             ProjectCommonConfiger extends DNConfiger
             FunctionDispatcher
             FunctionView extends DNView
-    DNMedoo.php             Medoo 数据库类的扩展
-        DNMedoo extends MedooFixed
+    MedooDB.php             Medoo 数据库类的扩展
+        MedooDB extends MedooFixed
             MedooFixed extends \Medoo\Medoo
     DNSingleton.php         单例 trait 
         trait DNSingleton
@@ -1175,9 +1175,9 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
     composer.json           Composer 系统的 json 文件
     template/               模板文件夹
 ```
-## DNDB.php
+## DB.php
 DNMVCS 自带了一个简单的 DB 类。
-DN::DB()得到的就是这个 DNDB 类。
+DN::DB()得到的就是这个 DB 类。
 DB 的配置在 setting.sample.php 里有。
 DNDB 简单实现的一个数据库类。封装了 PDO， 和 Medoo 兼容，也少了 Medoo 的很多功能。
 下面主要说 DB 类的用法
@@ -1220,8 +1220,8 @@ DNMedoo 类的除了默认的 Medoo 方法，还扩展了 DNDB 类同名方法�
 使得 DNMedoo 替换 DNDB
 ```php
 \DNMVCS\DNDBManager::G()->setDBHandler(
-    [\DNMVCS\DNMedoo::class,'CreateDBInstance']
-    [\DNMVCS\DNMedoo::class,'CloseDBInstance']
+    [\DNMVCS\MedooDB::class,'CreateDBInstance']
+    [\DNMVCS\MedooDB::class,'CloseDBInstance']
 );
 ```
 ## DNSingleton.php
