@@ -382,6 +382,8 @@ class DNSwooleHttpServer
 			'not_empty'=>true,
 			'db_reuse_size'=>0,
 			'db_reuse_timeout'=>5,
+			'http_handler_basepath'=>'',
+			'http_handler_root'=>null,
 		];
 	public $server=null;
 	

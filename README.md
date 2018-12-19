@@ -423,7 +423,7 @@ $tag 对应 $setting['database_list'][$tag]。
 
 你不必担心每次框架初始化会连接数据库。只有第一次调用 DNMVCS::DB() 的时候，才进行数据库类的创建。
 
-DNDB 的使用方法，看后面的参考。
+DB 的使用方法，看后面的参考。
 示例如下
 ```php
 $sql="select 1+? as t";
@@ -538,6 +538,7 @@ const DNRoute::DEFAULT_OPTIONS=[
     'prefix_no_namespace_mode'=>''      // 无命名空间模式时候的类名前缀
     'enable_paramters'=>false,          // 支持切片模式
     'enable_post_prefix'=>true,         // 把 POST 的 映射为 do_$action 方法
+    'prefix_post'=>'do_',         // 把 POST 的 映射为 do_$action 方法
         'path_controller'=>'app/Controller',    //controller 的目录
         'namespace_controller'=>'MY\Controller',   //controller 的命名空间 MY\Controller
         'default_controller_class'=>'DNController', //默认 controller 名字为 DNController
@@ -835,8 +836,10 @@ setBeforeRunHandler($before_run_handler)
     在run之前执行回调。 SwooleHttpServer 用到这个。
 ## 替换函数
 static header()
+
     兼容 swoole header
 static setcookie()
+
     兼容 swoole setcookie
 ## 事件方法
 实现了默认事件回调的方法。扩展以展现不同事件的显示。
@@ -984,10 +987,10 @@ init(callback $exception_handler,$dev_error_handler)
     初始化
 setDefaultExceptionHandler($default_exception_handler)
 
-    设置
+    设置默认异常处理
 assignExceptionHandler($class,$callback=null)
 
-    //
+    //分配异常处理
 setMultiExceptionHandler(array $classes,$callback)
     
     //
@@ -1210,14 +1213,14 @@ DNMVCS 类和附属类的文件。已经在前面介绍
 ## DNMVCSExt.php
 DNMVCSExt 类和附属类的文件，将在后面介绍。
 相关 $options['ext'] 的配置 用到这个类和附属类
-## DNMedoo.php
-DNMedoo 是 Medoo 的一个简单扩展，和 DNDB 接口一致。
-因为 DNMedoo 对 Medoo 有依赖关系，所以单独放在一个文件。
-DNMedoo 类的除了默认的 Medoo 方法，还扩展了 DNDB 类同名方法。
+## MedooDB.php
+MedooDB 是 Medoo 的一个简单扩展，和 DNDB 接口一致。
+因为 MedooDB 对 Medoo 有依赖关系，所以单独放在一个文件。
+MedooDB 类的除了默认的 Medoo 方法，还扩展了 DNDB 类同名方法。
 
 ### 使用方法：
 在你的 DNMVCS->init() 后面段加上下面代码，
-使得 DNMedoo 替换 DNDB
+使得 MedooDB 替换 DNDB
 ```php
 \DNMVCS\DNDBManager::G()->setDBHandler(
     [\DNMVCS\MedooDB::class,'CreateDBInstance']
@@ -1244,9 +1247,6 @@ $_GET ,$_POST 在兼容 Swoole 环境下，变成 ,SuperGlobal::G()->_GET ,Super
 *我也想缩短，但实在没法再短了。.*
 
 
-写入对象。SuperGlobal 类并没采用对称设计。因为 写入 ENV 一般是用不到的。
-写入 Cookie 数组不是更改 cookie ， 写入  session 和 读取 session 要对称
-
 Session 相关
 
 SuperGlobal::StarSession
@@ -1266,9 +1266,8 @@ SuperGlobal::SetSessionName($$name)
 ## SwooleSessionHandler.php
     一般不直接调用 ,swoole 下一个文件型的 session_handler
     如果你有更好方案，用 SuperGlobal::SetSessionHandler($handler);替换
-## SwooleSuperGlobal
+## SwooleSuperGlobal.php
     Swoole 环境下 SuperGlobal 的实现。
-
 ## Tookit.php 未使用用于参考的工具箱类。
 一些可能会用到的类，需要的时候把他们复制走。
 
