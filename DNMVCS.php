@@ -187,6 +187,7 @@ class DNRoute
 			'default_controller_class'=>'DNController',
 			
 			'enable_post_prefix'=>true,
+			'prefix_post'=>'_do',
 			'disable_default_class_outside'=>false,
 		];
 	
@@ -207,6 +208,7 @@ class DNRoute
 	protected $default_controller_class='DNController';
 	protected $enable_post_prefix=true;
 	protected $disable_default_class_outside=false;
+	protected $prefix_post='do_';
 	
 	protected $path;
 	
@@ -222,7 +224,6 @@ class DNRoute
 	
 	public $routeHooks=[];
 	public $callback=null;
-	public $prefix_post='do_';
 	
 	public function _URL($url=null)
 	{
@@ -265,6 +266,7 @@ class DNRoute
 		$this->default_controller_class=$options['default_controller_class'];
 		
 		$this->enable_post_prefix=$options['enable_post_prefix'];
+		$this->prefix_post=$options['prefix_post'];
 		$this->disable_default_class_outside=$options['disable_default_class_outside'];
 
 		$this->script_filename=$_SERVER['SCRIPT_FILENAME']??'';
@@ -1067,6 +1069,7 @@ trait DNMVCS_Handler
 	}
 	public function onDevErrorHandler($errno, $errstr, $errfile, $errline)
 	{
+		//
 		if(!$this->isDev){return;}
 		$descs=array(
 			E_USER_NOTICE=>'E_USER_NOTICE',
@@ -1104,7 +1107,7 @@ EOT;
 		if(!is_string($error_view)){ return; }
 		DNView::G()->_ShowBlock($error_view,$data);
 	}
-	
+	//
 }
 
 class DNMVCS
