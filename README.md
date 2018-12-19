@@ -1477,7 +1477,7 @@ const DEFAULT_OPTIONS=[
         'websocket_close_handler'=>null,        //websocket 关闭
 ];
 ```
-swoole 下， DNMVCS  入口选项 ['swoole']的选项
+swoole 下， DNMVCS  入口选项 ['swoole'] 的选项
 ```php
 const DEFAULT_DN_OPTIONS=[
         'not_empty'=>true,  //用于数组不空
@@ -1507,14 +1507,14 @@ DNSwooleHttpServer 运行 DNMVCS 可以有三种模式
 
 DNSwooleHttpServer 可以让你用 echo 直接输出。
 
-http_exception_handler，单文件模式和目录模式，你可以在这里处理 404。
+http_exception_handler，用于 单文件模式和目录模式，你可以在这里处理 404。
 
 ### DNMVCS 整合到 DNSwooleServer
 
 ```php
 <?php
 
-\DNMVCS\DNMVCS::RunAsServer($server_options,$dn_options);
+\DNMVCS\DNMVCS::RunAsServer($server_options,$dn_options,$server=null);
 // 展开模式 \DNMVCS\DNSwooleServer::G()->init($server_options,$server)->bindDN($dn_options)->run();
 
 DNSwooleHttpServer::()->init($server_options);
