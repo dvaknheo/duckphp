@@ -1,3 +1,20 @@
+1.0.4 到 1.0.5变更
+DNDB 类改成 DB 类， DNMedoo 改成 MedooDB 
+DNDB 类和 DBExt 类合并
+DNRoute 类 添加选项 prefix_post
+ShowBlock 现在可加 .php 后缀，也可以省
+修复 DB_R ，现在 database_list 可以加键名 DB() 方法会默认使用第一个键名。
+SuperGlobal 删除操作方法，现在只有用数组变量方式调用
+只支持 swoole 4.2.0 及以上版本。
+开始  swoole 服务前会有判断
+删除了 DNService DNModel  类
+start_server.php 加了默认端口 9528
+
+TODO swoole 模式， handler 模式 加www 目录文件 兼容选项
+TODO OneFile 模式，添加类选项。
+TODO 不再需要 DB_W , DB_R
+TODO ，添加 DNDBInterface ，规范数据库最小子集
+----
 1.0.3 到 1.0.4变更
 SuperGlobal::SetSessionName($name) 代替 session_name($name);
 ComposerScripts 添加 PostInstall
