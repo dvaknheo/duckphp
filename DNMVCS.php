@@ -187,7 +187,7 @@ class DNRoute
 			'default_controller_class'=>'DNController',
 			
 			'enable_post_prefix'=>true,
-			'prefix_post'=>'_do',
+			'prefix_post'=>'do_',
 			'disable_default_class_outside'=>false,
 		];
 	

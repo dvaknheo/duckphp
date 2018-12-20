@@ -1,6 +1,7 @@
 <?php
 namespace DNMVCS;
-class DNSystemWrapper
+
+class SystemWrapper
 {
 	use DNSingleton;
 	

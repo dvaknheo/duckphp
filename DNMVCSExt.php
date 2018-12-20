@@ -168,7 +168,6 @@ class FunctionDispatcher
 	use DNSingleton;
 	
 	protected $path_info;
-	public $post_prefix='do_';
 	public $prefix='action_';
 	public $default_callback='action_index';
 	public function hook($route)
@@ -178,21 +177,47 @@ class FunctionDispatcher
 	}
 	public function runRoute()
 	{
-		$post=(DNRoute::G()->request_method==='POST')?$this->post_prefix:'';
+		$route=DNRoute::G();
+		$post=($route->request_method==='POST')?$route->options['prefix_post']:'';
 		$callback=$this->prefix.$post.$this->path_info;
-		if(is_callable($callback)){
-			($callback)();
-		}else{
-			if(is_callable($this->default_callback)){
-				($this->default_callback)();
+		
+		$path_info=$this->path_info?:'index';
+		$prefix=str_replace('\\','/',$this->prefix);
+		$fullpath=$prefix.$path_info;
+		$blocks=explode('/',$fullpath);
+		$method=array_pop($blocks);
+		$classname=implode('\\',$blocks);
+		if($classname){
+			if(class_exists($classname)){
+			
+				$class=new $classname();
+				$method=$post?$post.$method:$method;
+				$callback=[$class,$method];
+				
 			}else{
-				(DNRoute::G()->the404Handler)();
-				return false;
+				$callback=null;
 			}
+		}else{
+			$method=$post?$post.$path_info:$path_info;
+			$method=$this->prefix.$method;
+			$callback=$method;
+			if(!is_callable($callback)){
+				$callback=null;
+			}
+			
 		}
-		return true;;
+		if($callback){
+			($callback)();
+			return true;
+		}
+		if(is_callable($this->default_callback)){
+			($this->default_callback)();
+			return true;
+		}else{
+			($route->the404Handler)();
+			return false;
+		}
 	}
-	
 }
 class FunctionView extends DNView
 {
@@ -259,6 +284,9 @@ class DNMVCSExt
 			'use_common_autoloader'=>false,
 				'fullpath_config_common'=>'',
 			'use_strict_db_manager'=>false,
+			
+			'session_auto_start'=>false,
+			'session_name'=>'DNSESSION',
 		];
 	public function afterInit($dn)
 	{
@@ -289,6 +317,11 @@ class DNMVCSExt
 		}
 		if($options['use_function_dispatch']){
 			DNRoute::G()->addRouteHook([FunctionDispatcher::G(),'hook']);
+		}
+		if($options['session_auto_start']){
+			SuperGlobal::SetSessionName($options['session_name']);
+			SuperGlobal::StartSession();
+		
 		}
 	}
 	public static function CheckDBPermission()
