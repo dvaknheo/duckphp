@@ -655,43 +655,6 @@ class DNDBManager
 		$this->databases=[];
 	}
 }
-class DNSystemWrapper
-{
-	use DNSingleton;
-	
-	public $header_handler=null;
-	public $cookie_handler=null;
-	
-	public function header($output ,bool $replace = true , int $http_response_code=0)
-	{
-		if($this->header_handler){
-			return ($this->header_handler)($output,$replace,$http_response_code);
-		}
-		if(PHP_SAPI==='cli'){ return; }
-		if(headers_sent()){ return; }
-		return header($output,$replace,$http_response_code);
-	}
-	
-	public function setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
-	{
-		if($this->cookie_handler){
-			return ($this->cookie_handler)($key,$value,$expire,$path,$domain,$secure,$httponly);
-		}
-		return setcookie($key,$value,$expire,$path,$domain,$secure,$httponly);
-	}
-	public function set_exception_handler(callable $exception_handler)
-	{
-		//static::G()->http_exception_handler=$exception_handler;
-	}
-	public function register_shutdown_function(callable $callback,...$args)
-	{
-		//SwooleContext::G()->shutdown_function_array[]=func_get_args();
-	}
-	public function exitSystem($code)
-	{
-		//TODO
-	}
-}
 trait DNMVCS_Glue
 {
 	//route
@@ -844,19 +807,19 @@ trait DNMVCS_Glue
 	
 	public static function header($output ,bool $replace = true , int $http_response_code=0)
 	{
-		return DNSystemWrapper::G()->header($output,$replace,$http_response_code);
+		return SystemWrapper::G()->header($output,$replace,$http_response_code);
 	}
 	public static function setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
 	{
-		return DNSystemWrapper::G()->setcookie($key,$value,$expire,$path,$domain,$secure,$httponly);
+		return SystemWrapper::G()->setcookie($key,$value,$expire,$path,$domain,$secure,$httponly);
 	}
 	public function setHandlerForHeader($header_handler)
 	{
-		DNSystemWrapper::G()->header_handler=$header_handler;
+		SystemWrapper::G()->header_handler=$header_handler;
 	}
 	public function setHandlerForSetCookie($cookie_handler)
 	{
-		DNSystemWrapper::G()->cookie_handler=$cookie_handler;
+		SystemWrapper::G()->cookie_handler=$cookie_handler;
 	}
 }
 trait DNMVCS_Misc
