@@ -1,3 +1,6 @@
+1.0.5 到 1.0.6变更
+修复  prefix_post 应该为 do_ 而不是 _do
+----
 1.0.4 到 1.0.5变更
 DNDB 类改成 DB 类， DNMedoo 改成 MedooDB 
 DNDB 类和 DBExt 类合并

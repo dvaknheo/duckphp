@@ -1075,7 +1075,7 @@ EOT;
 
 class DNMVCS
 {
-	const VERSION = '1.0.5';
+	const VERSION = '1.0.6';
 	
 	use DNSingleton;
 	use DNDI;
