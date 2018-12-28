@@ -382,8 +382,7 @@ class DNSwooleHttpServer
 			'not_empty'=>true,
 			'db_reuse_size'=>0,
 			'db_reuse_timeout'=>5,
-			'http_handler_basepath'=>'',
-			'http_handler_root'=>null,
+			'use_http_handler_root'=>false,
 		];
 	public $server=null;
 	
@@ -406,61 +405,84 @@ class DNSwooleHttpServer
 			$path_info=SuperGlobal::G()->_SERVER['REQUEST_URI'];
 			$file=$this->options['http_handler_basepath'].$this->options['http_handler_file'];
 			$document_root=dirname($file);
-			$this->includeHttpFile($file,$document_root,$path_info);
+			$this->includeHttpPhpFile($file,$document_root,$path_info);
 			return;
 		}
 		if($this->options['http_handler_root']){
 			$http_handler_root=$this->options['http_handler_basepath'].$this->options['http_handler_root'];
 			$http_handler_root=rtrim($http_handler_root,'/').'/';
-			
 			$document_root=$this->static_root?:rtrim($http_handler_root,'/');
 			
-			$request_uri=SuperGlobal::G()->_GET['REQUEST_URI'];
 			
+			$request_uri=SuperGlobal::G()->_SERVER['REQUEST_URI'];
 			$path=parse_url($request_uri,PHP_URL_PATH);
-			if(strpos($path,'/../')!==false || strpos($path,'/./')!==false){
-				throw new DNSwooleException("404 Not Found",404);
+			$flag=$this->runHttpFile($path,$document_root);
+			if(!$flag){
+				throw new DNSwooleException("404 Not Found!",404);
 			}
-			
-			$full_file=$document_root.$path;
-			if($path==='/'){
-				$this->includeHttpFile($document_root.'/index.php',$document_root,'');
-				return;
-			}
-			if(is_file($full_file)){
-				$ext=pathinfo($full_file,PATHINFO_EXTENSION);
-				if($ext==='php'){
-					$file=$full_file;
-					$path_info='';
-					$this->includeHttpFile($file,$document_root,$path_info);
-					return;
-				}
-				$mime=mime_content_type($fullfile);
-				SwooleContext::G()->response->header('Content-Type',$mime);
-				SwooleContext::G()->response->sendfile($full_file);
-				return;
-			}
-			
-			$max=20;
-			$offset=0;
-			for($i=0;$i<$max;$i++){
-				$offset=strpos($path,'.php/',$offset);
-				if(false===$offset){break;}
-				$offset++;
-				$file=substr($path,0,$offset).'.php';
-				$path_info=substr($path,$offset+strlen('.php'));
-				$file=$document_root.$file;
-				if(is_file($file)){
-					$this->includeHttpFile($file,$document_root,$path_info);
-					return;
-				}
-			}
-			throw new DNSwooleException("404 Not Found!",404);
-			
+			return;
 		}
-		$this->includeHttpFile($file,$document_root,$path_info);
+		$this->includeHttpPhpFile($file,$document_root,$path_info);
 	}
-	protected function includeHttpFile($file,$document_root,$path_info)
+	protected function runHttpFile($path,$document_root)
+	{
+	
+		if(strpos($path,'/../')!==false || strpos($path,'/./')!==false){
+			return false;
+		}
+		
+		$full_file=$document_root.$path;
+		if($path==='/'){
+			$this->includeHttpPhpFile($document_root.'/index.php',$document_root,'');
+			return true;
+		}
+		if(is_file($full_file)){
+			$this->includeHttpFullFile($full_file,$document_root,'');
+			return true;
+		}
+		
+		$max=1000;
+		$offset=0;
+		for($i=0;$i<$max;$i++){
+			$offset=strpos($path,'.php/',$offset);
+			if(false===$offset){break;}
+			$file=substr($path,0,$offset).'.php';
+			$path_info=substr($path,$offset+strlen('.php'));
+			$file=$document_root.$file;
+			if(is_file($file)){
+				$this->includeHttpPhpFile($file,$document_root,$path_info);
+				return true;
+			}
+			
+			$offset++;
+		}
+		
+		$dirs=explode('/',$path);
+		$prefix='';
+		foreach($dirs as $block){
+			$prefix.=$block.'/';
+			$file=$document_root.$prefix.'index.php';
+			if(is_file($file)){
+				$path_info=substr($path,strlen($prefix)-1);
+				$this->includeHttpPhpFile($file,$document_root,$path_info);
+				return true;
+			}
+		}
+		return false;
+	}
+	protected function includeHttpFullFile($full_file,$document_root,$path_info='')
+	{
+		$ext=pathinfo($full_file,PATHINFO_EXTENSION);
+		if($ext==='php'){
+			$this->includeHttpPhpFile($full_file,$document_root,$path_info);
+			return;
+		}
+		$mime=mime_content_type($full_file);
+		SwooleContext::G()->response->header('Content-Type',$mime);
+		SwooleContext::G()->response->sendfile($full_file);
+		return;
+	}
+	protected function includeHttpPhpFile($file,$document_root,$path_info)
 	{
 		SuperGlobal::G()->_SERVER['PATH_INFO']=$path_info;
 		SuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=$document_root;
@@ -558,11 +580,27 @@ class DNSwooleHttpServer
 
 		return $this;
 	}
+	public function on404()
+	{
+		CoroutineSingleton::CloneInstance(DNMVCS::class);
+		
+		$http_handler_root=$this->options['http_handler_basepath'].$this->options['http_handler_root'];
+		$http_handler_root=rtrim($http_handler_root,'/').'/';
+		$document_root=$this->static_root?:rtrim($http_handler_root,'/');
+		
+		
+		$request_uri=SuperGlobal::G()->_SERVER['REQUEST_URI'];
+		$path=parse_url($request_uri,PHP_URL_PATH);
+		
+		$flag=$this->runHttpFile($path,$document_root);
+		if(!$flag){
+			DNMVCS::G()->onShow404();
+		}
+		
+	}
 	public function bindDN($dn_options)
 	{
-		if(!$dn_options){return;}
-		
-		// if run include mode in bindDN mode.
+		if(!$dn_options){return $this;}
 		
 		$dn_options['swoole']=$dn_options['swoole']??[];
 		$dn_options['swoole']=array_replace_recursive(static::DEFAULT_DN_OPTIONS,$dn_options['swoole']);
@@ -581,6 +619,10 @@ class DNSwooleHttpServer
 			$dn->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
 		}
 		$dn->setHandlerForHeader([static::class,'header']);
+		
+		if($dn_swoole_options['use_http_handler_root']){
+			DNRoute::G()->set404([$this,'on404']);
+		}
 		
 		$dn->onBeforeRun(function(){
 			CoroutineSingleton::CloneInstance(DNExceptionManager::class);
