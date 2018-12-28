@@ -617,12 +617,13 @@ class DNSwooleHttpServer
 			$dbm=DNDBManager::G();
 			DBConnectPoolProxy::G()->init($db_reuse_size,$db_reuse_timeout)->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
 			$dn->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
-		}
-		$dn->setHandlerForHeader([static::class,'header']);
-		
+		}		
 		if($dn_swoole_options['use_http_handler_root']){
 			DNRoute::G()->set404([$this,'on404']);
 		}
+		SystemWrapper::G()->header_handler=[static::class,'header'];
+		SystemWrapper::G()->cookie_handler=[static::class,'setcookie'];
+		
 		
 		$dn->onBeforeRun(function(){
 			CoroutineSingleton::CloneInstance(DNExceptionManager::class);
