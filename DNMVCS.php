@@ -1143,6 +1143,7 @@ class DNMVCS
 				'use_function_dispatch'=>true,
 				'use_function_view'=>true,
 				
+				'session_auto_start'=>true,
 			]
 		];
 		$options=array_replace_recursive($default_options,$options);

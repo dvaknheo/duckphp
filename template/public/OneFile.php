@@ -59,7 +59,8 @@ function action_del()
 	}
 	unset(SG::G()->_SESSION['token']);
 	$data['msg']=$flag?'':'验证失败';
-		$data['url_back']=DN::URL('');
+	$data['url_back']=DN::URL('');
+	
 	DN::Show($data,'dialog');
 }
 function action_do_edit()
@@ -82,11 +83,7 @@ function H($str){return DN::H($str);}
 $options=[];
 if(defined('DNMVCS_WARNING_IN_TEMPLATE')){ echo "<div>Don't run the template file directly </div>"; }
 if(defined('DNMVCS_WARNING_IN_TEMPLATE')){ $options['setting_basename']=''; }
-DN::RunOneFileMode($options,function(){
-	SG::SetSessionName('MYSESS');
-	SG::StartSession();
-	}
-);
+DN::RunOneFileMode($options);
 
 if(!$view_data){return;} 
 extract($view_data);
