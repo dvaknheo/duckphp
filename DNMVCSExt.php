@@ -41,8 +41,6 @@ class SimpleRouteHook
 		}else{
 			$path_info=$_REQUEST[$k]??null;
 		}
-	
-		
 		
 		$path_info=ltrim($path_info,'/');
 		$route->path_info=$path_info;
@@ -61,29 +59,31 @@ class StrictService
 	public static function _before_instance($object)
 	{
 		if(!DNMVCS::Developing()){return $object;}
-		$class=static::class;
 		list($_0,$_1,$caller)=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,3);
 		$caller_class=$caller['class'];
 		$namespace=DNMVCS::G()->options['namespace'];
+		if(substr($class,0,0-strlen("LibService"))=="BatchService"){
+			return $object;
+		}
 		if(substr($class,0,0-strlen("LibService"))=="LibService"){
 			do{
-				if(substr($caller_class,0,strlen("\\$namespace\\Service\\"))=="\\$namespace\\Service\\"){break;}
+				if(substr($caller_class,0,strlen("$namespace\\Service\\"))=="$namespace\\Service\\"){break;}
 				if(substr($caller_class,0,0-strlen("Service"))=="Service"){break;}
-				DNMVCS::ThrowOn(true,"LibService Must Call By Serivce");
+				DNMVCS::ThrowOn(true,"LibService Must Call By Serivce($caller_class)");
 			}while(false);
 		}else{
 			do{
-				if(substr($caller_class,0,strlen("\\$namespace\\Service\\"))=="\\$namespace\\Service\\"){
-					DNMVCS::ThrowOn(true,"Service Can not call Service");
+				if(substr($caller_class,0,strlen("$namespace\\Service\\"))=="$namespace\\Service\\"){
+					DNMVCS::ThrowOn(true,"Service Can not call Service($caller_class)");
 				}
 				if(substr($caller_class,0,strlen("Service"))=="Service"){
-					DNMVCS::ThrowOn(true,"Service Can not call Service");
+					DNMVCS::ThrowOn(true,"Service Can not call Service($caller_class)");
 				}
-				if(substr($caller_class,0,strlen("\\$namespace\\Model\\"))=="\\$namespace\\Model\\"){
-					DNMVCS::ThrowOn(true,"Service Can not call by Model");
+				if(substr($caller_class,0,strlen("$namespace\\Model\\"))=="$namespace\\Model\\"){
+					DNMVCS::ThrowOn(true,"Service Can not call by Model($caller_class)");
 				}
 				if(substr($caller_class,0,strlen("Model"))=="Model"){
-					DNMVCS::ThrowOn(true,"Service Can not call by Model");
+					DNMVCS::ThrowOn(true,"Service Can not call by Model($caller_class)");
 				}	
 				
 			}while(false);
@@ -103,11 +103,13 @@ class StrictModel
 	{
 		
 		if(!DNMVCS::Developing()){return $object;}
+		
 		list($_0,$_1,$caller)=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,3);
 		$caller_class=$caller['class'];
+		
 		$namespace=DNMVCS::G()->options['namespace'];
 		do{
-			if(substr($caller_class,0,strlen("\\$namespace\\Service\\"))=="\\$namespace\\Service\\"){break;}
+			if(substr($caller_class,0,strlen("$namespace\\Service\\"))=="$namespace\\Service\\"){break;}
 			if(substr($caller_class,0,0-strlen("Service"))=="Service"){break;}
 			if(substr($caller_class,0,0-strlen("ExModel"))=="ExModel"){break;}
 			DNMVCS::ThrowOn(true,"Model Can Only call by Service or ExModel!");
@@ -177,7 +179,7 @@ class FunctionDispatcher
 	}
 	public function runRoute()
 	{
-		$route=DNRoute::G();
+		$route=DNRoute::G(); //TODO; module , action mode;
 		$post=($route->request_method==='POST')?$route->options['prefix_post']:'';
 		$callback=$this->prefix.$post.$this->path_info;
 		
@@ -328,10 +330,14 @@ class DNMVCSExt
 	{
 		if(!DNMVCS::Developing()){return;}
 		
-		list($_0,$_1,$_2,$caller,$bak)=$backtrace=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,5);
-		
-		$caller_class=$caller['class'];
-		if($caller_class===DNMVCS::class){$caller_class=$bak['class'];}
+		$backtrace=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,10);
+		$caller_class='';
+		foreach($backtrace as $i=>$v){
+			if($v['class']===DNMVCS::class){
+				$caller_class=$backtrace[$i+1]['class'];
+				break;
+			}
+		}
 		$namespace=DNMVCS::G()->options['namespace'];
 		$namespace_controller=DNMVCS::G()->options['namespace_controller'];
 		$default_controller_class=DNMVCS::G()->options['default_controller_class'];
@@ -343,8 +349,7 @@ class DNMVCSExt
 			if(substr($caller_class,0,strlen($namespace_controller))==$namespace_controller){
 				DNMVCS::ThrowOn(true,"DB Can not Call By Controller");
 			}
-			
-			if(substr($caller_class,0,strlen("\\$namespace\\Service\\"))=="\\$namespace\\Service\\"){
+			if(substr($caller_class,0,strlen("$namespace\\Service\\"))=="$namespace\\Service\\"){
 				DNMVCS::ThrowOn(true,"DB Can not Call By Service");
 			}
 			if(substr($caller_class,0-strlen("Service"))=="Service"){
