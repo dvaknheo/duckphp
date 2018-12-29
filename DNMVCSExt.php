@@ -175,7 +175,10 @@ class FunctionDispatcher
 	public function hook($route)
 	{
 		$this->path_info=$route->path_info;
-		$route->callback=[$this,'runRoute'];
+		$flag=$this->runRoute();
+		if($flag){
+			$route->callback=function(){};
+		}
 	}
 	public function runRoute()
 	{
@@ -216,7 +219,7 @@ class FunctionDispatcher
 			($this->default_callback)();
 			return true;
 		}else{
-			($route->the404Handler)();
+			//($route->the404Handler)();
 			return false;
 		}
 	}
@@ -276,6 +279,7 @@ class DNMVCSExt
 	use DNSingleton;
 	const DEFAULT_OPTIONS_EX=[
 			'key_for_simple_route'=>null,
+				'key_for_simple_route_module'=>null,
 			
 			'use_function_view'=>false,
 				'function_view_head'=>'view_header',
