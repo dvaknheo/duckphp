@@ -4,6 +4,7 @@ namespace DNMVCS;
 interface DNDBBasicInterface
 {
 	public function close();
+	public function getPDO();
 	public function quote($string);
 	public function fetchAll($sql,...$args);
 	public function fetch($sql,...$args);
@@ -49,6 +50,10 @@ class DB implements DNDBBasicInterface
 	{
 		$this->rowCount=0;
 		$this->pdo=null;
+	}
+	public function getPDO()
+	{
+		return $this->pdo;
 	}
 	public function quote($string)
 	{
