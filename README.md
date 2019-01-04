@@ -1465,7 +1465,7 @@ const DEFAULT_OPTIONS=[
         
         'host'=>'0.0.0.0',  // IP
         'port'=>0,          //端口
-        
+        'http_handler_basepath'=>'',
         'http_handler_root'=>null,      // php 的目录和静态目录的不相同，留空
         'http_handler_file'=>null,      // 启动文件 留空将会使用 http_handler
         'http_handler'=>null,           // 启动方法，
@@ -1483,6 +1483,7 @@ const DEFAULT_DN_OPTIONS=[
         'not_empty'=>true,  //用于数组不空
         'db_reuse_size'=>0,                 // 大于0表示复用数据库连接
         'db_reuse_timeout'=>5,              // 复用数据库连接超时秒数
+		'use_http_handler_root'=>false,             // 复用 http_handler_root 404 后会从目录文件里载入
 
     ];
 ```
