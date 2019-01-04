@@ -42,7 +42,7 @@ trait DNDI
 		return $object;
 	}
 }
-
+if(!trait_exists('DNMVCS\DNThrowQuickly',false)){
 trait DNThrowQuickly
 {
 	public static function ThrowOn($flag,$message,$code=0)
@@ -52,7 +52,7 @@ trait DNThrowQuickly
 		throw new $class($message,$code);
 	}
 }
-
+}
 class DNAutoLoader
 {
 	use DNSingleton;
