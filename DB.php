@@ -1,17 +1,6 @@
 <?php
 namespace DNMVCS;
-
-interface DNDBBasicInterface
-{
-	public function close();
-	public function getPDO();
-	public function quote($string);
-	public function fetchAll($sql,...$args);
-	public function fetch($sql,...$args);
-	public function fetchColumn($sql,...$args);
-	public function execQuick($sql,...$args);
-}
-class DB implements DNDBBasicInterface
+class DB implements DBInterface
 {
 	use DNDB_Ext;
 	
