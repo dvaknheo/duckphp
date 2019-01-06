@@ -1321,7 +1321,8 @@ const DEFAULT_OPTIONS_EX=[
     'use_common_autoloader'=>false,  // 额外 loader ，多工程共享配置用
         'fullpath_config_common'=>'',  //配合上面的使用， 公共文件会被本工程覆盖
     'use_strict_db_manager'=>false, // 严格模式
-    'use_superglobal'=>false, //用 SuperGlobal 代替默认的 超级变量。
+    'session_auto_start' =>false, //自动开启 session 
+    'session_name'=>'DNSESSION',
 ];
 ```
 

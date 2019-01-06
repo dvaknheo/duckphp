@@ -1,3 +1,18 @@
+1.0.6 到 1.0.7变更
+
+DBThrownQuickly 可外放成独立文件
+Done  添加 DNDBInterface
+DB 类 实现 DBInterface 接口 DBInterface 是希望数据库类实现的接口。
+StrictService 部分无效,StrictModel 部分无效修复 ，use_strict_db_manager 部分无效修复。
+use_function_dispatch  模式如果函数不存在则退回类的模式
+Ext 模式添加 session_auto_start session_name
+Done swoole 模式， handler 模式 加www 目录文件 兼容选项
+TODO OneFile 模式，添加类选项。
+Done  OneFile 模式里添加 $init_function 参数 
+//swoole  选项里加  use_http_handler_root 以附加。
+需要 DB_W , DB_R ，考虑后不会去掉。
+
+----
 1.0.5 到 1.0.6变更
 修复  prefix_post 应该为 do_ 而不是 _do
 ----

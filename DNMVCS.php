@@ -26,6 +26,7 @@ trait DNSingleton
 	}
 }
 }
+if(!trait_exists('DNMVCS\DNDI',false)){
 trait DNDI
 {
 	protected $_di_container;
@@ -41,6 +42,7 @@ trait DNDI
 		$this->_di_container[$name]=$object;
 		return $object;
 	}
+}
 }
 if(!trait_exists('DNMVCS\DNThrowQuickly',false)){
 trait DNThrowQuickly
@@ -1075,7 +1077,7 @@ EOT;
 
 class DNMVCS
 {
-	const VERSION = '1.0.6';
+	const VERSION = '1.0.7';
 	
 	use DNSingleton;
 	use DNDI;
