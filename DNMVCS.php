@@ -972,8 +972,11 @@ trait DNMVCS_Handler
 	{
 		$error_404=$this->options['error_404'];
 		
-		static::header('',true,404);
-		
+		if(class_exists(SystemWrapper::class)){
+			SystemWrapper::header('',true,404);
+		}else{
+			if(!headers_sent()){ header('',true,404); }
+		}
 		$use_default_view=$this->checkUseDefaultErrorView($error_404,[]);
 		if($use_default_view){
 			echo "File Not Found\n<!--DNMVCS -->\n";
@@ -991,7 +994,11 @@ trait DNMVCS_Handler
 		$flag=DNExceptionManager::G()->checkAndRunErrorHandlers($ex,true);
 		if($flag){return;}
 		
-		static::header('',true,500);
+		if(class_exists(SystemWrapper::class)){
+			SystemWrapper::header('',true,500);
+		}else{
+			if(!headers_sent()){ header('',true,500); }
+		}
 		$view=DNView::G();
 		
 		$data=[];

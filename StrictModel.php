@@ -1,7 +1,7 @@
 <?php
 namespace DNMVCS;
 
-class StrictModel
+trait StrictModel
 {
 	use DNSingleton { G as public parentG;}
 	public static function G($object=null)

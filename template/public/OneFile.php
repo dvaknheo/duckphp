@@ -82,7 +82,7 @@ function H($str){return DN::H($str);}
 ////////////////////////////////////
 $options=[];
 if(defined('DNMVCS_WARNING_IN_TEMPLATE')){ echo "<div>Don't run the template file directly </div>"; }
-if(defined('DNMVCS_WARNING_IN_TEMPLATE')){ $options['setting_basename']=''; }
+if(defined('DNMVCS_WARNING_IN_TEMPLATE')){ $options['setting_file_basename']=''; }
 DN::RunOneFileMode($options);
 
 if(!$view_data){return;} 
