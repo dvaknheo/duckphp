@@ -394,7 +394,7 @@ class DNMVCSExt
 	}
 	public function _ExitJson($ret)
 	{
-		DNMVCS::header('Content-Type:text/json');
+		SystemWrapper::header('Content-Type:text/json');
 		DNMVCS::G()->onBeforeShow([],'');
 		echo json_encode($ret,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
 		exit;
@@ -405,8 +405,8 @@ class DNMVCSExt
 			//something  wrong
 			exit;
 		}
-		DNMVCS::header('location: '.$url);
-		DNMVCS::header('',true,302);
+		SystemWrapper::header('location: '.$url);
+		SystemWrapper::header('',true,302);
 		DNMVCS::G()->onBeforeShow([],'');
 		exit;
 	}

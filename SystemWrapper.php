@@ -10,8 +10,8 @@ class SystemWrapper
 	
 	public function header($output ,bool $replace = true , int $http_response_code=0)
 	{
-		if($this->header_handler){
-			return ($this->header_handler)($output,$replace,$http_response_code);
+		if(static::G()->header_handler){
+			return (static::G()->header_handler)($output,$replace,$http_response_code);
 		}
 		if(PHP_SAPI==='cli'){ return; }
 		if(headers_sent()){ return; }
@@ -20,8 +20,8 @@ class SystemWrapper
 	
 	public function setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
 	{
-		if($this->cookie_handler){
-			return ($this->cookie_handler)($key,$value,$expire,$path,$domain,$secure,$httponly);
+		if(static::G()->cookie_handler){
+			return (static::G()->cookie_handler)($key,$value,$expire,$path,$domain,$secure,$httponly);
 		}
 		return setcookie($key,$value,$expire,$path,$domain,$secure,$httponly);
 	}

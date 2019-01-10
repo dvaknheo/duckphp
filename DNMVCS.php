@@ -495,24 +495,29 @@ class DNView
 		if(isset($this->before_show_handler)){
 			($this->before_show_handler)($data,$this->view);
 		}
+		$this->prepareFiles();
 		$this->data=array_merge($this->data,$data);
-		$this->view_file=$this->path.rtrim($this->view,'.php').'.php';
 		
-		$this->includeShowFiles();
-	}
-	
-	protected function includeShowFiles()
-	{
 		extract($this->data);
-		if( $this->head_file){
-			$this->head_file=rtrim($this->head_file,'.php').'.php';
+		
+		if($this->head_file){
 			include($this->path.$this->head_file);
 		}
+		
 		include($this->view_file);
 		
-		if( $this->foot_file){
-			$this->foot_file=rtrim($this->foot_file,'.php').'.php';
+		if($this->foot_file){
 			include($this->path.$this->foot_file);
+		}
+	}
+	protected function prepareFiles()
+	{
+		$this->view_file=$this->path.rtrim($this->view,'.php').'.php';
+		if($this->head_file){
+			$this->head_file=rtrim($this->head_file,'.php').'.php';
+		}
+		if($this->foot_file){
+			$this->foot_file=rtrim($this->foot_file,'.php').'.php';
 		}
 	}
 	public function init($path)
@@ -805,23 +810,6 @@ trait DNMVCS_Glue
 	public function setBeforeGetDBHandler($before_get_db_handler)
 	{
 		return DNDBManager::G()->setBeforeGetDBHandler($before_get_db_handler);
-	}
-	
-	public static function header($output ,bool $replace = true , int $http_response_code=0)
-	{
-		return SystemWrapper::G()->header($output,$replace,$http_response_code);
-	}
-	public static function setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
-	{
-		return SystemWrapper::G()->setcookie($key,$value,$expire,$path,$domain,$secure,$httponly);
-	}
-	public function setHandlerForHeader($header_handler)
-	{
-		SystemWrapper::G()->header_handler=$header_handler;
-	}
-	public function setHandlerForSetCookie($cookie_handler)
-	{
-		SystemWrapper::G()->cookie_handler=$cookie_handler;
 	}
 }
 trait DNMVCS_Misc

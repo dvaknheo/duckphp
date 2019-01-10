@@ -834,13 +834,6 @@ assignPathNamespace($path,$namespace=null)
 setBeforeRunHandler($before_run_handler)
 
     在run之前执行回调。 SwooleHttpServer 用到这个。
-## 替换函数
-static header()
-
-    兼容 swoole header
-static setcookie()
-
-    兼容 swoole setcookie
 ## 事件方法
 实现了默认事件回调的方法。扩展以展现不同事件的显示。
 
