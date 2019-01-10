@@ -500,8 +500,9 @@ autoload 自动加载相关的选项
 
 ```php
 const DNMVCS::DEFAULT_OPTIONS=[
+	'namespace'=>'MY',                  // 共享 namespcae 配置
     //'path'=>null,                     // 共享 path 配置
-    'base_class'=>'MY\Base\App',        // override 重写 系统入口类代替 DNMVCS 类。
+    'base_class'=>'Base\App',           // override 重写 系统入口类代替 DNMVCS 类。 \ 开头表示绝对 namespace
         'path_view'=>'view',            // 视图目录，或许会有人改到 app/View
         'path_config'=>'config',        // 配置目录，或许会有人改到 app/View
         'path_lib'=>'lib',              // 用于手动导入 DNMVCS::Import() 的类的目录

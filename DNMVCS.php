@@ -285,7 +285,7 @@ class DNRoute
 		if(substr($namespace_controller,0,1)!=='\\'){
 			$namespace_controller=$namespace.'\\'.$namespace_controller;
 		}
-		$namespace_controller=ltrim($namespace_controller,'/');
+		$namespace_controller=ltrim($namespace_controller,'\\');
 		$this->namespace_controller=$namespace_controller;
 		
 		if(PHP_SAPI==='cli'){
@@ -1099,7 +1099,8 @@ class DNMVCS
 	use DNMVCS_Misc;
 	
 	const DEFAULT_OPTIONS=[
-			'base_class'=>'MY\Base\App',
+			'namespace'=>'MY',
+			'base_class'=>'Base\App',
 			'path_view'=>'view',
 			'path_config'=>'config',
 			'path_lib'=>'lib',
@@ -1202,6 +1203,13 @@ class DNMVCS
 		if(static::class!==self::class){return null;}
 		
 		$base_class=isset($options['base_class'])?$options['base_class']:self::DEFAULT_OPTIONS['base_class'];
+		$namespace=isset($options['namespace'])?$options['namespace']:self::DEFAULT_OPTIONS['namespace'];
+		
+		if(substr($base_class,0,1)!=='\\'){
+			$base_class=$namespace.'\\'.$base_class;
+		}
+		$base_class=ltrim($base_class,'\\');
+		
 		if(!$base_class || !class_exists($base_class)){return null;}
 		return DNMVCS::G($base_class::G())->init($options);
 	}
