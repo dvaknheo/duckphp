@@ -1256,11 +1256,7 @@ SuperGlobal::SetSessionName($$name)
     替代 session_name;
 这些静态方法都是调用下划线前缀的实际类内实现。
 
-## SwooleSessionHandler.php
-    一般不直接调用 ,swoole 下一个文件型的 session_handler
-    如果你有更好方案，用 SuperGlobal::SetSessionHandler($handler);替换
-## SwooleSuperGlobal.php
-    Swoole 环境下 SuperGlobal 的实现。
+
 ## Tookit.php 未使用用于参考的工具箱类。
 一些可能会用到的类，需要的时候把他们复制走。
 
@@ -1591,9 +1587,11 @@ public function onRequest($request,$response)
     public static function CleanUp()
     public static function Dump()
 
-## SuperGlobalSuperGlobal
-    SuperGlobalSuperGlobal 是 Swoole 下 SuperGlobal 类的实现。
-
+## SwooleSuperGlobal
+    SwooleSuperGlobal 是 Swoole 下 SuperGlobal 类的实现。
+## SwooleSessionHandler
+    一般不直接调用 ,swoole 下一个文件型的 session_handler
+    如果你有更好方案，用 SuperGlobal::SetSessionHandler($handler);替换
 
 # 第十一章 DNMVCS 是怎么越做越复杂的
 

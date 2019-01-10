@@ -55,6 +55,11 @@ trait DNThrowQuickly
 	}
 }
 }
+class DNException extends \Exception
+{
+	use DNThrowQuickly;
+}
+
 class DNAutoLoader
 {
 	use DNSingleton;
@@ -781,6 +786,10 @@ trait DNMVCS_Glue
 	{
 		return static::G()->_Import($file);
 	}
+	public static function DI($name,$object=null)
+	{
+		return DNMVCSExt::G()->_DI($name,$object);
+	}
 	public function assignPathNamespace($path,$namespace=null)
 	{
 		return DNAutoLoader::G()->assignPathNamespace($path,$namespace);
@@ -1072,10 +1081,9 @@ EOT;
 
 class DNMVCS
 {
-	const VERSION = '1.0.7';
+	const VERSION = '1.0.8';
 	
 	use DNSingleton;
-	use DNDI;
 	
 	use DNMVCS_Glue;
 	use DNMVCS_Handler;
@@ -1297,9 +1305,4 @@ class DNRuntimeState
 		$this->error_reporting_old =error_reporting();
 		error_reporting($this->error_reporting_old & ~E_NOTICE);
 	}
-}
-/////////////////////////
-class DNException extends \Exception
-{
-	use DNThrowQuickly;
 }

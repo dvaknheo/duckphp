@@ -207,6 +207,8 @@ class FunctionView extends DNView
 class DNMVCSExt
 {
 	use DNSingleton;
+	use DNDI;
+	
 	const DEFAULT_OPTIONS_EX=[
 			'key_for_simple_route'=>null,
 				'key_for_simple_route_module'=>null,
