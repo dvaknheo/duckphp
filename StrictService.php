@@ -19,7 +19,7 @@ trait StrictService
 		if(substr($class,0,0-strlen("LibService"))=="BatchService"){
 			return $object;
 		}
-		if(substr($class,0,0-strlen("LibService"))=="LibService"){
+		if(substr($caller_class,0,0-strlen("LibService"))=="LibService"){
 			do{
 				if(substr($caller_class,0,strlen("$namespace\\Service\\"))=="$namespace\\Service\\"){break;}
 				if(substr($caller_class,0,0-strlen("Service"))=="Service"){break;}

@@ -190,7 +190,8 @@ class DNRoute
 			'with_no_namespace_mode'=>true,
 			'prefix_no_namespace_mode'=>'',
 			'path_controller'=>'app/Controller',
-			'namespace_controller'=>'MY\Controller',
+			'namespace'=>'MY',
+			'namespace_controller'=>'Controller',
 			'default_controller_class'=>'DNController',
 			
 			'enable_post_prefix'=>true,
@@ -265,7 +266,7 @@ class DNRoute
 		$this->options=$options;
 		
 		$this->path=$options['path'].$options['path_controller'].'/';
-		$this->namespace_controller=$options['namespace_controller'];
+		
 		$this->enable_paramters=$options['enable_paramters'];
 		$this->with_no_namespace_mode=$options['with_no_namespace_mode'];
 		$this->prefix_no_namespace_mode=$options['prefix_no_namespace_mode'];
@@ -278,6 +279,14 @@ class DNRoute
 
 		$this->script_filename=$_SERVER['SCRIPT_FILENAME']??'';
 		$this->document_root=$_SERVER['DOCUMENT_ROOT']??'';
+		
+		$namespace=$options['namespace'];
+		$namespace_controller=$options['namespace_controller'];
+		if(substr($namespace_controller,0,1)!=='\\'){
+			$namespace_controller=$namespace.'\\'.$namespace_controller;
+		}
+		$namespace_controller=ltrim($namespace_controller,'/');
+		$this->namespace_controller=$namespace_controller;
 		
 		if(PHP_SAPI==='cli'){
 			$argv=$_SERVER['argv']??[];
