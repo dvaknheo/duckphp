@@ -563,9 +563,9 @@ const DEFAULT_OPTIONS=[
             
             'with_no_namespace_mode'=>true,
             'path_no_namespace_mode'=>'app',
-            
-            'skip_app_autoload'=>false,
+
             'skip_system_autoload'=>false,
+            'skip_app_autoload'=>false,
 
             'enable_paramters'=>false,
             'prefix_no_namespace_mode'=>'',
@@ -574,6 +574,7 @@ const DEFAULT_OPTIONS=[
             'default_controller_class'=>'DNController',
             
             'enable_post_prefix'=>true,
+            'prefix_post' => 'do_',
             'disable_default_class_outside'=>false,
             
             'base_class'=>'Base\App',
@@ -1008,7 +1009,7 @@ _ShowBlock($view,$data=null)
     assignViewData($key,$value=null)
     setBeforeShow($callback)
     setViewWrapper($head_file,$foot_file)
-    protected function includeShowFiles()
+    protected function prepareFiles()
 ## DNRoute 路由类
 这应该会被扩展,加上权限判断等设置
 路由类是很强大扩展性很强的类。
@@ -1105,11 +1106,16 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
     ComposerScripts.php     // 和 compose 相关的脚本，用于创建工程用
         ComposerScripts
 	DB.php
-	    DB
+	    DB implements 
+            trait DB_Ext
+    DBInterface
+        interface DBInterface
     DNMVCS.php              // 主入口文件 DNMVCS 类，不引用其他文件。
+        trait DNSingleton
+        trait DNDI
+        trait DNThrowQuickly
         DNMVCS
-            trait DNDI
-            trait DNThrowQuickly
+            DNException extends \Exception
             trait DNMVCS_Glue
             trait DNMVCS_Misc
             trait DNMVCS_Handler
@@ -1120,13 +1126,9 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
             DNConfiger
             DNDBManager
             DNExceptionManager
-            DNException extends \Exception
-        DNSingleton
     DNMVCSExt.php           // ext 主入口文件  只引用 DNMVCS 文件
         DNMVCSExt
             SimpleRouteHook
-            StrictService
-            StrictModel
             ProjectCommonAutoloader
             ProjectCommonConfiger extends DNConfiger
             FunctionDispatcher
@@ -1135,7 +1137,7 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
         MedooDB extends MedooFixed
             MedooFixed extends \Medoo\Medoo
     DNSingleton.php         单例 trait 
-        trait DNSingleton
+        trait DNSingleton 
     DNSwooleHttpServer.php  使用 Swoole 的 http 服务
         DNSwooleHttpServer
             trait DNSwooleHttpServer_Static
@@ -1147,6 +1149,9 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
             DNSwooleException extends \Exception
             DBConnectPoolProxy
         CoroutineSingleton
+        SwooleSessionHandler implements \SessionHandlerInterface
+        SwooleSuperGlobal extends SuperGlobal
+            SwooleSuperGlobalSESSION
     Pager.php               用于简单接口的分页类
         Pager
     README.md               说明文档
@@ -1154,13 +1159,14 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
         RouteHookMapAndRewrite
     RouteHookSuperGlobal.php    用于支持 SuperGlobal
         RouteHookSuperGlobal
+    StrictModel.php
+        trait StrictModel
+    StrictService.php
+        trait StrictService
     SuperGlobal.php         SuperGlobal
         SuperGlobal
-    SwooleSessionHandler.php Swoole 的文件类型 Session 扩展实现
-        SwooleSessionHandler implements \SessionHandlerInterface
-    SwooleSuperGlobal.php   Swoole 的SuperGlobal 实现
-        SwooleSuperGlobal extends SuperGlobal
-            SwooleSuperGlobalSESSION
+    SystemWrapper.php
+        SystemWrapper
     ToolKit.php             一些工具，无引用
         Toolkit
         DNFuncionModifer
@@ -1171,11 +1177,13 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
     composer.json           Composer 系统的 json 文件
     template/               模板文件夹
 ```
+主要关心的是 DNMVCS.php DNSwooleHttpServer.php
+
 ## DB.php
 DNMVCS 自带了一个简单的 DB 类。
 DN::DB()得到的就是这个 DB 类。
 DB 的配置在 setting.sample.php 里有。
-DNDB 简单实现的一个数据库类。封装了 PDO， 和 Medoo 兼容，也少了 Medoo 的很多功能。
+DB 简单实现的一个数据库类。封装了 PDO， 和 Medoo 兼容，也少了 Medoo 的很多功能。
 下面主要说 DB 类的用法
 ```
 pdo 这是个公开成员变量而不是方法，是的，你可以操作 pdo
@@ -1239,7 +1247,6 @@ SuperGlobal 类同时处理 Session
 $_GET ,$_POST 在兼容 Swoole 环境下，变成 ,SuperGlobal::G()->_GET ,SuperGlobal::G()->_POST
 *我也想缩短，但实在没法再短了。.*
 
-
 Session 相关
 
 SuperGlobal::StarSession
@@ -1256,11 +1263,6 @@ SuperGlobal::SetSessionName($$name)
     替代 session_name;
 这些静态方法都是调用下划线前缀的实际类内实现。
 
-## SwooleSessionHandler.php
-    一般不直接调用 ,swoole 下一个文件型的 session_handler
-    如果你有更好方案，用 SuperGlobal::SetSessionHandler($handler);替换
-## SwooleSuperGlobal.php
-    Swoole 环境下 SuperGlobal 的实现。
 ## Tookit.php 未使用用于参考的工具箱类。
 一些可能会用到的类，需要的时候把他们复制走。
 

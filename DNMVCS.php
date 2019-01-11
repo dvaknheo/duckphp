@@ -510,13 +510,16 @@ class DNView
 	public function _Show($data=[],$view)
 	{
 		$this->view=$view;
+		$this->data=array_merge($this->data,$data);
+		$data=null;
+		$view=null;
+		extract($this->data);
+		
 		if(isset($this->before_show_handler)){
 			($this->before_show_handler)($data,$this->view);
 		}
 		$this->prepareFiles();
-		$this->data=array_merge($this->data,$data);
 		
-		extract($this->data);
 		
 		if($this->head_file){
 			include($this->path.$this->head_file);
