@@ -122,7 +122,7 @@ class FunctionDispatcher
 		$this->path_info=$route->path_info;
 		$flag=$this->runRoute();
 		if($flag){
-			$route->callback=function(){};
+			$route->stopRunDefaultHandler();
 		}
 	}
 	public function runRoute()

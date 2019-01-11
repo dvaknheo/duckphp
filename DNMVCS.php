@@ -348,6 +348,10 @@ class DNRoute
 		($this->the404Handler)();
 		return false;
 	}
+	public function stopRunDefaultHandler()
+	{
+		$this->callback=function(){};
+	}
 	protected function getRouteHandlerByFile()
 	{
 		list($current_class,$method)=$this->getCurrentClassAndMethod($this->path_info,$this->path);
