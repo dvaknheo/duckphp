@@ -131,7 +131,7 @@ Don't run the template file directly
 
 而是应该单独把 dnmvcs 放在独立的目录里，调整 public/index.php 的 require 语句指向 DNMVCS/DNMVCS.php
 
-修改 config/setting.php ，如果少了这不会有提示：
+修改 config/setting.php ，如果少了就会会有提示：
 ```
 DNMVCS Fatal: no setting file[【配置文件的完整路径】]!,change setting.sample.php to setting.php !
 ```
@@ -207,7 +207,7 @@ $options=[
 	'path'=>$path,
 ];
 // if(defined('DNMVCS_WARNING_IN_TEMPLATE')){ echo "<div>Don't run the template file directly </div>\n"; }
-// if(defined('DNMVCS_WARNING_IN_TEMPLATE')){ $options['setting_basename']=''; }
+// if(defined('DNMVCS_WARNING_IN_TEMPLATE')){ $options['setting_file_basename']=''; }
 \DNMVCS\DNMVCS::RunQuickly($options);
 // \DNMVCS\DNMVCS::G()->init($options)->run();
 ```
@@ -357,7 +357,7 @@ DNMVCS 的控制器有点像 CodeInigter，不需要继承什么，就这么简�
     正则用 ~
     要指定 GET/POST 在最前面加http 方法.
 
-    DN::G()->assignRoute('GET ~article/(\d+)','article->get');
+    \DNMVCS\DNMVCS::G()->assignRoute('GET ~article/(\d+)','article->get');
 
     *用->表示类调用而不是静态调用*
     DNMVCS 支持 Paramter，你可以在设置里关掉。
@@ -500,8 +500,8 @@ autoload 自动加载相关的选项
 
 ```php
 const DNMVCS::DEFAULT_OPTIONS=[
-	'namespace'=>'MY',                  // 共享 namespcae 配置
     //'path'=>null,                     // 共享 path 配置
+	'namespace'=>'MY',                  // 共享命名空间配置
     'base_class'=>'Base\App',           // override 重写 系统入口类代替 DNMVCS 类。 \ 开头表示绝对 namespace
         'path_view'=>'view',            // 视图目录，或许会有人改到 app/View
         'path_config'=>'config',        // 配置目录，或许会有人改到 app/View
@@ -511,9 +511,9 @@ const DNMVCS::DEFAULT_OPTIONS=[
         'setting_file_basename'=>'setting',        // 设置的文件名，如果为'' 则不读取设置文件
     'is_dev'=>false,					// 是否在开发状态，设置文件里填写的将会覆盖这一选项
 
-    'rewrite_map'=>[],                 // url 重写列表
-    'route_map'=>[],                   // 映射模式的 列表
-        'use_super_global'=>false,
+    'rewrite_map'=>[],                  // url 重写列表
+    'route_map'=>[],                    // 映射模式的 列表
+        'use_super_global'=>false,      //使用 SuperGlobal 类处理超全局变量
 
         'error_404'=>'_sys/error-404',      // 404 错误处理，传入字符串表示用的 view,如果传入 callable 则用 callback,view 优先
         'error_500'=>'_sys/error-500',      // 500 代码有语法错误等的页面，和 404 的内容一样。和前面类似
@@ -535,6 +535,7 @@ const DNMVCS::DEFAULT_OPTIONS=[
 ```php
 const DNRoute::DEFAULT_OPTIONS=[
     //'path'=>null,                     // 共享 path 配置
+	'namespace'=>'MY',                  // 共享命名空间配置
     'with_no_namespace_mode'=>true,     // 简单模式，无命名空间直接 controller, service,model
     'prefix_no_namespace_mode'=>''      // 无命名空间模式时候的类名前缀
     'enable_paramters'=>false,          // 支持切片模式
@@ -735,7 +736,7 @@ RunOneFileMode($optionss=[],$init_function=null)
 
     单一文件模式，不需要其他文件，设置内容请放在
     $options['setting'] 里
-	$init_function 用于初始化之后，run 前调用，如 SuperGlobal::StartSession();
+	$init_function 用于初始化之后，run 前调用
 RunWithoutPathInfo()
 
     不需要 PathInfo 的模式。用 _r 来表示 Path_Info
@@ -773,8 +774,6 @@ HasInclude($file)
 ## 非静态方法
 这里的方法偶尔会用到，所以没静态化 。
 assign 系列函数，都有两个模式 func(\$map)，和 func(\$key,\$value) 模式方便大量导入。
-
-
 
 assignRoute($route,$callback=null)
 
@@ -1305,6 +1304,7 @@ W($object);
 ```php
 const DEFAULT_OPTIONS_EX=[
     'key_for_simple_route'=>'_r', //act 这个选项，不用 path_info 了，我们用 $_REQUEST['act']，
+    'key_for_simple_route_module'=>'', // 用于前缀，适用于多模块。
     
     'use_function_view'=>false,   //不用 view 文件了，我们用 view_$xx 来表示view
         'function_view_head'=>'view_header', // 页眉函数

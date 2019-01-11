@@ -6,9 +6,11 @@ class SimpleRouteHook
 	use DNSingleton;
 
 	public $key_for_simple_route='_r';
+	public $key_for_simple_route_module='';
 	public function onURL($url=null)
 	{
 		$key_for_simple_route=$this->key_for_simple_route;
+		$key_for_simple_route_module=$this->key_for_simple_route_module;
 		
 		$path='';
 		if(class_exists('\DNMVCS\SuperGlobal' ,false)){
@@ -27,8 +29,18 @@ class SimpleRouteHook
 		$c=parse_url($url,PHP_URL_PATH);
 		$q=parse_url($url,PHP_URL_QUERY);
 
+		$a=[];
+		
+		if($key_for_simple_route_module){
+			$blocks=explode('/',$c);
+			$c=array_pop($blocks);
+			$m=implode('/',$blocks);
+			$a[$key_for_simple_route_module]=$m;
+		}
+		$a[$key_for_simple_route]=$c;
+		$controller_path=http_build_query($a);
 		$q=$q?'&'.$q:'';
-		$url=$path.'?'.$key_for_simple_route.'='.$c.$q;
+		$url=$path.'?'.$controller_path.$q;
 		return $url;
 	
 	}
@@ -36,12 +48,15 @@ class SimpleRouteHook
 	{
 		$route->setURLHandler([$this,'onURL']);
 		$k=$this->key_for_simple_route;
+		$m=$this->key_for_simple_route_module;
 		if(class_exists('\DNMVCS\SuperGlobal' ,false)){
+			$module=SuperGlobal::G()->_REQUEST[$m]??null;
 			$path_info=SuperGlobal::G()->_REQUEST[$k]??null;
 		}else{
+			$module=$_REQUEST[$m]??null;
 			$path_info=$_REQUEST[$k]??null;
 		}
-		
+		$path_info=$module.'/'.$path_info;
 		$path_info=ltrim($path_info,'/');
 		$route->path_info=$path_info;
 		$route->calling_path=$path_info;
@@ -251,6 +266,7 @@ class DNMVCSExt
 		
 		if($options['key_for_simple_route']){
 			SimpleRouteHook::G()->key_for_simple_route=$options['key_for_simple_route'];
+			SimpleRouteHook::G()->key_for_simple_route_module=$options['key_for_simple_route_module'];
 			DNRoute::G()->addRouteHook([SimpleRouteHook::G(),'hook']);
 		}
 		if($options['use_function_dispatch']){
