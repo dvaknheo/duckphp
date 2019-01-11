@@ -21,7 +21,12 @@ trait DBExt
 	}
 	public function qouteInsertArray($array)
 	{
-		// TODO
+		if(empty($array)){ return ''; }
+		$values=array_map([$this->pdo,'quote'], $array);
+		$str_keys=implode(',',array_values($array));
+		$str_values=implode(',',array_values($array));
+		$ret="($str_keys)VALUES($str_values)";
+		return $ret;
 	}
 
 
