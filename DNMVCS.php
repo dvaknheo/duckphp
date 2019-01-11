@@ -1141,7 +1141,7 @@ class DNMVCS
 	{
 		$default_options=[
 			'ext'=>[
-				'key_for_simple_route'=>'_r',
+				'key_for_action'=>'_r',
 			],
 			//'path_view'=>'',
 		];
@@ -1154,7 +1154,7 @@ class DNMVCS
 			'setting_file_basename'=>'',
 			'base_class'=>'',
 			'ext'=>[
-				'key_for_simple_route'=>'act',
+				'key_for_action'=>'act',
 				'use_function_dispatch'=>true,
 				'use_function_view'=>true,
 				

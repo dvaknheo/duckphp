@@ -368,7 +368,7 @@ DNMVCS 的控制器有点像 CodeInigter，不需要继承什么，就这么简�
     
 4. 不用 PATH_INFO
     比如 路由不用 path_info 用 $_GET['_r'] 等，很简单的。
-    $options['ext']['key_for_simple_route']='_r' 开启 _GET 模式路由
+    $options['ext']['key_for_action']='_r' 开启 _GET 模式路由
     如果你想加其他功能，可以 添加钩子， 继承 DNRoute 自行扩展类。  两种方式灵活扩展
 
 run() 方法开始使用路由。 如果你不想要路由。只想要特定结构的目录， 不调用 run 就可以了。
@@ -1277,7 +1277,7 @@ W($object);
     未使用,仅供参考，请用 SimpleRouteHook
 ### SimpleRouteHook
     SimpleRoute 用于指定 _GET 里某个 key 作为 控制器分配.
-    使用 $options['key_for_simple_route'] 来打开他。
+    使用 $options['key_for_action'] 来打开他。
 
 ### MedooSimpleIntaller
     \DNMVCS\DNDBManager::G()->setDBHandler([MedooSimpleIntaller::class,'CreateDBInstance']， [MedooSimpleIntaller::class,'CloseDBInstance']);
@@ -1303,8 +1303,8 @@ W($object);
 ## 额外模式
 ```php
 const DEFAULT_OPTIONS_EX=[
-    'key_for_simple_route'=>'_r', //act 这个选项，不用 path_info 了，我们用 $_REQUEST['act']，
-    'key_for_simple_route_module'=>'', // 用于前缀，适用于多模块。
+    'key_for_action'=>'_r', //act 这个选项，不用 path_info 了，我们用 $_REQUEST['act']，
+    'key_for_module'=>'',   // 用于前缀，适用于多模块。
     
     'use_function_view'=>false,   //不用 view 文件了，我们用 view_$xx 来表示view
         'function_view_head'=>'view_header', // 页眉函数

@@ -5,12 +5,12 @@ class SimpleRouteHook
 {
 	use DNSingleton;
 
-	public $key_for_simple_route='_r';
-	public $key_for_simple_route_module='';
+	public $key_for_action='_r';
+	public $key_for_module='';
 	public function onURL($url=null)
 	{
-		$key_for_simple_route=$this->key_for_simple_route;
-		$key_for_simple_route_module=$this->key_for_simple_route_module;
+		$key_for_action=$this->key_for_action;
+		$key_for_module=$this->key_for_module;
 		
 		$path='';
 		if(class_exists('\DNMVCS\SuperGlobal' ,false)){
@@ -31,13 +31,13 @@ class SimpleRouteHook
 
 		$a=[];
 		
-		if($key_for_simple_route_module){
+		if($key_for_module){
 			$blocks=explode('/',$c);
 			$c=array_pop($blocks);
 			$m=implode('/',$blocks);
-			$a[$key_for_simple_route_module]=$m;
+			$a[$key_for_module]=$m;
 		}
-		$a[$key_for_simple_route]=$c;
+		$a[$key_for_action]=$c;
 		$controller_path=http_build_query($a);
 		$q=$q?'&'.$q:'';
 		$url=$path.'?'.$controller_path.$q;
@@ -47,8 +47,8 @@ class SimpleRouteHook
 	public function hook($route)
 	{
 		$route->setURLHandler([$this,'onURL']);
-		$k=$this->key_for_simple_route;
-		$m=$this->key_for_simple_route_module;
+		$k=$this->key_for_action;
+		$m=$this->key_for_module;
 		if(class_exists('\DNMVCS\SuperGlobal' ,false)){
 			$module=SuperGlobal::G()->_REQUEST[$m]??null;
 			$path_info=SuperGlobal::G()->_REQUEST[$k]??null;
@@ -225,8 +225,8 @@ class DNMVCSExt
 	use DNDI;
 	
 	const DEFAULT_OPTIONS_EX=[
-			'key_for_simple_route'=>null,
-				'key_for_simple_route_module'=>null,
+			'key_for_action'=>null,
+				'key_for_module'=>null,
 			
 			'use_function_view'=>false,
 				'function_view_head'=>'view_header',
@@ -264,9 +264,9 @@ class DNMVCSExt
 			DNDBManager::G()->setBeforeGetDBHandler([static::class,'CheckDBPermission']);
 		}
 		
-		if($options['key_for_simple_route']){
-			SimpleRouteHook::G()->key_for_simple_route=$options['key_for_simple_route'];
-			SimpleRouteHook::G()->key_for_simple_route_module=$options['key_for_simple_route_module'];
+		if($options['key_for_action']){
+			SimpleRouteHook::G()->key_for_action=$options['key_for_action'];
+			SimpleRouteHook::G()->key_for_module=$options['key_for_module'];
 			DNRoute::G()->addRouteHook([SimpleRouteHook::G(),'hook']);
 		}
 		if($options['use_function_dispatch']){
