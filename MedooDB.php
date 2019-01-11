@@ -16,6 +16,8 @@ class MedooFixed extends \Medoo\Medoo
 
 class MedooDB extends MedooFixed
 {
+	use DBExt;
+	
 	public function close()
 	{
 		$this->pdo=null;

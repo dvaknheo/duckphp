@@ -1178,7 +1178,6 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
     template/               模板文件夹
 ```
 主要关心的是 DNMVCS.php DNSwooleHttpServer.php
-
 ## DB.php
 DNMVCS 自带了一个简单的 DB 类。
 DN::DB()得到的就是这个 DB 类。
@@ -1186,9 +1185,10 @@ DB 的配置在 setting.sample.php 里有。
 DB 简单实现的一个数据库类。封装了 PDO， 和 Medoo 兼容，也少了 Medoo 的很多功能。
 下面主要说 DB 类的用法
 ```
-pdo 这是个公开成员变量而不是方法，是的，你可以操作 pdo
-close
+close()
     关闭数据库
+getPDO() //DB
+
 public function quote($string)
     转码,如果是数组，则值部分会转码。
 public function fetchAll($sql,...$args)
@@ -1204,11 +1204,14 @@ public function  rowCount()
     获得结果行数
 public function init($config)
     初始化
-protected function check_connect()
-    DNDB 是使用的时候才连接的，不是一上来就连接数据库
 public static function CreateDBInstance($db_config)
     用于创建DB类
+public static function CloseDBInstance($db)
+    关闭DB类
+
 ```
+## DBInterface.php
+DBInterface 是希望其他DB类也遵守的接口。
 ## DNMVCS.php
 DNMVCS 类和附属类的文件。已经在前面介绍
 ## DNMVCSExt.php
