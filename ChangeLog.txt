@@ -1,3 +1,20 @@
+1.0.7 到 1.0.8变更
+DBExt 单独提成文件 ,MedooDB 因此变更
+DNDI 可外放
+namespace 选项 影响 base_class  ,namespace_controller
+DNRoute 添加 stopRunDefaultHandler
+DNView 删除 includeShowFiles 添加 prepareFiles ，FunctionView 由此改动
+主类 DI() 改成由 DNMVCSExt 实现。
+主类 添加 StartSession，删除  SystemWrapper 的函数
+DNMVCSEXt key_for_simple_route=>key_for_action，添加 key_for_module
+StrictService , StrictModel 改 trait ，外放
+SwooleSuperGlobal,SwooleSESSION,SwooleSessionHandler 收入 DNSwooleHttpServer.php
+StartSession 可添加选项
+
+改了 template 。
+TODO module-action 方式未处理 rewrite.
+TODO SetSessionName 要取消
+----
 1.0.6 到 1.0.7变更
 
 DBThrownQuickly 可外放成独立文件
