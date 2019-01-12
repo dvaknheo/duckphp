@@ -35,7 +35,9 @@ class SimpleRouteHook
 			$blocks=explode('/',$c);
 			$c=array_pop($blocks);
 			$m=implode('/',$blocks);
-			$a[$key_for_module]=$m;
+			if($m){
+				$a[$key_for_module]=$m;
+			}
 		}
 		$a[$key_for_action]=$c;
 		$controller_path=http_build_query($a);

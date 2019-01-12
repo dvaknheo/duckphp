@@ -95,10 +95,10 @@ function view_header($view_data=[]){ extract($view_data);
 <!doctype html>
 <html>
  <meta charset="UTF-8">
-<head><title>DNMVC 单一页面演示</title></head>
+<head><title>DNMVCS 单一页面演示</title></head>
 <body>
 <fieldset>
-	<legend>DNMVC 单一页面演示</legend>
+	<legend>DNMVCS 单一页面演示</legend>
 	<div style="border:1px red solid;">
 <?php
 }
