@@ -714,10 +714,16 @@ ThrowOn($flag,$message,$code=0);
 DI($name,$object=null)
 
     你们想要的 container。如果 $object 不为null 是写，否则是读。
+    实质调用 DNMVCSExt::G()->_DI();
 Import($file)
 
     手动导入默认lib 目录下的包含文件
-    实质调用 self::G()->_Import();
+    实质调用 _Import();
+StartSession(array $options=[])
+
+    替代 session_start
+
+    实际调用 SuperGlobal::G()->StartSession()
 ## 状态判定
 Developing()
 
@@ -1093,8 +1099,6 @@ DNAutoLoader 做了防多次加载和多次初始化。
     assignPathNamespace()
 ## DNRuntimeState 状态类
 用于运行时状态的保存
-## DNSystemWrapper 系统包裹类
-用于 setcookie, header 函数的替换。
 # 第六章 DNMVCS 全部文件和类说明
 这个章节说明 DNMVCS 的各个文件。
 并在此把次要的类和文件展示出来
@@ -1212,6 +1216,7 @@ public static function CloseDBInstance($db)
 ```
 ## DBInterface.php
 DBInterface 是希望其他DB类也遵守的接口。
+
 ## DNMVCS.php
 DNMVCS 类和附属类的文件。已经在前面介绍
 ## DNMVCSExt.php
@@ -1324,7 +1329,6 @@ const DEFAULT_OPTIONS_EX=[
     'session_name'=>'DNSESSION',
 ];
 ```
-
     'fullpath_config_common'=>'',  
         DNConfiger::G(ProjectCommonConfiger::G()); // 
         设置和配置会先读取相应的文件，合并到同目录来
@@ -1397,7 +1401,7 @@ DNMVCS 主类里一些函数，是调用其他类的实现。基本都可以用 
 
 DNMVCS 的各子类都是独立的。现实中应该不会拿出来单用吧
 
-DNDBManger 调用 DNDB 类，用于管理数据库
+DNDBManger 调用 DB 类，用于管理数据库
 ## DNMVCS 的代码流程讲解
 
 大致用图表现如下
