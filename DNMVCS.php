@@ -531,6 +531,16 @@ class DNView
 			include($this->path.$this->foot_file);
 		}
 	}
+	public function _ShowBlock($view,$data=null)
+	{
+		$this->view=$view;
+		$this->data=array_merge($this->data,$data);
+		$data=null;
+		$view=null;
+		extract($this->data);
+		
+		include($this->view_file);
+	}
 	protected function prepareFiles()
 	{
 		$this->view_file=$this->path.rtrim($this->view,'.php').'.php';
@@ -555,13 +565,7 @@ class DNView
 		$this->head_file=$head_file;
 		$this->foot_file=$foot_file;
 	}
-	public function _ShowBlock($view,$data=null)
-	{
-		$this->temp_view_file=$this->path.preg_replace('/\.php$/','',$view).'.php';
-		$data=$data??$this->data;
-		extract($data);
-		include($this->temp_view_file);
-	}
+	
 	public function assignViewData($key,$value=null)
 	{
 		if(is_array($key)&& $value===null){
@@ -835,6 +839,10 @@ trait DNMVCS_Glue
 	public function setBeforeGetDBHandler($before_get_db_handler)
 	{
 		return DNDBManager::G()->setBeforeGetDBHandler($before_get_db_handler);
+	}
+	public static function StartSession(array $options=[])
+	{
+		return SuperGlobal::G()->_StartSession($options);
 	}
 }
 trait DNMVCS_Misc

@@ -185,9 +185,19 @@ class FunctionView extends DNView
 		$this->foot_callback=$options['function_view_foot']??'';
 		return $ret;
 	}
-	protected function includeShowFiles()
+	public function _Show($data=[],$view)
 	{
+		$this->view=$view;
+		$this->data=array_merge($this->data,$data);
+		$data=null;
+		$view=null;
 		extract($this->data);
+		
+		if(isset($this->before_show_handler)){
+			($this->before_show_handler)($data,$this->view);
+		}
+		$this->prepareFiles();
+		
 		
 		if($this->head_callback){
 			if(is_callable($this->head_callback)){
@@ -217,6 +227,26 @@ class FunctionView extends DNView
 				include($this->path.$this->foot_file);
 			}
 		}
+	}
+	public function _ShowBlock($view,$data=null)
+	{
+		$this->view=$view;
+		$this->data=array_merge($this->data,$data);
+		$data=null;
+		$view=null;
+		extract($this->data);
+		
+		$this->callback=$this->prefix.$this->view;
+		if(is_callable($this->callback)){
+			($this->callback)($this->data);
+		}else{
+			include($this->view_file);
+		}
+	}
+	
+	protected function includeShowFiles()
+	{
+		
 	}
 }
 class DNMVCSExt
@@ -273,8 +303,7 @@ class DNMVCSExt
 			DNRoute::G()->addRouteHook([FunctionDispatcher::G(),'hook']);
 		}
 		if($options['session_auto_start']){
-			SuperGlobal::SetSessionName($options['session_name']);
-			SuperGlobal::StartSession();
+			DNMVCS::StartSession(['name'=>$options['session_name']]);
 		
 		}
 	}

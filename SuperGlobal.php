@@ -44,9 +44,9 @@ class SuperGlobal
 		return static::G()->_SetSessionName($name);
 	}
 ///////////////////////////////
-	public function _StartSession()
+	public function _StartSession(array $options=[])
 	{
-		if(session_status() !== PHP_SESSION_ACTIVE ){ session_start(); }
+		if(session_status() !== PHP_SESSION_ACTIVE ){ session_start($options); }
 		$this->_SESSION=&$_SESSION;
 	}
 	public function _DestroySession()

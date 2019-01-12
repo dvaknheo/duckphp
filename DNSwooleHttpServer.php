@@ -673,9 +673,9 @@ class SwooleSuperGlobal extends SuperGlobal
 			$this->_SERVER[strtoupper($k)]=$v;
 		}
 	}
-	public function _StartSession()
+	public function _StartSession(array $options=[])
 	{
-		SwooleSESSION::G()->_Start();
+		SwooleSESSION::G()->_Start($options);
 		$t=SwooleSESSION::G();
 		static::G()->_SESSION=&$t->data;
 	}
@@ -699,15 +699,21 @@ class SwooleSESSION
 
 	protected $handler=null;
 	protected $session_id='';
+	protected $options;
+	protected $session_name;
+	
 	protected $is_started=false;
 	public $data;
 	
-	public function setHandler($handler)
+	public function setHandler(\SessionHandlerInterface $handler)
 	{
-		// \SessionHandlerInterface
 		$this->handler=$handler;
 	}
-	public function _Start()
+	protected function getOption($key)
+	{
+		return $this->options[$key]??ini_get('session.'.$key);
+	}
+	public function _Start(array $options=[])
 	{
 		if(!$this->handler){
 			$this->handler=new SwooleSessionHandler();
@@ -716,7 +722,10 @@ class SwooleSESSION
 		$this->is_started=true;
 		
 		DNSwooleHttpServer::register_shutdown_function([$this,'writeClose']);
-		$session_name=ini_get('session.name');
+		
+		$this->options=$options;
+		
+		$session_name=$this->getOption('name');
 		$session_save_path=session_save_path();
 		
 		$cookies=DNSwooleHttpServer::Request()->cookie??[];
@@ -727,15 +736,15 @@ class SwooleSESSION
 		$this->session_id=$session_id;
 		
 		DNSwooleHttpServer::setcookie($session_name,$this->session_id
-			,ini_get('session.cookie_lifetime')?time()+ini_get('session.cookie_lifetime'):0
-			,ini_get('session.cookie_path')
-			,ini_get('session.cookie_domain')
-			,ini_get('session.cookie_secure')
-			,ini_get('session.cookie_httponly')
+			,$this->getOption('cookie_lifetime')?time()+$this->getOption('cookie_lifetime'):0
+			,$this->getOption('cookie_path')
+			,$this->getOption('cookie_domain')
+			,$this->getOption('cookie_secure')
+			,$this->getOption('cookie_httponly')
 		);
 		
-		if(ini_get('session.gc_probability') > mt_rand(0,ini_get('session.gc_divisor'))){
-			$this->handler->gc(ini_get('session.gc_maxlifetime'));
+		if($this->getOption('gc_probability') > mt_rand(0,$this->getOption('gc_divisor'))){
+			$this->handler->gc($this->getOption('gc_maxlifetime'));
 		}
 		$this->handler->open($session_save_path,$session_name);
 		$raw=$this->handler->read($this->session_id);
@@ -744,7 +753,7 @@ class SwooleSESSION
 	}
 	public function _Destroy()
 	{
-		$session_name=ini_get('session.name');
+		$session_name=$this->getOption('name');
 		$this->handler->destroy($this->session_id);
 		$this->data=[];
 		DNSwooleHttpServer::setcookie($session_name,'');
