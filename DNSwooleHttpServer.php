@@ -621,8 +621,8 @@ class DNSwooleHttpServer
 		if($dn_swoole_options['use_http_handler_root']){
 			DNRoute::G()->set404([$this,'onShow404']);
 		}
-		SystemWrapper::G()->header_handler=[static::class,'header'];
-		SystemWrapper::G()->cookie_handler=[static::class,'setcookie'];
+		DNMVCS::G()->header_handler=[static::class,'header'];
+		DNMVCS::G()->cookie_handler=[static::class,'setcookie'];
 		
 		
 		$dn->setBeforeRunHandler(function(){
