@@ -732,11 +732,8 @@ class DNSuperGlobal
 	public $_ENV;
 	public $_COOKIE;
 	public $_SESSION;
-	public function __construct()
-	{
-		$this->init();
-	}
-	protected function init()
+
+	public function init()
 	{	
 		$this->_GET		=&$_GET;
 		$this->_POST	=&$_POST;
@@ -1233,7 +1230,7 @@ trait DNMVCS_SystemWrapper
 
 class DNMVCS
 {
-	const VERSION = '1.0.8';
+	const VERSION = '1.0.9';
 	
 	use DNSingleton;
 	
@@ -1259,7 +1256,6 @@ class DNMVCS
 			
 			'rewrite_map'=>[],
 			'route_map'=>[],
-			'use_super_global'=>false,
 			
 			'error_404'=>'_sys/error-404',
 			'error_500'=>'_sys/error-500',
@@ -1420,6 +1416,7 @@ class DNMVCS
 		if(!empty($this->options['ext'])){
 			DNMVCSExt::G()->afterInit($this);
 		}
+		DNSuperGlobal::G()->init();
 	}
 	
 	public function setBeforeRunHandler($before_run_handler)

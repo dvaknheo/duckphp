@@ -513,8 +513,6 @@ const DNMVCS::DEFAULT_OPTIONS=[
 
     'rewrite_map'=>[],                  // url 重写列表
     'route_map'=>[],                    // 映射模式的 列表
-        'use_super_global'=>false,      //使用 SuperGlobal 类处理超全局变量
-
         'error_404'=>'_sys/error-404',      // 404 错误处理，传入字符串表示用的 view,如果传入 callable 则用 callback,view 优先
         'error_500'=>'_sys/error-500',      // 500 代码有语法错误等的页面，和 404 的内容一样。和前面类似
         'error_exception'=>'_sys/error-exception',  // 默认的异常处理。和前面类似
@@ -525,7 +523,7 @@ const DNMVCS::DEFAULT_OPTIONS=[
 	'database_list'=>[],					// 数据库列表
 
     'ext'=>[],                          //默认不使用扩展，如果不为空则为  
-    'swoole'=>[],                       // swoole_mode 模式，和 superGlobal 整合
+    'swoole'=>[],                       // swoole_mode 模式
 ];
 ```
     关于 base_class 选项。
@@ -592,7 +590,6 @@ const DEFAULT_OPTIONS=[
             
             'rewrite_map'=>[],
             'route_map'=>[],
-            'use_super_global'=>false,
             
             'error_404'=>'_sys/error-404',
             'error_500'=>'_sys/error-500',
@@ -619,7 +616,12 @@ run()
 
     开始路由，执行。这个方法拆分出来是为了特定需求, 比如只是为了加载一些类。
     如果404 则返回false;其他返回 true
-
+static SG()
+    SuperGlobal 的缩写
+    返回 DNSuperGlobal 对象
+    你可以 DNMVCS::SG()->_GET得到的就是 swoole 也可用的 $_GET 数组。
+    类似的还有 _GET,_POST,_REQUEST,_SERVER，_ENV,_COOKIE,_SESSION
+    注意 GLOBALS 数组不可用。
 ## 常用静态方法
 
 这些方法因为太常用，所以静态化了。
@@ -719,7 +721,6 @@ Import($file)
 
     手动导入默认lib 目录下的包含文件
     实质调用 _Import();
-
 ## 状态判定
 Developing()
 
@@ -757,13 +758,26 @@ RunAsServer($server_options,$dn_options,$server=null)
 \DNMVCS\DNMVCS::RunWithoutPathInfo([]);
 ``` 
 ## 取代系统函数
+和系统同名的静态函数，用于替换系统函数，以适应  swoole 等环境
 
-session_start
-session_destroy
+session_start(array $options=[])
+
+    session 会话函数
+    实质调用 DNSuperGlobal::G()->_StartSession();
+session_destroy()
+
+    实质调用 DNSuperGlobal::G()->_DestroySession();
 session_set_save_handler
+
+    这个函数只实现了 SessionInterface 的参数调用，没实现单独的调用
+    实质调用 DNSuperGlobal::G()->_DestroySession();
 header
+    同系统的 header 方法
+    注意
+    实际调用 static::G()->_heade
 setcookie
 
+exit_sytesm
 ## 独立杂项静态方法
 这几个方法独立，为了方便操作，放在这里。
 
@@ -846,7 +860,7 @@ setBeforeRunHandler($before_run_handler)
 
     在run之前执行回调。 SwooleHttpServer 用到这个。
 _header
-_set_cookie
+_setcookie
 _exit_system
 
 ## 事件方法
@@ -891,7 +905,6 @@ initDBManager(DNDBManger $dbm)
     db_close_handler($db,$tag)
 initMisc()
 
-    如果 swoole_mode 启用  use_super_global
     如果 选项  ext 启用 DNMVCSExt
 
 # 第五章 DNMVCS 核心组件
@@ -1108,13 +1121,20 @@ DNAutoLoader 做了防多次加载和多次初始化。
 ## DNRuntimeState 状态类
 用于运行时状态的保存
 ## DNSuperGlobal 超全局变量
-
+$_GET ,$_POST 在兼容 Swoole 环境下，变成 ,DNSuperGlobal::G()->_GET ,DNSuperGlobal::G()->_POST
+*我也想缩短，但实在没法再短了。.*
 # 第六章 DNMVCS 全部文件和类说明
 这个章节说明 DNMVCS 的各个文件。
 并在此把次要的类和文件展示出来
 ## 库文件说明
 DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主类文件里包含内部类。
 特殊情况下或许会用到这些内部类。
+
+主要掌握的文件 DNMVCS.php DNSwooleHttpServer.php DNMVCSExt.php
+DNSingleton DNDI, DNThrowQuickly 在 DNMVCS.php 里也有，这里是抽出来。用于特殊情况
+Pager.php 只是为了完成简单的演示用的分页类，除非很偷懒，不建议用
+Toolkit.php 是一些收集到的类 和系统无关
+RouteHookMapAndRewrite.php 是因为 route_map 和 rewrite_map 不是 DNMVCS 的必要方式。所以抽出来
 
 ```
     ComposerScripts.php     // 和 compose 相关的脚本，用于创建工程用
@@ -1133,13 +1153,16 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
             trait DNMVCS_Glue
             trait DNMVCS_Misc
             trait DNMVCS_Handler
-            
+            trait DNMVCS_SystemWrapper
+
             DNAutoLoader
             DNRoute
             DNView
             DNConfiger
             DNDBManager
             DNExceptionManager
+            DNRuntimeState
+            DNSuperGlobal
     DNMVCSExt.php           // ext 主入口文件  只引用 DNMVCS 文件
         DNMVCSExt
             SimpleRouteHook
@@ -1164,23 +1187,17 @@ DNMVCS 的文件并没有遵守一个类一个文件的原则，而是一些主�
             DBConnectPoolProxy
         CoroutineSingleton
         SwooleSessionHandler implements \SessionHandlerInterface
-        SwooleSuperGlobal extends SuperGlobal
-            SwooleSuperGlobalSESSION
+        SwooleSuperGlobal extends DNSuperGlobal
+            SwooleSESSION
     Pager.php               用于简单接口的分页类
-        Pager
+        Pager               分页类
     README.md               说明文档
     RouteHookMapAndRewrite.php 用于 RouteHook 和 Rewrite
         RouteHookMapAndRewrite
-    RouteHookSuperGlobal.php    用于支持 SuperGlobal
-        RouteHookSuperGlobal
     StrictModel.php
         trait StrictModel
     StrictService.php
         trait StrictService
-    SuperGlobal.php         SuperGlobal
-        SuperGlobal
-    SystemWrapper.php
-        SystemWrapper
     ToolKit.php             一些工具，无引用
         Toolkit
         DNFuncionModifer
@@ -1233,12 +1250,19 @@ DNMVCS 类和附属类的文件。已经在前面介绍
 DNMVCSExt 类和附属类的文件，将在后面介绍。
 相关 $options['ext'] 的配置 用到这个类和附属类
 ## MedooDB.php
-MedooDB 是 Medoo 的一个简单扩展，和 DNDB 接口一致。
+MedooDB 是 Medoo 的一个简单扩展，和 DB 接口一致。
 因为 MedooDB 对 Medoo 有依赖关系，所以单独放在一个文件。
-MedooDB 类的除了默认的 Medoo 方法，还扩展了 DNDB 类同名方法。
+MedooDB 类的除了默认的 Medoo 方法，还扩展了 DB 类同名方法。
 
 ### 使用方法：
-在你的 DNMVCS->init() 后面段加上下面代码，
+修改配置
+```php
+$options[
+    'db_create_handler'=>[\DNMVCS\MedooDB::class,'CreateDBInstance'],
+    'db_close_handler'=>[\DNMVCS\MedooDB::class,'CloseDBInstance'],
+]
+```
+或者在你的 DNMVCS->init() 后面段加上下面代码，
 使得 MedooDB 替换 DNDB
 ```php
 \DNMVCS\DNDBManager::G()->setDBHandler(
@@ -1254,32 +1278,7 @@ swoole 服务，后面章节详细介绍
 一个独立的分页类，目的是让 DEMO 有分页效果。
 如果你有更好方案，建议不要使用它
 ## RouteHookMapAndRewrite.php
-这个文件是用于自定义 route 和 rewrite 的
-## RouteHookSuperGlobal.php
-RouteHook ,路由钩子路由里用到超全局数组改用 SuperGlobal
-## SuperGlobal.php
-SuperGlobal 类 用于代替超全局变量，目的是兼容 swoole 。
-
-SuperGlobal 类同时处理 Session 
-
-$_GET ,$_POST 在兼容 Swoole 环境下，变成 ,SuperGlobal::G()->_GET ,SuperGlobal::G()->_POST
-*我也想缩短，但实在没法再短了。.*
-
-Session 相关
-
-SuperGlobal::StarSession
-
-    替代 session_start
-SuperGlobal::DetroySession
-
-    替代 session_destroy
-SuperGlobl::SetSessionHandler($handler)
-
-    替代 session_save_handler;
-SuperGlobal::SetSessionName($$name)
-
-    替代 session_name;
-这些静态方法都是调用下划线前缀的实际类内实现。
+这个文件是用于自定义 route 和 rewrite 的，配合 route_map, rewrite_map 使用。
 
 ## Tookit.php 未使用用于参考的工具箱类。
 一些可能会用到的类，需要的时候把他们复制走。
