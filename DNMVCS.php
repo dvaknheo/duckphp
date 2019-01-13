@@ -277,8 +277,7 @@ class DNRoute
 		$this->prefix_post=$options['prefix_post'];
 		$this->disable_default_class_outside=$options['disable_default_class_outside'];
 
-		$this->script_filename=$_SERVER['SCRIPT_FILENAME']??'';
-		$this->document_root=$_SERVER['DOCUMENT_ROOT']??'';
+
 		
 		$namespace=$options['namespace'];
 		$namespace_controller=$options['namespace_controller'];
@@ -288,6 +287,9 @@ class DNRoute
 		$namespace_controller=ltrim($namespace_controller,'\\');
 		$this->namespace_controller=$namespace_controller;
 		
+		
+		$this->script_filename=$_SERVER['SCRIPT_FILENAME']??'';
+		$this->document_root=$_SERVER['DOCUMENT_ROOT']??'';
 		if(PHP_SAPI==='cli'){
 			$argv=$_SERVER['argv']??[];
 			if(count($argv)>=2){
@@ -342,7 +344,7 @@ class DNRoute
 		if(!$this->the404Handler){
 			header("HTTP/1.0 404 Not Found");
 			echo "404 File Not Found.\n";
-			echo "DNRoute Notice: 404  You need set 404 Handler";
+			echo "DNRoute Notice: 404 .  You need set 404 Handler by DNRoute->set404(\$callback).";
 			exit;
 		}
 		($this->the404Handler)();
@@ -840,9 +842,17 @@ trait DNMVCS_Glue
 	{
 		return DNDBManager::G()->setBeforeGetDBHandler($before_get_db_handler);
 	}
+	public static function SG()
+	{
+		return SuperGlobal::G();
+	}
 	public static function StartSession(array $options=[])
 	{
 		return SuperGlobal::G()->_StartSession($options);
+	}
+	public static function DestroySession()
+	{
+		return SuperGlobal::G()->_DestroySession();
 	}
 }
 trait DNMVCS_Misc

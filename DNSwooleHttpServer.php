@@ -688,10 +688,6 @@ class SwooleSuperGlobal extends SuperGlobal
 	{
 		SwooleSESSION::G()->setHandler($handler);
 	}
-	public function _SetSessionName($name)
-	{
-		return ini_set('session.name',$name);
-	}
 }
 class SwooleSESSION
 {
@@ -775,51 +771,51 @@ class SwooleSessionHandler implements \SessionHandlerInterface
 {
 	use DNSingleton;
 	
-    private $savePath;
+	private $savePath;
 
-    public function open($savePath, $sessionName)
-    {
-        $this->savePath = $savePath;
-        if (!is_dir($this->savePath)) {
-            mkdir($this->savePath, 0777);
-        }
+	public function open($savePath, $sessionName)
+	{
+		$this->savePath = $savePath;
+		if (!is_dir($this->savePath)) {
+			mkdir($this->savePath, 0777);
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    public function close()
-    {
-        return true;
-    }
+	public function close()
+	{
+		return true;
+	}
 
-    public function read($id)
-    {
-        return (string)@file_get_contents("$this->savePath/sess_$id");
-    }
+	public function read($id)
+	{
+		return (string)@file_get_contents("$this->savePath/sess_$id");
+	}
 
-    public function write($id, $data)
-    {
-        return file_put_contents("$this->savePath/sess_$id", $data,LOCK_EX) === false ? false : true;
-    }
+	public function write($id, $data)
+	{
+		return file_put_contents("$this->savePath/sess_$id", $data,LOCK_EX) === false ? false : true;
+	}
 
-    public function destroy($id)
-    {
-        $file = "$this->savePath/sess_$id";
-        if (file_exists($file)) {
-            unlink($file);
-        }
+	public function destroy($id)
+	{
+		$file = "$this->savePath/sess_$id";
+		if (file_exists($file)) {
+			unlink($file);
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    public function gc($maxlifetime)
-    {
-        foreach (glob("$this->savePath/sess_*") as $file) {
-            if (filemtime($file) + $maxlifetime < time() && file_exists($file)) {
-                unlink($file);
-            }
-        }
+	public function gc($maxlifetime)
+	{
+		foreach (glob("$this->savePath/sess_*") as $file) {
+			if (filemtime($file) + $maxlifetime < time() && file_exists($file)) {
+				unlink($file);
+			}
+		}
 
-        return true;
-    }
+		return true;
+	}
 }
