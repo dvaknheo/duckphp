@@ -389,20 +389,20 @@ class DNSwooleHttpServer
 	public $http_handler=null;
 	public $http_exception_handler=null;
 	
-	protected $static_root=null;  //TODO
+	protected $static_root=null;
 	protected function onHttpRun($request,$response)
 	{
 		SwooleContext::G()->initHttp($request,$response);
 		
-		CoroutineSingleton::CloneInstance(SuperGlobal::class);
-		SuperGlobal::G()->init();
+		CoroutineSingleton::CloneInstance(DNSuperGlobal::class);
+		DNSuperGlobal::G()->init();
 		
 		if($this->http_handler){
 			$this->runHttpHandler();
 			return;
 		}
 		if($this->options['http_handler_file']){
-			$path_info=SuperGlobal::G()->_SERVER['REQUEST_URI'];
+			$path_info=DNSuperGlobal::G()->_SERVER['REQUEST_URI'];
 			$file=$this->options['http_handler_basepath'].$this->options['http_handler_file'];
 			$document_root=dirname($file);
 			$this->includeHttpPhpFile($file,$document_root,$path_info);
@@ -414,7 +414,7 @@ class DNSwooleHttpServer
 			$document_root=$this->static_root?:rtrim($http_handler_root,'/');
 			
 			
-			$request_uri=SuperGlobal::G()->_SERVER['REQUEST_URI'];
+			$request_uri=DNSuperGlobal::G()->_SERVER['REQUEST_URI'];
 			$path=parse_url($request_uri,PHP_URL_PATH);
 			$flag=$this->runHttpFile($path,$document_root);
 			if(!$flag){
@@ -484,9 +484,9 @@ class DNSwooleHttpServer
 	}
 	protected function includeHttpPhpFile($file,$document_root,$path_info)
 	{
-		SuperGlobal::G()->_SERVER['PATH_INFO']=$path_info;
-		SuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=$document_root;
-		SuperGlobal::G()->_SERVER['SCRIPT_FILENAME']=$file;
+		DNSuperGlobal::G()->_SERVER['PATH_INFO']=$path_info;
+		DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=$document_root;
+		DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']=$file;
 		chdir(dirname($file));
 		(function($file){include($file);})($file);
 	}
@@ -576,11 +576,11 @@ class DNSwooleHttpServer
 		\Swoole\Runtime::enableCoroutine();
 		
 		CoroutineSingleton::ReplaceDefaultSingletonHandler();
-		SuperGlobal::G(SwooleSuperGlobal::G());
+		DNSuperGlobal::G(SwooleSuperGlobal::G());
 
 		return $this;
 	}
-	public function on404()
+	public function onShow404()
 	{
 		CoroutineSingleton::CloneInstance(DNMVCS::class);
 		
@@ -589,7 +589,7 @@ class DNSwooleHttpServer
 		$document_root=$this->static_root?:rtrim($http_handler_root,'/');
 		
 		
-		$request_uri=SuperGlobal::G()->_SERVER['REQUEST_URI'];
+		$request_uri=DNMVCS::SG()->_SERVER['REQUEST_URI'];
 		$path=parse_url($request_uri,PHP_URL_PATH);
 		
 		$flag=$this->runHttpFile($path,$document_root);
@@ -619,19 +619,30 @@ class DNSwooleHttpServer
 			$dn->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
 		}		
 		if($dn_swoole_options['use_http_handler_root']){
-			DNRoute::G()->set404([$this,'on404']);
+			DNRoute::G()->set404([$this,'onShow404']);
 		}
 		SystemWrapper::G()->header_handler=[static::class,'header'];
 		SystemWrapper::G()->cookie_handler=[static::class,'setcookie'];
 		
 		
-		$dn->onBeforeRun(function(){
+		$dn->setBeforeRunHandler(function(){
 			CoroutineSingleton::CloneInstance(DNExceptionManager::class);
 			// CoroutineSingleton::CloneInstance(DNConfig::class);
 			CoroutineSingleton::CloneInstance(DNView::class);
 			CoroutineSingleton::CloneInstance(DNRoute::class);
 			CoroutineSingleton::CloneInstance(DNRuntimeState::class);
 			//CoroutineSingleton::CloneInstance(DNDBManager::class);
+			
+			$fakeRoot='public';
+			$fakeIndex='index.php';
+			$path=DNMVCS::G()->options['path'];
+			if(!isset(DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT'])){
+				DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=$path.$fakeRoot;
+			
+			}
+			if(!isset(DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME'])){
+				DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']=$path.$fakeRoot.'/'.$fakeIndex;
+			}
 		});
 		
 		return $this;
@@ -649,7 +660,7 @@ class DNSwooleHttpServer
 	}
 }
 
-class SwooleSuperGlobal extends SuperGlobal
+class SwooleSuperGlobal extends DNSuperGlobal
 {
 	public function init()
 	{
@@ -675,8 +686,8 @@ class SwooleSuperGlobal extends SuperGlobal
 	}
 	public function _StartSession(array $options=[])
 	{
-		SwooleSESSION::G()->_Start($options);
 		$t=SwooleSESSION::G();
+		$t->_Start($options);
 		static::G()->_SESSION=&$t->data;
 	}
 	public function _DestroySession()

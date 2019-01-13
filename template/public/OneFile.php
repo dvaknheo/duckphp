@@ -1,6 +1,5 @@
 <?php
 use \DNMVCS\DNMVCS as DN;
-use \DNMVCS\SuperGlobal as SG;
 
 require(__DIR__.'/../headfile/headfile.php');
 
@@ -9,19 +8,19 @@ $view_data=[];
 /////////////////////
 function get_data()
 {
-	return isset(SG::G()->_SESSION['content'])?SG::G()->_SESSION['content']:'';
+	return isset(DN::SG()->_SESSION['content'])?DN::SG()->_SESSION['content']:'';
 }
 function add_data($content)
 {
-	SG::G()->_SESSION['content']=$content;
+	DN::SG()->_SESSION['content']=$content;
 }
 function update_data($content)
 {
-	SG::G()->_SESSION['content']=$content;
+	DN::SG()->_SESSION['content']=$content;
 }
 function delete_data()
 {
-	unset(SG::G()->_SESSION['content']);
+	unset(DN::SG()->_SESSION['content']);
 }
 /////////////
 function action_index()
@@ -30,7 +29,7 @@ function action_index()
 	$view_data['content']=nl2br(DN::H(get_data()));
 	$view_data['url_add']=DN::URL('add');
 	$view_data['url_edit']=DN::URL('edit');
-	$token=SG::G()->_SESSION['token']=md5(mt_rand());
+	$token=DN::SG()->_SESSION['token']=md5(mt_rand());
 	$view_data['url_del']=DN::URL('del?token='.$token);
 	
 }
@@ -51,13 +50,13 @@ function action_edit()
 }
 function action_del()
 {
-	$old_token=SG::G()->_SESSION['token'];
-	$new_token=SG::G()->_GET['token'];
+	$old_token=DN::SG()->_SESSION['token'];
+	$new_token=DN::SG()->_GET['token'];
 	$flag=($old_token==$new_token)?true:false;
 	if($flag){
-		unset(SG::G()->_SESSION['content']);
+		unset(DN::SG()->_SESSION['content']);
 	}
-	unset(SG::G()->_SESSION['token']);
+	unset(DN::SG()->_SESSION['token']);
 	$data['msg']=$flag?'':'验证失败';
 	$data['url_back']=DN::URL('');
 	
@@ -65,14 +64,14 @@ function action_del()
 }
 function action_do_edit()
 {
-	update_data(SG::G()->_POST['content']);
+	update_data(DN::SG()->_POST['content']);
 	$data=[];
 	$data['url_back']=DN::URL('');
 	DN::Show($data,'dialog');
 }
 function action_do_add()
 {
-	add_data(SG::G()->_POST['content']);
+	add_data(DN::SG()->_POST['content']);
 	$data=[];
 	$data['url_back']=DN::URL('');
 	DN::Show($data,'dialog');

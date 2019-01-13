@@ -287,7 +287,14 @@ class DNRoute
 		$namespace_controller=ltrim($namespace_controller,'\\');
 		$this->namespace_controller=$namespace_controller;
 		
+		if(true){
+			//TODO
+			$this->initData();
+		}
 		
+	}
+	public function initData()
+	{
 		$this->script_filename=$_SERVER['SCRIPT_FILENAME']??'';
 		$this->document_root=$_SERVER['DOCUMENT_ROOT']??'';
 		if(PHP_SAPI==='cli'){
@@ -535,8 +542,8 @@ class DNView
 	}
 	public function _ShowBlock($view,$data=null)
 	{
-		$this->view=$view;
-		$this->data=array_merge($this->data,$data);
+		$this->view_file=$this->path.rtrim($view,'.php').'.php';
+		$this->data=isset($data)?$data:$this->data;
 		$data=null;
 		$view=null;
 		extract($this->data);
@@ -687,6 +694,72 @@ class DNDBManager
 			($this->db_close_handler)($v);
 		}
 		$this->databases=[];
+	}
+}
+class DNRuntimeState
+{
+	use DNSingleton;
+	protected $is_running=false;
+	protected $error_reporting_old;
+	public function isRunning()
+	{
+		return $this->is_running;
+	}
+	public function setState()
+	{
+		$this->is_running=true;
+		$this->error_reporting_old=error_reporting();
+	}
+	public function unsetState()
+	{
+		error_reporting($this->error_reporting_old);
+		$this->is_running=false;
+	}
+	public function skipNoticeError()
+	{
+		$this->error_reporting_old =error_reporting();
+		error_reporting($this->error_reporting_old & ~E_NOTICE);
+	}
+}
+class DNSuperGlobal
+{
+	use DNSingleton;
+	
+	public $_GET;
+	public $_POST;
+	public $_REQUEST;
+	public $_SERVER;
+	public $_ENV;
+	public $_COOKIE;
+	public $_SESSION;
+	public function __construct()
+	{
+		$this->init();
+	}
+	protected function init()
+	{	
+		$this->_GET		=&$_GET;
+		$this->_POST	=&$_POST;
+		$this->_REQUEST	=&$_REQUEST;
+		$this->_SERVER	=&$_SERVER;
+		$this->_ENV		=&$_ENV;
+		$this->_COOKIE	=&$_COOKIE;
+		$this->_SESSION	=&$_SESSION;
+	}
+///////////////////////////////
+	public function _StartSession(array $options=[])
+	{
+		if(session_status() !== PHP_SESSION_ACTIVE ){ session_start($options); }
+		$this->_SESSION=&$_SESSION;
+	}
+	public function _DestroySession()
+	{
+		session_destroy();
+		$this->_SESSION=[];
+	}
+	public function _SetSessionHandler($handler)
+	{
+		session_set_save_handler($handler);
 	}
 }
 trait DNMVCS_Glue
@@ -844,16 +917,9 @@ trait DNMVCS_Glue
 	}
 	public static function SG()
 	{
-		return SuperGlobal::G();
+		return DNSuperGlobal::G();
 	}
-	public static function StartSession(array $options=[])
-	{
-		return SuperGlobal::G()->_StartSession($options);
-	}
-	public static function DestroySession()
-	{
-		return SuperGlobal::G()->_DestroySession();
-	}
+
 }
 trait DNMVCS_Misc
 {
@@ -1113,6 +1179,65 @@ EOT;
 	//
 }
 
+trait DNMVCS_SystemWrapper
+{
+	
+	public $header_handler=null;
+	public $cookie_handler=null;
+	public $exit_handler=null;
+
+	public static function session_start(array $options=[])
+	{
+		return DNSuperGlobal::G()->_StartSession($options);
+	}
+	public static function session_destroy()
+	{
+		return DNSuperGlobal::G()->_DestroySession();
+	}
+	public static function session_set_save_handler(\SessionHandlerInterface $handler)
+	{
+		return DNSuperGlobal::G()->_SetSessionHandler($handler);
+	}
+
+	public static function header($output ,bool $replace = true , int $http_response_code=0)
+	{
+		return static::G()->_header($output,$replace,$http_response_code);
+	}
+	public static function setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
+	{
+		return static::G()->_setcookie($key,$value,$expire,$path,$domain,$secure,$httponly);
+	}
+	public static function exit_system($code=0)
+	{
+		return static::G()->_exit_system($code);
+	}
+	
+	public static function _header($output ,bool $replace = true , int $http_response_code=0)
+	{
+		if($this->header_handler){
+			return ($this->header_handler)($output,$replace,$http_response_code);
+		}
+		if(PHP_SAPI==='cli'){ return; }
+		if(headers_sent()){ return; }
+		return header($output,$replace,$http_response_code);
+	}
+	
+	public static function _setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
+	{
+		if($this->cookie_handler){
+			return ($this->cookie_handler)($key,$value,$expire,$path,$domain,$secure,$httponly);
+		}
+		return setcookie($key,$value,$expire,$path,$domain,$secure,$httponly);
+	}
+	public function _exit_system($code=0)
+	{
+		if($this->exit_handler){
+			return ($this->exit_handler)($code);
+		}
+		exit($code);
+	}
+}
+
 class DNMVCS
 {
 	const VERSION = '1.0.8';
@@ -1122,6 +1247,7 @@ class DNMVCS
 	use DNMVCS_Glue;
 	use DNMVCS_Handler;
 	use DNMVCS_Misc;
+	use DNMVCS_SystemWrapper;
 	
 	const DEFAULT_OPTIONS=[
 			'namespace'=>'MY',
@@ -1196,15 +1322,13 @@ class DNMVCS
 	public static function RunAsServer($server_options,$dn_options,$server=null)
 	{
 		DNAutoLoader::G()->init($dn_options)->run();
-		//todo merge swoole setting.
 		DNSwooleHttpServer::RunWithServer($server_options,$dn_options,$server);
 	}
 	
 	protected function checkAndInstallDefaultRouteHooks($route,$in_init=true)
 	{
 		if($in_init){
-			if(defined('DN_SWOOLE_SERVER_RUNNING') || $this->options['swoole'] || $this->options['use_super_global']){
-				$route->addRouteHook([RouteHookSuperGlobal::G(),'hook'],false,true);
+			if(defined('DN_SWOOLE_SERVER_RUNNING') || $this->options['swoole']){
 				$route->addRouteHook([RouteHookMapAndRewrite::G(),'hook'],false,true); 
 			}
 		}else{
@@ -1305,13 +1429,24 @@ class DNMVCS
 		}
 	}
 	
-	public function onBeforeRun($before_run_handler)
+	public function setBeforeRunHandler($before_run_handler)
 	{
 		$this->before_run_handler=$before_run_handler;
+	}
+	protected function beforeRouteRun(DNRoute $route)
+	{
+		$route->script_filename=DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']??'';
+		$route->document_root=DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT']??'';
+		$route->request_method=DNSuperGlobal::G()->_SERVER['REQUEST_METHOD']??'';
+		$route->path_info=DNSuperGlobal::G()->_SERVER['PATH_INFO']??'';
+		
+		$route->path_info=ltrim($route->path_info,'/');
 	}
 	public function run()
 	{
 		DNRuntimeState::G()->setState();
+		$this->beforeRouteRun(DNRoute::G());
+		
 		$this->checkAndInstallDefaultRouteHooks(DNRoute::G(),false); //recheck;
 		
 		if($this->before_run_handler){
@@ -1321,30 +1456,5 @@ class DNMVCS
 		$ret=DNRoute::G()->run();
 		DNRuntimeState::G()->unsetState();
 		return $ret;
-	}
-}
-class DNRuntimeState
-{
-	use DNSingleton;
-	protected $is_running=false;
-	protected $error_reporting_old;
-	public function isRunning()
-	{
-		return $this->is_running;
-	}
-	public function setState()
-	{
-		$this->is_running=true;
-		$this->error_reporting_old=error_reporting();
-	}
-	public function unsetState()
-	{
-		error_reporting($this->error_reporting_old);
-		$this->is_running=false;
-	}
-	public function skipNoticeError()
-	{
-		$this->error_reporting_old =error_reporting();
-		error_reporting($this->error_reporting_old & ~E_NOTICE);
 	}
 }

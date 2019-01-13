@@ -6,14 +6,10 @@ class RouteHookMapAndRewrite
 	use DNSingleton;
 	protected function mergeHttpGet($get)
 	{
-		if(class_exists('\DNMVCS\SuperGlobal',false)){
-			foreach($get as $k=>$v){
-				SuperGlobal::G()->_GET[$k]=$v;
-			}
+		foreach($get as $k=>$v){
+			DNSuperGlobal::G()->_GET[$k]=$v;
 		}
 		if(PHP_SAPI==='cli'){ return; }
-		
-		$_GET=array_merge($get,$_GET??[]);
 	}
 	public function matchRewrite($old_url,$new_url,$route)
 	{

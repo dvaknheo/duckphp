@@ -13,13 +13,9 @@ class SimpleRouteHook
 		$key_for_module=$this->key_for_module;
 		
 		$path='';
-		if(class_exists('\DNMVCS\SuperGlobal' ,false)){
-			$path=SuperGlobal::G()->_SERVER['REQUEST_URI'];
-			$path_info=SuperGlobal::G()->_SERVER['PATH_INFO'];
-		}else{
-			$path=$_SERVER['REQUEST_URI'];
-			$path_info=$_SERVER['PATH_INFO'];
-		}
+		$path=DNSuperGlobal::G()->_SERVER['REQUEST_URI'];
+		$path_info=DNSuperGlobal::G()->_SERVER['PATH_INFO'];
+
 		$path=parse_url($path,PHP_URL_PATH);
 		
 		if(strlen($path_info)){
@@ -51,13 +47,9 @@ class SimpleRouteHook
 		$route->setURLHandler([$this,'onURL']);
 		$k=$this->key_for_action;
 		$m=$this->key_for_module;
-		if(class_exists('\DNMVCS\SuperGlobal' ,false)){
-			$module=SuperGlobal::G()->_REQUEST[$m]??null;
-			$path_info=SuperGlobal::G()->_REQUEST[$k]??null;
-		}else{
-			$module=$_REQUEST[$m]??null;
-			$path_info=$_REQUEST[$k]??null;
-		}
+		$module=DNSuperGlobal::G()->_REQUEST[$m]??null;
+		$path_info=DNSuperGlobal::G()->_REQUEST[$k]??null;
+
 		$path_info=$module.'/'.$path_info;
 		$path_info=ltrim($path_info,'/');
 		$route->path_info=$path_info;
@@ -129,7 +121,7 @@ class FunctionDispatcher
 	}
 	public function runRoute()
 	{
-		$route=DNRoute::G(); //TODO; module , action mode;
+		$route=DNRoute::G();
 		$post=($route->request_method==='POST')?$route->options['prefix_post']:'';
 		$callback=$this->prefix.$post.$this->path_info;
 		

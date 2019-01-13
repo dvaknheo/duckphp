@@ -719,11 +719,7 @@ Import($file)
 
     手动导入默认lib 目录下的包含文件
     实质调用 _Import();
-StartSession(array $options=[])
 
-    替代 session_start
-
-    实际调用 SuperGlobal::G()->StartSession()
 ## 状态判定
 Developing()
 
@@ -760,6 +756,14 @@ RunAsServer($server_options,$dn_options,$server=null)
 ```php
 \DNMVCS\DNMVCS::RunWithoutPathInfo([]);
 ``` 
+## 取代系统函数
+
+session_start
+session_destroy
+session_set_save_handler
+header
+setcookie
+
 ## 独立杂项静态方法
 这几个方法独立，为了方便操作，放在这里。
 
@@ -841,6 +845,10 @@ assignPathNamespace($path,$namespace=null)
 setBeforeRunHandler($before_run_handler)
 
     在run之前执行回调。 SwooleHttpServer 用到这个。
+_header
+_set_cookie
+_exit_system
+
 ## 事件方法
 实现了默认事件回调的方法。扩展以展现不同事件的显示。
 
@@ -1099,6 +1107,8 @@ DNAutoLoader 做了防多次加载和多次初始化。
     assignPathNamespace()
 ## DNRuntimeState 状态类
 用于运行时状态的保存
+## DNSuperGlobal 超全局变量
+
 # 第六章 DNMVCS 全部文件和类说明
 这个章节说明 DNMVCS 的各个文件。
 并在此把次要的类和文件展示出来
