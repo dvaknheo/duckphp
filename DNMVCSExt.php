@@ -297,7 +297,7 @@ class DNMVCSExt
 			DNRoute::G()->addRouteHook([FunctionDispatcher::G(),'hook']);
 		}
 		if($options['session_auto_start']){
-			DNMVCS::StartSession(['name'=>$options['session_name']]);
+			DNMVCS::session_start(['name'=>$options['session_name']]);
 		
 		}
 	}
@@ -368,18 +368,18 @@ class DNMVCSExt
 		DNMVCS::header('Content-Type:text/json');
 		DNMVCS::G()->onBeforeShow([],'');
 		echo json_encode($ret,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
-		exit;
+		DNMVCS::exit_system();
 	}
 	public function _ExitRedirect($url,$only_in_site=true)
 	{
 		if($only_in_site && parse_url($url,PHP_URL_HOST)){
 			//something  wrong
-			exit;
+			DNMVCS::exit_system();
 		}
 		DNMVCS::header('location: '.$url);
 		DNMVCS::header('',true,302);
 		DNMVCS::G()->onBeforeShow([],'');
-		exit;
+		DNMVCS::exit_system();
 	}
 }
 //mysqldump -uroot -p123456 DnSample -d --opt --skip-dump-date --skip-comments | sed 's/ AUTO_INCREMENT=[0-9]*\b//g' >../data/database.sql

@@ -287,13 +287,10 @@ class DNRoute
 		$namespace_controller=ltrim($namespace_controller,'\\');
 		$this->namespace_controller=$namespace_controller;
 		
-		if(true){
-			//TODO
-			$this->initData();
-		}
+		$this->is_server_data_load=false;
 		
 	}
-	public function initData()
+	public function loadServerData()
 	{
 		$this->script_filename=$_SERVER['SCRIPT_FILENAME']??'';
 		$this->document_root=$_SERVER['DOCUMENT_ROOT']??'';
@@ -338,6 +335,9 @@ class DNRoute
 	}
 	public function run()
 	{
+		if($this->is_server_data_load){
+			$this->loadServerData();
+		}
 		foreach($this->routeHooks as $hook){
 			($hook)($this);
 		}
@@ -818,7 +818,7 @@ trait DNMVCS_Glue
 	public static function Exit404()
 	{
 		static::G()->onShow404();
-		exit;
+		static::exit_system();
 	}
 	public function setViewWrapper($head_file=null,$foot_file=null)
 	{
@@ -1205,7 +1205,7 @@ trait DNMVCS_SystemWrapper
 		return static::G()->_exit_system($code);
 	}
 	
-	public static function _header($output ,bool $replace = true , int $http_response_code=0)
+	public function _header($output ,bool $replace = true , int $http_response_code=0)
 	{
 		if($this->header_handler){
 			return ($this->header_handler)($output,$replace,$http_response_code);
@@ -1215,7 +1215,7 @@ trait DNMVCS_SystemWrapper
 		return header($output,$replace,$http_response_code);
 	}
 	
-	public static function _setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
+	public function _setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
 	{
 		if($this->cookie_handler){
 			return ($this->cookie_handler)($key,$value,$expire,$path,$domain,$secure,$httponly);
@@ -1322,7 +1322,7 @@ class DNMVCS
 	{
 		if($in_init){
 			if(defined('DN_SWOOLE_SERVER_RUNNING') || $this->options['swoole']){
-				$route->addRouteHook([RouteHookMapAndRewrite::G(),'hook'],false,true); 
+				$route->addRouteHook([RouteHookMapAndRewrite::G(),'hook'],false); 
 			}
 		}else{
 			if($this->options['rewrite_map'] || $this->options['route_map'] ){
@@ -1428,12 +1428,24 @@ class DNMVCS
 	}
 	protected function beforeRouteRun(DNRoute $route)
 	{
+		$route->is_server_data_load=true;
+		
 		$route->script_filename=DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']??'';
 		$route->document_root=DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT']??'';
 		$route->request_method=DNSuperGlobal::G()->_SERVER['REQUEST_METHOD']??'';
 		$route->path_info=DNSuperGlobal::G()->_SERVER['PATH_INFO']??'';
 		
 		$route->path_info=ltrim($route->path_info,'/');
+		
+		if(PHP_SAPI==='cli' && !defined('DN_SWOOLE_SERVER_RUNNING')){
+			$argv=$_SERVER['argv']??[];
+			if(count($argv)>=2){
+				$route->path_info=$argv[1];
+				array_shift($argv);
+				array_shift($argv);
+				$route->parameters=$argv;
+			}
+		}
 	}
 	public function run()
 	{
