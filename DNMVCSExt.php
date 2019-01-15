@@ -340,15 +340,34 @@ class FunctionView extends DNView
 		}
 	}
 }
-class FacadeRoot
+class FacadeBase
 {
+	use DNSingleton;
+	
 	public static function __callStatic($name, $arguments) 
 	{
-		$namespace=DNMVCS::G()->options['namespace'];
-		$class=$namespace.'\\'. substr(static::class,strlen($namespace.'\\Facade\\'));
-		$object=call_user_func([$class,'G']);
-		$ret=call_user_func_array([$object,$name], $arguments);
+		$callback=self::G()->getFacadeCallback(static::class,$name);
+		$ret=call_user_func_array($callback, $arguments);
 		return $ret;
+	}
+	public function getFacadeCallback($class,$name)
+	{
+		$dn=DNMVCS::G();
+		$ext=$dn->options['ext'];
+		$map=$ext['facade_map']??[];
+		
+		
+		$namespace=$dn->options['namespace'];
+		$class=$namespace.'\\'. substr($class,strlen($namespace.'\\Facade\\'));
+		foreach($map as $k=>$v){
+			if($k===$class){
+				$object=call_user_func([$v,'G']);
+				return [$object,$name];
+			}
+		}
+		
+		$object=call_user_func([$class,'G']);
+		return [$object,$name];
 	}
 }
 class DNMVCSExt
@@ -368,9 +387,11 @@ class DNMVCSExt
 				'fullpath_project_share_common'=>'',
 			'use_common_autoloader'=>false,
 				'fullpath_config_common'=>'',
-			'use_strict_db_manager'=>false,
+			'use_strict_db'=>false,
 			
 			'use_facade'=>false,
+			'facade_map'=>[],
+			
 			'session_auto_start'=>false,
 			'session_name'=>'DNSESSION',
 		];
@@ -393,8 +414,8 @@ class DNMVCSExt
 		if($options['use_function_view']){
 			$dn->initView(DNView::G(FunctionView::G()));
 		}
-		if($options['use_strict_db_manager']){
-			DNDBManager::G()->setBeforeGetDBHandler([static::class,'CheckDBPermission']);
+		if($options['use_strict_db']){
+			DNDBManager::G()->setBeforeGetDBHandler([static::G(),'checkDBPermission']);
 		}
 		
 		if($options['key_for_action']){
@@ -423,13 +444,13 @@ class DNMVCSExt
 			
 			$blocks=explode('\\',$class);
 			$basename=array_pop($blocks);
-			
 			$namespace=implode('\\',$blocks);
-			$code="namespace $namespace{ class $basename extends \\DNMVCS\\FacadeRoot{} }";
+			
+			$code="namespace $namespace{ class $basename extends \\DNMVCS\\FacadeBase{} }";
 			eval($code);
 		});
 	}
-	public static function CheckDBPermission()
+	public function checkDBPermission()
 	{
 		if(!DNMVCS::Developing()){return;}
 		
