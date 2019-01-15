@@ -16,7 +16,7 @@ class MedooFixed extends \Medoo\Medoo
 
 class MedooDB extends MedooFixed
 {
-	use DBExt;
+	use DBAdvance;
 	
 	public function close()
 	{

@@ -2,7 +2,7 @@
 namespace DNMVCS;
 class DB implements DBInterface
 {
-	use DBExt;
+	use DBAdvance;
 	
 	public $pdo;
 	public $config;

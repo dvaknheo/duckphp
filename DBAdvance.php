@@ -1,7 +1,7 @@
 <?php
 namespace DNMVCS;
 
-trait DBExt
+trait DBAdvance
 {
 	public function quoteIn($array)
 	{
