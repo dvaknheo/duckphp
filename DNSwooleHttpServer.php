@@ -302,8 +302,8 @@ trait DNSwooleHttpServer_SimpleHttpd
 			$this->onHttpException($ex);
 		}
 		
-		SwooleContext::G()->onShutdown();
 		\defer(function()use($InitObLevel,$response){
+			SwooleContext::G()->onShutdown();
 			for($i=ob_get_level();$i>$InitObLevel;$i--){
 				ob_end_flush();
 			}
@@ -660,8 +660,10 @@ class DNSwooleHttpServer
 	}
 }
 
-class SwooleSuperGlobal extends DNSuperGlobal
+class SwooleSuperGlobal
 {
+	use DNSingleton;
+	
 	public function init()
 	{
 		$cid = \Swoole\Coroutine::getuid();
