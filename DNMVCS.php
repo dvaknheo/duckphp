@@ -324,7 +324,7 @@ class DNRoute
 	{
 		if($once){
 			foreach($this->routeHooks as $v){
-				if($v==$hook){ var_dump("Hit!");return;}
+				if($v==$hook){ return false;}
 			}
 		}
 		if(!$prepend){
@@ -332,6 +332,7 @@ class DNRoute
 		}else{
 			array_unshift($this->routeHooks,$hook);
 		}
+		return true;
 	}
 	public function run()
 	{
@@ -1409,7 +1410,7 @@ class DNMVCS
 	{
 		$this->before_run_handler=$before_run_handler;
 	}
-	protected function beforeRouteRun(DNRoute $route)
+	public function beforeRouteRun(DNRoute $route)
 	{
 		$route->is_server_data_load=true;
 		
@@ -1437,11 +1438,11 @@ class DNMVCS
 	public function run()
 	{
 		DNRuntimeState::G()->setState();
-		$this->beforeRouteRun(DNRoute::G());
 		
 		if($this->before_run_handler){
 			($this->before_run_handler)($this);
 		}
+		$this->beforeRouteRun(DNRoute::G());
 		
 		$ret=DNRoute::G()->run();
 		DNRuntimeState::G()->unsetState();

@@ -144,88 +144,11 @@ class SwooleContext
 		$this->shutdown_function_array=[];
 	}
 }
-class DNSwooleException extends \Exception
+class SwooleException extends \Exception
 {
 	use DNThrowQuickly;
 }
-
-class DBConnectPoolProxy
-{
-	use DNSingleton;
-	
-	public $tag_write='0';
-	public $tag_read='1';
-	
-	protected $db_create_handler;
-	protected $db_close_handler;
-	protected $db_queue_write;
-	protected $db_queue_write_time;
-	protected $db_queue_read;
-	protected $db_queue_read_time;
-	public $max_length=100;
-	public $timeout=5;
-	public function __construct()
-	{
-		$this->db_queue_write=new \SplQueue();
-		$this->db_queue_write_time=new \SplQueue();
-		$this->db_queue_read=new \SplQueue();
-		$this->db_queue_read_time=new \SplQueue();
-	}
-	public function init($max_length=10,$timeout=5)
-	{
-		$this->max_length=$max_length;
-		$this->timeout=$timeout;
-		return $this;
-	}
-	public function setDBHandler($db_create_handler,$db_close_handler=null)
-	{
-		$this->db_create_handler=$db_create_handler;
-		$this->db_close_handler=$db_close_handler;
-	}
-	protected function getObject($queue,$queue_time,$db_config,$tag)
-	{
-		if($queue->isEmpty()){
-			return ($this->db_create_handler)($db_config,$tag);
-		}
-		$db=$queue->shift();
-		$time=$queue_time->shift();
-		$now=time();
-		$is_timeout =($now-$time)>$this->timeout?true:false;
-		if($is_timeout){
-			($this->db_close_handler)($db,$tag);
-			return ($this->db_create_handler)($db_config,$tag);
-		}
-		return $db;
-		
-	}
-	protected function reuseObject($queue,$queue_time,$db)
-	{
-		if(count($queue)>=$this->max_length){
-			($this->db_close_handler)($db,$tag);
-			return;
-		}
-		$time=time();
-		$queue->push($db);
-		$queue_time->push($time);
-	}
-	public function onCreate($db_config,$tag)
-	{
-		if($tag!=$this->tag_write){
-			return $this->getObject($this->db_queue_write,$this->db_queue_write_time,$db_config,$tag);
-		}else{
-			return $this->getObject($this->db_queue_read,$this->db_queue_read_time,$db_config,$tag);
-		}
-	}
-	public function onClose($db,$tag)
-	{
-		if($tag!=$this->tag_write){
-			return $this->reuseObject($this->db_queue_write,$this->db_queue_write_time,$db);
-		}else{
-			return $this->reuseObject($this->db_queue_read,$this->db_queue_read_time,$db);
-		}
-	}
-}
-trait DNSwooleHttpServer_Static
+trait SwooleHttpServer_Static
 {
 	public static function Server()
 	{
@@ -256,7 +179,7 @@ trait DNSwooleHttpServer_Static
 		return SwooleCoroutineSingleton::CloneInstance($class);
 	}
 }
-trait DNSwooleHttpServer_GlobalFunc
+trait SwooleHttpServer_GlobalFunc
 {
 	public $http_exception_handler=null;
 	public static function header(string $string, bool $replace = true , int $http_status_code =0)
@@ -282,12 +205,12 @@ trait DNSwooleHttpServer_GlobalFunc
 		SwooleContext::G()->shutdown_function_array[]=func_get_args();
 	}
 }
-trait DNSwooleHttpServer_SimpleHttpd
+trait SwooleHttpServer_SimpleHttpd
 {
 	
-	protected function onHttpRun($request,$response){throw new DNSwooleException("Impelement Me");}
-	protected function onHttpException($ex){throw new DNSwooleException("Impelement Me");}
-	protected function onHttpClean(){throw new DNSwooleException("Impelement Me");}
+	protected function onHttpRun($request,$response){throw new SwooleException("Impelement Me");}
+	protected function onHttpException($ex){throw new SwooleException("Impelement Me");}
+	protected function onHttpClean(){throw new SwooleException("Impelement Me");}
 	
 	public function onRequest($request,$response)
 	{
@@ -313,7 +236,7 @@ trait DNSwooleHttpServer_SimpleHttpd
 		});
 	}
 }
-trait DNSwooleHttpServer_WebSocket
+trait SwooleHttpServer_WebSocket
 {
 	public $websocket_open_handler=null;
 	public $websocket_handler=null;
@@ -352,13 +275,13 @@ trait DNSwooleHttpServer_WebSocket
 		}
 	}
 }
-class DNSwooleHttpServer
+class SwooleHttpServer
 {
 	use DNSingleton;
-	use DNSwooleHttpServer_Static;
-	use DNSwooleHttpServer_SimpleHttpd;
-	use DNSwooleHttpServer_WebSocket;
-	use DNSwooleHttpServer_GlobalFunc;
+	use SwooleHttpServer_Static;
+	use SwooleHttpServer_SimpleHttpd;
+	use SwooleHttpServer_WebSocket;
+	use SwooleHttpServer_GlobalFunc;
 	
 	const DEFAULT_OPTIONS=[
 			'swoole_server'=>null,
@@ -378,12 +301,6 @@ class DNSwooleHttpServer
 			'websocket_exception_handler'=>null,
 			'websocket_close_handler'=>null,
 		];
-	const DEFAULT_DN_OPTIONS=[
-			'not_empty'=>true,
-			'db_reuse_size'=>0,
-			'db_reuse_timeout'=>5,
-			'use_http_handler_root'=>false,
-		];
 	public $server=null;
 	
 	public $http_handler=null;
@@ -393,16 +310,15 @@ class DNSwooleHttpServer
 	protected function onHttpRun($request,$response)
 	{
 		SwooleContext::G()->initHttp($request,$response);
-		
-		SwooleCoroutineSingleton::CloneInstance(DNSuperGlobal::class);
-		DNSuperGlobal::G()->init();
+		SwooleCoroutineSingleton::CloneInstance(SwooleSuperGlobal::class);
+		SwooleSuperGlobal::G()->init();
 		
 		if($this->http_handler){
 			$this->runHttpHandler();
 			return;
 		}
 		if($this->options['http_handler_file']){
-			$path_info=DNSuperGlobal::G()->_SERVER['REQUEST_URI'];
+			$path_info=SwooleSuperGlobal::G()->_SERVER['REQUEST_URI'];
 			$file=$this->options['http_handler_basepath'].$this->options['http_handler_file'];
 			$document_root=dirname($file);
 			$this->includeHttpPhpFile($file,$document_root,$path_info);
@@ -414,11 +330,11 @@ class DNSwooleHttpServer
 			$document_root=$this->static_root?:rtrim($http_handler_root,'/');
 			
 			
-			$request_uri=DNSuperGlobal::G()->_SERVER['REQUEST_URI'];
+			$request_uri=SwooleSuperGlobal::G()->_SERVER['REQUEST_URI'];
 			$path=parse_url($request_uri,PHP_URL_PATH);
 			$flag=$this->runHttpFile($path,$document_root);
 			if(!$flag){
-				throw new DNSwooleException("404 Not Found!",404);
+				throw new SwooleException("404 Not Found!",404);
 			}
 			return;
 		}
@@ -484,9 +400,9 @@ class DNSwooleHttpServer
 	}
 	protected function includeHttpPhpFile($file,$document_root,$path_info)
 	{
-		DNSuperGlobal::G()->_SERVER['PATH_INFO']=$path_info;
-		DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=$document_root;
-		DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']=$file;
+		SwooleSuperGlobal::G()->_SERVER['PATH_INFO']=$path_info;
+		SwooleSuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=$document_root;
+		SwooleSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']=$file;
 		chdir(dirname($file));
 		(function($file){include($file);})($file);
 	}
@@ -576,75 +492,8 @@ class DNSwooleHttpServer
 		\Swoole\Runtime::enableCoroutine();
 		
 		SwooleCoroutineSingleton::ReplaceDefaultSingletonHandler();
-		DNSuperGlobal::G(SwooleSuperGlobal::G());
+		SwooleSuperGlobal::G(SwooleSuperGlobal::G());
 
-		return $this;
-	}
-	public function onShow404()
-	{
-		SwooleCoroutineSingleton::CloneInstance(DNMVCS::class);
-		
-		$http_handler_root=$this->options['http_handler_basepath'].$this->options['http_handler_root'];
-		$http_handler_root=rtrim($http_handler_root,'/').'/';
-		$document_root=$this->static_root?:rtrim($http_handler_root,'/');
-		
-		
-		$request_uri=DNMVCS::SG()->_SERVER['REQUEST_URI'];
-		$path=parse_url($request_uri,PHP_URL_PATH);
-		
-		$flag=$this->runHttpFile($path,$document_root);
-		if(!$flag){
-			DNMVCS::G()->onShow404();
-		}
-		
-	}
-	public function bindDN($dn_options)
-	{
-		if(!$dn_options){return $this;}
-		
-		$dn_options['swoole']=$dn_options['swoole']??[];
-		$dn_options['swoole']=array_replace_recursive(static::DEFAULT_DN_OPTIONS,$dn_options['swoole']);
-		$dn_swoole_options=$dn_options['swoole'];
-		$dn=DNMVCS::G()->init($dn_options);
-		///////////////////////////////
-		
-		$this->options['http_handler']=$this->http_handler =[$dn,'run'];
-		$this->options['http_exception_handler']=$this->http_exception_handler=[$dn,'onException'];
-		
-		$db_reuse_size=$dn_swoole_options['db_reuse_size']??0;
-		if($db_reuse_size){
-			$db_reuse_timeout=$dn_swoole_options['db_reuse_timeout']??5;
-			$dbm=DNDBManager::G();
-			DBConnectPoolProxy::G()->init($db_reuse_size,$db_reuse_timeout)->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
-			$dn->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
-		}		
-		if($dn_swoole_options['use_http_handler_root']){
-			DNRoute::G()->set404([$this,'onShow404']);
-		}
-		DNMVCS::G()->header_handler=[static::class,'header'];
-		DNMVCS::G()->cookie_handler=[static::class,'setcookie'];
-		
-		
-		$dn->setBeforeRunHandler(function(){
-			SwooleCoroutineSingleton::CloneInstance(DNExceptionManager::class);
-			// SwooleCoroutineSingleton::CloneInstance(DNConfig::class);
-			SwooleCoroutineSingleton::CloneInstance(DNView::class);
-			SwooleCoroutineSingleton::CloneInstance(DNRoute::class);
-			SwooleCoroutineSingleton::CloneInstance(DNRuntimeState::class);
-			//SwooleCoroutineSingleton::CloneInstance(DNDBManager::class);
-			
-			$fakeRoot='public';
-			$fakeIndex='index.php';
-			$path=DNMVCS::G()->options['path'];
-			if(!isset(DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT'])){
-				DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=$path.$fakeRoot;
-			
-			}
-			if(!isset(DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME'])){
-				DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']=$path.$fakeRoot.'/'.$fakeIndex;
-			}
-		});
-		
 		return $this;
 	}
 	public function run()
@@ -654,21 +503,25 @@ class DNSwooleHttpServer
 		$t=$this->server->start();
 		fwrite(STDOUT,get_class($this)." run end ".DATE(DATE_ATOM)." ...\n");
 	}
-	public static function RunWithServer($server_options,$dn_options=[],$server=null)
-	{
-		return static::G()->init($server_options,$server)->bindDN($dn_options)->run();
-	}
 }
 
 class SwooleSuperGlobal
 {
 	use DNSingleton;
 	
+	public $_GET;
+	public $_POST;
+	public $_REQUEST;
+	public $_SERVER;
+	public $_ENV;
+	public $_COOKIE;
+	public $_SESSION;
+	
 	public function init()
 	{
 		$cid = \Swoole\Coroutine::getuid();
 		if(!$cid){ return; }
-		$request=DNSwooleHttpServer::Request();
+		$request=SwooleHttpServer::Request();
 		if(!$request){ return; }
 		
 		$this->_GET=$request->get??[];
@@ -685,6 +538,7 @@ class SwooleSuperGlobal
 		foreach($request->server as $k=>$v){
 			$this->_SERVER[strtoupper($k)]=$v;
 		}
+		return $this;
 	}
 	public function _StartSession(array $options=[])
 	{
@@ -730,21 +584,21 @@ class SwooleSESSION
 		
 		$this->is_started=true;
 		
-		DNSwooleHttpServer::register_shutdown_function([$this,'writeClose']);
+		SwooleHttpServer::register_shutdown_function([$this,'writeClose']);
 		
 		$this->options=$options;
 		
 		$session_name=$this->getOption('name');
 		$session_save_path=session_save_path();
 		
-		$cookies=DNSwooleHttpServer::Request()->cookie??[];
+		$cookies=SwooleHttpServer::Request()->cookie??[];
 		$session_id=$cookies[$session_name]??null;
 		if($session_id===null || ! preg_match('/[a-zA-Z0-9,-]+/',$session_id)){
 			$session_id=$this->create_sid();
 		}
 		$this->session_id=$session_id;
 		
-		DNSwooleHttpServer::setcookie($session_name,$this->session_id
+		SwooleHttpServer::setcookie($session_name,$this->session_id
 			,$this->getOption('cookie_lifetime')?time()+$this->getOption('cookie_lifetime'):0
 			,$this->getOption('cookie_path')
 			,$this->getOption('cookie_domain')
@@ -765,7 +619,7 @@ class SwooleSESSION
 		$session_name=$this->getOption('name');
 		$this->handler->destroy($this->session_id);
 		$this->data=[];
-		DNSwooleHttpServer::setcookie($session_name,'');
+		SwooleHttpServer::setcookie($session_name,'');
 		$this->is_started=false;
 	}
 	public function writeClose()
