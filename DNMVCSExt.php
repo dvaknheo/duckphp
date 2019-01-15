@@ -237,10 +237,16 @@ class FunctionView extends DNView
 			include($this->view_file);
 		}
 	}
-	
-	protected function includeShowFiles()
+}
+class FacadeRoot
+{
+	public static function __callStatic($name, $arguments) 
 	{
-		
+		$namespace=DNMVCS::G()->options['namespace'];
+		$class=$namespace.'\\'. substr(static::class,strlen($namespace.'\\Facade\\'));
+		$object=call_user_func([$class,'G']);
+		$ret=call_user_func_array([$object,$name], $arguments);
+		return $ret;
 	}
 }
 class DNMVCSExt
@@ -262,6 +268,7 @@ class DNMVCSExt
 				'fullpath_config_common'=>'',
 			'use_strict_db_manager'=>false,
 			
+			'use_facade'=>false,
 			'session_auto_start'=>false,
 			'session_name'=>'DNSESSION',
 		];
@@ -298,8 +305,25 @@ class DNMVCSExt
 		}
 		if($options['session_auto_start']){
 			DNMVCS::session_start(['name'=>$options['session_name']]);
-		
 		}
+		
+		if($options['use_facade']){
+			$this->enableFacade();
+		}
+	}
+	protected function enableFacade()
+	{
+		spl_autoload_register(function($class){
+			$prefix=DNMVCS::G()->options['namespace'].'\\Facade\\';
+			if(substr($class,0,strlen($prefix))!==$prefix){ return; }
+			
+			$blocks=explode('\\',$class);
+			$basename=array_pop($blocks);
+			
+			$namespace=implode('\\',$blocks);
+			$code="namespace $namespace{ class $basename extends \\DNMVCS\\FacadeRoot{} }";
+			eval($code);
+		});
 	}
 	public static function CheckDBPermission()
 	{

@@ -1341,6 +1341,7 @@ const DEFAULT_OPTIONS_EX=[
 	'use_strict_db_manager'=>false, // 严格模式
 	'session_auto_start' =>false, //自动开启 session 
 	'session_name'=>'DNSESSION',
+	'use_facade'=>false,  // 你们要的 facade,待补充文档 \MY\Facade\TestService
 ];
 ```
 	'fullpath_config_common'=>'',  
