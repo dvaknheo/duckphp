@@ -492,8 +492,8 @@ class SwooleHttpServer
 		\Swoole\Runtime::enableCoroutine();
 		
 		SwooleCoroutineSingleton::ReplaceDefaultSingletonHandler();
-		SwooleSuperGlobal::G(SwooleSuperGlobal::G());
-
+		SwooleSuperGlobal::G();
+		
 		return $this;
 	}
 	public function run()
