@@ -1313,19 +1313,6 @@ class DNMVCS
 		DNAutoLoader::G()->init($dn_options)->run();
 		DNSwooleHttpServer::RunWithServer($server_options,$dn_options,$server);
 	}
-	
-	protected function checkAndInstallDefaultRouteHooks($route,$in_init=true)
-	{
-		if($in_init){
-			if(defined('DN_SWOOLE_SERVER_RUNNING') || $this->options['swoole']){
-				$route->addRouteHook([RouteHookMapAndRewrite::G(),'hook'],false); 
-			}
-		}else{
-			if($this->options['rewrite_map'] || $this->options['route_map'] ){
-				$route->addRouteHook([RouteHookMapAndRewrite::G(),'hook'],true); 
-			}
-		}
-	}
 	protected function initOptions($options=[])
 	{
 		$this->options=array_merge(DNAutoLoader::DEFAULT_OPTIONS,DNRoute::DEFAULT_OPTIONS,self::DEFAULT_OPTIONS,$options);
@@ -1392,7 +1379,6 @@ class DNMVCS
 	{
 		$route->init($this->options);
 		$route->set404([$this,'onShow404']);
-		$this->checkAndInstallDefaultRouteHooks($route,true);
 	}
 	public function initDBManager(DNDBManager $dbm)
 	{
@@ -1443,16 +1429,18 @@ class DNMVCS
 				$route->parameters=$argv;
 			}
 		}
+		
+		if($this->options['rewrite_map'] || $this->options['route_map'] ){
+			$route->addRouteHook([RouteHookMapAndRewrite::G(),'hook'],true); 
+		}
 	}
 	public function run()
 	{
 		DNRuntimeState::G()->setState();
 		$this->beforeRouteRun(DNRoute::G());
 		
-		$this->checkAndInstallDefaultRouteHooks(DNRoute::G(),false); //recheck;
-		
 		if($this->before_run_handler){
-			($this->before_run_handler)();
+			($this->before_run_handler)($this);
 		}
 		
 		$ret=DNRoute::G()->run();
