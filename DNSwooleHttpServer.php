@@ -1,7 +1,7 @@
 <?php
 namespace DNMVCS;
 
-class CoroutineSingleton
+class SwooleCoroutineSingleton
 {
 	protected static $_instances=[];
 	
@@ -37,7 +37,7 @@ class CoroutineSingleton
 		}else{
 			$master=self::$_instances[$class]??null;
 			if($master && !isset(self::$_instances[$key][$class])){
-				throw new \ErrorException("CoroutineSingleton fail:: $class use CreateInstance instead");
+				throw new \ErrorException("SwooleCoroutineSingleton fail:: $class use CreateInstance instead");
 			}
 			self::$_instances[$key][$class]=$object;
 			return $object;
@@ -73,7 +73,7 @@ class CoroutineSingleton
 	public static function DumpString()
 	{
 		$cid = \Swoole\Coroutine::getuid();
-		$ret="==== CoroutineSingleton List Current cid [{$cid}] ==== ;\n";
+		$ret="==== SwooleCoroutineSingleton List Current cid [{$cid}] ==== ;\n";
 		foreach(static::$_instances as $class=>$v){
 			if(!is_array($v)){
 					$desc=($v?get_class($v):'null');
@@ -253,7 +253,7 @@ trait DNSwooleHttpServer_Static
 	}
 	public static function CloneInstance($class)
 	{
-		return CoroutineSingleton::CloneInstance($class);
+		return SwooleCoroutineSingleton::CloneInstance($class);
 	}
 }
 trait DNSwooleHttpServer_GlobalFunc
@@ -394,7 +394,7 @@ class DNSwooleHttpServer
 	{
 		SwooleContext::G()->initHttp($request,$response);
 		
-		CoroutineSingleton::CloneInstance(DNSuperGlobal::class);
+		SwooleCoroutineSingleton::CloneInstance(DNSuperGlobal::class);
 		DNSuperGlobal::G()->init();
 		
 		if($this->http_handler){
@@ -513,7 +513,7 @@ class DNSwooleHttpServer
 	protected function onHttpClean()
 	{
 		SwooleContext::G()->cleanUp();
-		CoroutineSingleton::CleanUp();
+		SwooleCoroutineSingleton::CleanUp();
 	}
 	protected function check_swoole()
 	{
@@ -575,14 +575,14 @@ class DNSwooleHttpServer
 		
 		\Swoole\Runtime::enableCoroutine();
 		
-		CoroutineSingleton::ReplaceDefaultSingletonHandler();
+		SwooleCoroutineSingleton::ReplaceDefaultSingletonHandler();
 		DNSuperGlobal::G(SwooleSuperGlobal::G());
 
 		return $this;
 	}
 	public function onShow404()
 	{
-		CoroutineSingleton::CloneInstance(DNMVCS::class);
+		SwooleCoroutineSingleton::CloneInstance(DNMVCS::class);
 		
 		$http_handler_root=$this->options['http_handler_basepath'].$this->options['http_handler_root'];
 		$http_handler_root=rtrim($http_handler_root,'/').'/';
@@ -626,12 +626,12 @@ class DNSwooleHttpServer
 		
 		
 		$dn->setBeforeRunHandler(function(){
-			CoroutineSingleton::CloneInstance(DNExceptionManager::class);
-			// CoroutineSingleton::CloneInstance(DNConfig::class);
-			CoroutineSingleton::CloneInstance(DNView::class);
-			CoroutineSingleton::CloneInstance(DNRoute::class);
-			CoroutineSingleton::CloneInstance(DNRuntimeState::class);
-			//CoroutineSingleton::CloneInstance(DNDBManager::class);
+			SwooleCoroutineSingleton::CloneInstance(DNExceptionManager::class);
+			// SwooleCoroutineSingleton::CloneInstance(DNConfig::class);
+			SwooleCoroutineSingleton::CloneInstance(DNView::class);
+			SwooleCoroutineSingleton::CloneInstance(DNRoute::class);
+			SwooleCoroutineSingleton::CloneInstance(DNRuntimeState::class);
+			//SwooleCoroutineSingleton::CloneInstance(DNDBManager::class);
 			
 			$fakeRoot='public';
 			$fakeIndex='index.php';
