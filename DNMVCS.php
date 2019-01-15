@@ -1431,7 +1431,7 @@ class DNMVCS
 		}
 		
 		if($this->options['rewrite_map'] || $this->options['route_map'] ){
-			$route->addRouteHook([RouteHookMapAndRewrite::G(),'hook'],true); 
+			DNMVCSExt::G()->dealMapAndRewrite($route);
 		}
 	}
 	public function run()
