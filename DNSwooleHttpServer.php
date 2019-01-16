@@ -85,11 +85,10 @@ class DNSwooleHttpServer extends SwooleHttpServer
 			'use_http_handler_root'=>false,
 		];
 	/////////////////////////
-	public function init($options,$server)
+	public function init($options,$server=null)
 	{
 		parent::init($options,$server);
 		SwooleHttpServer::G($this);
-		DNSuperGlobal::G(SwooleSuperGlobal::G());
 		
 		return $this;
 	}
@@ -118,6 +117,8 @@ class DNSwooleHttpServer extends SwooleHttpServer
 		$dn_options['swoole']=$dn_options['swoole']??[];
 		$dn_options['swoole']=array_replace_recursive(static::DEFAULT_DN_OPTIONS,$dn_options['swoole']);
 		$dn_swoole_options=$dn_options['swoole'];
+		
+		DNSuperGlobal::G(SwooleSuperGlobal::G());
 		$dn=DNMVCS::G()->init($dn_options);
 		///////////////////////////////
 		

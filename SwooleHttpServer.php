@@ -1,6 +1,39 @@
 <?php
 namespace DNMVCS;
-
+if(!trait_exists('DNMVCS\DNSingleton',false)){
+trait DNSingleton
+{
+	protected static $_instances=[];
+	public static function G($object=null)
+	{
+		if(defined('DNMVCS_DNSINGLETON_REPALACER')){
+			$callback=DNMVCS_DNSINGLETON_REPALACER;
+			return ($callback)(static::class,$object);
+		}
+		if($object){
+			self::$_instances[static::class]=$object;
+			return $object;
+		}
+		$me=self::$_instances[static::class]??null;
+		if(null===$me){
+			$me=new static();
+			self::$_instances[static::class]=$me;
+		}
+		return $me;
+	}
+}
+}
+if(!trait_exists('DNMVCS\DNThrowQuickly',false)){
+trait DNThrowQuickly
+{
+	public static function ThrowOn($flag,$message,$code=0)
+	{
+		if(!$flag){return;}
+		$class=static::class;
+		throw new $class($message,$code);
+	}
+}
+}
 class SwooleCoroutineSingleton
 {
 	protected static $_instances=[];
@@ -443,7 +476,7 @@ class SwooleHttpServer
 		}
 	}
 	/////////////////////////
-	public function init($options,$server)
+	public function init($options,$server=null)
 	{
 		if(!defined('DN_SWOOLE_SERVER_INIT')){define('DN_SWOOLE_SERVER_INIT',true);}
 		$this->options=array_merge(self::DEFAULT_OPTIONS,$options);

@@ -307,6 +307,7 @@ class DNRoute
 			$this->request_method=$_SERVER['REQUEST_METHOD']??'GET';
 		}
 		$this->path_info=ltrim($this->path_info,'/');
+		$this->is_server_data_load=true;
 	}
 	public function set404($callback)
 	{
@@ -336,7 +337,7 @@ class DNRoute
 	}
 	public function run()
 	{
-		if($this->is_server_data_load){
+		if(!$this->is_server_data_load){
 			$this->loadServerData();
 		}
 		foreach($this->routeHooks as $hook){
@@ -1413,7 +1414,9 @@ class DNMVCS
 	public function beforeRouteRun(DNRoute $route)
 	{
 		$route->is_server_data_load=true;
-		
+		if(defined('DN_SWOOLE_SERVER_RUNNING')){
+			DNSuperGlobal::G(SwooleSuperGlobal::G());
+		}
 		$route->script_filename=DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']??'';
 		$route->document_root=DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT']??'';
 		$route->request_method=DNSuperGlobal::G()->_SERVER['REQUEST_METHOD']??'';
