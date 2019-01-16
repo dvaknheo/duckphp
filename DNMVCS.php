@@ -339,6 +339,7 @@ class DNRoute
 		if(!$this->is_server_data_load){
 			$this->loadServerData();
 		}
+		$this->path_info=ltrim($this->path_info,'/');
 		foreach($this->routeHooks as $hook){
 			($hook)($this);
 		}
@@ -405,7 +406,6 @@ class DNRoute
 	
 	protected function getCurrentClassAndMethod($path_info,$path)
 	{
-		$path_info=ltrim($path_info,'/');
 		if(substr($path_info,0,1)==='~'){ return [null,null]; }
 		
 		$blocks=explode('/',$path_info);
