@@ -445,9 +445,9 @@ DNMVCS 的默认数据库是 DB ,DB 功能很小，兼容 Medoo 这个数据库�
 * DNMVCS::Exit404 显示404页面。
 
 ## 常见任务： HTML 编码辅助函数
-DNMVCS::H($str)   Html编码. 更专业的有 Zend\Escaper。
-DNMVCS::RecordsetH 对一个 RecordSet 加 html 编码
-DNMVCS::RecordsetURL  对  RecordSet 加 url 转换
+* DNMVCS::H($str)   Html编码. 更专业的有 Zend\Escaper。
+* DNMVCS::RecordsetH 对一个 RecordSet 加 html 编码
+* DNMVCS::RecordsetURL  对  RecordSet 加 url 转换
 *进阶：把 html 编码替换成 Zend\Escaper .*
 ## 常见任务： 抛异常
 DNMVCS::ThrowOn($flag,$message,$code);
@@ -780,6 +780,7 @@ session_set_save_handler
 	这个函数只实现了 SessionInterface 的参数调用，没实现单独的调用
 	实质调用 DNSuperGlobal::G()->_DestroySession();
 header
+
 	同系统的 header 方法
 	注意判断了非 web 状态下不使用
 	实际调用 static::G()->_header()
@@ -1043,14 +1044,20 @@ _LoadConfig($file_basename='config')
 
 	DNConfiger 类获得配置设置
 ## DNView 视图类
-	init($path)
-
+init($path)
+	
+	初始化,设置路径
 _Show($data=[],$view)
+
+	显示视图
 _ShowBlock($view,$data=null)
-	assignViewData($key,$value=null)
-	setBeforeShow($callback)
-	setViewWrapper($head_file,$foot_file)
-	protected function prepareFiles()
+
+	显示内容
+assignViewData($key,$value=null)
+
+setBeforeShow($callback)
+setViewWrapper($head_file,$foot_file)
+protected function prepareFiles()
 ## DNRoute 路由类
 这应该会被扩展,加上权限判断等设置
 路由类是很强大扩展性很强的类。
@@ -1091,13 +1098,20 @@ getRouteCallingMethod()
 	当前类如果为空，说明是 rewrite 过来的。
 	当前路径用于如果是切片的，找回未切片的路径。
 protected getRouteHandleByFile
+
+	//
 protected getCurrentClassAndMethod
+
+	//
 protected getObecjectToCall($class_name)
+
+	//
 protected getMethodToCall($obj,$method)
+
+	//
 protected includeControllerFile
 
 	以上是内部方法。
-	
 ## DNDBManager 数据库管理类
 init($database_config_list=[])
 
@@ -1468,6 +1482,7 @@ const DEFAULT_DN_OPTIONS=[
 
 ## class DBConnectPoolProxy
 DB连接代理
+
 	public function init($max_length=10,$timeout=5)
 	public function setDBHandler($db_create_handler,$db_close_handler=null)
 	public function onCreate($db_config,$tag)
@@ -1653,9 +1668,7 @@ DNMVCS::DB
 
 
 # 第十一章 常见问题
-- 为什么没有单元测试
-    如果有，我也不会放在这个工程，会单独开工程 ，DNMVCS-FULLTEST 本意就是这样
-	现在只有一人在开发，这一年以来代码变动较大。如果有多人参加，会把这些加上
+
 - Session 要怎么处理 
 	一般来说 Session 的处理，放在 SesionModel 里。
 
