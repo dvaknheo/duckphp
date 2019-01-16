@@ -154,7 +154,6 @@ class SimpleRouteHook
 		$path_info=DNSuperGlobal::G()->_REQUEST[$k]??null;
 
 		$path_info=$module.'/'.$path_info;
-		$path_info=ltrim($path_info,'/');
 		$route->path_info=$path_info;
 		$route->calling_path=$path_info;
 	}

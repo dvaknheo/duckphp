@@ -306,7 +306,6 @@ class DNRoute
 			$this->path_info=$_SERVER['PATH_INFO']??'';
 			$this->request_method=$_SERVER['REQUEST_METHOD']??'GET';
 		}
-		$this->path_info=ltrim($this->path_info,'/');
 		$this->is_server_data_load=true;
 	}
 	public function set404($callback)
@@ -406,7 +405,11 @@ class DNRoute
 	
 	protected function getCurrentClassAndMethod($path_info,$path)
 	{
+		$path_info=ltrim($path_info,'/');
+		if(substr($path_info,0,1)==='~'){ return [null,null]; }
+		
 		$blocks=explode('/',$path_info);
+		
 		$prefix=$path;
 		//array_shift($blocks);
 		$l=count($blocks);
@@ -1420,8 +1423,6 @@ class DNMVCS
 		$route->document_root=DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT']??'';
 		$route->request_method=DNSuperGlobal::G()->_SERVER['REQUEST_METHOD']??'';
 		$route->path_info=DNSuperGlobal::G()->_SERVER['PATH_INFO']??'';
-		
-		$route->path_info=ltrim($route->path_info,'/');
 		
 		if(PHP_SAPI==='cli'){
 			$argv=DNSuperGlobal::G()->_SERVER['argv']??[];
