@@ -232,6 +232,7 @@ class DNRoute
 	
 	public $routeHooks=[];
 	public $callback=null;
+	public $is_server_data_load=false;
 	
 	public function _URL($url=null)
 	{
@@ -288,7 +289,6 @@ class DNRoute
 		$this->namespace_controller=$namespace_controller;
 		
 		$this->is_server_data_load=false;
-		
 	}
 	public function loadServerData()
 	{
@@ -1413,9 +1413,8 @@ class DNMVCS
 	}
 	public function beforeRouteRun(DNRoute $route)
 	{
-		$route->is_server_data_load=true;
-		if(defined('DN_SWOOLE_SERVER_RUNNING')){
-			DNSuperGlobal::G(SwooleSuperGlobal::G());
+		if(defined('DNMVCS_DNSUPERGLOBAL_REPALACER')){	
+			DNSuperGlobal::G(call_user_func([DNMVCS_DNSUPERGLOBAL_REPALACER,'G']));
 		}
 		$route->script_filename=DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']??'';
 		$route->document_root=DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT']??'';
@@ -1424,8 +1423,8 @@ class DNMVCS
 		
 		$route->path_info=ltrim($route->path_info,'/');
 		
-		if(PHP_SAPI==='cli' && !defined('DN_SWOOLE_SERVER_RUNNING')){
-			$argv=$_SERVER['argv']??[];
+		if(PHP_SAPI==='cli'){
+			$argv=DNSuperGlobal::G()->_SERVER['argv']??[];
 			if(count($argv)>=2){
 				$route->path_info=$argv[1];
 				array_shift($argv);
@@ -1437,6 +1436,8 @@ class DNMVCS
 		if($this->options['rewrite_map'] || $this->options['route_map'] ){
 			DNMVCSExt::G()->dealMapAndRewrite($route);
 		}
+		
+		$route->is_server_data_load=true;
 	}
 	public function run()
 	{

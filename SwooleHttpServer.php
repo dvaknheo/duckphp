@@ -526,7 +526,9 @@ class SwooleHttpServer
 		
 		SwooleCoroutineSingleton::ReplaceDefaultSingletonHandler();
 		SwooleSuperGlobal::G();
-		
+		if(!defined('DNMVCS_DNSUPERGLOBAL_REPALACER')){
+			define('DNMVCS_DNSUPERGLOBAL_REPALACER',SwooleSuperGlobal::class);
+		}
 		return $this;
 	}
 	public function run()
@@ -563,7 +565,15 @@ class SwooleSuperGlobal
 		$this->_REQUEST=array_merge($request->get??[],$request->post??[]);
 		$this->_ENV=&$_ENV;
 		
-		$this->_SERVER=[];
+		$this->_SERVER=$_SERVER;
+		if(isset($this->_SERVER['argv'])){
+			$this->_SERVER['cli_argv']=$this->_SERVER['argv'];
+			unset($this->_SERVER['argv']);
+		}
+		if(isset($this->_SERVER['argc'])){
+			$this->_SERVER['cli_argc']=$this->_SERVER['argc'];
+			unset($this->_SERVER['argc']);
+		}
 		foreach($request->header as $k=>$v){
 			$k='HTTP_'.str_replace('-','_',strtoupper($k));
 			$this->_SERVER[$k]=$v;

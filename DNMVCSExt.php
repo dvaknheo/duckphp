@@ -395,6 +395,7 @@ class DNMVCSExt
 			'session_auto_start'=>false,
 			'session_name'=>'DNSESSION',
 		];
+	protected $has_enableFacade=false;
 	public function afterInit($dn)
 	{
 		$dn=DNMVCS::G();
@@ -438,6 +439,8 @@ class DNMVCSExt
 	}
 	protected function enableFacade()
 	{
+		if($this->has_enableFacade){return;}
+		$this->has_enableFacade=true;
 		spl_autoload_register(function($class){
 			$prefix=DNMVCS::G()->options['namespace'].'\\Facade\\';
 			if(substr($class,0,strlen($prefix))!==$prefix){ return; }
