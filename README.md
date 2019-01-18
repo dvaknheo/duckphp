@@ -1244,6 +1244,15 @@ TestService::foo() =>  \MY\Service\DebugService::G()->foo();
 	函数方式的 view
 # 第七章 数据库
 ## 总说
+DNMVCS 系统的数据库处理部分四个文件。
+DBInterface.php DB.php DBAdvance.php MedooDB.php
+
+interface DBInterface 是希望大家都遵守的标准。但不是强制要求。
+trait DBAdvance 是 额外常用的 DB 功能。
+class DB 是系统默认的 数据库类 trait DBAdvance 是 DB 类的扩充 
+class MedooDB 是 Medoo 类基础上的一个封装 实现了 DBInterface 同时使用 DBAdvance 扩充。
+使用 MedooDB 必须引入第三方库 Medoo
+
 ## DB.php
 DNMVCS 自带了一个简单的 DB 类。
 DN::DB()得到的就是这个 DB 类。
@@ -1301,29 +1310,34 @@ $options[
 );
 ```
 # 第八章 Swoole 整合指南
+## 概述
+这章分两部分 SwooleHttpServer 和 DNSwooleHttpServer
 
-## SwooleHttpServer
 SwooleHttpServer 是设计成几乎和 DNMVCS 无关的Swoole 框架。
-DNSwooleHttpServer extends SwooleHttpServer 则是
+DNSwooleHttpServer extends SwooleHttpServer 则是和 DNMVCS整合的 Swoole Http 服务器
 
-SwooleHttpServer 和 DNMVCS 主类主要关系是在 G 函数 的实现，如果没这个 G 函数，两者是完全独立的。
-SwooleHttpServer  重写了 G 函数的实现，使得做到协程单例。
-想要获得当前 的 request ,response 用 DNSwooleHttpServer::Request() ,Response（）；
-还记得 _SERVER,_GET,_POST 超全局变量在 swoole 协程下无法使用么。用 SuperGloal类代替。
-
-### DNMVCS 整合到 DNSwooleServer
+DNMVCS 整合到 DNSwooleServer
 
 ```php
 <?php
 
 \DNMVCS\DNMVCS::RunAsServer($server_options,$dn_options,$server=null);
 // 展开模式 \DNMVCS\DNSwooleServer::G()->init($server_options,$server)->bindDN($dn_options)->run();
+## SwooleHttpServer
 ```
 
-```php
+SwooleHttpServer 和 DNMVCS 主类主要关系是在 G 函数 的实现，如果没这个 G 函数，两者是完全独立的。
+SwooleHttpServer  重写了 G 函数的实现，使得做到协程单例。
+想要获得当前 的 request ,response 用 DNSwooleHttpServer::Request() ,Response（）；
+还记得 _SERVER,_GET,_POST 超全局变量在 swoole 协程下无法使用么。用 SuperGloal类代替。
 
+
+以下是 SwooleHttpServer 的介绍
+
+和 DNMVCS 类似 SwooleHttpServer 的功能也基本由 SwooleHttpServer 实现。
 
 ## server_options 的选项
+
 ```php
 const DEFAULT_OPTIONS=[
 		'swoole_server'=>null,  // swoole_http_server 对象，留空，则用 host,port 创建
@@ -1364,93 +1378,74 @@ DNSwooleHttpServer 可以让你用 echo 直接输出。
 
 http_exception_handler，用于 单文件模式和目录模式，你可以在这里处理 404。
 
-## class SwooleCoroutineSingleton
+## class SwooleServer
+## 基本方法
+static G($object=null)
 
-用于协程单例
+	G 函数，不多说
+init($options=[])
 
-	public static function GetInstance($class,$object)
-	public static function CreateInstance($class,$object=null)
-	public static function CloneInstance($class)
-	public static function DeleteInstance($class)
-	public static function ReplaceDefaultSingletonHandler()
-	public static function CleanUp()
-	public static function Dump()
+	初始化，这是最经常子类化完成自己功能的方法。
+	你可以扩展这个类，添加工程里的其他初始化。
+run()
 
-## class SwooleContext
-	协程单例。Swoole 的运行信息
-## SwooleException extends \Exception
-
-
-
-
-
-## SuperGlobalSuperGlobal
-	SuperGlobalSuperGlobal 是 Swoole 下 SuperGlobal 类的实现。
-## SuperGlobalSuperGlobal
-## SwooleSESSION
-## SwooleSessionHandler
-
-
-## class DNSwooleHttpServer
-	public function init($server_options,$server=null)
-	public function run()
-
-### trait DNSwooleHttpServer_Static
-
-静态函数列表
-
-public static function Server()
+	运行
+## 常用静态方法
+和DNMVCS 常用静态方法一样，这也是常用的方法，所以提取出来
+Server
 
 	获得当前 swoole_server 对象
-public static function Request()
+Request
 
-	获得当前  swoole_request
-public static function Response()
+	获得当前 swoole_request 对象
+Response
 
-	获得当前  swoole_response    
-public static function Frame()
-
+	获得当前 swoole_response 对象
+Frame
 	获得当前  frame （websocket 生效 ）  
-public static function FD( 生效)
-
+FD
 	获得当前  fd  （websocket 生效）
-public static function IsClosing()
-
+IsClosing
 	判断是否是关闭的包 （websocket 生效）
-public static function CloneInstance()
-
-	把主进程单例复制到协程单例
+CloneInstance
+	把静态单例克隆到当前协程。
 	
-## trait SwooleHttpServer_GlobalFunc
-对应PHP手册的函数的全局函数的替代 因为相应的同名函数在 Swoole环境下不可用
+## 系统封装方法
+对应PHP手册的函数的全局函数的替代，因为相应的同名函数在 Swoole环境下不可用。
+和 DNMVCS 的系统封装方法一样通用，
+如果是在 DNSwooleServer 中，使用 DNMVCS 的相应静态函数，将会调用这里的实现。
 
-header(string $string, bool $replace = true , int $http_response_code =0)
+header(string $string, bool $replace = true , int $http_status_code =0)
 
 	header 函数
 setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
 
-	setcookie 函数
+	设置 cookie
+exit_system($code=0)
+
+	退出系统，相应的是 exit ，swoole 里，直接 exit 也是可以的。
+
 set_exception_handler(callable $exception_handler)
-
-	异常函数
+异常函数
 register_shutdown_function(callable $callback,...$args)
+退出关闭函数
+session_start(array $options=[])
 
-	退出关闭函数
+session_destroy()
 
-## class SwooleException
-	public static function ThrowOn($flag,$message,$code=0)
-	404 错误是用 code=404 那个
-	没端口会报错
-## trait DNSwooleHttpServer_SimpleHttpd
+session_set_save_handler(\SessionHandlerInterface $handler)
+
+## 简单 HTTP 服务器
+SwooleHttpServer 用的 trait SwooleHttpServer_SimpleHttpd .
 单独使用这个 trait 你可以实现一个 http 服务器
 
-	protected function onHttpRun($request,$response)
-	protected function onHttpException($ex)
-	protected function onHttpClean()
-public function onRequest($request,$response)
-
-## trait DNSwooleHttpServer_WebSocket
-
+	protected function onHttpRun($request,$response){throw new SwooleException("Impelement Me");}
+	protected function onHttpException($ex){throw new SwooleException("Impelement Me");}
+	protected function onHttpClean(){throw new SwooleException("Impelement Me");}
+	
+	public function onRequest($request,$response)
+## 简单 HTTP 服务器
+SwooleHttpServer 用的 trait SwooleHttpServer_WebSocket .
 单独使用这个 trait 你可以实现一个 websocket 服务器
 
 onRequest($request,$response)
@@ -1462,7 +1457,53 @@ onOpen(swoole_websocket_server $server, swoole_http_request $request)
 onMessage($server,$frame)
 
 	//
-----
+没有 OnClose 。
+## 其他子类
+
+## class SwooleCoroutineSingleton
+
+用于协程单例
+
+public static function GetInstance($class,$object)
+public static function CreateInstance($class,$object=null)
+public static function CloneInstance($class)
+public static function DeleteInstance($class)
+public static function ReplaceDefaultSingletonHandler()
+public static function CleanUp()
+public static function Dump()
+public static function DumpString()
+## SwooleException extends \Exception
+
+	use DNThrowQuickly; 用于处理 Swoole 异常。
+	public static function ThrowOn($flag,$message,$code=0)
+	404 错误是用 code=404 那个
+	没端口会报错
+
+## class SwooleContext
+	协程单例。Swoole 的运行信息
+	public function initHttp($request,$response)
+	public function initWebSocket($frame)
+	public function cleanUp()
+	public function onShutdown()
+	public function regShutDown($call_data)
+	public function isWebSocketClosing()
+## SuperGlobalSuperGlobal
+	SuperGlobalSuperGlobal 是 Swoole 下 SuperGlobal 类的实现。
+	相关方法，和公开变量，参考见 DNSuperGlobal
+## SwooleSession
+	SwooleSession 是因为 Swoole 的 session 实现。
+	SwooleSession 被 SuperGlobalSuperGlobal 调用， 调用 SwooleSessionHandler
+## SwooleSessionHandler implements \SessionHandlerInterface
+	如果你要实现自己的 SessionHandler ，用 SwooleServer::session_set_save_handler();替换这个类。 
+
+
+## class DNSwooleHttpServer
+	public function init($server_options,$server=null)
+	public function run()
+
+
+
+	把主进程单例复制到协程单例
 ## DNSwooleHttpServer
 
 swoole 下， DNMVCS  入口选项 ['swoole'] 的选项
