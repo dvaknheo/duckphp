@@ -441,6 +441,7 @@ class DNMVCSExt
 		if($this->has_enableFacade){return;}
 		$this->has_enableFacade=true;
 		spl_autoload_register(function($class){
+			if(!isset(DNMVCS::G()->options['namespace'])){ return; }
 			$prefix=DNMVCS::G()->options['namespace'].'\\Facade\\';
 			if(substr($class,0,strlen($prefix))!==$prefix){ return; }
 			
