@@ -749,17 +749,17 @@ class DNSuperGlobal
 		$this->_SESSION	=&$_SESSION;
 	}
 ///////////////////////////////
-	public function _StartSession(array $options=[])
+	public function session_start(array $options=[])
 	{
 		if(session_status() !== PHP_SESSION_ACTIVE ){ session_start($options); }
 		$this->_SESSION=&$_SESSION;
 	}
-	public function _DestroySession()
+	public function session_destroy()
 	{
 		session_destroy();
 		$this->_SESSION=[];
 	}
-	public function _SetSessionHandler($handler)
+	public function session_set_save_handler($handler)
 	{
 		session_set_save_handler($handler);
 	}
@@ -1176,23 +1176,11 @@ EOT;
 
 trait DNMVCS_SystemWrapper
 {
-	
 	public $header_handler=null;
 	public $cookie_handler=null;
 	public $exit_handler=null;
-
-	public static function session_start(array $options=[])
-	{
-		return DNSuperGlobal::G()->_StartSession($options);
-	}
-	public static function session_destroy()
-	{
-		return DNSuperGlobal::G()->_DestroySession();
-	}
-	public static function session_set_save_handler(\SessionHandlerInterface $handler)
-	{
-		return DNSuperGlobal::G()->_SetSessionHandler($handler);
-	}
+	public $exception_handler=null;
+	public $shutdown_handler=null;
 
 	public static function header($output ,bool $replace = true , int $http_response_code=0)
 	{
@@ -1205,6 +1193,28 @@ trait DNMVCS_SystemWrapper
 	public static function exit_system($code=0)
 	{
 		return static::G()->_exit_system($code);
+	}
+	
+	public static function set_exception_handler(callable $exception_handler)
+	{
+		return static::G()->_set_exception_handler($exception_handler);
+	}
+	public static function register_shutdown_function(callable $callback,...$args)
+	{
+		return static::G()->_register_shutdown_function($callback,...$args);
+	}
+	
+	public static function session_start(array $options=[])
+	{
+		return DNSuperGlobal::G()->session_start($options);
+	}
+	public static function session_destroy()
+	{
+		return DNSuperGlobal::G()->session_destroy();
+	}
+	public static function session_set_save_handler(\SessionHandlerInterface $handler)
+	{
+		return DNSuperGlobal::G()->session_set_save_handler($handler);
 	}
 	
 	public function _header($output ,bool $replace = true , int $http_response_code=0)
@@ -1230,6 +1240,20 @@ trait DNMVCS_SystemWrapper
 			return ($this->exit_handler)($code);
 		}
 		exit($code);
+	}
+	public function _set_exception_handler(callable $exception_handler)
+	{
+		if($this->exception_handler){
+			return ($this->exception_handler)($exception_handler);
+		}
+		return set_exception_handler($exception_handler);
+	}
+	public function _register_shutdown_function(callable $callback,...$args)
+	{
+		if($this->shutdown_handler){
+			return ($this->shutdown_handler)($callback,...$args);
+		}
+		return register_shutdown_function($callback,...$args);
 	}
 }
 

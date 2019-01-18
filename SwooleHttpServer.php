@@ -176,6 +176,14 @@ class SwooleContext
 		}
 		$this->shutdown_function_array=[];
 	}
+	public function regShutDown($call_data)
+	{
+		$this->shutdown_function_array[]=$call_data;
+	}
+	public function isWebSocketClosing()
+	{
+		return $this->frame->opcode == 0x08?true:false;
+	}
 }
 class SwooleException extends \Exception
 {
@@ -205,7 +213,7 @@ trait SwooleHttpServer_Static
 	}
 	public static function IsClosing()
 	{
-		return SwooleContext::G()->frame->opcode == 0x08?true:false;
+		return SwooleContext::G()->isWebSocketClosing();
 	}
 	public static function CloneInstance($class)
 	{
@@ -240,21 +248,23 @@ trait SwooleHttpServer_SystemWrapper
 	}
 	public static function register_shutdown_function(callable $callback,...$args)
 	{
-		SwooleContext::G()->shutdown_function_array[]=func_get_args();
+		SwooleContext::G()->regShutDown(func_get_args());
 	}
 	
 	public static function session_start(array $options=[])
 	{
-		return SwooleSuperGlobal::G()->_StartSession($options);
+		return SwooleSuperGlobal::G()->session_start($options);
 	}
 	public static function session_destroy()
 	{
-		return SwooleSuperGlobal::G()->_DestroySession();
+		return SwooleSuperGlobal::G()->session_destroy();
 	}
 	public static function session_set_save_handler(\SessionHandlerInterface $handler)
 	{
-		return SwooleSuperGlobal::G()->_SetSessionHandler($handler);
+		return SwooleSuperGlobal::G()->session_set_save_handler($handler);
 	}
+	
+	
 }
 trait SwooleHttpServer_SimpleHttpd
 {
@@ -273,6 +283,9 @@ trait SwooleHttpServer_SimpleHttpd
 		});
 		\defer(function()use($response,$InitObLevel){
 			SwooleContext::G()->onShutdown();
+			
+			$this->onHttpClean();
+			
 			for($i=ob_get_level();$i>$InitObLevel;$i--){
 				ob_end_flush();
 			}
@@ -361,12 +374,14 @@ class SwooleHttpServer
 	public $http_exception_handler=null;
 	
 	protected $static_root=null;
+	protected $auto_clean_autoload=true;
 	protected function onHttpRun($request,$response)
 	{
 		SwooleCoroutineSingleton::CloneInstance(SwooleSuperGlobal::class);
 		SwooleSuperGlobal::G()->init();
 		
 		if($this->http_handler){
+			$this->auto_clean_autoload=false;
 			$this->runHttpHandler();
 			return;
 		}
@@ -481,7 +496,11 @@ class SwooleHttpServer
 	}
 	protected function onHttpClean()
 	{
-		//Do nothing
+		if(!$this->auto_clean_autoload){ return;}
+		$functions = spl_autoload_functions();
+		foreach($functions as $function) {
+			spl_autoload_unregister($function);
+		}
 	}
 	protected function check_swoole()
 	{
@@ -602,18 +621,18 @@ class SwooleSuperGlobal
 		}
 		return $this;
 	}
-	public function _StartSession(array $options=[])
+	public function session_start(array $options=[])
 	{
 		$t=SwooleSession::G();
 		$t->_Start($options);
 		static::G()->_SESSION=&$t->data;
 	}
-	public function _DestroySession()
+	public function session_destroy()
 	{
 		SwooleSession::G()->_Destroy();
 		static::G()->_SESSION=[];
 	}
-	public function _SetSessionHandler($handler)
+	public function session_set_save_handler($handler)
 	{
 		SwooleSession::G()->setHandler($handler);
 	}
