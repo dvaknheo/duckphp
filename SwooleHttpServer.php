@@ -212,7 +212,7 @@ trait SwooleHttpServer_Static
 		return SwooleCoroutineSingleton::CloneInstance($class);
 	}
 }
-trait SwooleHttpServer_GlobalFunc
+trait SwooleHttpServer_SystemWrapper
 {
 	public $http_exception_handler=null;
 	public static function header(string $string, bool $replace = true , int $http_status_code =0)
@@ -229,6 +229,11 @@ trait SwooleHttpServer_GlobalFunc
 	{
 		return SwooleContext::G()->response->cookie($key,$value,$expire,$path,$domain,$secure,$httponly );
 	}
+	public static function exit_system($code=0)
+	{
+		return static::G()->_exit_system($code);
+	}
+	
 	public static function set_exception_handler(callable $exception_handler)
 	{
 		static::G()->http_exception_handler=$exception_handler;
@@ -236,6 +241,19 @@ trait SwooleHttpServer_GlobalFunc
 	public static function register_shutdown_function(callable $callback,...$args)
 	{
 		SwooleContext::G()->shutdown_function_array[]=func_get_args();
+	}
+	
+	public static function session_start(array $options=[])
+	{
+		return SwooleSuperGlobal::G()->_StartSession($options);
+	}
+	public static function session_destroy()
+	{
+		return SwooleSuperGlobal::G()->_DestroySession();
+	}
+	public static function session_set_save_handler(\SessionHandlerInterface $handler)
+	{
+		return SwooleSuperGlobal::G()->_SetSessionHandler($handler);
 	}
 }
 trait SwooleHttpServer_SimpleHttpd
@@ -247,26 +265,29 @@ trait SwooleHttpServer_SimpleHttpd
 	
 	public function onRequest($request,$response)
 	{
+		SwooleContext::G()->initHttp($request,$response);
 		$InitObLevel=ob_get_level();
 		ob_start(function($str) use($response){
 			if(''===$str){return;} // stop warnning;
 			$response->write($str);
 		});
+		\defer(function()use($response,$InitObLevel){
+			SwooleContext::G()->onShutdown();
+			for($i=ob_get_level();$i>$InitObLevel;$i--){
+				ob_end_flush();
+			}
+			SwooleContext::G()->cleanUp();
+			SwooleCoroutineSingleton::CleanUp();
+			$response->end();
+		});
+		
 		try{
 			$this->onHttpRun($request,$response);
 		}catch(\Throwable $ex){
 			$this->onHttpException($ex);
 		}
 		
-		\defer(function()use($InitObLevel,$response){
-			SwooleContext::G()->onShutdown();
-			for($i=ob_get_level();$i>$InitObLevel;$i--){
-				ob_end_flush();
-			}
-			$this->onHttpClean();
-			
-			$response->end();
-		});
+		
 	}
 }
 trait SwooleHttpServer_WebSocket
@@ -314,7 +335,7 @@ class SwooleHttpServer
 	use SwooleHttpServer_Static;
 	use SwooleHttpServer_SimpleHttpd;
 	use SwooleHttpServer_WebSocket;
-	use SwooleHttpServer_GlobalFunc;
+	use SwooleHttpServer_SystemWrapper;
 	
 	const DEFAULT_OPTIONS=[
 			'swoole_server'=>null,
@@ -342,7 +363,6 @@ class SwooleHttpServer
 	protected $static_root=null;
 	protected function onHttpRun($request,$response)
 	{
-		SwooleContext::G()->initHttp($request,$response);
 		SwooleCoroutineSingleton::CloneInstance(SwooleSuperGlobal::class);
 		SwooleSuperGlobal::G()->init();
 		
@@ -461,8 +481,7 @@ class SwooleHttpServer
 	}
 	protected function onHttpClean()
 	{
-		SwooleContext::G()->cleanUp();
-		SwooleCoroutineSingleton::CleanUp();
+		//Do nothing
 	}
 	protected function check_swoole()
 	{
@@ -585,21 +604,21 @@ class SwooleSuperGlobal
 	}
 	public function _StartSession(array $options=[])
 	{
-		$t=SwooleSESSION::G();
+		$t=SwooleSession::G();
 		$t->_Start($options);
 		static::G()->_SESSION=&$t->data;
 	}
 	public function _DestroySession()
 	{
-		SwooleSESSION::G()->_Destroy();
+		SwooleSession::G()->_Destroy();
 		static::G()->_SESSION=[];
 	}
 	public function _SetSessionHandler($handler)
 	{
-		SwooleSESSION::G()->setHandler($handler);
+		SwooleSession::G()->setHandler($handler);
 	}
 }
-class SwooleSESSION
+class SwooleSession
 {
 	use DNSingleton;
 
