@@ -92,20 +92,39 @@ class DNSwooleHttpServer extends SwooleHttpServer
 		
 		return $this;
 	}
+	public function onRequest($request,$response)
+	{
+		return parent::onRequest($request,$response);
+	}
+	protected function onHttpRun($request,$response)
+	{
+		SwooleCoroutineSingleton::CloneInstance(DNExceptionManager::class);
+		// SwooleCoroutineSingleton::CloneInstance(DNConfig::class);
+		SwooleCoroutineSingleton::CloneInstance(DNView::class);
+		SwooleCoroutineSingleton::CloneInstance(DNRoute::class);
+		SwooleCoroutineSingleton::CloneInstance(DNRuntimeState::class);
+		//SwooleCoroutineSingleton::CloneInstance(DNDBManager::class);
+		SwooleCoroutineSingleton::CloneInstance(DNSuperGlobal::class);
+		
+		return parent::onHttpRun($request,$response);
+	}
 	public function onShow404()
 	{
-		SwooleCoroutineSingleton::CloneInstance(DNMVCS::class);
+		//SwooleCoroutineSingleton::CloneInstance(DNMVCS::class);
+		//SwooleCoroutineSingleton::CloneInstance(DNRoute::class);
+		//DNMVCS::G(new DNMVCS()); //clean up
+		//DNRoute::G(new DNRoute()); //clean up
 		
 		$http_handler_root=$this->options['http_handler_basepath'].$this->options['http_handler_root'];
 		$http_handler_root=rtrim($http_handler_root,'/').'/';
 		$document_root=$this->static_root?:rtrim($http_handler_root,'/');
 		
-		
-		$request_uri=DNMVCS::SG()->_SERVER['REQUEST_URI'];
+		$request_uri=SwooleSuperGlobal::G()->_SERVER['REQUEST_URI'];
 		$path=parse_url($request_uri,PHP_URL_PATH);
 		
 		$flag=$this->runHttpFile($path,$document_root);
 		if(!$flag){
+			//Remark Can't Not use in dnmvcs.
 			DNMVCS::G()->onShow404();
 		}
 		
@@ -118,8 +137,8 @@ class DNSwooleHttpServer extends SwooleHttpServer
 		$dn_options['swoole']=array_replace_recursive(static::DEFAULT_DN_OPTIONS,$dn_options['swoole']);
 		$dn_swoole_options=$dn_options['swoole'];
 		
-		DNSuperGlobal::G(SwooleSuperGlobal::G());
 		$dn=DNMVCS::G()->init($dn_options);
+		
 		///////////////////////////////
 		
 		$this->options['http_handler']=$this->http_handler =[$dn,'run'];
@@ -140,17 +159,6 @@ class DNSwooleHttpServer extends SwooleHttpServer
 		
 		
 		$dn->setBeforeRunHandler(function($dn){
-			SwooleCoroutineSingleton::CloneInstance(DNExceptionManager::class);
-			// SwooleCoroutineSingleton::CloneInstance(DNConfig::class);
-			SwooleCoroutineSingleton::CloneInstance(DNView::class);
-			SwooleCoroutineSingleton::CloneInstance(DNRoute::class);
-			SwooleCoroutineSingleton::CloneInstance(DNRuntimeState::class);
-			//SwooleCoroutineSingleton::CloneInstance(DNDBManager::class);
-			SwooleCoroutineSingleton::CloneInstance(DNSuperGlobal::class);
-			
-			//SwooleSuperGlobal::G()->init();
-			DNSuperGlobal::G(SwooleSuperGlobal::G());
-
 			$fakeRoot='public';
 			$fakeIndex='index.php';
 			$path=DNMVCS::G()->options['path'];
