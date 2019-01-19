@@ -263,7 +263,21 @@ trait SwooleHttpServer_SystemWrapper
 	{
 		return SwooleSuperGlobal::G()->session_set_save_handler($handler);
 	}
-	
+	public static function GetReplaceDefaultSystemFunctions()
+	{
+		$ret=[
+			'header'				=>[static::class,'header'],
+			'setcookie'				=>[static::class,'setcookie'],
+			'exit_system'			=>[static::class,'exit_system'],
+			'set_exception_handler'	=>[static::class,'set_exception_handler'],
+			'register_shutdown_function' =>[static::class,'register_shutdown_function'],
+		];
+		return $ret;
+	}
+	public static function SystemWrapperInstaller($handler)
+	{
+		$handler->installSystemFunctions(static::GetReplaceDefaultSystemFunctions());
+	}
 	
 }
 trait SwooleHttpServer_SimpleHttpd
@@ -566,6 +580,9 @@ class SwooleHttpServer
 		SwooleSuperGlobal::G();
 		if(!defined('DNMVCS_DNSUPERGLOBAL_REPALACER')){
 			define('DNMVCS_DNSUPERGLOBAL_REPALACER',SwooleSuperGlobal::class);
+		}
+		if(!defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')){
+			define('DNMVCS_SYSTEM_WRAPPER_INSTALLER',static::class .'::SystemWrapperInstaller');
 		}
 		return $this;
 	}

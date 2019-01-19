@@ -1255,6 +1255,25 @@ trait DNMVCS_SystemWrapper
 		}
 		return register_shutdown_function($callback,...$args);
 	}
+	public function installSystemFunctions(array $funcs=[])
+	{
+		if(isset($funcs['header'])){ $this->header_handler=$funcs['header']; }
+		if(isset($funcs['setcookie'])){ $this->cookie_handler=$funcs['setcookie']; }
+		if(isset($funcs['exit_system'])){ $this->exit_handler=$funcs['exit_system']; }
+		if(isset($funcs['set_exception_handler'])){ $this->exception_handler=$funcs['set_exception_handler']; }
+		if(isset($funcs['register_shutdown_function'])){ $this->shutdown_handler=$funcs['register_shutdown_function']; }
+	}
+	public static function GetReplaceDefaultSystemFunctions()
+	{
+		$ret=[
+			'header'				=>[static::class,'header'],
+			'setcookie'				=>[static::class,'setcookie'],
+			'exit_system'			=>[static::class,'exit_system'],
+			'set_exception_handler'	=>[static::class,'set_exception_handler'],
+			'register_shutdown_function' =>[static::class,'register_shutdown_function'],
+		];
+		return $ret;
+	}
 }
 
 class DNMVCS
@@ -1440,6 +1459,11 @@ class DNMVCS
 	}
 	public function beforeRouteRun(DNRoute $route)
 	{
+		if(defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')){
+			//todo   in init ，not in this.
+			$installer=DNMVCS_SYSTEM_WRAPPER_INSTALLER;
+			($installer)($this);
+		}
 		if(defined('DNMVCS_DNSUPERGLOBAL_REPALACER')){	
 			DNSuperGlobal::G(call_user_func([DNMVCS_DNSUPERGLOBAL_REPALACER,'G']));
 		}
