@@ -78,12 +78,12 @@ class DBConnectPoolProxy
 }
 class DNSwooleHttpServer extends SwooleHttpServer
 {
-		const DEFAULT_DN_OPTIONS=[
-			'not_empty'=>true,
-			'db_reuse_size'=>0,
-			'db_reuse_timeout'=>5,
-			'use_http_handler_root'=>false,
-		];
+	const DEFAULT_DN_OPTIONS=[
+		'not_empty'=>true,
+		'db_reuse_size'=>0,
+		'db_reuse_timeout'=>5,
+		'use_http_handler_root'=>false,
+	];
 	/////////////////////////
 	public function init($options,$server=null)
 	{
@@ -105,6 +105,17 @@ class DNSwooleHttpServer extends SwooleHttpServer
 		SwooleCoroutineSingleton::CloneInstance(DNRuntimeState::class);
 		//SwooleCoroutineSingleton::CloneInstance(DNDBManager::class);
 		SwooleCoroutineSingleton::CloneInstance(DNSuperGlobal::class);
+		
+		$fakeRoot='public';
+		$fakeIndex='index.php';
+		$path=DNMVCS::G()->options['path'];
+		if(!isset(DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT'])){
+			DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=$path.$fakeRoot;
+		
+		}
+		if(!isset(DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME'])){
+			DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']=$path.$fakeRoot.'/'.$fakeIndex;
+		}
 		
 		return parent::onHttpRun($request,$response);
 	}
@@ -154,19 +165,6 @@ class DNSwooleHttpServer extends SwooleHttpServer
 		if($dn_swoole_options['use_http_handler_root']){
 			DNRoute::G()->set404([$this,'onShow404']);
 		}
-		
-		$dn->setBeforeRunHandler(function($dn){
-			$fakeRoot='public';
-			$fakeIndex='index.php';
-			$path=DNMVCS::G()->options['path'];
-			if(!isset(DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT'])){
-				DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=$path.$fakeRoot;
-			
-			}
-			if(!isset(DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME'])){
-				DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']=$path.$fakeRoot.'/'.$fakeIndex;
-			}
-		});
 		
 		return $this;
 	}
