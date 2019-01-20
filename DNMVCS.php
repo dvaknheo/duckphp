@@ -419,6 +419,7 @@ class DNRoute
 		for($i=0;$i<$l;$i++){
 			$v=$blocks[$i];
 			$method=$v;
+			if(substr($v,0,1)==='~'){ return [null,null]; }
 			if(''  ===$v){ break;}
 			if('.' ===$v){ return [null,null]; }
 			if('..'===$v){ return [null,null]; }
