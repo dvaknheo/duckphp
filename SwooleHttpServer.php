@@ -389,6 +389,8 @@ class SwooleHttpServer
 	
 	protected $static_root=null;
 	protected $auto_clean_autoload=true;
+	public $document_root=null;
+	public $script_filename=null;
 	protected function onHttpRun($request,$response)
 	{
 		SwooleCoroutineSingleton::CloneInstance(SwooleSuperGlobal::class);
@@ -396,7 +398,16 @@ class SwooleHttpServer
 		
 		if($this->http_handler){
 			$this->auto_clean_autoload=false;
-			$this->runHttpHandler();
+			if(!$this->http_handler){ throw new SwooleException("No Handler"); }
+			if(isset($this->document_root)){
+				SwooleSuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=$this->document_root;
+			}
+			if(isset($this->script_filename)){
+				SwooleSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']=$this->script_filename;
+			}
+			
+			($this->http_handler)();
+			
 			return;
 		}
 		if($this->options['http_handler_file']){
@@ -487,12 +498,6 @@ class SwooleHttpServer
 		SwooleSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']=$file;
 		chdir(dirname($file));
 		(function($file){include($file);})($file);
-	}
-	
-	protected function runHttpHandler()
-	{
-		if(!$this->http_handler){return;}
-		($this->http_handler)();
 	}
 	protected function onHttpException($ex)
 	{
@@ -636,6 +641,7 @@ class SwooleSuperGlobal
 		foreach($request->server as $k=>$v){
 			$this->_SERVER[strtoupper($k)]=$v;
 		}
+		$this->_SERVER['cli_script_filename']=$this->_SERVER['SCRIPT_FILENAME'];
 		return $this;
 	}
 	public function session_start(array $options=[])

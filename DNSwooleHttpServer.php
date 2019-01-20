@@ -83,6 +83,8 @@ class DNSwooleHttpServer extends SwooleHttpServer
 		'db_reuse_size'=>0,
 		'db_reuse_timeout'=>5,
 		'use_http_handler_root'=>false,
+		'fake_root'=>'public',
+		'fake_root_index_file'=>'index.php',
 	];
 	/////////////////////////
 	public function init($options,$server=null)
@@ -105,17 +107,6 @@ class DNSwooleHttpServer extends SwooleHttpServer
 		SwooleCoroutineSingleton::CloneInstance(DNRuntimeState::class);
 		//SwooleCoroutineSingleton::CloneInstance(DNDBManager::class);
 		SwooleCoroutineSingleton::CloneInstance(DNSuperGlobal::class);
-		
-		$fakeRoot='public';
-		$fakeIndex='index.php';
-		$path=DNMVCS::G()->options['path'];
-		if(!isset(DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT'])){
-			DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=$path.$fakeRoot;
-		
-		}
-		if(!isset(DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME'])){
-			DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']=$path.$fakeRoot.'/'.$fakeIndex;
-		}
 		
 		return parent::onHttpRun($request,$response);
 	}
@@ -149,15 +140,38 @@ class DNSwooleHttpServer extends SwooleHttpServer
 		$dn_swoole_options=$dn_options['swoole'];
 		
 		$dn=DNMVCS::G()->init($dn_options);
-		
+	
 		///////////////////////////////
 		
 		$this->options['http_handler']=$this->http_handler =[$dn,'run'];
 		$this->options['http_exception_handler']=$this->http_exception_handler=[$dn,'onException'];
 		
-		$db_reuse_size=$dn_swoole_options['db_reuse_size']??0;
+		$path=$dn->options['path'];
+		
+		if($dn_swoole_options['use_http_handler_root']){
+			$http_handler_root=$this->options['http_handler_basepath'].$this->options['http_handler_root'];
+			$http_handler_root=rtrim($http_handler_root,'/').'/';
+			$document_root=$this->static_root?:rtrim($http_handler_root,'/');
+		}else{
+			$fakeRoot=$dn_swoole_options['fake_root']??'public';
+			$doucment_root=$path.$fakeRoot;
+		}
+		$fakeIndex=$dn_swoole_options['fake_root_index_file']??'index.php';
+		
+		$this->document_root=$doucument_root;  // @override
+		$this->script_filename=$doucument_root.'/'.$fakeIndex; // @override
+		
+		///////////////////////////////
+
+		$this->adjustDN($dn,$dn_swoole_options);
+		
+		return $this;
+	}
+	protected function adjustDN($dn,$dn_swoole_options)
+	{
+		$db_reuse_size=$dn_swoole_options['db_reuse_size']??static::DEFAULT_DN_OPTIONS['db_reuse_size'];
 		if($db_reuse_size){
-			$db_reuse_timeout=$dn_swoole_options['db_reuse_timeout']??5;
+			$db_reuse_timeout=$dn_swoole_options['db_reuse_timeout']??static::DEFAULT_DN_OPTIONS['db_reuse_timeout'];
 			$dbm=DNDBManager::G();
 			DBConnectPoolProxy::G()->init($db_reuse_size,$db_reuse_timeout)->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
 			$dn->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
@@ -165,8 +179,6 @@ class DNSwooleHttpServer extends SwooleHttpServer
 		if($dn_swoole_options['use_http_handler_root']){
 			DNRoute::G()->set404([$this,'onShow404']);
 		}
-		
-		return $this;
 	}
 	public function run()
 	{
