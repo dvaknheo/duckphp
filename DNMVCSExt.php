@@ -10,6 +10,32 @@ class RouteHookMapAndRewrite
 		}
 		if(PHP_SAPI==='cli'){ return; }
 	}
+	public function filteRewrite($input_url)
+	{
+		$path=parse_url($input_url,PHP_URL_PATH);
+		$query=parse_url($input_url,PHP_URL_QUERY);
+		
+		$rewriteMap=DNMVCS::G()->options['rewrite_map'];
+		
+		foreach($rewriteMap as $old_url =>$new_url){
+			if(substr($old_url,0,1)!=='~'){
+				if($path===$old_url){ return $input_url; }
+				continue;
+			}
+			$p='/'.str_replace('/','\/',substr($old_url,1)).'/';
+			$new_url=str_replace('$','\\',$new_url);
+			
+			$url=preg_replace($p,$new_url,$path);
+			if($url===$path){ continue; }
+			
+			//merge
+			if(false===strpos($new_url,'?')){
+				return $url;
+			}
+			return $url.$query;
+		}
+		return $input_url;
+	}
 	public function matchRewrite($old_url,$new_url,$route)
 	{
 		$path_info=$route->path_info;
@@ -104,6 +130,7 @@ class RouteHookMapAndRewrite
 	}
 }
 
+// 处理  onefile.php?module=?&act=? 的链接
 class SimpleRouteHook
 {
 	use DNSingleton;
@@ -125,6 +152,9 @@ class SimpleRouteHook
 			$path=substr($path,0,0-strlen($path_info));
 		}
 		if($url===null || $url===''){return $path;}
+		
+		//$path=RouteHookMapAndRewrite::G()->filteRewrite($url);
+		
 		$c=parse_url($url,PHP_URL_PATH);
 		$q=parse_url($url,PHP_URL_QUERY);
 
