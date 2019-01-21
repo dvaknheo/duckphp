@@ -241,14 +241,14 @@ class DNRoute
 	}
 	public function defaultURLHandler($url=null)
 	{
+		if(strlen($url)>0 && '/'==$url{0}){ return $url;};
+		
 		$basepath=substr(rtrim(str_replace('\\','/',$this->script_filename),'/').'/',strlen($this->document_root));
 
 		if($basepath=='/index.php'){$basepath='/';}
 		if($basepath=='/index.php/'){$basepath='/';}
 		
 		if(''===$url){return $basepath;}
-
-		if('/'==$url{0}){ return $url;};
 		
 		if('?'==$url{0}){ return $basepath.$this->path_info.$url; }
 		if('#'==$url{0}){ return $basepath.$this->path_info.$url; }

@@ -29,7 +29,6 @@ class RouteHookMapAndRewrite
 		
 		$get=array_merge($input_get,$new_get);
 		$query=$get?'?'.http_build_query($get):'';
-		
 		return $new_path.$query;
 	}
 	public function replaceNormalUrl($input_url,$template_url,$new_url)
@@ -65,7 +64,7 @@ class RouteHookMapAndRewrite
 			$ret=$this->replaceRegexUrl($input_url,$template_url,$new_url);
 			if($ret!==null){return $ret;}
 		}
-		return $input_url;
+		return null;
 	}
 	protected function matchRoute($pattern_url,$path_info,$route)
 	{
@@ -166,42 +165,56 @@ class SimpleRouteHook
 	public $key_for_module='';
 	public function onURL($url=null)
 	{
+		if(strlen($url)>0 && '/'==$url{0}){ return $url;};
+		
 		$key_for_action=$this->key_for_action;
 		$key_for_module=$this->key_for_module;
-		
+		$get=[];
 		$path='';
 		$path=DNSuperGlobal::G()->_SERVER['REQUEST_URI'];
 		$path_info=DNSuperGlobal::G()->_SERVER['PATH_INFO'];
 
-		if(basename($path)===basename(parse_url($url,PHP_URL_PATH))){ return $url;}
-		$path=parse_url($path,PHP_URL_PATH);
 		
+		$path=parse_url($path,PHP_URL_PATH);
 		if(strlen($path_info)){
 			$path=substr($path,0,0-strlen($path_info));
 		}
 		if($url===null || $url===''){return $path;}
+		////////////////////////////////////
 		
-		//$path=RouteHookMapAndRewrite::G()->filteRewrite($url);
+		$new_url=RouteHookMapAndRewrite::G()->filteRewrite($url);
+		if($new_url){
+			$url=$new_url;
+			if(strlen($url)>0 && '/'==$url{0}){ return $url;};
+			//
+		}
 		
 		$input_path=parse_url($url,PHP_URL_PATH);
-		$q=parse_url($url,PHP_URL_QUERY);
-
-		$a=[];
-		
+		$input_get=[];
+		parse_str(parse_url($url,PHP_URL_QUERY),$input_get);
+		$blocks=explode('/',$input_path);
+		if(isset($blocks[0])){
+			$basefile=basename(DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']);
+			if($blocks[0]===$basefile){
+				array_shift($blocks);
+			}
+		}
+		// dirmoshi    a/b/c
 		if($key_for_module){
-			$blocks=explode('/',$input_path);
 			$action=array_pop($blocks);
 			$module=implode('/',$blocks);
 			if($module){
-				$a[$key_for_module]=$module;
+				$get[$key_for_module]=$module;
 			}
-			$a[$key_for_action]=$action;
+			$get[$key_for_action]=$action;
 		}else{
-			$a[$key_for_action]=$input_path;
+			$get[$key_for_action]=$input_path;
 		}
-		$controller_path=http_build_query($a);
-		$q=$q?'&'.$q:'';
-		$url=$path.'?'.$controller_path.$q;
+		
+		if($key_for_module && isset($get[$key_for_module]) && $get[$key_for_module]===''){ unset($get[$key_for_module]); }
+		$query=$get?'?'.http_build_query($get):'';
+		$url=$path.$query;
+		
 		return $url;
 	
 	}
