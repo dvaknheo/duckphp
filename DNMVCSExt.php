@@ -3,24 +3,20 @@ namespace DNMVCS;
 class RouteHookMapAndRewrite
 {
 	use DNSingleton;
-	protected function mergeHttpGet($get)
-	{
-		foreach($get as $k=>$v){
-			DNSuperGlobal::G()->_GET[$k]=$v;
-		}
-	}
+	
 	public function replaceRegexUrl($input_url,$template_url,$new_url)
 	{
 		if(substr($template_url,0,1)!=='~'){	return null; }
+		
 		
 		$input_path=parse_url($input_url,PHP_URL_PATH);
 		$input_get=[];
 		parse_str(parse_url($input_url,PHP_URL_QUERY),$input_get);
 		
-		$template_path=parse_url($template_url,PHP_URL_PATH);
-		$template_get=[];
+		//$template_path=parse_url($template_url,PHP_URL_PATH);
+		//$template_get=[];
 		parse_str(parse_url($template_url,PHP_URL_QUERY),$template_get);
-		$p='/'.str_replace('/','\/',substr($template_path,1)).'/A';
+		$p='/'.str_replace('/','\/',substr($template_url,1)).'/A';
 		if(!preg_match($p,$input_path)){ return null; }
 		//if(array_diff_assoc($input_get,$template_get)){ return null; }
 		
@@ -38,7 +34,6 @@ class RouteHookMapAndRewrite
 	}
 	public function replaceNormalUrl($input_url,$template_url,$new_url)
 	{
-		// a/b?c/d=e/f
 		if(substr($template_url,0,1)==='~'){ return null; }
 		
 		$input_path=parse_url($input_url,PHP_URL_PATH);
@@ -71,31 +66,6 @@ class RouteHookMapAndRewrite
 			if($ret!==null){return $ret;}
 		}
 		return $input_url;
-	}
-	public function matchRewrite($old_url,$new_url,$route)
-	{
-		$path_info=$route->path_info;
-		if(substr($old_url,0,1)!=='~'){
-			if($path_info===$old_url){
-				$route->path_info=$new_url;
-				return true;
-			}else{
-				return false;
-			}
-		}
-		$old_url=substr($old_url,1);
-		$new_url=str_replace('$','\\',$new_url);
-		$p='/'.str_replace('/','\/',$old_url).'/';
-		
-		$url=preg_replace($p,$new_url,$path_info);
-		if($url===$path_info){return false;}
-		
-		$path_info=parse_url($url,PHP_URL_PATH);
-		$q=parse_url($url,PHP_URL_QUERY);
-		parse_str($q,$get);
-		$this->mergeHttpGet($get);
-		$route->path_info=$path_info;
-		return true;
 	}
 	protected function matchRoute($pattern_url,$path_info,$route)
 	{
@@ -146,12 +116,33 @@ class RouteHookMapAndRewrite
 		}
 		return null;
 	}
+	protected function changeRouteUrl($route,$url)
+	{
+		$path=parse_url($url,PHP_URL_PATH);
+		$get=[];
+		parse_str(parse_url($url,PHP_URL_QUERY),$input_get);
+		$route->path_info=$path;
+		DNSuperGlobal::G()->_SERVER['init_get']=DNSuperGlobal::G()->_GET;
+		DNSuperGlobal::G()->_GET=$get;
+	}
 	protected function hookRewrite($route)
 	{
+		$path_info=$route->path_info;
+		
+		$uri=DNSuperGlobal::G()->_SERVER['REQUEST_URI'];
+		$query=parse_url($uri,PHP_URL_QUERY);
+		$query=$query?'?'.$query:'';
+		$input_url=$path_info.$query;
+		
 		$rewriteMap=DNMVCS::G()->options['rewrite_map'];
-		foreach($rewriteMap as $old_url =>$new_url){
-			if($this->matchRewrite($old_url,$new_url,$route)){
-				break;
+		foreach($rewriteMap as $template_url=>$new_url){
+			$url=$this->replaceNormalUrl($input_url,$template_url,$new_url);
+			if($url!==null){
+				$this->changeRouteUrl($route,$url);
+			}
+			$url=$this->replaceRegexUrl($input_url,$template_url,$new_url);
+			if($url!==null){
+				$this->changeRouteUrl($route,$url);
 			}
 		}
 	}
