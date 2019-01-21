@@ -8,7 +8,22 @@ class RouteHookMapAndRewrite
 		foreach($get as $k=>$v){
 			DNSuperGlobal::G()->_GET[$k]=$v;
 		}
-		if(PHP_SAPI==='cli'){ return; }
+	}
+	public function replacePathWithQuery($old_url,$new_url)
+	{
+		$path=parse_url($old_url,PHP_URL_PATH);
+		$input_get=[];
+		parse_str(parse_url($old_url,PHP_URL_QUERY),$input_get);
+		
+		$output_path=parse_url($new_url,PHP_URL_PATH);
+		$output_get=[];
+		parse_str(parse_url($new_url,PHP_URL_QUERY),$output_get);
+		
+		$get=array_merge($input_get,$output_get);
+		$query=http_build_query($get);
+		$query=$query?'?'.$query:'';
+		$ret=$output_path.$query;
+		return $ret;
 	}
 	public function filteRewrite($input_url)
 	{
@@ -17,10 +32,13 @@ class RouteHookMapAndRewrite
 		
 		$rewriteMap=DNMVCS::G()->options['rewrite_map'];
 		
+		 
 		foreach($rewriteMap as $old_url =>$new_url){
 			if(substr($old_url,0,1)!=='~'){
-				if($path===$old_url){ return $input_url; }
-				continue;
+				if($path!==$old_url){
+					continue;
+				}
+				
 			}
 			$p='/'.str_replace('/','\/',substr($old_url,1)).'/';
 			$new_url=str_replace('$','\\',$new_url);
@@ -146,6 +164,7 @@ class SimpleRouteHook
 		$path=DNSuperGlobal::G()->_SERVER['REQUEST_URI'];
 		$path_info=DNSuperGlobal::G()->_SERVER['PATH_INFO'];
 
+		if(basename($path)===basename(parse_url($url,PHP_URL_PATH))){ return $url;}
 		$path=parse_url($path,PHP_URL_PATH);
 		
 		if(strlen($path_info)){
@@ -155,20 +174,22 @@ class SimpleRouteHook
 		
 		//$path=RouteHookMapAndRewrite::G()->filteRewrite($url);
 		
-		$c=parse_url($url,PHP_URL_PATH);
+		$input_path=parse_url($url,PHP_URL_PATH);
 		$q=parse_url($url,PHP_URL_QUERY);
 
 		$a=[];
 		
 		if($key_for_module){
-			$blocks=explode('/',$c);
-			$c=array_pop($blocks);
-			$m=implode('/',$blocks);
-			if($m){
-				$a[$key_for_module]=$m;
+			$blocks=explode('/',$input_path);
+			$action=array_pop($blocks);
+			$module=implode('/',$blocks);
+			if($module){
+				$a[$key_for_module]=$module;
 			}
+			$a[$key_for_action]=$action;
+		}else{
+			$a[$key_for_action]=$input_path;
 		}
-		$a[$key_for_action]=$c;
 		$controller_path=http_build_query($a);
 		$q=$q?'&'.$q:'';
 		$url=$path.'?'.$controller_path.$q;
@@ -184,6 +205,7 @@ class SimpleRouteHook
 		$path_info=DNSuperGlobal::G()->_REQUEST[$k]??null;
 
 		$path_info=$module.'/'.$path_info;
+		$path_info=ltrim($path_info,'/');
 		$route->path_info=$path_info;
 		$route->calling_path=$path_info;
 	}
