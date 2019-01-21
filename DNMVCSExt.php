@@ -9,48 +9,66 @@ class RouteHookMapAndRewrite
 			DNSuperGlobal::G()->_GET[$k]=$v;
 		}
 	}
-	public function replacePathWithQuery($old_url,$new_url)
+	public function replaceRegexUrl($input_url,$template_url,$new_url)
 	{
-		$path=parse_url($old_url,PHP_URL_PATH);
+		if(substr($template_url,0,1)!=='~'){	return null; }
+		
+		$input_path=parse_url($input_url,PHP_URL_PATH);
 		$input_get=[];
-		parse_str(parse_url($old_url,PHP_URL_QUERY),$input_get);
+		parse_str(parse_url($input_url,PHP_URL_QUERY),$input_get);
 		
-		$output_path=parse_url($new_url,PHP_URL_PATH);
-		$output_get=[];
-		parse_str(parse_url($new_url,PHP_URL_QUERY),$output_get);
+		$template_path=parse_url($template_url,PHP_URL_PATH);
+		$template_get=[];
+		parse_str(parse_url($template_url,PHP_URL_QUERY),$template_get);
+		$p='/'.str_replace('/','\/',substr($template_path,1)).'/A';
+		if(!preg_match($p,$input_path)){ return null; }
+		//if(array_diff_assoc($input_get,$template_get)){ return null; }
 		
-		$get=array_merge($input_get,$output_get);
-		$query=http_build_query($get);
-		$query=$query?'?'.$query:'';
-		$ret=$output_path.$query;
-		return $ret;
+		$new_url=str_replace('$','\\',$new_url);
+		$new_url=preg_replace($p,$new_url,$input_path);
+		
+		$new_path=parse_url($new_url,PHP_URL_PATH);
+		$new_get=[];
+		parse_str(parse_url($new_url,PHP_URL_QUERY),$new_get);
+		
+		$get=array_merge($input_get,$new_get);
+		$query=$get?'?'.http_build_query($get):'';
+		
+		return $new_path.$query;
+	}
+	public function replaceNormalUrl($input_url,$template_url,$new_url)
+	{
+		// a/b?c/d=e/f
+		if(substr($template_url,0,1)==='~'){ return null; }
+		
+		$input_path=parse_url($input_url,PHP_URL_PATH);
+		$input_get=[];
+		parse_str(parse_url($input_url,PHP_URL_QUERY),$input_get);
+		
+		$template_path=parse_url($template_url,PHP_URL_PATH);
+		$template_get=[];
+		parse_str(parse_url($template_url,PHP_URL_QUERY),$template_get);
+		
+		if(array_diff_assoc($input_get,$template_get)){ return null; }
+		
+		$new_path=parse_url($new_url,PHP_URL_PATH);
+		$new_get=[];
+		parse_str(parse_url($new_url,PHP_URL_QUERY),$new_get);
+		if($input_path!==$template_path){ return null; }
+		
+		$get=array_merge($input_get,$new_get);
+		$query=$get?'?'.http_build_query($get):'';
+		
+		return $new_path.$query;
 	}
 	public function filteRewrite($input_url)
 	{
-		$path=parse_url($input_url,PHP_URL_PATH);
-		$query=parse_url($input_url,PHP_URL_QUERY);
-		
 		$rewriteMap=DNMVCS::G()->options['rewrite_map'];
-		
-		 
-		foreach($rewriteMap as $old_url =>$new_url){
-			if(substr($old_url,0,1)!=='~'){
-				if($path!==$old_url){
-					continue;
-				}
-				
-			}
-			$p='/'.str_replace('/','\/',substr($old_url,1)).'/';
-			$new_url=str_replace('$','\\',$new_url);
-			
-			$url=preg_replace($p,$new_url,$path);
-			if($url===$path){ continue; }
-			
-			//merge
-			if(false===strpos($new_url,'?')){
-				return $url;
-			}
-			return $url.$query;
+		foreach($rewriteMap as $template_url=>$new_url){
+			$ret=$this->replaceNormalUrl($input_url,$template_url,$new_url);
+			if($ret!==null){return $ret;}
+			$ret=$this->replaceRegexUrl($input_url,$template_url,$new_url);
+			if($ret!==null){return $ret;}
 		}
 		return $input_url;
 	}
