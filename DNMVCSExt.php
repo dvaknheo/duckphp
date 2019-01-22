@@ -157,6 +157,8 @@ class RouteHookMapAndRewrite
 }
 
 // 处理  onefile.php?module=?&act=? 的链接
+
+// basedir  a/b.php/d
 class SimpleRouteHook
 {
 	use DNSingleton;
@@ -186,12 +188,12 @@ class SimpleRouteHook
 		if($new_url){
 			$url=$new_url;
 			if(strlen($url)>0 && '/'==$url{0}){ return $url;};
-			//
 		}
 		
 		$input_path=parse_url($url,PHP_URL_PATH);
 		$input_get=[];
 		parse_str(parse_url($url,PHP_URL_QUERY),$input_get);
+		
 		$blocks=explode('/',$input_path);
 		if(isset($blocks[0])){
 			$basefile=basename(DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']);
@@ -199,7 +201,7 @@ class SimpleRouteHook
 				array_shift($blocks);
 			}
 		}
-		// dirmoshi    a/b/c
+		
 		if($key_for_module){
 			$action=array_pop($blocks);
 			$module=implode('/',$blocks);
@@ -210,7 +212,7 @@ class SimpleRouteHook
 		}else{
 			$get[$key_for_action]=$input_path;
 		}
-		
+		$get=array_merge($input_get,$get);
 		if($key_for_module && isset($get[$key_for_module]) && $get[$key_for_module]===''){ unset($get[$key_for_module]); }
 		$query=$get?'?'.http_build_query($get):'';
 		$url=$path.$query;
@@ -232,6 +234,28 @@ class SimpleRouteHook
 		$route->calling_path=$path_info;
 	}
 }
+
+class BasePathModeRouteHook // not working.
+{
+	use DNSingleton;
+
+	public $key_for_action='_r';
+	public $key_for_module='';
+	public function onURL($url=null)
+	{
+		if(strlen($url)>0 && '/'==$url{0}){ return $url;};
+		
+		return $url;	
+	}
+	// abc/d/e.php/g/h?act=z  abc/d/e/g
+	public function hook($route)
+	{
+		$route->setURLHandler([$this,'onURL']);
+		$route->path_info=$path_info;
+		$route->calling_path=$path_info;
+	}
+}
+
 class ProjectCommonAutoloader
 {
 	use DNSingleton;
