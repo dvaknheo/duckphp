@@ -172,24 +172,24 @@ $options 我们术语称为 DNMVCS 选项。和 setting.php 设置， config.php
 |   +---Model           // 模型放在里
 |   |       TestModel.php   // 测试 Model 
 |   \---Service         // 服务放在这里
-|           TestService.php //测试 Service
-+---bin                 //
-|       start_server.php //启动 swoole
-+---config              // 配置文件 放这里
+|           TestService.php // 测试 Service
++---bin                 // 命令行程序约定放这里。
+|       start_server.php 	// 启动 swoole
++---config              // 配置文件 放这里，可调
 |       config.php      // 配置，目前是空数组
 |       setting.php     // 设置，敏感文件，不放在版本管理里
-|       setting.sample.php      // 设置，去除敏感信息的模板
+|       setting.sample.php	// 设置，去除敏感信息的模板
 +---lib                 // 手动加载的文件放这里(非必要)
-|       ForImport.php   //用于测试导入文件
-+---view                // 视图文件放这里
+|       ForImport.php   // 用于测试导入文件
++---view                // 视图文件放这里，可调
 |   |   main.php        // 视图文件
 |   \---_sys            // 系统错误视图文件放这里
-|           error-404.php  // 404 
-|           error-500.php  // 500 出错了
+|           error-404.php  	// 404 
+|           error-500.php  	// 500 出错了
 |           error-debug.php // 调试的时候显示的视图
 |           error-exception.php // 出异常了，和 500 不同是 这里是未处理的异常。
-\---public              // 网站目录放这里
-		index.php       // 主页面
+\---public              // 网站目录约定放这里
+		index.php       // 主页
 ```
 工程的目录结构并非不可变更。
 config,view 目录可以通过选项（ $options['path_config'],$options['path_view']）调整（如调到 app 目录下）。
@@ -427,7 +427,7 @@ DB 的使用方法，看后面的参考。
 示例如下
 ```php
 $sql="select 1+? as t";
-$ret=DNMVCS::DB()->fetch($sql,2);
+$ret=\DNMVCS\DNMVCS::DB()->fetch($sql,2);
 var_dump($ret);
 ```
 
@@ -448,9 +448,12 @@ DNMVCS 的默认数据库是 DB ,DB 功能很小，兼容 Medoo 这个数据库�
 * DNMVCS::H($str)   Html编码. 更专业的有 Zend\Escaper。
 * DNMVCS::RecordsetH 对一个 RecordSet 加 html 编码
 * DNMVCS::RecordsetURL  对  RecordSet 加 url 转换
+
 *进阶：把 html 编码替换成 Zend\Escaper .*
 ## 常见任务： 抛异常
+```
 DNMVCS::ThrowOn($flag,$message,$code);
+```
 等价于 if(!$flag){throw new DNException($message,$code)}
 这是 DNMVCS 应用常见的操作。
 
@@ -613,6 +616,7 @@ static G($object=null)
 	使得调用形式不变，但实现方式变更
 	比 PHP-DI简洁，后面的文档 会有详细介绍
 init($options=[])
+
 	初始化，这是最经常子类化完成自己功能的方法。
 	你可以扩展这个类，添加工程里的其他初始化。
 run()
@@ -621,6 +625,7 @@ run()
 	比如 swoole 下不同协程的运行。
 	如果404 则返回false;其他返回 true
 static SG()
+
 	SuperGlobal 的缩写
 	返回 DNSuperGlobal 对象
 	你可以 DNMVCS::SG()->_GET得到的就是 swoole 也可用的 $_GET 数组。
@@ -866,7 +871,8 @@ assignPathNamespace($path,$namespace=null)
 	
 	分配自动加载的命名空间的目录。
 	实质调用 DNAutoLoader::G()->assignPathNamespace
-
+## 内部方法
+一些方法，虽然公开，但都只用于内部。
 _header
 	实现 header();
 _setcookie
@@ -951,7 +957,7 @@ MyBaseClass::G()->foo2();
 
 所以你可以扩展各种内部类以实现不同功能。
 
-比如你要自己的路由方法.在 init 里。
+比如你要自己的路由方法。在 init 里。
 ```php
 //MYMVCS::init
 public function init($options=[])
@@ -1021,23 +1027,27 @@ setDefaultExceptionHandler($default_exception_handler)
 	设置默认异常处理
 assignExceptionHandler($class,$callback=null)
 
-	//分配异常处理
+	// 分配异常处理
 setMultiExceptionHandler(array $classes,$callback)
 	
-	//
+	//  分配多个异常
 checkAndRunErrorHandlers($ex,$inDefault)
 
 	这个函数比较特殊 ,一般你不会调用他，用于检查是不是错误处理已经被接管了。
 ## DNConfiger 配置类
+DNConfiger 类获得配置设置
 init($path)
 
+	初始化
 _Setting($key)
+
+	获得设置
 _Config($key,$file_basename='config')
+
+	获得配置
 _LoadConfig($file_basename='config')
 
- protected function loadFile($basename,$checkfile=true)
-
-	DNConfiger 类获得配置设置
+	加载配置
 ## DNView 视图类
 init($path)
 	
@@ -1050,9 +1060,13 @@ _ShowBlock($view,$data=null)
 	显示内容
 assignViewData($key,$value=null)
 
+	//
 setBeforeShow($callback)
+
+	//
 setViewWrapper($head_file,$foot_file)
-protected function prepareFiles()
+
+	//
 ## DNRoute 路由类
 这应该会被扩展,加上权限判断等设置
 路由类是很强大扩展性很强的类。
@@ -1076,6 +1090,7 @@ setURLHandler
 
 	替换 URL()函数的实现。   
 getURLHandler
+
 	获得 URL()函数的实现。
 addRouteHook($hook,$prepend=false)
 	
@@ -1146,6 +1161,19 @@ DNAutoLoader 做了防多次加载和多次初始化。
 ## DNSuperGlobal 超全局变量
 $_GET ,$_POST 在兼容 Swoole 环境下，变成 ,DNSuperGlobal::G()->_GET ,DNSuperGlobal::G()->_POST
 *我也想缩短，但实在没法再短了。.*
+
+init()
+
+	//
+session_start(array $options=[])
+
+	//
+session_destroy()
+
+	//
+session_set_save_handler($handler)
+
+	//
 # 第六章 DNMVCSExt 扩展类和附属组件
 	DNMVCS 的选项 $options['ext'] 不为空数组就 引入DNMVCSExt 扩展类
 	配置字段 ext 数组有数据的时候，会进入高级模式。自动使用扩展文件
@@ -1209,10 +1237,10 @@ TestService::foo() =>  \MY\Service\DebugService::G()->foo();
 
 ```php
 'fullpath_config_common'=>'',  
-	//DNConfiger::G(ProjectCommonConfiger::G()); 	设置和配置会先读取相应的文件，合并到同目录来
+	// DNConfiger::G(ProjectCommonConfiger::G()); 	设置和配置会先读取相应的文件，合并到同目录来
 'fullpath_project_share_common'=>''     // 通用类文件目录，用于多工程
-	//调用ProjectCommonAutoloader::G()->init(DNMVCS::G()->options)->run();
-//	只处理了 CommonService 和 CommonModel 而且是无命名空间的。
+	// 调用ProjectCommonAutoloader::G()->init(DNMVCS::G()->options)->run();
+	// 只处理了 CommonService 和 CommonModel 而且是无命名空间的。
 ```
 *待完善*
 
@@ -1237,11 +1265,59 @@ TestService::foo() =>  \MY\Service\DebugService::G()->foo();
 	函数方式的 controller
 ### FunctionView
 	函数方式的 view
-# 第七章 数据库
-## 入门
-设置选项
 
-## 总说
+# 第七章 数据库
+
+## 入门
+要 使用数据库，在默认为 ::/config/setting.php 的 DNMVCS 设置里正确设置 database_list 数组。
+```php
+return [
+'database_list'=>[[
+		'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
+		'username'=>'???',
+		'password'=>'???',
+	],],
+];
+```
+详细介绍：
+
+database_list 是个数组，包含多个数据库配置。
+然后在用到的地方调用 DNMVCS::DB($tag=null) 得到的就是 DB 对象，用来做各种数据库操作。
+$tag 对应 $setting['database_list'][$tag]。
+你不必担心每次框架初始化会连接数据库。只有第一次调用 DNMVCS::DB() 的时候，才进行数据库类的创建。
+每个 database_list 的设置数组是传递到 DB 对象。
+dsn 对应的是创建PDO 对象需要的DSN ，username 对应用户名， password 对应密码。
+
+示例如下
+```php
+$sql="select 1+? as t";
+$ret=\DNMVCS\DNMVCS::DB()->fetch($sql,2);
+var_dump($ret);
+```
+## DNMVCS 的 数据库相关方法
+## 替换默认 DB 类
+DNDBManager 管理 DB 类的实例。
+
+1. 通过修改 DNMVCS选项，这些选项在 DNMVCS->initDBMaganger 的时候通过 DNDBManager->setDBHandler 使用到。
+```php
+$options[
+	'db_create_handler'=>[\DNMVCS\MedooDB::class,'CreateDBInstance'],
+	'db_close_handler'=>[\DNMVCS\MedooDB::class,'CloseDBInstance'],
+]
+```
+2. 通过调用 DNDBManager->setDBHandler
+
+或者在你的 DNMVCS->init() 后面段加上下面代码，
+使得 MedooDB 替换 DB
+```php
+\DNMVCS\DNDBManager::G()->setDBHandler(
+	[\DNMVCS\MedooDB::class,'CreateDBInstance']
+	[\DNMVCS\MedooDB::class,'CloseDBInstance']
+);
+```
+详情请参见 DNDBManager setDBHandler 的介绍。
+
+## 数据库相关文件总说
 DNMVCS 系统的数据库处理部分四个文件。
 DBInterface.php DB.php DBAdvance.php MedooDB.php
 
@@ -1252,79 +1328,68 @@ class MedooDB 是 Medoo 类基础上的一个封装 实现了 DBInterface 同时
 使用 MedooDB 必须引入第三方库 Medoo
 
 ## DBInterface.php
-DBInterface 是希望其他DB类也遵守的接口。
-close()
-	关闭数据库
-getPDO() //DB
 
-public function quote($string)
+DBInterface 是希望其他DB类也遵守的接口。
+
+close()
+
+	关闭数据库
+getPDO()
+
+	获得 PDO 对象
+quote($string)
+
 	转码,如果是数组，则值部分会转码。
-public function fetchAll($sql,...$args)
-public function fetch($sql,...$args)
-public function fetchColumn($sql,...$args)
+fetchAll($sql,...$args)
+
+fetch($sql,...$args)
+
+fetchColumn($sql,...$args)
+
 	这三个是动态参数，直接查询
 	获得的是数组
 	（有时候还是觉得直接用 object $v->id 之类方便多了,你可以在 pdo 里调整。
-public function execQuick($sql,...$args)
-	执行 pdo 结果，获得 PDOStatement 为什么不用 exec ? 因为  Medoo用了。
-	返回  PDOStatement 对象
-public function  rowCount()
+execQuick($sql,...$args)
 
+	返回  PDOStatement 对象
+	执行 pdo 结果，获得 PDOStatement 为什么不用 exec ? 因为  Medoo用了。
+	
+rowCount()
+	获得行数
 ## DB.php
 DNMVCS 自带了一个简单的 DB 类。
 DN::DB()得到的就是这个 DB 类。
-DB 的配置在 setting.sample.php 里有。
-DB 简单实现的一个数据库类。封装了 PDO， 和 Medoo 兼容，也少了 Medoo 的很多功能。
-下面主要说 DB 类的用法
-```
-close()
-	关闭数据库
-getPDO() //DB
 
-public function quote($string)
-	转码,如果是数组，则值部分会转码。
-public function fetchAll($sql,...$args)
-public function fetch($sql,...$args)
-public function fetchColumn($sql,...$args)
-	这三个是动态参数，直接查询
-	获得的是数组
-	（有时候还是觉得直接用 object $v->id 之类方便多了,你可以在 pdo 里调整。
-public function execQuick($sql,...$args)
-	执行 pdo 结果，获得 PDOStatement 为什么不用 exec ? 因为  Medoo用了。
-	返回  PDOStatement 对象
-public function  rowCount()
-	获得结果行数
-public function init($config)
-	初始化
-public static function CreateDBInstance($db_config)
-	用于创建DB类
-public static function CloseDBInstance($db)
-	关闭DB类
+## DBAdvance.php
+trait DBAdvance 是协助 DBInterface 完成扩展功能的 trait.
 
-```
+quoteIn($array)
 
+	//
+quoteSetArray($array)
+
+	//
+qouteInsertArray($array)
+
+	//
+findData($table_name,$id,$key='id')
+
+	//
+insertData($table_name,$data,$return_last_id=true)
+
+	//
+deleteData($table,$id,$key='id',$key_delete='is_deleted')
+
+	//
+updateData($table_name,$id,$data,$key='id')
+
+	//
 ## MedooDB.php
 MedooDB 是 Medoo 的一个简单扩展，和 DB 接口一致。
 因为 MedooDB 对 Medoo 有依赖关系，所以单独放在一个文件。
 MedooDB 类的除了默认的 Medoo 方法，还扩展了 DB 类同名方法。
 
 
-## 使用方法：
-修改配置
-```php
-$options[
-	'db_create_handler'=>[\DNMVCS\MedooDB::class,'CreateDBInstance'],
-	'db_close_handler'=>[\DNMVCS\MedooDB::class,'CloseDBInstance'],
-]
-```
-或者在你的 DNMVCS->init() 后面段加上下面代码，
-使得 MedooDB 替换 DNDB
-```php
-\DNMVCS\DNDBManager::G()->setDBHandler(
-	[\DNMVCS\MedooDB::class,'CreateDBInstance']
-	[\DNMVCS\MedooDB::class,'CloseDBInstance']
-);
-```
 # 第八章 Swoole 整合指南
 ## 概述
 这章分两部分 SwooleHttpServer 和 DNSwooleHttpServer
@@ -1480,16 +1545,16 @@ onMessage($server,$frame)
 
 ## SwooleCoroutineSingleton
 
-用于协程单例
+用于协程单例,把主进程单例复制到协程单例
 
-public static function GetInstance($class,$object)
-public static function CreateInstance($class,$object=null)
-public static function CloneInstance($class)
-public static function DeleteInstance($class)
-public static function ReplaceDefaultSingletonHandler()
-public static function CleanUp()
-public static function Dump()
-public static function DumpString()
+	public static function GetInstance($class,$object)
+	public static function CreateInstance($class,$object=null)
+	public static function CloneInstance($class)
+	public static function DeleteInstance($class)
+	public static function ReplaceDefaultSingletonHandler()
+	public static function CleanUp()
+	public static function Dump()
+	public static function DumpString()
 ## SwooleException extends \Exception
 
 	use DNThrowQuickly; 用于处理 Swoole 异常。
@@ -1512,17 +1577,10 @@ public static function DumpString()
 	SwooleSession 是因为 Swoole 的 session 实现。
 	SwooleSession 被 SuperGlobalSuperGlobal 调用， 调用 SwooleSessionHandler
 ## SwooleSessionHandler implements \SessionHandlerInterface
-	如果你要实现自己的 SessionHandler ，用 SwooleServer::session_set_save_handler();替换这个类。 
+	如果你要实现自己的 SessionHandler ，用 SwooleServer::session_set_save_handler();替换这个类。
 
 
 ## class DNSwooleHttpServer
-	public function init($server_options,$server=null)
-	public function run()
-
-
-
-	把主进程单例复制到协程单例
-## DNSwooleHttpServer
 
 swoole 下， DNMVCS  入口选项 ['swoole'] 的选项
 ```php
@@ -1721,7 +1779,7 @@ DN::run
 
 DNMVCS::DB
 
-	DNDBManager -> DNDB::CreateDBInstence(),DNDB::CloseDBInstence()
+	DNDBManager -> DB::CreateDBInstence(),DB::CloseDBInstence()
 ```
 
 
