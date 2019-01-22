@@ -7,6 +7,11 @@ class Toolkit
 	public static function Init()
 	{
 	}
+	public static function HasInclude($file)
+	{
+		$a=get_included_files();
+		return in_array($a,realpath($file))?true:false;
+	}
 	public function getTables()
 	{
 		$ret=[];

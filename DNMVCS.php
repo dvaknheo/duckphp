@@ -968,11 +968,6 @@ trait DNMVCS_Misc
 	{
 		return DNMVCSExt::G()->_RecordsetH($data,$cols);
 	}
-	public static function HasInclude($file)
-	{
-		$a=get_included_files();
-		return in_array($a,realpath($file))?true:false;
-	}
 }
 class DNExceptionManager
 {

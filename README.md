@@ -808,9 +808,6 @@ RecordsetURL(&$data,$cols_map=[])
 
 	给 sql 返回数组 加url 比如  url_edit=>"edit/{id}",则该行添加 url_edit =>DN::URL("edit/".$data[]['id']) 等类似。
 	实际调用 static::G()->_H()
-HasInclude($file)
-
-	判断文件是否已经包含
 ## 非静态方法
 这里的方法偶尔会用到，所以没静态化 。
 assign 系列函数，都有两个模式 func(\$map)，和 func(\$key,\$value) 模式方便大量导入。
@@ -1119,10 +1116,10 @@ setDBHandler($db_create_handler,$db_close_handler=null)
 	安装DB类
 	$db_create_handler($config,$tag):$db 返回 DB 实例。方便扩展.
 	$db_close_handler($db,$tag) 关闭数据库
-	使用场合，比如用自己公司的 DB 类，要在这里做一个封装。 不建议使用
+	使用场合，比如用自己公司的 DB 类，要在这里做一个封装。 
 setBeforeGetDBHandler($before_get_db_handler)
 	
-	设置 在 DB()函数前执行 $before_get_db_handler($tag) 不建议使用
+	设置 在 DB()函数前执行 $before_get_db_handler($tag)
 _DB($tag=null)
 
 	返回 DB 实例，如果 tag = null 则用 0 号数据库。
