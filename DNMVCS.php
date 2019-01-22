@@ -128,12 +128,14 @@ class DNAutoLoader
 	{
 		if($this->is_loaded){return;}
 		$this->is_loaded=true;
-		spl_autoload_register(function($class){
-			$flag=$this->loadByPath($class);
-			if($flag){return;}
-			$flag=$this->loadWithNoNameSpace($class);
-			if($flag){return;}
-		});
+		spl_autoload_register([$this,'_autoload']);
+	}
+	public function _autoload($class)
+	{
+		$flag=$this->loadByPath($class);
+		if($flag){return;}
+		$flag=$this->loadWithNoNameSpace($class);
+		if($flag){return;}
 	}
 
 	protected function loadWithNoNameSpace($class)

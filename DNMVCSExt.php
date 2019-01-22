@@ -267,16 +267,18 @@ class ProjectCommonAutoloader
 	}
 	public function run()
 	{
-		spl_autoload_register(function($class){
-			if(strpos($class,'\\')!==false){ return; }
-			$path_common=$this->path_common;
-			if(!$path_common);return;
-			$flag=preg_match('/Common(Service|Model)$/',$class,$m);
-			if(!$flag){return;}
-			$file=$path_common.'/'.$class.'.php';
-			if (!$file || !file_exists($file)) {return;}
-			require $file;
-		});
+		spl_autoload_register([$this,'_autoload']);
+	}
+	public function _autoload($class)
+	{
+		if(strpos($class,'\\')!==false){ return; }
+		$path_common=$this->path_common;
+		if(!$path_common);return;
+		$flag=preg_match('/Common(Service|Model)$/',$class,$m);
+		if(!$flag){return;}
+		$file=$path_common.'/'.$class.'.php';
+		if (!$file || !file_exists($file)) {return;}
+		require $file;
 	}
 }
 class ProjectCommonConfiger extends DNConfiger
@@ -538,18 +540,21 @@ class DNMVCSExt
 	{
 		if($this->has_enableFacade){return;}
 		$this->has_enableFacade=true;
-		spl_autoload_register(function($class){
-			if(!isset(DNMVCS::G()->options['namespace'])){ return; }
-			$prefix=DNMVCS::G()->options['namespace'].'\\Facade\\';
-			if(substr($class,0,strlen($prefix))!==$prefix){ return; }
-			
-			$blocks=explode('\\',$class);
-			$basename=array_pop($blocks);
-			$namespace=implode('\\',$blocks);
-			
-			$code="namespace $namespace{ class $basename extends \\DNMVCS\\FacadeBase{} }";
-			eval($code);
-		});
+		
+		spl_autoload_register([$this,'_facadeAutoload']);
+	}
+	public function _facadeAutoload($class)
+	{
+		if(!isset(DNMVCS::G()->options['namespace'])){ return; }
+		$prefix=DNMVCS::G()->options['namespace'].'\\Facade\\';
+		if(substr($class,0,strlen($prefix))!==$prefix){ return; }
+		
+		$blocks=explode('\\',$class);
+		$basename=array_pop($blocks);
+		$namespace=implode('\\',$blocks);
+		
+		$code="namespace $namespace{ class $basename extends \\DNMVCS\\FacadeBase{} }";
+		eval($code);
 	}
 	public function checkDBPermission()
 	{
