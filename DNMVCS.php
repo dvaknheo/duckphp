@@ -1316,12 +1316,12 @@ class DNMVCS
 		];
 	public $options=[];
 	public $isDev=false;
-	public $before_run_handler=null;
 	
 	protected $path=null;
 	protected $path_lib=null;
 	
-	protected $error_reporting_old;
+	protected $is_system_wrapper_installed;
+	
 	public static function RunQuickly($options=[])
 	{
 		return static::G()->init($options)->run();
@@ -1453,17 +1453,14 @@ class DNMVCS
 		}
 		DNSuperGlobal::G()->init();
 	}
-	
-	public function setBeforeRunHandler($before_run_handler)
-	{
-		$this->before_run_handler=$before_run_handler;
-	}
 	public function beforeRouteRun(DNRoute $route)
 	{
 		if(defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')){
-			//todo   in init ，not in this.
-			$installer=DNMVCS_SYSTEM_WRAPPER_INSTALLER;
-			($installer)($this);
+			if(!$this->is_system_wrapper_installed){
+				$installer=DNMVCS_SYSTEM_WRAPPER_INSTALLER;
+				($installer)($this);
+				$this->is_system_wrapper_installed=true;
+			}
 		}
 		if(defined('DNMVCS_DNSUPERGLOBAL_REPALACER')){	
 			DNSuperGlobal::G(call_user_func([DNMVCS_DNSUPERGLOBAL_REPALACER,'G']));
@@ -1493,12 +1490,10 @@ class DNMVCS
 	{
 		DNRuntimeState::G()->setState();
 		
-		if($this->before_run_handler){
-			($this->before_run_handler)($this);
-		}
-		$this->beforeRouteRun(DNRoute::G());
+		$route=DNRoute::G();
+		$this->beforeRouteRun($route);		
+		$ret=$route->run();
 		
-		$ret=DNRoute::G()->run();
 		DNRuntimeState::G()->unsetState();
 		return $ret;
 	}
