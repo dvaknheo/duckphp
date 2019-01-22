@@ -1317,7 +1317,7 @@ class DNMVCS
 	protected $path=null;
 	protected $path_lib=null;
 	
-	protected $is_system_wrapper_installed;
+	protected $is_system_wrapper_installed=false;
 	
 	public static function RunQuickly($options=[])
 	{
@@ -1450,7 +1450,7 @@ class DNMVCS
 		}
 		DNSuperGlobal::G()->init();
 	}
-	public function beforeRouteRun(DNRoute $route)
+	protected function beforeRouteRun(DNRoute $route)
 	{
 		if(defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')){
 			if(!$this->is_system_wrapper_installed){

@@ -112,10 +112,13 @@ class DNSwooleHttpServer extends SwooleHttpServer
 	}
 	public function onShow404()
 	{
-		//SwooleCoroutineSingleton::CloneInstance(DNMVCS::class);
-		//SwooleCoroutineSingleton::CloneInstance(DNRoute::class);
-		//DNMVCS::G(new DNMVCS()); //clean up
-		//DNRoute::G(new DNRoute()); //clean up
+		SwooleCoroutineSingleton::CloneInstance(DNAutoLoader::class);
+		SwooleCoroutineSingleton::CloneInstance(DNMVCS::class);
+		SwooleCoroutineSingleton::CloneInstance(DNRoute::class);
+		
+		DNAutoLoader::G(new DNAutoLoader());
+		DNMVCS::G(new DNMVCS());
+		DNRoute::G(new DNRoute());
 		
 		$http_handler_root=$this->options['http_handler_basepath'].$this->options['http_handler_root'];
 		$http_handler_root=rtrim($http_handler_root,'/').'/';
@@ -127,9 +130,18 @@ class DNSwooleHttpServer extends SwooleHttpServer
 		$flag=$this->runHttpFile($path,$document_root);
 		if(!$flag){
 			//Remark Can't Not use in dnmvcs.
-			DNMVCS::G()->onShow404();
+			//DNMVCS::G()->onShow404();
 		}
+		$this->auto_clean_autoload=true;
 		
+	}
+	protected function onHttpClean()
+	{
+		if(!$this->auto_clean_autoload){ return;}
+		$functions = spl_autoload_functions();
+		foreach($functions as $function) {
+			spl_autoload_unregister($function);
+		}
 	}
 	public function bindDN($dn_options)
 	{
@@ -140,7 +152,7 @@ class DNSwooleHttpServer extends SwooleHttpServer
 		$dn_swoole_options=$dn_options['swoole'];
 		
 		$dn=DNMVCS::G()->init($dn_options);
-	
+		if(!defined('DN_SWOOLE_SERVER_HANDLER_MODE')){ define('DN_SWOOLE_SERVER_HANDLER_MODE',true); }
 		///////////////////////////////
 		
 		$this->options['http_handler']=$this->http_handler =[$dn,'run'];
@@ -158,8 +170,8 @@ class DNSwooleHttpServer extends SwooleHttpServer
 		}
 		$fakeIndex=$dn_swoole_options['fake_root_index_file']??'index.php';
 		
-		$this->document_root=$doucument_root;  // @override
-		$this->script_filename=$doucument_root.'/'.$fakeIndex; // @override
+		$this->document_root=$document_root;  // @override
+		$this->script_filename=$document_root.'/'.$fakeIndex; // @override
 		
 		///////////////////////////////
 
