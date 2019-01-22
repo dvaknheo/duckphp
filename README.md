@@ -869,9 +869,7 @@ assignPathNamespace($path,$namespace=null)
 	
 	分配自动加载的命名空间的目录。
 	实质调用 DNAutoLoader::G()->assignPathNamespace
-setBeforeRunHandler($before_run_handler)
 
-	在run之前执行回调。 SwooleHttpServer 用到这个。
 _header
 	实现 header();
 _setcookie
@@ -1121,13 +1119,13 @@ setDBHandler($db_create_handler,$db_close_handler=null)
 	安装DB类
 	$db_create_handler($config,$tag):$db 返回 DB 实例。方便扩展.
 	$db_close_handler($db,$tag) 关闭数据库
-	使用场合，比如用自己公司的 DB 类，要在这里做一个封装。
+	使用场合，比如用自己公司的 DB 类，要在这里做一个封装。 不建议使用
 setBeforeGetDBHandler($before_get_db_handler)
 	
-	设置 在 DB()函数前执行 $before_get_db_handler($tag)
+	设置 在 DB()函数前执行 $before_get_db_handler($tag) 不建议使用
 _DB($tag=null)
 
-	返回 DB 实例，如果 tag -null 则用 0 号数据库。
+	返回 DB 实例，如果 tag = null 则用 0 号数据库。
 _DB_W()
 	
 	返回写入用的数据库 
@@ -1243,6 +1241,9 @@ TestService::foo() =>  \MY\Service\DebugService::G()->foo();
 ### FunctionView
 	函数方式的 view
 # 第七章 数据库
+## 入门
+设置选项
+
 ## 总说
 DNMVCS 系统的数据库处理部分四个文件。
 DBInterface.php DB.php DBAdvance.php MedooDB.php
@@ -1252,6 +1253,25 @@ trait DBAdvance 是 额外常用的 DB 功能。
 class DB 是系统默认的 数据库类 trait DBAdvance 是 DB 类的扩充 
 class MedooDB 是 Medoo 类基础上的一个封装 实现了 DBInterface 同时使用 DBAdvance 扩充。
 使用 MedooDB 必须引入第三方库 Medoo
+
+## DBInterface.php
+DBInterface 是希望其他DB类也遵守的接口。
+close()
+	关闭数据库
+getPDO() //DB
+
+public function quote($string)
+	转码,如果是数组，则值部分会转码。
+public function fetchAll($sql,...$args)
+public function fetch($sql,...$args)
+public function fetchColumn($sql,...$args)
+	这三个是动态参数，直接查询
+	获得的是数组
+	（有时候还是觉得直接用 object $v->id 之类方便多了,你可以在 pdo 里调整。
+public function execQuick($sql,...$args)
+	执行 pdo 结果，获得 PDOStatement 为什么不用 exec ? 因为  Medoo用了。
+	返回  PDOStatement 对象
+public function  rowCount()
 
 ## DB.php
 DNMVCS 自带了一个简单的 DB 类。
@@ -1285,8 +1305,7 @@ public static function CloseDBInstance($db)
 	关闭DB类
 
 ```
-## DBInterface.php
-DBInterface 是希望其他DB类也遵守的接口。
+
 ## MedooDB.php
 MedooDB 是 Medoo 的一个简单扩展，和 DB 接口一致。
 因为 MedooDB 对 Medoo 有依赖关系，所以单独放在一个文件。
@@ -1424,17 +1443,19 @@ setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/',
 exit_system($code=0)
 
 	退出系统，相应的是 exit ，swoole 里，直接 exit 也是可以的。
-
 set_exception_handler(callable $exception_handler)
-异常函数
+	
+	异常函数
 register_shutdown_function(callable $callback,...$args)
-退出关闭函数
+	
+	退出关闭函数
 session_start(array $options=[])
-
+	开始 session
 session_destroy()
-
+	结束 session
 session_set_save_handler(\SessionHandlerInterface $handler)
 
+	session 函数变更
 ## 简单 HTTP 服务器
 SwooleHttpServer 用的 trait SwooleHttpServer_SimpleHttpd .
 单独使用这个 trait 你可以实现一个 http 服务器
@@ -1460,7 +1481,7 @@ onMessage($server,$frame)
 没有 OnClose 。
 ## 其他子类
 
-## class SwooleCoroutineSingleton
+## SwooleCoroutineSingleton
 
 用于协程单例
 
