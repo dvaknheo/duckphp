@@ -101,7 +101,7 @@ class DNSwooleHttpServer extends SwooleHttpServer
 	protected function onHttpRun($request,$response)
 	{
 		SwooleCoroutineSingleton::CloneInstance(DNExceptionManager::class);
-		// SwooleCoroutineSingleton::CloneInstance(DNConfig::class);
+		// SwooleCoroutineSingleton::CloneInstance(DNConfiger::class);
 		SwooleCoroutineSingleton::CloneInstance(DNView::class);
 		SwooleCoroutineSingleton::CloneInstance(DNRoute::class);
 		SwooleCoroutineSingleton::CloneInstance(DNRuntimeState::class);
@@ -112,13 +112,23 @@ class DNSwooleHttpServer extends SwooleHttpServer
 	}
 	public function onShow404()
 	{
+		SwooleCoroutineSingleton::CloneInstance(DNConfiger::class);
 		SwooleCoroutineSingleton::CloneInstance(DNAutoLoader::class);
 		SwooleCoroutineSingleton::CloneInstance(DNMVCS::class);
 		SwooleCoroutineSingleton::CloneInstance(DNRoute::class);
+		SwooleCoroutineSingleton::CloneInstance(DNDBManager::class);
+		SwooleCoroutineSingleton::CloneInstance(DNSuperGlobal::class);
 		
+		$class=get_class(DNMVCS::G());
+		SwooleCoroutineSingleton::CloneInstance($class);
+		$class::G(new $class());
+
 		DNAutoLoader::G(new DNAutoLoader());
 		DNMVCS::G(new DNMVCS());
+		DNDBManager::G(new DNDBManager());
 		DNRoute::G(new DNRoute());
+		DNSuperGlobal::G(new DNSuperGlobal());
+		DNConfiger::G(new DNConfiger());
 		
 		$http_handler_root=$this->options['http_handler_basepath'].$this->options['http_handler_root'];
 		$http_handler_root=rtrim($http_handler_root,'/').'/';
@@ -137,6 +147,7 @@ class DNSwooleHttpServer extends SwooleHttpServer
 	}
 	protected function onHttpClean()
 	{
+		// todo  skip initd spl_reg
 		if(!$this->auto_clean_autoload){ return;}
 		$functions = spl_autoload_functions();
 		foreach($functions as $function) {
@@ -166,7 +177,7 @@ class DNSwooleHttpServer extends SwooleHttpServer
 			$document_root=$this->static_root?:rtrim($http_handler_root,'/');
 		}else{
 			$fakeRoot=$dn_swoole_options['fake_root']??'public';
-			$doucment_root=$path.$fakeRoot;
+			$document_root=$path.$fakeRoot;
 		}
 		$fakeIndex=$dn_swoole_options['fake_root_index_file']??'index.php';
 		
