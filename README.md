@@ -1000,8 +1000,7 @@ class App extends \DNMVCS\DNMVCS
 ```
 因为 MY\Base\Route 在初始化之前替换，所以不必再次初始化。
 而 MY\Base\View 在初始化之后调用，所以需要手动初始化。
-## trait DI
-简单的容器包装
+
 
 ## DNException 异常类 | trait DNThrowQuickly
 使用 trait DNThrowQuickly
@@ -1016,38 +1015,8 @@ if($flag){throw new MyException($message,$code);}
 你自己的异常类应该 use DNThrowQuickly 没必要继承 DNException。
 原因是你应该只处理你自己熟悉的异常
 
-## 异常管理 DNExceptionManager
 
-	异常管理类一般不用接管。
-init(callback $exception_handler,$dev_error_handler)
 
-	初始化
-setDefaultExceptionHandler($default_exception_handler)
-
-	设置默认异常处理
-assignExceptionHandler($class,$callback=null)
-
-	// 分配异常处理
-setMultiExceptionHandler(array $classes,$callback)
-	
-	//  分配多个异常
-checkAndRunErrorHandlers($ex,$inDefault)
-
-	这个函数比较特殊 ,一般你不会调用他，用于检查是不是错误处理已经被接管了。
-## DNConfiger 配置类
-DNConfiger 类获得配置设置
-init($path)
-
-	初始化
-_Setting($key)
-
-	获得设置
-_Config($key,$file_basename='config')
-
-	获得配置
-_LoadConfig($file_basename='config')
-
-	加载配置
 ## DNView 视图类
 init($path)
 	
@@ -1122,6 +1091,38 @@ protected getMethodToCall($obj,$method)
 protected includeControllerFile
 
 	以上是内部方法。
+## DNConfiger 配置类
+DNConfiger 类获得配置设置
+init($path)
+
+	初始化
+_Setting($key)
+
+	获得设置
+_Config($key,$file_basename='config')
+
+	获得配置
+_LoadConfig($file_basename='config')
+
+	加载配置
+## 异常管理 DNExceptionManager
+
+	异常管理类一般不用接管。
+init(callback $exception_handler,$dev_error_handler)
+
+	初始化
+setDefaultExceptionHandler($default_exception_handler)
+
+	设置默认异常处理
+assignExceptionHandler($class,$callback=null)
+
+	// 分配异常处理
+setMultiExceptionHandler(array $classes,$callback)
+	
+	//  分配多个异常
+checkAndRunErrorHandlers($ex,$inDefault)
+
+	这个函数比较特殊 ,一般你不会调用他，用于检查是不是错误处理已经被接管了。
 ## DNDBManager 数据库管理类
 init($database_config_list=[])
 
@@ -1148,16 +1149,6 @@ closeAllDB()
 
 	关闭所有数据，依次调用 $db_close_handler
 	在 DNMVCS::onBeforeShow  显示输出前被调用。
-## DNAutoLoader 加载类
-
-DNAutoLoader 不建议扩展。因为你要有新类进来才有能处理加载关系，不如自己再加个加载类呢。
-DNAutoLoader 做了防多次加载和多次初始化。
-
-	init($options)
-	run()
-	assignPathNamespace()
-## DNRuntimeState 状态类
-用于运行时状态的保存
 ## DNSuperGlobal 超全局变量
 $_GET ,$_POST 在兼容 Swoole 环境下，变成 ,DNSuperGlobal::G()->_GET ,DNSuperGlobal::G()->_POST
 *我也想缩短，但实在没法再短了。.*
@@ -1174,6 +1165,17 @@ session_destroy()
 session_set_save_handler($handler)
 
 	//
+
+## DNAutoLoader 加载类
+
+DNAutoLoader 不建议扩展。因为你要有新类进来才有能处理加载关系，不如自己再加个加载类呢。
+DNAutoLoader 做了防多次加载和多次初始化。
+
+	init($options)
+	run()
+	assignPathNamespace()
+## DNRuntimeState 状态类
+用于运行时状态的保存
 # 第六章 DNMVCSExt 扩展类和附属组件
 	DNMVCS 的选项 $options['ext'] 不为空数组就 引入DNMVCSExt 扩展类
 	配置字段 ext 数组有数据的时候，会进入高级模式。自动使用扩展文件
@@ -1252,19 +1254,21 @@ TestService::foo() =>  \MY\Service\DebugService::G()->foo();
 	public function _RecordsetH(&$data,$cols=[])
 	public function _ExitJson($ret)
 	public function _ExitRedirect($url,$only_in_site=true)
-	publlic function dealMapAndRewrite($route);
+	public function dealMapAndRewrite($route);
 ## RouteHookMapAndRewrite
 	实现 route_map 和 rewrite_map 的类，会被系统加载
 ## SimpleRouteHook
 	实现 path_info 的类
-### ProjectCommonAutoloader
+## ProjectCommonAutoloader
 	实现通用文件加载
-### ProjectCommonConfiger
+## ProjectCommonConfiger
 	实现通用配置加载
-### FunctionDispatcher
+## FunctionDispatcher
 	函数方式的 controller
-### FunctionView
+## FunctionView
 	函数方式的 view
+## trait DI
+简单的容器包装
 
 # 第七章 数据库
 
