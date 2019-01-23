@@ -229,7 +229,7 @@ class DNRoute
 	public $path_info='';
 	public $request_method='';
 	public $script_filename='';
-	public $doucment_root='';
+	public $document_root='';
 
 	
 	public $routeHooks=[];
