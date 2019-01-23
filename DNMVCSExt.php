@@ -159,7 +159,7 @@ class RouteHookMapAndRewrite
 // 处理  onefile.php?module=?&act=? 的链接
 
 // basedir  a/b.php/d
-class SimpleRouteHook
+class RouteHookOneFileMode
 {
 	use DNSingleton;
 
@@ -235,12 +235,18 @@ class SimpleRouteHook
 	}
 }
 
-class BasePathModeRouteHook // not working.
+class RouteHookDirectoryMode // not working.
 {
 	use DNSingleton;
 
-	public $key_for_action='_r';
-	public $key_for_module='';
+	protected function dealPathinfo()
+	{
+		$input_path=parse_url(DNSuperGlobal::G()->_SERVER['REQUEST_URI'],PHP_URL_PATH);
+		$script_filename=DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME'];
+		$path_info=substr($document_root.$input_path,strlen($this->basepath));
+		explode('',$path_info);
+		
+	}
 	public function onURL($url=null)
 	{
 		if(strlen($url)>0 && '/'==$url{0}){ return $url;};
@@ -493,6 +499,11 @@ class DNMVCSExt
 			
 			'session_auto_start'=>false,
 			'session_name'=>'DNSESSION',
+			
+			'dir_mode'=>false,
+			'dir_mode_dir'=>null,
+			'dir_mode_index_file'=>'',
+			'dir_mode_use_path_info'=>true,
 		];
 	protected $has_enableFacade=false;
 	public function afterInit($dn)
@@ -519,10 +530,14 @@ class DNMVCSExt
 		}
 		
 		if($options['key_for_action']){
-			SimpleRouteHook::G()->key_for_action=$options['key_for_action'];
-			SimpleRouteHook::G()->key_for_module=$options['key_for_module'];
-			DNRoute::G()->addRouteHook([SimpleRouteHook::G(),'hook']);
+			RouteHookOneFileMode::G()->key_for_action=$options['key_for_action'];
+			RouteHookOneFileMode::G()->key_for_module=$options['key_for_module'];
+			DNRoute::G()->addRouteHook([RouteHookOneFileMode::G(),'hook']);
 		}
+		if($options['dir_mode']){
+			DNRoute::G()->addRouteHook([RouteHookDirectoryMode::G(),'hook']);
+		}
+		
 		if($options['use_function_dispatch']){
 			DNRoute::G()->addRouteHook([FunctionDispatcher::G(),'hook']);
 		}
