@@ -195,6 +195,7 @@ class DNRoute
 			'namespace'=>'MY',
 			'namespace_controller'=>'Controller',
 			'default_controller_class'=>'DNController',
+			'default_method_for_miss'=>null,
 			
 			'enable_post_prefix'=>true,
 			'prefix_post'=>'do_',
@@ -219,7 +220,7 @@ class DNRoute
 	protected $enable_post_prefix=true;
 	protected $disable_default_class_outside=false;
 	protected $prefix_post='do_';
-	
+	protected $default_method_for_miss=null;
 	protected $path;
 	
 	public $calling_path='';
@@ -279,6 +280,7 @@ class DNRoute
 		$this->enable_post_prefix=$options['enable_post_prefix'];
 		$this->prefix_post=$options['prefix_post'];
 		$this->disable_default_class_outside=$options['disable_default_class_outside'];
+		$this->default_method_for_miss=$options['default_method_for_miss'];
 
 
 		
@@ -479,21 +481,23 @@ class DNRoute
 	protected function getMethodToCall($obj,$method)
 	{
 		if(substr($method,0,2)=='__'){return null;}
+		
 		if($this->request_method==='POST'){
 			if($this->enable_post_prefix && method_exists($obj,$this->prefix_post.$method)){
 				$method=$this->prefix_post.$method;
-			}else if(!method_exists($obj,$method)){
+			}
+		}
+		if(!method_exists($obj,$method)){
+			if(!$this->default_method_for_miss){
 				return null;
 			}
-		}else{
-			if(!method_exists($obj,$method)){
-				return null;
-			}
+			return [$obj,$this->default_method_for_miss];
 		}
 		if(!is_callable(array($obj,$method))){
+			
 			return null;
 		}
-		return array($obj,$method);
+		return [$obj,$method];
 	}
 	public function getRouteCallingPath()
 	{
