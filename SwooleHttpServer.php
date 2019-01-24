@@ -299,7 +299,6 @@ trait SwooleHttpServer_SimpleHttpd
 			SwooleContext::G()->onShutdown();
 			
 			$this->onHttpClean();
-			
 			for($i=ob_get_level();$i>$InitObLevel;$i--){
 				ob_end_flush();
 			}
@@ -387,12 +386,17 @@ class SwooleHttpServer
 	public $http_handler=null;
 	public $http_exception_handler=null;
 	
-	protected $static_root=null;
-	protected $auto_clean_autoload=true;
 	public $document_root=null;
 	public $script_filename=null;
+	
+	protected $static_root=null;
+	protected $auto_clean_autoload=true;
+	protected $old_autoloads=[];
+	
 	protected function onHttpRun($request,$response)
 	{
+		$this->old_autoloads = spl_autoload_functions();
+		
 		SwooleCoroutineSingleton::CloneInstance(SwooleSuperGlobal::class);
 		SwooleSuperGlobal::G()->init();
 		
@@ -519,6 +523,9 @@ class SwooleHttpServer
 		$functions = spl_autoload_functions();
 		foreach($functions as $function) {
 			spl_autoload_unregister($function);
+		}
+		foreach($this->old_autoloads as $v){
+			spl_autoload_register($v);
 		}
 	}
 	protected function check_swoole()

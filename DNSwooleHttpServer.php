@@ -127,7 +127,7 @@ class DNSwooleHttpServer extends SwooleHttpServer
 		DNMVCS::G(new DNMVCS());
 		DNDBManager::G(new DNDBManager());
 		DNRoute::G(new DNRoute());
-		DNSuperGlobal::G(new DNSuperGlobal());
+		DNSuperGlobal::G(SwooleSuperGlobal::G());
 		DNConfiger::G(new DNConfiger());
 		
 		$http_handler_root=$this->options['http_handler_basepath'].$this->options['http_handler_root'];
