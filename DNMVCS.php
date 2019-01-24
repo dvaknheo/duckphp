@@ -196,7 +196,7 @@ class DNRoute
 			'namespace_controller'=>'Controller',
 			'default_controller_class'=>'DNController',
 			'default_method_for_miss'=>null,
-			
+			'base_controller_class'=>null,
 			'enable_post_prefix'=>true,
 			'prefix_post'=>'do_',
 			'disable_default_class_outside'=>false,
@@ -221,6 +221,8 @@ class DNRoute
 	protected $disable_default_class_outside=false;
 	protected $prefix_post='do_';
 	protected $default_method_for_miss=null;
+	protected $base_controller_class=null;
+	
 	protected $path;
 	
 	public $calling_path='';
@@ -281,8 +283,6 @@ class DNRoute
 		$this->prefix_post=$options['prefix_post'];
 		$this->disable_default_class_outside=$options['disable_default_class_outside'];
 		$this->default_method_for_miss=$options['default_method_for_miss'];
-
-
 		
 		$namespace=$options['namespace'];
 		$namespace_controller=$options['namespace_controller'];
@@ -292,6 +292,11 @@ class DNRoute
 		$namespace_controller=ltrim($namespace_controller,'\\');
 		$this->namespace_controller=$namespace_controller;
 		
+		$this->base_controller_class=$options['base_controller_class'];
+		if(substr($this->base_controller_class,0,1)!=='\\'){
+			$this->base_controller_class=$namespace.'\\'.$this->base_controller_class;
+		}
+
 		$this->is_server_data_load=false;
 	}
 	public function loadServerData()
@@ -398,7 +403,7 @@ class DNRoute
 		
 		$file=$this->path.$current_class.'.php';
 		$this->includeControllerFile($file);
-		$obj=$this->getObecjectToCall($current_class);
+		$obj=$this->getObjectToCall($current_class);
 
 		if(null==$obj){return null;}
 		
@@ -451,7 +456,7 @@ class DNRoute
 		require_once($file);
 	}
 	// You can override it;
-	protected function getObecjectToCall($class_name)
+	protected function getObjectToCall($class_name)
 	{
 		if(substr(basename($class_name),0,1)=='_'){return null;}
 		if($this->with_no_namespace_mode){
@@ -476,6 +481,9 @@ class DNRoute
 		}
 		$this->calling_class=$fullclass;
 		$obj=new $fullclass();
+		if($this->base_controller_class && !is_a($obj,$this->base_controller_class)){
+			return null;
+		}
 		return $obj;
 	}
 	protected function getMethodToCall($obj,$method)
@@ -493,7 +501,7 @@ class DNRoute
 			}
 			return [$obj,$this->default_method_for_miss];
 		}
-		if(!is_callable(array($obj,$method))){
+		if(!is_callable([$obj,$method])){
 			
 			return null;
 		}
