@@ -871,14 +871,6 @@ assignPathNamespace($path,$namespace=null)
 	
 	分配自动加载的命名空间的目录。
 	实质调用 DNAutoLoader::G()->assignPathNamespace
-## 内部方法
-一些方法，虽然公开，但都只用于内部。
-_header
-	实现 header();
-_setcookie
-	setcookie();
-_exit_system
-	实现 exit();
 ## 事件方法
 实现了默认事件回调的方法。扩展以展现不同事件的显示。
 
@@ -922,6 +914,14 @@ initDBManager(DNDBManger $dbm)
 initMisc()
 
 	如果 选项  ext 启用 DNMVCSExt
+## 内部方法
+一些方法，虽然公开，但都只用于内部。
+_header
+	实现 header();
+_setcookie
+	setcookie();
+_exit_system
+	实现 exit();
 
 # 第五章 DNMVCS 核心组件
 
@@ -1299,6 +1299,11 @@ $ret=\DNMVCS\DNMVCS::DB()->fetch($sql,2);
 var_dump($ret);
 ```
 ## DNMVCS 的 数据库相关方法
+DNMVCS::DB($tag)
+DNMVCS::DB_R()
+DNMVCS::DB_W()
+
+
 ## 替换默认 DB 类
 DNDBManager 管理 DB 类的实例。
 
@@ -1359,11 +1364,11 @@ execQuick($sql,...$args)
 	执行 pdo 结果，获得 PDOStatement 为什么不用 exec ? 因为  Medoo用了。
 	
 rowCount()
+
 	获得行数
 ## DB.php
 DNMVCS 自带了一个简单的 DB 类。
 DN::DB()得到的就是这个 DB 类。
-
 ## DBAdvance.php
 trait DBAdvance 是协助 DBInterface 完成扩展功能的 trait.
 
