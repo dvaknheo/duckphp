@@ -1,5 +1,23 @@
 <?php
 namespace DNMVCS;
+if(!trait_exists('DNMVCS\DNDI',false)){
+trait DNDI
+{
+	protected $_di_container;
+	public static function DI($name,$object=null)
+	{
+		return static::G()->_DI($name,$object);
+	}
+	public function _DI($name,$object=null)
+	{
+		if(null===$object){
+			return $this->_di_container[$name];
+		}
+		$this->_di_container[$name]=$object;
+		return $object;
+	}
+}
+}
 class RouteHookMapAndRewrite
 {
 	use DNSingleton;
@@ -155,8 +173,7 @@ class RouteHookMapAndRewrite
 		$this->hookRouteMap($route);
 	}
 }
-
-// 处理  onefile.php?module=?&act=? 的链接
+//deal with onefile.php?module=?&act=?
 
 // basedir  a/b.php/d
 class RouteHookOneFileMode
@@ -165,6 +182,13 @@ class RouteHookOneFileMode
 
 	public $key_for_action='_r';
 	public $key_for_module='';
+	public function init($key_for_action,$key_for_module='')
+	{
+		$this->key_for_action=$key_for_action;
+		$this->key_for_module=$key_for_module;
+		
+		return $this;
+	}
 	public function onURL($url=null)
 	{
 		if(strlen($url)>0 && '/'==$url{0}){ return $url;};
@@ -222,7 +246,8 @@ class RouteHookOneFileMode
 	}
 	public function hook($route)
 	{
-		$route->setURLHandler([$this,'onURL']);
+		$route->setURLHandler([$this,'onURL']); //todo once ?
+		
 		$k=$this->key_for_action;
 		$m=$this->key_for_module;
 		$module=DNSuperGlobal::G()->_REQUEST[$m]??null;
@@ -239,26 +264,63 @@ class RouteHookDirectoryMode // not working.
 {
 	use DNSingleton;
 
-	protected function dealPathinfo()
+	public function init($options)
 	{
+		$this->basepath=$options['mode_dir_basepath'];
+		
+	}
+	protected function adjustPathinfo($path_info,$document_root)
+	{
+		//$this->basepath=ltrim($this->basepath,'/').'/';
 		$input_path=parse_url(DNSuperGlobal::G()->_SERVER['REQUEST_URI'],PHP_URL_PATH);
 		$script_filename=DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME'];
 		$path_info=substr($document_root.$input_path,strlen($this->basepath));
-		explode('',$path_info);
+		$path_info=ltrim($path_info,'/').'/';
 		
+		$blocks=explode('/',$path_info);
+		if(false){
+			$prefix=$this->basepath;
+			foreach($blocks as $v){
+				$prefix.='/'.$v;
+				if(is_file($prefix)){}
+			}
+		}else{
+			foreach($blocks as &$v){
+				$v=basename($v,'.php');
+			}
+			$path_info=implode('/',$blocks);
+		}
+		$path_info=rtrim($path_info,'/');
+		return $path_info;
 	}
 	public function onURL($url=null)
 	{
 		if(strlen($url)>0 && '/'==$url{0}){ return $url;};
+		$document_root=DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT'];
+		$base_url=substr($this->basepath,strlen($document_root));
+		$input_path=parse_url($url,PHP_URL_PATH);
 		
-		return $url;	
+		$blocks=explode('/',$input_path);
+		
+		//var_dump($input_path);
+		$file=$this->basepath;
+		foreach($blocks as $i=> $v){
+			$v=basename($v,'.php').'.php';
+			$file.='/'.$v;
+			if(!is_file($file)){ continue; }
+			
+		}
+		
+		//var_dump($ret);exit;
 	}
 	// abc/d/e.php/g/h?act=z  abc/d/e/g
 	public function hook($route)
 	{
-		$route->setURLHandler([$this,'onURL']);
-		$route->path_info=$path_info;
-		$route->calling_path=$path_info;
+		$route->setURLHandler([$this,'onURL']); //todo once ?
+		
+		$route->path_info=$this->adjustPathinfo($route->path_info,$route->document_root);
+		//var_dump($route->path_info);exit;
+		$route->calling_path=$route->path_info;
 	}
 }
 
@@ -500,10 +562,12 @@ class DNMVCSExt
 			'session_auto_start'=>false,
 			'session_name'=>'DNSESSION',
 			
-			'dir_mode'=>false,
-			'dir_mode_dir'=>null,
+			'mode_dir'=>false,
+			'mode_dir_basepath'=>null,
 			'dir_mode_index_file'=>'',
 			'dir_mode_use_path_info'=>true,
+			'mode_dir_key_for_module'=>true,
+			'mode_dir_key_for_action'=>true,
 		];
 	protected $has_enableFacade=false;
 	public function afterInit($dn)
@@ -530,11 +594,11 @@ class DNMVCSExt
 		}
 		
 		if($options['key_for_action']){
-			RouteHookOneFileMode::G()->key_for_action=$options['key_for_action'];
-			RouteHookOneFileMode::G()->key_for_module=$options['key_for_module'];
+			RouteHookOneFileMode::G()->init($options['key_for_action'],$options['key_for_module']);
 			DNRoute::G()->addRouteHook([RouteHookOneFileMode::G(),'hook']);
 		}
-		if($options['dir_mode']){
+		if($options['mode_dir']){
+			RouteHookDirectoryMode::G()->init($options);
 			DNRoute::G()->addRouteHook([RouteHookDirectoryMode::G(),'hook']);
 		}
 		
