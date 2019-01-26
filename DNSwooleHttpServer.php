@@ -197,7 +197,7 @@ class DNSwooleHttpServer extends SwooleHttpServer
 			$db_reuse_timeout=$dn_swoole_options['db_reuse_timeout']??static::DEFAULT_DN_OPTIONS['db_reuse_timeout'];
 			$dbm=DNDBManager::G();
 			DBConnectPoolProxy::G()->init($db_reuse_size,$db_reuse_timeout)->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
-			$dn->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
+			$dnm->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
 		}		
 		if($dn_swoole_options['use_http_handler_root']){
 			DNRoute::G()->set404([$this,'onShow404']);

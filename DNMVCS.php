@@ -26,24 +26,6 @@ trait DNSingleton
 	}
 }
 }
-if(!trait_exists('DNMVCS\DNDI',false)){
-trait DNDI
-{
-	protected $_di_container;
-	public static function DI($name,$object=null)
-	{
-		return static::G()->_DI($name,$object);
-	}
-	public function _DI($name,$object=null)
-	{
-		if(null===$object){
-			return $this->_di_container[$name];
-		}
-		$this->_di_container[$name]=$object;
-		return $object;
-	}
-}
-}
 if(!trait_exists('DNMVCS\DNThrowQuickly',false)){
 trait DNThrowQuickly
 {
@@ -368,7 +350,7 @@ class DNRoute
 		($this->the404Handler)();
 		return false;
 	}
-	public function stopRunDefaultHandler()
+	public function stopDefaultRouteHandler()
 	{
 		$this->callback=function(){};
 	}
@@ -855,9 +837,11 @@ class DNSuperGlobal
 	public $_ENV;
 	public $_COOKIE;
 	public $_SESSION;
-	public $GLOBALS;
-	public $STATICS;
-
+	
+	public $GLOBALS=[];
+	public $STATICS=[];
+	public $CLASS_STATICS=[];
+	
 	public function init()
 	{	
 		$this->_GET		=&$_GET;
@@ -885,37 +869,36 @@ class DNSuperGlobal
 		session_set_save_handler($handler);
 	}
 	///////////////////////////////
-	public static function &GLOBALS($k,$v=null)
-	{
-		return static::G()->_GLOBALS($k,$v);
-	}
-	
-	public static function &STATICS($k,$v=null)
-	{
-		return static::G()->_STATICS($k,$v,true);
-	}
-	
 	public function &_GLOBALS($k,$v=null)
 	{
 		if(!isset($this->GLOBALS[$k])){ $this->GLOBALS[$k]=$v;}
 		return $this->GLOBALS[$k];
 	}
-	public function &_STATICS($name,$v=null,$parent=false)
+	public function &_STATICS($name,$value=null,$parent=0)
 	{
-		$level=$parent?2:1;
-		$t=debug_backtrace(2,$level+1)[$level]??[];
+		$t=debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS,$parent+2)[$parent+1]??[]; //todo Coroutine trace ?
 		$k='';
 		$k.=isset($t['object'])?'object_'.spl_object_hash($t['object']):'';
 		$k.=$t['class']??'';
 		$k.=$t['type']??'';
 		$k.=$t['function']??'';
-		$k.=$k?' ':'';
+		$k.=$k?'$':'';
 		$k.=$name;
 		
-		if(!isset($this->STATICS[$k])){ $this->STATICS[$k]=$v;}
+		if(!isset($this->STATICS[$k])){ $this->STATICS[$k]=$value;}
 		return $this->STATICS[$k];
 	}
-
+	public function &_CLASS_STATICS($class_name,$var_name)
+	{		
+		$k=$class_name.'::$'.$var_name;
+		if(!isset($this->CLASS_STATICS[$k])){
+				$ref=new \ReflectionClass($class_name);
+				$reflectedProperty = $ref->getProperty($var_name);
+				$reflectedProperty->setAccessible(true);
+				$this->CLASS_STATICS[$k]=$reflectedProperty->getValue();
+		}
+		return $this->CLASS_STATICS[$k];
+	}
 }
 trait DNMVCS_Glue
 {
@@ -1074,7 +1057,19 @@ trait DNMVCS_Glue
 	{
 		return DNSuperGlobal::G();
 	}
-
+	public static function &GLOBALS($k,$v=null)
+	{
+		return DNSuperGlobal::G()->_GLOBALS($k,$v);
+	}
+	
+	public static function &STATICS($k,$v=null)
+	{
+		return DNSuperGlobal::G()->_STATICS($k,$v,1);
+	}
+	public static function &CLASS_STATICS($class_name,$var_name)
+	{
+		return DNSuperGlobal::G()->_CLASS_STATICS($class_name,$var_name);
+	}
 }
 trait DNMVCS_Misc
 {
@@ -1193,14 +1188,19 @@ class DNExceptionManager
 		if($flag){return;}
 		($this->exception_error_handler)($ex);
 	}
-	public function init($exception_handler,$dev_error_handler)
+	public function init($exception_handler,$dev_error_handler,$system_exception_handler)
 	{
 		$this->dev_error_handler=$dev_error_handler;
 		$this->exception_error_handler=$exception_handler;
 		$this->exception_error_handler_init=$exception_handler;
 		
 		set_error_handler([$this,'on_error_handler']);
-		set_exception_handler([$this,'on_exception']);
+		if($system_exception_handler){
+			return ($this->system_exception_handler)($exception_handler);
+		}else{
+			set_exception_handler([$this,'on_exception']);
+		}
+		
 	}
 }
 trait DNMVCS_Handler
@@ -1553,7 +1553,6 @@ class DNMVCS
 		$this->initRoute(DNRoute::G());
 		$this->initDBManager(DNDBManager::G());
 		$this->initMisc();
-		
 		return $this;
 	}
 	public function initExceptionManager($exception_manager)

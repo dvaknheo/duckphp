@@ -769,8 +769,7 @@ IsRunning
 
 	判断是否已经开始运行。
 	实质调用 DNRuntimeState::G()->isRunning();
-
-## 取代系统函数
+## 取代系统的静态函数
 和系统同名的静态函数，用于替换系统函数，以适应  swoole 环境
 
 session_start(array $options=[])
@@ -797,6 +796,54 @@ exit_sytesm($code=0)
 
 	代替 exit();
 	实际调用 static::G()->exit_sytesm()
+## Swoole 兼容的替代方法
+swoole 的协程使得 跨领域的 global ,static, 类内 static 变量不可用，
+我们用替代方法
+
+```php
+global $n;
+// =>
+$n=&DN::GLOBALS('n'); 
+
+static $n;
+// =>
+$n=&DN::STATICS('n');  //别漏掉了 &
+
+$n++;
+ 
+```
+```php
+class B
+{
+	protected static $var=10;
+	public static function foo()
+	{
+		//static::$var++;
+		//var_dump(static::$var);
+		
+		$_=&DN::CLASS_STATICS(static::class,'var');$_   ++;
+		// 把 static::$var 替换成  $_=&DN::CLASS_STATICS(static::class,'var');$_
+		//别漏掉了 &
+		var_dump(DN::CLASS_STATICS(static::class,'var')); // 没等号或 ++ -- 之类非左值不用 &
+	}
+}
+class C extends B
+{
+	protected static $var=100;
+	
+}
+C::foo();C::foo();C::foo();
+```
+public static function &GLOBALS($k,$v=null)
+
+	用于替换 global 语法
+	也可用 DNMVCS::SG()->GLOBALS;
+
+public static function &STATICS($k,$v=null)
+
+	用于替换
+public static function &CLASS_STATICS($class_name,$var_name)
+	用于替换类内的 static ，这要提供类名，需要 static::class 或 self::class (从堆栈没法分析出来，没办法了 ：( )
 ## 独立杂项静态方法
 这几个方法独立，为了方便操作，放在这里。
 
@@ -1076,9 +1123,12 @@ getRouteCallingMethod()
 	当前方法用于权限的判断。如跳过login 方法其他都要权限。
 	当前类如果为空，说明是 rewrite 过来的。
 	当前路径用于如果是切片的，找回未切片的路径。
-protected getRouteHandleByFile
+defaultRouteHandler
 
-	//
+	默认的路由方法
+stopDefaultRouteHandler
+
+	// 停止默认路由，用于钩子里调用
 protected getCurrentClassAndMethod
 
 	//
@@ -1220,7 +1270,7 @@ facade_map
 项目里
 ```php
 use \MY\Facade\Service\TestService;  //Facade 放在$options['namespace']后面。
-TestService::foo() =>  \My\TestService::G()->foo();
+TestService::foo() =>  \My\Service\TestService::G()->foo();
 ```
 如果有
 ```php

@@ -23,17 +23,6 @@ trait DNSingleton
 	}
 }
 }
-if(!trait_exists('DNMVCS\DNThrowQuickly',false)){
-trait DNThrowQuickly
-{
-	public static function ThrowOn($flag,$message,$code=0)
-	{
-		if(!$flag){return;}
-		$class=static::class;
-		throw new $class($message,$code);
-	}
-}
-}
 class SwooleCoroutineSingleton
 {
 	protected static $_instances=[];
@@ -618,8 +607,10 @@ class SwooleSuperGlobal
 	public $_ENV;
 	public $_COOKIE;
 	public $_SESSION;
+	
 	public $GLOBALS=[];
 	public $STATICS=[];
+	public $CLASS_STATICS=[];
 	
 	public function init()
 	{
@@ -669,35 +660,35 @@ class SwooleSuperGlobal
 		SwooleSession::G()->setHandler($handler);
 	}
 	//////////////
-	public static function &GLOBALS($k,$v=null)
-	{
-		return static::G()->_GLOBALS($k,$v);
-	}
-	
-	public static function &STATICS($k,$v=null)
-	{
-		return static::G()->_STATICS($k,$v,true);
-	}
-	
 	public function &_GLOBALS($k,$v=null)
 	{
 		if(!isset($this->GLOBALS[$k])){ $this->GLOBALS[$k]=$v;}
 		return $this->GLOBALS[$k];
 	}
-	public function &_STATICS($name,$v=null,$parent=false)
+	public function &_STATICS($name,$value=null,$parent=0)
 	{
-		$level=$parent?2:1;
-		$t=debug_backtrace(2,$level+1)[$level]??[]; //todo Coroutine trace ?
+		$t=debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS,$parent+2)[$parent+1]??[]; //todo Coroutine trace ?
 		$k='';
 		$k.=isset($t['object'])?'object_'.spl_object_hash($t['object']):'';
 		$k.=$t['class']??'';
 		$k.=$t['type']??'';
 		$k.=$t['function']??'';
-		$k.=$k?' ':'';
+		$k.=$k?'$':'';
 		$k.=$name;
 		
-		if(!isset($this->STATICS[$k])){ $this->STATICS[$k]=$v;}
+		if(!isset($this->STATICS[$k])){ $this->STATICS[$k]=$value;}
 		return $this->STATICS[$k];
+	}
+	public function &_CLASS_STATICS($class_name,$var_name)
+	{		
+		$k=$class_name.'::$'.$var_name;
+		if(!isset($this->CLASS_STATICS[$k])){
+				$ref=new \ReflectionClass($class_name);
+				$reflectedProperty = $ref->getProperty($var_name);
+				$reflectedProperty->setAccessible(true);
+				$this->CLASS_STATICS[$k]=$reflectedProperty->getValue();
+		}
+		return $this->CLASS_STATICS[$k];
 	}
 }
 class SwooleSession
