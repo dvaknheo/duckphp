@@ -855,6 +855,8 @@ class DNSuperGlobal
 	public $_ENV;
 	public $_COOKIE;
 	public $_SESSION;
+	public $GLOBALS;
+	public $STATICS;
 
 	public function init()
 	{	
@@ -865,8 +867,9 @@ class DNSuperGlobal
 		$this->_ENV		=&$_ENV;
 		$this->_COOKIE	=&$_COOKIE;
 		$this->_SESSION	=&$_SESSION;
+		$this->GLOBALS	=&$GLOBALS;
 	}
-///////////////////////////////
+	///////////////////////////////
 	public function session_start(array $options=[])
 	{
 		if(session_status() !== PHP_SESSION_ACTIVE ){ session_start($options); }
@@ -881,6 +884,38 @@ class DNSuperGlobal
 	{
 		session_set_save_handler($handler);
 	}
+	///////////////////////////////
+	public static function &GLOBALS($k,$v=null)
+	{
+		return static::G()->_GLOBALS($k,$v);
+	}
+	
+	public static function &STATICS($k,$v=null)
+	{
+		return static::G()->_STATICS($k,$v,true);
+	}
+	
+	public function &_GLOBALS($k,$v=null)
+	{
+		if(!isset($this->GLOBALS[$k])){ $this->GLOBALS[$k]=$v;}
+		return $this->GLOBALS[$k];
+	}
+	public function &_STATICS($name,$v=null,$parent=false)
+	{
+		$level=$parent?2:1;
+		$t=debug_backtrace(2,$level+1)[$level]??[];
+		$k='';
+		$k.=isset($t['object'])?'object_'.spl_object_hash($t['object']):'';
+		$k.=$t['class']??'';
+		$k.=$t['type']??'';
+		$k.=$t['function']??'';
+		$k.=$k?' ':'';
+		$k.=$name;
+		
+		if(!isset($this->STATICS[$k])){ $this->STATICS[$k]=$v;}
+		return $this->STATICS[$k];
+	}
+
 }
 trait DNMVCS_Glue
 {

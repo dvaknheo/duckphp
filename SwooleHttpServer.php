@@ -618,6 +618,8 @@ class SwooleSuperGlobal
 	public $_ENV;
 	public $_COOKIE;
 	public $_SESSION;
+	public $GLOBALS=[];
+	public $STATICS=[];
 	
 	public function init()
 	{
@@ -665,6 +667,37 @@ class SwooleSuperGlobal
 	public function session_set_save_handler($handler)
 	{
 		SwooleSession::G()->setHandler($handler);
+	}
+	//////////////
+	public static function &GLOBALS($k,$v=null)
+	{
+		return static::G()->_GLOBALS($k,$v);
+	}
+	
+	public static function &STATICS($k,$v=null)
+	{
+		return static::G()->_STATICS($k,$v,true);
+	}
+	
+	public function &_GLOBALS($k,$v=null)
+	{
+		if(!isset($this->GLOBALS[$k])){ $this->GLOBALS[$k]=$v;}
+		return $this->GLOBALS[$k];
+	}
+	public function &_STATICS($name,$v=null,$parent=false)
+	{
+		$level=$parent?2:1;
+		$t=debug_backtrace(2,$level+1)[$level]??[]; //todo Coroutine trace ?
+		$k='';
+		$k.=isset($t['object'])?'object_'.spl_object_hash($t['object']):'';
+		$k.=$t['class']??'';
+		$k.=$t['type']??'';
+		$k.=$t['function']??'';
+		$k.=$k?' ':'';
+		$k.=$name;
+		
+		if(!isset($this->STATICS[$k])){ $this->STATICS[$k]=$v;}
+		return $this->STATICS[$k];
 	}
 }
 class SwooleSession
