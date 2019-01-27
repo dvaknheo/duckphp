@@ -548,6 +548,8 @@ const DNRoute::DEFAULT_OPTIONS=[
 		'namespace_controller'=>'MY\Controller',    //controller 的命名空间 MY\Controller
 		'default_controller_class'=>'DNController', //默认 controller 名字为 DNController
 		'disable_default_class_outside'=>false,     // 屏蔽  Main/index  第二访问模式
+	'base_controller_class',
+	'default_method_for_miss'
 ];
 ```
 
@@ -1086,6 +1088,12 @@ setViewWrapper($head_file,$foot_file)
 ## DNRoute 路由类
 这应该会被扩展,加上权限判断等设置
 路由类是很强大扩展性很强的类。
+
+这也是 DNMVCS 最复杂的地方，主要是核心是 defaultRouteHandler。 默认路由的处理。
+分步如下
+	
+	
+**判断方法存在，只是从类里判断，如果是用魔术方法得到的对象动态方法名会被忽略。**
 
 _URL($url=null)
 
