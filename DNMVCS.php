@@ -184,7 +184,6 @@ class DNRoute
 			'disable_default_class_outside'=>false,
 		];
 	
-	public $options=[];
 	public $parameters=[];
 	public $the404Handler=null;
 	public $urlHandler=null;
@@ -251,7 +250,6 @@ class DNRoute
 	{
 		//$options=array_merge(self::DEFAULT_OPTIONS,$options);
 		$options=array_intersect_key(array_merge(self::DEFAULT_OPTIONS,$options),self::DEFAULT_OPTIONS);
-		$this->options=$options;
 		
 		$this->path=$options['path'].$options['path_controller'].'/';
 		
@@ -356,6 +354,14 @@ class DNRoute
 	}
 	protected function getFullPathAndMethodByAutoload($path_full,$path_class,$path_method)
 	{
+		$path=$path_class?:$this->welcome_controller;
+		$method=$path_method?:$this->default_method;
+		$full_class=$this->namespace_controller.'\\'.str_replace('/','\\',$path);
+		if( class_exists($full_class) ){
+			$this->calling_path=$path.'/'.$method;
+			return [$full_class,$method];
+		}
+		
 		$path=$path_full;
 		$method=$this->default_method;
 		$full_class=$this->namespace_controller.'\\'.str_replace('/','\\',$path);
@@ -364,163 +370,154 @@ class DNRoute
 			return [$full_class,$method];
 		}
 		
-		$path=$path_class?:$this->welcome_controller;
-		$method=$path_method?:$this->default_method;
-		$full_class=$this->namespace_controller.'\\'.str_replace('/','\\',$path);
-		if( class_exists($full_class) ){
-			$this->calling_path=$path.'/'.$method;
-			return [$full_class,$method];
-		}
-		return [null,null];
-	}
-	protected function requireFile($path_full,$path_class,$path_method)
-	{
-		$path=$path_full?:$this->welcome_controller;
-		$method=$this->default_method;
-		$file=$this->path.$path.'.php';
-		if(is_file($file)){
-			$this->includeControllerFile($file);
-			$this->calling_path=$path.'/'.$method;
-			return [$path,$method];
-		}
-		$path=$path_class?:$this->welcome_controller;
-		$method=$path_method;
-		$file=$this->path.$path.'.php';
-		if(is_file($file)){
-			$this->includeControllerFile($file);
-			$this->calling_path=$path.'/'.$method;
-			return [$path,$method];
-		}
+		
 		return [null,null];
 	}
 	public function defaultRouteHandler()
 	{
-		if($this->enable_paramters){
-			list($current_class,$method)=$this->getCurrentClassAndMethod($this->path_info,$this->path);
-			if($current_class===null and $method===null){return null;}
-			$blocks=explode('/',$this->path_info);
-			$param=array_slice($blocks,count(explode('/',$current_class))+($current_class?1:0));
-			if($param==array(0=>'')){$param=[];}
-			$this->parameters=$param;
-			
-			$this->calling_path=ltrim($current_class.'/'.$method,'/');
-			
-			if($this->disable_default_class_outside && $current_class === $this->welcome_controller && $method===$this->default_method){
+		$is_file=false;
+		$full_class='';
+		$sugguest_class='';
+		
+		$path_info=trim($this->path_info,'/');
+		$this->calling_path=$path_info;
+		
+		$this->error='';
+		
+		if(strpos($path_info,'.')!=false){
+			$this->error="error path_info has '.'";
+			return null;
+		};
+		if(strpos($path_info,'~.')!=false){
+			$this->error="error path_info has '~'";
+			return null;
+		};
+		
+		///if(!preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/',$v)){ //just for php classname;
+		///	return null;
+		///}
+		$pos=strrpos($path_info,'/');
+		if(false!==$pos){
+			$class_name=substr($path_info,0,$pos);
+			$input_method=substr($path_info,$pos+1);
+			if($this->disable_default_class_outside && $class_name===$this->welcome_controller){
+				$this->error="disable_default_class_outside! {$this->welcome_controller} ";
 				return null;
 			}
-			$method=$method?:$this->default_method;
-			$current_class=$current_class?:$this->welcome_controller;
-			
-			$this->calling_method=$method;
-			$this->calling_class=$current_class;
-			
-			$file=$this->path.$current_class.'.php';
-			$this->includeControllerFile($file);
-			$obj=$this->getObjectToCall($current_class);
-
-			if(null==$obj){return null;}
-			
-			$this->calling_method=$method;
-			$this->calling_class=get_class($obj);
-			
-			return $this->getMethodToCall($obj,$method);
-			
-			
 		}else{
-			$is_file=false;
+			$class_name='';
+			$input_method=$path_info;
+			if($this->disable_default_class_outside && $input_method===$this->default_method){
+				$this->error="disable_default_class_outside! index";
+				return null;
+			}
+		}
+		list($full_class,$method)=$this->getFullPathAndMethodByAutoload($path_info,$class_name,$input_method);
+		
+		
+		// if  a  Main/a(class autoload)  a/index (file,DNController) not method 
+		// find  a/index
+		// bug  post change method.
+		
+		if($class_name===$this->welcome_controller && !method_exists($full_class,$method)){
+			// if not strict_mode or  no file $method/index. null;
+		}
+		if($full_class && $this->base_controller_class && !is_a($full_class,$this->base_controller_class,true)){
+			$this->error="not is a base_controller_class";
+			return null;
+		}
+		if($full_class){
+			$object=new $full_class();
+			$ret=$this->getMethodToCall($object,$method);
+			if($ret){return $ret;}
+			if($class_name!==$this->welcome_controller){
+				return $ret;
+			}
+			$this->error="Main/xx not found ,try not strict mode xx/index";
 			$full_class='';
-			$sugguest_class='';
+		}
+		//////////////////////////
+		
+		$path_base=$this->path;
+		$enable_paramaters=$this->enable_paramaters;
+		if($this->with_no_namespace_mode || $this->default_controller_class ){
+			list($suggust_file,$sugguest_class,$method)=$this->searchFile($path_base,$path_info,$class_name,$input_method);
+		}
+		if(!$suggust_file && $enable_paramaters){
+			list($suggust_file,$sugguest_class,$method,$paramters)=$this->searchFileEx($path_base,$path_info,true);
+		}
+		if($suggust_file){
+			$this->includeControllerFile($suggust_file);
+			$this->calling_path=$sugguest_class.'/'.$method;
+		}
+		do{
 			
-			$path_info=trim($this->path_info,'/');
-			$this->calling_path=$path_info;
-			if(strpos($path_info,'.')!=false){ return null; };
-			
-			$pos=strrpos($path_info,'/');
-			
-			if(false!==$pos){
-				$class_name=substr($path_info,0,$pos);
-				$input_method=substr($path_info,$pos+1);
-			}else{
-				$class_name='';
-				$input_method=$path_info;
+			$fullclass=$this->prefix_no_namespace_mode . str_replace('/','__',$sugguest_class);
+			$full_class=$this->namespace_controller.'\\'.$this->default_controller_class;
+			if(class_exists($full_class,false)){
+				break;
 			}
-			list($full_class,$method)=$this->getFullPathAndMethodByAutoload($path_info,$class_name,$input_method);
-			if(!$full_class){
-				if($this->with_no_namespace_mode || $this->default_controller_class ){
-					list($sugguest_class,$method)=$this->requireFile($path_info,$class_name,$input_method);
-				}
-			}
-			do{
-				if($full_class){ break; }
-				$full_class=$sugguest_class;
-				if(class_exists($full_class,false)){
-					break;
-				}
-				
-				$full_class=$this->namespace_controller.'\\'.$this->default_controller_class;
-				if(class_exists($full_class,false)){
-					break;
-				}
-				if(!$this->with_no_namespace_mode){
-					$full_class=null;
-					break;
-				}
-				$full_class=$this->default_controller_class;
-				if(class_exists($full_class,false)){
-					break;
-				}
-				$fullclass=$this->prefix_no_namespace_mode . $this->default_controller_class;;
-				if(class_exists($full_class,false)){
-					break;
-				}
+			if(!$this->with_no_namespace_mode){
 				$full_class=null;
 				break;
-			}while(false);
-			
-			if(!$full_class){
-				return null;
 			}
-			//if($this->disable_default_class_outside && $current_class === $this->welcome_controller && $method===$this->default_method){
-			//	return null;
-			//}
-			
-			if($this->base_controller_class && !is_a($full_class,$this->base_controller_class,true)){
-				return null;
+			$full_class=$this->default_controller_class;
+			if(class_exists($full_class,false)){
+				break;
 			}
-			$object=new $full_class();
-			// if  a  Main/a(class autoload)  a/index (file,DNController) not method 
-			// find  a/index
-			return $this->getMethodToCall($object,$method);
+			$fullclass=$this->prefix_no_namespace_mode . $this->default_controller_class;;
+			if(class_exists($full_class,false)){
+				break;
+			}
+			$full_class=null;
+			break;
+		}while(false);
+		
+		if(!$full_class){
+			//not found class;
+			return null;
 		}
+
+		$object=new $full_class();
+		return $this->getMethodToCall($object,$method);
+		
 	}
-	
-	protected function getCurrentClassAndMethod($path_info,$path)
+	public function searchFile($path_base,$path_full,$path_class,$path_method)
 	{
-		if(substr($path_info,0,1)==='~'){ return [null,null]; }
-		
-		$blocks=explode('/',$path_info);
-		
-		$prefix=$path;
-		//array_shift($blocks);
-		$l=count($blocks);
+		$sugguest_class=$path_full?:$this->welcome_controller;
+		$method=$this->default_method;
+		$file=$path_base.$sugguest_class.'.php';
+		if(is_file($file)){
+			return [$file,$sugguest_class,$method];
+		}
+		$sugguest_class=$path_class?:$this->welcome_controller;
+		$method=$path_method;
+		$file=$path_base.$path.'.php';
+		if(is_file($file)){
+			return [$file,$sugguest_class,$method];
+		}
+		return [null,null,null];
+	}
+	protected function searchFileEx($path_base,$path_info,$path,$skip_last=false)
+	{
+		$full_file='';
 		$current_class='';
 		$method='';
+		$prefix=$path;
 		
-		for($i=0;$i<$l;$i++){
-			$v=$blocks[$i];
+		$blocks=explode('/',$path_info);
+		if($skip_last){
+			array_pop($blocks);
+		}
+		
+		foreach($blocks as $i=>$v){
 			$method=$v;
-			if(substr($v,0,1)==='~'){ return [null,null]; }
-			if(''  ===$v){ break;}
-			if('.' ===$v){ return [null,null]; }
-			if('..'===$v){ return [null,null]; }
-			///if(!preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/',$v)){ //just for php classname;
-			///	return null;
-			///}
 			$dir=$prefix.$v;
 			$full_file=$dir.'.php';
 			if(is_file($full_file)){
 				$current_class=implode('/',array_slice($blocks,0,$i+1));
-				$method=isset($blocks[$i+1])?$blocks[$i+1]:'';
+				$method=isset($blocks[$i+1])?$blocks[$i+1]:$this->default_method;
+				break;
 			}
 			if(is_dir($dir)){
 				$prefix.=$v.'/';
@@ -528,7 +525,13 @@ class DNRoute
 			}
 			break;
 		}
-		return [$current_class,$method];
+		
+		$parameters=array_slice($blocks,count(explode('/',$current_class))+($current_class?1:0));
+		if($parameters==array(0=>'')){
+			var_dump("fixed p");
+			$parameters=[];
+		}
+		return [$full_file,$current_class,$method,$parameters];
 	}
 
 	// You can override it; variable indived
@@ -537,9 +540,20 @@ class DNRoute
 		require_once($file);
 	}
 	// You can override it;
-	protected function getObjectToCall($class_name)
+	protected function getObjectToCall($class_name,$tregler=false)
 	{
-		if(substr(basename($class_name),0,1)=='_'){return null;}
+		// if  a  Main/a(class autoload)  a/index (file,DNController) not method 
+		// find  a/index
+		
+		//bug  post change method.
+		
+		if($class_name===$this->welcome_controller && !method_exists($full_class,$method)){
+			return null;
+		}
+
+
+
+		
 		if($this->with_no_namespace_mode){
 			$fullclass=$this->prefix_no_namespace_mode . str_replace('/','__',$class_name);
 			$flag=class_exists($fullclass,false);
@@ -1188,7 +1202,7 @@ class DNExceptionManager
 		if($flag){return;}
 		($this->exception_error_handler)($ex);
 	}
-	public function init($exception_handler,$dev_error_handler,$system_exception_handler)
+	public function init($exception_handler,$dev_error_handler,$system_exception_handler=null)
 	{
 		$this->dev_error_handler=$dev_error_handler;
 		$this->exception_error_handler=$exception_handler;
@@ -1555,7 +1569,7 @@ class DNMVCS
 		$this->initMisc();
 		return $this;
 	}
-	public function initExceptionManager($exception_manager)
+	public function initExceptionManager(DNExceptionManager$exception_manager)
 	{
 		$exception_manager->init([$this,'onException'],[$this,'onDevErrorHandler']);
 	}
