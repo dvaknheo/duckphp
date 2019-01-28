@@ -145,15 +145,6 @@ class DNSwooleHttpServer extends SwooleHttpServer
 		$this->auto_clean_autoload=true;
 		
 	}
-	protected function onHttpClean()
-	{
-		// todo  skip initd spl_reg
-		if(!$this->auto_clean_autoload){ return;}
-		$functions = spl_autoload_functions();
-		foreach($functions as $function) {
-			spl_autoload_unregister($function);
-		}
-	}
 	public function bindDN($dn_options)
 	{
 		if(!$dn_options){return $this;}
@@ -195,13 +186,20 @@ class DNSwooleHttpServer extends SwooleHttpServer
 		$db_reuse_size=$dn_swoole_options['db_reuse_size']??static::DEFAULT_DN_OPTIONS['db_reuse_size'];
 		if($db_reuse_size){
 			$db_reuse_timeout=$dn_swoole_options['db_reuse_timeout']??static::DEFAULT_DN_OPTIONS['db_reuse_timeout'];
-			$dbm=DNDBManager::G();
-			DBConnectPoolProxy::G()->init($db_reuse_size,$db_reuse_timeout)->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
-			$dnm->setDBHandler([DBConnectPoolProxy::G(),'onCreate'],[DBConnectPoolProxy::G(),'onClose']);
+			$this->dealDBProxy($db_reuse_size,$db_reuse_timeout);;
 		}		
 		if($dn_swoole_options['use_http_handler_root']){
 			DNRoute::G()->set404([$this,'onShow404']);
 		}
+	}
+	protected function dealDBProxy($db_reuse_size,$db_reuse_timeout)
+	{
+		$dbm=DNDBManager::G();
+		$proxy=DBConnectPoolProxy::G();
+		$proxy->init($db_reuse_size,$db_reuse_timeout);
+		
+		$proxy->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
+		$dnm->setDBHandler([$proxy,'onCreate'],[$proxy,'onClose']);
 	}
 	public function run()
 	{
