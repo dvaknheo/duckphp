@@ -526,7 +526,7 @@ class SwooleHttpServer
 		if(!$this->auto_clean_autoload){ return;}
 		$functions = spl_autoload_functions();
 		foreach($functions as $function) {
-			if(in_array($function,$this->old_autoloads){ continue; }
+			if(in_array($function,$this->old_autoloads)){ continue; }
 			spl_autoload_unregister($function);
 		}
 	}
@@ -657,7 +657,7 @@ class SwooleSuperGlobal
 		}
 		$this->_SERVER['cli_script_filename']=$this->_SERVER['SCRIPT_FILENAME'];
 		
-		$this->_FILES=$request->$files;
+		$this->_FILES=$request->files;
 		return $this;
 	}
 	public function session_start(array $options=[])

@@ -22,10 +22,11 @@ class DBConnectPoolProxy
 		$this->db_queue_read=new \SplQueue();
 		$this->db_queue_read_time=new \SplQueue();
 	}
-	public function init($max_length=10,$timeout=5)
+	public function init($max_length=10,$timeout=5,$dbm=null)
 	{
 		$this->max_length=$max_length;
 		$this->timeout=$timeout;
+		$this->proxy($dbm);
 		return $this;
 	}
 	public function setDBHandler($db_create_handler,$db_close_handler=null)
@@ -75,6 +76,13 @@ class DBConnectPoolProxy
 			return $this->reuseObject($this->db_queue_read,$this->db_queue_read_time,$db);
 		}
 	}
+	public function proxy($dbm)
+	{
+		if(!$dbm){ return; }
+		
+		$this->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
+		$dnm->setDBHandler([$this,'onCreate'],[$this,'onClose']);
+	}
 }
 class DNSwooleHttpServer extends SwooleHttpServer
 {
@@ -93,10 +101,6 @@ class DNSwooleHttpServer extends SwooleHttpServer
 		SwooleHttpServer::G($this);
 		
 		return $this;
-	}
-	public function onRequest($request,$response)
-	{
-		return parent::onRequest($request,$response);
 	}
 	protected function onHttpRun($request,$response)
 	{
@@ -154,6 +158,7 @@ class DNSwooleHttpServer extends SwooleHttpServer
 		$dn_swoole_options=$dn_options['swoole'];
 		
 		$dn=DNMVCS::G()->init($dn_options);
+		
 		if(!defined('DN_SWOOLE_SERVER_HANDLER_MODE')){ define('DN_SWOOLE_SERVER_HANDLER_MODE',true); }
 		///////////////////////////////
 		
@@ -184,30 +189,15 @@ class DNSwooleHttpServer extends SwooleHttpServer
 	protected function adjustDN($dn,$dn_swoole_options)
 	{
 		$db_reuse_size=$dn_swoole_options['db_reuse_size']??static::DEFAULT_DN_OPTIONS['db_reuse_size'];
+		$db_reuse_timeout=$dn_swoole_options['db_reuse_timeout']??static::DEFAULT_DN_OPTIONS['db_reuse_timeout'];
 		if($db_reuse_size){
-			$db_reuse_timeout=$dn_swoole_options['db_reuse_timeout']??static::DEFAULT_DN_OPTIONS['db_reuse_timeout'];
-			$this->dealDBProxy($db_reuse_size,$db_reuse_timeout);;
+			DBConnectPoolProxy::G()->init($db_reuse_size,$db_reuse_timeout,DNDBManager::G());
 		}		
 		if($dn_swoole_options['use_http_handler_root']){
 			DNRoute::G()->set404([$this,'onShow404']);
 		}
 	}
-	protected function dealDBProxy($db_reuse_size,$db_reuse_timeout)
-	{
-		$dbm=DNDBManager::G();
-		$proxy=DBConnectPoolProxy::G();
-		$proxy->init($db_reuse_size,$db_reuse_timeout);
-		
-		$proxy->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
-		$dnm->setDBHandler([$proxy,'onCreate'],[$proxy,'onClose']);
-	}
-	public function run()
-	{
-		if(!defined('DN_SWOOLE_SERVER_RUNNING')){ define('DN_SWOOLE_SERVER_RUNNING',true); }
-		fwrite(STDOUT,get_class($this)." run at ".DATE(DATE_ATOM)." ...\n");
-		$t=$this->server->start();
-		fwrite(STDOUT,get_class($this)." run end ".DATE(DATE_ATOM)." ...\n");
-	}
+	
 	public static function RunWithServer($server_options,$dn_options=[],$server=null)
 	{
 		return static::G()->init($server_options,$server)->bindDN($dn_options)->run();

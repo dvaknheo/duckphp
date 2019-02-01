@@ -710,9 +710,7 @@ class DNMVCSExt
 			//something  wrong
 			DNMVCS::exit_system();
 		}
-		DNMVCS::header('location: '.$url);
-		DNMVCS::header('',true,302);
-		DNMVCS::G()->onBeforeShow([],'');
+		DNMVCS::header('location: '.$url,true,302);
 		DNMVCS::exit_system();
 	}
 	public function dealMapAndRewrite($route)
