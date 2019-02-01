@@ -1,95 +1,10 @@
 <?php
 namespace DNMVCS;
-class DBConnectPoolProxy
-{
-	use DNSingleton;
-	
-	public $tag_write='0';
-	public $tag_read='1';
-	
-	protected $db_create_handler;
-	protected $db_close_handler;
-	protected $db_queue_write;
-	protected $db_queue_write_time;
-	protected $db_queue_read;
-	protected $db_queue_read_time;
-	public $max_length=100;
-	public $timeout=5;
-	public function __construct()
-	{
-		$this->db_queue_write=new \SplQueue();
-		$this->db_queue_write_time=new \SplQueue();
-		$this->db_queue_read=new \SplQueue();
-		$this->db_queue_read_time=new \SplQueue();
-	}
-	public function init($max_length=10,$timeout=5,$dbm=null)
-	{
-		$this->max_length=$max_length;
-		$this->timeout=$timeout;
-		$this->proxy($dbm);
-		return $this;
-	}
-	public function setDBHandler($db_create_handler,$db_close_handler=null)
-	{
-		$this->db_create_handler=$db_create_handler;
-		$this->db_close_handler=$db_close_handler;
-	}
-	protected function getObject($queue,$queue_time,$db_config,$tag)
-	{
-		if($queue->isEmpty()){
-			return ($this->db_create_handler)($db_config,$tag);
-		}
-		$db=$queue->shift();
-		$time=$queue_time->shift();
-		$now=time();
-		$is_timeout =($now-$time)>$this->timeout?true:false;
-		if($is_timeout){
-			($this->db_close_handler)($db,$tag);
-			return ($this->db_create_handler)($db_config,$tag);
-		}
-		return $db;
-		
-	}
-	protected function reuseObject($queue,$queue_time,$db)
-	{
-		if(count($queue)>=$this->max_length){
-			($this->db_close_handler)($db,$tag);
-			return;
-		}
-		$time=time();
-		$queue->push($db);
-		$queue_time->push($time);
-	}
-	public function onCreate($db_config,$tag)
-	{
-		if($tag!=$this->tag_write){
-			return $this->getObject($this->db_queue_write,$this->db_queue_write_time,$db_config,$tag);
-		}else{
-			return $this->getObject($this->db_queue_read,$this->db_queue_read_time,$db_config,$tag);
-		}
-	}
-	public function onClose($db,$tag)
-	{
-		if($tag!=$this->tag_write){
-			return $this->reuseObject($this->db_queue_write,$this->db_queue_write_time,$db);
-		}else{
-			return $this->reuseObject($this->db_queue_read,$this->db_queue_read_time,$db);
-		}
-	}
-	public function proxy($dbm)
-	{
-		if(!$dbm){ return; }
-		
-		$this->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
-		$dnm->setDBHandler([$this,'onCreate'],[$this,'onClose']);
-	}
-}
 class DNSwooleHttpServer extends SwooleHttpServer
 {
 	const DEFAULT_DN_OPTIONS=[
 		'not_empty'=>true,
-		'db_reuse_size'=>0,
-		'db_reuse_timeout'=>5,
+		
 		'use_http_handler_root'=>false,
 		'fake_root'=>'public',
 		'fake_root_index_file'=>'index.php',
@@ -104,14 +19,10 @@ class DNSwooleHttpServer extends SwooleHttpServer
 	}
 	protected function onHttpRun($request,$response)
 	{
-		SwooleCoroutineSingleton::CloneInstance(DNExceptionManager::class);
-		// SwooleCoroutineSingleton::CloneInstance(DNConfiger::class);
-		SwooleCoroutineSingleton::CloneInstance(DNView::class);
-		SwooleCoroutineSingleton::CloneInstance(DNRoute::class);
-		SwooleCoroutineSingleton::CloneInstance(DNRuntimeState::class);
-		//SwooleCoroutineSingleton::CloneInstance(DNDBManager::class);
-		SwooleCoroutineSingleton::CloneInstance(DNSuperGlobal::class);
-		
+		$classes=DNMVCS::G()->getDymicClasses();
+		foreach($classes as $class){
+			SwooleCoroutineSingleton::CloneInstance($class);
+		}
 		return parent::onHttpRun($request,$response);
 	}
 	public function onShow404()
@@ -157,7 +68,13 @@ class DNSwooleHttpServer extends SwooleHttpServer
 		$dn_options['swoole']=array_replace_recursive(static::DEFAULT_DN_OPTIONS,$dn_options['swoole']);
 		$dn_swoole_options=$dn_options['swoole'];
 		
+		if($dn_swoole_options['use_http_handler_root']){
+			$dn_options['error_404']=[$this,'onShow404'];
+		}
+		
 		$dn=DNMVCS::G()->init($dn_options);
+		
+		
 		
 		if(!defined('DN_SWOOLE_SERVER_HANDLER_MODE')){ define('DN_SWOOLE_SERVER_HANDLER_MODE',true); }
 		///////////////////////////////
@@ -181,23 +98,32 @@ class DNSwooleHttpServer extends SwooleHttpServer
 		$this->script_filename=$document_root.'/'.$fakeIndex; // @override
 		
 		///////////////////////////////
-
-		$this->adjustDN($dn,$dn_swoole_options);
-		
 		return $this;
 	}
-	protected function adjustDN($dn,$dn_swoole_options)
+	public function runDNMVCS()
 	{
-		$db_reuse_size=$dn_swoole_options['db_reuse_size']??static::DEFAULT_DN_OPTIONS['db_reuse_size'];
-		$db_reuse_timeout=$dn_swoole_options['db_reuse_timeout']??static::DEFAULT_DN_OPTIONS['db_reuse_timeout'];
-		if($db_reuse_size){
-			DBConnectPoolProxy::G()->init($db_reuse_size,$db_reuse_timeout,DNDBManager::G());
-		}		
-		if($dn_swoole_options['use_http_handler_root']){
-			DNRoute::G()->set404([$this,'onShow404']);
-		}
+		//
 	}
-	
+	public function getDymicClasses()
+	{
+		$classes=[
+			DNExceptionManager::class,
+			DNView::class,
+			DNRoute::class,
+			DNSuperGlobal::class,
+			DNRuntimeState::class,
+		];
+		$ext_class=[];
+		foreach($classes as $class){
+			if(get_class($class::G())!=$class){$ext_class[]=$class;}
+		}
+		$classes=$class+$ext_class;
+		return $classes;
+	}
+	public function getNotDymicClass()
+	{
+		//
+	}
 	public static function RunWithServer($server_options,$dn_options=[],$server=null)
 	{
 		return static::G()->init($server_options,$server)->bindDN($dn_options)->run();
