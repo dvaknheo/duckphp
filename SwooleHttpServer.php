@@ -176,7 +176,6 @@ class SwooleContext
 }
 class SwooleException extends \Exception
 {
-	use DNThrowQuickly;
 }
 trait SwooleHttpServer_Static
 {
@@ -438,7 +437,6 @@ class SwooleHttpServer
 	}
 	protected function runHttpFile($path,$document_root)
 	{
-	
 		if(strpos($path,'/../')!==false || strpos($path,'/./')!==false){
 			return false;
 		}
