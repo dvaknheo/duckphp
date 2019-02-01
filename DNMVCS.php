@@ -645,8 +645,9 @@ class DNDBManager
 	protected $database_config_list=[];
 	protected $databases=[];
 	
-	protected $db_create_handler=null;
-	protected $db_close_handler=null;
+	public $db_create_handler=null;
+	public $db_close_handler=null;
+	
 	protected $before_get_db_handler=null;
 	public function init($database_config_list=[])
 	{
@@ -732,6 +733,7 @@ class DNSuperGlobal
 	public $_ENV;
 	public $_COOKIE;
 	public $_SESSION;
+	public $_FILES;
 	
 	public $GLOBALS=[];
 	public $STATICS=[];
@@ -746,6 +748,7 @@ class DNSuperGlobal
 		$this->_ENV		=&$_ENV;
 		$this->_COOKIE	=&$_COOKIE;
 		$this->_SESSION	=&$_SESSION;
+		$this->_FILES	=&$_FILES;
 		$this->GLOBALS	=&$GLOBALS;
 	}
 	///////////////////////////////

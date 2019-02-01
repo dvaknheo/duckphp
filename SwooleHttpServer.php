@@ -369,6 +369,7 @@ class SwooleHttpServer
 			'websocket_handler'=>null,
 			'websocket_exception_handler'=>null,
 			'websocket_close_handler'=>null,
+			'use_http_handler_root'=>false,
 		];
 	public $server=null;
 	
@@ -392,6 +393,15 @@ class SwooleHttpServer
 		if($this->http_handler){
 			$this->auto_clean_autoload=false;
 			if(!$this->http_handler){ throw new SwooleException("No Handler"); }
+			
+			if($this->options['use_http_handler_root']){
+				$http_handler_root=$this->options['http_handler_basepath'].$this->options['http_handler_root'];
+				$http_handler_root=rtrim($http_handler_root,'/').'/';
+				$document_root=$this->static_root?:rtrim($http_handler_root,'/');
+				$this->document_root=$document_root;
+				$this->script_filename=$this->document_root.'/'.'index.php'; //
+			}
+			
 			if(isset($this->document_root)){
 				SwooleSuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=$this->document_root;
 			}
@@ -497,24 +507,27 @@ class SwooleHttpServer
 		if($ex instanceof \Swoole\ExitException){
 			return;
 		}
-		SwooleContext::G()->response->status(500);
+		if($ex instanceof SwooleException && $ex->getCode==404){
+			SwooleContext::G()->response->status(404);
+			echo "DNMVCS swoole mode: 404. \n";
+			echo $ex;
+			return;
+		}		
 		if($this->http_exception_handler){
 			($this->http_exception_handler)($ex);
-		}else{
-			echo "DNMVCS swoole mode: Server Error: \n";
-			echo $ex;
+			return;
 		}
-			
+		SwooleContext::G()->response->status(500);
+		echo "DNMVCS swoole mode: Server Error. \n";
+		echo $ex;
 	}
 	protected function onHttpClean()
 	{
 		if(!$this->auto_clean_autoload){ return;}
 		$functions = spl_autoload_functions();
 		foreach($functions as $function) {
+			if(in_array($function,$this->old_autoloads){ continue; }
 			spl_autoload_unregister($function);
-		}
-		foreach($this->old_autoloads as $v){
-			spl_autoload_register($v);
 		}
 	}
 	protected function check_swoole()
@@ -607,6 +620,7 @@ class SwooleSuperGlobal
 	public $_ENV;
 	public $_COOKIE;
 	public $_SESSION;
+	public $_FILES;
 	
 	public $GLOBALS=[];
 	public $STATICS=[];
@@ -642,6 +656,8 @@ class SwooleSuperGlobal
 			$this->_SERVER[strtoupper($k)]=$v;
 		}
 		$this->_SERVER['cli_script_filename']=$this->_SERVER['SCRIPT_FILENAME'];
+		
+		$this->_FILES=$request->$files;
 		return $this;
 	}
 	public function session_start(array $options=[])
