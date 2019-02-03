@@ -272,13 +272,14 @@ class RouteHookDirectoryMode // not working.
 	protected function adjustPathinfo($path_info,$document_root)
 	{
 		//$this->basepath=ltrim($this->basepath,'/').'/';
+		$basepath=$this->basepath;
 		$input_path=parse_url(DNSuperGlobal::G()->_SERVER['REQUEST_URI'],PHP_URL_PATH);
 		$script_filename=DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME'];
-		$path_info=substr($document_root.$input_path,strlen($this->basepath));
+		$path_info=substr($document_root.$input_path,strlen($basepath));
 		$path_info=ltrim($path_info,'/').'/';
-		
 		$blocks=explode('/',$path_info);
 		if(false){
+			//TODO
 			$prefix=$this->basepath;
 			foreach($blocks as $v){
 				$prefix.='/'.$v;
@@ -302,16 +303,30 @@ class RouteHookDirectoryMode // not working.
 		
 		$blocks=explode('/',$input_path);
 		
-		//var_dump($input_path);
-		$file=$this->basepath;
+		$basepath=$this->basepath;
+		$new_path='';
+		$l=count($blocks);
 		foreach($blocks as $i=> $v){
-			$v=basename($v,'.php').'.php';
-			$file.='/'.$v;
-			if(!is_file($file)){ continue; }
+			if($i+1>=$l){break;}
+			$class_names=array_slice($blocks,0,$i+1);
+			$file=$basepath.'/'.implode('/',$class_names).'.php';
+			$path_info=isset($blocks[$i])?array_slice($blocks,-$i-1):[];
+						$path_info=implode('/',$path_info);
+
+			if(is_file($file)){
+				$new_path=$base_url.'/'.implode('/',$class_names).'.php'.($path_info?'/'.$path_info:'');
+			}
 			
 		}
+		if(!$new_path){return $new_path;}
+	
+		$new_get=[];
+		parse_str(parse_url($url,PHP_URL_QUERY),$new_get);
 		
-		//var_dump($ret);exit;
+		$get=array_merge($new_get,$new_get);
+		$query=$get?'?'.http_build_query($get):'';
+		$ret=$new_path.$query;
+		return $ret;
 	}
 	// abc/d/e.php/g/h?act=z  abc/d/e/g
 	public function hook($route)
@@ -319,7 +334,6 @@ class RouteHookDirectoryMode // not working.
 		$route->setURLHandler([$this,'onURL']); //todo once ?
 		
 		$route->path_info=$this->adjustPathinfo($route->path_info,$route->document_root);
-		//var_dump($route->path_info);exit;
 		$route->calling_path=$route->path_info;
 	}
 }
@@ -592,35 +606,69 @@ class FunctionView extends DNView
 		}
 	}
 }
-class FacadeBase
+class FacadesAutoLoader
+{
+	use DNSingleton;
+
+	protected $prefix='';
+	protected $facades_map=[];
+	
+	protected $is_loaded=false;
+	protected $is_inited=false;
+	
+ 	public function init($namespace_facades='',$facades_map=[],$namespace='')
+	{
+		if(substr($namespace_facades,0,1)!=='\\'){
+			$namespace_facades=$namespace.'\\'.$namespace_facades;
+		}
+		$namespace_facades=ltrim($namespace_facades,'\\');
+		$this->prefix=$namespace_facades.'\\Facade\\';
+		
+		$this->is_init=true;
+		return $this;
+	}
+	public function run()
+	{
+		if($this->is_loaded){return;}
+		$this->is_loaded=true;
+		spl_autoload_register([$this,'_autoload']);
+	}
+	
+	public function _autoload($class)
+	{
+		if(substr($class,0,strlen($this->prefix))!==$this->prefix){ return; }
+		
+		$blocks=explode('\\',$class);
+		$basename=array_pop($blocks);
+		$namespace=implode('\\',$blocks);
+		
+		$code="namespace $namespace{ class $basename extends \\DNMVCS\\FacadesBase{} }";
+		eval($code);
+	}
+	public function getFacadesCallback($class,$name)
+	{
+		foreach($this->facades_map as $k=>$v){
+			if($k===$class){
+				$class=$v;
+				break;
+			}
+		}
+		// DNexception::ThrowOn(!class_exists($class),"No Class");
+		$object=call_user_func([$class,'G']);
+		return [$object,$name];
+	}
+}
+class FacadesBase
 {
 	use DNSingleton;
 	
 	public static function __callStatic($name, $arguments) 
 	{
-		$callback=self::G()->getFacadeCallback(static::class,$name);
+		$callback=FacadesAutoLoader::G()->getFacadesCallback(static::class,$name);
 		$ret=call_user_func_array($callback, $arguments);
 		return $ret;
 	}
-	public function getFacadeCallback($class,$name)
-	{
-		$dn=DNMVCS::G();
-		$ext=$dn->options['ext'];
-		$map=$ext['facade_map']??[];
-		
-		
-		$namespace=$dn->options['namespace'];
-		$class=$namespace.'\\'. substr($class,strlen($namespace.'\\Facade\\'));
-		foreach($map as $k=>$v){
-			if($k===$class){
-				$object=call_user_func([$v,'G']);
-				return [$object,$name];
-			}
-		}
-		
-		$object=call_user_func([$class,'G']);
-		return [$object,$name];
-	}
+	
 }
 class DNMVCSExt
 {
@@ -628,9 +676,7 @@ class DNMVCSExt
 	use DNDI;
 	
 	const DEFAULT_OPTIONS_EX=[
-			'key_for_action'=>null,
-				'key_for_module'=>null,
-			
+	
 			'use_function_view'=>false,
 				'function_view_head'=>'view_header',
 				'function_view_foot'=>'view_footer',
@@ -641,23 +687,28 @@ class DNMVCSExt
 				'fullpath_config_common'=>'',
 			'use_strict_db'=>false,
 			
-			'use_facade'=>false,
-			'facade_map'=>[],
+			'use_facades'=>false,
+			'facades_namespace'=>'Facades',
+			'facades_map'=>[],
 			
-			'session_auto_start'=>false,
-			'session_name'=>'DNSESSION',
+			'use_session_auto_start'=>false,
+			'session_auto_start_name'=>'DNSESSION',
+			
+			'mode_onefile'=>false,
+			'mode_onefile_key_for_action'=>null,
+			'mode_onfile_key_for_module'=>null,
 			
 			'mode_dir'=>false,
 			'mode_dir_basepath'=>null,
-			'dir_mode_index_file'=>'',
-			'dir_mode_use_path_info'=>true,
+			'mode_dir_index_file'=>'',
+			'mode_dir_use_path_info'=>true,
 			'mode_dir_key_for_module'=>true,
 			'mode_dir_key_for_action'=>true,
 			
+			'use_db_reuse'=>false,
 			'db_reuse_size'=>0,
 			'db_reuse_timeout'=>5,
 		];
-	protected $has_enableFacade=false;
 	public function afterInit($dn)
 	{
 		$dn=DNMVCS::G();
@@ -681,8 +732,8 @@ class DNMVCSExt
 			DNDBManager::G()->setBeforeGetDBHandler([static::G(),'checkDBPermission']);
 		}
 		
-		if($options['key_for_action']){
-			RouteHookOneFileMode::G()->init($options['key_for_action'],$options['key_for_module']);
+		if($options['mode_onefile']){
+			RouteHookOneFileMode::G()->init($options['mode_onefile_key_for_action'],$options['mode_onfile_key_for_module']);
 			DNRoute::G()->addRouteHook([RouteHookOneFileMode::G(),'hook']);
 		}
 		if($options['mode_dir']){
@@ -693,40 +744,18 @@ class DNMVCSExt
 		if($options['use_function_dispatch']){
 			DNRoute::G()->addRouteHook([FunctionDispatcher::G(),'hook']);
 		}
-		if($options['session_auto_start']){
-			DNMVCS::session_start(['name'=>$options['session_name']]);
+		if($options['use_session_auto_start']){
+			DNMVCS::session_start(['name'=>$options['session_auto_start_name']]);
 		}
 		
-		if($options['use_facade']){
-			$this->enableFacade();
+		if($options['use_facades']){
+			$namespace=$dn->options['namespace']??'';
+			FacadesAutoLoader::G()->init($options['facades_namespace'],$options['facades_map'],$namespace)->run();
+		}		
+		if($options['use_db_reuse']){
+			DBConnectPoolProxy::G()->init($options['db_reuse_size'],$db_reuse_timeout=$options['db_reuse_timeout'],DNDBManager::G());
 		}
 		
-		$db_reuse_size=$options['db_reuse_size']??static::DEFAULT_DN_OPTIONS['db_reuse_size'];
-		$db_reuse_timeout=$options['db_reuse_timeout']??static::DEFAULT_DN_OPTIONS['db_reuse_timeout'];
-		if($db_reuse_size){
-			DBConnectPoolProxy::G()->init($db_reuse_size,$db_reuse_timeout,DNDBManager::G());
-		}
-		
-	}
-	protected function enableFacade()
-	{
-		if($this->has_enableFacade){return;}
-		$this->has_enableFacade=true;
-		
-		spl_autoload_register([$this,'_facadeAutoload']);
-	}
-	public function _facadeAutoload($class)
-	{
-		if(!isset(DNMVCS::G()->options['namespace'])){ return; }
-		$prefix=DNMVCS::G()->options['namespace'].'\\Facade\\';
-		if(substr($class,0,strlen($prefix))!==$prefix){ return; }
-		
-		$blocks=explode('\\',$class);
-		$basename=array_pop($blocks);
-		$namespace=implode('\\',$blocks);
-		
-		$code="namespace $namespace{ class $basename extends \\DNMVCS\\FacadeBase{} }";
-		eval($code);
 	}
 	public function checkDBPermission()
 	{
