@@ -1125,6 +1125,7 @@ trait DNMVCS_Handler
 		if(!is_string($error_view) || !$error_view){
 			if($error_view){
 				($error_view)($data);
+				return false;
 			}
 			return true;
 		}
@@ -1182,6 +1183,7 @@ trait DNMVCS_Handler
 		
 		$view->setViewWrapper(null,null);
 		$view->_Show($data,$error_view);
+		DNRuntimeState::G()->unsetState();
 	}
 	public function onDevErrorHandler($errno, $errstr, $errfile, $errline)
 	{
@@ -1557,9 +1559,9 @@ class DNMVCS
 	public function run()
 	{
 		DNRuntimeState::G()->setState();
+		$this->beforeMiscRun();	
 		
 		$route=DNRoute::G();
-		$this->beforeMiscRun();	
 		$this->beforeRouteRun($route);		
 		$ret=$route->run();
 		
