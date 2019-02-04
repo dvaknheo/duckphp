@@ -1100,7 +1100,7 @@ class DNExceptionManager
 		
 		set_error_handler([$this,'on_error_handler']);
 		if($system_exception_handler){
-			return ($this->system_exception_handler)($exception_handler);
+			return ($system_exception_handler)($exception_handler);
 		}else{
 			set_exception_handler([$this,'on_exception']);
 		}
@@ -1476,7 +1476,7 @@ class DNMVCS
 	}
 	public function initExceptionManager($exception_manager)
 	{
-		$exception_manager->init([$this,'onException'],[$this,'onDevErrorHandler']);
+		$exception_manager->init([$this,'onException'],[$this,'onDevErrorHandler'],static::class.'::set_exception_handler');
 	}
 	public function initConfiger($configer)
 	{
