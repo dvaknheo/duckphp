@@ -1398,7 +1398,6 @@ class DNMVCS
 			'ext'=>[
 				'mode_onefile'=>true,
 				'mode_onefile_key_for_action'=>'act',
-
 				
 				'use_function_dispatch'=>true,
 				'use_function_view'=>true,
@@ -1417,6 +1416,15 @@ class DNMVCS
 	{
 		DNAutoLoader::G()->init($dn_options)->run();
 		DNSwooleHttpServer::RunWithServer($server_options,$dn_options,$server);
+	}
+	public static function __callStatic($name, $arguments) 
+	{
+		$class=get_class(static::G());
+		if($class===static::class){
+			throw new ErrorException("DNMVCS Call to undefined method DNMVCS\DNMVCS::$name()");
+		}
+		$ret=call_user_func_array([$class,$name], $arguments);
+		return $ret;
 	}
 	protected function initOptions($options=[])
 	{
