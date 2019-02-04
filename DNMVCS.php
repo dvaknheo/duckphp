@@ -365,9 +365,11 @@ class DNRoute
 	}
 	protected function getFullClassByNoNameSpace($path_class,$confirm=false)
 	{
-		if($confirm){
-			$class=$this->checkLoadClass($path_class);
-			if($class){return null;}
+		
+		$class=$this->checkLoadClass($path_class);
+		if($class){
+			if($confirm){return null;}
+			return $class;
 		}
 		$file=$this->path.$path_class.'.php';
 		if(!is_file($file)){
@@ -645,8 +647,8 @@ class DNDBManager
 	protected $database_config_list=[];
 	protected $databases=[];
 	
-	public $db_create_handler=null;
-	public $db_close_handler=null;
+	protected $db_create_handler=null;
+	protected $db_close_handler=null;
 	
 	protected $before_get_db_handler=null;
 	public function init($database_config_list=[])
@@ -661,6 +663,10 @@ class DNDBManager
 	public function setBeforeGetDBHandler($before_get_db_handler)
 	{
 		$this->before_get_db_handler=$before_get_db_handler;
+	}
+	public function getDBHandler()
+	{
+		return [$db_create_handler,$db_close_handler];
 	}
 	public function _DB($tag=null)
 	{
@@ -1375,24 +1381,29 @@ class DNMVCS
 	{
 		$default_options=[
 			'ext'=>[
-				'key_for_action'=>'_r',
+				'mode_onefile'=>true,
+				'mode_onefile_key_for_action'=>'_r',
 			],
-			//'path_view'=>'',
 		];
 		$options=array_replace_recursive($default_options,$options);
 		return static::G()->init($options)->run();
 	}
 	public static function RunOneFileMode($options=[],$init_function=null)
 	{
+		$path=realpath(getcwd().'/');
 		$default_options=[
+			'path'=>$path,
 			'setting_file_basename'=>'',
 			'base_class'=>'',
 			'ext'=>[
-				'key_for_action'=>'act',
+				'mode_onefile'=>true,
+				'mode_onefile_key_for_action'=>'act',
+
+				
 				'use_function_dispatch'=>true,
 				'use_function_view'=>true,
 				
-				'session_auto_start'=>true,
+				'use_session_auto_start'=>true,
 			]
 		];
 		$options=array_replace_recursive($default_options,$options);

@@ -278,20 +278,23 @@ class RouteHookDirectoryMode // not working.
 		$path_info=substr($document_root.$input_path,strlen($basepath));
 		$path_info=ltrim($path_info,'/').'/';
 		$blocks=explode('/',$path_info);
-		if(false){
-			//TODO
-			$prefix=$this->basepath;
-			foreach($blocks as $v){
-				$prefix.='/'.$v;
-				if(is_file($prefix)){}
+
+		$path_info='';
+		$has_file=false;
+		foreach($blocks as $i=>$v){
+				if(!$has_file && substr($v,-strlen('.php'))==='.php'){
+					$has_file=true;
+					$path_info.=substr($v,0,-strlen('.php')).'/';
+					if(!($blocks[$i+1])){
+						$path_info.='index';
+						break;
+					}
+				}else{
+					$path_info.=$v.'/';
+				}
 			}
-		}else{
-			foreach($blocks as &$v){
-				$v=basename($v,'.php');
-			}
-			$path_info=implode('/',$blocks);
-		}
 		$path_info=rtrim($path_info,'/');
+		
 		return $path_info;
 	}
 	public function onURL($url=null)
@@ -311,8 +314,7 @@ class RouteHookDirectoryMode // not working.
 			$class_names=array_slice($blocks,0,$i+1);
 			$file=$basepath.'/'.implode('/',$class_names).'.php';
 			$path_info=isset($blocks[$i])?array_slice($blocks,-$i-1):[];
-						$path_info=implode('/',$path_info);
-
+			$path_info=implode('/',$path_info);
 			if(is_file($file)){
 				$new_path=$base_url.'/'.implode('/',$class_names).'.php'.($path_info?'/'.$path_info:'');
 			}
@@ -339,7 +341,7 @@ class RouteHookDirectoryMode // not working.
 }
 
 
-class DBConnectPoolProxy
+class DBReusePoolProxy
 {
 	use DNSingleton;
 	
@@ -418,8 +420,8 @@ class DBConnectPoolProxy
 	public function proxy($dbm)
 	{
 		if(!$dbm){ return; }
-		
-		$this->setDBHandler($dbm->db_create_handler,$dbm->db_close_handler);
+		list($db_create_handler,$db_close_handler)=$dnm->getDBHandler();
+		$this->setDBHandler($db_create_handler,$db_close_handler);
 		$dnm->setDBHandler([$this,'onCreate'],[$this,'onClose']);
 	}
 }
@@ -572,10 +574,14 @@ class FunctionView extends DNView
 			}
 		}
 		
-		$this->callback=$this->prefix.$this->view;
+		$this->callback=$this->prefix.str_replace('/','__',preg_replace('/^Main\//','',$this->view));
 		if(is_callable($this->callback)){
 			($this->callback)($this->data);
 		}else{
+			if(!is_file($this->view_file)){
+				echo "Not callback {$this->callback}; not file $this->view_file";
+				return;
+			}
 			include($this->view_file);
 		}
 		
@@ -598,10 +604,14 @@ class FunctionView extends DNView
 		$view=null;
 		extract($this->data);
 		
-		$this->callback=$this->prefix.$this->view;
+		$this->callback=$this->prefix.str_replace('/','__',preg_replace('/^Main\//','',$this->view));
 		if(is_callable($this->callback)){
 			($this->callback)($this->data);
 		}else{
+			if(!is_file($this->view_file)){
+				echo "Not callback {$this->callback}; not file $this->view_file";
+				return;
+			}
 			include($this->view_file);
 		}
 	}
@@ -696,7 +706,7 @@ class DNMVCSExt
 			
 			'mode_onefile'=>false,
 			'mode_onefile_key_for_action'=>null,
-			'mode_onfile_key_for_module'=>null,
+			'mode_onefile_key_for_module'=>null,
 			
 			'mode_dir'=>false,
 			'mode_dir_basepath'=>null,
@@ -733,7 +743,7 @@ class DNMVCSExt
 		}
 		
 		if($options['mode_onefile']){
-			RouteHookOneFileMode::G()->init($options['mode_onefile_key_for_action'],$options['mode_onfile_key_for_module']);
+			RouteHookOneFileMode::G()->init($options['mode_onefile_key_for_action'],$options['mode_onefile_key_for_module']);
 			DNRoute::G()->addRouteHook([RouteHookOneFileMode::G(),'hook']);
 		}
 		if($options['mode_dir']){
@@ -753,7 +763,7 @@ class DNMVCSExt
 			FacadesAutoLoader::G()->init($options['facades_namespace'],$options['facades_map'],$namespace)->run();
 		}		
 		if($options['use_db_reuse']){
-			DBConnectPoolProxy::G()->init($options['db_reuse_size'],$db_reuse_timeout=$options['db_reuse_timeout'],DNDBManager::G());
+			DBReusePoolProxy::G()->init($options['db_reuse_size'],$db_reuse_timeout=$options['db_reuse_timeout'],DNDBManager::G());
 		}
 		
 	}
