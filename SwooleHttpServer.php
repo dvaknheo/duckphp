@@ -433,7 +433,7 @@ class SwooleHttpServer
 		throw new SwooleException("404 Not Found!",404);
 		//$this->includeHttpPhpFile($file,$document_root,$path_info);
 	}
-	protected function prepareRootMode()
+	public function prepareRootMode()
 	{
 		$http_handler_root=$this->options['http_handler_basepath'].$this->options['http_handler_root'];
 		$http_handler_root=rtrim($http_handler_root,'/').'/';
@@ -444,7 +444,7 @@ class SwooleHttpServer
 		return [$path,$document_root];
 	}
 	
-	protected function runHttpFile($path,$document_root)
+	public function runHttpFile($path,$document_root)
 	{
 		if(strpos($path,'/../')!==false || strpos($path,'/./')!==false){
 			return false;
