@@ -394,11 +394,9 @@ class SwooleHttpServer
 			if(!$this->http_handler){ throw new SwooleException("No Handler"); }
 			
 			if($this->options['use_http_handler_root']){
-				$http_handler_root=$this->options['http_handler_basepath'].$this->options['http_handler_root'];
-				$http_handler_root=rtrim($http_handler_root,'/').'/';
-				$document_root=$this->static_root?:rtrim($http_handler_root,'/');
+				list($path,$document_root)=$this->prepareRootMode();
 				$this->document_root=$document_root;
-				$this->script_filename=$this->document_root.'/'.'index.php'; //
+				$this->script_filename=$this->document_root.'/'.'index.php';
 			}
 			
 			if(isset($this->document_root)){
@@ -420,21 +418,27 @@ class SwooleHttpServer
 			return;
 		}
 		if($this->options['http_handler_root']){
-			$http_handler_root=$this->options['http_handler_basepath'].$this->options['http_handler_root'];
-			$http_handler_root=rtrim($http_handler_root,'/').'/';
-			$document_root=$this->static_root?:rtrim($http_handler_root,'/');
-			
-			
-			$request_uri=SwooleSuperGlobal::G()->_SERVER['REQUEST_URI'];
-			$path=parse_url($request_uri,PHP_URL_PATH);
+			list($path,$document_root)=$this->prepareRootMode();
 			$flag=$this->runHttpFile($path,$document_root);
 			if(!$flag){
 				throw new SwooleException("404 Not Found!",404);
 			}
 			return;
 		}
-		$this->includeHttpPhpFile($file,$document_root,$path_info);
+		throw new SwooleException("404 Not Found!",404);
+		//$this->includeHttpPhpFile($file,$document_root,$path_info);
 	}
+	protected function prepareRootMode()
+	{
+		$http_handler_root=$this->options['http_handler_basepath'].$this->options['http_handler_root'];
+		$http_handler_root=rtrim($http_handler_root,'/').'/';
+		$document_root=$this->static_root?:rtrim($http_handler_root,'/');
+		
+		$path=parse_url(SwooleSuperGlobal::G()->_SERVER['REQUEST_URI'],PHP_URL_PATH);
+		
+		return [$path,$document_root];
+	}
+	
 	protected function runHttpFile($path,$document_root)
 	{
 		if(strpos($path,'/../')!==false || strpos($path,'/./')!==false){
@@ -506,6 +510,18 @@ class SwooleHttpServer
 			return;
 		}
 		if($ex instanceof SwooleException && $ex->getCode==404){
+			if($this->http_handler && $this->options['use_http_handler_root'] && !$this->auto_clean_autoload){
+				$this->auto_clean_autoload=true;
+				list($path,$document_root)=$this->prepareRootMode();
+				try{
+					$flag=$this->runHttpFile($path,$document_root);
+					if($flag){ return; }
+				}catch(\Throwable $ex){
+					$this->onHttpException($ex);
+					return;
+				}
+				
+			}
 			SwooleContext::G()->response->status(404);
 			echo "DNMVCS swoole mode: 404. \n";
 			echo $ex;
