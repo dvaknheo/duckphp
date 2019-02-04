@@ -1472,16 +1472,16 @@ class DNMVCS
 		$this->initMisc();
 		return $this;
 	}
-	public function initExceptionManager(DNExceptionManager$exception_manager)
+	public function initExceptionManager($exception_manager)
 	{
 		$exception_manager->init([$this,'onException'],[$this,'onDevErrorHandler']);
 	}
-	public function initConfiger(DNConfiger $configer)
+	public function initConfiger($configer)
 	{
 		$path=$this->path.rtrim($this->options['path_config'],'/').'/';
 		$configer->init($path,$this->options);
 	}
-	public function initView(DNView $view)
+	public function initView($view)
 	{
 		$path_view=$this->path.rtrim($this->options['path_view'],'/').'/';
 		$view->init($path_view);
@@ -1492,7 +1492,7 @@ class DNMVCS
 		$route->init($this->options);
 		$route->set404([$this,'onShow404']);
 	}
-	public function initDBManager(DNDBManager $dbm)
+	public function initDBManager($dbm)
 	{
 		$configer=DNConfiger::G();
 		$database_list=$configer->_Setting('database_list');
@@ -1516,7 +1516,7 @@ class DNMVCS
 		}
 		DNSuperGlobal::G()->init();
 	}
-	protected function beforeRouteRun(DNRoute $route)
+	protected function beforeMiscRun()
 	{
 		if(defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')){
 			if(!$this->is_system_wrapper_installed){
@@ -1528,6 +1528,11 @@ class DNMVCS
 		if(defined('DNMVCS_DNSUPERGLOBAL_REPALACER')){	
 			DNSuperGlobal::G(call_user_func([DNMVCS_DNSUPERGLOBAL_REPALACER,'G']));
 		}
+		
+	}
+	protected function beforeRouteRun(DNRoute $route)
+	{
+		
 		$route->script_filename=DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']??'';
 		$route->document_root=DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT']??'';
 		$route->request_method=DNSuperGlobal::G()->_SERVER['REQUEST_METHOD']??'';
@@ -1554,6 +1559,7 @@ class DNMVCS
 		DNRuntimeState::G()->setState();
 		
 		$route=DNRoute::G();
+		$this->beforeMiscRun();	
 		$this->beforeRouteRun($route);		
 		$ret=$route->run();
 		
