@@ -177,6 +177,11 @@ class SwooleContext
 class SwooleException extends \Exception
 {
 }
+class Swoole404Exception extends SwooleException
+{
+	protected $code=404;
+	
+}
 trait SwooleHttpServer_Static
 {
 	public static function Server()
@@ -539,6 +544,7 @@ class SwooleHttpServer
 	{
 		if(!$this->auto_clean_autoload){ return;}
 		$functions = spl_autoload_functions();
+		$this->old_autoloads=$this->old_autoloads?:[];
 		foreach($functions as $function) {
 			if(in_array($function,$this->old_autoloads)){ continue; }
 			spl_autoload_unregister($function);
@@ -605,7 +611,9 @@ class SwooleHttpServer
 		\Swoole\Runtime::enableCoroutine();
 		
 		SwooleCoroutineSingleton::ReplaceDefaultSingletonHandler();
+		static::G($this);
 		SwooleSuperGlobal::G();
+
 		if(!defined('DNMVCS_DNSUPERGLOBAL_REPALACER')){
 			define('DNMVCS_DNSUPERGLOBAL_REPALACER',SwooleSuperGlobal::class);
 		}
@@ -618,7 +626,7 @@ class SwooleHttpServer
 	{
 		if(!defined('DN_SWOOLE_SERVER_RUNNING')){ define('DN_SWOOLE_SERVER_RUNNING',true); }
 		fwrite(STDOUT,get_class($this)." run at ".DATE(DATE_ATOM)." ...\n");
-		$t=$this->server->start();
+		$this->server->start();
 		fwrite(STDOUT,get_class($this)." run end ".DATE(DATE_ATOM)." ...\n");
 	}
 }
