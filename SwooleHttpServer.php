@@ -59,7 +59,8 @@ class SwooleCoroutineSingleton
 		}else{
 			$master=self::$_instances[$class]??null;
 			if($master && !isset(self::$_instances[$key][$class])){
-				throw new \ErrorException("SwooleCoroutineSingleton fail:: $class use CreateInstance instead");
+				self::$_instances[$key][$class]=null;
+				//throw new \ErrorException("SwooleCoroutineSingleton fail:: $class use CreateInstance instead");
 			}
 			self::$_instances[$key][$class]=$object;
 			return $object;
@@ -93,7 +94,22 @@ class SwooleCoroutineSingleton
 			define('DNMVCS_DNSINGLETON_REPALACER' ,self::class . '::'.'GetInstance');
 		}
 	}
-	
+	public static function ForkClasses($namespace)
+	{
+		$prefix=$namespace.'\\';
+		$cid = \Swoole\Coroutine::getuid();
+		$key="cid-$cid";
+		foreach(self::$_instances as $class=>$v){
+			if(substr($class,0,strlen($prefix))!=$prefix){ continue;}
+			if(is_object($v)){
+				if(!isset(self::$_instances[$key][$class])){
+					$real_class=get_class($v);
+					self::$_instances[$key][$class]=new $real_class();
+					fwrite(STDERR,"zzzzzzzzzzzzzzz,$class zzzzzz\n");
+				}
+			}
+		}
+	}
 	public static function DumpString()
 	{
 		$cid = \Swoole\Coroutine::getuid();
@@ -521,7 +537,7 @@ class SwooleHttpServer
 		if($ex instanceof \Swoole\ExitException){
 			return;
 		}
-		if($ex instanceof SwooleException && $ex->getCode==404){
+		if($ex instanceof SwooleException && $ex->getCode()==404){
 			if($this->http_handler && $this->options['use_http_handler_root'] && !$this->auto_clean_autoload){
 				$this->auto_clean_autoload=true;
 				list($path,$document_root)=$this->prepareRootMode();

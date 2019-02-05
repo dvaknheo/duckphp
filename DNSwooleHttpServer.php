@@ -17,8 +17,9 @@ class DNSwooleHttpServer
 	}
 	public function initRunningModeDNMVCS($options)
 	{
-var_dump("failing!");exit;
-		// clean objects;
+	
+		//SwooleCoroutineSingleton::Dump();
+		
 		SwooleCoroutineSingleton::CloneInstance(DNConfiger::class);
 		SwooleCoroutineSingleton::CloneInstance(DNAutoLoader::class);
 		SwooleCoroutineSingleton::CloneInstance(DNMVCS::class);
@@ -26,18 +27,18 @@ var_dump("failing!");exit;
 		SwooleCoroutineSingleton::CloneInstance(DNDBManager::class);
 		SwooleCoroutineSingleton::CloneInstance(DNSuperGlobal::class);
 		
-		$class=get_class(DNMVCS::G());
-		SwooleCoroutineSingleton::CloneInstance($class);
-		$class::G(new $class());
 
-		DNConfiger::G(new DNConfiger());
 		DNAutoLoader::G(new DNAutoLoader());
-		
-		//clone all static  dnmvcs to new object ?
-		
+		DNMVCS::G(new DNMVCS());
+		DNConfiger::G(new DNConfiger());
 		DNDBManager::G(new DNDBManager());
 		DNRoute::G(new DNRoute());
-		DNSuperGlobal::G(SwooleSuperGlobal::G());
+		
+		$ret=DNMVCS::G()->init($options);
+		
+		//SwooleCoroutineSingleton::ForkClasses('DNMVCS');
+		
+		return $ret;
 	}
 
 	public function onShow404()
@@ -52,9 +53,9 @@ var_dump("failing!");exit;
 		//  save base class;
 		DNMVCS::G(static::G()); // ok we passed the fake  object;
 		
-		//list($path,$document_root)=SwooleHttpServer::G()->prepareRootMode();
-		//$flag=SwooleHttpServer::G()->runHttpFile($path,$document_root);
-		throw new SwooleException();
+		list($path,$document_root)=SwooleHttpServer::G()->prepareRootMode();
+		$flag=SwooleHttpServer::G()->runHttpFile($path,$document_root);
+		//throw new SwooleException();
 	}
 	public function bind($dn,$server)
 	{
@@ -67,6 +68,9 @@ var_dump("failing!");exit;
 	}
 	public function onDNMVCSException($ex)
 	{
+//fwrite(STDERR,"-------------------".get_class($ex).":".$ex->getMessage().":".$ex->getCode()."\n");
+//fwrite(STDERR,"-------------------".$ex->getTraceAsString()."\n");
+
 		return DNMVCS::G()->onException($ex);
 	}
 	public function getDymicClasses()
@@ -84,10 +88,6 @@ var_dump("failing!");exit;
 		}
 		$classes=$classes + $ext_class;
 		return $classes;
-	}
-	public function getStaticClasses()
-	{
-		//
 	}
 	public function beforeInit()
 	{
