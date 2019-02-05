@@ -1,3 +1,41 @@
+1.0.8 到 1.0.9变更
+大量的调整
+DBExt => DBAdvance
+Pager 集中 SG 方法到一个方法，方便迁移
+文档结构大调整
+RouteHookeRewriteAndMap 收入 DNMVCExt
+SuperGlobal 改为 DNSuperGlobal 收入 DNMVCS 
+DNSuperGlobal 增加了 _FILES 的实现。增加了 globals 语法， static 语法 类内 static 语法替换
+RouteHookSuperGlobal 不需要了
+拆解 DNSwooleHttpServer 成 SwooleHttpServer 和 DNMVCS 无关系
+两者关系现在用 DNSwooleBridge 连接
+SystemWrapper 融合进 DNMVCS ，并且在 SwooleHttpServer 有自己的实现。-- 两者共同实现 DNSystemWrapperInterface;
+OneFile 模式的 SG::G() 也都改为 DN::SG();
+DNDI 移入 DNMVCExt
+spl_autoload_register 都不再用闭包，以增加 SwooleHttpServer 的方便
+DNRoute 主功能重构。一大堆修改，需要多测试。为自动运行模式增加了效率。
+default_method_for_miss
+base_controller_class
+_ShowBlock 修复
+添加回 GetDBHandler
+调整 DNRuntimeState
+exit 用 exit_system  替代
+HasInclude 移动到Toolkit
+OneFileMode 调整
+添加了 __callStatic 从当前类替换的类的静态方法里找
+Run 函数里添加了 beforeRouteRun,删除 before_run_handler
+RouteHookMapAndRewrite 重构
+RouteHookOneFileMode 重构，利用了 RouteHookOneFileMode 部分代码
+RouteHookDirectoryMode  添加了 mode_dir
+DBReusePoolProxy 原来 DBPoolProxy ，移动到 ext 里
+FacadesAutoLoader FacadesBase  添加了 facades 门面的实现
+
+
+SetSessionName 已经取消
+module-action 方式已处理 rewrite.
+
+2019-02-05 20:02:14
+----
 1.0.7 到 1.0.8变更
 DBExt 单独提成文件 ,MedooDB 因此变更
 DNDI 可外放
