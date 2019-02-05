@@ -89,7 +89,9 @@ class SwooleCoroutineSingleton
 
 	public static function ReplaceDefaultSingletonHandler()
 	{
-		define('DNMVCS_DNSINGLETON_REPALACER' ,self::class . '::'.'GetInstance');
+		if(!defined('DNMVCS_DNSINGLETON_REPALACER')){
+			define('DNMVCS_DNSINGLETON_REPALACER' ,self::class . '::'.'GetInstance');
+		}
 	}
 	
 	public static function DumpString()
@@ -386,6 +388,11 @@ class SwooleHttpServer
 	protected $static_root=null;
 	protected $auto_clean_autoload=true;
 	protected $old_autoloads=[];
+	
+	public static function ReplaceDefaultSingletonHandler()
+	{
+		SwooleCoroutineSingleton::ReplaceDefaultSingletonHandler();
+	}
 	
 	protected function onHttpRun($request,$response)
 	{

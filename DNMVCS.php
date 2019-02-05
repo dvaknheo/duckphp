@@ -13,6 +13,7 @@ trait DNSingleton
 			$callback=DNMVCS_DNSINGLETON_REPALACER;
 			return ($callback)(static::class,$object);
 		}
+//fwrite(STDOUT,"SINGLETON ". static::class ."\n");
 		if($object){
 			self::$_instances[static::class]=$object;
 			return $object;
@@ -1366,6 +1367,7 @@ class DNMVCS
 			
 			'ext'=>[],
 			'swoole'=>[],
+			'swoole_httpd_options'=>[],
 		];
 	public $options=[];
 	public $isDev=false;
@@ -1428,12 +1430,13 @@ class DNMVCS
 		$ret=call_user_func_array([$class,$name], $arguments);
 		return $ret;
 	}
-	protected function initOptions($options=[])
+	protected function mergeOptions($options=[])
 	{
-		$this->options=array_merge(DNAutoLoader::DEFAULT_OPTIONS,DNRoute::DEFAULT_OPTIONS,self::DEFAULT_OPTIONS,$options);
 		$autoloader_options=DNAutoLoader::G()->options;
-		$this->options=array_merge($this->options,$autoloader_options); 
-		
+		return array_merge(DNAutoLoader::DEFAULT_OPTIONS,DNRoute::DEFAULT_OPTIONS,static::DEFAULT_OPTIONS,$options,$autoloader_options);
+	}
+	protected function initOptions($options)
+	{
 		$this->path=$this->options['path'];
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
 		$this->isDev=$this->options['is_dev'];
@@ -1453,12 +1456,22 @@ class DNMVCS
 		if(!$base_class || !class_exists($base_class)){return null;}
 		return DNMVCS::G($base_class::G())->init($options);
 	}
+	protected function beforeInit()
+	{
+		if(!empty($this->options['httpd_options'])) {
+			DNSwooleHttpServer::G()->beforeInit();
+		}
+	}
 	//@override me
 	public function init($options=[])
 	{
-		DNAutoLoader::G()->init($options)->run();
 		$skip_check_override=$options['skip_check_override']??false;
 		unset($options['skip_check_override']);
+		
+		DNAutoLoader::G()->init($options)->run();
+		$this->options=$this->mergeOptions($options);
+		$this->beforeInit();
+		
 		if(!$skip_check_override){
 			$object=$this->checkOverride($options);
 			if($object){return $object;}
@@ -1509,7 +1522,7 @@ class DNMVCS
 		$db_close_handler=$this->options['db_close_handler']?:[DB::class,'CloseDBInstance'];
 		$dbm->setDBHandler($db_create_handler,$db_close_handler);
 	}
-	protected function initMisc()
+	public function initMisc()
 	{
 		$this->isDev=DNConfiger::G()->_Setting('is_dev')??$this->isDev;
 		
@@ -1517,9 +1530,17 @@ class DNMVCS
 			DNMVCSExt::G()->afterInit($this);
 		}
 		DNSuperGlobal::G()->init();
+		
+		if(!empty($this->options['httpd_options'])) {
+			DNSwooleHttpServer::G()->afterInit();
+		}
 	}
 	protected function beforeMiscRun()
 	{
+		if(!empty($this->options['httpd_options'])) {
+			$flag=DNSwooleHttpServer::G()->beforeRun();
+			if($flag){ return true; }
+		}
 		if(defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')){
 			if(!$this->is_system_wrapper_installed){
 				$installer=DNMVCS_SYSTEM_WRAPPER_INSTALLER;
@@ -1527,10 +1548,11 @@ class DNMVCS
 				$this->is_system_wrapper_installed=true;
 			}
 		}
-		if(defined('DNMVCS_DNSUPERGLOBAL_REPALACER')){	
+		
+		if(defined('DNMVCS_DNSUPERGLOBAL_REPALACER')){
 			DNSuperGlobal::G(call_user_func([DNMVCS_DNSUPERGLOBAL_REPALACER,'G']));
 		}
-		
+		return true;
 	}
 	protected function beforeRouteRun(DNRoute $route)
 	{
@@ -1556,15 +1578,17 @@ class DNMVCS
 		
 		$route->is_server_data_load=true;
 	}
+	
 	public function run()
 	{
+		$ret=true;
 		DNRuntimeState::G()->setState();
-		$this->beforeMiscRun();	
-		
-		$route=DNRoute::G();
-		$this->beforeRouteRun($route);		
-		$ret=$route->run();
-		
+		$flag=$this->beforeMiscRun();	
+		if($flag){
+			$route=DNRoute::G();
+			$this->beforeRouteRun($route);		
+			$ret=$route->run();
+		}
 		DNRuntimeState::G()->unsetState();
 		return $ret;
 	}

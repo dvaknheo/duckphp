@@ -548,8 +548,8 @@ const DNRoute::DEFAULT_OPTIONS=[
 		'namespace_controller'=>'MY\Controller',    //controller 的命名空间 MY\Controller
 		'default_controller_class'=>'DNController', //默认 controller 名字为 DNController
 		'disable_default_class_outside'=>false,     // 屏蔽  Main/index  第二访问模式
-	'base_controller_class',
-	'default_method_for_miss'
+	'base_controller_class'=>'',		// 必须基于某类
+	'default_method_for_miss'=>'',		// 丢失方法时候执行的方法
 ];
 ```
 
@@ -559,53 +559,62 @@ const DNRoute::DEFAULT_OPTIONS=[
 	default_controller_class 可以设置为空
 
 ## 全部默认选项
+使用
+var_export(\DNMVCS\DNMVCS::G()->init()->options);
+的结果 ,把动态的 path 去掉，其他是固定的
 ```php
-const DEFAULT_OPTIONS=[
-			'path'=>null,
-			
-			'namespace'=>'MY',
-			'path_namespace'=>'app',
-			
-			'with_no_namespace_mode'=>true,
-			'path_no_namespace_mode'=>'app',
-
-			'skip_system_autoload'=>false,
-			'skip_app_autoload'=>false,
-
-			'enable_paramters'=>false,
-			'prefix_no_namespace_mode'=>'',
-			'path_controller'=>'app/Controller',
-			'namespace_controller'=>'Controller',
-			'default_controller_class'=>'DNController',
-			
-			'enable_post_prefix'=>true,
-			'prefix_post' => 'do_',
-			'disable_default_class_outside'=>false,
-			
-			'base_class'=>'Base\App',
-			'path_view'=>'view',
-			'path_config'=>'config',
-			'path_lib'=>'lib',
-			
-			'is_dev'=>false,
-			'all_config'=>[],
-			'setting'=>[],
-			'setting_file_basename'=>'setting',
-			
-			'db_create_handler'=>'',
-			'db_close_handler'=>'',
-			
-			'rewrite_map'=>[],
-			'route_map'=>[],
-			
-			'error_404'=>'_sys/error-404',
-			'error_500'=>'_sys/error-500',
-			'error_exception'=>'_sys/error-exception',
-			'error_debug'=>'_sys/error_debug',
-			
-			'ext'=>[],
-			'swoole'=>[],
-		];
+array (
+  'path' => null,
+  'namespace' => 'MY',
+  'path_namespace' => 'app',
+  'with_no_namespace_mode' => true,
+  'path_no_namespace_mode' => 'app',
+  'skip_system_autoload' => false,
+  'skip_app_autoload' => false,
+  'enable_paramters' => false,
+  'prefix_no_namespace_mode' => '',
+  'path_controller' => 'app/Controller',
+  'namespace_controller' => 'Controller',
+  'default_controller_class' => 'DNController',
+  'default_method_for_miss' => NULL,
+  'base_controller_class' => NULL,
+  'enable_post_prefix' => true,
+  'prefix_post' => 'do_',
+  'disable_default_class_outside' => false,
+  'base_class' => 'Base\\App',
+  'path_view' => 'view',
+  'path_config' => 'config',
+  'path_lib' => 'lib',
+  'is_dev' => false,
+  'all_config' => 
+  array (
+  ),
+  'setting' => 
+  array (
+  ),
+  'setting_file_basename' => 'setting',
+  'db_create_handler' => '',
+  'db_close_handler' => '',
+  'database_list' => 
+  array (
+  ),
+  'rewrite_map' => 
+  array (
+  ),
+  'route_map' => 
+  array (
+  ),
+  'error_404' => '_sys/error-404',
+  'error_500' => '_sys/error-500',
+  'error_exception' => '_sys/error-exception',
+  'error_debug' => '_sys/error_debug',
+  'ext' => 
+  array (
+  ),
+  'swoole' => 
+  array (
+  ),
+)
 ```
 # 第四章 DNMVCS 核心类
 这一章节是说明 DNMVCS.php 里的 DNMVCS 核心类，和附属组件类。
