@@ -1251,9 +1251,18 @@ DNAutoLoader 做了防多次加载和多次初始化。
 ## 扩展选项
 ```php
 const DEFAULT_OPTIONS_EX=[
-	'key_for_action'=>'_r', //act 这个选项，不用 path_info 了，我们用 $_REQUEST['act']，
-	'key_for_module'=>'',   // 用于前缀，适用于多模块。
+
+	'mode_onefile'=>false,				 //单一文件模式
+	'mode_onefile_key_for_action'=>'_r', //act 这个选项，不用 path_info 了，我们用 $_REQUEST['act']，
+	'mode_onefile_key_for_module'=>'',   // 用于前缀，适用于多模块。
 	
+	'mode_dir'=>false,					// 目录文件模式
+	'mode_dir_basepath'=>null,
+	'mode_dir_index_file'=>'',
+	'mode_dir_use_path_info'=>true,
+	'mode_dir_key_for_module'=>true,
+	'mode_dir_key_for_action'=>true,
+
 	'use_function_view'=>false,   //不用 view 文件了，我们用 view_$xx 来表示view
 		'function_view_head'=>'view_header', // 页眉函数
 		'function_view_foot'=>'view_footer', // 页脚函数
@@ -1263,10 +1272,15 @@ const DEFAULT_OPTIONS_EX=[
 	'use_common_autoloader'=>false,  // 额外 loader ，多工程共享配置用
 		'fullpath_config_common'=>'',  //配合上面的使用， 公共文件会被本工程覆盖
 	'use_strict_db'=>false, // 严格模式
-	'session_auto_start' =>false, //自动开启 session 
-	'session_name'=>'DNSESSION',
-	'use_facade'=>false,  // 你们要的门面函数 facade
-	'facade_map'=>[],
+	'use_session_auto_start' =>false, //自动开启 session 
+	'session_auto_start_name'=>'DNSESSION',
+
+	'use_facades'=>false,  // 你们要的门面函数 facades
+	'facades_namespace'=>'Facades',
+	'facades_map'=>[],
+	
+	'db_reuse_size'=>0,             // 大于0表示复用数据库连接
+	'db_reuse_timeout'=>5,          // 复用数据库连接超时秒数
 ];
 ```
 ## 不通过 path_info 的路由
@@ -1280,8 +1294,8 @@ key_for_module key_for_action
 严格模式下那些 **新手** 就不能乱来了。
 
 ## 门面 Facade
-use_facade
-facade_map
+use_facades
+facades_map
 
 怎么使用
 项目里
@@ -1502,12 +1516,14 @@ const DEFAULT_OPTIONS=[
 		
 		'host'=>'0.0.0.0',      // IP
 		'port'=>0,              //端口
+
 		'http_handler_basepath'=>'',
 		'http_handler_root'=>null,      // php 的目录和静态目录的不相同，留空
 		'http_handler_file'=>null,      // 启动文件 留空将会使用 http_handler
 		'http_handler'=>null,           // 启动方法，
 		'http_exception_handler'=>null, // 异常处理方法,DNMVCS 已经占用  // http_handler_root 的异常也是这里处理
-		
+		'use_http_handler_root'=>false,	// 复用 http_handler_root 404 后会从目录文件里载入
+
 		//* websocket 在测试中。未稳定
 		'websocket_open_handler'=>null,  //websocket 打开
 		'websocket_handler'=>null,          //websocket 
@@ -1662,9 +1678,7 @@ swoole 下， DNMVCS  入口选项 ['swoole'] 的选项
 ```php
 const DEFAULT_DN_OPTIONS=[
 		'not_empty'=>true,  			// 用于数组不空
-		'db_reuse_size'=>0,             // 大于0表示复用数据库连接
-		'db_reuse_timeout'=>5,          // 复用数据库连接超时秒数
-		'use_http_handler_root'=>false,	// 复用 http_handler_root 404 后会从目录文件里载入
+
 	];
 ```
 	public function init($options,$server)
