@@ -21,7 +21,14 @@ trait DNDI
 class RouteHookMapAndRewrite
 {
 	use DNSingleton;
+	protected $rewrite_map;
+	protected $route_map;
 	
+	public function init($rewrite_map,$route_map)
+	{
+		$this->rewrite_map=$rewrite_map;
+		$this->route_map=$route_map;
+	}
 	public function replaceRegexUrl($input_url,$template_url,$new_url)
 	{
 		if(substr($template_url,0,1)!=='~'){	return null; }
@@ -75,8 +82,7 @@ class RouteHookMapAndRewrite
 	}
 	public function filteRewrite($input_url)
 	{
-		$rewriteMap=DNMVCS::G()->options['rewrite_map'];
-		foreach($rewriteMap as $template_url=>$new_url){
+		foreach($this->rewrite_map as $template_url=>$new_url){
 			$ret=$this->replaceNormalUrl($input_url,$template_url,$new_url);
 			if($ret!==null){return $ret;}
 			$ret=$this->replaceRegexUrl($input_url,$template_url,$new_url);
@@ -84,10 +90,9 @@ class RouteHookMapAndRewrite
 		}
 		return null;
 	}
-	protected function matchRoute($pattern_url,$path_info,$route)
+	protected function matchRoute($pattern_url,$path_info,$route,$enable_paramters)
 	{
 		$request_method=$route->request_method;
-		$enable_paramters=DNMVCS::G()->options['enable_paramters'];
 		
 		$pattern='/^(([A-Z_]+)\s+)?(~)?\/?(.*)\/?$/';
 		$flag=preg_match($pattern,$pattern_url,$m);
@@ -122,8 +127,10 @@ class RouteHookMapAndRewrite
 	protected function getRouteHandelByMap($route,$routeMap)
 	{
 		$path_info=$route->path_info;
+		$enable_paramters=DNMVCS::G()->options['enable_paramters'];
+		
 		foreach($routeMap as $pattern =>$callback){
-			if(!$this->matchRoute($pattern,$path_info,$route)){continue;}
+			if(!$this->matchRoute($pattern,$path_info,$route,$enable_paramters)){continue;}
 			if(!is_string($callback)){return $callback;}
 			if(false!==strpos($callback,'->')){
 				list($class,$method)=explode('->',$callback);
@@ -150,9 +157,7 @@ class RouteHookMapAndRewrite
 		$query=parse_url($uri,PHP_URL_QUERY);
 		$query=$query?'?'.$query:'';
 		$input_url=$path_info.$query;
-		
-		$rewriteMap=DNMVCS::G()->options['rewrite_map'];
-		foreach($rewriteMap as $template_url=>$new_url){
+		foreach($this->rewrite_map as $template_url=>$new_url){
 			$url=$this->replaceNormalUrl($input_url,$template_url,$new_url);
 			if($url!==null){
 				$this->changeRouteUrl($route,$url);
@@ -832,7 +837,7 @@ class DNMVCSExt
 	public function _ExitJson($ret)
 	{
 		DNMVCS::header('Content-Type:text/json');
-		DNMVCS::G()->onBeforeShow([],'');
+		// DNMVCS::G()->onBeforeShow([],'');
 		echo json_encode($ret,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
 		DNMVCS::exit_system();
 	}
@@ -842,11 +847,13 @@ class DNMVCSExt
 			//something  wrong
 			DNMVCS::exit_system();
 		}
+		// DNMVCS::G()->onBeforeShow([],'');
 		DNMVCS::header('location: '.$url,true,302);
 		DNMVCS::exit_system();
 	}
-	public function dealMapAndRewrite($route)
+	public function dealMapAndRewrite($route,$rewrite_map,$route_map)
 	{
+		RouteHookMapAndRewrite::G()->init($rewrite_map,$route_map);
 		$route->addRouteHook([RouteHookMapAndRewrite::G(),'hook'],true); 
 	}
 }

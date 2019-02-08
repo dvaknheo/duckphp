@@ -17,7 +17,8 @@
 MVC 结构的时候，你们业务逻辑放在哪里？
 新手放在 Controller ，后来的放到 Model ，后来觉得 Model 和数据库混一起太乱， 搞个 DAO 层吧。
 可是 一般的 PHP 框架不提供这个功能。
-所以，Service 按业务走，Model 层按数据库走，这就是 DNMVCS 的理念。
+所以，Service 按业务走，Model 层按数据库走，Controller 层按 URL 地址走，View 按页面走，这就是 DNMVCS 的理念。
+
 DNMVCS 的最大意义是思想，只要思想在，什么框架你都可以用
 你可以不用 DNMVCS 实现 Controller-Service-Model 架构。
 只要有这个思想就是理念成功了。

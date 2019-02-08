@@ -6,10 +6,11 @@ class DNSwooleHttpServer
 	/////////////////////////
 	protected $old_error_404;
 	protected $lock_init=false;
-	protected $lock_run=false;
+	protected $running_in_swoole=false;
 
 	public function init($options,$server=null)
 	{
+		//for 404 re in;
 		if(get_class(DNMVCS::G())===static::class){
 			return $this->initRunningModeDNMVCS($options);
 		}
@@ -17,15 +18,14 @@ class DNSwooleHttpServer
 	}
 	public function initRunningModeDNMVCS($options)
 	{
-	
 		//SwooleCoroutineSingleton::Dump();
+		SwooleHttpServer::CloneInstance(DNAutoLoader::class);
+		SwooleHttpServer::CloneInstance(DNMVCS::class);
+		SwooleHttpServer::CloneInstance(DNConfiger::class);
+		SwooleHttpServer::CloneInstance(DNDBManager::class);
 		
-		SwooleCoroutineSingleton::CloneInstance(DNConfiger::class);
-		SwooleCoroutineSingleton::CloneInstance(DNAutoLoader::class);
-		SwooleCoroutineSingleton::CloneInstance(DNMVCS::class);
-		SwooleCoroutineSingleton::CloneInstance(DNRoute::class);
-		SwooleCoroutineSingleton::CloneInstance(DNDBManager::class);
-		SwooleCoroutineSingleton::CloneInstance(DNSuperGlobal::class);
+		SwooleHttpServer::CloneInstance(DNRoute::class);
+		SwooleHttpServer::CloneInstance(DNSuperGlobal::class); // think more
 		
 
 		DNAutoLoader::G(new DNAutoLoader());
@@ -49,23 +49,14 @@ class DNSwooleHttpServer
 			DNMVCS::G()->onShow404();
 			return;
 		}
-		SwooleCoroutineSingleton::CloneInstance(DNMVCS::class);
-		//  save base class;
+		SwooleHttpServer::CloneInstance(DNMVCS::class);
+		//$this->saved_dn=DNMVCS::G();
 		DNMVCS::G(static::G()); // ok we passed the fake  object;
 		
 		list($path,$document_root)=SwooleHttpServer::G()->prepareRootMode();
 		$flag=SwooleHttpServer::G()->runHttpFile($path,$document_root);
-		//throw new SwooleException();
 	}
-	public function bind($dn,$server)
-	{
-		$server->http_handler=$server->options['http_handler']=[$dn,'run'];
-		$server->http_exception_handler=$server->options['http_exception_handler']=[$this,'onDNMVCSException'];
-		
-		$this->old_error_404=$dn->options['error_404'];
-		$dn->options['error_404']=[$this,'onShow404'];
-		return $this;
-	}
+
 	public function onDNMVCSException($ex)
 	{
 //fwrite(STDERR,"-------------------".get_class($ex).":".$ex->getMessage().":".$ex->getCode()."\n");
@@ -99,7 +90,9 @@ class DNSwooleHttpServer
 		$autoloader=DNAutoLoader::G();
 		$class=static::class;
 		$self=$class::G();
-		SwooleHttpServer::ReplaceDefaultSingletonHandler();
+		
+		//clone singleton;
+		SwooleHttpServer::ReplaceDefaultSingletonHandler(); 
 		
 		DNAutoLoader::G($autoloader);
 		DNMVCS::G($dn);
@@ -112,21 +105,30 @@ class DNSwooleHttpServer
 		SwooleHttpServer::G()->init($server_options,null);
 		$this->bind(DNMVCS::G(),SwooleHttpServer::G());
 	}
-	
+	protected function bind($dn,$server)
+	{
+		$this->old_error_404=$dn->options['error_404'];
+		$dn->options['error_404']=[$this,'onShow404'];
+		
+		$server->http_handler=$server->options['http_handler']=[$dn,'run'];
+		$server->http_exception_handler=$server->options['http_exception_handler']=[$this,'onDNMVCSException'];
+		
+		return $this;
+	}
 	public function beforeRun()
 	{
-		if($this->lock_run){
-			$classes=$this->getDymicClasses();
-			foreach($classes as $class){
-				SwooleCoroutineSingleton::CloneInstance($class);
-			}
-			return false;
+		if(!$this->running_in_swoole){
+			$this->running_in_swoole=true;
+			
+			SwooleHttpServer::G()->run();
+			// halt. not return;
+			return true;
 		}
-		$this->lock_run=true;
-		SwooleHttpServer::G()->run();
-		// halt. not return;
-		return true;
-		
+		$classes=$this->getDymicClasses();
+		foreach($classes as $class){
+			SwooleHttpServer::CloneInstance($class);
+		}
+		return false;
 	}
 	public static function RunWithServer($server_options,$dn_options=[],$server=null)
 	{

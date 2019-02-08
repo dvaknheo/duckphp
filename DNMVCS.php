@@ -950,14 +950,17 @@ trait DNMVCS_Glue
 	{
 		return DNRuntimeState::G()->isRunning();
 	}
+	//decraped
 	public function setDBHandler($db_create_handler,$db_close_handler=null)
 	{
 		return DNDBManager::G()->setDBHandler($db_create_handler,$db_close_handler);
 	}
+	//decraped
 	public function setBeforeGetDBHandler($before_get_db_handler)
 	{
 		return DNDBManager::G()->setBeforeGetDBHandler($before_get_db_handler);
 	}
+	//
 	public static function SG()
 	{
 		return DNSuperGlobal::G();
@@ -1330,7 +1333,49 @@ trait DNMVCS_SystemWrapper
 		return $ret;
 	}
 }
-
+trait DNMVCS_RunMode
+{
+	public static function RunWithoutPathInfo($options=[])
+	{
+		$default_options=[
+			'ext'=>[
+				'mode_onefile'=>true,
+				'mode_onefile_key_for_action'=>'_r',
+			],
+		];
+		$options=array_replace_recursive($default_options,$options);
+		return static::G()->init($options)->run();
+	}
+	public static function RunOneFileMode($options=[],$init_function=null)
+	{
+		$path=realpath(getcwd().'/');
+		$default_options=[
+			'path'=>$path,
+			'setting_file_basename'=>'',
+			'base_class'=>'',
+			'ext'=>[
+				'mode_onefile'=>true,
+				'mode_onefile_key_for_action'=>'act',
+				
+				'use_function_dispatch'=>true,
+				'use_function_view'=>true,
+				
+				'use_session_auto_start'=>true,
+			]
+		];
+		$options=array_replace_recursive($default_options,$options);
+		static::G()->init($options);
+		if($init_function){
+			($init_function)();
+		}
+		return static::G()->run();
+	}
+	public static function RunAsServer($server_options,$dn_options,$server=null)
+	{
+		DNAutoLoader::G()->init($dn_options)->run();
+		return DNSwooleHttpServer::RunWithServer($server_options,$dn_options,$server);
+	}
+}
 class DNMVCS
 {
 	const VERSION = '1.0.9';
@@ -1367,7 +1412,7 @@ class DNMVCS
 			
 			'ext'=>[],
 			'swoole'=>[],
-			'swoole_httpd_options'=>[],
+			'httpd_options'=>[],
 		];
 	public $options=[];
 	public $isDev=false;
@@ -1377,50 +1422,6 @@ class DNMVCS
 	
 	protected $is_system_wrapper_installed=false;
 	
-	public static function RunQuickly($options=[])
-	{
-		return static::G()->init($options)->run();
-	}
-	public static function RunWithoutPathInfo($options=[])
-	{
-		$default_options=[
-			'ext'=>[
-				'mode_onefile'=>true,
-				'mode_onefile_key_for_action'=>'_r',
-			],
-		];
-		$options=array_replace_recursive($default_options,$options);
-		return static::G()->init($options)->run();
-	}
-	public static function RunOneFileMode($options=[],$init_function=null)
-	{
-		$path=realpath(getcwd().'/');
-		$default_options=[
-			'path'=>$path,
-			'setting_file_basename'=>'',
-			'base_class'=>'',
-			'ext'=>[
-				'mode_onefile'=>true,
-				'mode_onefile_key_for_action'=>'act',
-				
-				'use_function_dispatch'=>true,
-				'use_function_view'=>true,
-				
-				'use_session_auto_start'=>true,
-			]
-		];
-		$options=array_replace_recursive($default_options,$options);
-		static::G()->init($options);
-		if($init_function){
-			($init_function)();
-		}
-		static::G()->run();
-	}
-	public static function RunAsServer($server_options,$dn_options,$server=null)
-	{
-		DNAutoLoader::G()->init($dn_options)->run();
-		DNSwooleHttpServer::RunWithServer($server_options,$dn_options,$server);
-	}
 	public static function __callStatic($name, $arguments) 
 	{
 		$class=get_class(static::G());
@@ -1429,6 +1430,10 @@ class DNMVCS
 		}
 		$ret=call_user_func_array([$class,$name], $arguments);
 		return $ret;
+	}
+	public static function RunQuickly($options=[])
+	{
+		return static::G()->init($options)->run();
 	}
 	protected function mergeOptions($options=[])
 	{
@@ -1458,6 +1463,7 @@ class DNMVCS
 	}
 	protected function beforeInit()
 	{
+		if(static::class!==self::class){return;}
 		if(!empty($this->options['httpd_options'])) {
 			DNSwooleHttpServer::G()->beforeInit();
 		}
@@ -1572,8 +1578,8 @@ class DNMVCS
 			}
 		}
 		
-		if($this->options['rewrite_map'] || $this->options['route_map'] ){
-			DNMVCSExt::G()->dealMapAndRewrite($route);
+		if( $this->options['rewrite_map'] || $this->options['route_map'] ){
+			DNMVCSExt::G()->dealMapAndRewrite($route,$this->options['rewrite_map'],$this->options['route_map']);
 		}
 		
 		$route->is_server_data_load=true;
