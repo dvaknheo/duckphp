@@ -130,10 +130,9 @@ class DNSwooleHttpServer
 		}
 		return false;
 	}
-	public static function RunWithServer($server_options,$dn_options=[],$server=null)
+	public static function RunWithServer($dn_options=[],$server=null)
 	{
-		$server_options['server']=$server;
-		$dn_options['httpd_options']=$server_options;
+		$dn_options['httpd_options']['server']=$server;
 		return DNMVCS::G()->init($dn_options)->run();
 	}
 }

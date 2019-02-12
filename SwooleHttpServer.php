@@ -183,7 +183,7 @@ class SwooleContext
 		}
 		$this->shutdown_function_array=[];
 	}
-	public function regShutDown($call_data)
+	public function regShutdown($call_data)
 	{
 		$this->shutdown_function_array[]=$call_data;
 	}
@@ -191,7 +191,7 @@ class SwooleContext
 	{
 		return $this->frame->opcode == 0x08?true:false;
 	}
-	public function _header(string $string, bool $replace = true , int $http_status_code =0)
+	public function header(string $string, bool $replace = true , int $http_status_code =0)
 	{
 		if($http_status_code){
 			$this->response->status($http_status_code);
@@ -199,6 +199,10 @@ class SwooleContext
 		if(strpos($string,':')===false){return;} // 404,500 so on
 		list($key,$value)=explode(':',$string);
 		SwooleContext::G()->response->header($key, $value);
+	}
+	public static function setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
+	{
+		return static::G()->response->cookie($key,$value,$expire,$path,$domain,$secure,$httponly );
 	}
 }
 class SwooleException extends \Exception
@@ -242,27 +246,25 @@ trait SwooleHttpServer_Static
 }
 trait SwooleHttpServer_SystemWrapper
 {
-	public $http_exception_handler=null;
 	public static function header(string $string, bool $replace = true , int $http_status_code =0)
 	{
 		return SwooleContext::G()->header($string,$replace,$http_status_code);
 	}
 	public static function setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
 	{
-		return SwooleContext::G()->response->cookie($key,$value,$expire,$path,$domain,$secure,$httponly );
+		return SwooleContext::G()->setcookie($key,$value,$expire,$path,$domain,$secure,$httponly);
 	}
 	public static function exit_system($code=0)
 	{
-		exit($code);
+		return SwooleHttpServer::G()->exit_request($code);
 	}
-	
 	public static function set_exception_handler(callable $exception_handler)
 	{
-		static::G()->http_exception_handler=$exception_handler;
+		return SwooleHttpServer::G()->set_http_exception_handler($exception_handler);
 	}
 	public static function register_shutdown_function(callable $callback,...$args)
 	{
-		SwooleContext::G()->regShutDown(func_get_args());
+		return SwooleContext::G()->regShutDown(func_get_args());
 	}
 	
 	public static function session_start(array $options=[])
@@ -278,14 +280,16 @@ trait SwooleHttpServer_SystemWrapper
 		return SwooleSuperGlobal::G()->session_set_save_handler($handler);
 	}
 	
-	public static function SystemWrapperGetFunctions():array
+	public static function system_wrapper_get_providers():array
 	{
 		$ret=[
-			'header'				=>[SwooleContext::G(),'header'],
+			'header'				=>[static::class,'header'],
 			'setcookie'				=>[static::class,'setcookie'],
 			'exit_system'			=>[static::class,'exit_system'],
 			'set_exception_handler'	=>[static::class,'set_exception_handler'],
 			'register_shutdown_function' =>[static::class,'register_shutdown_function'],
+			
+			'superglobal'			=>[SwooleSuperGlobal::class,'G'],
 		];
 		return $ret;
 	}
@@ -390,7 +394,7 @@ class SwooleHttpServer
 			'websocket_handler'=>null,
 			'websocket_exception_handler'=>null,
 			'websocket_close_handler'=>null,
-			'use_http_handler_root'=>true,
+			'use_http_handler_root'=>false,
 		];
 	public $server=null;
 	
@@ -408,7 +412,14 @@ class SwooleHttpServer
 	{
 		SwooleCoroutineSingleton::ReplaceDefaultSingletonHandler();
 	}
-	
+	public function set_http_exception_handler($exception_handler)
+	{
+		$this->http_exception_handler=$exception_handler;
+	}
+	public function exit_request($code=0)
+	{
+		exit($code);
+	}
 	protected function onHttpRun($request,$response)
 	{
 		$this->old_autoloads = spl_autoload_functions();
@@ -448,11 +459,11 @@ class SwooleHttpServer
 			list($path,$document_root)=$this->prepareRootMode();
 			$flag=$this->runHttpFile($path,$document_root);
 			if(!$flag){
-				throw new SwooleException("404 Not Found!",404);
+				throw new Swoole404Exception("404 Not Found!",404);
 			}
 			return;
 		}
-		throw new SwooleException("404 Not Found!",404);
+		throw new Swoole404Exception("404 Not Found!",404);
 		//$this->includeHttpPhpFile($file,$document_root,$path_info);
 	}
 	public function prepareRootMode()
@@ -536,7 +547,7 @@ class SwooleHttpServer
 		if($ex instanceof \Swoole\ExitException){
 			return;
 		}
-		if($ex instanceof SwooleException && $ex->getCode()==404){
+		if($ex instanceof Swoole404Exception){
 			if($this->http_handler && $this->options['use_http_handler_root'] && !$this->auto_clean_autoload){
 				$this->auto_clean_autoload=true;
 				list($path,$document_root)=$this->prepareRootMode();
@@ -640,7 +651,7 @@ class SwooleHttpServer
 			define('DNMVCS_DNSUPERGLOBAL_REPALACER',SwooleSuperGlobal::class);
 		}
 		if(!defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')){
-			define('DNMVCS_SYSTEM_WRAPPER_INSTALLER',static::class .'::' .'SystemWrapperGetFunctions');
+			define('DNMVCS_SYSTEM_WRAPPER_INSTALLER',static::class .'::' .'system_wrapper_get_providers');
 		}
 		return $this;
 	}

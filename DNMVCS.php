@@ -1314,7 +1314,7 @@ trait DNMVCS_SystemWrapper
 		}
 		return register_shutdown_function($callback,...$args);
 	}
-	public function doSystemWrapperInstall(array $funcs=[])
+	public function system_wrapper_replace(array $funcs=[])
 	{
 		if($this->is_system_wrapper_installed){ return false; }
 		$this->is_system_wrapper_installed=true;
@@ -1326,13 +1326,7 @@ trait DNMVCS_SystemWrapper
 		if(isset($funcs['register_shutdown_function'])){ $this->shutdown_handler=$funcs['register_shutdown_function']; }
 		return true;
 	}
-	public static function SystemWrapperInstall($callback):bool
-	{
-		if(!$callback){return false;}
-		$funcs=($callback)();
-		return static::G()->doSystemWrapperInstall($funcs);
-	}
-	public static function SystemWrapperGetFunctions():array
+	public static function system_wrapper_get_providers():array
 	{
 		$ret=[
 			'header'				=>[static::class,'header'],
@@ -1340,6 +1334,8 @@ trait DNMVCS_SystemWrapper
 			'exit_system'			=>[static::class,'exit_system'],
 			'set_exception_handler'	=>[static::class,'set_exception_handler'],
 			'register_shutdown_function' =>[static::class,'register_shutdown_function'],
+			
+			'superglobal' =>[DNSuperGloabl::class,'G'],
 		];
 		return $ret;
 	}
@@ -1381,10 +1377,10 @@ trait DNMVCS_RunMode
 		}
 		return static::G()->run();
 	}
-	public static function RunAsServer($server_options,$dn_options,$server=null)
+	public static function RunAsServer($dn_options,$server=null)
 	{
 		DNAutoLoader::G()->init($dn_options)->run();
-		return DNSwooleHttpServer::RunWithServer($server_options,$dn_options,$server);
+		return DNSwooleHttpServer::RunWithServer($dn_options,$server);
 	}
 }
 class DNMVCS
@@ -1559,10 +1555,12 @@ class DNMVCS
 			if($flag){ return true; }
 		}
 		if(defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')){
-			static::SystemWrapperInstall(DNMVCS_SYSTEM_WRAPPER_INSTALLER);
-		}
-		if(defined('DNMVCS_DNSUPERGLOBAL_REPALACER')){
-			DNSuperGlobal::G(call_user_func([DNMVCS_DNSUPERGLOBAL_REPALACER,'G']));
+			$callback=DNMVCS_SYSTEM_WRAPPER_INSTALLER;
+			$funcs=($callback)();
+			$this->system_wrapper_replace($funcs);
+			if(isset($funcs['superglobal'])){
+				DNSuperGlobal::G(($funcs['superglobal'])());
+			}
 		}
 		return true;
 	}
