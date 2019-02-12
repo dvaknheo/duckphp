@@ -932,6 +932,10 @@ trait DNMVCS_Glue
 	{
 		return DNAutoLoader::G()->assignPathNamespace($path,$namespace);
 	}
+	public static function Env()
+	{
+		return static::G()->env;
+	}
 	public static function Developing()
 	{
 		return static::G()->isDev;
@@ -1379,8 +1383,8 @@ trait DNMVCS_RunMode
 	}
 	public static function RunAsServer($dn_options,$server=null)
 	{
-		DNAutoLoader::G()->init($dn_options)->run();
-		return DNSwooleHttpServer::RunWithServer($dn_options,$server);
+		$dn_options['httpd_options']['swoole_server']=$server;
+		return static::G()->init($dn_options)->run();
 	}
 }
 class DNMVCS
@@ -1424,6 +1428,7 @@ class DNMVCS
 		];
 	public $options=[];
 	public $isDev=false;
+	public $env='';
 	
 	protected $path=null;
 	protected $path_lib=null;
@@ -1549,10 +1554,10 @@ class DNMVCS
 	}
 	protected function beforeMiscRun()
 	{
+		//TODO rename to RunOnce
 		if( !static::InSwoole()){ return true;}
 		if(!empty($this->options['httpd_options'])) {
-			$flag=DNSwooleHttpServer::G()->beforeRun();
-			if($flag){ return true; }
+			DNSwooleHttpServer::G()->beforeRun();
 		}
 		if(defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')){
 			$callback=DNMVCS_SYSTEM_WRAPPER_INSTALLER;
@@ -1560,6 +1565,9 @@ class DNMVCS
 			$this->system_wrapper_replace($funcs);
 			if(isset($funcs['superglobal'])){
 				DNSuperGlobal::G(($funcs['superglobal'])());
+			}
+			if(isset($funcs['set_exception_handler'])){
+				$this->set_exception_handler(array($this,'onException'));
 			}
 		}
 		return true;
@@ -1593,12 +1601,15 @@ class DNMVCS
 	{
 		$ret=true;
 		DNRuntimeState::G()->setState();
-		$flag=$this->beforeMiscRun();	
-		if($flag){
-			$route=DNRoute::G();
-			$this->beforeRouteRun($route);		
-			$ret=$route->run();
+		
+		$flag=$this->beforeMiscRun();
+		if(!$flag){
+			DNRuntimeState::G()->unsetState();
+			return true; //not 404
 		}
+		$route=DNRoute::G();
+		$this->beforeRouteRun($route);		
+		$ret=$route->run();
 		DNRuntimeState::G()->unsetState();
 		return $ret;
 	}

@@ -478,9 +478,11 @@ DNMVCS 整合其他框架：
 2. 只改选项实现目的
 3. 调用 DNMVCS 类的静态方法实现目的
 4. 调用 DNMVCS 类的动态方法实现目的
+5. ---- 核心程序员和高级程序员分界线 ----
 6. 调用扩展类，组件类的动态方法实现目的
 7. 继承接管特定类实现目的
 8. 魔改，硬改 DNMVCS 的代码实现目的
+
 
 
 # 第三章 DNMVCS 配置和选项
@@ -528,14 +530,19 @@ const DNMVCS::DEFAULT_OPTIONS=[
 		'db_close_handler' =>'', 		// 关闭DB 类的回调。
 	'database_list'=>[],				// 数据库列表
 
-	'ext'=>[],                          //默认不使用扩展，如果不为空则使用到扩展的 DNMVCSExt
-	'swoole'=>[],                       // swoole_mode 模式的选项，在 swoole 这章里介绍。
+	'ext'=>[],                          // 扩展选项，如果不为空则使用到扩展的 DNMVCSExt
+	'httpd_options'=>[],                // 启用 swoole_mode 模式的选项，在 swoole 这章里介绍。
 ];
 ```
 	关于 base_class 选项。
 	你可以写 DNMVCS 的子类 用这个子类来替换DNMVCS 的入口。留空或类不存在为使用默认DNMVCS 详情见后面。
-	ext 会加载 DNMVCSExt 实现一些扩展性的功能。后面章节会说明。
 
+	ext 配置里 会加载 DNMVCSExt 实现一些扩展性的功能。后面章节会说明。
+	扩展性功能主要有： 几种模式的扩展，单一文件模式，目录模式，无 PathI	nfo模式
+	facades session_auto_start db_reuse
+	关于 httpd_options 选项。 
+	使用 httpd_options 模式，将会开启 swoole 服务器  httpd_options 是 swoole 服务器的配置
+	 
 ```php
 const DNRoute::DEFAULT_OPTIONS=[
 	'path'=>null,                       // 共享基本路径配置
@@ -744,6 +751,9 @@ Import($file)
 	手动导入默认lib 目录下的包含文件
 	实质调用 static::G()->_Import();
 ## 状态判定
+Env()
+
+	返回当前环境平台，默认为空
 Developing()
 
 	判断是否在开发状态。默认读设置里的 is_dev ，
@@ -1310,7 +1320,7 @@ TestService::foo() =>  \My\Service\TestService::G()->foo();
 ```
 如果有
 ```php
-facade_map=[
+facades_map=[
 	'MY\Service\TestService' =>'MY\Service\DebugService' 
 ]
 
@@ -1517,7 +1527,7 @@ SwooleHttpServer  重写了 G 函数的实现，使得做到协程单例。
 ```php
 const DEFAULT_OPTIONS=[
 		'swoole_server'=>null,  // swoole_http_server 对象，留空，则用 host,port 创建
-		'swoole_options'=>[],   //swoole_http_server 的配置，合并如 server
+		'swoole_options'=>[],   // swoole_http_server 的配置，合并如 server
 		
 		'host'=>'0.0.0.0',      // IP
 		'port'=>0,              //端口
@@ -1527,6 +1537,7 @@ const DEFAULT_OPTIONS=[
 		'http_handler_file'=>null,      // 启动文件 留空将会使用 http_handler
 		'http_handler'=>null,           // 启动方法，
 		'http_exception_handler'=>null, // 异常处理方法,DNMVCS 已经占用  // http_handler_root 的异常也是这里处理
+
 		'use_http_handler_root'=>false,	// 复用 http_handler_root 404 后会从目录文件里载入
 
 		//* websocket 在测试中。未稳定
@@ -1536,13 +1547,13 @@ const DEFAULT_OPTIONS=[
 		'websocket_close_handler'=>null,        //websocket 关闭
 ];
 ```
-
+	DNMVCS 的  httpd_options 就这个选项
 ## 三种模式
 如果 http_handler 为空，有 http_handler_file 则直接 include  http_handler_file 运行，和 DNMVCS 系统无关
 
 SwooleHttpServer 运行 DNMVCS 可以有三种模式
 1. http_handler_root
-	这和document_root 一样。读取php文件，然后运行的模式
+	这和 document_root 一样。读取php文件，然后运行的模式
 2. http_handler_file
 	这种模式是把 url 都转向 文件如 index.php 来处理
 3. http_handler
@@ -1555,7 +1566,11 @@ SwooleHttpServer 运行 DNMVCS 可以有三种模式
 DNSwooleHttpServer 可以让你用 echo 直接输出。
 
 http_exception_handler，用于 单文件模式和目录模式，你可以在这里处理 404。
-
+## 预定义宏
+	DNMVCS_DNSINGLETON_REPALACER	耦合连接，协程单例，替换默认实现
+	DNMVCS_SYSTEM_WRAPPER_INSTALLER  耦合连接，协程单例，替换默认实现
+	DN_SWOOLE_SERVER_INIT			Swoole 服务器已经初始化的标志
+	DN_SWOOLE_SERVER_RUNNING		Swoole 服务器已经运行的标志
 ## class SwooleServer
 ## 基本方法
 static G($object=null)
@@ -1667,12 +1682,12 @@ onMessage($server,$frame)
 	public function onShutdown()
 	public function regShutDown($call_data)
 	public function isWebSocketClosing()
-## SuperGlobalSuperGlobal
-	SuperGlobalSuperGlobal 是 Swoole 下 SuperGlobal 类的实现。
+## SwooleSuperGlobal
+	SwooleSuperGlobal 是 Swoole 下 SuperGlobal 类的实现。
 	相关方法，和公开变量，参考见 DNSuperGlobal
 ## SwooleSession
 	SwooleSession 是因为 Swoole 的 session 实现。
-	SwooleSession 被 SuperGlobalSuperGlobal 调用， 调用 SwooleSessionHandler
+	SwooleSession 被 SwooleSuperGlobal 调用， 调用 SwooleSessionHandler
 ## SwooleSessionHandler implements \SessionHandlerInterface
 	如果你要实现自己的 SessionHandler ，用 SwooleServer::session_set_save_handler();替换这个类。
 

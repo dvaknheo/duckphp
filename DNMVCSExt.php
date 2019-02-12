@@ -21,8 +21,8 @@ trait DNDI
 class RouteHookMapAndRewrite
 {
 	use DNSingleton;
-	protected $rewrite_map;
-	protected $route_map;
+	protected $rewrite_map=[];
+	protected $route_map=[];
 	
 	public function init($rewrite_map,$route_map)
 	{

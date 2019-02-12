@@ -420,6 +420,10 @@ class SwooleHttpServer
 	{
 		exit($code);
 	}
+	public function show404()
+	{
+		throw new Swoole404Exception();
+	}
 	protected function onHttpRun($request,$response)
 	{
 		$this->old_autoloads = spl_autoload_functions();
@@ -466,7 +470,7 @@ class SwooleHttpServer
 		throw new Swoole404Exception("404 Not Found!",404);
 		//$this->includeHttpPhpFile($file,$document_root,$path_info);
 	}
-	public function prepareRootMode()
+	protected function prepareRootMode()
 	{
 		$http_handler_root=$this->options['http_handler_basepath'].$this->options['http_handler_root'];
 		$http_handler_root=rtrim($http_handler_root,'/').'/';
@@ -477,7 +481,7 @@ class SwooleHttpServer
 		return [$path,$document_root];
 	}
 	
-	public function runHttpFile($path,$document_root)
+	protected function runHttpFile($path,$document_root)
 	{
 		if(strpos($path,'/../')!==false || strpos($path,'/./')!==false){
 			return false;
@@ -646,10 +650,7 @@ class SwooleHttpServer
 		SwooleCoroutineSingleton::ReplaceDefaultSingletonHandler();
 		static::G($this);
 		SwooleSuperGlobal::G();
-
-		if(!defined('DNMVCS_DNSUPERGLOBAL_REPALACER')){
-			define('DNMVCS_DNSUPERGLOBAL_REPALACER',SwooleSuperGlobal::class);
-		}
+		
 		if(!defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')){
 			define('DNMVCS_SYSTEM_WRAPPER_INSTALLER',static::class .'::' .'system_wrapper_get_providers');
 		}

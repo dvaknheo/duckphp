@@ -1,5 +1,8 @@
 <?php
 namespace DNMVCS;
+
+//use SwooleCoroutineSingleton;
+
 class DNSwooleHttpServer
 {
 	use DNSingleton;
@@ -16,15 +19,16 @@ class DNSwooleHttpServer
 		}
 		return $this;
 	}
-	public function initRunningModeDNMVCS($options)
+	protected function initRunningModeDNMVCS($options)
 	{
 		//SwooleCoroutineSingleton::Dump();
 		SwooleHttpServer::CloneInstance(DNAutoLoader::class);
 		SwooleHttpServer::CloneInstance(DNMVCS::class);
 		SwooleHttpServer::CloneInstance(DNConfiger::class);
 		SwooleHttpServer::CloneInstance(DNDBManager::class);
-		
 		SwooleHttpServer::CloneInstance(DNRoute::class);
+		
+		
 		SwooleHttpServer::CloneInstance(DNSuperGlobal::class); // think more
 		
 
@@ -34,10 +38,10 @@ class DNSwooleHttpServer
 		DNDBManager::G(new DNDBManager());
 		DNRoute::G(new DNRoute());
 		
-		$ret=DNMVCS::G()->init($options);
+		
 		
 		//SwooleCoroutineSingleton::ForkClasses('DNMVCS');
-		
+		$ret=DNMVCS::G()->init($options);
 		return $ret;
 	}
 
@@ -50,19 +54,9 @@ class DNSwooleHttpServer
 			return;
 		}
 		SwooleHttpServer::CloneInstance(DNMVCS::class);
-		//$this->saved_dn=DNMVCS::G();
-		DNMVCS::G(static::G()); // ok we passed the fake  object;
-		
-		list($path,$document_root)=SwooleHttpServer::G()->prepareRootMode();
-		$flag=SwooleHttpServer::G()->runHttpFile($path,$document_root);
-	}
-
-	public function onDNMVCSException($ex)
-	{
-//fwrite(STDERR,"-------------------".get_class($ex).":".$ex->getMessage().":".$ex->getCode()."\n");
-//fwrite(STDERR,"-------------------".$ex->getTraceAsString()."\n");
-
-		return DNMVCS::G()->onException($ex);
+		DNMVCS::G(static::G());
+		// ok we passed the fake  object;
+		SwooleHttpServer::G()->show404();
 	}
 	public function getDymicClasses()
 	{
@@ -111,7 +105,6 @@ class DNSwooleHttpServer
 		$dn->options['error_404']=[$this,'onShow404'];
 		
 		$server->http_handler=$server->options['http_handler']=[$dn,'run'];
-		$server->http_exception_handler=$server->options['http_exception_handler']=[$this,'onDNMVCSException'];
 		
 		return $this;
 	}
@@ -121,7 +114,7 @@ class DNSwooleHttpServer
 			$this->running_in_swoole=true;
 			
 			SwooleHttpServer::G()->run();
-			// halt. not return;
+			DNMVCS::exit_system(0);
 			return true;
 		}
 		$classes=$this->getDymicClasses();
@@ -129,11 +122,6 @@ class DNSwooleHttpServer
 			SwooleHttpServer::CloneInstance($class);
 		}
 		return false;
-	}
-	public static function RunWithServer($dn_options=[],$server=null)
-	{
-		$dn_options['httpd_options']['server']=$server;
-		return DNMVCS::G()->init($dn_options)->run();
 	}
 }
 
