@@ -1239,6 +1239,7 @@ trait DNMVCS_SystemWrapper
 	public $exit_handler=null;
 	public $exception_handler=null;
 	public $shutdown_handler=null;
+	protected $is_system_wrapper_installed=false;
 
 	public static function header($output ,bool $replace = true , int $http_response_code=0)
 	{
@@ -1313,15 +1314,25 @@ trait DNMVCS_SystemWrapper
 		}
 		return register_shutdown_function($callback,...$args);
 	}
-	public function installSystemFunctions(array $funcs=[])
+	public function doSystemWrapperInstall(array $funcs=[])
 	{
+		if($this->is_system_wrapper_installed){ return false; }
+		$this->is_system_wrapper_installed=true;
+		
 		if(isset($funcs['header'])){ $this->header_handler=$funcs['header']; }
 		if(isset($funcs['setcookie'])){ $this->cookie_handler=$funcs['setcookie']; }
 		if(isset($funcs['exit_system'])){ $this->exit_handler=$funcs['exit_system']; }
 		if(isset($funcs['set_exception_handler'])){ $this->exception_handler=$funcs['set_exception_handler']; }
 		if(isset($funcs['register_shutdown_function'])){ $this->shutdown_handler=$funcs['register_shutdown_function']; }
+		return true;
 	}
-	public static function GetReplaceDefaultSystemFunctions()
+	public static function SystemWrapperInstall($callback):bool
+	{
+		if(!$callback){return false;}
+		$funcs=($callback)();
+		return static::G()->doSystemWrapperInstall($funcs);
+	}
+	public static function SystemWrapperGetFunctions():array
 	{
 		$ret=[
 			'header'				=>[static::class,'header'],
@@ -1386,6 +1397,7 @@ class DNMVCS
 	use DNMVCS_Handler;
 	use DNMVCS_Misc;
 	use DNMVCS_SystemWrapper;
+	use DNMVCS_RunMode;
 	
 	const DEFAULT_OPTIONS=[
 			'namespace'=>'MY',
@@ -1420,13 +1432,11 @@ class DNMVCS
 	protected $path=null;
 	protected $path_lib=null;
 	
-	protected $is_system_wrapper_installed=false;
-	
 	public static function __callStatic($name, $arguments) 
 	{
 		$class=get_class(static::G());
 		if($class===static::class){
-			throw new ErrorException("DNMVCS Call to undefined method DNMVCS\DNMVCS::$name()");
+			throw new \ErrorException("DNMVCS Call to undefined method DNMVCS\DNMVCS::$name()");
 		}
 		$ret=call_user_func_array([$class,$name], $arguments);
 		return $ret;
@@ -1543,18 +1553,14 @@ class DNMVCS
 	}
 	protected function beforeMiscRun()
 	{
+		if( !static::InSwoole()){ return true;}
 		if(!empty($this->options['httpd_options'])) {
 			$flag=DNSwooleHttpServer::G()->beforeRun();
 			if($flag){ return true; }
 		}
 		if(defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')){
-			if(!$this->is_system_wrapper_installed){
-				$installer=DNMVCS_SYSTEM_WRAPPER_INSTALLER;
-				($installer)($this);
-				$this->is_system_wrapper_installed=true;
-			}
+			static::SystemWrapperInstall(DNMVCS_SYSTEM_WRAPPER_INSTALLER);
 		}
-		
 		if(defined('DNMVCS_DNSUPERGLOBAL_REPALACER')){
 			DNSuperGlobal::G(call_user_func([DNMVCS_DNSUPERGLOBAL_REPALACER,'G']));
 		}

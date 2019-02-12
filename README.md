@@ -643,33 +643,6 @@ static SG()
 	你可以 DNMVCS::SG()->_GET得到的就是 swoole 也可用的 $_GET 数组。
 	类似的还有 _GET,_POST,_REQUEST,_SERVER，_ENV,_COOKIE,_SESSION
 	注意 GLOBALS 数组不可用。
-## 运行模式
-
-RunQuickly($options=[])
-
-	DNMVCS::RunQuickly ($options) 相当于 DNMVCS::G()->init($options)->run();
-RunOneFileMode($optionss=[],$init_function=null)
-
-	单一文件模式，不需要其他文件，设置内容请放在
-	$options['setting'] 里
-	$init_function 用于初始化之后，run 前调用
-RunWithoutPathInfo()
-
-	不需要 PathInfo 的模式。用 _r 来表示 Path_Info
-RunAsServer($server_options,$dn_options,$server=null)
-
-	运行 swoole http 服务器
-### 单文件模式
-```php
-\DNMVCS\DNMVCS::RunOneFileMode([]);
-```
-不想依赖这么多，一个文件解决？可以。
-### 不用 PATH_INFO 的模式
-
-```php
-\DNMVCS\DNMVCS::RunWithoutPathInfo([]);
-``` 
-用 _r 来做 path_info
 
 ## 常用静态方法
 
@@ -781,6 +754,34 @@ IsRunning
 
 	判断是否已经开始运行。
 	实质调用 DNRuntimeState::G()->isRunning();
+## 运行模式
+
+RunQuickly($options=[])
+
+	DNMVCS::RunQuickly ($options) 相当于 DNMVCS::G()->init($options)->run();
+RunOneFileMode($optionss=[],$init_function=null)
+
+	单一文件模式，不需要其他文件，设置内容请放在
+	$options['setting'] 里
+	$init_function 用于初始化之后，run 前调用
+RunWithoutPathInfo()
+
+	不需要 PathInfo 的模式。用 _r 来表示 Path_Info
+RunAsServer($server_options,$dn_options,$server=null)
+
+	运行 swoole http 服务器
+### 单文件模式
+```php
+\DNMVCS\DNMVCS::RunOneFileMode([]);
+```
+不想依赖这么多，一个文件解决？可以。
+### 不用 PATH_INFO 的模式
+
+```php
+\DNMVCS\DNMVCS::RunWithoutPathInfo([]);
+``` 
+用 _r 来做 path_info
+
 ## 取代系统的静态函数
 和系统同名的静态函数，用于替换系统函数，以适应  swoole 环境
 
@@ -846,15 +847,16 @@ class C extends B
 }
 C::foo();C::foo();C::foo();
 ```
-public static function &GLOBALS($k,$v=null)
+static &GLOBALS($k,$v=null)
 
 	用于替换 global 语法
 	也可用 DNMVCS::SG()->GLOBALS;
 
-public static function &STATICS($k,$v=null)
+static &STATICS($k,$v=null)
 
-	用于替换
-public static function &CLASS_STATICS($class_name,$var_name)
+	用于替换 static 语法
+static &CLASS_STATICS($class_name,$var_name)
+
 	用于替换类内的 static ，这要提供类名，需要 static::class 或 self::class (从堆栈没法分析出来，没办法了 ：( )
 ## 独立杂项静态方法
 这几个方法独立，为了方便操作，放在这里。
@@ -873,6 +875,7 @@ RecordsetURL(&$data,$cols_map=[])
 	给 sql 返回数组 加url 比如  url_edit=>"edit/{id}",则该行添加 url_edit =>DN::URL("edit/".$data[]['id']) 等类似。
 	实际调用 static::G()->_H()
 ## 非静态方法
+
 这里的方法偶尔会用到，所以没静态化 。
 assign 系列函数，都有两个模式 func(\$map)，和 func(\$key,\$value) 模式方便大量导入。
 
@@ -975,13 +978,14 @@ initMisc()
 	如果 选项  ext 启用 DNMVCSExt
 ## 内部方法
 一些方法，虽然公开，但都只用于内部。
+```
 _header
 	实现 header();
 _setcookie
 	setcookie();
 _exit_system
 	实现 exit();
-
+```
 # 第五章 DNMVCS 核心组件
 
 ## trait DNSingleton | 子类化和 G 方法

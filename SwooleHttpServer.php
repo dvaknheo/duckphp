@@ -191,6 +191,15 @@ class SwooleContext
 	{
 		return $this->frame->opcode == 0x08?true:false;
 	}
+	public function _header(string $string, bool $replace = true , int $http_status_code =0)
+	{
+		if($http_status_code){
+			$this->response->status($http_status_code);
+		}
+		if(strpos($string,':')===false){return;} // 404,500 so on
+		list($key,$value)=explode(':',$string);
+		SwooleContext::G()->response->header($key, $value);
+	}
 }
 class SwooleException extends \Exception
 {
@@ -236,13 +245,7 @@ trait SwooleHttpServer_SystemWrapper
 	public $http_exception_handler=null;
 	public static function header(string $string, bool $replace = true , int $http_status_code =0)
 	{
-		if($http_status_code){
-			SwooleContext::G()->response->status($http_status_code);
-		}
-		if(strpos($string,':')===false){return;} // 404,500 so on
-		list($key,$value)=explode(':',$string);
-		SwooleContext::G()->response->header($key, $value);
-		
+		return SwooleContext::G()->header($string,$replace,$http_status_code);
 	}
 	public static function setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
 	{
@@ -250,7 +253,7 @@ trait SwooleHttpServer_SystemWrapper
 	}
 	public static function exit_system($code=0)
 	{
-		return static::G()->_exit_system($code);
+		exit($code);
 	}
 	
 	public static function set_exception_handler(callable $exception_handler)
@@ -274,10 +277,11 @@ trait SwooleHttpServer_SystemWrapper
 	{
 		return SwooleSuperGlobal::G()->session_set_save_handler($handler);
 	}
-	public static function GetReplaceDefaultSystemFunctions()
+	
+	public static function SystemWrapperGetFunctions():array
 	{
 		$ret=[
-			'header'				=>[static::class,'header'],
+			'header'				=>[SwooleContext::G(),'header'],
 			'setcookie'				=>[static::class,'setcookie'],
 			'exit_system'			=>[static::class,'exit_system'],
 			'set_exception_handler'	=>[static::class,'set_exception_handler'],
@@ -285,11 +289,6 @@ trait SwooleHttpServer_SystemWrapper
 		];
 		return $ret;
 	}
-	public static function SystemWrapperInstaller($handler)
-	{
-		$handler->installSystemFunctions(static::GetReplaceDefaultSystemFunctions());
-	}
-	
 }
 trait SwooleHttpServer_SimpleHttpd
 {
@@ -391,7 +390,7 @@ class SwooleHttpServer
 			'websocket_handler'=>null,
 			'websocket_exception_handler'=>null,
 			'websocket_close_handler'=>null,
-			'use_http_handler_root'=>false,
+			'use_http_handler_root'=>true,
 		];
 	public $server=null;
 	
@@ -641,7 +640,7 @@ class SwooleHttpServer
 			define('DNMVCS_DNSUPERGLOBAL_REPALACER',SwooleSuperGlobal::class);
 		}
 		if(!defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')){
-			define('DNMVCS_SYSTEM_WRAPPER_INSTALLER',static::class .'::SystemWrapperInstaller');
+			define('DNMVCS_SYSTEM_WRAPPER_INSTALLER',static::class .'::' .'SystemWrapperGetFunctions');
 		}
 		return $this;
 	}
