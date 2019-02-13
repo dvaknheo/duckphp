@@ -90,9 +90,9 @@ class SwooleCoroutineSingleton
 
 	public static function ReplaceDefaultSingletonHandler()
 	{
-		if(!defined('DNMVCS_DNSINGLETON_REPALACER')){
-			define('DNMVCS_DNSINGLETON_REPALACER' ,self::class . '::'.'GetInstance');
-		}
+		if(defined('DNMVCS_DNSINGLETON_REPALACER')){ return false; }
+		define('DNMVCS_DNSINGLETON_REPALACER' ,self::class . '::'.'GetInstance');
+		return true;
 	}
 	public static function ForkClasses($namespace)
 	{
@@ -294,6 +294,25 @@ trait SwooleHttpServer_SystemWrapper
 		return $ret;
 	}
 }
+trait SwooleHttpServer_SuperGlobal
+{
+	public static function SG()
+	{
+		return SwooleSuperGlobal::G();
+	}
+	public static function &GLOBALS($k,$v=null)
+	{
+		return SwooleSuperGlobal::G()->_GLOBALS($k,$v);
+	}
+	public static function &STATICS($k,$v=null)
+	{
+		return SwooleSuperGlobal::G()->_STATICS($k,$v,1);
+	}
+	public static function &CLASS_STATICS($class_name,$var_name)
+	{
+		return SwooleSuperGlobal::G()->_CLASS_STATICS($class_name,$var_name);
+	}
+}
 trait SwooleHttpServer_SimpleHttpd
 {
 	
@@ -376,6 +395,7 @@ class SwooleHttpServer
 	use SwooleHttpServer_SimpleHttpd;
 	use SwooleHttpServer_WebSocket;
 	use SwooleHttpServer_SystemWrapper;
+	use SwooleHttpServer_SuperGlobal;
 	
 	const DEFAULT_OPTIONS=[
 			'swoole_server'=>null,
@@ -786,7 +806,7 @@ class SwooleSession
 	public function _Start(array $options=[])
 	{
 		if(!$this->handler){
-			$this->handler=new SwooleSessionHandler();
+			$this->handler=SwooleSessionHandler::G();
 		}
 		
 		$this->is_started=true;
