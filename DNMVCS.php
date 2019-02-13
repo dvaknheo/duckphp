@@ -1243,7 +1243,6 @@ trait DNMVCS_SystemWrapper
 	public $exit_handler=null;
 	public $exception_handler=null;
 	public $shutdown_handler=null;
-	protected $is_system_wrapper_installed=false;
 
 	public static function header($output ,bool $replace = true , int $http_response_code=0)
 	{
@@ -1320,14 +1319,12 @@ trait DNMVCS_SystemWrapper
 	}
 	public function system_wrapper_replace(array $funcs=[])
 	{
-		if($this->is_system_wrapper_installed){ return false; }
-		$this->is_system_wrapper_installed=true;
-		
 		if(isset($funcs['header'])){ $this->header_handler=$funcs['header']; }
 		if(isset($funcs['setcookie'])){ $this->cookie_handler=$funcs['setcookie']; }
 		if(isset($funcs['exit_system'])){ $this->exit_handler=$funcs['exit_system']; }
 		if(isset($funcs['set_exception_handler'])){ $this->exception_handler=$funcs['set_exception_handler']; }
 		if(isset($funcs['register_shutdown_function'])){ $this->shutdown_handler=$funcs['register_shutdown_function']; }
+		
 		return true;
 	}
 	public static function system_wrapper_get_providers():array
@@ -1433,6 +1430,9 @@ class DNMVCS
 	protected $path=null;
 	protected $path_lib=null;
 	
+	protected $has_run_once=false;
+	protected $platform=false;
+	public $before_run_handler=null;
 	public static function __callStatic($name, $arguments) 
 	{
 		$class=get_class(static::G());
@@ -1541,21 +1541,20 @@ class DNMVCS
 	}
 	public function initMisc()
 	{
-		$this->isDev=DNConfiger::G()->_Setting('is_dev')??$this->isDev;
+		DNSuperGlobal::G()->init();
 		
+		$this->isDev=DNConfiger::G()->_Setting('is_dev')??$this->isDev;
+		$this->platform=DNConfiger::G()->_Setting('platform')??$this->platform;
 		if(!empty($this->options['ext'])){
 			DNMVCSExt::G()->afterInit($this);
 		}
-		DNSuperGlobal::G()->init();
 		
 		if(!empty($this->options['httpd_options'])) {
 			DNSwooleHttpServer::G()->afterInit();
 		}
 	}
-	protected function beforeMiscRun()
+	protected function runOnce()
 	{
-		//TODO rename to RunOnce
-		if( !static::InSwoole()){ return true;}
 		if(!empty($this->options['httpd_options'])) {
 			DNSwooleHttpServer::G()->beforeRun();
 		}
@@ -1563,25 +1562,28 @@ class DNMVCS
 			$callback=DNMVCS_SYSTEM_WRAPPER_INSTALLER;
 			$funcs=($callback)();
 			$this->system_wrapper_replace($funcs);
-			if(isset($funcs['superglobal'])){
-				DNSuperGlobal::G(($funcs['superglobal'])());
-			}
+			
 			if(isset($funcs['set_exception_handler'])){
-				$this->set_exception_handler(array($this,'onException'));
+				static::set_exception_handler(array($this,'onException'));
 			}
+		}
+		if( $this->options['rewrite_map'] || $this->options['route_map'] ){
+			DNMVCSExt::G()->dealMapAndRewrite($route,$this->options['rewrite_map'],$this->options['route_map']);
 		}
 		return true;
 	}
 	protected function beforeRouteRun(DNRoute $route)
 	{
+		$route->is_server_data_load=true;
 		
 		$route->script_filename=DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']??'';
 		$route->document_root=DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT']??'';
 		$route->request_method=DNSuperGlobal::G()->_SERVER['REQUEST_METHOD']??'';
 		$route->path_info=DNSuperGlobal::G()->_SERVER['PATH_INFO']??'';
+		$argv=DNSuperGlobal::G()->_SERVER['argv']??[];
 		
 		if(PHP_SAPI==='cli'){
-			$argv=DNSuperGlobal::G()->_SERVER['argv']??[];
+			
 			if(count($argv)>=2){
 				$route->path_info=$argv[1];
 				array_shift($argv);
@@ -1589,27 +1591,29 @@ class DNMVCS
 				$route->parameters=$argv;
 			}
 		}
-		
-		if( $this->options['rewrite_map'] || $this->options['route_map'] ){
-			DNMVCSExt::G()->dealMapAndRewrite($route,$this->options['rewrite_map'],$this->options['route_map']);
-		}
-		
-		$route->is_server_data_load=true;
 	}
 	
 	public function run()
 	{
 		$ret=true;
 		DNRuntimeState::G()->setState();
+		do{
+			if(!$this->has_run_once){
+				$this->has_run_once=true;
+				$this->runOnce();
+			}
+			
+			$flag=false;
+			if($this->before_run_handler){
+				$flag=($this->before_run_handler)();
+			}
+			if($flag){ break;}
+			
+			$route=DNRoute::G();
+			$this->beforeRouteRun($route);		
+			$ret=$route->run();
+		}while(false);
 		
-		$flag=$this->beforeMiscRun();
-		if(!$flag){
-			DNRuntimeState::G()->unsetState();
-			return true; //not 404
-		}
-		$route=DNRoute::G();
-		$this->beforeRouteRun($route);		
-		$ret=$route->run();
 		DNRuntimeState::G()->unsetState();
 		return $ret;
 	}
