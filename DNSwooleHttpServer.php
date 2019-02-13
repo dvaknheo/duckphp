@@ -29,19 +29,15 @@ class DNSwooleHttpServer
 		SwooleHttpServer::CloneInstance(DNDBManager::class);
 		SwooleHttpServer::CloneInstance(DNRoute::class);
 		
-		
-		SwooleHttpServer::CloneInstance(DNSuperGlobal::class); // think more
-		
-
 		DNAutoLoader::G(new DNAutoLoader());
 		DNMVCS::G(new DNMVCS());
 		DNConfiger::G(new DNConfiger());
 		DNDBManager::G(new DNDBManager());
 		DNRoute::G(new DNRoute());
 		
+		DNSuperGlobal::G(SwooleSuperGlobal::G());
 		
-		
-		//SwooleCoroutineSingleton::ForkClasses('DNMVCS');
+		//SwooleCoroutineSingleton::ForkClasses('DNMVCS'); //MyBaseClass fll
 		$ret=DNMVCS::G()->init($options);
 		return $ret;
 	}
