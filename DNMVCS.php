@@ -1336,7 +1336,7 @@ trait DNMVCS_SystemWrapper
 			'set_exception_handler'	=>[static::class,'set_exception_handler'],
 			'register_shutdown_function' =>[static::class,'register_shutdown_function'],
 			
-			'superglobal' =>[DNSuperGloabl::class,'G'],
+			'super_global' =>[DNSuperGloabl::class,'G'],
 		];
 		return $ret;
 	}
@@ -1553,24 +1553,26 @@ class DNMVCS
 			DNSwooleHttpServer::G()->afterInit();
 		}
 	}
-	protected function runOnce()
+	protected function beforeRunOnce()
 	{
-		if(!empty($this->options['httpd_options'])) {
-			DNSwooleHttpServer::G()->beforeRun();
+		if( $this->options['rewrite_map'] || $this->options['route_map'] ){
+			DNMVCSExt::G()->dealMapAndRewrite($route,$this->options['rewrite_map'],$this->options['route_map']);
 		}
 		if(defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')){
 			$callback=DNMVCS_SYSTEM_WRAPPER_INSTALLER;
 			$funcs=($callback)();
 			$this->system_wrapper_replace($funcs);
-			
+			if(isset($funcs['super_global'])){
+				DNSuperGlobal::G(($funcs['super_global'])());
+			}
 			if(isset($funcs['set_exception_handler'])){
-				static::set_exception_handler(array($this,'onException'));
+				static::set_exception_handler(array($this,'onException')); //install oexcpetion again;
 			}
 		}
-		if( $this->options['rewrite_map'] || $this->options['route_map'] ){
-			DNMVCSExt::G()->dealMapAndRewrite($route,$this->options['rewrite_map'],$this->options['route_map']);
+		if(!empty($this->options['httpd_options'])) {
+			return DNSwooleHttpServer::G()->beforeRunOnce();
 		}
-		return true;
+		return false;
 	}
 	protected function beforeRouteRun(DNRoute $route)
 	{
@@ -1583,7 +1585,6 @@ class DNMVCS
 		$argv=DNSuperGlobal::G()->_SERVER['argv']??[];
 		
 		if(PHP_SAPI==='cli'){
-			
 			if(count($argv)>=2){
 				$route->path_info=$argv[1];
 				array_shift($argv);
@@ -1595,22 +1596,23 @@ class DNMVCS
 	
 	public function run()
 	{
+		$flag=false;
+		if(!$this->has_run_once){
+			$this->has_run_once=true;
+			$flag=$this->beforeRunOnce();
+		}
+		if($flag){ return true; }
+		
 		$ret=true;
 		DNRuntimeState::G()->setState();
 		do{
-			if(!$this->has_run_once){
-				$this->has_run_once=true;
-				$this->runOnce();
-			}
-			
-			$flag=false;
 			if($this->before_run_handler){
 				$flag=($this->before_run_handler)();
 			}
-			if($flag){ break;}
+			if($flag){ break; }
 			
 			$route=DNRoute::G();
-			$this->beforeRouteRun($route);		
+			$this->beforeRouteRun($route);
 			$ret=$route->run();
 		}while(false);
 		

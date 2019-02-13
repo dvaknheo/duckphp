@@ -8,6 +8,7 @@ class DNSwooleHttpServer
 	use DNSingleton;
 	/////////////////////////
 	protected $old_error_404;
+	protected $old_before_run_handler;
 	protected $lock_init=false;
 	protected $has_run_once=false;
 
@@ -64,7 +65,6 @@ class DNSwooleHttpServer
 			DNExceptionManager::class,
 			DNView::class,
 			DNRoute::class,
-			DNSuperGlobal::class,
 			DNRuntimeState::class,
 		];
 		$ext_class=[];
@@ -102,37 +102,28 @@ class DNSwooleHttpServer
 	protected function bind($dn,$server)
 	{
 		$server->http_handler=$server->options['http_handler']=[$dn,'run'];
-		$callback=DNMVCS_SYSTEM_WRAPPER_INSTALLER;
-		$funcs=($callback)();
-		$dn->system_wrapper_replace($funcs);
-		if(isset($funcs['set_exception_handler'])){
-			$dn->set_exception_handler(array($dn,'onException'));
-		}
+		$this->old_before_run_handler=$dn->before_run_handler;
 		$dn->before_run_handler=[$this,'beforeRun'];
-		DNSuperGlobal::G(SwooleSuperGlobal::G());
 		return $this;
 	}
-	protected function runOnce()
+	public function beforeRunOnce()
 	{
 		$this->old_error_404=DNMVCS::G()->options['error_404'];
 		DNMVCS::G()->options['error_404']=[$this,'onShow404'];
 		
 		SwooleHttpServer::G()->run();
-		DNMVCS::exit_system(0);
 		return true;
 	}
 	public function beforeRun()
 	{
-		if(!$this->has_run_once){
-			$this->has_run_once=true;
-			return $this->runOnce();
-		}
 		$classes=$this->getDymicClasses();
-
 		foreach($classes as $class){
 			SwooleHttpServer::CloneInstance($class);
 		}
 		DNSuperGlobal::G(SwooleSuperGlobal::G());
+		if($this->old_before_run_handler){
+			return ($this->old_before_run_handler)();
+		}
 		return false;
 	}
 }

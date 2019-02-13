@@ -289,7 +289,7 @@ trait SwooleHttpServer_SystemWrapper
 			'set_exception_handler'	=>[static::class,'set_exception_handler'],
 			'register_shutdown_function' =>[static::class,'register_shutdown_function'],
 			
-			'superglobal'			=>[SwooleSuperGlobal::class,'G'],
+			'super_global'			=>[SwooleSuperGlobal::class,'G'],
 		];
 		return $ret;
 	}
@@ -669,7 +669,6 @@ class SwooleHttpServer
 		
 		SwooleCoroutineSingleton::ReplaceDefaultSingletonHandler();
 		static::G($this);
-		SwooleSuperGlobal::G();
 		
 		if(!defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')){
 			define('DNMVCS_SYSTEM_WRAPPER_INSTALLER',static::class .'::' .'system_wrapper_get_providers');
