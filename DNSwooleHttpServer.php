@@ -22,22 +22,10 @@ class DNSwooleHttpServer
 	}
 	protected function initRunningModeDNMVCS($options)
 	{
-		//SwooleCoroutineSingleton::Dump();
-		SwooleHttpServer::CloneInstance(DNAutoLoader::class);
-		SwooleHttpServer::CloneInstance(DNMVCS::class);
-		SwooleHttpServer::CloneInstance(DNConfiger::class);
-		SwooleHttpServer::CloneInstance(DNDBManager::class);
-		SwooleHttpServer::CloneInstance(DNRoute::class);
+		$t=SwooleSuperGlobal::G();
+		SwooleCoroutineSingleton::ForkAllClasses();
+		DNSuperGlobal::G($t);
 		
-		DNAutoLoader::G(new DNAutoLoader());
-		DNMVCS::G(new DNMVCS());
-		DNConfiger::G(new DNConfiger());
-		DNDBManager::G(new DNDBManager());
-		DNRoute::G(new DNRoute());
-		
-		DNSuperGlobal::G(SwooleSuperGlobal::G());
-		
-		//SwooleCoroutineSingleton::ForkClasses('DNMVCS'); //MyBaseClass fll
 		$ret=DNMVCS::G()->init($options);
 		return $ret;
 	}

@@ -75,11 +75,21 @@ class SwooleCoroutineSingleton
 		if($cid<=0){return;}
 		unset(self::$_instances[$cid]);
 	}
-	public static function GetInstanceList($cid=null)
+	public static function GetInstanceClassList($cid=0)
+	{
+		return array_keys(self::$_instances[$cid]);
+	}
+	public static function CreateInstance($cid,$class)
+	{
+		self::$_instances[$cid]=new $class();
+	}
+	public static function ForkAllClasses()
 	{
 		$cid = \Swoole\Coroutine::getuid();
-		$cid=($cid<=0)?0:$cid;
-		return self::$_instances[$cid];
+		foreach(self::$_instances[0] as $class =>$object){
+			if(!isset($object)){continue;}
+			self::$_instances[$cid][$class]=new $class();
+		}
 	}
 	public static function DumpString()
 	{
@@ -620,7 +630,7 @@ class SwooleHttpServer
 			$this->server->on('mesage',[$this,'onMessage']);
 			$this->server->on('open',[$this,'onOpen']);
 		}
-		
+
 		\Swoole\Runtime::enableCoroutine();
 		
 		SwooleCoroutineSingleton::ReplaceDefaultSingletonHandler();

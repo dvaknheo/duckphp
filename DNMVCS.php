@@ -1556,7 +1556,7 @@ class DNMVCS
 	protected function beforeRunOnce()
 	{
 		if( $this->options['rewrite_map'] || $this->options['route_map'] ){
-			DNMVCSExt::G()->dealMapAndRewrite($route,$this->options['rewrite_map'],$this->options['route_map']);
+			DNMVCSExt::G()->dealMapAndRewrite(DNRoute::G(),$this->options['rewrite_map'],$this->options['route_map']);
 		}
 		if(defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')){
 			$callback=DNMVCS_SYSTEM_WRAPPER_INSTALLER;
