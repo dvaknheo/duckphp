@@ -90,6 +90,7 @@ class DNSwooleHttpServer
 	}
 	public function afterInit()
 	{
+		if(PHP_SAPI!=='cli'){ return; }
 		$dn_options=DNMVCS::G()->options;
 		$server_options=$dn_options['httpd_options'];
 		SwooleHttpServer::G()->init($server_options,null);
@@ -102,21 +103,32 @@ class DNSwooleHttpServer
 		$dn->before_run_handler=[$this,'beforeRun'];
 		return $this;
 	}
-	public function beforeRunOnce()
+	protected function beforeRunOnce()
 	{
 		$this->old_error_404=DNMVCS::G()->options['error_404'];
 		DNMVCS::G()->options['error_404']=[$this,'onShow404'];
 		
+		//TODO save all classes;
 		SwooleHttpServer::G()->run();
+		
 		return true;
 	}
 	public function beforeRun()
 	{
+		if(PHP_SAPI!=='cli'){ return; }
+		
+		if(!$this->has_run_once){
+			$this->has_run_once=true;
+			$flag=$this->beforeRunOnce();
+			if($flag){ return true;}
+		}
 		$classes=$this->getDymicClasses();
 		foreach($classes as $class){
 			SwooleHttpServer::CloneInstance($class);
 		}
-		DNSuperGlobal::G(SwooleSuperGlobal::G());
+		
+		DNSuperGlobal::G(SwooleHttpServer::SG());  //don't forget
+		
 		if($this->old_before_run_handler){
 			return ($this->old_before_run_handler)();
 		}
