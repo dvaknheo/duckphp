@@ -497,7 +497,8 @@ class FunctionDispatcher
 	public function runRoute()
 	{
 		$route=DNRoute::G();
-		$post=($route->request_method==='POST')?$route->options['prefix_post']:'';
+		$post=($route->request_method==='POST')?$route->prefix_post:'';
+		
 		$callback=$this->prefix.$post.$this->path_info;
 		
 		$path_info=$this->path_info?:'index';

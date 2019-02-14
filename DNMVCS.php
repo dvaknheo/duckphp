@@ -201,7 +201,7 @@ class DNRoute
 	protected $default_controller_class='DNController';
 	protected $enable_post_prefix=true;
 	protected $disable_default_class_outside=false;
-	protected $prefix_post='do_';
+	public $prefix_post='do_';
 	protected $default_method_for_miss=null;
 	protected $base_controller_class=null;
 	
@@ -219,7 +219,7 @@ class DNRoute
 	
 	public $routeHooks=[];
 	public $callback=null;
-	public $is_server_data_load=false;
+	protected $has_bind_server_data=false;
 	
 	public function _URL($url=null)
 	{
@@ -279,27 +279,28 @@ class DNRoute
 			$this->base_controller_class=$namespace.'\\'.$this->base_controller_class;
 		}
 
-		$this->is_server_data_load=false;
 		
 		return $this;
 	}
-	public function loadServerData()
-	{
-		$this->script_filename=$_SERVER['SCRIPT_FILENAME']??'';
-		$this->document_root=$_SERVER['DOCUMENT_ROOT']??'';
+	public function bindServerData($server)
+	{		
+		$this->script_filename=$server['SCRIPT_FILENAME']??'';
+		$this->document_root=$server['DOCUMENT_ROOT']??'';
+		$this->request_method=$server['REQUEST_METHOD']??'GET';
+		$this->path_info=$server['PATH_INFO']??'';
+		
+		$argv=$server['argv']??[];
+		
 		if(PHP_SAPI==='cli'){
-			$argv=$_SERVER['argv']??[];
 			if(count($argv)>=2){
 				$this->path_info=$argv[1];
 				array_shift($argv);
 				array_shift($argv);
 				$this->parameters=$argv;
 			}
-		}else{
-			$this->path_info=$_SERVER['PATH_INFO']??'';
-			$this->request_method=$_SERVER['REQUEST_METHOD']??'GET';
 		}
-		$this->is_server_data_load=true;
+		$this->has_bind_server_data=true;
+		return $this;
 	}
 	public function set404($callback)
 	{
@@ -329,8 +330,8 @@ class DNRoute
 	}
 	public function run()
 	{
-		if(!$this->is_server_data_load){
-			$this->loadServerData();
+		if(!$this->has_bind_server_data){
+			$this->loadServerData($_SERVER);
 		}
 		$this->path_info=ltrim($this->path_info,'/');
 		foreach($this->routeHooks as $hook){
@@ -932,9 +933,9 @@ trait DNMVCS_Glue
 	{
 		return DNAutoLoader::G()->assignPathNamespace($path,$namespace);
 	}
-	public static function Env()
+	public static function Platform()
 	{
-		return static::G()->env;
+		return static::G()->platform;
 	}
 	public static function Developing()
 	{
@@ -1425,13 +1426,12 @@ class DNMVCS
 		];
 	public $options=[];
 	public $isDev=false;
-	public $env='';
+	public $platform='';
 	
 	protected $path=null;
 	protected $path_lib=null;
 	
 	protected $has_run_once=false;
-	protected $platform=false;
 	public $before_run_handler=null;
 	public static function __callStatic($name, $arguments) 
 	{
@@ -1569,53 +1569,22 @@ class DNMVCS
 				static::set_exception_handler(array($this,'onException')); //install oexcpetion again;
 			}
 		}
-		if(!empty($this->options['httpd_options'])) {
-			return DNSwooleHttpServer::G()->beforeRunOnce();
-		}
-		return false;
 	}
-	protected function beforeRouteRun(DNRoute $route)
-	{
-		$route->is_server_data_load=true;
-		
-		$route->script_filename=DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']??'';
-		$route->document_root=DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT']??'';
-		$route->request_method=DNSuperGlobal::G()->_SERVER['REQUEST_METHOD']??'';
-		$route->path_info=DNSuperGlobal::G()->_SERVER['PATH_INFO']??'';
-		$argv=DNSuperGlobal::G()->_SERVER['argv']??[];
-		
-		if(PHP_SAPI==='cli'){
-			if(count($argv)>=2){
-				$route->path_info=$argv[1];
-				array_shift($argv);
-				array_shift($argv);
-				$route->parameters=$argv;
-			}
-		}
-	}
-	
 	public function run()
 	{
 		$flag=false;
 		if(!$this->has_run_once){
 			$this->has_run_once=true;
 			$flag=$this->beforeRunOnce();
+			if($flag){ return true; }
 		}
-		if($flag){ return true; }
 		
-		$ret=true;
+		if($this->before_run_handler){
+			$flag=($this->before_run_handler)();
+			if($flag){ return true; }
+		}
 		DNRuntimeState::G()->setState();
-		do{
-			if($this->before_run_handler){
-				$flag=($this->before_run_handler)();
-			}
-			if($flag){ break; }
-			
-			$route=DNRoute::G();
-			$this->beforeRouteRun($route);
-			$ret=$route->run();
-		}while(false);
-		
+		$ret=DNRoute::G()->bindServerData(DNSuperGlobal::G()->_SERVER)->run();
 		DNRuntimeState::G()->unsetState();
 		return $ret;
 	}
