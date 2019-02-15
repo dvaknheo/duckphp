@@ -57,7 +57,7 @@ class SwooleCoroutineSingleton
 	}
 	public static function CloneInstance($class,$from_cid=0,$null_as_false=false)
 	{
-		$t=$cid = \Swoole\Coroutine::getuid();
+		$cid = \Swoole\Coroutine::getuid();
 		$cid=($cid<=0)?0:$cid;
 		self::$_instances[$cid]=self::$_instances[$cid]??[];
 		if($cid ===$from_cid){ return false; }
@@ -81,9 +81,20 @@ class SwooleCoroutineSingleton
 	}
 	public static function CreateInstance($cid,$class)
 	{
-		self::$_instances[$cid]=new $class();
+		self::$_instances[$cid][$class]=new $class();
 	}
-	public static function ForkAllClasses()
+	public static function CreateCoroutineInstance($class)
+	{
+		$cid = \Swoole\Coroutine::getuid();
+		$cid=($cid<=0)?0:$cid;
+		
+		self::$_instances[$cid][$class]=new $class();
+	}
+	public static function CreateMasterInstance($class)
+	{
+		self::$_instances[0][$class]=new $class();
+	}
+	public static function CloneAllMasterClasses()
 	{
 		$cid = \Swoole\Coroutine::getuid();
 		foreach(self::$_instances[0] as $class =>$object){
@@ -91,6 +102,7 @@ class SwooleCoroutineSingleton
 			self::$_instances[$cid][$class]=new $class();
 		}
 	}
+	
 	public static function DumpString()
 	{
 		$cid = \Swoole\Coroutine::getuid();
@@ -374,14 +386,17 @@ class SwooleHttpServer
 			'http_handler_file'=>null,
 			'http_handler'=>null,
 			'http_exception_handler'=>null,
+			'http_404_handler'=>null,
+			
+			'use_http_handler_root'=>false,
+			'use_http_handler_file'=>false,
 			
 			'websocket_open_handler'=>null,
 			'websocket_handler'=>null,
 			'websocket_exception_handler'=>null,
 			'websocket_close_handler'=>null,
 			
-			'use_http_handler_root'=>false,
-			'use_http_handler_file'=>false,
+			
 		];
 	public $server=null;
 	
@@ -407,7 +422,7 @@ class SwooleHttpServer
 	{
 		exit($code);
 	}
-	public function show404()
+	public function throw404()
 	{
 		throw new Swoole404Exception();
 	}
@@ -659,18 +674,21 @@ class SwooleSuperGlobal
 	public $_GET;
 	public $_POST;
 	public $_REQUEST;
-	public $_SERVER;
+	public $_SERVER=[];
 	public $_ENV;
-	public $_COOKIE;
+	public $_COOKIE=[];
 	public $_SESSION;
-	public $_FILES;
+	public $_FILES=[];
 	
 	public $GLOBALS=[];
 	public $STATICS=[];
 	public $CLASS_STATICS=[];
-	
+
+	public $is_inited=false;
 	public function init()
 	{
+		if($this->is_inited){return $this;}
+		$this->is_inited=true;
 		$cid = \Swoole\Coroutine::getuid();
 		if(!$cid){ return; }
 		$request=SwooleHttpServer::Request();

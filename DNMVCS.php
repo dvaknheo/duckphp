@@ -1381,7 +1381,7 @@ trait DNMVCS_RunMode
 	}
 	public static function RunAsServer($dn_options,$server=null)
 	{
-		$dn_options['httpd_options']['swoole_server']=$server;
+		$dn_options['swoole']['swoole_server']=$server;
 		return static::G()->init($dn_options)->run();
 	}
 }
@@ -1422,7 +1422,6 @@ class DNMVCS
 			
 			'ext'=>[],
 			'swoole'=>[],
-			'httpd_options'=>[],
 		];
 	public $options=[];
 	public $isDev=false;
@@ -1475,7 +1474,7 @@ class DNMVCS
 	protected function beforeInit()
 	{
 		if(static::class!==self::class){return;}
-		if(!empty($this->options['httpd_options'])) {
+		if(!empty($this->options['swoole'])){
 			DNSwooleHttpServer::G()->beforeInit();
 		}
 	}
@@ -1548,13 +1547,32 @@ class DNMVCS
 		if(!empty($this->options['ext'])){
 			DNMVCSExt::G()->afterInit($this);
 		}
-		
-		if(!empty($this->options['httpd_options'])) {
+
+		if(!empty($this->options['swoole'])){
 			DNSwooleHttpServer::G()->afterInit();
 		}
 	}
-	protected function beforeRunOnce()
+	public function getDymicClasses()
 	{
+		$classes=[
+			DNExceptionManager::class,
+			DNView::class,
+			DNRoute::class,
+			DNRuntimeState::class,
+		];
+		$ext_class=[];
+		foreach($classes as $class){
+			if(get_class($class::G())!=$class){$ext_class[]=$class;}
+		}
+		$classes=$classes + $ext_class;
+		return $classes;
+	}
+	
+	protected function runOnce()
+	{
+		if(!empty($this->options['swoole'])){
+			DNSwooleHttpServer::G()->runOnce();
+		}
 		if( $this->options['rewrite_map'] || $this->options['route_map'] ){
 			DNMVCSExt::G()->dealMapAndRewrite(DNRoute::G(),$this->options['rewrite_map'],$this->options['route_map']);
 		}
@@ -1572,16 +1590,9 @@ class DNMVCS
 	}
 	public function run()
 	{
-		$flag=false;
 		if(!$this->has_run_once){
 			$this->has_run_once=true;
-			$flag=$this->beforeRunOnce();
-			if($flag){ return true; }
-		}
-		
-		if($this->before_run_handler){
-			$flag=($this->before_run_handler)();
-			if($flag){ return true; }
+			$this->runOnce();
 		}
 		DNRuntimeState::G()->setState();
 		$ret=DNRoute::G()->bindServerData(DNSuperGlobal::G()->_SERVER)->run();

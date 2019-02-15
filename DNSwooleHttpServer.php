@@ -22,9 +22,11 @@ class DNSwooleHttpServer
 	}
 	protected function initRunningModeDNMVCS($options)
 	{
-		$t=SwooleSuperGlobal::G();
-		SwooleCoroutineSingleton::ForkAllClasses();
-		DNSuperGlobal::G($t);
+		$old_super_global=SwooleSuperGlobal::G();
+		
+		SwooleCoroutineSingleton::CloneAllMasterClasses();
+		
+		DNSuperGlobal::G(SwooleSuperGlobal::G($old_super_global));
 		
 		$ret=DNMVCS::G()->init($options);
 		return $ret;
@@ -41,23 +43,9 @@ class DNSwooleHttpServer
 		SwooleHttpServer::CloneInstance(DNMVCS::class);
 		DNMVCS::G(static::G());
 		// ok we passed the fake  object;
-		SwooleHttpServer::G()->show404();
+		SwooleHttpServer::G()->throw404();
 	}
-	public function getDymicClasses()
-	{
-		$classes=[
-			DNExceptionManager::class,
-			DNView::class,
-			DNRoute::class,
-			DNRuntimeState::class,
-		];
-		$ext_class=[];
-		foreach($classes as $class){
-			if(get_class($class::G())!=$class){$ext_class[]=$class;}
-		}
-		$classes=$classes + $ext_class;
-		return $classes;
-	}
+	
 	public function beforeInit()
 	{
 		if(PHP_SAPI!=='cli'){ return; }
@@ -69,7 +57,6 @@ class DNSwooleHttpServer
 		$class=static::class;
 		$self=$class::G();
 		
-		//clone singleton;
 		SwooleHttpServer::ReplaceDefaultSingletonHandler(); 
 		
 		DNAutoLoader::G($autoloader);
@@ -80,47 +67,25 @@ class DNSwooleHttpServer
 	{
 		if(PHP_SAPI!=='cli'){ return; }
 		$dn_options=DNMVCS::G()->options;
-		$server_options=$dn_options['httpd_options'];
+		$server_options=$dn_options['swoole'];
 		SwooleHttpServer::G()->init($server_options,null);
-		$this->bind(DNMVCS::G(),SwooleHttpServer::G());
+		SwooleHttpServer::G()->http_handler=$server->options['http_handler']=[$this,'run'];
 	}
-	protected function bind($dn,$server)
-	{
-		$server->http_handler=$server->options['http_handler']=[$dn,'run'];
-		$this->old_before_run_handler=$dn->before_run_handler;
-		$dn->before_run_handler=[$this,'beforeRun'];
-		return $this;
-	}
-	protected function beforeRunOnce()
+	public function runOnce()
 	{
 		$this->old_error_404=DNMVCS::G()->options['error_404'];
 		DNMVCS::G()->options['error_404']=[$this,'onShow404'];
-		
-		//TODO save all classes;
 		SwooleHttpServer::G()->run();
-		
-		return true;
 	}
-	public function beforeRun()
+	public function run()
 	{
-		if(PHP_SAPI!=='cli'){ return; }
-		
-		if(!$this->has_run_once){
-			$this->has_run_once=true;
-			$flag=$this->beforeRunOnce();
-			if($flag){ return true;}
-		}
-		$classes=$this->getDymicClasses();
+		$classes=DNMVCS::G()->getDymicClasses();
 		foreach($classes as $class){
 			SwooleHttpServer::CloneInstance($class);
 		}
 		
-		DNSuperGlobal::G(SwooleHttpServer::SG());  //don't forget
-		
-		if($this->old_before_run_handler){
-			return ($this->old_before_run_handler)();
-		}
-		return false;
+		DNSuperGlobal::G(SwooleHttpServer::SG());
+		return DNMVCS::G()->run();
 	}
 }
 
