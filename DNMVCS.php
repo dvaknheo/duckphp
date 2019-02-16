@@ -1540,16 +1540,17 @@ class DNMVCS
 	}
 	public function initMisc()
 	{
-		DNSuperGlobal::G()->init();
-		
 		$this->isDev=DNConfiger::G()->_Setting('is_dev')??$this->isDev;
 		$this->platform=DNConfiger::G()->_Setting('platform')??$this->platform;
-		if(!empty($this->options['ext'])){
-			DNMVCSExt::G()->afterInit($this);
-		}
-
+		
 		if(!empty($this->options['swoole'])){
 			DNSwooleHttpServer::G()->afterInit();
+		}
+		$this->initSystemWrapper();
+		DNSuperGlobal::G()->init();
+		
+		if(!empty($this->options['ext'])){
+			DNMVCSExt::G()->afterInit($this);
 		}
 	}
 	public function getDymicClasses()
@@ -1567,15 +1568,8 @@ class DNMVCS
 		$classes=$classes + $ext_class;
 		return $classes;
 	}
-	
-	protected function runOnce()
+	protected function initSystemWrapper()
 	{
-		if(!empty($this->options['swoole'])){
-			DNSwooleHttpServer::G()->runOnce();
-		}
-		if( $this->options['rewrite_map'] || $this->options['route_map'] ){
-			DNMVCSExt::G()->dealMapAndRewrite(DNRoute::G(),$this->options['rewrite_map'],$this->options['route_map']);
-		}
 		if(defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')){
 			$callback=DNMVCS_SYSTEM_WRAPPER_INSTALLER;
 			$funcs=($callback)();
@@ -1587,6 +1581,16 @@ class DNMVCS
 				static::set_exception_handler(array($this,'onException')); //install oexcpetion again;
 			}
 		}
+	}
+	protected function runOnce()
+	{
+		if(!empty($this->options['swoole'])){
+			DNSwooleHttpServer::G()->runOnce();
+		}
+		if( $this->options['rewrite_map'] || $this->options['route_map'] ){
+			DNMVCSExt::G()->dealMapAndRewrite(DNRoute::G(),$this->options['rewrite_map'],$this->options['route_map']);
+		}
+		
 	}
 	public function run()
 	{

@@ -23,10 +23,12 @@ class DNSwooleHttpServer
 	protected function initRunningModeDNMVCS($options)
 	{
 		$old_super_global=SwooleSuperGlobal::G();
+		$context=SwooleContext::G();
 		
 		SwooleCoroutineSingleton::CloneAllMasterClasses();
-		
-		DNSuperGlobal::G(SwooleSuperGlobal::G($old_super_global));
+		SwooleSuperGlobal::G($old_super_global);
+		SwooleContext::G($context);
+		//DNSuperGlobal::G(); // 不能少这个，看怎么化简
 		
 		$ret=DNMVCS::G()->init($options);
 		return $ret;

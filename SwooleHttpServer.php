@@ -177,9 +177,9 @@ class SwooleContext
 		list($key,$value)=explode(':',$string);
 		$this->response->header($key, $value);
 	}
-	public static function setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
+	public  function setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
 	{
-		return static::G()->response->cookie($key,$value,$expire,$path,$domain,$secure,$httponly );
+		return $this->response->cookie($key,$value,$expire,$path,$domain,$secure,$httponly );
 	}
 }
 class SwooleException extends \Exception
