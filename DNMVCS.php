@@ -1550,8 +1550,9 @@ class DNMVCS
 		DNSuperGlobal::G()->init();
 		
 		if(!empty($this->options['ext'])){
-			DNMVCSExt::G()->afterInit($this);
+			DNMVCSExt::G()->init($this);
 		}
+		DNRuntimeState::G();
 	}
 	public function getDymicClasses()
 	{
@@ -1562,11 +1563,6 @@ class DNMVCS
 			DNRuntimeState::class,
 			DNSuperGlobal::class,
 		];
-		$ext_class=[];
-		foreach($classes as $class){
-			if(get_class($class::G())!=$class){$ext_class[]=$class;}
-		}
-		$classes=$classes + $ext_class;
 		return $classes;
 	}
 	protected function initSystemWrapper()

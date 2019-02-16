@@ -23,11 +23,12 @@ class RouteHookMapAndRewrite
 	use DNSingleton;
 	protected $rewrite_map=[];
 	protected $route_map=[];
-	
+	protected $enable_paramters=false;
 	public function init($rewrite_map,$route_map)
 	{
 		$this->rewrite_map=$rewrite_map;
 		$this->route_map=$route_map;
+		$this->enable_paramters=DNMVCS::G()->options['enable_paramters'];
 	}
 	public function replaceRegexUrl($input_url,$template_url,$new_url)
 	{
@@ -127,7 +128,7 @@ class RouteHookMapAndRewrite
 	protected function getRouteHandelByMap($route,$routeMap)
 	{
 		$path_info=$route->path_info;
-		$enable_paramters=DNMVCS::G()->options['enable_paramters'];
+		$enable_paramters=$this->enable_paramters;
 		
 		foreach($routeMap as $pattern =>$callback){
 			if(!$this->matchRoute($pattern,$path_info,$route,$enable_paramters)){continue;}
@@ -170,7 +171,7 @@ class RouteHookMapAndRewrite
 	}
 	protected function hookRouteMap($route)
 	{
-		$route->callback=$this->getRouteHandelByMap($route,DNMVCS::G()->options['route_map']);
+		$route->callback=$this->getRouteHandelByMap($route,$this->route_map);
 	}
 	public function hook($route)
 	{
@@ -725,9 +726,8 @@ class DNMVCSExt
 			'db_reuse_size'=>0,
 			'db_reuse_timeout'=>5,
 		];
-	public function afterInit($dn)
+	public function init($dn)
 	{
-		$dn=DNMVCS::G();
 		$ext_options=$dn->options['ext'];
 		
 		$options=array_merge(self::DEFAULT_OPTIONS_EX,$ext_options);
@@ -847,6 +847,7 @@ class DNMVCSExt
 		if($only_in_site && parse_url($url,PHP_URL_HOST)){
 			//something  wrong
 			DNMVCS::exit_system();
+			return;
 		}
 		// DNMVCS::G()->onBeforeShow([],'');
 		DNMVCS::header('location: '.$url,true,302);

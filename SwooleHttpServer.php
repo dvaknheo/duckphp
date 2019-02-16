@@ -25,6 +25,7 @@ trait DNSingleton
 }
 class SwooleCoroutineSingleton
 {
+	use DNSingleton;
 	protected static $_instances=[];
 	
 	public static function ReplaceDefaultSingletonHandler()
@@ -69,6 +70,31 @@ class SwooleCoroutineSingleton
 
 		return true;
 	}
+	public static function ForkMasterClassesToCo($classes,$co_classes=[])
+	{
+		$cid = \Swoole\Coroutine::getuid();
+		foreach($classes as $class){
+			if(!isset(self::$_instances[0][$class])){
+				$real_class=$class;
+				if(in_array($real_class,$co_classes)){
+					continue;
+				}
+				self::$_instances[$cid][$class]=new $class();
+				
+				continue;
+			}
+			$real_class=get_class(self::$_instances[0][$class]);
+			if(in_array($real_class,$co_classes)){
+				self::$_instances[$cid][$class]=self::$_instances[$cid][$real_class];
+				continue;
+			}
+			$object=self::$_instances[0][$real_class];
+			self::$_instances[$cid][$real_class]=clone $object;
+			if($class!==$real_class){
+				self::$_instances[$cid][$class]=self::$_instances[$cid][$real_class];
+			}
+		}
+	}
 	public static function CleanUp()
 	{
 		$cid = \Swoole\Coroutine::getuid();
@@ -79,20 +105,23 @@ class SwooleCoroutineSingleton
 	{
 		return array_keys(self::$_instances[$cid]);
 	}
-	public static function CreateInstance($cid,$class)
+	public static function CreateInstance($cid,$class,$object=null)
 	{
-		self::$_instances[$cid][$class]=new $class();
+		$object=$object??new $class();
+		self::$_instances[$cid][$class]=$object;
 	}
-	public static function CreateCoroutineInstance($class)
+	public static function CreateCoroutineInstance($class,$object=null)
 	{
 		$cid = \Swoole\Coroutine::getuid();
 		$cid=($cid<=0)?0:$cid;
 		
-		self::$_instances[$cid][$class]=new $class();
+		$object=$object??new $class();
+		self::$_instances[$cid][$class]=$object;
 	}
-	public static function CreateMasterInstance($class)
+	public static function CreateMasterInstance($class,$object=null)
 	{
-		self::$_instances[0][$class]=new $class();
+		$object=$object??new $class();
+		self::$_instances[0][$class]=$object;
 	}
 	public static function CloneAllMasterClasses()
 	{
@@ -426,6 +455,20 @@ class SwooleHttpServer
 	{
 		throw new Swoole404Exception();
 	}
+	public function getDymicClasses()
+	{
+		$classes=[
+			SwooleSuperGlobal::class,
+			SwooleContext::class,
+		];
+		return $classes;
+	}
+	//////////
+	public function forkMasterClassesToCo($classes)
+	{
+		return SwooleCoroutineSingleton::ForkMasterClassesToCo($classes,$this->getDymicClasses());
+	}
+	///////////
 	protected function onHttpRun($request,$response)
 	{
 		$this->old_autoloads = spl_autoload_functions();
@@ -660,6 +703,7 @@ class SwooleHttpServer
 	}
 	public function run()
 	{
+		//save classes to reset;
 		if(!defined('DN_SWOOLE_SERVER_RUNNING')){ define('DN_SWOOLE_SERVER_RUNNING',true); }
 		fwrite(STDOUT,get_class($this)." run at ".DATE(DATE_ATOM)." ...\n");
 		
