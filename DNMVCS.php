@@ -1560,6 +1560,7 @@ class DNMVCS
 			DNView::class,
 			DNRoute::class,
 			DNRuntimeState::class,
+			DNSuperGlobal::class,
 		];
 		$ext_class=[];
 		foreach($classes as $class){

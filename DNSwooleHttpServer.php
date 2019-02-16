@@ -28,7 +28,6 @@ class DNSwooleHttpServer
 		SwooleCoroutineSingleton::CloneAllMasterClasses();
 		SwooleSuperGlobal::G($old_super_global);
 		SwooleContext::G($context);
-		//DNSuperGlobal::G(); // 不能少这个，看怎么化简
 		
 		$ret=DNMVCS::G()->init($options);
 		return $ret;
@@ -42,7 +41,7 @@ class DNSwooleHttpServer
 			DNMVCS::G()->onShow404();
 			return;
 		}
-		SwooleHttpServer::CloneInstance(DNMVCS::class);
+		SwooleHttpServer::CloneInstance(DNMVCS::class);  //make sure class has.
 		DNMVCS::G(static::G());
 		// ok we passed the fake  object;
 		SwooleHttpServer::G()->throw404();
@@ -71,22 +70,24 @@ class DNSwooleHttpServer
 		$dn_options=DNMVCS::G()->options;
 		$server_options=$dn_options['swoole'];
 		SwooleHttpServer::G()->init($server_options,null);
-		SwooleHttpServer::G()->http_handler=$server->options['http_handler']=[$this,'run'];
 	}
 	public function runOnce()
 	{
 		$this->old_error_404=DNMVCS::G()->options['error_404'];
 		DNMVCS::G()->options['error_404']=[$this,'onShow404'];
+		SwooleHttpServer::G()->http_handler=$server->options['http_handler']=[$this,'run'];
 		SwooleHttpServer::G()->run();
 	}
 	public function run()
 	{
 		$classes=DNMVCS::G()->getDymicClasses();
+		
 		foreach($classes as $class){
 			SwooleHttpServer::CloneInstance($class);
 		}
-		
-		DNSuperGlobal::G(SwooleHttpServer::SG());
+//TODO 更优雅 new base_class => outside class; if in swoole_context,xcontent,  use it;
+//SwooleCoroutineSingleton::Dump();
+		DNSuperGlobal::G(SwooleHttpServer::SG());  // this
 		return DNMVCS::G()->run();
 	}
 }

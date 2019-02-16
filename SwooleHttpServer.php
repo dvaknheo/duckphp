@@ -299,7 +299,7 @@ trait SwooleHttpServer_SimpleHttpd
 	
 	public function onRequest($request,$response)
 	{
-		SwooleContext::G()->initHttp($request,$response);
+		SwooleContext::G(new SwooleContext())->initHttp($request,$response);
 		$InitObLevel=ob_get_level();
 		ob_start(function($str) use($response){
 			if(''===$str){return;} // stop warnning;
@@ -431,6 +431,7 @@ class SwooleHttpServer
 		$this->old_autoloads = spl_autoload_functions();
 		
 		SwooleSuperGlobal::G(new SwooleSuperGlobal())->init();
+		//SwooleContext::G(new SwooleContext());
 		
 		if($this->http_handler){
 			$this->auto_clean_autoload=false;
