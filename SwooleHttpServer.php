@@ -31,10 +31,10 @@ class SwooleCoroutineSingleton
 	public static function ReplaceDefaultSingletonHandler()
 	{
 		if(defined('DNMVCS_DNSINGLETON_REPALACER')){ return false; }
-		define('DNMVCS_DNSINGLETON_REPALACER' ,self::class . '::'.'GetInstance');
+		define('DNMVCS_DNSINGLETON_REPALACER' ,self::class . '::'.'SingletonInstance');
 		return true;
 	}
-	public static function GetInstance($class,$object)
+	public static function SingletonInstance($class,$object)
 	{
 		$cid = \Swoole\Coroutine::getuid();
 		$cid=($cid<=0)?0:$cid;
@@ -52,31 +52,40 @@ class SwooleCoroutineSingleton
 			self::$_instances[$cid][$class]=$me;
 			return $me;
 		}
-		//throw new \ErrorException("SwooleCoroutineSingleton fail:: no master but has cid $class use CreateInstance instead");
 		self::$_instances[$cid][$class]=$object;
 		return $object;
 	}
-	public static function CloneInstance($class,$from_cid=0,$null_as_false=false)
+	///////////////
+	public static function GetInstance($cid,$class)
 	{
-		$cid = \Swoole\Coroutine::getuid();
-		$cid=($cid<=0)?0:$cid;
-		self::$_instances[$cid]=self::$_instances[$cid]??[];
-		if($cid ===$from_cid){ return false; }
-		
-		$master=self::$_instances[$from_cid][$class]??null;
-		if($master===null){return false; }
-		
-		self::$_instances[$cid][$class]=clone $master;
-
-		return true;
+		return self::$_instances[$cid][$class]??null;
 	}
-	public static function ForkMasterClassesToCo($classes,$co_classes=[])
+	public static function SetInstance($cid,$class,$object)
+	{
+		self::$_instances[$cid][$class]=$object;
+	}
+	public static function DumpString()
+	{
+		return static::G()->_DumpString();
+	}
+	
+	///////////////
+	public function cleanUp()
 	{
 		$cid = \Swoole\Coroutine::getuid();
+		if($cid<=0){return;}
+		unset(self::$_instances[$cid]);
+	}
+	
+	public function forkMasterInstances($classes,$exclude_classes=[])
+	{
+		$cid = \Swoole\Coroutine::getuid();
+		if($cid<=0){return;}
+		
 		foreach($classes as $class){
 			if(!isset(self::$_instances[0][$class])){
 				$real_class=$class;
-				if(in_array($real_class,$co_classes)){
+				if(in_array($real_class,$exclude_classes)){
 					continue;
 				}
 				self::$_instances[$cid][$class]=new $class();
@@ -84,7 +93,7 @@ class SwooleCoroutineSingleton
 				continue;
 			}
 			$real_class=get_class(self::$_instances[0][$class]);
-			if(in_array($real_class,$co_classes)){
+			if(in_array($real_class,$exclude_classes)){
 				self::$_instances[$cid][$class]=self::$_instances[$cid][$real_class];
 				continue;
 			}
@@ -95,35 +104,8 @@ class SwooleCoroutineSingleton
 			}
 		}
 	}
-	public static function CleanUp()
-	{
-		$cid = \Swoole\Coroutine::getuid();
-		if($cid<=0){return;}
-		unset(self::$_instances[$cid]);
-	}
-	public static function GetInstanceClassList($cid=0)
-	{
-		return array_keys(self::$_instances[$cid]);
-	}
-	public static function CreateInstance($cid,$class,$object=null)
-	{
-		$object=$object??new $class();
-		self::$_instances[$cid][$class]=$object;
-	}
-	public static function CreateCoroutineInstance($class,$object=null)
-	{
-		$cid = \Swoole\Coroutine::getuid();
-		$cid=($cid<=0)?0:$cid;
-		
-		$object=$object??new $class();
-		self::$_instances[$cid][$class]=$object;
-	}
-	public static function CreateMasterInstance($class,$object=null)
-	{
-		$object=$object??new $class();
-		self::$_instances[0][$class]=$object;
-	}
-	public static function CloneAllMasterClasses()
+	
+	public function forkAllMasterClasses()
 	{
 		$cid = \Swoole\Coroutine::getuid();
 		foreach(self::$_instances[0] as $class =>$object){
@@ -131,8 +113,8 @@ class SwooleCoroutineSingleton
 			self::$_instances[$cid][$class]=new $class();
 		}
 	}
-	
-	public static function DumpString()
+	///////////////////////
+	public function _DumpString()
 	{
 		$cid = \Swoole\Coroutine::getuid();
 		$ret="==== SwooleCoroutineSingleton List Current cid [{$cid}] ==== ;\n";
@@ -245,10 +227,6 @@ trait SwooleHttpServer_Static
 	{
 		return SwooleContext::G()->isWebSocketClosing();
 	}
-	public static function CloneInstance($class)
-	{
-		return SwooleCoroutineSingleton::CloneInstance($class);
-	}
 }
 trait SwooleHttpServer_SystemWrapper
 {
@@ -342,7 +320,7 @@ trait SwooleHttpServer_SimpleHttpd
 				ob_end_flush();
 			}
 			SwooleContext::G()->cleanUp();
-			SwooleCoroutineSingleton::CleanUp();
+			SwooleCoroutineSingleton::G()->cleanUp();
 			$response->end();
 		});
 		
@@ -455,6 +433,7 @@ class SwooleHttpServer
 	{
 		throw new Swoole404Exception();
 	}
+	//////////
 	public function getDymicClasses()
 	{
 		$classes=[
@@ -463,10 +442,31 @@ class SwooleHttpServer
 		];
 		return $classes;
 	}
-	//////////
-	public function forkMasterClassesToCo($classes)
+	public function createCoInstance($class,$object)
 	{
-		return SwooleCoroutineSingleton::ForkMasterClassesToCo($classes,$this->getDymicClasses());
+		$cid = \Swoole\Coroutine::getuid();
+		$cid=($cid<=0)?0:$cid;
+		
+		return SwooleCoroutineSingleton::SetInstance($cid,$class,$object);
+	}
+	public function forkMasterInstances($classes,$exclude_classes=[])
+	{
+		$exclude_classes=array_merge($exclude_classes,$this->getDymicClasses());
+		return SwooleCoroutineSingleton::G()->forkMasterInstances($classes,$exclude_classes);
+	}
+	public function resetInstances()
+	{
+		$classes=$this->getDymicClasses();
+		$instances=[];
+		foreach($classes as $class){
+			$instances[$class]=$class::G();
+		}
+		
+		SwooleCoroutineSingleton::G()->forkAllMasterClasses();
+		
+		foreach($classes as $class){
+			$class::G($instances[$class]);
+		}
 	}
 	///////////
 	protected function onHttpRun($request,$response)
