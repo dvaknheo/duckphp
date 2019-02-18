@@ -1385,6 +1385,29 @@ trait DNMVCS_RunMode
 		return static::G()->init($dn_options)->run();
 	}
 }
+trait DNMVCS_Instance
+{
+	public function getBootInstances()
+	{
+		$ret=[
+			DNAutoLoader::class => DNAutoLoader::G(),
+			DNMVCS::class => DNMVCS::G(),
+		];
+		$ret[static::class]=$this;
+		return $ret;
+	}
+	public function getDymicClasses()
+	{
+		$classes=[
+			DNExceptionManager::class,
+			DNView::class,
+			DNRoute::class,
+			DNRuntimeState::class,
+			DNSuperGlobal::class,
+		];
+		return $classes;
+	}
+}
 class DNMVCS
 {
 	const VERSION = '1.0.9';
@@ -1396,6 +1419,7 @@ class DNMVCS
 	use DNMVCS_Misc;
 	use DNMVCS_SystemWrapper;
 	use DNMVCS_RunMode;
+	use DNMVCS_Instance;
 	
 	const DEFAULT_OPTIONS=[
 			'namespace'=>'MY',
@@ -1471,11 +1495,11 @@ class DNMVCS
 		if(!$base_class || !class_exists($base_class)){return null;}
 		return DNMVCS::G($base_class::G())->init($options);
 	}
-	protected function beforeInit()
+	protected function boot()
 	{
 		if(static::class!==self::class){return;}
 		if(!empty($this->options['swoole'])){
-			DNSwooleHttpServer::G()->beforeInit();
+			DNSwooleHttpServer::G()->onDNMVCSBoot();
 		}
 	}
 	//@override me
@@ -1486,7 +1510,7 @@ class DNMVCS
 		
 		DNAutoLoader::G()->init($options)->run();
 		$this->options=$this->mergeOptions($options);
-		$this->beforeInit();
+		$this->boot();
 		
 		if(!$skip_check_override){
 			$object=$this->checkOverride($options);
@@ -1540,30 +1564,21 @@ class DNMVCS
 	}
 	public function initMisc()
 	{
+		if(!empty($this->options['swoole'])){
+			DNSwooleHttpServer::G()->onDNMVCSInit($this->options['swoole']);
+		}
+		
 		$this->isDev=DNConfiger::G()->_Setting('is_dev')??$this->isDev;
 		$this->platform=DNConfiger::G()->_Setting('platform')??$this->platform;
 		
-		if(!empty($this->options['swoole'])){
-			DNSwooleHttpServer::G()->afterInit();
-		}
 		$this->initSystemWrapper();
-		DNSuperGlobal::G()->init();
+		$this->initSuperGlobal();
+		
 		
 		if(!empty($this->options['ext'])){
 			DNMVCSExt::G()->init($this);
 		}
 		DNRuntimeState::G();
-	}
-	public function getDymicClasses()
-	{
-		$classes=[
-			DNExceptionManager::class,
-			DNView::class,
-			DNRoute::class,
-			DNRuntimeState::class,
-			DNSuperGlobal::class,
-		];
-		return $classes;
 	}
 	protected function initSystemWrapper()
 	{
@@ -1579,10 +1594,18 @@ class DNMVCS
 			}
 		}
 	}
+	protected function initSuperGlobal()
+	{
+		if(defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')){
+			$func=DNMVCS_SUPER_GLOBAL_REPALACER;
+			DNSuperGlobal::G($func());
+		}
+		DNSuperGlobal::G()->init();
+	}
 	protected function runOnce()
 	{
 		if(!empty($this->options['swoole'])){
-			DNSwooleHttpServer::G()->runOnce();
+			DNSwooleHttpServer::G()->onDNMVCSRunOnce();
 		}
 		if( $this->options['rewrite_map'] || $this->options['route_map'] ){
 			DNMVCSExt::G()->dealMapAndRewrite(DNRoute::G(),$this->options['rewrite_map'],$this->options['route_map']);

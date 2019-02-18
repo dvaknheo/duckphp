@@ -320,8 +320,6 @@ trait SwooleHttpServer_SystemWrapper
 			'exit_system'			=>[static::class,'exit_system'],
 			'set_exception_handler'	=>[static::class,'set_exception_handler'],
 			'register_shutdown_function' =>[static::class,'register_shutdown_function'],
-			
-			'super_global'			=>[SwooleSuperGlobal::class,'G'],
 		];
 		return $ret;
 	}
@@ -605,6 +603,7 @@ class SwooleHttpServer
 	}
 	protected function onHttpException($ex)
 	{
+
 		if($ex instanceof \Swoole\ExitException){
 			return;
 		}
@@ -714,6 +713,9 @@ class SwooleHttpServer
 		if(!defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')){
 			define('DNMVCS_SYSTEM_WRAPPER_INSTALLER',static::class .'::' .'system_wrapper_get_providers');
 		}
+		if(!defined('DNMVCS_SUPER_GLOBAL_REPALACER')){
+			define('DNMVCS_SUPER_GLOBAL_REPALACER',SwooleSuperGlobal::class .'::' .'G');
+		}
 		return $this;
 	}
 	public function run()
@@ -746,10 +748,12 @@ class SwooleSuperGlobal
 	public $is_inited=false;
 	public function init()
 	{
+		$cid = \Swoole\Coroutine::getuid();
+		if(!$cid<=0){ return; }
+		
 		if($this->is_inited){return $this;}
 		$this->is_inited=true;
-		$cid = \Swoole\Coroutine::getuid();
-		if(!$cid){ return; }
+		
 		$request=SwooleHttpServer::Request();
 		if(!$request){ return; }
 		

@@ -6,12 +6,11 @@ class DNSwooleHttpServer
 	use DNSingleton;
 	
 	protected $old_error_404;
-	protected $lock_init=false;
-	protected $has_run_once=false;
-
+	protected $has_inited=false;
+	
 	public function init($options)
 	{
-		//for 404 re in;
+		//for 404 RE in;
 		if(get_class(DNMVCS::G())===static::class){
 			return $this->initRunningModeDNMVCS($options);
 		}
@@ -35,38 +34,35 @@ class DNSwooleHttpServer
 		$class=DNMVCS::class;
 		SwooleHttpServer::G()->createCoInstance($class,new $class);
 		
-		DNMVCS::G(static::G()); //fake object ,
+		DNMVCS::G(static::G()); //fake object
 		
 		SwooleHttpServer::G()->throw404(); 
 	}
 	
-	public function beforeInit()
+	public function onDNMVCSBoot()
 	{
 		if(PHP_SAPI!=='cli'){ return; }
-		if($this->lock_init){return;}
-		$this->lock_init=true;
 		
-		$dn=DNMVCS::G();
-		$autoloader=DNAutoLoader::G();   // TODO remove referer
-		$class=static::class;
-		$self=$class::G();
+		if($this->has_inited){return;}
+		$this->has_inited=true;
+		
+		$instances=DNMVCS::G()->getBootInstances();
 		
 		$flag=SwooleHttpServer::ReplaceDefaultSingletonHandler(); 
 		if(!$flag){ return; }
 		
-		DNAutoLoader::G($autoloader);
-		DNMVCS::G($dn);
-		static::G($self);
+		foreach($instances as $class=>$object){
+			$class::G($object);
+		}
+		static::G($this);
 	}
-	public function afterInit()
+	public function onDNMVCSInit($server_options)
 	{
 		if(PHP_SAPI!=='cli'){ return; }
 		
-		$dn_options=DNMVCS::G()->options;
-		$server_options=$dn_options['swoole'];
 		SwooleHttpServer::G()->init($server_options,null);
 	}
-	public function runOnce()
+	public function onDNMVCSRunOnce()
 	{
 		$this->old_error_404=DNMVCS::G()->options['error_404'];
 		DNMVCS::G()->options['error_404']=[$this,'onSwoole404'];
@@ -75,7 +71,6 @@ class DNSwooleHttpServer
 		if($options['use_http_handler_root']){
 			// mark
 		}
-		
 		SwooleHttpServer::G()->http_handler=$server->options['http_handler']=[$this,'runSwoole'];
 		SwooleHttpServer::G()->run();
 	}
