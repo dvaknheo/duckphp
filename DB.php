@@ -7,7 +7,10 @@ class DB implements DBInterface
 	public $pdo;
 	public $config;
 	protected $rowCount;
-	
+	protected $driver_options=[
+			\PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION,
+			\PDO::ATTR_DEFAULT_FETCH_MODE=>\PDO::FETCH_ASSOC
+		];
 	public function init($config)
 	{
 		$this->config=$config;
@@ -28,12 +31,9 @@ class DB implements DBInterface
 	{
 		if($this->pdo){return;}
 		$config=$this->config;
-		$this->pdo=new \PDO($config['dsn'], $config['username'], $config['password']
-			,[
-				\PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION,
-				\PDO::ATTR_DEFAULT_FETCH_MODE=>\PDO::FETCH_ASSOC
-			]
-		);
+		$driver_options=$config['driver_options']??[];
+		$driver_options=array_merge($this->driver_options,$driver_options);
+		$this->pdo=new \PDO($config['dsn'], $config['username'], $config['password'],$driver_options);
 	}
 	public function close()
 	{
