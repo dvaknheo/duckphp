@@ -23,6 +23,17 @@ trait DNSingleton
 	}
 }
 }
+if(!trait_exists('DNMVCS\DNSingleton',false)){
+trait DNThrowQuickly
+{
+	public static function ThrowOn($flag,$message,$code=0)
+	{
+		if(!$flag){return;}
+		$class=static::class;
+		throw new $class($message,$code);
+	}
+}
+}
 class SwooleCoroutineSingleton
 {
 	use DNSingleton;
@@ -200,6 +211,43 @@ class Swoole404Exception extends SwooleException
 {
 	protected $code=404;
 	
+}
+trait SwooleHttpServer_Singleton
+{
+	public function getDymicClasses()
+	{
+		$classes=[
+			SwooleSuperGlobal::class,
+			SwooleContext::class,
+		];
+		return $classes;
+	}
+	public function createCoInstance($class,$object)
+	{
+		$cid = \Swoole\Coroutine::getuid();
+		$cid=($cid<=0)?0:$cid;
+		
+		return SwooleCoroutineSingleton::SetInstance($cid,$class,$object);
+	}
+	public function forkMasterInstances($classes,$exclude_classes=[])
+	{
+		$exclude_classes=array_merge($exclude_classes,$this->getDymicClasses());
+		return SwooleCoroutineSingleton::G()->forkMasterInstances($classes,$exclude_classes);
+	}
+	public function resetInstances()
+	{
+		$classes=$this->getDymicClasses();
+		$instances=[];
+		foreach($classes as $class){
+			$instances[$class]=$class::G();
+		}
+		
+		SwooleCoroutineSingleton::G()->forkAllMasterClasses();
+		
+		foreach($classes as $class){
+			$class::G($instances[$class]);
+		}
+	}
 }
 trait SwooleHttpServer_Static
 {
@@ -380,6 +428,7 @@ class SwooleHttpServer
 	use SwooleHttpServer_WebSocket;
 	use SwooleHttpServer_SystemWrapper;
 	use SwooleHttpServer_SuperGlobal;
+	use SwooleHttpServer_Singleton;
 	
 	const DEFAULT_OPTIONS=[
 			'swoole_server'=>null,
@@ -433,48 +482,11 @@ class SwooleHttpServer
 	{
 		throw new Swoole404Exception();
 	}
-	//////////
-	public function getDymicClasses()
-	{
-		$classes=[
-			SwooleSuperGlobal::class,
-			SwooleContext::class,
-		];
-		return $classes;
-	}
-	public function createCoInstance($class,$object)
-	{
-		$cid = \Swoole\Coroutine::getuid();
-		$cid=($cid<=0)?0:$cid;
-		
-		return SwooleCoroutineSingleton::SetInstance($cid,$class,$object);
-	}
-	public function forkMasterInstances($classes,$exclude_classes=[])
-	{
-		$exclude_classes=array_merge($exclude_classes,$this->getDymicClasses());
-		return SwooleCoroutineSingleton::G()->forkMasterInstances($classes,$exclude_classes);
-	}
-	public function resetInstances()
-	{
-		$classes=$this->getDymicClasses();
-		$instances=[];
-		foreach($classes as $class){
-			$instances[$class]=$class::G();
-		}
-		
-		SwooleCoroutineSingleton::G()->forkAllMasterClasses();
-		
-		foreach($classes as $class){
-			$class::G($instances[$class]);
-		}
-	}
-	///////////
 	protected function onHttpRun($request,$response)
 	{
 		$this->old_autoloads = spl_autoload_functions();
 		
 		SwooleSuperGlobal::G(new SwooleSuperGlobal())->init();
-		//SwooleContext::G(new SwooleContext());
 		
 		if($this->http_handler){
 			$this->auto_clean_autoload=false;
@@ -597,6 +609,9 @@ class SwooleHttpServer
 			return;
 		}
 		if($ex instanceof Swoole404Exception){
+			//$this->the404handler();
+		}
+		if($ex instanceof Swoole404Exception){
 			if($this->http_handler && $this->options['use_http_handler_root'] && !$this->auto_clean_autoload){
 				$this->auto_clean_autoload=true;
 				list($path,$document_root)=$this->prepareRootMode();
@@ -703,7 +718,6 @@ class SwooleHttpServer
 	}
 	public function run()
 	{
-		//save classes to reset;
 		if(!defined('DN_SWOOLE_SERVER_RUNNING')){ define('DN_SWOOLE_SERVER_RUNNING',true); }
 		fwrite(STDOUT,get_class($this)." run at ".DATE(DATE_ATOM)." ...\n");
 		
