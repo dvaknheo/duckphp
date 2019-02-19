@@ -23,7 +23,7 @@ trait DNSingleton
 	}
 }
 }
-if(!trait_exists('DNMVCS\DNSingleton',false)){
+if(!trait_exists('DNMVCS\DNThrowQuickly',false)){
 trait DNThrowQuickly
 {
 	public static function ThrowOn($flag,$message,$code=0)
@@ -206,9 +206,12 @@ class SwooleContext
 }
 class SwooleException extends \Exception
 {
+	use DNThrowQuickly;
 }
 class Swoole404Exception extends SwooleException
 {
+	use DNThrowQuickly;
+	
 	protected $code=404;
 	
 }

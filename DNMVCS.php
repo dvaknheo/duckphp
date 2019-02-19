@@ -1428,6 +1428,8 @@ class DNMVCS
 			'path_config'=>'config',
 			'path_lib'=>'lib',
 			'is_dev'=>false,
+			'platform'=>'',
+			
 			'all_config'=>[],
 			'setting'=>[],
 			'setting_file_basename'=>'setting',
