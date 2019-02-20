@@ -657,7 +657,7 @@ class SwooleHttpServer
 	/////////////////////////
 	public function init($options,$server=null)
 	{
-		if(!defined('DN_SWOOLE_SERVER_INIT')){define('DN_SWOOLE_SERVER_INIT',true);}
+		if(!defined('DNMVCS_SWOOLE_INIT')){define('DNMVCS_SWOOLE_INIT',true);}
 		$this->options=array_merge(self::DEFAULT_OPTIONS,$options);
 		$options=$this->options;
 		
@@ -720,7 +720,7 @@ class SwooleHttpServer
 	}
 	public function run()
 	{
-		if(!defined('DN_SWOOLE_SERVER_RUNNING')){ define('DN_SWOOLE_SERVER_RUNNING',true); }
+		if(!defined('DNMVCS_SWOOLE_RUNNING')){ define('DNMVCS_SWOOLE_RUNNING',true); }
 		fwrite(STDOUT,get_class($this)." run at ".DATE(DATE_ATOM)." ...\n");
 		
 		$this->server->start();

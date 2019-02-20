@@ -943,10 +943,10 @@ trait DNMVCS_Glue
 	}
 	public static function InSwoole()
 	{
-		if(defined('DN_SWOOLE_SERVER_RUNNING')){
+		if(defined('DNMVCS_SWOOLE_RUNNING')){
 			return true;
 		}
-		if(defined('DN_SWOOLE_SERVER_INIT')){
+		if(defined('DNMVCS_SWOOLE_INIT')){
 			return true;
 		}
 		return false;
