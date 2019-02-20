@@ -161,6 +161,18 @@ $options 我们术语称为 DNMVCS 选项。和 setting.php 设置， config.php
 
 文档约定我们直接省略 DNMVCS 的命名空间。
 
+## 难度级别
+把这些常见任务完成了， DNMVCS 的静态函数就都看完了。
+
+从难度低到高，大概是这样的级别以实现目的
+1. 使用默认选项实现目的 
+2. 只改选项实现目的
+3. 调用 DNMVCS 类的静态方法实现目的
+4. 调用 DNMVCS 类的动态方法实现目的
+5. ---- 核心程序员和高级程序员分界线 ----
+6. 调用扩展类，组件类的动态方法实现目的
+7. 继承接管特定类实现目的
+8. 魔改，硬改 DNMVCS 的代码实现目的
 ## 目录结构
 
 推荐的工程的目录结构
@@ -463,27 +475,12 @@ DNMVCS 整合其他框架：
 ```php
 <?php
     $options['error_404']=function(){};
-    $flag=DNMVCS::G()->init($options)->run();
+    $flag=DNMVCS::RunQuickly($options);
     if($flag){ return; }
     // 后面是其他框架代码
 ```
 原理是由其他框架去处理 404。
 其他框架整合 DNMVCS ,则在相应处理 404 的地方开始
-
-## 总结常见任务
-把这些常见任务完成了， DNMVCS 的静态函数就都看完了。
-
-从难度低到高，大概是这样的级别以实现目的
-1. 使用默认选项实现目的 
-2. 只改选项实现目的
-3. 调用 DNMVCS 类的静态方法实现目的
-4. 调用 DNMVCS 类的动态方法实现目的
-5. ---- 核心程序员和高级程序员分界线 ----
-6. 调用扩展类，组件类的动态方法实现目的
-7. 继承接管特定类实现目的
-8. 魔改，硬改 DNMVCS 的代码实现目的
-
-
 
 # 第三章 DNMVCS 配置和选项
 
@@ -567,66 +564,13 @@ const DNRoute::DEFAULT_OPTIONS=[
     enable_post_prefix 默认把 POST 的方法映射到 do_$action 这样处理起来方便些。
     default_controller_class 可以设置为空
 
-## 全部默认选项
-使用
-var_export(\DNMVCS\DNMVCS::G()->init()->options);
-的结果 ,把动态的 path 去掉，其他是固定的
-```php
-array (
-  'path' => null,
-  'namespace' => 'MY',
-  'path_namespace' => 'app',
-  'with_no_namespace_mode' => true,
-  'path_no_namespace_mode' => 'app',
-  'skip_system_autoload' => false,
-  'skip_app_autoload' => false,
-  'enable_paramters' => false,
-  'prefix_no_namespace_mode' => '',
-  'path_controller' => 'app/Controller',
-  'namespace_controller' => 'Controller',
-  'default_controller_class' => 'DNController',
-  'default_method_for_miss' => NULL,
-  'base_controller_class' => NULL,
-  'enable_post_prefix' => true,
-  'prefix_post' => 'do_',
-  'disable_default_class_outside' => false,
-  'base_class' => 'Base\\App',
-  'path_view' => 'view',
-  'path_config' => 'config',
-  'path_lib' => 'lib',
-  'is_dev' => false,
-  'all_config' => 
-  array (
-  ),
-  'setting' => 
-  array (
-  ),
-  'setting_file_basename' => 'setting',
-  'db_create_handler' => '',
-  'db_close_handler' => '',
-  'database_list' => 
-  array (
-  ),
-  'rewrite_map' => 
-  array (
-  ),
-  'route_map' => 
-  array (
-  ),
-  'error_404' => '_sys/error-404',
-  'error_500' => '_sys/error-500',
-  'error_exception' => '_sys/error-exception',
-  'error_debug' => '_sys/error_debug',
-  'ext' => 
-  array (
-  ),
-  'swoole' => 
-  array (
-  ),
-)
-```
+
 # 第四章 DNMVCS 核心类
-这一章节是说明 DNMVCS.php 里的 DNMVCS 核心类，和附属组件类。
+这一章节是说明 DNMVCS.php 里的 DNMVCS 核心类。
+DNMVCS 类是很大的类。一般程序员要学会他。
+了解他，从下面几种分组功能方法就学会了
+包括 基本方法，常用静态方法，状态判定静态方法  运行模式，代替系统的静态函数，超全局变量替代静态函数
+独立杂项静态方法 独立杂项静态方法 事件方法 组件初始化 内部方法
 主要的说明文档
 ## 基本方法
 static G($object=null)
@@ -644,13 +588,17 @@ run()
     开始路由，执行。这个方法拆分出来是为了特定需求, 比如只是为了加载一些类。
     比如 swoole 下不同协程的运行。
     如果404 则返回false;其他返回 true
-static SG()
+RunQuickly($options=[])
 
-    SuperGlobal 的缩写
-    返回 DNSuperGlobal 对象
-    你可以 DNMVCS::SG()->_GET得到的就是 swoole 也可用的 $_GET 数组。
-    类似的还有 _GET,_POST,_REQUEST,_SERVER，_ENV,_COOKIE,_SESSION
-    注意 GLOBALS 数组不可用。
+    DNMVCS::RunQuickly ($options) 相当于 DNMVCS::G()->init($options)->run();
+RunOneFileMode($optionss=[],$init_function=null)
+
+    单一文件模式，不需要其他文件，设置内容请放在
+    $options['setting'] 里
+    $init_function 用于初始化之后，run 前调用
+RunWithoutPathInfo()
+
+    不需要 PathInfo 的模式。用 _r 来表示 Path_Info
 
 ## 常用静态方法
 
@@ -765,22 +713,7 @@ IsRunning
 
     判断是否已经开始运行。
     实质调用 DNRuntimeState::G()->isRunning();
-## 运行模式
 
-RunQuickly($options=[])
-
-    DNMVCS::RunQuickly ($options) 相当于 DNMVCS::G()->init($options)->run();
-RunOneFileMode($optionss=[],$init_function=null)
-
-    单一文件模式，不需要其他文件，设置内容请放在
-    $options['setting'] 里
-    $init_function 用于初始化之后，run 前调用
-RunWithoutPathInfo()
-
-    不需要 PathInfo 的模式。用 _r 来表示 Path_Info
-RunAsServer($server_options,$dn_options,$server=null)
-
-    运行 swoole http 服务器
 ### 单文件模式
 ```php
 \DNMVCS\DNMVCS::RunOneFileMode([]);
@@ -793,20 +726,20 @@ RunAsServer($server_options,$dn_options,$server=null)
 ``` 
 用 _r 来做 path_info
 
-## 取代系统的静态函数
+## 替代系统的静态函数
 和系统同名的静态函数，用于替换系统函数，以适应  swoole 环境
 
 session_start(array $options=[])
 
     session 会话函数
-    实质调用 DNSuperGlobal::G()->_StartSession();
+    实质调用 DNSuperGlobal::G()->session_start();
 session_destroy()
 
-    实质调用 DNSuperGlobal::G()->_DestroySession();
+    实质调用 DNSuperGlobal::G()->session_destroy();
 session_set_save_handler
 
     这个函数只实现了 SessionInterface 的参数调用，没实现单独的调用
-    实质调用 DNSuperGlobal::G()->_DestroySession();
+    实质调用 DNSuperGlobal::G()->session_set_save_handler();
 header
 
     同系统的 header 方法
@@ -820,7 +753,7 @@ exit_sytesm($code=0)
 
     代替 exit();
     实际调用 static::G()->exit_sytesm()
-## Swoole 兼容的替代方法
+## 超全局变量和语法代替静态方法
 swoole 的协程使得 跨领域的 global ,static, 类内 static 变量不可用，
 我们用替代方法
 
@@ -858,6 +791,13 @@ class C extends B
 }
 C::foo();C::foo();C::foo();
 ```
+static SG()
+
+    SuperGlobal 的缩写
+    返回 DNSuperGlobal 对象
+    你可以 DNMVCS::SG()->_GET得到的就是 swoole 也可用的 $_GET 数组。
+    类似的还有 _GET,_POST,_REQUEST,_SERVER，_ENV,_COOKIE,_SESSION
+
 static &GLOBALS($k,$v=null)
 
     用于替换 global 语法
@@ -869,6 +809,8 @@ static &STATICS($k,$v=null)
 static &CLASS_STATICS($class_name,$var_name)
 
     用于替换类内的 static ，这要提供类名，需要 static::class 或 self::class (从堆栈没法分析出来，没办法了 ：( )
+## 跳转用静态方法
+
 ## 独立杂项静态方法
 这几个方法独立，为了方便操作，放在这里。
 
@@ -1188,7 +1130,7 @@ _Config($key,$file_basename='config')
 _LoadConfig($file_basename='config')
 
     加载配置
-## 异常管理 DNExceptionManager
+## DNExceptionManager 异常管理类
 
     异常管理类一般不用接管。
 init(callback $exception_handler,$dev_error_handler)
@@ -1259,6 +1201,7 @@ DNAutoLoader 做了防多次加载和多次初始化。
     assignPathNamespace()
 ## DNRuntimeState 状态类
 用于运行时状态的保存
+
 # 第六章 DNMVCSExt 扩展类和附属组件
     DNMVCS 的选项 $options['ext'] 不为空数组就 引入DNMVCSExt 扩展类
     配置字段 ext 数组有数据的时候，会进入高级模式。自动使用扩展文件
@@ -1497,227 +1440,7 @@ MedooDB 类的除了默认的 Medoo 方法，还扩展了 DB 类同名方法。
 
 
 # 第八章 Swoole 整合指南
-## 概述
-这章分两部分 SwooleHttpServer 和 DNSwooleHttpServer
-
-SwooleHttpServer 是设计成几乎和 DNMVCS 无关的Swoole 框架。
-DNSwooleHttpServer extends SwooleHttpServer 则是和 DNMVCS整合的 Swoole Http 服务器
-
-DNMVCS 整合到 DNSwooleServer
-
-```php
-<?php
-
-\DNMVCS\DNMVCS::RunAsServer($server_options,$dn_options,$server=null);
-// 展开模式 \DNMVCS\DNSwooleServer::G()->init($server_options,$server)->bindDN($dn_options)->run();
-## SwooleHttpServer
-```
-
-SwooleHttpServer 和 DNMVCS 主类主要关系是在 G 函数 的实现，如果没这个 G 函数，两者是完全独立的。
-SwooleHttpServer  重写了 G 函数的实现，使得做到协程单例。
-想要获得当前 的 request ,response 用 DNSwooleHttpServer::Request() ,Response（）；
-还记得 _SERVER,_GET,_POST 超全局变量在 swoole 协程下无法使用么。用 SuperGloal类代替。
-
-
-以下是 SwooleHttpServer 的介绍
-
-和 DNMVCS 类似 SwooleHttpServer 的功能也基本由 SwooleHttpServer 实现。
-
-## server_options 的选项
-
-```php
-const DEFAULT_OPTIONS=[
-        'swoole_server'=>null,  // swoole_http_server 对象，留空，则用 host,port 创建
-        'swoole_options'=>[],   // swoole_http_server 的配置，合并如 server
-        
-        'host'=>'0.0.0.0',      // IP
-        'port'=>0,              //端口
-
-        'http_handler_basepath'=>'',
-        'http_handler_root'=>null,      // php 的目录和静态目录的不相同，留空
-        'http_handler_file'=>null,      // 启动文件 留空将会使用 http_handler
-        'http_handler'=>null,           // 启动方法，
-        'http_exception_handler'=>null, // 异常处理方法,DNMVCS 已经占用  // http_handler_root 的异常也是这里处理
-
-        'use_http_handler_root'=>false,	// 复用 http_handler_root 404 后会从目录文件里载入
-
-        //* websocket 在测试中。未稳定
-        'websocket_open_handler'=>null,  //websocket 打开
-        'websocket_handler'=>null,          //websocket 
-        'websocket_exception_handler'=>null,    //websocket 异常处理
-        'websocket_close_handler'=>null,        //websocket 关闭
-];
-```
-    DNMVCS 的  httpd_options 就这个选项
-## 三种模式
-如果 http_handler 为空，有 http_handler_file 则直接 include  http_handler_file 运行，和 DNMVCS 系统无关
-
-SwooleHttpServer 运行 DNMVCS 可以有三种模式
-1. http_handler_root
-    这和 document_root 一样。读取php文件，然后运行的模式
-2. http_handler_file
-    这种模式是把 url 都转向 文件如 index.php 来处理
-3. http_handler
-    所有url请求都到这个函数处理。
-    重点模式
-    DNSwooleHttpServer->bindDN($dn_options) 就是把请求定到 DNMVCS 里处理。
-    这模式和上面两种模式的区别，就是常驻内存,
-    然后设置  http_handler http_exception_handler 为 DNMVCS  的 run, onException
-
-DNSwooleHttpServer 可以让你用 echo 直接输出。
-
-http_exception_handler，用于 单文件模式和目录模式，你可以在这里处理 404。
-## 预定义宏
-    DNMVCS_DNSINGLETON_REPALACER	耦合连接，协程单例，替换默认实现
-    DNMVCS_SYSTEM_WRAPPER_INSTALLER  耦合连接，协程单例，替换默认实现
-    DN_SWOOLE_SERVER_INIT			Swoole 服务器已经初始化的标志
-    DN_SWOOLE_SERVER_RUNNING		Swoole 服务器已经运行的标志
-## class SwooleServer
-## 基本方法
-static G($object=null)
-
-    G 函数，不多说
-init($options=[])
-
-    初始化，这是最经常子类化完成自己功能的方法。
-    你可以扩展这个类，添加工程里的其他初始化。
-run()
-
-    运行
-## 常用静态方法
-和DNMVCS 常用静态方法一样，这也是常用的方法，所以提取出来
-Server
-
-    获得当前 swoole_server 对象
-Request
-
-    获得当前 swoole_request 对象
-Response
-
-    获得当前 swoole_response 对象
-Frame
-    获得当前  frame （websocket 生效 ）  
-FD
-    获得当前  fd  （websocket 生效）
-IsClosing
-    判断是否是关闭的包 （websocket 生效）
-CloneInstance
-    把静态单例克隆到当前协程。
-    
-## 系统封装方法
-对应PHP手册的函数的全局函数的替代，因为相应的同名函数在 Swoole环境下不可用。
-和 DNMVCS 的系统封装方法一样通用，
-如果是在 DNSwooleServer 中，使用 DNMVCS 的相应静态函数，将会调用这里的实现。
-
-header(string $string, bool $replace = true , int $http_status_code =0)
-
-    header 函数
-setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/', string $domain  = '', bool $secure = false , bool $httponly = false)
-
-    设置 cookie
-exit_system($code=0)
-
-    退出系统，相应的是 exit ，swoole 里，直接 exit 也是可以的。
-set_exception_handler(callable $exception_handler)
-    
-    异常函数
-register_shutdown_function(callable $callback,...$args)
-    
-    退出关闭函数
-session_start(array $options=[])
-    开始 session
-session_destroy()
-    结束 session
-session_set_save_handler(\SessionHandlerInterface $handler)
-
-    session 函数变更
-## 简单 HTTP 服务器
-SwooleHttpServer 用的 trait SwooleHttpServer_SimpleHttpd .
-单独使用这个 trait 你可以实现一个 http 服务器
-
-    protected function onHttpRun($request,$response){throw new SwooleException("Impelement Me");}
-    protected function onHttpException($ex){throw new SwooleException("Impelement Me");}
-    protected function onHttpClean(){throw new SwooleException("Impelement Me");}
-    
-    public function onRequest($request,$response)
-## 简单 HTTP 服务器
-SwooleHttpServer 用的 trait SwooleHttpServer_WebSocket .
-单独使用这个 trait 你可以实现一个 websocket 服务器
-
-onRequest($request,$response)
-
-    //
-onOpen(swoole_websocket_server $server, swoole_http_request $request)
-
-    //
-onMessage($server,$frame)
-
-    //
-没有 OnClose 。
-## 其他子类
-
-## SwooleCoroutineSingleton
-
-用于协程单例,把主进程单例复制到协程单例
-
-    public static function GetInstance($class,$object)
-    public static function CreateInstance($class,$object=null)
-    public static function CloneInstance($class)
-    public static function DeleteInstance($class)
-    public static function ReplaceDefaultSingletonHandler()
-    public static function CleanUp()
-    public static function Dump()
-    public static function DumpString()
-## SwooleException extends \Exception
-
-    use DNThrowQuickly; 用于处理 Swoole 异常。
-    public static function ThrowOn($flag,$message,$code=0)
-    404 错误是用 code=404 那个
-    没端口会报错
-
-## class SwooleContext
-    协程单例。Swoole 的运行信息
-    public function initHttp($request,$response)
-    public function initWebSocket($frame)
-    public function cleanUp()
-    public function onShutdown()
-    public function regShutDown($call_data)
-    public function isWebSocketClosing()
-## SwooleSuperGlobal
-    SwooleSuperGlobal 是 Swoole 下 SuperGlobal 类的实现。
-    相关方法，和公开变量，参考见 DNSuperGlobal
-## SwooleSession
-    SwooleSession 是因为 Swoole 的 session 实现。
-    SwooleSession 被 SwooleSuperGlobal 调用， 调用 SwooleSessionHandler
-## SwooleSessionHandler implements \SessionHandlerInterface
-    如果你要实现自己的 SessionHandler ，用 SwooleServer::session_set_save_handler();替换这个类。
-
-
-## class DNSwooleHttpServer
-
-swoole 下， DNMVCS  入口选项 ['swoole'] 的选项
-```php
-const DEFAULT_DN_OPTIONS=[
-        'not_empty'=>true,  			// 用于数组不空
-
-    ];
-```
-    public function init($options,$server)
-    public function onShow404()
-
-    public function bindDN($dn_options)
-    public static function RunWithServer($server_options,$dn_options=[],$server=null)
-
-## class DBConnectPoolProxy
-DB连接代理
-
-    public function init($max_length=10,$timeout=5)
-    public function setDBHandler($db_create_handler,$db_close_handler=null)
-    public function onCreate($db_config,$tag)
-    public function onClose($db,$tag)
-    protected function getObject($queue,$queue_time,$db_config,$tag)
-    protected function reuseObject($queue,$queue_time,$db)
-
+设置选项 $options['swoole'] 不为空 以调用
 # 第九章 DNMVCS 全部文件和类说明
 这个章节说明 DNMVCS 的各个文件。
 并在此把次要的类和文件展示出来
@@ -1892,7 +1615,64 @@ DNMVCS::DB
 
     DNDBManager -> DB::CreateDBInstence(),DB::CloseDBInstence()
 ```
-
+## 全部默认选项
+使用
+var_export(\DNMVCS\DNMVCS::G()->init()->options);
+的结果 ,把动态的 path 去掉，其他是固定的
+```php
+array (
+  'path' => null,
+  'namespace' => 'MY',
+  'path_namespace' => 'app',
+  'with_no_namespace_mode' => true,
+  'path_no_namespace_mode' => 'app',
+  'skip_system_autoload' => false,
+  'skip_app_autoload' => false,
+  'enable_paramters' => false,
+  'prefix_no_namespace_mode' => '',
+  'path_controller' => 'app/Controller',
+  'namespace_controller' => 'Controller',
+  'default_controller_class' => 'DNController',
+  'default_method_for_miss' => NULL,
+  'base_controller_class' => NULL,
+  'enable_post_prefix' => true,
+  'prefix_post' => 'do_',
+  'disable_default_class_outside' => false,
+  'base_class' => 'Base\\App',
+  'path_view' => 'view',
+  'path_config' => 'config',
+  'path_lib' => 'lib',
+  'is_dev' => false,
+  'all_config' => 
+  array (
+  ),
+  'setting' => 
+  array (
+  ),
+  'setting_file_basename' => 'setting',
+  'db_create_handler' => '',
+  'db_close_handler' => '',
+  'database_list' => 
+  array (
+  ),
+  'rewrite_map' => 
+  array (
+  ),
+  'route_map' => 
+  array (
+  ),
+  'error_404' => '_sys/error-404',
+  'error_500' => '_sys/error-500',
+  'error_exception' => '_sys/error-exception',
+  'error_debug' => '_sys/error_debug',
+  'ext' => 
+  array (
+  ),
+  'swoole' => 
+  array (
+  ),
+)
+```
 
 
 # 第十一章 常见问题
