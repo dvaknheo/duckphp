@@ -7,10 +7,7 @@ return [
 		'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
 		'username'=>'???',
 		'password'=>'???',
+		'driver_options'=>[],
 		],
-	],
-	'server_options'=>[
-		'port'=>9528,
-		//'http_handler_basepath'=>'',
 	],
 ];
