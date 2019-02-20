@@ -217,6 +217,10 @@ class Swoole404Exception extends SwooleException
 }
 trait SwooleHttpServer_Singleton
 {
+	public static function ReplaceDefaultSingletonHandler()
+	{
+		SwooleCoroutineSingleton::ReplaceDefaultSingletonHandler();
+	}
 	public function getDymicClasses()
 	{
 		$classes=[
@@ -458,48 +462,68 @@ class SwooleHttpServer
 	const DEFAULT_OPTIONS=[
 			'swoole_server'=>null,
 			'swoole_server_options'=>[],
-			
 			'host'=>'127.0.0.1',
 			'port'=>0,
 			
+			'http_handler'=>null,
 			'http_handler_basepath'=>'',
 			'http_handler_root'=>null,
 			'http_handler_file'=>null,
-			'http_handler'=>null,
 			'http_exception_handler'=>null,
 			'http_404_handler'=>null,
 			
 			'with_http_handler_root'=>false,
-			'use_http_handler_file'=>false,
+			'with_http_handler_file'=>false,
 			
 			'websocket_open_handler'=>null,
 			'websocket_handler'=>null,
 			'websocket_exception_handler'=>null,
 			'websocket_close_handler'=>null,
 			
-			
+			'base_class'=>'',
 		];
 	const MAX_PATH_LEVEL=1000;
 	public $server=null;
 	
 	public $http_handler=null;
+	public $http_handler_basepath=null;
+	public $http_handler_root=null;
+	public $http_handler_file=null;
 	public $http_exception_handler=null;
-	
-	public $document_root=null;
-	public $script_filename=null;
+	public $http_404_handler=null;
 	
 	protected $static_root=null;
 	protected $auto_clean_autoload=true;
 	protected $old_autoloads=[];
 	
-	public static function ReplaceDefaultSingletonHandler()
+	public static function RunQuickly($options)
 	{
-		SwooleCoroutineSingleton::ReplaceDefaultSingletonHandler();
+		return static::G()->init($options)->run();
 	}
 	public function set_http_exception_handler($exception_handler)
 	{
 		$this->http_exception_handler=$exception_handler;
 	}
+	public static function __callStatic($name, $arguments) 
+	{
+		$class=get_class(static::G());
+		if($class===static::class){
+			throw new \ErrorException(static::class .": Call to undefined method ".static::class ."::$name()");
+		}
+		$ret=call_user_func_array([$class,$name], $arguments);
+		return $ret;
+	}
+	protected function checkOverride($options)
+	{
+		if(static::class!==self::class){return null;}
+		
+		$base_class=isset($options['base_class'])?$options['base_class']:self::DEFAULT_OPTIONS['base_class'];
+		$base_class=ltrim($base_class,'\\');
+		
+		if(!$base_class || !class_exists($base_class)){return null;}
+		return static::G($base_class::G())->init($options);
+	}
+	
 	public function exit_request($code=0)
 	{
 		exit($code);
@@ -518,26 +542,26 @@ class SwooleHttpServer
 			if($flag){
 				return;
 			}
-			if(!$this->options['with_http_handler_root']){
+			if(!$this->with_http_handler_root){
 				$this->throw404();
 				return;
 			}
 			$this->auto_clean_autoload=true;
 		}
-		if($this->options['http_handler_root']){
+		if($this->http_handler_root){
 			list($path,$document_root)=$this->prepareRootMode();
 			$flag=$this->runHttpFile($path,$document_root);
 			if($flag){
 				return;
 			}
-			if(!$this->options['with_http_handler_file'] || $this->http_handler){
+			if(!$this->with_http_handler_file || $this->http_handler){
 				$this->throw404();
 				return;
 			}
 		}
-		if($this->options['http_handler_file']){
+		if($this->http_handler_file){
 			$path_info=SwooleSuperGlobal::G()->_SERVER['REQUEST_URI'];
-			$file=$this->options['http_handler_basepath'].$this->options['http_handler_file'];
+			$file=$this->http_handler_basepath.$this->http_handler_file;
 			$document_root=dirname($file);
 			$this->includeHttpPhpFile($file,$document_root,$path_info);
 			return;
@@ -545,7 +569,7 @@ class SwooleHttpServer
 	}
 	protected function prepareRootMode()
 	{
-		$http_handler_root=$this->options['http_handler_basepath'].$this->options['http_handler_root'];
+		$http_handler_root=$this->http_handler_basepath.$this->http_handler_root;
 		$http_handler_root=rtrim($http_handler_root,'/').'/';
 		$document_root=$this->static_root?:rtrim($http_handler_root,'/');
 		
@@ -657,14 +681,27 @@ class SwooleHttpServer
 	/////////////////////////
 	public function init($options,$server=null)
 	{
+		$skip_check_override=$options['skip_check_override']??false;
+		unset($options['skip_check_override']);
+		if(!$skip_check_override){
+			$object=$this->checkOverride($options);
+			if($object){return $object;}
+		}
+		
 		if(!defined('DNMVCS_SWOOLE_INIT')){define('DNMVCS_SWOOLE_INIT',true);}
-		$this->options=array_merge(self::DEFAULT_OPTIONS,$options);
-		$options=$this->options;
+		$options=array_merge(self::DEFAULT_OPTIONS,$options);
 		
 		$this->http_handler=$options['http_handler'];
+		$this->http_handler_basepath=$options['http_handler_basepath'];
+		$this->http_handler_root=$options['http_handler_root'];
+		$this->http_handler_file=$options['http_handler_file'];
 		$this->http_exception_handler=$options['http_exception_handler'];
+		$this->http_404_handler=$options['http_404_handler'];
 		
-		$this->server=$server?:$options['swoole_server'];
+		$this->with_http_handler_root=$options['with_http_handler_root'];
+		$this->with_http_handler_file=$options['with_http_handler_file'];
+		
+		$this->server=$options['swoole_server'];
 	
 		if(!$this->server){
 			$this->check_swoole();
@@ -687,7 +724,6 @@ class SwooleHttpServer
 			$this->server->set($options['swoole_server_options']);
 		}
 		
-		$this->options['swoole_server']=$this->server->setting;
 		$this->server->on('request',[$this,'onRequest']);
 		if($this->server->setting['enable_static_handler']??false){
 			$this->static_root=$this->server->setting['document_root'];

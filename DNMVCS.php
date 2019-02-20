@@ -1462,7 +1462,7 @@ class DNMVCS
 	{
 		$class=get_class(static::G());
 		if($class===static::class){
-			throw new \ErrorException("DNMVCS Call to undefined method DNMVCS\DNMVCS::$name()");
+			throw new \ErrorException(static::class .": Call to undefined method ".static::class ."::$name()");
 		}
 		$ret=call_user_func_array([$class,$name], $arguments);
 		return $ret;
@@ -1478,6 +1478,7 @@ class DNMVCS
 	}
 	protected function initOptions($options)
 	{
+		$this->options=$this->mergeOptions($options);
 		$this->path=$this->options['path'];
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
 		$this->isDev=$this->options['is_dev'];
@@ -1497,10 +1498,10 @@ class DNMVCS
 		if(!$base_class || !class_exists($base_class)){return null;}
 		return static::G($base_class::G())->init($options);
 	}
-	protected function boot()
+	protected function boot($options)
 	{
 		if(static::class!==self::class){return;}
-		if(!empty($this->options['swoole'])){
+		if(!empty($options['swoole'])){
 			DNSwooleExt::G()->onDNMVCSBoot();
 		}
 	}
@@ -1511,8 +1512,7 @@ class DNMVCS
 		unset($options['skip_check_override']);
 		
 		DNAutoLoader::G()->init($options)->run();
-		$this->options=$this->mergeOptions($options);
-		$this->boot();
+		$this->boot($options);
 		
 		if(!$skip_check_override){
 			$object=$this->checkOverride($options);

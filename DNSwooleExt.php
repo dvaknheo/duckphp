@@ -48,13 +48,12 @@ class DNSwooleExt
 	public function onDNMVCSRunOnce()
 	{
 		$server=SwooleHttpServer::G();
-		$options=$server->options;
-		if($options['with_http_handler_root']){
+		
+		if($server->with_http_handler_root){
 			$this->with_http_handler_root=true;
 			DNMVCS::G()->options['error_404']=function(){};
 		}
-		$server->options['http_404_handler']=[DNMVCS::G(),'onShow404'];
-		$server->http_handler=$server->options['http_handler']=[$this,'runSwoole'];
+		$server->http_handler=[$this,'runSwoole'];
 		$server->run();
 	}
 	public function runSwoole()
