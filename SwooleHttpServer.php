@@ -469,7 +469,7 @@ class SwooleHttpServer
 			'http_exception_handler'=>null,
 			'http_404_handler'=>null,
 			
-			'use_http_handler_root'=>false,
+			'with_http_handler_root'=>false,
 			'use_http_handler_file'=>false,
 			
 			'websocket_open_handler'=>null,
@@ -512,21 +512,28 @@ class SwooleHttpServer
 	{
 		$this->old_autoloads = spl_autoload_functions();
 		SwooleSuperGlobal::G(new SwooleSuperGlobal())->init();
-		
 		if($this->http_handler){
 			$this->auto_clean_autoload=false;
-			if(!$this->http_handler){ throw new SwooleException("No Handler"); }
-			
-			if($this->options['use_http_handler_root']){
-				list($path,$document_root)=$this->prepareRootMode();
-				$script_filename=$this->document_root.'/'.'index.php';
-				
-				SwooleSuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=$document_root;
-				SwooleSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']=$script_filename;
+			$flag=($this->http_handler)();
+			if($flag){
+				return;
 			}
-			
-			($this->http_handler)();
-			return;
+			if(!$this->options['with_http_handler_root']){
+				$this->throw404();
+				return;
+			}
+			$this->auto_clean_autoload=true;
+		}
+		if($this->options['http_handler_root']){
+			list($path,$document_root)=$this->prepareRootMode();
+			$flag=$this->runHttpFile($path,$document_root);
+			if($flag){
+				return;
+			}
+			if(!$this->options['with_http_handler_file'] || $this->http_handler){
+				$this->throw404();
+				return;
+			}
 		}
 		if($this->options['http_handler_file']){
 			$path_info=SwooleSuperGlobal::G()->_SERVER['REQUEST_URI'];
@@ -535,16 +542,6 @@ class SwooleHttpServer
 			$this->includeHttpPhpFile($file,$document_root,$path_info);
 			return;
 		}
-		if($this->options['http_handler_root']){
-			list($path,$document_root)=$this->prepareRootMode();
-			$flag=$this->runHttpFile($path,$document_root);
-			if(!$flag){
-				$this->throw404();
-			}
-			return;
-		}
-		$this->throw404();
-		//$this->includeHttpPhpFile($file,$document_root,$path_info);
 	}
 	protected function prepareRootMode()
 	{
@@ -610,8 +607,8 @@ class SwooleHttpServer
 			return;
 		}
 		$mime=mime_content_type($full_file);
-		SwooleContext::G()->response->header('Content-Type',$mime);
-		SwooleContext::G()->response->sendfile($full_file);
+		static::Response()->header('Content-Type',$mime);
+		static::Response()->sendfile($full_file);
 		return;
 	}
 	protected function includeHttpPhpFile($file,$document_root,$path_info)
@@ -624,30 +621,11 @@ class SwooleHttpServer
 	}
 	protected function onHttpException($ex)
 	{
-
 		if($ex instanceof \Swoole\ExitException){
 			return;
 		}
 		if($ex instanceof Swoole404Exception){
-			//$this->the404handler();
-		}
-		if($ex instanceof Swoole404Exception){
-			if($this->http_handler && $this->options['use_http_handler_root'] && !$this->auto_clean_autoload){
-				$this->auto_clean_autoload=true;
-				list($path,$document_root)=$this->prepareRootMode();
-				try{
-					$flag=$this->runHttpFile($path,$document_root);
-					if($flag){ return; }
-				}catch(\Throwable $ex){
-					$this->onHttpException($ex);
-					return;
-				}
-				
-			}
-			SwooleContext::G()->response->status(404);
-			echo "DNMVCS swoole mode: 404. \n";
-			echo $ex;
-			return;
+			static::OnShow404();
 		}		
 		if($this->http_exception_handler){
 			($this->http_exception_handler)($ex);
@@ -771,7 +749,7 @@ class SwooleSuperGlobal
 	public function init()
 	{
 		$cid = \Swoole\Coroutine::getuid();
-		if(!$cid<=0){ return; }
+		if($cid<=0){ return; }
 		
 		if($this->is_inited){return $this;}
 		$this->is_inited=true;

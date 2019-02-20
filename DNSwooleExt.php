@@ -5,8 +5,8 @@ class DNSwooleExt
 {
 	use DNSingleton;
 	
-	protected $old_error_404;
 	protected $has_inited=false;
+	protected $with_http_handler_root=false;
 	
 	public function init($options)
 	{
@@ -22,23 +22,6 @@ class DNSwooleExt
 		$ret=DNMVCS::G()->init($options);
 		return $ret;
 	}
-
-	public function onSwoole404()
-	{
-		$options=SwooleHttpServer::G()->options;
-		if(!$options['use_http_handler_root']){
-			DNMVCS::G()->options['error_404']=$this->old_error_404;
-			DNMVCS::G()->onShow404();
-			return;
-		}
-		$class=DNMVCS::class;
-		SwooleHttpServer::G()->createCoInstance($class,new $class);
-		
-		DNMVCS::G(static::G()); //fake object
-		
-		SwooleHttpServer::G()->throw404(); 
-	}
-	
 	public function onDNMVCSBoot()
 	{
 		if(PHP_SAPI!=='cli'){ return; }
@@ -64,22 +47,28 @@ class DNSwooleExt
 	}
 	public function onDNMVCSRunOnce()
 	{
-		$this->old_error_404=DNMVCS::G()->options['error_404'];
-		DNMVCS::G()->options['error_404']=[$this,'onSwoole404'];
-		
-		$options=SwooleHttpServer::G()->options;
-		if($options['use_http_handler_root']){
-			// mark
+		$server=SwooleHttpServer::G();
+		$options=$server->options;
+		if($options['with_http_handler_root']){
+			$this->with_http_handler_root=true;
+			DNMVCS::G()->options['error_404']=function(){};
 		}
-		SwooleHttpServer::G()->http_handler=$server->options['http_handler']=[$this,'runSwoole'];
-		SwooleHttpServer::G()->run();
+		$server->options['http_404_handler']=[DNMVCS::G(),'onShow404'];
+		$server->http_handler=$server->options['http_handler']=[$this,'runSwoole'];
+		$server->run();
 	}
 	public function runSwoole()
 	{
 		$classes=DNMVCS::G()->getDymicClasses();
 		SwooleHttpServer::G()->forkMasterInstances($classes);
 		
-		return DNMVCS::G()->run();
+		$ret=DNMVCS::G()->run();
+		if(!$ret && $this->with_http_handler_root){
+			$class=DNMVCS::class;
+			SwooleHttpServer::G()->createCoInstance($class,new $class);
+			DNMVCS::G(static::G()); //fake object
+		}
+		return $ret;
 	}
 }
 
