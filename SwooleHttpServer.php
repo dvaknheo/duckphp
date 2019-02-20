@@ -382,6 +382,29 @@ trait SwooleHttpServer_SimpleHttpd
 		
 	}
 }
+trait SwooleHttpServer_Handler
+{
+	public static function OnShow404()
+	{
+		return static::G()->_OnShow404();
+	}
+	public static function OnException($ex)
+	{
+		return static::G()->_OnException($ex);
+	}
+	public function _OnShow404()
+	{
+		static::header('',true,404);
+		echo "DNMVCS swoole mode: Server 404 \n";
+	}
+	public function _OnException($ex)
+	{
+		static::header('',true,500);
+		echo "DNMVCS swoole mode: Server Error. \n";
+		echo var_export($ex);
+	}
+}
+
 trait SwooleHttpServer_WebSocket
 {
 	public $websocket_open_handler=null;
@@ -430,6 +453,7 @@ class SwooleHttpServer
 	use SwooleHttpServer_SystemWrapper;
 	use SwooleHttpServer_SuperGlobal;
 	use SwooleHttpServer_Singleton;
+	use SwooleHttpServer_Handler;
 	
 	const DEFAULT_OPTIONS=[
 			'swoole_server'=>null,
@@ -455,6 +479,7 @@ class SwooleHttpServer
 			
 			
 		];
+	const MAX_PATH_LEVEL=1000;
 	public $server=null;
 	
 	public $http_handler=null;
@@ -486,7 +511,6 @@ class SwooleHttpServer
 	protected function onHttpRun($request,$response)
 	{
 		$this->old_autoloads = spl_autoload_functions();
-		
 		SwooleSuperGlobal::G(new SwooleSuperGlobal())->init();
 		
 		if($this->http_handler){
@@ -495,19 +519,13 @@ class SwooleHttpServer
 			
 			if($this->options['use_http_handler_root']){
 				list($path,$document_root)=$this->prepareRootMode();
-				$this->document_root=$document_root;
-				$this->script_filename=$this->document_root.'/'.'index.php';
-			}
-			
-			if(isset($this->document_root)){
-				SwooleSuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=$this->document_root;
-			}
-			if(isset($this->script_filename)){
-				SwooleSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']=$this->script_filename;
+				$script_filename=$this->document_root.'/'.'index.php';
+				
+				SwooleSuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=$document_root;
+				SwooleSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']=$script_filename;
 			}
 			
 			($this->http_handler)();
-			
 			return;
 		}
 		if($this->options['http_handler_file']){
@@ -521,11 +539,11 @@ class SwooleHttpServer
 			list($path,$document_root)=$this->prepareRootMode();
 			$flag=$this->runHttpFile($path,$document_root);
 			if(!$flag){
-				throw new Swoole404Exception("404 Not Found!",404);
+				$this->throw404();
 			}
 			return;
 		}
-		throw new Swoole404Exception("404 Not Found!",404);
+		$this->throw404();
 		//$this->includeHttpPhpFile($file,$document_root,$path_info);
 	}
 	protected function prepareRootMode()
@@ -555,7 +573,7 @@ class SwooleHttpServer
 			return true;
 		}
 		
-		$max=1000;
+		$max=static::MAX_PATH_LEVEL;
 		$offset=0;
 		for($i=0;$i<$max;$i++){
 			$offset=strpos($path,'.php/',$offset);
@@ -635,9 +653,7 @@ class SwooleHttpServer
 			($this->http_exception_handler)($ex);
 			return;
 		}
-		SwooleContext::G()->response->status(500);
-		echo "DNMVCS swoole mode: Server Error. \n";
-		echo $ex;
+		static::OnException($ex);
 	}
 	protected function onHttpClean()
 	{
@@ -684,7 +700,10 @@ class SwooleHttpServer
 			}else{
 				$this->server=new \swoole_websocket_server($options['host'], $options['port']);
 			}
-			//if(start server failed);
+			if(!$this->server){
+				echo 'DNMVCS swoole mode: Start server failed';
+				exit;
+			}
 		}
 		if($options['swoole_server_options']){
 			$this->server->set($options['swoole_server_options']);
