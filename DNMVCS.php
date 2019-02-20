@@ -1501,7 +1501,7 @@ class DNMVCS
 	{
 		if(static::class!==self::class){return;}
 		if(!empty($this->options['swoole'])){
-			DNSwooleHttpServer::G()->onDNMVCSBoot();
+			DNSwooleExt::G()->onDNMVCSBoot();
 		}
 	}
 	//@override me
@@ -1567,7 +1567,7 @@ class DNMVCS
 	public function initMisc()
 	{
 		if(!empty($this->options['swoole'])){
-			DNSwooleHttpServer::G()->onDNMVCSInit($this->options['swoole']);
+			DNSwooleExt::G()->onDNMVCSInit($this->options['swoole']);
 		}
 		
 		$this->isDev=DNConfiger::G()->_Setting('is_dev')??$this->isDev;
@@ -1607,7 +1607,7 @@ class DNMVCS
 	protected function runOnce()
 	{
 		if(!empty($this->options['swoole'])){
-			DNSwooleHttpServer::G()->onDNMVCSRunOnce();
+			DNSwooleExt::G()->onDNMVCSRunOnce();
 		}
 		if( $this->options['rewrite_map'] || $this->options['route_map'] ){
 			DNMVCSExt::G()->dealMapAndRewrite(DNRoute::G(),$this->options['rewrite_map'],$this->options['route_map']);
