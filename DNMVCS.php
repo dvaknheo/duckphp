@@ -1495,7 +1495,7 @@ class DNMVCS
 		$base_class=ltrim($base_class,'\\');
 		
 		if(!$base_class || !class_exists($base_class)){return null;}
-		return DNMVCS::G($base_class::G())->init($options);
+		return static::G($base_class::G())->init($options);
 	}
 	protected function boot()
 	{
@@ -1598,7 +1598,7 @@ class DNMVCS
 	}
 	protected function initSuperGlobal()
 	{
-		if(defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')){
+		if(defined('DNMVCS_SUPER_GLOBAL_REPALACER')){
 			$func=DNMVCS_SUPER_GLOBAL_REPALACER;
 			DNSuperGlobal::G($func());
 		}
@@ -1610,7 +1610,7 @@ class DNMVCS
 			DNSwooleExt::G()->onDNMVCSRunOnce();
 		}
 		if( $this->options['rewrite_map'] || $this->options['route_map'] ){
-			DNMVCSExt::G()->dealMapAndRewrite(DNRoute::G(),$this->options['rewrite_map'],$this->options['route_map']);
+			DNMVCSExt::G()->dealMapAndRewrite($this->options['rewrite_map'],$this->options['route_map']);
 		}
 		
 	}

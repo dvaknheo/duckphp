@@ -853,10 +853,10 @@ class DNMVCSExt
 		DNMVCS::header('location: '.$url,true,302);
 		DNMVCS::exit_system();
 	}
-	public function dealMapAndRewrite($route,$rewrite_map,$route_map)
+	public function dealMapAndRewrite($rewrite_map,$route_map)
 	{
 		RouteHookMapAndRewrite::G()->init($rewrite_map,$route_map);
-		$route->addRouteHook([RouteHookMapAndRewrite::G(),'hook'],true); 
+		DNRoute::G()->addRouteHook([RouteHookMapAndRewrite::G(),'hook'],true); 
 	}
 }
 //mysqldump -uroot -p123456 DnSample -d --opt --skip-dump-date --skip-comments | sed 's/ AUTO_INCREMENT=[0-9]*\b//g' >../data/database.sql
