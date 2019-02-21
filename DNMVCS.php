@@ -1122,23 +1122,11 @@ trait DNMVCS_Handler
 	public function onBeforeShow($data,$view=null)
 	{
 		if($view===null){
-			DNView::G()->view=DNRoute::G()->getRouteCallingPath(); //TODO getRouteCallingClass & Method
+			DNView::G()->view=DNRoute::G()->getRouteCallingPath();
 		}
 		
 		DNDBManager::G()->closeAllDB();
 		DNRuntimeState::G()->skipNoticeError();
-	}
-	
-	protected function checkUseDefaultErrorView($error_view,$data)
-	{
-		if(!is_string($error_view) || !$error_view){
-			if($error_view){
-				($error_view)($data);
-				return false;
-			}
-			return true;
-		}
-		return false;
 	}
 	//@override
 	public function onShow404()
@@ -1146,13 +1134,15 @@ trait DNMVCS_Handler
 		$error_404=$this->options['error_404'];
 		
 		static::header('',true,404);
-
-		$use_default_view=$this->checkUseDefaultErrorView($error_404,[]);
-		if($use_default_view){
+		
+		if( !is_string($error_view) && is_callable($error_view) ){
+			($error_view)($data);
+			return;
+		}
+		if(!$error_view){
 			echo "File Not Found\n<!--DNMVCS -->\n";
 			return;
 		}
-		if(!is_string($error_404)){ return; }
 		
 		$view=DNView::G();
 		$view->setViewWrapper(null,null);
@@ -1176,8 +1166,12 @@ trait DNMVCS_Handler
 		
 		$is_error=is_a($ex,'Error') || is_a($ex,'ErrorException')?true:false;		
 		$error_view=$is_error?$this->options['error_500']:$this->options['error_exception'];
-		$use_default_view=$this->checkUseDefaultErrorView($error_view,$data);
-		if($use_default_view){
+		
+		if( !is_string($error_view) && is_callable($error_view) ){
+			($error_view)($data);
+			return;
+		}
+		if(!$error_view){
 			$desc=$is_error?'Error':'Exception';
 			echo "Internal $desc \n<!--DNMVCS -->\n";
 			if($this->isDev){
@@ -1188,7 +1182,6 @@ trait DNMVCS_Handler
 			}
 			return;
 		}
-		if(!is_string($error_view)){ return; }
 		
 		$view->setViewWrapper(null,null);
 		$view->_Show($data,$error_view);
@@ -1215,8 +1208,11 @@ trait DNMVCS_Handler
 			'error_shortfile'=>$error_shortfile,
 		);
 		$error_view=$this->options['error_debug'];
-		$flag=$this->checkUseDefaultErrorView($error_view,$data);
-		if(!$flag){
+		if( !is_string($error_view) && is_callable($error_view) ){
+			($error_view)($data);
+			return;
+		}
+		if(!$error_view){
 			extract($data);
 			echo  <<<EOT
 <!--DNMVCS  use view/_sys/error-debug.php to overrid me -->
@@ -1231,7 +1227,6 @@ $errstr
 EOT;
 			return;
 		}
-		if(!is_string($error_view)){ return; }
 		DNView::G()->_ShowBlock($error_view,$data);
 	}
 	//
@@ -1482,6 +1477,10 @@ class DNMVCS
 		$this->path=$this->options['path'];
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
 		$this->isDev=$this->options['is_dev'];
+	}
+	public function toggleStopShow404()
+	{
+		//TODO
 	}
 	protected function checkOverride($options)
 	{
