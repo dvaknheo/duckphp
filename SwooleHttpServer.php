@@ -75,19 +75,26 @@ class SwooleCoroutineSingleton
 	{
 		self::$_instances[$cid][$class]=$object;
 	}
+	public function InitCoroutine()
+	{
+		return static::G()->_InitCoroutine();
+	}
 	public static function DumpString()
 	{
 		return static::G()->_DumpString();
 	}
 	
 	///////////////
-	public function cleanUp()
+	public function _InitCoroutine()
 	{
 		$cid = \Swoole\Coroutine::getuid();
 		if($cid<=0){return;}
-		unset(self::$_instances[$cid]);
+		self::$_instances[$cid]=[];
+		\defer(function(){
+			$cid = \Swoole\Coroutine::getuid();
+			unset(self::$_instances[$cid]);
+		});
 	}
-	
 	public function forkMasterInstances($classes,$exclude_classes=[])
 	{
 		$cid = \Swoole\Coroutine::getuid();
@@ -359,6 +366,7 @@ trait SwooleHttpServer_SimpleHttpd
 	
 	public function onRequest($request,$response)
 	{
+		SwooleCoroutineSingleton::InitCoroutine();
 		SwooleContext::G(new SwooleContext())->initHttp($request,$response);
 		$InitObLevel=ob_get_level();
 		ob_start(function($str) use($response){
@@ -367,13 +375,12 @@ trait SwooleHttpServer_SimpleHttpd
 		});
 		\defer(function()use($response,$InitObLevel){
 			SwooleContext::G()->onShutdown();
-			
 			$this->onHttpClean();
 			for($i=ob_get_level();$i>$InitObLevel;$i--){
 				ob_end_flush();
 			}
 			SwooleContext::G()->cleanUp();
-			SwooleCoroutineSingleton::G()->cleanUp();
+			
 			$response->end();
 		});
 		
