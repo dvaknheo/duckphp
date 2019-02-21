@@ -65,6 +65,9 @@ const DEFAULT_OPTIONS=[
         'websocket_handler'=>null,          // websocket  处理
         'websocket_exception_handler'=>null,// websocket 异常处理
         'websocket_close_handler'=>null,    // websocket 关闭
+
+        'base_class'=>null,                 // 替换本类初始化类
+        'after_init_callback'=>null,         // 初始化之后的回调
 ];
 ```
 
@@ -175,9 +178,21 @@ SG()
 
     类内静态变量 static 语法的替代方法
 
-## 单例模式
+## 单例模式再说明
 
-G 函数
+SwooleHttpd  use trait DNSingleton 。
+DNSingleton 定义了静态函数 G($object=null)   ，如果默认参数的话得到当前单例。
+如果传入  $object 则替换单例，实现调用方式不变，实现方式改变的效果。
+
+SwooleHttpd::  通过使用 SwooleCoroutineSingleton 进一步扩展了 DNSingltone （ 通过 DNMVCS_DNSINGLETON_REPALACER 宏 ）
+实现了协程单例
+。
+使得 MyClass::G() 如果在协程内 从 SwooleHttpd::G($object=null)  
+
+SwooleCoroutineSingleton::replaceIN() zuo  
+在协程结束时候，调用 SwooleCoroutineSingleton::G()->cleanUp 会清理所有协程单例。
+
+///
 
 # 高级内容
 
@@ -223,8 +238,10 @@ onMessage($server,$frame)
     resetInstances()
 
 ## SwooleException extends \Exception
+
     404 错误是用 code=404 那个
     没端口会报错
+
 ## Swoole404Exception extends SwooleException
 
 SwooleHttpd  重写了 G 函数的实现，使得做到协程单例。
