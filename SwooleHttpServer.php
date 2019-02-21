@@ -481,6 +481,7 @@ class SwooleHttpServer
 			'websocket_close_handler'=>null,
 			
 			'base_class'=>'',
+			'after_init_callback'=>null,
 		];
 	const MAX_PATH_LEVEL=1000;
 	public $server=null;
@@ -702,7 +703,8 @@ class SwooleHttpServer
 		$this->with_http_handler_file=$options['with_http_handler_file'];
 		
 		$this->server=$options['swoole_server'];
-	
+		$after_init_callback=$options['after_init_callback']??null;
+		
 		if(!$this->server){
 			$this->check_swoole();
 			
@@ -751,6 +753,9 @@ class SwooleHttpServer
 		}
 		if(!defined('DNMVCS_SUPER_GLOBAL_REPALACER')){
 			define('DNMVCS_SUPER_GLOBAL_REPALACER',SwooleSuperGlobal::class .'::' .'G');
+		}
+		if($after_init_callback){
+			($after_init_callback)();
 		}
 		return $this;
 	}
@@ -948,44 +953,36 @@ class SwooleSession
 class SwooleSessionHandler implements \SessionHandlerInterface
 {
 	use DNSingleton;
-	
 	private $savePath;
-
+	
 	public function open($savePath, $sessionName)
 	{
 		$this->savePath = $savePath;
 		if (!is_dir($this->savePath)) {
 			mkdir($this->savePath, 0777);
 		}
-
 		return true;
 	}
-
 	public function close()
 	{
 		return true;
 	}
-
 	public function read($id)
 	{
 		return (string)@file_get_contents("$this->savePath/sess_$id");
 	}
-
 	public function write($id, $data)
 	{
 		return file_put_contents("$this->savePath/sess_$id", $data,LOCK_EX) === false ? false : true;
 	}
-
 	public function destroy($id)
 	{
 		$file = "$this->savePath/sess_$id";
 		if (file_exists($file)) {
 			unlink($file);
 		}
-
 		return true;
 	}
-
 	public function gc($maxlifetime)
 	{
 		foreach (glob("$this->savePath/sess_*") as $file) {
@@ -993,7 +990,6 @@ class SwooleSessionHandler implements \SessionHandlerInterface
 				unlink($file);
 			}
 		}
-
 		return true;
 	}
 }
