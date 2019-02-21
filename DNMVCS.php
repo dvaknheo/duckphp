@@ -1118,21 +1118,34 @@ class DNExceptionManager
 }
 trait DNMVCS_Handler
 {
-	//  close database before show;
-	public function onBeforeShow($data,$view=null)
+	protected $stop_show_404=false;
+	public static function OnBeforeShow($data,$view=null)
+	{
+		return static::G()->onBeforeShowHandler($data,$view);
+	}
+	public static function On404()
+	{
+		return static::G()->on404Handler();
+	}
+	//////////////
+	public function toggleStop404Handler($flag=true)
+	{
+		$this->stop_show_404=$flag;
+	}
+	public function onBeforeShowHandler($data,$view=null)
 	{
 		if($view===null){
 			DNView::G()->view=DNRoute::G()->getRouteCallingPath();
 		}
-		
+		//  close database before show;
 		DNDBManager::G()->closeAllDB();
 		DNRuntimeState::G()->skipNoticeError();
 	}
-	//@override
-	public function onShow404()
+	public function on404Handler()
 	{
-		$error_404=$this->options['error_404'];
+		if($this->stop_show_404){return;}
 		
+		$error_view=$this->options['error_404'];
 		static::header('',true,404);
 		
 		if( !is_string($error_view) && is_callable($error_view) ){
@@ -1140,13 +1153,13 @@ trait DNMVCS_Handler
 			return;
 		}
 		if(!$error_view){
-			echo "File Not Found\n<!--DNMVCS -->\n";
+			echo "404 File Not Found\n<!--DNMVCS -->\n";
 			return;
 		}
 		
 		$view=DNView::G();
 		$view->setViewWrapper(null,null);
-		$view->_Show([],$error_404);
+		$view->_Show([],$error_view);
 	}
 	
 	public function onException($ex)
@@ -1215,7 +1228,7 @@ trait DNMVCS_Handler
 		if(!$error_view){
 			extract($data);
 			echo  <<<EOT
-<!--DNMVCS  use view/_sys/error-debug.php to overrid me -->
+<!--DNMVCS  use view/_sys/error-debug.php to override me -->
 <fieldset class="_DNMVC_DEBUG">
 	<legend>$error_desc($errno)</legend>
 <pre>
@@ -1439,7 +1452,7 @@ class DNMVCS
 			'error_404'=>'_sys/error-404',
 			'error_500'=>'_sys/error-500',
 			'error_exception'=>'_sys/error-exception',
-			'error_debug'=>'_sys/error_debug',
+			'error_debug'=>'_sys/error-debug',
 			
 			'ext'=>[],
 			'swoole'=>[],
@@ -1519,12 +1532,13 @@ class DNMVCS
 		}
 		
 		$this->initOptions($options);
-		$this->initExceptionManager(DNExceptionManager::G());
 		
+		$this->initExceptionManager(DNExceptionManager::G());
 		$this->initConfiger(DNConfiger::G());
 		$this->initView(DNView::G());
 		$this->initRoute(DNRoute::G());
 		$this->initDBManager(DNDBManager::G());
+		
 		$this->initMisc();
 		return $this;
 	}
@@ -1541,12 +1555,12 @@ class DNMVCS
 	{
 		$path_view=$this->path.rtrim($this->options['path_view'],'/').'/';
 		$view->init($path_view);
-		$view->setBeforeShowHandler([$this,'onBeforeShow']);
+		$view->setBeforeShowHandler([static::class,'OnBeforeShow']);
 	}
 	public function initRoute(DNRoute $route)
 	{
 		$route->init($this->options);
-		$route->set404([$this,'onShow404']);
+		$route->set404([static::class,'On404']);
 	}
 	public function initDBManager($dbm)
 	{

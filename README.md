@@ -522,7 +522,7 @@ const DNMVCS::DEFAULT_OPTIONS=[
         'error_404'=>'_sys/error-404',  // 404 错误处理，传入字符串表示用的 view,如果传入 callable 则用 callback,view 优先
         'error_500'=>'_sys/error-500',  // 500 代码有语法错误等的页面，和 404 的内容一样。和前面类似
         'error_exception'=>'_sys/error-exception',  // 默认的异常处理。和前面类似
-        'error_debug'=>'_sys/error_debug',          // 调试模式下出错的处理。和前面类似
+        'error_debug'=>'_sys/error-debug',          // 调试模式下出错的处理。和前面类似
 
         'db_create_handler' =>'',		// 创建DB 的回调 默认用 DB::class
         'db_close_handler' =>'', 		// 关闭DB 类的回调。

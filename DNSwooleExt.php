@@ -51,7 +51,7 @@ class DNSwooleExt
 		
 		if($server->with_http_handler_root){
 			$this->with_http_handler_root=true;
-			DNMVCS::G()->options['error_404']=function(){};
+			DNMVCS::G()->toggleStop404Handler(true);
 		}
 		$server->http_handler=[$this,'runSwoole'];
 		$server->run();
