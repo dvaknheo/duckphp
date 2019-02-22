@@ -1101,8 +1101,11 @@ class DNExceptionManager
 		if($flag){return;}
 		($this->exception_error_handler)($ex);
 	}
+	public $is_inited=false;
 	public function init($exception_handler,$dev_error_handler,$system_exception_handler=null)
 	{
+		if($this->is_inited){ return; }
+		$this->is_inited=true;
 		$this->dev_error_handler=$dev_error_handler;
 		$this->exception_error_handler=$exception_handler;
 		$this->exception_error_handler_init=$exception_handler;
@@ -1544,6 +1547,7 @@ class DNMVCS
 	}
 	public function initExceptionManager($exception_manager)
 	{
+		if(static::InSwoole()){return;}
 		$exception_manager->init([$this,'onException'],[$this,'onDevErrorHandler'],static::class.'::set_exception_handler');
 	}
 	public function initConfiger($configer)
