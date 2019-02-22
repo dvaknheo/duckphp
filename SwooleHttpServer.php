@@ -75,24 +75,26 @@ class SwooleCoroutineSingleton
 	{
 		self::$_instances[$cid][$class]=$object;
 	}
-	public function InitCoroutine()
-	{
-		return static::G()->_InitCoroutine();
-	}
 	public static function DumpString()
 	{
 		return static::G()->_DumpString();
 	}
 	
-	///////////////
-	public function _InitCoroutine()
+	public function InitCoroutine()
 	{
+		$old_mem=memory_get_usage();
 		$cid = \Swoole\Coroutine::getuid();
 		if($cid<=0){return;}
-		self::$_instances[$cid]=[];
-		\defer(function(){
+		
+		unset(self::$_instances[$cid]);
+		\defer(function()use($old_mem){
 			$cid = \Swoole\Coroutine::getuid();
 			unset(self::$_instances[$cid]);
+			
+			$mem_cached=gc_mem_caches();
+			gc_collect_cycles();
+			$new_mem=memory_get_usage();
+			$diff_mem=$new_mem-$old_mem;
 		});
 	}
 	public function forkMasterInstances($classes,$exclude_classes=[])
@@ -368,6 +370,7 @@ trait SwooleHttpServer_SimpleHttpd
 	{
 		SwooleCoroutineSingleton::InitCoroutine();
 		SwooleContext::G(new SwooleContext())->initHttp($request,$response);
+		SwooleSuperGlobal::G(new SwooleSuperGlobal())->init();
 		$InitObLevel=ob_get_level();
 		ob_start(function($str) use($response){
 			if(''===$str){return;} // stop warnning;
@@ -543,7 +546,6 @@ class SwooleHttpServer
 	protected function onHttpRun($request,$response)
 	{
 		$this->old_autoloads = spl_autoload_functions();
-		SwooleSuperGlobal::G(new SwooleSuperGlobal())->init();
 		if($this->http_handler){
 			$this->auto_clean_autoload=false;
 			$flag=($this->http_handler)();
