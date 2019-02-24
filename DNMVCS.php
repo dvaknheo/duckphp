@@ -431,6 +431,8 @@ class DNRoute
 		$method=array_pop($class_blocks);
 		$class_path=implode('/',$class_blocks);
 		
+		$this->calling_path=$class_path?$this->path_info:$this->welcome_controller.'/'.$method;
+		
 		if($this->disable_default_class_outside){
 			if($class_path===$this->welcome_controller){
 				$this->error="disable_default_class_outside! {$this->welcome_controller} ";
@@ -438,27 +440,38 @@ class DNRoute
 			}
 		}
 		$full_class=$this->getFullClassByAutoLoad($class_path,true);
-		if(!$full_class){
-			if($this->with_no_namespace_mode){
-				$full_class=$this->getFullClassByNoNameSpace($class_path);
-			}
-			if(!$full_class && $this->enable_paramters){
-				list($full_class,$the_method,$parameters,$calling_path)=$this->getClassMethodAndParameters($class_blocks,$method);
-				if($full_class){
-					$method=$the_method;
-					$this->parameters=$parameters;
-					$this->calling_path=$calling_path;
-				}
+		$callback=$this->getCallback($full_class,$method);
+		if($callback){
+			return $callback; 
+		}
+		////////
+		if($this->with_no_namespace_mode){
+			$full_class=$this->getFullClassByNoNameSpace($class_path);
+			$callback=$this->getCallback($full_class,$method);
+			if($callback){
+				return $callback; 
 			}
 		}
-		if(!$this->enable_paramters){
-			$this->calling_path=$class_path?$this->path_info:$this->welcome_controller.'/'.$method;
+		////////
+		if( $this->enable_paramters ){
+			list($full_class,$the_method,$parameters,$calling_path)=$this->getClassMethodAndParameters($class_blocks,$method);
+			if($full_class){
+				$method=$the_method;
+				$this->parameters=$parameters;
+				$this->calling_path=$calling_path;
+			}
 		}
+		
 		if(!$full_class){
 			$this->error="NoClass";
 			return null;
 		}
 		
+		return $this->getCallback($full_class,$method);
+	}
+	protected function getCallback($full_class,$method)
+	{
+		if(!$full_class){ return null; }
 		$this->calling_class=$full_class;
 		$this->calling_method=$method;
 		$object=$this->getObjectToCall($full_class);
