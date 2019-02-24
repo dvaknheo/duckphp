@@ -245,6 +245,7 @@ return [
         'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
         'username'=>'???',
         'password'=>'???',
+        'driver_options'=>[],
     ],],
 ];
 ```
@@ -427,6 +428,7 @@ return [
         'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
         'username'=>'???',
         'password'=>'???',
+        'driver_options'=>[],
     ],],
 ];
 ```
@@ -538,8 +540,8 @@ const DNMVCS::DEFAULT_OPTIONS=[
     ext 配置里 会加载 DNMVCSExt 实现一些扩展性的功能。后面章节会说明。
     扩展性功能主要有： 几种模式的扩展，单一文件模式，目录模式，无 PathI	nfo模式
     facades session_auto_start db_reuse
-    关于 httpd_options 选项。 
-    使用 httpd_options 模式，将会开启 swoole 服务器  httpd_options 是 swoole 服务器的配置
+    
+    使用 swoole 模式，将会开启 swoole 服务器  swoole 是 swoole 服务器的配置
      
 ```php
 const DNRoute::DEFAULT_OPTIONS=[
@@ -770,6 +772,7 @@ $n++;
  
 ```
 ```php
+use DNMVCS\DNMVCS as DN;
 class B
 {
     protected static $var=10;
@@ -1056,7 +1059,7 @@ setViewWrapper($head_file,$foot_file)
 这应该会被扩展,加上权限判断等设置
 路由类是很强大扩展性很强的类。
 
-这也是 DNMVCS 最复杂的地方，主要是核心是 defaultRouteHandler。 默认路由的处理。
+**这也是 DNMVCS 最复杂的地方**，主要是核心是 defaultRouteHandler。 默认路由的处理。
 分步如下
     
     
@@ -1457,7 +1460,7 @@ ComposerScripts.php     // 和 compose 相关的脚本，用于创建工程用
     ComposerScripts
 DB.php
     DB implements 
-        trait DB_Ext
+        trait DB_Advance
 DBInterface
     interface DBInterface
 DNMVCS.php              // 主入口文件 DNMVCS 类，不引用其他文件。

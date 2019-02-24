@@ -1,3 +1,20 @@
+1.0.9 到 1.0.10 变更
+2019-02-24 18:02:44
+添加了 LICENSE 文件
+
+DB 添加 driver_options 配置。
+删除  DNDI.php DNSingleton.php DNThrowQuick.php ，以后将在外加项目里加这些类
+DNMVCSExt 各功能类和 DNMVCS 主类 引用分离
+DNSwooleHttpServer => DNSwooleExt 并做了可用性调整
+SwooleHttpServer 做了大量变动，准备独立成 SwooleHttpd 项目
+增加了 DNMVCS::Platform()
+DNExceptionManager 防止多重载入
+swoole 选项成了内置 SwooleHttpServer 的选项
+一些 BUG 的修复
+其他大量内部实现的变更。
+
+基本稳定了。
+
 1.0.8 到 1.0.9变更
 大量的调整
 DBExt => DBAdvance

@@ -1,0 +1,87 @@
+digraph G{
+graph [rankdir = "LR"];
+subgraph cluster_1 {
+		node [style=filled];
+		label = "DNMVCS.php";
+		color=blue;
+		
+DNException -> DNThrowQuickly ;
+
+DNMVCS_Core -> DNAutoLoader;
+DNMVCS_Core -> DNException;
+DNMVCS_Core -> DNRoute;
+DNMVCS_Core -> DNView;
+DNMVCS_Core -> DNConfiger;
+DNMVCS_Core -> DNDBManager;
+DNMVCS_Core -> DNRuntimeState;
+DNMVCS_Core -> DNSuperGlobal;
+DNMVCS_Core -> DNMVCS_Glue;
+DNMVCS_Core -> DNMVCS_Misc;
+DNMVCS_Core -> DNExceptionManager;
+DNMVCS_Core -> DNMVCS_Handler;
+DNMVCS_Core -> DNMVCS_SystemWrapper;
+
+DNMVCS -> DNMVCS_Core;
+
+
+}
+
+subgraph cluster_2 {
+		node [style=filled];
+		label = "DNMVCSExt.php";
+		color=blue;
+DNMVCS -> DNMVCSExt [dir=both];
+
+RouteHookMapAndRewrite -> DNRoute ;
+RouteHookOneFileMode -> DNSuperGlobal;
+RouteHookDirectoryMode -> DNSuperGlobal;
+FacadesAutoLoader -> FacadesBase ;
+FunctionDispatcher -> DNRoute;
+FunctionView -> DNView;
+
+
+DNMVCSExt-> RouteHookMapAndRewrite;
+DNMVCSExt-> RouteHookOneFileMode;
+DNMVCSExt-> RouteHookDirectoryMode;
+DNMVCSExt-> DBReusePoolProxy;
+DNMVCSExt-> FunctionDispatcher;
+DNMVCSExt-> FunctionView;
+DNMVCSExt-> ProjectCommonAutoloader;
+DNMVCSExt-> ProjectCommonConfiger;
+DNMVCSExt-> FacadesAutoLoader;
+
+ProjectCommonConfiger -> DNConfiger  ;
+
+}
+subgraph cluster_4 {
+		node [style=filled];
+		label = "SwooleHttpServer.php";
+		color=blue;
+
+
+SwooleHttpServer -> SwooleContext;
+SwooleHttpServer -> SwooleCoroutineSingleton;
+SwooleHttpServer -> Swoole404Exception;
+SwooleHttpServer -> SwooleHttpServer_Singleton;
+SwooleHttpServer -> SwooleHttpServer_Static;
+SwooleHttpServer -> SwooleHttpServer_SystemWrapper;
+SwooleHttpServer -> SwooleHttpServer_SuperGlobal;
+SwooleHttpServer -> SwooleHttpServer_SimpleHttpd;
+SwooleHttpServer -> SwooleHttpServer_WebSocket;
+SwooleHttpServer -> SwooleSuperGlobal;
+SwooleSuperGlobal -> SwooleSession;
+SwooleSession -> SwooleSessionHandler;
+
+}
+subgraph cluster_3 {
+		node [style=filled];
+		label = "DNSwooleHttpServer.php";
+		color=blue;
+DNMVCS ->DNSwooleHttpServer [dir=both];
+
+DNSwooleHttpServer -> SwooleHttpServer;
+
+}
+
+
+}
