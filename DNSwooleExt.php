@@ -30,9 +30,10 @@ class DNSwooleExt
 		$this->has_inited=true;
 		
 		$instances=DNMVCS::G()->getBootInstances();
-		
+		$server=SwooleHttpServer::G();
 		$flag=SwooleHttpServer::ReplaceDefaultSingletonHandler(); 
 		if(!$flag){ return; }
+		SwooleHttpServer::G($server);
 		
 		foreach($instances as $class=>$object){
 			$class::G($object);
@@ -66,8 +67,9 @@ class DNSwooleExt
 			$class=DNMVCS::class;
 			SwooleHttpServer::G()->createCoInstance($class,new $class);
 			DNMVCS::G(static::G()); //fake object
+			return false;
 		}
-		return $ret;
+		return true;
 	}
 }
 
