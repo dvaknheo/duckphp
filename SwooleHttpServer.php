@@ -485,6 +485,10 @@ class SwooleHttpServer
 			'with_http_handler_root'=>false,
 			'with_http_handler_file'=>false,
 			
+			'enable_fix_index'=>true,
+			'enable_path_info'=>true,
+			'enable_not_php_file'=>true,
+			
 			'websocket_open_handler'=>null,
 			'websocket_handler'=>null,
 			'websocket_exception_handler'=>null,
@@ -503,6 +507,11 @@ class SwooleHttpServer
 	public $http_exception_handler=null;
 	public $http_404_handler=null;
 	
+	public $enable_fix_index=true;
+	public $enable_path_info=true;
+	public $enable_not_php_file=true;
+
+
 	protected $static_root=null;
 	protected $auto_clean_autoload=true;
 	protected $old_autoloads=[];
@@ -543,11 +552,31 @@ class SwooleHttpServer
 	{
 		throw new Swoole404Exception();
 	}
+	protected function fixIndex()
+	{
+		$index_file='index.php';
+		$index_path='/'.$index_file;
+		$path_info=static::SG()->_SERVER['PATH_INFO'];
+		if(substr($path_info,0,strlen($index_path))===$index_path){
+			if(strlen($path_info)===strlen($index_path)){
+				static::SG()->_SERVER['PATH_INFO']='';
+			}else{
+				if($index_path.'/'===substr($path_info,0,strlen($index_path)+1)){
+					static::SG()->_SERVER['PATH_INFO']=substr($path_info,strlen($index_path)+1);
+				}
+			}
+		}
+	}
+	
 	protected function onHttpRun($request,$response)
 	{
 		$this->old_autoloads = spl_autoload_functions();
 		if($this->http_handler){
 			$this->auto_clean_autoload=false;
+			if($this->enable_fix_index){
+				$this->fixIndex();
+			}
+			
 			$flag=($this->http_handler)();
 			if($flag){
 				return;
@@ -603,7 +632,16 @@ class SwooleHttpServer
 			$this->includeHttpFullFile($full_file,$document_root,'');
 			return true;
 		}
-		
+		if(!$this->enable_path_info){
+			if(is_dir($full_file)){
+				$full_file=rtrim($full_file,'/').'/index.php';
+				if(is_file($full_file)){
+					$this->includeHttpFullFile($full_file,$document_root,'');
+					return true;
+				}
+			}
+			return false;
+		}
 		$max=static::MAX_PATH_LEVEL;
 		$offset=0;
 		for($i=0;$i<$max;$i++){
@@ -640,6 +678,7 @@ class SwooleHttpServer
 			$this->includeHttpPhpFile($full_file,$document_root,$path_info);
 			return;
 		}
+		if(!$this->enable_not_php_file){ return; }
 		$mime=mime_content_type($full_file);
 		static::Response()->header('Content-Type',$mime);
 		static::Response()->sendfile($full_file);
@@ -710,6 +749,10 @@ class SwooleHttpServer
 		
 		$this->with_http_handler_root=$options['with_http_handler_root'];
 		$this->with_http_handler_file=$options['with_http_handler_file'];
+		
+		$this->enable_fix_index=$options['enable_fix_index'];
+		$this->enable_path_info=$options['enable_path_info'];
+		$this->enable_not_php_file=$options['enable_not_php_file'];
 		
 		$this->server=$options['swoole_server'];
 		$after_init_callback=$options['after_init_callback']??null;
