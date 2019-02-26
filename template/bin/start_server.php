@@ -2,57 +2,74 @@
 <?php
 require(__DIR__.'/../headfile/headfile.php');
 ////[[[[
+$dn_options=@include('start_server.config.php');
+$dn_options=$dn_options??[];
+
 $path=realpath(__DIR__.'/../').'/';
-$dn_options=[
-	'path'=>$path,
-];
+$dn_options['path']=$path;
+
 ////]]]]
 ///////////
-$short_opts=[
-	'h',
-	'H:',
-	'P:',
-	's',
-];
-$long_opts=[
-	'help',
-	'host:',
-	'port:',
-	'swoole',
-];
-$optind=null;
-$args=getopt(implode('',$short_opts),$long_opts,$optind);
-
 $host='0.0.0.0';
 $port='8080';
-$host=$args['H']??$host;
-$host=$args['host']??$host;
-$port=$args['P']??$port;
-$port=$args['port']??$port;
 
-if(isset($args['h']) || isset($args['help'])){
+$opts=[
+	'help'	=>'h',
+	'host:'	=>'H:',
+	'port:'	=>'P:',
+	'swoole'=>'s',
+];
+
+$captures=GetCmdCaptures($opts);
+
+$show_help=isset($captures['help'])?true:false;
+if($show_help){
 	return ShowHelp();
 }
-echo "DNMVCS CMD : use --help for show helps\n";
-if(!CheckSwoole($args)){
+
+$host=$captures['host']??$host;
+$port=$captures['port']??$port;
+
+echo "Well Come to use DNMVCS ,for more info , use --help \n";
+
+if(!CheckSwoole($captures)){
 	return RunHttpServer($path,$host,$port);
 }
 
-$swoole_options=[
-	'host'=>$host,
-	'port'=>$port,
-];
-$dn_options['swoole']=$swoole_options;
+$dn_options['swoole']=$dn_options['swoole']??[];
+
+$dn_options['swoole']['host']=$dn_options['swoole']['host']??$host;
+$dn_options['swoole']['port']=$dn_options['swoole']['port']??$port;
 
 if(defined('DNMVCS_WARNING_IN_TEMPLATE')){ $dn_options['setting_file_basename']=''; }
 if(defined('DNMVCS_WARNING_IN_TEMPLATE')){ echo "Don't run the template file directly \n"; }
 
 \DNMVCS\DNMVCS::RunQuickly($dn_options);
+
 /////////////////
+
+function GetCmdCaptures($opts)
+{
+	$optind=null;
+	$args=getopt(implode('',array_values($opts)),array_keys($opts),$optind);
+
+	$shorts=array_map(function($v){return trim($v,':');},array_values($opts));
+	$longs=array_map(function($v){return trim($v,':');},array_keys($opts));
+	$new_opts=array_combine($shorts,$longs);
+	$ret=[];
+	foreach($args as $k=>$v){
+		$key=$new_opts[$k]??$k;
+		$ret[$key]=$v;
+	}
+	return $ret;
+}
 function CheckSwoole($args)
 {
-	$flag=(isset($args['s']) || isset($args['swoole']))?true:false;
-	return $flag;
+	$flag=( isset($args['swoole']) )?true:false;
+	if(!$flag){ return false; }
+	if(!function_exists('swoole_version')){ return false; }
+	
+	return true;
 }
 function RunHttpServer($path,$host,$port)
 {
