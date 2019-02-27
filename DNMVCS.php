@@ -825,6 +825,96 @@ class DNSuperGlobal
 		return $this->CLASS_STATICS[$k];
 	}
 }
+class DNExceptionManager
+{
+	use DNSingleton;
+	
+	protected $errorHandlers=[];
+	protected $dev_error_handler=null;
+	protected $exception_error_handler_init=null;
+	protected $exception_error_handler=null;
+	
+	public function setDefaultExceptionHandler($default_exception_handler)
+	{
+		return $this->exception_error_handler=$default_exception_handler;
+	}
+	public function assignExceptionHandler($class,$callback=null)
+	{
+		$class=is_string($class)?array($class=>$callback):$class;
+		foreach($class as $k=>$v){
+			$this->errorHandlers[$k]=$v;
+		}
+	}
+	public function setMultiExceptionHandler(array $classes,$callback)
+	{
+		foreach($classes as $k){
+			$this->errorHandlers[$class]=$callback;
+		}
+	}
+	public function on_error_handler($errno, $errstr, $errfile, $errline)
+	{
+		if (!(error_reporting() & $errno)){
+			return false;
+		}
+		switch ($errno) {
+			case E_USER_NOTICE:
+			case E_NOTICE:
+			case E_STRICT:
+			case E_DEPRECATED:
+			case E_USER_DEPRECATED:
+				($this->dev_error_handler)($errno, $errstr, $errfile, $errline);
+				break;
+			default:
+				throw new \ErrorException($errstr,$errno,$errno,$errfile, $errline);
+				//TODO test more in swoole;
+				break;
+		}
+		/* Don't execute PHP internal error handler */
+		return true;
+	}
+	public function checkAndRunErrorHandlers($ex,$inDefault)
+	{
+		$exception_class=get_class($ex);
+		foreach($this->errorHandlers as $class =>$callback){
+			if($class===$exception_class){
+				($callback)($ex);
+				return true;
+			}
+		}
+		if($inDefault){
+			if($this->exception_error_handler != $this->exception_error_handler_init){
+				($this->exception_error_handler)($ex);
+				return true;
+			}
+			
+		}
+		
+		return false;
+	}
+	public function on_exception($ex)
+	{
+		$flag=$this->checkAndRunErrorHandlers($ex,false);
+		if($flag){return;}
+		($this->exception_error_handler)($ex);
+	}
+	public $is_inited=false;
+	public function init($exception_handler,$dev_error_handler,$system_exception_handler=null)
+	{
+		if($this->is_inited){ return; }
+		$this->is_inited=true;
+		$this->dev_error_handler=$dev_error_handler;
+		$this->exception_error_handler=$exception_handler;
+		$this->exception_error_handler_init=$exception_handler;
+		
+		set_error_handler([$this,'on_error_handler']);
+		if($system_exception_handler){
+			return ($system_exception_handler)($exception_handler);
+		}else{
+			set_exception_handler([$this,'on_exception']);
+		}
+		
+	}
+}
 trait DNMVCS_Glue
 {
 	//route
@@ -1048,112 +1138,32 @@ trait DNMVCS_Misc
 		return DNMVCSExt::G()->_RecordsetH($data,$cols);
 	}
 }
-class DNExceptionManager
-{
-	use DNSingleton;
-	
-	protected $errorHandlers=[];
-	protected $dev_error_handler=null;
-	protected $exception_error_handler_init=null;
-	protected $exception_error_handler=null;
-	
-	public function setDefaultExceptionHandler($default_exception_handler)
-	{
-		return $this->exception_error_handler=$default_exception_handler;
-	}
-	public function assignExceptionHandler($class,$callback=null)
-	{
-		$class=is_string($class)?array($class=>$callback):$class;
-		foreach($class as $k=>$v){
-			$this->errorHandlers[$k]=$v;
-		}
-	}
-	public function setMultiExceptionHandler(array $classes,$callback)
-	{
-		foreach($classes as $k){
-			$this->errorHandlers[$class]=$callback;
-		}
-	}
-	public function on_error_handler($errno, $errstr, $errfile, $errline)
-	{
-		if (!(error_reporting() & $errno)){
-			return false;
-		}
-		switch ($errno) {
-			case E_USER_NOTICE:
-			case E_NOTICE:
-			case E_STRICT:
-			case E_DEPRECATED:
-			case E_USER_DEPRECATED:
-				($this->dev_error_handler)($errno, $errstr, $errfile, $errline);
-				break;
-			default:
-				throw new \ErrorException($errstr,$errno,$errno,$errfile, $errline);
-				//TODO test more in swoole;
-				break;
-		}
-		/* Don't execute PHP internal error handler */
-		return true;
-	}
-	public function checkAndRunErrorHandlers($ex,$inDefault)
-	{
-		$exception_class=get_class($ex);
-		foreach($this->errorHandlers as $class =>$callback){
-			if($class===$exception_class){
-				($callback)($ex);
-				return true;
-			}
-		}
-		if($inDefault){
-			if($this->exception_error_handler != $this->exception_error_handler_init){
-				($this->exception_error_handler)($ex);
-				return true;
-			}
-			
-		}
-		
-		return false;
-	}
-	public function on_exception($ex)
-	{
-		$flag=$this->checkAndRunErrorHandlers($ex,false);
-		if($flag){return;}
-		($this->exception_error_handler)($ex);
-	}
-	public $is_inited=false;
-	public function init($exception_handler,$dev_error_handler,$system_exception_handler=null)
-	{
-		if($this->is_inited){ return; }
-		$this->is_inited=true;
-		$this->dev_error_handler=$dev_error_handler;
-		$this->exception_error_handler=$exception_handler;
-		$this->exception_error_handler_init=$exception_handler;
-		
-		set_error_handler([$this,'on_error_handler']);
-		if($system_exception_handler){
-			return ($system_exception_handler)($exception_handler);
-		}else{
-			set_exception_handler([$this,'on_exception']);
-		}
-		
-	}
-}
 trait DNMVCS_Handler
 {
 	protected $stop_show_404=false;
+	protected $stop_show_exception=false;
 	public static function OnBeforeShow($data,$view=null)
 	{
 		return static::G()->onBeforeShowHandler($data,$view);
 	}
 	public static function On404()
 	{
-		return static::G()->on404Handler();
+		return static::G()->_On404();
+	}
+	public static function OnException($ex)
+	{
+		return static::G()->_OnException($ex);
 	}
 	//////////////
 	public function toggleStop404Handler($flag=true)
 	{
 		$this->stop_show_404=$flag;
 	}
+	public function toggleStopExceptionHandler($flag=true)
+	{
+		$this->stop_show_exception=$flag;
+	}
+	
 	public function onBeforeShowHandler($data,$view=null)
 	{
 		if($view===null){
@@ -1163,7 +1173,7 @@ trait DNMVCS_Handler
 		DNDBManager::G()->closeAllDB();
 		DNRuntimeState::G()->skipNoticeError();
 	}
-	public function on404Handler()
+	public function _On404()
 	{
 		if($this->stop_show_404){return;}
 		
@@ -1184,10 +1194,11 @@ trait DNMVCS_Handler
 		$view->_Show([],$error_view);
 	}
 	
-	public function onException($ex)
+	public function _OnException($ex)
 	{
 		$flag=DNExceptionManager::G()->checkAndRunErrorHandlers($ex,true);
 		if($flag){return;}
+		if($this->stop_show_exception){return;}
 		
 		static::header('',true,500);
 		$view=DNView::G();
@@ -1254,8 +1265,8 @@ trait DNMVCS_Handler
 <fieldset class="_DNMVC_DEBUG">
 	<legend>$error_desc($errno)</legend>
 <pre>
-$error_shortfile:$errline
-$errstr
+{$error_shortfile}:{$errline}
+{$errstr}
 </pre>
 </fieldset>
 
@@ -1264,7 +1275,6 @@ EOT;
 		}
 		DNView::G()->_ShowBlock($error_view,$data);
 	}
-	//
 }
 
 trait DNMVCS_SystemWrapper
@@ -1440,7 +1450,7 @@ trait DNMVCS_Instance
 }
 class DNMVCS
 {
-	const VERSION = '1.0.9';
+	const VERSION = '1.0.11';
 	
 	use DNSingleton;
 	
@@ -1513,10 +1523,6 @@ class DNMVCS
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
 		$this->isDev=$this->options['is_dev'];
 	}
-	public function toggleStopShow404()
-	{
-		//TODO
-	}
 	protected function checkOverride($options)
 	{
 		if(static::class!==self::class){return null;}
@@ -1567,7 +1573,7 @@ class DNMVCS
 	public function initExceptionManager($exception_manager)
 	{
 		if(static::InSwoole()){return;}
-		$exception_manager->init([$this,'onException'],[$this,'onDevErrorHandler'],static::class.'::set_exception_handler');
+		$exception_manager->init([static::class,'OnException'],[$this,'onDevErrorHandler'],static::class.'::set_exception_handler');
 	}
 	public function initConfiger($configer)
 	{
@@ -1624,11 +1630,12 @@ class DNMVCS
 			$callback=DNMVCS_SYSTEM_WRAPPER_INSTALLER;
 			$funcs=($callback)();
 			$this->system_wrapper_replace($funcs);
+			
+			if(isset($funcs['set_exception_handler'])){
+				static::set_exception_handler([static::class,'OnException']); //install oexcpetion again;
+			}
 			if(isset($funcs['super_global'])){
 				DNSuperGlobal::G(($funcs['super_global'])());
-			}
-			if(isset($funcs['set_exception_handler'])){
-				static::set_exception_handler(array($this,'onException')); //install oexcpetion again;
 			}
 		}
 	}
@@ -1642,13 +1649,12 @@ class DNMVCS
 	}
 	protected function runOnce()
 	{
-		if(!empty($this->options['swoole'])){
-			DNSwooleExt::G()->onDNMVCSRunOnce();
-		}
 		if( $this->options['rewrite_map'] || $this->options['route_map'] ){
 			DNMVCSExt::G()->dealMapAndRewrite($this->options['rewrite_map'],$this->options['route_map']);
 		}
-		
+		if(!empty($this->options['swoole'])){
+			DNSwooleExt::G()->onDNMVCSRunOnce();
+		}
 	}
 	public function run()
 	{
