@@ -50,9 +50,9 @@ class DNAutoLoader
 			'path'=>null,
 			
 			'namespace'=>'MY',
+			'with_no_namespace_mode'=>true,
 			'path_namespace'=>'app',
 			
-			'with_no_namespace_mode'=>true,
 			'path_no_namespace_mode'=>'app',
 			
 			'skip_system_autoload'=>false,
@@ -171,18 +171,22 @@ class DNRoute
 	
 	const DEFAULT_OPTIONS=[
 			'path'=>null,
-			'enable_paramters'=>false,
-			'with_no_namespace_mode'=>true,
-			'prefix_no_namespace_mode'=>'',
-			'path_controller'=>'app/Controller',
 			'namespace'=>'MY',
+			'with_no_namespace_mode'=>true,
+			
 			'namespace_controller'=>'Controller',
-			'default_controller_class'=>'DNController',
-			'default_method_for_miss'=>null,
+			'path_controller'=>'app/Controller',
+			
+			'enable_paramters'=>false,
+			'disable_default_class_outside'=>false,
+			
 			'base_controller_class'=>null,
+			'prefix_no_namespace_mode'=>'',
+			'lazy_controller_class'=>'DNController',
+			
 			'enable_post_prefix'=>true,
 			'prefix_post'=>'do_',
-			'disable_default_class_outside'=>false,
+			'default_method_for_miss'=>null,
 		];
 	
 	public $parameters=[];
@@ -198,12 +202,13 @@ class DNRoute
 	protected $with_no_namespace_mode=true;
 	protected $prefix_no_namespace_mode='';
 	protected $namespace_controller='';
-	protected $default_controller_class='DNController';
+	protected $lazy_controller_class='DNController';
 	protected $enable_post_prefix=true;
 	protected $disable_default_class_outside=false;
-	public $prefix_post='do_';
 	protected $default_method_for_miss=null;
 	protected $base_controller_class=null;
+	
+	public $prefix_post='do_';
 	
 	protected $path;
 	
@@ -259,7 +264,7 @@ class DNRoute
 		$this->with_no_namespace_mode=$options['with_no_namespace_mode'];
 		$this->prefix_no_namespace_mode=$options['prefix_no_namespace_mode'];
 		
-		$this->default_controller_class=$options['default_controller_class'];
+		$this->lazy_controller_class=$options['lazy_controller_class'];
 		
 		$this->enable_post_prefix=$options['enable_post_prefix'];
 		$this->prefix_post=$options['prefix_post'];
@@ -386,9 +391,9 @@ class DNRoute
 	{
 		$class=$this->prefix_no_namespace_mode . str_replace('/','__',$path_class);
 		if(class_exists($class)){return $class; }
-		$class=($this->default_controller_class)?$this->default_controller_class:'';
+		$class=($this->lazy_controller_class)?$this->lazy_controller_class:'';
 		if(class_exists($class)){return $class; }
-		$class=($this->default_controller_class)?$this->namespace_controller.'\\'.$this->default_controller_class:'';
+		$class=($this->lazy_controller_class)?$this->namespace_controller.'\\'.$this->lazy_controller_class:'';
 		if(class_exists($class)){return $class; }
 		return null;
 	}
@@ -461,6 +466,7 @@ class DNRoute
 				$this->calling_path=$calling_path;
 			}
 		}
+		//TODO the lazy is the last.
 		
 		if(!$full_class){
 			$this->error="NoClass";
