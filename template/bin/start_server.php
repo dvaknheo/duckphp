@@ -17,12 +17,13 @@ $opts=[
 	'help'	=>'h',
 	'host:'	=>'H:',
 	'port:'	=>'P:',
-	'swoole'=>'s',
+	'inner-server'=>'i',
 ];
 
 $captures=GetCmdCaptures($opts);
-
 $show_help=isset($captures['help'])?true:false;
+
+echo "Well Come to use DNMVCS ,for more info , use --help \n";
 if($show_help){
 	return ShowHelp();
 }
@@ -30,20 +31,19 @@ if($show_help){
 $host=$captures['host']??$host;
 $port=$captures['port']??$port;
 
-echo "Well Come to use DNMVCS ,for more info , use --help \n";
-
 if(!CheckSwoole($captures)){
 	return RunHttpServer($path,$host,$port);
 }
 
 $dn_options['swoole']=$dn_options['swoole']??[];
-
 $dn_options['swoole']['host']=$dn_options['swoole']['host']??$host;
 $dn_options['swoole']['port']=$dn_options['swoole']['port']??$port;
+$host=$dn_options['swoole']['host'];
+$port=$dn_options['swoole']['port'];
 
 if(defined('DNMVCS_WARNING_IN_TEMPLATE')){ $dn_options['setting_file_basename']=''; }
 if(defined('DNMVCS_WARNING_IN_TEMPLATE')){ echo "Don't run the template file directly \n"; }
-
+echo "DNMVCS: RunServer swoole server $host:$port\n";
 \DNMVCS\DNMVCS::RunQuickly($dn_options);
 
 /////////////////
@@ -65,8 +65,8 @@ function GetCmdCaptures($opts)
 }
 function CheckSwoole($args)
 {
-	$flag=( isset($args['swoole']) )?true:false;
-	if(!$flag){ return false; }
+	$flag=( isset($args['inner-server']) )?true:false;
+	if($flag){ return false; }
 	if(!function_exists('swoole_version')){ return false; }
 	
 	return true;
@@ -78,7 +78,7 @@ function RunHttpServer($path,$host,$port)
 	$PHP=escapeshellcmd($PHP);
 	$host=escapeshellcmd($host);
 	$port=escapeshellcmd($port);
-	echo "DNMVCS CMD : RunServer bye php inner http server\n";
+	echo "DNMVCS: RunServer by php inner http server $host:$port\n";
 	$cmd="$PHP -t $dir -S $host:$port";
 	exec($cmd);
 }
