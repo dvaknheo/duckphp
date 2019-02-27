@@ -779,8 +779,9 @@ class DNMVCSExt
 		
 		$backtrace=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,10);
 		$caller_class='';
+		$base_class=get_class(DNMVCS::G());
 		foreach($backtrace as $i=>$v){
-			if($v['class']===DNMVCS::class){
+			if($v['class']===$base_class){
 				$caller_class=$backtrace[$i+1]['class'];
 				break;
 			}
