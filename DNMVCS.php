@@ -38,6 +38,51 @@ trait DNThrowQuickly
 	}
 }
 }
+if(!trait_exists('DNMVCS\DNClassExt',false)){
+trait DNClassExt
+{
+	protected $static_methods=[];
+	protected $dynamic_methods=[];
+	
+	public static function __callStatic($name, $arguments) 
+	{
+		$self=static::G();
+		$class=get_class($self);
+		if($class!==static::class && method_exists($class,$name)){
+			return call_user_func_array([$class,$name], $arguments);
+		}
+		if(isset($self->static_methods[$name]) && is_callable($self->static_methods[$name])){
+			return call_user_func_array($self->static_methods[$name], $arguments);
+		}
+		throw new \Error("Call to undefined method ".static::class ."::$name()");
+	}
+	public function __call($name, $arguments) 
+	{
+		if(isset($this->dynamic_methods[$name]) && is_callable($this->dynamic_methods[$name])){
+			return call_user_func_array($this->dynamic_methods[$name], $arguments);
+		}
+		
+		throw new \Error("Call to undefined method ".static::class ."::$name()");
+	}
+	public function assignStaticMethod($key,$value=null)
+	{
+		if(is_array($key)&& $value===null){
+			$this->static_methods=array_merge($this->static_methods,$key);
+		}else{
+			$this->static_methods[$key]=$value;
+		}
+	}
+	public function assignDynamicMethod($key,$value=null)
+	{
+		if(is_array($key)&& $value===null){
+			$this->dynamic_methods=array_merge($this->dynamic_methods,$key);
+		}else{
+			$this->dynamic_methods[$key]=$value;
+		}
+	}
+}
+}
+
 class DNException extends \Exception
 {
 	use DNThrowQuickly;
@@ -1436,7 +1481,7 @@ trait DNMVCS_Instance
 		$ret[static::class]=$this;
 		return $ret;
 	}
-	public function getDymicClasses()
+	public function getDynamicClasses()
 	{
 		$classes=[
 			DNExceptionManager::class,
@@ -1460,6 +1505,7 @@ class DNMVCS
 	use DNMVCS_SystemWrapper;
 	use DNMVCS_RunMode;
 	use DNMVCS_Instance;
+	use DNClassExt;
 	
 	const DEFAULT_OPTIONS=[
 			'namespace'=>'MY',
@@ -1498,15 +1544,7 @@ class DNMVCS
 	
 	protected $has_run_once=false;
 	public $before_run_handler=null;
-	public static function __callStatic($name, $arguments) 
-	{
-		$class=get_class(static::G());
-		if($class===static::class){
-			throw new \ErrorException(static::class .": Call to undefined method ".static::class ."::$name()");
-		}
-		$ret=call_user_func_array([$class,$name], $arguments);
-		return $ret;
-	}
+	
 	public static function RunQuickly($options=[])
 	{
 		return static::G()->init($options)->run();

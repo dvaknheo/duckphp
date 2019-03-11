@@ -59,7 +59,7 @@ class DNSwooleExt
 	}
 	public function runSwoole()
 	{
-		$classes=DNMVCS::G()->getDymicClasses();
+		$classes=DNMVCS::G()->getDynamicClasses();
 		SwooleHttpServer::G()->forkMasterInstances($classes);
 		
 		$ret=DNMVCS::G()->run();

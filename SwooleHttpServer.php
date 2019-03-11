@@ -230,7 +230,7 @@ trait SwooleHttpServer_Singleton
 	{
 		SwooleCoroutineSingleton::ReplaceDefaultSingletonHandler();
 	}
-	public function getDymicClasses()
+	public function getDynamicClasses()
 	{
 		$classes=[
 			SwooleSuperGlobal::class,
@@ -247,12 +247,12 @@ trait SwooleHttpServer_Singleton
 	}
 	public function forkMasterInstances($classes,$exclude_classes=[])
 	{
-		$exclude_classes=array_merge($exclude_classes,$this->getDymicClasses());
+		$exclude_classes=array_merge($exclude_classes,$this->getDynamicClasses());
 		return SwooleCoroutineSingleton::G()->forkMasterInstances($classes,$exclude_classes);
 	}
 	public function resetInstances()
 	{
-		$classes=$this->getDymicClasses();
+		$classes=$this->getDynamicClasses();
 		$instances=[];
 		foreach($classes as $class){
 			$instances[$class]=$class::G();
