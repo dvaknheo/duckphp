@@ -38,6 +38,7 @@ trait DNThrowQuickly
 	}
 }
 }
+
 if(!trait_exists('DNMVCS\DNClassExt',false)){
 trait DNClassExt
 {
@@ -1097,13 +1098,13 @@ trait DNMVCS_Glue
 	}
 	public static function InSwoole()
 	{
-		if(defined('DNMVCS_SWOOLE_RUNNING')){
-			return true;
-		}
-		if(defined('DNMVCS_SWOOLE_INIT')){
-			return true;
-		}
-		return false;
+		if(PHP_SAPI!=='cli'){ return false; }
+		if(!class_exsits('Swoole\Coroutine')){ return false; }
+		
+		$cid = \Swoole\Coroutine::getuid();
+		if($cid<=0){return false;}
+		
+		return true;
 	}
 	public static function IsRunning()
 	{
@@ -1216,7 +1217,9 @@ trait DNMVCS_Handler
 		}
 		//  close database before show;
 		DNDBManager::G()->closeAllDB();
-		DNRuntimeState::G()->skipNoticeError();
+		if($this->options['view_skip_notice_error']){
+			DNRuntimeState::G()->skipNoticeError();
+		}
 	}
 	public function _On404()
 	{
@@ -1255,9 +1258,12 @@ trait DNMVCS_Handler
 		$data['code']=$ex->getCode();
 		$data['trace']=$ex->getTraceAsString();
 		
-		$is_error=is_a($ex,'Error') || is_a($ex,'ErrorException')?true:false;		
-		$error_view=$is_error?$this->options['error_500']:$this->options['error_exception'];
-		
+		$is_error=is_a($ex,'Error') || is_a($ex,'ErrorException')?true:false;
+		if($this->options){
+			$error_view=$is_error?$this->options['error_500']:$this->options['error_exception'];
+		}else{
+			$error_view=null;
+		}
 		if( !is_string($error_view) && is_callable($error_view) ){
 			($error_view)($data);
 			return;
@@ -1437,7 +1443,7 @@ trait DNMVCS_RunMode
 				'mode_onefile_key_for_action'=>'_r',
 			],
 		];
-		$options=array_replace_recursive($default_options,$options);
+		$options=array_merge($default_options,$options);
 		return static::G()->init($options)->run();
 	}
 	public static function RunOneFileMode($options=[],$init_function=null)
@@ -1457,7 +1463,7 @@ trait DNMVCS_RunMode
 				'use_session_auto_start'=>true,
 			]
 		];
-		$options=array_replace_recursive($default_options,$options);
+		$options=array_merge($default_options,$options);
 		static::G()->init($options);
 		if($init_function){
 			($init_function)();
@@ -1515,11 +1521,13 @@ class DNMVCS
 			'path_lib'=>'lib',
 			'is_dev'=>false,
 			'platform'=>'',
+			'view_skip_notice_error'=>true,
 			
 			'all_config'=>[],
 			'setting'=>[],
 			'setting_file_basename'=>'setting',
 			
+			'use_db'=>true,
 			'db_create_handler'=>'',
 			'db_close_handler'=>'',
 			'database_list'=>[],
@@ -1545,9 +1553,14 @@ class DNMVCS
 	protected $has_run_once=false;
 	public $before_run_handler=null;
 	
-	public static function RunQuickly($options=[])
+	public static function RunQuickly(array $options=[],callable $after_init=null)
 	{
-		return static::G()->init($options)->run();
+		if(!$after_init){
+			return static::G()->init($options)->run();
+		}
+		static::G()->init($options);
+		($after_init)();
+		static::G()->run();
 	}
 	protected function mergeOptions($options=[])
 	{
@@ -1604,13 +1617,11 @@ class DNMVCS
 		$this->initView(DNView::G());
 		$this->initRoute(DNRoute::G());
 		$this->initDBManager(DNDBManager::G());
-		
 		$this->initMisc();
 		return $this;
 	}
 	public function initExceptionManager($exception_manager)
 	{
-		if(static::InSwoole()){return;}
 		$exception_manager->init([static::class,'OnException'],[$this,'onDevErrorHandler'],static::class.'::set_exception_handler');
 	}
 	public function initConfiger($configer)
@@ -1631,6 +1642,7 @@ class DNMVCS
 	}
 	public function initDBManager($dbm)
 	{
+		if(!$this->options['use_db']){ return; }
 		$configer=DNConfiger::G();
 		$database_list=$configer->_Setting('database_list');
 		$database_list=$database_list??[];
