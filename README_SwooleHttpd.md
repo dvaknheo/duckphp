@@ -3,7 +3,7 @@
 ## SwooleHttpd 是什么
 
 SwooleHttpd 致力于 Swoole 代码和 fpm 平台 代码几乎不用修改就可以双平台运行。
-是对 swoole_http_server 类的一个简单封装。
+是对 swoole_http_server 类的一个包裹。
 可以让你用 echo 直接输出。
 
 SwooleHttpd 原先来自 PHP 框架DNMVCS。不对外引用其他 PHP 代码，简单可靠。
@@ -69,14 +69,22 @@ const DEFAULT_OPTIONS=[
         'enable_path_info'=>true,       // http_handler_root 允许 path_info
         'enable_not_php_file'=>true,    // http_handler_root 允许包含资源文件
         
-        'base_class'=>null,             // 替换本类初始化类
-        'after_init_callback'=>null,    // 初始化之后的回调
+        'base_class'=>null,             // 替换本类继续初始化
 ];
 ```
 
-base_class 类在会替换 SwooleHttpd 类继续初始化。
+### 难度级别
 
-after_init_callback 用于不想拆分 RunQuickly 静态函数调用，在 init() 后运行。
+从难度低到高，大概是这样的级别以实现目的 *DNMVCS 也适用*
+
+1. 使用默认选项实现目的
+2. 只改选项实现目的
+3. 调用 SwooleHttpd 类的静态方法实现目的
+4. 调用 SwooleHttpd 类的动态方法实现目的
+5. ---- 初级程序员和高级程序员分界线 ----
+6. 调用扩展类，组件类的动态方法实现目的
+7. 继承接管特定类实现目的
+8. 魔改，硬改 DNMVCS 的代码实现目的
 
 ### 三种模式
 
@@ -99,7 +107,7 @@ SwooleHttpd 有三种模式
 
 ### 常用静态方法
 
-static RunQuickly($options=[])
+static RunQuickly(array $options=[],callable $after_init=null)
 
     入口，等价于 SwooleHttpd::G()->init($options)->run();
 Server()
@@ -111,6 +119,10 @@ Request()
 Response()
 
     获得当前 swoole_response 对象
+ThrowOn() *DNMVCS 也适用*
+
+    抛出异常
+Throw404()
 
 ### 超全局变量相关方法
 
@@ -128,6 +140,7 @@ SG()
 &CLASS_STATICS($class_name,$var_name)
 
     类内静态变量 static 语法的替代方法
+    $class_name 传入类名，以确定是 self::class 还是 static::class
 
 ### 系统封装静态方法
 
@@ -171,9 +184,16 @@ static G($object=null)
 
     G 函数，可替换单例。
 
-__callStatic($name, $arguments)
+__callStatic($name, $arguments) *DNMVCS 也适用*
+
+    配合 assignStaticMethod 适用
+__call($name, $arguments) *DNMVCS 也适用*
+
+    配合 assignStaticMethod 适用
 
 ReplaceDefaultSingletonHandler()
+SingletonInstance
+EnableCurrentCoSingleton
 
 ### 单例模式
 
@@ -206,8 +226,6 @@ run()
     DNMVCS_DNSINGLETON_REPALACER        耦合连接，协程单例，替换默认实现
     DNMVCS_SYSTEM_WRAPPER_INSTALLER     耦合连接，提供系统封装接口，DNMVVS
     DNMVCS_SUPER_GLOBAL_REPALACER       耦合连接，提供SuperGlobal 接口类
-    DNMVCS_SWOOLE_INIT                  Swoole 服务器已经初始化的标志
-    DNMVCS_SWOOLE_RUNNING               Swoole 服务器已经运行的标志
 
 ### 简单 HTTP 服务器
 
@@ -277,13 +295,14 @@ SwooleHttpd  重写了 G 函数的实现，使得做到协程单例。
 
     SwooleSuperGlobal 是 Swoole 下 超全局变量 的实现。
 
+    public $sessionImpelement=null;
     public $is_inited=false;
     public function init()
 
-### SwooleSession
+### SwooleSessionImpelement
 
-    SwooleSession 是 Swoole 的 session 实现。
-    SwooleSession 被 SwooleSuperGlobal 调用， 调用 SwooleSessionHandler ,
+    SwooleSessionImpelement 是 Swoole 的 session 实现。
+    SwooleSessionImpelement 被 SwooleSuperGlobal 调用， 调用 SwooleSessionHandler ,
     public function setHandler(\SessionHandlerInterface $handler)
     public function _Start(array $options=[])
     public function _Destroy()
