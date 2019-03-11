@@ -34,6 +34,50 @@ trait DNThrowQuickly
 	}
 }
 }
+if(!trait_exists('DNMVCS\DNClassExt',false)){
+trait DNClassExt
+{
+	protected $static_methods=[];
+	protected $dynamic_methods=[];
+	
+	public static function __callStatic($name, $arguments) 
+	{
+		$self=static::G();
+		$class=get_class($self);
+		if($class!==static::class && method_exists($class,$name)){
+			return call_user_func_array([$class,$name], $arguments);
+		}
+		if(isset($self->static_methods[$name]) && is_callable($self->static_methods[$name])){
+			return call_user_func_array($self->static_methods[$name], $arguments);
+		}
+		throw new \Error("Call to undefined method ".static::class ."::$name()");
+	}
+	public function __call($name, $arguments) 
+	{
+		if(isset($this->dynamic_methods[$name]) && is_callable($this->dynamic_methods[$name])){
+			return call_user_func_array($this->dynamic_methods[$name], $arguments);
+		}
+		
+		throw new \Error("Call to undefined method ".static::class ."::$name()");
+	}
+	public function assignStaticMethod($key,$value=null)
+	{
+		if(is_array($key)&& $value===null){
+			$this->static_methods=array_merge($this->static_methods,$key);
+		}else{
+			$this->static_methods[$key]=$value;
+		}
+	}
+	public function assignDynamicMethod($key,$value=null)
+	{
+		if(is_array($key)&& $value===null){
+			$this->dynamic_methods=array_merge($this->dynamic_methods,$key);
+		}else{
+			$this->dynamic_methods[$key]=$value;
+		}
+	}
+}
+}
 class SwooleCoroutineSingleton
 {
 	use DNSingleton;
@@ -83,11 +127,16 @@ class SwooleCoroutineSingleton
 		return static::G()->_DumpString();
 	}
 	
-	public function InitCoroutine()
+	public function EnableCurrentCoSingleton()
 	{
+		$cid = \Swoole\Coroutine::getuid();
+		if($cid<=0){return;}
+		
 		if(isset(self::$_instances[$cid])){return;}
 		self::$_instances[$cid]=[];
 		\defer(function(){
+			$cid = \Swoole\Coroutine::getuid();
+			if($cid<=0){return;}
 			unset(self::$_instances[$cid]);
 		});
 	}
@@ -222,7 +271,11 @@ trait SwooleHttpServer_Singleton
 {
 	public static function ReplaceDefaultSingletonHandler()
 	{
-		SwooleCoroutineSingleton::ReplaceDefaultSingletonHandler();
+		return SwooleCoroutineSingleton::ReplaceDefaultSingletonHandler();
+	}
+	public static function EnableCurrentCoSingleton()
+	{
+		return SwooleCoroutineSingleton::EnableCurrentCoSingleton();
 	}
 	public function getDynamicClasses()
 	{
@@ -366,7 +419,7 @@ trait SwooleHttpServer_SimpleHttpd
 			gc_collect_cycles();
 		});
 		
-		SwooleCoroutineSingleton::InitCoroutine();
+		SwooleCoroutineSingleton::EnableCurrentCoSingleton();
 		SwooleContext::G(new SwooleContext())->initHttp($request,$response);
 		SwooleSuperGlobal::G(new SwooleSuperGlobal())->init();
 		$InitObLevel=ob_get_level();
@@ -459,6 +512,8 @@ trait SwooleHttpServer_WebSocket
 class SwooleHttpServer
 {
 	use DNSingleton;
+	use DNClassExt;
+	
 	use SwooleHttpServer_Static;
 	use SwooleHttpServer_SimpleHttpd;
 	use SwooleHttpServer_WebSocket;
@@ -493,7 +548,8 @@ class SwooleHttpServer
 			'websocket_close_handler'=>null,
 			
 			'base_class'=>'',
-			'after_init_callback'=>null,
+			'silent_mode'=>false,
+			'enable_coroutine'=>true,
 		];
 	const MAX_PATH_LEVEL=1000;
 	public $server=null;
@@ -509,27 +565,24 @@ class SwooleHttpServer
 	public $enable_path_info=true;
 	public $enable_not_php_file=true;
 
+	public $silent_mode=false;
 
 	protected $static_root=null;
 	protected $auto_clean_autoload=true;
 	protected $old_autoloads=[];
 	
-	public static function RunQuickly($options)
+	public static function RunQuickly(array $options=[],callable $after_init=null)
 	{
-		return static::G()->init($options)->run();
+		if(!$after_init){
+			return static::G()->init($options)->run();
+		}
+		static::G()->init($options);
+		($after_init)();
+		static::G()->run();
 	}
 	public function set_http_exception_handler($exception_handler)
 	{
 		$this->http_exception_handler=$exception_handler;
-	}
-	public static function __callStatic($name, $arguments) 
-	{
-		$class=get_class(static::G());
-		if($class===static::class){
-			throw new \ErrorException(static::class .": Call to undefined method ".static::class ."::$name()");
-		}
-		$ret=call_user_func_array([$class,$name], $arguments);
-		return $ret;
 	}
 	protected function checkOverride($options)
 	{
@@ -596,6 +649,7 @@ class SwooleHttpServer
 			if($flag){
 				return;
 			}
+			var_dump("HIIIII",$path,$document_root);
 			if(!$this->with_http_handler_file || $this->http_handler){
 				$this->throw404();
 				return;
@@ -740,7 +794,6 @@ class SwooleHttpServer
 			if($object){return $object;}
 		}
 		
-		if(!defined('DNMVCS_SWOOLE_INIT')){define('DNMVCS_SWOOLE_INIT',true);}
 		$options=array_merge(self::DEFAULT_OPTIONS,$options);
 		
 		$this->http_handler=$options['http_handler'];
@@ -758,7 +811,9 @@ class SwooleHttpServer
 		$this->enable_not_php_file=$options['enable_not_php_file'];
 		
 		$this->server=$options['swoole_server'];
-		$after_init_callback=$options['after_init_callback']??null;
+		
+		$this->silent_mode=$options['silent_mode'];
+		
 		
 		if(!$this->server){
 			$this->check_swoole();
@@ -796,8 +851,9 @@ class SwooleHttpServer
 			$this->server->on('mesage',[$this,'onMessage']);
 			$this->server->on('open',[$this,'onOpen']);
 		}
-
-		\Swoole\Runtime::enableCoroutine();
+		if($options['enable_coroutine']){
+			\Swoole\Runtime::enableCoroutine();
+		}
 		
 		SwooleCoroutineSingleton::ReplaceDefaultSingletonHandler();
 		static::G($this);
@@ -809,18 +865,18 @@ class SwooleHttpServer
 		if(!defined('DNMVCS_SUPER_GLOBAL_REPALACER')){
 			define('DNMVCS_SUPER_GLOBAL_REPALACER',SwooleSuperGlobal::class .'::' .'G');
 		}
-		if($after_init_callback){
-			($after_init_callback)();
-		}
+		
 		return $this;
 	}
 	public function run()
 	{
-		if(!defined('DNMVCS_SWOOLE_RUNNING')){ define('DNMVCS_SWOOLE_RUNNING',true); }
-		fwrite(STDOUT,get_class($this)." run at ".DATE(DATE_ATOM)." ...\n");
-		
+		if(!$this->silent_mode){
+			fwrite(STDOUT,"[".DATE(DATE_ATOM)."] ".get_class($this)." run at ".$this->server->host.':'.$this->server->port." ...\n");
+		}
 		$this->server->start();
-		fwrite(STDOUT,get_class($this)." run end ".DATE(DATE_ATOM)." ...\n");
+		if(!$this->silent_mode){
+			fwrite(STDOUT,get_class($this)." run end ".DATE(DATE_ATOM)." ...\n");
+		}
 	}
 }
 
@@ -890,9 +946,8 @@ class SwooleSuperGlobal
 	}
 	public function session_start(array $options=[])
 	{
-		$t=SwooleSession::G();
-		$t->_Start($options);
-		static::G()->_SESSION=&$t->data;
+		$this->sessionImplement->_Start($options);
+		static::G()->_SESSION=&$this->sessionImplement->data;
 	}
 	public function session_destroy()
 	{
