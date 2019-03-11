@@ -49,7 +49,6 @@ class SwooleCoroutineSingleton
 	{
 		$cid = \Swoole\Coroutine::getuid();
 		$cid=($cid<=0)?0:$cid;
-		self::$_instances[$cid]=self::$_instances[$cid]??[];
 		
 		if($object===null){
 			$me=self::$_instances[$cid][$class]??null;
@@ -60,7 +59,11 @@ class SwooleCoroutineSingleton
 			}
 			
 			$me=new $class();
-			self::$_instances[$cid][$class]=$me;
+			if(isset(self::$_instances[$cid])){
+				self::$_instances[$cid][$class]=$me;
+			}else{
+				self::$_instances[0][$class]=$me;
+			}
 			return $me;
 		}
 		self::$_instances[$cid][$class]=$object;
@@ -82,19 +85,10 @@ class SwooleCoroutineSingleton
 	
 	public function InitCoroutine()
 	{
-		$old_mem=memory_get_usage();
-		$cid = \Swoole\Coroutine::getuid();
-		if($cid<=0){return;}
-		
-		unset(self::$_instances[$cid]);
-		\defer(function()use($old_mem){
-			$cid = \Swoole\Coroutine::getuid();
+		if(isset(self::$_instances[$cid])){return;}
+		self::$_instances[$cid]=[];
+		\defer(function(){
 			unset(self::$_instances[$cid]);
-			
-			$mem_cached=gc_mem_caches();
-			gc_collect_cycles();
-			$new_mem=memory_get_usage();
-			$diff_mem=$new_mem-$old_mem;
 		});
 	}
 	public function forkMasterInstances($classes,$exclude_classes=[])
@@ -368,6 +362,10 @@ trait SwooleHttpServer_SimpleHttpd
 	
 	public function onRequest($request,$response)
 	{
+		\defer(function(){
+			gc_collect_cycles();
+		});
+		
 		SwooleCoroutineSingleton::InitCoroutine();
 		SwooleContext::G(new SwooleContext())->initHttp($request,$response);
 		SwooleSuperGlobal::G(new SwooleSuperGlobal())->init();
@@ -548,9 +546,14 @@ class SwooleHttpServer
 	{
 		exit($code);
 	}
-	public function throw404()
+	public static function Throw404()
 	{
 		throw new Swoole404Exception();
+	}
+	public static function ThrowOn($flag,$message,$code=0)
+	{
+		if(!$flag){return;}
+		throw new SwooleException($message,$code);
 	}
 	protected function fixIndex()
 	{
@@ -838,7 +841,9 @@ class SwooleSuperGlobal
 	public $STATICS=[];
 	public $CLASS_STATICS=[];
 
+	public $sessionImplement=null;
 	public $is_inited=false;
+	
 	public function init()
 	{
 		$cid = \Swoole\Coroutine::getuid();
@@ -875,6 +880,12 @@ class SwooleSuperGlobal
 		$this->_SERVER['cli_script_filename']=$this->_SERVER['SCRIPT_FILENAME'];
 		
 		$this->_FILES=$request->files;
+		
+		if(!$this->sessionImplement){
+			$this->sessionImplement=SwooleSessionImplement::G();
+		}
+		
+		
 		return $this;
 	}
 	public function session_start(array $options=[])
@@ -885,12 +896,12 @@ class SwooleSuperGlobal
 	}
 	public function session_destroy()
 	{
-		SwooleSession::G()->_Destroy();
+		$this->sessionImplement->_Destroy();
 		static::G()->_SESSION=[];
 	}
 	public function session_set_save_handler($handler)
 	{
-		SwooleSession::G()->setHandler($handler);
+		$this->sessionImplement->setHandler($handler);
 	}
 	//////////////
 	public function &_GLOBALS($k,$v=null)
@@ -924,7 +935,7 @@ class SwooleSuperGlobal
 		return $this->CLASS_STATICS[$k];
 	}
 }
-class SwooleSession
+class SwooleSessionImplement
 {
 	use DNSingleton;
 
