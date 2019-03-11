@@ -144,11 +144,11 @@ class RouteHookMapAndRewrite
 	protected function changeRouteUrl($route,$url)
 	{
 		$path=parse_url($url,PHP_URL_PATH);
-		$get=[];
+		$input_get=[];
 		parse_str(parse_url($url,PHP_URL_QUERY),$input_get);
 		$route->path_info=$path;
 		DNSuperGlobal::G()->_SERVER['init_get']=DNSuperGlobal::G()->_GET;
-		DNSuperGlobal::G()->_GET=$get;
+		DNSuperGlobal::G()->_GET=$input_get;
 	}
 	protected function hookRewrite($route)
 	{
