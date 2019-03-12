@@ -209,6 +209,23 @@ class DNAutoLoader
 			
 		}
 	}
+	public function cacheClasses()
+	{
+		$ret=[];
+		foreach($this->namespace_paths as $source=>$name){
+			if($name===__NAMESPACE__){ continue;}
+			$source=realpath($source);
+			$directory = new \RecursiveDirectoryIterator($source,\FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS );
+			$iterator = new \RecursiveIteratorIterator($directory);
+			$files = \iterator_to_array($iterator,false);
+			$ret+=$files;
+		}
+		foreach($ret as $file){
+			if(opcache_is_script_cached ($file)){continue;}
+			opcache_compile_file($file);
+		}
+		return $ret;
+	}
 }
 
 class DNRoute
@@ -1521,7 +1538,9 @@ class DNMVCS
 			'path_lib'=>'lib',
 			'is_dev'=>false,
 			'platform'=>'',
+			
 			'view_skip_notice_error'=>true,
+			'with_cli_cache_classes'=>true,
 			
 			'all_config'=>[],
 			'setting'=>[],
@@ -1617,7 +1636,9 @@ class DNMVCS
 		$this->initView(DNView::G());
 		$this->initRoute(DNRoute::G());
 		$this->initDBManager(DNDBManager::G());
+		
 		$this->initMisc();
+		
 		return $this;
 	}
 	public function initExceptionManager($exception_manager)
@@ -1658,21 +1679,25 @@ class DNMVCS
 	}
 	public function initMisc()
 	{
+	if($this->options['with_cli_cache_classes'] && PHP_SAPI==='cli'){
+			DNAutoLoader::G()->cacheClasses();
+		}
 		if(!empty($this->options['swoole'])){
 			DNSwooleExt::G()->onDNMVCSInit($this->options['swoole']);
 		}
 		
-		$this->isDev=DNConfiger::G()->_Setting('is_dev')??$this->isDev;
-		$this->platform=DNConfiger::G()->_Setting('platform')??$this->platform;
-		
 		$this->initSystemWrapper();
 		$this->initSuperGlobal();
+		DNRuntimeState::G();
+		
+		$this->isDev=DNConfiger::G()->_Setting('is_dev')??$this->isDev;
+		$this->platform=DNConfiger::G()->_Setting('platform')??$this->platform;
 		
 		
 		if(!empty($this->options['ext'])){
 			DNMVCSExt::G()->init($this);
 		}
-		DNRuntimeState::G();
+		
 	}
 	protected function initSystemWrapper()
 	{
