@@ -64,8 +64,7 @@ class DNSwooleExt
 		
 		$ret=DNMVCS::G()->run();
 		if(!$ret && $this->with_http_handler_root){
-			$class=DNMVCS::class;
-			SwooleHttpServer::G()->createCoInstance($class,new $class);
+			SwooleHttpServer::G()->forkMasterInstances([DNMVCS::class]);
 			DNMVCS::G(static::G()); //fake object
 			return false;
 		}

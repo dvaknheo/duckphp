@@ -120,7 +120,7 @@ SwooleHttpd 有三种模式
 
 常用静态方法，基本都要用到的静态方法
 
-static RunQuickly(array $options=[],callable $after_init=null)
+static RunQuickly(array $options=[],callable $after_init=null) *DNMVCS 通用*
 
     入口，等价于 SwooleHttpd::G()->init($options)->run();
     如果 after_init不为 null 将会在 init 后执行
@@ -144,7 +144,10 @@ Response()
     返回 SwooleContext::G()->response
 OnShow404()
 
+    处理404的通用方法，选项 http_404_handler 优先使用
 OnException($ex)
+
+    异常的处理方法，选项 http_exception_handler 优先使用
 
 ### 超全局变量静态方法 *DNMVCS 通用*
 
@@ -158,17 +161,16 @@ SG()
 &GLOBALS($k,$v=null)
 
     全局变量 global 语法的替代方法
-    实质返回 SwooleSuperGlobal::G()->STATICS($k,$v)
-
+    返回 SwooleSuperGlobal::G()->STATICS($k,$v)
 &STATICS($k,$v=null)
 
     静态变量 static 语法的替代方法
-    实质返回 SwooleSuperGlobal::G()->_STATICS($k,$v)
+    返回 SwooleSuperGlobal::G()->_STATICS($k,$v)
 &CLASS_STATICS($class_name,$var_name)
 
     类内静态变量 static 语法的替代方法
     $class_name 传入类名，以确定是 self::class 还是 static::class
-    实质返回 SwooleSuperGlobal::G()->_CLASS_STATICS($class_name,$var_name)
+    返回 SwooleSuperGlobal::G()->_CLASS_STATICS($class_name,$var_name)
 
 ### 系统封装静态方法
 
@@ -190,7 +192,7 @@ setcookie(string $key, string $value = '', int $expire = 0 , string $path = '/',
     设置 cookie
 set_exception_handler(callable $exception_handler)
 
-    异常函数
+    设置异常函数
 register_shutdown_function(callable $callback,...$args)
 
     退出关闭函数
@@ -202,7 +204,7 @@ session_destroy()
     结束 session
 session_set_save_handler(\SessionHandlerInterface $handler)
 
-    重设 session_handler
+    设置 session_handler
 
 ### 高级静态方法
 
@@ -255,12 +257,29 @@ run()
 __call($name, $arguments) *DNMVCS 也适用*
 
     配合 assignDymanicMethod 适用
-getDynamicClasses()
-createCoInstance($class,$object)
-forkMasterInstances($classes,$exclude_classes=[])
-resetInstances()
-set_http_exception_handler（$ex）
+set_http_exception_handler($ex)
+
+    设置异常
 exit_request($code=0)
+
+    退出当前请求，等同于 exit
+getDynamicClasses()
+
+    获取动态类 http_handler 模式可能需要
+
+forkMasterInstances($classes,$exclude_classes=[])
+
+    把
+resetInstances()
+
+    重置 协程为0 的实例覆盖到当前协程，用空的实例，而不是原有实例。
+    用于
+
+### DNClassExt *DNMVCS 通用*
+
+SwooleHttpd use trait DNClassExt
+
+assignDynamicMethod
 
 ### SwooleHttpd 的预定义宏
 
@@ -348,7 +367,7 @@ SwooleHttpd  重写了 G 函数的实现，使得做到协程单例。
     public function _Start(array $options=[])
     public function _Destroy()
     public function writeClose()
-    protected function create_sid()
+    public function create_sid()
 
 ### SwooleSessionHandler implements \SessionHandlerInterface
 

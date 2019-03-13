@@ -285,13 +285,6 @@ trait SwooleHttpServer_Singleton
 		];
 		return $classes;
 	}
-	public function createCoInstance($class,$object)
-	{
-		$cid = \Swoole\Coroutine::getuid();
-		$cid=($cid<=0)?0:$cid;
-		
-		return SwooleCoroutineSingleton::SetInstance($cid,$class,$object);
-	}
 	public function forkMasterInstances($classes,$exclude_classes=[])
 	{
 		$exclude_classes=array_merge($exclude_classes,$this->getDynamicClasses());
