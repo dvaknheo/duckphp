@@ -351,11 +351,11 @@ trait SwooleHttpServer_SystemWrapper
 	}
 	public static function exit_system($code=0)
 	{
-		return SwooleHttpServer::G()->exit_request($code);
+		return static::G()->exit_request($code);
 	}
 	public static function set_exception_handler(callable $exception_handler)
 	{
-		return SwooleHttpServer::G()->set_http_exception_handler($exception_handler);
+		return static::G()->set_http_exception_handler($exception_handler);
 	}
 	public static function register_shutdown_function(callable $callback,...$args)
 	{
@@ -419,14 +419,12 @@ trait SwooleHttpServer_SimpleHttpd
 			gc_collect_cycles();
 		});
 		
-		SwooleCoroutineSingleton::EnableCurrentCoSingleton();
-		SwooleContext::G(new SwooleContext())->initHttp($request,$response);
-		SwooleSuperGlobal::G(new SwooleSuperGlobal())->init();
 		$InitObLevel=ob_get_level();
 		ob_start(function($str) use($response){
 			if(''===$str){return;} // stop warnning;
 			$response->write($str);
 		});
+		
 		\defer(function()use($response,$InitObLevel){
 			SwooleContext::G()->onShutdown();
 			$this->onHttpClean();
@@ -437,7 +435,11 @@ trait SwooleHttpServer_SimpleHttpd
 			
 			$response->end();
 		});
+
 		
+		SwooleCoroutineSingleton::EnableCurrentCoSingleton();
+		SwooleContext::G(new SwooleContext())->initHttp($request,$response);
+		SwooleSuperGlobal::G(new SwooleSuperGlobal())->init();
 		try{
 			$this->onHttpRun($request,$response);
 		}catch(\Throwable $ex){
@@ -459,11 +461,19 @@ trait SwooleHttpServer_Handler
 	}
 	public function _OnShow404()
 	{
+		if($this->http_404_handler){
+			($this->http_404_handler)($ex);
+			return;
+		}
 		static::header('',true,404);
 		echo "DNMVCS swoole mode: Server 404 \n";
 	}
 	public function _OnException($ex)
 	{
+		if($this->http_exception_handler){
+			($this->http_exception_handler)($ex);
+			return;
+		}
 		static::header('',true,500);
 		echo "DNMVCS swoole mode: Server Error. \n";
 		echo var_export($ex);
@@ -637,8 +647,8 @@ class SwooleHttpServer
 			if($flag){
 				return;
 			}
-			if(!$this->with_http_handler_root){
-				$this->throw404();
+			if(!$this->with_http_handler_root && !$this->http_handler_file){
+				static::Throw404();
 				return;
 			}
 			$this->auto_clean_autoload=true;
@@ -649,9 +659,8 @@ class SwooleHttpServer
 			if($flag){
 				return;
 			}
-			var_dump("HIIIII",$path,$document_root);
 			if(!$this->with_http_handler_file || $this->http_handler){
-				$this->throw404();
+				static::Throw404();
 				return;
 			}
 		}
@@ -756,11 +765,8 @@ class SwooleHttpServer
 		}
 		if($ex instanceof Swoole404Exception){
 			static::OnShow404();
-		}		
-		if($this->http_exception_handler){
-			($this->http_exception_handler)($ex);
 			return;
-		}
+		}		
 		static::OnException($ex);
 	}
 	protected function onHttpClean()
@@ -814,6 +820,7 @@ class SwooleHttpServer
 		
 		$this->silent_mode=$options['silent_mode'];
 		
+		$this->http_handler_basepath=rtrim(realpath($this->http_handler_basepath),'/').'/';
 		
 		if(!$this->server){
 			$this->check_swoole();
@@ -1062,7 +1069,7 @@ class SwooleSessionImplement
 		$this->handler->write($this->session_id,serialize($this->data));
 		$this->data=[];
 	}
-	protected function create_sid()
+	public function create_sid()
 	{
 		return md5(microtime().mt_rand());
 	}
