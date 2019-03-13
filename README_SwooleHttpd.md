@@ -256,7 +256,7 @@ run()
     运行，运行后进入 swoole_http_server
 __call($name, $arguments) *DNMVCS 也适用*
 
-    配合 assignDymanicMethod 适用
+    配合 assignDymanicMethod
 set_http_exception_handler($ex)
 
     设置异常
@@ -265,15 +265,14 @@ exit_request($code=0)
     退出当前请求，等同于 exit
 getDynamicClasses()
 
-    获取动态类 http_handler 模式可能需要
+    获取动态类 http_handler 模式
 
 forkMasterInstances($classes,$exclude_classes=[])
 
-    把
+    把master 实例clone 到当前协程。exclude_classes 表示，如果是 克隆的实例有当前的类，则跳过不克隆
 resetInstances()
 
     重置 协程为0 的实例覆盖到当前协程，用空的实例，而不是原有实例。
-    用于
 
 ### DNClassExt *DNMVCS 通用*
 
@@ -323,8 +322,6 @@ SwooleHttpd  重写了 G 函数的实现，使得做到协程单例。
 ### DNThrowQuickly
 
 共享 trait，这代码在 DNMVCS 里也有 用于快速抛异常
-
-## SwooleHttpd 的其他组件类
 
 ### class SwooleCoroutineSingleton
 
