@@ -1510,7 +1510,6 @@ trait DNMVCS_Instance
 			DNExceptionManager::class,
 			DNView::class,
 			DNRoute::class,
-			DNRuntimeState::class,
 			DNSuperGlobal::class,
 		];
 		return $classes;
@@ -1737,6 +1736,8 @@ class DNMVCS
 			$this->has_run_once=true;
 			$this->runOnce();
 		}
+		$class=get_class(DNRuntimeState::G());
+		DNRuntimeState::G(new $class);
 		DNRuntimeState::G()->setState();
 		$ret=DNRoute::G()->bindServerData(DNSuperGlobal::G()->_SERVER)->run();
 		DNRuntimeState::G()->unsetState();
