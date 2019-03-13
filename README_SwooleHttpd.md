@@ -4,7 +4,6 @@
 
 SwooleHttpd 致力于 Swoole 代码和 fpm 平台 代码几乎不用修改就可以双平台运行。
 是对 swoole_http_server 类的一个包裹。
-可以让你用 echo 直接输出。
 
 SwooleHttpd 原先来自 PHP 框架DNMVCS。不对外引用其他 PHP 代码，简单可靠。
 但是 SwooleHttpd 是设计成几乎和 DNMVCS 无关的Swoole 框架，所以我把他剥离了。
@@ -13,7 +12,7 @@ SwooleHttpd 原先来自 PHP 框架DNMVCS。不对外引用其他 PHP 代码，�
 
 ## 特色
 
-直接用 echo 输出。前面说过。
+直接用 echo 输出。
 
 最方便旧代码迁移。超全局变量用 SwooleHttpd::SG()-> 前缀就可以了。 如 $_GET => SwooleHttpd::SG()->_GET
 
@@ -45,7 +44,11 @@ $server_options=[
 SwooleHttpd::RunQuickly($options);
 ```
 
+这个例子展现了 $_SERVER 里有的东西
+
 ### 选项
+
+RunQuickly 的  选项有
 
 ```php
 const DEFAULT_OPTIONS=[
@@ -69,22 +72,29 @@ const DEFAULT_OPTIONS=[
         'enable_path_info'=>true,       // http_handler_root 允许 path_info
         'enable_not_php_file'=>true,    // http_handler_root 允许包含资源文件
         
-        'base_class'=>null,             // 替换本类继续初始化
+        'base_class'=>null,             // 替换 SwooleHttpd 类初始化
+        'silent_mode'=>false,           // 安静模式，不在命令行中提示服务启动信息。
+        'enable_coroutine'=>true,       // 启用 \Swoole\Runtime::enableCoroutine();
 ];
 ```
 
 ### 难度级别
 
-从难度低到高，大概是这样的级别以实现目的 *DNMVCS 也适用*
+从难度低到高，大概是这样的级别以实现目的 *DNMVCS 通用*
 
 1. 使用默认选项实现目的
 2. 只改选项实现目的
 3. 调用 SwooleHttpd 类的静态方法实现目的
 4. 调用 SwooleHttpd 类的动态方法实现目的
 5. ---- 初级程序员和高级程序员分界线 ----
-6. 调用扩展类，组件类的动态方法实现目的
-7. 继承接管特定类实现目的
-8. 魔改，硬改 DNMVCS 的代码实现目的
+6. 使用入口类扩展
+7. 调用扩展类，组件类的动态方法实现目的
+8. 继承接管特定类实现目的
+9. 魔改，硬改 SwooleHttpd 的代码实现目的
+
+### 文档小备注
+
+（DNMVCS 通用）的备注，在 DNMVCS 中也会有类似的做法。两者文档重复，方便看过 DNMVCS 的人。
 
 ### 三种模式
 
@@ -101,46 +111,64 @@ SwooleHttpd 有三种模式
     这和 document_root 一样。读取php文件，然后运行的模式。
     注意重复包含类会导致异常.
     with_http_handler_file  打开时 找不到文件会进入 http_handler_file 处理。
+    enable_not_php_file 允许读取资源文件，如图片，将会在浏览器显示图片。
 3. http_handler_file
 
     这种模式是把 url 都转向 文件如 index.php 来处理。
 
 ### 常用静态方法
 
+常用静态方法，基本都要用到的静态方法
+
 static RunQuickly(array $options=[],callable $after_init=null)
 
     入口，等价于 SwooleHttpd::G()->init($options)->run();
+    如果 after_init不为 null 将会在 init 后执行
+ThrowOn($flag,$message,$code=0) *DNMVCS 通用*
+
+    如果 flag 成立抛出异常
+    和 DNMVCS 不同的是，这里抛出 SwooleException。
+Throw404()
+
+    抛出 Swoole404Exception,进入 404 处理。
 Server()
 
     获得当前 swoole_server 对象
 Request()
 
     获得当前 swoole_request 对象
+    返回 SwooleContext::G()->request
 Response()
 
     获得当前 swoole_response 对象
-ThrowOn() *DNMVCS 也适用*
+    返回 SwooleContext::G()->response
+OnShow404()
 
-    抛出异常
-Throw404()
+OnException($ex)
 
-### 超全局变量相关方法
+### 超全局变量静态方法 *DNMVCS 通用*
 
-代替超全局变量
+代替超全局变量，基本由 SwooleSuperGlobal 的动态方法实现
+高级程序员可以由接管 SwooleSuperGlobal 以实现自己的解决方式。
 
 SG()
 
     代替系统超级变量
+    实质返回 SwooleSuperGlobal::G();
 &GLOBALS($k,$v=null)
 
     全局变量 global 语法的替代方法
+    实质返回 SwooleSuperGlobal::G()->STATICS($k,$v)
+
 &STATICS($k,$v=null)
 
     静态变量 static 语法的替代方法
+    实质返回 SwooleSuperGlobal::G()->_STATICS($k,$v)
 &CLASS_STATICS($class_name,$var_name)
 
     类内静态变量 static 语法的替代方法
     $class_name 传入类名，以确定是 self::class 还是 static::class
+    实质返回 SwooleSuperGlobal::G()->_CLASS_STATICS($class_name,$var_name)
 
 ### 系统封装静态方法
 
@@ -180,20 +208,23 @@ session_set_save_handler(\SessionHandlerInterface $handler)
 
 这些静态方法，初学者可以忽略
 
-static G($object=null)
+static G($object=null) *DNMVCS 通用*
 
     G 函数，可替换单例。
 
-__callStatic($name, $arguments) *DNMVCS 也适用*
+__callStatic($name, $arguments) *DNMVCS 通用*
 
-    配合 assignStaticMethod 适用
-__call($name, $arguments) *DNMVCS 也适用*
-
-    配合 assignStaticMethod 适用
+    SwooleHttpd::G($object) 后 $object 的静态方法 SwooleHttpd 也可用
+    SwooleHttpd::G()->assignStaticMethod 定的 静态方法 SwooleHttpd 也可用。
 
 ReplaceDefaultSingletonHandler()
-SingletonInstance
-EnableCurrentCoSingleton
+
+    替换单例实现
+    实质返回 SwooleCoroutineSingleton::ReplaceDefaultSingletonHandler();
+EnableCurrentCoSingleton()
+
+    开启协程内单例，比如 \go 函数里你需要用到自己的协程单例。
+    实质返回 SwooleCoroutineSingleton::EnableCurrentCoSingleton();
 
 ### 单例模式
 
@@ -202,8 +233,9 @@ DNSingleton 定义了静态函数 G($object=null)   ，如果默认参数的话�
 如果传入  $object 则替换单例，实现调用方式不变，实现方式改变的效果。
 
 SwooleHttpd::  通过使用 SwooleCoroutineSingleton 进一步扩展了 DNSingltone （ 通过 DNMVCS_DNSINGLETON_REPALACER 宏 ）
-实现了协程单例。
-使得 MyClass::G() 如果在协程内 从 SwooleHttpd::G($object=null)  
+实现了协程内单例。
+
+如果协程内没单例，会查找全局的单例（$cid=0）的
 
 在协程结束时候，会自动清理所有协程单例。
 
@@ -220,6 +252,15 @@ init($options=[])
 run()
 
     运行，运行后进入 swoole_http_server
+__call($name, $arguments) *DNMVCS 也适用*
+
+    配合 assignDymanicMethod 适用
+getDynamicClasses()
+createCoInstance($class,$object)
+forkMasterInstances($classes,$exclude_classes=[])
+resetInstances()
+set_http_exception_handler（$ex）
+exit_request($code=0)
 
 ### SwooleHttpd 的预定义宏
 
@@ -317,9 +358,78 @@ SwooleHttpd  重写了 G 函数的实现，使得做到协程单例。
 
 ## 代码解读
 
-    基本流程 init() -> run
-    DNMVCS_SYSTEM_WRAPPER_INSTALLER
-    DNMVCS_SUPER_GLOBAL_REPALACER
+### 基本流程 init()
+
+    开始检测是否有 base_class ，如果有，则替换当前单例为 base_class 的实现，
+    返回 base_class 的 G 实例的 init
+
+    载入选项 如果没有 server 对象则根据配置创建一个。
+
+    SwooleCoroutineSingleton::ReplaceDefaultSingletonHandler(); 替换单例
+    宏 DNMVCS_SUPER_GLOBAL_REPALACER 定为 SwooleSuperGlobal::G
+    宏 DNMVCS_SYSTEM_WRAPPER_INSTALLER 定为 static::system_wrapper_get_providers;
+
+### 基本流程 run()
+
+    如果不是安静模式，则打印相关信息
+    $this->server->start();
+
+### 基本流程 onRequest()
+
+    onRequest 实现于 trait SwooleHttpd_SimpleHttpd
+    trait SwooleHttpServer_SimpleHttpd （估计现实也没人会用到 SwooleHttpServer_SimpleHttpd 而不用 SwooleHttpd ）
+    一开始就 defer 手动 gc
+    SwooleCoroutineSingleton::EnableCurrentCoSingleton 开启 onRequest 协程的协程单例
+
+    defer 配合 ob_start 处理直接 echo 输出
+
+    SwooleContext 初始化
+    SwooleSuperGlobal::G 初始化
+
+    注意代码 SwooleSuperGlobal::G(new SwooleSuperGlobal())->init();
+    为什么不是 SwooleSuperGlobal::G()；
+    因为要确保 SwooleSuperGlobal::G() 得到的单例是 协程内的单例。
+
+    接下来 正常流程  onHttpRun 处理 http 业务
+    出异常则 onHttpException  处理异常。
+
+    流程结束后，进入前面 defer 流程里处理善后
+    包括 伪 regist_shutdown_function  处理
+    其他信息则  onHttpClean 处理
+    SwooleContext 善后处理
+    关闭 response;
+    （这个 defer 折腾了一段时间处理顺序，没 bug 就暂时不要动了。）
+
+### 基本流程 onHttpClean()
+
+    SwooleHttpd onHttpClean
+    处理 autoload ，防止 http_handler_root/http_handler_file 模式多次载入 spl_autoload
+
+### 基本流程 onHttpException($ex)
+
+    这个很简单
+    如果是 \Swoole\ExitException 异常， 不用处理
+    如果是  Swoole404Exception 则 static::OnShow404();
+    否则 static::OnException($ex);
+
+### 基本流程 onHttpRun
+
+    主要流程。
+    保存 spl_autoload_functions
+
+如果 http_handler 模式
+
+    关闭自动清理 autoload
+    处理选项  enable_fix_index
+    运行 http_handler
+    如果得到的是 false 而且非 with_http_handler_root，非 http_handler_file 则404
+    否则打开自动清理 autoload，继续
+
+如果 http_handler_root 模式
+
+如果 http_handler_file 模式
+
+### DNMVCS handler 相关。
 
 ## WebSocket(测试中)
 
