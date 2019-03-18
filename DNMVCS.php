@@ -27,18 +27,6 @@ trait DNSingleton
 	}
 }
 }
-if(!trait_exists('DNMVCS\DNThrowQuickly',false)){
-trait DNThrowQuickly
-{
-	public static function ThrowOn($flag,$message,$code=0)
-	{
-		if(!$flag){return;}
-		$class=static::class;
-		throw new $class($message,$code);
-	}
-}
-}
-
 if(!trait_exists('DNMVCS\DNClassExt',false)){
 trait DNClassExt
 {
@@ -80,6 +68,17 @@ trait DNClassExt
 		}else{
 			$this->dynamic_methods[$key]=$value;
 		}
+	}
+}
+}
+if(!trait_exists('DNMVCS\DNThrowQuickly',false)){
+trait DNThrowQuickly
+{
+	public static function ThrowOn($flag,$message,$code=0)
+	{
+		if(!$flag){return;}
+		$class=static::class;
+		throw new $class($message,$code);
 	}
 }
 }
@@ -1127,17 +1126,6 @@ trait DNMVCS_Glue
 	{
 		return DNRuntimeState::G()->isRunning();
 	}
-	//decraped
-	public function setDBHandler($db_create_handler,$db_close_handler=null)
-	{
-		return DNDBManager::G()->setDBHandler($db_create_handler,$db_close_handler);
-	}
-	//decraped
-	public function setBeforeGetDBHandler($before_get_db_handler)
-	{
-		return DNDBManager::G()->setBeforeGetDBHandler($before_get_db_handler);
-	}
-	//
 	public static function SG()
 	{
 		return DNSuperGlobal::G();
@@ -1216,6 +1204,10 @@ trait DNMVCS_Handler
 	public static function OnException($ex)
 	{
 		return static::G()->_OnException($ex);
+	}
+	public function OnDevErrorHandler($errno, $errstr, $errfile, $errline)
+	{
+		return static::G()->_OnDevErrorHandler($errno, $errstr, $errfile, $errline);
 	}
 	//////////////
 	public function toggleStop404Handler($flag=true)
@@ -1301,7 +1293,7 @@ trait DNMVCS_Handler
 		$view->_Show($data,$error_view);
 		DNRuntimeState::G()->unsetState();
 	}
-	public function onDevErrorHandler($errno, $errstr, $errfile, $errline)
+	public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline)
 	{
 		//
 		if(!$this->isDev){return;}
@@ -1507,10 +1499,9 @@ trait DNMVCS_Instance
 	public function getDynamicClasses()
 	{
 		$classes=[
-			DNExceptionManager::class,
-			DNView::class,
-			DNRoute::class,
-			DNSuperGlobal::class,
+			DNExceptionManager::class, // to  delete ?
+			DNView::class,   // for assign
+			DNSuperGlobal::class,  // todo delete ?
 		];
 		return $classes;
 	}
@@ -1642,7 +1633,7 @@ class DNMVCS
 	}
 	public function initExceptionManager($exception_manager)
 	{
-		$exception_manager->init([static::class,'OnException'],[$this,'onDevErrorHandler'],static::class.'::set_exception_handler');
+		$exception_manager->init([static::class,'OnException'],[static::class,'OnDevErrorHandler'],static::class.'::set_exception_handler');
 	}
 	public function initConfiger($configer)
 	{
