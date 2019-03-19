@@ -221,7 +221,7 @@ class DNAutoLoader
 		}
 		foreach($ret as $file){
 			if(opcache_is_script_cached ($file)){continue;}
-			opcache_compile_file($file);
+			@opcache_compile_file($file);
 		}
 		return $ret;
 	}
@@ -252,12 +252,12 @@ class DNRoute
 			
 			'welcome_controller'=>'Main',
 			'default_method'=>'index',
+			
+			'the_404_hanlder'=>null,
 		];
 	
 	public $parameters=[];
-	public $the404Handler=null;
 	public $urlHandler=null;
-	
 	
 	
 	protected $welcome_controller='Main';
@@ -272,6 +272,7 @@ class DNRoute
 	protected $disable_default_class_outside=false;
 	protected $default_method_for_miss=null;
 	protected $base_controller_class=null;
+	public $the_404_hanlder=null;
 	
 	public $prefix_post='do_';
 	
@@ -339,6 +340,8 @@ class DNRoute
 		$this->enable_post_prefix=$options['welcome_controller'];
 		$this->default_method=$options['default_method'];
 		
+		$this->the_404_hanlder=$options['the_404_hanlder'];
+		
 		$namespace=$options['namespace'];
 		$namespace_controller=$options['namespace_controller'];
 		if(substr($namespace_controller,0,1)!=='\\'){
@@ -377,7 +380,7 @@ class DNRoute
 	}
 	public function set404($callback)
 	{
-		$this->the404Handler=$callback;
+		$this->the_404_hanlder=$callback;
 	}
 	public function setURLHandler($callback)
 	{
@@ -417,13 +420,13 @@ class DNRoute
 			($this->callback)(...$this->parameters);
 			return true;
 		}
-		if(!$this->the404Handler){
+		if(!$this->the_404_hanlder){
 			header("HTTP/1.0 404 Not Found");
 			echo "404 File Not Found.\n";
 			echo "DNRoute Notice: 404 .  You need set 404 Handler by DNRoute->set404(\$callback).";
 			exit;
 		}
-		($this->the404Handler)();
+		($this->the_404_hanlder)();
 		return false;
 	}
 	public function stopRunDefaultHandler()
@@ -1590,6 +1593,10 @@ class DNMVCS
 	}
 	protected function checkOverride($options)
 	{
+		$skip_check_override=$options['skip_check_override']??false;
+		if($skip_check_override){
+			return null;
+		}
 		if(static::class!==self::class){return null;}
 		
 		$base_class=isset($options['base_class'])?$options['base_class']:self::DEFAULT_OPTIONS['base_class'];
@@ -1601,29 +1608,26 @@ class DNMVCS
 		$base_class=ltrim($base_class,'\\');
 		
 		if(!$base_class || !class_exists($base_class)){return null;}
+		$options['skip_check_override']=true;
 		return static::G($base_class::G())->init($options);
 	}
+	protected $is_booted=false;
 	protected function boot($options)
 	{
-		if(static::class!==self::class){return;}
+		if($this->is_booted){return true;}
+		$this->is_booted=true;
 		if(!empty($options['swoole'])){
 			DNSwooleExt::G()->onDNMVCSBoot();
 		}
+		return $this;
 	}
 	//@override me
 	public function init($options=[])
 	{
-		$skip_check_override=$options['skip_check_override']??false;
-		unset($options['skip_check_override']);
-		
 		DNAutoLoader::G()->init($options)->run();
+		$object=$this->checkOverride($options);
+		if($object){return $object;}
 		$this->boot($options);
-		
-		if(!$skip_check_override){
-			$object=$this->checkOverride($options);
-			if($object){return $object;}
-		}
-		
 		$this->initOptions($options);
 		
 		$this->initExceptionManager(DNExceptionManager::G());
@@ -1660,7 +1664,8 @@ class DNMVCS
 	{
 		if(!$this->options['use_db']){ return; }
 		$configer=DNConfiger::G();
-		$database_list=$configer->_Setting('database_list');
+		$setting_key_of_database_list=$this->options['setting_key_of_database_list']??'database_list';
+		$database_list=$configer->_Setting($setting_key_of_database_list);
 		$database_list=$database_list??[];
 		$database_list=array_merge($this->options['database_list'],$database_list);
 		
@@ -1674,7 +1679,7 @@ class DNMVCS
 	}
 	public function initMisc()
 	{
-	if($this->options['with_cli_cache_classes'] && PHP_SAPI==='cli'){
+		if($this->options['with_cli_cache_classes'] && PHP_SAPI==='cli'){
 			DNAutoLoader::G()->cacheClasses();
 		}
 		if(!empty($this->options['swoole'])){
@@ -1734,7 +1739,7 @@ class DNMVCS
 			$this->has_run_once=true;
 			$this->runOnce();
 		}
-		//TODO  view is init in this ?
+		//TODO  view is init in this ? SuperGlobal is init in this?
 		
 		$class=get_class(DNRuntimeState::G());
 		DNRuntimeState::G(new $class)->setState();
