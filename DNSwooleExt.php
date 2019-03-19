@@ -1,19 +1,43 @@
 <?php
 namespace DNMVCS;
-/*4
-ISwooleHttpServer:: init run getDynamicClasses ReplaceDefaultSingletonHandler  resetInstances  forkMasterInstances setHttpHandler(!) //getBootInstances?
-IDNMVCS:: 			init run getDynamicClasses getBootInstances    //toggleStop404Handler
-*/
+use Exception;
+class DNSwooleExtServerHolder
+{
+	use DNSingleton;
+	
+	public static function ReplaceDefaultSingletonHandler(){throw new Exception("Impelement Me!");}
+	
+	public function init(){throw new Exception("Impelement Me!");}
+	public function run(){throw new Exception("Impelement Me!");}
+	public function getDynamicClasses(){throw new Exception("Impelement Me!");}
+	public function getBootInstances(){throw new Exception("Impelement Me!");}
+	public function resetInstances(){throw new Exception("Impelement Me!");}
+	public function forkMasterInstances(){throw new Exception("Impelement Me!");}
+}
+class DNSwooleExtAppHolder
+{
+	use DNSingleton;
+	public function init(){throw new Exception("Impelement Me!");}
+	public function run(){throw new Exception("Impelement Me!");}
+	public function getDynamicClasses(){throw new Exception("Impelement Me!");}
+	public function getBootInstances(){throw new Exception("Impelement Me!");}
+}
 class DNSwooleExt
 {
 	use DNSingleton;
 	
-	protected $has_inited=false;
 	protected $with_http_handler_root=false;
-	
+	public static function Server($server=null)
+	{
+		return DNSwooleExtServerHolder::G($server);
+	}
+	public static function App($app=null)
+	{
+		return DNSwooleExtAppHolder::G($app);
+	}
 	public function init($options)
 	{
-		//for 404 RE in;
+		//for 404 re-in;
 		if(get_class(DNMVCS::G())===static::class){
 			return $this->initRunningModeDNMVCS($options);
 		}
@@ -21,23 +45,24 @@ class DNSwooleExt
 	}
 	protected function initRunningModeDNMVCS($options)
 	{
-		SwooleHttpServer::G()->resetInstances();
+		static::Server()->resetInstances();
+		
 		$ret=DNMVCS::G()->init($options);
 		return $ret;
 	}
 	public function onDNMVCSBoot()
 	{
 		if(PHP_SAPI!=='cli'){ return; }
+		static::App(DNMVCS::G());
 		
-		if($this->has_inited){return;}
-		$this->has_inited=true;
+		$server=static::Server();
+		$app=static::App();
 		
-		$instances=DNMVCS::G()->getBootInstances();
-		$server=SwooleHttpServer::G();
+		$instances=$app->getBootInstances();
 		$flag=([get_class($server),'ReplaceDefaultSingletonHandler'])();
 		if(!$flag){ return; }
-		SwooleHttpServer::G($server);
-		
+		static::Server($server);
+		static::App($app);
 		foreach($instances as $class=>$object){
 			$class::G($object);
 		}
@@ -47,29 +72,25 @@ class DNSwooleExt
 	{
 		if(PHP_SAPI!=='cli'){ return; }
 		
-		SwooleHttpServer::G()->init($server_options,null);
+		$this->with_http_handler_root=$server_options['with_http_handler_root']??false;
+		$server_options['http_handler']=[$this,'runSwoole'];
+		
+		static::Server()->init($server_options,null);
 	}
 	public function onDNMVCSRunOnce()
 	{
-		$server=SwooleHttpServer::G();
-		
-		if($server->with_http_handler_root){		//TODO.
-			$this->with_http_handler_root=true;
-			DNMVCS::G()->toggleStop404Handler(true);
-		}
-		$server->http_handler=[$this,'runSwoole'];
-		$server->run();
+		static::Server()->run();
 	}
 	public function runSwoole()
 	{
-		$classes=DNMVCS::G()->getDynamicClasses();
-		$exclude_classes=SwooleHttpServer::G()->getDynamicClasses();
-		SwooleHttpServer::G()->forkMasterInstances($classes,$exclude_classes);
+		$classes=static::App()->getDynamicClasses();
+		$exclude_classes=static::Server()->getDynamicClasses();
+		static::Server()->forkMasterInstances($classes,$exclude_classes);
 		
-		$ret=DNMVCS::G()->run($this->with_http_handler_root);
+		$ret=static::App()->run($this->with_http_handler_root);
 		if(!$ret && $this->with_http_handler_root){
-			SwooleHttpServer::G()->forkMasterInstances([DNMVCS::class]);
-			DNMVCS::G(static::G()); //fake object
+			static::Server()->forkMasterInstances(array_keys(static::App()->getBootInstances()));
+			DNMVCS::G(static::G()); //fake object //TODO
 			return false;
 		}
 		return true;

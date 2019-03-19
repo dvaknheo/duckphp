@@ -1124,7 +1124,7 @@ trait DNMVCS_Glue
 	public static function InSwoole()
 	{
 		if(PHP_SAPI!=='cli'){ return false; }
-		if(!class_exsits('Swoole\Coroutine')){ return false; }
+		if(!class_exists('Swoole\Coroutine')){ return false; }
 		
 		$cid = \Swoole\Coroutine::getuid();
 		if($cid<=0){return false;}
