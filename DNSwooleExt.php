@@ -1,6 +1,9 @@
 <?php
 namespace DNMVCS;
-
+/*4
+ISwooleHttpServer:: init run getDynamicClasses ReplaceDefaultSingletonHandler  resetInstances  forkMasterInstances setHttpHandler(!) //getBootInstances?
+IDNMVCS:: 			init run getDynamicClasses getBootInstances    //toggleStop404Handler
+*/
 class DNSwooleExt
 {
 	use DNSingleton;
@@ -31,7 +34,7 @@ class DNSwooleExt
 		
 		$instances=DNMVCS::G()->getBootInstances();
 		$server=SwooleHttpServer::G();
-		$flag=SwooleHttpServer::ReplaceDefaultSingletonHandler(); 
+		$flag=([get_class($server),'ReplaceDefaultSingletonHandler'])();
 		if(!$flag){ return; }
 		SwooleHttpServer::G($server);
 		
@@ -50,7 +53,7 @@ class DNSwooleExt
 	{
 		$server=SwooleHttpServer::G();
 		
-		if($server->with_http_handler_root){
+		if($server->with_http_handler_root){		//TODO.
 			$this->with_http_handler_root=true;
 			DNMVCS::G()->toggleStop404Handler(true);
 		}
@@ -60,9 +63,10 @@ class DNSwooleExt
 	public function runSwoole()
 	{
 		$classes=DNMVCS::G()->getDynamicClasses();
-		SwooleHttpServer::G()->forkMasterInstances($classes);
+		$exclude_classes=SwooleHttpServer::G()->getDynamicClasses();
+		SwooleHttpServer::G()->forkMasterInstances($classes,$exclude_classes);
 		
-		$ret=DNMVCS::G()->run();
+		$ret=DNMVCS::G()->run($this->with_http_handler_root);
 		if(!$ret && $this->with_http_handler_root){
 			SwooleHttpServer::G()->forkMasterInstances([DNMVCS::class]);
 			DNMVCS::G(static::G()); //fake object

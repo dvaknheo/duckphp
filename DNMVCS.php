@@ -1638,7 +1638,7 @@ class DNMVCS
 	}
 	public function initExceptionManager($exception_manager)
 	{
-		$exception_manager->init([static::class,'OnException'],[static::class,'OnDevErrorHandler'],static::class.'::set_exception_handler');
+		$exception_manager->init([static::class,'OnException'],[static::class,'OnDevErrorHandler'],[static::class,'set_exception_handler']);
 	}
 	public function initConfiger($configer)
 	{
@@ -1726,15 +1726,19 @@ class DNMVCS
 			DNSwooleExt::G()->onDNMVCSRunOnce();
 		}
 	}
-	public function run()
+	public function run($is_stop_404=false)
 	{
+		$this->toggleStop404Handler($is_stop_404);
+		
 		if(!$this->has_run_once){
 			$this->has_run_once=true;
 			$this->runOnce();
 		}
+		//TODO  view is init in this ?
+		
 		$class=get_class(DNRuntimeState::G());
-		DNRuntimeState::G(new $class);
-		DNRuntimeState::G()->setState();
+		DNRuntimeState::G(new $class)->setState();
+		
 		$ret=DNRoute::G()->bindServerData(DNSuperGlobal::G()->_SERVER)->run();
 		DNRuntimeState::G()->unsetState();
 		return $ret;
