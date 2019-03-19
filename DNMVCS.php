@@ -249,6 +249,9 @@ class DNRoute
 			'enable_post_prefix'=>true,
 			'prefix_post'=>'do_',
 			'default_method_for_miss'=>null,
+			
+			'welcome_controller'=>'Main',
+			'default_method'=>'index',
 		];
 	
 	public $parameters=[];
@@ -332,6 +335,9 @@ class DNRoute
 		$this->prefix_post=$options['prefix_post'];
 		$this->disable_default_class_outside=$options['disable_default_class_outside'];
 		$this->default_method_for_miss=$options['default_method_for_miss'];
+		
+		$this->enable_post_prefix=$options['welcome_controller'];
+		$this->default_method=$options['default_method'];
 		
 		$namespace=$options['namespace'];
 		$namespace_controller=$options['namespace_controller'];
@@ -1499,7 +1505,6 @@ trait DNMVCS_Instance
 	public function getDynamicClasses()
 	{
 		$classes=[
-			DNExceptionManager::class, // to  delete ?
 			DNView::class,   // for assign
 			DNSuperGlobal::class,  // todo delete ?
 		];
