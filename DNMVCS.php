@@ -1611,13 +1611,16 @@ class DNMVCS
 		$options['skip_check_override']=true;
 		return static::G($base_class::G())->init($options);
 	}
-	protected $is_booted=false;
-	protected function boot($options)
+	protected $has_init_once=false;
+	protected function initOnce($options)
 	{
-		if($this->is_booted){return true;}
-		$this->is_booted=true;
+		if($this->has_init_once){return true;}
+		$this->has_init_once=true;
 		if(!empty($options['swoole'])){
-			DNSwooleExt::G()->onDNMVCSBoot();
+			static::ThrowOn(class_exists(SwooleHttpd::class),"DNMVCS: You Need SwooleHttpd");
+			DNSwooleExt::Server(SwooleHttpd::G());
+			DNSwooleExt::G()->onDNMVCSBoot(self::class,$options);
+			$this->toggleStop404Handler();
 		}
 		return $this;
 	}
@@ -1627,7 +1630,12 @@ class DNMVCS
 		DNAutoLoader::G()->init($options)->run();
 		$object=$this->checkOverride($options);
 		if($object){return $object;}
-		$this->boot($options);
+		return $this->initStep2($options);
+	}
+	public function initStep2($options)
+	{
+		$this->initOnce($options);
+		
 		$this->initOptions($options);
 		
 		$this->initExceptionManager(DNExceptionManager::G());
