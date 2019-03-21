@@ -339,3 +339,61 @@ class TestRoot
 // $root=new TestRoot();
 // $t=$root->join("a","b")->dump()->did("c")->join("d")->dump();
 }
+class Ticker
+{
+	public static $data=[];
+	public static function Start()
+	{
+		register_tick_function([static::class,'tick_handler']);
+	}
+	public static function tick_handler()
+	{
+		$a=debug_backtrace(2,1)[0];
+		$file=$a['file'];
+		$line=$a['line'];
+		echo "$file : $line \n";
+		static::$data[$file][$line]=true;
+	}
+	public static function Stop()
+	{
+		unregister_tick_function([static::class,'tick_handler']);
+		$script_name=realpath($_SERVER['SCRIPT_FILENAME']);
+		foreach(static::$data as $filename=>$filedata){
+			$ret='';
+			$lines=file($filename);
+			foreach($lines as $i=>$str){
+				$tested=true;
+				do{
+					$t_str=trim($str);
+					$line=$i+1;
+
+					if(isset($filedata[$line])){
+						break;
+					}
+					if(!$t_str || $t_str==='}' || $t_str==='{' |||| $t_str==='}else{' ){
+						break;
+					}
+					
+					$p=preg_match('/(if|for|foreach|do|while)\s*\(.*?{$/',$t_str);
+					if($p){
+						break;
+					}
+					$p=preg_match('/(class|function|trait|public|protected|private|namespace|declare|use)\s/A',$t_str);
+					if($p){
+						break;
+					}
+					
+					$tested=false;
+				}while(false);
+				if($tested){
+					//$ret.=rtrim($str,"\n").' // TESTED '.$script_name."\n";
+					$ret.=$str;
+				}else{
+					$ret.=rtrim($str,"\n")." // NT \n";
+				}
+			}
+			$basename=$filename.".log";
+			file_put_contents($basename,$ret);
+		}
+	}
+}

@@ -804,12 +804,12 @@ class DNRuntimeState
 	{
 		return $this->is_running;
 	}
-	public function setState()
+	public function begin()
 	{
 		$this->is_running=true;
 		$this->error_reporting_old=error_reporting();
 	}
-	public function unsetState()
+	public function end()
 	{
 		error_reporting($this->error_reporting_old);
 		$this->is_running=false;
@@ -1300,7 +1300,7 @@ trait DNMVCS_Handler
 		
 		$view->setViewWrapper(null,null);
 		$view->_Show($data,$error_view);
-		DNRuntimeState::G()->unsetState();
+		DNRuntimeState::G()->end();
 	}
 	public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline)
 	{
@@ -1508,6 +1508,7 @@ trait DNMVCS_Instance
 	public function getDynamicClasses()
 	{
 		$classes=[
+			DNRoute::class,   // for bindServerData
 			DNView::class,   // for assign
 			DNSuperGlobal::class,  // todo delete ?
 		];
@@ -1696,7 +1697,7 @@ class DNMVCS
 		
 		$this->initSystemWrapper();
 		$this->initSuperGlobal();
-		DNRuntimeState::G();
+
 		
 		$this->isDev=DNConfiger::G()->_Setting('is_dev')??$this->isDev;
 		$this->platform=DNConfiger::G()->_Setting('platform')??$this->platform;
@@ -1741,19 +1742,25 @@ class DNMVCS
 	}
 	public function run($is_stop_404=false)
 	{
-		$this->toggleStop404Handler($is_stop_404);
-		
 		if(!$this->has_run_once){
 			$this->has_run_once=true;
 			$this->runOnce();
 		}
-		//TODO  view is init in this ? SuperGlobal is init in this?
+		$this->toggleStop404Handler($is_stop_404);
 		
 		$class=get_class(DNRuntimeState::G());
-		DNRuntimeState::G(new $class)->setState();
+		DNRuntimeState::G(new $class)->begin();
 		
-		$ret=DNRoute::G()->bindServerData(DNSuperGlobal::G()->_SERVER)->run();
-		DNRuntimeState::G()->unsetState();
+		//$class=get_class(DNView::G());
+		//DNView::G(new $class);
+		//$this->initView(DNView::G());
+		
+		$route=DNRoute::G();
+		if(true){
+			$route->bindServerData(DNSuperGlobal::G()->_SERVER);
+		}
+		$ret=$route->run();
+		DNRuntimeState::G()->end();
 		return $ret;
 	}
 }
