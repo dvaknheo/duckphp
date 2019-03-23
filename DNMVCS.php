@@ -482,10 +482,6 @@ class DNRoute
 			
 			$class=$this->namespace_controller.'\\'.implode('\\',$class_names);
 			if(class_exists($class)){ break; }
-			if(!$this->with_no_namespace_mode){ continue; }
-			
-			$class=$this->getFullClassByNoNameSpace($calling_path);
-			if($class){ break; }
 		}
 		if(!$class){
 			$this->error="No faill paramter not failed";
@@ -519,11 +515,12 @@ class DNRoute
 		array_push($parameters,$method);
 		$method=array_shift($parameters);
 		$calling_path=$calling_path.'/'.$method;
+		
+		return [$class,$method,$parameters,$calling_path];
 	}
 	public function defaultRouteHandler()
 	{
 		$path_info=$this->path_info;
-		$path=$this->path;
 		
 		$class_blocks=explode('/',$path_info);
 		$method=array_pop($class_blocks);
@@ -585,36 +582,36 @@ class DNRoute
 		if(!$full_class){ return null; }
 		$this->calling_class=$full_class;
 		$this->calling_method=$method;
-		$object=$this->getObjectToCall($full_class);
-		return $this->getMethodToCall($object,$method);
-	}
-	// You can override it; variable indived
-	protected function includeControllerFile($file)
-	{
-		require_once($file);
-	}
-	// You can override it;
-	protected function getObjectToCall($full_class)
-	{
-		$obj=new $full_class();
+		
+		$object=new $full_class();
 		if($this->base_controller_class && !is_a($obj,$this->base_controller_class)){
 			return null;
 		}
-		return $obj;
+		return $this->getMethodToCall($object,$method);
 	}
 	protected function getMethodToCall($obj,$method)
 	{
 		$method=$method===''?$this->default_method:$method;
-		if(substr($method,0,2)=='__'){return null;}
+		if(substr($method,0,2)=='__'){
+			return null;
+		}
 		if($this->enable_post_prefix && $this->request_method==='POST' &&  method_exists($obj,$this->prefix_post.$method)){
 			$method=$this->prefix_post.$method;
 		}
 		if($this->default_method_for_miss && !method_exists($obj,$method)){
 			$method=$this->default_method_for_miss;
 		}
-		if(!is_callable([$obj,$method])){ return null; }
+		if(!is_callable([$obj,$method])){
+			return null;
+		}
 		return [$obj,$method];
 	}
+	// You can override it; variable indived
+	protected function includeControllerFile($file)
+	{
+		require_once($file);
+	}
+	
 	public function getRouteCallingPath()
 	{
 		return $this->calling_path;
@@ -641,7 +638,6 @@ class DNView
 	public $data=[];
 	public $view=null;
 	
-	protected $temp_view_file;
 	protected $before_show_handler=null;
 	
 	public function _Show($data=[],$view)
@@ -721,7 +717,7 @@ class DNConfiger
 	protected $setting_file_basename='setting';
 	protected $setting=[];
 	protected $all_config=[];
-	protected $inited=false;
+	protected $is_inited=false;
 	public function init($path,$options)
 	{
 		$this->path=$path;
@@ -731,7 +727,7 @@ class DNConfiger
 	}
 	public function _Setting($key)
 	{
-		if($this->inited || !$this->setting_file_basename){ return $this->setting[$key]??null; }
+		if($this->is_inited || !$this->setting_file_basename){ return $this->setting[$key]??null; }
 		$basename=$this->setting_file_basename;
 		$full_config_file=$this->path.$basename.'.php';
 		if(!is_file($full_config_file)){
@@ -739,7 +735,7 @@ class DNConfiger
 			exit;
 		}
 		$this->setting=$this->loadFile($basename,false);
-		$this->inited=true;
+		$this->is_inited=true;
 		return $this->setting[$key]??null;
 	}
 	
@@ -1539,14 +1535,24 @@ trait DNMVCS_Instance
 		$ret[static::class]=$this;
 		return $ret;
 	}
+	protected $dynamicClasses=[];
+	protected $dynamicClassesInited=false;
+
+	protected function initDynamicClasses()
+	{
+		$this->dynamicClasses=[
+			DNRoute::class,   	// for bindServerData,and $this->path_info ,and so on
+			DNView::class,   	// for assign
+			DNSuperGlobal::class,
+		];
+	}
 	public function getDynamicClasses()
 	{
-		$classes=[
-			DNRoute::class,   // for bindServerData
-			DNView::class,   // for assign
-			DNSuperGlobal::class,  // todo delete ?
-		];
-		return $classes;
+		if($this->dynamicClassesInited){
+			$this->dynamicClassesInited=true;
+			$this->initDynamicClasses();
+		}
+		return $this->dynamicClasses;
 	}
 }
 class DNMVCS
@@ -1594,6 +1600,41 @@ class DNMVCS
 			
 			'ext'=>[],
 			'swoole'=>[],
+/*
+'path'=>null,
+			'path'=>null,
+			
+			'namespace'=>'MY',
+			'with_no_namespace_mode'=>true,
+			'path_namespace'=>'app',
+			
+			'path_no_namespace_mode'=>'app',
+			
+			'skip_system_autoload'=>false,
+			'skip_app_autoload'=>false,
+			
+			'namespace'=>'MY',
+			'with_no_namespace_mode'=>true,
+			
+			'namespace_controller'=>'Controller',
+			'path_controller'=>'app/Controller',
+			
+			'enable_paramters'=>false,
+			'disable_default_class_outside'=>false,
+			
+			'base_controller_class'=>null,
+			'prefix_no_namespace_mode'=>'',
+			'lazy_controller_class'=>'DNController',
+			
+			'enable_post_prefix'=>true,
+			'prefix_post'=>'do_',
+			'default_method_for_miss'=>null,
+			
+			'welcome_controller'=>'Main',
+			'default_method'=>'index',
+			
+			'the_404_hanlder'=>null,
+//*/
 		];
 	public $options=[];
 	public $isDev=false;
@@ -1622,9 +1663,12 @@ class DNMVCS
 	protected function initOptions($options)
 	{
 		$this->options=$this->mergeOptions($options);
+		
 		$this->path=$this->options['path'];
 		$this->path_lib=$this->path.rtrim($this->options['path_lib'],'/').'/';
+		
 		$this->isDev=$this->options['is_dev'];
+		$this->platform=$this->options['platform'];
 	}
 	protected function checkOverride($options)
 	{
@@ -1669,13 +1713,13 @@ class DNMVCS
 		$this->initSwoole($options);
 		
 		$this->initOptions($options);
-		
 		$this->initExceptionManager(DNExceptionManager::G());
 		$this->initConfiger(DNConfiger::G());
 		$this->initView(DNView::G());
 		$this->initRoute(DNRoute::G());
-		$this->initDBManager(DNDBManager::G());
 		
+		$this->initDBManager(DNDBManager::G());
+		$this->initSystemWrapper();
 		$this->initMisc();
 		
 		return $this;
@@ -1688,6 +1732,9 @@ class DNMVCS
 	{
 		$path=$this->path.rtrim($this->options['path_config'],'/').'/';
 		$configer->init($path,$this->options);
+		
+		$this->isDev=DNConfiger::G()->_Setting('is_dev')??$this->isDev;
+		$this->platform=DNConfiger::G()->_Setting('platform')??$this->platform;
 	}
 	public function initView($view)
 	{
@@ -1722,17 +1769,6 @@ class DNMVCS
 		if($this->options['with_cli_cache_classes'] && PHP_SAPI==='cli'){
 			DNAutoLoader::G()->cacheClasses();
 		}
-		if(!empty($this->options['swoole'])){
-			DNSwooleExt::G()->onAppInit($this->options['swoole']);
-		}
-		
-		$this->initSystemWrapper();
-		$this->initSuperGlobal();
-
-		
-		$this->isDev=DNConfiger::G()->_Setting('is_dev')??$this->isDev;
-		$this->platform=DNConfiger::G()->_Setting('platform')??$this->platform;
-		
 		
 		if(!empty($this->options['ext'])){
 			DNMVCSExt::G()->init($this);
@@ -1752,14 +1788,6 @@ class DNMVCS
 			static::set_exception_handler([static::class,'OnException']); //install oexcpetion again;
 		}
 	}
-	protected function initSuperGlobal()
-	{
-		if(defined('DNMVCS_SUPER_GLOBAL_REPALACER')){
-			$func=DNMVCS_SUPER_GLOBAL_REPALACER;
-			DNSuperGlobal::G($func());
-		}
-		DNSuperGlobal::G()->init();
-	}
 	protected function runOnce()
 	{
 		if( $this->options['rewrite_map'] || $this->options['route_map'] ){
@@ -1777,12 +1805,14 @@ class DNMVCS
 		}
 		$this->toggleStop404Handler($is_stop_404);
 		
-		$class=get_class(DNRuntimeState::G());
-		DNRuntimeState::G(new $class)->begin();
+		if(defined('DNMVCS_SUPER_GLOBAL_REPALACER')){
+			$func=DNMVCS_SUPER_GLOBAL_REPALACER;
+			DNSuperGlobal::G($func());
+		}
+		DNSuperGlobal::G()->init();
 		
-		//$class=get_class(DNView::G());
-		//DNView::G(new $class);
-		//$this->initView(DNView::G());
+		$class=get_class(DNRuntimeState::G());  //recreate
+		DNRuntimeState::G(new $class)->begin();
 		
 		$route=DNRoute::G();
 		if(true){

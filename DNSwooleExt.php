@@ -52,11 +52,11 @@ class DNSwooleExt
 		//for 404 re-in;
 		$class=get_class(([$this->appClass,'G'])());
 		if($class===static::class){
-			return $this->initRunningModeDNMVCS($options);
+			return $this->initRunningModeApp($options);
 		}
 		return $this;
 	}
-	protected function initRunningModeDNMVCS($options)
+	protected function initRunningModeApp($options)
 	{
 		static::Server()->resetInstances();
 		
@@ -80,10 +80,7 @@ class DNSwooleExt
 			$class::G($object);
 		}
 		static::G($this);
-	}
-	public function onAppInit($server_options)
-	{
-		if(PHP_SAPI!=='cli'){ return; }
+		//////////////
 		
 		$this->with_http_handler_root=$server_options['with_http_handler_root']??false;
 		$server_options['http_handler']=[$this,'runSwoole'];
