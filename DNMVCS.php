@@ -487,16 +487,38 @@ class DNRoute
 			$class=$this->getFullClassByNoNameSpace($calling_path);
 			if($class){ break; }
 		}
-		if($class){
-			array_push($parameters,$method);
-			$method=array_shift($parameters);
-			$calling_path=$calling_path.'/'.$method;
-			$this->error='';
-		}else{
+		if(!$class){
 			$this->error="No faill paramter not failed";
 			return [null,$method,$parameters,$calling_path];
 		}
+		array_push($parameters,$method);
+		$method=array_shift($parameters);
+		$calling_path=$calling_path.'/'.$method;
+		
 		return [$class,$method,$parameters,$calling_path];
+	}
+	protected function getClassMethodAndParameters2($blocks,$method)
+	{
+		$class=null;
+		$paramters=[];
+		$callinig_path='';
+		$p=implode('/',$blocks);
+		$l=count($blocks);
+		for($i=0;$i<$l;$i++){
+			$class_names=array_slice($blocks,0,$l-$i);
+			$parameters=$i?array_slice($blocks,-$i):[];
+			$calling_path=implode('/',$class_names);
+			
+			$class=$this->getFullClassByNoNameSpace($calling_path);
+			if($class){ break; }
+		}
+		if(!$class){
+			$this->error="No faill paramter not failed";
+			return [null,$method,$parameters,$calling_path];
+		}
+		array_push($parameters,$method);
+		$method=array_shift($parameters);
+		$calling_path=$calling_path.'/'.$method;
 	}
 	public function defaultRouteHandler()
 	{
@@ -520,7 +542,21 @@ class DNRoute
 		if($callback){
 			return $callback; 
 		}
-		////////
+		if( $this->enable_paramters ){
+			list($full_class,$the_method,$parameters,$calling_path)=$this->getClassMethodAndParameters($class_blocks,$method);
+			if($full_class){
+				$method=$the_method;
+				$this->parameters=$parameters;
+				$this->calling_path=$calling_path;
+				
+				$callback=$this->getCallback($full_class,$method);
+				if($callback){
+					return $callback; 
+				}
+			}
+		}
+		///////////////////////
+		
 		if($this->with_no_namespace_mode){
 			$full_class=$this->getFullClassByNoNameSpace($class_path);
 			$callback=$this->getCallback($full_class,$method);
@@ -530,15 +566,13 @@ class DNRoute
 		}
 		////////
 		if( $this->enable_paramters ){
-			list($full_class,$the_method,$parameters,$calling_path)=$this->getClassMethodAndParameters($class_blocks,$method);
+			list($full_class,$the_method,$parameters,$calling_path)=$this->getClassMethodAndParameters2($class_blocks,$method);
 			if($full_class){
 				$method=$the_method;
 				$this->parameters=$parameters;
 				$this->calling_path=$calling_path;
 			}
 		}
-		//TODO the lazy is the last.
-		
 		if(!$full_class){
 			$this->error="NoClass";
 			return null;
@@ -1594,12 +1628,6 @@ class DNMVCS
 	}
 	protected function checkOverride($options)
 	{
-		$skip_check_override=$options['skip_check_override']??false;
-		if($skip_check_override){
-			return null;
-		}
-		if(static::class!==self::class){return null;}
-		
 		$base_class=isset($options['base_class'])?$options['base_class']:self::DEFAULT_OPTIONS['base_class'];
 		$namespace=isset($options['namespace'])?$options['namespace']:self::DEFAULT_OPTIONS['namespace'];
 		
@@ -1608,34 +1636,37 @@ class DNMVCS
 		}
 		$base_class=ltrim($base_class,'\\');
 		
-		if(!$base_class || !class_exists($base_class)){return null;}
-		$options['skip_check_override']=true;
-		return static::G($base_class::G())->init($options);
-	}
-	protected $has_init_once=false;
-	protected function initOnce($options)
-	{
-		if($this->has_init_once){return true;}
-		$this->has_init_once=true;
-		if(!empty($options['swoole'])){
-			static::ThrowOn(class_exists(SwooleHttpd::class),"DNMVCS: You Need SwooleHttpd");
-			DNSwooleExt::Server(SwooleHttpd::G());
-			DNSwooleExt::G()->onDNMVCSBoot(self::class,$options);
-			$this->toggleStop404Handler();
+		if(!$base_class || !class_exists($base_class)){
+			return null;
 		}
-		return $this;
+		if(static::class===$base_class){
+			return null;
+		}
+		return static::G($base_class::G())->initAfterOverride($options);
+	}
+	protected function initSwoole($options)
+	{
+		if(empty($options['swoole'])){
+			return;
+		}
+		static::ThrowOn(!class_exists(SwooleHttpd::class),"DNMVCS: You Need SwooleHttpd");
+		DNSwooleExt::Server(SwooleHttpd::G());
+		DNSwooleExt::G()->onAppBoot(self::class,$options);
+		$this->toggleStop404Handler();
+		
 	}
 	//@override me
 	public function init($options=[])
 	{
 		DNAutoLoader::G()->init($options)->run();
+		
 		$object=$this->checkOverride($options);
 		if($object){return $object;}
-		return $this->initStep2($options);
+		return $this->initAfterOverride($options);
 	}
-	public function initStep2($options)
+	protected function initAfterOverride($options)
 	{
-		$this->initOnce($options);
+		$this->initSwoole($options);
 		
 		$this->initOptions($options);
 		
@@ -1692,7 +1723,7 @@ class DNMVCS
 			DNAutoLoader::G()->cacheClasses();
 		}
 		if(!empty($this->options['swoole'])){
-			DNSwooleExt::G()->onDNMVCSInit($this->options['swoole']);
+			DNSwooleExt::G()->onAppInit($this->options['swoole']);
 		}
 		
 		$this->initSystemWrapper();
@@ -1710,17 +1741,15 @@ class DNMVCS
 	}
 	protected function initSystemWrapper()
 	{
-		if(defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')){
-			$callback=DNMVCS_SYSTEM_WRAPPER_INSTALLER;
-			$funcs=($callback)();
-			$this->system_wrapper_replace($funcs);
-			
-			if(isset($funcs['set_exception_handler'])){
-				static::set_exception_handler([static::class,'OnException']); //install oexcpetion again;
-			}
-			if(isset($funcs['super_global'])){
-				DNSuperGlobal::G(($funcs['super_global'])());
-			}
+		if(!defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')){
+			return;
+		}
+		$callback=DNMVCS_SYSTEM_WRAPPER_INSTALLER;
+		$funcs=($callback)();
+		$this->system_wrapper_replace($funcs);
+		
+		if(isset($funcs['set_exception_handler'])){
+			static::set_exception_handler([static::class,'OnException']); //install oexcpetion again;
 		}
 	}
 	protected function initSuperGlobal()
@@ -1737,7 +1766,7 @@ class DNMVCS
 			DNMVCSExt::G()->dealMapAndRewrite($this->options['rewrite_map'],$this->options['route_map']);
 		}
 		if(!empty($this->options['swoole'])){
-			DNSwooleExt::G()->onDNMVCSRunOnce();
+			DNSwooleExt::G()->onAppBeforeRun();
 		}
 	}
 	public function run($is_stop_404=false)

@@ -63,7 +63,7 @@ class DNSwooleExt
 		$ret=([$this->appClass,'G'])()->init($options);
 		return $ret;
 	}
-	public function onDNMVCSBoot($class,$options=[])
+	public function onAppBoot($class,$options=[])
 	{
 		if(PHP_SAPI!=='cli'){ return; }
 		$this->setAppClass($class);
@@ -81,7 +81,7 @@ class DNSwooleExt
 		}
 		static::G($this);
 	}
-	public function onDNMVCSInit($server_options)
+	public function onAppInit($server_options)
 	{
 		if(PHP_SAPI!=='cli'){ return; }
 		
@@ -90,7 +90,7 @@ class DNSwooleExt
 		
 		static::Server()->init($server_options,null);
 	}
-	public function onDNMVCSRunOnce()
+	public function onAppBeforeRun()
 	{
 		static::Server()->run();
 	}
