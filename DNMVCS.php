@@ -124,7 +124,7 @@ class DNAutoLoader
 		$this->is_inited=true;
 		
 		//$options=array_merge(self::DEFAULT_OPTIONS,$options);
-		$options=array_intersect_key(array_merge(self::DEFAULT_OPTIONS,$options),self::DEFAULT_OPTIONS);
+		$options=array_intersect_key(array_merge_recursive(self::DEFAULT_OPTIONS,$options),self::DEFAULT_OPTIONS);
 		$this->options=$options;
 		
 		if(!isset($options['path']) || !$options['path']){
@@ -1491,7 +1491,7 @@ trait DNMVCS_RunMode
 				'mode_onefile_key_for_action'=>'_r',
 			],
 		];
-		$options=array_merge($default_options,$options);
+		$options=array_merge_recursive($default_options,$options);
 		return static::G()->init($options)->run();
 	}
 	public static function RunOneFileMode($options=[],$init_function=null)
@@ -1511,7 +1511,7 @@ trait DNMVCS_RunMode
 				'use_session_auto_start'=>true,
 			]
 		];
-		$options=array_merge($default_options,$options);
+		$options=array_merge_recursive($default_options,$options);
 		static::G()->init($options);
 		if($init_function){
 			($init_function)();

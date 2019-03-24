@@ -32,7 +32,7 @@ class DB implements DBInterface
 		if($this->pdo){return;}
 		$config=$this->config;
 		$driver_options=$config['driver_options']??[];
-		$driver_options=array_merge($this->driver_options,$driver_options);
+		$driver_options=array_merge_recursive($this->driver_options,$driver_options);
 		$this->pdo=new \PDO($config['dsn'], $config['username'], $config['password'],$driver_options);
 	}
 	public function close()
