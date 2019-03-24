@@ -731,7 +731,7 @@ class DNMVCSExt
 	{
 		$ext_options=$dn->options['ext'];
 		
-		$options=array_merge(self::DEFAULT_OPTIONS_EX,$ext_options);
+		$options=array_replace_recursive(self::DEFAULT_OPTIONS_EX,$ext_options);
 		
 		if($options['use_common_autoloader']){
 			ProjectCommonAutoloader::G()->init($options)->run();
