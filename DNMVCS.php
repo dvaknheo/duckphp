@@ -124,7 +124,7 @@ class DNAutoLoader
 		$this->is_inited=true;
 		
 		//$options=array_merge(self::DEFAULT_OPTIONS,$options);
-		$options=array_intersect_key(array_merge_recursive(self::DEFAULT_OPTIONS,$options),self::DEFAULT_OPTIONS);
+		$options=array_intersect_key(array_merge(self::DEFAULT_OPTIONS,$options),self::DEFAULT_OPTIONS);
 		$this->options=$options;
 		
 		if(!isset($options['path']) || !$options['path']){
