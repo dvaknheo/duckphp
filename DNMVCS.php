@@ -1301,6 +1301,7 @@ trait DNMVCS_Handler
 	
 	public function _OnException($ex)
 	{
+		//TODO;
 		$flag=DNExceptionManager::G()->checkAndRunErrorHandlers($ex,true);
 		if($flag){return;}
 		if($this->stop_show_exception){return;}
@@ -1680,6 +1681,9 @@ class DNMVCS
 	}
 	protected function checkOverride($options)
 	{
+		if($this->skip_override){
+			return null;
+		}
 		$base_class=isset($options['base_class'])?$options['base_class']:self::DEFAULT_OPTIONS['base_class'];
 		$namespace=isset($options['namespace'])?$options['namespace']:self::DEFAULT_OPTIONS['namespace'];
 		
@@ -1703,10 +1707,11 @@ class DNMVCS
 		}
 		static::ThrowOn(!class_exists(SwooleHttpd::class),"DNMVCS: You Need SwooleHttpd");
 		DNSwooleExt::Server(SwooleHttpd::G());
-		DNSwooleExt::G()->onAppBoot(self::class,$options);
+		DNSwooleExt::G()->onAppBoot(self::class,$options['swoole']);
 		$this->toggleStop404Handler();
 		
 	}
+	public $skip_override=false;
 	//@override me
 	public function init($options=[])
 	{
@@ -1714,7 +1719,10 @@ class DNMVCS
 		DNAutoLoader::G()->init($options)->run();
 		
 		$object=$this->checkOverride($options);
-		if($object){return $object;}
+		if($object){
+			$object->skip_override=true;
+			return $object->init($options);
+		}
 		return $this->initAfterOverride($options);
 	}
 	protected function initAfterOverride($options)

@@ -31,6 +31,7 @@ class DNSwooleExt
 	
 	protected $with_http_handler_root=false;
 	protected $appClass;
+	protected $is_server_running=false;
 	public static function Server($server=null)
 	{
 		return DNSwooleExtServerHolder::G($server);
@@ -63,7 +64,7 @@ class DNSwooleExt
 		$ret=([$this->appClass,'G'])()->init($options);
 		return $ret;
 	}
-	public function onAppBoot($class,$options=[])
+	public function onAppBoot($class,$server_options=[])
 	{
 		if(PHP_SAPI!=='cli'){ return; }
 		$this->setAppClass($class);
@@ -89,6 +90,8 @@ class DNSwooleExt
 	}
 	public function onAppBeforeRun()
 	{
+		if($this->is_server_running){ return;};
+		$this->is_server_running=true;
 		static::Server()->run();
 	}
 	public function runSwoole()
