@@ -252,21 +252,25 @@ class RouteHookOneFileMode
 	}
 	public function hook($route)
 	{
-		$route->setURLHandler([$this,'onURL']); //todo once ?
+		$route->setURLHandler([$this,'onURL']);
 		
 		$k=$this->key_for_action;
 		$m=$this->key_for_module;
+		$old_path_info=DNSuperGlobal::G()->_SERVER['PATH_INFO']??'';
+		
 		$module=DNSuperGlobal::G()->_REQUEST[$m]??null;
 		$path_info=DNSuperGlobal::G()->_REQUEST[$k]??null;
 
 		$path_info=$module.'/'.$path_info;
 		$path_info=ltrim($path_info,'/');
+		
+		$path_info=($path_info==='')?ltrim($old_path_info,'/'):$path_info;
 		$route->path_info=$path_info;
 		$route->calling_path=$path_info;
 	}
 }
 
-class RouteHookDirectoryMode // not working.
+class RouteHookDirectoryMode
 {
 	use DNSingleton;
 
@@ -493,22 +497,21 @@ class FunctionDispatcher
 		$this->path_info=$route->path_info;
 		$flag=$this->runRoute();
 		if($flag){
-			$route->stopDefaultRouteHandler();
+			$route->stopRunDefaultHandler();
 		}
 	}
 	public function runRoute()
 	{
 		$route=DNRoute::G();
 		$post=($route->request_method==='POST')?$route->prefix_post:'';
-		
 		$callback=$this->prefix.$post.$this->path_info;
-		
 		$path_info=$this->path_info?:'index';
 		$prefix=str_replace('\\','/',$this->prefix);
 		$fullpath=$prefix.$path_info;
 		$blocks=explode('/',$fullpath);
 		$method=array_pop($blocks);
 		$classname=implode('\\',$blocks);
+		// a\b
 		if($classname){
 			if(class_exists($classname)){
 			
@@ -524,10 +527,12 @@ class FunctionDispatcher
 			$method=$this->prefix.$method;
 			$callback=$method;
 			if(!is_callable($callback)){
+							var_dump('xx'.$callback);
+
 				$callback=null;
 			}
-			
 		}
+		
 		if($callback){
 			($callback)();
 			return true;
@@ -587,7 +592,7 @@ class FunctionView extends DNView
 			($this->callback)($this->data);
 		}else{
 			if(!is_file($this->view_file)){
-				echo "Not callback {$this->callback}; not file $this->view_file";
+				//echo "DNMVCS FunctionView: Not callback {$this->callback}; not file $this->view_file";
 				return;
 			}
 			include($this->view_file);
@@ -617,7 +622,7 @@ class FunctionView extends DNView
 			($this->callback)($this->data);
 		}else{
 			if(!is_file($this->view_file)){
-				echo "Not callback {$this->callback}; not file $this->view_file";
+				echo "NMVCS FunctionView ShowBlock: Not callback {$this->callback}; No file {$this->view_file}";
 				return;
 			}
 			include($this->view_file);

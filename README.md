@@ -32,7 +32,7 @@ DNMVCS 的最大意义是思想，只要思想在，什么框架你都可以用
 
 DNMVCS 层级关系图
 
-```
+```text
            /-> View
 Controller --> Service ---------------------------------> Model
                       \               \              /
@@ -478,7 +478,7 @@ DNMVCS 的默认数据库是 DB ,DB 功能很小，兼容 Medoo 这个数据库�
 DNMVCS::ThrowOn($flag,$message,$code);
 ```
 
-等价于 if(!$flag){throw new DNException($message,$code)}
+等价于 if(!$flag){throw new DNException($message,$code);}
 这是 DNMVCS 应用常见的操作。
 
 ## 常见任务： 和其他框架的整合
@@ -507,7 +507,7 @@ DNMVCS 整合其他框架：
 const DNAutoLoader::DEFAULT_OPTIONS=[
     'path'=>null,                       // 共享基本路径配置
     'namespace'=>'MY',                  // 默认的命名空间，你可以自定义工程的命名空间
-        'path_namespace'=>'app', 	    // 命名空间根目录
+        'path_namespace'=>'app',        // 命名空间根目录
     'with_no_namespace_mode'=>true,     // 简单模式，无命名空间直接 controller, service,model
         'path_no_namespace_mode'=>'app', // 简单模式的基本目录
     'skip_system_autoload'=>false,      // 如果是 composer 加载，会使用 composer 来加载系统库
@@ -931,18 +931,18 @@ assignPathNamespace($path,$namespace=null)
 
 实现了默认事件回调的方法。扩展以展现不同事件的显示。
 
-onBeforeShow()
+OnBeforeShow()
 
     在输出 view 开始前处理.
     默认处理空模板为当前类和方法，默认关闭数据库。
     因为如果请求时间很长，页面数据量很大。没关闭数据库会导致连接被占用。
-onShow404()
+OnShow404()
 
     404 回调。这里没传各种参数，需要的时候从外部获取。
-onException($ex)
+OnException($ex)
 
     发生未处理异常的处理函数。显示 exception 或 500 页面
-onDevErrorHandler($errno, $errstr, $errfile, $errline)
+OnDevErrorHandler($errno, $errstr, $errfile, $errline)
 
     处理 Notice 错误。
 
@@ -1035,7 +1035,6 @@ DNView::G(AdminView::G());
 G 函数的缺点：IDE 上没法做类型提示，这对一些人来说很重要。
 
 service , model 上 用  static 函数代替 G 函数实例方式或许也是一种办法
-
 
 组件在后续使用，记得初始化：
 
