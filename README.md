@@ -179,9 +179,10 @@ $options 我们术语称为 DNMVCS 选项。和 setting.php 设置， config.php
 3. 调用 DNMVCS 类的静态方法实现目的
 4. 调用 DNMVCS 类的动态方法实现目的
 5. ---- 核心程序员和高级程序员分界线 ----
-6. 调用扩展类，组件类的动态方法实现目的
-7. 继承接管特定类实现目的
-8. 魔改，硬改 DNMVCS 的代码实现目的
+6. 扩展 DNMVCS 类
+7. 调用扩展类，组件类的动态方法实现目的
+8. 继承接管，特定类实现目的
+9. 魔改，硬改 DNMVCS 的代码实现目的
 
 ## 目录结构
 
@@ -367,7 +368,6 @@ class App extends \DNMVCS\DNMVCS
 
 可以在这个类做覆盖 DNMVCS 类的事。
 
-
 这就是 DNMVCS 下的简单流程了。其他开发类似。
 
 这个例子在fulltest 里有
@@ -378,13 +378,12 @@ DNMVCS 的控制器有点像 CodeInigter，不需要继承什么，就这么简�
     甚至连名字都不用，用默认的 DNController 就够了。
     而且支持子命名空间多级目录。如果开启简单模式，也可用 __ 双下划线代替 \ 切分。
 2. 处理同名
-    Swoole 兼容不可以用这种偷懒模式)
+    Swoole 兼容不可以用这种偷懒模式
     DNController 重名了怎么办，比如我要相互引用？ 
     1. 那是你不应该这么做，
     2. 你也可以采取名称对应的类，而不偷懒啊啊。
 
 3. DNMVCS 还支持路由映射。 
-
     正则用 ~
     要指定 GET/POST 在最前面加http 方法.
 
@@ -507,43 +506,94 @@ DNMVCS 整合其他框架：
 const DNAutoLoader::DEFAULT_OPTIONS=[
     'path'=>null,                       // 共享基本路径配置
     'namespace'=>'MY',                  // 默认的命名空间，你可以自定义工程的命名空间
-        'path_namespace'=>'app',        // 命名空间根目录
-    'with_no_namespace_mode'=>true,     // 简单模式，无命名空间直接 controller, service,model
-        'path_no_namespace_mode'=>'app', // 简单模式的基本目录
+    'path_namespace'=>'app',        // 命名空间根目录
+
     'skip_system_autoload'=>false,      // 如果是 composer 加载，会使用 composer 来加载系统库
     'skip_app_autoload'=>false,         // 在工程的 composer.json 你指定了app 的 namespace 后设置为 true
-];
-```
 
-autoload 自动加载相关的选项
+    'namespace_controller'=>'Controller',
 
-```php
-const DNMVCS::DEFAULT_OPTIONS=[
-    'path'=>null,                       // 共享基本路径配置
-    'namespace'=>'MY',                  // 共享命名空间配置
+    'base_controller_class'=>null,
+    'enable_paramters'=>false,
+        'disable_default_class_outside'=>false,
+        'default_method_for_miss'=>null,
+        'enable_post_prefix'=>true,
+        'prefix_post'=>'do_',
+
     'base_class'=>'Base\App',           // override 重写 系统入口类代替 DNMVCS 类。 \ 开头表示绝对 namespace
+    'is_dev'=>false,                    // 是否在开发状态，设置文件里填写的将会覆盖这一选项
+    'platform'=>'',                     // 平台，设置文件里填写的将会覆盖这一选项
         'path_view'=>'view',            // 视图目录，或许会有人改到 app/View
         'path_config'=>'config',        // 配置目录，或许会有人改到 app/View
         'path_lib'=>'lib',              // 用于手动导入 DNMVCS::Import() 的类的目录
+        'skip_view_notice_error'=>true,
+        'enable_cache_classes_in_cli'=>true,
+        'use_super_global'=>false,
+
     'setting'=>[],                      // 设置，设置文件里填写的将会覆盖这一选项
     'all_config'=>[],                   // 配置，每个配置用 key  分割。
         'setting_file_basename'=>'setting',        // 设置的文件名，如果为'' 则不读取设置文件
-    'is_dev'=>false,                    // 是否在开发状态，设置文件里填写的将会覆盖这一选项
-    'platform'=>'',                     // 平台，设置文件里填写的将会覆盖这一选项
+
+    'error_404'=>'_sys/error-404',  // 404 错误处理，传入字符串表示用的 view,如果传入 callable 则用 callback,view 优先
+    'error_500'=>'_sys/error-500',  // 500 代码有语法错误等的页面，和 404 的内容一样。和前面类似
+    'error_exception'=>'_sys/error-exception',  // 默认的异常处理。和前面类似
+    'error_debug'=>'_sys/error-debug',          // 调试模式下出错的处理。和前面类似
+
+    'use_db'=>true,
+        'db_create_handler' =>'',       // 创建DB 的回调 默认用 DB::class
+        'db_close_handler' =>'',        // 关闭DB 类的回调。
+        'db_setting_key'=>'database_list',
+        'database_list'=>[],                // 数据库列表
 
     'rewrite_map'=>[],                  // url 重写列表, 如果不为空则使用到扩展的 DNMVCSExt
     'route_map'=>[],                    // 映射模式的 列表, 如果不为空则使用到扩展的 DNMVCSExt
-        'error_404'=>'_sys/error-404',  // 404 错误处理，传入字符串表示用的 view,如果传入 callable 则用 callback,view 优先
-        'error_500'=>'_sys/error-500',  // 500 代码有语法错误等的页面，和 404 的内容一样。和前面类似
-        'error_exception'=>'_sys/error-exception',  // 默认的异常处理。和前面类似
-        'error_debug'=>'_sys/error-debug',          // 调试模式下出错的处理。和前面类似
 
-        'db_create_handler' =>'',       // 创建DB 的回调 默认用 DB::class
-        'db_close_handler' =>'',        // 关闭DB 类的回调。
-    'database_list'=>[],                // 数据库列表
-
-    'ext'=>[],                          // 扩展选项，如果不为空则使用到扩展的 DNMVCSExt
     'swoole'=>[],                // 启用 swoole_mode 模式的选项，在 swoole 这章里介绍。
+
+   // 'lazy'=>[
+        'lazy_mode'=>true,
+        'use_app_path'=>true,
+        'lazy_path'=>'',//''app',
+        'lazy_path_service'=>'Service',
+        'lazy_path_model'=>'Model',
+        'lazy_path_contorller'=>'Controller',
+        'lazy_controller_class'=>'DNController',
+        'with_controller_namespace_namespace'=>true,
+        'with_controller_namespace_prefix'=>true,
+    //],
+    'ext'=>[        // 扩展选项，如果不为空则使用到扩展的 DNMVCSExt
+        'use_function_view'=>false,
+            'function_view_head'=>'view_header',
+            'function_view_foot'=>'view_footer',
+        'use_function_dispatch'=>false,
+        'use_common_configer'=>false,
+            'fullpath_project_share_common'=>'',
+        'use_common_autoloader'=>false,
+            'fullpath_config_common'=>'',
+        'use_strict_db'=>false,
+
+        'use_facades'=>false,
+        'facades_namespace'=>'Facades',
+        'facades_map'=>[],
+
+        'use_session_auto_start'=>false,
+        'session_auto_start_name'=>'DNSESSION',
+
+        'mode_onefile'=>false,
+        'mode_onefile_key_for_action'=>null,
+        'mode_onefile_key_for_module'=>null,
+
+        'mode_dir'=>false,
+        'mode_dir_basepath'=>null,
+        'mode_dir_index_file'=>'',
+        'mode_dir_use_path_info'=>true,
+        'mode_dir_key_for_module'=>true,
+        'mode_dir_key_for_action'=>true,
+
+        'use_db_reuse'=>false,
+        'db_reuse_size'=>0,
+        'db_reuse_timeout'=>5,
+    ],
 ];
 ```
 
@@ -553,28 +603,12 @@ const DNMVCS::DEFAULT_OPTIONS=[
     ext 配置里 会加载 DNMVCSExt 实现一些扩展性的功能。后面章节会说明。
     扩展性功能主要有： 几种模式的扩展，单一文件模式，目录模式，无 PathI	nfo模式
     facades session_auto_start db_reuse
-    
+
     使用 swoole 模式，将会开启 swoole 服务器  swoole 是 swoole 服务器的配置
 
-```php
-const DNRoute::DEFAULT_OPTIONS=[
-    'path'=>null,                       // 共享基本路径配置
-    'namespace'=>'MY',                  // 共享命名空间配置
-    'with_no_namespace_mode'=>true,     // 简单模式，无命名空间直接 controller, service,model
-    'prefix_no_namespace_mode'=>''      // 无命名空间模式时候的类名前缀
-    'enable_paramters'=>false,          // 支持切片模式
-    'enable_post_prefix'=>true,         // 支持post 方法映射
-    'prefix_post'=>'do_',               // 把 POST 的 映射为 do_$action 方法
-        'path_controller'=>'app/Controller',        // controller 的目录
-        'namespace_controller'=>'Controller',       // controller 的命名空间 MY\Controller
-        'lazy_controller_class'=>'DNController',    // 偷懒模式，默认 controller 名字为 DNController
-        'disable_default_class_outside'=>false,     // 屏蔽  Main/index  第二访问模式
-    'base_controller_class'=>''         // 必须基于某类
-    'default_method_for_miss'=>'',      // 丢失方法时候执行的方法
-];
-```
 
-    这段是和路由相关的。namespace 和 with_no_namespace_mode 选项也会影响路由。
+
+    路由相关配置。namespace 和 
     enable_paramters 切片模式。 使得 foo->a() 也支持 foo/a/b/c 这样的路由，而不是 404。
     enable_post_prefix 默认把 POST 的方法映射到 do_$action 这样处理起来方便些。
     default_controller_class 可以设置为空
@@ -718,6 +752,25 @@ ExitRouteTo($url)
 Exit404()
 
     404 跳转退出
+
+## 事件静态方法
+
+实现了默认事件回调的方法。扩展以展现不同事件的显示。
+
+OnBeforeShow()
+
+    在输出 view 开始前处理.
+    默认处理空模板为当前类和方法，默认关闭数据库。
+    因为如果请求时间很长，页面数据量很大。没关闭数据库会导致连接被占用。
+OnShow404()
+
+    404 回调。这里没传各种参数，需要的时候从外部获取。
+OnException($ex)
+
+    发生未处理异常的处理函数。显示 exception 或 500 页面
+OnDevErrorHandler($errno, $errstr, $errfile, $errline)
+
+    处理 Notice 错误。
 
 ## 超全局变量和语法代替静态方法
 
@@ -926,25 +979,6 @@ assignPathNamespace($path,$namespace=null)
 
     分配自动加载的命名空间的目录。
     实质调用 DNAutoLoader::G()->assignPathNamespace();
-
-## 事件方法
-
-实现了默认事件回调的方法。扩展以展现不同事件的显示。
-
-OnBeforeShow()
-
-    在输出 view 开始前处理.
-    默认处理空模板为当前类和方法，默认关闭数据库。
-    因为如果请求时间很长，页面数据量很大。没关闭数据库会导致连接被占用。
-OnShow404()
-
-    404 回调。这里没传各种参数，需要的时候从外部获取。
-OnException($ex)
-
-    发生未处理异常的处理函数。显示 exception 或 500 页面
-OnDevErrorHandler($errno, $errstr, $errfile, $errline)
-
-    处理 Notice 错误。
 
 ## 组件初始化
 
