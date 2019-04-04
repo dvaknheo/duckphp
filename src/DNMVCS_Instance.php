@@ -1,6 +1,8 @@
 <?php
 namespace DNMVCS;
-
+// use DNAutoLoader
+// use DNRoute
+// use DNView
 trait DNMVCS_Instance
 {
     public function getBootInstances()
@@ -20,7 +22,6 @@ trait DNMVCS_Instance
         $this->dynamicClasses=[
             DNRoute::class,   	// for bindServerData,and $this->path_info ,and so on
             DNView::class,   	// for assign
-            DNSuperGlobal::class,
         ];
     }
     public function getDynamicClasses()

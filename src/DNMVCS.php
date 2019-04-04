@@ -216,6 +216,7 @@ class DNMVCS
         $db_create_handler=$this->options['db_create_handler']?:[DB::class,'CreateDBInstance'];
         $db_close_handler=$this->options['db_close_handler']?:[DB::class,'CloseDBInstance'];
         $dbm->setDBHandler($db_create_handler, $db_close_handler);
+        $this->beforeShowHandlers[]=[$dbm,'closeAllDB'];
     }
     public function initMisc()
     {
@@ -249,7 +250,7 @@ class DNMVCS
             DNSwooleExt::G()->onAppBeforeRun();
         }
     }
-    public function run($is_stop_404=false)
+    public function run()
     {
         if (!$this->has_run_once) {
             $this->has_run_once=true;
@@ -261,10 +262,10 @@ class DNMVCS
             DNSuperGlobal::G($func());
         }
         if ($this->options['use_super_global']??false || defined('DNMVCS_SUPER_GLOBAL_REPALACER')) {
+            $this->dynamicClasses[]=DNSuperGlobal::class;
             DNRoute::G()->bindServerData(DNSuperGlobal::G()->_SERVER);
         }
         
-        $this->toggleStop404Handler($is_stop_404);
         $class=get_class(DNRuntimeState::G());  //ReCreateInstance;
         DNRuntimeState::G(new $class)->begin();
         

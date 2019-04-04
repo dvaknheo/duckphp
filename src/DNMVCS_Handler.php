@@ -5,6 +5,8 @@ trait DNMVCS_Handler
 {
     protected $stop_show_404=false;
     protected $stop_show_exception=false;
+    public $beforeShowHandlers=[];
+    
     public static function OnBeforeShow($data, $view=null)
     {
         return static::G()->_OnBeforeShow($data, $view);
@@ -36,8 +38,8 @@ trait DNMVCS_Handler
         if ($view===null) {
             DNView::G()->view=DNRoute::G()->getRouteCallingPath();
         }
-        if ($this->options['use_db']) {
-            DNDBManager::G()->closeAllDB();
+        foreach ($this->beforeShowHandlers as $v) {
+            ($v)();
         }
         if ($this->options['skip_view_notice_error']) {
             DNRuntimeState::G()->skipNoticeError();
@@ -64,6 +66,7 @@ trait DNMVCS_Handler
         $view=DNView::G();
         $view->setViewWrapper(null, null);
         $view->_Show([], $error_view);
+        DNRuntimeState::G()->end();
     }
     
     public function _OnException($ex)
