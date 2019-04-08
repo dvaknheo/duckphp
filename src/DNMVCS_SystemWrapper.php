@@ -1,6 +1,8 @@
 <?php
 namespace DNMVCS;
 
+use DNMVCS\DNSuperGlobal;
+
 trait DNMVCS_SystemWrapper
 {
     public $header_handler=null;

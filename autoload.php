@@ -7,8 +7,10 @@ spl_autoload_register(function ($class) {
     }
     $file = $path . str_replace('\\', '/', substr($class, strlen($namespace))) . '.php';
     if (!file_exists($file)) {
+    
         return false;
     }
+    
     require $file;
     return true;
 });

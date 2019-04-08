@@ -895,24 +895,6 @@ class DNMVCSExt
         }
         return $data;
     }
-    public function _ExitJson($ret)
-    {
-        DNMVCS::header('Content-Type:text/json');
-        // DNMVCS::G()->onBeforeShow([],'');
-        echo json_encode($ret, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
-        DNMVCS::exit_system();
-    }
-    public function _ExitRedirect($url, $only_in_site=true)
-    {
-        if ($only_in_site && parse_url($url, PHP_URL_HOST)) {
-            //something  wrong
-            DNMVCS::exit_system();
-            return;
-        }
-        // DNMVCS::G()->onBeforeShow([],'');
-        DNMVCS::header('location: '.$url, true, 302);
-        DNMVCS::exit_system();
-    }
     public function dealMapAndRewrite($rewrite_map, $route_map)
     {
         RouteHookMapAndRewrite::G()->init($rewrite_map, $route_map);

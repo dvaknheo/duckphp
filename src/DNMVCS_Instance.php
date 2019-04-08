@@ -1,5 +1,6 @@
 <?php
 namespace DNMVCS;
+
 // use DNAutoLoader
 // use DNRoute
 // use DNView

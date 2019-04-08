@@ -1,7 +1,7 @@
 <?php
 namespace DNMVCS;
 
-trait DNMVCS_Handler
+trait DNCore_Handler
 {
     protected $stop_show_404=false;
     protected $stop_show_exception=false;
@@ -156,5 +156,9 @@ EOT;
             return;
         }
         DNView::G()->_ShowBlock($error_view, $data);
+    }
+    public function addBeforeShowHandler($handler)
+    {
+        $this->beforeShowHandlers[]=$handler;
     }
 }
