@@ -1129,7 +1129,7 @@ trait DNMVCS_Glue
 	}
 	public static function Exit404()
 	{
-		static::G()->onShow404();
+		static::On404();
 		static::exit_system();
 	}
 	public function setViewWrapper($head_file=null,$foot_file=null)
