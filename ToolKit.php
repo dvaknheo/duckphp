@@ -370,7 +370,7 @@ class Ticker
 					if(isset($filedata[$line])){
 						break;
 					}
-					if(!$t_str || $t_str==='}' || $t_str==='{' |||| $t_str==='}else{' ){
+					if(!$t_str || $t_str==='}' || $t_str==='{' || $t_str==='}else{' ){
 						break;
 					}
 					
