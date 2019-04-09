@@ -63,4 +63,12 @@ trait DNClassExt
         }
         $this->assignDynamicMethod($methods);
     }
+    public function dumpExtMethods()
+    {
+        $ret=[
+            'static_methods'=>$this->static_methods,
+            'dynamic_methods'=>$this->dynamic_methods,
+       ];
+        return $ret;
+    }
 }

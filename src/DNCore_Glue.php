@@ -3,24 +3,10 @@ namespace DNMVCS;
 
 trait DNCore_Glue
 {
-    // system static
-    public static function Platform()
-    {
-        return static::G()->platform;
-    }
-    public static function Developing()
-    {
-        return static::G()->is_dev;
-    }
     public static function IsRunning()
     {
         return DNRuntimeState::G()->isRunning();
     }
-    public static function Import($file)
-    {
-        return static::G()->_Import($file);
-    }
-    
     // route static
     public static function URL($url=null)
     {
@@ -59,7 +45,6 @@ trait DNCore_Glue
     {
         return DNAutoLoader::G()->assignPathNamespace($path, $namespace);
     }
-    
     // route
     public function addRouteHook($hook, $prepend=false, $once=true)
     {
