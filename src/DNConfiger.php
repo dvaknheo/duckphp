@@ -10,9 +10,9 @@ class DNConfiger
     protected $setting=[];
     protected $all_config=[];
     protected $is_inited=false;
-    public function init($path, $options)
+    public function init($options=[], $context=null)
     {
-        $this->path=$path;
+        $this->path=($options['path']??'').rtrim($options['path_config'], '/').'/';
         $this->setting=$options['setting']??[];
         $this->all_config=$options['all_config']??[];
         $this->setting_file_basename=$options['setting_file_basename']??'setting';

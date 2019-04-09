@@ -75,13 +75,17 @@ class DNExceptionManager
         ($this->exception_error_handler)($ex);
     }
     public $is_inited=false;
-    public function init($exception_handler, $dev_error_handler, $system_exception_handler=null)
+    public function init($options=[], $context=null)
     {
         if ($this->is_inited) {
             return;
         }
         $this->is_inited=true;
-        $this->dev_error_handler=$dev_error_handler;
+        
+        $exception_handler=$options['exception_handler']??null;
+        $this->dev_error_handler=$options['dev_error_handler']??null;
+        $system_exception_handler=$options['system_exception_handler']??null;
+        
         $this->exception_error_handler=$exception_handler;
         $this->exception_error_handler_init=$exception_handler;
         

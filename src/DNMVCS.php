@@ -3,6 +3,8 @@
 //OK，Lazy
 namespace DNMVCS;
 
+use SwooleHttpd\SwooleHttpd;
+
 class DNMVCS extends DNCore
 {
     const VERSION = '1.1.0';
@@ -13,48 +15,7 @@ class DNMVCS extends DNCore
     use DNMVCS_SystemWrapper;
     use DNMVCS_Instance;
     
-    const DEFAULT_OPTIONS=[
-
-            'path'=>null,
-            'namespace'=>'MY',
-            'path_namespace'=>'app',
-            
-            'skip_system_autoload'=>true,
-            'skip_app_autoload'=>false,
-            
-            ////////
-            
-            'namespace_controller'=>'Controller',
-            
-            'base_controller_class'=>null,
-            'enable_paramters'=>false,
-            'disable_default_class_outside'=>false,
-            'default_method_for_miss'=>null,
-            
-            'enable_post_prefix'=>true,
-            'prefix_post'=>'do_',
-            ////////
-            
-            'base_class'=>'Base\App',
-            'path_view'=>'view',
-            'path_config'=>'config',
-            'path_lib'=>'lib',
-            'is_dev'=>false,
-            'platform'=>'',
-            
-            'skip_view_notice_error'=>true,
-            'enable_cache_classes_in_cli'=>true,
-            'use_super_global'=>false,
-            
-            'all_config'=>[],
-            'setting'=>[],
-            'setting_file_basename'=>'setting',
-            
-            'error_404'=>'_sys/error-404',
-            'error_500'=>'_sys/error-500',
-            'error_exception'=>'_sys/error-exception',
-            'error_debug'=>'_sys/error-debug',
-            
+    const DEFAULT_OPTIONS_EX=[
             'use_db'=>true,
             'db_create_handler'=>'',
             'db_close_handler'=>'',
@@ -67,20 +28,23 @@ class DNMVCS extends DNCore
             'ext'=>[],
             'swoole'=>[],
         ];
-
-    
     protected $has_run_once=false;
-
-
+    
+    public function empty_function()
+    {
+        return;
+    }
     protected function initSwoole($options)
     {
         if (empty($options['swoole'])) {
             return;
         }
         static::ThrowOn(!class_exists(SwooleHttpd::class), "DNMVCS: You Need SwooleHttpd");
+        $this->options['error_404']=[static::class,'empty_function'];
+        $this->options['use_super_global']=true;
+        
         DNSwooleExt::Server(SwooleHttpd::G());
-        DNSwooleExt::G()->onAppBoot(self::class, $options['swoole']);
-        $this->toggleStop404Handler();
+        DNSwooleExt::G()->onAppBoot(static::class, $options['swoole']);
     }
 
     protected function initAfterOverride($options)
@@ -91,7 +55,10 @@ class DNMVCS extends DNCore
         
         $this->initDBManager(DNDBManager::G());
         $this->initSystemWrapper();
-        $this->initMisc();
+        
+        if (!empty($this->options['ext'])) {
+            DNMVCSExt::G()->init($this);
+        }
         DNLazybones::G()->init($options);
         return $this;
     }
@@ -116,12 +83,6 @@ class DNMVCS extends DNCore
         $db_close_handler=$this->options['db_close_handler']?:[DB::class,'CloseDBInstance'];
         $dbm->setDBHandler($db_create_handler, $db_close_handler);
         $this->addBeforeShowHandler([$dbm,'closeAllDB']);
-    }
-    public function initMisc()
-    {
-        if (!empty($this->options['ext'])) {
-            DNMVCSExt::G()->init($this);
-        }
     }
     protected function initSystemWrapper()
     {
@@ -151,18 +112,19 @@ class DNMVCS extends DNCore
             $this->has_run_once=true;
             $this->runOnce();
         }
-        if (defined('DNMVCS_SUPER_GLOBAL_REPALACER')) {
-            $func=DNMVCS_SUPER_GLOBAL_REPALACER;
-            DNSuperGlobal::G($func());
-        }
+       
         if ($this->options['use_super_global']??false || defined('DNMVCS_SUPER_GLOBAL_REPALACER')) {
+            if (defined('DNMVCS_SUPER_GLOBAL_REPALACER')) {
+                $func=DNMVCS_SUPER_GLOBAL_REPALACER;
+                DNSuperGlobal::G($func());
+            }
             $this->dynamicClasses[]=DNSuperGlobal::class;
             DNRoute::G()->bindServerData(DNSuperGlobal::G()->_SERVER);
         }
         
         return parent::run();
     }
-    ////
+    //// RunMode
     public static function RunWithoutPathInfo($options=[])
     {
         $default_options=[

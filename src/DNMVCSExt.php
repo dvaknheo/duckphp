@@ -507,10 +507,10 @@ class ProjectCommonConfiger extends DNConfiger
 {
     public $fullpath_config_common;
 
-    public function init($path, $options)
+    public function init($options=[], $context=null)
     {
         $this->fullpath_config_common=isset($options['fullpath_config_common'])??'';
-        return parent::init($path, $options);
+        return parent::init($options, $context);
     }
     protected function loadFile($basename, $checkfile=true)
     {
@@ -596,9 +596,9 @@ class FunctionView extends DNView
     
     private $callback;
     
-    public function init($path)
+    public function init($options=[], $context=null)
     {
-        $ret=parent::init($path);
+        $ret=parent::init($options, $context);
         $options=DNMVCS::G()->options;
         $this->head_callback=$options['function_view_head']??'';
         $this->foot_callback=$options['function_view_foot']??'';

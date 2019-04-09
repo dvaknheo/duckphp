@@ -20,7 +20,7 @@ class DNRoute
             
             'welcome_controller'=>'Main',
             'default_method'=>'index',
-            'the_404_hanlder'=>null,
+            'on_404_handler'=>null,
         ];
     
     public $parameters=[];
@@ -34,7 +34,7 @@ class DNRoute
     protected $disable_default_class_outside=false;
     protected $default_method_for_miss=null;
     protected $base_controller_class=null;
-    public $the_404_hanlder=null;
+    public $on_404_handler=null;
     
     protected $enable_post_prefix=true;
     public $prefix_post='do_';
@@ -92,7 +92,7 @@ class DNRoute
         return $this->parameters;
     }
     
-    public function init($options)
+    public function init($options=[], $context=null)
     {
         $options=array_intersect_key(array_merge(static::DEFAULT_OPTIONS, $options), static::DEFAULT_OPTIONS);
         
@@ -106,7 +106,7 @@ class DNRoute
         
         $this->welcome_controller=$options['welcome_controller'];
         $this->default_method=$options['default_method'];
-        $this->the_404_hanlder=$options['the_404_hanlder'];
+        $this->on_404_handler=$options['on_404_handler'];
         
         $namespace=$options['namespace'];
         $namespace_controller=$options['namespace_controller'];
@@ -144,7 +144,7 @@ class DNRoute
     }
     public function set404($callback)
     {
-        $this->the_404_hanlder=$callback;
+        $this->on_404_handler=$callback;
     }
     public function setURLHandler($callback)
     {
@@ -189,13 +189,13 @@ class DNRoute
             ($this->callback)(...$this->parameters);
             return true;
         }
-        if (!$this->the_404_hanlder) {
+        if (!$this->on_404_handler) {
             header("HTTP/1.0 404 Not Found");
             echo "404 File Not Found.\n";
             echo "DNRoute Notice: 404 .  You need set 404 Handler by DNRoute->set404(\$callback).";
             exit;
         }
-        ($this->the_404_hanlder)();
+        ($this->on_404_handler)();
         return false;
     }
     public function stopRunDefaultHandler()

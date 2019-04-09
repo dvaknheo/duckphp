@@ -24,9 +24,8 @@ class DNCore
     
     const DEFAULT_OPTIONS=[
             'path'=>null,
-            'namespace'=>'MyProject',
+            'namespace'=>'MY',
             'path_namespace'=>'app',
-            
             'skip_app_autoload'=>false,
             //// controller ////
             'namespace_controller'=>'Controller',
@@ -36,8 +35,9 @@ class DNCore
             'default_method_for_miss'=>null,
             'enable_post_prefix'=>true,
             'prefix_post'=>'do_',
+            
             //// properties ////
-            'overrid_class'=>'Base\App',
+            'override_class'=>'Base\App',
             'path_view'=>'view',
             'path_config'=>'config',
             'path_lib'=>'lib',
@@ -58,6 +58,9 @@ class DNCore
             'error_exception'=>'_sys/error-exception',
             'error_debug'=>'_sys/error-debug',
         ];
+    const DEFAULT_OPTIONS_EX=[
+        ];
+    public $skip_override=false;
     public $options=[];
     
     public $is_dev=false;
@@ -65,7 +68,9 @@ class DNCore
     
     protected $path=null;
     protected $path_lib=null;
-    public $skip_override=false;
+    protected $stop_show_404=false;
+    protected $stop_show_exception=false;
+    public $beforeShowHandlers=[];
     
     public static function RunQuickly(array $options=[], callable $after_init=null)
     {
@@ -83,18 +88,25 @@ class DNCore
             $options['path']=$path;
         }
         $options['path']=rtrim($options['path'], '/').'/';
-        $options['skip_system_autoload']=class_exists('Composer\Autoload\ClassLoader')?true:false;
+        $options['skip_system_autoload']=true;//isset($options['skip_system_autoload'])?$options['skip_system_autoload']:(class_exists('Composer\Autoload\ClassLoader')?true:false);
+        
+        $options['on_404_handler']=[static::class,'On404'];
+        $options['before_show_handler']=[static::class,'OnBeforeShow'];
+        $options['exception_handler']=[static::class,'OnException'];
+        $options['dev_error_handler']=[static::class,'OnDevErrorHandler'];
+        $options['system_exception_handler']=[static::class,'set_exception_handler'];  // TODO
+        
         return $options;
     }
     protected function initOptions($options=[])
     {
-        $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
-        
+        $options=$this->adjustOptions($options);
+        $options=array_replace_recursive(static::DEFAULT_OPTIONS, static::DEFAULT_OPTIONS_EX, $options);
         $this->options=$options;
         
         $this->path=$this->options['path'];
-        $this->path_lib=$this->path.rtrim($this->options['path_lib'], '/').'/';
         
+        $this->path_lib=$this->path.rtrim($this->options['path_lib'], '/').'/';
         $this->is_dev=$this->options['is_dev'];
         $this->platform=$this->options['platform'];
     }
@@ -103,25 +115,25 @@ class DNCore
         if ($this->skip_override) {
             return null;
         }
-        $base_class=isset($options['base_class'])?$options['base_class']:static::DEFAULT_OPTIONS['base_class'];
+        $override_class=isset($options['override_class'])?$options['override_class']:static::DEFAULT_OPTIONS['override_class'];
         $namespace=isset($options['namespace'])?$options['namespace']:static::DEFAULT_OPTIONS['namespace'];
         
-        if (substr($base_class, 0, 1)!=='\\') {
-            $base_class=$namespace.'\\'.$base_class;
+        if (substr($override_class, 0, 1)!=='\\') {
+            $override_class=$namespace.'\\'.$override_class;
         }
-        $base_class=ltrim($base_class, '\\');
+        $override_class=ltrim($override_class, '\\');
         
-        if (!$base_class || !class_exists($base_class)) {
+        if (!$override_class || !class_exists($override_class)) {
             return null;
         }
-        if (static::class===$base_class) {
+        if (static::class===$override_class) {
             return null;
         }
-        return static::G($base_class::G());
+        return static::G($override_class::G());
     }
 
     //@override me
-    public function init($options=[])
+    public function init($options=[], $context=null)
     {
         $options=$this->adjustOptions($options);
         DNAutoLoader::G()->init($options)->run();
@@ -136,52 +148,30 @@ class DNCore
     protected function initAfterOverride($options)
     {
         $this->initOptions($options);
-        $this->initExceptionManager(DNExceptionManager::G());
-        $this->initConfiger(DNConfiger::G());
-        $this->initView(DNView::G());
-        $this->initRoute(DNRoute::G());
+        DNExceptionManager::G()->init($this->options, $this);
+        DNConfiger::G()->init($this->options, $this);
         
-        return $this;
-    }
-    public function initExceptionManager($exception_manager)
-    {
-        $exception_manager->init([static::class,'OnException'], [static::class,'OnDevErrorHandler'], [static::class,'set_exception_handler']);
-    }
-    public function initConfiger($configer)
-    {
-        $path=$this->path.rtrim($this->options['path_config'], '/').'/';
-        $configer->init($path, $this->options);
-        
+        ////[[[[
         $this->is_dev=DNConfiger::G()->_Setting('is_dev')??$this->is_dev;
         $this->platform=DNConfiger::G()->_Setting('platform')??$this->platform;
-    }
-    public function initView($view)
-    {
-        $path_view=$this->path.rtrim($this->options['path_view'], '/').'/';
-        $view->init($path_view);
-        $view->setBeforeShowHandler([static::class,'OnBeforeShow']);
-    }
-    public function initRoute(DNRoute $route)
-    {
-        $route->init($this->options);
-        $route->set404([static::class,'On404']);
-    }
-
-    public function initMisc()
-    {
         if ($this->options['enable_cache_classes_in_cli'] && PHP_SAPI==='cli') {
             DNAutoLoader::G()->cacheClasses();
         }
+        ////]]]]
+        
+        DNView::G()->init($this->options, $this);
+        DNRoute::G()->init($this->options, $this);
+        return $this;
     }
     public function run()
     {
         $class=get_class(DNRuntimeState::G());  //ReCreateInstance;
         DNRuntimeState::G(new $class)->begin();
-        
         $ret=DNRoute::G()->run();
         DNRuntimeState::G()->end();
         return $ret;
     }
+    ////////////////////////////////////////////////////////////////////////////////////////////
     //// after run ////
     public static function ThrowOn($flag, $message, $code=0)
     {
@@ -209,10 +199,7 @@ class DNCore
         $file=rtrim($file, '.php').'.php';
         require_once($this->path_lib.$file);
     }
-    protected $stop_show_404=false;
-    protected $stop_show_exception=false;
-    public $beforeShowHandlers=[];
-    
+
     public static function OnBeforeShow($data, $view=null)
     {
         return static::G()->_OnBeforeShow($data, $view);
@@ -258,7 +245,7 @@ class DNCore
         }
         
         $error_view=$this->options['error_404'];
-        static::header('', true, 404);
+        static::header('', true, 404); //TODO
         
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)($data);
@@ -285,7 +272,7 @@ class DNCore
         if ($this->stop_show_exception) {
             return;
         }
-        static::header('', true, 500);
+        static::header('', true, 500); //TODO
         $view=DNView::G();
         $data=[];
         $data['is_developing']=static::Developing();

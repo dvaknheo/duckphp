@@ -9,7 +9,7 @@ class DNAutoLoader
             'namespace'=>'MY',
             'path_namespace'=>'app',
             
-            'skip_system_autoload'=>false,
+            'skip_system_autoload'=>true,
             'skip_app_autoload'=>false,
         ];
     protected $namespace;
@@ -19,7 +19,7 @@ class DNAutoLoader
     
     protected $is_inited=false;
     protected $is_running=false;
-    public function init($options=[])
+    public function init($options=[], $context=null)
     {
         if ($this->is_inited) {
             return $this;
