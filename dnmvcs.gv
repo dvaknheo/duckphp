@@ -1,36 +1,35 @@
 digraph G{
+/* This is a graphviz file */
 graph [rankdir = "LR"];
-subgraph cluster_1 {
-		node [style=filled];
-		label = "DNMVCS.php";
-		color=blue;
+
 		
 DNException -> DNThrowQuickly ;
+DNCore -> DNRuntimeState;
+DNCore -> DNCore_Glue;
+DNCore -> DNAutoLoader;
+DNCore -> DNException;
+DNCore -> DNExceptionManager;
+DNCore -> DNView;
+DNCore -> DNConfiger;
+DNCore -> DNRoute;
 
-DNMVCS_Core -> DNAutoLoader;
-DNMVCS_Core -> DNException;
-DNMVCS_Core -> DNRoute;
-DNMVCS_Core -> DNView;
-DNMVCS_Core -> DNConfiger;
-DNMVCS_Core -> DNDBManager;
-DNMVCS_Core -> DNRuntimeState;
-DNMVCS_Core -> DNSuperGlobal;
-DNMVCS_Core -> DNMVCS_Glue;
-DNMVCS_Core -> DNMVCS_Misc;
-DNMVCS_Core -> DNExceptionManager;
-DNMVCS_Core -> DNMVCS_Handler;
-DNMVCS_Core -> DNMVCS_SystemWrapper;
-
-DNMVCS -> DNMVCS_Core;
+DNMVCS -> DNCore;
+DNMVCS -> DNMVCS_Glue;
+DNMVCS -> DNMVCS_Misc;
+DNMVCS -> DNMVCS_SystemWrapper;
+DNMVCS -> DNMVCS_Instance;
+DNMVCS -> DNDBManager;
+DNMVCS -> DNSwooleExt;
+DNMVCS -> DNMVCSExt;
+DNMVCS -> DNSuperGlobal;
+DNMVCS -> DNClassExt;
 
 
-}
+DNDBManager ->DB;
+DB -> DBAdvance;
+DB -> DBInterface;
+MedooDB -> DBAdvance;
 
-subgraph cluster_2 {
-		node [style=filled];
-		label = "DNMVCSExt.php";
-		color=blue;
-DNMVCS -> DNMVCSExt [dir=both];
 
 RouteHookMapAndRewrite -> DNRoute ;
 RouteHookOneFileMode -> DNSuperGlobal;
@@ -39,6 +38,7 @@ FacadesAutoLoader -> FacadesBase ;
 FunctionDispatcher -> DNRoute;
 FunctionView -> DNView;
 
+DNMVCSExt-> FacadesAutoLoader;
 
 DNMVCSExt-> RouteHookMapAndRewrite;
 DNMVCSExt-> RouteHookOneFileMode;
@@ -48,40 +48,13 @@ DNMVCSExt-> FunctionDispatcher;
 DNMVCSExt-> FunctionView;
 DNMVCSExt-> ProjectCommonAutoloader;
 DNMVCSExt-> ProjectCommonConfiger;
-DNMVCSExt-> FacadesAutoLoader;
 
 ProjectCommonConfiger -> DNConfiger  ;
 
-}
-subgraph cluster_4 {
-		node [style=filled];
-		label = "SwooleHttpServer.php";
-		color=blue;
-
-
-SwooleHttpServer -> SwooleContext;
-SwooleHttpServer -> SwooleCoroutineSingleton;
-SwooleHttpServer -> Swoole404Exception;
-SwooleHttpServer -> SwooleHttpServer_Singleton;
-SwooleHttpServer -> SwooleHttpServer_Static;
-SwooleHttpServer -> SwooleHttpServer_SystemWrapper;
-SwooleHttpServer -> SwooleHttpServer_SuperGlobal;
-SwooleHttpServer -> SwooleHttpServer_SimpleHttpd;
-SwooleHttpServer -> SwooleHttpServer_WebSocket;
-SwooleHttpServer -> SwooleSuperGlobal;
-SwooleSuperGlobal -> SwooleSession;
-SwooleSession -> SwooleSessionHandler;
-
-}
-subgraph cluster_3 {
-		node [style=filled];
-		label = "DNSwooleHttpServer.php";
-		color=blue;
-DNMVCS ->DNSwooleHttpServer [dir=both];
-
-DNSwooleHttpServer -> SwooleHttpServer;
-
-}
-
+DNSingleton;
+Pager;
+StrictModel;
+StrictService;
+ToolKit;
 
 }

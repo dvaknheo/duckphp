@@ -1,0 +1,14 @@
+digraph G{
+/* This is a graphviz file */
+graph [rankdir = "LR"];
+
+
+Controller -> Service -> Model;
+    
+Service -> LibService;
+LibService->ExModel;
+ExModel -> Model;
+LibService->Model;
+Controller -> View;
+
+}

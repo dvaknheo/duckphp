@@ -43,7 +43,6 @@ class DNMVCS extends DNCore
         $this->options['error_404']=[static::class,'empty_function'];
         $this->options['use_super_global']=true;
         
-        DNSwooleExt::Server(SwooleHttpd::G());
         DNSwooleExt::G()->onAppBoot(static::class, $options['swoole']);
     }
 

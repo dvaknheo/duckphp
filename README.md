@@ -34,9 +34,9 @@ DNMVCS 层级关系图
 
 ```text
            /-> View
-Controller --> Service ---------------------------------> Model
-                      \               \              /
-                       \-> LibService --> ExModel --/
+Controller --> Service ------------------------------ ---> Model
+                      \               \  /             /
+                       \-> LibService ----> ExModel --/
 ```
 
 * Controller 按 URL 入口走 调用 view 和service

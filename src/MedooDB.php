@@ -14,7 +14,7 @@ class MedooFixed extends \Medoo\Medoo
     }
 }
 
-class MedooDB extends MedooFixed
+class MedooDB extends MedooFixed implements DBInterface
 {
     use DBAdvance;
     

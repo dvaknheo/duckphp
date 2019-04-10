@@ -1,6 +1,7 @@
 <?php
 namespace DNMVCS;
 
+use SwooleHttpd\SwooleHttpd;
 use Exception;
 
 class DNSwooleExtServerHolder
@@ -57,6 +58,24 @@ class DNSwooleExtAppHolder
         throw new Exception("Impelement Me!");
     }
 }
+class DnSwooleExtReuserHolder
+{
+    use DNSingleton;
+
+    public $appClass;
+    public function init($options=[], $context=null)
+    {
+        //for 404 re-in;
+        $class=get_class(([$this->appClass,'G'])());
+        if ($class!==static::class) {
+            return $this;
+        }
+        DNSwooleExt::Server()->resetInstances();
+        
+        $ret=([$this->appClass,'G'])()->init($options);
+        return $ret;
+    }
+}
 class DNSwooleExt
 {
     use DNSingleton;
@@ -64,6 +83,7 @@ class DNSwooleExt
     protected $with_http_handler_root=false;
     protected $appClass;
     protected $is_server_running=false;
+    
     public static function Server($server=null)
     {
         return DNSwooleExtServerHolder::G($server);
@@ -89,13 +109,7 @@ class DNSwooleExt
         }
         return $this;
     }
-    protected function initRunningModeApp($options)
-    {
-        static::Server()->resetInstances();
-        
-        $ret=([$this->appClass,'G'])()->init($options);
-        return $ret;
-    }
+    
     public function onAppBoot($class, $server_options=[])
     {
         if (PHP_SAPI!=='cli') {
@@ -103,6 +117,7 @@ class DNSwooleExt
         }
         $this->setAppClass($class);
         
+        static::Server(SwooleHttpd::G());
         $server=static::Server();
         $app=static::App();
         
@@ -138,10 +153,12 @@ class DNSwooleExt
         $exclude_classes=static::Server()->getDynamicClasses();
         static::Server()->forkMasterInstances($classes, $exclude_classes);
         
-        $ret=static::App()->run($this->with_http_handler_root);
+        $ret=static::App()->run();
         if (!$ret && $this->with_http_handler_root) {
             static::Server()->forkMasterInstances(array_keys(static::App()->getBootInstances()));
-            ([$this->appClass,'G'])(static::G()); //fake object
+            
+            DnSwooleExtReuserHolder::G()->appClass=$this->appClass;
+            ([$this->appClass,'G'])(DnSwooleExtReuserHolder::G()); //fake object
             return false;
         }
         return true;
