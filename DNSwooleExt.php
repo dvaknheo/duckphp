@@ -1,5 +1,6 @@
 <?php
 namespace DNMVCS;
+use SwooleHttpd\SwooleHttpd;
 use Exception;
 class DNSwooleExtServerHolder
 {
@@ -67,6 +68,12 @@ class DNSwooleExt
 	public function onAppBoot($class,$server_options=[])
 	{
 		if(PHP_SAPI!=='cli'){ return; }
+        
+        if(!class_exists(SwooleHttpd::class)){
+            exit("DNMVCS: You Need SwooleHttpd");
+        }
+		DNSwooleExt::Server(SwooleHttpd::G());
+        
 		$this->setAppClass($class);
 		
 		$server=static::Server();

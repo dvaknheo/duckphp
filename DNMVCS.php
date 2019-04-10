@@ -1747,9 +1747,7 @@ class DNMVCS
 		if(empty($options['swoole'])){
 			return;
 		}
-		static::ThrowOn(!class_exists(SwooleHttpd::class),"DNMVCS: You Need SwooleHttpd");
-		DNSwooleExt::Server(SwooleHttpd::G());
-		DNSwooleExt::G()->onAppBoot(self::class,$options['swoole']);
+		DNSwooleExt::G()->onAppBoot(static::class,$options['swoole']);
 		$this->toggleStop404Handler();
 		
 	}
