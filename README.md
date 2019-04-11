@@ -770,7 +770,7 @@ OnException($ex)
     发生未处理异常的处理函数。显示 exception 或 500 页面
 OnDevErrorHandler($errno, $errstr, $errfile, $errline)
 
-    处理 Notice 错误。
+    处理 Notice ， Decraped 错误。
 
 ## 超全局变量和语法代替静态方法
 
