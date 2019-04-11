@@ -1292,6 +1292,20 @@ DNAutoLoader 做了防多次加载和多次初始化。
 
 用于运行时状态的保存
 
+## trait DNClassExt
+trait DNClassExt  实现了特殊的类方法扩展方式
+use  DNClassExt 的类，调用静态函数的时候，会检测  G() 函数实例类有没有静态方法.
+
+你可以 DNClassExt::G()->assignStaticMethod('Func',$callback) 实现 DNClassExt::Func => $callback;
+
+类似的 DNClassExt::G()->assignDynamicMethod('Func',$callback) , DNClassExt::G()->Func => $callback;
+
+extendClassMethodByThirdParty 用于 快速 copy 某类，到 DNClassExt 。
+
+	public function assignStaticMethod($key,$value=null)
+	public function assignDynamicMethod($key,$value=null)
+    public function extendClassMethodByThirdParty($object_or_class,array $StaticMethodList,array $DynamicMethodList=[])
+
 # 第六章 DNMVCSExt 扩展类和附属组件
 
     DNMVCS 的选项 $options['ext'] 不为空数组就 引入DNMVCSExt 扩展类
