@@ -1,4 +1,12 @@
 1.0.9 到 1.0.10 变更
+添加了 快速扩展的 DNClassExt
+配置大更新
+路由调整
+OnBeforeShow 等 静态化
+和 swoole DNSwooleExt 调整.
+
+
+1.0.9 到 1.0.10 变更
 2019-02-24 18:02:44
 添加了 LICENSE 文件
 
