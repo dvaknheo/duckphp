@@ -135,7 +135,7 @@ class DNSwooleExt
         $this->with_http_handler_root=$options['with_http_handler_root']??false;
         $server_options['http_handler']=[$this,'runSwoole'];
         
-        static::Server()->init($server_options, null);
+        static::Server()->init($options, null);
     }
     public function onAppBeforeRun()
     {

@@ -144,6 +144,7 @@ class DNCore
         $object=$this->checkOverride($options);
         if ($object) {
             $object->skip_override=true;
+            $object->root_class=static::class;
             return $object->init($options);
         }
         return $this->initAfterOverride($options);

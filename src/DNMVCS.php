@@ -61,6 +61,7 @@ class DNMVCS extends DNCore
         $configer=DNConfiger::G();
         $db_setting_key=$this->options['db_setting_key']??'database_list';
         $database_list=$configer->_Setting($db_setting_key);
+        $database_list=$database_list??[];
         $this->options['database_list']=array_merge($this->options['database_list'], $database_list);
         
         $dbm->init($this->options, $this);
