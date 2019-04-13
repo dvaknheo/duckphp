@@ -61,6 +61,7 @@ class DNCore
     const DEFAULT_OPTIONS_EX=[
         ];
     public $skip_override=false;
+    public $root_class='';
     public $options=[];
     
     public $is_dev=false;
@@ -115,6 +116,8 @@ class DNCore
         if ($this->skip_override) {
             return null;
         }
+        $this->root_class=static::class;
+        
         $override_class=isset($options['override_class'])?$options['override_class']:static::DEFAULT_OPTIONS['override_class'];
         $namespace=isset($options['namespace'])?$options['namespace']:static::DEFAULT_OPTIONS['namespace'];
         
@@ -294,7 +297,7 @@ class DNCore
         if (!$error_view) {
             $desc=$is_error?'Error':'Exception';
             echo "Internal $desc \n<!--DNMVCS -->\n";
-            if ($this->isDev) {
+            if ($this->is_dev) {
                 echo "<hr />";
                 echo "\n<pre>Debug On\n\n";
                 echo $data['trace'];
@@ -309,7 +312,7 @@ class DNCore
     public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline)
     {
         //
-        if (!$this->isDev) {
+        if (!$this->is_dev) {
             return;
         }
         $descs=array(

@@ -23,7 +23,7 @@ class DNLazybones
     
     protected $lazy_class_prefix='';
     
-    public function init($options)
+    public function init($options, $context=null)
     {
         $options=array_merge(static::DEFAULT_OPTIONS, $options);
         if (!($options['lazy_mode']??false)) {

@@ -789,7 +789,7 @@ class DNMVCSExt
         
         if ($options['use_common_configer']) {
             $dn->initConfiger(DNConfiger::G(ProjectCommonConfiger::G()));
-            $dn->isDev=DNConfiger::G()->_Setting('is_dev')??$dn->isDev;
+            $dn->is_dev=DNConfiger::G()->_Setting('is_dev')??$dn->isDev;
             // 可能要调整测试状态
         }
         if ($options['use_function_view']) {

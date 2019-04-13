@@ -12,9 +12,9 @@ class DB implements DBInterface
             \PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION,
             \PDO::ATTR_DEFAULT_FETCH_MODE=>\PDO::FETCH_ASSOC
         ];
-    public function init($config)
+    public function init($options=[], $context=null)
     {
-        $this->config=$config;
+        $this->config=$options;
         $this->check_connect();
     }
     public static function CreateDBInstance($db_config)

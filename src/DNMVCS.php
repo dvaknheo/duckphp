@@ -30,20 +30,15 @@ class DNMVCS extends DNCore
         ];
     protected $has_run_once=false;
     
-    public function empty_function()
+    public static function _EmptyFunction()
     {
         return;
     }
     protected function initSwoole($options)
     {
-        if (empty($options['swoole'])) {
-            return;
+        if (!empty($options['swoole'])) {
+            DNSwooleExt::G()->init($options['swoole'], $this);
         }
-        static::ThrowOn(!class_exists(SwooleHttpd::class), "DNMVCS: You Need SwooleHttpd");
-        $this->options['error_404']=[static::class,'empty_function'];
-        $this->options['use_super_global']=true;
-        
-        DNSwooleExt::G()->onAppBoot(static::class, $options['swoole']);
     }
 
     protected function initAfterOverride($options)
@@ -63,25 +58,12 @@ class DNMVCS extends DNCore
     }
     public function initDBManager($dbm)
     {
-        if (!$this->options['use_db']) {
-            return;
-        }
         $configer=DNConfiger::G();
         $db_setting_key=$this->options['db_setting_key']??'database_list';
         $database_list=$configer->_Setting($db_setting_key);
-        $database_list=$database_list??[];
-        $database_list=array_merge($this->options['database_list'], $database_list);
+        $this->options['database_list']=array_merge($this->options['database_list'], $database_list);
         
-        if (empty($database_list)) {
-            return;
-        }
-        
-        $dbm->init($database_list);
-        
-        $db_create_handler=$this->options['db_create_handler']?:[DB::class,'CreateDBInstance'];
-        $db_close_handler=$this->options['db_close_handler']?:[DB::class,'CloseDBInstance'];
-        $dbm->setDBHandler($db_create_handler, $db_close_handler);
-        $this->addBeforeShowHandler([$dbm,'closeAllDB']);
+        $dbm->init($this->options, $this);
     }
     protected function initSystemWrapper()
     {

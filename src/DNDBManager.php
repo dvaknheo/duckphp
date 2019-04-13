@@ -15,9 +15,23 @@ class DNDBManager
     protected $db_close_handler=null;
     
     protected $before_get_db_handler=null;
-    public function init($database_config_list=[])
+    public function init($options=[], $context=null)
     {
-        $this->database_config_list=$database_config_list;
+        if (!$options['use_db']) {
+            return;
+        }
+        $this->database_config_list=$options['database_list'];
+        $db_create_handler=$options['db_create_handler']?:[DB::class,'CreateDBInstance'];
+        $db_close_handler=$options['db_close_handler']?:[DB::class,'CloseDBInstance'];
+        $this->db_create_handler=$db_create_handler;
+        $this->db_close_handler=$db_close_handler;
+        if ($context) {
+            $this->initContext($context);
+        }
+    }
+    protected function initContext($context)
+    {
+        $context->addBeforeShowHandler([$this,'closeAllDB']);
     }
     public function setDBHandler($db_create_handler, $db_close_handler=null)
     {

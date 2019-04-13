@@ -100,24 +100,20 @@ class DNSwooleExt
         
         $this->appClass=$class;
     }
-    public function init($options)
-    {
-        //for 404 re-in;
-        $class=get_class(([$this->appClass,'G'])());
-        if ($class===static::class) {
-            return $this->initRunningModeApp($options);
-        }
-        return $this;
-    }
-    
-    public function onAppBoot($class, $server_options=[])
+    public function init($options=[], $context=null)
     {
         if (PHP_SAPI!=='cli') {
             return;
         }
-        $this->setAppClass($class);
-        
-        static::Server(SwooleHttpd::G());
+        if ($context) {
+            $app_class=$context->root_class;
+            $this->setAppClass($app_class);
+            $context->options['error_404']=[get_class($context),'_EmptyFunction'];
+            $context->options['use_super_global']=true;
+        }
+        $server_object=SwooleHttpd::G();
+        //static::ThrowOn(!class_exists(SwooleHttpd::class), "DNMVCS: You Need SwooleHttpd");
+        static::Server($server_object);
         $server=static::Server();
         $app=static::App();
         
@@ -126,6 +122,8 @@ class DNSwooleExt
         if (!$flag) {
             return;
         }
+        // replace G method again;
+        
         static::Server($server);
         static::App($app);
         foreach ($instances as $class=>$object) {
@@ -134,7 +132,7 @@ class DNSwooleExt
         static::G($this);
         //////////////
         
-        $this->with_http_handler_root=$server_options['with_http_handler_root']??false;
+        $this->with_http_handler_root=$options['with_http_handler_root']??false;
         $server_options['http_handler']=[$this,'runSwoole'];
         
         static::Server()->init($server_options, null);
