@@ -21,6 +21,10 @@ class DNCore
     const VERSION = '1.1.0';
     
     use DNCore_Glue;
+    use DNCore_Handler;
+    use DNCore_Redirect;
+    use DNCore_SystemWrapper;
+    use DNCore_Helper;
     
     const DEFAULT_OPTIONS=[
             'path'=>null,
@@ -70,7 +74,6 @@ class DNCore
     protected $path=null;
     protected $path_lib=null;
     protected $stop_show_exception=false;
-    public $beforeShowHandlers=[];
     
     public static function RunQuickly(array $options=[], callable $after_init=null)
     {
@@ -174,35 +177,10 @@ class DNCore
         DNRuntimeState::G()->end();
         return $ret;
     }
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    //// after run ////
-    public static function ThrowOn($flag, $message, $code=0)
-    {
-        if (!$flag) {
-            return;
-        }
-        throw new DNException($message, $code);
-    }
-    // system static
-    public static function Platform()
-    {
-        return static::G()->platform;
-    }
-    public static function Developing()
-    {
-        return static::G()->is_dev;
-    }
-    public static function Import($file)
-    {
-        return static::G()->_Import($file);
-    }
-    //// Misc Functions
-    public function _Import($file)
-    {
-        $file=rtrim($file, '.php').'.php';
-        require_once($this->path_lib.$file);
-    }
-
+}
+trait DNCore_Handler
+{
+    protected $beforeShowHandlers=[];
     public static function OnBeforeShow($data, $view=null)
     {
         return static::G()->_OnBeforeShow($data, $view);
@@ -219,11 +197,6 @@ class DNCore
     {
         return static::G()->_OnDevErrorHandler($errno, $errstr, $errfile, $errline);
     }
-    public function toggleStopExceptionHandler($flag=true)
-    {
-        $this->stop_show_exception=$flag;
-    }
-    
     public function _OnBeforeShow($data, $view=null)
     {
         if ($view===null) {
@@ -239,11 +212,7 @@ class DNCore
     public function _On404()
     {
         $error_view=$this->options['error_404'];
-        if(method_exists(static::class,'header')){
-            static::header('', true, 404);
-        }else{
-            header('', true, 404);
-        }
+        static::header('', true, 404);
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)($data);
             return;
@@ -261,16 +230,13 @@ class DNCore
     
     public function _OnException($ex)
     {
-        //TODO;
+        //TODO tell me why
         $flag=DNExceptionManager::G()->checkAndRunErrorHandlers($ex, true);
         if ($flag) {
             return;
         }
-        if(method_exists(static::class,'header')){
-            static::header('', true, 500);
-        }else{
-            header('', true, 500);
-        }
+        static::header('', true, 500);
+        
         $view=DNView::G();
         $data=[];
         $data['is_developing']=static::Developing();
@@ -306,7 +272,6 @@ class DNCore
     }
     public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline)
     {
-        //
         if (!$this->is_dev) {
             return;
         }
@@ -352,7 +317,44 @@ EOT;
     {
         $this->beforeShowHandlers[]=$handler;
     }
-    ////
+}
+
+trait DNCore_SystemWrapper
+{
+    public $header_handler=null;
+    public $exit_handler=null;
+
+    public static function header($output, bool $replace = true, int $http_response_code=0)
+    {
+        return static::G()->_header($output, $replace, $http_response_code);
+    }
+    public function _header($output, bool $replace = true, int $http_response_code=0)
+    {
+        if ($this->header_handler) {
+            return ($this->header_handler)($output, $replace, $http_response_code);
+        }
+        if (PHP_SAPI==='cli') {
+            return;
+        }
+        if (headers_sent()) {
+            return;
+        }
+        return header($output, $replace, $http_response_code);
+    }
+    public static function exit_system($code=0)
+    {
+        return static::G()->_exit_system($code);
+    }
+    public function _exit_system($code=0)
+    {
+        if ($this->exit_handler) {
+            return ($this->exit_handler)($code);
+        }
+        exit($code);
+    }
+}
+trait DNCore_Redirect
+{
     public static function ExitJson($ret)
     {
         return static::G()->_ExitJson($ret);
@@ -389,6 +391,37 @@ EOT;
         static::header('location: '.$url, true, 302);
         static::exit_system();
     }
+}
+
+trait DNCore_Helper
+{
+    public static function ThrowOn($flag, $message, $code=0)
+    {
+        if (!$flag) {
+            return;
+        }
+        throw new DNException($message, $code);
+    }
+    // system static
+    public static function Platform()
+    {
+        return static::G()->platform;
+    }
+    public static function Developing()
+    {
+        return static::G()->is_dev;
+    }
+    public static function Import($file)
+    {
+        return static::G()->_Import($file);
+    }
+    //// Misc Functions
+    public function _Import($file)
+    {
+        $file=rtrim($file, '.php').'.php';
+        require_once($this->path_lib.$file);
+    }
+
     ////
     public static function H($str)
     {
@@ -415,7 +448,84 @@ EOT;
             }
             return $arr;
         }
-
         return $str;
+    }
+}
+trait DNCore_Glue
+{
+    //state
+    public static function IsRunning()
+    {
+        return DNRuntimeState::G()->isRunning();
+    }
+    // route static
+    public static function URL($url=null)
+    {
+        return DNRoute::G()->_URL($url);
+    }
+    public static function Parameters()
+    {
+        return DNRoute::G()->_Parameters();
+    }
+    // view static
+    public static function Show($data=[], $view=null)
+    {
+        return DNView::G()->_Show($data, $view);
+    }
+    public static function ShowBlock($view, $data=null)
+    {
+        return DNView::G()->_ShowBlock($view, $data);
+    }
+    // config static
+    public static function Setting($key)
+    {
+        return DNConfiger::G()->_Setting($key);
+    }
+    public static function Config($key, $file_basename='config')
+    {
+        return DNConfiger::G()->_Config($key, $file_basename);
+    }
+    public static function LoadConfig($file_basename)
+    {
+        return DNConfiger::G()->_LoadConfig($file_basename);
+    }
+    
+    /////////////////////////////////
+    //autoloader
+    public function assignPathNamespace($path, $namespace=null)
+    {
+        return DNAutoLoader::G()->assignPathNamespace($path, $namespace);
+    }
+    // route
+    public function addRouteHook($hook, $prepend=false, $once=true)
+    {
+        return DNRoute::G()->addRouteHook($hook, $prepend, $once);
+    }
+    public function getRouteCallingMethod()
+    {
+        return DNRoute::G()->getRouteCallingMethod();
+    }
+    
+    //view
+    public function setViewWrapper($head_file=null, $foot_file=null)
+    {
+        return DNView::G()->setViewWrapper($head_file, $foot_file);
+    }
+    public function assignViewData($key, $value=null)
+    {
+        return DNView::G()->assignViewData($key, $value);
+    }
+    //exception manager
+    public function assignExceptionHandler($classes, $callback=null)
+    {
+        return DNExceptionManager::G()->assignExceptionHandler($classes, $callback);
+    }
+    public function setMultiExceptionHandler(array $classes, $callback)
+    {
+        return DNExceptionManager::G()->setMultiExceptionHandler($classes, $callback);
+    }
+    public function setDefaultExceptionHandler($callback)
+    {
+        return DNExceptionManager::G()->setDefaultExceptionHandler($callback);
     }
 }
