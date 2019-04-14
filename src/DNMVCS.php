@@ -52,7 +52,7 @@ class DNMVCS extends DNCore
         if (!empty($this->options['ext'])) {
             DNMVCSExt::G()->init($this);
         }
-        DNLazybones::G()->init($options);       
+        DNLazybones::G()->init($options);
         return $this;
     }
     public function initDBManager($dbm)

@@ -31,7 +31,7 @@ class DNDBManager
     }
     protected function initContext($context)
     {
-        $context->addBeforeShowHandler([$this,'closeAllDB']);
+        $context->addBeforeShowHandler([static::class,'CloseAllDB']);
     }
     public function setDBHandler($db_create_handler, $db_close_handler=null)
     {
@@ -76,7 +76,11 @@ class DNDBManager
         }
         return $this->_DB($this->tag_read);
     }
-    public function closeAllDB()
+    public function CloseAllDB()
+    {
+        return static::G()->_closeAllDB();
+    }
+    public function _closeAllDB()
     {
         if (!$this->db_close_handler) {
             return;
