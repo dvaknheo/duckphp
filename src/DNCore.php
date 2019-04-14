@@ -69,7 +69,6 @@ class DNCore
     
     protected $path=null;
     protected $path_lib=null;
-    protected $stop_show_404=false;
     protected $stop_show_exception=false;
     public $beforeShowHandlers=[];
     
@@ -220,11 +219,6 @@ class DNCore
     {
         return static::G()->_OnDevErrorHandler($errno, $errstr, $errfile, $errline);
     }
-    //////////////
-    public function toggleStop404Handler($flag=true)
-    {
-        $this->stop_show_404=$flag;
-    }
     public function toggleStopExceptionHandler($flag=true)
     {
         $this->stop_show_exception=$flag;
@@ -244,13 +238,12 @@ class DNCore
     }
     public function _On404()
     {
-        if ($this->stop_show_404) {
-            return;
-        }
-        
         $error_view=$this->options['error_404'];
-        static::header('', true, 404); //TODO
-        
+        if(method_exists(static::class,'header')){
+            static::header('', true, 404);
+        }else{
+            header('', true, 404);
+        }
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)($data);
             return;
@@ -273,10 +266,11 @@ class DNCore
         if ($flag) {
             return;
         }
-        if ($this->stop_show_exception) {
-            return;
+        if(method_exists(static::class,'header')){
+            static::header('', true, 500);
+        }else{
+            header('', true, 500);
         }
-        static::header('', true, 500); //TODO
         $view=DNView::G();
         $data=[];
         $data['is_developing']=static::Developing();
@@ -357,5 +351,71 @@ EOT;
     public function addBeforeShowHandler($handler)
     {
         $this->beforeShowHandlers[]=$handler;
+    }
+    ////
+    public static function ExitJson($ret)
+    {
+        return static::G()->_ExitJson($ret);
+    }
+    public static function ExitRedirect($url, $only_in_site=true)
+    {
+        return static::G()->_ExitRedirect($url, $only_in_site);
+    }
+    public static function ExitRouteTo($url)
+    {
+        return static::G()->_ExitRedirect(static::URL($url), true);
+    }
+    public static function Exit404()
+    {
+        static::On404();
+        static::exit_system();
+    }
+    ////
+    public function _ExitJson($ret)
+    {
+        static::header('Content-Type:text/json');
+        // DNMVCS::G()->onBeforeShow([],'');
+        echo json_encode($ret, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
+        static::exit_system();
+    }
+    public function _ExitRedirect($url, $only_in_site=true)
+    {
+        if ($only_in_site && parse_url($url, PHP_URL_HOST)) {
+            //something  wrong
+            static::exit_system();
+            return;
+        }
+        // DNMVCS::G()->onBeforeShow([],'');
+        static::header('location: '.$url, true, 302);
+        static::exit_system();
+    }
+    ////
+    public static function H($str)
+    {
+        return static::G()->_H($str);
+    }
+
+    public function _H(&$str)
+    {
+        if (is_string($str)) {
+            $str=htmlspecialchars($str, ENT_QUOTES);
+            return $str;
+        }
+        if (is_array($str)) {
+            foreach ($str as $k =>&$v) {
+                static::_H($v);
+            }
+            return $str;
+        }
+        
+        if (is_object($str)) {
+            $arr=get_object_vars($str);
+            foreach ($arr as $k =>&$v) {
+                static::_H($v);
+            }
+            return $arr;
+        }
+
+        return $str;
     }
 }
