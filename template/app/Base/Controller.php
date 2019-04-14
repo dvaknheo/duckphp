@@ -1,6 +1,7 @@
 <?php
 namespace MY\Base;
-use \DNMVCS\DNSingleton;
+
+use DNMVCS\DNSingleton;
 
 class Controller
 {

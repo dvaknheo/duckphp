@@ -1,7 +1,7 @@
 <?php
 namespace MY\Base;
-use \DNMVCS\DNSingleton;
-use \DNMVCS\StrictService;
+
+use DNMVCS\StrictService;
 
 class Service
 {
