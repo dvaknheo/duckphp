@@ -6,6 +6,9 @@ namespace DNMVCS;
 // use DNView
 trait DNMVCS_Instance
 {
+    protected $dynamicClasses=[];
+    protected $dynamicClassesInited=false;
+    
     public function getBootInstances()
     {
         $ret=[
@@ -15,9 +18,6 @@ trait DNMVCS_Instance
         $ret[static::class]=$this;
         return $ret;
     }
-    protected $dynamicClasses=[];
-    protected $dynamicClassesInited=false;
-
     protected function initDynamicClasses()
     {
         $this->dynamicClasses=[

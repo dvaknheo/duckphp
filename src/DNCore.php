@@ -214,7 +214,7 @@ trait DNCore_Handler
         $error_view=$this->options['error_404'];
         static::header('', true, 404);
         if (!is_string($error_view) && is_callable($error_view)) {
-            ($error_view)($data);
+            ($error_view)();
             return;
         }
         if (!$error_view) {
@@ -252,7 +252,7 @@ trait DNCore_Handler
             $error_view=null;
         }
         if (!is_string($error_view) && is_callable($error_view)) {
-            ($error_view)($data);
+            ($error_view)($ex);
             return;
         }
         if (!$error_view) {

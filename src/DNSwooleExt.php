@@ -92,6 +92,11 @@ class DNSwooleExt
     {
         return DNSwooleExtAppHolder::G($app);
     }
+    public static function _EmptyFunction()
+    {
+        return;
+    }
+    
     public function setAppClass($class)
     {
         $app=([$class,'G'])();
@@ -108,7 +113,7 @@ class DNSwooleExt
         if ($context) {
             $app_class=$context->root_class;
             $this->setAppClass($app_class);
-            $context->options['error_404']=[get_class($context),'_EmptyFunction'];
+            $context->options['error_404']=[static,'_EmptyFunction'];
             $context->options['use_super_global']=true;
         }
         $server_object=SwooleHttpd::G();
@@ -133,7 +138,7 @@ class DNSwooleExt
         //////////////
         
         $this->with_http_handler_root=$options['with_http_handler_root']??false;
-        $server_options['http_handler']=[$this,'runSwoole'];
+        $options['http_handler']=[$this,'runSwoole'];
         
         static::Server()->init($options, null);
     }
@@ -154,7 +159,7 @@ class DNSwooleExt
         $ret=static::App()->run();
         if (!$ret && $this->with_http_handler_root) {
             static::Server()->forkMasterInstances(array_keys(static::App()->getBootInstances()));
-            
+
             DnSwooleExtReuserHolder::G()->appClass=$this->appClass;
             ([$this->appClass,'G'])(DnSwooleExtReuserHolder::G()); //fake object
             return false;

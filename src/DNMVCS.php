@@ -54,6 +54,7 @@ class DNMVCS extends DNCore
             DNMVCSExt::G()->init($this);
         }
         DNLazybones::G()->init($options);
+        
         return $this;
     }
     public function initDBManager($dbm)
