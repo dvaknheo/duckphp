@@ -81,7 +81,6 @@ class DNMVCS extends DNCore
         if ($this->options['rewrite_map'] || $this->options['route_map']) {
             DNMVCSExt::G()->dealMapAndRewrite($this->options['rewrite_map'], $this->options['route_map']);
         }
-       
     }
     public function run()
     {
