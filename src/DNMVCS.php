@@ -44,7 +44,6 @@ class DNMVCS extends DNCore
     protected function initAfterOverride($options)
     {
         $this->initSwoole($options);
-        
         parent::initAfterOverride($options);
         
         $this->initDBManager(DNDBManager::G());
@@ -53,18 +52,15 @@ class DNMVCS extends DNCore
         if (!empty($this->options['ext'])) {
             DNMVCSExt::G()->init($this);
         }
-        DNLazybones::G()->init($options);
-        
+        DNLazybones::G()->init($options);       
         return $this;
     }
     public function initDBManager($dbm)
     {
-        $configer=DNConfiger::G();
         $db_setting_key=$this->options['db_setting_key']??'database_list';
-        $database_list=$configer->_Setting($db_setting_key);
-        $database_list=$database_list??[];
-        $this->options['database_list']=array_merge($this->options['database_list'], $database_list);
+        $database_list=static::Setting($db_setting_key)??[];
         
+        $this->options['database_list']=array_merge($this->options['database_list'], $database_list);
         $dbm->init($this->options, $this);
     }
     protected function initSystemWrapper()
@@ -85,12 +81,14 @@ class DNMVCS extends DNCore
         if ($this->options['rewrite_map'] || $this->options['route_map']) {
             DNMVCSExt::G()->dealMapAndRewrite($this->options['rewrite_map'], $this->options['route_map']);
         }
-        if (!empty($this->options['swoole'])) {
-            DNSwooleExt::G()->onAppBeforeRun();
-        }
+       
     }
     public function run()
     {
+        if (!empty($this->options['swoole'])) {
+            DNSwooleExt::G()->onAppBeforeRun();
+        }
+        
         if (!$this->has_run_once) {
             $this->has_run_once=true;
             $this->runOnce();
@@ -101,7 +99,7 @@ class DNMVCS extends DNCore
                 $func=DNMVCS_SUPER_GLOBAL_REPALACER;
                 DNSuperGlobal::G($func());
             }
-            $this->dynamicClasses[]=DNSuperGlobal::class;
+            $this->addDynamicClass(DNSuperGlobal::class);
             DNRoute::G()->bindServerData(DNSuperGlobal::G()->_SERVER);
         }
         

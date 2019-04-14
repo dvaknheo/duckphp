@@ -82,7 +82,6 @@ class DNSwooleExt
     
     protected $with_http_handler_root=false;
     protected $appClass;
-    protected $is_server_running=false;
     
     public static function Server($server=null)
     {
@@ -113,8 +112,6 @@ class DNSwooleExt
         if ($context) {
             $app_class=$context->root_class;
             $this->setAppClass($app_class);
-            $context->options['error_404']=[static,'_EmptyFunction'];
-            $context->options['use_super_global']=true;
         }
         $server_object=SwooleHttpd::G();
         //static::ThrowOn(!class_exists(SwooleHttpd::class), "DNMVCS: You Need SwooleHttpd");
@@ -144,10 +141,12 @@ class DNSwooleExt
     }
     public function onAppBeforeRun()
     {
-        if ($this->is_server_running) {
+        $cid = \Swoole\Coroutine::getuid();
+        if ($cid>0) {
             return;
-        };
-        $this->is_server_running=true;
+        }
+        static::App()->options['error_404']=[static::class,'_EmptyFunction'];
+        static::App()->options['use_super_global']=true;
         static::Server()->run();
     }
     public function runSwoole()

@@ -33,4 +33,12 @@ trait DNMVCS_Instance
         }
         return $this->dynamicClasses;
     }
+    public function addDynamicClass($class)
+    {
+        if ($this->dynamicClassesInited) {
+            $this->dynamicClassesInited=true;
+            $this->initDynamicClasses();
+        }
+        return $this->dynamicClasses[]=$class;
+    }
 }
