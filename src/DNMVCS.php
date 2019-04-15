@@ -10,10 +10,11 @@ class DNMVCS extends DNCore
     const VERSION = '1.1.0';
     
     use DNClassExt;
+    use DNDI;
     use DNMVCS_Glue;
-    use DNMVCS_Misc;
     use DNMVCS_SystemWrapper;
     use DNMVCS_Instance;
+    use DNMVCS_Misc;
     
     const DEFAULT_OPTIONS_EX=[
             'use_db'=>true,
@@ -52,7 +53,8 @@ class DNMVCS extends DNCore
         if (!empty($this->options['ext'])) {
             DNMVCSExt::G()->init($this);
         }
-        DNLazybones::G()->init($options);
+        DNLazybones::G()->init($options,$this);
+        RouteHookMapAndRewrite::G()->init($options,$this);
         return $this;
     }
     public function initDBManager($dbm)
@@ -76,21 +78,11 @@ class DNMVCS extends DNCore
             static::set_exception_handler([static::class,'OnException']); //install excpetion again;
         }
     }
-    protected function runOnce()
-    {
-        if ($this->options['rewrite_map'] || $this->options['route_map']) {
-            DNMVCSExt::G()->dealMapAndRewrite($this->options['rewrite_map'], $this->options['route_map']);
-        }
-    }
+
     public function run()
     {
         if (!empty($this->options['swoole'])) {
             DNSwooleExt::G()->onAppBeforeRun();
-        }
-        
-        if (!$this->has_run_once) {
-            $this->has_run_once=true;
-            $this->runOnce();
         }
        
         if ($this->options['use_super_global']??false || defined('DNMVCS_SUPER_GLOBAL_REPALACER')) {
@@ -144,5 +136,229 @@ class DNMVCS extends DNCore
     {
         $dn_options['swoole']['swoole_server']=$server;
         return static::G()->init($dn_options)->run();
+    }
+}
+trait DNMVCS_Glue
+{
+    //////////////
+    public static function SG()
+    {
+        return DNSuperGlobal::G();
+    }
+    public static function &GLOBALS($k, $v=null)
+    {
+        return DNSuperGlobal::G()->_GLOBALS($k, $v);
+    }
+    
+    public static function &STATICS($k, $v=null)
+    {
+        return DNSuperGlobal::G()->_STATICS($k, $v, 1);
+    }
+    public static function &CLASS_STATICS($class_name, $var_name)
+    {
+        return DNSuperGlobal::G()->_CLASS_STATICS($class_name, $var_name);
+    }
+    
+    /////
+    public static function DB($tag=null)
+    {
+        return DNDBManager::G()->_DB($tag);
+    }
+    public static function DB_W()
+    {
+        return DNDBManager::G()->_DB_W();
+    }
+    public static function DB_R()
+    {
+        return DNDBManager::G()->_DB_R();
+    }
+    /////
+    public function assignRewrite($key, $value=null)
+    {
+        return RouteHookMapAndRewrite::G()->assignRewrite($key,$value);
+    }
+    public function assignRoute($key, $value=null)
+    {
+        return RouteHookMapAndRewrite::G()->assignRewrite($key,$value);
+    }
+}
+trait DNMVCS_SystemWrapper
+{
+    public $cookie_handler=null;
+    public $exception_handler=null;
+    public $shutdown_handler=null;
+
+    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain  = '', bool $secure = false, bool $httponly = false)
+    {
+        return static::G()->_setcookie($key, $value, $expire, $path, $domain, $secure, $httponly);
+    }
+    public static function set_exception_handler(callable $exception_handler)
+    {
+        return static::G()->_set_exception_handler($exception_handler);
+    }
+    public static function register_shutdown_function(callable $callback, ...$args)
+    {
+        return static::G()->_register_shutdown_function($callback, ...$args);
+    }
+    public static function session_start(array $options=[])
+    {
+        return DNSuperGlobal::G()->session_start($options);
+    }
+    public static function session_destroy()
+    {
+        return DNSuperGlobal::G()->session_destroy();
+    }
+    public static function session_set_save_handler(\SessionHandlerInterface $handler)
+    {
+        return DNSuperGlobal::G()->session_set_save_handler($handler);
+    }
+    public function _setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain  = '', bool $secure = false, bool $httponly = false)
+    {
+        if ($this->cookie_handler) {
+            return ($this->cookie_handler)($key, $value, $expire, $path, $domain, $secure, $httponly);
+        }
+        return setcookie($key, $value, $expire, $path, $domain, $secure, $httponly);
+    }
+    public function _exit_system($code=0)
+    {
+        if ($this->exit_handler) {
+            return ($this->exit_handler)($code);
+        }
+        exit($code);
+    }
+    public function _set_exception_handler(callable $exception_handler)
+    {
+        if ($this->exception_handler) {
+            return ($this->exception_handler)($exception_handler);
+        }
+        return set_exception_handler($exception_handler);
+    }
+    public function _register_shutdown_function(callable $callback, ...$args)
+    {
+        if ($this->shutdown_handler) {
+            return ($this->shutdown_handler)($callback, ...$args);
+        }
+        return register_shutdown_function($callback, ...$args);
+    }
+    public function system_wrapper_replace(array $funcs=[])
+    {
+        if (isset($funcs['header'])) {
+            $this->header_handler=$funcs['header'];
+        }
+        if (isset($funcs['setcookie'])) {
+            $this->cookie_handler=$funcs['setcookie'];
+        }
+        if (isset($funcs['exit_system'])) {
+            $this->exit_handler=$funcs['exit_system'];
+        }
+        if (isset($funcs['set_exception_handler'])) {
+            $this->exception_handler=$funcs['set_exception_handler'];
+        }
+        if (isset($funcs['register_shutdown_function'])) {
+            $this->shutdown_handler=$funcs['register_shutdown_function'];
+        }
+        
+        return true;
+    }
+    public static function system_wrapper_get_providers():array
+    {
+        $ret=[
+            'header'				=>[static::class,'header'],
+            'setcookie'				=>[static::class,'setcookie'],
+            'exit_system'			=>[static::class,'exit_system'],
+            'set_exception_handler'	=>[static::class,'set_exception_handler'],
+            'register_shutdown_function' =>[static::class,'register_shutdown_function'],
+            
+            'super_global' =>[DNSuperGloabl::class,'G'],
+        ];
+        return $ret;
+    }
+}
+trait DNMVCS_Instance
+{
+    protected $dynamicClasses=[];
+    protected $dynamicClassesInited=false;
+    
+    public function getBootInstances()
+    {
+        $ret=[
+            DNAutoLoader::class => DNAutoLoader::G(),
+            DNMVCS::class => DNMVCS::G(),
+        ];
+        $ret[static::class]=$this;
+        return $ret;
+    }
+    protected function initDynamicClasses()
+    {
+        $this->dynamicClasses=[
+            DNRoute::class,   	// for bindServerData,and $this->path_info ,and so on
+            DNView::class,   	// for assign
+        ];
+    }
+    public function getDynamicClasses()
+    {
+        if ($this->dynamicClassesInited) {
+            $this->dynamicClassesInited=true;
+            $this->initDynamicClasses();
+        }
+        return $this->dynamicClasses;
+    }
+    public function addDynamicClass($class)
+    {
+        if ($this->dynamicClassesInited) {
+            $this->dynamicClassesInited=true;
+            $this->initDynamicClasses();
+        }
+        return $this->dynamicClasses[]=$class;
+    }
+}
+trait DNMVCS_Misc
+{
+    public static function RecordsetUrl(&$data, $cols_map=[])
+    {
+        return static::G()->_RecordsetUrl($data, $cols_map);
+    }
+    
+    public static function RecordsetH(&$data, $cols=[])
+    {
+        return static::G()->_RecordsetH($data, $cols);
+    }
+    public function _RecordsetUrl(&$data, $cols_map=[])
+    {
+        //need more quickly;
+        if ($data===[]) {
+            return $data;
+        }
+        if ($cols_map===[]) {
+            return $data;
+        }
+        $keys=array_keys($data[0]);
+        array_walk($keys, function (&$val, $k) {
+            $val='{'.$val.'}';
+        });
+        foreach ($data as &$v) {
+            foreach ($cols_map as $k=>$r) {
+                $values=array_values($v);
+                $v[$k]=static::URL(str_replace($keys, $values, $r));
+            }
+        }
+        unset($v);
+        return $data;
+    }
+    public function _RecordsetH(&$data, $cols=[])
+    {
+        if ($data===[]) {
+            return $data;
+        }
+        $cols=is_array($cols)?$cols:array($cols);
+        if ($cols===[]) {
+            $cols=array_keys($data[0]);
+        }
+        foreach ($data as &$v) {
+            foreach ($cols as $k) {
+                $v[$k]=static::H($v[$k], ENT_QUOTES);
+            }
+        }
+        return $data;
     }
 }

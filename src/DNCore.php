@@ -20,8 +20,8 @@ class DNCore
 
     const VERSION = '1.1.0';
     
-    use DNCore_Glue;
     use DNCore_Handler;
+    use DNCore_Glue;
     use DNCore_Redirect;
     use DNCore_SystemWrapper;
     use DNCore_Helper;

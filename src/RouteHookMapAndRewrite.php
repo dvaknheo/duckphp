@@ -7,18 +7,39 @@ class RouteHookMapAndRewrite
     protected $rewrite_map=[];
     protected $route_map=[];
     protected $enable_paramters=false;
-    public function init($rewrite_map, $route_map)
+    public function init($options,$context=null)
     {
-        $this->rewrite_map=$rewrite_map;
-        $this->route_map=$route_map;
-        $this->enable_paramters=DNMVCS::G()->options['enable_paramters'];
+        $this->rewrite_map=array_merge($this->rewrite_map,$options['rewrite_map']??[]);
+        $this->route_map=array_merge($this->route_map,$options['route_map']??[]);
+        
+        if($context){
+            $this->enable_paramters=$context->options['enable_paramters'];
+            $context->addRouteHook([RouteHookMapAndRewrite::G(),'hook'], true);
+            // $context->extendClassMethodByThirdParty(static::class,[],['assignRewrite','assignRoute']);
+        }
     }
+    public function assignRewrite($key, $value=null)
+    {
+        if (is_array($key)&& $value===null) {
+            $this->rewrite_map=array_merge($this->rewrite_map, $key);
+        } else {
+            $this->rewrite_map[$key]=$value;
+        }
+    }
+    public function assignRoute($key, $value=null)
+    {
+        if (is_array($key)&& $value===null) {
+            $this->route_map=array_merge($this->route_map, $key);
+        } else {
+            $this->route_map[$key]=$value;
+        }
+    }
+    
     public function replaceRegexUrl($input_url, $template_url, $new_url)
     {
         if (substr($template_url, 0, 1)!=='~') {
             return null;
         }
-        
         
         $input_path=parse_url($input_url, PHP_URL_PATH);
         $input_get=[];
