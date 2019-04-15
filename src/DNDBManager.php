@@ -1,6 +1,6 @@
 <?php
 namespace DNMVCS;
-
+use DNMVCS\DB\DB;
 class DNDBManager
 {
     use DNSingleton;

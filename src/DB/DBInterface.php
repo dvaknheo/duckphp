@@ -1,5 +1,5 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\DB;
 
 interface DBInterface
 {

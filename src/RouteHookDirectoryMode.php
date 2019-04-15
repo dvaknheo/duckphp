@@ -42,6 +42,9 @@ class RouteHookDirectoryMode
         if (strlen($url)>0 && '/'==$url{0}) {
             return $url;
         };
+        
+        $url=RouteHookMapAndRewrite::G()->filteRewrite($url);
+        
         $document_root=DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT'];
         $base_url=substr($this->basepath, strlen($document_root));
         $input_path=parse_url($url, PHP_URL_PATH);

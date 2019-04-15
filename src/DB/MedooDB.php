@@ -1,6 +1,6 @@
 <?php
 // You need import this file manually.
-namespace DNMVCS;
+namespace DNMVCS\DB;
 
 class MedooFixed extends \Medoo\Medoo
 {
@@ -69,7 +69,7 @@ class MedooDB extends MedooFixed implements DBInterface
         $db_config['dsn']=$dsn_array;
         $db_config['database_type']='mysql';
         
-        return new DNMedoo($db_config);
+        return new MedooDB($db_config);
     }
     public static function CloseDBInstance($db)
     {
