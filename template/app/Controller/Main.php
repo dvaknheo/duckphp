@@ -6,15 +6,14 @@ use MY\Service as S;
 
 class Main
 {
-	public function index()
-	{
-		$data=array();
-		$data['var']=S\TestService::G()->foo();
-		DN::Show($data,'main');
-		
-	}
-	public function i()
-	{
-		phpinfo();
-	}
+    public function index()
+    {
+        $data=array();
+        $data['var']=S\TestService::G()->foo();
+        DN::Show($data, 'main');
+    }
+    public function i()
+    {
+        phpinfo();
+    }
 }

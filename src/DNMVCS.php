@@ -57,7 +57,7 @@ class DNMVCS extends DNCore
         RouteHookMapAndRewrite::G()->init($options,$this);
         return $this;
     }
-    public function initDBManager($dbm)
+    protected function initDBManager($dbm)
     {
         $db_setting_key=$this->options['db_setting_key']??'database_list';
         $database_list=static::Setting($db_setting_key)??[];

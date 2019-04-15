@@ -31,6 +31,7 @@ class DNCore
             'namespace'=>'MY',
             'path_namespace'=>'app',
             'skip_app_autoload'=>false,
+            
             //// controller ////
             'namespace_controller'=>'Controller',
             'base_controller_class'=>null,
@@ -91,7 +92,7 @@ class DNCore
             $options['path']=$path;
         }
         $options['path']=rtrim($options['path'], '/').'/';
-        $options['skip_system_autoload']=true;//isset($options['skip_system_autoload'])?$options['skip_system_autoload']:(class_exists('Composer\Autoload\ClassLoader')?true:false);
+        $options['skip_system_autoload']=true;
         
         $options['on_404_handler']=[static::class,'On404'];
         $options['before_show_handler']=[static::class,'OnBeforeShow'];
@@ -230,6 +231,7 @@ trait DNCore_Handler
     
     public function _OnException($ex)
     {
+        $this->is_in_exception=true;
         //TODO tell me why
         $flag=DNExceptionManager::G()->checkAndRunErrorHandlers($ex, true);
         if ($flag) {

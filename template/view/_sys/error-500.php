@@ -1,15 +1,19 @@
-<?php use \DNMVCS\DNMVCS as DN ;?>
+<?php use \DNMVCS\DNMVCS as DN ;
+
+?>
 500
-<?php if($is_developing){ ?>
+<?php if ($is_developing) {
+    ?>
 <fieldset>
-	<legend>Developing! Error(<?=get_class($ex);?>:<?php echo($ex->getCode());?>)</legend>
-	<?php echo($ex->getMessage());?>
+	<legend>Developing! Error(<?=get_class($ex); ?>:<?php echo($ex->getCode()); ?>)</legend>
+	<?php echo($ex->getMessage()); ?>
 <pre>
-<?=($ex->getFile());?>:<?=($ex->getLine());?>
+<?=($ex->getFile()); ?>:<?=($ex->getLine()); ?>
 
 
 --
-<?php echo($trace);?>
+<?php echo($trace); ?>
 </pre>
 </fieldset>
-<?php }?>
+<?php
+}?>

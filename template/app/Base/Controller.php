@@ -5,5 +5,5 @@ use DNMVCS\DNSingleton;
 
 class Controller
 {
-	use DNSingleton;
+    use DNSingleton;
 }

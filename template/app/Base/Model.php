@@ -5,6 +5,6 @@ use DNMVCS\StrictModel;
 
 class Model
 {
-	use StrictModel;
-	//use DNSingleton;
+    use StrictModel;
+    //use DNSingleton;
 }

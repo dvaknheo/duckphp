@@ -1,7 +1,7 @@
 <?php
 $options=[
-	'swoole'=>[
-		'port'=>8080,
-	],
+    'swoole'=>[
+        'port'=>8080,
+    ],
 ];
 return $options;

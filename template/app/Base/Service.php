@@ -5,5 +5,5 @@ use DNMVCS\StrictService;
 
 class Service
 {
-	use StrictService;
+    use StrictService;
 }

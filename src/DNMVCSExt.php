@@ -44,19 +44,18 @@ class DNMVCSExt
     {
         $ext_options=$dn->options['ext'];
         
-        $options=array_replace_recursive(self::DEFAULT_OPTIONS_EX, $ext_options);
+        $options=array_replace_recursive(static::DEFAULT_OPTIONS_EX, $ext_options);
         
         if ($options['use_common_autoloader']) {
             ProjectCommonAutoloader::G()->init($options)->run();
         }
         
         if ($options['use_common_configer']) {
-            $dn->initConfiger(DNConfiger::G(ProjectCommonConfiger::G()));
+            DNConfiger::G(ProjectCommonConfiger::G())->init($dn->options, $dn);
             $dn->is_dev=DNConfiger::G()->_Setting('is_dev')??$dn->isDev;
-            // 可能要调整测试状态
         }
         if ($options['use_function_view']) {
-            $dn->initView(DNView::G(FunctionView::G()));
+            DNView::G(FunctionView::G())->init($dn->options, $dn);
         }
         if ($options['use_strict_db']) {
             DNDBManager::G()->setBeforeGetDBHandler([static::G(),'checkDBPermission']);
