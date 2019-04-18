@@ -8,6 +8,6 @@ class TestService extends Service
 {
     public function foo()
     {
-        return M\TestModel::G()->foo();
+        return "[" . M\TestModel::G()->foo()."]";
     }
 }

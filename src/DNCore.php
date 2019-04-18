@@ -32,36 +32,35 @@ class DNCore
             'path_namespace'=>'app',
             'skip_app_autoload'=>false,
             
-            //// controller ////
-            'namespace_controller'=>'Controller',
-            'base_controller_class'=>null,
-            'enable_paramters'=>false,
-            'disable_default_class_outside'=>false,
-            'default_method_for_miss'=>null,
-            'enable_post_prefix'=>true,
-            'prefix_post'=>'do_',
-            
             //// properties ////
             'override_class'=>'Base\App',
-            'path_view'=>'view',
-            'path_config'=>'config',
-            'path_lib'=>'lib',
             'is_dev'=>false,
             'platform'=>'',
-            //// actions ////
+            'path_view'=>'view',
+            'path_config'=>'config',
             'skip_view_notice_error'=>true,
-            'enable_cache_classes_in_cli'=>true,
+            'use_inner_error_view'=>false,
             
             //// config ////
+            'setting_file_basename'=>'setting',
             'all_config'=>[],
             'setting'=>[],
-            'setting_file_basename'=>'setting',
+            'reload_platform_and_dev'=>true,
             
             //// error handler ////
             'error_404'=>'_sys/error-404',
             'error_500'=>'_sys/error-500',
             'error_exception'=>'_sys/error-exception',
             'error_debug'=>'_sys/error-debug',
+            
+            //// controller ////
+            'controller_base_class'=>null,
+            'controller_prefix_post'=>'do_',
+                'controller_enable_paramters'=>false,
+                'controller_methtod_for_miss'=>null,
+                'controller_hide_boot_class'=>false,
+                'controller_welcome_class'=>'Main',
+                'controller_index_method'=>'index',
         ];
     const DEFAULT_OPTIONS_EX=[
         ];
@@ -73,7 +72,6 @@ class DNCore
     public $is_in_exception=false;
     
     protected $path=null;
-    protected $path_lib=null;
     
     public static function RunQuickly(array $options=[], callable $after_init=null)
     {
@@ -108,10 +106,16 @@ class DNCore
         $this->options=$options;
         
         $this->path=$this->options['path'];
-        $this->path_lib=$this->path.rtrim($this->options['path_lib'], '/').'/';
+       
         
         $this->is_dev=$this->options['is_dev'];
         $this->platform=$this->options['platform'];
+        if ($this->options['use_inner_error_view']) {
+            $this->options['error_404']=null;
+            $this->options['error_500']=null;
+            $this->options['error_exception']=null;
+            $this->options['error_debug']=null;
+        }
     }
     protected function checkOverride($options)
     {
@@ -161,9 +165,7 @@ class DNCore
         
         ////[[[[
 
-        if ($this->options['enable_cache_classes_in_cli'] && PHP_SAPI==='cli') {
-            DNAutoLoader::G()->cacheClasses();
-        }
+        
         ////]]]]
         
         DNView::G()->init($this->options, $this);
@@ -413,17 +415,6 @@ trait DNCore_Helper
     {
         return static::G()->is_dev;
     }
-    public static function Import($file)
-    {
-        return static::G()->_Import($file);
-    }
-    //// Misc Functions
-    public function _Import($file)
-    {
-        $file=rtrim($file, '.php').'.php';
-        require_once($this->path_lib.$file);
-    }
-
     ////
     public static function H($str)
     {

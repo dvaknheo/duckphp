@@ -84,7 +84,7 @@ class Lazybones
     public function runRoute()
     {
         $path_info=DNRoute::G()->path_info;
-        $enable_paramters=DNRoute::G()->enable_paramters;
+        $enable_paramters=DNRoute::G()->controller_enable_paramters;
         
         $class_blocks=explode('/', $path_info);
         $method=array_pop($class_blocks);

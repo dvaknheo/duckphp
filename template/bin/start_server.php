@@ -80,7 +80,9 @@ function CheckSwoole($args)
     if (!function_exists('swoole_version')) {
         return false;
     }
-    
+    if(!class_exists(SwooleHttpd\SwooleHttpd::class)){
+            return false;
+    }
     return true;
 }
 function RunHttpServer($path, $host, $port)

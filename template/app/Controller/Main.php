@@ -2,13 +2,14 @@
 namespace MY\Controller;
 
 use DNMVCS\DNMVCS as DN;
+use MY\Base\Controller;
 use MY\Service as S;
 
-class Main
+class Main // extends Controller
 {
     public function index()
     {
-        $data=array();
+        $data=[];
         $data['var']=S\TestService::G()->foo();
         DN::Show($data, 'main');
     }

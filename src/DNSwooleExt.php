@@ -109,10 +109,14 @@ class DNSwooleExt
         if (PHP_SAPI!=='cli') {
             return;
         }
+        if (!class_exists(SwooleHttpd::class)) {
+            return;
+        }
         if ($context) {
             $app_class=$context->override_root_class;
             $this->setAppClass($app_class);
         }
+        
         $server_object=SwooleHttpd::G();
         //static::ThrowOn(!class_exists(SwooleHttpd::class), "DNMVCS: You Need SwooleHttpd");
         static::Server($server_object);

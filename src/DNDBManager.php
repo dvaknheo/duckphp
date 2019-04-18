@@ -28,10 +28,9 @@ class DNDBManager
         }
         
         $this->use_strict_db=$options['use_strict_db']??false;
-        
         $this->database_config_list=$options['database_list'];
-        $this->db_create_handler=$options['db_create_handler']?:[DB::class,'CreateDBInstance'];
-        $this->db_close_handler=$options['db_close_handler']?:[DB::class,'CloseDBInstance'];
+        $this->db_create_handler=$options['db_create_handler']??[DB::class,'CreateDBInstance'];
+        $this->db_close_handler=$options['db_close_handler']??[DB::class,'CloseDBInstance'];
         if ($context) {
             $this->initContext($context);
         }

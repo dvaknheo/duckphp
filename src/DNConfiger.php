@@ -13,19 +13,24 @@ class DNConfiger
     public function init($options=[], $context=null)
     {
         $this->path=($options['path']??'').rtrim($options['path_config'], '/').'/';
+        
+        /////////////////
         $this->setting=$options['setting']??[];
         $this->all_config=$options['all_config']??[];
         $this->setting_file_basename=$options['setting_file_basename']??'setting';
-        
+        $this->reload_platform_and_dev=$options['reload_platform_and_dev']??[];
         if ($context) {
             $this->initContext($context);
         }
     }
     protected function initContext($context)
     {
-        $is_dev=$this->_Setting('is_dev');
-        $platform=$this->_Setting('is_dev');
         try {
+            if (!$context->options['reload_platform_and_dev']) {
+                return;
+            }
+            $is_dev=$this->_Setting('is_dev');
+            $platform=$this->_Setting('is_dev');
             if ($is_dev) {
                 $context->is_dev=$is_dev;
             }

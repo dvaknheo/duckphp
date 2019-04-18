@@ -8,4 +8,8 @@ class App extends \DNMVCS\DNMVCS
         parent::init($options);
         return $this;
     }
+    //public function run()
+    //{
+        //return parent::run;
+    //}
 }

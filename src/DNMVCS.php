@@ -17,6 +17,9 @@ class DNMVCS extends DNCore
     use DNMVCS_Misc;
     
     const DEFAULT_OPTIONS_EX=[
+            'path_lib'=>'lib',
+            'enable_cache_classes_in_cli'=>true,
+            
             'use_session_auto_start'=>false,
             'session_auto_start_name'=>'DNSESSION',
             
@@ -27,16 +30,15 @@ class DNMVCS extends DNCore
             'route_map'=>[],
             
             'swoole'=>[],
-
+            
             'extentions'=>[
                 'DNDBManager'=>[
                     'use_db'=>true,
                     'use_strict_db'=>false,
-                    'db_create_handler'=>'',
-                    'db_close_handler'=>'',
+                    'db_create_handler'=>null,
+                    'db_close_handler'=>null,
                     'database_list'=>[],
                 ],
-                
                 'Ext\DBReusePoolProxy'=>false,
                 'Ext\FacadesAutoLoader'=>false,
                 'Ext\FunctionView'=>false,
@@ -49,13 +51,18 @@ class DNMVCS extends DNCore
             ],
             
         ];
+    protected $path_lib=null;
+    
     protected function initAfterOverride($options)
     {
+        if ($this->options['enable_cache_classes_in_cli'] && PHP_SAPI==='cli') {
+            DNAutoLoader::G()->cacheClasses();
+        }
         DNSwooleExt::G()->init($options['swoole']??[], $this);
+        
         parent::initAfterOverride($options);
         DNSystemWrapperExt::G()->init($this->options, $this);
-        
-        //DNDBManager::G()->init($this->options, $this);
+        DNDBManager::G()->init($this->options, $this);
         $this->initExtentions();
         return $this;
     }
@@ -86,6 +93,19 @@ class DNMVCS extends DNCore
     }
     ////
     //for other;
+    public static function Import($file)
+    {
+        return static::G()->_Import($file);
+    }
+    //// Misc Functions
+    public function _Import($file)
+    {
+        if ($this->path_lib===null) {
+            $this->path_lib=$this->path.rtrim($this->options['path_lib'], '/').'/';
+        }
+        $file=rtrim($file, '.php').'.php';
+        require_once($this->path_lib.$file);
+    }
     public function checkDBPermission()
     {
         if (!DNMVCS::Developing()) {

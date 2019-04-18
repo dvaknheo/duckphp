@@ -9,14 +9,14 @@ class RouteHookMapAndRewrite
     use DNSingleton;
     protected $rewrite_map=[];
     protected $route_map=[];
-    protected $enable_paramters=false;
+    protected $controller_enable_paramters=false;
     public function init($options=[], $context=null)
     {
         $this->rewrite_map=array_merge($this->rewrite_map, $options['rewrite_map']??[]);
         $this->route_map=array_merge($this->route_map, $options['route_map']??[]);
         
         if ($context) {
-            $this->enable_paramters=$context->options['enable_paramters'];
+            $this->controller_enable_paramters=$context->options['controller_enable_paramters'];
             $context->addRouteHook([RouteHookMapAndRewrite::G(),'hook'], true);
             // $context->extendClassMethodByThirdParty(static::class,[],['assignRewrite','assignRoute']);
         }
@@ -154,7 +154,7 @@ class RouteHookMapAndRewrite
     protected function getRouteHandelByMap($route, $routeMap)
     {
         $path_info=$route->path_info;
-        $enable_paramters=$this->enable_paramters;
+        $enable_paramters=$this->controller_enable_paramters;
         
         foreach ($routeMap as $pattern =>$callback) {
             if (!$this->matchRoute($pattern, $path_info, $route, $enable_paramters)) {

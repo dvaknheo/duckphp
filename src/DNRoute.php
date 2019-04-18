@@ -10,34 +10,33 @@ class DNRoute
             'namespace'=>'MY',
             'namespace_controller'=>'Controller',
             
-            'base_controller_class'=>null,
-            'enable_paramters'=>false,
-            'disable_default_class_outside'=>false,
-            'default_method_for_miss'=>null,
+            'controller_base_class'=>null,
+            'controller_enable_paramters'=>false,
+            'controller_hide_boot_class'=>false,
+            'controller_methtod_for_miss'=>null,
             
-            'enable_post_prefix'=>true,
-            'prefix_post'=>'do_',
+            'controller_prefix_post'=>'do_',
             
-            'welcome_controller'=>'Main',
-            'default_method'=>'index',
+            'controller_welcome_class'=>'Main',
+            'controller_index_method'=>'index',
             'on_404_handler'=>null,
         ];
     
     public $parameters=[];
     public $urlHandler=null;
     
-    protected $welcome_controller='Main';
-    protected $default_method='index';
+    protected $controller_welcome_class='Main';
+    protected $controller_index_method='index';
     
-    public $enable_paramters=false;
+    public $controller_enable_paramters=false;
     public $namespace_controller='';
-    protected $disable_default_class_outside=false;
-    protected $default_method_for_miss=null;
-    protected $base_controller_class=null;
+    protected $controller_hide_boot_class=false;
+    protected $controller_methtod_for_miss=null;
+    protected $controller_base_class=null;
     public $on_404_handler=null;
     
     protected $enable_post_prefix=true;
-    public $prefix_post='do_';
+    public $controller_prefix_post='do_';
     
     public $calling_path='';
     public $calling_class='';
@@ -94,18 +93,18 @@ class DNRoute
     
     public function init($options=[], $context=null)
     {
-        $options=array_intersect_key(array_merge(static::DEFAULT_OPTIONS, $options), static::DEFAULT_OPTIONS);
+        $options=array_merge(static::DEFAULT_OPTIONS, $options);
         
-        $this->enable_paramters=$options['enable_paramters'];
+        $this->controller_enable_paramters=$options['controller_enable_paramters'];
         
-        $this->enable_post_prefix=$options['enable_post_prefix'];
-        $this->prefix_post=$options['prefix_post'];
+        $this->controller_prefix_post=$options['controller_prefix_post'];
+        $this->enable_post_prefix=$this->controller_prefix_post?true:false;
         
-        $this->disable_default_class_outside=$options['disable_default_class_outside'];
-        $this->default_method_for_miss=$options['default_method_for_miss'];
+        $this->controller_hide_boot_class=$options['controller_hide_boot_class'];
+        $this->controller_methtod_for_miss=$options['controller_methtod_for_miss'];
         
-        $this->welcome_controller=$options['welcome_controller'];
-        $this->default_method=$options['default_method'];
+        $this->controller_welcome_class=$options['controller_welcome_class'];
+        $this->controller_index_method=$options['controller_index_method'];
         $this->on_404_handler=$options['on_404_handler'];
         
         $namespace=$options['namespace'];
@@ -116,9 +115,9 @@ class DNRoute
         $namespace_controller=ltrim($namespace_controller, '\\');
         $this->namespace_controller=$namespace_controller;
         
-        $this->base_controller_class=$options['base_controller_class'];
-        if ($this->base_controller_class && substr($this->base_controller_class, 0, 1)!=='\\') {
-            $this->base_controller_class=$namespace.'\\'.$this->base_controller_class;
+        $this->controller_base_class=$options['controller_base_class'];
+        if ($this->controller_base_class && substr($this->controller_base_class, 0, 1)!=='\\') {
+            $this->controller_base_class=$namespace.'\\'.$this->controller_base_class;
         }
         return $this;
     }
@@ -206,7 +205,7 @@ class DNRoute
     
     protected function getFullClassByAutoLoad($path_class)
     {
-        $path_class=$path_class?:$this->welcome_controller;
+        $path_class=$path_class?:$this->controller_welcome_class;
         $class=$this->namespace_controller.'\\'.str_replace('/', '\\', $path_class);
         if (!class_exists($class)) {
             return null;
@@ -248,11 +247,11 @@ class DNRoute
         $method=array_pop($class_blocks);
         $class_path=implode('/', $class_blocks);
         
-        $this->calling_path=$class_path?$this->path_info:$this->welcome_controller.'/'.$method;
+        $this->calling_path=$class_path?$this->path_info:$this->controller_welcome_class.'/'.$method;
         
-        if ($this->disable_default_class_outside) {
-            if ($class_path===$this->welcome_controller) {
-                $this->error="disable_default_class_outside! {$this->welcome_controller} ";
+        if ($this->controller_hide_boot_class) {
+            if ($class_path===$this->controller_welcome_class) {
+                $this->error="controller_hide_boot_class! {$this->controller_welcome_class} ";
                 return null;
             }
         }
@@ -261,7 +260,7 @@ class DNRoute
         if ($callback) {
             return $callback;
         }
-        if ($this->enable_paramters) {
+        if ($this->controller_enable_paramters) {
             list($full_class, $the_method, $parameters, $calling_path)=$this->getClassMethodAndParameters($class_blocks, $method);
             if ($full_class) {
                 $method=$the_method;
@@ -285,22 +284,22 @@ class DNRoute
         $this->calling_method=$method;
         
         $object=new $full_class();
-        if ($this->base_controller_class && !is_a($obj, $this->base_controller_class)) {
+        if ($this->controller_base_class && !is_a($obj, $this->controller_base_class)) {
             return null;
         }
         return $this->getMethodToCall($object, $method);
     }
     protected function getMethodToCall($obj, $method)
     {
-        $method=$method===''?$this->default_method:$method;
+        $method=$method===''?$this->controller_index_method:$method;
         if (substr($method, 0, 2)=='__') {
             return null;
         }
-        if ($this->enable_post_prefix && $this->request_method==='POST' &&  method_exists($obj, $this->prefix_post.$method)) {
-            $method=$this->prefix_post.$method;
+        if ($this->enable_post_prefix && $this->request_method==='POST' &&  method_exists($obj, $this->controller_prefix_post.$method)) {
+            $method=$this->controller_prefix_post.$method;
         }
-        if ($this->default_method_for_miss && !method_exists($obj, $method)) {
-            $method=$this->default_method_for_miss;
+        if ($this->controller_methtod_for_miss && !method_exists($obj, $method)) {
+            $method=$this->controller_methtod_for_miss;
         }
         if (!is_callable([$obj,$method])) {
             return null;
