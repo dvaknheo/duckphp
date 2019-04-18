@@ -2,54 +2,60 @@ digraph G{
 /* This is a graphviz file */
 graph [rankdir = "LR"];
 
-		
-DNException -> DNThrowQuickly ;
-DNCore -> DNRuntimeState;
-DNCore -> DNCore_Glue;
-DNCore -> DNAutoLoader;
-DNCore -> DNException;
-DNCore -> DNExceptionManager;
-DNCore -> DNView;
-DNCore -> DNConfiger;
-DNCore -> DNRoute;
+subgraph cluster_Core {
+    label = "Main";
+        
+    DNCore -> DNRuntimeState;
+    DNCore -> DNAutoLoader;
+    DNCore -> DNException -> DNThrowQuickly ;
+    DNCore -> DNExceptionManager;
+    DNCore -> DNView;
+    DNCore -> DNConfiger;
+    DNCore -> DNRoute;
+    
+    DNCore [shape=Mdiamond];
+}
+
+
+subgraph cluster_DB {
+    label = "DB";
+
+DB_DB -> DB_DBAdvance;
+DB_DB -> DB_DBInterface;
+DB_MedooDB -> DB_DBAdvance;
+
+}
+subgraph cluster_All {
+    label = "DNMVCS";
 
 DNMVCS -> DNCore;
-DNMVCS -> DNMVCS_Glue;
-DNMVCS -> DNMVCS_Misc;
-DNMVCS -> DNMVCS_SystemWrapper;
-DNMVCS -> DNMVCS_Instance;
-DNMVCS -> DNDBManager;
-DNMVCS -> DNSwooleExt;
-DNMVCS -> DNMVCSExt;
-DNMVCS -> DNSuperGlobal;
+
 DNMVCS -> DNClassExt;
+DNMVCS -> DNSwooleExt;
+DNMVCS -> DNSystemWrapperExt;
+DNMVCS -> DNDBManager -> DB_DB;
+
+DNMVCS [shape=Mdiamond];
+
+}
+subgraph cluster_Ext {
+label = "Ext";
+
+DNMVCS-> Ext_RouteHookMapAndRewrite; 
+DNMVCS-> Ext_ProjectCommonConfiger -> DNConfiger;
+DNMVCS-> Ext_FunctionView  -> DNView;
 
 
-DNDBManager ->DB;
-DB -> DBAdvance;
-DB -> DBInterface;
-MedooDB -> DBAdvance;
+DNMVCS-> Ext_FacadesAutoLoader -> Ext_FacadesBase ;
+DNMVCS-> Ext_RouteHookOneFileMode -> DNSuperGlobal;
+DNMVCS-> Ext_RouteHookDirectoryMode -> DNSuperGlobal;
 
+DNMVCS-> Ext_DBReusePoolProxy;
+DNMVCS-> Ext_FunctionDispatcher;
+DNMVCS-> Ext_ProjectCommonAutoloader;
 
-RouteHookMapAndRewrite -> DNRoute ;
-RouteHookOneFileMode -> DNSuperGlobal;
-RouteHookDirectoryMode -> DNSuperGlobal;
-FacadesAutoLoader -> FacadesBase ;
-FunctionDispatcher -> DNRoute;
-FunctionView -> DNView;
+}
 
-DNMVCSExt-> FacadesAutoLoader;
-
-DNMVCSExt-> RouteHookMapAndRewrite;
-DNMVCSExt-> RouteHookOneFileMode;
-DNMVCSExt-> RouteHookDirectoryMode;
-DNMVCSExt-> DBReusePoolProxy;
-DNMVCSExt-> FunctionDispatcher;
-DNMVCSExt-> FunctionView;
-DNMVCSExt-> ProjectCommonAutoloader;
-DNMVCSExt-> ProjectCommonConfiger;
-
-ProjectCommonConfiger -> DNConfiger  ;
 
 DNSingleton;
 Pager;
