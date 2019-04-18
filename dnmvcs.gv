@@ -32,7 +32,7 @@ DNMVCS -> DNCore;
 
 DNMVCS -> DNClassExt;
 DNMVCS -> DNSwooleExt;
-DNMVCS -> DNSystemWrapperExt;
+DNMVCS -> DNSystemWrapperExt -> DNSuperGlobal;
 DNMVCS -> DNDBManager -> DB_DB;
 
 DNMVCS [shape=Mdiamond];
@@ -41,18 +41,21 @@ DNMVCS [shape=Mdiamond];
 subgraph cluster_Ext {
 label = "Ext";
 
-DNMVCS-> Ext_RouteHookMapAndRewrite; 
+
 DNMVCS-> Ext_ProjectCommonConfiger -> DNConfiger;
 DNMVCS-> Ext_FunctionView  -> DNView;
-
-
-DNMVCS-> Ext_FacadesAutoLoader -> Ext_FacadesBase ;
-DNMVCS-> Ext_RouteHookOneFileMode -> DNSuperGlobal;
 DNMVCS-> Ext_RouteHookDirectoryMode -> DNSuperGlobal;
+DNMVCS-> Ext_RouteHookOneFileMode -> DNSuperGlobal;
+
+
 
 DNMVCS-> Ext_DBReusePoolProxy;
 DNMVCS-> Ext_FunctionDispatcher;
 DNMVCS-> Ext_ProjectCommonAutoloader;
+
+DNMVCS-> Ext_RouteHookMapAndRewrite; 
+DNMVCS-> Ext_FacadesAutoLoader -> Ext_FacadesBase ;
+
 
 }
 
