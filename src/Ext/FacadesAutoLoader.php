@@ -1,5 +1,5 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\Ext;
 
 use DNMVCS\DNSingleton;
 
@@ -48,7 +48,7 @@ class FacadesAutoLoader
         $basename=array_pop($blocks);
         $namespace=implode('\\', $blocks);
         
-        $code="namespace $namespace{ class $basename extends \\DNMVCS\\FacadesBase{} }";
+        $code="namespace $namespace{ class $basename extends \\DNMVCS\\Ext\\FacadesBase{} }";
         eval($code);
     }
     public function getFacadesCallback($class, $name)

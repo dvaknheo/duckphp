@@ -1,5 +1,5 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\Ext;
 
 use DNMVCS\DNConfiger;
 

@@ -18,19 +18,20 @@ class DNDBManager
     protected $db_close_handler=null;
     
     protected $before_get_db_handler=null;
+    
+    protected $use_strict_db=false;
     public function init($options=[], $context=null)
     {
-        if (!$options['use_db']) {
+        $use_db=$options['use_db']??true;
+        if (!$use_db) {
             return;
         }
         
-        $db_create_handler=$options['db_create_handler']?:[DB::class,'CreateDBInstance'];
-        $db_close_handler=$options['db_close_handler']?:[DB::class,'CloseDBInstance'];
+        $this->use_strict_db=$options['use_strict_db']??false;
         
         $this->database_config_list=$options['database_list'];
-        
-        $this->db_create_handler=$db_create_handler;
-        $this->db_close_handler=$db_close_handler;
+        $this->db_create_handler=$options['db_create_handler']?:[DB::class,'CreateDBInstance'];
+        $this->db_close_handler=$options['db_close_handler']?:[DB::class,'CloseDBInstance'];
         if ($context) {
             $this->initContext($context);
         }
@@ -42,7 +43,7 @@ class DNDBManager
         
         $this->database_config_list=array_merge($context->options['database_list'], $database_list);
         
-        if ($context->options['use_strict_db']) {
+        if ($this->use_strict_db) {
             $this->setBeforeGetDBHandler([$context::G(),'checkDBPermission']);
         }
         $context->addBeforeShowHandler([static::class,'CloseAllDB']);

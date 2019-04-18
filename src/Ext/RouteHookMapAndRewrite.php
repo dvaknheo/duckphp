@@ -1,8 +1,8 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\Ext;
 
 use DNMVCS\DNSingleton;
-use DNMVCS\RouteHookMapAndRewrite;
+use DNMVCS\DNSuperGlobal;
 
 class RouteHookMapAndRewrite
 {

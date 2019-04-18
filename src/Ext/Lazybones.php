@@ -1,10 +1,10 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\Ext;
 
 use DNMVCS\DNSingleton;
 use DNMVCS\DNRoute;
 
-class DNLazybones
+class Lazybones
 {
     use DNSingleton;
     const DEFAULT_OPTIONS=[

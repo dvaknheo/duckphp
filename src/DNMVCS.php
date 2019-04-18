@@ -3,7 +3,7 @@
 //OK，Lazy
 namespace DNMVCS;
 
-use SwooleHttpd\SwooleHttpd;
+use DNMVCS\Ext;
 
 class DNMVCS extends DNCore
 {
@@ -19,11 +19,7 @@ class DNMVCS extends DNCore
     const DEFAULT_OPTIONS_EX=[
             'use_session_auto_start'=>false,
             'session_auto_start_name'=>'DNSESSION',
-            'use_strict_db'=>false,
             
-            'use_db'=>true,
-            'db_create_handler'=>'',
-            'db_close_handler'=>'',
             'db_setting_key'=>'database_list',
             'database_list'=>[],
             
@@ -31,13 +27,25 @@ class DNMVCS extends DNCore
             'route_map'=>[],
             
             'swoole'=>[],
-            'extentions'=>[],
-            'ext'=>[
-                //'DNSwooleExt'
-                //'DNSystemWrapperExt'
-                //'Ext\DNSwooleExt'
-                //'Ext\DNSwooleExt'
+
+            'extentions'=>[
+                'DNDBManager'=>[
+                    'use_db'=>true,
+                    'use_strict_db'=>false,
+                    'db_create_handler'=>'',
+                    'db_close_handler'=>'',
+                    'database_list'=>[],
+                ],
                 
+                'Ext\DBReusePoolProxy'=>false,
+                'Ext\FacadesAutoLoader'=>false,
+                'Ext\FunctionView'=>false,
+                'Ext\Lazybones'=>false,
+                'Ext\ProjectCommonAutoloader'=>false,
+                'Ext\ProjectCommonConfiger'=>false,
+                'Ext\RouteHookDirectoryMode'=>false,
+                'Ext\RouteHookOneFileMode'=>false,
+                'Ext\RouteHookMapAndRewrite'=>true,
             ],
             
         ];
@@ -47,28 +55,33 @@ class DNMVCS extends DNCore
         parent::initAfterOverride($options);
         DNSystemWrapperExt::G()->init($this->options, $this);
         
-        if ($this->options['use_session_auto_start']) {
-            DNMVCS::session_start(['name'=>$this->options['session_auto_start_name']]);
-        }
-        DNDBManager::G()->init($this->options, $this);
+        //DNDBManager::G()->init($this->options, $this);
         $this->initExtentions();
         return $this;
     }
     protected function initExtentions()
     {
-        DNLazybones::G()->init($this->options, $this);
-        RouteHookMapAndRewrite::G()->init($this->options, $this);
-        foreach ($this->options['extentions'] as $ext =>$v) {
-            //
+        foreach ($this->options['extentions'] as $ext =>$options) {
+            if ($options===false) {
+                continue;
+            }
+            $options=($options===true)?$this->options:$options;
+            $options=is_string($options)?$this->options[$options]:$options;
+            if (substr($ext, 0, 1)!=='\\') {
+                $ext=__NAMESPACE__.'\\'.$ext;
+            }
+            $ext::G()->init($options, $this);
         }
+        return;
     }
-
 
     public function run()
     {
         DNSwooleExt::G()->onBeforeRun();
         DNSystemWrapperExt::G()->onBeforeRun();
-        
+        if ($this->options['use_session_auto_start']) {
+            DNMVCS::session_start(['name'=>$this->options['session_auto_start_name']]);
+        }
         return parent::run();
     }
     ////
@@ -185,11 +198,11 @@ trait DNMVCS_Glue
     /////
     public function assignRewrite($key, $value=null)
     {
-        return RouteHookMapAndRewrite::G()->assignRewrite($key, $value);
+        return Ext\RouteHookMapAndRewrite::G()->assignRewrite($key, $value);
     }
     public function assignRoute($key, $value=null)
     {
-        return RouteHookMapAndRewrite::G()->assignRewrite($key, $value);
+        return Ext\RouteHookMapAndRewrite::G()->assignRewrite($key, $value);
     }
 }
 trait DNMVCS_SystemWrapper

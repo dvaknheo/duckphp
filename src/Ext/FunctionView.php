@@ -1,7 +1,8 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\Ext;
 
 use DNMVCS\DNSingleton;
+use DNMVCS\DNView;
 
 class FunctionView extends DNView
 {
