@@ -16,6 +16,24 @@ class DNConfiger
         $this->setting=$options['setting']??[];
         $this->all_config=$options['all_config']??[];
         $this->setting_file_basename=$options['setting_file_basename']??'setting';
+        
+        if ($context) {
+            $this->initContext($context);
+        }
+    }
+    protected function initContext($context)
+    {
+        $is_dev=$this->_Setting('is_dev');
+        $platform=$this->_Setting('is_dev');
+        try {
+            if ($is_dev) {
+                $context->is_dev=$is_dev;
+            }
+            if ($platform) {
+                $context->is_dev=$platform;
+            }
+        } catch (\Throwable $ex) {
+        }
     }
     public function _Setting($key)
     {

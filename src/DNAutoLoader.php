@@ -26,7 +26,7 @@ class DNAutoLoader
         }
         $this->is_inited=true;
         
-        $options=array_intersect_key(array_merge(static::DEFAULT_OPTIONS, $options), static::DEFAULT_OPTIONS);
+        $options=array_merge(static::DEFAULT_OPTIONS, $options);
         
         if (!isset($options['path']) || !$options['path']) {
             $path=realpath(getcwd().'/../');

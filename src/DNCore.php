@@ -65,16 +65,15 @@ class DNCore
         ];
     const DEFAULT_OPTIONS_EX=[
         ];
-    public $skip_override=false;
-    public $root_class='';
+    public $override_root_class='';
     public $options=[];
     
     public $is_dev=false;
     public $platform='';
+    public $is_in_exception=false;
     
     protected $path=null;
     protected $path_lib=null;
-    protected $stop_show_exception=false;
     
     public static function RunQuickly(array $options=[], callable $after_init=null)
     {
@@ -109,17 +108,17 @@ class DNCore
         $this->options=$options;
         
         $this->path=$this->options['path'];
-        
         $this->path_lib=$this->path.rtrim($this->options['path_lib'], '/').'/';
+        
         $this->is_dev=$this->options['is_dev'];
         $this->platform=$this->options['platform'];
     }
     protected function checkOverride($options)
     {
-        if ($this->skip_override) {
+        if ($this->override_root_class) {
             return null;
         }
-        $this->root_class=static::class;
+        $this->override_root_class=static::class;
         
         $override_class=isset($options['override_class'])?$options['override_class']:static::DEFAULT_OPTIONS['override_class'];
         $namespace=isset($options['namespace'])?$options['namespace']:static::DEFAULT_OPTIONS['namespace'];
@@ -137,30 +136,31 @@ class DNCore
         }
         return static::G($override_class::G());
     }
-
+    public function getOverrideRootClass()
+    {
+        return $this->override_root_class;
+    }
     //@override me
     public function init($options=[], $context=null)
     {
         $options=$this->adjustOptions($options);
-        DNAutoLoader::G()->init($options)->run();
+        DNAutoLoader::G()->init($options, $this)->run();
         
         $object=$this->checkOverride($options);
         if ($object) {
-            $object->skip_override=true;
-            $object->root_class=static::class;
+            $object->override_root_class=static::class;
             return $object->init($options);
         }
+        $this->initOptions($options);
         return $this->initAfterOverride($options);
     }
     protected function initAfterOverride($options)
     {
-        $this->initOptions($options);
         DNExceptionManager::G()->init($this->options, $this);
         DNConfiger::G()->init($this->options, $this);
         
         ////[[[[
-        $this->is_dev=DNConfiger::G()->_Setting('is_dev')??$this->is_dev;
-        $this->platform=DNConfiger::G()->_Setting('platform')??$this->platform;
+
         if ($this->options['enable_cache_classes_in_cli'] && PHP_SAPI==='cli') {
             DNAutoLoader::G()->cacheClasses();
         }

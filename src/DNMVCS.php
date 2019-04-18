@@ -85,6 +85,7 @@ class DNMVCS extends DNCore
         return parent::run();
     }
     ////
+    //for other;
     public function checkDBPermission()
     {
         if (!DNMVCS::Developing()) {

@@ -110,7 +110,7 @@ class DNSwooleExt
             return;
         }
         if ($context) {
-            $app_class=$context->root_class;
+            $app_class=$context->override_root_class;
             $this->setAppClass($app_class);
         }
         $server_object=SwooleHttpd::G();
