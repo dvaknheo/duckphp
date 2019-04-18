@@ -1,6 +1,8 @@
 <?php
 namespace DNMVCS;
 
+use DNMVCS\DNSingleton;
+
 class FacadesAutoLoader
 {
     use DNSingleton;
@@ -11,8 +13,15 @@ class FacadesAutoLoader
     protected $is_loaded=false;
     protected $is_inited=false;
     
-    public function init($namespace_facades='', $facades_map=[], $namespace='')
+    public function init($options=[], $context)
     {
+        $namespace='';
+        if ($context) {
+            $namespace=$dn->options['namespace'];
+        }
+        $namespace_facades=$options['facades_namespace'];
+        $facades_namespace=$options['facades_map'];
+        
         if (substr($namespace_facades, 0, 1)!=='\\') {
             $namespace_facades=$namespace.'\\'.$namespace_facades;
         }
@@ -20,15 +29,13 @@ class FacadesAutoLoader
         $this->prefix=$namespace_facades.'\\Facade\\';
         
         $this->is_init=true;
-        return $this;
-    }
-    public function run()
-    {
-        if ($this->is_loaded) {
-            return;
+        
+        if ($context) {
+            $this->run();
         }
-        $this->is_loaded=true;
         spl_autoload_register([$this,'_autoload']);
+        
+        return $this;
     }
     
     public function _autoload($class)

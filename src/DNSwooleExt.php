@@ -82,7 +82,7 @@ class DNSwooleExt
     
     protected $with_http_handler_root=false;
     protected $appClass;
-    
+    protected $is_inited=false;
     public static function Server($server=null)
     {
         return DNSwooleExtServerHolder::G($server);
@@ -138,9 +138,14 @@ class DNSwooleExt
         $options['http_handler']=[$this,'runSwoole'];
         
         static::Server()->init($options, null);
+        $this->is_inited=true;
+        return $this;
     }
-    public function onAppBeforeRun()
+    public function onBeforeRun()
     {
+        if (!$this->is_inited) {
+            return;
+        }
         $cid = \Swoole\Coroutine::getuid();
         if ($cid>0) {
             return;

@@ -1,13 +1,23 @@
 <?php
 namespace DNMVCS;
 
+use DNMVCS\DNSingleton;
+
 class RouteHookDirectoryMode
 {
     use DNSingleton;
-
-    public function init($options)
+    const DEFAULT_OPTIONS=[
+        'mode_dir_index_file'=>'',
+        'mode_dir_use_path_info'=>true,
+        'mode_dir_key_for_module'=>true,
+        'mode_dir_key_for_action'=>true,
+    ];
+    public function init($options=[], $context=null)
     {
         $this->basepath=$options['mode_dir_basepath'];
+        if ($context) {
+            $context->addRouteHook([static::G(),'hook']);
+        }
     }
     protected function adjustPathinfo($path_info, $document_root)
     {

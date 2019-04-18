@@ -17,6 +17,10 @@ class DNMVCS extends DNCore
     use DNMVCS_Misc;
     
     const DEFAULT_OPTIONS_EX=[
+            'use_session_auto_start'=>false,
+            'session_auto_start_name'=>'DNSESSION',
+            'use_strict_db'=>false,
+            
             'use_db'=>true,
             'db_create_handler'=>'',
             'db_close_handler'=>'',
@@ -26,75 +30,81 @@ class DNMVCS extends DNCore
             'rewrite_map'=>[],
             'route_map'=>[],
             
-            'ext'=>[],
             'swoole'=>[],
+            'extentions'=>[],
+            'ext'=>[
+                //'DNSwooleExt'
+                //'DNSystemWrapperExt'
+                //'Ext\DNSwooleExt'
+                //'Ext\DNSwooleExt'
+                
+            ],
+            
         ];
-    protected $has_run_once=false;
-    
-    public static function _EmptyFunction()
+    protected function initAfterOverride($options)
     {
-        return;
+        DNSwooleExt::G()->init($options['swoole']??[], $this);
+        parent::initAfterOverride($options);
+        DNSystemWrapperExt::G()->init($this->options, $this);
+        
+        if ($this->options['use_session_auto_start']) {
+            DNMVCS::session_start(['name'=>$this->options['session_auto_start_name']]);
+        }
+        DNDBManager::G()->init($this->options, $this);
+        $this->initExtentions();
+        return $this;
     }
-    protected function initSwoole($options)
+    protected function initExtentions()
     {
-        if (!empty($options['swoole'])) {
-            DNSwooleExt::G()->init($options['swoole'], $this);
+        DNLazybones::G()->init($this->options, $this);
+        RouteHookMapAndRewrite::G()->init($this->options, $this);
+        foreach ($this->options['extentions'] as $ext =>$v) {
+            //
         }
     }
 
-    protected function initAfterOverride($options)
-    {
-        $this->initSwoole($options);
-        parent::initAfterOverride($options);
-        
-        $this->initDBManager(DNDBManager::G());
-        $this->initSystemWrapper();
-        
-        if (!empty($this->options['ext'])) {
-            DNMVCSExt::G()->init($this);
-        }
-        DNLazybones::G()->init($options,$this);
-        RouteHookMapAndRewrite::G()->init($options,$this);
-        return $this;
-    }
-    protected function initDBManager($dbm)
-    {
-        $db_setting_key=$this->options['db_setting_key']??'database_list';
-        $database_list=static::Setting($db_setting_key)??[];
-        
-        $this->options['database_list']=array_merge($this->options['database_list'], $database_list);
-        $dbm->init($this->options, $this);
-    }
-    protected function initSystemWrapper()
-    {
-        if (!defined('DNMVCS_SYSTEM_WRAPPER_INSTALLER')) {
-            return;
-        }
-        $callback=DNMVCS_SYSTEM_WRAPPER_INSTALLER;
-        $funcs=($callback)();
-        $this->system_wrapper_replace($funcs);
-        
-        if (isset($funcs['set_exception_handler'])) {
-            static::set_exception_handler([static::class,'OnException']); //install excpetion again;
-        }
-    }
 
     public function run()
     {
-        if (!empty($this->options['swoole'])) {
-            DNSwooleExt::G()->onAppBeforeRun();
-        }
-       
-        if ($this->options['use_super_global']??false || defined('DNMVCS_SUPER_GLOBAL_REPALACER')) {
-            if (defined('DNMVCS_SUPER_GLOBAL_REPALACER')) {
-                $func=DNMVCS_SUPER_GLOBAL_REPALACER;
-                DNSuperGlobal::G($func());
-            }
-            $this->addDynamicClass(DNSuperGlobal::class);
-            DNRoute::G()->bindServerData(DNSuperGlobal::G()->_SERVER);
-        }
+        DNSwooleExt::G()->onBeforeRun();
+        DNSystemWrapperExt::G()->onBeforeRun();
         
         return parent::run();
+    }
+    ////
+    public function checkDBPermission()
+    {
+        if (!DNMVCS::Developing()) {
+            return;
+        }
+        
+        $backtrace=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 10);
+        $caller_class='';
+        $base_class=get_class(DNMVCS::G());
+        foreach ($backtrace as $i=>$v) {
+            if ($v['class']===$base_class) {
+                $caller_class=$backtrace[$i+1]['class'];
+                break;
+            }
+        }
+        $namespace=DNMVCS::G()->options['namespace'];
+        $namespace_controller=DNMVCS::G()->options['namespace_controller'];
+        $default_controller_class=DNMVCS::G()->options['default_controller_class'];
+        $namespace_controller.='\\';
+        do {
+            if ($caller_class==$default_controller_class) {
+                DNMVCS::ThrowOn(true, "DB Can not Call By Controller");
+            }
+            if (substr($caller_class, 0, strlen($namespace_controller))==$namespace_controller) {
+                DNMVCS::ThrowOn(true, "DB Can not Call By Controller");
+            }
+            if (substr($caller_class, 0, strlen("$namespace\\Service\\"))=="$namespace\\Service\\") {
+                DNMVCS::ThrowOn(true, "DB Can not Call By Service");
+            }
+            if (substr($caller_class, 0-strlen("Service"))=="Service") {
+                DNMVCS::ThrowOn(true, "DB Can not Call By Service");
+            }
+        } while (false);
     }
     //// RunMode
     public static function RunWithoutPathInfo($options=[])
@@ -175,11 +185,11 @@ trait DNMVCS_Glue
     /////
     public function assignRewrite($key, $value=null)
     {
-        return RouteHookMapAndRewrite::G()->assignRewrite($key,$value);
+        return RouteHookMapAndRewrite::G()->assignRewrite($key, $value);
     }
     public function assignRoute($key, $value=null)
     {
-        return RouteHookMapAndRewrite::G()->assignRewrite($key,$value);
+        return RouteHookMapAndRewrite::G()->assignRewrite($key, $value);
     }
 }
 trait DNMVCS_SystemWrapper

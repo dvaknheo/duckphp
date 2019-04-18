@@ -1,13 +1,18 @@
 <?php
 namespace DNMVCS;
 
+use DNMVCS\DNSingleton;
+
 class ProjectCommonAutoloader
 {
     use DNSingleton;
     protected $path_common;
-    public function init($options)
+    public function init($options=[], $context=null)
     {
         $this->path_common=isset($options['fullpath_project_share_common'])??'';
+        if ($context) {
+            $this->run();
+        }
         return $this;
     }
     public function run()

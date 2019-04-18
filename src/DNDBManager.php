@@ -1,6 +1,9 @@
 <?php
 namespace DNMVCS;
+
+use DNMVCS\DNSingleton;
 use DNMVCS\DB\DB;
+
 class DNDBManager
 {
     use DNSingleton;
@@ -20,9 +23,12 @@ class DNDBManager
         if (!$options['use_db']) {
             return;
         }
-        $this->database_config_list=$options['database_list'];
+        
         $db_create_handler=$options['db_create_handler']?:[DB::class,'CreateDBInstance'];
         $db_close_handler=$options['db_close_handler']?:[DB::class,'CloseDBInstance'];
+        
+        $this->database_config_list=$options['database_list'];
+        
         $this->db_create_handler=$db_create_handler;
         $this->db_close_handler=$db_close_handler;
         if ($context) {
@@ -31,6 +37,14 @@ class DNDBManager
     }
     protected function initContext($context)
     {
+        $db_setting_key=$context->options['db_setting_key']??'database_list';
+        $database_list=$context::Setting($db_setting_key)??[];
+        
+        $this->database_config_list=array_merge($context->options['database_list'], $database_list);
+        
+        if ($context->options['use_strict_db']) {
+            $this->setBeforeGetDBHandler([$context::G(),'checkDBPermission']);
+        }
         $context->addBeforeShowHandler([static::class,'CloseAllDB']);
     }
     public function setDBHandler($db_create_handler, $db_close_handler=null)

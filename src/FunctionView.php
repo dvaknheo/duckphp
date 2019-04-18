@@ -1,6 +1,8 @@
 <?php
 namespace DNMVCS;
 
+use DNMVCS\DNSingleton;
+
 class FunctionView extends DNView
 {
     public $prefix='view_';
@@ -12,7 +14,7 @@ class FunctionView extends DNView
     public function init($options=[], $context=null)
     {
         $ret=parent::init($options, $context);
-        $options=DNMVCS::G()->options;
+        $options=$context->options;
         $this->head_callback=$options['function_view_head']??'';
         $this->foot_callback=$options['function_view_foot']??'';
         return $ret;

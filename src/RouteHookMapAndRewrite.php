@@ -1,18 +1,21 @@
 <?php
 namespace DNMVCS;
 
+use DNMVCS\DNSingleton;
+use DNMVCS\RouteHookMapAndRewrite;
+
 class RouteHookMapAndRewrite
 {
     use DNSingleton;
     protected $rewrite_map=[];
     protected $route_map=[];
     protected $enable_paramters=false;
-    public function init($options,$context=null)
+    public function init($options=[], $context=null)
     {
-        $this->rewrite_map=array_merge($this->rewrite_map,$options['rewrite_map']??[]);
-        $this->route_map=array_merge($this->route_map,$options['route_map']??[]);
+        $this->rewrite_map=array_merge($this->rewrite_map, $options['rewrite_map']??[]);
+        $this->route_map=array_merge($this->route_map, $options['route_map']??[]);
         
-        if($context){
+        if ($context) {
             $this->enable_paramters=$context->options['enable_paramters'];
             $context->addRouteHook([RouteHookMapAndRewrite::G(),'hook'], true);
             // $context->extendClassMethodByThirdParty(static::class,[],['assignRewrite','assignRoute']);

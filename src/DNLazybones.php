@@ -1,6 +1,9 @@
 <?php
 namespace DNMVCS;
 
+use DNMVCS\DNSingleton;
+use DNMVCS\DNRoute;
+
 class DNLazybones
 {
     use DNSingleton;

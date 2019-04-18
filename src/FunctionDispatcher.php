@@ -1,6 +1,8 @@
 <?php
 namespace DNMVCS;
 
+use DNMVCS\DNSingleton;
+
 //TODO don't do so more;
 class FunctionDispatcher
 {
@@ -9,17 +11,22 @@ class FunctionDispatcher
     protected $path_info;
     public $prefix='action_';
     public $default_callback='action_index';
+    public function init($options=[], $context=null)
+    {
+        if ($context) {
+            $context->addRouteHook([static::G(),'hook']);
+        }
+    }
     public function hook($route)
     {
         $this->path_info=$route->path_info;
-        $flag=$this->runRoute();
+        $flag=$this->runRoute($route);
         if ($flag) {
             $route->stopRunDefaultHandler();
         }
     }
-    public function runRoute()
+    public function runRoute($route)
     {
-        $route=DNRoute::G();
         $post=($route->request_method==='POST')?$route->prefix_post:'';
         $callback=$this->prefix.$post.$this->path_info;
         $path_info=$this->path_info?:'index';
@@ -42,8 +49,6 @@ class FunctionDispatcher
             $method=$this->prefix.$method;
             $callback=$method;
             if (!is_callable($callback)) {
-                var_dump('xx'.$callback);
-
                 $callback=null;
             }
         }

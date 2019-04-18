@@ -1,17 +1,23 @@
 <?php
 namespace DNMVCS;
 
+use DNMVCS\DNSingleton;
+use DNMVCS\RouteHookMapAndRewrite;
+
 class RouteHookOneFileMode
 {
     use DNSingleton;
 
     public $key_for_action='_r';
     public $key_for_module='';
-    public function init($key_for_action, $key_for_module='')
+    public function init($options=[], $context=null)
     {
-        $this->key_for_action=$key_for_action;
-        $this->key_for_module=$key_for_module;
+        $this->key_for_action=$options['key_for_action'];
+        $this->key_for_module=$options['key_for_module'];
         
+        if ($context) {
+            $context->addRouteHook([static::G(),'hook']);
+        }
         return $this;
     }
     public function onURL($url=null)

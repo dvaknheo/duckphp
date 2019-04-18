@@ -1,6 +1,8 @@
 <?php
 namespace DNMVCS;
 
+use DNMVCS\DNConfiger;
+
 class ProjectCommonConfiger extends DNConfiger
 {
     public $fullpath_config_common;

@@ -1,6 +1,8 @@
 <?php
 namespace DNMVCS;
 
+use DNMVCS\DNSingleton;
+
 class FacadesBase
 {
     use DNSingleton;

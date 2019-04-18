@@ -1,6 +1,10 @@
 <?php
 namespace DNMVCS;
 
+use DNMVCS\DNSingleton;
+use DNMVCS\DNDBManager;
+use SplQueue;
+
 class DBReusePoolProxy
 {
     use DNSingleton;
@@ -18,16 +22,22 @@ class DBReusePoolProxy
     public $timeout=5;
     public function __construct()
     {
-        $this->db_queue_write=new \SplQueue();
-        $this->db_queue_write_time=new \SplQueue();
-        $this->db_queue_read=new \SplQueue();
-        $this->db_queue_read_time=new \SplQueue();
+        $this->db_queue_write=new SplQueue();
+        $this->db_queue_write_time=new SplQueue();
+        $this->db_queue_read=new SplQueue();
+        $this->db_queue_read_time=new SplQueue();
     }
-    public function init($max_length=10, $timeout=5, $dbm=null)
+    public function init($options=[], $context=null)
     {
-        $this->max_length=$max_length;
-        $this->timeout=$timeout;
+        $this->max_length=$options['db_reuse_size'];
+        $this->timeout=$options['db_reuse_timeout'];
+        
+        $dbm=$options['db_reuse_timeout']??null;
+        
+        $dbm=$dbm??DNDBManager::G();
+        $dbm=is_string($dbm)?$dbm::G():$dbm;
         $this->proxy($dbm);
+        
         return $this;
     }
     public function setDBHandler($db_create_handler, $db_close_handler=null)
