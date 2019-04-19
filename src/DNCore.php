@@ -196,7 +196,7 @@ trait DNCore_Handler
     {
         return static::G()->_OnException($ex);
     }
-    public function OnDevErrorHandler($errno, $errstr, $errfile, $errline)
+    public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline)
     {
         return static::G()->_OnDevErrorHandler($errno, $errstr, $errfile, $errline);
     }

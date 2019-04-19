@@ -1,118 +1,126 @@
 # DNMVCS 教程
 ## 快速入门
 假定不管什么原因，上级选用了 DNMVCS 这个框架，需要快速入门
+
 最快的方式是从 github 下载 DNMVCS。
+
 到所在目录之下运行
+
 ```bash
 php template/bin/start_server.php
 ```
-浏览器中打开 http://127.0.0.1:8080/ 得到欢迎页 即可。
+浏览器中打开 http://127.0.0.1:8080/ 得到下面欢迎页就表明 OK 了
 ```text
-////
+Don't run the template file directly
+Hello DNMVCS
+
+Time Now is [2019-04-19T21:36:06+08:00]
+For More Take the DNMVCS-FullTest (TODO)
 ```
-OK 了
+当然，你也可以用 composer 安装
 
-## 任务
-
-http://127.0.0.1:8080/test/done  显示当前时间的任务。
-然后对照目录结构我们要加个 test/done 显示当前时间
-
-### Controller控制器
-写 /about/foo 控制器对应的内容
-
-```php
-<?php
-namespace MY\Controller;
-// ::/app/Controller/about.php
-
-class test
-{
-    public function done()
-    {
-        $data=[];
-        $data['var']=MiscService::G()->foo();
-        \DNMVCS\DNMVCS::Show($data);
-    }
-}
-
+```bash
+composer require dnmvcs/framework
 ```
+然后类似的执行命令
+```bash
+php bin/start_server.php
+```
+发布的时候，把网站目录指向 public/index.php 就行。
+
+### 第一个任务
+路径： http://127.0.0.1:8080/test/done  
+作用显示当前时间的任务。
+
+对照目录结构我们要加个 test/done 显示当前时间
+
+都在各代码段里注释了文件所在相对工程文件夹的位置
+
 ### View 视图
 先做出要显示的样子。
-::/view/about/foo.php
 ```php
+<?php // view/test/done.php ?>
 <!doctype html><html><body>
 <h1>test</h1>
 <div><?=$var ?></div>
 </body></html>
 ```
-### Service 服务
-业务逻辑层。
-
-::/app/Service/MiscService.php
+### Controller控制器
+写 /test/done 控制器对应的内容
 ```php
 <?php
-class MiscService
+// app/Controller/test.php
+namespace MY\Controller;
+use MY\Service\MiscService;
+use DNMVCS\DNMVCS as DN;
+class test //extends \MY\Base\Controller
 {
-    use \DNMVCS\DNSingleton;
+    public function done()
+    {
+        $data=[];
+        $data['var']=DN::H(MiscService::G()->foo());
+        DN::Show($data);
+    }
+}
+```
+控制器里，我们处理外部数据，不做业务逻辑，业务逻辑在 Service 层做。
+
+* [DN::H](#DNMVCS::H) 函数 用于编码
+* [DN::Show](#DNMVCS::Show) 函数 用于显示视图
+
+### Service 服务
+业务逻辑层。
+```php
+<?php
+// app/Service/MiscService.php
+namespace MY\Service;
+use MY\Model\NoDB_MiscModel;
+use DNMVCS\DNSingleton;
+
+class MiscService // extends MY\Base\Service
+{
+    use DNSingleton;
     public function foo()
     {
         $time=NoDB_MiscModel::G()->getTime();
-        $ret='Now is '.$time;
+        $ret="<".$time.">";
         return $ret;
     }
 }
 ```
+这里调用了 NoDB_MiscModel 
+
 ### Model 模型
 
 完成 NoDB_MiscModel
 Model 类是实现基本功能的
 这里用 NoDB_ 表示和没使用到数据库
 
-::/app/Model/NoDB_MiscModel.php
 ```php
 <?php
-class NoDB_MiscModel
+// app/Model/NoDB_MiscModel.php
+namespace MY\Model;
+use DNMVCS\DNSingleton;
+class NoDB_MiscModel // extends MY\Base\Model
 {
-    use \DNMVCS\DNSingleton;
+    use DNSingleton;
     public function getTime()
     {
         return DATE(DATE_ATOM);
     }
 }
 ```
+### 最后显示结果
+```text
+test
 
-## 常见任务：URL 地址
-
-如果不是全站 PATH_INFO 模式， web 框架获取某个 URL 地址是常见任务。
-
-DNMVCS::URL($url) 函数就是用于这个任务。
-
-使得你不必关系是用在 /index.php 或者 /somefolder/index.php 里用 PATH_INFO 。
-
-DNMVCS::URL('about/foo') 都会得到正确的 URL 地址。
-
-
-
-
-直接在 github 上下载本项目，
-```bash
-php template/bin/start_server.php
+<2019-04-19T22:21:49+08:00>
 ```
 
-
-你也可以 composer 安装
-
-
-```bash
-composer require dnmvcs/framework
-```
-把网站目录指向 public/index.php 就行。
-
-可我不是全站的。甚至，我都没法 path_info —— 没关系，你这个需求是有些诡异但可以解决。
 
 我们接下来会逐步学习：
 
-## 从入门到精通
+### 从入门到精通
 1. 学习 DNCore 的配置
 2. 调用 DNCore 类的静态方法实现目的
 3. 调用 DNCore 类的动态方法实现目的
@@ -125,20 +133,6 @@ composer require dnmvcs/framework
 9. 调用扩展类，组件类的动态方法实现目的
 10. 继承接管，特定类实现目的
 11. 魔改，硬改 DNMVCS 的代码实现目的
-
-## 安装
-
-### composer 安装
-
-```bash
-composer require dnmvcs/framework
-php bin/start_server.php
-```
-
-浏览器中打开 http://127.0.0.1:8080/ 得到欢迎页
-
-
-然后试着添加例子。
 
 
 
@@ -159,7 +153,7 @@ php bin/start_server.php
 |   |       TestModel.php   // 测试模型
 |   \---Service             // 服务目录
 |           TestService.php // 测试 Service
-+---bin                     // 命令行程序放这里
++---bin
 |       start_server.php    // 启动服务
 +---config                  // 配置文件放这里
 |       config.php          // 配置，目前是空数组
@@ -173,13 +167,13 @@ php bin/start_server.php
 |           error-500.php   // 500 出错了
 |           error-debug.php // 调试的时候显示的视图
 |           error-exception.php // 出异常了，和 500 不同是 这里是未处理的异常。
-\---public                  // 网站目录约定放这里
-        index.php           // 主页
+\---public                  // 网站目录
+        index.php           // 主页，入口页
 ```
 这些结构能精简么？
 可以，你可以一个目录都不要。
 
-## 第二步，跑 hello world
+## 第二步
 
 ```php
 <?php
@@ -262,7 +256,7 @@ if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
 
     'all_config'=>[],               合并入的 config; // 当你不想读取配置的时候从这里拿
     'setting'=>[],                  合并入的 setting; // 当你不想读取配置的时候从这里拿设置
-    'reload_platform_and_dev'=>true,
+    'reload_platform_and_dev'=>true,    从设置里重载 is_dev 和 platform
 
     'error_404'=>'_sys/error-404',
     'error_500'=>'_sys/error-500',
@@ -368,14 +362,14 @@ DNMVCS 整合其他框架：
 原理是由其他框架去处理 404。
 其他框架整合 DNMVCS ,则在相应处理 404 的地方开始
 ### 静态函数参考
-#### Show
+#### DNMVCS::Show
 Show($data=[]],$view=null)
 
     显示视图
     视图的文件在 ::view 目录底下。你可以通过选项 path_view 调整
     为什么数据放前面，DN::Show(get_defined_vars());把 controller 的变量都整合进来，并用默认路径作为 view 文件。
     实质调用 DNView::G()->_Show();
-#### ShowBlock
+#### DNMVCS::ShowBlock
 ShowBlock($view,$data=null)
 
     展示一块 view ，用于 View 里嵌套其他 View 或调试的场合。
@@ -383,7 +377,7 @@ ShowBlock($view,$data=null)
     注意这里是 $view 在前面， $data 在后面，和 show 函数不一致哦。
     如果 $data===null 那么会继承上级的 view 数据
     实质调用 DNView::G()->_ShowBlock();
-#### URL
+#### DNMVCS::URL
 URL($url)
 
     获得调整路由后的url地址 
@@ -393,7 +387,7 @@ URL($url)
     如果是 / 开始的 URL ，将是从网站根目录开始。
 
     实质调用 DNRoute::G()->_URL();
-#### Parameters
+#### DNMVCS::Parameters
 Parameters()
 
     获得路径切片
@@ -403,67 +397,67 @@ Parameters()
 
     实质调用 DNRoute::G()->_Parameters();
 
-#### Setting
+#### DNMVCS::Setting
 Setting($key)
 
     读取设置
     设置在 ::/config/setting.php 里，php 格式
     配置非敏感信息，放在版本管理中，设置是敏感信息，不保存在版本管理中
     实质调用 DNConfig::G()->_Setting();
-#### Config
+#### DNMVCS::Config
 Config($key,$file_basename='config')
 
     读取配置 
     配置放在 config/$file_basename.php 里，php 格式
     配置是放在非敏感信息，放在版本管理中
     实质调用 DNConfig::G()->_Config();
-#### LoadConfig
+#### DNMVCS::LoadConfig
 LoadConfig($file_basename)
 
     加载其他配置
     如果很多配置文件，手动加载其他配置
     实质调用 DNConfig::G()->LoadConfig();
-#### Platform
+#### DNMVCS::Platform
 Platform()
 
     返回当前环境平台，默认为空默认读设置里的 platform 
-#### Developing
+#### DNMVCS::Developing
 Developing()
 
     判断是否在开发状态。默认读设置里的 is_dev ，
-#### H
+#### DNMVCS::H
 编码函数
 
-#### ExitJson
+#### DNMVCS::ExitJson
 ExitJson($ret)
 
     打印 json_encode($ret) 并且退出。
     这里的 json 为人眼友好模式。
 
     实质调用 static::G()->_ExitJson();
-#### ExitRedirect
+#### DNMVCS::ExitRedirect
 ExitRedirect($url)
 
     跳转到另一个url 并且退出。
     实质调用 static::G()->_ExitRedirect();
-#### ExitRouteTo
+#### DNMVCS::ExitRouteTo
 ExitRouteTo($url)
 
     跳转到 URL()函数包裹的 url。
     应用到 static::G()->ExitRedirect(); 和 DNRoute::G()->URL();
     高级开发者注意，这是静态方法里处理的，子类化需要注意
-#### Exit404
+#### DNMVCS::Exit404
 Exit404()
 
-    404 退出， 实质依次调用 
+    404 退出， 实质依次调用 static::On404, static::exit_system();
     高级开发者注意，这是静态方法里处理的，子类化需要注意
-#### IsRunning
+#### DNMVCS::IsRunning
 IsRunning
 
     判断是否已经开始运行。
     实质调用 DNRuntimeState::G()->isRunning();
 
-#### ThrowOn
+#### DNMVCS::ThrowOn
 ThrowOn($flag,$message,$code=0);
 
     如果 flag 成立则抛出 DNException 异常。
@@ -711,3 +705,7 @@ DNMVCS 实现 override_class 的 静态方法，是用 DNClassExt 来实现。
 ## 扩展
 
 init($options=[],$context=null);
+
+### 索引
+
+* xx
