@@ -1,5 +1,5 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\Toolkit;
 
 class Toolkit
 {
