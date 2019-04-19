@@ -69,7 +69,7 @@ trait DNClassExt
         }
         $this->assignDynamicMethod($methods);
     }
-    public function DumpExtMethods($return=false)
+    public static function DumpExtMethods($return=false)
     {
         return static::G()->_dumpExtMethods($return);
     }
