@@ -38,15 +38,17 @@ class DNMVCS extends DNCore
                     'db_close_handler'=>null,
                     'database_list'=>[],
                 ],
+                'Ext\Lazybones'=>true,
+                'Ext\RouteHookMapAndRewrite'=>true,
+                'Ext\DIExt'=>true,
+                
                 'Ext\DBReusePoolProxy'=>false,
                 'Ext\FacadesAutoLoader'=>false,
                 'Ext\FunctionView'=>false,
-                'Ext\Lazybones'=>false,
                 'Ext\ProjectCommonAutoloader'=>false,
                 'Ext\ProjectCommonConfiger'=>false,
                 'Ext\RouteHookDirectoryMode'=>false,
                 'Ext\RouteHookOneFileMode'=>false,
-                'Ext\RouteHookMapAndRewrite'=>true,
             ],
             
         ];

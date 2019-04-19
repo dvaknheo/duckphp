@@ -69,12 +69,65 @@ trait DNClassExt
         }
         $this->assignDynamicMethod($methods);
     }
-    public function dumpExtMethods()
+    public function DumpExtMethods($return=false)
     {
-        $ret=[
-            'static_methods'=>$this->static_methods,
-            'dynamic_methods'=>$this->dynamic_methods,
-       ];
+        return static::G()->_dumpExtMethods($return);
+    }
+    protected function get_callback_dump_desc($callback)
+    {
+        do {
+            if (is_array($callback)) {
+                $method=$callback[1]??'';
+                $method=$callback[1]??'';
+                if (is_object($callback[0])) {
+                    $class=get_class($callback[0]);
+                    $callback_desc="{$class}->{$method}";
+                    break;
+                }
+                if (is_string($callback[0])) {
+                    if (substr($callback[0], -3)==='::G') {
+                        $class=substr($callback[0], 0, -3);
+                        $object=$class::G();
+                        $real_class=get_class($object);
+                        $real_class=$real_class===$class?'':$real_class;
+                        $callback_desc="{$class}::G($real_class)->{$method}";
+                        ; // DNMVCS::G()->foo;
+                        break;
+                    }
+                    $class=$callback[0]??'';
+                    $callback_desc="{$class}::{$method}";
+                    break;
+                }
+                $callback_desc=var_export($callback, true);
+                break;
+            }
+            if (is_ojbect($callback)) {
+                $callback_desc="object(".get_class($callback).")";
+                break;
+            }
+            $callback_desc=var_export($callback, true);
+        } while (false);
+        return $callback_desc;
+    }
+    public function _dumpExtMethods($return=false)
+    {
+        $class=get_class($this);
+        $ret="\n<pre>\nDumpExtMethods: ($class) [[[[\n";
+        $ret.="---- static ----\n";
+
+        foreach ($this->static_methods as $name=>$callback) {
+            $callback_desc=$this->get_callback_dump_desc($callback);
+            $ret.="{$name} => {$callback_desc}\n";
+        }
+        $ret.="---- dynamic ----\n";
+        foreach ($this->dynamic_methods as $name=>$callback) {
+            $callback_desc=$this->get_callback_dump_desc($callback);
+            $ret.="{$name} => {$callback_desc}\n";
+        }
+        $ret.="]]]]</pre>\n";
+        if (!$return) {
+            echo $ret;
+        }
         return $ret;
     }
 }

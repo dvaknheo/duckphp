@@ -3,7 +3,7 @@ namespace DNMVCS\Ext;
 
 use DNMVCS\DNSingleton;
 
-class DI
+class DIExt
 {
     use DNSingleton;
 
