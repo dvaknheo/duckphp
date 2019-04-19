@@ -108,7 +108,7 @@ class DNMVCS extends DNCore
     }
     public function checkDBPermission()
     {
-        if (!DNMVCS::Developing()) {
+        if (!static::Developing()) {
             return;
         }
         
@@ -121,22 +121,22 @@ class DNMVCS extends DNCore
                 break;
             }
         }
-        $namespace=DNMVCS::G()->options['namespace'];
-        $namespace_controller=DNMVCS::G()->options['namespace_controller'];
-        $default_controller_class=DNMVCS::G()->options['default_controller_class'];
+        $namespace=$this->options['namespace'];
+        $namespace_controller=$this->options['namespace_controller'];
+        $default_controller_class=$this->options['default_controller_class'];
         $namespace_controller.='\\';
         do {
             if ($caller_class==$default_controller_class) {
-                DNMVCS::ThrowOn(true, "DB Can not Call By Controller");
+                static::ThrowOn(true, "DB Can not Call By Controller");
             }
             if (substr($caller_class, 0, strlen($namespace_controller))==$namespace_controller) {
-                DNMVCS::ThrowOn(true, "DB Can not Call By Controller");
+                static::ThrowOn(true, "DB Can not Call By Controller");
             }
             if (substr($caller_class, 0, strlen("$namespace\\Service\\"))=="$namespace\\Service\\") {
-                DNMVCS::ThrowOn(true, "DB Can not Call By Service");
+                static::ThrowOn(true, "DB Can not Call By Service");
             }
             if (substr($caller_class, 0-strlen("Service"))=="Service") {
-                DNMVCS::ThrowOn(true, "DB Can not Call By Service");
+                static::ThrowOn(true, "DB Can not Call By Service");
             }
         } while (false);
     }
