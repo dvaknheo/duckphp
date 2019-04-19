@@ -708,4 +708,6 @@ MyBaseClass::G()->foo2();
 
 DNMVCS 实现 override_class 的 静态方法，是用 DNClassExt 来实现。
 
+## 扩展
+
 init($options=[],$context=null);

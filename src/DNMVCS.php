@@ -8,9 +8,8 @@ use DNMVCS\Ext;
 class DNMVCS extends DNCore
 {
     const VERSION = '1.1.0';
-    
     use DNClassExt;
-    use DNDI;
+    
     use DNMVCS_Glue;
     use DNMVCS_SystemWrapper;
     use DNMVCS_Instance;

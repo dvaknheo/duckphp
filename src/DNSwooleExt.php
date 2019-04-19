@@ -66,13 +66,13 @@ class DnSwooleExtReuserHolder
     public function init($options=[], $context=null)
     {
         //for 404 re-in;
-        $class=get_class(([$this->appClass,'G'])());
-        if ($class!==static::class) {
+        $class=$this->appClass;
+        if (get_class($class::G())!==static::class) {
             return $this;
         }
         DNSwooleExt::Server()->resetInstances();
         
-        $ret=([$this->appClass,'G'])()->init($options);
+        $ret=$class::G()->init($options);
         return $ret;
     }
 }
@@ -98,9 +98,7 @@ class DNSwooleExt
     
     public function setAppClass($class)
     {
-        $app=([$class,'G'])();
-        
-        static::App($app);
+        static::App($class::G());
         
         $this->appClass=$class;
     }
@@ -124,7 +122,7 @@ class DNSwooleExt
         $app=static::App();
         
         $instances=$app->getBootInstances();
-        $flag=([get_class($server),'ReplaceDefaultSingletonHandler'])();
+        $flag=$server::ReplaceDefaultSingletonHandler();
         if (!$flag) {
             return;
         }

@@ -8,23 +8,35 @@ trait DNClassExt
     
     public static function __callStatic($name, $arguments)
     {
-        $self=static::G();
-        $class=get_class($self);
+        $static=static::G();
+        $class=get_class($static);
         if ($class!==static::class && method_exists($class, $name)) {
             return call_user_func_array([$class,$name], $arguments);
         }
-        if (isset($self->static_methods[$name]) && is_callable($self->static_methods[$name])) {
-            return call_user_func_array($self->static_methods[$name], $arguments);
+        ///////
+        $callback=$static->static_methods[$name]??null;
+        if (is_array($callback) && is_string($callback[0]) && substr($callback[0], -3)==='::G') {
+            $class=substr($callback[0], 0, -3);
+            $object=$class::G();
+            $callback=[$object,$callback[1]];
         }
-        throw new \Error("Call to undefined method ".static::class ."::$name()");
+        if (!is_callable($callback)) {
+            throw new \BadMethodCallException("Call to undefined static method ".static::class ."::$name()");
+        }
+        return call_user_func_array($callback, $arguments);
     }
     public function __call($name, $arguments)
     {
-        if (isset($this->dynamic_methods[$name]) && is_callable($this->dynamic_methods[$name])) {
-            return call_user_func_array($this->dynamic_methods[$name], $arguments);
+        $callback=$this->dynamic_methods[$name]??null;
+        if (is_array($callback) && is_string($callback[0]) && substr($callback[0], -3)==='::G') {
+            $class=substr($callback[0], 0, -3);
+            $object=$class::G();
+            $callback=[$object,$callback[1]];
         }
-        
-        throw new \Error("Call to undefined method ".static::class ."::$name()");
+        if (!is_callable($callback)) {
+            throw new \BadMethodCallException("Call to undefined dynamic method ".static::class ."::$name()");
+        }
+        return call_user_func_array($callback, $arguments);
     }
     public function assignStaticMethod($key, $value=null)
     {
@@ -42,21 +54,15 @@ trait DNClassExt
             $this->dynamic_methods[$key]=$value;
         }
     }
-    public function extendClassMethodByThirdParty($object_or_class, array $StaticMethodList, array $DynamicMethodList=[])
+    public function extendClassMethodByThirdParty($class, array $StaticMethodList, array $DynamicMethodList=[])
     {
-        if (is_object($object_or_class)) {
-            $class=get_class($object_or_class);
-            $object=$object_or_class;
-        } else {
-            $class=$object_or_class;
-            $object=$class::G();
-        }
-        
+        $object=$class.'::G';
         $methods=[];
         foreach ($StaticMethodList as $method) {
             $methods[$method]=[$class,$method];
         }
         $this->assignStaticMethod($methods);
+        ////
         $methods=[];
         foreach ($DynamicMethodList as $method) {
             $methods[$method]=[$object,$method];

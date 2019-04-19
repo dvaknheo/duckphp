@@ -29,11 +29,11 @@ class DNSystemWrapperExt
     }
     public function onBeforeRun()
     {
-        if ($this->use_super_global) {
-            if (defined('DNMVCS_SUPER_GLOBAL_REPALACER')) {
-                $func=DNMVCS_SUPER_GLOBAL_REPALACER;
-                DNSuperGlobal::G($func());
-            }
+        if (defined('DNMVCS_SUPER_GLOBAL_REPALACER')) {
+            $func=DNMVCS_SUPER_GLOBAL_REPALACER;
+            DNSuperGlobal::G($func());
+        }
+        if (defined('DNMVCS_SUPER_GLOBAL_REPALACER') || $this->use_super_global) {
             DNMVCS::G()->addDynamicClass(DNSuperGlobal::class);
             DNRoute::G()->bindServerData(DNSuperGlobal::G()->_SERVER);
         }
