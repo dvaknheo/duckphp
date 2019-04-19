@@ -18,13 +18,13 @@ class DNDBManager
     protected $db_close_handler=null;
     
     protected $before_get_db_handler=null;
-    
     protected $use_strict_db=false;
+    
     public function init($options=[], $context=null)
     {
         $use_db=$options['use_db']??true;
         if (!$use_db) {
-            return;
+            return $this;
         }
         
         $this->use_strict_db=$options['use_strict_db']??false;
@@ -32,10 +32,11 @@ class DNDBManager
         $this->db_create_handler=$options['db_create_handler']??[DB::class,'CreateDBInstance'];
         $this->db_close_handler=$options['db_close_handler']??[DB::class,'CloseDBInstance'];
         if ($context) {
-            $this->initContext($context);
+            $this->initContext($options, $context);
         }
+        return $this;
     }
-    protected function initContext($context)
+    protected function initContext($options, $context)
     {
         $db_setting_key=$context->options['db_setting_key']??'database_list';
         $database_list=$context::Setting($db_setting_key)??[];
