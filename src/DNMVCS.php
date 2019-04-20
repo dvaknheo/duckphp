@@ -62,8 +62,10 @@ class DNMVCS extends DNCore
         DNSwooleExt::G()->init($options['swoole']??[], $this);
         
         parent::initAfterOverride($options);
+        
         DNSystemWrapperExt::G()->init($this->options, $this);
         DNDBManager::G()->init($this->options, $this);
+        DNStrict::G()->init($this->options, $this);
         $this->initExtentions();
         return $this;
     }
@@ -169,7 +171,6 @@ trait DNMVCS_Glue
     {
         return DNSuperGlobal::G()->_CLASS_STATICS($class_name, $var_name);
     }
-    
     /////
     public static function DB($tag=null)
     {
@@ -191,6 +192,23 @@ trait DNMVCS_Glue
     public function assignRoute($key, $value=null)
     {
         return Ext\RouteHookMapAndRewrite::G()->assignRewrite($key, $value);
+    }
+    /////
+    public static function CheckStrictDB($object, $tag)
+    {
+        return DNStrict::CheckStrictDB($object);
+    }
+    public function checkStrictComponent($object)
+    {
+        return DNStrict::G()->checkStrictComponent($object);
+    }
+    public function checkStrictService($object)
+    {
+        return DNStrict::G()->checkStrictService($object);
+    }
+    public function checkStrictModel($object)
+    {
+        return DNStrict::G()->checkStrictModel($object);
     }
 }
 trait DNMVCS_SystemWrapper

@@ -173,7 +173,7 @@ test
 这些结构能精简么？
 可以，你可以一个目录都不要。
 
-## 第二步
+## 导读
 
 ```php
 <?php
@@ -236,32 +236,32 @@ if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
 这是基础的，后面还有一大堆的配置。
 总之，这里很明白了。
 
-    'path'=>null,                   根目录
-    'namespace'=>'MY',              命名空间
-    'path_namespace'=>'app',        autoload 的命名空间
-    'skip_app_autoload'=>false,     如果你有其他加载方式，设置为 false;
+'path'=>null,                   根目录
+'namespace'=>'MY',              命名空间
+'path_namespace'=>'app',        autoload 的命名空间
+'skip_app_autoload'=>false,     如果你有其他加载方式，设置为 false;
 
-    'override_class'=>'Base\App',  这项后面再说
+'override_class'=>'Base\App',  这项后面再说
 
-    'is_dev'=>false,                配置是否是在开发状态 * 设置文件的  is_dev 会覆盖
-    'platform'=>'',                 配置开发平台 * 设置文件的  platform 会覆盖
+'is_dev'=>false,                配置是否是在开发状态 * 设置文件的  is_dev 会覆盖
+'platform'=>'',                 配置开发平台 * 设置文件的  platform 会覆盖
 
-    'path_view'=>'view',            视图的目录，基于 path 配置
-    'path_config'=>'config',        配置的目录，基于 path 配置
+'path_view'=>'view',            视图的目录，基于 path 配置
+'path_config'=>'config',        配置的目录，基于 path 配置
 
-    'skip_view_notice_error'=>true, view 视图里忽略 notice 错误。
-    'use_inner_error_view'=>false,  忽略  error_* 配置，使用内部的错误视图
+'skip_view_notice_error'=>true, view 视图里忽略 notice 错误。
+'use_inner_error_view'=>false,  忽略  error_* 配置，使用内部的错误视图
 
-    'setting_file_basename'=>'setting', 如果这项为空，那就不读设置文件了。
+'setting_file_basename'=>'setting', 如果这项为空，那就不读设置文件了。
 
-    'all_config'=>[],               合并入的 config; // 当你不想读取配置的时候从这里拿
-    'setting'=>[],                  合并入的 setting; // 当你不想读取配置的时候从这里拿设置
-    'reload_platform_and_dev'=>true,    从设置里重载 is_dev 和 platform
+'all_config'=>[],               合并入的 config; // 当你不想读取配置的时候从这里拿
+'setting'=>[],                  合并入的 setting; // 当你不想读取配置的时候从这里拿设置
+'reload_platform_and_dev'=>true,    从设置里重载 is_dev 和 platform
 
-    'error_404'=>'_sys/error-404',
-    'error_500'=>'_sys/error-500',
-    'error_exception'=>'_sys/error-exception',
-    'error_debug'=>'_sys/error-debug',
+'error_404'=>'_sys/error-404',
+'error_500'=>'_sys/error-500',
+'error_exception'=>'_sys/error-exception',
+'error_debug'=>'_sys/error-debug',
 
 #### override_class
 注意到 app/Base/App.php 这个文件 MY\Base\App extends DNMVCS\DNMVCS;
@@ -287,10 +287,14 @@ DNMVCS::Show($data,$view=null) 用于 View 的显示， $view 为空的时候，
 *进阶，接管 View .*
 
 ### 常见任务：读取配置和设置
-DNMVCS::Setting($key) 用于读取 config/setting.php 的 $key 。
-DNMVCS::Config($key,$basename='config')用于读取 config/$basename.php  $key 。
-DNMVCS::LoadConfig($basename='config')用于载入 config/$basename.php 的内容。
+[DNMVCS::Setting($key)](#DNMVCS::Setting) 用于读取 config/setting.php 的 $key 。
+
+[DNMVCS::Config($key,$basename='config')](#DNMVCS::Config) 用于读取 config/$basename.php  $key 。
+
+[DNMVCS::LoadConfig($basename='config')](#DNMVCS::LoadConfig)用于载入 config/$basename.php 的内容。
+
 设置是敏感信息。而配置是非敏感
+
 *进阶，更多配置和设置相关 .*
 ### 常见任务： URL 重写
 $options['rewrite_map'] 用于重写 url . 以 ~ 开始的表示正则，同时省略 / 必须转义的。 用 $ 代替 \ 捕获。
@@ -335,6 +339,7 @@ DNMVCS 的默认数据库是 DB ,DB 功能很小，兼容 Medoo 这个数据库�
 
 ### 常见任务： HTML 编码辅助函数
 * DNMVCS::H($str)   Html编码. 更专业的有 Zend\Escaper。
+
 * DNMVCS::RecordsetH 对一个 RecordSet 加 html 编码
 * DNMVCS::RecordsetURL  对  RecordSet 加 url 转换
 
@@ -362,8 +367,14 @@ DNMVCS 整合其他框架：
 原理是由其他框架去处理 404。
 其他框架整合 DNMVCS ,则在相应处理 404 的地方开始
 ### 静态函数参考
+#### DNMVCS::RunQuickly
+RunQuickly($options=[],$func_after_init=null)
+    
+    快速运行
+    等价于 DNMVCS::G()->init($options)->run();
+    但 $func_after_init 将会在 init 之后运行
 #### DNMVCS::Show
-Show($data=[]],$view=null)
+Show($data=[],$view=null)
 
     显示视图
     视图的文件在 ::view 目录底下。你可以通过选项 path_view 调整
@@ -402,7 +413,8 @@ Setting($key)
 
     读取设置
     设置在 ::/config/setting.php 里，php 格式
-    配置非敏感信息，放在版本管理中，设置是敏感信息，不保存在版本管理中
+    设置是敏感信息，不保存在版本管理中。
+    配置非敏感信息，放在版本管理中.
     实质调用 DNConfig::G()->_Setting();
 #### DNMVCS::Config
 Config($key,$file_basename='config')
@@ -464,55 +476,58 @@ ThrowOn($flag,$message,$code=0);
     减少代码量。如果没这个函数，你要写
     if($flag){throw new DNException($message,$code);}
     如果是你自己的异常类 ，可以 use DNMVCS\DNThrowQuickly 实现 ThrowOn 静态方法。
-#### 事件静态方法
-
+#### DNMVCS::OnBeforeShow
 OnBeforeShow()
 
     在输出 view 开始前处理.
     默认处理空模板为当前类和方法，默认关闭数据库。
     因为如果请求时间很长，页面数据量很大。没关闭数据库会导致连接被占用。
+#### DNMVCS::OnShow404
 OnShow404()
 
     404 回调。这里没传各种参数，需要的时候从外部获取。
+#### DNMVCS::OnException
 OnException($ex)
 
     发生未处理异常的处理函数。显示 exception 或 500 页面
+#### DNMVCS::OnDevErrorHandler
 OnDevErrorHandler($errno, $errstr, $errfile, $errline)
 
     处理 Notice ， Decraped 错误。
-####  header
+#### DNMVCS::header
+header()
     同系统的 header 方法
     注意判断了非 web 状态下不使用
     实际调用 static::G()->_header()
-####  exit_system
+#### DNMVCS::exit_system
+exit()
     代替 exit();
     实际调用 static::G()->exit_sytesm()
 
-    
 ### 动态函数说明
 
-#### init
+#### DNMVCS->init
 init($options=[])
 
     初始化，这是最经常子类化完成自己功能的方法。
     你可以扩展这个类，添加工程里的其他初始化。
-#### run
+#### DNMVCS->run
 run()
 
     开始路由，执行。这个方法拆分出来是为了特定需求, 比如只是为了加载一些类。
     比如 swoole 下不同协程的运行。
     如果404 则返回false;其他返回 true
-#### assignPathNamespace
+#### DNMVCS->assignPathNamespace
 assignPathNamespace($path,$namespace=null)
 
     分配自动加载的命名空间的目录。
     实质调用 DNAutoLoader::G()->assignPathNamespace();
-#### addRouteHook
+#### DNMVCS->addRouteHook
 addRouteHook($hook,$prepend=false,$once=true)
 
     下钩子扩展 route 方法
     实质调用 DNRoute::G()->addRouteHook
-#### getRouteCallingMethod
+#### DNMVCS->getRouteCallingMethod
 getRouteCallingMethod()
 
     获得路由中正在调用的方法。
@@ -520,7 +535,7 @@ getRouteCallingMethod()
     也适用于重写URL后判断是否是直接访问
 
     实质调用 DNRoute::G()->getRouteCallingMethod
-#### setViewWrapper
+#### DNMVCS->setViewWrapper
 setViewWrapper($head_file=null,$foot_file=null)
 
     给输出 view 加页眉页脚 
@@ -529,24 +544,24 @@ setViewWrapper($head_file=null,$foot_file=null)
     有时候你需要 setViewWrapper(null,null) 清理页眉页脚
 
     实质调用 DNView::G()->setViewWrapper
-#### assignViewData
+#### DNMVCS->assignViewData
 assignViewData($key,$value=null)
 
     给 view 分配数据，
     这函数用于控制器构造函数添加统一视图数据
     实质调用 DNView::G()->assignViewData
-#### assignExceptionHandler
+#### DNMVCS->assignExceptionHandler
 assignExceptionHandler($classes,$callback=null)
 
     分配特定异常回调。
     用于控制器里控制特定错误类型。
     实质调用 DNExceptionManager::G()->assignExceptionHandler
-#### setMultiExceptionHandler
+#### DNMVCS->setMultiExceptionHandler
 setMultiExceptionHandler(array $classes,$callback)
 
     多个特定异常回调用于多个异常统一到同一个回调的情况。
     实质调用 DNExceptionManager::G()->setMultiExceptionHandler
-#### setDefaultExceptionHandler
+#### DNMVCS->setDefaultExceptionHandler
 setDefaultExceptionHandler($calllback)
 
     接管默认的异常处理，所有异常都归回调管，而不是显示 500 页面。
@@ -753,25 +768,27 @@ DNMVCS 实现 override_class 的 静态方法，是用 DNClassExt 来实现。
 * [DNMVCS::setcookie](#DNMVCS::setcookie)
 * [DNMVCS::system_wrapper_get_providers](#DNMVCS::system_wrapper_get_providers)
 ### 动态函数
-* [DNMVCS::addBeforeShowHandler](#DNMVCS::addBeforeShowHandler)
-* [DNMVCS::addDynamicClass](#DNMVCS::addDynamicClass)
-* [DNMVCS::addRouteHook](#DNMVCS::addRouteHook)
-* [DNMVCS::assignDynamicMethod](#DNMVCS::assignDynamicMethod)
-* [DNMVCS::assignExceptionHandler](#DNMVCS::assignExceptionHandler)
-* [DNMVCS::assignPathNamespace](#DNMVCS::assignPathNamespace)
-* [DNMVCS::assignRewrite](#DNMVCS::assignRewrite)
-* [DNMVCS::assignRoute](#DNMVCS::assignRoute)
-* [DNMVCS::assignStaticMethod](#DNMVCS::assignStaticMethod)
-* [DNMVCS::assignViewData](#DNMVCS::assignViewData)
-* [DNMVCS::checkDBPermission](#DNMVCS::checkDBPermission)
-* [DNMVCS::extendClassMethodByThirdParty](#DNMVCS::extendClassMethodByThirdParty)
-* [DNMVCS::getBootInstances](#DNMVCS::getBootInstances)
-* [DNMVCS::getDynamicClasses](#DNMVCS::getDynamicClasses)
-* [DNMVCS::getOverrideRootClass](#DNMVCS::getOverrideRootClass)
-* [DNMVCS::getRouteCallingMethod](#DNMVCS::getRouteCallingMethod)
-* [DNMVCS::init](#DNMVCS::init)
-* [DNMVCS::run](#DNMVCS::run)
-* [DNMVCS::setDefaultExceptionHandler](#DNMVCS::setDefaultExceptionHandler)
-* [DNMVCS::setMultiExceptionHandler](#DNMVCS::setMultiExceptionHandler)
-* [DNMVCS::setViewWrapper](#DNMVCS::setViewWrapper)
-* [DNMVCS::system_wrapper_replace](#DNMVCS::system_wrapper_replace)
+* [DNMVCS->addBeforeShowHandler](#DNMVCS->addBeforeShowHandler)
+* [DNMVCS->addDynamicClass](#DNMVCS->addDynamicClass)
+* [DNMVCS->addRouteHook](#DNMVCS->addRouteHook)
+* [DNMVCS->assignDynamicMethod](#DNMVCS->assignDynamicMethod)
+* [DNMVCS->assignExceptionHandler](#DNMVCS->assignExceptionHandler)
+* [DNMVCS->assignPathNamespace](#DNMVCS->assignPathNamespace)
+* [DNMVCS->assignRewrite](#DNMVCS->assignRewrite)
+* [DNMVCS->assignRoute](#DNMVCS->assignRoute)
+* [DNMVCS->assignStaticMethod](#DNMVCS->assignStaticMethod)
+* [DNMVCS->assignViewData](#DNMVCS->assignViewData)
+* [DNMVCS->checkDBPermission](#DNMVCS->checkDBPermission)
+* [DNMVCS->extendClassMethodByThirdParty](#DNMVCS->extendClassMethodByThirdParty)
+* [DNMVCS->getBootInstances](#DNMVCS->getBootInstances)
+* [DNMVCS->getDynamicClasses](#DNMVCS->getDynamicClasses)
+* [DNMVCS->getOverrideRootClass](#DNMVCS->getOverrideRootClass)
+* [DNMVCS->getRouteCallingMethod](#DNMVCS->getRouteCallingMethod)
+* [DNMVCS->init](#DNMVCS->init)
+* [DNMVCS->run](#DNMVCS->run)
+* [DNMVCS->setDefaultExceptionHandler](#DNMVCS->setDefaultExceptionHandler)
+* [DNMVCS->setMultiExceptionHandler](#DNMVCS->setMultiExceptionHandler)
+* [DNMVCS->setViewWrapper](#DNMVCS->setViewWrapper)
+* [DNMVCS->system_wrapper_replace](#DNMVCS->system_wrapper_replace)
+
+### 配置

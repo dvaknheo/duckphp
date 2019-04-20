@@ -36,7 +36,7 @@ class DNDBManager
         }
         return $this;
     }
-    protected function initContext($options, $context)
+    protected function initContext($options=[], $context=null)
     {
         $db_setting_key=$context->options['db_setting_key']??'database_list';
         $database_list=$context::Setting($db_setting_key)??[];
@@ -44,10 +44,11 @@ class DNDBManager
         $this->database_config_list=array_merge($context->options['database_list'], $database_list);
         
         if ($this->use_strict_db) {
-            //$this->setBeforeGetDBHandler([$context::G(),'checkDBPermission']);
+            $this->setBeforeGetDBHandler([get_class($context),'CheckStrictDB']);
         }
         $context->addBeforeShowHandler([static::class,'CloseAllDB']);
     }
+
     public function setDBHandler($db_create_handler, $db_close_handler=null)
     {
         $this->db_create_handler=$db_create_handler;
@@ -64,7 +65,7 @@ class DNDBManager
     public function _DB($tag=null)
     {
         if (isset($this->before_get_db_handler)) {
-            ($this->before_get_db_handler)($tag);
+            ($this->before_get_db_handler)($this, $tag);
         }
         if (!isset($tag)) {
             $t=array_keys($this->database_config_list);
