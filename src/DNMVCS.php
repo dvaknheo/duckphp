@@ -107,41 +107,6 @@ class DNMVCS extends DNCore
         $file=rtrim($file, '.php').'.php';
         require_once($this->path_lib.$file);
     }
-    public function checkDBPermission()
-    {
-        if (!static::Developing()) {
-            return;
-        }
-        
-        $backtrace=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 10);
-        $caller_class='';
-        $base_class=get_class(static::G());
-        foreach ($backtrace as $i=>$v) {
-            if ($v['class']===$base_class) {
-                $caller_class=$backtrace[$i+1]['class'];
-                break;
-            }
-        }
-        $namespace=$this->options['namespace'];
-        $namespace_controller=$this->options['namespace_controller'];
-        
-        $controller_base_class=$this->options['controller_base_class'];
-        $namespace_controller.='\\';
-        do {
-            //if ($caller_class==$default_controller_class) {
-            //    static::ThrowOn(true, "DB Can not Call By Controller");
-            //}
-            //if (substr($caller_class, 0, strlen($namespace_controller))==$namespace_controller) {
-            //    static::ThrowOn(true, "DB Can not Call By Controller");
-            //}
-            if (substr($caller_class, 0, strlen("$namespace\\Service\\"))=="$namespace\\Service\\") {
-                static::ThrowOn(true, "DB Can not Call By Service");
-            }
-            if (substr($caller_class, 0-strlen("Service"))=="Service") {
-                static::ThrowOn(true, "DB Can not Call By Service");
-            }
-        } while (false);
-    }
     //// RunMode
     public static function RunWithoutPathInfo($options=[])
     {

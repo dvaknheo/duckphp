@@ -44,7 +44,7 @@ class DNDBManager
         $this->database_config_list=array_merge($context->options['database_list'], $database_list);
         
         if ($this->use_strict_db) {
-            $this->setBeforeGetDBHandler([$context::G(),'checkDBPermission']);
+            //$this->setBeforeGetDBHandler([$context::G(),'checkDBPermission']);
         }
         $context->addBeforeShowHandler([static::class,'CloseAllDB']);
     }
