@@ -2,6 +2,7 @@
 ## 快速入门
 假定不管什么原因，上级选用了 DNMVCS 这个框架，需要快速入门
 
+<a id="zxvf">zzzz</a>
 最快的方式是从 github 下载 DNMVCS。
 
 到所在目录之下运行
@@ -792,3 +793,6 @@ DNMVCS 实现 override_class 的 静态方法，是用 DNClassExt 来实现。
 * [DNMVCS->system_wrapper_replace](#DNMVCS->system_wrapper_replace)
 
 ### 配置
+[XXX](#aa)
+
+[XXX](#zxvf)

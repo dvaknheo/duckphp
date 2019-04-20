@@ -51,9 +51,9 @@ class DNStrict
     }
     public function _CheckStrictDB($object)
     {
-        return $this->checkStrictComponet($object, 'DB');
+        return $this->checkStricttComponentt($object, 'DB');
     }
-    public function checkStrictComponet($object, $componet_name)
+    public function checkStrictComponent($object, $component_name)
     {
         if (!$this->checkEnv()) {
             return;
