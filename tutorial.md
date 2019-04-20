@@ -2,7 +2,6 @@
 ## 快速入门
 假定不管什么原因，上级选用了 DNMVCS 这个框架，需要快速入门
 
-<a id="zxvf">zzzz</a>
 最快的方式是从 github 下载 DNMVCS。
 
 到所在目录之下运行
@@ -570,6 +569,11 @@ setDefaultExceptionHandler($calllback)
     实质调用 DNExceptionManager::G()->setDefaultExceptionHandler
 
 学会这些静态方法，恭喜，基本会用了。
+### 总结
+这部分其实是 DNCore 这个类的内容，
+如果你不需要下面的扩展，用 DNCore 就够了。
+接下来是 DNMVCS 这个类的扩展
+
 ------------------------------------------------------------------------------
 
 我还没学会数据库呢。
@@ -589,8 +593,6 @@ setDefaultExceptionHandler($calllback)
             'ext'=>[],
             'swoole'=>[],
         ];
-----
-
 #### RunWithoutPathInfo
 #### RunOneFileMode
 #### RunAsServer
@@ -616,19 +618,19 @@ SG()
     你可以 DNMVCS::SG()->_GET得到的就是 swoole 也可用的 $_GET 数组。
     类似的还有 _GET,_POST,_REQUEST,_SERVER，_ENV,_COOKIE,_SESSION
 #### GLOBALS
-static &GLOBALS($k,$v=null)
+&GLOBALS($k,$v=null)
 
     兼容 Swoole
     用于替换 global 语法
     也可用 DNMVCS::SG()->GLOBALS;
 
 #### STATICS
-static &STATICS($k,$v=null)
+&STATICS($k,$v=null)
 
     兼容 Swoole
     用于替换 static 语法
 #### CLASS_STATICS
-static &CLASS_STATICS($class_name,$var_name)
+&CLASS_STATICS($class_name,$var_name)
 
     用于替换类内的 static ，这要提供类名，需要 static::class 或 self::class
 ----
@@ -793,6 +795,3 @@ DNMVCS 实现 override_class 的 静态方法，是用 DNClassExt 来实现。
 * [DNMVCS->system_wrapper_replace](#DNMVCS->system_wrapper_replace)
 
 ### 配置
-[XXX](#aa)
-
-[XXX](#zxvf)
