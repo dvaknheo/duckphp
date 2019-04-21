@@ -43,8 +43,6 @@ $port=$dn_options['swoole']['port'];
 
 if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
     $dn_options['setting_file_basename']='';
-}
-if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
     echo "Don't run the template file directly \n";
 }
 echo "DNMVCS: RunServer swoole server $host:$port\n";

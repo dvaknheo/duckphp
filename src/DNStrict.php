@@ -1,5 +1,6 @@
 <?php
 namespace DNMVCS;
+use Exception;
 
 class DNStrict
 {
@@ -37,7 +38,7 @@ class DNStrict
             }
         }
         if (!$caller_class) {
-            $dn::ThrowOn(true, "Too Nest ,can't not found caller");
+            throw new Exception(true, "Too Nest ,can't not found caller");
         }
         return $caller_class;
     }
@@ -70,16 +71,16 @@ class DNStrict
         
         do {
             if (substr($caller_class, 0, strlen($namespace_controller))==$namespace_controller) {
-                $dn::ThrowOn(true, "DB Can not Call By Controller");
+                throw new Exception(true, "DB Can not Call By Controller");
             }
             if ($controller_base_class && (is_subclass_of($caller_class, $controller_base_class) || $caller_class===$controller_base_class)) {
-                $dn::ThrowOn(true, "DB Can not Call By Controller");
+                throw new Exception(true, "DB Can not Call By Controller");
             }
             if (substr($caller_class, 0, strlen($namespace_service))===$namespace_service) {
-                $dn::ThrowOn(true, "DB Can not Call By Service");
+                throw new Exception(true, "DB Can not Call By Service");
             }
             if (substr($caller_class, 0-strlen("Service"))=="Service") {
-                $dn::ThrowOn(true, "DB Can not Call By Service");
+                throw new Exception(true, "DB Can not Call By Service");
             }
         } while (false);
     }
@@ -104,7 +105,7 @@ class DNStrict
             if (substr($caller_class, 0, 0-strlen("ExModel"))=="ExModel") {
                 break;
             }
-            $dn::ThrowOn(true, "Model Can Only call by Service or ExModel!");
+            throw new Exception("Model Can Only call by Service or ExModel!");
         } while (false);
     }
     public function checkStrictSerice($object)
@@ -129,21 +130,21 @@ class DNStrict
                 if (substr($caller_class, 0, 0-strlen("Service"))==="Service") {
                     break;
                 }
-                $dn::ThrowOn(true, "LibService Must Call By Serivce($caller_class)");
+                throw new Exception(true, "LibService Must Call By Serivce($caller_class)");
             } while (false);
         } else {
             do {
                 if (substr($caller_class, 0, strlen($namespace_service))===$namespace_service) {
-                    $dn::ThrowOn(true, "Service Can not call Service($caller_class)");
+                    throw new Exception(true, "Service Can not call Service($caller_class)");
                 }
                 if (substr($caller_class, 0, strlen("Service"))==="Service") {
-                    $dn::ThrowOn(true, "Service Can not call Service($caller_class)");
+                    throw new Exception(true, "Service Can not call Service($caller_class)");
                 }
                 if (substr($caller_class, 0, strlen($namespace_model))===$namespace_model) {
-                    $dn::ThrowOn(true, "Service Can not call by Model($caller_class)");
+                    throw new Exception(true, "Service Can not call by Model($caller_class)");
                 }
                 if (substr($caller_class, 0, strlen("Model"))==="Model") {
-                    $dn::ThrowOn(true, "Service Can not call by Model($caller_class)");
+                    throw new Exception(true, "Service Can not call by Model($caller_class)");
                 }
             } while (false);
         }
@@ -158,6 +159,6 @@ class DNStrict
         
         $class=get_class($object);
         $flag=(is_subclass_of($caller_class, $parent_class) || $caller_class===$parent_class)?true:false;
-        $dn::ThrowOn(!$flag, " checkStrictParentCaller Fail:Class [$class] Must By Calss [$parent_class]");
+        throw new Exception(!$flag, " checkStrictParentCaller Fail:Class [$class] Must By Calss [$parent_class]");
     }
 }

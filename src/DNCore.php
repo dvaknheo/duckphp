@@ -54,6 +54,7 @@ class DNCore
             'error_debug'=>'_sys/error-debug',
             
             //// controller ////
+            'namespace_controller'=>'Controller',
             'controller_base_class'=>null,
             'controller_prefix_post'=>'do_',
                 'controller_enable_paramters'=>false,
