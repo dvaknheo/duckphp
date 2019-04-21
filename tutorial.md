@@ -117,10 +117,10 @@ test
 <2019-04-19T22:21:49+08:00>
 ```
 
-成功
+成功！
 
 ### 目录结构
-记下来，我们回头看工程的目录结构，即默认目录结构
+接下来，我们回头看工程的目录结构，即默认目录结构
 
 ```text
 +---app                     // psr-4 标准的自动加载目录
@@ -155,6 +155,115 @@ test
 文件都不复杂。基本都是空类。
 我们主要看的是 入口类。 public/index.php
 
+### DNMVCS 所有方法从浅入深。
+
+#### 通用的方法
+在所有地方，我们都可能用到抛异常。
+DNMVCS::G(); 默认返回工程中 MY\Base\App 实例。
+
+DNMVCS::ThrowOn($flag,$messsage,$code=0) 如果 flag 城里，抛出 DNException;
+
+DNMVCS::DumpExtMethods() 用于查看主程 通过 MY\Base\App 的重载给添加了什么其他方法。
+
+还要去看工程里的 MY\Base\App 里的方法 DNMVCS 类可以用。
+
+
+assign 系列函数都是两种调用方式
+
+#### Controller 编写控制器用到的方法
+
+显示视图用 DNMVCS::Show($data,$view=null); 如果view 是空等价于 控制器名/方法名 的视图。
+PHP 自带的 get_defined_vars();会很有用。
+
+如果只显示一块，用 DNMVCS::ShowBlock($view,$data=null);  如果$data 是空，把父视图的数据带入。
+
+ShowBlock 没用到页眉页脚。
+
+在控制器的构造函数中。用 DNMVCS::G()->setViewWrapper($view_header) 来设置页眉页脚。
+DNMVCS::G()->assignViewData() 来预设一些输出。
+Html 编码用 DNMVCS::H(); 支持数组。
+
+跳转退出方面。
+404 跳转退出 DNMVCS::Exit404() ; 302 跳转退出 DNMVCS::ExitRedirect($url) ; 302 跳转退出 内部地址 DNMVCS::ExitRouteTo($url)
+输出 Json 退出  DNMVCS::ExitJson($data);
+
+系统替代函数 
+用 DNMVCS::header() 代替系统 header 兼容命令行等 DNMVCS::exit_system 代替系统 exit; 便于主程做后处理。
+
+用 DNMVCS::URL($url) 获取相对 url;
+用 DNMVCS::Parameters() 获取切片，对地址重写有用。
+
+如果要做权限判断 构造函数里 DNMVCS::G()->getRouteCallingMethod() 获取当前调用方法。
+
+异常相关
+
+如果想接管默认异常，用 DNMVCS::G()->setDefaultExceptionHandler
+
+如果对接管特定异常，用 DNMVCS::G()->assignExceptionHandler
+用 DNMVCS::G()->setMultiExceptionHandler 设置多个异常到回调中。
+
+要做 Swoole 兼容。 
+
+用 DNMVCS::SG() 代替 超全局变量的 $ 前缀
+
+swoole 兼容session 的替代函数  DNMVCS::session_start DNMVCS::session_destroy DNMVCS::session_set_save_handler
+
+超全局变量替代函数  DNMVCS::GLOBALS 全局变量 DNMVCS::STATICS 静态变量  DNMVCS::CLASS_STATICS 类静态变量
+
+#### Serivce 编写服务用到的方法
+
+开发状态判定 DNMVCS::Developing()
+获得运行平台 DNMVCS::Platform()
+
+获得设置 DNMVCS::Setting
+载入配置 DNMVCS::LoadConfig
+配置 DNMVCS::Config
+
+#### Model 编写模型用到的方法
+
+数据库。
+
+DNMVCS::DB($tag=null) 获得特定数据库类。
+DNMVCS::DB_R() 获得读数据库类。
+DNMVCS::DB_W() 获得写数据库类。
+
+#### 入口类可能用到其他方法
+DNMVCS::RunQuickly($options,$after_function=null);
+
+添加路由和重写  DNMVCS::G()->assignRewrite DNMVCS::G()->assignRoute 
+查看添加了的路由和重写
+*dumpRewrite dumpRoute*
+
+添加路由钩子 DNMVCS::G()->addRouteHook($callback);
+添加显示前处理
+DNMVCS::G()->addBeforeShowHandler($callback)
+
+自动加载的 assignPathNamespace 
+getOverrideRootClass() 获得重载自类
+
+Swoole 接口相关 addDynamicClass($class)
+
+动态扩展相关 
+ extendClassMethodByThirdParty
+assignStaticMethod($method,$callback=null)
+assignDynamicMethod($method,$callback=null)
+
+#### 入口类可能扩充的其他方法
+
+init run
+
+
+Swoole 接口相关的3个函数  addDynamicClass getBootInstances getDynamicClasses
+系统替代函数相关 system_wrapper_replace
+
+
+这几个静态函是
+
+
+内部事件方法：
+
+OnBeforeShow 显示之前调用。On404 处理404; OnException  处理异常 OnDevErrorHandler 处理异常模块 。
+
 ### 从入口开始
 ```php
 <?php
@@ -173,6 +282,7 @@ if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
 \DNMVCS\DNMVCS::RunQuickly($options);
 // \DNMVCS\DNMVCS::G()->init($options)->run();
 ```
+
 
 
 $options
@@ -260,16 +370,16 @@ autoload 的命名空间
 'override_class'=>'Base\App',
 **重要选项**
 
-基于 namespace ,如果这个选项的类存在，则 DNCore 在 init 的时候会切换到这个类完成后续初始化，兵返回这个类的实例。
+基于 namespace ,如果这个选项的类存在，则 DNCore 在 init 的时候会切换到这个类完成后续初始化，并返回这个类的实例。
 
 注意到 app/Base/App.php 这个文件 MY\Base\App extends DNMVCS\DNMVCS;
 如果以  \ 开头则是绝对 命名空间
-#### 选项
+#### 选项 is_dev
 'is_dev'=>false,
 配置是否是在开发状态
 
 设置文件的  is_dev 会覆盖
-#### 选项-
+#### 选项 platform
 'platform'=>'',
 
 配置开发平台 * 设置文件的  platform 会覆盖
@@ -291,6 +401,7 @@ autoload 的命名空间
 这用于不读取设置文件的模式
 #### 选项 all_config
 'all_config'=>[], 合并入的 config
+
 当你不想读取配置的时候从这里拿 这里的配置会覆盖文件里的。
 #### 选项 setting
 'setting'=>[], 合并入的 设置
@@ -336,12 +447,11 @@ POST 的方法会在方法名前加前缀 do_
 #### 选项 controller_hide_boot_class
 'controller_hide_boot_class'=>false,  不允许欢迎类的其他访问方式。
 
-比如  / 同时可以 用  /Main/index 访问 默认 false 是可以的。
-
+比如  / 同时可以 用  /Main/index 访问 使用默认 false 是可以的。
 #### 选项 controller_enable_paramters
 'controller_enable_paramters'=>false, 打开切片模式
 
-不建议打开。
+不建议打开，会降低性能
 **影响重大**
 #### 选项 controller_methtod_for_miss
 'controller_methtod_for_miss'=>null,
@@ -638,12 +748,17 @@ exit()
 
 ### 动态函数参考
 12 个动态函数，一般你不怎么用到的 getRouteCallingMethod 这个会常用点
-运行的
-init run
+
+运行的init run
+
 视图的 setViewWrapper assignViewData
+
 路由的 addRouteHook getRouteCallingMethod
+
 异常相关的 assignExceptionHandler setMultiExceptionHandler setDefaultExceptionHandler
+
 自动加载的 assignPathNamespace
+
 系统相关的 addBeforeShowHandler getOverrideRootClass
 #### DNMVCS->init
 init($options=[])
@@ -737,10 +852,9 @@ setDefaultExceptionHandler($calllback)
 #### 总说
 DNMVCS 相比 DNCore 扩展了一些方法按类型大致分为
 
-动态扩展相关 DumpExtMethods
 更多的运行方式  RunWithoutPathInfo RunOneFileMode RunAsServer
-数据库 DB DB_R DB_W CheckStrictDB($object);
 为什么没 Redis ?
+
 为了 swoole 兼容，更多的系统代替函数 setcookie set_exception_handler register_shutdown_function
 swoole 兼容session  替代函数  session_start session_destroy session_set_save_handler
 超全局变量替代函数  SG GLOBALS STATICS CLASS_STATICS
@@ -790,6 +904,7 @@ SG()
 
 
 ### DNMVCS 扩展的动态函数
+
 添加路由和重写  assignRewrite assignRoute
 Swoole 接口相关的3个函数  addDynamicClass getBootInstances getDynamicClasses
 动态扩展相关 assignStaticMethod assignDynamicMethod extendClassMethodByThirdParty
@@ -868,10 +983,8 @@ MyClass 把 MyBaseClass 的 foo 方法替换了。
 ```php
 MyBaseClass::G()->foo2();
 ```
-
-**注意:但是静态方法不替换，请注意这一点。**
 为什么不是 GetInstance ? 因为太长，这个方法太经常用。
-
+**注意:但是静态方法不替换，请注意这一点。**
 DNMVCS 实现 override_class 的 静态方法，是用 DNClassExt 来实现。
 
 
