@@ -4,21 +4,17 @@ namespace DNMVCS\Ext;
 use DNMVCS\DNSingleton;
 use DNMVCS\DNSuperGlobal;
 
-class RouteHookMapAndRewrite
+class RouteHookRewrite
 {
     use DNSingleton;
     protected $rewrite_map=[];
-    protected $route_map=[];
-    protected $controller_enable_paramters=false;
     public function init($options=[], $context=null)
     {
         $this->rewrite_map=array_merge($this->rewrite_map, $options['rewrite_map']??[]);
-        $this->route_map=array_merge($this->route_map, $options['route_map']??[]);
         
         if ($context) {
-            $this->controller_enable_paramters=$context->options['controller_enable_paramters'];
-            $context->addRouteHook([RouteHookMapAndRewrite::G(),'hook'], true);
-            // $context->extendClassMethodByThirdParty(static::class,[],['assignRewrite','assignRoute']);
+            $context->addRouteHook([static::class,'Hook'], true);
+            // $context->extendClassMethodByThirdParty(static::class,[],['assignRewrite','getRewrites']);
         }
     }
     public function assignRewrite($key, $value=null)
@@ -29,13 +25,9 @@ class RouteHookMapAndRewrite
             $this->rewrite_map[$key]=$value;
         }
     }
-    public function assignRoute($key, $value=null)
+    public function getRewrites()
     {
-        if (is_array($key)&& $value===null) {
-            $this->route_map=array_merge($this->route_map, $key);
-        } else {
-            $this->route_map[$key]=$value;
-        }
+        return $this->rewrite_map;
     }
     
     public function replaceRegexUrl($input_url, $template_url, $new_url)
@@ -112,65 +104,6 @@ class RouteHookMapAndRewrite
         }
         return null;
     }
-    protected function matchRoute($pattern_url, $path_info, $route, $enable_paramters)
-    {
-        $request_method=$route->request_method;
-        
-        $pattern='/^(([A-Z_]+)\s+)?(~)?\/?(.*)\/?$/';
-        $flag=preg_match($pattern, $pattern_url, $m);
-        if (!$flag) {
-            return false;
-        }
-        $method=$m[2];
-        $is_regex=$m[3];
-        $url=$m[4];
-        if ($method && $method!==$request_method) {
-            return false;
-        }
-        if (!$is_regex) {
-            $params=explode('/', $path_info);
-            $url_params=explode('/', $url);
-            if (!$enable_paramters) {
-                return ($url_params===$params)?true:false;
-            }
-            if ($url_params === array_slice($params, 0, count($url_params))) {
-                $route->parameters=array_slice($params, 0, count($url_params));
-                return true;
-            } else {
-                return false;
-            }
-        }
-        
-        $p='/'.str_replace('/', '\/', $url).'/';
-        $flag=preg_match($p, $path_info, $m);
-        
-        if (!$flag) {
-            return false;
-        }
-        array_shift($m);
-        $route->parameters=$m;
-        return true;
-    }
-    protected function getRouteHandelByMap($route, $routeMap)
-    {
-        $path_info=$route->path_info;
-        $enable_paramters=$this->controller_enable_paramters;
-        
-        foreach ($routeMap as $pattern =>$callback) {
-            if (!$this->matchRoute($pattern, $path_info, $route, $enable_paramters)) {
-                continue;
-            }
-            if (!is_string($callback)) {
-                return $callback;
-            }
-            if (false!==strpos($callback, '->')) {
-                list($class, $method)=explode('->', $callback);
-                return [new $class(),$method];
-            }
-            return $callback;
-        }
-        return null;
-    }
     protected function changeRouteUrl($route, $url)
     {
         $path=parse_url($url, PHP_URL_PATH);
@@ -180,10 +113,9 @@ class RouteHookMapAndRewrite
         DNSuperGlobal::G()->_SERVER['init_get']=DNSuperGlobal::G()->_GET;
         DNSuperGlobal::G()->_GET=$input_get;
     }
-    protected function hookRewrite($route)
+    protected function _Hook($route)
     {
         $path_info=$route->path_info;
-        
         $uri=DNSuperGlobal::G()->_SERVER['REQUEST_URI'];
         $query=parse_url($uri, PHP_URL_QUERY);
         $query=$query?'?'.$query:'';
@@ -198,14 +130,11 @@ class RouteHookMapAndRewrite
                 $this->changeRouteUrl($route, $url);
             }
         }
+
+        return  null;
     }
-    protected function hookRouteMap($route)
+    public static function Hook($route)
     {
-        $route->callback=$this->getRouteHandelByMap($route, $this->route_map);
-    }
-    public function hook($route)
-    {
-        $this->hookRewrite($route);
-        $this->hookRouteMap($route);
+        return static::G()->_Hook($route);
     }
 }

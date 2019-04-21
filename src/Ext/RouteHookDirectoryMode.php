@@ -2,6 +2,7 @@
 namespace DNMVCS\Ext;
 
 use DNMVCS\DNSingleton;
+use DNMVCS\Ext\RouteRewrite;
 
 class RouteHookDirectoryMode
 {
@@ -53,7 +54,7 @@ class RouteHookDirectoryMode
             return $url;
         };
         
-        $url=RouteHookMapAndRewrite::G()->filteRewrite($url);
+        $url=RouteRewrite::G()->filteRewrite($url);
         
         $document_root=DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT'];
         $base_url=substr($this->basepath, strlen($document_root));

@@ -41,7 +41,8 @@ class DNMVCS extends DNCore
                 'DNSystemWrapperExt'=>true,
                 
                 'Ext\Lazybones'=>true,
-                'Ext\RouteHookMapAndRewrite'=>true,
+                'Ext\RouteHookRewrite'=>true,
+                'Ext\RouteHookRouteMap'=>true,
                 'Ext\DIExt'=>true,
                 
                 'Ext\DBReusePoolProxy'=>false,
@@ -171,11 +172,19 @@ trait DNMVCS_Glue
     /////
     public function assignRewrite($key, $value=null)
     {
-        return Ext\RouteHookMapAndRewrite::G()->assignRewrite($key, $value);
+        return Ext\RouteHookRewrite::G()->assignRewrite($key, $value);
+    }
+    public function getRewrites()
+    {
+        return Ext\RouteHookRewrite::G()->getRewrites();
     }
     public function assignRoute($key, $value=null)
     {
-        return Ext\RouteHookMapAndRewrite::G()->assignRewrite($key, $value);
+        return Ext\RouteHookRouteMap::G()->assignRoute($key, $value);
+    }
+    public function getRoutes()
+    {
+        return Ext\RouteHookRouteMap::G()->getRoutes();
     }
     /////
     public static function OnCheckStrictDB($object, $tag)
@@ -280,10 +289,10 @@ trait DNMVCS_SystemWrapper
     public static function system_wrapper_get_providers():array
     {
         $ret=[
-            'header'				=>[static::class,'header'],
-            'setcookie'				=>[static::class,'setcookie'],
-            'exit_system'			=>[static::class,'exit_system'],
-            'set_exception_handler'	=>[static::class,'set_exception_handler'],
+            'header'                =>[static::class,'header'],
+            'setcookie'             =>[static::class,'setcookie'],
+            'exit_system'           =>[static::class,'exit_system'],
+            'set_exception_handler' =>[static::class,'set_exception_handler'],
             'register_shutdown_function' =>[static::class,'register_shutdown_function'],
             
             'super_global' =>[DNSuperGloabl::class,'G'],
@@ -308,8 +317,8 @@ trait DNMVCS_Instance
     protected function initDynamicClasses()
     {
         $this->dynamicClasses=[
-            DNRoute::class,   	// for bindServerData,and $this->path_info ,and so on
-            DNView::class,   	// for assign
+            DNRoute::class,     // for bindServerData,and $this->path_info ,and so on
+            DNView::class,      // for assign
         ];
     }
     public function getDynamicClasses()

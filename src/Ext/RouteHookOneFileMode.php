@@ -2,7 +2,7 @@
 namespace DNMVCS\Ext;
 
 use DNMVCS\DNSingleton;
-use DNMVCS\RouteHookMapAndRewrite;
+use DNMVCS\Ext\RouteRewrite;
 
 class RouteHookOneFileMode
 {
@@ -43,7 +43,7 @@ class RouteHookOneFileMode
         }
         ////////////////////////////////////
         
-        $new_url=RouteHookMapAndRewrite::G()->filteRewrite($url);
+        $new_url=RouteRewrite::G()->filteRewrite($url);
         if ($new_url) {
             $url=$new_url;
             if (strlen($url)>0 && '/'==$url{0}) {

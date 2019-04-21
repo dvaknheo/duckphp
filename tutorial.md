@@ -1,6 +1,6 @@
 # DNMVCS 教程
 ## 快速入门
-假定不管什么原因，上级选用了 DNMVCS 这个框架，需要快速入门
+假定不管什么原因，选用了 DNMVCS 这个框架，需要快速入门.
 
 最快的方式是从 github 下载 DNMVCS。
 
@@ -30,11 +30,11 @@ php bin/start_server.php
 
 ### 第一个任务
 路径： http://127.0.0.1:8080/test/done  
-作用显示当前时间的任务。
+作用是显示当前时间的任务。
 
 对照目录结构我们要加个 test/done 显示当前时间
 
-都在各代码段里注释了文件所在相对工程文件夹的位置
+都在各代码段里注释了文件所在相对工程目录的位置
 
 ### View 视图
 先做出要显示的样子。
@@ -155,7 +155,8 @@ test
 文件都不复杂。基本都是空类。
 我们主要看的是 入口类。 public/index.php
 
-### DNMVCS 所有方法从浅入深。
+### DNMVCS 所有方法从浅入深
+
 这一小节将介绍**全部** \DNMVCS\DNMVCS 类 **公开方法**。
 
 我们用 DNMVCS 缩写代替 完整的 DNMVCS\DNMVCS 类。
@@ -169,27 +170,31 @@ DNMVCS::DumpExtMethods() 用于查看主程 通过 MY\Base\App 的重载给添�
 
 你可能还要去看工程里的 MY\Base\App 里的方法，这些都可以让初始化之后的 DNMVCS 类使用，包括静态方法。
 
-assign 系列函数都是两种调用方式, 单个assign($key,$value) 和 assign($assoc);
+assign 系列函数都是两种调用方式, 单个assign($key,$value) 和 assign($assoc)，后者是批量导入的版本。
 
 #### Controller 编写控制器用到的方法
 
 显示视图用 DNMVCS::Show($data,$view=null); 如果view 是空等价于 控制器名/方法名 的视图。
 PHP 自带的 get_defined_vars();会很有用。
 
-如果只显示一块，用 DNMVCS::ShowBlock($view,$data=null);  如果$data 是空，把父视图的数据带入。
-
+如果只显示一块，用 DNMVCS::ShowBlock($view,$data=null);  如果$data 是空，把父视图的数据带入，
 DNMVCS::ShowBlock 没用到页眉页脚。
 
 在控制器的构造函数中。用 DNMVCS::G()->setViewWrapper($view_header,$view_footer) 来设置页眉页脚。
-DNMVCS::G()->assignViewData() 来预设一些输出。
+
+DNMVCS::G()->assignViewData($name,$var) 来预设一些输出。
+
 HTML 编码用 DNMVCS::H($str); $str 可以是数组。
 
 跳转退出方面。
-404 跳转退出 DNMVCS::Exit404() ; 302 跳转退出 DNMVCS::ExitRedirect($url) ; 302 跳转退出 内部地址 DNMVCS::ExitRouteTo($url)
+404 跳转退出 DNMVCS::Exit404();
+302 跳转退出 DNMVCS::ExitRedirect($url);
+302 跳转退出 内部地址 DNMVCS::ExitRouteTo($url);
 输出 Json 退出  DNMVCS::ExitJson($data);
 
 系统替代函数 
-用 DNMVCS::header() 代替系统 header 兼容命令行等 DNMVCS::exit_system() 代替系统 exit; 便于主程做后处理。
+用 DNMVCS::header() 代替系统 header 兼容命令行等。
+用 DNMVCS::exit_system() 代替系统 exit; 便于接管处理。
 
 用 DNMVCS::URL($url) 获取相对 url;
 用 DNMVCS::Parameters() 获取切片，对地址重写有用。
@@ -198,10 +203,11 @@ HTML 编码用 DNMVCS::H($str); $str 可以是数组。
 
 异常相关
 
-如果想接管默认异常，用 DNMVCS::G()->setDefaultExceptionHandler()
+如果想接管默认异常，用 DNMVCS::G()->setDefaultExceptionHandler($handler)
 
-如果对接管特定异常，用 DNMVCS::G()->assignExceptionHandler()
-用 DNMVCS::G()->setMultiExceptionHandler 设置多个异常到回调中。
+如果对接管特定异常，用 DNMVCS::G()->assignExceptionHandler($exception_name,$handler)
+
+用 DNMVCS::G()->setMultiExceptionHandler($exception_name=[],$handler) 设置多个异常到回调中。
 
 要做 Swoole 兼容。 
 
@@ -216,9 +222,9 @@ swoole 兼容session 的替代函数  DNMVCS::session_start DNMVCS::session_dest
 开发状态判定 DNMVCS::Developing()
 获得运行平台 DNMVCS::Platform()
 
-获得设置 DNMVCS::Setting
-载入配置 DNMVCS::LoadConfig
-配置 DNMVCS::Config
+获得设置 DNMVCS::Setting($key) 默认设置文件是  config/setting.php 。
+载入配置 DNMVCS::LoadConfig($key,$basename)
+获得配置 DNMVCS::Config($key)
 
 #### Model 编写模型用到的方法
 
@@ -232,35 +238,34 @@ DNMVCS::DB_W() 获得写数据库类。
 DNMVCS::RunQuickly($options,$after_function=null);
 
 添加路由和重写  DNMVCS::G()->assignRewrite DNMVCS::G()->assignRoute 
-查看添加了的路由和重写
-*dumpRewrite dumpRoute*
+查看添加了的路由和重写 用 DNMVCS::G()->getRewrites() 和DNMVCS::G()->getRoutes(); 查看
 
-添加路由钩子 DNMVCS::G()->addRouteHook($callback);
-添加显示前处理
-DNMVCS::G()->addBeforeShowHandler($callback)
+添加路由钩子 DNMVCS::G()->addRouteHook($hook); $hook 返回空用默认路由处理，否则调用 返回值处理。
+
+添加显示前处理 用 DNMVCS::G()->addBeforeShowHandler($callback)
 
 自动加载的 assignPathNamespace 
-getOverrideRootClass() 获得重载自类
+DNMVCS::G()->getOverrideRootClass() 获得重载自类
 
-Swoole 接口相关 addDynamicClass($class)
+Swoole 接口相关 DNMVCS::G()->addDynamicClass($class) swoole 协程单例的类。
 
 动态扩展相关 
- extendClassMethodByThirdParty
-assignStaticMethod($method,$callback=null)
-assignDynamicMethod($method,$callback=null)
+扩展静态方法 DNMVCS::G()->assignStaticMethod($method,$callback);
+扩展动态方法 DNMVCS::G()->assignDynamicMethod($method,$callback);
+
+DNMVCS::G()->extendClassMethodByThirdParty($class,$static_methods=[],$dyminac_methods=[]);
+DNMVCS 调用代理 $class 的方法。
 
 #### 入口类可能扩充的其他方法
 
-init run
+DNMVCS::G()->init($options,$context=null); 初始化
+
+DNMVCS::G()->run();运行
 
 
-Swoole 接口相关的3个函数  addDynamicClass getBootInstances getDynamicClasses
+Swoole 接口相关 getBootInstances getDynamicClasses
+
 系统替代函数相关 system_wrapper_replace
-
-
-这几个静态函是
-
-
 内部事件方法：
 
 OnBeforeShow 显示之前调用。On404 处理404; OnException  处理异常 OnDevErrorHandler 处理异常模块 。
@@ -293,9 +298,7 @@ RunQuickly 静态方法
 ### 从入门到精通
 我们接下来会逐步学习：
 
-1. 学习 DNCore 的配置
-2. 调用 DNCore 类的静态方法实现目的
-3. 调用 DNCore 类的动态方法实现目的
+
 4. 学习 DNMVCS 的配置
 4. 调用 DNMVCS 类的静态方法实现目的
 5. 调用 DNMVCS 类的动态方法实现目的
@@ -931,9 +934,6 @@ assignRoute($route,$callback=null)
 
 更多配置
 
-
-
-## 第五步，数据库
 ## 用 DNMVCS 的起因
 
 ## 学习更高级的调用
