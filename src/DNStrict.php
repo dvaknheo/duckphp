@@ -1,5 +1,6 @@
 <?php
 namespace DNMVCS;
+
 use Exception;
 
 class DNStrict
@@ -18,9 +19,9 @@ class DNStrict
     {
         $this->dn_class=get_class($context);
     }
-    public static function CheckStrictDB($object)
+    public static function OnCheckStrictDB($object)
     {
-        return static::G()->_CheckStrictDB($object);
+        return static::G()->_OnCheckStrictDB($object);
     }
     ///////////////////////////////////////////////////////////
     protected function getCaller($object)
@@ -50,9 +51,9 @@ class DNStrict
         }
         return true;
     }
-    public function _CheckStrictDB($object)
+    public function _OnCheckStrictDB($object)
     {
-        return $this->checkStricttComponentt($object, 'DB');
+        return $this->checkStrictComponent($object, 'DB');
     }
     public function checkStrictComponent($object, $component_name)
     {

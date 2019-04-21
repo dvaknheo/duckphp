@@ -62,6 +62,7 @@ class DNCore
                 'controller_hide_boot_class'=>false,
                 'controller_welcome_class'=>'Main',
                 'controller_index_method'=>'index',
+            'ext'=>[],
         ];
     const DEFAULT_OPTIONS_EX=[
         ];
@@ -163,15 +164,26 @@ class DNCore
     {
         DNExceptionManager::G()->init($this->options, $this);
         DNConfiger::G()->init($this->options, $this);
-        
-        ////[[[[
-
-        
-        ////]]]]
-        
         DNView::G()->init($this->options, $this);
         DNRoute::G()->init($this->options, $this);
+        
+        $this->initExtentions($this->options['ext']);
         return $this;
+    }
+    protected function initExtentions($exts)
+    {
+        foreach ($exts as $ext =>$options) {
+            if ($options===false) {
+                continue;
+            }
+            $options=($options===true)?$this->options:$options;
+            $options=is_string($options)?$this->options[$options]:$options;
+            if (substr($ext, 0, 1)!=='\\') {
+                $ext=__NAMESPACE__.'\\'.$ext;
+            }
+            $ext::G()->init($options, $this);
+        }
+        return;
     }
     public function run()
     {

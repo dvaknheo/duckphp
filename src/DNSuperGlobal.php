@@ -48,6 +48,10 @@ class DNSuperGlobal
         }
         $this->_SESSION=&$_SESSION;
     }
+    public function session_id($session_id)
+    {
+        return session_id($session_id=null);
+    }
     public function session_destroy()
     {
         session_destroy();

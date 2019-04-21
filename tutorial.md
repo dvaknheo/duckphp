@@ -156,19 +156,20 @@ test
 我们主要看的是 入口类。 public/index.php
 
 ### DNMVCS 所有方法从浅入深。
+这一小节将介绍**全部** \DNMVCS\DNMVCS 类 **公开方法**。
 
-#### 通用的方法
-在所有地方，我们都可能用到抛异常。
+我们用 DNMVCS 缩写代替 完整的 DNMVCS\DNMVCS 类。
+
+#### 开始之前
 DNMVCS::G(); 默认返回工程中 MY\Base\App 实例。
 
-DNMVCS::ThrowOn($flag,$messsage,$code=0) 如果 flag 城里，抛出 DNException;
+抛异常：DNMVCS::ThrowOn($flag,$messsage,$code=0); 如果 flag 成立，抛出 DNException;
 
 DNMVCS::DumpExtMethods() 用于查看主程 通过 MY\Base\App 的重载给添加了什么其他方法。
 
-还要去看工程里的 MY\Base\App 里的方法 DNMVCS 类可以用。
+你可能还要去看工程里的 MY\Base\App 里的方法，这些都可以让初始化之后的 DNMVCS 类使用，包括静态方法。
 
-
-assign 系列函数都是两种调用方式
+assign 系列函数都是两种调用方式, 单个assign($key,$value) 和 assign($assoc);
 
 #### Controller 编写控制器用到的方法
 
@@ -177,18 +178,18 @@ PHP 自带的 get_defined_vars();会很有用。
 
 如果只显示一块，用 DNMVCS::ShowBlock($view,$data=null);  如果$data 是空，把父视图的数据带入。
 
-ShowBlock 没用到页眉页脚。
+DNMVCS::ShowBlock 没用到页眉页脚。
 
-在控制器的构造函数中。用 DNMVCS::G()->setViewWrapper($view_header) 来设置页眉页脚。
+在控制器的构造函数中。用 DNMVCS::G()->setViewWrapper($view_header,$view_footer) 来设置页眉页脚。
 DNMVCS::G()->assignViewData() 来预设一些输出。
-Html 编码用 DNMVCS::H(); 支持数组。
+HTML 编码用 DNMVCS::H($str); $str 可以是数组。
 
 跳转退出方面。
 404 跳转退出 DNMVCS::Exit404() ; 302 跳转退出 DNMVCS::ExitRedirect($url) ; 302 跳转退出 内部地址 DNMVCS::ExitRouteTo($url)
 输出 Json 退出  DNMVCS::ExitJson($data);
 
 系统替代函数 
-用 DNMVCS::header() 代替系统 header 兼容命令行等 DNMVCS::exit_system 代替系统 exit; 便于主程做后处理。
+用 DNMVCS::header() 代替系统 header 兼容命令行等 DNMVCS::exit_system() 代替系统 exit; 便于主程做后处理。
 
 用 DNMVCS::URL($url) 获取相对 url;
 用 DNMVCS::Parameters() 获取切片，对地址重写有用。
@@ -197,16 +198,16 @@ Html 编码用 DNMVCS::H(); 支持数组。
 
 异常相关
 
-如果想接管默认异常，用 DNMVCS::G()->setDefaultExceptionHandler
+如果想接管默认异常，用 DNMVCS::G()->setDefaultExceptionHandler()
 
-如果对接管特定异常，用 DNMVCS::G()->assignExceptionHandler
+如果对接管特定异常，用 DNMVCS::G()->assignExceptionHandler()
 用 DNMVCS::G()->setMultiExceptionHandler 设置多个异常到回调中。
 
 要做 Swoole 兼容。 
 
 用 DNMVCS::SG() 代替 超全局变量的 $ 前缀
 
-swoole 兼容session 的替代函数  DNMVCS::session_start DNMVCS::session_destroy DNMVCS::session_set_save_handler
+swoole 兼容session 的替代函数  DNMVCS::session_start DNMVCS::session_destroy session_id() DNMVCS::session_set_save_handler
 
 超全局变量替代函数  DNMVCS::GLOBALS 全局变量 DNMVCS::STATICS 静态变量  DNMVCS::CLASS_STATICS 类静态变量
 

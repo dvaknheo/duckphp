@@ -27,10 +27,9 @@ class DNMVCS extends DNCore
             
             'rewrite_map'=>[],
             'route_map'=>[],
-            
             'swoole'=>[],
             
-            'extentions'=>[
+            'ext'=>[
                 'DNDBManager'=>[
                     'use_db'=>true,
                     'use_strict_db'=>false,
@@ -38,6 +37,9 @@ class DNMVCS extends DNCore
                     'db_close_handler'=>null,
                     'database_list'=>[],
                 ],
+                'DNStrict'=>true,
+                'DNSystemWrapperExt'=>true,
+                
                 'Ext\Lazybones'=>true,
                 'Ext\RouteHookMapAndRewrite'=>true,
                 'Ext\DIExt'=>true,
@@ -62,29 +64,9 @@ class DNMVCS extends DNCore
         DNSwooleExt::G()->init($options['swoole']??[], $this);
         
         parent::initAfterOverride($options);
-        
-        DNSystemWrapperExt::G()->init($this->options, $this);
-        DNDBManager::G()->init($this->options, $this);
-        DNStrict::G()->init($this->options, $this);
-        $this->initExtentions();
         return $this;
     }
-    protected function initExtentions()
-    {
-        foreach ($this->options['extentions'] as $ext =>$options) {
-            if ($options===false) {
-                continue;
-            }
-            $options=($options===true)?$this->options:$options;
-            $options=is_string($options)?$this->options[$options]:$options;
-            if (substr($ext, 0, 1)!=='\\') {
-                $ext=__NAMESPACE__.'\\'.$ext;
-            }
-            $ext::G()->init($options, $this);
-        }
-        return;
-    }
-
+    
     public function run()
     {
         DNSwooleExt::G()->onBeforeRun();
@@ -114,8 +96,10 @@ class DNMVCS extends DNCore
     {
         $default_options=[
             'ext'=>[
-                'mode_onefile'=>true,
-                'mode_onefile_key_for_action'=>'_r',
+                'Ext\RouteHookOneFileMode'=>[
+                    'mode_onefile'=>true,
+                    'mode_onefile_key_for_action'=>'_',
+                ],
             ],
         ];
         $options=array_replace_recursive($default_options, $options);
@@ -127,16 +111,16 @@ class DNMVCS extends DNCore
         $default_options=[
             'path'=>$path,
             'setting_file_basename'=>'',
-            'base_class'=>'',
             'ext'=>[
-                'mode_onefile'=>true,
-                'mode_onefile_key_for_action'=>'act',
-                
-                'use_function_dispatch'=>true,
-                'use_function_view'=>true,
-                
-                'use_session_auto_start'=>true,
-            ]
+                'Ext\RouteHookOneFileMode'=>[
+                    'mode_onefile'=>true,
+                    'mode_onefile_key_for_action'=>'act',
+                     'use_function_dispatch'=>true,
+                     'use_function_view'=>true,
+                    
+                    'use_session_auto_start'=>true,
+                ],
+            ],
         ];
         $options=array_replace_recursive($default_options, $options);
         static::G()->init($options);
@@ -194,9 +178,9 @@ trait DNMVCS_Glue
         return Ext\RouteHookMapAndRewrite::G()->assignRewrite($key, $value);
     }
     /////
-    public static function CheckStrictDB($object, $tag)
+    public static function OnCheckStrictDB($object, $tag)
     {
-        return DNStrict::CheckStrictDB($object);
+        return DNStrict::OnCheckStrictDB($object);
     }
     public function checkStrictComponent($object)
     {
@@ -232,6 +216,10 @@ trait DNMVCS_SystemWrapper
     public static function session_start(array $options=[])
     {
         return DNSuperGlobal::G()->session_start($options);
+    }
+    public function session_id($session_id=null)
+    {
+        return DNSuperGlobal::G()->session_id($session_id);
     }
     public static function session_destroy()
     {
