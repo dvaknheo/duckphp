@@ -18,7 +18,6 @@ class DNConfiger
         $this->setting=$options['setting']??[];
         $this->all_config=$options['all_config']??[];
         $this->setting_file_basename=$options['setting_file_basename']??'setting';
-        $this->reload_platform_and_dev=$options['reload_platform_and_dev']??[];
         if ($context) {
             $this->initContext($context);
         }
@@ -26,16 +25,16 @@ class DNConfiger
     protected function initContext($context)
     {
         try {
-            if (!$context->options['reload_platform_and_dev']) {
+            if (!$context->options['reload_for_flags']) {
                 return;
             }
             $is_dev=$this->_Setting('is_dev');
-            $platform=$this->_Setting('is_dev');
-            if ($is_dev) {
+            $platform=$this->_Setting('platform');
+            if (isset($is_dev)) {
                 $context->is_dev=$is_dev;
             }
-            if ($platform) {
-                $context->is_dev=$platform;
+            if (isset($platform)) {
+                $context->platform=$platform;
             }
         } catch (\Throwable $ex) {
         }

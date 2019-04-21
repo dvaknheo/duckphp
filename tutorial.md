@@ -334,7 +334,7 @@ const DEFAULT_OPTIONS=[
     'setting_file_basename'=>'setting',
     'all_config'=>[],
     'setting'=>[],
-    'reload_platform_and_dev'=>true,
+    'reload_for_flags'=>true,
     
     //// error handler ////
     'error_404'=>'_sys/error-404',
@@ -411,8 +411,8 @@ autoload 的命名空间
 'setting'=>[], 合并入的 设置
 
 当你不想读取设置的时候从这里拿 这里的设置会覆盖文件里的。
-#### 选项 reload_platform_and_dev
-'reload_platform_and_dev'=>true,    从设置里重载 is_dev 和 platform
+#### 选项 reload_for_flags
+'reload_for_flags'=>true,    从设置里重载 is_dev 和 platform
 #### 选项 error_404
 'error_404'=>'_sys/error-404', 404 页面
 

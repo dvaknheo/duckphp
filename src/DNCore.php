@@ -45,7 +45,7 @@ class DNCore
             'setting_file_basename'=>'setting',
             'all_config'=>[],
             'setting'=>[],
-            'reload_platform_and_dev'=>true,
+            'reload_for_flags'=>true,
             
             //// error handler ////
             'error_404'=>'_sys/error-404',
