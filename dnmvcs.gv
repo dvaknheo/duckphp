@@ -1,18 +1,30 @@
 digraph G{
 /* This is a graphviz file */
 graph [rankdir = "LR"];
-
+subgraph cluster_Basic {
+    label = "[Basic]";
+    DNSingleton [shape=Mdiamond];
+    DNSuperGlobal;
+    DNClassExt;
+}
 subgraph cluster_Core {
-    label = "Main";
-        
-    DNCore -> DNRuntimeState;
-    DNCore -> DNAutoLoader;
-    DNCore -> DNException -> DNThrowQuickly ;
-    DNCore -> DNExceptionManager;
-    DNCore -> DNView;
-    DNCore -> DNConfiger;
-    DNCore -> DNRoute;
+    style = "rounded";
+    label = "[System Core]";
+    DNCore -> AutoLoader ;
+    DNCore -> ExceptionManager;
+    DNCore -> View;
+    DNCore -> Configer;
+    DNCore -> Route;
+    DNCore -> RuntimeState;
     
+    DNCore -> CoreSingleton [style="dashed"];
+    AutoLoader -> CoreSingleton [style="dashed"];
+    ExceptionManager -> CoreSingleton [style="dashed"];
+    View -> CoreSingleton [style="dashed"];
+    Configer -> CoreSingleton [style="dashed"];
+    Route -> CoreSingleton [style="dashed"];
+    RuntimeState -> CoreSingleton [style="dashed"];
+      
     DNCore [shape=Mdiamond];
 }
 
@@ -25,45 +37,68 @@ DB_DB -> DB_DBInterface;
 DB_MedooDB -> DB_DBAdvance;
 
 }
-subgraph cluster_All {
-    label = "DNMVCS";
+subgraph cluster_Full {
+    label = "[System Full]";
 
-DNMVCS -> DNCore;
+    Full -> DNSwooleExt;
+    Full -> RouteHookRewrite;
+    Full -> RouteHookRouteMap;
 
-DNMVCS -> DNClassExt;
-DNMVCS -> DNSwooleExt;
-DNMVCS -> DNSystemWrapperExt -> DNSuperGlobal;
-DNMVCS -> DNDBManager -> DB_DB;
-
-DNMVCS [shape=Mdiamond];
+    Full -> DNSystemWrapperExt -> DNSuperGlobal;
+    Full -> DNDBManager -> DB_DB;
+    
+    DNSwooleExt -> DNSingleton[style="dashed"]; 
+    RouteHookRewrite -> DNSingleton[style="dashed"]; 
+    RouteHookRouteMap -> DNSingleton [style="dashed"]; 
+    DNSystemWrapperExt -> DNSingleton [style="dashed"]; 
+    DNDBManager -> DNSingleton [style="dashed"]; 
+    
+    Full [label="DNMVCS";style="dashed"];
 
 }
 subgraph cluster_Ext {
-label = "Ext";
+label = "[System Ext]";
 
 
-DNMVCS-> Ext_ProjectCommonConfiger -> DNConfiger;
-DNMVCS-> Ext_FunctionView  -> DNView;
-DNMVCS-> Ext_RouteHookDirectoryMode -> DNSuperGlobal;
-DNMVCS-> Ext_RouteHookOneFileMode -> DNSuperGlobal;
+Ext-> Ext_DBReusePoolProxy; 
+Ext-> Ext_FunctionDispatcher;
+Ext-> Ext_ProjectCommonAutoloader;
+Ext-> Ext_FacadesAutoLoader;
+Ext-> Ext_RouteHookDirectoryMode;
+Ext-> Ext_RouteHookOneFileMode;
+
+Ext_DBReusePoolProxy ->  DNSingleton [style="dashed"];  
+Ext_FunctionDispatcher -> DNSingleton [style="dashed"]; 
+Ext_ProjectCommonAutoloader -> DNSingleton [style="dashed"]; 
+Ext_FacadesAutoLoader -> DNSingleton [style="dashed"]; 
+Ext_RouteHookDirectoryMode -> DNSingleton [style="dashed"]; 
+Ext_RouteHookOneFileMode -> DNSingleton [style="dashed"]; 
 
 
+Ext-> Ext_FacadesAutoLoader -> Ext_FacadesBase ;
+Ext-> Ext_RouteHookDirectoryMode -> DNSuperGlobal;
+Ext-> Ext_RouteHookOneFileMode -> DNSuperGlobal;
 
-DNMVCS-> Ext_DBReusePoolProxy;
-DNMVCS-> Ext_FunctionDispatcher;
-DNMVCS-> Ext_ProjectCommonAutoloader;
 
-DNMVCS-> Ext_RouteHookMapAndRewrite; 
-DNMVCS-> Ext_FacadesAutoLoader -> Ext_FacadesBase ;
+Ext-> Ext_ProjectCommonConfiger -> Configer;
+Ext-> Ext_FunctionView  -> View;
 
+Ext [label="Ext";style="dashed"];
 
 }
 
 
+DNMVCS -> DNCore;
+DNMVCS -> Full;
+DNMVCS -> Ext;
+DNMVCS -> DNClassExt;
+
+DNMVCS [shape=Mdiamond];
+
 DNSingleton;
-Pager;
-StrictModel;
-StrictService;
-ToolKit;
+Pager -> DNSingleton [style="dashed"]; 
+StrictModel -> DNSingleton [style="dashed"]; 
+StrictService -> DNSingleton [style="dashed"]; 
+ToolKit  -> DNSingleton [style="dashed"]; 
 
 }
