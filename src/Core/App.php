@@ -285,7 +285,7 @@ trait Core_Handler
         
         $view=View::G();
         $data=[];
-        $data['is_developing']=static::Developing();
+        $data['is_developing']=static::IsDebug();
         $data['ex']=$ex;
         $data['message']=$ex->getMessage();
         $data['code']=$ex->getCode();
@@ -454,7 +454,7 @@ trait Core_Helper
     {
         return static::G()->platform;
     }
-    public static function Developing()
+    public static function IsDebug()
     {
         return static::G()->is_dev;
     }

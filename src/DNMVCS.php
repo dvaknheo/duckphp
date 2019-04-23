@@ -41,7 +41,7 @@ class DNMVCS extends App
                     'db_close_handler'=>null,
                     'database_list'=>[],
                 ],
-                'InnerExt\Strict'=>true,
+                'InnerExt\StrictCheck'=>true,
                 'InnerExt\SystemWrapperExt'=>true,
                 'InnerExt\Lazybones'=>true,
                 'InnerExt\RouteHookRewrite'=>true,
@@ -155,19 +155,19 @@ trait DNMVCS_Glue
     /////
     public static function OnCheckStrictDB($object, $tag)
     {
-        return Strict::OnCheckStrictDB($object);
+        return StrictCheck::OnCheckStrictDB($object);
     }
     public function checkStrictComponent($object)
     {
-        return Strict::G()->checkStrictComponent($object);
+        return StrictCheck::G()->checkStrictComponent($object);
     }
     public function checkStrictService($object)
     {
-        return Strict::G()->checkStrictService($object);
+        return StrictCheck::G()->checkStrictService($object);
     }
     public function checkStrictModel($object)
     {
-        return Strict::G()->checkStrictModel($object);
+        return StrictCheck::G()->checkStrictModel($object);
     }
 }
 trait DNMVCS_SystemWrapper

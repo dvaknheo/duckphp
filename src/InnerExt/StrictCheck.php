@@ -4,7 +4,7 @@ namespace DNMVCS\InnerExt;
 use DNMVCS\Basic\SingletonEx;
 use \Exception;
 
-class Strict
+class StrictCheck
 {
     use SingletonEx;
     
@@ -47,7 +47,7 @@ class Strict
     protected function checkEnv()
     {
         $dn=$this->dn_class;
-        if (!$dn::Developing()) {
+        if (!$dn::IsDebug()) {
             return false;
         }
         return true;

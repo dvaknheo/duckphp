@@ -164,7 +164,10 @@ test
 #### 开始之前
 DNMVCS::G(); 默认返回工程中 MY\Base\App 实例。
 
-抛异常：DNMVCS::ThrowOn($flag,$messsage,$code=0); 如果 flag 成立，抛出 DNException;
+是否调试状态 DNMVCS::IsDebug()
+
+抛异常：DNMVCS::ThrowOn($flag,$messsage,$code=0); 如果 flag 成立，抛出 Exception;
+
 
 DNMVCS::DumpExtMethods() 用于查看主程 通过 MY\Base\App 的重载给添加了什么其他方法。
 
@@ -175,9 +178,9 @@ assign 系列函数都是两种调用方式, 单个assign($key,$value) 和 assig
 #### Controller 编写控制器用到的方法
 
 显示视图用 DNMVCS::Show($data,$view=null); 如果view 是空等价于 控制器名/方法名 的视图。
-PHP 自带的 get_defined_vars();会很有用。
+最偷懒的是调用 DNMVCS::Show(get_defined_vars());
 
-如果只显示一块，用 DNMVCS::ShowBlock($view,$data=null);  如果$data 是空，把父视图的数据带入，
+如果只显示一块，用 DNMVCS::ShowBlock($view,$data=null); 如果$data 是空，把父视图的数据带入，
 DNMVCS::ShowBlock 没用到页眉页脚。
 
 在控制器的构造函数中。用 DNMVCS::G()->setViewWrapper($view_header,$view_footer) 来设置页眉页脚。
@@ -185,6 +188,7 @@ DNMVCS::ShowBlock 没用到页眉页脚。
 DNMVCS::G()->assignViewData($name,$var) 来预设一些输出。
 
 HTML 编码用 DNMVCS::H($str); $str 可以是数组。
+如果要做权限判断 构造函数里 DNMVCS::G()->getRouteCallingMethod() 获取当前调用方法。
 
 跳转退出方面。
 404 跳转退出 DNMVCS::Exit404();
@@ -197,29 +201,18 @@ HTML 编码用 DNMVCS::H($str); $str 可以是数组。
 用 DNMVCS::exit_system() 代替系统 exit; 便于接管处理。
 
 用 DNMVCS::URL($url) 获取相对 url;
-用 DNMVCS::Parameters() 获取切片，对地址重写有用。
+用 DNMVCS::Parameters() 获取切片，对地址重写有效。
 
-如果要做权限判断 构造函数里 DNMVCS::G()->getRouteCallingMethod() 获取当前调用方法。
-
-异常相关
+异常相关的
 
 如果想接管默认异常，用 DNMVCS::G()->setDefaultExceptionHandler($handler)
 
 如果对接管特定异常，用 DNMVCS::G()->assignExceptionHandler($exception_name,$handler)
 
-用 DNMVCS::G()->setMultiExceptionHandler($exception_name=[],$handler) 设置多个异常到回调中。
-
-要做 Swoole 兼容。 
-
-用 DNMVCS::SG() 代替 超全局变量的 $ 前缀
-
-swoole 兼容session 的替代函数  DNMVCS::session_start DNMVCS::session_destroy session_id() DNMVCS::session_set_save_handler
-
-超全局变量替代函数  DNMVCS::GLOBALS 全局变量 DNMVCS::STATICS 静态变量  DNMVCS::CLASS_STATICS 类静态变量
+设置多个异常到回调则用 DNMVCS::G()->setMultiExceptionHandler($exception_name=[],$handler)
 
 #### Serivce 编写服务用到的方法
 
-开发状态判定 DNMVCS::Developing()
 获得运行平台 DNMVCS::Platform()
 
 获得设置 DNMVCS::Setting($key) 默认设置文件是  config/setting.php 。
@@ -238,16 +231,11 @@ DNMVCS::DB_W() 获得写数据库类。
 DNMVCS::RunQuickly($options,$after_function=null);
 
 添加路由和重写  DNMVCS::G()->assignRewrite DNMVCS::G()->assignRoute 
-查看添加了的路由和重写 用 DNMVCS::G()->getRewrites() 和DNMVCS::G()->getRoutes(); 查看
+查看则 用 DNMVCS::G()->getRewrites() 和DNMVCS::G()->getRoutes();
 
-添加路由钩子 DNMVCS::G()->addRouteHook($hook); $hook 返回空用默认路由处理，否则调用 返回值处理。
-
-添加显示前处理 用 DNMVCS::G()->addBeforeShowHandler($callback)
-
-自动加载的 assignPathNamespace 
 DNMVCS::G()->getOverrideRootClass() 获得重载自类
+自动加载的 DNMVCS::G()->assignPathNamespace ()
 
-Swoole 接口相关 DNMVCS::G()->addDynamicClass($class) swoole 协程单例的类。
 
 动态扩展相关 
 扩展静态方法 DNMVCS::G()->assignStaticMethod($method,$callback);
@@ -256,6 +244,10 @@ Swoole 接口相关 DNMVCS::G()->addDynamicClass($class) swoole 协程单例的�
 DNMVCS::G()->extendClassMethodByThirdParty($class,$static_methods=[],$dyminac_methods=[]);
 DNMVCS 调用代理 $class 的方法。
 
+添加路由钩子 DNMVCS::G()->addRouteHook($hook); $hook 返回空用默认路由处理，否则调用返回的回调。
+
+添加显示前处理 用 DNMVCS::G()->addBeforeShowHandler($callback)
+运行前 DNMVCS::G()->addBeforeShowHandler($callback)
 #### 入口类可能扩充的其他方法
 
 DNMVCS::G()->init($options,$context=null); 初始化
@@ -263,12 +255,24 @@ DNMVCS::G()->init($options,$context=null); 初始化
 DNMVCS::G()->run();运行
 
 
-Swoole 接口相关 getBootInstances getDynamicClasses
+Swoole 接口相关 getStaticClasses getDynamicClasses
 
 系统替代函数相关 system_wrapper_replace
 内部事件方法：
 
-OnBeforeShow 显示之前调用。On404 处理404; OnException  处理异常 OnDevErrorHandler 处理异常模块 。
+OnBeforeShow 显示之前调用。On404 处理404; OnException  处理异常 OnDevErrorHandler 处理异常模块。
+
+#### 要做 Swoole 兼容。 
+
+用 DNMVCS::SG() 代替 超全局变量的 $ 前缀
+
+swoole 兼容session 的替代函数  DNMVCS::session_start DNMVCS::session_destroy session_id() DNMVCS::session_set_save_handler
+
+超全局变量替代函数  DNMVCS::GLOBALS 全局变量 DNMVCS::STATICS 静态变量  DNMVCS::CLASS_STATICS 类静态变量
+
+Swoole 接口相关 DNMVCS::G()->addDynamicClass($class) swoole 协程单例的类。
+
+### 以上
 
 ### 从入口开始
 ```php
@@ -578,7 +582,7 @@ DNMVCS 整合其他框架：
 运行相关的。
 入口 快速运行 RunQuickly
 运行状态判定 IsRunning
-开发状态判定 Developing
+开发状态判定 IsDebug
 运行平台 Platform
 
 设置配置。
@@ -623,8 +627,8 @@ IsRunning
 
     判断是否已经开始运行。
     实质调用 DNRuntimeState::G()->isRunning();
-#### DNMVCS::Developing
-Developing()
+#### DNMVCS::IsDebug
+IsDebug()
 
     判断是否在开发状态。默认读设置里的 is_dev 。
 #### DNMVCS::Platform
@@ -998,7 +1002,7 @@ DNMVCS 实现 override_class 的 静态方法，是用 DNClassExt 来实现。
 * [DNMVCS::DB](#DNMVCS::DB)
 * [DNMVCS::DB_R](#DNMVCS::DB_R)
 * [DNMVCS::DB_W](#DNMVCS::DB_W)
-* [DNMVCS::Developing](#DNMVCS::Developing)
+* [DNMVCS::IsDebug](#DNMVCS::IsDebug)
 * [DNMVCS::DumpExtMethods](#DNMVCS::DumpExtMethods)
 * [DNMVCS::Exit404](#DNMVCS::Exit404)
 * [DNMVCS::ExitJson](#DNMVCS::ExitJson)
