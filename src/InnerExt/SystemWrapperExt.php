@@ -2,6 +2,7 @@
 namespace DNMVCS\InnerExt;
 
 use DNMVCS\Basic\SingletonEx;
+use DNMVCS\Basic\SuperGlobal;
 
 class SystemWrapperExt
 {
@@ -22,7 +23,8 @@ class SystemWrapperExt
         if ($context) {
             $context::G()->system_wrapper_replace($funcs);
             if (isset($funcs['set_exception_handler'])) {
-                $context::set_exception_handler([DNMVCS::class,'OnException']);
+                $dn=defined('DNMVCS_CLASS')?DNMVCS_CLASS:DNMVCS::class;
+                $context::set_exception_handler([$dn,'OnException']);
             }
             $context->addBeforeRunHandler([static::class,'OnRun']);
         }
@@ -35,12 +37,12 @@ class SystemWrapperExt
     {
         if (defined('DNMVCS_SUPER_GLOBAL_REPALACER')) {
             $func=DNMVCS_SUPER_GLOBAL_REPALACER;
-            DNSuperGlobal::G($func());
+            SuperGlobal::G($func());
         }
         if (defined('DNMVCS_SUPER_GLOBAL_REPALACER') || $this->use_super_global) {
             $dn=defined('DNMVCS_CLASS')?DNMVCS_CLASS:DNMVCS::class;
-            $dn::G()->addDynamicClass(DNSuperGlobal::class);
-            $dn::G()->bindServerData(DNSuperGlobal::G()->_SERVER);
+            $dn::G()->addDynamicClass(SuperGlobal::class);
+            $dn::G()->bindServerData(SuperGlobal::G()->_SERVER);
         }
     }
 }

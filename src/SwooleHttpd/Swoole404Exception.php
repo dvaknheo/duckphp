@@ -1,5 +1,5 @@
 <?php
-namespace SwooleHttpd;
+namespace DNMVCS\SwooleHttpd;
 
 class Swoole404Exception extends \Exception
 {

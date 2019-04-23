@@ -1,6 +1,5 @@
 <?php
-namespace SwooleHttpd;
-
+namespace DNMVCS\SwooleHttpd;
 class SwooleCoroutineSingleton
 {
     use SwooleSingleton;
@@ -9,14 +8,15 @@ class SwooleCoroutineSingleton
     
     public static function ReplaceDefaultSingletonHandler()
     {
-        if (defined('DNMVCS_DNSINGLETON_REPALACER')) {
+        if (defined('DNMVCS_SINGLETONEX_REPALACER')) {
             return false;
         }
-        define('DNMVCS_DNSINGLETON_REPALACER', self::class . '::'.'SingletonInstance');
+        define('DNMVCS_SINGLETONEX_REPALACER', self::class . '::'.'SingletonInstance');
         return true;
     }
     public static function SingletonInstance($class, $object)
     {
+
         $cid = \Swoole\Coroutine::getuid();
         $cid=($cid<=0)?0:$cid;
         $cid=$cid_map[$cid]??$cid;

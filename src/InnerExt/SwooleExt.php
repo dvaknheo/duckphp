@@ -2,7 +2,7 @@
 namespace DNMVCS\InnerExt;
 
 use DNMVCS\Basic\SingletonEx;
-use SwooleHttpd\SwooleHttpd;
+use DNMVCS\SwooleHttpd\SwooleHttpd;
 use Exception;
 
 class DNSwooleExtServerHolder
@@ -75,7 +75,7 @@ class DnSwooleExtReuserHolder
         if (get_class($class::G())!==static::class) {
             return $this;
         }
-        DNSwooleExt::Server()->resetInstances();
+        SwooleExt::Server()->resetInstances();
         
         $ret=$class::G()->init($options);
         return $ret;

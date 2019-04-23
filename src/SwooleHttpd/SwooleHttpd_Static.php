@@ -1,5 +1,5 @@
 <?php
-namespace SwooleHttpd;
+namespace DNMVCS\SwooleHttpd;
 
 trait SwooleHttpd_Static
 {

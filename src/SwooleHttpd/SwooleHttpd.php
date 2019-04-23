@@ -1,5 +1,12 @@
 <?php
-namespace SwooleHttpd;
+namespace DNMVCS\SwooleHttpd;
+use DNMVCS\SwooleHttpd\SwooleHttpd_Static;
+use DNMVCS\SwooleHttpd\SwooleHttpd_SimpleHttpd;
+use DNMVCS\SwooleHttpd\SwooleHttpd_WebSocket;
+use DNMVCS\SwooleHttpd\SwooleHttpd_SystemWrapper;
+use DNMVCS\SwooleHttpd\SwooleHttpd_SuperGlobal;
+use DNMVCS\SwooleHttpd\SwooleHttpd_Singleton;
+use DNMVCS\SwooleHttpd\SwooleHttpd_Handler;
 
 class SwooleHttpd
 {

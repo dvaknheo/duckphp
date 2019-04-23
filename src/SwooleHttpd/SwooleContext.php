@@ -1,6 +1,5 @@
 <?php
-namespace SwooleHttpd;
-
+namespace DNMVCS\SwooleHttpd;
 class SwooleContext
 {
     use SwooleSingleton;
