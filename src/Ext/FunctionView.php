@@ -1,10 +1,9 @@
 <?php
 namespace DNMVCS\Ext;
 
-use DNMVCS\DNSingleton;
-use DNMVCS\DNView;
+use DNMVCS\Core\View;
 
-class FunctionView extends DNView
+class FunctionView extends View
 {
     public $prefix='view_';
     public $head_callback;

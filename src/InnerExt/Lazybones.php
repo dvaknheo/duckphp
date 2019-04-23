@@ -1,12 +1,12 @@
 <?php
-namespace DNMVCS\Ext;
+namespace DNMVCS\InnerExt;
 
-use DNMVCS\DNSingleton;
-use DNMVCS\DNRoute;
+use DNMVCS\Basic\SingletonEx;
+use DNMVCS\Core\Route;
 
 class Lazybones
 {
-    use DNSingleton;
+    use SingletonEx;
     const DEFAULT_OPTIONS=[
         'lazy_mode'=>true,
         'use_app_path'=>true,
@@ -54,7 +54,7 @@ class Lazybones
         spl_autoload_register([$this,'loadSeriveClass']);
         spl_autoload_register([$this,'loadModelClass']);
         
-        DNRoute::G()->ext_route_handler=[$this,'runRoute'];
+        Route::G()->ext_route_handler=[$this,'runRoute'];
     }
     public function loadSeriveClass($class)
     {
@@ -83,15 +83,15 @@ class Lazybones
     ////
     public function runRoute()
     {
-        $path_info=DNRoute::G()->path_info;
-        $enable_paramters=DNRoute::G()->controller_enable_paramters;
+        $path_info=Route::G()->path_info;
+        $enable_paramters=Route::G()->controller_enable_paramters;
         
         $class_blocks=explode('/', $path_info);
         $method=array_pop($class_blocks);
         $class_path=implode('/', $class_blocks);
         
         $full_class=$this->getFullClassByNoNameSpace($class_path);
-        $callback=DNRoute::G()->getCallback($full_class, $method);
+        $callback=Route::G()->getCallback($full_class, $method);
         if ($callback) {
             return $callback;
         }
@@ -103,9 +103,9 @@ class Lazybones
             return null;
         }
         $method=$the_method;
-        DNRoute::G()->parameters=$parameters;
-        DNRoute::G()->calling_path=$calling_path;
-        return DNRoute::G()->getCallback($full_class, $method);
+        Route::G()->parameters=$parameters;
+        Route::G()->calling_path=$calling_path;
+        return Route::G()->getCallback($full_class, $method);
     }
     protected function getRouteDispatchInfo($blocks, $method)
     {
@@ -158,7 +158,7 @@ class Lazybones
     // MyProject\Controller\AA__BB__CC
     protected function checkLoadClass($path_class)
     {
-        $namespace_controller=DNRoute::G()->namespace_controller;
+        $namespace_controller=Route::G()->namespace_controller;
 
         $path_class_simple=str_replace('/', '__', $path_class);
         

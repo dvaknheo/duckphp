@@ -1,11 +1,11 @@
 <?php
 namespace DNMVCS\Ext;
 
-use DNMVCS\DNSingleton;
+use DNMVCS\Basic\SingletonEx;
 
 class ProjectCommonAutoloader
 {
-    use DNSingleton;
+    use SingletonEx;
     protected $path_common;
     public function init($options=[], $context=null)
     {

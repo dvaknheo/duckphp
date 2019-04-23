@@ -1,9 +1,12 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\Core;
 
-class DNRuntimeState
+use DNMVCS\Core\SingletonEx;
+
+class RuntimeState
 {
-    use DNSingleton;
+    use SingletonEx;
+    
     protected $is_running=false;
     protected $error_reporting_old;
     public function isRunning()

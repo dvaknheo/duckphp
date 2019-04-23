@@ -1,11 +1,11 @@
 <?php
 namespace DNMVCS\Ext;
 
-use DNMVCS\DNSingleton;
+use DNMVCS\Basic\SingletonEx;
 
 class FacadesAutoLoader
 {
-    use DNSingleton;
+    use SingletonEx;
 
     protected $prefix='';
     protected $facades_map=[];

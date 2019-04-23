@@ -1,12 +1,11 @@
 <?php
-namespace DNMVCS\Ext;
+namespace DNMVCS\InnerExt;
 
-use DNMVCS\DNSingleton;
-use DNMVCS\DNSuperGlobal;
+use DNMVCS\Basic\SingletonEx;
 
 class RouteHookRouteMap
 {
-    use DNSingleton;
+    use SingletonEx;
     protected $route_map=[];
     public function init($options=[], $context=null)
     {
@@ -96,5 +95,4 @@ class RouteHookRouteMap
     {
         $route->callback=$this->getRouteHandelByMap($route, $this->route_map);
     }
-
 }

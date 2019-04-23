@@ -1,7 +1,7 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\Basic;
 
-trait DNClassExt
+trait ClassExt
 {
     protected $static_methods=[];
     protected $dynamic_methods=[];

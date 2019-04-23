@@ -3,13 +3,20 @@
 //OK，Lazy
 namespace DNMVCS;
 
-use DNMVCS\Ext;
-use DNMVCS\DNCore;
+use DNMVCS\Basic\ClassExt;
+use DNMVCS\Basic\SuperGlobal;
+use DNMVCS\InnerExt\Strict;
+use DNMVCS\InnerExt\DBManager;
+use DNMVCS\InnerExt\RouteHookRewrite;
+use DNMVCS\InnerExt\RouteHookRouteMap;
 
-class DNMVCS extends DNCore
+use DNMVCS\Ext;
+use DNMVCS\Core\App;
+
+class DNMVCS extends App
 {
     const VERSION = '1.1.0';
-    use DNClassExt;
+    use ClassExt;
     
     use DNMVCS_Glue;
     use DNMVCS_SystemWrapper;
@@ -26,21 +33,20 @@ class DNMVCS extends DNCore
             'swoole'=>[],
             
             'ext'=>[
-                'DNSwooleExt'=>true,
-                'DNDBManager'=>[
+                'InnerExt\SwooleExt'=>true,
+                'InnerExt\DBManager'=>[
                     'use_db'=>true,
                     'use_strict_db'=>false,
                     'db_create_handler'=>null,
                     'db_close_handler'=>null,
                     'database_list'=>[],
                 ],
-                'DNStrict'=>true,
-                'DNSystemWrapperExt'=>true,
-                
-                'Ext\Lazybones'=>true,
-                'Ext\RouteHookRewrite'=>true,
-                'Ext\RouteHookRouteMap'=>true,
-                'Ext\DIExt'=>true,
+                'InnerExt\Strict'=>true,
+                'InnerExt\SystemWrapperExt'=>true,
+                'InnerExt\Lazybones'=>true,
+                'InnerExt\RouteHookRewrite'=>true,
+                'InnerExt\RouteHookRouteMap'=>true,
+                'InnerExt\DIExt'=>true,
                 
                 'Ext\DBReusePoolProxy'=>false,
                 'Ext\FacadesAutoLoader'=>false,
@@ -101,67 +107,67 @@ trait DNMVCS_Glue
     //////////////
     public static function SG()
     {
-        return DNSuperGlobal::G();
+        return SuperGlobal::G();
     }
     public static function &GLOBALS($k, $v=null)
     {
-        return DNSuperGlobal::G()->_GLOBALS($k, $v);
+        return SuperGlobal::G()->_GLOBALS($k, $v);
     }
     
     public static function &STATICS($k, $v=null)
     {
-        return DNSuperGlobal::G()->_STATICS($k, $v, 1);
+        return SuperGlobal::G()->_STATICS($k, $v, 1);
     }
     public static function &CLASS_STATICS($class_name, $var_name)
     {
-        return DNSuperGlobal::G()->_CLASS_STATICS($class_name, $var_name);
+        return SuperGlobal::G()->_CLASS_STATICS($class_name, $var_name);
     }
     /////
     public static function DB($tag=null)
     {
-        return DNDBManager::G()->_DB($tag);
+        return DBManager::G()->_DB($tag);
     }
     public static function DB_W()
     {
-        return DNDBManager::G()->_DB_W();
+        return DBManager::G()->_DB_W();
     }
     public static function DB_R()
     {
-        return DNDBManager::G()->_DB_R();
+        return DBManager::G()->_DB_R();
     }
     /////
     public function assignRewrite($key, $value=null)
     {
-        return Ext\RouteHookRewrite::G()->assignRewrite($key, $value);
+        return RouteHookRewrite::G()->assignRewrite($key, $value);
     }
     public function getRewrites()
     {
-        return Ext\RouteHookRewrite::G()->getRewrites();
+        return RouteHookRewrite::G()->getRewrites();
     }
     public function assignRoute($key, $value=null)
     {
-        return Ext\RouteHookRouteMap::G()->assignRoute($key, $value);
+        return RouteHookRouteMap::G()->assignRoute($key, $value);
     }
     public function getRoutes()
     {
-        return Ext\RouteHookRouteMap::G()->getRoutes();
+        return RouteHookRouteMap::G()->getRoutes();
     }
     /////
     public static function OnCheckStrictDB($object, $tag)
     {
-        return DNStrict::OnCheckStrictDB($object);
+        return Strict::OnCheckStrictDB($object);
     }
     public function checkStrictComponent($object)
     {
-        return DNStrict::G()->checkStrictComponent($object);
+        return Strict::G()->checkStrictComponent($object);
     }
     public function checkStrictService($object)
     {
-        return DNStrict::G()->checkStrictService($object);
+        return Strict::G()->checkStrictService($object);
     }
     public function checkStrictModel($object)
     {
-        return DNStrict::G()->checkStrictModel($object);
+        return Strict::G()->checkStrictModel($object);
     }
 }
 trait DNMVCS_SystemWrapper
@@ -184,19 +190,19 @@ trait DNMVCS_SystemWrapper
     }
     public static function session_start(array $options=[])
     {
-        return DNSuperGlobal::G()->session_start($options);
+        return SuperGlobal::G()->session_start($options);
     }
     public function session_id($session_id=null)
     {
-        return DNSuperGlobal::G()->session_id($session_id);
+        return SuperGlobal::G()->session_id($session_id);
     }
     public static function session_destroy()
     {
-        return DNSuperGlobal::G()->session_destroy();
+        return SuperGlobal::G()->session_destroy();
     }
     public static function session_set_save_handler(\SessionHandlerInterface $handler)
     {
-        return DNSuperGlobal::G()->session_set_save_handler($handler);
+        return SuperGlobal::G()->session_set_save_handler($handler);
     }
     public function _setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain  = '', bool $secure = false, bool $httponly = false)
     {

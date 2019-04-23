@@ -1,12 +1,13 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\InnerExt;
 
+use DNMVCS\Basic\SingletonEx;
 use SwooleHttpd\SwooleHttpd;
 use Exception;
 
 class DNSwooleExtServerHolder
 {
-    use DNSingleton;
+    use SingletonEx;
     
     public static function ReplaceDefaultSingletonHandler()
     {
@@ -40,7 +41,7 @@ class DNSwooleExtServerHolder
 }
 class DNSwooleExtAppHolder
 {
-    use DNSingleton;
+    use SingletonEx;
     public function init()
     {
         throw new Exception("Impelement Me!");
@@ -64,7 +65,7 @@ class DNSwooleExtAppHolder
 }
 class DnSwooleExtReuserHolder
 {
-    use DNSingleton;
+    use SingletonEx;
 
     public $appClass;
     public function init($options=[], $context=null)
@@ -80,9 +81,9 @@ class DnSwooleExtReuserHolder
         return $ret;
     }
 }
-class DNSwooleExt
+class SwooleExt
 {
-    use DNSingleton;
+    use SingletonEx;
     
     protected $with_http_handler_root=false;
     protected $appClass;
@@ -111,7 +112,7 @@ class DNSwooleExt
         if (PHP_SAPI!=='cli') {
             return;
         }
-        if($this->is_inited){
+        if ($this->is_inited) {
             return $this;
         }
         if (!class_exists(SwooleHttpd::class)) {

@@ -1,12 +1,13 @@
 <?php
 namespace DNMVCS\Ext;
 
-use DNMVCS\DNSingleton;
-use DNMVCS\Ext\RouteRewrite;
+use DNMVCS\Basic\SingletonEx;
+use DNMVCS\Basic\SuperGlobal;
+use DNMVCS\Inneer\RouteHookRewrite;
 
 class RouteHookOneFileMode
 {
-    use DNSingleton;
+    use SingletonEx;
 
     public $key_for_action='_r';
     public $key_for_module='';
@@ -30,8 +31,8 @@ class RouteHookOneFileMode
         $key_for_module=$this->key_for_module;
         $get=[];
         $path='';
-        $path=DNSuperGlobal::G()->_SERVER['REQUEST_URI'];
-        $path_info=DNSuperGlobal::G()->_SERVER['PATH_INFO'];
+        $path=SuperGlobal::G()->_SERVER['REQUEST_URI'];
+        $path_info=SuperGlobal::G()->_SERVER['PATH_INFO'];
 
         
         $path=parse_url($path, PHP_URL_PATH);
@@ -43,7 +44,7 @@ class RouteHookOneFileMode
         }
         ////////////////////////////////////
         
-        $new_url=RouteRewrite::G()->filteRewrite($url);
+        $new_url=RouteHookRewrite::G()->filteRewrite($url);
         if ($new_url) {
             $url=$new_url;
             if (strlen($url)>0 && '/'==$url{0}) {
@@ -57,7 +58,7 @@ class RouteHookOneFileMode
         
         $blocks=explode('/', $input_path);
         if (isset($blocks[0])) {
-            $basefile=basename(DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']);
+            $basefile=basename(SuperGlobal::G()->_SERVER['SCRIPT_FILENAME']);
             if ($blocks[0]===$basefile) {
                 array_shift($blocks);
             }
@@ -88,10 +89,10 @@ class RouteHookOneFileMode
         
         $k=$this->key_for_action;
         $m=$this->key_for_module;
-        $old_path_info=DNSuperGlobal::G()->_SERVER['PATH_INFO']??'';
+        $old_path_info=SuperGlobal::G()->_SERVER['PATH_INFO']??'';
         
-        $module=DNSuperGlobal::G()->_REQUEST[$m]??null;
-        $path_info=DNSuperGlobal::G()->_REQUEST[$k]??null;
+        $module=SuperGlobal::G()->_REQUEST[$m]??null;
+        $path_info=SuperGlobal::G()->_REQUEST[$k]??null;
 
         $path_info=$module.'/'.$path_info;
         $path_info=ltrim($path_info, '/');

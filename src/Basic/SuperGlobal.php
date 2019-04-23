@@ -1,9 +1,11 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\Basic;
 
-class DNSuperGlobal
+use DNMVCS\Basic\SingletonEx;
+
+class SuperGlobal
 {
-    use DNSingleton;
+    use SingletonEx;
     
     public $_GET;
     public $_POST;

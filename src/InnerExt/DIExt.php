@@ -1,11 +1,11 @@
 <?php
-namespace DNMVCS\Ext;
+namespace DNMVCS\InnerExt;
 
-use DNMVCS\DNSingleton;
+use DNMVCS\Basic\SingletonEx;
 
 class DIExt
 {
-    use DNSingleton;
+    use SingletonEx;
 
     protected $_di_container;
     public static function DI($name, $object=null)

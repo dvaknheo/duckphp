@@ -1,12 +1,12 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\InnerExt;
 
-use DNMVCS\DNSingleton;
+use DNMVCS\Basic\SingletonEx;
 use DNMVCS\DB\DB;
 
-class DNDBManager
+class DBManager
 {
-    use DNSingleton;
+    use SingletonEx;
     
     public $tag_write=0;
     public $tag_read='1';

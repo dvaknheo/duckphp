@@ -1,9 +1,11 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\Core;
 
-class DNAutoLoader
+use DNMVCS\Core\SingletonEx;
+
+class AutoLoader
 {
-    use DNSingleton;
+    use SingletonEx;
     const DEFAULT_OPTIONS=[
             'path'=>null,
             'namespace'=>'MY',
@@ -91,9 +93,6 @@ class DNAutoLoader
     {
         $ret=[];
         foreach ($this->namespace_paths as $source=>$name) {
-            if ($name===__NAMESPACE__) {
-                continue;
-            }
             $source=realpath($source);
             $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
             $iterator = new \RecursiveIteratorIterator($directory);

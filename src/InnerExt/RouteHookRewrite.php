@@ -1,12 +1,12 @@
 <?php
-namespace DNMVCS\Ext;
+namespace DNMVCS\InnerExt;
 
-use DNMVCS\DNSingleton;
-use DNMVCS\DNSuperGlobal;
+use DNMVCS\Basic\SingletonEx;
+use DNMVCS\Basic\SuperGlobal;
 
 class RouteHookRewrite
 {
-    use DNSingleton;
+    use SingletonEx;
     protected $rewrite_map=[];
     public function init($options=[], $context=null)
     {
@@ -110,13 +110,13 @@ class RouteHookRewrite
         $input_get=[];
         parse_str(parse_url($url, PHP_URL_QUERY), $input_get);
         $route->path_info=$path;
-        DNSuperGlobal::G()->_SERVER['init_get']=DNSuperGlobal::G()->_GET;
-        DNSuperGlobal::G()->_GET=$input_get;
+        SuperGlobal::G()->_SERVER['init_get']=SuperGlobal::G()->_GET;
+        SuperGlobal::G()->_GET=$input_get;
     }
     protected function _Hook($route)
     {
         $path_info=$route->path_info;
-        $uri=DNSuperGlobal::G()->_SERVER['REQUEST_URI'];
+        $uri=SuperGlobal::G()->_SERVER['REQUEST_URI'];
         $query=parse_url($uri, PHP_URL_QUERY);
         $query=$query?'?'.$query:'';
         $input_url=$path_info.$query;

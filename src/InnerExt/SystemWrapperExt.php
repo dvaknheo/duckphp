@@ -1,11 +1,11 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\InnerExt;
 
-use DNMVCS\DNSingleton;
+use DNMVCS\Basic\SingletonEx;
 
-class DNSystemWrapperExt
+class SystemWrapperExt
 {
-    use DNSingleton;
+    use SingletonEx;
     const DEFAULT_OPTIONS=[
         'use_super_global'=>false,
     ];

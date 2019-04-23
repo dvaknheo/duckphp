@@ -1,12 +1,12 @@
 <?php
 namespace DNMVCS\Ext;
 
-use DNMVCS\DNSingleton;
-use FacadesAutoLoader;
+use DNMVCS\Basic\SingletonEx;
+use DNMVCS\Ext\FacadesAutoLoader;
 
 class FacadesBase
 {
-    use DNSingleton;
+    use SingletonEx;
     
     public static function __callStatic($name, $arguments)
     {

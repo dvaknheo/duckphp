@@ -1,7 +1,7 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\Basic;
 
-trait DNThrowQuickly
+trait ThrowQuickly
 {
     public static function ThrowOn($flag, $message, $code=0)
     {

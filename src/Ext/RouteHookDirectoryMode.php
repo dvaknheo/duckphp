@@ -1,12 +1,13 @@
 <?php
 namespace DNMVCS\Ext;
 
-use DNMVCS\DNSingleton;
-use DNMVCS\Ext\RouteRewrite;
+use DNMVCS\Basic\SingletonEx;
+use DNMVCS\Basic\SuperGlobal;
+use DNMVCS\Inneer\RouteHookRewrite;
 
 class RouteHookDirectoryMode
 {
-    use DNSingleton;
+    use SingletonEx;
     const DEFAULT_OPTIONS=[
         'mode_dir_index_file'=>'',
         'mode_dir_use_path_info'=>true,
@@ -24,8 +25,8 @@ class RouteHookDirectoryMode
     {
         //$this->basepath=ltrim($this->basepath,'/').'/';
         $basepath=$this->basepath;
-        $input_path=parse_url(DNSuperGlobal::G()->_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        $script_filename=DNSuperGlobal::G()->_SERVER['SCRIPT_FILENAME'];
+        $input_path=parse_url(SuperGlobal::G()->_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $script_filename=SuperGlobal::G()->_SERVER['SCRIPT_FILENAME'];
         $path_info=substr($document_root.$input_path, strlen($basepath));
         $path_info=ltrim($path_info, '/').'/';
         $blocks=explode('/', $path_info);
@@ -54,9 +55,9 @@ class RouteHookDirectoryMode
             return $url;
         };
         
-        $url=RouteRewrite::G()->filteRewrite($url);
+        $url=RouteHookRewrite::G()->filteRewrite($url);
         
-        $document_root=DNSuperGlobal::G()->_SERVER['DOCUMENT_ROOT'];
+        $document_root=SuperGlobal::G()->_SERVER['DOCUMENT_ROOT'];
         $base_url=substr($this->basepath, strlen($document_root));
         $input_path=parse_url($url, PHP_URL_PATH);
         

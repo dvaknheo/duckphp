@@ -1,9 +1,11 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\Core;
 
-class DNView
+use DNMVCS\Core\SingletonEx;
+
+class View
 {
-    use DNSingleton;
+    use SingletonEx;
 
     protected $head_file;
     protected $foot_file;

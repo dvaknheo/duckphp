@@ -1,11 +1,12 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\InnerExt;
 
-use Exception;
+use DNMVCS\Basic\SingletonEx;
+use \Exception;
 
-class DNStrict
+class Strict
 {
-    use DNSingleton;
+    use SingletonEx;
     
     const MAX_TRACE_LEVEL=10;
     protected $dn_class=null;

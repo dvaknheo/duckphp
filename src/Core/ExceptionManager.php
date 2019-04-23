@@ -1,9 +1,11 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\Core;
 
-class DNExceptionManager
+use DNMVCS\Core\SingletonEx;
+
+class ExceptionManager
 {
-    use DNSingleton;
+    use SingletonEx;
     
     protected $errorHandlers=[];
     protected $dev_error_handler=null;

@@ -1,13 +1,13 @@
 <?php
 namespace DNMVCS\Ext;
 
-use DNMVCS\DNSingleton;
-use DNMVCS\DNDBManager;
+use DNMVCS\Basic\SingletonEx;
+use DNMVCS\InnerExt\DBManager;
 use SplQueue;
 
 class DBReusePoolProxy
 {
-    use DNSingleton;
+    use SingletonEx;
     
     public $tag_write='0';
     public $tag_read='1';

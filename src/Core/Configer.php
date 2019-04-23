@@ -1,9 +1,11 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\Core;
 
-class DNConfiger
+use DNMVCS\Core\SingletonEx;
+
+class Configer
 {
-    use DNSingleton;
+    use SingletonEx;
 
     public $path;
     protected $setting_file_basename='setting';
@@ -47,7 +49,7 @@ class DNConfiger
         $basename=$this->setting_file_basename;
         $full_config_file=$this->path.$basename.'.php';
         if (!is_file($full_config_file)) {
-            echo '<h1>'.'DNMVCS Fatal: no setting file['.$full_config_file.']!,change '.$basename.'.sample.php to '.$basename.'.php !'.'</h1>';
+            echo '<h1> Class '. static::class.' Fatal: no setting file['.$full_config_file.']!,change '.$basename.'.sample.php to '.$basename.'.php !'.'</h1>';
             exit;
         }
         $this->setting=$this->loadFile($basename, false);

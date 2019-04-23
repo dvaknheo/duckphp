@@ -1,9 +1,11 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\Core;
 
-class DNRoute
+use DNMVCS\Core\SingletonEx;
+
+class Route
 {
-    use DNSingleton;
+    use SingletonEx;
     
     const DEFAULT_OPTIONS=[
             'path'=>null,

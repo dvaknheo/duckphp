@@ -1,9 +1,9 @@
 <?php
 namespace DNMVCS;
 
-class SessionController
+class SessionUsageController
 {
-    protected $session_name;
+    protected $session_name='DNSESSION';
     public function __construct()
     {
         $dn=defined('DNMVCS_CLASS')?DNMVCS_CLASS:DNMVCS::class;

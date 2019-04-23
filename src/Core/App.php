@@ -1,30 +1,31 @@
 <?php
+// MAIN FILE
 //dvaknheo@github.com
 //OK，Lazy
-namespace DNMVCS;
+namespace DNMVCS\Core;
 
-use DNMVCS\DNSingleton;
+use DNMVCS\Core\SingletonEx;
 
-use DNMVCS\DNException;
-use DNMVCS\DNRoute;
-use DNMVCS\DNAutoLoader;
-use DNMVCS\DNExceptionManager;
-use DNMVCS\DNConfiger;
-use DNMVCS\DNView;
-use DNMVCS\DNRuntimeState;
+use DNMVCS\Core\Route;
+use DNMVCS\Core\AutoLoader;
+use DNMVCS\Core\ExceptionManager;
+use DNMVCS\Core\Configer;
+use DNMVCS\Core\View;
+use DNMVCS\Core\RuntimeState;
 
-class DNCore
+class App
 {
-    use DNSingleton;
+    use SingletonEx;
 
     const VERSION = '1.1.0';
     
-    use DNCore_Handler;
-    use DNCore_Glue;
-    use DNCore_Redirect;
-    use DNCore_SystemWrapper;
-    use DNCore_Helper;
-    use DNCore_Instance;
+    use Core_Handler;
+    use Core_Glue;
+    use Core_Redirect;
+    use Core_SystemWrapper;
+    use Core_Helper;
+    use Core_Instance;
+    
     const DEFAULT_OPTIONS=[
             'path'=>null,
             'namespace'=>'MY',
@@ -150,7 +151,7 @@ class DNCore
     public function init($options=[], $context=null)
     {
         $options=$this->adjustOptions($options);
-        DNAutoLoader::G()->init($options, $this)->run();
+        AutoLoader::G()->init($options, $this)->run();
         
         $object=$this->checkOverride($options);
         if ($object) {
@@ -166,29 +167,42 @@ class DNCore
     protected function initAfterOverride()
     {
         if ($this->options['enable_cache_classes_in_cli'] && PHP_SAPI==='cli') {
-            DNAutoLoader::G()->cacheClasses();
+            AutoLoader::G()->cacheClasses();
         }
         
-        DNExceptionManager::G()->init($this->options, $this);
-        DNConfiger::G()->init($this->options, $this);
-        DNView::G()->init($this->options, $this);
-        DNRoute::G()->init($this->options, $this);
+        ExceptionManager::G()->init($this->options, $this);
+        Configer::G()->init($this->options, $this);
+        View::G()->init($this->options, $this);
+        Route::G()->init($this->options, $this);
         
         $this->initExtentions($this->options['ext']);
         return $this;
     }
     protected function initExtentions($exts)
     {
+        $t=explode('\\', $this->override_root_class);
+        array_pop($t);
+        $ns=implode('\\', $t).'\\';
+        
+        
         foreach ($exts as $ext =>$options) {
             if ($options===false) {
                 continue;
             }
             $options=($options===true)?$this->options:$options;
             $options=is_string($options)?$this->options[$options]:$options;
-            if (substr($ext, 0, 1)!=='\\') {
-                $ext=__NAMESPACE__.'\\'.$ext;
+            $class='';
+            do {
+                $class=$ns.$ext;
+                if (class_exists($ns)) {
+                    break;
+                }
+            } while (false);
+            
+            if (!$class) {
+                continue;
             }
-            $ext::G()->init($options, $this);
+            $class::G()->init($options, $this);
         }
         return;
     }
@@ -201,14 +215,14 @@ class DNCore
         foreach ($this->beforeRunHandlers as $v) {
             ($v)();
         }
-        $class=get_class(DNRuntimeState::G());  //ReCreateInstance;
-        DNRuntimeState::G(new $class)->begin();
-        $ret=DNRoute::G()->run();
-        DNRuntimeState::G()->end();
+        $class=get_class(RuntimeState::G());  //ReCreateInstance;
+        RuntimeState::G(new $class)->begin();
+        $ret=Route::G()->run();
+        RuntimeState::G()->end();
         return $ret;
     }
 }
-trait DNCore_Handler
+trait Core_Handler
 {
     protected $beforeShowHandlers=[];
     protected $is_in_exception=false;
@@ -231,13 +245,13 @@ trait DNCore_Handler
     public function _OnBeforeShow($data, $view=null)
     {
         if ($view===null) {
-            DNView::G()->view=DNRoute::G()->getRouteCallingPath();
+            View::G()->view=Route::G()->getRouteCallingPath();
         }
         foreach ($this->beforeShowHandlers as $v) {
             ($v)();
         }
         if ($this->options['skip_view_notice_error']) {
-            DNRuntimeState::G()->skipNoticeError();
+            RuntimeState::G()->skipNoticeError();
         }
     }
     public function _On404()
@@ -253,23 +267,23 @@ trait DNCore_Handler
             return;
         }
         
-        $view=DNView::G();
+        $view=View::G();
         $view->setViewWrapper(null, null);
         $view->_Show([], $error_view);
-        DNRuntimeState::G()->end();
+        RuntimeState::G()->end();
     }
     
     public function _OnException($ex)
     {
         $this->is_in_exception=true;
         //TODO tell me why
-        $flag=DNExceptionManager::G()->checkAndRunErrorHandlers($ex, true);
+        $flag=ExceptionManager::G()->checkAndRunErrorHandlers($ex, true);
         if ($flag) {
             return;
         }
         static::header('', true, 500);
         
-        $view=DNView::G();
+        $view=View::G();
         $data=[];
         $data['is_developing']=static::Developing();
         $data['ex']=$ex;
@@ -300,7 +314,7 @@ trait DNCore_Handler
         }
         $view->setViewWrapper(null, null);
         $view->_Show($data, $error_view);
-        DNRuntimeState::G()->end();
+        RuntimeState::G()->end();
     }
     public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline)
     {
@@ -343,7 +357,7 @@ trait DNCore_Handler
 EOT;
             return;
         }
-        DNView::G()->_ShowBlock($error_view, $data);
+        View::G()->_ShowBlock($error_view, $data);
     }
     public function addBeforeShowHandler($handler)
     {
@@ -351,7 +365,7 @@ EOT;
     }
 }
 
-trait DNCore_SystemWrapper
+trait Core_SystemWrapper
 {
     public $header_handler=null;
     public $exit_handler=null;
@@ -385,7 +399,7 @@ trait DNCore_SystemWrapper
         exit($code);
     }
 }
-trait DNCore_Redirect
+trait Core_Redirect
 {
     public static function ExitJson($ret)
     {
@@ -425,7 +439,7 @@ trait DNCore_Redirect
     }
 }
 
-trait DNCore_Helper
+trait Core_Helper
 {
     public static function ThrowOn($flag, $message, $code=0, $exception_class='')
     {
@@ -477,89 +491,89 @@ trait DNCore_Helper
         return $str;
     }
 }
-trait DNCore_Glue
+trait Core_Glue
 {
     //state
     public static function IsRunning()
     {
-        return DNRuntimeState::G()->isRunning();
+        return RuntimeState::G()->isRunning();
     }
     // route static
     public static function URL($url=null)
     {
-        return DNRoute::G()->_URL($url);
+        return Route::G()->_URL($url);
     }
     public static function Parameters()
     {
-        return DNRoute::G()->_Parameters();
+        return Route::G()->_Parameters();
     }
     // view static
     public static function Show($data=[], $view=null)
     {
-        return DNView::G()->_Show($data, $view);
+        return View::G()->_Show($data, $view);
     }
     public static function ShowBlock($view, $data=null)
     {
-        return DNView::G()->_ShowBlock($view, $data);
+        return View::G()->_ShowBlock($view, $data);
     }
     // config static
     public static function Setting($key)
     {
-        return DNConfiger::G()->_Setting($key);
+        return Configer::G()->_Setting($key);
     }
     public static function Config($key, $file_basename='config')
     {
-        return DNConfiger::G()->_Config($key, $file_basename);
+        return Configer::G()->_Config($key, $file_basename);
     }
     public static function LoadConfig($file_basename)
     {
-        return DNConfiger::G()->_LoadConfig($file_basename);
+        return Configer::G()->_LoadConfig($file_basename);
     }
     
     /////////////////////////////////
     //autoloader
     public function assignPathNamespace($path, $namespace=null)
     {
-        return DNAutoLoader::G()->assignPathNamespace($path, $namespace);
+        return AutoLoader::G()->assignPathNamespace($path, $namespace);
     }
     // route
     public function addRouteHook($hook, $prepend=false, $once=true)
     {
-        return DNRoute::G()->addRouteHook($hook, $prepend, $once);
+        return Route::G()->addRouteHook($hook, $prepend, $once);
     }
     public function getRouteCallingMethod()
     {
-        return DNRoute::G()->getRouteCallingMethod();
+        return Route::G()->getRouteCallingMethod();
     }
     public function bindServerData($data)
     {
-        return DNRoute::G()->bindServerData($data);
+        return Route::G()->bindServerData($data);
     }
     
     //view
     public function setViewWrapper($head_file=null, $foot_file=null)
     {
-        return DNView::G()->setViewWrapper($head_file, $foot_file);
+        return View::G()->setViewWrapper($head_file, $foot_file);
     }
     public function assignViewData($key, $value=null)
     {
-        return DNView::G()->assignViewData($key, $value);
+        return View::G()->assignViewData($key, $value);
     }
     //exception manager
     public function assignExceptionHandler($classes, $callback=null)
     {
-        return DNExceptionManager::G()->assignExceptionHandler($classes, $callback);
+        return ExceptionManager::G()->assignExceptionHandler($classes, $callback);
     }
     public function setMultiExceptionHandler(array $classes, $callback)
     {
-        return DNExceptionManager::G()->setMultiExceptionHandler($classes, $callback);
+        return ExceptionManager::G()->setMultiExceptionHandler($classes, $callback);
     }
     public function setDefaultExceptionHandler($callback)
     {
-        return DNExceptionManager::G()->setDefaultExceptionHandler($callback);
+        return ExceptionManager::G()->setDefaultExceptionHandler($callback);
     }
 }
-trait DNCore_Instance
+trait Core_Instance
 {
     protected $staticClasses=[];
     protected $dynamicClasses=[];
@@ -567,11 +581,11 @@ trait DNCore_Instance
     public function getStaticClasses()
     {
         $ret=[
-            DNAutoLoader::class,
-            DNExceptionManager::class,
-            DNConfiger::class,
-            DNView::class,
-            DNRoute::class,
+            AutoLoader::class,
+            ExceptionManager::class,
+            Configer::class,
+            View::class,
+            Route::class,
         ];
         return $ret;
     }

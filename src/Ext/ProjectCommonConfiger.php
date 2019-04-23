@@ -1,9 +1,9 @@
 <?php
 namespace DNMVCS\Ext;
 
-use DNMVCS\DNConfiger;
+use DNMVCS\Core\Configer;
 
-class ProjectCommonConfiger extends DNConfiger
+class ProjectCommonConfiger extends Configer
 {
     public $fullpath_config_common;
 

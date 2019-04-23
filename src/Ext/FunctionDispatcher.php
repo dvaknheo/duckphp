@@ -1,12 +1,12 @@
 <?php
 namespace DNMVCS\Ext;
 
-use DNMVCS\DNSingleton;
+use DNMVCS\Basic\SingletonEx;
 
 //TODO don't do so more;
 class FunctionDispatcher
 {
-    use DNSingleton;
+    use SingletonEx;
     
     protected $path_info;
     public $prefix='action_';
