@@ -1,5 +1,6 @@
 <?php
 namespace DNMVCS\SwooleHttpd;
+
 trait SwooleSingleton
 {
     protected static $_instances=[];

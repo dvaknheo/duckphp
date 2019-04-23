@@ -1,5 +1,8 @@
 <?php
 namespace DNMVCS\SwooleHttpd;
+
+use DNMVCS\SwooleHttpd\SwooleSingleton;
+
 class SwooleCoroutineSingleton
 {
     use SwooleSingleton;
@@ -16,7 +19,6 @@ class SwooleCoroutineSingleton
     }
     public static function SingletonInstance($class, $object)
     {
-
         $cid = \Swoole\Coroutine::getuid();
         $cid=($cid<=0)?0:$cid;
         $cid=$cid_map[$cid]??$cid;

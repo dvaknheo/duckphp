@@ -1,5 +1,6 @@
 <?php
 namespace DNMVCS\SwooleHttpd;
+
 use DNMVCS\SwooleHttpd\SwooleSingleton;
 
 class SwooleSuperGlobal
