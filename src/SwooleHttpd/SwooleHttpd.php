@@ -1,6 +1,8 @@
 <?php
 namespace DNMVCS\SwooleHttpd;
 
+use DNMVCS\SwooleHttpd\SwooleSingleton;
+
 use DNMVCS\SwooleHttpd\SwooleHttpd_Static;
 use DNMVCS\SwooleHttpd\SwooleHttpd_SimpleHttpd;
 use DNMVCS\SwooleHttpd\SwooleHttpd_WebSocket;

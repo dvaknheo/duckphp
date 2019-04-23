@@ -2,7 +2,7 @@
 namespace DNMVCS\InnerExt;
 
 use DNMVCS\Basic\SingletonEx;
-use \Exception;
+use Exception;
 
 class StrictCheck
 {
