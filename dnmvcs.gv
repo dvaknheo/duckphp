@@ -6,26 +6,34 @@ subgraph cluster_Basic {
     DNSingleton [shape=Mdiamond];
     DNSuperGlobal;
     DNClassExt;
+    DNSuperGlobal -> DNSingleton[style="dashed"]; 
 }
 subgraph cluster_Core {
     style = "rounded";
     label = "[System Core]";
-    DNCore -> AutoLoader ;
-    DNCore -> ExceptionManager;
-    DNCore -> View;
-    DNCore -> Configer;
-    DNCore -> Route;
-    DNCore -> RuntimeState;
+    Core_App -> Core_AutoLoader ;
+    Core_App -> Core_ExceptionManager;
+    Core_App -> Core_View;
+    Core_App -> Core_Configer;
+    Core_App -> Core_Route;
+    Core_App -> Core_RuntimeState;
     
-    DNCore -> CoreSingleton [style="dashed"];
-    AutoLoader -> CoreSingleton [style="dashed"];
-    ExceptionManager -> CoreSingleton [style="dashed"];
-    View -> CoreSingleton [style="dashed"];
-    Configer -> CoreSingleton [style="dashed"];
-    Route -> CoreSingleton [style="dashed"];
-    RuntimeState -> CoreSingleton [style="dashed"];
-      
-    DNCore [shape=Mdiamond];
+    Core_App -> Core_CoreSingleton [style="dashed"];
+    Core_AutoLoader -> Core_CoreSingleton [style="dashed"];
+    Core_ExceptionManager -> Core_CoreSingleton [style="dashed"];
+    Core_View -> Core_CoreSingleton [style="dashed"];
+    Core_Configer -> Core_CoreSingleton [style="dashed"];
+    Core_Route -> Core_CoreSingleton [style="dashed"];
+    Core_RuntimeState -> Core_CoreSingleton [style="dashed"];
+    
+    Core_CoreSingleton [label="Core\\CoreSingleton"];
+    Core_App [label="Core\\App";shape=Mdiamond];
+    Core_AutoLoader [label="Core\\AutoLoader"];
+    Core_ExceptionManager [label="Core\\ExceptionManager"];
+    Core_View [label="Core\\View"];
+    Core_Configer [label="Core\\Configer"];
+    Core_Route [label="Core\\Route"];
+    Core_RuntimeState [label="Core\\RuntimeState"];
 }
 
 
@@ -80,15 +88,15 @@ Ext-> Ext_RouteHookDirectoryMode -> DNSuperGlobal;
 Ext-> Ext_RouteHookOneFileMode -> DNSuperGlobal;
 
 
-Ext-> Ext_ProjectCommonConfiger -> Configer;
-Ext-> Ext_FunctionView  -> View;
+Ext-> Ext_ProjectCommonConfiger -> Core_Configer;
+Ext-> Ext_FunctionView  -> Core_View;
 
 Ext [label="Ext";style="dashed"];
 
 }
 
 
-DNMVCS -> DNCore;
+DNMVCS -> Core_App;
 DNMVCS -> Full;
 DNMVCS -> Ext;
 DNMVCS -> DNClassExt;
@@ -100,5 +108,6 @@ Pager -> DNSingleton [style="dashed"];
 StrictModel -> DNSingleton [style="dashed"]; 
 StrictService -> DNSingleton [style="dashed"]; 
 ToolKit  -> DNSingleton [style="dashed"]; 
+SessionUsageController;
 
 }
