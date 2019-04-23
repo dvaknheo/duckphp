@@ -4,6 +4,7 @@
 namespace DNMVCS;
 
 use DNMVCS\Ext;
+use DNMVCS\DNCore;
 
 class DNMVCS extends DNCore
 {
@@ -12,15 +13,10 @@ class DNMVCS extends DNCore
     
     use DNMVCS_Glue;
     use DNMVCS_SystemWrapper;
-    use DNMVCS_Instance;
     use DNMVCS_Misc;
     
     const DEFAULT_OPTIONS_EX=[
             'path_lib'=>'lib',
-            'enable_cache_classes_in_cli'=>true,
-            
-            'use_session_auto_start'=>false,
-            'session_auto_start_name'=>'DNSESSION',
             
             'db_setting_key'=>'database_list',
             'database_list'=>[],
@@ -30,6 +26,7 @@ class DNMVCS extends DNCore
             'swoole'=>[],
             
             'ext'=>[
+                'DNSwooleExt'=>true,
                 'DNDBManager'=>[
                     'use_db'=>true,
                     'use_strict_db'=>false,
@@ -55,43 +52,6 @@ class DNMVCS extends DNCore
             ],
             
         ];
-    protected $path_lib=null;
-    
-    protected function initAfterOverride($options)
-    {
-        if ($this->options['enable_cache_classes_in_cli'] && PHP_SAPI==='cli') {
-            DNAutoLoader::G()->cacheClasses();
-        }
-        DNSwooleExt::G()->init($options['swoole']??[], $this);
-        
-        parent::initAfterOverride($options);
-        return $this;
-    }
-    
-    public function run()
-    {
-        DNSwooleExt::G()->onBeforeRun();
-        DNSystemWrapperExt::G()->onBeforeRun();
-        if ($this->options['use_session_auto_start']) {
-            DNMVCS::session_start(['name'=>$this->options['session_auto_start_name']]);
-        }
-        return parent::run();
-    }
-    ////
-    //for other;
-    public static function Import($file)
-    {
-        return static::G()->_Import($file);
-    }
-    //// Misc Functions
-    public function _Import($file)
-    {
-        if ($this->path_lib===null) {
-            $this->path_lib=$this->path.rtrim($this->options['path_lib'], '/').'/';
-        }
-        $file=rtrim($file, '.php').'.php';
-        require_once($this->path_lib.$file);
-    }
     //// RunMode
     public static function RunWithoutPathInfo($options=[])
     {
@@ -300,46 +260,14 @@ trait DNMVCS_SystemWrapper
         return $ret;
     }
 }
-trait DNMVCS_Instance
-{
-    protected $dynamicClasses=[];
-    protected $dynamicClassesInited=false;
-    
-    public function getBootInstances()
-    {
-        $ret=[
-            DNAutoLoader::class => DNAutoLoader::G(),
-            DNMVCS::class => DNMVCS::G(),
-        ];
-        $ret[static::class]=$this;
-        return $ret;
-    }
-    protected function initDynamicClasses()
-    {
-        $this->dynamicClasses=[
-            DNRoute::class,     // for bindServerData,and $this->path_info ,and so on
-            DNView::class,      // for assign
-        ];
-    }
-    public function getDynamicClasses()
-    {
-        if ($this->dynamicClassesInited) {
-            $this->dynamicClassesInited=true;
-            $this->initDynamicClasses();
-        }
-        return $this->dynamicClasses;
-    }
-    public function addDynamicClass($class)
-    {
-        if ($this->dynamicClassesInited) {
-            $this->dynamicClassesInited=true;
-            $this->initDynamicClasses();
-        }
-        return $this->dynamicClasses[]=$class;
-    }
-}
 trait DNMVCS_Misc
 {
+    protected $path_lib=null;
+
+    public static function Import($file)
+    {
+        return static::G()->_Import($file);
+    }
     public static function RecordsetUrl(&$data, $cols_map=[])
     {
         return static::G()->_RecordsetUrl($data, $cols_map);
@@ -349,6 +277,16 @@ trait DNMVCS_Misc
     {
         return static::G()->_RecordsetH($data, $cols);
     }
+    /////////////////////
+    public function _Import($file)
+    {
+        if ($this->path_lib===null) {
+            $this->path_lib=$this->path.rtrim($this->options['path_lib'], '/').'/';
+        }
+        $file=rtrim($file, '.php').'.php';
+        require_once($this->path_lib.$file);
+    }
+    
     public function _RecordsetUrl(&$data, $cols_map=[])
     {
         //need more quickly;

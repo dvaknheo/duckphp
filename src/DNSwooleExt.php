@@ -45,6 +45,10 @@ class DNSwooleExtAppHolder
     {
         throw new Exception("Impelement Me!");
     }
+    public function getOverrideRootClass()
+    {
+        throw new Exception("Impelement Me!");
+    }
     public function run()
     {
         throw new Exception("Impelement Me!");
@@ -110,9 +114,12 @@ class DNSwooleExt
         if (!class_exists(SwooleHttpd::class)) {
             return;
         }
+        $options=$options['swoole'];
+        
         if ($context) {
-            $app_class=$context->override_root_class;
+            $app_class=$context->getOverrideRootClass();
             $this->setAppClass($app_class);
+            $context->addBeforeRunHandler([static::class,'OnRun']);
         }
         
         $server_object=SwooleHttpd::G();
@@ -121,7 +128,15 @@ class DNSwooleExt
         $server=static::Server();
         $app=static::App();
         
-        $instances=$app->getBootInstances();
+        $instances=[];
+        $classes=$app->getStaticClasses();
+        foreach ($classes as $class) {
+            $instances[$class]=$class::G();
+        }
+        $instances[$app_class]=$app_class::G();
+        $instances[get_class($app_class::G())]=$context::G();
+
+        
         $flag=$server::ReplaceDefaultSingletonHandler();
         if (!$flag) {
             return;
@@ -143,7 +158,11 @@ class DNSwooleExt
         $this->is_inited=true;
         return $this;
     }
-    public function onBeforeRun()
+    public static function OnRun()
+    {
+        return static::G()->run();
+    }
+    public function run()
     {
         if (!$this->is_inited) {
             return;
@@ -164,7 +183,11 @@ class DNSwooleExt
         
         $ret=static::App()->run();
         if (!$ret && $this->with_http_handler_root) {
-            static::Server()->forkMasterInstances(array_keys(static::App()->getBootInstances()));
+            $classes=static::App()->getStaticClasses();
+            $classes[]=get_class(static::App());
+            $classes[]=static::App()->getOverrideRootClass();
+            
+            static::Server()->forkMasterInstances($classes);
 
             DnSwooleExtReuserHolder::G()->appClass=$this->appClass;
             ([$this->appClass,'G'])(DnSwooleExtReuserHolder::G()); //fake object

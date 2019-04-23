@@ -41,7 +41,7 @@ class DNAutoLoader
             $this->assignPathNamespace($this->path_namespace, $this->namespace);
         }
         if (!$options['skip_system_autoload']) {
-            $this->assignPathNamespace(__DIR__, 'DNMVCS');
+            $this->assignPathNamespace(__DIR__, __NAMESPACE__);
         }
         
         return $this;

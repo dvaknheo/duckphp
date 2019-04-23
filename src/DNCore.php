@@ -4,7 +4,6 @@
 namespace DNMVCS;
 
 use DNMVCS\DNSingleton;
-use DNMVCS\DNCore_Glue;
 
 use DNMVCS\DNException;
 use DNMVCS\DNRoute;
@@ -25,7 +24,7 @@ class DNCore
     use DNCore_Redirect;
     use DNCore_SystemWrapper;
     use DNCore_Helper;
-    
+    use DNCore_Instance;
     const DEFAULT_OPTIONS=[
             'path'=>null,
             'namespace'=>'MY',
@@ -40,6 +39,7 @@ class DNCore
             'path_config'=>'config',
             'skip_view_notice_error'=>true,
             'use_inner_error_view'=>false,
+            'enable_cache_classes_in_cli'=>true,
             
             //// config ////
             'setting_file_basename'=>'setting',
@@ -66,14 +66,13 @@ class DNCore
         ];
     const DEFAULT_OPTIONS_EX=[
         ];
-    public $override_root_class='';
     public $options=[];
     
     public $is_dev=false;
     public $platform='';
-    public $is_in_exception=false;
-    
-    protected $path=null;
+    public $path=null;
+    public $override_root_class='';
+    protected $beforeRunHandlers=[];
     
     public static function RunQuickly(array $options=[], callable $after_init=null)
     {
@@ -91,13 +90,6 @@ class DNCore
             $options['path']=$path;
         }
         $options['path']=rtrim($options['path'], '/').'/';
-        $options['skip_system_autoload']=true;
-        
-        $options['on_404_handler']=[static::class,'On404'];
-        $options['before_show_handler']=[static::class,'OnBeforeShow'];
-        $options['exception_handler']=[static::class,'OnException'];
-        $options['dev_error_handler']=[static::class,'OnDevErrorHandler'];
-        $options['system_exception_handler']=[static::class,'set_exception_handler'];  // TODO
         
         return $options;
     }
@@ -105,10 +97,15 @@ class DNCore
     {
         $options=$this->adjustOptions($options);
         $options=array_replace_recursive(static::DEFAULT_OPTIONS, static::DEFAULT_OPTIONS_EX, $options);
-        $this->options=$options;
         
+        $options['on_404_handler']=[static::class,'On404'];
+        $options['before_show_handler']=[static::class,'OnBeforeShow'];
+        $options['exception_handler']=[static::class,'OnException'];
+        $options['dev_error_handler']=[static::class,'OnDevErrorHandler'];
+        //$options['system_exception_handler']=[static::class,'set_exception_handler'];
+        
+        $this->options=$options;
         $this->path=$this->options['path'];
-       
         
         $this->is_dev=$this->options['is_dev'];
         $this->platform=$this->options['platform'];
@@ -117,6 +114,9 @@ class DNCore
             $this->options['error_500']=null;
             $this->options['error_exception']=null;
             $this->options['error_debug']=null;
+        }
+        if (method_exists(static::class, 'set_exception_handler')) {
+            $this->options['system_exception_handler']=[static::class,'set_exception_handler'];
         }
     }
     protected function checkOverride($options)
@@ -155,13 +155,20 @@ class DNCore
         $object=$this->checkOverride($options);
         if ($object) {
             $object->override_root_class=static::class;
+            if (!defined('DNMVCS_CLASS')) {
+                define('DNMVCS_CLASS', static::class);
+            }
             return $object->init($options);
         }
         $this->initOptions($options);
-        return $this->initAfterOverride($options);
+        return $this->initAfterOverride();
     }
-    protected function initAfterOverride($options)
+    protected function initAfterOverride()
     {
+        if ($this->options['enable_cache_classes_in_cli'] && PHP_SAPI==='cli') {
+            DNAutoLoader::G()->cacheClasses();
+        }
+        
         DNExceptionManager::G()->init($this->options, $this);
         DNConfiger::G()->init($this->options, $this);
         DNView::G()->init($this->options, $this);
@@ -185,8 +192,15 @@ class DNCore
         }
         return;
     }
+    public function addBeforeRunHandler($handler)
+    {
+        $this->beforeRunHandlers[]=$handler;
+    }
     public function run()
     {
+        foreach ($this->beforeRunHandlers as $v) {
+            ($v)();
+        }
         $class=get_class(DNRuntimeState::G());  //ReCreateInstance;
         DNRuntimeState::G(new $class)->begin();
         $ret=DNRoute::G()->run();
@@ -197,6 +211,7 @@ class DNCore
 trait DNCore_Handler
 {
     protected $beforeShowHandlers=[];
+    protected $is_in_exception=false;
     public static function OnBeforeShow($data, $view=null)
     {
         return static::G()->_OnBeforeShow($data, $view);
@@ -412,12 +427,13 @@ trait DNCore_Redirect
 
 trait DNCore_Helper
 {
-    public static function ThrowOn($flag, $message, $code=0)
+    public static function ThrowOn($flag, $message, $code=0, $exception_class='')
     {
         if (!$flag) {
             return;
         }
-        throw new DNException($message, $code);
+        $exception_class=$exception_class?:\Exception::class;
+        throw new $exception_class($message, $code);
     }
     // system static
     public static function Platform()
@@ -427,6 +443,10 @@ trait DNCore_Helper
     public static function Developing()
     {
         return static::G()->is_dev;
+    }
+    public static function InException()
+    {
+        return static::G()->is_in_exception;
     }
     ////
     public static function H($str)
@@ -511,6 +531,10 @@ trait DNCore_Glue
     {
         return DNRoute::G()->getRouteCallingMethod();
     }
+    public function bindServerData($data)
+    {
+        return DNRoute::G()->bindServerData($data);
+    }
     
     //view
     public function setViewWrapper($head_file=null, $foot_file=null)
@@ -533,5 +557,30 @@ trait DNCore_Glue
     public function setDefaultExceptionHandler($callback)
     {
         return DNExceptionManager::G()->setDefaultExceptionHandler($callback);
+    }
+}
+trait DNCore_Instance
+{
+    protected $staticClasses=[];
+    protected $dynamicClasses=[];
+    
+    public function getStaticClasses()
+    {
+        $ret=[
+            DNAutoLoader::class,
+            DNExceptionManager::class,
+            DNConfiger::class,
+            DNView::class,
+            DNRoute::class,
+        ];
+        return $ret;
+    }
+    public function getDynamicClasses()
+    {
+        return $this->dynamicClasses;
+    }
+    public function addDynamicClass($class)
+    {
+        return $this->dynamicClasses[]=$class;
     }
 }
