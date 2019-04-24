@@ -5,6 +5,9 @@ use DNMVCS\Core\View;
 
 class FunctionView extends View
 {
+    const DEFAULT_OPTIONS=[
+    
+    ];
     public $prefix='view_';
     public $head_callback;
     public $foot_callback;

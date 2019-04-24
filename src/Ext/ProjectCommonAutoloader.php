@@ -6,6 +6,9 @@ use DNMVCS\Basic\SingletonEx;
 class ProjectCommonAutoloader
 {
     use SingletonEx;
+    const DEFAULT_OPTIONS_EX=[
+    
+    ];
     protected $path_common;
     public function init($options=[], $context=null)
     {

@@ -1,7 +1,7 @@
 <?php
 namespace DNMVCS\SwooleHttpd;
 
-trait SwooleHttpd_WebSocket
+trait WebSocketd
 {
     public $websocket_open_handler=null;
     public $websocket_handler=null;

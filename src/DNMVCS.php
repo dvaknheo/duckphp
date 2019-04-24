@@ -1,4 +1,5 @@
 <?php
+// MAIN FILE
 //dvaknheo@github.com
 //OK，Lazy
 namespace DNMVCS;
@@ -43,11 +44,11 @@ class DNMVCS extends App
                 ],
                 'InnerExt\StrictCheck'=>true,
                 'InnerExt\SystemWrapperExt'=>true,
-                'InnerExt\Lazybones'=>true,
                 'InnerExt\RouteHookRewrite'=>true,
                 'InnerExt\RouteHookRouteMap'=>true,
                 'InnerExt\DIExt'=>true,
                 
+                'Ext\Lazybones'=>false,
                 'Ext\DBReusePoolProxy'=>false,
                 'Ext\FacadesAutoLoader'=>false,
                 'Ext\FunctionView'=>false,

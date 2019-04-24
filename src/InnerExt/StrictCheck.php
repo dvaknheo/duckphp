@@ -7,7 +7,8 @@ use Exception;
 class StrictCheck
 {
     use SingletonEx;
-    
+    const DEFAULT_OPTIONS=[
+    ];
     const MAX_TRACE_LEVEL=10;
     protected $dn_class=null;
     public function init($options=[], $context=null)

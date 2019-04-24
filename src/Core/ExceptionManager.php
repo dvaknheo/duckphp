@@ -6,7 +6,11 @@ use DNMVCS\Core\SingletonEx;
 class ExceptionManager
 {
     use SingletonEx;
-    
+    const DEFAULT_OPTIONS=[
+        'exception_handler'=>null,
+        'dev_error_handler'=>null,
+        'system_exception_handler'=>null,
+    ];
     protected $errorHandlers=[];
     protected $dev_error_handler=null;
     protected $exception_error_handler_init=null;

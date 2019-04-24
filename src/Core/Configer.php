@@ -6,7 +6,13 @@ use DNMVCS\Core\SingletonEx;
 class Configer
 {
     use SingletonEx;
-
+    const DEFAULT_OPTIONS=[
+        'path'=>null,
+        'path_config'=>null,
+        'setting'=>null,
+        'all_config'=>null,
+        'setting_file_basename'=>null,
+    ];
     public $path;
     protected $setting_file_basename='setting';
     protected $setting=[];
@@ -16,31 +22,18 @@ class Configer
     {
         $this->path=($options['path']??'').rtrim($options['path_config'], '/').'/';
         
-        /////////////////
         $this->setting=$options['setting']??[];
         $this->all_config=$options['all_config']??[];
         $this->setting_file_basename=$options['setting_file_basename']??'setting';
         if ($context) {
             $this->initContext($context);
         }
+        return $this;
     }
-    protected function initContext($context)
+    protected function initContext($options=[], $context=null)
     {
-        try {
-            if (!$context->options['reload_for_flags']) {
-                return;
-            }
-            $is_dev=$this->_Setting('is_dev');
-            $platform=$this->_Setting('platform');
-            if (isset($is_dev)) {
-                $context->is_dev=$is_dev;
-            }
-            if (isset($platform)) {
-                $context->platform=$platform;
-            }
-        } catch (\Throwable $ex) {
-        }
     }
+
     public function _Setting($key)
     {
         if ($this->is_inited || !$this->setting_file_basename) {

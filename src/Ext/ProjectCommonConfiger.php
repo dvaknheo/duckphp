@@ -5,6 +5,9 @@ use DNMVCS\Core\Configer;
 
 class ProjectCommonConfiger extends Configer
 {
+    const DEFAULT_OPTIONS_EX=[
+    
+    ];
     public $fullpath_config_common;
 
     public function init($options=[], $context=null)

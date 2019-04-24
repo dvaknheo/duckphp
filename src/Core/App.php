@@ -34,7 +34,7 @@ class App
             
             //// properties ////
             'override_class'=>'Base\App',
-            'is_dev'=>false,
+            'is_debug'=>false,
             'platform'=>'',
             'path_view'=>'view',
             'path_config'=>'config',
@@ -69,12 +69,13 @@ class App
         ];
     public $options=[];
     
-    public $is_dev=false;
+    public $is_debug=true;
     public $platform='';
     public $path=null;
     public $override_root_class='';
     protected $beforeRunHandlers=[];
-    
+    protected $error_view_inited=false;
+
     public static function RunQuickly(array $options=[], callable $after_init=null)
     {
         if (!$after_init) {
@@ -100,15 +101,13 @@ class App
         $options=array_replace_recursive(static::DEFAULT_OPTIONS, static::DEFAULT_OPTIONS_EX, $options);
         
         $options['on_404_handler']=[static::class,'On404'];
-        $options['before_show_handler']=[static::class,'OnBeforeShow'];
         $options['exception_handler']=[static::class,'OnException'];
         $options['dev_error_handler']=[static::class,'OnDevErrorHandler'];
-        //$options['system_exception_handler']=[static::class,'set_exception_handler'];
         
         $this->options=$options;
         $this->path=$this->options['path'];
         
-        $this->is_dev=$this->options['is_dev'];
+        $this->is_debug=$this->options['is_debug'];
         $this->platform=$this->options['platform'];
         if ($this->options['use_inner_error_view']) {
             $this->options['error_404']=null;
@@ -152,7 +151,6 @@ class App
     {
         $options=$this->adjustOptions($options);
         AutoLoader::G()->init($options, $this)->run();
-        
         $object=$this->checkOverride($options);
         if ($object) {
             $object->override_root_class=static::class;
@@ -169,10 +167,14 @@ class App
         if ($this->options['enable_cache_classes_in_cli'] && PHP_SAPI==='cli') {
             AutoLoader::G()->cacheClasses();
         }
-        
         ExceptionManager::G()->init($this->options, $this);
+        
         Configer::G()->init($this->options, $this);
+        $this->reloadFlags();
+        
         View::G()->init($this->options, $this);
+        $this->error_view_inited=true;
+        
         Route::G()->init($this->options, $this);
         
         $this->initExtentions($this->options['ext']);
@@ -194,7 +196,15 @@ class App
             $class='';
             do {
                 $class=$ns.$ext;
-                if (class_exists($ns)) {
+                if (class_exists($class)) {
+                    break;
+                }
+                $class=$this->options['namespace'].'\\'.$class;
+                if (class_exists($class)) {
+                    break;
+                }
+                $class=ltrim($class, '\\');
+                if (class_exists($class)) {
                     break;
                 }
             } while (false);
@@ -221,11 +231,30 @@ class App
         RuntimeState::G()->end();
         return $ret;
     }
+    public function reloadFlags()
+    {
+        if (!$this->options['reload_for_flags']) {
+            return;
+        }
+        $is_debug=Configer::G()->_Setting('is_debug');
+        $platform=Configer::G()->_Setting('platform');
+        if (isset($is_debug)) {
+            $this->is_debug=$is_debug;
+        }
+        if (isset($platform)) {
+            $this->platform=$platform;
+        }
+    }
+    public function cleanUp()
+    {
+        // close db, etc ...
+    }
 }
 trait Core_Handler
 {
     protected $beforeShowHandlers=[];
     protected $is_in_exception=false;
+    protected $error_view_inited=false;
     public static function OnBeforeShow($data, $view=null)
     {
         return static::G()->_OnBeforeShow($data, $view);
@@ -257,6 +286,7 @@ trait Core_Handler
     public function _On404()
     {
         $error_view=$this->options['error_404'];
+        $error_view=$this->error_view_inited?$error_view:null;
         static::header('', true, 404);
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)();
@@ -285,18 +315,17 @@ trait Core_Handler
         
         $view=View::G();
         $data=[];
-        $data['is_developing']=static::IsDebug();
+        $data['is_debugeloping']=static::IsDebug();
         $data['ex']=$ex;
         $data['message']=$ex->getMessage();
         $data['code']=$ex->getCode();
         $data['trace']=$ex->getTraceAsString();
 
         $is_error=is_a($ex, 'Error') || is_a($ex, 'ErrorException')?true:false;
-        if ($this->options) {
-            $error_view=$is_error?$this->options['error_500']:$this->options['error_exception'];
-        } else {
-            $error_view=null;
-        }
+        
+        $error_view=$is_error?$this->options['error_500']:$this->options['error_exception'];
+        $error_view=$this->error_view_inited?$error_view:null;
+        
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)($ex);
             return;
@@ -304,8 +333,8 @@ trait Core_Handler
         if (!$error_view) {
             $desc=$is_error?'Error':'Exception';
             echo "Internal $desc \n<!--DNMVCS -->\n";
-            if ($this->is_dev) {
-                echo "<hr />";
+            if ($this->is_debug) {
+                echo "<hr />{$data['message']}";
                 echo "\n<pre>Debug On\n\n";
                 echo $data['trace'];
                 echo "\n</pre>\n";
@@ -318,7 +347,7 @@ trait Core_Handler
     }
     public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline)
     {
-        if (!$this->is_dev) {
+        if (!$this->is_debug) {
             return;
         }
         $descs=array(
@@ -338,6 +367,7 @@ trait Core_Handler
             'error_shortfile'=>$error_shortfile,
         );
         $error_view=$this->options['error_debug'];
+        $error_view=$this->error_view_inited?$error_view:null;
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)($data);
             return;
@@ -422,8 +452,12 @@ trait Core_Redirect
     public function _ExitJson($ret)
     {
         static::header('Content-Type:text/json');
-        // DNMVCS::G()->onBeforeShow([],'');
-        echo json_encode($ret, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
+        
+        $flag= JSON_UNESCAPED_UNICODE |  JSON_NUMERIC_CHECK;
+        if ($this->is_debug) {
+            $flag=$flag | JSON_PRETTY_PRINT;
+        }
+        echo json_encode($ret, $flag);
         static::exit_system();
     }
     public function _ExitRedirect($url, $only_in_site=true)
@@ -433,7 +467,7 @@ trait Core_Redirect
             static::exit_system();
             return;
         }
-        // DNMVCS::G()->onBeforeShow([],'');
+        
         static::header('location: '.$url, true, 302);
         static::exit_system();
     }
@@ -456,7 +490,7 @@ trait Core_Helper
     }
     public static function IsDebug()
     {
-        return static::G()->is_dev;
+        return static::G()->is_debug;
     }
     public static function InException()
     {
@@ -510,6 +544,7 @@ trait Core_Glue
     // view static
     public static function Show($data=[], $view=null)
     {
+        static::OnBeforeShow($data, $view);
         return View::G()->_Show($data, $view);
     }
     public static function ShowBlock($view, $data=null)
@@ -575,10 +610,10 @@ trait Core_Glue
 }
 trait Core_Instance
 {
-    protected $staticClasses=[];
-    protected $dynamicClasses=[];
+    protected $staticComponentClasses=[];
+    protected $dynamicComponentClasses=[];
     
-    public function getStaticClasses()
+    public function getStaticComponentClasses()
     {
         $ret=[
             AutoLoader::class,
@@ -589,12 +624,12 @@ trait Core_Instance
         ];
         return $ret;
     }
-    public function getDynamicClasses()
+    public function getDynamicComponentClasses()
     {
-        return $this->dynamicClasses;
+        return $this->dynamicComponentClasses;
     }
-    public function addDynamicClass($class)
+    public function addDynamicComponentClass($class)
     {
-        return $this->dynamicClasses[]=$class;
+        return $this->dynamicComponentClasses[]=$class;
     }
 }

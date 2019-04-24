@@ -1,7 +1,7 @@
 <?php
 namespace DNMVCS\SwooleHttpd;
 
-trait SwooleHttpd_SimpleHttpd
+trait SimpleHttpd
 {
     protected function onHttpRun($request, $response)
     {

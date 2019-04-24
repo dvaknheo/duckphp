@@ -1,11 +1,15 @@
 <?php
+// MAIN FILE
+//dvaknheo@github.com
+//OK，Lazy
 namespace DNMVCS\SwooleHttpd;
 
 use DNMVCS\SwooleHttpd\SwooleSingleton;
 
+use DNMVCS\SwooleHttpd\SimpleHttpd;
+use DNMVCS\SwooleHttpd\SimpleWebsocketd;
+
 use DNMVCS\SwooleHttpd\SwooleHttpd_Static;
-use DNMVCS\SwooleHttpd\SwooleHttpd_SimpleHttpd;
-use DNMVCS\SwooleHttpd\SwooleHttpd_WebSocket;
 use DNMVCS\SwooleHttpd\SwooleHttpd_SystemWrapper;
 use DNMVCS\SwooleHttpd\SwooleHttpd_SuperGlobal;
 use DNMVCS\SwooleHttpd\SwooleHttpd_Singleton;
@@ -13,16 +17,17 @@ use DNMVCS\SwooleHttpd\SwooleHttpd_Handler;
 
 class SwooleHttpd
 {
-    const VERSION = '1.0.2';
+    const VERSION = 'DNMVCS-inner';
     use SwooleSingleton;
     
-    use SwooleHttpd_Static;
-    use SwooleHttpd_SimpleHttpd;
-    use SwooleHttpd_WebSocket;
-    use SwooleHttpd_SystemWrapper;
-    use SwooleHttpd_SuperGlobal;
-    use SwooleHttpd_Singleton;
+    use SimpleHttpd;
+    use SimpleWebsocketd;
+    
     use SwooleHttpd_Handler;
+    use SwooleHttpd_Glue;
+    use SwooleHttpd_SystemWrapper;
+    
+    use SwooleHttpd_Singleton;
     
     
     const DEFAULT_OPTIONS=[
@@ -397,6 +402,165 @@ class SwooleHttpd
         $this->server->start();
         if (!$this->silent_mode) {
             fwrite(STDOUT, get_class($this)." run end ".DATE(DATE_ATOM)." ...\n");
+        }
+    }
+}
+trait SwooleHttpd_Handler
+{
+    public static function OnShow404()
+    {
+        return static::G()->_OnShow404();
+    }
+    public static function OnException($ex)
+    {
+        return static::G()->_OnException($ex);
+    }
+    public function _OnShow404()
+    {
+        if ($this->http_404_handler) {
+            ($this->http_404_handler)($ex);
+            return;
+        }
+        static::header('', true, 404);
+        echo "DNMVCS swoole mode: Server 404 \n";
+    }
+    public function _OnException($ex)
+    {
+        if ($this->http_exception_handler) {
+            ($this->http_exception_handler)($ex);
+            return;
+        }
+        static::header('', true, 500);
+        echo "DNMVCS swoole mode: Server Error. \n";
+        echo var_export($ex);
+    }
+}
+trait SwooleHttpd_Glue
+{
+    public static function Server()
+    {
+        return static::G()->server;
+    }
+    public static function Request()
+    {
+        return SwooleContext::G()->request;
+    }
+    public static function Response()
+    {
+        return SwooleContext::G()->response;
+    }
+    public static function Frame()
+    {
+        return SwooleContext::G()->frame;
+    }
+    public static function FD()
+    {
+        return SwooleContext::G()->fd;
+    }
+    public static function IsClosing()
+    {
+        return SwooleContext::G()->isWebSocketClosing();
+    }
+    /////////////
+    public static function SG()
+    {
+        return SwooleSuperGlobal::G();
+    }
+    public static function &GLOBALS($k, $v=null)
+    {
+        return SwooleSuperGlobal::G()->_GLOBALS($k, $v);
+    }
+    public static function &STATICS($k, $v=null)
+    {
+        return SwooleSuperGlobal::G()->_STATICS($k, $v, 1);
+    }
+    public static function &CLASS_STATICS($class_name, $var_name)
+    {
+        return SwooleSuperGlobal::G()->_CLASS_STATICS($class_name, $var_name);
+    }
+}
+trait SwooleHttpd_SystemWrapper
+{
+    public static function header(string $string, bool $replace = true, int $http_status_code =0)
+    {
+        return SwooleContext::G()->header($string, $replace, $http_status_code);
+    }
+    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain  = '', bool $secure = false, bool $httponly = false)
+    {
+        return SwooleContext::G()->setcookie($key, $value, $expire, $path, $domain, $secure, $httponly);
+    }
+    public static function exit_system($code=0)
+    {
+        return static::G()->exit_request($code);
+    }
+    public static function set_exception_handler(callable $exception_handler)
+    {
+        return static::G()->set_http_exception_handler($exception_handler);
+    }
+    public static function register_shutdown_function(callable $callback, ...$args)
+    {
+        return SwooleContext::G()->regShutDown(func_get_args());
+    }
+    
+    public static function session_start(array $options=[])
+    {
+        return SwooleSuperGlobal::G()->session_start($options);
+    }
+    public static function session_destroy()
+    {
+        return SwooleSuperGlobal::G()->session_destroy();
+    }
+    public static function session_set_save_handler(\SessionHandlerInterface $handler)
+    {
+        return SwooleSuperGlobal::G()->session_set_save_handler($handler);
+    }
+    
+    public static function system_wrapper_get_providers():array
+    {
+        $ret=[
+            'header'				=>[static::class,'header'],
+            'setcookie'				=>[static::class,'setcookie'],
+            'exit_system'			=>[static::class,'exit_system'],
+            'set_exception_handler'	=>[static::class,'set_exception_handler'],
+            'register_shutdown_function' =>[static::class,'register_shutdown_function'],
+        ];
+        return $ret;
+    }
+}
+trait SwooleHttpd_Singleton
+{
+    public static function ReplaceDefaultSingletonHandler()
+    {
+        return SwooleCoroutineSingleton::ReplaceDefaultSingletonHandler();
+    }
+    public static function EnableCurrentCoSingleton()
+    {
+        return SwooleCoroutineSingleton::EnableCurrentCoSingleton();
+    }
+    public function getDynamicClasses()
+    {
+        $classes=[
+            SwooleSuperGlobal::class,
+            SwooleContext::class,
+        ];
+        return $classes;
+    }
+    public function forkMasterInstances($classes, $exclude_classes=[])
+    {
+        return SwooleCoroutineSingleton::G()->forkMasterInstances($classes, $exclude_classes);
+    }
+    public function resetInstances()
+    {
+        $classes=$this->getDynamicClasses();
+        $instances=[];
+        foreach ($classes as $class) {
+            $instances[$class]=$class::G();
+        }
+        
+        SwooleCoroutineSingleton::G()->forkAllMasterClasses();
+        
+        foreach ($classes as $class) {
+            $class::G($instances[$class]);
         }
     }
 }

@@ -7,6 +7,8 @@ use DNMVCS\Basic\SuperGlobal;
 class RouteHookRewrite
 {
     use SingletonEx;
+    const DEFAULT_OPTIONS=[
+    ];
     protected $rewrite_map=[];
     public function init($options=[], $context=null)
     {

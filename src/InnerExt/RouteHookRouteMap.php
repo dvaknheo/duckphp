@@ -6,6 +6,9 @@ use DNMVCS\Basic\SingletonEx;
 class RouteHookRouteMap
 {
     use SingletonEx;
+    const DEFAULT_OPTIONS=[
+    ];
+    
     protected $route_map=[];
     public function init($options=[], $context=null)
     {

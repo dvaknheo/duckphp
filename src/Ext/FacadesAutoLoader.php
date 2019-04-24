@@ -28,10 +28,9 @@ class FacadesAutoLoader
         $namespace_facades=ltrim($namespace_facades, '\\');
         $this->prefix=$namespace_facades.'\\Facade\\';
         
-        $this->is_init=true;
+        $this->is_inited=true;
         
         if ($context) {
-            $this->run();
         }
         spl_autoload_register([$this,'_autoload']);
         

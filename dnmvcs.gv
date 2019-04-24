@@ -104,7 +104,6 @@ subgraph cluster_InnerExt {
     InnerExt -> RouteHookRewrite;
     InnerExt -> RouteHookRouteMap;
     InnerExt -> DIExt;
-    InnerExt -> Lazybones;
     InnerExt -> StrictCheck;
     
     InnerExt -> SystemWrapperExt -> SuperGlobal;
@@ -130,15 +129,15 @@ subgraph cluster_InnerExt {
 subgraph cluster_Ext {
 label = "[DNMVCS\\Ext]";
 
-
-Ext-> DBReusePoolProxy; 
-Ext-> FunctionDispatcher;
-Ext-> ProjectCommonAutoloader;
-Ext-> FacadesAutoLoader;
-Ext-> RouteHookDirectoryMode;
-Ext-> RouteHookOneFileMode;
-Ext-> ProjectCommonConfiger -> Core_Configer;
-Ext-> FunctionView  -> Core_View;
+Ext -> Lazybones;
+Ext -> DBReusePoolProxy; 
+Ext -> FunctionDispatcher;
+Ext -> ProjectCommonAutoloader;
+Ext -> FacadesAutoLoader;
+Ext -> RouteHookDirectoryMode;
+Ext -> RouteHookOneFileMode;
+Ext -> ProjectCommonConfiger -> Core_Configer;
+Ext -> FunctionView  -> Core_View;
 FacadesAutoLoader ->FacadesBase ;
 RouteHookDirectoryMode -> SuperGlobal;
 RouteHookOneFileMode -> SuperGlobal;

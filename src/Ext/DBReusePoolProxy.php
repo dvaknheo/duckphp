@@ -8,7 +8,9 @@ use SplQueue;
 class DBReusePoolProxy
 {
     use SingletonEx;
+    const DEFAULT_OPTIONS=[
     
+    ];
     public $tag_write='0';
     public $tag_read='1';
     
@@ -34,7 +36,7 @@ class DBReusePoolProxy
         
         $dbm=$options['db_reuse_timeout']??null;
         
-        $dbm=$dbm??DNDBManager::G();
+        $dbm=$dbm??DBManager::G();
         $dbm=is_string($dbm)?$dbm::G():$dbm;
         $this->proxy($dbm);
         

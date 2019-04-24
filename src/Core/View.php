@@ -6,7 +6,10 @@ use DNMVCS\Core\SingletonEx;
 class View
 {
     use SingletonEx;
-
+    const DEFAULT_OPTIONS=[
+        'path'=>null,
+        'path_view'=>null,
+    ];
     protected $head_file;
     protected $foot_file;
     protected $view_file;
@@ -15,7 +18,6 @@ class View
     public $data=[];
     public $view=null;
     
-    protected $before_show_handler=null;
     
     public function _Show($data=[], $view)
     {
@@ -64,11 +66,6 @@ class View
     public function init($options=[], $context=null)
     {
         $this->path=($options['path']??'').rtrim($options['path_view'], '/').'/';
-        $this->before_show_handler=$options['before_show_handler']??null;
-    }
-    public function setBeforeShowHandler($callback)
-    {
-        $this->before_show_handler=$callback;
     }
     public function setViewWrapper($head_file, $foot_file)
     {

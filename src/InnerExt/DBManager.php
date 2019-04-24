@@ -7,7 +7,9 @@ use DNMVCS\DB\DB;
 class DBManager
 {
     use SingletonEx;
-    
+    const DEFAULT_OPTIONS=[
+        
+    ];
     public $tag_write=0;
     public $tag_read='1';
     

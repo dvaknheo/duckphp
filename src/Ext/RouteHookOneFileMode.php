@@ -8,7 +8,8 @@ use DNMVCS\Inneer\RouteHookRewrite;
 class RouteHookOneFileMode
 {
     use SingletonEx;
-
+    const DEFAULT_OPTIONS=[
+    ];
     public $key_for_action='_r';
     public $key_for_module='';
     public function init($options=[], $context=null)

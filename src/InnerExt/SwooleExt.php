@@ -5,82 +5,6 @@ use DNMVCS\Basic\SingletonEx;
 use DNMVCS\SwooleHttpd\SwooleHttpd;
 use Exception;
 
-class DNSwooleExtServerHolder
-{
-    use SingletonEx;
-    
-    public static function ReplaceDefaultSingletonHandler()
-    {
-        throw new Exception("You Need DNMVCS\\SwooleHttpd !");
-    }
-    
-    public function init()
-    {
-        throw new Exception("Impelement Me!");
-    }
-    public function run()
-    {
-        throw new Exception("Impelement Me!");
-    }
-    public function getDynamicClasses()
-    {
-        throw new Exception("Impelement Me!");
-    }
-    public function getBootInstances()
-    {
-        throw new Exception("Impelement Me!");
-    }
-    public function resetInstances()
-    {
-        throw new Exception("Impelement Me!");
-    }
-    public function forkMasterInstances()
-    {
-        throw new Exception("Impelement Me!");
-    }
-}
-class DNSwooleExtAppHolder
-{
-    use SingletonEx;
-    public function init()
-    {
-        throw new Exception("Impelement Me!");
-    }
-    public function getOverrideRootClass()
-    {
-        throw new Exception("Impelement Me!");
-    }
-    public function run()
-    {
-        throw new Exception("Impelement Me!");
-    }
-    public function getDynamicClasses()
-    {
-        throw new Exception("Impelement Me!");
-    }
-    public function getBootInstances()
-    {
-        throw new Exception("Impelement Me!");
-    }
-}
-class DnSwooleExtReuserHolder
-{
-    use SingletonEx;
-
-    public $appClass;
-    public function init($options=[], $context=null)
-    {
-        //for 404 re-in;
-        $class=$this->appClass;
-        if (get_class($class::G())!==static::class) {
-            return $this;
-        }
-        SwooleExt::Server()->resetInstances();
-        
-        $ret=$class::G()->init($options);
-        return $ret;
-    }
-}
 class SwooleExt
 {
     use SingletonEx;
@@ -199,5 +123,72 @@ class SwooleExt
             return false;
         }
         return true;
+    }
+}
+class DnSwooleExtReuserHolder
+{
+    use SingletonEx;
+
+    public $appClass;
+    public function init($options=[], $context=null)
+    {
+        //for 404 re-in;
+        $class=$this->appClass;
+        if (get_class($class::G())!==static::class) {
+            return $this;
+        }
+        SwooleExt::Server()->resetInstances();
+        
+        $ret=$class::G()->init($options);
+        return $ret;
+    }
+}
+class DNSwooleExtServerHolder
+{
+    use SingletonEx;
+    
+    public static function ReplaceDefaultSingletonHandler()
+    {
+        throw new Exception("You Need DNMVCS\\SwooleHttpd !");
+    }
+    public function init()
+    {
+        throw new Exception("Impelement Me!");
+    }
+    public function run()
+    {
+        throw new Exception("Impelement Me!");
+    }
+    public function getDynamicClasses()
+    {
+        throw new Exception("Impelement Me!");
+    }
+    public function resetInstances()
+    {
+        throw new Exception("Impelement Me!");
+    }
+    public function forkMasterInstances()
+    {
+        throw new Exception("Impelement Me!");
+    }
+}
+class DNSwooleExtAppHolder
+{
+    use SingletonEx;
+    public function getOverrideRootClass()
+    {
+        throw new Exception("Impelement Me!");
+    }
+    public function addBeforeRunHandler()
+    {
+        throw new Exception("Impelement Me!");
+    }
+    public function getDynamicComponentClasses()
+    {
+        throw new Exception("Impelement Me!");
+    }
+    public function getXComponentClasses()
+    {
+        throw new Exception("Impelement Me!");
     }
 }
