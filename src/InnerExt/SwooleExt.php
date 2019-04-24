@@ -58,7 +58,7 @@ class SwooleExt
         $app=static::App();
         
         $instances=[];
-        $classes=$app->getStaticClasses();
+        $classes=$app->getStaticComponentClasses();
         foreach ($classes as $class) {
             $instances[$class]=$class::G();
         }
@@ -106,13 +106,13 @@ class SwooleExt
     }
     public function runSwoole()
     {
-        $classes=static::App()->getDynamicClasses();
+        $classes=static::App()->getDynamicComponentClasses();
         $exclude_classes=static::Server()->getDynamicClasses();
         static::Server()->forkMasterInstances($classes, $exclude_classes);
         
         $ret=static::App()->run();
         if (!$ret && $this->with_http_handler_root) {
-            $classes=static::App()->getStaticClasses();
+            $classes=static::App()->getStaticComponentClasses();
             $classes[]=get_class(static::App());
             $classes[]=static::App()->getOverrideRootClass();
             

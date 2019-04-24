@@ -41,7 +41,7 @@ class SystemWrapperExt
         }
         if (defined('DNMVCS_SUPER_GLOBAL_REPALACER') || $this->use_super_global) {
             $dn=defined('DNMVCS_CLASS')?DNMVCS_CLASS:DNMVCS::class;
-            $dn::G()->addDynamicClass(SuperGlobal::class);
+            $dn::G()->addDynamicComponentClass(SuperGlobal::class);
             $dn::G()->bindServerData(SuperGlobal::G()->_SERVER);
         }
     }
