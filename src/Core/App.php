@@ -547,7 +547,7 @@ trait Core_Glue
     }
     public function _Show($data=[], $view=null)
     {
-        $view=Route::G()->getRouteCallingPath();
+        $view=$view??Route::G()->getRouteCallingPath();
         foreach ($this->beforeShowHandlers as $v) {
             ($v)();
         }
