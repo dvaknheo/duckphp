@@ -177,63 +177,64 @@ assign 系列函数都是两种调用方式, 单个assign($key,$value) 和 assig
 
 #### Controller 编写控制器用到的方法
 
-显示视图用 DNMVCS::Show($data,$view=null); 如果view 是空等价于 控制器名/方法名 的视图。
-最偷懒的是调用 DNMVCS::Show(get_defined_vars());
+显示视图用 Core\App::Show($data,$view=null); 如果view 是空等价于 控制器名/方法名 的视图。
+最偷懒的是调用 Core\App::Show(get_defined_vars());
 
-如果只显示一块，用 DNMVCS::ShowBlock($view,$data=null); 如果$data 是空，把父视图的数据带入，
-DNMVCS::ShowBlock 没用到页眉页脚。
+如果只显示一块，用 Core\App::ShowBlock($view,$data=null); 如果$data 是空，把父视图的数据带入，
+Core\App::ShowBlock 没用到页眉页脚。
 
-在控制器的构造函数中。用 DNMVCS::G()->setViewWrapper($view_header,$view_footer) 来设置页眉页脚。
+在控制器的构造函数中。用 Core\App::G()->setViewWrapper($view_header,$view_footer) 来设置页眉页脚。
 
-DNMVCS::G()->assignViewData($name,$var) 来预设一些输出。
+Core\App::G()->assignViewData($name,$var) 来预设一些输出。
 
-HTML 编码用 DNMVCS::H($str); $str 可以是数组。
-如果要做权限判断 构造函数里 DNMVCS::G()->getRouteCallingMethod() 获取当前调用方法。
+HTML 编码用 Core\App::H($str); $str 可以是数组。
+如果要做权限判断 构造函数里 Core\App::G()->getRouteCallingMethod() 获取当前调用方法。
 
 跳转退出方面。
-404 跳转退出 DNMVCS::Exit404();
-302 跳转退出 DNMVCS::ExitRedirect($url);
-302 跳转退出 内部地址 DNMVCS::ExitRouteTo($url);
-输出 Json 退出  DNMVCS::ExitJson($data);
+404 跳转退出 Core\App::Exit404();
+302 跳转退出 Core\App::ExitRedirect($url);
+302 跳转退出 内部地址 Core\App::ExitRouteTo($url);
+输出 Json 退出  Core\App::ExitJson($data);
 
 系统替代函数 
-用 DNMVCS::header() 代替系统 header 兼容命令行等。
-用 DNMVCS::exit_system() 代替系统 exit; 便于接管处理。
+用 Core\App::header() 代替系统 header 兼容命令行等。
+用 Core\App::exit_system() 代替系统 exit; 便于接管处理。
 
-用 DNMVCS::URL($url) 获取相对 url;
-用 DNMVCS::Parameters() 获取切片，对地址重写有效。
+用 Core\App::URL($url) 获取相对 url;
+用 Core\App::Parameters() 获取切片，对地址重写有效。
 
 异常相关的
 
-如果想接管默认异常，用 DNMVCS::G()->setDefaultExceptionHandler($handler)
+如果想接管默认异常，用 Core\App::G()->setDefaultExceptionHandler($handler)
 
-如果对接管特定异常，用 DNMVCS::G()->assignExceptionHandler($exception_name,$handler)
+如果对接管特定异常，用 Core\App::G()->assignExceptionHandler($exception_name,$handler)
 
-设置多个异常到回调则用 DNMVCS::G()->setMultiExceptionHandler($exception_name=[],$handler)
+设置多个异常到回调则用 Core\App::G()->setMultiExceptionHandler($exception_name=[],$handler)
 
 #### Serivce 编写服务用到的方法
 
-获得运行平台 DNMVCS::Platform()
+获得运行平台 Core\App::Platform()
+获得运行平台 Core\App::IsDebug()
 
-获得设置 DNMVCS::Setting($key) 默认设置文件是  config/setting.php 。
-载入配置 DNMVCS::LoadConfig($key,$basename)
-获得配置 DNMVCS::Config($key)
+获得设置 Core\App::Setting($key) 默认设置文件是  config/setting.php 。
+载入配置 Core\App::LoadConfig($key,$basename)
+获得配置 Core\App::Config($key)
 
 #### Model 编写模型用到的方法
 
 数据库。
 
-DNMVCS::DB($tag=null) 获得特定数据库类。
-DNMVCS::DB_R() 获得读数据库类。
-DNMVCS::DB_W() 获得写数据库类。
+Core\App::DB($tag=null) 获得特定数据库类。
+Core\App::DB_R() 获得读数据库类。
+Core\App::DB_W() 获得写数据库类。
 
 #### 入口类可能用到其他方法
-DNMVCS::RunQuickly($options,$after_function=null);
+Core\App::RunQuickly($options,$after_function=null);
+Core\App::G()->getOverrideRootClass() 获得重载自类
 
-添加路由和重写  DNMVCS::G()->assignRewrite DNMVCS::G()->assignRoute 
+添加路由和重写  DNMVCS::G()->assignRewrite DNMVCS::G()->assignRoute();
+
 查看则 用 DNMVCS::G()->getRewrites() 和DNMVCS::G()->getRoutes();
-
-DNMVCS::G()->getOverrideRootClass() 获得重载自类
 自动加载的 DNMVCS::G()->assignPathNamespace ()
 
 
@@ -244,18 +245,16 @@ DNMVCS::G()->getOverrideRootClass() 获得重载自类
 DNMVCS::G()->extendClassMethodByThirdParty($class,$static_methods=[],$dyminac_methods=[]);
 DNMVCS 调用代理 $class 的方法。
 
-添加路由钩子 DNMVCS::G()->addRouteHook($hook); $hook 返回空用默认路由处理，否则调用返回的回调。
+添加路由钩子 Core\App::G()->addRouteHook($hook); $hook 返回空用默认路由处理，否则调用返回的回调。
 
-添加显示前处理 用 DNMVCS::G()->addBeforeShowHandler($callback)
-运行前 DNMVCS::G()->addBeforeShowHandler($callback)
+添加显示前处理 用 Core\App::G()->addBeforeShowHandler($callback)
+运行前 Core\App::G()->addBeforeRunHandler($callback)
+
 #### 入口类可能扩充的其他方法
 
 DNMVCS::G()->init($options,$context=null); 初始化
 
 DNMVCS::G()->run();运行
-
-
-Swoole 接口相关 getStaticClasses getDynamicClasses
 
 系统替代函数相关 system_wrapper_replace
 内部事件方法：
@@ -263,6 +262,7 @@ Swoole 接口相关 getStaticClasses getDynamicClasses
 OnBeforeShow 显示之前调用。On404 处理404; OnException  处理异常 OnDevErrorHandler 处理异常模块。
 
 #### 要做 Swoole 兼容。 
+Swoole 接口相关 getStaticComponentClasses getDynamicComponentClasses
 
 用 DNMVCS::SG() 代替 超全局变量的 $ 前缀
 

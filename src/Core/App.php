@@ -93,6 +93,10 @@ class App
         }
         $options['path']=rtrim($options['path'], '/').'/';
         
+        $options['on_404_handler']=[static::class,'On404'];
+        $options['exception_handler']=[static::class,'OnException'];
+        $options['dev_error_handler']=[static::class,'OnDevErrorHandler'];
+        
         return $options;
     }
     protected function initOptions($options=[])
@@ -100,9 +104,7 @@ class App
         $options=$this->adjustOptions($options);
         $options=array_replace_recursive(static::DEFAULT_OPTIONS, static::DEFAULT_OPTIONS_EX, $options);
         
-        $options['on_404_handler']=[static::class,'On404'];
-        $options['exception_handler']=[static::class,'OnException'];
-        $options['dev_error_handler']=[static::class,'OnDevErrorHandler'];
+        
         
         $this->options=$options;
         $this->path=$this->options['path'];
@@ -140,6 +142,7 @@ class App
         if (static::class===$override_class) {
             return null;
         }
+        $override_class::G()->override_root_class=static::class;
         return static::G($override_class::G());
     }
     public function getOverrideRootClass()
@@ -149,17 +152,25 @@ class App
     //@override me
     public function init($options=[], $context=null)
     {
-        $options=$this->adjustOptions($options);
-        AutoLoader::G()->init($options, $this)->run();
-        $object=$this->checkOverride($options);
-        if ($object) {
-            $object->override_root_class=static::class;
-            if (!defined('DNMVCS_CLASS')) {
-                define('DNMVCS_CLASS', static::class);
-            }
-            return $object->init($options);
+        if (!defined('DNMVCS_CLASS')) {
+            define('DNMVCS_CLASS', static::class);
         }
-        $this->initOptions($options);
+        if(!$this->override_root_class){
+            $options=$this->adjustOptions($options);
+            AutoLoader::G()->init($options, $this)->run();
+            ExceptionManager::G()->init($options, $this);
+            $object=$this->checkOverride($options);
+            
+            if($object){
+                $object->initOptions($options);
+                $object->is_debug=true;
+                return $object->init($options);
+            }
+        }else{
+            $this->initOptions($options);
+        }
+        $this->is_debug=$this->options['is_debug'];
+        
         return $this->initAfterOverride();
     }
     protected function initAfterOverride()
@@ -167,7 +178,7 @@ class App
         if ($this->options['enable_cache_classes_in_cli'] && PHP_SAPI==='cli') {
             AutoLoader::G()->cacheClasses();
         }
-        ExceptionManager::G()->init($this->options, $this);
+        
         
         Configer::G()->init($this->options, $this);
         $this->reloadFlags();
@@ -287,6 +298,7 @@ trait Core_Handler
     {
         $error_view=$this->options['error_404'];
         $error_view=$this->error_view_inited?$error_view:null;
+        
         static::header('', true, 404);
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)();
@@ -306,25 +318,25 @@ trait Core_Handler
     public function _OnException($ex)
     {
         $this->is_in_exception=true;
-        //TODO tell me why
         $flag=ExceptionManager::G()->checkAndRunErrorHandlers($ex, true);
         if ($flag) {
             return;
         }
-        static::header('', true, 500);
         
+        $is_error=is_a($ex, 'Error') || is_a($ex, 'ErrorException')?true:false;
+        $error_view=$is_error?$this->options['error_500']:$this->options['error_exception'];
+        $error_view=$this->error_view_inited?$error_view:null;
+        
+        static::header('', true, 500);
         $view=View::G();
         $data=[];
-        $data['is_debugeloping']=static::IsDebug();
-        $data['ex']=$ex;
+        $data['is_debug']=static::IsDebug();
+        $data['class']=get_class($ex);
         $data['message']=$ex->getMessage();
         $data['code']=$ex->getCode();
         $data['trace']=$ex->getTraceAsString();
 
-        $is_error=is_a($ex, 'Error') || is_a($ex, 'ErrorException')?true:false;
-        
-        $error_view=$is_error?$this->options['error_500']:$this->options['error_exception'];
-        $error_view=$this->error_view_inited?$error_view:null;
+
         
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)($ex);
@@ -334,7 +346,7 @@ trait Core_Handler
             $desc=$is_error?'Error':'Exception';
             echo "Internal $desc \n<!--DNMVCS -->\n";
             if ($this->is_debug) {
-                echo "<hr />{$data['message']}";
+                echo "<h3>{$data['class']}({$data['code']}):{$data['message']}</h3>";
                 echo "\n<pre>Debug On\n\n";
                 echo $data['trace'];
                 echo "\n</pre>\n";
@@ -423,6 +435,7 @@ trait Core_SystemWrapper
     }
     public function _exit_system($code=0)
     {
+        // TODO CleanUp;
         if ($this->exit_handler) {
             return ($this->exit_handler)($code);
         }

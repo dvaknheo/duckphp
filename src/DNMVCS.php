@@ -11,7 +11,6 @@ use DNMVCS\InnerExt\DBManager;
 use DNMVCS\InnerExt\RouteHookRewrite;
 use DNMVCS\InnerExt\RouteHookRouteMap;
 
-use DNMVCS\Ext;
 use DNMVCS\Core\App;
 
 class DNMVCS extends App
