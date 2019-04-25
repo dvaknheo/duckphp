@@ -259,7 +259,7 @@ DNMVCS::G()->run();运行
 系统替代函数相关 system_wrapper_replace
 内部事件方法：
 
-OnBeforeShow 显示之前调用。On404 处理404; OnException  处理异常 OnDevErrorHandler 处理异常模块。
+On404 处理404; OnException  处理异常 OnDevErrorHandler 处理异常模块。
 
 #### 要做 Swoole 兼容。 
 Swoole 接口相关 getStaticComponentClasses getDynamicComponentClasses

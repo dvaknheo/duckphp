@@ -7,6 +7,7 @@ class RouteHookRouteMap
 {
     use SingletonEx;
     const DEFAULT_OPTIONS=[
+        'route_map'=>[],
     ];
     
     protected $route_map=[];

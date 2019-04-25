@@ -6,7 +6,7 @@ namespace DNMVCS;
 
 use DNMVCS\Basic\ClassExt;
 use DNMVCS\Basic\SuperGlobal;
-use DNMVCS\InnerExt\Strict;
+use DNMVCS\InnerExt\StrictCheck;
 use DNMVCS\InnerExt\DBManager;
 use DNMVCS\InnerExt\RouteHookRewrite;
 use DNMVCS\InnerExt\RouteHookRouteMap;
@@ -36,7 +36,7 @@ class DNMVCS extends App
                 'InnerExt\SwooleExt'=>true,
                 'InnerExt\DBManager'=>[
                     'use_db'=>true,
-                    'use_strict_db'=>false,
+                    'use_strict_db'=>true,
                     'db_create_handler'=>null,
                     'db_close_handler'=>null,
                     'database_list'=>[],
@@ -153,21 +153,22 @@ trait DNMVCS_Glue
         return RouteHookRouteMap::G()->getRoutes();
     }
     /////
-    public static function OnCheckStrictDB($object, $tag)
+    public static function CheckStrictDB($tag)
     {
-        return StrictCheck::OnCheckStrictDB($object);
+        //3 = DB,_DB,CheckStrictDB
+        return static::G()->checkStrictComponent('DB', 3);
     }
-    public function checkStrictComponent($object)
+    public function checkStrictComponent($component_name, $trace_level)
     {
-        return StrictCheck::G()->checkStrictComponent($object);
+        return StrictCheck::G()->checkStrictComponent($component_name, $trace_level+1);
     }
-    public function checkStrictService($object)
+    public function checkStrictService($trace_level=2)
     {
-        return StrictCheck::G()->checkStrictService($object);
+        return StrictCheck::G()->checkStrictService($trace_level+1);
     }
-    public function checkStrictModel($object)
+    public function checkStrictModel($trace_level=2)
     {
-        return StrictCheck::G()->checkStrictModel($object);
+        return StrictCheck::G()->checkStrictModel($trace_level+1);
     }
 }
 trait DNMVCS_SystemWrapper

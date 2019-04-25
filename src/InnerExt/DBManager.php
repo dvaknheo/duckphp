@@ -8,7 +8,11 @@ class DBManager
 {
     use SingletonEx;
     const DEFAULT_OPTIONS=[
-        
+        'use_db'=>true,
+        'db_create_handler'=>null,
+        'db_close_handler'=>null,
+        'database_list'=>null,
+        'use_strict_db'=>true,
     ];
     public $tag_write=0;
     public $tag_read='1';
@@ -24,6 +28,7 @@ class DBManager
     
     public function init($options=[], $context=null)
     {
+        $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
         $use_db=$options['use_db']??true;
         if (!$use_db) {
             return $this;

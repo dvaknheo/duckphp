@@ -8,6 +8,7 @@ class RouteHookRewrite
 {
     use SingletonEx;
     const DEFAULT_OPTIONS=[
+        'rewrite_map'=>[],
     ];
     protected $rewrite_map=[];
     public function init($options=[], $context=null)

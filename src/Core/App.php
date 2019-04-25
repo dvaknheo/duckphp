@@ -155,18 +155,18 @@ class App
         if (!defined('DNMVCS_CLASS')) {
             define('DNMVCS_CLASS', static::class);
         }
-        if(!$this->override_root_class){
+        if (!$this->override_root_class) {
             $options=$this->adjustOptions($options);
             AutoLoader::G()->init($options, $this)->run();
             ExceptionManager::G()->init($options, $this);
             $object=$this->checkOverride($options);
             
-            if($object){
+            if ($object) {
                 $object->initOptions($options);
                 $object->is_debug=true;
                 return $object->init($options);
             }
-        }else{
+        } else {
             $this->initOptions($options);
         }
         $this->is_debug=$this->options['is_debug'];
@@ -266,10 +266,7 @@ trait Core_Handler
     protected $beforeShowHandlers=[];
     protected $is_in_exception=false;
     protected $error_view_inited=false;
-    public static function OnBeforeShow($data, $view=null)
-    {
-        return static::G()->_OnBeforeShow($data, $view);
-    }
+    
     public static function On404()
     {
         return static::G()->_On404();
@@ -281,18 +278,6 @@ trait Core_Handler
     public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline)
     {
         return static::G()->_OnDevErrorHandler($errno, $errstr, $errfile, $errline);
-    }
-    public function _OnBeforeShow($data, $view=null)
-    {
-        if ($view===null) {
-            View::G()->view=Route::G()->getRouteCallingPath();
-        }
-        foreach ($this->beforeShowHandlers as $v) {
-            ($v)();
-        }
-        if ($this->options['skip_view_notice_error']) {
-            RuntimeState::G()->skipNoticeError();
-        }
     }
     public function _On404()
     {
@@ -328,9 +313,9 @@ trait Core_Handler
         $error_view=$this->error_view_inited?$error_view:null;
         
         static::header('', true, 500);
-        $view=View::G();
         $data=[];
         $data['is_debug']=static::IsDebug();
+        $data['ex']=$ex;
         $data['class']=get_class($ex);
         $data['message']=$ex->getMessage();
         $data['code']=$ex->getCode();
@@ -353,6 +338,7 @@ trait Core_Handler
             }
             return;
         }
+        $view=View::G();
         $view->setViewWrapper(null, null);
         $view->_Show($data, $error_view);
         RuntimeState::G()->end();
@@ -505,7 +491,7 @@ trait Core_Helper
     {
         return static::G()->is_debug;
     }
-    public static function InException()
+    public static function isInException()
     {
         return static::G()->is_in_exception;
     }
@@ -557,7 +543,17 @@ trait Core_Glue
     // view static
     public static function Show($data=[], $view=null)
     {
-        static::OnBeforeShow($data, $view);
+        return static::G()->_Show($data, $view);
+    }
+    public function _Show($data=[], $view=null)
+    {
+        $view=Route::G()->getRouteCallingPath();
+        foreach ($this->beforeShowHandlers as $v) {
+            ($v)();
+        }
+        if ($this->options['skip_view_notice_error']) {
+            RuntimeState::G()->skipNoticeError();
+        }
         return View::G()->_Show($data, $view);
     }
     public static function ShowBlock($view, $data=null)

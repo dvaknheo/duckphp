@@ -9,7 +9,7 @@ trait StrictService
     public static function G($object=null)
     {
         $dn=defined('DNMVCS_CLASS')?DNMVCS_CLASS:DNMVCS::class;
-        $dn::G()->checkStrictService($object??static::class);
+        $dn::G()->checkStrictService();
         return static::_ParentG($object);
     }
 }

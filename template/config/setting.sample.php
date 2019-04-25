@@ -1,7 +1,7 @@
 <?php
 // copy me to "setting.php"
 return [
-    'is_dev'=>true,
+    'is_debug'=>false,
     'platform'=>'default',
     'database_list'=>[
         [

@@ -9,7 +9,9 @@ class DBReusePoolProxy
 {
     use SingletonEx;
     const DEFAULT_OPTIONS=[
-    
+        'db_reuse_size' => 100,
+        'db_reuse_timeout' => 5,
+        'dbm' => null,
     ];
     public $tag_write='0';
     public $tag_read='1';
@@ -22,6 +24,9 @@ class DBReusePoolProxy
     protected $db_queue_read_time;
     public $max_length=100;
     public $timeout=5;
+    
+    protected $dn;
+    
     public function __construct()
     {
         $this->db_queue_write=new SplQueue();
@@ -31,13 +36,15 @@ class DBReusePoolProxy
     }
     public function init($options=[], $context=null)
     {
+        $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
+        
         $this->max_length=$options['db_reuse_size'];
         $this->timeout=$options['db_reuse_timeout'];
-        
-        $dbm=$options['db_reuse_timeout']??null;
+        $dbm=$options['dbm'];
         
         $dbm=$dbm??DBManager::G();
         $dbm=is_string($dbm)?$dbm::G():$dbm;
+        
         $this->proxy($dbm);
         
         return $this;
@@ -80,8 +87,21 @@ class DBReusePoolProxy
             return $this->getObject($this->db_queue_read, $this->db_queue_read_time, $db_config, $tag);
         }
     }
+    protected function checkException()
+    {
+        $dn=defined('DNMVCS_CLASS')?DNMVCS_CLASS:DNMVCS::class;
+        if ($dn) {
+            if ($dn::G()->isInException()) {
+                return true;
+            }
+        }
+        return false;
+    }
     public function onClose($db, $tag)
     {
+        if ($this->checkException()) {
+            return;
+        }
         if ($tag!=$this->tag_write) {
             return $this->reuseObject($this->db_queue_write, $this->db_queue_write_time, $db);
         } else {

@@ -9,7 +9,7 @@ class StrictCheck
     use SingletonEx;
     const DEFAULT_OPTIONS=[
     ];
-    const MAX_TRACE_LEVEL=10;
+    const MAX_TRACE_LEVEL=20;
     protected $dn_class=null;
     public function init($options=[], $context=null)
     {
@@ -21,78 +21,62 @@ class StrictCheck
     {
         $this->dn_class=get_class($context);
     }
-    public static function OnCheckStrictDB($object)
+    public static function OnCheckStrictDB()
     {
         return static::G()->_OnCheckStrictDB($object);
     }
     ///////////////////////////////////////////////////////////
-    protected function getCaller($object)
+    protected function getCallerByLevel($level)
     {
-        $caller_class='';
-        $base_class=is_string($object)?$object:get_class($object);
+        $level+=1;
         $backtrace=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, static::MAX_TRACE_LEVEL);
-        foreach ($backtrace as $i=>$v) {
-            if ($v['class']===$base_class) {
-                $caller_class=$backtrace[$i+1]['class']??'';
-                if ($this->dn_class && (is_subclass_of($this->dn_class, $caller_class) || $this->dn_class===$caller_class)) {
-                    $caller_class=$backtrace[$i+2]['class']??'';
-                }
-                break;
-            }
+        $caller_class=$backtrace[$level]['class']??'';
+        if ($this->dn_class && (is_subclass_of($this->dn_class, $caller_class) || $this->dn_class===$caller_class)) {
+            $caller_class=$backtrace[$level+1]['class']??'';
         }
-        if (!$caller_class) {
-            throw new Exception(true, "Too Nest ,can't not found caller");
-        }
+          
+
         return $caller_class;
     }
     protected function checkEnv()
     {
-        $dn=$this->dn_class;
-        if (!$dn::IsDebug()) {
-            return false;
-        }
         return true;
     }
-    public function _OnCheckStrictDB($object)
-    {
-        return $this->checkStrictComponent($object, 'DB');
-    }
-    public function checkStrictComponent($object, $component_name)
+    public function checkStrictComponent($component_name, $trace_level)
     {
         if (!$this->checkEnv()) {
             return;
         }
-        
-        $caller_class=$this->getCaller($object);
-        
+        $caller_class=$this->getCallerByLevel($trace_level);
         $dn=$this->dn_class;
         $namespace=$dn::G()->options['namespace'];
         $namespace_service=$namespace."\\Service\\";
         
         $namespace_controller=$namespace."\\Controller\\"; // TODO
+        
         $controller_base_class=$dn::G()->options['controller_base_class']??'';
         
         do {
             if (substr($caller_class, 0, strlen($namespace_controller))==$namespace_controller) {
-                throw new Exception(true, "DB Can not Call By Controller");
+                throw new Exception(true, "$component_name Can not Call By Controller");
             }
             if ($controller_base_class && (is_subclass_of($caller_class, $controller_base_class) || $caller_class===$controller_base_class)) {
-                throw new Exception(true, "DB Can not Call By Controller");
+                throw new Exception(true, "$component_name Can not Call By Controller");
             }
             if (substr($caller_class, 0, strlen($namespace_service))===$namespace_service) {
-                throw new Exception(true, "DB Can not Call By Service");
+                throw new Exception(true, "$component_name Can not Call By Service");
             }
             if (substr($caller_class, 0-strlen("Service"))=="Service") {
-                throw new Exception(true, "DB Can not Call By Service");
+                throw new Exception(true, "$component_name Can not Call By Service");
             }
         } while (false);
     }
-    public function checkStrictModel($object)
+    public function checkStrictModel($trace_level)
     {
         if (!$this->checkEnv()) {
             return;
         }
-        $caller_class=$this->getCaller($object);
+        $caller_class=$this->getCallerByLevel($trace_level);
         $dn=$this->dn_class;
         
         $namespace=$dn::G()->options['namespace'];
@@ -111,16 +95,18 @@ class StrictCheck
             throw new Exception("Model Can Only call by Service or ExModel!");
         } while (false);
     }
-    public function checkStrictSerice($object)
+    public function checkStrictService($trace_level)
     {
         if (!$this->checkEnv()) {
             return;
         }
-        $caller_class=$this->getCaller($object);
+        $caller_class=$this->getCallerByLevel($trace_level);
         $dn=$this->dn_class;
         
         $namespace=$dn::G()->options['namespace'];
         $namespace_service=$namespace."\\Service\\";
+
+        $namespace_model=$namespace."\\Model\\";
         
         if (substr($caller_class, 0, 0-strlen("BatchService"))==="BatchService") {
             return;
@@ -152,13 +138,12 @@ class StrictCheck
             } while (false);
         }
     }
-    public function checkStrictParentCaller($object, $parent_class)
+    public function checkStrictParentCaller($trace_level, $parent_class)
     {
         if (!$this->checkEnv()) {
             return;
         }
-        $caller_class=$this->getCaller($object);
-        $dn=$this->dn_class;
+        $caller_class=$this->getCallerByLevel($trace_level);
         
         $class=get_class($object);
         $flag=(is_subclass_of($caller_class, $parent_class) || $caller_class===$parent_class)?true:false;
