@@ -25,15 +25,8 @@ class Configer
         $this->setting=$options['setting']??[];
         $this->all_config=$options['all_config']??[];
         $this->setting_file_basename=$options['setting_file_basename']??'setting';
-        if ($context) {
-            $this->initContext($context);
-        }
         return $this;
     }
-    protected function initContext($options=[], $context=null)
-    {
-    }
-
     public function _Setting($key)
     {
         if ($this->is_inited || !$this->setting_file_basename) {
