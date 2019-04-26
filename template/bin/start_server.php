@@ -1,18 +1,11 @@
 #!/usr/bin/env php
 <?php
 require(__DIR__.'/../headfile/headfile.php');
-////[[[[
-$dn_options=@include('start_server.config.php');
-$dn_options=$dn_options??[];
+echo "Well Come to use DNMVCS ,for more info , use --help \n";
 
-$path=realpath(__DIR__.'/../').'/';
-$dn_options['path']=$path;
-
-////]]]]
-///////////
 $host='0.0.0.0';
 $port='8080';
-
+$path=realpath(__DIR__.'/../').'/';
 $opts=[
     'help'	=>'h',
     'host:'	=>'H:',
@@ -21,35 +14,37 @@ $opts=[
 ];
 
 $captures=GetCmdCaptures($opts);
-$show_help=isset($captures['help'])?true:false;
-
-echo "Well Come to use DNMVCS ,for more info , use --help \n";
-if ($show_help) {
-    return ShowHelp();
-}
-
 $host=$captures['host']??$host;
 $port=$captures['port']??$port;
-
+if (isset($captures['help'])) {
+    return ShowHelp();
+}
 if (!CheckSwoole($captures)) {
     return RunHttpServer($path, $host, $port);
 }
-
-$dn_options['swoole']=$dn_options['swoole']??[];
-$dn_options['swoole']['host']=$dn_options['swoole']['host']??$host;
-$dn_options['swoole']['port']=$dn_options['swoole']['port']??$port;
-$host=$dn_options['swoole']['host'];
-$port=$dn_options['swoole']['port'];
-
-if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
-    $dn_options['setting_file_basename']='';
-    echo "Don't run the template file directly \n";
-}
-echo "DNMVCS: RunServer swoole server $host:$port\n";
-\DNMVCS\DNMVCS::RunQuickly($dn_options);
+return RunSwooleServer($path, $host, $port);
 
 /////////////////
+    
 
+function RunSwooleServer($path, $host, $port)
+{
+    $dn_options=@include('start_server.config.php');
+    $dn_options=$dn_options??[];
+    $dn_options['path']=$path;
+    $dn_options['swoole']=$dn_options['swoole']??[];
+    $dn_options['swoole']['host']=$dn_options['swoole']['host']??$host;
+    $dn_options['swoole']['port']=$dn_options['swoole']['port']??$port;
+    $host=$dn_options['swoole']['host'];
+    $port=$dn_options['swoole']['port'];
+
+    if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
+        $dn_options['setting_file_basename']='';
+        echo "Don't run the template file directly \n";
+    }
+    echo "DNMVCS: RunServer swoole server $host:$port\n";
+    \DNMVCS\DNMVCS::RunQuickly($dn_options);
+}
 function GetCmdCaptures($opts)
 {
     $optind=null;
@@ -78,8 +73,8 @@ function CheckSwoole($args)
     if (!function_exists('swoole_version')) {
         return false;
     }
-    if(!class_exists(SwooleHttpd\SwooleHttpd::class)){
-            return false;
+    if (!class_exists(\DNMVCS\SwooleHttpd\SwooleHttpd::class)) {
+        return false;
     }
     return true;
 }

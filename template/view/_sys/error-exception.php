@@ -1,7 +1,7 @@
 <?php use \DNMVCS\DNMVCS as DN ;
 
 ?>
-<?php if ($is_developing) {
+<?php if ($is_debug) {
     ?>
 <fieldset>
 	<legend>Exception(<?=get_class($ex); ?>:<?php echo($ex->getCode()); ?>)</legend>

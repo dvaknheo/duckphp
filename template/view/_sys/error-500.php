@@ -2,7 +2,7 @@
 
 ?>
 500
-<?php if ($is_developing) {
+<?php if ($is_debug) {
     ?>
 <fieldset>
 	<legend>Developing! Error(<?=get_class($ex); ?>:<?php echo($ex->getCode()); ?>)</legend>

@@ -160,7 +160,7 @@ class App
             AutoLoader::G()->init($options, $this)->run();
             ExceptionManager::G()->init($options, $this);
             $object=$this->checkOverride($options);
-            
+            $this->is_debug=true;
             if ($object) {
                 $object->initOptions($options);
                 $object->is_debug=true;
@@ -364,7 +364,7 @@ trait Core_Handler
             'error_desc'=>$descs[$errno],
             'error_shortfile'=>$error_shortfile,
         );
-        $error_view=$this->options['error_debug'];
+        $error_view=$this->options['error_debug']??'';
         $error_view=$this->error_view_inited?$error_view:null;
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)($data);
@@ -631,6 +631,8 @@ trait Core_Instance
             View::class,
             Route::class,
         ];
+        $ret[]=get_class($this);
+        $ret[]=$this->getOverrideRootClass();
         return $ret;
     }
     public function getDynamicComponentClasses()

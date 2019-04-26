@@ -3,88 +3,74 @@ namespace DNMVCS\InnerExt;
 
 use DNMVCS\Basic\SingletonEx;
 use DNMVCS\SwooleHttpd\SwooleHttpd;
+use DNMVCS\DNMVCS;
 use Exception;
 
 class SwooleExt
 {
     use SingletonEx;
-    
     protected $with_http_handler_root=false;
+    protected $serverClass;
     protected $appClass;
     protected $is_inited=false;
-    public static function Server($server=null)
-    {
-        return DNSwooleExtServerHolder::G($server);
-    }
-    public static function App($app=null)
-    {
-        return DNSwooleExtAppHolder::G($app);
-    }
     public static function _EmptyFunction()
     {
         return;
     }
-    
     public function setAppClass($class)
     {
-        static::App($class::G());
-        
         $this->appClass=$class;
+    }
+    public function setServerClass($class)
+    {
+        $this->serverClass=$class;
     }
     public function init($options=[], $context=null)
     {
+        if ($this->with_http_handler_root) {
+            //fakeobject
+            $cid = \Swoole\Coroutine::getuid();
+            if ($cid>0) {
+                return $this->doFakerInit($options, $context);
+            }
+        }
         if (PHP_SAPI!=='cli') {
             return;
         }
         if ($this->is_inited) {
             return $this;
         }
-        if (!class_exists(SwooleHttpd::class)) {
-            return;
-        }
+        $this->is_inited=true;
+        
         $options=$options['swoole'];
         
-        if ($context) {
-            $app_class=$context->getOverrideRootClass();
-            $this->setAppClass($app_class);
-            $context->addBeforeRunHandler([static::class,'OnRun']);
-        }
+        $this->serverClass=$options['swoolehttpd_server_class']??SwooleHttpd::class;
+        $this->appClass=$options['swoolehttpd_app_class']??($context?get_class($context):DNMVCS::class);
         
-        $server_object=SwooleHttpd::G();
-        //static::ThrowOn(!class_exists(SwooleHttpd::class), "DNMVCS: You Need SwooleHttpd");
-        static::Server($server_object);
-        $server=static::Server();
         
-        $app=static::App();
-        
+        //////////////
+        $server=($this->serverClass)::G();
+        $classes=($this->appClass)::G()->getStaticComponentClasses();
         $instances=[];
-        $classes=$app->getStaticComponentClasses();
         foreach ($classes as $class) {
             $instances[$class]=$class::G();
         }
-        $instances[$app_class]=$app_class::G();
-        $instances[get_class($app_class::G())]=$context::G();
-
-        
-        $flag=$server::ReplaceDefaultSingletonHandler();
+        $flag=($this->serverClass)::ReplaceDefaultSingletonHandler();
         if (!$flag) {
             return;
         }
-        // replace G method again;
         
-        static::Server($server);
-        static::App($app);
+        // replace G method again;
+        static::G($this);
+        ($this->serverClass)::G($server);
         foreach ($instances as $class=>$object) {
             $class::G($object);
         }
-        static::G($this);
         //////////////
-        
+        ($this->appClass)::G()->addBeforeRunHandler([static::class,'OnRun']);
         $this->with_http_handler_root=$options['with_http_handler_root']??false;
         $options['http_handler']=[$this,'runSwoole'];
-        
-        static::Server()->init($options, null);
-        $this->is_inited=true;
+        ($this->serverClass)::G()->init($options, null);
         return $this;
     }
     public static function OnRun()
@@ -100,46 +86,30 @@ class SwooleExt
         if ($cid>0) {
             return;
         }
-        static::App()->options['error_404']=[static::class,'_EmptyFunction'];
-        static::App()->options['use_super_global']=true;
-        static::Server()->run();
+        ($this->appClass)::G()->options['error_404']=[static::class,'_EmptyFunction'];
+        ($this->appClass)::G()->options['use_super_global']=true;
+        ($this->serverClass)::G()->run();
     }
     public function runSwoole()
     {
-        $classes=static::App()->getDynamicComponentClasses();
-        $exclude_classes=static::Server()->getDynamicClasses();
-        static::Server()->forkMasterInstances($classes, $exclude_classes);
+        $classes=           ($this->appClass)::G()->getDynamicComponentClasses();
+        $exclude_classes=($this->serverClass)::G()->getDynamicComponentClasses();
+        ($this->serverClass)::G()->forkMasterInstances($classes, $exclude_classes);
         
-        $ret=static::App()->run();
+        $ret=($this->appClass)::G()->run();
         if (!$ret && $this->with_http_handler_root) {
-            $classes=static::App()->getStaticComponentClasses();
-            $classes[]=get_class(static::App());
-            $classes[]=static::App()->getOverrideRootClass();
-            
-            static::Server()->forkMasterInstances($classes);
-
-            DnSwooleExtReuserHolder::G()->appClass=$this->appClass;
-            ([$this->appClass,'G'])(DnSwooleExtReuserHolder::G()); //fake object
+            $classes=($this->appClass)::G()->getStaticComponentClasses();
+            ($this->serverClass)::G()->forkMasterInstances($classes);
+            ($this->appClass)::G($this); //fake object
             return false;
         }
         return true;
     }
-}
-class DnSwooleExtReuserHolder
-{
-    use SingletonEx;
-
-    public $appClass;
-    public function init($options=[], $context=null)
+    protected function doFakerInit($options=[], $context=null)
     {
-        //for 404 re-in;
+        ($this->serverClass)::G()->resetInstances();
         $class=$this->appClass;
-        if (get_class($class::G())!==static::class) {
-            return $this;
-        }
-        SwooleExt::Server()->resetInstances();
-        
-        $ret=$class::G()->init($options);
+        $ret=($this->appClass)::G(new $class())->init($options);
         return $ret;
     }
 }
@@ -151,7 +121,7 @@ class DNSwooleExtServerHolder
     {
         throw new Exception("You Need DNMVCS\\SwooleHttpd !");
     }
-    public function init()
+    public function init($options=[], $context=null)
     {
         throw new Exception("Impelement Me!");
     }
@@ -175,10 +145,15 @@ class DNSwooleExtServerHolder
 class DNSwooleExtAppHolder
 {
     use SingletonEx;
-    public function getOverrideRootClass()
+    public function init($options=[], $context=null)
     {
         throw new Exception("Impelement Me!");
     }
+    public function run()
+    {
+        throw new Exception("Impelement Me!");
+    }
+    
     public function addBeforeRunHandler()
     {
         throw new Exception("Impelement Me!");
@@ -187,7 +162,7 @@ class DNSwooleExtAppHolder
     {
         throw new Exception("Impelement Me!");
     }
-    public function getXComponentClasses()
+    public function getStaticComponentClasses()
     {
         throw new Exception("Impelement Me!");
     }

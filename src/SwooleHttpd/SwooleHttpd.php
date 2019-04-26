@@ -537,7 +537,7 @@ trait SwooleHttpd_Singleton
     {
         return SwooleCoroutineSingleton::EnableCurrentCoSingleton();
     }
-    public function getDynamicClasses()
+    public function getDynamicComponentClasses()
     {
         $classes=[
             SwooleSuperGlobal::class,

@@ -329,7 +329,6 @@ class TestRoot
     }
     public function dump()
     {
-        var_dump($this->str);
         return $this;
     }
     // $root=new TestRoot();
