@@ -75,7 +75,7 @@ class App
     public $override_root_class='';
     protected $beforeRunHandlers=[];
     protected $error_view_inited=false;
-
+    protected $is_before_show_done=false;
     public static function RunQuickly(array $options=[], callable $after_init=null)
     {
         if (!$after_init) {
@@ -163,7 +163,6 @@ class App
             $this->is_debug=true;
             if ($object) {
                 $object->initOptions($options);
-                $object->is_debug=true;
                 return $object->init($options);
             }
         } else {
@@ -239,8 +238,19 @@ class App
         $class=get_class(RuntimeState::G());  //ReCreateInstance;
         RuntimeState::G(new $class)->begin();
         $ret=Route::G()->run();
-        RuntimeState::G()->end();
+        
+        $this->cleanUp();
         return $ret;
+    }
+    public function cleanUp()
+    {
+        if(!$this->is_before_show_done){
+            foreach ($this->beforeShowHandlers as $v) {
+                ($v)();
+            }
+            $this->is_before_show_done=true;
+        }
+        RuntimeState::G()->end();
     }
     public function reloadFlags()
     {
@@ -256,10 +266,7 @@ class App
             $this->platform=$platform;
         }
     }
-    public function cleanUp()
-    {
-        // close db, etc ...
-    }
+    
 }
 trait Core_Handler
 {
@@ -294,10 +301,9 @@ trait Core_Handler
             return;
         }
         
-        $view=View::G();
-        $view->setViewWrapper(null, null);
-        $view->_Show([], $error_view);
-        RuntimeState::G()->end();
+        $this->setViewWrapper(null, null);
+        $this->_Show([], $error_view);
+        $this->cleanUp();
     }
     
     public function _OnException($ex)
@@ -338,10 +344,10 @@ trait Core_Handler
             }
             return;
         }
-        $view=View::G();
-        $view->setViewWrapper(null, null);
-        $view->_Show($data, $error_view);
-        RuntimeState::G()->end();
+        
+        $this->setViewWrapper(null, null);
+        $this->_Show($data, $error_view);
+        $this->cleanUp();
     }
     public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline)
     {
@@ -425,6 +431,7 @@ trait Core_SystemWrapper
         if ($this->exit_handler) {
             return ($this->exit_handler)($code);
         }
+        $this->cleanUp();
         exit($code);
     }
 }
@@ -551,6 +558,7 @@ trait Core_Glue
         foreach ($this->beforeShowHandlers as $v) {
             ($v)();
         }
+        $this->is_before_show_done=true;
         if ($this->options['skip_view_notice_error']) {
             RuntimeState::G()->skipNoticeError();
         }
