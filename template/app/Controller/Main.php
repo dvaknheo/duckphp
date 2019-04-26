@@ -1,7 +1,7 @@
 <?php
 namespace MY\Controller;
 
-use DNMVCS\DNMVCS as DN;
+use MY\Base\App;
 use MY\Base\Controller;
 use MY\Service as S;
 
@@ -11,7 +11,7 @@ class Main // extends Controller
     {
         $data=[];
         $data['var']=S\TestService::G()->foo();
-        DN::Show($data, 'main');
+        App::Show($data, 'main');
     }
     public function i()
     {
