@@ -591,6 +591,10 @@ trait Core_Glue
     {
         return Route::G()->addRouteHook($hook, $prepend, $once);
     }
+    public function stopRunDefaultHandler()
+    {
+        return Route::G()->stopRunDefaultHandler();
+    }
     public function getRouteCallingMethod()
     {
         return Route::G()->getRouteCallingMethod();
