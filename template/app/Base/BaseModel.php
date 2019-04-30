@@ -1,11 +1,11 @@
 <?php
 namespace MY\Base;
 
-use DNMVCS\StrictService;
+use DNMVCS\StrictModel;
 use DNMVCS\DNSingleton;
 
-class Service
+class BaseModel
 {
-    // use StrictService;
+    // use StrictModel;
     use DNSingleton;
 }

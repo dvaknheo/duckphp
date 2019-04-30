@@ -240,7 +240,7 @@ Swoole 兼容
 
 session_start, session_destroy session_id, session_set_save_handler
 
-如 session_start() => App::session_start(); 参数格式都一样。
+如 session_start() => ControllerHelper::session_start(); 参数格式都一样。
 
 
 #### 编写 兼容 Swoole 的代码

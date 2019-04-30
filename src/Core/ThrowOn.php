@@ -1,5 +1,5 @@
 <?php
-namespace DNMVCS\Core\Glue;
+namespace DNMVCS\Core;
 
 trait ThrowOn
 {

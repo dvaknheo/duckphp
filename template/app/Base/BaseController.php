@@ -1,7 +1,7 @@
 <?php
 namespace MY\Base;
 
-class Controller
+class BaseController
 {
     //
 }
