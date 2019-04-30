@@ -494,11 +494,29 @@ trait Core_Helper
         return static::G()->is_in_exception;
     }
     ////
+    
+    public static function Show($data=[], $view=null)
+    {
+        return static::G()->_Show($data, $view);
+    }
     public static function H($str)
     {
         return static::G()->_H($str);
     }
-
+    ////
+    public function _Show($data=[], $view=null)
+    {
+        $view=$view??Route::G()->getRouteCallingPath();
+        foreach ($this->beforeShowHandlers as $v) {
+            ($v)();
+        }
+        $this->is_before_show_done=true;
+        if ($this->options['skip_view_notice_error']) {
+            RuntimeState::G()->skipNoticeError();
+        }
+        return View::G()->_Show($data, $view);
+    }
+    
     public function _H(&$str)
     {
         if (is_string($str)) {
@@ -522,8 +540,45 @@ trait Core_Helper
         return $str;
     }
 }
+trait Core_Instance
+{
+    protected $staticComponentClasses=[];
+    protected $dynamicComponentClasses=[];
+    
+    public function getStaticComponentClasses()
+    {
+        $ret=[
+            AutoLoader::class,
+            ExceptionManager::class,
+            Configer::class,
+            View::class,
+            Route::class,
+        ];
+        $ret[]=static::class;
+        $ret[]=self::class;
+        $ret[]=$this->getOverrideRootClass();
+        return $ret;
+    }
+    public function getDynamicComponentClasses()
+    {
+        return $this->dynamicComponentClasses;
+    }
+    public function addDynamicComponentClass($class)
+    {
+        return $this->dynamicComponentClasses[]=$class;
+    }
+}
+
 trait Core_Glue
 {
+    public static function ThrowOn($flag, $message, $code=0, $exception_class='')
+    {
+        if (!$flag) {
+            return;
+        }
+        $exception_class=$exception_class?:\Exception::class;
+        throw new $exception_class($message, $code);
+    }
     //state
     public static function IsRunning()
     {
@@ -539,22 +594,7 @@ trait Core_Glue
         return Route::G()->_Parameters();
     }
     // view static
-    public static function Show($data=[], $view=null)
-    {
-        return static::G()->_Show($data, $view);
-    }
-    public function _Show($data=[], $view=null)
-    {
-        $view=$view??Route::G()->getRouteCallingPath();
-        foreach ($this->beforeShowHandlers as $v) {
-            ($v)();
-        }
-        $this->is_before_show_done=true;
-        if ($this->options['skip_view_notice_error']) {
-            RuntimeState::G()->skipNoticeError();
-        }
-        return View::G()->_Show($data, $view);
-    }
+
     public static function ShowBlock($view, $data=null)
     {
         return View::G()->_ShowBlock($view, $data);
@@ -618,33 +658,5 @@ trait Core_Glue
     public function setDefaultExceptionHandler($callback)
     {
         return ExceptionManager::G()->setDefaultExceptionHandler($callback);
-    }
-}
-trait Core_Instance
-{
-    protected $staticComponentClasses=[];
-    protected $dynamicComponentClasses=[];
-    
-    public function getStaticComponentClasses()
-    {
-        $ret=[
-            AutoLoader::class,
-            ExceptionManager::class,
-            Configer::class,
-            View::class,
-            Route::class,
-        ];
-        $ret[]=static::class;
-        $ret[]=self::class;
-        $ret[]=$this->getOverrideRootClass();
-        return $ret;
-    }
-    public function getDynamicComponentClasses()
-    {
-        return $this->dynamicComponentClasses;
-    }
-    public function addDynamicComponentClass($class)
-    {
-        return $this->dynamicComponentClasses[]=$class;
     }
 }

@@ -3,19 +3,19 @@ namespace DNMVCS\Core\Base;
 
 use DNMVCS\Core\SingletonEx;
 use DNMVCS\Core\App;
+use DNMVCS\Core\ExceptionManager;
+use DNMVCS\Core\View;
+use DNMVCS\Core\Route;
+
+use DNMVCS\Glue\GlueThrowOn;
+use DNMVCS\Glue\GlueConfiger;
 
 class ControllerHelper
 {
     use SingletonEx;
+    use GlueThrowOn;
+    use GlueConfiger;
 
-    public static function ThrowOn($flag, $message, $code=0, $exception_class='')
-    {
-        if (!$flag) {
-            return;
-        }
-        $exception_class=$exception_class?:\Exception::class;
-        throw new $exception_class($message, $code);
-    }
     public static function IsDebug()
     {
         return App::G()->is_debug;
@@ -25,6 +25,7 @@ class ControllerHelper
         return App::G()->platform;
     }
 
+    
     ////////////////
     public static function URL($url=null)
     {
@@ -34,6 +35,12 @@ class ControllerHelper
     {
         return Route::G()->_Parameters();
     }
+    public function getRouteCallingMethod()
+    {
+        return Route::G()->getRouteCallingMethod();
+    }
+    
+    ///////////////
     public static function Show($data=[], $view=null)
     {
         return App::G()->_Show($data, $view);
@@ -42,66 +49,6 @@ class ControllerHelper
     {
         return View::G()->_ShowBlock($view, $data);
     }
-    
-    public static function Setting($key)
-    {
-        return Configer::G()->_Setting($key);
-    }
-    public static function Config($key, $file_basename='config')
-    {
-        return Configer::G()->_Config($key, $file_basename);
-    }
-    public static function LoadConfig($file_basename)
-    {
-        return Configer::G()->_LoadConfig($file_basename);
-    }
-    ///////////////
-    public static function header($output, bool $replace = true, int $http_response_code=0)
-    {
-        return App::G()->_header($output, $replace, $http_response_code);
-    }
-    public static function exit_system($code=0)
-    {
-        return App::G()->_exit_system($code);
-    }
-    public static function ExitJson($ret)
-    {
-        return App::G()->_ExitJson($ret);
-    }
-    
-    ////////////////////
-    public static function ExitRedirect($url, $only_in_site=true)
-    {
-        return App::G()->_ExitRedirect($url, $only_in_site);
-    }
-    public static function ExitRouteTo($url)
-    {
-        return static::G()->_ExitRedirect(static::URL($url), true);
-    }
-    public static function Exit404()
-    {
-        App::On404();
-        App::exit_system();
-    }
-    /////////////////
-    public static function isInException()
-    {
-        return App::G()->is_in_exception;
-    }
-    public function addRouteHook($hook, $prepend=false, $once=true)
-    {
-        return Route::G()->addRouteHook($hook, $prepend, $once);
-    }
-    public function getRouteCallingMethod()
-    {
-        return Route::G()->getRouteCallingMethod();
-    }
-    public function bindServerData($data)
-    {
-        return Route::G()->bindServerData($data);
-    }
-    
-    //view
     public function setViewWrapper($head_file=null, $foot_file=null)
     {
         return View::G()->setViewWrapper($head_file, $foot_file);
@@ -110,6 +57,39 @@ class ControllerHelper
     {
         return View::G()->assignViewData($key, $value);
     }
+    ////////////////////
+    public static function ExitRedirect($url, $only_in_site=true)
+    {
+        return App::G()->_ExitRedirect($url, $only_in_site);
+    }
+    public static function ExitRouteTo($url)
+    {
+        return App::G()->_ExitRedirect(static::URL($url), true);
+    }
+    public static function Exit404()
+    {
+        App::On404();
+        App::exit_system();
+    }
+    public static function ExitJson($ret)
+    {
+        return App::G()->_ExitJson($ret);
+    }
+    /////////////////
+    public static function isInException()
+    {
+        return App::G()->is_in_exception;
+    }
+
+    public static function header($output, bool $replace = true, int $http_response_code=0)
+    {
+        return App::G()->_header($output, $replace, $http_response_code);
+    }
+    public static function exit_system($code=0)
+    {
+        return App::G()->_exit_system($code);
+    }
+    
     //exception manager
     public function assignExceptionHandler($classes, $callback=null)
     {
