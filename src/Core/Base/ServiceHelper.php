@@ -2,14 +2,27 @@
 namespace DNMVCS\Core\Base;
 
 use DNMVCS\Core\SingletonEx;
-use DNMVCS\Glue\GlueThrowOn;
-use DNMVCS\Glue\GlueConfiger;
+use DNMVCS\Core\ThrowOn;
+use DNMVCS\Core\Configer;
+use DNMVCS\Core\App;
 
 class ServiceHelper
 {
     use SingletonEx;
     use GlueThrowOn;
-    use GlueConfiger;
+    
+    public static function Setting($key)
+    {
+        return Configer::G()->_Setting($key);
+    }
+    public static function Config($key, $file_basename='config')
+    {
+        return Configer::G()->_Config($key, $file_basename);
+    }
+    public static function LoadConfig($file_basename)
+    {
+        return Configer::G()->_LoadConfig($file_basename);
+    }
     
     public static function IsDebug()
     {
@@ -19,4 +32,5 @@ class ServiceHelper
     {
         return App::G()->platform;
     }
+    ////
 }

@@ -40,6 +40,7 @@ class ControllerHelper extends Helper
     {
         return SuperGlobal::G()->_CLASS_STATICS($class_name, $var_name);
     }
+    ////
     public static function session_start(array $options=[])
     {
         return SuperGlobal::G()->session_start($options);

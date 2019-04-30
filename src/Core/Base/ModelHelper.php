@@ -2,10 +2,10 @@
 namespace DNMVCS\Core\Base;
 
 use DNMVCS\Core\SingletonEx;
-use DNMVCS\Glue\GlueThrowOn;
+use DNMVCS\Core\ThrowOn;
 
 class ModelHelper
 {
     use SingletonEx;
-    use GlueThrowOn;
+    use ThrowOn;
 }

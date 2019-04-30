@@ -1,7 +1,7 @@
 <?php
 namespace DNMVCS\Core\Glue;
 
-trait GlueThrowOn
+trait ThrowOn
 {
     public static function ThrowOn($flag, $message, $code=0, $exception_class='')
     {

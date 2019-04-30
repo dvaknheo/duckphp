@@ -2,20 +2,29 @@
 namespace DNMVCS\Core\Base;
 
 use DNMVCS\Core\SingletonEx;
+use DNMVCS\Core\ThrowOn;
+use DNMVCS\Core\Configer;
 use DNMVCS\Core\App;
-use DNMVCS\Core\ExceptionManager;
-use DNMVCS\Core\View;
-use DNMVCS\Core\Route;
 
-use DNMVCS\Glue\GlueThrowOn;
-use DNMVCS\Glue\GlueConfiger;
+use DNMVCS\Core\Route;
+use DNMVCS\Core\View;
+use DNMVCS\Core\ExceptionManager;
 
 class ControllerHelper
 {
-    use SingletonEx;
-    use GlueThrowOn;
-    use GlueConfiger;
-
+    public static function Setting($key)
+    {
+        return Configer::G()->_Setting($key);
+    }
+    public static function Config($key, $file_basename='config')
+    {
+        return Configer::G()->_Config($key, $file_basename);
+    }
+    public static function LoadConfig($file_basename)
+    {
+        return Configer::G()->_LoadConfig($file_basename);
+    }
+    
     public static function IsDebug()
     {
         return App::G()->is_debug;
@@ -24,8 +33,7 @@ class ControllerHelper
     {
         return App::G()->platform;
     }
-
-    
+    ////
     ////////////////
     public static function URL($url=null)
     {
@@ -76,11 +84,6 @@ class ControllerHelper
         return App::G()->_ExitJson($ret);
     }
     /////////////////
-    public static function isInException()
-    {
-        return App::G()->is_in_exception;
-    }
-
     public static function header($output, bool $replace = true, int $http_response_code=0)
     {
         return App::G()->_header($output, $replace, $http_response_code);
@@ -89,7 +92,6 @@ class ControllerHelper
     {
         return App::G()->_exit_system($code);
     }
-    
     //exception manager
     public function assignExceptionHandler($classes, $callback=null)
     {

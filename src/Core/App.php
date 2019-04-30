@@ -5,6 +5,7 @@
 namespace DNMVCS\Core;
 
 use DNMVCS\Core\SingletonEx;
+use DNMVCS\Core\ThrowOn;
 
 use DNMVCS\Core\Route;
 use DNMVCS\Core\AutoLoader;
@@ -16,6 +17,7 @@ use DNMVCS\Core\RuntimeState;
 class App
 {
     use SingletonEx;
+    use ThrowOn;
 
     const VERSION = '1.1.0';
     
