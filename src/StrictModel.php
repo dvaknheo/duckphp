@@ -2,14 +2,14 @@
 namespace DNMVCS;
 
 use DNMVCS\Basic\SingletonEx;
+use DNMVCS\Core\App;
 
 trait StrictModel
 {
     use SingletonEx { G as _ParentG;}
     public static function G($object=null)
     {
-        $dn=defined('DNMVCS_CLASS')?DNMVCS_CLASS:DNMVCS::class;
-        $dn::G()->checkStrictModel();
+        App::G()->checkStrictModel();
         return static::_ParentG($object);
     }
 }

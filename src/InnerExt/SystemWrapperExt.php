@@ -3,6 +3,7 @@ namespace DNMVCS\InnerExt;
 
 use DNMVCS\Basic\SingletonEx;
 use DNMVCS\Basic\SuperGlobal;
+use DNMVCS\Core\App;
 
 class SystemWrapperExt
 {
@@ -40,9 +41,8 @@ class SystemWrapperExt
             SuperGlobal::G($func());
         }
         if (defined('DNMVCS_SUPER_GLOBAL_REPALACER') || $this->use_super_global) {
-            $dn=defined('DNMVCS_CLASS')?DNMVCS_CLASS:DNMVCS::class;
-            $dn::G()->addDynamicComponentClass(SuperGlobal::class);
-            $dn::G()->bindServerData(SuperGlobal::G()->_SERVER);
+            App::G()->addDynamicComponentClass(SuperGlobal::class);
+            App::G()->bindServerData(SuperGlobal::G()->_SERVER);
         }
     }
 }

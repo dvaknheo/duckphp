@@ -152,9 +152,6 @@ class App
     //@override me
     public function init($options=[], $context=null)
     {
-        if (!defined('DNMVCS_CLASS')) {
-            define('DNMVCS_CLASS', static::class);
-        }
         if (!$this->override_root_class) {
             $options=$this->adjustOptions($options);
             AutoLoader::G()->init($options, $this)->run();
@@ -162,9 +159,11 @@ class App
             $object=$this->checkOverride($options);
             $this->is_debug=true;
             if ($object) {
+                self::G($object);
                 $object->initOptions($options);
                 return $object->init($options);
             }
+            self::G($this);
         } else {
             $this->initOptions($options);
         }
@@ -244,7 +243,7 @@ class App
     }
     public function cleanUp()
     {
-        if(!$this->is_before_show_done){
+        if (!$this->is_before_show_done) {
             foreach ($this->beforeShowHandlers as $v) {
                 ($v)();
             }
@@ -266,7 +265,6 @@ class App
             $this->platform=$platform;
         }
     }
-    
 }
 trait Core_Handler
 {
@@ -639,7 +637,8 @@ trait Core_Instance
             View::class,
             Route::class,
         ];
-        $ret[]=get_class($this);
+        $ret[]=static::class;
+        $ret[]=self::class;
         $ret[]=$this->getOverrideRootClass();
         return $ret;
     }

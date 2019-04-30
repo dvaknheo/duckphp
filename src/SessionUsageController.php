@@ -1,12 +1,13 @@
 <?php
 namespace DNMVCS;
 
+use DNMVCS\Core\App;
+
 class SessionUsageController
 {
     protected $session_name='DNSESSION';
     public function __construct()
     {
-        $dn=defined('DNMVCS_CLASS')?DNMVCS_CLASS:DNMVCS::class;
-        $dn::session_start(['name'=>$this->session_name]);
+        App::session_start(['name'=>$this->session_name]);
     }
 }

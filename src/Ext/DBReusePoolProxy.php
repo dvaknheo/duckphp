@@ -2,6 +2,7 @@
 namespace DNMVCS\Ext;
 
 use DNMVCS\Basic\SingletonEx;
+use DNMVCS\Core\App;
 use DNMVCS\InnerExt\DBManager;
 use SplQueue;
 
@@ -89,13 +90,7 @@ class DBReusePoolProxy
     }
     protected function checkException()
     {
-        $dn=defined('DNMVCS_CLASS')?DNMVCS_CLASS:DNMVCS::class;
-        if ($dn) {
-            if ($dn::G()->isInException()) {
-                return true;
-            }
-        }
-        return false;
+        return App::G()->isInException();
     }
     public function onClose($db, $tag)
     {
