@@ -54,7 +54,7 @@ class ControllerHelper
     public static function LoadConfig($file_basename)
     {
         return Configer::G()->_LoadConfig($file_basename);
-    }    
+    }
     ///////////////
     public static function header($output, bool $replace = true, int $http_response_code=0)
     {
@@ -78,7 +78,7 @@ class ControllerHelper
     {
         return static::G()->_ExitRedirect(static::URL($url), true);
     }
-    public App function Exit404()
+    public static function Exit404()
     {
         App::On404();
         App::exit_system();
@@ -88,7 +88,7 @@ class ControllerHelper
     {
         return App::G()->is_in_exception;
     }
-        public function addRouteHook($hook, $prepend=false, $once=true)
+    public function addRouteHook($hook, $prepend=false, $once=true)
     {
         return Route::G()->addRouteHook($hook, $prepend, $once);
     }
@@ -123,5 +123,4 @@ class ControllerHelper
     {
         return ExceptionManager::G()->setDefaultExceptionHandler($callback);
     }
-    
 }

@@ -43,6 +43,9 @@ class SwooleExt
         $this->is_inited=true;
         
         $options=$options['swoole'];
+        if (empty($options)) {
+            return;
+        }
         
         $this->serverClass=$options['swoolehttpd_server_class']??SwooleHttpd::class;
         $this->appClass=$options['swoolehttpd_app_class']??($context?get_class($context):DNMVCS::class);

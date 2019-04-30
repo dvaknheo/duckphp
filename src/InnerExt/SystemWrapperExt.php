@@ -22,10 +22,9 @@ class SystemWrapperExt
         $funcs=($callback)();
         
         if ($context) {
-            $context::G()->system_wrapper_replace($funcs);
+            $context->system_wrapper_replace($funcs);
             if (isset($funcs['set_exception_handler'])) {
-                $dn=defined('DNMVCS_CLASS')?DNMVCS_CLASS:DNMVCS::class;
-                $context::set_exception_handler([$dn,'OnException']);
+                $context::set_exception_handler([get_class($context),'OnException']);
             }
             $context->addBeforeRunHandler([static::class,'OnRun']);
         }
