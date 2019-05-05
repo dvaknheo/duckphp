@@ -60,7 +60,7 @@ class test //extends BaseController
     public function done()
     {
         $data=[];
-        $data['var']=Helper::H(MiscService::G()->foo());
+        $data['var']=C::H(MiscService::G()->foo());
         C::Show($data);
     }
 }
@@ -130,34 +130,21 @@ test
 作为应用程序员， 你不能引入 DNMVCS 的任何东西，就当 DNMVCS 命名空间不存在。
 主力程序员才去研究 DNMVCS 类的东西。
 
-写 Model 你可能要引入 MY\Base\ModelHelper 类 。
+写 Model 你可能要引入 MY\Base\ModelHelper 类 记为  。
 写 Serivce 你可能要引入 MY\Base\SerivceHelper 类。
 写 Controller 你可能要引入 MY\Base\ControllerHelper 类。
 
 不能交叉引入其他 Helper 类。如果需要交叉，那么你就是错的。
 
 
-G 函数， G() 函数就是可变单例函数
+G 函数， G() 函数就是可变单例函数，当你用到助手类的 G 函数的形式的时候，说明你这个功能不常用。
 
-```php
-use MY\Base\App;
-```
-App::G() 返回 MY\Base\App 的单例
-
-是否调试状态 App::IsDebug()
-
-获得当前平台 App::Platform()
-
-抛异常：App::ThrowOn($flag,$messsage,$code=0,$exception_class); 如果 flag 成立，抛出 $exception_class(默认为 Exception);
-
-App::DumpExtMethods() 用于查看主程 通过 MY\Base\App 里找不到代码的方法。
-
-此外，后面会用到的。 assign* 系列函数都是两种调用方式, 单个assign($key,$value) 和 assign($assoc)，后者是批量导入的版本。
+assign* 系列函数都是两种调用方式, 单个assign($key,$value) 和 assign($assoc)，后者是批量导入的版本。
 
 
 #### Model 编写模型用到的方法
 
-Model 类 使用到快速
+抛异常：M::ThrowOn($flag,$messsage,$code=0,$exception_class=null); 如果 flag 成立，抛出 $exception_class(默认为 Exception 类);
 
 M::ThrowOn();
 
@@ -168,24 +155,25 @@ M::DB_R() 获得读数据库类。
 M::DB_W() 获得写数据库类。
 
 #### Serivce 编写服务用到的方法
+
 和 ModelHelper 一样也有同功能的 
 S::ThrowOn();
 
 此外还有
 
-获得设置 S::Setting($key) 默认设置文件是在  config/setting.php 。
+* 判断是否在调试状态 S::IsDebug();
+* 判断所在平台 S::Platform();
 
-载入配置 S::LoadConfig($key,$basename)
+* 获得设置 S::Setting($key) 默认设置文件是在  config/setting.php 。
+* 载入配置 S::LoadConfig($key,$basename)
+* 获得配置 S::Config($key)
 
-获得配置 S::Config($key)
-
-
+设置是敏感信息,不存在于版本控制里面。而配置是非敏感
 
 #### Controller 编写控制器用到的方法
 
-Service 的同名方法
+和 Service 的同名同作用方法
 
-* C::ThrowOn();
 * C::IsDebug();
 * C::Platform();
 * C::Setting($key);
@@ -200,9 +188,11 @@ Service 的同名方法
     最偷懒的是调用 C::Show(get_defined_vars());
 
     如果只显示一块，用 C::ShowBlock($view,$data=null); 如果$data 是空，把父视图的数据带入，
-    C::ShowBlock 没用到页眉页脚。
+    
 
     在控制器的构造函数中。用 C::G()->setViewWrapper($view_header,$view_footer) 来设置页眉页脚。
+    页眉页脚的变量和 view 页面是同域的。 setViewWrapper(null,null) 清理页眉页脚
+    C::ShowBlock 没用到页眉页脚。而且 C::ShwoBlock 只单纯输出，不做多余动作。
 
     C::G()->assignViewData($name,$var) 来设置视图的输出。
 
@@ -225,28 +215,30 @@ Service 的同名方法
 
 4. 系统替代函数 
     用 C::header() 代替系统 header 兼容命令行等。
+    用 C::setcookie() 代替系统 setcookie 兼容命令行等。
     用 C::exit_system() 代替系统 exit; 便于接管处理。
 
+setcookie
 
-异常相关
+5. 异常相关
 
     如果想接管默认异常，用 C::G()->setDefaultExceptionHandler($handler);
     如果对接管特定异常，用 C::G()->assignExceptionHandler($exception_name,$handler);
     设置多个异常到回调则用 C::G()->setMultiExceptionHandler($exception_name=[],$handler);
 
-Swoole 兼容
+6. Swoole 兼容
 
-如果想让你们的项目在 swoole 下也能运行，那就要加上这几点
-用 C::SG() 代替 超全局变量的 $ 前缀 如 $_GET =>  App::SG->_GET
+    如果想让你们的项目在 swoole 下也能运行，那就要加上这几点
+    用 C::SG() 代替 超全局变量的 $ 前缀 如 $_GET =>  App::SG->_GET
 
-使用以下 App 的 swoole 兼容静态方法，代替全局方法。
+    使用以下参数格式都一样的 swoole 兼容静态方法，代替同名全局方法。
 
-C::session_start,
-C::session_destroy,
-C::session_id
+    C::session_start(),
+    C::session_destroy(),
+    C::session_id()，
+    如 session_start() => C::session_start();。
 
-如 session_start() => C::session_start(); 参数格式都一样。
-
+    或许你会用到 C::RecordsetUrl(),C::RecordsetH()
 
 #### 编写 兼容 Swoole 的代码
 
@@ -257,29 +249,46 @@ C::session_id
 类内静态变量
 $x=static::$abc; => $x=C::CLASS_STATICS(static::class,'abc');
 
-####
-如果你想偷懒， *Helper   改为 App 也是可以的。
+#### 学习高级路由
+
+
+assignRewrite($old_url,$new_url=null)
+
+    rewrite  重写 path_info
+    不区分 request method , 重写后可以用 ? query 参数
+    ~ 开始表示是正则 ,为了简单用 / 代替普通正则的 \/
+    替换的url ，用 $1 $2 表示参数
+assignRoute($route,$callback=null)
+
+    给路由加回调。
+    关于回调模式的路由。详细情况看之前介绍
+    和在 options['route'] 添加数据一样
 
 #### 高级程序员
 
-但是，如果要完成 rewrite ，或者自定义路由。那就得调整 MY/Base/App 类了。
+如果你想偷懒， *Helper 改为 App 由 MY\Base\App 自己的实现也行。
+
+如果要完成 rewrite ，或者自定义路由。那就得调整 MY\Base\App 类了。
 
 在 init(), run() 方法里你会用到
+addRouteHook($hook,$prepend=false,$once=true)
 
 添加路由和重写  $this->assignRewrite $this->assignRoute();
 添加路由钩子 $this->addRouteHook($hook); $hook 返回空用默认路由处理，否则调用返回的回调。
-$this->stop RouteHook($hook)
+$this->stopRunDefaultRouteHook($hook)
 
-动态扩展相关 
-扩展静态方法 $this->assignStaticMethod($method,$callback);
-扩展动态方法 $this->assignDynamicMethod($method,$callback);
 
 $this->extendClassMethodByThirdParty($class,$static_methods=[],$dyminac_methods=[]);
 DNMVCS 调用代理 $class 的方法。
 
 
 添加显示前处理 用 $this->addBeforeShowHandler($callback)
-运行前 $this->->addBeforeRunHandler($callback)
+运行前 $this->addBeforeRunHandler($callback)
+
+动态扩展相关 
+
+扩展静态方法 $this->assignStaticMethod($method,$callback);
+扩展动态方法 $this->assignDynamicMethod($method,$callback);
 
 自动加载的 $this->assignPathNamespace()
 
@@ -291,11 +300,11 @@ DNMVCS 调用代理 $class 的方法。
 +---app                     // psr-4 标准的自动加载目录
 |   +---Base                // 基类放在这里
 |   |      App.php          // 默认框架入口文件
-|   |      Contrllor.php    // 控制器基类
+|   |      BaseContrllor.php    // 控制器基类
+|   |      BaseModel.php        // 模型基类
+|   |      BaseService.php      // 服务基类
 |   |      ContrllorHelper.php  // 控制器助手类
-|   |      Model.php        // 模型基类
 |   |      ModelHelper.php      // 模型助手类
-|   |      Service.php      // 服务基类
 |   |      ServiceHelper.php    // 服务助手类
 |   +---Controller          // 控制器目录
 |   |       Main.php        // 默认控制器
@@ -321,12 +330,13 @@ DNMVCS 调用代理 $class 的方法。
         index.php           // 主页，入口页
 ```
 文件都不复杂。基本都是空类或空继承类，便于不同处理。
-我们主要看的是 入口类。 public/index.php
+这些结构能精简么？
+可以，你可以一个目录都不要。
 
-
-### 以上
 
 ### 从入口开始
+我们主要看的是 入口类。 public/index.php
+
 ```php
 <?php
 require(__DIR__.'/../headfile/headfile.php');
@@ -337,7 +347,7 @@ $options=[
     'namespace'=>'MY',
 ];
 if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
-    $options['setting_file_basename']='';
+    $options['skip_setting_file']=true;
     $options['is_dev']=true;
     echo "<div>Don't run the template file directly </div>\n";
 }
@@ -346,26 +356,6 @@ if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
 ```
 
 
-
-$options
-RunQuickly 静态方法
-被注释的 init(),run 方法。
-
-### 从入门到精通
-我们接下来会逐步学习：
-
-
-4. 学习 DNMVCS 的配置
-4. 调用 DNMVCS 类的静态方法实现目的
-5. 调用 DNMVCS 类的动态方法实现目的
-6. 学习更高级的调用
-7. ---- 核心程序员和高级程序员分界线 ----
-8. 扩展 DNMVCS 类
-9. 调用扩展类，组件类的动态方法实现目的
-10. 继承接管，特定类实现目的
-11. 魔改，硬改 DNMVCS 的代码实现目的
-这些结构能精简么？
-可以，你可以一个目录都不要。
 
 ## 核心
 
@@ -382,14 +372,16 @@ const DEFAULT_OPTIONS=[
     'is_dev'=>false,
     'platform'=>'',
     'path_view'=>'view',
-    'path_config'=>'config',
+
     'skip_view_notice_error'=>true,
     'use_inner_error_view'=>false,
     
     //// config ////
-    'setting_file_basename'=>'setting',
+    'path_config'=>'config',
     'all_config'=>[],
     'setting'=>[],
+    'setting_file'=>'setting',
+    'skip_setting_file'=>false,
     'reload_for_flags'=>true,
     
     //// error handler ////
@@ -399,14 +391,11 @@ const DEFAULT_OPTIONS=[
     'error_debug'=>'_sys/error-debug',
     
     //// controller ////
-        'namespace_controller'=>'Controller',
+    // 'namespace_controller'=>'Controller',
     'controller_base_class'=>null,
     'controller_prefix_post'=>'do_',
     'controller_hide_boot_class'=>false,
     'controller_welcome_class'=>'Main',
-        'controller_enable_paramters'=>false,
-        'controller_methtod_for_miss'=>null,
-        'controller_index_method'=>'index',
 ];
 ```
 
@@ -430,9 +419,9 @@ autoload 的命名空间
 'override_class'=>'Base\App',
 **重要选项**
 
-基于 namespace ,如果这个选项的类存在，则 DNCore 在 init 的时候会切换到这个类完成后续初始化，并返回这个类的实例。
+基于 namespace ,如果这个选项的类存在，则在 init 的时候会切换到这个类完成后续初始化，并返回这个类的实例。
 
-注意到 app/Base/App.php 这个文件 MY\Base\App extends DNMVCS\DNMVCS;
+注意到 app/Base/App.php 这个文件的类 MY\Base\App extends DNMVCS\DNMVCS;
 如果以  \ 开头则是绝对 命名空间
 #### 选项 is_dev
 'is_dev'=>false,
@@ -451,12 +440,16 @@ autoload 的命名空间
 'path_config'=>'config', 配置的目录，基于 path 配置
 #### 选项 skip_view_notice_error
 'skip_view_notice_error'=>true, view 视图里忽略 notice 错误。
+
 #### 选项 use_inner_error_view
 'use_inner_error_view'=>false,  忽略  error_* 配置，使用内部的错误视图
+这是个快捷配置的选项。等价于 把 error_* 配置都设置为 null. 用于调试
+####  选项 use_404_to_other_framework
+'use_404_to_other_framework'=>false,  
+这是个快捷配置的选项。用于 404 后整合其他框架 等价于 error_404=function(){}
 
-这是个快捷配置的选项。等价于 把 error_* 配置都设置为 null.
-#### 选项 setting_file_basename
-'setting_file_basename'=>'setting', 如果这项为空，那就不读设置文件了。
+#### 选项 skip_setting_file
+'skip_setting_file'=>false, 如果这项为空，那就不读设置文件了。
 
 这用于不读取设置文件的模式
 #### 选项 all_config
@@ -521,10 +514,6 @@ POST 的方法会在方法名前加前缀 do_
 #### 选项 controller_welcome_class
 'controller_welcome_class'=>'Main',
 默认欢迎类是  Main 。
-#### 选项
-'controller_index_method'=>'index',
-**不建议修改**
-
 
 ## 常见任务
 
@@ -537,35 +526,15 @@ DNMVCS::URL($url) 函数就是用于这个任务。
 使得你不必关系是用在 /index.php 或者 /somefolder/index.php 里用 PATH_INFO 。
 DNMVCS::URL('about/foo') 都会得到正确的 URL 地址。
 
-*进阶，接管 URL 函数  .*
-### 常见任务：View 和 View 的包含
 
-DNMVCS::Show($data,$view=null) 用于 View 的显示， $view 为空的时候，会根据当前 URL 获得相关 view 文件。
-当要在 View 里包含的时候，用 DNMVCS::ShowData($view,$data=null); $data 为 null 的时候，会把当前view 数据带过去。
 
-*进阶，接管 View .*
-
-### 常见任务：读取配置和设置
-[DNMVCS::Setting($key)](#DNMVCS::Setting) 用于读取 config/setting.php 的 $key 。
-
-[DNMVCS::Config($key,$basename='config')](#DNMVCS::Config) 用于读取 config/$basename.php  $key 。
-
-[DNMVCS::LoadConfig($basename='config')](#DNMVCS::LoadConfig)用于载入 config/$basename.php 的内容。
-
-设置是敏感信息。而配置是非敏感
 
 *进阶，更多配置和设置相关 .*
 ### 常见任务：URL 重写
 $options['rewrite_map'] 用于重写 url . 以 ~ 开始的表示正则，同时省略 / 必须转义的。 用 $ 代替 \ 捕获。
 $options['route_map'] ,用于 回调式路由， 除了  :: 表示类的静态方法，还 -> 符号表示的是类的动态方法。
 key  可以加 GET POST 方法。
-### 常见任务：重写错误页面
 
-错误页面在 ::view/_sys/ 目录下 里。你可以修改相应的错误页面方法。
-比如 404 是 view/404.php 。
-你可以更改 DNMVCS 的报错页面。
-无错误页面模式，会自己显示默认错误。
-你也可以修改 $options['error_404'] 指向一个回调函数来处理 404 错误，其他错误类似。
 
 *进阶 错误管理.*
 ### 常见任务： 使用数据库
@@ -590,27 +559,7 @@ DB 类仅仅是简单的封装 PDO ，作为主程序员，可能要重新调整
 DNMVCS 的默认数据库是 DB ,DB 功能很小，兼容 Medoo 这个数据库类。
 
 你可以用更习惯的类。
-### 常见任务： 跳转
-* DNMVCS::ExitJson($data) 输出 json 。
-* DNMVCS::ExitRedirect($url) 用于 302 跳转。
-* DNMVCS::ExitRouteTo($url) 相当于 302 跳转到 DNMVCS::URL($url);
-* DNMVCS::Exit404 显示404页面。
-
-### 常见任务： HTML 编码辅助函数
-* DNMVCS::H($str)   Html编码. 更专业的有 Zend\Escaper。
-
-* DNMVCS::RecordsetH 对一个 RecordSet 加 html 编码
-* DNMVCS::RecordsetURL  对  RecordSet 加 url 转换
-
 *进阶：把 html 编码替换成 Zend\Escaper .*
-### 常见任务： 抛异常
-
-```
-DNMVCS::ThrowOn($flag,$message,$code);
-```
-
-等价于 if(!$flag){throw new DNException($message,$code);}
-这是 DNMVCS 应用常见的操作。
 
 ### 常见任务： 和其他框架的整合
 DNMVCS 整合其他框架：
@@ -627,46 +576,6 @@ DNMVCS 整合其他框架：
 其他框架整合 DNMVCS ,则在相应处理 404 的地方开始
 
 
-### 静态函数参考
-#### 总说
-核心静态函数共 24 个。学会这 24个核心静态函数，就基本会 DNMVCS 了。
-
-运行相关的。
-入口 快速运行 RunQuickly
-运行状态判定 IsRunning
-开发状态判定 IsDebug
-运行平台 Platform
-
-设置配置。
-设置 Setting
-配置 Config
-载入配置 LoadConfig
-
-显示视图。
-显示页面 Show
-显示局部块 ShowBlock
-
-地址相关。
-获取 URL 
-获取 Parameters
-
-跳转退出。
-404 跳转 Exit404 
-302 跳转 ExitRedirect 
-302 跳转 内部 url 退出 ExitRouteTo
-输出 Json ExitJson
-
-Html 编码 H();
-
-系统替代函数 
-header() 
-exit_system()
-
-事件处理 
-On404 
-OnException 
-OnDevErrorHandler
-OnBeforeShow
 
 #### DNMVCS::RunQuickly
 RunQuickly($options=[],$func_after_init=null)
@@ -674,221 +583,6 @@ RunQuickly($options=[],$func_after_init=null)
     快速运行
     等价于 DNMVCS::G()->init($options)->run();
     但 $func_after_init 将会在 init 之后运行
-#### DNMVCS::IsRunning
-IsRunning
-
-    判断是否已经开始运行。
-    实质调用 DNRuntimeState::G()->isRunning();
-#### DNMVCS::IsDebug
-IsDebug()
-
-    判断是否在开发状态。默认读设置里的 is_dev 。
-#### DNMVCS::Platform
-Platform()
-
-    返回当前环境平台，默认为空默认读设置里的 platform 
-#### DNMVCS::Show
-Show($data=[],$view=null)
-
-    显示视图
-    视图的文件在 ::view 目录底下。你可以通过选项 path_view 调整
-    为什么数据放前面，DN::Show(get_defined_vars());把 controller 的变量都整合进来，并用默认路径作为 view 文件。
-    实质调用 DNView::G()->_Show();
-#### DNMVCS::ShowBlock
-ShowBlock($view,$data=null)
-
-    展示一块 view ，用于 View 里嵌套其他 View 或调试的场合。
-    展示view不理会页眉页脚，也不做展示的后处理，如关闭数据库。
-    注意这里是 $view 在前面， $data 在后面，和 show 函数不一致哦。
-    如果 $data===null 那么会继承上级的 view 数据
-    实质调用 DNView::G()->_ShowBlock();
-#### DNMVCS::URL
-URL($url)
-
-    获得调整路由后的url地址 
-    当你重写 DNRoute 类后，你可能需要重写这个方法来展示
-    比如 simple_route_key 开启后， URL('class/method?foo=bar') 
-    将会是 ?r=class/method&foo=bar ，而不是 /class/method?foo=bar
-    如果是 / 开始的 URL ，将是从网站根目录开始。
-
-    实质调用 DNRoute::G()->_URL();
-#### DNMVCS::Parameters
-Parameters()
-
-    获得路径切片
-    当用正则匹配路由的时候，匹配结果放在这里。
-    如果开启了 eanbale_parameter 匹配选项也会在这里。
-    这会使得 /about/foo/123/456 路由调用方法为 => about->foo(123,456);
-
-    实质调用 DNRoute::G()->_Parameters();
-
-#### DNMVCS::Setting
-Setting($key)
-
-    读取设置
-    设置在 ::/config/setting.php 里，php 格式
-    设置是敏感信息，不保存在版本管理中。
-    配置非敏感信息，放在版本管理中.
-    实质调用 DNConfig::G()->_Setting();
-#### DNMVCS::Config
-Config($key,$file_basename='config')
-
-    读取配置 
-    配置放在 config/$file_basename.php 里，php 格式
-    配置是放在非敏感信息，放在版本管理中
-    实质调用 DNConfig::G()->_Config();
-#### DNMVCS::LoadConfig
-LoadConfig($file_basename)
-
-    加载其他配置
-    如果很多配置文件，手动加载其他配置
-    实质调用 DNConfig::G()->LoadConfig();
-
-#### DNMVCS::H
-编码函数
-#### DNMVCS::ExitJson
-ExitJson($ret)
-
-    打印 json_encode($ret) 并且退出。
-    这里的 json 为人眼友好模式。
-
-    实质调用 static::G()->_ExitJson();
-#### DNMVCS::ExitRedirect
-ExitRedirect($url)
-
-    跳转到另一个url 并且退出。
-    实质调用 static::G()->_ExitRedirect();
-#### DNMVCS::ExitRouteTo
-ExitRouteTo($url)
-
-    跳转到 URL()函数包裹的 url。
-    应用到 static::G()->ExitRedirect(); 和 DNRoute::G()->URL();
-    高级开发者注意，这是静态方法里处理的，子类化需要注意
-#### DNMVCS::Exit404
-Exit404()
-
-    404 退出， 实质依次调用 static::On404, static::exit_system();
-    高级开发者注意，这是静态方法里处理的，子类化需要注意
-
-
-#### DNMVCS::ThrowOn
-ThrowOn($flag,$message,$code=0);
-
-    如果 flag 成立则抛出 DNException 异常。
-    减少代码量。如果没这个函数，你要写
-    if($flag){throw new DNException($message,$code);}
-    如果是你自己的异常类 ，可以 use DNMVCS\DNThrowQuickly 实现 ThrowOn 静态方法。
-#### DNMVCS::OnBeforeShow
-OnBeforeShow()
-
-    在输出 view 开始前处理.
-    默认处理空模板为当前类和方法，默认关闭数据库。
-    因为如果请求时间很长，页面数据量很大。没关闭数据库会导致连接被占用。
-#### DNMVCS::On404
-OnShow404()
-
-    404 回调。这里没传各种参数，需要的时候从外部获取。
-#### DNMVCS::OnException
-OnException($ex)
-
-    发生未处理异常的处理函数。显示 exception 或 500 页面
-#### DNMVCS::OnDevErrorHandler
-OnDevErrorHandler($errno, $errstr, $errfile, $errline)
-
-    处理 Notice ， Decraped 错误。
-#### DNMVCS::header
-header()
-    同系统的 header 方法
-    注意判断了非 web 状态下不使用
-    实际调用 static::G()->_header()
-#### DNMVCS::exit_system
-exit()
-    代替 exit();
-    实际调用 static::G()->exit_sytesm()
-
-### 动态函数参考
-12 个动态函数，一般你不怎么用到的 getRouteCallingMethod 这个会常用点
-
-运行的init run
-
-视图的 setViewWrapper assignViewData
-
-路由的 addRouteHook getRouteCallingMethod
-
-异常相关的 assignExceptionHandler setMultiExceptionHandler setDefaultExceptionHandler
-
-自动加载的 assignPathNamespace
-
-系统相关的 addBeforeShowHandler getOverrideRootClass
-#### DNMVCS->init
-init($options=[])
-
-    初始化，这是最经常子类化完成自己功能的方法。
-    你可以扩展这个类，添加工程里的其他初始化。
-#### DNMVCS->run
-run()
-
-    开始路由，执行。这个方法拆分出来是为了特定需求, 比如只是为了加载一些类。
-    比如 swoole 下不同协程的运行。
-    如果404 则返回false;其他返回 true
-#### DNMVCS->setViewWrapper
-setViewWrapper($head_file=null,$foot_file=null)
-
-    给输出 view 加页眉页脚 
-    view 里的变量和页眉页脚的域是一样的。
-    页眉页脚的变量和 view 页面是同域的。
-    有时候你需要 setViewWrapper(null,null) 清理页眉页脚
-
-    实质调用 DNView::G()->setViewWrapper
-#### DNMVCS->assignViewData
-assignViewData($key,$value=null)
-
-    给 view 分配数据，
-    这函数用于控制器构造函数添加统一视图数据
-    实质调用 DNView::G()->assignViewData
-#### DNMVCS->assignPathNamespace
-assignPathNamespace($path,$namespace=null)
-
-    分配自动加载的命名空间的目录。
-    实质调用 DNAutoLoader::G()->assignPathNamespace();
-#### DNMVCS->addRouteHook
-addRouteHook($hook,$prepend=false,$once=true)
-
-    下钩子扩展 route 方法
-    实质调用 DNRoute::G()->addRouteHook
-#### DNMVCS->getRouteCallingMethod
-getRouteCallingMethod()
-
-    获得路由中正在调用的方法。
-    用于控制器里判断方法以便于权限管理。
-    也适用于重写URL后判断是否是直接访问
-
-    实质调用 DNRoute::G()->getRouteCallingMethod
-
-#### DNMVCS->assignExceptionHandler
-assignExceptionHandler($classes,$callback=null)
-
-    分配特定异常回调。
-    用于控制器里控制特定错误类型。
-    实质调用 DNExceptionManager::G()->assignExceptionHandler
-#### DNMVCS->setMultiExceptionHandler
-setMultiExceptionHandler(array $classes,$callback)
-
-    多个特定异常回调用于多个异常统一到同一个回调的情况。
-    实质调用 DNExceptionManager::G()->setMultiExceptionHandler
-#### DNMVCS->setDefaultExceptionHandler
-setDefaultExceptionHandler($calllback)
-
-    接管默认的异常处理，所有异常都归回调管，而不是显示 500 页面。
-    用于控制器里控制特定错误类型。比如 api 调用
-    实质调用 DNExceptionManager::G()->setDefaultExceptionHandler
-
-学会这些静态方法，恭喜，基本会用了。
-### 总结
-这部分其实是 DNCore 这个类的内容，
-如果你不需要下面的扩展，用 DNCore 就够了。
-接下来是 DNMVCS 这个类的扩展
-
 ------------------------------------------------------------------------------
 ## 高级
 我还没学会数据库呢。
@@ -909,211 +603,26 @@ setDefaultExceptionHandler($calllback)
             'swoole'=>[],
         ];
 ### DNMVCS 扩展的静态方法
-#### 总说
-DNMVCS 相比 DNCore 扩展了一些方法按类型大致分为
+
 
 更多的运行方式  RunWithoutPathInfo RunOneFileMode RunAsServer
 为什么没 Redis ?
 
-为了 swoole 兼容，更多的系统代替函数 setcookie set_exception_handler register_shutdown_function
-swoole 兼容session  替代函数  session_start session_destroy session_set_save_handler
-超全局变量替代函数  SG GLOBALS STATICS CLASS_STATICS
 
-#### RunWithoutPathInfo
-#### RunOneFileMode
-#### RunAsServer
-
-#### DB
-#### DB_W
-#### DB_R
-
-#### RecordsetUrl
-#### RecordsetH
-
-#### setcookie
-#### set_exception_handler
-#### register_shutdown_function
-#### session_start
-#### session_destroy
-#### session_set_save_handler
-#### SG
-SG()
-
-    SuperGlobal 的缩写
-    返回 DNSuperGlobal 对象
-    你可以 DNMVCS::SG()->_GET得到的就是 swoole 也可用的 $_GET 数组。
-    类似的还有 _GET,_POST,_REQUEST,_SERVER，_ENV,_COOKIE,_SESSION
-#### GLOBALS
-&GLOBALS($k,$v=null)
-
-    兼容 Swoole
-    用于替换 global 语法
-    也可用 DNMVCS::SG()->GLOBALS;
-
-#### STATICS
-&STATICS($k,$v=null)
-
-    兼容 Swoole
-    用于替换 static 语法
-#### CLASS_STATICS
-&CLASS_STATICS($class_name,$var_name)
-
-    用于替换类内的 static ，这要提供类名，需要 static::class 或 self::class
-----
+####  补充那些没提到的选项
+全选项里还有。
 
 
-
-### DNMVCS 扩展的动态函数
-
-添加路由和重写  assignRewrite assignRoute
-Swoole 接口相关的3个函数  addDynamicClass getBootInstances getDynamicClasses
-动态扩展相关 assignStaticMethod assignDynamicMethod extendClassMethodByThirdParty
-系统替代函数相关 system_wrapper_replace
-
-#### assignRewrite
-assignRewrite($old_url,$new_url=null)
-
-    rewrite  重写 path_info
-    不区分 request method , 重写后可以用 ? query 参数
-    ~ 开始表示是正则 ,为了简单用 / 代替普通正则的 \/
-    替换的url ，用 $1 $2 表示参数
-#### assignRoute
-assignRoute($route,$callback=null)
-
-    给路由加回调。
-    关于回调模式的路由。详细情况看之前介绍
-    和在 options['route'] 添加数据一样
-#### assignStaticMethod
-
-#### assignDynamicMethod
-#### extendClassMethodByThirdParty
-
-更多配置
-
-## 用 DNMVCS 的起因
-
-## 学习更高级的调用
-
-DNMVCS 扩展了 DNCore,导致 新手容易碰到的问题是: 这函数在  get_class_methods(DNMVCS\DNMVCS::G())里找不到啊，从哪里冒出来的？
-调用  DNMVCS::DumpExtMethods(); 就 Dump 出来了。
-DNMVCS use trait DNClassExt 一个灵活性就是 DNClassExt
-
-extendClassMethodByThirdParty
+### 从入门到精通
+我们接下来会逐步学习：
 
 
-todo  htmlattr,css,javascript
-
-
--------------------------
-
-## trait DNSingleton | 子类化和 G 方法
-**很重要的一节**
-
-```php
-<?php
-trait DNSingleton
-    public static function G($object=null):object
-```
-
-G 函数，可变单例模式。
-
-如果没有这个 G 方法 你可能会怎么写代码：
-```php
-(new MyClass())->foo();
-```
-
-绑定 DNSingleton 后，这么写
-
-```php
-MyClass::G()->foo();
-```
-
-另一个隐藏功能：
-
-```php
-MyBaseClass::G(new MyClass())->foo();
-```
-
-MyClass 把 MyBaseClass 的 foo 方法替换了。
-接下来后面这样的代码，也是调用 MyClass 的 foo2.
-
-```php
-MyBaseClass::G()->foo2();
-```
-为什么不是 GetInstance ? 因为太长，这个方法太经常用。
-**注意:但是静态方法不替换，请注意这一点。**
-DNMVCS 实现 override_class 的 静态方法，是用 DNClassExt 来实现。
-
-
-## 索引
-
-### 静态函数
-
-* [DNMVCS::CLASS_STATICS](#DNMVCS::CLASS_STATICS)
-* [DNMVCS::Config](#DNMVCS::Config)
-* [DNMVCS::DB](#DNMVCS::DB)
-* [DNMVCS::DB_R](#DNMVCS::DB_R)
-* [DNMVCS::DB_W](#DNMVCS::DB_W)
-* [DNMVCS::IsDebug](#DNMVCS::IsDebug)
-* [DNMVCS::DumpExtMethods](#DNMVCS::DumpExtMethods)
-* [DNMVCS::Exit404](#DNMVCS::Exit404)
-* [DNMVCS::ExitJson](#DNMVCS::ExitJson)
-* [DNMVCS::ExitRedirect](#DNMVCS::ExitRedirect)
-* [DNMVCS::ExitRouteTo](#DNMVCS::ExitRouteTo)
-* [DNMVCS::G](#DNMVCS::G)
-* [DNMVCS::GLOBALS](#DNMVCS::GLOBALS)
-* [DNMVCS::H](#DNMVCS::H)
-* [DNMVCS::Import](#DNMVCS::Import)
-* [DNMVCS::IsRunning](#DNMVCS::IsRunning)
-* [DNMVCS::LoadConfig](#DNMVCS::LoadConfig)
-* [DNMVCS::On404](#DNMVCS::On404)
-* [DNMVCS::OnBeforeShow](#DNMVCS::OnBeforeShow)
-* [DNMVCS::OnDevErrorHandler](#DNMVCS::OnDevErrorHandler)
-* [DNMVCS::OnException](#DNMVCS::OnException)
-* [DNMVCS::Parameters](#DNMVCS::Parameters)
-* [DNMVCS::Platform](#DNMVCS::Platform)
-* [DNMVCS::RecordsetH](#DNMVCS::RecordsetH)
-* [DNMVCS::RecordsetUrl](#DNMVCS::RecordsetUrl)
-* [DNMVCS::RunAsServer](#DNMVCS::RunAsServer)
-* [DNMVCS::RunOneFileMode](#DNMVCS::RunOneFileMode)
-* [DNMVCS::RunQuickly](#DNMVCS::RunQuickly)
-* [DNMVCS::RunWithoutPathInfo](#DNMVCS::RunWithoutPathInfo)
-* [DNMVCS::SG](#DNMVCS::SG)
-* [DNMVCS::STATICS](#DNMVCS::STATICS)
-* [DNMVCS::Setting](#DNMVCS::Setting)
-* [DNMVCS::Show](#DNMVCS::Show)
-* [DNMVCS::ShowBlock](#DNMVCS::ShowBlock)
-* [DNMVCS::ThrowOn](#DNMVCS::ThrowOn)
-* [DNMVCS::URL](#DNMVCS::URL)
-* [DNMVCS::exit_system](#DNMVCS::exit_system)
-* [DNMVCS::header](#DNMVCS::header)
-* [DNMVCS::register_shutdown_function](#DNMVCS::register_shutdown_function)
-* [DNMVCS::session_destroy](#DNMVCS::session_destroy)
-* [DNMVCS::session_set_save_handler](#DNMVCS::session_set_save_handler)
-* [DNMVCS::session_start](#DNMVCS::session_start)
-* [DNMVCS::set_exception_handler](#DNMVCS::set_exception_handler)
-* [DNMVCS::setcookie](#DNMVCS::setcookie)
-* [DNMVCS::system_wrapper_get_providers](#DNMVCS::system_wrapper_get_providers)
-### 动态函数
-* [DNMVCS->addBeforeShowHandler](#DNMVCS->addBeforeShowHandler)
-* [DNMVCS->addDynamicClass](#DNMVCS->addDynamicClass)
-* [DNMVCS->addRouteHook](#DNMVCS->addRouteHook)
-* [DNMVCS->assignDynamicMethod](#DNMVCS->assignDynamicMethod)
-* [DNMVCS->assignExceptionHandler](#DNMVCS->assignExceptionHandler)
-* [DNMVCS->assignPathNamespace](#DNMVCS->assignPathNamespace)
-* [DNMVCS->assignRewrite](#DNMVCS->assignRewrite)
-* [DNMVCS->assignRoute](#DNMVCS->assignRoute)
-* [DNMVCS->assignStaticMethod](#DNMVCS->assignStaticMethod)
-* [DNMVCS->assignViewData](#DNMVCS->assignViewData)
-* [DNMVCS->checkDBPermission](#DNMVCS->checkDBPermission)
-* [DNMVCS->extendClassMethodByThirdParty](#DNMVCS->extendClassMethodByThirdParty)
-* [DNMVCS->getBootInstances](#DNMVCS->getBootInstances)
-* [DNMVCS->getDynamicClasses](#DNMVCS->getDynamicClasses)
-* [DNMVCS->getOverrideRootClass](#DNMVCS->getOverrideRootClass)
-* [DNMVCS->getRouteCallingMethod](#DNMVCS->getRouteCallingMethod)
-* [DNMVCS->init](#DNMVCS->init)
-* [DNMVCS->run](#DNMVCS->run)
-* [DNMVCS->setDefaultExceptionHandler](#DNMVCS->setDefaultExceptionHandler)
-* [DNMVCS->setMultiExceptionHandler](#DNMVCS->setMultiExceptionHandler)
-* [DNMVCS->setViewWrapper](#DNMVCS->setViewWrapper)
-* [DNMVCS->system_wrapper_replace](#DNMVCS->system_wrapper_replace)
+4. 学习 DNMVCS 的配置
+4. 调用 DNMVCS 类的静态方法实现目的
+5. 调用 DNMVCS 类的动态方法实现目的
+6. 学习更高级的调用
+7. ---- 核心程序员和高级程序员分界线 ----
+8. 扩展 DNMVCS 类
+9. 调用扩展类，组件类的动态方法实现目的
+10. 继承接管，特定类实现目的
+11. 魔改，硬改 DNMVCS 的代码实现目的

@@ -35,22 +35,24 @@ class App
             'skip_app_autoload'=>false,
             
             //// properties ////
-            'override_class'=>'Base\App',
             'is_debug'=>false,
             'platform'=>'',
+            'override_class'=>'Base\App',
             'path_view'=>'view',
-            'path_config'=>'config',
             'skip_view_notice_error'=>true,
-            'use_inner_error_view'=>false,
-            'enable_cache_classes_in_cli'=>true,
+            
             
             //// config ////
-            'setting_file_basename'=>'setting',
+            'path_config'=>'config',
             'all_config'=>[],
             'setting'=>[],
+            'setting_file'=>'setting',
+            'skip_setting_file'=>false,
             'reload_for_flags'=>true,
             
             //// error handler ////
+            'use_inner_error_view'=>false,
+            'use_404_to_other_framework'=>false,
             'error_404'=>'_sys/error-404',
             'error_500'=>'_sys/error-500',
             'error_exception'=>'_sys/error-exception',
@@ -64,8 +66,9 @@ class App
                 'controller_methtod_for_miss'=>null,
                 'controller_hide_boot_class'=>false,
                 'controller_welcome_class'=>'Main',
-                'controller_index_method'=>'index',
             'ext'=>[],
+            
+            'enable_cache_classes_in_cli'=>true,
         ];
     const DEFAULT_OPTIONS_EX=[
         ];
@@ -87,10 +90,14 @@ class App
         ($after_init)();
         static::G()->run();
     }
+    public static function _EmptyFunction()
+    {
+        return;
+    }
     protected function adjustOptions($options=[])
     {
         if (!isset($options['path']) || !$options['path']) {
-            $path=realpath(getcwd().'/../');
+            $path=realpath($_SERVER['SCRIPT_FILENAME'].'/../');
             $options['path']=$path;
         }
         $options['path']=rtrim($options['path'], '/').'/';
@@ -105,9 +112,6 @@ class App
     {
         $options=$this->adjustOptions($options);
         $options=array_replace_recursive(static::DEFAULT_OPTIONS, static::DEFAULT_OPTIONS_EX, $options);
-        
-        
-        
         $this->options=$options;
         $this->path=$this->options['path'];
         
@@ -118,6 +122,9 @@ class App
             $this->options['error_500']=null;
             $this->options['error_exception']=null;
             $this->options['error_debug']=null;
+        }
+        if($this->options['use_404_to_other_framework']){
+            $this->options['error_404']=[static::class,'_EmptyFunction'];
         }
         if (method_exists(static::class, 'set_exception_handler')) {
             $this->options['system_exception_handler']=[static::class,'set_exception_handler'];
@@ -147,39 +154,33 @@ class App
         $override_class::G()->override_root_class=static::class;
         return static::G($override_class::G());
     }
-    public function getOverrideRootClass()
-    {
-        return $this->override_root_class;
-    }
     //@override me
     public function init($options=[], $context=null)
     {
         if (!$this->override_root_class) {
             $options=$this->adjustOptions($options);
-            AutoLoader::G()->init($options, $this)->run();
-            ExceptionManager::G()->init($options, $this);
+            $this->initBeforeOverride($options);
             $object=$this->checkOverride($options);
-            $this->is_debug=true;
+            self::G($object??$this);
             if ($object) {
-                self::G($object);
                 $object->initOptions($options);
                 return $object->init($options);
+            }else{
+                $this->initOptions($options);
             }
-            self::G($this);
-        } else {
-            $this->initOptions($options);
-        }
-        $this->is_debug=$this->options['is_debug'];
-        
+        }        
         return $this->initAfterOverride();
+    }
+    protected function initBeforeOverride($options)
+    {
+        AutoLoader::G()->init($options, $this)->run();
+        ExceptionManager::G()->init($options, $this);
     }
     protected function initAfterOverride()
     {
         if ($this->options['enable_cache_classes_in_cli'] && PHP_SAPI==='cli') {
             AutoLoader::G()->cacheClasses();
         }
-        
-        
         Configer::G()->init($this->options, $this);
         $this->reloadFlags();
         
@@ -320,7 +321,7 @@ trait Core_Handler
         
         static::header('', true, 500);
         $data=[];
-        $data['is_debug']=static::IsDebug();
+        $data['is_debug']=true;//static::IsDebug();
         $data['ex']=$ex;
         $data['class']=get_class($ex);
         $data['message']=$ex->getMessage();
@@ -334,9 +335,10 @@ trait Core_Handler
             return;
         }
         if (!$error_view) {
-            $desc=$is_error?'Error':'Exception';
-            echo "Internal $desc \n<!--DNMVCS -->\n";
-            if ($this->is_debug) {
+            $desc=$is_error?'Internal Error':'Internal Exception';
+            echo "$desc \n<!--DNMVCS -->\n";
+            
+            if ($data['is_debug']) {
                 echo "<h3>{$data['class']}({$data['code']}):{$data['message']}</h3>";
                 echo "\n<pre>Debug On\n\n";
                 echo $data['trace'];
@@ -558,7 +560,7 @@ trait Core_Instance
         ];
         $ret[]=static::class;
         $ret[]=self::class;
-        $ret[]=$this->getOverrideRootClass();
+        $ret[]=$this->override_root_class;
         return $ret;
     }
     public function getDynamicComponentClasses()

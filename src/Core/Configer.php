@@ -9,36 +9,42 @@ class Configer
     const DEFAULT_OPTIONS=[
         'path'=>null,
         'path_config'=>null,
-        'setting'=>null,
-        'all_config'=>null,
-        'setting_file_basename'=>null,
+        
+        'setting'=>[],
+        'all_config'=>[],
+        'setting_file'=>'setting',
+        'skip_setting_file'=>false,
     ];
-    public $path;
-    protected $setting_file_basename='setting';
-    protected $setting=[];
-    protected $all_config=[];
+    protected $path;
     protected $is_inited=false;
+    protected $all_config=[];
+    protected $setting=[];
+    protected $setting_file='setting';
+    protected $skip_setting_file=false;
     public function init($options=[], $context=null)
     {
         $this->path=($options['path']??'').rtrim($options['path_config'], '/').'/';
         
         $this->setting=$options['setting']??[];
         $this->all_config=$options['all_config']??[];
-        $this->setting_file_basename=$options['setting_file_basename']??'setting';
+        $this->setting_file=$options['setting_file']??'setting';
+        $this->skip_setting_file=$options['skip_setting_file']??false;
         return $this;
     }
     public function _Setting($key)
     {
-        if ($this->is_inited || !$this->setting_file_basename) {
+        if ($this->is_inited || $this->skip_setting_file) {
             return $this->setting[$key]??null;
         }
-        $basename=$this->setting_file_basename;
-        $full_config_file=$this->path.$basename.'.php';
-        if (!is_file($full_config_file)) {
-            echo '<h1> Class '. static::class.' Fatal: no setting file['.$full_config_file.']!,change '.$basename.'.sample.php to '.$basename.'.php !'.'</h1>';
-            exit;
+        $this->setting=$this->loadFile($this->setting_file, false);
+        if(!isset($this->setting) ){
+            $full_setting_file=$this->path.$this->setting_file.'.php';
+            if (!is_file($full_setting_file)) {
+                echo "<h1> Class ". static::class.' Fatal: no setting file['.$full_setting_file.']!,change '.$this->setting_file.'.sample.php to '.$basename.".php !</h1>";
+                echo "<h2> Or turn on  options ['skip_setting_file']</h2>";
+                exit;
+            }
         }
-        $this->setting=$this->loadFile($basename, false);
         $this->is_inited=true;
         return $this->setting[$key]??null;
     }

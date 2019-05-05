@@ -77,7 +77,7 @@ class DNMVCS extends App
         $path=realpath(getcwd().'/');
         $default_options=[
             'path'=>$path,
-            'setting_file_basename'=>'',
+            'skip_setting_file'=>true,
             'ext'=>[
                 'Ext\RouteHookOneFileMode'=>[
                     'mode_onefile'=>true,
