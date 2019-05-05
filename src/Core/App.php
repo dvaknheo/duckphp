@@ -123,7 +123,7 @@ class App
             $this->options['error_exception']=null;
             $this->options['error_debug']=null;
         }
-        if($this->options['use_404_to_other_framework']){
+        if ($this->options['use_404_to_other_framework']) {
             $this->options['error_404']=[static::class,'_EmptyFunction'];
         }
         if (method_exists(static::class, 'set_exception_handler')) {
@@ -165,10 +165,10 @@ class App
             if ($object) {
                 $object->initOptions($options);
                 return $object->init($options);
-            }else{
+            } else {
                 $this->initOptions($options);
             }
-        }        
+        }
         return $this->initAfterOverride();
     }
     protected function initBeforeOverride($options)

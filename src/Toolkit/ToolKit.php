@@ -403,4 +403,3 @@ trait ThrowQuickly
         throw new $class($message, $code);
     }
 }
-

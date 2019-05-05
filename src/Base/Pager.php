@@ -1,5 +1,6 @@
 <?php
 namespace DNMVCS\Base;
+
 use DNMVCS\Bassic\SingletonEx;
 use DNMVCS\Core\App;
 
@@ -44,7 +45,7 @@ class Pager
     /**
      * options: url, key,rewrite,current
      */
-    public function init($options=[],$context=null)
+    public function init($options=[], $context=null)
     {
         $this->url=$options['url']??static::SG()->_SERVER['REQUEST_URI'];
         $this->key=$options['key']??$this->key;

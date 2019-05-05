@@ -27,10 +27,10 @@ $options = array (
   'path_view' => 'view',
   'skip_view_notice_error' => true,
   'path_config' => 'config',
-  'all_config' => 
+  'all_config' =>
   array (
   ),
-  'setting' => 
+  'setting' =>
   array (
   ),
   'setting_file' => 'setting',
@@ -49,16 +49,16 @@ $options = array (
   'controller_methtod_for_miss' => NULL,
   'controller_hide_boot_class' => false,
   'controller_welcome_class' => 'Main',
-  'ext' => 
+  'ext' =>
   array (
     'InnerExt\\SwooleExt' => true,
-    'InnerExt\\DBManager' => 
+    'InnerExt\\DBManager' =>
     array (
       'use_db' => true,
       'use_strict_db' => true,
       'db_create_handler' => NULL,
       'db_close_handler' => NULL,
-      'database_list' => 
+      'database_list' =>
       array (
       ),
     ),
@@ -79,37 +79,37 @@ $options = array (
   'enable_cache_classes_in_cli' => true,
   'path_lib' => 'lib',
   'db_setting_key' => 'database_list',
-  'database_list' => 
+  'database_list' =>
   array (
   ),
-  'rewrite_map' => 
+  'rewrite_map' =>
   array (
   ),
-  'route_map' => 
+  'route_map' =>
   array (
   ),
-  'swoole' => 
+  'swoole' =>
   array (
   ),
-  'on_404_handler' => 
+  'on_404_handler' =>
   array (
     0 => 'MY\\Base\\App',
     1 => 'On404',
   ),
-  'exception_handler' => 
+  'exception_handler' =>
   array (
     0 => 'MY\\Base\\App',
     1 => 'OnException',
   ),
-  'dev_error_handler' => 
+  'dev_error_handler' =>
   array (
     0 => 'MY\\Base\\App',
     1 => 'OnDevErrorHandler',
   ),
-  'system_exception_handler' => 
+  'system_exception_handler' =>
   array (
     0 => 'MY\\Base\\App',
     1 => 'set_exception_handler',
   ),
 );
-*/ ?>
+*/
