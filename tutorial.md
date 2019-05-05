@@ -51,16 +51,17 @@ php bin/start_server.php
 <?php
 // app/Controller/test.php
 namespace MY\Controller;
+use MY\Base\BaseController;
+use MY\Base\ControllerHelper as C;
 
-use MY\Base\ControllerHelper as Helper;
 use MY\Service\MiscService;
-class test //extends \MY\Base\Controller
+class test //extends BaseController
 {
     public function done()
     {
         $data=[];
         $data['var']=Helper::H(MiscService::G()->foo());
-        Helper::Show($data);
+        C::Show($data);
     }
 }
 ```
@@ -73,11 +74,11 @@ class test //extends \MY\Base\Controller
 <?php
 // app/Service/MiscService.php
 namespace MY\Service;
-use MY\Base\ServiceHelper as Helper;
-use MY\Base\Service;
+use MY\Base\BaseService;
+use MY\Base\ServiceHelper as S;
 use MY\Model\NoDB_MiscModel;
 
-class MiscService extends Service
+class MiscService extends BaseService
 {
     public function foo()
     {
@@ -99,10 +100,11 @@ Model 类是实现基本功能的
 <?php
 // app/Model/NoDB_MiscModel.php
 namespace MY\Model;
-use MY\Base\ModelHelper as Helper;
-use MY\Base\Model;
 
-class NoDB_MiscModel extends Model
+use MY\Base\BaseModel;
+use MY\Base\ModelHelper as M;
+
+class NoDB_MiscModel extends BaseModel
 {
     public function getTime()
     {
@@ -128,14 +130,15 @@ test
 作为应用程序员， 你不能引入 DNMVCS 的任何东西，就当 DNMVCS 命名空间不存在。
 主力程序员才去研究 DNMVCS 类的东西。
 
-写 Model 你要引入 MY\Base\ModelHelper 类。
-写 Serivce 你要引入 MY\Base\SerivceHelper 类。
-写 Controller 你要引入 MY\Base\ControllerHelper 类。
+写 Model 你可能要引入 MY\Base\ModelHelper 类 。
+写 Serivce 你可能要引入 MY\Base\SerivceHelper 类。
+写 Controller 你可能要引入 MY\Base\ControllerHelper 类。
 
 不能交叉引入其他 Helper 类。如果需要交叉，那么你就是错的。
 
 
-我们注意到他们引用了这个类：
+G 函数， G() 函数就是可变单例函数
+
 ```php
 use MY\Base\App;
 ```
@@ -156,101 +159,103 @@ App::DumpExtMethods() 用于查看主程 通过 MY\Base\App 里找不到代码�
 
 Model 类 使用到快速
 
-ModelHelper::ThrowOn();
+M::ThrowOn();
 
 Model 类 还引用到相关
 
-ModelHelper::DB($tag=null) 获得特定数据库类。
-ModelHelper::DB_R() 获得读数据库类。
-ModelHelper::DB_W() 获得写数据库类。
+M::DB($tag=null) 获得特定数据库类。
+M::DB_R() 获得读数据库类。
+M::DB_W() 获得写数据库类。
 
 #### Serivce 编写服务用到的方法
 和 ModelHelper 一样也有同功能的 
-SerivceHelper::ThrowOn();
+S::ThrowOn();
 
 此外还有
 
-获得设置 SerivceHelper::Setting($key) 默认设置文件是在  config/setting.php 。
+获得设置 S::Setting($key) 默认设置文件是在  config/setting.php 。
 
-载入配置 SerivceHelper::LoadConfig($key,$basename)
+载入配置 S::LoadConfig($key,$basename)
 
-获得配置 SerivceHelper::Config($key)
+获得配置 S::Config($key)
 
 
 
 #### Controller 编写控制器用到的方法
 
 Service 的同名方法
-* ControllerHelper::ThrowOn();
-* ControllerHelper::IsDebug();
-* ControllerHelper::Platform();
-* ControllerHelper::Setting($key);
-* ControllerHelper::Config($key);
-* ControllerHelper::LoadConfig($key,$basename)
+
+* C::ThrowOn();
+* C::IsDebug();
+* C::Platform();
+* C::Setting($key);
+* C::Config($key);
+* C::LoadConfig($key,$basename)
 
 除去  Service 的同名方法 外，还有
 
 1. 显示相关的
 
-    显示视图用 ControllerHelper::Show($data,$view=null); 如果view 是空等价于 控制器名/方法名 的视图。
-    最偷懒的是调用 ControllerHelper::Show(get_defined_vars());
+    显示视图用 C::Show($data,$view=null); 如果view 是空等价于 控制器名/方法名 的视图。
+    最偷懒的是调用 C::Show(get_defined_vars());
 
-    如果只显示一块，用 ControllerHelper::ShowBlock($view,$data=null); 如果$data 是空，把父视图的数据带入，
-    ControllerHelper::ShowBlock 没用到页眉页脚。
+    如果只显示一块，用 C::ShowBlock($view,$data=null); 如果$data 是空，把父视图的数据带入，
+    C::ShowBlock 没用到页眉页脚。
 
-    在控制器的构造函数中。用 ControllerHelper::G()->setViewWrapper($view_header,$view_footer) 来设置页眉页脚。
+    在控制器的构造函数中。用 C::G()->setViewWrapper($view_header,$view_footer) 来设置页眉页脚。
 
-    ControllerHelper::G()->assignViewData($name,$var) 来设置视图的输出。
+    C::G()->assignViewData($name,$var) 来设置视图的输出。
 
-    HTML 编码用 ControllerHelper::H($str); $str 可以是数组。
+    HTML 编码用 C::H($str); $str 可以是数组。
 2. 跳转退出方面
 
-    404 跳转退出 ControllerHelper::Exit404();
-    302 跳转退出 ControllerHelper::ExitRedirect($url);
-    302 跳转退出 内部地址 ControllerHelper::ExitRouteTo($url);
-    输出 Json 退出  ControllerHelper::ExitJson($data);
+    404 跳转退出 C::Exit404();
+    302 跳转退出 C::ExitRedirect($url);
+    302 跳转退出 内部地址 C::ExitRouteTo($url);
+    输出 Json 退出  C::ExitJson($data);
 
 3. 路由相关
 
-    用 ControllerHelper::URL($url) 获取相对 url;
+    用 C::URL($url) 获取相对 url;
 
-    用 ControllerHelper::Parameters() 获取切片，对地址重写有效。
-    如果要做权限判断 构造函数里 ControllerHelper::G()->getRouteCallingMethod() 获取当前调用方法。
+    用 C::Parameters() 获取切片，对地址重写有效。
+    如果要做权限判断 构造函数里 C::G()->getRouteCallingMethod() 获取当前调用方法。
 
-    用 ControllerHelper::G()->getRewrites() 和 ControllerHelper::G()->getRoutes(); 查看 rewrite 表，和 路由表。
-
+    用 C::G()->getRewrites() 和 C::G()->getRoutes(); 查看 rewrite 表，和 路由表。
 
 4. 系统替代函数 
-    用 ControllerHelper::header() 代替系统 header 兼容命令行等。
-    用 ControllerHelper::exit_system() 代替系统 exit; 便于接管处理。
+    用 C::header() 代替系统 header 兼容命令行等。
+    用 C::exit_system() 代替系统 exit; 便于接管处理。
 
 
 异常相关
 
-    如果想接管默认异常，用 ControllerHelper::G()->setDefaultExceptionHandler($handler);
-    如果对接管特定异常，用 ControllerHelper::G()->assignExceptionHandler($exception_name,$handler);
-    设置多个异常到回调则用 ControllerHelper::G()->setMultiExceptionHandler($exception_name=[],$handler);
+    如果想接管默认异常，用 C::G()->setDefaultExceptionHandler($handler);
+    如果对接管特定异常，用 C::G()->assignExceptionHandler($exception_name,$handler);
+    设置多个异常到回调则用 C::G()->setMultiExceptionHandler($exception_name=[],$handler);
 
 Swoole 兼容
 
 如果想让你们的项目在 swoole 下也能运行，那就要加上这几点
-用 ControllerHelper::SG() 代替 超全局变量的 $ 前缀 如 $_GET =>  App::SG->_GET
+用 C::SG() 代替 超全局变量的 $ 前缀 如 $_GET =>  App::SG->_GET
 
 使用以下 App 的 swoole 兼容静态方法，代替全局方法。
 
-session_start, session_destroy session_id, session_set_save_handler
+C::session_start,
+C::session_destroy,
+C::session_id
 
-如 session_start() => ControllerHelper::session_start(); 参数格式都一样。
+如 session_start() => C::session_start(); 参数格式都一样。
 
 
 #### 编写 兼容 Swoole 的代码
 
-全局变量 global $a='val'; =>  $a=App::GLOBALS('a','val');
+全局变量 global $a='val'; =>  $a=C::GLOBALS('a','val');
 
-静态变量 global $a='val'; =>  $a=App::STATICS('a','val');
+静态变量 global $a='val'; =>  $a=C::STATICS('a','val');
 
 类内静态变量
-$x=static::$abc; => $x=ControllerHelper::CLASS_STATICS(static::class,'abc');
+$x=static::$abc; => $x=C::CLASS_STATICS(static::class,'abc');
 
 ####
 如果你想偷懒， *Helper   改为 App 也是可以的。

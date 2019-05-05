@@ -1,12 +1,21 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\Base;
+use DNMVCS\Bassic\SingletonEx;
+use DNMVCS\Core\App;
 
 class Pager
 {
-    use DNSingleton;
+    use SingletonEx;
+    const DEFAULT_OPTIONS=[
+        'url'=>null,
+        'key'=>null,
+        'page_size'=>null,
+        'rewrite'=>null,
+        'current'=>null,
+    ];
     public static function SG()
     {
-        return DNMVCS::SG();
+        return App::SG();
     }
     public static function Current()
     {
@@ -35,7 +44,7 @@ class Pager
     /**
      * options: url, key,rewrite,current
      */
-    public function init($options)
+    public function init($options=[],$context=null)
     {
         $this->url=$options['url']??static::SG()->_SERVER['REQUEST_URI'];
         $this->key=$options['key']??$this->key;
