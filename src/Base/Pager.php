@@ -1,8 +1,8 @@
 <?php
 namespace DNMVCS\Base;
 
-use DNMVCS\Bassic\SingletonEx;
-use DNMVCS\Core\App;
+use DNMVCS\Basic\SingletonEx;
+use DNMVCS\DNMVCS;
 
 class Pager
 {
@@ -16,7 +16,7 @@ class Pager
     ];
     public static function SG()
     {
-        return App::SG();
+        return DNMVCS::SG();
     }
     public static function Current()
     {
