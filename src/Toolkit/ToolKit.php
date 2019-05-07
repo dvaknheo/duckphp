@@ -3,11 +3,7 @@ namespace DNMVCS\Toolkit;
 
 class Toolkit
 {
-    use DNSingleton;
-    // OK Do nothing ,just for autoload
-    public static function Init()
-    {
-    }
+
     public static function HasInclude($file)
     {
         $a=get_included_files();
@@ -135,10 +131,9 @@ trait DNWrapper
     }
 }
 
-//use with DNSingleton
+//use with SingletonEx
 trait DNStaticCall
 {
-    use DNSingleton;
     //remark ，method do not public
     public static function __callStatic($method, $params)
     {
