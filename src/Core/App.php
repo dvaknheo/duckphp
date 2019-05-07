@@ -178,6 +178,9 @@ class App
     }
     protected function initAfterOverride()
     {
+        //$class=
+        (self::class)::G($this);
+        
         if ($this->options['enable_cache_classes_in_cli'] && PHP_SAPI==='cli') {
             AutoLoader::G()->cacheClasses();
         }
