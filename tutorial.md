@@ -327,6 +327,9 @@ DNMVCS 调用代理 $class 的方法。
 这些结构能精简么？
 可以，你可以一个目录都不要。
 
+    BaseContrllor, BaseModel, BaseService 是你自己要改的基类，基本只实现了单例模式。
+    ContrllorHelper,ModelHelper,ServiceHelper 如果你一个人偷懒，直接用 APP 类也行  
+    headfile 目录是为了直接命令行运行 template 的文件，你可以改 入口文件去掉。
 
 ### 从入口开始
 我们主要看的是 入口类。 public/index.php
@@ -356,39 +359,40 @@ var_export(\DNMVCS\DNMVCS::G()->options);
 ```php
 const DEFAULT_OPTIONS=[
     //// basic ////
-    'path'=>null,
-    'namespace'=>'MY',
-    'path_namespace'=>'app',
-    'skip_app_autoload'=>false,
+    'path'=>null,               基本目录, 其他目录依赖的基础目录，自动处理 /。
+    'namespace'=>'MY',          工程的 autoload 的命名空间
+    'path_namespace'=>'app',    工程对应的命名空间 目录
+    
+    'skip_app_autoload'=>false, 如果你用compose.json 设置加载，改为 true;
     
     //// properties ////
     'override_class'=>'Base\App',
-    'is_dev'=>false,
-    'platform'=>'',
-    'path_view'=>'view',
+    'is_dev'=>false,            是否是在开发状态
+    'platform'=>'',             配置平台标志，Platform 函数得到的是这个
+    'path_view'=>'view',        视图的目录，基于 path 配置
 
     'skip_view_notice_error'=>true,
+                                view 视图里忽略 notice 错误。
     'use_inner_error_view'=>false,
-    
+                                快捷方式设  error_* 配置全为 null
     //// config ////
-    'path_config'=>'config',
-    'all_config'=>[],
+    'path_config'=>'config',    配置的目录，基于 path 配置
+    'all_config'=>[],           合并入的 config
     'setting'=>[],
-    'setting_file'=>'setting',
-    'skip_setting_file'=>false,
-    'reload_for_flags'=>true,
+    'setting_file'=>'setting',  
+    'skip_setting_file'=>false, 跳过设置文件，用于
+    'reload_for_flags'=>true,   从设置文件里重新加载 is_debug,platform 选项
     
     //// error handler ////
-    'error_404'=>'_sys/error-404',
-    'error_500'=>'_sys/error-500',
-    'error_exception'=>'_sys/error-exception',
-    'error_debug'=>'_sys/error-debug',
+    'error_404'=>'_sys/error-404',          404 页面
+    'error_500'=>'_sys/error-500',          错误页面
+    'error_exception'=>'_sys/error-exception',  异常页面
+    'error_debug'=>'_sys/error-debug',      调试页面
     
     //// controller ////
-    'namespace_controller'=>'Controller',
     'controller_base_class'=>null,
-    'controller_prefix_post'=>'do_',
-    'controller_welcome_class'=>'Main',
+    'controller_prefix_post'=>'do_',    // POST 前缀，先搜索带前缀的方法
+    'controller_welcome_class'=>'Main', // 默认控制器类
 ];
 ```
 
@@ -396,20 +400,6 @@ const DEFAULT_OPTIONS=[
 总之，这里很明白了。
 
 ##### 基本选项
-'path'=>null,
-
-    基本目录, 其他目录依赖的基础目录，自动处理 /。
-'namespace'=>'MY',
-
-    自动处理 \ 。你的项目的命名空间
-'path_namespace'=>'app',
-
-    autoload 的命名空间
-'skip_app_autoload'=>false,
-
-    如果你有其他加载方式，设置为 true;
-    比如composer.json 里写了  autoload:'app'
-##### 影响整体行为的属性
 
 'override_class'=>'Base\App',
 
@@ -417,16 +407,11 @@ const DEFAULT_OPTIONS=[
     基于 namespace ,如果这个选项的类存在，则在 init 的时候会切换到这个类完成后续初始化，并返回这个类的实例。
     注意到 app/Base/App.php 这个文件的类 MY\Base\App extends DNMVCS\DNMVCS;
     如果以  \ 开头则是绝对 命名空间
-'is_debug'=>false,
-
-    配置是否是在开发状态
-    设置文件的  is_debug 会覆盖这个选项
-'platform'=>'',
 
     配置开发平台 * 设置文件的  platform 会覆盖
 'path_view'=>'view',
 
-    视图的目录，基于 path 配置
+    
 'skip_view_notice_error'=>true,
 
     view 视图里忽略 notice 错误。
@@ -442,14 +427,14 @@ const DEFAULT_OPTIONS=[
 
 'path_config'=>'config',
 
-    配置的目录，基于 path 配置
+    
 
 'skip_setting_file'=>false,
 
     打开这项，则开始时候不读设置文件了。
 'all_config'=>[], 
 
-    合并入的 config
+    
     当你不想读取配置的时候从这里拿 这里的配置会覆盖文件里的。
 'setting'=>[],
 
@@ -463,23 +448,13 @@ const DEFAULT_OPTIONS=[
 
 error_* 选项为 null 用默认，为 callable 是回调，为string 则是调用视图。
 
-'error_404'=>'_sys/error-404',
 
-    404 页面
-'error_500'=>'_sys/error-500',
-
-    500 页面
     error_500 选项 是应对 Error,error_exception 选项是应对 exception
-'error_exception'=>'_sys/error-exception',
-
-    error_500 选项 是应对 error,error_exception 选项是应对 exception
 'error_debug'=>'_sys/error-debug',
 
     is_debug 打开情况下，显示 Notice 错误
 ##### 控制器
-'namespace_controller'=>'Controller',
-    
-    控制器的命名空间，配合 namespace 选项  **不建议修改**
+
 'controller_base_class'=>null,
     
     限定控制器基类，配合 namespace namespace_controller 选项。
