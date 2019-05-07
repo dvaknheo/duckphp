@@ -11,12 +11,12 @@ if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
 $path=realpath(__DIR__.'/..');
 $options['path']=$path;
 $options['namespace']='MY';
-\DNMVCS\DNMVCS::RunQuickly($options);
+\DNMVCS\DNMVCS::RunQuickly($options, function () {
+});
 // \DNMVCS\DNMVCS::G()->init($options)->run();
-
-
 /*
-$options = array (
+var_export(\DNMVCS\DNMVCS::G()->options);
+array (
   'path' => '/mnt/d/MyWork/sites/DNMVCS-FullTest/',
   'namespace' => 'MY',
   'path_namespace' => 'app',
