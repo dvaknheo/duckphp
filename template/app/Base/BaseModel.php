@@ -1,11 +1,12 @@
 <?php
 namespace MY\Base;
 
-use DNMVCS\StrictModel;
-use DNMVCS\DNSingleton;
+use DNMVCS\Base\BaseModelTrait;
+
+// use DNMVCS\Base\StrictModelTrait;
 
 class BaseModel
 {
-    // use StrictModel;
-    use DNSingleton;
+    use BaseModelTrait;
+    // use StrictModelTrait;
 }
