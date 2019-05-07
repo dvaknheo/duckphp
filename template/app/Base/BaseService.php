@@ -1,12 +1,12 @@
 <?php
 namespace MY\Base;
 
-use DNMVCS\Base\BaseServiceTrait;
+use DNMVCS\Basic\SingletonEx;
 
 // use DNMVCS\Base\StrictServiceTrait;
 
 class BaseService
 {
-    use BaseServiceTrait;
+    use SingletonEx;
     // use StrictServiceTrait;
 }

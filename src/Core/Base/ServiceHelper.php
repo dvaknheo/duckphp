@@ -9,7 +9,7 @@ use DNMVCS\Core\App;
 class ServiceHelper
 {
     use SingletonEx;
-    use GlueThrowOn;
+    use ThrowOn;
     
     public static function Setting($key)
     {
