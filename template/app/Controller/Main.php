@@ -2,10 +2,10 @@
 namespace MY\Controller;
 
 use MY\Base\App;
-use MY\Base\Controller;
+use MY\Base\BaseController;
 use MY\Service as S;
 
-class Main // extends Controller
+class Main // extends BaseController
 {
     public function index()
     {

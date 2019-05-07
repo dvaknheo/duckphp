@@ -190,11 +190,11 @@ S::ThrowOn();
     如果只显示一块，用 C::ShowBlock($view,$data=null); 如果$data 是空，把父视图的数据带入，
     
 
-    在控制器的构造函数中。用 C::G()->setViewWrapper($view_header,$view_footer) 来设置页眉页脚。
-    页眉页脚的变量和 view 页面是同域的。 setViewWrapper(null,null) 清理页眉页脚
+    在控制器的构造函数中。用 C::setViewWrapper($view_header,$view_footer) 来设置页眉页脚。
+    页眉页脚的变量和 view 页面是同域的。 setViewWrapper(null,null) 清理页眉页脚。
     C::ShowBlock 没用到页眉页脚。而且 C::ShwoBlock 只单纯输出，不做多余动作。
 
-    C::G()->assignViewData($name,$var) 来设置视图的输出。
+    C::assignViewData($name,$var) 来设置视图的输出。
 
     HTML 编码用 C::H($str); $str 可以是数组。
 2. 跳转退出方面
@@ -209,9 +209,9 @@ S::ThrowOn();
     用 C::URL($url) 获取相对 url;
 
     用 C::Parameters() 获取切片，对地址重写有效。
-    如果要做权限判断 构造函数里 C::G()->getRouteCallingMethod() 获取当前调用方法。
+    如果要做权限判断 构造函数里 C::getRouteCallingMethod() 获取当前调用方法。
 
-    用 C::G()->getRewrites() 和 C::G()->getRoutes(); 查看 rewrite 表，和 路由表。
+    用 C::getRewrites() 和 C::getRoutes(); 查看 rewrite 表，和 路由表。
 
 4. 系统替代函数 
     用 C::header() 代替系统 header 兼容命令行等。
@@ -424,7 +424,7 @@ autoload 的命名空间
 注意到 app/Base/App.php 这个文件的类 MY\Base\App extends DNMVCS\DNMVCS;
 如果以  \ 开头则是绝对 命名空间
 #### 选项 is_dev
-'is_dev'=>false,
+'is_debug'=>false,
 配置是否是在开发状态
 
 设置文件的  is_dev 会覆盖
@@ -494,20 +494,7 @@ error_* 选项为 null 用默认，为 callable 是回调，为string 则是调�
 #### 选项 controller_prefix_post
 'controller_prefix_post'=>'do_',
 POST 的方法会在方法名前加前缀 do_
-不影响  getCallingMethod();
 
-如果想 加其他方法，请执行重载 DNRoute->getMethodToCall()
-#### 选项 controller_hide_boot_class
-'controller_hide_boot_class'=>false,  不允许欢迎类的其他访问方式。
-
-比如  / 同时可以 用  /Main/index 访问 使用默认 false 是可以的。
-#### 选项 controller_enable_paramters
-'controller_enable_paramters'=>false, 打开切片模式
-
-不建议打开，会降低性能
-**影响重大**
-#### 选项 controller_methtod_for_miss
-'controller_methtod_for_miss'=>null,
 
 找不到方法名，调用默认方法名。
 **不建议修改**
@@ -518,16 +505,6 @@ POST 的方法会在方法名前加前缀 do_
 ## 常见任务
 
 OK 安装好了，用了 路由， URL 也要更改，所以我们要调用 DN::URL 来显示路由。
-### 常见任务： 状态
-
-### 常见任务：URL 地址
-如果不是全站 PATH_INFO 模式， web 框架获取某个 URL 地址是常见任务。
-DNMVCS::URL($url) 函数就是用于这个任务。
-使得你不必关系是用在 /index.php 或者 /somefolder/index.php 里用 PATH_INFO 。
-DNMVCS::URL('about/foo') 都会得到正确的 URL 地址。
-
-
-
 
 *进阶，更多配置和设置相关 .*
 ### 常见任务：URL 重写
@@ -551,25 +528,6 @@ DB 的使用方法，看后面的参考。
 $sql="select 1+? as t";
 $ret=\DNMVCS\DNMVCS::DB()->fetch($sql,2);
 var_dump($ret);
-```
-
-进阶内容
-
-DB 类仅仅是简单的封装 PDO ，作为主程序员，可能要重新调整。
-DNMVCS 的默认数据库是 DB ,DB 功能很小，兼容 Medoo 这个数据库类。
-
-你可以用更习惯的类。
-*进阶：把 html 编码替换成 Zend\Escaper .*
-
-### 常见任务： 和其他框架的整合
-DNMVCS 整合其他框架：
-
-```php
-<?php
-    $options['error_404']=function(){};
-    $flag=DNMVCS::RunQuickly($options);
-    if($flag){ return; }
-    // 后面是其他框架代码
 ```
 
 原理是由其他框架去处理 404。

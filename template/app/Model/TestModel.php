@@ -1,9 +1,9 @@
 <?php
 namespace MY\Model;
 
-use MY\Base\Model;
+use MY\Base\BaseModel;
 
-class TestModel extends Model
+class TestModel extends BaseModel
 {
     public function foo()
     {
