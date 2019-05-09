@@ -5,6 +5,7 @@ use DNMVCS\Core\Base\ControllerHelper as Helper;
 
 use DNMVCS\Core\App;
 use DNMVCS\Basic\SuperGlobal;
+use DNMVCS\InnerExt\Pager;
 
 class ControllerHelper extends Helper
 {
@@ -56,5 +57,10 @@ class ControllerHelper extends Helper
     public static function session_set_save_handler(\SessionHandlerInterface $handler)
     {
         return SuperGlobal::G()->session_set_save_handler($handler);
+    }
+    ////
+    public static function Pager()
+    {
+        return Pager::G();
     }
 }

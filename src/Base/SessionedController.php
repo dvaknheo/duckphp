@@ -8,6 +8,6 @@ class SessionedController
     protected $_session_name='DNSESSION';
     public function __construct()
     {
-        App::session_start(['name'=>$this->_session_name]);
+        App::G()::session_start(['name'=>$this->_session_name]);
     }
 }

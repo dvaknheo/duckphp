@@ -10,6 +10,7 @@ use DNMVCS\InnerExt\StrictCheck;
 use DNMVCS\InnerExt\DBManager;
 use DNMVCS\InnerExt\RouteHookRewrite;
 use DNMVCS\InnerExt\RouteHookRouteMap;
+use DNMVCS\InnerExt\Pager;
 
 use DNMVCS\Core\App;
 
@@ -134,6 +135,10 @@ trait DNMVCS_Glue
     public static function DB_R()
     {
         return DBManager::G()->_DB_R();
+    }
+    public static function Pager()
+    {
+        return Pager::G();
     }
     /////
     public function assignRewrite($key, $value=null)
