@@ -384,14 +384,20 @@ const DEFAULT_OPTIONS=[
     'reload_for_flags'=>true,   从设置文件里重新加载 is_debug,platform 选项
     
     //// error handler ////
-    'error_404'=>'_sys/error-404',          404 页面
-    'error_500'=>'_sys/error-500',          错误页面
-    'error_exception'=>'_sys/error-exception',  异常页面
-    'error_debug'=>'_sys/error-debug',      调试页面
+    'error_404'=>'_sys/error-404',
+                                404 页面
+    'error_500'=>'_sys/error-500',
+                                错误页面
+    'error_exception'=>'_sys/error-exception',  
+                                异常页面
+    'error_debug'=>'_sys/error-debug',
+                                调试页面
     
     //// controller ////
     'controller_base_class'=>null,
-    'controller_prefix_post'=>'do_',    // POST 前缀，先搜索带前缀的方法
+                                // 控制器必须基类
+    'controller_prefix_post'=>'do_',
+                                // POST 前缀，先搜索带前缀的方法
     'controller_welcome_class'=>'Main', // 默认控制器类
 ];
 ```
@@ -409,7 +415,6 @@ const DEFAULT_OPTIONS=[
     如果以  \ 开头则是绝对 命名空间
 
     配置开发平台 * 设置文件的  platform 会覆盖
-'path_view'=>'view',
 
     
 'skip_view_notice_error'=>true,
@@ -448,7 +453,6 @@ const DEFAULT_OPTIONS=[
 
 error_* 选项为 null 用默认，为 callable 是回调，为string 则是调用视图。
 
-
     error_500 选项 是应对 Error,error_exception 选项是应对 exception
 'error_debug'=>'_sys/error-debug',
 
@@ -460,7 +464,6 @@ error_* 选项为 null 用默认，为 callable 是回调，为string 则是调�
     限定控制器基类，配合 namespace namespace_controller 选项。
     如果是 \ 开头的则忽略 namespace namespace_controller 选项。
 'controller_prefix_post'=>'do_',
-
     POST 的方法会在方法名前加前缀 do_
     如果找不到方法名，调用默认方法名。 **不建议修改**
 'controller_welcome_class'=>'Main',
