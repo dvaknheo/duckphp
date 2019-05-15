@@ -632,6 +632,7 @@ trait Core_Instance
         $ret[]=static::class;
         $ret[]=self::class;
         $ret[]=$this->override_root_class;
+        $ret=array_values(array_unique($ret));
         return $ret;
     }
     public function getDynamicComponentClasses()

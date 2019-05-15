@@ -13,6 +13,7 @@ class SwooleExt
     protected $serverClass;
     protected $appClass;
     protected $is_inited=false;
+    protected $is_error=false;
     public static function _EmptyFunction()
     {
         return;
@@ -92,6 +93,9 @@ class SwooleExt
         ($this->appClass)::G()->options['error_404']=[static::class,'_EmptyFunction'];
         ($this->appClass)::G()->options['use_super_global']=true;
         ($this->serverClass)::G()->run();
+        // OK ,we need not return .
+        $this->is_error=true;
+        throw new Exception('run break;',-500);
     }
     public function runSwoole()
     {
