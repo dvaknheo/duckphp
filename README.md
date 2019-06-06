@@ -36,8 +36,11 @@ DNMVCS 层级关系图
 ```text
            /-> View
 Controller --> Service ------------------------------ ---> Model
-                      \               \  /             /
-                       \-> LibService ----> ExModel --/
+         \         \   \               \  /             /    \
+          \         \   \-> LibService ----> ExModel --/      \
+           \         \             \                \----------->ModelHelper
+            \         ---------------->ServiceHelper
+             \-->ControllerHelper
 ```
 ![arch](arch.gv.png)
 
