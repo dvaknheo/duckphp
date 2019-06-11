@@ -3,6 +3,18 @@ namespace DNMVCS\Ext;
 
 use DNMVCS\Basic\SingletonEx;
 
+class FacadesBase
+{
+    use SingletonEx;
+    
+    public static function __callStatic($name, $arguments)
+    {
+        $callback=FacadesAutoLoader::G()->getFacadesCallback(static::class, $name);
+        $ret=call_user_func_array($callback, $arguments);
+        return $ret;
+    }
+}
+
 class FacadesAutoLoader
 {
     use SingletonEx;
@@ -47,7 +59,7 @@ class FacadesAutoLoader
         $basename=array_pop($blocks);
         $namespace=implode('\\', $blocks);
         
-        $code="namespace $namespace{ class $basename extends \\DNMVCS\\Ext\\FacadesBase{} }";
+        $code="namespace $namespace{ class $basename extends \\". __NAME_SPACE__."\\FacadesBase{} }";
         eval($code);
     }
     public function getFacadesCallback($class, $name)
