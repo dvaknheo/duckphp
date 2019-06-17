@@ -34,7 +34,7 @@ class DNMVCS extends App
             'swoole'=>[],
             
             'ext'=>[
-                'InnerExt\SwooleExt'=>true,
+                'SwooleHttpd\SwooleExt'=>true,
                 'InnerExt\DBManager'=>[
                     'use_db'=>true,
                     'use_strict_db'=>true,

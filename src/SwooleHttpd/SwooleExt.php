@@ -1,5 +1,5 @@
 <?php
-namespace DNMVCS\InnerExt;
+namespace DNMVCS\SwooleHttpd;
 
 use DNMVCS\SwooleHttpd\SwooleSingleton;
 use DNMVCS\SwooleHttpd\SwooleHttpd;
