@@ -1,13 +1,13 @@
 <?php
 namespace DNMVCS\InnerExt;
 
-use DNMVCS\SwooleHttpd\SingletonEx;
+use DNMVCS\SwooleHttpd\SwooleSingleton;
 use DNMVCS\SwooleHttpd\SwooleHttpd;
 use Exception;
 
 class SwooleExt
 {
-    use SingletonEx;
+    use SwooleSingleton;
     
     protected $with_http_handler_root=false;
     protected $serverClass;
@@ -17,14 +17,6 @@ class SwooleExt
     public static function _EmptyFunction()
     {
         return;
-    }
-    public function setAppClass($class)
-    {
-        $this->appClass=$class;
-    }
-    public function setServerClass($class)
-    {
-        $this->serverClass=$class;
     }
     public function init($options=[], $context=null)
     {
@@ -90,12 +82,24 @@ class SwooleExt
         if ($cid>0) {
             return;
         }
-        ($this->appClass)::G()->options['error_404']=[static::class,'_EmptyFunction'];
-        ($this->appClass)::G()->options['use_super_global']=true;
+        $this->initApp();
+        
         ($this->serverClass)::G()->run();
         // OK ,we need not return .
         $this->is_error=true;
-        throw new Exception('run break;',500);
+        throw new Exception('run break;', 500);
+    }
+    protected function initApp()
+    {
+        ($this->appClass)::G()->options['error_404']=[static::class,'_EmptyFunction']; // do not double 404;
+        ($this->appClass)::G()->options['use_super_global']=true;
+        $callback=DNMVCS_SYSTEM_WRAPPER_INSTALLER;
+        $funcs=($callback)();
+        ($this->appClass)::G()->system_wrapper_replace($funcs);
+        
+        if (isset($funcs['set_exception_handler'])) {
+            ($this->serverClass)::set_exception_handler([$this->appClass,'OnException']);
+        }
     }
     public function runSwoole()
     {

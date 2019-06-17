@@ -43,7 +43,6 @@ class DNMVCS extends App
                     'database_list'=>[],
                 ],
                 'InnerExt\StrictCheck'=>true,
-                'InnerExt\SystemWrapperExt'=>true,
                 'InnerExt\RouteHookRewrite'=>true,
                 'InnerExt\RouteHookRouteMap'=>true,
                 'InnerExt\DIExt'=>true,
@@ -101,6 +100,21 @@ class DNMVCS extends App
     {
         $dn_options['swoole']['swoole_server']=$server;
         return static::G()->init($dn_options)->run();
+    }
+    protected function beforeRun()
+    {
+        if (defined('DNMVCS_SUPER_GLOBAL_REPALACER')) {
+            $func=DNMVCS_SUPER_GLOBAL_REPALACER;
+            SuperGlobal::G($func());
+            $this->bindServerData(SuperGlobal::G()->_SERVER);
+            
+            return;
+        }
+        if ($this->options['use_super_global']??false) {
+            $this->bindServerData(SuperGlobal::G()->_SERVER);
+            
+            return;
+        }
     }
 }
 trait DNMVCS_Glue

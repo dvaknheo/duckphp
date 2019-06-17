@@ -240,12 +240,18 @@ class App
         foreach ($this->beforeRunHandlers as $v) {
             ($v)();
         }
+        $this->beforeRun();
         $class=get_class(RuntimeState::G());  //ReCreateInstance;
         RuntimeState::G(new $class)->begin();
         $ret=Route::G()->run();
         
         $this->cleanUp();
         return $ret;
+    }
+    protected function beforeRun()
+    {
+        // for override;
+        return;
     }
     public function cleanUp()
     {
@@ -256,6 +262,7 @@ class App
             $this->is_before_show_done=true;
         }
         RuntimeState::G()->end();
+        $this->is_in_exception=false;
     }
     public function reloadFlags()
     {
@@ -639,7 +646,7 @@ trait Core_Instance
     {
         return $this->dynamicComponentClasses;
     }
-    public function addDynamicComponentClass($class)
+    protected function addDynamicComponentClass($class)
     {
         return $this->dynamicComponentClasses[]=$class;
     }
@@ -700,7 +707,7 @@ trait Core_Glue
     {
         return Route::G()->getRouteCallingMethod();
     }
-    public function bindServerData($data)
+    protected function bindServerData($data)
     {
         return Route::G()->bindServerData($data);
     }

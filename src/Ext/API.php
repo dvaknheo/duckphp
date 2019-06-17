@@ -26,8 +26,8 @@ class API
                     $type=''.$type;
                     if (in_array($type, array_keys($f))) {
                         $flag=filter_var($input[$name], $f[$type], FILTER_NULL_ON_FAILURE);
-                        if($flag===null){
-                            throw new ReflectionException("Type Unmatch: {$name}", -1); //throw 
+                        if ($flag===null) {
+                            throw new ReflectionException("Type Unmatch: {$name}", -1); //throw
                         }
                     }
                 }
@@ -36,7 +36,7 @@ class API
             } elseif ($param->isDefaultValueAvailable()) {
                 $args[]=$param->getDefaultValue();
             } else {
-                 throw new ReflectionException("Need Parameter: {$name}", -2);
+                throw new ReflectionException("Need Parameter: {$name}", -2);
             }
         }
         

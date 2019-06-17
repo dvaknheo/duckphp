@@ -82,7 +82,7 @@ class FunctionView extends View
             ($this->callback)($this->data);
         } else {
             if (!is_file($this->view_file)) {
-                echo "NMVCS FunctionView ShowBlock: Not callback {$this->callback}; No file {$this->view_file}";
+                echo "DNMVCS FunctionView ShowBlock: Not callback {$this->callback}; No file {$this->view_file}";
                 return;
             }
             include($this->view_file);

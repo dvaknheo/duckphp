@@ -3,7 +3,6 @@ namespace DNMVCS\Toolkit;
 
 class Toolkit
 {
-
     public static function HasInclude($file)
     {
         $a=get_included_files();
