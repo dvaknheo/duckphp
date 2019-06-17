@@ -1,14 +1,14 @@
 <?php
 namespace DNMVCS\InnerExt;
 
-use DNMVCS\Basic\SingletonEx;
+use DNMVCS\SwooleHttpd\SingletonEx;
 use DNMVCS\SwooleHttpd\SwooleHttpd;
-use DNMVCS\DNMVCS;
 use Exception;
 
 class SwooleExt
 {
     use SingletonEx;
+    
     protected $with_http_handler_root=false;
     protected $serverClass;
     protected $appClass;
@@ -49,7 +49,7 @@ class SwooleExt
         }
         
         $this->serverClass=$options['swoolehttpd_server_class']??SwooleHttpd::class;
-        $this->appClass=$options['swoolehttpd_app_class']??($context?get_class($context):DNMVCS::class);
+        $this->appClass=$options['swoolehttpd_app_class']??($context?get_class($context):null);
         
         
         //////////////
@@ -95,7 +95,7 @@ class SwooleExt
         ($this->serverClass)::G()->run();
         // OK ,we need not return .
         $this->is_error=true;
-        throw new Exception('run break;',-500);
+        throw new Exception('run break;',500);
     }
     public function runSwoole()
     {
@@ -118,59 +118,5 @@ class SwooleExt
         $class=$this->appClass;
         $ret=($this->appClass)::G(new $class())->init($options);
         return $ret;
-    }
-}
-class DNSwooleExtServerHolder
-{
-    use SingletonEx;
-    
-    public static function ReplaceDefaultSingletonHandler()
-    {
-        throw new Exception("You Need DNMVCS\\SwooleHttpd !");
-    }
-    public function init($options=[], $context=null)
-    {
-        throw new Exception("Impelement Me!");
-    }
-    public function run()
-    {
-        throw new Exception("Impelement Me!");
-    }
-    public function getDynamicClasses()
-    {
-        throw new Exception("Impelement Me!");
-    }
-    public function resetInstances()
-    {
-        throw new Exception("Impelement Me!");
-    }
-    public function forkMasterInstances()
-    {
-        throw new Exception("Impelement Me!");
-    }
-}
-class DNSwooleExtAppHolder
-{
-    use SingletonEx;
-    public function init($options=[], $context=null)
-    {
-        throw new Exception("Impelement Me!");
-    }
-    public function run()
-    {
-        throw new Exception("Impelement Me!");
-    }
-    
-    public function addBeforeRunHandler()
-    {
-        throw new Exception("Impelement Me!");
-    }
-    public function getDynamicComponentClasses()
-    {
-        throw new Exception("Impelement Me!");
-    }
-    public function getStaticComponentClasses()
-    {
-        throw new Exception("Impelement Me!");
     }
 }

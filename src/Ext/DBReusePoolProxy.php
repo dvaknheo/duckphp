@@ -16,6 +16,8 @@ class DBReusePoolProxy
     ];
     public $tag_write='0';
     public $tag_read='1';
+    public $max_length=100;
+    public $timeout=5;
     
     protected $db_create_handler;
     protected $db_close_handler;
@@ -23,8 +25,8 @@ class DBReusePoolProxy
     protected $db_queue_write_time;
     protected $db_queue_read;
     protected $db_queue_read_time;
-    public $max_length=100;
-    public $timeout=5;
+    
+    protected $appClass;
     
     protected $dn;
     
@@ -47,6 +49,7 @@ class DBReusePoolProxy
         $dbm=is_string($dbm)?$dbm::G():$dbm;
         
         $this->proxy($dbm);
+        $this->appClass=$context?get_calss($context):'';
         
         return $this;
     }
@@ -90,7 +93,10 @@ class DBReusePoolProxy
     }
     protected function checkException()
     {
-        return App::G()->isInException();
+        if (!$this->appClass) {
+            return false;
+        }
+        return ($this->appClass)::G()->isInException();
     }
     public function onClose($db, $tag)
     {

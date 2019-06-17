@@ -11,6 +11,8 @@ class SystemWrapperExt
     const DEFAULT_OPTIONS=[
         'use_super_global'=>false,
     ];
+    protected $appClass;
+    
     public function init($options=[], $context=null)
     {
         $this->use_super_global=$options['use_super_global']??false;
@@ -22,6 +24,7 @@ class SystemWrapperExt
         $funcs=($callback)();
         
         if ($context) {
+            $this->appClass=get_calss($context);
             $context->system_wrapper_replace($funcs);
             if (isset($funcs['set_exception_handler'])) {
                 $context::set_exception_handler([get_class($context),'OnException']);
@@ -40,8 +43,8 @@ class SystemWrapperExt
             SuperGlobal::G($func());
         }
         if (defined('DNMVCS_SUPER_GLOBAL_REPALACER') || $this->use_super_global) {
-            App::G()->addDynamicComponentClass(SuperGlobal::class);
-            App::G()->bindServerData(SuperGlobal::G()->_SERVER);
+            ($this->appClass)::G()->addDynamicComponentClass(SuperGlobal::class);
+            ($this->appClass)::G()->bindServerData(SuperGlobal::G()->_SERVER);
         }
     }
 }
