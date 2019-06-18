@@ -646,10 +646,6 @@ trait Core_Instance
     {
         return $this->dynamicComponentClasses;
     }
-    protected function addDynamicComponentClass($class)
-    {
-        return $this->dynamicComponentClasses[]=$class;
-    }
 }
 
 trait Core_Glue

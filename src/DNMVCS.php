@@ -121,6 +121,15 @@ class DNMVCS extends App
             return;
         }
     }
+    //@override
+    public function getDynamicComponentClasses()
+    {
+        $ret=parent::getDynamicComponentClasses();
+        if (!in_array($ret,SuperGlobal::class)) {
+            $ret[]=SuperGlobal::class;
+        }
+        return $ret;
+    }
 }
 trait DNMVCS_Glue
 {

@@ -6,8 +6,9 @@ interface SwooleExtAppInterface
     
     public function init($options=[], $context=null);
     public function run();
-    public function addBeforeRunHandler();
+    public function system_wrapper_replace($funcs=[]);
+    
+    public function addBeforeRunHandler($handler);
     public function getDynamicComponentClasses();
     public function getStaticComponentClasses();
-    public function system_wrapper_replace($funcs=[]);
 }
