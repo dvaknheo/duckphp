@@ -1,9 +1,9 @@
 <?php
-$IN_COMPOSER=false;
-if (defined('HEAD_FILE_LOADED')) {
+if (defined('DNMVCS_HEAD_FILE_LOADED')) {
     return;
 }
-define('HEAD_FILE_LOADED', true);
+define('DNMVCS_HEAD_FILE_LOADED', true);
+$IN_COMPOSER=false;
 if ($IN_COMPOSER) {
     require(__DIR__ .'/../vendor/autoload.php');
     return;
