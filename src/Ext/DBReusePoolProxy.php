@@ -3,7 +3,7 @@ namespace DNMVCS\Ext;
 
 use DNMVCS\Basic\SingletonEx;
 use DNMVCS\Core\App;
-use DNMVCS\InnerExt\DBManager;
+use DNMVCS\Ext\DBManager;
 use SplQueue;
 
 class DBReusePoolProxy

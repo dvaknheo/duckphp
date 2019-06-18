@@ -5,7 +5,7 @@ use DNMVCS\Core\Base\ControllerHelper as Helper;
 
 use DNMVCS\Core\App;
 use DNMVCS\Basic\SuperGlobal;
-use DNMVCS\InnerExt\Pager;
+use DNMVCS\Ext\Pager;
 
 class ControllerHelper extends Helper
 {

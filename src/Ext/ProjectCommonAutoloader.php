@@ -7,7 +7,7 @@ class ProjectCommonAutoloader
 {
     use SingletonEx;
     const DEFAULT_OPTIONS_EX=[
-    
+        'fullpath_project_share_common'=>'',
     ];
     protected $path_common;
     public function init($options=[], $context=null)

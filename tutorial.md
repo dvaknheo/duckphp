@@ -432,8 +432,7 @@ const DEFAULT_OPTIONS=[
 
 'path_config'=>'config',
 
-    
-
+    配置路径目录
 'skip_setting_file'=>false,
 
     打开这项，则开始时候不读设置文件了。

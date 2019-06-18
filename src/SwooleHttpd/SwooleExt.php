@@ -10,18 +10,18 @@ class SwooleExt
     use SwooleSingleton;
     
     protected $with_http_handler_root=false;
-    protected $serverClass;
     protected $appClass;
     protected $is_inited=false;
     protected $is_error=false;
+    protected $in_fake=false;
+    
     public static function _EmptyFunction()
     {
         return;
     }
     public function init($options=[], $context=null)
     {
-        if ($this->with_http_handler_root) {
-            //fakeobject
+        if ($this->in_fake) {
             $cid = \Swoole\Coroutine::getuid();
             if ($cid>0) {
                 return $this->doFakerInit($options, $context);
@@ -40,25 +40,24 @@ class SwooleExt
             return;
         }
         
-        $this->serverClass=$options['swoolehttpd_server_class']??SwooleHttpd::class;
         $this->appClass=$options['swoolehttpd_app_class']??($context?get_class($context):null);
         
         
         //////////////
-        $server=($this->serverClass)::G();
+        $server=SwooleHttpd::G();
         $classes=($this->appClass)::G()->getStaticComponentClasses();
         $instances=[];
         foreach ($classes as $class) {
             $instances[$class]=$class::G();
         }
-        $flag=($this->serverClass)::ReplaceDefaultSingletonHandler();
+        $flag=SwooleHttpd::ReplaceDefaultSingletonHandler();
         if (!$flag) {
             return;
         }
         
         // replace G method again;
         static::G($this);
-        ($this->serverClass)::G($server);
+        SwooleHttpd::G($server);
         foreach ($instances as $class=>$object) {
             $class::G($object);
         }
@@ -66,7 +65,7 @@ class SwooleExt
         ($this->appClass)::G()->addBeforeRunHandler([static::class,'OnRun']);
         $this->with_http_handler_root=$options['with_http_handler_root']??false;
         $options['http_handler']=[$this,'runSwoole'];
-        ($this->serverClass)::G()->init($options, null);
+        SwooleHttpd::G()->init($options, null);
         return $this;
     }
     public static function OnRun()
@@ -84,7 +83,7 @@ class SwooleExt
         }
         $this->initApp();
         
-        ($this->serverClass)::G()->run();
+        SwooleHttpd::G()->run();
         // OK ,we need not return .
         $this->is_error=true;
         throw new Exception('run break;', 500);
@@ -98,19 +97,20 @@ class SwooleExt
         ($this->appClass)::G()->system_wrapper_replace($funcs);
         
         if (isset($funcs['set_exception_handler'])) {
-            ($this->serverClass)::set_exception_handler([$this->appClass,'OnException']);
+            SwooleHttpd::set_exception_handler([$this->appClass,'OnException']);
         }
     }
     public function runSwoole()
     {
         $classes=           ($this->appClass)::G()->getDynamicComponentClasses();
-        $exclude_classes=($this->serverClass)::G()->getDynamicComponentClasses();
-        ($this->serverClass)::G()->forkMasterInstances($classes, $exclude_classes);
+        $exclude_classes=SwooleHttpd::G()->getDynamicComponentClasses();
+        SwooleHttpd::G()->forkMasterInstances($classes, $exclude_classes);
         
         $ret=($this->appClass)::G()->run();
         if (!$ret && $this->with_http_handler_root) {
             $classes=($this->appClass)::G()->getStaticComponentClasses();
-            ($this->serverClass)::G()->forkMasterInstances($classes);
+            SwooleHttpd::G()->forkMasterInstances($classes);
+            $this->in_fake=true;
             ($this->appClass)::G($this); //fake object
             return false;
         }
@@ -118,9 +118,11 @@ class SwooleExt
     }
     protected function doFakerInit($options=[], $context=null)
     {
-        ($this->serverClass)::G()->resetInstances();
+        $this->in_fake=false;
+        SwooleHttpd::G()->resetInstances();
         $class=$this->appClass;
         $ret=($this->appClass)::G(new $class())->init($options);
+        
         return $ret;
     }
 }

@@ -6,17 +6,17 @@ namespace DNMVCS;
 
 use DNMVCS\Basic\ClassExt;
 use DNMVCS\Basic\SuperGlobal;
-use DNMVCS\InnerExt\StrictCheck;
-use DNMVCS\InnerExt\DBManager;
-use DNMVCS\InnerExt\RouteHookRewrite;
-use DNMVCS\InnerExt\RouteHookRouteMap;
-use DNMVCS\InnerExt\Pager;
+use DNMVCS\Ext\StrictCheck;
+use DNMVCS\Ext\DBManager;
+use DNMVCS\Ext\RouteHookRewrite;
+use DNMVCS\Ext\RouteHookRouteMap;
+use DNMVCS\Ext\Pager;
 
 use DNMVCS\Core\App;
 
 class DNMVCS extends App
 {
-    const VERSION = '1.1.0-dev';
+    const VERSION = '1.1.0-rc1';
     use ClassExt;
     
     use DNMVCS_Glue;
@@ -35,26 +35,26 @@ class DNMVCS extends App
             
             'ext'=>[
                 'SwooleHttpd\SwooleExt'=>true,
-                'InnerExt\DBManager'=>[
-                    'use_db'=>true,
-                    'use_strict_db'=>true,
+                'Ext\DBManager'=>[
+                    //'use_strict_db'=>true,
                     'db_create_handler'=>null,
                     'db_close_handler'=>null,
                     'database_list'=>[],
                 ],
-                'InnerExt\StrictCheck'=>true,
-                'InnerExt\RouteHookRewrite'=>true,
-                'InnerExt\RouteHookRouteMap'=>true,
-                'InnerExt\DIExt'=>true,
+                'Ext\StrictCheck'=>true,
+                
+                'Ext\RouteHookRewrite'=>true,
+                'Ext\RouteHookRouteMap'=>true,
+                'Ext\DIExt'=>true,
                 
                 'Ext\Lazybones'=>false,
                 'Ext\DBReusePoolProxy'=>false,
                 'Ext\FacadesAutoLoader'=>false,
-                'Ext\FunctionView'=>false,
                 'Ext\ProjectCommonAutoloader'=>false,
                 'Ext\ProjectCommonConfiger'=>false,
                 'Ext\RouteHookDirectoryMode'=>false,
                 'Ext\RouteHookOneFileMode'=>false,
+                'Ext\FunctionView'=>false,
             ],
             
         ];

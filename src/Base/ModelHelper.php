@@ -2,7 +2,7 @@
 namespace DNMVCS\Base;
 
 use DNMVCS\Core\Base\ModelHelper as Helper;
-use DNMVCS\InnerExt\DBManager;
+use DNMVCS\Ext\DBManager;
 
 class ModelHelper extends Helper
 {

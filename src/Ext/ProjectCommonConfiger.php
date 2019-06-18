@@ -6,7 +6,7 @@ use DNMVCS\Core\Configer;
 class ProjectCommonConfiger extends Configer
 {
     const DEFAULT_OPTIONS_EX=[
-    
+        'fullpath_config_common'=>'',
     ];
     public $fullpath_config_common;
 

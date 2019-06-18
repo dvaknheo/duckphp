@@ -1,5 +1,5 @@
 <?php
-namespace DNMVCS\InnerExt;
+namespace DNMVCS\Ext;
 
 use DNMVCS\Basic\SingletonEx;
 use Exception;
