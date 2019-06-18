@@ -9,8 +9,11 @@ class DBManager
     use SingletonEx;
     const DEFAULT_OPTIONS=[
         'use_db'=>true,
+        
         'db_create_handler'=>null,
         'db_close_handler'=>null,
+        'before_get_db_handler'=>null,
+        
         'database_list'=>null,
         'use_strict_db'=>true,
     ];
@@ -29,12 +32,13 @@ class DBManager
     public function init($options=[], $context=null)
     {
         $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
+        
         $use_db=$options['use_db']??true;
         if (!$use_db) {
             return $this;
         }
         
-        $this->use_strict_db=$options['use_strict_db']??false;
+        $this->before_get_db_handler=$options['before_get_db_handler']??null;
         $this->database_config_list=$options['database_list'];
         $this->db_create_handler=$options['db_create_handler']??[DB::class,'CreateDBInstance'];
         $this->db_close_handler=$options['db_close_handler']??[DB::class,'CloseDBInstance'];
@@ -45,14 +49,13 @@ class DBManager
     }
     protected function initContext($options=[], $context=null)
     {
-        //
         $db_setting_key=$context->options['db_setting_key']??'database_list';
         $database_list=$context::Setting($db_setting_key)??[];
         
         $this->database_config_list=array_merge($context->options['database_list'], $database_list);
         
-        if ($this->use_strict_db) {
-            $this->setBeforeGetDBHandler([get_class($context),'CheckStrictDB']);
+        if (is_array($this->before_get_db_handler) && $this->before_get_db_handler[0]===null) {
+            $this->before_get_db_handler[0]=get_class($context);
         }
         $context->addBeforeShowHandler([static::class,'CloseAllDB']);
     }

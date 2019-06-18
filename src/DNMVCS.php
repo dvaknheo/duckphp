@@ -36,24 +36,29 @@ class DNMVCS extends App
             'ext'=>[
                 'SwooleHttpd\SwooleExt'=>true,
                 'Ext\DBManager'=>[
-                    //'use_strict_db'=>true,
                     'db_create_handler'=>null,
                     'db_close_handler'=>null,
+                    'before_get_db_handler'=>[null,'CheckStrictDB'],
+                    //'use_context_database'=>true,
+                    //'use_database_list'=>true,
                     'database_list'=>[],
                 ],
-                'Ext\StrictCheck'=>false,
+                'Ext\StrictCheck'=>true,
                 
                 'Ext\RouteHookRewrite'=>true,
                 'Ext\RouteHookRouteMap'=>true,
+                
                 'Ext\DIExt'=>true,
                 
                 'Ext\Lazybones'=>false,
                 'Ext\DBReusePoolProxy'=>false,
                 'Ext\FacadesAutoLoader'=>false,
-                'Ext\ProjectCommonAutoloader'=>false,
-                'Ext\ProjectCommonConfiger'=>false,
+                
                 'Ext\RouteHookDirectoryMode'=>false,
                 'Ext\RouteHookOneFileMode'=>false,
+                
+                'Ext\ProjectCommonAutoloader'=>false,
+                'Ext\ProjectCommonConfiger'=>false,
                 'Ext\FunctionView'=>false,
             ],
             
@@ -82,8 +87,8 @@ class DNMVCS extends App
                 'Ext\RouteHookOneFileMode'=>[
                     'mode_onefile'=>true,
                     'mode_onefile_key_for_action'=>'act',
-                     'use_function_dispatch'=>true,
-                     'use_function_view'=>true,
+                    'use_function_dispatch'=>true,
+                    'use_function_view'=>true,
                     
                     'use_session_auto_start'=>true,
                 ],

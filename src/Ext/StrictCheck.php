@@ -40,10 +40,14 @@ class StrictCheck
     }
     protected function checkEnv()
     {
+    
         if (!$this->appClass) {
             return false;
         }
-        
+        $flag=($this->appClass)::G()->options['is_debug'];
+        if (!$flag) {
+            return false;
+        }
         return true;
     }
     public function checkStrictComponent($component_name, $trace_level)
