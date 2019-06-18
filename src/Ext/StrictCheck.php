@@ -10,7 +10,7 @@ class StrictCheck
     const DEFAULT_OPTIONS=[
     ];
     const MAX_TRACE_LEVEL=20;
-    protected $dn_class=null;
+    protected $appClass=null;
     public function init($options=[], $context=null)
     {
         if ($context) {
@@ -19,7 +19,7 @@ class StrictCheck
     }
     protected function initContext($options=[], $context=null)
     {
-        $this->dn_class=get_class($context);
+        $this->appClass=get_class($context);
     }
     public static function OnCheckStrictDB()
     {
@@ -31,7 +31,7 @@ class StrictCheck
         $level+=1;
         $backtrace=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, static::MAX_TRACE_LEVEL);
         $caller_class=$backtrace[$level]['class']??'';
-        if ($this->dn_class && (is_subclass_of($this->dn_class, $caller_class) || $this->dn_class===$caller_class)) {
+        if ($this->appClass && (is_subclass_of($this->appClass, $caller_class) || $this->appClass===$caller_class)) {
             $caller_class=$backtrace[$level+1]['class']??'';
         }
           
@@ -40,6 +40,10 @@ class StrictCheck
     }
     protected function checkEnv()
     {
+        if (!$this->appClass) {
+            return false;
+        }
+        
         return true;
     }
     public function checkStrictComponent($component_name, $trace_level)
@@ -47,14 +51,14 @@ class StrictCheck
         if (!$this->checkEnv()) {
             return;
         }
+        
         $caller_class=$this->getCallerByLevel($trace_level);
-        $dn=$this->dn_class;
-        $namespace=$dn::G()->options['namespace'];
+        $namespace=($this->appClass)::G()->options['namespace'];
         $namespace_service=$namespace."\\Service\\";
         
         $namespace_controller=$namespace."\\Controller\\"; // TODO
         
-        $controller_base_class=$dn::G()->options['controller_base_class']??'';
+        $controller_base_class=($this->appClass)->options['controller_base_class']??'';
         
         do {
             if (substr($caller_class, 0, strlen($namespace_controller))==$namespace_controller) {
@@ -77,9 +81,8 @@ class StrictCheck
             return;
         }
         $caller_class=$this->getCallerByLevel($trace_level);
-        $dn=$this->dn_class;
         
-        $namespace=$dn::G()->options['namespace'];
+        $namespace=($this->appClass)::G()->options['namespace'];
         $namespace_service=$namespace."\\Service\\";
         
         do {
@@ -101,9 +104,8 @@ class StrictCheck
             return;
         }
         $caller_class=$this->getCallerByLevel($trace_level);
-        $dn=$this->dn_class;
         
-        $namespace=$dn::G()->options['namespace'];
+        $namespace=($this->appClass)::G()->options['namespace'];
         $namespace_service=$namespace."\\Service\\";
 
         $namespace_model=$namespace."\\Model\\";

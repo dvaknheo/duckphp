@@ -41,7 +41,7 @@ class DNMVCS extends App
                     'db_close_handler'=>null,
                     'database_list'=>[],
                 ],
-                'Ext\StrictCheck'=>true,
+                'Ext\StrictCheck'=>false,
                 
                 'Ext\RouteHookRewrite'=>true,
                 'Ext\RouteHookRouteMap'=>true,

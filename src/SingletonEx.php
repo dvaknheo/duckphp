@@ -1,7 +1,7 @@
 <?php
 namespace DNMVCS;
 
-use DNMVCS\Basic\SingletonEx as Singleton;
+use DNMVCS\Core\SingletonEx as Singleton;
 
 trait SingletonEx
 {

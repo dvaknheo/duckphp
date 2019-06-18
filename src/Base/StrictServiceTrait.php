@@ -1,7 +1,7 @@
 <?php
 namespace DNMVCS\Base;
 
-use DNMVCS\Basic\SingletonEx;
+use DNMVCS\Core\SingletonEx;
 use DNMVCS\Core\App;
 
 trait StrictServiceTrait
