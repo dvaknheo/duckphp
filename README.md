@@ -42,7 +42,7 @@ Controller --> Service ------------------------------ ---> Model
             \         ---------------->ServiceHelper
              \-->ControllerHelper
 ```
-![arch](arch.gv.png)
+![arch](doc/arch.gv.svg)
 
 * Controller 按 URL 入口走 调用 view 和service
 * Service 按业务走 ,调用 model 和其他第三方代码。
@@ -101,7 +101,7 @@ Controller --> Service ------------------------------ ---> Model
 8. 这框架什么都没做啊。 居然只支持 PHP7 。
 
 ## 架构图
-![dnmvcs](dnmvcs.gv.png)
+![dnmvcs](doc/dnmvcs.gv.svg)
 
 ## 还有什么要说的
 
