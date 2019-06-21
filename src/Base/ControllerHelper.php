@@ -9,6 +9,26 @@ use DNMVCS\Ext\Pager;
 
 class ControllerHelper extends Helper
 {
+    public $_GET;
+    public $_POST;
+    public $_REQUEST;
+    public $_SERVER;
+    public $_ENV;
+    public $_COOKIE;
+    public $_SESSION;
+    public $_FILES;
+    
+    public static function EnableStaticSuperGlobal()
+    {
+        $this->_GET		=SuperGlobal::G()->_GET;
+        $this->_POST	=SuperGlobal::G()->_POST;
+        $this->_REQUEST	=SuperGlobal::G()->_REQUEST;
+        $this->_SERVER	=SuperGlobal::G()->_SERVER;
+        $this->_ENV		=SuperGlobal::G()->_ENV;
+        $this->_COOKIE	=SuperGlobal::G()->_COOKIE;
+        $this->_SESSION	=SuperGlobal::G()->_SESSION;
+        $this->_FILES	=SuperGlobal::G()->_FILES;
+    }
     ///////
     public static function Import($file)
     {

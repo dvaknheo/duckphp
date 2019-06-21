@@ -125,7 +125,7 @@ class DNMVCS extends App
     public function getDynamicComponentClasses()
     {
         $ret=parent::getDynamicComponentClasses();
-        if (!in_array($ret,SuperGlobal::class)) {
+        if (!in_array(SuperGlobal::class,$ret)) {
             $ret[]=SuperGlobal::class;
         }
         return $ret;
