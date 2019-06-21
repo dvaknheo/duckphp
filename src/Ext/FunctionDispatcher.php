@@ -1,7 +1,7 @@
 <?php
 namespace DNMVCS\Ext;
 
-use DNMVCS\Basic\SingletonEx;
+use DNMVCS\SingletonEx;
 
 //TODO don't do so more;
 class FunctionDispatcher

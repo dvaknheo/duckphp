@@ -1,8 +1,7 @@
 <?php
 namespace DNMVCS\Ext;
 
-use DNMVCS\Basic\SingletonEx;
-use DNMVCS\Core\App;
+use DNMVCS\SingletonEx;
 use DNMVCS\Ext\DBManager;
 use SplQueue;
 

@@ -1,7 +1,7 @@
 <?php
 namespace DNMVCS\Ext;
 
-use DNMVCS\Basic\SingletonEx;
+use DNMVCS\SingletonEx;
 use DNMVCS\DB\DB;
 
 class DBManager

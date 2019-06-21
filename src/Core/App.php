@@ -240,7 +240,7 @@ class App
         foreach ($this->beforeRunHandlers as $v) {
             ($v)();
         }
-        $this->beforeRun();
+        $this->onRun();
         $class=get_class(RuntimeState::G());  //ReCreateInstance;
         RuntimeState::G(new $class)->begin();
         $ret=Route::G()->run();
@@ -248,7 +248,7 @@ class App
         $this->cleanUp();
         return $ret;
     }
-    protected function beforeRun()
+    protected function onRun()
     {
         // for override;
         return;
