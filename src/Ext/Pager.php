@@ -2,7 +2,6 @@
 namespace DNMVCS\Ext;
 
 use DNMVCS\SingletonEx;
-use DNMVCS\Core\App;
 
 class Pager
 {
@@ -16,7 +15,7 @@ class Pager
     ];
     public static function SG()
     {
-        return APP::G()::SG();
+        return APP::G()::SG(); // TODO
     }
     public static function Current()
     {
@@ -47,6 +46,7 @@ class Pager
      */
     public function init($options=[], $context=null)
     {
+        $options['']
         $this->url=$options['url']??static::SG()->_SERVER['REQUEST_URI'];
         $this->key=$options['key']??$this->key;
         $this->page_size=$options['page_size']??$this->page_size;
