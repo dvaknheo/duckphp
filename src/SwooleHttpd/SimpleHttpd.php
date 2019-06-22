@@ -1,6 +1,11 @@
 <?php
 namespace DNMVCS\SwooleHttpd;
 
+use DNMVCS\SwooleHttpd\SwooleException;
+use DNMVCS\SwooleHttpd\SwooleContext;
+use DNMVCS\SwooleHttpd\SwooleSuperGlobal;
+use DNMVCS\SwooleHttpd\SwooleCoroutineSingleton;
+
 trait SimpleHttpd
 {
     protected function onHttpRun($request, $response)
@@ -26,6 +31,7 @@ trait SimpleHttpd
         \defer(function () {
             gc_collect_cycles();
         });
+        
         SwooleCoroutineSingleton::EnableCurrentCoSingleton(); // remark ,here has a defer
         
         \defer(function () {
@@ -45,7 +51,7 @@ trait SimpleHttpd
             SwooleContext::G()->response->end($str);
         });
         $this->initHttp($request, $response);
-        SwooleSuperGlobal::G(new SwooleSuperGlobal()); //TODO
+        SwooleSuperGlobal::G(new SwooleSuperGlobal())->mapToGlobal();
         try {
             $this->onHttpRun($request, $response);
         } catch (\Throwable $ex) {

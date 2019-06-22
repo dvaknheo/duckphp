@@ -77,6 +77,17 @@ class SwooleSuperGlobal
         
         return $this;
     }
+    public function mapToGlobal()
+    {
+        $_GET       =&$this->_GET;
+        $_POST      =&$this->_POST;
+        $_REQUEST   =&$this->_REQUEST;
+        $_SERVER    =&$this->_SERVER;
+        // $_ENV       =&$this->_ENV; no need
+        $_COOKIE    =&$this->_COOKIE;
+        $_SESSION   =&$this->_SESSION;
+        $_FILES     =&$this->_FILES;
+    }
 
     public function &_GLOBALS($k, $v=null)
     {
