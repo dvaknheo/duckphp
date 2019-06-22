@@ -2,7 +2,7 @@
 namespace DNMVCS\Ext;
 
 use DNMVCS\SingletonEx;
-use DNMVCS\Basic\SuperGlobal;
+use DNMVCS\SuperGlobal;
 
 class RouteHookRewrite
 {

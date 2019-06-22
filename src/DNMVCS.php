@@ -4,8 +4,8 @@
 //OK，Lazy
 namespace DNMVCS;
 
-use DNMVCS\Basic\ClassExt;
-use DNMVCS\Basic\SuperGlobal;
+use DNMVCS\ClassExt;
+use DNMVCS\SuperGlobal;
 use DNMVCS\Ext\StrictCheck;
 use DNMVCS\Ext\DBManager;
 use DNMVCS\Ext\RouteHookRewrite;

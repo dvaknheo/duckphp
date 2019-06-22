@@ -1,5 +1,5 @@
 <?php
-namespace DNMVCS\Basic;
+namespace DNMVCS;
 
 trait ClassExt
 {

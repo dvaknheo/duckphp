@@ -2,8 +2,8 @@
 namespace DNMVCS\Ext;
 
 use DNMVCS\SingletonEx;
-use DNMVCS\Basic\SuperGlobal;
-use DNMVCS\Inneer\RouteHookRewrite;
+use DNMVCS\SuperGlobal;
+use DNMVCS\Ext\RouteHookRewrite;
 
 class RouteHookDirectoryMode
 {
