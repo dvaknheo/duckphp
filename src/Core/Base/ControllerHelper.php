@@ -12,6 +12,8 @@ use DNMVCS\Core\ExceptionManager;
 
 class ControllerHelper
 {
+    use ThrowOn;
+    
     public static function Setting($key)
     {
         return Configer::G()->_Setting($key);
