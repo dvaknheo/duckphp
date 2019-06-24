@@ -1,7 +1,7 @@
 <?php
 namespace DNMVCS\Base;
 
-use DNMVCS\Core\App;
+use DNMVCS\Base\C;
 
 class SessionedController
 {

@@ -52,7 +52,7 @@ php bin/start_server.php
 // app/Controller/test.php
 namespace MY\Controller;
 use MY\Base\BaseController;
-use MY\Base\ControllerHelper as C;
+use MY\Base\C;
 
 use MY\Service\MiscService;
 class test //extends BaseController
@@ -75,7 +75,7 @@ class test //extends BaseController
 // app/Service/MiscService.php
 namespace MY\Service;
 use MY\Base\BaseService;
-use MY\Base\ServiceHelper as S;
+use MY\Base\S;
 use MY\Model\NoDB_MiscModel;
 
 class MiscService extends BaseService
@@ -102,7 +102,7 @@ Model 类是实现基本功能的
 namespace MY\Model;
 
 use MY\Base\BaseModel;
-use MY\Base\ModelHelper as M;
+use MY\Base\M;
 
 class NoDB_MiscModel extends BaseModel
 {
@@ -130,9 +130,9 @@ test
 作为应用程序员， 你不能引入 DNMVCS 的任何东西，就当 DNMVCS 命名空间不存在。
 主力程序员才去研究 DNMVCS 类的东西。
 
-* 写 Model 你可能要引入 MY\Base\ModelHelper 类别名为 M 。
-* 写 Serivce 你可能要引入 MY\Base\SerivceHelper 类别名为 S 。
-* 写 Controller 你可能要引入 MY\Base\ControllerHelper 类别名为 C 。
+* 写 Model 你可能要引入 MY\Base\M 助手类 。
+* 写 Serivce 你可能要引入 MY\Base\S 助手类  。
+* 写 Controller 你可能要引入 MY\Base\C 助手类 。
 * 不能交叉引入其他 Helper 类。如果需要交叉，那么你就是错的。
 
 Model, Service 以及助手类都有静态的 G 函数， G() 函数就是可变单例函数。

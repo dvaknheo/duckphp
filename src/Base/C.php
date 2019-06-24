@@ -1,13 +1,13 @@
 <?php
 namespace DNMVCS\Base;
 
-use DNMVCS\Core\Base\ControllerHelper as Helper;
+use DNMVCS\Core\Base\C as Helper;
 
 use DNMVCS\Core\App;
 use DNMVCS\SuperGlobal;
 use DNMVCS\Ext\Pager;
 
-class ControllerHelper extends Helper
+class C extends Helper
 {
     public $_GET;
     public $_POST;

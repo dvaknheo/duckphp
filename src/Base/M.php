@@ -1,10 +1,10 @@
 <?php
 namespace DNMVCS\Base;
 
-use DNMVCS\Core\Base\ModelHelper as Helper;
+use DNMVCS\Core\Base\M as Helper;
 use DNMVCS\Ext\DBManager;
 
-class ModelHelper extends Helper
+class M extends Helper
 {
     public static function DB($tag=null)
     {
