@@ -155,7 +155,7 @@ Model 类 还引用到相关
 
 #### Serivce 编写服务用到的方法
 
-S::ThrowOn() 和 ModelHelper 一样;
+S::ThrowOn() 和 M::ThrowOn 一样;
 
 此外还有
 

@@ -13,10 +13,10 @@
 使得网站开发者专注于业务逻辑。
 * 耦合松散，扩展灵活方便，魔改容易
 * 无第三方依赖，你不必担心第三方依赖改动而大费周折。
+* 你的代码，基本和DNMVCS系统给库无关
 * 无 composer 环境也可运行，同时支持 composer 。
 * 桩代码极小，你不必在一堆杂乱代码中开始，而是像普通库那样引用
 * 不仅仅支持全站路由，还支持局部路径路由和非 PATH_INFO 路由,不需要配服务器也能用
-* 小就是性能。（不过也上千行代码了）
 
 ## 关于 Servivce 层
 
@@ -38,9 +38,9 @@ DNMVCS 层级关系图
 Controller --> Service ------------------------------ ---> Model
          \         \   \               \  /             /    \
           \         \   \-> LibService ----> ExModel --/      \
-           \         \             \                \----------->ModelHelper
-            \         ---------------->ServiceHelper
-             \-->ControllerHelper
+           \         \             \                \----------->M
+            \         ---------------->S
+             \-->C
 ```
 ![arch](doc/arch.gv.svg)
 
@@ -49,6 +49,7 @@ Controller --> Service ------------------------------ ---> Model
 * Model 按数据库表走，基本上只实现和当前表相关的操作。
 * View 按页面走
 * 不建议 Model 抛异常
+* C,S,M 都为助手类，分别是 ControllerHelper ,ServiceHelper,ModelHelper 的缩写
 
 1. 如果 Service 相互调用怎么办?
 添加后缀为 LibService 用于 Service 共享调用，不对外，如MyLibService
