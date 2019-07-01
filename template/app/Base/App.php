@@ -1,15 +1,19 @@
 <?php
 namespace MY\Base;
 
-class App extends \DNMVCS\DNMVCS
+use DNMVCS\DNMVCS;
+
+class App extends DNMVCS
 {
     public function init($options=[], $context=null)
     {
         parent::init($options, $context);
+        //Your code here
         return $this;
     }
-    public function run()
+    protected function onRun()
     {
+        //Your code here
         return parent::run();
     }
 }

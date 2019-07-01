@@ -1,7 +1,7 @@
 <?php
 namespace MY\Base;
 
-use DNMVCS\Basic\SingletonEx;
+use DNMVCS\SingletonEx;
 
 // use DNMVCS\Base\StrictModelTrait;
 
