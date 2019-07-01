@@ -6,7 +6,7 @@ use DNMVCS\Core\ThrowOn;
 use DNMVCS\Core\Configer;
 use DNMVCS\Core\App;
 
-class S
+class ServiceHelper
 {
     use SingletonEx;
     use ThrowOn;

@@ -38,9 +38,9 @@ DNMVCS 层级关系图
 Controller --> Service ------------------------------ ---> Model
          \         \   \               \  /             /    \
           \         \   \-> LibService ----> ExModel --/      \
-           \         \             \                \----------->M
-            \         ---------------->S
-             \-->C
+           \         \             \                \----------->ModelHelper
+            \         ---------------->ServiceHelper
+             \-->ControllerHelper
 ```
 ![arch](doc/arch.gv.svg)
 
@@ -49,7 +49,7 @@ Controller --> Service ------------------------------ ---> Model
 * Model 按数据库表走，基本上只实现和当前表相关的操作。
 * View 按页面走
 * 不建议 Model 抛异常
-* C,S,M 都为助手类，分别是 ControllerHelper ,ServiceHelper,ModelHelper 的缩写
+* ControllerHelper,ServiceHelper,ModelHelper都为助手类，通常缩写为 C, S， M
 
 1. 如果 Service 相互调用怎么办?
 添加后缀为 LibService 用于 Service 共享调用，不对外，如MyLibService
