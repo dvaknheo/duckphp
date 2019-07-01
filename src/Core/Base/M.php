@@ -4,7 +4,7 @@ namespace DNMVCS\Core\Base;
 use DNMVCS\Core\SingletonEx;
 use DNMVCS\Core\ThrowOn;
 
-class ModelHelper
+class M
 {
     use SingletonEx;
     use ThrowOn;

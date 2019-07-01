@@ -10,7 +10,7 @@ use DNMVCS\Core\Route;
 use DNMVCS\Core\View;
 use DNMVCS\Core\ExceptionManager;
 
-class ControllerHelper
+class C
 {
     use ThrowOn;
     
