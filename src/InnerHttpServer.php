@@ -1,16 +1,14 @@
 <?php
 namespace DNMVCS;
 
-class InnerHttpServer
+use DNMVCS\Core\InnerHttpServer as Server;
+use DNMVCS\SwooleHttpd;
+
+class InnerHttpServer extends Server
 {
-    public static function RunQuickly($host,$port,$path)
-    {
-        $class=new InnerHttpServer();
-        $class->run($host,$port,$path);
-    }
     public function run($host,$port,$path)
     {
-        echo "Well Come to use DNMVCS ,for more info , use --help \n";
+        
         $opts=[
             'help'	=>'h',
             'host:'	=>'H:',
@@ -20,44 +18,12 @@ class InnerHttpServer
         $captures=$this->getCmdCaptures($opts);
         $host=$captures['host']??$host;
         $port=$captures['port']??$port;
+        
+        $this->showWelcome();
         if (isset($captures['help'])) {
             return $this->showHelp();
         }
-        if (!$this->checkSwoole($captures)) {
-            return $this->runHttpServer($path, $host, $port);
-        }
-        return $this->runSwooleServer($path, $host, $port);
-    }
-    protected function getCmdCaptures($opts)
-    {
-        $optind=null;
-        $args=getopt(implode('', array_values($opts)), array_keys($opts), $optind);
-
-        $shorts=array_map(function ($v) {
-            return trim($v, ':');
-        }, array_values($opts));
-        $longs=array_map(function ($v) {
-            return trim($v, ':');
-        }, array_keys($opts));
-        $new_opts=array_combine($shorts, $longs);
-        $ret=[];
-        foreach ($args as $k=>$v) {
-            $key=$new_opts[$k]??$k;
-            $ret[$key]=$v;
-        }
-        return $ret;
-    }
-    protected function showHelp()
-    {
-        $doc=<<<EOT
-DNMVCS server usage:
-  -h --help   show this help;
-  -s --swoole use swoole server;
-  -H --host   set server host,default is '8080';
-  -P --port   set server port,default is '0.0.0.0';
-
-EOT;
-        echo $doc;
+        $this->runHttpServer($path, $host, $port);
     }
     protected function checkSwoole($args)
     {
@@ -68,21 +34,17 @@ EOT;
         if (!function_exists('swoole_version')) {
             return false;
         }
-        if (!class_exists(SwooleHttpd\SwooleHttpd::class)) {
+        if (!class_exists(SwooleHttpd::class)) {
             return false;
         }
         return true;
     }
     protected function runHttpServer($path, $host, $port)
     {
-        $PHP=$_SERVER['_'];
-        $dir=$path.'public';
-        $PHP=escapeshellcmd($PHP);
-        $host=escapeshellcmd($host);
-        $port=escapeshellcmd($port);
-        echo "DNMVCS: RunServer by php inner http server $host:$port\n";
-        $cmd="$PHP -t $dir -S $host:$port";
-        exec($cmd);
+        if ($this->checkSwoole($captures)) {
+            return $this->runSwooleServer($path, $host, $port);
+        }
+        return parent::runHttpServer($path, $host, $port);
     }
     protected function runSwooleServer($path, $host, $port)
     {
@@ -99,7 +61,7 @@ EOT;
             $dn_options['skip_setting_file']=true;
             echo "Don't run the template file directly \n";
         }
-        echo "DNMVCS: RunServer swoole server $host:$port\n";
+        $this->showRunInfo($host, $port);
         DNMVCS::RunQuickly($dn_options);
     }
     protected function getConfig()

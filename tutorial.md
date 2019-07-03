@@ -51,7 +51,7 @@ php bin/start_server.php
 <?php
 // app/Controller/test.php
 namespace MY\Controller;
-use MY\Base\BaseController;
+// use MY\Base\BaseController;
 use MY\Base\ControllerHelper as C;
 
 use MY\Service\MiscService;
@@ -66,7 +66,7 @@ class test //extends BaseController
 }
 ```
 控制器里，我们处理外部数据，不做业务逻辑，业务逻辑在 Service 层做。
-
+BaseController  这个基类，如果不强制要求也可以不用。
 
 ### Service 服务
 业务逻辑层。
@@ -209,7 +209,7 @@ S::ThrowOn() 和 M::ThrowOn 一样;
     用 C::Parameters() 获取切片，对地址重写有效。
     如果要做权限判断 构造函数里 C::getRouteCallingMethod() 获取当前调用方法。
 
-    用 C::getRewrites() 和 C::getRoutes(); 查看 rewrite 表，和 路由表。
+    ! 用 C::getRewrites() 和 C::getRoutes(); 查看 rewrite 表，和 路由表。
 
 4. 系统替代函数 
     用 C::header() 代替系统 header 兼容命令行等。
@@ -225,7 +225,7 @@ S::ThrowOn() 和 M::ThrowOn 一样;
 6. Swoole 兼容
 
     如果想让你们的项目在 swoole 下也能运行，那就要加上这几点
-    用 C::SG() 代替 超全局变量的 $ 前缀 如 $_GET =>  App::SG->_GET
+    用 C::SG() 代替 超全局变量的 $ 前缀 如 $_GET =>  C::SG->_GET
 
     使用以下参数格式都一样的 swoole 兼容静态方法，代替同名全局方法。
 
