@@ -8,22 +8,13 @@ class InnerHttpServer extends Server
 {
     public function run($host,$port,$path)
     {
-        
-        $opts=[
-            'help'	=>'h',
-            'host:'	=>'H:',
-            'port:'	=>'P:',
-            'inner-server'=>'i',
-        ];
         $captures=$this->getCmdCaptures($opts);
         $host=$captures['host']??$host;
         $port=$captures['port']??$port;
         
         $this->showWelcome();
-        if (isset($captures['help'])) {
-            return $this->showHelp();
-        }
-        $this->runHttpServer($path, $host, $port);
+
+        $this->runHttpServer();
     }
     protected function checkSwoole($args)
     {

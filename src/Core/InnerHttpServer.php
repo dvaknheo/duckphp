@@ -1,92 +1,145 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\Core;
 
 use DNMVCS\Core\SingletonEx;
 
 class InnerHttpServer
 {
     use SingletonEx;
-
+    
+    const DEFAULT_OPTIONS=[
+            'host'=>'127.0.0.1',
+            'port'=>'9527',
+            'path'=>null,
+            'args'=>[
+                'help'=>[
+                    'short'=>'h',
+                    'desc'=>'show this help;',
+                ],
+                'host'=>[
+                    'short'=>'H',
+                    'desc'=>'set server host,default is 127.0.0.1',
+                    'optional'=>true,
+                ],
+                'port'=>[
+                    'short'=>'P',
+                    'desc'=>'set server port,default is 8080',
+                    'optional'=>true,
+                ],
+                'inner-server'=>[
+                    'short'=>'i',
+                    'desc'=>'use inner server',
+                ],
+            ],
+        ];
+    const DEFAULT_OPTIONS_EX=[
+        ];
+    
+    //TODO API 自动类，
+    //TODO 自动填充 Service 类
+    
     protected $path_document='public';
-
+    protected $args=[];
+    protected $document_root='';
+    
     public static function RunQuickly($host,$port,$path)
     {
-        static::G()->run($host,$port,$path);
+        $options=[
+            'host'=>$host,
+            'port'=>$port,
+            'path'=>$path,
+        ];
+        static::G()->init($options)->run($host,$port,$path);
     }
     public function init($options=[], $context=null)
     {
+        $options=array_replace_recursive(static::DEFAULT_OPTIONS, static::DEFAULT_OPTIONS_EX, $options);
+        $this->options=$options;
+        
+        $this->host=$options['host'];
+        $this->port=$options['port'];
+        
+        $this->args=$this->parseCaptures($options);
+        
+        $this->host=$this->args['host']??$this->host;
+        $this->port=$this->args['port']??$this->port;
+        
         return $this;
     }
-    
-
+    protected function parseCaptures($options)
+    {
+        foreach($options['args'] as $k=>$v){
+            $optional=$v['optional']??false;
+            $required=$v['required']??false;
+            $a[]=$k.($optional?':':'').($required?'::':'');
+            if(isset($v['short'])){
+                $shorts[]=$v['short'].($optional?':':'').($required?'::':'');
+                $shorts_map[$v['short']]=$k;
+            }
+            
+        }
+        $optind=null;
+        $args=getopt(implode('', ($shorts)),$a, $optind);
+        $args=$args?:[];
+        
+        $pos_args = array_slice($_SERVER['argv'], $optind);
+        
+        foreach($shorts_map as $k =>$v){
+            if(isset($args[$k]) && !isset($args[$v])){
+                $args[$v]=$args[$k];
+            }
+        }
+        $args=array_merge($args,$pos_args);
+        return $args;
+    }
     public function run($host,$port,$path)
     {
-        $opts=[
-            'help'	=>'h',
-            'host:'	=>'H:',
-            'port:'	=>'P:',
-            'inner-server'=>'i',
-        ];
-        $captures=$this->getCmdCaptures($opts);
-        $host=$captures['host']??$host;
-        $port=$captures['port']??$port;
-        
         $this->showWelcome();
-        if (isset($captures['help'])) {
+        
+        if (isset($this->args['help'])) {
             return $this->showHelp();
         }
-        $this->runHttpServer($path, $host, $port);
+        $this->runHttpServer();
     }
     protected function showWelcome()
     {
         echo "Well Come to use DNMVCS ,for more info , use --help \n";
     }
-    protected function getCmdCaptures($opts)
+    protected function getCmdCaptures()
     {
-        $optind=null;
-        $args=getopt(implode('', array_values($opts)), array_keys($opts), $optind);
-
-        $shorts=array_map(function ($v) {
-            return trim($v, ':');
-        }, array_values($opts));
+        $opts=[];
         
-        $longs=array_map(function ($v) {
-            return trim($v, ':');
-        }, array_keys($opts));
-        $new_opts=array_combine($shorts, $longs);
-        $ret=[];
-        foreach ($args as $k=>$v) {
-            $key=$new_opts[$k]??$k;
-            $ret[$key]=$v;
-        }
+        $optind=null;
+        $args=getopt($shorts,$a, $optind);
+        $pos_args = array_slice($_SERVER['argv'], $optind);
+        
         return $ret;
     }
     protected function showHelp()
     {
         $doc=<<<EOT
 DNMVCS InnerHttpServer usage:
-  -h --help   show this help;
-  -s --swoole use swoole server;
-  -H --host   set server host,default is '8080';
-  -P --port   set server port,default is '0.0.0.0';
 
 EOT;
+foreach($this->options['args'] as $k => $v){
+    $t=$v['short']??'';
+    $t=$t?'-'.$t:'';
+    echo " --{$k}\t{$t}\n\t".$v['desc']."\n";
+}
         echo $doc;
     }
-    protected function runHttpServer($path, $host, $port)
+    protected function runHttpServer()
     {
-        $document_root=$path.$this->path_document;
-        
         $PHP=$_SERVER['_'];
-        $document_root=escapeshellcmd($document_root);
         $PHP=escapeshellcmd($PHP);
-        $host=escapeshellcmd($host);
-        $port=escapeshellcmd($port);
+        $host=escapeshellcmd($this->host);
+        $port=escapeshellcmd($this->port);
+        $document_root=escapeshellcmd($this->document_root);
        
-        $cmd="$PHP -t $dir -S $host:$port";
-        
         echo "DNMVCS: RunServer by php inner http server $host:$port\n";
-        
+        $cmd="$PHP -S $host:$port -t $document_root ";
+        echo $cmd;return;
         exec($cmd);
+        
     }
 }
