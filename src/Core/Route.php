@@ -285,11 +285,15 @@ class Route
         $this->calling_class=$full_class;
         $this->calling_method=$method;
         
-        $object=new $full_class();
-        if ($this->controller_base_class && !is_a($obj, $this->controller_base_class)) {
+        $object=$this->createControllerObject($full_class);
+        if ($this->controller_base_class && !is_a($object, $this->controller_base_class)) {
             return null;
         }
         return $this->getMethodToCall($object, $method);
+    }
+    protected function createControllerObject($full_class)
+    {
+        return new $full_class();
     }
     protected function getMethodToCall($obj, $method)
     {
