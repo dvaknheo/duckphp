@@ -19,16 +19,29 @@ class HttpServer
                 'host'=>[
                     'short'=>'H',
                     'desc'=>'set server host,default is 127.0.0.1',
-                    'optional'=>true,
+                    'required'=>true,
                 ],
                 'port'=>[
                     'short'=>'P',
                     'desc'=>'set server port,default is 8080',
-                    'optional'=>true,
+                    'required'=>true,
                 ],
                 'inner-server'=>[
                     'short'=>'i',
                     'desc'=>'use inner server',
+                ],
+                'docroot'=>[
+                    'short'=>'t',
+                    'desc'=>'document root',
+                    'required'=>true,
+                ],
+                'file'=>[
+                    'short'=>'f',
+                    'desc'=>'index file',
+                    'required'=>true,
+                ],
+                'dry'=>[
+                    'desc'=>'dry mode, just show cmd',
                 ],
             ],
         ];
@@ -38,18 +51,12 @@ class HttpServer
     //TODO API 自动类，
     //TODO 自动填充 Service 类
     
-    protected $path_document='public';
     protected $args=[];
-    protected $document_root='';
+    protected $docroot='';
     
-    public static function RunQuickly($host,$port,$path)
+    public static function RunQuickly($options)
     {
-        $options=[
-            'host'=>$host,
-            'port'=>$port,
-            'path'=>$path,
-        ];
-        static::G()->init($options)->run($host,$port,$path);
+        static::G()->init($options)->run();
     }
     public function init($options=[], $context=null)
     {
@@ -58,22 +65,22 @@ class HttpServer
         
         $this->host=$options['host'];
         $this->port=$options['port'];
-        
+        $this->docroot=$options['docroot'];
         $this->args=$this->parseCaptures($options);
         
         $this->host=$this->args['host']??$this->host;
         $this->port=$this->args['port']??$this->port;
-        
+        $this->docroot=$this->args['docroot']??$this->docroot;
         return $this;
     }
     protected function parseCaptures($options)
     {
         foreach($options['args'] as $k=>$v){
-            $optional=$v['optional']??false;
             $required=$v['required']??false;
-            $a[]=$k.($optional?':':'').($required?'::':'');
+            $optional=$v['optional']??false;
+            $a[]=$k.($required?':':'').($optional?'::':'');
             if(isset($v['short'])){
-                $shorts[]=$v['short'].($optional?':':'').($required?'::':'');
+                $shorts[]=$v['short'].($required?':':'').($optional?'::':'');
                 $shorts_map[$v['short']]=$k;
             }
             
@@ -92,7 +99,7 @@ class HttpServer
         $args=array_merge($args,$pos_args);
         return $args;
     }
-    public function run($host,$port,$path)
+    public function run()
     {
         $this->showWelcome();
         
@@ -103,7 +110,7 @@ class HttpServer
     }
     protected function showWelcome()
     {
-        echo "Well Come to use DNMVCS ,for more info , use --help \n";
+        echo "Well Come to use DNMVCS , for more info , use --help \n";
     }
     protected function getCmdCaptures()
     {
@@ -117,16 +124,26 @@ class HttpServer
     }
     protected function showHelp()
     {
-        $doc=<<<EOT
-DNMVCS InnerHttpServer usage:
-
-EOT;
-foreach($this->options['args'] as $k => $v){
-    $t=$v['short']??'';
-    $t=$t?'-'.$t:'';
-    echo " --{$k}\t{$t}\n\t".$v['desc']."\n";
-}
+        $doc="Usage :\n\n";
         echo $doc;
+        foreach($this->options['args'] as $k => $v){
+            $long=$k;
+            
+            $t=$v['short']??'';
+            $t=$t?'-'.$t:'';
+            if($v['optional']??false){
+                $long.=' ['.$k.']';
+                $t.=' ['.$k.']';
+            }
+            if($v['required']??false){
+                $long.=' <'.$k.'>';
+                $t.=' <'.$k.'>';
+            }
+            echo " --{$long}\t{$t}\n\t".$v['desc']."\n";
+        }
+        echo "Current args :\n";
+        var_export($this->args);
+        echo "\n";
     }
     protected function runHttpServer()
     {
@@ -134,11 +151,16 @@ foreach($this->options['args'] as $k => $v){
         $PHP=escapeshellcmd($PHP);
         $host=escapeshellcmd($this->host);
         $port=escapeshellcmd($this->port);
-        $document_root=escapeshellcmd($this->document_root);
+        $document_root=escapeshellcmd($this->docroot);
        
         echo "DNMVCS: RunServer by php inner http server $host:$port\n";
+        
         $cmd="$PHP -S $host:$port -t $document_root ";
-        echo $cmd;return;
+        if(isset($this->args['dry'])){
+            echo $cmd;
+            echo "\n";
+            return;
+        }
         exec($cmd);
         
     }
