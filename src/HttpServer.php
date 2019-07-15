@@ -11,7 +11,6 @@ class HttpServer extends Server
                 'no-swoole'=>[
                     'desc'=>'do not use swoole httpserver',
                 ],
-                ''
             ],
     ];
     protected function checkSwoole($args)
@@ -29,12 +28,13 @@ class HttpServer extends Server
         if(isset($this->args['no-swoole'])){
             return parent::runHttpServer();
         }
-        return $this->runSwooleServer($this->docroot, $this->host, $this->port);
+        return $this->runSwooleServer($this->options['path'], $this->host, $this->port);
     }
     protected function runSwooleServer($path, $host, $port)
     {
-        //$this->showRunInfo($host, $port);
-        $dn_options=[];
+        echo "DNMVCS: RunServer by swooleserver $host:$port\n";
+        
+        $dn_options=$this->options['dnmvcs']??[];
         $dn_options['path']=$path;
         $dn_options['swoole']=$dn_options['swoole']??[];
         $dn_options['swoole']['host']=$host;

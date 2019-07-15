@@ -11,6 +11,8 @@ class HttpServer
             'host'=>'127.0.0.1',
             'port'=>'9527',
             'path'=>null,
+            'document_root'=>'public',
+            
             'args'=>[
                 'help'=>[
                     'short'=>'h',
@@ -63,8 +65,10 @@ class HttpServer
         
         $this->host=$options['host'];
         $this->port=$options['port'];
-        $this->docroot=$options['docroot'];
+        
         $this->args=$this->parseCaptures($options);
+        
+        $this->docroot=rtrim($this->options['path'],'/').'/'.$this->options['path_document'];
         
         $this->host=$this->args['host']??$this->host;
         $this->port=$this->args['port']??$this->port;

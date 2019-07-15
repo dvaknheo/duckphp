@@ -6,6 +6,7 @@ use DNMVCS\Core\Base\ControllerHelper as Helper;
 use DNMVCS\Core\App;
 use DNMVCS\SuperGlobal;
 use DNMVCS\Ext\Pager;
+use DNMVCS\Ext\API;
 
 class ControllerHelper extends Helper
 {
@@ -82,5 +83,26 @@ class ControllerHelper extends Helper
     public static function Pager()
     {
         return Pager::G();
+    }
+    ////
+    public function MapToService($serviceClass,$is_post=true)
+    {
+        if($is_post){
+            $input=static::SG()->_POST;
+        }else{
+            $input=static::SG()->_GET;
+        }
+        $method=static::getRouteCallingMethod();
+        try{
+            $data=API::Call($serviceClass, $method, $input);
+            if(!is_array($data) || !is_object($data)){
+                $data=['result'=>$data];
+            }
+        }catch(\Throwable $ex){
+            $data=[];
+            $data['error_message']=$ex->getMessage();
+            $data['error_code']=$ex->getCode();
+        }
+        static::ExitJson($data);
     }
 }

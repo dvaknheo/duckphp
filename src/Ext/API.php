@@ -1,10 +1,13 @@
 <?php
+namespace DNMVCS\Ext;
+use \ReflectionMethod;
+use \ReflectionException;
+
 class API
 {
     protected static function GetTypeFilter()
     {
         return [
-            'boolean'=>FILTER_VALIDATE_BOOLEAN  ,
             'bool'=>FILTER_VALIDATE_BOOLEAN  ,
             'int'=>FILTER_VALIDATE_INT,
             'float'=>FILTER_VALIDATE_FLOAT,
@@ -40,7 +43,7 @@ class API
             }
         }
         
-        $ret=$reflect->invokeArgs(new $service(), $args);
+        $ret=$reflect->invokeArgs(new $class(), $args);
         return $ret;
     }
 }

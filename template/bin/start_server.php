@@ -2,8 +2,12 @@
 <?php
 require(__DIR__.'/../headfile/headfile.php');
 
-$host='0.0.0.0';
-$port='8080';
-$path=realpath(__DIR__.'/../').'/';
+$path=realpath(__DIR__.'/../').'';
+$options=[
+    'host'=>'127.0.0.1',
+    'port'=>'8080',
+    'path'=>$path,
+    // 'path_document'=>'public',
+];
 
-DNMVCS\InnerHttpServer::RunQuickly($host,$port,$path);
+DNMVCS\HttpServer::RunQuickly($options);
