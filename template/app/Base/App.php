@@ -14,6 +14,6 @@ class App extends DNMVCS
     protected function onRun()
     {
         //Your code here
-        return parent::run();
+        return parent::onRun();
     }
 }
