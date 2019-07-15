@@ -3,7 +3,7 @@ namespace DNMVCS\Core;
 
 use DNMVCS\Core\SingletonEx;
 
-class InnerHttpServer
+class HttpServer
 {
     use SingletonEx;
     

@@ -1,10 +1,10 @@
 <?php
 namespace DNMVCS;
 
-use DNMVCS\Core\InnerHttpServer as Server;
+use DNMVCS\Core\HttpServer as Server;
 use DNMVCS\SwooleHttpd;
 
-class InnerHttpServer extends Server
+class HttpServer extends Server
 {
     public function run($host,$port,$path)
     {
