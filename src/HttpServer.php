@@ -6,22 +6,16 @@ use DNMVCS\SwooleHttpd;
 
 class HttpServer extends Server
 {
-    public function run($host,$port,$path)
-    {
-        $captures=$this->getCmdCaptures($opts);
-        $host=$captures['host']??$host;
-        $port=$captures['port']??$port;
-        
-        $this->showWelcome();
-
-        $this->runHttpServer();
-    }
+     const DEFAULT_OPTIONS_EX=[
+            'args'=>[
+                'no-swoole'=>[
+                    'desc'=>'do not use swoole httpserver',
+                ],
+                ''
+            ],
+    ];
     protected function checkSwoole($args)
     {
-        $flag=(isset($args['inner-server']))?true:false;
-        if ($flag) {
-            return false;
-        }
         if (!function_exists('swoole_version')) {
             return false;
         }
@@ -30,34 +24,26 @@ class HttpServer extends Server
         }
         return true;
     }
-    protected function runHttpServer($path, $host, $port)
+    protected function runHttpServer()
     {
-        if ($this->checkSwoole($captures)) {
-            return $this->runSwooleServer($path, $host, $port);
+        if(isset($this->args['no-swoole'])){
+            return parent::runHttpServer();
         }
-        return parent::runHttpServer($path, $host, $port);
+        return $this->runSwooleServer($this->docroot, $this->host, $this->port);
     }
     protected function runSwooleServer($path, $host, $port)
     {
-        $dn_options=$this->getConfig();
-        $dn_options=$dn_options??[];
+        //$this->showRunInfo($host, $port);
+        $dn_options=[];
         $dn_options['path']=$path;
         $dn_options['swoole']=$dn_options['swoole']??[];
-        $dn_options['swoole']['host']=$dn_options['swoole']['host']??$host;
-        $dn_options['swoole']['port']=$dn_options['swoole']['port']??$port;
-        $host=$dn_options['swoole']['host'];
-        $port=$dn_options['swoole']['port'];
+        $dn_options['swoole']['host']=$host;
+        $dn_options['swoole']['port']=$port;
 
         if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
             $dn_options['skip_setting_file']=true;
             echo "Don't run the template file directly \n";
         }
-        $this->showRunInfo($host, $port);
         DNMVCS::RunQuickly($dn_options);
     }
-    protected function getConfig()
-    {
-        return @include('start_server.config.php');
-    }
-
 }

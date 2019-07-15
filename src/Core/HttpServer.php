@@ -48,9 +48,6 @@ class HttpServer
     const DEFAULT_OPTIONS_EX=[
         ];
     
-    //TODO API 自动类，
-    //TODO 自动填充 Service 类
-    
     protected $args=[];
     protected $docroot='';
     
@@ -61,6 +58,7 @@ class HttpServer
     public function init($options=[], $context=null)
     {
         $options=array_replace_recursive(static::DEFAULT_OPTIONS, static::DEFAULT_OPTIONS_EX, $options);
+        
         $this->options=$options;
         
         $this->host=$options['host'];
@@ -75,6 +73,8 @@ class HttpServer
     }
     protected function parseCaptures($options)
     {
+        $shorts_map=[];
+        $shorts=[];
         foreach($options['args'] as $k=>$v){
             $required=$v['required']??false;
             $optional=$v['optional']??false;

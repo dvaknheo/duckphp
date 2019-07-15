@@ -35,7 +35,7 @@ class SwooleExt
         }
         $this->is_inited=true;
         
-        $options=$options['swoole'];
+        $options=$options['swoole']??[];
         if (empty($options)) {
             return;
         }
@@ -96,9 +96,7 @@ class SwooleExt
         $funcs=($callback)();
         ($this->appClass)::G()->system_wrapper_replace($funcs);
         
-        if (isset($funcs['set_exception_handler'])) {
-            SwooleHttpd::set_exception_handler([$this->appClass,'OnException']);
-        }
+        SwooleHttpd::set_exception_handler([$this->appClass,'OnException']);
     }
     public function runSwoole()
     {
