@@ -105,4 +105,18 @@ class ControllerHelper extends Helper
         }
         static::ExitJson($data);
     }
+    //TODO
+    public function explodeService($object,$namespace="MY\\Service\\")
+    {
+        $vars=array_keys(get_object_vars($object));
+        $l=strlen('Service');
+        foreach($vars as $v){
+            if(substr($v,0-$l)!=='Service'){continue;}
+            $name=ucfirst($v);
+            $class=$namespace.$name;
+            if(class_exists($class)){
+                $object->$v=$class::G();
+            }
+        }
+    }
 }
