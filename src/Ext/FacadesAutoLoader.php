@@ -27,23 +27,12 @@ class FacadesAutoLoader
     
     public function init($options=[], $context)
     {
-        $namespace='';
-        if ($context) {
-            $namespace=$dn->options['namespace'];
-        }
-        $namespace_facades=$options['facades_namespace'];
-        $facades_namespace=$options['facades_map'];
+        $namespace_facades=$options['facades_namespace']??'Facades';
+        $this->facades_map=$options['facades_map']??[];
         
-        if (substr($namespace_facades, 0, 1)!=='\\') {
-            $namespace_facades=$namespace.'\\'.$namespace_facades;
-        }
-        $namespace_facades=ltrim($namespace_facades, '\\');
-        $this->prefix=$namespace_facades.'\\Facade\\';
         
+        $this->prefix=trim($namespace_facades, '\\').'\\';
         $this->is_inited=true;
-        
-        if ($context) {
-        }
         spl_autoload_register([$this,'_autoload']);
         
         return $this;
@@ -59,18 +48,21 @@ class FacadesAutoLoader
         $basename=array_pop($blocks);
         $namespace=implode('\\', $blocks);
         
-        $code="namespace $namespace{ class $basename extends \\". __NAME_SPACE__."\\FacadesBase{} }";
+        $code="namespace $namespace{ class $basename extends \\". __NAMESPACE__  ."\\FacadesBase{} }";
         eval($code);
     }
     public function getFacadesCallback($class, $name)
     {
-        foreach ($this->facades_map as $k=>$v) {
-            if ($k===$class) {
-                $class=$v;
-                break;
+        $class=substr($class,strlen($this->prefix));
+        if(!empty($this->facades_map) && !class_exists($class)){
+            
+            foreach ($this->facades_map as $k=>$v) {
+                if ($k===$class) {
+                    $class=$v;
+                    break;
+                }
             }
         }
-        // DNexception::ThrowOn(!class_exists($class),"No Class");
         $object=call_user_func([$class,'G']);
         return [$object,$name];
     }

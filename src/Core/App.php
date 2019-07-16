@@ -169,8 +169,10 @@ class App
                 $this->initOptions($options);
             }
         }
+        $this->onInit();
         return $this->initAfterOverride();
     }
+    
     protected function initBeforeOverride($options)
     {
         AutoLoader::G()->init($options, $this)->run();
@@ -178,7 +180,6 @@ class App
     }
     protected function initAfterOverride()
     {
-        //$class=
         (self::class)::G($this);
         
         if ($this->options['enable_cache_classes_in_cli'] && PHP_SAPI==='cli') {
@@ -191,7 +192,6 @@ class App
         $this->error_view_inited=true;
         
         Route::G()->init($this->options, $this);
-        
         $this->initExtentions($this->options['ext']);
         return $this;
     }
@@ -247,6 +247,11 @@ class App
         
         $this->cleanUp();
         return $ret;
+    }
+    protected function onInit()
+    {
+         // for override;
+        return;
     }
     protected function onRun()
     {
