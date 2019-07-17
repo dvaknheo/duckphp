@@ -1,12 +1,16 @@
 digraph G{
 /* This is a graphviz file */
 graph [rankdir = "LR"];
-subgraph cluster_Basic {
-    label = "[DNMVCS\\Basic]";
-    SingletonEx [shape=Mdiamond];
-    SuperGlobal;
-    DNClassExt;
-    SuperGlobal -> SingletonEx[style="dashed"]; 
+
+
+
+SingletonEx;
+
+subgraph cluster_Base {
+    label = "[DNMVCS\\Base]";
+StrictModel -> SingletonEx [style="dashed"]; 
+StrictService -> SingletonEx [style="dashed"]; 
+SessionUsageController;
 }
 subgraph cluster_SwooleHttpd {
     node [style=filled];
@@ -64,22 +68,25 @@ subgraph cluster_Core {
     Core_App -> Core_Route;
     Core_App -> Core_RuntimeState;
     
-    Core_App -> Core_CoreSingleton [style="dashed"];
-    Core_AutoLoader -> Core_CoreSingleton [style="dashed"];
-    Core_ExceptionManager -> Core_CoreSingleton [style="dashed"];
-    Core_View -> Core_CoreSingleton [style="dashed"];
-    Core_Configer -> Core_CoreSingleton [style="dashed"];
-    Core_Route -> Core_CoreSingleton [style="dashed"];
-    Core_RuntimeState -> Core_CoreSingleton [style="dashed"];
+    Core_App -> Core_SingletonEx [style="dashed"];
+    Core_AutoLoader -> Core_SingletonEx [style="dashed"];
+    Core_ExceptionManager -> Core_SingletonEx [style="dashed"];
+    Core_View -> Core_SingletonEx [style="dashed"];
+    Core_Configer -> Core_SingletonEx [style="dashed"];
+    Core_Route -> Core_SingletonEx [style="dashed"];
+    Core_RuntimeState -> Core_SingletonEx [style="dashed"];
     
+    Core_HttpServer -> Core_SingletonEx [style="dashed"];
+
     Core_App [label="App";shape=Mdiamond];
-    Core_CoreSingleton [label="CoreSingleton";shape=Mdiamond];
+    Core_SingletonEx [label="SingletonEx";shape=Mdiamond];
     Core_AutoLoader [label="AutoLoader"];
     Core_ExceptionManager [label="ExceptionManager"];
     Core_View [label="View"];
     Core_Configer [label="Configer"];
     Core_Route [label="Route"];
     Core_RuntimeState [label="RuntimeState"];
+    Core_HttpServer [label="HttpServer"];
 }
 
 
@@ -97,19 +104,21 @@ DB_MedooDB [label="MedooDB"];
 
 
 }
-subgraph cluster_InnerExt {
-    label = "[DNMVCS\\InnerExt]";
+subgraph cluster_Ext {
+label = "[DNMVCS\\Ext]";
 
-    InnerExt -> SwooleExt;
-    InnerExt -> RouteHookRewrite;
-    InnerExt -> RouteHookRouteMap;
-    InnerExt -> DIExt;
-    InnerExt -> StrictCheck;
+    Ext -> SwooleExt;
+    Ext -> RouteHookRewrite;
+    Ext -> RouteHookRouteMap;
+    Ext -> DIExt;
+    Ext -> StrictCheck;
     
-    InnerExt -> SystemWrapperExt -> SuperGlobal;
-    InnerExt -> DBManager -> DB_DB;
+    Ext -> SystemWrapperExt -> SuperGlobal;
+    Ext -> DBManager -> DB_DB;
     
-    
+    Ext -> Lazybones;
+    Ext -> Pager;
+
 
     SwooleExt-> SwooleHttpd;
     
@@ -123,51 +132,44 @@ subgraph cluster_InnerExt {
     Lazybones -> SingletonEx [style="dashed"]; 
     
  
-    InnerExt [label="";style="dashed"];
 
-}
-subgraph cluster_Ext {
-label = "[DNMVCS\\Ext]";
 
-Ext -> Lazybones;
-Ext -> DBReusePoolProxy; 
-Ext -> FunctionDispatcher;
-Ext -> ProjectCommonAutoloader;
-Ext -> FacadesAutoLoader;
-Ext -> RouteHookDirectoryMode;
-Ext -> RouteHookOneFileMode;
-Ext -> ProjectCommonConfiger -> Core_Configer;
-Ext -> FunctionView  -> Core_View;
-FacadesAutoLoader ->FacadesBase ;
-RouteHookDirectoryMode -> SuperGlobal;
-RouteHookOneFileMode -> SuperGlobal;
+    Ext -> Lazybones;
+    Ext -> DBReusePoolProxy; 
+    Ext -> FunctionDispatcher;
+    Ext -> ProjectCommonAutoloader;
+    Ext -> FacadesAutoLoader;
+    Ext -> RouteHookDirectoryMode;
+    Ext -> RouteHookOneFileMode;
+    Ext -> ProjectCommonConfiger -> Core_Configer;
+    Ext -> FunctionView  -> Core_View;
+    FacadesAutoLoader ->FacadesBase ;
+    RouteHookDirectoryMode -> SuperGlobal;
+    RouteHookOneFileMode -> SuperGlobal;
 
-DBReusePoolProxy ->  SingletonEx [style="dashed"];  
-FunctionDispatcher -> SingletonEx [style="dashed"]; 
-ProjectCommonAutoloader -> SingletonEx [style="dashed"]; 
-FacadesAutoLoader -> SingletonEx [style="dashed"]; 
-RouteHookDirectoryMode -> SingletonEx [style="dashed"]; 
-RouteHookOneFileMode -> SingletonEx [style="dashed"]; 
-Ext [label="";style="dashed"];
+    DBReusePoolProxy ->  SingletonEx [style="dashed"];  
+    FunctionDispatcher -> SingletonEx [style="dashed"]; 
+    ProjectCommonAutoloader -> SingletonEx [style="dashed"]; 
+    FacadesAutoLoader -> SingletonEx [style="dashed"]; 
+    RouteHookDirectoryMode -> SingletonEx [style="dashed"]; 
+    RouteHookOneFileMode -> SingletonEx [style="dashed"];
+
+Pager -> SingletonEx [style="dashed"]; 
+
+    Ext [label="";style="dashed"];
 
 }
 
 
 
 DNMVCS -> Core_App;
-DNMVCS -> InnerExt;
 DNMVCS -> Ext;
-DNMVCS -> DNClassExt;
+DNMVCS -> ClassExt;
 
-DNMVCS [shape=Mdiamond];
-
-SingletonEx;
-Pager -> SingletonEx [style="dashed"]; 
-StrictModel -> SingletonEx [style="dashed"]; 
-StrictService -> SingletonEx [style="dashed"]; 
-ToolKit  -> SingletonEx [style="dashed"]; 
-SessionUsageController;
-
-
+    DNMVCS [shape=Mdiamond];
+    SingletonEx [shape=Mdiamond];
+    SuperGlobal;
+    
+    SuperGlobal -> SingletonEx[style="dashed"]; 
 
 }
