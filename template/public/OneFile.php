@@ -85,13 +85,9 @@ function H($str)
 ////////////////////////////////////
 $options=[];
 if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
-    echo "<div>Don't run the template file directly </div>";
-}
-if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
-    $options['setting_file_basename']='';
-}
-if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
-    $options['is_dev']=true;
+    $options['is_debug']=true;
+    $options['skip_setting_file']=true;
+    echo "<div>Don't run the template file directly </div>\n";
 }
 
 DN::RunOneFileMode($options);
