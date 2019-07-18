@@ -53,9 +53,8 @@ class FacadesAutoLoader
     }
     public function getFacadesCallback($class, $name)
     {
-        $class=substr($class,strlen($this->prefix));
-        if(!empty($this->facades_map) && !class_exists($class)){
-            
+        $class=substr($class, strlen($this->prefix));
+        if (!empty($this->facades_map) && !class_exists($class)) {
             foreach ($this->facades_map as $k=>$v) {
                 if ($k===$class) {
                     $class=$v;

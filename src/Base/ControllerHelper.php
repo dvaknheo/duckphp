@@ -85,20 +85,20 @@ class ControllerHelper extends Helper
         return Pager::G();
     }
     ////
-    public function MapToService($serviceClass,$is_post=true)
+    public function MapToService($serviceClass, $is_post=true)
     {
-        if($is_post){
+        if ($is_post) {
             $input=static::SG()->_POST;
-        }else{
+        } else {
             $input=static::SG()->_GET;
         }
         $method=static::getRouteCallingMethod();
-        try{
+        try {
             $data=API::Call($serviceClass, $method, $input);
-            if(!is_array($data) || !is_object($data)){
+            if (!is_array($data) || !is_object($data)) {
                 $data=['result'=>$data];
             }
-        }catch(\Throwable $ex){
+        } catch (\Throwable $ex) {
             $data=[];
             $data['error_message']=$ex->getMessage();
             $data['error_code']=$ex->getCode();
@@ -106,15 +106,17 @@ class ControllerHelper extends Helper
         static::ExitJson($data);
     }
     //TODO
-    public function explodeService($object,$namespace="MY\\Service\\")
+    public function explodeService($object, $namespace="MY\\Service\\")
     {
         $vars=array_keys(get_object_vars($object));
         $l=strlen('Service');
-        foreach($vars as $v){
-            if(substr($v,0-$l)!=='Service'){continue;}
+        foreach ($vars as $v) {
+            if (substr($v, 0-$l)!=='Service') {
+                continue;
+            }
             $name=ucfirst($v);
             $class=$namespace.$name;
-            if(class_exists($class)){
+            if (class_exists($class)) {
                 $object->$v=$class::G();
             }
         }

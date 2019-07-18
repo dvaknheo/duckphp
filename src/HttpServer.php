@@ -6,11 +6,9 @@ use DNMVCS\SwooleHttpd;
 
 class HttpServer extends Server
 {
-     const DEFAULT_OPTIONS_EX=[
-            'args'=>[
-                'no-swoole'=>[
-                    'desc'=>'do not use swoole httpserver',
-                ],
+    protected $cli_options_ex=[
+            'no-swoole'=>[
+                'desc'=>'do not use swoole httpserver',
             ],
     ];
     protected function checkSwoole($args)
@@ -25,7 +23,7 @@ class HttpServer extends Server
     }
     protected function runHttpServer()
     {
-        if(isset($this->args['no-swoole'])){
+        if (isset($this->args['no-swoole'])) {
             return parent::runHttpServer();
         }
         return $this->runSwooleServer($this->options['path'], $this->host, $this->port);

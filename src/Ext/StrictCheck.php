@@ -40,7 +40,6 @@ class StrictCheck
     }
     protected function checkEnv()
     {
-    
         if (!$this->appClass) {
             return false;
         }
