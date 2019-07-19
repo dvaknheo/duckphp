@@ -39,6 +39,7 @@ class SwooleExt
         if (empty($options)) {
             return;
         }
+        $this->with_http_handler_root=$options['with_http_handler_root']??false;
         
         $this->appClass=$options['swoolehttpd_app_class']??($context?get_class($context):null);
         
@@ -62,8 +63,10 @@ class SwooleExt
             $class::G($object);
         }
         //////////////
+        if ($this->with_http_handler_root) {
+            // stop default 404
+        }
         ($this->appClass)::G()->addBeforeRunHandler([static::class,'OnRun']);
-        $this->with_http_handler_root=$options['with_http_handler_root']??false;
         $options['http_handler']=[$this,'runSwoole'];
         SwooleHttpd::G()->init($options, null);
         return $this;
@@ -90,12 +93,8 @@ class SwooleExt
     }
     protected function initApp()
     {
-        ($this->appClass)::G()->options['error_404']=[static::class,'_EmptyFunction']; // do not double 404;
-        ($this->appClass)::G()->options['use_super_global']=true;
-        $callback=DNMVCS_SYSTEM_WRAPPER_INSTALLER;
-        $funcs=($callback)();
-        ($this->appClass)::G()->system_wrapper_replace($funcs);
-        
+        ($this->appClass)::G()->system_wrapper_replace(SwooleHttpd::G()->system_wrapper_get_providers());
+        SwooleHttpd::G()->http_404_handler=[$this->appClass,'On404'];
         SwooleHttpd::set_exception_handler([$this->appClass,'OnException']);
     }
     public function runSwoole()
@@ -105,7 +104,10 @@ class SwooleExt
         SwooleHttpd::G()->forkMasterInstances($classes, $exclude_classes);
         
         $ret=($this->appClass)::G()->run();
-        if (!$ret && $this->with_http_handler_root) {
+        if ($ret) {
+            return true;
+        }
+        if ($this->with_http_handler_root) {
             $classes=($this->appClass)::G()->getStaticComponentClasses();
             SwooleHttpd::G()->forkMasterInstances($classes);
             $this->in_fake=true;

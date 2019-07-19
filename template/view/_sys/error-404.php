@@ -2,7 +2,7 @@
 
 ?>
 404
-<?php if (DN::Developing()) {
+<?php if (DN::IsDebug()) {
     ?>
 Developing!
 <pre>

@@ -102,7 +102,7 @@ class App
         }
         $options['path']=rtrim($options['path'], '/').'/';
         
-        $options['on_404_handler']=[static::class,'On404'];
+        $options['skip_deal_route_404_handler']=true;
         $options['exception_handler']=[static::class,'OnException'];
         $options['dev_error_handler']=[static::class,'OnDevErrorHandler'];
         
@@ -122,9 +122,6 @@ class App
             $this->options['error_500']=null;
             $this->options['error_exception']=null;
             $this->options['error_debug']=null;
-        }
-        if ($this->options['use_404_to_other_framework']) {
-            $this->options['error_404']=[static::class,'_EmptyFunction'];
         }
         if (method_exists(static::class, 'set_exception_handler')) {
             $this->options['system_exception_handler']=[static::class,'set_exception_handler'];
@@ -241,9 +238,14 @@ class App
             ($v)();
         }
         $this->onRun();
-        $class=get_class(RuntimeState::G());  //ReCreateInstance;
-        RuntimeState::G(new $class)->begin();
+        
+        RuntimeState::ReCreateInstance();
+        RuntimeState::G()->begin();
+        
         $ret=Route::G()->run();
+        if (!$ret && !$this->options['use_404_to_other_framework']) {
+            static::On404();
+        }
         
         $this->cleanUp();
         return $ret;
@@ -260,6 +262,7 @@ class App
     }
     public function cleanUp()
     {
+        //is_before_show_done => RuntimeState ?
         if (!$this->is_before_show_done) {
             foreach ($this->beforeShowHandlers as $v) {
                 ($v)();

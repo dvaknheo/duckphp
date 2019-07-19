@@ -22,6 +22,7 @@ class Route
             'controller_welcome_class'=>'Main',
             'controller_index_method'=>'index',
             'on_404_handler'=>null,
+            'skip_deal_route_404_handler'=>false,
         ];
     
     public $parameters=[];
@@ -121,6 +122,8 @@ class Route
         if ($this->controller_base_class && substr($this->controller_base_class, 0, 1)!=='\\') {
             $this->controller_base_class=$namespace.'\\'.$this->controller_base_class;
         }
+        $this->skip_deal_route_404_handler=$options['skip_deal_route_404_handler'];
+        
         return $this;
     }
     public function bindServerData($server)
@@ -177,6 +180,7 @@ class Route
             $this->bindServerData($_SERVER);
         }
         $this->path_info=ltrim($this->path_info, '/');
+        $this->callback=null;
         foreach ($this->routeHooks as $hook) {
             ($hook)($this);
         }
@@ -190,6 +194,10 @@ class Route
             ($this->callback)(...$this->parameters);
             return true;
         }
+        if ($this->skip_deal_route_404_handler) {
+            return false;
+        }
+        
         if (!$this->on_404_handler) {
             header("HTTP/1.0 404 Not Found");
             echo "404 File Not Found.\n";

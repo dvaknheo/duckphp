@@ -13,6 +13,11 @@ class RuntimeState
     {
         return $this->is_running;
     }
+    public static function ReCreateInstance()
+    {
+        $class=get_class(static::G());
+        static::G(new $class);
+    }
     public function begin()
     {
         $this->is_running=true;

@@ -25,7 +25,7 @@ class DNMVCS extends App
     
     const DEFAULT_OPTIONS_EX=[
             'path_lib'=>'lib',
-            
+            'use_super_global'=>false,
             'db_setting_key'=>'database_list',
             'database_list'=>[],
             

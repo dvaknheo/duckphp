@@ -5,11 +5,10 @@ use DNMVCS\DNMVCS;
 
 class App extends DNMVCS
 {
-    public function init($options=[], $context=null)
+    public function onInit()
     {
-        parent::init($options, $context);
         //Your code here
-        return $this;
+        return parent::onInit();
     }
     protected function onRun()
     {

@@ -8,6 +8,7 @@ $options=[
     'port'=>'8080',
     'path'=>$path,
     // 'path_document'=>'public',
+    'dn'=>['is_debug'=>true,]
 ];
 
 DNMVCS\HttpServer::RunQuickly($options);
