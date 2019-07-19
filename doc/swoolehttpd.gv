@@ -1,0 +1,60 @@
+digraph G{
+/* This is a graphviz file */
+graph [rankdir = "LR"];
+
+
+
+subgraph cluster_SwooleHttpd {
+    node [style=filled];
+    label = "[DNMVCS\\SwooleHttpd]";
+
+    subgraph cluster_SwooleHttpd_trait {
+        SwooleHttpd_trait [style="dotted"];
+        SwooleHttpd_trait -> SwooleHttpd_SimpleHttpd;
+        SwooleHttpd_trait -> SwooleHttpd_Singleton;
+        SwooleHttpd_trait -> SwooleHttpd_Static;
+        SwooleHttpd_trait -> SwooleHttpd_SuperGlobal;
+        SwooleHttpd_trait -> SwooleHttpd_SystemWrapper;
+        SwooleHttpd_trait -> SwooleHttpd_WebSocket;
+        SwooleHttpd_trait -> SwooleHttpd_Handler;
+    }
+    
+    SwooleHttpd -> SwooleHttpd_trait;
+    
+    SwooleHttpd -> SwooleCoroutineSingleton;
+    SwooleHttpd -> SwooleContext;
+    SwooleHttpd -> SwooleException;
+    SwooleHttpd -> Swoole404Exception;
+
+    SwooleHttpd -> SwooleSessionHandler;
+    SwooleHttpd -> SwooleSuperGlobal;
+
+
+    SwooleHttpd -> SwooleSingleton [style="dotted"];
+    SwooleCoroutineSingleton -> SwooleSingleton [style="dotted"];
+    SwooleContext -> SwooleSingleton [style="dotted"];
+    SwooleSuperGlobal -> SwooleSingleton [style="dotted"];
+    SwooleSessionHandler -> SwooleSingleton [style="dotted"];
+
+    SwooleHttpd [label="SwooleHttpd";shape=Mdiamond];
+    SwooleSingleton [label="SwooleSingleton";shape=Mdiamond];
+
+    SwooleCoroutineSingleton [label="SwooleCoroutineSingleton"];
+    SwooleException [label="SwooleException"];
+    Swoole404Exception [label="Swoole404Exception"];
+    SwooleContext [label="SwooleContext"];
+    SwooleSuperGlobal [label="SwooleSuperGlobal"];
+    SwooleSessionHandler [label="SwooleSessionHandler"];
+    
+    SwooleExt [label="SwooleExt";shape=Mdiamond];
+    
+    SwooleExt -> SwooleExtAppInterface;
+    SwooleExt -> SwooleExtServerInterface;
+    
+    SwooleHttpd -> SwooleExtServerInterface [style="dashed"];
+
+
+    }
+
+
+}

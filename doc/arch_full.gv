@@ -2,20 +2,24 @@ digraph G{
 /* This is a graphviz file */
 graph [rankdir = "LR"];
 
-
-Controller -> Service -> Model;
+    Controller -> Service -> Model;
     
-Service -> LibService;
-LibService->ExModel;
-ExModel -> Model;
-LibService->Model;
-Controller -> View;
+    Service -> LibService;
+    LibService->ExModel;
+    ExModel -> Model;
+    LibService->Model;
+    Controller -> View;
 
-Controller ->ControllerHelper;
+    Controller ->ControllerHelper;
 
-Service ->ServiceHelper;
-LibService ->ServiceHelper;
+    Service ->ServiceHelper;
+    LibService ->ServiceHelper;
 
-Model ->ModelHepler;
-ExModel ->ModelHepler;
+    Model ->ModelHepler;
+    ExModel ->ModelHepler;
+
+    ControllerHelper [label="ControllerHelper as C"];
+    ServiceHelper [label="ServiceHelper as S"];
+    ModelHepler [label="ModelHepler as M"];
+
 }
