@@ -8,7 +8,9 @@ class RuntimeState
     use SingletonEx;
     
     protected $is_running=false;
+    public $is_before_show_done=false;
     protected $error_reporting_old;
+    
     public function isRunning()
     {
         return $this->is_running;

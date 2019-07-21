@@ -80,7 +80,6 @@ class App
     public $override_root_class='';
     protected $beforeRunHandlers=[];
     protected $error_view_inited=false;
-    protected $is_before_show_done=false;
     public static function RunQuickly(array $options=[], callable $after_init=null)
     {
         if (!$after_init) {
@@ -263,11 +262,11 @@ class App
     public function cleanUp()
     {
         //is_before_show_done => RuntimeState ?
-        if (!$this->is_before_show_done) {
+        if (! RuntimeState::G()->is_before_show_done) {
             foreach ($this->beforeShowHandlers as $v) {
                 ($v)();
             }
-            $this->is_before_show_done=true;
+            RuntimeState::G()->is_before_show_done=true;
         }
         RuntimeState::G()->end();
         $this->is_in_exception=false;
@@ -600,7 +599,7 @@ trait Core_Helper
         foreach ($this->beforeShowHandlers as $v) {
             ($v)();
         }
-        $this->is_before_show_done=true;
+        RuntimeState::G()->is_before_show_done=true;
         if ($this->options['skip_view_notice_error']) {
             RuntimeState::G()->skipNoticeError();
         }
