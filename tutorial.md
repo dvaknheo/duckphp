@@ -51,11 +51,12 @@ php bin/start_server.php
 <?php
 // app/Controller/test.php
 namespace MY\Controller;
+
 // use MY\Base\BaseController;
 use MY\Base\ControllerHelper as C;
-
 use MY\Service\MiscService;
-class test //extends BaseController
+
+class test // extends BaseController
 {
     public function done()
     {
@@ -67,15 +68,16 @@ class test //extends BaseController
 ```
 控制器里，我们处理外部数据，不做业务逻辑，业务逻辑在 Service 层做。
 BaseController  这个基类，如果不强制要求也可以不用。
-
+MY 这个命名空间前缀可在选项 ['namespace'] 中变更。
 ### Service 服务
 业务逻辑层。
 ```php
 <?php
 // app/Service/MiscService.php
 namespace MY\Service;
-use MY\Base\BaseService;
+
 use MY\Base\ServiceHelper as S;
+use MY\Base\BaseService;
 use MY\Model\NoDB_MiscModel;
 
 class MiscService extends BaseService
@@ -88,6 +90,8 @@ class MiscService extends BaseService
     }
 }
 ```
+BaseService 也是不强求的，我们 extends BaseService 是为了能用 G 函数
+
 这里调用了 NoDB_MiscModel 
 
 ### Model 模型
@@ -112,6 +116,7 @@ class NoDB_MiscModel extends BaseModel
     }
 }
 ```
+
 ### 最后显示结果
 ```text
 test
@@ -123,6 +128,8 @@ test
 同级之间的东西不能相互调用
 #### 完整架构图
 
+![arch](doc/arch.gv.svg)
+
 #### 开始之前
 
 命名空间 MY 是 可调的。比如调整成 MyProject ,TheBigOneProject  等
@@ -130,28 +137,21 @@ test
 作为应用程序员， 你不能引入 DNMVCS 的任何东西，就当 DNMVCS 命名空间不存在。
 主力程序员才去研究 DNMVCS 类的东西。
 
-* 写 Model 你可能要引入 MY\Base\ModelHelper 类别名为 M 。
-* 写 Serivce 你可能要引入 MY\Base\SerivceHelper 类别名为 S 。
-* 写 Controller 你可能要引入 MY\Base\ControllerHelper 类别名为 C 。
+* 写 Model 你可能要引入 MY\Base\ModelHelper 助手类别名为 M 。
+* 写 Serivce 你可能要引入 MY\Base\SerivceHelper 助手类别名为 S 。
+* 写 Controller 你可能要引入 MY\Base\ControllerHelper 助手类别名为 C 。
 * 不能交叉引入其他 Helper 类。如果需要交叉，那么你就是错的。
 
 Model, Service 以及助手类都有静态的 G 函数， G() 函数就是可变单例函数。
 当你用到助手类的 G 函数的形式的时候，说明你这个功能不常用。
 
-assign* 系列函数都是两种调用方式, 单个assign($key,$value) 和 assign($assoc)，后者是批量导入的版本。
-
 
 #### Model 编写模型用到的方法
-
+ 
 抛异常：M::ThrowOn($flag,$messsage,$code=0,$exception_class=null); 如果 flag 成立，抛出 $exception_class(默认为 Exception 类);
 
-M::ThrowOn();
 
-Model 类 还引用到相关
-
-* M::DB($tag=null) 获得特定数据库类。
-* M::DB_R() 获得读数据库类。
-* M::DB_W() 获得写数据库类。
+如果要使用数据库 DNMVCS/Core 是不提供的， DNMVCS/Framework 才提供
 
 #### Serivce 编写服务用到的方法
 
@@ -180,7 +180,7 @@ S::ThrowOn() 和 M::ThrowOn 一样;
 
 除去  Service 的同名方法 外，还有
 
-1. 显示相关的
+##### 1. 显示相关的
 
     显示视图用 C::Show($data,$view=null); 如果view 是空等价于 控制器名/方法名 的视图。
     最偷懒的是调用 C::Show(get_defined_vars());
@@ -195,70 +195,32 @@ S::ThrowOn() 和 M::ThrowOn 一样;
     C::assignViewData($name,$var) 来设置视图的输出。
 
     HTML 编码用 C::H($str); $str 可以是数组。
-2. 跳转退出方面
+##### 2. 跳转退出方面
 
     404 跳转退出 C::Exit404();
     302 跳转退出 C::ExitRedirect($url);
-    302 跳转退出 内部地址 C::ExitRouteTo($url);
+    302 跳转退出内部地址 C::ExitRouteTo($url);
     输出 Json 退出  C::ExitJson($data);
 
-3. 路由相关
+##### 3. 路由相关
 
     用 C::URL($url) 获取相对 url;
+    用 C::getRouteCallingMethod() 获取当前调用方法。常用于构造函数里做权限判断。
+    用 C::Parameters() 获取切片。在DNMVCS/Framework 中扩展成其他用途
 
-    用 C::Parameters() 获取切片，对地址重写有效。
-    如果要做权限判断 构造函数里 C::getRouteCallingMethod() 获取当前调用方法。
+##### 4. 系统替代函数 
 
-    ! 用 C::getRewrites() 和 C::getRoutes(); 查看 rewrite 表，和 路由表。
-
-4. 系统替代函数 
     用 C::header() 代替系统 header 兼容命令行等。
     用 C::setcookie() 代替系统 setcookie 兼容命令行等。
     用 C::exit_system() 代替系统 exit; 便于接管处理。
-
-5. 异常相关
+    set_exception_handler
+    register_shutdown_function
+##### 5. 异常相关
 
     如果想接管默认异常，用 C::setDefaultExceptionHandler($handler);
     如果对接管特定异常，用 C::assignExceptionHandler($exception_name,$handler);
     设置多个异常到回调则用 C::setMultiExceptionHandler($exception_name=[],$handler);
 
-6. Swoole 兼容
-
-    如果想让你们的项目在 swoole 下也能运行，那就要加上这几点
-    用 C::SG() 代替 超全局变量的 $ 前缀 如 $_GET =>  C::SG->_GET
-
-    使用以下参数格式都一样的 swoole 兼容静态方法，代替同名全局方法。
-
-    C::session_start(),
-    C::session_destroy(),
-    C::session_id()，
-    如 session_start() => C::session_start();。
-
-    或许你会用到 C::RecordsetUrl(),C::RecordsetH()
-
-#### 编写 兼容 Swoole 的代码
-
-全局变量 global $a='val'; =>  $a=C::GLOBALS('a','val');
-
-静态变量 global $a='val'; =>  $a=C::STATICS('a','val');
-
-类内静态变量
-$x=static::$abc; => $x=C::CLASS_STATICS(static::class,'abc');
-
-#### 学习高级路由
-
-
-assignRewrite($old_url,$new_url=null)
-
-    rewrite  重写 path_info
-    不区分 request method , 重写后可以用 ? query 参数
-    ~ 开始表示是正则 ,为了简单用 / 代替普通正则的 \/
-    替换的url ，用 $1 $2 表示参数
-assignRoute($route,$callback=null)
-
-    给路由加回调。
-    关于回调模式的路由。详细情况看之前介绍
-    和在 options['route'] 添加数据一样
 
 #### 高级程序员
 
@@ -288,7 +250,7 @@ DNMVCS 调用代理 $class 的方法。
 
 
 ### 目录结构
-在看默认选项前， 我们看工程的目录结构，即默认目录结构
+在看默认选项前， 我们看工程的桩代码,默认目录结构
 
 ```text
 +---app                     // psr-4 标准的自动加载目录
@@ -323,6 +285,7 @@ DNMVCS 调用代理 $class 的方法。
 \---public                  // 网站目录
         index.php           // 主页，入口页
 ```
+
 文件都不复杂。基本都是空类或空继承类，便于不同处理。
 这些结构能精简么？
 可以，你可以一个目录都不要。
@@ -331,7 +294,8 @@ DNMVCS 调用代理 $class 的方法。
     ContrllorHelper,ModelHelper,ServiceHelper 如果你一个人偷懒，直接用 APP 类也行  
     headfile 目录是为了直接命令行运行 template 的文件，你可以改 入口文件去掉。
 
-### 从入口开始
+### 入口文件
+
 我们主要看的是 入口类。 public/index.php
 
 ```php
@@ -340,7 +304,7 @@ require(__DIR__.'/../headfile/headfile.php');
 
 $options=[];
 if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
-    $options['is_dev']=true;
+    $options['is_debug']=true;
     $options['skip_setting_file']=true;
     echo "<div>Don't run the template file directly </div>\n";
 }
@@ -359,39 +323,39 @@ var_export(\DNMVCS\DNMVCS::G()->options);
 ```php
 const DEFAULT_OPTIONS=[
     //// basic ////
-    'path'=>null,               基本目录, 其他目录依赖的基础目录，自动处理 /。
-    'namespace'=>'MY',          工程的 autoload 的命名空间
-    'path_namespace'=>'app',    工程对应的命名空间 目录
+    'path'=>null,               // 基本目录, 其他目录依赖的基础目录，自动处理 “/”。
+    'namespace'=>'MY',          // 工程的 autoload 的命名空间
+    'path_namespace'=>'app',    // 工程对应的命名空间 目录
     
-    'skip_app_autoload'=>false, 如果你用compose.json 设置加载，改为 true;
+    'skip_app_autoload'=>false, // 如果你用compose.json 设置加载，改为 true;
     
     //// properties ////
-    'override_class'=>'Base\App',
-    'is_dev'=>false,            是否是在开发状态
-    'platform'=>'',             配置平台标志，Platform 函数得到的是这个
-    'path_view'=>'view',        视图的目录，基于 path 配置
+    'override_class'=>'Base\App',   // 基类，后面详细说明
+    'is_debug'=>false,          // 是否是在开发状态
+    'platform'=>'',             //  配置平台标志，Platform 函数得到的是这个
+    'path_view'=>'view',        // 视图的目录，基于 path 配置
 
     'skip_view_notice_error'=>true,
-                                view 视图里忽略 notice 错误。
+                                // view 视图里忽略 notice 错误。
     'use_inner_error_view'=>false,
-                                快捷方式设  error_* 配置全为 null
+                                // 快捷方式设  error_* 配置全为 null
     //// config ////
-    'path_config'=>'config',    配置的目录，基于 path 配置
-    'all_config'=>[],           合并入的 config
+    'path_config'=>'config',    // 配置的目录，基于 path 配置
+    'all_config'=>[],           // 合并入的 config
     'setting'=>[],
     'setting_file'=>'setting',  
-    'skip_setting_file'=>false, 跳过设置文件，用于
-    'reload_for_flags'=>true,   从设置文件里重新加载 is_debug,platform 选项
+    'skip_setting_file'=>false, // 跳过设置文件，用于
+    'reload_for_flags'=>true,   // 从设置文件里重新加载 is_debug,platform 选项
     
     //// error handler ////
     'error_404'=>'_sys/error-404',
-                                404 页面
+                                // 404 页面
     'error_500'=>'_sys/error-500',
-                                错误页面
+                                // 错误页面
     'error_exception'=>'_sys/error-exception',  
-                                异常页面
+                                // 异常页面
     'error_debug'=>'_sys/error-debug',
-                                调试页面
+                                // 调试页面
     
     //// controller ////
     'controller_base_class'=>null,
@@ -399,6 +363,10 @@ const DEFAULT_OPTIONS=[
     'controller_prefix_post'=>'do_',
                                 // POST 前缀，先搜索带前缀的方法
     'controller_welcome_class'=>'Main', // 默认控制器类
+
+    'ext'=>[],  // 扩展
+    
+    'enable_cache_classes_in_cli'=>true, // 命令行下缓存 类数据
 ];
 ```
 
@@ -406,7 +374,9 @@ const DEFAULT_OPTIONS=[
 总之，这里很明白了。
 
 ##### 基本选项
+'namespace' =>=>'MY',
 
+    工程的 autoload 的命名空间
 'override_class'=>'Base\App',
 
     **重要选项**
@@ -507,3 +477,64 @@ var_dump($ret);
 9. 调用扩展类，组件类的动态方法实现目的
 10. 继承接管，特定类实现目的
 11. 魔改，硬改 DNMVCS 的代码实现目的
+
+----
+
+6. Swoole 兼容
+
+    如果想让你们的项目在 swoole 下也能运行，那就要加上这几点
+    用 C::SG() 代替 超全局变量的 $ 前缀 如 $_GET =>  C::SG->_GET
+
+    使用以下参数格式都一样的 swoole 兼容静态方法，代替同名全局方法。
+
+    C::session_start(),
+    C::session_destroy(),
+    C::session_id()，
+    如 session_start() => C::session_start();。
+
+    或许你会用到 C::RecordsetUrl(),C::RecordsetH()
+
+#### 编写 兼容 Swoole 的代码
+
+全局变量 global $a='val'; =>  $a=C::GLOBALS('a','val');
+
+静态变量 global $a='val'; =>  $a=C::STATICS('a','val');
+
+类内静态变量
+$x=static::$abc; => $x=C::CLASS_STATICS(static::class,'abc');
+
+#### 学习高级路由
+
+
+assignRewrite($old_url,$new_url=null)
+
+    rewrite  重写 path_info
+    不区分 request method , 重写后可以用 ? query 参数
+    ~ 开始表示是正则 ,为了简单用 / 代替普通正则的 \/
+    替换的url ，用 $1 $2 表示参数
+assignRoute($route,$callback=null)
+
+    给路由加回调。
+    关于回调模式的路由。详细情况看之前介绍
+    和在 options['route'] 添加数据一样
+assign* 系列函数都是两种调用方式, 单个assign($key,$value) 和 assign($assoc)，后者是批量导入的版本。
+
+
+assign* 系列函数都是两种调用方式, 单个assign($key,$value) 和 assign($assoc)，后者是批量导入的版本。
+
+
+#### Model 编写模型用到的方法
+
+抛异常：M::ThrowOn($flag,$messsage,$code=0,$exception_class=null); 如果 flag 成立，抛出 $exception_class(默认为 Exception 类);
+
+M::ThrowOn();
+
+Model 类 还引用到相关
+
+* M::DB($tag=null) 获得特定数据库类。
+* M::DB_R() 获得读数据库类。
+* M::DB_W() 获得写数据库类。
+    用 C::Parameters() 获取切片，对地址重写有效。
+    如果要做权限判断 构造函数里 C::getRouteCallingMethod() 获取当前调用方法。
+
+    ! 用 C::getRewrites() 和 C::getRoutes(); 查看 rewrite 表，和 路由表。

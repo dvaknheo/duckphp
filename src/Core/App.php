@@ -193,10 +193,7 @@ class App
     }
     protected function initExtentions($exts)
     {
-        $t=explode('\\', $this->override_root_class);
-        array_pop($t);
-        $ns=implode('\\', $t).'\\';
-        
+        $DefaultNamespace='DNMVCS\\';
         
         foreach ($exts as $ext =>$options) {
             if ($options===false) {
@@ -206,7 +203,7 @@ class App
             $options=is_string($options)?$this->options[$options]:$options;
             $class='';
             do {
-                $class=$ns.$ext;
+                $class=$DefaultNamespace.$ext;
                 if (class_exists($class)) {
                     break;
                 }
