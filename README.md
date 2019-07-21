@@ -42,7 +42,7 @@ Controller --> Service ------------------------------ ---> Model
             \         ---------------->ServiceHelper
              \-->ControllerHelper
 ```
-![arch](doc/arch.gv.svg)
+![arch_full](doc/arch_full.gv.svg)
 
 * Controller 按 URL 入口走 调用 view 和service
 * Service 按业务走 ,调用 model 和其他第三方代码。

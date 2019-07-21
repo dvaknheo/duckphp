@@ -128,7 +128,7 @@ test
 同级之间的东西不能相互调用
 #### 完整架构图
 
-![arch](doc/arch.gv.svg)
+![arch_full](doc/arch_full.gv.svg)
 
 #### 开始之前
 
