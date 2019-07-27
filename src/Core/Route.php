@@ -18,9 +18,8 @@ class Route
             'controller_methtod_for_miss'=>null,
             
             'controller_prefix_post'=>'do_',
-            
             'controller_welcome_class'=>'Main',
-            'controller_index_method'=>'index',
+            
             'on_404_handler'=>null,
             'skip_deal_route_404_handler'=>false,
         ];
@@ -96,6 +95,8 @@ class Route
     
     public function init($options=[], $context=null)
     {
+        $this->controller_index_method='index';
+        
         $options=array_merge(static::DEFAULT_OPTIONS, $options);
         
         $this->controller_enable_paramters=$options['controller_enable_paramters'];
@@ -107,7 +108,7 @@ class Route
         $this->controller_methtod_for_miss=$options['controller_methtod_for_miss'];
         
         $this->controller_welcome_class=$options['controller_welcome_class'];
-        $this->controller_index_method=$options['controller_index_method'];
+        
         $this->on_404_handler=$options['on_404_handler'];
         
         $namespace=$options['namespace'];

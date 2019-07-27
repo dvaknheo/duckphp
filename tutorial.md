@@ -1,5 +1,6 @@
 # DNMVCS 教程
 ## 快速入门
+### 安装
 假定不管什么原因，选用了 DNMVCS 这个框架，需要快速入门.
 
 最快的方式是从 github 下载 DNMVCS。
@@ -135,7 +136,7 @@ test
 命名空间 MY 是 可调的。比如调整成 MyProject ,TheBigOneProject  等
 
 作为应用程序员， 你不能引入 DNMVCS 的任何东西，就当 DNMVCS 命名空间不存在。
-主力程序员才去研究 DNMVCS 类的东西。
+核心程序员才去研究 DNMVCS 类的东西。
 
 * 写 Model 你可能要引入 MY\Base\ModelHelper 助手类别名为 M 。
 * 写 Serivce 你可能要引入 MY\Base\SerivceHelper 助手类别名为 S 。
@@ -145,13 +146,12 @@ test
 Model, Service 以及助手类都有静态的 G 函数， G() 函数就是可变单例函数。
 当你用到助手类的 G 函数的形式的时候，说明你这个功能不常用。
 
-
 #### Model 编写模型用到的方法
  
-抛异常：M::ThrowOn($flag,$messsage,$code=0,$exception_class=null); 如果 flag 成立，抛出 $exception_class(默认为 Exception 类);
+M::ThrowOn($flag,$messsage,$code=0,$exception_class=null);
+抛异常 如果 flag 成立，抛出 $exception_class(默认为 Exception 类);
 
-
-如果要使用数据库 DNMVCS/Core 是不提供的， DNMVCS/Framework 才提供
+如果要使用数据库，见后文。
 
 #### Serivce 编写服务用到的方法
 
@@ -159,12 +159,11 @@ S::ThrowOn() 和 M::ThrowOn 一样;
 
 此外还有
 
-* 判断是否在调试状态 S::IsDebug();
-* 判断所在平台 S::Platform();
-
-* 获得设置 S::Setting($key) 默认设置文件是在  config/setting.php 。
-* 载入配置 S::LoadConfig($key,$basename)
-* 获得配置 S::Config($key)
+* S::IsDebug(); 判断是否在调试状态 ;
+* S::Platform(); 判断所在平台 ;
+* S::Setting($key); 获得设置  默认设置文件是在  config/setting.php 。
+* S::LoadConfig($key,$basename); 载入配置 
+* S::Config($key); 获得配置 
 
 设置是敏感信息,不存在于版本控制里面。而配置是非敏感。
 
@@ -182,19 +181,25 @@ S::ThrowOn() 和 M::ThrowOn 一样;
 
 ##### 1. 显示相关的
 
-    显示视图用 C::Show($data,$view=null); 如果view 是空等价于 控制器名/方法名 的视图。
+    C::Show($data,$view=null);
+
+    显示视图用  如果view 是空等价于 控制器名/方法名 的视图。
     最偷懒的是调用 C::Show(get_defined_vars());
 
-    如果只显示一块，用 C::ShowBlock($view,$data=null); 如果$data 是空，把父视图的数据带入，
+    C::ShowBlock($view,$data=null);
     
+    如果只显示一块，用  如果$data 是空，把父视图的数据带入，
+    
+    C::setViewWrapper($view_header,$view_footer)
+    在控制器的构造函数中。用  来设置页眉页脚。
+    
+    页眉页脚的变量和 view 页面是同域的。 用 C::setViewWrapper(null,null) 清理页眉页脚。
+    另 C::ShowBlock 没用到页眉页脚。而且 C::ShwoBlock 只单纯输出，不做多余动作。
 
-    在控制器的构造函数中。用 C::setViewWrapper($view_header,$view_footer) 来设置页眉页脚。
-    页眉页脚的变量和 view 页面是同域的。 C::setViewWrapper(null,null) 清理页眉页脚。
-    C::ShowBlock 没用到页眉页脚。而且 C::ShwoBlock 只单纯输出，不做多余动作。
+    C::assignViewData($name,$var); 设置视图的输出。
 
-    C::assignViewData($name,$var) 来设置视图的输出。
+    C::H($str); HTML 编码用  $str 可以是数组。
 
-    HTML 编码用 C::H($str); $str 可以是数组。
 ##### 2. 跳转退出方面
 
     404 跳转退出 C::Exit404();
@@ -204,17 +209,18 @@ S::ThrowOn() 和 M::ThrowOn 一样;
 
 ##### 3. 路由相关
 
-    用 C::URL($url) 获取相对 url;
-    用 C::getRouteCallingMethod() 获取当前调用方法。常用于构造函数里做权限判断。
-    用 C::Parameters() 获取切片。在DNMVCS/Framework 中扩展成其他用途
-
+    C::URL($url) 获取相对 url;
+    C::getRouteCallingMethod() 获取当前调用方法。常用于构造函数里做权限判断。
+    C::Parameters() 获取切片。在DNMVCS/Framework 中扩展成其他用途
+    C::Parameters() 获取切片，对地址重写有效。
 ##### 4. 系统替代函数 
 
     用 C::header() 代替系统 header 兼容命令行等。
     用 C::setcookie() 代替系统 setcookie 兼容命令行等。
-    用 C::exit_system() 代替系统 exit; 便于接管处理。
-    set_exception_handler
-    register_shutdown_function
+    用 C::exit_system() 代替系统 exit; 便于接管处理。 
+    用 C::set_exception_handler() 代替系统 set_exception_handler 便于接管处理。
+    用 C::register_shutdown_function() 代替系统 set_exception_handler 便于接管处理。
+    
 ##### 5. 异常相关
 
     如果想接管默认异常，用 C::setDefaultExceptionHandler($handler);
@@ -226,9 +232,13 @@ S::ThrowOn() 和 M::ThrowOn 一样;
 
 如果你想偷懒， *Helper 改为 App 由 MY\Base\App 的实现也行。
 
-如果要完成 rewrite ，或者自定义路由。那就得调整 MY\Base\App 类了。
+MY\Base\App override 的两个重要方法
 
-在 init(), run() 方法里你会用到
+onInit();
+
+onRun();
+
+
 $this->addRouteHook($hook,$prepend=false,$once=true)
 
 添加路由和重写  $this->assignRewrite $this->assignRoute();
@@ -238,15 +248,6 @@ $this->stopRunDefaultRouteHook($hook)
 
 添加显示前处理 用 $this->addBeforeShowHandler($callback)
 运行前 $this->addBeforeRunHandler($callback)
-
-* 动态扩展相关
-
-$this->extendClassMethodByThirdParty($class,$static_methods=[],$dyminac_methods=[]);
-DNMVCS 调用代理 $class 的方法。
-
-
-扩展静态方法 $this->assignStaticMethod($method,$callback);
-扩展动态方法 $this->assignDynamicMethod($method,$callback);
 
 
 ### 目录结构
@@ -286,9 +287,9 @@ DNMVCS 调用代理 $class 的方法。
         index.php           // 主页，入口页
 ```
 
-文件都不复杂。基本都是空类或空继承类，便于不同处理。
-这些结构能精简么？
-可以，你可以一个目录都不要。
+    文件都不复杂。基本都是空类或空继承类，便于不同处理。
+    这些结构能精简么？
+    可以，你可以一个目录都不要。
 
     BaseContrllor, BaseModel, BaseService 是你自己要改的基类，基本只实现了单例模式。
     ContrllorHelper,ModelHelper,ServiceHelper 如果你一个人偷懒，直接用 APP 类也行  
@@ -296,7 +297,7 @@ DNMVCS 调用代理 $class 的方法。
 
 ### 入口文件
 
-我们主要看的是 入口类。 public/index.php
+我们看入口类文件 public/index.php
 
 ```php
 <?php
@@ -362,11 +363,13 @@ const DEFAULT_OPTIONS=[
                                 // 控制器必须基类
     'controller_prefix_post'=>'do_',
                                 // POST 前缀，先搜索带前缀的方法
-    'controller_welcome_class'=>'Main', // 默认控制器类
+    'controller_welcome_class'=>'Main',
+                                // 默认控制器类
 
-    'ext'=>[],  // 扩展
+    'ext'=>[],                  // 扩展
     
-    'enable_cache_classes_in_cli'=>true, // 命令行下缓存 类数据
+    'enable_cache_classes_in_cli'=>true, 
+                                // 命令行下缓存 类数据
 ];
 ```
 
@@ -396,7 +399,7 @@ const DEFAULT_OPTIONS=[
     这是个快捷配置的选项。等价于 把 error_* 配置都设置为 null. 用于调试
 'use_404_to_other_framework'=>false,  
 
-    这是个快捷配置的选项。用于 404 后整合其他框架 等价于 error_404=function(){}
+    这是个快捷配置的选项。用于 404 后整合其他框架
 
 ##### 配置设置
 
@@ -439,12 +442,6 @@ error_* 选项为 null 用默认，为 callable 是回调，为string 则是调�
 
     默认欢迎类是  Main 。
 
-#####  那些没提到的选项
-全选项里还有 
-。。。
-本篇作为教程，忽略这些高级选项。
-
-
 *进阶 错误管理.*
 ### 常见任务： 使用数据库
 使用数据库，在 DNMVCS 设置里正确设置 database_list 这个数组，包含多个数据库配置
@@ -478,9 +475,42 @@ var_dump($ret);
 10. 继承接管，特定类实现目的
 11. 魔改，硬改 DNMVCS 的代码实现目的
 
-----
 
-6. Swoole 兼容
+### 从 DNMVCS/Core 到 DNMVCS/Framework
+----
+#### Model 编写模型用到的方法
+数据库
+
+* M::DB($tag=null) 获得特定数据库类。
+* M::DB_R() 获得读数据库类。
+* M::DB_W() 获得写数据库类。
+
+#### 学习高级路由
+
+
+用 C::Parameters() 获取切片，对地址重写有效。
+如果要做权限判断 构造函数里 C::getRouteCallingMethod() 获取当前调用方法。
+
+! 用 C::getRewrites() 和 C::getRoutes(); 查看 rewrite 表，和 路由表。
+
+assignRewrite($old_url,$new_url=null)
+
+assign* 系列函数都是两种调用方式, 单个assign($key,$value) 和 assign($assoc)，后者是批量导入的版本。
+
+    rewrite  重写 path_info
+    不区分 request method , 重写后可以用 ? query 参数
+    ~ 开始表示是正则 ,为了简单用 / 代替普通正则的 \/
+    替换的url ，用 $1 $2 表示参数
+assignRoute($route,$callback=null)
+
+    给路由加回调。
+    关于回调模式的路由。详细情况看之前介绍
+    和在 options['route'] 添加数据一样
+
+    或许你会用到 C::RecordsetUrl(),C::RecordsetH()
+
+
+#### 兼容 Swoole
 
     如果想让你们的项目在 swoole 下也能运行，那就要加上这几点
     用 C::SG() 代替 超全局变量的 $ 前缀 如 $_GET =>  C::SG->_GET
@@ -492,7 +522,6 @@ var_dump($ret);
     C::session_id()，
     如 session_start() => C::session_start();。
 
-    或许你会用到 C::RecordsetUrl(),C::RecordsetH()
 
 #### 编写 兼容 Swoole 的代码
 
@@ -503,38 +532,12 @@ var_dump($ret);
 类内静态变量
 $x=static::$abc; => $x=C::CLASS_STATICS(static::class,'abc');
 
-#### 学习高级路由
+$this->extendClassMethodByThirdParty($class,$static_methods=[],$dyminac_methods=[]);
+DNMVCS 调用代理 $class 的方法。
 
+扩展静态方法 $this->assignStaticMethod($method,$callback);
+扩展动态方法 $this->assignDynamicMethod($method,$callback);
 
-assignRewrite($old_url,$new_url=null)
-
-    rewrite  重写 path_info
-    不区分 request method , 重写后可以用 ? query 参数
-    ~ 开始表示是正则 ,为了简单用 / 代替普通正则的 \/
-    替换的url ，用 $1 $2 表示参数
-assignRoute($route,$callback=null)
-
-    给路由加回调。
-    关于回调模式的路由。详细情况看之前介绍
-    和在 options['route'] 添加数据一样
-assign* 系列函数都是两种调用方式, 单个assign($key,$value) 和 assign($assoc)，后者是批量导入的版本。
-
-
-assign* 系列函数都是两种调用方式, 单个assign($key,$value) 和 assign($assoc)，后者是批量导入的版本。
-
-
-#### Model 编写模型用到的方法
-
-抛异常：M::ThrowOn($flag,$messsage,$code=0,$exception_class=null); 如果 flag 成立，抛出 $exception_class(默认为 Exception 类);
-
-M::ThrowOn();
-
-Model 类 还引用到相关
-
-* M::DB($tag=null) 获得特定数据库类。
-* M::DB_R() 获得读数据库类。
-* M::DB_W() 获得写数据库类。
-    用 C::Parameters() 获取切片，对地址重写有效。
-    如果要做权限判断 构造函数里 C::getRouteCallingMethod() 获取当前调用方法。
-
-    ! 用 C::getRewrites() 和 C::getRoutes(); 查看 rewrite 表，和 路由表。
+DNMVCS包括了几部分
+SingletonEx
+DNMVCS/Core ，每个组件都可以单独用，比如 Route

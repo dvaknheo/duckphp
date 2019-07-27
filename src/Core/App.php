@@ -29,46 +29,60 @@ class App
     use Core_Instance;
     
     const DEFAULT_OPTIONS=[
+            //// base config ////
             'path'=>null,
             'namespace'=>'MY',
             'path_namespace'=>'app',
-            'skip_app_autoload'=>false,
             
             //// properties ////
             'is_debug'=>false,
             'platform'=>'',
             'override_class'=>'Base\App',
-            'path_view'=>'view',
-            'skip_view_notice_error'=>true,
-            
-            
-            //// config ////
-            'path_config'=>'config',
-            'all_config'=>[],
-            'setting'=>[],
-            'setting_file'=>'setting',
-            'skip_setting_file'=>false,
             'reload_for_flags'=>true,
+            'skip_view_notice_error'=>true,
+            'ext'=>[],
+            'enable_cache_classes_in_cli'=>true,
             
             //// error handler ////
-            'use_inner_error_view'=>false,
             'use_404_to_other_framework'=>false,
             'error_404'=>'_sys/error-404',
             'error_500'=>'_sys/error-500',
             'error_exception'=>'_sys/error-exception',
             'error_debug'=>'_sys/error-debug',
             
-            //// controller ////
+            //// Class Autoloader ////
+            // 'path'=>null,
+            // 'namespace'=>'MY',
+            // 'path_namespace'=>'app',
+            // 'skip_system_autoload'=>true,
+            'skip_app_autoload'=>false,
+            
+            //// Class Configer ////
+            // 'path'=>null,
+            'path_config'=>'config',
+            'all_config'=>[],
+            'setting'=>[],
+            // 'setting_file'=>'setting',
+            // 'skip_setting_file'=>false,
+            
+            //// Class View Class ////
+            // 'path'=>null,
+            'path_view'=>'view',
+            
+
+            //// Class Route ////
+            // 'path'=>null,
+            // 'namespace'=>'MY',
             'namespace_controller'=>'Controller',
             'controller_base_class'=>null,
-            'controller_prefix_post'=>'do_',
-                'controller_enable_paramters'=>false,
-                'controller_methtod_for_miss'=>null,
-                'controller_hide_boot_class'=>false,
-                'controller_welcome_class'=>'Main',
-            'ext'=>[],
-            
-            'enable_cache_classes_in_cli'=>true,
+            // 'controller_enable_paramters'=>false,
+            // 'controller_hide_boot_class'=>false,
+            // 'controller_methtod_for_miss'=>null,
+            // 'controller_prefix_post'=>'do_',
+            'controller_welcome_class'=>'Main',
+            // 'controller_index_method'=>'index',
+            // 'on_404_handler'=>null,
+            'skip_deal_route_404_handler'=>true,
         ];
     const DEFAULT_OPTIONS_EX=[
         ];
@@ -101,7 +115,6 @@ class App
         }
         $options['path']=rtrim($options['path'], '/').'/';
         
-        $options['skip_deal_route_404_handler']=true;
         $options['exception_handler']=[static::class,'OnException'];
         $options['dev_error_handler']=[static::class,'OnDevErrorHandler'];
         
@@ -116,12 +129,7 @@ class App
         
         $this->is_debug=$this->options['is_debug'];
         $this->platform=$this->options['platform'];
-        if ($this->options['use_inner_error_view']) {
-            $this->options['error_404']=null;
-            $this->options['error_500']=null;
-            $this->options['error_exception']=null;
-            $this->options['error_debug']=null;
-        }
+
         if (method_exists(static::class, 'set_exception_handler')) {
             $this->options['system_exception_handler']=[static::class,'set_exception_handler'];
         }
