@@ -8,7 +8,7 @@ class View
     use SingletonEx;
     const DEFAULT_OPTIONS=[
         'path'=>null,
-        'path_view'=>null,
+        'path_view'=>'view',
     ];
     protected $head_file;
     protected $foot_file;

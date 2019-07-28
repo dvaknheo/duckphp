@@ -133,7 +133,7 @@ test
 
 #### 开始之前
 
-命名空间 MY 是 可调的。比如调整成 MyProject ,TheBigOneProject  等
+命名空间 MY 是 可调的。比如调整成 MyProject ,TheBigOneProject  等（$options['namespace']）
 
 作为应用程序员， 你不能引入 DNMVCS 的任何东西，就当 DNMVCS 命名空间不存在。
 核心程序员才去研究 DNMVCS 类的东西。
@@ -328,25 +328,20 @@ const DEFAULT_OPTIONS=[
     'namespace'=>'MY',          // 工程的 autoload 的命名空间
     'path_namespace'=>'app',    // 工程对应的命名空间 目录
     
-    'skip_app_autoload'=>false, // 如果你用compose.json 设置加载，改为 true;
+    'skip_app_autoload'=>false, // 如果你用compose.json 设置加载 app 目录，改为 true;
     
     //// properties ////
-    'override_class'=>'Base\App',   // 基类，后面详细说明
+    'override_class'=>'Base\App',   
+                                // 基类，后面详细说明
     'is_debug'=>false,          // 是否是在开发状态
     'platform'=>'',             //  配置平台标志，Platform 函数得到的是这个
-    'path_view'=>'view',        // 视图的目录，基于 path 配置
-
+    'reload_for_flags'=>true,   // 从设置文件里重新加载 is_debug,platform 选项
+    'enable_cache_classes_in_cli'=>true, 
+                                // 命令行下缓存 类数据
     'skip_view_notice_error'=>true,
                                 // view 视图里忽略 notice 错误。
-    'use_inner_error_view'=>false,
-                                // 快捷方式设  error_* 配置全为 null
-    //// config ////
-    'path_config'=>'config',    // 配置的目录，基于 path 配置
-    'all_config'=>[],           // 合并入的 config
-    'setting'=>[],
-    'setting_file'=>'setting',  
-    'skip_setting_file'=>false, // 跳过设置文件，用于
-    'reload_for_flags'=>true,   // 从设置文件里重新加载 is_debug,platform 选项
+    'skip_404_handler'=>false,  // 404 由外部处理。
+    'ext'=>[],                  // 扩展
     
     //// error handler ////
     'error_404'=>'_sys/error-404',
@@ -357,23 +352,13 @@ const DEFAULT_OPTIONS=[
                                 // 异常页面
     'error_debug'=>'_sys/error-debug',
                                 // 调试页面
-    
-    //// controller ////
-    'controller_base_class'=>null,
-                                // 控制器必须基类
-    'controller_prefix_post'=>'do_',
-                                // POST 前缀，先搜索带前缀的方法
-    'controller_welcome_class'=>'Main',
-                                // 默认控制器类
 
-    'ext'=>[],                  // 扩展
-    
-    'enable_cache_classes_in_cli'=>true, 
-                                // 命令行下缓存 类数据
 ];
 ```
 
 这是基础的，后面还有一大堆的配置。
+其他组件的配置，也可以写在这里。
+
 总之，这里很明白了。
 
 ##### 基本选项
@@ -429,18 +414,6 @@ error_* 选项为 null 用默认，为 callable 是回调，为string 则是调�
 'error_debug'=>'_sys/error-debug',
 
     is_debug 打开情况下，显示 Notice 错误
-##### 控制器
-
-'controller_base_class'=>null,
-    
-    限定控制器基类，配合 namespace namespace_controller 选项。
-    如果是 \ 开头的则忽略 namespace namespace_controller 选项。
-'controller_prefix_post'=>'do_',
-    POST 的方法会在方法名前加前缀 do_
-    如果找不到方法名，调用默认方法名。 **不建议修改**
-'controller_welcome_class'=>'Main',
-
-    默认欢迎类是  Main 。
 
 *进阶 错误管理.*
 ### 常见任务： 使用数据库
@@ -541,3 +514,17 @@ DNMVCS 调用代理 $class 的方法。
 DNMVCS包括了几部分
 SingletonEx
 DNMVCS/Core ，每个组件都可以单独用，比如 Route
+
+
+##### 控制器
+
+'controller_base_class'=>null,
+    
+    限定控制器基类，配合 namespace namespace_controller 选项。
+    如果是 \ 开头的则忽略 namespace namespace_controller 选项。
+'controller_prefix_post'=>'do_',
+    POST 的方法会在方法名前加前缀 do_
+    如果找不到方法名，调用默认方法名。 **不建议修改**
+'controller_welcome_class'=>'Main',
+
+    默认欢迎类是  Main 。

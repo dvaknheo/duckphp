@@ -29,7 +29,7 @@ class App
     use Core_Instance;
     
     const DEFAULT_OPTIONS=[
-            //// base config ////
+            //// basic config ////
             'path'=>null,
             'namespace'=>'MY',
             'path_namespace'=>'app',
@@ -37,14 +37,16 @@ class App
             //// properties ////
             'is_debug'=>false,
             'platform'=>'',
+            'ext'=>[],
+            
             'override_class'=>'Base\App',
             'reload_for_flags'=>true,
-            'skip_view_notice_error'=>true,
-            'ext'=>[],
+            
             'enable_cache_classes_in_cli'=>true,
+            'skip_view_notice_error'=>true,
+            'skip_404_handler'=>false,
             
             //// error handler ////
-            'use_404_to_other_framework'=>false,
             'error_404'=>'_sys/error-404',
             'error_500'=>'_sys/error-500',
             'error_exception'=>'_sys/error-exception',
@@ -59,30 +61,27 @@ class App
             
             //// Class Configer ////
             // 'path'=>null,
-            'path_config'=>'config',
-            'all_config'=>[],
-            'setting'=>[],
+            // 'path_config'=>'config',
+            // 'all_config'=>[],
+            // 'setting'=>[],
             // 'setting_file'=>'setting',
             // 'skip_setting_file'=>false,
             
             //// Class View Class ////
             // 'path'=>null,
-            'path_view'=>'view',
+            // 'path_view'=>'view',
             
 
             //// Class Route ////
             // 'path'=>null,
             // 'namespace'=>'MY',
-            'namespace_controller'=>'Controller',
-            'controller_base_class'=>null,
+            // 'namespace_controller'=>'Controller',
+            // 'controller_base_class'=>null,
+            // 'controller_welcome_class'=>'Main',
             // 'controller_enable_paramters'=>false,
             // 'controller_hide_boot_class'=>false,
             // 'controller_methtod_for_miss'=>null,
             // 'controller_prefix_post'=>'do_',
-            'controller_welcome_class'=>'Main',
-            // 'controller_index_method'=>'index',
-            // 'on_404_handler'=>null,
-            'skip_deal_route_404_handler'=>true,
         ];
     const DEFAULT_OPTIONS_EX=[
         ];
@@ -247,7 +246,7 @@ class App
         RuntimeState::G()->begin();
         
         $ret=Route::G()->run();
-        if (!$ret && !$this->options['use_404_to_other_framework']) {
+        if (!$ret && !$this->options['skip_404_handler']) {
             static::On404();
         }
         

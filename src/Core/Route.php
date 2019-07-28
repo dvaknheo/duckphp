@@ -13,15 +13,13 @@ class Route
             'namespace_controller'=>'Controller',
             
             'controller_base_class'=>null,
-            'controller_enable_paramters'=>false,
+            'controller_welcome_class'=>'Main',
+
             'controller_hide_boot_class'=>false,
             'controller_methtod_for_miss'=>null,
-            
+            'controller_enable_paramters'=>false,
             'controller_prefix_post'=>'do_',
-            'controller_welcome_class'=>'Main',
             
-            'on_404_handler'=>null,
-            'skip_deal_route_404_handler'=>false,
         ];
     
     public $parameters=[];
@@ -35,7 +33,6 @@ class Route
     protected $controller_hide_boot_class=false;
     protected $controller_methtod_for_miss=null;
     protected $controller_base_class=null;
-    public $on_404_handler=null;
     
     protected $enable_post_prefix=true;
     public $controller_prefix_post='do_';
@@ -53,6 +50,7 @@ class Route
     public $routeHooks=[];
     public $callback=null;
     public $ext_route_handler=null;
+    
     public function _URL($url=null)
     {
         if ($this->urlHandler) {
@@ -95,7 +93,6 @@ class Route
     
     public function init($options=[], $context=null)
     {
-        $this->controller_index_method='index';
         
         $options=array_merge(static::DEFAULT_OPTIONS, $options);
         
@@ -109,7 +106,6 @@ class Route
         
         $this->controller_welcome_class=$options['controller_welcome_class'];
         
-        $this->on_404_handler=$options['on_404_handler'];
         
         $namespace=$options['namespace'];
         $namespace_controller=$options['namespace_controller'];
@@ -123,7 +119,6 @@ class Route
         if ($this->controller_base_class && substr($this->controller_base_class, 0, 1)!=='\\') {
             $this->controller_base_class=$namespace.'\\'.$this->controller_base_class;
         }
-        $this->skip_deal_route_404_handler=$options['skip_deal_route_404_handler'];
         
         return $this;
     }
@@ -147,10 +142,7 @@ class Route
         $this->has_bind_server_data=true;
         return $this;
     }
-    public function set404($callback)
-    {
-        $this->on_404_handler=$callback;
-    }
+
     public function setURLHandler($callback)
     {
         $this->urlHandler=$callback;
@@ -195,17 +187,7 @@ class Route
             ($this->callback)(...$this->parameters);
             return true;
         }
-        if ($this->skip_deal_route_404_handler) {
-            return false;
-        }
         
-        if (!$this->on_404_handler) {
-            header("HTTP/1.0 404 Not Found");
-            echo "404 File Not Found.\n";
-            echo "DNRoute Notice: 404 .  You need set 404 Handler by DNRoute->set404(\$callback).";
-            exit;
-        }
-        ($this->on_404_handler)();
         return false;
     }
     public function stopRunDefaultHandler()

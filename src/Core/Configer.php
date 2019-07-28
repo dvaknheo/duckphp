@@ -8,7 +8,7 @@ class Configer
     use SingletonEx;
     const DEFAULT_OPTIONS=[
         'path'=>null,
-        'path_config'=>null,
+        'path_config'=>'config',
         
         'setting'=>[],
         'all_config'=>[],
