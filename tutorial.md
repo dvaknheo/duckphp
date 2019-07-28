@@ -494,29 +494,7 @@ Core\View 的选项共享一个 path,带一个 path_view.
 'skip_system_autoload'=>true,
 'skip_app_autoload'=>false,
 ```
-
-----
-
-
-## 杂项备忘
-
-### 从入门到精通
-我们接下来会逐步学习：
-
-
-4. 学习 DNMVCS 的配置
-4. 调用 DNMVCS 类的静态方法实现目的
-5. 调用 DNMVCS 类的动态方法实现目的
-6. 学习更高级的调用
-7. ---- 核心程序员和高级程序员分界线 ----
-8. 扩展 DNMVCS 类
-9. 调用扩展类，组件类的动态方法实现目的
-10. 继承接管，特定类实现目的
-11. 魔改，硬改 DNMVCS 的代码实现目的
-
-
 ### 从 DNMVCS/Core 到 DNMVCS/Framework
-----
 #### Model 编写模型用到的方法
 数据库
 
@@ -579,14 +557,6 @@ DNMVCS 调用代理 $class 的方法。
 
 
 
-
-##### 控制器
-
-添加路由和重写  $this->assignRewrite() $this->assignRoute();
-
-
-
-*进阶 错误管理.*
 ### 常见任务： 使用数据库
 使用数据库，在 DNMVCS 设置里正确设置 database_list 这个数组，包含多个数据库配置
 然后在用到的地方调用 DNMVCS::DB($tag=null) 得到的就是 DNDB 对象，用来做各种数据库操作。
@@ -602,5 +572,4 @@ $sql="select 1+? as t";
 $ret=M::DB()->fetch($sql,2);
 var_dump($ret);
 ```
-##### 配置设置
-
+----
