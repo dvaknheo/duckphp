@@ -124,14 +124,19 @@ test
 
 <2019-04-19T22:21:49+08:00>
 ```
-### 接下来 Controller, Service, Model 该怎么写
-#### 简化架构图
-同级之间的东西不能相互调用
-#### 完整架构图
+## 应用程序员核心参考
+### 本章说明
+DNMVCS 的使用者角色分为 应用程序员，和核心程序员两种
+应用程序员负责日常 Curd 。核心程序员做的是更高级的任务。
+应用程序员读完
 
+本章之后，还有一章是补完应用程序员高级功能的篇章。
+将会讲解到高级应用，如数据库等。
+
+### 完整架构图
 ![arch_full](doc/arch_full.gv.svg)
-
-#### 开始之前
+同级之间的东西不能相互调用
+### 开始编码之前
 
 命名空间 MY 是 可调的。比如调整成 MyProject ,TheBigOneProject  等（$options['namespace']）
 
@@ -146,14 +151,14 @@ test
 Model, Service 以及助手类都有静态的 G 函数， G() 函数就是可变单例函数。
 当你用到助手类的 G 函数的形式的时候，说明你这个功能不常用。
 
-#### Model 编写模型用到的方法
+### Model 编写模型用到的方法
  
 M::ThrowOn($flag,$messsage,$code=0,$exception_class=null);
 抛异常 如果 flag 成立，抛出 $exception_class(默认为 Exception 类);
 
 如果要使用数据库，见后文。
 
-#### Serivce 编写服务用到的方法
+### Serivce 编写服务用到的方法
 
 S::ThrowOn() 和 M::ThrowOn 一样;
 
@@ -167,7 +172,7 @@ S::ThrowOn() 和 M::ThrowOn 一样;
 
 设置是敏感信息,不存在于版本控制里面。而配置是非敏感。
 
-#### Controller 编写控制器用到的方法
+### Controller 编写控制器用到的方法
 
 和 Service 的同名同作用方法。
 
@@ -206,9 +211,7 @@ S::ThrowOn() 和 M::ThrowOn 一样;
     302 跳转退出 C::ExitRedirect($url);
     302 跳转退出内部地址 C::ExitRouteTo($url);
     输出 Json 退出  C::ExitJson($data);
-
 ##### 3. 路由相关
-
     C::URL($url) 获取相对 url;
     C::getRouteCallingMethod() 获取当前调用方法。常用于构造函数里做权限判断。
     C::Parameters() 获取切片。在DNMVCS/Framework 中扩展成其他用途
@@ -220,34 +223,39 @@ S::ThrowOn() 和 M::ThrowOn 一样;
     用 C::exit_system() 代替系统 exit; 便于接管处理。 
     用 C::set_exception_handler() 代替系统 set_exception_handler 便于接管处理。
     用 C::register_shutdown_function() 代替系统 set_exception_handler 便于接管处理。
-    
 ##### 5. 异常相关
 
     如果想接管默认异常，用 C::setDefaultExceptionHandler($handler);
     如果对接管特定异常，用 C::assignExceptionHandler($exception_name,$handler);
     设置多个异常到回调则用 C::setMultiExceptionHandler($exception_name=[],$handler);
 
+## 高级话题
 
-#### 高级程序员
+### 核心程序员
+### MY\Base\App 类的方法
 
-如果你想偷懒， *Helper 改为 App 由 MY\Base\App 的实现也行。
 
-MY\Base\App override 的两个重要方法
+MY\Base\App 重写 override 的两个重要方法
 
 onInit();
 
+    用于初始化，你可能会在这里再次调整  $this->options.
 onRun();
 
+    用于运行前，做一些你想做的事
 
 $this->addRouteHook($hook,$prepend=false,$once=true)
 
-添加路由和重写  $this->assignRewrite $this->assignRoute();
 添加路由钩子 $this->addRouteHook($hook); $hook 返回空用默认路由处理，否则调用返回的回调。
+
 $this->stopRunDefaultRouteHook($hook)
 
 
 添加显示前处理 用 $this->addBeforeShowHandler($callback)
+
 运行前 $this->addBeforeRunHandler($callback)
+
+Tip: 如果你想偷懒， ModelHelper,SerivceHelper,ControllerHelper 的方法 MY\Base\App 的实现也行。
 
 
 ### 目录结构
@@ -257,7 +265,7 @@ $this->stopRunDefaultRouteHook($hook)
 +---app                     // psr-4 标准的自动加载目录
 |   +---Base                // 基类放在这里
 |   |      App.php          // 默认框架入口文件
-|   |      BaseContrllor.php    // 控制器基类
+|   |      BaseController.php    // 控制器基类
 |   |      BaseModel.php        // 模型基类
 |   |      BaseService.php      // 服务基类
 |   |      ContrllorHelper.php  // 控制器助手类
@@ -291,7 +299,7 @@ $this->stopRunDefaultRouteHook($hook)
     这些结构能精简么？
     可以，你可以一个目录都不要。
 
-    BaseContrllor, BaseModel, BaseService 是你自己要改的基类，基本只实现了单例模式。
+    BaseController, BaseModel, BaseService 是你自己要改的基类，基本只实现了单例模式。
     ContrllorHelper,ModelHelper,ServiceHelper 如果你一个人偷懒，直接用 APP 类也行  
     headfile 目录是为了直接命令行运行 template 的文件，你可以改 入口文件去掉。
 
@@ -319,6 +327,18 @@ $options['namespace']='MY';
 /*
 var_export(\DNMVCS\DNMVCS::G()->options);
 ```
+入口类前面部分是处理头文件的。
+然后处理直接 copy 代码提示，不要直接运行。
+起作用的主要就这句话
+    \DNMVCS\DNMVCS::RunQuickly($options, function () {
+    });
+相当于后面调用的 // \DNMVCS\DNMVCS::G()->init($options)->run();
+
+init,run 分两步走的模式。
+
+最后留了 dump 选项的语句。
+
+接下来我们看 $options 里可以选生么
 
 ### 核心基本选项
 ```php
@@ -362,9 +382,15 @@ const DEFAULT_OPTIONS=[
 总之，这里很明白了。
 
 ##### 基本选项
+'path'=>null,
+
+    基本路径，其他配置会用到这个基本路径。
 'namespace' =>=>'MY',
 
     工程的 autoload 的命名空间
+'path_namespace'
+    默认的 psr-4 的工程路径配合 skip_app_autoload  使用。
+
 'override_class'=>'Base\App',
 
     **重要选项**
@@ -378,30 +404,6 @@ const DEFAULT_OPTIONS=[
 'skip_view_notice_error'=>true,
 
     view 视图里忽略 notice 错误。
-'use_inner_error_view'=>false,
-
-    忽略  error_* 配置，使用内部的错误视图
-    这是个快捷配置的选项。等价于 把 error_* 配置都设置为 null. 用于调试
-'use_404_to_other_framework'=>false,  
-
-    这是个快捷配置的选项。用于 404 后整合其他框架
-
-##### 配置设置
-
-'path_config'=>'config',
-
-    配置路径目录
-'skip_setting_file'=>false,
-
-    打开这项，则开始时候不读设置文件了。
-'all_config'=>[], 
-
-    
-    当你不想读取配置的时候从这里拿 这里的配置会覆盖文件里的。
-'setting'=>[],
-
-    合并入的 设置
-    当你不想读取设置的时候从这里拿 这里的设置会覆盖文件里的。
 'reload_for_flags'=>true,
 
     从设置里重载 is_debug 和 platform
@@ -415,24 +417,88 @@ error_* 选项为 null 用默认，为 callable 是回调，为string 则是调�
 
     is_debug 打开情况下，显示 Notice 错误
 
-*进阶 错误管理.*
-### 常见任务： 使用数据库
-使用数据库，在 DNMVCS 设置里正确设置 database_list 这个数组，包含多个数据库配置
-然后在用到的地方调用 DNMVCS::DB($tag=null) 得到的就是 DNDB 对象，用来做各种数据库操作。
-$tag 对应 $setting['database_list'][$tag]。默认会得到最前面的 tag 的配置。
+### "ext" 选项和扩展
 
-你不必担心每次框架初始化会连接数据库。只有第一次调用 DNMVCS::DB() 的时候，才进行数据库类的创建。
+ext 是一个选项，这里单独成一节是因为这个选项很重要。涉及到 DNMVCS 的扩展系统
 
-DB 的使用方法，看后面的参考。
-示例如下
+在 DNMVCS/Core 里， ext 是个空数组。
 
-```php
-$sql="select 1+? as t";
-$ret=M::DB()->fetch($sql,2);
-var_dump($ret);
+    扩展映射 ,$ext_class => $options。
+
+    如果 $options 为  false 则不启用，
+    如果 $options 为 true ，则会把当前 $options 传递进去。
+
+    $ext_class 为扩展的类名
+    如果找不到扩展类则不启用。
+    
+    $ext_class 满足接口
+    $ext_class->init(array $options,$context);
+
+### 其他核心组件选项
+
+本章介绍的是核心扩展的选项，这些选项，可以通过修改 App 类的 $options 里设置。
+
+#### Configer
+```
+'path'=>null,
+'path_config'=>'config',    //配置路径目录
+'all_config'=>[],
+'setting'=>[],
+'setting_file'=>'setting',
+'skip_setting_file'=>false,
+```
+Core\Configer 的选项共享个 path,带个 path_config.
+当你想把配置目录 放入 app 目录的时候，调整 path_config
+当我们要额外设置，配置的时候，把 setting , all_config 的值 带入
+当我们不需要额外的配置文件的时候  skip_setting_file 设置为 true
+
+#### View
+```  
+'path'=>null,
+'path_view'=>'view',
+```
+Core\View 的选项共享一个 path,带一个 path_view.
+当你想把视图目录 放入 app 目录的时候，调整 path_view
+
+#### Route
+```
+'path'=>null,
+'namespace'=>'MY',
+'namespace_controller'=>'Controller',
+'controller_base_class'=>null,
+'controller_welcome_class'=>'Main',
+
+'controller_enable_paramters'=>false,
+'controller_hide_boot_class'=>false,
+'controller_methtod_for_miss'=>null,
+'controller_prefix_post'=>'do_',
+```
+'controller_base_class'=>null,
+    
+    限定控制器基类，配合 namespace namespace_controller 选项。
+    如果是 \ 开头的则忽略 namespace namespace_controller 选项。
+'controller_prefix_post'=>'do_',
+    POST 的方法会在方法名前加前缀 do_
+    如果找不到方法名，调用默认方法名。 **不建议修改**
+'controller_welcome_class'=>'Main',
+
+    默认欢迎类是  Main 。
+
+
+#### Autoloader
+```
+'path'=>null,
+'namespace'=>'MY',
+'path_namespace'=>'app',
+
+'skip_system_autoload'=>true,
+'skip_app_autoload'=>false,
 ```
 
 ----
+
+
+## 杂项备忘
 
 ### 从入门到精通
 我们接下来会逐步学习：
@@ -511,20 +577,30 @@ DNMVCS 调用代理 $class 的方法。
 扩展静态方法 $this->assignStaticMethod($method,$callback);
 扩展动态方法 $this->assignDynamicMethod($method,$callback);
 
-DNMVCS包括了几部分
-SingletonEx
-DNMVCS/Core ，每个组件都可以单独用，比如 Route
+
 
 
 ##### 控制器
 
-'controller_base_class'=>null,
-    
-    限定控制器基类，配合 namespace namespace_controller 选项。
-    如果是 \ 开头的则忽略 namespace namespace_controller 选项。
-'controller_prefix_post'=>'do_',
-    POST 的方法会在方法名前加前缀 do_
-    如果找不到方法名，调用默认方法名。 **不建议修改**
-'controller_welcome_class'=>'Main',
+添加路由和重写  $this->assignRewrite() $this->assignRoute();
 
-    默认欢迎类是  Main 。
+
+
+*进阶 错误管理.*
+### 常见任务： 使用数据库
+使用数据库，在 DNMVCS 设置里正确设置 database_list 这个数组，包含多个数据库配置
+然后在用到的地方调用 DNMVCS::DB($tag=null) 得到的就是 DNDB 对象，用来做各种数据库操作。
+$tag 对应 $setting['database_list'][$tag]。默认会得到最前面的 tag 的配置。
+
+你不必担心每次框架初始化会连接数据库。只有第一次调用 DNMVCS::DB() 的时候，才进行数据库类的创建。
+
+DB 的使用方法，看后面的参考。
+示例如下
+
+```php
+$sql="select 1+? as t";
+$ret=M::DB()->fetch($sql,2);
+var_dump($ret);
+```
+##### 配置设置
+
