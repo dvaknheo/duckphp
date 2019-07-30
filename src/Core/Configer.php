@@ -23,8 +23,8 @@ class Configer
     protected $skip_setting_file=false;
     public function init($options=[], $context=null)
     {
+        $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
         $this->path=($options['path']??'').rtrim($options['path_config'], '/').'/';
-        
         $this->setting=$options['setting']??[];
         $this->all_config=$options['all_config']??[];
         $this->setting_file=$options['setting_file']??'setting';

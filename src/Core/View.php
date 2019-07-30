@@ -65,6 +65,7 @@ class View
     }
     public function init($options=[], $context=null)
     {
+        $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
         $this->path=($options['path']??'').rtrim($options['path_view'], '/').'/';
     }
     public function setViewWrapper($head_file, $foot_file)
