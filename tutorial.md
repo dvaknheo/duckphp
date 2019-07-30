@@ -63,13 +63,18 @@ class test // extends BaseController
     {
         $data=[];
         $data['var']=C::H(MiscService::G()->foo());
-        C::Show($data);
+        C::Show($data); // C::Show($data,'test/done');
     }
 }
 ```
 控制器里，我们处理外部数据，不做业务逻辑，业务逻辑在 Service 层做。
+
 BaseController  这个基类，如果不强制要求也可以不用。
+
 MY 这个命名空间前缀可在选项 ['namespace'] 中变更。
+
+C::H 用来做 html编码。
+
 ### Service 服务
 业务逻辑层。
 ```php
@@ -91,15 +96,17 @@ class MiscService extends BaseService
     }
 }
 ```
-BaseService 也是不强求的，我们 extends BaseService 是为了能用 G 函数
+BaseService 也是不强求的，我们 extends BaseService 是为了能用 G 函数这个单例函数
 
 这里调用了 NoDB_MiscModel 
 
 ### Model 模型
 
-完成 NoDB_MiscModel
-Model 类是实现基本功能的
-这里用 NoDB_ 表示和没使用到数据库
+完成 NoDB_MiscModel 。
+
+Model 类是实现基本功能的。
+
+这里用 NoDB_ 前缀表示我们没使用到数据库。
 
 ```php
 <?php
@@ -117,6 +124,7 @@ class NoDB_MiscModel extends BaseModel
     }
 }
 ```
+同样 BaseModel 也是不强求的，我们 extends BaseModel 是为了能用 G 函数这个单例函数
 
 ### 最后显示结果
 ```text
@@ -125,6 +133,7 @@ test
 <2019-04-19T22:21:49+08:00>
 ```
 ## 应用程序员核心参考
+
 ### 本章说明
 DNMVCS 的使用者角色分为 应用程序员，和核心程序员两种
 应用程序员负责日常 Curd 。核心程序员做的是更高级的任务。
@@ -256,7 +265,6 @@ $this->stopRunDefaultRouteHook($hook)
 运行前 $this->addBeforeRunHandler($callback)
 
 Tip: 如果你想偷懒， ModelHelper,SerivceHelper,ControllerHelper 的方法 MY\Base\App 的实现也行。
-
 
 ### 目录结构
 在看默认选项前， 我们看工程的桩代码,默认目录结构
@@ -530,7 +538,7 @@ assignRoute($route,$callback=null)
 #### 兼容 Swoole
 
     如果想让你们的项目在 swoole 下也能运行，那就要加上这几点
-    用 C::SG() 代替 超全局变量的 $ 前缀 如 $_GET =>  C::SG->_GET
+    用 C::SG() 代替 超全局变量的 $ 前缀 如 $_GET =>  C::SG()->_GET
 
     使用以下参数格式都一样的 swoole 兼容静态方法，代替同名全局方法。
 
@@ -573,3 +581,26 @@ $ret=M::DB()->fetch($sql,2);
 var_dump($ret);
 ```
 ----
+
+## 高级话题之扩展
+DBManager
+默认开启。 DBManager 类是用来使用数据库的，
+DBReusePoolProxy
+连接池
+FacadesAutoLoader
+
+FunctionDispatcher
+FunctionView
+JsonRpcExt
+Lazybones
+
+Pager
+ProjectCommonAutoloader
+ProjectCommonConfiger
+RouteHookDirectoryMode
+RouteHookOneFileMode
+RouteHookRewrite
+默认开启 实现了
+RouteHookRouteMap
+默认开启
+StrictCheck
