@@ -253,6 +253,8 @@ onRun();
 
     用于运行前，做一些你想做的事
 
+其他方法
+
 $this->addRouteHook($hook,$prepend=false,$once=true)
 
 添加路由钩子 $this->addRouteHook($hook); $hook 返回空用默认路由处理，否则调用返回的回调。
@@ -502,7 +504,11 @@ Core\View 的选项共享一个 path,带一个 path_view.
 'skip_system_autoload'=>true,
 'skip_app_autoload'=>false,
 ```
-### 从 DNMVCS/Core 到 DNMVCS/Framework
+### 结构图和组件分析
+![core](doc/core.gv.svg)
+#### 
+## 从 DNMVCS/Core 到 DNMVCS/Framework
+
 #### Model 编写模型用到的方法
 数据库
 
