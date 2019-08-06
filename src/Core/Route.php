@@ -50,6 +50,15 @@ class Route
     public $callback=null;
     public $ext_route_handler=null;
     
+    public static function RunQuickly(array $options=[], callable $after_init=null)
+    {
+        if (!$after_init) {
+            return static::G()->init($options)->run();
+        }
+        static::G()->init($options);
+        ($after_init)();
+        static::G()->run();
+    }
     public function _URL($url=null)
     {
         if ($this->urlHandler) {

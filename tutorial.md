@@ -494,30 +494,32 @@ DNMVCS\Core\Route 这个类可以单独拿出来做路由用。
 
     默认欢迎类是  Main 。
 
-
+这是一个单用 Route 组件的例子
 ```php
 <?php
 use DNMVCS\Core\Route;
-//require files;
-namespace Controller{
-    class Main
+require(__DIR__.'/../headfile/headfile.php');
+
+class Main
+{
+    public function index()
     {
-        public function index()
-        {
-            
-        }
+        var_dump(DATE(DATE_ATOM));
+    }
+    public function i()
+    {
+        phpinfo();
     }
 }
-namespace {
 $options=[
-  //
+    'namespace_controller'=>'\\',
 ];
-$flag=Route::G()->init($options)->run();
+$flag=Route::RunQuickly($options);
 if(!$flag){
     header(404);
     echo "404!";
 }
-}
+
 ```
 
 #### Autoloader
