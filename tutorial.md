@@ -238,11 +238,11 @@ S::ThrowOn() 和 M::ThrowOn 一样;
     如果对接管特定异常，用 C::assignExceptionHandler($exception_name,$handler);
     设置多个异常到回调则用 C::setMultiExceptionHandler($exception_name=[],$handler);
 
-## 高级话题
+### 入口类 App 类的方法 以及高级程序员。
 
-### 核心程序员
-### MY\Base\App 类的方法
+MY\Base\App 是 继承扩展 DNMVCS\Core\App 类的方法。
 
+DNMVCS\Core\App 类在 初始化 之后，会切换入这个子类走后面的流程。
 
 MY\Base\App 重写 override 的两个重要方法
 
@@ -252,22 +252,21 @@ onInit();
 onRun();
 
     用于运行前，做一些你想做的事
+《聚合方法》
 
-其他方法
+    ModelHelper,SerivceHelper,ControllerHelper 都在 App 类里有实现。
+    这用于你想偷懒，直接 App::foo(); 的情况。
+addRouteHook($hook,$prepend=false,$once=true)
 
-$this->addRouteHook($hook,$prepend=false,$once=true)
+    添加路由钩子 
+    $hook 返回空用默认路由处理，否则调用返回的回调。
 
-添加路由钩子 $this->addRouteHook($hook); $hook 返回空用默认路由处理，否则调用返回的回调。
+addBeforeShowHandler($callback)
 
-$this->stopRunDefaultRouteHook($hook)
+    添加显示前处理
+addBeforeRunHandler($callback)
 
-
-添加显示前处理 用 $this->addBeforeShowHandler($callback)
-
-运行前 $this->addBeforeRunHandler($callback)
-
-Tip: 如果你想偷懒， ModelHelper,SerivceHelper,ControllerHelper 的方法 MY\Base\App 的实现也行。
-
+    添加运行前处理
 ### 目录结构
 在看默认选项前， 我们看工程的桩代码,默认目录结构
 
@@ -471,8 +470,9 @@ Core\View 的选项共享一个 path,带一个 path_view.
 当你想把视图目录 放入 app 目录的时候，调整 path_view
 
 #### Route
+DNMVCS\Core\Route 这个类可以单独拿出来做路由用。
+
 ```
-'path'=>null,
 'namespace'=>'MY',
 'namespace_controller'=>'Controller',
 'controller_base_class'=>null,
@@ -494,6 +494,31 @@ Core\View 的选项共享一个 path,带一个 path_view.
 
     默认欢迎类是  Main 。
 
+
+```php
+<?php
+use DNMVCS\Core\Route;
+//require files;
+namespace Controller{
+    class Main
+    {
+        public function index()
+        {
+            
+        }
+    }
+}
+namespace {
+$options=[
+  //
+];
+$flag=Route::G()->init($options)->run();
+if(!$flag){
+    header(404);
+    echo "404!";
+}
+}
+```
 
 #### Autoloader
 ```

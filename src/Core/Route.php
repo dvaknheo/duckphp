@@ -8,7 +8,6 @@ class Route
     use SingletonEx;
     
     const DEFAULT_OPTIONS=[
-            'path'=>null,
             'namespace'=>'MY',
             'namespace_controller'=>'Controller',
             
@@ -93,7 +92,6 @@ class Route
     
     public function init($options=[], $context=null)
     {
-        
         $options=array_merge(static::DEFAULT_OPTIONS, $options);
         
         $this->controller_enable_paramters=$options['controller_enable_paramters'];
