@@ -48,8 +48,6 @@ class DNMVCS extends App
                 'Ext\RouteHookRewrite'=>true,
                 'Ext\RouteHookRouteMap'=>true,
                 
-                'Ext\DIExt'=>true,
-                
                 'Ext\Lazybones'=>false,
                 'Ext\DBReusePoolProxy'=>false,
                 'Ext\FacadesAutoLoader'=>false,
