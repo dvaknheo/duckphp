@@ -23,7 +23,7 @@ class JsonRpcExt
     {
         $namespace=$options['jsonrpc_namespace']??'JsonRpc';
         
-        $this->backend=$options['jsonrpc_backend']?? 'http127.0.0.1';
+        $this->backend=$options['jsonrpc_backend']?? 'https://127.0.0.1';
         
         $this->prefix=trim($namespace, '\\').'\\';
         $this->is_inited=true;

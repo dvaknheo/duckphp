@@ -267,6 +267,9 @@ addBeforeShowHandler($callback)
 addBeforeRunHandler($callback)
 
     添加运行前处理
+其他方法
+
+    其他方法有待你的发觉。
 ### 目录结构
 在看默认选项前， 我们看工程的桩代码,默认目录结构
 
@@ -426,7 +429,7 @@ error_* 选项为 null 用默认，为 callable 是回调，为string 则是调�
 
     is_debug 打开情况下，显示 Notice 错误
 
-### "ext" 选项和扩展
+##### "ext" 选项和扩展
 
 ext 是一个选项，这里单独成一节是因为这个选项很重要。涉及到 DNMVCS 的扩展系统
 
@@ -457,6 +460,8 @@ ext 是一个选项，这里单独成一节是因为这个选项很重要。涉�
 'skip_setting_file'=>false,
 ```
 Core\Configer 的选项共享个 path,带个 path_config.
+path_config 如果是 / 开始的，会忽略 path 选项
+
 当你想把配置目录 放入 app 目录的时候，调整 path_config
 当我们要额外设置，配置的时候，把 setting , all_config 的值 带入
 当我们不需要额外的配置文件的时候  skip_setting_file 设置为 true
@@ -467,6 +472,7 @@ Core\Configer 的选项共享个 path,带个 path_config.
 'path_view'=>'view',
 ```
 Core\View 的选项共享一个 path,带一个 path_view.
+path_view 如果是 / 开始的，会忽略 path 选项
 当你想把视图目录 放入 app 目录的时候，调整 path_view
 
 #### Route
@@ -489,7 +495,7 @@ DNMVCS\Core\Route 这个类可以单独拿出来做路由用。
     如果是 \ 开头的则忽略 namespace namespace_controller 选项。
 'controller_prefix_post'=>'do_',
     POST 的方法会在方法名前加前缀 do_
-    如果找不到方法名，调用默认方法名。 **不建议修改**
+    如果找不到方法名，调用默认方法名。
 'controller_welcome_class'=>'Main',
 
     默认欢迎类是  Main 。
@@ -533,7 +539,9 @@ if(!$flag){
 ```
 ### 结构图和组件分析
 ![core](doc/core.gv.svg)
-#### 
+
+#### 继续其他核心类的介绍
+
 ## 从 DNMVCS/Core 到 DNMVCS/Framework
 
 #### Model 编写模型用到的方法
