@@ -269,7 +269,7 @@ addBeforeRunHandler($callback)
     添加运行前处理
 其他方法
 
-    其他方法有待你的发觉。
+    其他方法有待你的发掘。
 ### 目录结构
 在看默认选项前， 我们看工程的桩代码,默认目录结构
 
@@ -346,7 +346,7 @@ var_export(\DNMVCS\DNMVCS::G()->options);
     });
 相当于后面调用的 // \DNMVCS\DNMVCS::G()->init($options)->run();
 
-init,run 分两步走的模式。
+init, run 分两步走的模式。
 
 最后留了 dump 选项的语句。
 
@@ -459,12 +459,13 @@ ext 是一个选项，这里单独成一节是因为这个选项很重要。涉�
 'setting_file'=>'setting',
 'skip_setting_file'=>false,
 ```
-Core\Configer 的选项共享个 path,带个 path_config.
+Core\Configer 的选项共享个 path,带个 path_config
+
 path_config 如果是 / 开始的，会忽略 path 选项
 
-当你想把配置目录 放入 app 目录的时候，调整 path_config
-当我们要额外设置，配置的时候，把 setting , all_config 的值 带入
-当我们不需要额外的配置文件的时候  skip_setting_file 设置为 true
+    当你想把配置目录 放入 app 目录的时候，调整 path_config
+    当我们要额外设置，配置的时候，把 setting , all_config 的值 带入
+    当我们不需要额外的配置文件的时候  skip_setting_file 设置为 true
 
 #### View
 ```  
@@ -472,7 +473,9 @@ path_config 如果是 / 开始的，会忽略 path 选项
 'path_view'=>'view',
 ```
 Core\View 的选项共享一个 path,带一个 path_view.
+
 path_view 如果是 / 开始的，会忽略 path 选项
+
 当你想把视图目录 放入 app 目录的时候，调整 path_view
 
 #### Route
@@ -624,24 +627,24 @@ var_dump($ret);
 ----
 
 ## 高级话题之扩展
-DBManager
-默认开启。 DBManager 类是用来使用数据库的，
-DBReusePoolProxy
-连接池
-FacadesAutoLoader
+    DBManager
+    默认开启。 DBManager 类是用来使用数据库的，
+    DBReusePoolProxy
+    连接池
+    FacadesAutoLoader
 
-FunctionDispatcher
-FunctionView
-JsonRpcExt
-Lazybones
+    FunctionDispatcher
+    FunctionView
+    JsonRpcExt
+    Lazybones
 
-Pager
-ProjectCommonAutoloader
-ProjectCommonConfiger
-RouteHookDirectoryMode
-RouteHookOneFileMode
-RouteHookRewrite
-默认开启 实现了
-RouteHookRouteMap
-默认开启
-StrictCheck
+    Pager
+    ProjectCommonAutoloader
+    ProjectCommonConfiger
+    RouteHookDirectoryMode
+    RouteHookOneFileMode
+    RouteHookRewrite
+    默认开启 实现了
+    RouteHookRouteMap
+    默认开启
+    StrictCheck
