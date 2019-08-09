@@ -631,31 +631,68 @@ var_dump($ret);
 ![core](doc/dnmvcs.gv.svg)
 
 ### DBManager
-    默认开启。 DBManager 类是用来使用数据库的，
-#### DB 类的用法
+    默认开启。 DBManager 类是用来使用数据库的
+#### 选项
+    'db_create_handler'=>null,  // 默认用 DB::class,'CreateDBInstance']
+    'db_close_handler'=>null,   // DB::class,'CloseDBInstance'
+    'before_get_db_handler'=>null, // 在调用 DB 前调用
+    
+    'database_list'=>null, DB 列表
 
+#### DB 类的用法
+    public function close();
+    public function getPDO();
+    public function quote($string);
+    public function fetchAll($sql, ...$args);
+    public function fetch($sql, ...$args);
+    public function fetchColumn($sql, ...$args);
+    public function execQuick($sql, ...$args);
 ### DBReusePoolProxy
     连接池
-
+        'db_reuse_size' => 100,
+        'db_reuse_timeout' => 5,
+        'dbm' => null,
 ### FacadesAutoLoader
     你们要的 Facades 面子
+        'facades_namespace'=>'Facades',
+        'facades_map'=>[],
 ### JsonRpcExt
     一个 JonsRPC 的示例
-
+        $namespace=$options['jsonrpc_namespace']??'JsonRpc';
+        
+        $this->backend=$options['jsonrpc_backend']?? 'https://127.0.0.1';
 ### Lazybones
     懒汉配置
-
+        'lazy_mode'=>true,
+        'use_app_path'=>true,
+        'lazy_path'=>'',//''app',
+        'lazy_path_service'=>'Service',
+        'lazy_path_model'=>'Model',
+        'lazy_path_contorller'=>'Controller',
+        
+        'lazy_controller_class'=>'DNController',
+        'with_controller_namespace_namespace'=>true,
+        'with_controller_namespace_prefix'=>true,
 ### Pager
     分页
+        'url'=>null,
+        'key'=>null,
+        'page_size'=>null,
+        'rewrite'=>null,
+        'current'=>null,
 ### RouteHookDirectoryMode
     多目录模式的 hook
+        'mode_dir_index_file'=>'',
+        'mode_dir_use_path_info'=>true,
+        'mode_dir_key_for_module'=>true,
+        'mode_dir_key_for_action'=>true,
 ### RouteHookOneFileMode
     单一文件模式的 hook
 ### RouteHookRewrite
     默认开启 实现了
-    RouteHookRouteMap
+    'rewrite_map'=>[],
+### RouteHookRouteMap
     默认开启
-    StrictCheck
-
-### DIExt
-    已经废弃
+    'route_map'=>[],
+### StrictCheck
+    不允许 DB 直接使用

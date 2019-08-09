@@ -18,7 +18,10 @@ class FacadesBase
 class FacadesAutoLoader
 {
     use SingletonEx;
-
+    const DEFAULT_OPTIONS=[
+        'facades_namespace'=>'Facades',
+        'facades_map'=>[],
+    ];
     protected $prefix='';
     protected $facades_map=[];
     

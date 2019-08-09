@@ -34,8 +34,6 @@ class StrictCheck
         if ($this->appClass && (is_subclass_of($this->appClass, $caller_class) || $this->appClass===$caller_class)) {
             $caller_class=$backtrace[$level+1]['class']??'';
         }
-          
-
         return $caller_class;
     }
     protected function checkEnv()

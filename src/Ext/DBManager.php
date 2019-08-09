@@ -8,8 +8,6 @@ class DBManager
 {
     use SingletonEx;
     const DEFAULT_OPTIONS=[
-        'use_db'=>true,
-        
         'db_create_handler'=>null,
         'db_close_handler'=>null,
         'before_get_db_handler'=>null,
@@ -32,11 +30,6 @@ class DBManager
     public function init($options=[], $context=null)
     {
         $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
-        
-        $use_db=$options['use_db']??true;
-        if (!$use_db) {
-            return $this;
-        }
         
         $this->before_get_db_handler=$options['before_get_db_handler']??null;
         $this->database_config_list=$options['database_list'];

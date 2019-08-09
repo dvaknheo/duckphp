@@ -9,11 +9,14 @@ class RouteHookOneFileMode
 {
     use SingletonEx;
     const DEFAULT_OPTIONS=[
+        'key_for_action'=>'_r',
+        'key_for_module'=>'',
     ];
     public $key_for_action='_r';
     public $key_for_module='';
     public function init($options=[], $context=null)
     {
+        $options=array_merge(static::DEFAULT_OPTIONS, $options);
         $this->key_for_action=$options['key_for_action'];
         $this->key_for_module=$options['key_for_module'];
         
