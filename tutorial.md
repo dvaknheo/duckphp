@@ -342,6 +342,7 @@ var_export(\DNMVCS\DNMVCS::G()->options);
 入口类前面部分是处理头文件的。
 然后处理直接 copy 代码提示，不要直接运行。
 起作用的主要就这句话
+
     \DNMVCS\DNMVCS::RunQuickly($options, function () {
     });
 相当于后面调用的 // \DNMVCS\DNMVCS::G()->init($options)->run();
@@ -627,24 +628,34 @@ var_dump($ret);
 ----
 
 ## 高级话题之扩展
-    DBManager
+![core](doc/dnmvcs.gv.svg)
+
+### DBManager
     默认开启。 DBManager 类是用来使用数据库的，
-    DBReusePoolProxy
+#### DB 类的用法
+
+### DBReusePoolProxy
     连接池
-    FacadesAutoLoader
 
-    FunctionDispatcher
-    FunctionView
-    JsonRpcExt
-    Lazybones
+### FacadesAutoLoader
+    你们要的 Facades 面子
+### JsonRpcExt
+    一个 JonsRPC 的示例
 
-    Pager
-    ProjectCommonAutoloader
-    ProjectCommonConfiger
-    RouteHookDirectoryMode
-    RouteHookOneFileMode
-    RouteHookRewrite
+### Lazybones
+    懒汉配置
+
+### Pager
+    分页
+### RouteHookDirectoryMode
+    多目录模式的 hook
+### RouteHookOneFileMode
+    单一文件模式的 hook
+### RouteHookRewrite
     默认开启 实现了
     RouteHookRouteMap
     默认开启
     StrictCheck
+
+### DIExt
+    已经废弃

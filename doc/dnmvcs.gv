@@ -69,7 +69,6 @@ label = "[DNMVCS\\Ext]";
     RouteHookRouteMap -> SingletonEx [style="dotted"]; 
     DBManager -> SingletonEx [style="dotted"]; 
     
-    DIExt -> SingletonEx [style="dotted"]; 
     Lazybones -> SingletonEx [style="dotted"]; 
     
     Ext -> Lazybones;
