@@ -13,7 +13,7 @@ class DBManager
         'before_get_db_handler'=>null,
         
         'database_list'=>null,
-        'use_strict_db'=>true,
+        'use_context_db_setting'=>true,
     ];
     public $tag_write=0;
     public $tag_read='1';
@@ -25,7 +25,7 @@ class DBManager
     protected $db_close_handler=null;
     
     protected $before_get_db_handler=null;
-    protected $use_strict_db=false;
+    protected $use_context_db_setting=true;
     
     public function init($options=[], $context=null)
     {
@@ -35,6 +35,7 @@ class DBManager
         $this->database_config_list=$options['database_list'];
         $this->db_create_handler=$options['db_create_handler']??[DB::class,'CreateDBInstance'];
         $this->db_close_handler=$options['db_close_handler']??[DB::class,'CloseDBInstance'];
+        $this->use_context_db_setting=$options['use_context_db_setting'];
         if ($context) {
             $this->initContext($options, $context);
         }
@@ -42,11 +43,15 @@ class DBManager
     }
     protected function initContext($options=[], $context=null)
     {
-        $db_setting_key=$context->options['db_setting_key']??'database_list';
-        $database_list=$context::Setting($db_setting_key)??[];
+        if ($this->use_context_db_setting) {
+            $database_list=$context::Setting('database_list')??null;
+            if(!isset($database_list)){
+                $database_list=$context->options['database_list']??null;
+            }
+            $this->database_config_list=$database_list;
+        }
         
-        $this->database_config_list=array_merge($context->options['database_list'], $database_list);
-        
+        // before_get_db_handler
         if (is_array($this->before_get_db_handler) && $this->before_get_db_handler[0]===null) {
             $this->before_get_db_handler[0]=get_class($context);
         }

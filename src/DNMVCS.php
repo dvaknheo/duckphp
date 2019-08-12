@@ -26,9 +26,6 @@ class DNMVCS extends App
     const DEFAULT_OPTIONS_EX=[
             'path_lib'=>'lib',
             'use_super_global'=>false,
-            'db_setting_key'=>'database_list',
-            'database_list'=>[],
-            
             'rewrite_map'=>[],
             'route_map'=>[],
             'swoole'=>[],
@@ -36,28 +33,17 @@ class DNMVCS extends App
             'ext'=>[
                 'SwooleHttpd\SwooleExt'=>true,
                 'Ext\DBManager'=>[
-                    'db_create_handler'=>null,
-                    'db_close_handler'=>null,
                     'before_get_db_handler'=>[null,'CheckStrictDB'],
-                    //'use_context_database'=>true,
-                    //'use_database_list'=>true,
-                    'database_list'=>[],
                 ],
-                'Ext\StrictCheck'=>true,
-                
                 'Ext\RouteHookRewrite'=>true,
                 'Ext\RouteHookRouteMap'=>true,
+                'Ext\StrictCheck'=>true,
                 
                 'Ext\Lazybones'=>false,
                 'Ext\DBReusePoolProxy'=>false,
                 'Ext\FacadesAutoLoader'=>false,
-                
                 'Ext\RouteHookDirectoryMode'=>false,
                 'Ext\RouteHookOneFileMode'=>false,
-                
-                'Ext\ProjectCommonAutoloader'=>false,
-                'Ext\ProjectCommonConfiger'=>false,
-                'Ext\FunctionView'=>false,
             ],
             
         ];
