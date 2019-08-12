@@ -45,7 +45,7 @@ class DBManager
     {
         if ($this->use_context_db_setting) {
             $database_list=$context::Setting('database_list')??null;
-            if(!isset($database_list)){
+            if (!isset($database_list)) {
                 $database_list=$context->options['database_list']??null;
             }
             $this->database_config_list=$database_list;

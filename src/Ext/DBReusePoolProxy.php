@@ -45,14 +45,14 @@ class DBReusePoolProxy
     }
     protected function getObject($db_config, $tag)
     {
-        if(!isset($this->pools[$tag])){
+        if (!isset($this->pools[$tag])) {
             $this->pools[$tag]=[];
         }
         if (empty($this->pools[$tag])) {
             return ($this->db_create_handler)($db_config, $tag);
         }
         $data=array_shift($this->pools[$tag]);
-        list($db,$time,$enabled)=$data;
+        list($db, $time, $enabled)=$data;
         
         $now=time();
         $is_timeout =($now-$time)>$this->timeout?true:false;
@@ -64,7 +64,7 @@ class DBReusePoolProxy
     }
     protected function reuseObject($db)
     {
-        if(!isset($this->pools[$tag])){
+        if (!isset($this->pools[$tag])) {
             $this->pools[$tag]=[];
         }
         if (count($this->pools[$tag])>=$this->max_length) {
@@ -74,7 +74,7 @@ class DBReusePoolProxy
         $time=time();
         $data=array($db,$time,true);
         
-        array_push($this->pools,$data);
+        array_push($this->pools, $data);
     }
     public function onCreate($db_config, $tag)
     {

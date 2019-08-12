@@ -11,11 +11,11 @@ class Oldbones
     
     public function init($options=[], $context=null)
     {
-        DIExt::G()->init($options,$context);
-        FunctionDispatcher::G()->init($options,$context);
-        FunctionView::G()->init($options,$context);
-        ProjectCommonAutoloader::G()->init($options,$context);
-        ProjectCommonConfiger::G()->init($options,$context);
+        DIExt::G()->init($options, $context);
+        FunctionDispatcher::G()->init($options, $context);
+        FunctionView::G()->init($options, $context);
+        ProjectCommonAutoloader::G()->init($options, $context);
+        ProjectCommonConfiger::G()->init($options, $context);
     }
 }
 class DIExt
@@ -268,6 +268,3 @@ class ProjectCommonConfiger extends Configer
         return $ret;
     }
 }
-
-
-
