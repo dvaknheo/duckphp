@@ -65,16 +65,11 @@ class ControllerHelper extends Helper
         return Pager::G();
     }
     ////
-    public function MapToService($serviceClass, $is_post=true)
+    public function MapToService($serviceClass, $input)
     {
-        if ($is_post) {
-            $input=static::SG()->_POST;
-        } else {
-            $input=static::SG()->_GET;
-        }
-        $method=static::getRouteCallingMethod();
         try {
-            $data=API::Call($serviceClass, $method, $input);
+            $method=static::getRouteCallingMethod();
+            $data=APP::G()->callAPI($serviceClass, $method, $input);
             if (!is_array($data) || !is_object($data)) {
                 $data=['result'=>$data];
             }

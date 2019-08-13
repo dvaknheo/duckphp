@@ -100,7 +100,7 @@ class JsonRpcExt
     }
     /////////////////////
 
-    public function curl_file_get_contents($url, $post)
+    protected function curl_file_get_contents($url, $post)
     {
         $ch = curl_init();
         
