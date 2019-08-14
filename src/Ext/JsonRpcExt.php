@@ -18,12 +18,19 @@ class JsonRpcClientBase
 class JsonRpcExt
 {
     use SingletonEx;
-
+    const DEFAULT_OPTIONS=[
+        'jsonrpc_namespace'=>'JsonRpc',
+        'jsonrpc_backend'=>'https://127.0.0.1',
+    ];
+    public $is_inited;
+    protected $backend;
+    protected $prefix;
     public function init($options=[], $context)
     {
-        $namespace=$options['jsonrpc_namespace']??'JsonRpc';
+        $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
         
-        $this->backend=$options['jsonrpc_backend']?? 'https://127.0.0.1';
+        $namespace=$options['jsonrpc_namespace'];
+        $this->backend=$options['jsonrpc_backend'];
         
         $this->prefix=trim($namespace, '\\').'\\';
         $this->is_inited=true;
@@ -62,7 +69,6 @@ class JsonRpcExt
         $post['params']=$arguments;
         
         $post['id']=time();
-        
         $data=$this->curl_file_get_contents($this->backend, $post);
         $data=json_decode($data, true);
         if (empty($data)) {
@@ -113,13 +119,18 @@ class JsonRpcExt
             curl_setopt($ch, CURLOPT_CONNECT_TO, [$c]);
         }
         curl_setopt($ch, CURLOPT_URL, $url);
-        
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
+        
+        $this->prepare_token($ch);
+        
         $data = curl_exec($ch);
         curl_close($ch);
         return $data;
+    }
+    protected function prepare_token($ch)
+    {
+        return;
     }
 }

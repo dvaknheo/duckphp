@@ -420,7 +420,9 @@ const DEFAULT_OPTIONS=[
 'reload_for_flags'=>true,
 
     从设置里重载 is_debug 和 platform
+skip_404_handler
 
+    不处理404，用于你想在流程之外处理404的情况
 ##### 错误处理
 
 error_* 选项为 null 用默认，为 callable 是回调，为string 则是调用视图。
@@ -498,6 +500,7 @@ DNMVCS\Core\Route 这个类可以单独拿出来做路由用。
     限定控制器基类，配合 namespace namespace_controller 选项。
     如果是 \ 开头的则忽略 namespace namespace_controller 选项。
 'controller_prefix_post'=>'do_',
+
     POST 的方法会在方法名前加前缀 do_
     如果找不到方法名，调用默认方法名。
 'controller_welcome_class'=>'Main',
@@ -544,6 +547,8 @@ if(!$flag){
 ### 结构图和组件分析
 ![core](doc/core.gv.svg)
 
+#### HttpServer
+    用于构建单独的 Http 服务器
 #### 继续其他核心类的介绍
 
 ## 从 DNMVCS/Core 到 DNMVCS/Framework
@@ -579,7 +584,15 @@ assignRoute($route,$callback=null)
 
     或许你会用到 C::RecordsetUrl(),C::RecordsetH()
 
+高级方法 C::MapToService($serviceClass, $input) 
 
+    映射当前方法 到相应的 service 类 $input 为 GET 或 POST
+
+高级方法 explodeService($controller_object, $namespace="MY\\Service\\")
+
+    你们想要的 $this->load 。 把 Service 后缀的改过来。 自动加载
+    如 MY\Service\TestService::G()->foo(); => $this->testService->foo();
+    暂时不建议使用。
 #### 兼容 Swoole
 
     如果想让你们的项目在 swoole 下也能运行，那就要加上这几点
@@ -629,70 +642,141 @@ var_dump($ret);
 
 ## 高级话题之扩展
 ![core](doc/dnmvcs.gv.svg)
-
-### DBManager
+### 总说
+#### DBManager
     默认开启。 DBManager 类是用来使用数据库的
-#### 选项
+    M::DB() 用到了这个组件。
+##### 选项
     'db_create_handler'=>null,  // 默认用 DB::class,'CreateDBInstance']
-    'db_close_handler'=>null,   // DB::class,'CloseDBInstance'
+    'db_close_handler'=>null,   // 默认等于 [DB::class,'CloseDBInstance'
     'before_get_db_handler'=>null, // 在调用 DB 前调用
-    
-    'database_list'=>null, DB 列表
+    'use_context_db_setting'=>true, //使用 setting 里的。
+    'database_list'=>null,      //DB 列表
 
-#### DB 类的用法
-    public function close();
-    public function getPDO();
-    public function quote($string);
-    public function fetchAll($sql, ...$args);
-    public function fetch($sql, ...$args);
-    public function fetchColumn($sql, ...$args);
-    public function execQuick($sql, ...$args);
-### DBReusePoolProxy
-    连接池
-        'db_reuse_size' => 100,
-        'db_reuse_timeout' => 5,
-        'dbm' => null,
-### FacadesAutoLoader
-    你们要的 Facades 面子
-        'facades_namespace'=>'Facades',
-        'facades_map'=>[],
-### JsonRpcExt
-    一个 JonsRPC 的示例
-        $namespace=$options['jsonrpc_namespace']??'JsonRpc';
-        
-        $this->backend=$options['jsonrpc_backend']?? 'https://127.0.0.1';
-### Lazybones
-    懒汉配置
-        'lazy_mode'=>true,
-        'use_app_path'=>true,
-        'lazy_path'=>'',//''app',
-        'lazy_path_service'=>'Service',
-        'lazy_path_model'=>'Model',
-        'lazy_path_contorller'=>'Controller',
-        
-        'lazy_controller_class'=>'DNController',
-        'with_controller_namespace_namespace'=>true,
-        'with_controller_namespace_prefix'=>true,
-### Pager
-    分页
+database_list 的示例：
+    [[
+		'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
+		'username'=>'???',
+		'password'=>'???',
+	]],
+##### 方法
+DB()
+    是 App::DB 和 M::DB 的实现。
+##### DB 类的用法
+一目了然
+    close(); //关闭
+    getPDO(); //获取 PDO 对象
+    quote($string);
+    fetchAll($sql, ...$args);
+    fetch($sql, ...$args);
+    fetchColumn($sql, ...$args);
+    execQuick($sql, ...$args); //   执行某条sql ，不用 exec , execute 是为了兼容其他类。
+#### DBReusePoolProxy
+连接池，默认没开启，使用
+    'db_reuse_size' => 100,
+    'db_reuse_timeout' => 5,
+    'dbm' => null,
+#### FacadesAutoLoader
+你们要的 Facades 面子
+    'facades_namespace'=>'Facades',
+    'facades_map'=>[],
+##### 示例
+
+```php
+use Facades\MY\Model\TestModel;
+TestModel::foo(); // <=> \MY\Model\TestModel::G()->foo();
+```
+#### JsonRpcExt
+一个 JonsRPC 的示例，不提供安全验证功能。
+##### 选项
+    'jsonrpc_namespace'=>'JsonRpc',
+    'jsonrpc_backend'=>'', 
+##### 示例
+```php
+// Base\App
+$this->options['ext']['Ext\JsonRpcExt']=[
+    'jsonrpc_backend'=>['http://test.dnmvcs.dev/json_rpc','127.0.0.1:80'],
+];
+```
+```php
+// app/Controller/Main.php
+namespace MY\Controller;
+
+use MY\Base\App;
+use MY\Base\ControllerHelper as C;
+use JsonRpc\MY\Service\TestService as TestService;
+use DNMVCS\Ext\JsonRpcExt;
+
+class Main
+{
+	public function index()
+	{
+        $t=TestService::G()->foo();
+        var_dump($t);
+	}
+    public function json_rpc()
+    {
+        $ret= JsonRpcExt::G()->onRpcCall(App::SG()->_POST);
+        C::ExitJson($ret);
+    }
+}
+```
+这个例子，将会远程调用 http://test.dnmvcs.dev/json_rpc 的 TestService;
+
+#### Lazybones
+懒汉配置。你或许能找到些东西。
+    'lazy_mode'=>true,
+    'use_app_path'=>true,
+    'lazy_path'=>'',// <=> $context->options['path'],
+    'lazy_path_service'=>'Service',
+    'lazy_path_model'=>'Model',
+    'lazy_path_contorller'=>'Controller',
+    
+    'lazy_controller_class'=>'DNController',
+    'with_controller_namespace_namespace'=>true,
+    'with_controller_namespace_prefix'=>true,
+#### Oldbones
+一些过时的东西配置。你或许能找到些东西
+    'fullpath_project_share_common'=>'',
+    'fullpath_config_common'=>'',
+    'function_view_head'
+    'function_view_foot'
+
+    DI()
+#### Pager
+    分页。只是解决了有无问题，如果有更好的，你可以换之
         'url'=>null,
         'key'=>null,
         'page_size'=>null,
         'rewrite'=>null,
         'current'=>null,
-### RouteHookDirectoryMode
+#### RouteHookDirectoryMode
     多目录模式的 hook
         'mode_dir_index_file'=>'',
         'mode_dir_use_path_info'=>true,
         'mode_dir_key_for_module'=>true,
         'mode_dir_key_for_action'=>true,
-### RouteHookOneFileMode
+#### RouteHookOneFileMode
     单一文件模式的 hook
-### RouteHookRewrite
-    默认开启 实现了
+#### RouteHookRewrite
+默认开启 实现了rewrite 。
+
+rewrite 支持以 ~ 开始表示的正则， 并且转换后自动拼凑 $_GET
+##### 选项
     'rewrite_map'=>[],
-### RouteHookRouteMap
-    默认开启
-    'route_map'=>[],
-### StrictCheck
-    不允许 DB 直接使用
+##### 方法
+assignRewrite
+getRewrites
+#### RouteHookRouteMap
+默认开启,实现了路由映射功能
+支持 'Class@Method' 表示创建对象，执行动态方法。 
+##### 选项
+   'route_map'=>[],
+##### 方法
+assignRoute($route,$callback); 
+    是 C::assignRoute 和 App::assignRoute 的实现。
+getRoutes()
+    dump  route_map 的内容。
+#### StrictCheck
+
+用于 严格使用 DB 等情况。使得在调试状态下。不能在 Controller 里 使用 M::DB();等

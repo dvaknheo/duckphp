@@ -65,7 +65,7 @@ class ControllerHelper extends Helper
         return Pager::G();
     }
     ////
-    public function MapToService($serviceClass, $input)
+    public static function MapToService($serviceClass, $input)
     {
         try {
             $method=static::getRouteCallingMethod();
