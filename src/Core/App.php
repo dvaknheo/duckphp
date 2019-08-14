@@ -19,7 +19,7 @@ class App
     use SingletonEx;
     use ThrowOn;
 
-    const VERSION = '1.1.0';
+    const VERSION = '1.1.1-dev';
     
     use Core_Handler;
     use Core_Glue;
