@@ -7,10 +7,10 @@ use Exception;
 class JsonRpcClientBase
 {
     use SingletonEx;
-    
+    public $base_class=null;
     public function __call($method, $arguments)
     {
-        $class=JsonRpcExt::G()->getRealClass($this);
+        $class=$this->base_class?$this->base_class:JsonRpcExt::G()->getRealClass($this);
         $ret=JsonRpcExt::G()->callRPC($class, $method, $arguments);
         return $ret;
     }
@@ -46,7 +46,17 @@ class JsonRpcExt
         }
         return substr($class, strlen($this->prefix));
     }
-    
+    public static function Wrap($class)
+    {
+        return static::G()->_Wrap($class);
+    }
+    public static function _Wrap($class)
+    {
+        $class=is_object($class)?get_class($class):$class;
+        $base= new JsonRpcClientBase();
+        $base->base_class=$class;
+        return $base;
+    }
     
     public function _autoload($class)
     {
