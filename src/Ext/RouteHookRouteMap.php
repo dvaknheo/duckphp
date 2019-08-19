@@ -32,33 +32,28 @@ class RouteHookRouteMap
     {
         return $this->route_map;
     }
-    protected function matchRoute($pattern_url, $path_info, $route, $enable_paramters)
+    protected function matchRoute($pattern_url, $path_info, $route)
     {
-        $request_method=$route->request_method;
-        
-        $pattern='/^(([A-Z_]+)\s+)?(~)?\/?(.*)\/?$/';
+        $pattern='/^(~)?\/?(.*)\/?$/';
         $flag=preg_match($pattern, $pattern_url, $m);
         if (!$flag) {
             return false;
         }
-        $method=$m[2];
-        $is_regex=$m[3];
-        $url=$m[4];
-        if ($method && $method!==$request_method) {
-            return false;
-        }
+        $is_regex=$m[1];
+        $url=$m[2];
+
         if (!$is_regex) {
             $params=explode('/', $path_info);
             $url_params=explode('/', $url);
-            if (!$enable_paramters) {
-                return ($url_params===$params)?true:false;
-            }
+            return ($url_params===$params)?true:false;
+            /*
             if ($url_params === array_slice($params, 0, count($url_params))) {
                 $route->parameters=array_slice($params, 0, count($url_params));
                 return true;
             } else {
                 return false;
             }
+            */
         }
         
         $p='/'.str_replace('/', '\/', $url).'/';
@@ -73,11 +68,9 @@ class RouteHookRouteMap
     }
     protected function getRouteHandelByMap($route, $routeMap)
     {
-        $path_info=$route->path_info;
-        $enable_paramters=$route->controller_enable_paramters;
-        
+        $path_info=$route->path_info;        
         foreach ($routeMap as $pattern =>$callback) {
-            if (!$this->matchRoute($pattern, $path_info, $route, $enable_paramters)) {
+            if (!$this->matchRoute($pattern, $path_info, $route)) {
                 continue;
             }
             if (!is_string($callback)) {

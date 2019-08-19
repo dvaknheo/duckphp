@@ -59,6 +59,15 @@ class Route
         ($after_init)();
         static::G()->run();
     }
+    public static function URL($url=null)
+    {
+        return static::G()->_URL($url);
+    }
+    public static function Parameters()
+    {
+        return static::G()->_Parameters();
+    }
+    ////
     public function _URL($url=null)
     {
         if ($this->urlHandler) {
@@ -66,9 +75,13 @@ class Route
         }
         return $this->defaultURLHandler($url);
     }
+    public function _Parameters()
+    {
+        return $this->parameters;
+    }
     public function defaultURLHandler($url=null)
     {
-        if (strlen($url)>0 && '/'==$url{0}) {
+        if (strlen($url)>0 && substr($url,0,1)==='/') {
             return $url;
         };
         
@@ -94,10 +107,7 @@ class Route
         
         return $basepath.$url;
     }
-    public function _Parameters()
-    {
-        return $this->parameters;
-    }
+
     
     public function init($options=[], $context=null)
     {

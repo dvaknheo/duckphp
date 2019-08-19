@@ -78,7 +78,6 @@ trait ClassExt
         do {
             if (is_array($callback)) {
                 $method=$callback[1]??'';
-                $method=$callback[1]??'';
                 if (is_object($callback[0])) {
                     $class=get_class($callback[0]);
                     $callback_desc="{$class}->{$method}";
