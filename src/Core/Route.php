@@ -81,7 +81,7 @@ class Route
     }
     public function defaultURLHandler($url=null)
     {
-        if (strlen($url)>0 && substr($url,0,1)==='/') {
+        if (strlen($url)>0 && substr($url, 0, 1)==='/') {
             return $url;
         };
         

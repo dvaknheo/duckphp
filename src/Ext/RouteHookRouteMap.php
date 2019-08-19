@@ -34,41 +34,39 @@ class RouteHookRouteMap
     }
     protected function matchRoute($pattern_url, $path_info, $route)
     {
-        $pattern='/^(~)?\/?(.*)\/?$/';
-        $flag=preg_match($pattern, $pattern_url, $m);
-        if (!$flag) {
-            return false;
-        }
-        $is_regex=$m[1];
-        $url=$m[2];
-
-        if (!$is_regex) {
-            $params=explode('/', $path_info);
-            $url_params=explode('/', $url);
-            return ($url_params===$params)?true:false;
-            /*
-            if ($url_params === array_slice($params, 0, count($url_params))) {
-                $route->parameters=array_slice($params, 0, count($url_params));
-                return true;
-            } else {
+        $firstWord=substr($pattern_url, 0, 1);
+        if ($firstWord==='~') {
+            $flag=preg_match($pattern_url.'~x', $path_info, $m);
+            if (!$flag) {
                 return false;
             }
-            */
+            unset($m[0]);
+            $route->parameters=$m;
+            return true;
         }
-        
-        $p='/'.str_replace('/', '\/', $url).'/';
-        $flag=preg_match($p, $path_info, $m);
-        
-        if (!$flag) {
+        if ($firstWord==='/') {
+            $pattern_url=substr($pattern_url, 1);
+        }
+        $lastWord=substr($pattern_url, -1);
+        if ($lastWord==='*') {
+            $pattern_url=substr($pattern_url, -1);
+            if ($pattern_url!=$path_info) {
+                return false;
+            }
+            $p=substr($path_info, strlen($pattern_url));
+            if (strlen($p)>0 && substr($p, 0, 1)!=='/') {
+                return false;
+            }
+            $m=explode('/', $p);
+            array_shift($m);
+            $route->parameters=$m;
             return false;
         }
-        array_shift($m);
-        $route->parameters=$m;
-        return true;
+        return ($pattern_url === $path_info) ? true:false;
     }
     protected function getRouteHandelByMap($route, $routeMap)
     {
-        $path_info=$route->path_info;        
+        $path_info=$route->path_info;
         foreach ($routeMap as $pattern =>$callback) {
             if (!$this->matchRoute($pattern, $path_info, $route)) {
                 continue;
