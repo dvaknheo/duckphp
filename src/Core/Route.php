@@ -57,7 +57,7 @@ class Route
         }
         static::G()->init($options);
         ($after_init)();
-        static::G()->run();
+        return static::G()->run();
     }
     public static function URL($url=null)
     {

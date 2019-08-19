@@ -76,6 +76,7 @@ class RouteHookRouteMap
             }
             if (false!==strpos($callback, '->')) {
                 list($class, $method)=explode('->', $callback);
+                $route->stopRunDefaultHandler();
                 return [new $class(),$method];
             }
             return $callback;
