@@ -100,7 +100,7 @@ class App
         }
         static::G()->init($options);
         ($after_init)();
-        static::G()->run();
+        return static::G()->run();
     }
     public static function _EmptyFunction()
     {

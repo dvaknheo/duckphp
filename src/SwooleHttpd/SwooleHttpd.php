@@ -87,7 +87,7 @@ class SwooleHttpd
         }
         static::G()->init($options);
         ($after_init)();
-        static::G()->run();
+        return static::G()->run();
     }
     public function set_http_exception_handler($exception_handler)
     {
