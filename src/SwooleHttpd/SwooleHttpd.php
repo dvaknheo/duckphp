@@ -7,7 +7,7 @@ namespace DNMVCS\SwooleHttpd;
 use DNMVCS\SwooleHttpd\SwooleSingleton;
 
 use DNMVCS\SwooleHttpd\SimpleHttpd;
-use DNMVCS\SwooleHttpd\SimpleWebsocketd;
+use DNMVCS\SwooleHttpd\SimpleWebSocketd;
 
 use DNMVCS\SwooleHttpd\SwooleHttpd_Static;
 use DNMVCS\SwooleHttpd\SwooleHttpd_SystemWrapper;
