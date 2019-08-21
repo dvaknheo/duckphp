@@ -1,3 +1,6 @@
+<?php
+use App\Base\ViewHelper as V;
+?>
 <!doctype html>
 <html>
 <body>

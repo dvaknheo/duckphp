@@ -69,7 +69,7 @@ class DBManager
     }
     public function getDBHandler()
     {
-        return [$db_create_handler,$db_close_handler];
+        return [$this->db_create_handler,$this->db_close_handler];
     }
     public function _DB($tag=null)
     {

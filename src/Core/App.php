@@ -348,8 +348,6 @@ trait Core_Handler
         $data['message']=$ex->getMessage();
         $data['code']=$ex->getCode();
         $data['trace']=$ex->getTraceAsString();
-
-
         
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)($ex);

@@ -1,7 +1,7 @@
 <?php
 namespace MY\Controller;
 
-use MY\Base\App;
+use MY\Base\ControllerHelper as C;
 use MY\Base\BaseController;
 use MY\Service as S;
 
@@ -11,7 +11,7 @@ class Main // extends BaseController
     {
         $data=[];
         $data['var']=S\TestService::G()->foo();
-        App::Show($data, 'main');
+        C::Show($data, 'main');
     }
     public function i()
     {

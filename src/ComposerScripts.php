@@ -5,6 +5,7 @@ class ComposerScripts
 {
     protected static function DumpDir($source, $dest)
     {
+    
         $source=realpath($source);
         $dest=rtrim($dest, DIRECTORY_SEPARATOR);
         $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
