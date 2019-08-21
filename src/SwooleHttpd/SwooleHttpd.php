@@ -21,7 +21,7 @@ class SwooleHttpd
     use SwooleSingleton;
     
     use SimpleHttpd;
-    use SimpleWebsocketd;
+    use SimpleWebSocketd;
     
     use SwooleHttpd_Handler;
     use SwooleHttpd_Glue;

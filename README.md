@@ -1,5 +1,5 @@
 # 第一章 DNMVCS 介绍
-
+QQ: 85811616
 ##  [教程](tutorial.md)
 
  [教程](tutorial.md)
