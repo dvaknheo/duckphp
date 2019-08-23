@@ -75,6 +75,8 @@ MY 这个命名空间前缀可在选项 ['namespace'] 中变更。
 
 C::H 用来做 html编码。
 
+C::Show($data); 是 C::Show($data,'test/done'); 的缩写， 调用 test/done 这个视图。
+
 ### Service 服务
 业务逻辑层。
 ```php
@@ -96,7 +98,7 @@ class MiscService extends BaseService
     }
 }
 ```
-BaseService 也是不强求的，我们 extends BaseService 是为了能用 G 函数这个单例函数
+BaseService 也是不强求的，我们 extends BaseService 是为了能用 G 函数这个单例方法
 
 这里调用了 NoDB_MiscModel 
 
@@ -124,7 +126,7 @@ class NoDB_MiscModel extends BaseModel
     }
 }
 ```
-同样 BaseModel 也是不强求的，我们 extends BaseModel 是为了能用 G 函数这个单例函数
+同样 BaseModel 也是不强求的，我们 extends BaseModel 是为了能用 G 函数这个单例方法
 
 ### 最后显示结果
 ```text
@@ -248,7 +250,7 @@ MY\Base\App 重写 override 的两个重要方法
 
 onInit();
 
-    用于初始化，你可能会在这里再次调整  $this->options.
+    用于初始化，你可能会在这里再次调整  $this->options。
 onRun();
 
     用于运行前，做一些你想做的事
@@ -269,7 +271,7 @@ addBeforeRunHandler($callback)
     添加运行前处理
 其他方法
 
-    其他方法有待你的发掘。
+    其他方法有待你的发掘。如果你要用于特殊用处的话。
 ### 目录结构
 在看默认选项前， 我们看工程的桩代码,默认目录结构
 
@@ -351,7 +353,7 @@ init, run 分两步走的模式。
 
 最后留了 dump 选项的语句。
 
-接下来我们看 $options 里可以选生么
+接下来我们看 $options 里可以选什么
 
 ### 核心基本选项
 ```php
@@ -453,6 +455,12 @@ ext 是一个选项，这里单独成一节是因为这个选项很重要。涉�
 
 本章介绍的是核心扩展的选项，这些选项，可以通过修改 App 类的 $options 里设置。
 
+#### 可变单例 G 方法
+这里，对之前的 G 方法统一说明
+G 方法表面上是个单例函数，实际上的可替换的。
+DNMVCS 系统组件的连接，多是以调用类的可变单例来实现的。
+
+
 #### Configer
 ```
 'path'=>null,
@@ -483,7 +491,7 @@ path_view 如果是 / 开始的，会忽略 path 选项
 
 #### Route
 DNMVCS\Core\Route 这个类可以单独拿出来做路由用。
-
+##### 选项
 ```
 'namespace'=>'MY',
 'namespace_controller'=>'Controller',
@@ -506,7 +514,7 @@ DNMVCS\Core\Route 这个类可以单独拿出来做路由用。
 'controller_welcome_class'=>'Main',
 
     默认欢迎类是  Main 。
-
+##### 说明
 这是一个单用 Route 组件的例子
 ```php
 <?php
@@ -544,6 +552,7 @@ if(!$flag){
 'skip_system_autoload'=>true,
 'skip_app_autoload'=>false,
 ```
+这个加载类一般不单独使用。
 ### 结构图和组件分析
 ![core](doc/core.gv.svg)
 
@@ -552,6 +561,11 @@ if(!$flag){
 #### 继续其他核心类的介绍
 
 ## 从 DNMVCS/Core 到 DNMVCS/Framework
+
+### 说明
+前面 DNMVCS/Framework 
+
+### 追加的方法
 
 #### Model 编写模型用到的方法
 数据库
@@ -624,7 +638,7 @@ DNMVCS 调用代理 $class 的方法。
 
 
 ### 常见任务： 使用数据库
-使用数据库，在 DNMVCS 设置里正确设置 database_list 这个数组，包含多个数据库配置
+使用数据库，在 设置里正确设置 database_list 这个数组，包含多个数据库配置
 然后在用到的地方调用 DNMVCS::DB($tag=null) 得到的就是 DNDB 对象，用来做各种数据库操作。
 $tag 对应 $setting['database_list'][$tag]。默认会得到最前面的 tag 的配置。
 
@@ -643,15 +657,18 @@ var_dump($ret);
 ## 高级话题之扩展
 ![core](doc/dnmvcs.gv.svg)
 ### 总说
+
 #### DBManager
     默认开启。 DBManager 类是用来使用数据库的
     M::DB() 用到了这个组件。
 ##### 选项
-    'db_create_handler'=>null,  // 默认用 DB::class,'CreateDBInstance']
-    'db_close_handler'=>null,   // 默认等于 [DB::class,'CloseDBInstance'
+    'db_create_handler'=>null,  // 默认用 [DB::class,'CreateDBInstance']
+    'db_close_handler'=>null,   // 默认等于 [DB::class,'CloseDBInstance']
     'before_get_db_handler'=>null, // 在调用 DB 前调用
     'use_context_db_setting'=>true, //使用 setting 里的。
     'database_list'=>null,      //DB 列表
+db_create_handler
+##### 说明
 
 database_list 的示例：
     [[
@@ -688,9 +705,9 @@ TestModel::foo(); // <=> \MY\Model\TestModel::G()->foo();
 ```
 #### JsonRpcExt
 一个 JonsRPC 的示例，不提供安全验证功能。
-##### 选项
+##### 默认选项
     'jsonrpc_namespace'=>'JsonRpc',
-    'jsonrpc_backend'=>'', 
+    'jsonrpc_backend'=>'https://127.0.0.1', 
 ##### 示例
 ```php
 // Base\App
@@ -702,16 +719,20 @@ $this->options['ext']['Ext\JsonRpcExt']=[
 // app/Controller/Main.php
 namespace MY\Controller;
 
-use MY\Base\App;
 use MY\Base\ControllerHelper as C;
-use JsonRpc\MY\Service\TestService as TestService;
 use DNMVCS\Ext\JsonRpcExt;
+
+use JsonRpc\MY\Service\TestService as RemoteTestService;
+use MY\Service\TestService;
 
 class Main
 {
 	public function index()
 	{
-        $t=TestService::G()->foo();
+        $t=RemoteTestService::G()->foo();
+        var_dump($t);
+
+        $t=TestService::G(JsonRpcExt::Wrap(TestService::class))->foo();
         var_dump($t);
 	}
     public function json_rpc()
@@ -721,8 +742,11 @@ class Main
     }
 }
 ```
-这个例子，将会远程调用 http://test.dnmvcs.dev/json_rpc 的 TestService;
+这个例子，将会两次远程调用 http://test.dnmvcs.dev/json_rpc 的 TestService 。
 
+这里的 json_rpc 是服务端的实现
+
+如果你要 做自己的权限处理，则重写 protected function prepare_token($ch)。
 #### Lazybones
 懒汉配置。你或许能找到些东西。
     'lazy_mode'=>true,

@@ -12,13 +12,12 @@ subgraph cluster_DNMVCS {
     DNMVCS -> Ext;
 
     
-    SuperGlobal -> SingletonEx[style="dotted"]; 
     
     ClassExt;
     SuperGlobal;
     DNMVCS [shape=Mdiamond];
     
-    Core_App[label="DNMVCS\\Core\\App"];
+    Core_App[label="DNMVCS\\Core\\App" ,shape=Mdiamond];
 
 }
 subgraph cluster_Base {
@@ -27,19 +26,25 @@ StrictModel -> SingletonEx [style="dotted"];
 StrictService -> SingletonEx [style="dotted"]; 
 SessionUsageController;
 }
+subgraph cluster_SingletonEx {
+    label = "[DNMVCS\\Base]";
+        SuperGlobal -> SingletonEx[style="dotted"]; 
+
+SingletonEx[style="dotted"]; 
+}
 
 
 subgraph cluster_DB {
     label = "[DNMVCS\\DB]";
 
-DB_DB -> DB_DBAdvance;
-DB_DB -> DB_DBInterface;
-DB_MedooDB -> DB_DBAdvance;
+    DB_DB -> DB_DBAdvance;
+    DB_DB -> DB_DBInterface;
+    DB_MedooDB -> DB_DBAdvance;
 
-DB_DB [label="DB"];
-DB_DBAdvance [label="DBAdvance"];
-DB_DBInterface [label="DBInterface"];
-DB_MedooDB [label="MedooDB"];
+    DB_DB [label="DB"];
+    DB_DBAdvance [label="DBAdvance"];
+    DB_DBInterface [label="DBInterface"];
+    DB_MedooDB [label="MedooDB"];
 
 
 }
@@ -51,49 +56,38 @@ DB_MedooDB [label="MedooDB"];
 
 subgraph cluster_Ext {
 label = "[DNMVCS\\Ext]";
-    Ext;
-    Ext -> SwooleExt;
+    Ext [label="";style="dotted"];
+    
+    Ext -> DBManager -> DB_DB;
+    Ext -> DBReusePoolProxy; 
+    Ext -> FacadesAutoLoader;
+    Ext -> JsonRpcExt;
+    Ext -> Pager;
+    Ext -> RouteHookDirectoryMode;
+    Ext -> RouteHookOneFileMode;
     Ext -> RouteHookRewrite;
     Ext -> RouteHookRouteMap;
     Ext -> StrictCheck;
     
-    Ext -> DBManager -> DB_DB;
     
-    Ext -> Pager;
+    JsonRpcExt -> JsonRpcExtBase ;
 
-
-    SwooleExt-> SwooleHttpd;
+    FacadesAutoLoader ->FacadesBase ;
+    FacadesAutoLoader -> SingletonEx [style="dotted"];
     
-    SwooleExt -> SingletonEx[style="dotted"]; 
     RouteHookRewrite -> SingletonEx[style="dotted"]; 
     RouteHookRouteMap -> SingletonEx [style="dotted"]; 
-    DBManager -> SingletonEx [style="dotted"]; 
     
     Lazybones -> SingletonEx [style="dotted"]; 
+    Oldbones -> SingletonEx [style="dotted"]; 
     
-    Ext -> Lazybones;
-    Ext -> DBReusePoolProxy; 
-    Ext -> FunctionDispatcher;
-    Ext -> ProjectCommonAutoloader;
-    Ext -> FacadesAutoLoader;
-    Ext -> RouteHookDirectoryMode;
-    Ext -> RouteHookOneFileMode;
-    Ext -> ProjectCommonConfiger -> Core_Configer;
-    Ext -> FunctionView  -> Core_View;
-    FacadesAutoLoader ->FacadesBase ;
-    RouteHookDirectoryMode -> SuperGlobal;
-    RouteHookOneFileMode -> SuperGlobal;
+    
 
-    DBReusePoolProxy ->  SingletonEx [style="dotted"];  
-    FunctionDispatcher -> SingletonEx [style="dotted"]; 
-    ProjectCommonAutoloader -> SingletonEx [style="dotted"]; 
-    FacadesAutoLoader -> SingletonEx [style="dotted"]; 
+    
     RouteHookDirectoryMode -> SingletonEx [style="dotted"]; 
     RouteHookOneFileMode -> SingletonEx [style="dotted"];
 
-Pager -> SingletonEx [style="dotted"]; 
-
-    Ext [label="";style="dotted"];
+    Pager -> SingletonEx [style="dotted"]; 
 
 }
 
