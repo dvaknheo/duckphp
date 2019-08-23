@@ -44,10 +44,13 @@ function showWelcome()
 {
     echo "Well Come to use DNMVCS , for more info , use --help \n";
 echo <<<EOT
+
 ----
-create  create seklton-project
-start the project
-route
+create  create  a skeleton-project
+--prune-core
+--prune-helper
+--namespace <namespace>
+--start the project
 ----
 
 EOT;
@@ -60,7 +63,6 @@ class C
     {
         $source=realpath($source);
         $dest=realpath($dest);
-        var_dump($source,$dest);
         $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
         $iterator = new \RecursiveIteratorIterator($directory);
         $files = \iterator_to_array($iterator, false);
@@ -82,29 +84,19 @@ class C
                     mkdir($full_dir);
                 }
             }
-            copy($file, $dest.DIRECTORY_SEPARATOR.$short_file_name);
+            $dest_file=$dest.DIRECTORY_SEPARATOR.$short_file_name;
+            $data=file_get_contents($file);
+            $data=self::Filte($data);
+            file_put_contents($dest_file,$data);
+            //decoct(fileperms($file) & 0777);
         }
     }
-    protected static function ChangeFlag($file)
+    public static function Filte($data)
     {
-        $data=file_get_contents($file);
-        $data=str_replace('/headfile/headfile.php', '/vendor/autoload.php', $data);
-        $data=str_replace("if(defined('DNMVCS_WARNING_IN_TEMPLATE'))", "// if(defined('DNMVCS_WARNING_IN_TEMPLATE'))", $data);
+        $namespace='MyProject\\';
+        $data=str_replace('MY\\',$namespace,$data);
         
-        file_put_contents($file, $data);
-    }
-    public static function DumpTemplateFiles()
-    {
-        return;
-        $source=__DIR__.DIRECTORY_SEPARATOR.'/../template';
-        $dest=getcwd();
-        self::DumpDir($source, $dest);
-        self::ChangeFlag('public/index.php');
-        self::ChangeFlag('bin/start_server.php');
-        copy('config/setting.sample.php', 'config/setting.php');
-        $data="DNMVCS Installed at ".DATE(DATE_ATOM)."\n";
-        file_put_contents('dnmvcs-installed.lock', $data);
+        
+        return $data;
     }
 }
-
-return;

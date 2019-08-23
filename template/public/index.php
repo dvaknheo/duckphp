@@ -1,8 +1,8 @@
 <?php
+$options=[];
 
 require(__DIR__.'/../headfile/headfile.php');
 
-$options=[];
 if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
     $options['is_debug']=true;
     $options['skip_setting_file']=true;

@@ -1,7 +1,13 @@
 <?php
+die("暂时无效");
 use \DNMVCS\DNMVCS as DN;
-
+$options=[];
 require(__DIR__.'/../headfile/headfile.php');
+if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
+    $options['is_debug']=true;
+    $options['skip_setting_file']=true;
+    echo "<div>Don't run the template file directly </div>\n";
+}
 
 global $view_data;
 $view_data=[];
@@ -83,12 +89,7 @@ function H($str)
     return DN::H($str);
 }
 ////////////////////////////////////
-$options=[];
-if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
-    $options['is_debug']=true;
-    $options['skip_setting_file']=true;
-    echo "<div>Don't run the template file directly </div>\n";
-}
+
 
 DN::RunOneFileMode($options);
 
