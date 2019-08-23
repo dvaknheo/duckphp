@@ -1,5 +1,5 @@
-<?php use \DNMVCS\DNMVCS as DN ;
-
+<?php
+//var_dump(get_defined_vars());
 ?>
 <?php if ($is_debug) {
     ?>

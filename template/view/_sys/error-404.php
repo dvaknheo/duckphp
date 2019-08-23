@@ -1,8 +1,9 @@
-<?php use \DNMVCS\DNMVCS as DN;
-
+<?php
+use MY\Base\App;
+$is_debug=App::IsDebug(); //...
 ?>
 404
-<?php if (DN::IsDebug()) {
+<?php if ($is_debug) {
     ?>
 Developing!
 <pre>
