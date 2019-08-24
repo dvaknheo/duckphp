@@ -155,9 +155,9 @@ class C
     protected function changeHeadFile($data)
     {
         $autoload_file=$this->options['autoload_file']?$this->options['autoload_file']:"vendor/autoload.php";
-        $str_header="require(__DIR__.'/../$autoload_file');";
+        $str_header="require_once(__DIR__.'/../$autoload_file');";
         
-        $data=str_replace("require(__DIR__.'/../headfile/headfile.php');",$str_header,$data);
+        $data=str_replace("require_once(__DIR__.'/../headfile/headfile.php');",$str_header,$data);
         return $data;
     }
     protected function purceCore($data)

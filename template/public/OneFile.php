@@ -2,7 +2,7 @@
 die("暂时无效");
 use \DNMVCS\DNMVCS as DN;
 $options=[];
-require(__DIR__.'/../headfile/headfile.php');
+require_once(__DIR__.'/../headfile/headfile.php');
 //* DNMVCS TO DELETE 
 if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
     $options['is_debug']=true;

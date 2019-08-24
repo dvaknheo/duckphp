@@ -6,7 +6,7 @@ define('DNMVCS_HEAD_FILE_LOADED', true);
 
 $IN_COMPOSER=false;
 if ($IN_COMPOSER) {
-    require(__DIR__ .'/../vendor/autoload.php');
+    require_once(__DIR__ .'/../vendor/autoload.php');
     return;
 }
 

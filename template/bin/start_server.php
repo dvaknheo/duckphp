@@ -1,6 +1,6 @@
 #!/usr/bin/env php
 <?php
-require(__DIR__.'/../headfile/headfile.php');
+require_once(__DIR__.'/../headfile/headfile.php');
 
 $path=realpath(__DIR__.'/../');
 $options=[

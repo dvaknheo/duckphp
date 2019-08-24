@@ -1,7 +1,7 @@
 <?php
 $options=[];
 
-require(__DIR__.'/../headfile/headfile.php');
+require_once(__DIR__.'/../headfile/headfile.php');
 
 //* DNMVCS TO DELETE 
 if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
@@ -13,6 +13,6 @@ if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
 
 $path=realpath(__DIR__.'/..');
 $options['path']=$path;
-$options['namespace']='MY\\';
+$options['namespace']=rtrim('MY\\','\\');
 \DNMVCS\DNMVCS::RunQuickly($options, function () {
 });
