@@ -69,21 +69,30 @@ class C
             $this->showHelp();
             return;
         }
-        $source= __DIR__ .'/../template';
-        $dest=realpath($this->options['dest']);
-        $this->dumpDir($source, $dest);
-        
-        /*
-        var_dump($_SERVER);
-        
+        $is_done=false;
+        if($this->options['create']){
+            $source= __DIR__ .'/../template';
+            $dest=realpath($this->options['dest']);
+            $this->dumpDir($source, $dest);
+            
+            $is_done=true;
+        }
         if($this->options['start']){
             $a=$_SERVER['argv'];
             array_shift($a);
             
+            array_shift($a);
+            
+            
+            $is_done=true;
+            
+            
+        }
+        if(!$is_done){
+            $this->showHelp();
             return;
         }
         
-        */
     }
     public function dumpDir($source, $dest)
     {
@@ -95,6 +104,9 @@ class C
         echo "Copying file...\n";
         foreach ($files as $file) {
             $short_file_name=substr($file, strlen($source)+1);
+            if($short_file_name=='headfile/headfile.php'){
+                continue;
+            }
             if($this->options['prune_helper']){
                 if($this->pruneHelper($short_file_name)){
                     var_dump("skip $short_file_name");
