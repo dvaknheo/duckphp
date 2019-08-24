@@ -1,66 +1,87 @@
 #!/usr/bin/env php
 <?php
 $is_debug=true;
+
 if($is_debug){
     $autoload_file=__DIR__.'/../autoload.php';
     require($autoload_file);
-    
     $base_path=realpath(dirname(realpath(__FILE__)).'/../');
     $path=getcwd();
-    
-    $source= __DIR__ .'/../template';
     $dest  =__DIR__ .'/../build';
 }else{
 
 }
 /////////////////
-showWelcome();
-
-$shortopts  = "";
-$shortopts .= "f:";  // Required value
-$shortopts .= "v::"; // Optional value
-$shortopts .= "abc"; // These options do not accept values
 
 $longopts  = array(
-    "required:",     // Required value
-    "optional::",    // Optional value
-    "option",        // No value
-    "opt",           // No value
+    "help",
+    "create",
+    "start",
+    "prune-core",
+    "prune-helper",
+    "no-composer",
+    
+    "namespace:",
+    "src:",
+    "dest:",
 );
-$options = getopt($shortopts, $longopts);
-var_dump($options);
+$cli_options = getopt('', $longopts);
 
+$options=[];
+$options['help']=isset($cli_options['help'])?true:false;
+$options['create']=isset($cli_options['create'])?true:false;
+$options['prune_helper']=isset($cli_options['prune-helper'])?true:false;
+$options['prune_core']=isset($cli_options['prune-core'])?true:false;
+$options['autoload_file']=isset($cli_options['autoload_file'])?true:false;
 
+$options['namespace']=isset($cli_options['namespace'])?$cli_options['namespace']:'';
+$options['src']=isset($cli_options['src'])?$cli_options['src']:'';
+$options['dest']=isset($cli_options['dest'])?$cli_options['dest']:'';
 
-C::DumpDir($source,$dest);
+$options['src']=$src;
+$options['dest']=$dest;
 
-
-
-
-
-var_dump(DATE(DATE_ATOM));
+C::RunQuickly($options);
 return ;
-function showWelcome()
-{
-    echo "Well Come to use DNMVCS , for more info , use --help \n";
-echo <<<EOT
 
-----
-create  create  a skeleton-project
---prune-core
---prune-helper
---namespace <namespace>
---no-compose
---start the project
-----
-
-EOT;
-}
 
 
 class C
 {
-    public static function DumpDir($source, $dest)
+    public $options=[
+        'prune_helper'=>false,
+        'prune_core'=>false,
+        'namespace' =>'MY',
+        'src'=>'',
+        'dest'=>'',
+    ];
+    public function RunQuickly($options)
+    {
+        //$class=static::class;
+        return (new static())->init($options)->run();
+    }
+    public function init($options)
+    {
+        $this->options=array_replace_recursive($this->options, $options);
+
+        return $this;
+    }
+    public function run()
+    {
+        $this->showWelcome();
+        if($this->options['help']){
+                $this->showHelp();
+                return;
+        }
+        $source= __DIR__ .'/../template';
+        
+        $dest=$this->options['dest'];
+
+        //$this->dumpDir($source, $dest);
+        
+        var_dump(DATE(DATE_ATOM));
+    }
+    public function dumpDir($source, $dest)
     {
         $source=realpath($source);
         $dest=realpath($dest);
@@ -69,13 +90,13 @@ class C
         $files = \iterator_to_array($iterator, false);
         foreach ($files as $file) {
             $short_file_name=substr($file, strlen($source)+1);
-            if ($short_file_name==='headfile/headfile.php') {
-                continue;
-            }
-            if ($short_file_name==='config/setting.php') {
-                continue;
+            if($this->options['prune-helper']){
+                if($this->pruneHelper($short_file_name)){
+                    continue;
+                }
             }
             
+            // mkdir.
             $blocks=explode(DIRECTORY_SEPARATOR, $short_file_name);
             array_pop($blocks);
             $full_dir=$dest;
@@ -85,36 +106,86 @@ class C
                     mkdir($full_dir);
                 }
             }
+            
             $dest_file=$dest.DIRECTORY_SEPARATOR.$short_file_name;
             $data=file_get_contents($file);
-            $data=self::Filte($data);
+            
+            $data=$this->filteText($data);
+            $data=$this->changeHeadFile($data);
+            
+            if($this->options['purce-core']){
+                $data=$this->purceCore($data);
+            }
+            if($this->options['namespace']){
+                $data=$this->filteNamespace($data);
+            }
+            ////
             file_put_contents($dest_file,$data);
             //decoct(fileperms($file) & 0777);
         }
     }
-    public static function changeHeadFile($data)
+    protected function pruneHelper($short_file_name)
     {
-        $str_header="require(__DIR__.'/../vendor/autoload.php');"
+        if(substr($short_file_name,-strlen('ControllerHelper.php')==='ControllerHelper.php')){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    protected function filteText($data)
+    {
+        $data=str_replace('//* DNMVCS TO DELETE ','/* DNMVCS HAS DELETE ',$data);
+        $data=str_replace('/* DNMVCS TO KEEP ','//* DNMVCS HAS KEEP ',$data);
+        return $data;
+    }
+    protected function filteNamespace($data)
+    {
+        $namespace=$this->options['namespace'];
+        if($namespace==='MY'){
+            return $data;
+        }
+        $data=str_replace('MY\\',$namespace.'\\',$data);
+        return $data;
+    }
+    protected function changeHeadFile($data)
+    {
+        $autoload_file=$this->options['autoload_file']?$this->options['autoload_file']:"vendor/autoload.php";
+        
+        $str_header="require(__DIR__.'/../$autoload_file');";
         $data=str_replace("require(__DIR__.'/../headfile/headfile.php');",$str_header,$data);
         return $data;
     }
-    public static function purceCore($data)
+    protected function purceCore($data)
     {
         $data=str_replace("DNMVCS\\","DNMVCS\\Core\\",$data);
         $data=str_replace("DNMVCS\\Core\\DNMVCS","DNMVCS\\Core\\App",$data);
         $data=str_replace("DNMVCS\\Core\\Core","DNMVCS\\Core",$data);
         return $data;
     }
-    public static function DeleteSomething($data)
+    protected function showWelcome()
     {
-        $data=str_replace('//* DNMVCS TO DELETE ','/* DNMVCS Has DELETE ',$data);
-        return $data;
+        echo <<<EOT
+Well Come to use DNMVCS Manager , for more info , use --help \n
+EOT;
     }
-    public static function Filte($data)
+    protected function showHelp()
     {
-        if($namespace!=='MY'){
-            $data=str_replace('MY\\',$namespace.'\\',$data);
-        }
-        return $data;
+    echo <<<EOT
+----
+--help       Show this help.
+--start      Call the project start_server script. the project must has created.
+
+--create     Create the skeleton-project
+  --namespace <namespace>  Use another project namespace.
+  --prune-core             Just use DNMVCS\Core ,but not use DNMVC\
+  --prune-helper           Do not copy the Helper class, 
+  
+  --autoload-file <path> use another autoload file. Base
+  --src  [path] copy project file from  here.
+  --dest [path] copy project file from  here.
+
+----
+
+EOT;
     }
 }

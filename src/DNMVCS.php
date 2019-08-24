@@ -48,6 +48,7 @@ class DNMVCS extends App
             
         ];
     //// RunMode
+    /*
     public static function RunWithoutPathInfo($options=[])
     {
         $default_options=[
@@ -90,6 +91,7 @@ class DNMVCS extends App
         $dn_options['swoole']['swoole_server']=$server;
         return static::G()->init($dn_options)->run();
     }
+    */
     protected function onRun()
     {
         if (defined('DNMVCS_SUPER_GLOBAL_REPALACER')) {
