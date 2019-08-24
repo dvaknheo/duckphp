@@ -72,27 +72,6 @@ class C
             
             $is_done=true;
         }
-        if($this->options['start']){
-/*
-            echo "Start script ... \n"; 
-            $a=$_SERVER['argv'];
-            array_shift($a);
-            foreach($a as &$v){
-                $v=escapeshellarg($v);
-            }
-            unset($v);
-            
-            $args=implode(' ',$a);
-            $dest=realpath($this->options['dest']);
-            $cmd="php ".escapeshellcmd($dest.'/bin/start_server.php').' '.$args;
-            echo $cmd; echo "\n";
-            $handle = popen($cmd, "r");
-            $read = fread($handle, 2096);
-echo $read;
-pclose($handle);
-            $is_done=true;
-*/            
-        }
         if(!$is_done){
             $this->showHelp();
             return;
@@ -151,6 +130,7 @@ pclose($handle);
     }
     protected function pruneHelper($short_file_name)
     {
+        return false; //TODO  to work;
         if(substr($short_file_name,-strlen('Helper.php'))==='Helper.php'){
             return true;
         }else{
@@ -198,19 +178,20 @@ EOT;
     echo <<<EOT
 ----
 --help       Show this help.
---start      Call the project start_server script. the project must has created.
 
 --create     Create the skeleton-project
   --namespace <namespace>  Use another project namespace.
   --prune-core             Just use DNMVCS\Core ,but not use DNMVC\
-  --prune-helper           Do not copy the Helper class, 
+  --prune-helper           Do not use the Helper class, 
   
-  --autoload-file <path> use another autoload file. Base
-  --src  [path] copy project file from  here.
-  --dest [path] copy project file from  here.
+  --autoload-file <path> use another autoload file.
+  --dest [path] copy project file to here.
 
 ----
+To start the project , use bin/start_server.php
 
 EOT;
+//--start      Call the project start_server script. the project must has created.
+
     }
 }

@@ -2,12 +2,12 @@
 namespace MY\Service;
 
 use MY\Base\BaseService;
-use MY\Model as M;
+use MY\Model\TestModel;
 
 class TestService extends BaseService
 {
     public function foo()
     {
-        return "[" . M\TestModel::G()->foo()."]";
+        return "<" . TestModel::G()->foo().">";
     }
 }
