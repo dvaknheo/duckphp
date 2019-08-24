@@ -113,6 +113,7 @@ class App
             $options['path']=$path;
         }
         $options['path']=rtrim($options['path'], '/').'/';
+        $options['namespace']=rtrim($options['namespace'], '\\');
         
         $options['exception_handler']=[static::class,'OnException'];
         $options['dev_error_handler']=[static::class,'OnDevErrorHandler'];

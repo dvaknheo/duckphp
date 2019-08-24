@@ -127,14 +127,14 @@ class Route
         $namespace=$options['namespace'];
         $namespace_controller=$options['namespace_controller'];
         if (substr($namespace_controller, 0, 1)!=='\\') {
-            $namespace_controller=$namespace.'\\'.$namespace_controller;
+            $namespace_controller=rtrim($namespace, '\\').'\\'.$namespace_controller;
         }
         $namespace_controller=ltrim($namespace_controller, '\\');
         $this->namespace_controller=$namespace_controller;
         
         $this->controller_base_class=$options['controller_base_class'];
         if ($this->controller_base_class && substr($this->controller_base_class, 0, 1)!=='\\') {
-            $this->controller_base_class=$namespace.'\\'.$this->controller_base_class;
+            $this->controller_base_class=rtrim($namespace, '\\').'\\'.$this->controller_base_class;
         }
         
         return $this;

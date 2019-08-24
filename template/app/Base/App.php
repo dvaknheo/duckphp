@@ -1,9 +1,9 @@
 <?php
 namespace MY\Base;
 
-use DNMVCS\DNMVCS;
+use DNMVCS\DNMVCS as DN;
 
-class App extends DNMVCS
+class App extends DN
 {
     public function onInit()
     {

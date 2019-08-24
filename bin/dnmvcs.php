@@ -1,5 +1,7 @@
 #!/usr/bin/env php
 <?php
+// bin/dnmvcs.php --create --namespace MyProject --prune-core --prune-helper --dest build --autoload-file ../autoload.php  --start
+
 $is_debug=true;
 
 if($is_debug){
@@ -19,28 +21,23 @@ $longopts  = array(
     "start",
     "prune-core",
     "prune-helper",
-    "no-composer",
     
     "namespace:",
-    "src:",
     "dest:",
+    "autoload-file:",
 );
 $cli_options = getopt('', $longopts);
-
 $options=[];
 $options['help']=isset($cli_options['help'])?true:false;
 $options['create']=isset($cli_options['create'])?true:false;
 $options['prune_helper']=isset($cli_options['prune-helper'])?true:false;
 $options['prune_core']=isset($cli_options['prune-core'])?true:false;
-$options['autoload_file']=isset($cli_options['autoload_file'])?true:false;
 
 $options['namespace']=isset($cli_options['namespace'])?$cli_options['namespace']:'';
-$options['src']=isset($cli_options['src'])?$cli_options['src']:'';
 $options['dest']=isset($cli_options['dest'])?$cli_options['dest']:'';
+$options['autoload_file']=isset($cli_options['autoload-file'])?$cli_options['autoload-file']:'';
 
-$options['src']=$src;
 $options['dest']=$dest;
-
 C::RunQuickly($options);
 return ;
 
@@ -63,23 +60,30 @@ class C
     public function init($options)
     {
         $this->options=array_replace_recursive($this->options, $options);
-
         return $this;
     }
     public function run()
     {
         $this->showWelcome();
         if($this->options['help']){
-                $this->showHelp();
-                return;
+            $this->showHelp();
+            return;
         }
         $source= __DIR__ .'/../template';
+        $dest=realpath($this->options['dest']);
+        $this->dumpDir($source, $dest);
         
-        $dest=$this->options['dest'];
-
-        //$this->dumpDir($source, $dest);
+        /*
+        var_dump($_SERVER);
         
-        var_dump(DATE(DATE_ATOM));
+        if($this->options['start']){
+            $a=$_SERVER['argv'];
+            array_shift($a);
+            
+            return;
+        }
+        
+        */
     }
     public function dumpDir($source, $dest)
     {
@@ -88,10 +92,12 @@ class C
         $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
         $iterator = new \RecursiveIteratorIterator($directory);
         $files = \iterator_to_array($iterator, false);
+        echo "Copying file...\n";
         foreach ($files as $file) {
             $short_file_name=substr($file, strlen($source)+1);
-            if($this->options['prune-helper']){
+            if($this->options['prune_helper']){
                 if($this->pruneHelper($short_file_name)){
+                    var_dump("skip $short_file_name");
                     continue;
                 }
             }
@@ -113,7 +119,7 @@ class C
             $data=$this->filteText($data);
             $data=$this->changeHeadFile($data);
             
-            if($this->options['purce-core']){
+            if($this->options['prune_core']){
                 $data=$this->purceCore($data);
             }
             if($this->options['namespace']){
@@ -121,12 +127,14 @@ class C
             }
             ////
             file_put_contents($dest_file,$data);
+            echo $dest_file;
+            echo "\n";
             //decoct(fileperms($file) & 0777);
         }
     }
     protected function pruneHelper($short_file_name)
     {
-        if(substr($short_file_name,-strlen('ControllerHelper.php')==='ControllerHelper.php')){
+        if(substr($short_file_name,-strlen('Helper.php'))==='Helper.php'){
             return true;
         }else{
             return false;
@@ -150,8 +158,8 @@ class C
     protected function changeHeadFile($data)
     {
         $autoload_file=$this->options['autoload_file']?$this->options['autoload_file']:"vendor/autoload.php";
-        
         $str_header="require(__DIR__.'/../$autoload_file');";
+        
         $data=str_replace("require(__DIR__.'/../headfile/headfile.php');",$str_header,$data);
         return $data;
     }
