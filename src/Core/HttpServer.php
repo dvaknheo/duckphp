@@ -150,6 +150,9 @@ class HttpServer
     protected function runHttpServer()
     {
         $PHP=$_SERVER['_'];
+        if (realpath($PHP)===realpath($_SERVER['SCRIPT_FILENAME'])) {
+            $PHP='/usr/bin/env php';
+        }
         $PHP=escapeshellcmd($PHP);
         $host=escapeshellcmd($this->host);
         $port=escapeshellcmd($this->port);

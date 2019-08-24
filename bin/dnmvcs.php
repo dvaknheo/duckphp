@@ -72,6 +72,8 @@ class C
             
             $is_done=true;
         }
+        if ($this->options['start']) {
+        }
         if (!$is_done) {
             $this->showHelp();
             return;
@@ -191,5 +193,6 @@ To start the project , use bin/start_server.php
 
 EOT;
         //--start      Call the project start_server script. the project must has created.
+        // --force-create
     }
 }
