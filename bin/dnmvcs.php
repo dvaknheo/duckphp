@@ -1,13 +1,6 @@
 #!/usr/bin/env php
 <?php
 // bin/dnmvcs.php --create --namespace MyProject --prune-core --prune-helper --dest build --autoload-file ../autoload.php  --start
-
-$is_debug=true;
-
-if ($is_debug) {
-    $autoload_file=__DIR__.'/../autoload.php';
-    require($autoload_file);
-}
 /////////////////
 
 $longopts  = array(
