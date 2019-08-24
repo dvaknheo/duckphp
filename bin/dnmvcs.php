@@ -50,6 +50,7 @@ create  create  a skeleton-project
 --prune-core
 --prune-helper
 --namespace <namespace>
+--no-compose
 --start the project
 ----
 
@@ -91,12 +92,29 @@ class C
             //decoct(fileperms($file) & 0777);
         }
     }
+    public static function changeHeadFile($data)
+    {
+        $str_header="require(__DIR__.'/../vendor/autoload.php');"
+        $data=str_replace("require(__DIR__.'/../headfile/headfile.php');",$str_header,$data);
+        return $data;
+    }
+    public static function purceCore($data)
+    {
+        $data=str_replace("DNMVCS\\","DNMVCS\\Core\\",$data);
+        $data=str_replace("DNMVCS\\Core\\DNMVCS","DNMVCS\\Core\\App",$data);
+        $data=str_replace("DNMVCS\\Core\\Core","DNMVCS\\Core",$data);
+        return $data;
+    }
+    public static function DeleteSomething($data)
+    {
+        $data=str_replace('//* DNMVCS TO DELETE ','/* DNMVCS Has DELETE ',$data);
+        return $data;
+    }
     public static function Filte($data)
     {
-        $namespace='MyProject\\';
-        $data=str_replace('MY\\',$namespace,$data);
-        
-        
+        if($namespace!=='MY'){
+            $data=str_replace('MY\\',$namespace.'\\',$data);
+        }
         return $data;
     }
 }
