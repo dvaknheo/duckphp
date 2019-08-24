@@ -23,6 +23,6 @@
         "php": ">=7.0.0"
 	},
     "bin": [
-        "dnmvcs"
+        "bin/dnmvcs"
     ]
 }
