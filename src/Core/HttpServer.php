@@ -128,7 +128,7 @@ class HttpServer
     {
         $doc="Usage :\n\n";
         echo $doc;
-        foreach ($this->options['args'] as $k => $v) {
+        foreach ($this->cli_options as $k => $v) {
             $long=$k;
             
             $t=$v['short']??'';

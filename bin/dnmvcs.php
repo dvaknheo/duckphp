@@ -7,11 +7,6 @@ $is_debug=true;
 if($is_debug){
     $autoload_file=__DIR__.'/../autoload.php';
     require($autoload_file);
-    $base_path=realpath(dirname(realpath(__FILE__)).'/../');
-    $path=getcwd();
-    $dest  =__DIR__ .'/../build';
-}else{
-
 }
 /////////////////
 
@@ -30,6 +25,7 @@ $cli_options = getopt('', $longopts);
 $options=[];
 $options['help']=isset($cli_options['help'])?true:false;
 $options['create']=isset($cli_options['create'])?true:false;
+$options['start']=isset($cli_options['start'])?true:false;
 $options['prune_helper']=isset($cli_options['prune-helper'])?true:false;
 $options['prune_core']=isset($cli_options['prune-core'])?true:false;
 
@@ -37,7 +33,6 @@ $options['namespace']=isset($cli_options['namespace'])?$cli_options['namespace']
 $options['dest']=isset($cli_options['dest'])?$cli_options['dest']:'';
 $options['autoload_file']=isset($cli_options['autoload-file'])?$cli_options['autoload-file']:'';
 
-$options['dest']=$dest;
 C::RunQuickly($options);
 return ;
 
@@ -78,15 +73,25 @@ class C
             $is_done=true;
         }
         if($this->options['start']){
+/*
+            echo "Start script ... \n"; 
             $a=$_SERVER['argv'];
             array_shift($a);
+            foreach($a as &$v){
+                $v=escapeshellarg($v);
+            }
+            unset($v);
             
-            array_shift($a);
-            
-            
+            $args=implode(' ',$a);
+            $dest=realpath($this->options['dest']);
+            $cmd="php ".escapeshellcmd($dest.'/bin/start_server.php').' '.$args;
+            echo $cmd; echo "\n";
+            $handle = popen($cmd, "r");
+            $read = fread($handle, 2096);
+echo $read;
+pclose($handle);
             $is_done=true;
-            
-            
+*/            
         }
         if(!$is_done){
             $this->showHelp();
