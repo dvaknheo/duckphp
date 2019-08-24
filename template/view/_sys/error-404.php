@@ -1,5 +1,6 @@
 <?php
 use MY\Base\App;
+
 $is_debug=App::IsDebug(); //...
 ?>
 404

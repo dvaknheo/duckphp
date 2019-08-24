@@ -4,7 +4,7 @@
 
 $is_debug=true;
 
-if($is_debug){
+if ($is_debug) {
     $autoload_file=__DIR__.'/../autoload.php';
     require($autoload_file);
 }
@@ -60,23 +60,22 @@ class C
     public function run()
     {
         $this->showWelcome();
-        if($this->options['help']){
+        if ($this->options['help']) {
             $this->showHelp();
             return;
         }
         $is_done=false;
-        if($this->options['create']){
+        if ($this->options['create']) {
             $source= __DIR__ .'/../template';
             $dest=realpath($this->options['dest']);
             $this->dumpDir($source, $dest);
             
             $is_done=true;
         }
-        if(!$is_done){
+        if (!$is_done) {
             $this->showHelp();
             return;
         }
-        
     }
     public function dumpDir($source, $dest)
     {
@@ -88,11 +87,11 @@ class C
         echo "Copying file...\n";
         foreach ($files as $file) {
             $short_file_name=substr($file, strlen($source)+1);
-            if($short_file_name=='headfile/headfile.php'){
+            if ($short_file_name=='headfile/headfile.php') {
                 continue;
             }
-            if($this->options['prune_helper']){
-                if($this->pruneHelper($short_file_name)){
+            if ($this->options['prune_helper']) {
+                if ($this->pruneHelper($short_file_name)) {
                     var_dump("skip $short_file_name");
                     continue;
                 }
@@ -115,14 +114,14 @@ class C
             $data=$this->filteText($data);
             $data=$this->changeHeadFile($data);
             
-            if($this->options['prune_core']){
+            if ($this->options['prune_core']) {
                 $data=$this->purceCore($data);
             }
-            if($this->options['namespace']){
+            if ($this->options['namespace']) {
                 $data=$this->filteNamespace($data);
             }
             ////
-            file_put_contents($dest_file,$data);
+            file_put_contents($dest_file, $data);
             echo $dest_file;
             echo "\n";
             //decoct(fileperms($file) & 0777);
@@ -131,25 +130,25 @@ class C
     protected function pruneHelper($short_file_name)
     {
         return false; //TODO  to work;
-        if(substr($short_file_name,-strlen('Helper.php'))==='Helper.php'){
+        if (substr($short_file_name, -strlen('Helper.php'))==='Helper.php') {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
     protected function filteText($data)
     {
-        $data=str_replace('//* DNMVCS TO DELETE ','/* DNMVCS HAS DELETE ',$data);
-        $data=str_replace('/* DNMVCS TO KEEP ','//* DNMVCS HAS KEEP ',$data);
+        $data=str_replace('//* DNMVCS TO DELETE ', '/* DNMVCS HAS DELETE ', $data);
+        $data=str_replace('/* DNMVCS TO KEEP ', '//* DNMVCS HAS KEEP ', $data);
         return $data;
     }
     protected function filteNamespace($data)
     {
         $namespace=$this->options['namespace'];
-        if($namespace==='MY'){
+        if ($namespace==='MY') {
             return $data;
         }
-        $data=str_replace('MY\\',$namespace.'\\',$data);
+        $data=str_replace('MY\\', $namespace.'\\', $data);
         return $data;
     }
     protected function changeHeadFile($data)
@@ -157,14 +156,14 @@ class C
         $autoload_file=$this->options['autoload_file']?$this->options['autoload_file']:"vendor/autoload.php";
         $str_header="require_once(__DIR__.'/../$autoload_file');";
         
-        $data=str_replace("require_once(__DIR__.'/../headfile/headfile.php');",$str_header,$data);
+        $data=str_replace("require_once(__DIR__.'/../headfile/headfile.php');", $str_header, $data);
         return $data;
     }
     protected function purceCore($data)
     {
-        $data=str_replace("DNMVCS\\","DNMVCS\\Core\\",$data);
-        $data=str_replace("DNMVCS\\Core\\DNMVCS","DNMVCS\\Core\\App",$data);
-        $data=str_replace("DNMVCS\\Core\\Core","DNMVCS\\Core",$data);
+        $data=str_replace("DNMVCS\\", "DNMVCS\\Core\\", $data);
+        $data=str_replace("DNMVCS\\Core\\DNMVCS", "DNMVCS\\Core\\App", $data);
+        $data=str_replace("DNMVCS\\Core\\Core", "DNMVCS\\Core", $data);
         return $data;
     }
     protected function showWelcome()
@@ -175,7 +174,7 @@ EOT;
     }
     protected function showHelp()
     {
-    echo <<<EOT
+        echo <<<EOT
 ----
 --help       Show this help.
 
@@ -191,7 +190,6 @@ EOT;
 To start the project , use bin/start_server.php
 
 EOT;
-//--start      Call the project start_server script. the project must has created.
-
+        //--start      Call the project start_server script. the project must has created.
     }
 }

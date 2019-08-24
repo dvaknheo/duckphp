@@ -74,7 +74,7 @@ class DNMVCS extends App
                     'mode_onefile_key_for_action'=>'act',
                     'use_function_dispatch'=>true,
                     'use_function_view'=>true,
-                    
+
                     'use_session_auto_start'=>true,
                 ],
             ],

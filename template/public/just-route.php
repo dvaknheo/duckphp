@@ -1,7 +1,7 @@
 <?php
 use DNMVCS\Core\Route;
 
-require_once(__DIR__.'/../headfile/headfile.php'); 
+require_once(__DIR__.'/../headfile/headfile.php');
 
 class Main
 {
@@ -19,7 +19,7 @@ $options=[
     'namespace_controller'=>'\\',
 ];
 $flag=Route::RunQuickly($options);
-if(!$flag){
+if (!$flag) {
     header(404);
     echo "404!";
 }

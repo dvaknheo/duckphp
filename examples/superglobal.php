@@ -1,6 +1,7 @@
 <?php
 use DNMVCS\SwooleHttpd as DN;
-require (__DIR__.'/../autoload.php');
+
+require(__DIR__.'/../autoload.php');
 
 global $n;
 // =>
@@ -20,10 +21,11 @@ class B
     {
         //static::$var++;
         //var_dump(static::$var);
-        $_=&DN::CLASS_STATICS(static::class,'var');$_   ++;
+        $_=&DN::CLASS_STATICS(static::class, 'var');
+        $_   ++;
         // 把 static::$var 替换成  $_=&DN::CLASS_STATICS(static::class,'var');$_
         //别漏掉了 &
-        var_dump(DN::CLASS_STATICS(static::class,'var')); // 没等号或 ++ -- 之类非左值不用 &
+        var_dump(DN::CLASS_STATICS(static::class, 'var')); // 没等号或 ++ -- 之类非左值不用 &
     }
 }
 class C extends B

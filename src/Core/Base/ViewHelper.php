@@ -20,5 +20,4 @@ class ViewHelper
     {
         return App::G()->_ShowBlock($view, $data);
     }
-
 }
