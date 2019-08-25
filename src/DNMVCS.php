@@ -16,7 +16,7 @@ use DNMVCS\Core\App;
 
 class DNMVCS extends App
 {
-    const VERSION = '1.1.0-rc1';
+    const VERSION = '1.1.2';
     use ClassExt;
     
     use DNMVCS_Glue;

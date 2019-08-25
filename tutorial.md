@@ -809,3 +809,11 @@ getRoutes()
 #### StrictCheck
 
 用于 严格使用 DB 等情况。使得在调试状态下。不能在 Controller 里 使用 M::DB();等
+
+
+### 其他
+#### 通过 composer 创建工程
+```
+composer require dnmvcs/framework
+./vendor/bin/dnmvcs --create --help
+```
