@@ -58,7 +58,8 @@ class App
             // 'path_namespace'=>'app',
             // 'skip_system_autoload'=>true,
             'skip_app_autoload'=>false,
-            
+            //'enable_cache_classes_in_cli'=>true,
+
             //// Class Configer ////
             // 'path'=>null,
             // 'path_config'=>'config',
@@ -91,8 +92,10 @@ class App
     public $platform='';
     public $path=null;
     public $override_root_class='';
+    
     protected $beforeRunHandlers=[];
     protected $error_view_inited=false;
+    
     public static function RunQuickly(array $options=[], callable $after_init=null)
     {
         if (!$after_init) {
@@ -114,9 +117,9 @@ class App
         }
         $options['path']=rtrim($options['path'], '/').'/';
         
-        
         $options['exception_handler']=[static::class,'OnException'];
         $options['dev_error_handler']=[static::class,'OnDevErrorHandler'];
+        $options['system_exception_handler']=[static::class,'set_exception_handler'];
         
         return $options;
     }
@@ -125,14 +128,11 @@ class App
         $options=$this->adjustOptions($options);
         $options=array_replace_recursive(static::DEFAULT_OPTIONS, static::DEFAULT_OPTIONS_EX, $options);
         $this->options=$options;
+        
         $this->path=$this->options['path'];
         
         $this->is_debug=$this->options['is_debug'];
         $this->platform=$this->options['platform'];
-
-        if (method_exists(static::class, 'set_exception_handler')) {
-            $this->options['system_exception_handler']=[static::class,'set_exception_handler'];
-        }
     }
     protected function checkOverride($options)
     {
@@ -141,8 +141,8 @@ class App
         }
         $this->override_root_class=static::class;
         
-        $override_class=isset($options['override_class'])?$options['override_class']:static::DEFAULT_OPTIONS['override_class'];
-        $namespace=isset($options['namespace'])?$options['namespace']:static::DEFAULT_OPTIONS['namespace'];
+        $override_class=$options['override_class']??static::DEFAULT_OPTIONS['override_class'];
+        $namespace=$options['namespace']??static::DEFAULT_OPTIONS['namespace'];
         
         if (substr($override_class, 0, 1)!=='\\') {
             $override_class=$namespace.'\\'.$override_class;
@@ -163,9 +163,14 @@ class App
     {
         if (!$this->override_root_class) {
             $options=$this->adjustOptions($options);
-            $this->initBeforeOverride($options);
+            
+            AutoLoader::G()->init($options, $this)->run();
+            ExceptionManager::G()->init($options, $this);
+            
             $object=$this->checkOverride($options);
-            self::G($object??$this);
+            
+            (self::class)::G($object??$this);
+            
             if ($object) {
                 $object->initOptions($options);
                 return $object->init($options);
@@ -176,19 +181,10 @@ class App
         $this->onInit();
         return $this->initAfterOverride();
     }
-    
-    protected function initBeforeOverride($options)
-    {
-        AutoLoader::G()->init($options, $this)->run();
-        ExceptionManager::G()->init($options, $this);
-    }
     protected function initAfterOverride()
     {
         (self::class)::G($this);
         
-        if ($this->options['enable_cache_classes_in_cli'] && PHP_SAPI==='cli') {
-            AutoLoader::G()->cacheClasses();
-        }
         Configer::G()->init($this->options, $this);
         $this->reloadFlags();
         
@@ -276,7 +272,7 @@ class App
         RuntimeState::G()->end();
         $this->is_in_exception=false;
     }
-    public function reloadFlags()
+    protected function reloadFlags()
     {
         if (!$this->options['reload_for_flags']) {
             return;

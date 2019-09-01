@@ -13,6 +13,8 @@ class AutoLoader
             
             'skip_system_autoload'=>true,
             'skip_app_autoload'=>false,
+            
+            'enable_cache_classes_in_cli'=>false,
         ];
     protected $namespace;
     protected $path_namespace;
@@ -21,6 +23,7 @@ class AutoLoader
     
     protected $is_inited=false;
     protected $is_running=false;
+    protected $enable_cache_classes_in_cli=false;
     public function init($options=[], $context=null)
     {
         if ($this->is_inited) {
@@ -39,6 +42,8 @@ class AutoLoader
         $this->namespace=$options['namespace'];
         $this->path_namespace=$path.rtrim($options['path_namespace'], '/').'/';
         
+        $this->enable_cache_classes_in_cli=$options['enable_cache_classes_in_cli'];
+
         if (!$options['skip_app_autoload']) {
             $this->assignPathNamespace($this->path_namespace, $this->namespace);
         }
@@ -54,6 +59,10 @@ class AutoLoader
             return;
         }
         $this->is_running=true;
+        
+        if ($this->enable_cache_classes_in_cli) {
+            $this->cacheClasses();
+        }
         spl_autoload_register([$this,'_autoload']);
     }
     public function _autoload($class)
@@ -99,6 +108,22 @@ class AutoLoader
             $files = \iterator_to_array($iterator, false);
             $ret+=$files;
         }
+        foreach ($ret as $file) {
+            if (opcache_is_script_cached($file)) {
+                continue;
+            }
+            @opcache_compile_file($file);
+        }
+        return $ret;
+    }
+    public function cacheNamespacePath($path)
+    {
+        $ret=[];
+        $path=realpath($path);
+        $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
+        $iterator = new \RecursiveIteratorIterator($directory);
+        $files = \iterator_to_array($iterator, false);
+        $ret+=$files;
         foreach ($ret as $file) {
             if (opcache_is_script_cached($file)) {
                 continue;
