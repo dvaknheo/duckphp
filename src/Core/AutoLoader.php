@@ -19,9 +19,9 @@ class AutoLoader
     protected $namespace;
     protected $path_namespace;
 
+    public $is_inited=false;
     public $namespace_paths=[];
     
-    protected $is_inited=false;
     protected $is_running=false;
     protected $enable_cache_classes_in_cli=false;
     public function init($options=[], $context=null)
@@ -131,5 +131,9 @@ class AutoLoader
             @opcache_compile_file($file);
         }
         return $ret;
+    }
+    public function unload()
+    {
+        //用于番注册
     }
 }

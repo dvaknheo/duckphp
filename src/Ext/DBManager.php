@@ -10,6 +10,7 @@ class DBManager
     const DEFAULT_OPTIONS=[
         'db_create_handler'=>null,
         'db_close_handler'=>null,
+        'db_excption_handler'=>null,
         'before_get_db_handler'=>null,
         
         'database_list'=>null,
@@ -23,6 +24,7 @@ class DBManager
     
     protected $db_create_handler=null;
     protected $db_close_handler=null;
+    protected $db_excption_handler=null;
     
     protected $before_get_db_handler=null;
     protected $use_context_db_setting=true;
@@ -35,6 +37,7 @@ class DBManager
         $this->database_config_list=$options['database_list'];
         $this->db_create_handler=$options['db_create_handler']??[DB::class,'CreateDBInstance'];
         $this->db_close_handler=$options['db_close_handler']??[DB::class,'CloseDBInstance'];
+        $this->db_excption_handler=$options['db_excption_handler']??null;
         $this->use_context_db_setting=$options['use_context_db_setting'];
         if ($context) {
             $this->initContext($options, $context);
@@ -58,10 +61,11 @@ class DBManager
         $context->addBeforeShowHandler([static::class,'CloseAllDB']);
     }
 
-    public function setDBHandler($db_create_handler, $db_close_handler=null)
+    public function setDBHandler($db_create_handler, $db_close_handler=null, $db_excption_handler=null)
     {
         $this->db_create_handler=$db_create_handler;
         $this->db_close_handler=$db_close_handler;
+        $this->db_excption_handler=$db_excption_handler;
     }
     public function setBeforeGetDBHandler($before_get_db_handler)
     {
@@ -110,8 +114,22 @@ class DBManager
         if (!$this->db_close_handler) {
             return;
         }
-        foreach ($this->databases as $v) {
-            ($this->db_close_handler)($v);
+        foreach ($this->databases as $tag=>$v) {
+            ($this->db_close_handler)($v,$tag);
+        }
+        $this->databases=[];
+    }
+    public function OnException()
+    {
+        return static::G()->_onException();
+    }
+    public function _onException()
+    {
+        if (!$this->db_excption_handler) {
+            return;
+        }
+        foreach ($this->databases as $tag=>$v) {
+            ($this->db_excption_handler)($v,$tag);
         }
         $this->databases=[];
     }

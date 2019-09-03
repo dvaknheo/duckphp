@@ -7,12 +7,12 @@ namespace DNMVCS\Core;
 use DNMVCS\Core\SingletonEx;
 use DNMVCS\Core\ThrowOn;
 
-use DNMVCS\Core\Route;
 use DNMVCS\Core\AutoLoader;
-use DNMVCS\Core\ExceptionManager;
 use DNMVCS\Core\Configer;
-use DNMVCS\Core\View;
+use DNMVCS\Core\ExceptionManager;
+use DNMVCS\Core\Route;
 use DNMVCS\Core\RuntimeState;
+use DNMVCS\Core\View;
 
 class App
 {
@@ -41,8 +41,6 @@ class App
             
             'override_class'=>'Base\App',
             'reload_for_flags'=>true,
-            
-            'enable_cache_classes_in_cli'=>true,
             'skip_view_notice_error'=>true,
             'skip_404_handler'=>false,
             

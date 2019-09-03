@@ -15,7 +15,7 @@ class Route
             'controller_welcome_class'=>'Main',
 
             'controller_hide_boot_class'=>false,
-            'controller_methtod_for_miss'=>null,
+            'controller_methtod_for_miss'=>'_missing',
             'controller_enable_paramters'=>false,
             'controller_prefix_post'=>'do_',
             
@@ -312,8 +312,13 @@ class Route
         if ($this->enable_post_prefix && $this->request_method==='POST' &&  method_exists($obj, $this->controller_prefix_post.$method)) {
             $method=$this->controller_prefix_post.$method;
         }
-        if ($this->controller_methtod_for_miss && !method_exists($obj, $method)) {
-            $method=$this->controller_methtod_for_miss;
+        if ($this->controller_methtod_for_miss) {
+            if ($method===$this->controller_methtod_for_miss) {
+                return null;
+            }
+            if (!method_exists($obj, $method)) {
+                $method=$this->controller_methtod_for_miss;
+            }
         }
         if (!is_callable([$obj,$method])) {
             return null;

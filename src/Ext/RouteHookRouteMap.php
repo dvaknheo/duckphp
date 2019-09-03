@@ -71,17 +71,21 @@ class RouteHookRouteMap
             if (!$this->matchRoute($pattern, $path_info, $route)) {
                 continue;
             }
-            if (!is_string($callback)) {
-                return $callback;
-            }
-            if (false!==strpos($callback, '->')) {
-                list($class, $method)=explode('->', $callback);
-                $route->stopRunDefaultHandler();
-                return [new $class(),$method];
-            }
+            
+            $route->stopRunDefaultHandler();
+            $callback=$this->adjustCallback($callback);
+            
             return $callback;
         }
         return null;
+    }
+    protected function adjustCallback($callback)
+    {
+        if (is_string($callback) && false!==strpos($callback, '->')) {
+            list($class, $method)=explode('->', $callback);
+            return [new $class(),$method];
+        }
+        return $callback;
     }
     public static function Hook($route)
     {
