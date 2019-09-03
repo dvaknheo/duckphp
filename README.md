@@ -36,11 +36,11 @@ DNMVCS 的最大意义是思想，只要思想在，什么框架你都可以用
 DNMVCS 层级关系图
 
 ```text
-           /-> View
+           /-> View-->ViewHelper
 Controller --> Service ------------------------------ ---> Model
-         \         \   \               \  /             /    \
-          \         \   \-> LibService ----> ExModel --/      \
-           \         \             \                \----------->ModelHelper
+         \         \   \               \  /                  \
+          \         \   \-> LibService ----> ExModel----------->ModelHelper
+           \         \             \                
             \         ---------------->ServiceHelper
              \-->ControllerHelper
 ```
@@ -51,7 +51,7 @@ Controller --> Service ------------------------------ ---> Model
 * Model 按数据库表走，基本上只实现和当前表相关的操作。
 * View 按页面走
 * 不建议 Model 抛异常
-* ControllerHelper,ServiceHelper,ModelHelper都为助手类，通常缩写为 C, S， M
+* ControllerHelper,ServiceHelper,ModelHelper,ViewHelper 都为助手类，通常缩写为 C, S, M, V
 
 1. 如果 Service 相互调用怎么办?
 添加后缀为 LibService 用于 Service 共享调用，不对外，如MyLibService

@@ -7,7 +7,6 @@ Controller -> Service -> Model;
     
 Service -> LibService;
 LibService->ExModel;
-ExModel -> Model;
 LibService->Model;
 Controller -> View;
 

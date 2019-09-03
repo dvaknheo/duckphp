@@ -6,7 +6,6 @@ graph [rankdir = "LR"];
     
     Service -> LibService;
     LibService->ExModel;
-    ExModel -> Model;
     LibService->Model;
     Controller -> View;
 
