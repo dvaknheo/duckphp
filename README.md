@@ -1,5 +1,7 @@
 # 第一章 DNMVCS 介绍
-QQ: 85811616
+作者QQ: 85811616
+官方QQ群: 714610448
+
 ##  [教程](tutorial.md)
 
  [教程](tutorial.md)
