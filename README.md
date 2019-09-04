@@ -126,8 +126,13 @@ Controller --> Service ------------------------------ ---> Model
 5. 没有中间件。 重写 Controller 啊，要什么中间件。
 
 ## 架构图
-![dnmvcs](doc/dnmvcs.gv.svg)
+DNMVCS/Core 核心
+![core](doc/core.gv.svg)
+DNMVCS/Framwork 全框架
 
+![dnmvcs](doc/dnmvcs.gv.svg)
+SwooleHttpd 扩展
+![swoolehttpd](doc/swoolehttpd.gv.svg)
 ## 还有什么要说的
 
 使用它，鼓励我，让我有写下去的动力
