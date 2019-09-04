@@ -817,3 +817,10 @@ getRoutes()
 composer require dnmvcs/framework
 ./vendor/bin/dnmvcs --create --help
 ```
+####
+new , 协程单例 ，单例，static function
+
+效率 static function 最高
+new 多个效率比单例 低
+协程单例，需要的操作要多。效率底点。
+但是协程单例可以防低级错误。

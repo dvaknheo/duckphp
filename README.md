@@ -2,9 +2,9 @@
 作者QQ: 85811616
 官方QQ群: 714610448
 
-##  [教程](tutorial.md)
+##  教程
 
- [教程](tutorial.md)
+ [教程](tutorial.md) ,强烈推荐过 [教程](tutorial.md) 这篇文章。
 
 ## DNMVCS 是什么
 

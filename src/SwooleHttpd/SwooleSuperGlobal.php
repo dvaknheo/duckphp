@@ -2,6 +2,7 @@
 namespace DNMVCS\SwooleHttpd;
 
 use DNMVCS\SwooleHttpd\SwooleSingleton;
+use DNMVCS\SwooleHttpd\SwooleSessionHandler;
 
 class SwooleSuperGlobal
 {
