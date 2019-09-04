@@ -84,7 +84,7 @@ Controller --> Service ------------------------------ ---> Model
 
 ## DNMVCS 不做什么
 
-* ORM ，和各种屏蔽 sql 的行为，根据日志查 sql 方便多了。 自己简单封装了 pdo 。你也可以使用自己的DB类。 你也可以用第三方ORM
+* ORM ，和各种屏蔽 sql 的行为，根据日志查 sql 方便多了。 自己简单封装了 pdo 。你也可以使用自己的DB类。 你也可以用第三方ORM（教程最末有替换成 Think-orm 的方法）
 * 模板引擎，PHP本身就是模板引擎。
 * Widget ， 和 MVC 分离违背。
 * 接管替代默认的POST，GET，SESSION 。系统提供给你就用，不要折腾这些。 *除非为了支持 swoole*
@@ -92,6 +92,31 @@ Controller --> Service ------------------------------ ---> Model
 ## DNMVCS 还要做什么
 * 范例，例子还太简单了
 * 更多的杀手级应用
+## DNMVCS 的优点
+
+    DNMVCS 可以做到你的应用和 DNMVCS 系统只有一行关联。 这个是其他 PHP 框架目前都做不到的。
+    DNMVCS 用可变单例方式，解决了【系统的调用形式不变，实现形式可变】，比如不用 hack 来改系统漏洞。而其他框架用的 DI 则复杂，不方便调试。
+    DNMVCS 的应用调试是最方便的，debug_print_backtrace(2) 堆栈清晰。那些用了中间件的框架的堆栈没法看。
+    DNMVCS 的 Controller 是和其他类无关系的，切换的时候很容易。
+    DNMVCS 很容易嵌入其他框架。其他框架嵌入就不行了。
+    DNMVCS 可以在子目录，不改服务器设置的情况下使用。
+
+    你只要 DNMVCS 的路由也是可以的。
+    DNMVCS/Core 是 DNMVCS 的子框架。有时候你用 DNMVCS/Core 也行。
+
+    DNMVCS。 你可以按死，Service 类只能用 MY\Base\ServiceHelper . Controller 类 只能用 MY\Base\ControllerHelper .Model 类只能引用 MY\Base\ModelHepler。 View 类只能用 ViewHelper ，其他类不允许用。也可以规范成 只用 MY\Base\App 类这个系统类。其中 MY 这个命名空间你可以自定义。
+
+    DNMVCS 支持扩展。这些扩展可独立，不一定非要仅仅用于 DNMVCS。
+
+    laravel 的 ORM 确实很强大。但是意味着和 jquery 那样不可调试。
+
+    DNMVCS /Core 没有数据类，因为数据库类不是 Web 框架的必备
+    DNMVCS 的数据库类很简洁，而且，你可以轻易方便的替换 （我就把 thinkphp-db 来引用
+
+    DNMVCS 有扩展能做到禁止你在 Controller 里直接写 sql.
+    有时候，框架必须为了防止人犯蠢，而牺牲了性能。
+
+    DNMVCS 还有扩展做到 swoole 和 fpm 代码无缝切换。单例变成协程单例。
 
 ## DNMVCS 的 缺点
 
@@ -99,9 +124,6 @@ Controller --> Service ------------------------------ ---> Model
 2. 调用堆栈层级太少，不够 Java 。
 4. 错误报告页面很丑陋。 想华丽自己写一个。不用 IDE 的直接看就懂。
 5. 没有中间件。 重写 Controller 啊，要什么中间件。
-6. 没有强大的全局依赖注入容器，只有万能的 G 函数。
-7. 没有灵活强大的 AOP ，只有万能的 G 函数。
-8. 这框架什么都没做啊。 居然只支持 PHP7 。
 
 ## 架构图
 ![dnmvcs](doc/dnmvcs.gv.svg)

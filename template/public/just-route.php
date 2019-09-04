@@ -1,7 +1,7 @@
 <?php
-use DNMVCS\Core\Route;
-
 require_once(__DIR__.'/../headfile/headfile.php');
+
+use DNMVCS\Core\Route;
 
 class Main
 {

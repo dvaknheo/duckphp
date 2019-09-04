@@ -824,3 +824,37 @@ new , 协程单例 ，单例，static function
 new 多个效率比单例 低
 协程单例，需要的操作要多。效率底点。
 但是协程单例可以防低级错误。
+#### 使用 Think-orm 的 DB
+```php
+<?php
+use think\facade\Db;
+use DNMVCS\Ext\DBManager;
+use DNMVCS\DNMVCS;
+require_once('../vendor/autoload.php');
+
+$options=[];
+$options['override_class']='';      // 不要被子类干扰。
+$options['skip_setting_file']=true; // 不需要配置文件。
+$options['database_list']=[['skip']]; // 这里要填充假配置，实际应用的时候应该按规范读这里的配置。
+DNMVCS::RunQuickly($options,function(){
+    Db::setConfig([
+        'default'     => 'mysql',
+        'connections' => [
+            'mysql' => [
+                'type'     => 'mysql',
+                'hostname' => '127.0.0.1',
+                'username' => 'root',
+                'password' => '123456',
+                'database' => 'DnSample',
+            ]
+        ]
+    ]);
+    //就这句话了
+    DBManager::G()->setDBHandler(function(){return Db::class;});
+    $sql="select * from Users where true limit 1";
+    $data=DNMVCS::DB()::query($sql);
+    var_dump($data);
+    DNMVCS::exit_system(0);
+});
+
+```
