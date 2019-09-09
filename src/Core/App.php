@@ -77,7 +77,6 @@ class App
             // 'namespace_controller'=>'Controller',
             // 'controller_base_class'=>null,
             // 'controller_welcome_class'=>'Main',
-            // 'controller_enable_paramters'=>false,
             // 'controller_hide_boot_class'=>false,
             // 'controller_methtod_for_miss'=>null,
             // 'controller_prefix_post'=>'do_',

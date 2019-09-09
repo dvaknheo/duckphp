@@ -13,10 +13,9 @@ class Route
             
             'controller_base_class'=>null,
             'controller_welcome_class'=>'Main',
-
+            
             'controller_hide_boot_class'=>false,
             'controller_methtod_for_miss'=>'_missing',
-            'controller_enable_paramters'=>false,
             'controller_prefix_post'=>'do_',
             
         ];
@@ -27,7 +26,6 @@ class Route
     protected $controller_welcome_class='Main';
     protected $controller_index_method='index';
     
-    public $controller_enable_paramters=false;
     public $namespace_controller='';
     protected $controller_hide_boot_class=false;
     protected $controller_methtod_for_miss=null;
@@ -112,8 +110,6 @@ class Route
     public function init($options=[], $context=null)
     {
         $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
-        
-        $this->controller_enable_paramters=$options['controller_enable_paramters'];
         
         $this->controller_prefix_post=$options['controller_prefix_post'];
         $this->enable_post_prefix=$this->controller_prefix_post?true:false;
@@ -222,33 +218,7 @@ class Route
         }
         return $class;
     }
-    protected function getClassMethodAndParameters($blocks, $method)
-    {
-        $class=null;
-        $paramters=[];
-        $callinig_path='';
-        $p=implode('/', $blocks);
-        $l=count($blocks);
-        for ($i=0;$i<$l;$i++) {
-            $class_names=array_slice($blocks, 0, $l-$i);
-            $parameters=$i?array_slice($blocks, -$i):[];
-            $calling_path=implode('/', $class_names);
-            
-            $class=$this->namespace_controller.'\\'.implode('\\', $class_names);
-            if (class_exists($class)) {
-                break;
-            }
-        }
-        if (!$class) {
-            $this->error="No faill paramter not failed";
-            return [null,$method,$parameters,$calling_path];
-        }
-        array_push($parameters, $method);
-        $method=array_shift($parameters);
-        $calling_path=$calling_path.'/'.$method;
-        
-        return [$class,$method,$parameters,$calling_path];
-    }
+    
     public function defaultRouteHandler()
     {
         $path_info=$this->path_info;
@@ -269,19 +239,6 @@ class Route
         $callback=$this->getCallback($full_class, $method);
         if ($callback) {
             return $callback;
-        }
-        if ($this->controller_enable_paramters) {
-            list($full_class, $the_method, $parameters, $calling_path)=$this->getClassMethodAndParameters($class_blocks, $method);
-            if ($full_class) {
-                $method=$the_method;
-                $this->parameters=$parameters;
-                $this->calling_path=$calling_path;
-                
-                $callback=$this->getCallback($full_class, $method);
-                if ($callback) {
-                    return $callback;
-                }
-            }
         }
         return null;
     }
@@ -336,5 +293,9 @@ class Route
     public function getRouteCallingMethod()
     {
         return $this->calling_method;
+    }
+    public function setRouteCallingMethod($calling_method)
+    {
+        $this->calling_method=$calling_method;
     }
 }

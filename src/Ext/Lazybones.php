@@ -18,6 +18,7 @@ class Lazybones
         'lazy_controller_class'=>'DNController',
         'with_controller_namespace_namespace'=>true,
         'with_controller_namespace_prefix'=>true,
+        'with_controller_enable_paramters'=>false,
     ];
     protected $lazy_path='';
     protected $lazy_path_service='';
@@ -25,6 +26,10 @@ class Lazybones
     protected $lazy_path_contorller='';
     
     protected $lazy_class_prefix='';
+    
+    protected $with_controller_namespace_namespace=true;
+    protected $with_controller_namespace_prefix=true;
+    protected $with_controller_enable_paramters=false;
     
     public function init($options, $context=null)
     {
@@ -42,6 +47,7 @@ class Lazybones
         
         $this->with_controller_namespace_namespace=$options['with_controller_namespace_namespace'];
         $this->with_controller_namespace_prefix=$options['with_controller_namespace_prefix'];
+        $this->with_controller_enable_paramters=$options['with_controller_enable_paramters'];
 
         if ($options['use_app_path']??false) {
             $this->lazy_path=$options['path'];
@@ -84,7 +90,7 @@ class Lazybones
     public function runRoute()
     {
         $path_info=Route::G()->path_info;
-        $enable_paramters=Route::G()->controller_enable_paramters;
+        $enable_paramters=$this->with_controller_enable_paramters;// Route::G()->controller_enable_paramters; 
         
         $class_blocks=explode('/', $path_info);
         $method=array_pop($class_blocks);
@@ -184,5 +190,50 @@ class Lazybones
     protected function includeControllerFile($file)
     {
         require_once($file);
+    }
+    
+    //// backup
+    protected function getClassMethodAndParameters($blocks, $method)
+    {
+        $class=null;
+        $paramters=[];
+        $callinig_path='';
+        $p=implode('/', $blocks);
+        $l=count($blocks);
+        for ($i=0;$i<$l;$i++) {
+            $class_names=array_slice($blocks, 0, $l-$i);
+            $parameters=$i?array_slice($blocks, -$i):[];
+            $calling_path=implode('/', $class_names);
+            
+            $class=$this->namespace_controller.'\\'.implode('\\', $class_names);
+            if (class_exists($class)) {
+                break;
+            }
+        }
+        if (!$class) {
+            $this->error="No faill paramter not failed";
+            return [null,$method,$parameters,$calling_path];
+        }
+        array_push($parameters, $method);
+        $method=array_shift($parameters);
+        $calling_path=$calling_path.'/'.$method;
+        
+        return [$class,$method,$parameters,$calling_path];
+    }
+    protected function _getx()
+    {
+        if ($this->controller_enable_paramters) {
+            list($full_class, $the_method, $parameters, $calling_path)=$this->getClassMethodAndParameters($class_blocks, $method);
+            if ($full_class) {
+                $method=$the_method;
+                $this->parameters=$parameters;
+                $this->calling_path=$calling_path;
+                
+                $callback=$this->getCallback($full_class, $method);
+                if ($callback) {
+                    return $callback;
+                }
+            }
+        }
     }
 }

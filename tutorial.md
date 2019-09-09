@@ -541,10 +541,10 @@ DNMVCS\Core\Route 这个类可以单独拿出来做路由用。
 'controller_base_class'=>null,
 'controller_welcome_class'=>'Main',
 
-'controller_enable_paramters'=>false,
 'controller_hide_boot_class'=>false,
 'controller_methtod_for_miss'=>null,
 'controller_prefix_post'=>'do_',
+'controller_methtod_for_miss'=>'_missing',
 ```
 'controller_base_class'=>null,
     
@@ -557,6 +557,10 @@ DNMVCS\Core\Route 这个类可以单独拿出来做路由用。
 'controller_welcome_class'=>'Main',
 
     默认欢迎类是  Main 。
+'controller_methtod_for_miss'=>'_missing',
+    
+    如果有这个方法。找不到方法的时候，会进入这个方法
+    如果你使用了这个方法，将不会进入 404 。
 ##### 说明
 这是一个单用 Route 组件的例子
 ```php
