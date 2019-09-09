@@ -163,7 +163,7 @@ class App
             $options=$this->adjustOptions($options);
             
             AutoLoader::G()->init($options, $this)->run();
-            ExceptionManager::G()->init($options, $this);
+            ExceptionManager::G()->init($options, $this)->run();
             
             $object=$this->checkOverride($options);
             

@@ -111,7 +111,7 @@ class Route
     
     public function init($options=[], $context=null)
     {
-        $options=array_merge(static::DEFAULT_OPTIONS, $options);
+        $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
         
         $this->controller_enable_paramters=$options['controller_enable_paramters'];
         

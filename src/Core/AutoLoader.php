@@ -132,8 +132,8 @@ class AutoLoader
         }
         return $ret;
     }
-    public function unload()
+    public function cleanUp()
     {
-        //用于番注册
+        spl_autoload_unregister([$this,'_autoload']);
     }
 }

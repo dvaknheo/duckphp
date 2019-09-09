@@ -28,6 +28,14 @@ composer require dnmvcs/framework
 php bin/start_server.php
 ```
 发布的时候，把网站目录指向 public/index.php 就行。
+### 另一种模式： Composer 安装
+在工程目录下执行：
+```
+composer require dnmvcs/framework
+./vendor/bin/dnmvcs --create
+```
+将会直接把 template 的东西复制到工程
+细则可以看 --help 参数
 
 ### 第一个任务
 路径： http://127.0.0.1:8080/test/done  
@@ -134,6 +142,20 @@ test
 
 <2019-04-19T22:21:49+08:00>
 ```
+## 基础
+
+### SingletonEx
+SingletonEx 是 DNMVCS 系的基础
+可变单例。
+### DNMVCS/Core
+DNMVCS 的核心框架
+
+### DNMVCS/Framework
+DNMVCS 的常规框架
+### DNMVCS/SwooleHttpd
+DNMVCS 的 Swoole 扩展
+### DNMVCS++
+其他人员开发的符合 DNMVCS 规格的扩展，一般只引用 SingletonEx
 ## 应用程序员核心参考
 
 ### 本章说明
@@ -271,7 +293,9 @@ addBeforeRunHandler($callback)
 其他方法
 
     其他方法有待你的发掘。如果你要用于特殊用处的话。
+
 ### 目录结构
+
 在看默认选项前， 我们看工程的桩代码,默认目录结构
 
 ```text
@@ -390,31 +414,30 @@ const DEFAULT_OPTIONS=[
 ];
 ```
 
-这是基础的，后面还有一大堆的配置。
-其他组件的配置，也可以写在这里。
-
-总之，这里很明白了。
+其他组件的配置，也可能写在这里。
 
 ##### 基本选项
 'path'=>null,
 
     基本路径，其他配置会用到这个基本路径。
-'namespace' =>=>'MY',
+'namespace' =>'MY',
 
     工程的 autoload 的命名空间
-'path_namespace'
+'path_namespace'=>'app',
+
     默认的 psr-4 的工程路径配合 skip_app_autoload  使用。
+'skip_app_autoload'=>false
 
 'override_class'=>'Base\App',
 
     **重要选项**
-    基于 namespace ,如果这个选项的类存在，则在 init 的时候会切换到这个类完成后续初始化，并返回这个类的实例。
+    基于 namespace ,如果这个选项的类存在，则在init()的时候会切换到这个类完成后续初始化，并返回这个类的实例。
     注意到 app/Base/App.php 这个文件的类 MY\Base\App extends DNMVCS\DNMVCS;
     如果以  \ 开头则是绝对 命名空间
-
+'is_debug'=>false,
     配置开发平台 * 设置文件的  platform 会覆盖
+'platform'=>'',
 
-    
 'skip_view_notice_error'=>true,
 
     view 视图里忽略 notice 错误。
@@ -461,6 +484,24 @@ DNMVCS 系统组件的连接，多是以调用类的可变单例来实现的。
 
 #### 结构图和组件分析
 ![core](doc/core.gv.svg)
+
+SingletonEx 可变单例
+
+
+Base\*Helper 是各种快捷方法。
+
+其他组件都遵守 init($options, $contetxt=null); 接口。
+
+这些组件 都可以在 onInit 里通过类似方法替换
+```php
+Route::G(MyRoute::G());
+View::G(MyView::G());
+Configer::G(MyConfiger::G());
+RuntimeState::G(MyRuntimeState::G());
+```
+
+例外的是 AutoLoader 和 ExceptionManager 。
+HttpServer 是单独的 命令行启动 Http 服务器的类。
 
 
 #### Configer
@@ -796,10 +837,12 @@ getRewrites
 默认开启,实现了路由映射功能
 ##### 选项
    'route_map'=>[],
+如果是 * 结尾，那么把后续的按 / 切入 parameters
 route_map key 如果是 ~ 开头的，表示正则
-否则是普通的 path_info 匹配。如果是 * 结尾，那么把后续的按 / 切入 parameters
+否则是普通的 path_info 匹配。
 
-支持 'Class->Method' 表示创建对象，执行动态方法。 
+支持 'Class->Method' 表示创建对象，执行动态方法。
+你可以 
 parameters 
 
 ##### 方法

@@ -6,6 +6,7 @@ use DNMVCS\Core\SingletonEx;
 class ExceptionManager
 {
     use SingletonEx;
+    
     const DEFAULT_OPTIONS=[
         'exception_handler'=>null,
         'dev_error_handler'=>null,
@@ -13,8 +14,14 @@ class ExceptionManager
     ];
     protected $errorHandlers=[];
     protected $dev_error_handler=null;
-    protected $exception_error_handler_init=null;
     protected $exception_error_handler=null;
+    
+    protected $exception_error_handler_init=null;
+    protected $system_exception_handler=null;
+    protected $last_error_handler=null;
+    protected $last_exception_handler=null;
+    
+    public $is_inited=false;
     
     public function setDefaultExceptionHandler($default_exception_handler)
     {
@@ -80,7 +87,6 @@ class ExceptionManager
         }
         ($this->exception_error_handler)($ex);
     }
-    public $is_inited=false;
     public function init($options=[], $context=null)
     {
         if ($this->is_inited) {
@@ -88,18 +94,34 @@ class ExceptionManager
         }
         $this->is_inited=true;
         
-        $exception_handler=$options['exception_handler']??null;
-        $this->dev_error_handler=$options['dev_error_handler']??null;
-        $system_exception_handler=$options['system_exception_handler']??null;
+        $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
         
+        $exception_handler=$options['exception_handler'];
+        $this->dev_error_handler=$options['dev_error_handler'];
+        $this->system_exception_handler=$options['system_exception_handler'];
+        
+        $this->exception_handler=$exception_handler;
         $this->exception_error_handler=$exception_handler;
         $this->exception_error_handler_init=$exception_handler;
         
-        set_error_handler([$this,'on_error_handler']);
-        if ($system_exception_handler) {
-            return ($system_exception_handler)($exception_handler);
+        return $this;
+    }
+    public function run()
+    {
+        $this->last_error_handler=set_error_handler([$this,'on_error_handler']);
+        if ($this->system_exception_handler) {
+            $this->last_exception_handler=($this->system_exception_handler)($this->exception_handler);
         } else {
-            set_exception_handler([$this,'on_exception']);
+            $this->last_exception_handler=set_exception_handler([$this,'on_exception']);
+        }
+    }
+    public function cleanUp()
+    {
+        set_error_handler($this->last_error_handler);
+        if ($this->system_exception_handler) {
+            ($this->system_exception_handler)($this->last_exception_handler);
+        } else {
+            set_exception_handler($this->last_exception_handler);
         }
     }
 }
