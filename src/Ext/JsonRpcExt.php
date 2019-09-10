@@ -93,8 +93,8 @@ class JsonRpcExt
     public function onRpcCall(array $input)
     {
         $id=$input['id']??null;
-        
-        $a=explode('.', $input['method']);
+        $method=$input['method']??null;
+        $a=explode('.', $method);
         $method=array_pop($a);
         $service=implode("\\", $a);
         $args=$input['params']??[];

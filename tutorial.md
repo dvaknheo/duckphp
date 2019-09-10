@@ -142,20 +142,30 @@ test
 
 <2019-04-19T22:21:49+08:00>
 ```
-## 基础
+
+## 基础引论
 
 ### SingletonEx
-SingletonEx 是 DNMVCS 系的基础
-可变单例。
+SingletonEx 可变单例是 DNMVCS 系的基础
+
 ### DNMVCS/Core
-DNMVCS 的核心框架
+DNMVCS 核心功能 DNMVCS/Core 目录下。
+实现了一个微型框架。包括文件风格的路由。异常管理。和 Swoole 兼容的准备工作
+独立的带一个 HttpServer 服务器。
 
 ### DNMVCS/Framework
 DNMVCS 的常规框架
+比 DNMVCS/Core 多了，数据库的处理，路由重写
+和对 Swoole 的支持。
+
 ### DNMVCS/SwooleHttpd
-DNMVCS 的 Swoole 扩展
-### DNMVCS++
-其他人员开发的符合 DNMVCS 规格的扩展，一般只引用 SingletonEx
+
+SwooleHttpd 是一个
+### DNMVCS/Plus
+对 DNMVCS 的第三方扩展的称呼
+如果这些扩展，只用到可变单例， 引入 SingletonEx 这个项目够了。
+
+
 ## 应用程序员核心参考
 
 ### 本章说明
@@ -262,10 +272,9 @@ S::ThrowOn() 和 M::ThrowOn 一样;
     如果对接管特定异常，用 C::assignExceptionHandler($exception_name,$handler);
     设置多个异常到回调则用 C::setMultiExceptionHandler($exception_name=[],$handler);
 ### View 编写视图用到的方法
-IsDebug
-Platform
+V::IsDebug
+V::Platform
 V::ShowBlock($view, $data)
-V::ThrowOn() 
 ### 入口类 App 类的方法 以及高级程序员。
 
 MY\Base\App 是 继承扩展 DNMVCS\Core\App 类的方法。
@@ -686,22 +695,7 @@ DNMVCS 调用代理 $class 的方法。
 扩展静态方法 $this->assignStaticMethod($method,$callback);
 扩展动态方法 $this->assignDynamicMethod($method,$callback);
 
-### 常见任务： 使用数据库
-使用数据库，在 设置里正确设置 database_list 这个数组，包含多个数据库配置
-然后在用到的地方调用 DNMVCS::DB($tag=null) 得到的就是 DNDB 对象，用来做各种数据库操作。
-$tag 对应 $setting['database_list'][$tag]。默认会得到最前面的 tag 的配置。
 
-你不必担心每次框架初始化会连接数据库。只有第一次调用 DNMVCS::DB() 的时候，才进行数据库类的创建。
-
-DB 的使用方法，看后面的参考。
-示例如下
-
-```php
-$sql="select 1+? as t";
-$ret=M::DB()->fetch($sql,2);
-var_dump($ret);
-```
-----
 
 ## 高级话题之扩展
 ![core](doc/dnmvcs.gv.svg)
@@ -755,13 +749,16 @@ TestModel::foo(); // <=> \MY\Model\TestModel::G()->foo();
 #### JsonRpcExt
 一个 JonsRPC 的示例，不提供安全验证功能。
 ##### 默认选项
-    'jsonrpc_namespace'=>'JsonRpc',
-    'jsonrpc_backend'=>'https://127.0.0.1', 
+'jsonrpc_namespace'=>'JsonRpc',
+'jsonrpc_backend'=>'https://127.0.0.1', 
+//TODO
+后端，允许用数组，后面表示是实际IP，用于方便调试，见例子。实际连的是 127.0.0.1。
+
 ##### 示例
 ```php
 // Base\App
 $this->options['ext']['Ext\JsonRpcExt']=[
-    'jsonrpc_backend'=>['http://test.dnmvcs.dev/json_rpc','127.0.0.1:80'],
+    'jsonrpc_backend'=>['http://test.dnmvcs.dev/json_rpc','127.0.0.1:80'], 
 ];
 ```
 ```php
@@ -771,19 +768,25 @@ namespace MY\Controller;
 use MY\Base\ControllerHelper as C;
 use DNMVCS\Ext\JsonRpcExt;
 
-use JsonRpc\MY\Service\TestService as RemoteTestService;
-use MY\Service\TestService;
-
+use JsonRpc\MY\Controller\CalcService as RemoteCalcService;
+class CalcService
+{
+    public function add($a,$b)
+    {
+        return $a+$b;
+    }
+}
 class Main
 {
 	public function index()
 	{
-        $t=RemoteTestService::G()->foo();
+        $t=RemoteCalcService::G()->foo();
         var_dump($t);
 
-        $t=TestService::G(JsonRpcExt::Wrap(TestService::class))->foo();
+        $t=CalcService::G(JsonRpcExt::Wrap(RemoteCalcService::class))->add(1,2);
         var_dump($t);
-	}
+    }
+    // 这个是 server.
     public function json_rpc()
     {
         $ret= JsonRpcExt::G()->onRpcCall(App::SG()->_POST);
@@ -837,8 +840,8 @@ rewrite 支持以 ~ 开始表示的正则， 并且转换后自动拼凑 $_GET
 ##### 选项
     'rewrite_map'=>[],
 ##### 方法
-assignRewrite
-getRewrites
+assignRewrite()
+getRewrites()
 #### RouteHookRouteMap
 默认开启,实现了路由映射功能
 ##### 选项
@@ -861,7 +864,24 @@ getRoutes()
 用于 严格使用 DB 等情况。使得在调试状态下。不能在 Controller 里 使用 M::DB();等
 
 
-### 其他
+## 其他
+
+### 常见任务： 使用数据库
+使用数据库，在 设置里正确设置 database_list 这个数组，包含多个数据库配置
+然后在用到的地方调用 DNMVCS::DB($tag=null) 得到的就是 DNDB 对象，用来做各种数据库操作。
+$tag 对应 $setting['database_list'][$tag]。默认会得到最前面的 tag 的配置。
+
+你不必担心每次框架初始化会连接数据库。只有第一次调用 DNMVCS::DB() 的时候，才进行数据库类的创建。
+
+DB 的使用方法，看后面的参考。
+示例如下
+
+```php
+$sql="select 1+? as t";
+$ret=M::DB()->fetch($sql,2);
+var_dump($ret);
+```
+----
 #### 通过 composer 创建工程
 ```
 composer require dnmvcs/framework
