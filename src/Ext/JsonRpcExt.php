@@ -21,16 +21,19 @@ class JsonRpcExt
     const DEFAULT_OPTIONS=[
         'jsonrpc_namespace'=>'JsonRpc',
         'jsonrpc_backend'=>'https://127.0.0.1',
+        'jsonrpc_is_debug'=>false,
     ];
     public $is_inited;
     protected $backend;
     protected $prefix;
+    protected $is_debug;
     public function init($options=[], $context)
     {
         $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
         
         $namespace=$options['jsonrpc_namespace'];
         $this->backend=$options['jsonrpc_backend'];
+        $this->is_debug=$options['jsonrpc_is_debug'];
         
         $this->prefix=trim($namespace, '\\').'\\';
         $this->is_inited=true;
@@ -79,10 +82,11 @@ class JsonRpcExt
         $post['params']=$arguments;
         
         $post['id']=time();
-        $data=$this->curl_file_get_contents($this->backend, $post);
-        $data=json_decode($data, true);
+        $str_data=$this->curl_file_get_contents($this->backend, $post);
+        $data=json_decode($str_data, true);
         if (empty($data)) {
-            throw new Exception("failed", -1);
+            $str_data=$this->is_debug?$str_data:'';
+            throw new Exception("rpc failed".$str_data, -1);
         }
         if (isset($data['error'])) {
             throw new Exception($ret['error']['message'], $ret['error']['code']);

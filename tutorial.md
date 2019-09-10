@@ -756,45 +756,63 @@ TestModel::foo(); // <=> \MY\Model\TestModel::G()->foo();
 
 ##### 示例
 ```php
-// Base\App
+// Base\App onInit;
 $this->options['ext']['Ext\JsonRpcExt']=[
     'jsonrpc_backend'=>['http://test.dnmvcs.dev/json_rpc','127.0.0.1:80'], 
 ];
 ```
+
+/////////////
 ```php
-// app/Controller/Main.php
-namespace MY\Controller;
+<?php
+require_once(__DIR__.'/../vendor/autoload.php');
 
-use MY\Base\ControllerHelper as C;
+use DNMVCS\Core\Route;
+use DNMVCS\Core\SingletonEx;
 use DNMVCS\Ext\JsonRpcExt;
+use JsonRpc\CalcService as RemoteCalcService;
 
-use JsonRpc\MY\Controller\CalcService as RemoteCalcService;
 class CalcService
 {
+    use SingletonEx;
     public function add($a,$b)
     {
         return $a+$b;
     }
 }
+
 class Main
 {
-	public function index()
-	{
-        $t=RemoteCalcService::G()->foo();
+    public function index()
+    {
+        $t=CalcService::G()->add(1,2);
         var_dump($t);
-
-        $t=CalcService::G(JsonRpcExt::Wrap(RemoteCalcService::class))->add(1,2);
+        
+        $t=CalcService::G(JsonRpcExt::Wrap(CalcService::class))->add(3,4);
         var_dump($t);
     }
-    // 这个是 server.
     public function json_rpc()
     {
-        $ret= JsonRpcExt::G()->onRpcCall(App::SG()->_POST);
-        C::ExitJson($ret);
+        $ret=JsonRpcExt::G()->onRpcCall($_POST);
+        echo json_encode($ret);
     }
 }
+$options=[
+    'is_debug'=>true,
+    'namespace_controller'=>'\\',
+];
+JsonRpcExt::G()->init([
+    'jsonrpc_namespace'=>'JsonRpc',
+    'jsonrpc_backend'=>['http://d.dnmvcs.dev/2.php/json_rpc','127.0.0.1:80'], //请自行修改这里。
+    'jsonrpc_is_debug'=>true,
+],null);
+$flag=Route::RunQuickly($options);
+if (!$flag) {
+    header(404);
+    echo "404!";
+}
 ```
-这个例子，将会两次远程调用 http://test.dnmvcs.dev/json_rpc 的 TestService 。
+这个例子，将会两次远程调用 http://d.dnmvcs.dev/2.php/json_rpc 的 CalcService 。
 
 这里的 json_rpc 是服务端的实现
 
