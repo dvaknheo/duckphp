@@ -197,7 +197,7 @@ class Route
             $this->callback=($this->ext_route_handler)();
         }
         if (null!==$this->callback) {
-            ($this->callback)(...$this->parameters);
+            ($this->callback)();
             return true;
         }
         

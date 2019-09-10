@@ -706,6 +706,10 @@ trait Core_Glue
     {
         return Route::G()->getRouteCallingMethod();
     }
+    public function setRouteCallingMethod($method)
+    {
+        return Route::G()->getRouteCallingMethod($method);
+    }
     protected function bindServerData($data)
     {
         return Route::G()->bindServerData($data);
@@ -732,5 +736,22 @@ trait Core_Glue
     public function setDefaultExceptionHandler($callback)
     {
         return ExceptionManager::G()->setDefaultExceptionHandler($callback);
+    }
+    // ViewHelper
+    public static function DumpTrace()
+    {
+        echo "<pre>\n";
+        echo (new Exception('',0))->getTraceString();
+        echo "</pre>\n";
+    }
+    public static function Dump($object)
+    {
+        return static::G()->_Dump($object);
+    }
+    public function _Dump($object)
+    {
+        echo "<pre>\n";
+        var_dump($object);
+        echo "</pre>\n";
     }
 }

@@ -49,7 +49,10 @@ class ControllerHelper
     {
         return Route::G()->getRouteCallingMethod();
     }
-    
+    public function setRouteCallingMethod($method)
+    {
+        return Route::G()->getRouteCallingMethod($method);
+    }
     ///////////////
     public static function Show($data=[], $view=null)
     {

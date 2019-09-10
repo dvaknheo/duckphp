@@ -244,10 +244,11 @@ S::ThrowOn() 和 M::ThrowOn 一样;
     302 跳转退出内部地址 C::ExitRouteTo($url);
     输出 Json 退出  C::ExitJson($data);
 ##### 3. 路由相关
+
     C::URL($url) 获取相对 url;
     C::getRouteCallingMethod() 获取当前调用方法。常用于构造函数里做权限判断。
-    C::Parameters() 获取切片。对地址重写有效。在DNMVCS/Framework 中扩展成其他用途
-
+    C::setRouteCallingMethod($method) 设置当前调用方法，不常用，用于跨方法调用场合。
+    C::Parameters() 不常用，获得切片，默认为空。
 ##### 4. 系统替代函数 
 
     用 C::header() 代替系统 header 兼容命令行等。
@@ -260,7 +261,11 @@ S::ThrowOn() 和 M::ThrowOn 一样;
     如果想接管默认异常，用 C::setDefaultExceptionHandler($handler);
     如果对接管特定异常，用 C::assignExceptionHandler($exception_name,$handler);
     设置多个异常到回调则用 C::setMultiExceptionHandler($exception_name=[],$handler);
-
+### View 编写视图用到的方法
+IsDebug
+Platform
+V::ShowBlock($view, $data)
+V::ThrowOn() 
 ### 入口类 App 类的方法 以及高级程序员。
 
 MY\Base\App 是 继承扩展 DNMVCS\Core\App 类的方法。
@@ -293,7 +298,6 @@ addBeforeRunHandler($callback)
 其他方法
 
     其他方法有待你的发掘。如果你要用于特殊用处的话。
-
 ### 目录结构
 
 在看默认选项前， 我们看工程的桩代码,默认目录结构
@@ -428,6 +432,7 @@ const DEFAULT_OPTIONS=[
     默认的 psr-4 的工程路径配合 skip_app_autoload  使用。
 'skip_app_autoload'=>false
 
+    跳过应用的加载。
 'override_class'=>'Base\App',
 
     **重要选项**
@@ -487,10 +492,9 @@ DNMVCS 系统组件的连接，多是以调用类的可变单例来实现的。
 
 SingletonEx 可变单例
 
-
 Base\*Helper 是各种快捷方法。
 
-其他组件都遵守 init($options, $contetxt=null); 接口。
+其他组件都遵守 init(array $options, $contetxt=null); 接口。
 
 这些组件 都可以在 onInit 里通过类似方法替换
 ```php
@@ -622,7 +626,7 @@ AutoLoader 类最好不要通过 G 函数替换。
 * M::DB_W() 获得写数据库类。
 
 #### 学习高级路由
-
+DumpExtMethods
 
 用 C::Parameters() 获取切片，对地址重写有效。
 如果要做权限判断 构造函数里 C::getRouteCallingMethod() 获取当前调用方法。
@@ -681,8 +685,6 @@ DNMVCS 调用代理 $class 的方法。
 
 扩展静态方法 $this->assignStaticMethod($method,$callback);
 扩展动态方法 $this->assignDynamicMethod($method,$callback);
-
-
 
 ### 常见任务： 使用数据库
 使用数据库，在 设置里正确设置 database_list 这个数组，包含多个数据库配置
