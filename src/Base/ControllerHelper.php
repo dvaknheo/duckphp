@@ -2,6 +2,7 @@
 namespace DNMVCS\Base;
 
 use DNMVCS\Core\Base\ControllerHelper as Helper;
+use DNMVCS\ExtendStaticCallTrait;
 
 use DNMVCS\Core\App;
 use DNMVCS\SuperGlobal;
@@ -10,19 +11,21 @@ use DNMVCS\Ext\API;
 
 class ControllerHelper extends Helper
 {
+    use ExtendStaticCallTrait;
     ///////
     public static function Import($file)
     {
-        return App::G()->_Import($file);
+        return App::G()::Import($file);
     }
     public static function RecordsetUrl(&$data, $cols_map=[])
     {
-        return App::G()->_RecordsetUrl($data, $cols_map);
+        return App::G()::RecordsetUrl($data, $cols_map);
     }
     
     public static function RecordsetH(&$data, $cols=[])
     {
-        return App::G()->_RecordsetH($data, $cols);
+        
+        return App::G()::RecordsetH($data, $cols);
     }
     ///////
     public static function SG()
@@ -67,33 +70,11 @@ class ControllerHelper extends Helper
     ////
     public static function MapToService($serviceClass, $input)
     {
-        try {
-            $method=static::getRouteCallingMethod();
-            $data=APP::G()->callAPI($serviceClass, $method, $input);
-            if (!is_array($data) || !is_object($data)) {
-                $data=['result'=>$data];
-            }
-        } catch (\Throwable $ex) {
-            $data=[];
-            $data['error_message']=$ex->getMessage();
-            $data['error_code']=$ex->getCode();
-        }
-        static::ExitJson($data);
+        return App::G()::MapToService($serviceClass, $input);
     }
     //TODO
-    public function explodeService($object, $namespace="MY\\Service\\")
+    public static function explodeService($object, $namespace="MY\\Service\\")
     {
-        $vars=array_keys(get_object_vars($object));
-        $l=strlen('Service');
-        foreach ($vars as $v) {
-            if (substr($v, 0-$l)!=='Service') {
-                continue;
-            }
-            $name=ucfirst($v);
-            $class=$namespace.$name;
-            if (class_exists($class)) {
-                $object->$v=$class::G();
-            }
-        }
+        return App::G()::explodeService($object, $namespace);
     }
 }

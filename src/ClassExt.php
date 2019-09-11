@@ -8,6 +8,10 @@ trait ClassExt
     
     public static function __callStatic($name, $arguments)
     {
+        return static::ClassExtCallStatic($name, $arguments);
+    }
+    public static function ClassExtCallStatic($name, $arguments)
+    {
         $static=static::G();
         $class=get_class($static);
         if ($class!==static::class && method_exists($class, $name)) {
@@ -26,6 +30,10 @@ trait ClassExt
         return call_user_func_array($callback, $arguments);
     }
     public function __call($name, $arguments)
+    {
+        return $this->classExtcall($name, $arguments);
+    }
+    public function classExtcall($name, $arguments)
     {
         $callback=$this->dynamic_methods[$name]??null;
         if (is_array($callback) && is_string($callback[0]) && substr($callback[0], -3)==='::G') {

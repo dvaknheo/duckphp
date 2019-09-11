@@ -513,18 +513,30 @@ Configer::G(MyConfiger::G());
 RuntimeState::G(MyRuntimeState::G());
 ```
 
-例外的是 AutoLoader 和 ExceptionManager 。
+例外的是 AutoLoader 和 ExceptionManager 。 这两个是在插件系统启动之前启动
+所以你需要 
+```php
+AutoLoader::G()->cleanUp();
+AutoLoader::G(MyAutoLoader::G());
+
+ExceptionManager::G()->cleanUp();
+ExceptionManager::G(MyExceptionManager::G());
+```
+
+
 HttpServer 是单独的 命令行启动 Http 服务器的类。
 
 
 #### Configer
+
+##### 选项
 ```
-'path'=>null,
-'path_config'=>'config',    //配置路径目录
-'all_config'=>[],
-'setting'=>[],
-'setting_file'=>'setting',
-'skip_setting_file'=>false,
+    'path'=>null,
+    'path_config'=>'config',    //配置路径目录
+    'all_config'=>[],
+    'setting'=>[],
+    'setting_file'=>'setting',
+    'skip_setting_file'=>false,
 ```
 Core\Configer 的选项共享个 path,带个 path_config
 
@@ -635,7 +647,6 @@ AutoLoader 类最好不要通过 G 函数替换。
 * M::DB_W() 获得写数据库类。
 
 #### 学习高级路由
-DumpExtMethods
 
 用 C::Parameters() 获取切片，对地址重写有效。
 如果要做权限判断 构造函数里 C::getRouteCallingMethod() 获取当前调用方法。
@@ -689,11 +700,21 @@ assignRoute($route,$callback=null)
 类内静态变量
 $x=static::$abc; => $x=C::CLASS_STATICS(static::class,'abc');
 
-$this->extendClassMethodByThirdParty($class,$static_methods=[],$dyminac_methods=[]);
-DNMVCS 调用代理 $class 的方法。
+#### 动态方法
 
-扩展静态方法 $this->assignStaticMethod($method,$callback);
-扩展动态方法 $this->assignDynamicMethod($method,$callback);
+DNMVCS 相比  Core/App 多了
+
+ExtendStaticCallTrait
+
+查看有什么额外的静态方法：  GetExtendStaticStaticMethodList();
+
+ExtendStaticCallTrait 也在 M,V,C,S 中有，你可以动态添加。
+
+用 AssignExtendStaticMethod() ，来添加。当然，方便的是。
+
+App::G()->extendComponents($class,$methods,$components);
+
+其中： $components 为 ['M','V','C','S'] 可选
 
 
 

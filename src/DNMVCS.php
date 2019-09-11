@@ -4,24 +4,24 @@
 //OK，Lazy
 namespace DNMVCS;
 
-use DNMVCS\ClassExt;
+use DNMVCS\ExtendStaticCallTrait;
 use DNMVCS\SuperGlobal;
 use DNMVCS\Ext\StrictCheck;
 use DNMVCS\Ext\DBManager;
 use DNMVCS\Ext\RouteHookRewrite;
 use DNMVCS\Ext\RouteHookRouteMap;
 use DNMVCS\Ext\Pager;
+use DNMVCS\Ext\Misc;
 
 use DNMVCS\Core\App;
 
 class DNMVCS extends App
 {
     const VERSION = '1.1.2';
-    use ClassExt;
+    use ExtendStaticCallTrait;
     
     use DNMVCS_Glue;
     use DNMVCS_SystemWrapper;
-    use DNMVCS_Misc;
     
     const DEFAULT_OPTIONS_EX=[
             'path_lib'=>'lib',
@@ -32,6 +32,8 @@ class DNMVCS extends App
             
             'ext'=>[
                 'SwooleHttpd\SwooleExt'=>true,
+                'Ext\Misc'=>true,
+
                 'Ext\DBManager'=>[
                     'before_get_db_handler'=>[null,'CheckStrictDB'],
                 ],
@@ -47,6 +49,12 @@ class DNMVCS extends App
             ],
             
         ];
+    protected $componentClassMap=array(
+            'M'=>'ModelHelper',
+            'V'=>'ViewHelper',
+            'C'=>'ControllerHelper',
+            'S'=>'ServiceHelper',
+        );
     //// RunMode
     /*
     public static function RunWithoutPathInfo($options=[])
@@ -116,6 +124,39 @@ class DNMVCS extends App
         }
         return $ret;
     }
+    
+    public function extendComponents($class,$methods,$components)
+    {
+        
+        $methods=is_array($methods)?$methods:[$methods];
+        $components=is_array($components)?$components:explode(',',$components);
+        $maps=[];
+        foreach($methods as $method){
+            $maps[$method]=[$class,$method];
+        }
+        
+        static::AssignStaticMethod($maps);
+        
+        $a=explode('\\',get_class($this));
+        array_pop($a);
+        $namespace=implode('\\',$a);
+        
+        foreach($components as $component){
+            $class=$this->componentClassMap[strtoupper($component)]??null;
+            if($class===null){
+                continue;
+            }
+            $full_class=trim($namespace."\\".$class,"\\");
+            if(!class_exists($full_class)){
+                $full_class=trim("DNMVCS\\".$class,"\\");
+            }
+            if(!class_exists($full_class)){
+                continue;
+            }
+            $full_class::AssignStaticMethod($maps);
+        }
+    }
+    
 }
 trait DNMVCS_Glue
 {
@@ -189,6 +230,35 @@ trait DNMVCS_Glue
     {
         return StrictCheck::G()->checkStrictModel($trace_level+1);
     }
+    public static function Import($file)
+    {
+        return Misc::G()->_Import($file);
+    }
+    public static function RecordsetUrl(&$data, $cols_map=[])
+    {
+        return Misc::G()->_RecordsetUrl($data, $cols_map);
+    }
+    
+    public static function RecordsetH(&$data, $cols=[])
+    {
+        return Misc::G()->_RecordsetH($data, $cols);
+    }
+    /////////////////////
+
+    public function callAPI($class, $method, $input)
+    {
+        return Misc::G()->callAPI($class, $method, $input);
+    }
+    
+    public static function MapToService($serviceClass, $input)
+    {
+        return Misc::G()::MapToService($serviceClass, $input);
+    }
+    //TODO
+    public static function explodeService($object, $namespace="MY\\Service\\")
+    {
+        return Misc::G()::explodeService($object, $namespace);
+    }
 }
 trait DNMVCS_SystemWrapper
 {
@@ -207,108 +277,5 @@ trait DNMVCS_SystemWrapper
     public static function session_set_save_handler(\SessionHandlerInterface $handler)
     {
         return SuperGlobal::G()->session_set_save_handler($handler);
-    }
-}
-trait DNMVCS_Misc
-{
-    protected $path_lib=null;
-
-    public static function Import($file)
-    {
-        return static::G()->_Import($file);
-    }
-    public static function RecordsetUrl(&$data, $cols_map=[])
-    {
-        return static::G()->_RecordsetUrl($data, $cols_map);
-    }
-    
-    public static function RecordsetH(&$data, $cols=[])
-    {
-        return static::G()->_RecordsetH($data, $cols);
-    }
-    /////////////////////
-    public function _Import($file)
-    {
-        if ($this->path_lib===null) {
-            $this->path_lib=$this->path.rtrim($this->options['path_lib'], '/').'/';
-        }
-        $file=rtrim($file, '.php').'.php';
-        require_once($this->path_lib.$file);
-    }
-    
-    public function _RecordsetUrl(&$data, $cols_map=[])
-    {
-        //need more quickly;
-        if ($data===[]) {
-            return $data;
-        }
-        if ($cols_map===[]) {
-            return $data;
-        }
-        $keys=array_keys($data[0]);
-        array_walk($keys, function (&$val, $k) {
-            $val='{'.$val.'}';
-        });
-        foreach ($data as &$v) {
-            foreach ($cols_map as $k=>$r) {
-                $values=array_values($v);
-                $v[$k]=static::URL(str_replace($keys, $values, $r));
-            }
-        }
-        unset($v);
-        return $data;
-    }
-    public function _RecordsetH(&$data, $cols=[])
-    {
-        if ($data===[]) {
-            return $data;
-        }
-        $cols=is_array($cols)?$cols:array($cols);
-        if ($cols===[]) {
-            $cols=array_keys($data[0]);
-        }
-        foreach ($data as &$v) {
-            foreach ($cols as $k) {
-                $v[$k]=static::H($v[$k], ENT_QUOTES);
-            }
-        }
-        return $data;
-    }
-    public function callAPI($class, $method, $input)
-    {
-        $f=[
-            'bool'=>FILTER_VALIDATE_BOOLEAN  ,
-            'int'=>FILTER_VALIDATE_INT,
-            'float'=>FILTER_VALIDATE_FLOAT,
-            'string'=>FILTER_SANITIZE_STRING,
-        ];
-        $reflect = new ReflectionMethod($class, $method);
-        
-        $params=$reflect->getParameters();
-        $args=array();
-        foreach ($params as $i => $param) {
-            $name=$param->getName();
-            if (isset($input[$name])) {
-                $type=$param->getType();
-                if (null!==$type) {
-                    $type=''.$type;
-                    if (in_array($type, array_keys($f))) {
-                        $flag=filter_var($input[$name], $f[$type], FILTER_NULL_ON_FAILURE);
-                        if ($flag===null) {
-                            throw new ReflectionException("Type Unmatch: {$name}", -1); //throw
-                        }
-                    }
-                }
-                $args[]=$input[$name];
-                continue;
-            } elseif ($param->isDefaultValueAvailable()) {
-                $args[]=$param->getDefaultValue();
-            } else {
-                throw new ReflectionException("Need Parameter: {$name}", -2);
-            }
-        }
-        
-        $ret=$reflect->invokeArgs(new $class(), $args);
-        return $ret;
     }
 }
