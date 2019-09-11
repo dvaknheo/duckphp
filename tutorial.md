@@ -714,7 +714,7 @@ ExtendStaticCallTrait 也在 M,V,C,S 中有，你可以动态添加。
 
 App::G()->extendComponents($class,$methods,$components);
 
-其中： $components 为 ['M','V','C','S'] 可选
+其中： $components 为 ['M','V','C','S'] 可选。
 
 
 

@@ -20,7 +20,7 @@ class SwooleHttpd
     const VERSION = 'DNMVCS-inner';
     use SwooleSingleton;
     
-    use SimpleHttpd;
+    use SwooleHttpd_SimpleHttpd;
     use SimpleWebSocketd;
     
     use SwooleHttpd_Handler;
@@ -68,7 +68,7 @@ class SwooleHttpd
     public $http_handler_file=null;
     public $http_exception_handler=null;
     public $http_404_handler=null;
-    
+    protected $with_http_handler_root=false;
     public $enable_fix_index=true;
     public $enable_path_info=true;
     public $enable_not_php_file=true;
@@ -79,8 +79,11 @@ class SwooleHttpd
     protected $auto_clean_autoload=true;
     protected $old_autoloads=[];
     
+    public $is_shutdown=false;
+    
     public $skip_override=false;
     public static function RunQuickly(array $options=[], callable $after_init=null)
+    
     {
         if (!$after_init) {
             return static::G()->init($options)->run();
@@ -93,8 +96,15 @@ class SwooleHttpd
     {
         $this->http_exception_handler=$exception_handler;
     }
-    
-    
+    public function set_http_404_handler($http_404_handler)
+    {
+        $this->http_404_handler=$http_404_handler;
+    }
+    public function is_with_http_handler_root()
+    {
+        return $this->with_http_handler_root;
+    }
+
     public function exit_request($code=0)
     {
         exit($code);
@@ -110,6 +120,7 @@ class SwooleHttpd
         }
         throw new SwooleException($message, $code);
     }
+    
     protected function fixIndex()
     {
         $index_file='index.php';
@@ -405,6 +416,61 @@ class SwooleHttpd
         }
     }
 }
+trait SwooleHttpd_SimpleHttpd
+{
+
+    // en...
+    public function initHttp($request, $response)
+    {
+        SwooleContext::G(new SwooleContext())->initHttp($request, $response);
+    }
+    protected function deferGC()
+    {
+        \defer(function () {
+            gc_collect_cycles();
+        });
+    }
+    protected function checkShutdown()
+    {
+        if(!$this->is_shutdown){
+            return;
+        }
+        throw new Exception("Shutdowning".date(DATE_ATOM));
+    }
+    public function onRequest($request, $response)
+    {
+        $this->deferGC();
+        SwooleCoroutineSingleton::EnableCurrentCoSingleton(); // remark ,here has a defer
+        
+        $this->checkShutdown();
+        
+        \defer(function () {
+            $InitObLevel=0;
+            for ($i=ob_get_level();$i>$InitObLevel;$i--) {
+                ob_end_flush();
+            }
+            SwooleContext::G()->cleanUp();
+        });
+        \defer(function () {
+            SwooleContext::G()->onShutdown();
+        });
+        ob_start(function ($str) {
+            if (''===$str) {
+                return;
+            }
+            SwooleContext::G()->response->end($str);
+        });
+        $this->initHttp($request, $response);
+        SwooleSuperGlobal::G(new SwooleSuperGlobal())->mapToGlobal();
+        try {
+            $this->onHttpRun($request, $response);
+        } catch (\Throwable $ex) {
+            $this->onHttpException($ex);
+        }
+        $this->onHttpClean();
+    }
+}
+
 trait SwooleHttpd_Handler
 {
     public static function OnShow404()
@@ -551,7 +617,7 @@ trait SwooleHttpd_Singleton
     }
     public function resetInstances()
     {
-        $classes=$this->getDynamicClasses();
+        $classes=$this->getDynamicComponentClasses();
         $instances=[];
         foreach ($classes as $class) {
             $instances[$class]=$class::G();

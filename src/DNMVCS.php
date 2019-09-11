@@ -14,8 +14,9 @@ use DNMVCS\Ext\Pager;
 use DNMVCS\Ext\Misc;
 
 use DNMVCS\Core\App;
+use \DNMVCS\SwooleHttpd\SwooleExtAppInterface;
 
-class DNMVCS extends App
+class DNMVCS extends App implements SwooleExtAppInterface
 {
     const VERSION = '1.1.2';
     use ExtendStaticCallTrait;
@@ -49,12 +50,12 @@ class DNMVCS extends App
             ],
             
         ];
-    protected $componentClassMap=array(
+    protected $componentClassMap=[
             'M'=>'ModelHelper',
             'V'=>'ViewHelper',
             'C'=>'ControllerHelper',
             'S'=>'ServiceHelper',
-        );
+    ];
     //// RunMode
     /*
     public static function RunWithoutPathInfo($options=[])
@@ -111,18 +112,8 @@ class DNMVCS extends App
         }
         if ($this->options['use_super_global']??false) {
             $this->bindServerData(SuperGlobal::G()->_SERVER);
-            
             return;
         }
-    }
-    //@override
-    public function getDynamicComponentClasses()
-    {
-        $ret=parent::getDynamicComponentClasses();
-        if (!in_array(SuperGlobal::class, $ret)) {
-            $ret[]=SuperGlobal::class;
-        }
-        return $ret;
     }
     
     public function extendComponents($class,$methods,$components)
@@ -157,7 +148,35 @@ class DNMVCS extends App
         }
     }
     
+    // @interface SwooleExtAppInterface
+    public function onSwooleHttpdInit($SwooleHttpd)
+    {
+        $this->options['use_super_global']=true;
+        
+        $SwooleHttpd->set_http_exception_handler([static::class,'OnException']);        
+        $SwooleHttpd->set_http_404_handler([static::class,'On404']);
+        
+        if ($SwooleHttpd->is_with_http_handler_root()) {
+            $this->options['skip_404_handler']=true;
+        }
+        $this->system_wrapper_replace($SwooleHttpd->system_wrapper_get_providers());
+    }
+    
+    // @override
+    public function getStaticComponentClasses()
+    {
+        return parent::getStaticComponentClasses();
+    }
+    // @override
+    public function getDynamicComponentClasses()
+    {
+        $ret=parent::getDynamicComponentClasses();
+        $ret=array_merge($ret,[SuperGlobal::class]);
+        $ret=array_values(array_unique($ret));
+        return $ret;
+    }
 }
+
 trait DNMVCS_Glue
 {
     //////////////

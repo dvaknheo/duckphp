@@ -9,7 +9,6 @@ class SwooleExt
 {
     use SwooleSingleton;
     
-    protected $with_http_handler_root=false;
     protected $appClass;
     protected $is_inited=false;
     protected $is_error=false;
@@ -39,7 +38,6 @@ class SwooleExt
         if (empty($options)) {
             return;
         }
-        $this->with_http_handler_root=$options['with_http_handler_root']??false;
         
         $this->appClass=$options['swoolehttpd_app_class']??($context?get_class($context):null);
         
@@ -62,10 +60,8 @@ class SwooleExt
         foreach ($instances as $class=>$object) {
             $class::G($object);
         }
-        //////////////
-        if ($this->with_http_handler_root) {
-            // stop default 404
-        }
+        //////////////        
+        $this->initApp();
         ($this->appClass)::G()->addBeforeRunHandler([static::class,'OnRun']);
         $options['http_handler']=[$this,'runSwoole'];
         SwooleHttpd::G()->init($options, null);
@@ -84,7 +80,6 @@ class SwooleExt
         if ($cid>0) {
             return;
         }
-        $this->initApp();
         
         SwooleHttpd::G()->run();
         // OK ,we need not return .
@@ -93,6 +88,10 @@ class SwooleExt
     }
     protected function initApp()
     {
+        if (is_callable([($this->appClass)::G(),'onSwooleHttpdInit'])) {
+            ($this->appClass)::G()->onSwooleHttpdInit(SwooleHttpd::G());
+            return;
+        }
         ($this->appClass)::G()->system_wrapper_replace(SwooleHttpd::G()->system_wrapper_get_providers());
         SwooleHttpd::G()->http_404_handler=[$this->appClass,'On404'];
         SwooleHttpd::set_exception_handler([$this->appClass,'OnException']);
@@ -107,7 +106,7 @@ class SwooleExt
         if ($ret) {
             return true;
         }
-        if ($this->with_http_handler_root) {
+        if (SwooleHttpd::G()->is_with_http_handler_root()) {
             $classes=($this->appClass)::G()->getStaticComponentClasses();
             SwooleHttpd::G()->forkMasterInstances($classes);
             $this->in_fake=true;

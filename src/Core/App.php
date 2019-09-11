@@ -26,7 +26,7 @@ class App
     use Core_Redirect;
     use Core_SystemWrapper;
     use Core_Helper;
-    use Core_Instance;
+    use Core_ComponentClasses;
     
     const DEFAULT_OPTIONS=[
             //// basic config ////
@@ -376,7 +376,11 @@ trait Core_Handler
             E_DEPRECATED=>'E_DEPRECATED',
             E_USER_DEPRECATED=>'E_USER_DEPRECATED',
         );
-        $error_shortfile=(substr($errfile, 0, strlen($this->path))==$this->path)?substr($errfile, strlen($this->path)):$errfile;
+        if ($this->path) {
+            $error_shortfile=(substr($errfile, 0, strlen($this->path))==$this->path)?substr($errfile, strlen($this->path)):$errfile;
+        }else{
+            $error_shortfile=$errfile;
+        }
         $data=array(
             'errno'=>$errno,
             'errstr'=>$errstr,
@@ -625,11 +629,10 @@ trait Core_Helper
         return $str;
     }
 }
-trait Core_Instance
+trait Core_ComponentClasses
 {
     protected $staticComponentClasses=[];
     protected $dynamicComponentClasses=[];
-    
     public function getStaticComponentClasses()
     {
         $ret=[
@@ -639,6 +642,8 @@ trait Core_Instance
             View::class,
             Route::class,
         ];
+        $ret=array_merge($ret,$this->staticComponentClasses);
+        
         $ret[]=static::class;
         $ret[]=self::class;
         $ret[]=$this->override_root_class;
@@ -647,7 +652,12 @@ trait Core_Instance
     }
     public function getDynamicComponentClasses()
     {
-        return $this->dynamicComponentClasses;
+        $ret=[
+        ];
+        $ret=array_merge($ret,$this->dynamicComponentClasses);
+        $ret=array_values(array_unique($ret));
+        
+        return $ret;
     }
 }
 
