@@ -431,7 +431,7 @@ trait SwooleHttpd_SimpleHttpd
     }
     protected function deferGC()
     {
-        \defer(function () {
+        Coroutine::defer(function () {
             gc_collect_cycles();
         });
     }
@@ -449,14 +449,14 @@ trait SwooleHttpd_SimpleHttpd
         
         $this->checkShutdown();
         
-        \defer(function () {
+        Coroutine::defer(function () {
             $InitObLevel=0;
             for ($i=ob_get_level();$i>$InitObLevel;$i--) {
                 ob_end_flush();
             }
             SwooleContext::G()->cleanUp();
         });
-        \defer(function () {
+        Coroutine::defer(function () {
             SwooleContext::G()->onShutdown();
         });
         ob_start(function ($str) {

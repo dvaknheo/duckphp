@@ -68,7 +68,7 @@ class SwooleCoroutineSingleton
         if ($cid!==null) {
             $current_cid = Coroutine::getuid();
             self::$cid_map[$cid]=$current_cid;
-            \defer(function () use ($cid) {
+            Coroutine::defer(function () use ($cid) {
                 unset($cid_map[$cid]);
             });
             return;
@@ -81,7 +81,7 @@ class SwooleCoroutineSingleton
             return;
         }
         self::$_instances[$cid]=[];
-        \defer(function () {
+        Coroutine::defer(function () {
             $cid = Coroutine::getuid();
             if ($cid<=0) {
                 return;

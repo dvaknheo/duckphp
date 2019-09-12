@@ -165,7 +165,7 @@ class SwooleSuperGlobal
     {
         //SwooleHttpd::register_shutdown_function([$this,'writeClose']);
         $self=$this;
-        \defer(function () use ($self) {
+        Coroutine::defer(function () use ($self) {
             $self->writeClose();
         });
     }
