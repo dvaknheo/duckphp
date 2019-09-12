@@ -14,9 +14,9 @@ use DNMVCS\Ext\Pager;
 use DNMVCS\Ext\Misc;
 
 use DNMVCS\Core\App;
-use DNMVCS\SwooleHttpd\SwooleExtAppInterface;
+//use DNMVCS\SwooleHttpd\SwooleExtAppInterface;
 
-class DNMVCS extends App implements SwooleExtAppInterface
+class DNMVCS extends App //implements SwooleExtAppInterface
 {
     const VERSION = '1.1.2';
     use ExtendStaticCallTrait;

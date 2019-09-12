@@ -13,14 +13,14 @@ use DNMVCS\SwooleHttpd\SwooleHttpd_SystemWrapper;
 use DNMVCS\SwooleHttpd\SwooleHttpd_SuperGlobal;
 use DNMVCS\SwooleHttpd\SwooleHttpd_Singleton;
 use DNMVCS\SwooleHttpd\SwooleHttpd_Handler;
-use DNMVCS\SwooleHttpd\SwooleExtServerInterface;
+//use DNMVCS\SwooleHttpd\SwooleExtServerInterface;
 
 use Swoole\ExitException;
 use Swoole\Http\Server as Http_Server;
 use Swoole\Websocket\Server as Websocket_Server;
 use Swoole\Runtime;
 
-class SwooleHttpd implements SwooleExtServerInterface
+class SwooleHttpd //implements SwooleExtServerInterface
 {
     const VERSION = 'DNMVCS-inner';
     use SwooleSingleton;
