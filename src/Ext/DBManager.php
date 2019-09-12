@@ -1,7 +1,7 @@
 <?php
 namespace DNMVCS\Ext;
 
-use DNMVCS\SingletonEx;
+use DNMVCS\Core\SingletonEx;
 use DNMVCS\DB\DB;
 
 class DBManager
@@ -16,8 +16,8 @@ class DBManager
         'database_list'=>null,
         'use_context_db_setting'=>true,
     ];
-    public $tag_write=0;
-    public $tag_read='1';
+    const TAG_WRITE=0;
+    const TAG_READ=1;
     
     protected $database_config_list=[];
     protected $databases=[];
@@ -96,14 +96,14 @@ class DBManager
     }
     public function _DB_W()
     {
-        return $this->_DB($this->tag_write);
+        return $this->_DB(static::TAG_WRITE);
     }
     public function _DB_R()
     {
         if (!isset($this->database_config_list[$this->tag_read])) {
             return $this->_DB();
         }
-        return $this->_DB($this->tag_read);
+        return $this->_DB(static::TAG_READ);
     }
     public function CloseAllDB()
     {

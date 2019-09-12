@@ -1,7 +1,7 @@
 <?php
 namespace DNMVCS\Ext;
 
-use DNMVCS\SingletonEx;
+use DNMVCS\Core\SingletonEx;
 use DNMVCS\Core\Configer;
 use DNMVCS\Core\View;
 
