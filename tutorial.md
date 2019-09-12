@@ -724,17 +724,17 @@ App::G()->extendComponents($class,$methods,$components);
 DNMVCS/Framework 的扩展都放在 DNMVCS\\Ext 命名空间里
 下面按字母顺序介绍这些扩展的作用
 按选项，说明，公开方法，一一介绍。
-#### DBManager
+### DBManager
     默认开启。 DBManager 类是用来使用数据库的
     M::DB() 用到了这个组件。
-##### 选项
+#### 选项
     'db_create_handler'=>null,  // 默认用 [DB::class,'CreateDBInstance']
     'db_close_handler'=>null,   // 默认等于 [DB::class,'CloseDBInstance']
     'before_get_db_handler'=>null, // 在调用 DB 前调用
     'use_context_db_setting'=>true, //使用 setting 里的。
     'database_list'=>null,      //DB 列表
 db_create_handler
-##### 说明
+#### 说明
 
 database_list 的示例：
     [[
@@ -742,10 +742,10 @@ database_list 的示例：
 		'username'=>'???',
 		'password'=>'???',
 	]],
-##### 方法
+#### 方法
 DB()
     是 App::DB 和 M::DB 的实现。
-##### DB 类的用法
+#### DB 类的用法
 一目了然
     close(); //关闭
     getPDO(); //获取 PDO 对象
@@ -754,30 +754,29 @@ DB()
     fetch($sql, ...$args);
     fetchColumn($sql, ...$args);
     execQuick($sql, ...$args); //   执行某条sql ，不用 exec , execute 是为了兼容其他类。
-#### DBReusePoolProxy
+### DBReusePoolProxy
 连接池，默认没开启，使用
     'db_reuse_size' => 100,
     'db_reuse_timeout' => 5,
     'dbm' => null,
-#### FacadesAutoLoader
+### FacadesAutoLoader
 你们要的 Facades 面子
     'facades_namespace'=>'Facades',
     'facades_map'=>[],
-##### 示例
+#### 示例
 
 ```php
 use Facades\MY\Model\TestModel;
 TestModel::foo(); // <=> \MY\Model\TestModel::G()->foo();
 ```
-#### JsonRpcExt
+### JsonRpcExt
 一个 JonsRPC 的示例，不提供安全验证功能。
-##### 默认选项
+#### 默认选项
 'jsonrpc_namespace'=>'JsonRpc',
 'jsonrpc_backend'=>'https://127.0.0.1', 
 //TODO
 后端，允许用数组，后面表示是实际IP，用于方便调试，见例子。实际连的是 127.0.0.1。
-
-##### 示例
+#### 示例
 ```php
 // Base\App onInit;
 $this->options['ext']['Ext\JsonRpcExt']=[
@@ -840,7 +839,7 @@ if (!$flag) {
 这里的 json_rpc 是服务端的实现
 
 如果你要 做自己的权限处理，则重写 protected function prepare_token($ch)。
-#### Lazybones
+### Lazybones
 懒汉配置。你或许能找到些东西。
     'lazy_mode'=>true,
     'use_app_path'=>true,
@@ -852,40 +851,40 @@ if (!$flag) {
     'lazy_controller_class'=>'DNController',
     'with_controller_namespace_namespace'=>true,
     'with_controller_namespace_prefix'=>true,
-#### Oldbones
+### Oldbones
 一些过时的东西配置。你或许能找到些东西
     'fullpath_project_share_common'=>'',
     'fullpath_config_common'=>'',
     'function_view_head'
     'function_view_foot'
 
-#### Pager
+### Pager
     分页。只是解决了有无问题，如果有更好的，你可以换之
         'url'=>null,
         'key'=>null,
         'page_size'=>null,
         'rewrite'=>null,
         'current'=>null,
-#### RouteHookDirectoryMode
+### RouteHookDirectoryMode
     多目录模式的 hook
         'mode_dir_index_file'=>'',
         'mode_dir_use_path_info'=>true,
         'mode_dir_key_for_module'=>true,
         'mode_dir_key_for_action'=>true,
-#### RouteHookOneFileMode
+### RouteHookOneFileMode
     单一文件模式的 hook
-#### RouteHookRewrite
+### RouteHookRewrite
 默认开启 实现了rewrite 。
 
 rewrite 支持以 ~ 开始表示的正则， 并且转换后自动拼凑 $_GET
-##### 选项
+#### 选项
     'rewrite_map'=>[],
-##### 方法
+#### 方法
 assignRewrite()
 getRewrites()
-#### RouteHookRouteMap
+### RouteHookRouteMap
 默认开启,实现了路由映射功能
-##### 选项
+#### 选项
    'route_map'=>[],
 如果是 * 结尾，那么把后续的按 / 切入 parameters
 route_map key 如果是 ~ 开头的，表示正则
@@ -895,12 +894,12 @@ route_map key 如果是 ~ 开头的，表示正则
 你可以 
 parameters 
 
-##### 方法
+#### 方法
 assignRoute($route,$callback); 
     是 C::assignRoute 和 App::assignRoute 的实现。
 getRoutes()
     dump  route_map 的内容。
-#### StrictCheck
+### StrictCheck
 
 用于 严格使用 DB 等情况。使得在调试状态下。不能在 Controller 里 使用 M::DB();等
 
@@ -935,7 +934,7 @@ new , 协程单例 ，单例，static function
 new 多个效率比单例 低
 协程单例，需要的操作要多。效率底点。
 但是协程单例可以防低级错误。
-#### 使用 Think-orm 的 DB
+#### 使用 think-orm 的 DB
 ```php
 <?php
 use think\facade\Db;
