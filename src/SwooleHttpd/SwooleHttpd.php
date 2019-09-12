@@ -6,7 +6,6 @@ namespace DNMVCS\SwooleHttpd;
 
 use DNMVCS\SwooleHttpd\SwooleSingleton;
 
-use DNMVCS\SwooleHttpd\SimpleHttpd;
 use DNMVCS\SwooleHttpd\SimpleWebSocketd;
 
 use DNMVCS\SwooleHttpd\SwooleHttpd_Static;
@@ -15,6 +14,11 @@ use DNMVCS\SwooleHttpd\SwooleHttpd_SuperGlobal;
 use DNMVCS\SwooleHttpd\SwooleHttpd_Singleton;
 use DNMVCS\SwooleHttpd\SwooleHttpd_Handler;
 use DNMVCS\SwooleHttpd\SwooleExtServerInterface;
+
+use Swoole\ExitException;
+use Swoole\Http\Server as Http_Server;
+use Swoole\Websocket\Server as Websocket_Server;
+use Swoole\Runtime;
 
 class SwooleHttpd implements SwooleExtServerInterface
 {
@@ -270,7 +274,7 @@ class SwooleHttpd implements SwooleExtServerInterface
     }
     protected function onHttpException($ex)
     {
-        if ($ex instanceof \Swoole\ExitException) {
+        if ($ex instanceof ExitException) {
             return;
         }
         if ($ex instanceof Swoole404Exception) {
@@ -360,10 +364,10 @@ class SwooleHttpd implements SwooleExtServerInterface
                 exit;
             }
             if (!$options['websocket_handler']) {
-                $this->server=new \Swoole\Http\Server($options['host'], $options['port']);
+                $this->server=new Http_Server($options['host'], $options['port']);
             } else {
                 echo "SwooleHttpd: use WebSocket";
-                $this->server=new \Swoole\Websocket\Server($options['host'], $options['port']);
+                $this->server=new Websocket_Server($options['host'], $options['port']);
             }
             if (!$this->server) {
                 echo 'SwooleHttpd: Start server failed';
@@ -390,7 +394,7 @@ class SwooleHttpd implements SwooleExtServerInterface
             $this->server->on('open', [$this,'onOpen']);
         }
         if ($options['enable_coroutine']) {
-            \Swoole\Runtime::enableCoroutine();
+            Runtime::enableCoroutine();
         }
         
         SwooleCoroutineSingleton::ReplaceDefaultSingletonHandler();

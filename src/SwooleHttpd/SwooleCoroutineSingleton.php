@@ -2,7 +2,7 @@
 namespace DNMVCS\SwooleHttpd;
 
 use DNMVCS\SwooleHttpd\SwooleSingleton;
-
+use Swoole\Coroutine;
 class SwooleCoroutineSingleton
 {
     use SwooleSingleton;
@@ -19,7 +19,7 @@ class SwooleCoroutineSingleton
     }
     public static function SingletonInstance($class, $object)
     {
-        $cid = \Swoole\Coroutine::getuid();
+        $cid = Coroutine::getuid();
         $cid=($cid<=0)?0:$cid;
         $cid=$cid_map[$cid]??$cid;
         
@@ -66,14 +66,14 @@ class SwooleCoroutineSingleton
             return;
         }
         if ($cid!==null) {
-            $current_cid = \Swoole\Coroutine::getuid();
+            $current_cid = Coroutine::getuid();
             self::$cid_map[$cid]=$current_cid;
             \defer(function () use ($cid) {
                 unset($cid_map[$cid]);
             });
             return;
         }
-        $cid = \Swoole\Coroutine::getuid();
+        $cid = Coroutine::getuid();
         if ($cid<=0) {
             return;
         }
@@ -82,7 +82,7 @@ class SwooleCoroutineSingleton
         }
         self::$_instances[$cid]=[];
         \defer(function () {
-            $cid = \Swoole\Coroutine::getuid();
+            $cid = Coroutine::getuid();
             if ($cid<=0) {
                 return;
             }
@@ -91,7 +91,7 @@ class SwooleCoroutineSingleton
     }
     public function forkMasterInstances($classes, $exclude_classes=[])
     {
-        $cid = \Swoole\Coroutine::getuid();
+        $cid = Coroutine::getuid();
         if ($cid<=0) {
             return;
         }
@@ -122,7 +122,7 @@ class SwooleCoroutineSingleton
     
     public function forkAllMasterClasses()
     {
-        $cid = \Swoole\Coroutine::getuid();
+        $cid = Coroutine::getuid();
         foreach (self::$_instances[0] as $class =>$object) {
             if (!isset($object)) {
                 continue;
@@ -133,7 +133,7 @@ class SwooleCoroutineSingleton
     ///////////////////////
     public function _DumpString()
     {
-        $cid = \Swoole\Coroutine::getuid();
+        $cid = Coroutine::getuid();
         $ret="==== SwooleCoroutineSingleton List Current cid [{$cid}] ==== ;\n";
         foreach (self::$_instances as $cid=>$v) {
             foreach ($v as $cid_class=>$object) {

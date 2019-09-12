@@ -24,7 +24,7 @@ class SwooleExt
         $cid = Coroutine::getuid();
         if ($cid>0) {
             if ($this->in_fake) {
-                return $this->doFakerInit($options, $context);
+                //return $this->doFakerInit($options, $context);
             }
             return;
         }
@@ -79,7 +79,7 @@ class SwooleExt
         if (!$this->is_inited) {
             return;
         }
-        $cid = \Swoole\Coroutine::getuid();
+        $cid=Coroutine::getuid();
         if ($cid>0) {
             return;
         }
@@ -105,15 +105,18 @@ class SwooleExt
             
             
             $class=$this->appClass;
-            $this->in_fake=true;
-            ($this->appClass)::G($this); //fake object
-
-            SwooleHttpd::G()->forkMasterInstances($classes);
+            //$this->in_fake=true;
+            //($this->appClass)::G($this); //fake object
+            ($this->appClass)::G(new $class());
             
+            //TODO Merge
+            SwooleHttpd::G()->forkMasterInstances($classes);
+            SwooleHttpd::G()->resetInstances();
             return false;
         }
         return true;
     }
+    /*
     protected function doFakerInit($options=[], $context=null)
     {
         $this->in_fake=false;
@@ -123,4 +126,5 @@ class SwooleExt
         
         return $ret;
     }
+    */
 }

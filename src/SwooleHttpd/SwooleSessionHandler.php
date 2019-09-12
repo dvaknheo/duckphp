@@ -2,8 +2,8 @@
 namespace DNMVCS\SwooleHttpd;
 
 use DNMVCS\SwooleHttpd\SwooleSingleton;
-
-class SwooleSessionHandler implements \SessionHandlerInterface
+use SessionHandlerInterface;
+class SwooleSessionHandler implements SessionHandlerInterface
 {
     use SwooleSingleton;
     private $savePath;

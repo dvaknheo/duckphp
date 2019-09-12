@@ -3,6 +3,7 @@ namespace DNMVCS\SwooleHttpd;
 
 use DNMVCS\SwooleHttpd\SwooleSingleton;
 use DNMVCS\SwooleHttpd\SwooleSessionHandler;
+use Swoole\Coroutine;
 
 class SwooleSuperGlobal
 {
@@ -35,7 +36,7 @@ class SwooleSuperGlobal
     }
     public function init()
     {
-        $cid = \Swoole\Coroutine::getuid();
+        $cid=Coroutine::getuid();
         if ($cid<=0) {
             return;
         }
@@ -214,7 +215,7 @@ class SwooleSuperGlobal
     }
     public function create_sid()
     {
-        $cid = \Swoole\Coroutine::getuid();
+        $cid=Coroutine::getuid();
         return md5(microtime().' '.$cid.' '.mt_rand());
     }
 }
