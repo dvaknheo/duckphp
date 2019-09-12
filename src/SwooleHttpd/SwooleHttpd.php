@@ -14,8 +14,9 @@ use DNMVCS\SwooleHttpd\SwooleHttpd_SystemWrapper;
 use DNMVCS\SwooleHttpd\SwooleHttpd_SuperGlobal;
 use DNMVCS\SwooleHttpd\SwooleHttpd_Singleton;
 use DNMVCS\SwooleHttpd\SwooleHttpd_Handler;
+use DNMVCS\SwooleHttpd\SwooleExtServerInterface;
 
-class SwooleHttpd
+class SwooleHttpd implements SwooleExtServerInterface
 {
     const VERSION = 'DNMVCS-inner';
     use SwooleSingleton;
@@ -321,7 +322,7 @@ class SwooleHttpd
         return static::G($base_class::G());
     }
     
-    public function init($options, $server=null)
+    public function init(array $options, $server=null)
     {
         $object=$this->checkOverride($options);
         if ($object) {

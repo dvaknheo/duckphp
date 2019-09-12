@@ -14,7 +14,7 @@ use DNMVCS\Ext\Pager;
 use DNMVCS\Ext\Misc;
 
 use DNMVCS\Core\App;
-use \DNMVCS\SwooleHttpd\SwooleExtAppInterface;
+use DNMVCS\SwooleHttpd\SwooleExtAppInterface;
 
 class DNMVCS extends App implements SwooleExtAppInterface
 {
