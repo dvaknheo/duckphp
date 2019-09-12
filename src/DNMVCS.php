@@ -113,7 +113,6 @@ class DNMVCS extends App //implements SwooleExtAppInterface
         }
         if ($this->options['use_super_global']??false) {
             $this->bindServerData(SuperGlobal::G()->_SERVER);
-            ////////////var_dump("AAAAAAAAAAAAAAA",SuperGlobal::G()->_GET);
             return;
         }
     }

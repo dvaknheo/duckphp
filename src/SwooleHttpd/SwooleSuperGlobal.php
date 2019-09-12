@@ -77,6 +77,11 @@ class SwooleSuperGlobal
         
         $this->_FILES=$request->files;
         
+        // fixed swoole system bug
+        if (!empty($this->_GET)) {
+            $this->_SERVER['REQUEST_URI'].='?'.http_build_query($this->_GET);
+        }
+        
         return $this;
     }
     public function mapToGlobal()
