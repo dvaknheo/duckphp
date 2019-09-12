@@ -19,6 +19,7 @@ use Swoole\ExitException;
 use Swoole\Http\Server as Http_Server;
 use Swoole\Websocket\Server as Websocket_Server;
 use Swoole\Runtime;
+use Swoole\Coroutine;
 
 class SwooleHttpd //implements SwooleExtServerInterface
 {
@@ -608,6 +609,10 @@ trait SwooleHttpd_Singleton
     {
         return SwooleCoroutineSingleton::EnableCurrentCoSingleton();
     }
+    public function getStaticComponentClasses()
+    {
+        return [];
+    }
     public function getDynamicComponentClasses()
     {
         $classes=[
@@ -616,11 +621,12 @@ trait SwooleHttpd_Singleton
         ];
         return $classes;
     }
+    //
     public function forkMasterInstances($classes, $exclude_classes=[])
     {
         return SwooleCoroutineSingleton::G()->forkMasterInstances($classes, $exclude_classes);
     }
-    public function resetInstances()
+    public function forkMasterClassesToNewInstances()
     {
         $classes=$this->getDynamicComponentClasses();
         $instances=[];

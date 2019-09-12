@@ -20,14 +20,6 @@ class SwooleExt
         if (PHP_SAPI!=='cli') {
             return;
         }
-        
-        $cid = Coroutine::getuid();
-        if ($cid>0) {
-            if ($this->in_fake) {
-                //return $this->doFakerInit($options, $context);
-            }
-            return;
-        }
         if ($this->is_inited) {
             return $this;
         }
@@ -101,30 +93,10 @@ class SwooleExt
             return true;
         }
         if (SwooleHttpd::G()->is_with_http_handler_root()) {
-            $classes=($this->appClass)::G()->getStaticComponentClasses();
-            
-            
-            $class=$this->appClass;
-            //$this->in_fake=true;
-            //($this->appClass)::G($this); //fake object
-            ($this->appClass)::G(new $class());
-            
-            //TODO Merge
-            SwooleHttpd::G()->forkMasterInstances($classes);
-            SwooleHttpd::G()->resetInstances();
+            //SwooleHttpd::G()->forkMasterInstances([get_class(($this->appClass)::G())]);
+            SwooleHttpd::G()->forkMasterClassesToNewInstances();
             return false;
         }
         return true;
     }
-    /*
-    protected function doFakerInit($options=[], $context=null)
-    {
-        $this->in_fake=false;
-        SwooleHttpd::G()->resetInstances();
-        $class=$this->appClass;
-        $ret=($this->appClass)::G(new $class())->init($options);
-        
-        return $ret;
-    }
-    */
 }

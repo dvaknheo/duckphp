@@ -15,6 +15,6 @@ interface SwooleExtServerInterface
     public function set_http_404_handler(callable $callback);
     
     public function getDynamicComponentClasses();
-    public function resetInstances();
+    public function forkMasterClassesToNewInstances();
     public function forkMasterInstances($classes, $exclude_classes=[]);
 }

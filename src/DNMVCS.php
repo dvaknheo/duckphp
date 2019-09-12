@@ -101,17 +101,19 @@ class DNMVCS extends App //implements SwooleExtAppInterface
         return static::G()->init($dn_options)->run();
     }
     */
+    protected function onInit()
+    {
+    }
     protected function onRun()
     {
         if (defined('DNMVCS_SUPER_GLOBAL_REPALACER')) {
             $func=DNMVCS_SUPER_GLOBAL_REPALACER;
             SuperGlobal::G($func());
-            $this->bindServerData(SuperGlobal::G()->_SERVER);
-            
-            return;
+            $this->options['use_super_global']=true;
         }
         if ($this->options['use_super_global']??false) {
             $this->bindServerData(SuperGlobal::G()->_SERVER);
+            ////////////var_dump("AAAAAAAAAAAAAAA",SuperGlobal::G()->_GET);
             return;
         }
     }
