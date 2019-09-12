@@ -2,7 +2,7 @@
 namespace DNMVCS\Ext;
 
 use DNMVCS\Core\SingletonEx;
-use DNMVCS\SuperGlobal;
+use DNMVCS\Core\SuperGlobal;
 
 class RouteHookRewrite
 {
@@ -93,6 +93,7 @@ class RouteHookRewrite
         
         return $new_path.$query;
     }
+    // used by RouteHookDirectoryMode
     public function filteRewrite($input_url)
     {
         foreach ($this->rewrite_map as $template_url=>$new_url) {

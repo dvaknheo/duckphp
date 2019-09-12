@@ -5,7 +5,7 @@
 namespace DNMVCS;
 
 use DNMVCS\ExtendStaticCallTrait;
-use DNMVCS\SuperGlobal;
+use DNMVCS\Core\SuperGlobal;
 use DNMVCS\Ext\StrictCheck;
 use DNMVCS\Ext\DBManager;
 use DNMVCS\Ext\RouteHookRewrite;

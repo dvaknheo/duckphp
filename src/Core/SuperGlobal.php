@@ -1,7 +1,7 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\Core;
 
-use DNMVCS\SingletonEx;
+use DNMVCS\Core\SingletonEx;
 
 class SuperGlobal
 {

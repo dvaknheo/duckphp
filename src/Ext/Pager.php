@@ -2,7 +2,6 @@
 namespace DNMVCS\Ext;
 
 use DNMVCS\Core\SingletonEx;
-use DNMVCS\Core\App;
 
 class Pager
 {
@@ -16,7 +15,15 @@ class Pager
     ];
     public static function SG()
     {
-        return APP::G()::SG(); // TODO
+        return static::G()->_SG();
+    }
+    public function _SG()
+    {
+        if($this->context_class){
+            return $context_class::SG();
+        }else{
+            return \DNMVCS\Core\App::G()::SG();
+        }
     }
     public static function Current()
     {
@@ -55,6 +62,8 @@ class Pager
         
         $this->current_page=$options['current']??intval(static::SG()->_GET[$this->key]??1);
         $this->current_page=$this->current_page>1?$this->current_page:1;
+        
+        $this->context_class=isset($context)?get_class($context):null;
     }
     public function getUrl($page)
     {
