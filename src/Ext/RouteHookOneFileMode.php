@@ -20,6 +20,9 @@ class RouteHookOneFileMode
         $this->key_for_action=$options['key_for_action'];
         $this->key_for_module=$options['key_for_module'];
         
+        if (!$this->key_for_action && ! $this->key_for_module) {
+            return $this;
+        }
         if ($context) {
             $context->addRouteHook([static::G(),'hook']);
         }

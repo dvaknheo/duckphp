@@ -13,6 +13,7 @@ use DNMVCS\Core\ExceptionManager;
 use DNMVCS\Core\Route;
 use DNMVCS\Core\RuntimeState;
 use DNMVCS\Core\View;
+use DNMVCS\Core\SuperGlobal;
 
 class App
 {
@@ -27,6 +28,7 @@ class App
     use Core_SystemWrapper;
     use Core_Helper;
     use Core_ComponentClasses;
+    use Core_SuperGlobal;
     
     const DEFAULT_OPTIONS=[
             //// basic config ////
@@ -41,6 +43,7 @@ class App
             
             'override_class'=>'Base\App',
             'reload_for_flags'=>true,
+            'use_super_global'=>false,
             'skip_view_notice_error'=>true,
             'skip_404_handler'=>false,
             
@@ -190,6 +193,9 @@ class App
         
         Route::G()->init($this->options, $this);
         $this->initExtentions($this->options['ext']);
+        $this->initSuperGlobal();
+        
+        
         return $this;
     }
     protected function initExtentions($exts)
@@ -224,6 +230,18 @@ class App
             $class::G()->init($options, $this);
         }
         return;
+    }
+    protected function initSuperGlobal()
+    {
+        if (defined('DNMVCS_SUPER_GLOBAL_REPALACER')) {
+            $func=DNMVCS_SUPER_GLOBAL_REPALACER;
+            SuperGlobal::G($func());
+            $this->options['use_super_global']=true;
+        }
+        if ($this->options['use_super_global']) {
+            $this->bindServerData(SuperGlobal::G()->_SERVER);
+            return;
+        }
     }
     public function addBeforeRunHandler($handler)
     {
@@ -750,18 +768,58 @@ trait Core_Glue
     // ViewHelper
     public static function DumpTrace()
     {
+        return static::G()->_DumpTrace();
+    }
+    public static function Dump(...$args)
+    {
+        return static::G()->_Dump(...$args);
+    }
+    public function _DumpTrace()
+    {
         echo "<pre>\n";
         echo (new Exception('',0))->getTraceString();
         echo "</pre>\n";
     }
-    public static function Dump($object)
-    {
-        return static::G()->_Dump($object);
-    }
-    public function _Dump($object)
+    public function _Dump(...$args)
     {
         echo "<pre>\n";
-        var_dump($object);
+        var_dump(...$args);
         echo "</pre>\n";
+    }
+}
+trait Core_SuperGlobal
+{
+    public static function SG()
+    {
+        return SuperGlobal::G();
+    }
+    public static function &GLOBALS($k, $v=null)
+    {
+        return SuperGlobal::G()->_GLOBALS($k, $v);
+    }
+    
+    public static function &STATICS($k, $v=null)
+    {
+        return SuperGlobal::G()->_STATICS($k, $v, 1);
+    }
+    public static function &CLASS_STATICS($class_name, $var_name)
+    {
+        return SuperGlobal::G()->_CLASS_STATICS($class_name, $var_name);
+    }
+    public static function session_start(array $options=[])
+    {
+        return SuperGlobal::G()->session_start($options);
+    }
+    public function session_id($session_id=null)
+    {
+        return SuperGlobal::G()->session_id($session_id);
+    }
+    public static function session_destroy()
+    {
+        return SuperGlobal::G()->session_destroy();
+    }
+    public static function session_set_save_handler(\SessionHandlerInterface $handler)
+    {
+        return SuperGlobal::G()->session_set_save_handler($handler);
     }
 }

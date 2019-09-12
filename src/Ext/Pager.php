@@ -13,6 +13,7 @@ class Pager
         'rewrite'=>null,
         'current'=>null,
     ];
+    protected $context_class;
     public static function SG()
     {
         return static::G()->_SG();
@@ -20,7 +21,7 @@ class Pager
     public function _SG()
     {
         if($this->context_class){
-            return $context_class::SG();
+            return $this->context_class::SG();
         }else{
             return \DNMVCS\Core\App::G()::SG();
         }

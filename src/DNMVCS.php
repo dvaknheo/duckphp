@@ -19,10 +19,9 @@ use DNMVCS\Core\App;
 class DNMVCS extends App //implements SwooleExtAppInterface
 {
     const VERSION = '1.1.2';
-    use ExtendStaticCallTrait;
     
+    use ExtendStaticCallTrait;
     use DNMVCS_Glue;
-    use DNMVCS_SystemWrapper;
     
     const DEFAULT_OPTIONS_EX=[
             'path_lib'=>'lib',
@@ -30,6 +29,9 @@ class DNMVCS extends App //implements SwooleExtAppInterface
             'rewrite_map'=>[],
             'route_map'=>[],
             'swoole'=>[],
+            
+            'key_for_action'=>'',
+            'key_for_module'=>'',
             
             'ext'=>[
                 'SwooleHttpd\SwooleExt'=>true,
@@ -46,7 +48,7 @@ class DNMVCS extends App //implements SwooleExtAppInterface
                 'Ext\DBReusePoolProxy'=>false,
                 'Ext\FacadesAutoLoader'=>false,
                 'Ext\RouteHookDirectoryMode'=>false,
-                'Ext\RouteHookOneFileMode'=>false,
+                'Ext\RouteHookOneFileMode'=>true,
             ],
             
         ];
@@ -63,8 +65,8 @@ class DNMVCS extends App //implements SwooleExtAppInterface
         $default_options=[
             'ext'=>[
                 'Ext\RouteHookOneFileMode'=>[
-                    'mode_onefile'=>true,
-                    'mode_onefile_key_for_action'=>'_',
+                    'key_for_module'=>'',
+                    'key_for_action'=>'_',
                 ],
             ],
         ];
@@ -101,25 +103,9 @@ class DNMVCS extends App //implements SwooleExtAppInterface
         return static::G()->init($dn_options)->run();
     }
     */
-    protected function onInit()
-    {
-    }
-    protected function onRun()
-    {
-        if (defined('DNMVCS_SUPER_GLOBAL_REPALACER')) {
-            $func=DNMVCS_SUPER_GLOBAL_REPALACER;
-            SuperGlobal::G($func());
-            $this->options['use_super_global']=true;
-        }
-        if ($this->options['use_super_global']??false) {
-            $this->bindServerData(SuperGlobal::G()->_SERVER);
-            return;
-        }
-    }
-    
+    // @provide output.
     public function extendComponents($class,$methods,$components)
     {
-        
         $methods=is_array($methods)?$methods:[$methods];
         $components=is_array($components)?$components:explode(',',$components);
         $maps=[];
@@ -176,29 +162,19 @@ class DNMVCS extends App //implements SwooleExtAppInterface
         $ret=array_values(array_unique($ret));
         return $ret;
     }
+    // @override
+    public function _DumpTrace()
+    {
+        return parent::_DumpTrace();
+    }
+    public function _Dump(...$args)
+    {
+        return _Dump(...$args);
+    }
 }
 
 trait DNMVCS_Glue
 {
-    //////////////
-    public static function SG()
-    {
-        return SuperGlobal::G();
-    }
-    public static function &GLOBALS($k, $v=null)
-    {
-        return SuperGlobal::G()->_GLOBALS($k, $v);
-    }
-    
-    public static function &STATICS($k, $v=null)
-    {
-        return SuperGlobal::G()->_STATICS($k, $v, 1);
-    }
-    public static function &CLASS_STATICS($class_name, $var_name)
-    {
-        return SuperGlobal::G()->_CLASS_STATICS($class_name, $var_name);
-    }
-    /////
     public static function DB($tag=null)
     {
         return DBManager::G()->_DB($tag);
@@ -278,24 +254,5 @@ trait DNMVCS_Glue
     public static function explodeService($object, $namespace="MY\\Service\\")
     {
         return Misc::G()::explodeService($object, $namespace);
-    }
-}
-trait DNMVCS_SystemWrapper
-{
-    public static function session_start(array $options=[])
-    {
-        return SuperGlobal::G()->session_start($options);
-    }
-    public function session_id($session_id=null)
-    {
-        return SuperGlobal::G()->session_id($session_id);
-    }
-    public static function session_destroy()
-    {
-        return SuperGlobal::G()->session_destroy();
-    }
-    public static function session_set_save_handler(\SessionHandlerInterface $handler)
-    {
-        return SuperGlobal::G()->session_set_save_handler($handler);
     }
 }

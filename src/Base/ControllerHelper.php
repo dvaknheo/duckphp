@@ -5,7 +5,7 @@ use DNMVCS\Core\Base\ControllerHelper as Helper;
 use DNMVCS\ExtendStaticCallTrait;
 
 use DNMVCS\Core\App;
-use DNMVCS\SuperGlobal;
+use DNMVCS\Core\SuperGlobal;
 use DNMVCS\Ext\Pager;
 use DNMVCS\Ext\API;
 

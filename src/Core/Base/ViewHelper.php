@@ -26,9 +26,7 @@ class ViewHelper
     }
     public static function DumpTrace()
     {
-        echo "<pre>\n";
-        echo (new Exception('',0))->getTraceString();
-        echo "</pre>\n";
+        return App::G()->_DumpTrace();
     }
     public static function Dump(...$args)
     {
