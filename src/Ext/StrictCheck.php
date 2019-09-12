@@ -41,7 +41,7 @@ class StrictCheck
         if (!$this->appClass) {
             return false;
         }
-        $flag=($this->appClass)::G()->options['is_debug'];
+        $flag=($this->appClass)::G()->options['is_debug']??false;
         if (!$flag) {
             return false;
         }

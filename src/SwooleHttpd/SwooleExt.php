@@ -102,9 +102,14 @@ class SwooleExt
         }
         if (SwooleHttpd::G()->is_with_http_handler_root()) {
             $classes=($this->appClass)::G()->getStaticComponentClasses();
-            SwooleHttpd::G()->forkMasterInstances($classes);
+            
+            
+            $class=$this->appClass;
             $this->in_fake=true;
             ($this->appClass)::G($this); //fake object
+
+            SwooleHttpd::G()->forkMasterInstances($classes);
+            
             return false;
         }
         return true;

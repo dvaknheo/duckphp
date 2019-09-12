@@ -90,7 +90,7 @@ class ExceptionManager
     public function init($options=[], $context=null)
     {
         if ($this->is_inited) {
-            return;
+            return $this;
         }
         $this->is_inited=true;
         
