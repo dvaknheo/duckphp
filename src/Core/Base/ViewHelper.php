@@ -2,6 +2,10 @@
 namespace DNMVCS\Core\Base;
 
 use DNMVCS\Core\App;
+use DNMVCS\Core\SingletonEx;
+use DNMVCS\Core\ThrowOn;
+
+use DNMVCS\Core\View;
 
 class ViewHelper
 {
@@ -18,7 +22,7 @@ class ViewHelper
     }
     public static function ShowBlock($view, $data=null)
     {
-        return App::G()->_ShowBlock($view, $data);
+        return View::G()->_ShowBlock($view, $data);
     }
     public static function DumpTrace()
     {
@@ -26,8 +30,8 @@ class ViewHelper
         echo (new Exception('',0))->getTraceString();
         echo "</pre>\n";
     }
-    public static function Dump($object)
+    public static function Dump(...$args)
     {
-        return App::G()->_Dump($object);
+        return App::G()->_Dump(...$args);
     }
 }

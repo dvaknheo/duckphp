@@ -61,10 +61,12 @@ class SwooleExt
             $class::G($object);
         }
         //////////////        
-        $this->initApp();
-        ($this->appClass)::G()->addBeforeRunHandler([static::class,'OnRun']);
+
         $options['http_handler']=[$this,'runSwoole'];
         SwooleHttpd::G()->init($options, null);
+
+        $this->initApp();
+        ($this->appClass)::G()->addBeforeRunHandler([static::class,'OnRun']);
         return $this;
     }
     public static function OnRun()
