@@ -4,6 +4,7 @@ namespace DNMVCS\SwooleHttpd;
 use DNMVCS\SwooleHttpd\SwooleSingleton;
 use DNMVCS\SwooleHttpd\SwooleHttpd;
 use Exception;
+use Swoole\Coroutine;
 
 class SwooleExt
 {
@@ -19,17 +20,19 @@ class SwooleExt
         if (PHP_SAPI!=='cli') {
             return;
         }
+        
+        $cid = Coroutine::getuid();
+        if ($cid>0) {
+            if ($this->in_fake) {
+                return $this->doFakerInit($options, $context);
+            }
+            return;
+        }
         if ($this->is_inited) {
             return $this;
         }
         $this->is_inited=true;
         
-        if ($this->in_fake) {
-            $cid = \Swoole\Coroutine::getuid();
-            if ($cid>0) {
-                return $this->doFakerInit($options, $context);
-            }
-        }
         
         $options=$options['swoole']??[];
         if (empty($options)) {
