@@ -22,6 +22,7 @@ class ExceptionManager
     protected $last_exception_handler=null;
     
     public $is_inited=false;
+    public $is_running=false;
     
     public function setDefaultExceptionHandler($default_exception_handler)
     {
@@ -108,6 +109,11 @@ class ExceptionManager
     }
     public function run()
     {
+        if ($this->is_running) {
+            return;
+        }
+        $this->is_running=true;
+        
         $this->last_error_handler=set_error_handler([$this,'on_error_handler']);
         if ($this->system_exception_handler) {
             $this->last_exception_handler=($this->system_exception_handler)($this->exception_handler);

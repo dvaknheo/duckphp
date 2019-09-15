@@ -136,11 +136,6 @@ class App
     }
     protected function checkOverride($options)
     {
-        if ($this->override_root_class) {
-            return null;
-        }
-        $this->override_root_class=static::class;
-        
         $override_class=$options['override_class']??static::DEFAULT_OPTIONS['override_class'];
         $namespace=$options['namespace']??static::DEFAULT_OPTIONS['namespace'];
         
@@ -155,36 +150,29 @@ class App
         if (static::class===$override_class) {
             return null;
         }
-        $override_class::G()->override_root_class=static::class;
         return static::G($override_class::G());
     }
     //@override me
     public function init($options=[], $context=null)
     {
-        if (!$this->override_root_class) {
-            $options=$this->adjustOptions($options);
-            
-            AutoLoader::G()->init($options, $this)->run();
-            ExceptionManager::G()->init($options, $this)->run();
-            
-            $object=$this->checkOverride($options);
-            
-            (self::class)::G($object??$this);
-            
-            if ($object) {
-                $object->initOptions($options);
-                return $object->init($options);
-            } else {
-                $this->initOptions($options);
-            }
-        }
-        $this->onInit();
-        return $this->initAfterOverride();
+        AutoLoader::G()->init($options, $this)->run();
+        ExceptionManager::G()->init($options, $this)->run();
+        
+        $this->override_root_class=static::class;
+        $object=$this->checkOverride($options);
+        
+        $object=$object??$this;
+        (self::class)::G($object);
+        $object->override_class=static::class;
+        
+        $options=$this->adjustOptions($options);
+        $object->initOptions($options);
+        $object->onInit();
+        
+        return $object->initAfterOverride();
     }
     protected function initAfterOverride()
     {
-        (self::class)::G($this);
-        
         Configer::G()->init($this->options, $this);
         $this->reloadFlags();
         
@@ -671,6 +659,8 @@ trait Core_ComponentClasses
     public function getDynamicComponentClasses()
     {
         $ret=[
+            RuntimeState::class,
+            SuperGlobal::class,
         ];
         $ret=array_merge($ret,$this->dynamicComponentClasses);
         $ret=array_values(array_unique($ret));
