@@ -34,21 +34,21 @@ class DNMVCS extends App //implements SwooleExtAppInterface
             'key_for_module'=>'',
             
             'ext'=>[
-                'SwooleHttpd\SwooleExt'=>true,
-                'Ext\Misc'=>true,
+                'DNMVCS\SwooleHttpd\SwooleExt'=>true,
+                'DNMVCS\Ext\Misc'=>true,
 
-                'Ext\DBManager'=>[
+                'DNMVCS\Ext\DBManager'=>[
                     'before_get_db_handler'=>[null,'CheckStrictDB'],
                 ],
-                'Ext\RouteHookRewrite'=>true,
-                'Ext\RouteHookRouteMap'=>true,
-                'Ext\StrictCheck'=>true,
+                'DNMVCS\Ext\RouteHookRewrite'=>true,
+                'DNMVCS\Ext\RouteHookRouteMap'=>true,
+                'DNMVCS\Ext\StrictCheck'=>true,
                 
-                'Ext\Lazybones'=>false,
-                'Ext\DBReusePoolProxy'=>false,
-                'Ext\FacadesAutoLoader'=>false,
-                'Ext\RouteHookDirectoryMode'=>false,
-                'Ext\RouteHookOneFileMode'=>true,
+                'DNMVCS\Ext\Lazybones'=>false,
+                'DNMVCS\Ext\DBReusePoolProxy'=>false,
+                'DNMVCS\Ext\FacadesAutoLoader'=>false,
+                'DNMVCS\Ext\RouteHookDirectoryMode'=>false,
+                'DNMVCS\Ext\RouteHookOneFileMode'=>true,
             ],
             
         ];

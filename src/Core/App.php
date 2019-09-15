@@ -155,6 +155,8 @@ class App
     //@override me
     public function init($options=[], $context=null)
     {
+        $options=$this->adjustOptions($options);
+
         AutoLoader::G()->init($options, $this)->run();
         ExceptionManager::G()->init($options, $this)->run();
         
@@ -165,7 +167,6 @@ class App
         (self::class)::G($object);
         $object->override_class=static::class;
         
-        $options=$this->adjustOptions($options);
         $object->initOptions($options);
         $object->onInit();
         
@@ -188,31 +189,13 @@ class App
     }
     protected function initExtentions($exts)
     {
-        $DefaultNamespace='DNMVCS\\';
-        
-        foreach ($exts as $ext =>$options) {
-            if ($options===false) {
+        foreach ($exts as $class =>$options) {
+            if (!class_exists($class)) {
                 continue;
             }
             $options=($options===true)?$this->options:$options;
             $options=is_string($options)?$this->options[$options]:$options;
-            $class='';
-            do {
-                $class=$DefaultNamespace.$ext;
-                if (class_exists($class)) {
-                    break;
-                }
-                $class=$this->options['namespace'].'\\'.$class;
-                if (class_exists($class)) {
-                    break;
-                }
-                $class=ltrim($class, '\\');
-                if (class_exists($class)) {
-                    break;
-                }
-            } while (false);
-            
-            if (!$class) {
+            if ($options===false) {
                 continue;
             }
             $class::G()->init($options, $this);
