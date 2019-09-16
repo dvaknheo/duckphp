@@ -62,40 +62,11 @@ class DNMVCS extends App //implements SwooleExtAppInterface
     /*
     public static function RunWithoutPathInfo($options=[])
     {
-        $default_options=[
-            'ext'=>[
-                'Ext\RouteHookOneFileMode'=>[
-                    'key_for_module'=>'',
-                    'key_for_action'=>'_',
-                ],
-            ],
-        ];
-        $options=array_replace_recursive($default_options, $options);
-        return static::G()->init($options)->run();
+///
     }
     public static function RunOneFileMode($options=[], $init_function=null)
     {
-        $path=realpath(getcwd().'/');
-        $default_options=[
-            'path'=>$path,
-            'skip_setting_file'=>true,
-            'ext'=>[
-                'Ext\RouteHookOneFileMode'=>[
-                    'mode_onefile'=>true,
-                    'mode_onefile_key_for_action'=>'act',
-                    'use_function_dispatch'=>true,
-                    'use_function_view'=>true,
-
-                    'use_session_auto_start'=>true,
-                ],
-            ],
-        ];
-        $options=array_replace_recursive($default_options, $options);
-        static::G()->init($options);
-        if ($init_function) {
-            ($init_function)();
-        }
-        return static::G()->run();
+       ///
     }
     public static function RunAsServer($dn_options, $server=null)
     {
@@ -149,12 +120,12 @@ class DNMVCS extends App //implements SwooleExtAppInterface
         $this->system_wrapper_replace($SwooleHttpd->system_wrapper_get_providers());
     }
     
-    // @override
+    // @override interface SwooleExtAppInterface
     public function getStaticComponentClasses()
     {
         return parent::getStaticComponentClasses();
     }
-    // @override
+    // @override interface SwooleExtAppInterface
     public function getDynamicComponentClasses()
     {
         $ret=parent::getDynamicComponentClasses();

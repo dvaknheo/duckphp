@@ -1,5 +1,5 @@
 <?php
-spl_autoload_register(function ($class) {
+function _dnmvcs_namespace_autoload($class) {
     $path=__DIR__.'/src/';
     $namespace='DNMVCS\\';
     if (strncmp($namespace, $class, strlen($namespace)) !== 0) {
@@ -11,4 +11,5 @@ spl_autoload_register(function ($class) {
     }
     require $file;
     return true;
-});
+}
+spl_autoload_register('_dnmvcs_namespace_autoload');

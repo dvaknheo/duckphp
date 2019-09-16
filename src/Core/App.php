@@ -181,9 +181,11 @@ class App
         $this->error_view_inited=true;
         
         Route::G()->init($this->options, $this);
-        $this->initExtentions($this->options['ext']);
-        $this->initSuperGlobal();
         
+        
+        $this->initExtentions($this->options['ext']);
+        
+        $this->initSuperGlobal();
         
         return $this;
     }
@@ -209,10 +211,6 @@ class App
             SuperGlobal::G($func());
             $this->options['use_super_global']=true;
         }
-        if ($this->options['use_super_global']) {
-            $this->bindServerData(SuperGlobal::G()->_SERVER);
-            return;
-        }
     }
     public function addBeforeRunHandler($handler)
     {
@@ -224,6 +222,11 @@ class App
             ($v)();
         }
         $this->onRun();
+        
+        if ($this->options['use_super_global']) {
+            $this->bindServerData(SuperGlobal::G()->_SERVER);
+            return;
+        }
         
         RuntimeState::ReCreateInstance();
         RuntimeState::G()->begin();
