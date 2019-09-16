@@ -1,7 +1,7 @@
 <?php
-namespace DNMVCS\Base;
+namespace DNMVCS\Helper;
 
-use DNMVCS\Core\Base\ControllerHelper as Helper;
+use DNMVCS\Core\Helper\ControllerHelper as Helper;
 use DNMVCS\ExtendStaticCallTrait;
 
 use DNMVCS\Core\App;

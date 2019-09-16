@@ -136,6 +136,7 @@ class App
     }
     protected function checkOverride($options)
     {
+        // TODO static::DEFAULT_OPTIONSEX
         $override_class=$options['override_class']??static::DEFAULT_OPTIONS['override_class'];
         $namespace=$options['namespace']??static::DEFAULT_OPTIONS['namespace'];
         
@@ -182,7 +183,6 @@ class App
         
         Route::G()->init($this->options, $this);
         
-        
         $this->initExtentions($this->options['ext']);
         
         $this->initSuperGlobal();
@@ -227,6 +227,7 @@ class App
             $this->bindServerData(SuperGlobal::G()->_SERVER);
             return;
         }
+        // if cli ,--cli  bind annother
         
         RuntimeState::ReCreateInstance();
         RuntimeState::G()->begin();
@@ -251,7 +252,6 @@ class App
     }
     public function cleanUp()
     {
-        //is_before_show_done => RuntimeState ?
         if (! RuntimeState::G()->is_before_show_done) {
             foreach ($this->beforeShowHandlers as $v) {
                 ($v)();
@@ -629,6 +629,7 @@ trait Core_ComponentClasses
     {
         $ret=[
             AutoLoader::class,
+            //'DNMVCS\Core\AutoLoader\'
             ExceptionManager::class,
             Configer::class,
             View::class,

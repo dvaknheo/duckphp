@@ -1,7 +1,7 @@
 <?php
-namespace DNMVCS\Base;
+namespace DNMVCS\Helper;
 
-use DNMVCS\Core\Base\ModelHelper as Helper;
+use DNMVCS\Core\Helper\ModelHelper as Helper;
 use DNMVCS\ExtendStaticCallTrait;
 
 use DNMVCS\Ext\DBManager;

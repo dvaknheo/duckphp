@@ -1,16 +1,16 @@
 <?php
 namespace MY\Controller;
 
-use MY\Base\ControllerHelper as C;
+use MY\Base\Helper\ControllerHelper as C;
 use MY\Base\BaseController;
-use MY\Service as S;
+use MY\Service\TestService;
 
 class Main // extends BaseController
 {
     public function index()
     {
         $data=[];
-        $data['var']=S\TestService::G()->foo();
+        $data['var']=TestService::G()->foo();
         C::Show($data, 'main');
     }
     public function i()

@@ -1,7 +1,7 @@
 <?php
-namespace DNMVCS\Base;
+namespace DNMVCS\Helper;
 
-use DNMVCS\Core\Base\ServiceHelper as Helper;
+use DNMVCS\Core\Helper\ServiceHelper as Helper;
 use DNMVCS\ExtendStaticCallTrait;
 
 class ServiceHelper extends Helper

@@ -1,5 +1,5 @@
 <?php
-namespace DNMVCS\Core\Base;
+namespace DNMVCS\Core\Helper;
 
 use DNMVCS\Core\App;
 use DNMVCS\Core\SingletonEx;

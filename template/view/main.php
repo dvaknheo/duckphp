@@ -1,5 +1,5 @@
 <?php
-// use MY\Base\ViewHelper as V;
+// use MY\Base\Helper\ViewHelper as V;
 ?>
 <!doctype html>
 <html>

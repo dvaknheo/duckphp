@@ -1,7 +1,7 @@
 <?php
-namespace DNMVCS\Base;
+namespace DNMVCS\Helper;
 
-use DNMVCS\Core\Base\ViewHelper as Helper;
+use DNMVCS\Core\Helper\ViewHelper as Helper;
 use DNMVCS\ExtendStaticCallTrait;
 
 class ViewHelper extends Helper
