@@ -1,37 +1,95 @@
 digraph G{
 /* This is a graphviz file */
 graph [rankdir = "LR"];
+    
     SingletonEx [shape=Mdiamond];
+    
+subgraph cluster_Core {
+    style = "rounded";
+    label = "[DNMVCS\\Core]";
+    node [style=filled];
+    
+    Core_App -> Core_AutoLoader ;
+    Core_App -> Core_ExceptionManager;
+    Core_App -> Core_View;
+    Core_App -> Core_Configer;
+    Core_App -> Core_Route;
+    Core_App -> Core_RuntimeState;
+    
+    Core_App -> Core_SingletonEx [style="dotted"];
+    Core_App -> Core_ThrowOn;
+    Core_App -> Core_ExtendableStaticCallTrait;
+    
+    Core_AutoLoader -> Core_SingletonEx [style="dotted"];
+    Core_ExceptionManager -> Core_SingletonEx [style="dotted"];
+    Core_View -> Core_SingletonEx [style="dotted"];
+    Core_Configer -> Core_SingletonEx [style="dotted"];
+    Core_Route -> Core_SingletonEx [style="dotted"];
+    Core_RuntimeState -> Core_SingletonEx [style="dotted"];
+    
+    Core_HttpServer -> Core_SingletonEx [style="dotted"];
+    Core_SuperGlobal -> Core_SingletonEx [style="dotted"];
 
-subgraph cluster_DNMVCS {
-    label = "[DNMVCS]";
+    Core_Helper_ModelHelper -> Core_ExtendableStaticCallTrait [style="dashed"];
+    Core_Helper_ModelHelper -> Core_ThrowOn [style="dashed"];
+    Core_Helper_ModelHelper -> Core_App [style="dashed"];
 
-    DNMVCS -> Core_App;
-    DNMVCS -> ClassExt;
+    Core_Helper_ServiceHelper -> Core_ExtendableStaticCallTrait [style="dashed"];
+    Core_Helper_ServiceHelper -> Core_ThrowOn [style="dashed"];
+    Core_Helper_ServiceHelper -> Core_App [style="dashed"];
 
-    DNMVCS -> Ext;
 
+
+    Core_Helper_ControllerHelper -> Core_ExtendableStaticCallTrait [style="dashed"];
+    Core_Helper_ControllerHelper -> Core_ThrowOn [style="dashed"];
+    Core_Helper_ControllerHelper -> Core_App [style="dashed"];
+    
+    Core_Helper_ViewHelper -> Core_ExtendableStaticCallTrait [style="dashed"];
+    Core_Helper_ViewHelper -> Core_ThrowOn [style="dashed"];
+    Core_Helper_ViewHelper -> Core_App [style="dashed"];
+
+
+    Core_App [label="App";shape=Mdiamond];
+    Core_SingletonEx [label="SingletonEx";shape=Mdiamond];
+    Core_AutoLoader [label="AutoLoader"];
+    Core_ExceptionManager [label="ExceptionManager"];
+    Core_View [label="View"];
+    Core_Configer [label="Configer"];
+    Core_Route [label="Route"];
+    Core_RuntimeState [label="RuntimeState"];
+    
+    Core_HttpServer [label="HttpServer"];
+    Core_SuperGlobal [label="SuperGlobal"];
+
+    Core_ExtendableStaticCallTrait [label="ExtendableStaticCallTrait"];
+    
+    Core_ThrowOn [label="ThrowOn"];
+
+    Core_Helper_ModelHelper [label="Helper\\ModelHelper"];
+    Core_Helper_ServiceHelper [label="Helper\\ServiceHelper"];
+    Core_Helper_ControllerHelper [label="Helper\\ControllerHelper"];
+    Core_Helper_ViewHelper [label="Helper\\ViewHelper"];
     
     
-    ClassExt;
-    SuperGlobal;
-    DNMVCS [shape=Mdiamond];
-    
-    Core_App[label="DNMVCS\\Core\\App" ,shape=Mdiamond];
-
 }
+
+
+
 subgraph cluster_Base {
     label = "[DNMVCS\\Base]";
-StrictModel -> SingletonEx [style="dotted"]; 
-StrictService -> SingletonEx [style="dotted"]; 
-SessionUsageController;
+    StrictModelTrait -> Core_SingletonEx [style="dotted"]; 
+    StrictServiceTrait -> Core_SingletonEx [style="dotted"]; 
+    SessionedController;
 }
-subgraph cluster_SingletonEx {
-    label = "[DNMVCS\\Base]";
-        SuperGlobal -> SingletonEx[style="dotted"]; 
+subgraph cluster_Helper {
+    label = "[DNMVCS\\Helper]";
+    Helper_ControllerHelper -> Core_Helper_ControllerHelper [style="dotted"]; 
+    Helper_ModelHelper -> Core_Helper_ModelHelper [style="dotted"]; 
+    Helper_ServiceHelper -> Core_Helper_ServiceHelper [style="dotted"]; 
+    Helper_ViewHelper -> Core_Helper_ViewHelper [style="dotted"]; 
+}
 
-SingletonEx[style="dotted"]; 
-}
+
 
 
 subgraph cluster_DB {
@@ -73,21 +131,36 @@ label = "[DNMVCS\\Ext]";
     JsonRpcExt -> JsonRpcExtBase ;
 
     FacadesAutoLoader ->FacadesBase ;
-    FacadesAutoLoader -> SingletonEx [style="dotted"];
+    FacadesAutoLoader -> Core_SingletonEx [style="dotted"];
     
-    RouteHookRewrite -> SingletonEx[style="dotted"]; 
-    RouteHookRouteMap -> SingletonEx [style="dotted"]; 
+    RouteHookRewrite -> Core_SingletonEx[style="dotted"]; 
+    RouteHookRouteMap -> Core_SingletonEx [style="dotted"]; 
     
-    Lazybones -> SingletonEx [style="dotted"]; 
-    Oldbones -> SingletonEx [style="dotted"]; 
+    Lazybones -> Core_SingletonEx [style="dotted"]; 
+    Oldbones -> Core_SingletonEx [style="dotted"]; 
     
     
 
     
-    RouteHookDirectoryMode -> SingletonEx [style="dotted"]; 
-    RouteHookOneFileMode -> SingletonEx [style="dotted"];
+    RouteHookDirectoryMode -> Core_SingletonEx [style="dotted"]; 
+    RouteHookOneFileMode -> Core_SingletonEx [style="dotted"];
 
-    Pager -> SingletonEx [style="dotted"]; 
+    Pager -> Core_SingletonEx [style="dotted"]; 
+
+}
+subgraph cluster_DNMVCS {
+    label = "[DNMVCS]";
+        node [style=filled];
+
+    HttpServer -> Core_HttpServer;
+    DNMVCS -> Core_App;
+    SingletonEx -> Core_SingletonEx;
+
+    DNMVCS -> Ext;
+
+    DNMVCS [shape=Mdiamond];
+    HttpServer [shape=Mdiamond];
+    
 
 }
 

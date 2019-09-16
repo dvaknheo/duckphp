@@ -271,8 +271,27 @@ S::ThrowOn() 和 M::ThrowOn 一样;
     如果想接管默认异常，用 C::setDefaultExceptionHandler($handler);
     如果对接管特定异常，用 C::assignExceptionHandler($exception_name,$handler);
     设置多个异常到回调则用 C::setMultiExceptionHandler($exception_name=[],$handler);
-##### 6. 超全局变量和 session 相关
+#### 兼容 Swoole
 
+    如果想让你们的项目在 swoole 下也能运行，那就要加上这几点
+    用 C::SG() 代替 超全局变量的 $ 前缀 如 $_GET =>  C::SG()->_GET
+
+    使用以下参数格式都一样的 swoole 兼容静态方法，代替同名全局方法。
+
+    C::session_start(),
+    C::session_destroy(),
+    C::session_id()，
+    如 session_start() => C::session_start();。
+
+
+#### 编写 兼容 Swoole 的代码
+
+全局变量 global $a='val'; =>  $a=C::GLOBALS('a','val');
+
+静态变量 global $a='val'; =>  $a=C::STATICS('a','val');
+
+类内静态变量
+$x=static::$abc; => $x=C::CLASS_STATICS(static::class,'abc');
 
 ### View 编写视图用到的方法
 V::IsDebug
@@ -526,22 +545,22 @@ Base\*Helper 是各种快捷方法。
 
 这些组件 都可以在 onInit 里通过类似方法替换
 ```php
-Route::G(MyRoute::G());
-View::G(MyView::G());
-Configer::G(MyConfiger::G());
-RuntimeState::G(MyRuntimeState::G());
+Route::G(MyRoute::G())->init($this->options,$this);
+View::G(MyView::G())->init($this->options,$this);
+Configer::G(MyConfiger::G())->init($this->options,$this);
+RuntimeState::G(MyRuntimeState::G())->init($this->options,$this);
 ```
 
 例外的是 AutoLoader 和 ExceptionManager 。 这两个是在插件系统启动之前启动
 所以你需要 
 ```php
 AutoLoader::G()->cleanUp();
-AutoLoader::G(MyAutoLoader::G());
+AutoLoader::G(MyAutoLoader::G())->init($this->options,$this);
 
 ExceptionManager::G()->cleanUp();
-ExceptionManager::G(MyExceptionManager::G());
+ExceptionManager::G(MyExceptionManager::G())->init($this->options,$this);
 ```
-
+注意的是核心组件都在 onInit 之前初始化了，所以你要自己初始化。
 
 HttpServer 是单独的 命令行启动 Http 服务器的类。
 
@@ -643,9 +662,6 @@ if(!$flag){
 'skip_system_autoload'=>true,
 'skip_app_autoload'=>false,
 ```
-AutoLoader 类最好不要通过 G 函数替换。
-因为在 onInit()之前就已经初始化了。
-
 
 #### HttpServer
     用于构建单独的 Http 服务器
@@ -697,27 +713,7 @@ assignRoute($route,$callback=null)
     你们想要的 $this->load 。 把 Service 后缀的改过来。 自动加载
     如 MY\Service\TestService::G()->foo(); => $this->testService->foo();
     暂时不建议使用。
-#### 兼容 Swoole
 
-    如果想让你们的项目在 swoole 下也能运行，那就要加上这几点
-    用 C::SG() 代替 超全局变量的 $ 前缀 如 $_GET =>  C::SG()->_GET
-
-    使用以下参数格式都一样的 swoole 兼容静态方法，代替同名全局方法。
-
-    C::session_start(),
-    C::session_destroy(),
-    C::session_id()，
-    如 session_start() => C::session_start();。
-
-
-#### 编写 兼容 Swoole 的代码
-
-全局变量 global $a='val'; =>  $a=C::GLOBALS('a','val');
-
-静态变量 global $a='val'; =>  $a=C::STATICS('a','val');
-
-类内静态变量
-$x=static::$abc; => $x=C::CLASS_STATICS(static::class,'abc');
 
 
 
