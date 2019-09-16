@@ -1,11 +1,13 @@
 <?php
 namespace DNMVCS\Core\Helper;
 
-use DNMVCS\Core\App;
+use DNMVCS\Core\ExtendableStaticCallTrait;
 use DNMVCS\Core\ThrowOn;
+use DNMVCS\Core\App;
 
 class ServiceHelper
 {
+    use ExtendableStaticCallTrait;
     use ThrowOn;
     
     public static function Setting($key)

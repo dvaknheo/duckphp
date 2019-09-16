@@ -1,12 +1,16 @@
 <?php
 namespace DNMVCS\Core\Helper;
 
-use DNMVCS\Core\App;
+use DNMVCS\Core\ExtendableStaticCallTrait;
 use DNMVCS\Core\ThrowOn;
+use DNMVCS\Core\App;
 
 class ControllerHelper
 {
+    use ExtendableStaticCallTrait;
     use ThrowOn;
+    
+    // use ExtendableStaticCallTrait GetExtendStaticStaticMethodList to show static functions.
     
     public static function Setting($key)
     {
@@ -101,5 +105,39 @@ class ControllerHelper
     public function setDefaultExceptionHandler($callback)
     {
         return App::setDefaultExceptionHandler($callback);
+    }
+    //super global 
+    public static function SG()
+    {
+        return App::SG();
+    }
+    public static function &GLOBALS($k, $v=null)
+    {
+        return App::GLOBALS($k, $v);
+    }
+    public static function &STATICS($k, $v=null)
+    {
+        return App::STATICS($k, $v, 2); //Remark ,++;
+    }
+    public static function &CLASS_STATICS($class_name, $var_name)
+    {
+        return App::CLASS_STATICS($class_name, $var_name);
+    }
+    // super global  session
+    public static function session_start(array $options=[])
+    {
+        return App::session_start($options);
+    }
+    public function session_id($session_id=null)
+    {
+        return App::session_id($session_id);
+    }
+    public static function session_destroy()
+    {
+        return App::session_destroy();
+    }
+    public static function session_set_save_handler(\SessionHandlerInterface $handler)
+    {
+        return App::session_set_save_handler($handler);
     }
 }

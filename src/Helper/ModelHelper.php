@@ -2,24 +2,20 @@
 namespace DNMVCS\Helper;
 
 use DNMVCS\Core\Helper\ModelHelper as Helper;
-use DNMVCS\ExtendStaticCallTrait;
-
-use DNMVCS\Ext\DBManager;
+use DNMVCS\Core\App as App;
 
 class ModelHelper extends Helper
-{
-    use ExtendStaticCallTrait;
-    
+{    
     public static function DB($tag=null)
     {
-        return DBManager::G()->_DB($tag);
+        return App::G()::DB($tag);
     }
     public static function DB_W()
     {
-        return DBManager::G()->_DB_W();
+        return App::G()::DB_W();
     }
     public static function DB_R()
     {
-        return DBManager::G()->_DB_R();
+        return App::G()::DB_R();
     }
 }

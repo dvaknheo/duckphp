@@ -1,7 +1,7 @@
 <?php
-namespace DNMVCS;
+namespace DNMVCS\Core;
 
-trait ExtendStaticCallTrait
+trait ExtendableStaticCallTrait
 {
     protected static $static_methods=[];
     

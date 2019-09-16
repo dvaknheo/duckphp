@@ -6,6 +6,7 @@ namespace DNMVCS\Core;
 
 use DNMVCS\Core\SingletonEx;
 use DNMVCS\Core\ThrowOn;
+use DNMVCS\Core\ExtendableStaticCallTrait;
 
 use DNMVCS\Core\AutoLoader;
 use DNMVCS\Core\Configer;
@@ -27,7 +28,6 @@ class App
     use Core_Redirect;
     use Core_SystemWrapper;
     use Core_Helper;
-    use Core_ComponentClasses;
     use Core_SuperGlobal;
     
     const DEFAULT_OPTIONS=[
@@ -96,6 +96,13 @@ class App
     protected $beforeRunHandlers=[];
     protected $error_view_inited=false;
     
+    //const;
+    protected $componentClassMap=[
+            'M'=>'Helper\ModelHelper',
+            'V'=>'Helper\ViewHelper',
+            'C'=>'Helper\ControllerHelper',
+            'S'=>'Helper\ServiceHelper',
+    ];
     public static function RunQuickly(array $options=[], callable $after_init=null)
     {
         if (!$after_init) {
@@ -211,6 +218,7 @@ class App
             SuperGlobal::G($func());
             $this->options['use_super_global']=true;
         }
+        //$this->options['use_super_global']=true;
     }
     public function addBeforeRunHandler($handler)
     {
@@ -273,6 +281,35 @@ class App
         }
         if (isset($platform)) {
             $this->platform=$platform;
+        }
+    }
+    
+    // @provider output.
+    public function extendComponents($class,$methods,$components)
+    {
+        $methods=is_array($methods)?$methods:[$methods];
+        $components=is_array($components)?$components:explode(',',$components);
+        $maps=[];
+        foreach($methods as $method){
+            $maps[$method]=[$class,$method];
+        }
+        
+        static::AssignStaticMethod($maps);
+        
+        $a=explode('\\',get_class($this));
+        array_pop($a);
+        $namespace=ltrim(implode('\\',$a).'\\','\\').'\\';  // __NAMESPACE__
+        
+        foreach($components as $component){
+            $class=$this->componentClassMap[strtoupper($component)]??null;
+            if($class===null){
+                continue;
+            }
+            $full_class=$namespace.$class;
+            if(!class_exists($full_class)){
+                continue;
+            }
+            $full_class::AssignStaticMethod($maps);
         }
     }
 }
@@ -621,40 +658,7 @@ trait Core_Helper
         return $str;
     }
 }
-trait Core_ComponentClasses
-{
-    protected $staticComponentClasses=[];
-    protected $dynamicComponentClasses=[];
-    public function getStaticComponentClasses()
-    {
-        $ret=[
-            AutoLoader::class,
-            //'DNMVCS\Core\AutoLoader\'
-            ExceptionManager::class,
-            Configer::class,
-            View::class,
-            Route::class,
-        ];
-        $ret=array_merge($ret,$this->staticComponentClasses);
-        
-        $ret[]=static::class;
-        $ret[]=self::class;
-        $ret[]=$this->override_root_class;
-        $ret=array_values(array_unique($ret));
-        return $ret;
-    }
-    public function getDynamicComponentClasses()
-    {
-        $ret=[
-            RuntimeState::class,
-            SuperGlobal::class,
-        ];
-        $ret=array_merge($ret,$this->dynamicComponentClasses);
-        $ret=array_values(array_unique($ret));
-        
-        return $ret;
-    }
-}
+
 
 trait Core_Glue
 {

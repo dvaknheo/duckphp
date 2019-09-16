@@ -4,8 +4,9 @@
 //OK，Lazy
 namespace DNMVCS;
 
-use DNMVCS\ExtendStaticCallTrait;
-use DNMVCS\Core\SuperGlobal;
+use DNMVCS\Core\ExtendableStaticCallTrait;
+use DNMVCS\Core\App;
+
 use DNMVCS\Ext\StrictCheck;
 use DNMVCS\Ext\DBManager;
 use DNMVCS\Ext\RouteHookRewrite;
@@ -13,14 +14,13 @@ use DNMVCS\Ext\RouteHookRouteMap;
 use DNMVCS\Ext\Pager;
 use DNMVCS\Ext\Misc;
 
-use DNMVCS\Core\App;
 //use DNMVCS\SwooleHttpd\SwooleExtAppInterface;
 
 class DNMVCS extends App //implements SwooleExtAppInterface
 {
     const VERSION = '1.1.2';
     
-    use ExtendStaticCallTrait;
+    use ExtendableStaticCallTrait;
     use DNMVCS_Glue;
     
     const DEFAULT_OPTIONS_EX=[
@@ -52,11 +52,16 @@ class DNMVCS extends App //implements SwooleExtAppInterface
             ],
             
         ];
-    protected $componentClassMap=[
-            'M'=>'ModelHelper',
-            'V'=>'ViewHelper',
-            'C'=>'ControllerHelper',
-            'S'=>'ServiceHelper',
+    protected $staticComponentClasses=[
+        'DNMVCS\Core\AutoLoader',
+        'DNMVCS\Core\ExceptionManager',
+        'DNMVCS\Core\Configer',
+        'DNMVCS\Core\View',
+        'DNMVCS\Core\Route',
+    ];
+    protected $dynamicComponentClasses=[
+        'DNMVCS\Core\RuntimeState',
+        'DNMVCS\Core\SuperGlobal',
     ];
     //// RunMode
     /*
@@ -74,7 +79,7 @@ class DNMVCS extends App //implements SwooleExtAppInterface
         return static::G()->init($dn_options)->run();
     }
     */
-    // @provide output.
+    // @provider output.
     public function extendComponents($class,$methods,$components)
     {
         $methods=is_array($methods)?$methods:[$methods];
@@ -119,28 +124,25 @@ class DNMVCS extends App //implements SwooleExtAppInterface
         }
         $this->system_wrapper_replace($SwooleHttpd->system_wrapper_get_providers());
     }
-    
-    // @override interface SwooleExtAppInterface
+
+
+    // @interface SwooleExtAppInterface
     public function getStaticComponentClasses()
     {
-        return parent::getStaticComponentClasses();
-    }
-    // @override interface SwooleExtAppInterface
-    public function getDynamicComponentClasses()
-    {
-        $ret=parent::getDynamicComponentClasses();
-        $ret=array_merge($ret,[SuperGlobal::class]);
-        $ret=array_values(array_unique($ret));
+        $ret=[
+            'DNMVCS\Core\AutoLoader',
+            'DNMVCS\Core\ExceptionManager',
+            'DNMVCS\Core\Configer',
+            'DNMVCS\Core\View',
+            'DNMVCS\Core\Route',
+        ];
+        $ret=array_values(array_unique([ static::class,self::class,$this->override_root_class]));
+        return $this->staticComponentClasses + $self;
         return $ret;
     }
-    // @override
-    public function _DumpTrace()
+    public function getDynamicComponentClasses()
     {
-        return parent::_DumpTrace();
-    }
-    public function _Dump(...$args)
-    {
-        return _Dump(...$args);
+        return $this->dynamicComponentClasses;
     }
 }
 
