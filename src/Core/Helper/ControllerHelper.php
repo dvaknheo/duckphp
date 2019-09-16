@@ -1,14 +1,8 @@
 <?php
 namespace DNMVCS\Core\Helper;
 
-use DNMVCS\Core\SingletonEx;
-use DNMVCS\Core\ThrowOn;
-use DNMVCS\Core\Configer;
 use DNMVCS\Core\App;
-
-use DNMVCS\Core\Route;
-use DNMVCS\Core\View;
-use DNMVCS\Core\ExceptionManager;
+use DNMVCS\Core\ThrowOn;
 
 class ControllerHelper
 {
@@ -16,98 +10,96 @@ class ControllerHelper
     
     public static function Setting($key)
     {
-        return Configer::G()->_Setting($key);
+        return App::Setting($key);
     }
     public static function Config($key, $file_basename='config')
     {
-        return Configer::G()->_Config($key, $file_basename);
+        return App::Config($key, $file_basename);
     }
     public static function LoadConfig($file_basename)
     {
-        return Configer::G()->_LoadConfig($file_basename);
+        return App::LoadConfig($file_basename);
     }
     
     public static function IsDebug()
     {
-        return App::G()->is_debug;
+        return App::IsDebug();
     }
     public static function Platform()
     {
-        return App::G()->platform;
+        return App::Platform();
     }
-    ////
     ////////////////
     public static function URL($url=null)
     {
-        return Route::G()->_URL($url);
+        return App::URL($url);
     }
     public static function Parameters()
     {
-        return Route::G()->_Parameters();
+        return App::Parameters();
     }
     public function getRouteCallingMethod()
     {
-        return Route::G()->getRouteCallingMethod();
+        return App::getRouteCallingMethod();
     }
     public function setRouteCallingMethod($method)
     {
-        return Route::G()->getRouteCallingMethod($method);
+        return App::getRouteCallingMethod($method);
     }
     ///////////////
     public static function Show($data=[], $view=null)
     {
-        return App::G()->_Show($data, $view);
+        return App::Show($data, $view);
     }
     public static function ShowBlock($view, $data=null)
     {
-        return View::G()->_ShowBlock($view, $data);
+        return App::ShowBlock($view, $data);
     }
     public function setViewWrapper($head_file=null, $foot_file=null)
     {
-        return View::G()->setViewWrapper($head_file, $foot_file);
+        return App::setViewWrapper($head_file, $foot_file);
     }
     public function assignViewData($key, $value=null)
     {
-        return View::G()->assignViewData($key, $value);
+        return App::assignViewData($key, $value);
     }
     ////////////////////
     public static function ExitRedirect($url, $only_in_site=true)
     {
-        return App::G()->_ExitRedirect($url, $only_in_site);
+        return App::ExitRedirect($url, $only_in_site);
     }
     public static function ExitRouteTo($url)
     {
-        return App::G()->_ExitRedirect(static::URL($url), true);
+        return App::ExitRedirect(static::URL($url), true);
     }
     public static function Exit404()
     {
-        App::On404();
-        App::exit_system();
+        return App::Exit404();
     }
     public static function ExitJson($ret)
     {
-        return App::G()->_ExitJson($ret);
+        return App::ExitJson($ret);
     }
     /////////////////
     public static function header($output, bool $replace = true, int $http_response_code=0)
     {
-        return App::G()->_header($output, $replace, $http_response_code);
+        return App::header($output, $replace, $http_response_code);
     }
     public static function exit_system($code=0)
     {
-        return App::G()->_exit_system($code);
+        return App::exit_system($code);
     }
     //exception manager
     public function assignExceptionHandler($classes, $callback=null)
     {
-        return ExceptionManager::G()->assignExceptionHandler($classes, $callback);
+        return App::assignExceptionHandler($classes, $callback);
     }
     public function setMultiExceptionHandler(array $classes, $callback)
     {
-        return ExceptionManager::G()->setMultiExceptionHandler($classes, $callback);
+        return App::setMultiExceptionHandler($classes, $callback);
     }
     public function setDefaultExceptionHandler($callback)
     {
-        return ExceptionManager::G()->setDefaultExceptionHandler($callback);
+        return App::setDefaultExceptionHandler($callback);
     }
 }

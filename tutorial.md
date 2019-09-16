@@ -62,7 +62,7 @@ composer require dnmvcs/framework
 namespace MY\Controller;
 
 // use MY\Base\BaseController;
-use MY\Base\ControllerHelper as C;
+use MY\Base\Helper\ControllerHelper as C;
 use MY\Service\MiscService;
 
 class test // extends BaseController
@@ -92,7 +92,7 @@ C::Show($data); 是 C::Show($data,'test/done'); 的缩写， 调用 test/done �
 // app/Service/MiscService.php
 namespace MY\Service;
 
-use MY\Base\ServiceHelper as S;
+use MY\Base\Helper\ServiceHelper as S;
 use MY\Base\BaseService;
 use MY\Model\NoDB_MiscModel;
 
@@ -124,7 +124,7 @@ Model 类是实现基本功能的。
 namespace MY\Model;
 
 use MY\Base\BaseModel;
-use MY\Base\ModelHelper as M;
+use MY\Base\Helper\ModelHelper as M;
 
 class NoDB_MiscModel extends BaseModel
 {
@@ -184,10 +184,10 @@ DNMVCS 的使用者角色分为 应用程序员，和核心程序员两种
 作为应用程序员， 你不能引入 DNMVCS 的任何东西，就当 DNMVCS 命名空间不存在。
 核心程序员才去研究 DNMVCS 类的东西。
 
-* 写 Model 你可能要引入 MY\Base\ModelHelper 助手类别名为 M 。
-* 写 Serivce 你可能要引入 MY\Base\SerivceHelper 助手类别名为 S 。
-* 写 Controller 你可能要引入 MY\Base\ControllerHelper 助手类别名为 C 。
-* 写 View 你可能要引入 MY\Base\ViewHelper 助手类别名为 V 。
+* 写 Model 你可能要引入 MY\Base\Helper\ModelHelper 助手类别名为 M 。
+* 写 Serivce 你可能要引入 MY\Base\Helper\SerivceHelper 助手类别名为 S 。
+* 写 Controller 你可能要引入 MY\Base\Helper\ControllerHelper 助手类别名为 C 。
+* 写 View 你可能要引入 MY\Base\Helper\ViewHelper 助手类别名为 V 。
 * 不能交叉引入其他 Helper 类。如果需要交叉，那么你就是错的。
 
 Model, Service 以及助手类都有静态的 G 函数， G() 函数就是可变单例函数。
@@ -314,13 +314,15 @@ addBeforeRunHandler($callback)
 ```text
 +---app                     // psr-4 标准的自动加载目录
 |   +---Base                // 基类放在这里
-|   |      App.php          // 默认框架入口文件
-|   |      BaseController.php    // 控制器基类
-|   |      BaseModel.php        // 模型基类
-|   |      BaseService.php      // 服务基类
-|   |      ContrllorHelper.php  // 控制器助手类
-|   |      ModelHelper.php      // 模型助手类
-|   |      ServiceHelper.php    // 服务助手类
+|   |   |   App.php         // 默认框架入口文件
+|   |   |   BaseController.php  // 控制器基类
+|   |   |   BaseModel.php   // 模型基类
+|   |   |   BaseService.php // 服务基类
+|   |   \---Helper
+|   |           ControllerHelper.php    // 控制器助手类
+|   |           ModelHelper.php     // 模型助手类
+|   |           ServiceHelper.php   // 服务助手类
+|   |           ViewHelper.php      // 视图助手类
 |   +---Controller          // 控制器目录
 |   |       Main.php        // 默认控制器
 |   +---Model               // 模型放在里
