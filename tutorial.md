@@ -271,6 +271,9 @@ S::ThrowOn() 和 M::ThrowOn 一样;
     如果想接管默认异常，用 C::setDefaultExceptionHandler($handler);
     如果对接管特定异常，用 C::assignExceptionHandler($exception_name,$handler);
     设置多个异常到回调则用 C::setMultiExceptionHandler($exception_name=[],$handler);
+##### 6. 超全局变量和 session 相关
+
+
 ### View 编写视图用到的方法
 V::IsDebug
 V::Platform
@@ -307,6 +310,20 @@ addBeforeRunHandler($callback)
 其他方法
 
     其他方法有待你的发掘。如果你要用于特殊用处的话。
+    目前一共有 32 个 public function ,36 public static function ,10 protected function 
+    还有 +3 ExtendableStaticCallTrait 方法。
+
+#### ExtendableStaticCallTrait
+
+查看有什么额外的静态方法：  GetExtendStaticStaticMethodList();
+
+ExtendStaticCallTrait 也在 M,V,C,S 中有，你可以动态添加。
+
+用 AssignExtendStaticMethod() ，来添加。当然，方便的是。
+
+App::G()->extendComponents($class,$methods,$components);
+
+其中： $components 为 ['M','V','C','S'] 可选。
 ### 目录结构
 
 在看默认选项前， 我们看工程的桩代码,默认目录结构
@@ -702,21 +719,7 @@ assignRoute($route,$callback=null)
 类内静态变量
 $x=static::$abc; => $x=C::CLASS_STATICS(static::class,'abc');
 
-#### 动态方法
 
-DNMVCS 相比  Core/App 多了
-
-ExtendStaticCallTrait
-
-查看有什么额外的静态方法：  GetExtendStaticStaticMethodList();
-
-ExtendStaticCallTrait 也在 M,V,C,S 中有，你可以动态添加。
-
-用 AssignExtendStaticMethod() ，来添加。当然，方便的是。
-
-App::G()->extendComponents($class,$methods,$components);
-
-其中： $components 为 ['M','V','C','S'] 可选。
 
 
 
