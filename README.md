@@ -125,7 +125,7 @@ DN-MVCS/Core 核心
 ![core](doc/core.gv.svg)
 DN-MVCS/Framwork 全框架
 
-![DN-MVCS](doc/DN-MVCS.gv.svg)
+![DN-MVCS](doc/dnmvcs.gv.svg)
 SwooleHttpd 扩展
 ![swoolehttpd](doc/swoolehttpd.gv.svg)
 ## 还有什么要说的
