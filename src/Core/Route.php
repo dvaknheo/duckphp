@@ -193,11 +193,13 @@ class Route
         if (null===$this->callback) {
             $this->callback=$this->defaultRouteHandler();
         }
+        
         if (null===$this->callback && $this->ext_route_handler) {
             $this->callback=($this->ext_route_handler)();
         }
         if (null!==$this->callback) {
             ($this->callback)();
+            $this->callback=null; // to make  $this->controller __destruct;
             return true;
         }
         
