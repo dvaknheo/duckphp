@@ -105,7 +105,7 @@ class Misc
         $ret=$reflect->invokeArgs(new $class(), $args);
         return $ret;
     }
-    public  function mapToService($serviceClass, $input)
+    public function mapToService($serviceClass, $input)
     {
         try {
             $method=$this->context_class::G()->getRouteCallingMethod();

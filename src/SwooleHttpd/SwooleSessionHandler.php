@@ -3,6 +3,7 @@ namespace DNMVCS\SwooleHttpd;
 
 use DNMVCS\SwooleHttpd\SwooleSingleton;
 use SessionHandlerInterface;
+
 class SwooleSessionHandler implements SessionHandlerInterface
 {
     use SwooleSingleton;

@@ -146,7 +146,7 @@ test
 ## 基础引论
 
 ### SingletonEx
-SingletonEx 可变单例是 DNMVCS 系的基础
+SingletonEx 可变单例， 是 DNMVCS 系的基础
 
 ### DNMVCS/Core
 DNMVCS 核心功能 DNMVCS/Core 目录下。
@@ -156,17 +156,17 @@ DNMVCS 核心功能 DNMVCS/Core 目录下。
 ### DNMVCS/Framework
 DNMVCS 的常规框架
 比 DNMVCS/Core 多了，数据库的处理，路由重写
-和对 Swoole 的支持。
+和对 SwooleHttpd 的支持。
 
 ### DNMVCS/SwooleHttpd
+SwooleHttpd 是一个 Swoole Http 服务器框架
 
-SwooleHttpd 是一个
 ### DNMVCS/Plus
 对 DNMVCS 的第三方扩展的称呼
 如果这些扩展，只用到可变单例， 引入 SingletonEx 这个项目够了。
 
 
-## 应用程序员核心参考
+## DNMVCS/Core 核心参考
 
 ### 本章说明
 DNMVCS 的使用者角色分为 应用程序员，和核心程序员两种
@@ -175,6 +175,7 @@ DNMVCS 的使用者角色分为 应用程序员，和核心程序员两种
 将会讲解到高级应用，如数据库等。
 
 ### 完整架构图
+你的应用应该是这么架构
 ![arch_full](doc/arch_full.gv.svg)
 同级之间的东西不能相互调用
 ### 开始编码之前
@@ -188,23 +189,24 @@ DNMVCS 的使用者角色分为 应用程序员，和核心程序员两种
 * 写 Serivce 你可能要引入 MY\Base\Helper\SerivceHelper 助手类别名为 S 。
 * 写 Controller 你可能要引入 MY\Base\Helper\ControllerHelper 助手类别名为 C 。
 * 写 View 你可能要引入 MY\Base\Helper\ViewHelper 助手类别名为 V 。
-* 不能交叉引入其他 Helper 类。如果需要交叉，那么你就是错的。
+* 不能交叉引入其他层级的助手类。如果需要交叉，那么你就是错的。
+* 小工程可以用 App 类不区分这些助手类。
+Model, Service 以及 G() 函数就是可变单例函数。
+### 助手类的公用方法
 
-Model, Service 以及助手类都有静态的 G 函数， G() 函数就是可变单例函数。
-当你用到助手类的 G 函数的形式的时候，说明你这个功能不常用。
+ThrowOn($flag,$messsage,$code=0,$exception_class=null);
+抛异常 如果 flag 成立，抛出 $exception_class(默认为 \Exception 类);
+
+GetExtendStaticStaticMethodList()
 
 ### Model 编写模型用到的方法
- 
-M::ThrowOn($flag,$messsage,$code=0,$exception_class=null);
-抛异常 如果 flag 成立，抛出 $exception_class(默认为 Exception 类);
-
-如果要使用数据库，见后文。
-
+    Model 类默认没额外方法， 你可以用 GetExtendStaticStaticMethodList 来看有什么方法。
+### View 编写视图用到的方法
+    V::IsDebug()
+    V::Platform()
+    V::ShowBlock($view, $data)
+    V::Dump()
 ### Serivce 编写服务用到的方法
-
-S::ThrowOn() 和 M::ThrowOn 一样;
-
-此外还有
 
 * S::IsDebug(); 判断是否在调试状态 ;
 * S::Platform(); 判断所在平台 ;
@@ -214,7 +216,10 @@ S::ThrowOn() 和 M::ThrowOn 一样;
 
 设置是敏感信息,不存在于版本控制里面。而配置是非敏感。
 
+
 ### Controller 编写控制器用到的方法
+
+ControllerHelper 类的方法比较多
 
 和 Service 的同名同作用方法。
 
@@ -271,7 +276,7 @@ S::ThrowOn() 和 M::ThrowOn 一样;
     如果想接管默认异常，用 C::setDefaultExceptionHandler($handler);
     如果对接管特定异常，用 C::assignExceptionHandler($exception_name,$handler);
     设置多个异常到回调则用 C::setMultiExceptionHandler($exception_name=[],$handler);
-#### 兼容 Swoole
+##### 兼容 Swoole
 
     如果想让你们的项目在 swoole 下也能运行，那就要加上这几点
     用 C::SG() 代替 超全局变量的 $ 前缀 如 $_GET =>  C::SG()->_GET
@@ -284,7 +289,7 @@ S::ThrowOn() 和 M::ThrowOn 一样;
     如 session_start() => C::session_start();。
 
 
-#### 编写 兼容 Swoole 的代码
+##### 编写 兼容 Swoole 的代码
 
 全局变量 global $a='val'; =>  $a=C::GLOBALS('a','val');
 
@@ -293,15 +298,11 @@ S::ThrowOn() 和 M::ThrowOn 一样;
 类内静态变量
 $x=static::$abc; => $x=C::CLASS_STATICS(static::class,'abc');
 
-### View 编写视图用到的方法
-V::IsDebug
-V::Platform
-V::ShowBlock($view, $data)
 ### 入口类 App 类的方法 以及高级程序员。
 
 MY\Base\App 是 继承扩展 DNMVCS\Core\App 类的方法。
 
-DNMVCS\Core\App 类在 初始化 之后，会切换入这个子类走后面的流程。
+DNMVCS\Core\App 类或其子类在初始化之后，会切换入这个子类走后面的流程。
 
 MY\Base\App 重写 override 的两个重要方法
 
@@ -336,60 +337,14 @@ addBeforeRunHandler($callback)
 
 查看有什么额外的静态方法：  GetExtendStaticStaticMethodList();
 
-ExtendStaticCallTrait 也在 M,V,C,S 中有，你可以动态添加。
+ExtendStaticCallTrait 也在 M,V,C,S 助手类中有，你可以动态添加。
 
 用 AssignExtendStaticMethod() ，来添加。当然，方便的是。
 
 App::G()->extendComponents($class,$methods,$components);
 
 其中： $components 为 ['M','V','C','S'] 可选。
-### 目录结构
 
-在看默认选项前， 我们看工程的桩代码,默认目录结构
-
-```text
-+---app                     // psr-4 标准的自动加载目录
-|   +---Base                // 基类放在这里
-|   |   |   App.php         // 默认框架入口文件
-|   |   |   BaseController.php  // 控制器基类
-|   |   |   BaseModel.php   // 模型基类
-|   |   |   BaseService.php // 服务基类
-|   |   \---Helper
-|   |           ControllerHelper.php    // 控制器助手类
-|   |           ModelHelper.php     // 模型助手类
-|   |           ServiceHelper.php   // 服务助手类
-|   |           ViewHelper.php      // 视图助手类
-|   +---Controller          // 控制器目录
-|   |       Main.php        // 默认控制器
-|   +---Model               // 模型放在里
-|   |       TestModel.php   // 测试模型
-|   \---Service             // 服务目录
-|           TestService.php // 测试 Service
-+---bin
-|       start_server.php    // 启动服务
-+---config                  // 配置文件放这里
-|       config.php          // 配置，目前是空数组
-|       setting.sample.php  // 设置，去除敏感信息的模板
-+---headfile                // 头文件处理
-|       headfile.php        // 头文件处理
-+---view                    // 视图文件放这里，可调
-|   |   main.php            // 视图文件
-|   \---_sys                // 系统错误视图文件放这里
-|           error-404.php   // 404 页面
-|           error-500.php   // 500 页面
-|           error-debug.php // 调试的时候显示的视图
-|           error-exception.php // 异常页面
-\---public                  // 网站目录
-        index.php           // 主页，入口页
-```
-
-    文件都不复杂。基本都是空类或空继承类，便于不同处理。
-    这些结构能精简么？
-    可以，你可以一个目录都不要。
-
-    BaseController, BaseModel, BaseService 是你自己要改的基类，基本只实现了单例模式。
-    ContrllorHelper,ModelHelper,ServiceHelper 如果你一个人偷懒，直接用 APP 类也行  
-    headfile 目录是为了直接命令行运行 template 的文件，你可以改 入口文件去掉。
 
 ### 入口文件
 
@@ -397,14 +352,9 @@ App::G()->extendComponents($class,$methods,$components);
 
 ```php
 <?php
-require(__DIR__.'/../headfile/headfile.php');
+require(__DIR__.'/../vendor/autoload.php');
 
 $options=[];
-if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
-    $options['is_debug']=true;
-    $options['skip_setting_file']=true;
-    echo "<div>Don't run the template file directly </div>\n";
-}
 
 $path=realpath(__DIR__.'/..');
 $options['path']=$path;
@@ -412,15 +362,15 @@ $options['namespace']='MY';
 \DNMVCS\DNMVCS::RunQuickly($options, function () {
 });
 // \DNMVCS\DNMVCS::G()->init($options)->run();
-/*
-var_export(\DNMVCS\DNMVCS::G()->options);
+// var_export(\DNMVCS\DNMVCS::G()->options);
 ```
 入口类前面部分是处理头文件的。
 然后处理直接 copy 代码提示，不要直接运行。
 起作用的主要就这句话
-
-    \DNMVCS\DNMVCS::RunQuickly($options, function () {
-    });
+```php
+\DNMVCS\DNMVCS::RunQuickly($options, function () {
+});
+```
 相当于后面调用的 // \DNMVCS\DNMVCS::G()->init($options)->run();
 
 init, run 分两步走的模式。
@@ -566,7 +516,6 @@ HttpServer 是单独的 命令行启动 Http 服务器的类。
 
 
 #### Configer
-
 ##### 选项
 ```
     'path'=>null,
@@ -576,6 +525,7 @@ HttpServer 是单独的 命令行启动 Http 服务器的类。
     'setting_file'=>'setting',
     'skip_setting_file'=>false,
 ```
+##### 说明
 Core\Configer 的选项共享个 path,带个 path_config
 
 path_config 如果是 / 开始的，会忽略 path 选项
@@ -583,8 +533,10 @@ path_config 如果是 / 开始的，会忽略 path 选项
     当你想把配置目录 放入 app 目录的时候，调整 path_config
     当我们要额外设置，配置的时候，把 setting , all_config 的值 带入
     当我们不需要额外的配置文件的时候  skip_setting_file 设置为 true
+##### 方法
 
 #### View
+##### 选项
 ```  
 'path'=>null,
 'path_view'=>'view',
@@ -594,6 +546,7 @@ Core\View 的选项共享一个 path,带一个 path_view.
 path_view 如果是 / 开始的，会忽略 path 选项
 
 当你想把视图目录 放入 app 目录的时候，调整 path_view
+##### 方法
 
 #### Route
 DNMVCS\Core\Route 这个类可以单独拿出来做路由用。
@@ -624,12 +577,12 @@ DNMVCS\Core\Route 这个类可以单独拿出来做路由用。
     
     如果有这个方法。找不到方法的时候，会进入这个方法
     如果你使用了这个方法，将不会进入 404 。
-##### 说明
+##### 示例
 这是一个单用 Route 组件的例子
 ```php
 <?php
 use DNMVCS\Core\Route;
-require(__DIR__.'/../headfile/headfile.php');
+require(__DIR__.'/vendor/autoload.php');
 
 class Main
 {
@@ -654,6 +607,7 @@ if(!$flag){
 ```
 
 #### Autoloader
+DNMVCS\AutoLoader 类是 psr-4 加载类。
 ```
 'path'=>null,
 'namespace'=>'MY',
@@ -665,12 +619,71 @@ if(!$flag){
 
 #### HttpServer
     用于构建单独的 Http 服务器
-#### 继续其他核心类的介绍
+#### ExtendableStaticCall
+这个 trait 用来实现静态方法的扩展
+##### 方法
 
-## 从 DNMVCS/Core 到 DNMVCS/Framework
+
+
+### 目录结构
+
+工程的桩代码,默认目录结构
+
+```text
++---app                     // psr-4 标准的自动加载目录
+|   +---Base                // 基类放在这里
+|   |   |   App.php         // 默认框架入口文件
+|   |   |   BaseController.php  // 控制器基类
+|   |   |   BaseModel.php   // 模型基类
+|   |   |   BaseService.php // 服务基类
+|   |   \---Helper
+|   |           ControllerHelper.php    // 控制器助手类
+|   |           ModelHelper.php     // 模型助手类
+|   |           ServiceHelper.php   // 服务助手类
+|   |           ViewHelper.php      // 视图助手类
+|   +---Controller          // 控制器目录
+|   |       Main.php        // 默认控制器
+|   +---Model               // 模型放在里
+|   |       TestModel.php   // 测试模型
+|   \---Service             // 服务目录
+|           TestService.php // 测试 Service
++---bin
+|       start_server.php    // 启动 Htttp 服务
++---config                  // 配置文件放这里
+|       config.php          // 配置，目前是空数组
+|       setting.sample.php  // 设置，去除敏感信息的模板
++---view                    // 视图文件放这里，可调
+|   |   main.php            // 视图文件
+|   \---_sys                // 系统错误视图文件放这里
+|           error-404.php   // 404 页面
+|           error-500.php   // 500 页面
+|           error-debug.php // 调试的时候显示的视图
+|           error-exception.php // 异常页面
+\---public                  // 网站目录
+        index.php           // 主页，入口页
+```
+
+文件都不复杂。基本都是空类或空继承类，便于不同处理。
+这些结构能精简么？
+可以，你可以一个目录都不要。
+
+BaseController, BaseModel, BaseService 是你自己要改的基类，基本只实现了单例模式。
+ContrllorHelper,ModelHelper,ServiceHelper 如果你一个人偷懒，直接用 APP 类也行  
+#### 如何通过精简目录
+* 移除 app/Base/Helper/ 如果你直接用 App::* 替代 M,V,C,S 助手类。
+* 移除 app/Base/BaseController.php 如果你的 Controller 和默认的一样不需要基本类。
+* 移除 app/Base/BaseModel.php 如果你的 Model 不需要用全静态方法。
+* 移除 app/Base/BaseService.php 如果你的 Service 不需要 G 方法。
+* 移除 bin/start_server.php 如果你使用外部 http 服务器
+* 移除 config/ 在启动选项里加 'skip_setting_file'=>true ，如果你不需要 config/setting.php，
+    并有自己的配置方案
+* 移除 view/\_sys  你需要设置启动选项里 'error\_404','error\_500','error\_exception' 。
+
+
+## DNMVCS/Framework
 
 ### 说明
-前面 DNMVCS/Framework 
+DNMVCS/Framework 和 DNMVCS/Core 的区别
 
 ### 追加的方法
 
@@ -714,20 +727,16 @@ assignRoute($route,$callback=null)
     如 MY\Service\TestService::G()->foo(); => $this->testService->foo();
     暂时不建议使用。
 
+## DNMVCS/Framework 自带扩展参考
 
-
-
-
-
-## 高级话题之扩展
 ![core](doc/dnmvcs.gv.svg)
 ### 总说
 DNMVCS/Framework 的扩展都放在 DNMVCS\\Ext 命名空间里
 下面按字母顺序介绍这些扩展的作用
 按选项，说明，公开方法，一一介绍。
 ### DBManager
-    默认开启。 DBManager 类是用来使用数据库的
-    M::DB() 用到了这个组件。
+默认开启。 DBManager 类是用来使用数据库的
+M::DB() 用到了这个组件。
 #### 选项
     'db_create_handler'=>null,  // 默认用 [DB::class,'CreateDBInstance']
     'db_close_handler'=>null,   // 默认等于 [DB::class,'CloseDBInstance']
@@ -755,23 +764,92 @@ DB()
     fetch($sql, ...$args);
     fetchColumn($sql, ...$args);
     execQuick($sql, ...$args); //   执行某条sql ，不用 exec , execute 是为了兼容其他类。
+#### 示例
+使用数据库，在 设置里正确设置 database_list 这个数组，包含多个数据库配置
+然后在用到的地方调用 DNMVCS::DB($tag=null) 得到的就是 DNDB 对象，用来做各种数据库操作。
+$tag 对应 $setting['database_list'][$tag]。默认会得到最前面的 tag 的配置。
+
+你不必担心每次框架初始化会连接数据库。只有第一次调用 DNMVCS::DB() 的时候，才进行数据库类的创建。
+
+DB 的使用方法，看后面的参考。
+示例如下
+
+```php
+<?php
+use DNMVCS\DNMVCS;
+use DNMVCS\Helper\ModelHelper as M;
+
+require_once('../vendor/autoload.php');
+
+$options=[];
+$options['override_class']='';      // 示例文件不要被子类干扰。
+$options['skip_setting_file']=true; // 不需要配置文件。
+$options['error_exception']=true; // 使用默认的错误视图
+
+$options['database_list']=[[
+    'dsn'=>'mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;',
+    'username'=>'root',
+    'password'=>'123456',
+]]; // 这里用选项里的
+DNMVCS::RunQuickly($options,function(){    
+    $sql="select 1+? as t";
+    $data=M::DB()->fetch($sql,2);
+    var_dump($data);
+    DNMVCS::exit_system(0);
+});
+```
+#### 使用 think-orm 的 DB
+```php
+<?php
+use think\facade\Db;
+use DNMVCS\Ext\DBManager;
+use DNMVCS\DNMVCS;
+require_once('../vendor/autoload.php');
+
+$options=[];
+$options['override_class']='';      // 示例文件不要被子类干扰。
+$options['skip_setting_fil']=true;使用// 不需要配置文件。
+$options['datbase_list，在启动选项里加skip_setting_file']]; // '这里要填充假配置'=>true ，如果你不需要 config/setting.php.，
+    并有自己的配置方案
+* ptiview/_sy\s 。e_ 你需要设置ist，在 'error\_404','error\_500','error\_exception' 。NMVCS::RunQuickly($options,function(){
+    Db::setConfig([
+        'default'     => 'mysql',
+        'connections' => [
+            'mysql' => [
+                'type'     => 'mysql',
+                'hostname' => '127.0.0.1',
+                'username' => 'root',
+                'password' => '123456',
+                'database' => 'DnSample',
+            ]
+        ]
+    ]);
+    //就这句话了
+    DBManager::G()->setDBHandler(function(){return Db::class;});
+    $sql="select * from Users where true limit 1";
+    $data=DNMVCS::DB()::query($sql);
+    var_dump($data);
+    DNMVCS::exit_system(0);
+});
+
+```
 ### DBReusePoolProxy
-连接池，默认没开启，使用
+连接池，默认没开启
     'db_reuse_size' => 100,
     'db_reuse_timeout' => 5,
     'dbm' => null,
 ### FacadesAutoLoader
-你们要的 Facades 面子
-    'facades_namespace'=>'Facades',
-    'facades_map'=>[],
-#### 示例
 
+你们要的 Facades 伪静态方法
+'facades_namespace'=>'Facades', // 前缀
+'facades_map'=>[],
+#### 示例
 ```php
 use Facades\MY\Model\TestModel;
 TestModel::foo(); // <=> \MY\Model\TestModel::G()->foo();
 ```
 ### JsonRpcExt
-一个 JonsRPC 的示例，不提供安全验证功能。
+一个 JonsRPC 的示例，安全验证功能 需要加上
 #### 默认选项
 'jsonrpc_namespace'=>'JsonRpc',
 'jsonrpc_backend'=>'https://127.0.0.1', 
@@ -856,22 +934,22 @@ if (!$flag) {
 一些过时的东西配置。你或许能找到些东西
     'fullpath_project_share_common'=>'',
     'fullpath_config_common'=>'',
-    'function_view_head'
-    'function_view_foot'
-
+    'function_view_head',
+    'function_view_foot',
 ### Pager
-    分页。只是解决了有无问题，如果有更好的，你可以换之
-        'url'=>null,
-        'key'=>null,
-        'page_size'=>null,
-        'rewrite'=>null,
-        'current'=>null,
+分页。只是解决了有无问题，如果有更好的，你可以换之。
+为什么DNMVCS 框架要带这么个简单的分页类，因为不想做简单的演示的时候要去找分页处理。
+'url'=>null,
+'key'=>null,
+'page_size'=>null,
+'rewrite'=>null,
+'current'=>null,
 ### RouteHookDirectoryMode
-    多目录模式的 hook
-        'mode_dir_index_file'=>'',
-        'mode_dir_use_path_info'=>true,
-        'mode_dir_key_for_module'=>true,
-        'mode_dir_key_for_action'=>true,
+多目录模式的 hook
+    'mode_dir_index_file'=>'',
+    'mode_dir_use_path_info'=>true,
+    'mode_dir_key_for_module'=>true,
+    'mode_dir_key_for_action'=>true,
 ### RouteHookOneFileMode
     单一文件模式的 hook
 ### RouteHookRewrite
@@ -907,27 +985,7 @@ getRoutes()
 
 ## 其他
 
-### 常见任务： 使用数据库
-使用数据库，在 设置里正确设置 database_list 这个数组，包含多个数据库配置
-然后在用到的地方调用 DNMVCS::DB($tag=null) 得到的就是 DNDB 对象，用来做各种数据库操作。
-$tag 对应 $setting['database_list'][$tag]。默认会得到最前面的 tag 的配置。
-
-你不必担心每次框架初始化会连接数据库。只有第一次调用 DNMVCS::DB() 的时候，才进行数据库类的创建。
-
-DB 的使用方法，看后面的参考。
-示例如下
-
-```php
-$sql="select 1+? as t";
-$ret=M::DB()->fetch($sql,2);
-var_dump($ret);
-```
 ----
-#### 通过 composer 创建工程
-```
-composer require dnmvcs/framework
-./vendor/bin/dnmvcs --create --help
-```
 ####
 new , 协程单例 ，单例，static function
 
@@ -935,37 +993,3 @@ new , 协程单例 ，单例，static function
 new 多个效率比单例 低
 协程单例，需要的操作要多。效率底点。
 但是协程单例可以防低级错误。
-#### 使用 think-orm 的 DB
-```php
-<?php
-use think\facade\Db;
-use DNMVCS\Ext\DBManager;
-use DNMVCS\DNMVCS;
-require_once('../vendor/autoload.php');
-
-$options=[];
-$options['override_class']='';      // 不要被子类干扰。
-$options['skip_setting_file']=true; // 不需要配置文件。
-$options['database_list']=[['skip']]; // 这里要填充假配置，实际应用的时候应该按规范读这里的配置。
-DNMVCS::RunQuickly($options,function(){
-    Db::setConfig([
-        'default'     => 'mysql',
-        'connections' => [
-            'mysql' => [
-                'type'     => 'mysql',
-                'hostname' => '127.0.0.1',
-                'username' => 'root',
-                'password' => '123456',
-                'database' => 'DnSample',
-            ]
-        ]
-    ]);
-    //就这句话了
-    DBManager::G()->setDBHandler(function(){return Db::class;});
-    $sql="select * from Users where true limit 1";
-    $data=DNMVCS::DB()::query($sql);
-    var_dump($data);
-    DNMVCS::exit_system(0);
-});
-
-```

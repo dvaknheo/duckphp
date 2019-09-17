@@ -5,7 +5,7 @@ use DNMVCS\Core\Helper\ModelHelper as Helper;
 use DNMVCS\Core\App as App;
 
 class ModelHelper extends Helper
-{    
+{
     public static function DB($tag=null)
     {
         return App::G()::DB($tag);

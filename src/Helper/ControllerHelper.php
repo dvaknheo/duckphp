@@ -20,7 +20,6 @@ class ControllerHelper extends Helper
     }
     public static function RecordsetH(&$data, $cols=[])
     {
-        
         return App::G()::RecordsetH($data, $cols);
     }
     ///////

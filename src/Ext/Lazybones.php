@@ -90,7 +90,7 @@ class Lazybones
     public function runRoute()
     {
         $path_info=Route::G()->path_info;
-        $enable_paramters=$this->with_controller_enable_paramters;// Route::G()->controller_enable_paramters; 
+        $enable_paramters=$this->with_controller_enable_paramters;// Route::G()->controller_enable_paramters;
         
         $class_blocks=explode('/', $path_info);
         $method=array_pop($class_blocks);

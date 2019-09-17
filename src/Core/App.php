@@ -86,11 +86,10 @@ class App
         ];
     const DEFAULT_OPTIONS_EX=[
         ];
+
     public $options=[];
-    
     public $is_debug=true;
     public $platform='';
-    public $path=null;
     public $override_root_class='';
     
     protected $beforeRunHandlers=[];
@@ -116,23 +115,13 @@ class App
     {
         return;
     }
-    protected function adjustOptions($options=[])
+    protected function initOptions($options=[])
     {
         if (!isset($options['path']) || !$options['path']) {
             $path=realpath($_SERVER['SCRIPT_FILENAME'].'/../');
             $options['path']=$path;
         }
         $options['path']=rtrim($options['path'], '/').'/';
-        
-        $options['exception_handler']=[static::class,'OnException'];
-        $options['dev_error_handler']=[static::class,'OnDevErrorHandler'];
-        $options['system_exception_handler']=[static::class,'set_exception_handler'];
-        
-        return $options;
-    }
-    protected function initOptions($options=[])
-    {
-        $options=$this->adjustOptions($options);
         $options=array_replace_recursive(static::DEFAULT_OPTIONS, static::DEFAULT_OPTIONS_EX, $options);
         $this->options=$options;
         
@@ -163,10 +152,13 @@ class App
     //@override me
     public function init($options=[], $context=null)
     {
-        $options=$this->adjustOptions($options);
-
         AutoLoader::G()->init($options, $this)->run();
-        ExceptionManager::G()->init($options, $this)->run();
+        $exception_options=[
+            'exception_handler'=>[static::class,'OnException'],
+            'dev_error_handler'=>[static::class,'OnDevErrorHandler'],
+            'system_exception_handler'=>[static::class,'set_exception_handler'],
+        ];
+        ExceptionManager::G()->init($exception_options, $this)->run();
         
         $this->override_root_class=static::class;
         $object=$this->checkOverride($options);
@@ -285,28 +277,25 @@ class App
     }
     
     // @provider output.
-    public function extendComponents($class,$methods,$components)
+    public function extendComponents($class, $methods, $components)
     {
         $methods=is_array($methods)?$methods:[$methods];
-        $components=is_array($components)?$components:explode(',',$components);
+        $components=is_array($components)?$components:explode(',', $components);
         $maps=[];
-        foreach($methods as $method){
+        foreach ($methods as $method) {
             $maps[$method]=[$class,$method];
         }
         
         static::AssignStaticMethod($maps);
         
-        $a=explode('\\',get_class($this));
+        $a=explode('\\', get_class($this));
         array_pop($a);
-        $namespace=ltrim(implode('\\',$a).'\\','\\').'\\';  // __NAMESPACE__
+        $namespace=ltrim(implode('\\', $a).'\\', '\\').'\\';  // __NAMESPACE__
         
-        foreach($components as $component){
+        foreach ($components as $component) {
             $class=$this->componentClassMap[strtoupper($component)]??null;
-            if($class===null){
-                continue;
-            }
-            $full_class=$namespace.$class;
-            if(!class_exists($full_class)){
+            $full_class=($class===null)?$component:$namespace.$class;
+            if (!class_exists($full_class)) {
                 continue;
             }
             $full_class::AssignStaticMethod($maps);
@@ -405,9 +394,10 @@ trait Core_Handler
             E_DEPRECATED=>'E_DEPRECATED',
             E_USER_DEPRECATED=>'E_USER_DEPRECATED',
         );
-        if ($this->path) {
-            $error_shortfile=(substr($errfile, 0, strlen($this->path))==$this->path)?substr($errfile, strlen($this->path)):$errfile;
-        }else{
+        if ($this->options['path']) {
+            $path=$this->options['path'];
+            $error_shortfile=(substr($errfile, 0, strlen($path))==$path)?substr($errfile, strlen($path)):$errfile;
+        } else {
             $error_shortfile=$errfile;
         }
         $data=array(
@@ -758,7 +748,7 @@ trait Core_Glue
     public function _DumpTrace()
     {
         echo "<pre>\n";
-        echo (new Exception('',0))->getTraceString();
+        echo (new Exception('', 0))->getTraceString();
         echo "</pre>\n";
     }
     public function _Dump(...$args)

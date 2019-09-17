@@ -115,7 +115,7 @@ class DBManager
             return;
         }
         foreach ($this->databases as $tag=>$v) {
-            ($this->db_close_handler)($v,$tag);
+            ($this->db_close_handler)($v, $tag);
         }
         $this->databases=[];
     }
@@ -129,7 +129,7 @@ class DBManager
             return;
         }
         foreach ($this->databases as $tag=>$v) {
-            ($this->db_excption_handler)($v,$tag);
+            ($this->db_excption_handler)($v, $tag);
         }
         $this->databases=[];
     }

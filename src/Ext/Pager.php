@@ -20,9 +20,9 @@ class Pager
     }
     public function _SG()
     {
-        if($this->context_class){
+        if ($this->context_class) {
             return $this->context_class::SG();
-        }else{
+        } else {
             return \DNMVCS\Core\App::G()::SG();
         }
     }

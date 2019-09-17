@@ -1,6 +1,8 @@
 <?php
 namespace DNMVCS\SwooleHttpd;
+
 use Swoole\ExitException;
+
 trait SimpleWebSocketd
 {
     public $websocket_open_handler=null;

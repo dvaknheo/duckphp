@@ -35,5 +35,4 @@ class ViewHelper
     {
         return App::Dump(...$args);
     }
-    
 }

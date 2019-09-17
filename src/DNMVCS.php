@@ -79,44 +79,12 @@ class DNMVCS extends App //implements SwooleExtAppInterface
         return static::G()->init($dn_options)->run();
     }
     */
-    // @provider output.
-    public function extendComponents($class,$methods,$components)
-    {
-        $methods=is_array($methods)?$methods:[$methods];
-        $components=is_array($components)?$components:explode(',',$components);
-        $maps=[];
-        foreach($methods as $method){
-            $maps[$method]=[$class,$method];
-        }
-        
-        static::AssignStaticMethod($maps);
-        
-        $a=explode('\\',get_class($this));
-        array_pop($a);
-        $namespace=implode('\\',$a);
-        
-        foreach($components as $component){
-            $class=$this->componentClassMap[strtoupper($component)]??null;
-            if($class===null){
-                continue;
-            }
-            $full_class=trim($namespace."\\".$class,"\\");
-            if(!class_exists($full_class)){
-                $full_class=trim("DNMVCS\\".$class,"\\");
-            }
-            if(!class_exists($full_class)){
-                continue;
-            }
-            $full_class::AssignStaticMethod($maps);
-        }
-    }
-    
     // @interface SwooleExtAppInterface
     public function onSwooleHttpdInit($SwooleHttpd)
     {
         $this->options['use_super_global']=true;
         
-        $SwooleHttpd->set_http_exception_handler([static::class,'OnException']);        
+        $SwooleHttpd->set_http_exception_handler([static::class,'OnException']);
         $SwooleHttpd->set_http_404_handler([static::class,'On404']);
         
         if ($SwooleHttpd->is_with_http_handler_root()) {
@@ -159,6 +127,10 @@ trait DNMVCS_Glue
     public static function DB_R()
     {
         return DBManager::G()->_DB_R();
+    }
+    public function setDBHandler($db_create_handler, $db_close_handler=null, $db_excption_handler=null)
+    {
+        return DBManager::G()->setDBHandler($db_create_handler, $db_close_handler, $db_excption_handler);
     }
     public static function Pager()
     {

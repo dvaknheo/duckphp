@@ -106,7 +106,7 @@ class ControllerHelper
     {
         return App::setDefaultExceptionHandler($callback);
     }
-    //super global 
+    //super global
     public static function SG()
     {
         return App::SG();

@@ -3,6 +3,7 @@ namespace DNMVCS\SwooleHttpd;
 
 use DNMVCS\SwooleHttpd\SwooleSingleton;
 use Swoole\Coroutine;
+
 class SwooleCoroutineSingleton
 {
     use SwooleSingleton;

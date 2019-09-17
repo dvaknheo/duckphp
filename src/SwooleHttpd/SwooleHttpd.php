@@ -89,7 +89,6 @@ class SwooleHttpd //implements SwooleExtServerInterface
     
     public $skip_override=false;
     public static function RunQuickly(array $options=[], callable $after_init=null)
-    
     {
         if (!$after_init) {
             return static::G()->init($options)->run();
@@ -438,7 +437,7 @@ trait SwooleHttpd_SimpleHttpd
     }
     protected function checkShutdown()
     {
-        if(!$this->is_shutdown){
+        if (!$this->is_shutdown) {
             return;
         }
         throw new Exception("Shutdowning".date(DATE_ATOM));

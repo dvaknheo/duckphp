@@ -24,7 +24,7 @@ class DB implements DBInterface
         $db->init($db_config);
         return $db;
     }
-    public static function CloseDBInstance($db,$tag=null)
+    public static function CloseDBInstance($db, $tag=null)
     {
         $db->close();
     }
