@@ -112,7 +112,7 @@ class HttpServer
     }
     protected function showWelcome()
     {
-        echo "Well Come to use DNMVCS , for more info , use --help \n";
+        echo "DNMVCS: Wellcome, for more info , use --help \n";
     }
     protected function getCmdCaptures()
     {
