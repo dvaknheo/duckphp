@@ -224,6 +224,7 @@ Model 类。数据库相关
 * M::DB_W() 获得写数据库类。
 
 数据库如何使用？ 参见后面章节。
+
 ### Serivce 编写服务用到的方法
 
 ServiceHelper 默认没有额外方法，看你的核心开发人员是否加上。
@@ -774,8 +775,8 @@ database_list 的示例：
 DB()
     是 App::DB 和 M::DB 的实现。
 #### DB 类的用法
-一目了然
-    close(); //关闭
+DB
+    close(); //关闭, 你一般不用关闭,系统会自动关闭
     getPDO(); //获取 PDO 对象
     quote($string);
     fetchAll($sql, ...$args);
@@ -832,8 +833,8 @@ require_once('../vendor/autoload.php');
 
 $options=[];
 $options['override_class']='';      // 示例文件不要被子类干扰。
-$options['skip_setting_file']=true;使用// 不需要配置文件。
-
+$options['skip_setting_file']=true;// 不需要配置文件。
+$options['error_exception']=true; // 使用默认的错误视图
 DNMVCS::RunQuickly($options,function(){
     Db::setConfig([
         'default'     => 'mysql',
