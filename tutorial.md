@@ -25,7 +25,11 @@ For More Take the DNMVCS-FullTest (TODO)
 composer require dnmvcs/framework
 ./vendor/bin/dnmvcs --create
 ```
-将会直接把 template 的东西复制到工程
+将会直接把 template 的东西复制到工程并做调整，同样执行
+```bash
+php bin/start_server.php
+```
+浏览器中打开 http://127.0.0.1:8080/ 得到下面欢迎页就表明 OK 了
 细则可以看 --help 参数
 
 ### 第一个任务
