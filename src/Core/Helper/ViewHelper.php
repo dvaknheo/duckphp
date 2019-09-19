@@ -1,23 +1,12 @@
 <?php
 namespace DNMVCS\Core\Helper;
 
-use DNMVCS\Core\ExtendableStaticCallTrait;
-use DNMVCS\Core\ThrowOn;
+use DNMVCS\Core\Helper\HelperTrait;
 use DNMVCS\Core\App;
 
 class ViewHelper
 {
-    use ExtendableStaticCallTrait;
-    use ThrowOn;
-    
-    public static function IsDebug()
-    {
-        return App::IsDebug();
-    }
-    public static function Platform()
-    {
-        return App::Platform();
-    }
+    use HelperTrait;
     
     public static function &H($str)
     {

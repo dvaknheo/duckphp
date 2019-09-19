@@ -1,11 +1,9 @@
 <?php
 namespace DNMVCS\Core\Helper;
 
-use DNMVCS\Core\ExtendableStaticCallTrait;
-use DNMVCS\Core\ThrowOn;
+use DNMVCS\Core\Helper\HelperTrait;
 
 class ModelHelper
 {
-    use ExtendableStaticCallTrait;
-    use ThrowOn;
+    use HelperTrait;
 }

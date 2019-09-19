@@ -1,14 +1,12 @@
 <?php
 namespace DNMVCS\Core\Helper;
 
-use DNMVCS\Core\ExtendableStaticCallTrait;
-use DNMVCS\Core\ThrowOn;
+use DNMVCS\Core\Helper\HelperTrait;
 use DNMVCS\Core\App;
 
 class ServiceHelper
 {
-    use ExtendableStaticCallTrait;
-    use ThrowOn;
+    use HelperTrait;
     
     public static function Setting($key)
     {
@@ -22,14 +20,4 @@ class ServiceHelper
     {
         return App::LoadConfig($file_basename);
     }
-    
-    public static function IsDebug()
-    {
-        return App::IsDebug();
-    }
-    public static function Platform()
-    {
-        return App::Platform();
-    }
-    ////
 }

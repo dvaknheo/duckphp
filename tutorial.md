@@ -187,21 +187,34 @@ test
 * 不能交叉引入其他层级的助手类。如果需要交叉，那么你就是错的。
 * 小工程可以用直接使用入口类 MY\Base\App 类，这包含了上述类的公用方法。
 
-### 助手类的公用方法
+### 助手类的公用静态方法
 
+ThrowOn($flag,$messsage,$code=0,$exception_class=null)
+    
+    抛异常 如果 flag 成立，抛出 $exception_class(默认为 \Exception 类);
+GetExtendStaticStaticMethodList()
 
+    用来查看当前类有什么额外的静态方法。
+IsDebug()
 
-ThrowOn($flag,$messsage,$code=0,$exception_class=null);
-抛异常 如果 flag 成立，抛出 $exception_class(默认为 \Exception 类);
+    判断是否在调试状态
+Platform()
 
-GetExtendStaticStaticMethodList();
-用来查看当前类有什么额外的静态方法。
+    判断所在平台;
+Setting($key);
 
+    获得设置，默认设置文件是在  config/setting.php 。
+    设置是敏感信息,不存在于版本控制里面。而配置是非敏感。
+LoadConfig($key,$basename="config");
+
+    载入配置，Config($key); 获得配置 默认配置文件是在  config/config.php 。
 
 ### View 编写视图用到的方法
-    V::ShowBlock($view, $data)
-    V::H()
-    V::Dump()
+V::ShowBlock($view, $data)
+
+V::H($str)
+V::DumpTrace()
+V::Dump()
 
 ### Model 编写模型用到的方法
 Model 类。数据库相关
@@ -209,29 +222,15 @@ Model 类。数据库相关
 * M::DB($tag=null) 获得特定数据库类。
 * M::DB_R() 获得读数据库类。
 * M::DB_W() 获得写数据库类。
-IsDebug(); 判断是否在调试状态 ;
-Platform(); 判断所在平台 ;
+
 数据库如何使用？ 参见后面章节。
 ### Serivce 编写服务用到的方法
-IsDebug(); 判断是否在调试状态 ;
-Platform(); 判断所在平台 ;
-* S::Setting($key); 获得设置，默认设置文件是在  config/setting.php 。
-* S::LoadConfig($key,$basename); 载入配置 
-* S::Config($key); 获得配置 默认配置文件是在  config/config.php 。
 
-设置是敏感信息,不存在于版本控制里面。而配置是非敏感。
+ServiceHelper 默认没有额外方法，看你的核心开发人员是否加上。
 
 ### Controller 编写控制器用到的方法
 
-ControllerHelper 类的方法比较多
-
-三个和 Service 同名的方法
-
-* C::Setting($key);
-* C::Config($key);
-* C::LoadConfig($key,$basename)
-
-除去  Service 的同名方法 外，还有
+ControllerHelper 类的方法比较多，大致学完就全部会用了。
 
 ##### 1. 显示相关的
 
@@ -312,7 +311,7 @@ $x=static::$abc; => $x=C::CLASS_STATICS(static::class,'abc');
 
 assignRewrite($old_url,$new_url=null)
 
-assign* 系列函数都是两种调用方式, 单个assign($key,$value) 和 assign($assoc)，后者是批量导入的版本。
+    支持单个 assign($key,$value) 和多个 assign($assoc)
 
     rewrite  重写 path_info
     不区分 request method , 重写后可以用 ? query 参数
@@ -321,6 +320,7 @@ assign* 系列函数都是两种调用方式, 单个assign($key,$value) 和 assi
 assignRoute($route,$callback=null)
 
     给路由加回调。
+    单个 assign($key,$value) 和多个 assign($assoc)；
     关于回调模式的路由。详细情况看之前介绍
     和在 options['route'] 添加数据一样
 
@@ -337,7 +337,8 @@ assignRoute($route,$callback=null)
     暂时不建议使用。
 ### 其他要点
 配置和设置在哪里？
-TestService::G()->foo 是什么意思
+TestService::G()->foo 里的 G() 是什么意思.
+G函数，单例模式。
 JsonExt\MY\Service\TestService 这个类找不到啊。
 
 ## 第三章 DNMVCS 应用核心开发人员参考
@@ -480,11 +481,6 @@ ext 是一个选项，这里单独成一节是因为这个选项很重要。涉�
 
 #### HttpServer
     用于构建单独的 Http 服务器
-#### ExtendableStaticCall
-这个 trait 用来实现静态方法的扩展
-##### 方法
-
-
 
 ### DMMVCS 目录结构
 

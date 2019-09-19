@@ -1,16 +1,12 @@
 <?php
 namespace DNMVCS\Core\Helper;
 
-use DNMVCS\Core\ExtendableStaticCallTrait;
-use DNMVCS\Core\ThrowOn;
+use DNMVCS\Core\Helper\HelperTrait;
 use DNMVCS\Core\App;
 
 class ControllerHelper
 {
-    use ExtendableStaticCallTrait;
-    use ThrowOn;
-    
-    // use ExtendableStaticCallTrait GetExtendStaticStaticMethodList to show static functions.
+    use HelperTrait;
     
     public static function Setting($key)
     {
@@ -23,15 +19,6 @@ class ControllerHelper
     public static function LoadConfig($file_basename)
     {
         return App::LoadConfig($file_basename);
-    }
-    
-    public static function IsDebug()
-    {
-        return App::IsDebug();
-    }
-    public static function Platform()
-    {
-        return App::Platform();
     }
     ////////////////
     public static function URL($url=null)
