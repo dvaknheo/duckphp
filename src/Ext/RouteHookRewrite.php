@@ -120,9 +120,13 @@ class RouteHookRewrite
     protected function _Hook($route)
     {
         $path_info=$route->path_info;
-        $uri=SuperGlobal::G()->_SERVER['REQUEST_URI'];
-        $query=parse_url($uri, PHP_URL_QUERY);
-        $query=$query?'?'.$query:'';
+        if (isset(SuperGlobal::G()->_SERVER['REQUEST_URI'])) {
+            $uri=SuperGlobal::G()->_SERVER['REQUEST_URI'];
+            $query=parse_url($uri, PHP_URL_QUERY);
+            $query=$query?'?'.$query:'';
+        } else {
+            $query='';//$this->parameters
+        }
         $input_url=$path_info.$query;
         foreach ($this->rewrite_map as $template_url=>$new_url) {
             $url=$this->replaceNormalUrl($input_url, $template_url, $new_url);
