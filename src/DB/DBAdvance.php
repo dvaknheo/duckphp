@@ -26,7 +26,7 @@ trait DBAdvance
         if (empty($array)) {
             return '';
         }
-        $values=array_map([$this->pdo,'quote'], $array);
+        $array=array_map([$this->pdo,'quote'], $array);
         $str_keys=implode(',', array_values($array));
         $str_values=implode(',', array_values($array));
         $ret="($str_keys)VALUES($str_values)";
@@ -50,7 +50,7 @@ trait DBAdvance
         $ret=$this->pdo->lastInsertId();
         return $ret;
     }
-    public function deleteData($table, $id, $key='id', $key_delete='is_deleted')
+    public function deleteData($table_name, $id, $key='id', $key_delete='is_deleted')
     {
         if ($key_delete) {
             $sql="update {$table_name} set {$key_delete}=1 where {$key}=? limit 1";

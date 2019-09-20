@@ -83,6 +83,7 @@ class Pager
         $path=parse_url($this->url, PHP_URL_PATH);
         $query=parse_url($this->url, PHP_URL_QUERY);
         
+        $get=[];
         parse_str($query, $get);
         $get[$this->key]=$page;
         

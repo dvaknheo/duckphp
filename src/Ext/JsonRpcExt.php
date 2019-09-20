@@ -89,7 +89,7 @@ class JsonRpcExt
             throw new Exception("rpc failed".$str_data, -1);
         }
         if (isset($data['error'])) {
-            throw new Exception($ret['error']['message'], $ret['error']['code']);
+            throw new Exception($data['error']['message'], $data['error']['code']);
         }
         return $data['result'];
     }

@@ -2,11 +2,7 @@
 namespace DNMVCS\Helper;
 
 use DNMVCS\Core\Helper\ControllerHelper as Helper;
-
 use DNMVCS\Core\App as App;
-use DNMVCS\Core\SuperGlobal;
-use DNMVCS\Ext\Pager;
-use DNMVCS\Ext\API;
 
 class ControllerHelper extends Helper
 {

@@ -44,7 +44,7 @@ class Configer
         if (!isset($this->setting)) {
             $full_setting_file=$this->path.$this->setting_file.'.php';
             if (!is_file($full_setting_file)) {
-                echo "<h1> Class ". static::class.' Fatal: no setting file['.$full_setting_file.']!,change '.$this->setting_file.'.sample.php to '.$basename.".php !</h1>";
+                echo "<h1> Class ". static::class.' Fatal: no setting file['.$full_setting_file.']!,change '.$this->setting_file.'.sample.php to '. $this->setting_file.".php !</h1>";
                 echo "<h2> Or turn on  options ['skip_setting_file']</h2>";
                 exit;
             }

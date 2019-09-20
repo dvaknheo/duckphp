@@ -62,7 +62,7 @@ class DBReusePoolProxy
         }
         return $db;
     }
-    protected function reuseObject($db)
+    protected function reuseObject($db, $tag)
     {
         if (!isset($this->pools[$tag])) {
             $this->pools[$tag]=[];

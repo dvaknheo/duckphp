@@ -21,12 +21,12 @@ trait ExtendableStaticCallTrait
     {
         $callback=(static::$static_methods[$name])??null;
         
-        if (!is_callable($callback)) {
+        if (!\is_callable($callback)) {
             if (is_array($callback) && is_string($callback[0]) && substr($callback[0], -3)==='::G') {
                 $class=substr($callback[0], 0, -3);
                 $object=$class::G();
                 $callback=[$object,$callback[1]];
-                if (!is_callable($callback)) {
+                if (!\is_callable($callback)) {
                     throw new \BadMethodCallException("Call to undefined static method ".static::class ."::$name()");
                 }
             } else if (is_string($callback)) {

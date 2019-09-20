@@ -11,7 +11,7 @@ class HttpServer extends Server
                 'desc'=>'do not use swoole httpserver',
             ],
     ];
-    protected function checkSwoole($args)
+    protected function checkSwoole()
     {
         if (!function_exists('swoole_version')) {
             return false;

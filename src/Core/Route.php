@@ -81,8 +81,8 @@ class Route
     {
         if (strlen($url)>0 && substr($url, 0, 1)==='/') {
             return $url;
-        };
-        
+        }
+
         $basepath=substr(rtrim(str_replace('\\', '/', $this->script_filename), '/').'/', strlen($this->document_root));
 
         if ($basepath=='/index.php') {

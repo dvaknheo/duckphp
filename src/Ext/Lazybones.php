@@ -198,7 +198,7 @@ class Lazybones
         $class=null;
         $paramters=[];
         $callinig_path='';
-        $p=implode('/', $blocks);
+        $paramters=implode('/', $blocks);
         $l=count($blocks);
         for ($i=0;$i<$l;$i++) {
             $class_names=array_slice($blocks, 0, $l-$i);

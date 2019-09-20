@@ -489,7 +489,7 @@ trait SwooleHttpd_Handler
     public function _OnShow404()
     {
         if ($this->http_404_handler) {
-            ($this->http_404_handler)($ex);
+            ($this->http_404_handler)();
             return;
         }
         static::header('', true, 404);

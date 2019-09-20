@@ -37,7 +37,7 @@ class ExceptionManager
     }
     public function setMultiExceptionHandler(array $classes, $callback)
     {
-        foreach ($classes as $k) {
+        foreach ($classes as $class) {
             $this->errorHandlers[$class]=$callback;
         }
     }
