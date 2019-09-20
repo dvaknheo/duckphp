@@ -18,10 +18,11 @@ use DNMVCS\Core\SuperGlobal;
 
 class App
 {
+    const VERSION = '1.1.3-dev';
+    
     use SingletonEx;
     use ThrowOn;
-
-    const VERSION = '1.1.2';
+    use ExtendableStaticCallTrait;
     
     use Core_Handler;
     use Core_Glue;
@@ -122,8 +123,7 @@ class App
             $options['path']=$path;
         }
         $options['path']=rtrim($options['path'], '/').'/';
-        $options=array_replace_recursive(static::DEFAULT_OPTIONS, static::DEFAULT_OPTIONS_EX, $options);
-        $this->options=$options;
+        $this->options=array_replace_recursive(static::DEFAULT_OPTIONS, static::DEFAULT_OPTIONS_EX, $options);
         
         $this->path=$this->options['path'];
         
@@ -161,9 +161,9 @@ class App
         ExceptionManager::G()->init($exception_options, $this)->run();
         
         $this->override_root_class=static::class;
-        $object=$this->checkOverride($options);
+        $t_object=$this->checkOverride($options);
         
-        $object=$object??$this;
+        $object=$t_object??$this;
         (self::class)::G($object);
         $object->override_class=static::class;
         

@@ -4,7 +4,6 @@
 //OK，Lazy
 namespace DNMVCS;
 
-use DNMVCS\Core\ExtendableStaticCallTrait;
 use DNMVCS\Core\App;
 
 use DNMVCS\Ext\StrictCheck;
@@ -20,7 +19,6 @@ class DNMVCS extends App //implements SwooleExtAppInterface
 {
     const VERSION = '1.1.2';
     
-    use ExtendableStaticCallTrait;
     use DNMVCS_Glue;
     
     const DEFAULT_OPTIONS_EX=[
@@ -97,15 +95,8 @@ class DNMVCS extends App //implements SwooleExtAppInterface
     // @interface SwooleExtAppInterface
     public function getStaticComponentClasses()
     {
-        $ret=[
-            'DNMVCS\Core\AutoLoader',
-            'DNMVCS\Core\ExceptionManager',
-            'DNMVCS\Core\Configer',
-            'DNMVCS\Core\View',
-            'DNMVCS\Core\Route',
-        ];
-        $ret=array_values(array_unique([ static::class,self::class,$this->override_root_class]));
-        return $this->staticComponentClasses + $self;
+        $ext=array_values(array_unique([ static::class,self::class,$this->override_root_class]));
+        $ret=$this->staticComponentClasses + $ext;
         return $ret;
     }
     public function getDynamicComponentClasses()
@@ -154,7 +145,7 @@ trait DNMVCS_Glue
         return RouteHookRouteMap::G()->getRoutes();
     }
     /////
-    public static function CheckStrictDB($tag)
+    public static function CheckStrictDB()
     {
         //3 = DB,_DB,CheckStrictDB
         return static::G()->checkStrictComponent('DB', 3);
