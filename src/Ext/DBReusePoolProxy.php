@@ -34,7 +34,7 @@ class DBReusePoolProxy
         $dbm=is_string($dbm)?$dbm::G():$dbm;
         
         $this->proxy($dbm);
-        $this->appClass=$context?get_calss($context):'';
+        $this->appClass=$context? \get_class($context):null;
         
         return $this;
     }

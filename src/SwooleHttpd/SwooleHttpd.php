@@ -17,7 +17,7 @@ use DNMVCS\SwooleHttpd\SwooleHttpd_Handler;
 
 use Swoole\ExitException;
 use Swoole\Http\Server as Http_Server;
-use Swoole\Websocket\Server as Websocket_Server;
+use Swoole\WebSocket\Server as Websocket_Server;
 use Swoole\Runtime;
 use Swoole\Coroutine;
 
@@ -75,6 +75,7 @@ class SwooleHttpd //implements SwooleExtServerInterface
     public $http_exception_handler=null;
     public $http_404_handler=null;
     protected $with_http_handler_root=false;
+    protected $with_http_handler_file=false;
     public $enable_fix_index=true;
     public $enable_path_info=true;
     public $enable_not_php_file=true;
@@ -440,7 +441,7 @@ trait SwooleHttpd_SimpleHttpd
         if (!$this->is_shutdown) {
             return;
         }
-        throw new Exception("Shutdowning".date(DATE_ATOM));
+        throw new \Exception("Shutdowning".date(DATE_ATOM));
     }
     public function onRequest($request, $response)
     {

@@ -2,6 +2,8 @@
 namespace DNMVCS\SwooleHttpd;
 
 use Swoole\ExitException;
+use Swoole\Http\Request;
+use Swoole\WebSocket\Server as Websocket_Server;
 
 trait SimpleWebSocketd
 {
@@ -10,7 +12,7 @@ trait SimpleWebSocketd
     public $websocket_exception_handler=null;
     public $websocket_close_handler=null;
     
-    public function onOpen(swoole_websocket_server $server, swoole_http_request $request)
+    public function onOpen(Websocket_Server $server, Request $request)
     {
         SwooleContext::G()->initHttp($request, null);
         if (!$this->websocket_open_handler) {

@@ -52,6 +52,10 @@ class HttpServer
     protected $args=[];
     protected $docroot='';
     
+    protected $host;
+    protected $port;
+    public $options;
+    
     public static function RunQuickly($options)
     {
         static::G()->init($options)->run();
@@ -113,16 +117,6 @@ class HttpServer
     protected function showWelcome()
     {
         echo "DNMVCS: Wellcome, for more info , use --help \n";
-    }
-    protected function getCmdCaptures()
-    {
-        $opts=[];
-        
-        $optind=null;
-        $args=getopt($shorts, $a, $optind);
-        $pos_args = array_slice($_SERVER['argv'], $optind);
-        
-        return $ret;
     }
     protected function showHelp()
     {

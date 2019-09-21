@@ -24,13 +24,13 @@ class Lazybones
     protected $lazy_path_service='';
     protected $lazy_path_model='';
     protected $lazy_path_contorller='';
-    
+    protected $lazy_controller_class;
     protected $lazy_class_prefix='';
     
     protected $with_controller_namespace_namespace=true;
     protected $with_controller_namespace_prefix=true;
     protected $with_controller_enable_paramters=false;
-    
+    protected $error;
     public function init($options, $context=null)
     {
         $options=array_merge(static::DEFAULT_OPTIONS, $options);
@@ -164,7 +164,7 @@ class Lazybones
     // MyProject\Controller\AA__BB__CC
     protected function checkLoadClass($path_class)
     {
-        $namespace_controller=Route::G()->namespace_controller;
+        $namespace_controller=Route::G()->namespace_controller;    // ???
 
         $path_class_simple=str_replace('/', '__', $path_class);
         
@@ -193,6 +193,7 @@ class Lazybones
     }
     
     //// backup
+    /*
     protected function getClassMethodAndParameters($blocks, $method)
     {
         $class=null;
@@ -220,8 +221,9 @@ class Lazybones
         
         return [$class,$method,$parameters,$calling_path];
     }
-    protected function _getx()
+    protected function getControllerByFiles()
     {
+        //
         if ($this->controller_enable_paramters) {
             list($full_class, $the_method, $parameters, $calling_path)=$this->getClassMethodAndParameters($class_blocks, $method);
             if ($full_class) {
@@ -236,4 +238,5 @@ class Lazybones
             }
         }
     }
+    //*/
 }

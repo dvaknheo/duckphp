@@ -47,6 +47,7 @@ class Route
     public $routeHooks=[];
     public $callback=null;
     public $ext_route_handler=null;
+    public $error='';
     
     public static function RunQuickly(array $options=[], callable $after_init=null)
     {
@@ -237,7 +238,7 @@ class Route
                 return null;
             }
         }
-        $full_class=$this->getFullClassByAutoLoad($class_path, true);
+        $full_class=$this->getFullClassByAutoLoad($class_path);
         $callback=$this->getCallback($full_class, $method);
         if ($callback) {
             return $callback;

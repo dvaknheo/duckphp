@@ -39,7 +39,7 @@ class ControllerHelper
     }
     public function setRouteCallingMethod($method)
     {
-        return App::getRouteCallingMethod($method);
+        return App::setRouteCallingMethod($method);
     }
     ///////////////
     public static function Show($data=[], $view=null)

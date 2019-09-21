@@ -15,7 +15,8 @@ class ExceptionManager
     protected $errorHandlers=[];
     protected $dev_error_handler=null;
     protected $exception_error_handler=null;
-    
+
+    protected $exception_handler=null;
     protected $exception_error_handler_init=null;
     protected $system_exception_handler=null;
     protected $last_error_handler=null;

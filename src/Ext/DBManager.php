@@ -100,7 +100,7 @@ class DBManager
     }
     public function _DB_R()
     {
-        if (!isset($this->database_config_list[$this->tag_read])) {
+        if (!isset($this->database_config_list[static::TAG_READ])) {
             return $this->_DB();
         }
         return $this->_DB(static::TAG_READ);

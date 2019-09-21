@@ -125,8 +125,6 @@ class App
         $options['path']=rtrim($options['path'], '/').'/';
         $this->options=array_replace_recursive(static::DEFAULT_OPTIONS, static::DEFAULT_OPTIONS_EX, $options);
         
-        $this->path=$this->options['path'];
-        
         $this->is_debug=$this->options['is_debug'];
         $this->platform=$this->options['platform'];
     }
@@ -392,6 +390,7 @@ trait Core_Handler
             ($error_view)($data);
             return;
         }
+        $error_desc='';
         if (!$error_view) {
             extract($data);
             echo  <<<EOT
@@ -454,7 +453,7 @@ trait Core_SystemWrapper
         if (headers_sent()) {
             return;
         }
-        return header($output, $replace, $http_response_code);
+        header($output, $replace, $http_response_code);
     }
     public function _setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain  = '', bool $secure = false, bool $httponly = false)
     {
@@ -485,7 +484,7 @@ trait Core_SystemWrapper
         if ($this->shutdown_handler) {
             return ($this->shutdown_handler)($callback, ...$args);
         }
-        return register_shutdown_function($callback, ...$args);
+        register_shutdown_function($callback, ...$args);
     }
     public function system_wrapper_replace(array $funcs=[])
     {
@@ -679,34 +678,34 @@ trait Core_Glue
     {
         return Route::G()->stopRunDefaultHandler();
     }
-    public function getRouteCallingMethod()
+    public static function getRouteCallingMethod()
     {
         return Route::G()->getRouteCallingMethod();
     }
-    public function setRouteCallingMethod($method)
+    public static function setRouteCallingMethod($method)
     {
         return Route::G()->getRouteCallingMethod($method);
     }
     
     //view
-    public function setViewWrapper($head_file=null, $foot_file=null)
+    public static function setViewWrapper($head_file=null, $foot_file=null)
     {
         return View::G()->setViewWrapper($head_file, $foot_file);
     }
-    public function assignViewData($key, $value=null)
+    public static function assignViewData($key, $value=null)
     {
         return View::G()->assignViewData($key, $value);
     }
     //exception manager
-    public function assignExceptionHandler($classes, $callback=null)
+    public static function assignExceptionHandler($classes, $callback=null)
     {
         return ExceptionManager::G()->assignExceptionHandler($classes, $callback);
     }
-    public function setMultiExceptionHandler(array $classes, $callback)
+    public static function setMultiExceptionHandler(array $classes, $callback)
     {
         return ExceptionManager::G()->setMultiExceptionHandler($classes, $callback);
     }
-    public function setDefaultExceptionHandler($callback)
+    public static function setDefaultExceptionHandler($callback)
     {
         return ExceptionManager::G()->setDefaultExceptionHandler($callback);
     }
@@ -722,7 +721,7 @@ trait Core_Glue
     public function _DumpTrace()
     {
         echo "<pre>\n";
-        echo (new Exception('', 0))->getTraceString();
+        echo (new \Exception('', 0))->getTraceString();
         echo "</pre>\n";
     }
     public function _Dump(...$args)
@@ -743,9 +742,9 @@ trait Core_SuperGlobal
         return SuperGlobal::G()->_GLOBALS($k, $v);
     }
     
-    public static function &STATICS($k, $v=null)
+    public static function &STATICS($k, $v=null,$_level=1)
     {
-        return SuperGlobal::G()->_STATICS($k, $v, 1);
+        return SuperGlobal::G()->_STATICS($k, $v, $_level);
     }
     public static function &CLASS_STATICS($class_name, $var_name)
     {
@@ -755,7 +754,7 @@ trait Core_SuperGlobal
     {
         return SuperGlobal::G()->session_start($options);
     }
-    public function session_id($session_id=null)
+    public static function session_id($session_id=null)
     {
         return SuperGlobal::G()->session_id($session_id);
     }

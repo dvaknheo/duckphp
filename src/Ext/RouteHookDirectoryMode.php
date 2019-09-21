@@ -14,6 +14,7 @@ class RouteHookDirectoryMode
         'mode_dir_key_for_module'=>true,
         'mode_dir_key_for_action'=>true,
     ];
+    protected $basepath;
     public function init($options=[], $context=null)
     {
         $this->basepath=$options['mode_dir_basepath'];

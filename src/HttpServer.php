@@ -2,7 +2,7 @@
 namespace DNMVCS;
 
 use DNMVCS\Core\HttpServer as Server;
-use DNMVCS\SwooleHttpd;
+use DNMVCS\SwooleHttpd\SwooleHttpd;
 
 class HttpServer extends Server
 {

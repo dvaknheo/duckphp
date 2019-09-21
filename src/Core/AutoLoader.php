@@ -21,6 +21,7 @@ class AutoLoader
 
     public $is_inited=false;
     public $namespace_paths=[];
+    public $paths=[];
     
     protected $is_running=false;
     protected $enable_cache_classes_in_cli=false;
@@ -119,7 +120,7 @@ class AutoLoader
     public function cacheNamespacePath($path)
     {
         $ret=[];
-        $path=realpath($path);
+        $source=realpath($path);
         $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
         $iterator = new \RecursiveIteratorIterator($directory);
         $files = \iterator_to_array($iterator, false);

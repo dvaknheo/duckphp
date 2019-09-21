@@ -21,10 +21,6 @@ class StrictCheck
     {
         $this->appClass=get_class($context);
     }
-    public static function OnCheckStrictDB()
-    {
-        return static::G()->_OnCheckStrictDB($object);
-    }
     ///////////////////////////////////////////////////////////
     protected function getCallerByLevel($level)
     {
@@ -148,8 +144,8 @@ class StrictCheck
         }
         $caller_class=$this->getCallerByLevel($trace_level);
         
-        $class=get_class($object);
+        $class=get_class($this);
         $flag=(is_subclass_of($caller_class, $parent_class) || $caller_class===$parent_class)?true:false;
-        throw new Exception(!$flag, " checkStrictParentCaller Fail:Class [$class] Must By Calss [$parent_class]");
+        throw new Exception(!$flag, " checkStrictParentCaller Fail:Class [$class] Must By Class [$parent_class]");
     }
 }

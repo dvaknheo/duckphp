@@ -2,6 +2,8 @@
 namespace DNMVCS\Ext;
 
 use DNMVCS\Core\SingletonEx;
+use ReflectionMethod;
+use ReflectionException;
 
 class Misc
 {
@@ -12,7 +14,7 @@ class Misc
         'path_lib'=>'lib',
     ];
     protected $path=null;
-    protected $context;
+    protected $context_class;
     public function init($options=[], $context=null)
     {
         $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
