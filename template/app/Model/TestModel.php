@@ -1,7 +1,7 @@
 <?php
 namespace MY\Model;
 
-use MY\Base\Helper\BaseModel;
+use MY\Base\BaseModel;
 
 class TestModel extends BaseModel
 {
