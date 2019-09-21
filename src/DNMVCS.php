@@ -61,23 +61,6 @@ class DNMVCS extends App //implements SwooleExtAppInterface
         'DNMVCS\Core\RuntimeState',
         'DNMVCS\Core\SuperGlobal',
     ];
-    //// RunMode
-    /*
-    public static function RunWithoutPathInfo($options=[])
-    {
-///
-    }
-    public static function RunOneFileMode($options=[], $init_function=null)
-    {
-       ///
-    }
-    public static function RunAsServer($dn_options, $server=null)
-    {
-        $dn_options['swoole']['swoole_server']=$server;
-        return static::G()->init($dn_options)->run();
-    }
-    */
-    // @interface SwooleExtAppInterface
     public function onSwooleHttpdInit($SwooleHttpd,$inCoroutine=false)
     {
         $this->options['use_super_global']=true;
