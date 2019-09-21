@@ -533,9 +533,9 @@ trait SwooleHttpd_Glue
         return SwooleContext::G()->isWebSocketClosing();
     }
     /////////////
-    public static function SG()
+    public static function SG($replacement_object=null)
     {
-        return SwooleSuperGlobal::G();
+        return SwooleSuperGlobal::G($replacement_object);
     }
     public static function &GLOBALS($k, $v=null)
     {

@@ -1,10 +1,17 @@
 # 第一章 DN-MVCS 介绍
 作者QQ: 85811616
+
 官方QQ群: 714610448
 
 ##  教程
+[教程](tutorial.md) ,强烈推荐过 [教程](tutorial.md) 这篇文章。
+### Composer 安装
 
- [教程](tutorial.md) ,强烈推荐过 [教程](tutorial.md) 这篇文章。
+```
+composer require dnmvcs/framework
+./vendor/bin/dnmvcs --help
+./vendor/bin/dnmvcs --create
+```
 
 ## DN-MVCS 是什么
 
@@ -121,8 +128,6 @@ Controller --> Service ------------------------------ ---> Model
 
 ```
 ## 架构图
-DN-MVCS/Core 核心
-![core](doc/core.gv.svg)
 DN-MVCS/Framwork 全框架
 
 ![DN-MVCS](doc/dnmvcs.gv.svg)

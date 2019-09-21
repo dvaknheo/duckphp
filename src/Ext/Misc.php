@@ -9,11 +9,11 @@ class Misc
     
     const DEFAULT_OPTIONS=[
         'path'=>'',
-        'path_lib'=>'path_lib',
+        'path_lib'=>'lib',
     ];
     protected $path=null;
     protected $context;
-    public function init($options=[], $context)
+    public function init($options=[], $context=null)
     {
         $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
         if (substr($options['path_lib'], 0, 1)==='/') {

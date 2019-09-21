@@ -4,6 +4,7 @@ namespace DNMVCS\SwooleHttpd;
 interface SwooleExtServerInterface
 {
     public static function G($object=null);
+    public static function SG($replacement_object=null);
     public static function ReplaceDefaultSingletonHandler();
     public static function system_wrapper_get_providers();
     

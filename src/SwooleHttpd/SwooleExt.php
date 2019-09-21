@@ -25,13 +25,19 @@ class SwooleExt
         }
         $this->is_inited=true;
         
+        $this->appClass=$options['swoolehttpd_app_class']??($context?get_class($context):null);
+        
+        $cid=Coroutine::getuid();
+        if ($cid>0) {
+            ($this->appClass)::G()->onSwooleHttpdInit(SwooleHttpd::G(), true);
+            return;
+        }
         
         $options=$options['swoole']??[];
         if (empty($options)) {
             return;
         }
         
-        $this->appClass=$options['swoolehttpd_app_class']??($context?get_class($context):null);
         
         $this->replaceInstances();
         

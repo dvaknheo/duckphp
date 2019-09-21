@@ -21,6 +21,10 @@ class ControllerHelper
         return App::LoadConfig($file_basename);
     }
     ////////////////
+    public static function H($str)
+    {
+        return App::H($str);
+    }
     public static function URL($url=null)
     {
         return App::URL($url);

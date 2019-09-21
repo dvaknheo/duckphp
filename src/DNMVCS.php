@@ -78,9 +78,13 @@ class DNMVCS extends App //implements SwooleExtAppInterface
     }
     */
     // @interface SwooleExtAppInterface
-    public function onSwooleHttpdInit($SwooleHttpd)
+    public function onSwooleHttpdInit($SwooleHttpd,$inCoroutine=false)
     {
         $this->options['use_super_global']=true;
+        if ($inCoroutine) {
+            $this::SG($SwooleHttpd::SG());
+            return;
+        }
         
         $SwooleHttpd->set_http_exception_handler([static::class,'OnException']);
         $SwooleHttpd->set_http_404_handler([static::class,'On404']);

@@ -168,11 +168,10 @@ class App
         $object->override_class=static::class;
         
         $object->initOptions($options);
-        $object->onInit();
         
-        return $object->initAfterOverride();
+        return $object->onInit();
     }
-    protected function initAfterOverride()
+    protected function onInit()
     {
         Configer::G()->init($this->options, $this);
         $this->reloadFlags();
@@ -183,8 +182,6 @@ class App
         Route::G()->init($this->options, $this);
         
         $this->initExtentions($this->options['ext']);
-        
-        $this->initSuperGlobal();
         
         return $this;
     }
@@ -203,15 +200,6 @@ class App
         }
         return;
     }
-    protected function initSuperGlobal()
-    {
-        if (defined('DNMVCS_SUPER_GLOBAL_REPALACER')) {
-            $func=DNMVCS_SUPER_GLOBAL_REPALACER;
-            SuperGlobal::G($func());
-            $this->options['use_super_global']=true;
-        }
-        //$this->options['use_super_global']=true;
-    }
     public function addBeforeRunHandler($handler)
     {
         $this->beforeRunHandlers[]=$handler;
@@ -223,16 +211,12 @@ class App
         }
         $this->onRun();
         
+        RuntimeState::ReCreateInstance()->begin();
+        $route=Route::G();
         if ($this->options['use_super_global']) {
-            $this->bindServerData(SuperGlobal::G()->_SERVER);
-            return;
+            $route->bindServerData(SuperGlobal::G()->_SERVER);
         }
-        // if cli ,--cli  bind annother
-        
-        RuntimeState::ReCreateInstance();
-        RuntimeState::G()->begin();
-        
-        $ret=Route::G()->run();
+        $ret=$route->run();
         if (!$ret && !$this->options['skip_404_handler']) {
             static::On404();
         }
@@ -240,14 +224,8 @@ class App
         $this->cleanUp();
         return $ret;
     }
-    protected function onInit()
-    {
-        // for override;
-        return;
-    }
     protected function onRun()
     {
-        // for override;
         return;
     }
     public function cleanUp()
@@ -709,10 +687,6 @@ trait Core_Glue
     {
         return Route::G()->getRouteCallingMethod($method);
     }
-    protected function bindServerData($data)
-    {
-        return Route::G()->bindServerData($data);
-    }
     
     //view
     public function setViewWrapper($head_file=null, $foot_file=null)
@@ -760,9 +734,9 @@ trait Core_Glue
 }
 trait Core_SuperGlobal
 {
-    public static function SG()
+    public static function SG($replacement_object=null)
     {
-        return SuperGlobal::G();
+        return SuperGlobal::G($replacement_object);
     }
     public static function &GLOBALS($k, $v=null)
     {

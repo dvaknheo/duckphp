@@ -338,10 +338,10 @@ assignRoute($route,$callback=null)
     暂时不建议使用。
 ### 其他要点
 配置和设置在哪里？
-TestService::G()->foo 里的 G() 是什么意思.
-G函数，单例模式。
-JsonExt\MY\Service\TestService 这个类找不到啊。
+TestService::G()->foo 里的 G() 是什么意。G函数，单例模式。
 
+JsonExt\MY\Service\TestService 这个类找不到啊。
+这是第三方的扩展
 ## 第三章 DNMVCS 应用核心开发人员参考
 ### 入口文件
 我们看入口类文件 public/index.php
@@ -547,12 +547,13 @@ MY\Base\App 重写 override 的两个重要方法
 
 onInit();
     用于初始化，你可能会在这里再次调整  $this->options。
+    你可以在调用父类的初始化前后做一些操作
 onRun();
 
     用于运行前，做一些你想做的事
 RunQuickly();
 
-《聚合方法》
+{聚合方法}
 
     ModelHelper,SerivceHelper,ControllerHelper 都在 App 类里有实现。
     这用于你想偷懒，直接 App::foo(); 的情况。
@@ -616,10 +617,10 @@ Base\*Helper 是各种快捷方法。
 
 这些组件 都可以在 onInit 里通过类似方法替换
 ```php
-Route::G(MyRoute::G())->init($this->options,$this);
-View::G(MyView::G())->init($this->options,$this);
-Configer::G(MyConfiger::G())->init($this->options,$this);
-RuntimeState::G(MyRuntimeState::G())->init($this->options,$this);
+Route::G(MyRoute::G());
+View::G(MyView::G());
+Configer::G(MyConfiger::G());
+RuntimeState::G(MyRuntimeState::G());
 ```
 
 例外的是 AutoLoader 和 ExceptionManager 。 这两个是在插件系统启动之前启动
@@ -1022,6 +1023,8 @@ new 多个效率比单例 低
 DNMVCS 的使用者角色分为 应用程序员，和核心程序员两种
 应用程序员负责日常 Curd 。核心程序员做的是更高级的任务。
 
+
+
 #### SingletonEx
 SingletonEx 可变单例， 是 DNMVCS 系的基础
 
@@ -1041,3 +1044,20 @@ SwooleHttpd 是一个 Swoole Http 服务器框架
 #### DNMVCS/Plus
 对 DNMVCS 的第三方扩展的称呼
 如果这些扩展，只用到可变单例， 引入 SingletonEx 这个项目够了。
+
+#### 发布 DNMVCS 的 Composer 命名规范
+
+
+* DNSingletonEx/SingletonEx
+* DNMVCS/Framework
+
+假设你
+
+
+* Somebody/DNSingleton-foo
+你只用到 SingletonEx 这个类。
+
+* Somebody/DNMVCSCore-foo
+你只和 DNMVCS/Core 有关
+* Somebody/DNMVCS-foo
+你需要其他 DNMVCS

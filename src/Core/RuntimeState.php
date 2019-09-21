@@ -18,7 +18,7 @@ class RuntimeState
     public static function ReCreateInstance()
     {
         $class=get_class(static::G());
-        static::G(new $class);
+        return static::G(new $class);
     }
     public function begin()
     {
