@@ -9,6 +9,7 @@ class RuntimeState
     
     protected $is_running=false;
     public $is_before_show_done=false;
+    public $is_in_exception=false;
     protected $error_reporting_old;
     
     public function isRunning()

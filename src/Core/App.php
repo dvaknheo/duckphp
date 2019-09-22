@@ -235,7 +235,7 @@ class App
             RuntimeState::G()->is_before_show_done=true;
         }
         RuntimeState::G()->end();
-        $this->is_in_exception=false;
+        RuntimeState::G()->is_in_exception=false;
     }
     protected function reloadFlags()
     {
@@ -281,7 +281,6 @@ class App
 trait Core_Handler
 {
     protected $beforeShowHandlers=[];
-    protected $is_in_exception=false;
     protected $error_view_inited=false;
     
     public static function On404()
@@ -318,7 +317,7 @@ trait Core_Handler
     
     public function _OnException($ex)
     {
-        $this->is_in_exception=true;
+        RuntimeState::G()->is_in_exception=true;
         $flag=ExceptionManager::G()->checkAndRunErrorHandlers($ex, true);
         if ($flag) {
             return;
@@ -574,9 +573,9 @@ trait Core_Helper
     {
         return static::G()->is_debug;
     }
-    public static function isInException()
+    public static function IsInException()
     {
-        return static::G()->is_in_exception;
+        return RuntimeState::G()::G()->is_in_exception;
     }
     ////
     
