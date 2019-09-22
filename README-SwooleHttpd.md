@@ -31,13 +31,14 @@ SwooleHttpd 原先来自 PHP 框架DNMVCS。不对外引用其他 PHP 代码，�
 ### 使用方法：
 
 ```shell
-composer require dnmvcs/swoolehttpd
+composer require dnmvcs/framework
 ```
 
 ```php
 <?php
-use DNMVCS\SwooleHttpd;
 require(__DIR__.'/../autoload.php');
+
+use DNMVCS\SwooleHttpd\SwooleHttpd;
 function hello()
 {
     echo "<h1> hello ,have a good start.</h1><pre>\n";

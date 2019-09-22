@@ -414,7 +414,7 @@ class SwooleHttpd //implements SwooleExtServerInterface
     public function run()
     {
         if (!$this->silent_mode) {
-            fwrite(STDOUT, "[".DATE(DATE_ATOM)."] ".get_class($this)." run at ".$this->server->host.':'.$this->server->port." ...\n");
+            fwrite(STDOUT, "[".DATE(DATE_ATOM)."] ".get_class($this)." run at http://".$this->server->host.':'.$this->server->port."/ ...\n");
         }
         $this->server->start();
         if (!$this->silent_mode) {
