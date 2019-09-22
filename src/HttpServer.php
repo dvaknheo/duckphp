@@ -30,7 +30,7 @@ class HttpServer extends Server
     }
     protected function runSwooleServer($path, $host, $port)
     {
-        echo "DNMVCS: RunServer by swooleserver $host:$port\n";
+        echo "DNMVCS: RunServer by swooleserver http://$host:$port/\n";
         
         $dn_options=$this->options['dnmvcs']??[];
         $dn_options['path']=$path;

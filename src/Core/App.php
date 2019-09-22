@@ -91,13 +91,12 @@ class App
     public $options=[];
     public $is_debug=true;
     public $platform='';
-    public $override_root_class='';
     
     protected $beforeRunHandlers=[];
     protected $error_view_inited=false;
     
     //const;
-    protected $componentClassMap=[
+    protected static $componentClassMap=[
             'M'=>'Helper\ModelHelper',
             'V'=>'Helper\ViewHelper',
             'C'=>'Helper\ControllerHelper',
@@ -158,12 +157,10 @@ class App
         ];
         ExceptionManager::G()->init($exception_options, $this)->run();
         
-        $this->override_root_class=static::class;
-        $t_object=$this->checkOverride($options);
+        $object=$this->checkOverride($options);
+        $object=$object??$this;
         
-        $object=$t_object??$this;
         (self::class)::G($object);
-        $object->override_class=static::class;
         
         $object->initOptions($options);
         
@@ -222,7 +219,7 @@ class App
         $this->cleanUp();
         return $ret;
     }
-    protected function onRun(): void
+    protected function onRun()
     {
         return;
     }
@@ -268,7 +265,7 @@ class App
         $namespace=ltrim(implode('\\', $a).'\\', '\\').'\\';  // __NAMESPACE__
         
         foreach ($components as $component) {
-            $class=$this->componentClassMap[strtoupper($component)]??null;
+            $class=static::$componentClassMap[strtoupper($component)]??null;
             $full_class=($class===null)?$component:$namespace.$class;
             if (!class_exists($full_class)) {
                 continue;
