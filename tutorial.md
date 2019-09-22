@@ -210,8 +210,8 @@ LoadConfig($key,$basename="config");
     载入配置，Config($key); 获得配置 默认配置文件是在  config/config.php 。
 
 ### View 编写视图用到的方法
-V::ShowBlock($view, $data)
 
+V::ShowBlock($view, $data)
 V::H($str)
 V::DumpTrace()
 V::Dump()
@@ -536,16 +536,21 @@ ContrllorHelper,ModelHelper,ServiceHelper 如果你一个人偷懒，直接用 A
 * 移除 config/ 在启动选项里加 'skip_setting_file'=>true ，如果你不需要 config/setting.php，
     并有自己的配置方案
 * 移除 view/\_sys  你需要设置启动选项里 'error\_404','error\_500','error\_exception' 。
+* 移除 view 如果你不需要 view ，如 api。
+* 移除 TestService.php ， TestModel.php  测试用的东西
 
 ### 入口类 App 类的方法 以及高级程序员。
 
-MY\Base\App 是 继承扩展 DNMVCS\Core\App 类的方法。
+MY\Base\App 是 继承扩展 DNMVCS\DNMVCS 类的方法。
 
 DNMVCS\Core\App 类或其子类在初始化之后，会切换入这个子类走后面的流程。
 
+MY\Base\App 包含所有助手类的方法。
+
+
 MY\Base\App 重写 override 的两个重要方法
 
-onInit();
+onInit($options,$context=null):self;
     用于初始化，你可能会在这里再次调整  $this->options。
     你可以在调用父类的初始化前后做一些操作
 onRun();
@@ -553,10 +558,22 @@ onRun();
     用于运行前，做一些你想做的事
 RunQuickly();
 
-{聚合方法}
+    用于快速方法
+【聚合方法】
 
     ModelHelper,SerivceHelper,ControllerHelper 都在 App 类里有实现。
     这用于你想偷懒，直接 App::foo(); 的情况。
+【静态方法】
+
+    App::On404();
+    App::OnException();
+    App::OnDevErrorHandler();
+    App::IsRunning();
+    App::IsInException();
+
+    App::system_wrapper_get_providers();
+    App::session_set_save_handler();
+
 addRouteHook($hook,$prepend=false,$once=true)
 
     添加路由钩子 
@@ -571,22 +588,30 @@ addBeforeRunHandler($callback)
 extendComponents($class,$methods,$components);
     扩展组件的静态方法。
     其中： $components 为 ['M','V','C','S'] 组合可选。
+【公开动态方法】
+App->init();
+App->run();
+App->cleanUp();
+
+App->addBeforeRunHandler();
+App->extendComponents();
+App->addBeforeShowHandler();
+App->assignPathNamespace();
+App->addRouteHook();
+App->stopRunDefaultHandler();
+
+    App->onRun();
+    App->initOptions();
+    App->checkOverride();
+    App->initExtentions();
+    App->reloadFlags();
 其他方法
+
+【下划线开始的动态方法】
 
     其他方法有待你的发掘。如果你要用于特殊用处的话。
     目前一共有 32 个 public function ,36 public static function ,10 protected function 
     还有 +3 来自 ExtendableStaticCallTrait 方法。
-
-#### ExtendableStaticCallTrait
-
-查看有什么额外的静态方法：  GetExtendStaticStaticMethodList();
-
-ExtendStaticCallTrait 也在 M,V,C,S 助手类中有，你可以动态添加。
-
-用 AssignExtendStaticMethod() ，来添加。当然，方便的是。
-
-App::G()->extendComponents($class,$methods,$components);
-
 
 ## 第三章 DNMVCS 核心开发和扩展参考
 

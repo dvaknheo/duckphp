@@ -205,7 +205,7 @@ class Lazybones
             $class_names=array_slice($blocks, 0, $l-$i);
             $parameters=$i?array_slice($blocks, -$i):[];
             $calling_path=implode('/', $class_names);
-            
+
             $class=$this->namespace_controller.'\\'.implode('\\', $class_names);
             if (class_exists($class)) {
                 break;
@@ -218,7 +218,7 @@ class Lazybones
         array_push($parameters, $method);
         $method=array_shift($parameters);
         $calling_path=$calling_path.'/'.$method;
-        
+
         return [$class,$method,$parameters,$calling_path];
     }
     protected function getControllerByFiles()
@@ -230,7 +230,7 @@ class Lazybones
                 $method=$the_method;
                 $this->parameters=$parameters;
                 $this->calling_path=$calling_path;
-                
+
                 $callback=$this->getCallback($full_class, $method);
                 if ($callback) {
                     return $callback;

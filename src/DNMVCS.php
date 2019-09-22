@@ -61,7 +61,7 @@ class DNMVCS extends App //implements SwooleExtAppInterface
         'DNMVCS\Core\RuntimeState',
         'DNMVCS\Core\SuperGlobal',
     ];
-    public function onSwooleHttpdInit($SwooleHttpd,$inCoroutine=false)
+    public function onSwooleHttpdInit($SwooleHttpd, $inCoroutine=false)
     {
         $this->options['use_super_global']=true;
         if ($inCoroutine) {

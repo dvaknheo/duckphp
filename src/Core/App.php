@@ -1,4 +1,4 @@
-<?php
+<?php  //declare(strict_types=1);
 // MAIN FILE
 //dvaknheo@github.com
 //OK，Lazy
@@ -741,7 +741,7 @@ trait Core_SuperGlobal
         return SuperGlobal::G()->_GLOBALS($k, $v);
     }
     
-    public static function &STATICS($k, $v=null,$_level=1)
+    public static function &STATICS($k, $v=null, $_level=1)
     {
         return SuperGlobal::G()->_STATICS($k, $v, $_level);
     }
