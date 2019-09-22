@@ -3,8 +3,6 @@ namespace DNMVCS\Ext;
 
 use DNMVCS\Core\SingletonEx;
 
-
-
 class FacadesAutoLoader
 {
     use SingletonEx;
