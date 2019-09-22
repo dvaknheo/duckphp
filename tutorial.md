@@ -367,7 +367,7 @@ $options['namespace']='MY';
 \DNMVCS\DNMVCS::RunQuickly($options, function () {
 });
 ```
-相当于后面调用的 \DNMVCS\DNMVCS::G()->init($options)->run();
+相当于后面调用的 \DNMVCS\DNMVCS::G()->init($options)->run(); 第二个参数的回调用于 init 之后执行。
 
 init, run 分两步走的模式。
 
@@ -543,42 +543,43 @@ ContrllorHelper,ModelHelper,ServiceHelper 如果你一个人偷懒，直接用 A
 
 MY\Base\App 是 继承扩展 DNMVCS\DNMVCS 类的方法。
 
-DNMVCS\Core\App 类或其子类在初始化之后，会切换入这个子类走后面的流程。
+DNMVCS\DNMVCS 类或其子类在初始化之后，会切换入这个子类走后面的流程。
 
 MY\Base\App 包含所有助手类的方法。
 
 
-MY\Base\App 重写 override 的两个重要方法
+#### 用于 override 的两个重要方法
 
-onInit($options,$context=null):self;
+onInit():self
     用于初始化，你可能会在这里再次调整  $this->options。
     你可以在调用父类的初始化前后做一些操作
-onRun();
+onRun(): void
 
-    用于运行前，做一些你想做的事
-RunQuickly();
+    用于运行前，做一些你想做的事 ，和 onInit 不同，你不
+RunQuickly(): bool
 
-    用于快速方法
-【聚合方法】
+    前面已经介绍
+#### 聚合方法
 
     ModelHelper,SerivceHelper,ControllerHelper 都在 App 类里有实现。
     这用于你想偷懒，直接 App::foo(); 的情况。
-【静态方法】
+
+#### 常用静态方法
 
     App::On404();
-    App::OnException();
-    App::OnDevErrorHandler();
+    App::OnException(): void
+    App::OnDevErrorHandler():void 
     App::IsRunning();
     App::IsInException();
 
     App::system_wrapper_get_providers();
     App::session_set_save_handler();
+#### 常用静态方法
 
 addRouteHook($hook,$prepend=false,$once=true)
 
     添加路由钩子 
     $hook 返回空用默认路由处理，否则调用返回的回调。
-
 addBeforeShowHandler($callback)
 
     添加显示前处理
@@ -599,19 +600,49 @@ App->addBeforeShowHandler();
 App->assignPathNamespace();
 App->addRouteHook();
 App->stopRunDefaultHandler();
-
-    App->onRun();
+#### 内部可扩展方法
     App->initOptions();
     App->checkOverride();
     App->initExtentions();
     App->reloadFlags();
+#### 下划线开始的动态方法】
 其他方法
-
-【下划线开始的动态方法】
 
     其他方法有待你的发掘。如果你要用于特殊用处的话。
     目前一共有 32 个 public function ,36 public static function ,10 protected function 
     还有 +3 来自 ExtendableStaticCallTrait 方法。
+
+### 请求流程和生命周期
+DNMVCS::RunQuickly($options,$object) 发生了什么
+
+DNMVCS::G()->init($options)->run();
+
+    init 为初始化阶段 ，run 为运行阶段。
+    init 阶段做的事情如下
+    处理自动加载  AutoLoader::G()->init($options, $this)->run();
+    处理异常管理 ExceptionManager::G()->init($exception_options, $this)->run();
+    如果有子类，切入子类继续 checkOverride() 
+    调整补齐选项 initOptions()
+    * onInit()，可 override 处理这里了。
+    默认的 onInit
+        初始化 Configer
+        从 Configer 再设置 是否调试状态和平台 reloadFlags();
+        初始化 View
+        设置为已载入 View ，用于发生异常时候的显示。
+        初始化 Route
+        初始化扩展 initExtentions()
+    初始化阶段就结束了。
+run() 运行阶段
+
+    处理 addBeforeRunHandler() 引入的 beforeRunHandlers
+    * onRun ，可 override 处理这里了。
+    重制 RuntimeState 并设置为开始
+    绑定路由
+    ** 开始路由处理 Route::G()->run();
+    如果返回 404 则 On404() 处理 404
+    cleanUp 清理
+        如果没显示，而且还有 beforeShowHandlers() 处理（用于处理 DB 关闭等
+        设置 RuntimeState 为结束
 
 ## 第三章 DNMVCS 核心开发和扩展参考
 

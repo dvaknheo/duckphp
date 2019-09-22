@@ -29,6 +29,7 @@ class RuntimeState
     public function end()
     {
         error_reporting($this->error_reporting_old);
+        $this->is_in_exception=false;
         $this->is_running=false;
     }
     public function skipNoticeError()

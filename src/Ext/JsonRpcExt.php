@@ -4,17 +4,6 @@ namespace DNMVCS\Ext;
 use DNMVCS\Core\SingletonEx;
 use Exception;
 
-class JsonRpcClientBase
-{
-    use SingletonEx;
-    public $base_class=null;
-    public function __call($method, $arguments)
-    {
-        $class=$this->base_class?$this->base_class:JsonRpcExt::G()->getRealClass($this);
-        $ret=JsonRpcExt::G()->callRPC($class, $method, $arguments);
-        return $ret;
-    }
-}
 class JsonRpcExt
 {
     use SingletonEx;
@@ -146,5 +135,17 @@ class JsonRpcExt
     protected function prepare_token($ch)
     {
         return;
+    }
+}
+
+class JsonRpcClientBase
+{
+    use SingletonEx;
+    public $base_class=null;
+    public function __call($method, $arguments)
+    {
+        $class=$this->base_class?$this->base_class:JsonRpcExt::G()->getRealClass($this);
+        $ret=JsonRpcExt::G()->callRPC($class, $method, $arguments);
+        return $ret;
     }
 }

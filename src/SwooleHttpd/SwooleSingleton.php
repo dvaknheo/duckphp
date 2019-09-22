@@ -4,7 +4,7 @@ namespace DNMVCS\SwooleHttpd;
 trait SwooleSingleton
 {
     protected static $_instances=[];
-    public static function G($object=null):self
+    public static function G($object=null)
     {
         if (defined('DNMVCS_SINGLETONEX_REPALACER')) {
             $callback=DNMVCS_SINGLETONEX_REPALACER;

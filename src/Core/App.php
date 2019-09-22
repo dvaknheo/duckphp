@@ -103,7 +103,7 @@ class App
             'C'=>'Helper\ControllerHelper',
             'S'=>'Helper\ServiceHelper',
     ];
-    public static function RunQuickly(array $options=[], callable $after_init=null)
+    public static function RunQuickly(array $options=[], callable $after_init=null): bool
     {
         if (!$after_init) {
             return static::G()->init($options)->run();
@@ -112,7 +112,7 @@ class App
         ($after_init)();
         return static::G()->run();
     }
-    public static function _EmptyFunction()
+    public static function _EmptyFunction(): void
     {
         return;
     }
@@ -148,7 +148,7 @@ class App
         return static::G($override_class::G());
     }
     //@override me
-    public function init($options=[], $context=null)
+    public function init(array $options=[], object $context=null)
     {
         AutoLoader::G()->init($options, $this)->run();
         $exception_options=[
@@ -183,7 +183,7 @@ class App
         
         return $this;
     }
-    protected function initExtentions($exts)
+    protected function initExtentions(array $exts): void
     {
         foreach ($exts as $class =>$options) {
             if (!class_exists($class)) {
@@ -198,11 +198,11 @@ class App
         }
         return;
     }
-    public function addBeforeRunHandler($handler)
+    public function addBeforeRunHandler(callable $handler): void
     {
         $this->beforeRunHandlers[]=$handler;
     }
-    public function run()
+    public function run(): bool
     {
         foreach ($this->beforeRunHandlers as $v) {
             ($v)();
@@ -222,11 +222,11 @@ class App
         $this->cleanUp();
         return $ret;
     }
-    protected function onRun()
+    protected function onRun(): void
     {
         return;
     }
-    public function cleanUp()
+    public function cleanUp(): void
     {
         if (! RuntimeState::G()->is_before_show_done) {
             foreach ($this->beforeShowHandlers as $v) {
@@ -235,9 +235,8 @@ class App
             RuntimeState::G()->is_before_show_done=true;
         }
         RuntimeState::G()->end();
-        RuntimeState::G()->is_in_exception=false;
     }
-    protected function reloadFlags()
+    protected function reloadFlags(): void
     {
         if (!$this->options['reload_for_flags']) {
             return;
@@ -253,7 +252,7 @@ class App
     }
     
     // @provider output.
-    public function extendComponents($class, $methods, $components)
+    public function extendComponents($class, $methods, $components): void
     {
         $methods=is_array($methods)?$methods:[$methods];
         $components=is_array($components)?$components:explode(',', $components);
@@ -283,19 +282,19 @@ trait Core_Handler
     protected $beforeShowHandlers=[];
     protected $error_view_inited=false;
     
-    public static function On404()
+    public static function On404(): void
     {
-        return static::G()->_On404();
+        static::G()->_On404();
     }
-    public static function OnException($ex)
+    public static function OnException($ex): void
     {
-        return static::G()->_OnException($ex);
+        static::G()->_OnException($ex);
     }
-    public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline)
+    public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
     {
-        return static::G()->_OnDevErrorHandler($errno, $errstr, $errfile, $errline);
+        static::G()->_OnDevErrorHandler($errno, $errstr, $errfile, $errline);
     }
-    public function _On404()
+    public function _On404(): void
     {
         $error_view=$this->options['error_404'];
         $error_view=$this->error_view_inited?$error_view:null;
@@ -315,7 +314,7 @@ trait Core_Handler
         $this->cleanUp();
     }
     
-    public function _OnException($ex)
+    public function _OnException($ex): void
     {
         RuntimeState::G()->is_in_exception=true;
         $flag=ExceptionManager::G()->checkAndRunErrorHandlers($ex, true);
@@ -357,7 +356,7 @@ trait Core_Handler
         $this->_Show($data, $error_view);
         $this->cleanUp();
     }
-    public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline)
+    public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
     {
         if (!$this->is_debug) {
             return;
@@ -575,7 +574,7 @@ trait Core_Helper
     }
     public static function IsInException()
     {
-        return RuntimeState::G()::G()->is_in_exception;
+        return RuntimeState::G()->is_in_exception;
     }
     ////
     
@@ -681,7 +680,7 @@ trait Core_Glue
     {
         return Route::G()->getRouteCallingMethod();
     }
-    public static function setRouteCallingMethod($method)
+    public static function setRouteCallingMethod(string $method)
     {
         return Route::G()->getRouteCallingMethod($method);
     }
@@ -700,11 +699,11 @@ trait Core_Glue
     {
         return ExceptionManager::G()->assignExceptionHandler($classes, $callback);
     }
-    public static function setMultiExceptionHandler(array $classes, $callback)
+    public static function setMultiExceptionHandler(array $classes, callable $callback)
     {
         return ExceptionManager::G()->setMultiExceptionHandler($classes, $callback);
     }
-    public static function setDefaultExceptionHandler($callback)
+    public static function setDefaultExceptionHandler(callable $callback)
     {
         return ExceptionManager::G()->setDefaultExceptionHandler($callback);
     }
@@ -732,7 +731,7 @@ trait Core_Glue
 }
 trait Core_SuperGlobal
 {
-    public static function SG($replacement_object=null)
+    public static function SG(object $replacement_object=null)
     {
         return SuperGlobal::G($replacement_object);
     }
