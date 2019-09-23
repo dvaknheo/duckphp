@@ -23,7 +23,7 @@ use Swoole\Coroutine;
 
 class SwooleHttpd //implements SwooleExtServerInterface
 {
-    const VERSION = 'DNMVCS-inner';
+    const VERSION = '1.1.3';
     use SwooleSingleton;
     
     use SwooleHttpd_SimpleHttpd;

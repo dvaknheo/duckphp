@@ -18,7 +18,7 @@ use DNMVCS\Core\SuperGlobal;
 
 class App
 {
-    const VERSION = '1.1.3-dev';
+    const VERSION = '1.1.3';
     
     use SingletonEx;
     use ThrowOn;

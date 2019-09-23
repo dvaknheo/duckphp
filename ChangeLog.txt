@@ -1,3 +1,29 @@
+1.1.2 到 1.1.3 变更
+2019-09-22 22:09:20
+DNMVCS 类的 很多功能移动到了 Core/App
+autoload 不再用闭包，为了方便 profile
+最低要求 PHP 7.1
+架构图更新 ExModel 不再引用Model
+删除了单独的 core  架构图（SwooleHttpd 依然保留。
+swooleHttpd 的例子移动到相应目录
+添加了单元测试
+Helper 从 Base 目录抽出成 Helper 目录
+ClassExt 不再需要 , Core/App 里使用 extendComponents
+Core/App 变更
+Core/App 和 Helper 一样 都扩展 ExtendableStaticCallTrait
+    优化了 init() 过程
+    和 SwooleExt 相关代码移动到 DNMVCS
+SuperGlobal 下方到 Core
+
+SwooleHttpd去掉 短名称
+
+修复了很多 Bug，按 PHPStan level 7 来
+
+TODO
+抽出 SystemWraper
+getStaticComponent 回到 App
+
+
 1.0.9 到 1.0.10 变更
 添加了 快速扩展的 DNClassExt
 配置大更新

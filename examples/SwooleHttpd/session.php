@@ -1,7 +1,6 @@
 <?php
-use DNMVCS\SwooleHttpd;
-
-require(__DIR__.'/../autoload.php');
+require(__DIR__.'/../../autoload.php');
+use DNMVCS\SwooleHttpd\SwooleHttpd;
 
 $options=[
     'port'=>9528,

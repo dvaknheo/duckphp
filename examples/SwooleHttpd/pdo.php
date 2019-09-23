@@ -1,7 +1,7 @@
 <?php
-use DNMVCS\SwooleHttpd;
+require(__DIR__.'/../../autoload.php');
+use DNMVCS\SwooleHttpd\SwooleHttpd;
 
-require(__DIR__.'/../autoload.php');
 function hello()
 {
     $db=new PDO(
