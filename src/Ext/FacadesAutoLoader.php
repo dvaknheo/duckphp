@@ -53,6 +53,9 @@ class FacadesAutoLoader
                 }
             }
         }
+        if (!is_callable([$class,'G'])) {
+            return null;
+        }
         $object=call_user_func([$class,'G']);
         return [$object,$name];
     }

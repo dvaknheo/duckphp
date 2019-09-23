@@ -45,7 +45,7 @@ class DIExt
     }
     protected function initContext($options=[], $context=null)
     {
-        $context->assignStaticMethod('DI', [static::class,'DI']);
+        //$context->assignStaticMethod('DI', [static::class,'DI']); //TODO
     }
 }
 
@@ -99,7 +99,7 @@ class FunctionDispatcher
             }
         }
         
-        if ($callback) {
+        if ($callback && is_callable($callback)) {
             ($callback)();
             return true;
         }

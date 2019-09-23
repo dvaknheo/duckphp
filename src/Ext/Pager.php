@@ -80,8 +80,8 @@ class Pager
             $page=$page!=1?$page:'';
             return str_replace('{'.$this->key.'}', $page, $this->url);
         }
-        $path=parse_url($this->url, PHP_URL_PATH);
-        $query=parse_url($this->url, PHP_URL_QUERY);
+        $path=parse_url($this->url, PHP_URL_PATH)??'';
+        $query=parse_url($this->url, PHP_URL_QUERY)??'';
         
         $get=[];
         parse_str($query, $get);

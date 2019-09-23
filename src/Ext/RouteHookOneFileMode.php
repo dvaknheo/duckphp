@@ -42,7 +42,7 @@ class RouteHookOneFileMode
         $path_info=SuperGlobal::G()->_SERVER['PATH_INFO'];
 
         
-        $path=parse_url($path, PHP_URL_PATH);
+        $path=parse_url($path, PHP_URL_PATH)??'';
         if (strlen($path_info)) {
             $path=substr($path, 0, 0-strlen($path_info));
         }
@@ -59,9 +59,9 @@ class RouteHookOneFileMode
             };
         }
         
-        $input_path=parse_url($url, PHP_URL_PATH);
+        $input_path=parse_url($url, PHP_URL_PATH)??'';
         $input_get=[];
-        parse_str(parse_url($url, PHP_URL_QUERY), $input_get);
+        parse_str(parse_url($url, PHP_URL_QUERY)??'', $input_get);
         
         $blocks=explode('/', $input_path);
         if (isset($blocks[0])) {

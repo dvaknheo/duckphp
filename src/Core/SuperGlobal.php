@@ -46,7 +46,11 @@ class SuperGlobal
     public function session_start(array $options=[])
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start($options);
+            try {
+                session_start($options);
+            } catch (\Throwable $ex) {
+                return false;
+            }
         }
         $this->_SESSION=&$_SESSION;
     }

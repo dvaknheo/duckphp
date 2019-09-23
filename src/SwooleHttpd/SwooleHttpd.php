@@ -291,6 +291,7 @@ class SwooleHttpd //implements SwooleExtServerInterface
         }
         $functions = spl_autoload_functions();
         $this->old_autoloads=$this->old_autoloads?:[];
+        $functions=is_array($functions)?$functions:[];
         foreach ($functions as $function) {
             if (in_array($function, $this->old_autoloads)) {
                 continue;
@@ -355,7 +356,7 @@ class SwooleHttpd //implements SwooleExtServerInterface
         
         $this->silent_mode=$options['silent_mode'];
         
-        $this->http_handler_basepath=rtrim(realpath($this->http_handler_basepath), '/').'/';
+        $this->http_handler_basepath=rtrim((string)realpath($this->http_handler_basepath), '/').'/';
         
         if (!$this->server) {
             $this->check_swoole();
@@ -367,12 +368,8 @@ class SwooleHttpd //implements SwooleExtServerInterface
             if (!$options['websocket_handler']) {
                 $this->server=new Http_Server($options['host'], $options['port']);
             } else {
-                echo "SwooleHttpd: use WebSocket";
+                echo "SwooleHttpd: use WebSocket\n";
                 $this->server=new Websocket_Server($options['host'], $options['port']);
-            }
-            if (!$this->server) {
-                echo 'SwooleHttpd: Start server failed';
-                exit;
             }
         }
         if ($options['swoole_server_options']) {

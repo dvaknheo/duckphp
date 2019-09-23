@@ -65,6 +65,7 @@ class SwooleExt
         static::G($this);
         SwooleHttpd::G($server);
         foreach ($instances as $class=>$object) {
+            $class=(string)$class;
             $class::G($object);
         }
     }

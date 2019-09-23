@@ -92,6 +92,7 @@ class HttpServer
             }
         }
         $optind=null;
+        $a=[];
         $args=getopt(implode('', ($shorts)), $a, $optind);
         $args=$args?:[];
         

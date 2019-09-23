@@ -112,7 +112,7 @@ class Misc
         try {
             $method=$this->context_class::G()->getRouteCallingMethod();
             $data=$this->context_class::G()->callAPI($serviceClass, $method, $input);
-            if (!is_array($data) || !is_object($data)) {
+            if (!is_array($data) && !is_object($data)) {
                 $data=['result'=>$data];
             }
         } catch (\Throwable $ex) {

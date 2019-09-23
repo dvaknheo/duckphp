@@ -25,11 +25,10 @@ class App
     use ExtendableStaticCallTrait;
     
     use Core_Handler;
-    use Core_Glue;
+    use Core_Helper;
     use Core_Redirect;
     use Core_SystemWrapper;
-    use Core_Helper;
-    use Core_SuperGlobal;
+    use Core_Glue;
     
     const DEFAULT_OPTIONS=[
             //// basic config ////
@@ -102,6 +101,17 @@ class App
             'C'=>'Helper\ControllerHelper',
             'S'=>'Helper\ServiceHelper',
     ];
+    protected static $defaultStaticComponentClasses=[
+            'DNMVCS\Core\AutoLoader',
+            'DNMVCS\Core\ExceptionManager',
+            'DNMVCS\Core\Configer',
+            'DNMVCS\Core\View',
+            'DNMVCS\Core\Route',
+        ];
+    protected static $defaultDynamicComponentClasses=[
+            'DNMVCS\Core\RuntimeState',
+            'DNMVCS\Core\SuperGlobal',
+        ];
     public static function RunQuickly(array $options=[], callable $after_init=null): bool
     {
         if (!$after_init) {
@@ -110,10 +120,6 @@ class App
         static::G()->init($options);
         ($after_init)();
         return static::G()->run();
-    }
-    public static function _EmptyFunction(): void
-    {
-        return;
     }
     protected function initOptions($options=[])
     {
@@ -146,7 +152,7 @@ class App
         }
         return static::G($override_class::G());
     }
-    //@override me
+    //init
     public function init(array $options=[], object $context=null)
     {
         AutoLoader::G()->init($options, $this)->run();
@@ -166,6 +172,7 @@ class App
         
         return $object->onInit();
     }
+    //for override
     protected function onInit()
     {
         Configer::G()->init($this->options, $this);
@@ -180,9 +187,24 @@ class App
         
         return $this;
     }
+    protected function reloadFlags(): void
+    {
+        if (!$this->options['reload_for_flags']) {
+            return;
+        }
+        $is_debug=Configer::G()->_Setting('is_debug');
+        $platform=Configer::G()->_Setting('platform');
+        if (isset($is_debug)) {
+            $this->is_debug=$is_debug;
+        }
+        if (isset($platform)) {
+            $this->platform=$platform;
+        }
+    }
     protected function initExtentions(array $exts): void
     {
         foreach ($exts as $class =>$options) {
+            $class=(string)$class;
             if (!class_exists($class)) {
                 continue;
             }
@@ -195,9 +217,11 @@ class App
         }
         return;
     }
-    public function addBeforeRunHandler(callable $handler): void
+    
+    //for override
+    protected function onRun()
     {
-        $this->beforeRunHandlers[]=$handler;
+        return;
     }
     public function run(): bool
     {
@@ -219,10 +243,8 @@ class App
         $this->cleanUp();
         return $ret;
     }
-    protected function onRun()
-    {
-        return;
-    }
+    
+    //
     public function cleanUp(): void
     {
         if (! RuntimeState::G()->is_before_show_done) {
@@ -233,21 +255,39 @@ class App
         }
         RuntimeState::G()->end();
     }
-    protected function reloadFlags(): void
+    public function cleanAll()
     {
-        if (!$this->options['reload_for_flags']) {
-            return;
+        $this->cleanUp();
+        $classes=$this->getDynamicComponentClasses();
+        foreach ($classes as $class) {
+            $this->cleanClass($class);
         }
-        $is_debug=Configer::G()->_Setting('is_debug');
-        $platform=Configer::G()->_Setting('platform');
-        if (isset($is_debug)) {
-            $this->is_debug=$is_debug;
-        }
-        if (isset($platform)) {
-            $this->platform=$platform;
+        $classes=$this->getStaticComponentClasses();
+        foreach ($classes as $class) {
+            $this->cleanClass($class);
         }
     }
+    protected function cleanClass($input_class)
+    {
+        $current_class=get_class($input_class::G());
+        $input_class::G(new $input_class());
+        if ($current_class!=$input_class) {
+            $this->cleanClass($current_class);
+        }
+    }
+    //main produce end
     
+    ////////////////////////
+    
+    public function addBeforeRunHandler(callable $handler): void
+    {
+        $this->beforeRunHandlers[]=$handler;
+    }
+    public function addBeforeShowHandler($handler)
+    {
+        $this->beforeShowHandlers[]=$handler;
+    }
+    ////////////////////////
     // @provider output.
     public function extendComponents($class, $methods, $components): void
     {
@@ -258,7 +298,7 @@ class App
             $maps[$method]=[$class,$method];
         }
         
-        static::AssignStaticMethod($maps);
+        static::AssignExtendStaticMethod($maps);
         
         $a=explode('\\', get_class($this));
         array_pop($a);
@@ -270,8 +310,18 @@ class App
             if (!class_exists($full_class)) {
                 continue;
             }
-            $full_class::AssignStaticMethod($maps);
+            $full_class::AssignExtendStaticMethod($maps);
         }
+    }
+    public function getStaticComponentClasses()
+    {
+        $ext=array_values(array_unique([ static::class,self::class])); //TODO and static class override from
+        $ret=array_merge(static::$defaultStaticComponentClasses, $ext);
+        return $ret;
+    }
+    public function getDynamicComponentClasses()
+    {
+        return static::$defaultDynamicComponentClasses;
     }
 }
 trait Core_Handler
@@ -325,7 +375,7 @@ trait Core_Handler
         
         static::header('', true, 500);
         $data=[];
-        $data['is_debug']=true;//static::IsDebug();
+        $data['is_debug']=static::IsDebug();
         $data['ex']=$ex;
         $data['class']=get_class($ex);
         $data['message']=$ex->getMessage();
@@ -402,10 +452,6 @@ EOT;
             return;
         }
         View::G()->_ShowBlock($error_view, $data);
-    }
-    public function addBeforeShowHandler($handler)
-    {
-        $this->beforeShowHandlers[]=$handler;
     }
 }
 
@@ -596,7 +642,6 @@ trait Core_Helper
         }
         return View::G()->_Show($data, $view);
     }
-    
     public function _H(&$str)
     {
         if (is_string($str)) {
@@ -619,11 +664,33 @@ trait Core_Helper
         }
         return $str;
     }
+    // ViewHelper
+    public static function DumpTrace()
+    {
+        return static::G()->_DumpTrace();
+    }
+    public static function Dump(...$args)
+    {
+        return static::G()->_Dump(...$args);
+    }
+    public function _DumpTrace()
+    {
+        echo "<pre>\n";
+        echo (new \Exception('', 0))->getTraceAsString();
+        echo "</pre>\n";
+    }
+    public function _Dump(...$args)
+    {
+        echo "<pre>\n";
+        var_dump(...$args);
+        echo "</pre>\n";
+    }
 }
 
 
 trait Core_Glue
 {
+    //// source is static ////
     //state
     public static function IsRunning()
     {
@@ -658,7 +725,7 @@ trait Core_Glue
         return Configer::G()->_LoadConfig($file_basename);
     }
     
-    /////////////////////////////////
+    //// source is dym ////
     //autoloader
     public function assignPathNamespace($path, $namespace=null)
     {
@@ -704,30 +771,7 @@ trait Core_Glue
     {
         return ExceptionManager::G()->setDefaultExceptionHandler($callback);
     }
-    // ViewHelper
-    public static function DumpTrace()
-    {
-        return static::G()->_DumpTrace();
-    }
-    public static function Dump(...$args)
-    {
-        return static::G()->_Dump(...$args);
-    }
-    public function _DumpTrace()
-    {
-        echo "<pre>\n";
-        echo (new \Exception('', 0))->getTraceString();
-        echo "</pre>\n";
-    }
-    public function _Dump(...$args)
-    {
-        echo "<pre>\n";
-        var_dump(...$args);
-        echo "</pre>\n";
-    }
-}
-trait Core_SuperGlobal
-{
+    //super global
     public static function SG(object $replacement_object=null)
     {
         return SuperGlobal::G($replacement_object);
@@ -736,7 +780,6 @@ trait Core_SuperGlobal
     {
         return SuperGlobal::G()->_GLOBALS($k, $v);
     }
-    
     public static function &STATICS($k, $v=null, $_level=1)
     {
         return SuperGlobal::G()->_STATICS($k, $v, $_level);
@@ -745,6 +788,7 @@ trait Core_SuperGlobal
     {
         return SuperGlobal::G()->_CLASS_STATICS($class_name, $var_name);
     }
+    ////super global
     public static function session_start(array $options=[])
     {
         return SuperGlobal::G()->session_start($options);

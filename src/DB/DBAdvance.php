@@ -26,6 +26,9 @@ trait DBAdvance
         if (empty($array)) {
             return '';
         }
+        if (!$this->pdo || !is_callable([$this->pdo,'quote'])) {
+            return '';
+        }
         $array=array_map([$this->pdo,'quote'], $array);
         $str_keys=implode(',', array_values($array));
         $str_values=implode(',', array_values($array));

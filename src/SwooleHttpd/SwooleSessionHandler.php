@@ -39,7 +39,11 @@ class SwooleSessionHandler implements SessionHandlerInterface
     }
     public function gc($maxlifetime)
     {
-        foreach (glob("$this->savePath/sess_*") as $file) {
+        $files=glob("$this->savePath/sess_*");
+        if (!$files) {
+            return true;
+        }
+        foreach ($files as $file) {
             if (filemtime($file) + $maxlifetime < time() && file_exists($file)) {
                 unlink($file);
             }

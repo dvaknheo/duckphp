@@ -104,6 +104,9 @@ class AutoLoader
         $ret=[];
         foreach ($this->namespace_paths as $source=>$name) {
             $source=realpath($source);
+            if (false===$source) {
+                continue;
+            }
             $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
             $iterator = new \RecursiveIteratorIterator($directory);
             $files = \iterator_to_array($iterator, false);
@@ -113,7 +116,10 @@ class AutoLoader
             if (opcache_is_script_cached($file)) {
                 continue;
             }
-            @opcache_compile_file($file);
+            try {
+                @opcache_compile_file($file);
+            } catch (\Throwable $ex) {
+            }
         }
         return $ret;
     }
@@ -121,6 +127,9 @@ class AutoLoader
     {
         $ret=[];
         $source=realpath($path);
+        if (false===$source) {
+            return $ret;
+        }
         $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
         $iterator = new \RecursiveIteratorIterator($directory);
         $files = \iterator_to_array($iterator, false);
@@ -129,7 +138,10 @@ class AutoLoader
             if (opcache_is_script_cached($file)) {
                 continue;
             }
-            @opcache_compile_file($file);
+            try {
+                opcache_compile_file($file);
+            } catch (\Throwable $ex) {
+            }
         }
         return $ret;
     }

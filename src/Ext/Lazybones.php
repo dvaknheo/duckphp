@@ -116,8 +116,8 @@ class Lazybones
     protected function getRouteDispatchInfo($blocks, $method)
     {
         $class=null;
-        $paramters=[];
-        $callinig_path='';
+        $parameters=[];
+        $calling_path='';
         $p=implode('/', $blocks);
         $l=count($blocks);
         for ($i=0;$i<$l;$i++) {
