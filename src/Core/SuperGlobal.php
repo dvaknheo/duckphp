@@ -32,15 +32,15 @@ class SuperGlobal
         }
         $this->is_inited=true;
         
-        $this->_GET		=&$_GET;
-        $this->_POST	=&$_POST;
-        $this->_REQUEST	=&$_REQUEST;
-        $this->_SERVER	=&$_SERVER;
-        $this->_ENV		=&$_ENV;
-        $this->_COOKIE	=&$_COOKIE;
-        $this->_SESSION	=&$_SESSION;
-        $this->_FILES	=&$_FILES;
-        $this->GLOBALS	=&$GLOBALS;
+        $this->_GET        =&$_GET;
+        $this->_POST    =&$_POST;
+        $this->_REQUEST    =&$_REQUEST;
+        $this->_SERVER    =&$_SERVER;
+        $this->_ENV        =&$_ENV;
+        $this->_COOKIE    =&$_COOKIE;
+        $this->_SESSION    =&$_SESSION;
+        $this->_FILES    =&$_FILES;
+        $this->GLOBALS    =&$GLOBALS;
     }
     ///////////////////////////////
     public function session_start(array $options=[])

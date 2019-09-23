@@ -69,9 +69,11 @@ class SwooleCoroutineSingleton
         if ($cid!==null) {
             $current_cid = Coroutine::getuid();
             self::$cid_map[$cid]=$current_cid;
-            Coroutine::defer(function () use ($cid) {
-                unset(self::$cid_map[$cid]);
-            });
+            Coroutine::defer(
+                function () use ($cid) {
+                    unset(self::$cid_map[$cid]);
+                }
+            );
             return;
         }
         $cid = Coroutine::getuid();
@@ -82,13 +84,15 @@ class SwooleCoroutineSingleton
             return;
         }
         self::$_instances[$cid]=[];
-        Coroutine::defer(function () {
-            $cid = Coroutine::getuid();
-            if ($cid<=0) {
-                return;
+        Coroutine::defer(
+            function () {
+                $cid = Coroutine::getuid();
+                if ($cid<=0) {
+                    return;
+                }
+                unset(self::$_instances[$cid]);
             }
-            unset(self::$_instances[$cid]);
-        });
+        );
     }
     public function forkMasterInstances($classes, $exclude_classes=[])
     {

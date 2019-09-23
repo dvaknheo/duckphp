@@ -270,7 +270,7 @@ class SwooleHttpd //implements SwooleExtServerInterface
         SwooleSuperGlobal::G()->_SERVER['SCRIPT_FILENAME']=$file;
         chdir(dirname($file));
         (function ($file) {
-            include($file);
+            include $file;
         })($file);
     }
     protected function onHttpException($ex)
@@ -429,9 +429,11 @@ trait SwooleHttpd_SimpleHttpd
     }
     protected function deferGC()
     {
-        Coroutine::defer(function () {
-            gc_collect_cycles();
-        });
+        Coroutine::defer(
+            function () {
+                gc_collect_cycles();
+            }
+        );
     }
     protected function checkShutdown()
     {
@@ -447,22 +449,28 @@ trait SwooleHttpd_SimpleHttpd
         
         $this->checkShutdown();
         
-        Coroutine::defer(function () {
-            $InitObLevel=0;
-            for ($i=ob_get_level();$i>$InitObLevel;$i--) {
-                ob_end_flush();
+        Coroutine::defer(
+            function () {
+                $InitObLevel=0;
+                for ($i=ob_get_level();$i>$InitObLevel;$i--) {
+                    ob_end_flush();
+                }
+                SwooleContext::G()->cleanUp();
             }
-            SwooleContext::G()->cleanUp();
-        });
-        Coroutine::defer(function () {
-            SwooleContext::G()->onShutdown();
-        });
-        ob_start(function ($str) {
-            if (''===$str) {
-                return;
+        );
+        Coroutine::defer(
+            function () {
+                SwooleContext::G()->onShutdown();
             }
-            SwooleContext::G()->response->end($str);
-        });
+        );
+        ob_start(
+            function ($str) {
+                if (''===$str) {
+                    return;
+                }
+                SwooleContext::G()->response->end($str);
+            }
+        );
         $this->initHttp($request, $response);
         SwooleSuperGlobal::G(new SwooleSuperGlobal())->mapToGlobal();
         try {
@@ -587,10 +595,10 @@ trait SwooleHttpd_SystemWrapper
     public static function system_wrapper_get_providers():array
     {
         $ret=[
-            'header'				=>[static::class,'header'],
-            'setcookie'				=>[static::class,'setcookie'],
-            'exit_system'			=>[static::class,'exit_system'],
-            'set_exception_handler'	=>[static::class,'set_exception_handler'],
+            'header'                =>[static::class,'header'],
+            'setcookie'                =>[static::class,'setcookie'],
+            'exit_system'            =>[static::class,'exit_system'],
+            'set_exception_handler'    =>[static::class,'set_exception_handler'],
             'register_shutdown_function' =>[static::class,'register_shutdown_function'],
         ];
         return $ret;

@@ -74,7 +74,7 @@ class Configer
             return null;
         }
         $ret=(function ($file) {
-            return include($file);
+            return include $file;
         })($file);
         return $ret;
     }

@@ -149,7 +149,7 @@ class FunctionView extends View
         } else {
             if ($this->head_file) {
                 $this->head_file=rtrim($this->head_file, '.php').'.php';
-                include($this->path.$this->head_file);
+                include $this->path.$this->head_file;
             }
         }
         
@@ -161,7 +161,7 @@ class FunctionView extends View
                 //echo "DNMVCS FunctionView: Not callback {$this->callback}; not file $this->view_file";
                 return;
             }
-            include($this->view_file);
+            include $this->view_file;
         }
         
         if ($this->head_callback) {
@@ -171,7 +171,7 @@ class FunctionView extends View
         } else {
             if ($this->foot_file) {
                 $this->foot_file=rtrim($this->foot_file, '.php').'.php';
-                include($this->path.$this->foot_file);
+                include $this->path.$this->foot_file;
             }
         }
     }
@@ -191,7 +191,7 @@ class FunctionView extends View
                 echo "DNMVCS FunctionView ShowBlock: Not callback {$this->callback}; No file {$this->view_file}";
                 return;
             }
-            include($this->view_file);
+            include $this->view_file;
         }
     }
 }
@@ -232,7 +232,7 @@ class ProjectCommonAutoloader
         if (!$file || !file_exists($file)) {
             return;
         }
-        require $file;
+        include $file;
     }
 }
 
@@ -256,7 +256,7 @@ class ProjectCommonConfiger extends Configer
             $file=$this->fullpath_config_common.$basename.'.php';
             if (is_file($file)) {
                 $common_config=(function ($file) {
-                    return include($file);
+                    return include $file;
                 })($file);
             }
         }

@@ -71,7 +71,7 @@ class Lazybones
             return false;
         }
         $file=$this->lazy_path_service.str_replace('__', '/', $class).'.php';
-        require $file;
+        include $file;
         return true;
     }
     public function loadModelClass($class)
@@ -83,7 +83,7 @@ class Lazybones
             return false;
         }
         $file=$this->lazy_path_model.'Model'.'/'.$class.'.php';
-        require $file;
+        include $file;
         return true;
     }
     ////
@@ -189,7 +189,7 @@ class Lazybones
     // You can override it; variable indived
     protected function includeControllerFile($file)
     {
-        require_once($file);
+        include_once $file;
     }
     
     //// backup

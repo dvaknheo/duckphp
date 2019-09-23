@@ -50,9 +50,11 @@ class DB implements DBInterface
     public function quote($string)
     {
         if (is_array($string)) {
-            array_walk($string, function (&$v, $k) {
-                $v=is_string($v)?$this->quote($v):(string)$v;
-            });
+            array_walk(
+                $string, function (&$v, $k) {
+                    $v=is_string($v)?$this->quote($v):(string)$v;
+                }
+            );
         }
         if (!is_string($string)) {
             return $string;

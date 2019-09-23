@@ -34,13 +34,13 @@ class View
         
         
         if ($this->head_file) {
-            include($this->path.$this->head_file);
+            include $this->path.$this->head_file;
         }
         
-        include($this->view_file);
+        include $this->view_file;
         
         if ($this->foot_file) {
-            include($this->path.$this->foot_file);
+            include $this->path.$this->foot_file;
         }
     }
     public function _ShowBlock($view, $data=null)
@@ -51,7 +51,7 @@ class View
         $view=null;
         extract($this->data);
         
-        include($this->view_file);
+        include $this->view_file;
     }
     protected function prepareFiles()
     {

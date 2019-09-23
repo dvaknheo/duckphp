@@ -170,9 +170,11 @@ class SwooleSuperGlobal
     {
         //SwooleHttpd::register_shutdown_function([$this,'writeClose']);
         $self=$this;
-        Coroutine::defer(function () use ($self) {
-            $self->writeClose();
-        });
+        Coroutine::defer(
+            function () use ($self) {
+                $self->writeClose();
+            }
+        );
     }
     public function session_start(array $options=[])
     {

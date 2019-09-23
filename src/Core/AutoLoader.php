@@ -82,7 +82,7 @@ class AutoLoader
             if (!file_exists($file)) {
                 continue;
             }
-            require $file;
+            include $file;
             return true;
         }
         return false;

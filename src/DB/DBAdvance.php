@@ -8,9 +8,11 @@ trait DBAdvance
         if (empty($array)) {
             return 'NULL';
         }
-        array_walk($array, function (&$v, $k) {
-            $v=is_string($v)?$this->quote($v):(string)$v;
-        });
+        array_walk(
+            $array, function (&$v, $k) {
+                $v=is_string($v)?$this->quote($v):(string)$v;
+            }
+        );
         return implode(',', $array);
     }
     public function quoteSetArray($array)

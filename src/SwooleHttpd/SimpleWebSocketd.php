@@ -26,12 +26,14 @@ trait SimpleWebSocketd
         SwooleContext::G()->initWebSocket($frame);
         
         $fd=$frame->fd;
-        ob_start(function ($str) use ($server,$fd) {
-            if (''===$str) {
-                return;
+        ob_start(
+            function ($str) use ($server,$fd) {
+                if (''===$str) {
+                    return;
+                }
+                $server->push($fd, $str);
             }
-            $server->push($fd, $str);
-        });
+        );
         try {
             if ($frame->opcode != 0x08  || !$this->websocket_close_handler) {
                 ($this->websocket_handler)();

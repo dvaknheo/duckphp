@@ -29,7 +29,7 @@ class Misc
     }
     public function _Import($file)
     {
-        require_once($this->path.rtrim($file, '.php').'.php');
+        include_once $this->path.rtrim($file, '.php').'.php';
     }
     
     public function _RecordsetUrl(&$data, $cols_map=[])
@@ -42,9 +42,11 @@ class Misc
             return $data;
         }
         $keys=array_keys($data[0]);
-        array_walk($keys, function (&$val, $k) {
-            $val='{'.$val.'}';
-        });
+        array_walk(
+            $keys, function (&$val, $k) {
+                $val='{'.$val.'}';
+            }
+        );
         foreach ($data as &$v) {
             foreach ($cols_map as $k=>$r) {
                 $values=array_values($v);
