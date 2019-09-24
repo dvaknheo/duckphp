@@ -7,19 +7,22 @@ trait ExtendableStaticCallTrait
     
     public static function AssignExtendStaticMethod($key, $value=null)
     {
+        self::$static_methods[static::class]=self::$static_methods[static::class]??[];
         if (is_array($key)&& $value===null) {
-            static::$static_methods=array_merge(static::$static_methods, $key);
+            self::$static_methods[static::class]=array_merge(static::$static_methods[static::class], $key);
         } else {
-            static::$static_methods[$key]=$value;
+            self::$static_methods[static::class][$key]=$value;
         }
     }
     public static function GetExtendStaticStaticMethodList()
     {
-        return static::$static_methods;
+        self::$static_methods[static::class]=self::$static_methods[static::class]??[];
+        return self::$static_methods[static::class];
     }
     protected static function CallExtendStaticMethod($name, $arguments)
     {
-        $callback=(static::$static_methods[$name])??null;
+        self::$static_methods[static::class]=self::$static_methods[static::class]??[];
+        $callback=(self::$static_methods[static::class][$name])??null;
         
         if (!\is_callable($callback)) {
             if (is_array($callback) && is_string($callback[0]) && substr($callback[0], -3)==='::G') {

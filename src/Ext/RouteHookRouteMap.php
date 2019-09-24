@@ -81,9 +81,15 @@ class RouteHookRouteMap
     }
     protected function adjustCallback($callback)
     {
-        if (is_string($callback) && false!==strpos($callback, '->')) {
-            list($class, $method)=explode('->', $callback);
-            return [new $class(),$method];
+        //TODO  , add @ 
+        if (is_string($callback)){
+            if(false!==strpos($callback, '@')) {
+                list($class, $method)=explode('@', $callback);
+                return [new $class(),$method];
+            } elseif (false!==strpos($callback, '->')) {
+                list($class, $method)=explode('->', $callback);
+                return [new $class(),$method];
+            }
         }
         return $callback;
     }

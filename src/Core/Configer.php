@@ -7,23 +7,28 @@ class Configer
 {
     use SingletonEx;
     const DEFAULT_OPTIONS=[
-        'path'=>null,
+        'path'=>'',
         'path_config'=>'config',
         
         'setting'=>[],
         'all_config'=>[],
         'setting_file'=>'setting',
         'skip_setting_file'=>false,
+        'skip_env_file'=>true,
     ];
+    protected $base_path;
     protected $path;
     protected $is_inited=false;
     protected $all_config=[];
     protected $setting=[];
     protected $setting_file='setting';
     protected $skip_setting_file=false;
+    protected $skip_env_file=false;
     public function init($options=[], $context=null)
     {
         $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
+        $this->base_path=$options['path']??'';
+        
         if (substr($options['path_config'], 0, 1)==='/') {
             $this->path=rtrim($options['path_config'], '/').'/';
         } else {
@@ -33,21 +38,31 @@ class Configer
         $this->all_config=$options['all_config']??[];
         $this->setting_file=$options['setting_file']??'setting';
         $this->skip_setting_file=$options['skip_setting_file']??false;
+        $this->skip_setting_file=$options['skip_setting_file']??false;
+        $this->skip_env_file=$options['skip_env_file']??false;
         return $this;
     }
+
     public function _Setting($key)
     {
-        if ($this->is_inited || $this->skip_setting_file) {
+        if ($this->is_inited) {
             return $this->setting[$key]??null;
         }
-        $this->setting=$this->loadFile($this->setting_file, false);
-        if (!isset($this->setting)) {
+        if (!$this->skip_env_file){
+            $env_setting=parse_ini_file(realpath($this->base_path).'/.env');
+            $this->setting=array_merge($this->setting,$env_setting??[]);
+        }
+        if (!$this->skip_setting_file) {
             $full_setting_file=$this->path.$this->setting_file.'.php';
             if (!is_file($full_setting_file)) {
-                echo "<h1> Class ". static::class.' Fatal: no setting file['.$full_setting_file.']!,change '.$this->setting_file.'.sample.php to '. $this->setting_file.".php !</h1>";
+                echo "<h1> Class '". static::class."' Fatal: No setting file[ ".$full_setting_file.' ]!</h1>
+                echo  "<h2>change '.$this->setting_file.'.sample.php to '. $this->setting_file.".php !</h2";
                 echo "<h2> Or turn on  options ['skip_setting_file']</h2>";
                 exit;
             }
+            $setting=$this->loadFile($full_setting_file);
+            $this->setting=array_merge($this->setting,$setting);
+            
         }
         $this->is_inited=true;
         return $this->setting[$key]??null;
@@ -63,19 +78,13 @@ class Configer
         if (isset($this->all_config[$file_basename])) {
             return $this->all_config[$file_basename];
         }
-        $config=$this->loadFile($file_basename, false);
+        $full_file=$this->path.$basename.'.php';
+        $config=$this->loadFile($full_file);
         $this->all_config[$file_basename]=$config;
         return $config;
     }
-    protected function loadFile($basename, $checkfile=true)
+    protected function loadFile($full_file)
     {
-        $file=$this->path.$basename.'.php';
-        if ($checkfile && !is_file($file)) {
-            return null;
-        }
-        $ret=(function ($file) {
-            return include $file;
-        })($file);
-        return $ret;
+        return require $file;
     }
 }
