@@ -5,7 +5,7 @@
 
 [查看 SwooleHttpd 的文档](README-SwooleHttpd.md)
 ##  教程
-[教程](tutorial.md) ,强烈推荐过 [教程](tutorial.md) 这篇文章。
+[教程](tutorial.md) ,强烈推荐先过 [教程](tutorial.md) 这篇文章。
 
 ### Composer 安装
 
@@ -50,18 +50,19 @@ composer require dnmvcs/framework
 * DN-MVCS 可以规范为，Service 类只能用 MY\Base\ServiceHelper . Controller 类 只能用 MY\Base\ControllerHelper .Model 类只能引用 MY\Base\ModelHepler。 View 类只能用 ViewHelper ，其他类不允许用。也可以规范成 只用 MY\Base\App 类这个系统类。其中 MY 这个命名空间你可以自定义。
 
 ### 和其他框架简单对比
-```text
-                           CodeIgnter 4   ThinkPHP 6   Laravel 6  DN-MVCS
-    仅一行关联                 X             X            X         V
-    堆栈清晰                   V             V            X         V
-    不改源码解决所有问题        X             X            X         V
-    swoole/fpm 无缝切换        X             X            X         V
-    单一 composer 框架         X             X            X         V
-    无第三方依赖               X             X            X         V
-    高性能                     V             V            X         V
-    代码简洁                   V             V            X         V
-    以库引用                   X             X            X         V
-```
+
+|功能                 | CodeIgnter 4 | ThinkPHP 6 | Laravel 6 | DN-MVCS |
+|---------------------|--------------|------------|-----------|---------|
+|仅一行关联           |              |            |           | V       |
+|堆栈清晰             | V            | V          |           | V       |
+|不改源码解决所有问题 |              |            |           | V       |
+|swoole/fpm 无缝切换  |              |            |           | V       |
+|以库引用             |              |            |           | V       |
+|单一 composer 框架   |              |            |           | V       |
+|无第三方依赖         |              |            |           | V       |
+|高性能               | V            | V          |           | V       |
+|代码简洁             | V            | V          |           | V       |
+
 ## 关于 Servivce 层
 
 MVC 结构的时候，你们业务逻辑放在哪里？
@@ -119,6 +120,27 @@ Controller --> Service ------------------------------ ---> Model
 * 更多的杀手级应用。
     
 ## 样例
+### hello world
+```php
+<?php
+require_once __DIR__.'/../vendor/autoload.php';
+
+class Main
+{
+    public function index()
+    {
+        echo "hello world";
+    }
+}
+$options=[
+    'namespace_controller'=>'\\',   // 设置控制器的命名空间为根
+    'skip_setting_file'=>true,      // 跳过配置文件
+];
+DNMVCS\DNMVCS::RunQuickly($options);
+
+```
+### 复杂例子
+
 这个例子，在单一的文件里演示如何使用 DN-MVCS。
 设置正确的 引用文件 '../vendor/autoload.php' 。
 你可直接在浏览器里打开这个文件。
@@ -126,14 +148,198 @@ Controller --> Service ------------------------------ ---> Model
 这个样例是为了演示特性把所有东西集中到一个文件，
 虽然便于复制粘贴，但是结构偏凌乱，
 实际编码不会把所有东西全放在同一个文件里。
+
 ```php
+<?php
+namespace {
+    require_once __DIR__.'/../vendor/autoload.php';
+}
+// 以下部分是核心程序员写的。
+namespace MySpace\Base
+{
+    use \DNMVCS\Core\View as CoreView;
+    
+    // 默认的View 不支持函数调用，我们这里替换他。
+    class App extends \DNMVCS\DNMVCS {
+        protected function onInit() {
+            CoreView::G(View::G()); // 替换默认类
+            return parent::onInit();
+        }
+    }
+    
+    //如果有 MySpace\View\Views 类的方法，则尝试调用
+    
+    class View extends \DNMVCS\Core\View
+    {
+        public function _Show($data = [], $view) {
+            $ns = 'MySpace\View\Views';
+            $func = str_replace('/', '_', $view);
+            if (is_callable([$ns,$func])) {
+                $header=str_replace('/', '_', $this->head_file);
+                $footer=str_replace('/', '_', $this->foot_file);
+                if (is_callable([$ns,$header])) {
+                    ([$ns,$header])($data);
+                }
+                ([$ns,$func])($data);
+                if (is_callable([$ns,$footer])) {
+                    ([$ns,$footer])($data);
+                }
+                return;
+            }
+            return parent::_Show($data, $view);
+        }
+        public function _ShowBlock($view, $data = null)
+        {
+            $ns = 'MySpace\View\Views';
+            $func = str_replace('/', '_', $view);
+            if (is_callable([$ns,$func])) {
+                ([$ns,$func])($data);
+                return;
+            }
+            return parent::_Show($data, $view);
+        }
+    }
+    class BaseService
+    {
+        use \DNMVCS\SingletonEx;   //单例模式
+    }
+    class BaseModel
+    {
+        use \DNMVCS\SingletonEx;   //单例模式
+    }
+} // end namespace
+
+namespace MySpace\Base\Helper 
+{
+    class ControllerHelper extends \DNMVCS\Helper\ControllerHelper
+    {
+        // 一般不需要添加东西，继承就够了
+    }
+    class ServiceHelper extends \DNMVCS\Helper\ServiceHelper
+    {
+        // 一般不需要添加东西，继承就够了
+    }
+    class ModelHelper extends \DNMVCS\Helper\ModelHelper {
+        // 一般不需要添加东西，继承就够了
+    }
+    class ViewHelper extends \DNMVCS\Helper\ViewHelper {
+        // 一般不需要添加东西，继承就够了
+    }
+
+}
+// 以下部分是普通程序员写的。
+namespace MySpace\Controller {
+
+    use MySpace\Base\Helper\ControllerHelper as C;
+    use MySpace\Service\MyService;
+
+    class Main
+    {
+        public function __construct()
+        {
+            C::setViewWrapper('header','footer');
+        }
+        public function index()
+        {
+            $output = "Hello, now time is " . C::H(MyService::G()->getTimeDesc());
+            $url_about=C::URL('about/me');
+            C::Show(get_defined_vars(),'main_view'); //
+        }
+    }
+    class about
+    {
+        public function me() {
+            $url_main=C::URL('');
+            C::setViewWrapper('header','footer');
+            C::Show(get_defined_vars()); //
+        }
+    }
+}
+
+namespace MySpace\Service
+{
+    use MySpace\Base\Helper\ServiceHelper as S;
+    use MySpace\Base\BaseService;
+    use MySpace\Model\MyModel;
+
+    class MyService extends BaseService
+    {
+        public function getTimeDesc() {
+            return "<" . MyModel::G()->getTimeDesc() . ">";
+        }
+    }
+
+}
+
+namespace MySpace\Model
+{
+    use MySpace\Base\Helper\ModelHelper as M;
+    use MySpace\Base\BaseModel;
+
+    class MyModel extends BaseModel
+    {
+        public function getTimeDesc() {
+            return date(DATE_ATOM);
+        }
+    }
+
+}
+
+// 把 PHP 代码去掉看，这是可预览的 HTML 结构
+namespace MySpace\View {
+    class Views
+    {
+        function header($data) {
+            extract($data);
+            ?>
+            <html>
+                <head>
+                </head>
+                <body>
+                <header style="border:1px gray solid;">I am Header</header>
+    <?php
+        }
+
+        function main_view($data) {
+            extract($data);
+    ?>
+            <h1><?=$output?></h1>
+            <a href="<?=$url_about?>">go next</a>
+    <?php
+        }
+        function about_me($data)
+        {
+            extract($data);
+            ?>
+            <h1> OK, go back.</h1>
+            <a href="<?=$url_main?>">back</a>
+    <?php
+        }
+        function footer($data) 
+        {
+    ?>
+            <footer style="border:1px gray solid;">I am footer</footer>
+        </body>
+    </html>
+    <?php
+        }
+    }
+}
+//启动部分，要核心成员写。
+namespace {
+    $options=[];
+    $options['namespace']=rtrim('MySpace\\', '\\'); //项目命名空间为 MySpace
+    $options['skip_app_autoload']=true; // 跳过app 用的 autoload 免受干扰
+    $options['skip_setting_file']=true; // 跳过设置文件
+    $options['is_debug']=true;  // 开启调试模式
+    \DNMVCS\DNMVCS::RunQuickly($options, function () {});
+}
 
 ```
 ## 架构图
 DN-MVCS/Framwork 全框架
-
 ![DN-MVCS](doc/dnmvcs.gv.svg)
-SwooleHttpd 扩展
+DN-MVCS/SwooleHttpd 扩展
 ![swoolehttpd](doc/swoolehttpd.gv.svg)
 ## 还有什么要说的
 
