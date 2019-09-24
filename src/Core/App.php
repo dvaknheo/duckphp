@@ -302,8 +302,7 @@ class App
         
         $a=explode('\\', get_class($this));
         array_pop($a);
-        $namespace=ltrim(implode('\\', $a).'\\', '\\').'\\';  // __NAMESPACE__
-        
+        $namespace=ltrim(implode('\\', $a).'\\', '\\');  // __NAMESPACE__
         foreach ($components as $component) {
             $class=static::$componentClassMap[strtoupper($component)]??null;
             $full_class=($class===null)?$component:$namespace.$class;
