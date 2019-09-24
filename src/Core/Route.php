@@ -48,6 +48,8 @@ class Route
     public $callback=null;
     public $ext_route_handler=null;
     public $error='';
+    protected $prepend_handler=null;
+    protected $append_handler=null;
     
     public static function RunQuickly(array $options=[], callable $after_init=null)
     {
@@ -143,9 +145,8 @@ class Route
         $this->request_method=$server['REQUEST_METHOD']??'GET';
         $this->path_info=$server['PATH_INFO']??'';
         
-        $argv=$server['argv']??[];
-        
         if (PHP_SAPI==='cli') {
+            $argv=$server['argv']??[];
             if (count($argv)>=2) {
                 $this->path_info=$argv[1];
                 array_shift($argv);
@@ -181,30 +182,54 @@ class Route
         }
         return true;
     }
-    public function run()
+    protected function beforeRun()
     {
         if (!$this->has_bind_server_data) {
             $this->bindServerData($_SERVER);
         }
         $this->path_info=ltrim($this->path_info, '/');
         $this->callback=null;
+        
         foreach ($this->routeHooks as $hook) {
             ($hook)($this);
         }
         if (null===$this->callback) {
             $this->callback=$this->defaultRouteHandler();
         }
-        
-        if (null===$this->callback && $this->ext_route_handler) {
-            $this->callback=($this->ext_route_handler)();
+    }
+    public function run()
+    {
+        $ret=false;
+        if (null!==$this->prepend_handler) {
+            $ret=($this->prepend_handler)();
+            if($ret){
+                return $ret;
+            }
         }
+        
+        $this->beforeRun();
         if (null!==$this->callback) {
             ($this->callback)();
-            $this->callback=null; // to make  $this->controller __destruct;
+            $this->callback=null;
+            // to make  $this->controller __destruct;
             return true;
         }
         
+        if (null!==$this->append_handler) {
+            $ret=($this->append_handler)();
+            if($ret){
+                return $ret;
+            }
+        }
         return false;
+    }
+    public function prepend(callable $prepend_handler): void
+    {
+        $this->prepend_handler=$prepend_handler;
+    }
+    public function append(callable $append_handler): void
+    {
+        $this->append_handler=$append_handler;
     }
     public function stopRunDefaultHandler()
     {
@@ -226,9 +251,9 @@ class Route
     {
         $path_info=$this->path_info;
         
-        $class_blocks=explode('/', $path_info);
-        $method=array_pop($class_blocks);
-        $class_path=implode('/', $class_blocks);
+        $t=explode('/', $path_info);
+        $method=array_pop($t);
+        $class_path=implode('/', $t);
         
         $this->calling_path=$class_path?$this->path_info:$this->controller_welcome_class.'/'.$method;
         

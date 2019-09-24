@@ -60,7 +60,8 @@ class Lazybones
         spl_autoload_register([$this,'loadSeriveClass']);
         spl_autoload_register([$this,'loadModelClass']);
         
-        Route::G()->ext_route_handler=[$this,'runRoute'];
+        
+        Route::G()->append([$this,'run']);
     }
     public function loadSeriveClass($class)
     {
