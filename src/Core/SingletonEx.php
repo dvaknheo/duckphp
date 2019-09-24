@@ -10,11 +10,6 @@ trait SingletonEx
             $callback=DNMVCS_SINGLETONEX_REPALACER;
             return ($callback)(static::class, $object);
         }
-        
-        static $_instance;
-        $_instance=$object?:($_instance??new static);
-        return $_instance;
-        /*
         //fwrite(STDOUT,"SINGLETON ". static::class ."\n");
         if ($object) {
             self::$_instances[static::class]=$object;
@@ -26,6 +21,8 @@ trait SingletonEx
             self::$_instances[static::class]=$me;
         }
         return $me;
-        //*/
+        // Bug static $_instance;
+        // Bug $_instance=$object?:($_instance??new static);
+        // Bug return $_instance;
     }
 }

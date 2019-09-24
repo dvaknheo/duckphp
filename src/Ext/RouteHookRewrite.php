@@ -14,10 +14,11 @@ class RouteHookRewrite
     public function init($options=[], $context=null)
     {
         $this->rewrite_map=array_merge($this->rewrite_map, $options['rewrite_map']??[]);
+        var_dump($options,get_class(\DNMVCS\DNMVCS::G()));
         
         if ($context) {
             $context->addRouteHook([static::class,'Hook'], true);
-            // $context->extendClassMethodByThirdParty(static::class,[],['assignRewrite','getRewrites']);
+            $context->extendComponents(static::class,['assignRewrite','getRewrites'],['C']);
         }
     }
     public function assignRewrite($key, $value=null)
@@ -139,7 +140,6 @@ class RouteHookRewrite
                 $this->changeRouteUrl($route, $url);
             }
         }
-
         return  null;
     }
     public static function Hook($route)
