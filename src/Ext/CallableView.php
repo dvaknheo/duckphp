@@ -1,5 +1,6 @@
 <?php
 namespace DNMVCS\Ext;
+
 use DNMVCS\Core\View;
 
 class CallableView extends View
@@ -13,9 +14,9 @@ class CallableView extends View
         ];
     public function init($options=[], $context=null)
     {
-        $ret=parent::init($options,$context);
-        $this->options=array_intersect_key(array_merge($this->options,$options),$this->options);
-        if (!$this->options['callbale_view_skip_replace']){
+        $ret=parent::init($options, $context);
+        $this->options=array_intersect_key(array_merge($this->options, $options), $this->options);
+        if (!$this->options['callbale_view_skip_replace']) {
             View::G(static::G());
         }
         return $ret;
@@ -25,11 +26,10 @@ class CallableView extends View
         $ret=null;
         $func = str_replace('/', '_', $this->options['callbale_view_prefix'].$func);
         $ret=($this->options['callbale_view_class'])?[$the_class,$func]:$func;
-        if(!is_callable($ret)){
+        if (!is_callable($ret)) {
             return null;
         }
         return $ret;
-
     }
     
     public function _Show($data = [], $view)

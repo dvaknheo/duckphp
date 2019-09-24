@@ -202,7 +202,7 @@ class Route
         $ret=false;
         if (null!==$this->prepend_handler) {
             $ret=($this->prepend_handler)();
-            if($ret){
+            if ($ret) {
                 return $ret;
             }
         }
@@ -217,7 +217,7 @@ class Route
         
         if (null!==$this->append_handler) {
             $ret=($this->append_handler)();
-            if($ret){
+            if ($ret) {
                 return $ret;
             }
         }

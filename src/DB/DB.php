@@ -51,7 +51,8 @@ class DB implements DBInterface
     {
         if (is_array($string)) {
             array_walk(
-                $string, function (&$v, $k) {
+                $string,
+                function (&$v, $k) {
                     $v=is_string($v)?$this->quote($v):(string)$v;
                 }
             );

@@ -17,7 +17,7 @@ class RouteHookRewrite
         
         if ($context) {
             $context->addRouteHook([static::class,'Hook'], true);
-            $context->extendComponents(static::class,['assignRewrite','getRewrites'],['C']);
+            $context->extendComponents(static::class, ['assignRewrite','getRewrites'], ['C']);
         }
     }
     public function assignRewrite($key, $value=null)

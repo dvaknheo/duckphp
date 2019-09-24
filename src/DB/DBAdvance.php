@@ -9,7 +9,8 @@ trait DBAdvance
             return 'NULL';
         }
         array_walk(
-            $array, function (&$v, $k) {
+            $array,
+            function (&$v, $k) {
                 $v=is_string($v)?$this->quote($v):(string)$v;
             }
         );

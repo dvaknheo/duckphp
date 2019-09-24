@@ -48,9 +48,9 @@ class Configer
         if ($this->is_inited) {
             return $this->setting[$key]??null;
         }
-        if (!$this->skip_env_file){
+        if (!$this->skip_env_file) {
             $env_setting=parse_ini_file(realpath($this->base_path).'/.env');
-            $this->setting=array_merge($this->setting,$env_setting??[]);
+            $this->setting=array_merge($this->setting, $env_setting??[]);
         }
         if (!$this->skip_setting_file) {
             $full_setting_file=$this->path.$this->setting_file.'.php';
@@ -61,8 +61,7 @@ class Configer
                 exit;
             }
             $setting=$this->loadFile($full_setting_file);
-            $this->setting=array_merge($this->setting,$setting);
-            
+            $this->setting=array_merge($this->setting, $setting);
         }
         $this->is_inited=true;
         return $this->setting[$key]??null;

@@ -43,7 +43,8 @@ class Misc
         }
         $keys=array_keys($data[0]);
         array_walk(
-            $keys, function (&$val, $k) {
+            $keys,
+            function (&$val, $k) {
                 $val='{'.$val.'}';
             }
         );
