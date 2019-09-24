@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/../autoload.php';
 return;
-$dest=realpath(__DIR__.'/../tests/').'/';
+$dest=realpath(__DIR__.'/../tests/').'/input2/';
 $source=realpath(__DIR__.'/../src/').'/';
 $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
 $iterator = new \RecursiveIteratorIterator($directory);
@@ -16,8 +16,12 @@ foreach ($files as $file) {
     
     $data =MakeTest($file,$short_file);
     
-    $file_name=str_replace('.php','Test.php',$short_file);
-    file_put_contents($dest.$file_name,$data);
+    $file_name=$dest.str_replace('.php','Test.php',$short_file);
+    if( is_file($file_name)){
+        echo "File Exists:".$file_name."\n";
+        continue;
+    }
+    file_put_contents($file_name,$data);
 }
 function MakeDir($short_file,$dest)
 {
@@ -34,33 +38,37 @@ function MakeDir($short_file,$dest)
 function MakeTest($file,$short_file)
 {
     $data=file_get_contents($file);
-    preg_match_all('/ function ([^\(]+)\(/',$data,$m);
+    preg_match_all('/ function (([^\(]+)\([^\)]*\))/',$data,$m);
     $funcs=$m[1];
     
+    $ns='DNMVCS\\'.str_replace('/','\\',dirname($short_file));
     $namespace='tests\\'.str_replace('/','\\',dirname($short_file));
     if(dirname($short_file)=='.'){
         $namespace='tests';
     }
     $class=basename($short_file,'.php').'Test';
+    $init_class=basename($short_file,'.php').'';
     $ret='<'.'?php';
     $ret.=<<<EOT
 
 namespace $namespace;
-
+use {$ns}\\{$init_class};
 class $class extends \PHPUnit\Framework\TestCase
 {
+    public function testAll()
+    {
 
 EOT;
     foreach($funcs as $v){
         $v=ucfirst(str_replace('&','',$v));
 $ret.=<<<EOT
-    public function test$v()
-    {
-    }
+        {$init_class}::G()->$v;
 
 EOT;
     }
 $ret.=<<<EOT
+        \$this->assertTrue(true);
+    }
 }
 
 EOT;

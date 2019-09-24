@@ -3,18 +3,10 @@ namespace tests{
 
 class FullTest extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp():void
-    {
-        //fwrite(STDOUT, __METHOD__ . "\n");
-    }
-    protected function tearDown():void
-    {
-        //fwrite(STDOUT, __METHOD__ . "\n");
-    }
-    /*
+
+    //*
     public function testMain()
     {
-
         /////
         $options=[];
         $options['skip_setting_file']=true;
@@ -36,14 +28,18 @@ class FullTest extends \PHPUnit\Framework\TestCase
         $options['namespace']='MySpace';
         $options['error_404']=null;
         $flag=\DNMVCS\DNMVCS::RunQuickly($options,function(){
-            array_pop($_SERVER['argv']);
-            array_pop($_SERVER['argv']);
-            $_SERVER['argc']=count($_SERVER['argv']);
+
         });
         $this->assertTrue($flag);
     }
     /*
-    public function test3(){
+
+    public function test3()
+    {
+        \DNMVCS\DNMVCS::G(new \DNMVCS\DNMVCS())->init(['overrid_class'=>'DNMVCS\DNMVCS','skip_setting_file'=>true])->stopRunDefaultHandler();
+        $this->assertTrue(true);
+    }
+        public function test3(){
     
         define('DNMVCS_SINGLETONEX_REPALACER', \GSingleton::class . '::'.'SingletonInstance');
         \T::G();
@@ -88,17 +84,12 @@ namespace MySpace\Base
         {
             return parent::onInit();
         }
-        protected function onRun()
-        {
-            return parent::onRun();
-        }
     }
 }
 namespace MySpace\Base\Helper
 {
     class ControllerHelper extends \DNMVCS\Helper\ControllerHelper
     {
-        
     }
     class ServiceHelper extends \DNMVCS\Helper\ServiceHelper
     {
@@ -252,11 +243,43 @@ App::session_set_save_handler();
     }
 
 }
-namespace MySpace\Service
+namespace MySpace
 {
-}
-namespace MySpace\Model
-{
-    //
+    class MyService
+    {
+        public function doSomeThing()
+        {
+            M::DB();
+            M::DB_W();
+            M::DB_R();
+            M::IsDebug();
+            M::Platform();
+            M::GetExtendStaticStaticMethodList();
+            M::ThrowOn();
+            
+            M::AssignExtendStaticMethod();
+            M::CallExtendStaticMethod();
+            M::__callStatic();
+            
+        }
+    }
+    class MyModel
+    {
+        public function doSomeThing()
+        {
+            M::DB();
+            M::DB_W();
+            M::DB_R();
+            M::IsDebug();
+            M::Platform();
+            M::GetExtendStaticStaticMethodList();
+            M::ThrowOn();
+            
+            M::AssignExtendStaticMethod();
+            M::CallExtendStaticMethod();
+            M::__callStatic();
+            
+        }
+    }
 }
 
