@@ -14,7 +14,6 @@ class RouteHookRewrite
     public function init($options=[], $context=null)
     {
         $this->rewrite_map=array_merge($this->rewrite_map, $options['rewrite_map']??[]);
-        var_dump($options,get_class(\DNMVCS\DNMVCS::G()));
         
         if ($context) {
             $context->addRouteHook([static::class,'Hook'], true);
