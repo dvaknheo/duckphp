@@ -9,7 +9,19 @@ class ServiceHelperTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(ServiceHelper::class);
         
-        //code here
+        $path_base=realpath(__DIR__.'/../../');
+        $path_config=$path_base.'/data_for_tests/Core/Helper/ServiceHelper/';
+        $options=[
+            'skip_setting_file'=>true,
+            'path_config'=>$path_config,
+        ];
+        \DNMVCS\Core\Configer::G()->init($options);
+        $key='key';
+        $file_basename='config';
+        
+        ServiceHelper::Setting($key);
+        ServiceHelper::Config($key, $file_basename);
+        ServiceHelper::LoadConfig($file_basename);
         
         \MyCodeCoverage::G()->end(ServiceHelper::class);
         $this->assertTrue(true);

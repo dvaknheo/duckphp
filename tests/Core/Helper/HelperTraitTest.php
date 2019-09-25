@@ -9,13 +9,24 @@ class HelperTraitTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(HelperTrait::class);
         
-        //code here
+        $options=[
+            'skip_setting_file'=>true,
+            'is_debug'=>true,
+            'is_debug'=>'for_tests',
+        ];
+        \DNMVCS\Core\APP::G()->init($options);
+        
+        HelperTraitObject::IsDebug();
+        HelperTraitObject::Platform();
         
         \MyCodeCoverage::G()->end(HelperTrait::class);
         $this->assertTrue(true);
         /*
-        HelperTrait::G()->IsDebug();
-        HelperTrait::G()->Platform();
+
         //*/
     }
+}
+class HelperTraitObject
+{
+    use HelperTrait;
 }
