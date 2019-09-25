@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Ext;
+
 use DNMVCS\Ext\JsonRpcExt;
 
 class JsonRpcExtTest extends \PHPUnit\Framework\TestCase

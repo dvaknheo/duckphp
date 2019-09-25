@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Core;
+
 use DNMVCS\Core\HttpServer;
 
 class HttpServerTest extends \PHPUnit\Framework\TestCase

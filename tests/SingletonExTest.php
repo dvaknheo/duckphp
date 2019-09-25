@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS;
+
 use DNMVCS\SingletonEx;
 
 class SingletonExTest extends \PHPUnit\Framework\TestCase

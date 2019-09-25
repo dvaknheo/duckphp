@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Ext;
+
 use DNMVCS\Ext\FacadesAutoLoader;
 
 class FacadesAutoLoaderTest extends \PHPUnit\Framework\TestCase

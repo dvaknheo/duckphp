@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Ext;
+
 use DNMVCS\Ext\StrictCheck;
 
 class StrictCheckTest extends \PHPUnit\Framework\TestCase

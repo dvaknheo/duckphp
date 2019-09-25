@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS;
+
 use DNMVCS\DNMVCS;
 
 class DNMVCSTest extends \PHPUnit\Framework\TestCase

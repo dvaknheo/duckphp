@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Ext;
+
 use DNMVCS\Ext\CallableView;
 
 class CallableViewTest extends \PHPUnit\Framework\TestCase

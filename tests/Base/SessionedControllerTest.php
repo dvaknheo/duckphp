@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Base;
+
 use DNMVCS\Base\SessionedController;
 
 class SessionedControllerTest extends \PHPUnit\Framework\TestCase

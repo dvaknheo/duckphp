@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Ext;
+
 use DNMVCS\Ext\RouteHookRouteMap;
 
 class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase

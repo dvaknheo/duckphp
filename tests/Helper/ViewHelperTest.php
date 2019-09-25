@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Helper;
+
 use DNMVCS\Helper\ViewHelper;
 
 class ViewHelperTest extends \PHPUnit\Framework\TestCase

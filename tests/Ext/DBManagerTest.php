@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Ext;
+
 use DNMVCS\Ext\DBManager;
 
 class DBManagerTest extends \PHPUnit\Framework\TestCase

@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Ext;
+
 use DNMVCS\Ext\DBReusePoolProxy;
 
 class DBReusePoolProxyTest extends \PHPUnit\Framework\TestCase

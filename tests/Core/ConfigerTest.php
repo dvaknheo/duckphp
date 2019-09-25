@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Core;
+
 use DNMVCS\Core\Configer;
 
 class ConfigerTest extends \PHPUnit\Framework\TestCase

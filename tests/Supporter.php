@@ -21,7 +21,7 @@ class Supporter extends \PHPUnit\Framework\TestCase
         $dest=__DIR__;
         $source=__DIR__.'/../src';
 
-        TestFileGenerator::Run($source,$dest);
+        TestFileGenerator::Run($source, $dest);
         //*/
         return;
     }

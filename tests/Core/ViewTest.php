@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Core;
+
 use DNMVCS\Core\View;
 
 class ViewTest extends \PHPUnit\Framework\TestCase
@@ -8,7 +9,12 @@ class ViewTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(View::class);
         
-        //code here
+        View::G(new View());
+        $options=[
+            'path'=>'',
+            'path_view'=>'',
+        ];
+        View::G()->init($options);
         
         \MyCodeCoverage::G()->end(View::class);
         $this->assertTrue(true);
@@ -16,7 +22,7 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         View::G()->_Show($data=[], $view);
         View::G()->_ShowBlock($view, $data=null);
         View::G()->prepareFiles();
-        View::G()->init($options=[], $context=null);
+
         View::G()->setViewWrapper($head_file, $foot_file);
         View::G()->assignViewData($key, $value=null);
         //*/

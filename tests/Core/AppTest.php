@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Core;
+
 use DNMVCS\Core\App;
 
 class AppTest extends \PHPUnit\Framework\TestCase
@@ -8,7 +9,12 @@ class AppTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(App::class);
         
-        //code here
+        $options=[];
+        $options['skip_setting_file']=true;
+        $options['error_exception']=null;
+        $options['error_500']=null;
+        $options['error_404']=null;
+        $flag=\DNMVCS\DNMVCS::RunQuickly($options);
         
         \MyCodeCoverage::G()->end(App::class);
         $this->assertTrue(true);

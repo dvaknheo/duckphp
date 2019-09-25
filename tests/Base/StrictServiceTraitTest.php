@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Base;
+
 use DNMVCS\Base\StrictServiceTrait;
 
 class StrictServiceTraitTest extends \PHPUnit\Framework\TestCase

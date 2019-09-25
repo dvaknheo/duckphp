@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Core;
+
 use DNMVCS\Core\SingletonEx;
 
 class SingletonExTest extends \PHPUnit\Framework\TestCase
@@ -8,12 +9,23 @@ class SingletonExTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(SingletonEx::class);
         
-        //code here
+        SingletonExObject::G();
+        //define('DNMVCS_SINGLETONEX_REPALACER',SingletonExObject::class.'::CreateObject');
+        //SingletonExObject::G();
         
-        \MyCodeCoverage::G()->end(SingletonEx::class);
+        \MyCodeCoverage::G()->end();
         $this->assertTrue(true);
         /*
         SingletonEx::G()->G($object=null);
         //*/
+    }
+}
+class SingletonExObject
+{
+    use SingletonEx;
+    
+    public static function CreateObject($class, $object)
+    {
+        return new $class;
     }
 }

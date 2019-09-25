@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Helper;
+
 use DNMVCS\Helper\ServiceHelper;
 
 class ServiceHelperTest extends \PHPUnit\Framework\TestCase

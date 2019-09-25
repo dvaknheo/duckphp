@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Ext;
+
 use DNMVCS\Ext\RouteHookRewrite;
 
 class RouteHookRewriteTest extends \PHPUnit\Framework\TestCase

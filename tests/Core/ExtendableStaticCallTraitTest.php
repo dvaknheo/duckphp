@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Core;
+
 use DNMVCS\Core\ExtendableStaticCallTrait;
 
 class ExtendableStaticCallTraitTest extends \PHPUnit\Framework\TestCase

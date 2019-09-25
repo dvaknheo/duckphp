@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Core;
+
 use DNMVCS\Core\SuperGlobal;
 
 class SuperGlobalTest extends \PHPUnit\Framework\TestCase
@@ -9,8 +10,10 @@ class SuperGlobalTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(SuperGlobal::class);
         
         //code here
-        
-        \MyCodeCoverage::G()->end(SuperGlobal::class);
+        SuperGlobal::G()->init();
+        SuperGlobal::G()->_GLOBALS('k', 'v');
+
+        \MyCodeCoverage::G()->end();
         $this->assertTrue(true);
         /*
         SuperGlobal::G()->__construct();

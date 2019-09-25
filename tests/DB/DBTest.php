@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\DB;
+
 use DNMVCS\DB\DB;
 
 class DBTest extends \PHPUnit\Framework\TestCase

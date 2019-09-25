@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Core\Helper;
+
 use DNMVCS\Core\Helper\HelperTrait;
 
 class HelperTraitTest extends \PHPUnit\Framework\TestCase

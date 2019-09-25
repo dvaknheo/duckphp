@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Ext;
+
 use DNMVCS\Ext\RouteHookDirectoryMode;
 
 class RouteHookDirectoryModeTest extends \PHPUnit\Framework\TestCase

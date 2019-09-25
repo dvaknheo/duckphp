@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Core;
+
 use DNMVCS\Core\AutoLoader;
 
 class AutoLoaderTest extends \PHPUnit\Framework\TestCase

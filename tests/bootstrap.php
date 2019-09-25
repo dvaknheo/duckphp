@@ -25,9 +25,9 @@ class MyCodeCoverage
         $path=realpath(__DIR__.'/../src');
         $coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage();
         $coverage->filter()->addDirectoryToWhitelist($path);
-        $coverage->setTests(array (
-          'T' => 
-          array (
+        $coverage->setTests(array(
+          'T' =>
+          array(
             'size' => 'unknown',
             'status' => -1,
           ),
@@ -40,14 +40,12 @@ class MyCodeCoverage
         $files = \iterator_to_array($iterator, false);
         foreach ($files as $file) {
             $coverage->merge(static::include_file($file));
-            
         }
 
         $writer = new \SebastianBergmann\CodeCoverage\Report\Html\Facade;
-        $writer->process($coverage,__DIR__ . '/test_reports');
-        
+        $writer->process($coverage, __DIR__ . '/test_reports');
     }
-    static function G($object=null)
+    public static function G($object=null)
     {
         //Simplist
         static $_instance;
@@ -58,11 +56,11 @@ class MyCodeCoverage
     protected $test_class;
     protected function setPath($path)
     {
-        if(is_file($path)){
+        if (is_file($path)) {
             $this->coverage->filter()->addFileToWhitelist($path);
-        }elseif (is_object($path)) {
+        } elseif (is_object($path)) {
             $this->coverage->setFileter($path);
-        }else{
+        } else {
             $this->coverage->filter()->addDirectoryToWhitelist($path);
         }
     }
@@ -71,7 +69,7 @@ class MyCodeCoverage
         $ref=new ReflectionClass($class);
         return $ref->getFileName();
     }
-    public function begin($class,$name='T')
+    public function begin($class, $name='T')
     {
         $this->test_class=$class;
         $this->coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage();
@@ -83,32 +81,32 @@ class MyCodeCoverage
         $this->coverage->stop();
         
         $writer = new \SebastianBergmann\CodeCoverage\Report\PHP;
-        $path=substr(str_replace('\\','/',$this->test_class),strlen('DNMVCS\\'));
-        $path=__DIR__.'/dumps/'.$path .'.php';
-        $writer->process($this->coverage,$path);
+        $path=substr(str_replace('\\', '/', $this->test_class), strlen('DNMVCS\\'));
+        $path=__DIR__.'/test_coveragedumps/'.$path .'.php';
+        $writer->process($this->coverage, $path);
         $this->coverage=null;
         $this->test_class='';
     }
     
     ///////////////////////
-    public function run($path,$name,$callback)
+    public function run($path, $name, $callback)
     {
-        $this->begin($path,$name);
-        ($callback)($path,$name);
+        $this->begin($path, $name);
+        ($callback)($path, $name);
         return $this->end();
     }
-    public function merge($path,$name,$data_list)
+    public function merge($path, $name, $data_list)
     {
         $coverage =$this->coverage??new \SebastianBergmann\CodeCoverage\CodeCoverage;
         $this->setPath($path);
-        foreach($data_list as $data){
-            $this->coverage->append($data,$name);
+        foreach ($data_list as $data) {
+            $this->coverage->append($data, $name);
         }
     }
     public function reportHtml($output_path)
     {
         $writer = new \SebastianBergmann\CodeCoverage\Report\Html\Facade;
-        $writer->process($this->coverage,$output_path);
+        $writer->process($this->coverage, $output_path);
     }
     public function report($output_path)
     {
@@ -118,11 +116,11 @@ class MyCodeCoverage
         $ret=array_shift($t);
         unset($ret['methods']);
         var_dump( $ret );
-        
+
         return;
         */
         $writer = new \SebastianBergmann\CodeCoverage\Report\Text;
-        $x=$writer->process($this->coverage,$output_path);
+        $x=$writer->process($this->coverage, $output_path);
         echo $x;
     }
     public function clear()
@@ -135,7 +133,7 @@ $source=realpath(__DIR__.'/../src/').'/';
 
 class TestFileGenerator
 {
-    static function Run($source,$dest)
+    public static function Run($source, $dest)
     {
         $source=realpath($source).'/';
         $dest=realpath($dest).'/';
@@ -144,27 +142,27 @@ class TestFileGenerator
         $iterator = new \RecursiveIteratorIterator($directory);
         $files = \iterator_to_array($iterator, false);
         foreach ($files as $file) {
-            $short_file=substr($file,strlen($source));
-            if (substr($short_file,0,strlen('SwooleHttpd'))==='SwooleHttpd') {
+            $short_file=substr($file, strlen($source));
+            if (substr($short_file, 0, strlen('SwooleHttpd'))==='SwooleHttpd') {
                 continue;
             }
             
-            if($short_file==='Ext/Oldbones.php' || $short_file==='Ext/Lazybones.php'){
+            if ($short_file==='Ext/Oldbones.php' || $short_file==='Ext/Lazybones.php') {
                 continue;
             }
-            static::MakeDir($short_file,$dest);
+            static::MakeDir($short_file, $dest);
             
-            $data =static::MakeTest($file,$short_file);
+            $data =static::MakeTest($file, $short_file);
             
-            $file_name=$dest.str_replace('.php','Test.php',$short_file);
-            if( is_file($file_name)){
+            $file_name=$dest.str_replace('.php', 'Test.php', $short_file);
+            if (is_file($file_name)) {
                 echo "File Exists:".$file_name."\n";
                 continue;
             }
-            file_put_contents($file_name,$data);
+            file_put_contents($file_name, $data);
         }
     }
-    protected static function MakeDir($short_file,$dest)
+    protected static function MakeDir($short_file, $dest)
     {
         $blocks=explode(DIRECTORY_SEPARATOR, $short_file);
         array_pop($blocks);
@@ -176,19 +174,19 @@ class TestFileGenerator
             }
         }
     }
-    protected static function MakeTest($file,$short_file)
+    protected static function MakeTest($file, $short_file)
     {
         $data=file_get_contents($file);
-        preg_match_all('/ function (([^\(]+)\([^\)]*\))/',$data,$m);
+        preg_match_all('/ function (([^\(]+)\([^\)]*\))/', $data, $m);
         $funcs=$m[1];
         
-        $ns='DNMVCS\\'.str_replace('/','\\',dirname($short_file));
-        $ns=str_replace('\.','',$ns);
-        if(dirname($short_file)=='.'){
+        $ns='DNMVCS\\'.str_replace('/', '\\', dirname($short_file));
+        $ns=str_replace('\.', '', $ns);
+        if (dirname($short_file)=='.') {
             $namespace='tests';
         }
-        $TestClass=basename($short_file,'.php').'Test';
-        $InitClass=basename($short_file,'.php').'';
+        $TestClass=basename($short_file, '.php').'Test';
+        $InitClass=basename($short_file, '.php').'';
         
         $ret="<"."?php \n";
         $ret.=<<<EOT
@@ -209,13 +207,13 @@ class $TestClass extends \PHPUnit\Framework\TestCase
 
 EOT;
         foreach ($funcs as $v) {
-            $v=str_replace(['&','callable '],['',''],$v);
+            $v=str_replace(['&','callable '], ['',''], $v);
             $ret.=<<<EOT
         {$InitClass}::G()->$v;
 
 EOT;
-    }
-            $ret.=<<<EOT
+        }
+        $ret.=<<<EOT
         //*/
     }
 }

@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Helper;
+
 use DNMVCS\Helper\ControllerHelper;
 
 class ControllerHelperTest extends \PHPUnit\Framework\TestCase

@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Ext;
+
 use DNMVCS\Ext\Misc;
 
 class MiscTest extends \PHPUnit\Framework\TestCase

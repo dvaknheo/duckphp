@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Ext;
+
 use DNMVCS\Ext\RouteHookOneFileMode;
 
 class RouteHookOneFileModeTest extends \PHPUnit\Framework\TestCase

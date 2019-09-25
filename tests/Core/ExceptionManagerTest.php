@@ -1,5 +1,6 @@
-<?php 
+<?php
 namespace tests\DNMVCS\Core;
+
 use DNMVCS\Core\ExceptionManager;
 
 class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
