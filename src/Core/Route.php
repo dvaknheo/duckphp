@@ -47,10 +47,9 @@ class Route
 
     public $routeHooks=[];
     public $callback=null;
-    public $ext_route_handler=null;
     public $error='';
-    protected $prepend_handler=null;
-    protected $append_handler=null;
+    protected $prepend_object=null;
+    protected $append_object=null;
     
     public static function RunQuickly(array $options=[], callable $after_init=null)
     {
@@ -183,6 +182,7 @@ class Route
         }
         return true;
     }
+    
     protected function beforeRun()
     {
         if (!$this->has_bind_server_data) {
@@ -200,15 +200,15 @@ class Route
     }
     public function run()
     {
-        $ret=false;
-        if (null!==$this->prepend_handler) {
-            $ret=($this->prepend_handler)();
+        $this->beforeRun();
+        //
+        if (null!==$this->prepend_object) {
+            $ret=$this->prepend_object->run();
             if ($ret) {
-                return $ret;
+                return true;
             }
         }
         
-        $this->beforeRun();
         if (null!==$this->callback) {
             ($this->callback)();
             $this->callback=null;
@@ -216,25 +216,34 @@ class Route
             return true;
         }
         
-        if (null!==$this->append_handler) {
-            $ret=($this->append_handler)();
+        if (null!==$this->append_object) {
+            $ret=$this->append_object->run();
             if ($ret) {
-                return $ret;
+                return true;
             }
         }
         return false;
     }
-    public function prepend(callable $prepend_handler): void
+    public function prepend(object $object): void
     {
-        $this->prepend_handler=$prepend_handler;
+        if($this->prepend_object!==null){
+            $this->prepend_object->prepend($object);
+        }else{
+            $this->prepend_object=$object;
+        }
     }
-    public function append(callable $append_handler): void
+    public function append(object $object): void
     {
-        $this->append_handler=$append_handler;
+        if($this->append_object!==null){
+            $this->append_object->append($object);
+        }else{
+            $this->append_object=$object;
+        }
     }
     public function stopRunDefaultHandler()
     {
         $this->callback=function () {
+            return; //keep for tests
         };
     }
     

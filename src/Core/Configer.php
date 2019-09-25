@@ -82,7 +82,7 @@ class Configer
         $this->all_config[$file_basename]=$config;
         return $config;
     }
-    protected function loadFile($full_file)
+    protected function loadFile($file)
     {
         return require $file;
     }

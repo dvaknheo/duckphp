@@ -1,6 +1,92 @@
 <?php
 require __DIR__ . '/../autoload.php';
+
+class MyCodeCoverage
+{
+    static function G($object=null)
+    {
+        //Simply est
+        static $_instance;
+        $_instance=$object?:($_instance??new static);
+        return $_instance;
+    }
+    protected $coverage;
+    protected function setPath($path)
+    {
+        if(is_file($path)){
+            $this->coverage->filter()->addFileToWhitelist($path);
+        }elseif (is_object($path)) {
+            $this->coverage->setFileter($path);
+        }else{
+            $this->coverage->filter()->addDirectoryToWhitelist($path);
+        }
+    }
+    public function classToPath($class)
+    {
+        $ref=new ReflectionClass($class);
+        return $ref->getFileName();
+    }
+    public function begin($class,$name='T')
+    {
+    
+        $this->coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage();
+        $this->setPath($this->classToPath($class));
+        $this->coverage->start($name);
+    }
+    public function end()
+    {
+        return $this->coverage->stop();
+    }
+    
+    ///////////////////////
+    public function run($path,$name,$callback)
+    {
+        $this->begin($path,$name);
+        ($callback)($path,$name);
+        return $this->end();
+    }
+    public function merge($path,$name,$data_list)
+    {
+        $coverage =$this->coverage??new \SebastianBergmann\CodeCoverage\CodeCoverage;
+        $this->setPath($path);
+        foreach($data_list as $data){
+            $this->coverage->append($data,$name);
+        }
+    }
+    public function reportHtml($output_path)
+    {
+        $writer = new \SebastianBergmann\CodeCoverage\Report\Html\Facade;
+        $writer->process($this->coverage,$output_path);
+    }
+    public function report($output_path)
+    {
+        /*
+        $report = $this->coverage->getReport();
+        $t=$report->getClasses();
+        $ret=array_shift($t);
+        unset($ret['methods']);
+        var_dump( $ret );
+        
+        return;
+        */
+        $writer = new \SebastianBergmann\CodeCoverage\Report\Text;
+        $x=$writer->process($this->coverage,$output_path);
+        echo $x;
+    }
+    public function clear()
+    {
+        $this->coverage=null;
+    }
+}
+
+
+
+
+
+
+
 return;
+//-----------------------------------------------
 $dest=realpath(__DIR__.'/../tests/').'/input2/';
 $source=realpath(__DIR__.'/../src/').'/';
 $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
@@ -60,7 +146,7 @@ class $class extends \PHPUnit\Framework\TestCase
 
 EOT;
     foreach($funcs as $v){
-        $v=ucfirst(str_replace('&','',$v));
+        $v=str_replace('&','',$v);
 $ret.=<<<EOT
         {$init_class}::G()->$v;
 
