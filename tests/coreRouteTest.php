@@ -16,10 +16,10 @@ class Main
 class coreApp extends \PHPUnit\Framework\TestCase
 {
 
+    
     public function testMain()
     {
         MyCodeCoverage::G()->begin(Route::class);
-        //var_dump($_SERVER);
         
         //Main
         $options=[
@@ -30,9 +30,10 @@ class coreApp extends \PHPUnit\Framework\TestCase
         Route::RunQuickly($options);
 
         $flag=Route::RunQuickly($options,function(){
-            Route::G()->prepend(function(){return false;});
-            Route::G()->append(function(){return false;});
+            //Route::G()->prepend(function(){return false;});
+            //Route::G()->append(function(){return false;});
         });
+        
         //Get,Set
         Route::URL("A");
         Route::Parameters();
@@ -47,13 +48,27 @@ class coreApp extends \PHPUnit\Framework\TestCase
         Route::G()->stopRunDefaultHandler();
         Route::G()->setURLHandler(function(){});
         Route::G()->getURLHandler();
-        // again
 
         
         $this->assertTrue($flag);
         
         MyCodeCoverage::G()->end();
-        MyCodeCoverage::G()->report("code_2");
-        MyCodeCoverage::G()->reportHtml("report_html");
+        return;
+        //MyCodeCoverage::G()->report("code_2");
+        //MyCodeCoverage::G()->reportHtml("report_html");
+    }
+    
+    public function testMain2()
+    {
+        MyCodeCoverage::G()->begin(\DNMVCS\Core\App::class);
+        /////
+        $options=[];
+        $options['skip_setting_file']=true;
+        $options['error_exception']=null;
+        $options['error_500']=null;
+        $options['error_404']=null;
+        \DNMVCS\Core\App::RunQuickly($options);//("ZZZZ");
+         $this->assertTrue(true);
+        MyCodeCoverage::G()->end();
     }
 }

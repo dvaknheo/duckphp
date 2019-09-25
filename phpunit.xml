@@ -7,18 +7,20 @@
     convertErrorsToExceptions="true"
     convertNoticesToExceptions="true"
     convertWarningsToExceptions="true"
-    processIsolation="false"
+    processIsolation="true"
     bootstrap="tests/bootstrap.php"
     >
     <testsuites>
-        <testsuite name="DNMVCS Test Suitess">
+        <testsuite name="DNMVCS Test Suite">
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
-
+<!--
+we do codecoverage by self.
     <filter>
         <whitelist>
             <directory>./src/</directory>
         </whitelist>
     </filter>
+-->
 </phpunit>
