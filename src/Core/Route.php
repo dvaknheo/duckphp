@@ -17,6 +17,7 @@ class Route
             'controller_hide_boot_class'=>false,
             'controller_methtod_for_miss'=>'_missing',
             'controller_prefix_post'=>'do_',
+            'controller_postfix'=>'',
             
         ];
     
@@ -113,7 +114,7 @@ class Route
     public function init($options=[], $context=null)
     {
         $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
-        
+        $this->options=$options;
         $this->controller_prefix_post=$options['controller_prefix_post'];
         $this->enable_post_prefix=$this->controller_prefix_post?true:false;
         
@@ -240,7 +241,7 @@ class Route
     protected function getFullClassByAutoLoad($path_class)
     {
         $path_class=$path_class?:$this->controller_welcome_class;
-        $class=$this->namespace_controller.'\\'.str_replace('/', '\\', $path_class);
+        $class=$this->namespace_controller.'\\'.str_replace('/', '\\', $path_class).$this->options['controller_postfix'];
         if (!class_exists($class)) {
             return null;
         }
