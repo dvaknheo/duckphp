@@ -33,7 +33,7 @@ class MyCodeCoverage
           ),
         ));
 
-        $source=realpath(__DIR__.'/dumps');
+        $source=realpath(__DIR__.'/test_coveragedumps');
         $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
 
         $iterator = new \RecursiveIteratorIterator($directory);
@@ -44,7 +44,7 @@ class MyCodeCoverage
         }
 
         $writer = new \SebastianBergmann\CodeCoverage\Report\Html\Facade;
-        $writer->process($coverage,__DIR__ . '/reports');
+        $writer->process($coverage,__DIR__ . '/test_reports');
         
     }
     static function G($object=null)
@@ -145,6 +145,9 @@ class TestFileGenerator
         $files = \iterator_to_array($iterator, false);
         foreach ($files as $file) {
             $short_file=substr($file,strlen($source));
+            if (substr($short_file,0,strlen('SwooleHttpd'))==='SwooleHttpd') {
+                continue;
+            }
             
             if($short_file==='Ext/Oldbones.php' || $short_file==='Ext/Lazybones.php'){
                 continue;
@@ -180,33 +183,40 @@ class TestFileGenerator
         $funcs=$m[1];
         
         $ns='DNMVCS\\'.str_replace('/','\\',dirname($short_file));
-        $namespace='tests\\'.str_replace('/','\\',dirname($short_file));
+        $ns=str_replace('\.','',$ns);
         if(dirname($short_file)=='.'){
             $namespace='tests';
         }
-        $class=basename($short_file,'.php').'Test';
-        $init_class=basename($short_file,'.php').'';
-        $ret='<'.'?php';
+        $TestClass=basename($short_file,'.php').'Test';
+        $InitClass=basename($short_file,'.php').'';
+        
+        $ret="<"."?php \n";
         $ret.=<<<EOT
+namespace tests\\{$ns};
+use {$ns}\\{$InitClass};
 
-use {$ns}\\{$init_class};
-
-class $class extends \PHPUnit\Framework\TestCase
+class $TestClass extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \$this->assertTrue(true);return;
+        \\MyCodeCoverage::G()->begin({$InitClass}::class);
+        
+        //code here
+        
+        \\MyCodeCoverage::G()->end({$InitClass}::class);
+        \$this->assertTrue(true);
+        /*
 
 EOT;
         foreach ($funcs as $v) {
-            $v=str_replace('&','',$v);
+            $v=str_replace(['&','callable '],['',''],$v);
             $ret.=<<<EOT
-        {$init_class}::G()->$v;
+        {$InitClass}::G()->$v;
 
 EOT;
     }
             $ret.=<<<EOT
-        \$this->assertTrue(true);
+        //*/
     }
 }
 
