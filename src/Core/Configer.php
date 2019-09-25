@@ -23,7 +23,7 @@ class Configer
     protected $setting=[];
     protected $setting_file='setting';
     protected $skip_setting_file=false;
-    protected $skip_env_file=false;
+    protected $skip_env_file=true;
     public function init($options=[], $context=null)
     {
         $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
@@ -77,7 +77,7 @@ class Configer
         if (isset($this->all_config[$file_basename])) {
             return $this->all_config[$file_basename];
         }
-        $full_file=$this->path.$basename.'.php';
+        $full_file=$this->path.$file_basename.'.php';
         $config=$this->loadFile($full_file);
         $this->all_config[$file_basename]=$config;
         return $config;

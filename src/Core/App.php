@@ -342,7 +342,7 @@ trait Core_Handler
     }
     public function _On404(): void
     {
-        $error_view=$this->options['error_404'];
+        $error_view=$this->options['error_404']??null;
         $error_view=$this->error_view_inited?$error_view:null;
         
         static::header('', true, 404);
@@ -636,7 +636,7 @@ trait Core_Helper
             ($v)();
         }
         RuntimeState::G()->is_before_show_done=true;
-        if ($this->options['skip_view_notice_error']) {
+        if ($this->options['skip_view_notice_error']??false) {
             RuntimeState::G()->skipNoticeError();
         }
         return View::G()->_Show($data, $view);

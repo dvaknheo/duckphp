@@ -8,7 +8,7 @@ class ViewHelper
 {
     use HelperTrait;
     
-    public static function &H($str)
+    public static function H($str)
     {
         return App::H($str);
     }

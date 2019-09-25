@@ -41,7 +41,13 @@ class AutoLoader
         $path=rtrim($options['path'], '/').'/';
         
         $this->namespace=$options['namespace'];
-        $this->path_namespace=$path.rtrim($options['path_namespace'], '/').'/';
+        //
+        
+        if (substr($options['path_namespace'], 0, 1)==='/') {
+            $this->path_namespace=rtrim($options['path_namespace'], '/').'/';
+        } else {
+            $this->path_namespace=$path.rtrim($options['path_namespace'], '/').'/';
+        }
         
         $this->enable_cache_classes_in_cli=$options['enable_cache_classes_in_cli'];
 
@@ -117,7 +123,7 @@ class AutoLoader
                 continue;
             }
             try {
-                @opcache_compile_file($file);
+                opcache_compile_file($file);
             } catch (\Throwable $ex) {
             }
         }
