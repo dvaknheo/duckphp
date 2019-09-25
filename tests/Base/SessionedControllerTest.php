@@ -9,7 +9,7 @@ class SessionedControllerTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(SessionedController::class);
         
-        //code here
+        new SessionedController();
         
         \MyCodeCoverage::G()->end(SessionedController::class);
         $this->assertTrue(true);

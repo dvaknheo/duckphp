@@ -9,7 +9,10 @@ class HttpServerTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(HttpServer::class);
         
-        //code here
+        $options=[
+            'path_document'=>__DIR__,
+        ];
+        HttpServerParent::G()->RunQuickly($options);
         
         \MyCodeCoverage::G()->end(HttpServer::class);
         $this->assertTrue(true);
@@ -22,5 +25,12 @@ class HttpServerTest extends \PHPUnit\Framework\TestCase
         HttpServer::G()->showHelp();
         HttpServer::G()->runHttpServer();
         //*/
+    }
+}
+class HttpServerParent extends HttpServer
+{
+    protected function exec($cmd)
+    {
+        echo "Want to Run ".$cmd;
     }
 }

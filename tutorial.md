@@ -897,7 +897,7 @@ require_once('../vendor/autoload.php');
 $options=[];
 $options['override_class']='';      // 示例文件不要被子类干扰。
 $options['skip_setting_file']=true;// 不需要配置文件。
-$options['error_exception']=true; // 使用默认的错误视图
+$options['error_exception']=null; // 使用默认的错误视图
 DNMVCS::RunQuickly($options,function(){
     Db::setConfig([
         'default'     => 'mysql',

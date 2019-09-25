@@ -25,6 +25,8 @@ class MyCodeCoverage
         $path=realpath(__DIR__.'/../src');
         $coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage();
         $coverage->filter()->addDirectoryToWhitelist($path);
+        $coverage->filter()->removeDirectoryFromWhitelist($path.'/SwooleHttpd');
+
         $coverage->setTests(array(
           'T' =>
           array(
@@ -41,7 +43,7 @@ class MyCodeCoverage
         foreach ($files as $file) {
             $coverage->merge(static::include_file($file));
         }
-
+        $coverage->filter()->removeDirectoryFromWhitelist($path.'/SwooleHttpd');
         $writer = new \SebastianBergmann\CodeCoverage\Report\Html\Facade;
         $writer->process($coverage, __DIR__ . '/test_reports');
     }

@@ -414,7 +414,7 @@ trait Core_Handler
             E_DEPRECATED=>'E_DEPRECATED',
             E_USER_DEPRECATED=>'E_USER_DEPRECATED',
         );
-        if ($this->options['path']) {
+        if (!empty($this->options['path'])) {
             $path=$this->options['path'];
             $error_shortfile=(substr($errfile, 0, strlen($path))==$path)?substr($errfile, strlen($path)):$errfile;
         } else {

@@ -10,6 +10,10 @@ class DNMVCSTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(DNMVCS::class);
         
         //code here
+        //$handler=null;
+        //DNMVCS::G()->addBeforeRunHandler($handler);
+        DNMVCS::G()->getStaticComponentClasses();
+        DNMVCS::G()->getDynamicComponentClasses();
         
         \MyCodeCoverage::G()->end(DNMVCS::class);
         $this->assertTrue(true);

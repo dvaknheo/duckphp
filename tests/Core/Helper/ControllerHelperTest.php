@@ -86,12 +86,12 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         ControllerHelper::STATICS($k, $v=null);
         ControllerHelper::CLASS_STATICS($class_name, $var_name);        
         
-        
         ControllerHelper::session_start($options=[]);
         ControllerHelper::session_id(null);
         ControllerHelper::session_destroy();
         $handler=new FakeSessionHandler();
         ControllerHelper::session_set_save_handler( $handler);
+        
         \MyCodeCoverage::G()->end(ControllerHelper::class);
         $this->assertTrue(true);
 

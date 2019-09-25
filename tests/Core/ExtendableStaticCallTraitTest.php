@@ -10,14 +10,25 @@ class ExtendableStaticCallTraitTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(ExtendableStaticCallTrait::class);
         
         //code here
+        ExtendableStaticCallTraitObject::AssignExtendStaticMethod('Foo',[static::class,'Foo']);
+        
+        ExtendableStaticCallTraitObject::GetExtendStaticStaticMethodList();
+        
+        ExtendableStaticCallTraitObject::Foo(123);
         
         \MyCodeCoverage::G()->end(ExtendableStaticCallTrait::class);
         $this->assertTrue(true);
         /*
-        ExtendableStaticCallTrait::G()->AssignExtendStaticMethod($key, $value=null);
-        ExtendableStaticCallTrait::G()->GetExtendStaticStaticMethodList();
-        ExtendableStaticCallTrait::G()->CallExtendStaticMethod($name, $arguments);
-        ExtendableStaticCallTrait::G()->__callStatic($name, $arguments);
+
+        ExtendableStaticCallTraitObject::__callStatic($name, $arguments);
         //*/
     }
+    public static function Foo(...$arg)
+    {
+        var_dump(DATE(DATE_ATOM),...$arg);
+    }
+}
+class ExtendableStaticCallTraitObject
+{
+    use ExtendableStaticCallTrait;
 }

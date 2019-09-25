@@ -9,7 +9,9 @@ class HttpServerTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(HttpServer::class);
         
-        //code here
+        HttpServerParent::G()->test_checkSwoole();
+        //HttpServer::G()->test_runHttpServer();
+        HttpServerParent::G()->test_runSwooleServer(__DIR__, '127.0.0.1', 9901);
         
         \MyCodeCoverage::G()->end(HttpServer::class);
         $this->assertTrue(true);
@@ -18,5 +20,25 @@ class HttpServerTest extends \PHPUnit\Framework\TestCase
         HttpServer::G()->runHttpServer();
         HttpServer::G()->runSwooleServer($path, $host, $port);
         //*/
+    }
+}
+class HttpServerParent extends HttpServer
+{
+    public function test_checkSwoole()
+    {
+        return $this->checkSwoole();
+    }
+    public function test_runSwooleServer($path, $host, $port)
+    {
+        //$_SERVER['argc']
+        $this->options['dnmvcs']=[
+            'skip_setting_file'=>true,
+            'error_404'=>null,
+            'ext'=>[
+                'DNMVCS\SwooleHttpd\SwooleExt'=>false,
+            ]
+        ];
+        return $this->runSwooleServer($path, $host, $port);
+
     }
 }
