@@ -29,7 +29,7 @@ class SingletonExObject
     {
         static $_instance;
         $_instance=$_instance??[];
-        $_instance[$class]=$object[$class]?:($_instance??new static);
+        $_instance[$class]=$object?:($_instance[$class]??($_instance[$class]??new static));
         return $_instance[$class];
     }
 

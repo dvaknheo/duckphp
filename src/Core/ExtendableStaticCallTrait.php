@@ -33,8 +33,6 @@ trait ExtendableStaticCallTrait
                     throw new \BadMethodCallException("Call to undefined static method ".static::class ."::$name()");
                 }
             } elseif (is_string($callback)) {
-                //TODO
-                //$calls=explode('::',$callback);  //A::G::B
                 throw new \BadMethodCallException("Call to undefined static method ".static::class ."::$name()");
             } else {
                 throw new \BadMethodCallException("Call to undefined static method ".static::class ."::$name()");

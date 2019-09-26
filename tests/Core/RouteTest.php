@@ -1,5 +1,6 @@
 <?php
-namespace tests\DNMVCS\Core;
+namespace tests\DNMVCS\Core
+{
 
 use DNMVCS\Core\Route;
 
@@ -11,9 +12,9 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         
         //Main
         $options=[
-            'namespace_controller'=>'\\',
+            'namespace_controller'=>'\\tests_Core_Route',
         ];
-        $_SERVER['argv']=[ __FILE__ ,'/' ];
+        $_SERVER['argv']=[ __FILE__ ,'about/me' ];
         $_SERVER['argc']=count($_SERVER['argv']);
         Route::RunQuickly($options);
 
@@ -47,4 +48,16 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         //MyCodeCoverage::G()->report("code_2");
         //MyCodeCoverage::G()->reportHtml("report_html");
     }
+}
+
+}
+namespace tests_Core_Route
+{
+class about
+{
+    public function me()
+    {
+        var_dump(DATE(DATE_ATOM));
+    }
+}
 }
