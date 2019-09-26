@@ -27,9 +27,6 @@ class View
         $view=null;
         extract($this->data);
         
-        if (isset($this->before_show_handler)) {
-            ($this->before_show_handler)($data, $this->view);
-        }
         $this->prepareFiles();
         
         

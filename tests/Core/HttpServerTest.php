@@ -13,7 +13,8 @@ class HttpServerTest extends \PHPUnit\Framework\TestCase
             'path_document'=>__DIR__,
         ];
         HttpServerParent::G()->RunQuickly($options);
-        
+        HttpServerParent::G()->test_showHelp();
+
         \MyCodeCoverage::G()->end(HttpServer::class);
         $this->assertTrue(true);
         /*
@@ -29,8 +30,13 @@ class HttpServerTest extends \PHPUnit\Framework\TestCase
 }
 class HttpServerParent extends HttpServer
 {
-    protected function exec($cmd)
+    public function test_showHelp()
     {
-        echo "Want to Run ".$cmd;
+        $this->showHelp();
+    }
+    protected function runHttpServer()
+    {
+        $this->args['dry']=true;
+        return parent::runHttpServer();
     }
 }

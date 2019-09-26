@@ -5,7 +5,6 @@ use DNMVCS\Core\SuperGlobal;
 
 class SuperGlobalTest extends \PHPUnit\Framework\TestCase
 {
-    static $x;
 
     public function testAll()
     {
@@ -15,18 +14,21 @@ class SuperGlobalTest extends \PHPUnit\Framework\TestCase
         SuperGlobal::G()->init();
         
         $k="k";$v="v";
-        $class_name=static::class;
-        $var_name="x";
         SuperGlobal::G()->_GLOBALS($k, $v=null);
         SuperGlobal::G()->_STATICS($k, $v=null);
-        SuperGlobal::G()->_CLASS_STATICS($class_name, $var_name);        
+        SuperGlobal::G()->_CLASS_STATICS(SuperGlobal_SimpleObject::class, 'class_var');        
         
+        SuperGlobal::G()->session_start($options=[]);
         SuperGlobal::G()->session_start($options=[]);
         SuperGlobal::G()->session_id(null);
         SuperGlobal::G()->session_destroy();
-        $handler=new SuperGlobalFakeSessionHandler();
-        SuperGlobal::G()->session_set_save_handler( $handler);
         
+        $handler=new SuperGlobal_FakeSessionHandler();
+        SuperGlobal::G()->session_set_save_handler($handler);
+        try {
+            SuperGlobal::G()->session_id('12345'); //again;
+        } catch (\Throwable $ex) {
+        }
 
         \MyCodeCoverage::G()->end();
         $this->assertTrue(true);
@@ -43,7 +45,12 @@ class SuperGlobalTest extends \PHPUnit\Framework\TestCase
         //*/
     }
 }
-class SuperGlobalFakeSessionHandler implements \SessionHandlerInterface
+class SuperGlobal_SimpleObject
+{
+    static $class_var;
+
+}
+class SuperGlobal_FakeSessionHandler implements \SessionHandlerInterface
 {
     public function open($savePath, $sessionName)
     {

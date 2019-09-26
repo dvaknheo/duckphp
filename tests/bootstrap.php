@@ -11,7 +11,11 @@ return;
 */
 //-----------------------------------------------
 
-
+function GetClassTestPath($class)
+{
+    $ret=__DIR__.'/data_for_tests/'.str_replace(['DNMVCS\\','\\'],['/','/'],$class).'/';
+    return $ret;
+}
 
 
 class MyCodeCoverage

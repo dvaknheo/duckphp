@@ -10,9 +10,10 @@ class HttpServerTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(HttpServer::class);
         
         HttpServerParent::G()->test_checkSwoole();
-        //HttpServer::G()->test_runHttpServer();
+        HttpServerParent::G()->test_runHttpServer();
         HttpServerParent::G()->test_runSwooleServer(__DIR__, '127.0.0.1', 9901);
-        
+        defined('DNMVCS_WARNING_IN_TEMPLATE');
+        HttpServerParent::G()->test_runSwooleServer(__DIR__, '127.0.0.1', 9901);
         \MyCodeCoverage::G()->end(HttpServer::class);
         $this->assertTrue(true);
         /*
@@ -27,6 +28,11 @@ class HttpServerParent extends HttpServer
     public function test_checkSwoole()
     {
         return $this->checkSwoole();
+    }
+    public function test_runHttpServer()
+    {
+        $this->args['no-swoole']=true;
+        $this->runHttpServer();
     }
     public function test_runSwooleServer($path, $host, $port)
     {

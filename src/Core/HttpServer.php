@@ -161,10 +161,7 @@ class HttpServer
             echo "\n";
             return;
         }
-        $this->exec($cmd);
-    }
-    protected function exec($cmd)
-    {
-        exec($cmd);
-    }
+        exec($cmd); // @codeCoverageIgnore
+        return;
+    } // @codeCoverageIgnore
 }

@@ -9,18 +9,25 @@ class ViewTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(View::class);
         
-        $path_base=realpath(__DIR__.'/../');
-        $path_view=$path_base.'/data_for_tests/Core/View/';
+        
+        $path_view=\GetClassTestPath(View::class);
         $options=[
             'path_view'=>$path_view,
         ];
         \DNMVCS\Core\View::G()->init($options);
-        View::G()->_Show(['A'=>'b'],"view");
-        View::G()->_ShowBlock("view",['A'=>'b']);
+        View::G()->setViewWrapper('head', 'foot');
+        View::G()->assignViewData('A','aa');
+        View::G()->assignViewData(['B'=>'bb','C'=>'cc']);
+
+        View::G()->_Show(['D'=>'ddddddd'],"view");
         
-        $key="key";
-        View::G()->setViewWrapper($head_file=null, $foot_file=null);
-        View::G()->assignViewData($key, $value=null);
+        View::G()->_ShowBlock("block",['A'=>'b']);
+        
+        $options=[
+            'path'=>$path_view,
+            'path_view'=>'',
+        ];
+        \DNMVCS\Core\View::G()->init($options);
         
         \MyCodeCoverage::G()->end(View::class);
         $this->assertTrue(true);
