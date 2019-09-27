@@ -5,6 +5,6 @@ class LoadMe
 {
     public function foo()
     {
-        //var_dump(DATE(DATE_ATOM));
+        var_dump(DATE(DATE_ATOM));
     }
 }

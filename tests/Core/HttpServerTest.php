@@ -29,6 +29,12 @@ class HttpServerParent extends HttpServer
                 'optional'=>true,
             ],
     ];
+    protected function getopt($options,$longopts,&$optind)
+    {
+        $ret=getopt($options,$longopts,$optind);
+        $ret['z']='zzzzzzzzzzzzz';
+        return $ret;
+    }
     public function test_showHelp()
     {
         $this->showHelp();

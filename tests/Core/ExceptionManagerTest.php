@@ -51,8 +51,15 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
         ExceptionManager::G()->assignExceptionHandler($class, $callback=null);
         ExceptionManager::G()->setMultiExceptionHandler($classes, $callback);
         
-        \MyCodeCoverage::G()->end(ExceptionManager::class);
         
+        $exception_options=[
+            'system_exception_handler'=>[new ExceptionManagerObject(),'set_exception_handler'],
+        ];
+        ExceptionManager::G(new ExceptionManager())->init($exception_options)->run();
+        
+        ExceptionManager::G()->cleanUp();
+        
+        \MyCodeCoverage::G()->end(ExceptionManager::class);
         $this->assertTrue(true);
         /*
         

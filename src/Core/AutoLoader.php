@@ -117,9 +117,9 @@ class AutoLoader
             $ret+=$files;
         }
         foreach ($ret as $file) {
-            if (opcache_is_script_cached($file)) {
-                continue;
-            }
+            //if (opcache_is_script_cached($file)) {
+            //    continue;
+            //}
             try {
                 opcache_compile_file($file);
             } catch (\Throwable $ex) { //@codeCoverageIgnore
@@ -139,9 +139,9 @@ class AutoLoader
         $files = \iterator_to_array($iterator, false);
         $ret+=$files;
         foreach ($ret as $file) {
-            if (opcache_is_script_cached($file)) {
-                continue;
-            }
+            //if (opcache_is_script_cached($file)) {
+            //    continue;
+            //}
             try {
                 opcache_compile_file($file);
                 $flag=opcache_is_script_cached($file);

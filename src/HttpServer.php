@@ -14,16 +14,16 @@ class HttpServer extends Server
     protected function checkSwoole()
     {
         if (!function_exists('swoole_version')) {
-            return false;
+            return false; // @codeCoverageIgnore
         }
         if (!class_exists(SwooleHttpd::class)) {
-            return false;
+            return false; // @codeCoverageIgnore
         }
         return true;
     }
     protected function runHttpServer()
     {
-        if (isset($this->args['no-swoole'])) {
+        if (isset($this->args['no-swoole']) || !$this->checkSwoole() ) {
             return parent::runHttpServer();
         }
         return $this->runSwooleServer($this->options['path'], $this->host, $this->port);

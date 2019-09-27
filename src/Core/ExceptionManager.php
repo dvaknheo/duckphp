@@ -73,12 +73,14 @@ class ExceptionManager
             }
         }
         if ($inDefault) {
+            /*
             //TODO remove the dead code
             if ($this->exception_error_handler != $this->exception_error_handler_init) {
                 ($this->exception_error_handler)($ex);
                 return true;
             }
-            //
+                //class A on B ;
+            //*/
         }
         
         return false;

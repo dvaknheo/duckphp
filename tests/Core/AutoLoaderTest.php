@@ -27,15 +27,12 @@ class AutoLoaderTest extends \PHPUnit\Framework\TestCase
         $G->init($options); // retest
         
         $G->assignPathNamespace([
-            'ThisPastNotExsits'=>'NoNameSpace',
+            'ThisPathNotExsits'=>'NoNameSpace',
             $path_autoload.'AutoApp2'=> 'for_autoloadertest2',
         ]);
         $G->run();
         $G->run(); //retest
         
-spl_autoload_register(function($class){
-    var_dump($class);
-});
 
         $t=new \for_autoloadertest\LoadMe(); //_autoload
         $t->foo();
@@ -43,14 +40,21 @@ spl_autoload_register(function($class){
         $tt=new \for_autoloadertest2\LoadMe(); //_autoload
         $tt->foo();
     }catch(\Throwable $ex){
-        var_dump("".$ex);
     }
+    
+     try{
+        $tt=new \for_autoloadertest2\ThisClassNotExsits(); //_autoload
+        $tt->foo();
+    }catch(\Throwable $ex){
+    }
+    
         AutoLoader::G()->cacheClasses();
         AutoLoader::G()->cacheClasses();
-
-        $G->cacheNamespacePath($path_autoload);
-        $G->cacheNamespacePath($path_autoload);
-        $G->cacheNamespacePath('ThisPastNotExsits');
+        //opcache_invalidate($file,true);
+         
+        AutoLoader::G()->cacheNamespacePath($path_autoload);
+        AutoLoader::G()->cacheNamespacePath($path_autoload.'AutoApp/');
+        AutoLoader::G()->cacheNamespacePath('ThisPastNotExsits');
         //$G->cacheNamespacePath(path_autoload);
         $G->cleanUp();
         

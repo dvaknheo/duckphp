@@ -30,6 +30,8 @@ class MyCodeCoverage
         $coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage();
         $coverage->filter()->addDirectoryToWhitelist($path);
         $coverage->filter()->removeDirectoryFromWhitelist($path.'/SwooleHttpd');
+        $coverage->filter()->removeFileFromWhitelist($path.'/Ext/Oldbones.php');
+        $coverage->filter()->removeFileFromWhitelist($path.'/Ext/Lazybones.php');
 
         $coverage->setTests(array(
           'T' =>

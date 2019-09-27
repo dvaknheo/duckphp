@@ -89,17 +89,15 @@ class Route
 
         $basepath=substr(rtrim(str_replace('\\', '/', $this->script_filename), '/').'/', strlen($this->document_root));
 
-        if ($basepath=='/index.php') {
-            $basepath='/';
-        }
         if ($basepath=='/index.php/') {
             $basepath='/';
         }
-        
+        if ($basepath=='/index.php') {
+            $basepath='/';
+        }
         if (''===$url) {
             return $basepath;
         }
-        
         if ('?'==$url{0}) {
             return $basepath.$this->path_info.$url;
         }
@@ -139,19 +137,14 @@ class Route
         
         return $this;
     }
-    public function bindServerData($server, $use_cli=true)
+    public function bindServerData($server)
     {
         $this->script_filename=$server['SCRIPT_FILENAME']??'';
         $this->document_root=$server['DOCUMENT_ROOT']??'';
         $this->request_method=$server['REQUEST_METHOD']??'GET';
-        $this->path_info=$server['PATH_INFO']??'';
-        
-        $this->has_bind_server_data=true;
-        
-        if (!$use_cli) {
-            return $this;
-        }
-        if (PHP_SAPI==='cli') {
+        if (isset($server['PATH_INFO'])) {
+            $this->path_info=$server['PATH_INFO'];
+        }elseif (PHP_SAPI==='cli') {
             $argv=$server['argv']??[];
             if (count($argv)>=2) {
                 $this->path_info=$argv[1];
@@ -159,7 +152,11 @@ class Route
                 array_shift($argv);
                 $this->parameters=$argv;
             }
+        }else{
+            $this->path_info=''; // @codeCoverageIgnore
         }
+        
+        $this->has_bind_server_data=true;
         return $this;
     }
 
@@ -191,7 +188,7 @@ class Route
     protected function beforeRun()
     {
         if (!$this->has_bind_server_data) {
-            $this->bindServerData($_SERVER, true);
+            $this->bindServerData($_SERVER);
         }
         $this->path_info=ltrim($this->path_info, '/');
         $this->callback=null;
@@ -231,11 +228,11 @@ class Route
     }
     public function prepend(object $object): void
     {
-        array_shift($this->prependedObjectList[], $object);
+        array_unshift($this->prependedObjectList, $object);
     }
     public function append(object $object): void
     {
-        array_push($this->appendedObjectList[], $object);
+        array_push($this->appendedObjectList, $object);
     }
     public function stopRunDefaultHandler()
     {

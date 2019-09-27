@@ -25,20 +25,40 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         
         //Get,Set
         Route::URL("A");
+        Route::G()->setURLHandler(function($str){ return $str;});
+        Route::URL("BB");
+        
+        Route::G()->defaultURLHandler('/');
+
+
         Route::Parameters();
         $callback=function ($obj) {
         };
         Route::G()->addRouteHook($callback, false, true);
         Route::G()->addRouteHook($callback, false, true);
+        Route::G()->addRouteHook($callback, true, false);
+        
+        Route::G()->prepend(new RouteOjbect());
+        Route::G()->append(new RouteOjbect());
         
         Route::G()->getRouteCallingPath();
         Route::G()->getRouteCallingClass();
         Route::G()->getRouteCallingMethod();
         Route::G()->setRouteCallingMethod('_');
         Route::G()->stopRunDefaultHandler();
-        Route::G()->setURLHandler(function () {
-        });
+
         Route::G()->getURLHandler();
+
+    Route::G()->bindServerData([
+        'SCRIPT_FILENAME'=> 'script_filename',
+        'DOCUMENT_ROOT'=>'document_root',
+    ],false);
+            Route::G()->setURLHandler(null);
+        $x=Route::URL("");
+        Route::URL("?");
+        Route::URL("#");
+        var_dump($x);
+
 
         
         $this->assertTrue(true);
@@ -49,7 +69,14 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         //MyCodeCoverage::G()->reportHtml("report_html");
     }
 }
-
+class RouteOjbect
+{
+    public function run()
+    {
+        var_dump(DATE(DATE_ATOM));
+        return false;
+    }
+}
 }
 namespace tests_Core_Route
 {
@@ -57,7 +84,7 @@ class about
 {
     public function me()
     {
-        var_dump(DATE(DATE_ATOM));
+        //var_dump(DATE(DATE_ATOM));
     }
 }
 }

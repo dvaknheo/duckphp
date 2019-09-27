@@ -78,6 +78,10 @@ class HttpServer
         $this->docroot=$this->args['docroot']??$this->docroot;
         return $this;
     }
+    protected function getopt($options,$longopts,&$optind)
+    {
+        return getopt($options,$longopts,$optind); // @codeCoverageIgnore
+    }
     protected function parseCaptures($cli_options)
     {
         $shorts_map=[];
@@ -93,7 +97,8 @@ class HttpServer
         }
         $optind=null;
         $a=[];
-        $args=getopt(implode('', ($shorts)), $a, $optind);
+        //$args=getopt(implode('', ($shorts)), $a, $optind);
+        $args=$this->getopt(implode('', ($shorts)), $a, $optind);
         $args=$args?:[];
         
         $pos_args = array_slice($_SERVER['argv'], $optind);
@@ -162,5 +167,5 @@ class HttpServer
             return;
         }
         exec($cmd); // @codeCoverageIgnore
-    } // @codeCoverageIgnore
+    }// @codeCoverageIgnore
 }
