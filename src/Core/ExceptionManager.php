@@ -73,10 +73,12 @@ class ExceptionManager
             }
         }
         if ($inDefault) {
+            //TODO remove the dead code
             if ($this->exception_error_handler != $this->exception_error_handler_init) {
                 ($this->exception_error_handler)($ex);
                 return true;
             }
+            // 
         }
         
         return false;
@@ -124,11 +126,13 @@ class ExceptionManager
     }
     public function cleanUp()
     {
-        set_error_handler($this->last_error_handler);
+        restore_error_handler();
         if ($this->system_exception_handler) {
-            ($this->system_exception_handler)($this->last_exception_handler);
+            $this->system_exception_handler=null;
         } else {
-            set_exception_handler($this->last_exception_handler);
+            restore_exception_handler();
         }
+        $this->is_running=false;
+        $this->is_inited=false;
     }
 }
