@@ -272,7 +272,7 @@ class App
         $current_class=get_class($input_class::G());
         $input_class::G(new $input_class());
         if ($current_class!=$input_class) {
-            $this->cleanClass($current_class);
+            $this->cleanClass($current_class); // @codeCoverageIgnore
         }
     }
     //main produce end
@@ -369,7 +369,7 @@ trait Core_Handler
         }
         
         $is_error=is_a($ex, 'Error') || is_a($ex, 'ErrorException')?true:false;
-        $error_view=$is_error?$this->options['error_500']:$this->options['error_exception'];
+        $error_view=$is_error?$this->options['error_500']:$this->options['error_exception']??null;
         $error_view=$this->error_view_inited?$error_view:null;
         
         static::header('', true, 500);
@@ -505,12 +505,10 @@ trait Core_SystemWrapper
 
     public function _exit_system($code=0)
     {
-        // TODO CleanUp;
         if ($this->exit_handler) {
             return ($this->exit_handler)($code);
         }
-        $this->cleanUp();
-        exit($code);
+        exit($code);        // @codeCoverageIgnore
     }
     public function _set_exception_handler(callable $exception_handler)
     {
@@ -526,6 +524,7 @@ trait Core_SystemWrapper
         }
         register_shutdown_function($callback, ...$args);
     }
+    // @codeCoverageIgnoreStart
     public function system_wrapper_replace(array $funcs=[])
     {
         if (isset($funcs['header'])) {
@@ -546,6 +545,7 @@ trait Core_SystemWrapper
         
         return true;
     }
+    // @codeCoverageIgnoreEnd
     public static function system_wrapper_get_providers():array
     {
         $ret=[
@@ -652,14 +652,6 @@ trait Core_Helper
                 static::_H($v);
             }
             return $str;
-        }
-        
-        if (is_object($str)) {
-            $arr=get_object_vars($str);
-            foreach ($arr as $k =>&$v) {
-                static::_H($v);
-            }
-            return $arr;
         }
         return $str;
     }
