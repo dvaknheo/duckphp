@@ -29,7 +29,7 @@ class SwooleExt
         
         $cid=Coroutine::getuid();
         if ($cid>0) {
-            ($this->appClass)::G()->onSwooleHttpdInit(SwooleHttpd::G(), true);
+            ($this->appClass)::G()->onSwooleHttpdInit(SwooleHttpd::G(),true,null);
             return;
         }
         
@@ -44,8 +44,7 @@ class SwooleExt
         $options['http_handler']=[$this,'runSwoole'];
         SwooleHttpd::G()->init($options, null);
 
-        ($this->appClass)::G()->onSwooleHttpdInit(SwooleHttpd::G());
-        ($this->appClass)::G()->addBeforeRunHandler([static::class,'OnRun']);
+        ($this->appClass)::G()->onSwooleHttpdInit(SwooleHttpd::G(),false,[static::class,'OnRun']);
         return $this;
     }
     protected function replaceInstances()
