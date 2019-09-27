@@ -90,6 +90,7 @@ class App
     public $options=[];
     public $is_debug=true;
     public $platform='';
+    public $override_from='';
     
     protected $beforeRunHandlers=[];
     protected $error_view_inited=false;
@@ -101,25 +102,13 @@ class App
             'C'=>'Helper\ControllerHelper',
             'S'=>'Helper\ServiceHelper',
     ];
-    protected static $defaultStaticComponentClasses=[
-            'DNMVCS\Core\AutoLoader',
-            'DNMVCS\Core\ExceptionManager',
-            'DNMVCS\Core\Configer',
-            'DNMVCS\Core\View',
-            'DNMVCS\Core\Route',
-        ];
-    protected static $defaultDynamicComponentClasses=[
-            'DNMVCS\Core\RuntimeState',
-            'DNMVCS\Core\SuperGlobal',
-        ];
     public static function RunQuickly(array $options=[], callable $after_init=null): bool
     {
-        if (!$after_init) {
-            return static::G()->init($options)->run();
+        $instance=static::G()->init($options);
+        if($after_init){
+            ($after_init)();
         }
-        static::G()->init($options);
-        ($after_init)();
-        return static::G()->run();
+        return $instance->run();
     }
     protected function initOptions($options=[])
     {
@@ -150,7 +139,7 @@ class App
         if (static::class===$override_class) {
             return null;
         }
-        return static::G($override_class::G());
+        return $override_class::G();
     }
     //init
     public function init(array $options=[], object $context=null)
@@ -164,10 +153,14 @@ class App
         ExceptionManager::G()->init($exception_options, $this)->run();
         
         $object=$this->checkOverride($options);
+        
+        $override_from=$object?static::class:'';
         $object=$object??$this;
         
         (self::class)::G($object);
+        static::G($object);
         
+        $object->override_from=$override_from;
         $object->initOptions($options);
         
         return $object->onInit();
@@ -314,13 +307,29 @@ class App
     }
     public function getStaticComponentClasses()
     {
-        $ext=array_values(array_unique([ static::class,self::class])); //TODO and static class override from
-        $ret=array_merge(static::$defaultStaticComponentClasses, $ext);
+        $ret=[
+            self::class,
+            AutoLoader::class,
+            ExceptionManager::class,
+            Configer::class,
+            View::class,
+            Route::class,
+        ];
+        if(!in_array(static::class,$ret)){
+            $ret[]=static::class;
+        }
+        if($this->override_from && !in_array($this->override_from,$ret)){
+            $ret[]=$this->override_from;
+        }
         return $ret;
     }
     public function getDynamicComponentClasses()
     {
-        return static::$defaultDynamicComponentClasses;
+        $ret=[
+            RuntimeState::class,
+            SuperGlobal::class,
+        ];
+        return $ret;
     }
 }
 trait Core_Handler

@@ -51,7 +51,7 @@ class DNMVCS extends App //implements SwooleExtAppInterface
             
         ];
     // @interface SwooleExtAppInterface
-    public function onSwooleHttpdInit($SwooleHttpd, $inCoroutine=false,?callable $RrunHandler)
+    public function onSwooleHttpdInit($SwooleHttpd, $inCoroutine=false,?callable $RunHandler)
     {
         $this->options['use_super_global']=true;
         if ($inCoroutine) {
@@ -67,14 +67,12 @@ class DNMVCS extends App //implements SwooleExtAppInterface
         }
         $this->system_wrapper_replace($SwooleHttpd->system_wrapper_get_providers());
         
-        $this->addBeforeRunHandler($RrunHandler);
+        $this->addBeforeRunHandler($RunHandler);
     }
     // @interface SwooleExtAppInterface
     public function getStaticComponentClasses()
     {
-        $ext=array_values(array_unique([ static::class,self::class,parent::class]));
-        $ret=array_merge(static::$defaultStaticComponentClasses, $ext);
-        return $ret;
+        return parent::getStaticComponentClasses();
     }
     // @interface SwooleExtAppInterface
     public function getDynamicComponentClasses()

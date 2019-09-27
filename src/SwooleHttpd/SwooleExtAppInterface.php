@@ -12,7 +12,7 @@ interface SwooleExtAppInterface
     public function init($options=[], $context=null);
     public function run();
     
-    public function onSwooleHttpdInit(SwooleHttpd $SwooleHttpd,bool $InCoroutine,?callable $RrunHandler=null);
+    public function onSwooleHttpdInit(SwooleHttpd $SwooleHttpd,bool $InCoroutine,?callable $RunHandler=null);
     
     public function addBeforeRunHandler($handler); // TODO kill
     public function getDynamicComponentClasses();
