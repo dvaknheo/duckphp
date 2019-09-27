@@ -78,7 +78,7 @@ class ExceptionManager
                 ($this->exception_error_handler)($ex);
                 return true;
             }
-            // 
+            //
         }
         
         return false;

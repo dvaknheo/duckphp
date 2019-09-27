@@ -7,9 +7,11 @@ class AutoLoaderTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
+        opcache_reset();
+        //$this->assertTrue(ini_get('opcache.enable_cli'));
         \MyCodeCoverage::G()->begin(AutoLoader::class);
-        $path_base=realpath(__DIR__.'/../../tests');
-        $path_autoload=$path_base.'/data_for_tests/Core/AutoLoader/';
+        $path_autoload=\GetClassTestPath(AutoLoader::class);
+        var_dump($path_autoload);
         $options=[
             'path'=>$path_autoload,
             'path_namespace'=>'AutoApp',
@@ -19,26 +21,46 @@ class AutoLoaderTest extends \PHPUnit\Framework\TestCase
             
             'enable_cache_classes_in_cli'=>true,
         ];
-        $secode=(new AutoLoader())->init([]);
-        $G=new AutoLoader();
+        
+        $G=AutoLoader::G();
         $G->init($options);
         $G->init($options); // retest
+        
+        $G->assignPathNamespace([
+            'ThisPastNotExsits'=>'NoNameSpace',
+            $path_autoload.'AutoApp2'=> 'for_autoloadertest2',
+        ]);
         $G->run();
         $G->run(); //retest
         
-        $t=new \for_autoloadertest\LoadMe(); //_autoload
-        
-        $G->cacheNamespacePath(__DIR__);
-        $G->cleanUp();
+spl_autoload_register(function($class){
+    var_dump($class);
+});
 
+        $t=new \for_autoloadertest\LoadMe(); //_autoload
+        $t->foo();
+    try{
+        $tt=new \for_autoloadertest2\LoadMe(); //_autoload
+        $tt->foo();
+    }catch(\Throwable $ex){
+        var_dump("".$ex);
+    }
+        AutoLoader::G()->cacheClasses();
+        AutoLoader::G()->cacheClasses();
+
+        $G->cacheNamespacePath($path_autoload);
+        $G->cacheNamespacePath($path_autoload);
+        $G->cacheNamespacePath('ThisPastNotExsits');
+        //$G->cacheNamespacePath(path_autoload);
+        $G->cleanUp();
+        
+        $path_autoload=\GetClassTestPath(AutoLoader::class);
         $sec=(new AutoLoader())->init([
             'skip_system_autoload'=>true,
             'skip_app_autoload'=>true,
+            'path_namespace'=>'/path_autoload',
         ]);
-        $sec->assignPathNamespace([
-            
-        ]);
-
+        
         \MyCodeCoverage::G()->end(AutoLoader::class);
         $this->assertTrue(true);
         /*

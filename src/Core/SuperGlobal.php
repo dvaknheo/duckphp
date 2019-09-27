@@ -56,7 +56,7 @@ class SuperGlobal
     }
     public function session_id($session_id)
     {
-        if($session_id===null){
+        if ($session_id===null) {
             return session_id();
         }
         return session_id($session_id);

@@ -14,25 +14,29 @@ class HttpServerTest extends \PHPUnit\Framework\TestCase
         ];
         HttpServerParent::G()->RunQuickly($options);
         HttpServerParent::G()->test_showHelp();
+        HttpServerParent::G()->test_run2();
 
         \MyCodeCoverage::G()->end(HttpServer::class);
         $this->assertTrue(true);
-        /*
-        HttpServer::G()->RunQuickly($options);
-        HttpServer::G()->init($options=[], $context=null);
-        HttpServer::G()->parseCaptures($cli_options);
-        HttpServer::G()->run();
-        HttpServer::G()->showWelcome();
-        HttpServer::G()->showHelp();
-        HttpServer::G()->runHttpServer();
-        //*/
     }
 }
 class HttpServerParent extends HttpServer
 {
+    protected $cli_options_ex=[
+            'just-test'=>[
+                'short'=>'z',
+                'desc'=>'do not use swoole httpserver',
+                'optional'=>true,
+            ],
+    ];
     public function test_showHelp()
     {
         $this->showHelp();
+    }
+    public function test_run2()
+    {
+        $this->args['help']=true;
+        $this->run();
     }
     protected function runHttpServer()
     {

@@ -48,8 +48,9 @@ class Route
     public $routeHooks=[];
     public $callback=null;
     public $error='';
-    protected $prepend_object=null;
-    protected $append_object=null;
+    
+    protected $prependedObjectList=[];
+    protected $appendedObjectList=[];
     
     public static function RunQuickly(array $options=[], callable $after_init=null)
     {
@@ -138,13 +139,18 @@ class Route
         
         return $this;
     }
-    public function bindServerData($server)
+    public function bindServerData($server, $use_cli=true)
     {
         $this->script_filename=$server['SCRIPT_FILENAME']??'';
         $this->document_root=$server['DOCUMENT_ROOT']??'';
         $this->request_method=$server['REQUEST_METHOD']??'GET';
         $this->path_info=$server['PATH_INFO']??'';
         
+        $this->has_bind_server_data=true;
+        
+        if (!$use_cli) {
+            return $this;
+        }
         if (PHP_SAPI==='cli') {
             $argv=$server['argv']??[];
             if (count($argv)>=2) {
@@ -154,7 +160,6 @@ class Route
                 $this->parameters=$argv;
             }
         }
-        $this->has_bind_server_data=true;
         return $this;
     }
 
@@ -186,7 +191,7 @@ class Route
     protected function beforeRun()
     {
         if (!$this->has_bind_server_data) {
-            $this->bindServerData($_SERVER);
+            $this->bindServerData($_SERVER, true);
         }
         $this->path_info=ltrim($this->path_info, '/');
         $this->callback=null;
@@ -200,14 +205,14 @@ class Route
     }
     public function run()
     {
-        $this->beforeRun();
-        //
-        if (null!==$this->prepend_object) {
-            $ret=$this->prepend_object->run();
-            if ($ret) {
+        foreach ($this->prependedObjectList as $object) {
+            $flag=$object->run();
+            if ($flag) {
                 return true;
             }
         }
+        
+        $this->beforeRun();
         
         if (null!==$this->callback) {
             ($this->callback)();
@@ -216,9 +221,9 @@ class Route
             return true;
         }
         
-        if (null!==$this->append_object) {
-            $ret=$this->append_object->run();
-            if ($ret) {
+        foreach ($this->appendedObjectList as $object) {
+            $flag=$object->run();
+            if ($flag) {
                 return true;
             }
         }
@@ -226,19 +231,11 @@ class Route
     }
     public function prepend(object $object): void
     {
-        if($this->prepend_object!==null){
-            $this->prepend_object->prepend($object);
-        }else{
-            $this->prepend_object=$object;
-        }
+        array_shift($this->prependedObjectList[], $object);
     }
     public function append(object $object): void
     {
-        if($this->append_object!==null){
-            $this->append_object->append($object);
-        }else{
-            $this->append_object=$object;
-        }
+        array_push($this->appendedObjectList[], $object);
     }
     public function stopRunDefaultHandler()
     {

@@ -53,7 +53,6 @@ class Configer
             $this->setting=array_merge($this->setting, $env_setting??[]);
         }
         if (!$this->skip_setting_file) {
-            
             $full_setting_file=$this->path.$this->setting_file.'.php';
             if (!is_file($full_setting_file)) {
                 // @codeCoverageIgnoreStart

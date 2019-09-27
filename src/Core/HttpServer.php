@@ -162,6 +162,5 @@ class HttpServer
             return;
         }
         exec($cmd); // @codeCoverageIgnore
-        return;
     } // @codeCoverageIgnore
 }

@@ -21,7 +21,6 @@ class AutoLoader
 
     public $is_inited=false;
     public $namespace_paths=[];
-    public $paths=[];
     
     protected $is_running=false;
     protected $enable_cache_classes_in_cli=false;
@@ -75,16 +74,12 @@ class AutoLoader
     public function _autoload($class)
     {
         foreach ($this->namespace_paths as $base_dir =>$prefix) {
-            if ($prefix!=='') {
-                $prefix .='\\';
-            }
             if (strncmp($prefix, $class, strlen($prefix)) !== 0) {
                 continue;
             }
             
             $relative_class = substr($class, strlen($prefix));
             $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-            
             if (!file_exists($file)) {
                 continue;
             }
@@ -93,17 +88,20 @@ class AutoLoader
         }
         return false;
     }
-    public function assignPathNamespace($path, $namespace=null)
+    public function assignPathNamespace($input_path, $namespace=null)
     {
-        if (is_array($path)&& $namespace===null) {
-            foreach ($path as $k=>$v) {
-                $path[$k]=($v==='')?$v:rtrim($v, '/').'/';
-            }
-            $this->namespace_paths=array_merge($this->paths, $path);
+        if (!is_array($input_path)) {
+            $pathes=[$input_path=>$namespace];
         } else {
-            $path=($path==='')?$path:rtrim($path, '/').'/';
-            $this->namespace_paths[$path]=$namespace;
+            $pathes=$input_path;
         }
+        $ret=[];
+        foreach ($pathes as $path=>$namespace) {
+            $path=($path==='')?$path:rtrim($path, '/').'/';
+            $namespace=rtrim($namespace, '\\').'\\';
+            $ret[$path]=$namespace;
+        }
+        $this->namespace_paths=array_merge($this->namespace_paths, $ret);
     }
     public function cacheClasses()
     {
@@ -124,7 +122,7 @@ class AutoLoader
             }
             try {
                 opcache_compile_file($file);
-            } catch (\Throwable $ex) {
+            } catch (\Throwable $ex) { //@codeCoverageIgnore
             }
         }
         return $ret;
@@ -146,7 +144,8 @@ class AutoLoader
             }
             try {
                 opcache_compile_file($file);
-            } catch (\Throwable $ex) {
+                $flag=opcache_is_script_cached($file);
+            } catch (\Throwable $ex) { //@codeCoverageIgnore
             }
         }
         return $ret;
