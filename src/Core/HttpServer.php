@@ -134,7 +134,7 @@ class HttpServer
         if (!$this->pid) {
             return false;
         }
-        posix_kill($this->pid,SIGINT );
+        posix_kill($this->pid,9 );
     }
     protected function showWelcome()
     {
@@ -174,7 +174,10 @@ class HttpServer
         $port=escapeshellcmd($this->port);
         $document_root=escapeshellcmd($this->docroot);
        
-        if (!isset($this->args['background'])) {
+        if (isset($this->args['background'])){ 
+            $this->options['background']=true;
+        }
+        if ($this->options['background']??false) {
             echo "DNMVCS: RunServer by PHP inner http server $host:$port\n";
         }
         $cmd="$PHP -S $host:$port -t $document_root ";
@@ -183,7 +186,7 @@ class HttpServer
             echo "\n";
             return;
         }
-        if (isset($this->args['background'])) {
+        if ($this->options['background']??false) {
             $cmd.= ' > /dev/null 2>&1 & echo $!; ';
             $pid=exec($cmd);
             $this->pid=(int)$pid;

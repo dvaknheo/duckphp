@@ -144,7 +144,6 @@ class AutoLoader
             //}
             try {
                 opcache_compile_file($file);
-                $flag=opcache_is_script_cached($file);
             } catch (\Throwable $ex) { //@codeCoverageIgnore
             }
         }

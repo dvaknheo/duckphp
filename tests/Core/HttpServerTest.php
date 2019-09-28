@@ -13,9 +13,21 @@ class HttpServerTest extends \PHPUnit\Framework\TestCase
             'path_document'=>__DIR__,
         ];
         HttpServerParent::G()->RunQuickly($options);
+        HttpServerParent::G()->close();
         HttpServerParent::G()->test_showHelp();
         HttpServerParent::G()->test_run2();
 
+        
+        $options=[
+            'path_document'=>__DIR__,
+            'background'=>true,
+        ];
+        HttpServerParent::G()->RunQuickly($options);
+
+        echo HttpServerParent::G()->getPid();
+        HttpServerParent::G()->close();
+        
+        echo "zzzzzzzzzzzzzzzzzzzzzzzz";
         \MyCodeCoverage::G()->end(HttpServer::class);
         $this->assertTrue(true);
     }
@@ -46,7 +58,11 @@ class HttpServerParent extends HttpServer
     }
     protected function runHttpServer()
     {
-        $this->args['dry']=true;
+        if(! ($this->options['background']??false)){
+            $this->args['dry']=true;
+        }else{
+            $this->args['background']=true;
+        }
         return parent::runHttpServer();
     }
 }

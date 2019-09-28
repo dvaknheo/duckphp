@@ -54,12 +54,11 @@ class Route
     
     public static function RunQuickly(array $options=[], callable $after_init=null)
     {
-        if (!$after_init) {
-            return static::G()->init($options)->run();
+        $instance=static::G()->init($options);
+        if($after_init){
+            ($after_init)();
         }
-        static::G()->init($options);
-        ($after_init)();
-        return static::G()->run();
+        return $instance->run();
     }
     public static function URL($url=null)
     {
@@ -127,7 +126,7 @@ class Route
         if (substr($namespace_controller, 0, 1)!=='\\') {
             $namespace_controller=rtrim($namespace, '\\').'\\'.$namespace_controller;
         }
-        $namespace_controller=ltrim($namespace_controller, '\\');
+        $namespace_controller=trim($namespace_controller, '\\');
         $this->namespace_controller=$namespace_controller;
         
         $this->controller_base_class=$options['controller_base_class'];
@@ -246,6 +245,7 @@ class Route
         $path_class=$path_class?:$this->controller_welcome_class;
         $class=$this->namespace_controller.'\\'.str_replace('/', '\\', $path_class).$this->options['controller_postfix'];
         if (!class_exists($class)) {
+            $this->error="Can't find class($class)";
             return null;
         }
         return $class;
@@ -254,7 +254,6 @@ class Route
     public function defaultRouteHandler()
     {
         $path_info=$this->path_info;
-        
         $t=explode('/', $path_info);
         $method=array_pop($t);
         $class_path=implode('/', $t);
@@ -284,6 +283,7 @@ class Route
         
         $object=$this->createControllerObject($full_class);
         if ($this->controller_base_class && !is_a($object, $this->controller_base_class)) {
+            $this->error="no the controller_base_class! {$this->controller_base_class} ";
             return null;
         }
         return $this->getMethodToCall($object, $method);
