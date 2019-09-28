@@ -372,10 +372,15 @@ trait Core_Handler
     public function _OnException($ex): void
     {
         RuntimeState::G()->is_in_exception=true;
-        $flag=ExceptionManager::G()->checkAndRunErrorHandlers($ex, true);
-        if ($flag) {
-            return;
+        if (!RuntimeState::G()->running_exception) {
+            RuntimeState::G()->running_exception=true; //lock;
+            $flag=ExceptionManager::G()->checkAndRunErrorHandlers($ex, false);
+            if ($flag) {
+                return;
+            }
+            RuntimeState::G()->running_exception=false;
         }
+        
         
         $is_error=is_a($ex, 'Error') || is_a($ex, 'ErrorException')?true:false;
         $error_view=$is_error?$this->options['error_500']:$this->options['error_exception']??null;
@@ -423,11 +428,10 @@ trait Core_Handler
             E_DEPRECATED=>'E_DEPRECATED',
             E_USER_DEPRECATED=>'E_USER_DEPRECATED',
         );
+        $error_shortfile=$errfile;
         if (!empty($this->options['path'])) {
             $path=$this->options['path'];
             $error_shortfile=(substr($errfile, 0, strlen($path))==$path)?substr($errfile, strlen($path)):$errfile;
-        } else {
-            $error_shortfile=$errfile;
         }
         $data=array(
             'errno'=>$errno,
@@ -499,10 +503,13 @@ trait Core_SystemWrapper
         if (PHP_SAPI==='cli') {
             return;
         }
+        // @codeCoverageIgnoreStart
         if (headers_sent()) {
             return;
         }
         header($output, $replace, $http_response_code);
+        return;
+        // @codeCoverageIgnoreEnd
     }
     public function _setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain  = '', bool $secure = false, bool $httponly = false)
     {
