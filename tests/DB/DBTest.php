@@ -8,24 +8,58 @@ class DBTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \MyCodeCoverage::G()->begin(DB::class);
+        $options=[
+	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
+	'username'=>'admin',	
+	'password'=>'123456'
+];
+        $db=DB::CreateDBInstance($options);
+        $db->getPDO();
+        echo $db->quote("'");
+        $db->quote(["'"]);
+         $db->quote(new \stdClass);
+        echo PHP_EOL;
+        
+        $sql="select * from Users limit 1";
+        $x=$db->fetchAll($sql);
+        $sql="select * from Users where username=:username";
+        $x=$db->fetchAll($sql,['username'=>'aa']);
+
+        $sql="select * from Users limit 1";
+        $x=$db->fetch($sql);
+        $sql="select * from Users where username=:username";
+        $x=$db->fetch($sql,['username'=>'aa']);
+
+        $sql="select * from Users limit 1";
+        $x=$db->fetchColumn($sql);
+        $sql="select * from Users where username=:username";
+        $x=$db->fetchColumn($sql,['username'=>'aa']);
+
+        $sql="show tables";
+        $db->execQuick($sql);
+        $db->execQuick($sql,['a'=>'b']);
+        
+        
+        $db->rowCount();
         
         //code here
+        DB::CloseDBInstance($db);
         
         \MyCodeCoverage::G()->end(DB::class);
         $this->assertTrue(true);
         /*
-        DB::G()->init($options=[], $context=null);
-        DB::G()->CreateDBInstance($db_config);
-        DB::G()->CloseDBInstance($db, $tag=null);
-        DB::G()->check_connect();
-        DB::G()->close();
-        DB::G()->getPDO();
-        DB::G()->quote($string);
-        DB::G()->fetchAll($sql, ...$args);
-        DB::G()->fetch($sql, ...$args);
-        DB::G()->fetchColumn($sql, ...$args);
-        DB::G()->execQuick($sql, ...$args);
-        DB::G()->rowCount();
+        $db->init($options=[], $context=null);
+        $db->CreateDBInstance($db_config);
+        $db->CloseDBInstance($db, $tag=null);
+        $db->check_connect();
+        $db->close();
+        $db->getPDO();
+        $db->quote($string);
+        $db->fetchAll($sql, ...$args);
+        $db->fetch($sql, ...$args);
+        $db->fetchColumn($sql, ...$args);
+        $db->execQuick($sql, ...$args);
+        $db->rowCount();
         //*/
     }
 }

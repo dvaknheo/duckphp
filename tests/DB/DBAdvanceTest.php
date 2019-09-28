@@ -2,6 +2,7 @@
 namespace tests\DNMVCS\DB;
 
 use DNMVCS\DB\DBAdvance;
+use DNMVCS\DB\DB;
 
 class DBAdvanceTest extends \PHPUnit\Framework\TestCase
 {
@@ -9,18 +10,46 @@ class DBAdvanceTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(DBAdvance::class);
         
-        //code here
+        $options=[
+	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
+	'username'=>'admin',	
+	'password'=>'123456'
+];
+        $db=DB::CreateDBInstance($options);
+        
+        $array=[];
+        $db->quoteIn($array);
+        $db->qouteInsertArray($array);
+        $array=[1,2,3];
+        $db->quoteIn($array);
+        $db->quoteSetArray($array);
+        $db->qouteInsertArray($array);
+        $me=$db->findData('Users', 'aa', 'username');
+                
+        $table_name='Users';
+        $name="Test1";
+        $ret=$db->insertData($table_name, ['username'=>$name,'password'=>'123456']);
+        $ret=$db->deleteData($table_name, $name,'username','password');
+        $ret=$db->updateData($table_name, $name, ['username'=>'111','password'=>'333'], $key='username');
+        $ret=$db->deleteData($table_name, $name,'username',null);
+        
+        $name="Test2";
+        $ret=$db->insertData($table_name, ['username'=>$name,'password'=>'123456'],false);
+        $ret=$db->deleteData($table_name, $name,'username',null);
+
+        
+        var_dump($db->fetchAll("select * from Users"));
         
         \MyCodeCoverage::G()->end(DBAdvance::class);
         $this->assertTrue(true);
         /*
-        DBAdvance::G()->quoteIn($array);
-        DBAdvance::G()->quoteSetArray($array);
-        DBAdvance::G()->qouteInsertArray($array);
-        DBAdvance::G()->findData($table_name, $id, $key='id');
-        DBAdvance::G()->insertData($table_name, $data, $return_last_id=true);
-        DBAdvance::G()->deleteData($table_name, $id, $key='id', $key_delete='is_deleted');
-        DBAdvance::G()->updateData($table_name, $id, $data, $key='id');
+        $db->quoteIn($array);
+        $db->quoteSetArray($array);
+        $db->qouteInsertArray($array);
+        $db->findData($table_name, $id, $key='id');
+        $db->insertData($table_name, $data, $return_last_id=true);
+        $db->updateData($table_name, $id, $data, $key='id');
+        $db->deleteData($table_name, $id, $key='id', $key_delete='is_deleted');
         //*/
     }
 }

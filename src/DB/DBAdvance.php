@@ -29,9 +29,6 @@ trait DBAdvance
         if (empty($array)) {
             return '';
         }
-        if (!$this->pdo || !is_callable([$this->pdo,'quote'])) {
-            return '';
-        }
         $array=array_map([$this->pdo,'quote'], $array);
         $str_keys=implode(',', array_values($array));
         $str_values=implode(',', array_values($array));
@@ -42,7 +39,7 @@ trait DBAdvance
 
     public function findData($table_name, $id, $key='id')
     {
-        $sql="select {$table_name} from terms where {$key}=? limit 1";
+        $sql="select * from {$table_name} where {$key}=? limit 1";
         return $this->fetch($sql, $id);
     }
     
