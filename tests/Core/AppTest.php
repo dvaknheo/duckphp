@@ -12,11 +12,16 @@ class AppTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(App::class);
         
+        $path_app=\GetClassTestPath(View::class);
+        $path_config=\GetClassTestPath(Configer::class);
+        
         $options=[];
-        $options['path']=__DIR__;
+        $options['path']=$path_app;
         $options['platform']="BJ";
         $options['is_debug']=true;
+        $options['path_config']=$path_config;
         $options['skip_setting_file']=true;
+        $options['reload_for_flags']=true;
         $options['error_exception']=null;
         $options['error_500']=null;
         $options['error_404']=null;
@@ -39,12 +44,11 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::G()->cleanAll();
         
         $options=[
-            'skip_setting_file'=>true,
-            'reload_for_flags'=>false,
         ];
-            $options['error_exception']=null;
-
-            $options['error_500']=null;
+        $options['path_config']=$path_config;
+        $options['skip_setting_file']=true;
+        $options['error_exception']=null;
+        $options['error_500']=null;
         $options['error_404']=null;
         $options['error_debug']=null;
         
@@ -81,7 +85,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
     }
     public function do3()
     {
-        App::OnException(new \Exception("EX",-1));
+        App::OnException(new \Exception("EXxxxxxxxxxxxxxx",-1));
         //App::G()->extendComponents();
         App::G()->getStaticComponentClasses();
         App::G()->getDynamicComponentClasses();

@@ -33,6 +33,7 @@ class Route
     protected $controller_base_class=null;
     
     protected $enable_post_prefix=true;
+    
     public $controller_prefix_post='do_';
     
     public $calling_path='';
@@ -49,13 +50,13 @@ class Route
     public $callback=null;
     public $error='';
     
-    protected $prependedObjectList=[];
-    protected $appendedObjectList=[];
+    protected $prependedCallbackList=[];
+    protected $appendedCallbackList=[];
     
     public static function RunQuickly(array $options=[], callable $after_init=null)
     {
         $instance=static::G()->init($options);
-        if($after_init){
+        if ($after_init) {
             ($after_init)();
         }
         return $instance->run();
@@ -85,12 +86,11 @@ class Route
         if (strlen($url)>0 && substr($url, 0, 1)==='/') {
             return $url;
         }
-
-        $basepath=substr(rtrim(str_replace('\\', '/', $this->script_filename), '/').'/', strlen($this->document_root));
-
-        if ($basepath=='/index.php/') {
-            $basepath='/';
-        }
+        $document_root=rtrim($this->document_root, '/');
+        $basepath=substr(rtrim($this->script_filename, '/'), strlen($document_root));
+        $basepath=rtrim($basepath, '/');
+        $path_info=$this->path_info?:'/'.$this->path_info;
+        
         if ($basepath=='/index.php') {
             $basepath='/';
         }
@@ -98,13 +98,13 @@ class Route
             return $basepath;
         }
         if ('?'==$url{0}) {
-            return $basepath.$this->path_info.$url;
+            return $basepath.$path_info.$url;
         }
         if ('#'==$url{0}) {
-            return $basepath.$this->path_info.$url;
+            return $basepath.$path_info.$url;
         }
         
-        return $basepath.$url;
+        return $basepath.'/'.$url;
     }
 
     
@@ -143,7 +143,7 @@ class Route
         $this->request_method=$server['REQUEST_METHOD']??'GET';
         if (isset($server['PATH_INFO'])) {
             $this->path_info=$server['PATH_INFO'];
-        }elseif (PHP_SAPI==='cli') {
+        } elseif (PHP_SAPI==='cli') {
             $argv=$server['argv']??[];
             if (count($argv)>=2) {
                 $this->path_info=$argv[1];
@@ -151,7 +151,7 @@ class Route
                 array_shift($argv);
                 $this->parameters=$argv;
             }
-        }else{
+        } else {
             $this->path_info=''; // @codeCoverageIgnore
         }
         
@@ -190,48 +190,49 @@ class Route
             $this->bindServerData($_SERVER);
         }
         $this->path_info=ltrim($this->path_info, '/');
-        $this->callback=null;
         
         foreach ($this->routeHooks as $hook) {
             ($hook)($this);
         }
-        if (null===$this->callback) {
-            $this->callback=$this->defaultRouteHandler();
-        }
     }
     public function run()
     {
-        foreach ($this->prependedObjectList as $object) {
-            $flag=$object->run();
+        $this->callback=null;
+        $this->beforeRun();
+        
+        foreach ($this->prependedCallbackList as $callback) {
+            $flag=($callback)();
             if ($flag) {
                 return true;
             }
         }
         
-        $this->beforeRun();
-        
+        if (null===$this->callback) {
+            $this->callback= $this->getDefaultRouteHandler(); //do getgetDefaultRouteHandler();
+        }
         if (null!==$this->callback) {
             ($this->callback)();
             $this->callback=null;
             // to make  $this->controller __destruct;
             return true;
         }
+        $this->callback=null;
         
-        foreach ($this->appendedObjectList as $object) {
-            $flag=$object->run();
+        foreach ($this->appendedCallbackList as $callback) {
+            $flag=($callback)();
             if ($flag) {
                 return true;
             }
         }
         return false;
     }
-    public function prepend(object $object): void
+    public function prepend($callback)
     {
-        array_unshift($this->prependedObjectList, $object);
+        array_unshift($this->prependedCallbackList, $callback);
     }
-    public function append(object $object): void
+    public function append($callback)
     {
-        array_push($this->appendedObjectList, $object);
+        array_push($this->appendedCallbackList, $callback);
     }
     public function stopRunDefaultHandler()
     {
@@ -251,7 +252,7 @@ class Route
         return $class;
     }
     
-    public function defaultRouteHandler()
+    public function getDefaultRouteHandler()
     {
         $path_info=$this->path_info;
         $t=explode('/', $path_info);

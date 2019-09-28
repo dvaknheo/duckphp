@@ -83,9 +83,9 @@ class HttpServer
         $this->docroot=$this->args['docroot']??$this->docroot;
         return $this;
     }
-    protected function getopt($options,$longopts,&$optind)
+    protected function getopt($options, $longopts, &$optind)
     {
-        return getopt($options,$longopts,$optind); // @codeCoverageIgnore
+        return getopt($options, $longopts, $optind); // @codeCoverageIgnore
     }
     protected function parseCaptures($cli_options)
     {
@@ -134,7 +134,7 @@ class HttpServer
         if (!$this->pid) {
             return false;
         }
-        posix_kill($this->pid,9 );
+        posix_kill($this->pid, 9);
     }
     protected function showWelcome()
     {
@@ -174,7 +174,7 @@ class HttpServer
         $port=escapeshellcmd($this->port);
         $document_root=escapeshellcmd($this->docroot);
        
-        if (isset($this->args['background'])){ 
+        if (isset($this->args['background'])) {
             $this->options['background']=true;
         }
         if ($this->options['background']??false) {

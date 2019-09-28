@@ -11,7 +11,6 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(Route::class);
         
         //Main
-        //*
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
             'controller_base_class'=>\tests_Core_Route\baseController::class,
@@ -27,7 +26,6 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         $this->doUrl();
         //Get,Set
         $this->doGetterSetter();
-        //*/
         $options=[
             'namespace'=>'tests_Core_Route',
             'namespace_controller'=>'',
@@ -59,7 +57,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'PATH_INFO'=>'Main/index',
             'REQUEST_METHOD'=>'POST',
         ]);
-        Route::G()->defaultRouteHandler();
+        Route::G()->getDefaultRouteHandler();
         
         Route::G()->getCallback(null,'');
         Route::G()->getCallback('tests_Core_Route\\Main','__');
@@ -67,14 +65,61 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->getCallback('tests_Core_Route\\Main','post2');
         Route::G()->getCallback('tests_Core_Route\\Main','_missing');
         
+        //Route::G()->goByPathInfo('tests_Core_Route\\Main','post');
+
         echo Route::G()->error;
         echo PHP_EOL;
+
+        $options=[
+            'namespace_controller'=>'\\tests_Core_Route',
+            'controller_base_class'=>\tests_Core_Route\baseController::class,
+        ];
+        $_SERVER['argv']=[ __FILE__ ,'about/me' ];
+        $_SERVER['argc']=count($_SERVER['argv']);
+        
+        Route::G(new Route())->init($options);
+        Route::G()->bindServerData([
+            'PATH_INFO'=>'NoExists/Mazndex',
+            'REQUEST_METHOD'=>'POST',
+        ]);
+        Route::G()->getDefaultRouteHandler();
+        
+        Route::G(new Route())->init($options);
+        
+        $callback=function ($obj) {
+            Route::G()->stopRunDefaultHandler();
+            echo "stttttttttttttttttttttttttttttttttttttttttttttttoped";
+        };
+        Route::G()->addRouteHook($callback, false, true);
+        echo "3333333333333333333333333333333333333333333333";
+        Route::G()->run();
+        
+        Route::G(new Route())->init($options);
+        Route::G()->prepend([RouteOjbect::class,'RunTrue']);
+        Route::G()->prepend([RouteOjbect::class,'RunFalse']);
+        
+        Route::G()->bindServerData([
+            'PATH_INFO'=>'Main/index',
+            'REQUEST_METHOD'=>'POST',
+        ]);
+        Route::G()->run();
+        
+        Route::G(new Route())->init($options);
+        Route::G()->append([RouteOjbect::class,'RunFalse']);
+        Route::G()->append([RouteOjbect::class,'RunTrue']);
+        
+        Route::G()->bindServerData([
+            'PATH_INFO'=>'Missed',
+            'REQUEST_METHOD'=>'POST',
+        ]);
+        Route::G()->run();
+        
         //exit;
         //Route::RunQuickly($options,function(){});
         
         
-        Route::G()->prepend(new RouteOjbect());
-        Route::G()->append(new RouteOjbect());
+        //Route::G()->prepend(new RouteOjbect());
+        //Route::G()->append(new RouteOjbect());
         
 
         $this->assertTrue(true);
@@ -92,7 +137,8 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'SCRIPT_FILENAME'=> 'x/z/index.php',
             'DOCUMENT_ROOT'=>'x',
         ]);
-        echo Route::URL("/");
+        echo Route::URL("/aaaaaaaa");
+        echo PHP_EOL;
         echo Route::URL("A");
         echo PHP_EOL;
         Route::G()->setURLHandler(function($str){ return "[$str]";});
@@ -128,6 +174,16 @@ class RouteTest extends \PHPUnit\Framework\TestCase
 }
 class RouteOjbect
 {
+    public static function RunFalse()
+    {
+        print_r([__FUNCTION__]);
+        return false;
+    }
+    public static function RunTrue()
+    {
+        print_r([__FUNCTION__]);
+        return true;
+    }
     public function run()
     {
         var_dump(DATE(DATE_ATOM));

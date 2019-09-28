@@ -105,7 +105,7 @@ class App
     public static function RunQuickly(array $options=[], callable $after_init=null): bool
     {
         $instance=static::G()->init($options);
-        if($after_init){
+        if ($after_init) {
             ($after_init)();
         }
         return $instance->run();
@@ -315,10 +315,10 @@ class App
             View::class,
             Route::class,
         ];
-        if(!in_array(static::class,$ret)){
+        if (!in_array(static::class, $ret)) {
             $ret[]=static::class;
         }
-        if($this->override_from && !in_array($this->override_from,$ret)){
+        if ($this->override_from && !in_array($this->override_from, $ret)) {
             $ret[]=$this->override_from;
         }
         return $ret;
