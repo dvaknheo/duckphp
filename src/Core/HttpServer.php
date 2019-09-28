@@ -47,6 +47,10 @@ class HttpServer
             'dry'=>[
                 'desc'=>'dry mode, just show cmd',
             ],
+            'background'=>[
+                'short'=>'b',
+                'desc'=>'run background',
+            ],
         ];
     protected $cli_options_ex=[];
     protected $args=[];
@@ -55,10 +59,11 @@ class HttpServer
     protected $host;
     protected $port;
     public $options;
+    public $pid=0;
     
     public static function RunQuickly($options)
     {
-        static::G()->init($options)->run();
+        return static::G()->init($options)->run();
     }
     public function init($options=[], $context=null)
     {
@@ -86,19 +91,19 @@ class HttpServer
     {
         $shorts_map=[];
         $shorts=[];
+        $longopts=[];
+        
         foreach ($cli_options as $k=>$v) {
             $required=$v['required']??false;
             $optional=$v['optional']??false;
-            $a[]=$k.($required?':':'').($optional?'::':'');
+            $longopts[]=$k.($required?':':'').($optional?'::':'');
             if (isset($v['short'])) {
                 $shorts[]=$v['short'].($required?':':'').($optional?'::':'');
                 $shorts_map[$v['short']]=$k;
             }
         }
         $optind=null;
-        $a=[];
-        //$args=getopt(implode('', ($shorts)), $a, $optind);
-        $args=$this->getopt(implode('', ($shorts)), $a, $optind);
+        $args=$this->getopt(implode('', ($shorts)), $longopts, $optind);
         $args=$args?:[];
         
         $pos_args = array_slice($_SERVER['argv'], $optind);
@@ -118,7 +123,18 @@ class HttpServer
         if (isset($this->args['help'])) {
             return $this->showHelp();
         }
-        $this->runHttpServer();
+        return $this->runHttpServer();
+    }
+    public function getPid()
+    {
+        return $this->pid;
+    }
+    public function close()
+    {
+        if (!$this->pid) {
+            return false;
+        }
+        posix_kill($this->pid,SIGINT );
     }
     protected function showWelcome()
     {
@@ -158,14 +174,21 @@ class HttpServer
         $port=escapeshellcmd($this->port);
         $document_root=escapeshellcmd($this->docroot);
        
-        echo "DNMVCS: RunServer by php inner http server $host:$port\n";
-        
+        if (!isset($this->args['background'])) {
+            echo "DNMVCS: RunServer by PHP inner http server $host:$port\n";
+        }
         $cmd="$PHP -S $host:$port -t $document_root ";
         if (isset($this->args['dry'])) {
             echo $cmd;
             echo "\n";
             return;
         }
-        exec($cmd); // @codeCoverageIgnore
-    }// @codeCoverageIgnore
+        if (isset($this->args['background'])) {
+            $cmd.= ' > /dev/null 2>&1 & echo $!; ';
+            $pid=exec($cmd);
+            $this->pid=(int)$pid;
+            return $pid;
+        }
+        return exec($cmd); // @codeCoverageIgnore
+    }
 }
