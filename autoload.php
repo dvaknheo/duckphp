@@ -9,7 +9,7 @@ function _dnmvcs_namespace_autoload($class) {
     if (!file_exists($file)) {
         return false;
     }
-    require $file;
+    require_once $file;
     return true;
 }
 spl_autoload_register('_dnmvcs_namespace_autoload');
