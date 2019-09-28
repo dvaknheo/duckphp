@@ -2,6 +2,8 @@
 namespace tests\DNMVCS;
 
 use DNMVCS\DNMVCS;
+use DNMVCS\Core\SingletonEx;
+use DNMVCS\Ext\Misc;
 
 class DNMVCSTest extends \PHPUnit\Framework\TestCase
 {
@@ -15,7 +17,35 @@ class DNMVCSTest extends \PHPUnit\Framework\TestCase
         DNMVCS::G()->getStaticComponentClasses();
         DNMVCS::G()->getDynamicComponentClasses();
         
+        $SwooleHttpd=new fakeSwooleHttpd;
+        DNMVCS::G()->onSwooleHttpdInit($SwooleHttpd, false,function(){var_dump("OK");});
+        DNMVCS::G()->onSwooleHttpdInit($SwooleHttpd,true,null);
+
         $this->doGlue();
+        $path_lib=\GetClassTestPath(DNMVCS::class).'lib/';
+
+        $options=[
+            'skip_setting_file'=>true,
+            'path_lib'=>$path_lib,
+        ];
+        DNMVCS::G()->init($options);
+        DNMVCS::G()->system_wrapper_replace([
+            'exit_system' =>function(){ echo "change!\n";},
+
+        ]);
+        
+        DNMVCS::MapToService(FakeService::class, []);
+        DNMVCS::Import('file');
+        $data=[['A'=>'b']];
+        DNMVCS::RecordsetUrl($data, $cols_map=[]);
+        DNMVCS::RecordsetH($data, $cols=[]);
+        
+        DNMVCS::DB(0);
+        DNMVCS::DB_W();
+        DNMVCS::DB_R();
+        
+        
+        
         \MyCodeCoverage::G()->end(DNMVCS::class);
         $this->assertTrue(true);
 
@@ -35,12 +65,41 @@ class DNMVCSTest extends \PHPUnit\Framework\TestCase
         DNMVCS::checkStrictComponent($component_name="z", $trace_level=2);
         DNMVCS::checkStrictService($trace_level=2);
         DNMVCS::checkStrictModel($trace_level=2);
-        //DNMVCS::Import($file="z");
-        $data=[['A'=>'b']];
-        //DNMVCS::RecordsetUrl($data, $cols_map=[]);
-        //DNMVCS::RecordsetH($data, $cols=[]);
+
         //DNMVCS::callAPI($class, $method, $input);
-        //DNMVCS::MapToService($serviceClass, $input);
-        //DNMVCS::explodeService($object, $namespace="MY\\Service\\");
+        DNMVCS::explodeService(FakeObject::G(), $namespace=__NAMESPACE__);
     }
 }
+class fakeSwooleHttpd
+{
+    public static function SG()
+    {
+        return null;
+    }
+    public static function system_wrapper_get_providers()
+    {
+        return [];
+    }
+    public function is_with_http_handler_root()
+    {
+        return true; // return false;
+    }
+    public function set_http_exception_handler(callable $callback)
+    {
+        return;
+    }
+    public function set_http_404_handler(callable $callback)
+    {
+        return;
+    }
+}
+class FakeService
+{
+use SingletonEx;
+}
+class FakeObject 
+{
+    use SingletonEx;
+    
+}
+

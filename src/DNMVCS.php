@@ -51,10 +51,10 @@ class DNMVCS extends App //implements SwooleExtAppInterface
             
         ];
     // @interface SwooleExtAppInterface
-    public function onSwooleHttpdInit($SwooleHttpd, $inCoroutine=false, ?callable $RunHandler)
+    public function onSwooleHttpdInit($SwooleHttpd, $InCoroutine=false, ?callable $RunHandler)
     {
         $this->options['use_super_global']=true;
-        if ($inCoroutine) {
+        if ($InCoroutine) {
             $this::SG($SwooleHttpd::SG());
             return;
         }
@@ -65,7 +65,9 @@ class DNMVCS extends App //implements SwooleExtAppInterface
         if ($SwooleHttpd->is_with_http_handler_root()) {
             $this->options['skip_404_handler']=true;
         }
-        $this->system_wrapper_replace($SwooleHttpd->system_wrapper_get_providers());
+        $funcs=$SwooleHttpd->system_wrapper_get_providers();
+        
+        $this->system_wrapper_replace($funcs);
         
         $this->addBeforeRunHandler($RunHandler);
     }

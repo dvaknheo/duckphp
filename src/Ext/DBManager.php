@@ -81,6 +81,9 @@ class DBManager
             ($this->before_get_db_handler)($this, $tag);
         }
         if (!isset($tag)) {
+            if (empty($this->database_config_list)) {
+                return null;
+            }
             $t=array_keys($this->database_config_list);
             $tag=$t[0];
         }

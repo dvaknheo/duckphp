@@ -113,8 +113,8 @@ class Misc
     public function mapToService($serviceClass, $input)
     {
         try {
-            $method=$this->context_class::G()->getRouteCallingMethod();
-            $data=$this->context_class::G()->callAPI($serviceClass, $method, $input);
+            $method=static::G()->context_class::G()->getRouteCallingMethod();
+            $data=static::G()->context_class::G()->callAPI($serviceClass, $method, $input);
             if (!is_array($data) && !is_object($data)) {
                 $data=['result'=>$data];
             }
@@ -123,7 +123,7 @@ class Misc
             $data['error_message']=$ex->getMessage();
             $data['error_code']=$ex->getCode();
         }
-        $this->context_class::ExitJson($data);
+        static::G()->context_class::ExitJson($data);
     }
     public function explodeService($object, $namespace=null)
     {
