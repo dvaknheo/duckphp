@@ -22,7 +22,7 @@ class HttpServerTest extends \PHPUnit\Framework\TestCase
             'path_document'=>__DIR__,
             'background'=>true,
         ];
-        HttpServerParent::G()->RunQuickly($options);
+        HttpServerParent::RunQuickly($options);
 
         echo HttpServerParent::G()->getPid();
         HttpServerParent::G()->close();

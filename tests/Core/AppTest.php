@@ -11,8 +11,8 @@ class AppTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-            $path_app=\GetClassTestPath(App::class);
-            
+        $path_app=\GetClassTestPath(App::class);
+        
         \MyCodeCoverage::G()->begin(App::class);
         
         $path_app=\GetClassTestPath(App::class);
