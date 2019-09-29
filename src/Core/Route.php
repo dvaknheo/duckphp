@@ -226,6 +226,16 @@ class Route
         }
         return false;
     }
+    public function go($path_info,$request_method='GET')
+    {
+        if (!$this->has_bind_server_data) {
+            $this->bindServerData($_SERVER);
+        }
+        if (isset($request_method)) {
+            $this->request_method=$request_method;
+        }
+        return $this->run();
+    }
     public function prepend($callback)
     {
         array_unshift($this->prependedCallbackList, $callback);
