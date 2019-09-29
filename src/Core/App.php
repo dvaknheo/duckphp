@@ -225,7 +225,7 @@ class App
         
         RuntimeState::ReCreateInstance()->begin();
         $route=Route::G();
-        if ($this->options['use_super_global']) {
+        if ($this->options['use_super_global']??false) {
             $route->bindServerData(SuperGlobal::G()->_SERVER);
         }
         $ret=$route->run();
@@ -753,7 +753,7 @@ trait Core_Glue
     }
     public static function setRouteCallingMethod(string $method)
     {
-        return Route::G()->getRouteCallingMethod($method);
+        return Route::G()->setRouteCallingMethod($method);
     }
     
     //view

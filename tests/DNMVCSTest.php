@@ -40,7 +40,7 @@ class DNMVCSTest extends \PHPUnit\Framework\TestCase
         DNMVCS::RecordsetUrl($data, $cols_map=[]);
         DNMVCS::RecordsetH($data, $cols=[]);
         
-        DNMVCS::DB(0);
+        DNMVCS::DB();
         DNMVCS::DB_W();
         DNMVCS::DB_R();
         

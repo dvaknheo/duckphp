@@ -23,10 +23,24 @@ class Misc
         } else {
             $this->path=$options['path'].rtrim($options['path_lib'], '/').'/';
         }
-        $this->context_class=get_class($context);
+        $this->context_class=$context?get_class($context):null;
         
         //$this->context_class::G()->extendComponents(static::class,'Foo',['C']);
     }
+    public static function Import($file)
+    {
+        return static::G()->_Import($file);
+    }
+    public static function RecordsetUrl(&$data, $cols_map=[])
+    {
+        return static::G()->_RecordsetUrl($data, $cols_map);
+    }
+    
+    public static function RecordsetH(&$data, $cols=[])
+    {
+        return static::G()->_RecordsetH($data, $cols);
+    }
+    
     public function _Import($file)
     {
         include_once $this->path.rtrim($file, '.php').'.php';
@@ -51,7 +65,8 @@ class Misc
         foreach ($data as &$v) {
             foreach ($cols_map as $k=>$r) {
                 $values=array_values($v);
-                $v[$k]=$this->context_class::URL(str_replace($keys, $values, $r));
+                $changed_value=str_replace($keys, $values, $r);
+                $v[$k]=$this->context_class::URL($changed_value);
             }
         }
         unset($v);
