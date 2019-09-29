@@ -115,9 +115,6 @@ class StrictCheck
                 if (substr($caller_class, 0, strlen($namespace_service))===$namespace_service) {
                     break;
                 }
-                if (substr($caller_class, 0, 0-strlen("Service"))==="Service") {
-                    break;
-                }
                 throw new Exception("LibService Must Call By Serivce($caller_class)");
             } while (false);
         } else {
@@ -125,13 +122,7 @@ class StrictCheck
                 if (substr($caller_class, 0, strlen($namespace_service))===$namespace_service) {
                     throw new Exception("Service Can not call Service($caller_class)");
                 }
-                if (substr($caller_class, 0, strlen("Service"))==="Service") {
-                    throw new Exception("Service Can not call Service($caller_class)");
-                }
                 if (substr($caller_class, 0, strlen($namespace_model))===$namespace_model) {
-                    throw new Exception("Service Can not call by Model($caller_class)");
-                }
-                if (substr($caller_class, 0, strlen("Model"))==="Model") {
                     throw new Exception("Service Can not call by Model($caller_class)");
                 }
             } while (false);
