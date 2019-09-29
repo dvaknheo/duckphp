@@ -9,7 +9,16 @@ class RouteHookRewriteTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(RouteHookRewrite::class);
         
-        //code here
+        $options=[
+			'~article/(\d+)/?(\d+)?'=>'article?id=$1&page=$2',
+        ];
+        RouteHookRewrite::G()->init($options,null);
+        RouteHookRewrite::G()->assignRewrite(['abc'=>'d']);
+        RouteHookRewrite::G()->assignRewrite('efg','zz');
+        RouteHookRewrite::G()->getRewrites();
+        RouteHookRewrite::G()->replaceRegexUrl('inx','~ab','article?id=');
+        RouteHookRewrite::G()->replaceRegexUrl('111','111?a1=23','article?id=11');
+        RouteHookRewrite::G()->filteRewrite('zdfafd');
         
         \MyCodeCoverage::G()->end(RouteHookRewrite::class);
         $this->assertTrue(true);

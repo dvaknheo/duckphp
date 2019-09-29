@@ -4,6 +4,7 @@ namespace DNMVCS\Ext;
 use DNMVCS\Core\SingletonEx;
 use DNMVCS\Core\SuperGlobal;
 use DNMVCS\Ext\RouteHookRewrite;
+use DNMVCS\Core\Route;
 
 class RouteHookOneFileMode
 {
@@ -24,7 +25,7 @@ class RouteHookOneFileMode
             return $this;
         }
         if ($context) {
-            $context->addRouteHook([static::G(),'hook']);
+            $context->addRouteHook([static::class,'Hook'], true);
         }
         return $this;
     }
@@ -90,7 +91,11 @@ class RouteHookOneFileMode
         
         return $url;
     }
-    public function hook($route)
+    public static function Hook($route)
+    {
+        return static::G()->_Hook($route);
+    }
+    public function _Hook($route)
     {
         $route->setURLHandler([$this,'onURL']);
         

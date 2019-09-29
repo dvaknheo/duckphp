@@ -2,6 +2,7 @@
 namespace tests\DNMVCS\Ext;
 
 use DNMVCS\Ext\RouteHookRouteMap;
+use DNMVCS\Core\Route;
 
 class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
 {
@@ -9,9 +10,29 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(RouteHookRouteMap::class);
         
-        //code here
+        $options=[
+			'abc'=>function(){},
+        ];
+        RouteHookRouteMap::G()->init($options, $context=null);
+        RouteHookRouteMap::G()->assignRoute('def',function(){});
+        RouteHookRouteMap::G()->assignRoute(['hij',function(){}]);
+        RouteHookRouteMap::G()->getRoutes();
+
+        $options=[
+        ];
+        Route::G(new Route())->init($options);
         
-        \MyCodeCoverage::G()->end(RouteHookRouteMap::class);
+        RouteHookRouteMap::Hook(Route::G());
+        
+
+        Route::G()->bindServerData([
+            'PATH_INFO'=>'Missed',
+            'REQUEST_METHOD'=>'POST',
+        ]);
+        Route::G()->run();
+        
+
+\MyCodeCoverage::G()->end(RouteHookRouteMap::class);
         $this->assertTrue(true);
         /*
         RouteHookRouteMap::G()->init($options=[], $context=null);

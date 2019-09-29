@@ -19,7 +19,7 @@ class RouteHookDirectoryMode
     {
         $this->basepath=$options['mode_dir_basepath'];
         if ($context) {
-            $context->addRouteHook([static::G(),'hook']);
+            $context->addRouteHook([static::class,'Hook']);
         }
     }
     protected function adjustPathinfo($path_info, $document_root)
@@ -92,7 +92,11 @@ class RouteHookDirectoryMode
         return $ret;
     }
     // abc/d/e.php/g/h?act=z  abc/d/e/g
-    public function hook($route)
+    public static function Hook($route)
+    {
+        return static::G()->_Hook($route);
+    }
+    public function _Hook($route)
     {
         $route->setURLHandler([$this,'onURL']); //todo once ?
         
