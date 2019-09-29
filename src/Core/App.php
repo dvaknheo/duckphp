@@ -95,6 +95,8 @@ class App
     protected $beforeRunHandlers=[];
     protected $error_view_inited=false;
     
+    protected $extDynamicComponentClasses=[];
+
     //const;
     protected static $componentClassMap=[
             'M'=>'Helper\ModelHelper',
@@ -330,6 +332,16 @@ class App
             SuperGlobal::class,
         ];
         return $ret;
+    }
+    public function addDynamicComponentClass($class)
+    {
+        $this->extDynamicComponentClasses[]=$class;
+    }
+    public function deleteDynamicComponentClass($class)
+    {
+        array_filter($this->extDynamicComponentClasses, function ($v) use ($cid) {
+                return $v!==$class?true:false;
+            });
     }
 }
 trait Core_Handler

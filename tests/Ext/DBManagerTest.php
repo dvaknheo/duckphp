@@ -16,14 +16,14 @@ class DBManagerTest extends \PHPUnit\Framework\TestCase
         'db_excption_handler'=>null,
         'before_get_db_handler'=>null,
         
-        'database_list'=>[
+        'database_list'=>[[
 	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
 	'username'=>'admin',	
 	'password'=>'123456'
-],
+]],
         'use_context_db_setting'=>true,
         ];
-        DBManager::G()->init();
+        DBManager::G()->init($options);
         DBManager::G()->setDBHandler([DB::class,'CreateDBInstance'],[DB::class,'CloseDBInstance'],function(){echo "Exception!";});
         DBManager::G()->setBeforeGetDBHandler(function(){ echo "GETDB!";});
         DBManager::G()->getDBHandler();

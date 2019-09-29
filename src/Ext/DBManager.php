@@ -59,6 +59,7 @@ class DBManager
             $this->before_get_db_handler[0]=get_class($context);
         }
         $context->addBeforeShowHandler([static::class,'CloseAllDB']);
+        $context->addDynamicComponentClass(static::class);
     }
 
     public function setDBHandler($db_create_handler, $db_close_handler=null, $db_excption_handler=null)
@@ -73,7 +74,7 @@ class DBManager
     }
     public function getDBHandler()
     {
-        return [$this->db_create_handler,$this->db_close_handler];
+        return [$this->db_create_handler,$this->db_close_handler,$this->db_excption_handler];
     }
     public function _DB($tag=null)
     {

@@ -71,7 +71,6 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::G()->cleanUp();
         App::G()->cleanAll();
 
-if(true){
             $path_app=\GetClassTestPath(App::class);
 
         $options=[
@@ -93,7 +92,7 @@ if(true){
         App::G()->extendComponents(AppTest::class,['Foo'],['V',"ZZZ"]);
         
         $this->do4();
-}
+
 
         \MyCodeCoverage::G()->end(App::class);
         $this->assertTrue(true);
@@ -277,7 +276,12 @@ if(true){
         ];
         DNMVCS::G(new DNMVCS())->init($options);
         DNMVCS::G()->getStaticComponentClasses();
+        
         App::G()->getDynamicComponentClasses();
+        
+        App::G()->addDynamicComponentClass($class);
+        App::G()->deleteDynamicComponentClass($class);
+
     }
 }
 class AppTestApp extends DNMVCS
