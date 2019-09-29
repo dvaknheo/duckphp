@@ -108,7 +108,7 @@ class DBManager
         }
         return $this->_DB(static::TAG_READ);
     }
-    public function CloseAllDB()
+    public static function CloseAllDB()
     {
         return static::G()->_closeAllDB();
     }

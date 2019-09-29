@@ -16,7 +16,7 @@ class FacadesAutoLoader
     protected $is_loaded=false;
     protected $is_inited=false;
     
-    public function init($options=[], $context)
+    public function init(array $options=[], $context=null)
     {
         $namespace_facades=$options['facades_namespace']??'Facades';
         $this->facades_map=$options['facades_map']??[];
@@ -31,10 +31,11 @@ class FacadesAutoLoader
     
     public function _autoload($class)
     {
-        if (substr($class, 0, strlen($this->prefix))!==$this->prefix) {
-            return;
+        $flag=(substr($class, 0, strlen($this->prefix))===$this->prefix)?true:false;
+        if(!$flag){
+            $flag=($this->facades_map && in_array($class,array_keys($this->facades_map)))?true:false;
         }
-        
+        if(!$flag){return;}
         $blocks=explode('\\', $class);
         $basename=array_pop($blocks);
         $namespace=implode('\\', $blocks);
@@ -42,15 +43,18 @@ class FacadesAutoLoader
         $code="namespace $namespace{ class $basename extends \\". __NAMESPACE__  ."\\FacadesBase{} }";
         eval($code);
     }
-    public function getFacadesCallback($class, $name)
+    public function getFacadesCallback($input_class, $name)
     {
-        $class=substr($class, strlen($this->prefix));
-        if (!empty($this->facades_map) && !class_exists($class)) {
-            foreach ($this->facades_map as $k=>$v) {
-                if ($k===$class) {
-                    $class=$v;
-                    break;
-                }
+        $class=null;
+        foreach ($this->facades_map as $k=>$v) {
+            if ($k===$input_class) {
+                $class=$v;
+                break;
+            }
+        }
+        if(!$class){
+            if (substr($input_class, 0, strlen($this->prefix))===$this->prefix){
+                $class=substr($input_class, strlen($this->prefix));
             }
         }
         if (!is_callable([$class,'G'])) {
@@ -58,6 +62,10 @@ class FacadesAutoLoader
         }
         $object=call_user_func([$class,'G']);
         return [$object,$name];
+    }
+    public function cleanUp()
+    {
+        spl_autoload_unregister([$this,'_autoload']);
     }
 }
 
@@ -68,6 +76,9 @@ class FacadesBase
     public static function __callStatic($name, $arguments)
     {
         $callback=FacadesAutoLoader::G()->getFacadesCallback(static::class, $name);
+        if(!$callback){
+            throw new \Exception("BadCall");
+        }
         $ret=call_user_func_array($callback, $arguments);
         return $ret;
     }

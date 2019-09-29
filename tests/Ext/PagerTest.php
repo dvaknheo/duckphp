@@ -9,7 +9,16 @@ class PagerTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(Pager::class);
         
-        //code here
+        $options=[
+            'url'=>'/user',
+        ];
+        //Pager::G()->init($options, $context=null);
+        Pager::Render(123,$options);
+        ///////////////
+        
+        Pager::Render(123,$options);
+        Pager::Current();
+        
         
         \MyCodeCoverage::G()->end(Pager::class);
         $this->assertTrue(true);
@@ -19,7 +28,7 @@ class PagerTest extends \PHPUnit\Framework\TestCase
         Pager::G()->Current();
         Pager::G()->Render($total, $options=[]);
         Pager::G()->_current();
-        Pager::G()->init($options=[], $context=null);
+        
         Pager::G()->getUrl($page);
         Pager::G()->defaultGetUrl($page);
         Pager::G()->_render($total, $options=[]);

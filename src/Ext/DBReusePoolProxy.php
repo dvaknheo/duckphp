@@ -86,7 +86,7 @@ class DBReusePoolProxy
             return false;
         }
         // TODO;
-        return ($this->appClass)::G()->isInException();
+        return ($this->appClass)::IsInException();
     }
     public function onClose($db, $tag)
     {
