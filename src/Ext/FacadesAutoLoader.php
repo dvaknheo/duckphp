@@ -32,10 +32,12 @@ class FacadesAutoLoader
     public function _autoload($class)
     {
         $flag=(substr($class, 0, strlen($this->prefix))===$this->prefix)?true:false;
-        if(!$flag){
-            $flag=($this->facades_map && in_array($class,array_keys($this->facades_map)))?true:false;
+        if (!$flag) {
+            $flag=($this->facades_map && in_array($class, array_keys($this->facades_map)))?true:false;
         }
-        if(!$flag){return;}
+        if (!$flag) {
+            return;
+        }
         $blocks=explode('\\', $class);
         $basename=array_pop($blocks);
         $namespace=implode('\\', $blocks);
@@ -52,8 +54,8 @@ class FacadesAutoLoader
                 break;
             }
         }
-        if(!$class){
-            if (substr($input_class, 0, strlen($this->prefix))===$this->prefix){
+        if (!$class) {
+            if (substr($input_class, 0, strlen($this->prefix))===$this->prefix) {
                 $class=substr($input_class, strlen($this->prefix));
             }
         }
@@ -76,7 +78,7 @@ class FacadesBase
     public static function __callStatic($name, $arguments)
     {
         $callback=FacadesAutoLoader::G()->getFacadesCallback(static::class, $name);
-        if(!$callback){
+        if (!$callback) {
             throw new \Exception("BadCall");
         }
         $ret=call_user_func_array($callback, $arguments);

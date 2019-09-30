@@ -29,7 +29,11 @@ trait DBAdvance
         if (empty($array)) {
             return '';
         }
-        $array=array_map([$this->pdo,'quote'], $array);
+        $callback=[$this->pdo,'quote'];
+        if (!is_callable($callback)) {
+            return '';
+        }
+        $array=array_map($callback, $array);
         $str_keys=implode(',', array_values($array));
         $str_values=implode(',', array_values($array));
         $ret="($str_keys)VALUES($str_values)";

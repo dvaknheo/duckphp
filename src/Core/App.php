@@ -274,7 +274,7 @@ class App
     
     ////////////////////////
     
-    public function addBeforeRunHandler(callable $handler): void
+    public function addBeforeRunHandler(?callable $handler): void
     {
         $this->beforeRunHandlers[]=$handler;
     }
@@ -339,9 +339,9 @@ class App
     }
     public function deleteDynamicComponentClass($class)
     {
-        array_filter($this->extDynamicComponentClasses, function ($v) use ($cid) {
-                return $v!==$class?true:false;
-            });
+        array_filter($this->extDynamicComponentClasses, function ($v) use ($class) {
+            return $v!==$class?true:false;
+        });
     }
 }
 trait Core_Handler

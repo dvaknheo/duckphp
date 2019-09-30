@@ -44,11 +44,11 @@ class DBReusePoolProxy
         if (!$dbm) {
             return;
         }
-        list($db_create_handler, $db_close_handler,$db_exception_handler)=$dbm->getDBHandler();
-        $this->setDBHandler($db_create_handler, $db_close_handler,$db_exception_handler);
+        list($db_create_handler, $db_close_handler, $db_exception_handler)=$dbm->getDBHandler();
+        $this->setDBHandler($db_create_handler, $db_close_handler, $db_exception_handler);
         $dbm->setDBHandler([$this,'onCreate'], [$this,'onClose'], [$this,'onException']);  //将会被 clean
     }
-    public function setDBHandler($db_create_handler, $db_close_handler=null,$db_exception_handler=null)
+    public function setDBHandler($db_create_handler, $db_close_handler=null, $db_exception_handler=null)
     {
         $this->db_create_handler=$db_create_handler;
         $this->db_close_handler=$db_close_handler;
@@ -66,26 +66,26 @@ class DBReusePoolProxy
     {
         return $this->kickObject($db, $tag);
     }
-    protected function getObject(...$args)
+    protected function getObject($db, $tag)
     {
         $this->pools[$tag]=$this->pools[$tag]??[];
         $pool=&$this->pools[$tag];
         
-        foreach($pool as &$v){
-            if(!$v['Userable']){
+        foreach ($pool as &$v) {
+            if (!$v['Userable']) {
                 continue;
             }
             $now=time();
-            if(($now-$v['Userable'])>$this->timeout){
+            if (($now-$v['Userable'])>$this->timeout) {
                 continue;
             }
             $v['Userable']=true;
             return $v['object'];
         }
-        if(count($pool)>=$this->max_length){
+        if (count($pool)>=$this->max_length) {
             array_shift($pool);
         }
-        $object=($this->db_create_handler)(...$args);
+        $object=($this->db_create_handler)($db, $tag);
         
         $key=spl_object_hash($object);
         $pool[$key]=[
@@ -109,7 +109,7 @@ class DBReusePoolProxy
         $pool=&$this->pools[$tag];
         
         $key=spl_object_hash($db);
-        if(!isset($pool[$key])){
+        if (!isset($pool[$key])) {
             return;
         }
         $a=&$pool[$key];

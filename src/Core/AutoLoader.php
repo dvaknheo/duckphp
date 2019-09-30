@@ -97,7 +97,7 @@ class AutoLoader
         }
         $ret=[];
         foreach ($pathes as $path=>$namespace) {
-            $path=($path==='')?$path:rtrim($path, '/').'/';
+            $path=($path==='')?$path:rtrim((string)$path, '/').'/';
             $namespace=rtrim($namespace, '\\').'\\';
             $ret[$path]=$namespace;
         }

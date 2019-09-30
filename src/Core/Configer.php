@@ -50,7 +50,8 @@ class Configer
         }
         if (!$this->skip_env_file) {
             $env_setting=parse_ini_file(realpath($this->base_path).'/.env');
-            $this->setting=array_merge($this->setting, $env_setting??[]);
+            $env_setting=$env_setting?:[];
+            $this->setting=array_merge($this->setting, $env_setting);
         }
         if (!$this->skip_setting_file) {
             $full_setting_file=$this->path.$this->setting_file.'.php';

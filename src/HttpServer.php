@@ -26,7 +26,7 @@ class HttpServer extends Server
         if (isset($this->args['no-swoole']) || isset($this->args['dry']) || isset($this->args['background'])) {
             return parent::runHttpServer();
         }
-        if ($this->options['background']??false || !$this->checkSwoole()) {
+        if (($this->options['background']??false) || !$this->checkSwoole()) {
             return parent::runHttpServer();
         }
         return $this->runSwooleServer($this->options['path'], $this->host, $this->port);

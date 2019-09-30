@@ -260,7 +260,7 @@ class ProjectCommonConfiger extends Configer
                 })($file);
             }
         }
-        $ret=parent::loadFile($basename, $checkfile);
+        $ret=parent::loadFile($basename);
         $ret=array_merge($common_config, $ret);
         return $ret;
     }
