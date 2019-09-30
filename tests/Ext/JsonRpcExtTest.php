@@ -11,11 +11,7 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(JsonRpcExt::class);
         $path_app=\GetClassTestPath(JsonRpcExt::class);
-        $options=[
-            'jsonrpc_namespace'=>'JsonRpc',
-            'jsonrpc_backend'=>'http://127.0.0.1:9528/json_rpc',
-            'jsonrpc_is_debug'=>true,
-        ];
+        
         JsonRpcExt::G()->onRpcCall([
             'id'=>TestService::class,
             'method'=>'foo',
@@ -23,7 +19,17 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
                 'OK'
             ],
         ]);
+        
+        $options=[
+            'jsonrpc_namespace'=>'JsonRpc',
+            'jsonrpc_backend'=>'http://127.0.0.1:9528/json_rpc',
+            'jsonrpc_is_debug'=>true,
+        ];
+        
         JsonRpcExt::G()->init($options,null);
+        
+        $flag=class_exists('do_not_exoits');
+        
         $server_options=[
             'path'=>$path_app,
             'path_document'=>'',
@@ -31,10 +37,27 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
             'background'=>true,
         ];
         HttpServer::RunQuickly($server_options);
+        echo HttpServer::G()->getPid();
         $data=TestService::G(JsonRpcExt::Wrap(TestService::class))->foo();
+        JsonRpcExt::G()->getRealClass(TestService::G());
         JS::G()->foo();
         
-        echo HttpServer::G()->getPid();
+        JsonRpcExt::G()->cleanUp();
+        $options['jsonrpc_backend']=['http://localdomain.dev/json_rpc','127.0.0.1:9528'];
+        JsonRpcExt::G()->init($options,null);
+        JS::G()->foo();
+        try{
+        JS::G()->the500();
+        }catch(\Exception $ex){
+            echo $ex;
+        }
+        try{
+            JS::G()->throwException();
+        }catch(\Exception $ex){
+            echo $ex;
+        }
+        //JS::G()->foo();
+        
         var_dump($data);
         HttpServer::G()->close();
         

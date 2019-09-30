@@ -16,7 +16,7 @@ class JsonRpcExt
     protected $backend;
     protected $prefix;
     protected $is_debug;
-    public function init($options=[], $context)
+    public function init(array $options=[], $context=null)
     {
         $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
         
@@ -29,6 +29,10 @@ class JsonRpcExt
         spl_autoload_register([$this,'_autoload']);
         
         return $this;
+    }
+    public function cleanUp()
+    {
+        spl_autoload_unregister([$this,'_autoload']);
     }
     public function getRealClass($object)
     {
@@ -46,7 +50,7 @@ class JsonRpcExt
     {
         $class=is_object($class)?get_class($class):$class;
         $base= new JsonRpcClientBase();
-        $base->base_class=$class;
+        $base->_base_class=$class;
         return $base;
     }
     
@@ -141,11 +145,11 @@ class JsonRpcExt
 class JsonRpcClientBase
 {
     use SingletonEx;
-    public $base_class=null;
+    public $_base_class=null;
     public function __call($method, $arguments)
     {
-        $class=$this->base_class?$this->base_class:JsonRpcExt::G()->getRealClass($this);
-        $ret=JsonRpcExt::G()->callRPC($class, $method, $arguments);
+        $this->_base_class=$this->_base_class?$this->_base_class:JsonRpcExt::G()->getRealClass($this);
+        $ret=JsonRpcExt::G()->callRPC($this->_base_class, $method, $arguments);
         return $ret;
     }
 }

@@ -9,6 +9,10 @@ class TestService
     {
         return 'Server:'.DATE(DATE_ATOM);
     }
+    public function throwException()
+    {
+        throw new  \Exception ("serverException",1024);
+    }
 }
 class Main
 {
@@ -18,7 +22,13 @@ class Main
     }
     public function json_rpc()
     {
+        $post=DNMVCS\DNMVCS::SG()->_POST;
+        if($post['method']==='TestService.the500'){
+            var_dump(DATE(DATE_ATOM));
+            return;
+        }
         $ret= JsonRpcExt::G()->onRpcCall(DNMVCS\DNMVCS::SG()->_POST);
+        
         DNMVCS\DNMVCS::ExitJson($ret);
     }
 }
