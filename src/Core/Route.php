@@ -226,15 +226,18 @@ class Route
         }
         return false;
     }
-    public function go($path_info,$request_method='GET')
+    public function bind($path_info,$request_method='GET')
     {
         if (!$this->has_bind_server_data) {
             $this->bindServerData($_SERVER);
         }
+        $this->path_info=$path_info;
+        $this->path_info=ltrim($this->path_info, '/');
+        
         if (isset($request_method)) {
             $this->request_method=$request_method;
         }
-        return $this->run();
+        return $this;
     }
     public function prepend($callback)
     {

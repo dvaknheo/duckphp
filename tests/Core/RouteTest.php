@@ -105,7 +105,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->run();
         
         Route::G(new Route())->init($options);
-        Route::G()->go("good");
+        Route::G()->bind("good")->run();
         Route::G()->append([RouteOjbect::class,'RunFalse']);
         Route::G()->append([RouteOjbect::class,'RunTrue']);
         
@@ -114,7 +114,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'REQUEST_METHOD'=>'POST',
         ]);
         Route::G()->run();
-        Route::G()->go("again",null);
+        Route::G()->bind("again",null)->run();
         //exit;
         //Route::RunQuickly($options,function(){});
         
