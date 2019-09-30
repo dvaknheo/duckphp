@@ -2,6 +2,7 @@
 namespace tests\DNMVCS\Ext;
 
 use DNMVCS\Ext\Pager;
+use DNMVCS\DNMVCS;
 
 class PagerTest extends \PHPUnit\Framework\TestCase
 {
@@ -15,11 +16,28 @@ class PagerTest extends \PHPUnit\Framework\TestCase
         //Pager::G()->init($options, $context=null);
         Pager::Render(123,$options);
         ///////////////
-        
-        Pager::Render(123,$options);
         Pager::Current();
         
+        $options['url']='/a{page}';
+        Pager::Render(123,$options);
+        //
+        $options['page_size']=1000000;
+        Pager::Render(1,$options);
         
+        $options['page_size']=3;
+        $options['rewrite']=function($page){ return Pager::G()->defaultGetUrl($page);};
+
+        for($i=1;$i<=9;$i++){
+            $options['current']=$i;
+        Pager::Render(26,$options);
+        }
+        
+        Pager::G(new Pager());
+        Pager::Current();
+        Pager::G()->init(['url'=>'/user',],DNMVCS::G());
+        Pager::SG();
+        Pager::G()->getUrl(3);
+         
         \MyCodeCoverage::G()->end(Pager::class);
         $this->assertTrue(true);
         /*

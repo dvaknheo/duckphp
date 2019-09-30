@@ -7,7 +7,7 @@ class Route
 {
     use SingletonEx;
     
-    const DEFAULT_OPTIONS=[
+    public $options=[
             'namespace'=>'MY',
             'namespace_controller'=>'Controller',
             
@@ -52,7 +52,6 @@ class Route
     
     protected $prependedCallbackList=[];
     protected $appendedCallbackList=[];
-    protected $options;
     
     public static function RunQuickly(array $options=[], callable $after_init=null)
     {
@@ -111,7 +110,7 @@ class Route
     
     public function init($options=[], $context=null)
     {
-        $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
+        $options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
         $this->options=$options;
         $this->controller_prefix_post=$options['controller_prefix_post'];
         $this->enable_post_prefix=$this->controller_prefix_post?true:false;

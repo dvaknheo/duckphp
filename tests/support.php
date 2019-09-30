@@ -5,7 +5,7 @@ class Supporter extends \PHPUnit\Framework\TestCase
 {
     public function testMain()
     {
-        echo "start create Report at " .DATE(DATE_ATOM);
+        
         //$this->createTests();
         $this->createReport();
         
@@ -18,6 +18,9 @@ class Supporter extends \PHPUnit\Framework\TestCase
     public function createTests()
     {
         //*
+        echo "start create Report at " .DATE(DATE_ATOM);
+        echo "\n\n";
+        flush();
         $dest=__DIR__;
         $source=__DIR__.'/../src';
 

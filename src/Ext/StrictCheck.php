@@ -7,19 +7,35 @@ use Exception;
 class StrictCheck
 {
     use SingletonEx;
-    const DEFAULT_OPTIONS=[
-    ];
+
     const MAX_TRACE_LEVEL=20;
+    
+    public $options=[
+            'namespace'=>'',
+            'namespace_controller'=>'',
+            'namespace_service'=>'',
+            'namespace_model'=>'',
+            'controller_base_class'=>'',
+            'is_debug'=>true,
+            'app_class'=>null,
+        ];
+    
     protected $appClass=null;
+    
     public function init($options=[], $context=null)
     {
+        $this->options=array_merge($this->options, $options);
         if ($context) {
             $this->initContext($options, $context);
+        }
+        if (!$context) {
+            $this->appClass=$this->options['app_class'];
         }
     }
     protected function initContext($options=[], $context=null)
     {
         $this->appClass=get_class($context);
+        $this->options['is_debug']=$context->options['is_debug'];
     }
     ///////////////////////////////////////////////////////////
     protected function getCallerByLevel($level)
@@ -32,45 +48,34 @@ class StrictCheck
         }
         return $caller_class;
     }
-    protected function checkEnv()
+    protected function checkEnv(): bool
     {
-        if (!$this->appClass) {
+        if (!$this->options['is_debug']) {
             return false;
         }
         $flag=($this->appClass)::G()->options['is_debug']??false;
-        if (!$flag) {
-            return false;
-        }
-        return true;
+        return $flag?true:false;
     }
     public function checkStrictComponent($component_name, $trace_level)
     {
         if (!$this->checkEnv()) {
             return;
         }
-        
         $caller_class=$this->getCallerByLevel($trace_level);
-        $namespace=($this->appClass)::G()->options['namespace'];
-        $namespace_service=$namespace."\\Service\\";
         
-        $namespace_controller=$namespace."\\Controller\\"; // TODO
+        $namespace_service=$this->options['namespace_service'];
+        $namespace_controller=$this->options['namespace_controller'];
+        $controller_base_class=$this->options['controller_base_class'];
         
-        $controller_base_class=($this->appClass)->options['controller_base_class']??'';
-        
-        do {
-            if (substr($caller_class, 0, strlen($namespace_controller))==$namespace_controller) {
-                throw new Exception("$component_name Can not Call By Controller");
-            }
-            if ($controller_base_class && (is_subclass_of($caller_class, $controller_base_class) || $caller_class===$controller_base_class)) {
-                throw new Exception("$component_name Can not Call By Controller");
-            }
-            if (substr($caller_class, 0, strlen($namespace_service))===$namespace_service) {
-                throw new Exception("$component_name Can not Call By Service");
-            }
-            if (substr($caller_class, 0-strlen("Service"))=="Service") {
-                throw new Exception("$component_name Can not Call By Service");
-            }
-        } while (false);
+        if (substr($caller_class, 0, strlen($namespace_controller))==$namespace_controller) {
+            throw new Exception("$component_name Can not Call By Controller");
+        }
+        if ($controller_base_class && (is_subclass_of($caller_class, $controller_base_class) || $caller_class===$controller_base_class)) {
+            throw new Exception("$component_name Can not Call By Controller");
+        }
+        if (substr($caller_class, 0, strlen($namespace_service))===$namespace_service) {
+            throw new Exception("$component_name Can not Call By Service");
+        }
     }
     public function checkStrictModel($trace_level)
     {
@@ -78,67 +83,40 @@ class StrictCheck
             return;
         }
         $caller_class=$this->getCallerByLevel($trace_level);
-        
-        $namespace=($this->appClass)::G()->options['namespace'];
-        $namespace_service=$namespace."\\Service\\";
-        
-        do {
-            if (substr($caller_class, 0, strlen($namespace_service))===$namespace_service) {
-                break;
-            }
-            if (substr($caller_class, 0, 0-strlen("Service"))=="Service") {
-                break;
-            }
-            if (substr($caller_class, 0, 0-strlen("ExModel"))=="ExModel") {
-                break;
-            }
-            throw new Exception("Model Can Only call by Service or ExModel!");
-        } while (false);
-    }
-    public function checkStrictService($trace_level)
-    {
-        if (!$this->checkEnv()) {
-            return;
-        }
-        $caller_class=$this->getCallerByLevel($trace_level);
-        
-        $namespace=($this->appClass)::G()->options['namespace'];
-        $namespace_service=$namespace."\\Service\\";
 
-        $namespace_model=$namespace."\\Model\\";
+        $namespace_service=$this->options['namespace_service'];
+        $namespace_model=$this->options['namespace_model'];
         
-        if (substr($caller_class, 0, 0-strlen("BatchService"))==="BatchService") {
+        if (substr($caller_class, 0, strlen($namespace_service))===$namespace_service) {
             return;
         }
-        if (substr($caller_class, 0, 0-strlen("LibService"))==="LibService") {
-            do {
-                if (substr($caller_class, 0, strlen($namespace_service))===$namespace_service) {
-                    break;
-                }
-                throw new Exception("LibService Must Call By Serivce($caller_class)");
-            } while (false);
-        } else {
-            do {
-                if (substr($caller_class, 0, strlen($namespace_service))===$namespace_service) {
-                    throw new Exception("Service Can not call Service($caller_class)");
-                }
-                if (substr($caller_class, 0, strlen($namespace_model))===$namespace_model) {
-                    throw new Exception("Service Can not call by Model($caller_class)");
-                }
-            } while (false);
+        if (substr($caller_class, 0, strlen($namespace_model))===$namespace_model &&
+            substr($caller_class, -strlen("ExModel"))=="ExModel") {
+            return;
         }
+        throw new Exception("Model Can Only call by Service or ExModel!Caller is {$caller_class}");
     }
-    public function checkStrictParentCaller($trace_level, $parent_class)
+    public function checkStrictService($service_class, $trace_level)
     {
         if (!$this->checkEnv()) {
             return;
         }
         $caller_class=$this->getCallerByLevel($trace_level);
         
-        $class=get_class($this);
-        $flag=(is_subclass_of($caller_class, $parent_class) || $caller_class===$parent_class)?true:false;
-        if (!$flag) {
-            throw new Exception(" checkStrictParentCaller Fail:Class [$class] Must By Class [$parent_class]");
+        $namespace_model=$this->options['namespace_model'];
+        $namespace_service=$this->options['namespace_service'];
+        
+        if (substr($caller_class, -strlen("BatchService"))==="BatchService") {
+            return;
+        }
+        if (substr($service_class, -strlen("LibService"))==="LibService") {
+            return;
+        }
+        if (substr($caller_class, 0, strlen($namespace_service))===$namespace_service) {
+            throw new Exception("Service Can not call Service($caller_class)");
+        }
+        if (substr($caller_class, 0, strlen($namespace_model))===$namespace_model) {
+            throw new Exception("Service Can not call by Model, ($caller_class)");
         }
     }
 }

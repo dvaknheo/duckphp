@@ -132,9 +132,9 @@ trait DNMVCS_Glue
     {
         return StrictCheck::G()->checkStrictComponent($component_name, $trace_level+1);
     }
-    public function checkStrictService($trace_level=2)
+    public function checkStrictService($service_class, $trace_level=2)
     {
-        return StrictCheck::G()->checkStrictService($trace_level+1);
+        return StrictCheck::G()->checkStrictService($service_class, $trace_level+1);
     }
     public function checkStrictModel($trace_level=2)
     {

@@ -2,13 +2,31 @@
 require __DIR__ . '/../autoload.php';
 
 
-/*
-$dest=__DIR__.'/../tests';
-$source=__DIR__.'/../src';
+$c_args=[
+'--coverage-clover',
+'--coverage-crap4j',
+'--coverage-html',
+'--coverage-php',
+'--coverage-text',
+];
+$in_coverage=false;
+foreach($c_args as $v){
+    if(!in_array($v,$_SERVER['argv'])){ continue; }
+    $in_coverage=true;
+}
+if(!$in_coverage && ini_get('tests.report')){
+    register_shutdown_function(function(){
+    echo "\n Generating Report \n";
+        $dest=__DIR__.'/../tests';
+        $source=__DIR__.'/../src';
+        TestFileGenerator::Run($source,$dest);
+    });
+}
 
-TestFileGenerator::Run($source,$dest);
+
+
 return;
-*/
+//*/
 //-----------------------------------------------
 
 function GetClassTestPath($class)
