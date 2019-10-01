@@ -49,10 +49,7 @@ class RouteHookRouteMap
         }
         $lastWord=substr($pattern_url, -1);
         if ($lastWord==='*') {
-            $pattern_url=substr($pattern_url, -1);
-            if ($pattern_url!=$path_info) {
-                return false;
-            }
+            $pattern_url=substr($pattern_url, 0, -1);
             $p=substr($path_info, strlen($pattern_url));
             if (strlen($p)>0 && substr($p, 0, 1)!=='/') {
                 return false;
@@ -60,7 +57,7 @@ class RouteHookRouteMap
             $m=explode('/', $p);
             array_shift($m);
             $route->parameters=$m;
-            return false;
+            return true;
         }
         return ($pattern_url === $path_info) ? true:false;
     }

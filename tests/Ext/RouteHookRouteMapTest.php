@@ -10,39 +10,54 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(RouteHookRouteMap::class);
         
-        $options=[
-			'abc'=>function(){},
+        $route_options=[
+            'namespace'=>__NAMESPACE__,
+            'namespace_controller'=>'\\'.__NAMESPACE__,
         ];
-        RouteHookRouteMap::G()->init($options, $context=null);
-        RouteHookRouteMap::G()->assignRoute('def',function(){});
-        RouteHookRouteMap::G()->assignRoute(['hij',function(){}]);
+        Route::G(new Route())->init($route_options);
+        
+        $options=[
+            'route_map'=>[
+                '/first'=>function(){echo "first1111 \n";},
+            ],
+        ];
+        RouteHookRouteMap::G()->init($options, Route::G());
+        
+        RouteHookRouteMap::G()->assignRoute('~second(/(?<id>\d+))?',FakeObject::class.'@'.'second');
+        RouteHookRouteMap::G()->assignRoute(['/third*'=>FakeObject::class.'->'.'adjustCallbackArrow']);
         RouteHookRouteMap::G()->getRoutes();
-
-        $options=[
-        ];
-        Route::G(new Route())->init($options);
         
-        RouteHookRouteMap::Hook(Route::G());
-        
+        Route::G()->bind('/')->run();
+        Route::G()->bind('/first')->run();
+        Route::G()->bind('/second/1')->run();
+        Route::G()->bind('/third/abc/d/e')->run();
+        Route::G()->bind('/thirdabc/d/e')->run();
 
-        Route::G()->bindServerData([
-            'PATH_INFO'=>'Missed',
-            'REQUEST_METHOD'=>'POST',
-        ]);
-        Route::G()->run();
-        
-
-\MyCodeCoverage::G()->end(RouteHookRouteMap::class);
+        \MyCodeCoverage::G()->end(RouteHookRouteMap::class);
         $this->assertTrue(true);
-        /*
-        RouteHookRouteMap::G()->init($options=[], $context=null);
-        RouteHookRouteMap::G()->assignRoute($key, $value=null);
-        RouteHookRouteMap::G()->getRoutes();
-        RouteHookRouteMap::G()->matchRoute($pattern_url, $path_info, $route);
-        RouteHookRouteMap::G()->getRouteHandelByMap($route, $routeMap);
-        RouteHookRouteMap::G()->adjustCallback($callback);
-        RouteHookRouteMap::G()->Hook($route);
-        RouteHookRouteMap::G()->_Hook($route);
-        //*/
+    }
+}
+class Main{
+    
+    function index(){
+        var_dump(DATE(DATE_ATOM));
+    }
+
+}
+class FakeObject
+{
+    public function __construct()
+    {
+        echo "Main Class Start...";
+    }
+    function second()
+    {
+        var_dump(Route::Parameters());
+    }
+    function adjustCallbackArrow()
+    {
+        //var_dump(Route::Parameters());
+        //var_dump(Route::G()->path_info);
+        echo __METHOD__;echo PHP_EOL;
     }
 }
