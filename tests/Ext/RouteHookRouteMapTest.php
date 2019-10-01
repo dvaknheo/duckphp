@@ -13,6 +13,8 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
         $route_options=[
             'namespace'=>__NAMESPACE__,
             'namespace_controller'=>'\\'.__NAMESPACE__,
+            'controller_welcome_class'=> 'RouteHookRouteMapTestMain',
+
         ];
         Route::G(new Route())->init($route_options);
         
@@ -37,7 +39,7 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(true);
     }
 }
-class Main{
+class RouteHookRouteMapTestMain{
     
     function index(){
         var_dump(DATE(DATE_ATOM));

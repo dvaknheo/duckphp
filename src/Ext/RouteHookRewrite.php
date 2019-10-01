@@ -17,7 +17,9 @@ class RouteHookRewrite
         
         if ($context) {
             $context->addRouteHook([static::class,'Hook'], true);
-            $context->extendComponents(static::class, ['assignRewrite','getRewrites'], ['C']);
+            if (\method_exists($context,'extendComponents')) {
+                $context->extendComponents(static::class, ['assignRewrite','getRewrites'], ['C']);
+            }
         }
     }
     public function assignRewrite($key, $value=null)
@@ -129,17 +131,12 @@ class RouteHookRewrite
             $query='';//$this->parameters
         }
         $input_url=$path_info.$query;
-        foreach ($this->rewrite_map as $template_url=>$new_url) {
-            $url=$this->replaceNormalUrl($input_url, $template_url, $new_url);
-            if ($url!==null) {
-                $this->changeRouteUrl($route, $url);
-            }
-            $url=$this->replaceRegexUrl($input_url, $template_url, $new_url);
-            if ($url!==null) {
-                $this->changeRouteUrl($route, $url);
-            }
+        
+        $url=$this->filteRewrite($input_url);
+        if ($url!==null) {
+            $this->changeRouteUrl($route, $url);
         }
-        return  null;
+        return  false;
     }
     public static function Hook($route)
     {

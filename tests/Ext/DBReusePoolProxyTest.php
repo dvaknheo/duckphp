@@ -2,6 +2,8 @@
 namespace tests\DNMVCS\Ext;
 
 use DNMVCS\Ext\DBReusePoolProxy;
+use DNMVCS\Ext\DBManager;
+
 use DNMVCS\Core\SingletonEx;
 use DNMVCS\DNMVCS;
 
@@ -43,7 +45,7 @@ class DBReusePoolProxyTestObject
     use SingletonEx;
     public static function CreateDBInstance($config,$tag)
     {
-        $ret=new \stdClass
+        $ret=new \stdClass;
     }
     public static function CloseDBInstance($object,$tag)
     {
