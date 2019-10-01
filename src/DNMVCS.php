@@ -125,12 +125,15 @@ trait DNMVCS_Glue
     /////
     public static function CheckStrictDB()
     {
+$b=debug_backtrace(2,10);
+$a=array_column($b,'class');
+//var_dump($a);
         //3 = DB,_DB,CheckStrictDB
-        return static::G()->checkStrictComponent('DB', 3);
+        return static::G()->checkStrictComponent('DB', 4,['DNMVCS\Core\Helper\ModelHelper']);
     }
-    public function checkStrictComponent($component_name, $trace_level)
+    public function checkStrictComponent($component_name, $trace_level,$parent_classes_to_skip)
     {
-        return StrictCheck::G()->checkStrictComponent($component_name, $trace_level+1);
+        return StrictCheck::G()->checkStrictComponent($component_name, $trace_level+1,$parent_classes_to_skip);
     }
     public function checkStrictService($service_class, $trace_level=2)
     {
