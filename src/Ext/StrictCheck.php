@@ -38,13 +38,13 @@ class StrictCheck
         $this->options['is_debug']=$context->options['is_debug'];
     }
     ///////////////////////////////////////////////////////////
-    protected function getCallerByLevel($level,$parent_classes_to_skip=[])
+    protected function getCallerByLevel($level, $parent_classes_to_skip=[])
     {
         $level+=1;
         $backtrace=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, static::MAX_TRACE_LEVEL);
         $caller_class=$backtrace[$level]['class']??'';
         foreach ($parent_classes_to_skip as $parent_class_to_skip) {
-            if (is_subclass_of($caller_class,$parent_class_to_skip) || $parent_class_to_skip===$caller_class) {
+            if (is_subclass_of($caller_class, $parent_class_to_skip) || $parent_class_to_skip===$caller_class) {
                 $caller_class=$backtrace[$level+1]['class']??'';
                 return $caller_class;
             }
@@ -56,15 +56,18 @@ class StrictCheck
         if (!$this->options['is_debug']) {
             return false;
         }
+        if (!$this->appClass) {
+            return false;
+        }
         $flag=($this->appClass)::G()->options['is_debug']??false;
         return $flag?true:false;
     }
-    public function checkStrictComponent($component_name, $trace_level,$parent_classes_to_skip=[])
+    public function checkStrictComponent($component_name, $trace_level, $parent_classes_to_skip=[])
     {
         if (!$this->checkEnv()) {
             return;
         }
-        $caller_class=$this->getCallerByLevel($trace_level,$parent_classes_to_skip);
+        $caller_class=$this->getCallerByLevel($trace_level, $parent_classes_to_skip);
         
         $namespace_service=$this->options['namespace_service'];
         $namespace_controller=$this->options['namespace_controller'];
@@ -79,7 +82,6 @@ class StrictCheck
         if (substr($caller_class, 0, strlen($namespace_service))===$namespace_service) {
             throw new Exception("$component_name Can not Call By Service");
         }
-        
     }
     public function checkStrictModel($trace_level)
     {

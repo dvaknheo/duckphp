@@ -13,7 +13,9 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
             'skip_setting_file'=>true,
         ];
         DNMVCS::G()->init($options);
-        
+        DNMVCS::G()->system_wrapper_replace([
+            'exit_system' =>function(){ echo "change!\n";},
+        ]);
         
         $data=[];
         $cols_map=[];
@@ -29,6 +31,7 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         $serviceClass="abc";
         $input=[];
         try {
+            
         ControllerHelper::MapToService($serviceClass, $input);
         } catch(\Throwable $ex){
         }

@@ -56,8 +56,7 @@ class RouteHookDirectoryMode
             return $url;
         };
         
-        $url=RouteHookRewrite::G()->filteRewrite($url);
-        
+        //$url=RouteHookRewrite::G()->filteRewrite($url);
         $document_root=SuperGlobal::G()->_SERVER['DOCUMENT_ROOT'];
         $base_url=substr($this->basepath, strlen($document_root));
         $input_path=parse_url($url, PHP_URL_PATH)??'';
@@ -72,15 +71,17 @@ class RouteHookDirectoryMode
                 break;
             }
             $class_names=array_slice($blocks, 0, $i+1);
-            $file=$basepath.'/'.implode('/', $class_names).'.php';
-            $path_info=isset($blocks[$i])?array_slice($blocks, -$i-1):[];
-            $path_info=implode('/', $path_info);
+            $full_class_name=implode('/', $class_names);
+            $file=$basepath.$full_class_name.'.php';
             if (is_file($file)) {
-                $new_path=$base_url.'/'.implode('/', $class_names).'.php'.($path_info?'/'.$path_info:'');
+                $path_info=isset($blocks[$i])?array_slice($blocks, -$i-1):[];
+                $path_info=implode('/', $path_info);
+                $new_path=$base_url.implode('/', $class_names).'.php'.($path_info?'/'.$path_info:'');
+                break;
             }
         }
         if (!$new_path) {
-            return $new_path;
+            return $url;
         }
     
         $new_get=[];

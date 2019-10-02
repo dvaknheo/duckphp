@@ -3,6 +3,7 @@ namespace tests\DNMVCS\Ext;
 
 use DNMVCS\Ext\RouteHookRewrite;
 use DNMVCS\Core\Route;
+use DNMVCS\DNMVCS;
 
 class RouteHookRewriteTest extends \PHPUnit\Framework\TestCase
 {
@@ -10,12 +11,14 @@ class RouteHookRewriteTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(RouteHookRewrite::class);
         $route_options=[
+            'is_debug'=>true,
+            'skip_setting_file'=>true,
             'namespace'=>__NAMESPACE__,
             'namespace_controller'=>'\\'.__NAMESPACE__,
             'controller_welcome_class'=> 'RouteHookRewriteTestMain',
 
         ];
-        Route::G(new Route())->init($route_options);
+        DNMVCS::G(new DNMVCS())->init($route_options);
         
         $options=[
             'rewrite_map'=>[
@@ -29,6 +32,7 @@ class RouteHookRewriteTest extends \PHPUnit\Framework\TestCase
         RouteHookRewrite::G()->getRewrites();
         
         RouteHookRewrite::G()->filteRewrite('zdfafd');
+        RouteHookRewrite::G()->filteRewrite('k/v');
 
         Route::G()->bind('/article/3/4')->run();
         Route::G()->bind('/k/v')->run();

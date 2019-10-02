@@ -18,7 +18,7 @@ class Supporter extends \PHPUnit\Framework\TestCase
     public function createTests()
     {
         //*
-        echo "start create Report at " .DATE(DATE_ATOM);
+        echo "START CREATE REPORT AT " .DATE(DATE_ATOM);
         echo "\n\n";
         flush();
         $dest=__DIR__;

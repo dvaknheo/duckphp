@@ -58,7 +58,7 @@ class RouteHookOneFileMode
         }
         ////////////////////////////////////
         $flag=false;
-        $url=$this->filteRewrite($url,$flag);
+        $url=$this->filteRewrite($url, $flag);
         $input_path=parse_url($url, PHP_URL_PATH)??'';
         $input_get=[];
         parse_str(parse_url($url, PHP_URL_QUERY)??'', $input_get);
@@ -89,7 +89,7 @@ class RouteHookOneFileMode
         $url=$path.$query;
         return $url;
     }
-    protected function filteRewrite($url,&$ret=false)
+    protected function filteRewrite($url, &$ret=false)
     {
         /* you may turn this on
         $new_url=RouteHookRewrite::G()->filteRewrite($url);

@@ -40,6 +40,10 @@ class DBAdvanceTest extends \PHPUnit\Framework\TestCase
         
         var_dump($db->fetchAll("select * from Users"));
         
+        
+        $db->pdo=null;
+        $db->qouteInsertArray($array);
+        
         \MyCodeCoverage::G()->end(DBAdvance::class);
         $this->assertTrue(true);
         /*

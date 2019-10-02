@@ -30,7 +30,11 @@ class FacadesAutoLoaderTest extends \PHPUnit\Framework\TestCase
         \MyFacades\NoG::foo();
         }catch(\Throwable $ex){
         }
+        $flag=class_exists('Class_not_exists');
+        
         FacadesAutoLoader::G()->cleanUp();
+        
+        
         
         \MyCodeCoverage::G()->end(FacadesAutoLoader::class);
         $this->assertTrue(true);
