@@ -43,8 +43,9 @@ class RouteHookDirectoryModeTest extends \PHPUnit\Framework\TestCase
         SuperGlobal::G()->_SERVER['PATH_INFO']='';
 echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n";
         SuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=rtrim($base_path,'/');
-        echo RouteHookDirectoryMode::G()->onURL("/ix");
+        echo RouteHookDirectoryMode::G()->onURL("/izx");
         echo PHP_EOL;
+        echo RouteHookDirectoryMode::G()->onURL("BUG");
         echo RouteHookDirectoryMode::G()->onURL("m");
         echo PHP_EOL;
         echo RouteHookDirectoryMode::G()->onURL("m/index");
@@ -57,6 +58,20 @@ echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n";
         echo PHP_EOL;
 
 echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n";
+
+    
+        $file='/a/b.php';
+        SuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=rtrim($base_path,'/'); ///a/b.php
+        SuperGlobal::G()->_SERVER['SCRIPT_FILENAME']=rtrim($base_path,'/').$file;
+        SuperGlobal::G()->_SERVER['PATH_INFO']='';
+        SuperGlobal::G()->_SERVER['REQUEST_URI']=$file;
+        SuperGlobal::G()->_SERVER['REQUEST_URI'].=SuperGlobal::G()->_SERVER['PATH_INFO'];
+        
+                var_dump(SuperGlobal::G()->_SERVER['REQUEST_URI']);
+
+        Route::G()->bindServerData(SuperGlobal::G()->_SERVER);
+        Route::G()->run();
+
 
         
         \MyCodeCoverage::G()->end(RouteHookDirectoryMode::class);

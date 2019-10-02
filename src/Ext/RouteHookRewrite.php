@@ -79,20 +79,22 @@ class RouteHookRewrite
         $template_get=[];
         parse_str(parse_url($template_url, PHP_URL_QUERY)??'', $template_get);
         
-        if (array_diff_assoc($input_get, $template_get)) {
+        $input_path='/'.$input_path;
+
+        if ($input_path!==$template_path) {
             return null;
         }
+
+        //if (array_diff_assoc($template_get,$input_get )) {
+        //    return null;
+        //}
         
         $new_path=parse_url($new_url, PHP_URL_PATH);
         $new_get=[];
         parse_str(parse_url($new_url, PHP_URL_QUERY)??'', $new_get);
-        if ($input_path!==$template_path) {
-            return null;
-        }
         
         $get=array_merge($input_get, $new_get);
         $query=$get?'?'.http_build_query($get):'';
-        
         return $new_path.$query;
     }
     // used by RouteHookDirectoryMode

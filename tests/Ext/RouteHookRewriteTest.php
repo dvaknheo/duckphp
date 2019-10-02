@@ -27,8 +27,9 @@ class RouteHookRewriteTest extends \PHPUnit\Framework\TestCase
         ];
     
         RouteHookRewrite::G()->init($options,Route::G());
-        RouteHookRewrite::G()->assignRewrite(['/k/v?a=b'=>'c/d?e=f',]);
+        RouteHookRewrite::G()->assignRewrite(['/k/v'=>'c/d?e=f',]);
         RouteHookRewrite::G()->assignRewrite('second','zz');
+        RouteHookRewrite::G()->assignRewrite('/k/v?a=b','zz');
         RouteHookRewrite::G()->getRewrites();
         
         RouteHookRewrite::G()->filteRewrite('zdfafd');
@@ -36,31 +37,12 @@ class RouteHookRewriteTest extends \PHPUnit\Framework\TestCase
 
         Route::G()->bind('/article/3/4')->run();
         Route::G()->bind('/k/v')->run();
-        
-if(false){
+        echo "-----------xxxxxxxxxxxxxxxxxxxxx-----\n";
+        RouteHookRewrite::G()->filteRewrite('k/v?a=b&g=h');
 
-        RouteHookRewrite::G()->getRewrites();
-        
-        
-          
-        RouteHookRewrite::G()->replaceRegexUrl('inx','~ab','article?id=');
-        RouteHookRewrite::G()->replaceRegexUrl('111','111?a1=23','article?id=11');
-        RouteHookRewrite::G()->filteRewrite('zdfafd');
-}
 
         \MyCodeCoverage::G()->end(RouteHookRewrite::class);
         $this->assertTrue(true);
-        /*
-        RouteHookRewrite::G()->init($options=[], $context=null);
-        RouteHookRewrite::G()->assignRewrite($key, $value=null);
-        RouteHookRewrite::G()->getRewrites();
-        RouteHookRewrite::G()->replaceRegexUrl($input_url, $template_url, $new_url);
-        RouteHookRewrite::G()->replaceNormalUrl($input_url, $template_url, $new_url);
-        RouteHookRewrite::G()->filteRewrite($input_url);
-        RouteHookRewrite::G()->changeRouteUrl($route, $url);
-        RouteHookRewrite::G()->_Hook($route);
-        RouteHookRewrite::G()->Hook($route);
-        //*/
     }
 }
 class RouteHookRewriteTestMain{
