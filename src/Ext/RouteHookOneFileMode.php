@@ -29,6 +29,10 @@ class RouteHookOneFileMode
         }
         return $this;
     }
+    public static function URL($url=null)
+    {
+        return static::G()->onURL($url);
+    }
     public function onURL($url=null)
     {
         if (strlen($url)>0 && '/'==$url{0}) {
@@ -39,11 +43,13 @@ class RouteHookOneFileMode
         $key_for_module=$this->key_for_module;
         $get=[];
         $path='';
+        
         $path=SuperGlobal::G()->_SERVER['REQUEST_URI'];
         $path_info=SuperGlobal::G()->_SERVER['PATH_INFO'];
-
+        $script_file=SuperGlobal::G()->_SERVER['SCRIPT_FILENAME'];
         
         $path=parse_url($path, PHP_URL_PATH)??'';
+
         if (strlen($path_info)) {
             $path=substr($path, 0, 0-strlen($path_info));
         }
@@ -51,22 +57,15 @@ class RouteHookOneFileMode
             return $path;
         }
         ////////////////////////////////////
-        
-        $new_url=RouteHookRewrite::G()->filteRewrite($url);
-        if ($new_url) {
-            $url=$new_url;
-            if (strlen($url)>0 && '/'==$url{0}) {
-                return $url;
-            };
-        }
-        
+        $flag=false;
+        $url=$this->filteRewrite($url,$flag);
         $input_path=parse_url($url, PHP_URL_PATH)??'';
         $input_get=[];
         parse_str(parse_url($url, PHP_URL_QUERY)??'', $input_get);
         
         $blocks=explode('/', $input_path);
         if (isset($blocks[0])) {
-            $basefile=basename(SuperGlobal::G()->_SERVER['SCRIPT_FILENAME']);
+            $basefile=basename($script_file);
             if ($blocks[0]===$basefile) {
                 array_shift($blocks);
             }
@@ -83,12 +82,24 @@ class RouteHookOneFileMode
             $get[$key_for_action]=$input_path;
         }
         $get=array_merge($input_get, $get);
-        if ($key_for_module && isset($get[$key_for_module]) && $get[$key_for_module]==='') {
-            unset($get[$key_for_module]);
-        }
+        //if ($key_for_module && isset($get[$key_for_module]) && $get[$key_for_module]==='') {
+        //    unset($get[$key_for_module]);
+        //}
         $query=$get?'?'.http_build_query($get):'';
         $url=$path.$query;
-        
+        return $url;
+    }
+    protected function filteRewrite($url,&$ret=false)
+    {
+        /* you may turn this on
+        $new_url=RouteHookRewrite::G()->filteRewrite($url);
+        if ($new_url) {
+            $url=$new_url;
+            if (strlen($url)>0 && '/'==$url{0}) {
+                return $url;
+            };
+        }
+        //*/
         return $url;
     }
     public static function Hook($route)

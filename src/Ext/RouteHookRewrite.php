@@ -123,13 +123,10 @@ class RouteHookRewrite
     protected function _Hook($route)
     {
         $path_info=$route->path_info;
-        if (isset(SuperGlobal::G()->_SERVER['REQUEST_URI'])) {
-            $uri=SuperGlobal::G()->_SERVER['REQUEST_URI'];
-            $query=parse_url($uri, PHP_URL_QUERY);
-            $query=$query?'?'.$query:'';
-        } else {
-            $query='';//$this->parameters
-        }
+        
+        $query=SuperGlobal::G()->_GET;
+        $query=$query?'?'.http_build_query($query):'';
+        
         $input_url=$path_info.$query;
         
         $url=$this->filteRewrite($input_url);

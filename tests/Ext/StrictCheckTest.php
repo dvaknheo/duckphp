@@ -34,7 +34,7 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
             ]],
 
         ];
-        StrictCheck::G(new FakeObject);
+        StrictCheck::G(new StrictCheck_FakeObject);
         
         DNMVCS::G()->init($dn_options);
         $options=[
@@ -58,7 +58,7 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
 
     }
 }
-class FakeObject
+class StrictCheck_FakeObject
 {
     use SingletonEx;
     public function init($options,$context)
