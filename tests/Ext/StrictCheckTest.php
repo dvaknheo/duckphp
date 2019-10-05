@@ -15,7 +15,7 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \MyCodeCoverage::G()->begin(StrictCheck::class);
-        
+
         $dn_options=[
             'skip_setting_file'=>true,
             'error_404'=>null,
@@ -35,8 +35,9 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
 
         ];
         StrictCheck::G(new StrictCheck_FakeObject);
-        
+
         DNMVCS::G()->init($dn_options);
+
         $options=[
             'namespace'=> __NAMESPACE__,
             'namespace_controller'=>        __NAMESPACE__ .'\\'.'Controller'.'\\',
@@ -47,12 +48,16 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
         ];
         StrictCheck::G(new StrictCheck)->init($options, DNMVCS::G());
         Route::G()->bind('foo');
+
         DNMVCS::G()->run();
-        
+
         $options['is_debug']=false;
         StrictCheck::G()->init($options);
         DNMVCS::G()->run();
+        $options['is_debug']=true;
+        StrictCheck::G(new StrictCheck())->init($options)->checkStrictComponent('',0,[]);
         
+
         \MyCodeCoverage::G()->end(StrictCheck::class);
         $this->assertTrue(true);
 

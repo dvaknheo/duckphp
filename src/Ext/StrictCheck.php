@@ -31,6 +31,7 @@ class StrictCheck
         if (!$context) {
             $this->appClass=$this->options['app_class'];
         }
+        return $this;
     }
     protected function initContext($options=[], $context=null)
     {

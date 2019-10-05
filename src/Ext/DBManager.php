@@ -28,6 +28,7 @@ class DBManager
     
     protected $before_get_db_handler=null;
     protected $use_context_db_setting=true;
+    protected $is_static=false;
     
     public function init($options=[], $context=null)
     {
@@ -59,9 +60,19 @@ class DBManager
             $this->before_get_db_handler[0]=get_class($context);
         }
         $context->addBeforeShowHandler([static::class,'CloseAllDB']);
-        $context->addDynamicComponentClass(static::class);
+        if (!$this->is_static) {
+            $context->addDynamicComponentClass(static::class);
+        }
     }
-
+    public static function CloseAllDB()
+    {
+        return static::G()->_closeAllDB();
+    }
+    public function OnException()
+    {
+        return static::G()->_onException();
+    }
+    
     public function setDBHandler($db_create_handler, $db_close_handler=null, $db_excption_handler=null)
     {
         $this->db_create_handler=$db_create_handler;
@@ -88,12 +99,15 @@ class DBManager
             $t=array_keys($this->database_config_list);
             $tag=$t[0];
         }
-        
+        $db_config=$this->database_config_list[$tag]??null;
+        if ($db_config===null) {
+            return null;
+        }
+        return $this->getDatabase($db_config, $tag);
+    }
+    protected function getDatabase($db_config, $tag)
+    {
         if (!isset($this->databases[$tag])) {
-            $db_config=$this->database_config_list[$tag]??null;
-            if ($db_config===null) {
-                return null;
-            }
             $this->databases[$tag]=($this->db_create_handler)($db_config, $tag);
         }
         return $this->databases[$tag];
@@ -105,14 +119,11 @@ class DBManager
     public function _DB_R()
     {
         if (!isset($this->database_config_list[static::TAG_READ])) {
-            return $this->_DB();
+            return $this->_DB(static::TAG_WRITE);
         }
         return $this->_DB(static::TAG_READ);
     }
-    public static function CloseAllDB()
-    {
-        return static::G()->_closeAllDB();
-    }
+    
     public function _closeAllDB()
     {
         if (!$this->db_close_handler) {
@@ -123,10 +134,7 @@ class DBManager
         }
         $this->databases=[];
     }
-    public function OnException()
-    {
-        return static::G()->_onException();
-    }
+
     public function _onException()
     {
         if (!$this->db_excption_handler) {

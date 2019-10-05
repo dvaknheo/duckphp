@@ -89,7 +89,7 @@ $options['database_list']=[
         DBManager::OnException();
         DBManager::G()->init($options,null);
 
-                DBManager::G()->setDBHandler([DB::class,'CreateDBInstance'],null);
+        DBManager::G()->setDBHandler([DB::class,'CreateDBInstance'],null);
 
                 DBManager::CloseAllDB();
         DBManager::OnException();

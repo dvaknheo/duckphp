@@ -1,119 +1,147 @@
 <?php
 namespace DNMVCS\Ext;
 
-use DNMVCS\Core\SingletonEx;
 use DNMVCS\Ext\DBManager;
-use SplQueue;
 
-class DBReusePoolProxy
+class DBReusePoolProxy extends DBManager
 {
-    use SingletonEx;
     const DEFAULT_OPTIONS=[
         'db_reuse_size' => 100,
         'db_reuse_timeout' => 5,
-        'dbm' => null,
     ];
-    public $max_length=100;
-    public $timeout=5;
-    
-    protected $db_create_handler;
-    protected $db_close_handler;
-    protected $db_exception_handler;
-    
+    protected $db_reuse_size;
+    protected $db_reuse_timeout;
     protected $pools=[];
-    protected $appClass;
-    
+    protected $indexs=[];
+    protected $is_static=true;
+    public function __construct()
+    {
+        //$this->options=array_merge(parent::$options,$this->options);
+    }
     public function init($options=[], $context=null)
     {
-        $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
+        $this->db_reuse_size=$options['db_reuse_size']??100;
+        $this->db_reuse_timeout=$options['db_reuse_timeout']??5;
         
-        $this->max_length=$options['db_reuse_size'];
-        $this->timeout=$options['db_reuse_timeout'];
-        
-        $dbm=$options['dbm'];
-        $dbm=$dbm??DBManager::G();
-        $dbm=is_string($dbm)?$dbm::G():$dbm;
-        
-        $this->proxy($dbm);
-        $this->appClass=$context? \get_class($context):null;
-        
-        return $this;
+        return parent::init($options, $context);
     }
-    public function proxy($dbm)
+    //////////////////
+    protected function getObjectIndex($tag)
     {
-        if (!$dbm) {
-            return;
+        $cid=0;
+        try {
+            $cid=\Swoole\Coroutine::getuid();
+            $cid=($cid<=0)?0:$cid;
+        } catch (\Throwable $ex) {
         }
-        list($db_create_handler, $db_close_handler, $db_exception_handler)=$dbm->getDBHandler();
-        $this->setDBHandler($db_create_handler, $db_close_handler, $db_exception_handler);
-        $dbm->setDBHandler([$this,'onCreate'], [$this,'onClose'], [$this,'onException']);  //将会被 clean
+        return ''.$cid.':'.$tag;
     }
-    public function setDBHandler($db_create_handler, $db_close_handler=null, $db_exception_handler=null)
+
+    protected function getObjectByHash($tag, $hash)
     {
-        $this->db_create_handler=$db_create_handler;
-        $this->db_close_handler=$db_close_handler;
-        $this->db_exception_handler=$db_exception_handler;
+        $wrapper=$this->pools[$tag][$hash]??null;
+        
+        if (!$wrapper) {
+            return null;
+        }
+        if (!$wrapper['Userable']) {
+            return null;
+        }
+        $now=time();
+        if (($now-$wrapper['Time'])>=$this->db_reuse_timeout) {
+            return null;
+        }
+        $this->pools[$tag][$hash]['Time']=$now;
+        
+        return $v['Object'];
     }
-    public function onCreate($db_config, $tag)
+    protected function getDatabase($db_config, $tag)
     {
-        return $this->getObject($db_config, $tag);
-    }
-    public function onClose($db, $tag)
-    {
-        return $this->reuseObject($db, $tag);
-    }
-    public function onException($db, $tag)
-    {
-        return $this->kickObject($db, $tag);
-    }
-    protected function getObject($db, $tag)
-    {
+        $object=null;
         $this->pools[$tag]=$this->pools[$tag]??[];
-        $pool=&$this->pools[$tag];
         
-        foreach ($pool as &$v) {
-            if (!$v['Userable']) {
-                continue;
+        $index=$this->getObjectIndex($tag);
+        $hash=$this->indexs[$index]??null;
+        if ($hash!==null) {
+            $object=$this->getObjectByHash($tag, $hash);
+            if ($object!==null) {
+                return $object;
             }
-            $now=time();
-            if (($now-$v['Userable'])>$this->timeout) {
-                continue;
+        }
+        
+        foreach ($this->pools[$tag] as $hash=>$v) {
+            $object=$this->getObjectByHash($tag, $hash);
+            if ($object!==null) {
+                return $object;
             }
-            $v['Userable']=true;
-            return $v['object'];
         }
-        if (count($pool)>=$this->max_length) {
-            array_shift($pool);
+        
+        //full to kick out
+        if (count($this->pools[$tag])>=$this->db_reuse_size) {
+            $v=array_shift($this->pools[$tag]);
+            unset($this->indexs[$v['Index']]);
+            if ($this->db_close_handler) {
+                ($this->db_close_handler)($v['Object'], $tag);
+            }
         }
-        $object=($this->db_create_handler)($db, $tag);
+        
+        $object=($this->db_create_handler)($db_config, $tag);
         
         $key=spl_object_hash($object);
-        $pool[$key]=[
+        $this->indexs[$index]=$key;
+        $this->pools[$tag][$key]=[
             'Object'=>$object,
-            'Userable'=>true,
+            'Userable'=>false,
             'Time'=>time(),
+            'Index'=>$index,
         ];
         return $object;
     }
-    protected function kickObject($db, $tag)
+    protected function kickObject($tag)
     {
-        $this->pools[$tag]=$this->pools[$tag]??[];
-        $pool=&$this->pools[$tag];
-        $key=spl_object_hash($db);
-        
-        unset($pool[$key]);
-    }
-    protected function reuseObject($db, $tag)
-    {
-        $this->pools[$tag]=$this->pools[$tag]??[];
-        $pool=&$this->pools[$tag];
-        
-        $key=spl_object_hash($db);
-        if (!isset($pool[$key])) {
+        $index=$this->getObjectIndex($tag);
+        $key=$this->indexs[$index]??null;
+        if ($key===null) {
             return;
         }
-        $a=&$pool[$key];
-        $a['Time']=time();
-        $a['Useable']=true;
+
+        $object=$this->pools[$tag][$key]['Object']??null;
+        if ($object===null) {
+            return;
+        }
+        
+        $index=$this->getObjectIndex($tag);
+        unset($this->indexs[$index]);
+        if ($this->db_exception_handler) {
+            ($this->db_exception_handler)($object, $tag);
+        } elseif ($this->db_close_handler) {
+            ($this->db_close_handler)($object, $tag);
+        }
+    }
+    protected function reuseObject($tag)
+    {
+        $index=$this->getObjectIndex($tag);
+        $key=$this->indexs[$index]??null;
+        if ($key===null) {
+            return;
+        }
+        
+        if (!isset($this->pools[$tag][$key])) {
+            return;
+        }
+        $this->pools[$tag][$key]['Time']=time();
+        $this->pools[$tag][$key]['Useable']=true;
+    }
+    public function _closeAllDB()
+    {
+        foreach ($this->database_config_list as $tag=>$v) {
+            $this->reuseObject($tag);
+        }
+    }
+    public function _onException()
+    {
+        foreach ($this->database_config_list as $tag=>$v) {
+            $this->kickObject($tag);
+        }
     }
 }

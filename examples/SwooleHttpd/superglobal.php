@@ -1,5 +1,4 @@
 <?php
-<?php
 require(__DIR__.'/../../autoload.php');
 use DNMVCS\SwooleHttpd\SwooleHttpd;
 global $n;
