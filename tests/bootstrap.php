@@ -50,6 +50,7 @@ class MyCodeCoverage
         $coverage->filter()->removeDirectoryFromWhitelist($path.'/SwooleHttpd');
         $coverage->filter()->removeFileFromWhitelist($path.'/Ext/Oldbones.php');
         $coverage->filter()->removeFileFromWhitelist($path.'/Ext/Lazybones.php');
+        $coverage->filter()->removeFileFromWhitelist($path.'/Ext/DBReusePoolProxy.php');
 
         $coverage->setTests(array(
           'T' =>
@@ -173,7 +174,7 @@ class TestFileGenerator
                 continue;
             }
             
-            if ($short_file==='Ext/Oldbones.php' || $short_file==='Ext/Lazybones.php') {
+            if ($short_file==='Ext/DBReusePoolProxy.php' ||  $short_file==='Ext/Oldbones.php' || $short_file==='Ext/Lazybones.php') {
                 continue;
             }
             static::MakeDir($short_file, $dest);

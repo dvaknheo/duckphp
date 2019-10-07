@@ -10,7 +10,7 @@ class DBManager
     const DEFAULT_OPTIONS=[
         'db_create_handler'=>null,
         'db_close_handler'=>null,
-        'db_excption_handler'=>null,
+        'db_exception_handler'=>null,
         'before_get_db_handler'=>null,
         
         'database_list'=>null,
@@ -24,7 +24,7 @@ class DBManager
     
     protected $db_create_handler=null;
     protected $db_close_handler=null;
-    protected $db_excption_handler=null;
+    protected $db_exception_handler=null;
     
     protected $before_get_db_handler=null;
     protected $use_context_db_setting=true;
@@ -38,7 +38,7 @@ class DBManager
         $this->database_config_list=$options['database_list'];
         $this->db_create_handler=$options['db_create_handler']??[DB::class,'CreateDBInstance'];
         $this->db_close_handler=$options['db_close_handler']??[DB::class,'CloseDBInstance'];
-        $this->db_excption_handler=$options['db_excption_handler']??null;
+        $this->db_exception_handler=$options['db_exception_handler']??null;
         $this->use_context_db_setting=$options['use_context_db_setting'];
         if ($context) {
             $this->initContext($options, $context);
@@ -73,11 +73,11 @@ class DBManager
         return static::G()->_onException();
     }
     
-    public function setDBHandler($db_create_handler, $db_close_handler=null, $db_excption_handler=null)
+    public function setDBHandler($db_create_handler, $db_close_handler=null, $db_exception_handler=null)
     {
         $this->db_create_handler=$db_create_handler;
         $this->db_close_handler=$db_close_handler;
-        $this->db_excption_handler=$db_excption_handler;
+        $this->db_exception_handler=$db_exception_handler;
     }
     public function setBeforeGetDBHandler($before_get_db_handler)
     {
@@ -85,7 +85,7 @@ class DBManager
     }
     public function getDBHandler()
     {
-        return [$this->db_create_handler,$this->db_close_handler,$this->db_excption_handler];
+        return [$this->db_create_handler,$this->db_close_handler,$this->db_exception_handler];
     }
     public function _DB($tag=null)
     {
@@ -137,11 +137,11 @@ class DBManager
 
     public function _onException()
     {
-        if (!$this->db_excption_handler) {
+        if (!$this->db_exception_handler) {
             return;
         }
         foreach ($this->databases as $tag=>$v) {
-            ($this->db_excption_handler)($v, $tag);
+            ($this->db_exception_handler)($v, $tag);
         }
         $this->databases=[];
     }

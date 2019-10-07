@@ -97,9 +97,9 @@ trait DNMVCS_Glue
     {
         return DBManager::G()->_DB_R();
     }
-    public function setDBHandler($db_create_handler, $db_close_handler=null, $db_excption_handler=null)
+    public function setDBHandler($db_create_handler, $db_close_handler=null, $db_exception_handler=null)
     {
-        return DBManager::G()->setDBHandler($db_create_handler, $db_close_handler, $db_excption_handler);
+        return DBManager::G()->setDBHandler($db_create_handler, $db_close_handler, $db_exception_handler);
     }
     public static function Pager()
     {

@@ -50,7 +50,7 @@ class DBReusePoolProxy extends DBManager
         }
         $this->pools[$tag][$hash]['Time']=$now;
         
-        return $v['Object'];
+        return $this->pools[$tag][$hash]['Object'];
     }
     protected function getDatabase($db_config, $tag)
     {
