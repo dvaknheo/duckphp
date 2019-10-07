@@ -44,9 +44,6 @@ class DBReusePoolProxy extends DBManager
         if (!$wrapper) {
             return null;
         }
-        if (!$wrapper['Userable']) {
-            return null;
-        }
         $now=time();
         if (($now-$wrapper['Time'])>=$this->db_reuse_timeout) {
             return null;
@@ -130,6 +127,7 @@ class DBReusePoolProxy extends DBManager
             return;
         }
         $this->pools[$tag][$key]['Time']=time();
+        $this->pools[$tag][$key]['Index']=null;
         $this->pools[$tag][$key]['Useable']=true;
     }
     public function _closeAllDB()
