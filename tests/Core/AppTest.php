@@ -202,12 +202,12 @@ class AppTest extends \PHPUnit\Framework\TestCase
         $ret=["ret"=>'OK'];
         
         $output="";
-        
-        App::G()->exit_handler=function($code){
+        App::G()->system_wrapper_replace(['exit_system'=>function($code){
             var_dump(DATE(DATE_ATOM));
-        };
+        }]);
         //*
         App::ExitRedirect($url, $only_in_site=true);
+
         App::ExitRedirect("http://www.github.com",true);
         App::ExitRouteTo($url);
         App::Exit404();

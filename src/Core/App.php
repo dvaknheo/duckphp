@@ -481,12 +481,43 @@ EOT;
 
 trait Core_SystemWrapper
 {
-    public $header_handler=null;
-    public $cookie_handler=null;
-    public $exit_handler=null;
-    public $exception_handler=null;
-    public $shutdown_handler=null;
-    
+    protected $system_handlers=[
+            'header'                =>null,
+            'setcookie'             =>null,
+            'exit_system'           =>null,
+            'set_exception_handler' =>null,
+            'register_shutdown_function' =>null,
+        ];
+    public static function system_wrapper_replace(array $funcs)
+    {
+        static::G()->system_handlers=array_replace(static::G()->system_handlers, $funcs)??[];
+        return true;
+    }
+    public static function system_wrapper_get_providers():array
+    {
+        $ret=static::G()->system_handlers;
+        
+        $class=static::class;
+        array_map(
+            function ($v) use ($class) {
+                $v=$v??["$class","$v"];
+            }, $ret
+        );
+        return $ret;
+    }
+    protected function system_wrapper_call_check($func)
+    {
+        $func=ltrim($func, '_');
+        return isset($this->system_handlers[$func])?true:false;
+    }
+    protected function system_wrapper_call($func,$input_args)
+    {
+        $func=ltrim($func, '_');
+        if (is_callable($this->system_handlers[$func]??null)) {
+            return ($this->system_handlers[$func])(...$input_args);
+        }
+        return ($func)(...$input_args);
+    }
     public static function header($output, bool $replace = true, int $http_response_code=0)
     {
         return static::G()->_header($output, $replace, $http_response_code);
@@ -509,9 +540,11 @@ trait Core_SystemWrapper
     }
     public function _header($output, bool $replace = true, int $http_response_code=0)
     {
-        if ($this->header_handler) {
-            return ($this->header_handler)($output, $replace, $http_response_code);
+        if ($this->system_wrapper_call_check(__FUNCTION__)) {
+            $this->system_wrapper_call(__FUNCTION__, func_get_args());
+            return;
         }
+        ////
         if (PHP_SAPI==='cli') {
             return;
         }
@@ -525,65 +558,33 @@ trait Core_SystemWrapper
     }
     public function _setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain  = '', bool $secure = false, bool $httponly = false)
     {
-        if ($this->cookie_handler) {
-            return ($this->cookie_handler)($key, $value, $expire, $path, $domain, $secure, $httponly);
+        if ($this->system_wrapper_call_check(__FUNCTION__)) {
+            return $this->system_wrapper_call(__FUNCTION__, func_get_args());
         }
         return setcookie($key, $value, $expire, $path, $domain, $secure, $httponly);
     }
 
     public function _exit_system($code=0)
     {
-        if ($this->exit_handler) {
-            return ($this->exit_handler)($code);
+        if ($this->system_wrapper_call_check(__FUNCTION__)) {
+            return $this->system_wrapper_call(__FUNCTION__, func_get_args());
         }
         exit($code);        // @codeCoverageIgnore
     }
     public function _set_exception_handler(callable $exception_handler)
     {
-        if ($this->exception_handler) {
-            return ($this->exception_handler)($exception_handler);
+        if ($this->system_wrapper_call_check(__FUNCTION__)) {
+            return $this->system_wrapper_call(__FUNCTION__, func_get_args());
         }
         return set_exception_handler($exception_handler);
     }
     public function _register_shutdown_function(callable $callback, ...$args)
     {
-        if ($this->shutdown_handler) {
-            return ($this->shutdown_handler)($callback, ...$args);
+        if ($this->system_wrapper_call_check(__FUNCTION__)) {
+            $this->system_wrapper_call(__FUNCTION__, func_get_args());
+            return;
         }
         register_shutdown_function($callback, ...$args);
-    }
-    // @codeCoverageIgnoreStart
-    public function system_wrapper_replace(array $funcs=[])
-    {
-        if (isset($funcs['header'])) {
-            $this->header_handler=$funcs['header'];
-        }
-        if (isset($funcs['setcookie'])) {
-            $this->cookie_handler=$funcs['setcookie'];
-        }
-        if (isset($funcs['exit_system'])) {
-            $this->exit_handler=$funcs['exit_system'];
-        }
-        if (isset($funcs['set_exception_handler'])) {
-            $this->exception_handler=$funcs['set_exception_handler'];
-        }
-        if (isset($funcs['register_shutdown_function'])) {
-            $this->shutdown_handler=$funcs['register_shutdown_function'];
-        }
-        
-        return true;
-    }
-    // @codeCoverageIgnoreEnd
-    public static function system_wrapper_get_providers():array
-    {
-        $ret=[
-            'header'                =>[static::class,'header'],
-            'setcookie'             =>[static::class,'setcookie'],
-            'exit_system'           =>[static::class,'exit_system'],
-            'set_exception_handler' =>[static::class,'set_exception_handler'],
-            'register_shutdown_function' =>[static::class,'register_shutdown_function'],
-        ];
-        return $ret;
     }
 }
 trait Core_Redirect
