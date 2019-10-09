@@ -26,6 +26,7 @@ class RouteHookOneFileMode
         }
         if ($context) {
             $context->addRouteHook([static::class,'Hook'], true);
+            Route::G()->setURLHandler([$this,'onURL']);
         }
         return $this;
     }
@@ -102,16 +103,15 @@ class RouteHookOneFileMode
         //*/
         return $url;
     }
-    public static function Hook($route)
+    public static function Hook()
     {
-        return static::G()->_Hook($route);
+        return static::G()->_Hook();
     }
-    public function _Hook($route)
+    public function _Hook()
     {
-        $route->setURLHandler([$this,'onURL']);
-        
         $k=$this->key_for_action;
         $m=$this->key_for_module;
+        
         $old_path_info=SuperGlobal::G()->_SERVER['PATH_INFO']??'';
         
         $module=SuperGlobal::G()->_REQUEST[$m]??null;
@@ -121,7 +121,9 @@ class RouteHookOneFileMode
         $path_info=ltrim($path_info, '/');
         
         $path_info=($path_info==='')?ltrim($old_path_info, '/'):$path_info;
-        $route->path_info=$path_info;
-        $route->calling_path=$path_info;
+        
+        Route::G()->path_info=$path_info;
+        
+        return false;
     }
 }

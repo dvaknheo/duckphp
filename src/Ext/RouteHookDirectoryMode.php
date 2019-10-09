@@ -3,6 +3,7 @@ namespace DNMVCS\Ext;
 
 use DNMVCS\Core\SingletonEx;
 use DNMVCS\Core\SuperGlobal;
+use DNMVCS\Core\Route;
 use DNMVCS\Ext\RouteHookRewrite;
 
 class RouteHookDirectoryMode
@@ -20,12 +21,11 @@ class RouteHookDirectoryMode
         $this->basepath=$options['mode_dir_basepath'];
         if ($context) {
             $context->addRouteHook([static::class,'Hook']);
+            Route::G()->setURLHandler([$this,'onURL']);
         }
     }
-    protected function adjustPathinfo($path_info, $document_root)
+    protected function adjustPathinfo($basepath, $path_info, $document_root)
     {
-        //$this->basepath=ltrim($this->basepath,'/').'/';
-        $basepath=$this->basepath;
         $input_path=parse_url(SuperGlobal::G()->_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $script_filename=SuperGlobal::G()->_SERVER['SCRIPT_FILENAME'];
         $path_info=substr($document_root.$input_path, strlen($basepath));
@@ -92,16 +92,17 @@ class RouteHookDirectoryMode
         $ret=$new_path.$query;
         return $ret;
     }
-    // abc/d/e.php/g/h?act=z  abc/d/e/g
-    public static function Hook($route)
+    public static function Hook()
     {
-        return static::G()->_Hook($route);
+        return static::G()->_Hook();
     }
-    public function _Hook($route)
+    public function _Hook()
     {
-        $route->setURLHandler([$this,'onURL']); //todo once ?
+        $route=Route::G();
         
-        $route->path_info=$this->adjustPathinfo($route->path_info, $route->document_root);
-        $route->calling_path=$route->path_info;
+        //$this->basepath=ltrim($this->basepath,'/').'/';
+        $basepath=$this->basepath;
+        $route->path_info=$this->adjustPathinfo($basepath, $route->path_info, $route->document_root);
+        return false;
     }
 }

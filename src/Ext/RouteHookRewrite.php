@@ -3,6 +3,7 @@ namespace DNMVCS\Ext;
 
 use DNMVCS\Core\SingletonEx;
 use DNMVCS\Core\SuperGlobal;
+use DNMVCS\Core\Route;
 
 class RouteHookRewrite
 {
@@ -11,6 +12,12 @@ class RouteHookRewrite
         'rewrite_map'=>[],
     ];
     protected $rewrite_map=[];
+    
+    
+    public static function Hook()
+    {
+        return static::G()->doHook();
+    }
     public function init($options=[], $context=null)
     {
         $this->rewrite_map=array_merge($this->rewrite_map, $options['rewrite_map']??[]);
@@ -112,18 +119,18 @@ class RouteHookRewrite
         }
         return null;
     }
-    protected function changeRouteUrl($route, $url)
+    protected function changeRouteUrl($url)
     {
         $url=(string)$url;
         $path=parse_url($url, PHP_URL_PATH);
         $input_get=[];
         parse_str(parse_url($url, PHP_URL_QUERY)??'', $input_get);
-        $route->path_info=$path;
         SuperGlobal::G()->_SERVER['init_get']=SuperGlobal::G()->_GET;
         SuperGlobal::G()->_GET=$input_get;
     }
-    protected function _Hook($route)
+    protected function doHook()
     {
+        $route=Route::G();
         $path_info=$route->path_info;
         
         $query=SuperGlobal::G()->_GET;
@@ -133,12 +140,10 @@ class RouteHookRewrite
         
         $url=$this->filteRewrite($input_url);
         if ($url!==null) {
-            $this->changeRouteUrl($route, $url);
+            $this->changeRouteUrl($url);
+            $path=parse_url($url, PHP_URL_PATH);
+            $route->path_info=$path;
         }
         return  false;
-    }
-    public static function Hook($route)
-    {
-        return static::G()->_Hook($route);
     }
 }

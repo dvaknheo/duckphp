@@ -2,6 +2,7 @@
 namespace DNMVCS\Ext;
 
 use DNMVCS\Core\SingletonEx;
+use DNMVCS\Core\Route;
 
 class RouteHookRouteMap
 {
@@ -11,6 +12,12 @@ class RouteHookRouteMap
     ];
     
     protected $route_map=[];
+    ////
+    public static function Hook()
+    {
+        return static::G()->doHook();
+    }
+    ////
     public function init($options=[], $context=null)
     {
         $this->route_map=array_merge($this->route_map, $options['route_map']??[]);
@@ -64,15 +71,12 @@ class RouteHookRouteMap
     protected function getRouteHandelByMap($route, $routeMap)
     {
         $path_info=$route->path_info;
+        //$route->parameters
         foreach ($routeMap as $pattern =>$callback) {
             if (!$this->matchRoute($pattern, $path_info, $route)) {
                 continue;
             }
-            
-            $route->stopRunDefaultHandler();
-            $callback=$this->adjustCallback($callback);
-            
-            return $callback;
+            return $this->adjustCallback($callback);
         }
         return null;
     }
@@ -90,12 +94,11 @@ class RouteHookRouteMap
         }
         return $callback;
     }
-    public static function Hook($route)
+    public function doHook()
     {
-        return static::G()->_Hook($route);
-    }
-    public function _Hook($route)
-    {
+        $route=Route::G();
         $route->callback=$this->getRouteHandelByMap($route, $this->route_map);
+        
+        return false;
     }
 }
