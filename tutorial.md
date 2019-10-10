@@ -142,7 +142,7 @@ test
 
 ### 基本的 DMMVCS 目录结构
 
-简化版本的新建工程的桩代码。和描述。
+简化版本的新建工程的桩代码和描述。
 ```text
 +---app                     // psr-4 标准的自动加载目录
 |   +---Controller          // 控制器目录
@@ -256,10 +256,12 @@ ControllerHelper 类的方法比较多，大致学完就全部会用了。
 
 ##### 2. 跳转退出方面
 
-    404 跳转退出 C::Exit404();
-    302 跳转退出 C::ExitRedirect($url);
-    302 跳转退出内部地址 C::ExitRouteTo($url);
-    输出 Json 退出  C::ExitJson($data);
+    404 跳转退出 C::Exit404($exit);
+    302 跳转退出 C::ExitRedirect($url,$exit);
+    302 跳转到站外退出 C::ExitRedirectOutSide($url,$exit);
+    302 跳转退出内部地址 C::ExitRouteTo($url,$exit);
+    输出 Json 退出  C::ExitJson($data,$exit);
+    其中， $exit 默认为 true  ，跳转后接 exit();
 ##### 3. 路由相关
 
     C::URL($url) 获取相对 url;
@@ -342,7 +344,9 @@ TestService::G()->foo 里的 G() 是什么意。G函数，单例模式。
 
 JsonExt\MY\Service\TestService 这个类找不到啊。
 这是第三方的扩展
+
 ## 第三章 DNMVCS 应用核心开发人员参考
+
 ### 入口文件
 我们看入口类文件 public/index.php
 
@@ -491,7 +495,7 @@ ext 是一个选项，这里单独成一节是因为这个选项很重要。涉�
 
 ### DMMVCS 目录结构
 
-工程的桩代码,默认目录结构
+工程的桩代码,完整的默认目录结构
 
 ```text
 +---app                     // psr-4 标准的自动加载目录
@@ -605,7 +609,6 @@ App->extendComponents();
 App->addBeforeShowHandler();
 App->assignPathNamespace();
 App->addRouteHook();
-App->stopRunDefaultHandler();
 #### 内部可扩展方法
     App->initOptions();
     App->checkOverride();
@@ -1005,24 +1008,7 @@ if (!$flag) {
 这里的 json_rpc 是服务端的实现
 
 如果你要 做自己的权限处理，则重写 protected function prepare_token($ch)。
-### Lazybones
-懒汉配置。你或许能找到些东西。
-    'lazy_mode'=>true,
-    'use_app_path'=>true,
-    'lazy_path'=>'',// <=> $context->options['path'],
-    'lazy_path_service'=>'Service',
-    'lazy_path_model'=>'Model',
-    'lazy_path_contorller'=>'Controller',
-    
-    'lazy_controller_class'=>'DNController',
-    'with_controller_namespace_namespace'=>true,
-    'with_controller_namespace_prefix'=>true,
-### Oldbones
-一些过时的东西配置。你或许能找到些东西
-    'fullpath_project_share_common'=>'',
-    'fullpath_config_common'=>'',
-    'function_view_head',
-    'function_view_foot',
+
 ### Pager
 分页。只是解决了有无问题，如果有更好的，你可以换之。
 为什么DNMVCS 框架要带这么个简单的分页类，因为不想做简单的演示的时候要去找分页处理。
@@ -1112,9 +1098,6 @@ SwooleHttpd 是一个 Swoole Http 服务器框架
 
 * DNSingletonEx/SingletonEx
 * DNMVCS/Framework
-
-假设你
-
 
 * Somebody/DNSingleton-foo
 你只用到 SingletonEx 这个类。

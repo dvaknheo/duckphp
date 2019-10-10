@@ -501,7 +501,8 @@ trait Core_SystemWrapper
         array_map(
             function ($v) use ($class) {
                 $v=$v??["$class","$v"];
-            }, $ret
+            },
+            $ret
         );
         return $ret;
     }
@@ -510,7 +511,7 @@ trait Core_SystemWrapper
         $func=ltrim($func, '_');
         return isset($this->system_handlers[$func])?true:false;
     }
-    protected function system_wrapper_call($func,$input_args)
+    protected function system_wrapper_call($func, $input_args)
     {
         $func=ltrim($func, '_');
         if (is_callable($this->system_handlers[$func]??null)) {
@@ -589,25 +590,31 @@ trait Core_SystemWrapper
 }
 trait Core_Redirect
 {
-    public static function ExitJson($ret)
+    public static function ExitJson($ret, $exit=true)
     {
-        return static::G()->_ExitJson($ret);
+        return static::G()->_ExitJson($ret, $exit);
     }
-    public static function ExitRedirect($url, $only_in_site=true)
+    public static function ExitRedirect($url, $exit=true)
     {
-        return static::G()->_ExitRedirect($url, $only_in_site);
+        return static::G()->_ExitRedirect($url, $exit);
     }
-    public static function ExitRouteTo($url)
+    public static function ExitRedirectOutside($url, $exit=true)
     {
-        return static::G()->_ExitRedirect(static::URL($url), true);
+        return static::G()->_ExitRedirectOutside($url, $exit);
     }
-    public static function Exit404()
+    public static function ExitRouteTo($url, $exit=true)
+    {
+        return static::G()->_ExitRedirect(static::URL($url), $exit);
+    }
+    public static function Exit404($exit=true)
     {
         static::On404();
-        static::exit_system();
+        if ($exit) {
+            static::exit_system();
+        }
     }
     ////
-    public function _ExitJson($ret)
+    public function _ExitJson($ret, $exit=true)
     {
         static::header('Content-Type:text/json');
         
@@ -616,18 +623,27 @@ trait Core_Redirect
             $flag=$flag | JSON_PRETTY_PRINT;
         }
         echo json_encode($ret, $flag);
-        static::exit_system();
+        if ($exit) {
+            static::exit_system();
+        }
     }
-    public function _ExitRedirect($url, $only_in_site=true)
+    public function _ExitRedirect($url, $exit=true)
     {
-        if ($only_in_site && parse_url($url, PHP_URL_HOST)) {
-            //something  wrong
+        if (parse_url($url, PHP_URL_HOST)) {
             static::exit_system();
             return;
         }
-        
         static::header('location: '.$url, true, 302);
-        static::exit_system();
+        if ($exit) {
+            static::exit_system();
+        }
+    }
+    public function _ExitRedirectOutside($url, $exit=true)
+    {
+        static::header('location: '.$url, true, 302);
+        if ($exit) {
+            static::exit_system();
+        }
     }
 }
 
