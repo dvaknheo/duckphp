@@ -23,7 +23,7 @@ class RouteHookRewrite
         $this->rewrite_map=array_merge($this->rewrite_map, $options['rewrite_map']??[]);
         
         if ($context) {
-            $context->addRouteHook([static::class,'Hook'], true);
+            Route::G()->hook([static::class,'Hook'], 'prepend','inner');
             if (\method_exists($context, 'extendComponents')) {
                 $context->extendComponents(static::class, ['assignRewrite','getRewrites'], ['C']);
             }

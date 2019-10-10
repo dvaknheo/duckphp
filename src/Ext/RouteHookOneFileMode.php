@@ -25,7 +25,7 @@ class RouteHookOneFileMode
             return $this;
         }
         if ($context) {
-            $context->addRouteHook([static::class,'Hook'], true);
+            Route::G()->hook([static::class,'Hook'], 'prepend');
             Route::G()->setURLHandler([$this,'onURL']);
         }
         return $this;

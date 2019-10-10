@@ -87,7 +87,6 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G(new Route())->init($options);
         
         $callback=function ($obj) {
-            Route::G()->stopRunDefaultHandler();
             echo "stttttttttttttttttttttttttttttttttttttttttttttttoped";
         };
         Route::G()->addRouteHook($callback, false, true);
@@ -170,7 +169,6 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->getRouteCallingClass();
         Route::G()->getRouteCallingMethod();
         Route::G()->setRouteCallingMethod('_');
-        Route::G()->stopRunDefaultHandler();
     }
 }
 class RouteOjbect

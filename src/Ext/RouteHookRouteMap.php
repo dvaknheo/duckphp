@@ -23,8 +23,7 @@ class RouteHookRouteMap
         $this->route_map=array_merge($this->route_map, $options['route_map']??[]);
         
         if ($context) {
-            $context->addRouteHook([static::class,'Hook']);
-            // $context->extendClassMethodByThirdParty(static::class,[],['assignRoute','getRoutes']);
+            Route::G()->hook([static::class,'Hook'],'append');
         }
     }
     public function assignRoute($key, $value=null)
@@ -39,7 +38,7 @@ class RouteHookRouteMap
     {
         return $this->route_map;
     }
-    protected function matchRoute($pattern_url, $path_info, $route)
+    protected function matchRoute($pattern_url, $path_info, &$parameters)
     {
         $firstWord=substr($pattern_url, 0, 1);
         if ($firstWord==='~') {
@@ -48,7 +47,7 @@ class RouteHookRouteMap
                 return false;
             }
             unset($m[0]);
-            $route->parameters=$m;
+            $parameters=$m; // reference
             return true;
         }
         if ($firstWord==='/') {
@@ -63,17 +62,15 @@ class RouteHookRouteMap
             }
             $m=explode('/', $p);
             array_shift($m);
-            $route->parameters=$m;
+            $parameters=$m; // reference
             return true;
         }
         return ($pattern_url === $path_info) ? true:false;
     }
-    protected function getRouteHandelByMap($route, $routeMap)
+    protected function getRouteHandelByMap($routeMap,$path_info,&$parameters)
     {
-        $path_info=$route->path_info;
-        //$route->parameters
         foreach ($routeMap as $pattern =>$callback) {
-            if (!$this->matchRoute($pattern, $path_info, $route)) {
+            if (!$this->matchRoute($pattern, $path_info, $parameters)) {
                 continue;
             }
             return $this->adjustCallback($callback);
@@ -82,7 +79,6 @@ class RouteHookRouteMap
     }
     protected function adjustCallback($callback)
     {
-        //TODO  , add @
         if (is_string($callback)) {
             if (false!==strpos($callback, '@')) {
                 list($class, $method)=explode('@', $callback);
@@ -97,8 +93,12 @@ class RouteHookRouteMap
     public function doHook()
     {
         $route=Route::G();
-        $route->callback=$this->getRouteHandelByMap($route, $this->route_map);
-        
+        $callback=$this->getRouteHandelByMap($this->route_map,$route->path_info,$route->parameters);
+        if($callback){
+            ($callback)();
+            $callback=null;
+            return true;
+        }
         return false;
     }
 }

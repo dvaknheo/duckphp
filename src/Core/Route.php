@@ -197,9 +197,7 @@ class Route
     }
     public function run()
     {
-        $this->callback=null;
         $this->beforeRun();
-        
         foreach ($this->prependedCallbackList as $callback) {
             $flag=($callback)();
             if ($flag) {
@@ -207,16 +205,12 @@ class Route
             }
         }
         
-        if (null===$this->callback) {
-            $this->callback= $this->getDefaultRouteHandler(); //do getgetDefaultRouteHandler();
-        }
-        if (null!==$this->callback) {
-            ($this->callback)();
-            $this->callback=null;
-            // to make  $this->controller __destruct;
+        $callback=$this->defaultGetRouteCallback(); //do getdefaultGetRouteCallback();
+        if (null!==$callback) {
+            ($callback)();
+            $callback=null; // to make  $this->controller __destruct;
             return true;
         }
-        $this->callback=null;
         
         foreach ($this->appendedCallbackList as $callback) {
             $flag=($callback)();
@@ -224,6 +218,7 @@ class Route
                 return true;
             }
         }
+        
         return false;
     }
     public function bind($path_info, $request_method='GET')
@@ -239,6 +234,36 @@ class Route
         }
         return $this;
     }
+    public function hook($callback, $position='append', $inner_or_outter='', $once=true)
+    {
+        if ($position==='append') {
+            if ($once) {
+                if (in_array($callback, $this->appendedCallbackList)) {
+                    return false;
+                }
+            }
+            if ($inner_or_outter==='inner') {
+                array_unshift($this->appendedCallbackList, $callback);
+            } else {
+                array_push($this->appendedCallbackList, $callback);
+            }
+            return true;
+        } elseif ($position==='prepend') {
+            if ($once) {
+                if (in_array($callback, $this->prependedCallbackList)) {
+                    return false;
+                }
+            }
+            if ($inner_or_outter==='outter') {
+                array_unshift($this->prependedCallbackList, $callback);
+            } else {
+                array_push($this->prependedCallbackList, $callback);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
     public function prepend($callback)
     {
         array_unshift($this->prependedCallbackList, $callback);
@@ -246,12 +271,6 @@ class Route
     public function append($callback)
     {
         array_push($this->appendedCallbackList, $callback);
-    }
-    public function stopRunDefaultHandler()
-    {
-        $this->callback=function () {
-            return; //keep for tests
-        };
     }
     
     protected function getFullClassByAutoLoad($path_class)
@@ -265,7 +284,7 @@ class Route
         return $class;
     }
     
-    public function getDefaultRouteHandler()
+    public function defaultGetRouteCallback()
     {
         $path_info=$this->path_info;
         $t=explode('/', $path_info);

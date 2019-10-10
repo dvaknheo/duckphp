@@ -242,7 +242,6 @@ class AppTest extends \PHPUnit\Framework\TestCase
         
         App::assignPathNamespace("NoPath","NoName");
         App::addRouteHook(function(){});
-        App::stopRunDefaultHandler();
         
         App::IsRunning();
         App::IsDebug();
