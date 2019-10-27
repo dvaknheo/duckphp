@@ -314,7 +314,6 @@ class App
             AutoLoader::class,
             ExceptionManager::class,
             Configer::class,
-            View::class,
             Route::class,
         ];
         if (!in_array(static::class, $ret)) {
@@ -330,6 +329,7 @@ class App
         $ret=[
             RuntimeState::class,
             SuperGlobal::class,
+            View::class,
         ];
         return $ret;
     }
