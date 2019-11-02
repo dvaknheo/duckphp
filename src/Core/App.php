@@ -7,6 +7,7 @@ namespace DNMVCS\Core;
 use DNMVCS\Core\SingletonEx;
 use DNMVCS\Core\ThrowOn;
 use DNMVCS\Core\ExtendableStaticCallTrait;
+use DNMVCS\Core\SystemWrapper;
 
 use DNMVCS\Core\AutoLoader;
 use DNMVCS\Core\Configer;
@@ -18,11 +19,12 @@ use DNMVCS\Core\SuperGlobal;
 
 class App
 {
-    const VERSION = '1.1.4';
+    const VERSION = '1.1.5';
     
     use SingletonEx;
     use ThrowOn;
     use ExtendableStaticCallTrait;
+    use SystemWrapper;
     
     use Core_Handler;
     use Core_Helper;
@@ -98,12 +100,19 @@ class App
     protected $extDynamicComponentClasses=[];
 
     //const;
-    protected static $componentClassMap=[
+    protected $componentClassMap=[
             'M'=>'Helper\ModelHelper',
             'V'=>'Helper\ViewHelper',
             'C'=>'Helper\ControllerHelper',
             'S'=>'Helper\ServiceHelper',
     ];
+        protected $system_handlers=[
+            'header'                =>null,
+            'setcookie'             =>null,
+            'exit_system'           =>null,
+            'set_exception_handler' =>null,
+            'register_shutdown_function' =>null,
+        ];
     public static function RunQuickly(array $options=[], callable $after_init=null): bool
     {
         $instance=static::G()->init($options);
@@ -299,7 +308,7 @@ class App
         array_pop($a);
         $namespace=ltrim(implode('\\', $a).'\\', '\\');  // __NAMESPACE__
         foreach ($components as $component) {
-            $class=static::$componentClassMap[strtoupper($component)]??null;
+            $class=$this->componentClassMap[strtoupper($component)]??null;
             $full_class=($class===null)?$component:$namespace.$class;
             if (!class_exists($full_class)) {
                 continue;
@@ -481,44 +490,8 @@ EOT;
 
 trait Core_SystemWrapper
 {
-    protected $system_handlers=[
-            'header'                =>null,
-            'setcookie'             =>null,
-            'exit_system'           =>null,
-            'set_exception_handler' =>null,
-            'register_shutdown_function' =>null,
-        ];
-    public static function system_wrapper_replace(array $funcs)
-    {
-        static::G()->system_handlers=array_replace(static::G()->system_handlers, $funcs)??[];
-        return true;
-    }
-    public static function system_wrapper_get_providers():array
-    {
-        $ret=static::G()->system_handlers;
-        
-        $class=static::class;
-        array_map(
-            function ($v) use ($class) {
-                $v=$v??["$class","$v"];
-            },
-            $ret
-        );
-        return $ret;
-    }
-    protected function system_wrapper_call_check($func)
-    {
-        $func=ltrim($func, '_');
-        return isset($this->system_handlers[$func])?true:false;
-    }
-    protected function system_wrapper_call($func, $input_args)
-    {
-        $func=ltrim($func, '_');
-        if (is_callable($this->system_handlers[$func]??null)) {
-            return ($this->system_handlers[$func])(...$input_args);
-        }
-        return ($func)(...$input_args);
-    }
+    // use SystemWrapper;
+
     public static function header($output, bool $replace = true, int $http_response_code=0)
     {
         return static::G()->_header($output, $replace, $http_response_code);
