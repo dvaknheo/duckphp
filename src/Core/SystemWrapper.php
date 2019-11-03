@@ -1,8 +1,9 @@
 <?php
+namespace DNMVCS\Core;
 
 trait SystemWrapper
 {
-    protected $system_handlers=[];
+    // protected $system_handlers=[];
     public static function system_wrapper_replace(array $funcs)
     {
         static::G()->system_handlers=array_replace(static::G()->system_handlers, $funcs)??[];

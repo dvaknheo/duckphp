@@ -23,7 +23,7 @@ class RouteHookRouteMap
         $this->route_map=array_merge($this->route_map, $options['route_map']??[]);
         
         if ($context) {
-            Route::G()->hook([static::class,'Hook'],'append');
+            Route::G()->add404Handler([static::class,'Hook']);
         }
     }
     public function assignRoute($key, $value=null)

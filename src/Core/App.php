@@ -106,13 +106,13 @@ class App
             'C'=>'Helper\ControllerHelper',
             'S'=>'Helper\ServiceHelper',
     ];
-        protected $system_handlers=[
-            'header'                =>null,
-            'setcookie'             =>null,
-            'exit_system'           =>null,
-            'set_exception_handler' =>null,
-            'register_shutdown_function' =>null,
-        ];
+    protected $system_handlers=[
+        'header'                =>null,
+        'setcookie'             =>null,
+        'exit_system'           =>null,
+        'set_exception_handler' =>null,
+        'register_shutdown_function' =>null,
+    ];
     public static function RunQuickly(array $options=[], callable $after_init=null): bool
     {
         $instance=static::G()->init($options);
@@ -741,13 +741,9 @@ trait Core_Glue
         return AutoLoader::G()->assignPathNamespace($path, $namespace);
     }
     // route
-    public function addRouteHook($hook, $prepend=false, $once=true)
+    public function addRouteHook($hook, $append=true,$outter=true, $once=true)
     {
-        return Route::G()->addRouteHook($hook, $prepend, $once);
-    }
-    public function stopRunDefaultHandler()
-    {
-        return Route::G()->stopRunDefaultHandler();
+        return Route::G()->addRouteHook($hook, $append,$append, $once);
     }
     public static function getRouteCallingMethod()
     {

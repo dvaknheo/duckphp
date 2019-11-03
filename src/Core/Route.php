@@ -167,37 +167,18 @@ class Route
     {
         return $this->urlHandler;
     }
-    public function addRouteHook($hook, $prepend=false, $once=true)
-    {
-        if ($once) {
-            foreach ($this->routeHooks as $v) {
-                if ($v==$hook) {
-                    return false;
-                }
-            }
-        }
-        if (!$prepend) {
-            array_push($this->routeHooks, $hook);
-        } else {
-            array_unshift($this->routeHooks, $hook);
-        }
-        return true;
-    }
-    
     protected function beforeRun()
     {
         if (!$this->has_bind_server_data) {
             $this->bindServerData($_SERVER);
         }
         $this->path_info=ltrim($this->path_info, '/');
-        
-        foreach ($this->routeHooks as $hook) {
-            ($hook)($this);
-        }
     }
     public function run()
     {
         $this->beforeRun();
+        
+        //
         foreach ($this->prependedCallbackList as $callback) {
             $flag=($callback)();
             if ($flag) {
@@ -205,13 +186,12 @@ class Route
             }
         }
         
-        $callback=$this->defaultGetRouteCallback(); //do getdefaultGetRouteCallback();
-        if (null!==$callback) {
-            ($callback)();
-            $callback=null; // to make  $this->controller __destruct;
+        $flag=$this->defaultRunRouteCallback();
+        if ($flag) {
             return true;
         }
         
+        //
         foreach ($this->appendedCallbackList as $callback) {
             $flag=($callback)();
             if ($flag) {
@@ -221,8 +201,20 @@ class Route
         
         return false;
     }
+    public function defaultRunRouteCallback($path_info=null)
+    {
+        $path_info=$path_info??$this->path_info;
+        $callback=$this->defaultGetRouteCallback($path_info); //do getdefaultGetRouteCallback();
+        if (null===$callback) {
+            return false;
+        }
+        ($callback)();
+        return true;
+    }
     public function bind($path_info, $request_method='GET')
     {
+        $path_info=parse_url($path_info);
+        
         if (!$this->has_bind_server_data) {
             $this->bindServerData($_SERVER);
         }
@@ -234,45 +226,37 @@ class Route
         }
         return $this;
     }
-    public function hook($callback, $position='append', $inner_or_outter='', $once=true)
+    public function addRouteHook($callback, $append=true, $outter=true, $once=true)
     {
-        if ($position==='append') {
+        if ($append) {
             if ($once) {
                 if (in_array($callback, $this->appendedCallbackList)) {
                     return false;
                 }
             }
-            if ($inner_or_outter==='inner') {
-                array_unshift($this->appendedCallbackList, $callback);
-            } else {
+            if ($outter) {
                 array_push($this->appendedCallbackList, $callback);
+            } else {
+                array_unshift($this->appendedCallbackList, $callback);
             }
-            return true;
-        } elseif ($position==='prepend') {
+        } else {
             if ($once) {
                 if (in_array($callback, $this->prependedCallbackList)) {
                     return false;
                 }
             }
-            if ($inner_or_outter==='outter') {
-                array_unshift($this->prependedCallbackList, $callback);
-            } else {
+            if ($outter) {
                 array_push($this->prependedCallbackList, $callback);
+            } else {
+                array_unshift($this->prependedCallbackList, $callback);
             }
-            return true;
-        } else {
-            return false;
         }
+        return true;
     }
-    public function prepend($callback)
+    public function add404Handler($callback)
     {
-        array_unshift($this->prependedCallbackList, $callback);
+        return $this->addRouteHook($callback,true,true);
     }
-    public function append($callback)
-    {
-        array_push($this->appendedCallbackList, $callback);
-    }
-    
     protected function getFullClassByAutoLoad($path_class)
     {
         $path_class=$path_class?:$this->controller_welcome_class;
@@ -284,14 +268,13 @@ class Route
         return $class;
     }
     
-    public function defaultGetRouteCallback()
+    public function defaultGetRouteCallback($path_info)
     {
-        $path_info=$this->path_info;
         $t=explode('/', $path_info);
         $method=array_pop($t);
         $class_path=implode('/', $t);
         
-        $this->calling_path=$class_path?$this->path_info:$this->controller_welcome_class.'/'.$method;
+        $this->calling_path=$class_path?$path_info:$this->controller_welcome_class.'/'.$method;
         
         if ($this->controller_hide_boot_class) {
             if ($class_path===$this->controller_welcome_class) {
