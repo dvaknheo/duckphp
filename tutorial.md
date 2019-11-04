@@ -429,13 +429,13 @@ const DEFAULT_OPTIONS=[
     基本路径，其他配置会用到这个基本路径。
 'namespace' =>'MY',
 
-    工程的 autoload 的命名空间
+    工程的 autoload 的命名空间，和很多框架限定只能用 App 作为命名空间不同，DNMVCS 允许你用不同的命名空间
 'path_namespace'=>'app',
 
     默认的 psr-4 的工程路径配合 skip_app_autoload  使用。
 'skip_app_autoload'=>false
 
-    跳过应用的加载。
+    跳过应用的加载，如果你使用composer.json 来加载你的工程命名空间，你可以打开这个选项。
 'override_class'=>'Base\App',
 
     **重要选项**
@@ -884,11 +884,6 @@ DNMVCS::RunQuickly($options,function(){
 });
 ```
 #### 使用 think-orm 的 DB
-
-$options['datbase_list，在启动选项里加skip_setting_file']]; 
-// '这里要填充假配置'=>true ，如果你不需要 config/setting.php .
-    并有自己的配置方案
-* ptiview/_sy\s 。e_ 你需要设置ist，在 'error\_404','error\_500','error\_exception' 。
 
 ```php
 <?php

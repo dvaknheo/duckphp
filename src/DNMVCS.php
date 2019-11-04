@@ -167,7 +167,6 @@ trait DNMVCS_Glue
     {
         return Misc::G()::MapToService($serviceClass, $input);
     }
-    //TODO
     public static function explodeService($object, $namespace="MY\\Service\\")
     {
         return Misc::G()::explodeService($object, $namespace);

@@ -85,6 +85,7 @@ class App
             // 'controller_hide_boot_class'=>false,
             // 'controller_methtod_for_miss'=>null,
             // 'controller_prefix_post'=>'do_',
+            // 'controller_postfix'=>'',
         ];
     const DEFAULT_OPTIONS_EX=[
         ];
