@@ -540,7 +540,7 @@ ContrllorHelper,ModelHelper,ServiceHelper 如果你一个人偷懒，直接用 A
 #### 如何精简目录
 * 移除 app/Base/Helper/ 如果你直接用 App::* 替代 M,V,C,S 助手类。
 * 移除 app/Base/BaseController.php 如果你的 Controller 和默认的一样不需要基本类。
-* 移除 app/Base/BaseModel.php 如果你的 Model 不需要用全静态方法。
+* 移除 app/Base/BaseModel.php 如果你的 Model 用的全静态方法。
 * 移除 app/Base/BaseService.php 如果你的 Service 不需要 G 方法。
 * 移除 bin/start_server.php 如果你使用外部 http 服务器
 * 移除 config/ 在启动选项里加 'skip_setting_file'=>true ，如果你不需要 config/setting.php，
@@ -586,7 +586,7 @@ RunQuickly(): bool
     App::session_set_save_handler();
 #### 常用静态方法
 
-addRouteHook($hook,$prepend=false,$once=true)
+addRouteHook($hook,$append=true,$outter=true,$once=true)
 
     添加路由钩子 
     $hook 返回空用默认路由处理，否则调用返回的回调。
@@ -614,7 +614,7 @@ App->addRouteHook();
     App->checkOverride();
     App->initExtentions();
     App->reloadFlags();
-#### 下划线开始的动态方法】
+#### 下划线开始的动态方法
 其他方法
 
     其他方法有待你的发掘。如果你要用于特殊用处的话。

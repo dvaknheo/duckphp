@@ -149,7 +149,7 @@ class AutoLoader
         }
         return $ret;
     }
-    public function cleanUp()
+    public function clear()
     {
         spl_autoload_unregister([$this,'_autoload']);
     }

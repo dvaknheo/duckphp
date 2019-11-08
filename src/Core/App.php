@@ -245,12 +245,12 @@ class App
             static::On404();
         }
         
-        $this->cleanUp();
+        $this->clear();
         return $ret;
     }
     
-    //
-    public function cleanUp(): void
+    // 这里我们要做好些清理判断。对资源的释放处理
+    public function clear(): void
     {
         if (! RuntimeState::G()->is_before_show_done) {
             foreach ($this->beforeShowHandlers as $v) {
@@ -262,7 +262,7 @@ class App
     }
     public function cleanAll()
     {
-        $this->cleanUp();
+        $this->clearAll();
         $classes=$this->getDynamicComponentClasses();
         foreach ($classes as $class) {
             $this->cleanClass($class);
@@ -388,7 +388,6 @@ trait Core_Handler
         
         $this->setViewWrapper(null, null);
         $this->_Show([], $error_view);
-        $this->cleanUp();
     }
     
     public function _OnException($ex): void
@@ -436,7 +435,7 @@ trait Core_Handler
         
         $this->setViewWrapper(null, null);
         $this->_Show($data, $error_view);
-        $this->cleanUp();
+        $this->clear();
     }
     public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
     {

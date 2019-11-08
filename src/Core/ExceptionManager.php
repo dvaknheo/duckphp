@@ -126,7 +126,7 @@ class ExceptionManager
             $this->last_exception_handler=set_exception_handler([$this,'on_exception']);
         }
     }
-    public function cleanUp()
+    public function clear()
     {
         restore_error_handler();
         if ($this->system_exception_handler) {

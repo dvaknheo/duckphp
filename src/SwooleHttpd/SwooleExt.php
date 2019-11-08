@@ -103,6 +103,6 @@ class SwooleExt
             SwooleHttpd::G()->forkMasterClassesToNewInstances();
             return false;
         }
-        return true;
+        return true; //应该 return false ?
     }
 }
