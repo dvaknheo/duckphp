@@ -15,6 +15,8 @@ class Misc
     ];
     protected $path=null;
     protected $context_class;
+    protected $_di_container;
+
     public function init($options=[], $context=null)
     {
         $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
@@ -40,7 +42,18 @@ class Misc
     {
         return static::G()->_RecordsetH($data, $cols);
     }
-    
+    public static function DI($name, $object=null)
+    {
+        return static::G()->_DI($name, $object);
+    }
+    public function _DI($name, $object=null)
+    {
+        if (null===$object) {
+            return $this->_di_container[$name];
+        }
+        $this->_di_container[$name]=$object;
+        return $object;
+    }
     public function _Import($file)
     {
         include_once $this->path.rtrim($file, '.php').'.php';
