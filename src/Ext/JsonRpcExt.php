@@ -141,4 +141,3 @@ class JsonRpcExt
         return;
     }
 }
-

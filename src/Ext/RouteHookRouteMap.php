@@ -67,7 +67,7 @@ class RouteHookRouteMap
         }
         return ($pattern_url === $path_info) ? true:false;
     }
-    protected function getRouteHandelByMap($routeMap,$path_info,&$parameters)
+    protected function getRouteHandelByMap($routeMap, $path_info, &$parameters)
     {
         foreach ($routeMap as $pattern =>$callback) {
             if (!$this->matchRoute($pattern, $path_info, $parameters)) {
@@ -93,8 +93,8 @@ class RouteHookRouteMap
     public function doHook()
     {
         $route=Route::G();
-        $callback=$this->getRouteHandelByMap($this->route_map,$route->path_info,$route->parameters);
-        if($callback){
+        $callback=$this->getRouteHandelByMap($this->route_map, $route->path_info, $route->parameters);
+        if ($callback) {
             ($callback)();
             $callback=null;
             return true;

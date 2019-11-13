@@ -70,4 +70,3 @@ class FacadesAutoLoader
         spl_autoload_unregister([$this,'_autoload']);
     }
 }
-

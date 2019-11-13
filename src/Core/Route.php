@@ -255,7 +255,7 @@ class Route
     }
     public function add404Handler($callback)
     {
-        return $this->addRouteHook($callback,true,true);
+        return $this->addRouteHook($callback, true, true);
     }
     protected function getFullClassByAutoLoad($path_class)
     {

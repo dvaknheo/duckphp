@@ -15,7 +15,7 @@ trait ThrowOn
             $exception_class=$code;
             $code=0;
         }
-        $exception_class=$exception_class?:(is_a(static::class,Throwable::class)?static::class:Exception::class);
+        $exception_class=$exception_class?:(is_a(static::class, Throwable::class)?static::class:Exception::class);
         throw new $exception_class($message, $code);
     }
 }

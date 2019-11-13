@@ -211,10 +211,10 @@ LoadConfig($key,$basename="config");
 
 ### View 编写视图用到的方法
 
-V::ShowBlock($view, $data)
-V::H($str)
-V::DumpTrace()
-V::Dump()
+* V::ShowBlock($view, $data) 显示内嵌视图,如果 $data==null 则带入父视图的数据
+* V::H($str)  Html 编码字符，$str 可以是数组。
+* V::DumpTrace()  调试状态下，查看当前堆栈
+* V::Dump(...$arg)  调试状态下 Dump 当前变量，替代 var_dump
 
 ### Model 编写模型用到的方法
 Model 类。数据库相关
@@ -227,7 +227,7 @@ Model 类。数据库相关
 
 ### Serivce 编写服务用到的方法
 
-ServiceHelper 默认没有额外方法，看你的核心开发人员是否加上。
+ServiceHelper 默认没有额外方法，使用 GetExtendStaticStaticMethodList() 看你的核心开发人员是否有额外方法。
 
 ### Controller 编写控制器用到的方法
 
@@ -235,24 +235,26 @@ ControllerHelper 类的方法比较多，大致学完就全部会用了。
 
 ##### 1. 显示相关的
 
-    C::Show($data,$view=null);
+C::Show($data,$view=null);
 
     显示视图用  如果view 是空等价于 控制器名/方法名 的视图。
     最偷懒的是调用 C::Show(get_defined_vars());
 
-    C::ShowBlock($view,$data=null);
+C::ShowBlock($view,$data=null);
     
-    如果只显示一块，用  如果$data 是空，把父视图的数据带入，
-    
-    C::setViewWrapper($view_header,$view_footer)
-    在控制器的构造函数中。用  来设置页眉页脚。
-    
+    同 V::ShowBlock()    
+C::H($str); 
+
+    同 V::H($str). 
+C::setViewWrapper($view_header,$view_footer)
+
+    用来设置页眉页脚。
     页眉页脚的变量和 view 页面是同域的。 用 C::setViewWrapper(null,null) 清理页眉页脚。
     另 C::ShowBlock 没用到页眉页脚。而且 C::ShwoBlock 只单纯输出，不做多余动作。
+    一般用于在控制器的构造函数中。
+C::assignViewData($name,$var);
 
-    C::assignViewData($name,$var); 设置视图的输出。
-
-    C::H($str); HTML 编码用  $str 可以是数组。
+    设置视图的输出。
 
 ##### 2. 跳转退出方面
 
@@ -268,18 +270,19 @@ ControllerHelper 类的方法比较多，大致学完就全部会用了。
     C::getRouteCallingMethod() 获取当前调用方法。常用于构造函数里做权限判断。
     C::setRouteCallingMethod($method) 设置当前调用方法，不常用，用于跨方法调用场合。
 
-##### 4. 系统替代函数 
+##### 4. 异常相关
+
+    如果想接管默认异常，用 C::setDefaultExceptionHandler($handler);
+    如果对接管特定异常，用 C::assignExceptionHandler($exception_name,$handler);
+    设置多个异常到回调则用，C::setMultiExceptionHandler($exception_name=[],$handler);
+##### 5. 系统替代函数 
 
     用 C::header() 代替系统 header 兼容命令行等。
     用 C::setcookie() 代替系统 setcookie 兼容命令行等。
     用 C::exit_system() 代替系统 exit; 便于接管处理。 
     用 C::set_exception_handler() 代替系统 set_exception_handler 便于接管处理。
     用 C::register_shutdown_function() 代替系统 set_exception_handler 便于接管处理。
-##### 5. 异常相关
 
-    如果想接管默认异常，用 C::setDefaultExceptionHandler($handler);
-    如果对接管特定异常，用 C::assignExceptionHandler($exception_name,$handler);
-    设置多个异常到回调则用，C::setMultiExceptionHandler($exception_name=[],$handler);
 ##### 6.兼容 Swoole
 
     如果想让你们的项目在 swoole 下也能运行，那就要加上这几点
@@ -296,7 +299,7 @@ ControllerHelper 类的方法比较多，大致学完就全部会用了。
 全局变量
 ```php
 global $a='val'; =>  $a=C::GLOBALS('a','val');
-```php
+```
 静态变量 
 ```php
 static $a='val'; =>  $a=C::STATICS('a','val');
@@ -306,7 +309,6 @@ static $a='val'; =>  $a=C::STATICS('a','val');
 $x=static::$abc; => $x=C::CLASS_STATICS(static::class,'abc');
 ```
 ##### 7.高级路由
-
 用 C::Parameters() 获取切片，对地址重写有效。
 如果要做权限判断 构造函数里 C::getRouteCallingMethod() 获取当前调用方法。
 
@@ -343,6 +345,7 @@ assignRoute($route,$callback=null)
 TestService::G()->foo 里的 G() 是什么意。G函数，单例模式。
 
 JsonExt\MY\Service\TestService 这个类找不到啊。
+
 这是第三方的扩展
 
 ## 第三章 DNMVCS 应用核心开发人员参考
@@ -717,8 +720,8 @@ DNMVCS\AutoLoader 类是 psr-4 加载类。
 'namespace'=>'MY',
 'path_namespace'=>'app',
 
-'skip_system_autoload'=>true,
-'skip_app_autoload'=>false,
+'skip_system_autoload'=>true, 
+'skip_app_autoload'=>false,     //如果你在 composer.json 里设置了autoload 用 composer的，设置为 true
 ```
 ##### 示例
 
@@ -767,6 +770,7 @@ DNMVCS\Core\Route 这个类可以单独拿出来做路由用。
 'controller_hide_boot_class'=>false,
 'controller_methtod_for_miss'=>null,
 'controller_prefix_post'=>'do_',
+'controller_postfix'=>''
 'controller_methtod_for_miss'=>'_missing',
 ```
 'controller_base_class'=>null,
@@ -784,6 +788,9 @@ DNMVCS\Core\Route 这个类可以单独拿出来做路由用。
     
     如果有这个方法。找不到方法的时候，会进入这个方法
     如果你使用了这个方法，将不会进入 404 。
+'controller_postfix'=>''
+
+    控制器后缀，如果你觉得控制器类不够显眼，用 加上 Controller 后缀的话
 ##### 示例
 这是一个单用 Route 组件的例子
 ```php
@@ -828,7 +835,7 @@ M::DB() 用到了这个组件。
     'before_get_db_handler'=>null, // 在调用 DB 前调用
     'use_context_db_setting'=>true, //使用 setting 里的。
     'database_list'=>null,      //DB 列表
-db_create_handler
+    db_create_handler
 #### 说明
 
 database_list 的示例：

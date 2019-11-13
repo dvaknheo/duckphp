@@ -107,6 +107,7 @@ class App
             'C'=>'Helper\ControllerHelper',
             'S'=>'Helper\ServiceHelper',
     ];
+    //system handler replacer
     protected $system_handlers=[
         'header'                =>null,
         'setcookie'             =>null,
@@ -236,19 +237,21 @@ class App
         $this->onRun();
         
         RuntimeState::ReCreateInstance()->begin();
+        
         $route=Route::G();
         if ($this->options['use_super_global']??false) {
             $route->bindServerData(SuperGlobal::G()->_SERVER);
         }
         $ret=$route->run();
+        
         if (!$ret && !$this->options['skip_404_handler']) {
             static::On404();
         }
         
         $this->clear();
+        
         return $ret;
     }
-    
     // 这里我们要做好些清理判断。对资源的释放处理
     public function clear(): void
     {
@@ -259,10 +262,13 @@ class App
             RuntimeState::G()->is_before_show_done=true;
         }
         RuntimeState::G()->end();
+        
+        //
+        //
     }
     public function cleanAll()
     {
-        $this->clearAll();
+        $this->clear();
         $classes=$this->getDynamicComponentClasses();
         foreach ($classes as $class) {
             $this->cleanClass($class);
@@ -284,7 +290,7 @@ class App
     
     ////////////////////////
     
-    public function addBeforeRunHandler(?callable $handler): void
+    protected function addBeforeRunHandler(?callable $handler): void
     {
         $this->beforeRunHandlers[]=$handler;
     }
@@ -381,6 +387,7 @@ trait Core_Handler
             ($error_view)();
             return;
         }
+        //// no error_404 setting.
         if (!$error_view) {
             echo "404 File Not Found\n<!--DNMVCS -->\n";
             return;
@@ -418,8 +425,10 @@ trait Core_Handler
         
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)($ex);
+            $this->clear();
             return;
         }
+        ////////  no  error_500 or error_exception setting
         if (!$error_view) {
             $desc=$is_error?'Internal Error':'Internal Exception';
             echo "$desc \n<!--DNMVCS -->\n";
@@ -684,12 +693,18 @@ trait Core_Helper
     }
     public function _DumpTrace()
     {
+        if (!$this->is_debug) {
+            return;
+        }
         echo "<pre>\n";
         echo (new \Exception('', 0))->getTraceAsString();
         echo "</pre>\n";
     }
     public function _Dump(...$args)
     {
+        if (!$this->is_debug) {
+            return;
+        }
         echo "<pre>\n";
         var_dump(...$args);
         echo "</pre>\n";
@@ -741,9 +756,9 @@ trait Core_Glue
         return AutoLoader::G()->assignPathNamespace($path, $namespace);
     }
     // route
-    public function addRouteHook($hook, $append=true,$outter=true, $once=true)
+    public function addRouteHook($hook, $append=true, $outter=true, $once=true)
     {
-        return Route::G()->addRouteHook($hook, $append,$append, $once);
+        return Route::G()->addRouteHook($hook, $append, $append, $once);
     }
     public static function getRouteCallingMethod()
     {
