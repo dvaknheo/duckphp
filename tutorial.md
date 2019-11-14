@@ -441,7 +441,8 @@ const DEFAULT_OPTIONS=[
     跳过应用的加载，如果你使用composer.json 来加载你的工程命名空间，你可以打开这个选项。
 'override_class'=>'Base\App',
 
-    **重要选项**
+**重要选项**
+
     基于 namespace ,如果这个选项的类存在，则在init()的时候会切换到这个类完成后续初始化，并返回这个类的实例。
     注意到 app/Base/App.php 这个文件的类 MY\Base\App extends DNMVCS\DNMVCS;
     如果以  \ 开头则是绝对 命名空间
@@ -563,12 +564,12 @@ MY\Base\App 包含所有助手类的方法。
 
 #### 用于 override 的两个重要方法
 
-onInit():self
+onInit()
     用于初始化，你可能会在这里再次调整  $this->options。
     你可以在调用父类的初始化前后做一些操作
 onRun(): void
 
-    用于运行前，做一些你想做的事 ，和 onInit 不同，你不
+    用于运行前，做一些你想做的事 ，和 onInit 不同，你不用调用父类
 RunQuickly(): bool
 
     前面已经介绍
@@ -577,7 +578,7 @@ RunQuickly(): bool
     ModelHelper,SerivceHelper,ControllerHelper 都在 App 类里有实现。
     这用于你想偷懒，直接 App::foo(); 的情况。
 
-#### 常用静态方法
+#### 接管的静态方法
 
     App::On404();
     App::OnException(): void
@@ -600,18 +601,19 @@ addBeforeRunHandler($callback)
 
     添加运行前处理
 extendComponents($class,$methods,$components);
+
     扩展组件的静态方法。
     其中： $components 为 ['M','V','C','S'] 组合可选。
 【公开动态方法】
-App->init();
-App->run();
-App->cleanUp();
 
-App->addBeforeRunHandler();
-App->extendComponents();
-App->addBeforeShowHandler();
-App->assignPathNamespace();
-App->addRouteHook();
+    App->init();
+    App->run();
+
+    App->addBeforeRunHandler();
+    App->extendComponents();
+    App->addBeforeShowHandler();
+    App->assignPathNamespace();
+    App->addRouteHook();
 #### 内部可扩展方法
     App->initOptions();
     App->checkOverride();
@@ -625,7 +627,7 @@ App->addRouteHook();
     还有 +3 来自 ExtendableStaticCallTrait 方法。
 
 ### 请求流程和生命周期
-DNMVCS::RunQuickly($options,$object) 发生了什么
+DNMVCS::RunQuickly($options) 发生了什么
 
 DNMVCS::G()->init($options)->run();
 
@@ -652,7 +654,7 @@ run() 运行阶段
     绑定路由
     ** 开始路由处理 Route::G()->run();
     如果返回 404 则 On404() 处理 404
-    cleanUp 清理
+    clear 清理
         如果没显示，而且还有 beforeShowHandlers() 处理（用于处理 DB 关闭等
         设置 RuntimeState 为结束
 
@@ -819,8 +821,15 @@ if(!$flag){
 }
 
 ```
-
-### Core\RunTimeState
+##### 方法
+RunQuickly
+URL
+Parameters
+defaultURLHandler
+bindServerData
+### Core\RuntimeState
+RuntimeState 类用于保存运行时数据。无配置
+ReCreateInstance
 
 ### Core\SuperGlobal
 
@@ -839,6 +848,7 @@ M::DB() 用到了这个组件。
 #### 说明
 
 database_list 的示例：
+
     [[
 		'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
 		'username'=>'???',
@@ -1014,13 +1024,17 @@ if (!$flag) {
 ### Pager
 分页。只是解决了有无问题，如果有更好的，你可以换之。
 为什么DNMVCS 框架要带这么个简单的分页类，因为不想做简单的演示的时候要去找分页处理。
+
 'url'=>null,
 'key'=>null,
 'page_size'=>null,
 'rewrite'=>null,
 'current'=>null,
+
 ### RouteHookDirectoryMode
+
 多目录模式的 hook
+##### 选项
     'mode_dir_index_file'=>'',
     'mode_dir_use_path_info'=>true,
     'mode_dir_key_for_module'=>true,
@@ -1101,10 +1115,8 @@ SwooleHttpd 是一个 Swoole Http 服务器框架
 * DNSingletonEx/SingletonEx
 * DNMVCS/Framework
 
-* Somebody/DNSingleton-foo
+* Somebody/foo-DNSingletonEx
 你只用到 SingletonEx 这个类。
 
-* Somebody/DNMVCSCore-foo
+* Somebody/foo-DNMVCS
 你只和 DNMVCS/Core 有关
-* Somebody/DNMVCS-foo
-你需要其他 DNMVCS

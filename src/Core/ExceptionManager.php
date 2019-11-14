@@ -16,8 +16,8 @@ class ExceptionManager
     protected $dev_error_handler=null;
     protected $exception_error_handler=null;
 
-    protected $exception_handler=null;
-    protected $exception_error_handler_init=null;
+    protected $default_exception_handler=null;
+    
     protected $system_exception_handler=null;
     protected $last_error_handler=null;
     protected $last_exception_handler=null;
@@ -27,7 +27,7 @@ class ExceptionManager
     
     public function setDefaultExceptionHandler($default_exception_handler)
     {
-        return $this->exception_error_handler=$default_exception_handler;
+        $this->default_exception_handler=$default_exception_handler;
     }
     public function assignExceptionHandler($class, $callback=null)
     {
@@ -72,17 +72,6 @@ class ExceptionManager
                 return true;
             }
         }
-        if ($inDefault) {
-            /*
-            //TODO remove the dead code
-            if ($this->exception_error_handler != $this->exception_error_handler_init) {
-                ($this->exception_error_handler)($ex);
-                return true;
-            }
-                //class A on B ;
-            //*/
-        }
-        
         return false;
     }
     public function on_exception($ex)
@@ -91,7 +80,7 @@ class ExceptionManager
         if ($flag) {
             return;
         }
-        ($this->exception_error_handler)($ex);
+        ($this->default_exception_handler)($ex);
     }
     public function init($options=[], $context=null)
     {
@@ -107,8 +96,7 @@ class ExceptionManager
         $this->system_exception_handler=$options['system_exception_handler'];
         
         $this->exception_handler=$exception_handler;
-        $this->exception_error_handler=$exception_handler;
-        $this->exception_error_handler_init=$exception_handler;
+        $this->default_exception_handler=$exception_handler;
         
         return $this;
     }
