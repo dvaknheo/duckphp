@@ -21,8 +21,8 @@ class HookChain implements ArrayAccess
         if (is_null($var)) {
             $var = new static();
         }
-        if ($var instanceof HookerInvoker) {
-            $var->addHook($callable, $append, $once);
+        if ($var instanceof HookChain) {
+            $var->add($callable, $append, $once);
         } else {
             $var = $callable;
         }

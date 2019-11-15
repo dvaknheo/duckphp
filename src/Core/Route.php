@@ -224,7 +224,7 @@ class Route
             $this->bindServerData($_SERVER);
         }
         $this->path_info=$path_info;
-        $this->path_info=ltrim($this->path_info, '/');
+        $this->path_info=ltrim($this->path_info??'', '/');
         
         if (isset($request_method)) {
             $this->request_method=$request_method;

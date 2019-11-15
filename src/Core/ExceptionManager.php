@@ -95,7 +95,6 @@ class ExceptionManager
         $this->dev_error_handler=$options['dev_error_handler'];
         $this->system_exception_handler=$options['system_exception_handler'];
         
-        $this->exception_handler=$exception_handler;
         $this->default_exception_handler=$exception_handler;
         
         return $this;
@@ -109,7 +108,7 @@ class ExceptionManager
         
         $this->last_error_handler=set_error_handler([$this,'on_error_handler']);
         if ($this->system_exception_handler) {
-            $this->last_exception_handler=($this->system_exception_handler)($this->exception_handler);
+            $this->last_exception_handler=($this->system_exception_handler)($this->default_exception_handler);
         } else {
             $this->last_exception_handler=set_exception_handler([$this,'on_exception']);
         }
