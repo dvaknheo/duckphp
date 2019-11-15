@@ -18,13 +18,18 @@ class HookChain implements ArrayAccess
 
     public static function Hook(&$var, $callable, $append = true, $once = true)
     {
-        if (is_null($var)) {
-            $var = new static();
-        }
-        if ($var instanceof HookChain) {
+        
+        if ($var instanceof static) {
             $var->add($callable, $append, $once);
-        } else {
-            $var = $callable;
+        } else if (is_null($var)) {
+            $var = new static();
+            $var->add($callable, $append, $once);
+        }else{
+            
+            $t = new static();
+            $t->add($var, $append, $once);
+            $t->add($callable, $append, $once);
+            $var = $t;
         }
     }
 
@@ -33,7 +38,11 @@ class HookChain implements ArrayAccess
         if ($once && in_array($callable, $this->chain)) {
             return false;
         }
-        $this->chain[] = $callable;
+        if($append) {
+            $this->chain[] = $callable;
+        }else{
+            array_unshift($this->chain,$callable);
+        }
     }
 
     public function remove($callable)
