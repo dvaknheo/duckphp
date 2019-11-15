@@ -34,6 +34,10 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         ControllerHelper::Parameters();
         ControllerHelper::getRouteCallingMethod();
         ControllerHelper::setRouteCallingMethod($method);
+        
+        
+        
+
         //*/
         //*
         $path_base=realpath(__DIR__.'/../../');
@@ -55,19 +59,19 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         $ret=["ret"=>'OK'];
         
         $output="";
-        
+
         \DNMVCS\Core\App::G()->exit_handler=function($code){
             var_dump(DATE(DATE_ATOM));
         };
-        //*
+        /*
         ControllerHelper::ExitRedirect($url, $only_in_site=true);
         ControllerHelper::ExitRouteTo($url);
         ControllerHelper::Exit404();
         ControllerHelper::ExitJson($ret);
         //*/
         
-        ControllerHelper::header($output,$replace = true, $http_response_code=0);
-        ControllerHelper::exit_system($code=0);
+        //ControllerHelper::header($output,$replace = true, $http_response_code=0);
+        //ControllerHelper::exit_system($code=0);
         
         
         $classes=[];
