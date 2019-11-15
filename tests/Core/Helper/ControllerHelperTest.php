@@ -60,18 +60,22 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         
         $output="";
 
-        \DNMVCS\Core\App::G()->exit_handler=function($code){
+        \DNMVCS\Core\App::system_wrapper_replace(['exit_system'=>function($code){
             var_dump(DATE(DATE_ATOM));
-        };
-        /*
-        ControllerHelper::ExitRedirect($url, $only_in_site=true);
-        ControllerHelper::ExitRouteTo($url);
-        ControllerHelper::Exit404();
-        ControllerHelper::ExitJson($ret);
+        }]);
+        ControllerHelper::exit_system($code=0);
+        
+        var_dump("??????????");
+        //*
+        ControllerHelper::Exit404(false);
+        ControllerHelper::ExitRedirect($url, false);
+        ControllerHelper::ExitRedirectOutside($url, false);
+        ControllerHelper::ExitRouteTo($url, false);
+        ControllerHelper::ExitJson($ret,false);
         //*/
         
-        //ControllerHelper::header($output,$replace = true, $http_response_code=0);
-        //ControllerHelper::exit_system($code=0);
+        ControllerHelper::header($output,$replace = true, $http_response_code=0);
+        
         
         
         $classes=[];

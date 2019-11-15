@@ -52,6 +52,11 @@ class MiscTest extends \PHPUnit\Framework\TestCase
         
         DNMVCS::G()->setRouteCallingMethod('m1');
         Misc::mapToService(FakeService::class, []);
+        
+        $object=new \stdClass();
+        Misc::DI('a',$object);
+        Misc::DI('a');
+        
 
         \MyCodeCoverage::G()->end(Misc::class);
         $this->assertTrue(true);

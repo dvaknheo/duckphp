@@ -156,6 +156,10 @@ trait DNMVCS_Glue
     {
         return Misc::G()->_RecordsetH($data, $cols);
     }
+    public static function DI($name, $object=null)
+    {
+        return Misc::G()->_DI($name, $object);
+    }
     /////////////////////
 
     public function callAPI($class, $method, $input)

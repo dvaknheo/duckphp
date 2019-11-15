@@ -40,11 +40,11 @@ class RouteTest extends \PHPUnit\Framework\TestCase
                 'PATH_INFO'=>'/',
             ]);
             
-            $callback=function ($obj) {
+            $callback=function () {
             };
-            Route::G()->addRouteHook($callback, false, true);
-            Route::G()->addRouteHook($callback, false, true);
-            Route::G()->addRouteHook($callback, true, false);
+            Route::G()->addRouteHook($callback, false,false, true);
+            Route::G()->addRouteHook($callback, false,false, true);
+            Route::G()->addRouteHook($callback, true,false, false);
         });
         
         Route::G()->bindServerData([
@@ -57,14 +57,14 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'PATH_INFO'=>'Main/index',
             'REQUEST_METHOD'=>'POST',
         ]);
-        Route::G()->getDefaultRouteHandler();
-        
+        //Route::G()->getDefaultRouteHandler();
+        /*
         Route::G()->getCallback(null,'');
         Route::G()->getCallback('tests_Core_Route\\Main','__');
         Route::G()->getCallback('tests_Core_Route\\Main','post');
         Route::G()->getCallback('tests_Core_Route\\Main','post2');
         Route::G()->getCallback('tests_Core_Route\\Main','_missing');
-        
+        */
         //Route::G()->goByPathInfo('tests_Core_Route\\Main','post');
 
         echo Route::G()->error;
@@ -82,20 +82,19 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'PATH_INFO'=>'NoExists/Mazndex',
             'REQUEST_METHOD'=>'POST',
         ]);
-        Route::G()->getDefaultRouteHandler();
+        Route::G()->defaultGetRouteCallback('/');
         
         Route::G(new Route())->init($options);
         
-        $callback=function ($obj) {
+        $callback=function () {
             echo "stttttttttttttttttttttttttttttttttttttttttttttttoped";
         };
-        Route::G()->addRouteHook($callback, false, true);
+        Route::G()->addRouteHook($callback, false,false, true);
         echo "3333333333333333333333333333333333333333333333";
         Route::G()->run();
         
         Route::G(new Route())->init($options);
-        Route::G()->prepend([RouteOjbect::class,'RunTrue']);
-        Route::G()->prepend([RouteOjbect::class,'RunFalse']);
+
         
         Route::G()->bindServerData([
             'PATH_INFO'=>'Main/index',
@@ -105,9 +104,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         
         Route::G(new Route())->init($options);
         Route::G()->bind("good")->run();
-        Route::G()->append([RouteOjbect::class,'RunFalse']);
-        Route::G()->append([RouteOjbect::class,'RunTrue']);
-        
+
         Route::G()->bindServerData([
             'PATH_INFO'=>'Missed',
             'REQUEST_METHOD'=>'POST',

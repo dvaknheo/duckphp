@@ -44,7 +44,8 @@ class DNMVCSTest extends \PHPUnit\Framework\TestCase
         DNMVCS::DB_W();
         DNMVCS::DB_R();
         
-        
+        $object=new \stdClass();
+        DNMVCS::DI('a',$object);
         
         \MyCodeCoverage::G()->end(DNMVCS::class);
         $this->assertTrue(true);

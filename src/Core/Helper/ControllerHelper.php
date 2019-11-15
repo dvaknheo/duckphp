@@ -59,21 +59,25 @@ class ControllerHelper
         return App::assignViewData($key, $value);
     }
     ////////////////////
-    public static function ExitRedirect($url, $only_in_site=true)
+    public static function ExitRedirect($url, $exit=true)
     {
-        return App::ExitRedirect($url, $only_in_site);
+        return App::ExitRedirect($url, $exit);
     }
-    public static function ExitRouteTo($url)
+    public static function ExitRedirectOutside($url, $exit=true)
     {
-        return App::ExitRedirect(static::URL($url), true);
+        return App::ExitRedirectOutside($url, $exit);
     }
-    public static function Exit404()
+    public static function ExitRouteTo($url, $exit)
     {
-        return App::Exit404();
+        return App::ExitRedirect(static::URL($url), $exit);
     }
-    public static function ExitJson($ret)
+    public static function Exit404($exit=true)
     {
-        return App::ExitJson($ret);
+        return App::Exit404($exit);
+    }
+    public static function ExitJson($ret, $exit=true)
+    {
+        return App::ExitJson($ret, $exit);
     }
     /////////////////
     public static function header($output, bool $replace = true, int $http_response_code=0)

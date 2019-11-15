@@ -41,9 +41,6 @@ class AppTest extends \PHPUnit\Framework\TestCase
             AppTestObjectB::class=>['aa'=>'22'],
         ];
         App::RunQuickly($options,function(){
-        
-        
-        
             //App::G()->addBeforeRunHandler(function(){ echo "addBeforeRunHandler";});
             App::G()->addBeforeShowHandler(function(){ echo "beforeShowHandlers";});
             $value = $cache[$key]; // trigger notice
@@ -206,9 +203,10 @@ class AppTest extends \PHPUnit\Framework\TestCase
             var_dump(DATE(DATE_ATOM));
         }]);
         //*
-        App::ExitRedirect($url, $only_in_site=true);
+        App::ExitRedirect($url);
+        App::ExitRedirect('http://www.github.com');
 
-        App::ExitRedirect("http://www.github.com",true);
+        App::ExitRedirectOutside("http://www.github.com",true);
         App::ExitRouteTo($url);
         App::Exit404();
          App::G()->is_debug=true;
@@ -281,11 +279,31 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::G()->addDynamicComponentClass($class);
         App::G()->deleteDynamicComponentClass($class);
 
+        
+        $options=[
+        'skip_setting_file' => true,
+        'is_debug'=>false,
+        'error_exception' => NULL,
+        'error_500' => NULL,
+        'error_404' => NULL,
+        'error_debug' => NULL,
+        ];
+        AppTestApp::RunQuickly($options);
+        
+
     }
 }
-class AppTestApp extends DNMVCS
+class AppTestApp extends App
 {
-
+    protected function onInit()
+    {
+        $this->addBeforeRunHandler(function(){
+            static::DumpTrace();
+            static::Dump("ABC");
+            var_dump("!");return true;
+        });
+        return parent::onInit();
+    }
 }
 class AppTestObject
 {
