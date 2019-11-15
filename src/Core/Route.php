@@ -218,7 +218,7 @@ class Route
     }
     public function bind($path_info, $request_method='GET')
     {
-        $path_info=parse_url($path_info);
+        $path_info=parse_url($path_info,PHP_URL_PATH);
         
         if (!$this->has_bind_server_data) {
             $this->bindServerData($_SERVER);

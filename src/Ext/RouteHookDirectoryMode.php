@@ -20,7 +20,7 @@ class RouteHookDirectoryMode
     {
         $this->basepath=$options['mode_dir_basepath'];
         if ($context) {
-            Route::G()->hook([static::class,'Hook'], 'prepend');
+            Route::G()->addRouteHook([static::class,'Hook'], false);
             Route::G()->setURLHandler([$this,'onURL']);
         }
     }

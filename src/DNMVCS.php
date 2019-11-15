@@ -63,7 +63,8 @@ class DNMVCS extends App //implements SwooleExtAppInterface
         $SwooleHttpd->set_http_404_handler([static::class,'On404']);             // 接管 404 处理。
         
         $flag=$SwooleHttpd->is_with_http_handler_root();                         // 如果还有子文件，做404后处理
-        $this->options['skip_404_handler']= $this->options['skip_404_handler'] || $flag;
+        $this->options['skip_404_handler'] = $this->options['skip_404_handler']??false;
+        $this->options['skip_404_handler'] = $this->options['skip_404_handler'] || $flag;
         
         $funcs=$SwooleHttpd->system_wrapper_get_providers();                    
         $this->system_wrapper_replace($funcs);                                    // 替换默认的可用的系统函数。

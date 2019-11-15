@@ -39,7 +39,7 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
         ExceptionManager::G()->on_exception($ex2);
         ExceptionManager::G()->checkAndRunErrorHandlers($ex2,true);
         
-        ExceptionManager::G()->cleanUp();
+        ExceptionManager::G()->clear();
         
         $default_exception_handler=[ExceptionManager::G(),'on_exception'];
         $class="EX";
@@ -57,7 +57,7 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
         ];
         ExceptionManager::G(new ExceptionManager())->init($exception_options)->run();
         
-        ExceptionManager::G()->cleanUp();
+        ExceptionManager::G()->clear();
         
         \MyCodeCoverage::G()->end(ExceptionManager::class);
         $this->assertTrue(true);

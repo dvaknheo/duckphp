@@ -44,7 +44,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         
         
         
-            App::G()->addBeforeRunHandler(function(){ echo "addBeforeRunHandler";});
+            //App::G()->addBeforeRunHandler(function(){ echo "addBeforeRunHandler";});
             App::G()->addBeforeShowHandler(function(){ echo "beforeShowHandlers";});
             $value = $cache[$key]; // trigger notice
             
@@ -68,7 +68,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             
         };
         App::G()->run();
-        App::G()->cleanUp();
+        App::G()->clear();
         App::G()->cleanAll();
 
             $path_app=\GetClassTestPath(App::class);

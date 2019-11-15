@@ -56,7 +56,7 @@ class AutoLoaderTest extends \PHPUnit\Framework\TestCase
         AutoLoader::G()->cacheNamespacePath($path_autoload.'AutoApp/');
         AutoLoader::G()->cacheNamespacePath('ThisPastNotExsits');
         //$G->cacheNamespacePath(path_autoload);
-        $G->cleanUp();
+        $G->clear();
         
         $path_autoload=\GetClassTestPath(AutoLoader::class);
         $sec=(new AutoLoader())->init([
