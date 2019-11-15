@@ -1,6 +1,7 @@
 <?php 
 namespace tests\DNMVCS\Core;
 use DNMVCS\Core\SystemWrapper;
+use DNMVCS\Core\SingletonEx;
 
 class SystemWrapperTest extends \PHPUnit\Framework\TestCase
 {
@@ -8,8 +9,17 @@ class SystemWrapperTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(SystemWrapper::class);
         
-        //code here
+        //SystemWrapper::G()->system_wrapper_replace(array $funcs);
+        $data=\DNMVCS\Core\App::system_wrapper_get_providers();
         
+        SystemWrapperObject::var_dump(DATE(DATE_ATOM));
+        SystemWrapperObject::system_wrapper_replace(['var_dump'=>function(...$args){var_dump("!!!!");}]);
+        SystemWrapperObject::var_dump(DATE(DATE_ATOM));
+        SystemWrapperObject::var_dump2(DATE(DATE_ATOM));
+        
+        var_dump($data);
+
+
         \MyCodeCoverage::G()->end(SystemWrapper::class);
         $this->assertTrue(true);
         /*
@@ -18,5 +28,41 @@ class SystemWrapperTest extends \PHPUnit\Framework\TestCase
         SystemWrapper::G()->system_wrapper_call_check($func);
         SystemWrapper::G()->system_wrapper_call($func, $input_args);
         //*/
+    }
+}
+class SystemWrapperObject
+{
+    
+    use SingletonEx;
+    use SystemWrapper;
+    protected $system_handlers=[
+        'var_dump'=>null,
+        'var_dump2'=>null,
+    ];
+    public static function var_dump(...$args)
+    {
+        return static::G()->_var_dump(...$args);
+    }
+    public function _var_dump(...$args)
+    {
+        if ($this->system_wrapper_call_check(__FUNCTION__)) {
+            $this->system_wrapper_call(__FUNCTION__, func_get_args());
+            return;
+        }
+        echo "BEGIN";
+        var_dump(...$args);
+    }
+    public static function var_dump2(...$args)
+    {
+        return static::G()->_var_dump2(...$args);
+    }
+    public function _var_dump2(...$args)
+    {
+        $this->system_wrapper_call('var_export', func_get_args());
+        try{
+        $this->system_wrapper_call('ttt', func_get_args());
+        }catch(\Error $ex){
+            var_dump($ex);
+        }
     }
 }

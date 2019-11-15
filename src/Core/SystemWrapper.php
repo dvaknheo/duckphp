@@ -14,12 +14,10 @@ trait SystemWrapper
         $ret=static::G()->system_handlers;
         
         $class=static::class;
-        array_map(
-            function ($v) use ($class) {
-                $v=$v??[$class,$v];
-            },
-            $ret
-        );
+        foreach($ret as $k =>&$v){
+            $v=$v??[$class,$k];
+        }
+        unset($v);
         return $ret;
     }
     protected function system_wrapper_call_check($func)
@@ -32,6 +30,9 @@ trait SystemWrapper
         $func=ltrim($func, '_');
         if (is_callable($this->system_handlers[$func]??null)) {
             return ($this->system_handlers[$func])(...$input_args);
+        }
+        if (!is_callable($func)) {
+            throw new \Error("Call to undefined function $func");
         }
         return ($func)(...$input_args);
     }
