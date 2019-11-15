@@ -342,9 +342,7 @@ assignRoute($route,$callback=null)
     暂时不建议使用。
 ### 其他要点
 配置和设置在哪里？
-TestService::G()->foo 里的 G() 是什么意。G函数，单例模式。
 
-JsonExt\MY\Service\TestService 这个类找不到啊。
 
 这是第三方的扩展
 
@@ -447,9 +445,11 @@ const DEFAULT_OPTIONS=[
     注意到 app/Base/App.php 这个文件的类 MY\Base\App extends DNMVCS\DNMVCS;
     如果以  \ 开头则是绝对 命名空间
 'is_debug'=>false,
-    配置开发平台 * 设置文件的  platform 会覆盖
+
+    配置是否在调试状态。
 'platform'=>'',
 
+    配置开发平台 * 设置文件的  platform 会覆盖
 'skip_view_notice_error'=>true,
 
     view 视图里忽略 notice 错误。
@@ -494,10 +494,7 @@ ext 是一个选项，这里单独成一节是因为这个选项很重要。涉�
     如果 $options 为 true ，则会把当前 $options 传递进去。
 
 
-#### HttpServer
-    用于构建单独的 Http 服务器
-
-### DMMVCS 目录结构
+### DNMVCS 工程目录结构
 
 工程的桩代码,完整的默认目录结构
 
@@ -565,6 +562,7 @@ MY\Base\App 包含所有助手类的方法。
 #### 用于 override 的两个重要方法
 
 onInit()
+
     用于初始化，你可能会在这里再次调整  $this->options。
     你可以在调用父类的初始化前后做一些操作
 onRun(): void
@@ -586,9 +584,9 @@ RunQuickly(): bool
     App::IsRunning();
     App::IsInException();
 
-    App::system_wrapper_get_providers();
-    App::session_set_save_handler();
-#### 常用静态方法
+
+#### 常用方法
+这些方法不能归入 助手类里，只能在 App 类单独给出的。
 
 addRouteHook($hook,$append=true,$outter=true,$once=true)
 
@@ -604,14 +602,12 @@ extendComponents($class,$methods,$components);
 
     扩展组件的静态方法。
     其中： $components 为 ['M','V','C','S'] 组合可选。
-【公开动态方法】
+#### 公开动态方法
 
     App->init();
     App->run();
 
-    App->addBeforeRunHandler();
     App->extendComponents();
-    App->addBeforeShowHandler();
     App->assignPathNamespace();
     App->addRouteHook();
 #### 内部可扩展方法
@@ -619,12 +615,19 @@ extendComponents($class,$methods,$components);
     App->checkOverride();
     App->initExtentions();
     App->reloadFlags();
+    App::system_wrapper_get_providers();
+    App::session_set_save_handler();
 #### 下划线开始的动态方法
-其他方法
+    下划线开始的动态方法，表示的是内部，但特殊情况下会被外部调用的方法。
+    有些会对应无下划线的静态方法，用于实现。 用于接管的状态。
+
+
+#### 其他方法
 
     其他方法有待你的发掘。如果你要用于特殊用处的话。
     目前一共有 32 个 public function ,36 public static function ,10 protected function 
     还有 +3 来自 ExtendableStaticCallTrait 方法。
+    79 个方法。
 
 ### 请求流程和生命周期
 DNMVCS::RunQuickly($options) 发生了什么
@@ -660,12 +663,6 @@ run() 运行阶段
 
 ## 第三章 DNMVCS 核心开发和扩展参考
 
-### 流程
-
-### 其他核心组件选项
-
-本章介绍的是核心扩展的选项，这些选项，可以通过修改 App 类的 $options 里设置。
-
 #### 可变单例 G 方法
 这里，对之前的 G 方法统一说明
 G 方法表面上是个单例函数，实际上的可替换的。
@@ -684,6 +681,7 @@ SingletonEx 可变单例
 Base\*Helper 是各种快捷方法。
 
 其他组件都遵守 init(array $options, $contetxt=null); 接口。
+而且组件多有公开属性 $options 对应调整选项。
 
 这些组件 都可以在 onInit 里通过类似方法替换
 ```php
@@ -705,10 +703,10 @@ ExceptionManager::G(MyExceptionManager::G())->init($this->options,$this);
 如何替换组件。
 
 注意的是核心组件都在 onInit 之前初始化了，所以你要自己初始化。
-为什么核心组件都在 onInit 之前初始化。
+* 为什么核心组件都在 onInit 之前初始化。
 为了 onInit 使用方便
 
-为什么 Core 里面的都是 App::Foo(); 而 Ext 里面的都是 App::G()::Foo();
+* 为什么 Core 里面的都是 App::Foo(); 而 Ext 里面的都是 App::G()::Foo();
 因为 Core 里的扩展都是在 DNMVCS\Core\App 下的。
 
 Core 下面的扩展不会单独拿出来用， 
@@ -717,14 +715,18 @@ Core 下面的扩展不会单独拿出来用，
 ### Core\Autoloader
 DNMVCS\AutoLoader 类是 psr-4 加载类。
 ##### 选项
-```
-'path'=>null,
-'namespace'=>'MY',
-'path_namespace'=>'app',
+```php
+$options=[
+    'path'=>null,
+    'namespace'=>'MY',
+    'path_namespace'=>'app',
 
-'skip_system_autoload'=>true, 
-'skip_app_autoload'=>false,     //如果你在 composer.json 里设置了autoload 用 composer的，设置为 true
+    'skip_system_autoload'=>true, 
+    'skip_app_autoload'=>false,
+],
 ```
+##### 方法
+
 ##### 示例
 
 ### Core\Configer
@@ -763,17 +765,17 @@ path_view 如果是 / 开始的，会忽略 path 选项
 ### Core\Route
 DNMVCS\Core\Route 这个类可以单独拿出来做路由用。
 ##### 选项
-```
-'namespace'=>'MY',
-'namespace_controller'=>'Controller',
-'controller_base_class'=>null,
-'controller_welcome_class'=>'Main',
-
-'controller_hide_boot_class'=>false,
-'controller_methtod_for_miss'=>null,
-'controller_prefix_post'=>'do_',
-'controller_postfix'=>''
-'controller_methtod_for_miss'=>'_missing',
+```php
+$options=[
+    'namespace'=>'MY',
+    'namespace_controller'=>'Controller',
+    'controller_base_class'=>null,
+    'controller_welcome_class'=>'Main',
+    'controller_hide_boot_class'=>false,
+    'controller_methtod_for_miss'=>'_missing',
+    'controller_prefix_post'=>'do_',
+    'controller_postfix'=>''
+]
 ```
 'controller_base_class'=>null,
     
@@ -790,9 +792,12 @@ DNMVCS\Core\Route 这个类可以单独拿出来做路由用。
     
     如果有这个方法。找不到方法的时候，会进入这个方法
     如果你使用了这个方法，将不会进入 404 。
-'controller_postfix'=>''
+'controller_prefix_post'=>'do_'
 
-    控制器后缀，如果你觉得控制器类不够显眼，用 加上 Controller 后缀的话
+    拆分 POST 方法到 do_ 开头的方法。
+'controller_postfix'=>'',
+
+     控制器后缀，如果你觉得控制器类不够显眼，你可以设置成Controller
 ##### 示例
 这是一个单用 Route 组件的例子
 ```php
@@ -821,17 +826,77 @@ if(!$flag){
 }
 
 ```
-##### 方法
-RunQuickly
-URL
-Parameters
-defaultURLHandler
-bindServerData
+##### 静态方法
+public static function RunQuickly(array $options=[], callable $after_init=null)
+
+    快速方法，等同于 init()->run();
+public static function URL($url=null)
+
+    获取某个 相对 URL的绝对 URL 地址
+public static function Parameters()
+
+    获得切片数组。
+##### 公开动态方法
+    public function _URL($url=null)
+    public function _Parameters()
+    public function defaultURLHandler($url=null)
+    public function setURLHandler($callback)
+    public function getURLHandler()
+
+##### 主要流程方法。
+
+    public function bindServerData($server)
+    public function bind($path_info, $request_method='GET')
+
+    protected function beforeRun()
+    public function run()
+    public function defaultRunRouteCallback($path_info=null)
+    public function defaultGetRouteCallback($path_info)
+    public function defaultStopRouteCallback()
+
+    public function addRouteHook($callback, $append=true, $outter=true, $once=true)
+    public function add404Handler($callback)
+    
+    protected function getFullClassByAutoLoad($path_class)
+    protected function getCallback($full_class, $method)
+    protected function createControllerObject($full_class)
+    protected function getMethodToCall($obj, $method)
+##### 辅助信息方法
+    public function getRouteCallingPath()
+    public function getRouteCallingClass()
+    public function getRouteCallingMethod()
+    public function setRouteCallingMethod($calling_method)
+
+##### 钩挂路由流程指南
+
+    如果你对默认的文件路由不满意，可以安插自己的钩子。
+    $route->addRouteHook($callback, $append=true, $outter=true, $once=true);
+    其中， $callback 为你的钩子函数，符合 callback(string $path_info):bool
+    当你返回 true 的时候，表示成功。 将不再执行后面的函数。
+    一共有4个钩挂点可用。 $append,$outter。
+    defaultRunRouteCallback($path_info);  给做了默认榜样。
+    defaultGetRouteCallback($path_info); 则是获得，但不处理调用。
+    如果你在前面的，想禁止默认路由函数，可以用 defaultStopRouteCallback();
+
+    add404Handle() 是默认用于后处理的版本。
+##### URL 输出地址重写指南
+
+
+
 ### Core\RuntimeState
 RuntimeState 类用于保存运行时数据。无配置
 ReCreateInstance
 
 ### Core\SuperGlobal
+SuperGlobal 用于替代超全局变量。无配置
+
+
+### 辅助类的分割线
+    ExtendableStaticCallTrait
+    ThrowOn  提供了 实用的 ThrowOn
+    HookChain  提供 
+    HttpServer 提供了 HttpServer 的实现。
+    SystemWrapper 用于 同名函数替代系统系统函数。 比如 header();
 
 ### 分割线
     以下介绍的都是 Ext的参考。
@@ -848,12 +913,13 @@ M::DB() 用到了这个组件。
 #### 说明
 
 database_list 的示例：
-
+```php
     [[
 		'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
 		'username'=>'???',
 		'password'=>'???',
-	]],
+    ]],
+```
 #### 方法
 DB()
     是 App::DB 和 M::DB 的实现。
@@ -868,7 +934,7 @@ DB
     execQuick($sql, ...$args); //   执行某条sql ，不用 exec , execute 是为了兼容其他类。
 #### 示例
 使用数据库，在 设置里正确设置 database_list 这个数组，包含多个数据库配置
-然后在用到的地方调用 DNMVCS::DB($tag=null) 得到的就是 DNDB 对象，用来做各种数据库操作。
+然后在用到的地方调用 DNMVCS::DB($tag=null) 得到的就是 DB 对象，用来做各种数据库操作。
 $tag 对应 $setting['database_list'][$tag]。默认会得到最前面的 tag 的配置。
 
 你不必担心每次框架初始化会连接数据库。只有第一次调用 DNMVCS::DB() 的时候，才进行数据库类的创建。
@@ -1050,15 +1116,21 @@ rewrite 支持以 ~ 开始表示的正则， 并且转换后自动拼凑 $_GET
 #### 方法
 assignRewrite()
 getRewrites()
+
 ### RouteHookRouteMap
+
 默认开启,实现了路由映射功能
 #### 选项
+```php
+$options=[
    'route_map'=>[],
+]
+```
 如果是 * 结尾，那么把后续的按 / 切入 parameters
 route_map key 如果是 ~ 开头的，表示正则
 否则是普通的 path_info 匹配。
 
-支持 'Class->Method' 表示创建对象，执行动态方法。
+支持 'Class->Method' 和 'Class@Method'  表示创建对象，执行动态方法。
 你可以 
 parameters 
 
@@ -1067,13 +1139,28 @@ assignRoute($route,$callback);
     是 C::assignRoute 和 App::assignRoute 的实现。
 getRoutes()
     dump  route_map 的内容。
+
+### CallableView
+
+CallableView 扩展用于用函数替代文件方式显示视图
+##### 选项
+```php
+$options=[
+    'callable_view_head'=>null,     //  页眉函数
+    'callable_view_foot'=>null,     //  页脚函数
+    'callable_view_class'=>null,    //  限定于某类
+    'callable_view_prefix'=>null,   //  前缀
+    'callable_view_skip_replace'=>false,    // 初始化的时候替换默认的 Core\View
+];
+```
+所有回调都在 都会限定于 callable_view_class 内，callable_view_class 可以为 object;如果 callable_view_class 为 null 则为全局函数
+callable_view_prefix 是方法前缀。 方法名都会把view 的 / 替换成 _
+callable_view_skip_replace 打开的时候会在 初始化的时候替换默认的 Core\View
 ### StrictCheck
 
 用于 严格使用 DB 等情况。使得在调试状态下。不能在 Controller 里 使用 M::DB();等
 
 ## 第四章 DNMVCS 其他类参考
-
-## 其他
 
 ----
 ####

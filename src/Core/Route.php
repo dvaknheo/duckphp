@@ -52,6 +52,7 @@ class Route
     
     protected $prependedCallbackList=[];
     protected $appendedCallbackList=[];
+    protected $stop_default_callback=false;
     
     public static function RunQuickly(array $options=[], callable $after_init=null)
     {
@@ -203,6 +204,10 @@ class Route
     }
     public function defaultRunRouteCallback($path_info=null)
     {
+        if ($this->stop_default_callback) {
+            $this->stop_default_callback=false;
+            return false;
+        }
         $path_info=$path_info??$this->path_info;
         $callback=$this->defaultGetRouteCallback($path_info); //do getdefaultGetRouteCallback();
         if (null===$callback) {
@@ -289,7 +294,15 @@ class Route
         }
         return null;
     }
-    public function getCallback($full_class, $method)
+    public function defaulStopRouteCallback()
+    {
+        $this->stop_default_callback=true;
+    }
+    public function getRouteError()
+    {
+        return $this->error;
+    }
+    protected function getCallback($full_class, $method)
     {
         if (!$full_class) {
             return null;
