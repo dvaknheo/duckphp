@@ -18,38 +18,32 @@ class Route
             'controller_methtod_for_miss'=>'_missing',
             'controller_prefix_post'=>'do_',
             'controller_postfix'=>'',
-            
         ];
     
     public $parameters=[];
     public $urlHandler=null;
     
+    public $namespace_controller='';
     protected $controller_welcome_class='Main';
     protected $controller_index_method='index';
-    
-    public $namespace_controller='';
-    protected $controller_hide_boot_class=false;
-    protected $controller_methtod_for_miss=null;
     protected $controller_base_class=null;
     
-    protected $enable_post_prefix=true;
+    protected $controller_hide_boot_class=false;
+    protected $controller_methtod_for_miss=null;   
+    protected $controller_prefix_post='do_';
     
-    public $controller_prefix_post='do_';
+    public $path_info='';
+    public $request_method='';
     
+    public $script_filename='';
+    public $document_root='';
+
+    public $error='';
     public $calling_path='';
     public $calling_class='';
     public $calling_method='';
     
-    public $has_bind_server_data=false;
-    public $path_info='';
-    public $request_method='';
-    public $script_filename='';
-    public $document_root='';
-
-    public $routeHooks=[];
-    public $callback=null;
-    public $error='';
-    
+    protected $has_bind_server_data=false;
     protected $prependedCallbackList=[];
     protected $appendedCallbackList=[];
     protected $stop_default_callback=false;
@@ -90,6 +84,7 @@ class Route
         $document_root=rtrim($this->document_root, '/');
         $basepath=substr(rtrim($this->script_filename, '/'), strlen($document_root));
         $basepath=rtrim($basepath, '/');
+        
         $path_info=$this->path_info?:'/'.$this->path_info;
         
         if ($basepath=='/index.php') {
@@ -137,6 +132,15 @@ class Route
         
         return $this;
     }
+    public function setURLHandler($callback)
+    {
+        $this->urlHandler=$callback;
+    }
+    public function getURLHandler()
+    {
+        return $this->urlHandler;
+    }
+    
     public function bindServerData($server)
     {
         $this->script_filename=$server['SCRIPT_FILENAME']??'';
@@ -159,63 +163,6 @@ class Route
         $this->has_bind_server_data=true;
         return $this;
     }
-
-    public function setURLHandler($callback)
-    {
-        $this->urlHandler=$callback;
-    }
-    public function getURLHandler()
-    {
-        return $this->urlHandler;
-    }
-    protected function beforeRun()
-    {
-        if (!$this->has_bind_server_data) {
-            $this->bindServerData($_SERVER);
-        }
-        $this->path_info=ltrim($this->path_info, '/');
-    }
-    public function run()
-    {
-        $this->beforeRun();
-        
-        //
-        foreach ($this->prependedCallbackList as $callback) {
-            $flag=($callback)();
-            if ($flag) {
-                return true;
-            }
-        }
-        
-        $flag=$this->defaultRunRouteCallback();
-        if ($flag) {
-            return true;
-        }
-        
-        //
-        foreach ($this->appendedCallbackList as $callback) {
-            $flag=($callback)();
-            if ($flag) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-    public function defaultRunRouteCallback($path_info=null)
-    {
-        if ($this->stop_default_callback) {
-            $this->stop_default_callback=false;
-            return false;
-        }
-        $path_info=$path_info??$this->path_info;
-        $callback=$this->defaultGetRouteCallback($path_info); //do getdefaultGetRouteCallback();
-        if (null===$callback) {
-            return false;
-        }
-        ($callback)();
-        return true;
-    }
     public function bind($path_info, $request_method='GET')
     {
         $path_info=parse_url($path_info,PHP_URL_PATH);
@@ -231,6 +178,41 @@ class Route
         }
         return $this;
     }
+    protected function beforeRun()
+    {
+        if (!$this->has_bind_server_data) {
+            $this->bindServerData($_SERVER);
+        }
+        $this->path_info=ltrim($this->path_info, '/'); // TODO, kill this
+    }
+    public function run()
+    {
+        $this->beforeRun();
+        
+        foreach ($this->prependedCallbackList as $callback) {
+            $flag=($callback)();
+            if ($flag) {
+                return true;
+            }
+        }
+        
+        if ($this->stop_default_callback) {
+            $this->stop_default_callback=false; // unlock
+        } else {
+            $flag=$this->defaultRunRouteCallback($this->path_info);
+            if ($flag) {
+                return true;
+            }
+        }
+        
+        foreach ($this->appendedCallbackList as $callback) {
+            $flag=($callback)();
+            if ($flag) {
+                return true;
+            }
+        }
+        return false;
+    }
     public function addRouteHook($callback, $append=true, $outter=true, $once=true)
     {
         if ($append) {
@@ -240,9 +222,9 @@ class Route
                 }
             }
             if ($outter) {
-                array_push($this->appendedCallbackList, $callback);
-            } else {
                 array_unshift($this->appendedCallbackList, $callback);
+            } else {
+                array_push($this->appendedCallbackList, $callback);
             }
         } else {
             if ($once) {
@@ -260,65 +242,54 @@ class Route
     }
     public function add404Handler($callback)
     {
-        return $this->addRouteHook($callback, true, true);
-    }
-    protected function getFullClassByAutoLoad($path_class)
-    {
-        $path_class=$path_class?:$this->controller_welcome_class;
-        $class=$this->namespace_controller.'\\'.str_replace('/', '\\', $path_class).$this->options['controller_postfix'];
-        if (!class_exists($class)) {
-            $this->error="Can't find class($class)";
-            return null;
-        }
-        return $class;
-    }
-    
-    public function defaultGetRouteCallback($path_info)
-    {
-        $t=explode('/', $path_info);
-        $method=array_pop($t);
-        $class_path=implode('/', $t);
-        
-        $this->calling_path=$class_path?$path_info:$this->controller_welcome_class.'/'.$method;
-        
-        if ($this->controller_hide_boot_class) {
-            if ($class_path===$this->controller_welcome_class) {
-                $this->error="controller_hide_boot_class! {$this->controller_welcome_class} ";
-                return null;
-            }
-        }
-        $full_class=$this->getFullClassByAutoLoad($class_path);
-        $callback=$this->getCallback($full_class, $method);
-        if ($callback) {
-            return $callback;
-        }
-        return null;
+        return $this->addRouteHook($callback, true, true, false);
     }
     public function defaulStopRouteCallback()
     {
         $this->stop_default_callback=true;
     }
-    public function getRouteError()
+    public function defaultRunRouteCallback($path_info=null)
     {
-        return $this->error;
+        $callback=$this->defaultGetRouteCallback($path_info);
+        if (null===$callback) {
+            return false;
+        }
+        ($callback)();
+        return true;
     }
-    protected function getCallback($full_class, $method)
+    public function defaultGetRouteCallback($path_info)
     {
-        if (!$full_class) {
+        $t=explode('/', $path_info);
+        $method=array_pop($t);
+        $path_class=implode('/', $t);
+        
+        $this->calling_path=$path_class?$path_info:$this->controller_welcome_class.'/'.$method;
+        
+        if ($this->controller_hide_boot_class && $path_class===$this->controller_welcome_class) {
+            $this->error="controller_hide_boot_class! {$this->controller_welcome_class} ";
             return null;
         }
+        
+        $path_class=$path_class?:$this->controller_welcome_class;
+        $full_class=$this->namespace_controller.'\\'.str_replace('/', '\\', $path_class).$this->options['controller_postfix'];
+        if (!class_exists($full_class)) {
+            $this->error="can't find class($full_class) by $path_class ";
+            return null;
+        }
+
         $this->calling_class=$full_class;
         $this->calling_method=$method;
         
-        $object=$this->createControllerObject($full_class);
-        if ($this->controller_base_class && !is_a($object, $this->controller_base_class)) {
+        if ($this->controller_base_class && !is_subclass_of($full_class, $this->controller_base_class)) {
             $this->error="no the controller_base_class! {$this->controller_base_class} ";
             return null;
         }
+        $object=$this->createControllerObject($full_class);
         return $this->getMethodToCall($object, $method);
     }
     protected function createControllerObject($full_class)
     {
+        // OK, you may use other mode.
         return new $full_class();
     }
     protected function getMethodToCall($obj, $method)
@@ -327,7 +298,7 @@ class Route
         if (substr($method, 0, 2)=='__') {
             return null;
         }
-        if ($this->enable_post_prefix && $this->request_method==='POST' &&  method_exists($obj, $this->controller_prefix_post.$method)) {
+        if ($this->controller_prefix_post && $this->request_method==='POST' &&  method_exists($obj, $this->controller_prefix_post.$method)) {
             $method=$this->controller_prefix_post.$method;
         }
         if ($this->controller_methtod_for_miss) {
@@ -342,6 +313,12 @@ class Route
             return null;
         }
         return [$obj,$method];
+    }
+    
+    ////
+    public function getRouteError()
+    {
+        return $this->error;
     }
     public function getRouteCallingPath()
     {

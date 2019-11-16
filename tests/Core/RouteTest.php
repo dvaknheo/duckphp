@@ -20,7 +20,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         
         //First Run;
         $flag=Route::RunQuickly($options);
-                Route::Parameters();
+        Route::Parameters();
 
         //URL
         $this->doUrl();
@@ -41,10 +41,12 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             ]);
             
             $callback=function () {
+                var_dump(DATE(DATE_ATOM));
             };
             Route::G()->addRouteHook($callback, false,false, true);
-            Route::G()->addRouteHook($callback, false,false, true);
-            Route::G()->addRouteHook($callback, true,false, false);
+            Route::G()->addRouteHook($callback, false,true, true);
+            Route::G()->addRouteHook($callback, true,false, true);
+            Route::G()->addRouteHook($callback, true,true, true);
         });
         
         Route::G()->bindServerData([
@@ -52,6 +54,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         ]);
         Route::G()->run();
         
+        var_dump("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
         
         Route::G()->bindServerData([
             'PATH_INFO'=>'Main/index',
@@ -67,7 +70,6 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         */
         //Route::G()->goByPathInfo('tests_Core_Route\\Main','post');
 
-        echo Route::G()->error;
         echo PHP_EOL;
 
         $options=[
@@ -162,6 +164,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
     }
     protected function doGetterSetter()
     {
+        Route::G()->getRouteError();
         Route::G()->getRouteCallingPath();
         Route::G()->getRouteCallingClass();
         Route::G()->getRouteCallingMethod();
