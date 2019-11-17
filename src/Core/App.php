@@ -121,6 +121,9 @@ class App
     public static function RunQuickly(array $options=[], callable $after_init=null): bool
     {
         $instance=static::G()->init($options);
+        if (!$instance) {
+            return true;
+        }
         if ($after_init) {
             ($after_init)();
         }
@@ -184,10 +187,14 @@ class App
         (self::class)::G($object);
         static::G($object);
         
-        $object->override_from=$override_from;
-        $object->initOptions($options);
-        
-        return $object->onInit();
+        try {
+            $object->override_from=$override_from;
+            $object->initOptions($options);
+            return $object->onInit();
+        } catch (\Throwable $ex) {
+            ExceptionManager::G()->on_exception($ex);
+            return null;
+        }
     }
     //for override
     protected function onInit()
@@ -264,8 +271,7 @@ class App
             $this->clear();
             
             return $ret;
-            
-        }catch(\Throwable $ex){
+        } catch (\Throwable $ex) {
             RuntimeState::G()->is_in_exception=true;
             ExceptionManager::G()->on_exception($ex);
             return true;

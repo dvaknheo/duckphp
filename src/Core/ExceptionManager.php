@@ -69,7 +69,7 @@ class ExceptionManager
     public function on_exception($ex)
     {
         foreach ($this->exceptionHandlers as $class =>$callback) {
-            if (is_a($ex,$class)) {
+            if (is_a($ex, $class)) {
                 ($callback)($ex);
                 return;
             }

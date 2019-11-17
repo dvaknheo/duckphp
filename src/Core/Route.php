@@ -29,7 +29,7 @@ class Route
     protected $controller_base_class=null;
     
     protected $controller_hide_boot_class=false;
-    protected $controller_methtod_for_miss=null;   
+    protected $controller_methtod_for_miss=null;
     protected $controller_prefix_post='do_';
     
     public $path_info='';
@@ -165,7 +165,7 @@ class Route
     }
     public function bind($path_info, $request_method='GET')
     {
-        $path_info=parse_url($path_info,PHP_URL_PATH);
+        $path_info=parse_url($path_info, PHP_URL_PATH);
         
         if (!$this->has_bind_server_data) {
             $this->bindServerData($_SERVER);
@@ -201,7 +201,7 @@ class Route
             if ($flag) {
                 return true;
             }
-        }else{
+        } else {
             $this->enable_default_callback=true;
         }
         

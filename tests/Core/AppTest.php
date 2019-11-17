@@ -299,6 +299,8 @@ class AppTest extends \PHPUnit\Framework\TestCase
             throw new \Exception("xxx");
         });
         AppTestApp::G()->run();
+        
+        AppTestApp2::RunQuickly([]);
     }
 }
 class AppTestApp extends App
@@ -312,6 +314,13 @@ class AppTestApp extends App
             return true;
         });
         return parent::onInit();
+    }
+}
+class AppTestApp2 extends App
+{
+    protected function onInit()
+    {
+        throw new \Exception("zzzzzzzzzzzz");
     }
 }
 class AppTestObject

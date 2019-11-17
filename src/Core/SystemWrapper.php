@@ -14,7 +14,7 @@ trait SystemWrapper
         $ret=static::G()->system_handlers;
         
         $class=static::class;
-        foreach($ret as $k =>&$v){
+        foreach ($ret as $k =>&$v) {
             $v=$v??[$class,$k];
         }
         unset($v);
