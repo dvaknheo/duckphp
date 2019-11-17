@@ -209,7 +209,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::ExitRedirectOutside("http://www.github.com",true);
         App::ExitRouteTo($url);
         App::Exit404();
-         App::G()->is_debug=true;
+        App::G()->is_debug=true;
         App::ExitJson($ret);
         //*/
         
@@ -243,6 +243,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         
         App::IsRunning();
         App::IsDebug();
+        App::IsRealDebug();
         App::Platform();
         App::IsInException();
         
@@ -281,6 +282,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
 
         
         $options=[
+            'path' => $path_app,
         'skip_setting_file' => true,
         'is_debug'=>false,
         'error_exception' => NULL,
@@ -290,7 +292,13 @@ class AppTest extends \PHPUnit\Framework\TestCase
         ];
         AppTestApp::RunQuickly($options);
         
-
+        AppTestApp::G()->options['error_404']='_sys/error-404';
+        AppTestApp::On404();
+        
+        AppTestApp::G()->addRouteHook(function(){
+            throw new \Exception("xxx");
+        });
+        AppTestApp::G()->run();
     }
 }
 class AppTestApp extends App
@@ -300,7 +308,8 @@ class AppTestApp extends App
         $this->addBeforeRunHandler(function(){
             static::DumpTrace();
             static::Dump("ABC");
-            var_dump("!");return true;
+            var_dump("!");
+            return true;
         });
         return parent::onInit();
     }

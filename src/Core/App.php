@@ -26,6 +26,7 @@ class App
     use ExtendableStaticCallTrait;
     use SystemWrapper;
     
+    use Core_Component;
     use Core_Handler;
     use Core_Helper;
     use Core_Redirect;
@@ -50,6 +51,8 @@ class App
             'skip_404_handler'=>false,
             
             //// error handler ////
+            'handle_all_dev_error'=>true,
+            'handle_all_exception'=>true,
             'error_404'=>null,          //'_sys/error-404',
             'error_500'=>null,          //'_sys/error-500',
             'error_exception'=>null,    //'_sys/error-exception',
@@ -158,10 +161,18 @@ class App
     public function init(array $options=[], object $context=null)
     {
         AutoLoader::G()->init($options, $this)->run();
+        
+        $handle_all_dev_error=$options['handle_all_dev_error']??static::DEFAULT_OPTIONS['handle_all_dev_error'];
+        $handle_all_exception=$options['handle_all_exception']??static::DEFAULT_OPTIONS['handle_all_exception'];
+
         $exception_options=[
-            'exception_handler'=>[static::class,'OnException'],
-            'dev_error_handler'=>[static::class,'OnDevErrorHandler'],
+            'handle_all_dev_error'=>$handle_all_dev_error,
+            'handle_all_exception'=>$handle_all_exception,
+            
             'system_exception_handler'=>[static::class,'set_exception_handler'],
+            
+            'default_exception_handler'=>[static::class,'OnException'],
+            'dev_error_handler'=>[static::class,'OnDevErrorHandler'],
         ];
         ExceptionManager::G()->init($exception_options, $this)->run();
         
@@ -231,26 +242,34 @@ class App
     }
     public function run(): bool
     {
-        foreach ($this->beforeRunHandlers as $v) {
-            ($v)();
+        try {
+            foreach ($this->beforeRunHandlers as $v) {
+                ($v)();
+            }
+            
+            $this->onRun();
+            
+            RuntimeState::ReCreateInstance()->begin();
+            
+            $route=Route::G();
+            if ($this->options['use_super_global']??false) {
+                $route->bindServerData(SuperGlobal::G()->_SERVER);
+            }
+            
+            $ret=$route->run();
+            
+            if (!$ret && !$this->options['skip_404_handler']) {
+                static::On404();
+            }
+            $this->clear();
+            
+            return $ret;
+            
+        }catch(\Throwable $ex){
+            RuntimeState::G()->is_in_exception=true;
+            ExceptionManager::G()->on_exception($ex);
+            return true;
         }
-        $this->onRun();
-        
-        RuntimeState::ReCreateInstance()->begin();
-        
-        $route=Route::G();
-        if ($this->options['use_super_global']??false) {
-            $route->bindServerData(SuperGlobal::G()->_SERVER);
-        }
-        $ret=$route->run();
-        
-        if (!$ret && !$this->options['skip_404_handler']) {
-            static::On404();
-        }
-        
-        $this->clear();
-        
-        return $ret;
     }
     // 这里我们要做好些清理判断。对资源的释放处理
     public function clear(): void
@@ -322,6 +341,9 @@ class App
             $full_class::AssignExtendStaticMethod($maps);
         }
     }
+}
+trait Core_Component
+{
     public function getStaticComponentClasses()
     {
         $ret=[
@@ -398,17 +420,6 @@ trait Core_Handler
     
     public function _OnException($ex): void
     {
-        RuntimeState::G()->is_in_exception=true;
-        if (!RuntimeState::G()->running_exception) {
-            RuntimeState::G()->running_exception=true; //lock;
-            $flag=ExceptionManager::G()->checkAndRunErrorHandlers($ex, false);
-            if ($flag) {
-                return;
-            }
-            RuntimeState::G()->running_exception=false;
-        }
-        
-        
         $is_error=is_a($ex, 'Error') || is_a($ex, 'ErrorException')?true:false;
         $error_view=$is_error?$this->options['error_500']:$this->options['error_exception']??null;
         $error_view=$this->error_view_inited?$error_view:null;
@@ -639,6 +650,10 @@ trait Core_Helper
     public static function IsDebug()
     {
         return static::G()->is_debug;
+    }
+    public static function IsRealDebug()
+    {
+        return static::IsDebug(); //you can override this;
     }
     public static function IsInException()
     {

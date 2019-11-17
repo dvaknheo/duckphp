@@ -8,9 +8,9 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \MyCodeCoverage::G()->begin(ExceptionManager::class);
-        
+
          $exception_options=[
-            'exception_handler'=>[ExceptionManagerObject::class,'OnException'],
+            'default_exception_handler'=>[ExceptionManagerObject::class,'OnException'],
             'dev_error_handler'=>[ExceptionManagerObject::class,'OnDevErrorHandler'],
             //'system_exception_handler'=>[ExceptionManager::G(),'on_exception'],
         ];
@@ -37,7 +37,6 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
         });
         ExceptionManager::G()->on_exception($ex);
         ExceptionManager::G()->on_exception($ex2);
-        ExceptionManager::G()->checkAndRunErrorHandlers($ex2,true);
         
         ExceptionManager::G()->clear();
         
@@ -69,6 +68,7 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
         ExceptionManager::G()->on_exception($ex);
 
         //*/
+
     }
 }
 class ExceptionManagerException extends \Exception
