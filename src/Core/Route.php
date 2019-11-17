@@ -46,7 +46,7 @@ class Route
     protected $has_bind_server_data=false;
     protected $prependedCallbackList=[];
     protected $appendedCallbackList=[];
-    protected $stop_default_callback=false;
+    protected $enable_default_callback=true;
     
     public static function RunQuickly(array $options=[], callable $after_init=null)
     {
@@ -196,13 +196,13 @@ class Route
             }
         }
         
-        if ($this->stop_default_callback) {
-            $this->stop_default_callback=false; // unlock
-        } else {
+        if ($this->enable_default_callback) {
             $flag=$this->defaultRunRouteCallback($this->path_info);
             if ($flag) {
                 return true;
             }
+        }else{
+            $this->enable_default_callback=true;
         }
         
         foreach ($this->appendedCallbackList as $callback) {
@@ -244,9 +244,9 @@ class Route
     {
         return $this->addRouteHook($callback, true, true, false);
     }
-    public function defaulStopRouteCallback()
+    public function defaulToggleRouteCallback($enable=true)
     {
-        $this->stop_default_callback=true;
+        $this->enable_default_callback=$enable;
     }
     public function defaultRunRouteCallback($path_info=null)
     {
@@ -264,6 +264,7 @@ class Route
         $path_class=implode('/', $t);
         
         $this->calling_path=$path_class?$path_info:$this->controller_welcome_class.'/'.$method;
+        $this->error='';
         
         if ($this->controller_hide_boot_class && $path_class===$this->controller_welcome_class) {
             $this->error="controller_hide_boot_class! {$this->controller_welcome_class} ";
@@ -292,27 +293,30 @@ class Route
         // OK, you may use other mode.
         return new $full_class();
     }
-    protected function getMethodToCall($obj, $method)
+    protected function getMethodToCall($object, $method)
     {
         $method=$method===''?$this->controller_index_method:$method;
         if (substr($method, 0, 2)=='__') {
+            $this->error='can not call hidden method';
             return null;
         }
-        if ($this->controller_prefix_post && $this->request_method==='POST' &&  method_exists($obj, $this->controller_prefix_post.$method)) {
+        if ($this->controller_prefix_post && $this->request_method==='POST' &&  method_exists($object, $this->controller_prefix_post.$method)) {
             $method=$this->controller_prefix_post.$method;
         }
         if ($this->controller_methtod_for_miss) {
             if ($method===$this->controller_methtod_for_miss) {
+                $this->error='can not direct call controller_methtod_for_miss ';
                 return null;
             }
-            if (!method_exists($obj, $method)) {
+            if (!method_exists($object, $method)) {
                 $method=$this->controller_methtod_for_miss;
             }
         }
-        if (!is_callable([$obj,$method])) {
+        if (!is_callable([$object,$method])) {
+            $this->error='method can not call';
             return null;
         }
-        return [$obj,$method];
+        return [$object,$method];
     }
     
     ////

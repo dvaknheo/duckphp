@@ -852,7 +852,7 @@ public static function Parameters()
     public function run()
     public function defaultRunRouteCallback($path_info=null)
     public function defaultGetRouteCallback($path_info)
-    public function defaultStopRouteCallback()
+    public function defaultToggleRouteCallback($enable)
 
     public function addRouteHook($callback, $append=true, $outter=true, $once=true)
     public function add404Handler($callback)
@@ -876,7 +876,7 @@ public static function Parameters()
     一共有4个钩挂点可用。 $append,$outter。
     defaultRunRouteCallback($path_info);  给做了默认榜样。
     defaultGetRouteCallback($path_info); 则是获得，但不处理调用。
-    如果你在前面的，想禁止默认路由函数，可以用 defaultStopRouteCallback();
+    如果你在前面的，想禁止默认路由函数，可以用 defaultToggleRouteCallback(false);
 
     add404Handle() 是默认用于后处理的版本。
 ##### URL 输出地址重写指南

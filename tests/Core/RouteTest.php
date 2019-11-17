@@ -10,6 +10,13 @@ class RouteTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(Route::class);
         
+        
+        $this->hooks();
+        //$this->assertTrue(true);
+        
+        //\MyCodeCoverage::G()->end();
+        //return;
+        
         //Main
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
@@ -43,10 +50,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             $callback=function () {
                 var_dump(DATE(DATE_ATOM));
             };
-            Route::G()->addRouteHook($callback, false,false, true);
-            Route::G()->addRouteHook($callback, false,true, true);
-            Route::G()->addRouteHook($callback, true,false, true);
-            Route::G()->addRouteHook($callback, true,true, true);
+
         });
         
         Route::G()->bindServerData([
@@ -60,14 +64,19 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'PATH_INFO'=>'Main/index',
             'REQUEST_METHOD'=>'POST',
         ]);
-        //Route::G()->getDefaultRouteHandler();
-        /*
-        Route::G()->getCallback(null,'');
+        Route::G()->run();
+        
+        Route::G(MyRoute::G()->init(Route::G()->options));
+        Route::G()->bindServerData([
+            'PATH_INFO'=>'Main/index',
+            'REQUEST_METHOD'=>'POST',
+        ]);
+        //Route::G()->getCallback(null,'');
         Route::G()->getCallback('tests_Core_Route\\Main','__');
         Route::G()->getCallback('tests_Core_Route\\Main','post');
         Route::G()->getCallback('tests_Core_Route\\Main','post2');
         Route::G()->getCallback('tests_Core_Route\\Main','_missing');
-        */
+        
         //Route::G()->goByPathInfo('tests_Core_Route\\Main','post');
 
         echo PHP_EOL;
@@ -113,20 +122,52 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         ]);
         Route::G()->run();
         Route::G()->bind("again",null)->run();
-        //exit;
-        //Route::RunQuickly($options,function(){});
-        
-        
-        //Route::G()->prepend(new RouteOjbect());
-        //Route::G()->append(new RouteOjbect());
-        
 
         $this->assertTrue(true);
         
         \MyCodeCoverage::G()->end();
         return;
-        //MyCodeCoverage::G()->report("code_2");
-        //MyCodeCoverage::G()->reportHtml("report_html");
+    }
+    protected function hooks()
+    {
+        //First Main();
+        Route::RunQuickly([]);
+        
+        //Prepend, true
+        Route::G(new Route());
+        Route::RunQuickly([],function(){
+            $prepended=function () {
+                var_dump(DATE(DATE_ATOM));
+                return true;
+            };
+            Route::G()->addRouteHook($prepended, false,false, true);
+            Route::G()->addRouteHook($prepended, false,false, true);
+        });
+        //prepend,false
+        Route::G(new Route());
+        Route::RunQuickly([],function(){
+            $prepended=function () {
+                var_dump(DATE(DATE_ATOM));
+                Route::G()->defaulToggleRouteCallback(false);
+                return false;
+            };
+            $prepended2=function () { var_dump('prepended2!');};
+            Route::G()->addRouteHook($prepended, false,false, true);
+            Route::G()->addRouteHook($prepended2, false,true, false);
+        });
+        // append true.
+        
+        Route::G(new Route());
+        Route::RunQuickly([],function(){
+            $my404=function(){ return false;};
+            $appended=function () {
+                var_dump(DATE(DATE_ATOM));
+                return true;
+            };
+            Route::G()->add404Handler($my404);
+            Route::G()->addRouteHook($appended, true,true, true);
+            Route::G()->addRouteHook($appended, true,true, true);
+        });
     }
     protected function doUrl()
     {
@@ -171,24 +212,14 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->setRouteCallingMethod('_');
     }
 }
-class RouteOjbect
+class MyRoute extends Route
 {
-    public static function RunFalse()
+    public function getCallback($class,$method)
     {
-        print_r([__FUNCTION__]);
-        return false;
-    }
-    public static function RunTrue()
-    {
-        print_r([__FUNCTION__]);
-        return true;
-    }
-    public function run()
-    {
-        var_dump(DATE(DATE_ATOM));
-        return false;
+        return $this->getMethodToCall(new $class,$method);
     }
 }
+
 }
 namespace tests_Core_Route
 {
