@@ -11,6 +11,8 @@ class CallableView extends View
             'callable_view_class'=>null,
             'callable_view_prefix'=>null,
             'callable_view_skip_replace'=>false,
+            'path'=>'',
+            'path_view'=>'view',
         ];
     public function init($options=[], $context=null)
     {

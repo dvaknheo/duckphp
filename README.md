@@ -157,66 +157,37 @@ namespace {
 // 以下部分是核心程序员写的。
 namespace MySpace\Base
 {
-    use \DNMVCS\Core\View as CoreView;
+    use \DNMVCS\Core\View;
+    use \DNMVCS\Ext\CallableView;
     
     // 默认的View 不支持函数调用，我们这里替换他。
     class App extends \DNMVCS\DNMVCS {
         protected function onInit() {
-            CoreView::G(View::G()); // 替换默认类
+            // 补齐选项。
+            $this->options['callable_view_class']='MySpace\View\Views';
+            View::G(CallableView::G()); // 这里演示函数调用的   CallableView 代替系统的 View
             return parent::onInit();
         }
     }
     
-    //如果有 MySpace\View\Views 类的方法，则尝试调用
-    
-    class View extends \DNMVCS\Core\View
-    {
-        public function _Show($data = [], $view) {
-            $ns = 'MySpace\View\Views';
-            $func = str_replace('/', '_', $view);
-            if (is_callable([$ns,$func])) {
-                $header=str_replace('/', '_', $this->head_file);
-                $footer=str_replace('/', '_', $this->foot_file);
-                if (is_callable([$ns,$header])) {
-                    ([$ns,$header])($data);
-                }
-                ([$ns,$func])($data);
-                if (is_callable([$ns,$footer])) {
-                    ([$ns,$footer])($data);
-                }
-                return;
-            }
-            return parent::_Show($data, $view);
-        }
-        public function _ShowBlock($view, $data = null)
-        {
-            $ns = 'MySpace\View\Views';
-            $func = str_replace('/', '_', $view);
-            if (is_callable([$ns,$func])) {
-                ([$ns,$func])($data);
-                return;
-            }
-            return parent::_Show($data, $view);
-        }
-    }
+    //服务基类
     class BaseService
     {
         use \DNMVCS\SingletonEx;   //单例模式
     }
+    // 模型基类
     class BaseModel
     {
         use \DNMVCS\SingletonEx;   //单例模式
     }
 } // end namespace
-
+// 助手类
 namespace MySpace\Base\Helper 
 {
-    class ControllerHelper extends \DNMVCS\Helper\ControllerHelper
-    {
+    class ControllerHelper extends \DNMVCS\Helper\ControllerHelper {
         // 一般不需要添加东西，继承就够了
     }
-    class ServiceHelper extends \DNMVCS\Helper\ServiceHelper
-    {
+    class ServiceHelper extends \DNMVCS\Helper\ServiceHelper {
         // 一般不需要添加东西，继承就够了
     }
     class ModelHelper extends \DNMVCS\Helper\ModelHelper {
@@ -225,7 +196,6 @@ namespace MySpace\Base\Helper
     class ViewHelper extends \DNMVCS\Helper\ViewHelper {
         // 一般不需要添加东西，继承就够了
     }
-
 }
 // 以下部分是普通程序员写的。
 namespace MySpace\Controller {
@@ -237,13 +207,15 @@ namespace MySpace\Controller {
     {
         public function __construct()
         {
+            //设置页眉页脚。
             C::setViewWrapper('header','footer');
         }
         public function index()
         {
+            //获取数据
             $output = "Hello, now time is " . C::H(MyService::G()->getTimeDesc());
             $url_about=C::URL('about/me');
-            C::Show(get_defined_vars(),'main_view'); //
+            C::Show(get_defined_vars(),'main_view'); //显示数据
         }
     }
     class about
@@ -251,7 +223,7 @@ namespace MySpace\Controller {
         public function me() {
             $url_main=C::URL('');
             C::setViewWrapper('header','footer');
-            C::Show(get_defined_vars()); //
+            C::Show(get_defined_vars());
         }
     }
 }
