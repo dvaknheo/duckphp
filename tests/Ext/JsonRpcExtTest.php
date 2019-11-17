@@ -42,7 +42,7 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
         JsonRpcExt::G()->getRealClass(TestService::G());
         JS::G()->foo();
         
-        JsonRpcExt::G()->cleanUp();
+        JsonRpcExt::G()->clear();
         $options['jsonrpc_backend']=['http://localdomain.dev/json_rpc','127.0.0.1:9528'];
         JsonRpcExt::G()->init($options,null);
         JS::G()->foo();

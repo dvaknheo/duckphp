@@ -11,26 +11,32 @@ class JsonRpcExt
         'jsonrpc_namespace'=>'JsonRpc',
         'jsonrpc_backend'=>'https://127.0.0.1',
         'jsonrpc_is_debug'=>false,
+        'jsonrpc_enable_autoload'=>true,
     ];
+    public $options=[];
+    
     public $is_inited;
     protected $backend;
     protected $prefix;
     protected $is_debug;
     public function init(array $options=[], $context=null)
     {
-        $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
+        $this->options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
         
-        $namespace=$options['jsonrpc_namespace'];
-        $this->backend=$options['jsonrpc_backend'];
-        $this->is_debug=$options['jsonrpc_is_debug'];
+        $this->backend=$this->options['jsonrpc_backend'];
+        $this->is_debug=$this->options['jsonrpc_is_debug'];
         
+        $namespace=$this->options['jsonrpc_namespace'];
+
         $this->prefix=trim($namespace, '\\').'\\';
-        $this->is_inited=true;
-        spl_autoload_register([$this,'_autoload']);
+        
+        if($this->options['jsonrpc_enable_autoload']){
+            spl_autoload_register([$this,'_autoload']);
+        }
         
         return $this;
     }
-    public function cleanUp()
+    public function clear()
     {
         spl_autoload_unregister([$this,'_autoload']);
     }
@@ -138,6 +144,7 @@ class JsonRpcExt
     }
     protected function prepare_token($ch)
     {
+        //override me
         return;
     }
 }

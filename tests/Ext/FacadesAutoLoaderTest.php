@@ -32,7 +32,7 @@ class FacadesAutoLoaderTest extends \PHPUnit\Framework\TestCase
         }
         $flag=class_exists('Class_not_exists');
         
-        FacadesAutoLoader::G()->cleanUp();
+        FacadesAutoLoader::G()->clear();
         
         
         

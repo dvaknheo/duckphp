@@ -9,22 +9,25 @@ class FacadesAutoLoader
     const DEFAULT_OPTIONS=[
         'facades_namespace'=>'Facades',
         'facades_map'=>[],
+        'facades_enable_autoload'=>true,
     ];
+    public $options=[];
     protected $prefix='';
     protected $facades_map=[];
     
     protected $is_loaded=false;
-    protected $is_inited=false;
     
     public function init(array $options=[], $context=null)
     {
-        $namespace_facades=$options['facades_namespace']??'Facades';
-        $this->facades_map=$options['facades_map']??[];
+        $this->options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
         
-        
+        $this->facades_map=$this->options['facades_map']??[];
+        $namespace_facades=$this->options['facades_namespace']??'Facades';
         $this->prefix=trim($namespace_facades, '\\').'\\';
-        $this->is_inited=true;
-        spl_autoload_register([$this,'_autoload']);
+        
+        if($this->options['facades_enable_autoload']){
+            spl_autoload_register([$this,'_autoload']);
+        }
         
         return $this;
     }
@@ -65,8 +68,9 @@ class FacadesAutoLoader
         $object=call_user_func([$class,'G']);
         return [$object,$name];
     }
-    public function cleanUp()
+    public function clear()
     {
+        $this->facades_map=[];
         spl_autoload_unregister([$this,'_autoload']);
     }
 }

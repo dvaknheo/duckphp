@@ -857,8 +857,6 @@ public static function Parameters()
     public function addRouteHook($callback, $append=true, $outter=true, $once=true)
     public function add404Handler($callback)
     
-    protected function getFullClassByAutoLoad($path_class)
-    protected function getCallback($full_class, $method)
     protected function createControllerObject($full_class)
     protected function getMethodToCall($obj, $method)
 ##### 辅助信息方法
@@ -880,8 +878,6 @@ public static function Parameters()
 
     add404Handle() 是默认用于后处理的版本。
 ##### URL 输出地址重写指南
-
-
 
 ### Core\RuntimeState
 RuntimeState 类用于保存运行时数据。无配置
@@ -1090,13 +1086,15 @@ if (!$flag) {
 ### Pager
 分页。只是解决了有无问题，如果有更好的，你可以换之。
 为什么DNMVCS 框架要带这么个简单的分页类，因为不想做简单的演示的时候要去找分页处理。
-
-'url'=>null,
-'key'=>null,
-'page_size'=>null,
-'rewrite'=>null,
-'current'=>null,
-
+```php
+[
+    'url'=>null,
+    'key'=>null,
+    'page_size'=>null,
+    'rewrite'=>null,
+    'current'=>null,
+]
+```
 ### RouteHookDirectoryMode
 
 多目录模式的 hook
