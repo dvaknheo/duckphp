@@ -50,10 +50,10 @@ class App
             'skip_404_handler'=>false,
             
             //// error handler ////
-            'error_404'=>'_sys/error-404',
-            'error_500'=>'_sys/error-500',
-            'error_exception'=>'_sys/error-exception',
-            'error_debug'=>'_sys/error-debug',
+            'error_404'=>null,          //'_sys/error-404',
+            'error_500'=>null,          //'_sys/error-500',
+            'error_exception'=>null,    //'_sys/error-exception',
+            'error_debug'=>null,        //'_sys/error-debug',
             
             //// Class Autoloader ////
             // 'path'=>null,
@@ -264,7 +264,6 @@ class App
         RuntimeState::G()->end();
         
         //
-        //
     }
     public function cleanAll()
     {
@@ -389,7 +388,7 @@ trait Core_Handler
         }
         //// no error_404 setting.
         if (!$error_view) {
-            echo "404 File Not Found\n<!--DNMVCS -->\n";
+            echo "404 File Not Found\n<!--DNMVCS set options ['error_404']='_sys/error-404.php' to override me   -->\n";
             return;
         }
         
@@ -431,7 +430,7 @@ trait Core_Handler
         ////////  no  error_500 or error_exception setting
         if (!$error_view) {
             $desc=$is_error?'Internal Error':'Internal Exception';
-            echo "$desc \n<!--DNMVCS -->\n";
+            echo "$desc \n<!--DNMVCS set options ['error_500']='_sys/error-500'  -->\n";
             
             if ($data['is_debug']) {
                 echo "<h3>{$data['class']}({$data['code']}):{$data['message']}</h3>";
@@ -481,7 +480,7 @@ trait Core_Handler
         if (!$error_view) {
             extract($data);
             echo  <<<EOT
-<!--DNMVCS  use view/_sys/error-debug.php to override me -->
+<!--DNMVCS  set options ['error_debug']='_sys/error-debug.php' to override me -->
 <fieldset class="_DNMVC_DEBUG">
 	<legend>$error_desc($errno)</legend>
 <pre>

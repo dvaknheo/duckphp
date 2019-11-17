@@ -11,5 +11,11 @@ if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
 
 $options['path']=realpath(__DIR__.'/..');
 $options['namespace']=rtrim('MY\\', '\\');
+
+$options['error_404']='_sys/error-404';
+$options['error_500']='_sys/error-500';
+$options['error_exception']='_sys/error-exception';
+$options['error_debug']='_sys/error-debug';
+
 \DNMVCS\DNMVCS::RunQuickly($options, function () {
 });
