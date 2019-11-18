@@ -1157,6 +1157,30 @@ callable_view_skip_replace 打开的时候会在 初始化的时候替换默认�
 ### StrictCheck
 
 用于 严格使用 DB 等情况。使得在调试状态下。不能在 Controller 里 使用 M::DB();等
+##### 选项
+```php
+$options=[
+            'namespace'=>'',
+            'namespace_controller'=>'',
+            'namespace_service'=>'',
+            'namespace_model'=>'',
+            'controller_base_class'=>'',
+            'is_debug'=>true,
+            'app_class'=>null,
+        ];
+```
+    public function init($options=[], $context=null)
+    public function checkStrictComponent($component_name, $trace_level, $parent_classes_to_skip=[])
+    public function checkStrictModel($trace_level)
+    public function checkStrictService($service_class, $trace_level)
+    protected function getCallerByLevel($level, $parent_classes_to_skip=[])
+    protected function checkEnv(): bool
+
+### RedisManager
+
+redis 管理器。 redis 入口
+### RedisSimpleCache
+适配 redis 的 psr-16 (注意没实现 psr-16接口)
 
 ## 第四章 DNMVCS 其他类参考
 

@@ -52,7 +52,7 @@ class DBManager
             if (!isset($database_list)) {
                 $database_list=$context->options['database_list']??null;
             }
-            if($database_list){
+            if ($database_list) {
                 $this->database_config_list=$database_list;
             }
         }

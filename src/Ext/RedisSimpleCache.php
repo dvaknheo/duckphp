@@ -14,28 +14,37 @@ class RedisSimpleCache //extends Psr\SimpleCache\CacheInterface;
     {
         //
     }
-    public function initWithServer($redis,$prefix)
+    public function initWithServer($redis, $prefix)
     {
         $this->redis=$redis;
         $this->prefix=$prefix;
     }
     public function get($key, $default = null)
     {
-        if(!$this->redis){ return $default;}
+        if (!$this->redis || !$this->redis->isConnected()) {
+            return $default;
+        }
         $ret=$this->redis->get($this->prefix.$key);
+        
+        //encoding.
+        
         return $ret;
     }
     public function set($key, $value, $ttl = null)
     {
-        if(!$this->redis){ return false;}
-        $ret=$this->redis->set($this->prefix.$key,$value,$ttl);
+        if (!$this->redis || !$this->redis->isConnected()) {
+            return false;
+        }
+        $ret=$this->redis->set($this->prefix.$key, $value, $ttl);
         return $ret;
     }
     public function delete($key)
     {
-        if(!$this->redis || !$this->redis->isConnected()){ return false;}
+        if (!$this->redis || !$this->redis->isConnected()) {
+            return false;
+        }
         $key=is_array($key)?$key:[$key];
-        foreach($key as &$v){
+        foreach ($key as &$v) {
             $v=$this->prefix.$v;
         }
         unset($v);
@@ -45,7 +54,9 @@ class RedisSimpleCache //extends Psr\SimpleCache\CacheInterface;
     }
     public function has($key)
     {
-        if(!$this->redis){ return false;}
+        if (!$this->redis || !$this->redis->isConnected()) {
+            return false;
+        }
         $ret=$this->redis->exists($this->prefix.$key);
         return $ret;
     }
@@ -57,15 +68,15 @@ class RedisSimpleCache //extends Psr\SimpleCache\CacheInterface;
     public function getMultiple($keys, $default = null)
     {
         $ret=[];
-        foreach($keys as $v){
-            $ret[$v]=$this->get($v,$default);
+        foreach ($keys as $v) {
+            $ret[$v]=$this->get($v, $default);
         }
         return $ret;
     }
     public function setMultiple($values, $ttl = null)
     {
-        foreach($values as $k=>$v){
-            $ret[$v]=$this->set($k,$v,$ttl);
+        foreach ($values as $k=>$v) {
+            $ret[$v]=$this->set($k, $v, $ttl);
         }
         return true;
     }

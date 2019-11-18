@@ -25,7 +25,7 @@ class FacadesAutoLoader
         $namespace_facades=$this->options['facades_namespace']??'Facades';
         $this->prefix=trim($namespace_facades, '\\').'\\';
         
-        if($this->options['facades_enable_autoload']){
+        if ($this->options['facades_enable_autoload']) {
             spl_autoload_register([$this,'_autoload']);
         }
         

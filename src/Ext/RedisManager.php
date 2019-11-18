@@ -7,14 +7,14 @@ use Redis;
 
 class RedisManager
 {
-/*
-[[
-            'host'=>'',
-            'port'=>'',
-            'auth'=>'',
-            'select'=>'',
-        ]
-*/
+    /*
+    [[
+                'host'=>'',
+                'port'=>'',
+                'auth'=>'',
+                'select'=>'',
+            ]
+    */
     use SingletonEx;
     const DEFAULT_OPTIONS=[
         'redis_list'=>null,
@@ -32,11 +32,11 @@ class RedisManager
     {
         $this->options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
         $this->redis_config_list=$this->options['redis_list'];
-        if($context){
+        if ($context) {
             $this->initContext($options, $context);
         }
-        if($this->options['enable_simple_cache']){
-            RedisSimpleCache::G()->initWithServer($this->getServer(),$this->options['simple_cache_prefix']);
+        if ($this->options['enable_simple_cache']) {
+            RedisSimpleCache::G()->initWithServer($this->getServer(), $this->options['simple_cache_prefix']);
             if (method_exists($context, 'extendComponents')) {
                 $context->extendComponents(static::class, ['SimpleCache'], ['S']);
             }
@@ -50,7 +50,7 @@ class RedisManager
             if (!isset($redis_list)) {
                 $redis_list=$context->options['redis_list']??null;
             }
-            if($redis_list){
+            if ($redis_list) {
                 $this->redis_config_list=$redis_list;
             }
         }
@@ -68,8 +68,7 @@ class RedisManager
     }
     public function getServer($tag=0)
     {
-        if(!isset($this->pool[$tag])){
-            
+        if (!isset($this->pool[$tag])) {
             $this->pool[$tag]=$this->createServer($this->redis_config_list[$tag]);
         }
         return $this->pool[$tag];
@@ -78,10 +77,10 @@ class RedisManager
     {
         $redis = new Redis();
         $redis->connect($config['host'], $config['port']);
-        if(isset($config['auth'])){
+        if (isset($config['auth'])) {
             $redis->auth($config['auth']);
         }
-        if(isset($config['select'])){
+        if (isset($config['select'])) {
             $redis->select($config['select']);
         }
         return $redis;

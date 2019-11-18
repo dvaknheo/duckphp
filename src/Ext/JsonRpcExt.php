@@ -30,7 +30,7 @@ class JsonRpcExt
 
         $this->prefix=trim($namespace, '\\').'\\';
         
-        if($this->options['jsonrpc_enable_autoload']){
+        if ($this->options['jsonrpc_enable_autoload']) {
             spl_autoload_register([$this,'_autoload']);
         }
         
