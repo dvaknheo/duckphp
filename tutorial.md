@@ -208,13 +208,14 @@ Setting($key);
 LoadConfig($key,$basename="config");
 
     载入配置，Config($key); 获得配置 默认配置文件是在  config/config.php 。
-
+DumpTrace()
+    调试状态下，查看当前堆栈
+Dump(...$arg)
+    调试状态下 Dump 当前变量，替代 var_dump
 ### View 编写视图用到的方法
 
 * V::ShowBlock($view, $data) 显示内嵌视图,如果 $data==null 则带入父视图的数据
 * V::H($str)  Html 编码字符，$str 可以是数组。
-* V::DumpTrace()  调试状态下，查看当前堆栈
-* V::Dump(...$arg)  调试状态下 Dump 当前变量，替代 var_dump
 
 ### Model 编写模型用到的方法
 Model 类。数据库相关

@@ -18,4 +18,12 @@ trait HelperTrait
     {
         return App::Platform();
     }
+    public static function DumpTrace()
+    {
+        return App::DumpTrace();
+    }
+    public static function Dump(...$args)
+    {
+        return App::Dump(...$args);
+    }
 }

@@ -16,12 +16,4 @@ class ViewHelper
     {
         return App::ShowBlock($view, $data);
     }
-    public static function DumpTrace()
-    {
-        return App::DumpTrace();
-    }
-    public static function Dump(...$args)
-    {
-        return App::Dump(...$args);
-    }
 }
