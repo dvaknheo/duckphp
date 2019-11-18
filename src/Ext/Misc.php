@@ -49,7 +49,7 @@ class Misc
     public function _DI($name, $object=null)
     {
         if (null===$object) {
-            return $this->_di_container[$name];
+            return $this->_di_container[$name]??null;
         }
         $this->_di_container[$name]=$object;
         return $object;

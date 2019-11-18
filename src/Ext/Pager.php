@@ -13,7 +13,14 @@ class Pager
         'rewrite'=>null,
         'current'=>null,
     ];
+    protected $page_size=30;
+    protected $current_page=null;
+    protected $url='';
+    protected $key='page';
+    
+    protected $handel_get_url=null;
     protected $context_class;
+    
     public static function SG()
     {
         return static::G()->_SG();
@@ -43,16 +50,6 @@ class Pager
         return $this->current_page;
     }
 
-    protected $page_size=30;
-    protected $current_page=null;
-    protected $url='';
-    protected $key='page';
-    
-    protected $handel_get_url=null;
-    
-    /**
-     * options: url, key,rewrite,current
-     */
     public function init($options=[], $context=null)
     {
         $this->url=$options['url']??static::SG()->_SERVER['REQUEST_URI'];
