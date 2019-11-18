@@ -12,8 +12,21 @@ class DBManagerTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(DBManager::class);
         $dn_options=[
             'skip_setting_file'=>true,
+            'database_list'=>['zzz'],
         ];
         App::G()->init($dn_options);
+        
+        $options=[
+        'database_list'=>[[
+                'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
+                'username'=>'admin',	
+                'password'=>'123456'
+            ],],
+            'use_context_db_setting'=>true,
+        ];
+        DBManager::G()->init($options,App::G());
+        DBManager::G(new DBManager());
+        
         $options=[
         'db_create_handler'=>null,
         'db_close_handler'=>null,

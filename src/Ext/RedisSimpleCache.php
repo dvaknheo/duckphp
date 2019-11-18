@@ -33,8 +33,14 @@ class RedisSimpleCache //extends Psr\SimpleCache\CacheInterface;
     }
     public function delete($key)
     {
-        if(!$this->redis){ return false;}
-        $ret=$this->redis->del($this->prefix.$key);
+        if(!$this->redis || !$this->redis->isConnected()){ return false;}
+        $key=is_array($key)?$key:[$key];
+        foreach($key as &$v){
+            $v=$this->prefix.$v;
+        }
+        unset($v);
+        
+        $ret=$this->redis->del($key);
         return $ret;
     }
     public function has($key)
