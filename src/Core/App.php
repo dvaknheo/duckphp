@@ -187,14 +187,10 @@ class App
         (self::class)::G($object);
         static::G($object);
         
-        try {
-            $object->override_from=$override_from;
-            $object->initOptions($options);
-            return $object->onInit();
-        } catch (\Throwable $ex) {
-            ExceptionManager::G()->on_exception($ex);
-            return null;
-        }
+        $object->override_from=$override_from;
+        $object->initOptions($options);
+        return $object->onInit();
+        
     }
     //for override
     protected function onInit()
