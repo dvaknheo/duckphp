@@ -57,48 +57,20 @@ class Lazybones
         $this->lazy_path_model=$this->lazy_path.rtrim($this->lazy_path_model, '/').'/';
         $this->lazy_path_contorller=$this->lazy_path.rtrim($this->lazy_path_contorller, '/').'/';
         
-        spl_autoload_register([$this,'loadSeriveClass']);
-        spl_autoload_register([$this,'loadModelClass']);
-        
-        
-        Route::G()->append([$this,'run']);
-    }
-    public function loadSeriveClass($class)
-    {
-        if (strpos($class, '\\')!==false) {
-            return;
-        }
-        if ('Service'!==substr($class, -strlen('Service'))) {
-            return false;
-        }
-        $file=$this->lazy_path_service.str_replace('__', '/', $class).'.php';
-        include $file;
-        return true;
-    }
-    public function loadModelClass($class)
-    {
-        if (strpos($class, '\\')!==false) {
-            return;
-        }
-        if ('Model'!==substr($class, -strlen('Model'))) {
-            return false;
-        }
-        $file=$this->lazy_path_model.'Model'.'/'.$class.'.php';
-        include $file;
-        return true;
+        Route::G()->add404Handler([$this,'runRoute']);
     }
     ////
     public function runRoute()
     {
         $path_info=Route::G()->path_info;
-        $enable_paramters=$this->with_controller_enable_paramters;// Route::G()->controller_enable_paramters;
+        $enable_paramters=$this->with_controller_enable_paramters;
         
         $class_blocks=explode('/', $path_info);
         $method=array_pop($class_blocks);
         $class_path=implode('/', $class_blocks);
         
         $full_class=$this->getFullClassByNoNameSpace($class_path);
-        $callback=Route::G()->getCallback($full_class, $method);
+        $callback=$this->getCallback($full_class, $method);
         if ($callback) {
             return $callback;
         }
@@ -112,7 +84,11 @@ class Lazybones
         $method=$the_method;
         Route::G()->parameters=$parameters;
         Route::G()->calling_path=$calling_path;
-        return Route::G()->getCallback($full_class, $method);
+        return $this->getCallback($full_class, $method);
+    }
+    protected function getCallback($full_class,$method)
+    {
+        return [new $full_class,$method];
     }
     protected function getRouteDispatchInfo($blocks, $method)
     {
