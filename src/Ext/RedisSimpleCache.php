@@ -12,12 +12,8 @@ class RedisSimpleCache //extends Psr\SimpleCache\CacheInterface;
     
     public function init(array $options, $context=null)
     {
-        //
-    }
-    public function initWithServer($redis, $prefix)
-    {
-        $this->redis=$redis;
-        $this->prefix=$prefix;
+        $this->redis=$options['redis']??null;
+        $this->prefix=$options['prefix']??'';
     }
     public function get($key, $default = null)
     {
@@ -26,8 +22,9 @@ class RedisSimpleCache //extends Psr\SimpleCache\CacheInterface;
         }
         $ret=$this->redis->get($this->prefix.$key);
         
-        //encoding.
-        
+        if($ret!==false){
+            $ret=json_decode($ret,true);
+        }
         return $ret;
     }
     public function set($key, $value, $ttl = null)
@@ -35,6 +32,7 @@ class RedisSimpleCache //extends Psr\SimpleCache\CacheInterface;
         if (!$this->redis || !$this->redis->isConnected()) {
             return false;
         }
+        $value=json_encode($value);
         $ret=$this->redis->set($this->prefix.$key, $value, $ttl);
         return $ret;
     }

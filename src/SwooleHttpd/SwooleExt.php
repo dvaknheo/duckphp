@@ -27,6 +27,9 @@ class SwooleExt
         
         $this->appClass=$options['swoolehttpd_app_class']??($context?get_class($context):null);
         
+        if (class_exists(Coroutine::class)) {
+            return;
+        }
         $cid=Coroutine::getuid();
         if ($cid>0) {
             ($this->appClass)::G()->onSwooleHttpdInit(SwooleHttpd::G(), true, null);

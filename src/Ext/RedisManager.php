@@ -36,7 +36,10 @@ class RedisManager
             $this->initContext($options, $context);
         }
         if ($this->options['enable_simple_cache']) {
-            RedisSimpleCache::G()->initWithServer($this->getServer(), $this->options['simple_cache_prefix']);
+            RedisSimpleCache::G()->init([
+                'redis'=>$this->getServer(), 
+                'prefix'=>$this->options['simple_cache_prefix']
+            ]);
             if (method_exists($context, 'extendComponents')) {
                 $context->extendComponents(static::class, ['SimpleCache'], ['S']);
             }
