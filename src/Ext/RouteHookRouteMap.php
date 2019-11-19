@@ -13,9 +13,9 @@ class RouteHookRouteMap
     
     protected $route_map=[];
     ////
-    public static function Hook()
+    public static function Hook($path_info)
     {
-        return static::G()->doHook();
+        return static::G()->doHook($path_info);
     }
     ////
     public function init($options=[], $context=null)
@@ -90,15 +90,16 @@ class RouteHookRouteMap
         }
         return $callback;
     }
-    public function doHook()
+    public function doHook($path_info)
     {
+        $path_info=ltrim($path_info,'/');
         $route=Route::G();
-        $callback=$this->getRouteHandelByMap($this->route_map, $route->path_info, $route->parameters);
-        if ($callback) {
-            ($callback)();
-            $callback=null;
-            return true;
+        $callback=$this->getRouteHandelByMap($this->route_map, $path_info, $route->parameters);
+        if (!$callback) {
+            return false;
         }
-        return false;
+        ($callback)();
+        $callback=null;
+        return true;
     }
 }

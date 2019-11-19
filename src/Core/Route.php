@@ -81,26 +81,30 @@ class Route
         if (strlen($url)>0 && substr($url, 0, 1)==='/') {
             return $url;
         }
+        
+        //get basepath.
         $document_root=rtrim($this->document_root, '/');
         $basepath=substr(rtrim($this->script_filename, '/'), strlen($document_root));
-        $basepath=rtrim($basepath, '/');
         
-        $path_info=$this->path_info?:'/'.$this->path_info;
         
-        if ($basepath=='/index.php') {
-            $basepath='/';
+        
+        if (substr($basepath,-strlen('/index.php'))==='/index.php') {
+            $basepath=substr($basepath,0,-strlen('/index.php'));
         }
         if (''===$url) {
-            return $basepath;
+            return $basepath.'/';
         }
         if ('?'==$url{0}) {
+            $path_info=$this->path_info;
             return $basepath.$path_info.$url;
         }
         if ('#'==$url{0}) {
+            $path_info=$this->path_info;
             return $basepath.$path_info.$url;
         }
+        $url='/'.$url;
         
-        return $basepath.'/'.$url;
+        return $basepath.$url;
     }
 
     
@@ -171,7 +175,7 @@ class Route
             $this->bindServerData($_SERVER);
         }
         $this->path_info=$path_info;
-        $this->path_info=ltrim($this->path_info??'', '/');
+        //$this->path_info=ltrim($this->path_info??'', '/');
         
         if (isset($request_method)) {
             $this->request_method=$request_method;
@@ -183,14 +187,14 @@ class Route
         if (!$this->has_bind_server_data) {
             $this->bindServerData($_SERVER);
         }
-        $this->path_info=ltrim($this->path_info, '/'); // TODO, kill this
+        //$this->path_info=ltrim($this->path_info, '/'); // TODO, kill this
     }
     public function run()
     {
         $this->beforeRun();
         
         foreach ($this->prependedCallbackList as $callback) {
-            $flag=($callback)();
+            $flag=($callback)($this->path_info);
             if ($flag) {
                 return true;
             }
@@ -206,7 +210,7 @@ class Route
         }
         
         foreach ($this->appendedCallbackList as $callback) {
-            $flag=($callback)();
+            $flag=($callback)($this->path_info);
             if ($flag) {
                 return true;
             }
@@ -259,6 +263,7 @@ class Route
     }
     public function defaultGetRouteCallback($path_info)
     {
+        $path_info=ltrim($path_info,'/');
         $t=explode('/', $path_info);
         $method=array_pop($t);
         $path_class=implode('/', $t);

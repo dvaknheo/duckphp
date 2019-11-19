@@ -46,6 +46,7 @@ echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n";
         echo RouteHookDirectoryMode::G()->onURL("/izx");
         echo PHP_EOL;
         echo RouteHookDirectoryMode::G()->onURL("BUG");
+        echo PHP_EOL;
         echo RouteHookDirectoryMode::G()->onURL("m");
         echo PHP_EOL;
         echo RouteHookDirectoryMode::G()->onURL("m/index");
@@ -67,26 +68,22 @@ echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n";
         SuperGlobal::G()->_SERVER['REQUEST_URI']=$file;
         SuperGlobal::G()->_SERVER['REQUEST_URI'].=SuperGlobal::G()->_SERVER['PATH_INFO'];
         
-                var_dump(SuperGlobal::G()->_SERVER['REQUEST_URI']);
+        var_dump(SuperGlobal::G()->_SERVER['REQUEST_URI']);
 
         Route::G()->bindServerData(SuperGlobal::G()->_SERVER);
         Route::G()->run();
-
-
         
         \MyCodeCoverage::G()->end(RouteHookDirectoryMode::class);
         $this->assertTrue(true);
-        /*
-        RouteHookDirectoryMode::G()->init($options=[], $context=null);
-        RouteHookDirectoryMode::G()->adjustPathinfo($path_info, $document_root);
-        RouteHookDirectoryMode::G()->onURL($url=null);
-        RouteHookDirectoryMode::G()->hook($route);
-        //*/
     }
 }
 class RouteHookDirectoryModeTesttMain
 {    
     function index(){
         var_dump(DATE(DATE_ATOM));
+    }
+    function i()
+    {
+        var_dump("I");
     }
 }

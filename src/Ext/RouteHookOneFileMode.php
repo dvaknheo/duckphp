@@ -103,24 +103,21 @@ class RouteHookOneFileMode
         //*/
         return $url;
     }
-    public static function Hook()
+    public static function Hook($path_info)
     {
-        return static::G()->_Hook();
+        return static::G()->_Hook($path_info);
     }
-    public function _Hook()
+    public function _Hook($path_info)
     {
         $k=$this->key_for_action;
         $m=$this->key_for_module;
         
-        $old_path_info=SuperGlobal::G()->_SERVER['PATH_INFO']??'';
+        //$old_path_info=SuperGlobal::G()->_SERVER['PATH_INFO']??'';
         
         $module=SuperGlobal::G()->_REQUEST[$m]??null;
         $path_info=SuperGlobal::G()->_REQUEST[$k]??null;
 
         $path_info=$module.'/'.$path_info;
-        $path_info=ltrim($path_info, '/');
-        
-        $path_info=($path_info==='')?ltrim($old_path_info, '/'):$path_info;
         
         Route::G()->path_info=$path_info;
         

@@ -10,10 +10,10 @@ class RouteHookDirectoryMode
 {
     use SingletonEx;
     const DEFAULT_OPTIONS=[
-        'mode_dir_index_file'=>'',
-        'mode_dir_use_path_info'=>true,
-        'mode_dir_key_for_module'=>true,
-        'mode_dir_key_for_action'=>true,
+        'mode_dir_basepath'=>'',
+        //'mode_dir_use_path_info'=>true,
+        //'mode_dir_key_for_module'=>true,
+        //'mode_dir_key_for_action'=>true,
     ];
     protected $basepath;
     public function init($options=[], $context=null)
@@ -24,10 +24,12 @@ class RouteHookDirectoryMode
             Route::G()->setURLHandler([$this,'onURL']);
         }
     }
-    protected function adjustPathinfo($basepath, $path_info, $document_root)
+    protected function adjustPathinfo($basepath, $path_info)
     {
         $input_path=parse_url(SuperGlobal::G()->_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $script_filename=SuperGlobal::G()->_SERVER['SCRIPT_FILENAME'];
+        $document_root=SuperGlobal::G()->_SERVER['DOCUMENT_ROOT'];
+        
         $path_info=substr($document_root.$input_path, strlen($basepath));
         $path_info=ltrim($path_info, '/').'/';
         $blocks=explode('/', $path_info);
@@ -52,11 +54,10 @@ class RouteHookDirectoryMode
     }
     public function onURL($url=null)
     {
-        if (strlen($url)>0 && '/'==$url{0}) {
+        if (strlen($url)>0 && '/'===$url{0}) {
             return $url;
         };
         
-        //$url=RouteHookRewrite::G()->filteRewrite($url);
         $document_root=SuperGlobal::G()->_SERVER['DOCUMENT_ROOT'];
         $base_url=substr($this->basepath, strlen($document_root));
         $input_path=parse_url($url, PHP_URL_PATH)??'';
@@ -92,17 +93,14 @@ class RouteHookDirectoryMode
         $ret=$new_path.$query;
         return $ret;
     }
-    public static function Hook()
+    public static function Hook($path_info)
     {
-        return static::G()->_Hook();
+        return static::G()->_Hook($path_info);
     }
-    public function _Hook()
+    public function _Hook($path_info)
     {
-        $route=Route::G();
+        Route::G()->path_info=$this->adjustPathinfo($this->basepath, $path_info);
         
-        //$this->basepath=ltrim($this->basepath,'/').'/';
-        $basepath=$this->basepath;
-        $route->path_info=$this->adjustPathinfo($basepath, $route->path_info, $route->document_root);
         return false;
     }
 }

@@ -14,9 +14,9 @@ class RouteHookRewrite
     protected $rewrite_map=[];
     
     
-    public static function Hook()
+    public static function Hook($path_info)
     {
-        return static::G()->doHook();
+        return static::G()->doHook($path_info);
     }
     public function init($options=[], $context=null)
     {
@@ -128,11 +128,9 @@ class RouteHookRewrite
         SuperGlobal::G()->_SERVER['init_get']=SuperGlobal::G()->_GET;
         SuperGlobal::G()->_GET=$input_get;
     }
-    protected function doHook()
+    protected function doHook($path_info)
     {
-        $route=Route::G();
-        $path_info=$route->path_info;
-        
+        $path_info=ltrim($path_info,'/');
         $query=SuperGlobal::G()->_GET;
         $query=$query?'?'.http_build_query($query):'';
         
@@ -142,7 +140,7 @@ class RouteHookRewrite
         if ($url!==null) {
             $this->changeRouteUrl($url);
             $path=parse_url($url, PHP_URL_PATH);
-            $route->path_info=$path;
+            Route::G()->path_info=$path;
         }
         return  false;
     }

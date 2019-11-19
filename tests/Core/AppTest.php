@@ -320,7 +320,7 @@ class AppTestApp2 extends App
 {
     protected function onInit()
     {
-        throw new \Exception("zzzzzzzzzzzz");
+        //throw new \Exception("zzzzzzzzzzzz");
     }
 }
 class AppTestObject
