@@ -671,6 +671,22 @@ trait Core_Helper
     {
         return static::G()->_H($str);
     }
+    public static function L($str,$args=[])
+    {
+        return static::G()->_L($str,$args);
+    }
+    public static function HL($str,$args=[])
+    {
+        return static::H(static::L($str,$args));
+    }
+    public function _L($str,$args=[])
+    {
+        return sprintf($str,...$args);
+    }
+    public function _HL($str,$args=[])
+    {
+        return $this->_H($this->_L($str,$args));
+    }
     ////
     public function _Show($data=[], $view=null)
     {
@@ -703,9 +719,9 @@ trait Core_Helper
     {
         return static::G()->_DumpTrace();
     }
-    public static function Dump(...$args)
+    public static function var_dump(...$args)
     {
-        return static::G()->_Dump(...$args);
+        return static::G()->_var_dump(...$args);
     }
     public function _DumpTrace()
     {
@@ -716,7 +732,7 @@ trait Core_Helper
         echo (new \Exception('', 0))->getTraceAsString();
         echo "</pre>\n";
     }
-    public function _Dump(...$args)
+    public function _var_dump(...$args)
     {
         if (!$this->is_debug) {
             return;

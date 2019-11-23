@@ -28,12 +28,12 @@ class View
     }
     public function _Show($data=[], $view)
     {
-        $this->view_file=$this->path.rtrim($view, '.php').'.php';
+        $this->view_file=$this->path.preg_replace('/\.php$/','',$view).'.php';
         if ($this->head_file) {
-            $this->head_file=rtrim($this->head_file, '.php').'.php';
+            $this->head_file=preg_replace('/\.php$/','',$this->head_file).'.php';
         }
         if ($this->foot_file) {
-            $this->foot_file=rtrim($this->foot_file, '.php').'.php';
+            $this->foot_file=preg_replace('/\.php$/','',$this->foot_file).'.php';
         }
         
         $this->data=array_merge($this->data, $data);
@@ -53,7 +53,7 @@ class View
     }
     public function _ShowBlock($view, $data=null)
     {
-        $this->view_file=$this->path.rtrim($view, '.php').'.php';
+        $this->view_file=$this->path.preg_replace('/\.php$/','',$view).'.php';
         $this->data=isset($data)?$data:$this->data;
         $data=null;
         $view=null;

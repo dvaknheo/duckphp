@@ -22,8 +22,8 @@ trait HelperTrait
     {
         return App::DumpTrace();
     }
-    public static function Dump(...$args)
+    public static function var_dump(...$args)
     {
-        return App::Dump(...$args);
+        return App::var_dump(...$args);
     }
 }
