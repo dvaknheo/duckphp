@@ -681,11 +681,16 @@ trait Core_Helper
     }
     public function _L($str,$args=[])
     {
-        return sprintf($str,...$args);
-    }
-    public function _HL($str,$args=[])
-    {
-        return $this->_H($this->_L($str,$args));
+        //TODO locale and do
+        if (empty($args)) {
+            return $str;
+        }
+        $a=[];
+        foreach($args as $k=>$v){
+            $a["{$k}"]=$v;
+        }
+        $ret=str_replace(array_keys($a),array_values($a),$str);
+        return $ret;
     }
     ////
     public function _Show($data=[], $view=null)

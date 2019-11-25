@@ -158,7 +158,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         
         ////
         App::DumpTrace();
-        App::Dump("OK");
+        App::var_dump("OK");
         ////
         
         
@@ -168,6 +168,9 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::H($str);
         App::H(['a'=>'b']);
         App::H(123);
+        App::L("a{b}c",[]);
+        App::L("a{b}c",['b'=>'123']);
+        App::HL("&<{b}>",['b'=>'123']);
         
         App::URL($url=null);
         
@@ -309,8 +312,7 @@ class AppTestApp extends App
     {
         $this->addBeforeRunHandler(function(){
             static::DumpTrace();
-            static::Dump("ABC");
-            var_dump("!");
+            static::var_dump("ABC");
             return true;
         });
         return parent::onInit();

@@ -18,7 +18,7 @@ class SwooleExt
     public function init($options=[], $context=null)
     {
         if (PHP_SAPI!=='cli') {
-            return;
+            return $this;
         }
         if ($this->is_inited) {
             return $this;
@@ -27,8 +27,8 @@ class SwooleExt
         
         $this->appClass=$options['swoolehttpd_app_class']??($context?get_class($context):null);
         
-        if (class_exists(Coroutine::class)) {
-            return;
+        if (!class_exists(Coroutine::class)) {
+            return $this;
         }
         $cid=Coroutine::getuid();
         if ($cid>0) {
@@ -38,7 +38,7 @@ class SwooleExt
         
         $options=$options['swoole']??[];
         if (empty($options)) {
-            return;
+            return $this;
         }
         
         
