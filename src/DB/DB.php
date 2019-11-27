@@ -115,4 +115,8 @@ class DB implements DBInterface
     {
         return $this->rowCount;
     }
+    public function lastInsertId()
+    {
+        return $this->pdo->lastInsertId();
+    }
 }

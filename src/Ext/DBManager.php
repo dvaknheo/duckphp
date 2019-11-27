@@ -15,9 +15,11 @@ class DBManager
         
         'database_list'=>null,
         'use_context_db_setting'=>true,
+        'db_close_at_output'=>true,
     ];
     const TAG_WRITE=0;
     const TAG_READ=1;
+    public $options=[];
     
     protected $database_config_list=[];
     protected $databases=[];
@@ -32,7 +34,7 @@ class DBManager
     
     public function init($options=[], $context=null)
     {
-        $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
+        $this->options=$options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
         
         $this->before_get_db_handler=$options['before_get_db_handler']??null;
         $this->database_config_list=$options['database_list'];
@@ -61,7 +63,9 @@ class DBManager
         if (is_array($this->before_get_db_handler) && $this->before_get_db_handler[0]===null) {
             $this->before_get_db_handler[0]=get_class($context);
         }
-        $context->addBeforeShowHandler([static::class,'CloseAllDB']);
+        if ($this->options['db_close_at_output']) {
+            $context->addBeforeShowHandler([static::class,'CloseAllDB']);
+        }
         if (!$this->is_static) {
             $context->addDynamicComponentClass(static::class);
         }

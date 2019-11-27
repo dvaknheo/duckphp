@@ -12,6 +12,7 @@ use DNMVCS\Ext\RouteHookRewrite;
 use DNMVCS\Ext\RouteHookRouteMap;
 use DNMVCS\Ext\Pager;
 use DNMVCS\Ext\Misc;
+use DNMVCS\Ext\SimpleLogger;
 
 //use DNMVCS\SwooleHttpd\SwooleExtAppInterface;
 
@@ -41,12 +42,18 @@ class DNMVCS extends App //implements SwooleExtAppInterface
                 'DNMVCS\Ext\RouteHookRewrite'=>true,
                 'DNMVCS\Ext\RouteHookRouteMap'=>true,
                 'DNMVCS\Ext\StrictCheck'=>true,
+                'DNMVCS\Ext\SimpleLogger'=>true,
                 
-                'DNMVCS\Ext\Lazybones'=>false,
-                'DNMVCS\Ext\DBReusePoolProxy'=>false,
-                'DNMVCS\Ext\FacadesAutoLoader'=>false,
+                'DNMVCS\Ext\RedisManager'=>false,
+                'DNMVCS\Ext\RedisSimpleCache'=>false,
+                
                 'DNMVCS\Ext\RouteHookDirectoryMode'=>false,
                 'DNMVCS\Ext\RouteHookOneFileMode'=>true,
+                
+                'DNMVCS\Ext\DBReusePoolProxy'=>false,
+                'DNMVCS\Ext\FacadesAutoLoader'=>false,
+                'DNMVCS\Ext\Lazybones'=>false,
+                
             ],
             
         ];
@@ -101,9 +108,13 @@ trait DNMVCS_Glue
     {
         return DBManager::G()->setDBHandler($db_create_handler, $db_close_handler, $db_exception_handler);
     }
-    public static function Pager()
+    public static function Pager(?object $replacement_object=null)
     {
-        return Pager::G();
+        return Pager::G($replacement_object);
+    }
+    public static function Logger(?object $replacement_object=null)
+    {
+        return SimpleLogger::G($replacement_object);
     }
     /////
     public function assignRewrite($key, $value=null)

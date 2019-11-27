@@ -882,16 +882,17 @@ public static function Parameters()
 
 ### Core\RuntimeState
 RuntimeState 类用于保存运行时数据。无配置
-ReCreateInstance
+public function ReCreateInstance()
 
+    重新生成实例，保证是新的。
 ### Core\SuperGlobal
-SuperGlobal 用于替代超全局变量。无配置
 
+SuperGlobal 用于替代超全局变量。无配置
 
 ### 辅助类的分割线
     ExtendableStaticCallTrait
     ThrowOn  提供了 实用的 ThrowOn
-    HookChain  提供 
+    HookChain  提供 链式钩子。
     HttpServer 提供了 HttpServer 的实现。
     SystemWrapper 用于 同名函数替代系统系统函数。 比如 header();
 
