@@ -127,11 +127,31 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         ]);
         Route::G()->run();
         Route::G()->bind("again",null)->run();
+        
+        
+        $this->foo2();
 
         $this->assertTrue(true);
         
         \MyCodeCoverage::G()->end();
         return;
+    }
+    protected function foo2()
+    {
+       $options=[
+            'namespace_controller'=>'\\tests_Core_Route',
+            'controller_base_class'=>\tests_Core_Route\baseController::class,
+        ];
+        Route::G(new Route());
+        $flag=Route::RunQuickly([],function(){
+            $my404=function(){ return false;};
+            $appended=function () {
+                Route::G()->forceFail();
+                return true;
+            };
+            Route::G()->addRouteHook($appended, false,true, true);
+        });
+        var_dump("zzzzzzzzzzzzzzzzzzzzzzzzzzz",$flag);
     }
     protected function hooks()
     {

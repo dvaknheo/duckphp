@@ -47,6 +47,7 @@ class Route
     protected $prependedCallbackList=[];
     protected $appendedCallbackList=[];
     protected $enable_default_callback=true;
+    protected $is_failed=false;
     
     public static function RunQuickly(array $options=[], callable $after_init=null)
     {
@@ -191,12 +192,13 @@ class Route
     }
     public function run()
     {
+        $this->is_failed=false;
         $this->beforeRun();
         
         foreach ($this->prependedCallbackList as $callback) {
             $flag=($callback)($this->path_info);
             if ($flag) {
-                return true;
+                return $this->getRunResult();
             }
         }
         
@@ -212,10 +214,21 @@ class Route
         foreach ($this->appendedCallbackList as $callback) {
             $flag=($callback)($this->path_info);
             if ($flag) {
-                return true;
+                return $this->getRunResult();
             }
         }
         return false;
+    }
+    protected function getRunResult()
+    {
+        if($this->is_failed){
+            return false;
+        }
+        return true;
+    }
+    public function forceFail()
+    {
+        $this->is_failed=true;
     }
     public function addRouteHook($callback, $append=true, $outter=true, $once=true)
     {

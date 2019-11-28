@@ -45,9 +45,12 @@ class SimpleLogger //extends Psr\Log\LoggerInterface;
         }
         $message=str_replace(array_keys($a),array_values($a),$message);
         $message="[{$level}][{$prefix}]: ".$message."\n";
-        
-        $ret=error_log($message,$type,$path);
-        return $ret;
+        try{
+            $ret=error_log($message,$type,$path);
+        }catch(\Throwable $ex){
+            return false;
+        }
+        return $ret; // @codeCoverageIgnore
     }
     ////////////////////
     

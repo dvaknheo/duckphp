@@ -136,9 +136,6 @@ trait DNMVCS_Glue
     /////
     public static function CheckStrictDB()
     {
-        $b=debug_backtrace(2, 10);
-        $a=array_column($b, 'class');
-        //var_dump($a);
         //3 = DB,_DB,CheckStrictDB
         return static::G()->checkStrictComponent('DB', 4, ['DNMVCS\Core\Helper\ModelHelper']);
     }

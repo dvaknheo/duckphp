@@ -9,14 +9,40 @@ class HttpServerTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(HttpServer::class);
         
+        
+            
+        $path=\GetClassTestPath(HttpServer::class);
+        
+        
+            
         HttpServerParent::G()->test_checkSwoole();
         HttpServerParent::G()->test_runHttpServer();
 
         HttpServerParent::G()->test_runSwooleServer(__DIR__, '127.0.0.1', 9901);
         defined('DNMVCS_WARNING_IN_TEMPLATE');
         HttpServerParent::G()->test_runSwooleServer(__DIR__, '127.0.0.1', 9901);
+        
+        if (!function_exists('swoole_version')) {
+            include $path."fake_swoole.php";
+            var_dump("ffffffffffffffffffffff");
+            HttpServerParent::G(new HttpServerParent())->is_fake=true;
+            HttpServerParent::G()->test_runSwooleServer2(__DIR__, '127.0.0.1', 9901);
+        }
+        
+        
+            if (!function_exists('swoole_version')) {
+                include $path."fake_swoole.php";
+                var_dump("ffffffffffffffffffffff");
+                HttpServerParent::G()->is_fake=true;
+                HttpServerParent::G()->test_runSwooleServer2(__DIR__, '127.0.0.1', 9901);
+            }
+            
+            
         \MyCodeCoverage::G()->end(HttpServer::class);
         $this->assertTrue(true);
+        
+        return;
+        
         /*
         HttpServer::G()->checkSwoole();
         HttpServer::G()->runHttpServer();
@@ -26,6 +52,8 @@ class HttpServerTest extends \PHPUnit\Framework\TestCase
 }
 class HttpServerParent extends HttpServer
 {
+    public $is_fake=false;
+    
     public function test_checkSwoole()
     {
         return $this->checkSwoole();
@@ -63,5 +91,18 @@ class HttpServerParent extends HttpServer
         }
         return $this->runSwooleServer($path, $host, $port);
 
+    }
+    public function test_runSwooleServer2($path, $host, $port)
+    {
+        return $this->runHttpServer($path, $host, $port);
+
+    }
+    protected function runSwooleServer($path, $host, $port)
+    {
+        if($this->is_fake){
+            var_dump("fffffffffffffffffff");
+            return false;
+        }
+        return parent::runSwooleServer($path, $host, $port);
     }
 }

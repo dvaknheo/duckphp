@@ -38,8 +38,13 @@ class DBTest extends \PHPUnit\Framework\TestCase
         $sql="show tables";
         $db->execQuick($sql);
         $db->execQuick($sql,['a'=>'b']);
+        $name="_Test4";
+        $ret=$db->insertData('Users', ['username'=>$name,'password'=>'123456'],false);
+        $id=$db->lastInsertId();
         
-        
+        $sql="delete from Users where id=?";
+        $db->execQuick($sql,$id);
+        var_dump($ret);
         $db->rowCount();
         
         //code here
