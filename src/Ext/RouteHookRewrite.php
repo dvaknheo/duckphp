@@ -130,7 +130,7 @@ class RouteHookRewrite
     }
     protected function doHook($path_info)
     {
-        $path_info=ltrim($path_info,'/');
+        $path_info=ltrim($path_info, '/');
         $query=SuperGlobal::G()->_GET;
         $query=$query?'?'.http_build_query($query):'';
         

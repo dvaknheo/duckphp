@@ -29,9 +29,9 @@ class View
     }
     public function _Show($data=[], $view)
     {
-        $this->view_file=$this->getViewFile($this->path,$view);
-        $this->head_file=$this->getViewFile($this->path,$this->head_file);
-        $this->foot_file=$this->getViewFile($this->path,$this->foot_file);
+        $this->view_file=$this->getViewFile($this->path, $view);
+        $this->head_file=$this->getViewFile($this->path, $this->head_file);
+        $this->foot_file=$this->getViewFile($this->path, $this->foot_file);
         
         $this->data=array_merge($this->data, $data);
         $data=null;
@@ -78,12 +78,12 @@ class View
     }
     protected function getViewFile($path, $view)
     {
-        if(empty($view)){
+        if (empty($view)) {
             return '';
         }
-        $base_file=preg_replace('/\.php$/','',$view).'.php';
+        $base_file=preg_replace('/\.php$/', '', $view).'.php';
         $file=$path.$base_file;
-        if($this->options['path_view_override']??false && !is_file($file)){
+        if ($this->options['path_view_override']??false && !is_file($file)) {
             $file=$this->options['path_view_override'].$base_file;
         }
         return $file;

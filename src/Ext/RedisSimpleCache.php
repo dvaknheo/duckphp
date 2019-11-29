@@ -22,8 +22,8 @@ class RedisSimpleCache //extends Psr\SimpleCache\CacheInterface;
         }
         $ret=$this->redis->get($this->prefix.$key);
         
-        if($ret!==false){
-            $ret=json_decode($ret,true);
+        if ($ret!==false) {
+            $ret=json_decode($ret, true);
         }
         return $ret;
     }
@@ -32,7 +32,7 @@ class RedisSimpleCache //extends Psr\SimpleCache\CacheInterface;
         if (!$this->redis || !$this->redis->isConnected()) {
             return false;
         }
-        $value=json_encode($value,JSON_UNESCAPED_UNICODE);
+        $value=json_encode($value, JSON_UNESCAPED_UNICODE);
         $ret=$this->redis->set($this->prefix.$key, $value, $ttl);
         return $ret;
     }

@@ -89,8 +89,8 @@ class Route
         
         
         
-        if (substr($basepath,-strlen('/index.php'))==='/index.php') {
-            $basepath=substr($basepath,0,-strlen('/index.php'));
+        if (substr($basepath, -strlen('/index.php'))==='/index.php') {
+            $basepath=substr($basepath, 0, -strlen('/index.php'));
         }
         if (''===$url) {
             return $basepath.'/';
@@ -217,7 +217,7 @@ class Route
     }
     protected function getRunResult()
     {
-        if($this->is_failed){
+        if ($this->is_failed) {
             return false;
         }
         return true;
@@ -273,7 +273,7 @@ class Route
     }
     public function defaultGetRouteCallback($path_info)
     {
-        $path_info=ltrim($path_info,'/');
+        $path_info=ltrim($path_info, '/');
         $t=explode('/', $path_info);
         $method=array_pop($t);
         $path_class=implode('/', $t);

@@ -86,7 +86,7 @@ class Lazybones
         Route::G()->calling_path=$calling_path;
         return $this->getCallback($full_class, $method);
     }
-    protected function getCallback($full_class,$method)
+    protected function getCallback($full_class, $method)
     {
         return [new $full_class,$method];
     }

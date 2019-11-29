@@ -167,7 +167,7 @@ class App
     public function init(array $options=[], object $context=null)
     {
         if (isset($context) && isset($options['plugin_mode'])) {
-           return $this->initAsPlugin($options,$context);
+            return $this->initAsPlugin($options, $context);
         }
         AutoLoader::G()->init($options, $this)->run();
         
@@ -196,12 +196,11 @@ class App
         $object->override_from=$override_from;
         $object->initOptions($options);
         return $object->onInit();
-        
     }
     //for override
     protected function initAsPlugin(array $options=[], object $context=null)
     {
-        static::ThrowOn(true,'DNMVCS, only for override');
+        static::ThrowOn(true, 'DNMVCS, only for override');
         return $this; // @codeCoverageIgnore
     }
     //for override
@@ -683,25 +682,25 @@ trait Core_Helper
     {
         return static::G()->_H($str);
     }
-    public static function L($str,$args=[])
+    public static function L($str, $args=[])
     {
-        return static::G()->_L($str,$args);
+        return static::G()->_L($str, $args);
     }
-    public static function HL($str,$args=[])
+    public static function HL($str, $args=[])
     {
-        return static::H(static::L($str,$args));
+        return static::H(static::L($str, $args));
     }
-    public function _L($str,$args=[])
+    public function _L($str, $args=[])
     {
         //TODO locale and do
         if (empty($args)) {
             return $str;
         }
         $a=[];
-        foreach($args as $k=>$v){
+        foreach ($args as $k=>$v) {
             $a["{$k}"]=$v;
         }
-        $ret=str_replace(array_keys($a),array_values($a),$str);
+        $ret=str_replace(array_keys($a), array_values($a), $str);
         return $ret;
     }
     ////

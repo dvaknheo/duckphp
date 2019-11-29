@@ -85,13 +85,13 @@ class Configer
         $this->all_config[$file_basename]=$config;
         return $config;
     }
-    public function prependConfig($name,$data)
+    public function prependConfig($name, $data)
     {
-        if(!isset($data)){
+        if (!isset($data)) {
             return;
         }
         $this->all_config[$name]=$this->all_config[$name]??[];
-        $this->all_config[$name]=array_merge($data,$this->all_config[$name]);
+        $this->all_config[$name]=array_merge($data, $this->all_config[$name]);
     }
     protected function loadFile($file)
     {

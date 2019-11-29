@@ -92,7 +92,7 @@ class RouteHookRouteMap
     }
     public function doHook($path_info)
     {
-        $path_info=ltrim($path_info,'/');
+        $path_info=ltrim($path_info, '/');
         $route=Route::G();
         $callback=$this->getRouteHandelByMap($this->route_map, $path_info, $route->parameters);
         if (!$callback) {

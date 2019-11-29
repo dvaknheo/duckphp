@@ -23,13 +23,13 @@ class SimpleLogger //extends Psr\Log\LoggerInterface;
     ];
     protected $path;
     
-    public function init($options,$context=null)
+    public function init($options, $context=null)
     {
         $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
         
         if (substr($this->options['log_file'], 0, 1)==='/') {
             $this->path=$this->options['log_file'];
-        } else if($this->options['log_file']) {
+        } elseif ($this->options['log_file']) {
             $this->path=$this->options['path'].$this->options['log_file'];
         }
     }
@@ -40,14 +40,14 @@ class SimpleLogger //extends Psr\Log\LoggerInterface;
         $prefix=$this->options['log_prefix'];
         
         $a=[];
-        foreach($context as $k=>$v){
-            $a["{$k}"]=var_export($v,true);
+        foreach ($context as $k=>$v) {
+            $a["{$k}"]=var_export($v, true);
         }
-        $message=str_replace(array_keys($a),array_values($a),$message);
+        $message=str_replace(array_keys($a), array_values($a), $message);
         $message="[{$level}][{$prefix}]: ".$message."\n";
-        try{
-            $ret=error_log($message,$type,$path);
-        }catch(\Throwable $ex){ // @codeCoverageIgnore
+        try {
+            $ret=error_log($message, $type, $path);
+        } catch (\Throwable $ex) { // @codeCoverageIgnore
             return false;  // @codeCoverageIgnore
         }  // @codeCoverageIgnore
         return $ret; // @codeCoverageIgnore
