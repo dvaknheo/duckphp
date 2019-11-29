@@ -9,7 +9,7 @@ class View
     public $options=[
         'path'=>'',
         'path_view'=>'view',
-        'override_path'=>'',
+        'path_view_override'=>'',
     ];
     public $path;
     public $data=[];
@@ -72,6 +72,10 @@ class View
             $this->data[$key]=$value;
         }
     }
+    public function setOverridePath($path)
+    {
+        $this->options['path_view_override']=$path;
+    }
     protected function getViewFile($path, $view)
     {
         if(empty($view)){
@@ -79,8 +83,8 @@ class View
         }
         $base_file=preg_replace('/\.php$/','',$view).'.php';
         $file=$path.$base_file;
-        if($this->options['override_path']??false && !is_file($file)){
-            $file=$this->options['override_path'].$base_file;
+        if($this->options['path_view_override']??false && !is_file($file)){
+            $file=$this->options['path_view_override'].$base_file;
         }
         return $file;
     }

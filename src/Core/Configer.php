@@ -85,9 +85,10 @@ class Configer
         $this->all_config[$file_basename]=$config;
         return $config;
     }
-    public function setConfig($name,$data)
+    public function prependConfig($name,$data)
     {
-        $this->all_config[$name]=$data;
+        $this->all_config[$name]=$this->all_config[$name]??[];
+        $this->all_config[$name]=array_merge($data,$this->all_config[$name]);
     }
     protected function loadFile($file)
     {

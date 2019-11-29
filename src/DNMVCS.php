@@ -24,6 +24,8 @@ class DNMVCS extends App //implements SwooleExtAppInterface
     
     const DEFAULT_OPTIONS_EX=[
             'path_lib'=>'lib',
+            'log_file'=>'',
+            
             'use_super_global'=>false,
             'rewrite_map'=>[],
             'route_map'=>[],
@@ -74,9 +76,9 @@ class DNMVCS extends App //implements SwooleExtAppInterface
         $this->options['skip_404_handler'] = $this->options['skip_404_handler'] || $flag;
         
         $funcs=$SwooleHttpd->system_wrapper_get_providers();                    
-        $this->system_wrapper_replace($funcs);                                    // 替换默认的可用的系统函数。
+        $this->system_wrapper_replace($funcs);                                   // 替换默认的可用的系统函数。
         
-        $this->addBeforeRunHandler($RunHandler); // TODO 这里能否不要
+        $this->addBeforeRunHandler($RunHandler);                                 // TODO 这里能否不要
     }
     // @interface SwooleExtAppInterface
     public function getStaticComponentClasses()

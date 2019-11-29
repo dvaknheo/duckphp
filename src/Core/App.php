@@ -163,6 +163,9 @@ class App
     //init
     public function init(array $options=[], object $context=null)
     {
+        if (isset($context) && isset($options['plugin_mode'])) {
+           return $this->initAsPlugin($options,$context);
+        }
         AutoLoader::G()->init($options, $this)->run();
         
         $handle_all_dev_error=$options['handle_all_dev_error']??static::DEFAULT_OPTIONS['handle_all_dev_error'];
@@ -191,6 +194,11 @@ class App
         $object->initOptions($options);
         return $object->onInit();
         
+    }
+    //for override
+    protected function initAsPlugin(array $options=[], object $context=null)
+    {
+        throw new Exception('DNMVCS, only for override');
     }
     //for override
     protected function onInit()

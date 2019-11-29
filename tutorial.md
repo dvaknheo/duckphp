@@ -210,7 +210,7 @@ LoadConfig($key,$basename="config");
     载入配置，Config($key); 获得配置 默认配置文件是在  config/config.php 。
 DumpTrace()
     调试状态下，查看当前堆栈
-Dump(...$arg)
+var_dump(...$arg)
     调试状态下 Dump 当前变量，替代 var_dump
 ### View 编写视图用到的方法
 
@@ -346,7 +346,6 @@ assignRoute($route,$callback=null)
 
 
 这是第三方的扩展
-
 ## 第三章 DNMVCS 应用核心开发人员参考
 
 ### 入口文件
@@ -576,7 +575,7 @@ RunQuickly(): bool
 
     ModelHelper,SerivceHelper,ControllerHelper,ViewHelper 都在 App 类里实现。
     这用于你想偷懒，直接 App::foo(); 的情况。
-    
+
 
 #### 接管的静态方法
 
@@ -697,10 +696,10 @@ RuntimeState::G(MyRuntimeState::G());
 例外的是 AutoLoader 和 ExceptionManager 。 这两个是在插件系统启动之前启动
 所以你需要：
 ```php
-AutoLoader::G()->cleanUp();
+AutoLoader::G()->clear();
 AutoLoader::G(MyAutoLoader::G())->init($this->options,$this);
 
-ExceptionManager::G()->cleanUp();
+ExceptionManager::G()->clear();
 ExceptionManager::G(MyExceptionManager::G())->init($this->options,$this);
 ```
 如何替换组件。

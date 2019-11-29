@@ -32,7 +32,7 @@ class RedisSimpleCache //extends Psr\SimpleCache\CacheInterface;
         if (!$this->redis || !$this->redis->isConnected()) {
             return false;
         }
-        $value=json_encode($value);
+        $value=json_encode($value,JSON_UNESCAPED_UNICODE);
         $ret=$this->redis->set($this->prefix.$key, $value, $ttl);
         return $ret;
     }
