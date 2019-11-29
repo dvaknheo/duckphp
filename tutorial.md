@@ -574,8 +574,9 @@ RunQuickly(): bool
     前面已经介绍
 #### 聚合方法
 
-    ModelHelper,SerivceHelper,ControllerHelper 都在 App 类里有实现。
+    ModelHelper,SerivceHelper,ControllerHelper,ViewHelper 都在 App 类里实现。
     这用于你想偷懒，直接 App::foo(); 的情况。
+    
 
 #### 接管的静态方法
 
@@ -589,10 +590,11 @@ RunQuickly(): bool
 #### 常用方法
 这些方法不能归入 助手类里，只能在 App 类单独给出的。
 
-addRouteHook($hook,$append=true,$outter=true,$once=true)
+addRouteHook($hook,$position,$once=true)
 
     添加路由钩子 
     $hook 返回空用默认路由处理，否则调用返回的回调。
+    $position 包括位置['prepend-outter','prepend-inner',]
 addBeforeShowHandler($callback)
 
     添加显示前处理
