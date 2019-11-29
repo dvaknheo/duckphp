@@ -85,6 +85,10 @@ class Configer
         $this->all_config[$file_basename]=$config;
         return $config;
     }
+    public function setConfig($name,$data)
+    {
+        $this->all_config[$name]=$data;
+    }
     protected function loadFile($file)
     {
         return require $file;

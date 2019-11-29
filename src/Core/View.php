@@ -9,32 +9,29 @@ class View
     public $options=[
         'path'=>'',
         'path_view'=>'view',
+        'override_path'=>'',
     ];
+    public $path;
+    public $data=[];
+    
     protected $head_file;
     protected $foot_file;
     protected $view_file;
     
-    public $path;
-    public $data=[];
-    
     public function init($options=[], $context=null)
     {
-        $options=array_replace_recursive($this->options, $options);
-        if (substr($options['path_view'], 0, 1)==='/') {
-            $this->path=rtrim($options['path_view'], '/').'/';
+        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
+        if (substr($this->options['path_view'], 0, 1)==='/') {
+            $this->path=rtrim($this->options['path_view'], '/').'/';
         } else {
-            $this->path=$options['path'].rtrim($options['path_view'], '/').'/';
+            $this->path=$this->options['path'].rtrim($this->options['path_view'], '/').'/';
         }
     }
     public function _Show($data=[], $view)
     {
-        $this->view_file=$this->path.preg_replace('/\.php$/','',$view).'.php';
-        if ($this->head_file) {
-            $this->head_file=preg_replace('/\.php$/','',$this->head_file).'.php';
-        }
-        if ($this->foot_file) {
-            $this->foot_file=preg_replace('/\.php$/','',$this->foot_file).'.php';
-        }
+        $this->view_file=$this->getViewFile($this->path,$view);
+        $this->head_file=$this->getViewFile($this->path,$this->head_file);
+        $this->foot_file=$this->getViewFile($this->path,$this->foot_file);
         
         $this->data=array_merge($this->data, $data);
         $data=null;
@@ -42,18 +39,18 @@ class View
         extract($this->data);
         
         if ($this->head_file) {
-            include $this->path.$this->head_file;
+            include $this->head_file;
         }
         
         include $this->view_file;
         
         if ($this->foot_file) {
-            include $this->path.$this->foot_file;
+            include $this->foot_file;
         }
     }
     public function _ShowBlock($view, $data=null)
     {
-        $this->view_file=$this->path.preg_replace('/\.php$/','',$view).'.php';
+        $this->view_file=$this->getViewFile($this->path, $view);
         $this->data=isset($data)?$data:$this->data;
         $data=null;
         $view=null;
@@ -61,6 +58,7 @@ class View
         
         include $this->view_file;
     }
+
     public function setViewWrapper($head_file, $foot_file)
     {
         $this->head_file=$head_file;
@@ -73,5 +71,17 @@ class View
         } else {
             $this->data[$key]=$value;
         }
+    }
+    protected function getViewFile($path, $view)
+    {
+        if(!$view){
+            return '';
+        }
+        $base_file=preg_replace('/\.php$/','',$view).'.php';
+        $file=$path.$base_file;
+        if($this->options['override_path'] && !is_file($file)){
+            $file=$this->options['override_path'].$base_file;
+        }
+        return $file;
     }
 }
