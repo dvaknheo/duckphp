@@ -89,10 +89,20 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::G()->extendComponents(AppTest::class,['Foo'],['V',"ZZZ"]);
         
         $this->do4();
-
+        $this->doPugins();
 
         \MyCodeCoverage::G()->end(App::class);
         $this->assertTrue(true);
+    }
+    public function doPugins()
+    {
+        $app=new App();
+        $options=['plugin_mode'=>true];
+        try{
+            $app->init($options,$app);
+        }catch(\Exception $ex){
+            echo $ex->getMessage();
+        }
     }
     public function doSystemWrapper()
     {
@@ -285,7 +295,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
 
         
         $options=[
-            'path' => $path_app,
+        'path' => $path_app,
         'skip_setting_file' => true,
         'is_debug'=>false,
         'error_exception' => NULL,

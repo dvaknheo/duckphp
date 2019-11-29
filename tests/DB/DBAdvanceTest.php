@@ -27,13 +27,13 @@ class DBAdvanceTest extends \PHPUnit\Framework\TestCase
         $me=$db->findData('Users', 'aa', 'username');
                 
         $table_name='Users';
-        $name="Test1";
+        $name="newTest1";
         $ret=$db->insertData($table_name, ['username'=>$name,'password'=>'123456']);
         $ret=$db->deleteData($table_name, $name,'username','password');
         $ret=$db->updateData($table_name, $name, ['username'=>'111','password'=>'333'], $key='username');
         $ret=$db->deleteData($table_name, $name,'username',null);
         
-        $name="Test2";
+        $name="newTest2";
         $ret=$db->insertData($table_name, ['username'=>$name,'password'=>'123456'],false);
         $ret=$db->deleteData($table_name, $name,'username',null);
 

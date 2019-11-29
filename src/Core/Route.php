@@ -153,7 +153,7 @@ class Route
         $this->request_method=$server['REQUEST_METHOD']??'GET';
         if (isset($server['PATH_INFO'])) {
             $this->path_info=$server['PATH_INFO'];
-        } elseif (PHP_SAPI==='cli') {
+        } elseif (PHP_SAPI==='cli' && empty($this->path_info)) {
             $argv=$server['argv']??[];
             if (count($argv)>=2) {
                 $this->path_info=$argv[1];
@@ -161,8 +161,6 @@ class Route
                 array_shift($argv);
                 $this->parameters=$argv;
             }
-        } else {
-            $this->path_info=''; // @codeCoverageIgnore
         }
         
         $this->has_bind_server_data=true;
@@ -176,7 +174,6 @@ class Route
             $this->bindServerData($_SERVER);
         }
         $this->path_info=$path_info;
-        //$this->path_info=ltrim($this->path_info??'', '/');
         
         if (isset($request_method)) {
             $this->request_method=$request_method;
@@ -188,7 +185,6 @@ class Route
         if (!$this->has_bind_server_data) {
             $this->bindServerData($_SERVER);
         }
-        //$this->path_info=ltrim($this->path_info, '/'); // TODO, kill this
     }
     public function run()
     {
@@ -339,6 +335,10 @@ class Route
     }
     
     ////
+    public function setPathInfo($path_info)
+    {
+        $this->path_info=$path_info;
+    }
     public function getRouteError()
     {
         return $this->error;

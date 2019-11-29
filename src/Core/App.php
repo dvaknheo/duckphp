@@ -118,6 +118,9 @@ class App
         'set_exception_handler' =>null,
         'register_shutdown_function' =>null,
     ];
+    public function __construct()
+    {
+    }
     public static function RunQuickly(array $options=[], callable $after_init=null): bool
     {
         $instance=static::G()->init($options);
@@ -198,7 +201,8 @@ class App
     //for override
     protected function initAsPlugin(array $options=[], object $context=null)
     {
-        throw new Exception('DNMVCS, only for override');
+        static::ThrowOn(true,'DNMVCS, only for override');
+        return $this; // @codeCoverageIgnore
     }
     //for override
     protected function onInit()

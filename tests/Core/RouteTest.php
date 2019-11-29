@@ -229,6 +229,9 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->getRouteCallingClass();
         Route::G()->getRouteCallingMethod();
         Route::G()->setRouteCallingMethod('_');
+
+        Route::G()->setPathInfo('xx');
+
     }
 }
 class MyRoute extends Route

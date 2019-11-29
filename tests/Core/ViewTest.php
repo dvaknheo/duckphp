@@ -23,7 +23,7 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         
         View::G()->_ShowBlock("block",['A'=>'b']);
 
-        View::G()->options['override_path']=$path_view.'/overrided/';
+        View::G()->setOverridePath($path_view.'overrided/');
         View::G()->setViewWrapper(null,null);
         View::G()->_Show(['A'=>'b'],"override");
         

@@ -87,6 +87,9 @@ class Configer
     }
     public function prependConfig($name,$data)
     {
+        if(!isset($data)){
+            return;
+        }
         $this->all_config[$name]=$this->all_config[$name]??[];
         $this->all_config[$name]=array_merge($data,$this->all_config[$name]);
     }
