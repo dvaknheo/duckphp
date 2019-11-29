@@ -230,36 +230,37 @@ class Route
     {
         $this->is_failed=true;
     }
-    public function addRouteHook($callback, $append=true, $outter=true, $once=true)
+    public function addRouteHook($callback, $position, $once=true)
     {
-        if ($append) {
-            if ($once) {
-                if (in_array($callback, $this->appendedCallbackList)) {
-                    return false;
-                }
+        if ($once) {
+            if (($position==='prepend-outter' || $position==='prepend-inner')  && in_array($callback, $this->prependedCallbackList)) {
+                return false;
             }
-            if ($outter) {
-                array_unshift($this->appendedCallbackList, $callback);
-            } else {
-                array_push($this->appendedCallbackList, $callback);
+            if (($position==='append-inner' || $position==='append-outter')  && in_array($callback, $this->appendedCallbackList)) {
+                return false;
             }
-        } else {
-            if ($once) {
-                if (in_array($callback, $this->prependedCallbackList)) {
-                    return false;
-                }
-            }
-            if ($outter) {
-                array_push($this->prependedCallbackList, $callback);
-            } else {
+        }
+        switch ($position) {
+            case 'prepend-outter':
                 array_unshift($this->prependedCallbackList, $callback);
-            }
+                break;
+            case 'prepend-inner':
+                array_push($this->prependedCallbackList, $callback);
+                break;
+            case 'append-inner':
+                array_unshift($this->appendedCallbackList, $callback);
+                break;
+            case 'append-outter':
+                array_push($this->appendedCallbackList, $callback);
+                break;
+            default:
+                return false;
         }
         return true;
     }
     public function add404Handler($callback)
     {
-        return $this->addRouteHook($callback, true, true, false);
+        return $this->addRouteHook($callback, 'append-outter', false);
     }
     public function defaulToggleRouteCallback($enable=true)
     {

@@ -17,11 +17,6 @@ class RouteTest extends \PHPUnit\Framework\TestCase
 
         
         $this->hooks();
-        //$this->assertTrue(true);
-        
-        //\MyCodeCoverage::G()->end();
-        //return;
-        
         //Main
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
@@ -105,7 +100,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         $callback=function () {
             echo "stttttttttttttttttttttttttttttttttttttttttttttttoped";
         };
-        Route::G()->addRouteHook($callback, false,false, true);
+        Route::G()->addRouteHook($callback, 'outter-inner', true);
         echo "3333333333333333333333333333333333333333333333";
         Route::G()->run();
         
@@ -132,7 +127,6 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         $this->foo2();
 
         $this->assertTrue(true);
-        
         \MyCodeCoverage::G()->end();
         return;
     }
@@ -149,7 +143,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
                 Route::G()->forceFail();
                 return true;
             };
-            Route::G()->addRouteHook($appended, false,true, true);
+            Route::G()->addRouteHook($appended, 'append-outter', true);
         });
         var_dump("zzzzzzzzzzzzzzzzzzzzzzzzzzz",$flag);
     }
@@ -165,8 +159,8 @@ class RouteTest extends \PHPUnit\Framework\TestCase
                 var_dump(DATE(DATE_ATOM));
                 return true;
             };
-            Route::G()->addRouteHook($prepended, false,false, true);
-            Route::G()->addRouteHook($prepended, false,false, true);
+            Route::G()->addRouteHook($prepended, 'prepend-outter', true);
+            Route::G()->addRouteHook($prepended, 'prepend-outter', true);
         });
         //prepend,false
         Route::G(new Route());
@@ -177,8 +171,8 @@ class RouteTest extends \PHPUnit\Framework\TestCase
                 return false;
             };
             $prepended2=function () { var_dump('prepended2!');};
-            Route::G()->addRouteHook($prepended, false,false, true);
-            Route::G()->addRouteHook($prepended2, false,true, false);
+            Route::G()->addRouteHook($prepended, 'prepend-inner', true);
+            Route::G()->addRouteHook($prepended, 'prepend-outter', false);
         });
         // append true.
         
@@ -190,8 +184,8 @@ class RouteTest extends \PHPUnit\Framework\TestCase
                 return true;
             };
             Route::G()->add404Handler($my404);
-            Route::G()->addRouteHook($appended, true,true, true);
-            Route::G()->addRouteHook($appended, true,true, true);
+            Route::G()->addRouteHook($appended, 'append-inner', true);
+            Route::G()->addRouteHook($appended, 'append-outter', true);
         });
     }
     protected function doUrl()

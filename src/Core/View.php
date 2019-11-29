@@ -74,12 +74,12 @@ class View
     }
     protected function getViewFile($path, $view)
     {
-        if(!$view){
+        if(empty($view)){
             return '';
         }
         $base_file=preg_replace('/\.php$/','',$view).'.php';
         $file=$path.$base_file;
-        if($this->options['override_path'] && !is_file($file)){
+        if($this->options['override_path']??false && !is_file($file)){
             $file=$this->options['override_path'].$base_file;
         }
         return $file;

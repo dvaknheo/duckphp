@@ -47,9 +47,9 @@ class SimpleLogger //extends Psr\Log\LoggerInterface;
         $message="[{$level}][{$prefix}]: ".$message."\n";
         try{
             $ret=error_log($message,$type,$path);
-        }catch(\Throwable $ex){
-            return false;
-        }
+        }catch(\Throwable $ex){ // @codeCoverageIgnore
+            return false;  // @codeCoverageIgnore
+        }  // @codeCoverageIgnore
         return $ret; // @codeCoverageIgnore
     }
     ////////////////////

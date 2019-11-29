@@ -28,7 +28,7 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
             'path_config'=>basename($path_config),
         ];
         Configer::G(new Configer)->init($options);
-        
+        Configer::G()->setConfig('XConfig',['a'=>'b']);
         \MyCodeCoverage::G()->end(Configer::class);
         $this->assertTrue(true);
         /*

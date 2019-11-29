@@ -33,7 +33,8 @@ class SimpleLoggerTest extends \PHPUnit\Framework\TestCase
         SimpleLogger::G()->info($message,  $context);
         
         SimpleLogger::G()->debug($message,  $context);
-            
+        
+        file_put_contents($path_log.'log.log','');// clear
 
         \MyCodeCoverage::G()->end(SimpleLogger::class);
         $this->assertTrue(true);
