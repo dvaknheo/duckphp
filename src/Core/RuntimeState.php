@@ -14,6 +14,9 @@ class RuntimeState
     
     protected $error_reporting_old;
     
+    public function __construct()
+    {
+    }
     public function isRunning()
     {
         return $this->is_running;

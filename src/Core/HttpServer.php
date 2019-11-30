@@ -61,6 +61,9 @@ class HttpServer
     public $options;
     public $pid=0;
     
+    public function __construct()
+    {
+    }    
     public static function RunQuickly($options)
     {
         return static::G()->init($options)->run();

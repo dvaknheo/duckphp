@@ -49,6 +49,9 @@ class Route
     protected $enable_default_callback=true;
     protected $is_failed=false;
     
+    public function __construct()
+    {
+    }
     public static function RunQuickly(array $options=[], callable $after_init=null)
     {
         $instance=static::G()->init($options);

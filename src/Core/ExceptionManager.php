@@ -28,6 +28,9 @@ class ExceptionManager
     public $is_inited=false;
     public $is_running=false;
     
+    public function __construct()
+    {
+    }
     public function setDefaultExceptionHandler($default_exception_handler)
     {
         $this->default_exception_handler=$default_exception_handler;

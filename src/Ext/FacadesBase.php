@@ -7,6 +7,9 @@ class FacadesBase
 {
     use SingletonEx;
     
+    public function __construct()
+    {
+    }
     public static function __callStatic($name, $arguments)
     {
         $callback=FacadesAutoLoader::G()->getFacadesCallback(static::class, $name);

@@ -31,6 +31,10 @@ class Lazybones
     protected $with_controller_namespace_prefix=true;
     protected $with_controller_enable_paramters=false;
     protected $error;
+    
+    public function __construct()
+    {
+    }
     public function init($options, $context=null)
     {
         $options=array_merge(static::DEFAULT_OPTIONS, $options);

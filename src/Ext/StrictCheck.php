@@ -22,6 +22,9 @@ class StrictCheck
     
     protected $appClass=null;
     
+    public function __construct()
+    {
+    }
     public function init($options=[], $context=null)
     {
         $this->options=array_merge($this->options, $options);

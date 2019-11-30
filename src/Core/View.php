@@ -18,6 +18,9 @@ class View
     protected $foot_file;
     protected $view_file;
     
+    public function __construct()
+    {
+    }
     public function init($options=[], $context=null)
     {
         $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);

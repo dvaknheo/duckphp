@@ -32,6 +32,9 @@ class DBManager
     protected $use_context_db_setting=true;
     protected $is_static=false;
     
+    public function __construct()
+    {
+    }
     public function init($options=[], $context=null)
     {
         $this->options=$options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);

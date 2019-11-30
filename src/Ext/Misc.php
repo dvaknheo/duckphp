@@ -16,7 +16,10 @@ class Misc
     protected $path=null;
     protected $context_class;
     protected $_di_container;
-
+    
+    public function __construct()
+    {
+    }
     public function init($options=[], $context=null)
     {
         $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);

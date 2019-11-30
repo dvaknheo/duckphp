@@ -28,6 +28,10 @@ class RedisManager
     public $options;
     protected $pool=[];
     protected $redis_config_list=[];
+    
+    public function __construct()
+    {
+    }
     public function init($options = [], $context = null)
     {
         $this->options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);

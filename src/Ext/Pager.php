@@ -21,6 +21,9 @@ class Pager
     protected $handel_get_url=null;
     protected $context_class;
     
+    public function __construct()
+    {
+    }
     public static function SG()
     {
         return static::G()->_SG();

@@ -24,6 +24,10 @@ class Configer
     protected $setting_file='setting';
     protected $skip_setting_file=false;
     protected $skip_env_file=true;
+    
+    public function __construct()
+    {
+    }
     public function init($options=[], $context=null)
     {
         $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);

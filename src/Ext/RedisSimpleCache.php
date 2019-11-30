@@ -10,6 +10,9 @@ class RedisSimpleCache //extends Psr\SimpleCache\CacheInterface;
     public $redis=null;
     public $prefix='';
     
+    public function __construct()
+    {
+    }
     public function init(array $options, $context=null)
     {
         $this->redis=$options['redis']??null;

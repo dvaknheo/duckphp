@@ -24,6 +24,10 @@ class AutoLoader
     
     protected $is_running=false;
     protected $enable_cache_classes_in_cli=false;
+    
+    public function __construct()
+    {
+    }
     public function init($options=[], $context=null)
     {
         if ($this->is_inited) {

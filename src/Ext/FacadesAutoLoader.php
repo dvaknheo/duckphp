@@ -17,6 +17,9 @@ class FacadesAutoLoader
     
     protected $is_loaded=false;
     
+    public function __construct()
+    {
+    }
     public function init(array $options=[], $context=null)
     {
         $this->options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);

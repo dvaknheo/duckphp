@@ -15,6 +15,10 @@ class RouteHookOneFileMode
     ];
     public $key_for_action='_r';
     public $key_for_module='';
+    
+    public function __construct()
+    {
+    }
     public function init($options=[], $context=null)
     {
         $options=array_merge(static::DEFAULT_OPTIONS, $options);

@@ -6,7 +6,10 @@ use ArrayAccess;
 class HookChain implements ArrayAccess
 {
     protected $chain = [];
-
+    
+    public function __construct()
+    {
+    }
     public function __invoke()
     {
         foreach ($this->chain as $v) {

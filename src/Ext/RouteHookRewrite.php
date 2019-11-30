@@ -14,6 +14,9 @@ class RouteHookRewrite
     protected $rewrite_map=[];
     
     
+    public function __construct()
+    {
+    }
     public static function Hook($path_info)
     {
         return static::G()->doHook($path_info);
