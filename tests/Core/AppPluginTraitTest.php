@@ -1,8 +1,8 @@
 <?php 
-namespace tests\DNMVCS\Base
+namespace tests\DNMVCS\Core
 {
 
-    use DNMVCS\Base\AppPluginTrait;
+    use DNMVCS\Core\AppPluginTrait;
     use DNMVCS\Core\App;
     use DNMVCS\DNMVCS;
 
@@ -25,7 +25,7 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
         $plugin_options=[
             'plugin_mode'=>true,
             'plugin_path_namespace'=>'secondapp',
-            'plugin_namespace'=>'tests\DNMVCS\Base\Second',
+            'plugin_namespace'=>'tests\DNMVCS\Core\Second',
             
             'plugin_routehook_position'=>'append-outter',
             
@@ -49,6 +49,7 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
 class AppPluginTraitApp extends DNMVCS
 {
     use AppPluginTrait;
+    
     public function __construct()
     {
         parent::__construct();
@@ -57,7 +58,7 @@ class AppPluginTraitApp extends DNMVCS
 }
 
 }
-namespace tests\DNMVCS\Base\Second\Controller
+namespace tests\DNMVCS\Core\Second\Controller
 {
     use DNMVCS\DNMVCS;
 ////[[[[

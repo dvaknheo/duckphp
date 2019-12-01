@@ -1,5 +1,5 @@
 <?php
-namespace DNMVCS\Base;
+namespace DNMVCS\Core;
 
 use DNMVCS\Core\App;
 use DNMVCS\Core\AutoLoader;
@@ -12,8 +12,10 @@ trait AppPluginTrait
 {
     public $plugin_options=[
         'plugin_mode'=>false,
+        
         'plugin_path_namespace'=>null,
         'plugin_namespace'=>null,
+        
         'plugin_skip_autoload'=>false,
         
         'plugin_routehook_position'=>'append-outter',
@@ -34,7 +36,6 @@ trait AppPluginTrait
     }
     protected function defaultInitAsPlugin(array $options=[], ?object $context=null)
     {
-        //
         $this->plugin_options=array_intersect_key(array_replace_recursive($this->plugin_options, $options)??[], $this->plugin_options);
         $this->context_path=$context->options['path'];
         $this->path_view_override  =rtrim($this->context_path .$this->plugin_options['plugin_path_namespace'].'/'.$this->plugin_options['plugin_path_view'], '/').'/';
@@ -51,7 +52,7 @@ trait AppPluginTrait
             $config_data=$this->includeFileForPluginConfig($this->path_config_override.$name.'.php');
             Configer::G()->prependConfig($name, $config_data);
         }
-        Route::G()->addRouteHook([static::class,'Hook'], $this->plugin_options['plugin_routehook_position']);
+        Route::G()->addRouteHook([static::class,'PluginRouteHook'], $this->plugin_options['plugin_routehook_position']);
         return $this;
     }
     protected function includeFileForPluginConfig($file)
