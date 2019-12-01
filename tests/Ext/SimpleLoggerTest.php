@@ -1,7 +1,7 @@
 <?php 
 namespace tests\DNMVCS\Ext;
 use DNMVCS\Ext\SimpleLogger;
-
+use DNMVCS\DNMVCS;
 class SimpleLoggerTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
@@ -16,7 +16,12 @@ class SimpleLoggerTest extends \PHPUnit\Framework\TestCase
         ];
         $message='test{a}';
         $context=['a'=>'b'];
-        SimpleLogger::G()->init($options);
+        
+        $dn_options=[
+            'skip_setting_file'=>true,
+        ];
+        DNMVCS::G()->init($dn_options);
+        SimpleLogger::G()->init($options,DNMVCS::G());
         
         SimpleLogger::G()->emergency($message,  $context);
          $options=[
@@ -33,7 +38,7 @@ class SimpleLoggerTest extends \PHPUnit\Framework\TestCase
         SimpleLogger::G()->info($message,  $context);
         
         SimpleLogger::G()->debug($message,  $context);
-        
+        DNMVCS::Logger()->info("zzzzz");
         file_put_contents($path_log.'log.log','');// clear
 
         \MyCodeCoverage::G()->end(SimpleLogger::class);

@@ -1,7 +1,6 @@
 <?php
 namespace DNMVCS\Core;
 
-use DNMVCS\Core\App;
 use DNMVCS\Core\AutoLoader;
 use DNMVCS\Core\Configer;
 use DNMVCS\Core\View;

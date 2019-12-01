@@ -16,9 +16,12 @@ subgraph cluster_Core {
     Core_App -> Core_Route;
     Core_App -> Core_RuntimeState;
     
+    
     Core_App -> Core_SingletonEx [style="dotted"];
     Core_App -> Core_ThrowOn;
     Core_App -> Core_ExtendableStaticCallTrait;
+    Core_App -> Core_SuperGobal;
+    Core_App -> Core_SystemWrapper;
     
     Core_AutoLoader -> Core_SingletonEx [style="dotted"];
     Core_ExceptionManager -> Core_SingletonEx [style="dotted"];
@@ -29,6 +32,13 @@ subgraph cluster_Core {
     
     Core_HttpServer -> Core_SingletonEx [style="dotted"];
     Core_SuperGlobal -> Core_SingletonEx [style="dotted"];
+
+
+    Core_AppPluginTrait -> Core_AutoLoader;
+    Core_AppPluginTrait -> Core_Configer;
+    Core_AppPluginTrait -> Core_View;
+    Core_AppPluginTrait -> Core_Route;
+    Core_AppPluginTrait -> Core_SuperGlobal;
 
     Core_Helper_ModelHelper -> Core_ExtendableStaticCallTrait [style="dashed"];
     Core_Helper_ModelHelper -> Core_ThrowOn [style="dashed"];
@@ -48,6 +58,7 @@ subgraph cluster_Core {
     Core_Helper_ViewHelper -> Core_ThrowOn [style="dashed"];
     Core_Helper_ViewHelper -> Core_App [style="dashed"];
 
+    Core_AppPluginTrait [label="AppPluginTrait";shape=Mdiamond];
 
     Core_App [label="App";shape=Mdiamond];
     Core_SingletonEx [label="SingletonEx";shape=Mdiamond];
@@ -57,6 +68,7 @@ subgraph cluster_Core {
     Core_Configer [label="Configer"];
     Core_Route [label="Route"];
     Core_RuntimeState [label="RuntimeState"];
+    Core_SystemWrapper [label="SystemWrapper"];
     
     Core_HttpServer [label="HttpServer"];
     Core_SuperGlobal [label="SuperGlobal"];
@@ -64,6 +76,8 @@ subgraph cluster_Core {
     Core_ExtendableStaticCallTrait [label="ExtendableStaticCallTrait"];
     
     Core_ThrowOn [label="ThrowOn"];
+
+    Core_HookChain [label="HookChain"];
 
     Core_Helper_ModelHelper [label="Helper\\ModelHelper"];
     Core_Helper_ServiceHelper [label="Helper\\ServiceHelper"];
@@ -116,36 +130,49 @@ subgraph cluster_Ext {
 label = "[DNMVCS\\Ext]";
     Ext [label="";style="dotted"];
     
+    Ext -> CallableView -> Core_View;
     Ext -> DBManager -> DB_DB;
-    Ext -> DBReusePoolProxy; 
+    Ext -> DBReusePoolProxy ->DBManager; 
     Ext -> FacadesAutoLoader;
     Ext -> JsonRpcExt;
+    Ext -> Misc
     Ext -> Pager;
-    Ext -> RouteHookDirectoryMode;
-    Ext -> RouteHookOneFileMode;
     Ext -> RouteHookRewrite;
     Ext -> RouteHookRouteMap;
+    Ext -> SimpleLogger;
     Ext -> StrictCheck;
     
+    Ext -> RedisManager [style="dotted"];
+    Ext -> RedisSimpleCache [style="dotted"];
+    Ext -> RouteHookDirectoryMode [style="dotted"];
+    Ext -> RouteHookOneFileMode [style="dotted"];
     
     JsonRpcExt -> JsonRpcExtBase ;
+    JsonRpcExt -> Core_SingletonEx [style="dotted"];
+    JsonRpcExtBase -> Core_SingletonEx [style="dotted"];
 
     FacadesAutoLoader ->FacadesBase ;
     FacadesAutoLoader -> Core_SingletonEx [style="dotted"];
+    FacadesBase -> Core_SingletonEx [style="dotted"];
     
-    RouteHookRewrite -> Core_SingletonEx[style="dotted"]; 
-    RouteHookRouteMap -> Core_SingletonEx [style="dotted"]; 
+    Lazybones -> Core_SingletonEx [style="dotted"];
     
-    Lazybones -> Core_SingletonEx [style="dotted"]; 
-    Oldbones -> Core_SingletonEx [style="dotted"]; 
+    Pager -> Core_SingletonEx [style="dotted"]; 
     
-    
-
+    RedisManager -> RedisSimpleCache;
+    RedisManager -> Core_SingletonEx [style="dotted"]; 
+    RedisSimpleCache -> Core_SingletonEx [style="dotted"]; 
     
     RouteHookDirectoryMode -> Core_SingletonEx [style="dotted"]; 
     RouteHookOneFileMode -> Core_SingletonEx [style="dotted"];
+    
+    RouteHookRewrite -> Core_SingletonEx[style="dotted"]; 
+    RouteHookRouteMap -> Core_SingletonEx [style="dotted"]; 
 
-    Pager -> Core_SingletonEx [style="dotted"]; 
+    SimpleLogger -> Core_SingletonEx [style="dotted"]; 
+    StrictCheck -> Core_SingletonEx [style="dotted"]; 
+    
+
 
 }
 subgraph cluster_DNMVCS {
@@ -161,7 +188,7 @@ subgraph cluster_DNMVCS {
     DNMVCS [shape=Mdiamond];
     HttpServer [shape=Mdiamond];
     
-
+    SingletonEx [style=filled,shape=Mdiamond];
 }
 
 }

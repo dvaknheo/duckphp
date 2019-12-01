@@ -46,7 +46,8 @@ class DNMVCSTest extends \PHPUnit\Framework\TestCase
         
         $object=new \stdClass();
         DNMVCS::DI('a',$object);
-        
+                DNMVCS::Logger();//->info("OK");
+
         \MyCodeCoverage::G()->end(DNMVCS::class);
         $this->assertTrue(true);
 
@@ -57,7 +58,6 @@ class DNMVCSTest extends \PHPUnit\Framework\TestCase
         //DNMVCS::DB_W();
         //DNMVCS::DB_R();
         
-        DNMVCS::Logger();//->info("OK");
         DNMVCS::setDBHandler($db_create_handler=null, $db_close_handler=null, $db_excption_handler=null);
         DNMVCS::Pager();
         DNMVCS::assignRewrite($key="abc", $value=null);

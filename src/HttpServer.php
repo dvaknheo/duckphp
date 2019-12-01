@@ -19,7 +19,7 @@ class HttpServer extends Server
         if (!class_exists(SwooleHttpd::class)) {
             return false; // @codeCoverageIgnore
         }
-        return true;
+        return true; // @codeCoverageIgnore
     }
     protected function runHttpServer()
     {
@@ -29,7 +29,7 @@ class HttpServer extends Server
         if (($this->options['background']??false) || !$this->checkSwoole()) {
             return parent::runHttpServer();
         }
-        return $this->runSwooleServer($this->options['path'], $this->host, $this->port);
+        return $this->runSwooleServer($this->options['path'], $this->host, $this->port); // @codeCoverageIgnore
     }
     protected function runSwooleServer($path, $host, $port)
     {

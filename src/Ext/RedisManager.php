@@ -3,6 +3,7 @@
 namespace DNMVCS\Ext;
 
 use DNMVCS\Core\SingletonEx;
+use DNMVCS\Ext\RedisSimpleCache;
 use Redis;
 
 class RedisManager

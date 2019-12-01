@@ -20,6 +20,7 @@ class FacadesBaseTest extends \PHPUnit\Framework\TestCase
         }catch(\Exception $ex){
             echo "EXXXXXXXXXXXXx";
         }
+        new FacadesBase();
         \MyCodeCoverage::G()->end(FacadesBase::class);
         $this->assertTrue(true);
         /*

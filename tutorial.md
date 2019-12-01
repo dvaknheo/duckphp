@@ -575,16 +575,12 @@ RunQuickly(): bool
 
     ModelHelper,SerivceHelper,ControllerHelper,ViewHelper 都在 App 类里实现。
     这用于你想偷懒，直接 App::foo(); 的情况。
-
-
 #### 接管的静态方法
-
     App::On404();
     App::OnException(): void
     App::OnDevErrorHandler():void 
     App::IsRunning();
     App::IsInException();
-
 
 #### 常用方法
 这些方法不能归入 助手类里，只能在 App 类单独给出的。
@@ -634,14 +630,17 @@ extendComponents($class,$methods,$components);
 ### 请求流程和生命周期
 DNMVCS::RunQuickly($options) 发生了什么
 
-DNMVCS::G()->init($options)->run();
+DNMVCS::G()->init($options,$callback)->run();
 
-    init 为初始化阶段 ，run 为运行阶段。
-    init 阶段做的事情如下
+init 为初始化阶段 ，run 为运行阶段。$callback 在init() 之后执行（也是为了偷懒
+
+init 出事化阶段
+    处理是否是插件模式
     处理自动加载  AutoLoader::G()->init($options, $this)->run();
     处理异常管理 ExceptionManager::G()->init($exception_options, $this)->run();
     如果有子类，切入子类继续 checkOverride() 
     调整补齐选项 initOptions()
+    
     * onInit()，可 override 处理这里了。
     默认的 onInit
         初始化 Configer
@@ -651,6 +650,7 @@ DNMVCS::G()->init($options)->run();
         初始化 Route
         初始化扩展 initExtentions()
     初始化阶段就结束了。
+    
 run() 运行阶段
 
     处理 addBeforeRunHandler() 引入的 beforeRunHandlers
@@ -1184,6 +1184,8 @@ $options=[
 redis 管理器。 redis 入口
 ### RedisSimpleCache
 适配 redis 的 psr-16 (注意没实现 psr-16接口)
+
+## 插件系统。
 
 ## 第四章 DNMVCS 其他类参考
 
