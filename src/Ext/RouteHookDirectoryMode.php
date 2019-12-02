@@ -9,7 +9,7 @@ use DNMVCS\Ext\RouteHookRewrite;
 class RouteHookDirectoryMode
 {
     use SingletonEx;
-    const DEFAULT_OPTIONS=[
+    public $options=[
         'mode_dir_basepath'=>'',
         //'mode_dir_use_path_info'=>true,
         //'mode_dir_key_for_module'=>true,
@@ -20,9 +20,11 @@ class RouteHookDirectoryMode
     public function __construct()
     {
     }
-    public function init($options=[], $context=null)
+    public function init(array $options, object $context=null)
     {
-        $this->basepath=$options['mode_dir_basepath'];
+        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
+        
+        $this->basepath=$this->options['mode_dir_basepath'];
         if ($context) {
             Route::G()->addRouteHook([static::class,'Hook'], 'prepend-outter');
             Route::G()->setURLHandler([$this,'onURL']);

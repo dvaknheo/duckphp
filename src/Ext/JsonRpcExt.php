@@ -7,13 +7,12 @@ use Exception;
 class JsonRpcExt
 {
     use SingletonEx;
-    const DEFAULT_OPTIONS=[
+    public $options=[
         'jsonrpc_namespace'=>'JsonRpc',
         'jsonrpc_backend'=>'https://127.0.0.1',
         'jsonrpc_is_debug'=>false,
         'jsonrpc_enable_autoload'=>true,
     ];
-    public $options=[];
     
     public $is_inited;
     protected $backend;
@@ -23,9 +22,9 @@ class JsonRpcExt
     public function __construct()
     {
     }
-    public function init(array $options=[], $context=null)
+    public function init(array $options, object $context=null)
     {
-        $this->options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
+        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
         
         $this->backend=$this->options['jsonrpc_backend'];
         $this->is_debug=$this->options['jsonrpc_is_debug'];

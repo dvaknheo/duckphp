@@ -10,12 +10,10 @@ use DNMVCS\Core\SuperGlobal;
 trait AppPluginTrait
 {
     public $plugin_options=[
-        'plugin_mode'=>false,
-        
+    
+        'plugin_path'=>null,
         'plugin_path_namespace'=>null,
         'plugin_namespace'=>null,
-        
-        'plugin_skip_autoload'=>false,
         
         'plugin_routehook_position'=>'append-outter',
         
@@ -31,11 +29,21 @@ trait AppPluginTrait
     protected $path_config_override='';
     public function initAsPlugin(array $options=[], ?object $context=null)
     {
+        $this->plugin_options=array_intersect_key(array_replace_recursive($this->plugin_options, $options)??[], $this->plugin_options);
+        //override me
         return $this->defaultInitAsPlugin($options, $context);
     }
     protected function defaultInitAsPlugin(array $options=[], ?object $context=null)
     {
-        $this->plugin_options=array_intersect_key(array_replace_recursive($this->plugin_options, $options)??[], $this->plugin_options);
+        $class=static::class;
+        $t=explode('\\',$class);
+        $t_class=array_pop($t);
+        $t_base=array_pop($t);
+        $namespace=implode('\\',$t);
+        
+        $myfile=(new \ReflectionClass(static::class))->getFileName();
+        $root=substr($myfile,0,-strlen($t_class)-strlen($t_base)-5);
+        
         $this->context_path=$context->options['path'];
         $this->path_view_override  =rtrim($this->context_path .$this->plugin_options['plugin_path_namespace'].'/'.$this->plugin_options['plugin_path_view'], '/').'/';
         $this->path_config_override=rtrim($this->context_path .$this->plugin_options['plugin_path_namespace'].'/'.$this->plugin_options['plugin_path_conifg'], '/').'/';
@@ -44,9 +52,7 @@ trait AppPluginTrait
         if ($this->plugin_options['plugin_search_config']) {
             $this->plugin_options['plugin_files_conifg']=$this->searchAllPluginFile($this->path_config_override, $setting_file);
         }
-        if (!$this->plugin_options['plugin_skip_autoload']) {
-            AutoLoader::G()->assignPathNamespace($this->plugin_options['plugin_path_namespace'], $this->plugin_options['plugin_namespace']);
-        }
+        
         foreach ($this->plugin_options['plugin_files_conifg'] as $name) {
             $config_data=$this->includeFileForPluginConfig($this->path_config_override.$name.'.php');
             Configer::G()->prependConfig($name, $config_data);
@@ -84,6 +90,7 @@ trait AppPluginTrait
     }
     public function _PluginRouteHook($path_info)
     {
+        $this->runAsPlugin();
         View::G()->setOverridePath($this->path_view_override);
         $route=new Route();
         $options=$this->options;
@@ -92,5 +99,9 @@ trait AppPluginTrait
         $route->path_info=$path_info;
         $flag=$route->defaultRunRouteCallback($path_info);
         return $flag;
+    }
+    protected function runAsPlugin()
+    {
+        // ovverride md;
     }
 }

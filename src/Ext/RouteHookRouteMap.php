@@ -7,7 +7,7 @@ use DNMVCS\Core\Route;
 class RouteHookRouteMap
 {
     use SingletonEx;
-    const DEFAULT_OPTIONS=[
+    public $options=[
         'route_map'=>[],
     ];
     
@@ -21,9 +21,10 @@ class RouteHookRouteMap
         return static::G()->doHook($path_info);
     }
     ////
-    public function init($options=[], $context=null)
+    public function init(array $options, object $context=null)
     {
-        $this->route_map=array_merge($this->route_map, $options['route_map']??[]);
+        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
+        $this->route_map=array_merge($this->route_map, $this->options['route_map']??[]);
         
         if ($context) {
             Route::G()->add404Handler([static::class,'Hook']);

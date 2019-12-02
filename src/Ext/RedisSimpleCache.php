@@ -7,14 +7,17 @@ class RedisSimpleCache //extends Psr\SimpleCache\CacheInterface;
 {
     use SingletonEx;
     
+    public $options=[
+    ];
     public $redis=null;
     public $prefix='';
     
     public function __construct()
     {
     }
-    public function init(array $options, $context=null)
+    public function init(array $options, object $context=null)
     {
+        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
         $this->redis=$options['redis']??null;
         $this->prefix=$options['prefix']??'';
     }

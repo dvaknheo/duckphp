@@ -49,6 +49,7 @@ class App
             'use_super_global'=>false,
             'skip_view_notice_error'=>true,
             'skip_404_handler'=>false,
+            'skip_plugin_check'=>false,
             
             //// error handler ////
             'handle_all_dev_error'=>true,
@@ -164,9 +165,9 @@ class App
         return $override_class::G();
     }
     //init
-    public function init(array $options=[], object $context=null)
+    public function init(array $options, object $context=null)
     {
-        if (isset($context) && isset($options['plugin_mode'])) {
+        if (!($options['skip_plugin_check']??false) && isset($context)) {
             return $this->initAsPlugin($options, $context);
         }
         AutoLoader::G()->init($options, $this)->run();
@@ -423,7 +424,7 @@ trait Core_Handler
         }
         //// no error_404 setting.
         if (!$error_view) {
-            echo "404 File Not Found\n<!--DNMVCS set options ['error_404']='_sys/error-404.php' to override me   -->\n";
+            echo "404 File Not Found\n<!--DNMVCS set options ['error_404'] to override me   -->\n";
             return;
         }
         
@@ -454,7 +455,8 @@ trait Core_Handler
         ////////  no  error_500 or error_exception setting
         if (!$error_view) {
             $desc=$is_error?'Internal Error':'Internal Exception';
-            echo "$desc \n<!--DNMVCS set options ['error_500']='_sys/error-500'  -->\n";
+            $error_config=$is_error?'error_500':'error_exception';
+            echo "$desc \n<!--DNMVCS set options ['{$error_config}'] to override me  -->\n";
             
             if ($data['is_debug']) {
                 echo "<h3>{$data['class']}({$data['code']}):{$data['message']}</h3>";

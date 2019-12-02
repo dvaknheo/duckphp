@@ -5,7 +5,7 @@ use DNMVCS\Ext\DBManager;
 
 class DBReusePoolProxy extends DBManager
 {
-    const DEFAULT_OPTIONS=[
+    public $options_ex=[
         'db_reuse_size' => 100,
         'db_reuse_timeout' => 5,
     ];
@@ -16,9 +16,9 @@ class DBReusePoolProxy extends DBManager
     protected $is_static=true;
     public function __construct()
     {
-        //$this->options=array_merge(parent::$options,$this->options);
+        $this->options=array_merge($this->options_ex,$this->options);
     }
-    public function init($options=[], $context=null)
+    public function init(array $options, object $context=null)
     {
         $this->db_reuse_size=$options['db_reuse_size']??100;
         $this->db_reuse_timeout=$options['db_reuse_timeout']??5;

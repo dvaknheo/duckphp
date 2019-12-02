@@ -6,7 +6,8 @@ use DNMVCS\Core\SingletonEx;
 class Pager
 {
     use SingletonEx;
-    const DEFAULT_OPTIONS=[
+    
+    public $options=[
         'url'=>null,
         'key'=>null,
         'page_size'=>null,
@@ -53,8 +54,11 @@ class Pager
         return $this->current_page;
     }
 
-    public function init($options=[], $context=null)
+    public function init(array $options, object $context=null)
     {
+        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
+        $options=$this->options;
+        
         $this->url=$options['url']??static::SG()->_SERVER['REQUEST_URI'];
         $this->key=$options['key']??$this->key;
         $this->page_size=$options['page_size']??$this->page_size;

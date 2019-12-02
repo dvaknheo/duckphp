@@ -45,7 +45,7 @@ class DNMVCS extends App //implements SwooleExtAppInterface
                 'DNMVCS\Ext\RouteHookRouteMap'=>true,
                 'DNMVCS\Ext\StrictCheck'=>true,
                 'DNMVCS\Ext\SimpleLogger'=>true,
-                'DNMVCS\Ext\RouteHookOneFileMode'=>true,
+                'DNMVCS\Ext\RouteHookOneFileMode'=>false,
                 
                 'DNMVCS\Ext\RedisManager'=>false,
                 'DNMVCS\Ext\RedisSimpleCache'=>false,

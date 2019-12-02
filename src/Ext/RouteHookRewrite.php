@@ -8,7 +8,7 @@ use DNMVCS\Core\Route;
 class RouteHookRewrite
 {
     use SingletonEx;
-    const DEFAULT_OPTIONS=[
+    public $options=[
         'rewrite_map'=>[],
     ];
     protected $rewrite_map=[];
@@ -21,9 +21,10 @@ class RouteHookRewrite
     {
         return static::G()->doHook($path_info);
     }
-    public function init($options=[], $context=null)
+    public function init(array $options, object $context=null)
     {
-        $this->rewrite_map=array_merge($this->rewrite_map, $options['rewrite_map']??[]);
+        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
+        $this->rewrite_map=array_merge($this->rewrite_map, $this->options['rewrite_map']??[]);
         
         if ($context) {
             Route::G()->addRouteHook([static::class,'Hook'], 'prepend-outter');

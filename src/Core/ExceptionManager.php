@@ -7,7 +7,7 @@ class ExceptionManager
 {
     use SingletonEx;
     
-    const DEFAULT_OPTIONS=[
+    public $options=[
         'handle_all_dev_error'=>true,
         'handle_all_exception'=>true,
         'system_exception_handler'=>null,
@@ -15,10 +15,8 @@ class ExceptionManager
         'default_exception_handler'=>null,
         'dev_error_handler'=>null,
     ];
-    public $options=[];
     
     protected $exceptionHandlers=[];
-
     protected $default_exception_handler=null;
     
     protected $system_exception_handler=null;
@@ -79,9 +77,9 @@ class ExceptionManager
         }
         ($this->default_exception_handler)($ex);
     }
-    public function init($options=[], $context=null)
+    public function init(array $options, object $context=null)
     {
-        $this->options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
+        $this->options=array_replace_recursive($this->options, $options);
         
         $this->default_exception_handler=$this->options['default_exception_handler'];
         $this->system_exception_handler=$this->options['system_exception_handler'];

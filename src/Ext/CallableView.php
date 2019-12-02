@@ -14,10 +14,10 @@ class CallableView extends View
             'path'=>'',
             'path_view'=>'view',
         ];
-    public function init($options=[], $context=null)
+    public function init(array $options, object $context=null)
     {
         $ret=parent::init($options, $context);
-        $this->options=array_intersect_key(array_merge($this->options, $options), $this->options);
+        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
         if (!$this->options['callable_view_skip_replace']) {
             View::G(static::G());
         }

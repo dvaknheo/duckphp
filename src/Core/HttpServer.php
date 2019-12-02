@@ -7,13 +7,11 @@ class HttpServer
 {
     use SingletonEx;
     
-    const DEFAULT_OPTIONS=[
+    public $options=[
             'host'=>'127.0.0.1',
             'port'=>'9527',
             'path'=>null,
             'path_document'=>'public',
-        ];
-    const DEFAULT_OPTIONS_EX=[
         ];
     protected $cli_options=[
             'help'=>[
@@ -52,14 +50,14 @@ class HttpServer
                 'desc'=>'run background',
             ],
         ];
+    public $pid=0;
+    
     protected $cli_options_ex=[];
     protected $args=[];
     protected $docroot='';
     
     protected $host;
     protected $port;
-    public $options;
-    public $pid=0;
     
     public function __construct()
     {
@@ -68,15 +66,11 @@ class HttpServer
     {
         return static::G()->init($options)->run();
     }
-    public function init($options=[], $context=null)
+    public function init(array $options, object $context=null)
     {
-        $options=array_replace_recursive(static::DEFAULT_OPTIONS, static::DEFAULT_OPTIONS_EX, $options);
-        
-        $this->options=$options;
-        
-        $this->host=$options['host'];
-        $this->port=$options['port'];
-        $this->cli_options=array_replace_recursive($this->cli_options, $this->cli_options_ex);
+        $this->options=array_replace_recursive($this->options, $options);
+        $this->host=$this->options['host'];
+        $this->port=$this->options['port'];
         $this->args=$this->parseCaptures($this->cli_options);
         
         $this->docroot=rtrim($this->options['path'], '/').'/'.$this->options['path_document'];

@@ -9,7 +9,7 @@ class Misc
 {
     use SingletonEx;
     
-    const DEFAULT_OPTIONS=[
+    public $options=[
         'path'=>'',
         'path_lib'=>'lib',
     ];
@@ -20,9 +20,11 @@ class Misc
     public function __construct()
     {
     }
-    public function init($options=[], $context=null)
+    public function init(array $options, object $context=null)
     {
-        $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
+        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
+        $options=$this->options;
+        
         if (substr($options['path_lib'], 0, 1)==='/') {
             $this->path=rtrim($options['path_lib'], '/').'/';
         } else {

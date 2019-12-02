@@ -7,10 +7,14 @@ use DNMVCS\SwooleHttpd\SwooleHttpd;
 class HttpServer extends Server
 {
     protected $cli_options_ex=[
-            'no-swoole'=>[
-                'desc'=>'do not use swoole httpserver',
+            'swoole'=>[
+                'desc'=>'Use swoole httpserver',
             ],
     ];
+    public function __construct()
+    {
+        $this->cli_options=array_replace_recursive($this->cli_options_ex, $this->cli_options);
+    }
     protected function checkSwoole()
     {
         if (!function_exists('swoole_version')) {
@@ -23,13 +27,10 @@ class HttpServer extends Server
     }
     protected function runHttpServer()
     {
-        if (isset($this->args['no-swoole']) || isset($this->args['dry']) || isset($this->args['background'])) {
-            return parent::runHttpServer();
+        if($this->cli_options['swoole'] && $this->checkSwoole()){
+            return $this->runSwooleServer($this->options['path'], $this->host, $this->port); // @codeCoverageIgnore
         }
-        if (($this->options['background']??false) || !$this->checkSwoole()) {
-            return parent::runHttpServer();
-        }
-        return $this->runSwooleServer($this->options['path'], $this->host, $this->port); // @codeCoverageIgnore
+        return parent::runHttpServer();
     }
     protected function runSwooleServer($path, $host, $port)
     {

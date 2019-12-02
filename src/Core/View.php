@@ -21,7 +21,7 @@ class View
     public function __construct()
     {
     }
-    public function init($options=[], $context=null)
+    public function init(array $options, object $context=null)
     {
         $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
         if (substr($this->options['path_view'], 0, 1)==='/') {

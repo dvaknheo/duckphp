@@ -7,7 +7,8 @@ use DNMVCS\Core\Route;
 class Lazybones
 {
     use SingletonEx;
-    const DEFAULT_OPTIONS=[
+    
+    public $options=[
         'lazy_mode'=>true,
         'use_app_path'=>true,
         'lazy_path'=>'',//''app',
@@ -35,9 +36,10 @@ class Lazybones
     public function __construct()
     {
     }
-    public function init($options, $context=null)
+    public function init(array $options, object $context=null)
     {
-        $options=array_merge(static::DEFAULT_OPTIONS, $options);
+        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
+        $options=$this->options;
         if (!($options['lazy_mode']??false)) {
             return;
         }

@@ -34,13 +34,18 @@ class HttpServerTest extends \PHPUnit\Framework\TestCase
 }
 class HttpServerParent extends HttpServer
 {
-    protected $cli_options_ex=[
+    protected $my_cli_options=[
             'just-test'=>[
                 'short'=>'z',
                 'desc'=>'do not use swoole httpserver',
                 'optional'=>true,
             ],
     ];
+    public function __construct()
+    {
+        parent::__construct();
+        $this->cli_options=array_merge_recursive($this->cli_options,$this->my_cli_options);
+    }
     protected function getopt($options,$longopts,&$optind)
     {
         $ret=getopt($options,$longopts,$optind);

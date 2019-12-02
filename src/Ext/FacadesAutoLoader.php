@@ -6,12 +6,12 @@ use DNMVCS\Core\SingletonEx;
 class FacadesAutoLoader
 {
     use SingletonEx;
-    const DEFAULT_OPTIONS=[
+    
+    public $options=[
         'facades_namespace'=>'Facades',
         'facades_map'=>[],
         'facades_enable_autoload'=>true,
     ];
-    public $options=[];
     protected $prefix='';
     protected $facades_map=[];
     
@@ -20,9 +20,9 @@ class FacadesAutoLoader
     public function __construct()
     {
     }
-    public function init(array $options=[], $context=null)
+    public function init(array $options, object $context=null)
     {
-        $this->options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
+        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
         
         $this->facades_map=$this->options['facades_map']??[];
         $namespace_facades=$this->options['facades_namespace']??'Facades';

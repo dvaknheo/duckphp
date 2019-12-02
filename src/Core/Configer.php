@@ -6,7 +6,7 @@ use DNMVCS\Core\SingletonEx;
 class Configer
 {
     use SingletonEx;
-    const DEFAULT_OPTIONS=[
+    public $options=[
         'path'=>'',
         'path_config'=>'config',
         
@@ -21,29 +21,23 @@ class Configer
     protected $is_inited=false;
     protected $all_config=[];
     protected $setting=[];
-    protected $setting_file='setting';
-    protected $skip_setting_file=false;
-    protected $skip_env_file=true;
     
     public function __construct()
     {
     }
-    public function init($options=[], $context=null)
+    public function init(array $options, object $context=null)
     {
-        $options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
-        $this->base_path=$options['path']??'';
+        $this->options=array_replace_recursive($this->options, $options);
+        $this->base_path=$this->options['path']??'';
         
-        if (substr($options['path_config'], 0, 1)==='/') {
-            $this->path=rtrim($options['path_config'], '/').'/';
+        if (substr($this->options['path_config'], 0, 1)==='/') {
+            $this->path=rtrim($this->options['path_config'], '/').'/';
         } else {
-            $this->path=$options['path'].rtrim($options['path_config'], '/').'/';
+            $this->path=$this->options['path'].rtrim($this->options['path_config'], '/').'/';
         }
-        $this->setting=$options['setting']??[];
-        $this->all_config=$options['all_config']??[];
-        $this->setting_file=$options['setting_file']??'setting';
-        $this->skip_setting_file=$options['skip_setting_file']??false;
-        $this->skip_setting_file=$options['skip_setting_file']??false;
-        $this->skip_env_file=$options['skip_env_file']??false;
+        
+        $this->setting=$this->options['setting']??[];
+        $this->all_config=$this->options['all_config']??[];
         return $this;
     }
 
@@ -52,17 +46,18 @@ class Configer
         if ($this->is_inited) {
             return $this->setting[$key]??null;
         }
-        if (!$this->skip_env_file) {
+        if (!$this->options['skip_env_file']) {
             $env_setting=parse_ini_file(realpath($this->base_path).'/.env');
             $env_setting=$env_setting?:[];
             $this->setting=array_merge($this->setting, $env_setting);
         }
-        if (!$this->skip_setting_file) {
-            $full_setting_file=$this->path.$this->setting_file.'.php';
+        if (!$this->options['skip_setting_file']) {
+            $setting_file=$this->options['setting_file'];
+            $full_setting_file=$this->path.$setting_file.'.php';
             if (!is_file($full_setting_file)) {
                 // @codeCoverageIgnoreStart
                 echo "<h1> Class '". static::class."' Fatal: No setting file[ ".$full_setting_file.' ]!</h1>';
-                echo '<h2>change '.$this->setting_file.'.sample.php to '. $this->setting_file.".php !</h2>"; //// @codeCoverageIgnore
+                echo '<h2>change '.$setting_file.'.sample.php to '. $setting_file.".php !</h2>"; //// @codeCoverageIgnore
                 echo "<h2> Or turn on  options ['skip_setting_file']</h2>"; //
                 exit;
                 // @codeCoverageIgnoreEnd

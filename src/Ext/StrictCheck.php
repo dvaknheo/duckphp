@@ -25,9 +25,9 @@ class StrictCheck
     public function __construct()
     {
     }
-    public function init($options=[], $context=null)
+    public function init(array $options, object $context=null)
     {
-        $this->options=array_merge($this->options, $options);
+        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
         if ($context) {
             $this->initContext($options, $context);
         }

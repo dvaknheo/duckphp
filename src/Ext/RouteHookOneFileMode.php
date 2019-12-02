@@ -9,7 +9,7 @@ use DNMVCS\Core\Route;
 class RouteHookOneFileMode
 {
     use SingletonEx;
-    const DEFAULT_OPTIONS=[
+    public $options=[
         'key_for_action'=>'_r',
         'key_for_module'=>'',
     ];
@@ -19,11 +19,12 @@ class RouteHookOneFileMode
     public function __construct()
     {
     }
-    public function init($options=[], $context=null)
+    public function init(array $options, object $context=null)
     {
-        $options=array_merge(static::DEFAULT_OPTIONS, $options);
-        $this->key_for_action=$options['key_for_action'];
-        $this->key_for_module=$options['key_for_module'];
+        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
+        
+        $this->key_for_action=$this->options['key_for_action'];
+        $this->key_for_module=$this->options['key_for_module'];
         
         if (!$this->key_for_action && ! $this->key_for_module) {
             return $this;

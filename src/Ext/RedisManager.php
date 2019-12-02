@@ -17,7 +17,7 @@ class RedisManager
             ]
     */
     use SingletonEx;
-    const DEFAULT_OPTIONS=[
+    public $options=[
         'redis_list'=>null,
         'use_context_redis_setting'=>true,
         'enable_simple_cache'=>true,
@@ -26,16 +26,17 @@ class RedisManager
     const TAG_WRITE=0;
     const TAG_READ=1;
     
-    public $options;
+
     protected $pool=[];
     protected $redis_config_list=[];
     
     public function __construct()
     {
     }
-    public function init($options = [], $context = null)
+    public function init(array $options, object $context=null)
     {
-        $this->options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
+        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
+        
         $this->redis_config_list=$this->options['redis_list'];
         if ($context) {
             $this->initContext($options, $context);

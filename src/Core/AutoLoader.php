@@ -6,7 +6,8 @@ use DNMVCS\Core\SingletonEx;
 class AutoLoader
 {
     use SingletonEx;
-    const DEFAULT_OPTIONS=[
+    
+    public $options=[
             'path'=>null,
             'namespace'=>'MY',
             'path_namespace'=>'app',
@@ -28,16 +29,17 @@ class AutoLoader
     public function __construct()
     {
     }
-    public function init($options=[], $context=null)
+    public function init(array $options, object $context=null)
     {
         if ($this->is_inited) {
             return $this;
         }
         $this->is_inited=true;
         
-        $options=array_merge(static::DEFAULT_OPTIONS, $options);
+        $this->options=array_merge($this->options, $options);
+        $options=$this->options;
         
-        if (!isset($options['path']) || !$options['path']) {
+        if (empty($options['path'])) {
             $path=realpath(getcwd().'/../');
             $options['path']=$path;
         }

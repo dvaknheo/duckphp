@@ -7,7 +7,11 @@ use DNMVCS\DB\DB;
 class DBManager
 {
     use SingletonEx;
-    const DEFAULT_OPTIONS=[
+
+    const TAG_WRITE=0;
+    const TAG_READ=1;
+    
+    public $options=[
         'db_create_handler'=>null,
         'db_close_handler'=>null,
         'db_exception_handler'=>null,
@@ -17,9 +21,7 @@ class DBManager
         'use_context_db_setting'=>true,
         'db_close_at_output'=>true,
     ];
-    const TAG_WRITE=0;
-    const TAG_READ=1;
-    public $options=[];
+
     
     protected $database_config_list=[];
     protected $databases=[];
@@ -35,16 +37,16 @@ class DBManager
     public function __construct()
     {
     }
-    public function init($options=[], $context=null)
+    public function init(array $options, object $context=null)
     {
-        $this->options=$options=array_replace_recursive(static::DEFAULT_OPTIONS, $options);
+        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
         
-        $this->before_get_db_handler=$options['before_get_db_handler']??null;
-        $this->database_config_list=$options['database_list'];
-        $this->db_create_handler=$options['db_create_handler']??[DB::class,'CreateDBInstance'];
-        $this->db_close_handler=$options['db_close_handler']??[DB::class,'CloseDBInstance'];
-        $this->db_exception_handler=$options['db_exception_handler']??null;
-        $this->use_context_db_setting=$options['use_context_db_setting'];
+        $this->before_get_db_handler=$this->options['before_get_db_handler']??null;
+        $this->database_config_list=$this->options['database_list'];
+        $this->db_create_handler=$this->options['db_create_handler']??[DB::class,'CreateDBInstance'];
+        $this->db_close_handler=$this->options['db_close_handler']??[DB::class,'CloseDBInstance'];
+        $this->db_exception_handler=$this->options['db_exception_handler']??null;
+        $this->use_context_db_setting=$this->options['use_context_db_setting'];
         if ($context) {
             $this->initContext($options, $context);
         }

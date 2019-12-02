@@ -112,28 +112,27 @@ class Route
     }
 
     
-    public function init($options=[], $context=null)
+    public function init(array $options, object $context=null)
     {
-        $options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
-        $this->options=$options;
-        $this->controller_prefix_post=$options['controller_prefix_post'];
+        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
+        $this->controller_prefix_post=$this->options['controller_prefix_post'];
         $this->enable_post_prefix=$this->controller_prefix_post?true:false;
         
-        $this->controller_hide_boot_class=$options['controller_hide_boot_class'];
-        $this->controller_methtod_for_miss=$options['controller_methtod_for_miss'];
+        $this->controller_hide_boot_class=$this->options['controller_hide_boot_class'];
+        $this->controller_methtod_for_miss=$this->options['controller_methtod_for_miss'];
         
-        $this->controller_welcome_class=$options['controller_welcome_class'];
+        $this->controller_welcome_class=$this->options['controller_welcome_class'];
         
         
-        $namespace=$options['namespace'];
-        $namespace_controller=$options['namespace_controller'];
+        $namespace=$this->options['namespace'];
+        $namespace_controller=$this->options['namespace_controller'];
         if (substr($namespace_controller, 0, 1)!=='\\') {
             $namespace_controller=rtrim($namespace, '\\').'\\'.$namespace_controller;
         }
         $namespace_controller=trim($namespace_controller, '\\');
         $this->namespace_controller=$namespace_controller;
         
-        $this->controller_base_class=$options['controller_base_class'];
+        $this->controller_base_class=$this->options['controller_base_class'];
         if ($this->controller_base_class && substr($this->controller_base_class, 0, 1)!=='\\') {
             $this->controller_base_class=rtrim($namespace, '\\').'\\'.$this->controller_base_class;
         }

@@ -23,9 +23,9 @@ class SuperGlobal
     public $is_inited=false;
     public function __construct()
     {
-        $this->init();
+        $this->initialize();
     }
-    public function init()
+    public function initialize()
     {
         if ($this->is_inited) {
             return $this;
