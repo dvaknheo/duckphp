@@ -199,7 +199,7 @@ class App
         return $object->onInit();
     }
     //for override
-    protected function initAsPlugin(array $options=[], object $context=null)
+    protected function initAsPlugin(array $options, object $context=null)
     {
         static::ThrowOn(true, 'DNMVCS, only for override');
         return $this; // @codeCoverageIgnore

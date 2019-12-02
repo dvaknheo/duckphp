@@ -10,8 +10,6 @@ use DNMVCS\Core\SuperGlobal;
 trait AppPluginTrait
 {
     public $plugin_options=[
-    
-        'plugin_path'=>null,
         'plugin_path_namespace'=>null,
         'plugin_namespace'=>null,
         
@@ -21,39 +19,49 @@ trait AppPluginTrait
         'plugin_path_view'=>'view',
         
         'plugin_search_config'=>false,
-        'plugin_files_conifg'=>[],
-
+        'plugin_files_config'=>[],
     ];
-    protected $context_path=null;
     protected $path_view_override='';
     protected $path_config_override='';
-    public function initAsPlugin(array $options=[], ?object $context=null)
+    public function initAsPlugin(array $options, object $context=null)
     {
-        $this->plugin_options=array_intersect_key(array_replace_recursive($this->plugin_options, $options)??[], $this->plugin_options);
         //override me
         return $this->defaultInitAsPlugin($options, $context);
     }
-    protected function defaultInitAsPlugin(array $options=[], ?object $context=null)
+    protected function pluginModeInitOptions($options)
     {
+        $this->plugin_options=array_intersect_key(array_replace_recursive($this->plugin_options, $options)??[], $this->plugin_options);
         $class=static::class;
-        $t=explode('\\',$class);
-        $t_class=array_pop($t);
-        $t_base=array_pop($t);
-        $namespace=implode('\\',$t);
         
-        $myfile=(new \ReflectionClass(static::class))->getFileName();
-        $root=substr($myfile,0,-strlen($t_class)-strlen($t_base)-5);
+        if(!isset($this->plugin_options['plugin_namespace']) || !isset($this->plugin_options['plugin_path_namespace'])){
+            $t=explode('\\',$class);
+            $t_class=array_pop($t);
+            $t_base=array_pop($t);
+            $namespace=implode('\\',$t);
+            if(!isset($this->plugin_options['plugin_namespace'])){
+                $this->plugin_options['plugin_namespace']=$namespace;
+            }
+            if(!isset($this->plugin_options['plugin_path_namespace'])){
+                $myfile=(new \ReflectionClass($class))->getFileName();
+                $path=substr($myfile,0,-strlen($t_class)-strlen($t_base)-6); //6='//.php';
+                $this->plugin_options['plugin_path_namespace']=$path;
+            }
+        }
+    }
+    protected function defaultInitAsPlugin(array $options, object $context=null)
+    {
+        $this->pluginModeInitOptions($options);
         
-        $this->context_path=$context->options['path'];
-        $this->path_view_override  =rtrim($this->context_path .$this->plugin_options['plugin_path_namespace'].'/'.$this->plugin_options['plugin_path_view'], '/').'/';
-        $this->path_config_override=rtrim($this->context_path .$this->plugin_options['plugin_path_namespace'].'/'.$this->plugin_options['plugin_path_conifg'], '/').'/';
-
         $setting_file=$context->options['setting_file']??'setting';
+        
+        $this->path_view_override =rtrim($this->plugin_options['plugin_path_namespace'].$this->plugin_options['plugin_path_view'], '/').'/';
+        $this->path_config_override=rtrim($this->plugin_options['plugin_path_namespace'].$this->plugin_options['plugin_path_conifg'], '/').'/';
+
         if ($this->plugin_options['plugin_search_config']) {
-            $this->plugin_options['plugin_files_conifg']=$this->searchAllPluginFile($this->path_config_override, $setting_file);
+            $this->plugin_options['plugin_files_config']=$this->searchAllPluginFile($this->path_config_override, $setting_file);
         }
         
-        foreach ($this->plugin_options['plugin_files_conifg'] as $name) {
+        foreach ($this->plugin_options['plugin_files_config'] as $name) {
             $config_data=$this->includeFileForPluginConfig($this->path_config_override.$name.'.php');
             Configer::G()->prependConfig($name, $config_data);
         }

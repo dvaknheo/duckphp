@@ -105,14 +105,14 @@ class DBManager
         }
         if (!isset($tag)) {
             if (empty($this->database_config_list)) {
-                return null;
+                return null; // @codeCoverageIgnore
             }
             $t=array_keys($this->database_config_list);
             $tag=$t[0];
         }
         $db_config=$this->database_config_list[$tag]??null;
         if ($db_config===null) {
-            return null;
+            return null; // @codeCoverageIgnore
         }
         return $this->getDatabase($db_config, $tag);
     }

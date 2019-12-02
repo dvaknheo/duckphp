@@ -23,9 +23,7 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
             'override_class'=>'\\'.AppTestApp::class,
         ];
         $plugin_options=[
-            'plugin_mode'=>true,
-            'plugin_path_namespace'=>'secondapp',
-            'plugin_namespace'=>'tests\DNMVCS\Core\Second',
+            'plugin_path_namespace'=>$path_app.'secondapp/',
             
             'plugin_routehook_position'=>'append-outter',
             
@@ -42,6 +40,10 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
         \DNMVCS\Core\Route::G()->path_info='/second';
         DNMVCS::G()->run();
         
+        $plugin_options['plugin_path_namespace']=null;
+        $plugin_options['plugin_search_config']=false;
+        AppPluginTraitApp::G(new AppPluginTraitApp())->init($plugin_options,DNMVCS::G()->init($options));
+        var_dump(AppPluginTraitApp::G()->plugin_options['plugin_path_namespace']);
         \MyCodeCoverage::G()->end(AppPluginTrait::class);
         $this->assertTrue(true);
     }
