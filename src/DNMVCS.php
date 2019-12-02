@@ -18,7 +18,7 @@ use DNMVCS\Ext\SimpleLogger;
 
 class DNMVCS extends App //implements SwooleExtAppInterface
 {
-    const VERSION = '1.1.2';
+    const VERSION = '1.1.5';
     
     use DNMVCS_Glue;
     
