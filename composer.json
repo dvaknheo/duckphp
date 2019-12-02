@@ -1,5 +1,5 @@
 {
-    "name": "dnmvcs/framework",
+    "name": "dvaknheo/duckphp",
     "description": "A Framework in 2018",
     "type": "library",
     "keywords": [
@@ -23,6 +23,6 @@
         "php": ">=7.1.0"
 	},
     "bin": [
-        "bin/dnmvcs"
+        "bin/duckphp"
     ]
 }
