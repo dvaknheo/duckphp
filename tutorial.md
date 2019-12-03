@@ -1,9 +1,9 @@
-# DNMVCS 教程
+# DuckPHP 教程
 ## 第一章 快速入门
 ### 安装
-假定不管什么原因，选用了 DNMVCS 这个框架，需要快速入门.
+假定不管什么原因，选用了 DuckPHP 这个框架，需要快速入门.
 
-最快的方式是从 github 下载 DNMVCS。
+最快的方式是从 github 下载 DuckPHP。
 
 到所在目录之下运行
 
@@ -13,10 +13,10 @@ php template/bin/start_server.php
 浏览器中打开 http://127.0.0.1:8080/ 得到下面欢迎页就表明 OK 了
 ```text
 Don't run the template file directly
-Hello DNMVCS
+Hello DuckPHP
 
 Time Now is [2019-04-19T21:36:06+08:00]
-For More Take the DNMVCS-FullTest (TODO)
+For More Take the DuckPHP-FullTest (TODO)
 ```
 发布的时候，把网站目录指向 public/index.php 就行。
 ### 另一种安装模式： Composer 安装
@@ -113,8 +113,6 @@ BaseService 也是不强求的，我们 extends BaseService 是为了能用 G �
 
 Model 类是实现基本功能的。
 
-这里用 NoDB_ 前缀表示我们没使用到数据库。
-
 ```php
 <?php
 // app/Model/NoDB_MiscModel.php
@@ -123,7 +121,7 @@ namespace MY\Model;
 use MY\Base\BaseModel;
 use MY\Base\Helper\ModelHelper as M;
 
-class NoDB_MiscModel extends BaseModel
+class MiscModel extends BaseModel
 {
     public function getTime()
     {
@@ -140,7 +138,7 @@ test
 <2019-04-19T22:21:49+08:00>
 ```
 
-## 第二章 DNMVCS 应用普通开发人员参考
+## 第二章 DuckPHP 应用普通开发人员参考
 
 ### 基本的 DMMVCS 目录结构
 
@@ -179,8 +177,8 @@ test
 命名空间 MY 是 可调的。比如调整成 MyProject ,TheBigOneProject  等。
 参见 $options['namespace']
 
-作为应用程序员， 你不能引入 DNMVCS 的任何东西，就当 DNMVCS 命名空间不存在。
-核心程序员才去研究 DNMVCS 类的东西。
+作为应用程序员， 你不能引入 DuckPHP 的任何东西，就当 DuckPHP 命名空间不存在。
+核心程序员才去研究 DuckPHP 类的东西。
 
 * 写 Model 你可能要引入 MY\Base\Helper\ModelHelper 助手类别名为 M 。
 * 写 Serivce 你可能要引入 MY\Base\Helper\SerivceHelper 助手类别名为 S 。
@@ -348,7 +346,7 @@ assignRoute($route,$callback=null)
 
 
 这是第三方的扩展
-## 第三章 DNMVCS 应用核心开发人员参考
+## 第三章 DuckPHP 应用核心开发人员参考
 
 ### 入口文件
 我们看入口类文件 public/index.php
@@ -362,19 +360,19 @@ $options=[];
 
 $options['path']=$path;
 $options['namespace']='MY';
-\DNMVCS\DNMVCS::RunQuickly($options, function () {
+\DuckPHP\App::RunQuickly($options, function () {
 });
-// \DNMVCS\DNMVCS::G()->init($options)->run();
-// var_export(\DNMVCS\DNMVCS::G()->options);
+// \DuckPHP\App::G()->init($options)->run();
+// var_export(\DuckPHP\App::G()->options);
 ```
 入口类前面部分是处理头文件的。
 然后处理直接 copy 代码提示，不要直接运行。
 起作用的主要就这句话
 ```php
-\DNMVCS\DNMVCS::RunQuickly($options, function () {
+\DuckPHP\App::RunQuickly($options, function () {
 });
 ```
-相当于后面调用的 \DNMVCS\DNMVCS::G()->init($options)->run(); 第二个参数的回调用于 init 之后执行。
+相当于后面调用的 \DuckPHP\App::G()->init($options)->run(); 第二个参数的回调用于 init 之后执行。
 
 init, run 分两步走的模式。
 
@@ -432,7 +430,7 @@ const DEFAULT_OPTIONS=[
     基本路径，其他配置会用到这个基本路径。
 'namespace' =>'MY',
 
-    工程的 autoload 的命名空间，和很多框架限定只能用 App 作为命名空间不同，DNMVCS 允许你用不同的命名空间
+    工程的 autoload 的命名空间，和很多框架限定只能用 App 作为命名空间不同，DuckPHP 允许你用不同的命名空间
 'path_namespace'=>'app',
 
     默认的 psr-4 的工程路径配合 skip_app_autoload  使用。
@@ -444,7 +442,7 @@ const DEFAULT_OPTIONS=[
 **重要选项**
 
     基于 namespace ,如果这个选项的类存在，则在init()的时候会切换到这个类完成后续初始化，并返回这个类的实例。
-    注意到 app/Base/App.php 这个文件的类 MY\Base\App extends DNMVCS\DNMVCS;
+    注意到 app/Base/App.php 这个文件的类 MY\Base\App extends DuckPHP\App;
     如果以  \ 开头则是绝对 命名空间
 'is_debug'=>false,
 
@@ -481,9 +479,9 @@ error_* 选项为 null 用默认，为 callable 是回调，为string 则是调�
 
 ##### "ext" 选项和扩展
 
-ext 是一个选项，这里单独成一节是因为这个选项很重要。涉及到 DNMVCS 的扩展系统
+ext 是一个选项，这里单独成一节是因为这个选项很重要。涉及到 DuckPHP 的扩展系统
 
-在 DNMVCS/Core 里， ext 是个空数组。
+在 DuckPHP/Core 里， ext 是个空数组。
 
     扩展映射 ,$ext_class => $options。
 
@@ -496,7 +494,7 @@ ext 是一个选项，这里单独成一节是因为这个选项很重要。涉�
     如果 $options 为 true ，则会把当前 $options 传递进去。
 
 
-### DNMVCS 工程目录结构
+### DuckPHP 工程目录结构
 
 工程的桩代码,完整的默认目录结构
 
@@ -554,12 +552,11 @@ ContrllorHelper,ModelHelper,ServiceHelper 如果你一个人偷懒，直接用 A
 
 ### 入口类 App 类的方法 以及高级程序员。
 
-MY\Base\App 是 继承扩展 DNMVCS\DNMVCS 类的方法。
+MY\Base\App 是 继承扩展 DuckPHP\App 类的方法。
 
-DNMVCS\DNMVCS 类或其子类在初始化之后，会切换入这个子类走后面的流程。
+DuckPHP\App 类或其子类在初始化之后，会切换入这个子类走后面的流程。
 
-MY\Base\App 包含所有助手类的方法。
-
+DuckPHP\App 包含所有助手类的方法。所有助手方法都在 DuckPHP\App 里实现
 
 #### 用于 override 的两个重要方法
 
@@ -630,9 +627,9 @@ extendComponents($class,$methods,$components);
     79 个方法。
 
 ### 请求流程和生命周期
-DNMVCS::RunQuickly($options) 发生了什么
+DuckPHP\App::RunQuickly($options) 发生了什么
 
-DNMVCS::G()->init($options,$callback)->run();
+DuckPHP\App::G()->init($options,$callback)->run();
 
 init 为初始化阶段 ，run 为运行阶段。$callback 在init() 之后执行（也是为了偷懒
 
@@ -665,18 +662,18 @@ run() 运行阶段
         如果没显示，而且还有 beforeShowHandlers() 处理（用于处理 DB 关闭等
         设置 RuntimeState 为结束
 
-## 第三章 DNMVCS 核心开发和扩展参考
+## 第三章 DuckPHP 核心开发和扩展参考
 
 #### 可变单例 G 方法
 这里，对之前的 G 方法统一说明
 G 方法表面上是个单例函数，实际上的可替换的。
-DNMVCS 系统组件的连接，多是以调用类的可变单例来实现的。
+DuckPHP 系统组件的连接，多是以调用类的可变单例来实现的。
 
 #### 结构图和组件分析
-![core](doc/dnmvcs.gv.svg)
+![core](doc/DuckPHP.gv.svg)
 
 
-DNMVCS/Framework 的扩展都放在 DNMVCS\\Ext 命名空间里
+DuckPHP/Framework 的扩展都放在 DuckPHP\\Ext 命名空间里
 下面按字母顺序介绍这些扩展的作用
 按选项，说明，公开方法，一一介绍。
 
@@ -711,13 +708,13 @@ ExceptionManager::G(MyExceptionManager::G())->init($this->options,$this);
 为了 onInit 使用方便
 
 * 为什么 Core 里面的都是 App::Foo(); 而 Ext 里面的都是 App::G()::Foo();
-因为 Core 里的扩展都是在 DNMVCS\Core\App 下的。
+因为 Core 里的扩展都是在 DuckPHP\Core\App 下的。
 
 Core 下面的扩展不会单独拿出来用， 
 如果你扩展了该方面的类，最好也是让用户通过 App 或者 MVCS 组件来使用他们。
 
 ### Core\Autoloader
-DNMVCS\AutoLoader 类是 psr-4 加载类。
+DuckPHP\AutoLoader 类是 psr-4 加载类。
 ##### 选项
 ```php
 $options=[
@@ -767,7 +764,7 @@ path_view 如果是 / 开始的，会忽略 path 选项
 ##### 方法
 
 ### Core\Route
-DNMVCS\Core\Route 这个类可以单独拿出来做路由用。
+DuckPHP\Core\Route 这个类可以单独拿出来做路由用。
 ##### 选项
 ```php
 $options=[
@@ -806,7 +803,7 @@ $options=[
 这是一个单用 Route 组件的例子
 ```php
 <?php
-use DNMVCS\Core\Route;
+use DuckPHP\Core\Route;
 require(__DIR__.'/vendor/autoload.php');
 
 class Main
@@ -935,18 +932,18 @@ DB
     execQuick($sql, ...$args); //   执行某条sql ，不用 exec , execute 是为了兼容其他类。
 #### 示例
 使用数据库，在 设置里正确设置 database_list 这个数组，包含多个数据库配置
-然后在用到的地方调用 DNMVCS::DB($tag=null) 得到的就是 DB 对象，用来做各种数据库操作。
+然后在用到的地方调用 DuckPHP::DB($tag=null) 得到的就是 DB 对象，用来做各种数据库操作。
 $tag 对应 $setting['database_list'][$tag]。默认会得到最前面的 tag 的配置。
 
-你不必担心每次框架初始化会连接数据库。只有第一次调用 DNMVCS::DB() 的时候，才进行数据库类的创建。
+你不必担心每次框架初始化会连接数据库。只有第一次调用 DuckPHP::DB() 的时候，才进行数据库类的创建。
 
 DB 的使用方法，看后面的参考。
 示例如下
 
 ```php
 <?php
-use DNMVCS\DNMVCS;
-use DNMVCS\Helper\ModelHelper as M;
+use DuckPHP\App as DuckPHP;
+use DuckPHP\Helper\ModelHelper as M;
 
 require_once('../vendor/autoload.php');
 
@@ -960,11 +957,11 @@ $options['database_list']=[[
     'username'=>'root',
     'password'=>'123456',
 ]]; // 这里用选项里的
-DNMVCS::RunQuickly($options,function(){    
+DuckPHP::RunQuickly($options,function(){    
     $sql="select 1+? as t";
     $data=M::DB()->fetch($sql,2);
     var_dump($data);
-    DNMVCS::exit_system(0);
+    DuckPHP::exit_system(0);
 });
 ```
 #### 使用 think-orm 的 DB
@@ -972,15 +969,15 @@ DNMVCS::RunQuickly($options,function(){
 ```php
 <?php
 use think\facade\Db;
-use DNMVCS\Ext\DBManager;
-use DNMVCS\DNMVCS;
+use DuckPHP\Ext\DBManager;
+use DuckPHP\App;
 require_once('../vendor/autoload.php');
 
 $options=[];
 $options['override_class']='';      // 示例文件不要被子类干扰。
 $options['skip_setting_file']=true;// 不需要配置文件。
 $options['error_exception']=null; // 使用默认的错误视图
-DNMVCS::RunQuickly($options,function(){
+DuckPHP::RunQuickly($options,function(){
     Db::setConfig([
         'default'     => 'mysql',
         'connections' => [
@@ -996,9 +993,9 @@ DNMVCS::RunQuickly($options,function(){
     //就这句话了
     DBManager::G()->setDBHandler(function(){return Db::class;});
     $sql="select * from Users where true limit 1";
-    $data=DNMVCS::DB()::query($sql);
+    $data=DuckPHP::DB()::query($sql);
     var_dump($data);
-    DNMVCS::exit_system(0);
+    DuckPHP::exit_system(0);
 });
 
 ```
@@ -1028,7 +1025,7 @@ TestModel::foo(); // <=> \MY\Model\TestModel::G()->foo();
 ```php
 // Base\App onInit;
 $this->options['ext']['Ext\JsonRpcExt']=[
-    'jsonrpc_backend'=>['http://test.dnmvcs.dev/json_rpc','127.0.0.1:80'], 
+    'jsonrpc_backend'=>['http://test.duckphp.dev/json_rpc','127.0.0.1:80'], 
 ];
 ```
 
@@ -1037,9 +1034,9 @@ $this->options['ext']['Ext\JsonRpcExt']=[
 <?php
 require_once(__DIR__.'/../vendor/autoload.php');
 
-use DNMVCS\Core\Route;
-use DNMVCS\Core\SingletonEx;
-use DNMVCS\Ext\JsonRpcExt;
+use DuckPHP\Core\Route;
+use DuckPHP\Core\SingletonEx;
+use DuckPHP\Ext\JsonRpcExt;
 use JsonRpc\CalcService as RemoteCalcService;
 
 class CalcService
@@ -1073,7 +1070,7 @@ $options=[
 ];
 JsonRpcExt::G()->init([
     'jsonrpc_namespace'=>'JsonRpc',
-    'jsonrpc_backend'=>['http://d.dnmvcs.dev/2.php/json_rpc','127.0.0.1:80'], //请自行修改这里。
+    'jsonrpc_backend'=>['http://d.DuckPHP.dev/2.php/json_rpc','127.0.0.1:80'], //请自行修改这里。
     'jsonrpc_is_debug'=>true,
 ],null);
 $flag=Route::RunQuickly($options);
@@ -1082,7 +1079,7 @@ if (!$flag) {
     echo "404!";
 }
 ```
-这个例子，将会两次远程调用 http://d.dnmvcs.dev/2.php/json_rpc 的 CalcService 。
+这个例子，将会两次远程调用 http://d.DuckPHP.dev/2.php/json_rpc 的 CalcService 。
 
 这里的 json_rpc 是服务端的实现
 
@@ -1090,7 +1087,7 @@ if (!$flag) {
 
 ### Pager
 分页。只是解决了有无问题，如果有更好的，你可以换之。
-为什么DNMVCS 框架要带这么个简单的分页类，因为不想做简单的演示的时候要去找分页处理。
+为什么 DuckPHP 框架要带这么个简单的分页类，因为不想做简单的演示的时候要去找分页处理。
 ```php
 [
     'url'=>null,
@@ -1189,7 +1186,7 @@ redis 管理器。 redis 入口
 
 ## 插件系统。
 
-## 第四章 DNMVCS 其他类参考
+## 第四章 DuckPHP 其他类参考
 
 ----
 ####
@@ -1200,39 +1197,5 @@ new 多个效率比单例 低
 协程单例，需要的操作要多。效率底点。
 但是协程单例可以防低级错误。
 ### 本章说明
-DNMVCS 的使用者角色分为 应用程序员，和核心程序员两种
+DuckPHP 的使用者角色分为 应用程序员，和核心程序员两种
 应用程序员负责日常 Curd 。核心程序员做的是更高级的任务。
-
-
-
-#### SingletonEx
-SingletonEx 可变单例， 是 DNMVCS 系的基础
-
-#### DNMVCS/Core
-DNMVCS 核心功能。
-DNMVCS/Core 目录 实现了一个微型框架。包括文件风格的路由。异常管理。和 Swoole 兼容的准备工作。
-独立的带一个 HttpServer 服务器。
-
-#### DNMVCS/Framework
-DNMVCS 的常规框架。
-比 DNMVCS/Core 多了，数据库的处理，路由重写。
-和对 SwooleHttpd 的支持。
-
-#### DNMVCS/SwooleHttpd
-SwooleHttpd 是一个 Swoole Http 服务器框架
-
-#### DNMVCS/Plus
-对 DNMVCS 的第三方扩展的称呼
-如果这些扩展，只用到可变单例， 引入 SingletonEx 这个项目够了。
-
-#### 发布 DNMVCS 的 Composer 命名规范
-
-
-* DNSingletonEx/SingletonEx
-* DNMVCS/Framework
-
-* Somebody/foo-DNSingletonEx
-你只用到 SingletonEx 这个类。
-
-* Somebody/foo-DNMVCS
-你只和 DNMVCS/Core 有关
