@@ -4,27 +4,35 @@
 
 $longopts  = array(
     "help",
-    "create",
     "start",
+    "create",
+    "force",
+    "full",
     "prune-core",
     "prune-helper",
     
     "namespace:",
     "dest:",
     "autoload-file:",
+    'host:',
+    'port:',
 );
 $cli_options = getopt('', $longopts);
 $options=[];
 $options['help']=isset($cli_options['help'])?true:false;
-$options['create']=isset($cli_options['create'])?true:false;
 $options['start']=isset($cli_options['start'])?true:false;
+$options['create']=isset($cli_options['create'])?true:false;
+$options['force']=isset($cli_options['force'])?true:false;
 $options['prune_helper']=isset($cli_options['prune-helper'])?true:false;
 $options['prune_core']=isset($cli_options['prune-core'])?true:false;
+$options['full']=isset($cli_options['full'])?true:false;
+
 
 $options['namespace']=isset($cli_options['namespace'])?$cli_options['namespace']:'';
 $options['dest']=isset($cli_options['dest'])?$cli_options['dest']:'';
 $options['autoload_file']=isset($cli_options['autoload-file'])?$cli_options['autoload-file']:'';
-
+$options['host']=isset($cli_options['host'])?$cli_options['host']:'';
+$options['port']=isset($cli_options['port'])?$cli_options['port']:'';
 C::RunQuickly($options);
 return ;
 
@@ -57,7 +65,15 @@ class C
             $this->showHelp();
             return;
         }
-        
+        $is_done=false;
+        if ($this->options['create']) {
+            $name=$this->options['full']?'demo':'template';
+            $source= __DIR__ .'/../'.$name;
+            $dest=realpath($this->options['dest']);
+            $this->dumpDir($source, $dest, $this->options['force']);
+            
+            $is_done=true;
+        }
         if ($this->options['start']) {
             echo "----------------------\n";
             echo "Start Inner PHP Server\n";
@@ -67,25 +83,18 @@ class C
             $PHP='/usr/bin/env php ';
             $file=escapeshellcmd($file);
             $cmd=$PHP.$file;
-            $flag=system($cmd);
-            return;
-        }
-        $is_done=false;
-        if ($this->options['create']) {
-            $source= __DIR__ .'/../template';
-            $dest=realpath($this->options['dest']);
-            $this->dumpDir($source, $dest);
+            $cmd.=!empty($this->options['host'])?' --host='.escapeshellcmd($this->options['host']):'';
+            $cmd.=!empty($this->options['port'])?' --port='.escapeshellcmd($this->options['port']):'';
             
-            $is_done=true;
-        }
-        if ($this->options['start']) {
+            exec($cmd);
+            return;
         }
         if (!$is_done) {
             $this->showHelp();
             return;
         }
     }
-    public function dumpDir($source, $dest)
+    public function dumpDir($source, $dest, $force)
     {
         $source=realpath($source);
         $dest=realpath($dest);
@@ -93,6 +102,17 @@ class C
         $iterator = new \RecursiveIteratorIterator($directory);
         $files = \iterator_to_array($iterator, false);
         echo "Copying file...\n";
+        if(!$force){
+            foreach ($files as $file) {
+                $short_file_name=substr($file, strlen($source)+1);
+                $dest_file=$dest.DIRECTORY_SEPARATOR.$short_file_name;
+                if(is_file($dest_file)){
+                    echo "file exists: $dest_file \n";
+                    echo "use --force to overwrite existed files \n";
+                    return false;
+                }
+            }
+        }
         foreach ($files as $file) {
             $short_file_name=substr($file, strlen($source)+1);
             if ($short_file_name=='headfile/headfile.php') {
@@ -100,7 +120,7 @@ class C
             }
             if ($this->options['prune_helper']) {
                 if ($this->pruneHelper($short_file_name)) {
-                    var_dump("skip $short_file_name");
+                    echo "prune skip: $short_file_name \n";
                     continue;
                 }
             }
@@ -187,18 +207,19 @@ EOT;
 
 --create     Create the skeleton-project
   --namespace <namespace>   Use another project namespace.
-  --prune-core              Just use DuckPhp\Core ,but not use DuckPhp\
+  --force                   Overwrite exited files.
+  --full                    Use The demo template
+  --prune-core              Just use DuckPhp\Core ,but not use DuckPhp
   --prune-helper            Do not use the Helper class, 
   
-  --autoload-file <path> use another autoload file.
-  --dest [path] copy project file to here.
---start                     start the server var bin/start_server.php
-
+  --autoload-file <path>    Use another autoload file.
+  --dest [path]             Copy project file to here.
+--start                     Start the server var bin/start_server.php
+  --host [host]             Use this host
+  --port [port]             Use this port
 ----
 To start the project , use '--start' or run script 'bin/start_server.php'
 
 EOT;
-        //--start      Call the project start_server script. the project must has created.
-        // --force-create
     }
 }
