@@ -58,6 +58,13 @@ class C
             return;
         }
         $is_done=false;
+        if ($this->options['run']) {
+            $dest=realpath($this->options['dest']);
+            $file=$dest.'bin/start_server.php';
+            $file='/usr/bin/env php'.$file;
+            exec($file);
+            return;
+        }
         if ($this->options['create']) {
             $source= __DIR__ .'/../template';
             $dest=realpath($this->options['dest']);
@@ -179,7 +186,7 @@ EOT;
   
   --autoload-file <path> use another autoload file.
   --dest [path] copy project file to here.
-
+--run run the server var bin/start_server.php
 ----
 To start the project , use bin/start_server.php
 
