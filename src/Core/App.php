@@ -223,8 +223,8 @@ class App
         if (!$this->options['reload_for_flags']) {
             return;
         }
-        $is_debug=Configer::G()->_Setting('is_debug');
-        $platform=Configer::G()->_Setting('platform');
+        $is_debug=Configer::G()->_Setting('duckphp_is_debug');
+        $platform=Configer::G()->_Setting('duckphp_platform');
         if (isset($is_debug)) {
             $this->is_debug=$is_debug;
         }

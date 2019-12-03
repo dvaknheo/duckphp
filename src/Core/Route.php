@@ -90,10 +90,13 @@ class Route
         $document_root=rtrim($this->document_root, '/');
         $basepath=substr(rtrim($this->script_filename, '/'), strlen($document_root));
         
-        
-        
+        /*
         if (substr($basepath, -strlen('/index.php'))==='/index.php') {
             $basepath=substr($basepath, 0, -strlen('/index.php'));
+        }
+        */
+        if ($basepath==='/index.php') {
+            $basepath='/';
         }
         if (''===$url) {
             return $basepath.'/';
