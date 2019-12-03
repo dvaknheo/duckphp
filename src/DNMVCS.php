@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 // MAIN FILE
 //dvaknheo@github.com
 //OK，Lazy
