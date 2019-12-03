@@ -116,7 +116,6 @@ class HttpServer
     public function run()
     {
         $this->showWelcome();
-        
         if (isset($this->args['help'])) {
             return $this->showHelp();
         }
@@ -162,11 +161,7 @@ class HttpServer
     }
     protected function runHttpServer()
     {
-        $PHP=$_SERVER['_'];
-        if (realpath($PHP)===realpath($_SERVER['SCRIPT_FILENAME'])) {
-            $PHP='/usr/bin/env php';
-        }
-        $PHP=escapeshellcmd($PHP);
+        $PHP='/usr/bin/env php';
         $host=escapeshellcmd((string)$this->host);
         $port=escapeshellcmd((string)$this->port);
         $document_root=escapeshellcmd($this->docroot);

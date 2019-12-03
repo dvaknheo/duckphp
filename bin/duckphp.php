@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 // bin/duckphp.php --create --namespace MyProject --prune-core --prune-helper --dest build --autoload-file ../autoload.php  --start
 /////////////////
@@ -58,15 +57,20 @@ class C
             $this->showHelp();
             return;
         }
-        $is_done=false;
-        if ($this->options['run']) {
+        
+        if ($this->options['start']) {
+            echo "----------------------\n";
+            echo "Start Inner PHP Server\n";
+            echo "----------------------\n";
             $dest=realpath($this->options['dest']);
-            $file=$dest.'bin/start_server.php';
-            $file='/usr/bin/env php'.$file;
-            exec($file);
-            echo $file;
+            $file=$dest.'/bin/start_server.php';
+            $PHP='/usr/bin/env php ';
+            $file=escapeshellcmd($file);
+            $cmd=$PHP.$file;
+            $flag=system($cmd);
             return;
         }
+        $is_done=false;
         if ($this->options['create']) {
             $source= __DIR__ .'/../template';
             $dest=realpath($this->options['dest']);
@@ -182,15 +186,16 @@ EOT;
 --help       Show this help.
 
 --create     Create the skeleton-project
-  --namespace <namespace>  Use another project namespace.
-  --prune-core             Just use DuckPhp\Core ,but not use DuckPhp\
-  --prune-helper           Do not use the Helper class, 
+  --namespace <namespace>   Use another project namespace.
+  --prune-core              Just use DuckPhp\Core ,but not use DuckPhp\
+  --prune-helper            Do not use the Helper class, 
   
   --autoload-file <path> use another autoload file.
   --dest [path] copy project file to here.
---run run the server var bin/start_server.php
+--start                     start the server var bin/start_server.php
+
 ----
-To start the project , use bin/start_server.php
+To start the project , use '--start' or run script 'bin/start_server.php'
 
 EOT;
         //--start      Call the project start_server script. the project must has created.
