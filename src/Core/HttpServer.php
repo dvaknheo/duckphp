@@ -185,6 +185,6 @@ class HttpServer
             return $pid;
         }
         echo "DuckPhp running at : http://$host:$port/ \n";
-        return exec($cmd); // @codeCoverageIgnore
+        return system($cmd); // @codeCoverageIgnore
     }
 }

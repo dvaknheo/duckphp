@@ -86,7 +86,7 @@ class C
             $cmd.=!empty($this->options['host'])?' --host='.escapeshellcmd($this->options['host']):'';
             $cmd.=!empty($this->options['port'])?' --port='.escapeshellcmd($this->options['port']):'';
             
-            exec($cmd);
+            system($cmd);
             return;
         }
         if (!$is_done) {
