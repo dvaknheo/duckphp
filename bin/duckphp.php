@@ -39,6 +39,7 @@ class C
         'namespace' =>'MY',
         'src'=>'',
         'dest'=>'',
+        'run'=>false,
     ];
     public function RunQuickly($options)
     {
@@ -63,6 +64,7 @@ class C
             $file=$dest.'bin/start_server.php';
             $file='/usr/bin/env php'.$file;
             exec($file);
+            echo $file;
             return;
         }
         if ($this->options['create']) {
