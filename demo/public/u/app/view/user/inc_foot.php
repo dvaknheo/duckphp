@@ -1,0 +1,4 @@
+<hr />
+[[foot]]
+</body>
+</html>
