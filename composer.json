@@ -24,5 +24,8 @@
 	},
     "bin": [
         "bin/duckphp"
+    ],
+    "post-install-cmd": [
+            "echo 'Welcome to use DuckPHP ,run bin/duckphp form more.'"
     ]
 }
