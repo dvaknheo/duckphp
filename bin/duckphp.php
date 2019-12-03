@@ -1,6 +1,6 @@
 #!/usr/bin/env php
 <?php
-// bin/dnmvcs.php --create --namespace MyProject --prune-core --prune-helper --dest build --autoload-file ../autoload.php  --start
+// bin/duckphp.php --create --namespace MyProject --prune-core --prune-helper --dest build --autoload-file ../autoload.php  --start
 /////////////////
 
 $longopts  = array(
@@ -133,8 +133,8 @@ class C
     }
     protected function filteText($data)
     {
-        $data=str_replace('//* DNMVCS TO DELETE ', '/* DNMVCS HAS DELETE ', $data);
-        $data=str_replace('/* DNMVCS TO KEEP ', '//* DNMVCS HAS KEEP ', $data);
+        $data=str_replace('//* DuckPhp TO DELETE ', '/* DuckPhp HAS DELETE ', $data);
+        $data=str_replace('/* DuckPhp TO KEEP ', '//* DuckPhp HAS KEEP ', $data);
         return $data;
     }
     protected function filteNamespace($data)
@@ -156,15 +156,14 @@ class C
     }
     protected function purceCore($data)
     {
-        $data=str_replace("DNMVCS\\", "DNMVCS\\Core\\", $data);
-        $data=str_replace("DNMVCS\\Core\\DNMVCS", "DNMVCS\\Core\\App", $data);
-        $data=str_replace("DNMVCS\\Core\\Core", "DNMVCS\\Core", $data);
+        $data=str_replace("DuckPhp\\", "DuckPhp\\Core\\", $data);
+        $data=str_replace("DuckPhp\\Core\\Core", "DuckPhp\\Core", $data);
         return $data;
     }
     protected function showWelcome()
     {
         echo <<<EOT
-Well Come to use DNMVCS Manager , for more info , use --help \n
+Well Come to use DuckPhp Manager , for more info , use --help \n
 EOT;
     }
     protected function showHelp()
@@ -175,7 +174,7 @@ EOT;
 
 --create     Create the skeleton-project
   --namespace <namespace>  Use another project namespace.
-  --prune-core             Just use DNMVCS\Core ,but not use DNMVC\
+  --prune-core             Just use DuckPhp\Core ,but not use DuckPhp\
   --prune-helper           Do not use the Helper class, 
   
   --autoload-file <path> use another autoload file.

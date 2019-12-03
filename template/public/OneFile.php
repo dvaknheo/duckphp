@@ -1,6 +1,6 @@
 <?php
 die("暂时无效");
-use \DuckPhp\DuckPhp as DN;
+use \DuckPhp\App;
 
 $options=[];
 require_once(__DIR__.'/../headfile/headfile.php');
@@ -16,84 +16,84 @@ $view_data=[];
 /////////////////////
 function get_data()
 {
-    return isset(DN::SG()->_SESSION['content'])?DN::SG()->_SESSION['content']:'';
+    return isset(App::SG()->_SESSION['content'])?App::SG()->_SESSION['content']:'';
 }
 function add_data($content)
 {
-    DN::SG()->_SESSION['content']=$content;
+    App::SG()->_SESSION['content']=$content;
 }
 function update_data($content)
 {
-    DN::SG()->_SESSION['content']=$content;
+    App::SG()->_SESSION['content']=$content;
 }
 function delete_data()
 {
-    unset(DN::SG()->_SESSION['content']);
+    unset(App::SG()->_SESSION['content']);
 }
 /////////////
 function action_index()
 {
     global $view_data;
-    $view_data['content']=nl2br(DN::H(get_data()));
-    $view_data['url_add']=DN::URL('add');
-    $view_data['url_edit']=DN::URL('edit');
-    $token=DN::SG()->_SESSION['token']=md5(mt_rand());
-    $view_data['url_del']=DN::URL('del?token='.$token);
+    $view_data['content']=nl2br(App::H(get_data()));
+    $view_data['url_add']=App::URL('add');
+    $view_data['url_edit']=App::URL('edit');
+    $token=App::SG()->_SESSION['token']=md5(mt_rand());
+    $view_data['url_del']=App::URL('del?token='.$token);
 }
 function action_add()
 {
     $data=['x'=>'add'];
     
-    DN::Show($data);
+    App::Show($data);
     //view_add($data);
 }
 function action_edit()
 {
     $data=['x'=>'add'];
-    $data['content']=DN::H(get_data());
+    $data['content']=App::H(get_data());
 
-    DN::Show($data);
+    App::Show($data);
 }
 function action_del()
 {
-    $old_token=DN::SG()->_SESSION['token'];
-    $new_token=DN::SG()->_GET['token'];
+    $old_token=App::SG()->_SESSION['token'];
+    $new_token=App::SG()->_GET['token'];
     $flag=($old_token==$new_token)?true:false;
     if ($flag) {
-        unset(DN::SG()->_SESSION['content']);
+        unset(App::SG()->_SESSION['content']);
     }
-    unset(DN::SG()->_SESSION['token']);
+    unset(App::SG()->_SESSION['token']);
     $data['msg']=$flag?'':'验证失败';
-    $data['url_back']=DN::URL('');
+    $data['url_back']=App::URL('');
     
-    DN::Show($data, 'dialog');
+    App::Show($data, 'dialog');
 }
 function action_do_edit()
 {
-    update_data(DN::SG()->_POST['content']);
+    update_data(App::SG()->_POST['content']);
     $data=[];
-    $data['url_back']=DN::URL('');
-    DN::Show($data, 'dialog');
+    $data['url_back']=App::URL('');
+    App::Show($data, 'dialog');
 }
 function action_do_add()
 {
-    add_data(DN::SG()->_POST['content']);
+    add_data(App::SG()->_POST['content']);
     $data=[];
-    $data['url_back']=DN::URL('');
-    DN::Show($data, 'dialog');
+    $data['url_back']=App::URL('');
+    App::Show($data, 'dialog');
 }
 function URL($url)
 {
-    return DN::URL($url);
+    return App::URL($url);
 }
 function H($str)
 {
-    return DN::H($str);
+    return App::H($str);
 }
 ////////////////////////////////////
 
 
-DN::RunOneFileMode($options);
+App::RunOneFileMode($options);
 
 if (!$view_data) {
     return;

@@ -155,7 +155,6 @@ class App
             $override_class=$namespace.'\\'.$override_class;
         }
         $override_class=ltrim($override_class, '\\');
-        
         if (!$override_class || !class_exists($override_class)) {
             return null;
         }
@@ -435,7 +434,7 @@ trait Core_Handler
     public function _OnException($ex): void
     {
         $is_error=is_a($ex, 'Error') || is_a($ex, 'ErrorException')?true:false;
-        $error_view=$is_error?$this->options['error_500']:$this->options['error_exception']??null;
+        $error_view=$is_error?($this->options['error_500']??null):($this->options['error_exception']??null);
         $error_view=$this->error_view_inited?$error_view:null;
         
         static::header('', true, 500);

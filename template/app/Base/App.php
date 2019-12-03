@@ -1,7 +1,7 @@
 <?php
 namespace MY\Base;
 
-use DuckPhp\DuckPhp as DN;
+use DuckPhp\App as DN;
 
 class App extends DN
 {
