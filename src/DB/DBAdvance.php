@@ -20,7 +20,7 @@ trait DBAdvance
     {
         $a=array();
         foreach ($array as $k =>$v) {
-            $a[]=$k.'='.$this->pdo->quote($v);
+            $a[]=$k.'='.$this->pdo->quote((string)$v);
         }
         return implode(',', $a);
     }

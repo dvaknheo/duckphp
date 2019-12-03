@@ -73,7 +73,7 @@ class HttpServer
         $this->port=$this->options['port'];
         $this->args=$this->parseCaptures($this->cli_options);
         
-        $this->docroot=rtrim($this->options['path'], '/').'/'.$this->options['path_document'];
+        $this->docroot=rtrim($this->options['path']??'', '/').'/'.$this->options['path_document'];
         
         $this->host=$this->args['host']??$this->host;
         $this->port=$this->args['port']??$this->port;
@@ -167,8 +167,8 @@ class HttpServer
             $PHP='/usr/bin/env php';
         }
         $PHP=escapeshellcmd($PHP);
-        $host=escapeshellcmd($this->host);
-        $port=escapeshellcmd($this->port);
+        $host=escapeshellcmd((string)$this->host);
+        $port=escapeshellcmd((string)$this->port);
         $document_root=escapeshellcmd($this->docroot);
        
         if (isset($this->args['background'])) {

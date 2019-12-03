@@ -137,7 +137,7 @@ class App
     {
         if (!isset($options['path']) || !$options['path']) {
             $path=realpath($_SERVER['SCRIPT_FILENAME'].'/../');
-            $options['path']=$path;
+            $options['path']=(string)$path;
         }
         $options['path']=rtrim($options['path'], '/').'/';
         $this->options=array_replace_recursive(static::DEFAULT_OPTIONS, static::DEFAULT_OPTIONS_EX, $options);

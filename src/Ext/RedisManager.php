@@ -85,12 +85,12 @@ class RedisManager
     public function createServer($config)
     {
         $redis = new Redis();
-        $redis->connect($config['host'], $config['port']);
+        $redis->connect($config['host'], (int)$config['port']);
         if (isset($config['auth'])) {
             $redis->auth($config['auth']);
         }
         if (isset($config['select'])) {
-            $redis->select($config['select']);
+            $redis->select((int)$config['select']);
         }
         return $redis;
     }

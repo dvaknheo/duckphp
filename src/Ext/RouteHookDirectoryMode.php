@@ -37,7 +37,7 @@ class RouteHookDirectoryMode
         $document_root=SuperGlobal::G()->_SERVER['DOCUMENT_ROOT'];
         
         $path_info=substr($document_root.$input_path, strlen($basepath));
-        $path_info=ltrim($path_info, '/').'/';
+        $path_info=ltrim((string)$path_info, '/').'/';
         $blocks=explode('/', $path_info);
 
         $path_info='';
