@@ -22,8 +22,10 @@ For More Take the DNMVCS-FullTest (TODO)
 ### 另一种安装模式： Composer 安装
 在工程目录下执行：
 ```
-composer require dnmvcs/framework
-./vendor/bin/dnmvcs --create
+composer require dvaknheo/duckphp # 用 require 
+./vendor/bin/duckphp --help     # 查看有什么指令
+./vendor/bin/duckphp --create   # --full # 创建工程
+./vendor/bin/duckphp --start    # --host=127.0.0.1 --port=8080 # 开始 web 服务器
 ```
 将会直接把 template 的东西复制到工程并做调整，同样执行
 ```bash

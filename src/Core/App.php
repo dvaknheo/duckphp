@@ -798,7 +798,7 @@ trait Core_Glue
         return Configer::G()->_LoadConfig($file_basename);
     }
     
-    //// source is dym ////
+    //// the next is dynamic ////
     //autoloader
     public function assignPathNamespace($path, $namespace=null)
     {
