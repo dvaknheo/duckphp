@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Base;
 
 use DuckPhp\Base\StrictModelTrait;
-use DuckPhp\DuckPhp;
+use DuckPhp\App as DuckPhp;
 
 class StrictModelTraitTest extends \PHPUnit\Framework\TestCase
 {

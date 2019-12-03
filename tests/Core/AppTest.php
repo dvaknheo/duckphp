@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Core;
 
 use DuckPhp\Core\App;
-use DuckPhp\DuckPhp;
+use DuckPhp\App as DuckPhp;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\View;
 use DuckPhp\Core\SingletonEx;

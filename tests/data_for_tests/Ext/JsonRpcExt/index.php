@@ -22,14 +22,14 @@ class Main
     }
     public function json_rpc()
     {
-        $post=DuckPhp\DuckPhp::SG()->_POST;
+        $post=DuckPhp\App::SG()->_POST;
         if($post['method']==='TestService.the500'){
             var_dump(DATE(DATE_ATOM));
             return;
         }
-        $ret= JsonRpcExt::G()->onRpcCall(DuckPhp\DuckPhp::SG()->_POST);
+        $ret= JsonRpcExt::G()->onRpcCall(DuckPhp\App::SG()->_POST);
         
-        DuckPhp\DuckPhp::ExitJson($ret);
+        DuckPhp\App::ExitJson($ret);
     }
 }
 
@@ -39,4 +39,4 @@ $options=[
     'namespace_controller'=>'\\',
 ];
 
-$flag=DuckPhp\DuckPhp::RunQuickly($options);
+$flag=DuckPhp\App::RunQuickly($options);

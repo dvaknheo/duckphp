@@ -1,7 +1,7 @@
 <?php
 namespace tests\DuckPhp;
 
-use DuckPhp\DuckPhp;
+use DuckPhp\App as DuckPhp;
 use DuckPhp\Core\SingletonEx;
 use DuckPhp\Ext\Misc;
 

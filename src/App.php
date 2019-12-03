@@ -4,7 +4,7 @@
 //OK，Lazy
 namespace DuckPhp;
 
-use DuckPhp\Core\App;
+use DuckPhp\Core\App as Core_App;
 
 use DuckPhp\Ext\StrictCheck;
 use DuckPhp\Ext\DBManager;
@@ -16,7 +16,7 @@ use DuckPhp\Ext\SimpleLogger;
 
 //use DuckPhp\SwooleHttpd\SwooleExtAppInterface;
 
-class DuckPhp extends App //implements SwooleExtAppInterface
+class App extends Core_App //implements SwooleExtAppInterface
 {
     const VERSION = '1.1.5';
     

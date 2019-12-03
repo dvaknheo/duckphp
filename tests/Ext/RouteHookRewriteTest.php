@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Ext;
 
 use DuckPhp\Ext\RouteHookRewrite;
 use DuckPhp\Core\Route;
-use DuckPhp\DuckPhp;
+use DuckPhp\App as DuckPhp;
 
 class RouteHookRewriteTest extends \PHPUnit\Framework\TestCase
 {

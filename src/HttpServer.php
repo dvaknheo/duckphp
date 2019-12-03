@@ -48,6 +48,6 @@ class HttpServer extends Server
             $dn_options['skip_setting_file']=true;
             echo "Don't run the template file directly \n";
         }
-        DuckPhp::RunQuickly($dn_options);
+        App::RunQuickly($dn_options);
     }
 }

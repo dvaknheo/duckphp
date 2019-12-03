@@ -15,12 +15,9 @@
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
-<!--
-we do codecoverage by self.
     <filter>
         <whitelist>
             <directory>./src/</directory>
         </whitelist>
     </filter>
--->
 </phpunit>

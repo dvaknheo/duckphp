@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Helper;
 
 use DuckPhp\Helper\ControllerHelper;
-use DuckPhp\DuckPhp;
+use DuckPhp\App as DuckPhp;
 class ControllerHelperTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
