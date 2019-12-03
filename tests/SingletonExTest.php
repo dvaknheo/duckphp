@@ -1,7 +1,7 @@
 <?php
-namespace tests\DNMVCS;
+namespace tests\DuckPhp;
 
-use DNMVCS\SingletonEx;
+use DuckPhp\SingletonEx;
 
 class SingletonExTest extends \PHPUnit\Framework\TestCase
 {

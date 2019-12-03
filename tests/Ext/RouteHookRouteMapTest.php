@@ -1,8 +1,8 @@
 <?php
-namespace tests\DNMVCS\Ext;
+namespace tests\DuckPhp\Ext;
 
-use DNMVCS\Ext\RouteHookRouteMap;
-use DNMVCS\Core\Route;
+use DuckPhp\Ext\RouteHookRouteMap;
+use DuckPhp\Core\Route;
 
 class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
 {

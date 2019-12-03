@@ -1,7 +1,7 @@
 <?php
-namespace tests\DNMVCS\Core;
+namespace tests\DuckPhp\Core;
 
-use DNMVCS\Core\AutoLoader;
+use DuckPhp\Core\AutoLoader;
 
 class AutoLoaderTest extends \PHPUnit\Framework\TestCase
 {

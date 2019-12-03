@@ -1,12 +1,12 @@
 <?php
-namespace tests\DNMVCS\Ext;
+namespace tests\DuckPhp\Ext;
 
-use DNMVCS\Ext\DBReusePoolProxy;
-use DNMVCS\Ext\DBManager;
-use DNMVCS\DB\DB;
-use DNMVCS\Core\App;
-use DNMVCS\Core\SingletonEx;
-use DNMVCS\DNMVCS;
+use DuckPhp\Ext\DBReusePoolProxy;
+use DuckPhp\Ext\DBManager;
+use DuckPhp\DB\DB;
+use DuckPhp\Core\App;
+use DuckPhp\Core\SingletonEx;
+use DuckPhp\DuckPhp;
 
 class DBReusePoolProxyTest extends \PHPUnit\Framework\TestCase
 {

@@ -1,8 +1,8 @@
 <?php
-namespace tests\DNMVCS\Helper;
+namespace tests\DuckPhp\Helper;
 
-use DNMVCS\Helper\ControllerHelper;
-use DNMVCS\DNMVCS;
+use DuckPhp\Helper\ControllerHelper;
+use DuckPhp\DuckPhp;
 class ControllerHelperTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
@@ -12,8 +12,8 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         $options=[
             'skip_setting_file'=>true,
         ];
-        DNMVCS::G()->init($options);
-        DNMVCS::G()->system_wrapper_replace([
+        DuckPhp::G()->init($options);
+        DuckPhp::G()->system_wrapper_replace([
             'exit_system' =>function(){ echo "change!\n";},
         ]);
         

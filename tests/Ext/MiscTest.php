@@ -1,9 +1,9 @@
 <?php
-namespace tests\DNMVCS\Ext;
+namespace tests\DuckPhp\Ext;
 
-use DNMVCS\Ext\Misc;
-use DNMVCS\DNMVCS;
-use DNMVCS\Core\SingletonEx;
+use DuckPhp\Ext\Misc;
+use DuckPhp\DuckPhp;
+use DuckPhp\Core\SingletonEx;
 
 class MiscTest extends \PHPUnit\Framework\TestCase
 {
@@ -15,14 +15,14 @@ class MiscTest extends \PHPUnit\Framework\TestCase
             'path'=>$path_lib,
             'path_lib'=>'',
         ];
-        Misc::G()->init($options,DNMVCS::G());
+        Misc::G()->init($options,DuckPhp::G());
         $options=[
             'path_lib'=>$path_lib,
             'use_super_global'=>false,
             'skip_setting_file'=>true,
             'error_404'=>null,
         ];
-        Misc::G()->init($options,DNMVCS::G());
+        Misc::G()->init($options,DuckPhp::G());
         
         Misc::Import('file');
         
@@ -39,18 +39,18 @@ class MiscTest extends \PHPUnit\Framework\TestCase
         Misc::explodeService(FakeObject::G(), $namespace=__NAMESPACE__ .'\\');
         
         
-        DNMVCS::G()->system_wrapper_replace([
+        DuckPhp::G()->system_wrapper_replace([
             'exit_system' =>function(){ echo "change!\n";},
         ]);
-        DNMVCS::G()->init($options)->run();
+        DuckPhp::G()->init($options)->run();
         
         Misc::mapToService(FakeService::class, []);
         
-        DNMVCS::G()->setRouteCallingMethod('m1');
+        DuckPhp::G()->setRouteCallingMethod('m1');
         Misc::mapToService(FakeService::class, ['id'=>111]);
         Misc::mapToService(FakeService::class, ['id'=>"zz"]);
         
-        DNMVCS::G()->setRouteCallingMethod('m1');
+        DuckPhp::G()->setRouteCallingMethod('m1');
         Misc::mapToService(FakeService::class, []);
         
         $object=new \stdClass();

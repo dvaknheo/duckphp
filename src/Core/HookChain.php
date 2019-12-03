@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-namespace DNMVCS\Core;
+namespace DuckPhp\Core;
 
 use ArrayAccess;
 

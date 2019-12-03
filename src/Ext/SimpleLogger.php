@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
-namespace DNMVCS\Ext;
+namespace DuckPhp\Ext;
 
-use DNMVCS\Core\SingletonEx;
+use DuckPhp\Core\SingletonEx;
 
 class SimpleLogger //extends Psr\Log\LoggerInterface;
 {
@@ -19,7 +19,7 @@ class SimpleLogger //extends Psr\Log\LoggerInterface;
     public $options=[
         'path'=>'',
         'log_file'=>'',
-        'log_prefix'=>'DNMVCSLog',
+        'log_prefix'=>'DuckPhpLog',
     ];
     protected $path;
     

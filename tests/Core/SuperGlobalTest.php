@@ -1,7 +1,7 @@
 <?php
-namespace tests\DNMVCS\Core;
+namespace tests\DuckPhp\Core;
 
-use DNMVCS\Core\SuperGlobal;
+use DuckPhp\Core\SuperGlobal;
 
 class SuperGlobalTest extends \PHPUnit\Framework\TestCase
 {

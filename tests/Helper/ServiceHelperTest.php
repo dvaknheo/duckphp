@@ -1,7 +1,7 @@
 <?php
-namespace tests\DNMVCS\Helper;
+namespace tests\DuckPhp\Helper;
 
-use DNMVCS\Helper\ServiceHelper;
+use DuckPhp\Helper\ServiceHelper;
 
 class ServiceHelperTest extends \PHPUnit\Framework\TestCase
 {

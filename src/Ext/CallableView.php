@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
-namespace DNMVCS\Ext;
+namespace DuckPhp\Ext;
 
-use DNMVCS\Core\View;
+use DuckPhp\Core\View;
 
 class CallableView extends View
 {

@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
-namespace DNMVCS\Core\Helper;
+namespace DuckPhp\Core\Helper;
 
-use DNMVCS\Core\Helper\HelperTrait;
+use DuckPhp\Core\Helper\HelperTrait;
 
 class ModelHelper
 {

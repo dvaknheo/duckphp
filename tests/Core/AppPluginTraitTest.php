@@ -1,10 +1,10 @@
 <?php 
-namespace tests\DNMVCS\Core
+namespace tests\DuckPhp\Core
 {
 
-    use DNMVCS\Core\AppPluginTrait;
-    use DNMVCS\Core\App;
-    use DNMVCS\DNMVCS;
+    use DuckPhp\Core\AppPluginTrait;
+    use DuckPhp\Core\App;
+    use DuckPhp\DuckPhp;
 
 class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
 {
@@ -34,21 +34,21 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
             //'plugin_files_conifg'=>[],
         ];
         
-        AppPluginTraitApp::G()->init($plugin_options,DNMVCS::G()->init($options));
+        AppPluginTraitApp::G()->init($plugin_options,DuckPhp::G()->init($options));
         
-        \DNMVCS\Core\Route::G()->bindServerData(\DNMVCS\Core\SuperGlobal::G()->_SERVER);
-        \DNMVCS\Core\Route::G()->path_info='/second';
-        DNMVCS::G()->run();
+        \DuckPhp\Core\Route::G()->bindServerData(\DuckPhp\Core\SuperGlobal::G()->_SERVER);
+        \DuckPhp\Core\Route::G()->path_info='/second';
+        DuckPhp::G()->run();
         
         $plugin_options['plugin_path_namespace']=null;
         $plugin_options['plugin_search_config']=false;
-        AppPluginTraitApp::G(new AppPluginTraitApp())->init($plugin_options,DNMVCS::G()->init($options));
+        AppPluginTraitApp::G(new AppPluginTraitApp())->init($plugin_options,DuckPhp::G()->init($options));
         var_dump(AppPluginTraitApp::G()->plugin_options['plugin_path_namespace']);
         \MyCodeCoverage::G()->end(AppPluginTrait::class);
         $this->assertTrue(true);
     }
 }
-class AppPluginTraitApp extends DNMVCS
+class AppPluginTraitApp extends DuckPhp
 {
     use AppPluginTrait;
     
@@ -60,15 +60,15 @@ class AppPluginTraitApp extends DNMVCS
 }
 
 }
-namespace tests\DNMVCS\Core\Second\Controller
+namespace tests\DuckPhp\Core\Second\Controller
 {
-    use DNMVCS\DNMVCS;
+    use DuckPhp\DuckPhp;
 ////[[[[
 class Main
 {
     public function second()
     {
-        DNMVCS::Show(['date'=>DATE(DATE_ATOM)],'main');
+        DuckPhp::Show(['date'=>DATE(DATE_ATOM)],'main');
     }
 }
 ////]]]]

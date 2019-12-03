@@ -1,7 +1,7 @@
 <?php
-namespace tests\DNMVCS\Core;
+namespace tests\DuckPhp\Core;
 
-use DNMVCS\Core\RuntimeState;
+use DuckPhp\Core\RuntimeState;
 
 class RuntimeStateTest extends \PHPUnit\Framework\TestCase
 {

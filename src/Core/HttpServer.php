@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
-namespace DNMVCS\Core;
+namespace DuckPhp\Core;
 
-use DNMVCS\Core\SingletonEx;
+use DuckPhp\Core\SingletonEx;
 
 class HttpServer
 {
@@ -135,7 +135,7 @@ class HttpServer
     }
     protected function showWelcome()
     {
-        echo "DNMVCS: Wellcome, for more info , use --help \n";
+        echo "DuckPhp: Wellcome, for more info , use --help \n";
     }
     protected function showHelp()
     {
@@ -175,7 +175,7 @@ class HttpServer
             $this->options['background']=true;
         }
         if ($this->options['background']??false) {
-            echo "DNMVCS: RunServer by PHP inner http server $host:$port\n";
+            echo "DuckPhp: RunServer by PHP inner http server $host:$port\n";
         }
         $cmd="$PHP -S $host:$port -t $document_root ";
         if (isset($this->args['dry'])) {
@@ -189,6 +189,7 @@ class HttpServer
             $this->pid=(int)$pid;
             return $pid;
         }
+        echo "DuckPhp running at : http://$host:$port \n";
         return exec($cmd); // @codeCoverageIgnore
     }
 }

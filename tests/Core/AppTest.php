@@ -1,11 +1,11 @@
 <?php
-namespace tests\DNMVCS\Core;
+namespace tests\DuckPhp\Core;
 
-use DNMVCS\Core\App;
-use DNMVCS\DNMVCS;
-use DNMVCS\Core\Configer;
-use DNMVCS\Core\View;
-use DNMVCS\Core\SingletonEx;
+use DuckPhp\Core\App;
+use DuckPhp\DuckPhp;
+use DuckPhp\Core\Configer;
+use DuckPhp\Core\View;
+use DuckPhp\Core\SingletonEx;
 
 class AppTest extends \PHPUnit\Framework\TestCase
 {
@@ -285,8 +285,8 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'use_super_global' => true,
             'override_class'=>'\\'.AppTestApp::class,
         ];
-        DNMVCS::G(new DNMVCS())->init($options);
-        DNMVCS::G()->getStaticComponentClasses();
+        DuckPhp::G(new DuckPhp())->init($options);
+        DuckPhp::G()->getStaticComponentClasses();
         
         App::G()->getDynamicComponentClasses();
         

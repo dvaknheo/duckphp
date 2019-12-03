@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
-namespace DNMVCS\Base;
+namespace DuckPhp\Base;
 
-use DNMVCS\Core\SingletonEx;
-use DNMVCS\Core\App;
+use DuckPhp\Core\SingletonEx;
+use DuckPhp\Core\App;
 
 trait StrictServiceTrait
 {

@@ -1,7 +1,7 @@
 <?php
-namespace tests\DNMVCS\Core\Helper;
+namespace tests\DuckPhp\Core\Helper;
 
-use DNMVCS\Core\Helper\ControllerHelper;
+use DuckPhp\Core\Helper\ControllerHelper;
 
 class ControllerHelperTest extends \PHPUnit\Framework\TestCase
 {
@@ -18,7 +18,7 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
             'skip_setting_file'=>true,
             'path_config'=>$path_config,
         ];
-        \DNMVCS\Core\Configer::G()->init($options);
+        \DuckPhp\Core\Configer::G()->init($options);
         $key='key';
         $file_basename='config';
         
@@ -45,7 +45,7 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         $options=[
             'path_view'=>$path_view,
         ];
-        \DNMVCS\Core\View::G()->init($options);
+        \DuckPhp\Core\View::G()->init($options);
         ControllerHelper::Show(['A'=>'b'],"view");
         ControllerHelper::ShowBlock("view",['A'=>'b']);
         
@@ -60,7 +60,7 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         
         $output="";
 
-        \DNMVCS\Core\App::system_wrapper_replace(['exit_system'=>function($code){
+        \DuckPhp\Core\App::system_wrapper_replace(['exit_system'=>function($code){
             var_dump(DATE(DATE_ATOM));
         }]);
         ControllerHelper::exit_system($code=0);

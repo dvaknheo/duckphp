@@ -1,8 +1,8 @@
 <?php
-namespace tests\DNMVCS\Base;
+namespace tests\DuckPhp\Base;
 
-use DNMVCS\Base\StrictServiceTrait;
-use DNMVCS\DNMVCS;
+use DuckPhp\Base\StrictServiceTrait;
+use DuckPhp\DuckPhp;
 
 class StrictServiceTraitTest extends \PHPUnit\Framework\TestCase
 {
@@ -13,7 +13,7 @@ class StrictServiceTraitTest extends \PHPUnit\Framework\TestCase
         $options=[
             'skip_setting_file'=>true,
         ];
-        DNMVCS::G()->init($options);
+        DuckPhp::G()->init($options);
         StrictServiceTraitObject::G();
         
         \MyCodeCoverage::G()->end(StrictServiceTrait::class);

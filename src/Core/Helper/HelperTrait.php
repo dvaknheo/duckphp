@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
-namespace DNMVCS\Core\Helper;
+namespace DuckPhp\Core\Helper;
 
-use DNMVCS\Core\ExtendableStaticCallTrait;
-use DNMVCS\Core\ThrowOn;
-use DNMVCS\Core\App;
+use DuckPhp\Core\ExtendableStaticCallTrait;
+use DuckPhp\Core\ThrowOn;
+use DuckPhp\Core\App;
 
 trait HelperTrait
 {

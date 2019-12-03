@@ -1,7 +1,7 @@
 <?php
 function _dnmvcs_namespace_autoload($class) {
     $path=__DIR__.'/src/';
-    $namespace='DNMVCS\\';
+    $namespace='DuckPhp\\';
     if (strncmp($namespace, $class, strlen($namespace)) !== 0) {
         return false;
     }

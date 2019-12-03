@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
-namespace DNMVCS\Ext;
+namespace DuckPhp\Ext;
 
-use DNMVCS\Core\SingletonEx;
-use DNMVCS\Core\SuperGlobal;
-use DNMVCS\Ext\RouteHookRewrite;
-use DNMVCS\Core\Route;
+use DuckPhp\Core\SingletonEx;
+use DuckPhp\Core\SuperGlobal;
+use DuckPhp\Ext\RouteHookRewrite;
+use DuckPhp\Core\Route;
 
 class RouteHookOneFileMode
 {

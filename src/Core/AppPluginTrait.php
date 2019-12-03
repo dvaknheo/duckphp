@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
-namespace DNMVCS\Core;
+namespace DuckPhp\Core;
 
-use DNMVCS\Core\AutoLoader;
-use DNMVCS\Core\Configer;
-use DNMVCS\Core\View;
-use DNMVCS\Core\Route;
-use DNMVCS\Core\SuperGlobal;
+use DuckPhp\Core\AutoLoader;
+use DuckPhp\Core\Configer;
+use DuckPhp\Core\View;
+use DuckPhp\Core\Route;
+use DuckPhp\Core\SuperGlobal;
 
 trait AppPluginTrait
 {

@@ -30,4 +30,4 @@ $options=[
     'dnmvcs'=>$dn_options,
 ];
 
-DNMVCS\HttpServer::RunQuickly($options);
+DuckPhp\HttpServer::RunQuickly($options);

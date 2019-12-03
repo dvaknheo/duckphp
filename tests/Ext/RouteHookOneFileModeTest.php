@@ -1,9 +1,9 @@
 <?php
-namespace tests\DNMVCS\Ext;
+namespace tests\DuckPhp\Ext;
 
-use DNMVCS\Ext\RouteHookOneFileMode;
-use DNMVCS\Core\Route;
-use DNMVCS\Core\SuperGlobal;
+use DuckPhp\Ext\RouteHookOneFileMode;
+use DuckPhp\Core\Route;
+use DuckPhp\Core\SuperGlobal;
 
 class RouteHookOneFileModeTest extends \PHPUnit\Framework\TestCase
 {

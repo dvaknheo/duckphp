@@ -1,7 +1,7 @@
 <?php
-namespace tests\DNMVCS\DB;
+namespace tests\DuckPhp\DB;
 
-use DNMVCS\DB\DBInterface;
+use DuckPhp\DB\DBInterface;
 
 class DBInterfaceTest extends \PHPUnit\Framework\TestCase
 {

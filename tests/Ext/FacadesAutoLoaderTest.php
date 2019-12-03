@@ -1,9 +1,9 @@
 <?php
-namespace tests\DNMVCS\Ext;
+namespace tests\DuckPhp\Ext;
 
-use DNMVCS\Ext\FacadesAutoLoader;
-use DNMVCS\Core\SingletonEx;
-use Facades\tests\DNMVCS\Ext\FacadesAutoLoaderTestObject as TestObject;
+use DuckPhp\Ext\FacadesAutoLoader;
+use DuckPhp\Core\SingletonEx;
+use Facades\tests\DuckPhp\Ext\FacadesAutoLoaderTestObject as TestObject;
 
 class FacadesAutoLoaderTest extends \PHPUnit\Framework\TestCase
 {

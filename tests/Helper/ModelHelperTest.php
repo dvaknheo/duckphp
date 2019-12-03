@@ -1,8 +1,8 @@
 <?php
-namespace tests\DNMVCS\Helper;
+namespace tests\DuckPhp\Helper;
 
-use DNMVCS\Helper\ModelHelper;
-use DNMVCS\DNMVCS;
+use DuckPhp\Helper\ModelHelper;
+use DuckPhp\DuckPhp;
 
 class ModelHelperTest extends \PHPUnit\Framework\TestCase
 {
@@ -13,7 +13,7 @@ class ModelHelperTest extends \PHPUnit\Framework\TestCase
         $options=[
             'skip_setting_file'=>true,
         ];
-        DNMVCS::G()->init($options);
+        DuckPhp::G()->init($options);
         try {
         ModelHelper::DB($tag=null);
         } catch(\Throwable $ex) {

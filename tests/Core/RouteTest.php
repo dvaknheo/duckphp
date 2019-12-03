@@ -1,8 +1,8 @@
 <?php
-namespace tests\DNMVCS\Core
+namespace tests\DuckPhp\Core
 {
 
-use DNMVCS\Core\Route;
+use DuckPhp\Core\Route;
 
 class RouteTest extends \PHPUnit\Framework\TestCase
 {

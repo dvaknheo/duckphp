@@ -1,14 +1,14 @@
 <?php
-namespace tests\DNMVCS\Ext
+namespace tests\DuckPhp\Ext
 {
 
-use DNMVCS\Ext\StrictCheck;
-use DNMVCS\DNMVCS;
-use DNMVCS\Core\Route;
-use DNMVCS\Core\SingletonEx;
+use DuckPhp\Ext\StrictCheck;
+use DuckPhp\DuckPhp;
+use DuckPhp\Core\Route;
+use DuckPhp\Core\SingletonEx;
 
-use tests\DNMVCS\Ext\Model\FakeModel;
-use tests\DNMVCS\Ext\Service\FakeService;
+use tests\DuckPhp\Ext\Model\FakeModel;
+use tests\DuckPhp\Ext\Service\FakeService;
 
 class StrictCheckTest extends \PHPUnit\Framework\TestCase
 {
@@ -36,7 +36,7 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
         ];
         StrictCheck::G(new StrictCheck_FakeObject);
 
-        DNMVCS::G()->init($dn_options);
+        DuckPhp::G()->init($dn_options);
 
         $options=[
             'namespace'=> __NAMESPACE__,
@@ -46,14 +46,14 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
             'controller_base_class'=>       __NAMESPACE__ .'\\'.'Base'.'\\'.'BaseController',
             'is_debug'=>true,
         ];
-        StrictCheck::G(new StrictCheck)->init($options, DNMVCS::G());
+        StrictCheck::G(new StrictCheck)->init($options, DuckPhp::G());
         Route::G()->bind('foo');
 
-        DNMVCS::G()->run();
+        DuckPhp::G()->run();
 
         $options['is_debug']=false;
         StrictCheck::G()->init($options);
-        DNMVCS::G()->run();
+        DuckPhp::G()->run();
         $options['is_debug']=true;
         StrictCheck::G(new StrictCheck())->init($options)->checkStrictComponent('',0,[]);
         
@@ -87,8 +87,8 @@ class StrictCheck_FakeObject
 }
 
 }
-namespace tests\DNMVCS\Ext\Base {
-use DNMVCS\Helper\ModelHelper as M;
+namespace tests\DuckPhp\Ext\Base {
+use DuckPhp\Helper\ModelHelper as M;
 
 class BaseController
 {
@@ -101,12 +101,12 @@ class BaseController2 extends BaseController
         var_dump("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
     }
 }
-} // end tests\DNMVCS\Ext\Base
+} // end tests\DuckPhp\Ext\Base
 
-namespace tests\DNMVCS\Ext\Model {
-use DNMVCS\Base\StrictModelTrait;
-use tests\DNMVCS\Ext\Service\FakeService;
-use DNMVCS\Helper\ModelHelper as M;
+namespace tests\DuckPhp\Ext\Model {
+use DuckPhp\Base\StrictModelTrait;
+use tests\DuckPhp\Ext\Service\FakeService;
+use DuckPhp\Helper\ModelHelper as M;
 
 class FakeModel
 {
@@ -128,15 +128,15 @@ class FakeExModel
         FakeModel::G()->foo();
     }
 }
-}  // end tests\DNMVCS\Ext\Model
+}  // end tests\DuckPhp\Ext\Model
 
-namespace tests\DNMVCS\Ext\Service {
-use DNMVCS\Base\StrictServiceTrait;
-//use DNMVCS\Ext\DBManager;
-use DNMVCS\DNMVCS;
-use tests\DNMVCS\Ext\Model\FakeExModel;
-use tests\DNMVCS\Ext\Model\FakeModel;
-//use tests\DNMVCS\Ext\Model\FakeModel;
+namespace tests\DuckPhp\Ext\Service {
+use DuckPhp\Base\StrictServiceTrait;
+//use DuckPhp\Ext\DBManager;
+use DuckPhp\DuckPhp;
+use tests\DuckPhp\Ext\Model\FakeExModel;
+use tests\DuckPhp\Ext\Model\FakeModel;
+//use tests\DuckPhp\Ext\Model\FakeModel;
 
 class FakeService
 {
@@ -151,7 +151,7 @@ class FakeService
         FakeModel::G()->callService();
     }
     public function callDB(){
-        DNMVCS::DB()->fetch("select 1+1 as t");
+        DuckPhp::DB()->fetch("select 1+1 as t");
     }
     public function normal()
     {
@@ -174,16 +174,16 @@ class FakeLibService
     }
 }
 
-}  // end tests\DNMVCS\Ext\Service
+}  // end tests\DuckPhp\Ext\Service
 
-namespace tests\DNMVCS\Ext\Controller {
-use tests\DNMVCS\Ext\Base\BaseController;
-use tests\DNMVCS\Ext\Base\BaseController2;
-use tests\DNMVCS\Ext\Service\FakeBatchService;
-use tests\DNMVCS\Ext\Service\FakeService;
-use tests\DNMVCS\Ext\Model\FakeModel;
-use DNMVCS\DNMVCS;
-use DNMVCS\Helper\ModelHelper as M;
+namespace tests\DuckPhp\Ext\Controller {
+use tests\DuckPhp\Ext\Base\BaseController;
+use tests\DuckPhp\Ext\Base\BaseController2;
+use tests\DuckPhp\Ext\Service\FakeBatchService;
+use tests\DuckPhp\Ext\Service\FakeService;
+use tests\DuckPhp\Ext\Model\FakeModel;
+use DuckPhp\DuckPhp;
+use DuckPhp\Helper\ModelHelper as M;
 
 class StrictCheckTestMain extends BaseController
 {
@@ -197,7 +197,7 @@ class StrictCheckTestMain extends BaseController
         echo "============================\n";
         
         try{
-            DNMVCS::DB()->fetch("select 1+1 as t");
+            DuckPhp::DB()->fetch("select 1+1 as t");
         }catch(\Throwable $ex){
             echo "zzzzzzzzzzzzz".$ex->getMessage().PHP_EOL;
         }
@@ -236,7 +236,7 @@ class StrictCheckTestMain extends BaseController
         
         
         try{
-            DNMVCS::DB()->fetch("select 1+1 as t");
+            DuckPhp::DB()->fetch("select 1+1 as t");
         }catch(\Throwable $ex){
             echo "zzzzzzzzzzzzz".$ex->getMessage().PHP_EOL;
         }
@@ -254,7 +254,7 @@ class StrictCheckTestMain extends BaseController
     }
 }
 
-}  // end tests\DNMVCS\Ext\Controller
+}  // end tests\DuckPhp\Ext\Controller
 
  
 

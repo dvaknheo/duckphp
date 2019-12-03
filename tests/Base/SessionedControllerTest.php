@@ -1,7 +1,7 @@
 <?php
-namespace tests\DNMVCS\Base;
+namespace tests\DuckPhp\Base;
 
-use DNMVCS\Base\SessionedController;
+use DuckPhp\Base\SessionedController;
 
 class SessionedControllerTest extends \PHPUnit\Framework\TestCase
 {

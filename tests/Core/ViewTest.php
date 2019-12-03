@@ -1,7 +1,7 @@
 <?php
-namespace tests\DNMVCS\Core;
+namespace tests\DuckPhp\Core;
 
-use DNMVCS\Core\View;
+use DuckPhp\Core\View;
 
 class ViewTest extends \PHPUnit\Framework\TestCase
 {
@@ -14,7 +14,7 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         $options=[
             'path_view'=>$path_view,
         ];
-        \DNMVCS\Core\View::G()->init($options);
+        \DuckPhp\Core\View::G()->init($options);
         View::G()->setViewWrapper('head', 'foot');
         View::G()->assignViewData('A','aa');
         View::G()->assignViewData(['B'=>'bb','C'=>'cc']);
@@ -31,7 +31,7 @@ class ViewTest extends \PHPUnit\Framework\TestCase
             'path'=>$path_view,
             'path_view'=>'',
         ];
-        \DNMVCS\Core\View::G()->init($options);
+        \DuckPhp\Core\View::G()->init($options);
         
         \MyCodeCoverage::G()->end(View::class);
         $this->assertTrue(true);

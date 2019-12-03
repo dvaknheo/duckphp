@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
-namespace DNMVCS;
+namespace DuckPhp;
 
-use DNMVCS\Core\SingletonEx as Singleton;
+use DuckPhp\Core\SingletonEx as Singleton;
 
 trait SingletonEx
 {

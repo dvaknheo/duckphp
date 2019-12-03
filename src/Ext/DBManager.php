@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
-namespace DNMVCS\Ext;
+namespace DuckPhp\Ext;
 
-use DNMVCS\Core\SingletonEx;
-use DNMVCS\DB\DB;
+use DuckPhp\Core\SingletonEx;
+use DuckPhp\DB\DB;
 
 class DBManager
 {

@@ -1,7 +1,7 @@
 <?php
-namespace tests\DNMVCS\Core;
+namespace tests\DuckPhp\Core;
 
-use DNMVCS\Core\HttpServer;
+use DuckPhp\Core\HttpServer;
 
 class HttpServerTest extends \PHPUnit\Framework\TestCase
 {

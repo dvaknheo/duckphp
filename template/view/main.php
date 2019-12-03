@@ -4,10 +4,10 @@
 <!doctype html>
 <html>
 <body>
-<h1>Hello DNMVCS</h1>
+<h1>Hello DuckPhp</h1>
 <div>
 Time Now is <?php echo $var;?>
 </div>
-<div>For More Take the DNMVCS-FullTest (TODO)</div>
+<div>For More Take the DuckPhp-FullTest (TODO)</div>
 </body>
 </html>

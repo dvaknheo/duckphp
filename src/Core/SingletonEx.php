@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
-namespace DNMVCS\Core;
+namespace DuckPhp\Core;
 
 trait SingletonEx
 {
     protected static $_instances=[];
     public static function G($object=null)
     {
-        if (defined('DNMVCS_SINGLETONEX_REPALACER')) {
-            $callback=DNMVCS_SINGLETONEX_REPALACER;
+        if (defined('DuckPhp_SINGLETONEX_REPALACER')) {
+            $callback=DuckPhp_SINGLETONEX_REPALACER;
             return ($callback)(static::class, $object);
         }
         //fwrite(STDOUT,"SINGLETON ". static::class ."\n");

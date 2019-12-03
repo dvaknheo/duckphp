@@ -1,7 +1,7 @@
 <?php
-namespace tests\DNMVCS\Core;
+namespace tests\DuckPhp\Core;
 
-use DNMVCS\Core\ExceptionManager;
+use DuckPhp\Core\ExceptionManager;
 
 class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
 {

@@ -1,9 +1,9 @@
 <?php
-namespace tests\DNMVCS\Ext;
+namespace tests\DuckPhp\Ext;
 
-use DNMVCS\Ext\RouteHookRewrite;
-use DNMVCS\Core\Route;
-use DNMVCS\DNMVCS;
+use DuckPhp\Ext\RouteHookRewrite;
+use DuckPhp\Core\Route;
+use DuckPhp\DuckPhp;
 
 class RouteHookRewriteTest extends \PHPUnit\Framework\TestCase
 {
@@ -18,7 +18,7 @@ class RouteHookRewriteTest extends \PHPUnit\Framework\TestCase
             'controller_welcome_class'=> 'RouteHookRewriteTestMain',
 
         ];
-        DNMVCS::G(new DNMVCS())->init($route_options);
+        DuckPhp::G(new DuckPhp())->init($route_options);
         
         $options=[
             'rewrite_map'=>[

@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
-namespace DNMVCS\Base;
+namespace DuckPhp\Base;
 
-use DNMVCS\Core\App;
+use DuckPhp\Core\App;
 
 class SessionedController
 {

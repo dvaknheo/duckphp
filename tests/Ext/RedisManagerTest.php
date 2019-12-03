@@ -1,7 +1,7 @@
 <?php 
-namespace tests\DNMVCS\Ext;
-use DNMVCS\Ext\RedisManager;
-use DNMVCS\Core\App;
+namespace tests\DuckPhp\Ext;
+use DuckPhp\Ext\RedisManager;
+use DuckPhp\Core\App;
 
 class RedisManagerTest extends \PHPUnit\Framework\TestCase
 {

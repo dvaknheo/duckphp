@@ -1,8 +1,8 @@
 <?php
-namespace tests\DNMVCS\Ext;
+namespace tests\DuckPhp\Ext;
 
-use DNMVCS\Ext\Pager;
-use DNMVCS\DNMVCS;
+use DuckPhp\Ext\Pager;
+use DuckPhp\DuckPhp;
 
 class PagerTest extends \PHPUnit\Framework\TestCase
 {
@@ -34,7 +34,7 @@ class PagerTest extends \PHPUnit\Framework\TestCase
         
         Pager::G(new Pager());
         Pager::Current();
-        Pager::G()->init(['url'=>'/user',],DNMVCS::G());
+        Pager::G()->init(['url'=>'/user',],DuckPhp::G());
         Pager::SG();
         Pager::G()->getUrl(3);
          

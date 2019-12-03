@@ -1,7 +1,7 @@
 <?php
-namespace tests\DNMVCS\Core\Helper;
+namespace tests\DuckPhp\Core\Helper;
 
-use DNMVCS\Core\Helper\ViewHelper;
+use DuckPhp\Core\Helper\ViewHelper;
 
 class ViewHelperTest extends \PHPUnit\Framework\TestCase
 {
@@ -19,7 +19,7 @@ class ViewHelperTest extends \PHPUnit\Framework\TestCase
         $options=[
             'path_view'=>$path_view,
         ];
-        \DNMVCS\Core\View::G()->init($options);
+        \DuckPhp\Core\View::G()->init($options);
         ViewHelper::ShowBlock("view",['A'=>'b']);
         
         

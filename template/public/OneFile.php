@@ -1,11 +1,11 @@
 <?php
 die("暂时无效");
-use \DNMVCS\DNMVCS as DN;
+use \DuckPhp\DuckPhp as DN;
 
 $options=[];
 require_once(__DIR__.'/../headfile/headfile.php');
-//* DNMVCS TO DELETE
-if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
+//* DuckPhp TO DELETE
+if (defined('DuckPhp_WARNING_IN_TEMPLATE')) {
     $options['is_debug']=true;
     $options['skip_setting_file']=true;
     echo "<div>Don't run the template file directly </div>\n";
@@ -106,10 +106,10 @@ function view_header($view_data=[])
 <!doctype html>
 <html>
  <meta charset="UTF-8">
-<head><title>DNMVCS 单一页面演示</title></head>
+<head><title>DuckPhp 单一页面演示</title></head>
 <body>
 <fieldset>
-	<legend>DNMVCS 单一页面演示</legend>
+	<legend>DuckPhp 单一页面演示</legend>
 	<div style="border:1px red solid;">
 <?php
 }

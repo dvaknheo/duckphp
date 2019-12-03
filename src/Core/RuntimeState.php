@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
-namespace DNMVCS\Core;
+namespace DuckPhp\Core;
 
-use DNMVCS\Core\SingletonEx;
+use DuckPhp\Core\SingletonEx;
 
 class RuntimeState
 {

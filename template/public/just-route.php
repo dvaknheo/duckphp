@@ -1,7 +1,7 @@
 <?php
 require_once(__DIR__.'/../headfile/headfile.php');
 
-use DNMVCS\Core\Route;
+use DuckPhp\Core\Route;
 
 class Main
 {

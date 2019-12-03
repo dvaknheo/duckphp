@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace DNMVCS\Ext;
+namespace DuckPhp\Ext;
 
-use DNMVCS\Core\SingletonEx;
-use DNMVCS\Ext\RedisSimpleCache;
+use DuckPhp\Core\SingletonEx;
+use DuckPhp\Ext\RedisSimpleCache;
 use Redis;
 
 class RedisManager

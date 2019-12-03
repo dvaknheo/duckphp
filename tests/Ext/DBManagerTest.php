@@ -1,9 +1,9 @@
 <?php
-namespace tests\DNMVCS\Ext;
+namespace tests\DuckPhp\Ext;
 
-use DNMVCS\Ext\DBManager;
-use DNMVCS\DB\DB;
-use DNMVCS\Core\App;
+use DuckPhp\Ext\DBManager;
+use DuckPhp\DB\DB;
+use DuckPhp\Core\App;
 
 class DBManagerTest extends \PHPUnit\Framework\TestCase
 {

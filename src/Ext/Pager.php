@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
-namespace DNMVCS\Ext;
+namespace DuckPhp\Ext;
 
-use DNMVCS\Core\SingletonEx;
+use DuckPhp\Core\SingletonEx;
 
 class Pager
 {
@@ -34,7 +34,7 @@ class Pager
         if ($this->context_class) {
             return $this->context_class::SG();
         } else {
-            return \DNMVCS\Core\App::G()::SG();
+            return \DuckPhp\Core\App::G()::SG();
         }
     }
     public static function Current()

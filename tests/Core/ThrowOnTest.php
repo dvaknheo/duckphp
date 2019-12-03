@@ -1,7 +1,7 @@
 <?php
-namespace tests\DNMVCS\Core;
+namespace tests\DuckPhp\Core;
 
-use DNMVCS\Core\ThrowOn;
+use DuckPhp\Core\ThrowOn;
 
 class ThrowOnTest extends \PHPUnit\Framework\TestCase
 {

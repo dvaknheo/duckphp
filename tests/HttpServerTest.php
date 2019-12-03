@@ -1,7 +1,7 @@
 <?php
-namespace tests\DNMVCS;
+namespace tests\DuckPhp;
 
-use DNMVCS\HttpServer;
+use DuckPhp\HttpServer;
 
 class HttpServerTest extends \PHPUnit\Framework\TestCase
 {
@@ -19,7 +19,7 @@ class HttpServerTest extends \PHPUnit\Framework\TestCase
         HttpServerParent::G()->test_runHttpServer();
 
         HttpServerParent::G()->test_runSwooleServer(__DIR__, '127.0.0.1', 9901);
-        defined('DNMVCS_WARNING_IN_TEMPLATE');
+        defined('DuckPhp_WARNING_IN_TEMPLATE');
         HttpServerParent::G()->test_runSwooleServer(__DIR__, '127.0.0.1', 9901);
         
         if (!function_exists('swoole_version')) {
@@ -65,7 +65,7 @@ class HttpServerParent extends HttpServer
             'skip_setting_file'=>true,
             'error_404'=>null,
             'ext'=>[
-                'DNMVCS\SwooleHttpd\SwooleExt'=>false,
+                'DuckPhp\SwooleHttpd\SwooleExt'=>false,
             ]
         ];
         
@@ -83,11 +83,11 @@ class HttpServerParent extends HttpServer
             'skip_setting_file'=>true,
             'error_404'=>null,
             'ext'=>[
-                'DNMVCS\SwooleHttpd\SwooleExt'=>false,
+                'DuckPhp\SwooleHttpd\SwooleExt'=>false,
             ]
         ];
-        if(!defined('DNMVCS_WARNING_IN_TEMPLATE')){
-            define('DNMVCS_WARNING_IN_TEMPLATE',true);
+        if(!defined('DuckPhp_WARNING_IN_TEMPLATE')){
+            define('DuckPhp_WARNING_IN_TEMPLATE',true);
         }
         return $this->runSwooleServer($path, $host, $port);
 

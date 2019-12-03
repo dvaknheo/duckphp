@@ -1,7 +1,7 @@
 <?php
-namespace tests\DNMVCS\Core\Helper;
+namespace tests\DuckPhp\Core\Helper;
 
-use DNMVCS\Core\Helper\ServiceHelper;
+use DuckPhp\Core\Helper\ServiceHelper;
 
 class ServiceHelperTest extends \PHPUnit\Framework\TestCase
 {
@@ -15,7 +15,7 @@ class ServiceHelperTest extends \PHPUnit\Framework\TestCase
             'skip_setting_file'=>true,
             'path_config'=>$path_config,
         ];
-        \DNMVCS\Core\Configer::G()->init($options);
+        \DuckPhp\Core\Configer::G()->init($options);
         $key='key';
         $file_basename='config';
         

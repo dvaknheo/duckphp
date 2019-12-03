@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
-namespace DNMVCS\Helper;
+namespace DuckPhp\Helper;
 
-use DNMVCS\Core\Helper\ModelHelper as Helper;
-use DNMVCS\Core\App as App;
+use DuckPhp\Core\Helper\ModelHelper as Helper;
+use DuckPhp\Core\App as App;
 
 class ModelHelper extends Helper
 {

@@ -1,7 +1,7 @@
 <?php
-namespace tests\DNMVCS\Core;
+namespace tests\DuckPhp\Core;
 
-use DNMVCS\Core\SingletonEx;
+use DuckPhp\Core\SingletonEx;
 
 class SingletonExTest extends \PHPUnit\Framework\TestCase
 {
@@ -11,7 +11,7 @@ class SingletonExTest extends \PHPUnit\Framework\TestCase
         
         SingletonExObject::G();
         SingletonExObject::G(new SingletonExObject());
-        define('DNMVCS_SINGLETONEX_REPALACER',SingletonExObject::class.'::CreateObject');
+        define('DuckPhp_SINGLETONEX_REPALACER',SingletonExObject::class.'::CreateObject');
         SingletonExObject::G();
         
         \MyCodeCoverage::G()->end();

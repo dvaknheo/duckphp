@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
-namespace DNMVCS;
+namespace DuckPhp;
 
-use DNMVCS\Core\HttpServer as Server;
-use DNMVCS\SwooleHttpd\SwooleHttpd;
+use DuckPhp\Core\HttpServer as Server;
+use DuckPhp\SwooleHttpd\SwooleHttpd;
 
 class HttpServer extends Server
 {
@@ -36,7 +36,7 @@ class HttpServer extends Server
     {
         $ext=($host==='0.0.0.0')?" ( http://127.0.0.1:$port/ )":'';
         
-        echo "DNMVCS: RunServer by SwooleHttpd http://$host:$port/$ext\n";
+        echo "DuckPhp: RunServer by SwooleHttpd http://$host:$port/$ext\n";
         
         $dn_options=$this->options['dnmvcs']??[];
         $dn_options['path']=$path;
@@ -44,10 +44,10 @@ class HttpServer extends Server
         $dn_options['swoole']['host']=$host;
         $dn_options['swoole']['port']=$port;
 
-        if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
+        if (defined('DuckPhp_WARNING_IN_TEMPLATE')) {
             $dn_options['skip_setting_file']=true;
             echo "Don't run the template file directly \n";
         }
-        DNMVCS::RunQuickly($dn_options);
+        DuckPhp::RunQuickly($dn_options);
     }
 }

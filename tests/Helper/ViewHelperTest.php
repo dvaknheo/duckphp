@@ -1,7 +1,7 @@
 <?php
-namespace tests\DNMVCS\Helper;
+namespace tests\DuckPhp\Helper;
 
-use DNMVCS\Helper\ViewHelper;
+use DuckPhp\Helper\ViewHelper;
 
 class ViewHelperTest extends \PHPUnit\Framework\TestCase
 {

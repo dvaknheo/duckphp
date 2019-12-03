@@ -1,7 +1,7 @@
 <?php 
-namespace tests\DNMVCS\Core;
-use DNMVCS\Core\SystemWrapper;
-use DNMVCS\Core\SingletonEx;
+namespace tests\DuckPhp\Core;
+use DuckPhp\Core\SystemWrapper;
+use DuckPhp\Core\SingletonEx;
 
 class SystemWrapperTest extends \PHPUnit\Framework\TestCase
 {
@@ -10,7 +10,7 @@ class SystemWrapperTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(SystemWrapper::class);
         
         //SystemWrapper::G()->system_wrapper_replace(array $funcs);
-        $data=\DNMVCS\Core\App::system_wrapper_get_providers();
+        $data=\DuckPhp\Core\App::system_wrapper_get_providers();
         
         SystemWrapperObject::var_dump(DATE(DATE_ATOM));
         SystemWrapperObject::system_wrapper_replace(['var_dump'=>function(...$args){var_dump("!!!!");}]);

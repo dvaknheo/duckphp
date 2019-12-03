@@ -1,7 +1,7 @@
 <?php 
-namespace tests\DNMVCS\Ext;
-use DNMVCS\Ext\JsonRpcClientBase;
-use DNMVCS\Ext\JsonRpcExt;
+namespace tests\DuckPhp\Ext;
+use DuckPhp\Ext\JsonRpcClientBase;
+use DuckPhp\Ext\JsonRpcExt;
 
 class JsonRpcClientBaseTest extends \PHPUnit\Framework\TestCase
 {

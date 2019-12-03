@@ -2,20 +2,20 @@
 // MAIN FILE
 //dvaknheo@github.com
 //OK，Lazy
-namespace DNMVCS\Core;
+namespace DuckPhp\Core;
 
-use DNMVCS\Core\SingletonEx;
-use DNMVCS\Core\ThrowOn;
-use DNMVCS\Core\ExtendableStaticCallTrait;
-use DNMVCS\Core\SystemWrapper;
+use DuckPhp\Core\SingletonEx;
+use DuckPhp\Core\ThrowOn;
+use DuckPhp\Core\ExtendableStaticCallTrait;
+use DuckPhp\Core\SystemWrapper;
 
-use DNMVCS\Core\AutoLoader;
-use DNMVCS\Core\Configer;
-use DNMVCS\Core\ExceptionManager;
-use DNMVCS\Core\Route;
-use DNMVCS\Core\RuntimeState;
-use DNMVCS\Core\View;
-use DNMVCS\Core\SuperGlobal;
+use DuckPhp\Core\AutoLoader;
+use DuckPhp\Core\Configer;
+use DuckPhp\Core\ExceptionManager;
+use DuckPhp\Core\Route;
+use DuckPhp\Core\RuntimeState;
+use DuckPhp\Core\View;
+use DuckPhp\Core\SuperGlobal;
 
 class App
 {
@@ -201,7 +201,7 @@ class App
     //for override
     protected function initAsPlugin(array $options, object $context=null)
     {
-        static::ThrowOn(true, 'DNMVCS, only for override');
+        static::ThrowOn(true, 'DuckPhp, only for override');
         return $this; // @codeCoverageIgnore
     }
     //for override
@@ -424,7 +424,7 @@ trait Core_Handler
         }
         //// no error_404 setting.
         if (!$error_view) {
-            echo "404 File Not Found\n<!--DNMVCS set options ['error_404'] to override me   -->\n";
+            echo "404 File Not Found\n<!--DuckPhp set options ['error_404'] to override me   -->\n";
             return;
         }
         
@@ -456,7 +456,7 @@ trait Core_Handler
         if (!$error_view) {
             $desc=$is_error?'Internal Error':'Internal Exception';
             $error_config=$is_error?'error_500':'error_exception';
-            echo "$desc \n<!--DNMVCS set options ['{$error_config}'] to override me  -->\n";
+            echo "$desc \n<!--DuckPhp set options ['{$error_config}'] to override me  -->\n";
             
             if ($data['is_debug']) {
                 echo "<h3>{$data['class']}({$data['code']}):{$data['message']}</h3>";
@@ -506,7 +506,7 @@ trait Core_Handler
         if (!$error_view) {
             extract($data);
             echo  <<<EOT
-<!--DNMVCS  set options ['error_debug']='_sys/error-debug.php' to override me -->
+<!--DuckPhp  set options ['error_debug']='_sys/error-debug.php' to override me -->
 <fieldset class="_DNMVC_DEBUG">
 	<legend>$error_desc($errno)</legend>
 <pre>

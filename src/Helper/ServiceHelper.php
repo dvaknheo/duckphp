@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
-namespace DNMVCS\Helper;
+namespace DuckPhp\Helper;
 
-use DNMVCS\Core\Helper\ServiceHelper as Helper;
+use DuckPhp\Core\Helper\ServiceHelper as Helper;
 
 class ServiceHelper extends Helper
 {

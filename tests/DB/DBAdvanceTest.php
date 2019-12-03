@@ -1,8 +1,8 @@
 <?php
-namespace tests\DNMVCS\DB;
+namespace tests\DuckPhp\DB;
 
-use DNMVCS\DB\DBAdvance;
-use DNMVCS\DB\DB;
+use DuckPhp\DB\DBAdvance;
+use DuckPhp\DB\DB;
 
 class DBAdvanceTest extends \PHPUnit\Framework\TestCase
 {

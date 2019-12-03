@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
-namespace DNMVCS\Ext;
+namespace DuckPhp\Ext;
 
-use DNMVCS\Ext\DBManager;
+use DuckPhp\Ext\DBManager;
 
 class DBReusePoolProxy extends DBManager
 {

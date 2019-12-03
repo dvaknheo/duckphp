@@ -1,7 +1,7 @@
 <?php 
-namespace tests\DNMVCS\Ext;
-use DNMVCS\Ext\RedisSimpleCache;
-use DNMVCS\Ext\RedisManager;
+namespace tests\DuckPhp\Ext;
+use DuckPhp\Ext\RedisSimpleCache;
+use DuckPhp\Ext\RedisManager;
 
 class RedisSimpleCacheTest extends \PHPUnit\Framework\TestCase
 {

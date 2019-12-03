@@ -1,9 +1,9 @@
 <?php
-namespace tests\DNMVCS\Ext;
+namespace tests\DuckPhp\Ext;
 
-use DNMVCS\Ext\RouteHookDirectoryMode;
-use DNMVCS\Core\Route;
-use DNMVCS\Core\SuperGlobal;
+use DuckPhp\Ext\RouteHookDirectoryMode;
+use DuckPhp\Core\Route;
+use DuckPhp\Core\SuperGlobal;
 
 class RouteHookDirectoryModeTest extends \PHPUnit\Framework\TestCase
 {

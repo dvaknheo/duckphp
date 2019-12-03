@@ -1,8 +1,8 @@
 <?php
-namespace tests\DNMVCS\Ext{
+namespace tests\DuckPhp\Ext{
 
-use DNMVCS\Ext\JsonRpcExt;
-use DNMVCS\Core\HttpServer;
+use DuckPhp\Ext\JsonRpcExt;
+use DuckPhp\Core\HttpServer;
 use TestService;
 use JsonRpc\TestService as JS;
 class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
@@ -76,11 +76,11 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
         //*/
     }
 }
-} // endnamespace  tests\DNMVCS\Ext
+} // endnamespace  tests\DuckPhp\Ext
 namespace
 {
 
-use DNMVCS\Core\SingletonEx;
+use DuckPhp\Core\SingletonEx;
 class TestService
 {
     use SingletonEx;

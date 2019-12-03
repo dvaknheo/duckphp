@@ -1,7 +1,7 @@
 <?php
-namespace tests\DNMVCS\DB;
+namespace tests\DuckPhp\DB;
 
-use DNMVCS\DB\DB;
+use DuckPhp\DB\DB;
 
 class DBTest extends \PHPUnit\Framework\TestCase
 {

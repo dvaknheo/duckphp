@@ -1,7 +1,7 @@
 <?php
-namespace tests\DNMVCS\Ext{
+namespace tests\DuckPhp\Ext{
 
-use DNMVCS\Ext\CallableView;
+use DuckPhp\Ext\CallableView;
 
 class CallableViewTest extends \PHPUnit\Framework\TestCase
 {

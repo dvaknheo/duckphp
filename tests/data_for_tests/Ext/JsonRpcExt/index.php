@@ -1,7 +1,7 @@
 <?php
 require_once realpath (__DIR__.'/../../../../autoload.php');
-use DNMVCS\Ext\JsonRpcExt;
-use DNMVCS\Core\SingletonEx;
+use DuckPhp\Ext\JsonRpcExt;
+use DuckPhp\Core\SingletonEx;
 class TestService
 {
     use SingletonEx;
@@ -22,14 +22,14 @@ class Main
     }
     public function json_rpc()
     {
-        $post=DNMVCS\DNMVCS::SG()->_POST;
+        $post=DuckPhp\DuckPhp::SG()->_POST;
         if($post['method']==='TestService.the500'){
             var_dump(DATE(DATE_ATOM));
             return;
         }
-        $ret= JsonRpcExt::G()->onRpcCall(DNMVCS\DNMVCS::SG()->_POST);
+        $ret= JsonRpcExt::G()->onRpcCall(DuckPhp\DuckPhp::SG()->_POST);
         
-        DNMVCS\DNMVCS::ExitJson($ret);
+        DuckPhp\DuckPhp::ExitJson($ret);
     }
 }
 
@@ -39,4 +39,4 @@ $options=[
     'namespace_controller'=>'\\',
 ];
 
-$flag=DNMVCS\DNMVCS::RunQuickly($options);
+$flag=DuckPhp\DuckPhp::RunQuickly($options);

@@ -1,8 +1,8 @@
 <?php 
-namespace tests\DNMVCS\Ext;
-use DNMVCS\Ext\FacadesBase;
-use DNMVCS\Ext\FacadesAutoLoader;
-use DNMVCS\Core\SingletonEx;
+namespace tests\DuckPhp\Ext;
+use DuckPhp\Ext\FacadesBase;
+use DuckPhp\Ext\FacadesAutoLoader;
+use DuckPhp\Core\SingletonEx;
 
 class FacadesBaseTest extends \PHPUnit\Framework\TestCase
 {

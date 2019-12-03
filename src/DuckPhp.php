@@ -2,25 +2,25 @@
 // MAIN FILE
 //dvaknheo@github.com
 //OK，Lazy
-namespace DNMVCS;
+namespace DuckPhp;
 
-use DNMVCS\Core\App;
+use DuckPhp\Core\App;
 
-use DNMVCS\Ext\StrictCheck;
-use DNMVCS\Ext\DBManager;
-use DNMVCS\Ext\RouteHookRewrite;
-use DNMVCS\Ext\RouteHookRouteMap;
-use DNMVCS\Ext\Pager;
-use DNMVCS\Ext\Misc;
-use DNMVCS\Ext\SimpleLogger;
+use DuckPhp\Ext\StrictCheck;
+use DuckPhp\Ext\DBManager;
+use DuckPhp\Ext\RouteHookRewrite;
+use DuckPhp\Ext\RouteHookRouteMap;
+use DuckPhp\Ext\Pager;
+use DuckPhp\Ext\Misc;
+use DuckPhp\Ext\SimpleLogger;
 
-//use DNMVCS\SwooleHttpd\SwooleExtAppInterface;
+//use DuckPhp\SwooleHttpd\SwooleExtAppInterface;
 
-class DNMVCS extends App //implements SwooleExtAppInterface
+class DuckPhp extends App //implements SwooleExtAppInterface
 {
     const VERSION = '1.1.5';
     
-    use DNMVCS_Glue;
+    use DuckPhp_Glue;
     
     const DEFAULT_OPTIONS_EX=[
             'path_lib'=>'lib',
@@ -35,25 +35,25 @@ class DNMVCS extends App //implements SwooleExtAppInterface
             'key_for_module'=>'',
             
             'ext'=>[
-                'DNMVCS\SwooleHttpd\SwooleExt'=>true,
-                'DNMVCS\Ext\Misc'=>true,
+                'DuckPhp\SwooleHttpd\SwooleExt'=>true,
+                'DuckPhp\Ext\Misc'=>true,
 
-                'DNMVCS\Ext\DBManager'=>[
+                'DuckPhp\Ext\DBManager'=>[
                     'before_get_db_handler'=>[null,'CheckStrictDB'],
                 ],
-                'DNMVCS\Ext\RouteHookRewrite'=>true,
-                'DNMVCS\Ext\RouteHookRouteMap'=>true,
-                'DNMVCS\Ext\StrictCheck'=>true,
-                'DNMVCS\Ext\SimpleLogger'=>true,
-                'DNMVCS\Ext\RouteHookOneFileMode'=>false,
+                'DuckPhp\Ext\RouteHookRewrite'=>true,
+                'DuckPhp\Ext\RouteHookRouteMap'=>true,
+                'DuckPhp\Ext\StrictCheck'=>true,
+                'DuckPhp\Ext\SimpleLogger'=>true,
+                'DuckPhp\Ext\RouteHookOneFileMode'=>false,
                 
-                'DNMVCS\Ext\RedisManager'=>false,
-                'DNMVCS\Ext\RedisSimpleCache'=>false,
+                'DuckPhp\Ext\RedisManager'=>false,
+                'DuckPhp\Ext\RedisSimpleCache'=>false,
                 
-                'DNMVCS\Ext\RouteHookDirectoryMode'=>false,
-                'DNMVCS\Ext\DBReusePoolProxy'=>false,
-                'DNMVCS\Ext\FacadesAutoLoader'=>false,
-                'DNMVCS\Ext\Lazybones'=>false,
+                'DuckPhp\Ext\RouteHookDirectoryMode'=>false,
+                'DuckPhp\Ext\DBReusePoolProxy'=>false,
+                'DuckPhp\Ext\FacadesAutoLoader'=>false,
+                'DuckPhp\Ext\Lazybones'=>false,
                 
             ],
             
@@ -91,7 +91,7 @@ class DNMVCS extends App //implements SwooleExtAppInterface
     }
 }
 
-trait DNMVCS_Glue
+trait DuckPhp_Glue
 {
     public static function DB($tag=null)
     {
@@ -134,7 +134,7 @@ trait DNMVCS_Glue
     public static function CheckStrictDB()
     {
         //3 = DB,_DB,CheckStrictDB
-        return static::G()->checkStrictComponent('DB', 4, ['DNMVCS\Core\Helper\ModelHelper']);
+        return static::G()->checkStrictComponent('DB', 4, ['DuckPhp\Core\Helper\ModelHelper']);
     }
     public function checkStrictComponent($component_name, $trace_level, $parent_classes_to_skip=[])
     {

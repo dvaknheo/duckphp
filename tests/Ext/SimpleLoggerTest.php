@@ -1,7 +1,7 @@
 <?php 
-namespace tests\DNMVCS\Ext;
-use DNMVCS\Ext\SimpleLogger;
-use DNMVCS\DNMVCS;
+namespace tests\DuckPhp\Ext;
+use DuckPhp\Ext\SimpleLogger;
+use DuckPhp\DuckPhp;
 class SimpleLoggerTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
@@ -12,7 +12,7 @@ class SimpleLoggerTest extends \PHPUnit\Framework\TestCase
         $options=[
             'path'=>'',
             'log_file'=>$path_log.'log.log',
-            'log_prefix'=>'DNMVCSLog',
+            'log_prefix'=>'DuckPhpLog',
         ];
         $message='test{a}';
         $context=['a'=>'b'];
@@ -20,14 +20,14 @@ class SimpleLoggerTest extends \PHPUnit\Framework\TestCase
         $dn_options=[
             'skip_setting_file'=>true,
         ];
-        DNMVCS::G()->init($dn_options);
-        SimpleLogger::G()->init($options,DNMVCS::G());
+        DuckPhp::G()->init($dn_options);
+        SimpleLogger::G()->init($options,DuckPhp::G());
         
         SimpleLogger::G()->emergency($message,  $context);
          $options=[
             'path'=>$path_log,
             'log_file'=>'log2.log',
-            'log_prefix'=>'DNMVCSLog',
+            'log_prefix'=>'DuckPhpLog',
         ];
         SimpleLogger::G()->init($options);
         SimpleLogger::G()->alert($message,  $context);
@@ -38,7 +38,7 @@ class SimpleLoggerTest extends \PHPUnit\Framework\TestCase
         SimpleLogger::G()->info($message,  $context);
         
         SimpleLogger::G()->debug($message,  $context);
-        DNMVCS::Logger()->info("zzzzz");
+        DuckPhp::Logger()->info("zzzzz");
         file_put_contents($path_log.'log.log','');// clear
 
         \MyCodeCoverage::G()->end(SimpleLogger::class);
