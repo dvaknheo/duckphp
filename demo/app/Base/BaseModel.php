@@ -3,7 +3,7 @@ namespace MY\Base;
 
 use DuckPhp\SingletonEx;
 
-// use DNMVCS\Base\StrictModelTrait;
+// use DuckPhp\Base\StrictModelTrait;
 
 class BaseModel
 {

@@ -1,20 +1,21 @@
 <?php
-require_once(__DIR__.'/../headfile/headfile.php');
-$options=[];
-$options['path']=realpath(__DIR__.'/..');
-$options['namespace']=rtrim('MY\\', '\\'); //keep this;
-$options['error_404']='_sys/error-404';
-$options['error_500']='_sys/error-500';
-$options['error_exception']='_sys/error-exception';
-$options['error_debug']='_sys/error-debug';
+require_once(__DIR__.'/../headfile/headfile.php'); // @HEADFILE
+$path=realpath(__DIR__.'/..');
+$namespace= rtrim('MY\\', '\\');    //  @NAMESPACE
+$options=[
+    'path' => $path,
+    'namespace' => $namespace,
+    'error_404' => '_sys/error-404',
+    'error_500' => '_sys/error-500',
+    'error_exception' => '_sys/error-exception',
+    'error_debug' => '_sys/error-debug',
+];
 
-//* DuckPhp TO DELETE
-if (defined('DuckPhp_WARNING_IN_TEMPLATE')) {
-    $options['is_debug']=true;
-    $options['skip_setting_file']=true;
-    echo "<div>Don't run the template file directly </div>\n";
+if (defined('DuckPhp_WARNING_IN_TEMPLATE')) {       // @REMOVE
+    $options['is_debug']=true;                      // @REMOVE
+    $options['skip_setting_file']=true;             // @REMOVE
+    echo "<div>Don't run the template file directly </div>\n"; //@REMOVE
 }
-//*/
 
 \DuckPhp\App::RunQuickly($options, function () {
 });

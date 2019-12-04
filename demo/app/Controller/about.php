@@ -1,7 +1,7 @@
 <?php
 namespace MY\Controller;
-use DNMVCS\DNMVCS as DN;
-use MY\Service as S;
+
+use MY\Base\Helper\ControllerHelper as C;
 use MY\Service\TestService;
 class about
 {
@@ -9,13 +9,13 @@ class about
     {
         $data=[];
         $data['var']=TestService::G()->foo();
-        \DNMVCS\DNMVCS::Show($data);
+        C::Show($data);
     }
 	
 	public function index()
     {
         var_dump("hhhhhhhhhhhhhhhhhh",date(DATE_ATOM));
 		$data=[];
-        \DNMVCS\DNMVCS::Show($data);
+        C::Show($data);
     }
 }
