@@ -235,13 +235,13 @@ class App
     protected function initExtentions(array $exts): void
     {
         foreach ($exts as $class =>$options) {
-            $class=(string)$class;
-            if (!class_exists($class)) {
-                continue;
-            }
             $options=($options===true)?$this->options:$options;
             $options=is_string($options)?$this->options[$options]:$options;
             if ($options===false) {
+                continue;
+            }
+            $class=(string)$class;
+            if (!class_exists($class)) {
                 continue;
             }
             $class::G()->init($options, $this);
