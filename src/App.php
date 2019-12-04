@@ -35,7 +35,7 @@ class App extends Core_App //implements SwooleExtAppInterface
             'key_for_module'=>'',
             
             'ext'=>[
-                'DuckPhp\SwooleHttpd\SwooleExt'=>true,
+                //'DuckPhp\SwooleHttpd\SwooleExt'=>true,
                 'DuckPhp\Ext\Misc'=>true,
 
                 'DuckPhp\Ext\DBManager'=>[
