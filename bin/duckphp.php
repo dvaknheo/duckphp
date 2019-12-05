@@ -2,44 +2,18 @@
 // bin/duckphp.php --create --namespace MyProject --prune-core --prune-helper --dest build --autoload-file ../autoload.php  --start
 /////////////////
 
-$longopts  = array(
-    "help",
-    "start",
-    "create",
-    "force",
-    "full",
-    "prune-core",
-    "prune-helper",
-    
-    "namespace:",
-    "dest:",
-    "autoload-file:",
-    'host:',
-    'port:',
-);
-$cli_options = getopt('', $longopts);
-$options=[];
-$options['help']=isset($cli_options['help'])?true:false;
-$options['start']=isset($cli_options['start'])?true:false;
-$options['create']=isset($cli_options['create'])?true:false;
-$options['force']=isset($cli_options['force'])?true:false;
-$options['prune_helper']=isset($cli_options['prune-helper'])?true:false;
-$options['prune_core']=isset($cli_options['prune-core'])?true:false;
-$options['full']=isset($cli_options['full'])?true:false;
-
-
-$options['namespace']=isset($cli_options['namespace'])?$cli_options['namespace']:'';
-$options['dest']=isset($cli_options['dest'])?$cli_options['dest']:'';
-$options['autoload_file']=isset($cli_options['autoload-file'])?$cli_options['autoload-file']:'';
-$options['host']=isset($cli_options['host'])?$cli_options['host']:'';
-$options['port']=isset($cli_options['port'])?$cli_options['port']:'';
-
-Main::RunQuickly($options);
+$options=[
+    // do noting;
+];
+Installer::RunQuickly($options);
 
 return;
 
-class Main
+class Installer
 {
+    public function __construct()
+    {
+    }
     public $options=[
         'prune_helper'=>false,
         'prune_core'=>false,
@@ -54,7 +28,8 @@ class Main
     }
     public function init($options)
     {
-        $this->options=array_replace_recursive($this->options, $options);
+        $cli_options=$this->getOptionsByCli();
+        $this->options=array_replace_recursive($cli_options,$this->options, $options);
         return $this;
     }
     public function run()
@@ -91,6 +66,44 @@ class Main
             $this->showHelp();
             return;
         }
+    }
+    protected function getOptionsByCli()
+    {
+        $longopts  = [
+            "help",
+            "start",
+            "create",
+            "force",
+            "full",
+            "prune-core",
+            "prune-helper",
+            
+            "namespace:",
+            "dest:",
+            "autoload-file:",
+            'host:',
+            'port:',
+        ];
+        
+        $cli_options = getopt('', $longopts);
+        
+        $options=[];
+        $options['help']=isset($cli_options['help'])?true:false;
+        $options['start']=isset($cli_options['start'])?true:false;
+        $options['create']=isset($cli_options['create'])?true:false;
+        $options['force']=isset($cli_options['force'])?true:false;
+        $options['prune_helper']=isset($cli_options['prune-helper'])?true:false;
+        $options['prune_core']=isset($cli_options['prune-core'])?true:false;
+        $options['full']=isset($cli_options['full'])?true:false;
+
+
+        $options['namespace']=isset($cli_options['namespace'])?$cli_options['namespace']:'';
+        $options['dest']=isset($cli_options['dest'])?$cli_options['dest']:'';
+        $options['autoload_file']=isset($cli_options['autoload-file'])?$cli_options['autoload-file']:'';
+        $options['host']=isset($cli_options['host'])?$cli_options['host']:'';
+        $options['port']=isset($cli_options['port'])?$cli_options['port']:'';
+        
+        return $options;
     }
     public function dumpDir($source, $dest, $force=false,$is_full=false)
     {

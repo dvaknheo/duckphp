@@ -15,9 +15,10 @@ $dn_option=[
 $path=realpath(__DIR__.'/');
 
 $options=[
-    'host'=>'127.0.0.1',    //  --host to override
-    'port'=>'8080',         // --port to override
     'path'=>$path,
+    
+    //'host'=>'127.0.0.1',    // default is 127.0.0.1 uncomment or --host to override
+    //'port'=>'8080',         // default is 8080 uncomment or  --port to override
     // 'dnmvcs'=>$dn_options,    // decraped. for swoole only.
 ];
 
