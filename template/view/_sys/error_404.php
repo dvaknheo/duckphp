@@ -1,7 +1,8 @@
 <?php
-use MY\Base\App;
+use DuckPhp\Helper\ViewHelper as V;
+////var_dump(get_defined_vars());
 
-$is_debug=App::IsDebug(); //...
+$is_debug=V::IsDebug();
 ?>
 404
 <?php if ($is_debug) {

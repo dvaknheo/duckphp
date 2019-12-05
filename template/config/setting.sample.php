@@ -1,8 +1,8 @@
 <?php
 // copy me to "setting.php"
 return [
-    'is_debug'=>false,
-    'platform'=>'default',
+    'duckphp_is_debug'=>false,
+    'duckphp_platform'=>'default',
     'database_list'=>[
         [
         'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',

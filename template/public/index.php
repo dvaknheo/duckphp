@@ -1,7 +1,7 @@
 <?php
-require_once(__DIR__.'/../headfile/headfile.php'); // @HEADFILE
+require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
 $path=realpath(__DIR__.'/..');
-$namespace= rtrim('MY\\', '\\');    //  @NAMESPACE
+$namespace= rtrim('MY\\', '\\');                    // @DUCKPHP_NAMESPACE
 $options=[
     'path' => $path,
     'namespace' => $namespace,
@@ -10,12 +10,10 @@ $options=[
     'error_exception' => '_sys/error-exception',
     'error_debug' => '_sys/error-debug',
 ];
-
-if (defined('DuckPhp_WARNING_IN_TEMPLATE')) {       // @REMOVE
-    $options['is_debug']=true;                      // @REMOVE
-    $options['skip_setting_file']=true;             // @REMOVE
-    echo "<div>Don't run the template file directly </div>\n"; //@REMOVE
-}
-
+if (defined('DuckPhp_WARNING_IN_TEMPLATE')) {       // @DUCKPHP_DELETE
+    $options['is_debug']=true;                      // @DUCKPHP_DELETE
+    $options['skip_setting_file']=true;             // @DUCKPHP_DELETE
+    echo "<div>Don't run the template file directly </div>\n"; //@DUCKPHP_DELETE
+}                                                   // @DUCKPHP_DELETE
 \DuckPhp\App::RunQuickly($options, function () {
 });

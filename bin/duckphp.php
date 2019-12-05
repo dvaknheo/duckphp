@@ -33,12 +33,12 @@ $options['dest']=isset($cli_options['dest'])?$cli_options['dest']:'';
 $options['autoload_file']=isset($cli_options['autoload-file'])?$cli_options['autoload-file']:'';
 $options['host']=isset($cli_options['host'])?$cli_options['host']:'';
 $options['port']=isset($cli_options['port'])?$cli_options['port']:'';
-C::RunQuickly($options);
-return ;
 
+Main::RunQuickly($options);
 
+return;
 
-class C
+class Main
 {
     public $options=[
         'prune_helper'=>false,
@@ -50,7 +50,6 @@ class C
     ];
     public function RunQuickly($options)
     {
-        //$class=static::class;
         return (new static())->init($options)->run();
     }
     public function init($options)
@@ -67,10 +66,9 @@ class C
         }
         $is_done=false;
         if ($this->options['create']) {
-            $name=$this->options['full']?'demo':'template';
-            $source= __DIR__ .'/../'.$name;
-            $dest=realpath($this->options['dest']);
-            $this->dumpDir($source, $dest, $this->options['force']);
+            $source= __DIR__ .'/../template';
+            $dest=$this->options['dest'];
+            $this->dumpDir($source, $dest, $this->options['force'],$this->options['full']);
             
             $is_done=true;
         }
@@ -94,97 +92,134 @@ class C
             return;
         }
     }
-    public function dumpDir($source, $dest, $force)
+    public function dumpDir($source, $dest, $force=false,$is_full=false)
     {
-        $source=realpath($source);
-        $dest=realpath($dest);
+        $source=rtrim(realpath($source),'/').'/';
+        $dest=rtrim(realpath($dest),'/').'/';
         $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
         $iterator = new \RecursiveIteratorIterator($directory);
-        $files = \iterator_to_array($iterator, false);
-        echo "Copying file...\n";
+        $t_files = \iterator_to_array($iterator, false);
+        $files=[];
+        
+        foreach ($t_files as $file) {
+            $files[$file]=substr($file, strlen($source));
+        }
+        
         if(!$force){
-            foreach ($files as $file) {
-                $short_file_name=substr($file, strlen($source)+1);
-                $dest_file=$dest.DIRECTORY_SEPARATOR.$short_file_name;
-                if(is_file($dest_file)){
-                    echo "file exists: $dest_file \n";
-                    echo "use --force to overwrite existed files \n";
-                    return false;
-                }
+            $flag=$this->checkFilesExist($source, $dest, $files);
+            if(!$flag){
+                return;
             }
         }
-        foreach ($files as $file) {
-            $short_file_name=substr($file, strlen($source)+1);
-            if ($short_file_name=='headfile/headfile.php') {
+        echo "Copying file...\n";
+        
+        $flag=$this->createDirectories($dest, $files);
+        if(!$flag){
+            return;
+        }
+        
+        foreach ($files as $file =>$short_file_name) {
+            $is_in_full=substr($short_file_name,0,strlen('public/full/'))==='public/full/'?true:false;
+            if(!$is_full && $is_in_full){
                 continue;
             }
+            /*
             if ($this->options['prune_helper']) {
                 if ($this->pruneHelper($short_file_name)) {
                     echo "prune skip: $short_file_name \n";
                     continue;
                 }
             }
+            */
             
-            // mkdir.
-            $blocks=explode(DIRECTORY_SEPARATOR, $short_file_name);
-            array_pop($blocks);
-            $full_dir=$dest;
-            foreach ($blocks as $t) {
-                $full_dir.=DIRECTORY_SEPARATOR.$t;
-                if (!is_dir($full_dir)) {
-                    mkdir($full_dir);
-                }
-            }
-            
-            $dest_file=$dest.DIRECTORY_SEPARATOR.$short_file_name;
             $data=file_get_contents($file);
             
-            $data=$this->filteText($data);
-            $data=$this->changeHeadFile($data);
+            $data=$this->filteText($data,$is_in_full,$short_file_name);
             
-            if ($this->options['prune_core']) {
-                $data=$this->purceCore($data);
-            }
-            if ($this->options['namespace']) {
-                $data=$this->filteNamespace($data);
-            }
-            ////
-            file_put_contents($dest_file, $data);
+            $dest_file=$dest.$short_file_name;
+            
+            $flag=file_put_contents($dest_file, $data);
+            
             echo $dest_file;
             echo "\n";
             //decoct(fileperms($file) & 0777);
         }
     }
-    protected function pruneHelper($short_file_name)
+    protected function checkFilesExist($source,$dest,$files)
     {
-        return false; //TODO  to work;
-        if (substr($short_file_name, -strlen('Helper.php'))==='Helper.php') {
-            return true;
-        } else {
-            return false;
+        foreach ($files as $file=> $short_file_name) {
+            if(!$this->options['full']){
+                if(substr($short_file_name,0,strlen('public/full/'))==='public/full/'){
+                    continue;
+                }
+            }
+            $dest_file=$dest.$short_file_name;
+            if(is_file($dest_file)){
+                echo "file exists: $dest_file \n";
+                echo "use --force to overwrite existed files \n";
+                return false;
+            }
         }
+        return true;
     }
-    protected function filteText($data)
+    protected function createDirectories($dest,$files)
     {
-        $data=str_replace('//* DuckPhp TO DELETE ', '/* DuckPhp HAS DELETE ', $data);
-        $data=str_replace('/* DuckPhp TO KEEP ', '//* DuckPhp HAS KEEP ', $data);
+        foreach ($files as $file => $short_file_name) {
+            // mkdir.
+            $blocks=explode('/', $short_file_name);
+            array_pop($blocks);
+            $full_dir=$dest;
+            foreach ($blocks as $t) {
+                $full_dir.=DIRECTORY_SEPARATOR.$t;
+                if (!is_dir($full_dir)) {
+                    $flag = mkdir($full_dir);
+                    if(!$flag){
+                        echo "create file failed $full_dir";
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+    protected function filteText($data, $is_in_full,$short_file_name)
+    {
+        $data = $this->changeHeadFile($data, $short_file_name);
+        
+        if(!$is_in_full){
+            $data=$this->filteMacro($data);
+            if ($this->options['prune_core']) {
+                $data=$this->purceCore($data);
+            }
+            if ($this->options['namespace']) {
+                $data=$this->filteNamespace($data, $this->options['namespace']);
+            }
+        }
         return $data;
     }
-    protected function filteNamespace($data)
+    protected function filteMacro($data)
     {
-        $namespace=$this->options['namespace'];
+        $data=preg_replace('/^.*?@DUCKPHP_DELETE.*?$/m', '', $data);
+        
+        return $data;    
+    }
+    protected function filteNamespace($data, $namespace)
+    {
         if ($namespace==='MY') {
             return $data;
         }
         $data=str_replace('MY\\', $namespace.'\\', $data);
         return $data;
     }
-    protected function changeHeadFile($data)
+    protected function changeHeadFile($data,$short_file_name)
     {
         $autoload_file=$this->options['autoload_file']?$this->options['autoload_file']:"vendor/autoload.php";
-        $str_header="require_once(__DIR__.'/../$autoload_file');";
+        $level=substr_count($short_file_name, '/');
+        $subdir=str_repeat('../',$level);
+        $str_header="require_once(__DIR__.'/{$subdir}$autoload_file');";
         
-        $data=str_replace("require_once(__DIR__.'/../headfile/headfile.php');", $str_header, $data);
+        $data=preg_replace('/^.*?@DUCKPHP_HEADFILE.*?$/m', $str_header, $data);
+        
         return $data;
     }
     protected function purceCore($data)
@@ -193,6 +228,16 @@ class C
         $data=str_replace("DuckPhp\\Core\\Core", "DuckPhp\\Core", $data);
         return $data;
     }
+    protected function pruneHelper($short_file_name)
+    {
+        return false; //TODO notwork ,to make it work ,should change
+        if (substr($short_file_name, -strlen('Helper.php'))==='Helper.php') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     protected function showWelcome()
     {
         echo <<<EOT
@@ -210,7 +255,6 @@ EOT;
   --force                   Overwrite exited files.
   --full                    Use The demo template
   --prune-core              Just use DuckPhp\Core ,but not use DuckPhp
-  --prune-helper            Do not use the Helper class, 
   
   --autoload-file <path>    Use another autoload file.
   --dest [path]             Copy project file to here.
@@ -221,5 +265,6 @@ EOT;
 To start the project , use '--start' or run script 'bin/start_server.php'
 
 EOT;
+//--prune-helper            Do not use the Helper class, 
     }
 }

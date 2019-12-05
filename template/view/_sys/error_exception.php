@@ -1,15 +1,26 @@
 <?php
+use DuckPhp\Helper\ViewHelper as V;
 //var_dump(get_defined_vars());
-?>
-<?php if ($is_debug) {
+
+$is_debug=V::IsDebug();
+$class=get_class($ex);
+$code=$ex->getCode();
+$message=$ex->getMessage();
+$trace=$ex->getTraceString();
+
+if ($is_debug) {
     ?>
 <fieldset>
-	<legend>Exception(<?=get_class($ex); ?>:<?php echo($ex->getCode()); ?>)</legend>
-	<?php echo($ex->getMessage()); ?>
+	<legend>Exception(<?=$class ?>:<?=$code?>)</legend>
+	<?=$message ?>
 <pre>
 --
-<?php echo($trace); ?>
+<?=$trace?>
 </pre>
 </fieldset>
 <?php
-}?>
+}else{
+?>
+    500
+<?php
+}
