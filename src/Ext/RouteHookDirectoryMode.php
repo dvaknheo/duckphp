@@ -1,4 +1,8 @@
 <?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\SingletonEx;
@@ -9,8 +13,8 @@ use DuckPhp\Ext\RouteHookRewrite;
 class RouteHookDirectoryMode
 {
     use SingletonEx;
-    public $options=[
-        'mode_dir_basepath'=>'',
+    public $options = [
+        'mode_dir_basepath' => '',
         //'mode_dir_use_path_info'=>true,
         //'mode_dir_key_for_module'=>true,
         //'mode_dir_key_for_action'=>true,
@@ -20,11 +24,11 @@ class RouteHookDirectoryMode
     public function __construct()
     {
     }
-    public function init(array $options, object $context=null)
+    public function init(array $options, object $context = null)
     {
-        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
+        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         
-        $this->basepath=$this->options['mode_dir_basepath'];
+        $this->basepath = $this->options['mode_dir_basepath'];
         if ($context) {
             Route::G()->addRouteHook([static::class,'Hook'], 'prepend-outter');
             Route::G()->setURLHandler([$this,'onURL']);
@@ -32,58 +36,58 @@ class RouteHookDirectoryMode
     }
     protected function adjustPathinfo($basepath, $path_info)
     {
-        $input_path=parse_url(SuperGlobal::G()->_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        $script_filename=SuperGlobal::G()->_SERVER['SCRIPT_FILENAME'];
-        $document_root=SuperGlobal::G()->_SERVER['DOCUMENT_ROOT'];
+        $input_path = parse_url(SuperGlobal::G()->_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $script_filename = SuperGlobal::G()->_SERVER['SCRIPT_FILENAME'];
+        $document_root = SuperGlobal::G()->_SERVER['DOCUMENT_ROOT'];
         
-        $path_info=substr($document_root.$input_path, strlen($basepath));
-        $path_info=ltrim((string)$path_info, '/').'/';
-        $blocks=explode('/', $path_info);
+        $path_info = substr($document_root.$input_path, strlen($basepath));
+        $path_info = ltrim((string)$path_info, '/').'/';
+        $blocks = explode('/', $path_info);
 
-        $path_info='';
-        $has_file=false;
-        foreach ($blocks as $i=>$v) {
-            if (!$has_file && substr($v, -strlen('.php'))==='.php') {
-                $has_file=true;
-                $path_info.=substr($v, 0, -strlen('.php')).'/';
-                if (!($blocks[$i+1])) {
-                    $path_info.='index';
+        $path_info = '';
+        $has_file = false;
+        foreach ($blocks as $i => $v) {
+            if (!$has_file && substr($v, -strlen('.php')) === '.php') {
+                $has_file = true;
+                $path_info .= substr($v, 0, -strlen('.php')).'/';
+                if (!($blocks[$i + 1])) {
+                    $path_info .= 'index';
                     break;
                 }
             } else {
-                $path_info.=$v.'/';
+                $path_info .= $v.'/';
             }
         }
-        $path_info=rtrim($path_info, '/');
+        $path_info = rtrim($path_info, '/');
         
         return $path_info;
     }
-    public function onURL($url=null)
+    public function onURL($url = null)
     {
-        if (strlen($url)>0 && '/'===$url{0}) {
+        if (strlen($url) > 0 && '/' === $url{0}) {
             return $url;
         };
         
-        $document_root=SuperGlobal::G()->_SERVER['DOCUMENT_ROOT'];
-        $base_url=substr($this->basepath, strlen($document_root));
-        $input_path=parse_url($url, PHP_URL_PATH)??'';
+        $document_root = SuperGlobal::G()->_SERVER['DOCUMENT_ROOT'];
+        $base_url = substr($this->basepath, strlen($document_root));
+        $input_path = parse_url($url, PHP_URL_PATH) ?? '';
         
-        $blocks=explode('/', $input_path);
+        $blocks = explode('/', $input_path);
         
-        $basepath=$this->basepath;
-        $new_path='';
-        $l=count($blocks);
-        foreach ($blocks as $i=> $v) {
-            if ($i+1>=$l) {
+        $basepath = $this->basepath;
+        $new_path = '';
+        $l = count($blocks);
+        foreach ($blocks as $i => $v) {
+            if ($i + 1 >= $l) {
                 break;
             }
-            $class_names=array_slice($blocks, 0, $i+1);
-            $full_class_name=implode('/', $class_names);
-            $file=$basepath.$full_class_name.'.php';
+            $class_names = array_slice($blocks, 0, $i + 1);
+            $full_class_name = implode('/', $class_names);
+            $file = $basepath.$full_class_name.'.php';
             if (is_file($file)) {
-                $path_info=isset($blocks[$i])?array_slice($blocks, -$i-1):[];
-                $path_info=implode('/', $path_info);
-                $new_path=$base_url.implode('/', $class_names).'.php'.($path_info?'/'.$path_info:'');
+                $path_info = isset($blocks[$i])?array_slice($blocks, -$i - 1):[];
+                $path_info = implode('/', $path_info);
+                $new_path = $base_url.implode('/', $class_names).'.php'.($path_info?'/'.$path_info:'');
                 break;
             }
         }
@@ -91,12 +95,12 @@ class RouteHookDirectoryMode
             return $url;
         }
     
-        $new_get=[];
-        parse_str(parse_url($url, PHP_URL_QUERY)??'', $new_get);
+        $new_get = [];
+        parse_str(parse_url($url, PHP_URL_QUERY) ?? '', $new_get);
         
-        $get=array_merge($new_get, $new_get);
-        $query=$get?'?'.http_build_query($get):'';
-        $ret=$new_path.$query;
+        $get = array_merge($new_get, $new_get);
+        $query = $get?'?'.http_build_query($get):'';
+        $ret = $new_path.$query;
         return $ret;
     }
     public static function Hook($path_info)
@@ -105,7 +109,7 @@ class RouteHookDirectoryMode
     }
     public function _Hook($path_info)
     {
-        Route::G()->path_info=$this->adjustPathinfo($this->basepath, $path_info);
+        Route::G()->path_info = $this->adjustPathinfo($this->basepath, $path_info);
         
         return false;
     }

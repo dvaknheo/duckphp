@@ -1,4 +1,8 @@
 <?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\SingletonEx;
@@ -8,65 +12,65 @@ class DBManager
 {
     use SingletonEx;
 
-    const TAG_WRITE=0;
-    const TAG_READ=1;
+    const TAG_WRITE = 0;
+    const TAG_READ = 1;
     
-    public $options=[
-        'db_create_handler'=>null,
-        'db_close_handler'=>null,
-        'db_exception_handler'=>null,
-        'before_get_db_handler'=>null,
+    public $options = [
+        'db_create_handler' => null,
+        'db_close_handler' => null,
+        'db_exception_handler' => null,
+        'before_get_db_handler' => null,
         
-        'database_list'=>null,
-        'use_context_db_setting'=>true,
-        'db_close_at_output'=>true,
+        'database_list' => null,
+        'use_context_db_setting' => true,
+        'db_close_at_output' => true,
     ];
 
     
-    protected $database_config_list=[];
-    protected $databases=[];
+    protected $database_config_list = [];
+    protected $databases = [];
     
-    protected $db_create_handler=null;
-    protected $db_close_handler=null;
-    protected $db_exception_handler=null;
+    protected $db_create_handler = null;
+    protected $db_close_handler = null;
+    protected $db_exception_handler = null;
     
-    protected $before_get_db_handler=null;
-    protected $use_context_db_setting=true;
-    protected $is_static=false;
+    protected $before_get_db_handler = null;
+    protected $use_context_db_setting = true;
+    protected $is_static = false;
     
     public function __construct()
     {
     }
-    public function init(array $options, object $context=null)
+    public function init(array $options, object $context = null)
     {
-        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
+        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         
-        $this->before_get_db_handler=$this->options['before_get_db_handler']??null;
-        $this->database_config_list=$this->options['database_list'];
-        $this->db_create_handler=$this->options['db_create_handler']??[DB::class,'CreateDBInstance'];
-        $this->db_close_handler=$this->options['db_close_handler']??[DB::class,'CloseDBInstance'];
-        $this->db_exception_handler=$this->options['db_exception_handler']??null;
-        $this->use_context_db_setting=$this->options['use_context_db_setting'];
+        $this->before_get_db_handler = $this->options['before_get_db_handler'] ?? null;
+        $this->database_config_list = $this->options['database_list'];
+        $this->db_create_handler = $this->options['db_create_handler'] ?? [DB::class,'CreateDBInstance'];
+        $this->db_close_handler = $this->options['db_close_handler'] ?? [DB::class,'CloseDBInstance'];
+        $this->db_exception_handler = $this->options['db_exception_handler'] ?? null;
+        $this->use_context_db_setting = $this->options['use_context_db_setting'];
         if ($context) {
             $this->initContext($options, $context);
         }
         return $this;
     }
-    protected function initContext($options=[], $context=null)
+    protected function initContext($options = [], $context = null)
     {
         if ($this->use_context_db_setting) {
-            $database_list=$context::Setting('database_list')??null;
+            $database_list = $context::Setting('database_list') ?? null;
             if (!isset($database_list)) {
-                $database_list=$context->options['database_list']??null;
+                $database_list = $context->options['database_list'] ?? null;
             }
             if ($database_list) {
-                $this->database_config_list=$database_list;
+                $this->database_config_list = $database_list;
             }
         }
         
         // before_get_db_handler
-        if (is_array($this->before_get_db_handler) && $this->before_get_db_handler[0]===null) {
-            $this->before_get_db_handler[0]=get_class($context);
+        if (is_array($this->before_get_db_handler) && $this->before_get_db_handler[0] === null) {
+            $this->before_get_db_handler[0] = get_class($context);
         }
         if ($this->options['db_close_at_output']) {
             $context->addBeforeShowHandler([static::class,'CloseAllDB']);
@@ -84,21 +88,21 @@ class DBManager
         return static::G()->_onException();
     }
     
-    public function setDBHandler($db_create_handler, $db_close_handler=null, $db_exception_handler=null)
+    public function setDBHandler($db_create_handler, $db_close_handler = null, $db_exception_handler = null)
     {
-        $this->db_create_handler=$db_create_handler;
-        $this->db_close_handler=$db_close_handler;
-        $this->db_exception_handler=$db_exception_handler;
+        $this->db_create_handler = $db_create_handler;
+        $this->db_close_handler = $db_close_handler;
+        $this->db_exception_handler = $db_exception_handler;
     }
     public function setBeforeGetDBHandler($before_get_db_handler)
     {
-        $this->before_get_db_handler=$before_get_db_handler;
+        $this->before_get_db_handler = $before_get_db_handler;
     }
     public function getDBHandler()
     {
         return [$this->db_create_handler,$this->db_close_handler,$this->db_exception_handler];
     }
-    public function _DB($tag=null)
+    public function _DB($tag = null)
     {
         if (isset($this->before_get_db_handler)) {
             ($this->before_get_db_handler)($this, $tag);
@@ -107,11 +111,11 @@ class DBManager
             if (empty($this->database_config_list)) {
                 return null; // @codeCoverageIgnore
             }
-            $t=array_keys($this->database_config_list);
-            $tag=$t[0];
+            $t = array_keys($this->database_config_list);
+            $tag = $t[0];
         }
-        $db_config=$this->database_config_list[$tag]??null;
-        if ($db_config===null) {
+        $db_config = $this->database_config_list[$tag] ?? null;
+        if ($db_config === null) {
             return null; // @codeCoverageIgnore
         }
         return $this->getDatabase($db_config, $tag);
@@ -119,7 +123,7 @@ class DBManager
     protected function getDatabase($db_config, $tag)
     {
         if (!isset($this->databases[$tag])) {
-            $this->databases[$tag]=($this->db_create_handler)($db_config, $tag);
+            $this->databases[$tag] = ($this->db_create_handler)($db_config, $tag);
         }
         return $this->databases[$tag];
     }
@@ -140,10 +144,10 @@ class DBManager
         if (!$this->db_close_handler) {
             return;
         }
-        foreach ($this->databases as $tag=>$v) {
+        foreach ($this->databases as $tag => $v) {
             ($this->db_close_handler)($v, $tag);
         }
-        $this->databases=[];
+        $this->databases = [];
     }
 
     public function _onException()
@@ -151,9 +155,9 @@ class DBManager
         if (!$this->db_exception_handler) {
             return;
         }
-        foreach ($this->databases as $tag=>$v) {
+        foreach ($this->databases as $tag => $v) {
             ($this->db_exception_handler)($v, $tag);
         }
-        $this->databases=[];
+        $this->databases = [];
     }
 }

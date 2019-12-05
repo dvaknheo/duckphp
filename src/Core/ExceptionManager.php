@@ -1,4 +1,8 @@
 <?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\SingletonEx;
@@ -7,43 +11,43 @@ class ExceptionManager
 {
     use SingletonEx;
     
-    public $options=[
-        'handle_all_dev_error'=>true,
-        'handle_all_exception'=>true,
-        'system_exception_handler'=>null,
+    public $options = [
+        'handle_all_dev_error' => true,
+        'handle_all_exception' => true,
+        'system_exception_handler' => null,
         
-        'default_exception_handler'=>null,
-        'dev_error_handler'=>null,
+        'default_exception_handler' => null,
+        'dev_error_handler' => null,
     ];
     
-    protected $exceptionHandlers=[];
-    protected $default_exception_handler=null;
+    protected $exceptionHandlers = [];
+    protected $default_exception_handler = null;
     
-    protected $system_exception_handler=null;
-    protected $last_error_handler=null;
-    protected $last_exception_handler=null;
+    protected $system_exception_handler = null;
+    protected $last_error_handler = null;
+    protected $last_exception_handler = null;
     
-    public $is_inited=false;
-    public $is_running=false;
+    public $is_inited = false;
+    public $is_running = false;
     
     public function __construct()
     {
     }
     public function setDefaultExceptionHandler($default_exception_handler)
     {
-        $this->default_exception_handler=$default_exception_handler;
+        $this->default_exception_handler = $default_exception_handler;
     }
-    public function assignExceptionHandler($class, $callback=null)
+    public function assignExceptionHandler($class, $callback = null)
     {
-        $class=is_string($class)?array($class=>$callback):$class;
-        foreach ($class as $k=>$v) {
-            $this->exceptionHandlers[$k]=$v;
+        $class = is_string($class)?array($class => $callback):$class;
+        foreach ($class as $k => $v) {
+            $this->exceptionHandlers[$k] = $v;
         }
     }
     public function setMultiExceptionHandler(array $classes, $callback)
     {
         foreach ($classes as $class) {
-            $this->exceptionHandlers[$class]=$callback;
+            $this->exceptionHandlers[$class] = $callback;
         }
     }
     public function on_error_handler($errno, $errstr, $errfile, $errline)
@@ -69,7 +73,7 @@ class ExceptionManager
     }
     public function on_exception($ex)
     {
-        foreach ($this->exceptionHandlers as $class =>$callback) {
+        foreach ($this->exceptionHandlers as $class => $callback) {
             if (is_a($ex, $class)) {
                 ($callback)($ex);
                 return;
@@ -77,12 +81,12 @@ class ExceptionManager
         }
         ($this->default_exception_handler)($ex);
     }
-    public function init(array $options, object $context=null)
+    public function init(array $options, object $context = null)
     {
-        $this->options=array_replace_recursive($this->options, $options);
+        $this->options = array_replace_recursive($this->options, $options);
         
-        $this->default_exception_handler=$this->options['default_exception_handler'];
-        $this->system_exception_handler=$this->options['system_exception_handler'];
+        $this->default_exception_handler = $this->options['default_exception_handler'];
+        $this->system_exception_handler = $this->options['system_exception_handler'];
         
         return $this;
     }
@@ -91,17 +95,17 @@ class ExceptionManager
         if ($this->is_running) {
             return;
         }
-        $this->is_running=true;
+        $this->is_running = true;
         
         if ($this->options['handle_all_dev_error']) {
-            $this->last_error_handler=set_error_handler([$this,'on_error_handler']);
+            $this->last_error_handler = set_error_handler([$this,'on_error_handler']);
         }
         
         if ($this->options['handle_all_exception']) {
             if ($this->system_exception_handler) {
-                $this->last_exception_handler=($this->system_exception_handler)([$this,'on_exception']);
+                $this->last_exception_handler = ($this->system_exception_handler)([$this,'on_exception']);
             } else {
-                $this->last_exception_handler=set_exception_handler([$this,'on_exception']);
+                $this->last_exception_handler = set_exception_handler([$this,'on_exception']);
             }
         }
     }
@@ -112,12 +116,12 @@ class ExceptionManager
         }
         if ($this->options['handle_all_exception']) {
             if ($this->system_exception_handler) {
-                $this->system_exception_handler=null;
+                $this->system_exception_handler = null;
             } else {
                 restore_exception_handler();
             }
         }
-        $this->is_running=false;
-        $this->is_inited=false;
+        $this->is_running = false;
+        $this->is_inited = false;
     }
 }

@@ -1,4 +1,8 @@
-<?php declare(strict_types=1);  //declare(strict_types=1);
+<?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */  
 // MAIN FILE
 //dvaknheo@github.com
 //OK，Lazy
@@ -33,38 +37,38 @@ class App
     use Core_SystemWrapper;
     use Core_Glue;
     
-    const DEFAULT_OPTIONS=[
+    const DEFAULT_OPTIONS = [
             //// basic config ////
-            'path'=>null,
-            'namespace'=>'MY',
-            'path_namespace'=>'app',
+            'path' => null,
+            'namespace' => 'MY',
+            'path_namespace' => 'app',
             
             //// properties ////
-            'is_debug'=>false,
-            'platform'=>'',
-            'ext'=>[],
+            'is_debug' => false,
+            'platform' => '',
+            'ext' => [],
             
-            'override_class'=>'Base\App',
-            'reload_for_flags'=>true,
-            'use_super_global'=>false,
-            'skip_view_notice_error'=>true,
-            'skip_404_handler'=>false,
-            'skip_plugin_check'=>false,
+            'override_class' => 'Base\App',
+            'reload_for_flags' => true,
+            'use_super_global' => false,
+            'skip_view_notice_error' => true,
+            'skip_404_handler' => false,
+            'skip_plugin_check' => false,
             
             //// error handler ////
-            'handle_all_dev_error'=>true,
-            'handle_all_exception'=>true,
-            'error_404'=>null,          //'_sys/error-404',
-            'error_500'=>null,          //'_sys/error-500',
-            'error_exception'=>null,    //'_sys/error-exception',
-            'error_debug'=>null,        //'_sys/error-debug',
+            'handle_all_dev_error' => true,
+            'handle_all_exception' => true,
+            'error_404' => null,          //'_sys/error-404',
+            'error_500' => null,          //'_sys/error-500',
+            'error_exception' => null,    //'_sys/error-exception',
+            'error_debug' => null,        //'_sys/error-debug',
             
             //// Class Autoloader ////
             // 'path'=>null,
             // 'namespace'=>'MY',
             // 'path_namespace'=>'app',
             // 'skip_system_autoload'=>true,
-            'skip_app_autoload'=>false,
+            'skip_app_autoload' => false,
             //'enable_cache_classes_in_cli'=>true,
 
             //// Class Configer ////
@@ -91,40 +95,40 @@ class App
             // 'controller_prefix_post'=>'do_',
             // 'controller_postfix'=>'',
         ];
-    const DEFAULT_OPTIONS_EX=[
+    const DEFAULT_OPTIONS_EX = [
         ];
 
-    public $options=[];
-    public $is_debug=true;
-    public $platform='';
-    public $override_from='';
+    public $options = [];
+    public $is_debug = true;
+    public $platform = '';
+    public $override_from = '';
     
-    protected $beforeRunHandlers=[];
-    protected $error_view_inited=false;
+    protected $beforeRunHandlers = [];
+    protected $error_view_inited = false;
     
-    protected $extDynamicComponentClasses=[];
+    protected $extDynamicComponentClasses = [];
 
     //const;
-    protected $componentClassMap=[
-            'M'=>'Helper\ModelHelper',
-            'V'=>'Helper\ViewHelper',
-            'C'=>'Helper\ControllerHelper',
-            'S'=>'Helper\ServiceHelper',
+    protected $componentClassMap = [
+            'M' => 'Helper\ModelHelper',
+            'V' => 'Helper\ViewHelper',
+            'C' => 'Helper\ControllerHelper',
+            'S' => 'Helper\ServiceHelper',
     ];
     //system handler replacer
-    protected $system_handlers=[
-        'header'                =>null,
-        'setcookie'             =>null,
-        'exit_system'           =>null,
-        'set_exception_handler' =>null,
-        'register_shutdown_function' =>null,
+    protected $system_handlers = [
+        'header' => null,
+        'setcookie' => null,
+        'exit_system' => null,
+        'set_exception_handler' => null,
+        'register_shutdown_function' => null,
     ];
     public function __construct()
     {
     }
-    public static function RunQuickly(array $options=[], callable $after_init=null): bool
+    public static function RunQuickly(array $options = [], callable $after_init = null): bool
     {
-        $instance=static::G()->init($options);
+        $instance = static::G()->init($options);
         if (!$instance) {
             return true;
         }
@@ -133,72 +137,72 @@ class App
         }
         return $instance->run();
     }
-    protected function initOptions($options=[])
+    protected function initOptions($options = [])
     {
         if (!isset($options['path']) || !$options['path']) {
-            $path=realpath($_SERVER['SCRIPT_FILENAME'].'/../');
-            $options['path']=(string)$path;
+            $path = realpath($_SERVER['SCRIPT_FILENAME'].'/../');
+            $options['path'] = (string)$path;
         }
-        $options['path']=rtrim($options['path'], '/').'/';
-        $this->options=array_replace_recursive(static::DEFAULT_OPTIONS, static::DEFAULT_OPTIONS_EX, $options);
+        $options['path'] = rtrim($options['path'], '/').'/';
+        $this->options = array_replace_recursive(static::DEFAULT_OPTIONS, static::DEFAULT_OPTIONS_EX, $options);
         
-        $this->is_debug=$this->options['is_debug'];
-        $this->platform=$this->options['platform'];
+        $this->is_debug = $this->options['is_debug'];
+        $this->platform = $this->options['platform'];
     }
     protected function checkOverride($options)
     {
         // TODO static::DEFAULT_OPTIONSEX
-        $override_class=$options['override_class']??static::DEFAULT_OPTIONS['override_class'];
-        $namespace=$options['namespace']??static::DEFAULT_OPTIONS['namespace'];
+        $override_class = $options['override_class'] ?? static::DEFAULT_OPTIONS['override_class'];
+        $namespace = $options['namespace'] ?? static::DEFAULT_OPTIONS['namespace'];
         
-        if (substr($override_class, 0, 1)!=='\\') {
-            $override_class=$namespace.'\\'.$override_class;
+        if (substr($override_class, 0, 1) !== '\\') {
+            $override_class = $namespace.'\\'.$override_class;
         }
-        $override_class=ltrim($override_class, '\\');
+        $override_class = ltrim($override_class, '\\');
         if (!$override_class || !class_exists($override_class)) {
             return null;
         }
-        if (static::class===$override_class) {
+        if (static::class === $override_class) {
             return null;
         }
         return $override_class::G();
     }
     //init
-    public function init(array $options, object $context=null)
+    public function init(array $options, object $context = null)
     {
-        if (!($options['skip_plugin_check']??false) && isset($context)) {
+        if (!($options['skip_plugin_check'] ?? false) && isset($context)) {
             return $this->initAsPlugin($options, $context);
         }
         AutoLoader::G()->init($options, $this)->run();
         
-        $handle_all_dev_error=$options['handle_all_dev_error']??static::DEFAULT_OPTIONS['handle_all_dev_error'];
-        $handle_all_exception=$options['handle_all_exception']??static::DEFAULT_OPTIONS['handle_all_exception'];
+        $handle_all_dev_error = $options['handle_all_dev_error'] ?? static::DEFAULT_OPTIONS['handle_all_dev_error'];
+        $handle_all_exception = $options['handle_all_exception'] ?? static::DEFAULT_OPTIONS['handle_all_exception'];
 
-        $exception_options=[
-            'handle_all_dev_error'=>$handle_all_dev_error,
-            'handle_all_exception'=>$handle_all_exception,
+        $exception_options = [
+            'handle_all_dev_error' => $handle_all_dev_error,
+            'handle_all_exception' => $handle_all_exception,
             
-            'system_exception_handler'=>[static::class,'set_exception_handler'],
+            'system_exception_handler' => [static::class,'set_exception_handler'],
             
-            'default_exception_handler'=>[static::class,'OnException'],
-            'dev_error_handler'=>[static::class,'OnDevErrorHandler'],
+            'default_exception_handler' => [static::class,'OnException'],
+            'dev_error_handler' => [static::class,'OnDevErrorHandler'],
         ];
         ExceptionManager::G()->init($exception_options, $this)->run();
         
-        $object=$this->checkOverride($options);
+        $object = $this->checkOverride($options);
         
-        $override_from=$object?static::class:'';
-        $object=$object??$this;
+        $override_from = $object?static::class:'';
+        $object = $object ?? $this;
         
         (self::class)::G($object);
         static::G($object);
         
-        $object->override_from=$override_from;
+        $object->override_from = $override_from;
         $object->initOptions($options);
         return $object->onInit();
     }
     //for override
-    protected function initAsPlugin(array $options, object $context=null)
+    protected function initAsPlugin(array $options, object $context = null)
     {
         static::ThrowOn(true, 'DuckPhp, only for override');
         return $this; // @codeCoverageIgnore
@@ -210,7 +214,7 @@ class App
         $this->reloadFlags();
         
         View::G()->init($this->options, $this);
-        $this->error_view_inited=true;
+        $this->error_view_inited = true;
         
         Route::G()->init($this->options, $this);
         
@@ -223,24 +227,24 @@ class App
         if (!$this->options['reload_for_flags']) {
             return;
         }
-        $is_debug=Configer::G()->_Setting('duckphp_is_debug');
-        $platform=Configer::G()->_Setting('duckphp_platform');
+        $is_debug = Configer::G()->_Setting('duckphp_is_debug');
+        $platform = Configer::G()->_Setting('duckphp_platform');
         if (isset($is_debug)) {
-            $this->is_debug=$is_debug;
+            $this->is_debug = $is_debug;
         }
         if (isset($platform)) {
-            $this->platform=$platform;
+            $this->platform = $platform;
         }
     }
     protected function initExtentions(array $exts): void
     {
-        foreach ($exts as $class =>$options) {
-            $options=($options===true)?$this->options:$options;
-            $options=is_string($options)?$this->options[$options]:$options;
-            if ($options===false) {
+        foreach ($exts as $class => $options) {
+            $options = ($options === true)?$this->options:$options;
+            $options = is_string($options)?$this->options[$options]:$options;
+            if ($options === false) {
                 continue;
             }
-            $class=(string)$class;
+            $class = (string)$class;
             if (!class_exists($class)) {
                 continue;
             }
@@ -265,12 +269,12 @@ class App
             
             RuntimeState::ReCreateInstance()->begin();
             
-            $route=Route::G();
-            if ($this->options['use_super_global']??false) {
+            $route = Route::G();
+            if ($this->options['use_super_global'] ?? false) {
                 $route->bindServerData(SuperGlobal::G()->_SERVER);
             }
             
-            $ret=$route->run();
+            $ret = $route->run();
             
             if (!$ret && !$this->options['skip_404_handler']) {
                 static::On404();
@@ -279,7 +283,7 @@ class App
             
             return $ret;
         } catch (\Throwable $ex) {
-            RuntimeState::G()->is_in_exception=true;
+            RuntimeState::G()->is_in_exception = true;
             ExceptionManager::G()->on_exception($ex);
             return true;
         }
@@ -291,7 +295,7 @@ class App
             foreach ($this->beforeShowHandlers as $v) {
                 ($v)();
             }
-            RuntimeState::G()->is_before_show_done=true;
+            RuntimeState::G()->is_before_show_done = true;
         }
         RuntimeState::G()->end();
         
@@ -300,20 +304,20 @@ class App
     public function cleanAll()
     {
         $this->clear();
-        $classes=$this->getDynamicComponentClasses();
+        $classes = $this->getDynamicComponentClasses();
         foreach ($classes as $class) {
             $this->cleanClass($class);
         }
-        $classes=$this->getStaticComponentClasses();
+        $classes = $this->getStaticComponentClasses();
         foreach ($classes as $class) {
             $this->cleanClass($class);
         }
     }
     protected function cleanClass($input_class)
     {
-        $current_class=get_class($input_class::G());
+        $current_class = get_class($input_class::G());
         $input_class::G(new $input_class());
-        if ($current_class!=$input_class) {
+        if ($current_class != $input_class) {
             $this->cleanClass($current_class); // @codeCoverageIgnore
         }
     }
@@ -323,31 +327,31 @@ class App
     
     protected function addBeforeRunHandler(?callable $handler): void
     {
-        $this->beforeRunHandlers[]=$handler;
+        $this->beforeRunHandlers[] = $handler;
     }
     public function addBeforeShowHandler($handler)
     {
-        $this->beforeShowHandlers[]=$handler;
+        $this->beforeShowHandlers[] = $handler;
     }
     ////////////////////////
     // @provider output.
     public function extendComponents($class, $methods, $components): void
     {
-        $methods=is_array($methods)?$methods:[$methods];
-        $components=is_array($components)?$components:explode(',', $components);
-        $maps=[];
+        $methods = is_array($methods)?$methods:[$methods];
+        $components = is_array($components)?$components:explode(',', $components);
+        $maps = [];
         foreach ($methods as $method) {
-            $maps[$method]=[$class,$method];
+            $maps[$method] = [$class,$method];
         }
         
         static::AssignExtendStaticMethod($maps);
         
-        $a=explode('\\', get_class($this));
+        $a = explode('\\', get_class($this));
         array_pop($a);
-        $namespace=ltrim(implode('\\', $a).'\\', '\\');  // __NAMESPACE__
+        $namespace = ltrim(implode('\\', $a).'\\', '\\');  // __NAMESPACE__
         foreach ($components as $component) {
-            $class=$this->componentClassMap[strtoupper($component)]??null;
-            $full_class=($class===null)?$component:$namespace.$class;
+            $class = $this->componentClassMap[strtoupper($component)] ?? null;
+            $full_class = ($class === null)?$component:$namespace.$class;
             if (!class_exists($full_class)) {
                 continue;
             }
@@ -359,7 +363,7 @@ trait Core_Component
 {
     public function getStaticComponentClasses()
     {
-        $ret=[
+        $ret = [
             self::class,
             AutoLoader::class,
             ExceptionManager::class,
@@ -367,16 +371,16 @@ trait Core_Component
             Route::class,
         ];
         if (!in_array(static::class, $ret)) {
-            $ret[]=static::class;
+            $ret[] = static::class;
         }
         if ($this->override_from && !in_array($this->override_from, $ret)) {
-            $ret[]=$this->override_from;
+            $ret[] = $this->override_from;
         }
         return $ret;
     }
     public function getDynamicComponentClasses()
     {
-        $ret=[
+        $ret = [
             RuntimeState::class,
             SuperGlobal::class,
             View::class,
@@ -385,19 +389,19 @@ trait Core_Component
     }
     public function addDynamicComponentClass($class)
     {
-        $this->extDynamicComponentClasses[]=$class;
+        $this->extDynamicComponentClasses[] = $class;
     }
     public function deleteDynamicComponentClass($class)
     {
         array_filter($this->extDynamicComponentClasses, function ($v) use ($class) {
-            return $v!==$class?true:false;
+            return $v !== $class?true:false;
         });
     }
 }
 trait Core_Handler
 {
-    protected $beforeShowHandlers=[];
-    protected $error_view_inited=false;
+    protected $beforeShowHandlers = [];
+    protected $error_view_inited = false;
     
     public static function On404(): void
     {
@@ -413,8 +417,8 @@ trait Core_Handler
     }
     public function _On404(): void
     {
-        $error_view=$this->options['error_404']??null;
-        $error_view=$this->error_view_inited?$error_view:null;
+        $error_view = $this->options['error_404'] ?? null;
+        $error_view = $this->error_view_inited?$error_view:null;
         
         static::header('', true, 404);
         if (!is_string($error_view) && is_callable($error_view)) {
@@ -433,18 +437,18 @@ trait Core_Handler
     
     public function _OnException($ex): void
     {
-        $is_error=is_a($ex, 'Error') || is_a($ex, 'ErrorException')?true:false;
-        $error_view=$is_error?($this->options['error_500']??null):($this->options['error_exception']??null);
-        $error_view=$this->error_view_inited?$error_view:null;
+        $is_error = is_a($ex, 'Error') || is_a($ex, 'ErrorException')?true:false;
+        $error_view = $is_error?($this->options['error_500'] ?? null):($this->options['error_exception'] ?? null);
+        $error_view = $this->error_view_inited?$error_view:null;
         
         static::header('', true, 500);
-        $data=[];
-        $data['is_debug']=static::IsDebug();
-        $data['ex']=$ex;
-        $data['class']=get_class($ex);
-        $data['message']=$ex->getMessage();
-        $data['code']=$ex->getCode();
-        $data['trace']=$ex->getTraceAsString();
+        $data = [];
+        $data['is_debug'] = static::IsDebug();
+        $data['ex'] = $ex;
+        $data['class'] = get_class($ex);
+        $data['message'] = $ex->getMessage();
+        $data['code'] = $ex->getCode();
+        $data['trace'] = $ex->getTraceAsString();
         
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)($ex);
@@ -453,8 +457,8 @@ trait Core_Handler
         }
         ////////  no  error_500 or error_exception setting
         if (!$error_view) {
-            $desc=$is_error?'Internal Error':'Internal Exception';
-            $error_config=$is_error?'error_500':'error_exception';
+            $desc = $is_error?'Internal Error':'Internal Exception';
+            $error_config = $is_error?'error_500':'error_exception';
             echo "$desc \n<!--DuckPhp set options ['{$error_config}'] to override me  -->\n";
             
             if ($data['is_debug']) {
@@ -475,33 +479,33 @@ trait Core_Handler
         if (!$this->is_debug) {
             return;
         }
-        $descs=array(
-            E_USER_NOTICE=>'E_USER_NOTICE',
-            E_NOTICE=>'E_NOTICE',
-            E_STRICT=>'E_STRICT',
-            E_DEPRECATED=>'E_DEPRECATED',
-            E_USER_DEPRECATED=>'E_USER_DEPRECATED',
+        $descs = array(
+            E_USER_NOTICE => 'E_USER_NOTICE',
+            E_NOTICE => 'E_NOTICE',
+            E_STRICT => 'E_STRICT',
+            E_DEPRECATED => 'E_DEPRECATED',
+            E_USER_DEPRECATED => 'E_USER_DEPRECATED',
         );
-        $error_shortfile=$errfile;
+        $error_shortfile = $errfile;
         if (!empty($this->options['path'])) {
-            $path=$this->options['path'];
-            $error_shortfile=(substr($errfile, 0, strlen($path))==$path)?substr($errfile, strlen($path)):$errfile;
+            $path = $this->options['path'];
+            $error_shortfile = (substr($errfile, 0, strlen($path)) == $path)?substr($errfile, strlen($path)):$errfile;
         }
-        $data=array(
-            'errno'=>$errno,
-            'errstr'=>$errstr,
-            'errfile'=>$errfile,
-            'errline'=>$errline,
-            'error_desc'=>$descs[$errno],
-            'error_shortfile'=>$error_shortfile,
+        $data = array(
+            'errno' => $errno,
+            'errstr' => $errstr,
+            'errfile' => $errfile,
+            'errline' => $errline,
+            'error_desc' => $descs[$errno],
+            'error_shortfile' => $error_shortfile,
         );
-        $error_view=$this->options['error_debug']??'';
-        $error_view=$this->error_view_inited?$error_view:null;
+        $error_view = $this->options['error_debug'] ?? '';
+        $error_view = $this->error_view_inited?$error_view:null;
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)($data);
             return;
         }
-        $error_desc='';
+        $error_desc = '';
         if (!$error_view) {
             extract($data);
             echo  <<<EOT
@@ -525,15 +529,15 @@ trait Core_SystemWrapper
 {
     // use SystemWrapper;
 
-    public static function header($output, bool $replace = true, int $http_response_code=0)
+    public static function header($output, bool $replace = true, int $http_response_code = 0)
     {
         return static::G()->_header($output, $replace, $http_response_code);
     }
-    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain  = '', bool $secure = false, bool $httponly = false)
+    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
     {
         return static::G()->_setcookie($key, $value, $expire, $path, $domain, $secure, $httponly);
     }
-    public static function exit_system($code=0)
+    public static function exit_system($code = 0)
     {
         return static::G()->_exit_system($code);
     }
@@ -545,14 +549,14 @@ trait Core_SystemWrapper
     {
         return static::G()->_register_shutdown_function($callback, ...$args);
     }
-    public function _header($output, bool $replace = true, int $http_response_code=0)
+    public function _header($output, bool $replace = true, int $http_response_code = 0)
     {
         if ($this->system_wrapper_call_check(__FUNCTION__)) {
             $this->system_wrapper_call(__FUNCTION__, func_get_args());
             return;
         }
         ////
-        if (PHP_SAPI==='cli') {
+        if (PHP_SAPI === 'cli') {
             return;
         }
         // @codeCoverageIgnoreStart
@@ -563,7 +567,7 @@ trait Core_SystemWrapper
         return;
         // @codeCoverageIgnoreEnd
     }
-    public function _setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain  = '', bool $secure = false, bool $httponly = false)
+    public function _setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
     {
         if ($this->system_wrapper_call_check(__FUNCTION__)) {
             return $this->system_wrapper_call(__FUNCTION__, func_get_args());
@@ -571,7 +575,7 @@ trait Core_SystemWrapper
         return setcookie($key, $value, $expire, $path, $domain, $secure, $httponly);
     }
 
-    public function _exit_system($code=0)
+    public function _exit_system($code = 0)
     {
         if ($this->system_wrapper_call_check(__FUNCTION__)) {
             return $this->system_wrapper_call(__FUNCTION__, func_get_args());
@@ -596,23 +600,23 @@ trait Core_SystemWrapper
 }
 trait Core_Redirect
 {
-    public static function ExitJson($ret, $exit=true)
+    public static function ExitJson($ret, $exit = true)
     {
         return static::G()->_ExitJson($ret, $exit);
     }
-    public static function ExitRedirect($url, $exit=true)
+    public static function ExitRedirect($url, $exit = true)
     {
         return static::G()->_ExitRedirect($url, $exit);
     }
-    public static function ExitRedirectOutside($url, $exit=true)
+    public static function ExitRedirectOutside($url, $exit = true)
     {
         return static::G()->_ExitRedirectOutside($url, $exit);
     }
-    public static function ExitRouteTo($url, $exit=true)
+    public static function ExitRouteTo($url, $exit = true)
     {
         return static::G()->_ExitRedirect(static::URL($url), $exit);
     }
-    public static function Exit404($exit=true)
+    public static function Exit404($exit = true)
     {
         static::On404();
         if ($exit) {
@@ -620,20 +624,20 @@ trait Core_Redirect
         }
     }
     ////
-    public function _ExitJson($ret, $exit=true)
+    public function _ExitJson($ret, $exit = true)
     {
         static::header('Content-Type:text/json');
         
-        $flag= JSON_UNESCAPED_UNICODE |  JSON_NUMERIC_CHECK;
+        $flag = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
         if ($this->is_debug) {
-            $flag=$flag | JSON_PRETTY_PRINT;
+            $flag = $flag | JSON_PRETTY_PRINT;
         }
         echo json_encode($ret, $flag);
         if ($exit) {
             static::exit_system();
         }
     }
-    public function _ExitRedirect($url, $exit=true)
+    public function _ExitRedirect($url, $exit = true)
     {
         if (parse_url($url, PHP_URL_HOST)) {
             static::exit_system();
@@ -644,7 +648,7 @@ trait Core_Redirect
             static::exit_system();
         }
     }
-    public function _ExitRedirectOutside($url, $exit=true)
+    public function _ExitRedirectOutside($url, $exit = true)
     {
         static::header('location: '.$url, true, 302);
         if ($exit) {
@@ -675,7 +679,7 @@ trait Core_Helper
     }
     ////
     
-    public static function Show($data=[], $view=null)
+    public static function Show($data = [], $view = null)
     {
         return static::G()->_Show($data, $view);
     }
@@ -683,36 +687,36 @@ trait Core_Helper
     {
         return static::G()->_H($str);
     }
-    public static function L($str, $args=[])
+    public static function L($str, $args = [])
     {
         return static::G()->_L($str, $args);
     }
-    public static function HL($str, $args=[])
+    public static function HL($str, $args = [])
     {
         return static::H(static::L($str, $args));
     }
-    public function _L($str, $args=[])
+    public function _L($str, $args = [])
     {
         //TODO locale and do
         if (empty($args)) {
             return $str;
         }
-        $a=[];
-        foreach ($args as $k=>$v) {
-            $a["{$k}"]=$v;
+        $a = [];
+        foreach ($args as $k => $v) {
+            $a["{$k}"] = $v;
         }
-        $ret=str_replace(array_keys($a), array_values($a), $str);
+        $ret = str_replace(array_keys($a), array_values($a), $str);
         return $ret;
     }
     ////
-    public function _Show($data=[], $view=null)
+    public function _Show($data = [], $view = null)
     {
-        $view=$view??Route::G()->getRouteCallingPath();
+        $view = $view ?? Route::G()->getRouteCallingPath();
         foreach ($this->beforeShowHandlers as $v) {
             ($v)();
         }
-        RuntimeState::G()->is_before_show_done=true;
-        if ($this->options['skip_view_notice_error']??false) {
+        RuntimeState::G()->is_before_show_done = true;
+        if ($this->options['skip_view_notice_error'] ?? false) {
             RuntimeState::G()->skipNoticeError();
         }
         return View::G()->_Show($data, $view);
@@ -720,11 +724,11 @@ trait Core_Helper
     public function _H(&$str)
     {
         if (is_string($str)) {
-            $str=htmlspecialchars($str, ENT_QUOTES);
+            $str = htmlspecialchars($str, ENT_QUOTES);
             return $str;
         }
         if (is_array($str)) {
-            foreach ($str as $k =>&$v) {
+            foreach ($str as $k => &$v) {
                 static::_H($v);
             }
             return $str;
@@ -770,7 +774,7 @@ trait Core_Glue
         return RuntimeState::G()->isRunning();
     }
     // route static
-    public static function URL($url=null)
+    public static function URL($url = null)
     {
         return Route::G()->_URL($url);
     }
@@ -780,7 +784,7 @@ trait Core_Glue
     }
     // view static
 
-    public static function ShowBlock($view, $data=null)
+    public static function ShowBlock($view, $data = null)
     {
         return View::G()->_ShowBlock($view, $data);
     }
@@ -789,7 +793,7 @@ trait Core_Glue
     {
         return Configer::G()->_Setting($key);
     }
-    public static function Config($key, $file_basename='config')
+    public static function Config($key, $file_basename = 'config')
     {
         return Configer::G()->_Config($key, $file_basename);
     }
@@ -800,12 +804,12 @@ trait Core_Glue
     
     //// the next is dynamic ////
     //autoloader
-    public function assignPathNamespace($path, $namespace=null)
+    public function assignPathNamespace($path, $namespace = null)
     {
         return AutoLoader::G()->assignPathNamespace($path, $namespace);
     }
     // route
-    public function addRouteHook($hook, $append=true, $outter=true, $once=true)
+    public function addRouteHook($hook, $append = true, $outter = true, $once = true)
     {
         return Route::G()->addRouteHook($hook, $append, $append, $once);
     }
@@ -819,16 +823,16 @@ trait Core_Glue
     }
     
     //view
-    public static function setViewWrapper($head_file=null, $foot_file=null)
+    public static function setViewWrapper($head_file = null, $foot_file = null)
     {
         return View::G()->setViewWrapper($head_file, $foot_file);
     }
-    public static function assignViewData($key, $value=null)
+    public static function assignViewData($key, $value = null)
     {
         return View::G()->assignViewData($key, $value);
     }
     //exception manager
-    public static function assignExceptionHandler($classes, $callback=null)
+    public static function assignExceptionHandler($classes, $callback = null)
     {
         return ExceptionManager::G()->assignExceptionHandler($classes, $callback);
     }
@@ -841,15 +845,15 @@ trait Core_Glue
         return ExceptionManager::G()->setDefaultExceptionHandler($callback);
     }
     //super global
-    public static function SG(object $replacement_object=null)
+    public static function SG(object $replacement_object = null)
     {
         return SuperGlobal::G($replacement_object);
     }
-    public static function &GLOBALS($k, $v=null)
+    public static function &GLOBALS($k, $v = null)
     {
         return SuperGlobal::G()->_GLOBALS($k, $v);
     }
-    public static function &STATICS($k, $v=null, $_level=1)
+    public static function &STATICS($k, $v = null, $_level = 1)
     {
         return SuperGlobal::G()->_STATICS($k, $v, $_level);
     }
@@ -858,11 +862,11 @@ trait Core_Glue
         return SuperGlobal::G()->_CLASS_STATICS($class_name, $var_name);
     }
     ////super global
-    public static function session_start(array $options=[])
+    public static function session_start(array $options = [])
     {
         return SuperGlobal::G()->session_start($options);
     }
-    public static function session_id($session_id=null)
+    public static function session_id($session_id = null)
     {
         return SuperGlobal::G()->session_id($session_id);
     }

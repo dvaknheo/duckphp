@@ -1,4 +1,8 @@
 <?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
 namespace DuckPhp\Core\Helper;
 
 use DuckPhp\Core\Helper\HelperTrait;
@@ -12,7 +16,7 @@ class ControllerHelper
     {
         return App::Setting($key);
     }
-    public static function Config($key, $file_basename='config')
+    public static function Config($key, $file_basename = 'config')
     {
         return App::Config($key, $file_basename);
     }
@@ -25,7 +29,7 @@ class ControllerHelper
     {
         return App::H($str);
     }
-    public static function URL($url=null)
+    public static function URL($url = null)
     {
         return App::URL($url);
     }
@@ -42,28 +46,28 @@ class ControllerHelper
         return App::setRouteCallingMethod($method);
     }
     ///////////////
-    public static function Show($data=[], $view=null)
+    public static function Show($data = [], $view = null)
     {
         return App::Show($data, $view);
     }
-    public static function ShowBlock($view, $data=null)
+    public static function ShowBlock($view, $data = null)
     {
         return App::ShowBlock($view, $data);
     }
-    public function setViewWrapper($head_file=null, $foot_file=null)
+    public function setViewWrapper($head_file = null, $foot_file = null)
     {
         return App::setViewWrapper($head_file, $foot_file);
     }
-    public function assignViewData($key, $value=null)
+    public function assignViewData($key, $value = null)
     {
         return App::assignViewData($key, $value);
     }
     ////////////////////
-    public static function ExitRedirect($url, $exit=true)
+    public static function ExitRedirect($url, $exit = true)
     {
         return App::ExitRedirect($url, $exit);
     }
-    public static function ExitRedirectOutside($url, $exit=true)
+    public static function ExitRedirectOutside($url, $exit = true)
     {
         return App::ExitRedirectOutside($url, $exit);
     }
@@ -71,25 +75,25 @@ class ControllerHelper
     {
         return App::ExitRedirect(static::URL($url), $exit);
     }
-    public static function Exit404($exit=true)
+    public static function Exit404($exit = true)
     {
         return App::Exit404($exit);
     }
-    public static function ExitJson($ret, $exit=true)
+    public static function ExitJson($ret, $exit = true)
     {
         return App::ExitJson($ret, $exit);
     }
     /////////////////
-    public static function header($output, bool $replace = true, int $http_response_code=0)
+    public static function header($output, bool $replace = true, int $http_response_code = 0)
     {
         return App::header($output, $replace, $http_response_code);
     }
-    public static function exit_system($code=0)
+    public static function exit_system($code = 0)
     {
         return App::exit_system($code);
     }
     //exception manager
-    public function assignExceptionHandler($classes, $callback=null)
+    public function assignExceptionHandler($classes, $callback = null)
     {
         return App::assignExceptionHandler($classes, $callback);
     }
@@ -106,11 +110,11 @@ class ControllerHelper
     {
         return App::SG();
     }
-    public static function &GLOBALS($k, $v=null)
+    public static function &GLOBALS($k, $v = null)
     {
         return App::GLOBALS($k, $v);
     }
-    public static function &STATICS($k, $v=null)
+    public static function &STATICS($k, $v = null)
     {
         return App::STATICS($k, $v, 2); //Remark ,++;
     }
@@ -119,11 +123,11 @@ class ControllerHelper
         return App::CLASS_STATICS($class_name, $var_name);
     }
     // super global  session
-    public static function session_start(array $options=[])
+    public static function session_start(array $options = [])
     {
         return App::session_start($options);
     }
-    public function session_id($session_id=null)
+    public function session_id($session_id = null)
     {
         return App::session_id($session_id);
     }

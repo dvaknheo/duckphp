@@ -1,4 +1,8 @@
 <?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
 namespace DuckPhp\DB;
 
 class DB implements DBInterface
@@ -8,23 +12,23 @@ class DB implements DBInterface
     public $pdo;
     public $config;
     protected $rowCount;
-    protected $driver_options=[
-            \PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION,
-            \PDO::ATTR_DEFAULT_FETCH_MODE=>\PDO::FETCH_ASSOC
+    protected $driver_options = [
+            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+            \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
         ];
-    public function init($options=[], $context=null)
+    public function init($options = [], $context = null)
     {
-        $this->config=$options;
+        $this->config = $options;
         $this->check_connect();
     }
     public static function CreateDBInstance($db_config)
     {
-        $class=static::class;
-        $db=new $class();
+        $class = static::class;
+        $db = new $class();
         $db->init($db_config);
         return $db;
     }
-    public static function CloseDBInstance($db, $tag=null)
+    public static function CloseDBInstance($db, $tag = null)
     {
         $db->close();
     }
@@ -33,15 +37,15 @@ class DB implements DBInterface
         if ($this->pdo) {
             return;
         }
-        $config=$this->config;
-        $driver_options=$config['driver_options']??[];
-        $driver_options=array_replace_recursive($this->driver_options, $driver_options);
-        $this->pdo=new \PDO($config['dsn'], $config['username'], $config['password'], $driver_options);
+        $config = $this->config;
+        $driver_options = $config['driver_options'] ?? [];
+        $driver_options = array_replace_recursive($this->driver_options, $driver_options);
+        $this->pdo = new \PDO($config['dsn'], $config['username'], $config['password'], $driver_options);
     }
     public function close()
     {
-        $this->rowCount=0;
-        $this->pdo=null;
+        $this->rowCount = 0;
+        $this->pdo = null;
     }
     public function getPDO()
     {
@@ -53,7 +57,7 @@ class DB implements DBInterface
             array_walk(
                 $string,
                 function (&$v, $k) {
-                    $v=is_string($v)?$this->quote($v):(string)$v;
+                    $v = is_string($v)?$this->quote($v):(string)$v;
                 }
             );
         }
@@ -67,48 +71,48 @@ class DB implements DBInterface
 
     public function fetchAll($sql, ...$args)
     {
-        if (count($args)===1 &&is_array($args[0])) {
-            $args=$args[0];
+        if (count($args) === 1 && is_array($args[0])) {
+            $args = $args[0];
         }
         
         $sth = $this->pdo->prepare($sql);
         $sth->execute($args);
         
-        $ret=$sth->fetchAll();
+        $ret = $sth->fetchAll();
         return $ret;
     }
     public function fetch($sql, ...$args)
     {
-        if (count($args)===1 &&is_array($args[0])) {
-            $args=$args[0];
+        if (count($args) === 1 && is_array($args[0])) {
+            $args = $args[0];
         }
         
         $sth = $this->pdo->prepare($sql);
         $sth->execute($args);
-        $ret=$sth->fetch();
+        $ret = $sth->fetch();
         return $ret;
     }
     public function fetchColumn($sql, ...$args)
     {
-        if (count($args)===1 &&is_array($args[0])) {
-            $args=$args[0];
+        if (count($args) === 1 && is_array($args[0])) {
+            $args = $args[0];
         }
         
         $sth = $this->pdo->prepare($sql);
         $sth->execute($args);
-        $ret=$sth->fetchColumn();
+        $ret = $sth->fetchColumn();
         return $ret;
     }
     public function execQuick($sql, ...$args)
     {
-        if (count($args)===1 &&is_array($args[0])) {
-            $args=$args[0];
+        if (count($args) === 1 && is_array($args[0])) {
+            $args = $args[0];
         }
         
         $sth = $this->pdo->prepare($sql);
-        $ret=$sth->execute($args);
+        $ret = $sth->execute($args);
         
-        $this->rowCount=$sth->rowCount();
+        $this->rowCount = $sth->rowCount();
         return $ret;
     }
     public function rowCount()

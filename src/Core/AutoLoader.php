@@ -1,4 +1,8 @@
 <?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\SingletonEx;
@@ -7,54 +11,54 @@ class AutoLoader
 {
     use SingletonEx;
     
-    public $options=[
-            'path'=>null,
-            'namespace'=>'MY',
-            'path_namespace'=>'app',
+    public $options = [
+            'path' => null,
+            'namespace' => 'MY',
+            'path_namespace' => 'app',
             
-            'skip_system_autoload'=>true,
-            'skip_app_autoload'=>false,
+            'skip_system_autoload' => true,
+            'skip_app_autoload' => false,
             
-            'enable_cache_classes_in_cli'=>false,
+            'enable_cache_classes_in_cli' => false,
         ];
     protected $namespace;
     protected $path_namespace;
 
-    public $is_inited=false;
-    public $namespace_paths=[];
+    public $is_inited = false;
+    public $namespace_paths = [];
     
-    protected $is_running=false;
-    protected $enable_cache_classes_in_cli=false;
+    protected $is_running = false;
+    protected $enable_cache_classes_in_cli = false;
     
     public function __construct()
     {
     }
-    public function init(array $options, object $context=null)
+    public function init(array $options, object $context = null)
     {
         if ($this->is_inited) {
             return $this;
         }
-        $this->is_inited=true;
+        $this->is_inited = true;
         
-        $this->options=array_merge($this->options, $options);
-        $options=$this->options;
+        $this->options = array_merge($this->options, $options);
+        $options = $this->options;
         
         if (empty($options['path'])) {
-            $path=realpath(getcwd().'/../');
-            $options['path']=$path;
+            $path = realpath(getcwd().'/../');
+            $options['path'] = $path;
         }
-        $path=rtrim($options['path'], '/').'/';
+        $path = rtrim($options['path'], '/').'/';
         
-        $this->namespace=$options['namespace'];
+        $this->namespace = $options['namespace'];
         //
         
-        if (substr($options['path_namespace'], 0, 1)==='/') {
-            $this->path_namespace=rtrim($options['path_namespace'], '/').'/';
+        if (substr($options['path_namespace'], 0, 1) === '/') {
+            $this->path_namespace = rtrim($options['path_namespace'], '/').'/';
         } else {
-            $this->path_namespace=$path.rtrim($options['path_namespace'], '/').'/';
+            $this->path_namespace = $path.rtrim($options['path_namespace'], '/').'/';
         }
         
-        $this->enable_cache_classes_in_cli=$options['enable_cache_classes_in_cli'];
+        $this->enable_cache_classes_in_cli = $options['enable_cache_classes_in_cli'];
 
         if (!$options['skip_app_autoload']) {
             $this->assignPathNamespace($this->path_namespace, $this->namespace);
@@ -70,7 +74,7 @@ class AutoLoader
         if ($this->is_running) {
             return;
         }
-        $this->is_running=true;
+        $this->is_running = true;
         
         if ($this->enable_cache_classes_in_cli) {
             $this->cacheClasses();
@@ -79,7 +83,7 @@ class AutoLoader
     }
     public function _autoload($class)
     {
-        foreach ($this->namespace_paths as $base_dir =>$prefix) {
+        foreach ($this->namespace_paths as $base_dir => $prefix) {
             if (strncmp($prefix, $class, strlen($prefix)) !== 0) {
                 continue;
             }
@@ -94,33 +98,33 @@ class AutoLoader
         }
         return false;
     }
-    public function assignPathNamespace($input_path, $namespace=null)
+    public function assignPathNamespace($input_path, $namespace = null)
     {
         if (!is_array($input_path)) {
-            $pathes=[$input_path=>$namespace];
+            $pathes = [$input_path => $namespace];
         } else {
-            $pathes=$input_path;
+            $pathes = $input_path;
         }
-        $ret=[];
-        foreach ($pathes as $path=>$namespace) {
-            $path=($path==='')?$path:rtrim((string)$path, '/').'/';
-            $namespace=rtrim($namespace, '\\').'\\';
-            $ret[$path]=$namespace;
+        $ret = [];
+        foreach ($pathes as $path => $namespace) {
+            $path = ($path === '')?$path:rtrim((string)$path, '/').'/';
+            $namespace = rtrim($namespace, '\\').'\\';
+            $ret[$path] = $namespace;
         }
-        $this->namespace_paths=array_merge($this->namespace_paths, $ret);
+        $this->namespace_paths = array_merge($this->namespace_paths, $ret);
     }
     public function cacheClasses()
     {
-        $ret=[];
-        foreach ($this->namespace_paths as $source=>$name) {
-            $source=realpath($source);
-            if (false===$source) {
+        $ret = [];
+        foreach ($this->namespace_paths as $source => $name) {
+            $source = realpath($source);
+            if (false === $source) {
                 continue;
             }
             $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
             $iterator = new \RecursiveIteratorIterator($directory);
             $files = \iterator_to_array($iterator, false);
-            $ret+=$files;
+            $ret += $files;
         }
         foreach ($ret as $file) {
             //if (opcache_is_script_cached($file)) {
@@ -135,15 +139,15 @@ class AutoLoader
     }
     public function cacheNamespacePath($path)
     {
-        $ret=[];
-        $source=realpath($path);
-        if (false===$source) {
+        $ret = [];
+        $source = realpath($path);
+        if (false === $source) {
             return $ret;
         }
         $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
         $iterator = new \RecursiveIteratorIterator($directory);
         $files = \iterator_to_array($iterator, false);
-        $ret+=$files;
+        $ret += $files;
         foreach ($ret as $file) {
             //if (opcache_is_script_cached($file)) {
             //    continue;

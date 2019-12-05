@@ -1,4 +1,8 @@
 <?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
 
 namespace DuckPhp\Ext;
 
@@ -17,34 +21,34 @@ class RedisManager
             ]
     */
     use SingletonEx;
-    public $options=[
-        'redis_list'=>null,
-        'use_context_redis_setting'=>true,
-        'enable_simple_cache'=>true,
-        'simple_cache_prefix'=>'',
+    public $options = [
+        'redis_list' => null,
+        'use_context_redis_setting' => true,
+        'enable_simple_cache' => true,
+        'simple_cache_prefix' => '',
     ];
-    const TAG_WRITE=0;
-    const TAG_READ=1;
+    const TAG_WRITE = 0;
+    const TAG_READ = 1;
     
 
-    protected $pool=[];
-    protected $redis_config_list=[];
+    protected $pool = [];
+    protected $redis_config_list = [];
     
     public function __construct()
     {
     }
-    public function init(array $options, object $context=null)
+    public function init(array $options, object $context = null)
     {
-        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
+        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         
-        $this->redis_config_list=$this->options['redis_list'];
+        $this->redis_config_list = $this->options['redis_list'];
         if ($context) {
             $this->initContext($options, $context);
         }
         if ($this->options['enable_simple_cache']) {
             RedisSimpleCache::G()->init([
-                'redis'=>$this->getServer(),
-                'prefix'=>$this->options['simple_cache_prefix']
+                'redis' => $this->getServer(),
+                'prefix' => $this->options['simple_cache_prefix']
             ]);
             if (method_exists($context, 'extendComponents')) {
                 $context->extendComponents(static::class, ['SimpleCache'], ['S']);
@@ -52,22 +56,22 @@ class RedisManager
         }
     }
     
-    protected function initContext($options=[], $context=null)
+    protected function initContext($options = [], $context = null)
     {
         if ($this->options['use_context_redis_setting']) {
-            $redis_list=$context::Setting('redis_list')??null;
+            $redis_list = $context::Setting('redis_list') ?? null;
             if (!isset($redis_list)) {
-                $redis_list=$context->options['redis_list']??null;
+                $redis_list = $context->options['redis_list'] ?? null;
             }
             if ($redis_list) {
-                $this->redis_config_list=$redis_list;
+                $this->redis_config_list = $redis_list;
             }
         }
         if (method_exists($context, 'extendComponents')) {
             $context->extendComponents(static::class, ['Redis'], ['S']);
         }
     }
-    public static function Redis($tag=0)
+    public static function Redis($tag = 0)
     {
         return static::G()->getServer($tag);
     }
@@ -75,10 +79,10 @@ class RedisManager
     {
         return RedisSimpleCache::G();
     }
-    public function getServer($tag=0)
+    public function getServer($tag = 0)
     {
         if (!isset($this->pool[$tag])) {
-            $this->pool[$tag]=$this->createServer($this->redis_config_list[$tag]);
+            $this->pool[$tag] = $this->createServer($this->redis_config_list[$tag]);
         }
         return $this->pool[$tag];
     }

@@ -1,4 +1,8 @@
 <?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
 namespace DuckPhp\Core\Helper;
 
 use DuckPhp\Core\Helper\HelperTrait;
@@ -12,7 +16,7 @@ class ServiceHelper
     {
         return App::Setting($key);
     }
-    public static function Config($key, $file_basename='config')
+    public static function Config($key, $file_basename = 'config')
     {
         return App::Config($key, $file_basename);
     }

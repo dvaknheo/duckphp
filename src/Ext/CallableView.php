@@ -1,23 +1,27 @@
 <?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\View;
 
 class CallableView extends View
 {
-    public $options=[
-            'callable_view_head'=>null,
-            'callable_view_foot'=>null,
-            'callable_view_class'=>null,
-            'callable_view_prefix'=>null,
-            'callable_view_skip_replace'=>false,
-            'path'=>'',
-            'path_view'=>'view',
+    public $options = [
+            'callable_view_head' => null,
+            'callable_view_foot' => null,
+            'callable_view_class' => null,
+            'callable_view_prefix' => null,
+            'callable_view_skip_replace' => false,
+            'path' => '',
+            'path_view' => 'view',
         ];
-    public function init(array $options, object $context=null)
+    public function init(array $options, object $context = null)
     {
-        $ret=parent::init($options, $context);
-        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
+        $ret = parent::init($options, $context);
+        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         if (!$this->options['callable_view_skip_replace']) {
             View::G(static::G());
         }
@@ -25,9 +29,9 @@ class CallableView extends View
     }
     protected function viewToCallback($func)
     {
-        $ret=null;
+        $ret = null;
         $func = str_replace('/', '_', $this->options['callable_view_prefix'].$func);
-        $ret=($this->options['callable_view_class'])?[$this->options['callable_view_class'],$func]:$func;
+        $ret = ($this->options['callable_view_class'])?[$this->options['callable_view_class'],$func]:$func;
         if (!is_callable($ret)) {
             return null;
         }
@@ -36,25 +40,25 @@ class CallableView extends View
     
     public function _Show($data = [], $view)
     {
-        $callback=$this->viewToCallback($view);
-        if (null===$callback) {
+        $callback = $this->viewToCallback($view);
+        if (null === $callback) {
             parent::_Show($data, $view);
             return;
         }
-        $header=$this->viewToCallback($this->options['callable_view_head']?:$this->head_file);
-        $footer=$this->viewToCallback($this->options['callable_view_foot']?:$this->foot_file);
-        if (null!==$header) {
+        $header = $this->viewToCallback($this->options['callable_view_head']?:$this->head_file);
+        $footer = $this->viewToCallback($this->options['callable_view_foot']?:$this->foot_file);
+        if (null !== $header) {
             ($header)($data);
         }
         ($callback)($data);
-        if (null!==$footer) {
+        if (null !== $footer) {
             ($footer)($data);
         }
     }
     public function _ShowBlock($view, $data = null)
     {
-        $func=$this->viewToCallback($view);
-        if (null!==$func) {
+        $func = $this->viewToCallback($view);
+        if (null !== $func) {
             ($func)($data);
             return;
         }

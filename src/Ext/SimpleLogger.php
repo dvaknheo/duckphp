@@ -1,4 +1,8 @@
 <?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\SingletonEx;
@@ -8,55 +12,55 @@ class SimpleLogger //extends Psr\Log\LoggerInterface;
     use SingletonEx;
     
     const EMERGENCY = 'emergency';
-    const ALERT     = 'alert';
-    const CRITICAL  = 'critical';
-    const ERROR     = 'error';
-    const WARNING   = 'warning';
-    const NOTICE    = 'notice';
-    const INFO      = 'info';
-    const DEBUG     = 'debug';
+    const ALERT = 'alert';
+    const CRITICAL = 'critical';
+    const ERROR = 'error';
+    const WARNING = 'warning';
+    const NOTICE = 'notice';
+    const INFO = 'info';
+    const DEBUG = 'debug';
 
-    public $options=[
-        'path'=>'',
-        'log_file'=>'',
-        'log_prefix'=>'DuckPhpLog',
+    public $options = [
+        'path' => '',
+        'log_file' => '',
+        'log_prefix' => 'DuckPhpLog',
     ];
     protected $path;
     
     public function __construct()
     {
     }
-    public function init(array $options, object $context=null)
+    public function init(array $options, object $context = null)
     {
-        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
+        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         
-        if (substr($this->options['log_file'], 0, 1)==='/') {
-            $this->path=$this->options['log_file'];
+        if (substr($this->options['log_file'], 0, 1) === '/') {
+            $this->path = $this->options['log_file'];
         } elseif ($this->options['log_file']) {
-            $this->path=$this->options['path'].$this->options['log_file'];
+            $this->path = $this->options['path'].$this->options['log_file'];
         }
         if (method_exists($context, 'extendComponents')) {
             $context->extendComponents(static::class, ['Logger'], ['C','S','M','V']);
         }
     }
-    public static function Logger(?object $replacement_object=null)
+    public static function Logger(?object $replacement_object = null)
     {
         return static::G($replacement_object);
     }
     public function log($level, $message, array $context = array())
     {
-        $path=$this->path;
-        $type=!empty($path)?3:0;
-        $prefix=$this->options['log_prefix'];
+        $path = $this->path;
+        $type = !empty($path)?3:0;
+        $prefix = $this->options['log_prefix'];
         
-        $a=[];
-        foreach ($context as $k=>$v) {
-            $a["{$k}"]=var_export($v, true);
+        $a = [];
+        foreach ($context as $k => $v) {
+            $a["{$k}"] = var_export($v, true);
         }
-        $message=str_replace(array_keys($a), array_values($a), $message);
-        $message="[{$level}][{$prefix}]: ".$message."\n";
+        $message = str_replace(array_keys($a), array_values($a), $message);
+        $message = "[{$level}][{$prefix}]: ".$message."\n";
         try {
-            $ret=error_log($message, $type, $path);
+            $ret = error_log($message, $type, $path);
         } catch (\Throwable $ex) { // @codeCoverageIgnore
             return false;  // @codeCoverageIgnore
         }  // @codeCoverageIgnore

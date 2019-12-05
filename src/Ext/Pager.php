@@ -1,4 +1,8 @@
 <?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\SingletonEx;
@@ -7,19 +11,19 @@ class Pager
 {
     use SingletonEx;
     
-    public $options=[
-        'url'=>null,
-        'key'=>null,
-        'page_size'=>null,
-        'rewrite'=>null,
-        'current'=>null,
+    public $options = [
+        'url' => null,
+        'key' => null,
+        'page_size' => null,
+        'rewrite' => null,
+        'current' => null,
     ];
-    protected $page_size=30;
-    protected $current_page=null;
-    protected $url='';
-    protected $key='page';
+    protected $page_size = 30;
+    protected $current_page = null;
+    protected $url = '';
+    protected $key = 'page';
     
-    protected $handel_get_url=null;
+    protected $handel_get_url = null;
     protected $context_class;
     
     public function __construct()
@@ -41,34 +45,34 @@ class Pager
     {
         return static::G()->_Current();
     }
-    public static function Render($total, $options=[])
+    public static function Render($total, $options = [])
     {
         return static::G()->_Render($total, $options);
     }
     public function _current()
     {
-        if ($this->current_page!==null) {
+        if ($this->current_page !== null) {
             return $this->current_page;
         }
-        $this->current_page=intval(static::SG()->_GET[$this->key]??1);
+        $this->current_page = intval(static::SG()->_GET[$this->key] ?? 1);
         return $this->current_page;
     }
 
-    public function init(array $options, object $context=null)
+    public function init(array $options, object $context = null)
     {
-        $this->options=array_intersect_key(array_replace_recursive($this->options, $options)??[], $this->options);
-        $options=$this->options;
+        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
+        $options = $this->options;
         
-        $this->url=$options['url']??static::SG()->_SERVER['REQUEST_URI'];
-        $this->key=$options['key']??$this->key;
-        $this->page_size=$options['page_size']??$this->page_size;
+        $this->url = $options['url'] ?? static::SG()->_SERVER['REQUEST_URI'];
+        $this->key = $options['key'] ?? $this->key;
+        $this->page_size = $options['page_size'] ?? $this->page_size;
         
-        $this->handel_get_url=$options['rewrite']??$this->handel_get_url;
+        $this->handel_get_url = $options['rewrite'] ?? $this->handel_get_url;
         
-        $this->current_page=$options['current']??intval(static::SG()->_GET[$this->key]??1);
-        $this->current_page=$this->current_page>1?$this->current_page:1;
+        $this->current_page = $options['current'] ?? intval(static::SG()->_GET[$this->key] ?? 1);
+        $this->current_page = $this->current_page > 1?$this->current_page:1;
         
-        $this->context_class=isset($context)?get_class($context):null;
+        $this->context_class = isset($context)?get_class($context):null;
     }
     public function getUrl($page)
     {
@@ -79,72 +83,72 @@ class Pager
     }
     public function defaultGetUrl($page)
     {
-        $flag=strpos($this->url, '{'.$this->key.'}');
-        if ($flag!==false) {
-            $page=$page!=1?$page:'';
+        $flag = strpos($this->url, '{'.$this->key.'}');
+        if ($flag !== false) {
+            $page = $page != 1?$page:'';
             return str_replace('{'.$this->key.'}', $page, $this->url);
         }
-        $path=parse_url($this->url, PHP_URL_PATH)??'';
-        $query=parse_url($this->url, PHP_URL_QUERY)??'';
+        $path = parse_url($this->url, PHP_URL_PATH) ?? '';
+        $query = parse_url($this->url, PHP_URL_QUERY) ?? '';
         
-        $get=[];
+        $get = [];
         parse_str($query, $get);
-        $get[$this->key]=$page;
+        $get[$this->key] = $page;
         
-        if ($page==1) {
+        if ($page == 1) {
             unset($get['page']);
         }
         
-        $url=$path.($get?'?'.http_build_query($get):'');
+        $url = $path.($get?'?'.http_build_query($get):'');
         return $url;
     }
-    public function _render($total, $options=[])
+    public function _render($total, $options = [])
     {
         $this->init($options);
         
-        $current_page=$this->_current();
-        $total_pages=ceil($total/$this->page_size);
-        if ($total_pages<=1) {
+        $current_page = $this->_current();
+        $total_pages = ceil($total / $this->page_size);
+        if ($total_pages <= 1) {
             return '';
         }
         
-        $window_length=3;
-        $page_window_begin=$current_page-floor($window_length/2);
-        $page_window_begin=$page_window_begin>1?$page_window_begin:1;
+        $window_length = 3;
+        $page_window_begin = $current_page - floor($window_length / 2);
+        $page_window_begin = $page_window_begin > 1?$page_window_begin:1;
         
-        $page_window_end=$page_window_begin+($window_length-1);
-        $page_window_end=$page_window_end<=$total_pages?$page_window_end:$total_pages;
+        $page_window_end = $page_window_begin + ($window_length - 1);
+        $page_window_end = $page_window_end <= $total_pages?$page_window_end:$total_pages;
         
-        $url_first=$this->getUrl(1);
-        $url_last=$this->getUrl($total_pages);
+        $url_first = $this->getUrl(1);
+        $url_last = $this->getUrl($total_pages);
         
-        $html='<span class="page_wraper">';
-        $spliter="<span class='page_spliter'>|</span>";
-        if ($page_window_begin>1) {
-            $html.="<a href='$url_first' class='page'>1</a>";
+        $html = '<span class="page_wraper">';
+        $spliter = "<span class='page_spliter'>|</span>";
+        if ($page_window_begin > 1) {
+            $html .= "<a href='$url_first' class='page'>1</a>";
             if ($page_window_begin > 2) {
-                $html.="<span class='page_blank'>...</span>";
+                $html .= "<span class='page_blank'>...</span>";
             } else {
-                $html.=$spliter;
+                $html .= $spliter;
             }
         }
-        $page_htmls=array();
-        for ($i=$page_window_begin;$i<=$page_window_end;$i++) {
-            $url=$this->getUrl($i);
-            $page_htmls[]=($i==$current_page)?"<span class='current'>$i</span>":"<a href='$url' class='page'>$i</a>";
+        $page_htmls = array();
+        for ($i = $page_window_begin;$i <= $page_window_end;$i++) {
+            $url = $this->getUrl($i);
+            $page_htmls[] = ($i == $current_page)?"<span class='current'>$i</span>":"<a href='$url' class='page'>$i</a>";
         }
         
-        $html.=implode($spliter, $page_htmls);
+        $html .= implode($spliter, $page_htmls);
         
         if ($page_window_end < $total_pages) {
-            if ($page_window_end<$total_pages-1) {
-                $html.="<span class='page_blank'>...</span>";
+            if ($page_window_end < $total_pages - 1) {
+                $html .= "<span class='page_blank'>...</span>";
             } else {
-                $html.=$spliter;
+                $html .= $spliter;
             }
-            $html.="<a href='$url_last' class='page'>{$total_pages}</a>";
+            $html .= "<a href='$url_last' class='page'>{$total_pages}</a>";
         }
-        $html.='</span>';
+        $html .= '</span>';
         return $html;
     }
 }

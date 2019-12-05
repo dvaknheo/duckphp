@@ -1,4 +1,8 @@
 <?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
 namespace DuckPhp\Core;
 
 use Throwable;
@@ -6,16 +10,16 @@ use Exception;
 
 trait ThrowOn
 {
-    public static function ThrowOn($flag, $message, $code=0, $exception_class=null)
+    public static function ThrowOn($flag, $message, $code = 0, $exception_class = null)
     {
         if (!$flag) {
             return;
         }
-        if ($exception_class===null && is_string($code)) {
-            $exception_class=$code;
-            $code=0;
+        if ($exception_class === null && is_string($code)) {
+            $exception_class = $code;
+            $code = 0;
         }
-        $exception_class=$exception_class?:(is_a(static::class, Throwable::class)?static::class:Exception::class);
+        $exception_class = $exception_class?:(is_a(static::class, Throwable::class)?static::class:Exception::class);
         throw new $exception_class($message, $code);
     }
 }
