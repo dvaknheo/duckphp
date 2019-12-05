@@ -34,6 +34,14 @@ php bin/start_server.php
 浏览器中打开 http://127.0.0.1:8080/ 得到下面欢迎页就表明 OK 了
 细则可以看 --help 参数
 
+当然你也可以用 nginx 或apache 安装。
+nginx 把 document_root 配置成 public 目录。
+并且按常用框架配置 path_info 即可。
+```
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+```
 ### 第一个任务
 路径： http://127.0.0.1:8080/test/done  
 作用是显示当前时间的任务。
