@@ -7,7 +7,14 @@ use MY\Base\Helper\ViewHelper as V;
 use MY\Base\Helper\ServiceHelper as S;
 
 
-
+class T
+{
+    use \DuckPhp\Core\Helper\HelperTrait;
+    public function exit()    
+    {
+        var_dump("exit!");
+    }
+}
 class Main
 {
     public function __construct()
@@ -20,20 +27,26 @@ class Main
 	public function index()
 	{
         $ret=[];
-        $x=C::GetExtendStaticStaticMethodList();
-        $ret=array_keys($x);
-        $z=new \ReflectionClass(C::class);
-        $methods=$z->getMethods();
-        foreach($methods as $v){
-            $ret[]=$v->getName();
-        }
-        $str=implode("\n",$ret);
-        echo $str;
+        $methods=$this->getClass(V::class);
             
 		C::Show(get_defined_vars(),'main');
 	}
     public function i()
     {
         phpinfo();
+    }
+    protected function getClass($class)
+    {
+        $t=$class::GetExtendStaticStaticMethodList();
+        $ret=array_keys($t);
+        $z=new \ReflectionClass($class);
+        $methods=$z->getMethods();
+        foreach($methods as $v){
+            if(!$v->isStatic()){
+                continue;
+            }
+            $ret[]=$v->getName();
+        }
+        return $ret;
     }
 }
