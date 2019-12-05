@@ -32,4 +32,8 @@ class Main
             
 		C::Show(get_defined_vars(),'main');
 	}
+    public function i()
+    {
+        phpinfo();
+    }
 }

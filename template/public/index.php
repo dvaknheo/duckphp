@@ -10,10 +10,9 @@ $options=[
     'error_exception' => '_sys/error-exception',
     'error_debug' => '_sys/error-debug',
 ];
-if (defined('DuckPhp_WARNING_IN_TEMPLATE')) {       // @DUCKPHP_DELETE
-    $options['is_debug']=true;                      // @DUCKPHP_DELETE
-    $options['skip_setting_file']=true;             // @DUCKPHP_DELETE
-    echo "<div>Don't run the template file directly </div>\n"; //@DUCKPHP_DELETE
-}                                                   // @DUCKPHP_DELETE
+$options['duckphp_is_debug']=true;                  // @DUCKPHP_DELETE
+$options['skip_setting_file']=true;                 // @DUCKPHP_DELETE
+echo "<div>Don't run the template file directly </div>\n"; //@DUCKPHP_DELETE
+
 \DuckPhp\App::RunQuickly($options, function () {
 });

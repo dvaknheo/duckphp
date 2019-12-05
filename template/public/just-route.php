@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__.'/../headfile/headfile.php'); // @DUCKPHP_HEADFILE
+require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
 
 use DuckPhp\Core\Route;
 

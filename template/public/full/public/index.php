@@ -1,5 +1,5 @@
 <?php
-require(__DIR__.'/../headfile/headfile.php');  // @HEADFILE , will change in install;
+require(__DIR__.'/../../../../autoload.php');  // @DUCKPHP_HEADFILE
 
 $project_root=realpath(__DIR__.'/..');
 $options=[

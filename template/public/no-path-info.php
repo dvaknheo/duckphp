@@ -1,5 +1,6 @@
 <?php
-require(__DIR__.'/../headfile/headfile.php');  //headfile
+require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
+
 $project_root=realpath(__DIR__.'/..');
 $options=[
 	'path'=>$project_root,
