@@ -9,4 +9,6 @@ class BaseService
 {
     use SingletonEx;
     // use StrictServiceTrait;
+    
+    // override or add your code here
 }

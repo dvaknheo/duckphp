@@ -1,5 +1,6 @@
 <?php
 use DuckPhp\Helper\ViewHelper as V;
+// change this file if you can.
 //var_dump(get_defined_vars());
 
 $is_debug=V::IsDebug();
@@ -11,8 +12,8 @@ $trace=$ex->getTraceString();
 if ($is_debug) {
     ?>
 <fieldset>
-	<legend>Exception(<?=$class ?>:<?=$code?>)</legend>
-	<?=$message ?>
+    <legend>Exception(<?=$class ?>:<?=$code?>)</legend>
+    <?=$message ?>
 <pre>
 --
 <?=$trace?>

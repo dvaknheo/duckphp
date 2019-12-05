@@ -8,5 +8,7 @@ use DuckPhp\SingletonEx;
 class BaseModel
 {
     use SingletonEx;
-    // use StrictModelTrait;
+    // use StrictModelTrait;  // if you want to use strick check
+
+    // override or add your code here
 }

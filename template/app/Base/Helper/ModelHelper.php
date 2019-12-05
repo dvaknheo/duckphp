@@ -5,5 +5,5 @@ use DuckPhp\Helper\ModelHelper as Helper;
 
 class ModelHelper extends Helper
 {
-    //
+    // override or add your code here
 }

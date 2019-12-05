@@ -1,9 +1,9 @@
 <?php
-require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
+require(__DIR__.'/../../../../autoload.php');  // @DUCKPHP_HEADFILE
 
-$project_root=realpath(__DIR__.'/..');
+$project_root=realpath(__DIR__.'/../');
 $options=[
-	'path'=>$project_root,
+    'path'=>$project_root,
     'ext'=>[
         'DuckPhp\Ext\RouteHookOneFileMode'=>[
             'key_for_action'=>'_r',

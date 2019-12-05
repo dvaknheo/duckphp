@@ -9,9 +9,11 @@ class Main // extends BaseController
 {
     public function index()
     {
+        //change if  you can
         $var = C::H(TestService::G()->foo());
         C::Show(get_defined_vars(), 'main');
     }
+    // change if  you can
     public function i()
     {
         phpinfo();

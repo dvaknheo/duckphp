@@ -29,7 +29,7 @@ class Installer
     public function init($options)
     {
         $cli_options=$this->getOptionsByCli();
-        $this->options=array_replace_recursive($cli_options,$this->options, $options);
+        $this->options=array_replace_recursive($this->options,$cli_options, $options);
         return $this;
     }
     public function run()
@@ -86,7 +86,6 @@ class Installer
         ];
         
         $cli_options = getopt('', $longopts);
-        
         $options=[];
         $options['help']=isset($cli_options['help'])?true:false;
         $options['start']=isset($cli_options['start'])?true:false;
@@ -95,14 +94,12 @@ class Installer
         $options['prune_helper']=isset($cli_options['prune-helper'])?true:false;
         $options['prune_core']=isset($cli_options['prune-core'])?true:false;
         $options['full']=isset($cli_options['full'])?true:false;
-
-
+        
         $options['namespace']=isset($cli_options['namespace'])?$cli_options['namespace']:'';
         $options['dest']=isset($cli_options['dest'])?$cli_options['dest']:'';
         $options['autoload_file']=isset($cli_options['autoload-file'])?$cli_options['autoload-file']:'';
         $options['host']=isset($cli_options['host'])?$cli_options['host']:'';
         $options['port']=isset($cli_options['port'])?$cli_options['port']:'';
-        
         return $options;
     }
     public function dumpDir($source, $dest, $force=false,$is_full=false)
@@ -187,7 +184,7 @@ class Installer
                 if (!is_dir($full_dir)) {
                     $flag = mkdir($full_dir);
                     if(!$flag){
-                        echo "create file failed $full_dir";
+                        echo "create file failed $full_dir \n";
                         return false;
                     }
                 }
@@ -200,7 +197,7 @@ class Installer
         $data = $this->changeHeadFile($data, $short_file_name);
         
         if(!$is_in_full){
-            $data=$this->filteMacro($data);
+            $data=$this->filteMacro($data, $is_in_full);
             if ($this->options['prune_core']) {
                 $data=$this->purceCore($data);
             }
@@ -210,10 +207,12 @@ class Installer
         }
         return $data;
     }
-    protected function filteMacro($data)
+    protected function filteMacro($data, $is_in_full)
     {
         $data=preg_replace('/^.*?@DUCKPHP_DELETE.*?$/m', '', $data);
-        
+        if (!$is_in_full) {
+            $data=preg_replace('/^.*?@DUCKPHP_KEEP_IN_FULL.*?$/m', '', $data);
+        }
         return $data;    
     }
     protected function filteNamespace($data, $namespace)

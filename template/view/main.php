@@ -1,7 +1,8 @@
 <?php
-// use MY\Base\Helper\ViewHelper as V;
-    $in_full=true;
-    $in_full=false;  //@DUCKPHP_DELETE_IN_FULL
+    // use MY\Base\Helper\ViewHelper as V;
+    // change this file if you can
+    $skip_in_full=false;
+    $skip_in_full=true;  // @DUCKPHP_KEEP_IN_FULL
 ?>
 <!doctype html>
 <html>
@@ -17,7 +18,7 @@
 欢迎使用 DuckPHP ,<?php echo $var;?>
 </div>
 <?php
-    if($in_full){
+    if($skip_in_full){
 ?>
 <div>
 请使用安装选项 --full 以打开开启 <a href="javascript:;">完整演示</a>

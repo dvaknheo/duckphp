@@ -1,18 +1,20 @@
 <?php
 namespace MY\Base;
 
-use DuckPhp\App as DN;
+use DuckPhp\App as DuckPhp_App;
 
-class App extends DN
+class App extends DuckPhp_App
 {
     public function onInit()
     {
-        //Your code here
-        return parent::onInit();
+        // your code here
+        $ret =parent::onInit();
+        // your code here
+        return $ret;
     }
     protected function onRun()
     {
-        //Your code here
+        // your code here
         return parent::onRun();
     }
 }

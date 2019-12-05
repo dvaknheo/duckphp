@@ -12,7 +12,7 @@ $options=[
 ];
 $options['duckphp_is_debug']=true;                  // @DUCKPHP_DELETE
 $options['skip_setting_file']=true;                 // @DUCKPHP_DELETE
-echo "<div>Don't run the template file directly </div>\n"; //@DUCKPHP_DELETE
+echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKPHP_DELETE
 
 \DuckPhp\App::RunQuickly($options, function () {
 });
