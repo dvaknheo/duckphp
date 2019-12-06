@@ -719,6 +719,12 @@ trait Core_Helper
         if ($this->options['skip_view_notice_error'] ?? false) {
             RuntimeState::G()->skipNoticeError();
         }
+        
+        View::G()->assignViewData([
+            '__is_debug' => $this->is_debug,
+            '__duckphp_is_debug' => $this->is_debug,
+            '__duckphp_platform' => $this->platform,
+        ]);
         return View::G()->_Show($data, $view);
     }
     public function _H(&$str)
