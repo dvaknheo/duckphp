@@ -2,19 +2,7 @@
 namespace MY\Controller;
 
 use MY\Base\Helper\ControllerHelper as C;
-use MY\Base\Helper\ModelHelper as M;
-use MY\Base\Helper\ViewHelper as V;
-use MY\Base\Helper\ServiceHelper as S;
 
-
-class T
-{
-    use \DuckPhp\Core\Helper\HelperTrait;
-    public function exit()    
-    {
-        var_dump("exit!");
-    }
-}
 class Main
 {
     public function __construct()
@@ -27,8 +15,10 @@ class Main
 	public function index()
 	{
         $ret=[];
-        $methods=$this->getClass(V::class);
-            
+        for($i=0;$i<6;$i++){
+            //$t=mt_rand(0,3);
+            //var_dump($t);
+        }
 		C::Show(get_defined_vars(),'main');
 	}
     public function i()

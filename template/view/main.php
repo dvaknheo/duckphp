@@ -1,8 +1,8 @@
 <?php
     // use MY\Base\Helper\ViewHelper as V;
     // change this file if you can
-    $skip_in_full=false;
-    $skip_in_full=true;  // @DUCKPHP_KEEP_IN_FULL
+    $skip_in_full=true;
+    $skip_in_full=false;  // @DUCKPHP_KEEP_IN_FULL
 ?>
 <!doctype html>
 <html>
