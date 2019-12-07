@@ -78,6 +78,9 @@ class DBManager
         if (!$this->is_static) {
             $context->addDynamicComponentClass(static::class);
         }
+        if (method_exists($context, 'extendComponents')) {
+            $context->extendComponents(static::class, ['DB','DB_R','DB_W'], ['M']);
+        }
     }
     public static function CloseAllDB()
     {

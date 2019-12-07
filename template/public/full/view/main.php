@@ -24,10 +24,18 @@ use MY\Base\Helper\ControllerHelper as C;
 DuckPHP 的 nginx 配置很简单，就一句话。
 本工程是在 子目录下配置的。
 <pre>
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
+
+try_files $uri $uri/ /index.php$request_uri;
+location ~ \.php {
+    fastcgi_pass 127.0.0.1:9000;
+    fastcgi_index index.php;
+    fastcgi_split_path_info ^(.*\.php)(.*)$;
+    fastcgi_param PATH_INFO $fastcgi_path_info;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    include fastcgi_params;
+}
 </pre>
+
 如果你没有 设置PATH_INFO，你可以切到 <a href="/full/public/no-path-info.php" target="_blank">“一个文件全部模式”</a>来查看</br>
 为什么要这个 url 是  /full/public/index.php。而不是 /full/index.php 。<br >
 因为这个全演示页面要做到直接把网站根目录调到 full/public/ 就是个典型的 DuckPHP 工程。 <br />
@@ -49,7 +57,7 @@ template 工程的桩代码,完整的默认目录结构
 |   |   |-- BaseModel.php           // 模型基类
 |   |   |-- BaseService.php         // 服务基类
 |   |   `-- Helper                  // 助手目录
-|   |       |-- ControllerHelper.php // 控制器助手类
+|   |       |-- ControllerHelper.php// 控制器助手类
 |   |       |-- ModelHelper.php     // 模型助手类
 |   |       |-- ServiceHelper.php   // 服务助手类
 |   |       `-- ViewHelper.php      // 视图助手类
@@ -61,7 +69,8 @@ template 工程的桩代码,完整的默认目录结构
 |     `-- TestService.php           // 测试服务
 |-- config                          // 配置文件放这里
 |   |-- config.php                  // 配置，目前是空数组
-|   `-- setting.sample.php          // 设置，去除敏感信息的模板
+|   |-- setting.php                 // 设置，这个文件不要放在版本控制下
+|   `-- setting.sample.php          // 设置模板，去除敏感信息的模板
 |-- start_server.php                // 启动 Htttp 服务
 |-- public                          // 网站目录
 |   `-- index.php                   // 主页，入口页
@@ -80,6 +89,9 @@ template 工程的桩代码,完整的默认目录结构
 问题，如何精简
 </fieldset>
 <fieldset>
+404 页面设置
+</fieldset>
+<fieldset>
 <legend> 助手类参考 </legend>
 <div>
 架构图
@@ -87,7 +99,7 @@ template 工程的桩代码,完整的默认目录结构
 </fieldset>
 <fieldset>
 <legend> 助手类参考 </legend>
-再学这部分就合格了。
+再学这部分就合格了。<br />
 <a href="<?=C::URL('AllHelper/index')?>">全部助手类共有方法</a><br />
 <a href="<?=C::URL('ControllerHelper/index')?>">ControllerHelper</a><br />
 <a href="<?=C::URL('ServiceHelper/index')?>">ServiceHelper</a><br />
@@ -95,7 +107,8 @@ template 工程的桩代码,完整的默认目录结构
 <a href="<?=C::URL('ViewHelper/index')?>">ViewHelper</a><br />
 </fieldset>
 <fieldset>
-数据库学习
+<legend>数据库学习</legend>
+
 </fieldset>
 <fieldset>
 <legend> 入口文件 public/index.php </legend>
@@ -121,10 +134,15 @@ $options=[
 这部分配合选项来学
 </fieldset>
 <fieldset>
+<legend>样例</legend>
+基本用户系统。
+
+</fieldset>
+<fieldset>
 扩展
+</fieldset>
 <fieldset>
-<fieldset>
-完整组件。
+第三方组件的使用和制作。
 </fieldset>
 
 <a href="<?=$url_phpinfo?>" target="_blank">点这里到 phpinfo 页面</a>来查看</br>
