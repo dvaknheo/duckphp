@@ -103,7 +103,7 @@ class DB implements DBInterface
         $ret = $sth->fetchColumn();
         return $ret;
     }
-    public function execQuick($sql, ...$args)
+    public function execute($sql, ...$args)
     {
         if (count($args) === 1 && is_array($args[0])) {
             $args = $args[0];

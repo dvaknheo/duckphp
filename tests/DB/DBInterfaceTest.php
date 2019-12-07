@@ -20,7 +20,7 @@ class DBInterfaceTest extends \PHPUnit\Framework\TestCase
         DBInterface::G()->fetchAll($sql, ...$args);
         DBInterface::G()->fetch($sql, ...$args);
         DBInterface::G()->fetchColumn($sql, ...$args);
-        DBInterface::G()->execQuick($sql, ...$args);
+        DBInterface::G()->execute($sql, ...$args);
         //*/
     }
 }

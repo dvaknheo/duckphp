@@ -36,14 +36,14 @@ class DBTest extends \PHPUnit\Framework\TestCase
         $x=$db->fetchColumn($sql,['username'=>'aa']);
 
         $sql="show tables";
-        $db->execQuick($sql);
-        $db->execQuick($sql,['a'=>'b']);
+        $db->execute($sql);
+        $db->execute($sql,['a'=>'b']);
         $name="_Test4";
         $ret=$db->insertData('Users', ['username'=>$name,'password'=>'123456'],false);
         $id=$db->lastInsertId();
         
         $sql="delete from Users where id=?";
-        $db->execQuick($sql,$id);
+        $db->execute($sql,$id);
         var_dump($ret);
         $db->rowCount();
         
@@ -63,7 +63,7 @@ class DBTest extends \PHPUnit\Framework\TestCase
         $db->fetchAll($sql, ...$args);
         $db->fetch($sql, ...$args);
         $db->fetchColumn($sql, ...$args);
-        $db->execQuick($sql, ...$args);
+        $db->execute($sql, ...$args);
         $db->rowCount();
         //*/
     }

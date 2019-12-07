@@ -937,7 +937,7 @@ DB
     fetchAll($sql, ...$args);
     fetch($sql, ...$args);
     fetchColumn($sql, ...$args);
-    execQuick($sql, ...$args); //   执行某条sql ，不用 exec , execute 是为了兼容其他类。
+    execute($sql, ...$args); //   执行某条sql ，不用 exec , execute 是为了兼容其他类。
 #### 示例
 使用数据库，在 设置里正确设置 database_list 这个数组，包含多个数据库配置
 然后在用到的地方调用 DuckPHP::DB($tag=null) 得到的就是 DB 对象，用来做各种数据库操作。

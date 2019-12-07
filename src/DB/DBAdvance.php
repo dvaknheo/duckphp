@@ -54,7 +54,7 @@ trait DBAdvance
     public function insertData($table_name, $data, $return_last_id = true)
     {
         $sql = "insert into {$table_name} set ".$this->quoteSetArray($data);
-        $ret = $this->execQuick($sql);
+        $ret = $this->execute($sql);
         if (!$return_last_id) {
             return $ret;
         }
@@ -65,10 +65,10 @@ trait DBAdvance
     {
         if ($key_delete) {
             $sql = "update {$table_name} set {$key_delete}=1 where {$key}=? limit 1";
-            return $this->execQuick($sql, $id);
+            return $this->execute($sql, $id);
         } else {
             $sql = "delete from {$table_name} where {$key}=? limit 1";
-            return $this->execQuick($sql, $id);
+            return $this->execute($sql, $id);
         }
     }
     
@@ -79,7 +79,7 @@ trait DBAdvance
         }
         $frag = $this->quoteSetArray($data);
         $sql = "update {$table_name} set ".$frag." where {$key}=?";
-        $ret = $this->execQuick($sql, $id);
+        $ret = $this->execute($sql, $id);
         return $ret;
     }
 }

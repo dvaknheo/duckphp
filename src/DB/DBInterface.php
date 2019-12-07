@@ -13,5 +13,5 @@ interface DBInterface
     public function fetchAll($sql, ...$args);
     public function fetch($sql, ...$args);
     public function fetchColumn($sql, ...$args);
-    public function execQuick($sql, ...$args);
+    public function execute($sql, ...$args);
 }
