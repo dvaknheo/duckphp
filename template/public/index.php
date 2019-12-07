@@ -5,10 +5,10 @@ $namespace= rtrim('MY\\', '\\');                    // @DUCKPHP_NAMESPACE
 $options=[
     'path' => $path,
     'namespace' => $namespace,
-    'error_404' => '_sys/error-404',
-    'error_500' => '_sys/error-500',
-    'error_exception' => '_sys/error-exception',
-    'error_debug' => '_sys/error-debug',
+    'error_404' => '_sys/error_404',
+    'error_500' => '_sys/error_500',
+    'error_exception' => '_sys/error_exception',
+    'error_debug' => '_sys/error_debug',
 ];
 $options['duckphp_is_debug']=true;                  // @DUCKPHP_DELETE
 $options['skip_setting_file']=true;                 // @DUCKPHP_DELETE
