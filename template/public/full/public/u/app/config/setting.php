@@ -1,6 +1,6 @@
 <?php 
-$data=array();
-$data['is_debug']=true;
+$data=[];
+$data['duckphp_is_debug']=true;
 $data['platform']='unkown';
 $data['database_list']=[[
 	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",

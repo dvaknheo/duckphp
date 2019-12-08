@@ -16,7 +16,7 @@ V::startSection('content'); ?>
                             <label for="name" class="col-md-4 col-form-label text-md-right"><?= V::HL('Name'); ?></label>
 
                             <div class="col-md-6">
-                                <input id="name" type="text" class="form-control <?php if(isset($errors['name'])){ ?> is-invalid <?php } ?>" name="name" value="<?= V::H($olds['name']?''); ?>" required autocomplete="name" autofocus>
+                                <input id="name" type="text" class="form-control <?php if(isset($errors['name'])){ ?> is-invalid <?php } ?>" name="name" value="<?= V::H($olds['name'])?:''; ?>" required autocomplete="name" autofocus>
 
                                 <?php if(isset($errors['name'])){ ?>
                                     <span class="invalid-feedback" role="alert">

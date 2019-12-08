@@ -5,24 +5,43 @@ use Project\Base\BaseService;
 use Project\Base\Helper\ServiceHelper as S;
 use Project\Base\App;
 
-// 这个类用于管理所有 session
 class SessionService extends BaseService
 {
+    public function __construct()
+    {
+        App::session_start();
+    }
     public function getCurrentUser()
     {
-        //
+        return App::SG()->_SESSION['user']??[];
     }
     public function setCurrentUser($user)
     {
-        //
+        App::SG()->_SESSION['user']=$user;
     }
     public function getRegisterInfo()
     {
-        //
+        $olds=App::SG()->_SESSION['reg_olds']??[];
+        $errors=App::SG()->_SESSION['reg_errors']??[];
+        
+        return [$olds,$errors];
+    }
+    public function setRegisterInfo($olds,$errors)
+    {
+        App::SG()->_SESSION['reg_olds']=$olds;
+        App::SG()->_SESSION['reg_errors']=$errors;
     }
     public function getLoginInfo()
     {
-        //
+        $olds=App::SG()->_SESSION['reg_olds']??[];
+        $errors=App::SG()->_SESSION['reg_errors']??[];
+        
+        return [$olds,$errors];
+    }
+    public function setLoginInfo($olds,$errors)
+    {
+        App::SG()->_SESSION['reg_olds']=$olds;
+        App::SG()->_SESSION['reg_errors']=$errors;
     }
     ////////////////////////////////////////////////////////////////////////
     public function csrf_token()

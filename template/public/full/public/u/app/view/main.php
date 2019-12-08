@@ -1,7 +1,4 @@
-<?php
-
-//throw new Exception("test");
-?><!doctype html><!-- ddddddddddddddddddddddddd -->
+<!doctype html>
 <html>
 <meta http-equiv="content-type" content="text/html;charset=utf-8" />
 <body>
@@ -22,15 +19,6 @@
 <?php }?>
 </ul>
 <?=$pager?>
-<pre>
-<?php 
-$files=get_included_files();
-sort($files);
-var_export($files);?>
-</pre>
-<pre>
-<?php debug_print_backtrace(2);?>
-</pre>
 </fieldset>
 </body>
 </html>

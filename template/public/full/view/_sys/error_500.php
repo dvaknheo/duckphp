@@ -1,8 +1,5 @@
-<?php
-use MY\Base\Helper\ViewHelper as V;
-?>
 500
-<?php if(V::IsDebug()){ ?>
+<?php if(!empty($__is_debug)){ ?>
 <fieldset>
 	<legend>Error(<?=get_class($ex);?>:<?php echo($ex->getCode());?>)</legend>
 	<?php echo($ex->getMessage());?>

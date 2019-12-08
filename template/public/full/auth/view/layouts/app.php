@@ -13,14 +13,10 @@ use Project\Base\Helper\ViewHelper as V;
     <title><?= V::H($app_name); ?></title>
 
     <!-- Scripts -->
-    <script src="<?= V::H($asset_js); ?>" defer></script>
 
     <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-    <link href="<?= V::H($asset_css); ?>" rel="stylesheet">
 </head>
 <body>
     <div id="app">

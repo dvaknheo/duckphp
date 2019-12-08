@@ -40,8 +40,7 @@ class Main
         $url_register=C::URL('register');
         
         $csrf_field=SessionService::G()->csrf_field();
-        $olds=SessionService::G()->getRegisterOldInfo();
-        $errors=SessionService::G()->getRegisterErrors();
+        list($olds,$errors)=SessionService::G()->getRegisterInfo();
         
         C::Show(get_defined_vars(),'auth/register');
     }
@@ -50,15 +49,13 @@ class Main
         $post=C::SG()->_POST;
         $errors=UserService::G()->validateRegister($post);
         if($errors){
-            SessionService::G()->setRegisterOldInfo($post);
-            SessionService::G()->setRegisterErrors($errors);
-            
+            SessionService::G()->setRegisterInfo($post, $errors);
             C::ExitRouteTo('auth/register',false);
-            //C::Show(get_defined_vars(),'auth/register');
+            
             return;
         }
         
-        $user=UserService::G()->register($data);
+        $user=UserService::G()->register($post);
         SessionService::G()->setCurrentUser($user);
     }
     public function login()
