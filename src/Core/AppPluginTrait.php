@@ -102,7 +102,9 @@ trait AppPluginTrait
     }
     public function _PluginRouteHook($path_info)
     {
+        //TODO clone Helper
         $this->runAsPlugin();
+        
         View::G()->setOverridePath($this->path_view_override);
         $route = new Route();
         $options = $this->options;

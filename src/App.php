@@ -22,7 +22,7 @@ use DuckPhp\Ext\SimpleLogger;
 
 class App extends Core_App //implements SwooleExtAppInterface
 {
-    const VERSION = '1.1.5';
+    const VERSION = '1.2.1';
     
     use DuckPhp_Glue;
     

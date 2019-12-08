@@ -1,15 +1,12 @@
 <?php
 namespace Project\Controller;
 
-use Project\Base\Helper\ControllerHelper as C;
-use Project\Base\BaseController;
 use Project\Base\App;
+use Project\Base\Helper\ControllerHelper as C;
 use Project\Service\SessionService;
 use Project\Service\UserService;
 
-use FilesystemIterator;
-use RecursiveDirectoryIterator;
-class Main // extends BaseController
+class Main
 {
     public function __construct()
     {
@@ -38,20 +35,7 @@ class Main // extends BaseController
         
         C::assignViewData(get_defined_vars());
     }
-    public function indexx()
-    {
-        $has_route_login=true;              //Route::has('login')
-        $has_route_register=true;           //Route::has('register');
-        
-        $has_logined=SessionService::G()->hasLogin(); //auth()->guard()->check()
-        
-        $url_home=C::URL('home');           //url('/home')
-        $url_login=C::URL('login');         //route('login');
-        $url_register=C::URL('register');   //route('register')
-        
-        C::Show(get_defined_vars(),'welcome');
-    }
-    public function registerx()
+    public function register()
     {
         $url_register=C::URL('register');
         
@@ -61,7 +45,7 @@ class Main // extends BaseController
         
         C::Show(get_defined_vars(),'auth/register');
     }
-    public function do_registerxxx()
+    public function do_register()
     {
         $post=C::SG()->_POST;
         $errors=UserService::G()->validateRegister($post);
@@ -114,38 +98,10 @@ class Main // extends BaseController
         //
         //$this->sendLoginResponse($request);
     }
-    public function homex()
+    public function home()
     {
         $is_guest=false;
         $session_status='';
         C::Show(get_defined_vars(),'home');
     }
-    ////////////////////////////////////
-    public function i()
-    {
-        var_dump($errors);
-        var_dump(DATE(DATE_ATOM));
-    }
-    public function ittt()
-    {
-        $path=App::G()->options['path'];
-        $folder=$path.'storage/framework/views';
-        $flags = FilesystemIterator::CURRENT_AS_PATHNAME | FilesystemIterator::SKIP_DOTS | FilesystemIterator::UNIX_PATHS;
-        $Directory =new \RecursiveDirectoryIterator($folder, $flags);
-        $Iterator = new \RecursiveIteratorIterator($Directory);
-        $regex = new \RegexIterator($Iterator, '/^.+\.php$/i', \RecursiveRegexIterator::MATCH);
-        foreach($regex as $file){
-           $this->run($file);
-        }
-    }
-    protected function run($file)
-    {
-        $data = file_get_contents($file);
-        $path=App::G()->options['path'];
-        preg_match('/PATH (.*?) ENDPATH/',$data,$m);
-        $viewname=basename($m[1],'.blade.php');
-        file_put_contents($path."project/view/blade/{$viewname}.php",$data);
-        var_dump($viewname);
-    }
 }
-//        $this->post('email/resend', 'Auth\VerificationController@resend')->name('verification.resend');

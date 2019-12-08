@@ -10,23 +10,19 @@ class SessionService extends BaseService
 {
     public function getCurrentUser()
     {
-        
+        //
     }
     public function setCurrentUser($user)
     {
         //
     }
-    public function getRegisterOldInfo()
+    public function getRegisterInfo()
     {
+        //
     }
-    public function getRegisterErrors()
+    public function getLoginInfo()
     {
-    }
-    public function getLoginOldInfo()
-    {
-    }
-    public function getLoginErrors()
-    {
+        //
     }
     ////////////////////////////////////////////////////////////////////////
     public function csrf_token()

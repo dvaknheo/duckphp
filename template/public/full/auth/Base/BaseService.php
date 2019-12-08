@@ -1,12 +1,9 @@
 <?php
 namespace Project\Base;
 
-use DNMVCS\SingletonEx;
-
-// use DNMVCS\Base\StrictServiceTrait;
+use DuckPhp\Core\SingletonEx;
 
 class BaseService
 {
     use SingletonEx;
-    // use StrictServiceTrait;
 }

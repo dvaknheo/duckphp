@@ -23,7 +23,7 @@ use DuckPhp\Core\SuperGlobal;
 
 class App
 {
-    const VERSION = '1.1.5';
+    const VERSION = '1.2.1';
     
     use SingletonEx;
     use ThrowOn;
@@ -357,6 +357,16 @@ class App
             }
             $full_class::AssignExtendStaticMethod($maps);
         }
+    }
+    public function getComponentClassMaps()
+    {
+        $a = explode('\\', get_class($this));
+        array_pop($a);
+        $namespace = ltrim(implode('\\', $a).'\\', '\\');  // __NAMESPACE__
+        foreach ($components as $component) {
+            $class = $this->componentClassMap[strtoupper($component)] ?? null;
+        }
+        
     }
 }
 trait Core_Component

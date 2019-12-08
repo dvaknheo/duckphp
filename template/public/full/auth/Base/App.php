@@ -1,10 +1,13 @@
 <?php
 namespace Project\Base;
 
-use DNMVCS\DNMVCS as DN;
+use DuckPhp\App as DuckPhp_App;
+use DuckPhp\Core\AppPluginTrait;
 
-class App extends DN
+class App extends DuckPhp_App
 {
+    use AppPluginTrait;
+    
     public function onInit()
     {
         //Your code here

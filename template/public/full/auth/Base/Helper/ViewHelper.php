@@ -1,14 +1,10 @@
 <?php
 namespace Project\Base\Helper;
 
-use DNMVCS\Helper\ViewHelper as Helper;
+use DuckPhp\Core\Helper\ViewHelper as Helper;
 
 class ViewHelper extends Helper
 {
-    public static function HL($str,$args=[])
-    {
-        return static::H($str);
-    }
     static $Sections=[];
     public static function startSection($name)
     {
