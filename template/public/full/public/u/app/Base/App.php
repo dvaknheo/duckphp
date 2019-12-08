@@ -1,9 +1,8 @@
 <?php
 namespace UUU\Base;
-use DNMVCS\DNMVCS as DN;
-use DNMVCS\Core\Route;
+use DuckPhp\App as DuckPhp_App;
 
-class App extends \DNMVCS\DNMVCS
+class App extends DuckPhp_App
 {
 	public function onInit()
 	{
@@ -12,7 +11,7 @@ class App extends \DNMVCS\DNMVCS
 		]);
 		
 		$this->assignRoute([
-			'~abc(\d*)'=>function(){var_dump(DN::Parameters());},
+			'~abc(\d*)'=>function(){var_dump(App::Parameters());},
 		]);
 		return parent::onInit();
 	}

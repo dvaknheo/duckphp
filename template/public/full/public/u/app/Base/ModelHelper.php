@@ -1,7 +1,7 @@
 <?php
 namespace UUU\Base;
 
-use DNMVCS\Helper\ModelHelper as Helper;
+use DuckPhp\Helper\ModelHelper as Helper;
 
 class ModelHelper extends Helper
 {

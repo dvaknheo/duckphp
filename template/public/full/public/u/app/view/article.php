@@ -2,9 +2,6 @@
 <html>
 <meta http-equiv="content-type" content="text/html;charset=utf-8" />
 <body>
-<pre>
-<?php var_dump(\DNMVCS\DNMVCS::G()->SG()->_GET);?>
-</pre>
 <fieldset>
 	<legend><?=$article['title']?></legend>
 	<div>

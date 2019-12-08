@@ -1,9 +1,9 @@
 <?php
 namespace UUU\Base;
 
-use DNMVCS\SingletonEx;
+use DuckPhp\Core\SingletonEx;
 
-// use DNMVCS\Base\StrictModelTrait;
+// use DuckPhp\Base\StrictModelTrait;
 
 class BaseModel
 {

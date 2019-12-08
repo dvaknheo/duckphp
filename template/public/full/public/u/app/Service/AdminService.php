@@ -1,11 +1,12 @@
 <?php
 namespace UUU\Service;
-use DNMVCS as DN;
+
+use DuckPhp\Core\SingletonEx;
 use UUU\Model as M;
 
 class AdminService
 {
-	use \DNMVCS\DNSingleton;
+	use SingletonEx;
 
 	public function reset()
 	{

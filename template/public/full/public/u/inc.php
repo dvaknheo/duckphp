@@ -1,12 +1,12 @@
 <?php
-require(__DIR__.'/../../headfile/headfile.php');
+require(__DIR__.'/../../../../../autoload.php');  // @DUCKPHP_HEADFILE
 
 $options=[
 	'path'=>__DIR__,
-	'path_controller'=>'app/Controller',
 	'path_view'=>'app/view',
 	'path_config'=>'app/config',
 	'path_lib'=>'app/lib',
+/*
 	'ext'=>[
 		'key_for_action'=>null,
 		'mode_dir'=>true,
@@ -15,6 +15,7 @@ $options=[
 		'mode_dir_key_for_module'=>'',
 		'mode_dir_key_for_action'=>'',
 	],
+*/
 ];
-\DNMVCS\DNMVCS::RunQuickly($options);
+\DuckPhp\App::RunQuickly($options);
 
