@@ -1,5 +1,5 @@
 <?php
-namespace Project\Base;
+namespace UserSystemDemo\Base;
 
 use DuckPhp\SingletonEx;
 

@@ -1,10 +1,10 @@
 <?php
-namespace Project\Controller;
+namespace UserSystemDemo\Controller;
 
-use Project\Base\App;
-use Project\Base\Helper\ControllerHelper as C;
-use Project\Service\SessionService;
-use Project\Service\UserService;
+use UserSystemDemo\Base\App;
+use UserSystemDemo\Base\Helper\ControllerHelper as C;
+use UserSystemDemo\Service\SessionService;
+use UserSystemDemo\Service\UserService;
 
 class Main
 {
@@ -25,82 +25,55 @@ class Main
     {
         $csrf_token=SessionService::G()->csrf_token();
         $csrf_field=SessionService::G()->csrf_field();
-        $current_user=[];//=SessionService::G()->getCurrentUser(); //auth()->guard()->guest()
         
-        $user_name=$current_user? $current_user['name']:''; // Auth::user()->name
+        $current_user=SessionService::G()->getCurrentUser();
+        $user_name=$current_user? $current_user['name']:'';
         unset($current_user);
         
         C::assignViewData(get_defined_vars());
     }
+    public function home()
+    {
+        C::Show(get_defined_vars(),'home');
+    }
     public function register()
     {
-        $url_register=C::URL('register');
-        
         $csrf_field=SessionService::G()->csrf_field();
-        list($olds,$errors)=SessionService::G()->getRegisterInfo();
-        
+        $url_register=C::URL('register');
         C::Show(get_defined_vars(),'auth/register');
-    }
-    public function do_register()
-    {
-        $post=C::SG()->_POST;
-        $errors=UserService::G()->validateRegister($post);
-        if($errors){
-            SessionService::G()->setRegisterInfo($post, $errors);
-            C::ExitRouteTo('register',false);
-            
-            return;
-        }
-        
-        $user=UserService::G()->register($post);
-        SessionService::G()->setCurrentUser($user);
-        C::ExitRouteTo('home',false);
     }
     public function login()
     {
         $csrf_field=SessionService::G()->csrf_field();
-        list($olds,$errors)=SessionService::G()->getLoginInfo();
-        
-        $has_route_password_request=true; //Route::has('password.request');
-        
         $url_login=C::URL('login'); 
-        $url_password_request=('password/reset');
-        
         C::Show(get_defined_vars(),'auth/login');
+    }
+    public function test()
+    {
+    }
+    ////////////////////////////////////////////
+    public function do_register()
+    {
+        $post=C::SG()->_POST;
+        try{
+            $user=UserService::G()->register($post);
+            SessionService::G()->setCurrentUser($user);
+        }catch(\Exception $ex){
+            C::Show(get_defined_vars(),'auth/register');
+            return;
+        }
+        C::ExitRouteTo('home');
     }
     public function do_login()
     {
         $post=C::SG()->_POST;
-        
-        $errors=UserServive::G()->validateLogin($post);
-        if($errors){
-            SessionService::G()->setLoginError($errors,$post['remmeber']);
-            C::ExitRouteTo('login',false);
+        try{
+            $user=UserService::G()->login($post);
+            SessionService::G()->setCurrentUser($user);
+        }catch(\Exception $ex){
+            C::Show(get_defined_vars(),'auth/login');
             return;
         }
-        $user=UserServive::G()->login($post);
-        if(empty($user)){
-            $this->incrementLoginAttempts($request);
-            return $this->sendFailedLoginResponse($request);
-        }
-        C::ExitRouteTo('home',false);
-    }
-    public function home()
-    {
-        $is_guest=false;
-        $session_status='';
-        C::Show(get_defined_vars(),'home');
-    }
-    public function test()
-    {
-        $t=[
-            'email'=>'t9@xx.com',
-            'password'=>'123456',
-        ];
-        $user=UserService::G()->login($t);
-        SessionService::G()->setCurrentUser($user);
-        $user=SessionService::G()->getCurrentUser();
-        SessionService::G()->logout();
-        return;
+        C::ExitRouteTo('home');
     }
 }

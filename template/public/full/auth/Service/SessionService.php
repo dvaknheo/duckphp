@@ -1,9 +1,9 @@
 <?php
-namespace Project\Service;
+namespace UserSystemDemo\Service;
 
-use Project\Base\BaseService;
-use Project\Base\Helper\ServiceHelper as S;
-use Project\Base\App;
+use UserSystemDemo\Base\BaseService;
+use UserSystemDemo\Base\Helper\ServiceHelper as S;
+use UserSystemDemo\Base\App;
 
 class SessionService extends BaseService
 {
@@ -28,30 +28,6 @@ class SessionService extends BaseService
     public function setCurrentUser($user)
     {
         App::SG()->_SESSION['user']=$user;
-    }
-    public function getRegisterInfo()
-    {
-        $olds=App::SG()->_SESSION['reg_olds']??[];
-        $errors=App::SG()->_SESSION['reg_errors']??[];
-        
-        return [$olds,$errors];
-    }
-    public function setRegisterInfo($olds,$errors)
-    {
-        App::SG()->_SESSION['reg_olds']=$olds;
-        App::SG()->_SESSION['reg_errors']=$errors;
-    }
-    public function getLoginInfo()
-    {
-        $olds=App::SG()->_SESSION['reg_olds']??[];
-        $errors=App::SG()->_SESSION['reg_errors']??[];
-        
-        return [$olds,$errors];
-    }
-    public function setLoginInfo($olds,$errors)
-    {
-        App::SG()->_SESSION['reg_olds']=$olds;
-        App::SG()->_SESSION['reg_errors']=$errors;
     }
     public function logout()
     {

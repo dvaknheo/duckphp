@@ -1,5 +1,5 @@
 <?php
-namespace Project\Base\Helper;
+namespace UserSystemDemo\Base\Helper;
 
 use DuckPhp\Helper\ServiceHelper as Helper;
 

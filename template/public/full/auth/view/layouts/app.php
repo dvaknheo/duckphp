@@ -1,5 +1,5 @@
 <?php
-use Project\Base\Helper\ViewHelper as V;
+use UserSystemDemo\Base\Helper\ViewHelper as V;
 
 ?><!doctype html>
 <html lang="<?=$locale  ?>">

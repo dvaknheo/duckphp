@@ -1,8 +1,8 @@
 <?php
-namespace Project\Model;
+namespace UserSystemDemo\Model;
 
-use Project\Base\BaseModel;
-use Project\Base\Helper\ModelHelper as M;
+use UserSystemDemo\Base\BaseModel;
+use UserSystemDemo\Base\Helper\ModelHelper as M;
 
 class UserModel extends BaseModel
 {
@@ -10,37 +10,33 @@ class UserModel extends BaseModel
     {
         $data=[];
         $data['name']=$form['name'];
-        $data['email']=$form['email'];
         $data['password']=$this->hash($form['password']);
         
-        if($this->exists($data['email'])){
-            return [];
-        }
+        $sql="select count(*) as c from Users where username=?";
+        $count=M::DB()->fetchColumn($sql,$form['name']);
+        M::ThrowOn($count,'用户已经存在');
+        
         $id=M::DB()->insertData('users', $data);
-        if(!$id){
-            return [];
-        }
-        $sql="select * from users where id=?";
+        M::ThrowOn(!$id,'添加用户失败');
+        
+        $sql="select * from Users where id=?";
         $user=M::DB()->fetch($sql,$id);
         unset($user['password']);
+        
         return $user;
     }
     public function login($form)
     {
-        $email=$form['email'];
-        $user=$this->getUserByEmail($email);
+        $sql="select * from Users where username=?";
+        $user=M::DB()->fetch($sql,$form['name']);
+        
         M::ThrowOn(!$user,'没有这个用户');
         $flag=$this->verify($form['password'],$user['password']);
         M::ThrowOn(!$flag,'验证失败');
         unset($user['password']);
         return $user;
     }
-    public function exists($email):bool
-    {
-        $sql="select count(*) as c from users where email=?";
-        $ret=M::DB()->fetchColumn($sql,$email);
-        return $ret;
-    }
+    ////
     protected function hash($password)
     {
         return password_hash($password,PASSWORD_DEFAULT);
@@ -48,15 +44,5 @@ class UserModel extends BaseModel
     protected function verify($password,$hash)
     {
         return password_verify($password,$hash);
-    }
-    ////
-    public function getUserByEmail($email)
-    {
-        $sql="select * from users where email=? ";
-        $ret=M::DB()->fetch($sql,$email);
-        if(!$ret){
-            return [];
-        }
-        return $ret;
     }
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Project\Base;
+namespace UserSystemDemo\Base;
 
 use DuckPhp\App as DuckPhp_App;
 use DuckPhp\Core\AppPluginTrait;
