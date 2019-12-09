@@ -681,8 +681,14 @@ trait Core_Helper
     }
     public static function IsRealDebug()
     {
-        return static::IsDebug(); //you can override this;
+        return static::G()->_IsRealDebug(); 
     }
+    public function _IsRealDebug()
+    {
+        //you can override this;
+        return $this->is_debug;
+    }
+    
     public static function IsInException()
     {
         return RuntimeState::G()->is_in_exception;

@@ -71,7 +71,7 @@ class ControllerHelper
     {
         return App::ExitRedirectOutside($url, $exit);
     }
-    public static function ExitRouteTo($url, $exit)
+    public static function ExitRouteTo($url, $exit = true)
     {
         return App::ExitRedirect(static::URL($url), $exit);
     }

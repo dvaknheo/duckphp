@@ -28,4 +28,8 @@ class ViewHelper
     {
         return App::ShowBlock($view, $data);
     }
+    public static function URL($url)
+    {
+        return App::URL($url);
+    }
 }

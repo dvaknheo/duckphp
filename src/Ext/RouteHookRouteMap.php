@@ -13,10 +13,11 @@ class RouteHookRouteMap
     use SingletonEx;
     public $options = [
         'route_map' => [],
+        // 'route_map_post'=>
     ];
     
     protected $route_map = [];
-        
+    
     public function __construct()
     {
     }
@@ -105,6 +106,9 @@ class RouteHookRouteMap
         $callback = $this->getRouteHandelByMap($this->route_map, $path_info, $route->parameters);
         if (!$callback) {
             return false;
+        }
+        if(is_array($callback)){
+            $route->setCallingRouteMethod($callback[1]);
         }
         ($callback)();
         $callback = null;

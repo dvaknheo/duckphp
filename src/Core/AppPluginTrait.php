@@ -47,7 +47,7 @@ trait AppPluginTrait
             }
             if (!isset($this->plugin_options['plugin_path_namespace'])) {
                 $myfile = (new \ReflectionClass($class))->getFileName();
-                $path = substr($myfile, 0, -strlen($t_class) - strlen($t_base) - 6); //6='//.php';
+                $path = substr($myfile, 0, -strlen($t_class) - strlen($t_base) - 5); //5='/.php';
                 $this->plugin_options['plugin_path_namespace'] = $path;
             }
         }

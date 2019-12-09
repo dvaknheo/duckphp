@@ -47,14 +47,14 @@ class Main
         $errors=UserService::G()->validateRegister($post);
         if($errors){
             SessionService::G()->setRegisterInfo($post, $errors);
-            C::ExitRouteTo('auth/register',false);
+            C::ExitRouteTo('register',false);
             
             return;
         }
         
         $user=UserService::G()->register($post);
         SessionService::G()->setCurrentUser($user);
-        C::ExitRouteTo('home');
+        C::ExitRouteTo('home',false);
     }
     public function login()
     {
@@ -75,7 +75,7 @@ class Main
         $errors=UserServive::G()->validateLogin($post);
         if($errors){
             SessionService::G()->setLoginError($errors,$post['remmeber']);
-            C::ExitRouteTo('auth/login');
+            C::ExitRouteTo('login',false);
             return;
         }
         $user=UserServive::G()->login($post);
@@ -83,7 +83,7 @@ class Main
             $this->incrementLoginAttempts($request);
             return $this->sendFailedLoginResponse($request);
         }
-        C::ExitRouteTo('home');
+        C::ExitRouteTo('home',false);
     }
     public function home()
     {
