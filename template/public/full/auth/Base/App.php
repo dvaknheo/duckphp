@@ -15,7 +15,6 @@ class App extends DuckPhp_App
     }
     protected function onRun()
     {
-        static::session_start();
         return parent::onRun();
     }
 }

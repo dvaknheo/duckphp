@@ -147,35 +147,4 @@ class Misc
         $ret = $reflect->invokeArgs(new $class(), $args);
         return $ret;
     }
-    public function MapToService($serviceClass, $input)
-    {
-        try {
-            $method = static::G()->context_class::G()->getRouteCallingMethod();
-            $data = static::G()->context_class::G()->callAPI($serviceClass, $method, $input);
-            if (!is_array($data) && !is_object($data)) {
-                $data = ['result' => $data];
-            }
-        } catch (\Throwable $ex) {
-            $data = [];
-            $data['error_message'] = $ex->getMessage();
-            $data['error_code'] = $ex->getCode();
-        }
-        static::G()->context_class::ExitJson($data);
-    }
-    public function explodeService($object, $namespace = null)
-    {
-        $namespace = $namespace ?? 'MY\\Service';
-        $vars = array_keys(get_object_vars($object));
-        $l = strlen('Service');
-        foreach ($vars as $v) {
-            if (substr($v, 0 - $l) !== 'Service') {
-                continue;
-            }
-            $name = ucfirst($v);
-            $class = $namespace.$name;
-            if (class_exists($class)) {
-                $object->$v = $class::G();
-            }
-        }
-    }
 }

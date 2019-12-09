@@ -47,7 +47,7 @@ class App extends Core_App //implements SwooleExtAppInterface
                 ],
                 'DuckPhp\Ext\RouteHookRewrite' => true,
                 'DuckPhp\Ext\RouteHookRouteMap' => true,
-                'DuckPhp\Ext\StrictCheck' => true,
+                'DuckPhp\Ext\StrictCheck' => false,
                 'DuckPhp\Ext\SimpleLogger' => true,
                 'DuckPhp\Ext\RouteHookOneFileMode' => false,
                 
@@ -174,14 +174,5 @@ trait DuckPhp_Glue
     public function callAPI($class, $method, $input)
     {
         return Misc::G()->callAPI($class, $method, $input);
-    }
-    
-    public static function MapToService($serviceClass, $input)
-    {
-        return Misc::G()::MapToService($serviceClass, $input);
-    }
-    public static function explodeService($object, $namespace = "MY\\Service\\")
-    {
-        return Misc::G()::explodeService($object, $namespace);
     }
 }

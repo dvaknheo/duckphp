@@ -27,14 +27,4 @@ class ControllerHelper extends Helper
     {
         return App::G()::Pager();
     }
-    ////
-    public static function MapToService($serviceClass, $input)
-    {
-        return App::G()::MapToService($serviceClass, $input);
-    }
-    //TODO
-    public static function explodeService($object, $namespace = "MY\\Service\\")
-    {
-        return App::G()::explodeService($object, $namespace);
-    }
 }

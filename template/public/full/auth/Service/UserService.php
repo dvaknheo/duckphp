@@ -5,30 +5,14 @@ use Project\Base\BaseService;
 use Project\Base\Helper\ServiceHelper as S;
 use Project\Lib\UserRegisterValidator;
 use Project\Model\UserModel;
-use think\Validate;
 
 class UserService extends BaseService
 {
-    public function hasLogin()
-    {
-        return false;
-    }
-    public function isGuest()
-    {
-        return true;
-    }
     public function register($form)
     {
-        $ret=[];
-        $errors=ValidatorLib::G()->validateRegister($form);
-        if(!empty($errors)){
-            return [$ret,$errors];
-        }
         $user=UserModel::G()->register($form);
-        
-        S::ThrowOn(!$user,"注册新用户失败");
-
-        return [$user,[]];
+        S::ThrowOn(empty($user),"注册新用户失败");
+        return $user;
     }
     public function validateRegister(array $data)
     {
@@ -47,10 +31,15 @@ class UserService extends BaseService
             'password.min'      => 'The :attribute must be at least 8 characters.',
             'password.confirm'      => 'The :attribute confirmation does not match.',
         ];
-        $v=new Validate($rules,$messages);
-        $v->batch(true);
-        $v->check($data);
-        $ret=$v->getError();
+        $ret = ValidateLib::G()->validate($data,$rules,$messages);
+        if(empty($ret)){
+            //UserModel::G()->login($data);
+        }
         return $ret;
+    }
+    public function login($form)
+    {
+        $user=UserModel::G()->login($form);
+        return $user;
     }
 }

@@ -10,25 +10,22 @@ class Main
 {
     public function __construct()
     {
+        if(C::getRouteCallingMethod()==='index'){
+            return;
+        }
         $this->setLayoutData();
+    }
+    public function index()
+    {
+        $url_reg=C::URL('register');
+        $url_login=C::URL('login');
+        C::Show(get_defined_vars(),'main');
     }
     protected function setLayoutData()
     {
-        $locale='en';
-        $app_name='Laravel';
-        $asset_js='/js/app.js';
-        $asset_css='/css/app.css';
-        
-        $url_root=C::URL('/');
-        $url_login=C::URL('login');
-        $url_register=C::URL('register');
-        $url_logout=C::URL('logout');
-        
-        $has_route_register=true;           //Route::has('register');
-        
         $csrf_token=SessionService::G()->csrf_token();
         $csrf_field=SessionService::G()->csrf_field();
-        $current_user=SessionService::G()->getCurrentUser(); //auth()->guard()->guest()
+        $current_user=[];//=SessionService::G()->getCurrentUser(); //auth()->guard()->guest()
         
         $user_name=$current_user? $current_user['name']:''; // Auth::user()->name
         unset($current_user);
@@ -57,12 +54,12 @@ class Main
         
         $user=UserService::G()->register($post);
         SessionService::G()->setCurrentUser($user);
+        C::ExitRouteTo('home');
     }
     public function login()
     {
         $csrf_field=SessionService::G()->csrf_field();
-        $olds=SessionService::G()->getLoginOldInfo();
-        $errors=SessionService::G()->getLoginErrors();
+        list($olds,$errors)=SessionService::G()->getLoginInfo();
         
         $has_route_password_request=true; //Route::has('password.request');
         
@@ -71,34 +68,39 @@ class Main
         
         C::Show(get_defined_vars(),'auth/login');
     }
-    public function do_loginx()
+    public function do_login()
     {
         $post=C::SG()->_POST;
         
         $errors=UserServive::G()->validateLogin($post);
         if($errors){
             SessionService::G()->setLoginError($errors,$post['remmeber']);
-            
             C::ExitRouteTo('auth/login');
             return;
-        }
-        if (false){
-            //$this->hasTooManyLoginAttempts($request)) {
-            //$this->fireLockoutEvent($request);
-            //return $this->sendLockoutResponse($request);
         }
         $user=UserServive::G()->login($post);
         if(empty($user)){
             $this->incrementLoginAttempts($request);
             return $this->sendFailedLoginResponse($request);
         }
-        //
-        //$this->sendLoginResponse($request);
+        C::ExitRouteTo('home');
     }
     public function home()
     {
         $is_guest=false;
         $session_status='';
         C::Show(get_defined_vars(),'home');
+    }
+    public function test()
+    {
+        $t=[
+            'email'=>'t9@xx.com',
+            'password'=>'123456',
+        ];
+        $user=UserService::G()->login($t);
+        SessionService::G()->setCurrentUser($user);
+        $user=SessionService::G()->getCurrentUser();
+        SessionService::G()->logout();
+        return;
     }
 }

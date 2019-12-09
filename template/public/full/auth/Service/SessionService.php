@@ -13,8 +13,18 @@ class SessionService extends BaseService
     }
     public function getCurrentUser()
     {
-        return App::SG()->_SESSION['user']??[];
+        $ret = App::SG()->_SESSION['user']??[];
+        S::ThrowOn(empty($ret), '请重新登录');
+        
+        return $ret;
     }
+    
+    public function getCurrentUid()
+    {
+        $user=$this->getCurrentUser();
+        return $user['id'];
+    }
+    
     public function setCurrentUser($user)
     {
         App::SG()->_SESSION['user']=$user;
@@ -42,6 +52,11 @@ class SessionService extends BaseService
     {
         App::SG()->_SESSION['reg_olds']=$olds;
         App::SG()->_SESSION['reg_errors']=$errors;
+    }
+    public function logout()
+    {
+        unset(App::SG()->_SESSION['user']);
+        App::session_destroy();
     }
     ////////////////////////////////////////////////////////////////////////
     public function csrf_token()
