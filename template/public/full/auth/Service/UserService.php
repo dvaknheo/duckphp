@@ -11,8 +11,8 @@ class UserService extends BaseService
     public function register($form)
     {
         $username=$form['name'];
-        $password=$form['password'];
-        
+        $password=$form['password']??'';
+        UserServiceException::ThrowOn($password==='',"密码为空");
         $flag=UserModel::G()->exsits($username);
         UserServiceException::ThrowOn($flag,"用户已经存在");
         

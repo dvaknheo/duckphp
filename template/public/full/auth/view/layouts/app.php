@@ -2,12 +2,12 @@
 use UserSystemDemo\Base\Helper\ViewHelper as V;
 
 ?><!doctype html>
-<html lang="<?=$locale  ?>">
+<html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="<?=V::H($csrf_token)?>">
-    <title><?= V::H($app_name); ?></title>
+    <title>简单用户系统演示</title>
 </head>
 <body>
     <div id="app">

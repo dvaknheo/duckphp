@@ -76,9 +76,14 @@ class Main
     {
         $post=C::SG()->_POST;
         try{
+            $post['password']=$post['password']??'';
+            $post['password_confirm']=$post['password_confirm']??'';
+            UserServiceException::ThrowOn($post['password']!=$post['password_confirm'], '重复密码不一致');
             $user=UserService::G()->register($post);
             SessionService::G()->setCurrentUser($user);
         }catch(UserServiceException $ex){
+            $error=$ex->getMessage();
+            $name=$post['name']??'';
             C::Show(get_defined_vars(),'auth/register');
             return;
         }
@@ -91,6 +96,8 @@ class Main
             $user=UserService::G()->login($post);
             SessionService::G()->setCurrentUser($user);
         }catch(UserServiceException $ex){
+            $error=$ex->getMessage();
+            $name=$post['name']??'';
             C::Show(get_defined_vars(),'auth/login');
             return;
         }
