@@ -9,7 +9,7 @@ class UserModel extends BaseModel
     public function exsits($name)
     {
         $sql="select count(*) as c from Users where username=?";
-        $count=M::DB()->fetchColumn($sql,$form['name']);
+        $count=M::DB()->fetchColumn($sql,$name);
         return !empty($count)?true:false;
     }
     public function addUser($username,$password)

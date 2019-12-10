@@ -5,13 +5,14 @@ use UserSystemDemo\Base\App;
 use UserSystemDemo\Base\Helper\ControllerHelper as C;
 use UserSystemDemo\Service\SessionService;
 use UserSystemDemo\Service\UserService;
+use UserSystemDemo\Service\UserServiceException;
 
 class Main
 {
     public function __construct()
     {
         $method = C::getRouteCallingMethod();
-        if (in_array($method,['index','register','login','test'])) {
+        if (in_array($method,['','index','register','login','logout','test'])) {
             return;
         }
         $this->setLayoutData();
@@ -28,7 +29,7 @@ class Main
         $csrf_field=SessionService::G()->csrf_field();
         
         $current_user=SessionService::G()->getCurrentUser();
-        $user_name=$current_user? $current_user['name']:'';
+        $user_name=$current_user? $current_user['username']:'';
         unset($current_user);
         
         C::assignViewData(get_defined_vars());
@@ -49,6 +50,11 @@ class Main
         $url_login=C::URL('login'); 
         C::Show(get_defined_vars(),'auth/login');
     }
+    public function logout()
+    {
+        SessionService::G()->logout();
+        C::ExitRouteTo('index');
+    }
     public function test()
     {
         $name='DKTest4';
@@ -66,7 +72,7 @@ class Main
         try{
             $user=UserService::G()->register($post);
             SessionService::G()->setCurrentUser($user);
-        }catch(\Exception $ex){
+        }catch(UserServiceException $ex){
             C::Show(get_defined_vars(),'auth/register');
             return;
         }
@@ -78,10 +84,10 @@ class Main
         try{
             $user=UserService::G()->login($post);
             SessionService::G()->setCurrentUser($user);
-        }catch(\Exception $ex){
+        }catch(UserServiceException $ex){
             C::Show(get_defined_vars(),'auth/login');
             return;
         }
-        C::ExitRouteTo('home');
+C::ExitRouteTo('home');
     }
 }

@@ -3,7 +3,7 @@ namespace UserSystemDemo\Base;
 
 use DuckPhp\Core\ThrowOn;
 
-class BaseException
+class BaseException extends \Exception
 {
     use ThrowOn;
 }

@@ -15,11 +15,11 @@ trait ThrowOn
         if (!$flag) {
             return;
         }
-        if ($exception_class === null && is_string($code)) {
+        if ($exception_class === null && is_string($code) && class_exists($exception_class)) {
             $exception_class = $code;
             $code = 0;
         }
-        $exception_class = $exception_class?:(is_a(static::class, Throwable::class)?static::class:Exception::class);
+        $exception_class = $exception_class?:(is_subclass_of(static::class, Exception::class)?static::class:Exception::class);
         throw new $exception_class($message, $code);
     }
 }

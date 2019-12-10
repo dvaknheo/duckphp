@@ -14,7 +14,7 @@ class SessionService extends BaseService
     public function getCurrentUser()
     {
         $ret = App::SG()->_SESSION['user']??[];
-        S::ThrowOn(empty($ret), '请重新登录');
+        SessionServiceException::ThrowOn(empty($ret), '请重新登录');
         
         return $ret;
     }

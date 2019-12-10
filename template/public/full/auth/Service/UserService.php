@@ -17,7 +17,7 @@ class UserService extends BaseService
         UserServiceException::ThrowOn($flag,"用户已经存在");
         
         $uid=UserModel::G()->addUser($username,$password);
-        UserServiceException::ThrowOn(empty($user),"注册新用户失败");
+        UserServiceException::ThrowOn(!$uid,"注册新用户失败");
         
         $user=UserModel::G()->getUserById($uid);
         $user=UserModel::G()->unloadPassword($user);
@@ -32,7 +32,7 @@ class UserService extends BaseService
         $user=UserModel::G()->getUserByUsername($username);
         UserServiceException::ThrowOn(empty($user),"用户不存在");
         $flag=UserModel::G()->verifyPassword($user, $password);
-        UserServiceException::ThrowOn($flag,"密码错误");
+        UserServiceException::ThrowOn(!$flag,"密码错误");
         $user=UserModel::G()->unloadPassword($user);
         
         return $user;
