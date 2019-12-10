@@ -1,4 +1,8 @@
-<?php
+<?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
 use DNMVCS\Basic\SingletonEx;
 
 class NoDB_MiscModel

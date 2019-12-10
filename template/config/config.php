@@ -1,3 +1,7 @@
-<?php
-// if you don't use App::Config($key); remove me;
+<?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
+
 return [];

@@ -1,6 +1,7 @@
-<?php
+<?php declare(strict_types=1);
 use MY\Base\Helper\ViewHelper as V;
 use MY\Base\Helper\ControllerHelper as DN;
+
 ?>
 <fieldset>
 <legend>超全局变量</legend>

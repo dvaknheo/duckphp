@@ -1,8 +1,8 @@
-<?php
-    // use MY\Base\Helper\ViewHelper as V;
+<?php declare(strict_types=1);
+// use MY\Base\Helper\ViewHelper as V;
     // change this file if you can
-    $skip_in_full=true;
-    $skip_in_full=false;  // @DUCKPHP_KEEP_IN_FULL
+    $skip_in_full = true;
+    $skip_in_full = false;  // @DUCKPHP_KEEP_IN_FULL
 ?>
 <!doctype html>
 <html>
@@ -18,14 +18,14 @@
 欢迎使用 DuckPHP ,<?php echo $var;?>
 </div>
 <?php
-    if($skip_in_full){
-?>
+    if ($skip_in_full) {
+        ?>
 <div>
 请使用安装选项 --full 以打开开启 <a href="javascript:;">完整演示</a>
 </div>
 <?php
-    }else{
-?>
+    } else {
+        ?>
 <div>
 <a href="/full/public/index.php">转到完整演示页面</a>
 </div>

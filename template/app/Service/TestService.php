@@ -1,5 +1,8 @@
-<?php
-//if your don't need, remove this file;
+<?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
 
 namespace MY\Service;
 

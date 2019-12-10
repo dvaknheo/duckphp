@@ -1,5 +1,5 @@
 500
-<?php if(!empty($__is_debug)){ ?>
+<?php if (!empty($__is_debug)) { ?>
 <fieldset>
 	<legend>Error(<?=get_class($ex);?>:<?php echo($ex->getCode());?>)</legend>
 	<?php echo($ex->getMessage());?>

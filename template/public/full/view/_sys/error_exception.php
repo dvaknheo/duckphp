@@ -1,4 +1,5 @@
-<?php if(!empty($__is_debug)){ ?>
+<?php declare(strict_types=1);
+if (!empty($__is_debug)) { ?>
 <fieldset>
 	<legend>Exception(<?=get_class($ex);?>:<?php echo($ex->getCode());?>)</legend>
 	<?php echo($ex->getMessage());?>

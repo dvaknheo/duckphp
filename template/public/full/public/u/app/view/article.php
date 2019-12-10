@@ -11,7 +11,7 @@
 <fieldset>
 	<legend>评论列表</legend>
 	<ul>
-<?php foreach($article['comments'] as $v){?>
+<?php foreach ($article['comments'] as $v) {?>
 		<li><?=$v['content']?> (<?=$v['username']?> |<?=$v['created_at']?>)</li>
 <?php }?>
 	</ul>
@@ -19,13 +19,13 @@
 </fieldset>
 <fieldset>
 	<legend>添加评论</legend>
-<?php if($user){?>
+<?php if ($user) {?>
 	<form method="post" action="<?=$url_add_comment?>">
 		<input name="article_id" type="hidden"  value="<?=$article['id']?>">
 		<textarea name="content"></textarea>
 		<input type="submit" value="提交">
 	</form>
-<?php }else{ ?>
+<?php } else { ?>
 	<a href="<?=$url_login_to_commment?>">登录以评论</a>
 <?php }?>
 </fieldset>

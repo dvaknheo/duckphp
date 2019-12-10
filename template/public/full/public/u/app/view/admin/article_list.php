@@ -6,7 +6,7 @@
 	<th>编辑</th>
 	<th>删除</th>
 </tr>
-<?php foreach($list as $v){?>
+<?php foreach ($list as $v) {?>
 <tr>
 	<td><?=$v['id']?></td>
 	<td><?=$v['title']?></td>

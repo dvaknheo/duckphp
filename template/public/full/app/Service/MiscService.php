@@ -1,4 +1,8 @@
-<?php
+<?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
 use DNMVCS\Basic\SingletonEx;
 
 class MiscService
@@ -7,8 +11,8 @@ class MiscService
     public function foo()
     {
         //TODO log something.
-        $time=NoDB_MiscModel::G()->getTime();
-        $ret='Now is '.$time;
+        $time = NoDB_MiscModel::G()->getTime();
+        $ret = 'Now is '.$time;
         return $ret;
     }
 }

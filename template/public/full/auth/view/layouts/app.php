@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 use UserSystemDemo\Base\Helper\ViewHelper as V;
 
 ?><!doctype html>

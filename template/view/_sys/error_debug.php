@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 // change me if you can
 //var_dump(get_defined_vars());
 ?>

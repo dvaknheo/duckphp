@@ -1,4 +1,8 @@
-<?php
+<?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
 namespace UserSystemDemo\Model;
 
 use UserSystemDemo\Base\BaseModel;
@@ -8,36 +12,36 @@ class UserModel extends BaseModel
 {
     public function exsits($name)
     {
-        $sql="select count(*) as c from Users where username=?";
-        $count=M::DB()->fetchColumn($sql,$name);
+        $sql = "select count(*) as c from Users where username=?";
+        $count = M::DB()->fetchColumn($sql, $name);
         return !empty($count)?true:false;
     }
-    public function addUser($username,$password)
+    public function addUser($username, $password)
     {
-        $data=[];
-        $data['username']=$username;
-        $data['password']=$this->hash($password);
+        $data = [];
+        $data['username'] = $username;
+        $data['password'] = $this->hash($password);
         
-        $id=M::DB()->insertData('Users', $data);
+        $id = M::DB()->insertData('Users', $data);
         return $id;
     }
     public function getUserById($id)
     {
-        $sql="select * from Users where id=?";
-        $user=M::DB()->fetch($sql,$id);
+        $sql = "select * from Users where id=?";
+        $user = M::DB()->fetch($sql, $id);
         
         return $user;
     }
     public function getUserByUsername($username)
     {
-        $sql="select * from Users where username=?";
-        $user=M::DB()->fetch($sql,$username);
+        $sql = "select * from Users where username=?";
+        $user = M::DB()->fetch($sql, $username);
         
         return $user;
     }
-    public function verifyPassword($user,$password)
+    public function verifyPassword($user, $password)
     {
-        return $this->verify($password,$user['password']);
+        return $this->verify($password, $user['password']);
     }
     public function unloadPassword($user)
     {
@@ -47,10 +51,10 @@ class UserModel extends BaseModel
     ////
     protected function hash($password)
     {
-        return password_hash($password,PASSWORD_DEFAULT);
+        return password_hash($password, PASSWORD_DEFAULT);
     }
-    protected function verify($password,$hash)
+    protected function verify($password, $hash)
     {
-        return password_verify($password,$hash);
+        return password_verify($password, $hash);
     }
 }

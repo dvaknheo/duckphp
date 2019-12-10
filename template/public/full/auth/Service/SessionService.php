@@ -1,4 +1,8 @@
-<?php
+<?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
 namespace UserSystemDemo\Service;
 
 use UserSystemDemo\Base\BaseService;
@@ -13,7 +17,7 @@ class SessionService extends BaseService
     }
     public function getCurrentUser()
     {
-        $ret = App::SG()->_SESSION['user']??[];
+        $ret = App::SG()->_SESSION['user'] ?? [];
         SessionServiceException::ThrowOn(empty($ret), '请重新登录');
         
         return $ret;
@@ -21,13 +25,13 @@ class SessionService extends BaseService
     
     public function getCurrentUid()
     {
-        $user=$this->getCurrentUser();
+        $user = $this->getCurrentUser();
         return $user['id'];
     }
     
     public function setCurrentUser($user)
     {
-        App::SG()->_SESSION['user']=$user;
+        App::SG()->_SESSION['user'] = $user;
     }
     public function logout()
     {
@@ -38,9 +42,9 @@ class SessionService extends BaseService
     public function csrf_token()
     {
         //$this->put('_token', Str::random(40));
-        if(!isset(App::SG()->_SESSION['_token'])){
-            $token=$this->randomString(40);
-            App::SG()->_SESSION['_token']=$token;
+        if (!isset(App::SG()->_SESSION['_token'])) {
+            $token = $this->randomString(40);
+            App::SG()->_SESSION['_token'] = $token;
         }
         return App::SG()->_SESSION['_token'];
     }
@@ -62,5 +66,4 @@ class SessionService extends BaseService
 
         return $string;
     }
-
 }

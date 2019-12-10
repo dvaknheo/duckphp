@@ -1,4 +1,8 @@
-<?php
+<?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
 require(__DIR__.'/../../../../autoload.php');  // @DUCKPHP_HEADFILE
 
 use DuckPhp\Core\Route;
@@ -15,10 +19,10 @@ class Main
         phpinfo();
     }
 }
-$options=[
-    'namespace_controller'=>'\\',
+$options = [
+    'namespace_controller' => '\\',
 ];
-$flag=Route::RunQuickly($options);
+$flag = Route::RunQuickly($options);
 if (!$flag) {
     header(404);
     echo "404!";
