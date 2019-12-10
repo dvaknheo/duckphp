@@ -7,12 +7,15 @@
   <title>Hello DuckPHP!</title>
 </head>
 <body>
-本页面展示 ContrlloerHelper 方法。
+本页面展示 ViewHelper 方法。
+ViewHelper 是在View 里使用。
+
+ViewHelper 默认的方法在 ControllerHelper 里都有。
+但是 ViewHelper 不是作为  ControllerHelper 的子集。
+
 <fieldset>
     <legend> ViewHelper</legend>
 <dl>
-    <dt><a href="#">Logger</a></dt>
-    <dd> 介绍</dd>
     <dt><a href="#">H</a></dt>
     <dd> 介绍</dd>
     <dt><a href="#">L</a></dt>

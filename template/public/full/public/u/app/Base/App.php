@@ -4,6 +4,12 @@ use DuckPhp\App as DuckPhp_App;
 
 class App extends DuckPhp_App
 {
+    protected $componentClassMap = [
+            'M' => 'ModelHelper',
+            'V' => 'ViewHelper',
+            'C' => 'ControllerHelper',
+            'S' => 'ServiceHelper',
+    ];
 	public function onInit()
 	{
 		$this->assignRewrite([

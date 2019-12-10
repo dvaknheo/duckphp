@@ -10,7 +10,8 @@ class Main
 {
     public function __construct()
     {
-        if(C::getRouteCallingMethod()==='index'){
+        $method = C::getRouteCallingMethod();
+        if (in_array($method,['index','register','login'])) {
             return;
         }
         $this->setLayoutData();

@@ -82,14 +82,18 @@ template 工程的桩代码,完整的默认目录结构
         |-- error_debug.php         // 调试的时候显示的视图
         `-- error_exception.php     // 异常页面
 </pre>
-如何开始
-
-问题，比如出复杂异常怎么办
-
-问题，如何精简
+<pre>
+Controller 目录下的是 文件方式的路由
+假定网站域名是 127.0.0.1
+访问
+http://127.0.0.1/a/b/c 对应的文件是 app/Controller/a/b.php 对应方法是 MY\Controller\a\b->c();
+如果只有一级
+http://127.0.0.1/d/ 则对应的是 MY\Controller\Main->d() ，注意不是 MY\Controller\d->index();
+命名空间，可以调。 路由表模式也有，都属于后面的高级功能
+</pre>
 </fieldset>
 <fieldset>
-404 页面设置
+架构图。
 </fieldset>
 <fieldset>
 <legend> 助手类参考 </legend>
@@ -100,15 +104,61 @@ template 工程的桩代码,完整的默认目录结构
 <fieldset>
 <legend> 助手类参考 </legend>
 再学这部分就合格了。<br />
+我们先学共有静态方法。
 <a href="<?=C::URL('AllHelper/index')?>">全部助手类共有方法</a><br />
-<a href="<?=C::URL('ControllerHelper/index')?>">ControllerHelper</a><br />
+我们从简单的到复杂的开始学习
+<a href="<?=C::URL('ModelHelper/index')?>">ModelHelper</a> 
+ModelHelper 只有获得数据库的方法 <br />
+<a href="<?=C::URL('ViewHelper/index')?>">ViewHelper 记为 V, </a><br />
 <a href="<?=C::URL('ServiceHelper/index')?>">ServiceHelper</a><br />
-<a href="<?=C::URL('ModelHelper/index')?>">ModelHelper</a><br />
-<a href="<?=C::URL('ViewHelper/index')?>">ViewHelper</a><br />
+
+ControllerHelper 最复杂，默认包含配置方法， 内容处理方法等。 ServiceHelper
+<a href="<?=C::URL('ControllerHelper/index')?>">ControllerHelper</a><br />
+
+当然，所有静态方法都在 App 类里实现。
+
+SessionService 这个特殊类就引用了 App 类。
+其他小弟，要是直接用App 类那就罚他。
 </fieldset>
+
 <fieldset>
 <legend>数据库学习</legend>
+数据库配置。
+config/setting.php 里
+<pre>
+'database_list'=>[
+    [
+    'dsn'=>'mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8mb4;',
+    'username'=>'admin',
+    'password'=>'123456',
+    'driver_options'=>[],
+    ],
+],
+</pre>
+<pre>
+数据库使用
+var_dump(M::DB()); // 默认是 DB 类。
+方法
 
+public function close();
+关闭数据库
+public function execute($sql, ...$args);
+public function fetchAll($sql, ...$args);
+public function fetch($sql, ...$args);
+public function fetchColumn($sql, ...$args);
+public function quote($string);
+public function rowCount()
+public function lastInsertId()
+
+高级方法
+    public function findData($table_name, $id, $key = 'id')
+    public function insertData($table_name, $data, $return_last_id = true)
+    public function deleteData($table_name, $id, $key = 'id', $key_delete = 'is_deleted')
+    public function updateData($table_name, $id, $data, $key = 'id')
+    public function quoteIn($array)
+    public function quoteSetArray($array)
+    public function qouteInsertArray($array)
+</pre>
 </fieldset>
 <fieldset>
 <legend> 入口文件 public/index.php </legend>
@@ -124,10 +174,6 @@ $options=[
     'error_exception' => '_sys/error_exception',
     'error_debug' => '_sys/error_debug',
 ];
-
-
-
-
 \DuckPhp\App::RunQuickly($options, function () {
 });
 </pre>
@@ -136,7 +182,9 @@ $options=[
 <fieldset>
 <legend>样例</legend>
 基本用户系统。
+问题，比如出复杂异常怎么办
 
+问题，如何精简
 </fieldset>
 <fieldset>
 扩展

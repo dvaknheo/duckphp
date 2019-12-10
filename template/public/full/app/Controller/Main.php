@@ -14,11 +14,6 @@ class Main
     }
 	public function index()
 	{
-        $ret=[];
-        for($i=0;$i<6;$i++){
-            //$t=mt_rand(0,3);
-            //var_dump($t);
-        }
 		C::Show(get_defined_vars(),'main');
 	}
     public function i()

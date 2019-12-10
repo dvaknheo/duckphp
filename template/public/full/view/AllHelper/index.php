@@ -8,118 +8,40 @@
 </head>
 <body>
 
-本页面展示 ContrlloerHelper 方法。
-
+本页面展示 所有助手类共有的方法。
 <fieldset>
     <legend>ControllerHelper 方法</legend>
     <dl>
-    <dt><a href="#">assignRewrite</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">getRewrites</a></dt>
-    <dd> 介绍</dd>
+    <dt><a href="#">IsDebug</a></dt>
+    <dd>
+        IsDebug 方法，用于判断平台
+    </dd>
+    <dt><a href="#">IsRealDebug</a></dt>
+    <dd>
+        IsRealDebug 切莫乱用。用于环境设置为其他。比如线上环境，但是还是要特殊调试的场合。
+    </dd>
+    <dt><a href="#">Platform</a></dt>
+    <dd>获得当前所在平台</dd>
+    <dt><a href="#">DumpTrace</a></dt>
+    <dd>打印当前堆栈，类似 debug_print_backtrce(2)</dd>
+    <dt><a href="#">var_dump</a></dt>
+    <dd> 替代 var_dump 函数，不是debug 模式下，不会现实，安全使用</dd>
+    <dt><a href="#">AssignExtendStaticMethod</a></dt>
+    <dd>高级函数，一般不要使用</dd>
+    <dt><a href="#">GetExtendStaticStaticMethodList</a></dt>
+    <dd>获得当前方法扩展了什么 </dd>
+    <dt><a href="#">CallExtendStaticMethod</a></dt>
+    <dd>高级函数，一般不要使用</dd>
+    <dt><a href="#">__callStatic</a></dt>
+    <dd>静态方法已经被扩展</dd>
+    <dt><a href="#">ThrowOn</a></dt>
+    <dd>介绍</dd>
     <dt><a href="#">Logger</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">Import</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">RecordsetUrl</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">RecordsetH</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">Pager</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">MapToService</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">explodeService</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">Setting</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">Config</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">LoadConfig</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">H</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">URL</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">Parameters</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">Show</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">ShowBlock</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">ExitRedirect</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">ExitRedirectOutside</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">ExitRouteTo</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">Exit404</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">ExitJson</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">header</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">exit_system</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">SG</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">GLOBALS</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">STATICS</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">CLASS_STATICS</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">session_start</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">session_destroy</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">session_set_save_handler</a></dt>
-    <dd> 介绍</dd>
+    <dd> 获得 PSR 日志类</dd>
     </dl>
-</fieldset>
-<fieldset>
-    <legend>ServiceHelper</legend>
+<hr />
+排序
     <dl>
-        <dt><a href="#">Logger</a></dt>
-        <dd> 介绍</dd>
-        <dt><a href="#">Setting</a></dt>
-        <dd> 介绍</dd>
-        <dt><a href="#">Config</a></dt>
-        <dd> 介绍</dd>
-        <dt><a href="#">LoadConfig</a></dt>
-        <dd> 介绍</dd>
-        <dd> 介绍</dd>
     </dl>
-</fieldset>
-<fieldset>
-    <legend> ModelHelper</legend>
-<dl>
-        <dt><a href="#">Logger</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">DB</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">DB_W</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">DB_R</a></dt>
-    <dd> 介绍</dd>
-</dl>
-</fieldset>
-<fieldset>
-    <legend> ViewHelper</legend>
-<dl>
-    <dt><a href="#">Logger</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">H</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">L</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">HL</a></dt>
-    <dd> 介绍</dd>
-    <dt><a href="#">ShowBlock</a></dt>
-    <dd> 介绍</dd>
-
-</dl>
-</fieldset>
-
 </body>
 </html>

@@ -20,7 +20,7 @@ class Main
 		
 		list($articles,$total)=ArticleService::G()->getRecentArticle($page);
 		C::RecordsetH($articles,['title']);
-		C::RecordsetURL($articles,['url'=>'article/{id}']);
+		C::RecordsetUrl($articles,['url'=>'article/{id}']);
 
 
 		$url_reg=C::URL('reg');

@@ -25,21 +25,6 @@ V::startSection('content'); ?>
                                 <?php } ?>
                             </div>
                         </div>
-
-                        <div class="form-group row">
-                            <label for="email" class="col-md-4 col-form-label text-md-right"><?= V::HL('E-Mail Address'); ?></label>
-
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control <?php if(isset($errors['email'])){ ?> is-invalid <?php } ?>" name="email" value="<?= V::H($olds['email']??''); ?>" required autocomplete="email">
-
-                                <?php if (isset($errors['email'])) { ?>
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong><?= V::H($error['email']); ?></strong>
-                                    </span>
-                                <?php } ?>
-                            </div>
-                        </div>
-
                         <div class="form-group row">
                             <label for="password" class="col-md-4 col-form-label text-md-right"><?= V::HL('Password'); ?></label>
 
