@@ -27,6 +27,7 @@ trait AppPluginTrait
     ];
     protected $path_view_override = '';
     protected $path_config_override = '';
+    protected $plugin_context_class = '';
     public function initAsPlugin(array $options, object $context = null)
     {
         //override me
@@ -55,7 +56,7 @@ trait AppPluginTrait
     protected function defaultInitAsPlugin(array $options, object $context = null)
     {
         $this->pluginModeInitOptions($options);
-        
+        $this->plugin_context_class=get_class($context);
         $setting_file = $context->options['setting_file'] ?? 'setting';
         
         $this->path_view_override = rtrim($this->plugin_options['plugin_path_namespace'].$this->plugin_options['plugin_path_view'], '/').'/';
@@ -102,7 +103,7 @@ trait AppPluginTrait
     }
     public function _PluginRouteHook($path_info)
     {
-        //TODO clone Helper
+        $this->plugin_clone_helpers();
         $this->runAsPlugin();
         
         View::G()->setOverridePath($this->path_view_override);
@@ -114,8 +115,14 @@ trait AppPluginTrait
         $flag = $route->defaultRunRouteCallback($path_info);
         return $flag;
     }
+    protected function plugin_clone_helpers()
+    {
+        $new_namespace = $this->plugin_options['plugin_namespace'] . '\\Base\\';
+        $this->plugin_context_class::G()->cloneHelpers($new_namespace);
+        
+    }
     protected function runAsPlugin()
     {
-        // ovverride md;
+        
     }
 }

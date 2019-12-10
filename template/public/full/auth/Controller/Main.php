@@ -4,6 +4,7 @@ namespace UserSystemDemo\Controller;
 use UserSystemDemo\Base\App;
 use UserSystemDemo\Base\Helper\ControllerHelper as C;
 use UserSystemDemo\Service\SessionService;
+use UserSystemDemo\Service\SessionServiceException;
 use UserSystemDemo\Service\UserService;
 use UserSystemDemo\Service\UserServiceException;
 
@@ -15,6 +16,10 @@ class Main
         if (in_array($method,['','index','register','login','logout','test'])) {
             return;
         }
+        C::assignExceptionHandler(SessionServiceException::class,function(){
+            C::ExitRouteTo('login');
+        });
+        
         $this->setLayoutData();
     }
     public function index()
@@ -36,6 +41,7 @@ class Main
     }
     public function home()
     {
+        $url_logout=C::URL('logout');
         C::Show(get_defined_vars(),'home');
     }
     public function register()
