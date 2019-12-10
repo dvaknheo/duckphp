@@ -294,16 +294,15 @@ class Route
             $this->error = "controller_hide_boot_class! {$this->controller_welcome_class} ";
             return null;
         }
-        
         $path_class = $path_class?:$this->controller_welcome_class;
         $full_class = $this->namespace_controller.'\\'.str_replace('/', '\\', $path_class).$this->options['controller_postfix'];
         if (!class_exists($full_class)) {
             $this->error = "can't find class($full_class) by $path_class ";
             return null;
         }
-
+        
         $this->calling_class = $full_class;
-        $this->calling_method = $method;
+        $this->calling_method = !empty($method)?$method:'index';
         
         if ($this->controller_base_class && !is_subclass_of($full_class, $this->controller_base_class)) {
             $this->error = "no the controller_base_class! {$this->controller_base_class} ";

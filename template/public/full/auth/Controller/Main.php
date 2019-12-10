@@ -13,7 +13,7 @@ class Main
     public function __construct()
     {
         $method = C::getRouteCallingMethod();
-        if (in_array($method,['','index','register','login','logout','test'])) {
+        if (in_array($method,['index','register','login','logout','test'])) {
             return;
         }
         C::assignExceptionHandler(SessionServiceException::class,function(){

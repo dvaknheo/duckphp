@@ -90,7 +90,7 @@ class View
         }
         $base_file = preg_replace('/\.php$/', '', $view).'.php';
         $file = $path.$base_file;
-        if ($this->options['path_view_override'] ?? false && !is_file($file)) {
+        if (($this->options['path_view_override'] ?? false) && !is_file($file)) {
             $file = $this->options['path_view_override'].$base_file;
         }
         return $file;
