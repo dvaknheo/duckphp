@@ -33,7 +33,13 @@ class RouteHookRewrite
         if ($context) {
             Route::G()->addRouteHook([static::class,'Hook'], 'prepend-outter');
             if (\method_exists($context, 'extendComponents')) {
-                $context->extendComponents(static::class, ['assignRewrite','getRewrites'], ['C']);
+                $context->extendComponents(
+                    [
+                        'assignRewrite' => [static::class.'::G','assignRewrite'],
+                        'getRewrites' => [static::class.'::G','getRewrites']
+                    ],
+                    ['C']
+                );
             }
         }
     }

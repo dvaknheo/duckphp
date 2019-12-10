@@ -2,7 +2,7 @@
 /**
  * DuckPHP
  * From this time, you never be alone~
- */  
+ */
 // MAIN FILE
 //dvaknheo@github.com
 //OK，Lazy
@@ -101,7 +101,7 @@ class App
     public $options = [];
     public $is_debug = true;
     public $platform = '';
-    public $override_from = '';
+    public $override_from = ''; // for inner usage;
     
     protected $beforeRunHandlers = [];
     protected $error_view_inited = false;
@@ -335,16 +335,9 @@ class App
     }
     ////////////////////////
     // @provider output.
-    public function extendComponents($class, $methods, $components): void
+    public function extendComponents($method_map, $components = []): void
     {
-        $methods = is_array($methods)?$methods:[$methods];
-        $components = is_array($components)?$components:explode(',', $components);
-        $maps = [];
-        foreach ($methods as $method) {
-            $maps[$method] = [$class,$method];
-        }
-        
-        static::AssignExtendStaticMethod($maps);
+        static::AssignExtendStaticMethod($method_map);
         
         $a = explode('\\', get_class($this));
         array_pop($a);
@@ -355,18 +348,8 @@ class App
             if (!class_exists($full_class)) {
                 continue;
             }
-            $full_class::AssignExtendStaticMethod($maps);
+            $full_class::AssignExtendStaticMethod($method_map);
         }
-    }
-    public function getComponentClassMaps()
-    {
-        $a = explode('\\', get_class($this));
-        array_pop($a);
-        $namespace = ltrim(implode('\\', $a).'\\', '\\');  // __NAMESPACE__
-        foreach ($components as $component) {
-            $class = $this->componentClassMap[strtoupper($component)] ?? null;
-        }
-        
     }
 }
 trait Core_Component
@@ -681,7 +664,7 @@ trait Core_Helper
     }
     public static function IsRealDebug()
     {
-        return static::G()->_IsRealDebug(); 
+        return static::G()->_IsRealDebug();
     }
     public function _IsRealDebug()
     {

@@ -40,7 +40,7 @@ class SimpleLogger //extends Psr\Log\LoggerInterface;
             $this->path = $this->options['path'].$this->options['log_file'];
         }
         if (method_exists($context, 'extendComponents')) {
-            $context->extendComponents(static::class, ['Logger'], ['C','S','M','V']);
+            $context->extendComponents(['Logger' => [static::class, 'Logger']], ['C','S','M','V']);
         }
     }
     public static function Logger(?object $replacement_object = null)

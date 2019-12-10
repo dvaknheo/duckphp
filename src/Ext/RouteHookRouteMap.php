@@ -107,7 +107,7 @@ class RouteHookRouteMap
         if (!$callback) {
             return false;
         }
-        if(is_array($callback)){
+        if (is_array($callback)) {
             $route->setCallingRouteMethod($callback[1]);
         }
         ($callback)();

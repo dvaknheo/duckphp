@@ -42,17 +42,14 @@ class RedisManager
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         
         $this->redis_config_list = $this->options['redis_list'];
-        if ($context) {
-            $this->initContext($options, $context);
-        }
         if ($this->options['enable_simple_cache']) {
             RedisSimpleCache::G()->init([
                 'redis' => $this->getServer(),
                 'prefix' => $this->options['simple_cache_prefix']
             ]);
-            if (method_exists($context, 'extendComponents')) {
-                $context->extendComponents(static::class, ['SimpleCache'], ['S']);
-            }
+        }
+        if ($context) {
+            $this->initContext($options, $context);
         }
     }
     
@@ -68,7 +65,12 @@ class RedisManager
             }
         }
         if (method_exists($context, 'extendComponents')) {
-            $context->extendComponents(static::class, ['Redis'], ['S']);
+            $context->extendComponents(['Redis' => [static::class, 'Redis']], ['S']);
+        }
+        if ($this->options['enable_simple_cache']) {
+            if (method_exists($context, 'extendComponents')) {
+                $context->extendComponents(['SimpleCache' => [static::class, 'SimpleCache']], ['S']);
+            }
         }
     }
     public static function Redis($tag = 0)

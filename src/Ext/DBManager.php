@@ -79,7 +79,15 @@ class DBManager
             $context->addDynamicComponentClass(static::class);
         }
         if (method_exists($context, 'extendComponents')) {
-            $context->extendComponents(static::class, ['DB','DB_R','DB_W'], ['M']);
+            $context->extendComponents(
+                [
+                    'DB' => [static::class, 'DB'],
+                    'DB_R' => [static::class, 'DB_R'],
+                    'DB_W' => [static::class, 'DB_W'],
+                    'setDBHandler' => [static::class .'::G', 'setDBHandler'],
+                ],
+                ['M']
+            );
         }
     }
     public static function CloseAllDB()
@@ -89,6 +97,18 @@ class DBManager
     public function OnException()
     {
         return static::G()->_onException();
+    }
+    public static function DB($tag = null)
+    {
+        return static::G()->_DB($tag);
+    }
+    public static function DB_W()
+    {
+        return static::G()->_DB_W();
+    }
+    public static function DB_R()
+    {
+        return static::G()->_DB_R();
     }
     
     public function setDBHandler($db_create_handler, $db_close_handler = null, $db_exception_handler = null)

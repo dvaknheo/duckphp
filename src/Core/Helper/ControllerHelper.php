@@ -24,24 +24,37 @@ class ControllerHelper
     {
         return App::LoadConfig($file_basename);
     }
-    ////////////////
+    ////
     public static function H($str)
     {
         return App::H($str);
     }
-    public static function URL($url = null)
+    public static function L($str, $args = [])
+    {
+        return App::L($str, $args);
+    }
+    public static function HL($str, $args = [])
+    {
+        return App::HL($str, $args);
+    }
+    public static function ShowBlock($view, $data = null)
+    {
+        return App::ShowBlock($view, $data);
+    }
+    public static function URL($url)
     {
         return App::URL($url);
     }
+    ////
     public static function Parameters()
     {
         return App::Parameters();
     }
-    public function getRouteCallingMethod()
+    public static function getRouteCallingMethod()
     {
         return App::getRouteCallingMethod();
     }
-    public function setRouteCallingMethod($method)
+    public static function setRouteCallingMethod($method)
     {
         return App::setRouteCallingMethod($method);
     }
@@ -50,15 +63,11 @@ class ControllerHelper
     {
         return App::Show($data, $view);
     }
-    public static function ShowBlock($view, $data = null)
-    {
-        return App::ShowBlock($view, $data);
-    }
-    public function setViewWrapper($head_file = null, $foot_file = null)
+    public static function setViewWrapper($head_file = null, $foot_file = null)
     {
         return App::setViewWrapper($head_file, $foot_file);
     }
-    public function assignViewData($key, $value = null)
+    public static function assignViewData($key, $value = null)
     {
         return App::assignViewData($key, $value);
     }
@@ -121,22 +130,5 @@ class ControllerHelper
     public static function &CLASS_STATICS($class_name, $var_name)
     {
         return App::CLASS_STATICS($class_name, $var_name);
-    }
-    // super global  session
-    public static function session_start(array $options = [])
-    {
-        return App::session_start($options);
-    }
-    public function session_id($session_id = null)
-    {
-        return App::session_id($session_id);
-    }
-    public static function session_destroy()
-    {
-        return App::session_destroy();
-    }
-    public static function session_set_save_handler(\SessionHandlerInterface $handler)
-    {
-        return App::session_set_save_handler($handler);
     }
 }

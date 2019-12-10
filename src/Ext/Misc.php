@@ -35,25 +35,39 @@ class Misc
             $this->path = $options['path'].rtrim($options['path_lib'], '/').'/';
         }
         $this->context_class = $context?get_class($context):null;
-        
-        //$this->context_class::G()->extendComponents(static::class,'Foo',['C']);
+        if (\method_exists($context, 'extendComponents')) {
+            $context->extendComponents(
+                [
+                    'Import' => [static::class,'Import'],
+                    'DI' => [static::class,'DI'],
+                    'RecordsetUrl' => [static::class,'RecordsetUrl'],
+                    'RecordsetH' => [static::class,'RecordsetH'],
+                    'CallAPI' => [static::class,'CallAPI'],
+                ],
+                ['C']
+            );
+        }
     }
     public static function Import($file)
     {
         return static::G()->_Import($file);
     }
-    public static function RecordsetUrl(&$data, $cols_map = [])
+    public static function RecordsetUrl($data, $cols_map = [])
     {
         return static::G()->_RecordsetUrl($data, $cols_map);
     }
     
-    public static function RecordsetH(&$data, $cols = [])
+    public static function RecordsetH($data, $cols = [])
     {
         return static::G()->_RecordsetH($data, $cols);
     }
     public static function DI($name, $object = null)
     {
         return static::G()->_DI($name, $object);
+    }
+    public function CallAPI($class, $method, $input, $interface = '')
+    {
+        return static::G()->_CallAPI($class, $method, $input, $interface = '');
     }
     public function _DI($name, $object = null)
     {
@@ -68,7 +82,7 @@ class Misc
         include_once $this->path.rtrim($file, '.php').'.php';
     }
     
-    public function _RecordsetUrl(&$data, $cols_map = [])
+    public function _RecordsetUrl($data, $cols_map = [])
     {
         //need more quickly;
         if ($data === []) {
@@ -94,7 +108,7 @@ class Misc
         unset($v);
         return $data;
     }
-    public function _RecordsetH(&$data, $cols = [])
+    public function _RecordsetH($data, $cols = [])
     {
         if ($data === []) {
             return $data;
@@ -110,7 +124,7 @@ class Misc
         }
         return $data;
     }
-    public function callAPI($class, $method, $input)
+    public function _CallAPI($class, $method, $input, $interface = '')
     {
         $f = [
             'bool' => FILTER_VALIDATE_BOOLEAN  ,
@@ -118,6 +132,10 @@ class Misc
             'float' => FILTER_VALIDATE_FLOAT,
             'string' => FILTER_SANITIZE_STRING,
         ];
+        if ($interface && !is_a($class, $interface)) {
+            throw new ReflectionException("Bad interface", -3);
+            return null;
+        }
         $reflect = new ReflectionMethod($class, $method);
         
         $params = $reflect->getParameters();

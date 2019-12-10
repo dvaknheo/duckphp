@@ -27,21 +27,17 @@ class App extends Core_App //implements SwooleExtAppInterface
     use DuckPhp_Glue;
     
     const DEFAULT_OPTIONS_EX = [
+
             'path_lib' => 'lib',
             'log_file' => '',
             
             'use_super_global' => false,
             'rewrite_map' => [],
             'route_map' => [],
-            'swoole' => [],
-            
-            'key_for_action' => '',
-            'key_for_module' => '',
             
             'ext' => [
                 //'DuckPhp\SwooleHttpd\SwooleExt'=>true,
                 'DuckPhp\Ext\Misc' => true,
-
                 'DuckPhp\Ext\DBManager' => [
                     'before_get_db_handler' => [null,'CheckStrictDB'],
                 ],
@@ -58,10 +54,14 @@ class App extends Core_App //implements SwooleExtAppInterface
                 'DuckPhp\Ext\DBReusePoolProxy' => false,
                 'DuckPhp\Ext\FacadesAutoLoader' => false,
                 'DuckPhp\Ext\Lazybones' => false,
-                
             ],
             
         ];
+    public function __construct()
+    {
+        parent::__construct();
+        $this->extendComponents(['Pager' => [static::class,'_Pager'],], ['C']);
+    }
     // @interface SwooleExtAppInterface
     public function onSwooleHttpdInit($SwooleHttpd, $InCoroutine = false, ?callable $RunHandler)
     {
@@ -97,23 +97,7 @@ class App extends Core_App //implements SwooleExtAppInterface
 
 trait DuckPhp_Glue
 {
-    public static function DB($tag = null)
-    {
-        return DBManager::G()->_DB($tag);
-    }
-    public static function DB_W()
-    {
-        return DBManager::G()->_DB_W();
-    }
-    public static function DB_R()
-    {
-        return DBManager::G()->_DB_R();
-    }
-    public function setDBHandler($db_create_handler, $db_close_handler = null, $db_exception_handler = null)
-    {
-        return DBManager::G()->setDBHandler($db_create_handler, $db_close_handler, $db_exception_handler);
-    }
-    public static function Pager(?object $replacement_object = null)
+    public static function _Pager(object $replacement_object = null)
     {
         return Pager::G($replacement_object);
     }
@@ -151,28 +135,5 @@ trait DuckPhp_Glue
     public function checkStrictModel($trace_level = 2)
     {
         return StrictCheck::G()->checkStrictModel($trace_level + 1);
-    }
-    public static function Import($file)
-    {
-        return Misc::G()->_Import($file);
-    }
-    public static function RecordsetUrl(&$data, $cols_map = [])
-    {
-        return Misc::G()->_RecordsetUrl($data, $cols_map);
-    }
-    
-    public static function RecordsetH(&$data, $cols = [])
-    {
-        return Misc::G()->_RecordsetH($data, $cols);
-    }
-    public static function DI($name, $object = null)
-    {
-        return Misc::G()->_DI($name, $object);
-    }
-    /////////////////////
-
-    public function callAPI($class, $method, $input)
-    {
-        return Misc::G()->callAPI($class, $method, $input);
     }
 }
