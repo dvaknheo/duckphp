@@ -11,7 +11,7 @@ class Main
     public function __construct()
     {
         $method = C::getRouteCallingMethod();
-        if (in_array($method,['index','register','login'])) {
+        if (in_array($method,['index','register','login','test'])) {
             return;
         }
         $this->setLayoutData();
@@ -51,6 +51,13 @@ class Main
     }
     public function test()
     {
+        $name='DKTest4';
+        $user=UserService::G()->login(['name'=>$name,'password'=>'123456']);
+        SessionService::G()->setCurrentUser($user);
+        $user=SessionService::G()->getCurrentUser();
+        SessionService::G()->logout();
+        
+        var_dump(DATE(DATE_ATOM));
     }
     ////////////////////////////////////////////
     public function do_register()

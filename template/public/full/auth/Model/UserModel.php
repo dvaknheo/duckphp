@@ -6,33 +6,41 @@ use UserSystemDemo\Base\Helper\ModelHelper as M;
 
 class UserModel extends BaseModel
 {
-    public function register($form)
+    public function exsits($name)
     {
-        $data=[];
-        $data['name']=$form['name'];
-        $data['password']=$this->hash($form['password']);
-        
         $sql="select count(*) as c from Users where username=?";
         $count=M::DB()->fetchColumn($sql,$form['name']);
-        M::ThrowOn($count,'用户已经存在');
+        return !empty($count)?true:false;
+    }
+    public function addUser($username,$password)
+    {
+        $data=[];
+        $data['username']=$username;
+        $data['password']=$this->hash($password);
         
-        $id=M::DB()->insertData('users', $data);
-        M::ThrowOn(!$id,'添加用户失败');
-        
+        $id=M::DB()->insertData('Users', $data);
+        return $id;
+    }
+    public function getUserById($id)
+    {
         $sql="select * from Users where id=?";
         $user=M::DB()->fetch($sql,$id);
-        unset($user['password']);
         
         return $user;
     }
-    public function login($form)
+    public function getUserByUsername($username)
     {
         $sql="select * from Users where username=?";
-        $user=M::DB()->fetch($sql,$form['name']);
+        $user=M::DB()->fetch($sql,$username);
         
-        M::ThrowOn(!$user,'没有这个用户');
-        $flag=$this->verify($form['password'],$user['password']);
-        M::ThrowOn(!$flag,'验证失败');
+        return $user;
+    }
+    public function verifyPassword($user,$password)
+    {
+        return $this->verify($password,$user['password']);
+    }
+    public function unloadPassword($user)
+    {
         unset($user['password']);
         return $user;
     }

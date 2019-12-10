@@ -10,7 +10,12 @@ class App extends DuckPhp_App
     
     public function onInit()
     {
-        //Your code here
+        $this->options['database_list']=[[
+            'dsn'=>'mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8mb4;',
+            'username'=>'admin',
+            'password'=>'123456',
+            'driver_options'=>[],
+        ]];
         return parent::onInit();
     }
     protected function onRun()
@@ -22,6 +27,6 @@ class App extends DuckPhp_App
         DuckPhp_App::G()->options['error_404']=null;
         DuckPhp_App::G()->options['error_500']=null;
         DuckPhp_App::G()->options['error_exception']=null;
-        DuckPhp_App::G()->options['error_debug']=null;//'_sys/error_debug';
+        DuckPhp_App::G()->options['error_debug']=null;
     }
 }
