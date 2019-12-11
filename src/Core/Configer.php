@@ -31,7 +31,7 @@ class Configer
     }
     public function init(array $options, object $context = null)
     {
-        $this->options = array_replace_recursive($this->options, $options);
+        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         $this->base_path = $this->options['path'] ?? '';
         
         if (substr($this->options['path_config'], 0, 1) === '/') {

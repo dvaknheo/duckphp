@@ -352,14 +352,23 @@ class App
             $full_class::AssignExtendStaticMethod($method_map);
         }
     }
-    public function cloneHelpers($new_namespace)
+    public function cloneHelpers($new_namespace, $componentClassMap = [])
     {
-        $a = explode('\\', get_class(App::G()));
+        if (empty($componentClassMap)) {
+            $componentClassMap = $this->componentClassMap;
+        }
+        //Get Namespace.
+        $a = explode('\\', get_class($this));
         array_pop($a);
-        $namespace = ltrim(implode('\\', $a).'\\', '\\');  // __NAMESPACE__
-        foreach($this->componentClassMap as $class){
-            $old_class=$namespace.$class;
-            $new_class=$new_namespace.$class;
+        $namespace = ltrim(implode('\\', $a).'\\', '\\');
+        
+        foreach ($this->componentClassMap as $name => $class) {
+            $new_class = $componentClassMap[$name] ?? null;
+            if (!$new_class) {
+                continue;
+            }
+            $old_class = $namespace.$class;
+            $new_class = $new_namespace.$new_class;
             if (!class_exists($new_class) || !class_exists($old_class)) {
                 continue;
             }

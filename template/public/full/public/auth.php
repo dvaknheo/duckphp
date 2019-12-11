@@ -8,7 +8,7 @@ require(__DIR__.'/../../../../autoload.php');  // @DUCKPHP_HEADFILE
 $project_root = realpath(__DIR__.'/..');
 $options = [
     'path' => $project_root,
-    'skip_setting_file' => true,
+    //'skip_setting_file' => true,
     'path_namespace' => 'auth',
     'path_config' => 'auth/config',
     'path_view' => 'auth/view',

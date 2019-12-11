@@ -13,7 +13,6 @@ class App extends \DuckPhp\App
 {
     protected function onInit()
     {
-        $this->options['is_debug'] = true;
         
         $this->options['error_404'] = '_sys/error_404';
         $this->options['error_500'] = '_sys/error_500';
@@ -22,7 +21,7 @@ class App extends \DuckPhp\App
         $this->options['ext']['UserSystemDemo\Base\App'] = true;
         
         $this->assignPathNamespace($this->options['path'].'auth/', 'UserSystemDemo');
-        $this->is_debug = true;
+        
         $ret = parent::onInit();
         return $ret;
     }

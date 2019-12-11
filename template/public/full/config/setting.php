@@ -3,6 +3,7 @@
  * DuckPHP
  * From this time, you never be alone~
  */
+
 return [
     'duckphp_is_debug' => true,
     'duckphp_platform' => 'default',

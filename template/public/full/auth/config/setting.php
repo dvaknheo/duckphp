@@ -4,4 +4,4 @@
  * From this time, you never be alone~
  */
 
-return require __DIR__.'/../../../../config/setting.php';
+return require __DIR__.'/../../config/setting.php';

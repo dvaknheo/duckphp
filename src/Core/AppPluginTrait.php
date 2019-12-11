@@ -56,7 +56,7 @@ trait AppPluginTrait
     protected function defaultInitAsPlugin(array $options, object $context = null)
     {
         $this->pluginModeInitOptions($options);
-        $this->plugin_context_class=get_class($context);
+        $this->plugin_context_class = get_class($context);
         $setting_file = $context->options['setting_file'] ?? 'setting';
         
         $this->path_view_override = rtrim($this->plugin_options['plugin_path_namespace'].$this->plugin_options['plugin_path_view'], '/').'/';
@@ -117,12 +117,13 @@ trait AppPluginTrait
     }
     protected function plugin_clone_helpers()
     {
-        $new_namespace = $this->plugin_options['plugin_namespace'] . '\\Base\\';
-        $this->plugin_context_class::G()->cloneHelpers($new_namespace);
-        
+        $a = explode('\\', get_class($this));
+        array_pop($a);
+        $namespace = ltrim(implode('\\', $a).'\\', '\\');
+        $map = $this->componentClassMap ?? [];
+        $this->plugin_context_class::G()->cloneHelpers($namespace, $map);
     }
     protected function runAsPlugin()
     {
-        
     }
 }

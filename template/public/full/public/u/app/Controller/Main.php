@@ -24,11 +24,11 @@ class Main
         $user = SessionService::G()->getCurrentUser();
         
         list($articles, $total) = ArticleService::G()->getRecentArticle($page);
-        C::RecordsetH($articles, ['title']);
-        C::RecordsetUrl($articles, ['url' => 'article/{id}']);
+        $articles = C::RecordsetH($articles, ['title']);
+        $articles = C::RecordsetUrl($articles, ['url' => 'article/{id}']);
 
 
-        $url_reg = C::URL('reg');
+        $url_reg = C::URL('register');
         $url_login = C::URL('login');
         $url_logout = C::URL('logout');
         $url_admin = C::URL('admin');
@@ -48,48 +48,15 @@ class Main
         if (!$article) {
             C::Exit404();
         }
-        C::RecordsetH($article['comments'], ['content','username']);
+        $article['comments'] = C::RecordsetH($article['comments'], ['content','username']);
         $html_pager = C::Pager()::Render($article['comments_total']);
         $url_add_comment = C::URL('addcomment');
         C::Show(get_defined_vars(), 'article');
     }
-    public function reg()
+    public function regx()
     {
         C::setViewWrapper('user/inc_head.php', 'user/inc_foot.php');
         C::Show(get_defined_vars(), 'user/reg');
-    }
-    public function login()
-    {
-        C::setViewWrapper('user/inc_head.php', 'user/inc_foot.php');
-        C::Show(get_defined_vars(), 'user/login');
-    }
-    public function logout()
-    {
-        SessionService::G()->logout();
-        C::ExitRouteTo('');
-    }
-    
-    public function do_reg()
-    {
-        try {
-            $user = UserService::G()->reg(C::SG()->_POST['username'], C::SG()->_POST['password']);
-        } catch (\Exception $ex) {
-            C::G()->assignViewData('error_info', $ex->getMessage());
-            return $this->reg();
-        }
-        SessionService::G()->setCurrentUser($user);
-        C::ExitRouteTo('');
-    }
-    public function do_login()
-    {
-        try {
-            $user = UserService::G()->login(DN::SG()->_POST['username'], DN::SG()->_POST['password']);
-        } catch (\Exception $ex) {
-            DN::G()->assignViewData('error_info', $ex->getMessage());
-            return $this->login();
-        }
-        SessionService::G()->setCurrentUser($user);
-        C::ExitRouteTo('');
     }
     public function do_addcomment()
     {

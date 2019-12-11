@@ -26,7 +26,13 @@ class App extends DuckPhp_App
                 var_dump(App::Parameters());
             },
         ]);
-        return parent::onInit();
+        
+        $this->options['ext']['UserSystemDemo\Base\App'] = true;
+        
+        $path=realpath($this->options['path'].'../../auth/');
+        $this->assignPathNamespace($path, 'UserSystemDemo');
+        
+return parent::onInit();
     }
     public function onRun()
     {

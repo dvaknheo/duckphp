@@ -4,17 +4,15 @@
  * From this time, you never be alone~
  */
 
-$data = array();
-$data['is_dev'] = true;
-$data['db'] = array(
-    'dsn' => 'mysql:host=???;port=???;dbname=???;charset=utf8;',
-    'user' => '???',
-    'password' => '???',
-);
-$data['medoo'] = array(
-    'database_type' => 'mysql',
-    'dsn' => "???",
-    'username' => '???',
-    'password' => '???'
-);
-return $data;
+return [
+    'duckphp_is_debug' => true,
+    'duckphp_platform' => '???',
+    'database_list' => [
+        [
+        'dsn' => 'mysql:host=???;port=3306;dbname=???;charset=utf8mb4;',
+        'username' => '???',
+        'password' => '???',
+        'driver_options' => [],
+        ],
+    ],
+];
