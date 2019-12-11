@@ -31,7 +31,7 @@ class Main
         $url_reg = C::URL('register');
         $url_login = C::URL('login');
         $url_logout = C::URL('logout');
-        $url_admin = C::URL('admin');
+        $url_admin = C::URL('admin/index');
         
         C::Show(get_defined_vars(), 'main');
     }
@@ -61,7 +61,7 @@ class Main
     public function do_addcomment()
     {
         $user = SessionService::G()->getCurrentUser();
-        UserService::G()->addComment($user['id'], DN::SG()->_POST['article_id'], DN::SG()->_POST['content']);
+        UserService::G()->addComment($user['id'], C::SG()->_POST['article_id'], C::SG()->_POST['content']);
         C::ExitRouteTo('');
     }
     public function do_delcomment()

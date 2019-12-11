@@ -34,8 +34,10 @@ class UserService extends BaseService
         $password = $form['password'];
         $user = UserModel::G()->getUserByUsername($username);
         UserServiceException::ThrowOn(empty($user), "用户不存在");
+        UserServiceException::ThrowOn(!empty($user['deletee_at']), "用户已被禁用");
         $flag = UserModel::G()->verifyPassword($user, $password);
         UserServiceException::ThrowOn(!$flag, "密码错误");
+        
         $user = UserModel::G()->unloadPassword($user);
         
         return $user;

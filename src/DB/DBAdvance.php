@@ -74,7 +74,7 @@ trait DBAdvance
     
     public function updateData($table_name, $id, $data, $key = 'id')
     {
-        if ($data[$key]) {
+        if (isset($data[$key])) {
             unset($data[$key]);
         }
         $frag = $this->quoteSetArray($data);

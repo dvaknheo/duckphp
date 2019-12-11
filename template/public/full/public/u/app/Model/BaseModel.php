@@ -31,7 +31,7 @@ class BaseModel extends Model
         $date = date('Y-m-d H:i:s');
         $data['created_at'] = $date;
         $data['updated_at'] = $date;
-        $ret = M::DB()->insert($this->table_name, $data);
+        $ret = M::DB()->insertData($this->table_name, $data);
         
         return $ret;
     }
@@ -39,7 +39,7 @@ class BaseModel extends Model
     {
         $date = date('Y-m-d H:i:s');
         $data['updated_at'] = $date;
-        $ret = M::DB()->update($this->table_name, $id, $data);
+        $ret = M::DB()->updateData($this->table_name, $id, $data);
         
         return $ret;
     }
@@ -47,7 +47,7 @@ class BaseModel extends Model
     {
         $date = date('Y-m-d H:i:s');
         $sql = "update $this->table_name set deleted_at=? where id=? ";
-        $ret = M::DB()->execQuick($sql, $date, $id);
+        $ret = M::DB()->execute($sql, $date, $id);
         return $ret;
     }
 }

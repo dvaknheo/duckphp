@@ -16,7 +16,7 @@ class AdminService
     {
         $password = mt_rand(100000, 999999);
         $init_password = $password;
-        $password = password_hash($password, PASSWORD_BCRYPT);
+        $password = password_hash($password);
         
         M\SettingModel::G()->set('admin_password', $password);
         return $init_password;
@@ -24,7 +24,7 @@ class AdminService
     
     public function changePassword($password)
     {
-        $password = password_hash($password, PASSWORD_BCRYPT);
+        $password = password_hash($password);
         M\SettingModel::G()->set('admin_password', $password);
         return $flag;
     }
@@ -32,7 +32,6 @@ class AdminService
     {
         $old_password = M\SettingModel::G()->get('admin_password');
         $flag = password_verify($password, $old_password);
-
         M\ActionLogModel::G()->log("管理员登录".($flag?"成功":"失败"), "管理员登录");
         return $flag;
     }
@@ -57,9 +56,9 @@ class AdminService
     //////////各种操作
     public function addArticle($title, $content)
     {
-        $ret = M\ArticleModel::G()->addData($title, $content);
+        $id = M\ArticleModel::G()->addData($title, $content);
         M\ActionLogModel::G()->log("添加文章 {$id}", "添加文章");
-        return $ret;
+        return $id;
     }
     public function updateArticle($id, $title, $content)
     {

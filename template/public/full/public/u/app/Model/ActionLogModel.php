@@ -7,7 +7,7 @@ namespace UUU\Model;
 
 use UUU\Base\ModelHelper as M;
 
-class ActionLogModel
+class ActionLogModel extends BaseModel
 {
     public function log($action, $type = '')
     {

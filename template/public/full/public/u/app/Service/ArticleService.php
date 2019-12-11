@@ -39,4 +39,8 @@ class ArticleService extends BaseService
         $art['comments_total'] = $total;
         return $art;
     }
+    public function addArctile()
+    {
+        //
+    }
 }
