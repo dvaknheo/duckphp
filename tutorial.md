@@ -340,17 +340,8 @@ assignRoute($route,$callback=null)
 
     或许你会用到 C::RecordsetUrl(),C::RecordsetH()
 
-高级方法 C::MapToService($serviceClass, $input) 
-
-    映射当前方法 到相应的 service 类 $input 为 GET 或 POST
-
-高级方法 explodeService($controller_object, $namespace="MY\\Service\\")
-
-    你们想要的 $this->load 。 把 Service 后缀的改过来。 自动加载
-    如 MY\Service\TestService::G()->foo(); => $this->testService->foo();
-    暂时不建议使用。
 ### 其他要点
-配置和设置在哪里？
+
 
 
 这是第三方的扩展
