@@ -11,9 +11,12 @@
 ```
 composer require dvaknheo/duckphp # 用 require 
 ./vendor/bin/duckphp --help     # 查看有什么指令
-./vendor/bin/duckphp --create   # --full # 创建工程
+./vendor/bin/duckphp --create   # --full # 创建工程，把 template 目录内容复制到当前目录
 ./vendor/bin/duckphp --start    # --host=127.0.0.1 --port=8080 # 开始 web 服务器
 ```
+不建议使用命令行的 web 服务器， 你把 nginx 或 apache 的 document_root 设置为  public 目录按常规框架调整即可。
+
+DuckPHP 也支持在子目录里使用，同时也支持无 path_info 配置的 web 服务器。
 
 ## DuckPHP 是什么
 
@@ -143,63 +146,78 @@ DNMVCS\DNMVCS::RunQuickly($options);
 ```
 ### 复杂例子
 
-这个例子，在单一的文件里演示如何使用 DuckPHP。
-设置正确的 引用文件 '../vendor/autoload.php' 。
-你可直接在浏览器里打开这个文件。
+工程附带的模板文件
+
+template/public/demo.php
+
+在单一的文件里演示如何使用 DuckPHP。
 
 这个样例是为了演示特性把所有东西集中到一个文件，
-虽然便于复制粘贴，但是结构偏凌乱，
+
 实际编码不会把所有东西全放在同一个文件里。
 
+
 ```php
-<?php
+<?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
 namespace {
-    require_once __DIR__.'/../vendor/autoload.php';
+    require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
+    //头文件可以自行修改。
 }
-// 以下部分是核心程序员写的。
+// 以下部分是核心程序员写。
 namespace MySpace\Base
 {
-    use \DNMVCS\Core\View;
-    use \DNMVCS\Ext\CallableView;
-    
+    use \DuckPhp\Core\View;
+    use \DuckPhp\Ext\CallableView;
+
     // 默认的View 不支持函数调用，我们这里替换他。
-    class App extends \DNMVCS\DNMVCS {
-        protected function onInit() {
-            // 补齐选项。
-            $this->options['callable_view_class']='MySpace\View\Views';
-            View::G(CallableView::G()); // 这里演示函数调用的   CallableView 代替系统的 View
+    class App extends \DuckPhp\App
+    {
+        protected function onInit()
+        {
+            // 本例特殊，这里演示函数调用的   CallableView 代替系统的 View
+            $this->options['callable_view_class'] = 'MySpace\View\Views';
+            View::G(CallableView::G());
+            
+            ////
             return parent::onInit();
         }
     }
-    
-    //服务基类
+    //服务基类, 为了 XXService::G() 可变单例。
     class BaseService
     {
-        use \DNMVCS\SingletonEx;   //单例模式
+        use \DuckPhp\SingletonEx;
     }
-    // 模型基类
+    // 模型基类, 为了 XXModel::G() 可变单例。
     class BaseModel
     {
-        use \DNMVCS\SingletonEx;   //单例模式
+        use \DuckPhp\SingletonEx;
     }
 } // end namespace
 // 助手类
-namespace MySpace\Base\Helper 
+namespace MySpace\Base\Helper
 {
-    class ControllerHelper extends \DNMVCS\Helper\ControllerHelper {
+    class ControllerHelper extends \DuckPhp\Helper\ControllerHelper
+    {
         // 一般不需要添加东西，继承就够了
     }
-    class ServiceHelper extends \DNMVCS\Helper\ServiceHelper {
+    class ServiceHelper extends \DuckPhp\Helper\ServiceHelper
+    {
         // 一般不需要添加东西，继承就够了
     }
-    class ModelHelper extends \DNMVCS\Helper\ModelHelper {
+    class ModelHelper extends \DuckPhp\Helper\ModelHelper
+    {
         // 一般不需要添加东西，继承就够了
     }
-    class ViewHelper extends \DNMVCS\Helper\ViewHelper {
+    class ViewHelper extends \DuckPhp\Helper\ViewHelper
+    {
         // 一般不需要添加东西，继承就够了
     }
-}
-// 以下部分是普通程序员写的。
+} // end namespace
+// 以下部分是普通程序员写的。不再和 DuckPhp 的类有任何关系。
 namespace MySpace\Controller {
 
     use MySpace\Base\Helper\ControllerHelper as C;
@@ -210,26 +228,26 @@ namespace MySpace\Controller {
         public function __construct()
         {
             //设置页眉页脚。
-            C::setViewWrapper('header','footer');
+            C::setViewWrapper('header', 'footer');
         }
         public function index()
         {
             //获取数据
             $output = "Hello, now time is " . C::H(MyService::G()->getTimeDesc());
-            $url_about=C::URL('about/me');
-            C::Show(get_defined_vars(),'main_view'); //显示数据
+            $url_about = C::URL('about/me');
+            C::Show(get_defined_vars(), 'main_view'); //显示数据
         }
     }
     class about
     {
-        public function me() {
-            $url_main=C::URL('');
-            C::setViewWrapper('header','footer');
+        public function me()
+        {
+            $url_main = C::URL('');
+            C::setViewWrapper('header', 'footer');
             C::Show(get_defined_vars());
         }
     }
-}
-
+} // end namespace
 namespace MySpace\Service
 {
     use MySpace\Base\Helper\ServiceHelper as S;
@@ -238,13 +256,13 @@ namespace MySpace\Service
 
     class MyService extends BaseService
     {
-        public function getTimeDesc() {
+        public function getTimeDesc()
+        {
             return "<" . MyModel::G()->getTimeDesc() . ">";
         }
     }
 
-}
-
+} // end namespace
 namespace MySpace\Model
 {
     use MySpace\Base\Helper\ModelHelper as M;
@@ -252,20 +270,20 @@ namespace MySpace\Model
 
     class MyModel extends BaseModel
     {
-        public function getTimeDesc() {
+        public function getTimeDesc()
+        {
             return date(DATE_ATOM);
         }
     }
 
 }
-
 // 把 PHP 代码去掉看，这是可预览的 HTML 结构
 namespace MySpace\View {
     class Views
     {
-        function header($data) {
-            extract($data);
-            ?>
+        public function header($data)
+        {
+            extract($data); ?>
             <html>
                 <head>
                 </head>
@@ -274,40 +292,43 @@ namespace MySpace\View {
     <?php
         }
 
-        function main_view($data) {
-            extract($data);
-    ?>
+        public function main_view($data)
+        {
+            extract($data); ?>
             <h1><?=$output?></h1>
-            <a href="<?=$url_about?>">go next</a>
+            <a href="<?=$url_about?>">go to "about/me"</a>
     <?php
         }
-        function about_me($data)
+        public function about_me($data)
         {
-            extract($data);
-            ?>
+            extract($data); ?>
             <h1> OK, go back.</h1>
             <a href="<?=$url_main?>">back</a>
     <?php
         }
-        function footer($data) 
+        public function footer($data)
         {
-    ?>
+            ?>
             <footer style="border:1px gray solid;">I am footer</footer>
         </body>
     </html>
     <?php
         }
     }
-}
-//启动部分，要核心成员写。
+} // end namespace
+// 以下部分是核心程序员写。
+// 这里是入口，单一文件下要等前面类声明
 namespace {
-    $options=[];
-    $options['namespace']=rtrim('MySpace\\', '\\'); //项目命名空间为 MySpace
-    $options['skip_app_autoload']=true; // 跳过app 用的 autoload 免受干扰
-    $options['skip_setting_file']=true; // 跳过设置文件
-    $options['is_debug']=true;  // 开启调试模式
-    \DNMVCS\DNMVCS::RunQuickly($options, function () {});
-}
+    $options = [];
+    $options['namespace'] = rtrim('MySpace\\', '\\'); //项目命名空间为 MySpace，  你可以随意命名
+    $options['is_debug'] = true;  // 开启调试模式
+    
+    $options['skip_app_autoload'] = true; // 本例特殊，跳过app 用的 autoload 免受干扰
+    $options['skip_setting_file'] = true; // 本例特殊，跳过设置文件
+    
+    \DuckPhp\App::RunQuickly($options, function () {
+    });
+} // end namespace
 
 ```
 ## 架构图
