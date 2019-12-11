@@ -24,7 +24,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'path_view' => $path_app.'view/',
 
             'platform' => 'BJ',
-            'duckphp_is_debug' => true,
+            'is_debug' => true,
             'skip_setting_file' => true,
             'reload_for_flags' => false,
             'error_exception' => NULL,
@@ -278,7 +278,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'path' => $path_app,
             'path_config' => $path_config,
             'platform' => 'BJ',
-            'duckphp_is_debug' => true,
+            'is_debug' => true,
             'skip_setting_file' => true,
             'reload_for_flags' => true,
             'error_exception' => NULL,
@@ -301,7 +301,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         $options=[
         'path' => $path_app,
         'skip_setting_file' => true,
-        'duckphp_is_debug'=>false,
+        'is_debug'=>false,
         'error_exception' => NULL,
         'error_500' => NULL,
         'error_404' => NULL,

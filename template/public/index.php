@@ -14,7 +14,7 @@ $options = [
     'error_exception' => '_sys/error_exception',
     'error_debug' => '_sys/error_debug',
 ];
-$options['duckphp_is_debug'] = true;                  // @DUCKPHP_DELETE
+$options['is_debug'] = true;                  // @DUCKPHP_DELETE
 $options['skip_setting_file'] = true;                 // @DUCKPHP_DELETE
 echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKPHP_DELETE
 

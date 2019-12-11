@@ -20,7 +20,6 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
             'skip_setting_file'=>true,
             'error_404'=>null,
             
-            'duckphp_is_debug'=>true,
             'is_debug'=>true,
             
             'error_debug'=>null,
@@ -47,8 +46,10 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
             'namespace_service'=>           __NAMESPACE__ .'\\'.'Service'.'\\',
             'namespace_model'=>             __NAMESPACE__ .'\\'.'Model'.'\\',
             'controller_base_class'=>       __NAMESPACE__ .'\\'.'Base'.'\\'.'BaseController',
-            'duckphp_is_debug'=>true,
             'is_debug'=>true,
+            'ext'=>[
+                StrictCheck::class => true,
+            ],
 
         ];
         StrictCheck::G(new StrictCheck)->init($options, DuckPhp::G());
