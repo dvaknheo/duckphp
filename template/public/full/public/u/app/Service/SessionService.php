@@ -20,8 +20,15 @@ class SessionService extends BaseService
     }
     public function getCurrentUser()
     {
-        $user = isset($_SESSION['user'])?$_SESSION['user']:array();
+        $user = isset($_SESSION['user'])?$_SESSION['user']:[];
+        
         return $user;
+    }
+    public function getCurrentUid()
+    {
+        $user = isset($_SESSION['user'])?$_SESSION['user']:[];
+        
+        return $user['id'];
     }
     public function setCurrentUser($user)
     {

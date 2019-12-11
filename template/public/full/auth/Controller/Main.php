@@ -60,6 +60,12 @@ class Main
         $url_login = C::URL('login');
         C::Show(get_defined_vars(), 'auth/login');
     }
+    public function password()
+    {
+        $user = SessionService::G()->getCurrentUser();
+
+        C::Show(get_defined_vars(), 'auth/password');
+    }
     public function logout()
     {
         SessionService::G()->logout();
@@ -106,5 +112,26 @@ class Main
             return;
         }
         C::ExitRouteTo('home');
+    }
+    public function do_password()
+    {
+        $post = C::SG()->_POST;
+        
+        $old_pass = $post['oldpassword']??'';
+        $new_pass = $post['newpassword']??'';
+        $confirm_pass = $post['newpassword_confirm']??'';
+        
+        $uid = SessionService::G()->getCurrentUid();
+        $user = SessionService::G()->getCurrentUser();
+        
+        try {
+            UserServiceException::ThrowOn($new_pass !== $confirm_pass, '重复密码不一致');
+            UserService::G()->changePassword($uid, $old_pass,$new_pass);
+            
+            $error="密码修改完毕";
+        } catch (UserServiceException $ex) {
+            $error = $ex->getMessage();
+        }
+        C::Show(get_defined_vars(), 'auth/password');
     }
 }

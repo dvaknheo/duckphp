@@ -15,6 +15,7 @@ class Main
 {
     public function __construct()
     {
+        //C::assignExceptionHandel( )
     }
     public function index()
     {
@@ -53,16 +54,20 @@ class Main
         $url_add_comment = C::URL('addcomment');
         C::Show(get_defined_vars(), 'article');
     }
-    public function regx()
+    public function _old_reg()
     {
         C::setViewWrapper('user/inc_head.php', 'user/inc_foot.php');
         C::Show(get_defined_vars(), 'user/reg');
     }
+    public function do_changepass()
+    {
+        $uid = SessionService::G()->getCurrentUid();
+    }
     public function do_addcomment()
     {
-        $user = SessionService::G()->getCurrentUser();
+        $uid = SessionService::G()->getCurrentUid();
         UserService::G()->addComment($user['id'], C::SG()->_POST['article_id'], C::SG()->_POST['content']);
-        C::ExitRouteTo('');
+        C::ExitRouteTo('article/'.C::SG()->_POST['article_id']);
     }
     public function do_delcomment()
     {

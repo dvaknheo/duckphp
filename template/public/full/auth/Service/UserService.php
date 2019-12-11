@@ -42,4 +42,14 @@ class UserService extends BaseService
         
         return $user;
     }
+    public function changePassword($uid, $password,$new_password)
+    {
+        UserServiceException::ThrowOn($new_password==='', "空密码");
+        $user = UserModel::G()->getUserById($uid);
+        UserServiceException::ThrowOn(!empty($user['deletee_at']), "用户已被禁用");
+        $flag = UserModel::G()->verifyPassword($user, $password);
+        UserServiceException::ThrowOn(!$flag, "旧密码错误");
+        
+        UserModel::G()->updatePassword($uid,$new_password);
+    }
 }
