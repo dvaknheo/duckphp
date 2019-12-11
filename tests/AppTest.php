@@ -63,7 +63,6 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::getRewrites();
         DuckPhp::assignRoute($key="zzz", $value=null);
         DuckPhp::getRoutes();
-        DuckPhp::CheckStrictDB();
         DuckPhp::checkStrictComponent($component_name="z", $trace_level=2);
         DuckPhp::checkStrictService($trace_level=2);
         DuckPhp::checkStrictModel($trace_level=2);

@@ -1,5 +1,5 @@
 <?php
-namespace tests\DuckPhp\Core;
+namespace tests\DuckPhp\Core{
 
 use DuckPhp\Core\App;
 use DuckPhp\App as DuckPhp;
@@ -106,7 +106,10 @@ class AppTest extends \PHPUnit\Framework\TestCase
         }catch(\Exception $ex){
             echo $ex->getMessage();
         }
-        //App::G()->cloneHelpers(); ($new_namespace, $componentClassMap = [])
+        $new_namespace=__NAMESPACE__;
+        $new_namespace.='\\';
+        App::G()->cloneHelpers($new_namespace, $componentClassMap);
+        App::G()->cloneHelpers($new_namespace, ['M'=>'no_exits_class']);
     }
     public function doSystemWrapper()
     {
@@ -396,4 +399,12 @@ class FakeSessionHandler implements \SessionHandlerInterface
     {
         return true;
     }
+}
+
+}
+namespace tests\DuckPhp\Core\Helper{
+class ControllerHelper
+{
+    use \DuckPhp\Core\Helper\HelperTrait;
+}
 }

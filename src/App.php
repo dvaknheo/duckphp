@@ -38,13 +38,11 @@ class App extends Core_App //implements SwooleExtAppInterface
             'ext' => [
                 //'DuckPhp\SwooleHttpd\SwooleExt'=>true,
                 'DuckPhp\Ext\Misc' => true,
-                'DuckPhp\Ext\DBManager' => [
-                    'before_get_db_handler' => [null,'CheckStrictDB'],
-                ],
+                'DuckPhp\Ext\SimpleLogger' => true,
+                'DuckPhp\Ext\DBManager' => true,
                 'DuckPhp\Ext\RouteHookRewrite' => true,
                 'DuckPhp\Ext\RouteHookRouteMap' => true,
                 'DuckPhp\Ext\StrictCheck' => false,
-                'DuckPhp\Ext\SimpleLogger' => true,
                 'DuckPhp\Ext\RouteHookOneFileMode' => false,
                 
                 'DuckPhp\Ext\RedisManager' => false,
@@ -117,12 +115,6 @@ trait DuckPhp_Glue
     public function getRoutes()
     {
         return RouteHookRouteMap::G()->getRoutes();
-    }
-    /////
-    public static function CheckStrictDB()
-    {
-        //3 = DB,_DB,CheckStrictDB
-        return static::G()->checkStrictComponent('DB', 4, ['DuckPhp\Core\Helper\ModelHelper']);
     }
     public function checkStrictComponent($component_name, $trace_level, $parent_classes_to_skip = [])
     {

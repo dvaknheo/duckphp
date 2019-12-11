@@ -200,34 +200,34 @@ class StrictCheckTestMain extends BaseController
     {
         FakeBatchService::G()->foo();
         
-        echo "============================\n";
+        echo "==========0000000000000000000000000000000000==================\n";
         
         try{
             DuckPhp::DB()->fetch("select 1+1 as t");
         }catch(\Throwable $ex){
-            echo "zzzzzzzzzzzzz".$ex->getMessage().PHP_EOL;
+            echo "111111111111".$ex->getMessage().PHP_EOL;
         }
         try{
             M::DB()->fetch("select 1+1 as t");
         }catch(\Throwable $ex){
-            echo "zzzzzzzzzzzzz Catch S::DB ".$ex->getMessage().PHP_EOL;
+            echo "2222222222222222222 Catch S::DB ".$ex->getMessage().PHP_EOL;
         }
         try{
             (new t)->foo();
         }catch(\Throwable $ex){
-            echo "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".$ex->getMessage().PHP_EOL;
+            echo "33333333333333333333333".$ex->getMessage().PHP_EOL;
         }
         
         try{
             FakeModel::G()->foo();
         }catch(\Throwable $ex){
-            echo "zzzzzzzzzzzzz".$ex->getMessage().PHP_EOL;
+            echo "4444444444444444444444444".$ex->getMessage().PHP_EOL;
         }
 
         try{
             FakeService::G()->callService();
         }catch(\Throwable $ex){
-            echo "sssFakeService::G()->callService()".$ex->getMessage().PHP_EOL;
+            echo "55555555555555555555555555555FakeService::G()->callService()".$ex->getMessage().PHP_EOL;
         }
         try{
             FakeService::G()->modelCallService();
@@ -257,6 +257,8 @@ class StrictCheckTestMain extends BaseController
             echo "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".$ex->getMessage().PHP_EOL;
         }
         FakeService::G()->normal();
+        echo "============================\n";
+
     }
 }
 

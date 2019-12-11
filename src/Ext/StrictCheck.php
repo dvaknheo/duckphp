@@ -44,19 +44,46 @@ class StrictCheck
     {
         $this->appClass = get_class($context);
         $this->options['is_debug'] = $context->options['is_debug'];
+        
+        try {
+            $context::setBeforeGetDBHandler([static::class, 'CheckStrictDB']);
+        } catch (\BadMethodCallException $ex) { // @codeCoverageIgnore
+            //do nothing;
+        }
     }
+    
+    public static function CheckStrictDB()
+    {
+        return static::G()->checkStrictComponent('DB', 7);
+    }
+    /*
+    public function checkStrictComponent($component_name, $trace_level, $parent_classes_to_skip = [])
+    {
+        return StrictCheck::G()->checkStrictComponent($component_name, $trace_level + 1, $parent_classes_to_skip);
+    }
+    public function checkStrictService($service_class, $trace_level = 2)
+    {
+        return StrictCheck::G()->checkStrictService($service_class, $trace_level + 1);
+    }
+    public function checkStrictModel($trace_level = 2)
+    {
+        return StrictCheck::G()->checkStrictModel($trace_level + 1);
+    }
+    */
     ///////////////////////////////////////////////////////////
     protected function getCallerByLevel($level, $parent_classes_to_skip = [])
     {
         $level += 1;
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, static::MAX_TRACE_LEVEL);
         $caller_class = $backtrace[$level]['class'] ?? '';
+        // @codeCoverageIgnoreStart
         foreach ($parent_classes_to_skip as $parent_class_to_skip) {
             if (is_subclass_of($caller_class, $parent_class_to_skip) || $parent_class_to_skip === $caller_class) {
                 $caller_class = $backtrace[$level + 1]['class'] ?? '';
                 return $caller_class;
             }
         }
+        // @codeCoverageIgnoreEnd
         return $caller_class;
     }
     protected function checkEnv(): bool
