@@ -49,6 +49,12 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         ControllerHelper::Show(['A'=>'b'],"view");
         ControllerHelper::ShowBlock("view",['A'=>'b']);
         
+        
+        echo ControllerHelper::L("a{b}c",['b'=>'123']);
+        echo "---------------\n";
+        echo ControllerHelper::HL("&<{b}>",['b'=>'123']);
+        echo ControllerHelper::URL('xxxx');
+        
         $key="key";
         ControllerHelper::setViewWrapper($head_file=null, $foot_file=null);
         ControllerHelper::assignViewData($key, $value=null);
@@ -93,12 +99,6 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         ControllerHelper::GLOBALS($k, $v=null);
         ControllerHelper::STATICS($k, $v=null);
         ControllerHelper::CLASS_STATICS($class_name, $var_name);        
-        
-        ControllerHelper::session_start($options=[]);
-        ControllerHelper::session_id(null);
-        ControllerHelper::session_destroy();
-        $handler=new FakeSessionHandler();
-        ControllerHelper::session_set_save_handler( $handler);
         
         \MyCodeCoverage::G()->end(ControllerHelper::class);
         $this->assertTrue(true);

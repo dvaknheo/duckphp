@@ -44,8 +44,8 @@ class App
             'path_namespace' => 'app',
             
             //// properties ////
-            'is_debug' => false,
-            'platform' => '',
+            'duckphp_is_debug' => false,
+            'duckphp_platform' => '',
             'ext' => [],
             
             'override_class' => 'Base\App',
@@ -146,8 +146,8 @@ class App
         $options['path'] = rtrim($options['path'], '/').'/';
         $this->options = array_replace_recursive(static::DEFAULT_OPTIONS, static::DEFAULT_OPTIONS_EX, $options);
         
-        $this->is_debug = $this->options['is_debug'];
-        $this->platform = $this->options['platform'];
+        $this->is_debug = $this->options['duckphp_is_debug'];
+        $this->platform = $this->options['duckphp_platform'];
     }
     protected function checkOverride($options)
     {

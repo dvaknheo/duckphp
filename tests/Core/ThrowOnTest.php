@@ -22,6 +22,8 @@ class ThrowOnTest extends \PHPUnit\Framework\TestCase
         try {
             ThrowOnObject::ThrowOn(true, "Message", ThrowOnException::class);
         } catch (\Throwable $ex) {
+            echo "xxxxxxxxxxx\n";
+            echo $ex->getMessage();
             echo  get_class($ex);
             echo "3Done";
         }

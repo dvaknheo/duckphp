@@ -11,7 +11,7 @@ class SingletonExTest extends \PHPUnit\Framework\TestCase
         
         SingletonExObject::G();
         SingletonExObject::G(new SingletonExObject());
-        define('DuckPhp_SINGLETONEX_REPALACER',SingletonExObject::class.'::CreateObject');
+        define('__SINGLETONEX_REPALACER',SingletonExObject::class.'::CreateObject');
         SingletonExObject::G();
         
         \MyCodeCoverage::G()->end();

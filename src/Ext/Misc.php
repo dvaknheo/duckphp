@@ -67,7 +67,7 @@ class Misc
     }
     public function CallAPI($class, $method, $input, $interface = '')
     {
-        return static::G()->_CallAPI($class, $method, $input, $interface = '');
+        return static::G()->_CallAPI($class, $method, $input, $interface);
     }
     public function _DI($name, $object = null)
     {
@@ -134,7 +134,6 @@ class Misc
         ];
         if ($interface && !is_a($class, $interface)) {
             throw new ReflectionException("Bad interface", -3);
-            return null;
         }
         $reflect = new ReflectionMethod($class, $method);
         

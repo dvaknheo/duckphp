@@ -24,7 +24,6 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         ControllerHelper::RecordsetH($data, $cols=[]);
         ControllerHelper::Pager();
         $object=new \stdClass();
-        ControllerHelper::explodeService($object, $namespace="MY\\Service\\");
         
         
         //TODO;
@@ -32,7 +31,6 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         $input=[];
         try {
             
-        ControllerHelper::MapToService($serviceClass, $input);
         } catch(\Throwable $ex){
         }
 
@@ -40,7 +38,6 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         //TODO;
         $file="xx";
         try {
-        ControllerHelper::Import($file);
         } catch(\Throwable $ex){
         }
         //*/

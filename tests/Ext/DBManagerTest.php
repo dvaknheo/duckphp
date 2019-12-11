@@ -96,9 +96,9 @@ $options['database_list']=[
 ];
         DBManager::G()->init($options,null);
 
-        DBManager::G()->_DB();
-        DBManager::G()->_DB_W();
-        DBManager::G()->_DB_R();
+        DBManager::DB();
+        DBManager::DB_W();
+        DBManager::DB_R();
         DBManager::OnException();
         DBManager::G()->init($options,null);
 

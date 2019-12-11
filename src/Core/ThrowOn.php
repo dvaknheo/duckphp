@@ -15,7 +15,7 @@ trait ThrowOn
         if (!$flag) {
             return;
         }
-        if ($exception_class === null && is_string($code) && class_exists($exception_class)) {
+        if ($exception_class === null && is_string($code) && class_exists($code)) {
             $exception_class = $code;
             $code = 0;
         }

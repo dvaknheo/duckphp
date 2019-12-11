@@ -1,6 +1,6 @@
 <?php
 $ret=[
-    'is_debug'=>true,
-    'platform'=>'FirstApp',
+    'duckphp_is_debug'=>true,
+    'duckphp_platform'=>'FirstApp',
 ];
 return $ret;

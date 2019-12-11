@@ -36,7 +36,6 @@ class MiscTest extends \PHPUnit\Framework\TestCase
         $data=Misc::RecordsetH($data);
         print_r($data);
         
-        Misc::explodeService(FakeObject::G(), $namespace=__NAMESPACE__ .'\\');
         
         
         DuckPhp::G()->system_wrapper_replace([
@@ -44,19 +43,28 @@ class MiscTest extends \PHPUnit\Framework\TestCase
         ]);
         DuckPhp::G()->init($options)->run();
         
-        Misc::mapToService(FakeService::class, []);
         
         DuckPhp::G()->setRouteCallingMethod('m1');
-        Misc::mapToService(FakeService::class, ['id'=>111]);
-        Misc::mapToService(FakeService::class, ['id'=>"zz"]);
-        
+
         DuckPhp::G()->setRouteCallingMethod('m1');
-        Misc::mapToService(FakeService::class, []);
         
         $object=new \stdClass();
         Misc::DI('a',$object);
         Misc::DI('a');
         
+        try{
+            Misc::CallAPI(FakeService::class,'m1',['id'=>'1'],FakeInterface::class);
+        }catch(\Exception $ex){
+        }
+        try{
+            Misc::CallAPI(FakeService::class,'m2',['id'=>[]],"");
+        }catch(\Exception $ex){
+        }
+        try{
+            Misc::CallAPI(FakeService::class,'m1',[]);
+        }catch(\Exception $ex){
+        }
+                    Misc::CallAPI(FakeService::class,'m1',['id'=>'1']);
 
         \MyCodeCoverage::G()->end(Misc::class);
         $this->assertTrue(true);
@@ -72,9 +80,14 @@ class MiscTest extends \PHPUnit\Framework\TestCase
     }
     
 }
+interface FakeInterface
+{
+    public function foo();
+}
 class FakeService
 {
     use SingletonEx;
+
     public function m1(int $id,string $name="xx")
     {
         return DATE(DATE_ATOM);

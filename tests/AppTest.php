@@ -34,7 +34,6 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
 
         ]);
         
-        DuckPhp::MapToService(FakeService::class, []);
         DuckPhp::Import('file');
         $data=[['A'=>'b']];
         DuckPhp::RecordsetUrl($data, $cols_map=[]);
@@ -58,7 +57,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         //DuckPhp::DB_W();
         //DuckPhp::DB_R();
         
-        DuckPhp::setDBHandler($db_create_handler=null, $db_close_handler=null, $db_excption_handler=null);
+        //DuckPhp::setDBHandler($db_create_handler=null, $db_close_handler=null, $db_excption_handler=null);
         DuckPhp::Pager();
         DuckPhp::assignRewrite($key="abc", $value=null);
         DuckPhp::getRewrites();
@@ -70,7 +69,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::checkStrictModel($trace_level=2);
 
         //DuckPhp::callAPI($class, $method, $input);
-        DuckPhp::explodeService(FakeObject::G(), $namespace=__NAMESPACE__);
+        //DuckPhp::explodeService(FakeObject::G(), $namespace=__NAMESPACE__);
     }
 }
 class fakeSwooleHttpd

@@ -24,7 +24,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'path_view' => $path_app.'view/',
 
             'platform' => 'BJ',
-            'is_debug' => true,
+            'duckphp_is_debug' => true,
             'skip_setting_file' => true,
             'reload_for_flags' => false,
             'error_exception' => NULL,
@@ -43,18 +43,19 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::RunQuickly($options,function(){
             //App::G()->addBeforeRunHandler(function(){ echo "addBeforeRunHandler";});
             App::G()->addBeforeShowHandler(function(){ echo "beforeShowHandlers";});
+            
             $value = $cache[$key]; // trigger notice
             
 
-        App::G()->options['error_debug']='_sys/error-debug';
-        $value = $cache[$key]; 
-        
-        App::G()->options['error_debug']=function($data){var_dump($data);return;};
-        $value = $cache[$key]; 
-        
-        App::G()->is_debug=false;
-        $value = $cache[$key]; 
-        App::G()->is_debug=true;
+            App::G()->options['error_debug']='_sys/error-debug';
+            $value = $cache[$key]; 
+            
+            App::G()->options['error_debug']=function($data){var_dump($data);return;};
+            $value = $cache[$key]; 
+            
+            App::G()->is_debug=false;
+            $value = $cache[$key]; 
+            App::G()->is_debug=true;
 
         });
         App::G()->getStaticComponentClasses();
@@ -91,6 +92,8 @@ class AppTest extends \PHPUnit\Framework\TestCase
         $this->do4();
         $this->doPugins();
 
+
+
         \MyCodeCoverage::G()->end(App::class);
         $this->assertTrue(true);
     }
@@ -103,6 +106,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         }catch(\Exception $ex){
             echo $ex->getMessage();
         }
+        //App::G()->cloneHelpers(); ($new_namespace, $componentClassMap = [])
     }
     public function doSystemWrapper()
     {
@@ -274,7 +278,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'path' => $path_app,
             'path_config' => $path_config,
             'platform' => 'BJ',
-            'is_debug' => true,
+            'duckphp_is_debug' => true,
             'skip_setting_file' => true,
             'reload_for_flags' => true,
             'error_exception' => NULL,
@@ -297,7 +301,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         $options=[
         'path' => $path_app,
         'skip_setting_file' => true,
-        'is_debug'=>false,
+        'duckphp_is_debug'=>false,
         'error_exception' => NULL,
         'error_500' => NULL,
         'error_404' => NULL,
