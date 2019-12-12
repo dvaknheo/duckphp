@@ -94,32 +94,49 @@ http://127.0.0.1/d/ 则对应的是 MY\Controller\Main->d() ，注意不是 MY\C
 </pre>
 </fieldset>
 <fieldset>
-架构图。
+<legend>理解架构图</legend>
+<pre>
+           /-> View-->ViewHelper as V
+Controller --> Service ------------------------------ ---> Model
+         \         \   \               \  /                  \
+          \         \   \-> LibService ----> ExModel----------->ModelHelper as M
+           \         \             \                
+            \         ---------------->ServiceHelper as S
+             \-->ControllerHelper as C
+</pre>
+</fieldset>
+<fieldset>
+<legend> 基础演示代码 </legend>
+<a href="">点击这里看基础演示代码</a>
 </fieldset>
 <fieldset>
 <legend> 助手类参考 </legend>
-<div>
-架构图
-</div>
-</fieldset>
-<fieldset>
-<legend> 助手类参考 </legend>
-再学这部分就合格了。<br />
-我们先学共有静态方法。<br />
-<a href="<?=C::URL('AllHelper/index')?>">全部助手类共有方法</a><br />
-我们从简单的到复杂的开始学习<br />
-<a href="<?=C::URL('ModelHelper/index')?>">ModelHelper</a> <br />
-ModelHelper 只有获得数据库的方法 <br />
-<a href="<?=C::URL('ViewHelper/index')?>">ViewHelper</a><br />
-ViewHelper 只做 一些基本的 View 的操作 <br />
-<a href="<?=C::URL('ServiceHelper/index')?>">ServiceHelper</a><br />
-ControllerHelper 最复杂，默认包含配置方法， 内容处理方法等。<br />
-<a href="<?=C::URL('ControllerHelper/index')?>">ControllerHelper</a><br />
+<p>助手类是什么</p>
+<p>
+@ProjectNamespace\Base\Helper\  命名空间下的类。 @ProjectNamespace 是你的命名空间。</p>
+<p> 不同助手类在在不同地方使用。</p>
+<p> 如  @ProjectNamespace\Base\Helper\ControllerHelper as C 用于 @ProjectNamespace\Controller\ 下面的所有类。</p>
+<p> 其他助手类类推。</p>
+<p>助手类只有静态方法，也许会有核心人员扩展的静态方法，你可以用  <a href="<?=C::URL('AllHelper/index#GetExtendStaticStaticMethodList')?>">GetExtendStaticStaticMethodList()</a> 来查看</p>
 
+</p>
+<dl>
+<dt><a href="<?=C::URL('AllHelper/index')?>">全部助手类共有静态方法</a></dt>
+<dd>（共计 11个），所有助手类都要用到</dd>
+<dt><a href="<?=C::URL('ViewHelper/index')?>">ViewHelper</a></dt>
+<dd>（共计 5 个），View 层的助手方法</dd>
+<dt><a href="<?=C::URL('ServiceHelper/index')?>">ServiceHelper</a></dt>
+<dd>（共计 3 个），Service层 的助手类做的配置工作</dd>
+<dt><a href="<?=C::URL('ModelHelper/index')?>">ModelHelper</a></dt>
+<dd>（共计 3 个），Model 层， 获得数据库的方法。不包含于 ControllerHelper</dd>
+<dt><a href="<?=C::URL('ControllerHelper/index')?>">ControllerHelper</a></dt>
+<dd>（共计 24个），Controller 层最复杂，助手类包含配置，显示相关，还包含跳转和其他其他复杂的使用</dd>
+</dl>
+<p>
 当然，所有静态方法都在 App 类里实现。
-
-SessionService 这个特殊类就引用了 App 类。
-其他小弟，要是直接用App 类那就罚他。
+特殊例外的是 SessionService 这个特殊类就引用了 App 类。
+非核心代码请勿直接引用其他核心代码。
+</p>
 </fieldset>
 
 <fieldset>

@@ -18,11 +18,11 @@ ModelHelper 只有数据库的三个独特方法。<br>
 <fieldset>
     <legend> ModelHelper</legend>
 <dl>
-    <dt><a href="#">DB</a></dt>
-    <dd>获得 DB 数据库对象</dd>
-    <dt><a href="#">DB_W</a></dt>
+    <dt><a href="#">DB($tag)</a></dt>
+    <dd>获得 DB 数据库对象 ,第 $tag 个配置的数据库对象</dd>
+    <dt><a href="#">DB_W()</a></dt>
     <dd>获得用于写入的 DB 对象,这是获得第 0 个配置列表里的数据库</dd>
-    <dt><a href="#">DB_R</a></dt>
+    <dt><a href="#">DB_R()</a></dt>
     <dd>获得用于读取的 DB 对象，这是获得第 1 个配置列表里的数据库</dd>
 </dl>
 </fieldset>
