@@ -105,15 +105,15 @@ http://127.0.0.1/d/ 则对应的是 MY\Controller\Main->d() ，注意不是 MY\C
 <fieldset>
 <legend> 助手类参考 </legend>
 再学这部分就合格了。<br />
-我们先学共有静态方法。
+我们先学共有静态方法。<br />
 <a href="<?=C::URL('AllHelper/index')?>">全部助手类共有方法</a><br />
-我们从简单的到复杂的开始学习
-<a href="<?=C::URL('ModelHelper/index')?>">ModelHelper</a> 
+我们从简单的到复杂的开始学习<br />
+<a href="<?=C::URL('ModelHelper/index')?>">ModelHelper</a> <br />
 ModelHelper 只有获得数据库的方法 <br />
-<a href="<?=C::URL('ViewHelper/index')?>">ViewHelper 记为 V, </a><br />
+<a href="<?=C::URL('ViewHelper/index')?>">ViewHelper</a><br />
 <a href="<?=C::URL('ServiceHelper/index')?>">ServiceHelper</a><br />
 
-ControllerHelper 最复杂，默认包含配置方法， 内容处理方法等。 ServiceHelper
+ControllerHelper 最复杂，默认包含配置方法， 内容处理方法等。 ServiceHelper<br />
 <a href="<?=C::URL('ControllerHelper/index')?>">ControllerHelper</a><br />
 
 当然，所有静态方法都在 App 类里实现。
@@ -184,7 +184,7 @@ $options=[
 <legend>样例</legend>
 <div>
 <a href="auth.php">这个是基本用户例子系统</a><br />
-<a href="full/index.php">这个是文章发布，管理，评论系统 </a>
+<a href="/full/public/u/index.php">这个是文章发布，管理，评论系统 </a>
 其中，用户系统是拿 基本用户例子系统做为一个插件运行的！<br />
 </div>
 </fieldset>
