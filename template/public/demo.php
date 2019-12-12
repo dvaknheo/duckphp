@@ -166,6 +166,12 @@ namespace {
     $options['skip_app_autoload'] = true; // 本例特殊，跳过app 用的 autoload 免受干扰
     $options['skip_setting_file'] = true; // 本例特殊，跳过设置文件
     
+    //没设置服务器，那就用 _r 作为路由吧
+    // $options['ext']['DuckPhp\Ext\RouteHookOneFileMode']=[
+    //    'key_for_action' => '_r',
+    //    'key_for_module' => '',
+    // ];
+    
     \DuckPhp\App::RunQuickly($options, function () {
     });
 } // end namespace
