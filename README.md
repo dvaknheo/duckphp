@@ -333,7 +333,7 @@ namespace {
 ```
 ## 架构图
 DuckPHP/Framwork 全框架
-![DuckPHP](doc/dnmvcs.gv.svg)
+![DuckPHP](doc/duckphp.gv.svg)
 ## 还有什么要说的
 
 使用它，鼓励我，让我有写下去的动力

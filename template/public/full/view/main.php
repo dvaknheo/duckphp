@@ -111,9 +111,9 @@ http://127.0.0.1/d/ 则对应的是 MY\Controller\Main->d() ，注意不是 MY\C
 <a href="<?=C::URL('ModelHelper/index')?>">ModelHelper</a> <br />
 ModelHelper 只有获得数据库的方法 <br />
 <a href="<?=C::URL('ViewHelper/index')?>">ViewHelper</a><br />
+ViewHelper 只做 一些基本的 View 的操作 <br />
 <a href="<?=C::URL('ServiceHelper/index')?>">ServiceHelper</a><br />
-
-ControllerHelper 最复杂，默认包含配置方法， 内容处理方法等。 ServiceHelper<br />
+ControllerHelper 最复杂，默认包含配置方法， 内容处理方法等。<br />
 <a href="<?=C::URL('ControllerHelper/index')?>">ControllerHelper</a><br />
 
 当然，所有静态方法都在 App 类里实现。

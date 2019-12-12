@@ -6,7 +6,7 @@ graph [rankdir = "LR"];
     
 subgraph cluster_Core {
     style = "rounded";
-    label = "[DNMVCS\\Core]";
+    label = "[DuckPhp\\Core]";
     node [style=filled];
     
     Core_App -> Core_AutoLoader ;
@@ -90,13 +90,13 @@ subgraph cluster_Core {
 
 
 subgraph cluster_Base {
-    label = "[DNMVCS\\Base]";
+    label = "[DuckPhp\\Base]";
     StrictModelTrait -> Core_SingletonEx [style="dotted"]; 
     StrictServiceTrait -> Core_SingletonEx [style="dotted"]; 
     SessionedController;
 }
 subgraph cluster_Helper {
-    label = "[DNMVCS\\Helper]";
+    label = "[DuckPhp\\Helper]";
     Helper_ControllerHelper -> Core_Helper_ControllerHelper [style="dotted"]; 
     Helper_ModelHelper -> Core_Helper_ModelHelper [style="dotted"]; 
     Helper_ServiceHelper -> Core_Helper_ServiceHelper [style="dotted"]; 
@@ -107,7 +107,7 @@ subgraph cluster_Helper {
 
 
 subgraph cluster_DB {
-    label = "[DNMVCS\\DB]";
+    label = "[DuckPhp\\DB]";
 
     DB_DB -> DB_DBAdvance;
     DB_DB -> DB_DBInterface;
@@ -127,7 +127,7 @@ subgraph cluster_DB {
 
 
 subgraph cluster_Ext {
-label = "[DNMVCS\\Ext]";
+label = "[DuckPhp\\Ext]";
     Ext [label="";style="dotted"];
     
     Ext -> CallableView -> Core_View;
@@ -175,17 +175,17 @@ label = "[DNMVCS\\Ext]";
 
 
 }
-subgraph cluster_DNMVCS {
-    label = "[DNMVCS]";
+subgraph cluster_DuckPhp {
+    label = "[DuckPhp]";
         node [style=filled];
 
     HttpServer -> Core_HttpServer;
-    DNMVCS -> Core_App;
+    DuckPhp -> Core_App;
     SingletonEx -> Core_SingletonEx;
 
-    DNMVCS -> Ext;
+    DuckPhp -> Ext;
 
-    DNMVCS [shape=Mdiamond];
+    DuckPhp [shape=Mdiamond];
     HttpServer [shape=Mdiamond];
     
     SingletonEx [style=filled,shape=Mdiamond];
