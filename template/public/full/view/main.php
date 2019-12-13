@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 use MY\Base\Helper\ViewHelper as V;
 use MY\Base\Helper\ControllerHelper as C;
-
 ?>
 <!doctype html>
 <html>
@@ -141,7 +140,7 @@ Controller --> Service ------------------------------ ---> Model
 
 <fieldset>
 <legend>数据库学习</legend>
-数据库配置。
+<h3>数据库配置</h3>
 config/setting.php 里
 <pre>
 'database_list'=>[
@@ -153,20 +152,37 @@ config/setting.php 里
     ],
 ],
 </pre>
+需要注意的是 DuckPHP 是支持多个数据库的，所以是二维数组。
+
 <pre>
 数据库使用
-var_dump(M::DB()); // 默认是 DB 类。
-方法
+use MY\Base\Helper\ModelHelper as M;
+$sql="select 1+? as t";
+$ret=M::DB()->fetchColumn($sql,100);
+var_dump($ret);
+var_dump(M::DB());
 
-public function close();
-关闭数据库
-public function execute($sql, ...$args);
-public function fetchAll($sql, ...$args);
-public function fetch($sql, ...$args);
-public function fetchColumn($sql, ...$args);
-public function quote($string);
-public function rowCount()
-public function lastInsertId()
+</pre>
+
+<dl>
+<dt>close()</dt>
+<dd>关闭数据库</dd>
+<dt>execute($sql, ...$args)</dt>
+<dd>执行 sql 语句 </dd>
+<dt>fetchAll($sql, ...$args)</dt>
+<dd>获取SQL结果</dd>
+<dt>fetch($sql, ...$args)</dt>
+<dd>获取SQL结果</dd>
+<dt>fetchColumn($sql, ...$args)</dt>
+<dd>获取SQL结果</dd>
+<dt>quote($string)</dt>
+<dd>获取SQL结果</dd>
+<dt>rowCount()</dt>
+<dd>获取SQL结果</dd>
+<dt>lastInsertId()</dt>
+<dd>获取SQL结果</dd>
+</dl>
+<pre>
 
 高级方法
     public function findData($table_name, $id, $key = 'id')
