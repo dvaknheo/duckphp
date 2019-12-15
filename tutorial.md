@@ -38,9 +38,16 @@ php bin/start_server.php
 nginx 把 document_root 配置成 public 目录。
 并且按常用框架配置 path_info 即可。
 ```
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
+try_files $uri $uri/ /index.php$request_uri;
+location ~ \.php {
+    fastcgi_pass 127.0.0.1:9000;
+    fastcgi_index index.php;
+    fastcgi_split_path_info ^(.*\.php)(.*)$;
+    fastcgi_param PATH_INFO $fastcgi_path_info;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    include fastcgi_params;
+}
+
 ```
 ### 第一个任务
 路径： http://127.0.0.1:8080/test/done  
@@ -99,13 +106,13 @@ namespace MY\Service;
 
 use MY\Base\Helper\ServiceHelper as S;
 use MY\Base\BaseService;
-use MY\Model\NoDB_MiscModel;
+use MY\Model\MiscModel;
 
 class MiscService extends BaseService
 {
     public function foo()
     {
-        $time=NoDB_MiscModel::G()->getTime();
+        $time=MiscModel::G()->getTime();
         $ret="<".$time.">";
         return $ret;
     }
@@ -113,17 +120,17 @@ class MiscService extends BaseService
 ```
 BaseService 也是不强求的，我们 extends BaseService 是为了能用 G 函数这个单例方法
 
-这里调用了 NoDB_MiscModel 
+这里调用了 MiscModel 
 
 ### Model 模型
 
-完成 NoDB_MiscModel 。
+完成 MiscModel 。
 
 Model 类是实现基本功能的。
 
 ```php
 <?php
-// app/Model/NoDB_MiscModel.php
+// app/Model/MiscModel.php
 namespace MY\Model;
 
 use MY\Base\BaseModel;

@@ -9,6 +9,15 @@ use MY\Base\Helper\ControllerHelper as C;
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <title>Hello DuckPHP!</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <link rel="Stylesheet" type="text/css" href="/style.css">
+  <style>
+  pre {
+    background-color: #ddd;
+    border:1px gray solid;
+  }
+  </style>
 </head>
 <body>
 <h1>欢迎来到 DuckPHP 的全功能演示页面</h1>
@@ -107,6 +116,112 @@ Controller --> Service ------------------------------ ---> Model
 <fieldset>
 <legend> 基础演示代码 </legend>
 <a href="">点击这里看基础演示代码</a>
+<h3>任务</h3>
+<p>路径： http://127.0.0.1:8080/test/done</p>
+<p>作用： 显示当前时间的任务。</p>
+
+<p>对照目录结构我们要加个 test/done 显示当前时间
+都在各代码段里注释了文件所在相对工程目录的位置
+</p>
+
+<h3>View 视图</h3>
+先做出要显示的样子。
+<pre>
+&lt;?php // view/test/done.php ?>
+&lt;!doctype html>&lt;html><body>
+&lt;h1>test&lt;/h1>
+&lt;div>&lt;?=$var ?>&lt;/div>
+&lt;/body>&lt;/html>
+</pre>
+<h3>Controller控制器</h3>
+写 /test/done 控制器对应的内容
+<pre>
+&lt;?php
+// app/Controller/test.php
+namespace MY\Controller;
+
+// use MY\Base\BaseController;
+use MY\Base\Helper\ControllerHelper as C;
+use MY\Service\MiscService;
+
+class test // extends BaseController
+{
+    public function done()
+    {
+        $data=[];
+        $data['var']=C::H(MiscService::G()->foo());
+        C::Show($data); // C::Show($data,'test/done');
+    }
+}
+</pre>
+
+<p>控制器里，我们处理外部数据，不做业务逻辑，业务逻辑在 Service 层做。</p>
+
+<p>BaseController  这个基类，如果不强制要求也可以不用。</p>
+
+<p>MY 这个命名空间前缀可在选项 ['namespace'] 中变更。</p>
+
+<p>C::H 用来做 html编码。</p>
+
+<p>C::Show($data); 是 C::Show($data,'test/done'); 的缩写， 调用 test/done 这个视图。</p>
+
+<h3>Service 服务</h3>
+业务逻辑层。
+<pre>
+&lt;?php
+// app/Service/MiscService.php
+namespace MY\Service;
+
+use MY\Base\Helper\ServiceHelper as S;
+use MY\Base\BaseService;
+use MY\Model\MiscModel;
+
+class MiscService extends BaseService
+{
+    public function foo()
+    {
+        $time=MiscModel::G()->getTime();
+        $ret="&lt;".$time.">";
+        return $ret;
+    }
+}
+</pre>
+
+<p>BaseService 也是不强求的，我们 extends BaseService 是为了能用 G 函数这个单例方法</p>
+
+<p>这里调用了 MiscModel </p>
+
+<h3>Model 模型</h3>
+
+完成 MiscModel 。
+
+Model 类是实现基本功能的。
+
+<pre>
+&lt;?php
+// app/Model/MiscModel.php
+namespace MY\Model;
+
+use MY\Base\BaseModel;
+use MY\Base\Helper\ModelHelper as M;
+
+class MiscModel extends BaseModel
+{
+    public function getTime()
+    {
+        return DATE(DATE_ATOM);
+    }
+}
+</pre>
+
+<p>同样 BaseModel 也是不强求的，我们 extends BaseModel 是为了能用 G 函数这个单例方法</p>
+
+<h3>最后显示结果</h3>
+<pre>
+test
+
+&lt;2019-04-19T22:21:49+08:00>
+</pre>
 </fieldset>
 <fieldset>
 <legend> 助手类参考 </legend>
@@ -182,9 +297,8 @@ var_dump(M::DB());
 <dt>lastInsertId()</dt>
 <dd>获取SQL结果</dd>
 </dl>
-<pre>
-
 高级方法
+<pre>
     public function findData($table_name, $id, $key = 'id')
     public function insertData($table_name, $data, $return_last_id = true)
     public function deleteData($table_name, $id, $key = 'id', $key_delete = 'is_deleted')
@@ -221,10 +335,9 @@ $options=[
 其中，用户系统是拿 基本用户例子系统做为一个插件运行的！<br />
 </div>
 </fieldset>
+
 <fieldset>
-扩展
-</fieldset>
-<fieldset>
+扩展<br />
 第三方组件的使用和制作。
 </fieldset>
 
@@ -233,9 +346,7 @@ $options=[
 <a href="/u/index.php">“一个完整的文章系统”</a>
 路由方式，子目录的路由
 
-Time Now is <?php echo $var;?>
-<div><?=$html_pager?></div>
-</div>
+
 
 <hr/>
 <hr/>
@@ -244,7 +355,27 @@ Time Now is <?php echo $var;?>
 <a href="<?=$url_phpinfo?>" target="_blank">phpinfo</a></br>
 <fieldset>
     <legend>当前状态</legend>
-<?php V::ShowBlock('inc-backtrace');?>
+<fieldset>
+<legend>调用堆栈</legend>
+<h3>实际调用堆栈</h3>
+<pre>
+<?php debug_print_backtrace(2);?>
+</pre>
+<h3>理论调用堆栈</h3>
+<pre>
+#0  include(@DOCUMENT_ROOT/full/view/main.php)   [@DuckPhp/Core/View.php:52]                        // 包含  View 文件
+#1  DuckPhp\Core\View->_Show()                   [@DuckPhp/Core/App.php:751]                        // View 类实际处理 视图
+#2  DuckPhp\Core\App->_Show()                    [@DuckPhp/Core/App.php:707]                        // App::Show 的内部实现，处理一些东西，转由 View 类出来
+#3  DuckPhp\Core\App::Show()                     [@DuckPhp/Core/Helper/ControllerHelper.php:64]     // 未接管情况下，ControllerHelper 传递到实际的 App::Show
+#4  DuckPhp\Core\Helper\ControllerHelper::Show() [@Project_namespace_path/Controller/Main.php:21]   // 调用 ControllerHelper::Show 显示页面
+----
+#5  MY\Controller\Main->index()                  [@DuckPhp/Core/Route.php:280]                      // index 方法
+#6  DuckPhp\Core\Route->defaultRunRouteCallback()[@DuckPhp/Core/Route.php:211]                      // 默认路由方法
+#7  DuckPhp\Core\Route->run()                    [@DuckPhp/Core/App.php:277]                        // 路由，处理钩子等。
+#8  DuckPhp\Core\App->run()                      [@DuckPhp/Core/App.php:138]                        // App run 方法开始运行
+#9  DuckPhp\Core\App::RunQuickly()               [@DOCUMENT_ROOT/full/public/index.php:15]          // 快速运行
+</pre>
+</fieldset>
 <?php V::ShowBlock('inc-file');?>
 <?php V::ShowBlock('inc-superglobal');?>
 </fieldset>

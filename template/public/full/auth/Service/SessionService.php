@@ -38,10 +38,14 @@ class SessionService extends BaseService
         unset(App::SG()->_SESSION['user']);
         App::session_destroy();
     }
+    public function checkCsrf($token)
+    {
+        $session_token = App::SG()->_SESSION['_token']??null;
+        SessionServiceException::ThrowOn($token!==$session_token, 'csrf_token 失败',419);
+    }
     ////////////////////////////////////////////////////////////////////////
     public function csrf_token()
     {
-        //$this->put('_token', Str::random(40));
         if (!isset(App::SG()->_SESSION['_token'])) {
             $token = $this->randomString(40);
             App::SG()->_SESSION['_token'] = $token;

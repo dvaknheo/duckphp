@@ -14,16 +14,47 @@ use UserSystemDemo\Service\UserServiceException;
 
 class Main
 {
+    protected function SiteDomain()
+    {
+        $scheme=C::SG()->_SERVER['REQUEST_SCHEME'];
+        $host=C::SG()->_SERVER['HTTP_HOST']??(C::SG()->SERVER['SERVER_NAME']??C::SG()->_SERVER['SERVER_ADDR']);
+        
+        $port=C::SG()->_SERVER['SERVER_PORT'];
+        $port=($port==443 && $scheme=='https')?'':$port;
+        $port=($port==80 && $scheme=='http')?'':$port;
+        $port=($port)?(':'.$port):'';
+        $host = (strpos($host, ':') )? strstr($host, ':', true) : $host;
+        
+        $ret=$scheme.':/'.'/'.$host.$port;
+        return $ret;
+    }
     public function __construct()
     {
         $method = C::getRouteCallingMethod();
+        
         if (in_array($method, ['index','register','login','logout','test'])) {
             return;
         }
-        C::assignExceptionHandler(SessionServiceException::class, function () {
+        C::assignExceptionHandler(SessionServiceException::class, function ($ex) {
+            $code = $ex->getCode();
+            if ($code==419) {
+                C::var_dump(419);
+                C::DumpTrace();
+                
+                exit;
+            }
+            C::Logger()->warning(''.(get_class($ex)).'('.$ex->getCode().'): '.$ex->getMessage());
             C::ExitRouteTo('login');
         });
-        
+        if (!empty(App::SG()->_POST)) {
+            $referer=C::SG()->_SERVER['HTTP_REFERER']??'';
+            $domain=$this->SiteDomain().'/';
+            if (substr($referer,0,strlen($domain))!==$domain) {
+                SessionServiceException::ThrowOn(true,"CRSF",419);
+                //防止 csrf 攻击，用于站内无跳板的简单情况
+            }
+            //$flag=SessionService::G()->checkCsrf(App::SG()->_POST['_token']??null);
+        }
         $this->setLayoutData();
     }
     public function index()
@@ -45,7 +76,8 @@ class Main
     }
     public function home()
     {
-        $url_logout = C::URL('logout');
+        $token=SessionService::G()->csrf_token();
+        $url_logout = C::URL('logout'.'?_token='.$token);
         C::Show(get_defined_vars(), 'home');
     }
     public function register()
@@ -68,6 +100,7 @@ class Main
     }
     public function logout()
     {
+        $flag=SessionService::G()->checkCsrf(App::SG()->_GET['_token']??null);
         SessionService::G()->logout();
         C::ExitRouteTo('index');
     }

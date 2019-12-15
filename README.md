@@ -6,6 +6,12 @@
 ##  教程
 [教程](tutorial.md) ,强烈推荐先过 [教程](tutorial.md) 这篇文章。
 
+### 直接运行演示。
+进入 template 目录
+```
+php start_server.php
+```
+即可
 ### Composer 安装
 
 ```
@@ -17,7 +23,6 @@ composer require dvaknheo/duckphp # 用 require
 不建议使用命令行的 web 服务器， 你把 nginx 或 apache 的 document_root 设置为  public 目录按常规框架调整即可。
 
 DuckPHP 也支持在子目录里使用，同时也支持无 path_info 配置的 web 服务器。
-
 ## DuckPHP 是什么
 
 一个 PHP Web 简单框架 
