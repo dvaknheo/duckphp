@@ -32,7 +32,7 @@ class RouteHookRouteMap
         $this->route_map = array_merge($this->route_map, $this->options['route_map'] ?? []);
         
         if ($context) {
-            Route::G()->add404Handler([static::class,'Hook']);
+            Route::G()->addRouteHook([static::class,'Hook'], 'append-outter');
             if (\method_exists($context, 'extendComponents')) {
                 $context->extendComponents(
                     [

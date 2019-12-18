@@ -76,7 +76,9 @@ class DBManager
             $context->addBeforeShowHandler([static::class,'CloseAllDB']);
         }
         if (!$this->is_static) {
-            $context->addDynamicComponentClass(static::class);
+            if (method_exists($context, 'addDynamicComponentClass')) {
+                $context->addDynamicComponentClass(static::class);
+            }
         }
         if (method_exists($context, 'extendComponents')) {
             $context->extendComponents(
@@ -93,7 +95,7 @@ class DBManager
                 [
                     'setDBHandler' => [static::class .'::G', 'setDBHandler'],
                     'setBeforeGetDBHandler' => [static::class .'::G', 'setBeforeGetDBHandler'],
-                ],
+                ]
             );
         }
     }

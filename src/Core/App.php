@@ -23,14 +23,19 @@ use DuckPhp\Core\SuperGlobal;
 
 class App
 {
-    const VERSION = '1.2.1';
+    const HOOK_PREPEND_OUTTER = 'prepend-outter';
+    const HOOK_PREPEND_INNER = 'prepend-inner';
+    const HOOK_APPPEND_INNER = 'append-inner';
+    const HOOK_APPPEND_OUTTER = 'append-outter';
+    
+    const VERSION = '1.2.2';
     
     use SingletonEx;
     use ThrowOn;
     use ExtendableStaticCallTrait;
     use SystemWrapper;
     
-    use Core_Component;
+    //inner trait
     use Core_Handler;
     use Core_Helper;
     use Core_Redirect;
@@ -103,16 +108,16 @@ class App
     protected $beforeRunHandlers = [];
     protected $error_view_inited = false;
     
-    protected $extDynamicComponentClasses = [];
+    protected $extDynamicComponentClasses = []; // for swoole_ext
 
-    //const;
+    // for helper
     protected $componentClassMap = [
             'M' => 'Helper\ModelHelper',
             'V' => 'Helper\ViewHelper',
             'C' => 'Helper\ControllerHelper',
             'S' => 'Helper\ServiceHelper',
     ];
-    //system handler replacer
+    // for system handler replacer
     protected $system_handlers = [
         'header' => null,
         'setcookie' => null,
@@ -148,7 +153,6 @@ class App
     }
     protected function checkOverride($options)
     {
-        // TODO static::DEFAULT_OPTIONSEX
         $override_class = $options['override_class'] ?? $this->options['override_class'];
         $namespace = $options['namespace'] ?? $this->options['namespace'];
         
@@ -298,18 +302,6 @@ class App
         
         //
     }
-    public function cleanAll()
-    {
-        $this->clear();
-        $classes = $this->getDynamicComponentClasses();
-        foreach ($classes as $class) {
-            $this->cleanClass($class);
-        }
-        $classes = $this->getStaticComponentClasses();
-        foreach ($classes as $class) {
-            $this->cleanClass($class);
-        }
-    }
     protected function cleanClass($input_class)
     {
         $current_class = get_class($input_class::G());
@@ -371,45 +363,6 @@ class App
             }
             $new_class::AssignExtendStaticMethod($old_class::GetExtendStaticStaticMethodList());
         }
-    }
-}
-trait Core_Component
-{
-    public function getStaticComponentClasses()
-    {
-        $ret = [
-            self::class,
-            AutoLoader::class,
-            ExceptionManager::class,
-            Configer::class,
-            Route::class,
-        ];
-        if (!in_array(static::class, $ret)) {
-            $ret[] = static::class;
-        }
-        if ($this->override_from && !in_array($this->override_from, $ret)) {
-            $ret[] = $this->override_from;
-        }
-        return $ret;
-    }
-    public function getDynamicComponentClasses()
-    {
-        $ret = [
-            RuntimeState::class,
-            SuperGlobal::class,
-            View::class,
-        ];
-        return $ret;
-    }
-    public function addDynamicComponentClass($class)
-    {
-        $this->extDynamicComponentClasses[] = $class;
-    }
-    public function deleteDynamicComponentClass($class)
-    {
-        array_filter($this->extDynamicComponentClasses, function ($v) use ($class) {
-            return $v !== $class?true:false;
-        });
     }
 }
 trait Core_Handler

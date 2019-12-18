@@ -9,6 +9,11 @@ use DuckPhp\Core\SingletonEx;
 
 class Route
 {
+    const HOOK_PREPEND_OUTTER = 'prepend-outter';
+    const HOOK_PREPEND_INNER = 'prepend-inner';
+    const HOOK_APPPEND_INNER = 'append-inner';
+    const HOOK_APPPEND_OUTTER = 'append-outter';
+    
     use SingletonEx;
     
     public $options = [

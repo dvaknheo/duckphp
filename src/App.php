@@ -10,21 +10,15 @@ namespace DuckPhp;
 
 use DuckPhp\Core\App as Core_App;
 
-use DuckPhp\Ext\StrictCheck;
-use DuckPhp\Ext\DBManager;
-use DuckPhp\Ext\RouteHookRewrite;
-use DuckPhp\Ext\RouteHookRouteMap;
 use DuckPhp\Ext\Pager;
-use DuckPhp\Ext\Misc;
-use DuckPhp\Ext\SimpleLogger;
 
-//use DuckPhp\SwooleHttpd\SwooleExtAppInterface;
+//use SwooleHttpd\SwooleExtAppInterface;
 
 class App extends Core_App //implements SwooleExtAppInterface
 {
-    const VERSION = '1.2.1';
+    const VERSION = '1.2.2';
     
-    use DuckPhp_Glue;
+    use DuckPhp_SwooleExt;
     
     protected $options_ex = [
             'log_file' => '',
@@ -32,6 +26,7 @@ class App extends Core_App //implements SwooleExtAppInterface
             'use_super_global' => false,
             'rewrite_map' => [],
             'route_map' => [],
+            'route_map_append' => [],
             
             'ext' => [
                 //'DuckPhp\SwooleHttpd\SwooleExt'=>true,
@@ -59,6 +54,13 @@ class App extends Core_App //implements SwooleExtAppInterface
         parent::__construct();
         $this->extendComponents(['Pager' => [static::class,'_Pager'],], ['C']);
     }
+    public static function _Pager(object $replacement_object = null)
+    {
+        return Pager::G($replacement_object);
+    }
+}
+trait DuckPhp_SwooleExt
+{
     // @interface SwooleExtAppInterface
     public function onSwooleHttpdInit($SwooleHttpd, $InCoroutine = false, ?callable $RunHandler)
     {
@@ -80,22 +82,44 @@ class App extends Core_App //implements SwooleExtAppInterface
         
         $this->addBeforeRunHandler($RunHandler);                                 // TODO 这里能否不要
     }
+    
     // @interface SwooleExtAppInterface
     public function getStaticComponentClasses()
     {
-        return parent::getStaticComponentClasses();
+        $ret = [
+            self::class,
+            'DuckPhp\Core\App',
+            'DuckPhp\Core\AutoLoader',
+            'DuckPhp\Core\ExceptionManager',
+            'DuckPhp\Core\Configer',
+            'DuckPhp\Core\Route',
+        ];
+        if (!in_array(self::class, $ret)) {
+            $ret[] = self::class;
+        }
+        if (!in_array(static::class, $ret)) {
+            $ret[] = static::class;
+        }
+        return $ret;
     }
     // @interface SwooleExtAppInterface
     public function getDynamicComponentClasses()
     {
-        return parent::getDynamicComponentClasses();
+        $ret = [
+            'DuckPhp\Core\RuntimeState',
+            'DuckPhp\Core\SuperGlobal',
+            'DuckPhp\Core\View',
+        ];
+        return $ret;
     }
-}
-
-trait DuckPhp_Glue
-{
-    public static function _Pager(object $replacement_object = null)
+    public function addDynamicComponentClass($class)
     {
-        return Pager::G($replacement_object);
+        $this->extDynamicComponentClasses[] = $class;
+    }
+    public function deleteDynamicComponentClass($class)
+    {
+        array_filter($this->extDynamicComponentClasses, function ($v) use ($class) {
+            return $v !== $class?true:false;
+        });
     }
 }
