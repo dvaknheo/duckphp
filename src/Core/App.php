@@ -762,9 +762,9 @@ trait Core_Helper
         return $str;
     }
     // ViewHelper
-    public static function DumpTrace()
+    public static function trace_dump()
     {
-        return static::G()->_DumpTrace();
+        return static::G()->_trace_dump();
     }
     public static function var_dump(...$args)
     {

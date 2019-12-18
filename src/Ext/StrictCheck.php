@@ -56,20 +56,6 @@ class StrictCheck
     {
         return static::G()->checkStrictComponent('DB', 7);
     }
-    /*
-    public function checkStrictComponent($component_name, $trace_level, $parent_classes_to_skip = [])
-    {
-        return StrictCheck::G()->checkStrictComponent($component_name, $trace_level + 1, $parent_classes_to_skip);
-    }
-    public function checkStrictService($service_class, $trace_level = 2)
-    {
-        return StrictCheck::G()->checkStrictService($service_class, $trace_level + 1);
-    }
-    public function checkStrictModel($trace_level = 2)
-    {
-        return StrictCheck::G()->checkStrictModel($trace_level + 1);
-    }
-    */
     ///////////////////////////////////////////////////////////
     protected function getCallerByLevel($level, $parent_classes_to_skip = [])
     {

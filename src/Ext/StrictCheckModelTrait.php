@@ -3,19 +3,19 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckPhp\Base;
+namespace DuckPhp\Ext;
 
 use DuckPhp\Core\SingletonEx;
-use DuckPhp\Core\App;
+use DuckPhp\StrictCheck;
 
-trait StrictServiceTrait
+trait StrictCheckModelTrait
 {
     use SingletonEx {
         G as _ParentG;
     }
     public static function G($object = null)
     {
-        App::G()->checkStrictService(static::class);
+        StrictCheck::G()->checkStrictModel();
         return static::_ParentG($object);
     }
 }

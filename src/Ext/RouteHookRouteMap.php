@@ -33,6 +33,15 @@ class RouteHookRouteMap
         
         if ($context) {
             Route::G()->add404Handler([static::class,'Hook']);
+            if (\method_exists($context, 'extendComponents')) {
+                $context->extendComponents(
+                    [
+                        'assignRoute' => [static::class.'::G','assignRoute'],
+                        'getRoutes' => [static::class.'::G','getRoutes'],
+                    ],
+                    []
+                );
+            }
         }
     }
     public function assignRoute($key, $value = null)

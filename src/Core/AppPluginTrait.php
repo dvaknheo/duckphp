@@ -28,6 +28,7 @@ trait AppPluginTrait
     protected $path_view_override = '';
     protected $path_config_override = '';
     protected $plugin_context_class = '';
+    // protected componentClassMap=[] => in parent
     public function initAsPlugin(array $options, object $context = null)
     {
         //override me
@@ -56,6 +57,7 @@ trait AppPluginTrait
     protected function defaultInitAsPlugin(array $options, object $context = null)
     {
         $this->pluginModeInitOptions($options);
+        
         $this->plugin_context_class = get_class($context);
         $setting_file = $context->options['setting_file'] ?? 'setting';
         
@@ -70,7 +72,7 @@ trait AppPluginTrait
             $config_data = $this->includeFileForPluginConfig($this->path_config_override.$name.'.php');
             Configer::G()->prependConfig($name, $config_data);
         }
-        Route::G()->addRouteHook([static::class,'PluginRouteHook'], $this->plugin_options['plugin_routehook_position']);
+        Route::G()->addRouteHook([static::class,'PluginModeRouteHook'], $this->plugin_options['plugin_routehook_position']);
         return $this;
     }
     protected function includeFileForPluginConfig($file)
@@ -97,33 +99,36 @@ trait AppPluginTrait
         return $ret;
     }
 
-    public static function PluginRouteHook($path_info)
+    public static function PluginModeRouteHook($path_info)
     {
-        return static::G()->_PluginRouteHook($path_info);
+        return static::G()->_PluginModeRouteHook($path_info);
     }
-    public function _PluginRouteHook($path_info)
+    public function _PluginModeRouteHook($path_info)
     {
-        $this->plugin_clone_helpers();
-        $this->runAsPlugin();
+        return $this->defaultPluginModeRouteHook($path_info);
+    }
+    protected function defaultPluginModeRouteHook($path_info)
+    {
+        $this->pluginCloneHelpers();
         
         View::G()->setOverridePath($this->path_view_override);
+        
+        // route
         $route = new Route();
-        $options = $this->options;
-        $options['namespace'] = $options['namespace'] ?? $this->plugin_options['plugin_namespace'];
+        $options['namespace'] = $this->plugin_options['plugin_namespace'];
         $route->init($options)->bindServerData(SuperGlobal::G()->_SERVER);
+        
         $route->path_info = $path_info;
         $flag = $route->defaultRunRouteCallback($path_info);
         return $flag;
     }
-    protected function plugin_clone_helpers()
+    protected function pluginCloneHelpers()
     {
         $a = explode('\\', get_class($this));
         array_pop($a);
         $namespace = ltrim(implode('\\', $a).'\\', '\\');
+        
         $map = $this->componentClassMap ?? [];
-        $this->plugin_context_class::G()->cloneHelpers($namespace, $map);
-    }
-    protected function runAsPlugin()
-    {
+        $this->plugin_context_class::G()->cloneHelpers($namespace);
     }
 }

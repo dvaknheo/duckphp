@@ -18,13 +18,17 @@ trait HelperTrait
     {
         return App::IsDebug();
     }
+    public static function IsRealDebug()
+    {
+        return App::IsRealDebug();
+    }
     public static function Platform()
     {
         return App::Platform();
     }
-    public static function DumpTrace()
+    public static function trace_dump()
     {
-        return App::DumpTrace();
+        return App::trace_dump();
     }
     public static function var_dump(...$args)
     {

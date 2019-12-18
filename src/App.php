@@ -27,8 +27,6 @@ class App extends Core_App //implements SwooleExtAppInterface
     use DuckPhp_Glue;
     
     protected $options_ex = [
-
-            'path_lib' => 'lib',
             'log_file' => '',
             
             'use_super_global' => false,
@@ -42,13 +40,13 @@ class App extends Core_App //implements SwooleExtAppInterface
                 'DuckPhp\Ext\DBManager' => true,
                 'DuckPhp\Ext\RouteHookRewrite' => true,
                 'DuckPhp\Ext\RouteHookRouteMap' => true,
+                
                 'DuckPhp\Ext\StrictCheck' => false,
                 'DuckPhp\Ext\RouteHookOneFileMode' => false,
+                'DuckPhp\Ext\RouteHookDirectoryMode' => false,
                 
                 'DuckPhp\Ext\RedisManager' => false,
                 'DuckPhp\Ext\RedisSimpleCache' => false,
-                
-                'DuckPhp\Ext\RouteHookDirectoryMode' => false,
                 'DuckPhp\Ext\DBReusePoolProxy' => false,
                 'DuckPhp\Ext\FacadesAutoLoader' => false,
                 'DuckPhp\Ext\Lazybones' => false,
@@ -99,34 +97,5 @@ trait DuckPhp_Glue
     public static function _Pager(object $replacement_object = null)
     {
         return Pager::G($replacement_object);
-    }
-    /////
-    public function assignRewrite($key, $value = null)
-    {
-        return RouteHookRewrite::G()->assignRewrite($key, $value);
-    }
-    public function getRewrites()
-    {
-        return RouteHookRewrite::G()->getRewrites();
-    }
-    public function assignRoute($key, $value = null)
-    {
-        return RouteHookRouteMap::G()->assignRoute($key, $value);
-    }
-    public function getRoutes()
-    {
-        return RouteHookRouteMap::G()->getRoutes();
-    }
-    public function checkStrictComponent($component_name, $trace_level, $parent_classes_to_skip = [])
-    {
-        return StrictCheck::G()->checkStrictComponent($component_name, $trace_level + 1, $parent_classes_to_skip);
-    }
-    public function checkStrictService($service_class, $trace_level = 2)
-    {
-        return StrictCheck::G()->checkStrictService($service_class, $trace_level + 1);
-    }
-    public function checkStrictModel($trace_level = 2)
-    {
-        return StrictCheck::G()->checkStrictModel($trace_level + 1);
     }
 }
