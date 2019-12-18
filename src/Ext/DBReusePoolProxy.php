@@ -21,6 +21,7 @@ class DBReusePoolProxy extends DBManager
     public function __construct()
     {
         $this->options = array_merge($this->options_ex, $this->options);
+        parent::__construct();
     }
     public function init(array $options, object $context = null)
     {
@@ -33,8 +34,14 @@ class DBReusePoolProxy extends DBManager
     protected function getObjectIndex($tag)
     {
         $cid = 0;
+        if (!class_exists('Swoole\Coroutine')) {
+            return;
+        }
         try {
-            $cid = \Swoole\Coroutine::getuid();
+            $func = ['Swoole\Coroutine','getuid'];
+            if (is_callable($func)) {
+                $cid = ($func)();
+            }
             $cid = ($cid <= 0)?0:$cid;
         } catch (\Throwable $ex) {
         }

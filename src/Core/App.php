@@ -37,7 +37,7 @@ class App
     use Core_SystemWrapper;
     use Core_Glue;
     
-    const DEFAULT_OPTIONS = [
+    public $options = [
             //// basic config ////
             'path' => null,
             'namespace' => 'MY',
@@ -95,10 +95,7 @@ class App
             // 'controller_prefix_post'=>'do_',
             // 'controller_postfix'=>'',
         ];
-    const DEFAULT_OPTIONS_EX = [
-        ];
 
-    public $options = [];
     public $is_debug = true;
     public $platform = '';
     public $override_from = ''; // for inner usage;
@@ -144,7 +141,7 @@ class App
             $options['path'] = (string)$path;
         }
         $options['path'] = rtrim($options['path'], '/').'/';
-        $this->options = array_replace_recursive(static::DEFAULT_OPTIONS, static::DEFAULT_OPTIONS_EX, $options);
+        $this->options = array_replace_recursive($this->options, $options);
         
         $this->is_debug = $this->options['is_debug'];
         $this->platform = $this->options['platform'];
@@ -152,8 +149,8 @@ class App
     protected function checkOverride($options)
     {
         // TODO static::DEFAULT_OPTIONSEX
-        $override_class = $options['override_class'] ?? static::DEFAULT_OPTIONS['override_class'];
-        $namespace = $options['namespace'] ?? static::DEFAULT_OPTIONS['namespace'];
+        $override_class = $options['override_class'] ?? $this->options['override_class'];
+        $namespace = $options['namespace'] ?? $this->options['namespace'];
         
         if (substr($override_class, 0, 1) !== '\\') {
             $override_class = $namespace.'\\'.$override_class;
@@ -175,8 +172,8 @@ class App
         }
         AutoLoader::G()->init($options, $this)->run();
         
-        $handle_all_dev_error = $options['handle_all_dev_error'] ?? static::DEFAULT_OPTIONS['handle_all_dev_error'];
-        $handle_all_exception = $options['handle_all_exception'] ?? static::DEFAULT_OPTIONS['handle_all_exception'];
+        $handle_all_dev_error = $options['handle_all_dev_error'] ?? $this->options['handle_all_dev_error'];
+        $handle_all_exception = $options['handle_all_exception'] ?? $this->options['handle_all_exception'];
 
         $exception_options = [
             'handle_all_dev_error' => $handle_all_dev_error,
@@ -833,14 +830,18 @@ trait Core_Glue
     
     //// the next is dynamic ////
     //autoloader
-    public function assignPathNamespace($path, $namespace = null)
+    public static function assignPathNamespace($path, $namespace = null)
     {
         return AutoLoader::G()->assignPathNamespace($path, $namespace);
     }
     // route
-    public function addRouteHook($hook, $append = true, $outter = true, $once = true)
+    public static function getPathInfo()
     {
-        return Route::G()->addRouteHook($hook, $append, $append, $once);
+        return Route::G()->getPathInfo();
+    }
+    public static function addRouteHook($hook, $position, $once = true)
+    {
+        return Route::G()->addRouteHook($hook, $position, $once);
     }
     public static function getRouteCallingMethod()
     {

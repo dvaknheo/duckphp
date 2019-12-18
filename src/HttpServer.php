@@ -6,7 +6,6 @@
 namespace DuckPhp;
 
 use DuckPhp\Core\HttpServer as Server;
-use DuckPhp\SwooleHttpd\SwooleHttpd;
 
 class HttpServer extends Server
 {
@@ -18,13 +17,11 @@ class HttpServer extends Server
     public function __construct()
     {
         $this->cli_options = array_replace_recursive($this->cli_options_ex, $this->cli_options);
+        parent::__construct();
     }
     protected function checkSwoole()
     {
         if (!function_exists('swoole_version')) {
-            return false; // @codeCoverageIgnore
-        }
-        if (!class_exists(SwooleHttpd::class)) {
             return false; // @codeCoverageIgnore
         }
         return true; // @codeCoverageIgnore

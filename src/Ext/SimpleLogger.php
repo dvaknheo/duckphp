@@ -39,7 +39,7 @@ class SimpleLogger //extends Psr\Log\LoggerInterface;
         } elseif ($this->options['log_file']) {
             $this->path = $this->options['path'].$this->options['log_file'];
         }
-        if (method_exists($context, 'extendComponents')) {
+        if ($context && \method_exists($context, 'extendComponents')) {
             $context->extendComponents(['Logger' => [static::class, 'Logger']], ['C','S','M','V']);
         }
     }

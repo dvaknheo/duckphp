@@ -26,7 +26,7 @@ class App extends Core_App //implements SwooleExtAppInterface
     
     use DuckPhp_Glue;
     
-    const DEFAULT_OPTIONS_EX = [
+    protected $options_ex = [
 
             'path_lib' => 'lib',
             'log_file' => '',
@@ -57,6 +57,7 @@ class App extends Core_App //implements SwooleExtAppInterface
         ];
     public function __construct()
     {
+        $this->options = array_merge($this->options, $this->options_ex);
         parent::__construct();
         $this->extendComponents(['Pager' => [static::class,'_Pager'],], ['C']);
     }

@@ -58,6 +58,10 @@ class ControllerHelper
     {
         return App::setRouteCallingMethod($method);
     }
+    public static function getPathInfo()
+    {
+        return App::getPathInfo();
+    }
     ///////////////
     public static function Show($data = [], $view = null)
     {
@@ -97,20 +101,24 @@ class ControllerHelper
     {
         return App::header($output, $replace, $http_response_code);
     }
+    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
+    {
+        return App::setcookie($key, $value, $expire, $path, $domain, $secure, $httponly);
+    }
     public static function exit_system($code = 0)
     {
         return App::exit_system($code);
     }
     //exception manager
-    public function assignExceptionHandler($classes, $callback = null)
+    public static function assignExceptionHandler($classes, $callback = null)
     {
         return App::assignExceptionHandler($classes, $callback);
     }
-    public function setMultiExceptionHandler(array $classes, $callback)
+    public static function setMultiExceptionHandler(array $classes, $callback)
     {
         return App::setMultiExceptionHandler($classes, $callback);
     }
-    public function setDefaultExceptionHandler($callback)
+    public static function setDefaultExceptionHandler($callback)
     {
         return App::setDefaultExceptionHandler($callback);
     }
@@ -118,17 +126,5 @@ class ControllerHelper
     public static function SG()
     {
         return App::SG();
-    }
-    public static function &GLOBALS($k, $v = null)
-    {
-        return App::GLOBALS($k, $v);
-    }
-    public static function &STATICS($k, $v = null)
-    {
-        return App::STATICS($k, $v, 2); //Remark ,++;
-    }
-    public static function &CLASS_STATICS($class_name, $var_name)
-    {
-        return App::CLASS_STATICS($class_name, $var_name);
     }
 }

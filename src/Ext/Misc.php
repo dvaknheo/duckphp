@@ -35,7 +35,7 @@ class Misc
             $this->path = $options['path'].rtrim($options['path_lib'], '/').'/';
         }
         $this->context_class = $context?get_class($context):null;
-        if (\method_exists($context, 'extendComponents')) {
+        if ($context && \method_exists($context, 'extendComponents')) {
             $context->extendComponents(
                 [
                     'Import' => [static::class,'Import'],

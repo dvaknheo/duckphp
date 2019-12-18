@@ -123,7 +123,6 @@ class Route
     {
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         $this->controller_prefix_post = $this->options['controller_prefix_post'];
-        $this->enable_post_prefix = $this->controller_prefix_post?true:false;
         
         $this->controller_hide_boot_class = $this->options['controller_hide_boot_class'];
         $this->controller_methtod_for_miss = $this->options['controller_methtod_for_miss'];
@@ -343,6 +342,10 @@ class Route
     }
     
     ////
+    public function getPathInfo()
+    {
+        return $this->path_info;
+    }
     public function setPathInfo($path_info)
     {
         $this->path_info = $path_info;
