@@ -66,7 +66,7 @@ class Main
     public function do_addcomment()
     {
         $uid = SessionService::G()->getCurrentUid();
-        UserService::G()->addComment($user['id'], C::SG()->_POST['article_id'], C::SG()->_POST['content']);
+        UserService::G()->addComment($uid, C::SG()->_POST['article_id'], C::SG()->_POST['content']);
         C::ExitRouteTo('article/'.C::SG()->_POST['article_id']);
     }
     public function do_delcomment()

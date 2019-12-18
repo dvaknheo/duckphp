@@ -3,6 +3,8 @@
  * DuckPHP
  * From this time, you never be alone~
  */
+var_dump($_SERVER);
+
 require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
 $path = realpath(__DIR__.'/..');
 $namespace = rtrim('MY\\', '\\');                    // @DUCKPHP_NAMESPACE

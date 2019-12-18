@@ -285,17 +285,17 @@ var_dump(M::DB());
 <dt>execute($sql, ...$args)</dt>
 <dd>执行 sql 语句 </dd>
 <dt>fetchAll($sql, ...$args)</dt>
-<dd>获取SQL结果</dd>
+<dd>取得多行 SQL 的执行结果 </dd>
 <dt>fetch($sql, ...$args)</dt>
-<dd>获取SQL结果</dd>
+<dd>取得单 SQL 的执行结果 </dd>
 <dt>fetchColumn($sql, ...$args)</dt>
-<dd>获取SQL结果</dd>
+<dd>取得单个 SQL 的执行结果 </dd>
 <dt>quote($string)</dt>
-<dd>获取SQL结果</dd>
+<dd> SQL 编码</dd>
 <dt>rowCount()</dt>
-<dd>获取SQL结果</dd>
+<dd>函数总计</dd>
 <dt>lastInsertId()</dt>
-<dd>获取SQL结果</dd>
+<dd>取得插入ID</dd>
 </dl>
 高级方法
 <pre>
@@ -308,6 +308,64 @@ var_dump(M::DB());
     public function qouteInsertArray($array)
 </pre>
 </fieldset>
+<hr /><hr /><hr />
+以上是普通开发者的 需要了解的知识。
+<hr /><hr /><hr />
+<fieldset>
+<legend> App 类 其他助手方法。 </legend>
+    public static function RunQuickly(array $options = [], callable $after_init = null): bool
+
+    public static function session_start(array $options = [])
+    public static function session_id($session_id = null)
+    public static function session_destroy()
+    public static function session_set_save_handler(\SessionHandlerInterface $handler)
+    public static function header($output, bool $replace = true, int $http_response_code = 0)
+    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
+    public static function exit_system($code = 0)
+    public static function set_exception_handler(callable $exception_handler)
+    public static function register_shutdown_function(callable $callback, ...$args)
+    
+
+    public static function &GLOBALS($k, $v = null)
+    public static function &STATICS($k, $v = null, $_level = 1)
+    public static function &CLASS_STATICS($class_name, $var_name)
+    
+    public function assignPathNamespace($path, $namespace = null)
+<del>    public function addRouteHook($hook, $append = true, $outter = true, $once = true) 修正</del>
+    public static function IsRunning()
+    public static function IsInException()
+        public static function IsRealDebug()
+
+    public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
+    public static function On404(): void
+
+</fieldset>
+<fieldset>
+<legend> App 类 其他助手方法。 </legend>
+    public function getStaticComponentClasses()
+    public function getDynamicComponentClasses()
+    public function addDynamicComponentClass($class)
+    public function deleteDynamicComponentClass($class)
+</fieldset>
+<fieldset>
+<legend> App 类 主流程方法  </legend>
+    public function init(array $options, object $context = null)
+    protected function onInit()
+    protected function reloadFlags(): void
+    protected function initExtentions(array $exts): void
+    protected function onRun()
+    public function clear(): void
+    public function cleanAll()
+    protected function cleanClass($input_class)
+    protected function addBeforeRunHandler(?callable $handler): void
+    public function addBeforeShowHandler($handler)
+    public function extendComponents($method_map, $components = []): void
+    public function cloneHelpers($new_namespace, $componentClassMap = [])
+
+
+
+</fieldset>
+
 <fieldset>
 <legend> 入口文件 public/index.php </legend>
 <pre>
