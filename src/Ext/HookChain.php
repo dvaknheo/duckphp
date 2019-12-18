@@ -3,7 +3,7 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckPhp\Core;
+namespace DuckPhp\Ext;
 
 use ArrayAccess;
 
