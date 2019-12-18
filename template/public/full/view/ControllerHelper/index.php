@@ -20,17 +20,18 @@ ContrlloerHelper 的方法很多很杂，但掌握了 ContrlloerHelper  方法�
     <legend>ControllerHelper 方法</legend>
 
     <dt><a href="#">H</a></dt>
-    <dd><a href="<?=V::URL('ViewHelper/index#H')?>">见 ViewHelper 的 H 介绍</a></dd>
+    <dd>【显示相关】<a href="<?=V::URL('ViewHelper/index#H')?>">见 ViewHelper 的 H 介绍</a></dd>
     <dt><a href="#">L</a></dt>
-    <dd><a href="<?=V::URL('ViewHelper/index#L')?>">见 ViewHelper 的 L 介绍</a></dd>
+    <dd>【显示相关】<a href="<?=V::URL('ViewHelper/index#L')?>">见 ViewHelper 的 L 介绍</a></dd>
     <dt><a href="#">HL</a></dt>
-    <dd><a href="<?=V::URL('ViewHelper/index#HL')?>">见 ViewHelper 的 HL 介绍</a></dd>
+    <dd>【显示相关】<a href="<?=V::URL('ViewHelper/index#HL')?>">见 ViewHelper 的 HL 介绍</a></dd>
     <dt><a href="#">URL</a></dt>
-    <dd><a href="<?=V::URL('ViewHelper/index#URL')?>">见 ViewHelper 的 URL 介绍</a></dd>
+    <dd>【显示相关】<a href="<?=V::URL('ViewHelper/index#URL')?>">见 ViewHelper 的 URL 介绍</a></dd>
     <dt><a href="#">ShowBlock</a></dt>
-    <dd><a href="<?=V::URL('ViewHelper/index#ShowBlock')?>">见 ViewHelper 的 ShowBlock 介绍</a></dd>
+    <dd>【显示相关】<a href="<?=V::URL('ViewHelper/index#ShowBlock')?>">见 ViewHelper 的 ShowBlock 介绍</a></dd>
+    
     <dt><a href="#">Setting</a></dt>
-    <dd><a href="<?=V::URL('ServiceHelper/index#Setting')?>">见 ServiceHelper 的 Setting 介绍</a></dd>
+    <dd>【选项相关】<a href="<?=V::URL('ServiceHelper/index#Setting')?>">见 ServiceHelper 的 Setting 介绍</a></dd>
     <dt><a href="#">Config</a></dt>
     <dd><a href="<?=V::URL('ServiceHelper/index#Config')?>">见 ServiceHelper 的 Config 介绍</a></dd>
     <dt><a href="#">LoadConfig</a></dt>    
@@ -58,10 +59,10 @@ ContrlloerHelper 的方法很多很杂，但掌握了 ContrlloerHelper  方法�
     <dt><a href="#">header</a></dt>
     <dd> 替代系统 header 函数以兼容命令行模式</dd>
     <dt><a href="#">setcookie()</a></dt>
-    <dd><del>替代系统 setcookie 函数以兼容命令行模式</del>(待修正添加)</dd>
+    <dd>替代系统 setcookie 函数以兼容命令行模式</dd>
     <dt><a href="#">exit_system</a></dt>
-    <dd> 替代系统退出函数，以便于接管</dd>
-    
+    <dd>替代系统退出函数，以便于接管</dd>
+
     <dt><a href="#">Pager()</a></dt>
     <dd> 获得分页器对象</dd>
     <dt><a href="#">Show($data = [], $view = null)</a></dt>
@@ -72,12 +73,6 @@ ContrlloerHelper 的方法很多很杂，但掌握了 ContrlloerHelper  方法�
     <dd>【内容处理】分配视图变量，另一版本为 assignViewData($assoc);  </dd>
     <dt><a href="#">SG</a></dt>
     <dd> 【swoole 兼容】 SG()-> 前缀替代  超全局变量做 swoole 兼容， 如 C::SG()->_GET[] , C::SG()->_POST[] 等。</dd>
-    <dt><a href="#">GLOBALS</a></dt>
-    <dd> 【swoole 兼容】替代全局变量</dd>
-    <dt><a href="#">STATICS </a></dt>
-    <dd> 【swoole 兼容】替代局部变量</dd>
-    <dt><a href="#">CLASS_STATICS</a></dt>
-    <dd> 【swoole 兼容】替代类内局部变量</dd>
     </dl>
 </fieldset>
 </body>
