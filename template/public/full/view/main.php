@@ -30,10 +30,7 @@ use MY\Base\Helper\ControllerHelper as C;
 
 <fieldset>
 <legend> nginx 配置 </legend>
-DuckPHP 的 nginx 配置很简单，就一句话。
-本工程是在 子目录下配置的。
 <pre>
-
 try_files $uri $uri/ /index.php$request_uri;
 location ~ \.php {
     fastcgi_pass 127.0.0.1:9000;
@@ -44,6 +41,13 @@ location ~ \.php {
     include fastcgi_params;
 }
 </pre>
+这是最保证没问题的配置。 有人有这种简化配置，但现实会告你，这样会导致子目录没法用。
+<pre>
+location / {
+    try_files $uri $uri/ /index.php?$query_string;
+}
+</pre>
+使用 PHP 的内置服务器，就完全不用自己手动配置 PATH_INFO;
 
 如果你没有 设置PATH_INFO，你可以切到 <a href="/full/public/no-path-info.php" target="_blank">“一个文件全部模式”</a>来查看</br>
 为什么要这个 url 是  /full/public/index.php。而不是 /full/index.php 。<br >

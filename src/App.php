@@ -54,21 +54,21 @@ class App extends Core_App //implements SwooleExtAppInterface
         $this->options = array_merge($this->options, $this->options_ex);
         parent::__construct();
         $this->extendComponents(['Pager' => [static::class,'_Pager'],], ['C']);
+        if(get_class($this)===self::class){
+            $this->componentClassMap = [
+                'M' => 'Core\Helper\ModelHelper',
+                'V' => 'Core\Helper\ViewHelper',
+                'C' => 'Core\Helper\ControllerHelper',
+                'S' => 'Core\Helper\ServiceHelper',
+            ];
+        }
+        
     }
     public static function _Pager(object $replacement_object = null)
     {
         return Pager::G($replacement_object);
     }
-    /*
-    protected function cleanClass($input_class)
-    {
-        $current_class = get_class($input_class::G());
-        $input_class::G(new $input_class());
-        if ($current_class != $input_class) {
-            $this->cleanClass($current_class); // @codeCoverageIgnore
-        }
-    }
-    */
+
 }
 trait DuckPhp_SwooleExt
 {
@@ -131,4 +131,14 @@ trait DuckPhp_SwooleExt
             return $v !== $class?true:false; // @codeCoverageIgnore
         });
     }
+    /*
+    protected function cleanClass($input_class)
+    {
+        $current_class = get_class($input_class::G());
+        $input_class::G(new $input_class());
+        if ($current_class != $input_class) {
+            $this->cleanClass($current_class); // @codeCoverageIgnore
+        }
+    }
+    */
 }

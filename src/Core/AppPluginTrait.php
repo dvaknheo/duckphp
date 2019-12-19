@@ -40,7 +40,7 @@ trait AppPluginTrait
     }
     public function _PluginModeRouteHook($path_info)
     {
-        return $this->defaultPluginModeRouteHook($path_info);
+        return $this->pluginModeDefaultRouteHook($path_info);
     }
     /////
     protected function pluginModeInitOptions($options)
@@ -74,21 +74,21 @@ trait AppPluginTrait
         $this->path_config_override = rtrim($this->plugin_options['plugin_path_namespace'].$this->plugin_options['plugin_path_conifg'], '/').'/';
 
         if ($this->plugin_options['plugin_search_config']) {
-            $this->plugin_options['plugin_files_config'] = $this->searchAllPluginFile($this->path_config_override, $setting_file);
+            $this->plugin_options['plugin_files_config'] = $this->pluginModeSearchAllPluginFile($this->path_config_override, $setting_file);
         }
         
         foreach ($this->plugin_options['plugin_files_config'] as $name) {
-            $config_data = $this->includeFileForPluginConfig($this->path_config_override.$name.'.php');
+            $config_data = $this->pluginModeIncludeConfigFile($this->path_config_override.$name.'.php');
             Configer::G()->prependConfig($name, $config_data);
         }
         Route::G()->addRouteHook([static::class,'PluginModeRouteHook'], $this->plugin_options['plugin_routehook_position']);
         return $this;
     }
-    protected function includeFileForPluginConfig($file)
+    protected function pluginModeIncludeConfigFile($file)
     {
         return include $file;
     }
-    protected function searchAllPluginFile($path, $setting_file = '')
+    protected function pluginModeSearchAllPluginFile($path, $setting_file = '')
     {
         $setting_file = !empty($setting_file)?$path.$setting_file.'.php':'';
         $flags = \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::UNIX_PATHS | \FilesystemIterator::FOLLOW_SYMLINKS ;
@@ -108,9 +108,9 @@ trait AppPluginTrait
         return $ret;
     }
 
-    protected function defaultPluginModeRouteHook($path_info)
+    protected function pluginModeDefaultRouteHook($path_info)
     {
-        $this->pluginCloneHelpers();
+        $this->pluginModeCloneHelpers();
         
         View::G()->setOverridePath($this->path_view_override);
         
@@ -118,12 +118,11 @@ trait AppPluginTrait
         $route = new Route();
         $options['namespace'] = $this->plugin_options['plugin_namespace'];
         $route->init($options)->bindServerData(SuperGlobal::G()->_SERVER);
-        
-        $route->path_info = $path_info;
+        $route->setPathInfo($path_info);
         $flag = $route->defaultRunRouteCallback($path_info);
         return $flag;
     }
-    protected function pluginCloneHelpers()
+    protected function pluginModeCloneHelpers()
     {
         $a = explode('\\', get_class($this));
         array_pop($a);
