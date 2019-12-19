@@ -5,9 +5,9 @@
  */
 namespace MY\Base;
 
-use DuckPhp\SingletonEx;
+use DuckPhp\Core\SingletonEx;
 
-// use DuckPhp\Base\StrictModelTrait;
+// use DuckPhp\Ext\StrictCheckModelTrait;
 
 class BaseModel
 {
