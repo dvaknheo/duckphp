@@ -15,7 +15,7 @@ trait StrictCheckServiceTrait
     }
     public static function G($object = null)
     {
-        StrictCheck::G()->checkStrictService(static::class, 1);
+        StrictCheck::G()->checkStrictService(static::class, 2);
         return static::_ParentG($object);
     }
 }

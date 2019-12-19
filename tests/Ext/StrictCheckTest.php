@@ -57,11 +57,12 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
 
         DuckPhp::G()->run();
 
-        $options['is_debug']=false;
-        StrictCheck::G()->init($options);
+        StrictCheck::G()->options['is_debug']=false;
         DuckPhp::G()->run();
+
         $options['is_debug']=true;
-        StrictCheck::G(new StrictCheck())->init($options)->checkStrictComponent('',0,[]);
+        $options['namespace_service']='';
+        StrictCheck::G(new StrictCheck())->init($options)->checkStrictService('NoExt',0);
         
 
         \MyCodeCoverage::G()->end(StrictCheck::class);
@@ -198,8 +199,6 @@ class StrictCheckTestMain extends BaseController
     }
     public function foo()
     {
-        FakeBatchService::G()->foo();
-        
         echo "==========0000000000000000000000000000000000==================\n";
         
         try{
@@ -258,6 +257,7 @@ class StrictCheckTestMain extends BaseController
         }
         FakeService::G()->normal();
         echo "============================\n";
+        FakeBatchService::G()->foo();
 
     }
 }

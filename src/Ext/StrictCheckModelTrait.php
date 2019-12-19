@@ -15,7 +15,7 @@ trait StrictCheckModelTrait
     }
     public static function G($object = null)
     {
-        StrictCheck::G()->checkStrictModel(1);
+        StrictCheck::G()->checkStrictModel(2);
         return static::_ParentG($object);
     }
 }

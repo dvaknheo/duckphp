@@ -72,7 +72,7 @@ class StrictCheck
         // @codeCoverageIgnoreEnd
         return $caller_class;
     }
-    protected function checkEnv(): bool
+    public function checkEnv(): bool
     {
         if (!$this->options['is_debug']) {
             return false;
@@ -129,10 +129,11 @@ class StrictCheck
             return;
         }
         $caller_class = $this->getCallerByLevel($trace_level);
-        
         $namespace_model = $this->options['namespace_model'];
         $namespace_service = $this->options['namespace_service'];
-        
+        if (empty($namespace_service)) {
+            return;
+        }
         if (substr($caller_class, -strlen("BatchService")) === "BatchService") {
             return;
         }
@@ -140,7 +141,7 @@ class StrictCheck
             return;
         }
         if (substr($caller_class, 0, strlen($namespace_service)) === $namespace_service) {
-            throw new Exception("Service Can not call Service($caller_class)");
+            throw new Exception("Service($service_class) Can not call Service($caller_class)");
         }
         if (substr($caller_class, 0, strlen($namespace_model)) === $namespace_model) {
             throw new Exception("Service Can not call by Model, ($caller_class)");
