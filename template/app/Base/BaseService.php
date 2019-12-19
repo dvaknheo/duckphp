@@ -5,7 +5,7 @@
  */
 namespace MY\Base;
 
-use DuckPhp\SingletonEx;
+use DuckPhp\Core\SingletonEx;
 
 // use DuckPhp\Base\StrictServiceTrait;
 

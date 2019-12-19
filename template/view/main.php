@@ -33,5 +33,8 @@
 <?php
     }
 ?>
+<div>
+<a href="/test/done">查看 Demeo</a>
+</div>
 </body>
 </html>

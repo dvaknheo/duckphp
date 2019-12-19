@@ -7,7 +7,7 @@
 namespace MY\Service;
 
 use MY\Base\BaseService;
-//use MY\Base\Helper\ServiceHelper as S;
+use MY\Base\Helper\ServiceHelper as S;
 use MY\Model\TestModel;
 
 class TestService extends BaseService

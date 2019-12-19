@@ -17,20 +17,20 @@ class App extends DuckPhp_App
     ];
     public function onInit()
     {
-        $this->assignRewrite([
-            '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
-        ]);
-        
-        $this->assignRoute([
-            '~abc(\d*)' => function () {
-                var_dump(App::Parameters());
-            },
-        ]);
+                
+        $this->options['rewrite_map']['~article/(\d+)/?(\d+)?'] = 'article?id=$1&page=$2';
         
         $this->options['ext']['UserSystemDemo\Base\App'] = true;
         
         $path=realpath($this->options['path'].'../../auth/');
         $this->assignPathNamespace($path, 'UserSystemDemo');
+        $ret=parent::onInit();
+        static::assignRoute([
+            '~abc(\d*)' => function () {
+                var_dump(App::Parameters());
+            },
+        ]);
+        return $ret;
         
 return parent::onInit();
     }
