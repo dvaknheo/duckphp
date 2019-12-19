@@ -44,8 +44,8 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::DB_R();
         
         $object=new \stdClass();
-        DuckPhp::DI('a',$object);
-                DuckPhp::Logger();//->info("OK");
+        //DuckPhp::DI('a',$object);
+        DuckPhp::Logger();//->info("OK");
 
         \MyCodeCoverage::G()->end(DuckPhp::class);
         $this->assertTrue(true);
@@ -59,16 +59,24 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         
         //DuckPhp::setDBHandler($db_create_handler=null, $db_close_handler=null, $db_excption_handler=null);
         DuckPhp::Pager();
-        DuckPhp::assignRewrite($key="abc", $value=null);
+        
+        
+        //DuckPhp::assignRewrite($key="abc", $value=null);
+        /*
         DuckPhp::getRewrites();
         DuckPhp::assignRoute($key="zzz", $value=null);
         DuckPhp::getRoutes();
-        DuckPhp::checkStrictComponent($component_name="z", $trace_level=2);
-        DuckPhp::checkStrictService($trace_level=2);
-        DuckPhp::checkStrictModel($trace_level=2);
+        */
+    }
+    public function doSwoole()
+    {
+        DuckPhp::G()->getStaticComponentClasses();
+        
+        DuckPhp::G()->getDynamicComponentClasses();
+        
+        DuckPhp::G()->addDynamicComponentClass($class);
+        DuckPhp::G()->deleteDynamicComponentClass($class);
 
-        //DuckPhp::callAPI($class, $method, $input);
-        //DuckPhp::explodeService(FakeObject::G(), $namespace=__NAMESPACE__);
     }
 }
 class fakeSwooleHttpd

@@ -17,8 +17,9 @@ class HelperTraitTest extends \PHPUnit\Framework\TestCase
         \DuckPhp\Core\APP::G()->init($options);
         
         HelperTraitObject::IsDebug();
+        HelperTraitObject::IsRealDebug();
         HelperTraitObject::Platform();
-        HelperTraitObject::DumpTrace();
+        HelperTraitObject::trace_dump();
         HelperTraitObject::var_dump($options);
         
         \MyCodeCoverage::G()->end(HelperTrait::class);

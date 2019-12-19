@@ -58,6 +58,7 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         $key="key";
         ControllerHelper::setViewWrapper($head_file=null, $foot_file=null);
         ControllerHelper::assignViewData($key, $value=null);
+        ControllerHelper::getPathInfo();
         
         //*/
         $url="/abc";
@@ -81,6 +82,8 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         //*/
         
         ControllerHelper::header($output,$replace = true, $http_response_code=0);
+        $key = "??";
+        ControllerHelper::setcookie( $key,  $value = '',  $expire = 0,  $path = '/',  $domain = '',  $secure = false,  $httponly = false);
         
         
         
@@ -92,13 +95,8 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         ControllerHelper::setMultiExceptionHandler($classes, $callback);
         ControllerHelper::setDefaultExceptionHandler($callback);
         
-        $k="k";$v="v";
-        $class_name=static::class;
-        $var_name="x";
         ControllerHelper::SG();
-        ControllerHelper::GLOBALS($k, $v=null);
-        ControllerHelper::STATICS($k, $v=null);
-        ControllerHelper::CLASS_STATICS($class_name, $var_name);        
+
         
         \MyCodeCoverage::G()->end(ControllerHelper::class);
         $this->assertTrue(true);

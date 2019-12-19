@@ -86,9 +86,9 @@ class StrictCheck_FakeObject
     }
     public function foo()
     {
-        $parent_class=StrictCheckTest::class;
-        StrictCheck::G()->checkStrictParentCaller($parent_class,1);
-        StrictCheck::G()->checkStrictParentCaller($parent_class,1);
+        // no use $parent_class=StrictCheckTest::class;
+        // no use StrictCheck::G()->checkStrictParentCaller($parent_class,1);
+        // no use StrictCheck::G()->checkStrictParentCaller($parent_class,1);
     }
 }
 
@@ -110,13 +110,13 @@ class BaseController2 extends BaseController
 } // end tests\DuckPhp\Ext\Base
 
 namespace tests\DuckPhp\Ext\Model {
-use DuckPhp\Base\StrictModelTrait;
+use DuckPhp\Ext\StrictCheckModelTrait;
 use tests\DuckPhp\Ext\Service\FakeService;
 use DuckPhp\Helper\ModelHelper as M;
 
 class FakeModel
 {
-    use StrictModelTrait;
+    use StrictCheckModelTrait;
     public function foo(){
         var_dump(DATE(DATE_ATOM));
     }
@@ -129,7 +129,7 @@ class FakeModel
 }
 class FakeExModel
 {
-    use StrictModelTrait;
+    use StrictCheckModelTrait;
     public function foo(){
         FakeModel::G()->foo();
     }
@@ -137,7 +137,7 @@ class FakeExModel
 }  // end tests\DuckPhp\Ext\Model
 
 namespace tests\DuckPhp\Ext\Service {
-use DuckPhp\Base\StrictServiceTrait;
+use DuckPhp\Ext\StrictCheckServiceTrait;
 //use DuckPhp\Ext\DBManager;
 use DuckPhp\App as DuckPhp;
 use tests\DuckPhp\Ext\Model\FakeExModel;
@@ -146,7 +146,7 @@ use tests\DuckPhp\Ext\Model\FakeModel;
 
 class FakeService
 {
-    use StrictServiceTrait;
+    use StrictCheckServiceTrait;
     public function foo(){
         FakeLibService::G()->foo();
     }
@@ -166,7 +166,7 @@ class FakeService
 }
 class FakeBatchService
 {
-    use StrictServiceTrait;
+    use StrictCheckServiceTrait;
     public function foo(){
         FakeService::G()->foo();
     }
@@ -174,7 +174,7 @@ class FakeBatchService
 
 class FakeLibService
 {
-    use StrictServiceTrait;
+    use StrictCheckServiceTrait;
     public function foo(){
         FakeExModel::G()->foo();
     }

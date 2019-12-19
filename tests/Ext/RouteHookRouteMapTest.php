@@ -3,6 +3,7 @@ namespace tests\DuckPhp\Ext;
 
 use DuckPhp\Ext\RouteHookRouteMap;
 use DuckPhp\Core\Route;
+use DuckPhp\Core\APP;
 
 class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
 {
@@ -34,6 +35,7 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
         Route::G()->bind('/second/1')->run();
         Route::G()->bind('/third/abc/d/e')->run();
         Route::G()->bind('/thirdabc/d/e')->run();
+        RouteHookRouteMap::G(new RouteHookRouteMap())->init($options, App::G());
 
         \MyCodeCoverage::G()->end(RouteHookRouteMap::class);
         $this->assertTrue(true);

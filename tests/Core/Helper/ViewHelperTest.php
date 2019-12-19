@@ -12,7 +12,6 @@ class ViewHelperTest extends \PHPUnit\Framework\TestCase
         $str="str";
         $a="a";$b="b";$c="c";
         ViewHelper::H($str);
-        ViewHelper::DumpTrace();
     
         $path_base=realpath(__DIR__.'/../../');
         $path_view=$path_base.'/data_for_tests/Core/Helper/ViewHelper/';

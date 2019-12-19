@@ -230,6 +230,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->getRouteCallingMethod();
         Route::G()->setRouteCallingMethod('_');
 
+        Route::G()->getPathInfo();
         Route::G()->setPathInfo('xx');
 
     }

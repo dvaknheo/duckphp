@@ -34,6 +34,15 @@ trait AppPluginTrait
         //override me
         return $this->defaultInitAsPlugin($options, $context);
     }
+    public static function PluginModeRouteHook($path_info)
+    {
+        return static::G()->_PluginModeRouteHook($path_info);
+    }
+    public function _PluginModeRouteHook($path_info)
+    {
+        return $this->defaultPluginModeRouteHook($path_info);
+    }
+    /////
     protected function pluginModeInitOptions($options)
     {
         $this->plugin_options = array_intersect_key(array_replace_recursive($this->plugin_options, $options) ?? [], $this->plugin_options);
@@ -99,14 +108,6 @@ trait AppPluginTrait
         return $ret;
     }
 
-    public static function PluginModeRouteHook($path_info)
-    {
-        return static::G()->_PluginModeRouteHook($path_info);
-    }
-    public function _PluginModeRouteHook($path_info)
-    {
-        return $this->defaultPluginModeRouteHook($path_info);
-    }
     protected function defaultPluginModeRouteHook($path_info)
     {
         $this->pluginCloneHelpers();

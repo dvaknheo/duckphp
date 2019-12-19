@@ -48,6 +48,7 @@ class App extends Core_App //implements SwooleExtAppInterface
             ],
             
         ];
+    protected $extDynamicComponentClasses = []; // for swoole_ext
     public function __construct()
     {
         $this->options = array_merge($this->options, $this->options_ex);

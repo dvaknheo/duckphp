@@ -58,7 +58,6 @@ class AppTest extends \PHPUnit\Framework\TestCase
             App::G()->is_debug=true;
 
         });
-        App::G()->getStaticComponentClasses();
         
         App::SG()->_SERVER['PATH_INFO']='/NOOOOOOOOOOOOOOO';
         App::G()->options['error_404']=function(){
@@ -67,7 +66,6 @@ class AppTest extends \PHPUnit\Framework\TestCase
         };
         App::G()->run();
         App::G()->clear();
-        App::G()->cleanAll();
 
             $path_app=\GetClassTestPath(App::class);
 
@@ -76,7 +74,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'path_config' => $path_app,
             'override_class'=>'\\'.App::class,
             'path_view' => $path_app.'view/',
-
+            'is_debug' => true,
             'error_debug' => NULL,
             'error_exception' => NULL,
             'error_500' => NULL,
@@ -174,7 +172,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::LoadConfig($file_basename);
         
         ////
-        App::DumpTrace();
+        App::trace_dump();
         App::var_dump("OK");
         ////
         
@@ -259,13 +257,14 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::session_set_save_handler( $handler);
         
         App::assignPathNamespace("NoPath","NoName");
-        App::addRouteHook(function(){});
+        App::addRouteHook(function(){},'append-outter',true);
         
         App::IsRunning();
         App::IsDebug();
         App::IsRealDebug();
         App::Platform();
         App::IsInException();
+        App::getPathInfo();
         
         
         
@@ -293,12 +292,6 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'override_class'=>'\\'.AppTestApp::class,
         ];
         DuckPhp::G(new DuckPhp())->init($options);
-        DuckPhp::G()->getStaticComponentClasses();
-        
-        App::G()->getDynamicComponentClasses();
-        
-        App::G()->addDynamicComponentClass($class);
-        App::G()->deleteDynamicComponentClass($class);
 
         
         $options=[
@@ -317,7 +310,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         
         AppTestApp::G()->addRouteHook(function(){
             throw new \Exception("xxx");
-        });
+        },'append-outter',true);
         AppTestApp::G()->run();
         
         AppTestApp2::RunQuickly([]);
@@ -328,7 +321,7 @@ class AppTestApp extends App
     protected function onInit()
     {
         $this->addBeforeRunHandler(function(){
-            static::DumpTrace();
+            static::trace_dump();
             static::var_dump("ABC");
             return true;
         });

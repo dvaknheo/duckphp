@@ -1,6 +1,6 @@
 <?php 
-namespace tests\DuckPhp\Core;
-use DuckPhp\Core\HookChain;
+namespace tests\DuckPhp\Ext;
+use DuckPhp\Ext\HookChain;
 
 class HookChainTest extends \PHPUnit\Framework\TestCase
 {

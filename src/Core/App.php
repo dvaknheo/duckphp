@@ -107,9 +107,6 @@ class App
     
     protected $beforeRunHandlers = [];
     protected $error_view_inited = false;
-    
-    protected $extDynamicComponentClasses = []; // for swoole_ext
-
     // for helper
     protected $componentClassMap = [
             'M' => 'Helper\ModelHelper',
@@ -723,7 +720,7 @@ trait Core_Helper
     {
         return static::G()->_var_dump(...$args);
     }
-    public function _DumpTrace()
+    public function _trace_dump()
     {
         if (!$this->is_debug) {
             return;

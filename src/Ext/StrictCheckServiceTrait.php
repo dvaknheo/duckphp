@@ -6,7 +6,7 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\SingletonEx;
-use DuckPhp\StrictCheck;
+use DuckPhp\Ext\StrictCheck;
 
 trait StrictCheckServiceTrait
 {
@@ -15,7 +15,7 @@ trait StrictCheckServiceTrait
     }
     public static function G($object = null)
     {
-        StrictCheck::G()->checkStrictService(static::class);
+        StrictCheck::G()->checkStrictService(static::class, 1);
         return static::_ParentG($object);
     }
 }
