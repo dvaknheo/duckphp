@@ -32,4 +32,8 @@ class ViewHelper
     {
         return App::URL($url);
     }
+    public static function Domain()
+    {
+        return App::Domain($url);
+    }
 }

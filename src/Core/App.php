@@ -730,6 +730,24 @@ trait Core_Helper
         var_dump(...$args);
         echo "</pre>\n";
     }
+    public static function Domain()
+    {
+        return static::G()->_Domain();
+    }
+    public function _Domain()
+    {
+        $scheme=static::SG()->_SERVER['REQUEST_SCHEME'];
+        $host=static::SG()->_SERVER['HTTP_HOST']??(static::SG()->SERVER['SERVER_NAME']??static::SG()->_SERVER['SERVER_ADDR']);
+        
+        $port=static::SG()->_SERVER['SERVER_PORT'];
+        $port=($port==443 && $scheme=='https')?'':$port;
+        $port=($port==80 && $scheme=='http')?'':$port;
+        $port=($port)?(':'.$port):'';
+        $host = (strpos($host, ':') )? strstr($host, ':', true) : $host;
+        
+        $ret=$scheme.':/'.'/'.$host.$port;
+        return $ret;
+    }
 }
 
 
