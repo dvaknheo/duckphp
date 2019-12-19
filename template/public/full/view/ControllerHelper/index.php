@@ -31,11 +31,11 @@ ContrlloerHelper 的方法很多很杂，但掌握了 ContrlloerHelper  方法�
     <dd>【显示相关】<a href="<?=V::URL('ViewHelper/index#ShowBlock')?>">见 ViewHelper 的 ShowBlock 介绍</a></dd>
     
     <dt><a href="#">Setting</a></dt>
-    <dd>【选项相关】<a href="<?=V::URL('ServiceHelper/index#Setting')?>">见 ServiceHelper 的 Setting 介绍</a></dd>
+    <dd>【配置相关】<a href="<?=V::URL('ServiceHelper/index#Setting')?>">见 ServiceHelper 的 Setting 介绍</a></dd>
     <dt><a href="#">Config</a></dt>
-    <dd><a href="<?=V::URL('ServiceHelper/index#Config')?>">见 ServiceHelper 的 Config 介绍</a></dd>
+    <dd>【配置相关】<a href="<?=V::URL('ServiceHelper/index#Config')?>">见 ServiceHelper 的 Config 介绍</a></dd>
     <dt><a href="#">LoadConfig</a></dt>    
-    <dd><a href="<?=V::URL('ServiceHelper/index#LoadConfig')?>">见 ServiceHelper 的 LoadConfig 介绍</a></dd>
+    <dd>【配置相关】<a href="<?=V::URL('ServiceHelper/index#LoadConfig')?>">见 ServiceHelper 的 LoadConfig 介绍</a></dd>
     <dt><a href="#">ExitRedirect($url, $exit = true)</a></dt>
     <dd>【跳转】跳转到站内URL ，$exit 为 true 则附加 exit()</dd>
     <dt><a href="#">ExitRedirectOutside($url, $exit = true)</a></dt>
@@ -63,14 +63,15 @@ ContrlloerHelper 的方法很多很杂，但掌握了 ContrlloerHelper  方法�
     <dt><a href="#">exit_system</a></dt>
     <dd>替代系统退出函数，以便于接管</dd>
 
-    <dt><a href="#">Pager()</a></dt>
-    <dd> 获得分页器对象</dd>
+
     <dt><a href="#">Show($data = [], $view = null)</a></dt>
     <dd>【内容处理】显示视图， 默认为 view/$view.php 的文件， 并会带上页眉页脚</dd>
     <dt><a href="#">setViewWrapper($head_file = null, $foot_file = null)</a></dt>
     <dd>【内容处理】设置页眉页脚</dd>
     <dt><a href="#">assignViewData($key, $value = null)</a></dt>
     <dd>【内容处理】分配视图变量，另一版本为 assignViewData($assoc);  </dd>
+    <dt>【内容处理】<a href="#">Pager()</a></dt>
+    <dd> 获得分页器对象, 分页器参考 DuckPhp\Ext\Pager。 DuckPHP 只是做了最小的分页器</dd>
     <dt><a href="#">SG</a></dt>
     <dd> 【swoole 兼容】 SG()-> 前缀替代  超全局变量做 swoole 兼容， 如 C::SG()->_GET[] , C::SG()->_POST[] 等。</dd>
     </dl>

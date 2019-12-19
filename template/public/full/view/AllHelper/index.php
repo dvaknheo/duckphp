@@ -24,7 +24,7 @@
     <dt><a href="#">Platform()</a></dt>
     <dd>获得当前所在平台,设置字段里的 duckphp_platform ，用于判断当前是哪台机器等</dd>
     
-    <dt><a href="#">DumpTrace()</a></dt>
+    <dt><a href="#">trace_dump()</a></dt>
     <dd>打印当前堆栈，类似 debug_print_backtrce(2)</dd>
     <dt><a href="#">var_dump(...$args)</a></dt>
     <dd> 替代 var_dump 函数，不是debug 模式下，不会现实，安全使用</dd>
