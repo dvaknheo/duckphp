@@ -39,7 +39,7 @@ class MiscTest extends \PHPUnit\Framework\TestCase
         
         
         DuckPhp::G()->system_wrapper_replace([
-            'exit_system' =>function(){ echo "change!\n";},
+            'exit' =>function(){ echo "change!\n";},
         ]);
         DuckPhp::G()->init($options)->run();
         

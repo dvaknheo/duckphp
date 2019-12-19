@@ -59,6 +59,16 @@ class App extends Core_App //implements SwooleExtAppInterface
     {
         return Pager::G($replacement_object);
     }
+    /*
+    protected function cleanClass($input_class)
+    {
+        $current_class = get_class($input_class::G());
+        $input_class::G(new $input_class());
+        if ($current_class != $input_class) {
+            $this->cleanClass($current_class); // @codeCoverageIgnore
+        }
+    }
+    */
 }
 trait DuckPhp_SwooleExt
 {
@@ -95,11 +105,8 @@ trait DuckPhp_SwooleExt
             'DuckPhp\Core\Configer',
             'DuckPhp\Core\Route',
         ];
-        if (!in_array(self::class, $ret)) {
-            $ret[] = self::class;
-        }
         if (!in_array(static::class, $ret)) {
-            $ret[] = static::class;
+            $ret[] = static::class; // @codeCoverageIgnore
         }
         return $ret;
     }
@@ -111,6 +118,7 @@ trait DuckPhp_SwooleExt
             'DuckPhp\Core\SuperGlobal',
             'DuckPhp\Core\View',
         ];
+        $ret = array_merge($ret, $this->extDynamicComponentClasses);
         return $ret;
     }
     public function addDynamicComponentClass($class)
@@ -120,7 +128,7 @@ trait DuckPhp_SwooleExt
     public function deleteDynamicComponentClass($class)
     {
         array_filter($this->extDynamicComponentClasses, function ($v) use ($class) {
-            return $v !== $class?true:false;
+            return $v !== $class?true:false; // @codeCoverageIgnore
         });
     }
 }

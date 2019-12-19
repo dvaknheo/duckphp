@@ -80,6 +80,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'error_500' => NULL,
         ];
         View::G(new View());
+        Configer::G(new Configer());
         App::G(new App())->init($options);
         $this->do3();
         $this->do2();
@@ -89,7 +90,6 @@ class AppTest extends \PHPUnit\Framework\TestCase
         
         $this->do4();
         $this->doPugins();
-
 
 
         \MyCodeCoverage::G()->end(App::class);
@@ -115,7 +115,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
 
         App::header($output,$replace = true, $http_response_code=0);
         App::setcookie( $key="123",  $value = '', $expire = 0,  $path = '/',  $domain  = '', $secure = false,  $httponly = false);
-        App::exit_system($code=0);
+        App::exit($code=0);
         App::set_exception_handler(function($handler){
             return set_exception_handler($handler);
         });
@@ -124,14 +124,14 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::G()->system_wrapper_replace([
             'header' =>function(){ echo "change!\n";},
             'setcookie' =>function(){ echo "change!\n";},
-            'exit_system' =>function(){ echo "change!\n";},
+            'exit' =>function(){ echo "change!\n";},
             'set_exception_handler' =>function(){ echo "change!\n";},
             'register_shutdown_function' =>function(){ echo "change!\n";},
         ]);
         
         App::header($output,$replace = true, $http_response_code=0);
         App::setcookie( $key="123",  $value = '', $expire = 0,  $path = '/',  $domain  = '', $secure = false,  $httponly = false);
-        App::exit_system($code=0);
+        App::exit($code=0);
         App::set_exception_handler(function($handler){
             return set_exception_handler($handler);
         });
@@ -217,7 +217,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         $ret=["ret"=>'OK'];
         
         $output="";
-        App::G()->system_wrapper_replace(['exit_system'=>function($code){
+        App::G()->system_wrapper_replace(['exit'=>function($code){
             var_dump(DATE(DATE_ATOM));
         }]);
         //*

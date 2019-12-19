@@ -14,7 +14,7 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         ];
         DuckPhp::G()->init($options);
         DuckPhp::G()->system_wrapper_replace([
-            'exit_system' =>function(){ echo "change!\n";},
+            'exit' =>function(){ echo "change!\n";},
         ]);
         
         $data=[];

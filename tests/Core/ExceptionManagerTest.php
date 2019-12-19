@@ -35,12 +35,12 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
         ExceptionManager::G()->assignExceptionHandler(ExceptionManagerException::class, function($ex){
             var_dump("OK");
         });
-        ExceptionManager::G()->on_exception($ex);
-        ExceptionManager::G()->on_exception($ex2);
+        ExceptionManager::G()->onException($ex);
+        ExceptionManager::G()->onException($ex2);
         
         ExceptionManager::G()->clear();
         
-        $default_exception_handler=[ExceptionManager::G(),'on_exception'];
+        $default_exception_handler=[ExceptionManager::G(),'onException'];
         $class="EX";
         $callback="callback";
         $classes=["ABC"];

@@ -30,7 +30,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         ];
         DuckPhp::G()->init($options);
         DuckPhp::G()->system_wrapper_replace([
-            'exit_system' =>function(){ echo "change!\n";},
+            'exit' =>function(){ echo "change!\n";},
 
         ]);
         
@@ -44,6 +44,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::DB_R();
         
         $object=new \stdClass();
+        $this->doSwoole();
         //DuckPhp::DI('a',$object);
         DuckPhp::Logger();//->info("OK");
 
@@ -74,6 +75,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         
         DuckPhp::G()->getDynamicComponentClasses();
         
+        $class="NoExits";
         DuckPhp::G()->addDynamicComponentClass($class);
         DuckPhp::G()->deleteDynamicComponentClass($class);
 

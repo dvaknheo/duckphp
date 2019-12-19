@@ -105,9 +105,9 @@ class ControllerHelper
     {
         return App::setcookie($key, $value, $expire, $path, $domain, $secure, $httponly);
     }
-    public static function exit_system($code = 0)
+    public static function exit($code = 0)
     {
-        return App::exit_system($code);
+        return App::exit($code);
     }
     //exception manager
     public static function assignExceptionHandler($classes, $callback = null)

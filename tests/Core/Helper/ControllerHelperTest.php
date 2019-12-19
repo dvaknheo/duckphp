@@ -67,10 +67,10 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         
         $output="";
 
-        \DuckPhp\Core\App::system_wrapper_replace(['exit_system'=>function($code){
+        \DuckPhp\Core\App::system_wrapper_replace(['exit'=>function($code){
             var_dump(DATE(DATE_ATOM));
         }]);
-        ControllerHelper::exit_system($code=0);
+        ControllerHelper::exit($code=0);
         
         var_dump("??????????");
         //*

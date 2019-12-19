@@ -118,7 +118,7 @@ class App
     protected $system_handlers = [
         'header' => null,
         'setcookie' => null,
-        'exit_system' => null,
+        'exit' => null,
         'set_exception_handler' => null,
         'register_shutdown_function' => null,
     ];
@@ -282,7 +282,7 @@ class App
             return $ret;
         } catch (\Throwable $ex) {
             RuntimeState::G()->is_in_exception = true;
-            ExceptionManager::G()->on_exception($ex);
+            ExceptionManager::G()->onException($ex);
             return true;
         }
     }
@@ -298,14 +298,6 @@ class App
         RuntimeState::G()->end();
         
         //
-    }
-    protected function cleanClass($input_class)
-    {
-        $current_class = get_class($input_class::G());
-        $input_class::G(new $input_class());
-        if ($current_class != $input_class) {
-            $this->cleanClass($current_class); // @codeCoverageIgnore
-        }
     }
     //main produce end
     
@@ -501,9 +493,9 @@ trait Core_SystemWrapper
     {
         return static::G()->_setcookie($key, $value, $expire, $path, $domain, $secure, $httponly);
     }
-    public static function exit_system($code = 0)
+    public static function exit($code = 0)
     {
-        return static::G()->_exit_system($code);
+        return static::G()->_exit($code);
     }
     public static function set_exception_handler(callable $exception_handler)
     {
@@ -539,7 +531,7 @@ trait Core_SystemWrapper
         return setcookie($key, $value, $expire, $path, $domain, $secure, $httponly);
     }
 
-    public function _exit_system($code = 0)
+    public function _exit($code = 0)
     {
         if ($this->system_wrapper_call_check(__FUNCTION__)) {
             return $this->system_wrapper_call(__FUNCTION__, func_get_args());
@@ -584,7 +576,7 @@ trait Core_Redirect
     {
         static::On404();
         if ($exit) {
-            static::exit_system();
+            static::exit();
         }
     }
     ////
@@ -598,25 +590,25 @@ trait Core_Redirect
         }
         echo json_encode($ret, $flag);
         if ($exit) {
-            static::exit_system();
+            static::exit();
         }
     }
     public function _ExitRedirect($url, $exit = true)
     {
         if (parse_url($url, PHP_URL_HOST)) {
-            static::exit_system();
+            static::exit();
             return;
         }
         static::header('location: '.$url, true, 302);
         if ($exit) {
-            static::exit_system();
+            static::exit();
         }
     }
     public function _ExitRedirectOutside($url, $exit = true)
     {
         static::header('location: '.$url, true, 302);
         if ($exit) {
-            static::exit_system();
+            static::exit();
         }
     }
 }

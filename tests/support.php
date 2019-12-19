@@ -13,7 +13,8 @@ class Supporter extends \PHPUnit\Framework\TestCase
     }
     public function createReport()
     {
-        echo "START CREATE REPORT AT " .DATE(DATE_ATOM);
+        echo "\nSTART CREATE REPORT AT " .DATE(DATE_ATOM);
+        echo "File: file://".__DIR__."/test_reports/index.html" ."\n";
         echo "\n\n";
         echo "\n\n";        
         MyCodeCoverage::G()->createReport();
