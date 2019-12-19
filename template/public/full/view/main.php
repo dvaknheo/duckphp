@@ -313,59 +313,65 @@ var_dump(M::DB());
 <hr /><hr /><hr />
 <fieldset>
 <legend> App 类 其他助手方法。 </legend>
-    public static function RunQuickly(array $options = [], callable $after_init = null): bool
+<pre>
+    public static function assignPathNamespace($path, $namespace = null)
+    public static function addRouteHook($hook, $position, $once = true) 
+    public static function IsRunning()
+    public static function IsInException()
+    public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
+    public static function On404(): void
+    public static function OnException($ex)
+    
+    public static function &GLOBALS($k, $v = null)
+    public static function &STATICS($k, $v = null, $_level = 1)
+    public static function &CLASS_STATICS($class_name, $var_name)
+</pre>
 
+</fieldset>
+<fieldset>
+<legend> App 类 系统函数替代静态方法  </legend>
+App类系统函数替代静态方法。是和系统函数同名，参数相同，用于在不同环境下兼容。
+<pre>
+
+    public static function header($output, bool $replace = true, int $http_response_code = 0)
+    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
+    public static function exit($code = 0)
+    public static function set_exception_handler(callable $exception_handler)
+    public static function register_shutdown_function(callable $callback, ...$args)
+</pre>
+</fieldset>
+<fieldset>
+<legend> App 类替代 Session 类  </legend>
+和系统函数替代静态方法类似，也是和系统函数同名，参数相同。但由 SuperGlobal 类来实现。
+<pre>
     public static function session_start(array $options = [])
     public static function session_id($session_id = null)
     public static function session_destroy()
     public static function session_set_save_handler(\SessionHandlerInterface $handler)
-    public static function header($output, bool $replace = true, int $http_response_code = 0)
-    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
-    public static function exit_system($code = 0)
-    public static function set_exception_handler(callable $exception_handler)
-    public static function register_shutdown_function(callable $callback, ...$args)
-    
-
-    public static function &GLOBALS($k, $v = null)
-    public static function &STATICS($k, $v = null, $_level = 1)
-    public static function &CLASS_STATICS($class_name, $var_name)
-    
-    public function assignPathNamespace($path, $namespace = null)
-<del>    public function addRouteHook($hook, $append = true, $outter = true, $once = true) 修正</del>
-    public static function IsRunning()
-    public static function IsInException()
-        public static function IsRealDebug()
-
-    public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
-    public static function On404(): void
-
-</fieldset>
-<fieldset>
-<legend> App 类 其他助手方法。 </legend>
-    public function getStaticComponentClasses()
-    public function getDynamicComponentClasses()
-    public function addDynamicComponentClass($class)
-    public function deleteDynamicComponentClass($class)
-</fieldset>
+</pre>
+</legend>
 <fieldset>
 <legend> App 类 主流程方法  </legend>
+<pre>
+    public static function RunQuickly(array $options = [], callable $after_init = null): bool
     public function init(array $options, object $context = null)
     protected function onInit()
     protected function reloadFlags(): void
     protected function initExtentions(array $exts): void
     protected function onRun()
     public function clear(): void
-    public function cleanAll()
-    protected function cleanClass($input_class)
     protected function addBeforeRunHandler(?callable $handler): void
+
+</pre>
+</fieldset>
+<fieldset>
+<legend> App 类 主流程方法  </legend>
+<pre>
     public function addBeforeShowHandler($handler)
     public function extendComponents($method_map, $components = []): void
     public function cloneHelpers($new_namespace, $componentClassMap = [])
-
-
-
+</pre>
 </fieldset>
-
 <fieldset>
 <legend> 入口文件 public/index.php </legend>
 <pre>
