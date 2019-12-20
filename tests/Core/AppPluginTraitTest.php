@@ -18,7 +18,7 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
             'skip_setting_file' => true,
             
             'use_super_global' => true,
-            'override_class'=>'\\'.AppTestApp::class,
+            'override_class'=>'',
         ];
         $plugin_options=[
             'plugin_path_namespace'=>$path_app.'secondapp/',
