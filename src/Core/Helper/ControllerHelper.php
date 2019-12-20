@@ -126,7 +126,7 @@ class ControllerHelper
     {
         return App::setDefaultExceptionHandler($callback);
     }
-    public static function Pager($object=null)
+    public static function Pager($object = null)
     {
         return App::Pager($object);
     }

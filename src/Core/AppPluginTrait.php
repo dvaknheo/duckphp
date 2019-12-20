@@ -29,10 +29,10 @@ trait AppPluginTrait
     protected $path_config_override = '';
     protected $plugin_context_class = '';
     // protected componentClassMap=[] => in parent
-    public function initAsPlugin(array $options, object $context = null)
+    public function pluginModeInit(array $options, object $context = null)
     {
         //override me
-        return $this->defaultInitAsPlugin($options, $context);
+        return $this->pluginModeDefaultInit($options, $context);
     }
     public static function PluginModeRouteHook($path_info)
     {
@@ -63,7 +63,7 @@ trait AppPluginTrait
             }
         }
     }
-    protected function defaultInitAsPlugin(array $options, object $context = null)
+    protected function pluginModeDefaultInit(array $options, object $context = null)
     {
         $this->pluginModeInitOptions($options);
         

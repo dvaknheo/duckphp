@@ -20,7 +20,7 @@ use DuckPhp\Core\Route;
 use DuckPhp\Core\RuntimeState;
 use DuckPhp\Core\View;
 use DuckPhp\Core\SuperGlobal;
-use DuckPhp\Core\Pager;
+use DuckPhp\Core\Logger;
 
 class App
 {
@@ -42,6 +42,7 @@ class App
     use Core_Redirect;
     use Core_SystemWrapper;
     use Core_Glue;
+    use Core_Component;
     
     public $options = [
             //// basic config ////
@@ -59,7 +60,7 @@ class App
             'use_super_global' => false,
             'skip_view_notice_error' => true,
             'skip_404_handler' => false,
-            'skip_plugin_check' => false,
+            'skip_plugin_mode_check' => false,
             
             //// error handler ////
             'handle_all_dev_error' => true,
@@ -108,6 +109,7 @@ class App
     protected $beforeRunHandler = null;
     protected $afterRunHandler = null;
     protected $error_view_inited = false;
+    
     // for helper
     protected $componentClassMap = [
             'M' => 'Helper\ModelHelper',
@@ -115,7 +117,7 @@ class App
             'C' => 'Helper\ControllerHelper',
             'S' => 'Helper\ServiceHelper',
     ];
-    // for system handler replacer
+    // for trait
     protected $system_handlers = [
         'header' => null,
         'setcookie' => null,
@@ -123,6 +125,9 @@ class App
         'set_exception_handler' => null,
         'register_shutdown_function' => null,
     ];
+    // for trait
+    protected $extDynamicComponentClasses = [];
+    
     public function __construct()
     {
     }
@@ -169,8 +174,8 @@ class App
     //init
     public function init(array $options, object $context = null)
     {
-        if (!($options['skip_plugin_check'] ?? false) && isset($context)) {
-            return $this->initAsPlugin($options, $context);
+        if (!($options['skip_plugin_mode_check'] ?? false) && isset($context)) {
+            return $this->pluginModeInit($options, $context);
         }
         AutoLoader::G()->init($options, $this)->run();
         
@@ -201,7 +206,7 @@ class App
         return $object->onInit();
     }
     //for override
-    protected function initAsPlugin(array $options, object $context = null)
+    protected function pluginModeInit(array $options, object $context = null)
     {
         static::ThrowOn(true, 'DuckPhp, only for override');
         return $this; // @codeCoverageIgnore
@@ -264,7 +269,6 @@ class App
             ($this->beforeRunHandler)();
         }
         try {
-            
             $this->onRun();
             
             RuntimeState::ReCreateInstance()->begin();
@@ -765,7 +769,7 @@ trait Core_Helper
     {
         throw new Exception("Impelement Me");
     }
-    public function Logger($object=null)
+    public function Logger($object = null)
     {
         return Logger::G($object);
     }
@@ -888,5 +892,47 @@ trait Core_Glue
     public static function session_set_save_handler(\SessionHandlerInterface $handler)
     {
         return SuperGlobal::G()->session_set_save_handler($handler);
+    }
+}
+trait Core_Component
+{
+    //protected $extDynamicComponentClasses = [];
+    public function getStaticComponentClasses()
+    {
+        $ret = [
+            self::class,
+            AutoLoader::class,
+            ExceptionManager::class,
+            Configer::class,
+            Route::class,
+            Logger::class,
+        ];
+        if (!in_array(static::class, $ret)) {
+            $ret[] = static::class;
+        }
+        if ($this->override_from && !in_array($this->override_from, $ret)) {
+            $ret[] = $this->override_from;
+        }
+        return $ret;
+    }
+    public function getDynamicComponentClasses()
+    {
+        $ret = [
+            RuntimeState::class,
+            SuperGlobal::class,
+            View::class,
+        ];
+        $ret = array_merge($ret, $this->extDynamicComponentClasses);
+        return $ret;
+    }
+    public function addDynamicComponentClass($class)
+    {
+        $this->extDynamicComponentClasses[] = $class;
+    }
+    public function removeDynamicComponentClass($class)
+    {
+        array_filter($this->extDynamicComponentClasses, function ($v) use ($class) {
+            return $v !== $class?true:false;
+        });
     }
 }

@@ -39,7 +39,6 @@ class Logger //extends Psr\Log\LoggerInterface;
         } elseif ($this->options['log_file']) {
             $this->path = $this->options['path'].$this->options['log_file'];
         }
-
     }
     public function log($level, $message, array $context = array())
     {
@@ -52,7 +51,8 @@ class Logger //extends Psr\Log\LoggerInterface;
             $a["{$k}"] = var_export($v, true);
         }
         $message = str_replace(array_keys($a), array_values($a), $message);
-        $message = "[{$level}][{$prefix}]: ".$message."\n";
+        $date = date('Y-m-d H:i:s');
+        $message = "[{$level}][{$prefix}][$date]: ".$message."\n";
         try {
             $ret = error_log($message, $type, $path);
         } catch (\Throwable $ex) { // @codeCoverageIgnore

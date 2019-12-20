@@ -39,5 +39,4 @@ trait HelperTrait
     {
         return App::var_dump(...$args);
     }
-
 }

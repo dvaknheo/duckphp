@@ -1,4 +1,8 @@
-<?php
+<?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\SingletonEx;
@@ -7,26 +11,24 @@ class PluginForSwooleHttpd // impelement SwooleExtAppInterface
 {
     use SingletonEx;
     
-    public $options=[
+    public $options = [
+        'swoole_ext_class' => 'SwooleHttpd\\SwooleExt',
     ];
-    protected $extDynamicComponentClasses = [];
+    protected $context_class;
     public function init($options, $context)
     {
-        //$SwooleExt=
-        //$SwooleExt::init($options,$this);
-        $context->extendComponents(
-        [
-            'addDynamicComponentClass' => [static::class, 'addDynamicComponentClass'],
-        ]);
+        $this->context_class = get_class($context);
+        $SwooleExt = $this->options['swoole_ext_class'];
+        $SwooleExt::G()->init($options, $this);
     }
     public function run()
     {
-        //
+        $this->context_class::G()->run();
     }
     // @interface SwooleExtAppInterface
     public function onSwooleHttpdInit($SwooleHttpd, $InCoroutine = false, ?callable $RunHandler)
     {
-        $app=$this->appClass::G();
+        $app = $this->context_class::G();
         $app->options['use_super_global'] = true;
         if ($InCoroutine) {
             $app::SG($SwooleHttpd::SG());
@@ -40,8 +42,7 @@ class PluginForSwooleHttpd // impelement SwooleExtAppInterface
         $app->options['skip_404_handler'] = $app->options['skip_404_handler'] ?? false;
         $app->options['skip_404_handler'] = $app->options['skip_404_handler'] || $flag;
         
-        $funcs = $SwooleHttpd->system_wrapper_get_providers();
-        $app->system_wrapper_replace($funcs);
+        $app::system_wrapper_replace($SwooleHttpd::system_wrapper_get_providers());
         
         $app->setBeforeRunHandler($RunHandler);
     }
@@ -49,45 +50,11 @@ class PluginForSwooleHttpd // impelement SwooleExtAppInterface
     // @interface SwooleExtAppInterface
     public function getStaticComponentClasses()
     {
-        $ret = [
-            self::class,
-            'DuckPhp\Core\App',
-            'DuckPhp\Core\AutoLoader',
-            'DuckPhp\Core\ExceptionManager',
-            'DuckPhp\Core\Configer',
-            'DuckPhp\Core\Route',
-        ];
-        $ret[]=static::class;
-        return $ret;
+        return $this->context_class::G()->getStaticComponentClasses();
     }
     // @interface SwooleExtAppInterface
     public function getDynamicComponentClasses()
     {
-        $ret = [
-            'DuckPhp\Core\RuntimeState',
-            'DuckPhp\Core\SuperGlobal',
-            'DuckPhp\Core\View',
-        ];
-        return $ret;
+        return $this->context_class::G()->getDynamicComponentClasses();
     }
-    public function addDynamicComponentClass($class)
-    {
-        $this->extDynamicComponentClasses[] = $class;
-    }
-    public function deleteDynamicComponentClass($class)
-    {
-        array_filter($this->extDynamicComponentClasses, function ($v) use ($class) {
-            return $v !== $class?true:false;
-        });
-    }
-/*
-    protected function cleanClass($input_class)
-    {
-        $current_class = get_class($input_class::G());
-        $input_class::G(new $input_class());
-        if ($current_class != $input_class) {
-            $this->cleanClass($current_class); // @codeCoverageIgnore
-        }
-    }
-    */
 }

@@ -10,14 +10,21 @@ trait SystemWrapper
     // protected $system_handlers=[];
     public static function system_wrapper_replace(array $funcs)
     {
-        static::G()->system_handlers = array_replace(static::G()->system_handlers, $funcs) ?? [];
-        return true;
+        return static::G()->_system_wrapper_replace($funcs);
     }
     public static function system_wrapper_get_providers():array
     {
-        $ret = static::G()->system_handlers;
-        
+        return static::G()->_system_wrapper_get_providers();
+    }
+    public function _system_wrapper_replace(array $funcs)
+    {
+        $this->system_handlers = array_replace($this->system_handlers, $funcs) ?? [];
+        return true;
+    }
+    public function _system_wrapper_get_providers()
+    {
         $class = static::class;
+        $ret = $this->system_handlers;
         foreach ($ret as $k => &$v) {
             $v = $v ?? [$class,$k];
         }
