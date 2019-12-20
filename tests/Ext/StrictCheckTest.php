@@ -95,7 +95,7 @@ class StrictCheck_FakeObject
 
 }
 namespace tests\DuckPhp\Ext\Base {
-use DuckPhp\Helper\ModelHelper as M;
+use DuckPhp\Core\Helper\ModelHelper as M;
 
 class BaseController
 {
@@ -113,7 +113,7 @@ class BaseController2 extends BaseController
 namespace tests\DuckPhp\Ext\Model {
 use DuckPhp\Ext\StrictCheckModelTrait;
 use tests\DuckPhp\Ext\Service\FakeService;
-use DuckPhp\Helper\ModelHelper as M;
+use DuckPhp\Core\Helper\ModelHelper as M;
 
 class FakeModel
 {
@@ -190,7 +190,7 @@ use tests\DuckPhp\Ext\Service\FakeBatchService;
 use tests\DuckPhp\Ext\Service\FakeService;
 use tests\DuckPhp\Ext\Model\FakeModel;
 use DuckPhp\App as DuckPhp;
-use DuckPhp\Helper\ModelHelper as M;
+use DuckPhp\Core\Helper\ModelHelper as M;
 
 class StrictCheckTestMain extends BaseController
 {

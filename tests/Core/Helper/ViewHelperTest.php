@@ -26,6 +26,7 @@ class ViewHelperTest extends \PHPUnit\Framework\TestCase
         echo "---------------\n";
         echo ViewHelper::HL("&<{b}>",['b'=>'123']);
         echo ViewHelper::URL('xxxx');
+        echo ViewHelper::Domain();
         
         \MyCodeCoverage::G()->end(ViewHelper::class);
         $this->assertTrue(true);

@@ -186,6 +186,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::L("a{b}c",[]);
         App::L("a{b}c",['b'=>'123']);
         App::HL("&<{b}>",['b'=>'123']);
+        App::Domain();
         
         App::URL($url=null);
         

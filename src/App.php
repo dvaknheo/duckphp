@@ -61,7 +61,6 @@ class App extends Core_App //implements SwooleExtAppInterface
                 'S' => 'Core\Helper\ServiceHelper',
             ];
         }
-        var_dump(static::class, $this->componentClassMap);
         $this->extendComponents(['Pager' => [static::class,'_Pager'],], ['C']);
     }
     public static function _Pager(object $replacement_object = null)

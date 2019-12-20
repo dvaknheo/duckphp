@@ -31,6 +31,7 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         $method="method";
         ControllerHelper::H($str);
         ControllerHelper::URL($url=null);
+        ControllerHelper::Domain();
         ControllerHelper::Parameters();
         ControllerHelper::getRouteCallingMethod();
         ControllerHelper::setRouteCallingMethod($method);
