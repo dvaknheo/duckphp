@@ -53,7 +53,6 @@ class App extends Core_App //implements SwooleExtAppInterface
     {
         $this->options = array_merge($this->options, $this->options_ex);
         parent::__construct();
-        $this->extendComponents(['Pager' => [static::class,'_Pager'],], ['C']);
         if(get_class($this)===self::class){
             $this->componentClassMap = [
                 'M' => 'Core\Helper\ModelHelper',
@@ -62,7 +61,8 @@ class App extends Core_App //implements SwooleExtAppInterface
                 'S' => 'Core\Helper\ServiceHelper',
             ];
         }
-        
+        var_dump(static::class,$this->componentClassMap);
+        $this->extendComponents(['Pager' => [static::class,'_Pager'],], ['C']);
     }
     public static function _Pager(object $replacement_object = null)
     {
