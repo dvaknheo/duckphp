@@ -3,11 +3,11 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckPhp\Ext;
+namespace DuckPhp\Core;
 
 use DuckPhp\Core\SingletonEx;
 
-class SimpleLogger //extends Psr\Log\LoggerInterface;
+class Logger //extends Psr\Log\LoggerInterface;
 {
     use SingletonEx;
     
@@ -39,13 +39,7 @@ class SimpleLogger //extends Psr\Log\LoggerInterface;
         } elseif ($this->options['log_file']) {
             $this->path = $this->options['path'].$this->options['log_file'];
         }
-        if ($context && \method_exists($context, 'extendComponents')) {
-            $context->extendComponents(['Logger' => [static::class, 'Logger']], ['C','S','M','V']);
-        }
-    }
-    public static function Logger(?object $replacement_object = null)
-    {
-        return static::G($replacement_object);
+
     }
     public function log($level, $message, array $context = array())
     {

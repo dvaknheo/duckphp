@@ -20,6 +20,7 @@ use DuckPhp\Core\Route;
 use DuckPhp\Core\RuntimeState;
 use DuckPhp\Core\View;
 use DuckPhp\Core\SuperGlobal;
+use DuckPhp\Core\Pager;
 
 class App
 {
@@ -65,7 +66,6 @@ class App
             'handle_all_exception' => true,
             'error_404' => null,          //'_sys/error-404',
             'error_500' => null,          //'_sys/error-500',
-            'error_exception' => null,    //'_sys/error-exception',
             'error_debug' => null,        //'_sys/error-debug',
             
             //// Class Autoloader ////
@@ -105,7 +105,8 @@ class App
     public $platform = '';
     public $override_from = ''; // for inner usage;
     
-    protected $beforeRunHandlers = [];
+    protected $beforeRunHandler = null;
+    protected $afterRunHandler = null;
     protected $error_view_inited = false;
     // for helper
     protected $componentClassMap = [
@@ -216,6 +217,7 @@ class App
         
         Route::G()->init($this->options, $this);
         
+        Logger::G()->init($this->options, $this);
         $this->initExtentions($this->options['ext']);
         
         return $this;
@@ -258,10 +260,10 @@ class App
     }
     public function run(): bool
     {
+        if ($this->beforeRunHandler) {
+            ($this->beforeRunHandler)();
+        }
         try {
-            foreach ($this->beforeRunHandlers as $v) {
-                ($v)();
-            }
             
             $this->onRun();
             
@@ -278,13 +280,15 @@ class App
                 static::On404();
             }
             $this->clear();
-            
-            return $ret;
         } catch (\Throwable $ex) {
             RuntimeState::G()->is_in_exception = true;
             ExceptionManager::G()->onException($ex);
-            return true;
+            $ret = true;
         }
+        if ($this->afterRunHandler) {
+            ($this->afterRunHandler)();
+        }
+        return $ret;
     }
     // 这里我们要做好些清理判断。对资源的释放处理
     public function clear(): void
@@ -303,9 +307,13 @@ class App
     
     ////////////////////////
     
-    protected function addBeforeRunHandler(?callable $handler): void
+    protected function setBeforeRunHandler(callable $handler): void
     {
-        $this->beforeRunHandlers[] = $handler;
+        $this->beforeRunHandler = $handler;
+    }
+    protected function setAfterRunHandler(callable $handler): void
+    {
+        $this->afterRunHandler = $handler;
     }
     public function addBeforeShowHandler($handler)
     {
@@ -394,7 +402,7 @@ trait Core_Handler
     public function _OnException($ex): void
     {
         $is_error = is_a($ex, 'Error') || is_a($ex, 'ErrorException')?true:false;
-        $error_view = $is_error?($this->options['error_500'] ?? null):($this->options['error_exception'] ?? null);
+        $error_view = $this->options['error_500'] ?? null;
         $error_view = $this->error_view_inited?$error_view:null;
         
         static::header('', true, 500);
@@ -411,11 +419,10 @@ trait Core_Handler
             $this->clear();
             return;
         }
-        ////////  no  error_500 or error_exception setting
+        ////////default;
         if (!$error_view) {
             $desc = $is_error?'Internal Error':'Internal Exception';
-            $error_config = $is_error?'error_500':'error_exception';
-            echo "$desc \n<!--DuckPhp set options ['{$error_config}'] to override me  -->\n";
+            echo "$desc \n<!--DuckPhp set options ['error_500'] to override me  -->\n";
             
             if ($data['is_debug']) {
                 echo "<h3>{$data['class']}({$data['code']}):{$data['message']}</h3>";
@@ -749,6 +756,18 @@ trait Core_Helper
         
         $ret = $scheme.':/'.'/'.$host.$port;
         return $ret;
+    }
+    public static function Pager(object $object = null)
+    {
+        return static::G()->_Pager($object);
+    }
+    public function _Pager(object $object = null)
+    {
+        throw new Exception("Impelement Me");
+    }
+    public function Logger($object=null)
+    {
+        return Logger::G($object);
     }
 }
 

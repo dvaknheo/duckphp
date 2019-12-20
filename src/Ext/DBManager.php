@@ -36,7 +36,6 @@ class DBManager
     
     protected $before_get_db_handler = null;
     protected $use_context_db_setting = true;
-    protected $is_static = false;
     
     public function __construct()
     {
@@ -74,13 +73,6 @@ class DBManager
         }
         if ($this->options['db_close_at_output']) {
             $context->addBeforeShowHandler([static::class,'CloseAllDB']);
-        }
-        if (!$this->is_static) {
-            try {
-                $context->addDynamicComponentClass(static::class);
-            } catch (\BadMethodCallException $ex) { // @codeCoverageIgnore
-                //do nothing;
-            }
         }
         if (method_exists($context, 'extendComponents')) {
             $context->extendComponents(

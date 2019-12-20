@@ -25,10 +25,17 @@ class DBReusePoolProxy extends DBManager
     }
     public function init(array $options, object $context = null)
     {
-        $this->db_reuse_size = $options['db_reuse_size'] ?? 100;
-        $this->db_reuse_timeout = $options['db_reuse_timeout'] ?? 5;
+        parent::init($options, $context);
+        try {
+            $context::addDynamicComponentClass(static::class);
+        } catch (\BadMethodCallException $ex) { // @codeCoverageIgnore
+            //do nothing;
+        }
         
-        return parent::init($options, $context);
+        $this->db_reuse_size = $this->options['db_reuse_size'] ?? 100;
+        $this->db_reuse_timeout = $this->options['db_reuse_timeout'] ?? 5;
+        return $this;
+        
     }
     //////////////////
     protected function getObjectIndex($tag)

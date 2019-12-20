@@ -26,6 +26,11 @@ trait HelperTrait
     {
         return App::Platform();
     }
+    public static function Logger()
+    {
+        return App::Logger();
+    }
+    ////
     public static function trace_dump()
     {
         return App::trace_dump();
@@ -34,4 +39,5 @@ trait HelperTrait
     {
         return App::var_dump(...$args);
     }
+
 }
