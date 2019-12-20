@@ -736,16 +736,16 @@ trait Core_Helper
     }
     public function _Domain()
     {
-        $scheme=static::SG()->_SERVER['REQUEST_SCHEME'];
-        $host=static::SG()->_SERVER['HTTP_HOST']??(static::SG()->SERVER['SERVER_NAME']??static::SG()->_SERVER['SERVER_ADDR']);
+        $scheme = static::SG()->_SERVER['REQUEST_SCHEME'];
+        $host = static::SG()->_SERVER['HTTP_HOST'] ?? (static::SG()->SERVER['SERVER_NAME'] ?? static::SG()->_SERVER['SERVER_ADDR']);
         
-        $port=static::SG()->_SERVER['SERVER_PORT'];
-        $port=($port==443 && $scheme=='https')?'':$port;
-        $port=($port==80 && $scheme=='http')?'':$port;
-        $port=($port)?(':'.$port):'';
-        $host = (strpos($host, ':') )? strstr($host, ':', true) : $host;
+        $port = static::SG()->_SERVER['SERVER_PORT'];
+        $port = ($port == 443 && $scheme == 'https')?'':$port;
+        $port = ($port == 80 && $scheme == 'http')?'':$port;
+        $port = ($port)?(':'.$port):'';
+        $host = (strpos($host, ':'))? strstr($host, ':', true) : $host;
         
-        $ret=$scheme.':/'.'/'.$host.$port;
+        $ret = $scheme.':/'.'/'.$host.$port;
         return $ret;
     }
 }

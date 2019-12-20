@@ -47,7 +47,7 @@ class ControllerHelper
     }
     public static function Domain()
     {
-        return App::Domain($url);
+        return App::Domain();
     }
     ////
     public static function Parameters()
