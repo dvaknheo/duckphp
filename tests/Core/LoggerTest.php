@@ -1,6 +1,6 @@
 <?php 
 namespace tests\DuckPhp\Ext;
-use DuckPhp\Ext\Logger;
+use DuckPhp\Core\Logger;
 use DuckPhp\Core\App as DuckPhp;
 class LoggerTest extends \PHPUnit\Framework\TestCase
 {

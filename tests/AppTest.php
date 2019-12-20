@@ -17,9 +17,9 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::G()->getStaticComponentClasses();
         DuckPhp::G()->getDynamicComponentClasses();
         
-        $SwooleHttpd=new fakeSwooleHttpd;
-        DuckPhp::G()->onSwooleHttpdInit($SwooleHttpd, false,function(){var_dump("OK");});
-        DuckPhp::G()->onSwooleHttpdInit($SwooleHttpd,true,null);
+        //$SwooleHttpd=new fakeSwooleHttpd;
+        //DuckPhp::G()->onSwooleHttpdInit($SwooleHttpd, false,function(){var_dump("OK");});
+        //DuckPhp::G()->onSwooleHttpdInit($SwooleHttpd,true,null);
 
         $this->doGlue();
         $path_lib=\GetClassTestPath(DuckPhp::class).'lib/';
@@ -71,13 +71,13 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
     }
     public function doSwoole()
     {
-        DuckPhp::G()->getStaticComponentClasses();
+        //DuckPhp::G()->getStaticComponentClasses();
         
-        DuckPhp::G()->getDynamicComponentClasses();
+        //DuckPhp::G()->getDynamicComponentClasses();
         
-        $class="NoExits";
-        DuckPhp::G()->addDynamicComponentClass($class);
-        DuckPhp::G()->deleteDynamicComponentClass($class);
+        //$class="NoExits";
+        //DuckPhp::G()->addDynamicComponentClass($class);
+        //DuckPhp::G()->deleteDynamicComponentClass($class);
 
     }
 }

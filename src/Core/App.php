@@ -127,7 +127,7 @@ class App
     ];
     // for trait
     protected $extDynamicComponentClasses = [];
-    
+    protected $is_failed=false;
     public function __construct()
     {
     }
@@ -265,8 +265,12 @@ class App
     }
     public function run(): bool
     {
+        $this->is_failed = false;
         if ($this->beforeRunHandler) {
-            ($this->beforeRunHandler)();
+            $flag = ($this->beforeRunHandler)();
+            if ($flag) {
+                return $this->getRunResult();
+            }
         }
         try {
             $this->onRun();
@@ -290,9 +294,19 @@ class App
             $ret = true;
         }
         if ($this->afterRunHandler) {
-            ($this->afterRunHandler)();
+            $flag = ($this->afterRunHandler)();
+            if ($flag) {
+                return $this->getRunResult();
+            }
         }
         return $ret;
+    }
+    protected function getRunResult()
+    {
+        if ($this->is_failed) {
+            return false;
+        }
+        return true;
     }
     // 这里我们要做好些清理判断。对资源的释放处理
     public function clear(): void
@@ -311,11 +325,11 @@ class App
     
     ////////////////////////
     
-    protected function setBeforeRunHandler(callable $handler): void
+    public function setBeforeRunHandler(callable $handler): void
     {
         $this->beforeRunHandler = $handler;
     }
-    protected function setAfterRunHandler(callable $handler): void
+    public function setAfterRunHandler(callable $handler): void
     {
         $this->afterRunHandler = $handler;
     }

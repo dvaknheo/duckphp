@@ -41,8 +41,9 @@ class AppTest extends \PHPUnit\Framework\TestCase
             AppTestObjectB::class=>['aa'=>'22'],
         ];
         App::RunQuickly($options,function(){
-            //App::G()->addBeforeRunHandler(function(){ echo "addBeforeRunHandler";});
+            App::G()->setBeforeRunHandler(function(){ echo "setBeforeRunHandler";});
             App::G()->addBeforeShowHandler(function(){ echo "beforeShowHandlers";});
+            App::G()->setAfterRunHandler(function(){ echo "setAfterRunHandler";});
             
             $value = $cache[$key]; // trigger notice
             
@@ -321,7 +322,7 @@ class AppTestApp extends App
 {
     protected function onInit()
     {
-        $this->addBeforeRunHandler(function(){
+        $this->setBeforeRunHandler(function(){
             static::trace_dump();
             static::var_dump("ABC");
             return true;
