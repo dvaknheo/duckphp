@@ -115,7 +115,7 @@ Controller --> Service ------------------------------ ---> Model
 </fieldset>
 <fieldset>
 <legend> 基础演示代码 </legend>
-<a href="">点击这里看基础演示代码</a>
+<a href="/test/done">点这里查看成品</a>
 <h3>任务</h3>
 <p>路径： http://127.0.0.1:8080/test/done</p>
 <p>作用： 显示当前时间的任务。</p>
@@ -373,6 +373,12 @@ App类系统函数替代静态方法。是和系统函数同名，参数相同�
 </pre>
 </fieldset>
 <fieldset>
+<legend> 重写方法  </legend>
+<pre>
+重写方法很简单，在 MY\Base\App 里，重写就行， 重写的静态方法不会被助手类调用，你要重写的是相关的动态方法。
+</pre>
+</fieldset>
+<fieldset>
 <legend> 入口文件 public/index.php </legend>
 <pre>
 require_once(__DIR__.'/../vendor/autoload.php');        // @DUCKPHP_HEADFILE
@@ -391,6 +397,8 @@ $options=[
 </pre>
 这部分配合选项来学
 </fieldset>
+
+
 <fieldset>
 <legend>样例</legend>
 <div>
