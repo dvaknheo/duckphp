@@ -75,7 +75,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         
         //DuckPhp::G()->getDynamicComponentClasses();
         
-        //$class="NoExits";
+        $class="NoExits";
         //DuckPhp::G()->addDynamicComponentClass($class);
         //DuckPhp::G()->deleteDynamicComponentClass($class);
 

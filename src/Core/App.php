@@ -106,8 +106,8 @@ class App
     public $platform = '';
     public $override_from = ''; // for inner usage;
     
-    protected $beforeRunHandler = null;
-    protected $afterRunHandler = null;
+    public $beforeRunHandler = null;
+    public $afterRunHandler = null;
     protected $error_view_inited = false;
     
     // for helper
@@ -127,7 +127,7 @@ class App
     ];
     // for trait
     protected $extDynamicComponentClasses = [];
-    protected $is_failed=false;
+    protected $is_failed = false;
     public function __construct()
     {
     }
@@ -273,9 +273,8 @@ class App
             }
         }
         try {
-            $this->onRun();
-            
             RuntimeState::ReCreateInstance()->begin();
+            $this->onRun();
             
             $route = Route::G();
             if ($this->options['use_super_global'] ?? false) {
@@ -308,6 +307,10 @@ class App
         }
         return true;
     }
+    public function forceFail()
+    {
+        $this->is_failed = true;
+    }
     // 这里我们要做好些清理判断。对资源的释放处理
     public function clear(): void
     {
@@ -325,11 +328,11 @@ class App
     
     ////////////////////////
     
-    public function setBeforeRunHandler(callable $handler): void
+    public function setBeforeRunHandler(callable $handler = null): void
     {
         $this->beforeRunHandler = $handler;
     }
-    public function setAfterRunHandler(callable $handler): void
+    public function setAfterRunHandler(callable $handler = null): void
     {
         $this->afterRunHandler = $handler;
     }
@@ -781,9 +784,10 @@ trait Core_Helper
     }
     public function _Pager(object $object = null)
     {
-        throw new Exception("Impelement Me");
+        static::ThrowOn(true, 'DuckPhp, the core need impelment pager');
+        return null; // @codeCoverageIgnore
     }
-    public function Logger($object = null)
+    public static function Logger($object = null)
     {
         return Logger::G($object);
     }
@@ -923,9 +927,6 @@ trait Core_Component
         ];
         if (!in_array(static::class, $ret)) {
             $ret[] = static::class;
-        }
-        if ($this->override_from && !in_array($this->override_from, $ret)) {
-            $ret[] = $this->override_from;
         }
         return $ret;
     }

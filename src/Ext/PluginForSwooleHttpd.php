@@ -17,6 +17,7 @@ class PluginForSwooleHttpd // impelement SwooleExtAppInterface
     protected $context_class;
     public function init($options, $context)
     {
+        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         $this->context_class = get_class($context);
         $SwooleExt = $this->options['swoole_ext_class'];
         $SwooleExt::G()->init($options, $this);
@@ -35,8 +36,8 @@ class PluginForSwooleHttpd // impelement SwooleExtAppInterface
             return;
         }
         
-        $SwooleHttpd->set_http_exception_handler([$this->appClass,'OnException']);  // TODO
-        $SwooleHttpd->set_http_404_handler([$this->appClass, 'On404']);             // 接管 404 处理。
+        $SwooleHttpd->set_http_exception_handler([$this->context_class,'OnException']);  // TODO
+        $SwooleHttpd->set_http_404_handler([$this->context_class, 'On404']);             // 接管 404 处理。
         
         $flag = $SwooleHttpd->is_with_http_handler_root();                         // 如果还有子文件，做404后处理
         $app->options['skip_404_handler'] = $app->options['skip_404_handler'] ?? false;

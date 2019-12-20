@@ -35,8 +35,11 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         ControllerHelper::Parameters();
         ControllerHelper::getRouteCallingMethod();
         ControllerHelper::setRouteCallingMethod($method);
-        
-        
+        try{
+        ControllerHelper::Pager();
+        }catch(\Exception $ex){
+            echo $ex->getMessage();
+        }
         
 
         //*/

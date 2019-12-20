@@ -41,13 +41,11 @@ class AppTest extends \PHPUnit\Framework\TestCase
             AppTestObjectB::class=>['aa'=>'22'],
         ];
         App::RunQuickly($options,function(){
-            App::G()->setBeforeRunHandler(function(){ echo "setBeforeRunHandler";});
             App::G()->addBeforeShowHandler(function(){ echo "beforeShowHandlers";});
+            App::G()->setBeforeRunHandler(function(){ echo "setBeforeRunHandler";});
             App::G()->setAfterRunHandler(function(){ echo "setAfterRunHandler";});
             
             $value = $cache[$key]; // trigger notice
-            
-
             App::G()->options['error_debug']='_sys/error-debug';
             $value = $cache[$key]; 
             
@@ -76,23 +74,36 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'override_class'=>'\\'.App::class,
             'path_view' => $path_app.'view/',
             'is_debug' => true,
-            'error_debug' => NULL,
-            'error_exception' => NULL,
-            'error_500' => NULL,
         ];
         View::G(new View());
         Configer::G(new Configer());
         App::G(new App())->init($options);
-        $this->do3();
-        $this->do2();
+        $this->doException();
+        $this->doGlue();
         $this->doSystemWrapper();
 
-        App::G()->extendComponents(AppTest::class,['Foo'],['V',"ZZZ"]);
+        App::G()->extendComponents(['Foo'=>[AppTest::class,'Foo']],['V',"ZZZ"]);
         
         $this->do4();
         $this->doPugins();
+        $this->do_Core_Component();
 
 
+
+        $appended=function () {
+            App::G()->forceFail();
+            return true;
+        };
+         $appended=function () {
+            App::G()->forceFail();
+            return true;
+        };
+        App::G()->setBeforeRunHandler($appended);
+        App::G()->run();
+        App::G()->setBeforeRunHandler(null);
+        App::G()->setAfterRunHandler($appended);
+        App::G()->run();
+        
         \MyCodeCoverage::G()->end(App::class);
         $this->assertTrue(true);
     }
@@ -139,15 +150,15 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::register_shutdown_function(function(){echo "shutdowning";});
         
     }
-    public function do3()
+    public function doException()
     {       
-        App::G()->options['error_exception']="_sys/error-exception";
+        App::G()->options['error_500']="_sys/error-exception";
         App::OnException(new \Exception("333333",-1));
         
-        App::G()->options['error_exception']=null;
+        App::G()->options['error_500']=null;
         App::OnException(new \Exception("EXxxxxxxxxxxxxxx",-1));
         
-        App::G()->options['error_exception']=function($ex){ echo $ex;};
+        App::G()->options['error_500']=function($ex){ echo $ex;};
 
         App::OnException(new \Exception("22222222222222",-1));
         App::assignExceptionHandler(\Exception::class,function($ex){
@@ -156,7 +167,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         });
         App::OnException(new \Exception("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",-1));
     }
-    public function do2()
+    public function doGlue()
     {
         $path_base=realpath(__DIR__.'/../');
         $path_config=$path_base.'/data_for_tests/Core/Helper/ControllerHelper/';
@@ -267,9 +278,12 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::Platform();
         App::IsInException();
         App::getPathInfo();
-        
-        
-        
+        try{
+            App::Pager();
+        }catch(\Throwable $ex){
+            //
+        }
+        App::Logger();
     }
     protected function do4()
     {
@@ -316,6 +330,14 @@ class AppTest extends \PHPUnit\Framework\TestCase
         AppTestApp::G()->run();
         
         AppTestApp2::RunQuickly([]);
+    }
+    protected function do_Core_Component()
+    {
+        App::G()->getStaticComponentClasses();
+        App::G()->getDynamicComponentClasses();
+        $class="NoExits";
+        App::G()->addDynamicComponentClass($class);
+        App::G()->removeDynamicComponentClass($class);
     }
 }
 class AppTestApp extends App

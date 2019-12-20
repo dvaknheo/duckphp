@@ -7,7 +7,7 @@ namespace DuckPhp\Ext;
 
 use DuckPhp\Ext\DBManager;
 
-class DBReusePoolProxy extends DBManager
+class DBReusePoolProxy extends DBManager // @codeCoverageIgnoreStart
 {
     public $options_ex = [
         'db_reuse_size' => 100,
@@ -26,15 +26,20 @@ class DBReusePoolProxy extends DBManager
     public function init(array $options, object $context = null)
     {
         parent::init($options, $context);
-        try {
-            $context->addDynamicComponentClass(static::class);
-        } catch (\BadMethodCallException $ex) { // @codeCoverageIgnore
-            //do nothing;
-        }
         
         $this->db_reuse_size = $this->options['db_reuse_size'] ?? 100;
         $this->db_reuse_timeout = $this->options['db_reuse_timeout'] ?? 5;
         return $this;
+    }
+    //@override
+    protected function initContext($options = [], $context = null)
+    {
+        parent::initContext($options, $context);
+        try {
+            $context->addDynamicComponentClass(static::class);
+        } catch (\BadMethodCallException $ex) { // @ codeCoverageIgnore
+            //do nothing;
+        }
     }
     //////////////////
     protected function getObjectIndex($tag)
@@ -159,4 +164,4 @@ class DBReusePoolProxy extends DBManager
             $this->kickObject($tag);
         }
     }
-}
+}   // @codeCoverageIgnoreEnd

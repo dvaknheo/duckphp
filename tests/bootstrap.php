@@ -47,10 +47,6 @@ class MyCodeCoverage
         $path=realpath(__DIR__.'/../src');
         $coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage();
         $coverage->filter()->addDirectoryToWhitelist($path);
-        $coverage->filter()->removeDirectoryFromWhitelist($path.'/SwooleHttpd');
-        $coverage->filter()->removeFileFromWhitelist($path.'/Ext/Oldbones.php');
-        $coverage->filter()->removeFileFromWhitelist($path.'/Ext/Lazybones.php');
-        $coverage->filter()->removeFileFromWhitelist($path.'/Ext/DBReusePoolProxy.php');
 
         $coverage->setTests(array(
           'T' =>
@@ -174,16 +170,13 @@ class TestFileGenerator
                 continue;
             }
             
-            if ($short_file==='Ext/DBReusePoolProxy.php' ||  $short_file==='Ext/Oldbones.php' || $short_file==='Ext/Lazybones.php') {
-                continue;
-            }
             static::MakeDir($short_file, $dest);
             
             $data =static::MakeTest($file, $short_file);
             
             $file_name=$dest.str_replace('.php', 'Test.php', $short_file);
             if (is_file($file_name)) {
-                echo "File Exists:".$file_name."\n";
+                echo "Skip Existed File:".$file_name."\n";
                 continue;
             }
             file_put_contents($file_name, $data);

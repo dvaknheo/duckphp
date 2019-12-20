@@ -8,7 +8,7 @@ namespace DuckPhp\Ext;
 use DuckPhp\Core\SingletonEx;
 use DuckPhp\Core\Route;
 
-class Lazybones
+class Lazybones // @codeCoverageIgnoreStart
 {
     use SingletonEx;
     
@@ -257,4 +257,4 @@ class Lazybones
         }
     }
     //*/
-}
+} // @codeCoverageIgnoreEnd

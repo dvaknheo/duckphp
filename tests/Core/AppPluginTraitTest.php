@@ -1,10 +1,8 @@
 <?php 
 namespace tests\DuckPhp\Core
 {
-
-    use DuckPhp\Core\AppPluginTrait;
-    use DuckPhp\Core\App;
-    use DuckPhp\App as DuckPhp;
+use DuckPhp\Core\AppPluginTrait;
+use DuckPhp\App as DuckPhp;
 
 class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
 {
@@ -33,7 +31,7 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
             'plugin_search_config'=>true,
             //'plugin_files_conifg'=>[],
         ];
-        
+        DuckPhp::G(new DuckPhp());
         AppPluginTraitApp::G()->init($plugin_options,DuckPhp::G()->init($options));
         
         \DuckPhp\Core\Route::G()->bindServerData(\DuckPhp\Core\SuperGlobal::G()->_SERVER);
@@ -45,6 +43,7 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
         AppPluginTraitApp::G(new AppPluginTraitApp())->init($plugin_options,DuckPhp::G()->init($options));
         var_dump(AppPluginTraitApp::G()->plugin_options['plugin_path_namespace']);
         \MyCodeCoverage::G()->end(AppPluginTrait::class);
+        DuckPhp::G(new DuckPhp());
         $this->assertTrue(true);
     }
 }
