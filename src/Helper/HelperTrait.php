@@ -3,7 +3,7 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckPhp\Core\Helper;
+namespace DuckPhp\Helper;
 
 use DuckPhp\Core\ExtendableStaticCallTrait;
 use DuckPhp\Core\ThrowOn;

@@ -43,18 +43,16 @@ class App extends Core_App
             ],
             
         ];
+    protected $componentClassMap = [
+                'M' => 'Helper\ModelHelper',
+                'V' => 'Helper\ViewHelper',
+                'C' => 'Helper\ControllerHelper',
+                'S' => 'Helper\ServiceHelper',
+            ];
     public function __construct()
     {
         $this->options = array_merge($this->options, $this->options_ex);
         parent::__construct();
-        if (get_class($this) === self::class) {
-            $this->componentClassMap = [
-                'M' => 'Core\Helper\ModelHelper',
-                'V' => 'Core\Helper\ViewHelper',
-                'C' => 'Core\Helper\ControllerHelper',
-                'S' => 'Core\Helper\ServiceHelper',
-            ];
-        }
     }
     // @override parent
     public function _Pager(object $replacement_object = null)

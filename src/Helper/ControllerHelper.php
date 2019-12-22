@@ -3,9 +3,9 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckPhp\Core\Helper;
+namespace DuckPhp\Helper;
 
-use DuckPhp\Core\Helper\HelperTrait;
+use DuckPhp\Helper\HelperTrait;
 use DuckPhp\Core\App;
 
 class ControllerHelper

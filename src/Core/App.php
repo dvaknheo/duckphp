@@ -111,12 +111,7 @@ class App
     protected $error_view_inited = false;
     
     // for helper
-    protected $componentClassMap = [
-            'M' => 'Helper\ModelHelper',
-            'V' => 'Helper\ViewHelper',
-            'C' => 'Helper\ControllerHelper',
-            'S' => 'Helper\ServiceHelper',
-    ];
+    protected $componentClassMap = [];
     // for trait
     protected $system_handlers = [
         'header' => null,

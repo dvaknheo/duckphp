@@ -5,7 +5,7 @@
  */
 namespace UserSystemDemo\Base\Helper;
 
-use DuckPhp\Core\Helper\ControllerHelper as Helper;
+use DuckPhp\Helper\ControllerHelper as Helper;
 
 class ControllerHelper extends Helper
 {

@@ -5,7 +5,7 @@
  */
 namespace UserSystemDemo\Base\Helper;
 
-use DuckPhp\Core\Helper\ViewHelper as Helper;
+use DuckPhp\Helper\ViewHelper as Helper;
 
 class ViewHelper extends Helper
 {
