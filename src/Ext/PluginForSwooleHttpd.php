@@ -27,16 +27,17 @@ class PluginForSwooleHttpd // impelement SwooleExtAppInterface
         $this->context_class::G()->run();
     }
     // @interface SwooleExtAppInterface
-    public function onSwooleHttpdInit($SwooleHttpd, $InCoroutine = false, ?callable $RunHandler)
+    public function onSwooleHttpdCoroutine($SwooleHttpd)
+    {
+            $app::SG($SwooleHttpd::SG());
+            return;
+    }
+    public function onSwooleHttpdInit($SwooleHttpd=null, ?callable $RunHandler=null)
     {
         $app = $this->context_class::G();
         $app->options['use_super_global'] = true;
-        if ($InCoroutine) {
-            $app::SG($SwooleHttpd::SG());
-            return;
-        }
         
-        $SwooleHttpd->set_http_exception_handler([$this->context_class,'OnException']);  // TODO
+        $SwooleHttpd->set_http_exception_handler([$this->context_class,'handlerAllException']);
         $SwooleHttpd->set_http_404_handler([$this->context_class, 'On404']);             // 接管 404 处理。
         
         $flag = $SwooleHttpd->is_with_http_handler_root();                         // 如果还有子文件，做404后处理
@@ -51,7 +52,9 @@ class PluginForSwooleHttpd // impelement SwooleExtAppInterface
     // @interface SwooleExtAppInterface
     public function getStaticComponentClasses()
     {
-        return $this->context_class::G()->getStaticComponentClasses();
+        $ret=$this->context_class::G()->getStaticComponentClasses();
+        $ret[]=static::class;
+        return $ret;
     }
     // @interface SwooleExtAppInterface
     public function getDynamicComponentClasses()

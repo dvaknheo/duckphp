@@ -71,7 +71,7 @@ class ExceptionManager
         /* Don't execute PHP internal error handler */
         return true;
     }
-    public function onException($ex)
+    public function handlerAllException($ex)
     {
         foreach ($this->exceptionHandlers as $class => $callback) {
             if (is_a($ex, $class)) {
@@ -103,9 +103,9 @@ class ExceptionManager
         
         if ($this->options['handle_all_exception']) {
             if ($this->system_exception_handler) {
-                $this->last_exception_handler = ($this->system_exception_handler)([$this,'onException']);
+                $this->last_exception_handler = ($this->system_exception_handler)([$this,'handlerAllException']);
             } else {
-                $this->last_exception_handler = set_exception_handler([$this,'onException']);
+                $this->last_exception_handler = set_exception_handler([$this,'handlerAllException']);
             }
         }
     }

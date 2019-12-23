@@ -6,6 +6,7 @@
 namespace DuckPhp;
 
 use DuckPhp\Core\HttpServer as Server;
+use DuckPhp\Ext\PluginForSwooleHttpd;
 
 class HttpServer extends Server
 {
@@ -39,14 +40,14 @@ class HttpServer extends Server
         
         echo "DuckPhp: RunServer by SwooleHttpd http://$host:$port/$ext\n";
         
-        $dn_options = $this->options['dnmvcs'] ?? [];
+        $dn_options = $this->options['duckphp'] ?? [];
         $dn_options['path'] = $path;
         $dn_options['swoole'] = $dn_options['swoole'] ?? [];
         $dn_options['swoole']['host'] = $host;
         $dn_options['swoole']['port'] = $port;
+        $dn_options['ext'][PluginForSwooleHttpd::class] = true;
 
         if (defined('DuckPhp_WARNING_IN_TEMPLATE')) {
-            $dn_options['skip_setting_file'] = true;
             echo "Don't run the template file directly \n";
         }
         App::RunQuickly($dn_options);

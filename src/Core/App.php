@@ -111,7 +111,12 @@ class App
     protected $error_view_inited = false;
     
     // for helper
-    protected $componentClassMap = [];
+    protected $componentClassMap = [
+        'M' => 'Helper\ModelHelper',
+        'V' => 'Helper\ViewHelper',
+        'C' => 'Helper\ControllerHelper',
+        'S' => 'Helper\ServiceHelper',
+    ];
     // for trait
     protected $system_handlers = [
         'header' => null,
@@ -269,6 +274,7 @@ class App
         }
         try {
             RuntimeState::ReCreateInstance()->begin();
+            View::G()->setViewWrapper(null,null);
             $this->onRun();
             
             $route = Route::G();
@@ -284,7 +290,7 @@ class App
             $this->clear();
         } catch (\Throwable $ex) {
             RuntimeState::G()->is_in_exception = true;
-            ExceptionManager::G()->onException($ex);
+            ExceptionManager::G()->handlerAllException($ex);
             $ret = true;
         }
         if ($this->afterRunHandler) {
@@ -872,6 +878,10 @@ trait Core_Glue
     {
         return ExceptionManager::G()->setDefaultExceptionHandler($callback);
     }
+    public static function handlerAllException($ex)
+    {
+        return ExceptionManager::G()->handlerAllException($ex);
+    }
     //super global
     public static function SG(object $replacement_object = null)
     {
@@ -919,6 +929,7 @@ trait Core_Component
             Configer::class,
             Route::class,
             Logger::class,
+            View::class,
         ];
         if (!in_array(static::class, $ret)) {
             $ret[] = static::class;
@@ -930,7 +941,6 @@ trait Core_Component
         $ret = [
             RuntimeState::class,
             SuperGlobal::class,
-            View::class,
         ];
         $ret = array_merge($ret, $this->extDynamicComponentClasses);
         return $ret;

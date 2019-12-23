@@ -43,12 +43,6 @@ class App extends Core_App
             ],
             
         ];
-    protected $componentClassMap = [
-                'M' => 'Helper\ModelHelper',
-                'V' => 'Helper\ViewHelper',
-                'C' => 'Helper\ControllerHelper',
-                'S' => 'Helper\ServiceHelper',
-            ];
     public function __construct()
     {
         $this->options = array_merge($this->options, $this->options_ex);
