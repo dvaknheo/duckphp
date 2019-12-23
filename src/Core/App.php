@@ -283,6 +283,8 @@ class App
             RuntimeState::G()->is_in_exception = true;
             if (!$this->options['skip_exception_check']) {
                 ExceptionManager::G()->handlerAllException($ex);
+            } else {
+                throw $ex;
             }
             $ret = true;
         }
