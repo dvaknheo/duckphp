@@ -32,7 +32,7 @@ class PluginForSwooleHttpd // impelement SwooleExtAppInterface
     {
         return $this->context_class::G()->run();
     }
-    public function onSwooleHttpdInit($SwooleHttpd=null, ?callable $RunHandler=null)
+    public function onSwooleHttpdInit($SwooleHttpd = null, ?callable $RunHandler = null)
     {
         $this->SwooleHttpd = $SwooleHttpd;
         
@@ -52,7 +52,7 @@ class PluginForSwooleHttpd // impelement SwooleExtAppInterface
         $app->replaceDefaultRunHandler($RunHandler);
     }
     // @interface SwooleExtAppInterface
-    public function onSwooleHttpdStart($SwooleHttpd=null)
+    public function onSwooleHttpdStart($SwooleHttpd = null)
     {
         $this->context_class::G()->replaceDefaultRunHandler(null);
         //$this->context_class::G()->addRouteHook([static::class,'Hook'], 'prepend-outter');
@@ -80,7 +80,7 @@ class PluginForSwooleHttpd // impelement SwooleExtAppInterface
     }
     public function _Hook($path_info)
     {
-        
+
         //$this->context_class::G()::SG($SwooleHttpd::SG());
 
         return false;

@@ -260,13 +260,12 @@ class App
     }
     public function run(): bool
     {
-        $this->is_failed = false;
         if ($this->defaultRunHandler) {
             return ($this->defaultRunHandler)();
         }
         try {
             RuntimeState::ReCreateInstance()->begin();
-            View::G()->setViewWrapper(null,null);
+            View::G()->setViewWrapper(null, null);
             $this->onRun();
             
             $route = Route::G();
@@ -282,7 +281,7 @@ class App
             $this->clear();
         } catch (\Throwable $ex) {
             RuntimeState::G()->is_in_exception = true;
-            if(!$this->options['skip_exception_check']){
+            if (!$this->options['skip_exception_check']) {
                 ExceptionManager::G()->handlerAllException($ex);
             }
             $ret = true;
