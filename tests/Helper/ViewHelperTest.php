@@ -1,7 +1,7 @@
 <?php
-namespace tests\DuckPhp\Core\Helper;
+namespace tests\DuckPhp\Helper;
 
-use DuckPhp\Core\Helper\ViewHelper;
+use DuckPhp\Helper\ViewHelper;
 
 class ViewHelperTest extends \PHPUnit\Framework\TestCase
 {
@@ -13,8 +13,8 @@ class ViewHelperTest extends \PHPUnit\Framework\TestCase
         $a="a";$b="b";$c="c";
         ViewHelper::H($str);
     
-        $path_base=realpath(__DIR__.'/../../');
-        $path_view=$path_base.'/data_for_tests/Core/Helper/ViewHelper/';
+        $path_base=realpath(__DIR__.'/../');
+        $path_view=$path_base.'/data_for_tests/Helper/ViewHelper/';
         $options=[
             'path_view'=>$path_view,
         ];

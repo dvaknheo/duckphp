@@ -1,7 +1,7 @@
 <?php
-namespace tests\DuckPhp\Core\Helper;
+namespace tests\DuckPhp\Helper;
 
-use DuckPhp\Core\Helper\HelperTrait;
+use DuckPhp\Helper\HelperTrait;
 
 class HelperTraitTest extends \PHPUnit\Framework\TestCase
 {
@@ -12,9 +12,9 @@ class HelperTraitTest extends \PHPUnit\Framework\TestCase
         $options=[
             'skip_setting_file'=>true,
             'is_debug'=>true,
-            'is_debug'=>'for_tests',
+            'platform'=>'for_tests',
         ];
-        \DuckPhp\Core\APP::G()->init($options);
+        \DuckPhp\APP::G()->init($options);
         
         HelperTraitObject::IsDebug();
         HelperTraitObject::IsRealDebug();

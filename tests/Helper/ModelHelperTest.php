@@ -1,7 +1,7 @@
 <?php
-namespace tests\DuckPhp\Core\Helper;
+namespace tests\DuckPhp\Helper;
 
-use DuckPhp\Core\Helper\ModelHelper;
+use DuckPhp\Helper\ModelHelper;
 
 class ModelHelperTest extends \PHPUnit\Framework\TestCase
 {

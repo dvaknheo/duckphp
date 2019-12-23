@@ -1,7 +1,7 @@
 <?php
-namespace tests\DuckPhp\Core\Helper;
+namespace tests\DuckPhp\Helper;
 
-use DuckPhp\Core\Helper\ServiceHelper;
+use DuckPhp\Helper\ServiceHelper;
 
 class ServiceHelperTest extends \PHPUnit\Framework\TestCase
 {
@@ -9,8 +9,8 @@ class ServiceHelperTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(ServiceHelper::class);
         
-        $path_base=realpath(__DIR__.'/../../');
-        $path_config=$path_base.'/data_for_tests/Core/Helper/ServiceHelper/';
+        $path_base=realpath(__DIR__.'/../');
+        $path_config=$path_base.'/data_for_tests/Helper/ServiceHelper/';
         $options=[
             'skip_setting_file'=>true,
             'path_config'=>$path_config,

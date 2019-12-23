@@ -1,7 +1,7 @@
 <?php
-namespace tests\DuckPhp\Core\Helper;
+namespace tests\DuckPhp\Helper;
 
-use DuckPhp\Core\Helper\ControllerHelper;
+use DuckPhp\Helper\ControllerHelper;
 
 class ControllerHelperTest extends \PHPUnit\Framework\TestCase
 {
@@ -12,8 +12,8 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         
         //code here
         //*
-        $path_base=realpath(__DIR__.'/../../');
-        $path_config=$path_base.'/data_for_tests/Core/Helper/ControllerHelper/';
+        $path_base=realpath(__DIR__.'/../');
+        $path_config=$path_base.'/data_for_tests/Helper/ControllerHelper/';
         $options=[
             'skip_setting_file'=>true,
             'path_config'=>$path_config,
@@ -44,8 +44,8 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
 
         //*/
         //*
-        $path_base=realpath(__DIR__.'/../../');
-        $path_view=$path_base.'/data_for_tests/Core/Helper/ControllerHelper/';
+        $path_base=realpath(__DIR__.'/../');
+        $path_view=$path_base.'/data_for_tests/Helper/ControllerHelper/';
         $options=[
             'path_view'=>$path_view,
         ];

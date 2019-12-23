@@ -147,7 +147,7 @@ class JsonRpcExt
         
         $data = curl_exec($ch);
         curl_close($ch);
-        return $data;
+        return $data !== false?$data:'';
     }
     protected function prepare_token($ch)
     {

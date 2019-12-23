@@ -42,8 +42,6 @@ class AppTest extends \PHPUnit\Framework\TestCase
         ];
         App::RunQuickly($options,function(){
             App::G()->addBeforeShowHandler(function(){ echo "beforeShowHandlers";});
-            App::G()->setBeforeRunHandler(function(){ echo "setBeforeRunHandler";});
-            App::G()->setAfterRunHandler(function(){ echo "setAfterRunHandler";});
             
             $value = $cache[$key]; // trigger notice
             App::G()->options['error_debug']='_sys/error-debug';
@@ -91,17 +89,10 @@ class AppTest extends \PHPUnit\Framework\TestCase
 
 
         $appended=function () {
-            App::G()->forceFail();
+            var_dump("changed");
             return true;
         };
-         $appended=function () {
-            App::G()->forceFail();
-            return true;
-        };
-        App::G()->setBeforeRunHandler($appended);
-        App::G()->run();
-        App::G()->setBeforeRunHandler(null);
-        App::G()->setAfterRunHandler($appended);
+        App::G()->replaceDefaultRunHandler($appended);
         App::G()->run();
         
         \MyCodeCoverage::G()->end(App::class);
@@ -170,7 +161,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
     public function doGlue()
     {
         $path_base=realpath(__DIR__.'/../');
-        $path_config=$path_base.'/data_for_tests/Core/Helper/ControllerHelper/';
+        $path_config=$path_base.'/data_for_tests/Helper/ControllerHelper/';
         $options=[
             'skip_setting_file'=>true,
             'path_config'=>$path_config,
@@ -344,11 +335,6 @@ class AppTestApp extends App
 {
     protected function onInit()
     {
-        $this->setBeforeRunHandler(function(){
-            static::trace_dump();
-            static::var_dump("ABC");
-            return true;
-        });
         return parent::onInit();
     }
 }
@@ -419,9 +405,9 @@ class FakeSessionHandler implements \SessionHandlerInterface
 }
 
 }
-namespace tests\DuckPhp\Core\Helper{
+namespace tests\DuckPhp\Helper{
 class ControllerHelper
 {
-    use \DuckPhp\Core\Helper\HelperTrait;
+    use \DuckPhp\Helper\HelperTrait;
 }
 }
