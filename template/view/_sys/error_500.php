@@ -8,7 +8,7 @@ $is_debug = V::IsDebug();
 $class = get_class($ex);
 $code = $ex->getCode();
 $message = $ex->getMessage();
-$trace = $ex->getTraceString();
+$trace = $ex->getTraceAsString();
 
 if ($is_debug) {
     ?>

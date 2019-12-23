@@ -24,7 +24,7 @@ class App extends Core_App
             //'route_map_append' => [],
             
             'ext' => [
-                //'DuckPhp\Ext\PluginForSwooleHttpd'=>true,
+                'DuckPhp\Ext\PluginForSwooleHttpd'=>true,
                 'DuckPhp\Ext\Misc' => true,
                 'DuckPhp\Ext\SimpleLogger' => true,
                 'DuckPhp\Ext\DBManager' => true,
@@ -46,6 +46,9 @@ class App extends Core_App
     public function __construct()
     {
         $this->options = array_merge($this->options, $this->options_ex);
+        if (PHP_SAPI !== 'cli' || !extension_loaded('swoole')) {
+            unset($this->options['DuckPhp\Ext\PluginForSwooleHttpd']);
+        }
         parent::__construct();
     }
     // @override parent

@@ -61,6 +61,7 @@ class App
             'skip_view_notice_error' => true,
             'skip_404_handler' => false,
             'skip_plugin_mode_check' => false,
+            'skip_exception_check' => false,
             
             //// error handler ////
             'handle_all_dev_error' => true,
@@ -104,10 +105,8 @@ class App
 
     public $is_debug = true;
     public $platform = '';
-    public $override_from = ''; // for inner usage;
     
-    public $beforeRunHandler = null;
-    public $afterRunHandler = null;
+    protected $defaultRunHandler = null;
     protected $error_view_inited = false;
     
     // for helper
@@ -127,7 +126,6 @@ class App
     ];
     // for trait
     protected $extDynamicComponentClasses = [];
-    protected $is_failed = false;
     public function __construct()
     {
     }
@@ -194,14 +192,11 @@ class App
         ExceptionManager::G()->init($exception_options, $this)->run();
         
         $object = $this->checkOverride($options);
-        
-        $override_from = $object?static::class:'';
         $object = $object ?? $this;
         
         (self::class)::G($object);
         static::G($object);
         
-        $object->override_from = $override_from;
         $object->initOptions($options);
         return $object->onInit();
     }
@@ -266,11 +261,8 @@ class App
     public function run(): bool
     {
         $this->is_failed = false;
-        if ($this->beforeRunHandler) {
-            $flag = ($this->beforeRunHandler)();
-            if ($flag) {
-                return $this->getRunResult();
-            }
+        if ($this->defaultRunHandler) {
+            return ($this->defaultRunHandler)();
         }
         try {
             RuntimeState::ReCreateInstance()->begin();
@@ -290,27 +282,12 @@ class App
             $this->clear();
         } catch (\Throwable $ex) {
             RuntimeState::G()->is_in_exception = true;
-            ExceptionManager::G()->handlerAllException($ex);
+            if(!$this->options['skip_exception_check']){
+                ExceptionManager::G()->handlerAllException($ex);
+            }
             $ret = true;
         }
-        if ($this->afterRunHandler) {
-            $flag = ($this->afterRunHandler)();
-            if ($flag) {
-                return $this->getRunResult();
-            }
-        }
         return $ret;
-    }
-    protected function getRunResult()
-    {
-        if ($this->is_failed) {
-            return false;
-        }
-        return true;
-    }
-    public function forceFail()
-    {
-        $this->is_failed = true;
     }
     // 这里我们要做好些清理判断。对资源的释放处理
     public function clear(): void
@@ -329,13 +306,9 @@ class App
     
     ////////////////////////
     
-    public function setBeforeRunHandler(callable $handler = null): void
+    public function replaceDefaultRunHandler(callable $handler = null): void
     {
-        $this->beforeRunHandler = $handler;
-    }
-    public function setAfterRunHandler(callable $handler = null): void
-    {
-        $this->afterRunHandler = $handler;
+        $this->defaultRunHandler = $handler;
     }
     public function addBeforeShowHandler($handler)
     {
@@ -941,6 +914,7 @@ trait Core_Component
         $ret = [
             RuntimeState::class,
             SuperGlobal::class,
+            View::class,
         ];
         $ret = array_merge($ret, $this->extDynamicComponentClasses);
         return $ret;
