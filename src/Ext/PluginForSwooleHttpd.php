@@ -19,7 +19,7 @@ class PluginForSwooleHttpd // impelement SwooleExtAppInterface
     public function init($options, $context)
     {
         if (PHP_SAPI !== 'cli') {
-            return $this;
+            return $this; // @codeCoverageIgnore
         }
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         $this->context_class = get_class($context);

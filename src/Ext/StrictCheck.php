@@ -57,7 +57,7 @@ class StrictCheck
         return static::G()->checkStrictComponent('DB', 7);
     }
     ///////////////////////////////////////////////////////////
-    protected function getCallerByLevel($level, $parent_classes_to_skip = [])
+    public function getCallerByLevel($level, $parent_classes_to_skip = [])
     {
         $level += 1;
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, static::MAX_TRACE_LEVEL);

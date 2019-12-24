@@ -61,11 +61,11 @@ class HttpServerParent extends HttpServer
     public function test_runHttpServer()
     {
         $this->options['path']=__DIR__;
-        $this->options['dnmvcs']=[
+        $this->options['duckphp']=[
             'skip_setting_file'=>true,
             'error_404'=>null,
             'ext'=>[
-                'DuckPhp\SwooleHttpd\SwooleExt'=>false,
+                'DuckPhp\PluginForSwoole'=>false,
             ]
         ];
         
