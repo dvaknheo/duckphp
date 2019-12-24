@@ -33,6 +33,10 @@ class ExceptionManager
     public function __construct()
     {
     }
+    public static function OnException($ex)
+    {
+        return static::G()->_OnException($ex);
+    }
     public function setDefaultExceptionHandler($default_exception_handler)
     {
         $this->default_exception_handler = $default_exception_handler;
@@ -71,7 +75,7 @@ class ExceptionManager
         /* Don't execute PHP internal error handler */
         return true;
     }
-    public function handlerAllException($ex)
+    public function _OnException($ex)
     {
         foreach ($this->exceptionHandlers as $class => $callback) {
             if (is_a($ex, $class)) {
@@ -103,9 +107,9 @@ class ExceptionManager
         
         if ($this->options['handle_all_exception']) {
             if ($this->system_exception_handler) {
-                $this->last_exception_handler = ($this->system_exception_handler)([$this,'handlerAllException']);
+                $this->last_exception_handler = ($this->system_exception_handler)([$this,'_OnException']);
             } else {
-                $this->last_exception_handler = set_exception_handler([$this,'handlerAllException']);
+                $this->last_exception_handler = set_exception_handler([$this,'_OnException']);
             }
         }
     }

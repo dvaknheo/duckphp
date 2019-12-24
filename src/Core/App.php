@@ -186,7 +186,7 @@ class App
             
             'system_exception_handler' => [static::class,'set_exception_handler'],
             
-            'default_exception_handler' => [static::class,'OnException'],
+            'default_exception_handler' => [static::class,'OnDefaultException'],
             'dev_error_handler' => [static::class,'OnDevErrorHandler'],
         ];
         ExceptionManager::G()->init($exception_options, $this)->run();
@@ -282,7 +282,7 @@ class App
         } catch (\Throwable $ex) {
             RuntimeState::G()->is_in_exception = true;
             if (!$this->options['skip_exception_check']) {
-                ExceptionManager::G()->handlerAllException($ex);
+                ExceptionManager::OnException($ex);
             } else {
                 throw $ex;
             }
@@ -316,7 +316,6 @@ class App
         $this->beforeShowHandlers[] = $handler;
     }
     ////////////////////////
-    // @provider output.
     public function extendComponents($method_map, $components = []): void
     {
         static::AssignExtendStaticMethod($method_map);
@@ -367,9 +366,9 @@ trait Core_Handler
     {
         static::G()->_On404();
     }
-    public static function OnException($ex): void
+    public static function OnDefaultException($ex): void
     {
-        static::G()->_OnException($ex);
+        static::G()->_OnDefaultException($ex);
     }
     public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
     {
@@ -395,9 +394,8 @@ trait Core_Handler
         $this->_Show([], $error_view);
     }
     
-    public function _OnException($ex): void
+    public function _OnDefaultException($ex): void
     {
-        $is_error = is_a($ex, 'Error') || is_a($ex, 'ErrorException')?true:false;
         $error_view = $this->options['error_500'] ?? null;
         $error_view = $this->error_view_inited?$error_view:null;
         
@@ -417,8 +415,7 @@ trait Core_Handler
         }
         ////////default;
         if (!$error_view) {
-            $desc = $is_error?'Internal Error':'Internal Exception';
-            echo "$desc \n<!--DuckPhp set options ['error_500'] to override me  -->\n";
+            echo "Internal Error \n<!--DuckPhp set options ['error_500'] to override me  -->\n";
             
             if ($data['is_debug']) {
                 echo "<h3>{$data['class']}({$data['code']}):{$data['message']}</h3>";
@@ -852,9 +849,9 @@ trait Core_Glue
     {
         return ExceptionManager::G()->setDefaultExceptionHandler($callback);
     }
-    public static function handlerAllException($ex)
+    public static function OnException($ex)
     {
-        return ExceptionManager::G()->handlerAllException($ex);
+        return ExceptionManager::G()->_OnException($ex);
     }
     //super global
     public static function SG(object $replacement_object = null)
@@ -894,6 +891,7 @@ trait Core_Glue
 trait Core_Component
 {
     //protected $extDynamicComponentClasses = [];
+
     public function getStaticComponentClasses()
     {
         $ret = [

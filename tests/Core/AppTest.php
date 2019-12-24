@@ -5,16 +5,15 @@ use DuckPhp\Core\App;
 use DuckPhp\App as DuckPhp;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\View;
+use DuckPhp\Core\Route;
 use DuckPhp\Core\SingletonEx;
 
 class AppTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        $path_app=\GetClassTestPath(App::class);
-        
         \MyCodeCoverage::G()->begin(App::class);
-        
+    
         $path_app=\GetClassTestPath(App::class);
         $path_config=\GetClassTestPath(Configer::class);
         
@@ -22,8 +21,8 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'path' => $path_app,
             'path_config' => $path_config,
             'path_view' => $path_app.'view/',
-
-            'platform' => 'BJ',
+            'namespace' => __NAMESPACE__,
+            'platform' => 'ForTests',
             'is_debug' => true,
             'skip_setting_file' => true,
             'reload_for_flags' => false,
@@ -33,6 +32,8 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'error_debug' => NULL,
             'skip_view_notice_error' => true,
             'use_super_global' => true,
+                        'override_class'=>'\\'.AppTestApp::class,
+
         ];
         $options['ext']=[
             'noclass'=>true,
@@ -56,16 +57,44 @@ class AppTest extends \PHPUnit\Framework\TestCase
 
         });
         
-        App::SG()->_SERVER['PATH_INFO']='/NOOOOOOOOOOOOOOO';
+        //App::SG()->_SERVER['PATH_INFO']='/NOOOOOOOOOOOOOOO';
+        Route::G()->bind('/NOOOOOOOOOOOOOOO');  // 这两句居然有区别 ,TODO ，分析之
+        
         App::G()->options['error_404']=function(){
-            echo "nooooooooooooo\n";
+            echo "noooo 404  ooooooooo\n";
             
         };
+        
         App::G()->run();
+echo "-------------------------------------\n";
+        Route::G()->bind('/exception');
+        App::G()->run();
+
+        try{
+                App::G()->options['skip_exception_check']=true;
+            Route::G()->bind('/exception');
+            App::G()->run();
+        }catch(\Throwable $ex){
+            echo $ex->getMessage();
+        }
+        App::G()->options['skip_exception_check']=false;
+//\MyCodeCoverage::G()->end(App::class);
+//$this->assertTrue(true);
+//return;
+        //Route::G()->bind('')
+        //////////////////////////////////////////////////
+        
+        $app=new App();
+        $options=['plugin_mode'=>true];
+        try{
+            $app->init($options,$app);
+        }catch(\Exception $ex){
+            echo $ex->getMessage();
+        }
+        
+        
         App::G()->clear();
-
-            $path_app=\GetClassTestPath(App::class);
-
+        ///////////////////////////
         $options=[
             // 'no this path' => $path_app,
             'path_config' => $path_app,
@@ -76,41 +105,29 @@ class AppTest extends \PHPUnit\Framework\TestCase
         View::G(new View());
         Configer::G(new Configer());
         App::G(new App())->init($options);
-        $this->doException();
-        $this->doGlue();
-        $this->doSystemWrapper();
-
-        App::G()->extendComponents(['Foo'=>[AppTest::class,'Foo']],['V',"ZZZ"]);
         
-        $this->do4();
-        $this->doPugins();
-        $this->do_Core_Component();
 
+        $this->doException();
 
-
-        $appended=function () {
+        $this->do404();
+        $this->doHelper();
+        
+        $this->doGlue();
+        $this->do_Core_Redirect();
+        $this->doSystemWrapper();
+        
+        $xfunc=function () {
             var_dump("changed");
             return true;
         };
-        App::G()->replaceDefaultRunHandler($appended);
+        App::G()->replaceDefaultRunHandler($xfunc);
         App::G()->run();
         
-        \MyCodeCoverage::G()->end(App::class);
-        $this->assertTrue(true);
-    }
-    public function doPugins()
-    {
-        $app=new App();
-        $options=['plugin_mode'=>true];
-        try{
-            $app->init($options,$app);
-        }catch(\Exception $ex){
-            echo $ex->getMessage();
-        }
-        $new_namespace=__NAMESPACE__;
-        $new_namespace.='\\';
-        App::G()->cloneHelpers($new_namespace, $componentClassMap);
-        App::G()->cloneHelpers($new_namespace, ['M'=>'no_exits_class']);
+        $this->do_Core_Component();
+        
+\MyCodeCoverage::G()->end(App::class);
+$this->assertTrue(true);
+return;
     }
     public function doSystemWrapper()
     {
@@ -118,7 +135,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
 
         App::header($output,$replace = true, $http_response_code=0);
         App::setcookie( $key="123",  $value = '', $expire = 0,  $path = '/',  $domain  = '', $secure = false,  $httponly = false);
-        App::exit($code=0);
+       
         App::set_exception_handler(function($handler){
             return set_exception_handler($handler);
         });
@@ -142,21 +159,54 @@ class AppTest extends \PHPUnit\Framework\TestCase
         
     }
     public function doException()
-    {       
+    {
+        App::G()->is_debug=true;
         App::G()->options['error_500']="_sys/error-exception";
         App::OnException(new \Exception("333333",-1));
-        
         App::G()->options['error_500']=null;
         App::OnException(new \Exception("EXxxxxxxxxxxxxxx",-1));
         
         App::G()->options['error_500']=function($ex){ echo $ex;};
-
         App::OnException(new \Exception("22222222222222",-1));
+        
         App::assignExceptionHandler(\Exception::class,function($ex){
-            App::OnException($ex);
+            App::OnDefaultException($ex);
             echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         });
         App::OnException(new \Exception("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",-1));
+    }
+    public function doHelper()
+    {
+        ////
+        
+        ////
+        $str='<>';
+        echo  App::H($str);
+        echo App::H(['a'=>'b']);
+        echo App::H(123);
+        echo App::L("a{b}c",[]);
+        echo App::L("a{b}c",['b'=>'123']);
+        echo App::HL("&<{b}>",['b'=>'123']);
+        echo App::Domain();
+        App::IsRunning();
+        App::IsDebug();
+        App::IsRealDebug();
+        App::Platform();
+        try{
+            App::Pager();
+        }catch(\Throwable $ex){
+            //
+        }
+        App::Logger();
+        $flag=App::G()->is_debug;
+        
+        App::G()->is_debug=true;
+        App::trace_dump();
+        App::var_dump("OK");
+        App::G()->is_debug=false;
+        App::trace_dump();
+        App::var_dump("OK");
+        App::G()->is_debug=$flag;
     }
     public function doGlue()
     {
@@ -174,23 +224,9 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::Config($key, $file_basename);
         App::LoadConfig($file_basename);
         
-        ////
-        App::trace_dump();
-        App::var_dump("OK");
-        ////
         
-        
-        $str='<>';
         $url="";
         $method="method";
-        App::H($str);
-        App::H(['a'=>'b']);
-        App::H(123);
-        App::L("a{b}c",[]);
-        App::L("a{b}c",['b'=>'123']);
-        App::HL("&<{b}>",['b'=>'123']);
-        App::Domain();
-        
         App::URL($url=null);
         
         App::Parameters();
@@ -221,18 +257,8 @@ class AppTest extends \PHPUnit\Framework\TestCase
         $ret=["ret"=>'OK'];
         
         $output="";
-        App::G()->system_wrapper_replace(['exit'=>function($code){
-            var_dump(DATE(DATE_ATOM));
-        }]);
-        //*
-        App::ExitRedirect($url);
-        App::ExitRedirect('http://www.github.com');
 
-        App::ExitRedirectOutside("http://www.github.com",true);
-        App::ExitRouteTo($url);
-        App::Exit404();
-        App::G()->is_debug=true;
-        App::ExitJson($ret);
+
         //*/
         
 
@@ -263,24 +289,19 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::assignPathNamespace("NoPath","NoName");
         App::addRouteHook(function(){},'append-outter',true);
         
-        App::IsRunning();
-        App::IsDebug();
-        App::IsRealDebug();
-        App::Platform();
+        
         App::IsInException();
         App::getPathInfo();
-        try{
-            App::Pager();
-        }catch(\Throwable $ex){
-            //
-        }
-        App::Logger();
+        
+        
+        App::OnException(new \Exception("something"));
+        
     }
-    protected function do4()
+    protected function do404()
     {
         
         
-    echo "-----------------------\n";
+        echo "-----------------------\n";
         $path_app=\GetClassTestPath(App::class);
         $path_config=\GetClassTestPath(Configer::class);
         $options=[
@@ -290,10 +311,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'is_debug' => true,
             'skip_setting_file' => true,
             'reload_for_flags' => true,
-            'error_exception' => NULL,
-            'error_500' => NULL,
-            'error_404' => NULL,
-            'error_debug' => NULL,
+            
             'skip_view_notice_error' => true,
             'use_super_global' => true,
             'override_class'=>'\\'.AppTestApp::class,
@@ -302,37 +320,70 @@ class AppTest extends \PHPUnit\Framework\TestCase
 
         
         $options=[
-        'path' => $path_app,
-        'skip_setting_file' => true,
-        'is_debug'=>false,
-        'error_exception' => NULL,
-        'error_500' => NULL,
-        'error_404' => NULL,
-        'error_debug' => NULL,
+            'path' => $path_app,
+            'skip_setting_file' => true,
+            'is_debug'=>false,
         ];
         AppTestApp::RunQuickly($options);
         
         AppTestApp::G()->options['error_404']='_sys/error-404';
-        AppTestApp::On404();
-        
-        AppTestApp::G()->addRouteHook(function(){
-            throw new \Exception("xxx");
-        },'append-outter',true);
-        AppTestApp::G()->run();
-        
+        AppTestApp::On404();        
         AppTestApp2::RunQuickly([]);
+    }
+    protected function do_Core_Redirect()
+    {
+        App::G()->system_wrapper_replace(['exit'=>function($code){
+            var_dump(DATE(DATE_ATOM));
+        }]);
+        
+        $url="/test";
+        
+        App::ExitRedirect($url);
+        App::ExitRedirect('http://www.github.com');
+
+        App::ExitRedirectOutside("http://www.github.com",true);
+        App::ExitRouteTo($url);
+        App::Exit404();
+        App::G()->is_debug=true;
+        App::ExitJson($ret);
     }
     protected function do_Core_Component()
     {
+
         App::G()->getStaticComponentClasses();
         App::G()->getDynamicComponentClasses();
         $class="NoExits";
         App::G()->addDynamicComponentClass($class);
         App::G()->removeDynamicComponentClass($class);
+        
+        
+        $new_namespace=__NAMESPACE__;
+        $new_namespace.='\\';
+    
+        $options=[
+            //'path' => $path_app,
+            'is_debug' => true,
+            'skip_setting_file' => true,
+            'namespace'=> __NAMESPACE__,
+            'override_class'=>'\\'.AppTestApp::class,
+        ];
+        App::G()->init($options);
+
+        App::G()->extendComponents(['Foo'=>[AppTest::class,'Foo']],['V',"ZZZ"]);
+        App::G()->cloneHelpers($new_namespace);
+        App::G()->cloneHelpers($new_namespace, ['M'=>'no_exits_class']);
+    }
+    public static function Foo()
+    {
     }
 }
 class AppTestApp extends App
 {
+    public function __construcct()
+    {
+        parent::__construct();
+        return;
+    }
     protected function onInit()
     {
         return parent::onInit();
@@ -342,6 +393,7 @@ class AppTestApp2 extends App
 {
     protected function onInit()
     {
+        return null;
         //throw new \Exception("zzzzzzzzzzzz");
     }
 }
@@ -405,9 +457,26 @@ class FakeSessionHandler implements \SessionHandlerInterface
 }
 
 }
-namespace tests\DuckPhp\Helper{
+namespace tests\DuckPhp\Core\Helper{
 class ControllerHelper
 {
     use \DuckPhp\Helper\HelperTrait;
+}
+class ViewHelper
+{
+    use \DuckPhp\Helper\HelperTrait;
+}
+}
+namespace tests\DuckPhp\Core\Controller{
+class Main
+{
+    public function index()
+    {
+        var_dump("OK");
+    }
+    public function exception()
+    {
+        throw new \Exception("HAHA");
+    }
 }
 }
