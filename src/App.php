@@ -20,8 +20,8 @@ class App extends Core_App
             
             'use_super_global' => false,
             'rewrite_map' => [],
+            'route_map_important' => [],
             'route_map' => [],
-            //'route_map_append' => [],
             
             'ext' => [
                 //'DuckPhp\Ext\PluginForSwooleHttpd' => true,
@@ -45,12 +45,15 @@ class App extends Core_App
         ];
     public function __construct()
     {
+/*
         $this->options = array_merge($this->options, $this->options_ex);
-        if (PHP_SAPI !== 'cli' || !extension_loaded('swoole') && empty($this->options['swoole'])) {
-            
+        if (PHP_SAPI === 'cli' && extension_loaded('swoole')) {
+            //$t = ['DuckPhp\Ext\PluginForSwooleHttpd' => true];
+            //$this->options['ext'] = array_merge($t, $this->options);
         }
-        unset($this->options['DuckPhp\Ext\PluginForSwooleHttpd']);
+*/
         parent::__construct();
+
     }
     // @override parent
     public function _Pager(object $replacement_object = null)

@@ -12,9 +12,7 @@ class PluginForSwooleHttpdTest extends \PHPUnit\Framework\TestCase
         $options=[
             'swoole_ext_class' => FakeSwooleExt::class,
         ];
-        \MyCodeCoverage::G()->end(PluginForSwooleHttpd::class);
-        $this->assertTrue(true);
-        return;
+
         $context=App::G();
         PluginForSwooleHttpd::G()->init($options, $context);
         PluginForSwooleHttpd::G()->getStaticComponentClasses();
@@ -22,19 +20,14 @@ class PluginForSwooleHttpdTest extends \PHPUnit\Framework\TestCase
         PluginForSwooleHttpd::G()->run();
         
         $SwooleHttpd=new FakeSwooleHttpd();
-        $InCoroutine=false;
-        $RunHandler=null;
-        //PluginForSwooleHttpd::G()->onSwooleHttpdInit($SwooleHttpd, $InCoroutine, $RunHandler);
         
-        $InCoroutine=true;
-        $RunHandler=null;
-        //PluginForSwooleHttpd::G()->onSwooleHttpdInit($SwooleHttpd, $InCoroutine, $RunHandler);
+PluginForSwooleHttpd::G()->onSwooleHttpdInit($SwooleHttpd,null);
+PluginForSwooleHttpd::G()->onSwooleHttpdStart($SwooleHttpd);
+PluginForSwooleHttpd::G()->onSwooleHttpdRequest($SwooleHttpd);
+
         
         \MyCodeCoverage::G()->end(PluginForSwooleHttpd::class);
         $this->assertTrue(true);
-        /*
-       
-        //*/
     }
 }
 class FakeSwooleExt

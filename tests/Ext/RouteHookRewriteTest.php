@@ -26,7 +26,7 @@ class RouteHookRewriteTest extends \PHPUnit\Framework\TestCase
             ]
         ];
     
-        RouteHookRewrite::G()->init($options,Route::G());
+        RouteHookRewrite::G()->init($options,DuckPhp::G());
         RouteHookRewrite::G()->assignRewrite(['/k/v'=>'c/d?e=f',]);
         RouteHookRewrite::G()->assignRewrite('second','zz');
         RouteHookRewrite::G()->assignRewrite('/k/v?a=b','zz');

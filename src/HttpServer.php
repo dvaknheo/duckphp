@@ -45,7 +45,6 @@ class HttpServer extends Server
         $dn_options['swoole'] = $dn_options['swoole'] ?? [];
         $dn_options['swoole']['host'] = $host;
         $dn_options['swoole']['port'] = $port;
-        $dn_options['ext'][PluginForSwooleHttpd::class] = true;
 
         if (defined('DuckPhp_WARNING_IN_TEMPLATE')) {
             echo "Don't run the template file directly \n";

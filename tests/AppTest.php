@@ -14,8 +14,6 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         //code here
         //$handler=null;
         //DuckPhp::G()->addBeforeRunHandler($handler);
-        DuckPhp::G()->getStaticComponentClasses();
-        DuckPhp::G()->getDynamicComponentClasses();
         
         //$SwooleHttpd=new fakeSwooleHttpd;
         //DuckPhp::G()->onSwooleHttpdInit($SwooleHttpd, false,function(){var_dump("OK");});
@@ -31,23 +29,17 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::G()->init($options);
         DuckPhp::G()->system_wrapper_replace([
             'exit' =>function(){ echo "change!\n";},
-
         ]);
+        DuckPhp::Pager();
         
-        DuckPhp::Import('file');
-        $data=[['A'=>'b']];
-        DuckPhp::RecordsetUrl($data, $cols_map=[]);
-        DuckPhp::RecordsetH($data, $cols=[]);
+        //DuckPhp::Import('file');
+        //$data=[['A'=>'b']];
+        //DuckPhp::RecordsetUrl($data, $cols_map=[]);
+        //DuckPhp::RecordsetH($data, $cols=[]);
         
-        DuckPhp::DB();
-        DuckPhp::DB_W();
-        DuckPhp::DB_R();
-        
-        $object=new \stdClass();
-        $this->doSwoole();
-        //DuckPhp::DI('a',$object);
-        DuckPhp::Logger();//->info("OK");
-
+        //DuckPhp::DB();
+        //DuckPhp::DB_W();
+        //DuckPhp::DB_R();
         \MyCodeCoverage::G()->end(DuckPhp::class);
         $this->assertTrue(true);
 
@@ -59,7 +51,6 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         //DuckPhp::DB_R();
         
         //DuckPhp::setDBHandler($db_create_handler=null, $db_close_handler=null, $db_excption_handler=null);
-        DuckPhp::Pager();
         
         
         //DuckPhp::assignRewrite($key="abc", $value=null);
@@ -68,17 +59,6 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::assignRoute($key="zzz", $value=null);
         DuckPhp::getRoutes();
         */
-    }
-    public function doSwoole()
-    {
-        //DuckPhp::G()->getStaticComponentClasses();
-        
-        //DuckPhp::G()->getDynamicComponentClasses();
-        
-        $class="NoExits";
-        //DuckPhp::G()->addDynamicComponentClass($class);
-        //DuckPhp::G()->deleteDynamicComponentClass($class);
-
     }
 }
 class fakeSwooleHttpd
