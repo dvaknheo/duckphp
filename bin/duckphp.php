@@ -78,8 +78,6 @@ class Installer
             "create",
             "force",
             "full",
-            "prune-core",
-            "prune-helper",
             "verbose",
             
             "namespace:",
@@ -95,8 +93,6 @@ class Installer
         $options['start'] = isset($cli_options['start'])?true:false;
         $options['create'] = isset($cli_options['create'])?true:false;
         $options['force'] = isset($cli_options['force'])?true:false;
-        $options['prune_helper'] = isset($cli_options['prune-helper'])?true:false;
-        $options['prune_core'] = isset($cli_options['prune-core'])?true:false;
         $options['full'] = isset($cli_options['full'])?true:false;
         $options['verbose'] = isset($cli_options['verbose'])?true:false;
         
@@ -134,7 +130,7 @@ class Installer
         }
         
         foreach ($files as $file => $short_file_name) {
-            $is_in_full = substr($short_file_name, 0, strlen('public/full/')) === 'public/full/'?true:false;
+            $is_in_full = (substr($short_file_name, 0, strlen('public/full/'))) === 'public/full/'?true:false;
             if (!$is_full && $is_in_full) {
                 continue;
             }
@@ -206,9 +202,7 @@ class Installer
         
         if (!$is_in_full) {
             $data = $this->filteMacro($data, $is_in_full);
-            if ($this->options['prune_core']) {
-                $data = $this->purceCore($data);
-            }
+
             if ($this->options['namespace']) {
                 $data = $this->filteNamespace($data, $this->options['namespace']);
             }
@@ -241,23 +235,7 @@ class Installer
         $data = preg_replace('/^.*?@DUCKPHP_HEADFILE.*?$/m', $str_header, $data);
         
         return $data;
-    }
-    protected function purceCore($data)
-    {
-        $data = str_replace("DuckPhp\\", "DuckPhp\\Core\\", $data);
-        $data = str_replace("DuckPhp\\Core\\Core", "DuckPhp\\Core", $data);
-        return $data;
-    }
-    protected function pruneHelper($short_file_name)
-    {
-        return false; //TODO notwork ,to make it work ,should change
-        if (substr($short_file_name, -strlen('Helper.php')) === 'Helper.php') {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
+    }    
     protected function showWelcome()
     {
         echo <<<EOT
