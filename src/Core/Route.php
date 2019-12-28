@@ -73,10 +73,6 @@ class Route
     {
         return static::G()->_URL($url);
     }
-    public static function Parameters()
-    {
-        return static::G()->_Parameters();
-    }
     ////
     public function _URL($url = null)
     {
@@ -84,10 +80,6 @@ class Route
             return ($this->urlHandler)($url);
         }
         return $this->defaultURLHandler($url);
-    }
-    public function _Parameters()
-    {
-        return $this->parameters;
     }
     public function defaultURLHandler($url = null)
     {
@@ -354,6 +346,14 @@ class Route
     public function setPathInfo($path_info)
     {
         $this->path_info = $path_info;
+    }
+    public function getParameters()
+    {
+        return $this->parameters;
+    }
+    public function setParameters($parameters)
+    {
+        $this->parameters = $parameters;
     }
     public function getRouteError()
     {

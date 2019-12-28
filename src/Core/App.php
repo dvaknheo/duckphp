@@ -779,10 +779,6 @@ trait Core_Glue
     {
         return Route::G()->_URL($url);
     }
-    public static function Parameters()
-    {
-        return Route::G()->_Parameters();
-    }
     // view static
 
     public static function ShowBlock($view, $data = null)
@@ -813,6 +809,10 @@ trait Core_Glue
     public static function getPathInfo()
     {
         return Route::G()->getPathInfo();
+    }
+    public static function getParameters()
+    {
+        return Route::G()->getParameters();
     }
     public static function addRouteHook($hook, $position, $once = true)
     {

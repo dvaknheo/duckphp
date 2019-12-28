@@ -50,9 +50,9 @@ class ControllerHelper
         return App::Domain();
     }
     ////
-    public static function Parameters()
+    public static function getParameters()
     {
-        return App::Parameters();
+        return App::getParameters();
     }
     public static function getRouteCallingMethod()
     {
