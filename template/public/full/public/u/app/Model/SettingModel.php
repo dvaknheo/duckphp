@@ -18,6 +18,6 @@ class SettingModel extends BaseModel
     public function set($key, $value)
     {
         $sql = "INSERT INTO Settings (k,v) VALUES(?,?) ON DUPLICATE KEY UPDATE  v=?";
-        $ret = M::DB()->execQuick($sql, $key, $value, $value);
+        $ret = M::DB()->execute($sql, $key, $value, $value);
     }
 }
