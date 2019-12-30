@@ -325,7 +325,7 @@ static $a='val'; =>  $a=C::STATICS('a','val');
 $x=static::$abc; => $x=C::CLASS_STATICS(static::class,'abc');
 ```
 ##### 7.高级路由
-用 C::Parameters() 获取切片，对地址重写有效。
+用 C::getParameters() 获取切片，对地址重写有效。
 如果要做权限判断 构造函数里 C::getRouteCallingMethod() 获取当前调用方法。
 
 用 C::getRewrites() 和 C::getRoutes(); 查看 rewrite 表，和 路由表。
@@ -840,7 +840,7 @@ public static function RunQuickly(array $options=[], callable $after_init=null)
 public static function URL($url=null)
 
     获取某个 相对 URL的绝对 URL 地址
-public static function Parameters()
+public static function getParameters()
 
     获得切片数组。
 ##### 公开动态方法

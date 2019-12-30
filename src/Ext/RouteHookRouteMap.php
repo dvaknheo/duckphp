@@ -31,26 +31,26 @@ class RouteHookRouteMap
     {
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         
-        if ($context) {
+        if ($context && \method_exists($context, 'addRouteHook')) {
             $context->addRouteHook([static::class,'PrependHook'], 'prepend-inner');
             $context->addRouteHook([static::class,'AppendHook'], 'append-outter');
-            if (\method_exists($context, 'extendComponents')) {
-                $context->extendComponents(
-                    [
-                        'assignImportantRoute' => [static::class.'::G','assignImportantRoute'],
-                        'assignRoute' => [static::class.'::G','assignRoute'],
-                        'getRoutes' => [static::class.'::G','getRoutes'],
-                        'routeMapNameToRegex' => [static::class.'::G','routeMapNameToRegex'],
-                    ],
-                    []
-                );
-                $context->extendComponents(
-                    [
-                        'getRoutes' => [static::class.'::G','getRoutes'],
-                    ],
-                    ['C']
-                );
-            }
+        }
+        if ($context && \method_exists($context, 'extendComponents')) {
+            $context->extendComponents(
+                [
+                    'assignImportantRoute' => [static::class.'::G','assignImportantRoute'],
+                    'assignRoute' => [static::class.'::G','assignRoute'],
+                    'getRoutes' => [static::class.'::G','getRoutes'],
+                    'routeMapNameToRegex' => [static::class.'::G','routeMapNameToRegex'],
+                ],
+                []
+            );
+            $context->extendComponents(
+                [
+                    'getRoutes' => [static::class.'::G','getRoutes'],
+                ],
+                ['C']
+            );
         }
     }
     public function compile($pattern_url, $rules = [])

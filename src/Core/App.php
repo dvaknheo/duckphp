@@ -315,47 +315,6 @@ class App
     {
         $this->beforeShowHandlers[] = $handler;
     }
-    ////////////////////////
-    public function extendComponents($method_map, $components = []): void
-    {
-        static::AssignExtendStaticMethod($method_map);
-        
-        $a = explode('\\', get_class($this));
-        array_pop($a);
-        $namespace = ltrim(implode('\\', $a).'\\', '\\');  // __NAMESPACE__
-        
-        foreach ($components as $component) {
-            $class = $this->componentClassMap[strtoupper($component)] ?? null;
-            $full_class = ($class === null)?$component:$namespace.$class;
-            if (!class_exists($full_class)) {
-                continue;
-            }
-            $full_class::AssignExtendStaticMethod($method_map);
-        }
-    }
-    public function cloneHelpers($new_namespace, $componentClassMap = [])
-    {
-        if (empty($componentClassMap)) {
-            $componentClassMap = $this->componentClassMap;
-        }
-        //Get Namespace.
-        $a = explode('\\', get_class($this));
-        array_pop($a);
-        $namespace = ltrim(implode('\\', $a).'\\', '\\');
-        
-        foreach ($this->componentClassMap as $name => $class) {
-            $new_class = $componentClassMap[$name] ?? null;
-            if (!$new_class) {
-                continue;
-            }
-            $old_class = $namespace.$class;
-            $new_class = $new_namespace.$new_class;
-            if (!class_exists($new_class) || !class_exists($old_class)) {
-                continue;
-            }
-            $new_class::AssignExtendStaticMethod($old_class::GetExtendStaticStaticMethodList());
-        }
-    }
 }
 trait Core_Handler
 {
@@ -891,7 +850,47 @@ trait Core_Glue
 trait Core_Component
 {
     //protected $extDynamicComponentClasses = [];
-
+    
+    public function extendComponents($method_map, $components = []): void
+    {
+        static::AssignExtendStaticMethod($method_map);
+        
+        $a = explode('\\', get_class($this));
+        array_pop($a);
+        $namespace = ltrim(implode('\\', $a).'\\', '\\');  // __NAMESPACE__
+        
+        foreach ($components as $component) {
+            $class = $this->componentClassMap[strtoupper($component)] ?? null;
+            $full_class = ($class === null)?$component:$namespace.$class;
+            if (!class_exists($full_class)) {
+                continue;
+            }
+            $full_class::AssignExtendStaticMethod($method_map);
+        }
+    }
+    public function cloneHelpers($new_namespace, $componentClassMap = [])
+    {
+        if (empty($componentClassMap)) {
+            $componentClassMap = $this->componentClassMap;
+        }
+        //Get Namespace.
+        $a = explode('\\', get_class($this));
+        array_pop($a);
+        $namespace = ltrim(implode('\\', $a).'\\', '\\');
+        
+        foreach ($this->componentClassMap as $name => $class) {
+            $new_class = $componentClassMap[$name] ?? null;
+            if (!$new_class) {
+                continue;
+            }
+            $old_class = $namespace.$class;
+            $new_class = $new_namespace.$new_class;
+            if (!class_exists($new_class) || !class_exists($old_class)) {
+                continue;
+            }
+            $new_class::AssignExtendStaticMethod($old_class::GetExtendStaticStaticMethodList());
+        }
+    }
     public function getStaticComponentClasses()
     {
         $ret = [
