@@ -229,7 +229,7 @@ return;
         $method="method";
         App::URL($url=null);
         
-        App::Parameters();
+        App::getParameters();
         App::getRouteCallingMethod();
         App::setRouteCallingMethod($method);
         //*/

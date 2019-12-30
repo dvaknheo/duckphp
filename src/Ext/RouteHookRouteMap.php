@@ -12,49 +12,69 @@ class RouteHookRouteMap
 {
     use SingletonEx;
     public $options = [
+        'route_map_important' => [],
         'route_map' => [],
-        // 'route_map_post'=>
+        
     ];
-    
-    protected $route_map = [];
-    
     public function __construct()
     {
     }
-    public static function Hook($path_info)
+    public static function PrependHook($path_info)
     {
-        return static::G()->doHook($path_info);
+        return static::G()->doHook($path_info, false);
     }
-    ////
+    public static function AppendHook($path_info)
+    {
+        return static::G()->doHook($path_info, true);
+    }
     public function init(array $options, object $context = null)
     {
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
-        $this->route_map = array_merge($this->route_map, $this->options['route_map'] ?? []);
         
         if ($context) {
-            Route::G()->addRouteHook([static::class,'Hook'], 'append-outter');
+            $context->addRouteHook([static::class,'PrependHook'], 'prepend-inner');
+            $context->addRouteHook([static::class,'AppendHook'], 'append-outter');
             if (\method_exists($context, 'extendComponents')) {
                 $context->extendComponents(
                     [
+                        'assignImportantRoute' => [static::class.'::G','assignImportantRoute'],
                         'assignRoute' => [static::class.'::G','assignRoute'],
                         'getRoutes' => [static::class.'::G','getRoutes'],
+                        'routeMapNameToRegex' => [static::class.'::G','routeMapNameToRegex'],
                     ],
                     []
+                );
+                $context->extendComponents(
+                    [
+                        'getRoutes' => [static::class.'::G','getRoutes'],
+                    ],
+                    ['C']
                 );
             }
         }
     }
+    public function routeMapNameToRegex($url)
+    {
+    }
     public function assignRoute($key, $value = null)
     {
         if (is_array($key) && $value === null) {
-            $this->route_map = array_merge($this->route_map, $key);
+            $this->options['route_map'] = array_merge($this->options['route_map'], $key);
         } else {
-            $this->route_map[$key] = $value;
+            $this->options['route_map'][$key] = $value;
+        }
+    }
+    public function assignImportantRoute($key, $value = null)
+    {
+        if (is_array($key) && $value === null) {
+            $this->options['route_map_important'] = array_merge($this->options['route_map_important'], $key);
+        } else {
+            $this->options['route_map_important'][$key] = $value;
         }
     }
     public function getRoutes()
     {
-        return $this->route_map;
+        return $this->options;
     }
     protected function matchRoute($pattern_url, $path_info, &$parameters)
     {
@@ -87,6 +107,7 @@ class RouteHookRouteMap
     }
     protected function getRouteHandelByMap($routeMap, $path_info, &$parameters)
     {
+        $path_info = ltrim($path_info, '/');
         foreach ($routeMap as $pattern => $callback) {
             if (!$this->matchRoute($pattern, $path_info, $parameters)) {
                 continue;
@@ -108,17 +129,27 @@ class RouteHookRouteMap
         }
         return $callback;
     }
-    public function doHook($path_info)
+    public function doHook($path_info, $is_append)
     {
-        $path_info = ltrim($path_info, '/');
+        $map = $is_append ? $this->options['route_map']: $this->options['route_map_important'];
+        if (empty($map)) {
+            return false;
+        }
+        return $this->doHookByMap($path_info, $map);
+    }
+    protected function doHookByMap($path_info, $route_map)
+    {
         $route = Route::G();
-        $callback = $this->getRouteHandelByMap($this->route_map, $path_info, $route->parameters);
+        $parameters = [];
+        $callback = $this->getRouteHandelByMap($route_map, $path_info, $parameters);
         if (!$callback) {
             return false;
         }
         if (is_array($callback)) {
             $route->setRouteCallingMethod($callback[1]);
         }
+        $route->setParameters($parameters);
+        
         ($callback)();
         $callback = null;
         return true;

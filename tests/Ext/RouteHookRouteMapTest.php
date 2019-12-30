@@ -56,7 +56,7 @@ class RouteHookRouteMapTest_FakeObject
     }
     function second()
     {
-        var_dump(Route::Parameters());
+        var_dump(Route::G()->getParameters());
     }
     function adjustCallbackArrow()
     {

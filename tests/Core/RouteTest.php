@@ -27,7 +27,8 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         
         //First Run;
         $flag=Route::RunQuickly($options);
-        Route::Parameters();
+        Route::G()->getParameters();
+        Route::G()->setParameters([]);
 
         //URL
         $this->doUrl();
