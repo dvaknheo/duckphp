@@ -89,7 +89,7 @@ class DBManager
                 [
                     'setDBHandler' => [static::class .'::G', 'setDBHandler'],
                     'setBeforeGetDBHandler' => [static::class .'::G', 'setBeforeGetDBHandler'],
-                ],
+                ]
             );
         }
     }
