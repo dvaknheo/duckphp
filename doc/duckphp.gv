@@ -40,23 +40,6 @@ subgraph cluster_Core {
     Core_AppPluginTrait -> Core_Route;
     Core_AppPluginTrait -> Core_SuperGlobal;
 
-    Core_Helper_ModelHelper -> Core_ExtendableStaticCallTrait [style="dashed"];
-    Core_Helper_ModelHelper -> Core_ThrowOn [style="dashed"];
-    Core_Helper_ModelHelper -> Core_App [style="dashed"];
-
-    Core_Helper_ServiceHelper -> Core_ExtendableStaticCallTrait [style="dashed"];
-    Core_Helper_ServiceHelper -> Core_ThrowOn [style="dashed"];
-    Core_Helper_ServiceHelper -> Core_App [style="dashed"];
-
-
-
-    Core_Helper_ControllerHelper -> Core_ExtendableStaticCallTrait [style="dashed"];
-    Core_Helper_ControllerHelper -> Core_ThrowOn [style="dashed"];
-    Core_Helper_ControllerHelper -> Core_App [style="dashed"];
-    
-    Core_Helper_ViewHelper -> Core_ExtendableStaticCallTrait [style="dashed"];
-    Core_Helper_ViewHelper -> Core_ThrowOn [style="dashed"];
-    Core_Helper_ViewHelper -> Core_App [style="dashed"];
 
     Core_AppPluginTrait [label="AppPluginTrait";shape=Mdiamond];
 
@@ -76,31 +59,33 @@ subgraph cluster_Core {
     Core_ExtendableStaticCallTrait [label="ExtendableStaticCallTrait"];
     
     Core_ThrowOn [label="ThrowOn"];
-
-    Core_HookChain [label="HookChain"];
-
-    Core_Helper_ModelHelper [label="Helper\\ModelHelper"];
-    Core_Helper_ServiceHelper [label="Helper\\ServiceHelper"];
-    Core_Helper_ControllerHelper [label="Helper\\ControllerHelper"];
-    Core_Helper_ViewHelper [label="Helper\\ViewHelper"];
-    
     
 }
 
 
 
-subgraph cluster_Base {
-    label = "[DuckPhp\\Base]";
-    StrictModelTrait -> Core_SingletonEx [style="dotted"]; 
-    StrictServiceTrait -> Core_SingletonEx [style="dotted"]; 
-    SessionedController;
-}
+
 subgraph cluster_Helper {
     label = "[DuckPhp\\Helper]";
-    Helper_ControllerHelper -> Core_Helper_ControllerHelper [style="dotted"]; 
-    Helper_ModelHelper -> Core_Helper_ModelHelper [style="dotted"]; 
-    Helper_ServiceHelper -> Core_Helper_ServiceHelper [style="dotted"]; 
-    Helper_ViewHelper -> Core_Helper_ViewHelper [style="dotted"]; 
+    ControllerHelper -> Core_App; 
+    ModelHelper -> Core_App; 
+    ServiceHelper -> Core_App; 
+    ViewHelper -> Core_App; 
+    HelperTrait -> Core_App;
+    HelperTrait -> Core_ExtendableStaticCallTrait [style="dotted"];
+    HelperTrait -> Core_ThrowOn [style="dotted"];
+    
+    ControllerHelper -> HelperTrait; 
+    ModelHelper -> HelperTrait; 
+    ServiceHelper -> HelperTrait; 
+    ViewHelper -> HelperTrait; 
+
+    ControllerHelper [label="ControllerHelper";shape=Mdiamond];
+    ModelHelper [label="ModelHelper";shape=Mdiamond];
+    ServiceHelper [label="ServiceHelper";shape=Mdiamond];
+    ViewHelper [label="ViewHelper";shape=Mdiamond];
+
+
 }
 
 
@@ -123,16 +108,14 @@ subgraph cluster_DB {
 
 
 
-
-
-
 subgraph cluster_Ext {
 label = "[DuckPhp\\Ext]";
     Ext [label="";style="dotted"];
     
     Ext -> CallableView -> Core_View;
     Ext -> DBManager -> DB_DB;
-    Ext -> DBReusePoolProxy ->DBManager; 
+    Ext -> DBReusePoolProxy [style="dotted"];
+    
     Ext -> FacadesAutoLoader;
     Ext -> JsonRpcExt;
     Ext -> Misc
@@ -147,6 +130,7 @@ label = "[DuckPhp\\Ext]";
     Ext -> RouteHookDirectoryMode [style="dotted"];
     Ext -> RouteHookOneFileMode [style="dotted"];
     
+    DBReusePoolProxy ->DBManager; 
     JsonRpcExt -> JsonRpcExtBase ;
     JsonRpcExt -> Core_SingletonEx [style="dotted"];
     JsonRpcExtBase -> Core_SingletonEx [style="dotted"];
@@ -172,7 +156,13 @@ label = "[DuckPhp\\Ext]";
     SimpleLogger -> Core_SingletonEx [style="dotted"]; 
     StrictCheck -> Core_SingletonEx [style="dotted"]; 
     
+    StrictModelTrait -> Core_SingletonEx [style="dotted"]; 
+    StrictServiceTrait -> Core_SingletonEx [style="dotted"];
 
+    StrictModelTrait -> StrictCheck; 
+    StrictServiceTrait -> StrictCheck; 
+    
+    Core_HookChain [label="HookChain"];
 
 }
 subgraph cluster_DuckPhp {
