@@ -21,12 +21,19 @@ class App extends \DuckPhp\App
         $this->options['ext']['UserSystemDemo\Base\App'] = true;
         
         $this->assignPathNamespace($this->options['path'].'auth/', 'UserSystemDemo');
-        
+        $this->options['route_map']['@posts/{post}/comments/{comment:\d+}'] = [$this,'foo'];
+        $this->options['route_map_important']['~abc/d(/?|)\w*'] = [$this,'foo'];
         $ret = parent::onInit();
         return $ret;
     }
     protected function onRun()
     {
         return parent::onRun();
+    }
+    public function foo()
+    {
+        var_dump(static::getRouteCallingMethod());
+        var_dump(static::getParameters());
+        var_dump(static::getPathInfo());
     }
 }

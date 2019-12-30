@@ -53,9 +53,18 @@ class RouteHookRouteMap
             }
         }
     }
-    public function routeMapNameToRegex($url)
+    public function compile($pattern_url, $rules = [])
     {
+        $pattern_url = substr($pattern_url, 1);
+        $ret = preg_replace_callback('/\{(\w+)(:([^\}]+))?(\??)\}/', function ($matches) use ($rules) {
+            $rule = $rules[$matches[1]] ?? '\w+';
+            $rule = !empty($matches[3])?$matches[3]:$rule;
+            return "(?<".$matches[1].">".$rule.")".$matches[4];
+        }, $pattern_url);
+        $ret = '~^'.$ret.'$ # '.$pattern_url.'~x';
+        return $ret;
     }
+    
     public function assignRoute($key, $value = null)
     {
         if (is_array($key) && $value === null) {
@@ -81,6 +90,16 @@ class RouteHookRouteMap
         $firstWord = substr($pattern_url, 0, 1);
         if ($firstWord === '~') {
             $flag = preg_match($pattern_url.'~x', $path_info, $m);
+            if (!$flag) {
+                return false;
+            }
+            unset($m[0]);
+            $parameters = $m; // reference
+            return true;
+        }
+        if ($firstWord === '@') {
+            $pattern_url = $this->compile($pattern_url);
+            $flag = preg_match($pattern_url, $path_info, $m);
             if (!$flag) {
                 return false;
             }
@@ -135,6 +154,7 @@ class RouteHookRouteMap
         if (empty($map)) {
             return false;
         }
+        
         return $this->doHookByMap($path_info, $map);
     }
     protected function doHookByMap($path_info, $route_map)

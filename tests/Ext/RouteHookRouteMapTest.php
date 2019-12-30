@@ -24,10 +24,16 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
                 '/first'=>function(){echo "first1111 \n";},
             ],
         ];
+        
+        $options['route_map_important']['@posts/{post}/comments/{comment:\d+}'] = RouteHookRouteMapTest_FakeObject::class.'@foo';
+        //$this->options['route_map_important']['~abc/d(/?|)\w*'] = [$this,'foo'];
+        
         RouteHookRouteMap::G()->init($options, Route::G());
         
         RouteHookRouteMap::G()->assignRoute('~second(/(?<id>\d+))?',RouteHookRouteMapTest_FakeObject::class.'@'.'second');
         RouteHookRouteMap::G()->assignRoute(['/third*'=>RouteHookRouteMapTest_FakeObject::class.'->'.'adjustCallbackArrow']);
+        RouteHookRouteMap::G()->assignImportantRoute(['@posts/{post}/comments/{comment:\d+}'=>RouteHookRouteMapTest_FakeObject::class.'@foo']);
+        RouteHookRouteMap::G()->assignImportantRoute('@posts/{post}/comments/{comment:\d+}',RouteHookRouteMapTest_FakeObject::class.'@foo');
         RouteHookRouteMap::G()->getRoutes();
         
         Route::G()->bind('/')->run();
@@ -35,8 +41,12 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
         Route::G()->bind('/second/1')->run();
         Route::G()->bind('/third/abc/d/e')->run();
         Route::G()->bind('/thirdabc/d/e')->run();
+        Route::G()->bind('/posts/aa/comments/33')->run();
+        
+        var_dump("-------------------------");
         RouteHookRouteMap::G(new RouteHookRouteMap())->init($options, App::G());
-
+        RouteHookRouteMap::G()->options['route_map_important']=[];
+        Route::G()->bind('/posts/aa/comments/33')->run();
         \MyCodeCoverage::G()->end(RouteHookRouteMap::class);
         $this->assertTrue(true);
     }
@@ -47,6 +57,7 @@ class RouteHookRouteMapTestMain{
         var_dump(DATE(DATE_ATOM));
     }
 
+
 }
 class RouteHookRouteMapTest_FakeObject
 {
@@ -55,6 +66,10 @@ class RouteHookRouteMapTest_FakeObject
         echo "Main Class Start...";
     }
     function second()
+    {
+        var_dump(Route::G()->getParameters());
+    }
+    function foo()
     {
         var_dump(Route::G()->getParameters());
     }

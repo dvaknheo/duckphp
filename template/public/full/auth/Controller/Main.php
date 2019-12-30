@@ -14,20 +14,6 @@ use UserSystemDemo\Service\UserServiceException;
 
 class Main
 {
-    protected function SiteDomain()
-    {
-        $scheme=C::SG()->_SERVER['REQUEST_SCHEME'];
-        $host=C::SG()->_SERVER['HTTP_HOST']??(C::SG()->SERVER['SERVER_NAME']??C::SG()->_SERVER['SERVER_ADDR']);
-        
-        $port=C::SG()->_SERVER['SERVER_PORT'];
-        $port=($port==443 && $scheme=='https')?'':$port;
-        $port=($port==80 && $scheme=='http')?'':$port;
-        $port=($port)?(':'.$port):'';
-        $host = (strpos($host, ':') )? strstr($host, ':', true) : $host;
-        
-        $ret=$scheme.':/'.'/'.$host.$port;
-        return $ret;
-    }
     public function __construct()
     {
         $method = C::getRouteCallingMethod();
@@ -48,7 +34,7 @@ class Main
         });
         if (!empty(App::SG()->_POST)) {
             $referer=C::SG()->_SERVER['HTTP_REFERER']??'';
-            $domain=$this->SiteDomain().'/';
+            $domain=App::Domain().'/';
             if (substr($referer,0,strlen($domain))!==$domain) {
                 SessionServiceException::ThrowOn(true,"CRSF",419);
                 //防止 csrf 攻击，用于站内无跳板的简单情况
