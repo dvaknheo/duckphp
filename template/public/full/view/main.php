@@ -248,7 +248,7 @@ test
 <dt><a href="<?=C::URL('ModelHelper/index')?>">ModelHelper</a></dt>
 <dd>（共计 3 个），Model 层， 获得数据库的方法。不包含于 ControllerHelper</dd>
 <dt><a href="<?=C::URL('ControllerHelper/index')?>">ControllerHelper</a></dt>
-<dd>（共计 24个），Controller 层最复杂，助手类包含配置，显示相关，还包含跳转和其他其他复杂的使用</dd>
+<dd>（共计 28个），Controller 层最复杂，助手类包含配置，显示相关，还包含跳转和其他其他复杂的使用</dd>
 </dl>
 <p>
 当然，所有静态方法都在 App 类里实现。

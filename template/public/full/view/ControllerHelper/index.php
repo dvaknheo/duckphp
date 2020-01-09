@@ -47,33 +47,41 @@ ContrlloerHelper 的方法很多很杂，但掌握了 ContrlloerHelper  方法�
     <dt><a href="#">ExitJson($ret, $exit = true)</a></dt>
     <dd>【跳转】输出 json 结果，$exit 为 true 则附加 exit()</dd>
     
-    <dt><a href="#">Parameters</a></dt>
-    <dd>【路由相关】获得路由重写相关的数据</dd>
+    
     <dt><a href="#">getRouteCallingMethod()</a></dt>
     <dd>【路由相关】获得当前的路由调用方法，用于权限判断等</dd>
-    <dt><a href="#">getPathInfo()</a></dt>
-    <dd><del>【路由相关】获得当前的 PATH_INFO</del>(待添加)</dd>
     <dt><a href="#">setRouteCallingMethod</a></dt>
     <dd>【路由相关】设置当前的路由调用方法，用于跨方法调用时候 view 修正</dd>
+    <dt><a href="#">getPathInfo()</a></dt>
+    <dd>【路由相关】获得当前的 PATH_INFO</dd>
+    <dt><a href="#">getParameters</a></dt>
+    <dd>【路由相关】获得路由重写相关的数据</dd>
     
-    <dt><a href="#">header</a></dt>
-    <dd> 替代系统 header 函数以兼容命令行模式</dd>
-    <dt><a href="#">setcookie()</a></dt>
-    <dd>替代系统 setcookie 函数以兼容命令行模式</dd>
-    <dt><a href="#">exit_system</a></dt>
-    <dd>替代系统退出函数，以便于接管</dd>
-
-
     <dt><a href="#">Show($data = [], $view = null)</a></dt>
     <dd>【内容处理】显示视图， 默认为 view/$view.php 的文件， 并会带上页眉页脚</dd>
     <dt><a href="#">setViewWrapper($head_file = null, $foot_file = null)</a></dt>
     <dd>【内容处理】设置页眉页脚</dd>
     <dt><a href="#">assignViewData($key, $value = null)</a></dt>
     <dd>【内容处理】分配视图变量，另一版本为 assignViewData($assoc);  </dd>
-    <dt>【内容处理】<a href="#">Pager()</a></dt>
-    <dd> 获得分页器对象, 分页器参考 DuckPhp\Ext\Pager。 DuckPHP 只是做了最小的分页器</dd>
+    <dt><a href="#">Pager()</a></dt>
+    <dd>【内容处理】获得分页器对象, 分页器参考 DuckPhp\Ext\Pager。 DuckPHP 只是做了最小的分页器</dd>
+
+    <dt><a href="#">assignExceptionHandler</a></dt>
+    <dd>【异常处理】分配异常句柄</dd>
+    <dt><a href="#">setMultiExceptionHandler</a></dt>
+    <dd>【异常处理】设置多个异常处理</dd>
+    <dt><a href="#">setDefaultExceptionHandler</a></dt>
+    <dd>【异常处理】设置异常的默认处理</dd>
+
+    <dt><a href="#">header</a></dt>
+    <dd>【系统替代】 header 函数以兼容命令行模式</dd>
+    <dt><a href="#">setcookie()</a></dt>
+    <dd>【系统替代】 setcookie 函数以兼容命令行模式</dd>
+    <dt><a href="#">exit</a></dt>
+    <dd>【系统替代】 退出函数，以便于接管</dd>
+    
     <dt><a href="#">SG</a></dt>
-    <dd> 【swoole 兼容】 SG()-> 前缀替代  超全局变量做 swoole 兼容， 如 C::SG()->_GET[] , C::SG()->_POST[] 等。</dd>
+    <dd>【swoole 兼容】 SG()-> 前缀替代  超全局变量做 swoole 兼容， 如 C::SG()->_GET[] , C::SG()->_POST[] 等。</dd>
     </dl>
 </fieldset>
 </body>

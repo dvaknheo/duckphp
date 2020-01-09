@@ -15,6 +15,9 @@ class DBTest extends \PHPUnit\Framework\TestCase
 ];
         $db=DB::CreateDBInstance($options);
         $db->getPDO();
+        $db->setBeforeQueryHandler(function($sql,...$args)use ($db){
+            echo "Quering... ".$db->buildQueryString($sql,...$args) ."\n";
+        });
         echo $db->quote("'");
         $db->quote(["'"]);
          $db->quote(new \stdClass);
