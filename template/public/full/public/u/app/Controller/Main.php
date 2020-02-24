@@ -19,8 +19,7 @@ class Main
     }
     public function index()
     {
-        $page = intval(C::SG()->_GET['page'] ?? 1);
-        $page = ($page > 1)?:1;
+        $page = C::PageNo();
 
         $user = SessionService::G()->getCurrentUser();
         
@@ -38,11 +37,9 @@ class Main
     }
     public function article()
     {
-        $user = SessionService::G()->getCurrentUser();
-        
+        $page = C::PageNo();
         $id = intval(C::SG()->_GET['id'] ?? 1);
-        $page = intval(C::SG()->_GET['page'] ?? 1);
-        $page = ($page > 1)?:1;
+        
         $page_size = 10;
         
         $article = ArticleService::G()->getArticleFullInfo($id, $page, $page_size);
@@ -50,7 +47,7 @@ class Main
             C::Exit404();
         }
         $article['comments'] = C::RecordsetH($article['comments'], ['content','username']);
-        $html_pager = C::Pager()::Render($article['comments_total']);
+        $html_pager = C::PageHtml($article['comments_total']);
         $url_add_comment = C::URL('addcomment');
         C::Show(get_defined_vars(), 'article');
     }

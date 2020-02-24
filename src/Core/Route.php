@@ -110,6 +110,8 @@ class Route
             $path_info = $this->path_info;
             return $basepath.$path_info.$url;
         }
+        // ugly.
+        $basepath = rtrim($basepath, '/');
         $url = '/'.$url;
         
         return $basepath.$url;

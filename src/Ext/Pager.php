@@ -13,17 +13,13 @@ class Pager
     
     public $options = [
         'url' => null,
-        'key' => null,
-        'page_size' => null,
-        'rewrite' => null,
         'current' => null,
+        'page_size' => 30,
+        'page_key' => 'page',
+        'rewrite' => null,
     ];
     protected $page_size = 30;
     protected $current_page = null;
-    protected $url = '';
-    protected $key = 'page';
-    
-    protected $handel_get_url = null;
     protected $context_class;
     
     public function __construct()
@@ -41,59 +37,61 @@ class Pager
             return \DuckPhp\Core\App::G()::SG();
         }
     }
-    public static function Current()
-    {
-        return static::G()->_Current();
-    }
-    public static function Render($total, $options = [])
-    {
-        return static::G()->_Render($total, $options);
-    }
-    public function _current()
-    {
-        if ($this->current_page !== null) {
-            return $this->current_page;
-        }
-        $this->current_page = intval(static::SG()->_GET[$this->key] ?? 1);
-        return $this->current_page;
-    }
-
+    ////////////////////////
     public function init(array $options, object $context = null)
     {
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
-        $options = $this->options;
-        
-        $this->url = $options['url'] ?? static::SG()->_SERVER['REQUEST_URI'];
-        $this->key = $options['key'] ?? $this->key;
-        $this->page_size = $options['page_size'] ?? $this->page_size;
-        
-        $this->handel_get_url = $options['rewrite'] ?? $this->handel_get_url;
-        
-        $this->current_page = $options['current'] ?? intval(static::SG()->_GET[$this->key] ?? 1);
-        $this->current_page = $this->current_page > 1?$this->current_page:1;
         
         $this->context_class = isset($context)?get_class($context):null;
+        
+        $this->url = $this->options['url'] ?? static::SG()->_SERVER['REQUEST_URI'];
+        
+        $this->options['current'] = $this->current();
+        /////
+    }
+    
+    public function current()
+    {
+        if ($this->options['current'] !== null) {
+            return $this->options['current'];
+        }
+        $this->options['current'] = intval(static::SG()->_GET[$this->options['page_key']] ?? 1);
+        return $this->options['current'];
+    }
+    public function pageSize($new_value = null)
+    {
+        if (empty($new_value)) {
+            return $this->options['page_size'];
+        }
+        $this->options['page_size'] = $new_value;
+    }
+    public function getPageCount($total)
+    {
+        return ceil($total / $this->options['page_size']);
+        ;
     }
     public function getUrl($page)
     {
-        if ($this->handel_get_url) {
-            return ($this->handel_get_url)($page);
+        if ($this->options['rewrite']) {
+            return ($this->options['rewrite'])($page);
         }
         return $this->defaultGetUrl($page);
     }
     public function defaultGetUrl($page)
     {
-        $flag = strpos($this->url, '{'.$this->key.'}');
+        $page_key = $this->options['page_key'];
+        $url = $this->url;
+        $flag = strpos($this->url, '{'.$page_key.'}');
         if ($flag !== false) {
             $page = $page != 1?$page:'';
-            return str_replace('{'.$this->key.'}', $page, $this->url);
+            return str_replace('{'.$page_key.'}', $page, $url);
         }
-        $path = parse_url($this->url, PHP_URL_PATH) ?? '';
-        $query = parse_url($this->url, PHP_URL_QUERY) ?? '';
+        $path = parse_url($url, PHP_URL_PATH) ?? '';
+        $query = parse_url($url, PHP_URL_QUERY) ?? '';
         
         $get = [];
         parse_str($query, $get);
-        $get[$this->key] = $page;
+        $get[$page_key] = $page;
         
         if ($page == 1) {
             unset($get['page']);
@@ -102,15 +100,17 @@ class Pager
         $url = $path.($get?'?'.http_build_query($get):'');
         return $url;
     }
-    public function _render($total, $options = [])
+    ////////////////////////
+    public function render($total, $options = [])
     {
         $this->init($options);
+        $current_page = $this->current();
+        $total_pages = $this->getPageCount($total);
         
-        $current_page = $this->_current();
-        $total_pages = ceil($total / $this->page_size);
         if ($total_pages <= 1) {
             return '';
         }
+        ///////////////////////////////
         
         $window_length = 3;
         $page_window_begin = $current_page - floor($window_length / 2);
