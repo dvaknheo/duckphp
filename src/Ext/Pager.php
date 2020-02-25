@@ -56,6 +56,7 @@ class Pager
             return $this->options['current'];
         }
         $this->options['current'] = intval(static::SG()->_GET[$this->options['page_key']] ?? 1);
+        $this->options['current'] = $this->options['current'] > 1 ? $this->options['current'] : 1;
         return $this->options['current'];
     }
     public function pageSize($new_value = null)
