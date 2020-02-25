@@ -269,10 +269,13 @@ class App
             $this->onRun();
             
             $route = Route::G();
-            if ($this->options['use_super_global'] ?? false) {
-                $route->bindServerData(SuperGlobal::G()->_SERVER);
+            
+            $serverData = ($this->options['use_super_global'] ?? false) ? SuperGlobal::G()->_SERVER : $_SERVER;
+            if (empty($serverData['PATH_INFO'])) {
+                $serverData = $this->fixPathinfo($serverData);
             }
             
+            $route->bindServerData($serverData);
             $ret = $route->run();
             
             if (!$ret && !$this->options['skip_404_handler']) {
@@ -281,16 +284,14 @@ class App
             $this->clear();
         } catch (\Throwable $ex) {
             RuntimeState::G()->is_in_exception = true;
-            if (!$this->options['skip_exception_check']) {
-                ExceptionManager::OnException($ex);
-            } else {
+            if ($this->options['skip_exception_check']) {
                 throw $ex;
             }
+            ExceptionManager::OnException($ex);
             $ret = true;
         }
         return $ret;
     }
-    // 这里我们要做好些清理判断。对资源的释放处理
     public function clear(): void
     {
         if (! RuntimeState::G()->is_before_show_done) {
@@ -300,8 +301,20 @@ class App
             RuntimeState::G()->is_before_show_done = true;
         }
         RuntimeState::G()->end();
+    }
+    protected function fixPathinfo(&$serverData)
+    {
+        $request_path = parse_url($serverData['REQUEST_URI'], PHP_URL_PATH);
+        $request_file = substr($serverData['SCRIPT_FILENAME'], strlen($serverData['DOCUMENT_ROOT']));
         
-        //
+        if ($request_file === '/index.php' && substr($request_path, 0, strlen($request_file)) !== '/index.php') {
+            $path_info = $request_path;
+        } else {
+            $path_info = substr($request_path, strlen($request_file));
+        }
+        
+        $serverData['PATH_INFO'] = $path_info;
+        return $serverData;
     }
     //main produce end
     

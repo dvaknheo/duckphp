@@ -12,7 +12,7 @@ class DB implements DBInterface
     public $pdo;
     public $config;
     protected $rowCount;
-    protected $beforeQueryHandler=null;
+    protected $beforeQueryHandler = null;
     protected $driver_options = [
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
             \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
@@ -72,25 +72,25 @@ class DB implements DBInterface
         $this->check_connect();
         return $this->pdo->quote($string);
     }
-    public function buildQueryString($sql,...$args)
+    public function buildQueryString($sql, ...$args)
     {
         if (count($args) === 1 && is_array($args[0])) {
-            $keys=$args[0];
-            foreach($keys as $k => $v){
-                $sql=str_replace(':'.$k,$this->quote($v),$sql);
+            $keys = $args[0];
+            foreach ($keys as $k => $v) {
+                $sql = str_replace(':'.$k, $this->quote($v), $sql);
             }
             return $sql;
         }
-        if(empty($args)){
+        if (empty($args)) {
             return $sql;
         }
-        $count=1;
-        $sql=str_replace(array_fill(0,count($args),'?'),$args,$sql,$count);
+        $count = 1;
+        $sql = str_replace(array_fill(0, count($args), '?'), $args, $sql, $count);
         return $sql;
     }
     public function fetchAll($sql, ...$args)
     {
-        if ($this->beforeQueryHandler){
+        if ($this->beforeQueryHandler) {
             ($this->beforeQueryHandler)($sql, ...$args);
         }
         if (count($args) === 1 && is_array($args[0])) {
@@ -105,7 +105,7 @@ class DB implements DBInterface
     }
     public function fetch($sql, ...$args)
     {
-        if ($this->beforeQueryHandler){
+        if ($this->beforeQueryHandler) {
             ($this->beforeQueryHandler)($sql, ...$args);
         }
         
@@ -120,7 +120,7 @@ class DB implements DBInterface
     }
     public function fetchColumn($sql, ...$args)
     {
-        if ($this->beforeQueryHandler){
+        if ($this->beforeQueryHandler) {
             ($this->beforeQueryHandler)($sql, ...$args);
         }
         
@@ -135,7 +135,7 @@ class DB implements DBInterface
     }
     public function execute($sql, ...$args)
     {
-        if ($this->beforeQueryHandler){
+        if ($this->beforeQueryHandler) {
             ($this->beforeQueryHandler)($sql, ...$args);
         }
         

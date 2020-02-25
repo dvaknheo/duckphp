@@ -130,21 +130,21 @@ class ControllerHelper
     {
         return App::SG();
     }
-    public static function GET($key,$default=null)
+    public static function GET($key, $default = null)
     {
-        return static::SG()->_GET[$key]??$default;
+        return static::SG()->_GET[$key] ?? $default;
     }
-    public static function POST($key,$default=null)
+    public static function POST($key, $default = null)
     {
-        return static::SG()->_POST[$key]??$default;
+        return static::SG()->_POST[$key] ?? $default;
     }
-    public static function REQUEST($key,$default=null)
+    public static function REQUEST($key, $default = null)
     {
-        return static::SG()->_REQUEST[$key]??$default;
+        return static::SG()->_REQUEST[$key] ?? $default;
     }
-    public static function COOKIE($key,$default=null)
+    public static function COOKIE($key, $default = null)
     {
-        return static::SG()->_COOKIE[$key]??$default;
+        return static::SG()->_COOKIE[$key] ?? $default;
     }
     ////
     public static function Pager($object = null)
@@ -155,7 +155,7 @@ class ControllerHelper
     {
         return App::Pager()->current();
     }
-    public static function PageSize($new_value=null)
+    public static function PageSize($new_value = null)
     {
         return App::Pager()->pageSize($new_value);
     }
