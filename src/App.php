@@ -55,7 +55,7 @@ class App extends Core_App
         parent::__construct();
     }
     // @override parent
-    public function _Pager(object $replacement_object = null)
+    public function _Pager($replacement_object = null)
     {
         return Pager::G($replacement_object);
     }

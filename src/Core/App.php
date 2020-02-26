@@ -722,11 +722,11 @@ trait Core_Helper
         $ret = $scheme.':/'.'/'.$host.$port;
         return $ret;
     }
-    public static function Pager(object $object = null)
+    public static function Pager($object = null)
     {
         return static::G()->_Pager($object);
     }
-    public function _Pager(object $object = null)
+    public function _Pager($object = null)
     {
         static::ThrowOn(true, 'DuckPhp, the core need impelment pager');
         return null; // @codeCoverageIgnore
@@ -826,7 +826,7 @@ trait Core_Glue
         return ExceptionManager::G()->_OnException($ex);
     }
     //super global
-    public static function SG(object $replacement_object = null)
+    public static function SG($replacement_object = null)
     {
         return SuperGlobal::G($replacement_object);
     }
