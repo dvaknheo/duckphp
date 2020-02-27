@@ -271,8 +271,8 @@ class App
             $route = Route::G();
             
             $serverData = ($this->options['use_super_global'] ?? false) ? SuperGlobal::G()->_SERVER : $_SERVER;
-            if (empty($serverData['PATH_INFO'])) {
-                $serverData = $this->fixPathinfo($serverData);
+            if (PHP_SAPI!='cli') {
+                $serverData = $this->fixPathInfo($serverData); // @codeCoverageIgnore
             }
             
             $route->bindServerData($serverData);
@@ -302,8 +302,16 @@ class App
         }
         RuntimeState::G()->end();
     }
-    protected function fixPathinfo(&$serverData)
+    protected function fixPathInfo(&$serverData)
     {
+        if (!empty($serverData['PATH_INFO'])) {
+            $serverData['PATH_INFO'] = $serverData['PATH_INFO'] ?? '';
+            return $serverData;
+        }
+        if (!isset($serverData['REQUEST_URI'])) {
+            $serverData['PATH_INFO'] = $serverData['PATH_INFO'] ?? '';
+            return $serverData;
+        }
         $request_path = parse_url($serverData['REQUEST_URI'], PHP_URL_PATH);
         $request_file = substr($serverData['SCRIPT_FILENAME'], strlen($serverData['DOCUMENT_ROOT']));
         
@@ -728,7 +736,7 @@ trait Core_Helper
     }
     public function _Pager($object = null)
     {
-        static::ThrowOn(true, 'DuckPhp, the core need impelment pager');
+        static::ThrowOn(true, 'DuckPhp, the core need impelment pager! ');
         return null; // @codeCoverageIgnore
     }
     public static function Logger($object = null)

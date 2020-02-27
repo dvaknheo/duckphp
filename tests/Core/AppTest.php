@@ -125,9 +125,42 @@ echo "-------------------------------------\n";
         
         $this->do_Core_Component();
         
-\MyCodeCoverage::G()->end(App::class);
-$this->assertTrue(true);
-return;
+        $this->doFixPathinfo();
+        
+        
+        
+    \MyCodeCoverage::G()->end(App::class);
+    $this->assertTrue(true);
+    return;
+
+    }
+    protected function doFixPathinfo()
+    {
+        AppTestApp::G()->init([]);
+        $serverData=[
+        ];
+        AppTestApp::G()->fixPathInfo($serverData);
+        
+        $serverData=[
+            'PATH_INFO'=>'abc',
+        ];
+        AppTestApp::G()->fixPathInfo($serverData);
+        $serverData=[
+            'REQUEST_URI'=>'/',
+            'SCRIPT_FILENAME'=>__DIR__ . '/index.php',
+            'DOCUMENT_ROOT'=>__DIR__,
+        ];
+        
+        AppTestApp::G()->fixPathInfo($serverData);
+        
+        $serverData=[
+            'REQUEST_URI'=>'/abc/d',
+            'SCRIPT_FILENAME'=>__FILE__,
+            'DOCUMENT_ROOT'=>__DIR__,
+        ];
+        AppTestApp::G()->fixPathInfo($serverData);
+        
+        
     }
     public function doSystemWrapper()
     {
@@ -387,6 +420,12 @@ class AppTestApp extends App
     protected function onInit()
     {
         return parent::onInit();
+    }
+    public function fixPathInfo(&$serverData)
+    {
+var_dump("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n");
+var_dump($serverData);
+        return parent::fixPathInfo($serverData);
     }
 }
 class AppTestApp2 extends App

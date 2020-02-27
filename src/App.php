@@ -40,6 +40,7 @@ class App extends Core_App
                 'DuckPhp\Ext\DBReusePoolProxy' => false,
                 'DuckPhp\Ext\FacadesAutoLoader' => false,
                 'DuckPhp\Ext\Lazybones' => false,
+                'DuckPhp\Ext\Pager' => true,
             ],
             
         ];

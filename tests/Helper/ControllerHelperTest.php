@@ -101,7 +101,20 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         
         ControllerHelper::SG();
 
-        
+
+   ControllerHelper::GET('a');
+                ControllerHelper::POST('a');
+                ControllerHelper::REQUEST('a');
+                ControllerHelper::COOKIE('a');
+/////
+echo"zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n\n";
+\DuckPhp\App::G()->init([]);
+ControllerHelper::Pager();
+ControllerHelper::PageNo();
+ControllerHelper::PageSize();
+ControllerHelper::PageHtml(123);
+
+
         \MyCodeCoverage::G()->end(ControllerHelper::class);
         $this->assertTrue(true);
 

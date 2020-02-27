@@ -27,7 +27,7 @@ class App extends DuckPhp_App
         $ret=parent::onInit();
         static::assignRoute([
             '~abc(\d*)' => function () {
-                var_dump(App::Parameters());
+                var_dump("OK");
             },
         ]);
         return $ret;

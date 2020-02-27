@@ -81,8 +81,8 @@ class Pager
     public function defaultGetUrl($page)
     {
         $page_key = $this->options['page_key'];
-        $url = $this->url;
-        $flag = strpos($this->url, '{'.$page_key.'}');
+        $url = $this->url ?? '';
+        $flag = strpos($url, '{'.$page_key.'}');
         if ($flag !== false) {
             $page = $page != 1?$page:'';
             return str_replace('{'.$page_key.'}', $page, $url);

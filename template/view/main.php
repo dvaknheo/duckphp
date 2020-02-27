@@ -34,7 +34,7 @@
     }
 ?>
 <div>
-<a href="/test/done">查看 Demeo</a>
+<a href="/test/done">查看 Demo</a>
 </div>
 </body>
 </html>
