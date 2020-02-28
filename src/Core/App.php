@@ -312,7 +312,7 @@ class App
             $serverData['PATH_INFO'] = $serverData['PATH_INFO'] ?? '';
             return $serverData;
         }
-        $request_path = parse_url($serverData['REQUEST_URI'], PHP_URL_PATH);
+        $request_path = parse_url($serverData['REQUEST_URI'], PHP_URL_PATH) ?? '';
         $request_file = substr($serverData['SCRIPT_FILENAME'], strlen($serverData['DOCUMENT_ROOT']));
         
         if ($request_file === '/index.php' && substr($request_path, 0, strlen($request_file)) !== '/index.php') {

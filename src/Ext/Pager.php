@@ -18,10 +18,8 @@ class Pager
         'page_key' => 'page',
         'rewrite' => null,
     ];
-    protected $page_size = 30;
-    protected $current_page = null;
     protected $context_class;
-    
+    protected $url;
     public function __construct()
     {
     }
