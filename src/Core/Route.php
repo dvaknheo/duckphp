@@ -102,11 +102,11 @@ class Route
         if ('' === $url) {
             return $basepath.'/';
         }
-        if (isset($url) &&  '?' === substr($url,0,1)) {
+        if (isset($url) && '?' === substr($url, 0, 1)) {
             $path_info = $this->path_info;
             return $basepath.$path_info.$url;
         }
-        if (isset($url) &&  '#' === substr($url,0,1)) {
+        if (isset($url) && '#' === substr($url, 0, 1)) {
             $path_info = $this->path_info;
             return $basepath.$path_info.$url;
         }

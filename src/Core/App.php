@@ -271,7 +271,7 @@ class App
             $route = Route::G();
             
             $serverData = ($this->options['use_super_global'] ?? false) ? SuperGlobal::G()->_SERVER : $_SERVER;
-            if (PHP_SAPI!='cli') {
+            if (PHP_SAPI != 'cli') {
                 $serverData = $this->fixPathInfo($serverData); // @codeCoverageIgnore
             }
             
