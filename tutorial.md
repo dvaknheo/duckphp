@@ -967,7 +967,6 @@ DuckPHP::RunQuickly($options,function(){
     $sql="select * from Users where true limit 1";
     $data=DuckPHP::DB()::query($sql);
     var_dump($data);
-    DuckPHP::exit_system(0);
 });
 
 ```

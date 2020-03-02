@@ -1,6 +1,7 @@
 # Ext\FacadesBase
 
 ## 简介
+Facades的基类
 
 ## 选项
 
