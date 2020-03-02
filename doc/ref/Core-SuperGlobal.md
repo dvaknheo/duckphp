@@ -5,7 +5,15 @@
 ## 选项
 
 ## 公开方法
-
+    public function __construct()
+    public function init()
+    public function session_start(array $options=[])
+    public function session_id($session_id)
+    public function session_destroy()
+    public function session_set_save_handler($handler)
+    public function &_GLOBALS($k, $v=null)
+    public function &_STATICS($name, $value=null, $parent=0)
+    public function &_CLASS_STATICS($class_name, $var_name)
 
 ## 详解
 

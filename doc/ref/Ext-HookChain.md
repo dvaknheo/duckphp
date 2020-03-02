@@ -1,11 +1,18 @@
 # Ext\HookChain
 
 ## 简介
-这个类没有被使用
-## 选项
 
-## 公开方法
-
-
+这是个特殊类。并没有引用
+## 方法
+    public function __invoke()
+    public static function Hook(&$var, $callable, $append = true, $once = true)
+    public function add($callable, $append, $once)
+    public function remove($callable)
+    public function has($callable)
+    public function all()
+    public function offsetSet($offset, $value)
+    public function offsetExists($offset)
+    public function offsetUnset($offset)
+    public function offsetGet($offset)
 ## 详解
 

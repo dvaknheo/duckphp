@@ -18,7 +18,7 @@ trait ExtendableStaticCallTrait
             self::$static_methods[static::class][$key] = $value;
         }
     }
-    public static function GetExtendStaticStaticMethodList()
+    public static function GetExtendStaticMethodList()
     {
         self::$static_methods[static::class] = self::$static_methods[static::class] ?? [];
         return self::$static_methods[static::class];

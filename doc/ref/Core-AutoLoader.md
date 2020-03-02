@@ -15,6 +15,26 @@ DuckPHP 的自动加载类
 'enable_cache_classes_in_cli' => false,
 ## 公开方法
 
+public function init($options=[], $context=null)
 
+    //
+public function run()
+
+    //
+public function _autoload($class)
+
+    //
+public function assignPathNamespace($input_path, $namespace=null)
+
+    //
+public function cacheClasses()
+
+    //
+public function cacheNamespacePath($path)
+
+    //
+public function clear()
+
+    //
 ## 详解
 

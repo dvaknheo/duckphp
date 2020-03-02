@@ -13,6 +13,10 @@
 'skip_env_file' => true,
 ## 公开方法
 
-
+    public function init($options=[], $context=null)
+    public function _Setting($key)
+    public function _Config($key, $file_basename='config')
+    public function _LoadConfig($file_basename='config')
+    public function prependConfig($name, $data)
 ## 详解
 

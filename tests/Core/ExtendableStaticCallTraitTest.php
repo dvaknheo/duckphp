@@ -14,7 +14,7 @@ class ExtendableStaticCallTraitTest extends \PHPUnit\Framework\TestCase
         ExtendableStaticCallTraitObject::AssignExtendStaticMethod(['Foo1'=>[ExtendableStaticCallTraitObject::class.'::G','FooX']]);
         ExtendableStaticCallTraitObject::AssignExtendStaticMethod(['Foo2'=>ExtendableStaticCallTraitObject::class.'::G'.'::'.'FooX']);
         
-        ExtendableStaticCallTraitObject::GetExtendStaticStaticMethodList();
+        ExtendableStaticCallTraitObject::GetExtendStaticMethodList();
         
         ExtendableStaticCallTraitObject::Foo(123);
         
