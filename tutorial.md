@@ -36,18 +36,8 @@ php bin/start_server.php
 
 当然你也可以用 nginx 或apache 安装。
 nginx 把 document_root 配置成 public 目录。
-并且按常用框架配置 path_info 即可。
 ```
 try_files $uri $uri/ /index.php$request_uri;
-location ~ \.php {
-    fastcgi_pass 127.0.0.1:9000;
-    fastcgi_index index.php;
-    fastcgi_split_path_info ^(.*\.php)(.*)$;
-    fastcgi_param PATH_INFO $fastcgi_path_info;
-    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-    include fastcgi_params;
-}
-
 ```
 ### 第一个任务
 路径： http://127.0.0.1:8080/test/done  
@@ -223,7 +213,7 @@ Setting($key);
 LoadConfig($key,$basename="config");
 
     载入配置，Config($key); 获得配置 默认配置文件是在  config/config.php 。
-DumpTrace()
+trace_dump()
     调试状态下，查看当前堆栈
 var_dump(...$arg)
     调试状态下 Dump 当前变量，替代 var_dump
@@ -299,31 +289,7 @@ C::assignViewData($name,$var);
     用 C::set_exception_handler() 代替系统 set_exception_handler 便于接管处理。
     用 C::register_shutdown_function() 代替系统 set_exception_handler 便于接管处理。
 
-##### 6.兼容 Swoole
 
-    如果想让你们的项目在 swoole 下也能运行，那就要加上这几点
-    用 C::SG() 代替 超全局变量的 $ 前缀 如 $_GET =>  C::SG()->_GET
-
-    使用以下参数格式都一样的 swoole 兼容静态方法，代替同名全局方法。
-
-    C::session_start(),
-    C::session_destroy(),
-    C::session_id()，
-    如 session_start() => C::session_start();
-
-    编写 Swoole 相容的代码，还需要注意到一些写法的改动。
-全局变量
-```php
-global $a='val'; =>  $a=C::GLOBALS('a','val');
-```
-静态变量 
-```php
-static $a='val'; =>  $a=C::STATICS('a','val');
-```
-类内静态变量
-```php
-$x=static::$abc; => $x=C::CLASS_STATICS(static::class,'abc');
-```
 ##### 7.高级路由
 用 C::getParameters() 获取切片，对地址重写有效。
 如果要做权限判断 构造函数里 C::getRouteCallingMethod() 获取当前调用方法。
@@ -1205,3 +1171,28 @@ new 多个效率比单例 低
 ### 本章说明
 DuckPHP 的使用者角色分为 应用程序员，和核心程序员两种
 应用程序员负责日常 Curd 。核心程序员做的是更高级的任务。
+##### 6.兼容 Swoole
+
+    如果想让你们的项目在 swoole 下也能运行，那就要加上这几点
+    用 C::SG() 代替 超全局变量的 $ 前缀 如 $_GET =>  C::SG()->_GET
+
+    使用以下参数格式都一样的 swoole 兼容静态方法，代替同名全局方法。
+
+    C::session_start(),
+    C::session_destroy(),
+    C::session_id()，
+    如 session_start() => C::session_start();
+
+    编写 Swoole 相容的代码，还需要注意到一些写法的改动。
+全局变量
+```php
+global $a='val'; =>  $a=C::GLOBALS('a','val');
+```
+静态变量 
+```php
+static $a='val'; =>  $a=C::STATICS('a','val');
+```
+类内静态变量
+```php
+$x=static::$abc; => $x=C::CLASS_STATICS(static::class,'abc');
+```
