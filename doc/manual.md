@@ -185,11 +185,8 @@ ext 是一个选项，这里单独成一节是因为这个选项很重要。涉�
     $ext_class 满足接口。
     $ext_class->init(array $options,$context=null);
     
-    如果 $options 为  false 则不启用，
+    如果 $options 为 false 则不启用，
     如果 $options 为 true ，则会把当前 $options 传递进去。
-
-
-
 
 ## 架构
 
