@@ -62,6 +62,7 @@ class App
             'skip_404_handler' => false,
             'skip_plugin_mode_check' => false,
             'skip_exception_check' => false,
+            'skip_fix_path_info' => false,
             
             //// error handler ////
             'handle_all_dev_error' => true,
@@ -105,9 +106,12 @@ class App
 
     public $is_debug = true;
     public $platform = '';
-    
     protected $defaultRunHandler = null;
-    protected $error_view_inited = false;
+    // for kernel
+    protected $hanlder_for_exception_handler;
+    protected $hanlder_for_exception;
+    protected $hanlder_for_develop_exception;
+    protected $hanlder_for_404;
     
     // for helper
     protected $componentClassMap = [
@@ -126,8 +130,18 @@ class App
     ];
     // for trait
     protected $extDynamicComponentClasses = [];
+    protected $beforeShowHandlers = [];
+    protected $error_view_inited = false;
+    
+
+    
+    // trait kernel
     public function __construct()
     {
+        $this->hanlder_for_exception_handler = [static::class,'set_exception_handler'];
+        $this->hanlder_for_exception = [static::class,'OnDefaultException'];
+        $this->hanlder_for_develop_exception = [static::class,'OnDevErrorHandler'];
+        $this->hanlder_for_404 = [static::class,'On404'];
     }
     public static function RunQuickly(array $options = [], callable $after_init = null): bool
     {
@@ -184,10 +198,9 @@ class App
             'handle_all_dev_error' => $handle_all_dev_error,
             'handle_all_exception' => $handle_all_exception,
             
-            'system_exception_handler' => [static::class,'set_exception_handler'],
-            
-            'default_exception_handler' => [static::class,'OnDefaultException'],
-            'dev_error_handler' => [static::class,'OnDevErrorHandler'],
+            'system_exception_handler' => $this->hanlder_for_exception_handler,
+            'default_exception_handler' => $this->hanlder_for_exception,
+            'dev_error_handler' => $this->hanlder_for_develop_exception,
         ];
         ExceptionManager::G()->init($exception_options, $this)->run();
         
@@ -271,7 +284,7 @@ class App
             $route = Route::G();
             
             $serverData = ($this->options['use_super_global'] ?? false) ? SuperGlobal::G()->_SERVER : $_SERVER;
-            if (PHP_SAPI != 'cli') {
+            if (!$this->options['skip_fix_path_info'] && PHP_SAPI != 'cli') {
                 $serverData = $this->fixPathInfo($serverData); // @codeCoverageIgnore
             }
             
@@ -279,7 +292,7 @@ class App
             $ret = $route->run();
             
             if (!$ret && !$this->options['skip_404_handler']) {
-                static::On404();
+                ($this->hanlder_for_404)();// static::On404();
             }
             $this->clear();
         } catch (\Throwable $ex) {
@@ -339,8 +352,8 @@ class App
 }
 trait Core_Handler
 {
-    protected $beforeShowHandlers = [];
-    protected $error_view_inited = false;
+    //protected $beforeShowHandlers = [];
+    //protected $error_view_inited = false;
     
     public static function On404(): void
     {
@@ -730,6 +743,10 @@ trait Core_Helper
         $ret = $scheme.':/'.'/'.$host.$port;
         return $ret;
     }
+    public static function Logger($object = null)
+    {
+        return Logger::G($object);
+    }
     public static function Pager($object = null)
     {
         return static::G()->_Pager($object);
@@ -739,9 +756,18 @@ trait Core_Helper
         static::ThrowOn(true, 'DuckPhp, the core need impelment pager! ');
         return null; // @codeCoverageIgnore
     }
-    public static function Logger($object = null)
+    
+    public static function PageNo()
     {
-        return Logger::G($object);
+        return static::Pager()->current();
+    }
+    public static function PageSize($new_value = null)
+    {
+        return static::Pager()->pageSize($new_value);
+    }
+    public static function PageHtml($total, $options=[])
+    {
+        return static::Pager()->render($total, $options);
     }
 }
 
@@ -909,7 +935,7 @@ trait Core_Component
             if (!class_exists($new_class) || !class_exists($old_class)) {
                 continue;
             }
-            $new_class::AssignExtendStaticMethod($old_class::GetExtendStaticStaticMethodList());
+            $new_class::AssignExtendStaticMethod($old_class::GetExtendStaticMethodList());
         }
     }
     public function getStaticComponentClasses()

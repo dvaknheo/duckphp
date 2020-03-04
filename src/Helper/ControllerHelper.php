@@ -153,14 +153,14 @@ class ControllerHelper
     }
     public static function PageNo()
     {
-        return App::Pager()->current();
+        return App::PageNo();
     }
     public static function PageSize($new_value = null)
     {
-        return App::Pager()->pageSize($new_value);
+        return App::PageSize($new_value);
     }
     public static function PageHtml($total)
     {
-        return  App::Pager()->render($total);
+        return  App::PageHtml($total);
     }
 }
