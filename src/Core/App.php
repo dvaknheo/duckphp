@@ -107,6 +107,8 @@ class App
     public $is_debug = true;
     public $platform = '';
     protected $defaultRunHandler = null;
+    protected $error_view_inited = false;
+
     // for kernel
     protected $hanlder_for_exception_handler;
     protected $hanlder_for_exception;
@@ -131,9 +133,7 @@ class App
     // for trait
     protected $extDynamicComponentClasses = [];
     protected $beforeShowHandlers = [];
-    protected $error_view_inited = false;
-    
-
+    protected $pager;
     
     // trait kernel
     public function __construct()
@@ -608,6 +608,7 @@ trait Core_Redirect
 
 trait Core_Helper
 {
+    //protected $pager;
 
     // system static
     public static function Platform()
@@ -753,8 +754,10 @@ trait Core_Helper
     }
     public function _Pager($object = null)
     {
-        static::ThrowOn(true, 'DuckPhp, the core need impelment pager! ');
-        return null; // @codeCoverageIgnore
+        if ($object) {
+            $this->pager=$object;
+        }
+        return $this->pager;
     }
     
     public static function PageNo()

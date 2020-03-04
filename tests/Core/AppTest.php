@@ -7,6 +7,7 @@ use DuckPhp\Core\Configer;
 use DuckPhp\Core\View;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\SingletonEx;
+use DuckPhp\Ext\Pager;
 
 class AppTest extends \PHPUnit\Framework\TestCase
 {
@@ -127,7 +128,11 @@ echo "-------------------------------------\n";
         
         $this->doFixPathinfo();
         
-        
+App::Pager(Pager::G());
+App::PageNo();
+App::PageSize();
+App::PageHtml(123);
+
         
     \MyCodeCoverage::G()->end(App::class);
     $this->assertTrue(true);
