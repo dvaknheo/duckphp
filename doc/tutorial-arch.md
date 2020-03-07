@@ -14,9 +14,7 @@
 4. Core/ 目录是核心目录，基本功能都在 Core 里实现
    - **[SingletonEx.php]()**  
 
-
    - **[App.php]()** 是核心,引用
-
 
      - [Kernel.php]() 核心Trait 组件
 

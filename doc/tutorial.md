@@ -299,7 +299,7 @@ C::assignViewData($name,$var);
 assignRewrite($old_url,$new_url=null)
 
     支持单个 assign($key,$value) 和多个 assign($assoc)
-
+    
     rewrite  重写 path_info
     不区分 request method , 重写后可以用 ? query 参数
     ~ 开始表示是正则 ,为了简单用 / 代替普通正则的 \/
@@ -310,7 +310,7 @@ assignRoute($route,$callback=null)
     单个 assign($key,$value) 和多个 assign($assoc)；
     关于回调模式的路由。详细情况看之前介绍
     和在 options['route'] 添加数据一样
-
+    
     或许你会用到 C::RecordsetUrl(),C::RecordsetH()
 
 ### 其他要点
@@ -453,10 +453,10 @@ error_* 选项为 null 用默认，为 callable 是回调，为string 则是调�
 
 ext 是一个选项，这里单独成一节是因为这个选项很重要。涉及到 DuckPHP 的扩展系统
 
-在 DuckPHP/Core 里， ext 是个空数组。
+在 DuckPHP/Core/App 里， ext 是个空数组。
 
     扩展映射 ,$ext_class => $options。
-
+    
     $ext_class 为扩展的类名，如果找不到扩展类则不启用。
     
     $ext_class 满足接口。
@@ -464,6 +464,7 @@ ext 是一个选项，这里单独成一节是因为这个选项很重要。涉�
     
     如果 $options 为  false 则不启用，
     如果 $options 为 true ，则会把当前 $options 传递进去。
+DuckPHP/Core 的 Configer, Route, View, AutoLoader 默认都在这调用
 
 
 ### DuckPHP 工程目录结构
@@ -551,7 +552,7 @@ RunQuickly(): bool
     App::OnException(): void
     App::OnDevErrorHandler():void 
     App::IsRunning();
-    App::IsInException();
+    App::InException();
 
 #### 常用方法
 这些方法不能归入 助手类里，只能在 App 类单独给出的。
@@ -575,7 +576,7 @@ extendComponents($class,$methods,$components);
 
     App->init();
     App->run();
-
+    
     App->extendComponents();
     App->assignPathNamespace();
     App->addRouteHook();
@@ -612,6 +613,7 @@ init 出事化阶段
     如果有子类，切入子类继续 checkOverride() 
     调整补齐选项 initOptions()
     
+
     * onInit()，可 override 处理这里了。
     默认的 onInit
         初始化 Configer
@@ -621,7 +623,7 @@ init 出事化阶段
         初始化 Route
         初始化扩展 initExtentions()
     初始化阶段就结束了。
-    
+
 run() 运行阶段
 
     处理 addBeforeRunHandler() 引入的 beforeRunHandlers
@@ -642,7 +644,7 @@ G 方法表面上是个单例函数，实际上的可替换的。
 DuckPHP 系统组件的连接，多是以调用类的可变单例来实现的。
 
 #### 结构图和组件分析
-![core](doc/DuckPHP.gv.svg)
+![core](DuckPHP.gv.svg)
 
 
 DuckPHP/Framework 的扩展都放在 DuckPHP\\Ext 命名空间里
@@ -651,7 +653,7 @@ DuckPHP/Framework 的扩展都放在 DuckPHP\\Ext 命名空间里
 
 SingletonEx 可变单例
 
-Base\*Helper 是各种快捷方法。
+\*Helper 是各种快捷方法。
 
 其他组件都遵守 init(array $options, $contetxt=null); 接口。
 而且组件多有公开属性 $options 对应调整选项。
@@ -820,13 +822,13 @@ public static function getParameters()
 
     public function bindServerData($server)
     public function bind($path_info, $request_method='GET')
-
+    
     protected function beforeRun()
     public function run()
     public function defaultRunRouteCallback($path_info=null)
     public function defaultGetRouteCallback($path_info)
     public function defaultToggleRouteCallback($enable)
-
+    
     public function addRouteHook($callback, $append=true, $outter=true, $once=true)
     public function add404Handler($callback)
     
@@ -848,7 +850,7 @@ public static function getParameters()
     defaultRunRouteCallback($path_info);  给做了默认榜样。
     defaultGetRouteCallback($path_info); 则是获得，但不处理调用。
     如果你在前面的，想禁止默认路由函数，可以用 defaultToggleRouteCallback(false);
-
+    
     add404Handle() 是默认用于后处理的版本。
 ##### URL 输出地址重写指南
 
@@ -905,7 +907,7 @@ DB
 #### 示例
 使用数据库，在 设置里正确设置 database_list 这个数组，包含多个数据库配置
 然后在用到的地方调用 DuckPHP::DB($tag=null) 得到的就是 DB 对象，用来做各种数据库操作。
-$tag 对应 $setting['database_list'][$tag]。默认会得到最前面的 tag 的配置。
+$tag 对应 $setting\['database_list'\][$tag]。默认会得到最前面的 tag 的配置。
 
 你不必担心每次框架初始化会连接数据库。只有第一次调用 DuckPHP::DB() 的时候，才进行数据库类的创建。
 
@@ -1174,14 +1176,14 @@ DuckPHP 的使用者角色分为 应用程序员，和核心程序员两种
 
     如果想让你们的项目在 swoole 下也能运行，那就要加上这几点
     用 C::SG() 代替 超全局变量的 $ 前缀 如 $_GET =>  C::SG()->_GET
-
+    
     使用以下参数格式都一样的 swoole 兼容静态方法，代替同名全局方法。
-
+    
     C::session_start(),
     C::session_destroy(),
     C::session_id()，
     如 session_start() => C::session_start();
-
+    
     编写 Swoole 相容的代码，还需要注意到一些写法的改动。
 全局变量
 ```php

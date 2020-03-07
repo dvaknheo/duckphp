@@ -3,46 +3,20 @@
 这个页用于索引所有 md 文档页面
 
 ## 快速教程
-[快速教程](!tutorial.md)
+[快速教程](tutorial.md)
 
 ## 参考
-[参考索引页面](!ref/index.md)
+[参考索引页面](ref/index.md)
 
 按类文件参考
 
 ## 施工中的教程
-
-[架构](!tutorial-arch.md)
-[支持性的开发](!tutorial-support.md)
-
-
-
-
-## 其他
-
-
-教程 快速开始
-教程，助手函数
-
-教程，架构
-
-教程 路由
-
-基本路由，你先查看 路由的文档
-duckphp 默认加载了 routemap 和 routerewarite 插件
-
-教程 异常处理
-基本的异常处理
-异常处理的一般守则
-
-
-教程 数据库
-
-教程 session 的处理
-
-教程 参与开发
-
-教程 常用扩展
-教程 json-prc
-短函数
-Route::setUrlHandle();
+[通常](tutorial-general.md)
+[助手类](tutorial-helper.md)
+[路由](tutorial-route.md)
+[架构](tutorial-arch.md)
+[异常处理](tutorial-exception.md)
+[数据库](tutorial-db.md)
+[会话处理](tutorial-session.md)
+[扩展的使用和开发](tutorial-extension.md)
+[参与开发相关](tutorial-support.md)
