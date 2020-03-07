@@ -83,7 +83,9 @@ class ExceptionManager
                 return;
             }
         }
-        ($this->default_exception_handler)($ex);
+        if ($this->default_exception_handler) {
+            ($this->default_exception_handler)($ex);
+        }
     }
     public function init(array $options, object $context = null)
     {

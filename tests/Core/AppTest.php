@@ -33,7 +33,8 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'error_debug' => NULL,
             'skip_view_notice_error' => true,
             'use_super_global' => true,
-                        'override_class'=>'\\'.AppTestApp::class,
+            'override_class'=>'\\'.AppTestApp::class,
+            'controller_welcome_class'=>'AppMain',
 
         ];
 
@@ -73,8 +74,9 @@ echo "-------------------------------------\n";
         App::G()->run();
 
         try{
-                App::G()->options['skip_exception_check']=true;
+            App::G()->options['skip_exception_check']=true;
             Route::G()->bind('/exception');
+            
             App::G()->run();
         }catch(\Throwable $ex){
             echo $ex->getMessage();
@@ -271,6 +273,8 @@ App::PageHtml(123);
         App::getParameters();
         App::getRouteCallingMethod();
         App::setRouteCallingMethod($method);
+        App::setURLHandler(function($url){return $url;});
+        App::URL('abc');
         //*/
         //*
         $path_view=\GetClassTestPath(App::class).'view/';
@@ -329,7 +333,7 @@ App::PageHtml(123);
         App::addRouteHook(function(){},'append-outter',true);
         
         
-        App::IsInException();
+        App::InException();
         App::getPathInfo();
         
         
@@ -513,7 +517,7 @@ class ViewHelper
 }
 }
 namespace tests\DuckPhp\Core\Controller{
-class Main
+class AppMain
 {
     public function index()
     {
@@ -524,4 +528,6 @@ class Main
         throw new \Exception("HAHA");
     }
 }
+
+
 }

@@ -353,7 +353,7 @@ trait Core_Helper
         return $this->is_debug;
     }
     
-    public static function IsInException()
+    public static function InException()
     {
         return RuntimeState::G()->is_in_exception;
     }

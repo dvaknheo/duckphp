@@ -19,9 +19,9 @@ class AppHelper
     {
         return App::IsRunning();
     }
-    public static function IsInException()
+    public static function InException()
     {
-        return App::IsInException();
+        return App::InException();
     }
     
     public static function assignPathNamespace($path, $namespace = null)
