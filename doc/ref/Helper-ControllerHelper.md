@@ -3,39 +3,70 @@
 ## 简介
 
 控制器助手类
-## 选项
 
-## 公开方法
-public static function Setting($key)
-public static function Config($key, $file_basename='config')
-public static function LoadConfig($file_basename)
-public static function H($str)
-public static function URL($url=null)
-public static function Parameters()
-public function getRouteCallingMethod()
-public function setRouteCallingMethod($method)
-public static function Show($data=[], $view=null)
-public static function ShowBlock($view, $data=null)
-public function setViewWrapper($head_file=null, $foot_file=null)
-public function assignViewData($key, $value=null)
-public static function ExitRedirect($url, $exit=true)
-public static function ExitRedirectOutside($url, $exit=true)
-public static function ExitRouteTo($url, $exit)
-public static function Exit404($exit=true)
-public static function ExitJson($ret, $exit=true)
-public static function header($output, bool $replace = true, int $http_response_code=0)
-public static function exit_system($code=0)
-public function assignExceptionHandler($classes, $callback=null)
-public function setMultiExceptionHandler(array $classes, $callback)
-public function setDefaultExceptionHandler($callback)
-public static function SG()
-public static function &GLOBALS($k, $v=null)
-public static function &STATICS($k, $v=null)
-public static function &CLASS_STATICS($class_name, $var_name)
-public static function session_start(array $options=[])
-public function session_id($session_id=null)
-public static function session_destroy()
-public static function session_set_save_handler(\SessionHandlerInterface $handler)
+## 公开静态方法
+
+### 助手类公开静态方法
+[助手类公开静态方法](HelperTrait.md)
+IsDebug()
+IsRealDebug()
+Platform()
+Logger()
+trace_dump()
+var_dump(...$args)
+
+### 配置相关
+Setting($key)
+Config($key, $file_basename = 'config')
+LoadConfig($file_basename)
+
+### 显示相关
+H($str)
+L($str, $args = [])
+HL($str, $args = [])
+ShowBlock($view, $data = null)
+Show($data = [], $view = null)
+setViewWrapper($head_file = null, $foot_file = null)
+assignViewData($key, $value = null)
+
+### 路由相关
+
+URL($url)
+Domain()
+ExitRedirect($url, $exit = true)
+ExitRedirectOutside($url, $exit = true)
+ExitRouteTo($url, $exit = true)
+Exit404($exit = true)
+ExitJson($ret, $exit = true)
+getParameters()
+getRouteCallingMethod()
+setRouteCallingMethod($method)
+getPathInfo()
+
+### 系统兼容替换
+header($output, bool $replace = true, int $http_response_code = 0)
+setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
+exit($code = 0)
+
+### 异常处理
+
+assignExceptionHandler($classes, $callback = null)
+setMultiExceptionHandler(array $classes, $callback)
+setDefaultExceptionHandler($callback)
+
+### 超全局变量
+SG()
+GET($key, $default = null)
+POST($key, $default = null)
+REQUEST($key, $default = null)
+COOKIE($key, $default = null)
+
+### 分页相关
+Pager($object = null)
+PageNo()
+PageSize($new_value = null)
+PageHtml($total)
+
 
 ## 详解
-
+Controller Helper 全是静态方法，调用 App 类的内容。

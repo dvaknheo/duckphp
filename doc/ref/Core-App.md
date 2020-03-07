@@ -110,111 +110,6 @@ public static function header($output, bool $replace = true, int $http_response_
 public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = ### ', string $domain  = '', bool $secure = false, bool $httponly = false)
 
     //
-public static function exit_system($code=0)
-
-    //
-public static function set_exception_handler(callable $exception_handler)
-
-    //
-public static function register_shutdown_function(callable $callback, ...$args)
-
-    //
-public static function ExitJson($ret, $exit=true)
-
-    //
-public static function ExitRedirect($url, $exit=true)
-
-    //
-public static function ExitRedirectOutside($url, $exit=true)
-
-    //
-public static function ExitRouteTo($url, $exit=true)
-
-    //
-public static function Exit404($exit=true)
-
-    //
-public static function Platform()
-
-    //
-public static function IsDebug()
-
-    //
-public static function IsRealDebug()
-
-    //
-public static function IsInException()
-
-    //
-public static function Show($data=[], $view=null)
-
-    //
-public static function H($str)
-
-    //
-public static function L($str, $args=[])
-
-    //
-public static function HL($str, $args=[])
-
-    //
-public static function DumpTrace()
-
-    //
-public static function var_dump(...$args)
-
-    //
-public static function IsRunning()
-
-    //
-public static function URL($url=null)
-
-    //
-public static function Parameters()
-
-    //
-public static function ShowBlock($view, $data=null)
-
-    //
-public static function Setting($key)
-
-    //
-public static function Config($key, $file_basename='config')
-
-    //
-public static function LoadConfig($file_basename)
-
-    //
-public function assignPathNamespace($path, $namespace=null)
-
-    //
-public function addRouteHook($hook, $append=true, $outter=true, $once=true)
-
-    //
-public static function getRouteCallingMethod()
-
-    //
-public static function setRouteCallingMethod(string $method)
-
-    //
-public static function setViewWrapper($head_file=null, $foot_file=null)
-
-    //
-public static function assignViewData($key, $value=null)
-
-    //
-public static function assignExceptionHandler($classes, $callback=null)
-
-    //
-public static function setMultiExceptionHandler(array $classes, callable $callback)
-
-    //
-public static function setDefaultExceptionHandler(callable $callback)
-
-    //
-public static function SG(object $replacement_object=null)
-
-    //
 public static function &GLOBALS($k, $v=null)
 
     //
@@ -245,7 +140,7 @@ Core\App 类 可以视为几个类的组合
 ### 覆盖系统的 core_systemwrapper
 
 ### 助手类
-Core_Glue
+### Core_Glue
 
-Core_Component
+#### Core_Component
 
