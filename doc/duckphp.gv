@@ -8,21 +8,33 @@ subgraph cluster_Core {
     style = "rounded";
     label = "[DuckPhp\\Core]";
     node [style=filled];
+
+
+    Core_Kernel -> Core_SingletonEx [style="dotted"];
+    Core_Kernel -> Core_AutoLoader ;
+    Core_Kernel -> Core_Configer;
+    Core_Kernel -> Core_Logger;
+    Core_Kernel -> Core_ExceptionManager;
+    Core_Kernel -> Core_Route;
+    Core_Kernel -> Core_RuntimeState;
+    Core_Kernel -> Core_View;
+    Core_Kernel -> Core_SuperGlobal;
+
     
-    Core_App -> Core_AutoLoader ;
-    Core_App -> Core_ExceptionManager;
-    Core_App -> Core_View;
-    Core_App -> Core_Configer;
-    Core_App -> Core_Route;
-    Core_App -> Core_RuntimeState;
-    
-    
-    Core_App -> Core_SingletonEx [style="dotted"];
+    Core_App -> Core_Kernel;
     Core_App -> Core_ThrowOn;
     Core_App -> Core_ExtendableStaticCallTrait;
-    Core_App -> Core_SuperGobal;
     Core_App -> Core_SystemWrapper;
     
+    Core_App -> Core_AutoLoader [style="dotted"];
+    Core_App -> Core_Configer [style="dotted"];
+    Core_App -> Core_Logger [style="dotted"];
+    Core_App -> Core_ExceptionManager [style="dotted"];
+    Core_App -> Core_Route [style="dotted"];
+    Core_App -> Core_RuntimeState [style="dotted"];
+    Core_App -> Core_View [style="dotted"];
+    Core_App -> Core_SuperGlobal [style="dotted"];
+
     Core_AutoLoader -> Core_SingletonEx [style="dotted"];
     Core_ExceptionManager -> Core_SingletonEx [style="dotted"];
     Core_View -> Core_SingletonEx [style="dotted"];
@@ -44,11 +56,13 @@ subgraph cluster_Core {
     Core_AppPluginTrait [label="AppPluginTrait";shape=Mdiamond];
 
     Core_App [label="App";shape=Mdiamond];
+    Core_Kernel [label="Kernel";shape=Mdiamond];
     Core_SingletonEx [label="SingletonEx";shape=Mdiamond];
     Core_AutoLoader [label="AutoLoader"];
     Core_ExceptionManager [label="ExceptionManager"];
     Core_View [label="View"];
     Core_Configer [label="Configer"];
+    Core_Logger [label="Logger"];
     Core_Route [label="Route"];
     Core_RuntimeState [label="RuntimeState"];
     Core_SystemWrapper [label="SystemWrapper"];
@@ -67,6 +81,7 @@ subgraph cluster_Core {
 
 subgraph cluster_Helper {
     label = "[DuckPhp\\Helper]";
+    AppHelper -> Core_App; 
     ControllerHelper -> Core_App; 
     ModelHelper -> Core_App; 
     ServiceHelper -> Core_App; 
@@ -75,11 +90,13 @@ subgraph cluster_Helper {
     HelperTrait -> Core_ExtendableStaticCallTrait [style="dotted"];
     HelperTrait -> Core_ThrowOn [style="dotted"];
     
+    AppHelper -> HelperTrait; 
     ControllerHelper -> HelperTrait; 
     ModelHelper -> HelperTrait; 
     ServiceHelper -> HelperTrait; 
     ViewHelper -> HelperTrait; 
 
+    AppHelper [label="AppHelper";shape=Mdiamond];
     ControllerHelper [label="ControllerHelper";shape=Mdiamond];
     ModelHelper [label="ModelHelper";shape=Mdiamond];
     ServiceHelper [label="ServiceHelper";shape=Mdiamond];
@@ -96,13 +113,10 @@ subgraph cluster_DB {
 
     DB_DB -> DB_DBAdvance;
     DB_DB -> DB_DBInterface;
-    DB_MedooDB -> DB_DBAdvance;
 
     DB_DB [label="DB"];
     DB_DBAdvance [label="DBAdvance"];
     DB_DBInterface [label="DBInterface"];
-    DB_MedooDB [label="MedooDB"];
-
 
 }
 
@@ -112,17 +126,17 @@ subgraph cluster_Ext {
 label = "[DuckPhp\\Ext]";
     Ext [label="";style="dotted"];
     
-    Ext -> CallableView -> Core_View;
+    Ext -> CallableView [style="dotted"];  CallableView -> Core_View;
     Ext -> DBManager -> DB_DB;
     Ext -> DBReusePoolProxy [style="dotted"];
     
-    Ext -> FacadesAutoLoader;
-    Ext -> JsonRpcExt;
+    Ext -> FacadesAutoLoader [style="dotted"];
+    Ext -> JsonRpcExt [style="dotted"] ;
     Ext -> Misc
-    Ext -> Pager;
+    Ext -> Pager ;
+    Ext -> PluginForSwooleHttpd [style="dotted"];
     Ext -> RouteHookRewrite;
     Ext -> RouteHookRouteMap;
-    Ext -> SimpleLogger;
     Ext -> StrictCheck;
     
     Ext -> RedisManager [style="dotted"];
@@ -153,7 +167,6 @@ label = "[DuckPhp\\Ext]";
     RouteHookRewrite -> Core_SingletonEx[style="dotted"]; 
     RouteHookRouteMap -> Core_SingletonEx [style="dotted"]; 
 
-    SimpleLogger -> Core_SingletonEx [style="dotted"]; 
     StrictCheck -> Core_SingletonEx [style="dotted"]; 
     
     StrictModelTrait -> Core_SingletonEx [style="dotted"]; 
@@ -171,14 +184,14 @@ subgraph cluster_DuckPhp {
 
     HttpServer -> Core_HttpServer;
     App -> Core_App;
-    SingletonEx -> Core_SingletonEx;
-
+    SingletonEx -> Core_SingletonEx [style="dotted"];
+    
     App -> Ext;
 
     App [shape=Mdiamond];
     HttpServer [shape=Mdiamond];
     
-    SingletonEx [style=filled,shape=Mdiamond];
+    SingletonEx [style=filled,shape=Mdiamond] ;
 }
 
 }
