@@ -236,4 +236,16 @@ public static function session_destroy()
 public static function session_set_save_handler(\SessionHandlerInterface $handler)
 
 ## 详解
+Core\App 类 可以视为几个类的组合
+
+### 作为内核的 App 入口类
+
+### 作为 500,404 处理的 trait
+
+### 覆盖系统的 core_systemwrapper
+
+### 助手类
+Core_Glue
+
+Core_Component
 

@@ -170,12 +170,12 @@ subgraph cluster_DuckPhp {
         node [style=filled];
 
     HttpServer -> Core_HttpServer;
-    DuckPhp -> Core_App;
+    App -> Core_App;
     SingletonEx -> Core_SingletonEx;
 
-    DuckPhp -> Ext;
+    App -> Ext;
 
-    DuckPhp [shape=Mdiamond];
+    App [shape=Mdiamond];
     HttpServer [shape=Mdiamond];
     
     SingletonEx [style=filled,shape=Mdiamond];

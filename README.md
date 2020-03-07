@@ -4,7 +4,7 @@
 官方QQ群: 714610448
 
 ##  教程
-[教程](tutorial.md) ,强烈推荐先过 [教程](tutorial.md) 这篇文章。
+[**快速教程**](doc/tutorial.md) ,强烈推荐先看教程文章。
 
 ### 直接运行演示。
 进入 template 目录
@@ -80,7 +80,7 @@ MVC 结构的时候，你们业务逻辑放在哪里？
 可是 一般的 PHP 框架不提供这个功能。
 所以，Service 按业务走，Model 层按数据库走，Controller 层按 URL 地址走，View 按页面走，这就是 DuckPHP 的理念。
 
-DuckPHP 的最大意义是思想，只要思想在，什么框架你都可以用
+DuckPHP 的最大意义是思想，只要思想在，什么框架你都可以用。
 你可以不用 DuckPHP 实现 Controller-Service-Model 架构。
 只要有这个思想就是理念成功了。
 
@@ -128,9 +128,9 @@ Controller --> Service ------------------------------ ---> Model
 * 范例，例子还太少太简单了。
 * 单元测试，我真的在学习中。
 * 更多的杀手级应用。
-    
+  
 ## 样例
-### hello world
+### 1. hello world
 ```php
 <?php
 require_once __DIR__.'/../vendor/autoload.php';
@@ -149,17 +149,11 @@ $options=[
 DuckPHP\DuckPHP::RunQuickly($options);
 
 ```
-### 复杂例子
+### 2. 复杂样例
 
-工程附带的模板文件
+工程附带的模板文件 `template/public/demo.php` 在单一的文件里演示如何使用 ``DuckPHP``。
 
-template/public/demo.php
-
-在单一的文件里演示如何使用 DuckPHP。
-
-这个样例是为了演示特性把所有东西集中到一个文件，
-
-实际编码不会把所有东西全放在同一个文件里。
+这个样例是为了演示特性把所有东西集中到一个文件，实际编码不会把所有东西全放在同一个文件里。
 
 
 ```php
@@ -339,6 +333,7 @@ namespace {
 ## 架构图
 DuckPHP/Framwork 全框架
 ![DuckPHP](doc/duckphp.gv.svg)
+
 ## 还有什么要说的
 
 使用它，鼓励我，让我有写下去的动力

@@ -16,6 +16,7 @@ class Misc
     public $options = [
         'path' => '',
         'path_lib' => 'lib',
+        'use_short_function' => true,
     ];
     protected $path = null;
     protected $context_class;

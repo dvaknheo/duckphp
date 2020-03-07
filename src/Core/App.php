@@ -835,8 +835,10 @@ trait Core_Glue
     {
         return Route::G()->setRouteCallingMethod($method);
     }
-    
-    //view
+    public static function setURLHandler($callback)
+    {
+        return Route::G()->setURLHandler($callback);
+    }    //view
     public static function setViewWrapper($head_file = null, $foot_file = null)
     {
         return View::G()->setViewWrapper($head_file, $foot_file);
