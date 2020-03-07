@@ -479,7 +479,7 @@ trait Core_Helper
     public function _Pager($object = null)
     {
         if ($object) {
-            $this->pager=$object;
+            $this->pager = $object;
         }
         return $this->pager;
     }
@@ -492,7 +492,7 @@ trait Core_Helper
     {
         return static::Pager()->pageSize($new_value);
     }
-    public static function PageHtml($total, $options=[])
+    public static function PageHtml($total, $options = [])
     {
         return static::Pager()->render($total, $options);
     }

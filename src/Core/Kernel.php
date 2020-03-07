@@ -129,10 +129,9 @@ trait Kernel
         $object = null;
         if (!$override_class || !class_exists($override_class)) {
             $object = $this;
-            
-        }else if (static::class === $override_class) {
+        } elseif (static::class === $override_class) {
             $object = $this;
-        }else{
+        } else {
             $object = $override_class::G();
         }
         

@@ -30,7 +30,7 @@ class AppHelper
     }
     public static function addRouteHook($hook, $position, $once = true)
     {
-        return App::addRouteHook($hook,$position,$once);
+        return App::addRouteHook($hook, $position, $once);
     }
     public static function setUrlHandler($callback)
     {
@@ -63,11 +63,11 @@ class AppHelper
     }
     public static function &GLOBALS($k, $v = null)
     {
-        return App::GLOBALS($k,$v);
+        return App::GLOBALS($k, $v);
     }
     public static function &STATICS($k, $v = null, $_level = 1)
     {
-        return App::STATICS($k,$v,$_level+1);
+        return App::STATICS($k, $v, $_level + 1);
     }
     public static function &CLASS_STATICS($class_name, $var_name)
     {
