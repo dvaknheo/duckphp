@@ -2,6 +2,7 @@
 namespace tests\DuckPhp\Core{
 
 use DuckPhp\Core\App;
+use DuckPhp\Core\Kernel;
 use DuckPhp\App as DuckPhp;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\View;
@@ -9,11 +10,11 @@ use DuckPhp\Core\Route;
 use DuckPhp\Core\SingletonEx;
 use DuckPhp\Ext\Pager;
 
-class AppTest extends \PHPUnit\Framework\TestCase
+class KernelTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(App::class);
+        \MyCodeCoverage::G()->begin(Kernel::class);
     
         $path_app=\GetClassTestPath(App::class);
         $path_config=\GetClassTestPath(Configer::class);
@@ -36,7 +37,6 @@ class AppTest extends \PHPUnit\Framework\TestCase
                         'override_class'=>'\\'.AppTestApp::class,
 
         ];
-
         $options['ext']=[
             'noclass'=>true,
             AppTestObject::class=>false,
@@ -125,17 +125,9 @@ echo "-------------------------------------\n";
         App::G()->replaceDefaultRunHandler($xfunc);
         App::G()->run();
         
-        $this->do_Core_Component();
-        
-        $this->doFixPathinfo();
-        
-App::Pager(Pager::G());
-App::PageNo();
-App::PageSize();
-App::PageHtml(123);
 
         
-    \MyCodeCoverage::G()->end(App::class);
+    \MyCodeCoverage::G()->end(Kernel::class);
     $this->assertTrue(true);
     return;
 
@@ -416,6 +408,8 @@ App::PageHtml(123);
     {
     }
 }
+}
+/*
 class AppTestApp extends App
 {
     public function __construcct()
@@ -525,3 +519,4 @@ class Main
     }
 }
 }
+*/

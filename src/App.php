@@ -14,11 +14,7 @@ use DuckPhp\Ext\Pager;
 class App extends Core_App
 {
     const VERSION = '1.2.2';
-        
     protected $options_ex = [
-            'log_file' => '',
-            
-            'use_super_global' => false,
             'rewrite_map' => [],
             'route_map_important' => [],
             'route_map' => [],
@@ -40,7 +36,7 @@ class App extends Core_App
                 'DuckPhp\Ext\DBReusePoolProxy' => false,
                 'DuckPhp\Ext\FacadesAutoLoader' => false,
                 'DuckPhp\Ext\Lazybones' => false,
-                'DuckPhp\Ext\Pager' => true,
+                'DuckPhp\Ext\Pager' =>  false,
             ],
             
         ];
@@ -54,10 +50,5 @@ class App extends Core_App
                 }
         */
         parent::__construct();
-    }
-    // @override parent
-    public function _Pager($replacement_object = null)
-    {
-        return Pager::G($replacement_object);
     }
 }
