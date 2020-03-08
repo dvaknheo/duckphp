@@ -9,7 +9,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(DuckPhp::class);
+        \MyCodeCoverage::G()->begin(DuckPhp::class,'T',dirname(\MyCodeCoverage::G()->classToPath()).'/Ext/ShortFunctions.php');
         
         //code here
         //$handler=null;
@@ -25,6 +25,8 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         $options=[
             'skip_setting_file'=>true,
             'path_lib'=>$path_lib,
+            'log_sql'=>true,
+            'use_short_functions'=>true,
         ];
         DuckPhp::G()->init($options);
         DuckPhp::G()->system_wrapper_replace([
@@ -32,14 +34,13 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         ]);
         DuckPhp::Pager();
         
-        //DuckPhp::Import('file');
-        //$data=[['A'=>'b']];
-        //DuckPhp::RecordsetUrl($data, $cols_map=[]);
-        //DuckPhp::RecordsetH($data, $cols=[]);
+        ////
         
-        //DuckPhp::DB();
-        //DuckPhp::DB_W();
-        //DuckPhp::DB_R();
+        DuckPhp::OnQuery("SQL ",1,2);
+        ////
+        \e("<B>xx</B>");
+        
+        
         \MyCodeCoverage::G()->end(DuckPhp::class);
         $this->assertTrue(true);
 

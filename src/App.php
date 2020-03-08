@@ -18,6 +18,9 @@ class App extends Core_App
             'rewrite_map' => [],
             'route_map_important' => [],
             'route_map' => [],
+            'db_before_query_handler' => null,
+            'log_sql' => false,
+            'use_short_functions' => false,
             
             'ext' => [
                 //'DuckPhp\Ext\PluginForSwooleHttpd' => true,
@@ -43,12 +46,36 @@ class App extends Core_App
     public function __construct()
     {
         $this->options = array_merge($this->options, $this->options_ex);
-        /*
+        /* no use
                 if (PHP_SAPI === 'cli' && extension_loaded('swoole')) {
                     //$t = ['DuckPhp\Ext\PluginForSwooleHttpd' => true];
                     //$this->options['ext'] = array_merge($t, $this->options);
                 }
         */
+        $this->options['db_before_query_handler'] = [static::class, 'OnQuery'];
         parent::__construct();
+    }
+    public function init(array $options, object $context = null)
+    {
+        parent::init($options, $context);
+        if (!empty($this->options['log_sql'])) {
+            $this->options['db_before_query_handler'] = $this->options['db_before_query_handler'] ?? [static::class, 'OnQuery'];
+        }
+        if($this->options['use_short_functions']){
+            require_once __DIR__.'/Ext/ShortFunctions.php';
+        }
+        return $this;
+    }
+    public function _Pager($object = null)
+    {
+        return Pager::G($object);
+    }
+    public static function OnQuery($sql, ...$args)
+    {
+        return static::G()->_OnQuery($sql, ...$args);
+    }
+    public function _OnQuery($sql, ...$args)
+    {
+        static::Logger()->info('[sql]: ' . $sql, $args);
     }
 }

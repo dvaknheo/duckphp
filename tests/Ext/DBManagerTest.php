@@ -136,6 +136,30 @@ $options['database_list']=[[
         DBManager::G()->setDBHandler([DB::class,'CreateDBInstance'],null,[static::class,'onExceptions' ]);
 DBManager::G()->_DB();
         DBManager::OnException();
+        ////
+        $dn_options=[
+            'skip_setting_file'=>true,
+            'log_sql'=>true,
+        ];
+        App::G(new App())->init($dn_options);
+        var_dump(App::G());
+$options=[
+        'db_create_handler'=>null,
+        'db_close_handler'=>null,
+        'db_excption_handler'=>null,
+        'before_get_db_handler'=>null,
+        
+        'database_list'=>[[
+	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
+	'username'=>'admin',	
+	'password'=>'123456'
+]],
+            'use_context_db_setting'=>true,
+        ];
+        DBManager::G(new DBManager())->init($options,App::G());
+        $data=App::DB()->fetchColumn('select ?+? as t',1,2);
+        
+        var_dump($data);
 
 
         \MyCodeCoverage::G()->end(DBManager::class);

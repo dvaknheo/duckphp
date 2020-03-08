@@ -37,6 +37,8 @@ class DBManager
     protected $before_get_db_handler = null;
     protected $use_context_db_setting = true;
     
+    protected $beforeQueryHandler = null;
+    
     public function __construct()
     {
     }
@@ -74,6 +76,7 @@ class DBManager
         if ($this->options['db_close_at_output']) {
             $context->addBeforeShowHandler([static::class,'CloseAllDB']);
         }
+        $this->beforeQueryHandler = $context->options['db_before_query_handler'] ?? null;
         if (method_exists($context, 'extendComponents')) {
             $context->extendComponents(
                 [
@@ -83,13 +86,14 @@ class DBManager
                     'setDBHandler' => [static::class .'::G', 'setDBHandler'],
                     'setBeforeGetDBHandler' => [static::class .'::G', 'setBeforeGetDBHandler'],
                 ],
-                ['M']
+                ['M','A']
             );
             $context->extendComponents(
                 [
                     'setDBHandler' => [static::class .'::G', 'setDBHandler'],
                     'setBeforeGetDBHandler' => [static::class .'::G', 'setBeforeGetDBHandler'],
-                ]
+                ],
+                ['A']
             );
         }
     }
@@ -149,7 +153,11 @@ class DBManager
     protected function getDatabase($db_config, $tag)
     {
         if (!isset($this->databases[$tag])) {
-            $this->databases[$tag] = ($this->db_create_handler)($db_config, $tag);
+            $db = ($this->db_create_handler)($db_config, $tag);
+            if ($this->beforeQueryHandler && is_callable([$db,'setBeforeQueryHandler'])) {
+                $db->setBeforeQueryHandler($this->beforeQueryHandler);
+            }
+            $this->databases[$tag] = $db;
         }
         return $this->databases[$tag];
     }

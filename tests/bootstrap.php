@@ -92,11 +92,14 @@ class MyCodeCoverage
         $ref=new ReflectionClass($class);
         return $ref->getFileName();
     }
-    public function begin($class, $name='T')
+    public function begin($class, $name='T',$extPath=null)
     {
         $this->test_class=$class;
         $this->coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage();
         $this->setPath($this->classToPath($class));
+        if($extPath){
+            $this->coverage->filter()->addFileToWhitelist($extPath);
+        }
         $this->coverage->start($name);
     }
     public function end()
