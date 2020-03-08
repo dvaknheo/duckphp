@@ -1,18 +1,26 @@
 # Core\Route
 
 ## 简介
-很重要的路由类
+很重要的路由类，可以在单独抽出来使用。
 ## 选项
 'namespace' => 'MY',
+	默认命名空间为 MY
 'namespace_controller' => 'Controller',
-
+	默认子命名空间为 Controller
 'controller_base_class' => null,
+	必须的基类
 'controller_welcome_class' => 'Main',
-
+	欢迎类
 'controller_hide_boot_class' => false,
+	隐藏启动的类
 'controller_methtod_for_miss' => '_missing',
+	方法丢失调用的方法
 'controller_prefix_post' => 'do_',
+	post 模式下的类
 'controller_postfix' => '',
+
+​	控制器后缀
+
 ## 公开方法
     public function __construct()
     public static function RunQuickly(array $options=[], callable $after_init=null)

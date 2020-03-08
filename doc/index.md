@@ -1,6 +1,6 @@
 # 首页
 
-这个页用于索引所有 md 文档页面
+这个页用于索引所有 markdown 文档页面
 
 ## 快速教程
 [快速教程](tutorial.md)
@@ -18,5 +18,6 @@
 [异常处理](tutorial-exception.md)
 [数据库](tutorial-db.md)
 [会话处理](tutorial-session.md)
+[接管实现](tutorial-override.md)
 [扩展的使用和开发](tutorial-extension.md)
 [参与开发相关](tutorial-support.md)

@@ -5,7 +5,7 @@
 ## 选项
 
 ## 公开方法
-    public static function ThrowOn($flag, $message, $code=0, $exception_class=null)
+    ThrowOn($flag, $message, $code=0, $exception_class=null)
 
 
 ## 详解

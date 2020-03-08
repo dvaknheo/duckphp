@@ -2,12 +2,21 @@
 ## 相关类和配置。
 [`Ext/DBManager`]()
 
+DB/DB
+
+DB/DBAdvance
+
+DB/DBInterface
+
+
+
 
 ## 开始
 
 ### DBManager
 默认开启。DBManager 类是用来使用数据库的
 M::DB() 用到了这个组件。
+
 #### 选项
     'db_create_handler'=>null,  // 默认用 [DB::class,'CreateDBInstance']
     'db_close_handler'=>null,   // 默认等于 [DB::class,'CloseDBInstance']

@@ -1,3 +1,22 @@
+v1.2.2 发布。通过 phpstan level7 的检查，php-cs-fixer 的格式化。phpunit 的 100%覆盖测试。
+
+应用层方面，C::Parameters() 改成 C::getParameters() ，这个只用于自定义路由。
+
+其他都是上层的改动。
+用于各种自定义的路由 RouteHookRouteMap 拆分成 route_map 和 route_map_important 两选项， 后者在默认文件路由前钩挂，用于比较重要的自定义路由。 前者用于默认文件路由后 404 处理
+把当前站点改成组件化用的 AppPluginTrait 重写。如果没特殊使用，不需要改动。
+Logger 类 放入核心目录。
+Helper 类从 Core 核心目录移出。 核心框架不再包含。
+App 类额外方法都咔嚓。 由 Ext 扩展类自行扩充。
+Swoole 的支持方式变更，ext 扩展 + core/app 类方式完成。 
+随行 demo 更新。
+
+要做的： 
+错误处理现在复杂化了，需要重新简化以更清晰。
+需要添加 init 后 缓存，直接读取到 run 运行的 更快速运行方式。
+AppPlugin 组件化的初始化默认应该加上 lazyload 模式，使得多加组件不影响启动效率。
+需要添加适配各家框架 nginx 配置的插件 。各家 nginx 配置居然都有不同 :( 。
+
 1.1.4到 1.1.5 变更
 2019-12-02 15:12:13
 添加了插件模式，添加了 log ，还有一堆东西，准备改名了。
