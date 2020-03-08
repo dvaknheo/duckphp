@@ -9,7 +9,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(DuckPhp::class,'T',dirname(\MyCodeCoverage::G()->classToPath()).'/Ext/ShortFunctions.php');
+        \MyCodeCoverage::G()->begin(DuckPhp::class,'T',dirname(\MyCodeCoverage::G()->classToPath(DuckPhp::class)).'/Ext/ShortFunctions.php');
         
         //code here
         //$handler=null;
