@@ -35,6 +35,7 @@ class KernelTest extends \PHPUnit\Framework\TestCase
             'skip_view_notice_error' => true,
             'use_super_global' => true,
             'override_class'=>'\\'.KernelTestApp::class,
+            'skip_fix_path_info'=>true,
         ];
         
         $options['ext']=[
