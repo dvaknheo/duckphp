@@ -5,7 +5,7 @@
  */
 
 if (! function_exists('e')) {
-    function e($value)
+    function e($str)
     {
         return \DuckPhp\Core\App::H($str);
     }

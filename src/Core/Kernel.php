@@ -35,7 +35,8 @@ trait Kernel
             'ext' => [],
             
             'override_class' => 'Base\App',
-            'reload_for_flags' => true,
+            
+            'use_flag_by_setting' => true,
             'use_super_global' => false,
             'skip_view_notice_error' => true,
             'skip_404_handler' => false,
@@ -188,7 +189,7 @@ trait Kernel
     }
     protected function reloadFlags(): void
     {
-        if (!$this->options['reload_for_flags']) {
+        if (!$this->options['use_flag_by_setting']) {
             return;
         }
         $is_debug = Configer::G()->_Setting('duckphp_is_debug');

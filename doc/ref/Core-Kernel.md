@@ -1,226 +1,99 @@
-# Core\App
+# Core\Kernel
 
 ## 简介
-最核心的类，其他
+最核心的Trait，你通过 App 类来使用他。
+
 ## 选项
 
-    //// basic config ////
-    'path' => null,
-    'namespace' => 'MY',
-    'path_namespace' => 'app',
-    
-    //// properties ////
-    'is_debug' => false,
-    'platform' => '',
-    'ext' => [],
-    
-    'override_class' => 'Base\App',
-    'reload_for_flags' => true,
-    'use_super_global' => false,
-    'skip_view_notice_error' => true,
-    'skip_404_handler' => false,
-    'skip_plugin_mode_check' => false,
-    'skip_exception_check' => false,
-    'skip_fix_path_info' => false,
-    
-    //// error handler ////
-    'handle_all_dev_error' => true,
-    'handle_all_exception' => true,
-    'error_404' => null,          //'_sys/error-404',
-    'error_500' => null,          //'_sys/error-500',
-    'error_debug' => null,        //'_sys/error-debug',
-    
-    
-    'skip_app_autoload' => false,
-    
+### 基本配置
+'path' => null,
 
+    基准目录
+'namespace' => 'MY',
 
+    基准命名空间
+'path_namespace' => 'app',
+
+    命名空间路径
+'override_class' => 'Base\App',
+
+    重新进入的类。
+'is_debug' => false,
+
+    调试模式， 用于 IsDebug 方法。
+'platform' => '',
+
+    平台， 自定义字符，用于 Platform() 方法。
+'ext' => [],
     
-## 公开方法
+### 错误处理配置
+'handle_all_dev_error' => true,
+'handle_all_exception' => true,
+'error_404' => null,          //'_sys/error-404',
+'error_500' => null,          //'_sys/error-500',
+'error_debug' => null,        //'_sys/error-debug',
+
+### 开关配置
+'reload_for_flags' => true,
+
+    从设置文件中再次重载 is_debug 和 platform
+'use_super_global' => false,
+
+    使用 `SuperGlobal` 类处理超全局变量，默认关闭以节约微乎其微的性能。
+'skip_view_notice_error' => true,
+
+    Show() 函数关闭 notice 警告，以避免麻烦的处理。
+'skip_404_handler' => false,
+
+    不处理 404 ，用于配合其他框架使用。
+'skip_plugin_mode_check' => false,
+
+    跳过是否插件模式的检查， 打开以节约微乎其微的性能。
+'skip_exception_check' => false,
+    
+    不在 Run 流程检查异常，把异常抛出外面，打开以节约微乎其微的性能。
+'skip_fix_path_info' => false,
+
+    修复默认没配置 PATH_INFO ，打开以节约性能
+'skip_app_autoload' => false,
+    
+    不使用 AutoLoader 加载类，如果你不打算用AutoLoader类。打开以节约性能
+
+## 方法
+### 公开方法
 public static function RunQuickly(array $options=[], callable $after_init=null): bool
 
-    //
+    快速开始，init() 后接 $after_init() 然年后 run() 
 public function init(array $options=[], object $context=null)
 
-    //
+    初始化
 public function run(): bool
 
-    //
+    运行
 public function clear(): void
 
-    //
-public function cleanAll()
+    不建议主动使用，用于清理现场。
+public function replaceDefaultRunHandler(callable $handler = null): void
 
-    //
+    不通过继承而是外挂替换默认的 Run 函数， `Ext\PluginForSwoole` 扩展用到。
 public function addBeforeShowHandler($handler)
 
     //
-public function extendComponents($class, $methods, $components): void
+### 重写用的方法
+protected function onInit()
+protected function onRun()
+protected function pluginModeInit(array $options, object $context = null)
 
-    //
-public function getStaticComponentClasses()
-
-    //
-public function getDynamicComponentClasses()
-
-    //
-public function addDynamicComponentClass($class)
-
-    //
-public function deleteDynamicComponentClass($class)
-
-    //
-public static function On404(): void
-
-    //
-public static function OnException($ex): void
-
-    //
-public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
-
-    //
-public static function header($output, bool $replace = true, int $http_response_code=0)
-
-    //
-public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = ### ', string $domain  = '', bool $secure = false, bool $httponly = false)
-
-    //
-public static function exit_system($code=0)
-
-    //
-public static function set_exception_handler(callable $exception_handler)
-
-    //
-public static function register_shutdown_function(callable $callback, ...$args)
-
-    //
-public static function ExitJson($ret, $exit=true)
-
-    //
-public static function ExitRedirect($url, $exit=true)
-
-    //
-public static function ExitRedirectOutside($url, $exit=true)
-
-    //
-public static function ExitRouteTo($url, $exit=true)
-
-    //
-public static function Exit404($exit=true)
-
-    //
-public static function Platform()
-
-    //
-public static function IsDebug()
-
-    //
-public static function IsRealDebug()
-
-    //
-public static function IsInException()
-
-    //
-public static function Show($data=[], $view=null)
-
-    //
-public static function H($str)
-
-    //
-public static function L($str, $args=[])
-
-    //
-public static function HL($str, $args=[])
-
-    //
-public static function DumpTrace()
-
-    //
-public static function var_dump(...$args)
-
-    //
-public static function IsRunning()
-
-    //
-public static function URL($url=null)
-
-    //
-public static function Parameters()
-
-    //
-public static function ShowBlock($view, $data=null)
-
-    //
-public static function Setting($key)
-
-    //
-public static function Config($key, $file_basename='config')
-
-    //
-public static function LoadConfig($file_basename)
-
-    //
-public function assignPathNamespace($path, $namespace=null)
-
-    //
-public function addRouteHook($hook, $append=true, $outter=true, $once=true)
-
-    //
-public static function getRouteCallingMethod()
-
-    //
-public static function setRouteCallingMethod(string $method)
-
-    //
-public static function setViewWrapper($head_file=null, $foot_file=null)
-
-    //
-public static function assignViewData($key, $value=null)
-
-    //
-public static function assignExceptionHandler($classes, $callback=null)
-
-    //
-public static function setMultiExceptionHandler(array $classes, callable $callback)
-
-    //
-public static function setDefaultExceptionHandler(callable $callback)
-
-    //
-public static function SG(object $replacement_object=null)
-
-    //
-public static function &GLOBALS($k, $v=null)
-
-    //
-public static function &STATICS($k, $v=null, $_level=1)
-
-    //
-public static function &CLASS_STATICS($class_name, $var_name)
-
-    //
-public static function session_start(array $options=[])
-
-    //
-public static function session_id($session_id=null)
-
-    //
-public static function session_destroy()
-
-    //
-public static function session_set_save_handler(\SessionHandlerInterface $handler)
+### 流程相关方法。
+protected function checkOverride($options)
+protected function initOptions($options = [])
+protected function reloadFlags(): void
+protected function initExtentions(array $exts): void
+protected function fixPathInfo(&$serverData)
 
 ## 详解
-Core\App 类 可以视为几个类的组合
 
-### 作为内核的 App 入口类
+Kernel 这个 Trait 不直接处理，一般直接用的是 Core\App ， 而直接的 App 类，则是把常见扩展加进去形成完善的框架。
 
-### 作为 500,404 处理的 trait
-
-### 覆盖系统的 core_systemwrapper
-
-### 助手类
-Core_Glue
-
-Core_Component
-
+### 流程说明
+init 只是初始化

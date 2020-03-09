@@ -1,19 +1,19 @@
 # 路由
 ## 相关类
 
-Core/Route
+**[Core\Route](ref/Core-Route.md)**
 
-Ext/RouteHookRewrite
+[Ext\RouteHookRewrite](ref/Ext-RouteHookRewrite.md)
 
-Ext/RouteHookRouteMap
+[Ext\RouteHookRouteMap](ref/Ext-RouteHookRouteMap.md)
 
-Ext/RouteHookOneFileMode
+*[Ext\RouteHookOneFileMode](ref/Ext-RouteHookOneFileMode.md)*
 
-Ext/RouteHookDirctoryMode
+*[Ext\RouteHookDirectoryMode](ref/RouteHookDirectoryMode.md)*
 
 ## 开始
 
-duckphp 默认加载了 routemap 和 routerewarite 插件。
+duckphp 默认加载了 routemap 和 routerewrite 插件。
 
 路由钩子
 

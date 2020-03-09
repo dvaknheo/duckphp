@@ -40,30 +40,28 @@ class AutoLoader
         }
         $this->is_inited = true;
         
-        $this->options = array_merge($this->options, $options);
-        $options = $this->options;
-        
-        if (empty($options['path'])) {
+        $this->options = array_merge($this->options, $options);        
+        if (!isset($this->options['path'])) {
             $path = realpath(getcwd().'/../');
-            $options['path'] = $path;
+            $this->options['path'] = $path;
         }
-        $path = rtrim($options['path'], '/').'/';
+        $path = rtrim($this->options['path'], '/').'/';
         
-        $this->namespace = $options['namespace'];
+        $this->namespace = $this->options['namespace'];
         //
         
-        if (substr($options['path_namespace'], 0, 1) === '/') {
-            $this->path_namespace = rtrim($options['path_namespace'], '/').'/';
+        if (substr($this->options['path_namespace'], 0, 1) === '/') {
+            $this->path_namespace = rtrim($this->options['path_namespace'], '/').'/';
         } else {
-            $this->path_namespace = $path.rtrim($options['path_namespace'], '/').'/';
+            $this->path_namespace = $path.rtrim($this->options['path_namespace'], '/').'/';
         }
         
-        $this->enable_cache_classes_in_cli = $options['enable_cache_classes_in_cli'];
+        $this->enable_cache_classes_in_cli = $this->options['enable_cache_classes_in_cli'];
 
-        if (!$options['skip_app_autoload']) {
+        if (!$this->options['skip_app_autoload']) {
             $this->assignPathNamespace($this->path_namespace, $this->namespace);
         }
-        if (!$options['skip_system_autoload']) {
+        if (!$this->options['skip_system_autoload']) {
             $this->assignPathNamespace(__DIR__, __NAMESPACE__);
         }
         

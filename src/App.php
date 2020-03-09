@@ -15,15 +15,15 @@ class App extends Core_App
 {
     const VERSION = '1.2.2';
     protected $options_ex = [
-            'rewrite_map' => [],
-            'route_map_important' => [],
-            'route_map' => [],
+            // 'rewrite_map' => [],
+            // 'route_map_important' => [],
+            // 'route_map' => [],
             'db_before_query_handler' => null,
             'log_sql' => false,
             'use_short_functions' => false,
             
             'ext' => [
-                //'DuckPhp\Ext\PluginForSwooleHttpd' => true,
+                // No Use 'DuckPhp\Ext\PluginForSwooleHttpd' => true,
                 'DuckPhp\Ext\Misc' => true,
                 'DuckPhp\Ext\SimpleLogger' => true,
                 'DuckPhp\Ext\DBManager' => true,
@@ -55,16 +55,17 @@ class App extends Core_App
         $this->options['db_before_query_handler'] = [static::class, 'OnQuery'];
         parent::__construct();
     }
-    public function init(array $options, object $context = null)
+    protected function onInit()
     {
-        parent::init($options, $context);
+        $ret=parent::onInit();
+        
         if (!empty($this->options['log_sql'])) {
             $this->options['db_before_query_handler'] = $this->options['db_before_query_handler'] ?? [static::class, 'OnQuery'];
         }
         if($this->options['use_short_functions']){
             require_once __DIR__.'/Ext/ShortFunctions.php';
         }
-        return $this;
+        return $ret;
     }
     public function _Pager($object = null)
     {

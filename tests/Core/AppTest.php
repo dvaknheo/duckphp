@@ -26,7 +26,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'platform' => 'ForTests',
             'is_debug' => true,
             'skip_setting_file' => true,
-            'reload_for_flags' => false,
+            'use_flag_by_setting' => false,
             'error_exception' => NULL,
             'error_500' => NULL,
             'error_404' => NULL,
@@ -353,7 +353,7 @@ App::PageHtml(123);
             'platform' => 'BJ',
             'is_debug' => true,
             'skip_setting_file' => true,
-            'reload_for_flags' => true,
+            'use_flag_by_setting' => true,
             
             'skip_view_notice_error' => true,
             'use_super_global' => true,
