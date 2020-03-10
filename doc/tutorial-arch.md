@@ -11,7 +11,9 @@
 
 3. [SingletonEx.php](ref/SingletonEx.md) 是 Core/SingletonEx.php 的快捷方法。
 
-4. Core/ 目录是核心目录，基本功能都在 Core 里实现
+4. [ThrowOn.php](ref/ThrowOn.md) 是 Core/ThrowOn.php 的快捷方法。
+
+5. Core/ 目录是核心目录，基本功能都在 Core 里实现
    1. **[SingletonEx.php](ref/Core-SingletonEx.php)**  
    2. **[ThrowOn.php](ref/Core-ThrowOn.md)** 注意这个 trait 也被 Helper使用
    3. **[App.php](ref/Core-App.md)** 是核心,引用
@@ -25,40 +27,40 @@
            7. [Logger.php](ref/Core-Logger.md)
            8. [ExceptionManager.php](ref/Core-ExceptionManager.md)  
            9. [RuntimeState.php](ref/Core-RuntimeState.md)
-
         2. [ExtendableStaticCallTrait.php](ref/Core-ExtendableStaticCallTrait.md) 注意这个 trait 也被 Helper使用
         3. [SystemWrapper.php](ref/Core-SystemWrapper.md)
    3. **[AppPluginTrait.php](ref/Core-AppPluginTrait.md) **  这个Trait用于把独立工程 App 转成插件 
    4. **[HttpServer.php](ref/Core-HttpServer.md)** 单独的 Http 服务器
   
-5. DB/ 是数据库
+6. DB/ 是数据库
    1. [DBAdvance.php](ref/DB-DBAdvance.md)
    2. [DBInterface.php](ref/DB-DBInterface.md)
    3. [DB.php](ref/DB-DB.md)
 
-6. Ext/ 目录是各种扩展，粗体为默认
+7. Ext/ 目录是各种扩展，粗体为默认
    1. **[DBManager.php](ref/Ext-DBManager.md)**
    2. **[Misc.php](ref/Ext-Misc.md)**
    3. **[Pager.php](ref/Ext-Pager.md)**
+        1. [PagerInteface.php](ref/Ext-PagerInteface.md)
    4. **[RouteHookRewrite.php](ref/Ext-RouteHookRewrite.md)**
    5. **[RouteHookRouteMap.php](ref/Ext-RouteHookRouteMap.md)**
    6. [CallableView.php](ref/Ext-CallableView.md)
    7. [DBReusePoolProxy.php](ref/Ext-DBReusePoolProxy.md)
    8. [FacadesAutoLoader.php](ref/Ext-FacadesAutoLoader.md)
-        9. [FacadesBase.php](ref/Ext-FacadesBase.md)
-   10. [HookChain.php](ref/Ext-HookChain.md) 这个独立文件没用到。
+        1. [FacadesBase.php](ref/Ext-FacadesBase.md)
+   9. [HookChain.php](ref/Ext-HookChain.md) 这个独立文件没用到。
    10. [JsonRpcExt.php](ref/Ext-JsonRpcExt.md)
-        12. [JsonRpcClientBase.php](ref/Ext-JsonRpcClientBase.md)
-   13. [PluginForSwooleHttpd.php](ref/Ext-PluginForSwooleHttpd.md)
-   14. [RedisManager.php](ref/Ext-RedisManager.md)
-   15. [RedisSimpleCache.php](ref/Ext-RedisSimpleCache.md)
-   16. [RouteHookDirectoryMode.php](ref/Ext-RouteHookDirectoryMode.md)
-   17. [RouteHookOneFileMode.php](ref/Ext-RouteHookOneFileMode.md)
-   18. [StrictCheck.php](ref/Ext-StrictCheck.md)
+        1. [JsonRpcClientBase.php](ref/Ext-JsonRpcClientBase.md)
+   11. [PluginForSwooleHttpd.php](ref/Ext-PluginForSwooleHttpd.md)
+   12. [RedisManager.php](ref/Ext-RedisManager.md)
+   13. [RedisSimpleCache.php](ref/Ext-RedisSimpleCache.md)
+   14. [RouteHookDirectoryMode.php](ref/Ext-RouteHookDirectoryMode.md)
+   15. [RouteHookOneFileMode.php](ref/Ext-RouteHookOneFileMode.md)
+   16. [StrictCheck.php](ref/Ext-StrictCheck.md)
          1. [StrictCheckModelTrait.php](ref/Ext-StrictCheckModelTrait.md)
          2. [StrictCheckServiceTrait.php](ref/Ext-StrictCheckServiceTrait.md)
-    19. *[Lazybones.php](ref/Ext-Lazybones.md)*
-7. Helper/ 助手类
+   17. *[Lazybones.php](ref/Ext-Lazybones.md)*
+8. Helper/ 助手类
     1. **[HelperTrait.php](ref/Helper-HelperTrait.md)**
     2. [ControllerHelper.php](ref/Helper-ControllerHelper.md)
     3. [ModelHelper.php](ref/Helper-ModelHelper.md)

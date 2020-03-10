@@ -1,15 +1,22 @@
 # 数据库教程
 ## 相关类和配置。
-[`Ext/DBManager`]()
 
-DB/DB
+[Ext/DBManager](ref/Ext-DBManager.md)
 
-DB/DBAdvance
+[DB/DB](ref/DB-DB.md)
 
-DB/DBInterface
+[DB/DBAdvance](ref/DB-DBAdvance)
 
+[DB/DBInterface]()
 
+## 相关配置
+'db_create_handler'=>null,  // 默认用 [DB::class,'CreateDBInstance']
+'db_close_handler'=>null,   // 默认等于 [DB::class,'CloseDBInstance']
+'before_get_db_handler'=>null, // 在调用 DB 前调用
+'use_context_db_setting'=>true, //使用 setting 里的。
+'database_list'=>null,      //DB 列表
 
+## 相关设置
 
 ## 开始
 
@@ -18,12 +25,7 @@ DB/DBInterface
 M::DB() 用到了这个组件。
 
 #### 选项
-    'db_create_handler'=>null,  // 默认用 [DB::class,'CreateDBInstance']
-    'db_close_handler'=>null,   // 默认等于 [DB::class,'CloseDBInstance']
-    'before_get_db_handler'=>null, // 在调用 DB 前调用
-    'use_context_db_setting'=>true, //使用 setting 里的。
-    'database_list'=>null,      //DB 列表
-    db_create_handler
+
 #### 说明
 
 database_list 的示例：
@@ -86,14 +88,12 @@ DuckPHP::RunQuickly($options,function(){
 ```php
 <?php
 use think\facade\Db;
-use DuckPHP\Ext\DBManager;
 use DuckPHP\App;
 require_once('../vendor/autoload.php');
 
 $options=[];
-$options['override_class']='';      // 示例文件不要被子类干扰。
-$options['skip_setting_file']=true;// 不需要配置文件。
-$options['error_exception']=null; // 使用默认的错误视图
+$options['override_class']='';      // 示例文件，不要被子类干扰。
+$options['skip_setting_file']=true; // 示例文件，不需要配置文件。
 DuckPHP::RunQuickly($options,function(){
     Db::setConfig([
         'default'     => 'mysql',
@@ -108,7 +108,7 @@ DuckPHP::RunQuickly($options,function(){
         ]
     ]);
     //就这句话了
-    DBManager::G()->setDBHandler(function(){return Db::class;});
+    App::G()->setDBHandler(function(){return Db::class;});
     $sql="select * from Users where true limit 1";
     $data=DuckPHP::DB()::query($sql);
     var_dump($data);

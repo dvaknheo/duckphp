@@ -15,6 +15,8 @@
 [助手类](tutorial-helper.md)
 [路由](tutorial-route.md)
 [架构](tutorial-arch.md)
+[系统自带例子分析](tutorial-sample.md)
+
 [异常处理](tutorial-exception.md)
 [数据库](tutorial-db.md)
 [会话处理](tutorial-session.md)
