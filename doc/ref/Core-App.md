@@ -2,7 +2,17 @@
 
 ## 简介
 最核心的类，其他
+## 依赖关系
+`Core\App` 
+    + Trait [Core\Kernel](Core-Kernel.md)
+    + Trait [Core\ThrowOn](Core-ThrowOn.md)
+    + Trait [Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md)
+    + Trait [Core\SystemWrapper](Core-SystemWrapper.md)
+
 ## 选项
+使用 [Core\Kernel](Core-Kernel.md) 的默认选项。
+
+## 
 
 public function extendComponents($class, $methods, $components): void
 

@@ -65,11 +65,11 @@ class RedisManager
             }
         }
         if (method_exists($context, 'extendComponents')) {
-            $context->extendComponents(['Redis' => [static::class, 'Redis']], ['S']);
+            $context->extendComponents(['Redis' => [static::class, 'Redis']], ['S','A']);
         }
         if ($this->options['enable_simple_cache']) {
             if (method_exists($context, 'extendComponents')) {
-                $context->extendComponents(['SimpleCache' => [static::class, 'SimpleCache']], ['S']);
+                $context->extendComponents(['SimpleCache' => [static::class, 'SimpleCache']], ['S','A']);
             }
         }
     }

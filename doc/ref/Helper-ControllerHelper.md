@@ -74,3 +74,47 @@ setDefaultExceptionHandler($callback)
 
 ## 详解
 Controller Helper 全是静态方法，调用 App 类的内容。
+
+
+array (
+  'Import' => 
+  array (
+    0 => 'DuckPhp\\Ext\\Misc',
+    1 => 'Import',
+  ),
+  'DI' => 
+  array (
+    0 => 'DuckPhp\\Ext\\Misc',
+    1 => 'DI',
+  ),
+  'RecordsetUrl' => 
+  array (
+    0 => 'DuckPhp\\Ext\\Misc',
+    1 => 'RecordsetUrl',
+  ),
+  'RecordsetH' => 
+  array (
+    0 => 'DuckPhp\\Ext\\Misc',
+    1 => 'RecordsetH',
+  ),
+  'CallAPI' => 
+  array (
+    0 => 'DuckPhp\\Ext\\Misc',
+    1 => 'CallAPI',
+  ),
+  'assignRewrite' => 
+  array (
+    0 => 'DuckPhp\\Ext\\RouteHookRewrite::G',
+    1 => 'assignRewrite',
+  ),
+  'getRewrites' => 
+  array (
+    0 => 'DuckPhp\\Ext\\RouteHookRewrite::G',
+    1 => 'getRewrites',
+  ),
+  'getRoutes' => 
+  array (
+    0 => 'DuckPhp\\Ext\\RouteHookRouteMap::G',
+    1 => 'getRoutes',
+  ),
+)

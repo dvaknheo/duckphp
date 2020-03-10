@@ -3,6 +3,17 @@
 ## 简介
 最核心的Trait，你通过 App 类来使用他。
 
+## 引用
+
+[Core\AutoLoader](ref/Core-AutoLoader.md)
+[Core\Configer](ref/Core-Configer.md)
+[Core\ExceptionManager](ref/Core-ExceptionManager.md)
+[Core\Route](ref/Core-Route.md)
+[Core\RuntimeState](ref/Core-RuntimeState.md)
+[Core\View](ref/Core-View.md)
+[Core\SuperGlobal](ref/Core-SuperGlobal.md)
+[Core\Logger](ref/Core-Logger.md)
+
 ## 选项
 
 ### 基本配置
@@ -57,6 +68,7 @@
     修复默认没配置 PATH_INFO ，打开以节约性能
 'skip_app_autoload' => false,
     
+    **这里修改了 AutoLoader 的默认配置**
     不使用 AutoLoader 加载类，如果你不打算用AutoLoader类。打开以节约性能
 
 ## 方法

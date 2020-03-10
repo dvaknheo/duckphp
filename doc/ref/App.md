@@ -4,20 +4,23 @@
 总入口类，父类 Core\App
 ## 依赖关系
 `DuckPhp\App` 
-    1. 继承 [Core\App]()
-        + 继承 Core\Kernel()
-    2. 使用 [Ext\Misc](ref/Ext-Misc.md)
-    3. 使用 [Ext\SimpleLogger](ref/Ext-SimpleLogger.md)
-    4. 使用 [Ext\DBManager](ref/Ext-DBManager.md)
-    5. 使用 [Ext\RouteHookRewrite](ref/Ext-RouteHookRewrite.md)
-    6. 使用 [Ext\RouteHookRouteMap](ref/Ext-RouteHookRouteMap.md)
+    1. 继承 [Core\App](Core-App.md)
+        + Trait Core\Kernel(Core-Kernel.md)
+        + Trait Core\Kernel(Core-Kernel.md)
+    2. 使用 [Ext\Misc](Ext-Misc.md)
+    3. 使用 [Ext\SimpleLogger](Ext-SimpleLogger.md)
+    4. 使用 [Ext\DBManager](Ext-DBManager.md)
+    5. 使用 [Ext\RouteHookRewrite](Ext-RouteHookRewrite.md)
+    6. 使用 [Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
     
     7. 参考 [Ext\StrictCheck]()
     8. 参考 [Ext\RouteHookOneFileMode]()
     9. 参考 [Ext\RouteHookDirectoryMode]()
     10. 参考 [Ext\RouteHookOneFileMode]()
 ## 选项
+继承 [Core\Kernel](Core-Kernel.md) 的默认选项。
 
+    详细查看 [Core\Kernel](Core-Kernel.md) 的文档
 'db_before_query_handler' => null,
 
     内部选项，将会填充为 [static::class, 'OnQuery'] 回调。

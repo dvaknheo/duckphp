@@ -45,7 +45,7 @@ class Misc
                     'RecordsetH' => [static::class,'RecordsetH'],
                     'CallAPI' => [static::class,'CallAPI'],
                 ],
-                ['C']
+                ['C','A']
             );
         }
     }

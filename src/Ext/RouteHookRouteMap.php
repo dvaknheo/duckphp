@@ -43,13 +43,13 @@ class RouteHookRouteMap
                     'getRoutes' => [static::class.'::G','getRoutes'],
                     'routeMapNameToRegex' => [static::class.'::G','routeMapNameToRegex'],
                 ],
-                []
+                ['A']
             );
             $context->extendComponents(
                 [
                     'getRoutes' => [static::class.'::G','getRoutes'],
                 ],
-                ['C']
+                ['C','A']
             );
         }
     }

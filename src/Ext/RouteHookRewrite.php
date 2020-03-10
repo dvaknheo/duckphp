@@ -38,7 +38,7 @@ class RouteHookRewrite
                         'assignRewrite' => [static::class.'::G','assignRewrite'],
                         'getRewrites' => [static::class.'::G','getRewrites']
                     ],
-                    ['C']
+                    ['C','A']
                 );
             }
         }
