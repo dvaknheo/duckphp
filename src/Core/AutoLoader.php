@@ -40,7 +40,7 @@ class AutoLoader
         }
         $this->is_inited = true;
         
-        $this->options = array_merge($this->options, $options);        
+        $this->options = array_merge($this->options, $options);
         if (!isset($this->options['path'])) {
             $path = realpath(getcwd().'/../');
             $this->options['path'] = $path;

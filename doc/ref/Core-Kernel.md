@@ -69,7 +69,7 @@ public function init(array $options=[], object $context=null)
     初始化
 public function run(): bool
 
-    运行
+    运行，如果404，返回false。
 public function clear(): void
 
     不建议主动使用，用于清理现场。
@@ -96,4 +96,6 @@ protected function fixPathInfo(&$serverData)
 Kernel 这个 Trait 不直接处理，一般直接用的是 Core\App ， 而直接的 App 类，则是把常见扩展加进去形成完善的框架。
 
 ### 流程说明
-init 只是初始化
+Kernel 大致分为两个阶段
+init() 初始化阶段，和 run 阶段
+

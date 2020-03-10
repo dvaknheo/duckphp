@@ -57,12 +57,12 @@ class App extends Core_App
     }
     protected function onInit()
     {
-        $ret=parent::onInit();
+        $ret = parent::onInit();
         
         if (!empty($this->options['log_sql'])) {
             $this->options['db_before_query_handler'] = $this->options['db_before_query_handler'] ?? [static::class, 'OnQuery'];
         }
-        if($this->options['use_short_functions']){
+        if ($this->options['use_short_functions']) {
             require_once __DIR__.'/Ext/ShortFunctions.php';
         }
         return $ret;

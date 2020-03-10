@@ -26,9 +26,9 @@ trait HelperTrait
     {
         return App::Platform();
     }
-    public static function Logger()
+    public static function Logger($object = null)
     {
-        return App::Logger();
+        return App::Logger($object);
     }
     ////
     public static function trace_dump()

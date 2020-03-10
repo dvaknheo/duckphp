@@ -10,6 +10,6 @@ public static function Platform()
 public static function trace_dump()
 public static function var_dump(...$args)
 
-
+## 由 DBManager 扩展的方法
 ## 详解
 
