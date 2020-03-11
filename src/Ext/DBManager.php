@@ -83,8 +83,6 @@ class DBManager
                     'DB' => [static::class, 'DB'],
                     'DB_R' => [static::class, 'DB_R'],
                     'DB_W' => [static::class, 'DB_W'],
-                    'setDBHandler' => [static::class .'::G', 'setDBHandler'],
-                    'setBeforeGetDBHandler' => [static::class .'::G', 'setBeforeGetDBHandler'],
                 ],
                 ['M','A']
             );

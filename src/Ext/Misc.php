@@ -16,7 +16,6 @@ class Misc
     public $options = [
         'path' => '',
         'path_lib' => 'lib',
-        'use_short_function' => true,
     ];
     protected $path = null;
     protected $context_class;
@@ -41,6 +40,11 @@ class Misc
                 [
                     'Import' => [static::class,'Import'],
                     'DI' => [static::class,'DI'],
+                ],
+                ['A']
+            );
+            $context->extendComponents(
+                [
                     'RecordsetUrl' => [static::class,'RecordsetUrl'],
                     'RecordsetH' => [static::class,'RecordsetH'],
                     'CallAPI' => [static::class,'CallAPI'],
