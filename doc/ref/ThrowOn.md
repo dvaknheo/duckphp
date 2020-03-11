@@ -1,12 +1,10 @@
-# Core\ThrowOn
+# ThrowOn
 
 ## 简介
-快速抛出异常的 trait
-## 选项
 
-## 公开方法
-    ThrowOn($flag, $message, $code=0, $exception_class=null)
+这是 [Core\ThrowOn](Core-ThrownOn.md) 的快捷类
+
+为什么使用快捷类？为了使得关系清晰。
 
 
-## 详解
 

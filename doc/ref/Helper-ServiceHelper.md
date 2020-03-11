@@ -1,7 +1,10 @@
 # Helper\ServiceHelper
 
 ## 简介
+
 服务助手类
+
+助手类，全静态方法
 
 ## 方法
 

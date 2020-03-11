@@ -2,6 +2,8 @@
 
 ## 简介
 异常管理类
+
+组件类
 ## 选项
 'handle_all_dev_error' => true,
 'handle_all_exception' => true,

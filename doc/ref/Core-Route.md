@@ -21,7 +21,7 @@
 
 ​	控制器后缀
 
-## 公开方法
+## 方法
     public function __construct()
     public static function RunQuickly(array $options=[], callable $after_init=null)
     public static function URL($url=null)

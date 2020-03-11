@@ -12,3 +12,4 @@
 
 ## 详解
 
+    public function init(array $options, object $context = null)

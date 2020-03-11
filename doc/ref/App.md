@@ -6,7 +6,6 @@
 `DuckPhp\App` 
     1. 继承 [Core\App](Core-App.md)
         + Trait Core\Kernel(Core-Kernel.md)
-        + Trait Core\Kernel(Core-Kernel.md)
     2. 使用 [Ext\Misc](Ext-Misc.md)
     3. 使用 [Ext\SimpleLogger](Ext-SimpleLogger.md)
     4. 使用 [Ext\DBManager](Ext-DBManager.md)
@@ -63,7 +62,7 @@ public function __construct()
 protected function onInit()
 
     处理 `log_sql`，如果 log_sql 不为 false 则联立 OnQuery,
-    处理 use_short_functions,
+    处理 `use_short_functions`, 如果
 public function _Pager($object = null)
 
     重写了 `Core\App` 的 _Pager 方法，填充默认 DuckPhp\ExtPager 对象。

@@ -1,7 +1,13 @@
 # Core\ExtendableStaticCallTrait
 
 ## 简介
-能扩展静态方法的 Trait
+
+能扩展静态方法的 Trait 。
+
+## 使用于
+- 核心类 Core\App 
+- 助手类 AppHelper 等
+使用于各助手类和 App 类
 
 ## 公开静态方法
 
@@ -20,4 +26,4 @@ ExtendableStaticCallTrait 这个 Trait 用于 App, ControllerHelper, ServiceHelp
 
 作用是动态扩展类的静态方法。
 
-你写自己的扩展的时候会用到他
+你写自己的扩展的时候会用到。

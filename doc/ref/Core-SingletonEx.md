@@ -2,8 +2,9 @@
 ## 简介
 
 可变单例类
+## 使用于
 
-## 公开静态方法
+## 方法
     public static function G($object=null)
 
 

@@ -4,7 +4,7 @@
 
 控制器助手类
 
-## 公开静态方法
+## 方法
 
 ### 助手类公开静态方法
 
@@ -72,49 +72,66 @@ setDefaultExceptionHandler($callback)
 - PageSize($new_value = null)
 - PageHtml($total)
 
+## 助手类公用方法列表
+- IsDebug()
+
+    判断是否在调试状态，App 的  `is_debug` 选项 ,`duckphp_is_debug` 设置项。
+    
+- IsRealDebug()
+    这个用于调试标识开，但是实际还是调试状态。用于特定用处。
+    
+- Platform()
+    获得平台标志，App 的  `platform` 选项 ,`duckphp_platform` 设置项。
+    
+- Logger($object=null)
+    返回Logger类。
+    $object 是替换入的新的 Logger 类。
+    
+- trace_dump()
+    显示调用堆栈
+    
+- var_dump(...$args)
+    替代 var_dump ，在非调试状态下不显示。
+    
+- ThrowOn($flag, $message, $code = 0, $exception_class = null) 详见 [Core/ThrowOn](Core-ThrowOn.md)
+
+    如果 $flag成立则抛出异常，如果未指定 $exception_class，抛则判断当前类是否是 Exception 类的子类，如果不是，则默认为 Exception 类。    
+- AssignExtendStaticMethod($key, $value = null)   详见 [Core/ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md)
+    分配固定方法。
+
+- GetExtendStaticMethodList() 详见 [Core/ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md)
+    获得
+- \_\_callStatic($name, $arguments) 详见 [Core/ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md)
+    静态方法已经被接管。
 ## 详解
+
+
+## 额外单独扩展的方法
+
+RecordsetUrl [DuckPhp\Ext\Misc::RecordsetUrl](Ext-Misc.md#RecordsetUrl)
+	
+    DuckPhp\Ext\Misc::RecordsetUrl
+RecordsetH
+	
+    DuckPhp\Ext\Misc::RecordsetH
+CallAPI
+	
+    DuckPhp\Ext\Misc::CallAPI
+assignRewrite
+	
+    DuckPhp\Ext\RouteHookRewrite::G::assignRewrite
+getRewrites
+	
+    DuckPhp\Ext\RouteHookRewrite::G::getRewrites
+getRoutes
+	
+    DuckPhp\Ext\RouteHookRouteMap::G::getRoutes
+
+## 详解
+
 Controller Helper 全是静态方法，调用 App 类的内容。
 
 
-array (
-  'Import' => 
-  array (
-    0 => 'DuckPhp\\Ext\\Misc',
-    1 => 'Import',
-  ),
-  'DI' => 
-  array (
-    0 => 'DuckPhp\\Ext\\Misc',
-    1 => 'DI',
-  ),
-  'RecordsetUrl' => 
-  array (
-    0 => 'DuckPhp\\Ext\\Misc',
-    1 => 'RecordsetUrl',
-  ),
-  'RecordsetH' => 
-  array (
-    0 => 'DuckPhp\\Ext\\Misc',
-    1 => 'RecordsetH',
-  ),
-  'CallAPI' => 
-  array (
-    0 => 'DuckPhp\\Ext\\Misc',
-    1 => 'CallAPI',
-  ),
-  'assignRewrite' => 
-  array (
-    0 => 'DuckPhp\\Ext\\RouteHookRewrite::G',
-    1 => 'assignRewrite',
-  ),
-  'getRewrites' => 
-  array (
-    0 => 'DuckPhp\\Ext\\RouteHookRewrite::G',
-    1 => 'getRewrites',
-  ),
-  'getRoutes' => 
-  array (
-    0 => 'DuckPhp\\Ext\\RouteHookRouteMap::G',
-    1 => 'getRoutes',
-  ),
-)
+## 方法索引
+
+

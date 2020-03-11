@@ -3,7 +3,7 @@
 ## 简介
 
 ## 选项
-
+'route_map'=>[],
 ## 公开方法
 
 
@@ -23,7 +23,7 @@ route_map key 如果是 ~ 开头的，表示正则
 否则是普通的 path_info 匹配。
 
 支持 'Class->Method' 和 'Class@Method'  表示创建对象，执行动态方法。
-你可以 
+
 parameters 
 
 #### 方法
@@ -31,3 +31,5 @@ assignRoute($route,$callback);
     是 C::assignRoute 和 App::assignRoute 的实现。
 getRoutes()
     dump  route_map 的内容。
+    
+    
