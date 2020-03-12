@@ -90,19 +90,33 @@ public function replaceDefaultRunHandler(callable $handler = null): void
     不通过继承而是外挂替换默认的 Run 函数， `Ext\PluginForSwoole` 扩展用到。
 public function addBeforeShowHandler($handler)
 
-    //
+    挂接在显示前输入的方法。
 ### 重写用的方法
 protected function onInit()
+
+    初始阶段。因为类重入机制，不建议重写 init() 而是在这里
 protected function onRun()
+
+    运行阶段。不建议重写 run ，而是在这里添加运行阶段处理
 protected function pluginModeInit(array $options, object $context = null)
 
+    插件模式运行。这里用于插件方法
 ### 流程相关方法。
 protected function checkOverride($options)
+
+    在 init() 里检测重入类。
 protected function initOptions($options = [])
+
+    init() 中初始化
 protected function reloadFlags(): void
+
+    init() 中从设置读取调试标志和平台标志
 protected function initExtentions(array $exts): void
+
+    初始化扩展
 protected function fixPathInfo(&$serverData)
 
+    修复Path_INFO
 ## 详解
 
 Kernel 这个 Trait 不直接处理，一般直接用的是 Core\App ， 而直接的 App 类，则是把常见扩展加进去形成完善的框架。
@@ -111,3 +125,6 @@ Kernel 这个 Trait 不直接处理，一般直接用的是 Core\App ， 而直�
 Kernel 大致分为两个阶段
 init() 初始化阶段，和 run 阶段
 
+run 阶段，通过 PluginForSwoole 插件,调用 replaceDefaultRunHandler 修改默认流程
+
+run 阶段可重复调用
