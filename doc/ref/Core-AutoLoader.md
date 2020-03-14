@@ -4,6 +4,8 @@
 
 DuckPHP 的自动加载类
 
+组件类
+
 ## 选项
 'path' => null,
 

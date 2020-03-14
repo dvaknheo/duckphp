@@ -24,14 +24,20 @@ class Logger //extends Psr\Log\LoggerInterface;
         'path' => '',
         'log_file' => '',
         'log_prefix' => 'DuckPhpLog',
+        // 多文件系统。
     ];
     protected $path;
     
+    public $is_inited = false;
     public function __construct()
     {
+        $this->init();
     }
     public function init(array $options, object $context = null)
     {
+        if ($this->is_inited) {
+            return $this;
+        }
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         
         if (substr($this->options['log_file'], 0, 1) === '/') {

@@ -8,4 +8,5 @@ JsonRPC 的客户端基类
 
 
 ## 详解
+查看 [JsonRpcExt](Ext-JsonRpcExt.md)文档
 

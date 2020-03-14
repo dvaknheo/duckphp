@@ -71,7 +71,7 @@ $options=[
 ];
 JsonRpcExt::G()->init([
     'jsonrpc_namespace'=>'JsonRpc',
-    'jsonrpc_backend'=>['http://d.duckphp.dev/2.php/json_rpc','127.0.0.1:80'], //请自行修改这里。
+    'jsonrpc_backend'=>['http://d.duckphp.dev/json_rpc','127.0.0.1:80'], //请自行修改这里。
     'jsonrpc_is_debug'=>true,
 ],null);
 $flag=Route::RunQuickly($options);

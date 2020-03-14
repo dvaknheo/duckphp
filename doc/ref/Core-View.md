@@ -4,8 +4,14 @@
 视图类
 ## 选项
 'path' => '',
+
+    // xx
 'path_view' => 'view',
+
+    // xx
 'path_view_override' => '',
+
+    // xx
 ## 公开方法
 __construct()
 

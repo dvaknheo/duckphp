@@ -16,9 +16,21 @@ trait ThrowOn 是为了写代码更偷懒。
 
 ## 例子
 ```
+class MyClass extends \Exception
+{
+    use \DuckPhp\Core\ThrowOn;
+}
+class X
+{
+    use \DuckPhp\Core\ThrowOn;
+}
 MyException::ThrowOn(true,"something exception",142857);
-ControllerHelper::ThrowOn(true,"second",MyException::class);
-ControllerHelper::ThrowOn(true,"thr",22,MyException::class);
+
+X::ThrowOn(true,"second",MyException::class);
+
+X::ThrowOn(true,"thr",22,MyException::class);
+
 ```
+
 ThrowOn 的弊病是多了一层堆栈。调试的时候要注意
 

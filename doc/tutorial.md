@@ -445,9 +445,7 @@ error_* 选项为 null 用默认，为 callable 是回调，为string 则是调�
 'error_500'=>'_sys/error-500'
 
     500 页面
-'error_exception'=>'_sys/error-exception'
-
-    excption 页面。
+    
 
 ##### "ext" 选项和扩展
 
@@ -678,7 +676,7 @@ addBeforeRunHandler($callback)
 extendComponents($class,$methods,$components);
 
     扩展组件的静态方法。
-    其中： $components 为 ['M','V','C','S'] 组合可选。
+    其中： $components 为 ['M','V','C','S','A'] 组合可选。
 #### 公开动态方法
 
     App->init();
