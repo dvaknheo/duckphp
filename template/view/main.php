@@ -28,6 +28,7 @@
         ?>
 <div>
 <a href="/full/public/index.php">转到完整演示页面</a>
+<a href="/full/public/u/">一个文章系统的例子</a>
 </div>
     
 <?php

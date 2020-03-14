@@ -27,9 +27,9 @@ class SuperGlobal
     public $is_inited = false;
     public function __construct()
     {
-        $this->initialize();
+        $this->init([]);
     }
-    public function initialize()
+    public function init(array $options, object $context = null)
     {
         if ($this->is_inited) {
             return $this;

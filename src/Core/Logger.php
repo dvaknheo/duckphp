@@ -31,7 +31,7 @@ class Logger //extends Psr\Log\LoggerInterface;
     public $is_inited = false;
     public function __construct()
     {
-        $this->init();
+        $this->init([]);
     }
     public function init(array $options, object $context = null)
     {
