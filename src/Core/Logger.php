@@ -28,16 +28,22 @@ class Logger //extends Psr\Log\LoggerInterface;
     ];
     protected $path;
     
-    public $is_inited = false;
+    protected $is_inited = false;
     public function __construct()
     {
         $this->init([]);
     }
+    public function reset()
+    {
+        $this->is_inited = false;
+        return $this;
+    }
     public function init(array $options, object $context = null)
     {
         if ($this->is_inited) {
-            return $this;
+            //return $this;
         }
+        $this->is_inited = true;
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         
         if (substr($this->options['log_file'], 0, 1) === '/') {
@@ -45,6 +51,7 @@ class Logger //extends Psr\Log\LoggerInterface;
         } elseif ($this->options['log_file']) {
             $this->path = $this->options['path'].$this->options['log_file'];
         }
+        return $this;
     }
     public function log($level, $message, array $context = array())
     {

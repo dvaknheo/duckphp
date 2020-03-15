@@ -21,10 +21,9 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
             'skip_setting_file'=>true,
         ];
         DuckPhp::G()->init($dn_options);
-        Logger::G()->init($options,DuckPhp::G());
-        
+        Logger::G()->reset()->init($options,DuckPhp::G());
         Logger::G()->emergency($message,  $context);
-         $options=[
+        $options=[
             'path'=>$path_log,
             'log_file'=>'log2.log',
             'log_prefix'=>'DuckPhpLog',
@@ -40,7 +39,7 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
         Logger::G()->debug($message,  $context);
         DuckPhp::Logger()->info("zzzzz");
         file_put_contents($path_log.'log.log','');// clear
-
+        
         \MyCodeCoverage::G()->end(Logger::class);
         $this->assertTrue(true);
     }

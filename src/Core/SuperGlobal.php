@@ -24,10 +24,15 @@ class SuperGlobal
     public $STATICS = [];
     public $CLASS_STATICS = [];
     
-    public $is_inited = false;
+    protected $is_inited = false;
     public function __construct()
     {
         $this->init([]);
+    }
+    public function reset()
+    {
+        $this->is_inited = false;
+        return $this;
     }
     public function init(array $options, object $context = null)
     {
@@ -45,6 +50,8 @@ class SuperGlobal
         $this->_SESSION = &$_SESSION;
         $this->_FILES = &$_FILES;
         $this->GLOBALS = &$GLOBALS;
+        
+        return $this;
     }
     ///////////////////////////////
     public function session_start(array $options = [])

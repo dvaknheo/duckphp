@@ -11,7 +11,7 @@ class SuperGlobalTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(SuperGlobal::class);
         
         //code here
-        SuperGlobal::G()->init([]);
+        SuperGlobal::G()->init([])->reset()->init([]);
         
         $k="k";$v="v";
         SuperGlobal::G()->_GLOBALS($k, $v=null);
