@@ -31,5 +31,18 @@ assignRoute($route,$callback);
     是 C::assignRoute 和 App::assignRoute 的实现。
 getRoutes()
     dump  route_map 的内容。
-    
-    
+
+
+    public function __construct()
+    public static function PrependHook($path_info)
+    public static function AppendHook($path_info)
+    public function init(array $options, object $context = null)
+    public function compile($pattern_url, $rules = [])
+    public function assignRoute($key, $value = null)
+    public function assignImportantRoute($key, $value = null)
+    public function getRoutes()
+    protected function matchRoute($pattern_url, $path_info, &$parameters)
+    protected function getRouteHandelByMap($routeMap, $path_info, &$parameters)
+    protected function adjustCallback($callback)
+    public function doHook($path_info, $is_append)
+    protected function doHookByMap($path_info, $route_map)

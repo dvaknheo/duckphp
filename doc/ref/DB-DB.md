@@ -55,3 +55,19 @@ DuckPHP::RunQuickly($options,function(){
     DuckPHP::exit_system(0);
 });
 ```
+
+    public function init($options = [], $context = null)
+    public static function CreateDBInstance($db_config)
+    public static function CloseDBInstance($db, $tag = null)
+    protected function check_connect()
+    public function close()
+    public function getPDO()
+    public function setBeforeQueryHandler($handler)
+    public function quote($string)
+    public function buildQueryString($sql, ...$args)
+    public function fetchAll($sql, ...$args)
+    public function fetch($sql, ...$args)
+    public function fetchColumn($sql, ...$args)
+    public function execute($sql, ...$args)
+    public function rowCount()
+    public function lastInsertId()

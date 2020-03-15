@@ -24,3 +24,13 @@
     public function clear()
 ## 详解
 
+    public function __construct()
+    public static function OnException($ex)
+    public function setDefaultExceptionHandler($default_exception_handler)
+    public function assignExceptionHandler($class, $callback = null)
+    public function setMultiExceptionHandler(array $classes, $callback)
+    public function on_error_handler($errno, $errstr, $errfile, $errline)
+    public function _OnException($ex)
+    public function init(array $options, object $context = null)
+    public function run()
+    public function clear()

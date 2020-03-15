@@ -49,3 +49,11 @@ public function clear()
     //
 ## 详解
 
+    public function __construct()
+    public function init(array $options, object $context = null)
+    public function run()
+    public function _autoload($class)
+    public function assignPathNamespace($input_path, $namespace = null)
+    public function cacheClasses()
+    public function cacheNamespacePath($path)
+    public function clear()

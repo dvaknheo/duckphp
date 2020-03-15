@@ -56,14 +56,14 @@ subgraph cluster_Core {
     Core_AppPluginTrait [label="AppPluginTrait";shape=Mdiamond];
 
     Core_App [label="App";shape=Mdiamond];
-    Core_Kernel [label="Kernel";shape=Mdiamond];
+    Core_Kernel [label="Kernel"];
     Core_SingletonEx [label="SingletonEx";shape=Mdiamond];
     Core_AutoLoader [label="AutoLoader"];
     Core_ExceptionManager [label="ExceptionManager"];
     Core_View [label="View"];
     Core_Configer [label="Configer"];
     Core_Logger [label="Logger"];
-    Core_Route [label="Route"];
+    Core_Route [label="Route";shape=Mdiamond];
     Core_RuntimeState [label="RuntimeState"];
     Core_SystemWrapper [label="SystemWrapper"];
     
@@ -132,6 +132,7 @@ label = "[DuckPhp\\Ext]";
     
     Ext -> FacadesAutoLoader [style="dotted"];
     Ext -> JsonRpcExt [style="dotted"] ;
+
     Ext -> Misc
     Ext -> Pager ;
     Ext -> PluginForSwooleHttpd [style="dotted"];

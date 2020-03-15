@@ -14,3 +14,9 @@
 ## 详解
 
 
+    public function __construct()
+    public function init(array $options, object $context = null)
+    protected function adjustPathinfo($basepath, $path_info)
+    public function onURL($url = null)
+    public static function Hook($path_info)
+    public function _Hook($path_info)

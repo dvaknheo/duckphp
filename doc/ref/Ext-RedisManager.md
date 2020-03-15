@@ -20,3 +20,10 @@ Redis 管理类
 
 ## 详解
 
+    public function __construct()
+    public function init(array $options, object $context = null)
+    protected function initContext($options = [], $context = null)
+    public static function Redis($tag = 0)
+    public static function SimpleCache()
+    public function getServer($tag = 0)
+    public function createServer($config)

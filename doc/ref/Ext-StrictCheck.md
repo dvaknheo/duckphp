@@ -24,3 +24,14 @@ protected function checkEnv(): bool
 ## 详解
 
 没文档，先看单元覆盖测试吧。
+
+
+    public function __construct()
+    public function init(array $options, object $context = null)
+    protected function initContext($options = [], $context = null)
+    public static function CheckStrictDB()
+    public function getCallerByLevel($level, $parent_classes_to_skip = [])
+    public function checkEnv(): bool
+    public function checkStrictComponent($component_name, $trace_level, $parent_classes_to_skip = [])
+    public function checkStrictModel($trace_level)
+    public function checkStrictService($service_class, $trace_level)

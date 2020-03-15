@@ -8,3 +8,6 @@
 
 ## 详解
 
+    public function current() : int;
+    public function pageSize($new_value = null) : int;
+    public function render($total, $options = []) : string;

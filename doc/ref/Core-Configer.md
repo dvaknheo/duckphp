@@ -20,3 +20,10 @@
     public function prependConfig($name, $data)
 ## 详解
 
+    public function __construct()
+    public function init(array $options, object $context = null)
+    public function _Setting($key)
+    public function _Config($key, $file_basename = 'config')
+    public function _LoadConfig($file_basename = 'config')
+    public function prependConfig($name, $data)
+    protected function loadFile($file)

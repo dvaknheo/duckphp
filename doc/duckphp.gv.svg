@@ -54,16 +54,12 @@
 </g>
 <!-- Core_Kernel -->
 <g id="node2" class="node"><title>Core_Kernel</title>
-<polygon fill="lightgrey" stroke="black" points="729.784,-1160 680.852,-1142 729.784,-1124 778.716,-1142 729.784,-1160"/>
-<polyline fill="none" stroke="black" points="692.114,-1146.14 692.114,-1137.86 "/>
-<polyline fill="none" stroke="black" points="718.522,-1128.14 741.046,-1128.14 "/>
-<polyline fill="none" stroke="black" points="767.453,-1137.86 767.453,-1146.14 "/>
-<polyline fill="none" stroke="black" points="741.046,-1155.86 718.522,-1155.86 "/>
+<ellipse fill="lightgrey" stroke="black" cx="729.784" cy="-1142" rx="34.394" ry="18"/>
 <text text-anchor="middle" x="729.784" y="-1138.3" font-family="Times,serif" font-size="14.00">Kernel</text>
 </g>
 <!-- Core_Kernel&#45;&gt;Core_SingletonEx -->
 <g id="edge1" class="edge"><title>Core_Kernel&#45;&gt;Core_SingletonEx</title>
-<path fill="none" stroke="black" stroke-dasharray="1,5" d="M770.802,-1145C791.824,-1148.28 817.029,-1155.05 835.725,-1169 860.648,-1187.6 844.663,-1213.68 871.725,-1229 903.436,-1246.95 1006.01,-1250.12 1035.71,-1229 1124.27,-1166.03 1137.56,-1021.43 1139.09,-960.208"/>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M764.34,-1144.09C786.467,-1146.94 815.069,-1153.59 835.725,-1169 860.648,-1187.6 844.663,-1213.68 871.725,-1229 903.436,-1246.95 1006.01,-1250.12 1035.71,-1229 1124.27,-1166.03 1137.56,-1021.43 1139.09,-960.208"/>
 <polygon fill="black" stroke="black" points="1142.59,-960.173 1139.25,-950.118 1135.59,-960.06 1142.59,-960.173"/>
 </g>
 <!-- Core_AutoLoader -->
@@ -73,7 +69,7 @@
 </g>
 <!-- Core_Kernel&#45;&gt;Core_AutoLoader -->
 <g id="edge2" class="edge"><title>Core_Kernel&#45;&gt;Core_AutoLoader</title>
-<path fill="none" stroke="black" d="M759.803,-1149.2C780.909,-1154.5 810.146,-1161.98 835.725,-1169 856.714,-1174.76 879.796,-1181.44 899.597,-1187.28"/>
+<path fill="none" stroke="black" d="M761.161,-1149.54C782.152,-1154.82 810.69,-1162.13 835.725,-1169 856.714,-1174.76 879.796,-1181.44 899.597,-1187.28"/>
 <polygon fill="black" stroke="black" points="898.744,-1190.68 909.326,-1190.16 900.729,-1183.96 898.744,-1190.68"/>
 </g>
 <!-- Core_Configer -->
@@ -83,8 +79,8 @@
 </g>
 <!-- Core_Kernel&#45;&gt;Core_Configer -->
 <g id="edge3" class="edge"><title>Core_Kernel&#45;&gt;Core_Configer</title>
-<path fill="none" stroke="black" d="M775.412,-1143.23C810.813,-1144.2 860.328,-1145.57 897.371,-1146.59"/>
-<polygon fill="black" stroke="black" points="897.374,-1150.09 907.467,-1146.86 897.567,-1143.09 897.374,-1150.09"/>
+<path fill="none" stroke="black" d="M764.358,-1142.92C799.801,-1143.9 856.116,-1145.45 897.188,-1146.58"/>
+<polygon fill="black" stroke="black" points="897.187,-1150.08 907.279,-1146.86 897.379,-1143.09 897.187,-1150.08"/>
 </g>
 <!-- Core_Logger -->
 <g id="node6" class="node"><title>Core_Logger</title>
@@ -93,7 +89,7 @@
 </g>
 <!-- Core_Kernel&#45;&gt;Core_Logger -->
 <g id="edge4" class="edge"><title>Core_Kernel&#45;&gt;Core_Logger</title>
-<path fill="none" stroke="black" d="M776.142,-1142.97C797.044,-1145.82 820.527,-1152.82 835.725,-1169 893.968,-1231.01 816.183,-1292.56 871.725,-1357 880.116,-1366.74 892.232,-1372.96 904.378,-1376.94"/>
+<path fill="none" stroke="black" d="M764.294,-1141.75C787.574,-1143.44 817.565,-1149.67 835.725,-1169 893.968,-1231.01 816.183,-1292.56 871.725,-1357 880.116,-1366.74 892.232,-1372.96 904.378,-1376.94"/>
 <polygon fill="black" stroke="black" points="903.48,-1380.33 914.055,-1379.68 905.385,-1373.59 903.48,-1380.33"/>
 </g>
 <!-- Core_ExceptionManager -->
@@ -103,18 +99,22 @@
 </g>
 <!-- Core_Kernel&#45;&gt;Core_ExceptionManager -->
 <g id="edge5" class="edge"><title>Core_Kernel&#45;&gt;Core_ExceptionManager</title>
-<path fill="none" stroke="black" d="M772.105,-1144.44C793.121,-1147.56 817.915,-1154.37 835.725,-1169 864.299,-1192.47 844.888,-1218.57 871.725,-1244 877.214,-1249.2 883.67,-1253.61 890.469,-1257.34"/>
+<path fill="none" stroke="black" d="M764.33,-1143.42C786.735,-1145.97 815.662,-1152.52 835.725,-1169 864.299,-1192.47 844.888,-1218.57 871.725,-1244 877.214,-1249.2 883.67,-1253.61 890.469,-1257.34"/>
 <polygon fill="black" stroke="black" points="889.381,-1260.71 899.896,-1262.01 892.488,-1254.44 889.381,-1260.71"/>
 </g>
 <!-- Core_Route -->
 <g id="node8" class="node"><title>Core_Route</title>
-<ellipse fill="lightgrey" stroke="black" cx="949.718" cy="-1040" rx="31.6951" ry="18"/>
+<polygon fill="lightgrey" stroke="black" points="949.718,-1058 904.64,-1040 949.718,-1022 994.795,-1040 949.718,-1058"/>
+<polyline fill="none" stroke="black" points="915.785,-1044.45 915.785,-1035.55 "/>
+<polyline fill="none" stroke="black" points="938.573,-1026.45 960.862,-1026.45 "/>
+<polyline fill="none" stroke="black" points="983.651,-1035.55 983.651,-1044.45 "/>
+<polyline fill="none" stroke="black" points="960.862,-1053.55 938.573,-1053.55 "/>
 <text text-anchor="middle" x="949.718" y="-1036.3" font-family="Times,serif" font-size="14.00">Route</text>
 </g>
 <!-- Core_Kernel&#45;&gt;Core_Route -->
 <g id="edge6" class="edge"><title>Core_Kernel&#45;&gt;Core_Route</title>
-<path fill="none" stroke="black" d="M749.479,-1130.87C776.05,-1115.33 826.538,-1086.81 871.725,-1067 884.418,-1061.44 898.655,-1056.18 911.403,-1051.81"/>
-<polygon fill="black" stroke="black" points="912.881,-1055.01 921.248,-1048.51 910.654,-1048.37 912.881,-1055.01"/>
+<path fill="none" stroke="black" d="M753.204,-1128.7C780.578,-1112.78 828.569,-1085.92 871.725,-1067 885.267,-1061.06 900.568,-1055.48 913.94,-1050.95"/>
+<polygon fill="black" stroke="black" points="915.342,-1054.17 923.73,-1047.7 913.136,-1047.53 915.342,-1054.17"/>
 </g>
 <!-- Core_RuntimeState -->
 <g id="node9" class="node"><title>Core_RuntimeState</title>
@@ -123,7 +123,7 @@
 </g>
 <!-- Core_Kernel&#45;&gt;Core_RuntimeState -->
 <g id="edge7" class="edge"><title>Core_Kernel&#45;&gt;Core_RuntimeState</title>
-<path fill="none" stroke="black" d="M775.107,-1143.39C796.016,-1146.31 819.811,-1153.25 835.725,-1169 879.561,-1212.37 829.781,-1257.79 871.725,-1303 876.759,-1308.43 882.945,-1312.76 889.604,-1316.23"/>
+<path fill="none" stroke="black" d="M764.365,-1142.2C787.373,-1144.14 817.003,-1150.48 835.725,-1169 879.561,-1212.37 829.781,-1257.79 871.725,-1303 876.759,-1308.43 882.945,-1312.76 889.604,-1316.23"/>
 <polygon fill="black" stroke="black" points="888.359,-1319.5 898.913,-1320.43 891.24,-1313.12 888.359,-1319.5"/>
 </g>
 <!-- Core_View -->
@@ -133,7 +133,7 @@
 </g>
 <!-- Core_Kernel&#45;&gt;Core_View -->
 <g id="edge8" class="edge"><title>Core_Kernel&#45;&gt;Core_View</title>
-<path fill="none" stroke="black" d="M752.197,-1132.17C775.024,-1120.89 811.192,-1100.59 835.725,-1075 857.776,-1052 847.17,-1033.31 871.725,-1013 882.858,-1003.79 897.343,-997.635 910.74,-993.56"/>
+<path fill="none" stroke="black" d="M756.071,-1130.24C778.959,-1118.65 812.538,-1099.18 835.725,-1075 857.776,-1052 847.17,-1033.31 871.725,-1013 882.858,-1003.79 897.343,-997.635 910.74,-993.56"/>
 <polygon fill="black" stroke="black" points="911.979,-996.85 920.7,-990.834 910.131,-990.098 911.979,-996.85"/>
 </g>
 <!-- Core_SuperGlobal -->
@@ -143,8 +143,8 @@
 </g>
 <!-- Core_Kernel&#45;&gt;Core_SuperGlobal -->
 <g id="edge9" class="edge"><title>Core_Kernel&#45;&gt;Core_SuperGlobal</title>
-<path fill="none" stroke="black" d="M761.087,-1135.33C795.302,-1127.79 851.675,-1115.37 893.713,-1106.11"/>
-<polygon fill="black" stroke="black" points="894.515,-1109.52 903.529,-1103.95 893.01,-1102.69 894.515,-1109.52"/>
+<path fill="none" stroke="black" d="M762.009,-1135.12C796.259,-1127.58 851.891,-1115.33 893.535,-1106.15"/>
+<polygon fill="black" stroke="black" points="894.518,-1109.52 903.531,-1103.95 893.012,-1102.69 894.518,-1109.52"/>
 </g>
 <!-- Core_AutoLoader&#45;&gt;Core_SingletonEx -->
 <g id="edge22" class="edge"><title>Core_AutoLoader&#45;&gt;Core_SingletonEx</title>
@@ -163,7 +163,7 @@
 </g>
 <!-- Core_Route&#45;&gt;Core_SingletonEx -->
 <g id="edge26" class="edge"><title>Core_Route&#45;&gt;Core_SingletonEx</title>
-<path fill="none" stroke="black" stroke-dasharray="1,5" d="M979.68,-1033.55C996.61,-1029.12 1018.05,-1022.33 1035.71,-1013 1066.17,-996.899 1096.67,-971.569 1116.55,-953.523"/>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M979.287,-1033.65C996.278,-1029.22 1017.92,-1022.41 1035.71,-1013 1066.17,-996.899 1096.67,-971.569 1116.55,-953.523"/>
 <polygon fill="black" stroke="black" points="1119.16,-955.878 1124.13,-946.523 1114.41,-950.735 1119.16,-955.878"/>
 </g>
 <!-- Core_RuntimeState&#45;&gt;Core_SingletonEx -->
@@ -192,8 +192,8 @@
 </g>
 <!-- Core_App&#45;&gt;Core_Kernel -->
 <g id="edge10" class="edge"><title>Core_App&#45;&gt;Core_Kernel</title>
-<path fill="none" stroke="black" d="M535.596,-1200.1C557.232,-1191.78 592.674,-1178.59 623.843,-1169 645.279,-1162.4 669.509,-1156.1 689.281,-1151.24"/>
-<polygon fill="black" stroke="black" points="690.284,-1154.6 699.176,-1148.84 688.632,-1147.79 690.284,-1154.6"/>
+<path fill="none" stroke="black" d="M535.596,-1200.1C557.232,-1191.78 592.674,-1178.59 623.843,-1169 644.82,-1162.55 668.471,-1156.37 688.004,-1151.55"/>
+<polygon fill="black" stroke="black" points="688.919,-1154.93 697.806,-1149.16 687.262,-1148.13 688.919,-1154.93"/>
 </g>
 <!-- Core_App&#45;&gt;Core_AutoLoader -->
 <g id="edge14" class="edge"><title>Core_App&#45;&gt;Core_AutoLoader</title>
@@ -217,8 +217,8 @@
 </g>
 <!-- Core_App&#45;&gt;Core_Route -->
 <g id="edge18" class="edge"><title>Core_App&#45;&gt;Core_Route</title>
-<path fill="none" stroke="black" stroke-dasharray="1,5" d="M518.931,-1192.16C528.32,-1154.33 557.829,-1059.03 623.843,-1021 671.36,-993.627 833.614,-1018.69 909.277,-1032.41"/>
-<polygon fill="black" stroke="black" points="908.89,-1035.9 919.358,-1034.26 910.156,-1029.01 908.89,-1035.9"/>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M518.931,-1192.16C528.32,-1154.33 557.829,-1059.03 623.843,-1021 671.301,-993.661 833.215,-1018.63 908.998,-1032.36"/>
+<polygon fill="black" stroke="black" points="908.631,-1035.85 919.099,-1034.21 909.896,-1028.96 908.631,-1035.85"/>
 </g>
 <!-- Core_App&#45;&gt;Core_RuntimeState -->
 <g id="edge19" class="edge"><title>Core_App&#45;&gt;Core_RuntimeState</title>
@@ -296,8 +296,8 @@
 </g>
 <!-- Core_AppPluginTrait&#45;&gt;Core_Route -->
 <g id="edge33" class="edge"><title>Core_AppPluginTrait&#45;&gt;Core_Route</title>
-<path fill="none" stroke="black" d="M807.926,-1045.17C841.476,-1043.94 879.438,-1042.54 907.482,-1041.51"/>
-<polygon fill="black" stroke="black" points="907.849,-1045 917.714,-1041.14 907.592,-1038.01 907.849,-1045"/>
+<path fill="none" stroke="black" d="M807.926,-1045.17C837.761,-1044.07 871.085,-1042.85 897.82,-1041.87"/>
+<polygon fill="black" stroke="black" points="898.23,-1045.36 908.095,-1041.49 897.974,-1038.36 898.23,-1045.36"/>
 </g>
 <!-- Core_AppPluginTrait&#45;&gt;Core_View -->
 <g id="edge32" class="edge"><title>Core_AppPluginTrait&#45;&gt;Core_View</title>

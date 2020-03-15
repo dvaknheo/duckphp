@@ -76,3 +76,8 @@ public function _OnQuery($sql, ...$args)
 
 App 类，继承了 Core\App 的功能，在默认配置里，还加载了其他 Ext 扩展的内容
 
+    public function __construct()
+    protected function onInit()
+    public function _Pager($object = null)
+    public static function OnQuery($sql, ...$args)
+    public function _OnQuery($sql, ...$args)

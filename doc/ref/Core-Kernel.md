@@ -116,7 +116,7 @@ protected function initExtentions(array $exts): void
     初始化扩展
 protected function fixPathInfo(&$serverData)
 
-    修复Path_INFO
+    修复PATH_INFO
 ## 详解
 
 Kernel 这个 Trait 不直接处理，一般直接用的是 Core\App ， 而直接的 App 类，则是把常见扩展加进去形成完善的框架。
@@ -128,3 +128,20 @@ init() 初始化阶段，和 run 阶段
 run 阶段，通过 PluginForSwoole 插件,调用 replaceDefaultRunHandler 修改默认流程
 
 run 阶段可重复调用
+
+
+
+    public static function RunQuickly(array $options = [], callable $after_init = null): bool
+    protected function initOptions($options = [])
+    protected function checkOverride($options)
+    public function init(array $options, object $context = null)
+    protected function pluginModeInit(array $options, object $context = null)
+    protected function onInit()
+    protected function reloadFlags(): void
+    protected function initExtentions(array $exts): void
+    protected function onRun()
+    public function run(): bool
+    public function clear(): void
+    protected function fixPathInfo(&$serverData)
+    public function replaceDefaultRunHandler(callable $handler = null): void
+    public function addBeforeShowHandler($handler)

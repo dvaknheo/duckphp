@@ -15,3 +15,7 @@
 
 ## 详解
 
+    public function init(array $options, object $context = null)
+    protected function viewToCallback($func)
+    public function _Show($data = [], $view)
+    public function _ShowBlock($view, $data = null)

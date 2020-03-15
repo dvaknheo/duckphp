@@ -6,3 +6,6 @@
 ## 详解
 这个 trait 替换了默认的 G 函数。
 给默认 G 函数钱加了严格检查
+
+
+    public static function G($object = null)

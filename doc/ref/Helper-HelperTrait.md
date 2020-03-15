@@ -41,3 +41,11 @@ HelperTrait 只有静态方法
 `ThrowOn()` 是来自 `Core/ThrowOn` 用于跑异常
 
 `__callStatic` 和 `GetExtendStaticMethodList`, `AssignExtendStaticMethod`, 是 来自 `Core/ExtendableStaticCallTrait`
+
+
+    public static function IsDebug()
+    public static function IsRealDebug()
+    public static function Platform()
+    public static function Logger($object = null)
+    public static function trace_dump()
+    public static function var_dump(...$args)

@@ -27,3 +27,9 @@ ExtendableStaticCallTrait 这个 Trait 用于 App, ControllerHelper, ServiceHelp
 作用是动态扩展类的静态方法。
 
 你写自己的扩展的时候会用到。
+
+
+    public static function AssignExtendStaticMethod($key, $value = null)
+    public static function GetExtendStaticMethodList()
+    protected static function CallExtendStaticMethod($name, $arguments)
+    public static function __callStatic($name, $arguments)

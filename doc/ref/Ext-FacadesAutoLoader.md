@@ -11,3 +11,8 @@
 
 ## 详解
 
+    public function __construct()
+    public function init(array $options, object $context = null)
+    public function _autoload($class)
+    public function getFacadesCallback($input_class, $name)
+    public function clear()

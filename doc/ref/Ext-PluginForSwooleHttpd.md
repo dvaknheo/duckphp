@@ -11,3 +11,12 @@ SwooleHttpd 的插件
 
 ## 详解
 
+    public function init($options, $context)
+    public function run()
+    public function onSwooleHttpdInit($SwooleHttpd = null, ?callable $RunHandler = null)
+    public function onSwooleHttpdStart($SwooleHttpd = null)
+    public function onSwooleHttpdRequest($SwooleHttpd)
+    public function getStaticComponentClasses()
+    public function getDynamicComponentClasses()
+    public static function Hook($path_info)
+    public function _Hook($path_info)

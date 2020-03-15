@@ -81,3 +81,14 @@ pluginModeDefaultRouteHook 默认的路由钩子
 pluginModeDefaultRouteHook 通过 pluginModeCloneHelpers 把自己的 Helper  克隆过去
 调整 View 目录。
 然后切入自己的 namespace 执行控制器。
+
+
+    public function pluginModeInit(array $options, object $context = null)
+    public static function PluginModeRouteHook($path_info)
+    public function _PluginModeRouteHook($path_info)
+    protected function pluginModeInitOptions($options)
+    protected function pluginModeDefaultInit(array $options, object $context = null)
+    protected function pluginModeIncludeConfigFile($file)
+    protected function pluginModeSearchAllPluginFile($path, $setting_file = '')
+    protected function pluginModeDefaultRouteHook($path_info)
+    protected function pluginModeCloneHelpers()

@@ -16,3 +16,20 @@
 
 ## 详解
 
+    public function __construct()
+    public function init(array $options, object $context = null)
+    protected function initContext($options = [], $context = null)
+    public static function CloseAllDB()
+    public function OnException()
+    public static function DB($tag = null)
+    public static function DB_W()
+    public static function DB_R()
+    public function setDBHandler($db_create_handler, $db_close_handler = null, $db_exception_handler = null)
+    public function setBeforeGetDBHandler($before_get_db_handler)
+    public function getDBHandler()
+    public function _DB($tag = null)
+    protected function getDatabase($db_config, $tag)
+    public function _DB_W()
+    public function _DB_R()
+    public function _closeAllDB()
+    public function _onException()

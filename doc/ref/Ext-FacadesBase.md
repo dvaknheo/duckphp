@@ -12,3 +12,5 @@ Facades的基类
 
 ## 详解
 
+    public function __construct()
+    public static function __callStatic($name, $arguments)
