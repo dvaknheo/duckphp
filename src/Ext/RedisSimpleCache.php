@@ -12,6 +12,8 @@ class RedisSimpleCache //extends Psr\SimpleCache\CacheInterface;
     use SingletonEx;
     
     public $options = [
+        'redis' => null,
+        'redis_cache_prefix' => '',
     ];
     public $redis = null;
     public $prefix = '';
@@ -23,7 +25,7 @@ class RedisSimpleCache //extends Psr\SimpleCache\CacheInterface;
     {
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         $this->redis = $options['redis'] ?? null;
-        $this->prefix = $options['prefix'] ?? '';
+        $this->prefix = $options['redis_cache_prefix'] ?? '';
     }
     public function get($key, $default = null)
     {

@@ -16,6 +16,7 @@ class JsonRpcExt
         'jsonrpc_backend' => 'https://127.0.0.1',
         'jsonrpc_is_debug' => false,
         'jsonrpc_enable_autoload' => true,
+        'jsonrpc_check_token_handler' => null,
     ];
     
     public $is_inited;
@@ -151,7 +152,9 @@ class JsonRpcExt
     }
     protected function prepare_token($ch)
     {
-        //override me
+        if (isset($this->options['jsonrpc_check_token_handler'])) {
+            return ($this->options['jsonrpc_check_token_handler'])($ch);
+        }
         return;
     }
 }

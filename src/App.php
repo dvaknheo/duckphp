@@ -30,16 +30,16 @@ class App extends Core_App
                 'DuckPhp\Ext\RouteHookRewrite' => true,
                 'DuckPhp\Ext\RouteHookRouteMap' => true,
                 
-                'DuckPhp\Ext\StrictCheck' => false,
-                'DuckPhp\Ext\RouteHookOneFileMode' => false,
-                'DuckPhp\Ext\RouteHookDirectoryMode' => false,
+                //'DuckPhp\Ext\StrictCheck' => false,
+                //'DuckPhp\Ext\RouteHookOneFileMode' => false,
+                //'DuckPhp\Ext\RouteHookDirectoryMode' => false,
                 
-                'DuckPhp\Ext\RedisManager' => false,
-                'DuckPhp\Ext\RedisSimpleCache' => false,
-                'DuckPhp\Ext\DBReusePoolProxy' => false,
-                'DuckPhp\Ext\FacadesAutoLoader' => false,
-                'DuckPhp\Ext\Lazybones' => false,
-                'DuckPhp\Ext\Pager' => false,
+                //'DuckPhp\Ext\RedisManager' => false,
+                //'DuckPhp\Ext\RedisSimpleCache' => false,
+                //'DuckPhp\Ext\DBReusePoolProxy' => false,
+                //'DuckPhp\Ext\FacadesAutoLoader' => false,
+                //'DuckPhp\Ext\Lazybones' => false,
+                //'DuckPhp\Ext\Pager' => false,
             ],
             
         ];

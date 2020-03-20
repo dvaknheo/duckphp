@@ -24,6 +24,7 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
             'jsonrpc_namespace'=>'JsonRpc',
             'jsonrpc_backend'=>'http://127.0.0.1:9528/json_rpc',
             'jsonrpc_is_debug'=>true,
+            'jsonrpc_check_token_handler'=>function($ch){ var_dump('OOK');}
         ];
         
         JsonRpcExt::G()->init($options,null);
@@ -35,6 +36,7 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
             'path_document'=>'',
             'port'=>9528,
             'background'=>true,
+            
         ];
         HttpServer::RunQuickly($server_options);
         echo HttpServer::G()->getPid();

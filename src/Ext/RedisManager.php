@@ -45,7 +45,7 @@ class RedisManager
         if ($this->options['enable_simple_cache']) {
             RedisSimpleCache::G()->init([
                 'redis' => $this->getServer(),
-                'prefix' => $this->options['simple_cache_prefix']
+                'redis_cache_prefix' => $this->options['simple_cache_prefix']
             ]);
         }
         if ($context) {
