@@ -284,7 +284,7 @@ trait Kernel
             $path_info = $request_path;
         } else {
             $path_info = substr($request_path, strlen($request_file));
-            $path_info = ($path_info !== false) ? $path_info: '';
+            //$path_info = ($path_info !== false) ? $path_info: '';
         }
         
         $serverData['PATH_INFO'] = $path_info;
