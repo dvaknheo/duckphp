@@ -1,15 +1,17 @@
 # 数据库教程
 ## 相关类和配置。
 
-[Ext/DBManager](ref/Ext-DBManager.md)
+- [Ext/DBManager](ref/Ext-DBManager.md)
 
-[DB/DB](ref/DB-DB.md)
+管理数据库
+- [DB/DB](ref/DB-DB.md)
 
-[DB/DBAdvance](ref/DB-DBAdvance)
+    - 使用 [DB/DBAdvance](ref/DB-DBAdvance.md)
 
-[DB/DBInterface]()
+- [DB/DBInterface](ref/DB-DBInterface.md)
 
 ## 相关配置
+
 'db_create_handler'=>null,  // 默认用 [DB::class,'CreateDBInstance']
 'db_close_handler'=>null,   // 默认等于 [DB::class,'CloseDBInstance']
 'before_get_db_handler'=>null, // 在调用 DB 前调用
@@ -17,7 +19,15 @@
 'database_list'=>null,      //DB 列表
 
 ## 相关设置
-
+```
+[
+database_list =>[[
+		'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
+		'username'=>'???',
+		'password'=>'???',
+    ]],
+],
+```
 ## 开始
 
 ### DBManager

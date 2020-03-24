@@ -2,15 +2,71 @@
 
 ## 简介
 
+`伪组件类` DB 类是DuckPhp 自带的数据库类。 是 App::DB 和 M::DB 的实现。
+
 ## 选项
 
 ## 公开方法
 
+public function init($options = [], $context = null)
+
+    虽然是组件类，只被 DB::CreateDBInstance 使用
+public static function CreateDBInstance($db_config)
+
+    用于创建实例
+public static function CloseDBInstance($db, $tag = null)
+
+    用于关闭实例
+public function fetchAll($sql, ...$args)
+
+    运行SQL并获得所有行
+public function fetch($sql, ...$args)
+
+    运行SQL并获得单一行
+public function fetchColumn($sql, ...$args)
+
+    运行SQL并获得单一行
+public function execute($sql, ...$args)
+
+    运行SQL并获得单一行
+protected function check_connect()
+
+    用于 override ，连接的设置。
+public function close()
+
+public function getPDO()
+
+    获得 相关 PDO 对象。
+public function setBeforeQueryHandler($handler)
+
+    在 query 前执行。
+public function quote($string)
+
+    编码
+public function buildQueryString($sql, ...$args)
+
+    合并带参数的sql.
+public function rowCount()
+
+    获得行数
+public function lastInsertId()
+    
+    获得插入的ID.
+
+### DBAdvance 的方法
+
+public function quoteIn($array)
+public function quoteSetArray($array)
+public function qouteInsertArray($array)
+public function findData($table_name, $id, $key = 'id')
+public function insertData($table_name, $data, $return_last_id = true)
+public function deleteData($table_name, $id, $key = 'id', $key_delete = 'is_deleted')
+public function updateData($table_name, $id, $data, $key = 'id')
 
 ## 详解
 
 DB()
-    是 App::DB 和 M::DB 的实现。
+    
 #### DB 类的用法
 DB
     close(); //关闭, 你一般不用关闭,系统会自动关闭
@@ -22,19 +78,17 @@ DB
     execute($sql, ...$args); //   执行某条sql ，不用 exec , execute 是为了兼容其他类。
 #### 示例
 使用数据库，在 设置里正确设置 database_list 这个数组，包含多个数据库配置
-然后在用到的地方调用 DuckPHP::DB($tag=null) 得到的就是 DB 对象，用来做各种数据库操作。
+然后在用到的地方调用 DuckPHP\App::DB($tag=null) 得到的就是 DB 对象，用来做各种数据库操作。
 $tag 对应 $setting['database_list'][$tag]。默认会得到最前面的 tag 的配置。
 
 你不必担心每次框架初始化会连接数据库。只有第一次调用 DuckPHP::DB() 的时候，才进行数据库类的创建。
 
-DB 的使用方法，看后面的参考。
 
 ## 示例如下
 
 ```php
 <?php
 use DuckPHP\App as DuckPHP;
-use DuckPHP\Helper\ModelHelper as M;
 
 require_once('../vendor/autoload.php');
 
@@ -51,23 +105,25 @@ $options['database_list']=[[
 DuckPHP::RunQuickly($options,function(){    
     $sql="select 1+? as t";
     $data=M::DB()->fetch($sql,2);
-    var_dump($data);
-    DuckPHP::exit_system(0);
+    DuckPHP::var_dump($data);
+    DuckPHP::exit(0);
 });
 ```
 
-    public function init($options = [], $context = null)
-    public static function CreateDBInstance($db_config)
-    public static function CloseDBInstance($db, $tag = null)
-    protected function check_connect()
-    public function close()
-    public function getPDO()
-    public function setBeforeQueryHandler($handler)
-    public function quote($string)
-    public function buildQueryString($sql, ...$args)
-    public function fetchAll($sql, ...$args)
-    public function fetch($sql, ...$args)
-    public function fetchColumn($sql, ...$args)
-    public function execute($sql, ...$args)
-    public function rowCount()
-    public function lastInsertId()
+## 方法索引
+
+public function init($options = [], $context = null)
+public static function CreateDBInstance($db_config)
+public static function CloseDBInstance($db, $tag = null)
+protected function check_connect()
+public function close()
+public function getPDO()
+public function setBeforeQueryHandler($handler)
+public function quote($string)
+public function buildQueryString($sql, ...$args)
+public function fetchAll($sql, ...$args)
+public function fetch($sql, ...$args)
+public function fetchColumn($sql, ...$args)
+public function execute($sql, ...$args)
+public function rowCount()
+public function lastInsertId()

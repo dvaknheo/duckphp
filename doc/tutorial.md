@@ -388,7 +388,7 @@ const DEFAULT_OPTIONS=[
 ];
 ```
 
-其他组件的配置，也可能写在这里。
+**还有众多其他组件的配置，这里不一一展示。**
 
 ##### 基本选项
 'skip_setting_file'=> false,
