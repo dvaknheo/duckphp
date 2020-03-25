@@ -22,9 +22,9 @@
 ```
 [
 database_list =>[[
-		'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
-		'username'=>'???',
-		'password'=>'???',
+        'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
+        'username'=>'???',
+        'password'=>'???',
     ]],
 ],
 ```
@@ -41,9 +41,9 @@ M::DB() 用到了这个组件。
 database_list 的示例：
 ```php
     [[
-		'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
-		'username'=>'???',
-		'password'=>'???',
+        'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
+        'username'=>'???',
+        'password'=>'???',
     ]],
 ```
 #### 方法

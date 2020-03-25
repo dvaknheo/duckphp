@@ -177,10 +177,10 @@
 * [Ext\StrictCheckModelTrait](Ext-StrictCheckModelTrait.md) 
 * [Ext\StrictCheckServiceTrait](Ext-StrictCheckServiceTrait.md) 
 * [Helper\ControllerHelper](Helper-ControllerHelper.md) 
-* [Helper\HelperTrait](Helper-HelperTrait.md) 
-* [Helper\ModelHelper](Helper-ModelHelper.md) 
-* [Helper\ServiceHelper](Helper-ServiceHelper.md) 
-* [Helper\ViewHelper](Helper-ViewHelper.md) 
+* **[Helper\HelperTrait](Helper-HelperTrait.md)** 
+* **[Helper\ModelHelper](Helper-ModelHelper.md)** 
+* **[Helper\ServiceHelper](Helper-ServiceHelper.md)** 
+* **[Helper\ViewHelper](Helper-ViewHelper.md)** 
 * [HttpServer](HttpServer.md) 
 * [SingletonEx](SingletonEx.md) 
 * [ThrowOn](ThrowOn.md) 
@@ -189,46 +189,76 @@
 
 - 'all_config' => array (), //参见 [Core\Configer](Core-Configer.md)
     所有配置
+    
 - 'before_get_db_handler' => NULL,
-'callable_view_head' => null,
-'callable_view_foot' => null,
-'callable_view_class' => null,
-'callable_view_prefix' => null,
-'callable_view_skip_replace' => false,
-- 'controller_base_class' => NULL,
-- 'controller_hide_boot_class' => false,
-- 'controller_methtod_for_miss' => '_missing',
-- 'controller_postfix' => '',
-- 'controller_prefix_post' => 'do_',
+    获取DB前调用的handler
+    
+- 'callable_view_head' => null,
+    页眉
+    
+- 'callable_view_foot' => null,
+    页脚
+    
+- 'callable_view_class' => null,
 
+   视图类
+
+- 'callable_view_prefix' => null,
+
+   视图函数模板
+
+- 'callable_view_skip_replace' => false,
+
+    可调用视图跳过默认视图替换
+
+- 'controller_base_class' => NULL,
+
+    控制器基类
+
+- 'controller_hide_boot_class' => false,
+
+    控制器隐藏 特别的入口
+
+- 'controller_methtod_for_miss' => '_missing',
+
+    控制器，缺失方法
+- 'controller_postfix' => '',
+
+    控制器方法后缀
+- 'controller_prefix_post' => 'do_',
+    控制器，POST 方法前缀
 - 'controller_welcome_class' => 'Main',
+    控制器默认欢迎方法
 - 'database_list' => NULL,
-- 'db_before_query_handler' => 
-- array (
-- 0 => 'MY\\Base\\App',
-- 1 => 'OnQuery',
-- ),
+    数据库列表
+- 'db_before_query_handler' => ['MY\\Base\\App','OnQuery']
+    数据库，查询前执行
 - 'db_close_at_output' => true,
+    数据库，输出前关闭
 - 'db_close_handler' => NULL,
+    数据库，关闭句柄
 - 'db_create_handler' => NULL,
+    数据库，创建句柄
 - 'db_exception_handler' => NULL,
-- 'default_exception_handler' => 
-- array (
-- 0 => 'DuckPhp\\App',
-- 1 => 'OnDefaultException',
-- ),
-- 'dev_error_handler' => 
-- array (
-- 0 => 'DuckPhp\\App',
-- 1 => 'OnDevErrorHandler',
-- ),
+    数据库，异常句柄
+- 'default_exception_handler' => ['DuckPhp\\App',OnDefaultException']
+    默认异常句柄
+
+- 'dev_error_handler' => 'DuckPhp\\App','OnDevErrorHandler']
+    默认开发错误句柄
+
 - 'enable_cache_classes_in_cli' => false,
+在 cli 下开启缓存模式
 - 'error_404' => '_sys/error_404',
+404 页面
 - 'error_500' => '_sys/error_500',
+500 页面
 - 'error_debug' => '_sys/error_debug',
+错误调试页面
+
 - 'ext' => 
- array (
- 'DuckPhp\\Ext\\Misc' => true,
+   array (
+    'DuckPhp\\Ext\\Misc' => true,
     'DuckPhp\\Ext\\SimpleLogger' => true,
     'DuckPhp\\Ext\\DBManager' => true,
     'DuckPhp\\Ext\\RouteHookRewrite' => true,
@@ -242,57 +272,86 @@
     'DuckPhp\\Ext\\FacadesAutoLoader' => false,
     'DuckPhp\\Ext\\Lazybones' => false,
     'DuckPhp\\Ext\\Pager' => false,
-),
+   ),
 
+    默认开启扩展
 - 'handle_all_dev_error' => true,
+    接管一切开发错误
 - 'handle_all_exception' => true,
+    接管一切异常
 - 'is_debug' => true,
+    是否调试状态
 - 'log_file' => '',
+    日志文件
 - 'log_prefix' => 'DuckPhpLog',
+    日志前缀
 - 'log_sql' => false,
+    记录sql
 - 'namespace' => 'MY',
+    命名空间
 - 'namespace_controller' => 'Controller',
+
+    控制器的命名空间
 - 'override_class' => 'Base\\App',
+    重写类名
 - 'path' => '/mnt/d/MyWork/sites/DNMVCS/template/',
+    路径
 - 'path_config' => 'config',
+    配置路径
 - 'path_lib' => 'lib',
+    库路径
 - 'path_namespace' => 'app',
+    命名空间路径
 - 'path_view' => 'view',
+    视图路径
 - 'path_view_override' => '',
+    覆盖视图路径
 - 'platform' => '',
-- 'rewrite_map' => 
-- array (
-- ),
-- 'route_map' => 
-- array (
-- ),
-- 'route_map_important' => 
-- array (
-- ),
-- 'setting' => 
-- array (
-- ),
+    平台
+- 'rewrite_map' => array ( ),
+    路径重写映射
+
+- 'route_map' => array ( ),
+    路由映射
+
+- 'route_map_important' => array ( ),
+    重要路由映射
+
+- 'setting' => array ( ),
+    设置，预先载入的设置
+
 - 'setting_file' => 'setting',
+
+    设置文件
+
 - 'skip_404_handler' => false,
+
+    跳过404处理
 - 'skip_app_autoload' => false,
+    跳过 自动加载
 - 'skip_env_file' => true,
+    跳过 .env 文件
 - 'skip_exception_check' => false,
+    跳过异常检查
 - 'skip_fix_path_info' => false,
+    跳过 PATH_INFO 修复
 - 'skip_plugin_mode_check' => false,
+    跳过插件模式检查
 - 'skip_setting_file' => true,
+    跳过设置文件
 - 'skip_system_autoload' => true,
+    跳过 系统自动加载
 - 'skip_view_notice_error' => true,
-- 'system_exception_handler' => 
-array (
- 0 => 'DuckPhp\\App',
- 1 => 'set_exception_handler',
-),
+    跳过 View 视图的 notice
+- 'system_exception_handler' =>  Duckphp->  set_exception_handler
+    接管系统的异常管理
 - 'use_context_db_setting' => true,
+    使用父类的数据库配置
 - 'use_flag_by_setting' => true,
-- 'use_short_function' => true,
+
+    从设置文件里再入
 - 'use_short_functions' => true,
+使用短函数,使用
+
 - 'use_super_global' => false,
-
-
-            'path' => '',
-            'path_view' => 'view',
+    使用super_global 类。
