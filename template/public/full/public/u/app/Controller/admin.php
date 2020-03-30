@@ -57,7 +57,7 @@ class admin
             $method = C::getRouteCallingMethod();
             C::ExitRouteTo('admin/login?r=admin/'.$method);
         }
-        $r = ($r!=='admin/login')?$r:'admin/index';
+        $r = ($r !== 'admin/login')?$r:'admin/index';
 
         SessionService::G()->adminLogin();
         C::ExitRouteTo($r);
@@ -128,15 +128,15 @@ class admin
         $page = intval($_GET['page'] ?? 1);
         $page = ($page > 1)?:1;
         list($list, $total) = AdminService::G()->getUserList($page);
-        $csrf_token='';
+        $csrf_token = '';
         foreach ($list as  &$v) {
-            $v['url_delete']=C::URL("admin/delete_user?id={$v['id']}&_token={$csrf_token}");
+            $v['url_delete'] = C::URL("admin/delete_user?id={$v['id']}&_token={$csrf_token}");
         }
         C::Show(get_defined_vars());
     }
     public function delete_user()
     {
-        $id = $_REQUEST['id']??0;
+        $id = $_REQUEST['id'] ?? 0;
         AdminService::G()->deleteUser($id);
         C::ExitRouteTo('admin/users');
     }
@@ -163,10 +163,9 @@ class admin
     }
     public function delete_comments()
     {
-        $id = $_POST['id']; 
+        $id = $_POST['id'];
         AdminService::G()->deleteComment($id);
         
         C::ExitRouteTo('admin/comments');
-        
     }
 }

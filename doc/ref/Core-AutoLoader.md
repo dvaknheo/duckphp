@@ -1,10 +1,7 @@
 # Core\AutoLoader
 
 ## 简介
-
-DuckPHP 的自动加载类
-
-组件类
+`组件类` DuckPHP\AutoLoader 类是 psr-4 自动加载类
 
 ## 选项
 'path' => null,

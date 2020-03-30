@@ -8,8 +8,8 @@ $path = realpath(__DIR__.'/..');
 $namespace = rtrim('MY\\', '\\');                    // @DUCKPHP_NAMESPACE
 ////[[[[
 $options =
-array (
-  // 'all_config' => 
+array(
+  // 'all_config' =>
   // array (
   // ),
   
@@ -22,7 +22,7 @@ array (
   // 'controller_prefix_post' => 'do_',
   // 'controller_welcome_class' => 'Main',
   // 'database_list' => NULL,
-  // 'db_before_query_handler' => 
+  // 'db_before_query_handler' =>
   // array (
   //   0 => 'MY\\Base\\App',
   //   1 => 'OnQuery',
@@ -31,12 +31,12 @@ array (
   // 'db_close_handler' => NULL,
   // 'db_create_handler' => NULL,
   // 'db_exception_handler' => NULL,
-  // 'default_exception_handler' => 
+  // 'default_exception_handler' =>
   // array (
   //   0 => 'DuckPhp\\App',
   //   1 => 'OnDefaultException',
   // ),
-  // 'dev_error_handler' => 
+  // 'dev_error_handler' =>
   // array (
   //   0 => 'DuckPhp\\App',
   //   1 => 'OnDevErrorHandler',
@@ -45,7 +45,7 @@ array (
   // 'error_404' => '_sys/error_404',
   // 'error_500' => '_sys/error_500',
   // 'error_debug' => '_sys/error_debug',
-  // 'ext' => 
+  // 'ext' =>
   // array (
   //   'DuckPhp\\Ext\\Misc' => true,
   //   'DuckPhp\\Ext\\SimpleLogger' => true,
@@ -78,16 +78,16 @@ array (
   // 'path_view' => 'view',
   // 'path_view_override' => '',
   // 'platform' => '',
-  // 'rewrite_map' => 
+  // 'rewrite_map' =>
   // array (
   // ),
-  // 'route_map' => 
+  // 'route_map' =>
   // array (
   // ),
-  // 'route_map_important' => 
+  // 'route_map_important' =>
   // array (
   // ),
-  // 'setting' => 
+  // 'setting' =>
   // array (
   // ),
   // 'setting_file' => 'setting',
@@ -100,7 +100,7 @@ array (
   // 'skip_setting_file' => true,
   // 'skip_system_autoload' => true,
   // 'skip_view_notice_error' => true,
-  // 'system_exception_handler' => 
+  // 'system_exception_handler' =>
   // array (
   //   0 => 'DuckPhp\\App',
   //   1 => 'set_exception_handler',

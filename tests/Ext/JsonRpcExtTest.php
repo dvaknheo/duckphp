@@ -48,8 +48,9 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
         $options['jsonrpc_backend']=['http://localdomain.dev/json_rpc','127.0.0.1:9528'];
         JsonRpcExt::G()->init($options,null);
         JS::G()->foo();
+
         try{
-        JS::G()->the500();
+            JS::G()->the500();
         }catch(\Exception $ex){
             echo $ex;
         }
@@ -58,6 +59,10 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
         }catch(\Exception $ex){
             echo $ex;
         }
+        
+               $options['jsonrpc_check_token_handler']=null;
+        JsonRpcExt::G()->init($options,null);
+        JS::G()->foo();
         //JS::G()->foo();
         
         var_dump($data);

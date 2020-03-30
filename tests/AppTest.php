@@ -39,8 +39,11 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::OnQuery("SQL ",1,2);
         ////
         \e("<B>xx</B>");
-        
-        
+        try{
+            \view('test');
+        }catch(\Throwable $ex){
+            var_dump($ex);
+        }
         \MyCodeCoverage::G()->end(DuckPhp::class);
         $this->assertTrue(true);
 

@@ -1,7 +1,9 @@
 # Ext\RouteHookDirectoryMode
 
 ## 简介
+多目录模式的 hook
 
+##### 
 ## 选项
 'mode_dir_index_file'=>'',
 'mode_dir_use_path_info'=>true,

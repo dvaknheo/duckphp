@@ -48,13 +48,12 @@ class UserModel extends BaseModel
         unset($user['password']);
         return $user;
     }
-    public function updatePassword($uid,$password)
+    public function updatePassword($uid, $password)
     {
-        $password=$this->hash($password);
+        $password = $this->hash($password);
         $sql = "update Users set password=? where id=? limit 1";
-        $ret = M::DB()->execute($sql,$password,$uid);
+        $ret = M::DB()->execute($sql, $password, $uid);
         return $ret;
-        
     }
     ////
     protected function hash($password)

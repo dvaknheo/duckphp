@@ -27,3 +27,8 @@ Redis 管理类
     public static function SimpleCache()
     public function getServer($tag = 0)
     public function createServer($config)
+    
+    
+### RedisManager
+
+redis 管理器。 redis 入口

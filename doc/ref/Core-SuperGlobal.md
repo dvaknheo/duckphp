@@ -2,10 +2,11 @@
 
 ## 简介
 超级变量类，本类不带选项
+RuntimeState 类用于保存运行时数据。无配置
 
 ## 公开方法
     public function __construct()
-    public function init()
+    public function init(array $options, object $context = null)
     public function session_start(array $options=[])
     public function session_id($session_id)
     public function session_destroy()

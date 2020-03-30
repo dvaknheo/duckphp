@@ -17,14 +17,13 @@ class App extends DuckPhp_App
     ];
     public function onInit()
     {
-                
         $this->options['rewrite_map']['~article/(\d+)/?(\d+)?'] = 'article?id=$1&page=$2';
         
         $this->options['ext']['UserSystemDemo\Base\App'] = true;
         
-        $path=realpath($this->options['path'].'../../auth/');
+        $path = realpath($this->options['path'].'../../auth/');
         $this->assignPathNamespace($path, 'UserSystemDemo');
-        $ret=parent::onInit();
+        $ret = parent::onInit();
         static::assignRoute([
             '~abc(\d*)' => function () {
                 var_dump("OK");
@@ -32,7 +31,7 @@ class App extends DuckPhp_App
         ]);
         return $ret;
         
-return parent::onInit();
+        return parent::onInit();
     }
     public function onRun()
     {

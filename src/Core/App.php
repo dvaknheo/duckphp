@@ -440,11 +440,13 @@ trait Core_Helper
             RuntimeState::G()->skipNoticeError();
         }
         
-        View::G()->assignViewData([
-            '__is_debug' => $this->is_debug,
-            '__duckphp_is_debug' => $this->is_debug,
-            '__duckphp_platform' => $this->platform,
-        ]);
+        if ($this->is_debug) {
+            View::G()->assignViewData([
+                '__is_debug' => $this->is_debug,
+                '__duckphp_is_debug' => $this->is_debug,
+                '__duckphp_platform' => $this->platform,
+            ]);
+        }
         return View::G()->_Show($data, $view);
     }
     public function _H(&$str)

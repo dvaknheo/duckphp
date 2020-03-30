@@ -1,5 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 use DuckPhp\Core\Helper\ViewHelper as V;
+
 ?>
 用户资料页
 

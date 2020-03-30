@@ -32,6 +32,13 @@ composer require dvaknheo/duckphp # 用 require
 php bin/start_server.php
 ```
 浏览器中打开 http://127.0.0.1:8080/ 得到下面欢迎页就表明 OK 了
+```text
+Don't run the template file directly
+Hello DuckPHP
+
+Time Now is [2019-04-19T21:36:06+08:00]
+For More Take the DuckPHP-FullTest (TODO)
+```
 细则可以看 --help 参数
 
 当然你也可以用 nginx 或apache 安装。
@@ -109,9 +116,9 @@ class MiscService  extends BaseService
     }
 }
 ```
-BaseService 也是不强求的，我们 extends BaseService 是为了能用 G 函数这个单例方法
+BaseService 也是不强求的，我们 extends BaseService 是为了能用 G 函数这个单例方法。
 
-这里调用了 MiscModel 
+这里调用了 MiscModel 。
 
 ### Model 模型
 
@@ -135,7 +142,7 @@ class MiscModel extends BaseModel
     }
 }
 ```
-同样 BaseModel 也是不强求的，我们 extends BaseModel 是为了能用 G 函数这个单例方法
+同样 BaseModel 也是不强求的，我们 extends BaseModel 是为了能用 G 函数这个单例方法。
 
 ### 最后显示结果
 ```text
@@ -143,6 +150,65 @@ test
 
 <2019-04-19T22:21:49+08:00>
 ```
+### 如果没有配置 PATH_INFO
+如果你懒得配置 PATH_INFO，把 `public/index.php` 文件这项打开
+```php
+$options['ext']['DuckPhp\\Ext\\RouteHookeOneFile']=true;
+```
+同样访问  http://127.0.0.1:8080/index.php?_r=test/done  也是得到想同测试页面的结果
+
+### 数据库操作
+前提工作，我们注释掉 `public/index.php` 中跳过设置文件的选项
+```php
+//$options['skip_setting_file']=true;
+```
+`./vendor/bin/duckphp --create` 脚本会删去这一行。
+
+数据库演示需要数据库配置。
+
+我们复制 `config/setting.sample.php` 为 `config/setting.php`
+```php
+return [
+    'duckphp_is_debug' => false,
+    'duckphp_platform' => 'default',
+    //*
+    'database_list' => [
+        [
+        'dsn' => 'mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8mb4;',
+        'username' => 'admin',
+        'password' => '123456',
+        'driver_options' => [],
+        ],
+    ],
+    //*/
+];
+```
+然后，我们写 `app/Controller/dbtest.php` 如下
+```php
+namespace MY\Controller;
+use MY\Base\App as M;
+
+class dbtest
+{
+    public function main()
+    {
+        $ret = $this->foo();
+        var_dump($ret);
+    }
+    public function foo()
+    {
+        $sql = "select 1+? as t";
+        $ret = M::DB()->fetch($sql,2);
+        return $ret;
+    }
+}
+```
+访问   http://127.0.0.1:8080/dbtest/main 
+会得到， 't' => string '3' (length=1)
+
+### 开发人员角色
+DuckPHP 的使用者角色分为 应用程序员，和核心程序员两种
+应用程序员负责日常 Curd 。核心程序员做的是更高级的任务。
 
 ## 第二章 DuckPHP 应用普通开发人员参考
 
@@ -333,7 +399,7 @@ class DBModel extends BaseModel
 }
 ```
 要使用数据库,需要在 config/setting.php 里做相关配置添加.
- 
+
 ```php
 'database_list' =>
     [[
@@ -794,7 +860,7 @@ DuckPHP 系统组件的连接，多是以调用类的可变单例来实现的。
 ![core](DuckPHP.gv.svg)
 
 
-DuckPHP/Framework 的扩展都放在 DuckPHP\\Ext 命名空间里
+DuckPHP 的扩展都放在 DuckPHP\\Ext 命名空间里
 下面按字母顺序介绍这些扩展的作用
 按选项，说明，公开方法，一一介绍。
 
@@ -834,183 +900,9 @@ ExceptionManager::G(MyExceptionManager::G())->init($this->options,$this);
 Core 下面的扩展不会单独拿出来用， 
 如果你扩展了该方面的类，最好也是让用户通过 App 或者 MVCS 组件来使用他们。
 
-### Core\Autoloader
-DuckPHP\AutoLoader 类是 psr-4 加载类。
-##### 选项
-```php
-$options=[
-    'path'=>null,
-    'namespace'=>'MY',
-    'path_namespace'=>'app',
 
-    'skip_system_autoload'=>true, 
-    'skip_app_autoload'=>false,
-],
-```
-##### 方法
+##### 
 
-##### 示例
-
-### Core\Configer
-##### 选项
-```
-    'path'=>null,
-    'path_config'=>'config',    //配置路径目录
-    'all_config'=>[],
-    'setting'=>[],
-    'setting_file'=>'setting',
-    'skip_setting_file'=>false,
-```
-##### 说明
-Core\Configer 的选项共享个 path,带个 path_config
-
-path_config 如果是 / 开始的，会忽略 path 选项
-
-    当你想把配置目录 放入 app 目录的时候，调整 path_config
-    当我们要额外设置，配置的时候，把 setting , all_config 的值 带入
-    当我们不需要额外的配置文件的时候  skip_setting_file 设置为 true
-##### 方法
-
-### Core\View
-##### 选项
-```  
-'path'=>null,
-'path_view'=>'view',
-```
-Core\View 的选项共享一个 path,带一个 path_view.
-
-path_view 如果是 / 开始的，会忽略 path 选项
-
-当你想把视图目录 放入 app 目录的时候，调整 path_view
-##### 方法
-
-### Core\Route
-DuckPHP\Core\Route 这个类可以单独拿出来做路由用。
-##### 选项
-```php
-$options=[
-    'namespace'=>'MY',
-    'namespace_controller'=>'Controller',
-    'controller_base_class'=>null,
-    'controller_welcome_class'=>'Main',
-    'controller_hide_boot_class'=>false,
-    'controller_methtod_for_miss'=>'_missing',
-    'controller_prefix_post'=>'do_',
-    'controller_postfix'=>''
-]
-```
-'controller_base_class'=>null,
-    
-    限定控制器基类，配合 namespace namespace_controller 选项。
-    如果是 \ 开头的则忽略 namespace namespace_controller 选项。
-'controller_prefix_post'=>'do_',
-
-    POST 的方法会在方法名前加前缀 do_
-    如果找不到方法名，调用默认方法名。
-'controller_welcome_class'=>'Main',
-
-    默认欢迎类是  Main 。
-'controller_methtod_for_miss'=>'_missing',
-    
-    如果有这个方法。找不到方法的时候，会进入这个方法
-    如果你使用了这个方法，将不会进入 404 。
-'controller_prefix_post'=>'do_'
-
-    拆分 POST 方法到 do_ 开头的方法。
-'controller_postfix'=>'',
-
-     控制器后缀，如果你觉得控制器类不够显眼，你可以设置成Controller
-##### 示例
-这是一个单用 Route 组件的例子
-```php
-<?php
-use DuckPHP\Core\Route;
-require(__DIR__.'/vendor/autoload.php');
-
-class Main
-{
-    public function index()
-    {
-        var_dump(DATE(DATE_ATOM));
-    }
-    public function i()
-    {
-        phpinfo();
-    }
-}
-$options=[
-    'namespace_controller'=>'\\',
-];
-$flag=Route::RunQuickly($options);
-if(!$flag){
-    header(404);
-    echo "404!";
-}
-
-```
-##### 静态方法
-public static function RunQuickly(array $options=[], callable $after_init=null)
-
-    快速方法，等同于 init()->run();
-public static function URL($url=null)
-
-    获取某个 相对 URL的绝对 URL 地址
-public static function getParameters()
-
-    获得切片数组。
-##### 公开动态方法
-    public function _URL($url=null)
-    public function _Parameters()
-    public function defaultURLHandler($url=null)
-    public function setURLHandler($callback)
-    public function getURLHandler()
-
-##### 主要流程方法。
-
-    public function bindServerData($server)
-    public function bind($path_info, $request_method='GET')
-    
-    protected function beforeRun()
-    public function run()
-    public function defaultRunRouteCallback($path_info=null)
-    public function defaultGetRouteCallback($path_info)
-    public function defaultToggleRouteCallback($enable)
-    
-    public function addRouteHook($callback, $append=true, $outter=true, $once=true)
-    public function add404Handler($callback)
-    
-    protected function createControllerObject($full_class)
-    protected function getMethodToCall($obj, $method)
-##### 辅助信息方法
-    public function getRouteCallingPath()
-    public function getRouteCallingClass()
-    public function getRouteCallingMethod()
-    public function setRouteCallingMethod($calling_method)
-
-##### 钩挂路由流程指南
-
-    如果你对默认的文件路由不满意，可以安插自己的钩子。
-    $route->addRouteHook($callback, $append=true, $outter=true, $once=true);
-    其中， $callback 为你的钩子函数，符合 callback(string $path_info):bool
-    当你返回 true 的时候，表示成功。 将不再执行后面的函数。
-    一共有4个钩挂点可用。 $append,$outter。
-    defaultRunRouteCallback($path_info);  给做了默认榜样。
-    defaultGetRouteCallback($path_info); 则是获得，但不处理调用。
-    如果你在前面的，想禁止默认路由函数，可以用 defaultToggleRouteCallback(false);
-    
-    add404Handle() 是默认用于后处理的版本。
-##### URL 输出地址重写指南
-
-### Core\RuntimeState
-RuntimeState 类用于保存运行时数据。无配置
-public function ReCreateInstance()
-
-    重新生成实例，保证是新的。
-### Core\SuperGlobal
-
-SuperGlobal 用于替代超全局变量。无配置
-
-### 辅助类的分割线
     ExtendableStaticCallTrait
     ThrowOn  提供了 实用的 ThrowOn
     HookChain  提供 链式钩子。
@@ -1019,275 +911,6 @@ SuperGlobal 用于替代超全局变量。无配置
 
 ### 分割线
     以下介绍的都是 Ext的参考。
-### DBManager
-默认开启。DBManager 类是用来使用数据库的
-M::DB() 用到了这个组件。
-#### 选项
-    'db_create_handler'=>null,  // 默认用 [DB::class,'CreateDBInstance']
-    'db_close_handler'=>null,   // 默认等于 [DB::class,'CloseDBInstance']
-    'before_get_db_handler'=>null, // 在调用 DB 前调用
-    'use_context_db_setting'=>true, //使用 setting 里的。
-    'database_list'=>null,      //DB 列表
-    db_create_handler
-#### 说明
 
 
-#### 使用 think-orm 的 DB
 
-```php
-<?php
-use think\facade\Db;
-use DuckPHP\Ext\DBManager;
-use DuckPHP\App;
-require_once('../vendor/autoload.php');
-
-$options=[];
-$options['override_class']='';      // 示例文件不要被子类干扰。
-$options['skip_setting_file']=true;// 不需要配置文件。
-$options['error_exception']=null; // 使用默认的错误视图
-DuckPHP::RunQuickly($options,function(){
-    Db::setConfig([
-        'default'     => 'mysql',
-        'connections' => [
-            'mysql'     => [
-                'type'     => 'mysql',
-                'hostname' => '127.0.0.1',
-                'username' => 'root',
-                'password' => '123456',
-                'database' => 'DnSample',
-            ]
-        ]
-    ]);
-    //就这句话了
-    DBManager::G()->setDBHandler(function(){return Db::class;});
-    $sql="select * from Users where true limit 1";
-    $data=DuckPHP::DB()::query($sql);
-    var_dump($data);
-});
-
-```
-### DBReusePoolProxy
-连接池，默认没开启
-    'db_reuse_size' => 100,
-    'db_reuse_timeout' => 5,
-    'dbm' => null,
-### FacadesAutoLoader
-
-你们要的 Facades 伪静态方法
-'facades_namespace'=>'Facades', // 前缀
-'facades_map'=>[],
-#### 示例
-```php
-use Facades\MY\Model\TestModel;
-TestModel::foo(); // <=> \MY\Model\TestModel::G()->foo();
-```
-### JsonRpcExt
-一个 JonsRPC 的示例，安全验证功能 需要加上
-#### 默认选项
-'jsonrpc_namespace'=>'JsonRpc',
-'jsonrpc_backend'=>'https://127.0.0.1', 
-//TODO
-后端，允许用数组，后面表示是实际IP，用于方便调试，见例子。实际连的是 127.0.0.1。
-#### 示例
-```php
-// Base\App onInit;
-$this->options['ext']['Ext\JsonRpcExt']=[
-    'jsonrpc_backend'=>['http://test.duckphp.dev/json_rpc','127.0.0.1:80'], 
-];
-```
-
-/////////////
-```php
-<?php
-require_once(__DIR__.'/../vendor/autoload.php');
-
-use DuckPHP\Core\Route;
-use DuckPHP\Core\SingletonEx;
-use DuckPHP\Ext\JsonRpcExt;
-use JsonRpc\CalcService as RemoteCalcService;
-
-class CalcService
-{
-    use SingletonEx;
-    public function add($a,$b)
-    {
-        return $a+$b;
-    }
-}
-
-class Main
-{
-    public function index()
-    {
-        $t=CalcService::G()->add(1,2);
-        var_dump($t);
-        
-        $t=CalcService::G(JsonRpcExt::Wrap(CalcService::class))->add(3,4);
-        var_dump($t);
-    }
-    public function json_rpc()
-    {
-        $ret=JsonRpcExt::G()->onRpcCall($_POST);
-        echo json_encode($ret);
-    }
-}
-$options=[
-    'is_debug'=>true,
-    'namespace_controller'=>'\\',
-];
-JsonRpcExt::G()->init([
-    'jsonrpc_namespace'=>'JsonRpc',
-    'jsonrpc_backend'=>['http://d.DuckPHP.dev/2.php/json_rpc','127.0.0.1:80'], //请自行修改这里。
-    'jsonrpc_is_debug'=>true,
-],null);
-$flag=Route::RunQuickly($options);
-if (!$flag) {
-    header(404);
-    echo "404!";
-}
-```
-这个例子，将会两次远程调用 http://d.DuckPHP.dev/2.php/json_rpc 的 CalcService 。
-
-这里的 json_rpc 是服务端的实现
-
-如果你要 做自己的权限处理，则重写 protected function prepare_token($ch)。
-
-### Pager
-分页。只是解决了有无问题，如果有更好的，你可以换之。
-为什么 DuckPHP 框架要带这么个简单的分页类，因为不想做简单的演示的时候要去找分页处理。
-```php
-[
-    'url'=>null,
-    'key'=>null,
-    'page_size'=>null,
-    'rewrite'=>null,
-    'current'=>null,
-]
-```
-### RouteHookDirectoryMode
-
-多目录模式的 hook
-##### 选项
-    'mode_dir_index_file'=>'',
-    'mode_dir_use_path_info'=>true,
-    'mode_dir_key_for_module'=>true,
-    'mode_dir_key_for_action'=>true,
-### RouteHookOneFileMode
-    单一文件模式的 hook
-### RouteHookRewrite
-默认开启 实现了rewrite 。
-
-rewrite 支持以 ~ 开始表示的正则， 并且转换后自动拼凑 $_GET
-#### 选项
-    'rewrite_map'=>[],
-#### 方法
-assignRewrite()
-getRewrites()
-
-### RouteHookRouteMap
-
-默认开启,实现了路由映射功能
-#### 选项
-```php
-$options=[
-   'route_map'=>[],
-]
-```
-如果是 * 结尾，那么把后续的按 / 切入 parameters
-route_map key 如果是 ~ 开头的，表示正则
-否则是普通的 path_info 匹配。
-
-支持 'Class->Method' 和 'Class@Method'  表示创建对象，执行动态方法。
-你可以 
-parameters 
-
-#### 方法
-assignRoute($route,$callback); 
-    是 C::assignRoute 和 App::assignRoute 的实现。
-getRoutes()
-    dump  route_map 的内容。
-
-### CallableView
-
-CallableView 扩展用于用函数替代文件方式显示视图
-##### 选项
-```php
-$options=[
-    'callable_view_head'=>null,     //  页眉函数
-    'callable_view_foot'=>null,     //  页脚函数
-    'callable_view_class'=>null,    //  限定于某类
-    'callable_view_prefix'=>null,   //  前缀
-    'callable_view_skip_replace'=>false,    // 初始化的时候替换默认的 Core\View
-];
-```
-所有回调都在 都会限定于 callable_view_class 内，callable_view_class 可以为 object;如果 callable_view_class 为 null 则为全局函数
-callable_view_prefix 是方法前缀。 方法名都会把view 的 / 替换成 _
-callable_view_skip_replace 打开的时候会在 初始化的时候替换默认的 Core\View
-### StrictCheck
-
-用于 严格使用 DB 等情况。使得在调试状态下。不能在 Controller 里 使用 M::DB();等
-##### 选项
-```php
-$options=[
-            'namespace'=>'',
-            'namespace_controller'=>'',
-            'namespace_service'=>'',
-            'namespace_model'=>'',
-            'controller_base_class'=>'',
-            'is_debug'=>true,
-            'app_class'=>null,
-        ];
-```
-    public function init($options=[], $context=null)
-    public function checkStrictComponent($component_name, $trace_level, $parent_classes_to_skip=[])
-    public function checkStrictModel($trace_level)
-    public function checkStrictService($service_class, $trace_level)
-    protected function getCallerByLevel($level, $parent_classes_to_skip=[])
-    protected function checkEnv(): bool
-
-### RedisManager
-
-redis 管理器。 redis 入口
-### RedisSimpleCache
-适配 redis 的 psr-16 (注意没实现 psr-16接口)
-
-## 插件系统。
-
-## 第四章 DuckPHP 其他类参考
-
-----
-####
-new , 协程单例 ，单例，static function
-
-效率 static function 最高
-new 多个效率比单例 低
-协程单例，需要的操作要多。效率底点。
-但是协程单例可以防低级错误。
-#### 角色
-DuckPHP 的使用者角色分为 应用程序员，和核心程序员两种
-应用程序员负责日常 Curd 。核心程序员做的是更高级的任务。
-##### 6.兼容 Swoole
-
-    如果想让你们的项目在 swoole 下也能运行，那就要加上这几点
-    用 C::SG() 代替 超全局变量的 $ 前缀 如 $_GET =>  C::SG()->_GET
-    
-    使用以下参数格式都一样的 swoole 兼容静态方法，代替同名全局方法。
-    
-    C::session_start(),
-    C::session_destroy(),
-    C::session_id()，
-    如 session_start() => C::session_start();
-    
-    编写 Swoole 相容的代码，还需要注意到一些写法的改动。
-全局变量
-```php
-global $a='val'; =>  $a=C::GLOBALS('a','val');
-```
-静态变量 
-```php
-static $a='val'; =>  $a=C::STATICS('a','val');
-```
-类内静态变量
-```php
-$x=static::$abc; => $x=C::CLASS_STATICS(static::class,'abc');
-```

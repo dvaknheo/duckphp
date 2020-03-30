@@ -13,7 +13,6 @@ class App extends \DuckPhp\App
 {
     protected function onInit()
     {
-        
         $this->options['error_404'] = '_sys/error_404';
         $this->options['error_500'] = '_sys/error_500';
         $this->options['error_exception'] = '_sys/error_exception';

@@ -9,7 +9,7 @@ return [
     'duckphp_platform' => 'default',
     'database_list' => [
         [
-        'dsn' => 'mysql:host=???;port=???;dbname=???;charset=utf8;',
+        'dsn' => 'mysql:host=???;port=???;dbname=???;charset=utf8mb4;',
         'username' => '???',
         'password' => '???',
         'driver_options' => [],

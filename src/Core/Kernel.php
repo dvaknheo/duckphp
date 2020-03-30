@@ -231,15 +231,15 @@ trait Kernel
         try {
             RuntimeState::ReCreateInstance()->begin();
             View::G()->setViewWrapper(null, null);
+            
             $this->onRun();
-            
-            $route = Route::G();
-            
+
             $serverData = ($this->options['use_super_global'] ?? false) ? SuperGlobal::G()->_SERVER : $_SERVER;
             if (!$this->options['skip_fix_path_info'] && PHP_SAPI != 'cli') {
                 $serverData = $this->fixPathInfo($serverData); // @codeCoverageIgnore
             }
             
+            $route = Route::G();
             $route->bindServerData($serverData);
             $ret = $route->run();
             
@@ -284,7 +284,7 @@ trait Kernel
             $path_info = $request_path;
         } else {
             $path_info = substr($request_path, strlen($request_file));
-            //$path_info = ($path_info !== false) ? $path_info: '';
+            $path_info = (string)$path_info;  //shit phpstan
         }
         
         $serverData['PATH_INFO'] = $path_info;

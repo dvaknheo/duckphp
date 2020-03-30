@@ -35,3 +35,4 @@ protected function checkEnv(): bool
     public function checkStrictComponent($component_name, $trace_level, $parent_classes_to_skip = [])
     public function checkStrictModel($trace_level)
     public function checkStrictService($service_class, $trace_level)
+

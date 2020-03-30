@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 use MY\Base\Helper\ViewHelper as V;
 use MY\Base\Helper\ControllerHelper as C;
+
 ?>
 <!doctype html>
 <html>

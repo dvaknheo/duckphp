@@ -23,7 +23,7 @@ class Main
         }
         C::assignExceptionHandler(SessionServiceException::class, function ($ex) {
             $code = $ex->getCode();
-            if ($code==419) {
+            if ($code == 419) {
                 C::var_dump(419);
                 C::DumpTrace();
                 
@@ -33,10 +33,10 @@ class Main
             C::ExitRouteTo('login');
         });
         if (!empty(App::SG()->_POST)) {
-            $referer=C::SG()->_SERVER['HTTP_REFERER']??'';
-            $domain=App::Domain().'/';
-            if (substr($referer,0,strlen($domain))!==$domain) {
-                SessionServiceException::ThrowOn(true,"CRSF",419);
+            $referer = C::SG()->_SERVER['HTTP_REFERER'] ?? '';
+            $domain = App::Domain().'/';
+            if (substr($referer, 0, strlen($domain)) !== $domain) {
+                SessionServiceException::ThrowOn(true, "CRSF", 419);
                 //防止 csrf 攻击，用于站内无跳板的简单情况
             }
             //$flag=SessionService::G()->checkCsrf(App::SG()->_POST['_token']??null);
@@ -62,7 +62,7 @@ class Main
     }
     public function home()
     {
-        $token=SessionService::G()->csrf_token();
+        $token = SessionService::G()->csrf_token();
         $url_logout = C::URL('logout'.'?_token='.$token);
         C::Show(get_defined_vars(), 'home');
     }
@@ -86,7 +86,7 @@ class Main
     }
     public function logout()
     {
-        $flag=SessionService::G()->checkCsrf(App::SG()->_GET['_token']??null);
+        $flag = SessionService::G()->checkCsrf(App::SG()->_GET['_token'] ?? null);
         SessionService::G()->logout();
         C::ExitRouteTo('index');
     }
@@ -136,18 +136,18 @@ class Main
     {
         $post = C::SG()->_POST;
         
-        $old_pass = $post['oldpassword']??'';
-        $new_pass = $post['newpassword']??'';
-        $confirm_pass = $post['newpassword_confirm']??'';
+        $old_pass = $post['oldpassword'] ?? '';
+        $new_pass = $post['newpassword'] ?? '';
+        $confirm_pass = $post['newpassword_confirm'] ?? '';
         
         $uid = SessionService::G()->getCurrentUid();
         $user = SessionService::G()->getCurrentUser();
         
         try {
             UserServiceException::ThrowOn($new_pass !== $confirm_pass, '重复密码不一致');
-            UserService::G()->changePassword($uid, $old_pass,$new_pass);
+            UserService::G()->changePassword($uid, $old_pass, $new_pass);
             
-            $error="密码修改完毕";
+            $error = "密码修改完毕";
         } catch (UserServiceException $ex) {
             $error = $ex->getMessage();
         }

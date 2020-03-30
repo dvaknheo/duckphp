@@ -21,3 +21,7 @@ Redis 的 SimpleCache  类
     public function getMultiple($keys, $default = null)
     public function setMultiple($values, $ttl = null)
     public function deleteMultiple($keys)
+    
+
+### RedisSimpleCache
+适配 redis 的 psr-16 (注意没实现 psr-16接口)

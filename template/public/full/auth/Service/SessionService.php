@@ -40,8 +40,8 @@ class SessionService extends BaseService
     }
     public function checkCsrf($token)
     {
-        $session_token = App::SG()->_SESSION['_token']??null;
-        SessionServiceException::ThrowOn($token!==$session_token, 'csrf_token 失败',419);
+        $session_token = App::SG()->_SESSION['_token'] ?? null;
+        SessionServiceException::ThrowOn($token !== $session_token, 'csrf_token 失败', 419);
     }
     ////////////////////////////////////////////////////////////////////////
     public function csrf_token()
