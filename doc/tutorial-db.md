@@ -5,10 +5,8 @@
 
 管理数据库
 - [DB/DB](ref/DB-DB.md)
-
     - 使用 [DB/DBAdvance](ref/DB-DBAdvance.md)
-
-- [DB/DBInterface](ref/DB-DBInterface.md)
+    - 实现 [DB/DBInterface](ref/DB-DBInterface.md)
 
 ## 相关配置
 
@@ -125,3 +123,63 @@ DuckPHP::RunQuickly($options,function(){
 });
 
 ```
+### 数据库
+
+DuckPHP 提供了一个默认的数据库类。如果在项目中有不满意，则可以替换之。
+
+建议只在  Model 层用 数据库。
+
+示例如下
+
+```php
+<?php
+// app/Model/MiscModel.php
+namespace MY\Model;
+
+use MY\Base\BaseModel;
+use MY\Base\Helper\ModelHelper as M;
+
+class DBModel extends BaseModel
+{
+    public function first()
+    {
+        $sql="select 1+? as t";
+        $data=M::DB()->fetch($sql,2);
+        var_dump($data);
+    }
+}
+```
+
+要使用数据库,需要在 config/setting.php 里做相关配置添加.
+
+```php
+'database_list' =>
+    [[
+		'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
+		'username'=>'???',
+		'password'=>'???',
+    ]],
+```
+
+注意到配置是  database_list ,是支持多个数据库的。
+
+`M::DB($tag)` 的 $tag 对应 $setting\['database_list'\][$tag]。默认会得到最前面的 tag 的配置。
+
+DB_R() 则的对应第0 号数库 ,DB_W() 对应第一号数据库。
+
+你不必担心每次框架初始化会连接数据库。只有第一次调用 DuckPHP::DB() 的时候，才进行数据库类的创建。
+
+
+#### DB 类的用法
+
+DB
+    close(); //关闭, 你一般不用关闭,系统会自动关闭
+    getPDO(); //获取 PDO 对象
+    quote($string);
+    fetchAll($sql, ...$args);
+    fetch($sql, ...$args);
+    fetchColumn($sql, ...$args);
+    execute($sql, ...$args); //   执行某条sql ，不用 exec , execute 是为了兼容其他类。
+
+
+

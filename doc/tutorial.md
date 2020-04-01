@@ -197,6 +197,10 @@ class dbtest
     }
     public function foo()
     {
+        if (M::DB()===null) {
+            var_dump("No database setting!");
+            return;
+        }
         $sql = "select 1+? as t";
         $ret = M::DB()->fetch($sql,2);
         return $ret;
@@ -204,7 +208,13 @@ class dbtest
 }
 ```
 访问   http://127.0.0.1:8080/dbtest/main 
-会得到， 't' => string '3' (length=1)
+会得到
+
+```
+array('t'=>3);
+```
+
+
 
 ### 开发人员角色
 DuckPHP 的使用者角色分为 应用程序员，和核心程序员两种
@@ -253,48 +263,7 @@ DuckPHP 的使用者角色分为 应用程序员，和核心程序员两种
 * 不能交叉引入其他层级的助手类。如果需要交叉，那么你就是错的。
 * 小工程可以用直接使用入口类 MY\Base\App 类，这包含了上述类的公用方法。
 
-### 助手类的公用静态方法
 
-ThrowOn($flag,$messsage,$code=0,$exception_class=null)
-    
-    抛异常 如果 flag 成立，抛出 $exception_class(默认为 \Exception 类);
-GetExtendStaticStaticMethodList()
-
-    用来查看当前类有什么额外的静态方法。
-IsDebug()
-
-    判断是否在调试状态
-Platform()
-
-    判断所在平台;
-Setting($key);
-
-    获得设置，默认设置文件是在  config/setting.php 。
-    设置是敏感信息,不存在于版本控制里面。而配置是非敏感。
-LoadConfig($key,$basename="config");
-
-    载入配置，Config($key); 获得配置 默认配置文件是在  config/config.php 。
-trace_dump()
-    调试状态下，查看当前堆栈
-var_dump(...$arg)
-    调试状态下 Dump 当前变量，替代 var_dump
-### View 编写视图用到的方法
-
-* V::ShowBlock($view, $data) 显示内嵌视图,如果 $data==null 则带入父视图的数据
-* V::H($str)  Html 编码字符，$str 可以是数组。
-
-### Model 编写模型用到的方法
-Model 类。数据库相关
-
-* M::DB($tag=null) 获得特定数据库类。
-* M::DB_R() 获得读数据库类。
-* M::DB_W() 获得写数据库类。
-
-数据库如何使用？ 参见后面章节。
-
-### Serivce 编写服务用到的方法
-
-ServiceHelper 默认没有额外方法，使用 GetExtendStaticStaticMethodList() 看你的核心开发人员是否有额外方法。
 
 ### Controller 编写控制器用到的方法
 
@@ -360,72 +329,17 @@ C::assignViewData($name,$var);
 assignRewrite($old_url,$new_url=null)
 
     支持单个 assign($key,$value) 和多个 assign($assoc)
-    
     rewrite  重写 path_info
     不区分 request method , 重写后可以用 ? query 参数
     ~ 开始表示是正则 ,为了简单用 / 代替普通正则的 \/
     替换的url ，用 $1 $2 表示参数
+
 assignRoute($route,$callback=null)
 
     给路由加回调。
     单个 assign($key,$value) 和多个 assign($assoc)；
     关于回调模式的路由。详细情况看之前介绍
     和在 options['route'] 添加数据一样
-
-### 数据库
-
-DuckPHP 提供了一个默认的数据库类。如果在项目中有不满意，则可以替换之。
-
-建议只在  Model 层用 数据库。
-
-示例如下
-
-```php
-<?php
-// app/Model/MiscModel.php
-namespace MY\Model;
-
-use MY\Base\BaseModel;
-use MY\Base\Helper\ModelHelper as M;
-
-class DBModel extends BaseModel
-{
-    public function first()
-    {
-        $sql="select 1+? as t";
-        $data=M::DB()->fetch($sql,2);
-        var_dump($data);
-    }
-}
-```
-要使用数据库,需要在 config/setting.php 里做相关配置添加.
-
-```php
-'database_list' =>
-    [[
-		'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
-		'username'=>'???',
-		'password'=>'???',
-    ]],
-```
-注意到配置是  database_list ,是支持多个数据库的。
-
-`M::DB($tag)` 的 $tag 对应 $setting\['database_list'\][$tag]。默认会得到最前面的 tag 的配置。
-
-DB_R() 则的对应第0 号数库 ,DB_W() 对应第一号数据库。
-
-你不必担心每次框架初始化会连接数据库。只有第一次调用 DuckPHP::DB() 的时候，才进行数据库类的创建。
-
-
-#### DB 类的用法
-DB
-    close(); //关闭, 你一般不用关闭,系统会自动关闭
-    getPDO(); //获取 PDO 对象
-    quote($string);
-    fetchAll($sql, ...$args);
-    fetch($sql, ...$args);
-    fetchColumn($sql, ...$args);
-    execute($sql, ...$args); //   执行某条sql ，不用 exec , execute 是为了兼容其他类。
 
 
 
@@ -448,6 +362,7 @@ $options['namespace']='MY';
 // \DuckPHP\App::G()->init($options)->run();
 // var_export(\DuckPHP\App::G()->options);
 ```
+
 入口类前面部分是处理头文件的。
 然后处理直接 copy 代码提示，不要直接运行。
 起作用的主要就这句话
