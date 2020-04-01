@@ -246,6 +246,16 @@ DuckPHP 的使用者角色分为 应用程序员，和核心程序员两种
 ### 应用工程完整架构图
 你的工程应该是这么架构
 ![arch_full](arch_full.gv.svg)
+文字版
+```text
+           /-> View-->ViewHelper
+Controller --> Service ------------------------------ ---> Model
+         \         \   \               \  /                  \
+          \         \   \-> LibService ----> ExModel----------->ModelHelper
+           \         \             \                
+            \         ---------------->ServiceHelper
+             \-->ControllerHelper
+```
 同级之间的东西不能相互调用
 
 ### 开始编码之前
@@ -265,62 +275,8 @@ DuckPHP 的使用者角色分为 应用程序员，和核心程序员两种
 
 
 
-### Controller 编写控制器用到的方法
-
-ControllerHelper 类的方法比较多，大致学完就全部会用了。
-
-##### 1. 显示相关的
-
-C::Show($data,$view=null);
-
-    显示视图用  如果view 是空等价于 控制器名/方法名 的视图。
-    最偷懒的是调用 C::Show(get_defined_vars());
-
-C::ShowBlock($view,$data=null);
-    
-    同 V::ShowBlock()    
-C::H($str); 
-
-    同 V::H($str). 
-C::setViewWrapper($view_header,$view_footer)
-
-    用来设置页眉页脚。
-    页眉页脚的变量和 view 页面是同域的。 用 C::setViewWrapper(null,null) 清理页眉页脚。
-    另 C::ShowBlock 没用到页眉页脚。而且 C::ShwoBlock 只单纯输出，不做多余动作。
-    一般用于在控制器的构造函数中。
-C::assignViewData($name,$var);
-
-    设置视图的输出。
-
-##### 2. 跳转退出方面
-
-    404 跳转退出 C::Exit404($exit);
-    302 跳转退出 C::ExitRedirect($url,$exit);
-    302 跳转到站外退出 C::ExitRedirectOutSide($url,$exit);
-    302 跳转退出内部地址 C::ExitRouteTo($url,$exit);
-    输出 Json 退出  C::ExitJson($data,$exit);
-    其中， $exit 默认为 true  ，跳转后接 exit();
-##### 3. 路由相关
-
-    C::URL($url) 获取相对 url;
-    C::getRouteCallingMethod() 获取当前调用方法。常用于构造函数里做权限判断。
-    C::setRouteCallingMethod($method) 设置当前调用方法，不常用，用于跨方法调用场合。
-
-##### 4. 异常相关
-
-    如果想接管默认异常，用 C::setDefaultExceptionHandler($handler);
-    如果对接管特定异常，用 C::assignExceptionHandler($exception_name,$handler);
-    设置多个异常到回调则用，C::setMultiExceptionHandler($exception_name=[],$handler);
-##### 5. 系统替代函数 
-
-    用 C::header() 代替系统 header 兼容命令行等。
-    用 C::setcookie() 代替系统 setcookie 兼容命令行等。
-    用 C::exit_system() 代替系统 exit; 便于接管处理。 
-    用 C::set_exception_handler() 代替系统 set_exception_handler 便于接管处理。
-    用 C::register_shutdown_function() 代替系统 set_exception_handler 便于接管处理。
-
-
 ##### 7.高级路由
+
 用 C::getParameters() 获取切片，对地址重写有效。
 如果要做权限判断 构造函数里 C::getRouteCallingMethod() 获取当前调用方法。
 

@@ -14,8 +14,19 @@
 我们搬出架构图。
 
 ![arch_full.gv.svg](arch_full.gv.svg)
-
+文字版
+```text
+           /-> View-->ViewHelper
+Controller --> Service ------------------------------ ---> Model
+         \         \   \               \  /                  \
+          \         \   \-> LibService ----> ExModel----------->ModelHelper
+           \         \             \                
+            \         ---------------->ServiceHelper
+             \-->ControllerHelper
+```
 上述构架图省略了命名空间。
+
+
 
 作为应用程序员， 你不能引入 DuckPHP 的任何东西，就当 DuckPHP 命名空间不存在。
 核心程序员才去研究 DuckPHP 类的东西。
@@ -138,6 +149,9 @@ DB_R()
 ## ControllerHelper 控制器的助手类
 
 本页面展示 ContrlloerHelper 方法。 ContrlloerHelper 的方法很多很杂，但掌握了 ContrlloerHelper 方法，基本就掌握了用法 大致分为 【通用杂项】【路由处理】【异常管理】【跳转】【swoole 兼容】 【内容处理】 几块 内容处理和 ViewHelper 基本通用。 ControllerHelper 方法
+
+### 显示相关
+
 H
     【显示相关】见 ViewHelper 的 H 介绍
 L
@@ -152,6 +166,7 @@ URL
 ShowBlock
 
     【显示相关】见 ViewHelper 的 ShowBlock 介绍
+### 配置相关
 Setting
 
     【配置相关】见 ServiceHelper 的 Setting 介绍
@@ -161,6 +176,7 @@ Config
 LoadConfig
 
     【配置相关】见 ServiceHelper 的 LoadConfig 介绍
+### 跳转相关
 ExitRedirect($url, $exit = true)
 
     【跳转】跳转到站内URL ，$exit 为 true 则附加 exit()
@@ -177,7 +193,7 @@ ExitJson($ret, $exit = true)
 
     【跳转】输出 json 结果，$exit 为 true 则附加 exit()
 getRouteCallingMethod()
-
+### 路由相关
     【路由相关】获得当前的路由调用方法，用于权限判断等
 setRouteCallingMethod
 
@@ -188,6 +204,7 @@ getPathInfo()
 getParameters()
 
     【路由相关】获得路由重写相关的数据
+### 内容处理
 Show($data = [], $view = null)
 
     【内容处理】显示视图， 默认为 view/$view.php 的文件， 并会带上页眉页脚
@@ -199,7 +216,7 @@ assignViewData($key, $value = null)
     【内容处理】分配视图变量，另一版本为 assignViewData($assoc);
 Pager()
     【内容处理】获得分页器对象, 分页器参考 DuckPhp\Ext\Pager。 DuckPHP 只是做了最小的分页器
-
+### 异常处理
 assignExceptionHandler
 
     【异常处理】分配异常句柄
@@ -207,6 +224,7 @@ setMultiExceptionHandler
     【异常处理】设置多个异常处理
 setDefaultExceptionHandler
     【异常处理】设置异常的默认处理
+系统替代
 header
 
     【系统替代】 header 函数以兼容命令行模式
@@ -225,6 +243,46 @@ SG
 
 应用 助手的方法
 ```
+
+
+    public static function SG()
+    {
+        return App::SG();
+    }
+    public static function GET($key, $default = null)
+    {
+        return static::SG()->_GET[$key] ?? $default;
+    }
+    public static function POST($key, $default = null)
+    {
+        return static::SG()->_POST[$key] ?? $default;
+    }
+    public static function REQUEST($key, $default = null)
+    {
+        return static::SG()->_REQUEST[$key] ?? $default;
+    }
+    public static function COOKIE($key, $default = null)
+    {
+        return static::SG()->_COOKIE[$key] ?? $default;
+    }
+    ////
+    public static function Pager($object = null)
+    {
+        return App::Pager($object);
+    }
+    public static function PageNo()
+    {
+        return App::PageNo();
+    }
+    public static function PageSize($new_value = null)
+    {
+        return App::PageSize($new_value);
+    }
+    public static function PageHtml($total)
+    {
+        return  App::PageHtml($total);
+    }
+    
 public static function OnException($ex)
 {
     return App::OnException($ex);
@@ -290,9 +348,9 @@ public static function &CLASS_STATICS($class_name, $var_name)
 ```
 
 ## 高级
+
 扩展 助手类。 最直接的方式就是  添加静态方法。
 
-在 AppPluginTrait 里扩展的助手类。
 
 
 一般工程，都会重写自己的助手类，而不是直接使用 DuckPhp 的助手类。
