@@ -7,6 +7,15 @@
 [DuckPhp\Core\App](Core-Kernel.md)
 ## 选项
 
+'path' => '',
+    
+    基础路径
+'log_file' => '',
+
+    日志文件名称
+'log_prefix' => 'DuckPhpLog',
+
+    日志的前缀
 ## 方法
 
 
@@ -16,6 +25,9 @@
 
 App::Logger() 函数得到的就是这个类
 
+和 SuperGlobal 类意义这个租金类是初始化的时候就直接调用 init() ，调用 reset() 重置
+
+其他方法都遵循 PSR 标准 *但是这个类没实现 PSR 接口*。
 
 
     public function __construct()

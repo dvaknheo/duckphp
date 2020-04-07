@@ -1,9 +1,10 @@
 # Ext\RouteHookRewrite
 
 ## 简介
+用于重写URL.
 
 ## 选项
-
+rewrite_map=>[]
 ## 公开方法
 
 

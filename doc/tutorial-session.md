@@ -31,7 +31,7 @@ class SessionService extends BaseService
         
         return $ret;
     }
-        public function setCurrentUser($user)
+    public function setCurrentUser($user)
     {
         App::SG()->_SESSION['user'] = $user;
     }
@@ -43,8 +43,16 @@ namespace UserSystemDemo\Service;
 
 use UserSystemDemo\Base\BaseException;
 
-class UserServiceException extends BaseException
+class SessionServiceException extends BaseException
 {
     //
 }
 ```
+
+这个例子，在 controller 里调用 SessionService::G()->getCurrentUser() 得到当前用户数据。
+
+如果得不到，就抛出 SessionServiceException 。
+
+如果还有什么需要 Session 数据的地方，继续填充这个 Session 类，而不是到处直接使用 session 。
+
+免得发生不知道这个 session 数据在哪里用的？ 这样的疑问。

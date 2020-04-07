@@ -1,9 +1,7 @@
 # 数据库教程
 ## 相关类和配置。
 
-- [Ext/DBManager](ref/Ext-DBManager.md)
-
-管理数据库
+- [Ext/DBManager](ref/Ext-DBManager.md) 管理数据库
 - [DB/DB](ref/DB-DB.md)
     - 使用 [DB/DBAdvance](ref/DB-DBAdvance.md)
     - 实现 [DB/DBInterface](ref/DB-DBInterface.md)

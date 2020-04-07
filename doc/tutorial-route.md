@@ -13,6 +13,10 @@
 
 ## 开始
 
+路由的流程在 DuckPhp\Core\Route 类里
+run() 方法。
+
+
 duckphp 默认加载了 routemap 和 routerewrite 插件。
 
 路由钩子

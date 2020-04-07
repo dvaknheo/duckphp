@@ -83,26 +83,26 @@
    2. **[ThrowOn.php](Core-ThrowOn.md)** 注意这个 trait 也被 Helper使用
    3. **[App.php](Core-App.md)** 是核心,引用
         1. [Kernel.php](Core-Kernel.md) 核心Trait 组件
-           1. [AutoLoader.php](Core-AutoLoader.md)
-           2. [Configer.php](Core-Configer.md)
-           3. [View.php](Core-View.md)
-           4. [Route.php](Core-Route.md)
+           1. [AutoLoader.php](Core-AutoLoader.md) 自动加载类
+           2. [Configer.php](Core-Configer.md) 配置类
+           3. [View.php](Core-View.md) 视图类
+           4. [Route.php](Core-Route.md) 路由类
            5. 以上是核心必备组件
-           6. [SuperGlobal.php](SuperGlobal.md)
-           7. [Logger.php](Core-Logger.md)
-           8. [ExceptionManager.php](Core-ExceptionManager.md)  
-           9. [RuntimeState.php](Core-RuntimeState.md)
-        2. [ExtendableStaticCallTrait.php](Core-ExtendableStaticCallTrait.md) 注意这个 trait 也被 Helper使用
-        3. [SystemWrapper.php](Core-SystemWrapper.md)
+           6. [SuperGlobal.php](SuperGlobal.md) 超全局变量替换
+           7. [Logger.php](Core-Logger.md) 日志类
+           8. [ExceptionManager.php](Core-ExceptionManager.md)   异常管理类
+           9. [RuntimeState.php](Core-RuntimeState.md) 运行期数据保存类
+        2. [ExtendableStaticCallTrait.php](Core-ExtendableStaticCallTrait.md) 扩展静态调用的 trait 注意这个 trait 也被 Helper使用
+        3. [SystemWrapper.php](Core-SystemWrapper.md) 替换系统同名函数的 trait
    3. **[AppPluginTrait.php](Core-AppPluginTrait.md) **  这个Trait用于把独立工程 App 转成插件 
    4. **[HttpServer.php](Core-HttpServer.md)** 单独的 Http 服务器
   
-6. DB/ 是数据库
+6. DB/ 目录是数据库
    1. [DBAdvance.php](DB-DBAdvance.md)
    2. [DBInterface.php](DB-DBInterface.md)
    3. [DB.php](DB-DB.md)
 
-7. Ext/ 目录是各种扩展，粗体为默认
+7. Ext/ 目录是各种扩展，粗体为默认加载
    1. **[DBManager.php](Ext-DBManager.md)**
    2. **[Misc.php](Ext-Misc.md)**
    3. **[Pager.php](Ext-Pager.md)**
