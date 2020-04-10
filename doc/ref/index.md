@@ -186,77 +186,83 @@
 * [ThrowOn](ThrowOn.md) 
 
 ## 选项列表
+- 'all_config' => array (), // 参见 [Core\Configer](Core-Configer.md)
 
-- 'all_config' => array (), //参见 [Core\Configer](Core-Configer.md)
-    所有配置
-    
-- 'before_get_db_handler' => NULL,
+    所有配置    
+- 'before\_get\_db\_handler' => NULL, // 参见 [Ext\DBManager](Ext-DBManager.md)
+
     获取DB前调用的handler
-    
-- 'callable_view_head' => null,
-    页眉
-    
-- 'callable_view_foot' => null,
-    页脚
-    
-- 'callable_view_class' => null,
+- 'callable_view_head' => null, // 参见 [Ext\CallableView](Ext-CallableView.md)
 
-   视图类
+    callableview 页眉
+- 'callable_view_foot' => null, // 参见 [Ext\CallableView](Ext-CallableView.md)
 
-- 'callable_view_prefix' => null,
+    callableview 页脚    
+- 'callable_view_class' => null, // 参见 [Ext\CallableView](Ext-CallableView.md)
 
-   视图函数模板
+   callableview 视图类
+- 'callable_view_prefix' => null, // 参见 [Ext\CallableView](Ext-CallableView.md)
 
-- 'callable_view_skip_replace' => false,
+   callableview 视图函数模板
+- 'callable_view_skip_replace' => false, // 参见 [Ext\CallableView](Ext-CallableView.md)
 
-    可调用视图跳过默认视图替换
-
-- 'controller_base_class' => NULL,
+    callableview 可调用视图跳过默认视图替换
+- 'controller_base_class' => NULL, // 参见 [Core\Route](Core-Route.md)
 
     控制器基类
+- 'controller_hide_boot_class' => false, // 参见 [Core\Route](Core-Route.md)
 
-- 'controller_hide_boot_class' => false,
+    控制器标记，隐藏特别的入口
+- 'controller_methtod_for_miss' => '_missing', // 参见 [Core\Route](Core-Route.md)
 
-    控制器隐藏 特别的入口
-
-- 'controller_methtod_for_miss' => '_missing',
-
-    控制器，缺失方法
-- 'controller_postfix' => '',
+    控制器，缺失方法的调用方法
+- 'controller_postfix' => '', // 参见 [Core\Route](Core-Route.md)
 
     控制器方法后缀
-- 'controller_prefix_post' => 'do_',
+- 'controller_prefix_post' => 'do_', // 参见 [Core\Route](Core-Route.md)
+
     控制器，POST 方法前缀
-- 'controller_welcome_class' => 'Main',
+- 'controller_welcome_class' => 'Main', // 参见 [Core\Route](Core-Route.md)
+
     控制器默认欢迎方法
-- 'database_list' => NULL,
+- 'database_list' => NULL, // 参见 [Ext\DBManager](Ext-DBManager.md)
+
     数据库列表
-- 'db_before_query_handler' => ['MY\\Base\\App','OnQuery']
+- 'db_before_query_handler' => ['MY\\Base\\App','OnQuery'] // 参见 [Ext\XX](Ext-XX.md)
+
     数据库，查询前执行
-- 'db_close_at_output' => true,
+- 'db_close_at_output' => true, // 参见 [Ext\DBManager](Ext-DBManager.md)
+
     数据库，输出前关闭
-- 'db_close_handler' => NULL,
+- 'db_close_handler' => NULL, // 参见 [Ext\DBManager](Ext-DBManager.md)
+
     数据库，关闭句柄
-- 'db_create_handler' => NULL,
+- 'db_create_handler' => NULL, // 参见 [Ext\DBManager](Ext-DBManager.md)
+
     数据库，创建句柄
-- 'db_exception_handler' => NULL,
+- 'db_exception_handler' => NULL, // 参见 [Ext\DBManager](Ext-DBManager.md)
+
     数据库，异常句柄
-- 'default_exception_handler' => ['DuckPhp\\App',OnDefaultException']
+- 'default_exception_handler' => ['DuckPhp\\App',OnDefaultException'] // 参见 [Ext\DBManager](Ext-DBManager.md)
     默认异常句柄
 
-- 'dev_error_handler' => 'DuckPhp\\App','OnDevErrorHandler']
+- 'dev_error_handler' => 'DuckPhp\\App','OnDevErrorHandler'] // 参见 [Core\Kernel](Core-Kernel.md)
+
     默认开发错误句柄
+- 'enable_cache_classes_in_cli' => false, // 参见 [Core\AutoLoader](Core\AutoLoader.md)
 
-- 'enable_cache_classes_in_cli' => false,
-在 cli 下开启缓存模式
-- 'error_404' => '_sys/error_404',
-404 页面
-- 'error_500' => '_sys/error_500',
-500 页面
-- 'error_debug' => '_sys/error_debug',
-错误调试页面
+    在 cli 下开启缓存模式
+- 'error_404' => '\_sys/error_404',  // 参见 [Core\Kernel](Core-Kernel.md)
 
-- 'ext' => 
+    404 页面
+- 'error_500' => '\_sys/error_500',   // 参见 [Core\Kernel](Core-Kernel.md)
+
+    500 页面
+- 'error_debug' => '\_sys/error_debug',  // 参见 [Core\Kernel](Core-Kernel.md)
+
+    错误调试页面
+- 'ext' =>  // 参见 [Core\Kernel](Core-Kernel.md)
+
    array (
     'DuckPhp\\Ext\\Misc' => true,
     'DuckPhp\\Ext\\SimpleLogger' => true,
@@ -274,84 +280,109 @@
     'DuckPhp\\Ext\\Pager' => false,
    ),
 
-    默认开启扩展
-- 'handle_all_dev_error' => true,
+    默认开启的扩展
+
+- 'handle_all_dev_error' => true, // 参见 [Core\Kernel](Core-Kernel.md)
+
     接管一切开发错误
-- 'handle_all_exception' => true,
+- 'handle_all_exception' => true, // 参见 [Core\Kernel](Core-Kernel.md)
+
     接管一切异常
-- 'is_debug' => true,
+- 'is_debug' => true, // 参见 [Core\Kernel](Core-Kernel.md)
+
     是否调试状态
-- 'log_file' => '',
+- 'log_file' => '', // 参见 [Core\Logger](Core-Logger.md)
+
     日志文件
-- 'log_prefix' => 'DuckPhpLog',
+- 'log_prefix' => 'DuckPhpLog', // 参见 [Core\Logger](Core-Logger.md)
+
     日志前缀
-- 'log_sql' => false,
+- 'log_sql' => false,  // 参见 [App](App.md)
+
     记录sql
-- 'namespace' => 'MY',
+- 'namespace' => 'MY', // 参见 [Core\Kernel](Core-Kernel.md)
+
     命名空间
-- 'namespace_controller' => 'Controller',
+- 'namespace_controller' => 'Controller', // 参见 [Core\Route](Core-Route.md)
 
     控制器的命名空间
-- 'override_class' => 'Base\\App',
+- 'override_class' => 'Base\\App', // 参见 [Core\Kernel](Core-Kernel.md)
+
     重写类名
-- 'path' => '/mnt/d/MyWork/sites/DNMVCS/template/',
+- 'path' => '@ProjectPath', // 参见 [Core\Kernel](Core-Kernel.md)
+
     路径
-- 'path_config' => 'config',
+- 'path_config' => 'config', // 参见 [Core\Configer](Core-Configer.md)
+
     配置路径
-- 'path_lib' => 'lib',
+- 'path_lib' => 'lib',  // 参见 [Ext\Misc](Ext-Misc.md)
+
     库路径
-- 'path_namespace' => 'app',
+- 'path_namespace' => 'app', // 参见 [Core\Autoloader](Core\AutoLoader.md)
+
     命名空间路径
-- 'path_view' => 'view',
+- 'path_view' => 'view', // 参见 [Core\View](Core-View.md)
+
     视图路径
-- 'path_view_override' => '',
+- 'path_view_override' => '', // 参见 [Core\View](Core-View.md)
+
     覆盖视图路径
-- 'platform' => '',
+- 'platform' => '', // 参见 [Core\Kernel](Core-Kernel.md)
+
     平台
-- 'rewrite_map' => array ( ),
+- 'rewrite_map' => array ( ), // 参见 [Ext\RouteHookRewrite](Ext-RouteHookRewrite.md)
+
     路径重写映射
+- 'route_map' => array ( ), // 参见 [Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
 
-- 'route_map' => array ( ),
     路由映射
+- 'route_map_important' => array ( ), // 参见 [Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
 
-- 'route_map_important' => array ( ),
     重要路由映射
+- 'setting' => array ( ), // 参见 [Core\Configer](Core-Configer.md)
 
-- 'setting' => array ( ),
     设置，预先载入的设置
-
-- 'setting_file' => 'setting',
+- 'setting_file' => 'setting', // 参见 [Core\Configer](Core-Configer.md)
 
     设置文件
-
-- 'skip_404_handler' => false,
+- 'skip_404_handler' => false, // 参见 [Core\Kernel](Core-Kernel.md)
 
     跳过404处理
-- 'skip_app_autoload' => false,
+- 'skip_app_autoload' => false, // 参见 [Core\Autoloader](Core\AutoLoader.md)
+
     跳过 自动加载
-- 'skip_env_file' => true,
+- 'skip_env_file' => true, // 参见 [Core\Configer](Core-Configer.md)
+
     跳过 .env 文件
-- 'skip_exception_check' => false,
+- 'skip_exception_check' => false, // 参见 [Core\Kernel](Core-Kernel.md)
+
     跳过异常检查
-- 'skip_fix_path_info' => false,
+- 'skip_fix_path_info' => false, // 参见 [Core\Kernel](Core-Kernel.md)
+
     跳过 PATH_INFO 修复
-- 'skip_plugin_mode_check' => false,
+- 'skip_plugin_mode_check' => false, // 参见 [Core\Kernel](Core-Kernel.md)
+
     跳过插件模式检查
-- 'skip_setting_file' => true,
+- 'skip_setting_file' => true, // 参见 [Core\Configer](Core-Configer.md)
+
     跳过设置文件
-- 'skip_system_autoload' => true,
+- 'skip_system_autoload' => true, // 参见 [Core\AutoLoader](Core-AutoLoader.md)
+
     跳过 系统自动加载
-- 'skip_view_notice_error' => true,
+- 'skip_view_notice_error' => true, // 参见 [Core\Kernel](Core-Kernel.md)
+
     跳过 View 视图的 notice
-- 'system_exception_handler' =>  Duckphp->  set_exception_handler
+- 'system_exception_handler' =>  Duckphp\App->set_exception_handler // 参见 [Core\Kernel](Core-Kernel.md)
+
     接管系统的异常管理
-- 'use_context_db_setting' => true,
+- 'use_context_db_setting' => true, // 参见 [Ext\DBManager](Ext-DBManager.md)
+
     使用父类的数据库配置
-- 'use_flag_by_setting' => true,
+- 'use_flag_by_setting' => true, // 参见 [Core\Kernel](Core-Kernel.md)
 
     从设置文件里再入
-- 'use_short_functions' => true,
-使用短函数,使用
+- 'use_short_functions' => true, // 参见 [App](App.md)
 
-- 'use_super_global' => false,
-    使用super_global 类。
+    使用短函数
+- 'use_super_global' => false, // 参见 [Core\Kernel](Core-Kernel.md)
+    使用super_global 类。 

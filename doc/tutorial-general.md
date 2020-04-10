@@ -1,14 +1,99 @@
 # 一般流程
 ## 相关类
 
+
+## 请求流程和生命周期
+
+我们看入口类文件 public/index.php
+
+```php
+<?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
+require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
+$path = realpath(__DIR__.'/..');
+$namespace = rtrim('MY\\', '\\');                    // @DUCKPHP_NAMESPACE
+////[[[[
+$options =
+array(
+    //省略一堆注释性配置
+);
+////]]]]
+$options['path'] = $path;
+$options['namespace'] = $namespace;
+$options['error_404'] = '_sys/error_404';
+$options['error_500'] = '_sys/error_500';
+$options['error_debug'] = '_sys/error_debug';
+
+$options['is_debug'] = true;                  // @DUCKPHP_DELETE
+$options['skip_setting_file'] = true;                 // @DUCKPHP_DELETE
+echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKPHP_DELETE
+
+
+\DuckPhp\App::RunQuickly($options, function () {
+});
+```
+
+入口类前面部分是处理头文件的。
+然后处理直接 copy 代码提示，不要直接运行。
+起作用的主要就这句话
+```php
+\DuckPHP\App::RunQuickly($options, function () {
+});
+```
+相当于 \DuckPHP\App::G()->init($options)->run(); 第二个参数的回调用于 init 之后执行。
+
+init, run 分两步走的模式。
+
+最后留了 dump 选项的语句。
+
+接下来我们看 $options 里可以选什么
+
+
 ## 高级说明
 
-## 默认的全部选项
 
-这个是全部的默认配置
+### 请求流程和生命周期
+DuckPHP\App::RunQuickly($options) 发生了什么
 
-```
-```
+等价于 DuckPHP\App::G()->init($options,$callback)->run();
+
+init 为初始化阶段 ，run 为运行阶段。$callback 在init() 之后执行（也是为了偷懒
+
+init 初始化阶段
+    处理是否是插件模式
+    处理自动加载  AutoLoader::G()->init($options, $this)->run();
+    处理异常管理 ExceptionManager::G()->init($exception_options, $this)->run();
+    如果有子类，切入子类继续 checkOverride() 
+    调整补齐选项 initOptions()
+    
+
+    【重要】 onInit()，可 override 处理这里了。
+    默认的 onInit
+        初始化 Configer
+        从 Configer 再设置 是否调试状态和平台 reloadFlags();
+        初始化 View
+        设置为已载入 View ，用于发生异常时候的显示。
+        初始化 Route
+        初始化扩展 initExtentions()
+    初始化阶段就结束了。
+
+run() 运行阶段
+
+    处理 addBeforeRunHandler() 引入的 beforeRunHandlers
+    * onRun ，可 override 处理这里了。
+    重制 RuntimeState 并设置为开始
+    绑定路由
+    ** 开始路由处理 Route::G()->run();
+    如果返回 404 则 On404() 处理 404
+    clear 清理
+        如果没显示，而且还有 beforeShowHandlers() 处理（用于处理 DB 关闭等
+        设置 RuntimeState 为结束
+
+   路由流程
+
 
 ## 全部默认选项
 ```
@@ -61,10 +146,7 @@ array (
     'DuckPhp\\Ext\\StrictCheck' => false,
     'DuckPhp\\Ext\\RouteHookOneFileMode' => false,
     'DuckPhp\\Ext\\RouteHookDirectoryMode' => false,
-    'DuckPhp\\Ext\\RedisManager' => false,
-    'DuckPhp\\Ext\\RedisSimpleCache' => false,
-    'DuckPhp\\Ext\\DBReusePoolProxy' => false,
-    'DuckPhp\\Ext\\FacadesAutoLoader' => false,
+
     'DuckPhp\\Ext\\Lazybones' => false,
     'DuckPhp\\Ext\\Pager' => false,
   ),
@@ -118,3 +200,4 @@ array (
   'use_super_global' => false,
 )
 ```
+
