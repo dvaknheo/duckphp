@@ -55,7 +55,7 @@ class Installer
             echo "Start Inner PHP Server\n";
             echo "----------------------\n";
             $dest = realpath($this->options['dest']);
-            $file = $dest.'/bin/start_server.php';
+            $file = $dest.'/start_server.php';
             $PHP = '/usr/bin/env php ';
             $file = escapeshellcmd($file);
             $cmd = $PHP.$file;
