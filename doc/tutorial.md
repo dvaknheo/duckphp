@@ -213,39 +213,23 @@ class dbtest
 ```
 array('t'=>3);
 ```
+### Tip 开发人员角色
 
+DuckPHP 的使用者角色分为 应用程序员，和核心程序员两种。
 
-
-### 开发人员角色
-DuckPHP 的使用者角色分为 应用程序员，和核心程序员两种
 应用程序员负责日常 Curd 。核心程序员做的是更高级的任务。
 
-## 第二章 DuckPHP 应用普通开发人员参考
+作为应用程序员， 你不能引入 DuckPHP 的任何东西，就当 DuckPHP 命名空间不存在。
 
-### 基本的 DMMVCS 目录结构
+核心程序员才去研究 DuckPHP 类里的东西。
 
-简化版本的新建工程的桩代码和描述。
-```text
-+---app                     // psr-4 标准的自动加载目录
-|   +---Controller          // 控制器目录
-|   |       Main.php        // 默认控制器
-|   +---Model               // 模型目录
-|   |       TestModel.php   // 测试模型
-|   \---Service             // 服务目录
-|           TestService.php // 测试 Service
-+---config                  // 配置文件放这里
-|       config.php          // 配置，目前是空数组
-+---view                    // 视图目录
-|       main.php            // 视图文件
-\---public                  // 网站目录
-        index.php           // 主页，入口页
-```
-这是简化版本的工程文件架构图，为了对应用普通开发人员。省掉了一些文件。
-完整的工程文件架构图在后面章节。
+### 工程完整架构图
 
-### 应用工程完整架构图
-你的工程应该是这么架构
+
+你的工程应该是这么架构。
+
 ![arch_full](arch_full.gv.svg)
+
 文字版
 ```text
            /-> View-->ViewHelper
@@ -256,15 +240,8 @@ Controller --> Service ------------------------------ ---> Model
             \         ---------------->ServiceHelper
              \-->ControllerHelper
 ```
+
 同级之间的东西不能相互调用
-
-### 开始编码之前
-
-命名空间 MY 是 可调的。比如调整成 MyProject ,TheBigOneProject  等。
-参见 $options['namespace']
-
-作为应用程序员， 你不能引入 DuckPHP 的任何东西，就当 DuckPHP 命名空间不存在。
-核心程序员才去研究 DuckPHP 类的东西。
 
 * 写 Model 你可能要引入 MY\Base\Helper\ModelHelper 助手类别名为 M 。
 * 写 Serivce 你可能要引入 MY\Base\Helper\SerivceHelper 助手类别名为 S 。
@@ -273,30 +250,75 @@ Controller --> Service ------------------------------ ---> Model
 * 不能交叉引入其他层级的助手类。如果需要交叉，那么你就是错的。
 * 小工程可以用直接使用入口类 MY\Base\App 类，这包含了上述类的公用方法。
 
+ContrllorHelper,ModelHelper,ServiceHelper 如果你一个人偷懒，直接用 APP 类也行  
+
+助手类教程在这里 [助手类教程](tutorial-helper.md)
 
 
-##### 7.高级路由
+接下来我们就可以看工程目录结构了。
 
-用 C::getParameters() 获取切片，对地址重写有效。
-如果要做权限判断 构造函数里 C::getRouteCallingMethod() 获取当前调用方法。
+### DuckPHP 工程目录结构
 
-用 C::getRewrites() 和 C::getRoutes(); 查看 rewrite 表，和 路由表。
+template 目录就是我们的工程目录示例。也是工程桩代码。
 
-assignRewrite($old_url,$new_url=null)
 
-    支持单个 assign($key,$value) 和多个 assign($assoc)
-    rewrite  重写 path_info
-    不区分 request method , 重写后可以用 ? query 参数
-    ~ 开始表示是正则 ,为了简单用 / 代替普通正则的 \/
-    替换的url ，用 $1 $2 表示参数
+```text
++---app                     // psr-4 标准的自动加载目录
+|   +---Base                // 基类放在这里
+|   |   |   App.php         // 默认框架入口文件
+|   |   |   BaseController.php  // 控制器基类
+|   |   |   BaseModel.php   // 模型基类
+|   |   |   BaseService.php // 服务基类
+|   |   \---Helper
+|   |           ControllerHelper.php    // 控制器助手类
+|   |           ModelHelper.php     // 模型助手类
+|   |           ServiceHelper.php   // 服务助手类
+|   |           ViewHelper.php      // 视图助手类
+|   +---Controller          // 控制器目录
+|   |       Main.php        // 默认控制器
+|   +---Model               // 模型放在里
+|   |       TestModel.php   // 测试模型
+|   \---Service             // 服务目录
+|           TestService.php // 测试 Service
++---bin
+|       start_server.php    // 启动 Htttp 服务
++---config                  // 配置文件放这里
+|       config.php          // 配置，目前是空数组
+|       setting.sample.php  // 设置，去除敏感信息的模板
++---view                    // 视图文件放这里，可调
+|   |   main.php            // 视图文件
+|   \---_sys                // 系统错误视图文件放这里
+|           error-404.php   // 404 页面
+|           error-500.php   // 500 页面
+|           error-debug.php // 调试的时候显示的视图
+\---public                  // 网站目录
+        index.php           // 主页，入口页
+```
 
-assignRoute($route,$callback=null)
+app 目录，就是放 MY 开始命名空间的东西了。
+命名空间 MY 是 可调的。比如调整成 MyProject ,TheBigOneProject  等。
 
-    给路由加回调。
-    单个 assign($key,$value) 和多个 assign($assoc)；
-    关于回调模式的路由。详细情况看之前介绍
-    和在 options['route'] 添加数据一样
 
+文件都不复杂。基本都是空类或空继承类，便于不同处理。
+这些结构能精简么？
+可以，你可以一个目录都不要。
+
+BaseController, BaseModel, BaseService 是你自己要改的基类，基本只实现了单例模式。
+ContrllorHelper,ModelHelper,ServiceHelper 如果你一个人偷懒，直接用 APP 类也行  
+#### 如何精简目录
+* 移除 app/Base/Helper/ 如果你直接用 App::* 替代 M,V,C,S 助手类。
+* 移除 app/Base/BaseController.php 如果你的 Controller 和默认的一样不需要基本类。
+* 移除 app/Base/BaseModel.php 如果你的 Model 用的全静态方法。
+* 移除 app/Base/BaseService.php 如果你的 Service 不需要 G 方法。
+* 移除 bin/start_server.php 如果你使用外部 http 服务器
+* 移除 config/ 在启动选项里加 'skip_setting_file'=>true ，如果你不需要 config/setting.php，
+    并有自己的配置方案
+* 移除 view/\_sys  你需要设置启动选项里 'error\_404','error\_500'。
+* 移除 view 如果你不需要 view ，如 API 项目。
+* 移除 TestService.php ， TestModel.php  测试用的东西
+
+
+----
 
 
 ## 第三章 DuckPHP 应用核心开发人员参考
@@ -349,7 +371,7 @@ const DEFAULT_OPTIONS=[
                                 // 基类，后面详细说明
     'is_debug'=>false,          // 是否是在开发状态
     'platform'=>'',             //  配置平台标志，Platform 函数得到的是这个
-    'reload_for_flags'=>true,   // 从设置文件里重新加载 is_debug,platform 选项
+    'use_flag_by_setting'=>true,   // 从设置文件里重新加载 is_debug,platform 选项
     'enable_cache_classes_in_cli'=>true, 
                                 // 命令行下缓存 类数据
     'skip_view_notice_error'=>true,
@@ -407,7 +429,7 @@ const DEFAULT_OPTIONS=[
 'skip_view_notice_error'=>true,
 
     view 视图里忽略 notice 错误。
-'reload_for_flags'=>true,
+'use_flag_by_setting'=>true,
 
     从设置里重载 is_debug 和 platform
 'skip_404_handler'=>false,
@@ -447,168 +469,6 @@ ext 是一个选项，这里单独成一节是因为这个选项很重要。涉�
     如果 $options 为 true ，则会把当前 $options 传递进去。
 DuckPHP/Core 的 Configer, Route, View, AutoLoader 默认都在这调用
 
-以上只是基本选项，全部选项有这么多。
-```php
-array (
-  'all_config' => 
-  array (
-  ),
-  
-  'before_get_db_handler' => NULL,
-  'controller_base_class' => NULL,
-  'controller_hide_boot_class' => false,
-  'controller_methtod_for_miss' => '_missing',
-  'controller_postfix' => '',
-  'controller_prefix_post' => 'do_',
-  'controller_welcome_class' => 'Main',
-  'database_list' => NULL,
-  'db_before_query_handler' => 
-  array (
-    0 => 'MY\\Base\\App',
-    1 => 'OnQuery',
-  ),
-  'db_close_at_output' => true,
-  'db_close_handler' => NULL,
-  'db_create_handler' => NULL,
-  'db_exception_handler' => NULL,
-  'default_exception_handler' => 
-  array (
-    0 => 'DuckPhp\\App',
-    1 => 'OnDefaultException',
-  ),
-  'dev_error_handler' => 
-  array (
-    0 => 'DuckPhp\\App',
-    1 => 'OnDevErrorHandler',
-  ),
-  'enable_cache_classes_in_cli' => false,
-  'error_404' => '_sys/error_404',
-  'error_500' => '_sys/error_500',
-  'error_debug' => '_sys/error_debug',
-  'error_exception' => '_sys/error_exception',
-  'ext' => 
-  array (
-    'DuckPhp\\Ext\\Misc' => true,
-    'DuckPhp\\Ext\\SimpleLogger' => true,
-    'DuckPhp\\Ext\\DBManager' => true,
-    'DuckPhp\\Ext\\RouteHookRewrite' => true,
-    'DuckPhp\\Ext\\RouteHookRouteMap' => true,
-    'DuckPhp\\Ext\\StrictCheck' => false,
-    'DuckPhp\\Ext\\RouteHookOneFileMode' => false,
-    'DuckPhp\\Ext\\RouteHookDirectoryMode' => false,
-    'DuckPhp\\Ext\\RedisManager' => false,
-    'DuckPhp\\Ext\\RedisSimpleCache' => false,
-    'DuckPhp\\Ext\\DBReusePoolProxy' => false,
-    'DuckPhp\\Ext\\FacadesAutoLoader' => false,
-    'DuckPhp\\Ext\\Lazybones' => false,
-    'DuckPhp\\Ext\\Pager' => false,
-  ),
-  'handle_all_dev_error' => true,
-  'handle_all_exception' => true,
-  'is_debug' => true,
-  'log_file' => '',
-  'log_prefix' => 'DuckPhpLog',
-  'log_sql' => false,
-  'namespace' => 'MY',
-  'namespace_controller' => 'Controller',
-  'override_class' => 'Base\\App',
-  'path' =>  null,
-  'path_config' => 'config',
-  'path_lib' => 'lib',
-  'path_namespace' => 'app',
-  'path_view' => 'view',
-  'path_view_override' => '',
-  'platform' => '',
-  'rewrite_map' => 
-  array (
-  ),
-  'route_map' => 
-  array (
-  ),
-  'route_map_important' => 
-  array (
-  ),
-  'setting' => 
-  array (
-  ),
-  'setting_file' => 'setting',
-  'skip_404_handler' => false,
-  'skip_app_autoload' => false,
-  'skip_env_file' => true,
-  'skip_exception_check' => false,
-  'skip_fix_path_info' => false,
-  'skip_plugin_mode_check' => false,
-  'skip_setting_file' => true,
-  'skip_system_autoload' => true,
-  'skip_view_notice_error' => true,
-  'system_exception_handler' => 
-  array (
-    0 => 'DuckPhp\\App',
-    1 => 'set_exception_handler',
-  ),
-  'use_context_db_setting' => true,
-  'use_flag_by_setting' => true,
-  'use_short_function' => true,
-  'use_short_functions' => true,
-  'use_super_global' => false,
-)
-```
-
-### DuckPHP 工程目录结构
-
-工程的桩代码,完整的默认目录结构
-
-```text
-+---app                     // psr-4 标准的自动加载目录
-|   +---Base                // 基类放在这里
-|   |   |   App.php         // 默认框架入口文件
-|   |   |   BaseController.php  // 控制器基类
-|   |   |   BaseModel.php   // 模型基类
-|   |   |   BaseService.php // 服务基类
-|   |   \---Helper
-|   |           ControllerHelper.php    // 控制器助手类
-|   |           ModelHelper.php     // 模型助手类
-|   |           ServiceHelper.php   // 服务助手类
-|   |           ViewHelper.php      // 视图助手类
-|   +---Controller          // 控制器目录
-|   |       Main.php        // 默认控制器
-|   +---Model               // 模型放在里
-|   |       TestModel.php   // 测试模型
-|   \---Service             // 服务目录
-|           TestService.php // 测试 Service
-+---bin
-|       start_server.php    // 启动 Htttp 服务
-+---config                  // 配置文件放这里
-|       config.php          // 配置，目前是空数组
-|       setting.sample.php  // 设置，去除敏感信息的模板
-+---view                    // 视图文件放这里，可调
-|   |   main.php            // 视图文件
-|   \---_sys                // 系统错误视图文件放这里
-|           error-404.php   // 404 页面
-|           error-500.php   // 500 页面
-|           error-debug.php // 调试的时候显示的视图
-|           error-exception.php // 异常页面
-\---public                  // 网站目录
-        index.php           // 主页，入口页
-```
-
-文件都不复杂。基本都是空类或空继承类，便于不同处理。
-这些结构能精简么？
-可以，你可以一个目录都不要。
-
-BaseController, BaseModel, BaseService 是你自己要改的基类，基本只实现了单例模式。
-ContrllorHelper,ModelHelper,ServiceHelper 如果你一个人偷懒，直接用 APP 类也行  
-#### 如何精简目录
-* 移除 app/Base/Helper/ 如果你直接用 App::* 替代 M,V,C,S 助手类。
-* 移除 app/Base/BaseController.php 如果你的 Controller 和默认的一样不需要基本类。
-* 移除 app/Base/BaseModel.php 如果你的 Model 用的全静态方法。
-* 移除 app/Base/BaseService.php 如果你的 Service 不需要 G 方法。
-* 移除 bin/start_server.php 如果你使用外部 http 服务器
-* 移除 config/ 在启动选项里加 'skip_setting_file'=>true ，如果你不需要 config/setting.php，
-    并有自己的配置方案
-* 移除 view/\_sys  你需要设置启动选项里 'error\_404','error\_500','error\_exception' 。
-* 移除 view 如果你不需要 view ，如 api。
-* 移除 TestService.php ， TestModel.php  测试用的东西
 
 ### 入口类 App 类的方法 以及高级程序员。
 
@@ -727,8 +587,25 @@ run() 运行阶段
 G 方法表面上是个单例函数，实际上的可替换的。
 DuckPHP 系统组件的连接，多是以调用类的可变单例来实现的。
 
-#### 结构图和组件分析
+### 结构图
 ![core](DuckPHP.gv.svg)
+
+##### 架构分析
+
+Core 目录 核心框架
+
+##### Tip 虚拟接口 组件类
+
+组件类满足以下虚拟接口
+
+```
+interface
+{
+    public $options;/* array() */;
+    public static function G():this;
+    public init(array $options, $contetxt=null):this;
+}
+```
 
 
 DuckPHP 的扩展都放在 DuckPHP\\Ext 命名空间里
@@ -739,8 +616,6 @@ SingletonEx 可变单例
 
 \*Helper 是各种快捷方法。
 
-其他组件都遵守 init(array $options, $contetxt=null); 接口。
-而且组件多有公开属性 $options 对应调整选项。
 
 这些组件 都可以在 onInit 里通过类似方法替换
 ```php
@@ -763,6 +638,7 @@ ExceptionManager::G(MyExceptionManager::G())->init($this->options,$this);
 
 注意的是核心组件都在 onInit 之前初始化了，所以你要自己初始化。
 * 为什么核心组件都在 onInit 之前初始化。
+
 为了 onInit 使用方便
 
 * 为什么 Core 里面的都是 App::Foo(); 而 Ext 里面的都是 App::G()::Foo();
@@ -773,15 +649,9 @@ Core 下面的扩展不会单独拿出来用，
 
 
 ##### 
-
     ExtendableStaticCallTrait
     ThrowOn  提供了 实用的 ThrowOn
     HookChain  提供 链式钩子。
     HttpServer 提供了 HttpServer 的实现。
     SystemWrapper 用于 同名函数替代系统系统函数。 比如 header();
-
-### 分割线
-    以下介绍的都是 Ext的参考。
-
-
 

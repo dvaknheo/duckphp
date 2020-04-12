@@ -35,9 +35,8 @@
 'controller_postfix' => '',
 
 ​	控制器后缀，如果你觉得控制器类的方法不够显眼，你可以设置成其他的
-
-
 ## 方法
+
 ### 主流程方法
 
 ### 公开方法
@@ -174,20 +173,7 @@ public function getRouteError()
 
 DuckPHP\Core\Route 这个类可以单独拿出来做路由用。
 
-##### 选项
 
-```php
-$options=[
-    'namespace'=>'MY',
-    'namespace_controller'=>'Controller',
-    'controller_base_class'=>null,
-    'controller_welcome_class'=>'Main',
-    'controller_hide_boot_class'=>false,
-    'controller_methtod_for_miss'=>'_missing',
-    'controller_prefix_post'=>'do_',
-    'controller_postfix'=>''
-]
-```
 
 ##### 示例
 
@@ -234,3 +220,6 @@ if(!$flag){
     add404Handle() 是默认用于后处理的版本。
 
 ##### URL 输出地址重写指南
+
+
+## Tip bind() 函数和 bindServerData 区别

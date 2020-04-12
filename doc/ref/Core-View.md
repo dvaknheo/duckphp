@@ -1,53 +1,48 @@
 # Core\View
 
 ## 简介
-视图类
+`组件类` 视图类
 ## 选项
 'path' => '',
 
-    // xx
+    路径
 'path_view' => 'view',
 
-    // xx
+    视图路径
 'path_view_override' => '',
 
-    // xx
+    用于覆盖的路径——用于插件模式
 ## 公开方法
-__construct()
 
-​	构造函数
+public function __construct()
 
-init($options=[], $context=null)
+    空构造函数
+public function init(array $options, object $context = null)
 
-_Show($data=[], $view)
-_ShowBlock($view, $data=null)
-setViewWrapper($head_file, $foot_file)
-assignViewData($key, $value=null)
-setOverridePath($path)
+    初始化
+public function _Show($data = [], $view)
 
+    显示文件，包括页眉页脚
+public function _ShowBlock($view, $data = null)
+
+    显示文件，不包括页眉页脚
+public function setViewWrapper($head_file, $foot_file)
+
+    设置页眉页脚
+public function assignViewData($key, $value = null)
+
+    设置要显示的数据，可批量
+public function setOverridePath($path)
+
+    插件模式下设置视图路径
+protected function getViewFile($path, $view)
+
+    获得 View 文件。
 
 ## 详解
-
-    public function __construct()
-    public function init(array $options, object $context = null)
-    public function _Show($data = [], $view)
-    public function _ShowBlock($view, $data = null)
-    public function setViewWrapper($head_file, $foot_file)
-    public function assignViewData($key, $value = null)
-    public function setOverridePath($path)
-    protected function getViewFile($path, $view)
-    
-### Core\View
-
-##### 选项
-
-```  
-'path'=>null,
-'path_view'=>'view',
-```
 
 Core\View 的选项共享一个 path,带一个 path_view.
 
 path_view 如果是 / 开始的，会忽略 path 选项
 
-当你想把视图目录 放入 app 目录的时候，调整 path_view
+当你想把视图目录 放入 app 目录的时候，请自行调整 path_view

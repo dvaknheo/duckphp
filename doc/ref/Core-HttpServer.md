@@ -1,29 +1,27 @@
 # Core\HttpServer
 
 ## 简介
-Http 服务器类，实现一个简单的 Http 服务
-组件类
-
+`组件类` Http 服务器类，实现一个简单的 Http 服务
 ## 选项
 
 ## 公开方法
-    public function __construct()
-    public static function RunQuickly($options)
-    public function init($options=[], $context=null)
-    public function run()
-    public function getPid()
-    public function close()
+public function __construct()
+public static function RunQuickly($options)
+public function init(array $options, object $context = null)
+public function run()
 
-## 详解
+protected function getopt($options, $longopts, &$optind)
+protected function parseCaptures($cli_options)
 
-    public function __construct()
-    public static function RunQuickly($options)
-    public function init(array $options, object $context = null)
-    protected function getopt($options, $longopts, &$optind)
-    protected function parseCaptures($cli_options)
-    public function run()
-    public function getPid()
-    public function close()
-    protected function showWelcome()
-    protected function showHelp()
-    protected function runHttpServer()
+public function getPid()
+public function close()
+
+protected function showWelcome()
+
+    显示欢迎信息，用于重写
+protected function showHelp()
+
+    显示帮助信息
+protected function runHttpServer()
+
+    开始运行

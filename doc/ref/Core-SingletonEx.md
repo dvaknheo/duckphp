@@ -44,3 +44,10 @@ B::G()->foo();
 猪年快乐
 鼠年快乐
 ```
+### 宏 __SINGLETONEX_REPALACER 的作用
+
+如果你定义了宏 __SINGLETONEX_REPALACER 则 G 函数 不是使用默认实新，而是 返回 __SINGLETONEX_REPALACER($class, $object);
+
+SwooleHttpd 通过这个方法，实现了 协程单例。
+
+这个宏也可以用于特殊调试的场合

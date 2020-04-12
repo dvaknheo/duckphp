@@ -25,10 +25,9 @@ class X
     use \DuckPhp\Core\ThrowOn;
 }
 MyException::ThrowOn(true,"something exception",142857);
-
 X::ThrowOn(true,"second",MyException::class);
-
-X::ThrowOn(true,"thr",22,MyException::class);
+X::ThrowOn(true,"third",22,MyException::class);
+X::ThrowOn(true,"forth");
 
 ```
 

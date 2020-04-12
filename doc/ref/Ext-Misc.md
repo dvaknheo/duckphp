@@ -1,28 +1,65 @@
 # Ext\Misc
 
 ## 简介
-杂项扩展
+`组件类` 杂项扩展， 提供了一批函数。
+
 ## 选项
     public $options = [
         'path' => '',
         'path_lib' => 'lib',
     ];
-## 公开方法
+##  扩充方法。
+### AppHelper 扩充
 
+- Import
+- DI
 
-## 详解
+### ControllerHelper 扩充
 
-    public function init(array $options, object $context = null)
+- RecordsetUrl
+- RecordsetH
+- CallAPI
+
+## 方法
+
+public function init(array $options, object $context = null)
+
+    初始化
+public function __construct()
+
+    空构造函数
+public function init(array $options, object $context = null)
+
+    初始化
+public static function Import($file)
+
+    导入文件
+public static function RecordsetUrl($data, $cols_map = [])
+
+    转换 Recordset 的 URL
+public static function RecordsetH($data, $cols = [])
+
+    转换 Recordset 的 HTML 编码
+public static function DI($name, $object = null)
+
+    DI 函数
+public function CallAPI($class, $method, $input, $interface = '')
+
+    调用一个 API
+public function _DI($name, $object = null)
+
+    相应静态函数的实现
+public function _Import($file)
+
+    相应静态函数的实现
+public function _RecordsetUrl($data, $cols_map = [])
+
+    相应静态函数的实现
+public function _RecordsetH($data, $cols = [])
+
+    相应静态函数的实现
+public function _CallAPI($class, $method, $input, $interface = '')
+
+    相应静态函数的实现
     
-    public function __construct()
-    public function init(array $options, object $context = null)
-    public static function Import($file)
-    public static function RecordsetUrl($data, $cols_map = [])
-    public static function RecordsetH($data, $cols = [])
-    public static function DI($name, $object = null)
-    public function CallAPI($class, $method, $input, $interface = '')
-    public function _DI($name, $object = null)
-    public function _Import($file)
-    public function _RecordsetUrl($data, $cols_map = [])
-    public function _RecordsetH($data, $cols = [])
-    public function _CallAPI($class, $method, $input, $interface = '')
+## 详解

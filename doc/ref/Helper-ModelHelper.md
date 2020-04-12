@@ -18,4 +18,3 @@ public static function var_dump(...$args)
 
 ## 详解
 
-## 所有方法所以i你
