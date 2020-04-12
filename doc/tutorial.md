@@ -25,13 +25,14 @@ For More Take the DuckPHP-FullTest (TODO)
 composer require dvaknheo/duckphp # 用 require 
 ./vendor/bin/duckphp --help     # 查看有什么指令
 ./vendor/bin/duckphp --create   # --full # 创建工程
-./vendor/bin/duckphp --start    # --host=127.0.0.1 --port=8080 # 开始 web 服务器
+./vendor/bin/duckphp --start    # --host=127.0.0.1 --port=9527 # 开始 web 服务器
+
 ```
 将会直接把 template 的东西复制到工程并做调整，同样执行
 ```bash
 php bin/start_server.php
 ```
-浏览器中打开 http://127.0.0.1:8080/ 得到下面欢迎页就表明 OK 了
+浏览器中打开 http://127.0.0.1:9527/ 得到下面欢迎页就表明 OK 了
 ```text
 Don't run the template file directly
 Hello DuckPHP

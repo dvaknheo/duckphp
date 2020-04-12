@@ -113,7 +113,12 @@ class Installer
         $files = [];
         
         foreach ($t_files as $file) {
-            $files[$file] = substr($file, strlen($source));
+            $short_file_name = substr($file, strlen($source));
+            $is_in_full = (substr($short_file_name, 0, strlen('public/full/'))) === 'public/full/'?true:false;
+            if (!$is_full && $is_in_full) {
+                continue;
+            }
+            $files[$file] = $short_file_name;
         }
         
         if (!$force) {
