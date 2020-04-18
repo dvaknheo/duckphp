@@ -265,6 +265,9 @@ trait Kernel
     public function clear(): void
     {
         RuntimeState::G()->end();
+        if (!empty($this->beforeShowHandlers)) {
+            ob_end_flush();
+        }
     }
     protected function fixPathInfo(&$serverData)
     {

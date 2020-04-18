@@ -13,7 +13,11 @@ class RuntimeStateTest extends \PHPUnit\Framework\TestCase
         RuntimeState::G()->ReCreateInstance();
         RuntimeState::G()->begin();
         RuntimeState::G()->end();
-        RuntimeState::G()->skipNoticeError();
+        
+        RuntimeState::G()->toggleInException();
+        RuntimeState::G()->isInException();
+        RuntimeState::G()->isOutputed();
+        RuntimeState::G()->toggleOutputed();
         
         //code here
         

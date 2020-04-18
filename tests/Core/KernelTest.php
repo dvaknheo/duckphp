@@ -3,6 +3,7 @@ namespace tests\DuckPhp\Core{
 
 use DuckPhp\Core\App;
 use DuckPhp\Core\Kernel;
+use DuckPhp\Core\RuntimeState;
 use DuckPhp\App as DuckPhp;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\View;
@@ -119,6 +120,13 @@ echo "-------------------------------------\n";
         
         $this->doFixPathinfo();
 
+        ////
+        RuntimeState::G()->toggleOutputed(false);
+        App::OnOutputBuffering('abc');
+        RuntimeState::G()->toggleOutputed(true);
+        App::OnOutputBuffering('def');
+        ////
+        
         
     \MyCodeCoverage::G()->end(Kernel::class);
     $this->assertTrue(true);

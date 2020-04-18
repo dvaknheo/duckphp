@@ -39,7 +39,7 @@ class View
     }
     public function _Show($data = [], $view)
     {
-        if ($this->options['skip_view_notice_error']) {
+        if ($this->options['skip_view_notice_error']??false) {
             $this->error_reporting_old = error_reporting();
             error_reporting($this->error_reporting_old & ~E_NOTICE);
         }
@@ -62,7 +62,7 @@ class View
         if ($this->foot_file) {
             include $this->foot_file;
         }
-        if ($this->options['skip_view_notice_error']) {
+        if ($this->options['skip_view_notice_error']??false) {
             $this->error_reporting_old = error_reporting();
             error_reporting($this->error_reporting_old & ~E_NOTICE);
         }
