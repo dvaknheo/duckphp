@@ -337,6 +337,7 @@ trait Core_Helper
     public static function Exit404($exit = true)
     {
         static::On404();
+        Route::G()->forceFail();
         if ($exit) {
             static::exit();
         }
@@ -395,7 +396,7 @@ trait Core_Helper
     
     public static function InException()
     {
-        return RuntimeState::G()->is_in_exception;
+        return RuntimeState::G()->isInException();
     }
     ////
     
@@ -432,13 +433,6 @@ trait Core_Helper
     public function _Show($data = [], $view = null)
     {
         $view = $view ?? Route::G()->getRouteCallingPath();
-        foreach ($this->beforeShowHandlers as $v) {
-            ($v)();
-        }
-        RuntimeState::G()->is_before_show_done = true;
-        if ($this->options['skip_view_notice_error'] ?? false) {
-            RuntimeState::G()->skipNoticeError();
-        }
         
         if ($this->is_debug) {
             View::G()->assignViewData([

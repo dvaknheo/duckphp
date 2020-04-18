@@ -12,18 +12,11 @@ class RuntimeState
     use SingletonEx;
     
     protected $is_running = false;
-    public $is_before_show_done = false;
-    public $is_in_exception = false;
-    public $running_exception = false;
-    
-    protected $error_reporting_old;
+    protected $is_in_exception = false;
+    protected $is_outputed  = false; 
     
     public function __construct()
     {
-    }
-    public function isRunning()
-    {
-        return $this->is_running;
     }
     public static function ReCreateInstance()
     {
@@ -33,17 +26,31 @@ class RuntimeState
     public function begin()
     {
         $this->is_running = true;
-        $this->error_reporting_old = error_reporting();
     }
     public function end()
     {
-        error_reporting($this->error_reporting_old);
         $this->is_in_exception = false;
         $this->is_running = false;
     }
-    public function skipNoticeError()
+    public function isRunning()
     {
-        $this->error_reporting_old = error_reporting();
-        error_reporting($this->error_reporting_old & ~E_NOTICE);
+        return $this->is_running;
+    }
+
+    public function toggleInException($flag=true)
+    {
+        $this->is_in_exception=$flag;
+    }
+    public function isInException()
+    {
+        return $this->is_in_exception;
+    }
+    public function isOutputed()
+    {
+        return $this->is_outputed;
+    }
+    public function toggleOutputed($flag=true)
+    {
+        $this->is_outputed = true;
     }
 }

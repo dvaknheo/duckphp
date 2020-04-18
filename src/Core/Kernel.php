@@ -38,7 +38,6 @@ trait Kernel
             
             'use_flag_by_setting' => true,
             'use_super_global' => false,
-            'skip_view_notice_error' => true,
             'skip_404_handler' => false,
             'skip_plugin_mode_check' => false,
             'skip_exception_check' => false,
@@ -228,43 +227,44 @@ trait Kernel
         if ($this->defaultRunHandler) {
             return ($this->defaultRunHandler)();
         }
+        $this->beforeRun();
         try {
-            RuntimeState::ReCreateInstance()->begin();
-            View::G()->setViewWrapper(null, null);
-            
             $this->onRun();
-
-            $serverData = ($this->options['use_super_global'] ?? false) ? SuperGlobal::G()->_SERVER : $_SERVER;
-            if (!$this->options['skip_fix_path_info'] && PHP_SAPI != 'cli') {
-                $serverData = $this->fixPathInfo($serverData); // @codeCoverageIgnore
-            }
-            
-            $route = Route::G();
-            $route->bindServerData($serverData);
-            $ret = $route->run();
+            $route = Route::G()->run();
             
             if (!$ret && !$this->options['skip_404_handler']) {
-                ($this->hanlder_for_404)();// static::On404();
+                ($this->hanlder_for_404)();// = static::On404();
             }
-            $this->clear();
         } catch (\Throwable $ex) {
-            RuntimeState::G()->is_in_exception = true;
+            RuntimeState::G()->toggleInException();
             if ($this->options['skip_exception_check']) {
                 throw $ex;
             }
             ExceptionManager::OnException($ex);
             $ret = true;
         }
+        $this->clear();
         return $ret;
+    }
+    protected function beforeRun()
+    {
+        RuntimeState::ReCreateInstance()->begin();
+        View::G()->setViewWrapper(null, null);
+        
+        $serverData = ($this->options['use_super_global'] ?? false) ? SuperGlobal::G()->_SERVER : $_SERVER;
+        if (!$this->options['skip_fix_path_info'] && PHP_SAPI != 'cli') {
+            $serverData = $this->fixPathInfo($serverData); // @codeCoverageIgnore
+        }
+        Route::G()->bindServerData($serverData);
+        
+        if(!empty($this->beforeShowHandlers)) {
+            //header_register_callback([static::class,'OnOutputBuffering']);
+            ob_start([static::class,'OnOutputBuffering']);
+        }
+        
     }
     public function clear(): void
     {
-        if (! RuntimeState::G()->is_before_show_done) {
-            foreach ($this->beforeShowHandlers as $v) {
-                ($v)();
-            }
-            RuntimeState::G()->is_before_show_done = true;
-        }
         RuntimeState::G()->end();
     }
     protected function fixPathInfo(&$serverData)
@@ -300,5 +300,21 @@ trait Kernel
     public function addBeforeShowHandler($handler)
     {
         $this->beforeShowHandlers[] = $handler;
+    }
+    public static function OnOutputBuffering($str='')
+    {
+        return static::G()->_OnOutputBuffering($str);
+    }
+    public function _OnOutputBuffering($str)
+    {
+        $flag = RuntimeState::G()->isOutputed();
+        if ($flag) {
+            return $str;
+        }
+        foreach ($this->beforeShowHandlers as $v) {
+            ($v)();
+        }
+        RuntimeState::G()->toggleOutputed();
+        return $str;
     }
 }

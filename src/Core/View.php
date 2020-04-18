@@ -14,6 +14,7 @@ class View
         'path' => '',
         'path_view' => 'view',
         'path_view_override' => '',
+        'skip_view_notice_error' => true,
     ];
     public $path;
     public $data = [];
@@ -21,6 +22,7 @@ class View
     protected $head_file;
     protected $foot_file;
     protected $view_file;
+    protected $error_reporting_old;
     
     public function __construct()
     {
@@ -33,9 +35,15 @@ class View
         } else {
             $this->path = $this->options['path'].rtrim($this->options['path_view'], '/').'/';
         }
+        return $this;
     }
     public function _Show($data = [], $view)
     {
+        if ($this->options['skip_view_notice_error']) {
+            $this->error_reporting_old = error_reporting();
+            error_reporting($this->error_reporting_old & ~E_NOTICE);
+        }
+        
         $this->view_file = $this->getViewFile($this->path, $view);
         $this->head_file = $this->getViewFile($this->path, $this->head_file);
         $this->foot_file = $this->getViewFile($this->path, $this->foot_file);
@@ -53,6 +61,10 @@ class View
         
         if ($this->foot_file) {
             include $this->foot_file;
+        }
+        if ($this->options['skip_view_notice_error']) {
+            $this->error_reporting_old = error_reporting();
+            error_reporting($this->error_reporting_old & ~E_NOTICE);
         }
     }
     public function _ShowBlock($view, $data = null)

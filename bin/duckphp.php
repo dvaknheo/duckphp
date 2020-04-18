@@ -266,7 +266,7 @@ EOT;
   --host [host]             Use this host
   --port [port]             Use this port
 ----
-To start the project , use '--start' or run script 'bin/start_server.php'
+To start the project , use '--start' or run script 'start_server.php'
 
 EOT;
         //--prune-helper            Do not use the Helper class,
