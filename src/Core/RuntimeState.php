@@ -13,7 +13,7 @@ class RuntimeState
     
     protected $is_running = false;
     protected $is_in_exception = false;
-    protected $is_outputed  = false; 
+    protected $is_outputed = false;
     
     public function __construct()
     {
@@ -37,9 +37,9 @@ class RuntimeState
         return $this->is_running;
     }
 
-    public function toggleInException($flag=true)
+    public function toggleInException($flag = true)
     {
-        $this->is_in_exception=$flag;
+        $this->is_in_exception = $flag;
     }
     public function isInException()
     {
@@ -49,7 +49,7 @@ class RuntimeState
     {
         return $this->is_outputed;
     }
-    public function toggleOutputed($flag=true)
+    public function toggleOutputed($flag = true)
     {
         $this->is_outputed = true;
     }

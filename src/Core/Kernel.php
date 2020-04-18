@@ -230,7 +230,7 @@ trait Kernel
         $this->beforeRun();
         try {
             $this->onRun();
-            $route = Route::G()->run();
+            $ret = Route::G()->run();
             
             if (!$ret && !$this->options['skip_404_handler']) {
                 ($this->hanlder_for_404)();// = static::On404();
@@ -257,11 +257,10 @@ trait Kernel
         }
         Route::G()->bindServerData($serverData);
         
-        if(!empty($this->beforeShowHandlers)) {
+        if (!empty($this->beforeShowHandlers)) {
             //header_register_callback([static::class,'OnOutputBuffering']);
             ob_start([static::class,'OnOutputBuffering']);
         }
-        
     }
     public function clear(): void
     {
@@ -301,7 +300,7 @@ trait Kernel
     {
         $this->beforeShowHandlers[] = $handler;
     }
-    public static function OnOutputBuffering($str='')
+    public static function OnOutputBuffering($str = '')
     {
         return static::G()->_OnOutputBuffering($str);
     }
