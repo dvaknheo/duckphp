@@ -17,6 +17,8 @@ class JsonRpcExt
         'jsonrpc_is_debug' => false,
         'jsonrpc_enable_autoload' => true,
         'jsonrpc_check_token_handler' => null,
+        'jsonrpc_interface' => '',//todo next version
+        'jsonrpc_namespace' => '',//todo next version
     ];
     
     public $is_inited;
@@ -103,17 +105,18 @@ class JsonRpcExt
     
     public function onRpcCall(array $input)
     {
+        $ret = [
+           "jsonrpc" => "2.0",
+        ];
         $id = $input['id'] ?? null;
         $method = $input['method'] ?? '';
         $a = explode('.', $method);
         $method = array_pop($a);
         $service = implode("\\", $a);
-        $args = $input['params'] ?? [];
-        $ret = [
-           "jsonrpc" => "2.0",
-        ];
         try {
-            //DN::ThrowOn()
+            $service = $this->adjustService($service);
+            $args = $input['params'] ?? [];
+            //ThrowOn()
             $ret['result'] = $service::G()->$method(...$args);
         } catch (\Throwable $ex) {
             $ret['error'] = [
@@ -126,7 +129,10 @@ class JsonRpcExt
         return $ret;
     }
     /////////////////////
-
+    protected function adjustService($service)
+    {
+        return $service;
+    }
     protected function curl_file_get_contents($url, $post)
     {
         $ch = curl_init();

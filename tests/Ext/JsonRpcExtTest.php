@@ -40,6 +40,8 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
         ];
         HttpServer::RunQuickly($server_options);
         echo HttpServer::G()->getPid();
+        sleep(1);// ugly
+        
         $data=TestService::G(JsonRpcExt::Wrap(TestService::class))->foo();
         JsonRpcExt::G()->getRealClass(TestService::G());
         JS::G()->foo();
