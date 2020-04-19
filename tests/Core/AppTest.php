@@ -173,6 +173,7 @@ App::PageHtml(123);
     public function doSystemWrapper()
     {
         App::system_wrapper_get_providers();
+        $output="";
 
         App::header($output,$replace = true, $http_response_code=0);
         App::setcookie( $key="123",  $value = '', $expire = 0,  $path = '/',  $domain  = '', $secure = false,  $httponly = false);
@@ -215,6 +216,9 @@ App::PageHtml(123);
             echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         });
         App::OnException(new \Exception("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",-1));
+        
+                App::OnException(new E("EXxxxxxxxxxxxxxx",-1));
+
     }
     public function doHelper()
     {
@@ -418,6 +422,13 @@ App::PageHtml(123);
     }
     public static function Foo()
     {
+    }
+}
+class E extends \Exception
+{
+    public function handle($ex)
+    {
+        var_dump("Hit");
     }
 }
 class AppTestApp extends App

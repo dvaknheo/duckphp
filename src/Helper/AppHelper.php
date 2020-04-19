@@ -36,7 +36,20 @@ class AppHelper
     {
         return App::setUrlHandler($callback);
     }
+
     //
+    public static function header($output, bool $replace = true, int $http_response_code = 0)
+    {
+        return App::header($output, $replace, $http_response_code);
+    }
+    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
+    {
+        return App::setcookie($key, $value,  $expire, $path, $domain,$secure, $httponly);
+    }
+    public static function exit($code = 0)
+    {
+        return App::exit($code);
+    }
     public static function set_exception_handler(callable $exception_handler)
     {
         return App::set_exception_handler($exception_handler);

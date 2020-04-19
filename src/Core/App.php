@@ -49,7 +49,7 @@ class App
     protected $hanlder_for_404;
     
     // for helper
-    protected $componentClassMap = [
+    public $componentClassMap = [
         'M' => 'Helper\ModelHelper',
         'V' => 'Helper\ViewHelper',
         'C' => 'Helper\ControllerHelper',
@@ -63,6 +63,12 @@ class App
         'exit' => null,
         'set_exception_handler' => null,
         'register_shutdown_function' => null,
+
+        'session_start' => null,
+        'session_id' => null,
+        'session_destroy' => null,
+        'session_set_save_handler' => null,
+
     ];
     // for trait
     protected $extDynamicComponentClasses = [];
@@ -136,6 +142,7 @@ trait Core_Handler
     }
     public function _On404(): void
     {
+        Route::G()->forceFail();
         $error_view = $this->options['error_404'] ?? null;
         $error_view = $this->error_view_inited?$error_view:null;
         
@@ -156,6 +163,11 @@ trait Core_Handler
     
     public function _OnDefaultException($ex): void
     {
+        if (method_exists($ex,'handle')) {
+            $ex->handle($ex);
+            $this->clear();
+            return;
+        }
         $error_view = $this->options['error_500'] ?? null;
         $error_view = $this->error_view_inited?$error_view:null;
         
@@ -337,7 +349,6 @@ trait Core_Helper
     public static function Exit404($exit = true)
     {
         static::On404();
-        Route::G()->forceFail();
         if ($exit) {
             static::exit();
         }

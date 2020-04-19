@@ -40,7 +40,6 @@ class RouteHookRouteMap
                 [
                     'assignImportantRoute' => [static::class.'::G','assignImportantRoute'],
                     'assignRoute' => [static::class.'::G','assignRoute'],
-                    'getRoutes' => [static::class.'::G','getRoutes'],
                     'routeMapNameToRegex' => [static::class.'::G','routeMapNameToRegex'],
                 ],
                 ['A']

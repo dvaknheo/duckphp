@@ -13,7 +13,7 @@ class HttpServer
     
     public $options = [
             'host' => '127.0.0.1',
-            'port' => '9527',
+            'port' => '8080',
             'path' => null,
             'path_document' => 'public',
         ];

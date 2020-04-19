@@ -2,6 +2,7 @@
 namespace tests\DuckPhp\Helper;
 
 use DuckPhp\Helper\AppHelper;
+use DuckPhp\Core\App;
 
 class AppHelperTest extends \PHPUnit\Framework\TestCase
 {
@@ -30,6 +31,20 @@ class AppHelperTest extends \PHPUnit\Framework\TestCase
         AppHelper::GLOBALS($k, $v=null);
         AppHelper::STATICS($k, $v=null);
         AppHelper::CLASS_STATICS($class_name, $var_name);        
+        
+                $output="";
+
+        
+        App::G()->system_wrapper_replace([
+            'header' =>function(){ echo "change!\n";},
+            'setcookie' =>function(){ echo "change!\n";},
+            'exit' =>function(){ echo "change!\n";},
+        ]);
+        
+        AppHelper::header($output,$replace = true, $http_response_code=0);
+        AppHelper::setcookie( $key="123",  $value = '', $expire = 0,  $path = '/',  $domain  = '', $secure = false,  $httponly = false);
+        AppHelper::exit($code=0);
+        
         
         AppHelper::session_start($options=[]);
         AppHelper::session_id(null);
