@@ -21,7 +21,7 @@ DuckPHP 的使用者角色分为 `应用程序员`和`核心程序员`两种。
 
 DuckPHP 代码里的 template 目录就是我们的工程目录示例。也是工程桩代码。
 
-在执行 `./vendor/bin/duckphp --create` 的时候，会把代码复制到工程目录
+在执行 `./vendor/bin/duckphp --create` 的时候，会把代码复制到工程目录。兵做一些改动。
 
 ```text
 +---app                     // psr-4 标准的自动加载目录。
@@ -55,7 +55,7 @@ DuckPHP 代码里的 template 目录就是我们的工程目录示例。也是�
 \---start_server.php    // 启动 Htttp 服务
 ```
 这个目录结构里，应用程序员只能写 `app/Controller`,`app/Model`,`app/Service`,`view` 这四个目录。
-需要去看 `app/Base/Helper` 目录下的的类。其他都不是程序员的活
+需要去看 `app/Base/Helper` 目录下的的类。其他则是核心程序员的活。
 
 
 app 目录，就是放 MY 开始命名空间的东西了。 app 目录可以在选项里设置成其他名字
@@ -70,15 +70,15 @@ BaseController, BaseModel, BaseService 是你自己要改的基类，基本只�
 ContrllorHelper,ModelHelper,ServiceHelper 如果你一个人偷懒，直接用 APP 类也行  
 #### 如何精简目录
 * 
-* 移除 app/Base/Helper/ 如果你直接用 App::* 替代 M,V,C,S 助手类。
+* 移除 app/Base/Helper/ 目录,如果你直接用 App::* 替代 M,V,C,S 助手类。
 * 移除 app/Base/BaseController.php 如果你的 Controller 和默认的一样不需要基本类。
 * 移除 app/Base/BaseModel.php 如果你的 Model 用的全静态方法。
 * 移除 app/Base/BaseService.php 如果你的 Service 不需要 G 方法。
 * 移除 bin/start_server.php 如果你使用外部 http 服务器
-* 移除 config/ 在启动选项里加 'skip_setting_file'=>true ，如果你不需要 config/setting.php，
+* 移除 config/ 目录,在启动选项里加 'skip_setting_file'=>true ，如果你不需要 config/setting.php，
     并有自己的配置方案
-* 移除 view/\_sys  你需要设置启动选项里 'error\_404','error\_500'。
-* 移除 view 如果你不需要 view ，如 API 项目。
+* 移除 view/\_sys  目录 你需要设置启动选项里 'error\_404','error\_500'。
+* 移除 view 目录如果你不需要 view ，如 API 项目。
 * 移除 TestService.php ， TestModel.php  测试用的东西
 
 ----
@@ -168,14 +168,14 @@ init, run 分两步走的模式。
 
 注意到  // @ 的注释，这些特殊注解，他们用于安装脚本。共有4个注解
 
-+ // @DUCKPHP_DELETE
-+ // @DUCKPHP_HEADFILE
-+ // @DUCKPHP_NAMESPACE
-+ // @DUCKPHP_KEEP_IN_FULL
++ // @DUCKPHP_DELETE 模板引入后删除
++ // @DUCKPHP_HEADFILE 头文件调整
++ // @DUCKPHP_NAMESPACE 调整命名空间
++ // @DUCKPHP_KEEP_IN_FULL 在view  里，如果是 --full 选项则保留。
 
 我们引用代码的时候，省略了一堆注释，这些注释，就是选项
 
-专门有个章节说明这些选项开关的使用方法。 请阅读[](x.md);
+专门有个章节说明这些选项开关的使用方法。 请阅读
 
 DuckPHP 只要更改选项就能实现很多强大的功能变化。
 如果这些选项都不能满足你，那就启用扩展吧，这样有更多的选项能用，
@@ -345,7 +345,7 @@ error_* 选项为 null 用默认，为 callable 是回调，为string 则是调�
 组件类满足以下虚拟接口
 
 ```
-interface
+interface Component
 {
     public $options;/* array() */;
     public static function G():this;
