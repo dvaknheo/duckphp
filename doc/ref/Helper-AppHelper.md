@@ -86,6 +86,8 @@ routeMapNameToRegex
     public static function assignPathNamespace($path, $namespace = null)
     public static function addRouteHook($hook, $position, $once = true)
     public static function setUrlHandler($callback)
+    
+    
     public static function set_exception_handler(callable $exception_handler)
     public static function register_shutdown_function(callable $callback, ...$args)
     public static function session_start(array $options = [])

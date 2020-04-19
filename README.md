@@ -150,7 +150,7 @@ $options=[
     'namespace_controller'=>'\\',   // 设置控制器的命名空间为根
     'skip_setting_file'=>true,      // 跳过配置文件
 ];
-DuckPHP\DuckPHP::RunQuickly($options);
+DuckPHP\App::RunQuickly($options);
 
 ```
 ### 2. 复杂样例

@@ -77,3 +77,10 @@
 Ext 的虚线，表示的是默认未加载的扩展。
 
 ![DuckPHP](duckphp.gv.svg)
+
+##### 
+    ExtendableStaticCallTrait
+    ThrowOn  提供了 实用的 ThrowOn
+    HookChain  提供 链式钩子。
+    HttpServer 提供了 HttpServer 的实现。
+    SystemWrapper 用于 同名函数替代系统系统函数。 比如 header();
