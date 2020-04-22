@@ -4,12 +4,12 @@
 
 ## 快速教程
 - [快速教程](tutorial.md)
-- [应用文件架构](tutorial-general.md)
+- [应用文件架构和通用流程](tutorial-general.md)
 - [通用流程](tutorial-general.md)
 - [助手类](tutorial-helper.md)
+- [路由](tutorial-route.md)
 - [数据库](tutorial-db.md)
 - [异常处理](tutorial-exception.md)
-- [路由](tutorial-route.md)
 - [会话处理](tutorial-session.md)
 - [系统内部架构](tutorial-arch.md)
 - [接管实现](tutorial-override.md)

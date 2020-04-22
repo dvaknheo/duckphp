@@ -63,3 +63,19 @@ public function _CallAPI($class, $method, $input, $interface = '')
     相应静态函数的实现
     
 ## 详解
+
+Import [DuckPhp\Ext\Misc::Import](Ext-Misc.md#Import)
+
+    // 导入文件
+DI
+
+    DuckPhp\Ext\Misc::DI
+RecordsetUrl
+    
+    DuckPhp\Ext\Misc::RecordsetUrl
+RecordsetH
+    
+    DuckPhp\Ext\Misc::RecordsetH
+CallAPI
+    
+    DuckPhp\Ext\Misc::CallAPI

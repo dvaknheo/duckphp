@@ -21,9 +21,9 @@ duckphp 默认加载了 routemap 和 routerewrite 插件。
 
 路由钩子
 
-路由重写
-
 路由映射
+
+路由重写
 
 自定义路由
 

@@ -1,27 +1,18 @@
 # 一般流程
-## 目录
-+ 工程目录结构
-+ 开发模式
-+ 入口文件
-+ 选项
-+ 设置
-快速入门之后，我们接下来系统性学习怎么使用 DuckPHP了。
-
+[toc]
 ## 开发人员角色
 
 DuckPHP 的使用者角色分为 `应用程序员`和`核心程序员`两种。
 
-应用程序员负责日常 Curd 。核心程序员做的是更高级的任务。
+`应用程序员`负责日常 Curd 。作为应用程序员， 你不能引入 DuckPHP 的任何东西，就当 DuckPHP 命名空间不存在。
 
-作为应用程序员， 你不能引入 DuckPHP 的任何东西，就当 DuckPHP 命名空间不存在。
-
-核心程序员才去研究 DuckPHP 类里的东西。
+`核心程序员`才去研究 DuckPHP 类里的东西。
 
 ## 目录结构
 
 DuckPHP 代码里的 template 目录就是我们的工程目录示例。也是工程桩代码。
 
-在执行 `./vendor/bin/duckphp --create` 的时候，会把代码复制到工程目录。兵做一些改动。
+在执行 `./vendor/bin/duckphp --create` 的时候，会把代码复制到工程目录。 并做一些改动。
 
 ```text
 +---app                     // psr-4 标准的自动加载目录。
@@ -54,9 +45,8 @@ DuckPHP 代码里的 template 目录就是我们的工程目录示例。也是�
 |       index.php           // 主页，入口页
 \---start_server.php    // 启动 Htttp 服务
 ```
-这个目录结构里，应用程序员只能写 `app/Controller`,`app/Model`,`app/Service`,`view` 这四个目录。
-需要去看 `app/Base/Helper` 目录下的的类。其他则是核心程序员的活。
-
+这个目录结构里，`应用程序员`只能写 `app/Controller`,`app/Model`,`app/Service`,`view` 这四个目录。
+有时候需要去读 `app/Base/Helper` 目录下的的类。其他则是`核心程序员`的活。
 
 app 目录，就是放 MY 开始命名空间的东西了。 app 目录可以在选项里设置成其他名字
 命名空间 MY 是 可调的。比如调整成 MyProject ,TheBigOneProject  等。
@@ -66,10 +56,16 @@ app 目录，就是放 MY 开始命名空间的东西了。 app 目录可以在�
 这些结构能精简么？
 可以，你可以一个目录都不要。
 
+Base/App.php 这个类继承 DuckPhp\App 类，工程的入口流程会在这里进行，这里是`核心程序员`重点了解的类。
+
+
+
 BaseController, BaseModel, BaseService 是你自己要改的基类，基本只实现了单例模式。
 ContrllorHelper,ModelHelper,ServiceHelper 如果你一个人偷懒，直接用 APP 类也行  
+
+
+
 #### 如何精简目录
-* 
 * 移除 app/Base/Helper/ 目录,如果你直接用 App::* 替代 M,V,C,S 助手类。
 * 移除 app/Base/BaseController.php 如果你的 Controller 和默认的一样不需要基本类。
 * 移除 app/Base/BaseModel.php 如果你的 Model 用的全静态方法。
@@ -87,7 +83,7 @@ ContrllorHelper,ModelHelper,ServiceHelper 如果你一个人偷懒，直接用 A
 ## 工程完整架构图
 
 
-你的工程应该是这么架构。
+对应上面的文件结构，你的工程应该是这么架构。
 
 ![arch_full](arch_full.gv.svg)
 
@@ -104,10 +100,10 @@ Controller --> Service ------------------------------ ---> Model
 
 同级之间的东西不能相互调用
 
-* 写 Model 你可能要引入 MY\Base\Helper\ModelHelper 助手类别名为 M 。
-* 写 Serivce 你可能要引入 MY\Base\Helper\SerivceHelper 助手类别名为 S 。
-* 写 Controller 你可能要引入 MY\Base\Helper\ControllerHelper 助手类别名为 C 。
-* 写 View 你可能要引入 MY\Base\Helper\ViewHelper 助手类别名为 V 。
+* 写 Model 你可能要引入 Base\Helper\ModelHelper 助手类别名为 M 。
+* 写 Serivce 你可能要引入 Base\Helper\SerivceHelper 助手类别名为 S 。
+* 写 Controller 你可能要引入 Base\Helper\ControllerHelper 助手类别名为 C 。
+* 写 View 你可能要引入 Base\Helper\ViewHelper 助手类别名为 V 。
 * 不能交叉引入其他层级的助手类。如果需要交叉，那么你就是错的。
 * 小工程可以用直接使用入口类 MY\Base\App 类，这包含了上述类的公用方法。
 * ContrllorHelper,ModelHelper,ServiceHelper,ViewHelper 如果你一个人偷懒，直接用 APP 类也行  
@@ -117,11 +113,11 @@ Controller --> Service ------------------------------ ---> Model
 
 * 图上没显示特殊的 AppHelper
 
-助手类教程在这里 [助手类教程](tutorial-helper.md)
+助手类教程在这里 [助手类教程](tutorial-helper.md)，基本上，看完助手类教程，`应用程序员`就可以开干了。
 
-## 请求流程和生命周期
+## 入口文件和选项
 
-我们看入口类文件 public/index.php
+我们看 Web 的入口文件 public/index.php
 
 ```php
 <?php declare(strict_types=1);
@@ -135,7 +131,7 @@ $namespace = rtrim('MY\\', '\\');                    // @DUCKPHP_NAMESPACE
 ////[[[[
 $options =
 array(
-    //省略一堆注释性配置
+    // 省略一堆注释性配置
 );
 ////]]]]
 $options['path'] = $path;
@@ -156,6 +152,7 @@ echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKP
 入口类前面部分是处理头文件的。
 然后处理直接 copy 代码提示，不要直接运行。
 起作用的主要就这句话
+
 ```php
 \DuckPHP\App::RunQuickly($options, function () {
 });
@@ -198,9 +195,37 @@ $options['ext']数组实现的
 
 DuckPHP/Core 的其他组件如 Configer, Route, View, AutoLoader 默认都在这调用
 
-### 解读入口文件。
+## 核心开发者重写的入口类。
+`app/Base/App.php` 对应的 MY\Base\App 类就是入口了。
+模板文件提供
+```php
+<?php declare(strict_types=1);
+/**
+ * DuckPHP
+ * From this time, you never be alone~
+ */
+namespace MY\Base;
 
-### Base/App
+use DuckPhp\App as DuckPhp_App;
+
+class App extends DuckPhp_App
+{
+    public function onInit()
+    {
+        // your code here
+        $ret = parent::onInit();
+        // your code here
+        return $ret;
+    }
+    protected function onRun()
+    {
+        // your code here
+        return parent::onRun();
+    }
+}
+```
+onInit 方法，会在初始化后进行
+onRun 方法，会在运行期间运行。
 
 ## 高级说明
 
@@ -329,7 +354,6 @@ const DEFAULT_OPTIONS=[
 
 error_* 选项为 null 用默认，为 callable 是回调，为string 则是调用视图。
 
-    error_500 选项 是应对 Error,error_exception 选项是应对 exception
 'error_debug'=>'_sys/error-debug',
 
     is_debug 打开情况下，显示 Notice 错误
@@ -338,21 +362,21 @@ error_* 选项为 null 用默认，为 callable 是回调，为string 则是调�
     404 页面
 'error_500'=>'_sys/error-500'
 
-    500 页面
+    500 页面，异常页面都会在这里
 
 ##### Tip 虚拟接口 组件类
 
 组件类满足以下虚拟接口
 
 ```
-interface Component
+interface ComponentInterface
 {
     public $options;/* array() */;
     public static function G():this;
     public init(array $options, $contetxt=null):this;
 }
 ```
-
+为什么是虚拟接口？因为你不必 impelement .
 
 DuckPHP 的扩展都放在 DuckPHP\\Ext 命名空间里
 下面按字母顺序介绍这些扩展的作用

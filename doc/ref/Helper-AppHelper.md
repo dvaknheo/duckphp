@@ -30,21 +30,7 @@ public static function &GLOBALS($k, $v = null)
 public static function &STATICS($k, $v = null, $_level = 1)
 public static function &CLASS_STATICS($class_name, $var_name)
 ## 默认扩展的方法
-Import [DuckPhp\Ext\Misc::Import](Ext-Misc.md#Import)
 
-    // 导入文件
-DI
-
-    DuckPhp\Ext\Misc::DI
-RecordsetUrl
-    
-    DuckPhp\Ext\Misc::RecordsetUrl
-RecordsetH
-    
-    DuckPhp\Ext\Misc::RecordsetH
-CallAPI
-    
-    DuckPhp\Ext\Misc::CallAPI
 DB
     
     DuckPhp\Ext\DBManager::DB

@@ -1,6 +1,7 @@
 # 助手类
 **重要，本文对应用开发者很重要**
 
+[toc]
 ## 相关类
 - *[DuckPhp\Helper\HelperTrait](ref/Helper-HelperTrait.md)*  助手类公共 Trait。其他助手类都实现这里的方法。
 - [DuckPhp\Helper\ViewHelper](ref/Helper-ViewHelper.md) 视图助手类
@@ -15,6 +16,7 @@
 
 ![arch_full.gv.svg](arch_full.gv.svg)
 文字版
+
 ```text
            /-> View-->ViewHelper
 Controller --> Service ------------------------------ ---> Model
@@ -42,15 +44,34 @@ Controller --> Service ------------------------------ ---> Model
 工程的命名空间 MY 是 可调的。比如调整成 MyProject ,TheBigOneProject  等。
 参见 $options['namespace'];
 
-`AppHelper`  类并没出现在上图， AppHelper 类 的存在意义是什么呢？ 答案是用于 App 类的 助手函数参考， 当你要从 App 类里找出复杂的助手类，还不如在 AppHelper 里找。
+## 小问答
 
 问：为什么这个方法在助手类的声明里查不到?
 
 答：查看相应助手类方法 GetExtendStaticMethodList() ，因为 \_\_callStatic($name, $arguments) 已经被接管。在里面实现。
 
+问：为什么我的结果和这里的结果不同？
+
+答：`核心程序员`可以修改所有方法的实现。
+
+问：为什么有些方法是大写开始，有些方法是小写开始。
+
+答：大写开始的方法是常用方法，小写开始的方法是不常用方法。高级来说，大写开始方法对应一个静态函数。小写方法是对应动态函数。但是他们都可以更改实现。
+
+问：上面怎么没有 `AppHelper` 类
+
+答：`AppHelper` 助手类只由核心程序员来调用 。当你要从 App 类里找出复杂的助手类，还不如在 AppHelper 里找。Session 管理就用到了 AppHelper 类。
+
+
+
 ## 助手类的公用静态方法
 
+所有助手类都有的静态方法。
+
+
+
 ThrowOn($flag,$messsage,$code=0,$exception_class=null)
+
     抛异常 如果 flag 成立，抛出 $exception_class(默认为 \Exception 类);
 GetExtendStaticStaticMethodList()
 
@@ -93,7 +114,7 @@ CallExtendStaticMethod($name, $arguments)
 
 ## ViewHelper 视图助手类
 
-本页面展示 ViewHelper 方法。 ViewHelper 是在View 里使用。 ViewHelper 默认的方法在 ControllerHelper 里都有。 但是 ViewHelper 不是作为 ControllerHelper 的子集。 
+本页面展示 ViewHelper 方法。 ViewHelper 是在View 里使用。 ViewHelper 默认的方法在 ControllerHelper 里都有。 但是 ViewHelper 不是 ControllerHelper 的子集。 
 H($str)
 
 	HTML 编码
@@ -153,6 +174,7 @@ DB_R()
 ### 显示相关
 
 H
+
     【显示相关】见 ViewHelper 的 H 介绍
 L
 
@@ -177,6 +199,8 @@ LoadConfig
 
     【配置相关】见 ServiceHelper 的 LoadConfig 介绍
 ### 跳转相关
+ExitRedirect 不能跳转到外站，要用 ExitRedirectOutside
+
 ExitRedirect($url, $exit = true)
 
     【跳转】跳转到站内URL ，$exit 为 true 则附加 exit()
@@ -185,23 +209,24 @@ ExitRedirectOutside($url, $exit = true)
     【跳转】跳转到站外URL, $exit 为 true 则附加 exit()
 ExitRouteTo($url, $exit = true)
 
-    【跳转】跳转到相对 url , $exit 为 true 则附 exit
+    【跳转】跳转到相对 url , $exit 为 true 则附加 exit()
 Exit404($exit = true)
 
     【跳转】报 404，显示后续页面，$exit 为 true 则附加 exit()
 ExitJson($ret, $exit = true)
 
     【跳转】输出 json 结果，$exit 为 true 则附加 exit()
-getRouteCallingMethod()
 ### 路由相关
-    【路由相关】获得当前的路由调用方法，用于权限判断等
 setRouteCallingMethod
 
     【路由相关】设置当前的路由调用方法，用于跨方法调用时候 view 修正
+getRouteCallingMethod
+
+    【路由相关】获得当前的路由调用方法，用于权限判断等
 getPathInfo()
 
     【路由相关】获得当前的 PATH_INFO
-getParameters()
+getParameters(): array
 
     【路由相关】获得路由重写相关的数据
 ### 内容处理
@@ -214,17 +239,17 @@ setViewWrapper($head_file = null, $foot_file = null)
 assignViewData($key, $value = null)
 
     【内容处理】分配视图变量，另一版本为 assignViewData($assoc);
-Pager()
-    【内容处理】获得分页器对象, 分页器参考 DuckPhp\Ext\Pager。 DuckPHP 只是做了最小的分页器
 ### 异常处理
 assignExceptionHandler
 
     【异常处理】分配异常句柄
 setMultiExceptionHandler
+
     【异常处理】设置多个异常处理
 setDefaultExceptionHandler
+
     【异常处理】设置异常的默认处理
-系统替代
+### 系统替代
 header
 
     【系统替代】 header 函数以兼容命令行模式
@@ -235,123 +260,109 @@ exit
 
     【系统替代】 退出函数，以便于接管
 SG
+
     【swoole 兼容】 SG()-> 前缀替代 超全局变量做 swoole 兼容， 如 C::SG()->_GET[] , C::SG()->_POST[] 等。
+### 输入相关
+替代同名 GET / POST /REQUEST /COOKIE 。如果没的话返回 后面的默认值。
+注意没有 \_SESSION ，这是故意设计成这样的，不希望 \_SESSION 到处飞，\ _SESSION 应该集中于 SessionService 或 SessionLib 里。
 
+ENV 也是不希望人用所以没有， SERVER 的话。
 
+GET($key, $default = null)
+
+    对应 _GET， $_GET[$key] 不存在则返回 $default;
+POST($key, $default = null)
+
+    对应 _POST， $_POST[$key] 不存在则返回 $default;
+REQUEST($key, $default = null)
+
+    对应 _REQUEST， $_REQUEST[$key] 不存在则返回 $default;
+COOKIE($key, $default = null)
+
+    对应 _GET， $_GET[$key] 不存在则返回 $default;
+### 分页
+
+Pager()
+
+    获得分页器对象, 分页器参考 DuckPhp\Ext\Pager。 DuckPHP 只是做了最小的分页器
+PageNo()
+
+    当前页码
+PageSize($new_value = null)
+
+    当前每页数据条目， 留空为读，有数字则写。
+PageHtml($total)
+
+    获得分页结果 HTML
 
 ## AppHelper
 
 应用 助手的方法
-```
+### 系统替代
+AppHelper 的系统替代更全面，包括 session 族函数
 
+header
 
-    public static function SG()
-    {
-        return App::SG();
-    }
-    public static function GET($key, $default = null)
-    {
-        return static::SG()->_GET[$key] ?? $default;
-    }
-    public static function POST($key, $default = null)
-    {
-        return static::SG()->_POST[$key] ?? $default;
-    }
-    public static function REQUEST($key, $default = null)
-    {
-        return static::SG()->_REQUEST[$key] ?? $default;
-    }
-    public static function COOKIE($key, $default = null)
-    {
-        return static::SG()->_COOKIE[$key] ?? $default;
-    }
-    ////
-    public static function Pager($object = null)
-    {
-        return App::Pager($object);
-    }
-    public static function PageNo()
-    {
-        return App::PageNo();
-    }
-    public static function PageSize($new_value = null)
-    {
-        return App::PageSize($new_value);
-    }
-    public static function PageHtml($total)
-    {
-        return  App::PageHtml($total);
-    }
-    
-public static function OnException($ex)
-{
-    return App::OnException($ex);
-}
-public static function IsRunning()
-{
-    return App::IsRunning();
-}
-public static function InException()
-{
-    return App::InException();
-}
+    【系统替代】 header 函数以兼容命令行模式
+setcookie()
 
-public static function assignPathNamespace($path, $namespace = null)
-{
-    return App::assignPathNamespace($path, $namespace);
-}
-public static function addRouteHook($hook, $position, $once = true)
-{
-    return App::addRouteHook($hook, $position, $once);
-}
-public static function setUrlHandler($callback)
-{
-    return App::setUrlHandler($callback);
-}
-//
-public static function set_exception_handler(callable $exception_handler)
-{
-    return App::set_exception_handler($exception_handler);
-}
-public static function register_shutdown_function(callable $callback, ...$args)
-{
-    return App::register_shutdown_function($callback, ...$args);
-}
-public static function session_start(array $options = [])
-{
-    return App::session_start($options);
-}
-public static function session_id($session_id = null)
-{
-    return App::session_id($session_id);
-}
-public static function session_destroy()
-{
-    return App::session_destroy();
-}
-public static function session_set_save_handler(\SessionHandlerInterface $handler)
-{
-    return App::session_set_save_handler($handler);
-}
-public static function &GLOBALS($k, $v = null)
-{
-    return App::GLOBALS($k, $v);
-}
-public static function &STATICS($k, $v = null, $_level = 1)
-{
-    return App::STATICS($k, $v, $_level + 1);
-}
-public static function &CLASS_STATICS($class_name, $var_name)
-{
-    return App::CLASS_STATICS($class_name, $var_name);
-}
-```
+    【系统替代】 setcookie 函数以兼容命令行模式
+exit
 
-## 高级
+    【系统替代】 退出函数，以便于接管
+set_exception_handler(callable $exception_handler)
+
+    【系统替代】 用于 swoole 中特殊用处
+register_shutdown_function(callable $callback, ...$args)
+
+    【系统替代】 用于 swoole 中特殊用处
+session_start(array $options = [])
+
+    【系统替代】
+session_id($session_id = null)
+    【系统替代】
+session_destroy()
+
+    【系统替代】
+session_set_save_handler(\SessionHandlerInterface $handler)
+
+    【系统替代】
+### 常用操作
+
+IsRunning()
+
+    判断是否在运行状态
+InException()
+
+    判断是否在异常中
+addRouteHook($hook, $position, $once = true)
+
+    给路由添加钩子，见相关文档
+setUrlHandler($callback)
+
+    实现自己的 URL 函数
+assignPathNamespace($path, $namespace = null)
+
+    自动载入
+OnException($ex)
+
+    调用异常处理，一般也不用，而是看异常处理那章
+### Swoole 兼容
+
+这是 Swoole 开发才会用到的方法。这里暂时不解释
+
+&GLOBALS($k, $v = null)
+
+    替换全局变量
+&STATICS($k, $v = null, $_level = 1)
+
+    替换静态变量
+&CLASS_STATICS($class_name, $var_name)
+
+    替换类内静态变量
+## 高级话题：添加或修改助手类的方法 
 
 扩展 助手类。 最直接的方式就是  添加静态方法。
-
-
 
 一般工程，都会重写自己的助手类，而不是直接使用 DuckPhp 的助手类。
 类似 自己对 ModelHelper 扩展:
@@ -368,3 +379,6 @@ class ModelHelper extends Helper
 }
 
 ```
+如果你要修改相关实现，了解 DuckPHP 系统架构后后 参考 [DuckPhp\Core\App](ref/Core-App.md)
+如果你自己添加了 Ext 扩展类，那么你需要extendsXXX 方法注入相关 Helper
+如果你只是替换系统的实现， 找出那些 Helper 的实现函数，替换之。
