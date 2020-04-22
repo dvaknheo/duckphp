@@ -24,7 +24,7 @@ class App extends Core_App
             
             'ext' => [
                 // No Use 'DuckPhp\Ext\PluginForSwooleHttpd' => true,
-                'DuckPhp\Ext\Misc' => true,
+                // 'DuckPhp\Ext\Misc' => true,
                 'DuckPhp\Ext\SimpleLogger' => true,
                 'DuckPhp\Ext\DBManager' => true,
                 'DuckPhp\Ext\RouteHookRewrite' => true,
