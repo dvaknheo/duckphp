@@ -2,16 +2,10 @@
 [toc]
 ## 相关类
 
-ThrowOn
+ThrowOn , ExceptionManager
 
 
 ## 相关配置
-'handle_all_dev_error' => true,
-
-	接管调试错误
-'handle_all_exception' => true,
-
-	接管所有异常管理
 
 'error_404' => null,          //'_sys/error-404',
 
@@ -22,12 +16,18 @@ ThrowOn
 'error_debug' => null,        //'_sys/error-debug',
 
 	调试视图/闭包
+
+以下是高级的选项。
+
 'skip_exception_check'=>false,
 
 	运行阶段，跳过异常检查抛出给上层
+'handle_all_dev_error' => true,
 
-----
+	接管调试错误
+'handle_all_exception' => true,
 
+	接管所有异常管理
 
 ## 基本的异常处理
 

@@ -1,35 +1,85 @@
 # 路由
+[toc]
 ## 相关类
 
-**[Core\Route](ref/Core-Route.md)**
+**[Core\\Route](ref/Core-Route.md)**
 
-[Ext\RouteHookRewrite](ref/Ext-RouteHookRewrite.md)
+[Ext\\RouteHookRewrite](ref/Ext-RouteHookRewrite.md)
 
-[Ext\RouteHookRouteMap](ref/Ext-RouteHookRouteMap.md)
+[Ext\\RouteHookRouteMap](ref/Ext-RouteHookRouteMap.md)
 
-*[Ext\RouteHookOneFileMode](ref/Ext-RouteHookOneFileMode.md)*
+*[Ext\\RouteHookOneFileMode](ref/Ext-RouteHookOneFileMode.md)*
 
-*[Ext\RouteHookDirectoryMode](ref/RouteHookDirectoryMode.md)*
+*[Ext\\RouteHookDirectoryMode](ref/RouteHookDirectoryMode.md)*
+## 相关选项
+'namespace' => 'MY',
+
+	默认的命名空间
+'namespace_controller' => 'Controller',
+
+	控制器命名空间
+'controller_base_class' => null,
+
+	控制器基类
+'controller_welcome_class' => 'Main',
+
+	控制器欢迎类
+'controller_hide_boot_class' => false,
+
+	隐藏默认的路径
+'controller_methtod_for_miss' => '_missing',
+
+	控制器丢失方法
+'controller_prefix_post' => 'do_',
+
+	POST 方法前缀
+'controller_postfix' => '',
+
+	控制器方法后缀
+
+'route_map'
+'route_map_important'
 
 ## 开始
 
-路由的流程在 DuckPhp\Core\Route 类里
-run() 方法。
+###  文件型路由
+
+DuckPHP 很传统。
+路由的流程在 DuckPhp\Core\Route 类里run() 方法。
+
+限定的类是在  namespace namespace_controller
+
+根目录的路由会使用 Main 来代替。
+
+为了把 post 和 get 区分， 我们有了 controller_prefix_post 。如果没有 相关方法存在也是没问题的。 这个技巧用于很多需要的情况
+
+
+### 路由钩子
+路由钩子，是在路由运行前后执行的一组钩子。通过
+
+addRouteHook($callback, $position, $once = true)
+添加
+$once 是表示同类型钩子，只有一个同名 callback 就够了
+
+position 一共有4个位置
+    const HOOK_PREPEND_OUTTER = 'prepend-outter';
+    const HOOK_PREPEND_INNER = 'prepend-inner';
+    const HOOK_APPPEND_INNER = 'append-inner';
+    const HOOK_APPPEND_OUTTER = 'append-outter';
 
 
 duckphp 默认加载了 routemap 和 routerewrite 插件。
 
-路由钩子
 
-路由映射
+### 路由映射
 
-路由重写
+### 路由重写
 
-自定义路由
+### 自定义路由
 
-单一文件模式的路由
+### 单一文件模式的路由
 
-文件模式的路由
+### 目录模式的路由
 
 
 用 C::getParameters() 获取切片，对地址重写有效。
