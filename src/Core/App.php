@@ -515,6 +515,29 @@ trait Core_Helper
         $ret = $scheme.':/'.'/'.$host.$port;
         return $ret;
     }
+    
+    public static function SQLForPage($sql, $pageNo, $pageSize)
+    {
+        return static::G()->_SQLForPage($sql, $pageNo, $pageSize);
+    }
+    public static function SqlForCountSimply($sql)
+    {
+        return static::G()->_SqlForCountSimply($sql);
+    }
+    public function _SqlForPage($sql, $pageNo, $pageSize)
+    {
+        $pageSize=(int)$pageSize;
+        $start = ($pageNo-1)*$pageSize;
+        $start=(int)$start;
+        $sql.=" LIMIT $start,$pageSize";
+        return $sql;
+    }
+    public function _SqlForCountSimply($sql)
+    {
+        $sql=preg_replace('/^\s*select(.*?)\sfrom\s/is',function($m){return 'SELECT COUNT(*) as c FROM ';},$sql);
+        return $sql;
+    }
+    
     public static function Logger($object = null)
     {
         return Logger::G($object);

@@ -123,7 +123,10 @@ Kernel 这个 Trait 不直接处理，一般直接用的是 Core\App ， 而直�
 
 ### 流程说明
 Kernel 大致分为两个阶段
+
 init() 初始化阶段，和 run 阶段
+
+
 
 run 阶段，通过 PluginForSwoole 插件,调用 replaceDefaultRunHandler 修改默认流程
 
