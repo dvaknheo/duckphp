@@ -9,6 +9,6 @@ interface ComponentInterface
 {
     //public $options; /* array() */;
     public static function G();
-    public function init(array $options, $contetxt=null);/*return this */
+    public function init(array $options, $contetxt = null);/*return this */
     //public function isInited():bool;
 }

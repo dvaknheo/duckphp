@@ -37,9 +37,18 @@ class View
         }
         return $this;
     }
+    public static function Show($data = [], $view)
+    {
+        return static::G()->_Show($data, $view);
+    }
+    public static function Display($view, $data = null)
+    {
+        return static::G()->_Display($view, $data);
+    }
+    
     public function _Show($data = [], $view)
     {
-        if ($this->options['skip_view_notice_error']??false) {
+        if ($this->options['skip_view_notice_error'] ?? false) {
             $this->error_reporting_old = error_reporting();
             error_reporting($this->error_reporting_old & ~E_NOTICE);
         }
@@ -62,12 +71,12 @@ class View
         if ($this->foot_file) {
             include $this->foot_file;
         }
-        if ($this->options['skip_view_notice_error']??false) {
+        if ($this->options['skip_view_notice_error'] ?? false) {
             $this->error_reporting_old = error_reporting();
             error_reporting($this->error_reporting_old & ~E_NOTICE);
         }
     }
-    public function _ShowBlock($view, $data = null)
+    public function _Display($view, $data = null)
     {
         $this->view_file = $this->getViewFile($this->path, $view);
         $this->data = isset($data)?$data:$this->data;

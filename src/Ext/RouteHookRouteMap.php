@@ -87,8 +87,8 @@ class RouteHookRouteMap
     protected function matchRoute($pattern_url, $path_info, &$parameters)
     {
         $firstWord = substr($pattern_url, 0, 1);
-        if ($firstWord === '~') {
-            $flag = preg_match($pattern_url.'~x', $path_info, $m);
+        if ($firstWord === '^') {
+            $flag = preg_match('~'.$pattern_url.'$~x', $path_info, $m);
             if (!$flag) {
                 return false;
             }

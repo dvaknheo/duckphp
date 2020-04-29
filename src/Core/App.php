@@ -163,8 +163,15 @@ trait Core_Handler
     
     public function _OnDefaultException($ex): void
     {
-        if (method_exists($ex,'handle')) {
-            $ex->handle($ex);
+        if ($this->options['log_error']) {
+            try{
+                static::Logger()->error('['.get_class($ex).']('.$ex->getMessage().')'.$ex->getMessage());
+            } catch(\Throwable $ex) {
+                //do nothing
+            }
+        }
+        if (method_exists($ex, 'display')) {
+            $ex->display($ex);
             $this->clear();
             return;
         }
@@ -179,6 +186,8 @@ trait Core_Handler
         $data['message'] = $ex->getMessage();
         $data['code'] = $ex->getCode();
         $data['trace'] = $ex->getTraceAsString();
+        $data['file'] = $ex->getFile();
+        $data['line'] = $ex->getLine();
         
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)($ex);
@@ -191,6 +200,7 @@ trait Core_Handler
             
             if ($data['is_debug']) {
                 echo "<h3>{$data['class']}({$data['code']}):{$data['message']}</h3>";
+                echo "<div>{$data['file']} : {$data['line']}</div>";
                 echo "\n<pre>Debug On\n\n";
                 echo $data['trace'];
                 echo "\n</pre>\n";
@@ -249,7 +259,7 @@ trait Core_Handler
 EOT;
             return;
         }
-        View::G()->_ShowBlock($error_view, $data);
+        View::G()->_Display($error_view, $data);
     }
 }
 
@@ -516,7 +526,7 @@ trait Core_Helper
         return $ret;
     }
     
-    public static function SQLForPage($sql, $pageNo, $pageSize)
+    public static function SQLForPage($sql, $pageNo, $pageSize = 10)
     {
         return static::G()->_SQLForPage($sql, $pageNo, $pageSize);
     }
@@ -524,17 +534,19 @@ trait Core_Helper
     {
         return static::G()->_SqlForCountSimply($sql);
     }
-    public function _SqlForPage($sql, $pageNo, $pageSize)
+    public function _SqlForPage($sql, $pageNo, $pageSize = 10)
     {
-        $pageSize=(int)$pageSize;
-        $start = ($pageNo-1)*$pageSize;
-        $start=(int)$start;
-        $sql.=" LIMIT $start,$pageSize";
+        $pageSize = (int)$pageSize;
+        $start = ((int)$pageNo - 1) * $pageSize;
+        $start = (int)$start;
+        $sql .= " LIMIT $start,$pageSize";
         return $sql;
     }
     public function _SqlForCountSimply($sql)
     {
-        $sql=preg_replace('/^\s*select(.*?)\sfrom\s/is',function($m){return 'SELECT COUNT(*) as c FROM ';},$sql);
+        $sql = preg_replace_callback('/^\s*select\s(.*?)\sfrom\s/is', function ($m) {
+            return 'SELECT COUNT(*) as c FROM ';
+        }, $sql);
         return $sql;
     }
     
@@ -584,9 +596,9 @@ trait Core_Glue
     }
     // view static
 
-    public static function ShowBlock($view, $data = null)
+    public static function Display($view, $data = null)
     {
-        return View::G()->_ShowBlock($view, $data);
+        return View::G()->_Display($view, $data);
     }
     // config static
     public static function Setting($key)

@@ -62,9 +62,6 @@ class App extends Core_App
         if (!empty($this->options['log_sql'])) {
             $this->options['db_before_query_handler'] = $this->options['db_before_query_handler'] ?? [static::class, 'OnQuery'];
         }
-        if ($this->options['use_short_functions']) {
-            require_once __DIR__.'/Ext/ShortFunctions.php';
-        }
         return $ret;
     }
     public function _Pager($object = null)

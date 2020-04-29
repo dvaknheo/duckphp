@@ -38,12 +38,9 @@ class Pager
     ////////////////////////
     public function init(array $options, object $context = null)
     {
-        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
-        
+        $this->options = array_replace_recursive($this->options, $options) ?? [];
         $this->context_class = isset($context)?get_class($context):null;
-        
         $this->url = $this->options['url'] ?? static::SG()->_SERVER['REQUEST_URI'];
-        
         $this->options['current'] = $this->current();
         /////
     }

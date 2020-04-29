@@ -10,4 +10,4 @@ parameters:
 
     # Prevents scanning given folders/files
     excludes_analyse:
-        - src/Ext/ShortFunctions.php
+        - src/Core/ShortFunctions.php

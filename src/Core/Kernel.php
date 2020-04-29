@@ -38,6 +38,10 @@ trait Kernel
             
             'use_flag_by_setting' => true,
             'use_super_global' => false,
+            'use_short_functions'=>false,
+            
+            'log_error'=>true,
+            
             'skip_404_handler' => false,
             'skip_plugin_mode_check' => false,
             'skip_exception_check' => false,
@@ -173,6 +177,9 @@ trait Kernel
     //for override
     protected function onInit()
     {
+        if ($this->options['use_short_functions']) {
+            require_once __DIR__.'/Functions.php';
+        }
         Configer::G()->init($this->options, $this);
         $this->reloadFlags();
         

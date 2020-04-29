@@ -44,7 +44,7 @@ class AppHelper
     }
     public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
     {
-        return App::setcookie($key, $value,  $expire, $path, $domain,$secure, $httponly);
+        return App::setcookie($key, $value, $expire, $path, $domain, $secure, $httponly);
     }
     public static function exit($code = 0)
     {
