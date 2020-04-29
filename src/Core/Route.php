@@ -100,7 +100,7 @@ class Route
             $basepath = '/';
         }
         if ('' === $url) {
-            return $basepath.'/';
+            return $basepath;
         }
         if (isset($url) && '?' === substr($url, 0, 1)) {
             $path_info = $this->path_info;

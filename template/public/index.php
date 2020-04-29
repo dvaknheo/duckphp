@@ -125,3 +125,4 @@ echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKP
 
 \DuckPhp\App::RunQuickly($options, function () {
 });
+var_dump(\DuckPhp\App::URL(''));

@@ -174,4 +174,6 @@ namespace {
     
     \DuckPhp\App::RunQuickly($options, function () {
     });
+    var_dump(\DuckPhp\App::URL('/'));
+
 } // end namespace
