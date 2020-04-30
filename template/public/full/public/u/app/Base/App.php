@@ -9,7 +9,7 @@ use DuckPhp\App as DuckPhp_App;
 
 class App extends DuckPhp_App
 {
-    protected $componentClassMap = [
+    public $componentClassMap = [
             'M' => 'ModelHelper',
             'V' => 'ViewHelper',
             'C' => 'ControllerHelper',
@@ -20,6 +20,7 @@ class App extends DuckPhp_App
         $this->options['rewrite_map']['~article/(\d+)/?(\d+)?'] = 'article?id=$1&page=$2';
         
         $this->options['ext']['UserSystemDemo\Base\App'] = true;
+        $this->options['ext']['DuckPhp\\Ext\\Misc'] = true;
         
         $path = realpath($this->options['path'].'../../auth/');
         $this->assignPathNamespace($path, 'UserSystemDemo');
