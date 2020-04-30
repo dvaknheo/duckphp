@@ -64,7 +64,6 @@ class MyCodeCoverage
         foreach ($files as $file) {
             $coverage->merge(static::include_file($file));
         }
-        $coverage->filter()->removeDirectoryFromWhitelist($path.'/SwooleHttpd');
         $writer = new \SebastianBergmann\CodeCoverage\Report\Html\Facade;
         $writer->process($coverage, __DIR__ . '/test_reports');
     }
@@ -92,13 +91,21 @@ class MyCodeCoverage
         $ref=new ReflectionClass($class);
         return $ref->getFileName();
     }
-    public function begin($class, $name='T',$extPath=null)
+    protected $extFile=null;
+    public function prepareAttachFile($extFile)
+    {
+        $this->extFile=$extFile;
+    }
+    public function begin($class, $name='')
     {
         $this->test_class=$class;
         $this->coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage();
         $this->setPath($this->classToPath($class));
-        if($extPath){
-            $this->coverage->filter()->addFileToWhitelist($extPath);
+        if($this->extFile){
+            $this->coverage->filter()->addFileToWhitelist($this->extFile);
+        }
+        if(!$name){
+            $name=$class;
         }
         $this->coverage->start($name);
     }
@@ -166,10 +173,6 @@ class TestFileGenerator
         $files = \iterator_to_array($iterator, false);
         foreach ($files as $file) {
             $short_file=substr($file, strlen($source));
-            if (substr($short_file, 0, strlen('SwooleHttpd'))==='SwooleHttpd') {
-                continue;
-            }
-            
             static::MakeDir($short_file, $dest);
             
             $data =static::MakeTest($file, $short_file);
