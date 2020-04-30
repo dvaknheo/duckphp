@@ -12,9 +12,9 @@ class ModelHelper
 {
     use HelperTrait;
     
-    public static function SQLForPage($sql, $pageNo, $pageSize = 10)
+    public static function SqlForPager($sql, $pageNo, $pageSize = 10)
     {
-        return App::SQLForPage($sql, $pageNo, $pageSize);
+        return App::SqlForPager($sql, $pageNo, $pageSize);
     }
     public static function SqlForCountSimply($sql)
     {

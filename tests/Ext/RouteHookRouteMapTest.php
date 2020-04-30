@@ -30,7 +30,7 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
         
         RouteHookRouteMap::G()->init($options, Route::G());
         
-        RouteHookRouteMap::G()->assignRoute('~second(/(?<id>\d+))?',RouteHookRouteMapTest_FakeObject::class.'@'.'second');
+        RouteHookRouteMap::G()->assignRoute('^second(/(?<id>\d+))?',RouteHookRouteMapTest_FakeObject::class.'@'.'second');
         RouteHookRouteMap::G()->assignRoute(['/third*'=>RouteHookRouteMapTest_FakeObject::class.'->'.'adjustCallbackArrow']);
         RouteHookRouteMap::G()->assignImportantRoute(['@posts/{post}/comments/{comment:\d+}'=>RouteHookRouteMapTest_FakeObject::class.'@foo']);
         RouteHookRouteMap::G()->assignImportantRoute('@posts/{post}/comments/{comment:\d+}',RouteHookRouteMapTest_FakeObject::class.'@foo');

@@ -163,12 +163,12 @@ trait Core_Handler
     
     public function _OnDefaultException($ex): void
     {
-        if ($this->options['log_error']) {
+        if ($this->options['log_errors']) {
             try {
                 static::Logger()->error('['.get_class($ex).']('.$ex->getMessage().')'.$ex->getMessage());
-            } catch (\Throwable $ex) {
+            } catch (\Throwable $ex) { // @codeCoverageIgnore
                 //do nothing
-            }
+            } // @codeCoverageIgnore
         }
         if (method_exists($ex, 'display')) {
             $ex->display($ex);
@@ -526,15 +526,15 @@ trait Core_Helper
         return $ret;
     }
     
-    public static function SQLForPage($sql, $pageNo, $pageSize = 10)
+    public static function SqlForPager($sql, $pageNo, $pageSize = 10)
     {
-        return static::G()->_SQLForPage($sql, $pageNo, $pageSize);
+        return static::G()->_SqlForPager($sql, $pageNo, $pageSize);
     }
     public static function SqlForCountSimply($sql)
     {
         return static::G()->_SqlForCountSimply($sql);
     }
-    public function _SqlForPage($sql, $pageNo, $pageSize = 10)
+    public function _SqlForPager($sql, $pageNo, $pageSize = 10)
     {
         $pageSize = (int)$pageSize;
         $start = ((int)$pageNo - 1) * $pageSize;

@@ -216,9 +216,8 @@ App::PageHtml(123);
             echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         });
         App::OnException(new \Exception("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",-1));
-        
-                App::OnException(new E("EXxxxxxxxxxxxxxx",-1));
-
+        App::OnException(new E("EXxxxxxxxxxxxxxx",-1));
+        App::OnException(new E2("EXxxxxxxxxxxxxxx",-1));
     }
     public function doHelper()
     {
@@ -252,6 +251,10 @@ App::PageHtml(123);
         App::trace_dump();
         App::var_dump("OK");
         App::G()->is_debug=$flag;
+        
+        $sql="Select * from users";
+        App::SqlForPager($sql,1,5);
+        App::SqlForCountSimply($sql);        
     }
     public function doGlue()
     {
@@ -429,6 +432,13 @@ class E extends \Exception
     public function handle($ex)
     {
         var_dump("Hit");
+    }
+}
+class E2 extends \Exception
+{
+    public function display($ex)
+    {
+        var_dump("Hit2");
     }
 }
 class AppTestApp extends App

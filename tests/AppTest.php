@@ -21,12 +21,14 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
 
         $this->doGlue();
         $path_lib=\GetClassTestPath(DuckPhp::class).'lib/';
+        $path_view=\GetClassTestPath(DuckPhp::class).'views/';
 
         $options=[
             'skip_setting_file'=>true,
             'path_lib'=>$path_lib,
             'log_sql'=>true,
             'use_short_functions'=>true,
+            'path_view'=>$path_view,
         ];
         DuckPhp::G()->init($options);
         DuckPhp::G()->system_wrapper_replace([
@@ -38,12 +40,12 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         
         DuckPhp::OnQuery("SQL ",1,2);
         ////
-        \e("<B>xx</B>");
-        try{
-            \view('test');
-        }catch(\Throwable $ex){
-            var_dump($ex);
-        }
+        \__h("test");
+        \__l("test");
+        \__hl("test");
+        \__url("test");
+        \__display("block",[]);
+        
         \MyCodeCoverage::G()->end(DuckPhp::class);
         $this->assertTrue(true);
 

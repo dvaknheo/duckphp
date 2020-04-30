@@ -102,10 +102,17 @@ echo "-------------------------------------\n";
             'override_class'=>'\\'.App::class,
             'path_view' => $path_app.'view/',
             'is_debug' => true,
+            'use_short_functions' => true,
+
         ];
         View::G(new View());
         Configer::G(new Configer());
         App::G(new App())->init($options);
+
+        App::G(new App())->init($options);
+        
+
+
 
         $this->do404();
         

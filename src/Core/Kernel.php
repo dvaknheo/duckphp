@@ -40,7 +40,7 @@ trait Kernel
             'use_super_global' => false,
             'use_short_functions' => false,
             
-            'log_error' => true,
+            'log_errors' => true,
             
             'skip_404_handler' => false,
             'skip_plugin_mode_check' => false,
