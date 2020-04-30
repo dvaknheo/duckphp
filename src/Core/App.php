@@ -12,7 +12,7 @@ use DuckPhp\Core\Kernel;
 
 use DuckPhp\Core\ThrowOn;
 use DuckPhp\Core\ExtendableStaticCallTrait;
-use DuckPhp\Core\SystemWrapper;
+use DuckPhp\Core\SystemWrapperTrait;
 
 use DuckPhp\Core\AutoLoader;
 use DuckPhp\Core\Configer;
@@ -33,7 +33,7 @@ class App
     use Kernel;
     use ThrowOn;
     use ExtendableStaticCallTrait;
-    use SystemWrapper;
+    use SystemWrapperTrait;
     
     //inner trait
     use Core_Handler;

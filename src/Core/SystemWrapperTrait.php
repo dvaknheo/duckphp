@@ -5,7 +5,7 @@
  */
 namespace DuckPhp\Core;
 
-trait SystemWrapper
+trait SystemWrapperTrait
 {
     // protected $system_handlers=[];
     public static function system_wrapper_replace(array $funcs)
