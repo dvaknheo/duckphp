@@ -17,8 +17,8 @@ class JsonRpcExt
         'jsonrpc_is_debug' => false,
         'jsonrpc_enable_autoload' => true,
         'jsonrpc_check_token_handler' => null,
-        'jsonrpc_interface' => '',//todo next version
-        'jsonrpc_namespace' => '',//todo next version
+        'jsonrpc_service_interface' => '',//todo next version
+        'jsonrpc_service_namespace' => '',//todo next version
     ];
     
     public $is_inited;

@@ -208,7 +208,8 @@ class Route
         if ($this->enable_default_callback) {
             $flag = $this->defaultRunRouteCallback($this->path_info);
             if ($flag) {
-                return $this->getRunResult();;
+                return $this->getRunResult();
+                ;
             }
         } else {
             $this->enable_default_callback = true;

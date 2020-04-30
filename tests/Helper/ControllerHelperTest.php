@@ -52,7 +52,7 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         ];
         \DuckPhp\Core\View::G()->init($options);
         ControllerHelper::Show(['A'=>'b'],"view");
-        ControllerHelper::ShowBlock("view",['A'=>'b']);
+        ControllerHelper::Display("view",['A'=>'b']);
         
         
         echo ControllerHelper::L("a{b}c",['b'=>'123']);

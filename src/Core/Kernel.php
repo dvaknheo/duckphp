@@ -38,9 +38,9 @@ trait Kernel
             
             'use_flag_by_setting' => true,
             'use_super_global' => false,
-            'use_short_functions'=>false,
+            'use_short_functions' => false,
             
-            'log_error'=>true,
+            'log_error' => true,
             
             'skip_404_handler' => false,
             'skip_plugin_mode_check' => false,

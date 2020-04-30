@@ -19,7 +19,7 @@ class ViewHelperTest extends \PHPUnit\Framework\TestCase
             'path_view'=>$path_view,
         ];
         \DuckPhp\Core\View::G()->init($options);
-        ViewHelper::ShowBlock("view",['A'=>'b']);
+        ViewHelper::Display("view",['A'=>'b']);
         
         
         echo ViewHelper::L("a{b}c",['b'=>'123']);

@@ -164,9 +164,9 @@ trait Core_Handler
     public function _OnDefaultException($ex): void
     {
         if ($this->options['log_error']) {
-            try{
+            try {
                 static::Logger()->error('['.get_class($ex).']('.$ex->getMessage().')'.$ex->getMessage());
-            } catch(\Throwable $ex) {
+            } catch (\Throwable $ex) {
                 //do nothing
             }
         }

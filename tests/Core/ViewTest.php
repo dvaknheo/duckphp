@@ -19,9 +19,9 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         View::G()->assignViewData('A','aa');
         View::G()->assignViewData(['B'=>'bb','C'=>'cc']);
 
-        View::G()->_Show(['D'=>'ddddddd'],"view");
+        View::Show(['D'=>'ddddddd'],"view");
         
-        View::G()->_ShowBlock("block",['A'=>'b']);
+        View::Display("block",['A'=>'b']);
 
         View::G()->setOverridePath($path_view.'overrided/');
         View::G()->setViewWrapper(null,null);
@@ -35,12 +35,5 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         
         \MyCodeCoverage::G()->end(View::class);
         $this->assertTrue(true);
-        /*
-        View::G()->_Show($data=[], $view);
-        View::G()->_ShowBlock($view, $data=null);
-
-        View::G()->setViewWrapper($head_file, $foot_file);
-        View::G()->assignViewData($key, $value=null);
-        //*/
     }
 }

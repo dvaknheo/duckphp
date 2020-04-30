@@ -20,7 +20,6 @@ class App extends Core_App
             // 'route_map' => [],
             'db_before_query_handler' => null,
             'log_sql' => false,
-            'use_short_functions' => false,
             
             'ext' => [
                 // No Use 'DuckPhp\Ext\PluginForSwooleHttpd' => true,

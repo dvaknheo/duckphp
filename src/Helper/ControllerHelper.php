@@ -37,9 +37,9 @@ class ControllerHelper
     {
         return App::HL($str, $args);
     }
-    public static function ShowBlock($view, $data = null)
+    public static function Display($view, $data = null)
     {
-        return App::ShowBlock($view, $data);
+        return App::Display($view, $data);
     }
     public static function URL($url)
     {
