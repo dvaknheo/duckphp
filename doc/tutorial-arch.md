@@ -28,7 +28,7 @@
            8. [ExceptionManager.php](ref/Core-ExceptionManager.md)  
            9. [RuntimeState.php](ref/Core-RuntimeState.md)
         2. [ExtendableStaticCallTrait.php](ref/Core-ExtendableStaticCallTrait.md) 注意这个 trait 也被 Helper使用
-        3. [SystemWrapper.php](ref/Core-SystemWrapper.md)
+        3. [SystemWrapperTrait.php](ref/Core-SystemWrapperTrait.md)
    3. **[AppPluginTrait.php](ref/Core-AppPluginTrait.md) **  这个Trait用于把独立工程 App 转成插件 
    4. **[HttpServer.php](ref/Core-HttpServer.md)** 单独的 Http 服务器
   
@@ -83,4 +83,4 @@ Ext 的虚线，表示的是默认未加载的扩展。
     ThrowOn  提供了 实用的 ThrowOn
     HookChain  提供 链式钩子。
     HttpServer 提供了 HttpServer 的实现。
-    SystemWrapper 用于 同名函数替代系统系统函数。 比如 header();
+    SystemWrapperTrait 用于 同名函数替代系统系统函数。 比如 header();

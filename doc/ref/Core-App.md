@@ -7,7 +7,7 @@
     + Trait [Core\Kernel](Core-Kernel.md)
     + Trait [Core\ThrowOn](Core-ThrowOn.md)
     + Trait [Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md)
-    + Trait [Core\SystemWrapper](Core-SystemWrapper.md)
+    + Trait [Core\SystemWrapperTrait](Core-SystemWrapperTrait.md)
 
 ## 选项
 使用 [Core\Kernel](Core-Kernel.md) 的默认选项。

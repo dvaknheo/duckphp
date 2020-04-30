@@ -33,7 +33,7 @@
 * [Core\RuntimeState](Core-RuntimeState.md) 运行状态保持的组件
 * [Core\SingletonEx](Core-SingletonEx.md) 可变单例Trait
 * [Core\SuperGlobal](Core-SuperGlobal.md) 超全局变量
-* [Core\SystemWrapper](Core-SystemWrapper.md) 全局函数替代
+* [Core\SystemWrapperTrait](Core-SystemWrapperTrait.md) 全局函数替代
 * [Core\ThrowOn](Core-ThrowOn.md) 可抛Trait
 * [Core\View](Core-View.md) 视图组件
 
@@ -93,7 +93,7 @@
            8. [ExceptionManager.php](Core-ExceptionManager.md)   异常管理类
            9. [RuntimeState.php](Core-RuntimeState.md) 运行期数据保存类
         2. [ExtendableStaticCallTrait.php](Core-ExtendableStaticCallTrait.md) 扩展静态调用的 trait 注意这个 trait 也被 Helper使用
-        3. [SystemWrapper.php](Core-SystemWrapper.md) 替换系统同名函数的 trait
+        3. [SystemWrapperTrait.php](Core-SystemWrapperTrait.md) 替换系统同名函数的 trait
    3. **[AppPluginTrait.php](Core-AppPluginTrait.md) **  这个Trait用于把独立工程 App 转成插件 
    4. **[HttpServer.php](Core-HttpServer.md)** 单独的 Http 服务器
   
@@ -148,7 +148,7 @@
 * [Core\RuntimeState](Core-RuntimeState.md) 
 * [Core\SingletonEx](Core-SingletonEx.md) 
 * [Core\SuperGlobal](Core-SuperGlobal.md) 
-* [Core\SystemWrapper](Core-SystemWrapper.md) 
+* [Core\SystemWrapperTrait](Core-SystemWrapperTrait.md) 
 * [Core\ThrowOn](Core-ThrowOn.md) 
 * [Core\View](Core-View.md) 
 * [DB\DB](DB-DB.md) 
