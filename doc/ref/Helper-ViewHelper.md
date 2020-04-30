@@ -14,7 +14,7 @@ public static function L($str, $args = [])
 多语言编码
 public static function HL($str, $args = [])
 多语言编码
-public static function ShowBlock($view, $data = null)
+public static function Display($view, $data = null)
 显示块
 public static function URL($url)
 获得 URL
@@ -55,13 +55,13 @@ public static function Domain()
 ## 详解
 
 
-为什么 ShowBlock 的 view 在前面， 而Show() 的 View 在后面？ 因为可省略啊。
+为什么 Display 的 view 在前面， 而Show() 的 View 在后面？ 因为可省略啊。
 为什么没有 Show() ? 避免在 View里调用啊。
 
 
     public static function H($str)
     public static function L($str, $args = [])
     public static function HL($str, $args = [])
-    public static function ShowBlock($view, $data = null)
+    public static function Display($view, $data = null)
     public static function URL($url)
     public static function Domain()

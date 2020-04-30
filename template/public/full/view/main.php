@@ -453,8 +453,8 @@ $options=[
 #9  DuckPhp\Core\App::RunQuickly()               [@DOCUMENT_ROOT/full/public/index.php:15]          // 快速运行
 </pre>
 </fieldset>
-<?php V::ShowBlock('inc-file');?>
-<?php V::ShowBlock('inc-superglobal');?>
+<?php V::Display('inc-file');?>
+<?php V::Display('inc-superglobal');?>
 </fieldset>
 <pre>
 .........~+=+++=++......................

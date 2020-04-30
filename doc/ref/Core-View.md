@@ -23,7 +23,7 @@ public function init(array $options, object $context = null)
 public function _Show($data = [], $view)
 
     显示文件，包括页眉页脚
-public function _ShowBlock($view, $data = null)
+public function _Display($view, $data = null)
 
     显示文件，不包括页眉页脚
 public function setViewWrapper($head_file, $foot_file)

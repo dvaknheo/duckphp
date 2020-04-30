@@ -18,7 +18,7 @@ run
 <legend>显示</legend>
 <ul>
 <li><a href="#">Show</a>
-<li><a href="#">ShowBlock</a>
+<li><a href="#">Display</a>
 </ul>
 </fieldset>
 <fieldset>

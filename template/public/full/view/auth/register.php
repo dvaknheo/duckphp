@@ -28,4 +28,4 @@ V::startSection('content'); ?>
 
 </div>
 <?php V::stopSection(); ?>
-<?php V::ShowBlock('layouts/app');?>
+<?php V::Display('layouts/app');?>

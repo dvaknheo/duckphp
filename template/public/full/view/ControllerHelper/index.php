@@ -28,8 +28,8 @@ ContrlloerHelper 的方法很多很杂，但掌握了 ContrlloerHelper  方法�
     <dd>【显示相关】<a href="<?=V::URL('ViewHelper/index#HL')?>">见 ViewHelper 的 HL 介绍</a></dd>
     <dt><a href="#">URL</a></dt>
     <dd>【显示相关】<a href="<?=V::URL('ViewHelper/index#URL')?>">见 ViewHelper 的 URL 介绍</a></dd>
-    <dt><a href="#">ShowBlock</a></dt>
-    <dd>【显示相关】<a href="<?=V::URL('ViewHelper/index#ShowBlock')?>">见 ViewHelper 的 ShowBlock 介绍</a></dd>
+    <dt><a href="#">Display</a></dt>
+    <dd>【显示相关】<a href="<?=V::URL('ViewHelper/index#Display')?>">见 ViewHelper 的 Display 介绍</a></dd>
     
     <dt><a href="#">Setting</a></dt>
     <dd>【配置相关】<a href="<?=V::URL('ServiceHelper/index#Setting')?>">见 ServiceHelper 的 Setting 介绍</a></dd>

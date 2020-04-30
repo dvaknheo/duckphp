@@ -127,7 +127,7 @@ HL($str, $args=[])
 URL($url)
 
 	获得相对 url 地址
-ShowBlock($view, $data = null)
+Display($view, $data = null)
 
 	包含下一个 $view ， 如果 $data =null 则带入所有当前作用域的变量。 否则带入 $data 关联数组的内容
 
@@ -185,9 +185,9 @@ HL
 URL
 
     【显示相关】见 ViewHelper 的 URL 介绍
-ShowBlock
+Display
 
-    【显示相关】见 ViewHelper 的 ShowBlock 介绍
+    【显示相关】见 ViewHelper 的 Display 介绍
 ### 配置相关
 Setting
 

@@ -6,4 +6,4 @@ V::startSection('content'); ?>
 <a href="<?= V::URL('password')?>">修改密码</a><br>
 <a href="<?=$url_logout?>">登出</a><br>
 <?php V::stopSection(); ?>
-<?php V::ShowBlock('layouts/app');?>
+<?php V::Display('layouts/app');?>
