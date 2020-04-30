@@ -4,7 +4,7 @@
 官方QQ群: 714610448
 
 ##  教程
-[**快速入门**](doc/tutorial.md) ,快速入门页面。
+[**快速入门**](doc/tutorial-quickstart.md) ,快速入门页面。
 
 [**文档索引页**](doc/index.md) ,所有文档索引页面，所有文档的集合入口
 
