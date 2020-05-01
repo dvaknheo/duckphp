@@ -15,6 +15,7 @@
 - [接管实现](tutorial-override.md)
 - [扩展的使用和开发](tutorial-extension.md)
 - [系统自带例子分析](tutorial-sample.md)
+[参与开发相关](tutorial-support.md)
 [参考索引页面](ref/index.md)
 
 ## 参考
@@ -48,6 +49,4 @@ RouteHookOnFileMode
 
 StricCheck
 
-Lazybones
 
-[参与开发相关](tutorial-support.md)

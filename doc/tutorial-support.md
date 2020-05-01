@@ -38,3 +38,7 @@ tests/genref 可以生成 doc 文档。
 ```
 phpunit tests/genref.php
 ```
+svg 图形生成
+```
+dot duckphp.gv -T svg -O
+```

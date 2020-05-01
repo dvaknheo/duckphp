@@ -255,15 +255,15 @@
 <path fill="none" stroke="black" d="M521.717,-1222.45C535.594,-1252.44 571.708,-1321.58 623.843,-1357 630.353,-1361.42 637.538,-1365.12 645.004,-1368.21"/>
 <polygon fill="black" stroke="black" points="643.988,-1371.57 654.58,-1371.82 646.452,-1365.02 643.988,-1371.57"/>
 </g>
-<!-- Core_SystemWrapper -->
-<g id="node15" class="node"><title>Core_SystemWrapper</title>
-<ellipse fill="lightgrey" stroke="black" cx="729.784" cy="-1196" rx="68.4888" ry="18"/>
-<text text-anchor="middle" x="729.784" y="-1192.3" font-family="Times,serif" font-size="14.00">SystemWrapper</text>
+<!-- Core_SystemWrapperTrait -->
+<g id="node15" class="node"><title>Core_SystemWrapperTrait</title>
+<ellipse fill="lightgrey" stroke="black" cx="729.784" cy="-1196" rx="85.2851" ry="18"/>
+<text text-anchor="middle" x="729.784" y="-1192.3" font-family="Times,serif" font-size="14.00">SystemWrapperTrait</text>
 </g>
-<!-- Core_App&#45;&gt;Core_SystemWrapper -->
-<g id="edge13" class="edge"><title>Core_App&#45;&gt;Core_SystemWrapper</title>
-<path fill="none" stroke="black" d="M547.346,-1206.2C575.083,-1204.64 616.364,-1202.32 652.546,-1200.29"/>
-<polygon fill="black" stroke="black" points="652.813,-1203.78 662.601,-1199.72 652.42,-1196.79 652.813,-1203.78"/>
+<!-- Core_App&#45;&gt;Core_SystemWrapperTrait -->
+<g id="edge13" class="edge"><title>Core_App&#45;&gt;Core_SystemWrapperTrait</title>
+<path fill="none" stroke="black" d="M547.346,-1206.2C571.16,-1204.86 604.959,-1202.96 636.943,-1201.16"/>
+<polygon fill="black" stroke="black" points="637.46,-1204.64 647.248,-1200.59 637.067,-1197.65 637.46,-1204.64"/>
 </g>
 <!-- Core_HttpServer -->
 <g id="node16" class="node"><title>Core_HttpServer</title>
@@ -703,14 +703,13 @@
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M968.468,-265.095C988.18,-285.172 1019.37,-320.409 1035.71,-357 1123.27,-553.072 1136.65,-818.117 1138.66,-903.94"/>
 <polygon fill="black" stroke="black" points="1135.16,-904.244 1138.86,-914.172 1142.16,-904.104 1135.16,-904.244"/>
 </g>
-<!-- Lazybones -->
-<g id="node45" class="node"><title>Lazybones</title>
-<ellipse fill="none" stroke="black" cx="514.4" cy="-726" rx="48.9926" ry="18"/>
-<text text-anchor="middle" x="514.4" y="-722.3" font-family="Times,serif" font-size="14.00">Lazybones</text>
+<!-- _holder -->
+<g id="node45" class="node"><title>_holder</title>
+<ellipse fill="none" stroke="black" stroke-dasharray="1,5" cx="514.4" cy="-726" rx="27" ry="18"/>
 </g>
-<!-- Lazybones&#45;&gt;Core_SingletonEx -->
-<g id="edge74" class="edge"><title>Lazybones&#45;&gt;Core_SingletonEx</title>
-<path fill="none" stroke="black" stroke-dasharray="1,5" d="M528.634,-743.329C547.162,-766.159 583.163,-805.567 623.843,-824 791.707,-900.06 860.841,-813.83 1035.71,-872 1063.65,-881.294 1092.37,-898.736 1112.41,-912.429"/>
+<!-- _holder&#45;&gt;Core_SingletonEx -->
+<g id="edge74" class="edge"><title>_holder&#45;&gt;Core_SingletonEx</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M527.397,-741.799C545.528,-764.357 582.239,-805.149 623.843,-824 791.707,-900.06 860.841,-813.83 1035.71,-872 1063.65,-881.294 1092.37,-898.736 1112.41,-912.429"/>
 <polygon fill="black" stroke="black" points="1110.51,-915.366 1120.71,-918.222 1114.51,-909.627 1110.51,-915.366"/>
 </g>
 <!-- StrictModelTrait -->

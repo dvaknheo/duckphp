@@ -24,7 +24,7 @@ subgraph cluster_Core {
     Core_App -> Core_Kernel;
     Core_App -> Core_ThrowOn;
     Core_App -> Core_ExtendableStaticCallTrait;
-    Core_App -> Core_SystemWrapper;
+    Core_App -> Core_SystemWrapperTrait;
     
     Core_App -> Core_AutoLoader [style="dotted"];
     Core_App -> Core_Configer [style="dotted"];
@@ -65,7 +65,7 @@ subgraph cluster_Core {
     Core_Logger [label="Logger"];
     Core_Route [label="Route";shape=Mdiamond];
     Core_RuntimeState [label="RuntimeState"];
-    Core_SystemWrapper [label="SystemWrapper"];
+    Core_SystemWrapperTrait [label="SystemWrapperTrait"];
     
     Core_HttpServer [label="HttpServer"];
     Core_SuperGlobal [label="SuperGlobal"];
@@ -154,7 +154,8 @@ label = "[DuckPhp\\Ext]";
     FacadesAutoLoader -> Core_SingletonEx [style="dotted"];
     FacadesBase -> Core_SingletonEx [style="dotted"];
     
-    Lazybones -> Core_SingletonEx [style="dotted"];
+    _holder -> Core_SingletonEx [style="dotted"];
+    _holder[label="";style="dotted"];
     
     Pager -> Core_SingletonEx [style="dotted"]; 
     
