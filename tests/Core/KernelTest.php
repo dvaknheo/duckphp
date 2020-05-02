@@ -129,9 +129,9 @@ echo "-------------------------------------\n";
 
         ////
         RuntimeState::G()->toggleOutputed(false);
-        App::OnOutputBuffering('abc');
+        //App::OnOutputBuffering('abc');
         RuntimeState::G()->toggleOutputed(true);
-        App::OnOutputBuffering('def');
+        //App::OnOutputBuffering('def');
         ////
         
         

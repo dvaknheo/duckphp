@@ -116,7 +116,14 @@ class Route
         
         return $basepath.$url;
     }
-
+    public static function Parameter($key, $default = null)
+    {
+        return static::G()->_Parameter($key, $default);
+    }
+    public function _Parameter($key, $default = null)
+    {
+        return $this->parameters[$key] ?? $default;
+    }
     
     public function init(array $options, object $context = null)
     {
@@ -189,13 +196,13 @@ class Route
     }
     protected function beforeRun()
     {
+        $this->is_failed = false;
         if (!$this->has_bind_server_data) {
             $this->bindServerData($_SERVER);
         }
     }
     public function run()
     {
-        $this->is_failed = false;
         $this->beforeRun();
         
         foreach ($this->prependedCallbackList as $callback) {
@@ -207,7 +214,7 @@ class Route
         
         if ($this->enable_default_callback) {
             $flag = $this->defaultRunRouteCallback($this->path_info);
-            if ($flag && !$this->is_failed) {
+            if ($flag && (!$this->is_failed)) {
                 return $this->getRunResult();
             }
         } else {

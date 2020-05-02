@@ -278,6 +278,7 @@ App::PageHtml(123);
         App::URL($url=null);
         
         App::getParameters();
+        App::Parameter('x','y');
         App::getRouteCallingMethod();
         App::setRouteCallingMethod($method);
         App::setURLHandler(function($url){return $url;});
@@ -340,7 +341,7 @@ App::PageHtml(123);
         App::addRouteHook(function(){},'append-outter',true);
         
         
-        App::InException();
+        App::isInException();
         App::getPathInfo();
         
         

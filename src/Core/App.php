@@ -123,7 +123,7 @@ class App
         }
     }
     
-        public function addBeforeShowHandler($handler)
+    public function addBeforeShowHandler($handler)
     {
         $this->beforeShowHandlers[] = $handler;
     }
@@ -419,11 +419,6 @@ trait Core_Helper
         //you can override this;
         return $this->is_debug;
     }
-    ////
-    public static function Paramater($key, $default=null)
-    {
-        return static::G()->_Paramater($key, $default);
-    }
     public static function Show($data = [], $view = null)
     {
         return static::G()->_Show($data, $view);
@@ -469,11 +464,6 @@ trait Core_Helper
             ]);
         }
         return View::G()->_Show($data, $view);
-    }
-    public function _Paramater($key, $default=null)
-    {
-        return Route::G()->getParamaters()[$kery] ?? $default;
-        
     }
     public function _H(&$str)
     {
@@ -608,6 +598,10 @@ trait Core_Glue
     public static function URL($url = null)
     {
         return Route::G()->_URL($url);
+    }
+    public static function Parameter($key, $default = null)
+    {
+        return Route::G()->_Parameter($key, $default);
     }
     // view static
 

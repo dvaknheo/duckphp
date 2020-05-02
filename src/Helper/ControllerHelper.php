@@ -130,9 +130,9 @@ class ControllerHelper
     {
         return App::SG();
     }
-    public static function Paramter($key, $default = null)
+    public static function Parameter($key, $default = null)
     {
-        return App::Paramter($key,$default);
+        return App::Parameter($key, $default);
     }
     public static function GET($key, $default = null)
     {
@@ -157,7 +157,7 @@ class ControllerHelper
     }
     public static function PageNo($new_value = null)
     {
-        return App::PageNo($nwe_value);
+        return App::PageNo($new_value);
     }
     public static function PageSize($new_value = null)
     {

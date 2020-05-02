@@ -19,7 +19,7 @@ class Configer
         'setting_file' => 'setting',
         'skip_setting_file' => false,
         'skip_env_file' => true,
-        'config_ext_files'=>[],
+        'config_ext_files' => [],
     ];
     protected $base_path;
     protected $path;
@@ -85,18 +85,22 @@ class Configer
             return $this->all_config[$file_basename];
         }
         $full_file = $this->path.$file_basename.'.php';
-        if(isset($this->options['config_ext_files'][$file_basename]) && !is_file($full_file)) {
-            $full_file=$this->options['config_ext_files'][$file_basename];
+        if (isset($this->options['config_ext_files'][$file_basename]) && !is_file($full_file)) {
+            $full_file = $this->options['config_ext_files'][$file_basename];
             $config = $this->loadFile($full_file);
-        }else{
+        } else {
             $config = $this->loadFile($full_file);
         }
         $this->all_config[$file_basename] = $config;
         return $config;
     }
-    public function addExtConfigFile($name, $file)
+    public function assignExtConfigFile($key, $value = null)
     {
-        $this->options['config_ext_files'][$name]=$file;
+        if (is_array($key) && $value === null) {
+            $this->options['config_ext_files'] = array_merge($this->options['config_ext_files'], $key);
+        } else {
+            $this->options['config_ext_files'][$key] = $value;
+        }
     }
     protected function loadFile($file)
     {

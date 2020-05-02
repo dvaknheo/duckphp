@@ -17,7 +17,7 @@ class AppHelperTest extends \PHPUnit\Framework\TestCase
         AppHelper::OnException(new \Exception("333333",-1));
 
         AppHelper::IsRunning();
-        AppHelper::InException();
+        AppHelper::isInException();
 
         AppHelper::set_exception_handler(function($handler){
             return set_exception_handler($handler);

@@ -63,10 +63,8 @@ trait AppPluginTrait
             }
         }
     }
-    protected function pluginModeDefaultInit(array $options, object $context = null)
+    protected function pluginModeInitVars($context)
     {
-        $this->pluginModeInitOptions($options);
-        
         $this->plugin_context_class = get_class($context);
         $setting_file = $context->options['setting_file'] ?? 'setting';
         
@@ -76,18 +74,24 @@ trait AppPluginTrait
         if ($this->plugin_options['plugin_search_config']) {
             $this->plugin_options['plugin_files_config'] = $this->pluginModeSearchAllPluginFile($this->path_config_override, $setting_file);
         }
+    }
+    protected function pluginModeDefaultInit(array $options, object $context = null)
+    {
+        $this->pluginModeInitOptions($options);
+        $this->pluginModeInitVars($context);
         
+        $ext_config_files = [];
         foreach ($this->plugin_options['plugin_files_config'] as $name) {
             $file = $this->path_config_override.$name.'.php';
-            Configer::G()->addExtConfigFile($name, $file);
+            $ext_config_files[$name] = $file;
+        }
+        if (!empty($ext_config_files)) {
+            Configer::G()->assignExtConfigFile($ext_config_files);
         }
         Route::G()->addRouteHook([static::class,'PluginModeRouteHook'], $this->plugin_options['plugin_routehook_position']);
         return $this;
     }
-    protected function pluginModeIncludeConfigFile($file)
-    {
-        return include $file;
-    }
+
     protected function pluginModeSearchAllPluginFile($path, $setting_file = '')
     {
         $setting_file = !empty($setting_file)?$path.$setting_file.'.php':'';

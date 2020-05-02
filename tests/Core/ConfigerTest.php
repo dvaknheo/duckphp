@@ -28,8 +28,10 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
             'path_config'=>basename($path_config),
         ];
         Configer::G(new Configer)->init($options);
-        Configer::G()->prependConfig('XConfig',null);
-        Configer::G()->prependConfig('XConfig',['a'=>'b']);
+        
+        Configer::G()->assignExtConfigFile(['X/a'=>$path_config.'/for_assign.php']);
+        Configer::G()->assignExtConfigFile('b',$path_config.'/c.php');
+        Configer::G()->_LoadConfig('X/a');
         \MyCodeCoverage::G()->end(Configer::class);
         $this->assertTrue(true);
         /*
