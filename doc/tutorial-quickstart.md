@@ -223,6 +223,7 @@ array('t'=>3);
 异常处理，扩展 等高级内容
 
 
+--
 
 ##### "ext" 选项和扩展
 
@@ -316,42 +317,7 @@ extendComponents($class,$methods,$components);
     还有 +3 来自 ExtendableStaticCallTrait 方法。
     79 个方法。
 
-### 请求流程和生命周期
-DuckPHP\App::RunQuickly($options) 发生了什么
 
-DuckPHP\App::G()->init($options,$callback)->run();
-
-init 为初始化阶段 ，run 为运行阶段。$callback 在init() 之后执行（也是为了偷懒
-
-init 出事化阶段
-    处理是否是插件模式
-    处理自动加载  AutoLoader::G()->init($options, $this)->run();
-    处理异常管理 ExceptionManager::G()->init($exception_options, $this)->run();
-    如果有子类，切入子类继续 checkOverride() 
-    调整补齐选项 initOptions()
-    
-
-    * onInit()，可 override 处理这里了。
-    默认的 onInit
-        初始化 Configer
-        从 Configer 再设置 是否调试状态和平台 reloadFlags();
-        初始化 View
-        设置为已载入 View ，用于发生异常时候的显示。
-        初始化 Route
-        初始化扩展 initExtentions()
-    初始化阶段就结束了。
-
-run() 运行阶段
-
-    处理 addBeforeRunHandler() 引入的 beforeRunHandlers
-    * onRun ，可 override 处理这里了。
-    重制 RuntimeState 并设置为开始
-    绑定路由
-    ** 开始路由处理 Route::G()->run();
-    如果返回 404 则 On404() 处理 404
-    clear 清理
-        如果没显示，而且还有 beforeShowHandlers() 处理（用于处理 DB 关闭等
-        设置 RuntimeState 为结束
 
 ## 第三章 DuckPHP 核心开发和扩展参考
 

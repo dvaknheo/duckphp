@@ -115,9 +115,16 @@ Controller --> Service ------------------------------ ---> Model
 
 助手类教程在这里 [助手类教程](tutorial-helper.md)，基本上，看完助手类教程，`应用程序员`就可以开干了。
 
+如果你的项目使用内置数据库，或许你还要看  [数据库教程](tutorial-helper.md)
+
+此外有什么不了解的，问`核心程序员`吧。
+比如路由方面，常见是文件路由。 [路由教程](tutorial-route.md)
+
 ## 入口文件和选项
 
-我们看 Web 的入口文件 public/index.php
+### Web 的入口文件
+
+和很多 Web 框架一样，我们的工程是从 public/index.php 开始的
 
 ```php
 <?php declare(strict_types=1);
@@ -126,14 +133,15 @@ Controller --> Service ------------------------------ ---> Model
  * From this time, you never be alone~
  */
 require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
-$path = realpath(__DIR__.'/..');
-$namespace = rtrim('MY\\', '\\');                    // @DUCKPHP_NAMESPACE
+
 ////[[[[
 $options =
 array(
     // 省略一堆注释性配置
 );
 ////]]]]
+$path = realpath(__DIR__.'/..');
+$namespace = 'MY';                    // @DUCKPHP_NAMESPACE
 $options['path'] = $path;
 $options['namespace'] = $namespace;
 $options['error_404'] = '_sys/error_404';
@@ -148,55 +156,18 @@ echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKP
 \DuckPhp\App::RunQuickly($options, function () {
 });
 ```
-
-入口类前面部分是处理头文件的。
-然后处理直接 copy 代码提示，不要直接运行。
-起作用的主要就这句话
+入口类前面部分是处理头文件的。然后处理直接 copy 代码提示，不要直接运行。起作用的主要就这句话
 
 ```php
 \DuckPHP\App::RunQuickly($options, function () {
 });
 ```
-相当于 \DuckPHP\App::G()->init($options)->run(); 第二个参数的回调用于 init 之后执行。
+RunQuickly 相当于 \DuckPHP\App::G()->init($options,function(){})->run(); 
+\DuckPHP\App::G()->init($options,function(){})； 会执行根据配置，返回  MY\Base\App
 
-init, run 分两步走的模式。
+### 工程入口文件
 
-最后留了 dump 选项的语句。
-
-注意到  // @ 的注释，这些特殊注解，他们用于安装脚本。共有4个注解
-
-+ // @DUCKPHP_DELETE 模板引入后删除
-+ // @DUCKPHP_HEADFILE 头文件调整
-+ // @DUCKPHP_NAMESPACE 调整命名空间
-+ // @DUCKPHP_KEEP_IN_FULL 在view  里，如果是 --full 选项则保留。
-
-我们引用代码的时候，省略了一堆注释，这些注释，就是选项
-
-专门有个章节说明这些选项开关的使用方法。 请阅读
-
-DuckPHP 只要更改选项就能实现很多强大的功能变化。
-如果这些选项都不能满足你，那就启用扩展吧，这样有更多的选项能用，
-如果连这都不行，那么，就自己写扩展吧。
-
-### 使用 DuckPHP 的扩展
-
-DuckPHP 扩展的加载是通过选项里添加
-$options['ext']数组实现的
-
-    扩展映射 ,$ext_class => $options。
-    
-    $ext_class 为扩展的类名，如果找不到扩展类则不启用。
-    
-    $ext_class 满足组件接口。在初始化的时候会被调用。
-    $ext_class->init(array $options,$context=null);
-    
-    如果 $options 为  false 则不启用，
-    如果 $options 为 true ，则会把当前 $options 传递进去。
-
-DuckPHP/Core 的其他组件如 Configer, Route, View, AutoLoader 默认都在这调用
-
-## 核心开发者重写的入口类。
-`app/Base/App.php` 对应的 MY\Base\App 类就是入口了。
+所以我们现在来看 `app/Base/App.php` 对应的 MY\Base\App 类就是入口了。
 模板文件提供
 ```php
 <?php declare(strict_types=1);
@@ -224,12 +195,38 @@ class App extends DuckPhp_App
     }
 }
 ```
+
+##### 关于代码的 @ 注解
+
+ // @ 的注释，这些特殊注解，他们用于安装脚本。共有4个注解
+
++ // @DUCKPHP_DELETE 模板引入后删除
++ // @DUCKPHP_HEADFILE 头文件调整
++ // @DUCKPHP_NAMESPACE 调整命名空间
++ // @DUCKPHP_KEEP_IN_FULL 在view  里，如果是 --full 选项则保留。
+
+##### 怎么就从 DuckPhp\App 切到 MY\Base\App 类了？
+
+
+#### 关于选项
+
+我们引用代码的时候，省略了一堆注释，这些注释，就是选项
+
+
+DuckPHP 只要更改选项就能实现很多强大的功能变化。
+如果这些选项都不能满足你，那就启用扩展吧，这样有更多的选项能用，
+如果连这都不行，那么，就自己写扩展吧。
+
+
 onInit 方法，会在初始化后进行
 onRun 方法，会在运行期间运行。
 
 ## 高级说明
 
+
+
 ## 请求流程和生命周期
+
 index.php 就只执行了
 
 DuckPHP\App::RunQuickly($options, $callback) 
@@ -418,5 +415,21 @@ Core 下面的扩展不会单独拿出来用，
 如果你扩展了该方面的类，最好也是让用户通过 App 或者 MVCS 组件来使用他们。
 
 
+### 使用 DuckPHP 的扩展
+
+DuckPHP 扩展的加载是通过选项里添加
+$options['ext']数组实现的
+
+    扩展映射 ,$ext_class => $options。
+    
+    $ext_class 为扩展的类名，如果找不到扩展类则不启用。
+    
+    $ext_class 满足组件接口。在初始化的时候会被调用。
+    $ext_class->init(array $options,$context=null);
+    
+    如果 $options 为  false 则不启用，
+    如果 $options 为 true ，则会把当前 $options 传递进去。
+
+DuckPHP/Core 的其他组件如 Configer, Route, View, AutoLoader 默认都在这调用
 
 
