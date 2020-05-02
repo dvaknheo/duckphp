@@ -78,8 +78,8 @@ trait AppPluginTrait
         }
         
         foreach ($this->plugin_options['plugin_files_config'] as $name) {
-            $config_data = $this->pluginModeIncludeConfigFile($this->path_config_override.$name.'.php');
-            Configer::G()->prependConfig($name, $config_data);
+            $file = $this->path_config_override.$name.'.php';
+            Configer::G()->addExtConfigFile($name, $file);
         }
         Route::G()->addRouteHook([static::class,'PluginModeRouteHook'], $this->plugin_options['plugin_routehook_position']);
         return $this;

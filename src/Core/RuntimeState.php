@@ -23,6 +23,10 @@ class RuntimeState
         $class = get_class(static::G());
         return static::G(new $class);
     }
+    public static function InException()
+    {
+        return static::G()->isInException();
+    }
     public function begin()
     {
         $this->is_running = true;

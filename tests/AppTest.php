@@ -11,7 +11,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
     {
         $extFile=dirname(\MyCodeCoverage::G()->classToPath(DuckPhp::class)).'/Core/Functions.php';
         \MyCodeCoverage::G()->prepareAttachFile($extFile);
-        \MyCodeCoverage::G()->begin(DuckPhp::class,'T');
+        \MyCodeCoverage::G()->begin(DuckPhp::class);
         
         //code here
         //$handler=null;

@@ -122,6 +122,11 @@ class App
             $new_class::AssignExtendStaticMethod($old_class::GetExtendStaticMethodList());
         }
     }
+    
+        public function addBeforeShowHandler($handler)
+    {
+        $this->beforeShowHandlers[] = $handler;
+    }
 }
 trait Core_Handler
 {
@@ -414,13 +419,11 @@ trait Core_Helper
         //you can override this;
         return $this->is_debug;
     }
-    
-    public static function InException()
-    {
-        return RuntimeState::G()->isInException();
-    }
     ////
-    
+    public static function Paramater($key, $default=null)
+    {
+        return static::G()->_Paramater($key, $default);
+    }
     public static function Show($data = [], $view = null)
     {
         return static::G()->_Show($data, $view);
@@ -453,6 +456,9 @@ trait Core_Helper
     ////
     public function _Show($data = [], $view = null)
     {
+        foreach ($this->beforeShowHandlers as $v) {
+            ($v)();
+        }
         $view = $view ?? Route::G()->getRouteCallingPath();
         
         if ($this->is_debug) {
@@ -463,6 +469,11 @@ trait Core_Helper
             ]);
         }
         return View::G()->_Show($data, $view);
+    }
+    public function _Paramater($key, $default=null)
+    {
+        return Route::G()->getParamaters()[$kery] ?? $default;
+        
     }
     public function _H(&$str)
     {
@@ -566,9 +577,9 @@ trait Core_Helper
         return $this->pager;
     }
     
-    public static function PageNo()
+    public static function PageNo($new_value = null)
     {
-        return static::Pager()->current();
+        return static::Pager()->current($new_value);
     }
     public static function PageSize($new_value = null)
     {
@@ -584,8 +595,12 @@ trait Core_Helper
 trait Core_Glue
 {
     //// source is static ////
-    //state
-    public static function IsRunning()
+    //runtime state
+    public static function isInException()
+    {
+        return RuntimeState::G()->isInException();
+    }
+    public static function isRunning()
     {
         return RuntimeState::G()->isRunning();
     }

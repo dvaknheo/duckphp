@@ -240,7 +240,7 @@ trait Kernel
             $ret = Route::G()->run();
             
             if (!$ret && !$this->options['skip_404_handler']) {
-                ($this->hanlder_for_404)();// = static::On404();
+                ($this->hanlder_for_404)();
             }
         } catch (\Throwable $ex) {
             RuntimeState::G()->toggleInException();
@@ -264,17 +264,16 @@ trait Kernel
         }
         Route::G()->bindServerData($serverData);
         
+        /*
         if (!empty($this->beforeShowHandlers)) {
             //header_register_callback([static::class,'OnOutputBuffering']);
             ob_start([static::class,'OnOutputBuffering']);
         }
+        */
     }
     public function clear(): void
     {
         RuntimeState::G()->end();
-        if (!empty($this->beforeShowHandlers)) {
-            ob_end_flush();
-        }
     }
     protected function fixPathInfo(&$serverData)
     {
@@ -306,10 +305,7 @@ trait Kernel
     {
         $this->defaultRunHandler = $handler;
     }
-    public function addBeforeShowHandler($handler)
-    {
-        $this->beforeShowHandlers[] = $handler;
-    }
+    /*
     public static function OnOutputBuffering($str = '')
     {
         return static::G()->_OnOutputBuffering($str);
@@ -326,4 +322,5 @@ trait Kernel
         RuntimeState::G()->toggleOutputed();
         return $str;
     }
+    */
 }
