@@ -1,4 +1,5 @@
 # 整体架构图
+[toc]
 ## DuckPHP 的源代码
 遵循 PSR-4 的文件结构，节点文件是 `Core/Singleton` 是所有非辅助类都以来的可变单例类。
 `Core/App`, `Core/Kernel`, `Core/HttpServer` 是连接性节点。 其他节点都是独立的。

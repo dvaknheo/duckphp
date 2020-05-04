@@ -14,7 +14,7 @@ public static function var_dump(...$args)
 public static function OnException($ex)
 
 public static function IsRunning()
-public static function InException()
+public static function isInException()
 
 public static function assignPathNamespace($path, $namespace = null)
 public static function addRouteHook($hook, $position, $once = true)

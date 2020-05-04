@@ -1,5 +1,5 @@
 ##### 6.兼容 Swoole
-
+[toc]
     如果想让你们的项目在 swoole 下也能运行，那就要加上这几点
     用 C::SG() 代替 超全局变量的 $ 前缀 如 $_GET =>  C::SG()->_GET
     
@@ -13,13 +13,13 @@
     编写 Swoole 相容的代码，还需要注意到一些写法的改动。
 全局变量
 ```php
-global $a='val'; =>  $a=C::GLOBALS('a','val');
+global $a='val'; =>  $a=App::GLOBALS('a','val');
 ```
 静态变量 
 ```php
-static $a='val'; =>  $a=C::STATICS('a','val');
+static $a='val'; =>  $a=App::STATICS('a','val');
 ```
 类内静态变量
 ```php
-$x=static::$abc; => $x=C::CLASS_STATICS(static::class,'abc');
+$x=static::$abc; => $x=App::CLASS_STATICS(static::class,'abc');
 ```

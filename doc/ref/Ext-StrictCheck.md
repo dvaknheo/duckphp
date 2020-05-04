@@ -2,6 +2,8 @@
 
 ## 简介
 用于 严格使用 DB 等情况。使得在调试状态下，不能在 Controller 里 使用 M::DB();等
+不能在 service 里调用 service
+
 ## 选项
     'namespace' => '',
     'namespace_controller' => '',

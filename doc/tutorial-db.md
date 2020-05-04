@@ -1,4 +1,5 @@
 # 数据库教程
+[toc]
 ## 相关类和配置。
 
 - [Ext/DBManager](ref/Ext-DBManager.md) 管理数据库

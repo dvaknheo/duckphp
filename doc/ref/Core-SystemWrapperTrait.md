@@ -8,8 +8,20 @@
 
 ## 方法
 
-    public static function system_wrapper_replace(array $funcs)
-    public static function system_wrapper_get_providers():array
-    public function _system_wrapper_replace(array $funcs)
-    public function _system_wrapper_get_providers()
-    protected function system_wrapper_call_check($func)
+system_wrapper_replace(array $funcs)
+
+    第三方替换本类提供的系统函数
+system_wrapper_get_providers():array
+
+    获得本类能替换的系统函数
+_system_wrapper_replace(array $funcs)
+
+    动态实现，第三方替换本类提供的系统函数
+_system_wrapper_get_providers()
+
+    动态实现，获得本类能替换的系统函数
+system_wrapper_call_check($func)
+
+    检查是否有相应的系统函数是西安
+    
+相关例子在 [Core\App] 里。
