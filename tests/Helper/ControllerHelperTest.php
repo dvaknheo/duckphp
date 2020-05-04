@@ -104,10 +104,11 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         ControllerHelper::SG();
 
 
-   ControllerHelper::GET('a');
-                ControllerHelper::POST('a');
-                ControllerHelper::REQUEST('a');
-                ControllerHelper::COOKIE('a');
+        ControllerHelper::GET('a');
+        ControllerHelper::POST('a');
+        ControllerHelper::REQUEST('a');
+        ControllerHelper::COOKIE('a');
+        ControllerHelper::SERVER('SCRIPT_FILENAME');
 /////
 echo"zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n\n";
 \DuckPhp\App::G()->init([]);
@@ -125,28 +126,5 @@ ControllerHelper::PageHtml(123);
 
 
         //*/
-    }
-}
-class FakeSessionHandler implements \SessionHandlerInterface
-{
-    public function open($savePath, $sessionName)
-    {
-    }
-    public function close()
-    {
-    }
-    public function read($id)
-    {
-    }
-    public function write($id, $data)
-    {
-    }
-    public function destroy($id)
-    {
-        return true;
-    }
-    public function gc($maxlifetime)
-    {
-        return true;
     }
 }

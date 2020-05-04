@@ -150,6 +150,10 @@ class ControllerHelper
     {
         return static::SG()->_COOKIE[$key] ?? $default;
     }
+    public static function SERVER($key, $default = null)
+    {
+        return static::SG()->_SERVER[$key] ?? $default;
+    }
     ////
     public static function Pager($object = null)
     {
