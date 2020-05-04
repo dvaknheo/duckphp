@@ -51,9 +51,10 @@
 'use_super_global' => false,
 
     使用 `SuperGlobal` 类处理超全局变量，默认关闭以节约微乎其微的性能。
-'skip_view_notice_error' => true,
+'use_short_functions' => false,
 
-    Show() 函数关闭 notice 警告，以避免麻烦的处理。
+    允许使用短函数
+
 'skip_404_handler' => false,
 
     不处理 404 ，用于配合其他框架使用。

@@ -12,6 +12,9 @@
 'path_view_override' => '',
 
     用于覆盖的路径——用于插件模式
+'skip_view_notice_error' => true,
+
+    关闭 notice 警告，以避免麻烦的处理。
 ## 公开方法
 
 public function __construct()
