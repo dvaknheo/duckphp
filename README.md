@@ -76,7 +76,7 @@ DuckPHP 的名字源自鸭子类型，这东西看起来像鸭子，叫起来像
 |无第三方依赖         |              |            |           | V       |
 |高性能               | V            | V          |           | V       |
 |代码简洁             | V            | V          |           | V       |
-
+|非固定全站框架                   |            |           |         | V |
 ## 关于 Servivce 层
 
 MVC 结构的时候，你们业务逻辑放在哪里？
@@ -130,9 +130,7 @@ Controller --> Service ------------------------------ ---> Model
 
 * 文档，教程是有了，但还是不太够。
 * 范例，例子还太少太简单了。
-* 单元测试，我真的在学习中。
 * 更多的杀手级应用。
-  
 ## 样例
 ### 1. hello world
 ```php
@@ -147,12 +145,14 @@ class Main
     }
 }
 $options=[
-    'namespace_controller'=>'\\',   // 设置控制器的命名空间为根
-    'skip_setting_file'=>true,      // 跳过配置文件
+    'namespace_controller'=>'\\',   // 本例特殊，设置控制器的命名空间为根
+    'skip_setting_file'=>true,      // 本例特殊，跳过配置文件
 ];
 DuckPHP\App::RunQuickly($options);
 
 ```
+
+
 ### 2. 复杂样例
 
 工程附带的模板文件 `template/public/demo.php` 在单一的文件里演示如何使用 ``DuckPHP``。
@@ -170,7 +170,7 @@ namespace {
     require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
     //头文件可以自行修改。
 }
-// 以下部分是核心程序员写。
+// 以下部分是核心工程师写。
 namespace MySpace\Base
 {
     use \DuckPhp\Core\View;
@@ -220,7 +220,7 @@ namespace MySpace\Base\Helper
         // 一般不需要添加东西，继承就够了
     }
 } // end namespace
-// 以下部分是普通程序员写的。不再和 DuckPhp 的类有任何关系。
+// 以下部分是业务工程师写的。不再和 DuckPhp 的类有任何关系。
 namespace MySpace\Controller {
 
     use MySpace\Base\Helper\ControllerHelper as C;
@@ -319,7 +319,7 @@ namespace MySpace\View {
         }
     }
 } // end namespace
-// 以下部分是核心程序员写。
+// 以下部分是核心工程师写。
 // 这里是入口，单一文件下要等前面类声明
 namespace {
     $options = [];

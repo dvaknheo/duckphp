@@ -30,8 +30,8 @@ Controller --> Service ------------------------------ ---> Model
 
 
 
-作为应用程序员， 你不能引入 DuckPHP 的任何东西，就当 DuckPHP 命名空间不存在。
-核心程序员才去研究 DuckPHP 类的东西。
+作为业务工程师， 你不能引入 DuckPHP 的任何东西，就当 DuckPHP 命名空间不存在。
+核心工程师才去研究 DuckPHP 类的东西。
 
 * 写 Model 你可能要引入 MY\Base\Helper\ModelHelper 助手类别名为 M 。
 * 写 Serivce 你可能要引入 MY\Base\Helper\SerivceHelper 助手类别名为 S 。
@@ -52,7 +52,7 @@ Controller --> Service ------------------------------ ---> Model
 
 问：为什么我的结果和这里的结果不同？
 
-答：`核心程序员`可以修改所有方法的实现。
+答：`核心工程师`可以修改所有方法的实现。
 
 问：为什么有些方法是大写开始，有些方法是小写开始。
 
@@ -60,7 +60,7 @@ Controller --> Service ------------------------------ ---> Model
 
 问：上面怎么没有 `AppHelper` 类
 
-答：`AppHelper` 助手类只由核心程序员来调用 。当你要从 App 类里找出复杂的助手类，还不如在 AppHelper 里找。Session 管理就用到了 AppHelper 类。
+答：`AppHelper` 助手类只由核心工程师来调用 。当你要从 App 类里找出复杂的助手类，还不如在 AppHelper 里找。Session 管理就用到了 AppHelper 类。
 
 
 

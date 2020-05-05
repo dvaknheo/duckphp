@@ -2,11 +2,11 @@
 [toc]
 ## 开发人员角色
 
-DuckPHP 的使用者角色分为 `应用程序员`和`核心程序员`两种。
+DuckPHP 的使用者角色分为 `业务工程师`和`核心工程师`两种。
 
-`应用程序员`负责日常 Curd 。作为应用程序员， 你不能引入 DuckPHP 的任何东西，就当 DuckPHP 命名空间不存在。
+`业务工程师`负责日常 Curd 。作为业务工程师， 你不能引入 DuckPHP 的任何东西，就当 DuckPHP 命名空间不存在。
 
-`核心程序员`才去研究 DuckPHP 类里的东西。
+`核心工程师`才去研究 DuckPHP 类里的东西。
 
 ## 目录结构
 
@@ -45,8 +45,8 @@ DuckPHP 代码里的 template 目录就是我们的工程目录示例。也是�
 |       index.php           // 主页，入口页
 \---start_server.php    // 启动 Htttp 服务
 ```
-这个目录结构里，`应用程序员`只能写 `app/Controller`,`app/Model`,`app/Service`,`view` 这四个目录。
-有时候需要去读 `app/Base/Helper` 目录下的的类。其他则是`核心程序员`的活。
+这个目录结构里，`业务工程师`只能写 `app/Controller`,`app/Model`,`app/Service`,`view` 这四个目录。
+有时候需要去读 `app/Base/Helper` 目录下的的类。其他则是`核心工程师`的活。
 
 app 目录，就是放 MY 开始命名空间的东西了。 app 目录可以在选项里设置成其他名字
 命名空间 MY 是 可调的。比如调整成 MyProject ,TheBigOneProject  等。
@@ -56,7 +56,7 @@ app 目录，就是放 MY 开始命名空间的东西了。 app 目录可以在�
 这些结构能精简么？
 可以，你可以一个目录都不要。
 
-Base/App.php 这个类继承 DuckPhp\App 类，工程的入口流程会在这里进行，这里是`核心程序员`重点了解的类。
+Base/App.php 这个类继承 DuckPhp\App 类，工程的入口流程会在这里进行，这里是`核心工程师`重点了解的类。
 
 
 
@@ -113,11 +113,11 @@ Controller --> Service ------------------------------ ---> Model
 
 * 图上没显示特殊的 AppHelper
 
-助手类教程在这里 [助手类教程](tutorial-helper.md)，基本上，看完助手类教程，`应用程序员`就可以开干了。
+助手类教程在这里 [助手类教程](tutorial-helper.md)，基本上，看完助手类教程，`业务工程师`就可以开干了。
 
 如果你的项目使用内置数据库，或许你还要看  [数据库教程](tutorial-helper.md)
 
-此外有什么不了解的，问`核心程序员`吧。
+此外有什么不了解的，问`核心工程师`吧。
 比如路由方面，常见是文件路由。 [路由教程](tutorial-route.md)
 
 ## 入口文件和选项
@@ -163,12 +163,13 @@ echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKP
 });
 ```
 RunQuickly 相当于 \DuckPHP\App::G()->init($options,function(){})->run(); 
-\DuckPHP\App::G()->init($options,function(){})； 会执行根据配置，返回  MY\Base\App
+\DuckPHP\App::G()->init($options,function(){})； 会执行根据配置，返回  `MY\Base\App`
 
 ### 工程入口文件
 
 所以我们现在来看 `app/Base/App.php` 对应的 MY\Base\App 类就是入口了。
-模板文件提供
+模板文件
+
 ```php
 <?php declare(strict_types=1);
 /**
@@ -196,117 +197,48 @@ class App extends DuckPhp_App
 }
 ```
 
-##### 关于代码的 @ 注解
+onInit 方法，会在初始化后进行
+onRun 方法，会在运行期间运行。
 
- // @ 的注释，这些特殊注解，他们用于安装脚本。共有4个注解
+后面我们开始解释这些代码。
+
+### // @DUCKPHP 开始的注解
+ 我们是看 template 文件夹看到一些  // @DUCKPHP 开始的注解。在安装脚本运行之后，实际这些注解的行会有特殊变动。
+共有4个注解
 
 + // @DUCKPHP_DELETE 模板引入后删除
 + // @DUCKPHP_HEADFILE 头文件调整
 + // @DUCKPHP_NAMESPACE 调整命名空间
 + // @DUCKPHP_KEEP_IN_FULL 在view  里，如果是 --full 选项则保留。
 
-##### 怎么就从 DuckPhp\App 切到 MY\Base\App 类了？
+### 关于选项
 
+参考 [参考首页](ref/index.md) 获得所有选项信息
 
-#### 关于选项
+在前面 我们引用代码的时候，省略了一堆注释。
+这些  $optioins 的可选内容，术语称之为就是`选项`和 `设置`， `配置` 相区分如下：
++ 选项 ，传递给入口类的内容
++ 配置，可有可无的配置文件。
++ 设置，配置的 setting 文件，敏感信息
 
-我们引用代码的时候，省略了一堆注释，这些注释，就是选项
+```php
+$path = realpath(__DIR__.'/..');
+$namespace = 'MY';                    // @DUCKPHP_NAMESPACE
+$options['path'] = $path;
+$options['namespace'] = $namespace;
+$options['error_404'] = '_sys/error_404';
+$options['error_500'] = '_sys/error_500';
+$options['error_debug'] = '_sys/error_debug';
 
+$options['is_debug'] = true;                  // @DUCKPHP_DELETE
+$options['skip_setting_file'] = true;                 // @DUCKPHP_DELETE
+```
 
 DuckPHP 只要更改选项就能实现很多强大的功能变化。
 如果这些选项都不能满足你，那就启用扩展吧，这样有更多的选项能用，
 如果连这都不行，那么，就自己写扩展吧。
 
-
-onInit 方法，会在初始化后进行
-onRun 方法，会在运行期间运行。
-
-## 高级说明
-
-
-
-## 请求流程和生命周期
-
-index.php 就只执行了
-
-DuckPHP\App::RunQuickly($options, $callback) 
-
-发生了什么
-
-等价于 DuckPHP\App::G()->init($options)->run();
-
-init 为初始化阶段 ，run 为运行阶段。$callback 在init() 之后执行
-
-init 初始化阶段
-    处理是否是插件模式
-    处理自动加载  AutoLoader::G()->init($options, $this)->run();
-    处理异常管理 ExceptionManager::G()->init($exception_options, $this)->run();
-    如果有子类，切入子类继续 checkOverride() 
-    调整补齐选项 initOptions()
-    
-    【重要】 onInit()，可 override 处理这里了。
-    默认的 onInit
-        初始化 Configer
-        从 Configer 再设置 是否调试状态和平台 reloadFlags();
-        初始化 View
-        设置为已载入 View ，用于发生异常时候的显示。
-        初始化 Route
-        初始化扩展 initExtentions()
-    初始化阶段就结束了。
-
-run() 运行阶段
-
-    处理 setBeforeRunHandler() 引入的 beforeRunHandlers
-    * onRun ，可 override 处理这里了。
-    重制 RuntimeState 并设置为开始
-    绑定路由
-    ** 开始路由处理 Route::G()->run();
-    如果返回 404 则 On404() 处理 404
-    clear 清理
-        如果没显示，而且还有 beforeShowHandlers() 处理（用于处理 DB 关闭等
-        设置 RuntimeState 为结束
-
-   路由流程
-
-### 核心基本选项
-```php
-const DEFAULT_OPTIONS=[
-    //// basic ////
-    'path'=>null,               // 基本目录, 其他目录依赖的基础目录，自动处理 “/”。
-    'namespace'=>'MY',          // 工程的 autoload 的命名空间
-    'path_namespace'=>'app',    // 工程对应的命名空间 目录
-    
-    'skip_app_autoload'=>false, // 如果你用compose.json 设置加载 app 目录，改为 true;
-    
-    //// properties ////
-    'override_class'=>'Base\App',   
-                                // 基类，后面详细说明
-    'is_debug'=>false,          // 是否是在开发状态
-    'platform'=>'',             //  配置平台标志，Platform 函数得到的是这个
-    'use_flag_by_setting'=>true,   // 从设置文件里重新加载 is_debug,platform 选项
-    'enable_cache_classes_in_cli'=>true, 
-                                // 命令行下缓存 类数据
-    'skip_view_notice_error'=>true,
-                                // view 视图里忽略 notice 错误。
-    'skip_404_handler'=>false,  // 404 由外部处理。
-    'ext'=>[],                  // 扩展
-    
-    //// error handler ////
-    'error_404'=>'_sys/error-404',
-                                // 404 页面
-    'error_500'=>'_sys/error-500',
-                                // 错误页面
-    'error_exception'=>'_sys/error-exception',  
-                                // 异常页面
-    'error_debug'=>'_sys/error-debug',
-                                // 调试页面
-
-];
-```
-
-**还有众多其他组件的配置，这里不一一展示。**
-
-##### 基本选项
+### 基本选项详解
 'skip_setting_file'=> false,
 
     新手之一最容易犯的错就是，没把这项设置为 true.
@@ -325,9 +257,7 @@ const DEFAULT_OPTIONS=[
 'skip_app_autoload'=>false
 
     跳过应用的加载，如果你使用composer.json 来加载你的工程命名空间，你可以打开这个选项。
-'override_class'=>'Base\App',
-
-**重要选项**
+'override_class'=>'Base\App', **重要选项**
 
     基于 namespace ,如果这个选项的类存在，则在init()的时候会切换到这个类完成后续初始化，并返回这个类的实例。
     注意到 app/Base/App.php 这个文件的类 MY\Base\App extends DuckPHP\App;
@@ -338,17 +268,6 @@ const DEFAULT_OPTIONS=[
 'platform'=>'',
 
     配置开发平台 * 设置文件的  platform 会覆盖
-'skip_view_notice_error'=>true,
-
-    view 视图里忽略 notice 错误。
-'use_flag_by_setting'=>true,
-
-    从设置里重载 is_debug 和 platform
-'skip_404_handler'=>false,
-
-    不处理404，用于你想在流程之外处理404的情况
-##### 错误处理
-
 error_* 选项为 null 用默认，为 callable 是回调，为string 则是调用视图。
 
 'error_debug'=>'_sys/error-debug',
@@ -361,6 +280,58 @@ error_* 选项为 null 用默认，为 callable 是回调，为string 则是调�
 
     500 页面，异常页面都会在这里
 
+### 怎么就从 DuckPhp\App 切到 MY\Base\App 类了？
+
+请看请求流程和生命周期
+
+
+## 请求流程和生命周期
+
+index.php 就只执行了
+
+DuckPHP\App::RunQuickly($options, $callback) 
+
+发生了什么
+
+等价于 DuckPHP\App::G()->init($options)->run();
+
+init 为初始化阶段 ，run 为运行阶段。$callback 在init() 之后执行
+
+#### init 初始化阶段
+
+    处理是否是插件模式
+    处理自动加载  AutoLoader::G()->init($options, $this)->run();
+    处理异常管理 ExceptionManager::G()->init($exception_options, $this)->run();
+    如果有子类，切入子类继续 checkOverride() 
+    调整补齐选项 initOptions()
+
+#### onInit()
+【重要】 onInit()，可 override 处理这里了。
+默认的 onInit
+
+    初始化 Configer
+    从 Configer 再设置 是否调试状态和平台 reloadFlags();
+    初始化 View
+    设置为已载入 View ，用于发生异常时候的显示。
+    初始化 Route
+    初始化扩展 initExtentions()
+#### run() 运行阶段
+
+    处理 setBeforeRunHandler() 引入的 beforeRunHandlers
+    异常准备
+        beforeRun()；
+            重制 RuntimeState 并设置为开始
+            绑定路由
+        * onRun ，可 override 处理这里了。
+
+        ** 开始路由处理 Route::G()->run();
+        如果返回 404 则 On404() 处理 404
+    如果发生异常
+        进入异常流程
+    清理流程
+
+#### clear 清理
+        设置 RuntimeState 为结束
 ##### Tip 虚拟接口 组件类
 
 组件类满足以下虚拟接口
@@ -431,5 +402,3 @@ $options['ext']数组实现的
     如果 $options 为 true ，则会把当前 $options 传递进去。
 
 DuckPHP/Core 的其他组件如 Configer, Route, View, AutoLoader 默认都在这调用
-
-
