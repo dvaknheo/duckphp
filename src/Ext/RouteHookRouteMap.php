@@ -123,27 +123,39 @@ class RouteHookRouteMap
         }
         return ($pattern_url === $path_info) ? true:false;
     }
-    protected function getRouteHandelByMap($routeMap, $path_info, &$parameters)
+    protected function getRouteHandelByMap($routeMap, $path_info)
     {
+        $parameters = [];
         $path_info = ltrim($path_info, '/');
         foreach ($routeMap as $pattern => $callback) {
             if (!$this->matchRoute($pattern, $path_info, $parameters)) {
                 continue;
             }
-            return $this->adjustCallback($callback);
+            return $this->adjustCallback($callback, $parameters);
         }
         return null;
     }
-    protected function adjustCallback($callback)
+    protected function adjustCallback($callback, $parameters)
     {
+        Route::G()->setParameters($parameters);
         if (is_string($callback)) {
             if (false !== strpos($callback, '@')) {
                 list($class, $method) = explode('@', $callback);
+                Route::G()->setRouteCallingMethod($method);
                 return [new $class(),$method];
             } elseif (false !== strpos($callback, '->')) {
                 list($class, $method) = explode('->', $callback);
+                Route::G()->setRouteCallingMethod($method);
                 return [new $class(),$method];
+            } elseif (false !== strpos($callback, '::')) {
+                list($class, $method) = explode('::', $callback);
+                Route::G()->setRouteCallingMethod($method);
+                return [$class,$method];
             }
+        }
+        if (is_array($callback) && isset($callback[1])) {
+            $method = $callback[1];
+            Route::G()->setRouteCallingMethod($method);
         }
         return $callback;
     }
@@ -158,17 +170,10 @@ class RouteHookRouteMap
     }
     protected function doHookByMap($path_info, $route_map)
     {
-        $route = Route::G();
-        $parameters = [];
-        $callback = $this->getRouteHandelByMap($route_map, $path_info, $parameters);
+        $callback = $this->getRouteHandelByMap($route_map, $path_info);
         if (!$callback) {
             return false;
         }
-        if (is_array($callback)) {
-            $route->setRouteCallingMethod($callback[1]);
-        }
-        $route->setParameters($parameters);
-        
         ($callback)();
         $callback = null;
         return true;

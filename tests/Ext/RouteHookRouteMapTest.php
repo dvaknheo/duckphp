@@ -21,7 +21,7 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
         
         $options=[
             'route_map'=>[
-                '/first'=>function(){echo "first1111 \n";},
+                //'/first'=>function(){echo "first1111 \n";},
             ],
         ];
         
@@ -29,11 +29,15 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
         //$this->options['route_map_important']['~abc/d(/?|)\w*'] = [$this,'foo'];
         
         RouteHookRouteMap::G()->init($options, Route::G());
-        
+        RouteHookRouteMap::G()->assignRoute('/first',RouteHookRouteMapTest_FakeObject::class.'::'.'fifth');
+        RouteHookRouteMap::G()->assignRoute('/sixth',[RouteHookRouteMapTest_FakeObject::class,'sixth']);
         RouteHookRouteMap::G()->assignRoute('^second(/(?<id>\d+))?',RouteHookRouteMapTest_FakeObject::class.'@'.'second');
         RouteHookRouteMap::G()->assignRoute(['/third*'=>RouteHookRouteMapTest_FakeObject::class.'->'.'adjustCallbackArrow']);
         RouteHookRouteMap::G()->assignImportantRoute(['@posts/{post}/comments/{comment:\d+}'=>RouteHookRouteMapTest_FakeObject::class.'@foo']);
         RouteHookRouteMap::G()->assignImportantRoute('@posts/{post}/comments/{comment:\d+}',RouteHookRouteMapTest_FakeObject::class.'@foo');
+        
+
+
         RouteHookRouteMap::G()->getRoutes();
         
         Route::G()->bind('/')->run();
@@ -42,7 +46,9 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
         Route::G()->bind('/third/abc/d/e')->run();
         Route::G()->bind('/thirdabc/d/e')->run();
         Route::G()->bind('/posts/aa/comments/33')->run();
-        
+        Route::G()->bind('/fifth')->run();
+        Route::G()->bind('/sixth')->run();
+
         var_dump("-------------------------");
         RouteHookRouteMap::G(new RouteHookRouteMap())->init($options, App::G());
         RouteHookRouteMap::G()->options['route_map_important']=[];
@@ -66,6 +72,14 @@ class RouteHookRouteMapTest_FakeObject
         echo "Main Class Start...";
     }
     function second()
+    {
+        var_dump(Route::G()->getParameters());
+    }
+    function fifth()
+    {
+        var_dump(Route::G()->getParameters());
+    }
+        function sixth()
     {
         var_dump(Route::G()->getParameters());
     }
