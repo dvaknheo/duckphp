@@ -8,7 +8,7 @@ namespace DuckPhp\Core;
 interface ComponentInterface
 {
     //public $options; /* array() */;
-    public static function G();
+    public static function G($new_object = null);
     public function init(array $options, $contetxt = null);/*return this */
     //public function isInited():bool;
 }

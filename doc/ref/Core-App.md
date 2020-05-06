@@ -25,6 +25,21 @@ public static function OnException($ex): void
     //
 public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
 
+
+    //
+public function getStaticComponentClasses()
+
+    //
+public function getDynamicComponentClasses()
+
+    //
+public function addDynamicComponentClass($class)
+
+    //
+public function removeDynamicComponentClass($class)
+
+    //
+
 ## 详解
 Core\App 类 可以视为几个类的组合
 

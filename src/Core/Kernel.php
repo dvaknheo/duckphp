@@ -234,8 +234,8 @@ trait Kernel
         if ($this->defaultRunHandler) {
             return ($this->defaultRunHandler)();
         }
-        $this->beforeRun();
         try {
+            $this->beforeRun();
             $this->onRun();
             $ret = Route::G()->run();
             
@@ -263,13 +263,6 @@ trait Kernel
             $serverData = $this->fixPathInfo($serverData); // @codeCoverageIgnore
         }
         Route::G()->bindServerData($serverData);
-        
-        /*
-        if (!empty($this->beforeShowHandlers)) {
-            //header_register_callback([static::class,'OnOutputBuffering']);
-            ob_start([static::class,'OnOutputBuffering']);
-        }
-        */
     }
     public function clear(): void
     {
@@ -305,22 +298,4 @@ trait Kernel
     {
         $this->defaultRunHandler = $handler;
     }
-    /*
-    public static function OnOutputBuffering($str = '')
-    {
-        return static::G()->_OnOutputBuffering($str);
-    }
-    public function _OnOutputBuffering($str)
-    {
-        $flag = RuntimeState::G()->isOutputed();
-        if ($flag) {
-            return $str;
-        }
-        foreach ($this->beforeShowHandlers as $v) {
-            ($v)();
-        }
-        RuntimeState::G()->toggleOutputed();
-        return $str;
-    }
-    */
 }

@@ -30,8 +30,9 @@
            9. [RuntimeState.php](ref/Core-RuntimeState.md)
         2. [ExtendableStaticCallTrait.php](ref/Core-ExtendableStaticCallTrait.md) 注意这个 trait 也被 Helper使用
         3. [SystemWrapperTrait.php](ref/Core-SystemWrapperTrait.md)
+        4. [ComponentInterface.php](ref/Core-ComponentInterface.md) 组件类接口
    3. **[AppPluginTrait.php](ref/Core-AppPluginTrait.md) **  这个Trait用于把独立工程 App 转成插件 
-   4. **[HttpServer.php](ref/Core-HttpServer.md)** 单独的 Http 服务器
+  4. **[HttpServer.php](ref/Core-HttpServer.md)** 单独的 Http 服务器
   
 6. DB/ 是数据库
    1. [DBAdvance.php](ref/DB-DBAdvance.md)

@@ -145,14 +145,12 @@ class Main
     }
 }
 $options=[
-    'namespace_controller'=>'\\',   // 本例特殊，设置控制器的命名空间为根
+    'namespace_controller'=>"\\",   // 本例特殊，设置控制器的命名空间为根
     'skip_setting_file'=>true,      // 本例特殊，跳过配置文件
 ];
-DuckPHP\App::RunQuickly($options);
+DuckPhp\App::RunQuickly($options);
 
 ```
-
-
 ### 2. 复杂样例
 
 工程附带的模板文件 `template/public/demo.php` 在单一的文件里演示如何使用 ``DuckPHP``。
