@@ -23,7 +23,7 @@ use DuckPhp\Core\View;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\Logger;
 
-class App
+class App implements ComponentInterface
 {
     const HOOK_PREPEND_OUTTER = 'prepend-outter';
     const HOOK_PREPEND_INNER = 'prepend-inner';

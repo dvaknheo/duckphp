@@ -7,7 +7,7 @@ namespace DuckPhp\Core;
 
 use DuckPhp\Core\SingletonEx;
 
-class Route
+class Route implements ComponentInterface
 {
     const HOOK_PREPEND_OUTTER = 'prepend-outter';
     const HOOK_PREPEND_INNER = 'prepend-inner';
@@ -57,7 +57,8 @@ class Route
     protected $appendedCallbackList = [];
     protected $enable_default_callback = true;
     protected $is_failed = false;
-    
+
+    protected $is_inited = false;
     public function __construct()
     {
     }
@@ -149,7 +150,12 @@ class Route
             $this->controller_base_class = rtrim($namespace, '\\').'\\'.$this->controller_base_class;
         }
         
+        $this->is_inited = true;
         return $this;
+    }
+    public function isInited()
+    {
+        return $this->is_inited;
     }
     public function setURLHandler($callback)
     {

@@ -134,7 +134,8 @@ echo "-------------------------------------\n";
         //App::OnOutputBuffering('def');
         ////
         
-        
+            App::G()->isInited();
+
     \MyCodeCoverage::G()->end(Kernel::class);
     $this->assertTrue(true);
     return;

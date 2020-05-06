@@ -39,7 +39,8 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
         Logger::G()->debug($message,  $context);
         DuckPhp::Logger()->info("zzzzz");
         file_put_contents($path_log.'log.log','');// clear
-        
+        Logger::G()->isInited();
+
         \MyCodeCoverage::G()->end(Logger::class);
         $this->assertTrue(true);
     }

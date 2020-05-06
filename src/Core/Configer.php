@@ -7,7 +7,7 @@ namespace DuckPhp\Core;
 
 use DuckPhp\Core\SingletonEx;
 
-class Configer
+class Configer implements ComponentInterface
 {
     use SingletonEx;
     public $options = [
@@ -45,7 +45,10 @@ class Configer
         $this->all_config = $this->options['all_config'] ?? [];
         return $this;
     }
-
+    public function isInited()
+    {
+        return $this->is_inited;
+    }
     public function _Setting($key)
     {
         if ($this->is_inited) {

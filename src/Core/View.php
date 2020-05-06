@@ -7,7 +7,7 @@ namespace DuckPhp\Core;
 
 use DuckPhp\Core\SingletonEx;
 
-class View
+class View implements ComponentInterface
 {
     use SingletonEx;
     public $options = [
@@ -23,7 +23,7 @@ class View
     protected $foot_file;
     protected $view_file;
     protected $error_reporting_old;
-    
+    protected $is_inited = false;
     public function __construct()
     {
     }
@@ -35,7 +35,12 @@ class View
         } else {
             $this->path = $this->options['path'].rtrim($this->options['path_view'], '/').'/';
         }
+        $this->is_inited =true;
         return $this;
+    }
+    public function isInited()
+    {
+        return $this->is_inited;
     }
     public static function Show($data = [], $view)
     {

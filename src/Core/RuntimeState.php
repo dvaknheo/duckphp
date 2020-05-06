@@ -14,7 +14,7 @@ class RuntimeState
     protected $is_running = false;
     protected $is_in_exception = false;
     protected $is_outputed = false;
-    
+    protected $is_inited = false;
     public function __construct()
     {
     }
@@ -23,6 +23,16 @@ class RuntimeState
         $class = get_class(static::G());
         return static::G(new $class);
     }
+    public function init(array $options, object $context = null)
+    {
+        $this->is_inited =true;
+        return $this;
+    }
+    public function isInited()
+    {
+        return $this->is_inited;
+    }
+    
     public function begin()
     {
         $this->is_running = true;

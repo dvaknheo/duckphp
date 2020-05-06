@@ -7,7 +7,7 @@ namespace DuckPhp\Core;
 
 use DuckPhp\Core\SingletonEx;
 
-class Logger //extends Psr\Log\LoggerInterface;
+class Logger implements ComponentInterface //implements Psr\Log\LoggerInterface;
 {
     use SingletonEx;
     
@@ -43,7 +43,6 @@ class Logger //extends Psr\Log\LoggerInterface;
         if ($this->is_inited) {
             //return $this;
         }
-        $this->is_inited = true;
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         
         if (substr($this->options['log_file'], 0, 1) === '/') {
@@ -51,7 +50,12 @@ class Logger //extends Psr\Log\LoggerInterface;
         } elseif ($this->options['log_file']) {
             $this->path = $this->options['path'].$this->options['log_file'];
         }
+        $this->is_inited = true;
         return $this;
+    }
+    public function isInited()
+    {
+        return $this->is_inited;
     }
     public function log($level, $message, array $context = array())
     {

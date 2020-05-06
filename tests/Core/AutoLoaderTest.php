@@ -64,7 +64,10 @@ class AutoLoaderTest extends \PHPUnit\Framework\TestCase
             'skip_app_autoload'=>true,
             'path_namespace'=>'/path_autoload',
         ]);
-        
+
+        AutoLoader::G()->isInited();
+
+
         \MyCodeCoverage::G()->end(AutoLoader::class);
         $this->assertTrue(true);
         /*

@@ -29,7 +29,8 @@ class SuperGlobalTest extends \PHPUnit\Framework\TestCase
             SuperGlobal::G()->session_id('12345'); //again;
         } catch (\Throwable $ex) {
         }
-
+        SuperGlobal::G()->isInited();
+        
         \MyCodeCoverage::G()->end();
         $this->assertTrue(true);
         /*

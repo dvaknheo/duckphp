@@ -19,8 +19,9 @@ class RuntimeStateTest extends \PHPUnit\Framework\TestCase
         RuntimeState::G()->isOutputed();
         RuntimeState::G()->toggleOutputed();
         
-        //code here
-        
+        RuntimeState::G()->init([]);
+        RuntimeState::G()->isInited();
+
         \MyCodeCoverage::G()->end(RuntimeState::class);
         $this->assertTrue(true);
         /*

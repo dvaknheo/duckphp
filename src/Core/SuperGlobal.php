@@ -29,6 +29,7 @@ class SuperGlobal
     {
         $this->init([]);
     }
+    
     public function reset()
     {
         $this->is_inited = false;
@@ -52,6 +53,10 @@ class SuperGlobal
         $this->GLOBALS = &$GLOBALS;
         
         return $this;
+    }
+    public function isInited()
+    {
+        return $this->is_inited;
     }
     ///////////////////////////////
     public function session_start(array $options = [])

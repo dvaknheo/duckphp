@@ -7,7 +7,7 @@ namespace DuckPhp\Core;
 
 use DuckPhp\Core\SingletonEx;
 
-class ExceptionManager
+class ExceptionManager implements ComponentInterface
 {
     use SingletonEx;
     
@@ -95,6 +95,10 @@ class ExceptionManager
         $this->system_exception_handler = $this->options['system_exception_handler'];
         
         return $this;
+    }
+    public function isInited()
+    {
+        return $this->is_inited;
     }
     public function run()
     {

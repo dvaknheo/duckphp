@@ -136,7 +136,8 @@ App::PageNo();
 App::PageSize();
 App::PageHtml(123);
 
-        
+    App::G()->isInited();
+
     \MyCodeCoverage::G()->end(App::class);
     $this->assertTrue(true);
     return;

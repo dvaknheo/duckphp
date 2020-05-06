@@ -32,6 +32,9 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
         Configer::G()->assignExtConfigFile(['X/a'=>$path_config.'/for_assign.php']);
         Configer::G()->assignExtConfigFile('b',$path_config.'/c.php');
         Configer::G()->_LoadConfig('X/a');
+        
+        Configer::G()->isInited();
+        
         \MyCodeCoverage::G()->end(Configer::class);
         $this->assertTrue(true);
         /*

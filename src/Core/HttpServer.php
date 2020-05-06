@@ -7,7 +7,7 @@ namespace DuckPhp\Core;
 
 use DuckPhp\Core\SingletonEx;
 
-class HttpServer
+class HttpServer implements ComponentInterface
 {
     use SingletonEx;
     
@@ -62,7 +62,8 @@ class HttpServer
     
     protected $host;
     protected $port;
-    
+    protected $is_inited = false;
+
     public function __construct()
     {
     }
@@ -82,7 +83,14 @@ class HttpServer
         $this->host = $this->args['host'] ?? $this->host;
         $this->port = $this->args['port'] ?? $this->port;
         $this->docroot = $this->args['docroot'] ?? $this->docroot;
+        
+        $this->is_inited = true;
+        
         return $this;
+    }
+    public function isInited()
+    {
+        return $this->is_inited;
     }
     protected function getopt($options, $longopts, &$optind)
     {

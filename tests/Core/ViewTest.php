@@ -26,7 +26,7 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         View::G()->setOverridePath($path_view.'overrided/');
         View::G()->setViewWrapper(null,null);
         View::G()->_Show(['A'=>'b'],"override");
-        
+        View::G()->isInited();
         $options=[
             'path'=>$path_view,
             'path_view'=>'',

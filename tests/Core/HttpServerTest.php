@@ -16,7 +16,7 @@ class HttpServerTest extends \PHPUnit\Framework\TestCase
         HttpServerParent::G()->close();
         HttpServerParent::G()->test_showHelp();
         HttpServerParent::G()->test_run2();
-
+HttpServerParent::G()->isInited();
         
         $options=[
             'path_document'=>__DIR__,

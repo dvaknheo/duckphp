@@ -7,7 +7,7 @@ namespace DuckPhp\Core;
 
 use DuckPhp\Core\SingletonEx;
 
-class AutoLoader
+class AutoLoader implements ComponentInterface
 {
     use SingletonEx;
     
@@ -24,7 +24,7 @@ class AutoLoader
     protected $namespace;
     protected $path_namespace;
 
-    public $is_inited = false;
+    protected $is_inited = false;
     public $namespace_paths = [];
     
     protected $is_running = false;
@@ -66,6 +66,10 @@ class AutoLoader
         }
         
         return $this;
+    }
+    public function isInited()
+    {
+        return $this->is_inited;
     }
     public function run()
     {

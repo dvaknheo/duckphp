@@ -96,6 +96,7 @@ trait Kernel
     protected $hanlder_for_exception;
     protected $hanlder_for_develop_exception;
     protected $hanlder_for_404;
+    protected $is_inited = false;
     
     public static function RunQuickly(array $options = [], callable $after_init = null): bool
     {
@@ -169,6 +170,10 @@ trait Kernel
         $object->initOptions($options);
         return $object->onInit();
     }
+    public function isInited()
+    {
+        return $this->is_inited;
+    }
     //for override
     protected function pluginModeInit(array $options, object $context = null)
     {
@@ -191,6 +196,7 @@ trait Kernel
         
         $this->initExtentions($this->options['ext']);
         
+        $this->is_inited=true;
         return $this;
     }
     protected function reloadFlags(): void
