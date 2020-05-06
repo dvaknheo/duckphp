@@ -3,13 +3,9 @@
 ## 相关类
 
 **[Core\\Route](ref/Core-Route.md)**
-
-[Ext\\RouteHookRewrite](ref/Ext-RouteHookRewrite.md)
-
 [Ext\\RouteHookRouteMap](ref/Ext-RouteHookRouteMap.md)
-
+[Ext\\RouteHookRewrite](ref/Ext-RouteHookRewrite.md)
 *[Ext\\RouteHookOneFileMode](ref/Ext-RouteHookOneFileMode.md)*
-
 *[Ext\\RouteHookDirectoryMode](ref/RouteHookDirectoryMode.md)*
 ## 相关选项
 'namespace' => 'MY',
@@ -47,7 +43,7 @@
 
 ## 开始
 
-###  文件型路由
+###  基础路由
 
 DuckPHP 支持很多种 路由方式，最常见最基本的就是文件型路由方式了。
 
@@ -58,7 +54,6 @@ DuckPHP 支持很多种 路由方式，最常见最基本的就是文件型路�
 注意的是，  DuckPHP 不支持 /test/  这样的 url ，最后的 / 需要自己处理。
 
 
-
 路由的流程在 DuckPhp\Core\Route 类里run() 方法。
 
 限定的类是在  namespace namespace_controller
@@ -67,36 +62,49 @@ DuckPHP 支持很多种 路由方式，最常见最基本的就是文件型路�
 
 为了把 post 和 get 区分， 我们有了 controller_prefix_post 。如果没有 相关方法存在也是没问题的。 这个技巧用于很多需要的情况
 
+### 路由钩子
 
+路由钩子，是在路由运行前后执行的一组钩子。添加的方式是调用 `App::addRouteHook($callback, $position, $once = true)`
+
+$once 是表示同类型钩子，只有一个同名 callback 就够了
+
+position 一共有4个位置
+    const HOOK_PREPEND_OUTTER = 'prepend-outter';
+    const HOOK_PREPEND_INNER = 'prepend-inner';
+    const HOOK_APPPEND_INNER = 'append-inner';
+    const HOOK_APPPEND_OUTTER = 'append-outter';
+
+DuckPhp 默认加载了 DuckPhp\\Ext\\RouteHookRouteMap 插件。 实现了路由映射。
+
+其他扩展可能还会有更多的钩子。如果发现“为什么会有这个地址”，去问`核心工程师`吧。
 
 ### 路由映射
 
+我们知道，路由重写是经常干的事情，比如  /res/{id} 这样的。
 
-我们知道，路由重写是经常干的事情，比如  /res/id/ 这样的。
+DuckPhp 默认加了扩展插件，添加了两个选项
 
-所以，这些设置在 选项 route_map 里设置个映射表.
+这些设置在 选项 route_map 和 route_map_important 里设置个映射表.
 
 映射表的 key 为有以下规则
 
-/ 开始的是普通 url
+- / 开始的是普通 url
 
-~ 开始的是正则 推荐的方法， PHP 有
+- ~ 开始的是正则 推荐的方法， PHP 有
 
-@ 的是 {} 替换的表达式
+- @ 的是 {} 替换的表达式
 
 value 对应的规则是
 
-class::method 静态方法
+- class::method 静态方法
 
-class@method 动态方法
+- class@method 动态方法
 
-class->method 动态方法
+- class->method 动态方法
 
-\# 前缀对应的是 namespace 和 namespace_controller 
+- 如果是闭包，直接执行闭包。
 
-如果是闭包，直接执行闭包。
-
-
+例子：
 
 ```PHP
 <?php declare(strict_types=1);
@@ -115,50 +123,8 @@ return [
 
 ```
 
-相关的方法   C::getRewrites() 和 C::getRoutes(); 
-
-
-
-### 路由钩子
-路由钩子，是在路由运行前后执行的一组钩子。通过
-
-addRouteHook($callback, $position, $once = true)
-添加
-$once 是表示同类型钩子，只有一个同名 callback 就够了
-
-position 一共有4个位置
-    const HOOK_PREPEND_OUTTER = 'prepend-outter';
-    const HOOK_PREPEND_INNER = 'prepend-inner';
-    const HOOK_APPPEND_INNER = 'append-inner';
-    const HOOK_APPPEND_OUTTER = 'append-outter';
-
-
-duckphp 默认加载了 routemap 和 routerewrite 插件。
-
-### 路由重写
-
-### 自定义路由
-
-### 目录模式的路由
-
+可以用 C::getRoutes();  得到路由表
 用 C::getParameters() 获取切片，对地址重写有效。
 如果要做权限判断 构造函数里 C::getRouteCallingMethod() 获取当前调用方法。
 
-用 C::getRewrites() 和 C::getRoutes(); 查看 rewrite 表，和 路由表。
-
-assignRewrite($old_url,$new_url=null)
-
-    支持单个 assign($key,$value) 和多个 assign($assoc)
-    rewrite  重写 path_info
-    不区分 request method , 重写后可以用 ? query 参数
-    ~ 开始表示是正则 ,为了简单用 / 代替普通正则的 \/
-    替换的url ，用 $1 $2 表示参数
-
-assignRoute($route,$callback=null)
-
-    给路由加回调。
-    单个 assign($key,$value) 和多个 assign($assoc)；
-    关于回调模式的路由。详细情况看之前介绍
-    和在 options['route'] 添加数据一样
-
-高级路由
+### 目录模式的路由

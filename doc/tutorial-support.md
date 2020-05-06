@@ -10,7 +10,7 @@ php-cs-fixer fix src
 ## 代码检查
 
 ```
-phpstan analyse -l 7 -a autoload.php src
+phpstan analyse
 
 ```
 ## 测试

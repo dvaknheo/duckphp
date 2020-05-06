@@ -306,7 +306,7 @@ init 为初始化阶段 ，run 为运行阶段。$callback 在init() 之后执�
     调整补齐选项 initOptions()
 
 #### onInit()
-【重要】 onInit()，可 override 处理这里了。
+* 重要 * onInit()，可 override 处理这里了。
 默认的 onInit
 
     初始化 Configer
@@ -329,76 +329,7 @@ init 为初始化阶段 ，run 为运行阶段。$callback 在init() 之后执�
     如果发生异常
         进入异常流程
     清理流程
-
 #### clear 清理
-        设置 RuntimeState 为结束
-##### Tip 虚拟接口 组件类
+只有一个动作： 设置 RuntimeState 为结束
 
-组件类满足以下虚拟接口
-
-```
-interface ComponentInterface
-{
-    public $options;/* array() */;
-    public static function G():this;
-    public init(array $options, $contetxt=null):this;
-}
-```
-为什么是虚拟接口？因为你不必 impelement .
-
-DuckPHP 的扩展都放在 DuckPHP\\Ext 命名空间里
-下面按字母顺序介绍这些扩展的作用
-按选项，说明，公开方法，一一介绍。
-
-SingletonEx 可变单例
-
-\*Helper 是各种快捷方法。
-
-
-这些组件 都可以在 onInit 里通过类似方法替换
-```php
-Route::G(MyRoute::G());
-View::G(MyView::G());
-Configer::G(MyConfiger::G());
-RuntimeState::G(MyRuntimeState::G());
-```
-
-例外的是 AutoLoader 和 ExceptionManager 。 这两个是在插件系统启动之前启动
-所以你需要：
-```php
-AutoLoader::G()->clear();
-AutoLoader::G(MyAutoLoader::G())->init($this->options,$this);
-
-ExceptionManager::G()->clear();
-ExceptionManager::G(MyExceptionManager::G())->init($this->options,$this);
-```
-如何替换组件。
-
-注意的是核心组件都在 onInit 之前初始化了，所以你要自己初始化。
-* 为什么核心组件都在 onInit 之前初始化。
-
-为了 onInit 使用方便
-
-* 为什么 Core 里面的都是 App::Foo(); 而 Ext 里面的都是 App::G()::Foo();
-因为 Core 里的扩展都是在 DuckPHP\Core\App 下的。
-
-Core 下面的扩展不会单独拿出来用， 
-如果你扩展了该方面的类，最好也是让用户通过 App 或者 MVCS 组件来使用他们。
-
-
-### 使用 DuckPHP 的扩展
-
-DuckPHP 扩展的加载是通过选项里添加
-$options['ext']数组实现的
-
-    扩展映射 ,$ext_class => $options。
-    
-    $ext_class 为扩展的类名，如果找不到扩展类则不启用。
-    
-    $ext_class 满足组件接口。在初始化的时候会被调用。
-    $ext_class->init(array $options,$context=null);
-    
-    如果 $options 为  false 则不启用，
-    如果 $options 为 true ，则会把当前 $options 传递进去。
-
-DuckPHP/Core 的其他组件如 Configer, Route, View, AutoLoader 默认都在这调用
+接下来是路由这一章，  Route::G()->run() 的具体内容

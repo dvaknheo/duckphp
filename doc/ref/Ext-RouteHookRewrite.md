@@ -30,3 +30,10 @@ assignRewrite()
 getRewrites()
 
 
+assignRewrite($old_url,$new_url=null)
+
+    支持单个 assign($key,$value) 和多个 assign($assoc)
+    rewrite  重写 path_info
+    不区分 request method , 重写后可以用 ? query 参数
+    ~ 开始表示是正则 ,为了简单用 / 代替普通正则的 \/
+    替换的url ，用 $1 $2 表示参数
