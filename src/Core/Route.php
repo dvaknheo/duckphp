@@ -153,7 +153,7 @@ class Route implements ComponentInterface
         $this->is_inited = true;
         return $this;
     }
-    public function isInited()
+    public function isInited():bool
     {
         return $this->is_inited;
     }

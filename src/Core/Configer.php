@@ -45,7 +45,7 @@ class Configer implements ComponentInterface
         $this->all_config = $this->options['all_config'] ?? [];
         return $this;
     }
-    public function isInited()
+    public function isInited():bool
     {
         return $this->is_inited;
     }

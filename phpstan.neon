@@ -1,6 +1,6 @@
 parameters:
     # Needed only when you use "rules" block below
-    level: 5
+    level: 7
     paths:
         - src
 

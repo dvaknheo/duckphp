@@ -35,10 +35,10 @@ class View implements ComponentInterface
         } else {
             $this->path = $this->options['path'].rtrim($this->options['path_view'], '/').'/';
         }
-        $this->is_inited =true;
+        $this->is_inited = true;
         return $this;
     }
-    public function isInited()
+    public function isInited():bool
     {
         return $this->is_inited;
     }

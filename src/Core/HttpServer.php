@@ -88,7 +88,7 @@ class HttpServer implements ComponentInterface
         
         return $this;
     }
-    public function isInited()
+    public function isInited():bool
     {
         return $this->is_inited;
     }

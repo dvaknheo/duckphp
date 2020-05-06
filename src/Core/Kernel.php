@@ -170,7 +170,7 @@ trait Kernel
         $object->initOptions($options);
         return $object->onInit();
     }
-    public function isInited()
+    public function isInited():bool
     {
         return $this->is_inited;
     }
@@ -196,7 +196,7 @@ trait Kernel
         
         $this->initExtentions($this->options['ext']);
         
-        $this->is_inited=true;
+        $this->is_inited = true;
         return $this;
     }
     protected function reloadFlags(): void
