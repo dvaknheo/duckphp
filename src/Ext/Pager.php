@@ -6,8 +6,9 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\SingletonEx;
+use DuckPhp\Core\ComponentInterface;
 
-class Pager
+class Pager implements ComponentInterface, PagerInterface
 {
     use SingletonEx;
     
@@ -17,54 +18,77 @@ class Pager
         'page_size' => 30,
         'page_key' => 'page',
         'rewrite' => null,
+        'context_class' => null,
     ];
     protected $context_class;
     protected $url;
+    
+    protected $is_inited = false;
     public function __construct()
     {
     }
-    public static function SG()
+    protected function getDefaultUrl()
     {
-        return static::G()->_SG();
-    }
-    public function _SG()
-    {
-        if ($this->context_class) {
-            return $this->context_class::SG();
+        if (is_callable([$this->context_class,'SG'])) {
+            return ($this->context_class)::SG()->_SERVER['REQUEST_URI'] ?? '';
         } else {
-            return \DuckPhp\Core\App::G()::SG();
+            return $_SERVER['REQUEST_URI'] ?? '';
+        }
+    }
+    protected function getDefaultPageNo()
+    {
+        if (is_callable([$this->context_class,'SG'])) {
+            return ($this->context_class)::SG()->_GET[$this->options['page_key']] ?? 1;
+        } else {
+            return $_GET[$this->options['page_key']] ?? 1;
         }
     }
     ////////////////////////
     public function init(array $options, object $context = null)
     {
         $this->options = array_replace_recursive($this->options, $options) ?? [];
+        
         $this->context_class = isset($context)?get_class($context):null;
-        $this->url = $this->options['url'] ?? static::SG()->_SERVER['REQUEST_URI'];
+        $this->context_class = $this->options['context_class'] ?? $this->context_class;
+        
+        $this->url = $this->options['url'] ?? $this->getDefaultUrl();
         $this->options['current'] = $this->current();
-        /////
+        
+        $this->is_inited = true;
+    }
+    public function isInited(): bool
+    {
+        return $this->is_inited;
     }
     
-    public function current()
+    public function current($new_value = null): int
     {
+        if (isset($new_value)) {
+            $this->options['current'] = $new_value;
+            
+            return $new_value;
+        }
         if ($this->options['current'] !== null) {
             return $this->options['current'];
         }
-        $this->options['current'] = intval(static::SG()->_GET[$this->options['page_key']] ?? 1);
-        $this->options['current'] = $this->options['current'] > 1 ? $this->options['current'] : 1;
-        return $this->options['current'];
+        $page_no = $this->getDefaultPageNo();
+        $page_no = intval($page_no) ?? 1;
+        $page_no = $page_no > 1 ? $page_no : 1;
+        $this->options['current'] = $page_no;
+        
+        return $page_no;
     }
-    public function pageSize($new_value = null)
+    public function pageSize($new_value = null): int
     {
         if (empty($new_value)) {
             return $this->options['page_size'];
         }
         $this->options['page_size'] = $new_value;
+        return $this->options['page_size'];
     }
-    public function getPageCount($total)
+    public function getPageCount($total): int
     {
-        return ceil($total / $this->options['page_size']);
-        ;
+        return (int)ceil($total / $this->options['page_size']);
     }
     public function getUrl($page)
     {
@@ -97,7 +121,7 @@ class Pager
         return $url;
     }
     ////////////////////////
-    public function render($total, $options = [])
+    public function render($total, $options = []): string
     {
         $this->init($options);
         $current_page = $this->current();

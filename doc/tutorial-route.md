@@ -90,7 +90,7 @@ DuckPhp 默认加了扩展插件，添加了两个选项
 
 - / 开始的是普通 url
 
-- ~ 开始的是正则 推荐的方法， PHP 有
+- ~ 开始的是正则 推荐的方法， PHP 有命名参数，会放入
 
 - @ 的是 {} 替换的表达式
 
@@ -109,16 +109,16 @@ value 对应的规则是
 ```PHP
 <?php declare(strict_types=1);
 return [
-            '~^user(/page-(?<page>\d+))?$'      => '#user->index',
-            '~^user/(?<login>\w+)$'             => '#user->profile',
+            '~^user(/page-(?<page>\d+))?$'      => '~user->index',
+            '~^user/(?<login>\w+)$'             => '~user->profile',
 
-            '~^api/user/(?<login>\w+)$'         => "#api@profile",
+            '~^api/user/(?<login>\w+)$'         => "~api@profile",
             
-            '~^blog/archive/(?<year>\d+)$'      =>"#blog@archive_yearly",
-            '~^blog/archive/(?<year>\d+)-(?<month>\d+)(/page(?<page>\d+))?$'    =>"#blog@archive_monthly",
-            '~^blog/tag/(?<label>\w+)(/page(?<page>\d+))?$'                     =>"#blog@tag",
-            '~^blog/page/(?<slug>\S+)$'                                         =>"#blog@post",
-            '~^blog(/(?<id>\d+))?$'                                              =>"#blog@index",
+            '~^blog/archive/(?<year>\d+)$'      =>"~blog@archive_yearly",
+            '~^blog/archive/(?<year>\d+)-(?<month>\d+)(/page(?<page>\d+))?$'    =>"~blog@archive_monthly",
+            '~^blog/tag/(?<label>\w+)(/page(?<page>\d+))?$'                     =>"~blog@tag",
+            '~^blog/page/(?<slug>\S+)$'                                         =>"~blog@post",
+            '~^blog(/(?<id>\d+))?$'                                              =>"~blog@index",
         ];
 
 ```
@@ -126,5 +126,7 @@ return [
 可以用 C::getRoutes();  得到路由表
 用 C::getParameters() 获取切片，对地址重写有效。
 如果要做权限判断 构造函数里 C::getRouteCallingMethod() 获取当前调用方法。
+
+### 文件模式的路由
 
 ### 目录模式的路由

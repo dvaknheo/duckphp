@@ -7,7 +7,7 @@ namespace DuckPhp\Ext;
 
 interface PagerInterface
 {
-    public function current() : int;
+    public function current($new_value = null) : int;
     public function pageSize($new_value = null) : int;
     public function render($total, $options = []) : string;
 }

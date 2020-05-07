@@ -285,13 +285,13 @@ COOKIE($key, $default = null)
 Pager()
 
     获得分页器对象, 分页器参考 DuckPhp\Ext\Pager。 DuckPHP 只是做了最小的分页器
-PageNo()
+PageNo(new_value = null)
 
-    当前页码
+    获得或设置当前页码
 PageSize($new_value = null)
 
-    当前每页数据条目， 留空为读，有数字则写。
-PageHtml($total)
+    获得或设置当前每页数据条目
+PageHtml($total, $options=[])
 
     获得分页结果 HTML
 

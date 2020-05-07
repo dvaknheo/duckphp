@@ -167,8 +167,8 @@ class ControllerHelper
     {
         return App::PageSize($new_value);
     }
-    public static function PageHtml($total)
+    public static function PageHtml($total, $options = [])
     {
-        return  App::PageHtml($total);
+        return  App::PageHtml($total, $options);
     }
 }

@@ -1,7 +1,7 @@
 # 扩展教程
 [toc]
 
-### 使用 DuckPHP 的扩展
+## 使用 DuckPHP 的扩展
 
 DuckPHP 扩展的加载是通过选项里添加
 $options['ext']数组实现的
@@ -18,7 +18,7 @@ $options['ext']数组实现的
 
 DuckPHP/Core 的其他组件如 Configer, Route, View, AutoLoader 默认都在这调用
 
-#####  组件类
+##  组件类
 
 组件类满足以下接口
 
@@ -42,7 +42,7 @@ SingletonEx 可变单例
 
 
 
-默认启用的扩展
+## 默认启用的扩展
 
 默认没启用的扩展
 CallableView

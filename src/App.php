@@ -15,19 +15,19 @@ class App extends Core_App
 {
     const VERSION = '1.2.3';
     protected $options_ex = [
-            // 'rewrite_map' => [],
-            // 'route_map_important' => [],
-            // 'route_map' => [],
+            
+            //'route_map_important' => [],
+            //'route_map' => [],
             'db_before_query_handler' => null,
             'log_sql' => false,
             
             'ext' => [
+                'DuckPhp\Ext\DBManager' => true,
+                'DuckPhp\Ext\RouteHookRouteMap' => true,
+                
                 // No Use 'DuckPhp\Ext\PluginForSwooleHttpd' => true,
                 // 'DuckPhp\Ext\Misc' => true,
-                'DuckPhp\Ext\SimpleLogger' => true,
-                'DuckPhp\Ext\DBManager' => true,
-                'DuckPhp\Ext\RouteHookRewrite' => true,
-                'DuckPhp\Ext\RouteHookRouteMap' => true,
+                //'DuckPhp\Ext\RouteHookRewrite' => true,
                 
                 //'DuckPhp\Ext\StrictCheck' => false,
                 //'DuckPhp\Ext\RouteHookOneFileMode' => false,
@@ -37,8 +37,6 @@ class App extends Core_App
                 //'DuckPhp\Ext\RedisSimpleCache' => false,
                 //'DuckPhp\Ext\DBReusePoolProxy' => false,
                 //'DuckPhp\Ext\FacadesAutoLoader' => false,
-                //'DuckPhp\Ext\Lazybones' => false,
-                //'DuckPhp\Ext\Pager' => false,
             ],
             
         ];
@@ -65,7 +63,9 @@ class App extends Core_App
     }
     public function _Pager($object = null)
     {
-        return Pager::G($object);
+        $pager = Pager::G($object);
+        $pager->options['context_class'] = static::class;
+        return $pager;
     }
     public static function OnQuery($sql, ...$args)
     {

@@ -11,9 +11,9 @@ class PagerTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(Pager::class);
         
         $options=[
-            'url'=>'/user',
+            //'url'=>'/user',
         ];
-        //Pager::G()->init($options, $context=null);
+        Pager::G()->init($options, DuckPhp::G());
         Pager::G()->render(123,$options);
         ///////////////
         Pager::G()->current();
@@ -29,28 +29,18 @@ class PagerTest extends \PHPUnit\Framework\TestCase
 
         for($i=1;$i<=9;$i++){
             $options['current']=$i;
-        Pager::G()->render(26,$options);
+            Pager::G()->render(26,$options);
         }
         
         Pager::G(new Pager());
         Pager::G()->current();
         Pager::G()->init(['url'=>'/user',],DuckPhp::G());
-        Pager::SG();
         Pager::G()->getUrl(3);
         Pager::G()->pageSize(3);
+        Pager::G()->current(1);
         Pager::G()->pageSize();
+        Pager::G()->isInited();
         \MyCodeCoverage::G()->end(Pager::class);
         $this->assertTrue(true);
-        /*
-        Pager::G()->SG();
-        Pager::G()->_SG();
-        Pager::G()->Current();
-        Pager::G()->G()->render($total, $options=[]);
-        Pager::G()->_current();
-        
-        Pager::G()->getUrl($page);
-        Pager::G()->defaultGetUrl($page);
-        Pager::G()->_render($total, $options=[]);
-        //*/
     }
 }
