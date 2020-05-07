@@ -5,10 +5,11 @@
  */
 namespace DuckPhp\Ext;
 
+use DuckPhp\Core\ComponentInterface;
 use DuckPhp\Core\SingletonEx;
 use Exception;
 
-class StrictCheck
+class StrictCheck implements ComponentInterface
 {
     use SingletonEx;
 
@@ -21,11 +22,11 @@ class StrictCheck
             'namespace_model' => '',
             'controller_base_class' => '',
             'is_debug' => true,
-            'app_class' => null,
+            'context_class' => null,
         ];
     
-    protected $appClass = null;
-    
+    protected $context_class = null;
+    protected $is_inited = false;
     public function __construct()
     {
     }
@@ -36,13 +37,18 @@ class StrictCheck
             $this->initContext($options, $context);
         }
         if (!$context) {
-            $this->appClass = $this->options['app_class'];
+            $this->context_class = $this->options['context_class'];
         }
+        $this->is_inited = true;
         return $this;
+    }
+    public function isInited(): bool
+    {
+        return $this->is_inited;
     }
     protected function initContext($options = [], $context = null)
     {
-        $this->appClass = get_class($context);
+        $this->context_class = get_class($context);
         $this->options['is_debug'] = $context->options['is_debug'];
         
         try {
@@ -77,10 +83,10 @@ class StrictCheck
         if (!$this->options['is_debug']) {
             return false;
         }
-        if (!$this->appClass) {
+        if (!$this->context_class) {
             return $this->options['is_debug'];
         }
-        $flag = ($this->appClass)::G()->options['is_debug'] ?? false;
+        $flag = ($this->context_class)::G()->options['is_debug'] ?? false;
         return $flag?true:false;
     }
     public function checkStrictComponent($component_name, $trace_level, $parent_classes_to_skip = [])

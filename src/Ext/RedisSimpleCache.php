@@ -5,9 +5,10 @@
  */
 namespace DuckPhp\Ext;
 
+use DuckPhp\Core\ComponentInterface;
 use DuckPhp\Core\SingletonEx;
 
-class RedisSimpleCache //extends Psr\SimpleCache\CacheInterface;
+class RedisSimpleCache implements ComponentInterface //extends Psr\SimpleCache\CacheInterface;
 {
     use SingletonEx;
     
@@ -17,7 +18,7 @@ class RedisSimpleCache //extends Psr\SimpleCache\CacheInterface;
     ];
     public $redis = null;
     public $prefix = '';
-    
+    protected $is_inited = false;
     public function __construct()
     {
     }
@@ -26,6 +27,13 @@ class RedisSimpleCache //extends Psr\SimpleCache\CacheInterface;
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         $this->redis = $options['redis'] ?? null;
         $this->prefix = $options['redis_cache_prefix'] ?? '';
+        
+        $this->is_inited = true;
+        return $this;
+    }
+    public function isInited(): bool
+    {
+        return $this->is_inited;
     }
     public function get($key, $default = null)
     {

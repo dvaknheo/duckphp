@@ -25,7 +25,7 @@ PluginForSwooleHttpd::G()->onSwooleHttpdInit($SwooleHttpd,null);
 PluginForSwooleHttpd::G()->onSwooleHttpdStart($SwooleHttpd);
 PluginForSwooleHttpd::G()->onSwooleHttpdRequest($SwooleHttpd);
 
-        
+        PluginForSwooleHttpd::G()->isInited();
         \MyCodeCoverage::G()->end(PluginForSwooleHttpd::class);
         $this->assertTrue(true);
     }

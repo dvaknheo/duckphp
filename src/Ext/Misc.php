@@ -5,11 +5,13 @@
  */
 namespace DuckPhp\Ext;
 
+use DuckPhp\Core\ComponentInterface;
 use DuckPhp\Core\SingletonEx;
+
 use ReflectionMethod;
 use ReflectionException;
 
-class Misc
+class Misc implements ComponentInterface
 {
     use SingletonEx;
     
@@ -21,6 +23,7 @@ class Misc
     protected $context_class;
     protected $_di_container;
     
+    protected $is_inited = false;
     public function __construct()
     {
     }
@@ -52,6 +55,13 @@ class Misc
                 ['C','A']
             );
         }
+        
+        $this->is_inited = true;
+        return $this;
+    }
+    public function isInited(): bool
+    {
+        return $this->is_inited;
     }
     public static function Import($file)
     {

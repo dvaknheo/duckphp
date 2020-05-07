@@ -40,6 +40,7 @@ class RouteHookRewriteTest extends \PHPUnit\Framework\TestCase
         echo "-----------xxxxxxxxxxxxxxxxxxxxx-----\n";
         RouteHookRewrite::G()->filteRewrite('k/v?a=b&g=h');
 
+                        RouteHookRewrite::G()->isInited();
 
         \MyCodeCoverage::G()->end(RouteHookRewrite::class);
         $this->assertTrue(true);

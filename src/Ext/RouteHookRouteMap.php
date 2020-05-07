@@ -5,10 +5,11 @@
  */
 namespace DuckPhp\Ext;
 
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\Core\ComponentInterface;
 use DuckPhp\Core\Route;
+use DuckPhp\Core\SingletonEx;
 
-class RouteHookRouteMap
+class RouteHookRouteMap implements ComponentInterface
 {
     use SingletonEx;
     public $options = [
@@ -16,6 +17,7 @@ class RouteHookRouteMap
         'route_map' => [],
         
     ];
+    protected $is_inited = false;
     public function __construct()
     {
     }
@@ -51,6 +53,12 @@ class RouteHookRouteMap
                 ['C','A']
             );
         }
+        $this->is_inited = true;
+        return $this;
+    }
+    public function isInited(): bool
+    {
+        return $this->is_inited;
     }
     public function compile($pattern_url, $rules = [])
     {

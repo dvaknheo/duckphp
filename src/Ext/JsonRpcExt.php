@@ -5,10 +5,11 @@
  */
 namespace DuckPhp\Ext;
 
+use DuckPhp\Core\ComponentInterface;
 use DuckPhp\Core\SingletonEx;
 use Exception;
 
-class JsonRpcExt
+class JsonRpcExt implements ComponentInterface
 {
     use SingletonEx;
     public $options = [
@@ -21,11 +22,11 @@ class JsonRpcExt
         'jsonrpc_service_namespace' => '',//todo next version
     ];
     
-    public $is_inited;
     protected $backend;
     protected $prefix;
     protected $is_debug;
     
+    protected $is_inited = false;
     public function __construct()
     {
     }
@@ -44,7 +45,12 @@ class JsonRpcExt
             spl_autoload_register([$this,'_autoload']);
         }
         
+        $this->is_inited = true;
         return $this;
+    }
+    public function isInited(): bool
+    {
+        return $this->is_inited;
     }
     public function clear()
     {

@@ -5,12 +5,13 @@
  */
 namespace DuckPhp\Ext;
 
+use DuckPhp\Core\ComponentInterface;
+use DuckPhp\Core\Route;
 use DuckPhp\Core\SingletonEx;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Ext\RouteHookRewrite;
-use DuckPhp\Core\Route;
 
-class RouteHookOneFileMode
+class RouteHookOneFileMode implements ComponentInterface
 {
     use SingletonEx;
     public $options = [
@@ -19,7 +20,7 @@ class RouteHookOneFileMode
     ];
     public $key_for_action = '_r';
     public $key_for_module = '';
-    
+    protected $is_inited = false;
     public function __construct()
     {
     }
@@ -37,7 +38,12 @@ class RouteHookOneFileMode
             Route::G()->addRouteHook([static::class,'Hook'], 'prepend-outter');
             Route::G()->setURLHandler([$this,'onURL']);
         }
+        $this->is_inited = true;
         return $this;
+    }
+    public function isInited(): bool
+    {
+        return $this->is_inited;
     }
     public static function URL($url = null)
     {

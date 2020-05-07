@@ -69,7 +69,7 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
         
         var_dump($data);
         HttpServer::G()->close();
-        
+        JsonRpcExt::G()->isInited();
         \MyCodeCoverage::G()->end(JsonRpcExt::class);
         $this->assertTrue(true);
         /*

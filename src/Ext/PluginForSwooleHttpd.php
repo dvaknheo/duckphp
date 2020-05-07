@@ -5,9 +5,10 @@
  */
 namespace DuckPhp\Ext;
 
+use DuckPhp\Core\ComponentInterface;
 use DuckPhp\Core\SingletonEx;
 
-class PluginForSwooleHttpd // impelement SwooleExtAppInterface
+class PluginForSwooleHttpd implements ComponentInterface // , SwooleExtAppInterface
 {
     use SingletonEx;
     
@@ -16,16 +17,24 @@ class PluginForSwooleHttpd // impelement SwooleExtAppInterface
     ];
     protected $context_class;
     protected $SwooleHttpd;
-    public function init($options, $context)
+    
+    protected $is_inited = false;
+    public function init(array $options, object $context = null)
     {
         if (PHP_SAPI !== 'cli') {
             return $this; // @codeCoverageIgnore
         }
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
-        $this->context_class = get_class($context);
+        $this->context_class = $context ? get_class($context) : null;
         $SwooleExt = $this->options['swoole_ext_class'];
         $SwooleExt::G()->init($options, $this);
+        
+        $this->is_inited = true;
         return $this;
+    }
+    public function isInited(): bool
+    {
+        return $this->is_inited;
     }
     // @interface SwooleExtAppInterface
     public function run()

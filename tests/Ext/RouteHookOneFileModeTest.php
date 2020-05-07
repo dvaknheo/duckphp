@@ -67,7 +67,8 @@ if(true){
 
         //------------
         
-        
+                        RouteHookOneFileMode::G()->isInited();
+
         \MyCodeCoverage::G()->end(RouteHookOneFileMode::class);
         $this->assertTrue(true);
         /*

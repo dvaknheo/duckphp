@@ -5,12 +5,13 @@
  */
 namespace DuckPhp\Ext;
 
+use DuckPhp\Core\ComponentInterface;
+use DuckPhp\Core\Route;
 use DuckPhp\Core\SingletonEx;
 use DuckPhp\Core\SuperGlobal;
-use DuckPhp\Core\Route;
 use DuckPhp\Ext\RouteHookRewrite;
 
-class RouteHookDirectoryMode
+class RouteHookDirectoryMode implements ComponentInterface
 {
     use SingletonEx;
     public $options = [
@@ -20,7 +21,7 @@ class RouteHookDirectoryMode
         //'mode_dir_key_for_action'=>true,
     ];
     protected $basepath;
-    
+    protected $is_inited = false;
     public function __construct()
     {
     }
@@ -33,6 +34,12 @@ class RouteHookDirectoryMode
             Route::G()->addRouteHook([static::class,'Hook'], 'prepend-outter');
             Route::G()->setURLHandler([$this,'onURL']);
         }
+        $this->is_inited = true;
+        return $this;
+    }
+    public function isInited(): bool
+    {
+        return $this->is_inited;
     }
     protected function adjustPathinfo($basepath, $path_info)
     {

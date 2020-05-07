@@ -45,6 +45,9 @@ class RedisSimpleCacheTest extends \PHPUnit\Framework\TestCase
         RedisSimpleCache::G()->set($key, $value, $ttl );
         RedisSimpleCache::G()->delete($key);
         RedisSimpleCache::G()->has($key);
+        
+        RedisSimpleCache::G()->isInited();
+
         \MyCodeCoverage::G()->end(RedisSimpleCache::class);
         $this->assertTrue(true);
         /*

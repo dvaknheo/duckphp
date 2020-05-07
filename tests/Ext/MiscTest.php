@@ -65,6 +65,7 @@ class MiscTest extends \PHPUnit\Framework\TestCase
         }catch(\Exception $ex){
         }
                     Misc::CallAPI(FakeService::class,'m1',['id'=>'1']);
+        Misc::G()->isInited();
 
         \MyCodeCoverage::G()->end(Misc::class);
         $this->assertTrue(true);

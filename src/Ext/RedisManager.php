@@ -6,13 +6,15 @@
 
 namespace DuckPhp\Ext;
 
+use DuckPhp\Core\ComponentInterface;
 use DuckPhp\Core\SingletonEx;
 use DuckPhp\Ext\RedisSimpleCache;
 use Redis;
 
-class RedisManager
+class RedisManager implements ComponentInterface
 {
     /*
+    redis_lis=>
     [[
                 'host'=>'',
                 'port'=>'',
@@ -33,7 +35,7 @@ class RedisManager
 
     protected $pool = [];
     protected $redis_config_list = [];
-    
+    protected $is_inited = false;
     public function __construct()
     {
     }
@@ -51,8 +53,14 @@ class RedisManager
         if ($context) {
             $this->initContext($options, $context);
         }
+        $this->is_inited = true;
+        
+        return $this;
     }
-    
+    public function isInited(): bool
+    {
+        return $this->is_inited;
+    }
     protected function initContext($options = [], $context = null)
     {
         if ($this->options['use_context_redis_setting']) {

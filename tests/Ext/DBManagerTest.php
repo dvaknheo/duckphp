@@ -161,6 +161,7 @@ $options=[
         
         var_dump($data);
 
+        DBManager::G()->isInited();
 
         \MyCodeCoverage::G()->end(DBManager::class);
         $this->assertTrue(true);

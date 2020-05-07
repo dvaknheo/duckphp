@@ -5,11 +5,12 @@
  */
 namespace DuckPhp\Ext;
 
+use DuckPhp\Core\ComponentInterface;
+use DuckPhp\Core\Route;
 use DuckPhp\Core\SingletonEx;
 use DuckPhp\Core\SuperGlobal;
-use DuckPhp\Core\Route;
 
-class RouteHookRewrite
+class RouteHookRewrite implements ComponentInterface
 {
     use SingletonEx;
     public $options = [
@@ -17,7 +18,7 @@ class RouteHookRewrite
     ];
     protected $rewrite_map = [];
     
-    
+    protected $is_inited = false;
     public function __construct()
     {
     }
@@ -42,6 +43,12 @@ class RouteHookRewrite
                 );
             }
         }
+        $this->is_inited = true;
+        return $this;
+    }
+    public function isInited(): bool
+    {
+        return $this->is_inited;
     }
     public function assignRewrite($key, $value = null)
     {

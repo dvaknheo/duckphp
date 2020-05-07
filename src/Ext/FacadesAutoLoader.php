@@ -5,9 +5,10 @@
  */
 namespace DuckPhp\Ext;
 
+use DuckPhp\Core\ComponentInterface;
 use DuckPhp\Core\SingletonEx;
 
-class FacadesAutoLoader
+class FacadesAutoLoader implements ComponentInterface
 {
     use SingletonEx;
     
@@ -20,7 +21,7 @@ class FacadesAutoLoader
     protected $facades_map = [];
     
     protected $is_loaded = false;
-    
+    protected $is_inited = false;
     public function __construct()
     {
     }
@@ -36,9 +37,13 @@ class FacadesAutoLoader
             spl_autoload_register([$this,'_autoload']);
         }
         
+        $this->is_inited = true;
         return $this;
     }
-    
+    public function isInited(): bool
+    {
+        return $this->is_inited;
+    }
     public function _autoload($class)
     {
         $flag = (substr($class, 0, strlen($this->prefix)) === $this->prefix)?true:false;

@@ -53,6 +53,9 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
         RouteHookRouteMap::G(new RouteHookRouteMap())->init($options, App::G());
         RouteHookRouteMap::G()->options['route_map_important']=[];
         Route::G()->bind('/posts/aa/comments/33')->run();
+        
+                                RouteHookRouteMap::G()->isInited();
+
         \MyCodeCoverage::G()->end(RouteHookRouteMap::class);
         $this->assertTrue(true);
     }

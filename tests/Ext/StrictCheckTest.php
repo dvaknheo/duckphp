@@ -64,6 +64,7 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
         $options['namespace_service']='';
         StrictCheck::G(new StrictCheck())->init($options)->checkStrictService('NoExt',0);
         
+                                StrictCheck::G()->isInited();
 
         \MyCodeCoverage::G()->end(StrictCheck::class);
         $this->assertTrue(true);

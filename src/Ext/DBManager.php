@@ -5,10 +5,11 @@
  */
 namespace DuckPhp\Ext;
 
+use DuckPhp\Core\ComponentInterface;
 use DuckPhp\Core\SingletonEx;
 use DuckPhp\DB\DB;
 
-class DBManager
+class DBManager implements ComponentInterface
 {
     use SingletonEx;
 
@@ -38,7 +39,7 @@ class DBManager
     protected $use_context_db_setting = true;
     
     protected $beforeQueryHandler = null;
-    
+    protected $is_inited = false;
     public function __construct()
     {
     }
@@ -55,7 +56,12 @@ class DBManager
         if ($context) {
             $this->initContext($options, $context);
         }
+        $this->is_inited = true;
         return $this;
+    }
+    public function isInited(): bool
+    {
+        return $this->is_inited;
     }
     protected function initContext($options = [], $context = null)
     {

@@ -72,7 +72,8 @@ echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n";
 
         Route::G()->bindServerData(SuperGlobal::G()->_SERVER);
         Route::G()->run();
-        
+                RouteHookDirectoryMode::G()->isInited();
+
         \MyCodeCoverage::G()->end(RouteHookDirectoryMode::class);
         $this->assertTrue(true);
     }
