@@ -205,20 +205,20 @@ App::PageHtml(123);
     {
         App::G()->is_debug=true;
         App::G()->options['error_500']="_sys/error-exception";
-        App::OnException(new \Exception("333333",-1));
+        App::CallException(new \Exception("333333",-1));
         App::G()->options['error_500']=null;
-        App::OnException(new \Exception("EXxxxxxxxxxxxxxx",-1));
+        App::CallException(new \Exception("EXxxxxxxxxxxxxxx",-1));
         
         App::G()->options['error_500']=function($ex){ echo $ex;};
-        App::OnException(new \Exception("22222222222222",-1));
+        App::CallException(new \Exception("22222222222222",-1));
         
         App::assignExceptionHandler(\Exception::class,function($ex){
             App::OnDefaultException($ex);
             echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         });
-        App::OnException(new \Exception("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",-1));
-        App::OnException(new E("EXxxxxxxxxxxxxxx",-1));
-        App::OnException(new E2("EXxxxxxxxxxxxxxx",-1));
+        App::CallException(new \Exception("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",-1));
+        App::CallException(new E("EXxxxxxxxxxxxxxx",-1));
+        App::CallException(new E2("EXxxxxxxxxxxxxxx",-1));
     }
     public function doHelper()
     {
@@ -346,7 +346,7 @@ App::PageHtml(123);
         App::getPathInfo();
         
         
-        App::OnException(new \Exception("something"));
+        App::CallException(new \Exception("something"));
         
     }
     protected function do404()

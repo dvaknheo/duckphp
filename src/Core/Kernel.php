@@ -253,7 +253,7 @@ trait Kernel
             if ($this->options['skip_exception_check']) {
                 throw $ex;
             }
-            ExceptionManager::OnException($ex);
+            ExceptionManager::CallException($ex);
             $ret = true;
         }
         $this->clear();

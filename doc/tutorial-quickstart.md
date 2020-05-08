@@ -270,7 +270,7 @@ RunQuickly(): bool
     这用于你想偷懒，直接 App::foo(); 的情况。
 #### 接管的静态方法
     App::On404();
-    App::OnException(): void
+    App::CallException(): void
     App::OnDevErrorHandler():void 
     App::IsRunning();
     App::InException();

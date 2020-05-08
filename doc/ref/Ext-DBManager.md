@@ -20,7 +20,6 @@
     public function init(array $options, object $context = null)
     protected function initContext($options = [], $context = null)
     public static function CloseAllDB()
-    public function OnException()
     public static function DB($tag = null)
     public static function DB_W()
     public static function DB_R()
@@ -32,7 +31,6 @@
     public function _DB_W()
     public function _DB_R()
     public function _closeAllDB()
-    public function _onException()
     
 
 ### DBManager

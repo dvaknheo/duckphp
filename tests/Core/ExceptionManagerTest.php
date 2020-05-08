@@ -10,7 +10,7 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(ExceptionManager::class);
 
          $exception_options=[
-            'default_exception_handler'=>[ExceptionManagerObject::class,'OnException'],
+            'default_exception_handler'=>[ExceptionManagerObject::class,'CallException'],
             'dev_error_handler'=>[ExceptionManagerObject::class,'OnDevErrorHandler'],
             //'system_exception_handler'=>[ExceptionManager::G(),'on_exception'],
         ];
@@ -35,8 +35,8 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
         ExceptionManager::G()->assignExceptionHandler(ExceptionManagerException::class, function($ex){
             var_dump("OK");
         });
-        ExceptionManager::OnException($ex);
-        ExceptionManager::OnException($ex2);
+        ExceptionManager::CallException($ex);
+        ExceptionManager::CallException($ex2);
         
         ExceptionManager::G()->clear();
         
@@ -83,7 +83,7 @@ class ExceptionManagerObject
     {
 
     }
-    static function OnException(\Throwable $ex)
+    static function CallException(\Throwable $ex)
     {
         //if( ExceptionManager::G()->
         echo "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";

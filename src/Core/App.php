@@ -676,9 +676,9 @@ trait Core_Glue
     {
         return ExceptionManager::G()->setDefaultExceptionHandler($callback);
     }
-    public static function OnException($ex)
+    public static function CallException($ex)
     {
-        return ExceptionManager::G()->_OnException($ex);
+        return ExceptionManager::G()->_CallException($ex);
     }
     //super global
     public static function SG($replacement_object = null)

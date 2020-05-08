@@ -14,7 +14,7 @@ class AppHelperTest extends \PHPUnit\Framework\TestCase
         AppHelper::setUrlHandler(function($url){});
         AppHelper::addRouteHook(function(){},'append-outter',true);
         
-        AppHelper::OnException(new \Exception("333333",-1));
+        AppHelper::CallException(new \Exception("333333",-1));
 
         AppHelper::IsRunning();
         AppHelper::isInException();

@@ -33,9 +33,9 @@ class ExceptionManager implements ComponentInterface
     public function __construct()
     {
     }
-    public static function OnException($ex)
+    public static function CallException($ex)
     {
-        return static::G()->_OnException($ex);
+        return static::G()->_CallException($ex);
     }
     public function setDefaultExceptionHandler($default_exception_handler)
     {
@@ -75,7 +75,7 @@ class ExceptionManager implements ComponentInterface
         /* Don't execute PHP internal error handler */
         return true;
     }
-    public function _OnException($ex)
+    public function _CallException($ex)
     {
         foreach ($this->exceptionHandlers as $class => $callback) {
             if (is_a($ex, $class)) {
@@ -113,9 +113,9 @@ class ExceptionManager implements ComponentInterface
         
         if ($this->options['handle_all_exception']) {
             if ($this->system_exception_handler) {
-                $this->last_exception_handler = ($this->system_exception_handler)([$this,'_OnException']);
+                $this->last_exception_handler = ($this->system_exception_handler)([$this,'_CallException']);
             } else {
-                $this->last_exception_handler = set_exception_handler([$this,'_OnException']);
+                $this->last_exception_handler = set_exception_handler([$this,'_CallException']);
             }
         }
     }

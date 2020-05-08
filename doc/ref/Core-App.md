@@ -20,7 +20,7 @@ public function extendComponents($class, $methods, $components): void
 public static function On404(): void
 
     //
-public static function OnException($ex): void
+public static function CallException($ex): void
 
     //
 public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
@@ -69,7 +69,6 @@ Core\App 类 可以视为几个类的组合
     public static function On404(): void
     public static function OnDefaultException($ex): void
     public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
-    public static function OnException($ex)
 
     public function getStaticComponentClasses()
     public function getDynamicComponentClasses()

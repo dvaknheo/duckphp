@@ -11,9 +11,9 @@ use DuckPhp\Core\App;
 class AppHelper
 {
     use HelperTrait;
-    public static function OnException($ex)
+    public static function CallException($ex)
     {
-        return App::OnException($ex);
+        return App::CallException($ex);
     }
     public static function IsRunning()
     {

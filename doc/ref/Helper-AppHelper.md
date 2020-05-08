@@ -11,7 +11,7 @@ public static function Platform()
 public static function trace_dump()
 public static function var_dump(...$args)
 
-public static function OnException($ex)
+public static function CallException($ex)
 
 public static function IsRunning()
 public static function isInException()
@@ -66,7 +66,7 @@ routeMapNameToRegex
 
 
 
-    public static function OnException($ex)
+    public static function CallException($ex)
     public static function IsRunning()
     public static function InException()
     public static function assignPathNamespace($path, $namespace = null)

@@ -344,7 +344,7 @@ setUrlHandler($callback)
 assignPathNamespace($path, $namespace = null)
 
     自动载入
-OnException($ex)
+CallException($ex)
 
     调用异常处理，一般也不用，而是看异常处理那章
 ### Swoole 兼容
