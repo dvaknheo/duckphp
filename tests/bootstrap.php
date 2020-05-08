@@ -38,35 +38,15 @@ function GetClassTestPath($class)
 
 class MyCodeCoverage
 {
-    protected static function include_file($file)
-    {
-        return include $file;
-    }
-    public function createReport()
-    {
-        $path=realpath(__DIR__.'/../src');
-        $coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage();
-        $coverage->filter()->addDirectoryToWhitelist($path);
-
-        $coverage->setTests(array(
-          'T' =>
-          array(
-            'size' => 'unknown',
-            'status' => -1,
-          ),
-        ));
-
-        $source=realpath(__DIR__.'/test_coveragedumps');
-        $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
-
-        $iterator = new \RecursiveIteratorIterator($directory);
-        $files = \iterator_to_array($iterator, false);
-        foreach ($files as $file) {
-            $coverage->merge(static::include_file($file));
-        }
-        $writer = new \SebastianBergmann\CodeCoverage\Report\Html\Facade;
-        $writer->process($coverage, __DIR__ . '/test_reports');
-    }
+    public $options=[
+    ];
+    protected $extFile=null;
+    protected $coverage;
+    protected $test_class;
+    protected $path_source;
+    protected $path_dump;
+    public $path_report;
+    protected $namespace=null;
     public static function G($object=null)
     {
         //Simplist
@@ -74,8 +54,58 @@ class MyCodeCoverage
         $_instance=$object?:($_instance??new static);
         return $_instance;
     }
-    protected $coverage;
-    protected $test_class;
+    public function init(array $options, $context=null)
+    {
+    }
+    public function isInited():bool
+    {
+        return true;
+    }
+    public function __construct()
+    {
+        $this->path_source=realpath(__DIR__.'/../src');
+        $this->path_dump=realpath(__DIR__.'/test_coveragedumps');
+        $this->path_report=realpath(__DIR__.'/test_reports');
+        $this->namespace=null;
+
+    }
+    protected static function include_file($file)
+    {
+        return include $file;
+    }
+    public function createReport()
+    {
+        $coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage();
+        $coverage->filter()->addDirectoryToWhitelist($this->path_source);
+        $coverage->setTests([
+          'T' =>[
+            'size' => 'unknown',
+            'status' => -1,
+          ],
+        ]);
+
+        $directory = new \RecursiveDirectoryIterator($this->path_dump, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
+
+        $iterator = new \RecursiveIteratorIterator($directory);
+        $files = \iterator_to_array($iterator, false);
+        foreach ($files as $file) {
+            $coverage->merge(static::include_file($file));
+        }
+        $writer = new \SebastianBergmann\CodeCoverage\Report\Html\Facade;
+        $writer->process($coverage, $this->path_report);
+        
+        $report = $coverage->getReport();
+        $lines_tested = $report->getNumExecutedLines();
+        $lines_total = $report->getNumExecutableLines();
+        $lines_percent = sprintf('%0.2f%%',$lines_tested/$lines_total *100);
+        return [
+            'lines_tested'=>$lines_tested,
+            'lines_total'=>$lines_total,
+            'lines_percent'=>$lines_percent,
+        ];
+    }
+
+
     protected function setPath($path)
     {
         if (is_file($path)) {
@@ -91,75 +121,38 @@ class MyCodeCoverage
         $ref=new ReflectionClass($class);
         return $ref->getFileName();
     }
-    protected $extFile=null;
     public function prepareAttachFile($extFile)
     {
         $this->extFile=$extFile;
     }
-    public function begin($class, $name='')
+    public function begin($class)
     {
         $this->test_class=$class;
+        if(!$this->isInited()){
+            $this->init([]);
+        }
         $this->coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage();
         $this->setPath($this->classToPath($class));
         if($this->extFile){
             $this->coverage->filter()->addFileToWhitelist($this->extFile);
         }
-        if(!$name){
-            $name=$class;
-        }
-        $this->coverage->start($name);
+        $this->coverage->start($class);
     }
     public function end()
     {
         $this->coverage->stop();
-        
         $writer = new \SebastianBergmann\CodeCoverage\Report\PHP;
-        $path=substr(str_replace('\\', '/', $this->test_class), strlen('DuckPhp\\'));
-        $path=__DIR__.'/test_coveragedumps/'.$path .'.php';
+        
+        $this->namespace=$this->namespace??array_shift(explode('\\',$this->test_class));
+        $path=substr(str_replace('\\', '/', $this->test_class), strlen($this->namespace.'\\'));
+        $path=realpath($this->path_dump.'/'.$path .'.php');
         $writer->process($this->coverage, $path);
+        
+
         $this->coverage=null;
-        $this->test_class='';
     }
     
     ///////////////////////
-    public function run($path, $name, $callback)
-    {
-        $this->begin($path, $name);
-        ($callback)($path, $name);
-        return $this->end();
-    }
-    public function merge($path, $name, $data_list)
-    {
-        $coverage =$this->coverage??new \SebastianBergmann\CodeCoverage\CodeCoverage;
-        $this->setPath($path);
-        foreach ($data_list as $data) {
-            $this->coverage->append($data, $name);
-        }
-    }
-    public function reportHtml($output_path)
-    {
-        $writer = new \SebastianBergmann\CodeCoverage\Report\Html\Facade;
-        $writer->process($this->coverage, $output_path);
-    }
-    public function report($output_path)
-    {
-        /*
-        $report = $this->coverage->getReport();
-        $t=$report->getClasses();
-        $ret=array_shift($t);
-        unset($ret['methods']);
-        var_dump( $ret );
-
-        return;
-        */
-        $writer = new \SebastianBergmann\CodeCoverage\Report\Text;
-        $x=$writer->process($this->coverage, $output_path);
-        echo $x;
-    }
-    public function clear()
-    {
-        $this->coverage=null;
-    }
 }
 class TestFileGenerator
 {
