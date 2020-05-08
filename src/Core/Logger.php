@@ -5,9 +5,10 @@
  */
 namespace DuckPhp\Core;
 
+use DuckPhp\Core\ComponentInterface;
 use DuckPhp\Core\SingletonEx;
 
-class Logger implements ComponentInterface //implements Psr\Log\LoggerInterface;
+class Logger implements ComponentInterface //, Psr\Log\LoggerInterface;
 {
     use SingletonEx;
     

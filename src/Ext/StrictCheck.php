@@ -16,12 +16,12 @@ class StrictCheck implements ComponentInterface
     const MAX_TRACE_LEVEL = 20;
     
     public $options = [
-            'namespace' => '',
-            'namespace_controller' => '',
+            'namespace' => 'MY',
+            'namespace_controller' => 'Controller',
             'namespace_service' => '',
             'namespace_model' => '',
-            'controller_base_class' => '',
-            'is_debug' => true,
+            'controller_base_class' => null,
+            'is_debug' => false,
             'context_class' => null,
         ];
     

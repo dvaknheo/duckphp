@@ -5,12 +5,14 @@
  */
 namespace DuckPhp\Core;
 
+use DuckPhp\Core\ComponentInterface;
 use DuckPhp\Core\SingletonEx;
 
-class SuperGlobal
+class SuperGlobal implements ComponentInterface
 {
     use SingletonEx;
     
+    public $options = [];
     public $_GET;
     public $_POST;
     public $_REQUEST;

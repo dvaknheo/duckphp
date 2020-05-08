@@ -5,16 +5,19 @@
  */
 namespace DuckPhp\Core;
 
+use DuckPhp\Core\ComponentInterface;
 use DuckPhp\Core\SingletonEx;
 
-class RuntimeState
+class RuntimeState implements ComponentInterface
 {
     use SingletonEx;
+    public $options = [];
     
     protected $is_running = false;
     protected $is_in_exception = false;
     protected $is_outputed = false;
     protected $is_inited = false;
+    
     public function __construct()
     {
     }

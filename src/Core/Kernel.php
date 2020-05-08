@@ -8,6 +8,7 @@
 //OK，Lazy
 namespace DuckPhp\Core;
 
+use DuckPhp\Core\ComponentInterface;
 use DuckPhp\Core\SingletonEx;
 
 use DuckPhp\Core\AutoLoader;

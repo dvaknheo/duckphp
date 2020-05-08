@@ -5,6 +5,7 @@
  */
 namespace DuckPhp\Core;
 
+use DuckPhp\Core\ComponentInterface;
 use DuckPhp\Core\SingletonEx;
 
 class AutoLoader implements ComponentInterface
