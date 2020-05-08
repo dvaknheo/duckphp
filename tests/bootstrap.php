@@ -143,7 +143,9 @@ class MyCodeCoverage
         $this->coverage->stop();
         $writer = new \SebastianBergmann\CodeCoverage\Report\PHP;
         
-        $this->namespace=$this->namespace??array_shift(explode('\\',$this->test_class));
+        $blocks=explode('\\',$this->test_class);
+        $root=array_shift($blocks);
+        $this->namespace=$this->namespace ?? $root;
         $path=substr(str_replace('\\', '/', $this->test_class), strlen($this->namespace.'\\'));
         $path=realpath($this->path_dump.'/'.$path .'.php');
         $writer->process($this->coverage, $path);

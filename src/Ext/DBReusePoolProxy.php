@@ -9,7 +9,7 @@ use DuckPhp\Ext\DBManager;
 
 class DBReusePoolProxy extends DBManager // @codeCoverageIgnoreStart
 {
-    public $options_ex = [
+    public $options = [
         'db_reuse_size' => 100,
         'db_reuse_timeout' => 5,
     ];
@@ -20,7 +20,7 @@ class DBReusePoolProxy extends DBManager // @codeCoverageIgnoreStart
     protected $is_static = true;
     public function __construct()
     {
-        $this->options = array_merge($this->options_ex, $this->options);
+        $this->options = array_replace_recursive($this->options, (new parent())->options); //merge parent's options;
         parent::__construct();
     }
     public function init(array $options, object $context = null)

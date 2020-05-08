@@ -15,9 +15,12 @@ class CallableView extends View
             'callable_view_class' => null,
             'callable_view_prefix' => null,
             'callable_view_skip_replace' => false,
-            'path' => '',
-            'path_view' => 'view',
         ];
+    public function __construct()
+    {
+        $this->options = array_replace_recursive($this->options, (new parent())->options); //merge parent's options;
+        parent::__construct();
+    }
     public function init(array $options, object $context = null)
     {
         $ret = parent::init($options, $context);

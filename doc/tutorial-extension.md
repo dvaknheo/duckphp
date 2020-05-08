@@ -63,8 +63,11 @@ RouteHookDirecotoryMode
 
 RouteHookOnFileMode
 
-
-
+    public function __construct()
+    {
+        $this->options = array_replace_recursive($this->options, (new parent())->options); //merge parent's options;
+        return parent::__construct();
+    }
 StricCheck
 
 如何写扩展
