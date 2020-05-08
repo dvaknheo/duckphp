@@ -60,14 +60,13 @@ Controller --> Service ------------------------------ ---> Model
 
 问：上面怎么没有 `AppHelper` 类
 
-答：`AppHelper` 助手类只由核心工程师来调用 。当你要从 App 类里找出复杂的助手类，还不如在 AppHelper 里找。Session 管理就用到了 AppHelper 类。
+答：`AppHelper` 助手类只由`核心工程师`来调用 。当你要从 App 类里找出复杂的助手类，还不如在 AppHelper 里找。Session 管理就用到了 AppHelper 类。
 
 
 
 ## 助手类的公用静态方法
 
 所有助手类都有的静态方法。
-
 
 
 ThrowOn($flag,$messsage,$code=0,$exception_class=null)
@@ -78,7 +77,7 @@ GetExtendStaticStaticMethodList()
     用来查看当前类有什么额外的静态方法。
 \_\_callStatic
 
-    静态方法已经被扩展, 会有额外代码，
+    静态方法已经被扩展。
 IsDebug()
 
     判断是否在调试状态, 默认读取选项和设置字段里的 duckphp_is_debug
@@ -380,5 +379,5 @@ class ModelHelper extends Helper
 
 ```
 如果你要修改相关实现，了解 DuckPHP 系统架构后后 参考 [DuckPhp\Core\App](ref/Core-App.md)
-如果你自己添加了 Ext 扩展类，那么你需要extendsXXX 方法注入相关 Helper
+如果你自己添加了 Ext 扩展类，那么你需要 extendComponents 方法注入相关 Helper
 如果你只是替换系统的实现， 找出那些 Helper 的实现函数，替换之。

@@ -2,7 +2,7 @@
 [toc]
 ## 介绍
 
-本参考是所有 DuckPHP 类 的规范参考。
+本参考是所有 DuckPHP 类 的规范参考。不包含内部 trait 。包含所有选项索引。
 
 ## 按功能分类的类索引
 
@@ -12,7 +12,7 @@
 * [Helper\ModelHelper](Helper-ModelHelper.md) 模型助手类
 * [Helper\ServiceHelper](Helper-ServiceHelper.md) 服务助手类
 * [Helper\ViewHelper](Helper-ViewHelper.md) 视图助手类
-* [Helper\AppHelper](Helper-AppHelper.md) 服务助手类
+* [Helper\AppHelper](Helper-AppHelper.md) 工程应用助手类
 
 ### 入口
 * [App](App.md) 框架应用入口类  继承
@@ -65,73 +65,67 @@
 * [Ext\StrictCheckModelTrait](Ext-StrictCheckModelTrait.md) 
 * [Ext\StrictCheckServiceTrait](Ext-StrictCheckServiceTrait.md) 
 ## DuckPHP 的源代码
+
 遵循 PSR-4 的文件结构，节点文件是 `Core/Singleton` 是所有非辅助类都以来的可变单例类。
 `Core/App`, `Core/Kernel`, `Core/HttpServer` 是连接性节点。 其他节点都是独立的。
 
 链接指向参考文件。
 
-1. [App.php](App.md) 是加载了扩展的 DuckPHP 入口 ，扩展至 Core/App
-
-2. [HttpServer.php](HttpServer.md) 是 加了 Swoole 的 Http 服务器。
-
-3. [SingletonEx.php](SingletonEx.md) 是 Core/SingletonEx.php 的快捷方法。
-
-4. [ThrowOn.php](ThrowOn.md) 是 Core/ThrowOn.php 的快捷方法。
-
-5. Core/ 目录是核心目录，基本功能都在 Core 里实现
-   1. **[SingletonEx.php](Core-SingletonEx.php)**  
-   2. **[ThrowOn.php](Core-ThrowOn.md)** 注意这个 trait 也被 Helper使用
-   3. **[App.php](Core-App.md)** 是核心,引用
-        1. [Kernel.php](Core-Kernel.md) 核心Trait 组件
+1. [App.php](App.md) 加载了扩展的 DuckPHP 入口 ，扩展自 Core/App
+2. [HttpServer.php](HttpServer.md)  加了 Swoole 的 Http 服务器。
+3. [SingletonEx.php](SingletonEx.md)  Core/SingletonEx.php 的快捷方法。
+4. [ThrowOn.php](ThrowOn.md)  Core/ThrowOn.php 的快捷方法。
+5. `Core` 目录是核心目录，核心框架。基本功能都在 Core 里实现
+   1. **[SingletonEx.php](Core-SingletonEx.php)**  可变单例trait
+   2. **[ThrowOn.php](Core-ThrowOn.md)** 可抛 trait 注意这个 trait 也被 Helper使用
+   3. [ComponentInterface.php](Core-ComponentInterface.md) 组件接口
+   4. **[App.php](Core-App.md)** 核心应用类。
+        2. [Kernel.php](Core-Kernel.md) 核心Trait 以下是 `核心必备组件`
            1. [AutoLoader.php](Core-AutoLoader.md) 自动加载类
            2. [Configer.php](Core-Configer.md) 配置类
            3. [View.php](Core-View.md) 视图类
            4. [Route.php](Core-Route.md) 路由类
-           5. 以上是核心必备组件
-           6. [SuperGlobal.php](SuperGlobal.md) 超全局变量替换
-           7. [Logger.php](Core-Logger.md) 日志类
-           8. [ExceptionManager.php](Core-ExceptionManager.md)   异常管理类
-           9. [RuntimeState.php](Core-RuntimeState.md) 运行期数据保存类
-        2. [ExtendableStaticCallTrait.php](Core-ExtendableStaticCallTrait.md) 扩展静态调用的 trait 注意这个 trait 也被 Helper使用
-        3. [SystemWrapperTrait.php](Core-SystemWrapperTrait.md) 替换系统同名函数的 trait
-   3. **[AppPluginTrait.php](Core-AppPluginTrait.md) **  这个Trait用于把独立工程 App 转成插件 
-   4. **[HttpServer.php](Core-HttpServer.md)** 单独的 Http 服务器
-  
-6. DB/ 目录是数据库
-   1. [DBAdvance.php](DB-DBAdvance.md)
-   2. [DBInterface.php](DB-DBInterface.md)
-   3. [DB.php](DB-DB.md)
-
-7. Ext/ 目录是各种扩展，粗体为默认加载
-   1. **[DBManager.php](Ext-DBManager.md)**
-   2. **[Misc.php](Ext-Misc.md)**
-   3. **[Pager.php](Ext-Pager.md)**
-        1. [PagerInteface.php](Ext-PagerInteface.md)
-   4. **[RouteHookRewrite.php](Ext-RouteHookRewrite.md)**
-   5. **[RouteHookRouteMap.php](Ext-RouteHookRouteMap.md)**
-   6. [CallableView.php](Ext-CallableView.md)
-   7. [DBReusePoolProxy.php](Ext-DBReusePoolProxy.md)
-   8. [FacadesAutoLoader.php](Ext-FacadesAutoLoader.md)
-        1. [FacadesBase.php](Ext-FacadesBase.md)
-   9. [HookChain.php](Ext-HookChain.md) 这个独立文件没用到。
-   10. [JsonRpcExt.php](Ext-JsonRpcExt.md)
-        1. [JsonRpcClientBase.php](Ext-JsonRpcClientBase.md)
-   11. [PluginForSwooleHttpd.php](Ext-PluginForSwooleHttpd.md)
-   12. [RedisManager.php](Ext-RedisManager.md)
-   13. [RedisSimpleCache.php](Ext-RedisSimpleCache.md)
-   14. [RouteHookDirectoryMode.php](Ext-RouteHookDirectoryMode.md)
-   15. [RouteHookOneFileMode.php](Ext-RouteHookOneFileMode.md)
-   16. [StrictCheck.php](Ext-StrictCheck.md)
-         1. [StrictCheckModelTrait.php](Ext-StrictCheckModelTrait.md)
-         2. [StrictCheckServiceTrait.php](Ext-StrictCheckServiceTrait.md)
-   17. *[Lazybones.php](Ext-Lazybones.md)*
-8. Helper/ 助手类
-    1. **[HelperTrait.php](Helper-HelperTrait.md)**
-    2. [ControllerHelper.php](Helper-ControllerHelper.md)
-    3. [ModelHelper.php](Helper-ModelHelper.md)
-    4. [ServiceHelper.php](Helper-ServiceHelper.md)
-    5. [ViewHelper.php](Helper-ViewHelper.md)
-    6. *[AppHelper.php](Helper-AppHelper.md)*
+           5. [SuperGlobal.php](SuperGlobal.md) 超全局变量替换
+           6. [Logger.php](Core-Logger.md) 日志类
+           7. [ExceptionManager.php](Core-ExceptionManager.md)   异常管理类
+           8. [RuntimeState.php](Core-RuntimeState.md) 运行期数据保存类
+        3. [ExtendableStaticCallTrait.php](Core-ExtendableStaticCallTrait.md) 扩展静态调用的 trait 注意这个 trait 也被 Helper使用
+        4. [SystemWrapperTrait.php](Core-SystemWrapperTrait.md) 替换系统同名函数的 trait
+        4. [Functions.php](Core-Functions.md) 全局函数列表
+   5. **[AppPluginTrait.php](Core-AppPluginTrait.md) **  这个Trait用于把独立工程 App 转成插件 
+  6. [HttpServer.php](Core-HttpServer.md) 单独的 Http 服务器
+6. `DB` 目录是数据库
+   1. [DBAdvance.php](DB-DBAdvance.md)  这个 trait 增加了 DB类的高级功能
+   2. [DBInterface.php](DB-DBInterface.md) DB 类满足 DBInterface 接口
+   3. [DB.php](DB-DB.md) DB类
+7. `Ext` 目录是各种扩展，按字母排序。默认加载  **[DBManager.php](Ext-DBManager.md)** **[Pager.php](Ext-Pager.md)**  **[RouteHookRouteMap.php](Ext-RouteHookRouteMap.md)**
+   1. **[DBManager.php](Ext-DBManager.md)** 数据库管理类
+   3. **[Pager.php](Ext-Pager.md)** 分页类
+        1. [PagerInteface.php](Ext-PagerInteface.md) 分页接口
+   4. **[RouteHookRouteMap.php](Ext-RouteHookRouteMap.md)** 路由映射
+   4. [RouteHookRewrite.php](Ext-RouteHookRewrite.md) 路由重写
+   5. [Misc.php](Ext-Misc.md) 杂项功能类
+   6. [CallableView.php](Ext-CallableView.md) 可接受函数调用的视图
+   7. [DBReusePoolProxy.php](Ext-DBReusePoolProxy.md) DB连接池，小心使用
+   8. [FacadesAutoLoader.php](Ext-FacadesAutoLoader.md) 门面类用于偷懒
+        1. [FacadesBase.php](Ext-FacadesBase.md) 门面类的基类
+   9. [JsonRpcExt.php](Ext-JsonRpcExt.md) Json 远程调用
+         1. [JsonRpcClientBase.php](Ext-JsonRpcClientBase.md)
+   10. [PluginForSwooleHttpd.php](Ext-PluginForSwooleHttpd.md) 支持 SwooleHttpd 的插件
+   11. [RedisManager.php](Ext-RedisManager.md) Redis管理器类
+   12. [RedisSimpleCache.php](Ext-RedisSimpleCache.md) redis 缓存类
+   13. [RouteHookDirectoryMode.php](Ext-RouteHookDirectoryMode.md) 多个目录基准的模式
+   14. [RouteHookOneFileMode.php](Ext-RouteHookOneFileMode.md) 无程序路由设计模式
+   15. [StrictCheck.php](Ext-StrictCheck.md) 严格检查模式
+            1. [StrictCheckModelTrait.php](Ext-StrictCheckModelTrait.md) 严格检查模式的模型类基类
+            2. [StrictCheckServiceTrait.php](Ext-StrictCheckServiceTrait.md) 严格检查模式的服务类基类
+9. Helper/ 助手类
+    1. **[HelperTrait.php](Helper-HelperTrait.md)** 助手类公用 Trait
+    2. [ControllerHelper.php](Helper-ControllerHelper.md) 控制器助手类
+    3. [ModelHelper.php](Helper-ModelHelper.md) 模型助手类
+    4. [ServiceHelper.php](Helper-ServiceHelper.md) 服务助手类
+    5. [ViewHelper.php](Helper-ViewHelper.md) 视图助手类
+    6. *[AppHelper.php](Helper-AppHelper.md)* 工程应用助手类
 
 ## 按字母顺序的类索引
 
@@ -159,10 +153,8 @@
 * [Ext\DBReusePoolProxy](Ext-DBReusePoolProxy.md) 
 * [Ext\FacadesAutoLoader](Ext-FacadesAutoLoader.md) 
 * [Ext\FacadesBase](Ext-FacadesBase.md) 
-* [Ext\HookChain](Ext-HookChain.md) 
 * [Ext\JsonRpcClientBase](Ext-JsonRpcClientBase.md) 
 * [Ext\JsonRpcExt](Ext-JsonRpcExt.md) 
-* [Ext\Lazybones](Ext-Lazybones.md) 
 * [Ext\Misc](Ext-Misc.md) 
 * [Ext\Pager](Ext-Pager.md) 
 * [Ext\PagerInterface](Ext-PagerInterface.md) 
@@ -177,15 +169,15 @@
 * [Ext\StrictCheckModelTrait](Ext-StrictCheckModelTrait.md) 
 * [Ext\StrictCheckServiceTrait](Ext-StrictCheckServiceTrait.md) 
 * [Helper\ControllerHelper](Helper-ControllerHelper.md) 
-* **[Helper\HelperTrait](Helper-HelperTrait.md)** 
-* **[Helper\ModelHelper](Helper-ModelHelper.md)** 
-* **[Helper\ServiceHelper](Helper-ServiceHelper.md)** 
-* **[Helper\ViewHelper](Helper-ViewHelper.md)** 
+* [Helper\HelperTrait](Helper-HelperTrait.md) 
+* [Helper\ModelHelper](Helper-ModelHelper.md) 
+* [Helper\ServiceHelper](Helper-ServiceHelper.md) 
+* [Helper\ViewHelper](Helper-ViewHelper.md) 
 * [HttpServer](HttpServer.md) 
 * [SingletonEx](SingletonEx.md) 
 * [ThrowOn](ThrowOn.md) 
 
-## 选项列表
+## 选项索引
 - 'all_config' => array (), // 参见 [Core\Configer](Core-Configer.md)
 
     所有配置    
