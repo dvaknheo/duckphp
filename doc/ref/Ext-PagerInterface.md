@@ -5,7 +5,7 @@
 
 ## 详解
 
-public function current() : int;
+public function current($new_value = null) : int;
     对应 C::PageNo ，获得当前页码
 public function pageSize($new_value = null) : int;
 

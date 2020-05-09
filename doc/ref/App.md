@@ -9,13 +9,9 @@
     2. 使用 [Ext\Misc](Ext-Misc.md)
     3. 使用 [Ext\SimpleLogger](Ext-SimpleLogger.md)
     4. 使用 [Ext\DBManager](Ext-DBManager.md)
-    5. 使用 [Ext\RouteHookRewrite](Ext-RouteHookRewrite.md)
-    6. 使用 [Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
+    5. 使用 [Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
     
-    7. 参考 [Ext\StrictCheck]()
-    8. 参考 [Ext\RouteHookOneFileMode]()
-    9. 参考 [Ext\RouteHookDirectoryMode]()
-    10. 参考 [Ext\RouteHookOneFileMode]()
+
 ## 选项
 继承 [Core\Kernel](Core-Kernel.md) 的默认选项。
 
@@ -65,7 +61,8 @@ protected function onInit()
     处理 `use_short_functions`, 如果
 public function _Pager($object = null)
 
-    重写了 `Core\App` 的 _Pager 方法，填充默认 DuckPhp\ExtPager 对象。
+    重写了 `Core\App` 的 _Pager 方法，填充默认 DuckPhp\Ext
+    Pager 对象。
 public static function OnQuery($sql, ...$args)
 
     DB查询钱的回调

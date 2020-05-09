@@ -1,4 +1,5 @@
-# Ext\CallableView
+# DuckPhp\Ext\CallableView
+[toc]
 
 ## 简介
 CallableView 扩展扩充了默认的 view 类，用于用函数替代文件方式显示视图

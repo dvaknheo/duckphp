@@ -1,4 +1,5 @@
 # Core\Kernel
+[toc]
 
 ## 简介
 最核心的Trait，你通过 App 类来使用他。

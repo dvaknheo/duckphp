@@ -1,7 +1,9 @@
 # DuckPhp\Ext\Pager
 [toc]
 ## 简介
-`组件类` 分页类 符合接口   DuckPhp\Ext\PagerInterface
+`组件类` 分页类 符合接口   
+
+接口 DuckPhp\Ext\PagerInterface
 ## 选项
 'url' => null,
 
