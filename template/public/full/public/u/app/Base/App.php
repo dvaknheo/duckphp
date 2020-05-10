@@ -21,12 +21,13 @@ class App extends DuckPhp_App
         
         $this->options['ext']['UserSystemDemo\Base\App'] = true;
         $this->options['ext']['DuckPhp\\Ext\\Misc'] = true;
+        $this->options['ext']['DuckPhp\\Ext\\RouteHookRewrite'] = true;
         
         $path = realpath($this->options['path'].'../../auth/');
         $this->assignPathNamespace($path, 'UserSystemDemo');
         $ret = parent::onInit();
         static::assignRoute([
-            '~abc(\d*)' => function () {
+            '^abc(\d*)' => function () {
                 var_dump("OK");
             },
         ]);

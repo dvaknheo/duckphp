@@ -38,10 +38,12 @@ class RuntimeState implements ComponentInterface
     
     public function begin()
     {
+        //if(ob)
         $this->is_running = true;
     }
     public function end()
     {
+        //ob_end();
         $this->is_in_exception = false;
         $this->is_running = false;
     }

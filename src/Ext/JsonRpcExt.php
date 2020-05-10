@@ -137,6 +137,12 @@ class JsonRpcExt implements ComponentInterface
     /////////////////////
     protected function adjustService($service)
     {
+        if(empty($this->options['jsonrpc_service_interface'])){
+            return $service;
+        }
+        if(!is_a($service,$this->options['jsonrpc_service_interface'])){
+            return null;
+        }
         return $service;
     }
     protected function curl_file_get_contents($url, $post)

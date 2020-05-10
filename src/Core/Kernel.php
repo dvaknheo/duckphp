@@ -252,6 +252,7 @@ trait Kernel
         } catch (\Throwable $ex) {
             RuntimeState::G()->toggleInException();
             if ($this->options['skip_exception_check']) {
+                //RuntimeSTtus::end();
                 throw $ex;
             }
             ExceptionManager::CallException($ex);

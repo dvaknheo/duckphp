@@ -19,13 +19,14 @@ class App extends Core_App
             //'route_map_important' => [],
             //'route_map' => [],
             'db_before_query_handler' => null,
-            'log_sql' => false,
+            'log_sql_query' => false,
+            'log_sql_level' => 'debug',
             
             'ext' => [
                 'DuckPhp\Ext\DBManager' => true,
                 'DuckPhp\Ext\RouteHookRouteMap' => true,
                 
-                // No Use 'DuckPhp\Ext\PluginForSwooleHttpd' => true,
+                // 'DuckPhp\Ext\PluginForSwooleHttpd' => true,
                 // 'DuckPhp\Ext\Misc' => true,
                 //'DuckPhp\Ext\RouteHookRewrite' => true,
                 
@@ -56,7 +57,7 @@ class App extends Core_App
     {
         $ret = parent::onInit();
         
-        if (!empty($this->options['log_sql'])) {
+        if (!empty($this->options['log_sql_query'])) {
             $this->options['db_before_query_handler'] = $this->options['db_before_query_handler'] ?? [static::class, 'OnQuery'];
         }
         return $ret;
@@ -73,6 +74,6 @@ class App extends Core_App
     }
     public function _OnQuery($sql, ...$args)
     {
-        static::Logger()->info('[sql]: ' . $sql, $args);
+        static::Logger()->log($this->options['log_sql_level'],'[sql]: ' . $sql, $args);
     }
 }

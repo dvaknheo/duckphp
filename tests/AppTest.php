@@ -28,7 +28,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         $options=[
             'skip_setting_file'=>true,
             'path_lib'=>$path_lib,
-            'log_sql'=>true,
+            'log_sql_query'=>true,
             'use_short_functions'=>true,
             'path_view'=>$path_view,
         ];

@@ -9,9 +9,13 @@ $class = get_class($ex);
 $code = $ex->getCode();
 $message = $ex->getMessage();
 $trace = $ex->getTraceAsString();
-
+$file = $ex->getFile();
+$line = $ex->getLine();
 if ($is_debug) {
+                echo "<div>{$file} : {$line}</div>";
+
     ?>
+
 <fieldset>
     <legend>Error(<?=$class ?>:<?=$code?>)</legend>
     <?=$message ?>

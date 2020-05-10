@@ -178,7 +178,6 @@ trait Core_Handler
         }
         if (method_exists($ex, 'display')) {
             $ex->display($ex);
-            $this->clear();
             return;
         }
         $error_view = $this->options['error_500'] ?? null;
@@ -197,7 +196,6 @@ trait Core_Handler
         
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)($ex);
-            $this->clear();
             return;
         }
         ////////default;
@@ -216,7 +214,6 @@ trait Core_Handler
         
         $this->setViewWrapper(null, null);
         $this->_Show($data, $error_view);
-        $this->clear();
     }
     public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
     {
