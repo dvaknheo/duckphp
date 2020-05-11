@@ -1,7 +1,7 @@
-# DB\DBAdvance
+# DB\DBAdvanceTrait
 
 ## 简介
-DBAdvance 这个 trait 给 DB类提供了常用的 高级的 DB 方法
+DBAdvanceTrait 这个 trait 给 DB类提供了常用的 高级的 DB 方法
 ## 选项
 
 ## 方法

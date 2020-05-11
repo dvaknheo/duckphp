@@ -36,7 +36,7 @@
    5. **[AppPluginTrait.php](Core-AppPluginTrait.md) **  这个Trait用于把独立工程 App 转成插件 
   6. [HttpServer.php](Core-HttpServer.md) 单独的 Http 服务器
 6. `DB` 目录是数据库
-   1. [DBAdvance.php](DB-DBAdvance.md)  这个 trait 增加了 DB类的高级功能
+   1. [DBAdvanceTrait.php](DB-DBAdvanceTrait.md)  这个 trait 增加了 DB类的高级功能
    2. [DBInterface.php](DB-DBInterface.md) DB 类满足 DBInterface 接口
    3. [DB.php](DB-DB.md) DB类
 7. `Ext` 目录是各种扩展，按字母排序。默认加载  **[DBManager.php](Ext-DBManager.md)** **[Pager.php](Ext-Pager.md)**  **[RouteHookRouteMap.php](Ext-RouteHookRouteMap.md)**
@@ -103,7 +103,7 @@
 
 ### 数据库
 * [DB\DB](DB-DB.md) 数据库类
-* [DB\DBAdvance](DB-DBAdvance.md)  数据库扩展
+* [DB\DBAdvanceTrait](DB-DBAdvanceTrait.md)  数据库扩展
 * [DB\DBInterface](DB-DBInterface.md) 数据库类接口
 ### 扩展
 * [Ext\CallableView](Ext-CallableView.md) 
@@ -149,7 +149,7 @@
 * [Core\ThrowOn](Core-ThrowOn.md) 
 * [Core\View](Core-View.md) 
 * [DB\DB](DB-DB.md) 
-* [DB\DBAdvance](DB-DBAdvance.md) 
+* [DB\DBAdvanceTrait](DB-DBAdvanceTrait.md) 
 * [DB\DBInterface](DB-DBInterface.md) 
 * [Ext\CallableView](Ext-CallableView.md) 
 * [Ext\DBManager](Ext-DBManager.md) 

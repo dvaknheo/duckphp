@@ -7,7 +7,7 @@ graph [rankdir = "LR"];
 subgraph cluster_Core {
     style = "rounded";
     label = "[DuckPhp\\Core]";
-    node [style=filled];
+
 
 
     Core_Kernel -> Core_SingletonEx [style="dotted"];
@@ -58,21 +58,23 @@ subgraph cluster_Core {
     Core_App [label="App";shape=Mdiamond];
     Core_Kernel [label="Kernel"];
     Core_SingletonEx [label="SingletonEx";shape=Mdiamond];
-    Core_AutoLoader [label="AutoLoader"];
-    Core_ExceptionManager [label="ExceptionManager"];
-    Core_View [label="View"];
-    Core_Configer [label="Configer"];
-    Core_Logger [label="Logger"];
+    Core_AutoLoader [label="AutoLoader";shape="component"];
+    Core_ExceptionManager [label="ExceptionManager";shape="component"];
+    Core_View [label="View";shape="component"];
+    Core_Configer [label="Configer";shape="component"];
+    Core_Logger [label="Logger";shape="component"];
     Core_Route [label="Route";shape=Mdiamond];
-    Core_RuntimeState [label="RuntimeState"];
+    Core_RuntimeState [label="RuntimeState";shape="component"];
     Core_SystemWrapperTrait [label="SystemWrapperTrait"];
     
-    Core_HttpServer [label="HttpServer"];
-    Core_SuperGlobal [label="SuperGlobal"];
+    Core_HttpServer [label="HttpServer";shape="component"];
+    Core_SuperGlobal [label="SuperGlobal";shape="component"];
 
     Core_ExtendableStaticCallTrait [label="ExtendableStaticCallTrait"];
     
     Core_ThrowOn [label="ThrowOn"];
+    Core_ComponentInterface [label="ComponentInterface"];
+    Core_Functions [label="Functions"];
     
 }
 
@@ -111,11 +113,11 @@ subgraph cluster_Helper {
 subgraph cluster_DB {
     label = "[DuckPhp\\DB]";
 
-    DB_DB -> DB_DBAdvance;
+    DB_DB -> DB_DBAdvanceTrait;
     DB_DB -> DB_DBInterface;
 
     DB_DB [label="DB"];
-    DB_DBAdvance [label="DBAdvance"];
+    DB_DBAdvanceTrait [label="DBAdvanceTrait"];
     DB_DBInterface [label="DBInterface"];
 
 }
@@ -126,19 +128,20 @@ subgraph cluster_Ext {
 label = "[DuckPhp\\Ext]";
     Ext [label="";style="dotted"];
     
-    Ext -> CallableView [style="dotted"];  CallableView -> Core_View;
     Ext -> DBManager -> DB_DB;
+    Ext -> RouteHookRouteMap;
+    Ext -> Pager [style="dotted"];
+    
+    Ext -> CallableView [style="dotted"];  CallableView -> Core_View;
     Ext -> DBReusePoolProxy [style="dotted"];
     
     Ext -> FacadesAutoLoader [style="dotted"];
     Ext -> JsonRpcExt [style="dotted"] ;
 
-    Ext -> Misc
-    Ext -> Pager ;
+    Ext -> Misc [style="dotted"];
     Ext -> PluginForSwooleHttpd [style="dotted"];
-    Ext -> RouteHookRewrite;
-    Ext -> RouteHookRouteMap;
-    Ext -> StrictCheck;
+    Ext -> RouteHookRewrite [style="dotted"];
+    Ext -> StrictCheck [style="dotted"];
     
     Ext -> RedisManager [style="dotted"];
     Ext -> RedisSimpleCache [style="dotted"];
@@ -146,18 +149,16 @@ label = "[DuckPhp\\Ext]";
     Ext -> RouteHookOneFileMode [style="dotted"];
     
     DBReusePoolProxy ->DBManager; 
-    JsonRpcExt -> JsonRpcExtBase ;
     JsonRpcExt -> Core_SingletonEx [style="dotted"];
     JsonRpcExtBase -> Core_SingletonEx [style="dotted"];
-
+    JsonRpcExtBase ->JsonRpcExt;
     FacadesAutoLoader ->FacadesBase ;
     FacadesAutoLoader -> Core_SingletonEx [style="dotted"];
     FacadesBase -> Core_SingletonEx [style="dotted"];
     
-    _holder -> Core_SingletonEx [style="dotted"];
-    _holder[label="";style="dotted"];
     
     Pager -> Core_SingletonEx [style="dotted"]; 
+    Pager -> PagerInterface; 
     
     RedisManager -> RedisSimpleCache;
     RedisManager -> Core_SingletonEx [style="dotted"]; 
@@ -176,9 +177,6 @@ label = "[DuckPhp\\Ext]";
 
     StrictModelTrait -> StrictCheck; 
     StrictServiceTrait -> StrictCheck; 
-    
-    Core_HookChain [label="HookChain"];
-
 }
 subgraph cluster_DuckPhp {
     label = "[DuckPhp]";
@@ -187,6 +185,7 @@ subgraph cluster_DuckPhp {
     HttpServer -> Core_HttpServer;
     App -> Core_App;
     SingletonEx -> Core_SingletonEx [style="dotted"];
+    ThrowOn -> Core_ThrowOn [style="dotted"];
     
     App -> Ext;
 
@@ -194,6 +193,8 @@ subgraph cluster_DuckPhp {
     HttpServer [shape=Mdiamond];
     
     SingletonEx [style=filled,shape=Mdiamond] ;
+    ThrowOn [shape=Mdiamond];
+
 }
 
 }
