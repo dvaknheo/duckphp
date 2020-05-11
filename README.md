@@ -63,7 +63,7 @@ DuckPHP 的名字源自鸭子类型，这东西看起来像鸭子，叫起来像
 
 ### 和其他框架简单对比
 
-|功能                 | CodeIgnter 4 | ThinkPHP 6 | Laravel 6 | DuckPHP |
+|功能                 | CodeIgniter 4 | ThinkPHP 6 | Laravel 6 | DuckPHP |
 |---------------------|--------------|------------|-----------|---------|
 |仅一行关联           |              |            |           | V       |
 |堆栈清晰             | V            | V          |           | V       |

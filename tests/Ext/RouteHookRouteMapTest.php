@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Ext;
 
 use DuckPhp\Ext\RouteHookRouteMap;
 use DuckPhp\Core\Route;
-use DuckPhp\Core\APP;
+use DuckPhp\Core\App;
 
 class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
 {
@@ -26,11 +26,11 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
         ];
         
         $options['route_map_important']['@posts/{post}/comments/{comment:\d+}'] = RouteHookRouteMapTest_FakeObject::class.'@foo';
-        //$this->options['route_map_important']['~abc/d(/?|)\w*'] = [$this,'foo'];
         
         RouteHookRouteMap::G()->init($options, Route::G());
         RouteHookRouteMap::G()->assignRoute('/first',RouteHookRouteMapTest_FakeObject::class.'::'.'fifth');
-        RouteHookRouteMap::G()->assignRoute('/sixth',[RouteHookRouteMapTest_FakeObject::class,'sixth']);
+        RouteHookRouteMap::G()->assignRoute('/sixth','~RouteHookRouteMapTest_FakeObject::sixth');
+        RouteHookRouteMap::G()->assignRoute('/seventh',[RouteHookRouteMapTest_FakeObject::class,'seventh']);
         RouteHookRouteMap::G()->assignRoute('^second(/(?<id>\d+))?',RouteHookRouteMapTest_FakeObject::class.'@'.'second');
         RouteHookRouteMap::G()->assignRoute(['/third*'=>RouteHookRouteMapTest_FakeObject::class.'->'.'adjustCallbackArrow']);
         RouteHookRouteMap::G()->assignImportantRoute(['@posts/{post}/comments/{comment:\d+}'=>RouteHookRouteMapTest_FakeObject::class.'@foo']);
@@ -48,14 +48,23 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
         Route::G()->bind('/posts/aa/comments/33')->run();
         Route::G()->bind('/fifth')->run();
         Route::G()->bind('/sixth')->run();
+        Route::G()->bind('/seventh')->run();
 
         var_dump("-------------------------");
+        $path=\GetClassTestPath(RouteHookRouteMap::class);
+        App::G()->init([
+            'path'=>$path,
+            'path_config'=>'',
+            'skip_setting_file'=>true,
+            
+        ]);
+        $options['route_map_by_config_name']='routes';
         RouteHookRouteMap::G(new RouteHookRouteMap())->init($options, App::G());
         RouteHookRouteMap::G()->options['route_map_important']=[];
         Route::G()->bind('/posts/aa/comments/33')->run();
-        
-                                RouteHookRouteMap::G()->isInited();
+        //Route::G()->bind('/eighth')->run();
 
+        RouteHookRouteMap::G()->isInited();
         \MyCodeCoverage::G()->end(RouteHookRouteMap::class);
         $this->assertTrue(true);
     }
@@ -82,8 +91,18 @@ class RouteHookRouteMapTest_FakeObject
     {
         var_dump(Route::G()->getParameters());
     }
-        function sixth()
+    function sixth()
     {
+        var_dump(Route::G()->getParameters());
+    }
+    function seventh()
+    {
+        var_dump("seventh!");
+        var_dump(Route::G()->getParameters());
+    }
+    function eighth()
+    {
+        var_dump("eight!");
         var_dump(Route::G()->getParameters());
     }
     function foo()

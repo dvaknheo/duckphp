@@ -252,7 +252,7 @@ trait Kernel
         } catch (\Throwable $ex) {
             RuntimeState::G()->toggleInException();
             if ($this->options['skip_exception_check']) {
-                //RuntimeSTtus::end();
+                RuntimeState::G()->end();
                 throw $ex;
             }
             ExceptionManager::CallException($ex);
@@ -263,7 +263,7 @@ trait Kernel
     }
     protected function beforeRun()
     {
-        RuntimeState::ReCreateInstance()->begin();
+        RuntimeState::ReCreateInstance()->begin($this->options);
         View::G()->setViewWrapper(null, null);
         
         $serverData = ($this->options['use_super_global'] ?? false) ? SuperGlobal::G()->_SERVER : $_SERVER;
