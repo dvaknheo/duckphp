@@ -18,8 +18,9 @@ class JsonRpcExt implements ComponentInterface
         'jsonrpc_is_debug' => false,
         'jsonrpc_enable_autoload' => true,
         'jsonrpc_check_token_handler' => null,
-        'jsonrpc_service_interface' => '',//todo next version
-        'jsonrpc_service_namespace' => '',//todo next version
+        'jsonrpc_wrap_auto_adjust' => true,
+        'jsonrpc_service_interface' => '',
+        'jsonrpc_service_namespace' => '',
     ];
     
     protected $backend;
@@ -90,6 +91,12 @@ class JsonRpcExt implements ComponentInterface
     }
     public function callRpc($classname, $method, $arguments)
     {
+        $namespace = trim($this->options['jsonrpc_service_namespace'], '\\');
+        $classname = str_replace('.', '\\', $classname);
+        
+        $classname = $namespace?$namespace."\\".$classname:$classname;
+
+
         $post = [
            "jsonrpc" => "2.0",
         ];
@@ -122,7 +129,6 @@ class JsonRpcExt implements ComponentInterface
         try {
             $service = $this->adjustService($service);
             $args = $input['params'] ?? [];
-            //ThrowOn()
             $ret['result'] = $service::G()->$method(...$args);
         } catch (\Throwable $ex) {
             $ret['error'] = [
@@ -137,10 +143,14 @@ class JsonRpcExt implements ComponentInterface
     /////////////////////
     protected function adjustService($service)
     {
-        if(empty($this->options['jsonrpc_service_interface'])){
+        $namespace = trim($this->options['jsonrpc_service_namespace'], '\\');
+        //$namespace=$namespace?$namespace."\\":'';
+        
+        $service = $namespace?$namespace."\\".$service:$service;
+        if (empty($this->options['jsonrpc_service_interface'])) {
             return $service;
         }
-        if(!is_a($service,$this->options['jsonrpc_service_interface'])){
+        if (!is_subclass_of($service, $this->options['jsonrpc_service_interface'])) {
             return null;
         }
         return $service;

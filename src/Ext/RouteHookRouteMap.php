@@ -15,11 +15,11 @@ class RouteHookRouteMap implements ComponentInterface
     public $options = [
         'route_map_important' => [],
         'route_map' => [],
-        'route_map_by_config_name' =>'',
+        'route_map_by_config_name' => '',
     ];
-    protected $route_map=[];
-    protected $route_map_important=[];
-    protected $is_compiled=false;
+    protected $route_map = [];
+    protected $route_map_important = [];
+    protected $is_compiled = false;
     protected $is_inited = false;
     public function __construct()
     {
@@ -38,13 +38,13 @@ class RouteHookRouteMap implements ComponentInterface
         
         Route::G()->addRouteHook([static::class,'PrependHook'], 'prepend-inner');
         Route::G()->addRouteHook([static::class,'AppendHook'], 'append-outter');
-
+        
+        if ($context && $this->options['route_map_by_config_name']) {
+            $config = get_class($context)::LoadConfig($this->options['route_map_by_config_name']);
+            $this->assignRoute($config['route_map'] ?? []);
+            $this->assignImportantRoute($config['route_map_important'] ?? []);
+        }
         if ($context && \method_exists($context, 'extendComponents')) {
-            if($this->options['route_map_by_config_name']){
-                $config=$context::LoadConfig($this->options['route_map_by_config_name']);
-                $this->assignRoute($config['route_map']??[]);
-                $this->assignImportantRoute($config['route_map_important']??[]);
-            }
             $context->extendComponents(
                 [
                     'assignImportantRoute' => [static::class.'::G','assignImportantRoute'],
@@ -78,21 +78,20 @@ class RouteHookRouteMap implements ComponentInterface
         $ret = '~^'.$ret.'$ # '.$pattern_url.'~x';
         return $ret;
     }
-    protected function compileMap($map,$namespace_controller)
+    protected function compileMap($map, $namespace_controller)
     {
-        $ret=[];
-        foreach($map as $pattern_url => $callback){
+        $ret = [];
+        foreach ($map as $pattern_url => $callback) {
             $firstWord = substr($pattern_url, 0, 1);
             if ($firstWord === '@') {
                 $pattern_url = $this->compile($pattern_url);
             }
-            if(is_string($callback) && substr($callback, 0, 1)==='~'){
-               $callback = str_replace('~',$namespace_controller,$callback);
+            if (is_string($callback) && substr($callback, 0, 1) === '~') {
+                $callback = str_replace('~', $namespace_controller, $callback);
             }
-            $ret[$pattern_url]=$callback;
+            $ret[$pattern_url] = $callback;
         }
         return $ret;
-        
     }
     
     public function assignRoute($key, $value = null)
@@ -182,11 +181,11 @@ class RouteHookRouteMap implements ComponentInterface
     }
     public function doHook($path_info, $is_append)
     {
-        if(!$this->is_compiled){
-            $namespace_controller=Route::G()->namespace_controller .'\\';
-            $this->route_map=$this->compileMap($this->options['route_map'],$namespace_controller);
-            $this->route_map_important=$this->compileMap($this->options['route_map_important'],$namespace_controller);
-            $this->is_compiled=true;
+        if (!$this->is_compiled) {
+            $namespace_controller = Route::G()->namespace_controller .'\\';
+            $this->route_map = $this->compileMap($this->options['route_map'], $namespace_controller);
+            $this->route_map_important = $this->compileMap($this->options['route_map_important'], $namespace_controller);
+            $this->is_compiled = true;
         }
         $map = $is_append ? $this->route_map : $this->route_map_important;
         if (empty($map)) {

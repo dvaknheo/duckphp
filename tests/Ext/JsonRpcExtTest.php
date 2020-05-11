@@ -1,5 +1,6 @@
 <?php
 namespace tests\DuckPhp\Ext{
+use DuckPhp\Core\SingletonEx;
 
 use DuckPhp\Ext\JsonRpcExt;
 use DuckPhp\Core\HttpServer;
@@ -12,13 +13,36 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(JsonRpcExt::class);
         $path_app=\GetClassTestPath(JsonRpcExt::class);
         
-        JsonRpcExt::G()->onRpcCall([
-            'id'=>TestService::class,
-            'method'=>'foo',
+        $ret=JsonRpcExt::G()->onRpcCall([
+            'method'=>TestService::class.'.foo',
             'params'=>[
                 'OK'
             ],
         ]);
+        $ret=JsonRpcExt::G()->onRpcCall([
+            'method'=>'NoClass',
+            'params'=>[
+                'OK'
+            ],
+        ]);
+        $ret=JsonRpcExt::G(new JsonRpcExt())->init([
+            'jsonrpc_service_interface' => testInterface::class,
+            'jsonrpc_service_namespace' => __NAMESPACE__,
+        ])->onRpcCall([
+            'method'=>'TestService2.foo',
+            'params'=>[
+                'OK'
+            ],
+        ]);
+        $ret=JsonRpcExt::G(new JsonRpcExt())->init([
+            'jsonrpc_service_interface' => 'noexites'
+        ])->onRpcCall([
+            'method'=>'TestService2.foo',
+            'params'=>[
+                'OK'
+            ],
+        ]);
+        
         
         $options=[
             'jsonrpc_namespace'=>'JsonRpc',
@@ -27,7 +51,7 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
             'jsonrpc_check_token_handler'=>function($ch){ var_dump('OOK');}
         ];
         
-        JsonRpcExt::G()->init($options,null);
+        JsonRpcExt::G(new JsonRpcExt())->init($options,null);
         
         $flag=class_exists('do_not_exoits');
         
@@ -62,7 +86,7 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
             echo $ex;
         }
         
-               $options['jsonrpc_check_token_handler']=null;
+        $options['jsonrpc_check_token_handler']=null;
         JsonRpcExt::G()->init($options,null);
         JS::G()->foo();
         //JS::G()->foo();
@@ -85,6 +109,21 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
         //*/
     }
 }
+
+interface testInterface
+{
+    //
+}
+
+class TestService2 implements testInterface
+{
+    use SingletonEx;
+    public function foo()
+    {
+        return 'Client:'.DATE(DATE_ATOM);
+    }
+}
+
 } // endnamespace  tests\DuckPhp\Ext
 namespace
 {
@@ -98,4 +137,4 @@ class TestService
         return 'Client:'.DATE(DATE_ATOM);
     }
 }
-} //endnamespace \
+}

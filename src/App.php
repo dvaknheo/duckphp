@@ -74,6 +74,6 @@ class App extends Core_App
     }
     public function _OnQuery($sql, ...$args)
     {
-        static::Logger()->log($this->options['log_sql_level'],'[sql]: ' . $sql, $args);
+        static::Logger()->log($this->options['log_sql_level'], '[sql]: ' . $sql, $args);
     }
 }
