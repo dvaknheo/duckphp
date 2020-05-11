@@ -7,7 +7,7 @@ namespace DuckPhp\DB;
 
 class DB implements DBInterface
 {
-    use DBAdvance;
+    use DBAdvanceTrait;
     
     public $pdo;
     public $config;

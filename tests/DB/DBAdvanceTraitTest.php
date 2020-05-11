@@ -1,14 +1,14 @@
 <?php
 namespace tests\DuckPhp\DB;
 
-use DuckPhp\DB\DBAdvance;
+use DuckPhp\DB\DBAdvanceTrait;
 use DuckPhp\DB\DB;
 
-class DBAdvanceTest extends \PHPUnit\Framework\TestCase
+class DBAdvanceTraitTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(DBAdvance::class);
+        \MyCodeCoverage::G()->begin(DBAdvanceTrait::class);
         
         $options=[
 	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
@@ -44,7 +44,7 @@ class DBAdvanceTest extends \PHPUnit\Framework\TestCase
         $db->pdo=null;
         $db->qouteInsertArray($array);
         
-        \MyCodeCoverage::G()->end(DBAdvance::class);
+        \MyCodeCoverage::G()->end(DBAdvanceTrait::class);
         $this->assertTrue(true);
         /*
         $db->quoteIn($array);

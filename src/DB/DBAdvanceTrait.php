@@ -5,7 +5,7 @@
  */
 namespace DuckPhp\DB;
 
-trait DBAdvance
+trait DBAdvanceTrait
 {
     public function quoteIn($array)
     {
