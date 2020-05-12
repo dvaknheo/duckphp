@@ -76,13 +76,11 @@
 
 钻石表示核心节点
 
-Ext 的虚线，表示的是默认未加载的扩展。
 
 ![DuckPhp](duckphp.gv.svg)
 
 ##### 
     ExtendableStaticCallTrait
-    ThrowOn  提供了 实用的 ThrowOn
-    HookChain  提供 链式钩子。
+    SystemWrapperTrait 用于 同名函数替代系统系统函数。 
+    比如 header();    ThrowOn  提供了 实用的 ThrowOn
     HttpServer 提供了 HttpServer 的实现。
-    SystemWrapperTrait 用于 同名函数替代系统系统函数。 比如 header();

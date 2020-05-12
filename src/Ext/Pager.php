@@ -19,7 +19,7 @@ class Pager implements ComponentInterface, PagerInterface
         'page_size' => 30,
         'page_key' => 'page',
         'rewrite' => null,
-        'context_class' => null,
+        'pager_context_class' => null,
     ];
     protected $context_class;
     protected $url;

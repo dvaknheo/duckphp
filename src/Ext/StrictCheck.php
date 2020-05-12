@@ -23,7 +23,7 @@ class StrictCheck implements ComponentInterface
             'namespace_model' => '',
             'controller_base_class' => null,
             'is_debug' => false,
-            'context_class' => null,
+            'strict_check_context_class' => null,
         ];
     
     protected $context_class = null;
@@ -38,7 +38,7 @@ class StrictCheck implements ComponentInterface
             $this->initContext($options, $context);
         }
         if (!$context) {
-            $this->context_class = $this->options['context_class'];
+            $this->context_class = $this->options['strict_check_context_class'];
         }
         $this->is_inited = true;
         return $this;

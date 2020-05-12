@@ -44,7 +44,11 @@
 'error_404' => null,          //'_sys/error-404',
 'error_500' => null,          //'_sys/error-500',
 'error_debug' => null,        //'_sys/error-debug',
+'override_class'=>'Base\App', **重要选项**
 
+    基于 namespace ,如果这个选项的类存在，则在init()的时候会切换到这个类完成后续初始化，并返回这个类的实例。
+    注意到 app/Base/App.php 这个文件的类 MY\Base\App extends DuckPhp\App;
+    如果以  \ 开头则是绝对 命名空间
 ### 开关配置
 'reload_for_flags' => true,
 
@@ -72,7 +76,9 @@
     
     **这里修改了 AutoLoader 的默认配置**
     不使用 AutoLoader 加载类，如果你不打算用AutoLoader类。打开以节约性能
+'skip_app_autoload'=>false
 
+    跳过应用的加载，如果你使用composer.json 来加载你的工程命名空间，你可以打开这个选项。
 ## 方法
 ### 公开方法
 public static function RunQuickly(array $options=[], callable $after_init=null): bool
