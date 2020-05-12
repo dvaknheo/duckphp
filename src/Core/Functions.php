@@ -1,8 +1,9 @@
 <?php declare(strict_types=1);
 /**
- * DuckPHP
+ * DuckPhp
  * From this time, you never be alone~
  */
+
 use DuckPhp\Core\App;
 
 if (! function_exists('__h')) {

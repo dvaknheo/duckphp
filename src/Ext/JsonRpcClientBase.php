@@ -1,11 +1,13 @@
 <?php declare(strict_types=1);
 /**
- * DuckPHP
+ * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\SingletonEx;
+use DuckPhp\Ext\JsonRpcExt;
 
 class JsonRpcClientBase
 {

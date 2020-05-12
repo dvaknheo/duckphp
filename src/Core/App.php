@@ -1,8 +1,9 @@
 <?php declare(strict_types=1);
 /**
- * DuckPHP
+ * DuckPhp
  * From this time, you never be alone~
  */
+
 // MAIN FILE
 //dvaknheo@github.com
 //OK，Lazy

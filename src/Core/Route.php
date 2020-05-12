@@ -1,8 +1,9 @@
 <?php declare(strict_types=1);
 /**
- * DuckPHP
+ * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\ComponentInterface;

@@ -1,6 +1,6 @@
 <?php
 $header = <<<'EOF'
-DuckPHP
+DuckPhp
 From this time, you never be alone~
 EOF;
 $finder = PhpCsFixer\Finder::create()
