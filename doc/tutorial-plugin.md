@@ -37,6 +37,7 @@ $this->options['ext']['UserSystemDemo\Base\App'] = true;
 AppPluginTrait 帮你做了什么，如果不满要求应该怎么办
 
 AppPluginTrait 的默认选项
+```
 
 [
         'plugin_path_namespace' => null,
@@ -50,10 +51,10 @@ AppPluginTrait 的默认选项
         'plugin_search_config' => false,   // 搜索配置
         'plugin_files_config' => [],
     ];
+```
 
+对默认选项不满意的修改 $plugin_options 选项。
 
-对默认选项不满意的修改。
-$plugin_options
 初始化。
  AppPluginTrait 兼容 App ，初始化不从 init(); 开始。
     public function initAsPlugin(array $options, object $context = null)

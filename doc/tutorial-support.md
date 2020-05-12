@@ -42,7 +42,7 @@ svg 图形生成
 ```
 dot duckphp.gv -T svg -O
 ```
-
+代码风格检查加代码检查加单元测试
 ```
 php-cs-fixer fix src && phpstan analyse && phpunit
 ```

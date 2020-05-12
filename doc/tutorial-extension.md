@@ -42,7 +42,7 @@ SingletonEx 可变单例
 
 
 
-## 默认启用的扩展
+## 默认没启用的扩展
 
 默认没启用的扩展
 CallableView
@@ -63,11 +63,6 @@ RouteHookDirecotoryMode
 
 RouteHookOnFileMode
 
-    public function __construct()
-    {
-        $this->options = array_replace_recursive($this->options, (new parent())->options); //merge parent's options;
-        return parent::__construct();
-    }
 StricCheck
 
 如何写扩展

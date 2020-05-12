@@ -1,5 +1,5 @@
 # 助手类
-**重要，本文对应用开发者很重要**
+**重要，本文对业务工程师很重要**
 
 [toc]
 ## 相关类
@@ -11,7 +11,7 @@
 - *[DuckPhp\Helper\AppHelper](ref/Helper-AppHelper.md)* 应用助手类，一般不常用。
 
 ## 开始
-助手类是应用开发者必须掌握的类。
+助手类是业务工程师必须掌握的类。
 我们搬出架构图。
 
 ![arch_full.gv.svg](arch_full.gv.svg)
@@ -58,7 +58,7 @@ Controller --> Service ------------------------------ ---> Model
 
 答：大写开始的方法是常用方法，小写开始的方法是不常用方法。高级来说，大写开始方法对应一个静态函数。小写方法是对应动态函数。但是他们都可以更改实现。
 
-问：上面怎么没有 `AppHelper` 类
+问：上面调用关系图怎么没有 `AppHelper` 类
 
 答：`AppHelper` 助手类只由`核心工程师`来调用 。当你要从 App 类里找出复杂的助手类，还不如在 AppHelper 里找。Session 管理就用到了 AppHelper 类。
 
@@ -89,7 +89,7 @@ Platform()
     获得当前所在平台,默认读取选项和设置字段里的 duckphp_platform，用于判断当前是哪台机器等
 Logger($object = null)
 
-    获得 psr 标准的 Logger 类。默认是 DuckPhp\Core\Logger 类。
+    获得或设置 psr 标准的 Logger 类。默认是 DuckPhp\Core\Logger 类。
 trace_dump()
 
     调试状态下，查看当前堆栈，打印当前堆栈，类似 debug_print_backtrce(2)
@@ -106,14 +106,16 @@ ThrowOn($flag, $message, $code = 0, $exception_class = null)
     参见 trait Duckphp\\Core\\ThrowOn
 AssignExtendStaticMethod($key, $value = null)
 
-    高级函数，参见 trait DuckPhp\\Core\\
+    高级函数
 CallExtendStaticMethod($name, $arguments)
 
-    高级函数，参见 trait DuckPhp\\Core\\
+    高级函数
 
 ## ViewHelper 视图助手类
 
-本页面展示 ViewHelper 方法。 ViewHelper 是在View 里使用。 ViewHelper 默认的方法在 ControllerHelper 里都有。 但是 ViewHelper 不是 ControllerHelper 的子集。 
+本页面展示 ViewHelper 方法。 ViewHelper 是在View 里使用。 ViewHelper 默认的方法在 ControllerHelper 里都有。 但是 ViewHelper 不是 ControllerHelper 的子集。
+
+
 H($str)
 
 	HTML 编码
@@ -231,14 +233,16 @@ getParameters(): array
 ### 内容处理
 Show($data = [], $view = null)
 
-    【内容处理】显示视图， 默认为 view/$view.php 的文件， 并会带上页眉页脚
+    【内容处理】显示视图， 默认为 view/{$view}.php 的文件， 并会带上页眉页脚
 setViewWrapper($head_file = null, $foot_file = null)
 
     【内容处理】设置页眉页脚
 assignViewData($key, $value = null)
 
-    【内容处理】分配视图变量，另一版本为 assignViewData($assoc);
+    【内容处理】分配视图变量，另一版本为 assignViewData([$key=>$value]);
 ### 异常处理
+见 异常管理 一节
+
 assignExceptionHandler
 
     【异常处理】分配异常句柄
@@ -265,7 +269,7 @@ SG
 替代同名 GET / POST /REQUEST /COOKIE 。如果没的话返回 后面的默认值。
 注意没有 \_SESSION ，这是故意设计成这样的，不希望 \_SESSION 到处飞，\ _SESSION 应该集中于 SessionService 或 SessionLib 里。
 
-ENV 也是不希望人用所以没有， SERVER 的话。
+ENV 也是不希望人用所以没有。
 
 GET($key, $default = null)
 
@@ -278,8 +282,13 @@ REQUEST($key, $default = null)
     对应 _REQUEST， $_REQUEST[$key] 不存在则返回 $default;
 COOKIE($key, $default = null)
 
-    对应 _GET， $_GET[$key] 不存在则返回 $default;
+    对应 _COOKIE， $_GET[$key] 不存在则返回 $default;
+SEVER($key, $default = null)
+
+    对应 SEVER $_GET[$key] 不存在则返回 $default;
 ### 分页
+
+分页器类是通过 DuckPhp\\Ext\\Pager 实现的
 
 Pager()
 
@@ -292,12 +301,13 @@ PageSize($new_value = null)
     获得或设置当前每页数据条目
 PageHtml($total, $options=[])
 
-    获得分页结果 HTML
+    获得分页结果 HTML，这里的 $options 的传递给 Pager 类的选项。
 
 ## AppHelper
 
 应用 助手的方法
 ### 系统替代
+
 AppHelper 的系统替代更全面，包括 session 族函数
 
 header
@@ -328,10 +338,10 @@ session_set_save_handler(\SessionHandlerInterface $handler)
     【系统替代】
 ### 常用操作
 
-IsRunning()
+isRunning()
 
     判断是否在运行状态
-InException()
+inException()
 
     判断是否在异常中
 addRouteHook($hook, $position, $once = true)
