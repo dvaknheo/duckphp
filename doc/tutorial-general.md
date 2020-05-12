@@ -2,15 +2,15 @@
 [toc]
 ## 开发人员角色
 
-DuckPHP 的使用者角色分为 `业务工程师`和`核心工程师`两种。
+DuckPhp 的使用者角色分为 `业务工程师`和`核心工程师`两种。
 
-`业务工程师`负责日常 Curd 。作为业务工程师， 你不能引入 DuckPHP 的任何东西，就当 DuckPHP 命名空间不存在。
+`业务工程师`负责日常 Curd 。作为业务工程师， 你不能引入 DuckPhp 的任何东西，就当 DuckPhp 命名空间不存在。
 
-`核心工程师`才去研究 DuckPHP 类里的东西。
+`核心工程师`才去研究 DuckPhp 类里的东西。
 
 ## 目录结构
 
-DuckPHP 代码里的 template 目录就是我们的工程目录示例。也是工程桩代码。
+DuckPhp 代码里的 template 目录就是我们的工程目录示例。也是工程桩代码。
 
 在执行 `./vendor/bin/duckphp --create` 的时候，会把代码复制到工程目录。 并做一些改动。
 
@@ -129,7 +129,7 @@ Controller --> Service ------------------------------ ---> Model
 ```php
 <?php declare(strict_types=1);
 /**
- * DuckPHP
+ * DuckPhp
  * From this time, you never be alone~
  */
 require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
@@ -159,11 +159,11 @@ echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKP
 入口类前面部分是处理头文件的。然后处理直接 copy 代码提示，不要直接运行。起作用的主要就这句话
 
 ```php
-\DuckPHP\App::RunQuickly($options, function () {
+\DuckPhp\App::RunQuickly($options, function () {
 });
 ```
-RunQuickly 相当于 \DuckPHP\App::G()->init($options,function(){})->run(); 
-\DuckPHP\App::G()->init($options,function(){})； 会执行根据配置，返回  `MY\Base\App`
+RunQuickly 相当于 \DuckPhp\App::G()->init($options,function(){})->run(); 
+\DuckPhp\App::G()->init($options,function(){})； 会执行根据配置，返回  `MY\Base\App`
 
 ### 工程入口文件
 
@@ -173,7 +173,7 @@ RunQuickly 相当于 \DuckPHP\App::G()->init($options,function(){})->run();
 ```php
 <?php declare(strict_types=1);
 /**
- * DuckPHP
+ * DuckPhp
  * From this time, you never be alone~
  */
 namespace MY\Base;
@@ -234,7 +234,7 @@ $options['is_debug'] = true;                  // @DUCKPHP_DELETE
 $options['skip_setting_file'] = true;                 // @DUCKPHP_DELETE
 ```
 
-DuckPHP 只要更改选项就能实现很多强大的功能变化。
+DuckPhp 只要更改选项就能实现很多强大的功能变化。
 如果这些选项都不能满足你，那就启用扩展吧，这样有更多的选项能用，
 如果连这都不行，那么，就自己写扩展吧。
 
@@ -260,7 +260,7 @@ DuckPHP 只要更改选项就能实现很多强大的功能变化。
 'override_class'=>'Base\App', **重要选项**
 
     基于 namespace ,如果这个选项的类存在，则在init()的时候会切换到这个类完成后续初始化，并返回这个类的实例。
-    注意到 app/Base/App.php 这个文件的类 MY\Base\App extends DuckPHP\App;
+    注意到 app/Base/App.php 这个文件的类 MY\Base\App extends DuckPhp\App;
     如果以  \ 开头则是绝对 命名空间
 'is_debug'=>false,
 
@@ -289,11 +289,11 @@ error_* 选项为 null 用默认，为 callable 是回调，为string 则是调�
 
 index.php 就只执行了
 
-DuckPHP\App::RunQuickly($options, $callback) 
+DuckPhp\App::RunQuickly($options, $callback) 
 
 发生了什么
 
-等价于 DuckPHP\App::G()->init($options)->run();
+等价于 DuckPhp\App::G()->init($options)->run();
 
 init 为初始化阶段 ，run 为运行阶段。$callback 在init() 之后执行
 

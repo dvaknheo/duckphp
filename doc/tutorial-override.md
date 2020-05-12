@@ -25,7 +25,7 @@ ExceptionManager::G(MyExceptionManager::G())->init($this->options,$this);
 为了 onInit 使用方便
 
 * 为什么 Core 里面的都是 App::Foo(); 而 Ext 里面的都是 App::G()::Foo();
-因为 Core 里的扩展都是在 DuckPHP\Core\App 下的。
+因为 Core 里的扩展都是在 DuckPhp\Core\App 下的。
 
 Core 下面的扩展不会单独拿出来用， 
 如果你扩展了该方面的类，最好也是让用户通过 App 或者 MVCS 组件来使用他们。

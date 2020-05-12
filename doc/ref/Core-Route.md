@@ -171,7 +171,7 @@ public function getRouteError()
 
 ### Core\Route
 
-DuckPHP\Core\Route 这个类可以单独拿出来做路由用。
+DuckPhp\Core\Route 这个类可以单独拿出来做路由用。
 
 
 
@@ -181,7 +181,7 @@ DuckPHP\Core\Route 这个类可以单独拿出来做路由用。
 
 ```php
 <?php
-use DuckPHP\Core\Route;
+use DuckPhp\Core\Route;
 require(__DIR__.'/vendor/autoload.php');
 
 class Main

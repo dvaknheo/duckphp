@@ -35,9 +35,9 @@ $this->options['ext']['Ext\JsonRpcExt']=[
 <?php
 require_once(__DIR__.'/../vendor/autoload.php');
 
-use DuckPHP\Core\Route;
-use DuckPHP\Core\SingletonEx;
-use DuckPHP\Ext\JsonRpcExt;
+use DuckPhp\Core\Route;
+use DuckPhp\Core\SingletonEx;
+use DuckPhp\Ext\JsonRpcExt;
 use JsonRpc\CalcService as RemoteCalcService;
 
 class CalcService

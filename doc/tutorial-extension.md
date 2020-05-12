@@ -1,9 +1,9 @@
 # 扩展教程
 [toc]
 
-## 使用 DuckPHP 的扩展
+## 使用 DuckPhp 的扩展
 
-DuckPHP 扩展的加载是通过选项里添加
+DuckPhp 扩展的加载是通过选项里添加
 $options['ext']数组实现的
 
     扩展映射 ,$ext_class => $options。
@@ -16,7 +16,7 @@ $options['ext']数组实现的
     如果 $options 为  false 则不启用，
     如果 $options 为 true ，则会把当前 $options 传递进去。
 
-DuckPHP/Core 的其他组件如 Configer, Route, View, AutoLoader 默认都在这调用
+DuckPhp/Core 的其他组件如 Configer, Route, View, AutoLoader 默认都在这调用
 
 ##  组件类
 
@@ -31,7 +31,7 @@ interface ComponentInterface
 }
 ```
 
-DuckPHP 的扩展都放在 DuckPHP\\Ext 命名空间里
+DuckPhp 的扩展都放在 DuckPhp\\Ext 命名空间里
 下面按字母顺序介绍这些扩展的作用
 按选项，说明，公开方法，一一介绍。
 

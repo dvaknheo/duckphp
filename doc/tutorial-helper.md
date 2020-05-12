@@ -30,8 +30,8 @@ Controller --> Service ------------------------------ ---> Model
 
 
 
-作为业务工程师， 你不能引入 DuckPHP 的任何东西，就当 DuckPHP 命名空间不存在。
-核心工程师才去研究 DuckPHP 类的东西。
+作为业务工程师， 你不能引入 DuckPhp 的任何东西，就当 DuckPhp 命名空间不存在。
+核心工程师才去研究 DuckPhp 类的东西。
 
 * 写 Model 你可能要引入 MY\Base\Helper\ModelHelper 助手类别名为 M 。
 * 写 Serivce 你可能要引入 MY\Base\Helper\SerivceHelper 助手类别名为 S 。
@@ -283,7 +283,7 @@ COOKIE($key, $default = null)
 
 Pager()
 
-    获得分页器对象, 分页器参考 DuckPhp\Ext\Pager。 DuckPHP 只是做了最小的分页器
+    获得分页器对象, 分页器参考 DuckPhp\Ext\Pager。 DuckPhp 只是做了最小的分页器
 PageNo(new_value = null)
 
     获得或设置当前页码
@@ -378,6 +378,6 @@ class ModelHelper extends Helper
 }
 
 ```
-如果你要修改相关实现，了解 DuckPHP 系统架构后后 参考 [DuckPhp\Core\App](ref/Core-App.md)
+如果你要修改相关实现，了解 DuckPhp 系统架构后后 参考 [DuckPhp\Core\App](ref/Core-App.md)
 如果你自己添加了 Ext 扩展类，那么你需要 extendComponents 方法注入相关 Helper
 如果你只是替换系统的实现， 找出那些 Helper 的实现函数，替换之。

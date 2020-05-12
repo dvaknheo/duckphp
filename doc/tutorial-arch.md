@@ -1,12 +1,12 @@
 # 整体架构图
 [toc]
-## DuckPHP 的源代码
+## DuckPhp 的源代码
 遵循 PSR-4 的文件结构，节点文件是 `Core/Singleton` 是所有非辅助类都以来的可变单例类。
 `Core/App`, `Core/Kernel`, `Core/HttpServer` 是连接性节点。 其他节点都是独立的。
 
 链接指向参考文件。
 
-1. [App.php](ref/App.md) 是加载了扩展的 DuckPHP 入口 ，扩展至 Core/App
+1. [App.php](ref/App.md) 是加载了扩展的 DuckPhp 入口 ，扩展至 Core/App
 
 2. [HttpServer.php](ref/HttpServer.md) 是 加了 Swoole 的 Http 服务器。
 
@@ -70,7 +70,7 @@
     5. [ViewHelper.php](ref/Helper-ViewHelper.md)
     6. *[AppHelper.php](ref/Helper-AppHelper.md)*
 
-## DuckPHP 全框架架构图
+## DuckPhp 全框架架构图
 
 画成引用  [ SVG,下载查看大图 ](duckphp.gv.svg) （源文件 duckphp.gv）  如下：
 
@@ -78,7 +78,7 @@
 
 Ext 的虚线，表示的是默认未加载的扩展。
 
-![DuckPHP](duckphp.gv.svg)
+![DuckPhp](duckphp.gv.svg)
 
 ##### 
     ExtendableStaticCallTrait

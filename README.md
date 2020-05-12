@@ -1,4 +1,4 @@
-# 第一章 DuckPHP 介绍
+# 第一章 DuckPhp 介绍
 作者QQ: 85811616
 
 官方QQ群: 714610448
@@ -24,8 +24,8 @@ composer require dvaknheo/duckphp # 用 require
 ```
 不建议使用命令行的 web 服务器， 你把 nginx 或 apache 的 document_root 设置为  public 目录按常规框架调整即可。
 
-DuckPHP 也支持在子目录里使用，同时也支持无 path_info 配置的 web 服务器。
-## DuckPHP 是什么
+DuckPhp 也支持在子目录里使用，同时也支持无 path_info 配置的 web 服务器。
+## DuckPhp 是什么
 
 一个 PHP Web 简单框架 
 
@@ -34,36 +34,36 @@ DuckPHP 也支持在子目录里使用，同时也支持无 path_info 配置的 
 
 使用 DuckPHP，让网站开发者专注于业务逻辑。
 
-DuckPHP 的名字源自鸭子类型，这东西看起来像鸭子，叫起来像鸭子，所以就是鸭子。
+DuckPhp 的名字源自鸭子类型，这东西看起来像鸭子，叫起来像鸭子，所以就是鸭子。
 
-## DuckPHP 的优点
+## DuckPhp 的优点
 ### 主要优点
-1. DuckPHP 可以做到你的应用和 DuckPHP 的系统代码只有一行关联。 这个是其他 PHP 框架目前都做不到的。你的代码，基本和 DuckPHP的系统代码无关。
-2. DuckPHP 用可变单例方式，解决了【系统的调用形式不变，实现形式可变】，比如不用 hack 来改系统漏洞。而其他框架用的 IoC,DI 技术则复杂且不方便调试。
-3. DuckPHP 的应用调试非常方便，堆栈清晰，调用 debug_print_backtrace(2) 很容易发现。那些用了中间件的框架的堆栈很不清晰。
-4. DuckPHP 无第三方依赖，你不必担心第三方依赖改动而大费周折。
-5. DuckPHP 耦合松散，扩展灵活方便，魔改容易。
-6. DuckPHP 是库，可以按 composer 库的方式引入
-7. DuckPHP 很容易嵌入其他 PHP 框架。根据 DuckPHP 的返回值判断是否继续后面其他框架。
-8. DuckPHP 支持 composer。无 composer 环境也可运。
-9. DuckPHP 做到了 swoole 和 fpm 代码无缝切换。单例变成协程单例。
-### DuckPHP 还有以下优点：
+1. DuckPhp 可以做到你的应用和 DuckPhp 的系统代码只有一行关联。 这个是其他 PHP 框架目前都做不到的。你的代码，基本和 DuckPHP的系统代码无关。
+2. DuckPhp 用可变单例方式，解决了【系统的调用形式不变，实现形式可变】，比如不用 hack 来改系统漏洞。而其他框架用的 IoC,DI 技术则复杂且不方便调试。
+3. DuckPhp 的应用调试非常方便，堆栈清晰，调用 debug_print_backtrace(2) 很容易发现。那些用了中间件的框架的堆栈很不清晰。
+4. DuckPhp 无第三方依赖，你不必担心第三方依赖改动而大费周折。
+5. DuckPhp 耦合松散，扩展灵活方便，魔改容易。
+6. DuckPhp 是库，可以按 composer 库的方式引入
+7. DuckPhp 很容易嵌入其他 PHP 框架。根据 DuckPhp 的返回值判断是否继续后面其他框架。
+8. DuckPhp 支持 composer。无 composer 环境也可运。
+9. DuckPhp 做到了 swoole 和 fpm 代码无缝切换。单例变成协程单例。
+### DuckPhp 还有以下优点：
 
-* DuckPHP 代码简洁，不做多余事情。
-* DuckPHP 的 Controller 切换容易，独立，和其他类无关，简单明了。
-* DuckPHP 支持全站路由，还支持局部路径路由和非 PATH_INFO 路由，不需要配服务器也能用。 可以在不修改 Web 服务器设置（如设置 PATH_INFO）的情况下使用，也可以在子目录里使用。
-* DuckPHP 的路由也可以单独抽出使用。
-* DuckPHP 支持扩展。这些扩展可独立，不一定非要仅仅用于 DuckPHP。
-* DuckPHP 的数据库类很简洁，而且，你可以轻易方便的替换。如教程就有使用 thinkphp-db 的例子。
-* DuckPHP 有扩展能做到禁止你在 Controller 里直接写 sql 。有时候，框架必须为了防止人犯蠢，而牺牲了性能。但 DuckPHP 这么做几乎不影响性能。
-* DuckPHP/Core 是 DuckPHP 的子框架。有时候你用 DuckPHP/Core 也行。类似 lumen 之于 Laravel
-* DuckPHP/Core 没有数据类，因为数据库类不是 Web 框架的必备。Laravel 的 ORM 确实很强大。但是意味着和 jquery 那样不可调试。
-* DuckPHP 不限制你的工程的命名空间固定为 app.
-* DuckPHP 可以规范为，Service 类只能用 MY\Base\ServiceHelper . Controller 类 只能用 MY\Base\ControllerHelper .Model 类只能引用 MY\Base\ModelHepler。 View 类只能用 ViewHelper ，其他类不允许用。也可以规范成 只用 MY\Base\App 类这个系统类。其中 MY 这个命名空间你可以自定义。
+* DuckPhp 代码简洁，不做多余事情。
+* DuckPhp 的 Controller 切换容易，独立，和其他类无关，简单明了。
+* DuckPhp 支持全站路由，还支持局部路径路由和非 PATH_INFO 路由，不需要配服务器也能用。 可以在不修改 Web 服务器设置（如设置 PATH_INFO）的情况下使用，也可以在子目录里使用。
+* DuckPhp 的路由也可以单独抽出使用。
+* DuckPhp 支持扩展。这些扩展可独立，不一定非要仅仅用于 DuckPHP。
+* DuckPhp 的数据库类很简洁，而且，你可以轻易方便的替换。如教程就有使用 thinkphp-db 的例子。
+* DuckPhp 有扩展能做到禁止你在 Controller 里直接写 sql 。有时候，框架必须为了防止人犯蠢，而牺牲了性能。但 DuckPhp 这么做几乎不影响性能。
+* DuckPhp/Core 是 DuckPhp 的子框架。有时候你用 DuckPhp/Core 也行。类似 lumen 之于 Laravel
+* DuckPhp/Core 没有数据类，因为数据库类不是 Web 框架的必备。Laravel 的 ORM 确实很强大。但是意味着和 jquery 那样不可调试。
+* DuckPhp 不限制你的工程的命名空间固定为 app.
+* DuckPhp 可以规范为，Service 类只能用 MY\Base\ServiceHelper . Controller 类 只能用 MY\Base\ControllerHelper .Model 类只能引用 MY\Base\ModelHepler。 View 类只能用 ViewHelper ，其他类不允许用。也可以规范成 只用 MY\Base\App 类这个系统类。其中 MY 这个命名空间你可以自定义。
 
 ### 和其他框架简单对比
 
-|功能                 | CodeIgniter 4 | ThinkPHP 6 | Laravel 6 | DuckPHP |
+|功能                 | CodeIgniter 4 | ThinkPHP 6 | Laravel 6 | DuckPhp |
 |---------------------|--------------|------------|-----------|---------|
 |仅一行关联           |              |            |           | V       |
 |堆栈清晰             | V            | V          |           | V       |
@@ -82,15 +82,15 @@ DuckPHP 的名字源自鸭子类型，这东西看起来像鸭子，叫起来像
 MVC 结构的时候，你们业务逻辑放在哪里？
 新手放在 Controller ，后来的放到 Model ，后来觉得 Model 和数据库混一起太乱， 搞个 DAO 层吧。
 可是 一般的 PHP 框架不提供这个功能。
-所以，Service 按业务走，Model 层按数据库走，Controller 层按 URL 地址走，View 按页面走，这就是 DuckPHP 的理念。
+所以，Service 按业务走，Model 层按数据库走，Controller 层按 URL 地址走，View 按页面走，这就是 DuckPhp 的理念。
 
-DuckPHP 的最大意义是思想，只要思想在，什么框架你都可以用。
-你可以不用 DuckPHP 实现 Controller-Service-Model 架构。
+DuckPhp 的最大意义是思想，只要思想在，什么框架你都可以用。
+你可以不用 DuckPhp 实现 Controller-Service-Model 架构。
 只要有这个思想就是理念成功了。
 
-## 理解 DuckPHP 的原则
+## 理解 DuckPhp 的原则
 
-DuckPHP 层级关系图
+DuckPhp 层级关系图
 
 ```text
            /-> View-->ViewHelper
@@ -117,14 +117,14 @@ Controller --> Service ------------------------------ ---> Model
     2. 添加后缀为 ExModel 用于表示这个 Model 是多个表的，如 UserExModel。
     3. 或者单独和数据库不一致如取名 UserAndPlayerRelationModel
 
-## DuckPHP 不做什么
+## DuckPhp 不做什么
 
 * ORM ，和各种屏蔽 sql 的行为，根据日志查 sql 方便多了。 自己简单封装了 pdo 。你也可以使用自己的DB类。 你也可以用第三方ORM（教程最末有替换成 think-orm 的方法）
 * 模板引擎，PHP本身就是模板引擎。
 * Widget ， 和 MVC 分离违背。
 * 接管替代默认的POST，GET，SESSION 。系统提供给你就用，不要折腾这些。 *除非为了支持 swoole*
 
-## DuckPHP 还要做什么
+## DuckPhp 还要做什么
 
 **我真的很需要反馈啊，给我个反馈吧**
 
@@ -153,7 +153,7 @@ DuckPhp\App::RunQuickly($options);
 ```
 ### 2. 复杂样例
 
-工程附带的模板文件 `template/public/demo.php` 在单一的文件里演示如何使用 ``DuckPHP``。
+工程附带的模板文件 `template/public/demo.php` 在单一的文件里演示如何使用 ``DuckPhp``。
 
 这个样例是为了演示特性把所有东西集中到一个文件，实际编码不会把所有东西全放在同一个文件里。
 
@@ -161,7 +161,7 @@ DuckPhp\App::RunQuickly($options);
 ```php
 <?php declare(strict_types=1);
 /**
- * DuckPHP
+ * DuckPhp
  * From this time, you never be alone~
  */
 namespace {
@@ -321,20 +321,18 @@ namespace MySpace\View {
 // 这里是入口，单一文件下要等前面类声明
 namespace {
     $options = [];
-    $options['namespace'] = rtrim('MySpace\\', '\\'); //项目命名空间为 MySpace，  你可以随意命名
+    $options['namespace'] = 'MySpace'; //项目命名空间为 MySpace，  你可以随意命名
     $options['is_debug'] = true;  // 开启调试模式
     
     $options['skip_app_autoload'] = true; // 本例特殊，跳过app 用的 autoload 免受干扰
     $options['skip_setting_file'] = true; // 本例特殊，跳过设置文件
     
-    \DuckPhp\App::RunQuickly($options, function () {
-    });
+    \DuckPhp\App::RunQuickly($options);
 } // end namespace
 
 ```
 ## 架构图
-DuckPHP/Framwork 全框架
-![DuckPHP](doc/duckphp.gv.svg)
+![DuckPhp](doc/duckphp.gv.svg)
 
 ## 还有什么要说的
 

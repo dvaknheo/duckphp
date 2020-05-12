@@ -51,15 +51,15 @@ M::DB() 用到了这个组件。
 ```php
 <?php
 use think\facade\Db;
-use DuckPHP\Ext\DBManager;
-use DuckPHP\App;
+use DuckPhp\Ext\DBManager;
+use DuckPhp\App;
 require_once('../vendor/autoload.php');
 
 $options=[];
 $options['override_class']='';      // 示例文件不要被子类干扰。
 $options['skip_setting_file']=true;// 不需要配置文件。
 $options['error_exception']=null; // 使用默认的错误视图
-DuckPHP::RunQuickly($options,function(){
+DuckPhp::RunQuickly($options,function(){
     Db::setConfig([
         'default'     => 'mysql',
         'connections' => [
@@ -75,7 +75,7 @@ DuckPHP::RunQuickly($options,function(){
     //就这句话了
     DBManager::G()->setDBHandler(function(){return Db::class;});
     $sql="select * from Users where true limit 1";
-    $data=DuckPHP::DB()::query($sql);
+    $data=DuckPhp::DB()::query($sql);
     var_dump($data);
 });
 

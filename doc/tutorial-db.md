@@ -57,18 +57,18 @@ DB
     execute($sql, ...$args); //   执行某条sql ，不用 exec , execute 是为了兼容其他类。
 #### 示例
 使用数据库，在 设置里正确设置 database_list 这个数组，包含多个数据库配置
-然后在用到的地方调用 DuckPHP::DB($tag=null) 得到的就是 DB 对象，用来做各种数据库操作。
+然后在用到的地方调用 DuckPhp::DB($tag=null) 得到的就是 DB 对象，用来做各种数据库操作。
 $tag 对应 $setting\['database_list'\][$tag]。默认会得到最前面的 tag 的配置。
 
-你不必担心每次框架初始化会连接数据库。只有第一次调用 DuckPHP::DB() 的时候，才进行数据库类的创建。
+你不必担心每次框架初始化会连接数据库。只有第一次调用 DuckPhp::DB() 的时候，才进行数据库类的创建。
 
 DB 的使用方法，看后面的参考。
 示例如下
 
 ```php
 <?php
-use DuckPHP\App as DuckPHP;
-use DuckPHP\Helper\ModelHelper as M;
+use DuckPhp\App as DuckPhp;
+use DuckPhp\Helper\ModelHelper as M;
 
 require_once('../vendor/autoload.php');
 
@@ -82,11 +82,11 @@ $options['database_list']=[[
     'username'=>'root',
     'password'=>'123456',
 ]]; // 这里用选项里的
-DuckPHP::RunQuickly($options,function(){    
+DuckPhp::RunQuickly($options,function(){    
     $sql="select 1+? as t";
     $data=M::DB()->fetch($sql,2);
     var_dump($data);
-    DuckPHP::exit_system(0);
+    DuckPhp::exit_system(0);
 });
 ```
 
@@ -95,13 +95,13 @@ DuckPHP::RunQuickly($options,function(){
 ```php
 <?php
 use think\facade\Db;
-use DuckPHP\App;
+use DuckPhp\App;
 require_once('../vendor/autoload.php');
 
 $options=[];
 $options['override_class']='';      // 示例文件，不要被子类干扰。
 $options['skip_setting_file']=true; // 示例文件，不需要配置文件。
-DuckPHP::RunQuickly($options,function(){
+DuckPhp::RunQuickly($options,function(){
     Db::setConfig([
         'default'     => 'mysql',
         'connections' => [
@@ -117,14 +117,14 @@ DuckPHP::RunQuickly($options,function(){
     //就这句话了
     App::G()->setDBHandler(function(){return Db::class;});
     $sql="select * from Users where true limit 1";
-    $data=DuckPHP::DB()::query($sql);
+    $data=DuckPhp::DB()::query($sql);
     var_dump($data);
 });
 
 ```
 ### 数据库
 
-DuckPHP 提供了一个默认的数据库类。如果在项目中有不满意，则可以替换之。
+DuckPhp 提供了一个默认的数据库类。如果在项目中有不满意，则可以替换之。
 
 建议只在  Model 层用 数据库。
 
@@ -166,7 +166,7 @@ class DBModel extends BaseModel
 
 DB_R() 则的对应第0 号数库 ,DB_W() 对应第一号数据库。
 
-你不必担心每次框架初始化会连接数据库。只有第一次调用 DuckPHP::DB() 的时候，才进行数据库类的创建。
+你不必担心每次框架初始化会连接数据库。只有第一次调用 DuckPhp::DB() 的时候，才进行数据库类的创建。
 
 
 #### DB 类的用法

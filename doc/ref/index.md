@@ -3,7 +3,7 @@
 [test](options.md#options-xx)
 ## 介绍
 
-本参考是所有 DuckPHP 类 的规范参考。不包含内部 trait 。包含所有选项索引。
+本参考是所有 DuckPhp 类 的规范参考。不包含内部 trait 。包含所有选项索引。
 
 ## 按 DuckPhp 文件结构介绍的类
 
@@ -12,7 +12,7 @@
 
 链接指向参考文件。
 
-1. [App.php](App.md) 加载了扩展的 DuckPHP 入口 ，扩展自 Core/App
+1. [App.php](App.md) 加载了扩展的 DuckPhp 入口 ，扩展自 Core/App
 2. [HttpServer.php](HttpServer.md)  加了 Swoole 的 Http 服务器。
 3. [SingletonEx.php](SingletonEx.md)  Core/SingletonEx.php 的快捷方法。
 4. [ThrowOn.php](ThrowOn.md)  Core/ThrowOn.php 的快捷方法。

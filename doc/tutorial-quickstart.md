@@ -1,8 +1,8 @@
-# DuckPHP 教程
+# DuckPhp 教程
 [toc]
 ## 第一章 快速入门
 ### 安装
-假定不管什么原因，选用了 DuckPHP 这个框架，需要快速入门.
+假定不管什么原因，选用了 DuckPhp 这个框架，需要快速入门.
 
 最快的方式是从 github 下载 DuckPHP。
 
@@ -14,10 +14,10 @@ php template/bin/start_server.php
 浏览器中打开 http://127.0.0.1:8080/ 得到下面欢迎页就表明 OK 了
 ```text
 Don't run the template file directly
-Hello DuckPHP
+Hello DuckPhp
 
 Time Now is [2019-04-19T21:36:06+08:00]
-For More Take the DuckPHP-FullTest (TODO)
+For More Take the DuckPhp-FullTest (TODO)
 ```
 发布的时候，把网站目录指向 public/index.php 就行。
 ### 另一种安装模式： Composer 安装
@@ -36,10 +36,10 @@ php bin/start_server.php
 浏览器中打开 http://127.0.0.1:9527/ 得到下面欢迎页就表明 OK 了
 ```text
 Don't run the template file directly
-Hello DuckPHP
+Hello DuckPhp
 
 Time Now is [2019-04-19T21:36:06+08:00]
-For More Take the DuckPHP-FullTest (TODO)
+For More Take the DuckPhp-FullTest (TODO)
 ```
 细则可以看 --help 参数
 

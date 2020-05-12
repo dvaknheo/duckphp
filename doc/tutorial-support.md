@@ -14,7 +14,7 @@ phpstan analyse
 
 ```
 ## 测试
-DuckPHP 使用phpunit 做单元覆盖测试
+DuckPhp 使用phpunit 做单元覆盖测试
 
 ```
 phpunit
