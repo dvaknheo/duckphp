@@ -22,10 +22,10 @@
 'log_sql' => false,
 
     记录 sql ，配合 db_before_query_handler
-'use_short_functions' => false,
 
-    打开这个选项，使用 `\e` 函数。
 'ext' => \[\]
+
+
 
     扩展选项
     默认为：
@@ -58,7 +58,6 @@ public function __construct()
 protected function onInit()
 
     处理 `log_sql`，如果 log_sql 不为 false 则联立 OnQuery,
-    处理 `use_short_functions`, 如果
 public function _Pager($object = null)
 
     重写了 `Core\App` 的 _Pager 方法，填充默认 DuckPhp\Ext
@@ -72,9 +71,3 @@ public function _OnQuery($sql, ...$args)
 ## 详解
 
 App 类，继承了 Core\App 的功能，在默认配置里，还加载了其他 Ext 扩展的内容
-
-    public function __construct()
-    protected function onInit()
-    public function _Pager($object = null)
-    public static function OnQuery($sql, ...$args)
-    public function _OnQuery($sql, ...$args)

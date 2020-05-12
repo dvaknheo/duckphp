@@ -8,53 +8,7 @@ subgraph cluster_Core {
     style = "rounded";
     label = "[DuckPhp\\Core]";
 
-
-
-    Core_Kernel -> Core_SingletonEx [style="dotted"];
-    Core_Kernel -> Core_AutoLoader ;
-    Core_Kernel -> Core_Configer;
-    Core_Kernel -> Core_Logger;
-    Core_Kernel -> Core_ExceptionManager;
-    Core_Kernel -> Core_Route;
-    Core_Kernel -> Core_RuntimeState;
-    Core_Kernel -> Core_View;
-    Core_Kernel -> Core_SuperGlobal;
-
-    
-    Core_App -> Core_Kernel;
-    Core_App -> Core_ThrowOn;
-    Core_App -> Core_ExtendableStaticCallTrait;
-    Core_App -> Core_SystemWrapperTrait;
-    
-    Core_App -> Core_AutoLoader [style="dotted"];
-    Core_App -> Core_Configer [style="dotted"];
-    Core_App -> Core_Logger [style="dotted"];
-    Core_App -> Core_ExceptionManager [style="dotted"];
-    Core_App -> Core_Route [style="dotted"];
-    Core_App -> Core_RuntimeState [style="dotted"];
-    Core_App -> Core_View [style="dotted"];
-    Core_App -> Core_SuperGlobal [style="dotted"];
-
-    Core_AutoLoader -> Core_SingletonEx [style="dotted"];
-    Core_ExceptionManager -> Core_SingletonEx [style="dotted"];
-    Core_View -> Core_SingletonEx [style="dotted"];
-    Core_Configer -> Core_SingletonEx [style="dotted"];
-    Core_Route -> Core_SingletonEx [style="dotted"];
-    Core_RuntimeState -> Core_SingletonEx [style="dotted"];
-    
-    Core_HttpServer -> Core_SingletonEx [style="dotted"];
-    Core_SuperGlobal -> Core_SingletonEx [style="dotted"];
-
-
-    Core_AppPluginTrait -> Core_AutoLoader;
-    Core_AppPluginTrait -> Core_Configer;
-    Core_AppPluginTrait -> Core_View;
-    Core_AppPluginTrait -> Core_Route;
-    Core_AppPluginTrait -> Core_SuperGlobal;
-
-
     Core_AppPluginTrait [label="AppPluginTrait";shape=Mdiamond];
-
     Core_App [label="App";shape=Mdiamond];
     Core_Kernel [label="Kernel"];
     Core_SingletonEx [label="SingletonEx";shape=Mdiamond];
@@ -75,7 +29,37 @@ subgraph cluster_Core {
     Core_ThrowOn [label="ThrowOn"];
     Core_ComponentInterface [label="ComponentInterface"];
     Core_Functions [label="Functions"];
+
+
+    Core_Kernel -> Core_AutoLoader ;
+    Core_Kernel -> Core_Configer;
+    Core_Kernel -> Core_Logger;
+    Core_Kernel -> Core_ExceptionManager;
+    Core_Kernel -> Core_Route;
+    Core_Kernel -> Core_RuntimeState;
+    Core_Kernel -> Core_View;
+    Core_Kernel -> Core_SuperGlobal;
     
+    Core_App -> Core_Kernel;
+    Core_App -> Core_ThrowOn;
+    Core_App -> Core_ExtendableStaticCallTrait;
+    Core_App -> Core_SystemWrapperTrait;
+    
+    Core_App -> Core_AutoLoader [style="dotted"];
+    Core_App -> Core_Configer [style="dotted"];
+    Core_App -> Core_Logger [style="dotted"];
+    Core_App -> Core_ExceptionManager [style="dotted"];
+    Core_App -> Core_Route [style="dotted"];
+    Core_App -> Core_RuntimeState [style="dotted"];
+    Core_App -> Core_View [style="dotted"];
+    Core_App -> Core_SuperGlobal [style="dotted"];
+
+
+    Core_AppPluginTrait -> Core_AutoLoader;
+    Core_AppPluginTrait -> Core_Configer;
+    Core_AppPluginTrait -> Core_View;
+    Core_AppPluginTrait -> Core_Route;
+    Core_AppPluginTrait -> Core_SuperGlobal;
 }
 
 
@@ -83,27 +67,28 @@ subgraph cluster_Core {
 
 subgraph cluster_Helper {
     label = "[DuckPhp\\Helper]";
+    
+    AppHelper [label="AppHelper";shape=Mdiamond];
+    ControllerHelper [label="ControllerHelper";shape=Mdiamond];
+    ModelHelper [label="ModelHelper";shape=Mdiamond];
+    ServiceHelper [label="ServiceHelper";shape=Mdiamond];
+    ViewHelper [label="ViewHelper";shape=Mdiamond];
+    HelperTrait;
+    
     AppHelper -> Core_App; 
     ControllerHelper -> Core_App; 
     ModelHelper -> Core_App; 
     ServiceHelper -> Core_App; 
     ViewHelper -> Core_App; 
     HelperTrait -> Core_App;
-    HelperTrait -> Core_ExtendableStaticCallTrait [style="dotted"];
-    HelperTrait -> Core_ThrowOn [style="dotted"];
+    HelperTrait -> Core_ExtendableStaticCallTrait ;
+    HelperTrait -> Core_ThrowOn;
     
     AppHelper -> HelperTrait; 
     ControllerHelper -> HelperTrait; 
     ModelHelper -> HelperTrait; 
     ServiceHelper -> HelperTrait; 
     ViewHelper -> HelperTrait; 
-
-    AppHelper [label="AppHelper";shape=Mdiamond];
-    ControllerHelper [label="ControllerHelper";shape=Mdiamond];
-    ModelHelper [label="ModelHelper";shape=Mdiamond];
-    ServiceHelper [label="ServiceHelper";shape=Mdiamond];
-    ViewHelper [label="ViewHelper";shape=Mdiamond];
-
 
 }
 
@@ -113,12 +98,14 @@ subgraph cluster_Helper {
 subgraph cluster_DB {
     label = "[DuckPhp\\DB]";
 
-    DB_DB -> DB_DBAdvanceTrait;
-    DB_DB -> DB_DBInterface;
-
     DB_DB [label="DB"];
     DB_DBAdvanceTrait [label="DBAdvanceTrait"];
     DB_DBInterface [label="DBInterface"];
+    
+    DB_DB -> DB_DBAdvanceTrait;
+    DB_DB -> DB_DBInterface;
+
+
 
 }
 
@@ -126,55 +113,34 @@ subgraph cluster_DB {
 
 subgraph cluster_Ext {
 label = "[DuckPhp\\Ext]";
-    Ext [label="";style="dotted"];
-    
-    Ext -> DBManager -> DB_DB;
-    Ext -> RouteHookRouteMap;
-    Ext -> Pager [style="dotted"];
-    
-    Ext -> CallableView [style="dotted"];  CallableView -> Core_View;
-    Ext -> DBReusePoolProxy [style="dotted"];
-    
-    Ext -> FacadesAutoLoader [style="dotted"];
-    Ext -> JsonRpcExt [style="dotted"] ;
 
-    Ext -> Misc [style="dotted"];
-    Ext -> PluginForSwooleHttpd [style="dotted"];
-    Ext -> RouteHookRewrite [style="dotted"];
-    Ext -> StrictCheck [style="dotted"];
-    
-    Ext -> RedisManager [style="dotted"];
-    Ext -> RedisSimpleCache [style="dotted"];
-    Ext -> RouteHookDirectoryMode [style="dotted"];
-    Ext -> RouteHookOneFileMode [style="dotted"];
-    
+    CallableView[shape="component"];
+    DBManager[shape="component"];
+    DBReusePoolProxy[shape="component"];
+    FacadesAutoLoader[shape="component"];
+    FacadesBase ;
+    JsonRpcClientBase ;
+    JsonRpcExt[shape="component"];
+    Misc[shape="component"];
+    Pager[shape="component"];
+    PagerInterface ;
+    PluginForSwooleHttpd[shape="component"];
+    RedisManager[shape="component"];
+    RedisSimpleCache[shape="component"];
+    RouteHookDirectoryMode[shape="component"];
+    RouteHookOneFileMode[shape="component"];
+    RouteHookRewrite[shape="component"];
+    RouteHookRouteMap[shape="component"];
+    StrictCheck[shape="component"];
+
+
+    DBManager -> DB_DB;
+    CallableView ->Core_View; 
     DBReusePoolProxy ->DBManager; 
-    JsonRpcExt -> Core_SingletonEx [style="dotted"];
-    JsonRpcExtBase -> Core_SingletonEx [style="dotted"];
-    JsonRpcExtBase ->JsonRpcExt;
-    FacadesAutoLoader ->FacadesBase ;
-    FacadesAutoLoader -> Core_SingletonEx [style="dotted"];
-    FacadesBase -> Core_SingletonEx [style="dotted"];
-    
-    
-    Pager -> Core_SingletonEx [style="dotted"]; 
+    JsonRpcClientBase ->JsonRpcExt;
+    FacadesBase -> FacadesAutoLoader;
     Pager -> PagerInterface; 
-    
-    RedisManager -> RedisSimpleCache;
-    RedisManager -> Core_SingletonEx [style="dotted"]; 
-    RedisSimpleCache -> Core_SingletonEx [style="dotted"]; 
-    
-    RouteHookDirectoryMode -> Core_SingletonEx [style="dotted"]; 
-    RouteHookOneFileMode -> Core_SingletonEx [style="dotted"];
-    
-    RouteHookRewrite -> Core_SingletonEx[style="dotted"]; 
-    RouteHookRouteMap -> Core_SingletonEx [style="dotted"]; 
-
-    StrictCheck -> Core_SingletonEx [style="dotted"]; 
-    
-    StrictModelTrait -> Core_SingletonEx [style="dotted"]; 
-    StrictServiceTrait -> Core_SingletonEx [style="dotted"];
-
+    RedisSimpleCache -> RedisManager;
     StrictModelTrait -> StrictCheck; 
     StrictServiceTrait -> StrictCheck; 
 }
@@ -184,10 +150,12 @@ subgraph cluster_DuckPhp {
 
     HttpServer -> Core_HttpServer;
     App -> Core_App;
-    SingletonEx -> Core_SingletonEx [style="dotted"];
-    ThrowOn -> Core_ThrowOn [style="dotted"];
+    SingletonEx -> Core_SingletonEx;
+    ThrowOn -> Core_ThrowOn;
     
-    App -> Ext;
+    App -> RouteHookRouteMap;
+    App -> Pager;
+    App -> DBManager;
 
     App [shape=Mdiamond];
     HttpServer [shape=Mdiamond];
