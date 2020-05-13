@@ -55,7 +55,7 @@ class DBManager implements ComponentInterface
         $this->db_exception_handler = $this->options['db_exception_handler'] ?? null;
         $this->use_context_db_setting = $this->options['use_context_db_setting'];
         if ($context) {
-            $this->initContext($options, $context);
+            $this->initContext($context);
         }
         $this->is_inited = true;
         return $this;
@@ -64,7 +64,7 @@ class DBManager implements ComponentInterface
     {
         return $this->is_inited;
     }
-    protected function initContext($options = [], $context = null)
+    protected function initContext($context)
     {
         if ($this->use_context_db_setting) {
             $database_list = $context::Setting('database_list') ?? null;

@@ -51,7 +51,7 @@ class RedisManager implements ComponentInterface
             ]);
         }
         if ($context) {
-            $this->initContext($options, $context);
+            $this->initContext($context);
         }
         $this->is_inited = true;
         
@@ -61,7 +61,7 @@ class RedisManager implements ComponentInterface
     {
         return $this->is_inited;
     }
-    protected function initContext($options = [], $context = null)
+    protected function initContext($context)
     {
         if ($this->options['use_context_redis_setting']) {
             $redis_list = $context::Setting('redis_list') ?? null;

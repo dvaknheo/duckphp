@@ -33,9 +33,9 @@ class DBReusePoolProxy extends DBManager // @codeCoverageIgnoreStart
         return $this;
     }
     //@override
-    protected function initContext($options = [], $context = null)
+    protected function initContext($context)
     {
-        parent::initContext($options, $context);
+        parent::initContext($context);
         try {
             $context->addDynamicComponentClass(static::class);
         } catch (\BadMethodCallException $ex) { // @ codeCoverageIgnore

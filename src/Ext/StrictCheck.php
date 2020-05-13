@@ -35,7 +35,7 @@ class StrictCheck implements ComponentInterface
     {
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         if ($context) {
-            $this->initContext($options, $context);
+            $this->initContext($context);
         }
         if (!$context) {
             $this->context_class = $this->options['strict_check_context_class'];
@@ -47,7 +47,7 @@ class StrictCheck implements ComponentInterface
     {
         return $this->is_inited;
     }
-    protected function initContext($options = [], $context = null)
+    protected function initContext($context)
     {
         $this->context_class = get_class($context);
         $this->options['is_debug'] = $context->options['is_debug'];

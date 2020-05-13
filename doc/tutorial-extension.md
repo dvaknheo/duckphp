@@ -18,17 +18,95 @@ $options['ext']数组实现的
 
 DuckPhp/Core 的其他组件如 Configer, Route, View, AutoLoader 默认都在这调用
 
+## 默认没启用的扩展
+
+所有的 DuckPhp 自带扩展 可以在 [参考文档](ref/index.md) 里按字母顺序查看
+
+DuckPhp 只启用了 DBManager 一个扩展。
+
+其他扩展按功能如下
+
+RouteHookDirecotoryMode , RouteHookOnFileMode
+
+这些路由钩子的扩展可以在  路由教程 里查看
+
+
+
+RedisManager RedisSimpleCache
+
+
+
+JsonRpcExt
+
+StrictCheck 严格检查
+
+FacadesAutoLoader
+
+Misc
+
+
+
+CallableView
+
+DBReusePoolProxy
+
+PluginForSwooleHttpd
+
+
+
+## 编写扩展
+
+假如你要做个自己的扩展 MyExtention , 你的类只要能实现这样的调用。
+
+MyExtends::G()->init(array $options, $contetxt=null);
+
+非强制实现 DuckPhp\\Core\\ComponentInterface();
+
+一般要提供 MyExtends::G()->options 保存自己的 选项。
+
+### ComponentInterface 接口
+
+
+
+### 编写扩展的技巧
+
+一些技巧，继承父类
+
+```
+    public function __construct()
+    {
+        $this->options = array_replace_recursive($this->options, (new parent())->options); //merge parent's options;
+        parent::__construct();
+    }
+```
+
+extendComponents ，如果你要把你的类给助手类使用。
+
+
+
+```
+$context->extendComponents(
+                [
+                    'assignImportantRoute' => [static::class.'::G','assignImportantRoute'],
+                    'assignRoute' => [static::class.'::G','assignRoute'],
+                    'routeMapNameToRegex' => [static::class.'::G','routeMapNameToRegex'],
+                ],
+                ['A']
+            );
+```
+
+
+
+## 把你的独立工程作为扩展给第三方使用
+
+
+
 ##  组件类
 
 组件类满足以下接口
 
 ```
-interface ComponentInterface
-{
-    public $options;/* array() */;
-    public static function G():this;
-    public init(array $options, $contetxt=null):this;
-}
+
 ```
 
 DuckPhp 的扩展都放在 DuckPhp\\Ext 命名空间里
@@ -42,32 +120,8 @@ SingletonEx 可变单例
 
 
 
-## 默认没启用的扩展
 
-默认没启用的扩展
-CallableView
-
-DBReusePoolProxy
-
-FacadesAutoLoader
-
-JsonRpcExt
-
-PluginForSwooleHttpd
-
-RedisManager
-
-RedisSimpleCache
-
-RouteHookDirecotoryMode
-
-RouteHookOnFileMode
-
-StricCheck
 
 如何写扩展
 
-把你的应用变成扩展
 
-
-## 简介
