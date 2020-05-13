@@ -17,6 +17,7 @@ class ComponentBase
     }
     public function init(array $options, ?object $context = null)
     {
+        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         $this->initOptions($options);
         if ($context !==null) {
             $this->initContext($context);
@@ -31,7 +32,6 @@ class ComponentBase
     //for override
     protected function initOptions(array $options)
     {
-        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
     }
     //for override
     protected function initContext(object $context)
