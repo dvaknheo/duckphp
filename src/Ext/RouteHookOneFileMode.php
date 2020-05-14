@@ -30,7 +30,7 @@ class RouteHookOneFileMode extends ComponentBase
     protected function initContext(object $context)
     {
         Route::G()->addRouteHook([static::class,'Hook'], 'prepend-outter');
-        Route::G()->setURLHandler([$this,'onURL']);
+        Route::G()->setURLHandler([static::class,'URL']);
     }
     
     public static function URL($url = null)

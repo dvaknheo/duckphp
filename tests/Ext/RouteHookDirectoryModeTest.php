@@ -43,6 +43,7 @@ class RouteHookDirectoryModeTest extends \PHPUnit\Framework\TestCase
         SuperGlobal::G()->_SERVER['PATH_INFO']='';
 echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n";
         SuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=rtrim($base_path,'/');
+        echo RouteHookDirectoryMode::URL("/izx");
         echo RouteHookDirectoryMode::G()->onURL("/izx");
         echo PHP_EOL;
         echo RouteHookDirectoryMode::G()->onURL("BUG");

@@ -4,6 +4,7 @@
 ## 使用 DuckPhp 的扩展
 
 DuckPhp 扩展的加载是通过选项里添加
+
 $options['ext']数组实现的
 
     扩展映射 ,$ext_class => $options。
@@ -64,24 +65,17 @@ MyExtends::G()->init(array $options, $contetxt=null);
 
 一般要提供 MyExtends::G()->options 保存自己的 选项。
 
-### ComponentInterface 接口
+### ComponentBase 基类 和 ComponentInterface 接口
 
+ComponentBase 帮你实现了 这些东西，
+你只要写自己的 $options 和 重写 initOptions()  initContext(object $context) 就行了。 默认父类这两个是空类。
 
 
 ### 编写扩展的技巧
 
-一些技巧，继承父类
-
-```
-    public function __construct()
-    {
-        $this->options = array_replace_recursive($this->options, (new parent())->options); //merge parent's options;
-        parent::__construct();
-    }
-```
-
 extendComponents ，如果你要把你的类给助手类使用。
 
+['A','M','V','C','S'] 都是各助手类的名称缩写。
 
 
 ```
@@ -98,30 +92,4 @@ $context->extendComponents(
 
 
 ## 把你的独立工程作为扩展给第三方使用
-
-
-
-##  组件类
-
-组件类满足以下接口
-
-```
-
-```
-
-DuckPhp 的扩展都放在 DuckPhp\\Ext 命名空间里
-下面按字母顺序介绍这些扩展的作用
-按选项，说明，公开方法，一一介绍。
-
-SingletonEx 可变单例
-
-\*Helper 是各种快捷方法。
-
-
-
-
-
-
-如何写扩展
-
 

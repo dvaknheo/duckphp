@@ -85,7 +85,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
 
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
-            'controller_base_class'=>\tests_Core_Route\baseController::class,
+            'controller_base_class'=>'~baseController',
         ];
         $_SERVER['argv']=[ __FILE__ ,'about/me' ];
         $_SERVER['argc']=count($_SERVER['argv']);
@@ -124,7 +124,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         ]);
         Route::G()->run();
         Route::G()->bind("again",null)->run();
-        
+        Route::G()->getNamespacePrefix();
         
         $this->foo2();
         Route::G()->isInited();

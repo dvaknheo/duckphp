@@ -28,7 +28,7 @@ class RouteHookDirectoryMode extends ComponentBase
     protected function initContext(object $context)
     {
         Route::G()->addRouteHook([static::class,'Hook'], 'prepend-outter');
-        Route::G()->setURLHandler([$this,'onURL']); // => static ?
+        Route::G()->setURLHandler([static::class,'URL']);
     }
     
     protected function adjustPathinfo($basepath, $path_info)
@@ -58,6 +58,10 @@ class RouteHookDirectoryMode extends ComponentBase
         $path_info = rtrim($path_info, '/');
         
         return $path_info;
+    }
+    public static function URL($url = null)
+    {
+        return static::G()->onURL($url);
     }
     public function onURL($url = null)
     {

@@ -141,8 +141,8 @@ class Route extends ComponentBase
         $this->namespace_controller = $namespace_controller;
         
         $this->controller_base_class = $this->options['controller_base_class'];
-        if ($this->controller_base_class && substr($this->controller_base_class, 0, 1) !== '\\') {
-            $this->controller_base_class = rtrim($namespace, '\\').'\\'.$this->controller_base_class;
+        if ($this->controller_base_class && substr($this->controller_base_class, 0, 1) === '~') {
+            $this->controller_base_class = $this->namespace_controller.'\\'.$this->controller_base_class;
         }
     }
     
@@ -378,5 +378,9 @@ class Route extends ComponentBase
     public function setRouteCallingMethod($calling_method)
     {
         $this->calling_method = $calling_method;
+    }
+    public function getNamespacePrefix()
+    {
+        return $this->namespace_controller.'\\';
     }
 }
