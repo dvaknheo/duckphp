@@ -48,7 +48,7 @@ class RedisManager extends ComponentBase
         if ($this->options['use_context_redis_setting']) {
             $redis_list = get_class($context)::Setting('redis_list') ?? null;
             if (!isset($redis_list)) {
-                $redis_list = isset($context->options) ? $context->options['redis_list'] : null;
+                $redis_list = isset($context->options) ? ($context->options['redis_list'] ?? null) : null;
             }
             if ($redis_list) {
                 $this->redis_config_list = $redis_list;

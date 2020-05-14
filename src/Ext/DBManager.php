@@ -54,7 +54,7 @@ class DBManager extends ComponentBase
         if ($this->use_context_db_setting) {
             $database_list = get_class($context)::Setting('database_list') ?? null;
             if (!isset($database_list)) {
-                $database_list = isset($context->options) ? $context->options['database_list'] : null;
+                $database_list = isset($context->options) ? ($context->options['database_list'] ?? null) : null;
             }
             if ($database_list) {
                 $this->database_config_list = $database_list;
@@ -68,7 +68,7 @@ class DBManager extends ComponentBase
         if ($this->options['db_close_at_output'] && method_exists($context, 'addBeforeShowHandler')) {
             $context->addBeforeShowHandler([static::class,'CloseAllDB']);
         }
-        $this->beforeQueryHandler = isset($context->options) ? $context->options['db_before_query_handler'] : null;
+        $this->beforeQueryHandler = isset($context->options) ? ($context->options['db_before_query_handler'] ?? null) : null;
         if (method_exists($context, 'extendComponents')) {
             $context->extendComponents(
                 [

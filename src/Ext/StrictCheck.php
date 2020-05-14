@@ -34,7 +34,7 @@ class StrictCheck extends ComponentBase
     protected function initContext(object $context)
     {
         $this->context_class = get_class($context);
-        $this->options['is_debug'] = isset($context->options) ? $context->options['is_debug'] : $this->options['is_debug'] ;
+        $this->options['is_debug'] = isset($context->options) ? ($context->options['is_debug'] ?? $this->options['is_debug']) : $this->options['is_debug'];
         
         try {
             get_class($context)::setBeforeGetDBHandler([static::class, 'CheckStrictDB']);

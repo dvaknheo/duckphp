@@ -36,6 +36,5 @@ class ComponentBase implements ComponentInterface
     //for override
     protected function initContext(object $context)
     {
-        return;
     }
 }

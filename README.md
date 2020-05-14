@@ -49,7 +49,7 @@ DuckPhp 的名字源自鸭子类型，这东西看起来像鸭子，叫起来像
 9. DuckPhp 做到了 swoole 和 fpm 代码无缝切换。单例变成协程单例。
 ### DuckPhp 还有以下优点：
 
-* DuckPhp 代码简洁，不做多余事情。
+* DuckPhp 代码简洁，不做多余事情。最新版本 默认demo 运行只需要 812 /5252 行。
 * DuckPhp 的 Controller 切换容易，独立，和其他类无关，简单明了。
 * DuckPhp 支持全站路由，还支持局部路径路由和非 PATH_INFO 路由，不需要配服务器也能用。 可以在不修改 Web 服务器设置（如设置 PATH_INFO）的情况下使用，也可以在子目录里使用。
 * DuckPhp 的路由也可以单独抽出使用。
