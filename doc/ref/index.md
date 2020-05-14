@@ -19,8 +19,9 @@
 5. `Core` 目录是核心目录，核心框架。基本功能都在 Core 里实现
    1. **[SingletonEx.php](Core-SingletonEx.php)**  可变单例trait
    2. **[ThrowOn.php](Core-ThrowOn.md)** 可抛 trait 注意这个 trait 也被 Helper使用
-   3. [ComponentInterface.php](Core-ComponentInterface.md) 组件接口
-   4. **[App.php](Core-App.md)** 核心应用类。
+   3. [ComponentBase.php](Core-ComponentBase.md) 组件基类
+   4. [ComponentInterface.php](Core-ComponentInterface.md) 组件接口
+   5. **[App.php](Core-App.md)** 核心应用类。
         1. [Kernel.php](Core-Kernel.md) 核心Trait 以下是 `核心必备组件`
            1. [AutoLoader.php](Core-AutoLoader.md) 自动加载类
            2. [Configer.php](Core-Configer.md) 配置类
@@ -33,7 +34,7 @@
         2. [ExtendableStaticCallTrait.php](Core-ExtendableStaticCallTrait.md) 扩展静态调用的 trait 注意这个 trait 也被 Helper使用
         3. [SystemWrapperTrait.php](Core-SystemWrapperTrait.md) 替换系统同名函数的 trait
         4. [Functions.php](Core-Functions.md) 全局函数列表
-   5. **[AppPluginTrait.php](Core-AppPluginTrait.md) **  这个Trait用于把独立工程 App 转成插件 
+   6. **[AppPluginTrait.php](Core-AppPluginTrait.md) **  这个Trait用于把独立工程 App 转成插件 
   6. [HttpServer.php](Core-HttpServer.md) 单独的 Http 服务器
 6. `DB` 目录是数据库
    1. [DBAdvanceTrait.php](DB-DBAdvanceTrait.md)  这个 trait 增加了 DB类的高级功能

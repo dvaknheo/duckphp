@@ -227,9 +227,7 @@ class Installer
         if ($namespace === 'MY') {
             return $data;
         }
-        $data = str_replace('MY\\', $namespace.'\\', $data);
-        
-        $str_header = "\$namespace = '$namespace'";
+        $str_header = "\$namespace = '$namespace';";
         $data = preg_replace('/^.*?@DUCKPHP_NAMESPACE.*?$/m', $str_header, $data);
         return $data;
     }
