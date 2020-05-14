@@ -35,10 +35,8 @@ class DBReusePoolProxy extends DBManager // @codeCoverageIgnoreStart
     protected function initContext(object $context)
     {
         parent::initContext($context);
-        try {
+        if (method_exists($context, 'addDynamicComponentClass')) {
             $context->addDynamicComponentClass(static::class);
-        } catch (\BadMethodCallException $ex) { // @ codeCoverageIgnore
-            //do nothing;
         }
     }
     //////////////////

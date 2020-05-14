@@ -26,7 +26,7 @@ class RedisManagerTest extends \PHPUnit\Framework\TestCase
             ]]]));
         RedisManager::G()->Redis();
         RedisManager::SimpleCache();
-                RedisManager::G()->isInited();
+        RedisManager::G()->isInited();
 
         \MyCodeCoverage::G()->end(RedisManager::class);
         $this->assertTrue(true);

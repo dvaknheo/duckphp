@@ -6,37 +6,22 @@
 
 namespace DuckPhp\Core;
 
-use DuckPhp\Core\ComponentInterface;
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\Core\ComponentBase;
 
-class RuntimeState implements ComponentInterface
+class RuntimeState extends ComponentBase
 {
-    use SingletonEx;
-    public $options = [];
+    public $options = [
+    ];
     
     protected $is_running = false;
     protected $is_in_exception = false;
     protected $is_outputed = false;
-    protected $is_inited = false;
     
-    public function __construct()
-    {
-    }
     public static function ReCreateInstance()
     {
         $class = get_class(static::G());
         return static::G(new $class);
     }
-    public function init(array $options, object $context = null)
-    {
-        $this->is_inited = true;
-        return $this;
-    }
-    public function isInited():bool
-    {
-        return $this->is_inited;
-    }
-    
     public function begin()
     {
         //if(ob)

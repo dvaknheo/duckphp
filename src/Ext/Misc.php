@@ -28,7 +28,6 @@ class Misc extends ComponentBase
         } else {
             $this->path = $this->options['path'].rtrim($this->options['path_lib'], '/').'/';
         }
-
     }
     //@override ComponentBase
     protected function initContext(object $context)

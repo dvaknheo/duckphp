@@ -6,13 +6,10 @@
 
 namespace DuckPhp\Core;
 
-use DuckPhp\Core\ComponentInterface;
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\Core\ComponentBase;
 
-class ExceptionManager implements ComponentInterface
+class ExceptionManager extends ComponentBase
 {
-    use SingletonEx;
-    
     public $options = [
         'handle_all_dev_error' => true,
         'handle_all_exception' => true,
@@ -29,12 +26,8 @@ class ExceptionManager implements ComponentInterface
     protected $last_error_handler = null;
     protected $last_exception_handler = null;
     
-    public $is_inited = false;
     public $is_running = false;
-    
-    public function __construct()
-    {
-    }
+
     public static function CallException($ex)
     {
         return static::G()->_CallException($ex);
@@ -89,14 +82,12 @@ class ExceptionManager implements ComponentInterface
             ($this->default_exception_handler)($ex);
         }
     }
-    public function init(array $options, object $context = null)
+    
+    //@override
+    protected function initOptions(array $options)
     {
-        $this->options = array_replace_recursive($this->options, $options);
-        
         $this->default_exception_handler = $this->options['default_exception_handler'];
         $this->system_exception_handler = $this->options['system_exception_handler'];
-        
-        return $this;
     }
     public function isInited():bool
     {

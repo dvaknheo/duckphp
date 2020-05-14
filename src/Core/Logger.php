@@ -6,13 +6,10 @@
 
 namespace DuckPhp\Core;
 
-use DuckPhp\Core\ComponentInterface;
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\Core\ComponentBase;
 
-class Logger implements ComponentInterface //, Psr\Log\LoggerInterface;
+class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
 {
-    use SingletonEx;
-    
     const EMERGENCY = 'emergency';
     const ALERT = 'alert';
     const CRITICAL = 'critical';
@@ -30,9 +27,9 @@ class Logger implements ComponentInterface //, Psr\Log\LoggerInterface;
     ];
     protected $path;
     
-    protected $is_inited = false;
     public function __construct()
     {
+        parent::__construct();
         $this->init([]);
     }
     public function reset()
@@ -40,24 +37,15 @@ class Logger implements ComponentInterface //, Psr\Log\LoggerInterface;
         $this->is_inited = false;
         return $this;
     }
-    public function init(array $options, object $context = null)
+    
+    //@override
+    protected function initOptions(array $options)
     {
-        if ($this->is_inited) {
-            //return $this;
-        }
-        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
-        
         if (substr($this->options['log_file'], 0, 1) === '/') {
             $this->path = $this->options['log_file'];
         } elseif ($this->options['log_file']) {
             $this->path = $this->options['path'].$this->options['log_file'];
         }
-        $this->is_inited = true;
-        return $this;
-    }
-    public function isInited():bool
-    {
-        return $this->is_inited;
     }
     public function log($level, $message, array $context = array())
     {

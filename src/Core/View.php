@@ -6,12 +6,11 @@
 
 namespace DuckPhp\Core;
 
-use DuckPhp\Core\ComponentInterface;
+use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\SingletonEx;
 
-class View implements ComponentInterface
+class View extends ComponentBase
 {
-    use SingletonEx;
     public $options = [
         'path' => '',
         'path_view' => 'view',
@@ -25,24 +24,15 @@ class View implements ComponentInterface
     protected $foot_file;
     protected $view_file;
     protected $error_reporting_old;
-    protected $is_inited = false;
-    public function __construct()
+    
+    //@override
+    protected function initOptions(array $options)
     {
-    }
-    public function init(array $options, object $context = null)
-    {
-        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         if (substr($this->options['path_view'], 0, 1) === '/') {
             $this->path = rtrim($this->options['path_view'], '/').'/';
         } else {
             $this->path = $this->options['path'].rtrim($this->options['path_view'], '/').'/';
         }
-        $this->is_inited = true;
-        return $this;
-    }
-    public function isInited():bool
-    {
-        return $this->is_inited;
     }
     public static function Show($data = [], $view)
     {

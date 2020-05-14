@@ -9,9 +9,8 @@ namespace DuckPhp\Core;
 use DuckPhp\Core\ComponentInterface;
 use DuckPhp\Core\SingletonEx;
 
-class Configer implements ComponentInterface
+class Configer extends ComponentBase
 {
-    use SingletonEx;
     public $options = [
         'path' => '',
         'path_config' => 'config',
@@ -25,16 +24,13 @@ class Configer implements ComponentInterface
     ];
     protected $base_path;
     protected $path;
-    protected $is_inited = false;
+    protected $is_setting_inited = false;
     protected $all_config = [];
     protected $setting = [];
     
-    public function __construct()
+    //@override
+    protected function initOptions(array $options)
     {
-    }
-    public function init(array $options, object $context = null)
-    {
-        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         $this->base_path = $this->options['path'] ?? '';
         
         if (substr($this->options['path_config'], 0, 1) === '/') {
@@ -45,15 +41,11 @@ class Configer implements ComponentInterface
         
         $this->setting = $this->options['setting'] ?? [];
         $this->all_config = $this->options['all_config'] ?? [];
-        return $this;
     }
-    public function isInited():bool
-    {
-        return $this->is_inited;
-    }
+    
     public function _Setting($key)
     {
-        if ($this->is_inited) {
+        if ($this->is_setting_inited) {
             return $this->setting[$key] ?? null;
         }
         if (!$this->options['skip_env_file']) {
@@ -75,7 +67,7 @@ class Configer implements ComponentInterface
             $setting = $this->loadFile($full_setting_file);
             $this->setting = array_merge($this->setting, $setting);
         }
-        $this->is_inited = true;
+        $this->is_setting_inited = true;
         return $this->setting[$key] ?? null;
     }
     

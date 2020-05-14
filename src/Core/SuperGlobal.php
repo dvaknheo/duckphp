@@ -6,14 +6,12 @@
 
 namespace DuckPhp\Core;
 
-use DuckPhp\Core\ComponentInterface;
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\Core\ComponentBase;
 
-class SuperGlobal implements ComponentInterface
+class SuperGlobal extends ComponentBase
 {
-    use SingletonEx;
-    
     public $options = [];
+    
     public $_GET;
     public $_POST;
     public $_REQUEST;
@@ -30,21 +28,17 @@ class SuperGlobal implements ComponentInterface
     protected $is_inited = false;
     public function __construct()
     {
+        parent::__construct();
         $this->init([]);
     }
-    
     public function reset()
     {
         $this->is_inited = false;
         return $this;
     }
-    public function init(array $options, object $context = null)
+    //@override
+    protected function initOptions(array $options)
     {
-        if ($this->is_inited) {
-            return $this;
-        }
-        $this->is_inited = true;
-        
         $this->_GET = &$_GET;
         $this->_POST = &$_POST;
         $this->_REQUEST = &$_REQUEST;
@@ -54,12 +48,6 @@ class SuperGlobal implements ComponentInterface
         $this->_SESSION = &$_SESSION;
         $this->_FILES = &$_FILES;
         $this->GLOBALS = &$GLOBALS;
-        
-        return $this;
-    }
-    public function isInited():bool
-    {
-        return $this->is_inited;
     }
     ///////////////////////////////
     public function session_start(array $options = [])

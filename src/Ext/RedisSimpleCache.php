@@ -10,7 +10,6 @@ use DuckPhp\Core\ComponentBase;
 
 class RedisSimpleCache extends ComponentBase //implements Psr\SimpleCache\CacheInterface;
 {
-    
     public $options = [
         'redis' => null,
         'redis_cache_prefix' => '',

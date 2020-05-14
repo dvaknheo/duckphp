@@ -10,7 +10,7 @@ class ComponentBase implements ComponentInterface
 {
     use SingletonEx;
     
-    public $options=[];
+    public $options = [];
     protected $is_inited = false;
     public function __construct()
     {
@@ -19,7 +19,7 @@ class ComponentBase implements ComponentInterface
     {
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         $this->initOptions($options);
-        if ($context !==null) {
+        if ($context !== null) {
             $this->initContext($context);
         }
         $this->is_inited = true;

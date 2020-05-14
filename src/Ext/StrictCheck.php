@@ -11,7 +11,6 @@ use Exception;
 
 class StrictCheck extends ComponentBase
 {
-
     const MAX_TRACE_LEVEL = 20;
     
     public $options = [
@@ -35,10 +34,10 @@ class StrictCheck extends ComponentBase
     protected function initContext(object $context)
     {
         $this->context_class = get_class($context);
-        $this->options['is_debug'] = $context->options['is_debug'];
+        $this->options['is_debug'] = isset($context->options) ? $context->options['is_debug'] : $this->options['is_debug'] ;
         
         try {
-            $context::setBeforeGetDBHandler([static::class, 'CheckStrictDB']);
+            get_class($context)::setBeforeGetDBHandler([static::class, 'CheckStrictDB']);
         } catch (\BadMethodCallException $ex) { // @codeCoverageIgnore
             //do nothing;
         }

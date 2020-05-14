@@ -6,13 +6,10 @@
 
 namespace DuckPhp\Core;
 
-use DuckPhp\Core\ComponentInterface;
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\Core\ComponentBase;
 
-class AutoLoader implements ComponentInterface
+class AutoLoader extends ComponentBase
 {
-    use SingletonEx;
-    
     public $options = [
             'path' => null,
             'namespace' => 'MY',
@@ -23,26 +20,18 @@ class AutoLoader implements ComponentInterface
             
             'enable_cache_classes_in_cli' => false,
         ];
+    
     protected $namespace;
     protected $path_namespace;
 
-    protected $is_inited = false;
     public $namespace_paths = [];
     
     protected $is_running = false;
     protected $enable_cache_classes_in_cli = false;
     
-    public function __construct()
+    //@override
+    protected function initOptions(array $options)
     {
-    }
-    public function init(array $options, object $context = null)
-    {
-        if ($this->is_inited) {
-            return $this;
-        }
-        $this->is_inited = true;
-        
-        $this->options = array_merge($this->options, $options);
         if (!isset($this->options['path'])) {
             $path = realpath(getcwd().'/../');
             $this->options['path'] = $path;
@@ -50,7 +39,6 @@ class AutoLoader implements ComponentInterface
         $path = rtrim($this->options['path'], '/').'/';
         
         $this->namespace = $this->options['namespace'];
-        //
         
         if (substr($this->options['path_namespace'], 0, 1) === '/') {
             $this->path_namespace = rtrim($this->options['path_namespace'], '/').'/';
@@ -66,12 +54,6 @@ class AutoLoader implements ComponentInterface
         if (!$this->options['skip_system_autoload']) {
             $this->assignPathNamespace(__DIR__, __NAMESPACE__);
         }
-        
-        return $this;
-    }
-    public function isInited():bool
-    {
-        return $this->is_inited;
     }
     public function run()
     {

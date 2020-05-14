@@ -9,7 +9,7 @@ namespace DuckPhp\Ext;
 use DuckPhp\Core\ComponentBase;
 
 class Pager extends ComponentBase implements PagerInterface
-{    
+{
     public $options = [
         'url' => null,
         'current' => null,
@@ -18,7 +18,7 @@ class Pager extends ComponentBase implements PagerInterface
         'rewrite' => null,
         'pager_context_class' => null,
     ];
-    protected $context_class=null;
+    protected $context_class = null;
     protected $url;
     
     protected function getDefaultUrl()
@@ -39,9 +39,9 @@ class Pager extends ComponentBase implements PagerInterface
     }
     ////////////////////////
     //@override
-    public function init(array $options,object $context=null)
+    public function init(array $options, object $context = null)
     {
-        parent::init($options,$context);
+        parent::init($options, $context);
         $this->options['current'] = $this->current();
         return $this;
     }

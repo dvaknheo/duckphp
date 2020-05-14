@@ -6,17 +6,14 @@
 
 namespace DuckPhp\Core;
 
-use DuckPhp\Core\ComponentInterface;
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\Core\ComponentBase;
 
-class Route implements ComponentInterface
+class Route extends ComponentBase
 {
     const HOOK_PREPEND_OUTTER = 'prepend-outter';
     const HOOK_PREPEND_INNER = 'prepend-inner';
     const HOOK_APPPEND_INNER = 'append-inner';
     const HOOK_APPPEND_OUTTER = 'append-outter';
-    
-    use SingletonEx;
     
     public $options = [
             'namespace' => 'MY',
@@ -60,10 +57,6 @@ class Route implements ComponentInterface
     protected $enable_default_callback = true;
     protected $is_failed = false;
 
-    protected $is_inited = false;
-    public function __construct()
-    {
-    }
     public static function RunQuickly(array $options = [], callable $after_init = null)
     {
         $instance = static::G()->init($options);
@@ -128,9 +121,9 @@ class Route implements ComponentInterface
         return $this->parameters[$key] ?? $default;
     }
     
-    public function init(array $options, object $context = null)
+    //@override
+    protected function initOptions(array $options)
     {
-        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         $this->controller_prefix_post = $this->options['controller_prefix_post'];
         
         $this->controller_hide_boot_class = $this->options['controller_hide_boot_class'];
@@ -151,14 +144,8 @@ class Route implements ComponentInterface
         if ($this->controller_base_class && substr($this->controller_base_class, 0, 1) !== '\\') {
             $this->controller_base_class = rtrim($namespace, '\\').'\\'.$this->controller_base_class;
         }
-        
-        $this->is_inited = true;
-        return $this;
     }
-    public function isInited():bool
-    {
-        return $this->is_inited;
-    }
+    
     public function setURLHandler($callback)
     {
         $this->urlHandler = $callback;

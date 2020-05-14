@@ -6,13 +6,10 @@
 
 namespace DuckPhp\Core;
 
-use DuckPhp\Core\ComponentInterface;
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\Core\ComponentBase;
 
-class HttpServer implements ComponentInterface
+class HttpServer extends ComponentBase
 {
-    use SingletonEx;
-    
     public $options = [
             'host' => '127.0.0.1',
             'port' => '8080',
@@ -66,14 +63,13 @@ class HttpServer implements ComponentInterface
     protected $port;
     protected $is_inited = false;
 
-    public function __construct()
-    {
-    }
     public static function RunQuickly($options)
     {
         return static::G()->init($options)->run();
     }
-    public function init(array $options, object $context = null)
+    
+    //@override
+    protected function initOptions(array $options)
     {
         $this->options = array_replace_recursive($this->options, $options);
         $this->host = $this->options['host'];
@@ -85,14 +81,6 @@ class HttpServer implements ComponentInterface
         $this->host = $this->args['host'] ?? $this->host;
         $this->port = $this->args['port'] ?? $this->port;
         $this->docroot = $this->args['docroot'] ?? $this->docroot;
-        
-        $this->is_inited = true;
-        
-        return $this;
-    }
-    public function isInited():bool
-    {
-        return $this->is_inited;
     }
     protected function getopt($options, $longopts, &$optind)
     {
