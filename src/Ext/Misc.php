@@ -6,16 +6,12 @@
 
 namespace DuckPhp\Ext;
 
-use DuckPhp\Core\ComponentInterface;
-use DuckPhp\Core\SingletonEx;
-
+use DuckPhp\Core\ComponentBase;
 use ReflectionMethod;
 use ReflectionException;
 
-class Misc implements ComponentInterface
+class Misc extends ComponentBase
 {
-    use SingletonEx;
-    
     public $options = [
         'path' => '',
         'path_lib' => 'lib',
@@ -23,23 +19,23 @@ class Misc implements ComponentInterface
     protected $path = null;
     protected $context_class;
     protected $_di_container;
-    
-    protected $is_inited = false;
-    public function __construct()
+
+    //@override ComponentBase
+    protected function initOptions(array $options)
     {
-    }
-    public function init(array $options, object $context = null)
-    {
-        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
-        $options = $this->options;
-        
-        if (substr($options['path_lib'], 0, 1) === '/') {
-            $this->path = rtrim($options['path_lib'], '/').'/';
+        if (substr($this->options['path_lib'], 0, 1) === '/') {
+            $this->path = rtrim($this->options['path_lib'], '/').'/';
         } else {
-            $this->path = $options['path'].rtrim($options['path_lib'], '/').'/';
+            $this->path = $this->options['path'].rtrim($this->options['path_lib'], '/').'/';
         }
-        $this->context_class = $context?get_class($context):null;
-        if ($context && \method_exists($context, 'extendComponents')) {
+
+    }
+    //@override ComponentBase
+    protected function initContext(object $context)
+    {
+        $this->context_class = get_class($context);
+        
+        if (\method_exists($context, 'extendComponents')) {
             $context->extendComponents(
                 [
                     'Import' => [static::class,'Import'],
@@ -56,14 +52,8 @@ class Misc implements ComponentInterface
                 ['C','A']
             );
         }
-        
-        $this->is_inited = true;
-        return $this;
     }
-    public function isInited(): bool
-    {
-        return $this->is_inited;
-    }
+
     public static function Import($file)
     {
         return static::G()->_Import($file);

@@ -6,14 +6,11 @@
 
 namespace DuckPhp\Ext;
 
-use DuckPhp\Core\ComponentInterface;
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\Core\ComponentBase;
 use DuckPhp\DB\DB;
 
-class DBManager implements ComponentInterface
+class DBManager extends ComponentBase
 {
-    use SingletonEx;
-
     const TAG_WRITE = 0;
     const TAG_READ = 1;
     
@@ -40,31 +37,19 @@ class DBManager implements ComponentInterface
     protected $use_context_db_setting = true;
     
     protected $beforeQueryHandler = null;
-    protected $is_inited = false;
-    public function __construct()
+
+    //@override
+    protected function initOptions(array $options)
     {
-    }
-    public function init(array $options, object $context = null)
-    {
-        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
-        
         $this->before_get_db_handler = $this->options['before_get_db_handler'] ?? null;
         $this->database_config_list = $this->options['database_list'];
         $this->db_create_handler = $this->options['db_create_handler'] ?? [DB::class,'CreateDBInstance'];
         $this->db_close_handler = $this->options['db_close_handler'] ?? [DB::class,'CloseDBInstance'];
         $this->db_exception_handler = $this->options['db_exception_handler'] ?? null;
         $this->use_context_db_setting = $this->options['use_context_db_setting'];
-        if ($context) {
-            $this->initContext($context);
-        }
-        $this->is_inited = true;
-        return $this;
     }
-    public function isInited(): bool
-    {
-        return $this->is_inited;
-    }
-    protected function initContext($context)
+    //@override
+    protected function initContext(object $context)
     {
         if ($this->use_context_db_setting) {
             $database_list = $context::Setting('database_list') ?? null;

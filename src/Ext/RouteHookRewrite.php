@@ -6,50 +6,39 @@
 
 namespace DuckPhp\Ext;
 
-use DuckPhp\Core\ComponentInterface;
+use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Route;
-use DuckPhp\Core\SingletonEx;
 use DuckPhp\Core\SuperGlobal;
 
-class RouteHookRewrite implements ComponentInterface
+class RouteHookRewrite extends ComponentBase
 {
-    use SingletonEx;
     public $options = [
         'rewrite_map' => [],
     ];
     protected $rewrite_map = [];
     
-    protected $is_inited = false;
-    public function __construct()
-    {
-    }
     public static function Hook($path_info)
     {
         return static::G()->doHook($path_info);
     }
-    public function init(array $options, object $context = null)
+    //@override
+    protected function initOptions(array $options)
     {
-        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         $this->rewrite_map = array_merge($this->rewrite_map, $this->options['rewrite_map'] ?? []);
-        
-        if ($context) {
-            Route::G()->addRouteHook([static::class,'Hook'], 'prepend-outter');
-            if (\method_exists($context, 'extendComponents')) {
-                $context->extendComponents(
-                    [
-                        'assignRewrite' => [static::class.'::G','assignRewrite'],
-                        'getRewrites' => [static::class.'::G','getRewrites']
-                    ],
-                    ['C','A']
-                );
-            }
-        }
-        $this->is_inited = true;
-        return $this;
     }
-    public function isInited(): bool
+    //@override
+    protected function initContext(object $context)
     {
-        return $this->is_inited;
+        Route::G()->addRouteHook([static::class,'Hook'], 'prepend-outter');
+        if (\method_exists($context, 'extendComponents')) {
+            $context->extendComponents(
+                [
+                    'assignRewrite' => [static::class.'::G','assignRewrite'],
+                    'getRewrites' => [static::class.'::G','getRewrites']
+                ],
+                ['C','A']
+            );
+        }
     }
     public function assignRewrite($key, $value = null)
     {

@@ -65,7 +65,7 @@ class App extends Core_App
     public function _Pager($object = null)
     {
         $pager = Pager::G($object);
-        $pager->options['context_class'] = static::class;
+        $pager->options['pager_context_class'] = static::class;
         return $pager;
     }
     public static function OnQuery($sql, ...$args)

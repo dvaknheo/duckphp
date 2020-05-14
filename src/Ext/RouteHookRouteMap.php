@@ -6,13 +6,11 @@
 
 namespace DuckPhp\Ext;
 
-use DuckPhp\Core\ComponentInterface;
+use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Route;
-use DuckPhp\Core\SingletonEx;
 
-class RouteHookRouteMap implements ComponentInterface
+class RouteHookRouteMap extends ComponentBase
 {
-    use SingletonEx;
     public $options = [
         'route_map_important' => [],
         'route_map' => [],
@@ -21,10 +19,7 @@ class RouteHookRouteMap implements ComponentInterface
     protected $route_map = [];
     protected $route_map_important = [];
     protected $is_compiled = false;
-    protected $is_inited = false;
-    public function __construct()
-    {
-    }
+    
     public static function PrependHook($path_info)
     {
         return static::G()->doHook($path_info, false);
@@ -33,13 +28,15 @@ class RouteHookRouteMap implements ComponentInterface
     {
         return static::G()->doHook($path_info, true);
     }
-    public function init(array $options, object $context = null)
-    {
-        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
-        
+    //@override
+    protected function initOptions(array $options)
+    {        
         Route::G()->addRouteHook([static::class,'PrependHook'], 'prepend-inner');
         Route::G()->addRouteHook([static::class,'AppendHook'], 'append-outter');
-        
+    }
+    //@override
+    protected function initContext(object $context)
+    {
         if ($context && $this->options['route_map_by_config_name']) {
             $config = get_class($context)::LoadConfig($this->options['route_map_by_config_name']);
             $this->assignRoute($config['route_map'] ?? []);
@@ -61,12 +58,6 @@ class RouteHookRouteMap implements ComponentInterface
                 ['C','A']
             );
         }
-        $this->is_inited = true;
-        return $this;
-    }
-    public function isInited(): bool
-    {
-        return $this->is_inited;
     }
     public function compile($pattern_url, $rules = [])
     {

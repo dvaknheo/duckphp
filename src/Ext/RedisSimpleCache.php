@@ -6,12 +6,10 @@
 
 namespace DuckPhp\Ext;
 
-use DuckPhp\Core\ComponentInterface;
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\Core\ComponentBase;
 
-class RedisSimpleCache implements ComponentInterface //extends Psr\SimpleCache\CacheInterface;
+class RedisSimpleCache extends ComponentBase //implements Psr\SimpleCache\CacheInterface;
 {
-    use SingletonEx;
     
     public $options = [
         'redis' => null,
@@ -19,23 +17,14 @@ class RedisSimpleCache implements ComponentInterface //extends Psr\SimpleCache\C
     ];
     public $redis = null;
     public $prefix = '';
-    protected $is_inited = false;
-    public function __construct()
+    
+    //override
+    protected function initOptions(array $options)
     {
+        $this->redis = $this->options['redis'] ?? null;
+        $this->prefix = $this->options['redis_cache_prefix'] ?? '';
     }
-    public function init(array $options, object $context = null)
-    {
-        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
-        $this->redis = $options['redis'] ?? null;
-        $this->prefix = $options['redis_cache_prefix'] ?? '';
-        
-        $this->is_inited = true;
-        return $this;
-    }
-    public function isInited(): bool
-    {
-        return $this->is_inited;
-    }
+    
     public function get($key, $default = null)
     {
         if (!$this->redis || !$this->redis->isConnected()) {

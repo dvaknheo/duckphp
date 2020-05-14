@@ -6,15 +6,12 @@
 
 namespace DuckPhp\Ext;
 
-use DuckPhp\Core\ComponentInterface;
+use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Route;
-use DuckPhp\Core\SingletonEx;
 use DuckPhp\Core\SuperGlobal;
-use DuckPhp\Ext\RouteHookRewrite;
 
-class RouteHookDirectoryMode implements ComponentInterface
+class RouteHookDirectoryMode extends ComponentBase
 {
-    use SingletonEx;
     public $options = [
         'mode_dir_basepath' => '',
         //'mode_dir_use_path_info'=>true,
@@ -22,26 +19,18 @@ class RouteHookDirectoryMode implements ComponentInterface
         //'mode_dir_key_for_action'=>true,
     ];
     protected $basepath;
-    protected $is_inited = false;
-    public function __construct()
+    
+    protected function initOptions(array $options)
     {
-    }
-    public function init(array $options, object $context = null)
-    {
-        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
-        
         $this->basepath = $this->options['mode_dir_basepath'];
-        if ($context) {
-            Route::G()->addRouteHook([static::class,'Hook'], 'prepend-outter');
-            Route::G()->setURLHandler([$this,'onURL']);
-        }
-        $this->is_inited = true;
-        return $this;
     }
-    public function isInited(): bool
+    //@override
+    protected function initContext(object $context)
     {
-        return $this->is_inited;
+        Route::G()->addRouteHook([static::class,'Hook'], 'prepend-outter');
+        Route::G()->setURLHandler([$this,'onURL']); // => static ?
     }
+    
     protected function adjustPathinfo($basepath, $path_info)
     {
         $input_path = parse_url(SuperGlobal::G()->_SERVER['REQUEST_URI'], PHP_URL_PATH);

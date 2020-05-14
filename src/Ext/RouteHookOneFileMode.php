@@ -6,46 +6,33 @@
 
 namespace DuckPhp\Ext;
 
-use DuckPhp\Core\ComponentInterface;
+use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Route;
-use DuckPhp\Core\SingletonEx;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Ext\RouteHookRewrite;
 
-class RouteHookOneFileMode implements ComponentInterface
+class RouteHookOneFileMode extends ComponentBase
 {
-    use SingletonEx;
     public $options = [
         'key_for_action' => '_r',
         'key_for_module' => '',
     ];
     public $key_for_action = '_r';
     public $key_for_module = '';
-    protected $is_inited = false;
-    public function __construct()
+    
+    //@override
+    protected function initOptions(array $options)
     {
-    }
-    public function init(array $options, object $context = null)
-    {
-        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
-        
         $this->key_for_action = $this->options['key_for_action'];
         $this->key_for_module = $this->options['key_for_module'];
-        
-        if (!$this->key_for_action && ! $this->key_for_module) {
-            return $this;
-        }
-        if ($context) {
-            Route::G()->addRouteHook([static::class,'Hook'], 'prepend-outter');
-            Route::G()->setURLHandler([$this,'onURL']);
-        }
-        $this->is_inited = true;
-        return $this;
     }
-    public function isInited(): bool
+    //@override
+    protected function initContext(object $context)
     {
-        return $this->is_inited;
+        Route::G()->addRouteHook([static::class,'Hook'], 'prepend-outter');
+        Route::G()->setURLHandler([$this,'onURL']);
     }
+    
     public static function URL($url = null)
     {
         return static::G()->onURL($url);

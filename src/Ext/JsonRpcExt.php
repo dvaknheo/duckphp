@@ -6,13 +6,11 @@
 
 namespace DuckPhp\Ext;
 
-use DuckPhp\Core\ComponentInterface;
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\Core\ComponentBase;
 use Exception;
 
-class JsonRpcExt implements ComponentInterface
+class JsonRpcExt extends ComponentBase
 {
-    use SingletonEx;
     public $options = [
         'jsonrpc_namespace' => 'JsonRpc',
         'jsonrpc_backend' => 'https://127.0.0.1',
@@ -28,32 +26,18 @@ class JsonRpcExt implements ComponentInterface
     protected $prefix;
     protected $is_debug;
     
-    protected $is_inited = false;
-    public function __construct()
+    //@override
+    protected function initOptions(array $options)
     {
-    }
-    public function init(array $options, object $context = null)
-    {
-        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
-        
         $this->backend = $this->options['jsonrpc_backend'];
         $this->is_debug = $this->options['jsonrpc_is_debug'];
-        
-        $namespace = $this->options['jsonrpc_namespace'];
-
-        $this->prefix = trim($namespace, '\\').'\\';
+        $this->prefix = trim($this->options['jsonrpc_namespace'], '\\').'\\';
         
         if ($this->options['jsonrpc_enable_autoload']) {
             spl_autoload_register([$this,'_autoload']);
         }
-        
-        $this->is_inited = true;
-        return $this;
     }
-    public function isInited(): bool
-    {
-        return $this->is_inited;
-    }
+    
     public function clear()
     {
         spl_autoload_unregister([$this,'_autoload']);

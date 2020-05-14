@@ -6,13 +6,10 @@
 
 namespace DuckPhp\Ext;
 
-use DuckPhp\Core\ComponentInterface;
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\Core\ComponentBase;
 
-class FacadesAutoLoader implements ComponentInterface
+class FacadesAutoLoader extends ComponentBase
 {
-    use SingletonEx;
-    
     public $options = [
         'facades_namespace' => 'Facades',
         'facades_map' => [],
@@ -22,14 +19,10 @@ class FacadesAutoLoader implements ComponentInterface
     protected $facades_map = [];
     
     protected $is_loaded = false;
-    protected $is_inited = false;
-    public function __construct()
+    
+    //@override
+    protected function initOptions(array $options)
     {
-    }
-    public function init(array $options, object $context = null)
-    {
-        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
-        
         $this->facades_map = $this->options['facades_map'] ?? [];
         $namespace_facades = $this->options['facades_namespace'] ?? 'Facades';
         $this->prefix = trim($namespace_facades, '\\').'\\';
@@ -37,14 +30,8 @@ class FacadesAutoLoader implements ComponentInterface
         if ($this->options['facades_enable_autoload']) {
             spl_autoload_register([$this,'_autoload']);
         }
-        
-        $this->is_inited = true;
-        return $this;
     }
-    public function isInited(): bool
-    {
-        return $this->is_inited;
-    }
+    
     public function _autoload($class)
     {
         $flag = (substr($class, 0, strlen($this->prefix)) === $this->prefix)?true:false;

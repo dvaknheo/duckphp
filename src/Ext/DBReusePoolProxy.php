@@ -24,16 +24,15 @@ class DBReusePoolProxy extends DBManager // @codeCoverageIgnoreStart
         $this->options = array_replace_recursive($this->options, (new parent())->options); //merge parent's options;
         parent::__construct();
     }
-    public function init(array $options, object $context = null)
+    protected function initOptions(array $options)
     {
-        parent::init($options, $context);
+        parent::initOptions($options);
         
         $this->db_reuse_size = $this->options['db_reuse_size'] ?? 100;
         $this->db_reuse_timeout = $this->options['db_reuse_timeout'] ?? 5;
-        return $this;
     }
     //@override
-    protected function initContext($context)
+    protected function initContext(object $context)
     {
         parent::initContext($context);
         try {

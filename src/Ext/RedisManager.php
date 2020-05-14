@@ -6,12 +6,11 @@
 
 namespace DuckPhp\Ext;
 
-use DuckPhp\Core\ComponentInterface;
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\Core\ComponentBase;
 use DuckPhp\Ext\RedisSimpleCache;
 use Redis;
 
-class RedisManager implements ComponentInterface
+class RedisManager extends ComponentBase
 {
     /*
     redis_lis=>
@@ -22,7 +21,6 @@ class RedisManager implements ComponentInterface
                 'select'=>'',
             ]
     */
-    use SingletonEx;
     public $options = [
         'redis_list' => null,
         'use_context_redis_setting' => true,
@@ -31,18 +29,11 @@ class RedisManager implements ComponentInterface
     ];
     const TAG_WRITE = 0;
     const TAG_READ = 1;
-    
-
     protected $pool = [];
     protected $redis_config_list = [];
-    protected $is_inited = false;
-    public function __construct()
+    //@override
+    protected function initOptions(array $options)
     {
-    }
-    public function init(array $options, object $context = null)
-    {
-        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
-        
         $this->redis_config_list = $this->options['redis_list'];
         if ($this->options['enable_simple_cache']) {
             RedisSimpleCache::G()->init([
@@ -50,18 +41,9 @@ class RedisManager implements ComponentInterface
                 'redis_cache_prefix' => $this->options['simple_cache_prefix']
             ]);
         }
-        if ($context) {
-            $this->initContext($context);
-        }
-        $this->is_inited = true;
-        
-        return $this;
     }
-    public function isInited(): bool
-    {
-        return $this->is_inited;
-    }
-    protected function initContext($context)
+    //@override
+    protected function initContext(object $context)
     {
         if ($this->options['use_context_redis_setting']) {
             $redis_list = $context::Setting('redis_list') ?? null;

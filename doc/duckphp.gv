@@ -28,6 +28,7 @@ subgraph cluster_Core {
     
     Core_ThrowOn [label="ThrowOn"];
     Core_ComponentInterface [label="ComponentInterface"];
+    Core_ComponentBase [label="ComponentBase"];
     Core_Functions [label="Functions"];
 
 

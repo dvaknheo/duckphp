@@ -22,14 +22,14 @@ class CallableView extends View
         $this->options = array_replace_recursive($this->options, (new parent())->options); //merge parent's options;
         parent::__construct();
     }
+    //@override
     public function init(array $options, object $context = null)
     {
-        $ret = parent::init($options, $context);
-        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
+        parent::init($options, $context);
         if (!$this->options['callable_view_skip_replace']) {
             View::G(static::G());
         }
-        return $ret;
+        return $this;
     }
     protected function viewToCallback($func)
     {

@@ -6,13 +6,10 @@
 
 namespace DuckPhp\Ext;
 
-use DuckPhp\Core\SingletonEx;
-use DuckPhp\Core\ComponentInterface;
+use DuckPhp\Core\ComponentBase;
 
-class Pager implements ComponentInterface, PagerInterface
-{
-    use SingletonEx;
-    
+class Pager extends ComponentBase implements PagerInterface
+{    
     public $options = [
         'url' => null,
         'current' => null,
@@ -21,13 +18,9 @@ class Pager implements ComponentInterface, PagerInterface
         'rewrite' => null,
         'pager_context_class' => null,
     ];
-    protected $context_class;
+    protected $context_class=null;
     protected $url;
     
-    protected $is_inited = false;
-    public function __construct()
-    {
-    }
     protected function getDefaultUrl()
     {
         if (is_callable([$this->context_class,'SG'])) {
@@ -45,21 +38,23 @@ class Pager implements ComponentInterface, PagerInterface
         }
     }
     ////////////////////////
-    public function init(array $options, object $context = null)
+    //@override
+    public function init(array $options,object $context=null)
     {
-        $this->options = array_replace_recursive($this->options, $options) ?? [];
-        
-        $this->context_class = isset($context)?get_class($context):null;
-        $this->context_class = $this->options['context_class'] ?? $this->context_class;
-        
-        $this->url = $this->options['url'] ?? $this->getDefaultUrl();
+        parent::init($options,$context);
         $this->options['current'] = $this->current();
-        
-        $this->is_inited = true;
+        return $this;
     }
-    public function isInited(): bool
+    //@override
+    protected function initOptions(array $options)
     {
-        return $this->is_inited;
+        $this->url = $this->options['url'] ?? $this->getDefaultUrl();
+        $this->context_class = $this->options['pager_context_class'];
+    }
+    //@override
+    protected function initContext(object $context)
+    {
+        $this->context_class = get_class($context);
     }
     
     public function current($new_value = null): int

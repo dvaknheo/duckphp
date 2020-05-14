@@ -6,13 +6,11 @@
 
 namespace DuckPhp\Ext;
 
-use DuckPhp\Core\ComponentInterface;
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\Core\ComponentBase;
 use Exception;
 
-class StrictCheck implements ComponentInterface
+class StrictCheck extends ComponentBase
 {
-    use SingletonEx;
 
     const MAX_TRACE_LEVEL = 20;
     
@@ -27,27 +25,14 @@ class StrictCheck implements ComponentInterface
         ];
     
     protected $context_class = null;
-    protected $is_inited = false;
-    public function __construct()
+    
+    //@override
+    protected function initOptions(array $options)
     {
+        $this->context_class = $this->options['strict_check_context_class'];
     }
-    public function init(array $options, object $context = null)
-    {
-        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
-        if ($context) {
-            $this->initContext($context);
-        }
-        if (!$context) {
-            $this->context_class = $this->options['strict_check_context_class'];
-        }
-        $this->is_inited = true;
-        return $this;
-    }
-    public function isInited(): bool
-    {
-        return $this->is_inited;
-    }
-    protected function initContext($context)
+    //@override
+    protected function initContext(object $context)
     {
         $this->context_class = get_class($context);
         $this->options['is_debug'] = $context->options['is_debug'];
