@@ -13,7 +13,7 @@ use DuckPhp\Ext\Pager;
 
 class App extends Core_App
 {
-    const VERSION = '1.2.3';
+    const VERSION = '1.2.4';
     protected $options_ex = [
             
             //'route_map_important' => [],

@@ -341,7 +341,7 @@ session_set_save_handler(\SessionHandlerInterface $handler)
 isRunning()
 
     判断是否在运行状态
-inException()
+isInException()
 
     判断是否在异常中
 addRouteHook($hook, $position, $once = true)
