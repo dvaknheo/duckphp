@@ -31,7 +31,8 @@ class ViewTest extends \PHPUnit\Framework\TestCase
             'path'=>$path_view,
             'path_view'=>'',
         ];
-        \DuckPhp\Core\View::G()->init($options);
+        View::G()->init($options);
+        View::G()->reset();
         
         \MyCodeCoverage::G()->end(View::class);
         $this->assertTrue(true);

@@ -36,7 +36,7 @@ class DBManager extends ComponentBase
     protected $before_get_db_handler = null;
     protected $use_context_db_setting = true;
     
-    protected $beforeQueryHandler = null;
+    protected $before_query_handler = null;
 
     //@override
     protected function initOptions(array $options)
@@ -68,7 +68,7 @@ class DBManager extends ComponentBase
         if ($this->options['db_close_at_output'] && method_exists($context, 'addBeforeShowHandler')) {
             $context->addBeforeShowHandler([static::class,'CloseAllDB']);
         }
-        $this->beforeQueryHandler = isset($context->options) ? ($context->options['db_before_query_handler'] ?? null) : null;
+        $this->before_query_handler = isset($context->options) ? ($context->options['db_before_query_handler'] ?? null) : null;
         if (method_exists($context, 'extendComponents')) {
             $context->extendComponents(
                 [
@@ -93,7 +93,7 @@ class DBManager extends ComponentBase
     }
     public function OnException()
     {
-        return static::G()->_onException();
+        return static::G()->_OnException();
     }
     public static function DB($tag = null)
     {
@@ -144,8 +144,8 @@ class DBManager extends ComponentBase
     {
         if (!isset($this->databases[$tag])) {
             $db = ($this->db_create_handler)($db_config, $tag);
-            if ($this->beforeQueryHandler && is_callable([$db,'setBeforeQueryHandler'])) {
-                $db->setBeforeQueryHandler($this->beforeQueryHandler);
+            if ($this->before_query_handler && is_callable([$db,'setBeforeQueryHandler'])) {
+                $db->setBeforeQueryHandler($this->before_query_handler);
             }
             $this->databases[$tag] = $db;
         }
@@ -174,7 +174,7 @@ class DBManager extends ComponentBase
         $this->databases = [];
     }
 
-    public function _onException()
+    public function _OnException()
     {
         if (!$this->db_exception_handler) {
             return;

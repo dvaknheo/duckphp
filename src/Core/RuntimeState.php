@@ -11,25 +11,35 @@ use DuckPhp\Core\ComponentBase;
 class RuntimeState extends ComponentBase
 {
     public $options = [
+        'use_output_buffer' => false,
     ];
     
     protected $is_running = false;
     protected $is_in_exception = false;
     protected $is_outputed = false;
+    protected $init_ob_level = 0;
     
     public static function ReCreateInstance()
     {
         $class = get_class(static::G());
         return static::G(new $class);
     }
-    public function begin()
+    public function run()
     {
-        //if(ob)
+        if ($this->options['use_output_buffer']) {
+            $this->init_ob_level = ob_get_level();
+            ob_implicit_flush(0);
+            ob_start();
+        }
         $this->is_running = true;
     }
-    public function end()
+    public function clear()
     {
-        //ob_end();
+        if ($this->options['use_output_buffer']) {
+            for ($i = ob_get_level();$i > $this->init_ob_level;$i--) {
+                ob_end_flush();
+            }
+        }
         $this->is_in_exception = false;
         $this->is_running = false;
     }

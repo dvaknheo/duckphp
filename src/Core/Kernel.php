@@ -26,6 +26,12 @@ trait Kernel
     use SingletonEx;
     
     public $options = [
+            //// not override options ////
+            'use_autoloader' => true,
+            'skip_plugin_mode_check' => false,
+            'handle_all_dev_error' => true,
+            'handle_all_exception' => true,
+            
             //// basic config ////
             'path' => null,
             'namespace' => 'MY',
@@ -39,19 +45,16 @@ trait Kernel
             'override_class' => 'Base\App',
             
             'use_flag_by_setting' => true,
-            'use_super_global' => false,
-            'use_short_functions' => false,
+            'use_super_global' => true,
+            'use_short_functions' => true,
             
             'log_errors' => true,
             
             'skip_404_handler' => false,
-            'skip_plugin_mode_check' => false,
             'skip_exception_check' => false,
             'skip_fix_path_info' => false,
             
             //// error handler ////
-            'handle_all_dev_error' => true,
-            'handle_all_exception' => true,
             'error_404' => null,          //'_sys/error-404',
             'error_500' => null,          //'_sys/error-500',
             'error_debug' => null,        //'_sys/error-debug',
@@ -61,8 +64,8 @@ trait Kernel
             // 'namespace'=>'MY',
             // 'path_namespace'=>'app',
             // 'skip_system_autoload'=>true,
-            'skip_app_autoload' => false,
-            //'enable_cache_classes_in_cli'=>true,
+            // 'skip_app_autoload' => false,
+            // 'enable_cache_classes_in_cli'=>true,
 
             //// Class Configer ////
             // 'path'=>null,
@@ -90,7 +93,7 @@ trait Kernel
         ];
     public $is_debug = true;
     public $platform = '';
-    protected $defaultRunHandler = null;
+    protected $default_run_handler = null;
     protected $error_view_inited = false;
 
     // for kernel
@@ -99,7 +102,8 @@ trait Kernel
     protected $hanlder_for_develop_exception;
     protected $hanlder_for_404;
     protected $is_inited = false;
-    
+    protected $project_options = [];
+
     public static function RunQuickly(array $options = [], callable $after_init = null): bool
     {
         $instance = static::G()->init($options);
@@ -153,7 +157,10 @@ trait Kernel
         if (!($options['skip_plugin_mode_check'] ?? false) && isset($context)) {
             return $this->pluginModeInit($options, $context);
         }
-        AutoLoader::G()->init($options, $this)->run();
+        
+        if ($options['use_autoloader'] ?? true) {
+            AutoLoader::G()->init($options, $this)->run();
+        }
         
         $handle_all_dev_error = $options['handle_all_dev_error'] ?? $this->options['handle_all_dev_error'];
         $handle_all_exception = $options['handle_all_exception'] ?? $this->options['handle_all_exception'];
@@ -239,8 +246,8 @@ trait Kernel
     }
     public function run(): bool
     {
-        if ($this->defaultRunHandler) {
-            return ($this->defaultRunHandler)();
+        if ($this->default_run_handler) {
+            return ($this->default_run_handler)();
         }
         try {
             $this->beforeRun();
@@ -253,7 +260,7 @@ trait Kernel
         } catch (\Throwable $ex) {
             RuntimeState::G()->toggleInException();
             if ($this->options['skip_exception_check']) {
-                RuntimeState::G()->end();
+                RuntimeState::G()->clear();
                 throw $ex;
             }
             ExceptionManager::CallException($ex);
@@ -264,8 +271,8 @@ trait Kernel
     }
     protected function beforeRun()
     {
-        RuntimeState::ReCreateInstance()->begin($this->options);
-        View::G()->setViewWrapper(null, null);
+        RuntimeState::ReCreateInstance()->init($this->options, $this)->run();
+        View::G()->reset();
         
         $serverData = ($this->options['use_super_global'] ?? false) ? SuperGlobal::G()->_SERVER : $_SERVER;
         if (!$this->options['skip_fix_path_info'] && PHP_SAPI != 'cli') {
@@ -275,7 +282,7 @@ trait Kernel
     }
     public function clear(): void
     {
-        RuntimeState::G()->end();
+        RuntimeState::G()->clear();
     }
     protected function fixPathInfo(&$serverData)
     {
@@ -305,6 +312,6 @@ trait Kernel
     ////////////////////////
     public function replaceDefaultRunHandler(callable $handler = null): void
     {
-        $this->defaultRunHandler = $handler;
+        $this->default_run_handler = $handler;
     }
 }

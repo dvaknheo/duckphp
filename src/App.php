@@ -8,42 +8,22 @@
 //OK，Lazy
 namespace DuckPhp;
 
-use DuckPhp\Core\App as Core_App;
+use DuckPhp\Core\App as CoreApp;
+use DuckPhp\Ext\DBManager;
 use DuckPhp\Ext\Pager;
+use DuckPhp\Ext\RouteHookRouteMap;
 
-class App extends Core_App
+class App extends CoreApp
 {
     const VERSION = '1.2.4';
-    protected $options_ex = [
-            
-            //'route_map_important' => [],
-            //'route_map' => [],
-            'db_before_query_handler' => null,
-            'log_sql_query' => false,
-            'log_sql_level' => 'debug',
-            
-            'ext' => [
-                'DuckPhp\Ext\DBManager' => true,
-                'DuckPhp\Ext\RouteHookRouteMap' => true,
-                
-                // 'DuckPhp\Ext\PluginForSwooleHttpd' => true,
-                // 'DuckPhp\Ext\Misc' => true,
-                //'DuckPhp\Ext\RouteHookRewrite' => true,
-                
-                //'DuckPhp\Ext\StrictCheck' => false,
-                //'DuckPhp\Ext\RouteHookOneFileMode' => false,
-                //'DuckPhp\Ext\RouteHookDirectoryMode' => false,
-                
-                //'DuckPhp\Ext\RedisManager' => false,
-                //'DuckPhp\Ext\RedisSimpleCache' => false,
-                //'DuckPhp\Ext\DBReusePoolProxy' => false,
-                //'DuckPhp\Ext\FacadesAutoLoader' => false,
-            ],
-            
-        ];
+    
     public function __construct()
     {
-        $this->options = array_merge($this->options, $this->options_ex);
+        $this->options['log_sql_query'] = false;
+        $this->options['log_sql_level'] = 'debug';
+        $this->options['db_before_query_handler'] = null;
+        $this->options['ext'][DBManager::class] = true;
+        $this->options['ext'][RouteHookRouteMap::class] = true;
         /* no use
                 if (PHP_SAPI === 'cli' && extension_loaded('swoole')) {
                     //$t = ['DuckPhp\Ext\PluginForSwooleHttpd' => true];
