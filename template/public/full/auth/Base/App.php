@@ -20,11 +20,4 @@ class App extends DuckPhp_App
     {
         return parent::onRun();
     }
-    protected function runAsPlugin()
-    {
-        DuckPhp_App::G()->options['error_404'] = null;
-        DuckPhp_App::G()->options['error_500'] = null;
-        DuckPhp_App::G()->options['error_exception'] = null;
-        DuckPhp_App::G()->options['error_debug'] = null;
-    }
 }

@@ -550,3 +550,8 @@
     - 'path' => null
     - 'path_document' => "public"
     - 'port' => "8080"
+    
+## 版本变动未整理的选项
+
++ use_output_buffer =>false RuntimeState
++ use_autoloader => true CoreApp

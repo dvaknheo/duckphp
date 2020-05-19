@@ -29,12 +29,12 @@ namespace MySpace\Base
     //服务基类, 为了 XXService::G() 可变单例。
     class BaseService
     {
-        use \DuckPhp\SingletonEx;
+        use \DuckPhp\Core\SingletonEx;
     }
     // 模型基类, 为了 XXModel::G() 可变单例。
     class BaseModel
     {
-        use \DuckPhp\SingletonEx;
+        use \DuckPhp\Core\SingletonEx;
     }
 } // end namespace
 // 助手类

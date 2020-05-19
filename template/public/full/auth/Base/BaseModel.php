@@ -5,7 +5,7 @@
  */
 namespace UserSystemDemo\Base;
 
-use DuckPhp\SingletonEx;
+use DuckPhp\Core\SingletonEx;
 
 class BaseModel
 {

@@ -5,9 +5,9 @@
  */
 namespace MY\Base;
 
-use DuckPhp\App as DuckPhp_App;
+use DuckPhp\App as SystemApp;
 
-class App extends DuckPhp_App
+class App extends SystemApp
 {
     public function onInit()
     {
