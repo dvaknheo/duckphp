@@ -139,12 +139,18 @@ class DBManager extends ComponentBase
     {
         if (!isset($this->databases[$tag])) {
             $db = ($this->db_create_handler)($db_config, $tag);
-            if ($this->before_query_handler && is_callable([$db,'setBeforeQueryHandler'])) {
-                $db->setBeforeQueryHandler($this->before_query_handler);
+            if ($this->before_query_handler) {
+                $this->setBeforeQueryHandler($db, $this->before_query_handler);
             }
             $this->databases[$tag] = $db;
         }
         return $this->databases[$tag];
+    }
+    public function setBeforeQueryHandler($db, $before_query_handler)
+    {
+        if (is_callable([$db,'setBeforeQueryHandler'])) {
+            $db->setBeforeQueryHandler($this->before_query_handler);
+        }
     }
     public function _DB_W()
     {

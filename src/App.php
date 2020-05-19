@@ -21,7 +21,7 @@ class App extends CoreApp
     {
         $this->options['log_sql_query'] = false;
         $this->options['log_sql_level'] = 'debug';
-        $this->options['db_before_query_handler'] = null;
+        $this->options['db_before_query_handler'] = [static::class, 'OnQuery'];
         $this->options['ext'][DBManager::class] = true;
         $this->options['ext'][RouteHookRouteMap::class] = true;
         /* no use
@@ -33,27 +33,22 @@ class App extends CoreApp
         $this->options['db_before_query_handler'] = [static::class, 'OnQuery'];
         parent::__construct();
     }
-    protected function onInit()
-    {
-        $ret = parent::onInit();
-        
-        if (!empty($this->options['log_sql_query'])) {
-            $this->options['db_before_query_handler'] = $this->options['db_before_query_handler'] ?? [static::class, 'OnQuery'];
-        }
-        return $ret;
-    }
     public function _Pager($object = null)
     {
         $pager = Pager::G($object);
         $pager->options['pager_context_class'] = static::class;
         return $pager;
     }
-    public static function OnQuery($sql, ...$args)
+    public static function OnQuery($db, $sql, ...$args)
     {
-        return static::G()->_OnQuery($sql, ...$args);
+        return static::G()->_OnQuery($db, $sql, ...$args);
     }
-    public function _OnQuery($sql, ...$args)
+    public function _OnQuery($db, $sql, ...$args)
     {
+        if (!$this->options['log_sql_query']) {
+            DBManager::G()->setBeforeQueryHandler($db, null);
+            return;
+        }
         static::Logger()->log($this->options['log_sql_level'], '[sql]: ' . $sql, $args);
     }
 }

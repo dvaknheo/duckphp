@@ -92,7 +92,7 @@ class DB implements DBInterface
     public function fetchAll($sql, ...$args)
     {
         if ($this->beforeQueryHandler) {
-            ($this->beforeQueryHandler)($sql, ...$args);
+            ($this->beforeQueryHandler)($this, $sql, ...$args);
         }
         if (count($args) === 1 && is_array($args[0])) {
             $args = $args[0];
@@ -107,7 +107,7 @@ class DB implements DBInterface
     public function fetch($sql, ...$args)
     {
         if ($this->beforeQueryHandler) {
-            ($this->beforeQueryHandler)($sql, ...$args);
+            ($this->beforeQueryHandler)($this, $sql, ...$args);
         }
         
         if (count($args) === 1 && is_array($args[0])) {
@@ -122,7 +122,7 @@ class DB implements DBInterface
     public function fetchColumn($sql, ...$args)
     {
         if ($this->beforeQueryHandler) {
-            ($this->beforeQueryHandler)($sql, ...$args);
+            ($this->beforeQueryHandler)($this, $sql, ...$args);
         }
         
         if (count($args) === 1 && is_array($args[0])) {
@@ -137,7 +137,7 @@ class DB implements DBInterface
     public function execute($sql, ...$args)
     {
         if ($this->beforeQueryHandler) {
-            ($this->beforeQueryHandler)($sql, ...$args);
+            ($this->beforeQueryHandler)($this, $sql, ...$args);
         }
         
         if (count($args) === 1 && is_array($args[0])) {

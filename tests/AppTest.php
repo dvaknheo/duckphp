@@ -21,7 +21,6 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         //DuckPhp::G()->onSwooleHttpdInit($SwooleHttpd, false,function(){var_dump("OK");});
         //DuckPhp::G()->onSwooleHttpdInit($SwooleHttpd,true,null);
 
-        $this->doGlue();
         $path_lib=\GetClassTestPath(DuckPhp::class).'lib/';
         $path_view=\GetClassTestPath(DuckPhp::class).'views/';
 
@@ -39,8 +38,11 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::Pager();
         
         ////
-        
-        DuckPhp::OnQuery("SQL ",1,2);
+                $db=new \stdClass();
+        DuckPhp::OnQuery($db,"SQL ",1,2);
+        DuckPhp::G()->options['log_sql_query']=false;
+        $db=new \stdClass();
+        DuckPhp::OnQuery($db,"SQL ",1,2);
         ////
         \__h("test");
         \__l("test");
@@ -51,22 +53,6 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->end(DuckPhp::class);
         $this->assertTrue(true);
 
-    }
-    public function doGlue()
-    {
-        //DuckPhp::DB($tag=null);
-        //DuckPhp::DB_W();
-        //DuckPhp::DB_R();
-        
-        //DuckPhp::setDBHandler($db_create_handler=null, $db_close_handler=null, $db_excption_handler=null);
-        
-        
-        //DuckPhp::assignRewrite($key="abc", $value=null);
-        /*
-        DuckPhp::getRewrites();
-        DuckPhp::assignRoute($key="zzz", $value=null);
-        DuckPhp::getRoutes();
-        */
     }
 }
 class fakeSwooleHttpd

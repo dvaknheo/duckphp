@@ -124,7 +124,7 @@ class RouteHookRouteMap extends ComponentBase
         $lastWord = substr($pattern_url, -1);
         if ($lastWord === '*') {
             $pattern_url = substr($pattern_url, 0, -1);
-            $p = substr($path_info, strlen($pattern_url));
+            $p = ''.substr($path_info, strlen($pattern_url));
             if (strlen($p) > 0 && substr($p, 0, 1) !== '/') {
                 return false;
             }
