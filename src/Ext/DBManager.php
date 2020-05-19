@@ -15,13 +15,12 @@ class DBManager extends ComponentBase
     const TAG_READ = 1;
     
     public $options = [
+        'database_list' => null,
         'db_create_handler' => null,
         'db_close_handler' => null,
         'db_exception_handler' => null,
-        'before_get_db_handler' => null,
-        
-        'database_list' => null,
-        'use_context_db_setting' => true,
+        'db_before_get_object_handler' => null,
+        'db_database_list_from_setting' => true,
         'db_close_at_output' => true,
     ];
 
@@ -33,25 +32,22 @@ class DBManager extends ComponentBase
     protected $db_close_handler = null;
     protected $db_exception_handler = null;
     
-    protected $before_get_db_handler = null;
-    protected $use_context_db_setting = true;
-    
+    protected $db_before_get_object_handler = null;
     protected $before_query_handler = null;
 
     //@override
     protected function initOptions(array $options)
     {
-        $this->before_get_db_handler = $this->options['before_get_db_handler'] ?? null;
+        $this->db_before_get_object_handler = $this->options['db_before_get_object_handler'] ?? null;
         $this->database_config_list = $this->options['database_list'];
         $this->db_create_handler = $this->options['db_create_handler'] ?? [DB::class,'CreateDBInstance'];
         $this->db_close_handler = $this->options['db_close_handler'] ?? [DB::class,'CloseDBInstance'];
         $this->db_exception_handler = $this->options['db_exception_handler'] ?? null;
-        $this->use_context_db_setting = $this->options['use_context_db_setting'];
     }
     //@override
     protected function initContext(object $context)
     {
-        if ($this->use_context_db_setting) {
+        if ($this->options['db_database_list_from_setting']) {
             $database_list = get_class($context)::Setting('database_list') ?? null;
             if (!isset($database_list)) {
                 $database_list = isset($context->options) ? ($context->options['database_list'] ?? null) : null;
@@ -60,10 +56,9 @@ class DBManager extends ComponentBase
                 $this->database_config_list = $database_list;
             }
         }
-        
-        // before_get_db_handler
-        if (is_array($this->before_get_db_handler) && $this->before_get_db_handler[0] === null) {
-            $this->before_get_db_handler[0] = get_class($context);
+        // db_before_get_object_handler
+        if (is_array($this->db_before_get_object_handler) && $this->db_before_get_object_handler[0] === null) {
+            $this->db_before_get_object_handler[0] = get_class($context);
         }
         if ($this->options['db_close_at_output'] && method_exists($context, 'addBeforeShowHandler')) {
             $context->addBeforeShowHandler([static::class,'CloseAllDB']);
@@ -114,9 +109,9 @@ class DBManager extends ComponentBase
         $this->db_close_handler = $db_close_handler;
         $this->db_exception_handler = $db_exception_handler;
     }
-    public function setBeforeGetDBHandler($before_get_db_handler)
+    public function setBeforeGetDBHandler($db_before_get_object_handler)
     {
-        $this->before_get_db_handler = $before_get_db_handler;
+        $this->db_before_get_object_handler = $db_before_get_object_handler;
     }
     public function getDBHandler()
     {
@@ -124,8 +119,8 @@ class DBManager extends ComponentBase
     }
     public function _DB($tag = null)
     {
-        if (isset($this->before_get_db_handler)) {
-            ($this->before_get_db_handler)($this, $tag);
+        if (isset($this->db_before_get_object_handler)) {
+            ($this->db_before_get_object_handler)($this, $tag);
         }
         if (!isset($tag)) {
             if (empty($this->database_config_list)) {

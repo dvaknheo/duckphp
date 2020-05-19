@@ -25,7 +25,7 @@ $dn_options=[
         'db_create_handler'=>null,
         'db_close_handler'=>null,
         'db_excption_handler'=>null,
-        'before_get_db_handler'=>[null,'beforeGet'],
+        'db_before_get_object_handler'=>[null,'beforeGet'],
         
         'database_list'=>[[
 	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",

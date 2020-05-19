@@ -22,7 +22,6 @@ class DBManagerTest extends \PHPUnit\Framework\TestCase
                 'username'=>'admin',	
                 'password'=>'123456'
             ],],
-            'use_context_db_setting'=>true,
         ];
         DBManager::G()->init($options,App::G());
         DBManager::G(new DBManager());
@@ -31,7 +30,7 @@ class DBManagerTest extends \PHPUnit\Framework\TestCase
         'db_create_handler'=>null,
         'db_close_handler'=>null,
         'db_excption_handler'=>null,
-        'before_get_db_handler'=>[null,'beforeGet'],
+        'db_before_get_object_handler'=>[null,'beforeGet'],
         
         'database_list'=>[[
 	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
@@ -44,7 +43,6 @@ class DBManagerTest extends \PHPUnit\Framework\TestCase
 	'password'=>'123456'
 ]
 ],
-            'use_context_db_setting'=>true,
         ];
         
 
@@ -81,14 +79,12 @@ class DBManagerTest extends \PHPUnit\Framework\TestCase
         'db_create_handler'=>null,
         'db_close_handler'=>null,
         'db_excption_handler'=>null,
-        'before_get_db_handler'=>null,
         
         'database_list'=>[[
 	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
 	'username'=>'admin',	
 	'password'=>'123456'
 ]],
-            'use_context_db_setting'=>true,
         ];
         DBManager::G(new DBManager())->init($options);
         DBManager::G()->setDBHandler([DB::class,'CreateDBInstance'],null,function(){echo "Exception!";});
@@ -111,14 +107,13 @@ $options=[
         'db_create_handler'=>null,
         'db_close_handler'=>null,
         'db_excption_handler'=>null,
-        'before_get_db_handler'=>null,
+        'db_before_get_object_handler'=>null,
         
         'database_list'=>[[
 	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
 	'username'=>'admin',	
 	'password'=>'123456'
 ]],
-            'use_context_db_setting'=>true,
         ];    
 $options['database_list']=[[
 	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
@@ -147,14 +142,12 @@ $options=[
         'db_create_handler'=>null,
         'db_close_handler'=>null,
         'db_excption_handler'=>null,
-        'before_get_db_handler'=>null,
         
         'database_list'=>[[
 	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
 	'username'=>'admin',	
 	'password'=>'123456'
 ]],
-            'use_context_db_setting'=>true,
         ];
         DBManager::G(new DBManager())->init($options,App::G());
         $data=App::DB()->fetchColumn('select ?+? as t',1,2);
