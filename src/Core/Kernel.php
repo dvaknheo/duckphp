@@ -31,6 +31,7 @@ trait Kernel
             'skip_plugin_mode_check' => false,
             'handle_all_dev_error' => true,
             'handle_all_exception' => true,
+            'override_class' => 'Base\App',
             
             //// basic config ////
             'path' => null,
@@ -41,14 +42,11 @@ trait Kernel
             'is_debug' => false,
             'platform' => '',
             'ext' => [],
-            
-            'override_class' => 'Base\App',
+            'log_errors' => true,
             
             'use_flag_by_setting' => true,
             'use_super_global' => true,
             'use_short_functions' => true,
-            
-            'log_errors' => true,
             
             'skip_404_handler' => false,
             'skip_exception_check' => false,
@@ -58,58 +56,23 @@ trait Kernel
             'error_404' => null,          //'_sys/error-404',
             'error_500' => null,          //'_sys/error-500',
             'error_debug' => null,        //'_sys/error-debug',
-            
-            //// Class Autoloader ////
-            // 'path'=>null,
-            // 'namespace'=>'MY',
-            // 'path_namespace'=>'app',
-            // 'skip_system_autoload'=>true,
-            // 'skip_app_autoload' => false,
-            // 'enable_cache_classes_in_cli'=>true,
-
-            //// Class Configer ////
-            // 'path'=>null,
-            // 'path_config'=>'config',
-            // 'all_config'=>[],
-            // 'setting'=>[],
-            // 'setting_file'=>'setting',
-            // 'skip_setting_file'=>false,
-            
-            //// Class View Class ////
-            // 'path'=>null,
-            // 'path_view'=>'view',
-            
-
-            //// Class Route ////
-            // 'path'=>null,
-            // 'namespace'=>'MY',
-            // 'namespace_controller'=>'Controller',
-            // 'controller_base_class'=>null,
-            // 'controller_welcome_class'=>'Main',
-            // 'controller_hide_boot_class'=>false,
-            // 'controller_methtod_for_miss'=>null,
-            // 'controller_prefix_post'=>'do_',
-            // 'controller_postfix'=>'',
         ];
     public $is_debug = true;
     public $platform = '';
     protected $default_run_handler = null;
     protected $error_view_inited = false;
 
-    // for kernel
+    // for app
+    protected $options_project = [];
     protected $hanlder_for_exception_handler;
     protected $hanlder_for_exception;
     protected $hanlder_for_develop_exception;
     protected $hanlder_for_404;
     protected $is_inited = false;
-    protected $project_options = [];
 
     public static function RunQuickly(array $options = [], callable $after_init = null): bool
     {
         $instance = static::G()->init($options);
-        if (!$instance) {
-            return true;
-        }
         if ($after_init) {
             ($after_init)();
         }
@@ -126,6 +89,9 @@ trait Kernel
         
         $this->is_debug = $this->options['is_debug'];
         $this->platform = $this->options['platform'];
+    }
+    protected function initContext($context)
+    {
     }
     protected function checkOverride($options)
     {
@@ -176,8 +142,7 @@ trait Kernel
         ExceptionManager::G()->init($exception_options, $this)->run();
         
         $object = $this->checkOverride($options);
-        $object->initOptions($options);
-        return $object->onInit();
+        return $object->initAfterOverride($options, $context);
     }
     public function isInited():bool
     {
@@ -188,8 +153,20 @@ trait Kernel
     {
         return $this;
     }
+    protected function initAfterOverride(array $options, object $context = null)
+    {
+        $this->initOptions($options);
+        $this->initContext($context);
+        
+        $this->initDefaultComponents();
+        $this->initExtentions($this->options['ext']);
+        $this->onInit();
+        
+        $this->is_inited = true;
+        return $this;
+    }
     //for override
-    protected function onInit()
+    protected function initDefaultComponents()
     {
         if ($this->options['use_short_functions']) {
             require_once __DIR__.'/Functions.php';
@@ -202,11 +179,6 @@ trait Kernel
         
         Route::G()->init($this->options, $this);
         Logger::G()->init($this->options, $this);
-        
-        $this->initExtentions($this->options['ext']);
-        
-        $this->is_inited = true;
-        return $this;
     }
     protected function reloadFlags(): void
     {
@@ -236,6 +208,11 @@ trait Kernel
             }
             $class::G()->init($options, $this);
         }
+        return;
+    }
+    //for override
+    protected function onInit()
+    {
         return;
     }
     
