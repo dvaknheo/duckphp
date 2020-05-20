@@ -14,7 +14,8 @@ class DBTest extends \PHPUnit\Framework\TestCase
 	'password'=>'123456'
 ];
         $db=DB::CreateDBInstance($options);
-        $db->getPDO();
+        $pdo=$db->PDO();
+        $db->PDO($pdo);
         $db->setBeforeQueryHandler(function($db, $sql,...$args){
             echo "Quering... ".$db->buildQueryString($sql,...$args) ."\n";
         });

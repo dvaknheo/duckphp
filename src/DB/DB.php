@@ -49,8 +49,11 @@ class DB implements DBInterface
         $this->rowCount = 0;
         $this->pdo = null;
     }
-    public function getPDO()
+    public function PDO($pdo = null)
     {
+        if($pdo){
+            $this->pdo=$pdo;
+        }
         return $this->pdo;
     }
     public function setBeforeQueryHandler($handler)

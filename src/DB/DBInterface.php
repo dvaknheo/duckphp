@@ -9,7 +9,7 @@ namespace DuckPhp\DB;
 interface DBInterface
 {
     public function close();
-    public function getPDO();
+    public function PDO($object = null);
     public function quote($string);
     public function fetchAll($sql, ...$args);
     public function fetch($sql, ...$args);
