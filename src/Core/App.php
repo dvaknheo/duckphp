@@ -44,11 +44,14 @@ class App implements ComponentInterface
     use Core_Glue;
     use Core_Component;
 
-    // for kernel
+    // from kernel
+    protected $options_project = [];
     protected $hanlder_for_exception_handler;
     protected $hanlder_for_exception;
     protected $hanlder_for_develop_exception;
     protected $hanlder_for_404;
+    protected $is_inited = false;
+
     
     // for helper
     public $componentClassMap = [
@@ -65,7 +68,7 @@ class App implements ComponentInterface
         'exit' => null,
         'set_exception_handler' => null,
         'register_shutdown_function' => null,
-
+        
         'session_start' => null,
         'session_id' => null,
         'session_destroy' => null,
@@ -79,7 +82,7 @@ class App implements ComponentInterface
     
     public function __construct()
     {
-        $this->options = array_merge($this->options, $this->project_options);
+        $this->options = array_replace_recursive($this->options, $this->options_project);
         $this->hanlder_for_exception_handler = [static::class,'set_exception_handler'];
         $this->hanlder_for_exception = [static::class,'OnDefaultException'];
         $this->hanlder_for_develop_exception = [static::class,'OnDevErrorHandler'];

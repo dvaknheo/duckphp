@@ -37,4 +37,13 @@ class ComponentBase implements ComponentInterface
     protected function initContext(object $context)
     {
     }
+    //helper
+    protected function getComponenetPathByKey($path_key)
+    {
+        if (substr($this->options[$path_key], 0, 1) === '/') {
+            return rtrim($this->options[$path_key], '/').'/';
+        } else {
+            return $this->options['path'].rtrim($this->options[$path_key], '/').'/';
+        }
+    }
 }

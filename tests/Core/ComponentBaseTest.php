@@ -19,5 +19,12 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
 
 class ComponentBaseObject extends ComponentBase  implements ComponentInterface
 {
-
+    public $options=[
+        'path'=>'',
+        'path_test'=>'test',
+    ];
+    protected function initOptions(array $options)
+    {
+        $this->path = parent::getComponenetPathByKey('path_test');
+    }
 }

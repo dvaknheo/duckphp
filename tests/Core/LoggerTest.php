@@ -10,8 +10,7 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
         
         $path_log=\GetClassTestPath(Logger::class);
         $options=[
-            'path'=>'',
-            'log_file'=>$path_log.'log.log',
+            'path_log' => $path_log,
             'log_prefix'=>'DuckPhpLog',
         ];
         $message='test{a}';

@@ -5,10 +5,10 @@
  */
 namespace UserSystemDemo\Base;
 
-use DuckPhp\App as DuckPhp_App;
+use DuckPhp\App as DuckPhpApp;
 use DuckPhp\Core\AppPluginTrait;
 
-class App extends DuckPhp_App
+class App extends DuckPhpApp
 {
     use AppPluginTrait;
     
@@ -20,4 +20,12 @@ class App extends DuckPhp_App
     {
         return parent::onRun();
     }
+	////
+    protected function onPluginInit()
+    {
+        return parent::onPluginInit();
+    }
+	protected function onPluginModeRun()
+		{
+		}
 }

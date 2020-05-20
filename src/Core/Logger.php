@@ -21,7 +21,8 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
 
     public $options = [
         'path' => '',
-        'log_file' => '',
+        'path_log' => 'logs',
+        'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
         'log_prefix' => 'DuckPhpLog',
         // 多文件系统。
     ];
@@ -41,15 +42,14 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
     //@override
     protected function initOptions(array $options)
     {
-        if (substr($this->options['log_file'], 0, 1) === '/') {
-            $this->path = $this->options['log_file'];
-        } elseif ($this->options['log_file']) {
-            $this->path = $this->options['path'].$this->options['log_file'];
-        }
+        $this->path = parent::getComponenetPathByKey('path_log');
     }
     public function log($level, $message, array $context = array())
     {
-        $path = $this->path;
+        $file = preg_replace_callback('/%(.)/', function ($m) {
+            return date($m[1]);
+        }, $this->options['log_file_template']);
+        $path = $this->path.$file;
         $type = !empty($path)?3:0;
         $prefix = $this->options['log_prefix'];
         
