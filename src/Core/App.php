@@ -407,7 +407,7 @@ trait Core_Helper
     // system static
     public static function Platform()
     {
-        return static::G()->platform;
+        return static::G()->options['platform'];
     }
     public static function IsDebug()
     {
@@ -463,7 +463,7 @@ trait Core_Helper
             View::G()->assignViewData([
                 '__is_debug' => $this->is_debug,
                 '__duckphp_is_debug' => $this->is_debug,
-                '__duckphp_platform' => $this->platform,
+                '__duckphp_platform' => $this->options['platform'],
             ]);
         }
         return View::G()->_Show($data, $view);

@@ -58,7 +58,6 @@ trait Kernel
             'error_debug' => null,        //'_sys/error-debug',
         ];
     public $is_debug = true;
-    public $platform = '';
     protected $default_run_handler = null;
     protected $error_view_inited = false;
 
@@ -88,7 +87,6 @@ trait Kernel
         $this->options = array_replace_recursive($this->options, $options);
         
         $this->is_debug = $this->options['is_debug'];
-        $this->platform = $this->options['platform'];
     }
     protected function initContext($context)
     {
@@ -158,6 +156,8 @@ trait Kernel
         $this->initOptions($options);
         $this->initContext($context);
         
+        $this->onPrepare();
+        
         $this->initDefaultComponents();
         $this->initExtentions($this->options['ext']);
         $this->onInit();
@@ -191,7 +191,7 @@ trait Kernel
             $this->is_debug = $is_debug;
         }
         if (isset($platform)) {
-            $this->platform = $platform;
+            $this->options['platform'] = $platform;
         }
     }
     protected function initExtentions(array $exts): void
@@ -211,11 +211,15 @@ trait Kernel
         return;
     }
     //for override
+    protected function onPrepare()
+    {
+        return;
+    }
+    //for override
     protected function onInit()
     {
         return;
     }
-    
     //for override
     protected function onRun()
     {
