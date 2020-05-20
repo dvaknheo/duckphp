@@ -24,27 +24,59 @@ trait AppPluginTrait
         
         'plugin_search_config' => false,
         'plugin_files_config' => [],
+        'plugin_use_helper' => true,
+    ];
+    protected $plugin_options_project = [
     ];
     protected $path_view_override = '';
     protected $path_config_override = '';
+    
     protected $plugin_context_class = '';
+    protected $plugin_before_run_handler = null;
+    protected $plugin_route = null;
     // protected componentClassMap=[] => in parent
+    
     public function pluginModeInit(array $options, object $context = null)
     {
-        //override me
-        return $this->pluginModeDefaultInit($options, $context);
+        $this->pluginModeInitOptions($options);
+        $this->pluginModeInitVars($context);
+        
+        $ext_config_files = [];
+        foreach ($this->plugin_options['plugin_files_config'] as $name) {
+            $file = $this->path_config_override.$name.'.php';
+            $ext_config_files[$name] = $file;
+        }
+        if (!empty($ext_config_files)) {
+            Configer::G()->assignExtConfigFile($ext_config_files);
+        }
+        Route::G()->addRouteHook([static::class,'PluginModeRouteHook'], $this->plugin_options['plugin_routehook_position']);
+        
+        $this->onPluginModeInit();
+        
+        return $this;
+    }
+    //for override
+    protected function onPluginModeInit()
+    {
+        ////
+    }
+    //for override
+    protected function onPluginModeRun()
+    {
+        ////
+    }
+    public function pluginModeBeforeRun($handler)
+    {
+        $this->plugin_before_run_handler = $handler;
     }
     public static function PluginModeRouteHook($path_info)
     {
         return static::G()->_PluginModeRouteHook($path_info);
     }
-    public function _PluginModeRouteHook($path_info)
-    {
-        return $this->pluginModeDefaultRouteHook($path_info);
-    }
     /////
     protected function pluginModeInitOptions($options)
     {
+        $this->plugin_options = array_replace_recursive($this->plugin_options, $this->plugin_options_project);
         $this->plugin_options = array_intersect_key(array_replace_recursive($this->plugin_options, $options) ?? [], $this->plugin_options);
         $class = static::class;
         
@@ -75,23 +107,6 @@ trait AppPluginTrait
             $this->plugin_options['plugin_files_config'] = $this->pluginModeSearchAllPluginFile($this->path_config_override, $setting_file);
         }
     }
-    protected function pluginModeDefaultInit(array $options, object $context = null)
-    {
-        $this->pluginModeInitOptions($options);
-        $this->pluginModeInitVars($context);
-        
-        $ext_config_files = [];
-        foreach ($this->plugin_options['plugin_files_config'] as $name) {
-            $file = $this->path_config_override.$name.'.php';
-            $ext_config_files[$name] = $file;
-        }
-        if (!empty($ext_config_files)) {
-            Configer::G()->assignExtConfigFile($ext_config_files);
-        }
-        Route::G()->addRouteHook([static::class,'PluginModeRouteHook'], $this->plugin_options['plugin_routehook_position']);
-        return $this;
-    }
-
     protected function pluginModeSearchAllPluginFile($path, $setting_file = '')
     {
         $setting_file = !empty($setting_file)?$path.$setting_file.'.php':'';
@@ -112,17 +127,26 @@ trait AppPluginTrait
         return $ret;
     }
 
-    protected function pluginModeDefaultRouteHook($path_info)
+    protected function _PluginModeRouteHook($path_info)
     {
-        $this->pluginModeCloneHelpers();
+        if ($this->plugin_options['plugin_use_helper'] && $this->componentClassMap) {
+            $this->pluginModeCloneHelpers();
+        }
         
         View::G()->setOverridePath($this->path_view_override);
         
         // route
         $route = new Route();
+        $this->plugin_route = $route;
         $options['namespace'] = $this->plugin_options['plugin_namespace'];
         $route->init($options)->bindServerData(SuperGlobal::G()->_SERVER);
         $route->setPathInfo($path_info);
+        
+        if ($this->plugin_before_run_handler) {
+            ($this->plugin_before_run_handler)();
+        }
+        $this->onPluginModeRun();
+        
         $flag = $route->defaultRunRouteCallback($path_info);
         return $flag;
     }
@@ -132,7 +156,10 @@ trait AppPluginTrait
         array_pop($a);
         $namespace = ltrim(implode('\\', $a).'\\', '\\');
         
-        $map = $this->componentClassMap ?? [];
         $this->plugin_context_class::G()->cloneHelpers($namespace);
+    }
+    public function pluginModeGetRoute()
+    {
+        return $this->plugin_route;
     }
 }

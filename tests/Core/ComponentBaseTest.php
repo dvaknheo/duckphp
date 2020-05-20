@@ -25,6 +25,11 @@ class ComponentBaseObject extends ComponentBase  implements ComponentInterface
     ];
     protected function initOptions(array $options)
     {
+        parent::initOptions($options);
+
         $this->path = parent::getComponenetPathByKey('path_test');
+        $this->options['path_test']='/tmp';
+        $this->path = parent::getComponenetPathByKey('path_test');
+        
     }
 }

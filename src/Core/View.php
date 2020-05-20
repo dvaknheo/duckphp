@@ -28,11 +28,7 @@ class View extends ComponentBase
     //@override
     protected function initOptions(array $options)
     {
-        if (substr($this->options['path_view'], 0, 1) === '/') {
-            $this->path = rtrim($this->options['path_view'], '/').'/';
-        } else {
-            $this->path = $this->options['path'].rtrim($this->options['path_view'], '/').'/';
-        }
+        $this->path = parent::getComponenetPathByKey('path_view');
     }
     public static function Show($data = [], $view)
     {

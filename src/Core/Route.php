@@ -28,10 +28,10 @@ class Route extends ComponentBase
             'controller_postfix' => '',
         ];
     
-    public $parameters = [];
+    protected $parameters = [];
     public $urlHandler = null;
     
-    public $namespace_controller = '';
+    protected $namespace_controller = '';
     protected $controller_welcome_class = 'Main';
     protected $controller_index_method = 'index';
     protected $controller_base_class = null;

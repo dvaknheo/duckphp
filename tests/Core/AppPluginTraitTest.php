@@ -33,6 +33,7 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
         ];
         DuckPhp::G(new DuckPhp());
         AppPluginTraitApp::G()->init($plugin_options,DuckPhp::G()->init($options));
+        AppPluginTraitApp::G()->pluginModeBeforeRun(function(){var_dump("Before run!",get_class(AppPluginTraitApp::G()->pluginModeGetRoute()));});
         
         \DuckPhp\Core\Route::G()->bindServerData(\DuckPhp\Core\SuperGlobal::G()->_SERVER);
         \DuckPhp\Core\Route::G()->path_info='/second';
@@ -50,11 +51,20 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
 class AppPluginTraitApp extends DuckPhp
 {
     use AppPluginTrait;
-    
+    public $componentClassMap = [
+        'A' => 'AppHelper',
+    ];
     public function __construct()
     {
         parent::__construct();
         $this->plugin_options['plugin_files_conifg']='config';
+    }
+}
+class AppHelper
+{
+    public static function Foo()
+    {
+        var_dump("OK");
     }
 }
 

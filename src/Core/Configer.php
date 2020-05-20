@@ -33,11 +33,7 @@ class Configer extends ComponentBase
     {
         $this->base_path = $this->options['path'] ?? '';
         
-        if (substr($this->options['path_config'], 0, 1) === '/') {
-            $this->path = rtrim($this->options['path_config'], '/').'/';
-        } else {
-            $this->path = $this->options['path'].rtrim($this->options['path_config'], '/').'/';
-        }
+        $this->path = parent::getComponenetPathByKey('path_config');
         
         $this->setting = $this->options['setting'] ?? [];
         $this->all_config = $this->options['all_config'] ?? [];
