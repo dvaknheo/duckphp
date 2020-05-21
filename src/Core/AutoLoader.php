@@ -6,9 +6,7 @@
 
 namespace DuckPhp\Core;
 
-use DuckPhp\Core\ComponentBase;
-
-class AutoLoader extends ComponentBase
+class AutoLoader
 {
     public $options = [
             'path' => null,
@@ -20,18 +18,46 @@ class AutoLoader extends ComponentBase
             
             'enable_cache_classes_in_cli' => false,
         ];
-    
     protected $namespace;
     protected $path_namespace;
 
+    public $is_inited = false;
     public $namespace_paths = [];
     
     protected $is_running = false;
     protected $enable_cache_classes_in_cli = false;
     
-    //@override
-    protected function initOptions(array $options)
+    protected static $_instances = [];
+    //embed
+    public static function G($object = null)
     {
+        if (defined('__SINGLETONEX_REPALACER')) {
+            $callback = __SINGLETONEX_REPALACER;
+            return ($callback)(static::class, $object);
+        }
+        if ($object) {
+            self::$_instances[static::class] = $object;
+            return $object;
+        }
+        $me = self::$_instances[static::class] ?? null;
+        if (null === $me) {
+            $me = new static();
+            self::$_instances[static::class] = $me;
+        }
+        
+        return $me;
+    }
+    public function __construct()
+    {
+    }
+    public function init(array $options, object $context = null)
+    {
+        if ($this->is_inited) {
+            return $this;
+        }
+        $this->is_inited = true;
+        
+        $this->options = array_merge($this->options, $options);
         if (!isset($this->options['path'])) {
             $path = realpath(getcwd().'/../');
             $this->options['path'] = $path;
@@ -52,8 +78,13 @@ class AutoLoader extends ComponentBase
             $this->assignPathNamespace($this->path_namespace, $this->namespace);
         }
         if (!$this->options['skip_system_autoload']) {
-            $this->assignPathNamespace(__DIR__, __NAMESPACE__);
+            $this->assignPathNamespace(__DIR__, __NAMESPACE__); //TODO
         }
+        return $this;
+    }
+    public function isInited(): bool
+    {
+        return $this->is_inited;
     }
     public function run()
     {

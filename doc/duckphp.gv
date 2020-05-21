@@ -56,7 +56,6 @@ subgraph cluster_Core {
     Core_App -> Core_Functions [style="dotted"];
 
 
-    Core_AppPluginTrait -> Core_AutoLoader;
     Core_AppPluginTrait -> Core_Configer;
     Core_AppPluginTrait -> Core_View;
     Core_AppPluginTrait -> Core_Route;
@@ -67,7 +66,6 @@ subgraph cluster_Core {
     Core_Configer -> Core_ComponentBase [style="dotted"];
     Core_Route -> Core_ComponentBase [style="dotted"];
     Core_SuperGlobal -> Core_ComponentBase [style="dotted"];
-    Core_AutoLoader -> Core_ComponentBase [style="dotted"];
     Core_RuntimeState -> Core_ComponentBase [style="dotted"];
     Core_View -> Core_ComponentBase [style="dotted"];
     Core_Logger -> Core_ComponentBase [style="dotted"];

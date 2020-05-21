@@ -67,7 +67,11 @@ class AutoLoaderTest extends \PHPUnit\Framework\TestCase
 
         AutoLoader::G()->isInited();
 
-
+        AutoLoader::G();
+        AutoLoader::G(new AutoLoader());
+        define('__SINGLETONEX_REPALACER',AutoLoaderObject::class.'::CreateObject');
+        AutoLoader::G();
+        
         \MyCodeCoverage::G()->end(AutoLoader::class);
         $this->assertTrue(true);
         /*
@@ -78,4 +82,15 @@ class AutoLoaderTest extends \PHPUnit\Framework\TestCase
         AutoLoader::G()->cleanUp();
         //*/
     }
+}
+class AutoLoaderObject
+{    
+    public static function CreateObject($class, $object)
+    {
+        static $_instance;
+        $_instance=$_instance??[];
+        $_instance[$class]=$object?:($_instance[$class]??($_instance[$class]??new static));
+        return $_instance[$class];
+    }
+
 }
