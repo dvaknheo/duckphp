@@ -51,8 +51,8 @@ class DB implements DBInterface
     }
     public function PDO($pdo = null)
     {
-        if($pdo){
-            $this->pdo=$pdo;
+        if ($pdo) {
+            $this->pdo = $pdo;
         }
         return $this->pdo;
     }

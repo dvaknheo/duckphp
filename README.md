@@ -153,47 +153,59 @@ DuckPhp\App::RunQuickly($options);
 ```
 ### 2. 复杂样例
 
-工程附带的模板文件 `template/public/demo.php` 在单一的文件里演示如何使用 ``DuckPhp``。
+工程附带的模板文件 `template/public/demo.php` 在单一的文件里演示如何使用 `DuckPhp`。
 
-这个样例是为了演示特性把所有东西集中到一个文件，实际编码不会把所有东西全放在同一个文件里。
+需要注意的是，这个样例是为了演示特性把所有东西集中到一个文件，实际编码不会把所有东西全放在同一个文件里。
 
 
 ```php
 <?php declare(strict_types=1);
 /**
- * DuckPhp
+ * DuckPHP
  * From this time, you never be alone~
  */
-namespace {
+namespace
+{
     require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
-    //头文件可以自行修改。
+
 }
 // 以下部分是核心工程师写。
 namespace MySpace\Base
 {
-    use \DuckPhp\Core\View;
-    use \DuckPhp\Ext\CallableView;
+    use DuckPhp\Core\View;
+    use DuckPhp\Ext\CallableView;
+    use DuckPhp\Ext\RouteHookOneFileMode; // 我们要支持无路由的配置模式
+    use MySpace\View\Views;
 
-    // 默认的View 不支持函数调用，我们这里替换他。
     class App extends \DuckPhp\App
     {
+        // 这里演示函数调用的
+        protected $options_project = [
+            'is_debug' => true,
+                // 开启调试模式
+            'skip_setting_file' => true,
+                // 本例特殊，跳过设置文件 这个选项防止没有上传设置文件到服务器
+             
+            'ext' => [
+                RouteHookOneFileMode::class => true,
+                    // 开启单一文件模式，服务器不配置也能运行
+                CallableView::class => true,
+                    // 默认的 View 不支持函数调用，我们用  CallableView 代替系统的 View
+            ],
+            'callable_view_class' => Views::class, // 替换的 View 类。
+        ];
         protected function onInit()
         {
-            // 本例特殊，这里演示函数调用的   CallableView 代替系统的 View
-            $this->options['callable_view_class'] = 'MySpace\View\Views';
-            View::G(CallableView::G());
-            
-            ////
-            return parent::onInit();
+            //初始化之后在这里运行。
+            //var_dump($this->options);//查看总共多少选项
+        }
+        protected function onRun()
+        {
+            //运行期在这里
         }
     }
     //服务基类, 为了 XXService::G() 可变单例。
     class BaseService
-    {
-        use \DuckPhp\Core\SingletonEx;
-    }
-    // 模型基类, 为了 XXModel::G() 可变单例。
-    class BaseModel
     {
         use \DuckPhp\Core\SingletonEx;
     }
@@ -203,32 +215,33 @@ namespace MySpace\Base\Helper
 {
     class ControllerHelper extends \DuckPhp\Helper\ControllerHelper
     {
-        // 一般不需要添加东西，继承就够了
+        // 添加你想要的助手函数
     }
     class ServiceHelper extends \DuckPhp\Helper\ServiceHelper
     {
-        // 一般不需要添加东西，继承就够了
+        // 添加你想要的助手函数
     }
     class ModelHelper extends \DuckPhp\Helper\ModelHelper
     {
-        // 一般不需要添加东西，继承就够了
+        // 添加你想要的助手函数
     }
     class ViewHelper extends \DuckPhp\Helper\ViewHelper
     {
-        // 一般不需要添加东西，继承就够了
+        // 添加你想要的助手函数
     }
 } // end namespace
-// 以下部分是业务工程师写的。不再和 DuckPhp 的类有任何关系。
-namespace MySpace\Controller {
-
-    use MySpace\Base\Helper\ControllerHelper as C;
-    use MySpace\Service\MyService;
+//------------------------------
+// 以下部分是应用工程师写的。不再和 DuckPhp 的类有任何关系。
+namespace MySpace\Controller
+{
+    use MySpace\Base\Helper\ControllerHelper as C;  // 引用助手类
+    use MySpace\Service\MyService;                  // 引用相关服务了。
 
     class Main
     {
         public function __construct()
         {
-            //设置页眉页脚。
+            // 在构造函数设置页眉页脚。
             C::setViewWrapper('header', 'footer');
         }
         public function index()
@@ -245,7 +258,7 @@ namespace MySpace\Controller {
         {
             $url_main = C::URL('');
             C::setViewWrapper('header', 'footer');
-            C::Show(get_defined_vars());
+            C::Show(get_defined_vars()); // 默认视图 about/me ，可省略
         }
     }
 } // end namespace
@@ -259,7 +272,7 @@ namespace MySpace\Service
     {
         public function getTimeDesc()
         {
-            return "<" . MyModel::G()->getTimeDesc() . ">";
+            return "<" . MyModel::getTimeDesc() . ">";
         }
     }
 
@@ -267,16 +280,14 @@ namespace MySpace\Service
 namespace MySpace\Model
 {
     use MySpace\Base\Helper\ModelHelper as M;
-    use MySpace\Base\BaseModel;
 
-    class MyModel extends BaseModel
+    class MyModel
     {
-        public function getTimeDesc()
+        public static function getTimeDesc()
         {
             return date(DATE_ATOM);
         }
     }
-
 }
 // 把 PHP 代码去掉看，这是可预览的 HTML 结构
 namespace MySpace\View {
@@ -317,18 +328,14 @@ namespace MySpace\View {
         }
     }
 } // end namespace
-// 以下部分是核心工程师写。
-// 这里是入口，单一文件下要等前面类声明
+
 namespace {
-    $options = [];
-    $options['namespace'] = 'MySpace'; //项目命名空间为 MySpace，  你可以随意命名
-    $options['is_debug'] = true;  // 开启调试模式
-    
-    $options['skip_app_autoload'] = true; // 本例特殊，跳过app 用的 autoload 免受干扰
-    $options['skip_setting_file'] = true; // 本例特殊，跳过设置文件
-    
+    $options = [
+        'namespace' => 'MySpace', //项目命名空间为 MySpace，  你可以随意命名
+    ];
     \DuckPhp\App::RunQuickly($options);
-} // end namespace
+}
+
 
 ```
 ## 架构图
