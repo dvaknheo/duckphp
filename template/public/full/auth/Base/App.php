@@ -14,18 +14,18 @@ class App extends DuckPhpApp
     
     public function onInit()
     {
-        return parent::onInit();
     }
     protected function onRun()
     {
-        return parent::onRun();
     }
 	////
-    protected function onPluginInit()
+    protected function onPluginModeInit()
     {
-        return parent::onPluginInit();
     }
 	protected function onPluginModeRun()
-		{
-		}
+    {
+    }
+	protected function onPluginModeRun()
+    {
+    }
 }

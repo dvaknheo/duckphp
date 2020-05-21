@@ -12,13 +12,9 @@ class App extends SystemApp
     public function onInit()
     {
         // your code here
-        $ret = parent::onInit();
-        // your code here
-        return $ret;
     }
     protected function onRun()
     {
         // your code here
-        return parent::onRun();
     }
 }

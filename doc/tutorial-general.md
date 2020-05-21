@@ -314,19 +314,18 @@ init 为初始化阶段 ，run 为运行阶段。$callback 在init() 之后执�
     处理是否是插件模式
     处理自动加载  AutoLoader::G()->init($options, $this)->run();
     处理异常管理 ExceptionManager::G()->init($exception_options, $this)->run();
-    如果有子类，切入子类继续 checkOverride() 
-    调整补齐选项 initOptions()
+    如果有子类，切入子类继续 checkOverride()
+    接下来是 initAfterOverride;
 
-#### onInit()
-* 重要 * onInit()，可 override 处理这里了。
-默认的 onInit
+#### initAfterOverride 初始化阶段
 
-    初始化 Configer
-    从 Configer 再设置 是否调试状态和平台 reloadFlags();
-    初始化 View
-    设置为已载入 View ，用于发生异常时候的显示。
-    初始化 Route
-    初始化扩展 initExtentions()
+    调整选项 initOptions()
+    调整外界 initContext()
+    用于重写的 onPrepare(); 
+    初始化默认组件 initDefaultComponenents()
+    加入扩展 initExtends()
+    用于重写的  onInit();
+
 #### run() 运行阶段
 
     处理 setBeforeRunHandler() 引入的 beforeRunHandlers
@@ -344,4 +343,45 @@ init 为初始化阶段 ，run 为运行阶段。$callback 在init() 之后执�
 #### clear 清理
 只有一个动作： 设置 RuntimeState 为结束
 
+## 重写入口类
+
+$this->options_project 的数据会合并如 $this->options 。工程额外选项请在这里添加
+
+onPrepare() 用于替换默认组件等。
+
+onInit() 在初始化结束之后执行。
+
+
+### 接管替换默认实现
+
+你可以在 onPrepare() 方法里替换默认的实现。
+```php
+Route::G(MyRoute::G());
+View::G(MyView::G());
+Configer::G(MyConfiger::G());
+RuntimeState::G(MyRuntimeState::G());
+```
+
+例外的是 AutoLoader 和 ExceptionManager 。 这两个是在插件系统启动之前启动
+
+所以你需要：
+```php
+AutoLoader::G()->clear();
+AutoLoader::G(MyAutoLoader::G())->init($this->options,$this);
+
+ExceptionManager::G()->clear();
+ExceptionManager::G(MyExceptionManager::G())->init($this->options,$this);
+```
+如何替换组件。
+
+
+为了 onInit 使用方便
+
+* 为什么 Core 里面的都是 App::Foo(); 而 Ext 里面的都是 App::G()::Foo();
+因为 Core 里的扩展都是在 DuckPhp\Core\App 下的。
+
+Core 下面的扩展不会单独拿出来用。如果你扩展了该方面的类，最好也是让用户通过 App 或者 MVCS 组件来使用他们。
+
+
 接下来是[路由](tutorial-route.md)这一章教程，  Route::G()->run() 的具体内容
+

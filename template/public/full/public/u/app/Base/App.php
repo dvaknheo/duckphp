@@ -15,7 +15,7 @@ class App extends DuckPhp_App
             'C' => 'ControllerHelper',
             'S' => 'ServiceHelper',
     ];
-    public function onInit()
+    public function onPrepare()
     {
         $this->options['rewrite_map']['~article/(\d+)/?(\d+)?'] = 'article?id=$1&page=$2';
         
@@ -25,18 +25,16 @@ class App extends DuckPhp_App
         
         $path = realpath($this->options['path'].'../../auth/');
         $this->assignPathNamespace($path, 'UserSystemDemo');
-        $ret = parent::onInit();
+    }
+    public function onInit()
+    {
         static::assignRoute([
             '^abc(\d*)' => function () {
                 var_dump("OK");
             },
         ]);
-        return $ret;
-        
-        return parent::onInit();
     }
     public function onRun()
     {
-        return parent::onRun();
     }
 }

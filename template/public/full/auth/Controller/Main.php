@@ -32,14 +32,14 @@ class Main
             C::Logger()->warning(''.(get_class($ex)).'('.$ex->getCode().'): '.$ex->getMessage());
             C::ExitRouteTo('login');
         });
-        if (!empty(App::SG()->_POST)) {
+        if (!empty(C::SG()->_POST)) {
             $referer = C::SG()->_SERVER['HTTP_REFERER'] ?? '';
-            $domain = App::Domain().'/';
+            $domain = C::Domain().'/';
             if (substr($referer, 0, strlen($domain)) !== $domain) {
                 SessionServiceException::ThrowOn(true, "CRSF", 419);
                 //防止 csrf 攻击，用于站内无跳板的简单情况
             }
-            //$flag=SessionService::G()->checkCsrf(App::SG()->_POST['_token']??null);
+            //$flag=SessionService::G()->checkCsrf(C::SG()->_POST['_token']??null);
         }
         $this->setLayoutData();
     }
@@ -86,7 +86,7 @@ class Main
     }
     public function logout()
     {
-        $flag = SessionService::G()->checkCsrf(App::SG()->_GET['_token'] ?? null);
+        $flag = SessionService::G()->checkCsrf(C::SG()->_GET['_token'] ?? null);
         SessionService::G()->logout();
         C::ExitRouteTo('index');
     }

@@ -88,9 +88,6 @@ trait Kernel
         
         $this->is_debug = $this->options['is_debug'];
     }
-    protected function initContext($context)
-    {
-    }
     protected function checkOverride($options)
     {
         $override_class = $options['override_class'] ?? $this->options['override_class'];
@@ -154,7 +151,6 @@ trait Kernel
     protected function initAfterOverride(array $options, object $context = null)
     {
         $this->initOptions($options);
-        $this->initContext($context);
         
         $this->onPrepare();
         

@@ -12,34 +12,21 @@ use DuckPhp\Core\AutoLoader;
 class App extends \DuckPhp\App
 {
     protected $options_project=[
-        //
     ];
-    protected $options_plugin=[
-        //
-    ];
-    protected function onInit()
+
+    public function onPrepare()
     {
         $this->options['error_404'] = '_sys/error_404';
         $this->options['error_500'] = '_sys/error_500';
         $this->options['error_exception'] = '_sys/error_exception';
         $this->options['error_debug'] = '_sys/error_debug';
-        $this->options['ext']['UserSystemDemo\Base\App'] = true;
-        
-        $this->assignPathNamespace($this->options['path'].'auth/', 'UserSystemDemo');
         $this->options['route_map']['@posts/{post}/comments/{comment:\d+}'] = [$this,'foo'];
         $this->options['route_map_important']['^abc/d(/?|)\w*'] = [$this,'foo'];
-        $ret = parent::onInit();
         
-        return $ret;
+        $this->options['ext']['UserSystemDemo\Base\App'] = true;
+        $this->assignPathNamespace($this->options['path'].'auth/', 'UserSystemDemo');
     }
-    protected function onRun()
+    protected function onInit()
     {
-        return parent::onRun();
-    }
-    public function foo()
-    {
-        var_dump(static::getRouteCallingMethod());
-        var_dump(static::getParameters());
-        var_dump(static::getPathInfo());
     }
 }
