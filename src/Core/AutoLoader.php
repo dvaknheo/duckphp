@@ -79,7 +79,7 @@ class AutoLoader extends ComponentBase
             if (!file_exists($file)) {
                 continue;
             }
-            include $file;
+            include_once $file;
             return true;
         }
         return false;

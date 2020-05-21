@@ -171,7 +171,6 @@ namespace MySpace\View {
 namespace {
     $options = [
         'namespace' => 'MySpace', //项目命名空间为 MySpace，  你可以随意命名
-        'skip_app_autoload' => true,// 本例特殊，跳过app 用的 autoload 免受 app 目录干扰
     ];
     \DuckPhp\App::RunQuickly($options);
 }
