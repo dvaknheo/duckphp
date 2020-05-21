@@ -82,7 +82,6 @@ class App implements ComponentInterface
     
     public function __construct()
     {
-        $this->options = array_replace_recursive($this->options, $this->options_project);
         $this->hanlder_for_exception_handler = [static::class,'set_exception_handler'];
         $this->hanlder_for_exception = [static::class,'OnDefaultException'];
         $this->hanlder_for_develop_exception = [static::class,'OnDevErrorHandler'];

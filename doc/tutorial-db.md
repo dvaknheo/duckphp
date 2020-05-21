@@ -16,9 +16,10 @@
 'database_list'=>null,      //DB 列表
 
 ## 相关设置
+setting.php 以下配置，注意的是 DuckPhp 默认是支持多个数据库的，所以是databa
 ```
 [
-database_list =>[[
+'database_list' =>[[
         'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
         'username'=>'???',
         'password'=>'???',
@@ -49,15 +50,16 @@ DB()
 #### DB 类的用法
 DB
     close(); //关闭, 你一般不用关闭,系统会自动关闭
-    getPDO(); //获取 PDO 对象
+    PDO();
     quote($string);
     fetchAll($sql, ...$args);
     fetch($sql, ...$args);
     fetchColumn($sql, ...$args);
-    execute($sql, ...$args); //   执行某条sql ，不用 exec , execute 是为了兼容其他类。
+    execute($sql, ...$args); //   执行某条sql'
+
 #### 示例
 使用数据库，在 设置里正确设置 database_list 这个数组，包含多个数据库配置
-然后在用到的地方调用 DuckPhp::DB($tag=null) 得到的就是 DB 对象，用来做各种数据库操作。
+然后在用到的地方调用 App::DB($tag=null) 得到的就是 DB 对象，用来做各种数据库操作。
 $tag 对应 $setting\['database_list'\][$tag]。默认会得到最前面的 tag 的配置。
 
 你不必担心每次框架初始化会连接数据库。只有第一次调用 DuckPhp::DB() 的时候，才进行数据库类的创建。
@@ -90,38 +92,7 @@ DuckPhp::RunQuickly($options,function(){
 });
 ```
 
-## 使用 think-orm 的 DB
 
-```php
-<?php
-use think\facade\Db;
-use DuckPhp\App;
-require_once('../vendor/autoload.php');
-
-$options=[];
-$options['override_class']='';      // 示例文件，不要被子类干扰。
-$options['skip_setting_file']=true; // 示例文件，不需要配置文件。
-DuckPhp::RunQuickly($options,function(){
-    Db::setConfig([
-        'default'     => 'mysql',
-        'connections' => [
-            'mysql'     => [
-                'type'     => 'mysql',
-                'hostname' => '127.0.0.1',
-                'username' => 'root',
-                'password' => '123456',
-                'database' => 'DnSample',
-            ]
-        ]
-    ]);
-    //就这句话了
-    App::G()->setDBHandler(function(){return Db::class;});
-    $sql="select * from Users where true limit 1";
-    $data=DuckPhp::DB()::query($sql);
-    var_dump($data);
-});
-
-```
 ### 数据库
 
 DuckPhp 提供了一个默认的数据库类。如果在项目中有不满意，则可以替换之。
@@ -168,17 +139,35 @@ DB_R() 则的对应第0 号数库 ,DB_W() 对应第一号数据库。
 
 你不必担心每次框架初始化会连接数据库。只有第一次调用 DuckPhp::DB() 的时候，才进行数据库类的创建。
 
+## 使用 think-orm 的 DB
 
-#### DB 类的用法
+```php
+<?php
+use think\facade\Db;
+use DuckPhp\App;
+require_once('../vendor/autoload.php');
 
-DB
-    close(); //关闭, 你一般不用关闭,系统会自动关闭
-    getPDO(); //获取 PDO 对象
-    quote($string);
-    fetchAll($sql, ...$args);
-    fetch($sql, ...$args);
-    fetchColumn($sql, ...$args);
-    execute($sql, ...$args); //   执行某条sql ，不用 exec , execute 是为了兼容其他类。
+$options=[];
+$options['override_class']='';      // 示例文件，不要被子类干扰。
+$options['skip_setting_file']=true; // 示例文件，不需要配置文件。
+DuckPhp::RunQuickly($options,function(){
+    Db::setConfig([
+        'default'     => 'mysql',
+        'connections' => [
+            'mysql'     => [
+                'type'     => 'mysql',
+                'hostname' => '127.0.0.1',
+                'username' => 'root',
+                'password' => '123456',
+                'database' => 'DnSample',
+            ]
+        ]
+    ]);
+    //就这句话了
+    App::G()->setDBHandler(function(){return Db::class;});
+    $sql="select * from Users where true limit 1";
+    $data=DuckPhp::DB()::query($sql);
+    var_dump($data);
+});
 
-
-
+```

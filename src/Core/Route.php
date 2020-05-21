@@ -52,8 +52,8 @@ class Route extends ComponentBase
     public $calling_method = '';
     
     protected $has_bind_server_data = false;
-    protected $prependedCallbackList = [];
-    protected $appendedCallbackList = [];
+    public $prependedCallbackList = [];
+    public $appendedCallbackList = [];
     protected $enable_default_callback = true;
     protected $is_failed = false;
 

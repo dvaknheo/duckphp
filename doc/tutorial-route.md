@@ -1,10 +1,13 @@
 # 路由
 [toc]
+
+DuckPhp 的路由类比较复杂，也是重点
+
 ## 相关类
 
 **[Core\\Route](ref/Core-Route.md)**
 [Ext\\RouteHookRouteMap](ref/Ext-RouteHookRouteMap.md)
-[Ext\\RouteHookRewrite](ref/Ext-RouteHookRewrite.md)
+*[Ext\\RouteHookRewrite](ref/Ext-RouteHookRewrite.md)*
 *[Ext\\RouteHookOneFileMode](ref/Ext-RouteHookOneFileMode.md)*
 *[Ext\\RouteHookDirectoryMode](ref/RouteHookDirectoryMode.md)*
 
@@ -50,7 +53,7 @@ DuckPhp 支持很多种 路由方式，默认最常见最基本的就是文件�
 
 限定的类是在  namespace namespace_controller 选项
 
-根目录的路由会使用 Main 来代替。
+根目录的路由会使用 Main（controller_welcome_class 选项） 来代替。
 
 为了把 post 和 get 区分， 我们有了 controller_prefix_post 。如果没有 相关方法存在也是没问题的。 这个技巧用于很多需要的情况
 
@@ -146,7 +149,7 @@ URL ($url) 函数也被接管。 自动替换成相应的实现。
 DuckPhp 还有一种很特殊的路由模式。
 目录方式
 
-
+参见 [DuckPhp\\Ext\\RouteHookDirectoryMode](ref/RouteHookDirectoryMode.md)
 
 ### 路由重写
 

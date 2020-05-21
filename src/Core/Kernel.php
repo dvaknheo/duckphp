@@ -58,11 +58,11 @@ trait Kernel
             'error_debug' => null,        //'_sys/error-debug',
         ];
     public $is_debug = true;
+    protected $options_project = [];
     protected $default_run_handler = null;
     protected $error_view_inited = false;
 
     // for app
-    protected $options_project = [];
     protected $hanlder_for_exception_handler;
     protected $hanlder_for_exception;
     protected $hanlder_for_develop_exception;
@@ -79,13 +79,12 @@ trait Kernel
     }
     protected function initOptions($options = [])
     {
-        if (!isset($options['path']) || !$options['path']) {
+        $this->options = array_replace_recursive($this->options, $this->options_project, $options);
+        if (empty($this->options['path'])) {
             $path = realpath($_SERVER['SCRIPT_FILENAME'].'/../');
-            $options['path'] = (string)$path;
+            $this->options['path'] = (string)$path;
         }
-        $options['path'] = rtrim($options['path'], '/').'/';
-        $this->options = array_replace_recursive($this->options, $options);
-        
+        $this->options['path'] = rtrim($this->options['path'], '/').'/';
         $this->is_debug = $this->options['is_debug'];
     }
     protected function checkOverride($options)
