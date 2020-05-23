@@ -3,7 +3,7 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-require(__DIR__.'/../../../../autoload.php');  // @DUCKPHP_HEADFILE
+require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
 
 $project_root = realpath(__DIR__.'/../');
 $options = [

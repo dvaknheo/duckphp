@@ -56,12 +56,9 @@ AppPluginTrait 的默认选项
 对默认选项不满意的修改 $plugin_options 选项。
 
 初始化。
- AppPluginTrait 兼容 App ，初始化不从 init(); 开始。
-    public function initAsPlugin(array $options, object $context = null)
+ AppPluginTrait 兼容 App ，初始化不从 init() 开始，而是从 pluginModeInit() 开始
+    public function puglinModeInit(array $options, object $context = null)
 
-因为 Trait 不存在 父方法，所以 用 defaultInitAsPlugin 来代替 父类的  initAsPlugin
-defaultInitAsPlugin 做的事情就是补齐 选项。
-然后 读入配置文件， 添加路由钩子。 
 
 运行阶段
 钩子名字，

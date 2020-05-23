@@ -35,7 +35,7 @@
     }
 ?>
 <div>
-<a href="/test/done">查看 Demo</a>
+<a href="<?=__url('/test/done')?>">查看 Demo 结果</a>
 </div>
 </body>
 </html>
