@@ -15,14 +15,18 @@ class App extends DuckPhp_App
             'C' => 'ControllerHelper',
             'S' => 'ServiceHelper',
     ];
+    protected function $options_project = [
+        'ext' => [
+            'UserSystemDemo\\Base\\App' => true,
+            'DuckPhp\\Ext\\Misc' => true,
+            'DuckPhp\\Ext\\RouteHookRewrite' => true,
+        ],
+        'rewrite_map' => [
+            '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
+        ],
+    ];
     public function onPrepare()
     {
-        $this->options['rewrite_map']['~article/(\d+)/?(\d+)?'] = 'article?id=$1&page=$2';
-        
-        $this->options['ext']['UserSystemDemo\Base\App'] = true;
-        $this->options['ext']['DuckPhp\\Ext\\Misc'] = true;
-        $this->options['ext']['DuckPhp\\Ext\\RouteHookRewrite'] = true;
-        
         $path = realpath($this->options['path'].'../../auth/');
         $this->assignPathNamespace($path, 'UserSystemDemo');
     }
