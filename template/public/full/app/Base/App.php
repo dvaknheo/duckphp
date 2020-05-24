@@ -12,21 +12,26 @@ use DuckPhp\Core\AutoLoader;
 class App extends \DuckPhp\App
 {
     protected $options_project=[
+        'error_404'=>'_sys/error_404',
+        'error_exception'=>'error_exception',
+        'error_debug'=>'error_debug',
+        'ext'=>[
+            'UserSystemDemo\\Base\\App'=>true,
+        ],
     ];
 
     public function onPrepare()
     {
-        $this->options['error_404'] = '_sys/error_404';
-        $this->options['error_500'] = '_sys/error_500';
-        $this->options['error_exception'] = '_sys/error_exception';
-        $this->options['error_debug'] = '_sys/error_debug';
         $this->options['route_map']['@posts/{post}/comments/{comment:\d+}'] = [$this,'foo'];
         $this->options['route_map_important']['^abc/d(/?|)\w*'] = [$this,'foo'];
         
-        $this->options['ext']['UserSystemDemo\Base\App'] = true;
         $this->assignPathNamespace($this->options['path'].'auth/', 'UserSystemDemo');
     }
     protected function onInit()
     {
+    }
+    public function foo()
+    {
+        var_dump("hit!");
     }
 }
