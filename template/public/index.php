@@ -145,19 +145,14 @@ $options['ext']['DuckPhp\\Ext\\StrictCheck'] = true;
 ////]]]]
 
 $path = realpath(__DIR__.'/..');
-$namespace = 'MY';                    // @DUCKPHP_NAMESPACE
+$namespace = 'MY';                              // @DUCKPHP_NAMESPACE
 
 $options['path'] = $path;
 $options['namespace'] = $namespace;
-$options['error_404'] = '_sys/error_404';
-$options['error_500'] = '_sys/error_500';
-$options['error_debug'] = '_sys/error_debug';
 
-$options['is_debug'] = true;                                            // @DUCKPHP_DELETE
-$options['skip_setting_file'] = true;                                   // @DUCKPHP_DELETE
+$options['ext']['DuckPhp\\Ext\\RouteHookOneFileMode']=true; //@DUCKPHP_DELETE
+
 echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKPHP_DELETE
-
-//$options['ext']['DuckPhp\\Ext\\RouteHookOneFileMode']=true;
 
 \DuckPhp\App::RunQuickly($options, function () {
 });

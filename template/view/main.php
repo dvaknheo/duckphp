@@ -15,7 +15,8 @@
 <body>
 <h1>Hello DuckPHP</h1>
 <div>
-欢迎使用 DuckPHP ,<?php echo $var;?>
+    欢迎使用 DuckPHP ,<?php echo $var;?>
+    <a href="<?=__url('test/done')?>">查看 Demo 结果</a>
 </div>
 <?php
     if ($skip_in_full) {
@@ -25,7 +26,7 @@
 </div>
 <?php
     } else {
-        ?>
+?>
 <div>
 <a href="/full/public/index.php">转到完整演示页面</a>
 <a href="/full/public/u/">一个文章系统的例子</a>
@@ -35,7 +36,6 @@
     }
 ?>
 <div>
-<a href="<?=__url('/test/done')?>">查看 Demo 结果</a>
 </div>
 </body>
 </html>
