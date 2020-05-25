@@ -10,8 +10,7 @@ require(__DIR__.'/../../../../../autoload.php');  // @DUCKPHP_HEADFILE
 $options = [
     'path' => __DIR__,
     'namespace' => 'UUU',
-    'path_view' => 'app/view',
-    'path_config' => 'app/config',
+
 ];
 try {
     App::G()->init($options);

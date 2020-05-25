@@ -56,6 +56,7 @@ class MyCodeCoverage
     }
     public function init(array $options, $context=null)
     {
+        //return $this;
     }
     public function isInited():bool
     {
@@ -69,6 +70,11 @@ class MyCodeCoverage
         $this->namespace=null;
 
     }
+    //function GetClassTestPath($class)
+    //{
+    //    $ret=__DIR__.'/data_for_tests'.str_replace(['DuckPhp\\','\\'],['/','/'],$class).'/';
+    //    return $ret;
+    //}
     protected static function include_file($file)
     {
         return include $file;
@@ -151,6 +157,10 @@ class MyCodeCoverage
         $writer->process($this->coverage, $path);
         
         $this->coverage=null;
+        
+        //echo "\nXXX Test Done!"
+        //\PHPUnit\Framework\Assert\assertTrue(true);
+        //echo "\n";
     }
     
     ///////////////////////

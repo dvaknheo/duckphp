@@ -15,7 +15,11 @@ class App extends DuckPhp_App
             'C' => 'ControllerHelper',
             'S' => 'ServiceHelper',
     ];
-    protected function $options_project = [
+    //@override
+    protected $options_project = [
+        'path_view' => 'app/view',
+        'path_config' => 'app/config',
+        
         'ext' => [
             'UserSystemDemo\\Base\\App' => true,
             'DuckPhp\\Ext\\Misc' => true,

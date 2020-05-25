@@ -26,7 +26,7 @@
 		<input type="submit" value="提交">
 	</form>
 <?php } else { ?>
-	<a href="<?=$url_login_to_commment?>">登录以评论</a>
+	<a href="<?=$url_login_to_commment?>">登录以评论TODO</a>
 <?php }?>
 </fieldset>
 </body>
