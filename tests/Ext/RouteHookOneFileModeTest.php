@@ -69,8 +69,7 @@ if(true){
         
                         RouteHookOneFileMode::G()->isInited();
 
-        \MyCodeCoverage::G()->end(RouteHookOneFileMode::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
         RouteHookOneFileMode::G()->init($options=[], $context=null);
         RouteHookOneFileMode::G()->onURL($url=null);

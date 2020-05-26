@@ -9,7 +9,7 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(Configer::class);
         
-        $path_config=\GetClassTestPath(Configer::class);
+        $path_config=\MyCodeCoverage::GetClassTestPath(Configer::class);
         $options=[
             'path'=>$path_config,
             'path_config'=>$path_config,
@@ -35,8 +35,7 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
         
         Configer::G()->isInited();
         
-        \MyCodeCoverage::G()->end(Configer::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
         Configer::G()->init($options=[], $context=null);
         Configer::G()->_Setting($key);

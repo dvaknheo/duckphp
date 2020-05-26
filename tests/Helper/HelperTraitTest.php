@@ -23,8 +23,7 @@ class HelperTraitTest extends \PHPUnit\Framework\TestCase
         HelperTraitObject::var_dump($options);
         HelperTraitObject::Logger();
 
-        \MyCodeCoverage::G()->end(HelperTrait::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
 
         //*/

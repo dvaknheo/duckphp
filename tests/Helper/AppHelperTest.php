@@ -52,8 +52,7 @@ class AppHelperTest extends \PHPUnit\Framework\TestCase
         $handler=new HelperFakeSessionHandler();
         AppHelper::session_set_save_handler( $handler);
 
-        \MyCodeCoverage::G()->end(AppHelper::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
         //*/
     }

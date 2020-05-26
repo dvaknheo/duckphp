@@ -66,9 +66,7 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
         
                                 StrictCheck::G()->isInited();
 
-        \MyCodeCoverage::G()->end(StrictCheck::class);
-        $this->assertTrue(true);
-
+        \MyCodeCoverage::G()->end();
     }
 }
 class StrictCheck_FakeObject

@@ -11,7 +11,7 @@ class HttpServerTest extends \PHPUnit\Framework\TestCase
         
         
             
-        $path=\GetClassTestPath(HttpServer::class);
+        $path=\MyCodeCoverage::GetClassTestPath(HttpServer::class);
         
         
             
@@ -38,8 +38,7 @@ class HttpServerTest extends \PHPUnit\Framework\TestCase
             }
             
             
-        \MyCodeCoverage::G()->end(HttpServer::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         
         return;
         

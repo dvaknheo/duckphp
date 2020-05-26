@@ -10,7 +10,7 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(View::class);
         
         
-        $path_view=\GetClassTestPath(View::class);
+        $path_view=\MyCodeCoverage::GetClassTestPath(View::class);
         $options=[
             'path_view'=>$path_view,
         ];
@@ -34,7 +34,6 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         View::G()->init($options);
         View::G()->reset();
         
-        \MyCodeCoverage::G()->end(View::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
     }
 }

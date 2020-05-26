@@ -9,7 +9,7 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \MyCodeCoverage::G()->begin(AppPluginTrait::class);
-        $path_app=\GetClassTestPath(AppPluginTrait::class);
+        $path_app=\MyCodeCoverage::GetClassTestPath(AppPluginTrait::class);
 
         $options=[
             'path' =>$path_app,
@@ -43,10 +43,9 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
         $plugin_options['plugin_search_config']=false;
         AppPluginTraitApp::G(new AppPluginTraitApp())->init($plugin_options,DuckPhp::G()->init($options));
         var_dump(AppPluginTraitApp::G()->plugin_options['plugin_path_namespace']);
-        \MyCodeCoverage::G()->end(AppPluginTrait::class);
         DuckPhp::G(new DuckPhp());
-        $this->assertTrue(true);
-    }
+        \MyCodeCoverage::G()->end();
+        }
 }
 class AppPluginTraitApp extends DuckPhp
 {

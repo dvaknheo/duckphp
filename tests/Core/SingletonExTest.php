@@ -15,7 +15,6 @@ class SingletonExTest extends \PHPUnit\Framework\TestCase
         SingletonExObject::G();
         
         \MyCodeCoverage::G()->end();
-        $this->assertTrue(true);
         /*
         SingletonEx::G()->G($object=null);
         //*/

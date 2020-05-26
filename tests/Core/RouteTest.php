@@ -129,7 +129,6 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         $this->foo2();
         Route::G()->isInited();
 
-        $this->assertTrue(true);
         \MyCodeCoverage::G()->end();
         return;
     }

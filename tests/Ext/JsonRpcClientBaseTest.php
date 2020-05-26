@@ -13,8 +13,7 @@ class JsonRpcClientBaseTest extends \PHPUnit\Framework\TestCase
         JsonRpcExt::G(JsonRpcClientBaseJsonRpcExt::G());
         $x=new JsonRpcClientBase();
         $x->foo();
-        \MyCodeCoverage::G()->end(JsonRpcClientBase::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
         JsonRpcClientBase::G()->__call($method, $arguments);
         //*/

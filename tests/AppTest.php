@@ -21,8 +21,8 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         //DuckPhp::G()->onSwooleHttpdInit($SwooleHttpd, false,function(){var_dump("OK");});
         //DuckPhp::G()->onSwooleHttpdInit($SwooleHttpd,true,null);
 
-        $path_lib=\GetClassTestPath(DuckPhp::class).'lib/';
-        $path_view=\GetClassTestPath(DuckPhp::class).'views/';
+        $path_lib=\MyCodeCoverage::GetClassTestPath(DuckPhp::class).'lib/';
+        $path_view=\MyCodeCoverage::GetClassTestPath(DuckPhp::class).'views/';
 
         $options=[
             'skip_setting_file'=>true,
@@ -51,7 +51,6 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         \__display("block",[]);
         
         \MyCodeCoverage::G()->end(DuckPhp::class);
-        $this->assertTrue(true);
 
     }
 }

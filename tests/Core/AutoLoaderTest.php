@@ -10,7 +10,7 @@ class AutoLoaderTest extends \PHPUnit\Framework\TestCase
         opcache_reset();
         //$this->assertTrue(ini_get('opcache.enable_cli'));
         \MyCodeCoverage::G()->begin(AutoLoader::class);
-        $path_autoload=\GetClassTestPath(AutoLoader::class);
+        $path_autoload=\MyCodeCoverage::GetClassTestPath(AutoLoader::class);
         var_dump($path_autoload);
         $options=[
             'path'=>$path_autoload,
@@ -58,7 +58,7 @@ class AutoLoaderTest extends \PHPUnit\Framework\TestCase
         //$G->cacheNamespacePath(path_autoload);
         $G->clear();
         
-        $path_autoload=\GetClassTestPath(AutoLoader::class);
+        $path_autoload=\MyCodeCoverage::GetClassTestPath(AutoLoader::class);
         $sec=(new AutoLoader())->init([
             'skip_system_autoload'=>true,
             'skip_app_autoload'=>true,
@@ -72,8 +72,7 @@ class AutoLoaderTest extends \PHPUnit\Framework\TestCase
         define('__SINGLETONEX_REPALACER',AutoLoaderObject::class.'::CreateObject');
         AutoLoader::G();
         
-        \MyCodeCoverage::G()->end(AutoLoader::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
         AutoLoader::G()->_autoload($class);
         AutoLoader::G()->assignPathNamespace($path, $namespace=null);

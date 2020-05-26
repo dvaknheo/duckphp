@@ -131,8 +131,7 @@ $options['database_list']=[[
 DBManager::G()->_DB();
         DBManager::OnException();
 ////]]]]
-        \MyCodeCoverage::G()->end(DBReusePoolProxy::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
     }
     
     public static function beforeGet()

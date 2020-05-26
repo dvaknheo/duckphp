@@ -32,7 +32,6 @@ class SuperGlobalTest extends \PHPUnit\Framework\TestCase
         SuperGlobal::G()->isInited();
         
         \MyCodeCoverage::G()->end();
-        $this->assertTrue(true);
         /*
         SuperGlobal::G()->__construct();
         SuperGlobal::G()->init();

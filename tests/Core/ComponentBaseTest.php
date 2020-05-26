@@ -13,7 +13,6 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
         ComponentBaseObject::G()->isInited();
 
         \MyCodeCoverage::G()->end();
-        $this->assertTrue(true);
     }
 }
 

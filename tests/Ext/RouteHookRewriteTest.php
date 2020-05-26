@@ -42,8 +42,7 @@ class RouteHookRewriteTest extends \PHPUnit\Framework\TestCase
 
                         RouteHookRewrite::G()->isInited();
 
-        \MyCodeCoverage::G()->end(RouteHookRewrite::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
     }
 }
 class RouteHookRewriteTestMain{

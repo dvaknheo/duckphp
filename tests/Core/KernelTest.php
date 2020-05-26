@@ -17,8 +17,8 @@ class KernelTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(Kernel::class);
     
-        $path_app=\GetClassTestPath(App::class);
-        $path_config=\GetClassTestPath(Configer::class);
+        $path_app=\MyCodeCoverage::GetClassTestPath(App::class);
+        $path_config=\MyCodeCoverage::GetClassTestPath(Configer::class);
         
         $options=[
             'path' => $path_app,
@@ -136,8 +136,7 @@ echo "-------------------------------------\n";
         
             App::G()->isInited();
 
-    \MyCodeCoverage::G()->end(Kernel::class);
-    $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
     return;
 
     }
@@ -176,8 +175,8 @@ echo "-------------------------------------\n";
         
         
         echo "-----------------------\n";
-        $path_app=\GetClassTestPath(App::class);
-        $path_config=\GetClassTestPath(Configer::class);
+        $path_app=\MyCodeCoverage::GetClassTestPath(App::class);
+        $path_config=\MyCodeCoverage::GetClassTestPath(Configer::class);
         $options=[
             'path' => $path_app,
             'path_config' => $path_config,

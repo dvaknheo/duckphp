@@ -28,8 +28,6 @@ class ViewHelperTest extends \PHPUnit\Framework\TestCase
         echo ViewHelper::URL('xxxx');
         echo ViewHelper::Domain();
         
-        \MyCodeCoverage::G()->end(ViewHelper::class);
-        $this->assertTrue(true);
-
+        \MyCodeCoverage::G()->end();
     }
 }

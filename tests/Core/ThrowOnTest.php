@@ -28,8 +28,7 @@ class ThrowOnTest extends \PHPUnit\Framework\TestCase
             echo "3Done";
         }
         
-        \MyCodeCoverage::G()->end(ThrowOn::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
         ThrowOn::G()->ThrowOn($flag, $message, $code=0, $exception_class=null);
         //*/

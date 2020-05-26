@@ -28,8 +28,7 @@ HttpServerParent::G()->isInited();
         HttpServerParent::G()->close();
         
         echo "zzzzzzzzzzzzzzzzzzzzzzzz";
-        \MyCodeCoverage::G()->end(HttpServer::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
     }
 }
 class HttpServerParent extends HttpServer

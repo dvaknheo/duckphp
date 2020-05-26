@@ -16,8 +16,7 @@ class StrictCheckModelTraitTest extends \PHPUnit\Framework\TestCase
         DuckPhp::G()->init($options);
         StrictCheckModelTraitObject::G();
         
-        \MyCodeCoverage::G()->end(StrictCheckModelTrait::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
         StrictCheckModelTrait::G()->G($object=null);
         //*/

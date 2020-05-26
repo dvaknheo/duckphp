@@ -121,9 +121,7 @@ ControllerHelper::PageSize();
 ControllerHelper::PageHtml(123);
 
 
-        \MyCodeCoverage::G()->end(ControllerHelper::class);
-        $this->assertTrue(true);
-
+        \MyCodeCoverage::G()->end();
 
         //*/
     }

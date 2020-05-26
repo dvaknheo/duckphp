@@ -36,8 +36,7 @@ class FacadesAutoLoaderTest extends \PHPUnit\Framework\TestCase
         
         
         FacadesAutoLoader::G()->isInited();
-        \MyCodeCoverage::G()->end(FacadesAutoLoader::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
         FacadesAutoLoader::G()->init($options=[], $context);
         FacadesAutoLoader::G()->_autoload($class);

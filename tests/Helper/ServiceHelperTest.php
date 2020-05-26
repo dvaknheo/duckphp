@@ -23,8 +23,7 @@ class ServiceHelperTest extends \PHPUnit\Framework\TestCase
         ServiceHelper::Config($key, $file_basename);
         ServiceHelper::LoadConfig($file_basename);
         
-        \MyCodeCoverage::G()->end(ServiceHelper::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
         ServiceHelper::G()->Setting($key);
         ServiceHelper::G()->Config($key, $file_basename='config');

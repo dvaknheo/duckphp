@@ -40,7 +40,6 @@ class PagerTest extends \PHPUnit\Framework\TestCase
         Pager::G()->current(1);
         Pager::G()->pageSize();
         Pager::G()->isInited();
-        \MyCodeCoverage::G()->end(Pager::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
     }
 }

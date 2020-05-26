@@ -16,8 +16,9 @@ class Supporter extends \PHPUnit\Framework\TestCase
         $data = MyCodeCoverage::G()->createReport();
         echo "\nSTART CREATE REPORT AT " .DATE(DATE_ATOM)."\n";
         echo "File:\nfile://".MyCodeCoverage::G()->path_report."/index.html" ."\n"; 
-        
-        echo "\nTest Lines: {$data['lines_tested']}/{$data['lines_total']}({$data['lines_percent']})\n";
+                echo "\n\033[42;30m".$this->test_class."\033[0m Test Done!";
+
+        echo "\nTest Lines: \033[42;30m{$data['lines_tested']}/{$data['lines_total']}({$data['lines_percent']})\033[0m\n";
         echo "\n\n";
     }
     public function _testCreateTests()

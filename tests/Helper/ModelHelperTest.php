@@ -13,8 +13,7 @@ class ModelHelperTest extends \PHPUnit\Framework\TestCase
         ModelHelper::SqlForPager($sql,1,5);
         ModelHelper::SqlForCountSimply($sql);
 
-        \MyCodeCoverage::G()->end(ModelHelper::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
         //*/
     }

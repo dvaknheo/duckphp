@@ -8,7 +8,7 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(Logger::class);
         
-        $path_log=\GetClassTestPath(Logger::class);
+        $path_log=\MyCodeCoverage::GetClassTestPath(Logger::class);
         $options=[
             'path_log' => $path_log,
             'log_prefix'=>'DuckPhpLog',
@@ -40,7 +40,6 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
         file_put_contents($path_log.'log.log','');// clear
         Logger::G()->isInited();
 
-        \MyCodeCoverage::G()->end(Logger::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
     }
 }

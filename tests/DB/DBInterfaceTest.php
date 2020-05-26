@@ -11,8 +11,7 @@ class DBInterfaceTest extends \PHPUnit\Framework\TestCase
         
         //code here
         
-        \MyCodeCoverage::G()->end(DBInterface::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
         DBInterface::G()->close();
         DBInterface::G()->getPDO();

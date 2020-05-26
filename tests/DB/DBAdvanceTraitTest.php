@@ -44,8 +44,7 @@ class DBAdvanceTraitTest extends \PHPUnit\Framework\TestCase
         $db->pdo=null;
         $db->qouteInsertArray($array);
         
-        \MyCodeCoverage::G()->end(DBAdvanceTrait::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
         $db->quoteIn($array);
         $db->quoteSetArray($array);

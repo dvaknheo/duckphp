@@ -48,8 +48,7 @@ class RedisSimpleCacheTest extends \PHPUnit\Framework\TestCase
         
         RedisSimpleCache::G()->isInited();
 
-        \MyCodeCoverage::G()->end(RedisSimpleCache::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
 
         //*/

@@ -34,8 +34,7 @@ class ExtendableStaticCallTraitTest extends \PHPUnit\Framework\TestCase
         }catch(\Throwable $ex){
         }
         
-        \MyCodeCoverage::G()->end(ExtendableStaticCallTrait::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
 
         ExtendableStaticCallTraitObject::__callStatic($name, $arguments);

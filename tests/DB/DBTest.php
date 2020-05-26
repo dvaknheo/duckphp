@@ -54,8 +54,7 @@ class DBTest extends \PHPUnit\Framework\TestCase
         //code here
         DB::CloseDBInstance($db);
         
-        \MyCodeCoverage::G()->end(DB::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
         $db->init($options=[], $context=null);
         $db->CreateDBInstance($db_config);

@@ -156,8 +156,7 @@ $options=[
 
         DBManager::G()->isInited();
 
-        \MyCodeCoverage::G()->end(DBManager::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
 
     }
     public static function beforeGet()

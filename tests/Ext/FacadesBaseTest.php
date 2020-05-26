@@ -21,8 +21,7 @@ class FacadesBaseTest extends \PHPUnit\Framework\TestCase
             echo "EXXXXXXXXXXXXx";
         }
         new FacadesBase();
-        \MyCodeCoverage::G()->end(FacadesBase::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
         FacadesBase::G()->__callStatic($name, $arguments);
         //*/

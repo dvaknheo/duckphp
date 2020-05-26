@@ -20,8 +20,7 @@ class SystemWrapperTraitTest extends \PHPUnit\Framework\TestCase
         var_dump($data);
 
 
-        \MyCodeCoverage::G()->end(SystemWrapper::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
         SystemWrapper::G()->system_wrapper_replace(array $funcs);
         SystemWrapper::G()->system_wrapper_get_providers();

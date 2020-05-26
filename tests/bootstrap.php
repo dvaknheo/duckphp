@@ -70,11 +70,18 @@ class MyCodeCoverage
         $this->namespace=null;
 
     }
-    //function GetClassTestPath($class)
-    //{
-    //    $ret=__DIR__.'/data_for_tests'.str_replace(['DuckPhp\\','\\'],['/','/'],$class).'/';
-    //    return $ret;
-    //}
+    public function GetClassTestPath($class)
+    {
+        return static::G()->doGetClassTestPath($class);
+    }
+    public function doGetClassTestPath($class)
+    {
+        $blocks=explode('\\',$this->test_class);
+        $root=array_shift($blocks);
+        $this->namespace=$this->namespace ?? $root;
+        $ret=__DIR__.'/data_for_tests/'.str_replace([$this->namespace.'\\','\\'],['/','/'],$class).'/';
+        return $ret;
+    }
     protected static function include_file($file)
     {
         return include $file;
@@ -158,9 +165,13 @@ class MyCodeCoverage
         
         $this->coverage=null;
         
-        //echo "\nXXX Test Done!"
-        //\PHPUnit\Framework\Assert\assertTrue(true);
-        //echo "\n";
+        $this->showResult();
+    }
+    protected function showResult()
+    {
+        echo "\n\033[42;30m".$this->test_class."\033[0m Test Done!";
+        \PHPUnit\Framework\Assert::assertTrue(true);
+        echo "\n";
     }
     
     ///////////////////////

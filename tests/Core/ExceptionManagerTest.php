@@ -60,8 +60,7 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
         
         ExceptionManager::G()->isInited();
 
-        \MyCodeCoverage::G()->end(ExceptionManager::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
         
         ExceptionManager::G()->setMultiExceptionHandler(array $classes, $callback);

@@ -20,8 +20,7 @@ class RuntimeStateTest extends \PHPUnit\Framework\TestCase
         
         RuntimeState::G()->isInited();
 
-        \MyCodeCoverage::G()->end(RuntimeState::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
         RuntimeState::G()->isRunning();
         RuntimeState::G()->ReCreateInstance();

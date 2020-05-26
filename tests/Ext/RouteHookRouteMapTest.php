@@ -51,7 +51,7 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
         Route::G()->bind('/seventh')->run();
 
         var_dump("-------------------------");
-        $path=\GetClassTestPath(RouteHookRouteMap::class);
+        $path=\MyCodeCoverage::GetClassTestPath(RouteHookRouteMap::class);
         App::G()->init([
             'path'=>$path,
             'path_config'=>'',
@@ -65,8 +65,7 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
         //Route::G()->bind('/eighth')->run();
 
         RouteHookRouteMap::G()->isInited();
-        \MyCodeCoverage::G()->end(RouteHookRouteMap::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
     }
 }
 class RouteHookRouteMapTestMain{

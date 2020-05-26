@@ -11,7 +11,7 @@ class RouteHookDirectoryModeTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(RouteHookDirectoryMode::class);
         
-        $base_path=\GetClassTestPath(RouteHookDirectoryMode::class);
+        $base_path=\MyCodeCoverage::GetClassTestPath(RouteHookDirectoryMode::class);
         $route_options=[
             'namespace'=>__NAMESPACE__,
             'namespace_controller'=>'\\'.__NAMESPACE__,
@@ -75,8 +75,7 @@ echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n";
         Route::G()->run();
                 RouteHookDirectoryMode::G()->isInited();
 
-        \MyCodeCoverage::G()->end(RouteHookDirectoryMode::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
     }
 }
 class RouteHookDirectoryModeTesttMain

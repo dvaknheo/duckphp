@@ -16,8 +16,7 @@ class StrictServiceTraitTest extends \PHPUnit\Framework\TestCase
         DuckPhp::G()->init($options);
         StrictCheckServiceTraitObject::G();
         
-        \MyCodeCoverage::G()->end(StrictCheckServiceTrait::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
         StrictServiceTrait::G()->G($object=null);
         //*/

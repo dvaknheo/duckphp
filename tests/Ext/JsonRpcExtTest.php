@@ -11,7 +11,7 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \MyCodeCoverage::G()->begin(JsonRpcExt::class);
-        $path_app=\GetClassTestPath(JsonRpcExt::class);
+        $path_app=\MyCodeCoverage::GetClassTestPath(JsonRpcExt::class);
         
         $ret=JsonRpcExt::G()->onRpcCall([
             'method'=>TestService::class.'.foo',
@@ -94,8 +94,7 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
         var_dump($data);
         HttpServer::G()->close();
         JsonRpcExt::G()->isInited();
-        \MyCodeCoverage::G()->end(JsonRpcExt::class);
-        $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
         /*
         JsonRpcExt::G()->init($options=[], $context);
         JsonRpcExt::G()->getRealClass($object);

@@ -15,8 +15,8 @@ class AppTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(App::class);
     
-        $path_app=\GetClassTestPath(App::class);
-        $path_config=\GetClassTestPath(Configer::class);
+        $path_app=\MyCodeCoverage::GetClassTestPath(App::class);
+        $path_config=\MyCodeCoverage::GetClassTestPath(Configer::class);
         
         $options=[
             'path' => $path_app,
@@ -138,8 +138,7 @@ App::PageHtml(123);
 
     App::G()->isInited();
 
-    \MyCodeCoverage::G()->end(App::class);
-    $this->assertTrue(true);
+        \MyCodeCoverage::G()->end();
     return;
 
     }
@@ -286,7 +285,7 @@ App::PageHtml(123);
         App::URL('abc');
         //*/
         //*
-        $path_view=\GetClassTestPath(App::class).'view/';
+        $path_view=\MyCodeCoverage::GetClassTestPath(App::class).'view/';
 
         $options=[
             'path_view'=>$path_view,
@@ -354,8 +353,8 @@ App::PageHtml(123);
         
         
         echo "-----------------------\n";
-        $path_app=\GetClassTestPath(App::class);
-        $path_config=\GetClassTestPath(Configer::class);
+        $path_app=\MyCodeCoverage::GetClassTestPath(App::class);
+        $path_config=\MyCodeCoverage::GetClassTestPath(Configer::class);
         $options=[
             'path' => $path_app,
             'path_config' => $path_config,
