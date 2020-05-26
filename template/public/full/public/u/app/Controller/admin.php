@@ -3,13 +3,13 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace UUU\Controller;
+namespace SimpleBlog\Controller;
 
-use UUU\Base\ControllerHelper  as C;
-use UUU\Service as S;
-use UUU\Service\AdminService;
-use UUU\Service\SessionService;
-use UUU\Service\ArticleService;
+use SimpleBlog\Base\ControllerHelper  as C;
+use SimpleBlog\Service as S;
+use SimpleBlog\Service\AdminService;
+use SimpleBlog\Service\SessionService;
+use SimpleBlog\Service\ArticleService;
 
 class admin
 {

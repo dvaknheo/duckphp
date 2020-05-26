@@ -3,7 +3,7 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace UUU\Base;
+namespace SimpleBlog\Base;
 
 use DuckPhp\App as DuckPhp_App;
 
@@ -17,9 +17,6 @@ class App extends DuckPhp_App
     ];
     //@override
     protected $options_project = [
-        'path_view' => 'app/view',
-        'path_config' => 'app/config',
-        
         'ext' => [
             'UserSystemDemo\\Base\\App' => true,
             'DuckPhp\\Ext\\Misc' => true,
@@ -29,6 +26,13 @@ class App extends DuckPhp_App
             '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
         ],
     ];
+    public function __construct()
+    {
+        parent::__construct();
+        $base_dir=basename(__DIR__);
+        $this->options=['path_view'] = $base_dir.'/view';
+        $this->options=['path_config'] = $base_dir.'/config';
+    }
     protected function onPrepare()
     {
         $path = realpath($this->options['path'].'../../auth/');

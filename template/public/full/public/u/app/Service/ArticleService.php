@@ -3,11 +3,11 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace UUU\Service;
+namespace SimpleBlog\Service;
 
-use UUU\Base\BaseService;
+use SimpleBlog\Base\BaseService;
 
-use UUU\Model as M;
+use SimpleBlog\Model as M;
 
 class ArticleService extends BaseService
 {

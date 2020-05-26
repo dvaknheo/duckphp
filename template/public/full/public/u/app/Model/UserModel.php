@@ -3,9 +3,9 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace UUU\Model;
+namespace SimpleBlog\Model;
 
-use UUU\Base\ModelHelper as M;
+use SimpleBlog\Base\ModelHelper as M;
 
 class UserModel extends BaseModel
 {

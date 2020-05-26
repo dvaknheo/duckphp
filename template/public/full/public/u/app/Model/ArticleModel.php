@@ -3,7 +3,7 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace UUU\Model;
+namespace SimpleBlog\Model;
 
 class ArticleModel extends BaseModel
 {

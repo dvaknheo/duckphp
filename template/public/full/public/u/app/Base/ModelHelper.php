@@ -3,7 +3,7 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace UUU\Base;
+namespace SimpleBlog\Base;
 
 use DuckPhp\Helper\ModelHelper as Helper;
 

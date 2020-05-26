@@ -3,16 +3,16 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace UUU\Service;
+namespace SimpleBlog\Service;
 
-use UUU\Base\BaseService;
-use UUU\Base\ServiceHelper as S;
-use UUU\UserException;
+use SimpleBlog\Base\BaseService;
+use SimpleBlog\Base\ServiceHelper as S;
+use SimpleBlog\UserException;
 
-use UUU\Model as M;
-use UUU\Model\ActionLogModel;
-use UUU\Model\UserModel;
-use UUU\Model\CommentModel;
+use SimpleBlog\Model as M;
+use SimpleBlog\Model\ActionLogModel;
+use SimpleBlog\Model\UserModel;
+use SimpleBlog\Model\CommentModel;
 
 class UserService extends BaseService
 {

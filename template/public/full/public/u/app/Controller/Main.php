@@ -3,13 +3,13 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace UUU\Controller;
+namespace SimpleBlog\Controller;
 
-use UUU\Base\ControllerHelper as C;
+use SimpleBlog\Base\ControllerHelper as C;
 
-use UUU\Service\SessionService;
-use UUU\Service\ArticleService;
-use UUU\Service\UserService;
+use SimpleBlog\Service\SessionService;
+use SimpleBlog\Service\ArticleService;
+use SimpleBlog\Service\UserService;
 
 class Main
 {

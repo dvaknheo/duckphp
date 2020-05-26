@@ -3,11 +3,11 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace UUU\Service;
+namespace SimpleBlog\Service;
 
-use UUU\Base\BaseService;
-use UUU\Base\ServiceHelper;
-use UUU\Base\App;
+use SimpleBlog\Base\BaseService;
+use SimpleBlog\Base\ServiceHelper;
+use SimpleBlog\Base\App;
 
 class SessionService extends BaseService
 {

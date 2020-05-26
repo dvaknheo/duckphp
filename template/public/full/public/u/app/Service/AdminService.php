@@ -3,10 +3,10 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace UUU\Service;
+namespace SimpleBlog\Service;
 
 use DuckPhp\Core\SingletonEx;
-use UUU\Model as M;
+use SimpleBlog\Model as M;
 
 class AdminService
 {

@@ -3,9 +3,9 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace UUU\Controller;
+namespace SimpleBlog\Controller;
 
-use UUU\Base\ControllerHelper  as DN;
+use SimpleBlog\Base\ControllerHelper  as DN;
 
 class install
 {
