@@ -12,22 +12,28 @@ class App extends DuckPhpApp
 {
     use AppPluginTrait;
     
+    //@override
     protected $options_project = [
         'path_config' => 'auth/config',
         'path_view' => 'auth/view',
     ];
-    protected $plugin_options_project = [];
+    //@override
+    protected $plugin_options_project = [
+    ];
+    //@override
     public function onInit()
     {
     }
+    //@override
     protected function onRun()
     {
     }
-	////
+	//@override
     protected function onPluginModeInit()
     {
         //your code here
     }
+    //@override
 	protected function onPluginModeRun()
     {
         //your code here

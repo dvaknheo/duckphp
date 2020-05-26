@@ -215,6 +215,8 @@ class dbtest
 ```
 array('t'=>3);
 ```
+`M::DB()`  的几个方法  `fetch` `fetchAll`,`execute` 和 pdo 类似
+
 
 ### 快速入门演示了什么
 

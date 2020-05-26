@@ -150,7 +150,7 @@ require_once('../vendor/autoload.php');
 $options=[];
 $options['override_class']='';      // 示例文件，不要被子类干扰。
 $options['skip_setting_file']=true; // 示例文件，不需要配置文件。
-DuckPhp::RunQuickly($options,function(){
+App::RunQuickly($options,function(){
     Db::setConfig([
         'default'     => 'mysql',
         'connections' => [
@@ -166,7 +166,7 @@ DuckPhp::RunQuickly($options,function(){
     //就这句话了
     App::G()->setDBHandler(function(){return Db::class;});
     $sql="select * from Users where true limit 1";
-    $data=DuckPhp::DB()::query($sql);
+    $data=App::DB()::query($sql);
     var_dump($data);
 });
 

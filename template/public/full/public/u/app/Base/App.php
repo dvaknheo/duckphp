@@ -29,20 +29,17 @@ class App extends DuckPhp_App
             '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
         ],
     ];
-    public function onPrepare()
+    protected function onPrepare()
     {
         $path = realpath($this->options['path'].'../../auth/');
         $this->assignPathNamespace($path, 'UserSystemDemo');
     }
-    public function onInit()
+    protected function onInit()
     {
         static::assignRoute([
             '^abc(\d*)' => function () {
                 var_dump("OK");
             },
         ]);
-    }
-    public function onRun()
-    {
     }
 }
