@@ -9,12 +9,16 @@ $class = get_class($ex);
 $code = $ex->getCode();
 $message = $ex->getMessage();
 $trace = $ex->getTraceString();
+$file = $ex->getFile();
+$line = $ex->getLine();
 
 if ($is_debug) {
     ?>
 <fieldset>
     <legend>Exception(<?=$class ?>:<?=$code?>)</legend>
     <?=$message ?>
+    <div><?=$file?> : <?=$line?></div>";
+
 <pre>
 --
 <?=$trace?>
@@ -25,4 +29,4 @@ if ($is_debug) {
         ?>
     500
 <?php
-    }
+}

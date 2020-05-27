@@ -151,8 +151,6 @@ $options['path'] = $path;
 $options['namespace'] = $namespace;
 
 $options['ext']['DuckPhp\\Ext\\RouteHookOneFileMode']=true; //@DUCKPHP_DELETE
-
 echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKPHP_DELETE
 
-\DuckPhp\App::RunQuickly($options, function () {
-});
+\DuckPhp\App::RunQuickly($options);

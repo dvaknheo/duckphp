@@ -53,18 +53,20 @@ class Configer extends ComponentBase
             $setting_file = $this->options['setting_file'];
             $full_setting_file = $this->path.$setting_file.'.php';
             if (!is_file($full_setting_file)) {
-                // @codeCoverageIgnoreStart
-                echo "<h1> Class '". static::class."' Fatal: No setting file[ ".$full_setting_file.' ]!</h1>';
-                echo '<h2>change '.$setting_file.'.sample.php to '. $setting_file.".php !</h2>"; //// @codeCoverageIgnore
-                echo "<h2> Or turn on  options ['skip_setting_file']</h2>"; //
-                exit;
-                // @codeCoverageIgnoreEnd
+                $this->exitWhenNoSettingFile($full_setting_file, $setting_file); // @codeCoverageIgnore
             }
             $setting = $this->loadFile($full_setting_file);
             $this->setting = array_merge($this->setting, $setting);
         }
         $this->is_setting_inited = true;
         return $this->setting[$key] ?? null;
+    }
+    protected function exitWhenNoSettingFile($full_setting_file, $setting_file)
+    {
+        echo "<h1> Class '". static::class."' Fatal: No setting file[ ".$full_setting_file.' ]!</h1>';
+        echo '<h2>change '.$setting_file.'.sample.php to '. $setting_file.".php !</h2>";
+        echo "<h2> Or turn on  options ['skip_setting_file']</h2>"; //
+        exit;
     }
     
     public function _Config($key, $file_basename = 'config')

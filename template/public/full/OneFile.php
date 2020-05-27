@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 use DuckPhp\App;
 use DuckPhp\Core\Route;
-
+//未完工
 require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
 //// 这个例子极端点，没用任何类，全函数模式。
 
@@ -94,7 +94,6 @@ $options['skip_setting_file'] = true;
 $options['is_debug'] = true;
 
 $flag=App::RunQuickly($options,function(){
-    View::G
     Route::G()->add404Handler(function(){
         $path_info=Route::G()->path_info;
         $path_info=ltrim($path_info,'/');

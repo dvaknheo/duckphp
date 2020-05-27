@@ -16,7 +16,7 @@ class App extends SystemApp
         'error_debug' =>  '_sys/error_debug',
         
         'is_debug' => true, // @DUCKPHP_DELETE
-        'skip_setting_file' => false, // @DUCKPHP_DELETE
+        'skip_setting_file' => true, // @DUCKPHP_DELETE
     ];
     public function __construct()
     {
@@ -106,7 +106,6 @@ class App extends SystemApp
     //@override
     protected function onPrepare()
     {
-        var_dump($this->options);
     }
     //@override
     protected function onInit()

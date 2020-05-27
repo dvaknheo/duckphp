@@ -7,17 +7,17 @@
     - 使用 [DB/DBAdvance](ref/DB-DBAdvance.md)
     - 实现 [DB/DBInterface](ref/DB-DBInterface.md)
 
-## 相关配置
+## 相关选项
 
 'db_create_handler'=>null,  // 默认用 [DB::class,'CreateDBInstance']
 'db_close_handler'=>null,   // 默认等于 [DB::class,'CloseDBInstance']
 'before_get_db_handler'=>null, // 在调用 DB 前调用
-'use_context_db_setting'=>true, //使用 setting 里的。
+'use_context_db_setting'=>true, //使用 setting 里的 database_list 配置。
 'database_list'=>null,      //DB 列表
 
 ## 相关设置
 setting.php 以下配置，注意的是 DuckPhp 默认是支持多个数据库的，所以是databa
-```
+```php
 [
 'database_list' =>[[
         'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
@@ -32,21 +32,10 @@ setting.php 以下配置，注意的是 DuckPhp 默认是支持多个数据库�
 默认开启。DBManager 类是用来使用数据库的
 M::DB() 用到了这个组件。
 
-#### 选项
-
-#### 说明
-
-database_list 的示例：
-```php
-    [[
-        'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
-        'username'=>'???',
-        'password'=>'???',
-    ]],
-```
 #### 方法
 DB()
     是 App::DB 和 M::DB 的实现。
+
 #### DB 类的用法
 DB
     close(); //关闭, 你一般不用关闭,系统会自动关闭
