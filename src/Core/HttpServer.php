@@ -13,7 +13,7 @@ class HttpServer extends ComponentBase
     public $options = [
             'host' => '127.0.0.1',
             'port' => '8080',
-            'path' => null,
+            'path' => '',
             'path_document' => 'public',
         ];
     protected $cli_options = [

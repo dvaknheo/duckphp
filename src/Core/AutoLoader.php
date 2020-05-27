@@ -9,7 +9,7 @@ namespace DuckPhp\Core;
 class AutoLoader
 {
     public $options = [
-            'path' => null,
+            'path' => '',
             'namespace' => 'MY',
             'path_namespace' => 'app',
             
@@ -58,7 +58,7 @@ class AutoLoader
         $this->is_inited = true;
         
         $this->options = array_merge($this->options, $options);
-        if (!isset($this->options['path'])) {
+        if (empty($this->options['path'])) {
             $path = realpath(getcwd().'/../');
             $this->options['path'] = $path;
         }

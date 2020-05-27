@@ -1,8 +1,11 @@
 <?php declare(strict_types=1);
 use DuckPhp\App;
+use DuckPhp\Core\Route;
 
-require(__DIR__.'/../headfile/headfile.php');
+require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
+//// 这个例子极端点，没用任何类，全函数模式。
 
+////
 global $view_data;
 $view_data = [];
 /////////////////////
@@ -21,17 +24,19 @@ function update_data($content)
 function delete_data()
 {
     unset(App::SG()->_SESSION['content']);
-    unset(_SESSION['content']);
+    unset($_SESSION['content']);
 }
 /////////////
 function action_index()
 {
-    global $view_data;]
+    global $view_data;
     $view_data['content'] = nl2br(App::H(get_data()));
     $view_data['url_add'] = App::URL('add');
     $view_data['url_edit'] = App::URL('edit');
-    $token = App::SG()->_SESSION['token'] = md5(mt_rand());
+    $token = App::SG()->_SESSION['token'] = md5(''.mt_rand());
     $view_data['url_del'] = App::URL('del?token='.$token);
+    
+    App::Show($data);
 }
 function action_add()
 {
@@ -69,7 +74,7 @@ function action_do_edit()
 }
 function action_do_add()
 {
-    add_data(DN::SG()->_POST['content']);
+    add_data(App::SG()->_POST['content']);
     $data = [];
     $data['url_back'] = DN::URL('');
     App::Show($data, 'dialog');
@@ -84,17 +89,26 @@ function H($str)
 }
 ////////////////////////////////////
 $options = [];
-if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
-    echo "<div>Don't run the template file directly </div>";
-}
-if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
-    $options['setting_file_basename'] = '';
-}
-if (defined('DNMVCS_WARNING_IN_TEMPLATE')) {
-    $options['is_dev'] = true;
-}
 
-$flag=App::RunQuickly($options);
+$options['skip_setting_file'] = true;
+$options['is_debug'] = true;
+
+$flag=App::RunQuickly($options,function(){
+    View::G
+    Route::G()->add404Handler(function(){
+        $path_info=Route::G()->path_info;
+        $path_info=ltrim($path_info,'/');
+        $path_info=empty($path_info)?'index':$path_info;
+        $post_prefix=!empty(APP::SG()->_POST)?'do_':'';
+        $callback="action_{$post_prefix}{$path_info}";
+        //var_dump($callback);
+        if(is_callable($callback)){
+            ($callback)();
+            return true;
+        }
+        return false;
+    });
+});
 if(!$flag){
     return;
 }
@@ -118,13 +132,16 @@ function view_header($view_data = [])
  <meta charset="UTF-8">
 <head><title>DNMVCS 单一页面演示</title></head>
 <body>
+<?php
+    echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKPHP_DELETE
+?>
 <fieldset>
 	<legend>DNMVCS 单一页面演示</legend>
 	<div style="border:1px red solid;">
 <?php
 }
-//function main(){
-?>
+function view_main($view_data){
+    extract($view_data); ?>
 	<h1>首页</h1>
 <?php if ($content === '') {
     ?>
@@ -141,7 +158,7 @@ function view_header($view_data = [])
     }
 ?>
 	<?php
-// }// main
+}// main
 function view_add($view_data)
 {
     extract($view_data); ?>

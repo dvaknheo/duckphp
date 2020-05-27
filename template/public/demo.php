@@ -6,7 +6,6 @@
 namespace
 {
     require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
-
 }
 // 以下部分是核心工程师写。
 namespace MySpace\Base
@@ -18,7 +17,7 @@ namespace MySpace\Base
 
     class App extends \DuckPhp\App
     {
-        // 这里演示函数调用的
+        // @override
         protected $options_project = [
             'is_debug' => true,
                 // 开启调试模式
@@ -29,9 +28,10 @@ namespace MySpace\Base
                 RouteHookOneFileMode::class => true,
                     // 开启单一文件模式，服务器不配置也能运行
                 CallableView::class => true,
-                    // 默认的 View 不支持函数调用，我们用  CallableView 代替系统的 View
+                    // 默认的 View 不支持函数调用，我们用扩展 CallableView 代替系统的 View
             ],
-            'callable_view_class' => Views::class, // 替换的 View 类。
+            'callable_view_class' => Views::class, 
+                    // 替换的 View 类。
         ];
         protected function onInit()
         {
@@ -70,11 +70,11 @@ namespace MySpace\Base\Helper
     }
 } // end namespace
 //------------------------------
-// 以下部分是应用工程师写的。不再和 DuckPhp 的类有任何关系。
+// 以下部分由应用工程师编写，不再和 DuckPhp 的类有任何关系。
 namespace MySpace\Controller
 {
     use MySpace\Base\Helper\ControllerHelper as C;  // 引用助手类
-    use MySpace\Service\MyService;                  // 引用相关服务了。
+    use MySpace\Service\MyService;                  // 引用相关服务类
 
     class Main
     {
@@ -95,7 +95,7 @@ namespace MySpace\Controller
     {
         public function me()
         {
-            $url_main = C::URL('');
+            $url_main = C::URL(''); //默认URL
             C::setViewWrapper('header', 'footer');
             C::Show(get_defined_vars()); // 默认视图 about/me ，可省略
         }
@@ -167,7 +167,8 @@ namespace MySpace\View {
         }
     }
 } // end namespace
-
+//------------------------------
+// 入口，放最后面避免自动加载问题
 namespace {
     $options = [
         'namespace' => 'MySpace', //项目命名空间为 MySpace，  你可以随意命名

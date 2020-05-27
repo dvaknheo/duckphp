@@ -38,6 +38,7 @@ trait AppPluginTrait
     
     public function pluginModeInit(array $options, object $context = null)
     {
+        $this->onPluginModePrepare();
         $this->pluginModeInitOptions($options);
         $this->pluginModeInitVars($context);
         
@@ -54,6 +55,11 @@ trait AppPluginTrait
         $this->onPluginModeInit();
         
         return $this;
+    }
+    //for override
+    protected function onPluginModePrepare()
+    {
+        ////
     }
     //for override
     protected function onPluginModeInit()

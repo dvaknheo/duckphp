@@ -22,7 +22,7 @@
     if ($skip_in_full) {
         ?>
 <div>
-请使用安装选项 --full 以打开开启 <a href="javascript:;">完整演示</a>
+    请使用安装选项 --full 以打开开启 <a href="javascript:;">完整演示</a>
 </div>
 <?php
     } else {
@@ -36,6 +36,20 @@
     }
 ?>
 <div>
+所有例子
+<ul>
+    <li>demo.php 单一文件演示所有操作
+    <li>demo2.php 单一文件演示所有操作，第二模式。
+    <li>helloworld.php 常见的 helloworld
+    <li>no-path-info.php 不配置服务器
+</ul>
+完整模式下的其他例子
+<ul>
+    <li>auth.php
+    <li>blog.php
+    <li>inddex.php
+    <li>OneFile.php 最传统
+</ul>
 </div>
 </body>
 </html>

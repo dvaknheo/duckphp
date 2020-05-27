@@ -34,7 +34,7 @@ trait Kernel
             'override_class' => 'Base\App',
             
             //// basic config ////
-            'path' => null,
+            'path' => '',
             'namespace' => 'MY',
             'path_namespace' => 'app',
             

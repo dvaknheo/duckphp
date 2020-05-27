@@ -92,3 +92,10 @@ pluginModeDefaultRouteHook 通过 pluginModeCloneHelpers 把自己的 Helper  �
     protected function pluginModeSearchAllPluginFile($path, $setting_file = '')
     protected function pluginModeDefaultRouteHook($path_info)
     protected function pluginModeCloneHelpers()
+    
+    
+    protected function onPluginModePrepare()
+    protected function onPluginModeInit()
+    protected function onPluginModeRun()
+    protected function pluginModeBeforeRun($callback)
+ 
