@@ -15,7 +15,9 @@ class App extends SystemApp
         'error_exception' => '_sys/error_exception',
         'error_debug' =>  '_sys/error_debug',
         
+        //'is_debug' => true, 
         'is_debug' => true, // @DUCKPHP_DELETE
+        //'skip_setting_file' => true,
         'skip_setting_file' => true, // @DUCKPHP_DELETE
     ];
     public function __construct()

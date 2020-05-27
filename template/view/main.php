@@ -38,17 +38,16 @@
 <div>
 所有例子
 <ul>
-    <li>demo.php 单一文件演示所有操作
-    <li>demo2.php 单一文件演示所有操作，第二模式。
-    <li>helloworld.php 常见的 helloworld
-    <li>no-path-info.php 不配置服务器
+    <li><a href="/demo.php"> demo.php 单一文件演示所有操作</a>
+    <li><a href="/helloworld.php"> helloworld.php 常见的 helloworld</a>
+    <li><a href="/just-route.php">just-route.php 只要路由</a>
 </ul>
 完整模式下的其他例子
 <ul>
-    <li>auth.php
-    <li>blog.php
-    <li>inddex.php
-    <li>OneFile.php 最传统
+    <li><a href="/full/auth.php">auth.php 简单的用户验证系统</a>
+    <li><a href="/full/blog.php">blog.php 简单的博客</a>
+    <li><a href="/full/index.php">index.php 待整理，旧的自声明文档</a>
+    <li><a href="/full/OneFile.php">OneFile.php 单一文件，用于 </a>
 </ul>
 </div>
 </body>
