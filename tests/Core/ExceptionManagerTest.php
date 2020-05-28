@@ -60,6 +60,11 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
         
         ExceptionManager::G()->isInited();
 
+
+        ExceptionManager::G(new ExceptionManager());
+        define('__SINGLETONEX_REPALACER',ExceptionAutoLoaderObject::class.'::CreateObject');
+        ExceptionManager::G();
+        
         \MyCodeCoverage::G()->end();
         /*
         
@@ -92,4 +97,15 @@ class ExceptionManagerObject
     {
         echo (sprintf("ERROR:%X;",$errno).'~'.$errstr.'~'.$errfile.'~'.$errline."\n");
     }
+}
+class ExceptionAutoLoaderObject
+{    
+    public static function CreateObject($class, $object)
+    {
+        static $_instance;
+        $_instance=$_instance??[];
+        $_instance[$class]=$object?:($_instance[$class]??($_instance[$class]??new static));
+        return $_instance[$class];
+    }
+
 }

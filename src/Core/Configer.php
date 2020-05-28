@@ -63,10 +63,10 @@ class Configer extends ComponentBase
     }
     protected function exitWhenNoSettingFile($full_setting_file, $setting_file)
     {
-        echo "<h1> Class '". static::class."' Fatal: No setting file[ ".$full_setting_file.' ]!</h1>';
+        echo "<h1> Class '". static::class."' Fatal: No setting file[ ".$full_setting_file.' ]!</h1>'; // @codeCoverageIgnoreStart
         echo '<h2>change '.$setting_file.'.sample.php to '. $setting_file.".php !</h2>";
         echo "<h2> Or turn on  options ['skip_setting_file']</h2>"; //
-        exit;
+        exit; // @codeCoverageIgnoreEnd
     }
     
     public function _Config($key, $file_basename = 'config')

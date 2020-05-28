@@ -189,7 +189,7 @@ class App extends SystemApp
             $options['strict_check_context_class']=NULL;
         //*/
 
-        $this->options = array_replace_recursive($this->options, $options);
+        $this->options_project = array_replace_recursive($this->options_project, $options);
     }
     //@override
     protected function onPrepare()

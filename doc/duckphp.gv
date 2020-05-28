@@ -10,8 +10,8 @@ subgraph cluster_Core {
     Core_App [label="App";shape=Mdiamond]; 
     Core_Kernel [label="Kernel";shape="diamond"];
     Core_SingletonEx [label="SingletonEx";shape=Mdiamond];
-    Core_AutoLoader [label="AutoLoader";shape="component"];
-    Core_ExceptionManager [label="ExceptionManager";shape="component"];
+    Core_AutoLoader [label="AutoLoader"];
+    Core_ExceptionManager [label="ExceptionManager"];
     Core_View [label="View";shape="component"];
     Core_Configer [label="Configer";shape="component"];
     Core_Logger [label="Logger";shape="component"];
@@ -62,7 +62,6 @@ subgraph cluster_Core {
     Core_AppPluginTrait -> Core_SuperGlobal;
     
     
-    Core_ExceptionManager -> Core_ComponentBase [style="dotted"];
     Core_Configer -> Core_ComponentBase [style="dotted"];
     Core_Route -> Core_ComponentBase [style="dotted"];
     Core_SuperGlobal -> Core_ComponentBase [style="dotted"];

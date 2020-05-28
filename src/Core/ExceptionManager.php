@@ -6,9 +6,7 @@
 
 namespace DuckPhp\Core;
 
-use DuckPhp\Core\ComponentBase;
-
-class ExceptionManager extends ComponentBase
+class ExceptionManager
 {
     public $options = [
         'handle_all_dev_error' => true,
@@ -26,8 +24,28 @@ class ExceptionManager extends ComponentBase
     protected $last_error_handler = null;
     protected $last_exception_handler = null;
     
+    public $is_inited = false;
     public $is_running = false;
-
+    protected static $_instances = [];
+    //embed
+    public static function G($object = null)
+    {
+        if (defined('__SINGLETONEX_REPALACER')) {
+            $callback = __SINGLETONEX_REPALACER;
+            return ($callback)(static::class, $object);
+        }
+        if ($object) {
+            self::$_instances[static::class] = $object;
+            return $object;
+        }
+        $me = self::$_instances[static::class] ?? null;
+        if (null === $me) {
+            $me = new static();
+            self::$_instances[static::class] = $me;
+        }
+        
+        return $me;
+    }
     public static function CallException($ex)
     {
         return static::G()->_CallException($ex);
@@ -82,12 +100,14 @@ class ExceptionManager extends ComponentBase
             ($this->default_exception_handler)($ex);
         }
     }
-    
-    //@override
-    protected function initOptions(array $options)
+    public function init(array $options, object $context = null)
     {
+        $this->options = array_replace_recursive($this->options, $options);
+        
         $this->default_exception_handler = $this->options['default_exception_handler'];
         $this->system_exception_handler = $this->options['system_exception_handler'];
+        
+        return $this;
     }
     public function isInited():bool
     {

@@ -96,7 +96,11 @@ class AutoLoader
         if ($this->enable_cache_classes_in_cli) {
             $this->cacheClasses();
         }
-        spl_autoload_register([$this,'_autoload']);
+        spl_autoload_register([$this, 'AutoLoad']);
+    }
+    public static function AutoLoad($class)
+    {
+        return static::G()->_autoload($class);
     }
     public function _autoload($class)
     {
@@ -178,6 +182,6 @@ class AutoLoader
     }
     public function clear()
     {
-        spl_autoload_unregister([$this,'_autoload']);
+        spl_autoload_unregister([$this,'AutoLoad']);
     }
 }

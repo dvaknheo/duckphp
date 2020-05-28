@@ -165,34 +165,63 @@ RunQuickly 相当于 \DuckPhp\App::G()->init($options,function(){})->run();
 ```php
 <?php declare(strict_types=1);
 /**
- * DuckPhp
+ * DuckPHP
  * From this time, you never be alone~
  */
 namespace MY\Base;
 
-use DuckPhp\App as DuckPhp_App;
+use DuckPhp\App as SystemApp;
 
-class App extends DuckPhp_App
+class App extends SystemApp
 {
-    public function onInit()
+    //@override
+    protected $options_project = [
+        'error_404' => '_sys/error_404',
+        'error_500' => '_sys/error_exception',
+        'error_debug' =>  '_sys/error_debug',
+        
+        //'is_debug' => true, 
+        'is_debug' => true, // @DUCKPHP_DELETE
+        //'skip_setting_file' => true,
+        'skip_setting_file' => true, // @DUCKPHP_DELETE
+    ];
+    public function __construct()
+    {
+        parent::__construct();
+        $options = [];
+        // 省略一堆注释
+        $this->options_project = array_replace_recursive($this->options_project, $options);
+    }
+    //@override
+    protected function onPrepare()
+    {
+    }
+    //@override
+    protected function onInit()
     {
         // your code here
-        $ret = parent::onInit();
-        // your code here
-        return $ret;
     }
+    //@override
     protected function onRun()
     {
         // your code here
-        return parent::onRun();
     }
 }
-```
 
-onInit 方法，会在初始化后进行。
+```
+ //@override 注释都是用于重写的。
+
+$options 属性是所有选项，$options_project 属性的东西，将在 init 的时候合并入 $options;
+
+onPrepare 方法，基本在初始化钱运行。
+onInit 方法，会在初始化后运行。
 onRun 方法，会在运行期间运行。
 
-核心工程师重写这两个方法，就能给你的工程带来多种多样的变化了。
+核心工程师重写这三个方法，就能给你的工程带来多种多样的变化了。
+
+在构造父方法里，我们合并了一大堆注释的选项以做不同选择。
+
+这些注释选项，都是默认选项。和打开的效果是一样的。
 
 后面我们开始解释这些代码。
 
@@ -203,7 +232,7 @@ onRun 方法，会在运行期间运行。
 + // @DUCKPHP_DELETE 模板引入后删除
 + // @DUCKPHP_HEADFILE 头文件调整
 + // @DUCKPHP_NAMESPACE 调整命名空间
-+ // @DUCKPHP_KEEP_IN_FULL 在view  里，如果是 --full 选项则保留。
++ // @DUCKPHP_KEEP_IN_FULL 如果是 --full 选项则保留。
 
 ### 关于选项
 
@@ -377,7 +406,7 @@ ExceptionManager::G(MyExceptionManager::G())->init($this->options,$this);
 * 为什么 Core 里面的都是 App::Foo(); 而 Ext 里面的都是 App::G()::Foo();
 因为 Core 里的扩展都是在 DuckPhp\Core\App 下的。
 
-Core 下面的扩展不会单独拿出来用。如果你扩展了该方面的类，最好也是让用户通过 App 或者 MVCS 组件来使用他们。
+Core 下面的扩展不会单独拿出来用。如果你扩展了该方面的类，最好也是让用户通过 App 或者 MVCSA 助手类来使用他们。
 
 
 接下来是[路由](tutorial-route.md)这一章教程，  Route::G()->run() 的具体内容
