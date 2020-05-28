@@ -129,43 +129,35 @@ Controller --> Service ------------------------------ ---> Model
 ```php
 <?php declare(strict_types=1);
 /**
- * DuckPhp
+ * DuckPHP
  * From this time, you never be alone~
  */
 require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
 
-////[[[[
-$options =
-array(
-    // 省略一堆注释性配置
-);
-////]]]]
+$namespace = 'MY';                              // @DUCKPHP_NAMESPACE
 $path = realpath(__DIR__.'/..');
-$namespace = 'MY';                    // @DUCKPHP_NAMESPACE
+
+$options = [];
 $options['path'] = $path;
 $options['namespace'] = $namespace;
-$options['error_404'] = '_sys/error_404';
-$options['error_500'] = '_sys/error_500';
-$options['error_debug'] = '_sys/error_debug';
 
-$options['is_debug'] = true;                  // @DUCKPHP_DELETE
-$options['skip_setting_file'] = true;                 // @DUCKPHP_DELETE
+// $options['ext']['DuckPhp\\Ext\\RouteHookOneFileMode']=true;
+$options['ext']['DuckPhp\\Ext\\RouteHookOneFileMode']=true; //@DUCKPHP_DELETE
 echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKPHP_DELETE
 
-
-\DuckPhp\App::RunQuickly($options, function () {
-});
+\DuckPhp\App::RunQuickly($options);
 ```
 入口类前面部分是处理头文件的。然后处理直接 copy 代码提示，不要直接运行。起作用的主要就这句话
 
 ```php
-\DuckPhp\App::RunQuickly($options, function () {
-});
+\DuckPhp\App::RunQuickly($options);
 ```
 RunQuickly 相当于 \DuckPhp\App::G()->init($options,function(){})->run(); 
 \DuckPhp\App::G()->init($options,function(){})； 会执行根据选项，返回  `MY\Base\App`
 
-### 工程入口文件
+为什么不是 `MY\Base\App::RunQuickly($options); ` 呢？ 可以，但是这要兼容不使用外部 autoloader 的情况。如 composer  。 如果你用外部加载器，直接  MY\Base\App::RunQuickly 也行。
+
+###  工程入口文件
 
 所以我们现在来看 `app/Base/App.php` 对应的 MY\Base\App 类就是入口了。
 模板文件
@@ -314,7 +306,7 @@ init 为初始化阶段 ，run 为运行阶段。$callback 在init() 之后执�
     处理是否是插件模式
     处理自动加载  AutoLoader::G()->init($options, $this)->run();
     处理异常管理 ExceptionManager::G()->init($exception_options, $this)->run();
-    如果有子类，切入子类继续 checkOverride()
+    checkOverride() 检测如果有子类，切入子类（MY\Base\App）继续 
     接下来是 initAfterOverride;
 
 #### initAfterOverride 初始化阶段
@@ -344,13 +336,19 @@ init 为初始化阶段 ，run 为运行阶段。$callback 在init() 之后执�
 只有一个动作： 设置 RuntimeState 为结束
 
 ## 重写入口类
+### 请求流程中添加你的代码
 
-$this->options_project 的数据会合并如 $this->options 。工程额外选项请在这里添加
 
-onPrepare() 用于替换默认组件等。
+属性 options_project 的数据会合并入 $this->options 。工程额外选项请在这里添加
 
-onInit() 在初始化结束之后执行。
++ protected function onPrepare() 
+	用于替换默认组件等。
 
++ protected function onInit() 
+	在初始化结束之后执行。要在初始化完成后做额外工作就在这里加了。
+
++ protected function onRun()
+	运行阶段执行。
 
 ### 接管替换默认实现
 
@@ -373,7 +371,6 @@ ExceptionManager::G()->clear();
 ExceptionManager::G(MyExceptionManager::G())->init($this->options,$this);
 ```
 如何替换组件。
-
 
 为了 onInit 使用方便
 

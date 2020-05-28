@@ -86,7 +86,6 @@ class App extends SystemApp
         // $options['use_short_functions'] = true;
         // $options['use_super_global'] = true;
         
-
         /*
         $options['ext']['DuckPhp\\Ext\\CallableView'] = true;
             $options['callable_view_class']=NULL;
