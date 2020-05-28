@@ -26,7 +26,7 @@ http://duckphp.demo.dev/full/public/auth.php/ 来访问。这就是 UserSystemDe
 
 正如所示 auth 所示范的那样。在普通 
 ```php
-$this->options['ext']['UserSystemDemo\Base\App'] = true;
+$this->options['ext']['SimpleAuth\Base\App'] = true;
 ```
 然后打开地址。
 

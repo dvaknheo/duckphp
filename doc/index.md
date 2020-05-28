@@ -11,7 +11,6 @@
 - [异常处理](tutorial-exception.md)
 - [会话处理](tutorial-session.md)
 - [系统内部架构](tutorial-arch.md)
-- [接管实现](tutorial-override.md)
 - [扩展的使用和开发](tutorial-extension.md)
 - [使用第三方扩展包](tutorial-plugin.md)
 - [系统自带例子分析](tutorial-sample.md)

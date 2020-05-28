@@ -27,31 +27,32 @@ DuckPhp 只启用了 DBManager 一个扩展。
 
 其他扩展按功能如下
 
+### 
 RouteHookDirecotoryMode , RouteHookOnFileMode
 
 这些路由钩子的扩展可以在  路由教程 里查看
 
 
 
-RedisManager RedisSimpleCache
+### RedisManager RedisSimpleCache
 
 
 
-JsonRpcExt
+### JsonRpcExt
 
-StrictCheck 严格检查
+### StrictCheck 严格检查
 
-FacadesAutoLoader
+### FacadesAutoLoader
 
-Misc
+### Misc
 
 
 
-CallableView
+### CallableView
 
-DBReusePoolProxy
+### DBReusePoolProxy
 
-PluginForSwooleHttpd
+### PluginForSwooleHttpd
 
 
 
@@ -80,16 +81,17 @@ extendComponents ，如果你要把你的类给助手类使用。
 
 ```
 $context->extendComponents(
-                [
-                    'assignImportantRoute' => [static::class.'::G','assignImportantRoute'],
-                    'assignRoute' => [static::class.'::G','assignRoute'],
-                    'routeMapNameToRegex' => [static::class.'::G','routeMapNameToRegex'],
-                ],
-                ['A']
-            );
+    [
+        'assignImportantRoute' => [static::class.'::G','assignImportantRoute'],
+        'assignRoute' => [static::class.'::G','assignRoute'],
+        'routeMapNameToRegex' => [static::class.'::G','routeMapNameToRegex'],
+    ],
+    ['A']
+);
 ```
 
 
 
 ## 把你的独立工程作为扩展给第三方使用
 
+只要入口  App 类使用 AppPluginTrait 就行。
