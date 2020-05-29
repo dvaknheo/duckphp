@@ -18,3 +18,10 @@ public static function var_dump(...$args)
 
 ## 详解
 
+SqlForPager($sql, $pageNo, $pageSize = 10)
+
+    分页 limte 的 sql 
+SqlForCountSimply($sql)
+    
+    简单的把 select ... from 替换成select count(*)as c from 
+    

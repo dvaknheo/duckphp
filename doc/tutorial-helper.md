@@ -152,7 +152,7 @@ LoadConfig($key,$basename="config");
 ## ModelHelper
 
 ModelHelper 用于 Model 层。 
-ModelHelper 只有数据库的三个独特方法。
+ModelHelper 有数据库的三个独特方法。
 这几个方法在 ControllerHelper 里没有。
 这几个方法不是 DuckPhp\Core\App 里的。
 而是由 DuckPhp\App 加载 DuckPhp\Ext\DBManager 后添加的。
@@ -168,6 +168,14 @@ DB_R()
 
     获得用于读取的 DB 对象，这是获得第 1 个配置列表里的数据库
 
+此外，还有两个快捷方法，方便分页
+SqlForPager($sql, $pageNo, $pageSize = 10)
+
+    分页 limte 的 sql 
+SqlForCountSimply($sql)
+    
+    简单的把 select ... from 替换成select count(*)as c from 
+    
 ## ControllerHelper 控制器的助手类
 
 本页面展示 ContrlloerHelper 方法。 ContrlloerHelper 的方法很多很杂，但掌握了 ContrlloerHelper 方法，基本就掌握了用法 大致分为 【通用杂项】【路由处理】【异常管理】【跳转】【swoole 兼容】 【内容处理】 几块 内容处理和 ViewHelper 基本通用。 ControllerHelper 方法
