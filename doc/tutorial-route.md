@@ -116,7 +116,7 @@ return [
             
             '^blog/archive/(?<year>\d+)'      =>"~blog@archive_yearly",
             '^blog/archive/(?<year>\d+)-(?<month>\d+)(/page(?<page>\d+))?'    =>"~blog@archive_monthly",
-            '^blog/tag/(?<label>\w+)(/page(?<page>\d+))?'                     =>"~blog@tag",
+            '^blog/ tag/(?<label>\w+)(/page(?<page>\d+))?'                     =>"~blog@tag",
             '^blog/page/(?<slug>\S+)'                                         =>"~blog@post",
             '^blog(/(?<id>\d+))?'                                              =>"~blog@index",
         ];
@@ -156,3 +156,16 @@ DuckPhp 还有一种很特殊的路由模式。
 \+ [DuckPhp\Ext\RouteHookRewrite](Ext-RouteHookRewrite.md)
 
 ​    \- 'rewrite_map' => []
+#### 默认路由生命周期
+    run 函数。
+    
+    BeforeRun 设置 failed 为假
+    绑定服务端数据
+    执行前钩子
+    执行默认路由
+    执行后钩子
+    ////
+    
+    默认路由：获得默认回调 。执行默认回调 defaultGetRouteCallback
+    获取默认类
+    创建实例 获取要调用的方法 getMethodToCall调用类方法

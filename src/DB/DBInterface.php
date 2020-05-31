@@ -15,4 +15,6 @@ interface DBInterface
     public function fetch($sql, ...$args);
     public function fetchColumn($sql, ...$args);
     public function execute($sql, ...$args);
+    public function rowCount();
+    public function lastInsertId();
 }

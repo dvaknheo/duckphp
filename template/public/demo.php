@@ -5,7 +5,7 @@
  */
 namespace
 {
-    require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
+    require_once(__DIR__.'/../../../autoload.php');        // @DUCKPHP_HEADFILE
 }
 // 以下部分是核心工程师写。
 namespace MySpace\Base

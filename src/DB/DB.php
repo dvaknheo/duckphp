@@ -54,6 +54,7 @@ class DB implements DBInterface
         if ($pdo) {
             $this->pdo = $pdo;
         }
+        $this->check_connect();
         return $this->pdo;
     }
     public function setBeforeQueryHandler($handler)
