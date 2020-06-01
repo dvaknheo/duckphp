@@ -1,5 +1,7 @@
 <?php declare(strict_types=1);
 // use MY\Base\Helper\ViewHelper as V;
+    
+    //var_dump(get_defined_vars());
     // change this file if you can
     $skip_in_full = true;
     $skip_in_full = false;  // @DUCKPHP_KEEP_IN_FULL
@@ -47,7 +49,7 @@
     <li><a href="/full/auth.php">auth.php 简单的用户验证系统</a>
     <li><a href="/full/blog.php">blog.php 简单的博客</a>
     <li><a href="/full/index.php">index.php 待整理，旧的自声明文档</a>
-    <li><a href="/full/OneFile.php">OneFile.php 单一文件，用于 </a>
+    <!-- <li><a href="/full/OneFile.php">OneFile.php 单一文件，用于 </a> -->
 </ul>
 </div>
 </body>

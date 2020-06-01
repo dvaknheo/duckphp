@@ -10,11 +10,7 @@
 
 2. [HttpServer.php](ref/HttpServer.md) 是 加了 Swoole 的 Http 服务器。
 
-3. [SingletonEx.php](ref/SingletonEx.md) 是 Core/SingletonEx.php 的快捷方法。
-
-4. [ThrowOn.php](ref/ThrowOn.md) 是 Core/ThrowOn.php 的快捷方法。
-
-5. Core/ 目录是核心目录，基本功能都在 Core 里实现
+3. Core/ 目录是核心目录，基本功能都在 Core 里实现
    1. **[SingletonEx.php](ref/Core-SingletonEx.php)**  
    2. **[ThrowOn.php](ref/Core-ThrowOn.md)** 注意这个 trait 也被 Helper使用
    3. **[App.php](ref/Core-App.md)** 是核心,引用
@@ -34,12 +30,12 @@
    3. **[AppPluginTrait.php](ref/Core-AppPluginTrait.md) **  这个Trait用于把独立工程 App 转成插件 
   4. **[HttpServer.php](ref/Core-HttpServer.md)** 单独的 Http 服务器
   
-6. DB/ 是数据库
+4. DB/ 是数据库
    1. [DBAdvance.php](ref/DB-DBAdvance.md)
    2. [DBInterface.php](ref/DB-DBInterface.md)
    3. [DB.php](ref/DB-DB.md)
 
-7. Ext/ 目录是各种扩展，粗体为默认
+5. Ext/ 目录是各种扩展，粗体为默认
    1. **[DBManager.php](ref/Ext-DBManager.md)**
    2. **[Misc.php](ref/Ext-Misc.md)**
    3. **[Pager.php](ref/Ext-Pager.md)**
@@ -62,7 +58,7 @@
          1. [StrictCheckModelTrait.php](ref/Ext-StrictCheckModelTrait.md)
          2. [StrictCheckServiceTrait.php](ref/Ext-StrictCheckServiceTrait.md)
    17. *[Lazybones.php](ref/Ext-Lazybones.md)*
-8. Helper/ 助手类
+6. Helper/ 助手类
     1. **[HelperTrait.php](ref/Helper-HelperTrait.md)**
     2. [ControllerHelper.php](ref/Helper-ControllerHelper.md)
     3. [ModelHelper.php](ref/Helper-ModelHelper.md)

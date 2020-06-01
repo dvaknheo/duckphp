@@ -24,7 +24,7 @@ subgraph cluster_Core {
 
     Core_ExtendableStaticCallTrait [label="ExtendableStaticCallTrait";shape=diamond];
     
-    Core_ThrowOn [label="ThrowOn";shape=diamond];
+    Core_ThrowOn [label="ThrowOn";shape=Mdiamond];
     Core_ComponentInterface [label="ComponentInterface";shape=note];
     Core_ComponentBase [label="ComponentBase";shape=box3d];
     Core_Functions [label="Functions"];
@@ -185,18 +185,13 @@ subgraph cluster_DuckPhp {
 
     HttpServer -> Core_HttpServer;
     App -> Core_App;
-    SingletonEx -> Core_SingletonEx;
-    ThrowOn -> Core_ThrowOn;
-    
+
     App -> RouteHookRouteMap;
     App -> Pager;
     App -> DBManager;
 
     App [shape=Mdiamond];
     HttpServer [shape=Mdiamond];
-    
-    SingletonEx [style=filled,shape=Mdiamond] ;
-    ThrowOn [shape=Mdiamond];
 
 }
 
