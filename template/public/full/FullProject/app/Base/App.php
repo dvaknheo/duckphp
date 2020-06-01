@@ -13,8 +13,8 @@ class App extends \DuckPhp\App
 {
     protected $options_project=[
         'error_404'=>'_sys/error_404',
-        'error_exception'=>'error_exception',
-        'error_debug'=>'error_debug',
+        'error_500'=>'_sys/error_500',
+        'error_debug'=>'_sys/error_debug',
         'ext'=>[
             'UserSystemDemo\\Base\\App'=>true,
         ],
