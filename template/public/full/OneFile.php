@@ -129,13 +129,13 @@ function view_header($view_data = [])
 <!doctype html>
 <html>
  <meta charset="UTF-8">
-<head><title>DNMVCS 单一页面演示</title></head>
+<head><title>DuckPhp 单一页面演示</title></head>
 <body>
 <?php
     echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKPHP_DELETE
 ?>
 <fieldset>
-	<legend>DNMVCS 单一页面演示</legend>
+	<legend>DuckPhp 单一页面演示</legend>
 	<div style="border:1px red solid;">
 <?php
 }

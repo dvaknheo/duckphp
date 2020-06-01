@@ -19,7 +19,7 @@ class AutoLoaderTest extends \PHPUnit\Framework\TestCase
             'skip_system_autoload'=>false,
             'skip_app_autoload'=>false,
             
-            'enable_cache_classes_in_cli'=>true,
+            'autoload_cache_in_cli'=>true,
         ];
         
         $G=AutoLoader::G();

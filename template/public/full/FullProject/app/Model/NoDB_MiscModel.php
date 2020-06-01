@@ -3,7 +3,7 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-use DNMVCS\Basic\SingletonEx;
+use DNMVCS\Core\SingletonEx;
 
 class NoDB_MiscModel
 {

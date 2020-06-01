@@ -1,8 +1,9 @@
 <?php declare(strict_types=1);
 /**
- * DuckPHP
+ * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace MY\Base;
 
 use DuckPhp\App as SystemApp;
@@ -11,14 +12,19 @@ class App extends SystemApp
 {
     //@override
     protected $options_project = [
-        'error_404' => '_sys/error_404',
-        'error_500' => '_sys/error_exception',
-        'error_debug' =>  '_sys/error_debug',
-        
-        //'is_debug' => true, 
-        'is_debug' => true, // @DUCKPHP_DELETE
         //'skip_setting_file' => true,
         'skip_setting_file' => true, // @DUCKPHP_DELETE
+        
+        //'is_debug' => true,
+        'is_debug' => true, // @DUCKPHP_DELETE
+        
+        //'platform' => true,
+        'platform' => '', // @DUCKPHP_DELETE
+        
+        
+        'error_404' => '_sys/error_404',
+        'error_500' => '_sys/error_500',
+        'error_debug' => '_sys/error_debug',
     ];
     public function __construct()
     {
@@ -28,6 +34,7 @@ class App extends SystemApp
         // deafalt options;
         
         // $options['all_config'] = array ( );
+        // $options['autoload_cache_in_cli'] = false;
         // $options['config_ext_files'] = array ( );
         // $options['controller_base_class'] = NULL;
         // $options['controller_hide_boot_class'] = false;
@@ -43,7 +50,6 @@ class App extends SystemApp
         // $options['db_create_handler'] = NULL;
         // $options['db_database_list_from_setting'] = true;
         // $options['db_exception_handler'] = NULL;
-        // $options['enable_cache_classes_in_cli'] = false;
         // $options['error_404'] = NULL;
         // $options['error_500'] = NULL;
         // $options['error_debug'] = NULL;
@@ -78,13 +84,14 @@ class App extends SystemApp
         // $options['skip_fix_path_info'] = false;
         // $options['skip_plugin_mode_check'] = false;
         // $options['skip_setting_file'] = false;
-        // $options['skip_system_autoload'] = true;
         // $options['skip_view_notice_error'] = true;
         // $options['use_autoloader'] = true;
         // $options['use_flag_by_setting'] = true;
         // $options['use_output_buffer'] = false;
         // $options['use_short_functions'] = true;
         // $options['use_super_global'] = true;
+        
+        // extentions
         
         /*
         $options['ext']['DuckPhp\\Ext\\CallableView'] = true;

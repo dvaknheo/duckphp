@@ -34,7 +34,7 @@ RouteHookDirecotoryMode , RouteHookOnFileMode
 
 
 
-### RedisManager RedisSimpleCache
+### RedisManager RedisSimpleCache Redis 的一些扩展
 
 
 
@@ -42,15 +42,15 @@ RouteHookDirecotoryMode , RouteHookOnFileMode
 
 ### StrictCheck 严格检查
 
-### FacadesAutoLoader
+### FacadesAutoLoader Facade 门面
 
-### Misc
+### Misc 一些通用方法
 
 
 
-### CallableView
+### CallableView 函数方式的视图
 
-### DBReusePoolProxy
+### DBReusePoolProxy 过时 ，连接池
 
 ### PluginForSwooleHttpd
 

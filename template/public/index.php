@@ -11,6 +11,7 @@ $path = realpath(__DIR__.'/..');
 $options = [];
 $options['path'] = $path;
 $options['namespace'] = $namespace;
+// $options['path_namespace'] = 'app';
 
 // $options['ext']['DuckPhp\\Ext\\RouteHookOneFileMode']=true;
 $options['ext']['DuckPhp\\Ext\\RouteHookOneFileMode']=true; //@DUCKPHP_DELETE

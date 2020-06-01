@@ -59,7 +59,7 @@ C::ThrowOn($flag,$message,$code,$exception_class);
 
 Model 不抛出异常。Service 抛出自己错误的时候，来个同名 exception 类。如 SessionService => SessionServiceException 。由调用者自行解决异常问题。
 
-建议这些 Exception 类继承  BaseExeption 类，并实现一个  display() 方法，以便于出错的时候显示
+建议这些 Exception 类继承  BaseExeption 类，并实现一个  display($ex) 方法，以便于出错的时候显示
 同时， DuckPhp 并没有自动记录异常。所以要自行 Log。
 
 ### 异常的高级处理

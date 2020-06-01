@@ -13,10 +13,9 @@ class AutoLoader
             'namespace' => 'MY',
             'path_namespace' => 'app',
             
-            'skip_system_autoload' => true,
             'skip_app_autoload' => false,
             
-            'enable_cache_classes_in_cli' => false,
+            'autoload_cache_in_cli' => false,
         ];
     protected $namespace;
     protected $path_namespace;
@@ -25,7 +24,6 @@ class AutoLoader
     public $namespace_paths = [];
     
     protected $is_running = false;
-    protected $enable_cache_classes_in_cli = false;
     
     protected static $_instances = [];
     //embed
@@ -72,13 +70,8 @@ class AutoLoader
             $this->path_namespace = $path.rtrim($this->options['path_namespace'], '/').'/';
         }
         
-        $this->enable_cache_classes_in_cli = $this->options['enable_cache_classes_in_cli'];
-
         if (!$this->options['skip_app_autoload']) {
             $this->assignPathNamespace($this->path_namespace, $this->namespace);
-        }
-        if (!$this->options['skip_system_autoload']) {
-            $this->assignPathNamespace(__DIR__, __NAMESPACE__); //TODO
         }
         return $this;
     }
@@ -93,7 +86,7 @@ class AutoLoader
         }
         $this->is_running = true;
         
-        if ($this->enable_cache_classes_in_cli) {
+        if ($this->options['autoload_cache_in_cli']) {
             $this->cacheClasses();
         }
         spl_autoload_register([$this, 'AutoLoad']);

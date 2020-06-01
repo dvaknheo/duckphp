@@ -1,8 +1,9 @@
 <?php declare(strict_types=1);
 /**
- * DuckPHP
+ * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace MY\Base\Helper;
 
 use DuckPhp\Helper\ServiceHelper as Helper;

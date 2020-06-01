@@ -1,11 +1,12 @@
 <?php declare(strict_types=1);
 /**
- * DuckPHP
+ * DuckPhp
  * From this time, you never be alone~
  */
+
 namespace MY\Base;
 
-use DuckPhp\SingletonEx;
+use DuckPhp\Core\SingletonEx;
 
 // use DuckPhp\Base\StrictModelTrait;
 

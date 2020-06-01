@@ -10,7 +10,6 @@ namespace
 // 以下部分是核心工程师写。
 namespace MySpace\Base
 {
-    use DuckPhp\Core\View;
     use DuckPhp\Ext\CallableView;
     use DuckPhp\Ext\RouteHookOneFileMode; // 我们要支持无路由的配置模式
     use MySpace\View\Views;

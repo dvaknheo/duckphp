@@ -4,9 +4,9 @@
 
 DuckPhp 的使用者角色分为 `业务工程师`和`核心工程师`两种。
 
-`业务工程师`负责日常 Curd 。作为业务工程师， 你不能引入 DuckPhp 的任何东西，就当 DuckPhp 命名空间不存在。
+`业务工程师`负责日常 Curd 。作为业务工程师， 你不能引入 DuckPhp 的任何东西，就当 DuckPhp 命名空间里的东西不存在。
 
-`核心工程师`才去研究 DuckPhp 类里的东西。
+`核心工程师`才去研究 DuckPhp 类里的东西。做大家统一的底层代码。
 
 ## 目录结构
 
@@ -56,9 +56,7 @@ app 目录，就是放 MY 开始命名空间的东西了。 app 目录可以在�
 这些结构能精简么？
 可以，你可以一个目录都不要。
 
-Base/App.php 这个类继承 DuckPhp\App 类，工程的入口流程会在这里进行，这里是`核心工程师`重点了解的类。
-
-
+Base/App.php 这个文件的入口类继承 DuckPhp\App 类，工程的入口流程会在这里进行，这里是`核心工程师`重点了解的类。
 
 BaseController, BaseModel, BaseService 是你自己要改的基类，基本只实现了单例模式。
 ContrllorHelper,ModelHelper,ServiceHelper 如果你一个人偷懒，直接用 APP 类也行  
@@ -69,11 +67,11 @@ ContrllorHelper,ModelHelper,ServiceHelper 如果你一个人偷懒，直接用 A
 * 移除 app/Base/Helper/ 目录,如果你直接用 App::* 替代 M,V,C,S 助手类。
 * 移除 app/Base/BaseController.php 如果你的 Controller 和默认的一样不需要基本类。
 * 移除 app/Base/BaseModel.php 如果你的 Model 用的全静态方法。
-* 移除 app/Base/BaseService.php 如果你的 Service 不需要 G 方法。
-* 移除 bin/start_server.php 如果你使用外部 http 服务器
+* 移除 app/Base/BaseService.php 如果你的 Service 不需要 G() 可变单例方法。
+* 移除 start_server.php 如果你使用外部 http 服务器
 * 移除 config/ 目录,在启动选项里加 'skip_setting_file'=>true ，如果你不需要 config/setting.php，
     并有自己的配置方案
-* 移除 view/\_sys  目录 你需要设置启动选项里 'error\_404','error\_500'。
+* 移除 view/\_sys  目录 你需要设置启动选项里 'error\_404','error\_500,'error_debug‘’。
 * 移除 view 目录如果你不需要 view ，如 API 项目。
 * 移除 TestService.php ， TestModel.php  测试用的东西
 
@@ -147,7 +145,11 @@ echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKP
 
 \DuckPhp\App::RunQuickly($options);
 ```
-入口类前面部分是处理头文件的。然后处理直接 copy 代码提示，不要直接运行。起作用的主要就这句话
+入口类前面部分是处理头文件的。
+
+带入工程文件目录 $path ，和工程命名空间 $namespae。
+
+然后就这句话
 
 ```php
 \DuckPhp\App::RunQuickly($options);
@@ -155,12 +157,11 @@ echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKP
 RunQuickly 相当于 \DuckPhp\App::G()->init($options,function(){})->run(); 
 \DuckPhp\App::G()->init($options,function(){})； 会执行根据选项，返回  `MY\Base\App`
 
-为什么不是 `MY\Base\App::RunQuickly($options); ` 呢？ 可以，但是这要兼容不使用外部 autoloader 的情况。如 composer  。 如果你用外部加载器，直接  MY\Base\App::RunQuickly 也行。
+为什么不是 `MY\Base\App::RunQuickly($options); ` 呢？ 可以，但是这要兼容不使用外部 autoloader 的情况。如 composer  。 如果你用外部加载器，只需直接 `MY\Base\App::RunQuickly($options); `。
 
 ###  工程入口文件
 
 所以我们现在来看 `app/Base/App.php` 对应的 MY\Base\App 类就是入口了。
-模板文件
 
 ```php
 <?php declare(strict_types=1);
@@ -209,19 +210,11 @@ class App extends SystemApp
 }
 
 ```
+这里的代码省略了一大堆注释，这些注释选项，都是默认选项。和打开的效果是一样的。
+
  //@override 注释都是用于重写的。
 
-$options 属性是所有选项，$options_project 属性的东西，将在 init 的时候合并入 $options;
-
-onPrepare 方法，基本在初始化钱运行。
-onInit 方法，会在初始化后运行。
-onRun 方法，会在运行期间运行。
-
-核心工程师重写这三个方法，就能给你的工程带来多种多样的变化了。
-
 在构造父方法里，我们合并了一大堆注释的选项以做不同选择。
-
-这些注释选项，都是默认选项。和打开的效果是一样的。
 
 后面我们开始解释这些代码。
 
@@ -236,35 +229,37 @@ onRun 方法，会在运行期间运行。
 
 ### 关于选项
 
-参考 [选项参考页](ref/options.md) 获得所有选项信息
+术语 `选项`和 `设置`， `配置 相区分如下：
 
-在前面 我们引用代码的时候，省略了一堆注释。
-这些  $optioins 的可选内容，术语称之为就是`选项`和 `设置`， `配置` 相区分如下：
+- 选项 ，传递给入口类的内容
+- 配置，可有可无的配置文件。
+- 设置，配置的 setting 文件，敏感信息
 
-+ 选项 ，传递给入口类的内容
-+ 配置，可有可无的配置文件。
-+ 设置，配置的 setting 文件，敏感信息
-
-```php
-$path = realpath(__DIR__.'/..');
-$namespace = 'MY';                    // @DUCKPHP_NAMESPACE
-$options['path'] = $path;
-$options['namespace'] = $namespace;
-$options['error_404'] = '_sys/error_404';
-$options['error_500'] = '_sys/error_500';
-$options['error_debug'] = '_sys/error_debug';
-
-$options['is_debug'] = true;                  // @DUCKPHP_DELETE
-$options['skip_setting_file'] = true;                 // @DUCKPHP_DELETE
-```
+index.php 中的 $options , app/Base/App.php 的 $options_project 在初始化的时候都会传递合并入入口类的 $options 公开属性里。
+在 App 类的代码里，还留有一大堆排序后的注释选项。打开后也合并如 options 公开属性。
+这些注释选项代码和默认的是一致的。
 
 DuckPhp 只要更改选项就能实现很多强大的功能变化。
-如果这些选项都不能满足你，那就启用扩展吧，这样有更多的选项能用，
+如果这些选项都不能满足你，那就启用扩展吧，这样有更多的选项能用。
 如果连这都不行，那么，就自己写扩展吧。
+
+参考 [选项参考页](ref/options.md) 获得所有选项信息
+
 
 ### 基本选项详解
 
 DuckPhp 的示例文件，注释的都是默认选项，没使用默认注释选项的，这里说明一下。
+
+'path'=>$path,
+
+    基本路径，其他配置会用到这个基本路径。
+'namespace' =>$namespace，
+
+    工程的 autoload 的命名空间，和很多框架限定只能用 App 作为命名空间不同，DuckPHP 允许你用不同的命名空间
+
+'path_namespace'=>'app',
+
+    默认的 psr-4 的工程路径。可使用绝对路径
 
 **'skip_setting_file'=> false,**
 
@@ -272,15 +267,7 @@ DuckPhp 的示例文件，注释的都是默认选项，没使用默认注释选
     这个选项的作用是跳过读取 setting.php  敏感文件。
     为什么要这么设置， 防止传代码上去而没传设置文件。
     造成后面的错误。
-'path'=>$path,
 
-    基本路径，其他配置会用到这个基本路径。
-'namespace' =>$namespace，
-
-    工程的 autoload 的命名空间，和很多框架限定只能用 App 作为命名空间不同，DuckPHP 允许你用不同的命名空间
-'path_namespace'=>'app',
-
-    默认的 psr-4 的工程路径配合 skip_app_autoload  使用。
 'is_debug'=>false,
 
     配置是否在调试状态。
@@ -299,26 +286,10 @@ error_* 选项为 null 用默认，为 callable 是回调，为string 则是调�
 
     500 页面，异常页面都会在这里
 
-### 加载扩展
-
-DuckPhp 扩展的加载是通过选项里添加，$options['ext']数组实现的
-
-    扩展映射 ,$ext_class => $options。
-    
-    $ext_class 为扩展的类名，如果找不到扩展类则不启用。
-    
-    $ext_class 满足组件接口。在初始化的时候会被调用。
-    $ext_class->init(array $options,$context=null);
-    
-    如果 $options 为  false 则不启用，
-    如果 $options 为 true ，则会把当前全局 $options 传递进去。
-
 
 ## 请求流程和生命周期
 
 怎么就从 DuckPhp\App 切到 MY\Base\App 类了？
-
-
 
 index.php 就只执行了
 
@@ -379,6 +350,8 @@ init 为初始化阶段 ，run 为运行阶段。$callback 在init() 之后执�
 + protected function onRun()
 	运行阶段执行。
 
+核心工程师重写这三个方法，就能给你的工程带来多种多样的变化了。
+
 ### 接管替换默认实现
 
 你可以在 onPrepare() 方法里替换默认的实现。
@@ -410,4 +383,18 @@ Core 下面的扩展不会单独拿出来用。如果你扩展了该方面的类
 
 
 接下来是[路由](tutorial-route.md)这一章教程，  Route::G()->run() 的具体内容
+
+### 加载扩展
+
+DuckPhp 扩展的加载是通过选项里添加，$options['ext']数组实现的
+
+    扩展映射 ,$ext_class => $options。
+    
+    $ext_class 为扩展的类名，如果找不到扩展类则不启用。
+    
+    $ext_class 满足组件接口。在初始化的时候会被调用。
+    $ext_class->init(array $options,$context=null);
+    
+    如果 $options 为  false 则不启用，
+    如果 $options 为 true ，则会把当前全局 $options 传递进去。
 
