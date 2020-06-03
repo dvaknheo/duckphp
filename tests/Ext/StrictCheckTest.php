@@ -64,7 +64,6 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
         $options['namespace_service']='';
         StrictCheck::G(new StrictCheck())->init($options)->checkStrictService('NoExt',0);
         
-                                StrictCheck::G()->isInited();
 
         \MyCodeCoverage::G()->end();
     }
@@ -208,8 +207,9 @@ class StrictCheckTestMain extends BaseController
         try{
             M::DB()->fetch("select 1+1 as t");
         }catch(\Throwable $ex){
-            echo "2222222222222222222 Catch S::DB ".$ex->getMessage().PHP_EOL;
+            echo "2222222222222222222 Catch M::DB ".$ex->getMessage().PHP_EOL;
         }
+        
         try{
             (new t)->foo();
         }catch(\Throwable $ex){
@@ -230,29 +230,29 @@ class StrictCheckTestMain extends BaseController
         try{
             FakeService::G()->modelCallService();
         }catch(\Throwable $ex){
-            echo "sssssssss modelCallService sssssssssssssssssss".$ex->getMessage().PHP_EOL;
+            echo "6666666666666 modelCallService sssssssssssssssssss".$ex->getMessage().PHP_EOL;
         }
         try{
             FakeService::G()->callDB();
         }catch(\Throwable $ex){
-            echo "sssssssss modelCallService sssssssssssssssssss".$ex->getMessage().PHP_EOL;
+            echo "7777777777777777 modelCallService sssssssssssssssssss".$ex->getMessage().PHP_EOL;
         }
         
         
         try{
             DuckPhp::DB()->fetch("select 1+1 as t");
         }catch(\Throwable $ex){
-            echo "zzzzzzzzzzzzz".$ex->getMessage().PHP_EOL;
+            echo "8888888888888888 ".$ex->getMessage().PHP_EOL;
         }
         try{
             M::DB()->fetch("select 1+1 as t");
         }catch(\Throwable $ex){
-            echo "zzzzzzzzzzzzz Catch S::DB ".$ex->getMessage().PHP_EOL;
+            echo "9999999999999999999 Catch S::DB ".$ex->getMessage().PHP_EOL;
         }
         try{
             (new BaseController2)->foo();
         }catch(\Throwable $ex){
-            echo "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".$ex->getMessage().PHP_EOL;
+            echo "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ".$ex->getMessage().PHP_EOL;
         }
         FakeService::G()->normal();
         echo "============================\n";

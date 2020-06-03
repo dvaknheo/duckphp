@@ -13,6 +13,15 @@ class ModelHelperTest extends \PHPUnit\Framework\TestCase
         ModelHelper::SqlForPager($sql,1,5);
         ModelHelper::SqlForCountSimply($sql);
 
+        try{
+            ModelHelper::DB();
+        }catch(\Throwable $ex){}
+        try{
+            ModelHelper::DB_R();
+        }catch(\Throwable $ex){}
+        try{
+            ModelHelper::DB_W();
+        }catch(\Throwable $ex){}
         \MyCodeCoverage::G()->end();
         /*
         //*/

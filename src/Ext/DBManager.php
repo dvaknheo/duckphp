@@ -56,6 +56,9 @@ class DBManager extends ComponentBase
                 $this->database_config_list = $database_list;
             }
         }
+        //if(!isset($this->database_config_list)){
+        //    throw new \Exception(static::class." setting error");
+        //}
         // db_before_get_object_handler
         if (is_array($this->db_before_get_object_handler) && $this->db_before_get_object_handler[0] === null) {
             $this->db_before_get_object_handler[0] = get_class($context);

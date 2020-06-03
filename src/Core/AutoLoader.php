@@ -89,13 +89,13 @@ class AutoLoader
         if ($this->options['autoload_cache_in_cli']) {
             $this->cacheClasses();
         }
-        spl_autoload_register([$this, 'AutoLoad']);
+        spl_autoload_register(self::class.'::AutoLoad'); // phpstan can't use static::class :(
     }
-    public static function AutoLoad($class)
+    public static function AutoLoad(string $class): void
     {
-        return static::G()->_autoload($class);
+        static::G()->_autoload($class);
     }
-    public function _autoload($class)
+    public function _autoload(string $class):void
     {
         foreach ($this->namespace_paths as $base_dir => $prefix) {
             if (strncmp($prefix, $class, strlen($prefix)) !== 0) {
@@ -108,9 +108,9 @@ class AutoLoader
                 continue;
             }
             include_once $file;
-            return true;
+            return;
         }
-        return false;
+        return;
     }
     public function assignPathNamespace($input_path, $namespace = null)
     {
@@ -175,6 +175,22 @@ class AutoLoader
     }
     public function clear()
     {
-        spl_autoload_unregister([$this,'AutoLoad']);
+        spl_autoload_unregister(self::class.'::AutoLoad'); // phpstan can't use static::class :(
     }
+    public static function DuckPhpSystemAutoLoader(string $class): void //@codeCoverageIgnoreStart
+    {
+        $prefix = 'DuckPhp\\';
+        
+        if (strncmp($prefix, $class, strlen($prefix)) !== 0) {
+            return;
+        }
+        if (strncmp("DuckPhp\\Core\\Helper\\", $class, strlen("DuckPhp\\Core\\Helper\\")) === 0) {
+            return;
+        }
+        $base_dir = dirname(__DIR__).'/';
+        $relative_class = substr($class, strlen($prefix));
+        $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+
+        include_once $file;
+    }//@codeCoverageIgnoreEnd
 }

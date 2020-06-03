@@ -154,9 +154,8 @@ LoadConfig($key,$basename="config");
 ModelHelper 用于 Model 层。 
 ModelHelper 有数据库的三个独特方法。
 这几个方法在 ControllerHelper 里没有。
-这几个方法不是 DuckPhp\Core\App 里的。
-而是由 DuckPhp\App 加载 DuckPhp\Ext\DBManager 后添加的。
 如何使用 DB 对象，看数据库部分的介绍。
+此外，还有两个快捷方法，方便分页
 
 DB($tag=null)
 
@@ -168,7 +167,6 @@ DB_R()
 
     获得用于读取的 DB 对象，这是获得第 1 个配置列表里的数据库
 
-此外，还有两个快捷方法，方便分页
 SqlForPager($sql, $pageNo, $pageSize = 10)
 
     分页 limte 的 sql 

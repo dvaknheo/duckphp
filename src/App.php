@@ -33,12 +33,6 @@ class App extends CoreApp
         $this->options['db_before_query_handler'] = [static::class, 'OnQuery'];
         parent::__construct();
     }
-    public function _Pager($object = null)
-    {
-        $pager = Pager::G($object);
-        $pager->options['pager_context_class'] = static::class;
-        return $pager;
-    }
     public static function OnQuery($db, $sql, ...$args)
     {
         return static::G()->_OnQuery($db, $sql, ...$args);
@@ -50,5 +44,23 @@ class App extends CoreApp
             return;
         }
         static::Logger()->log($this->options['log_sql_level'], '[sql]: ' . $sql, $args);
+    }
+    public function _Pager($object = null)
+    {
+        $pager = Pager::G($object);
+        $pager->options['pager_context_class'] = static::class;
+        return $pager;
+    }
+    public function _DB($tag)
+    {
+        return DBManager::G()->_DB($tag);
+    }
+    public function _DB_R()
+    {
+        return DBManager::G()->_DB_R();
+    }
+    public function _DB_W()
+    {
+        return DBManager::G()->_DB_W();
     }
 }

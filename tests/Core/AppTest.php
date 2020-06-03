@@ -136,6 +136,20 @@ App::PageNo();
 App::PageSize();
 App::PageHtml(123);
 
+        try{
+            App::DB();
+        }catch(\Throwable $ex){
+        }
+        try{
+            App::DB_W();
+        }catch(\Throwable $ex){
+        }
+        try{
+            App::DB_R();
+        }catch(\Throwable $ex){
+        }
+
+
     App::G()->isInited();
 
         \MyCodeCoverage::G()->end();

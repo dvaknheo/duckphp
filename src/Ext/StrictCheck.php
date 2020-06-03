@@ -45,7 +45,8 @@ class StrictCheck extends ComponentBase
     
     public static function CheckStrictDB()
     {
-        return static::G()->checkStrictComponent('DB', 7);
+        return static::G()->checkStrictComponent('DB', 5, ['DuckPhp\\Core\\App','DuckPhp\\Helper\\ModelHelper']);
+        //
     }
     ///////////////////////////////////////////////////////////
     public function getCallerByLevel($level, $parent_classes_to_skip = [])
@@ -53,14 +54,12 @@ class StrictCheck extends ComponentBase
         $level += 1;
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, static::MAX_TRACE_LEVEL);
         $caller_class = $backtrace[$level]['class'] ?? '';
-        // @codeCoverageIgnoreStart
         foreach ($parent_classes_to_skip as $parent_class_to_skip) {
             if (is_subclass_of($caller_class, $parent_class_to_skip) || $parent_class_to_skip === $caller_class) {
                 $caller_class = $backtrace[$level + 1]['class'] ?? '';
                 return $caller_class;
             }
         }
-        // @codeCoverageIgnoreEnd
         return $caller_class;
     }
     public function checkEnv(): bool
@@ -80,7 +79,6 @@ class StrictCheck extends ComponentBase
             return;
         }
         $caller_class = $this->getCallerByLevel($trace_level, $parent_classes_to_skip);
-        
         $namespace_service = $this->options['namespace_service'];
         $namespace_controller = $this->options['namespace_controller'];
         $controller_base_class = $this->options['controller_base_class'];
