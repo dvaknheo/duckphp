@@ -40,6 +40,7 @@
 <ul>
     <li><a href="/full/auth.php">auth.php 简单的用户验证系统</a>
     <li><a href="/full/blog.php">blog.php 简单的博客</a>
+    <li><a href="/full/index.php">dbtest.php 数据库演示</a>
     <li><a href="/full/index.php">index.php 待整理，旧的自声明文档</a>
     <!-- <li><a href="/full/OneFile.php">OneFile.php 单一文件，用于 </a> -->
 </ul>

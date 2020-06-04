@@ -55,9 +55,9 @@ class KernelTest extends \PHPUnit\Framework\TestCase
             App::G()->options['error_debug']=function($data){var_dump($data);return;};
             $value = $cache[$key]; 
             
-            App::G()->is_debug=false;
+            App::G()->options['is_debug']=false;
             $value = $cache[$key]; 
-            App::G()->is_debug=true;
+            App::G()->options['is_debug']=true;
 
         });
         

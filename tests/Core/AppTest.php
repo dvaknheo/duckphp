@@ -54,9 +54,9 @@ class AppTest extends \PHPUnit\Framework\TestCase
             App::G()->options['error_debug']=function($data){var_dump($data);return;};
             $value = $cache[$key]; 
             
-            App::G()->is_debug=false;
+            App::G()->options['is_debug']=false;
             $value = $cache[$key]; 
-            App::G()->is_debug=true;
+            App::G()->options['is_debug']=true;
 
         });
         
@@ -216,7 +216,7 @@ App::PageHtml(123);
     }
     public function doException()
     {
-        App::G()->is_debug=true;
+        App::G()->options['is_debug']=true;
         App::G()->options['error_500']="_sys/error-exception";
         App::CallException(new \Exception("333333",-1));
         App::G()->options['error_500']=null;
@@ -256,15 +256,15 @@ App::PageHtml(123);
             //
         }
         App::Logger();
-        $flag=App::G()->is_debug;
+        $flag=App::G()->options['is_debug'];
         
-        App::G()->is_debug=true;
+        App::G()->options['is_debug']=true;
         App::trace_dump();
         App::var_dump("OK");
-        App::G()->is_debug=false;
+        App::G()->options['is_debug']=false;
         App::trace_dump();
         App::var_dump("OK");
-        App::G()->is_debug=$flag;
+        App::G()->options['is_debug']=$flag;
         
         $sql="Select * from users";
         App::SqlForPager($sql,1,5);
@@ -409,7 +409,7 @@ App::PageHtml(123);
         App::ExitRedirectOutside("http://www.github.com",true);
         App::ExitRouteTo($url);
         App::Exit404();
-        App::G()->is_debug=true;
+        App::G()->options['is_debug']=true;
         App::ExitJson($ret);
     }
     protected function do_Core_Component()

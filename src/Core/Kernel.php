@@ -58,7 +58,6 @@ trait Kernel
             'error_500' => null,          //'_sys/error-500',
             'error_debug' => null,        //'_sys/error-debug',
         ];
-    public $is_debug = true;
     protected $default_run_handler = null;
     protected $error_view_inited = false;
 
@@ -85,7 +84,6 @@ trait Kernel
             $this->options['path'] = (string)$path;
         }
         $this->options['path'] = rtrim($this->options['path'], '/').'/';
-        $this->is_debug = $this->options['is_debug'];
     }
     protected function checkOverride($options)
     {
@@ -183,7 +181,7 @@ trait Kernel
         $is_debug = Configer::G()->_Setting('duckphp_is_debug');
         $platform = Configer::G()->_Setting('duckphp_platform');
         if (isset($is_debug)) {
-            $this->is_debug = $is_debug;
+            $this->options['is_debug'] = $is_debug;
         }
         if (isset($platform)) {
             $this->options['platform'] = $platform;

@@ -189,7 +189,7 @@ trait Core_Handler
         
         static::header('', true, 500);
         $data = [];
-        $data['is_debug'] = $this->is_debug;
+        $data['is_debug'] = $this->options['is_debug'];
         $data['ex'] = $ex;
         $data['class'] = get_class($ex);
         $data['message'] = $ex->getMessage();
@@ -221,7 +221,7 @@ trait Core_Handler
     }
     public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
     {
-        if (!$this->is_debug) {
+        if (!$this->_IsDebug()) {
             return;
         }
         $descs = array(
@@ -376,7 +376,7 @@ trait Core_Helper
         static::header('Content-Type:text/json');
         
         $flag = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
-        if ($this->is_debug) {
+        if ($this->_IsDebug()) {
             $flag = $flag | JSON_PRETTY_PRINT;
         }
         echo json_encode($ret, $flag);
@@ -406,11 +406,19 @@ trait Core_Helper
     // system static
     public static function Platform()
     {
-        return static::G()->options['platform'];
+        return static::G()->_Platform();
+    }
+    public function _Platform()
+    {
+        return $this->options['platform'];
     }
     public static function IsDebug()
     {
-        return static::G()->is_debug;
+        return static::G()->_IsDebug();
+    }
+    public function _IsDebug()
+    {
+        return static::G()->options['is_debug'];
     }
     public static function IsRealDebug()
     {
@@ -419,7 +427,7 @@ trait Core_Helper
     public function _IsRealDebug()
     {
         //you can override this;
-        return $this->is_debug;
+        return $this->options['is_debug'];
     }
     public static function Show($data = [], $view = null)
     {
@@ -458,10 +466,10 @@ trait Core_Helper
         }
         $view = $view ?? Route::G()->getRouteCallingPath();
         
-        if ($this->is_debug) {
+        if ($this->options['is_debug']) {
             View::G()->assignViewData([
-                '__is_debug' => $this->is_debug,
-                '__duckphp_is_debug' => $this->is_debug,
+                '__is_debug' => $this->options['is_debug'],
+                '__duckphp_is_debug' => $this->options['is_debug'],
                 '__duckphp_platform' => $this->options['platform'],
             ]);
         }
@@ -492,7 +500,7 @@ trait Core_Helper
     }
     public function _trace_dump()
     {
-        if (!$this->is_debug) {
+        if (!$this->options['is_debug']) {
             return;
         }
         echo "<pre>\n";
@@ -501,7 +509,7 @@ trait Core_Helper
     }
     public function _var_dump(...$args)
     {
-        if (!$this->is_debug) {
+        if (!$this->options['is_debug']) {
             return;
         }
         echo "<pre>\n";
