@@ -81,7 +81,7 @@ class App extends ComponentBase
     public function __construct()
     {
         parent::__construct();
-        $this->options = array_merge($this->options_default, $this->options); // be a private
+        $this->mergeDefaultOptions();
         $this->hanlder_for_exception_handler = [static::class,'set_exception_handler'];
         $this->hanlder_for_exception = [static::class,'OnDefaultException'];
         $this->hanlder_for_develop_exception = [static::class,'OnDevErrorHandler'];

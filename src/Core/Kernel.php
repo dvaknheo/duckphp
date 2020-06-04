@@ -76,6 +76,10 @@ trait Kernel
         }
         return $instance->run();
     }
+    protected function mergeDefaultOptions()
+    {
+        $this->options = array_merge($this->options_default, $this->options);
+    }
     protected function initOptions($options = [])
     {
         $this->options = array_replace_recursive($this->options, $options);
