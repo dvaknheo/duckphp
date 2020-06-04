@@ -12,9 +12,9 @@ class AutoLoader
             'path' => '',
             'namespace' => 'MY',
             'path_namespace' => 'app',
-            
             'skip_app_autoload' => false,
             
+            'autoload_path_namespace_map' => [],
             'autoload_cache_in_cli' => false,
         ];
     protected $namespace;
@@ -73,6 +73,8 @@ class AutoLoader
         if (!$this->options['skip_app_autoload']) {
             $this->assignPathNamespace($this->path_namespace, $this->namespace);
         }
+        $this->assignPathNamespace($this->options['autoload_path_namespace_map']);
+        
         return $this;
     }
     public function isInited(): bool
