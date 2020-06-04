@@ -39,7 +39,7 @@ class View extends ComponentBase
         return static::G()->_Display($view, $data);
     }
     
-    public function _Show($data = [], $view)
+    public function _Show(array $data, $view)
     {
         if ($this->options['skip_view_notice_error'] ?? false) {
             $this->error_reporting_old = error_reporting();

@@ -11,7 +11,7 @@ use DuckPhp\Core\AutoLoader;
 
 class App extends \DuckPhp\App
 {
-    protected $options_project=[
+    public $options = [
         'error_404'=>'_sys/error_404',
         'error_500'=>'_sys/error_500',
         'error_debug'=>'_sys/error_debug',
@@ -20,7 +20,7 @@ class App extends \DuckPhp\App
         ],
     ];
 
-    public function onPrepare()
+    protected function onPrepare()
     {
         $this->options['route_map']['@posts/{post}/comments/{comment:\d+}'] = [$this,'foo'];
         $this->options['route_map_important']['^abc/d(/?|)\w*'] = [$this,'foo'];

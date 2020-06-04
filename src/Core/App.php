@@ -24,7 +24,7 @@ use DuckPhp\Core\View;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\Logger;
 
-class App implements ComponentInterface
+class App extends ComponentBase
 {
     const HOOK_PREPEND_OUTTER = 'prepend-outter';
     const HOOK_PREPEND_INNER = 'prepend-inner';
@@ -44,13 +44,12 @@ class App implements ComponentInterface
     use Core_Component;
 
     // from kernel
-    protected $options_project = [];
     protected $hanlder_for_exception_handler;
     protected $hanlder_for_exception;
     protected $hanlder_for_develop_exception;
     protected $hanlder_for_404;
     protected $is_inited = false;
-
+    //protected $options_default;
     
     // for helper
     public $componentClassMap = [
@@ -81,6 +80,8 @@ class App implements ComponentInterface
     
     public function __construct()
     {
+        parent::__construct();
+        $this->options = array_merge($this->options_default, $this->options); // be a private
         $this->hanlder_for_exception_handler = [static::class,'set_exception_handler'];
         $this->hanlder_for_exception = [static::class,'OnDefaultException'];
         $this->hanlder_for_develop_exception = [static::class,'OnDevErrorHandler'];

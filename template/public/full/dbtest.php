@@ -11,7 +11,7 @@ use DuckPhp\Ext\RouteHookOneFileMode;
 class App extends \DuckPhp\App
 {
     // @override
-    protected $options_project = [
+    public $options = [
         'is_debug' => true,
             // 开启调试模式
         'skip_setting_file' => true,

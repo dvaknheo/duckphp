@@ -16,7 +16,7 @@ class App extends DuckPhp_App
             'S' => 'ServiceHelper',
     ];
     //@override
-    protected $options_project = [
+    public $options = [
         'ext' => [
             'SimpleAuth\\Base\\App' => true,
             'DuckPhp\\Ext\\Misc' => true,

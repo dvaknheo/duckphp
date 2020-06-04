@@ -13,15 +13,15 @@ class App extends DuckPhpApp
     use AppPluginTrait;
     
     //@override
-    protected $options_project = [
+    public $options = [
         'path_config' => 'config',
         'path_view' => 'view',
     ];
     //@override
-    protected $plugin_options_project = [
+    protected $plugin_options = [
     ];
     //@override
-    public function onPrepare()
+    protected function onPrepare()
     {
     }
     //@override

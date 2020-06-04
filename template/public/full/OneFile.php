@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 use DuckPhp\App;
 use DuckPhp\Core\Route;
+use DuckPhp\Core\View;
 //未完工
 require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
 //// 这个例子极端点，没用任何类，全函数模式。
 
 ////
-global $view_data;
-$view_data = [];
+
 /////////////////////
 function get_data()
 {
@@ -88,19 +88,40 @@ function H($str)
     return App::H($str);
 }
 ////////////////////////////////////
-$options = [];
 
+class MyView extends \DuckPhp\Core\View
+{
+    public function _Show($data = [], $view)
+    {
+        global $view_data;
+        $this->data = array_merge($this->data, $data);
+        $view_data=$this->data;
+        
+        $view_data['view']=$view;
+    }
+    public function _Display($view, $data = null)
+    {
+        global $view_data;
+        $this->data = isset($data)?$data:$this->data;
+
+        $view_data=$this->data;
+        $view_data='skip_head_foot']=true;
+        $view_data['view']=$view;
+    }
+}
+
+$options = [];
 $options['skip_setting_file'] = true;
 $options['is_debug'] = true;
-
 $flag=App::RunQuickly($options,function(){
     Route::G()->add404Handler(function(){
-        $path_info=Route::G()->path_info;
+        $path_info=Route::G()->getPathInfo();
         $path_info=ltrim($path_info,'/');
         $path_info=empty($path_info)?'index':$path_info;
+        
         $post_prefix=!empty(APP::SG()->_POST)?'do_':'';
         $callback="action_{$post_prefix}{$path_info}";
-        //var_dump($callback);
+        
         if(is_callable($callback)){
             ($callback)();
             return true;
@@ -115,17 +136,13 @@ if(!$flag){
 if (!$view_data) {
     return;
 }
-extract($view_data);
-view_header($view_data);
-if (!$view_data) {
-    return;
-}
-view_main($view_data);
-view_footer($view_data);
 
-function view_header($view_data = [])
-{
-    extract($view_data); ?>
+global $view_data;
+extract($view_data);
+
+
+if(!empty($skip_head_foot)){
+     ?>
 <!doctype html>
 <html>
  <meta charset="UTF-8">
@@ -139,15 +156,16 @@ function view_header($view_data = [])
 	<div style="border:1px red solid;">
 <?php
 }
-function view_main($view_data){
-    extract($view_data); ?>
+if($view===''){
+?>
 	<h1>首页</h1>
-<?php if ($content === '') {
-    ?>
+<?php 
+    if ($content === '') {
+?>
 	还没有内容，
 	<a href="<?=$url_add?>">添加内容</a>
 <?php
-} else {
+    } else {
         ?>
 	已经输入，内容为
 	<div style="border:1px gray solid;" ><?=$content?></div>
@@ -156,11 +174,10 @@ function view_main($view_data){
 <?php
     }
 ?>
-	<?php
-}// main
-function view_add($view_data)
-{
-    extract($view_data); ?>
+<?php
+}
+if($view==='add'){
+?>
 	<h1>添加</h1>
 	<form method="post" >
 		<div><textarea name="content"></textarea></div>
@@ -168,9 +185,8 @@ function view_add($view_data)
 	</form>
 <?php
 }
-function view_edit($view_data)
-{
-    extract($view_data); ?>
+if($view==='edit'){
+ ?>
 	编辑
 	<form method="post">
 		<div><textarea name="content"><?=$content?></textarea></div>
@@ -178,18 +194,15 @@ function view_edit($view_data)
 	</form>
 <?php
 }
-function view_dialog($view_data)
-{
-    extract($view_data); ?>
+if($view==='dialog'){ ?>
 	<?php if (!$msg) {?>已经完成<?php } else {
         echo $msg;
     } ?> <a href="<?=$url_back?>">返回主页</a>
 <?php
 }
 
-function view_footer($view_data = [])
-{
-    extract($view_data); ?>
+if(!empty($skip_head_foot)){
+?>
 	<hr />
 	</div>
 </fieldset>

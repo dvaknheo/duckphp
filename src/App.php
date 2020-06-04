@@ -19,19 +19,25 @@ class App extends CoreApp
     
     public function __construct()
     {
-        $this->options['log_sql_query'] = false;
-        $this->options['log_sql_level'] = 'debug';
-        $this->options['db_before_query_handler'] = [static::class, 'OnQuery'];
-        $this->options['ext'][DBManager::class] = true;
-        $this->options['ext'][RouteHookRouteMap::class] = true;
-        /* no use
-                if (PHP_SAPI === 'cli' && extension_loaded('swoole')) {
-                    //$t = ['DuckPhp\Ext\PluginForSwooleHttpd' => true];
-                    //$this->options['ext'] = array_merge($t, $this->options);
-                }
-        */
-        $this->options['db_before_query_handler'] = [static::class, 'OnQuery'];
         parent::__construct();
+        $options['log_sql_query'] = false;
+        $options['log_sql_level'] = 'debug';
+        $options['db_before_query_handler'] = [static::class, 'OnQuery'];
+
+        /* no use
+        if (PHP_SAPI === 'cli' && extension_loaded('swoole')) {
+            //$t = ['DuckPhp\Ext\PluginForSwooleHttpd' => true];
+            //$options['ext'] = array_merge($t, $options); // make it first
+        }
+        */
+        
+        $this->options = array_merge($options, $this->options);
+        $ext = [
+            DBManager::class => true,
+            RouteHookRouteMap::class => true,
+        ];
+        $this->options['ext'] = $this->options['ext'] ?? [];
+        $this->options['ext'] = array_merge($ext, $this->options['ext']);
     }
     public static function OnQuery($db, $sql, ...$args)
     {

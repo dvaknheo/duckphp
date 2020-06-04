@@ -13,7 +13,8 @@ use DuckPhp\Core\SuperGlobal;
 
 trait AppPluginTrait
 {
-    public $plugin_options = [
+    //public $plugin_options = [] => in parent
+    protected $plugin_options_default = [
         'plugin_path_namespace' => null,
         'plugin_namespace' => null,
         
@@ -26,8 +27,7 @@ trait AppPluginTrait
         'plugin_files_config' => [],
         'plugin_use_helper' => true,
     ];
-    protected $plugin_options_project = [
-    ];
+
     protected $path_view_override = '';
     protected $path_config_override = '';
     
@@ -38,6 +38,7 @@ trait AppPluginTrait
     
     public function pluginModeInit(array $options, object $context = null)
     {
+        $this->plugin_options = array_replace_recursive($this->plugin_options_default, $this->plugin_options);
         $this->onPluginModePrepare();
         $this->pluginModeInitOptions($options);
         $this->pluginModeInitVars($context);
@@ -82,7 +83,6 @@ trait AppPluginTrait
     /////
     protected function pluginModeInitOptions($options)
     {
-        $this->plugin_options = array_replace_recursive($this->plugin_options, $this->plugin_options_project);
         $this->plugin_options = array_intersect_key(array_replace_recursive($this->plugin_options, $options) ?? [], $this->plugin_options);
         $class = static::class;
         

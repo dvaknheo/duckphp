@@ -23,9 +23,10 @@ use DuckPhp\Core\Logger;
 
 trait Kernel
 {
-    use SingletonEx;
+    // use SingletonEx; OK ，turn on this for full work;
     
-    public $options = [
+    public $options = [];
+    protected $options_default = [
             //// not override options ////
             'use_autoloader' => true,
             'skip_plugin_mode_check' => false,
@@ -58,7 +59,6 @@ trait Kernel
             'error_debug' => null,        //'_sys/error-debug',
         ];
     public $is_debug = true;
-    protected $options_project = [];
     protected $default_run_handler = null;
     protected $error_view_inited = false;
 
@@ -79,7 +79,7 @@ trait Kernel
     }
     protected function initOptions($options = [])
     {
-        $this->options = array_replace_recursive($this->options, $this->options_project, $options);
+        $this->options = array_replace_recursive($this->options, $options);
         if (empty($this->options['path'])) {
             $path = realpath($_SERVER['SCRIPT_FILENAME'].'/../');
             $this->options['path'] = (string)$path;
@@ -89,8 +89,8 @@ trait Kernel
     }
     protected function checkOverride($options)
     {
-        $override_class = $options['override_class'] ?? $this->options['override_class'];
-        $namespace = $options['namespace'] ?? $this->options['namespace'];
+        $override_class = $options['override_class'] ?? $this->options_default['override_class'];
+        $namespace = $options['namespace'] ?? $this->options_default['namespace'];
         
         if (substr($override_class, 0, 1) !== '\\') {
             $override_class = $namespace.'\\'.$override_class;
@@ -122,8 +122,8 @@ trait Kernel
             AutoLoader::G()->init($options, $this)->run();
         }
         
-        $handle_all_dev_error = $options['handle_all_dev_error'] ?? $this->options['handle_all_dev_error'];
-        $handle_all_exception = $options['handle_all_exception'] ?? $this->options['handle_all_exception'];
+        $handle_all_dev_error = $options['handle_all_dev_error'] ?? $this->options_default['handle_all_dev_error'];
+        $handle_all_exception = $options['handle_all_exception'] ?? $this->options_default['handle_all_exception'];
 
         $exception_options = [
             'handle_all_dev_error' => $handle_all_dev_error,

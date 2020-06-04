@@ -13,7 +13,7 @@ class PluginForSwooleHttpdTest extends \PHPUnit\Framework\TestCase
             'swoole_ext_class' => FakeSwooleExt::class,
         ];
 
-        $context=App::G();
+        $context=App::G()->init(['skip_setting_file'=>true]);
         PluginForSwooleHttpd::G()->init($options, $context);
         PluginForSwooleHttpd::G()->getStaticComponentClasses();
         PluginForSwooleHttpd::G()->getDynamicComponentClasses();

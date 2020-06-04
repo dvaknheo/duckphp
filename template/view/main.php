@@ -27,14 +27,6 @@
     请使用安装选项 --full 以打开开启 <a href="javascript:;">完整演示</a>
 </div>
 <?php
-    } else {
-?>
-<div>
-<a href="/full/public/index.php">转到完整演示页面</a>
-<a href="/full/public/u/">一个文章系统的例子</a>
-</div>
-    
-<?php
     }
 ?>
 <div>

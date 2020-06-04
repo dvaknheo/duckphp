@@ -177,7 +177,7 @@ use DuckPhp\App as SystemApp;
 class App extends SystemApp
 {
     //@override
-    protected $options_project = [
+    public $options = [
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_exception',
         'error_debug' =>  '_sys/error_debug',
@@ -192,7 +192,7 @@ class App extends SystemApp
         parent::__construct();
         $options = [];
         // 省略一堆注释
-        $this->options_project = array_replace_recursive($this->options_project, $options);
+        $this->options = array_replace_recursive($this->options, $options);
     }
     //@override
     protected function onPrepare()
@@ -236,7 +236,7 @@ class App extends SystemApp
 - 配置，可有可无的配置文件。
 - 设置，配置的 setting 文件，敏感信息
 
-index.php 中的 $options , app/Base/App.php 的 $options_project 在初始化的时候都会传递合并入入口类的 $options 公开属性里。
+index.php 中的 $options , app/Base/App.php 的 在初始化的时候都会传递合并入入口类的 $options 公开属性里。
 在 App 类的代码里，还留有一大堆排序后的注释选项。打开后也合并如 options 公开属性。
 这些注释选项代码和默认的是一致的。
 

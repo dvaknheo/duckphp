@@ -6,16 +6,16 @@ subgraph cluster_Core {
     
     label = "[DuckPhp\\Core]";
 
-    Core_AppPluginTrait [label="AppPluginTrait";shape=Mdiamond];
+    Core_AppPluginTrait [label="AppPluginTrait";shape=Mdiamond;style=filled];
     Core_App [label="App";shape=Mdiamond]; 
     Core_Kernel [label="Kernel";shape="diamond"];
-    Core_SingletonEx [label="SingletonEx";shape=Mdiamond];
+    Core_SingletonEx [label="SingletonEx";shape=Mdiamond;style=filled];
     Core_AutoLoader [label="AutoLoader"];
     Core_ExceptionManager [label="ExceptionManager"];
     Core_View [label="View";shape="component"];
     Core_Configer [label="Configer";shape="component"];
     Core_Logger [label="Logger";shape="component"];
-    Core_Route [label="Route";shape=Mdiamond];
+    Core_Route [label="Route";shape=Mdiamond;style=filled];
     Core_RuntimeState [label="RuntimeState";shape="component"];
     Core_SystemWrapperTrait [label="SystemWrapperTrait";shape=diamond];
     
@@ -24,7 +24,7 @@ subgraph cluster_Core {
 
     Core_ExtendableStaticCallTrait [label="ExtendableStaticCallTrait";shape=diamond];
     
-    Core_ThrowOn [label="ThrowOn";shape=Mdiamond];
+    Core_ThrowOn [label="ThrowOn";shape=Mdiamond;style=filled];
     Core_ComponentInterface [label="ComponentInterface";shape=note];
     Core_ComponentBase [label="ComponentBase";shape=box3d];
     Core_Functions [label="Functions"];
@@ -54,6 +54,7 @@ subgraph cluster_Core {
     Core_App -> Core_SuperGlobal [style="dotted"];
     
     Core_App -> Core_Functions [style="dotted"];
+    Core_App -> Core_ComponentBase [style="dotted"];
 
 
     Core_AppPluginTrait -> Core_Configer;
@@ -74,7 +75,6 @@ subgraph cluster_Core {
     Core_ComponentBase -> Core_ComponentInterface;
     Core_ComponentBase -> Core_SingletonEx;
     
-    Core_Kernel -> Core_SingletonEx;
     
 }
 
@@ -85,11 +85,11 @@ subgraph cluster_Helper {
     
     label = "[DuckPhp\\Helper]";
     
-    AppHelper [label="AppHelper";shape=Mdiamond];
-    ControllerHelper [label="ControllerHelper";shape=Mdiamond];
-    ModelHelper [label="ModelHelper";shape=Mdiamond];
-    ServiceHelper [label="ServiceHelper";shape=Mdiamond];
-    ViewHelper [label="ViewHelper";shape=Mdiamond];
+    AppHelper [label="AppHelper";shape=Mdiamond;style=filled];
+    ControllerHelper [label="ControllerHelper";shape=Mdiamond;style=filled];
+    ModelHelper [label="ModelHelper";shape=Mdiamond;style=filled];
+    ServiceHelper [label="ServiceHelper";shape=Mdiamond;style=filled];
+    ViewHelper [label="ViewHelper";shape=Mdiamond;style=filled];
     HelperTrait [label="HelperTrait";shape=diamond];
     
     AppHelper -> Core_App; 
@@ -191,7 +191,7 @@ subgraph cluster_DuckPhp {
     App -> DBManager;
 
     App [shape=Mdiamond];
-    HttpServer [shape=Mdiamond];
+    HttpServer [shape=Mdiamond;style=filled];
 
 }
 

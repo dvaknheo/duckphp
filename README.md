@@ -166,7 +166,7 @@ DuckPhp\App::RunQuickly($options);
  */
 namespace
 {
-    require_once(__DIR__.'/../../../autoload.php');        // @DUCKPHP_HEADFILE
+    require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
 }
 // 以下部分是核心工程师写。
 namespace MySpace\Base
@@ -178,7 +178,7 @@ namespace MySpace\Base
     class App extends \DuckPhp\App
     {
         // @override
-        protected $options_project = [
+        public $options = [
             'is_debug' => true,
                 // 开启调试模式
             'skip_setting_file' => true,

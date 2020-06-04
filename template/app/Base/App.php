@@ -11,7 +11,7 @@ use DuckPhp\App as SystemApp;
 class App extends SystemApp
 {
     //@override
-    protected $options_project = [
+    public $options = [
         //'skip_setting_file' => true,
         'skip_setting_file' => true, // @DUCKPHP_DELETE
         
@@ -19,7 +19,7 @@ class App extends SystemApp
         'is_debug' => true, // @DUCKPHP_DELETE
         
         //'platform' => true,
-        'platform' => '', // @DUCKPHP_DELETE
+        'platform' => 'aaa', // @DUCKPHP_DELETE
         
         
         'error_404' => '_sys/error_404',
@@ -196,7 +196,7 @@ class App extends SystemApp
             $options['strict_check_context_class']=NULL;
         //*/
 
-        $this->options_project = array_replace_recursive($this->options_project, $options);
+        $this->options = array_replace_recursive($this->options, $options);
     }
     //@override
     protected function onPrepare()
