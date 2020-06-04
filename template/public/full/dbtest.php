@@ -1,5 +1,6 @@
 <?php
 require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
+
 use App as M;
 use App as C;
 use App as V;
@@ -15,7 +16,6 @@ class App extends \DuckPhp\App
             // 开启调试模式
         'skip_setting_file' => true,
             // 本例特殊，跳过设置文件 这个选项防止没有上传设置文件到服务器
-         
         'ext' => [
             RouteHookOneFileMode::class => true,
                 // 开启单一文件模式，服务器不配置也能运行
@@ -27,43 +27,47 @@ class App extends \DuckPhp\App
         'namespace_controller'=>"\\",   
             // 本例特殊，设置控制器的命名空间为根
         'setting'=>[
-'database_list' => [
-    [
-        'dsn' => 'mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8mb4;',
-        'username' => 'admin',
-        'password' => '123456',
-        'driver_options' => [],
-    ],
-],
+        //数据库设置
+        'database_list' => [
+                [
+                    'dsn' => 'mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8mb4;',
+                    'username' => 'admin',
+                    'password' => '123456',
+                    'driver_options' => [],
+                ],
             ],
+        ],
     ];
 }
-class Service
+class MyService
 {
     use \DuckPhp\Core\SingletonEx;
     public function getDataList($page,$pagesize)
     {
-        return Model::getDataList($page,$pagesize);
+        return MyModel::getDataList($page,$pagesize);
     }
     public function getData($id)
     {
-        return Model::getData($id);
+        return MyModel::getData($id);
     }
     public function addData($data)
     {
-        return Model::addData($id);
-
+        return MyModel::addData($data);
     }
     public function updateData($id,$data)
     {
-        return Model::updateData($id);
+        return MyModel::updateData($id,$data);
+    }
+    public function deleteData($id)
+    {
+        return MyModel::deleteData($id);
     }
 }
-class Model
+class MyModel
 {
     public static function getDataList($page,$pagesize)
     {
-        $sql="select * from test order by id";
+        $sql="select * from test order by id desc";
         $total=M::DB()->fetchColumn(M::SqlForCountSimply($sql));
         $list=M::DB()->fetchAll(M::SqlForPager($sql,$page,$pagesize));
 
@@ -88,7 +92,7 @@ class Model
     }
     public static function deleteData($id)
     {
-        $sql="delete form test where id=? limit 1";
+        $sql="delete from test where id=? limit 1";
         M::DB()->execute($sql,$id);
     }
 }
@@ -97,29 +101,32 @@ class Main
 {
     public function index()
     {
-        list($total,$list)=Service::G()->getDataList(C::PageNo(),C::PageSize());
+        list($total,$list)=MyService::G()->getDataList(C::PageNo(),C::PageSize(3));
         $pager=C::PageHtml($total);
         C::Show(get_defined_vars(),'main_view');
     }
+    public function do_index()
+    {
+        MyService::G()->addData(C::SG()->_POST);
+        $this->index();
+    }
     public function show()
     {
-        Service::G()->getData(C::GET('id'));
-        C::Show(get_defined_vars());
+        $data=MyService::G()->getData(C::SG()->_GET['id']??0);
+        C::Show(get_defined_vars(),'show');
     }
     public function do_show()
     {
+        MyService::G()->updateData(C::SG()->_POST['id'],C::SG()->_POST);
+        $this->show();
     }
     public function delete()
     {
-        
+        MyService::G()->deleteData(C::SG()->_GET['id']??0);
+        C::ExitRouteTo('');
     }
 }
-
-$options=[
-
-];
-App::RunQuickly($options);
-
+App::RunQuickly([]);
 class Views
 {
     public function header($data)
@@ -146,28 +153,33 @@ class Views
                 <td><?=$v['id']?></td>
                 <td><?=__h($v['content'])?></td>
                 <td><a href="<?=__url('show?id='.$v['id'])?>">编辑</a></td>
+                <td><a href="<?=__url('delete?id='.$v['id'])?>">删除</a></td>
             </tr>
 <?php
         }
 ?>
         </table>
+        <?=$pager?>
         <h1>新增</h1>
-        <form method="post">
+        <form method="post" action="<?=__url('')?>">
             <input type="text" name="content">
             <input type="submit">
         </form>
-        <?=$pager?>
 <?php
     }
-    public function show($data)
+    public function show($vdata)
     {
-        extract($data); ?>
-        查看/编辑
+        extract($vdata); ?>
+        <h1>查看/编辑</h1>
+        原内容
+        <p><?=__h($data['content'])?></p>
         <form method="post">
-            <input type="text" name="id" value="<?=$data['id']?>">
+            <input type="hidden" name="id" value="<?=$data['id']?>">
             <input type="text" name="content" value="<?=__h($data['content'])?>">
             <input type="submit" value="编辑">
         </form>
+        <a href="<?=__url('')?>">回首页</a>
+
 <?php
     }
     public function footer($data)
