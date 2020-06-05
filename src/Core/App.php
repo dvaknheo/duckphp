@@ -42,14 +42,6 @@ class App extends ComponentBase
     use Core_SystemWrapper;
     use Core_Glue;
     use Core_Component;
-
-    // from kernel
-    protected $hanlder_for_exception_handler;
-    protected $hanlder_for_exception;
-    protected $hanlder_for_develop_exception;
-    protected $hanlder_for_404;
-    protected $is_inited = false;
-    //protected $options_default;
     
     // for helper
     public $componentClassMap = [
@@ -73,6 +65,13 @@ class App extends ComponentBase
         'session_set_save_handler' => null,
 
     ];
+    
+    // from kernel
+    protected $hanlder_for_exception_handler;
+    protected $hanlder_for_exception;
+    protected $hanlder_for_develop_exception;
+    protected $hanlder_for_404;
+    
     // for trait
     protected $extDynamicComponentClasses = [];
     protected $beforeShowHandlers = [];
