@@ -5,9 +5,9 @@
  */
 namespace SimpleBlog\Base;
 
-use DuckPhp\App as DuckPhp_App;
+use DuckPhp\App as SystemApp;
 
-class App extends DuckPhp_App
+class App extends SystemApp
 {
     public $componentClassMap = [
             'M' => 'ModelHelper',
@@ -18,9 +18,11 @@ class App extends DuckPhp_App
     //@override
     public $options = [
         'ext' => [
-            'SimpleAuth\\Base\\App' => true,
             'DuckPhp\\Ext\\Misc' => true,
             'DuckPhp\\Ext\\RouteHookRewrite' => true,
+            'SimpleAuth\\Base\\App' => [
+                'plugin_url_prefix'=>'/simpleauth/',
+            ],
         ],
         'rewrite_map' => [
             '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',

@@ -29,12 +29,6 @@ return;
 //*/
 //-----------------------------------------------
 
-function GetClassTestPath($class)
-{
-    $ret=__DIR__.'/data_for_tests'.str_replace(['DuckPhp\\','\\'],['/','/'],$class).'/';
-    return $ret;
-}
-
 
 class MyCodeCoverage
 {
@@ -79,7 +73,7 @@ class MyCodeCoverage
         $blocks=explode('\\',$this->test_class);
         $root=array_shift($blocks);
         $this->namespace=$this->namespace ?? $root;
-        $ret=__DIR__.'/data_for_tests/'.str_replace([$this->namespace.'\\','\\'],['/','/'],$class).'/';
+        $ret=__DIR__.'/data_for_tests'.str_replace([$this->namespace.'\\','\\'],['/','/'],$class).'/';
         return $ret;
     }
     protected static function include_file($file)

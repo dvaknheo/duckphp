@@ -14,20 +14,7 @@ use DuckPhp\Core\SuperGlobal;
 trait AppPluginTrait
 {
     //public $plugin_options = [] => in parent
-    protected $plugin_options_default = [
-        'plugin_path_namespace' => null,
-        'plugin_namespace' => null,
-        
-        'plugin_routehook_position' => 'append-outter',
-        
-        'plugin_path_conifg' => 'config',
-        'plugin_path_view' => 'view',
-        
-        'plugin_search_config' => false,
-        'plugin_files_config' => [],
-        'plugin_use_helper' => true,
-    ];
-
+    
     protected $path_view_override = '';
     protected $path_config_override = '';
     
@@ -38,7 +25,25 @@ trait AppPluginTrait
     
     public function pluginModeInit(array $options, object $context = null)
     {
-        $this->plugin_options = array_replace_recursive($this->plugin_options_default, $this->plugin_options);
+        $plugin_options_default = [
+            'plugin_path_namespace' => null,
+            'plugin_namespace' => null,
+            
+            'plugin_routehook_position' => 'append-outter',
+            
+            'plugin_path_conifg' => 'config',
+            'plugin_path_view' => 'view',
+            
+            'plugin_search_config' => false,
+            'plugin_use_helper' => true,
+            'plugin_files_config' => [],
+            'plugin_url_prefix' => '',
+        ];
+        
+        
+        $this->plugin_options = array_merge($plugin_options_default, $this->plugin_options ?? []);
+        $this->plugin_options['plugin_files_config'] = $this->plugin_options['plugin_files_config'] ?? [];
+        
         $this->onPluginModePrepare();
         $this->pluginModeInitOptions($options);
         $this->pluginModeInitVars($context);
@@ -83,7 +88,7 @@ trait AppPluginTrait
     /////
     protected function pluginModeInitOptions($options)
     {
-        $this->plugin_options = array_intersect_key(array_replace_recursive($this->plugin_options, $options) ?? [], $this->plugin_options);
+        $this->plugin_options = array_intersect_key(array_replace_recursive($this->plugin_options, $options), $this->plugin_options);
         $class = static::class;
         
         if (!isset($this->plugin_options['plugin_namespace']) || !isset($this->plugin_options['plugin_path_namespace'])) {
@@ -135,6 +140,16 @@ trait AppPluginTrait
 
     protected function _PluginModeRouteHook($path_info)
     {
+        $my_path_info = $path_info;
+        if ($this->plugin_options['plugin_url_prefix'] ?? false) {
+            $prefix = '/'.trim($this->plugin_options['plugin_url_prefix'], '/').'/';
+            
+            if (substr($path_info, 0, strlen($prefix)) === $prefix) {
+                $my_path_info = substr($path_info, strlen($this->plugin_options['plugin_url_prefix']) + 1);
+            } else {
+                return false;
+            }
+        }
         if ($this->plugin_options['plugin_use_helper'] && $this->componentClassMap) {
             $this->pluginModeCloneHelpers();
         }
@@ -146,14 +161,14 @@ trait AppPluginTrait
         $this->plugin_route = $route;
         $options['namespace'] = $this->plugin_options['plugin_namespace'];
         $route->init($options)->bindServerData(SuperGlobal::G()->_SERVER);
-        $route->setPathInfo($path_info);
+        
+        $route->setPathInfo($my_path_info);
         
         if ($this->plugin_before_run_handler) {
             ($this->plugin_before_run_handler)();
         }
         $this->onPluginModeRun();
-        
-        $flag = $route->defaultRunRouteCallback($path_info);
+        $flag = $route->defaultRunRouteCallback($my_path_info);
         return $flag;
     }
     protected function pluginModeCloneHelpers()

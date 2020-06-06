@@ -54,9 +54,13 @@ class Main
         $csrf_token = SessionService::G()->csrf_token();
         $csrf_field = SessionService::G()->csrf_field();
         
-        $current_user = SessionService::G()->getCurrentUser();
-        $user_name = $current_user? $current_user['username']:'';
-        unset($current_user);
+        try{
+            $current_user = SessionService::G()->getCurrentUser();
+            $user_name = $current_user? $current_user['username']:'';
+            unset($current_user);
+        }catch(\Throwable $ex){
+            $user_name='';
+        }
         
         C::assignViewData(get_defined_vars());
     }

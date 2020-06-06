@@ -10,14 +10,11 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(AppPluginTrait::class);
         $path_app=\MyCodeCoverage::GetClassTestPath(AppPluginTrait::class);
-
         $options=[
             'path' =>$path_app,
             'platform' => 'BJ',
             'is_debug' => true,
             'skip_setting_file' => true,
-            
-            'use_super_global' => true,
             'override_class'=>'',
         ];
         $plugin_options=[
@@ -31,21 +28,26 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
             'plugin_search_config'=>true,
             //'plugin_files_conifg'=>[],
         ];
-        DuckPhp::G(new DuckPhp());
-        AppPluginTraitApp::G()->init($plugin_options,DuckPhp::G()->init($options));
-        AppPluginTraitApp::G()->pluginModeBeforeRun(function(){var_dump("Before run!",get_class(AppPluginTraitApp::G()->pluginModeGetRoute()));});
+
+        $options['ext'][AppPluginTraitApp::class]=$plugin_options;
+        $options['ext'][AppPluginTraitApp2::class]=$plugin_options;
         
-        \DuckPhp\Core\Route::G()->bindServerData(\DuckPhp\Core\SuperGlobal::G()->_SERVER);
-        \DuckPhp\Core\Route::G()->path_info='/second';
+        DuckPhp::G(new DuckPhp())->init($options);
+        \DuckPhp\Core\Route::G()->setPathInfo('/Test/second');
         DuckPhp::G()->run();
+
+        \DuckPhp\Core\Route::G()->setPathInfo('/Test2/second');
+        DuckPhp::G()->run();
+        
         
         $plugin_options['plugin_path_namespace']=null;
         $plugin_options['plugin_search_config']=false;
         AppPluginTraitApp::G(new AppPluginTraitApp())->init($plugin_options,DuckPhp::G()->init($options));
-        var_dump(AppPluginTraitApp::G()->plugin_options['plugin_path_namespace']);
         DuckPhp::G(new DuckPhp());
+        
+        
         \MyCodeCoverage::G()->end();
-        }
+    }
 }
 class AppPluginTraitApp extends DuckPhp
 {
@@ -57,18 +59,33 @@ class AppPluginTraitApp extends DuckPhp
     {
         parent::__construct();
         $this->plugin_options['plugin_files_conifg']='config';
+        $this->pluginModeBeforeRun(function(){
+            var_dump("Before run!",get_class(AppPluginTraitApp::G()->pluginModeGetRoute()));}
+        );
     }
 }
 class AppHelper
 {
     public static function Foo()
     {
-        var_dump("OK");
+        var_dump("AppHelper OK");
+    }
+}
+class AppPluginTraitApp2 extends DuckPhp
+{
+    use AppPluginTrait;
+    public $plugin_options=[
+        'plugin_url_prefix'=>'Test',
+    ];
+    public function __construct()
+    {
+        parent::__construct();
     }
 }
 
+
 }
-namespace tests\DuckPhp\Core\Second\Controller
+namespace tests\DuckPhp\Controller
 {
 use DuckPhp\App as DuckPhp;
 ////[[[[
@@ -76,6 +93,8 @@ class Main
 {
     public function second()
     {
+        //DuckPhp::Foo
+        //\DuckPhp\Helper\AppHelper::Foo();
         DuckPhp::Show(['date'=>DATE(DATE_ATOM)],'main');
     }
 }
