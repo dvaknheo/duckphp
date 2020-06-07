@@ -353,6 +353,7 @@ App::PageHtml(123);
         
         App::assignPathNamespace("NoPath","NoName");
         App::addRouteHook(function(){},'append-outter',true);
+        App::add404RouteHook(function(){});
         
         
         App::isInException();

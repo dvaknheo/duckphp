@@ -185,7 +185,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
                 var_dump(DATE(DATE_ATOM));
                 return true;
             };
-            Route::G()->add404Handler($my404);
+            Route::G()->add404RouteHook($my404);
             Route::G()->addRouteHook($appended, 'append-inner', true);
             Route::G()->addRouteHook($appended, 'append-outter', true);
         });

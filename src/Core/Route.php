@@ -263,7 +263,7 @@ class Route extends ComponentBase
         }
         return true;
     }
-    public function add404Handler($callback)
+    public function add404RouteHook($callback)
     {
         return $this->addRouteHook($callback, 'append-outter', false);
     }

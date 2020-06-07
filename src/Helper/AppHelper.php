@@ -33,6 +33,10 @@ class AppHelper
     {
         return App::addRouteHook($hook, $position, $once);
     }
+    public static function add404RouteHook($callback)
+    {
+        return App::add404RouteHook($callback);
+    }
     public static function setUrlHandler($callback)
     {
         return App::setUrlHandler($callback);

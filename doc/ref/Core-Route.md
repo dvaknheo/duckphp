@@ -64,9 +64,9 @@ public function forceFail()
 public function addRouteHook($callback, $position, $once = true)
     
     添加钩子
-public function add404Handler($callback)
+public function add404RouteHook($callback)
 
-    添加 404 回调
+    添加 404 回调，相当于addRouteHook($callback, 'append-outter', false);
 public function defaulToggleRouteCallback($enable = true)
 
     切换默认的路由回调

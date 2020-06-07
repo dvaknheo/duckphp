@@ -52,9 +52,11 @@ class AppHelperTest extends \PHPUnit\Framework\TestCase
         $handler=new HelperFakeSessionHandler();
         AppHelper::session_set_save_handler( $handler);
 
+        AppHelper::add404RouteHook( function(){var_dump('404!');});
+
+
         \MyCodeCoverage::G()->end();
-        /*
-        //*/
+
     }
 
 }
