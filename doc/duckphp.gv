@@ -6,8 +6,8 @@ subgraph cluster_Core {
     
     label = "[DuckPhp\\Core]";
 
-    Core_AppPluginTrait [label="AppPluginTrait";shape=Mdiamond;style=filled];
-    Core_App [label="App";shape=Mdiamond]; 
+    Core_AppPluginTrait [label="AppPluginTrait";shape=diamond];
+    Core_App [label="App";shape=Mdiamond;style=filled]; 
     Core_Kernel [label="Kernel";shape="diamond"];
     Core_SingletonEx [label="SingletonEx";shape=Mdiamond;style=filled];
     Core_AutoLoader [label="AutoLoader"];
@@ -19,7 +19,7 @@ subgraph cluster_Core {
     Core_RuntimeState [label="RuntimeState";shape="component"];
     Core_SystemWrapperTrait [label="SystemWrapperTrait";shape=diamond];
     
-    Core_HttpServer [label="HttpServer";shape="component"];
+    Core_HttpServer [label="HttpServer";shape=Mdiamond;style=filled];
     Core_SuperGlobal [label="SuperGlobal";shape="component"];
 
     Core_ExtendableStaticCallTrait [label="ExtendableStaticCallTrait";shape=diamond];

@@ -31,11 +31,7 @@
 </g>
 <!-- Core_AppPluginTrait -->
 <g id="node1" class="node"><title>Core_AppPluginTrait</title>
-<polygon fill="lightgrey" stroke="black" points="689.282,-939.165 596.612,-921.165 689.282,-903.165 781.952,-921.165 689.282,-939.165"/>
-<polyline fill="none" stroke="black" points="608.391,-923.453 608.391,-918.877 "/>
-<polyline fill="none" stroke="black" points="677.502,-905.453 701.062,-905.453 "/>
-<polyline fill="none" stroke="black" points="770.172,-918.877 770.172,-923.453 "/>
-<polyline fill="none" stroke="black" points="701.062,-936.877 677.502,-936.877 "/>
+<polygon fill="none" stroke="black" points="689.282,-939.165 596.612,-921.165 689.282,-903.165 781.952,-921.165 689.282,-939.165"/>
 <text text-anchor="middle" x="689.282" y="-917.465" font-family="Times,serif" font-size="14.00">AppPluginTrait</text>
 </g>
 <!-- Core_View -->
@@ -90,7 +86,7 @@
 </g>
 <!-- Core_App -->
 <g id="node2" class="node"><title>Core_App</title>
-<polygon fill="none" stroke="black" points="472.208,-1144.16 435.674,-1126.16 472.208,-1108.16 508.742,-1126.16 472.208,-1144.16"/>
+<polygon fill="lightgrey" stroke="black" points="472.208,-1144.16 435.674,-1126.16 472.208,-1108.16 508.742,-1126.16 472.208,-1144.16"/>
 <polyline fill="none" stroke="black" points="446.438,-1131.47 446.438,-1120.86 "/>
 <polyline fill="none" stroke="black" points="461.443,-1113.47 482.972,-1113.47 "/>
 <polyline fill="none" stroke="black" points="497.977,-1120.86 497.977,-1131.47 "/>
@@ -304,15 +300,17 @@
 </g>
 <!-- Core_HttpServer -->
 <g id="node13" class="node"><title>Core_HttpServer</title>
-<polygon fill="none" stroke="black" points="985.582,-897.165 909.582,-897.165 909.582,-893.165 905.582,-893.165 905.582,-889.165 909.582,-889.165 909.582,-869.165 905.582,-869.165 905.582,-865.165 909.582,-865.165 909.582,-861.165 985.582,-861.165 985.582,-897.165"/>
-<polyline fill="none" stroke="black" points="909.582,-893.165 913.582,-893.165 913.582,-889.165 909.582,-889.165 "/>
-<polyline fill="none" stroke="black" points="909.582,-869.165 913.582,-869.165 913.582,-865.165 909.582,-865.165 "/>
+<polygon fill="lightgrey" stroke="black" points="947.582,-897.165 877.87,-879.165 947.582,-861.165 1017.29,-879.165 947.582,-897.165"/>
+<polyline fill="none" stroke="black" points="889.489,-882.165 889.489,-876.165 "/>
+<polyline fill="none" stroke="black" points="935.964,-864.165 959.201,-864.165 "/>
+<polyline fill="none" stroke="black" points="1005.68,-876.165 1005.68,-882.165 "/>
+<polyline fill="none" stroke="black" points="959.201,-894.165 935.964,-894.165 "/>
 <text text-anchor="middle" x="947.582" y="-875.465" font-family="Times,serif" font-size="14.00">HttpServer</text>
 </g>
 <!-- Core_HttpServer&#45;&gt;Core_ComponentBase -->
 <g id="edge33" class="edge"><title>Core_HttpServer&#45;&gt;Core_ComponentBase</title>
-<path fill="none" stroke="black" stroke-dasharray="1,5" d="M985.722,-879.165C1005.06,-879.165 1029.23,-879.165 1051.37,-879.165"/>
-<polygon fill="black" stroke="black" points="1051.37,-882.665 1061.37,-879.165 1051.37,-875.665 1051.37,-882.665"/>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M1017.33,-879.165C1028.62,-879.165 1040.26,-879.165 1051.39,-879.165"/>
+<polygon fill="black" stroke="black" points="1051.44,-882.665 1061.44,-879.165 1051.44,-875.665 1051.44,-882.665"/>
 </g>
 <!-- Core_SuperGlobal&#45;&gt;Core_ComponentBase -->
 <g id="edge29" class="edge"><title>Core_SuperGlobal&#45;&gt;Core_ComponentBase</title>
@@ -731,8 +729,8 @@
 </g>
 <!-- HttpServer&#45;&gt;Core_HttpServer -->
 <g id="edge73" class="edge"><title>HttpServer&#45;&gt;Core_HttpServer</title>
-<path fill="none" stroke="black" d="M340.567,-674.532C372.647,-707.224 456.779,-786.98 544.974,-821.165 665.222,-867.773 706.555,-828.934 833.589,-851.165 855.473,-854.994 879.398,-860.698 899.575,-865.96"/>
-<polygon fill="black" stroke="black" points="898.89,-869.399 909.453,-868.578 900.684,-862.633 898.89,-869.399"/>
+<path fill="none" stroke="black" d="M340.567,-674.532C372.647,-707.224 456.779,-786.98 544.974,-821.165 665.222,-867.773 706.555,-828.934 833.589,-851.165 857.028,-855.266 882.806,-861.517 903.815,-867.073"/>
+<polygon fill="black" stroke="black" points="903.149,-870.518 913.714,-869.733 904.965,-863.758 903.149,-870.518"/>
 </g>
 <!-- App -->
 <g id="node50" class="node"><title>App</title>
