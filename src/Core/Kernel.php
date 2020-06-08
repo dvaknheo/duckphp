@@ -26,27 +26,7 @@ trait Kernel
     // use SingletonEx; OK ，turn on this for full work;
     
     public $options = [];
-
-    protected $default_run_handler = null;
-    protected $error_view_inited = false;
-
-    // for app
-    protected $hanlder_for_exception_handler;
-    protected $hanlder_for_exception;
-    protected $hanlder_for_develop_exception;
-    protected $hanlder_for_404;
-
-    public static function RunQuickly(array $options = [], callable $after_init = null): bool
-    {
-        $instance = static::G()->init($options);
-        if ($after_init) {
-            ($after_init)();
-        }
-        return $instance->run();
-    }
-    protected function mergeDefaultOptions()
-    {
-        $options_default = [
+    protected static $options_default = [
             //// not override options ////
             'use_autoloader' => true,
             'skip_plugin_mode_check' => false,
@@ -78,8 +58,22 @@ trait Kernel
             'error_500' => null,          //'_sys/error-500',
             'error_debug' => null,        //'_sys/error-debug',
         ];
-        $this->options = array_merge($options_default, $this->options);
-        $this->options['ext'] = $this->options['ext'] ?? [];
+    protected $default_run_handler = null;
+    protected $error_view_inited = false;
+
+    // for app
+    protected $hanlder_for_exception_handler;
+    protected $hanlder_for_exception;
+    protected $hanlder_for_develop_exception;
+    protected $hanlder_for_404;
+
+    public static function RunQuickly(array $options = [], callable $after_init = null): bool
+    {
+        $instance = static::G()->init($options);
+        if ($after_init) {
+            ($after_init)();
+        }
+        return $instance->run();
     }
     protected function initOptions($options = [])
     {
@@ -92,8 +86,8 @@ trait Kernel
     }
     protected function checkOverride($options)
     {
-        $override_class = $options['override_class'] ?? 'Base\App';//$this->options_default['override_class'];
-        $namespace = $options['namespace'] ?? 'MY';//$this->options_default['namespace'];
+        $override_class = $options['override_class'] ?? self::$options_default['override_class'];
+        $namespace = $options['namespace'] ?? self::$options_default['namespace'];
         
         if (substr($override_class, 0, 1) !== '\\') {
             $override_class = $namespace.'\\'.$override_class;
@@ -117,17 +111,16 @@ trait Kernel
     //init
     public function init(array $options, object $context = null)
     {
-        if (!($options['skip_plugin_mode_check'] ?? false) && isset($context)) {
+        if (!($options['skip_plugin_mode_check'] ?? self::$options_default['skip_plugin_mode_check']) && isset($context)) {
             return $this->pluginModeInit($options, $context);
         }
         
-        if ($options['use_autoloader'] ?? true) {
+        if ($options['use_autoloader'] ?? self::$options_default['use_autoloader']) {
             AutoLoader::G()->init($options, $this)->run();
         }
         
-        $handle_all_dev_error = $options['handle_all_dev_error'] ?? true; //$this->options_default['handle_all_dev_error'];
-        $handle_all_exception = $options['handle_all_exception'] ?? true; //$this->options_default['handle_all_exception'];
-
+        $handle_all_dev_error = $options['handle_all_dev_error'] ?? self::$options_default['handle_all_dev_error'];
+        $handle_all_exception = $options['handle_all_exception'] ?? self::$options_default['handle_all_exception'];
         $exception_options = [
             'handle_all_dev_error' => $handle_all_dev_error,
             'handle_all_exception' => $handle_all_exception,

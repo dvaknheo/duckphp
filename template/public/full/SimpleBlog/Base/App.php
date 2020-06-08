@@ -21,7 +21,7 @@ class App extends SystemApp
             'DuckPhp\\Ext\\Misc' => true,
             'DuckPhp\\Ext\\RouteHookRewrite' => true,
             'SimpleAuth\\Base\\App' => [
-                'plugin_url_prefix'=>'/simpleauth/',
+                //'plugin_url_prefix'=>'/simpleauth/',
             ],
         ],
         'rewrite_map' => [
