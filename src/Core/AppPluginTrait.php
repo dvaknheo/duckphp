@@ -143,9 +143,9 @@ trait AppPluginTrait
         $my_path_info = $path_info;
         if ($this->plugin_options['plugin_url_prefix'] ?? false) {
             $prefix = '/'.trim($this->plugin_options['plugin_url_prefix'], '/').'/';
-            
-            if (substr($path_info, 0, strlen($prefix)) === $prefix) {
-                $my_path_info = substr($path_info, strlen($this->plugin_options['plugin_url_prefix']) + 1);
+            $l = strlen($prefix);
+            if (substr($path_info, 0, $l) === $prefix) {
+                $my_path_info = substr($path_info, $l - 1);
             } else {
                 return false;
             }
