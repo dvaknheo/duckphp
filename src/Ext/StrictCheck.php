@@ -46,7 +46,6 @@ class StrictCheck extends ComponentBase
     public static function CheckStrictDB()
     {
         return static::G()->checkStrictComponent('DB', 5, ['DuckPhp\\Core\\App','DuckPhp\\Helper\\ModelHelper']);
-        //
     }
     ///////////////////////////////////////////////////////////
     public function getCallerByLevel($level, $parent_classes_to_skip = [])
@@ -79,6 +78,7 @@ class StrictCheck extends ComponentBase
             return;
         }
         $caller_class = $this->getCallerByLevel($trace_level, $parent_classes_to_skip);
+        
         $namespace_service = $this->options['namespace_service'];
         $namespace_controller = $this->options['namespace_controller'];
         $controller_base_class = $this->options['controller_base_class'];

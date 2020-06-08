@@ -755,6 +755,27 @@ trait Core_Glue
     {
         return SuperGlobal::G()->session_set_save_handler($handler);
     }
+    
+    public static function GET($key, $default = null)
+    {
+        return static::SG()->_GET[$key] ?? $default;
+    }
+    public static function POST($key, $default = null)
+    {
+        return static::SG()->_POST[$key] ?? $default;
+    }
+    public static function REQUEST($key, $default = null)
+    {
+        return static::SG()->_REQUEST[$key] ?? $default;
+    }
+    public static function COOKIE($key, $default = null)
+    {
+        return static::SG()->_COOKIE[$key] ?? $default;
+    }
+    public static function SERVER($key, $default = null)
+    {
+        return static::SG()->_SERVER[$key] ?? $default;
+    }
 }
 trait Core_Component
 {

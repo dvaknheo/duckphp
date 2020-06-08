@@ -149,8 +149,11 @@ App::PageHtml(123);
         }catch(\Throwable $ex){
         }
 
-
-    App::G()->isInited();
+        App::GET('a');
+        App::POST('a');
+        App::REQUEST('a');
+        App::COOKIE('a');
+        App::SERVER('SCRIPT_FILENAME');
 
         \MyCodeCoverage::G()->end();
     return;

@@ -106,6 +106,7 @@ class ExceptionManager
         
         $this->default_exception_handler = $this->options['default_exception_handler'];
         $this->system_exception_handler = $this->options['system_exception_handler'];
+        $this->is_inited = true;
         
         return $this;
     }

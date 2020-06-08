@@ -137,23 +137,23 @@ class ControllerHelper
     }
     public static function GET($key, $default = null)
     {
-        return static::SG()->_GET[$key] ?? $default;
+        return App::GET($key, $default);
     }
     public static function POST($key, $default = null)
     {
-        return static::SG()->_POST[$key] ?? $default;
+        return App::POST($key, $default);
     }
     public static function REQUEST($key, $default = null)
     {
-        return static::SG()->_REQUEST[$key] ?? $default;
+        return App::REQUEST($key, $default);
     }
     public static function COOKIE($key, $default = null)
     {
-        return static::SG()->_COOKIE[$key] ?? $default;
+        return App::COOKIE($key, $default);
     }
     public static function SERVER($key, $default = null)
     {
-        return static::SG()->_SERVER[$key] ?? $default;
+        return App::SERVER($key, $default);
     }
     ////
     public static function Pager($object = null)
