@@ -20,6 +20,7 @@
     欢迎使用 DuckPHP ,<?php echo $var;?>
     <a href="<?=__url('test/done')?>">查看 Demo 结果</a>
 </div>
+<hr />
 <?php
     if ($skip_in_full) {
         ?>

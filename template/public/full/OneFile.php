@@ -1,125 +1,34 @@
 <?php declare(strict_types=1);
 use DuckPhp\App;
-use DuckPhp\Core\Route;
 use DuckPhp\Core\View;
 //未完工
 require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
 //// 这个例子极端点，没用任何类，全函数模式。
 
 ////
-
-/////////////////////
-function get_data()
-{
-    return App::SG()->_SESSION['content'] ?? '';
-}
-function add_data($content)
-{
-    App::SG()->_SESSION['content'] = $content;
-}
-function update_data($content)
-{
-    App::SG()->_SESSION['content'] = $content;
-}
-function delete_data()
-{
-    unset(App::SG()->_SESSION['content']);
-    unset($_SESSION['content']);
-}
-/////////////
-function action_index()
-{
-    global $view_data;
-    $view_data['content'] = nl2br(App::H(get_data()));
-    $view_data['url_add'] = App::URL('add');
-    $view_data['url_edit'] = App::URL('edit');
-    $token = App::SG()->_SESSION['token'] = md5(''.mt_rand());
-    $view_data['url_del'] = App::URL('del?token='.$token);
-    
-    App::Show($data);
-}
-function action_add()
-{
-    $data = ['x' => 'add'];
-    
-    App::Show($data);
-}
-function action_edit()
-{
-    $data = ['x' => 'add'];
-    $data['content'] = H(get_data());
-
-    App::Show($data);
-}
-function action_del()
-{
-    $old_token = App::SG()->_SESSION['token'];
-    $new_token = App::SG()->_GET['token'];
-    $flag = ($old_token == $new_token)?true:false;
-    if ($flag) {
-        unset(App::SG()->_SESSION['content']);
-    }
-    unset(App::SG()->_SESSION['token']);
-    $data['msg'] = $flag?'':'验证失败';
-    $data['url_back'] = App::URL('');
-    
-    App::Show($data, 'dialog');
-}
-function action_do_edit()
-{
-    update_data(App::SG()->_POST['content']);
-    $data = [];
-    $data['url_back'] = App::URL('');
-    App::Show($data, 'dialog');
-}
-function action_do_add()
-{
-    add_data(App::SG()->_POST['content']);
-    $data = [];
-    $data['url_back'] = DN::URL('');
-    App::Show($data, 'dialog');
-}
-function URL($url)
-{
-    return App::URL($url);
-}
-function H($str)
-{
-    return App::H($str);
-}
-////////////////////////////////////
-
 class MyView extends \DuckPhp\Core\View
 {
     public function _Show($data = [], $view)
     {
-        global $view_data;
         $this->data = array_merge($this->data, $data);
-        $view_data=$this->data;
-        
-        $view_data['view']=$view;
+        $this->data['view']=$view;
     }
     public function _Display($view, $data = null)
     {
-        global $view_data;
         $this->data = isset($data)?$data:$this->data;
-
-        $view_data=$this->data;
-        $view_data='skip_head_foot']=true;
-        $view_data['view']=$view;
+        $this->data['skip_head_foot']=true;
+        $this->data['view']=$view;
     }
 }
-
-$options = [];
-$options['skip_setting_file'] = true;
-$options['is_debug'] = true;
-$flag=App::RunQuickly($options,function(){
-    Route::G()->add404Handler(function(){
-        $path_info=Route::G()->getPathInfo();
+function onInit()
+{
+    View::G(MyView::G());
+    App::G()->add404Handler(function(){
+        $path_info=App::G()->getPathInfo();
         $path_info=ltrim($path_info,'/');
         $path_info=empty($path_info)?'index':$path_info;
         
-        $post_prefix=!empty(APP::SG()->_POST)?'do_':'';
+        $post_prefix=!empty($_POST)?'do_':'';
         $callback="action_{$post_prefix}{$path_info}";
         
         if(is_callable($callback)){
@@ -128,21 +37,104 @@ $flag=App::RunQuickly($options,function(){
         }
         return false;
     });
-});
+}
+function POST($k,$v)
+{
+    return App::POST($k,$v);
+}
+function AllViewData()
+{
+    return View::G()->data;
+}
+/////////////////////
+function get_data()
+{
+    return$_SESSION['content'] ?? '';
+}
+function add_data($content)
+{
+   $_SESSION['content'] = $content;
+}
+function update_data($content)
+{
+   $_SESSION['content'] = $content;
+}
+function delete_data()
+{
+    unset($_SESSION['content']);
+    //unset($_SESSION['content']);
+}
+/////////////
+function action_index()
+{
+    $data['content'] = nl2br(__h(get_data()));
+    $data['url_add'] = __url('add');
+    $data['url_edit'] = __url('edit');
+    
+    $token =$_SESSION['token'] = md5(''.mt_rand());
+    
+    $data['url_del'] = __url('del?token='.$token);
+
+    __show($data);
+}
+function action_add()
+{
+    $data = ['x' => 'add'];
+    
+    __show($data);
+}
+function action_edit()
+{
+    $data = ['x' => 'add'];
+    $data['content'] = __h(get_data());
+
+    __show($data);
+}
+function action_del()
+{
+    $old_token =$_SESSION['token'];
+    $new_token =$_GET['token'];
+    $flag = ($old_token === $new_token)?true:false;
+    if ($flag) {
+        unset($_SESSION['content']);
+    }
+    unset($_SESSION['token']);
+    $data['msg'] = $flag?'':'验证失败';
+    $data['url_back'] = __url('');
+    
+    __show($data, 'dialog');
+}
+function action_do_edit()
+{
+    update_data(POST('content'));
+    $data = [];
+    $data['url_back'] = __url('');
+    __show($data, 'dialog');
+}
+function action_do_add()
+{
+    add_data(POST('content'));
+    $data = [];
+    $data['url_back'] = __url('');
+    __show($data, 'dialog');
+}
+
+
+////////////////////////////////////
+
+$options = [];
+$options['skip_setting_file'] = true;
+$options['is_debug'] = true;
+
+$flag=App::RunQuickly($options,'onInit');
 if(!$flag){
     return;
 }
-
-if (!$view_data) {
-    return;
-}
-
-global $view_data;
-extract($view_data);
+extract(AllViewData());
 
 
 if(!empty($skip_head_foot)){
-     ?>
+?>
 <!doctype html>
 <html>
  <meta charset="UTF-8">
