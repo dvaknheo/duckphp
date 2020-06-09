@@ -13,15 +13,15 @@ class ModelHelper
 {
     use HelperTrait;
     
-    public function DB($tag = null)
+    public static function DB($tag = null)
     {
         return App::DB($tag);
     }
-    public function DB_R()
+    public static function DB_R()
     {
         return App::DB_R();
     }
-    public function DB_W()
+    public static function DB_W()
     {
         return App::DB_W();
     }
