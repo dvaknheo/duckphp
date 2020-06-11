@@ -7,11 +7,13 @@
 namespace DuckPhp\Helper;
 
 use DuckPhp\Core\ExtendableStaticCallTrait;
+use DuckPhp\Core\SingletonEx;
 use DuckPhp\Core\ThrowOn;
 use DuckPhp\Core\App;
 
 trait HelperTrait
 {
+    use SingletonEx;
     use ExtendableStaticCallTrait;
     use ThrowOn;
 

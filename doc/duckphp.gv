@@ -97,6 +97,7 @@ subgraph cluster_Helper {
     ModelHelper -> Core_App; 
     ServiceHelper -> Core_App; 
     ViewHelper -> Core_App; 
+    HelperTrait -> Core_SingletonEx;
     HelperTrait -> Core_App;
     HelperTrait -> Core_ExtendableStaticCallTrait ;
     HelperTrait -> Core_ThrowOn;
