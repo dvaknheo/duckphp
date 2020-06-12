@@ -1,67 +1,81 @@
 # 参考首页
 [toc]
-[test](options.md#options-xx)
 ## 介绍
 
-本参考是所有 DuckPhp 类 的规范参考。不包含内部 trait 。包含所有选项索引。
+本参考是所有 DuckPhp 类 的规范参考。不包含内部 trait 。
+
+本参考也索引所有选项。
+
+## 架构图
+
+![DuckPhp](../duckphp.gv.svg)
+
+
+
+图解:
+
+灰色尖框为可单独使用类
+
+方尖为 Trait
+
+组件类用统一标志
+
+
 
 ## 按 DuckPhp 文件结构介绍的类
 
-遵循 PSR-4 的文件结构，节点文件是 `Core/Singleton` 是所有非辅助类都以来的可变单例类。
-`Core/App`, `Core/Kernel`, `Core/HttpServer` 是连接性节点。 其他节点都是独立的。
+遵循 PSR-4 的文件结构，`Core/App`, `Core/Kernel`, `Core/HttpServer` 是连接性节点。 其他节点都是独立的。
 
 链接指向参考文件。
 
-1. [App.php](App.md) 加载了扩展的 DuckPhp 入口 ，扩展自 Core/App
+1. [App.php](App.md) 加载了默认扩展的 DuckPhp 入口 ，扩展自 Core/App
 2. [HttpServer.php](HttpServer.md)  加了 Swoole 的 Http 服务器。
-3. [SingletonEx.php](SingletonEx.md)  Core/SingletonEx.php 的快捷方法。
-4. [ThrowOn.php](ThrowOn.md)  Core/ThrowOn.php 的快捷方法。
-5. `Core` 目录是核心目录，核心框架。基本功能都在 Core 里实现
+3. `Core` 目录是核心目录，核心框架。基本功能都在 Core 里实现
    1. **[SingletonEx.php](Core-SingletonEx.php)**  可变单例trait
-   2. **[ThrowOn.php](Core-ThrowOn.md)** 可抛 trait 注意这个 trait 也被 Helper使用
-   3. [**ComponentBase.php**](Core-ComponentBase.md) 组件基类
+   2. **[ThrowOn.php](Core-ThrowOn.md)** 可抛 trait
+   3. **[ComponentBase.php](Core-ComponentBase.md)** 组件基类
    4. [ComponentInterface.php](Core-ComponentInterface.md) 组件接口
    5. **[App.php](Core-App.md)** 核心应用类。
         1. [Kernel.php](Core-Kernel.md) 核心Trait 以下是 `核心必备组件`
            1. [AutoLoader.php](Core-AutoLoader.md) 自动加载类
-           2. [Configer.php](Core-Configer.md) 配置类
-           3. [View.php](Core-View.md) 视图类
-           4. [Route.php](Core-Route.md) 路由类
-           5. [SuperGlobal.php](SuperGlobal.md) 超全局变量替换
-           6. [Logger.php](Core-Logger.md) 日志类
-           7. [ExceptionManager.php](Core-ExceptionManager.md)   异常管理类
-           8. [RuntimeState.php](Core-RuntimeState.md) 运行期数据保存类
-        2. [ExtendableStaticCallTrait.php](Core-ExtendableStaticCallTrait.md) 扩展静态调用的 trait 注意这个 trait 也被 Helper使用
+           2. [Configer.php](Core-Configer.md) 配置组件
+           3. [View.php](Core-View.md) 视图组件
+           4. [Route.php](Core-Route.md) 路由组件
+           5. [SuperGlobal.php](SuperGlobal.md) 超全局变量替换组件
+           6. [Logger.php](Core-Logger.md) 日志组件
+           7. [ExceptionManager.php](Core-ExceptionManager.md)   异常管理组件
+           8. [RuntimeState.php](Core-RuntimeState.md) 运行期数据保存组件
+        2. [ExtendableStaticCallTrait.php](Core-ExtendableStaticCallTrait.md) 扩展静态调用的 trait
         3. [SystemWrapperTrait.php](Core-SystemWrapperTrait.md) 替换系统同名函数的 trait
         4. [Functions.php](Core-Functions.md) 全局函数列表
    6. **[AppPluginTrait.php](Core-AppPluginTrait.md) **  这个Trait用于把独立工程 App 转成插件 
-  6. [HttpServer.php](Core-HttpServer.md) 单独的 Http 服务器
-6. `DB` 目录是数据库
+   7. [HttpServer.php](Core-HttpServer.md) 单独的 Http 服务器
+4. `DB` 目录是数据库目录
    1. [DBAdvanceTrait.php](DB-DBAdvanceTrait.md)  这个 trait 增加了 DB类的高级功能
    2. [DBInterface.php](DB-DBInterface.md) DB 类满足 DBInterface 接口
    3. [DB.php](DB-DB.md) DB类
-7. `Ext` 目录是各种扩展，按字母排序。默认加载  **[DBManager.php](Ext-DBManager.md)** **[Pager.php](Ext-Pager.md)**  **[RouteHookRouteMap.php](Ext-RouteHookRouteMap.md)**
-   1. **[DBManager.php](Ext-DBManager.md)** 数据库管理类
+5. `Ext` 目录是扩展目录，按字母排序。默认加载  **[DBManager.php](Ext-DBManager.md)**   **[RouteHookRouteMap.php](Ext-RouteHookRouteMap.md)**
+   1. **[DBManager.php](Ext-DBManager.md)** 数据库管理组件
    3. **[Pager.php](Ext-Pager.md)** 分页类
         1. [PagerInteface.php](Ext-PagerInteface.md) 分页接口
-   4. **[RouteHookRouteMap.php](Ext-RouteHookRouteMap.md)** 路由映射
-   4. [RouteHookRewrite.php](Ext-RouteHookRewrite.md) 路由重写
-   5. [Misc.php](Ext-Misc.md) 杂项功能类
-   6. [CallableView.php](Ext-CallableView.md) 可接受函数调用的视图
-   7. [DBReusePoolProxy.php](Ext-DBReusePoolProxy.md) DB连接池，小心使用
-   8. [FacadesAutoLoader.php](Ext-FacadesAutoLoader.md) 门面类用于偷懒
+   4. **[RouteHookRouteMap.php](Ext-RouteHookRouteMap.md)** 路由映射组件
+   4. [RouteHookRewrite.php](Ext-RouteHookRewrite.md) 路由重写组件
+   5. [Misc.php](Ext-Misc.md) 杂项功能组件
+   6. [CallableView.php](Ext-CallableView.md) 可接受函数调用的视图组件
+   7. [DBReusePoolProxy.php](Ext-DBReusePoolProxy.md) DB连接池组件，小心使用
+   8. [FacadesAutoLoader.php](Ext-FacadesAutoLoader.md) 门面组件用于偷懒
         1. [FacadesBase.php](Ext-FacadesBase.md) 门面类的基类
-   9. [JsonRpcExt.php](Ext-JsonRpcExt.md) Json 远程调用
+   9. [JsonRpcExt.php](Ext-JsonRpcExt.md) Json 远程调用组件
          1. [JsonRpcClientBase.php](Ext-JsonRpcClientBase.md)
-   10. [PluginForSwooleHttpd.php](Ext-PluginForSwooleHttpd.md) 支持 SwooleHttpd 的插件
-   11. [RedisManager.php](Ext-RedisManager.md) Redis管理器类
-   12. [RedisSimpleCache.php](Ext-RedisSimpleCache.md) redis 缓存类
-   13. [RouteHookDirectoryMode.php](Ext-RouteHookDirectoryMode.md) 多个目录基准的模式
-   14. [RouteHookOneFileMode.php](Ext-RouteHookOneFileMode.md) 无程序路由设计模式
-   15. [StrictCheck.php](Ext-StrictCheck.md) 严格检查模式
+   10. [PluginForSwooleHttpd.php](Ext-PluginForSwooleHttpd.md) 支持 SwooleHttpd 的组件
+   11. [RedisManager.php](Ext-RedisManager.md) Redis管理器组件
+   12. [RedisSimpleCache.php](Ext-RedisSimpleCache.md) redis 缓存组件
+   13. [RouteHookDirectoryMode.php](Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件
+   14. [RouteHookOneFileMode.php](Ext-RouteHookOneFileMode.md) 无程序路由设计模式组件
+   15. [StrictCheck.php](Ext-StrictCheck.md) 严格检查模式组件
             1. [StrictCheckModelTrait.php](Ext-StrictCheckModelTrait.md) 严格检查模式的模型类基类
-            2. [StrictCheckServiceTrait.php](Ext-StrictCheckServiceTrait.md) 严格检查模式的服务类基类
-9. Helper/ 助手类
+                 2. [StrictCheckServiceTrait.php](Ext-StrictCheckServiceTrait.md) 严格检查模式的服务类基类
+6. `Helper` 目录是各种助手类
     1. **[HelperTrait.php](Helper-HelperTrait.md)** 助手类公用 Trait
     2. [ControllerHelper.php](Helper-ControllerHelper.md) 控制器助手类
     3. [ModelHelper.php](Helper-ModelHelper.md) 模型助手类
@@ -69,118 +83,69 @@
     5. [ViewHelper.php](Helper-ViewHelper.md) 视图助手类
     6. *[AppHelper.php](Helper-AppHelper.md)* 工程应用助手类
     
-## 按功能分类的类索引
+##  全部文件一览
 
-### 助手
-* [Helper\HelperTrait](Helper-HelperTrait.md) 助手类公用 Trait
-* [Helper\ControllerHelper](Helper-ControllerHelper.md) 控制器助手类
-* [Helper\ModelHelper](Helper-ModelHelper.md) 模型助手类
-* [Helper\ServiceHelper](Helper-ServiceHelper.md) 服务助手类
-* [Helper\ViewHelper](Helper-ViewHelper.md) 视图助手类
-* [Helper\AppHelper](Helper-AppHelper.md) 工程应用助手类
-
-### 入口
-* [App](App.md) 框架应用入口类  继承
-* [HttpServer](HttpServer.md) 自带 Http 服务器
-* [SingletonEx](SingletonEx.md) 可变单例 Trait
-* [ThrowOn](ThrowOn.md) 可抛 Trait
-
-### 核心
-* [Core\App](Core-App.md) 核心应用入口类
-* [Core\AppPluginTrait](Core-AppPluginTrait.md)  插件 trait
-* [Core\AutoLoader](Core-AutoLoader.md)  自动加载组件
-* [Core\Configer](Core-Configer.md) 配置组件
-* [Core\ExceptionManager](Core-ExceptionManager.md) 异常管理组件
-* [Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md) 可扩展静态方法trait
-* [Core\HttpServer](Core-HttpServer.md) Http 服务器
-* [Core\Logger](Core-Logger.md) 日志组件
-* [Core\Route](Core-Route.md) 路由组件
-* [Core\RuntimeState](Core-RuntimeState.md) 运行状态保持的组件
-* [Core\SingletonEx](Core-SingletonEx.md) 可变单例Trait
-* [Core\SuperGlobal](Core-SuperGlobal.md) 超全局变量
-* [Core\SystemWrapperTrait](Core-SystemWrapperTrait.md) 全局函数替代
-* [Core\ThrowOn](Core-ThrowOn.md) 可抛Trait
-* [Core\View](Core-View.md) 视图组件
-
-### 数据库
-* [DB\DB](DB-DB.md) 数据库类
-* [DB\DBAdvanceTrait](DB-DBAdvanceTrait.md)  数据库扩展
-* [DB\DBInterface](DB-DBInterface.md) 数据库类接口
-### 扩展
-* [Ext\CallableView](Ext-CallableView.md) 
-* [Ext\DBManager](Ext-DBManager.md) 
-* [Ext\DBReusePoolProxy](Ext-DBReusePoolProxy.md) 
-* [Ext\FacadesAutoLoader](Ext-FacadesAutoLoader.md) 
-* [Ext\FacadesBase](Ext-FacadesBase.md) 
-* [Ext\HookChain](Ext-HookChain.md) 
-* [Ext\JsonRpcClientBase](Ext-JsonRpcClientBase.md) 
-* [Ext\JsonRpcExt](Ext-JsonRpcExt.md) 
-* [Ext\Lazybones](Ext-Lazybones.md) 
-* [Ext\Misc](Ext-Misc.md) 
-* [Ext\Pager](Ext-Pager.md) 
-* [Ext\PagerInterface](Ext-PagerInterface.md) 
-* [Ext\PluginForSwooleHttpd](Ext-PluginForSwooleHttpd.md) 
-* [Ext\RedisManager](Ext-RedisManager.md) 
-* [Ext\RedisSimpleCache](Ext-RedisSimpleCache.md) 
-* [Ext\RouteHookDirectoryMode](Ext-RouteHookDirectoryMode.md) 
-* [Ext\RouteHookOneFileMode](Ext-RouteHookOneFileMode.md) 
-* [Ext\RouteHookRewrite](Ext-RouteHookRewrite.md) 
-* [Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md) 
-* [Ext\StrictCheck](Ext-StrictCheck.md) 
-* [Ext\StrictCheckModelTrait](Ext-StrictCheckModelTrait.md) 
-* [Ext\StrictCheckServiceTrait](Ext-StrictCheckServiceTrait.md) 
-
-
-## 按字母顺序的类索引
-
-* [App](App.md) 
-* [Core\App](Core-App.md) 
-* [Core\AppPluginTrait](Core-AppPluginTrait.md) 
-* [Core\AutoLoader](Core-AutoLoader.md) 
-* [Core\Configer](Core-Configer.md) 
-* [Core\ExceptionManager](Core-ExceptionManager.md) 
-* [Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md) 
-* [Core\HttpServer](Core-HttpServer.md) 
-* [Core\Logger](Core-Logger.md) 
-* [Core\Route](Core-Route.md) 
-* [Core\RuntimeState](Core-RuntimeState.md) 
-* [Core\SingletonEx](Core-SingletonEx.md) 
-* [Core\SuperGlobal](Core-SuperGlobal.md) 
-* [Core\SystemWrapperTrait](Core-SystemWrapperTrait.md) 
-* [Core\ThrowOn](Core-ThrowOn.md) 
-* [Core\View](Core-View.md) 
-* [DB\DB](DB-DB.md) 
-* [DB\DBAdvanceTrait](DB-DBAdvanceTrait.md) 
-* [DB\DBInterface](DB-DBInterface.md) 
-* [Ext\CallableView](Ext-CallableView.md) 
-* [Ext\DBManager](Ext-DBManager.md) 
-* [Ext\DBReusePoolProxy](Ext-DBReusePoolProxy.md) 
-* [Ext\FacadesAutoLoader](Ext-FacadesAutoLoader.md) 
-* [Ext\FacadesBase](Ext-FacadesBase.md) 
-* [Ext\JsonRpcClientBase](Ext-JsonRpcClientBase.md) 
-* [Ext\JsonRpcExt](Ext-JsonRpcExt.md) 
-* [Ext\Misc](Ext-Misc.md) 
-* [Ext\Pager](Ext-Pager.md) 
-* [Ext\PagerInterface](Ext-PagerInterface.md) 
-* [Ext\PluginForSwooleHttpd](Ext-PluginForSwooleHttpd.md) 
-* [Ext\RedisManager](Ext-RedisManager.md) 
-* [Ext\RedisSimpleCache](Ext-RedisSimpleCache.md) 
-* [Ext\RouteHookDirectoryMode](Ext-RouteHookDirectoryMode.md) 
-* [Ext\RouteHookOneFileMode](Ext-RouteHookOneFileMode.md) 
-* [Ext\RouteHookRewrite](Ext-RouteHookRewrite.md) 
-* [Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md) 
-* [Ext\StrictCheck](Ext-StrictCheck.md) 
-* [Ext\StrictCheckModelTrait](Ext-StrictCheckModelTrait.md) 
-* [Ext\StrictCheckServiceTrait](Ext-StrictCheckServiceTrait.md) 
-* [Helper\ControllerHelper](Helper-ControllerHelper.md) 
-* [Helper\HelperTrait](Helper-HelperTrait.md) 
-* [Helper\ModelHelper](Helper-ModelHelper.md) 
-* [Helper\ServiceHelper](Helper-ServiceHelper.md) 
-* [Helper\ViewHelper](Helper-ViewHelper.md) 
-* [HttpServer](HttpServer.md) 
-* [SingletonEx](SingletonEx.md) 
-* [ThrowOn](ThrowOn.md) 
-
+```
+.
+|-- App.php
+|-- Core
+|   |-- App.php
+|   |-- AppPluginTrait.php
+|   |-- AutoLoader.php
+|   |-- ComponentBase.php
+|   |-- ComponentInterface.php
+|   |-- Configer.php
+|   |-- ExceptionManager.php
+|   |-- ExtendableStaticCallTrait.php
+|   |-- Functions.php
+|   |-- HttpServer.php
+|   |-- Kernel.php
+|   |-- Logger.php
+|   |-- Route.php
+|   |-- RuntimeState.php
+|   |-- SingletonEx.php
+|   |-- SuperGlobal.php
+|   |-- SystemWrapperTrait.php
+|   |-- ThrowOn.php
+|   `-- View.php
+|-- DB
+|   |-- DB.php
+|   |-- DBAdvanceTrait.php
+|   `-- DBInterface.php
+|-- Ext
+|   |-- CallableView.php
+|   |-- DBManager.php
+|   |-- DBReusePoolProxy.php
+|   |-- EmptyView.php.todo
+|   |-- FacadesAutoLoader.php
+|   |-- FacadesBase.php
+|   |-- JsonRpcClientBase.php
+|   |-- JsonRpcExt.php
+|   |-- Misc.php
+|   |-- Pager.php
+|   |-- PagerInterface.php
+|   |-- PluginForSwooleHttpd.php
+|   |-- RedisManager.php
+|   |-- RedisSimpleCache.php
+|   |-- RouteHookDirectoryMode.php
+|   |-- RouteHookManager.php.todo
+|   |-- RouteHookOneFileMode.php
+|   |-- RouteHookRewrite.php
+|   |-- RouteHookRouteMap.php
+|   |-- StrictCheck.php
+|   |-- StrictCheck.php.bak
+|   |-- StrictCheckModelTrait.php
+|   `-- StrictCheckServiceTrait.php
+|-- Helper
+|   |-- AppHelper.php
+|   |-- ControllerHelper.php
+|   |-- HelperTrait.php
+|   |-- ModelHelper.php
+|   |-- ServiceHelper.php
+|   `-- ViewHelper.php
+`-- HttpServer.php
+```
+##
 ## 选项索引
 - 'all_config' => array (), // 参见 [Core\Configer](Core-Configer.md)
 
@@ -265,19 +230,11 @@
     'DuckPhp\\Ext\\DBManager' => true,
     'DuckPhp\\Ext\\RouteHookRewrite' => true,
     'DuckPhp\\Ext\\RouteHookRouteMap' => true,
-    'DuckPhp\\Ext\\StrictCheck' => false,
-    'DuckPhp\\Ext\\RouteHookOneFileMode' => false,
-    'DuckPhp\\Ext\\RouteHookDirectoryMode' => false,
-    'DuckPhp\\Ext\\RedisManager' => false,
-    'DuckPhp\\Ext\\RedisSimpleCache' => false,
-    'DuckPhp\\Ext\\DBReusePoolProxy' => false,
-    'DuckPhp\\Ext\\FacadesAutoLoader' => false,
-    'DuckPhp\\Ext\\Lazybones' => false,
-    'DuckPhp\\Ext\\Pager' => false,
+   
    ),
-
+   
     默认开启的扩展
-
+   
 - 'handle_all_dev_error' => true, // 参见 [Core\Kernel](Core-Kernel.md)
 
     接管一切开发错误
