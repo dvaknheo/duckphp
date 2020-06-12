@@ -32,17 +32,18 @@ class DBManagerTest extends \PHPUnit\Framework\TestCase
         'db_excption_handler'=>null,
         'db_before_get_object_handler'=>[null,'beforeGet'],
         
-        'database_list'=>[[
-	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
-	'username'=>'admin',	
-	'password'=>'123456'
-],
-[
-	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
-	'username'=>'admin',	
-	'password'=>'123456'
-]
-],
+        'database_list'=>[
+                [
+                    'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
+                    'username'=>'admin',	
+                    'password'=>'123456'
+                ],
+                [
+                    'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
+                    'username'=>'admin',	
+                    'password'=>'123456'
+                ]
+            ],
         ];
         
 
@@ -103,33 +104,30 @@ $options['database_list']=[
                 DBManager::CloseAllDB();
         DBManager::OnException();
 
-$options=[
-        'db_create_handler'=>null,
-        'db_close_handler'=>null,
-        'db_excption_handler'=>null,
-        'db_before_get_object_handler'=>null,
+        $options=[
+            'db_create_handler'=>null,
+            'db_close_handler'=>null,
+            'db_excption_handler'=>null,
+            'db_before_get_object_handler'=>null,
+            ];
+    
+        $options['database_list']=[
+            [
+                'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
+                'username'=>'admin',	
+                'password'=>'123456'
+            ],
+            [
+                'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
+                'username'=>'admin',	
+                'password'=>'123456'
+            ]
+        ];
         
-        'database_list'=>[[
-	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
-	'username'=>'admin',	
-	'password'=>'123456'
-]],
-        ];    
-$options['database_list']=[[
-	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
-	'username'=>'admin',	
-	'password'=>'123456'
-],
-[
-	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
-	'username'=>'admin',	
-	'password'=>'123456'
-]
-]
-;
         DBManager::G()->init($options,null);
         DBManager::G()->setDBHandler([DB::class,'CreateDBInstance'],null,[static::class,'onExceptions' ]);
-DBManager::G()->_DB();
+        DBManager::G()->_DB();
+        
         DBManager::OnException();
         ////
         $dn_options=[
@@ -138,24 +136,41 @@ DBManager::G()->_DB();
         ];
         App::G(new App())->init($dn_options);
         var_dump(App::G());
-$options=[
-        'db_create_handler'=>null,
-        'db_close_handler'=>null,
-        'db_excption_handler'=>null,
-        
-        'database_list'=>[[
-	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
-	'username'=>'admin',	
-	'password'=>'123456'
-]],
+        $options=[
+            'db_create_handler'=>null,
+            'db_close_handler'=>null,
+            'db_excption_handler'=>null,
+            
+            'database_list'=>[[
+                'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
+                'username'=>'admin',	
+                'password'=>'123456'
+            ]],
         ];
         DBManager::G(new DBManager())->init($options,App::G());
         $data=App::DB()->fetchColumn('select ?+? as t',1,2);
         
         var_dump($data);
 
-        DBManager::G()->isInited();
+        //
+        echo "zzzzzzzzzzzzzzzzzzzzzzzzzz";
+        $dn_options=[
+            'skip_setting_file'=>true,
+        ];
+        DBManager::G(new DBManager());
+        App::G(new App())->init($dn_options);
 
+        try{
+            App::DB();
+        }catch(\Exception $ex){
+        }
+        try{
+            App::DB('zxvf');
+        }catch(\Exception $ex){
+        }
+        
+        
+        
         \MyCodeCoverage::G()->end();
 
     }

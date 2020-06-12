@@ -37,10 +37,15 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         ]);
         DuckPhp::Pager();
         
+        try{
         DuckPhp::DB();
+        }catch(\Exception $ex){}
+        try{
         DuckPhp::DB_R();
+        }catch(\Exception $ex){}
+        try{
         DuckPhp::DB_W();
-        
+        }catch(\Exception $ex){}
         ////
                 $db=new \stdClass();
         DuckPhp::OnQuery($db,"SQL ",1,2);

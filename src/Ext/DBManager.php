@@ -127,14 +127,14 @@ class DBManager extends ComponentBase
         }
         if (!isset($tag)) {
             if (empty($this->database_config_list)) {
-                return null; // @codeCoverageIgnore
+                throw new \Exception('DuckPhp: setting database_list missing');
             }
             $t = array_keys($this->database_config_list);
             $tag = $t[0];
         }
         $db_config = $this->database_config_list[$tag] ?? null;
         if ($db_config === null) {
-            return null; // @codeCoverageIgnore
+            throw new \Exception('DuckPhp: setting database_list['.$tag.'] missing');
         }
         return $this->getDatabase($db_config, $tag);
     }
