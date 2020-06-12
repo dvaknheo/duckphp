@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 use DuckPhp\App;
-use DuckPhp\Core\View;
+
 //未完工
 require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
 //// 这个例子极端点，没用任何类，全函数模式。
 
-////
+////[[[[
 class MyView extends \DuckPhp\Core\View
 {
     public function _Show($data = [], $view)
@@ -22,8 +22,9 @@ class MyView extends \DuckPhp\Core\View
 }
 function onInit()
 {
-    View::G(MyView::G());
-    App::G()->add404Handler(function(){
+    \DuckPhp\Core\View::G(MyView::G());
+    \DuckPhp\Ext\RouteHookOneFileMode::G()->init(App::G()->options,App::G());
+    App::G()->add404RouteHook(function(){
         $path_info=App::G()->getPathInfo();
         $path_info=ltrim($path_info,'/');
         $path_info=empty($path_info)?'index':$path_info;
@@ -35,18 +36,32 @@ function onInit()
             ($callback)();
             return true;
         }
-        return false;
+        action_index();
+        return true;
     });
 }
-function POST($k,$v)
+function POST($k,$v=null)
 {
     return App::POST($k,$v);
 }
 function AllViewData()
 {
+    $view=&View::G()->data['view'];
+    $view=isset($view)?$view:'';
+    if(substr($view,0,strlen('Main/'))==='Main/'){
+        $view=substr($view,strlen('Main/'));
+    }
+    
     return View::G()->data;
 }
-/////////////////////
+if (!function_exists('__show')) {
+    function __show(...$args)
+    {
+        return App::Show(...$args);
+    }
+}
+
+////]]]]
 function get_data()
 {
     return$_SESSION['content'] ?? '';
@@ -75,7 +90,7 @@ function action_index()
     
     $data['url_del'] = __url('del?token='.$token);
 
-    __show($data);
+    __show($data,'');
 }
 function action_add()
 {
@@ -121,17 +136,16 @@ function action_do_add()
 
 
 ////////////////////////////////////
-
+session_start();
 $options = [];
 $options['skip_setting_file'] = true;
 $options['is_debug'] = true;
-
 $flag=App::RunQuickly($options,'onInit');
 if(!$flag){
     return;
 }
 extract(AllViewData());
-
+error_reporting(error_reporting() & ~E_NOTICE);
 
 if(!empty($skip_head_foot)){
 ?>
@@ -187,7 +201,7 @@ if($view==='edit'){
 <?php
 }
 if($view==='dialog'){ ?>
-	<?php if (!$msg) {?>已经完成<?php } else {
+	<?php if (!($msg??false)) {?>已经完成<?php } else {
         echo $msg;
     } ?> <a href="<?=$url_back?>">返回主页</a>
 <?php
