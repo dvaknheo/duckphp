@@ -57,7 +57,7 @@ app 目录，就是放 MY 开始命名空间的东西了。 app 目录可以在�
 这些结构能精简么？
 可以，你可以一个目录都不要。
 
-Base/App.php 这个文件的入口类继承 DuckPhp\App 类，工程的入口流程会在这里进行，这里是`核心工程师`重点了解的类。
+Base/DuckPhp.php 这个文件的入口类继承 DuckPhp\DuckPhp 类，工程的入口流程会在这里进行，这里是`核心工程师`重点了解的类。
 
 BaseController, BaseModel, BaseService 是你自己要改的基类，基本只实现了单例模式。
 ContrllorHelper,ModelHelper,ServiceHelper 如果你一个人偷懒，直接用 APP 类也行  
@@ -144,7 +144,7 @@ $options['namespace'] = $namespace;
 $options['ext']['DuckPhp\\Ext\\RouteHookOneFileMode']=true; //@DUCKPHP_DELETE
 echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKPHP_DELETE
 
-\DuckPhp\App::RunQuickly($options);
+\DuckPhp\DuckPhp::RunQuickly($options);
 ```
 入口类前面部分是处理头文件的。
 
@@ -153,10 +153,10 @@ echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKP
 然后就这句话
 
 ```php
-\DuckPhp\App::RunQuickly($options);
+\DuckPhp\DuckPhp::RunQuickly($options);
 ```
-RunQuickly 相当于 \DuckPhp\App::G()->init($options,function(){})->run(); 
-\DuckPhp\App::G()->init($options,function(){})； 会执行根据选项，返回  `MY\Base\App`
+RunQuickly 相当于 \DuckPhp\DuckPhp::G()->init($options,function(){})->run(); 
+\DuckPhp\DuckPhp::G()->init($options,function(){})； 会执行根据选项，返回  `MY\Base\App`
 
 为什么不是 `MY\Base\App::RunQuickly($options); ` 呢？ 可以，但是这要兼容不使用外部 autoloader 的情况。如 composer  。 如果你用外部加载器，只需直接 `MY\Base\App::RunQuickly($options); `。
 
@@ -172,9 +172,9 @@ RunQuickly 相当于 \DuckPhp\App::G()->init($options,function(){})->run();
  */
 namespace MY\Base;
 
-use DuckPhp\App as SystemApp;
+use DuckPhp\DuckPhp;
 
-class App extends SystemApp
+class App extends DuckPhp
 {
     //@override
     public $options = [
@@ -290,15 +290,15 @@ error_* 选项为 null 用默认，为 callable 是回调，为string 则是调�
 
 ## 请求流程和生命周期
 
-怎么就从 DuckPhp\App 切到 MY\Base\App 类了？
+怎么就从 DuckPhp\DuckPhp 切到 MY\Base\App 类了？
 
 index.php 就只执行了
 
-DuckPhp\App::RunQuickly($options, $callback) 
+DuckPhp\DuckPhp::RunQuickly($options, $callback) 
 
 发生了什么
 
-等价于 DuckPhp\App::G()->init($options)->run();
+等价于 DuckPhp\DuckPhp::G()->init($options)->run();
 
 init 为初始化阶段 ，run 为运行阶段。$callback 在init() 之后执行
 

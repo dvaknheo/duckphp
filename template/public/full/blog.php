@@ -13,4 +13,4 @@ $options = [
 
     'is_debug' => true,
 ];
-\DuckPhp\App::RunQuickly($options);
+\DuckPhp\DuckPhp::RunQuickly($options);

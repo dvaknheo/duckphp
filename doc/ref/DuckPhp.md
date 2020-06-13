@@ -1,9 +1,9 @@
 # App
 
 ## 简介
-总入口类，父类 Core\App
+总入口类，父类 Core\DuckPhp
 ## 依赖关系
-`DuckPhp\App` 
+`DuckPhp\DuckPhp` 
     1. 继承 [Core\App](Core-App.md)
         + Trait Core\Kernel(Core-Kernel.md)
     2. 使用 [Ext\Misc](Ext-Misc.md)

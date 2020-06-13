@@ -9,4 +9,4 @@ $project_root = realpath(__DIR__).'/FullProject/';
 $options = [
     'path' => $project_root,
 ];
-\DuckPhp\App::RunQuickly($options);
+\DuckPhp\DuckPhp::RunQuickly($options);

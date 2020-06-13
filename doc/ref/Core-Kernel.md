@@ -39,7 +39,7 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 'override_class'=>'Base\App',**重要选项**
 
     基于 namespace ,如果这个选项的类存在，则在init()的时候会切换到这个类完成后续初始化，并返回这个类的实例。
-    注意到 app/Base/App.php 这个文件的类 MY\Base\App extends DuckPhp\App;
+    注意到 app/Base/App.php 这个文件的类 MY\Base\App extends DuckPhp\DuckPhp;
     如果以  \ 开头则是绝对 命名空间
 
 ### 基本配置

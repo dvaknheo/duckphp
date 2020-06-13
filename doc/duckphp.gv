@@ -156,7 +156,8 @@ subgraph cluster_Ext {
 
     DBManager -> DB_DB;
     CallableView ->Core_View; 
-    DBReusePoolProxy ->DBManager; 
+    DBReusePoolProxy ->DBManager;
+    EmptyView ->Core_View; 
     JsonRpcClientBase ->JsonRpcExt;
     FacadesBase -> FacadesAutoLoader;
     Pager -> PagerInterface; 
@@ -186,14 +187,14 @@ subgraph cluster_DuckPhp {
     node [style=filled];
 
     HttpServer -> Core_HttpServer;
-    App -> Core_App;
+    DuckPhp -> Core_App;
 
-    App -> RouteHookRouteMap;
-    App -> Pager;
-    App -> DBManager;
-    App -> RouteHookOneFileMode;
+    DuckPhp -> RouteHookRouteMap;
+    DuckPhp -> Pager;
+    DuckPhp -> DBManager;
+    DuckPhp -> RouteHookOneFileMode;
 
-    App [shape=Mdiamond];
+    DuckPhp [shape=Mdiamond];
     HttpServer [shape=Mdiamond;style=filled];
 
 }

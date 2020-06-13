@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Ext
 {
 
 use DuckPhp\Ext\StrictCheck;
-use DuckPhp\App as DuckPhp;
+use DuckPhp\DuckPhp;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\SingletonEx;
 
@@ -138,7 +138,7 @@ class FakeExModel
 namespace tests\DuckPhp\Ext\Service {
 use DuckPhp\Ext\StrictCheckServiceTrait;
 //use DuckPhp\Ext\DBManager;
-use DuckPhp\App as DuckPhp;
+use DuckPhp\DuckPhp;
 use tests\DuckPhp\Ext\Model\FakeExModel;
 use tests\DuckPhp\Ext\Model\FakeModel;
 //use tests\DuckPhp\Ext\Model\FakeModel;
@@ -187,7 +187,7 @@ use tests\DuckPhp\Ext\Base\BaseController2;
 use tests\DuckPhp\Ext\Service\FakeBatchService;
 use tests\DuckPhp\Ext\Service\FakeService;
 use tests\DuckPhp\Ext\Model\FakeModel;
-use DuckPhp\App as DuckPhp;
+use DuckPhp\DuckPhp;
 use DuckPhp\Helper\ModelHelper as M;
 
 class StrictCheckTestMain extends BaseController

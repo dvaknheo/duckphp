@@ -1,6 +1,7 @@
 <?php
 namespace tests\DuckPhp\Helper;
 
+use DuckPhp\DuckPhp;
 use DuckPhp\Helper\HelperTrait;
 
 class HelperTraitTest extends \PHPUnit\Framework\TestCase
@@ -14,7 +15,7 @@ class HelperTraitTest extends \PHPUnit\Framework\TestCase
             'is_debug'=>true,
             'platform'=>'for_tests',
         ];
-        \DuckPhp\APP::G()->init($options);
+        DuckPhp::G()->init($options);
         
         HelperTraitObject::IsDebug();
         HelperTraitObject::IsRealDebug();

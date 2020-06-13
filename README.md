@@ -148,7 +148,7 @@ $options=[
     'namespace_controller'=>"\\",   // 本例特殊，设置控制器的命名空间为根
     'skip_setting_file'=>true,      // 本例特殊，跳过配置文件
 ];
-DuckPhp\App::RunQuickly($options);
+DuckPhp\DuckPhp::RunQuickly($options);
 
 ```
 ### 2. 复杂样例
@@ -175,7 +175,7 @@ namespace MySpace\Base
     use DuckPhp\Ext\RouteHookOneFileMode; // 我们要支持无路由的配置模式
     use MySpace\View\Views;
 
-    class App extends \DuckPhp\App
+    class App extends \DuckPhp\DuckPhp
     {
         // @override
         public $options = [
@@ -333,7 +333,7 @@ namespace {
     $options = [
         'namespace' => 'MySpace', //项目命名空间为 MySpace，  你可以随意命名
     ];
-    \DuckPhp\App::RunQuickly($options);
+    \DuckPhp\DuckPhp::RunQuickly($options);
 }
 
 ```

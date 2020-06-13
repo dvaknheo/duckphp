@@ -5,10 +5,10 @@
  */
 namespace SimpleAuth\Base;
 
-use DuckPhp\App as DuckPhpApp;
+use DuckPhp\DuckPhp;
 use DuckPhp\Core\AppPluginTrait;
 
-class App extends DuckPhpApp
+class App extends DuckPhp
 {
     use AppPluginTrait;
     

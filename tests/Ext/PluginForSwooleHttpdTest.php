@@ -1,7 +1,7 @@
 <?php 
 namespace tests\DuckPhp\Ext;
 use DuckPhp\Ext\PluginForSwooleHttpd;
-use DuckPhp\App;
+use DuckPhp\DuckPhp as App;
 use DuckPhp\Core\SingletonEx;
 
 class PluginForSwooleHttpdTest extends \PHPUnit\Framework\TestCase

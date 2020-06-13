@@ -66,7 +66,7 @@ Model 不抛出异常。Service 抛出自己错误的时候，来个同名 excep
 'error_debug' => null, 选项，用于
 
 'handle_all_dev_error' => true, 'handle_all_exception' => true, 选项用于接管系统错误。
-该选项用于 DuckPhp\App 类，而不是 MY\Base\App 这样后者接管类
+该选项用于 DuckPhp\DuckPhp 类，而不是 MY\Base\App 这样后者接管类
 
 'skip_exception_check'=>false, 开启时候 运行阶段，跳过异常检查抛出给上层。如果你不打算自己管理错误的话。 技巧，管理错误的时候，把这个选项 打开 throw $ex ；则由上层管理错误
 	

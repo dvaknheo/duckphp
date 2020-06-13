@@ -397,7 +397,7 @@ $options=[
     'error_exception' => '_sys/error_exception',
     'error_debug' => '_sys/error_debug',
 ];
-\DuckPhp\App::RunQuickly($options, function () {
+\DuckPhp\DuckPhp::RunQuickly($options, function () {
 });
 </pre>
 这部分配合选项来学

@@ -9,7 +9,7 @@ use Facades\MY\Base\App as FA;
 use JsonRpc\MY\Service\TestSerice;
 use DuckPhp\Core\AutoLoader;
 
-class App extends \DuckPhp\App
+class App extends \DuckPhp\DuckPhp
 {
     public $options = [
         'error_404'=>'_sys/error_404',

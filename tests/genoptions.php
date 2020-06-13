@@ -4,7 +4,7 @@ function getDefaultOptions()
 {
 //DuckPhp\\Core\\ExceptionManager
 
-    $classes="DuckPhp\\App
+    $classes="DuckPhp\\DuckPhp
 DuckPhp\\Core\\AutoLoader
 DuckPhp\\Core\\Configer
 DuckPhp\\Core\\Logger
@@ -66,7 +66,7 @@ echo getDefaultOptions();
 
 exit;
 
-$classes="DuckPhp/App
+$classes="DuckPhp/DuckPhp
 DuckPhp/Core/App
 DuckPhp/Core/AutoLoader
 DuckPhp/Core/Configer

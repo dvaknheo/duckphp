@@ -58,7 +58,7 @@
     - [DuckPhp\Ext\DBReusePoolProxy](Ext-DBReusePoolProxy.md)
 
 + 'db_before_query_handler' => ["DuckPhp\\App","OnQuery"]
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
 
 + 'db_close_at_output' => true
     - [DuckPhp\Ext\DBManager](Ext-DBManager.md)
@@ -95,22 +95,22 @@
     - [DuckPhp\Ext\RedisManager](Ext-RedisManager.md)
 
 + 'error_404' => null
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
     - [DuckPhp\Core\App](Core-App.md)
 
 + 'error_500' => null
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
     - [DuckPhp\Core\App](Core-App.md)
 
 + 'error_debug' => null
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
     - [DuckPhp\Core\App](Core-App.md)
 
 + 'ext' => []
     - [DuckPhp\Core\App](Core-App.md)
 
 + 'ext' => {"DuckPhp\\Ext\\DBManager":true,"DuckPhp\\Ext\\RouteHookRouteMap":true}
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
 
 + 'facades_enable_autoload' => true
     - [DuckPhp\Ext\FacadesAutoLoader](Ext-FacadesAutoLoader.md)
@@ -122,12 +122,12 @@
     - [DuckPhp\Ext\FacadesAutoLoader](Ext-FacadesAutoLoader.md)
 
 + 'handle_all_dev_error' => true
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
     - [DuckPhp\Core\App](Core-App.md)
     - [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
 
 + 'handle_all_exception' => true
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
     - [DuckPhp\Core\App](Core-App.md)
     - [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
 
@@ -136,7 +136,7 @@
     - [DuckPhp\HttpServer](HttpServer.md)
 
 + 'is_debug' => false
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
     - [DuckPhp\Core\App](Core-App.md)
     - [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
 
@@ -168,7 +168,7 @@
     - [DuckPhp\Ext\RouteHookOneFileMode](Ext-RouteHookOneFileMode.md)
 
 + 'log_errors' => true
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
     - [DuckPhp\Core\App](Core-App.md)
 
 + 'log_file' => ""
@@ -178,13 +178,13 @@
     - [DuckPhp\Core\Logger](Core-Logger.md)
 
 + 'log_sql' => false
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
 
 + 'mode_dir_basepath' => ""
     - [DuckPhp\Ext\RouteHookDirectoryMode](Ext-RouteHookDirectoryMode.md)
 
 + 'namespace' => "MY"
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
     - [DuckPhp\Core\App](Core-App.md)
     - [DuckPhp\Core\AutoLoader](Core-AutoLoader.md)
     - [DuckPhp\Core\Route](Core-Route.md)
@@ -201,7 +201,7 @@
     - [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
 
 + 'override_class' => "Base\\App"
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
     - [DuckPhp\Core\App](Core-App.md)
 
 + 'page_key' => "page"
@@ -218,7 +218,7 @@
     - [DuckPhp\Ext\Misc](Ext-Misc.md)
 
 + 'path' => null
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
     - [DuckPhp\Core\App](Core-App.md)
     - [DuckPhp\Core\AutoLoader](Core-AutoLoader.md)
     - [DuckPhp\Core\HttpServer](Core-HttpServer.md)
@@ -235,7 +235,7 @@
     - [DuckPhp\Ext\Misc](Ext-Misc.md)
 
 + 'path_namespace' => "app"
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
     - [DuckPhp\Core\App](Core-App.md)
     - [DuckPhp\Core\AutoLoader](Core-AutoLoader.md)
 
@@ -248,7 +248,7 @@
     - [DuckPhp\Ext\CallableView](Ext-CallableView.md)
 
 + 'platform' => ""
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
     - [DuckPhp\Core\App](Core-App.md)
 
 + 'port' => "8080"
@@ -286,11 +286,11 @@
     - [DuckPhp\Ext\RedisManager](Ext-RedisManager.md)
 
 + 'skip_404_handler' => false
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
     - [DuckPhp\Core\App](Core-App.md)
 
 + 'skip_app_autoload' => false
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
     - [DuckPhp\Core\App](Core-App.md)
     - [DuckPhp\Core\AutoLoader](Core-AutoLoader.md)
 
@@ -298,15 +298,15 @@
     - [DuckPhp\Core\Configer](Core-Configer.md)
 
 + 'skip_exception_check' => false
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
     - [DuckPhp\Core\App](Core-App.md)
 
 + 'skip_fix_path_info' => false
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
     - [DuckPhp\Core\App](Core-App.md)
 
 + 'skip_plugin_mode_check' => false
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
     - [DuckPhp\Core\App](Core-App.md)
 
 + 'skip_setting_file' => false
@@ -336,19 +336,19 @@
     - [DuckPhp\Ext\RedisManager](Ext-RedisManager.md)
 
 + 'use_flag_by_setting' => true
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
     - [DuckPhp\Core\App](Core-App.md)
 
 + 'use_short_functions' => false
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
     - [DuckPhp\Core\App](Core-App.md)
 
 + 'use_super_global' => false
-    - [DuckPhp\App](App.md)
+    - [DuckPhp\DuckPhp](App.md)
     - [DuckPhp\Core\App](Core-App.md)
 
 ## 以类名名称排序索引
-+ [DuckPhp\App](App.md)
++ [DuckPhp\DuckPhp](App.md)
     - 'db_before_query_handler' => ["DuckPhp\\App","OnQuery"]
     - 'error_404' => null
     - 'error_500' => null

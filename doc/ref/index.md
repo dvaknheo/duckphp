@@ -28,7 +28,7 @@
 
 链接指向参考文件。
 
-1. [App.php](App.md) 加载了默认扩展的 DuckPhp 入口 ，扩展自 Core/App
+1. [DuckPhp.php](DuckPhp.md) 加载了默认扩展的 DuckPhp 入口 ，扩展自 Core/App
 2. [HttpServer.php](HttpServer.md)  加了 Swoole 的 Http 服务器。
 3. `Core` 目录是核心目录，核心框架。基本功能都在 Core 里实现
    1. **[SingletonEx.php](Core-SingletonEx.php)**  可变单例trait
@@ -88,7 +88,6 @@
 
 ```
 .
-|-- App.php
 |-- Core
 |   |-- App.php
 |   |-- AppPluginTrait.php
@@ -113,6 +112,7 @@
 |   |-- DB.php
 |   |-- DBAdvanceTrait.php
 |   `-- DBInterface.php
+|-- DuckPhp.php
 |-- Ext
 |   |-- CallableView.php
 |   |-- DBManager.php
@@ -325,7 +325,7 @@
 - 'skip_view_notice_error' => true, // 参见 [Core\Kernel](Core-Kernel.md)
 
     跳过 View 视图的 notice
-- 'system_exception_handler' =>  Duckphp\App->set_exception_handler // 参见 [Core\Kernel](Core-Kernel.md)
+- 'system_exception_handler' =>  Duckphp\DuckPhp->set_exception_handler // 参见 [Core\Kernel](Core-Kernel.md)
 
     接管系统的异常管理
 - 'use_context_db_setting' => true, // 参见 [Ext\DBManager](Ext-DBManager.md)

@@ -1,31 +1,16 @@
 <?php declare(strict_types=1);
-use DuckPhp\App;
+use DuckPhp\DuckPhp;
+use DuckPhp\Core\View;
 
 //未完工
 require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
 //// 这个例子极端点，没用任何类，全函数模式。
 
 ////[[[[
-class MyView extends \DuckPhp\Core\View
-{
-    public function _Show($data = [], $view)
-    {
-        $this->data = array_merge($this->data, $data);
-        $this->data['view']=$view;
-    }
-    public function _Display($view, $data = null)
-    {
-        $this->data = isset($data)?$data:$this->data;
-        $this->data['skip_head_foot']=true;
-        $this->data['view']=$view;
-    }
-}
 function onInit()
 {
-    \DuckPhp\Core\View::G(MyView::G());
-    \DuckPhp\Ext\RouteHookOneFileMode::G()->init(App::G()->options,App::G());
-    App::G()->add404RouteHook(function(){
-        $path_info=App::G()->getPathInfo();
+    DuckPhp::G()->add404RouteHook(function(){
+        $path_info=DuckPhp::G()->getPathInfo();
         $path_info=ltrim($path_info,'/');
         $path_info=empty($path_info)?'index':$path_info;
         
@@ -42,22 +27,16 @@ function onInit()
 }
 function POST($k,$v=null)
 {
-    return App::POST($k,$v);
+    return DuckPhp::POST($k,$v);
 }
 function AllViewData()
 {
-    $view=&View::G()->data['view'];
-    $view=isset($view)?$view:'';
-    if(substr($view,0,strlen('Main/'))==='Main/'){
-        $view=substr($view,strlen('Main/'));
-    }
-    
     return View::G()->data;
 }
 if (!function_exists('__show')) {
     function __show(...$args)
     {
-        return App::Show(...$args);
+        return DuckPhp::Show(...$args);
     }
 }
 
@@ -140,7 +119,10 @@ session_start();
 $options = [];
 $options['skip_setting_file'] = true;
 $options['is_debug'] = true;
-$flag=App::RunQuickly($options,'onInit');
+$options['ext'][\DuckPhp\Ext\EmptyView::class] = true;
+$options['ext'][\DuckPhp\Ext\RouteHookOneFileMode::class] = true;
+
+$flag=DuckPhp::RunQuickly($options,'onInit');
 if(!$flag){
     return;
 }

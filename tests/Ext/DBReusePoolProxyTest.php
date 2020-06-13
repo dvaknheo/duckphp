@@ -6,7 +6,7 @@ use DuckPhp\Ext\DBManager;
 use DuckPhp\DB\DB;
 use DuckPhp\Core\App;
 use DuckPhp\Core\SingletonEx;
-use DuckPhp\App as DuckPhp;
+use DuckPhp\DuckPhp;
 
 class DBReusePoolProxyTest extends \PHPUnit\Framework\TestCase
 {

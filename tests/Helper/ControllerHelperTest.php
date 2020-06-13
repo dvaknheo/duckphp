@@ -1,6 +1,7 @@
 <?php
 namespace tests\DuckPhp\Helper;
 
+use DuckPhp\DuckPhp;
 use DuckPhp\Helper\ControllerHelper;
 use DuckPhp\Ext\Pager;
 
@@ -111,9 +112,9 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         ControllerHelper::SERVER('SCRIPT_FILENAME');
 /////
 echo"zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n\n";
-\DuckPhp\App::G()->init([]);
-\DuckPhp\App::Pager(new Pager);
-var_dump(\DuckPhp\App::Pager());
+DuckPhp::G()->init([]);
+DuckPhp::Pager(new Pager);
+var_dump(DuckPhp::Pager());
 $t=ControllerHelper::Pager();
 var_dump($t);
 ControllerHelper::PageNo();

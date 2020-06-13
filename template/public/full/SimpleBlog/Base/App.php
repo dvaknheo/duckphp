@@ -5,9 +5,9 @@
  */
 namespace SimpleBlog\Base;
 
-use DuckPhp\App as SystemApp;
+use DuckPhp\DuckPhp;
 
-class App extends SystemApp
+class App extends DuckPhp
 {
     public $componentClassMap = [
             'M' => 'ModelHelper',

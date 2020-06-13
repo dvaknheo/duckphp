@@ -52,7 +52,7 @@ M::DB() 用到了这个组件。
 <?php
 use think\facade\Db;
 use DuckPhp\Ext\DBManager;
-use DuckPhp\App;
+use DuckPhp\DuckPhp;
 require_once('../vendor/autoload.php');
 
 $options=[];

@@ -8,13 +8,13 @@
 //OK，Lazy
 namespace DuckPhp;
 
-use DuckPhp\Core\App as CoreApp;
+use DuckPhp\Core\App;
 use DuckPhp\Ext\DBManager;
 use DuckPhp\Ext\Pager;
 use DuckPhp\Ext\RouteHookRouteMap;
 use DuckPhp\Ext\RouteHookOneFileMode;
 
-class App extends CoreApp
+class DuckPhp extends App
 {
     const VERSION = '1.2.4';
     

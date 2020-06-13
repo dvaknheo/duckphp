@@ -8,7 +8,7 @@ use App as V;
 use DuckPhp\Ext\CallableView;
 use DuckPhp\Ext\RouteHookOneFileMode;
 
-class App extends \DuckPhp\App
+class App extends \DuckPhp\DuckPhp
 {
     // @override
     public $options = [

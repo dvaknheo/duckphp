@@ -6,6 +6,7 @@
 
 namespace DuckPhp;
 
+use DuckPhp\DuckPhp;
 use DuckPhp\Core\HttpServer as Server;
 use DuckPhp\Ext\PluginForSwooleHttpd;
 
@@ -50,6 +51,6 @@ class HttpServer extends Server
         if (defined('DuckPhp_WARNING_IN_TEMPLATE')) {
             echo "Don't run the template file directly \n";
         }
-        App::RunQuickly($dn_options);
+        DuckPhp::RunQuickly($dn_options);
     }
 }

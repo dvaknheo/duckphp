@@ -13,7 +13,7 @@ ModelHelper 用于 Model 层。 <br>
 ModelHelper 只有数据库的三个独特方法。<br>
 这几个方法在 ControllerHelper 里没有。<br>
 这几个方法不是 DuckPhp\Core\App 里的。<br>
-而是由 DuckPhp\App 加载 DuckPhp\Ext\DBManager 后添加的。<br>
+而是由 DuckPhp\DuckPhp 加载 DuckPhp\Ext\DBManager 后添加的。<br>
 如何使用 DB 对象，看数据库部分的介绍。<br>
 <fieldset>
     <legend> ModelHelper</legend>

@@ -6,9 +6,9 @@
 
 namespace MY\Base;
 
-use DuckPhp\App as SystemApp;
+use DuckPhp\DuckPhp;
 
-class App extends SystemApp
+class App extends DuckPhp
 {
     //@override
     public $options = [

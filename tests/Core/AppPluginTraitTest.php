@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Core
 {
 use DuckPhp\Core\AppPluginTrait;
-use DuckPhp\App as DuckPhp;
+use DuckPhp\DuckPhp;
 
 class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
 {
@@ -87,7 +87,7 @@ class AppPluginTraitApp2 extends DuckPhp
 }
 namespace tests\DuckPhp\Controller
 {
-use DuckPhp\App as DuckPhp;
+use DuckPhp\DuckPhp;
 ////[[[[
 class Main
 {

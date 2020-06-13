@@ -78,7 +78,7 @@ DB
     execute($sql, ...$args); //   执行某条sql ，不用 exec , execute 是为了兼容其他类。
 #### 示例
 使用数据库，在 设置里正确设置 database_list 这个数组，包含多个数据库配置
-然后在用到的地方调用 DuckPhp\App::DB($tag=null) 得到的就是 DB 对象，用来做各种数据库操作。
+然后在用到的地方调用 DuckPhpDuckPhp::DB($tag=null) 得到的就是 DB 对象，用来做各种数据库操作。
 $tag 对应 $setting['database_list'][$tag]。默认会得到最前面的 tag 的配置。
 
 你不必担心每次框架初始化会连接数据库。只有第一次调用 DuckPhp::DB() 的时候，才进行数据库类的创建。
@@ -88,7 +88,7 @@ $tag 对应 $setting['database_list'][$tag]。默认会得到最前面的 tag �
 
 ```php
 <?php
-use DuckPhp\App as DuckPhp;
+use DuckPhp\DuckPhp;
 
 require_once('../vendor/autoload.php');
 
