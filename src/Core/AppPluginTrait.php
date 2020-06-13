@@ -144,12 +144,13 @@ trait AppPluginTrait
         if ($this->plugin_options['plugin_url_prefix'] ?? false) {
             $prefix = '/'.trim($this->plugin_options['plugin_url_prefix'], '/').'/';
             $l = strlen($prefix);
-            if (substr($path_info, 0, $l) === $prefix) {
-                $my_path_info = substr($path_info, $l - 1);
-            } else {
+            if (substr($path_info, 0, $l) !== $prefix) {
                 return false;
             }
+            $my_path_info = substr($path_info, $l - 1);
+            Route::G()->setUrlHandler([static::class,'OnURL']);
         }
+        // hit or not.
         if ($this->plugin_options['plugin_use_helper'] && $this->componentClassMap) {
             $this->pluginModeCloneHelpers();
         }
@@ -170,6 +171,17 @@ trait AppPluginTrait
         $this->onPluginModeRun();
         $flag = $route->defaultRunRouteCallback($my_path_info);
         return $flag;
+    }
+    public function OnURL($url)
+    {
+        return static::G()->_OnURL($url);
+    }
+    public function _OnURL($url)
+    {
+        $prefix = trim($this->plugin_options['plugin_url_prefix'], '/').'/';
+        $url = $prefix.$url;
+        
+        return $this->plugin_route->defaultURLHandler($url);
     }
     protected function pluginModeCloneHelpers()
     {

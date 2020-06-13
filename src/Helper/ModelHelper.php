@@ -12,24 +12,36 @@ use DuckPhp\Core\App;
 class ModelHelper
 {
     use HelperTrait;
-    
+    /**
+     *
+     * @param mixed $tag
+     * @return \DuckPhp\DB\DB
+     */
     public static function DB($tag = null)
     {
         return App::DB($tag);
     }
+    /**
+     *
+     * @return \DuckPhp\DB\DB
+     */
     public static function DB_R()
     {
         return App::DB_R();
     }
+    /**
+     *
+     * @return \DuckPhp\DB\DB
+     */
     public static function DB_W()
     {
         return App::DB_W();
     }
-    public static function SqlForPager($sql, $pageNo, $pageSize = 10)
+    public static function SqlForPager(string $sql, int $pageNo, int $pageSize = 10): string
     {
         return App::SqlForPager($sql, $pageNo, $pageSize);
     }
-    public static function SqlForCountSimply($sql)
+    public static function SqlForCountSimply(string $sql): string
     {
         return App::SqlForCountSimply($sql);
     }

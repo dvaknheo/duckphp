@@ -3,6 +3,7 @@ use SimpleAuth\Base\Helper\ViewHelper as V;
 
 V::startSection('content'); ?>
 <div class="container">
+<a href="<?=__url('register')?>">注册</a>
 <form method="post" action="<?= V::H($url_login); ?>"
     <?= $csrf_field ?>
 <?php if (isset($error)) { ?>

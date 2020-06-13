@@ -29,6 +29,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
             'path_lib'=>$path_lib,
             'log_sql_query'=>true,
             'use_short_functions'=>true,
+            'quick_no_path_info'=>true,
             'path_view'=>$path_view,
         ];
         DuckPhp::G()->init($options);

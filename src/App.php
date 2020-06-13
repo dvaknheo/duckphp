@@ -12,6 +12,7 @@ use DuckPhp\Core\App as CoreApp;
 use DuckPhp\Ext\DBManager;
 use DuckPhp\Ext\Pager;
 use DuckPhp\Ext\RouteHookRouteMap;
+use DuckPhp\Ext\RouteHookOneFileMode;
 
 class App extends CoreApp
 {
@@ -20,6 +21,7 @@ class App extends CoreApp
     public function __construct()
     {
         parent::__construct();
+        $options['quick_no_path_info'] = false;
         $options['log_sql_query'] = false;
         $options['log_sql_level'] = 'debug';
         $options['db_before_query_handler'] = [static::class, 'OnQuery'];
@@ -38,6 +40,14 @@ class App extends CoreApp
         ];
         $this->options['ext'] = $this->options['ext'] ?? [];
         $this->options['ext'] = array_merge($ext, $this->options['ext']);
+    }
+    //ovvride
+    protected function initOptions($options = [])
+    {
+        parent::initOptions($options);
+        if ($this->options['quick_no_path_info'] ?? false) {
+            $this->options['ext'][RouteHookOneFileMode::class] = $this->options['ext'][RouteHookOneFileMode::class] ?? true;
+        }
     }
     public static function OnQuery($db, $sql, ...$args)
     {

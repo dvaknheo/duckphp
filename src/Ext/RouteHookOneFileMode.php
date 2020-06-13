@@ -52,6 +52,9 @@ class RouteHookOneFileMode extends ComponentBase
         $path_info = SuperGlobal::G()->_SERVER['PATH_INFO'];
         $script_file = SuperGlobal::G()->_SERVER['SCRIPT_FILENAME'];
         
+        $path = $path ?? '';
+        $path_info = $path_info ?? '';
+        
         $path = parse_url($path, PHP_URL_PATH) ?? '';
 
         if (strlen($path_info)) {

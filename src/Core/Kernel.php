@@ -27,6 +27,7 @@ trait Kernel
     
     public $options = [];
     protected static $options_default = [
+    
             //// not override options ////
             'use_autoloader' => true,
             'skip_plugin_mode_check' => false,
@@ -42,7 +43,7 @@ trait Kernel
             //// properties ////
             'is_debug' => false,
             'platform' => '',
-            //'ext' => [],
+            'ext' => [],
             'log_errors' => true,
             
             'use_flag_by_setting' => true,

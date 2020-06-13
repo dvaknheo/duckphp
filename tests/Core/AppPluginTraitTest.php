@@ -95,6 +95,7 @@ class Main
     {
         //DuckPhp::Foo
         //\DuckPhp\Helper\AppHelper::Foo();
+        $x=__url("z");
         DuckPhp::Show(['date'=>DATE(DATE_ATOM)],'main');
     }
 }
