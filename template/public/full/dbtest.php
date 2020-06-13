@@ -5,8 +5,8 @@ use App as M;
 use App as C;
 use App as V;
 
-use DuckPhp\Ext\CallableView;
-use DuckPhp\Ext\RouteHookOneFileMode;
+use DuckPhp\Core\SingletonEx;
+use DuckPhp\Ext\EmptyView;
 
 class App extends \DuckPhp\DuckPhp
 {
@@ -16,19 +16,18 @@ class App extends \DuckPhp\DuckPhp
             // 开启调试模式
         'skip_setting_file' => true,
             // 本例特殊，跳过设置文件 这个选项防止没有上传设置文件到服务器
-        'ext' => [
-            RouteHookOneFileMode::class => true,
-                // 开启单一文件模式，服务器不配置也能运行
-            CallableView::class => true,
-                // 默认的 View 不支持函数调用，我们用扩展 CallableView 代替系统的 View
-        ],
-        'callable_view_class' => Views::class, 
-            // 替换的 View 类。
+        'mode_no_path_info' => true,
+            // 单一文件模式
+        
         'namespace_controller'=>"\\",   
             // 本例特殊，设置控制器的命名空间为根
+        'ext' => [
+            EmptyView::class => true,
+            // 我们用扩展 EmptyView 代替系统的 View
+        ],
         'setting'=>[
         //数据库设置
-        'database_list' => [
+            'database_list' => [
                 [
                     'dsn' => 'mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8mb4;',
                     'username' => 'admin',
@@ -38,10 +37,16 @@ class App extends \DuckPhp\DuckPhp
             ],
         ],
     ];
+    //视图数据
+    public static function GetViewData()
+    {
+        return EmptyView::G()->data;
+    }
 }
+//业务服务
 class MyService
 {
-    use \DuckPhp\Core\SingletonEx;
+    use SingletonEx;
     public function getDataList($page,$pagesize)
     {
         return MyModel::getDataList($page,$pagesize);
@@ -63,6 +68,7 @@ class MyService
         return MyModel::deleteData($id);
     }
 }
+
 class MyModel
 {
     public static function getDataList($page,$pagesize)
@@ -126,12 +132,13 @@ class Main
         C::ExitRouteTo('');
     }
 }
-App::RunQuickly([]);
-class Views
-{
-    public function header($data)
-    {
-        extract($data); ?>
+///////////////
+
+    App::RunQuickly(['error_404'=>function(){(new Main)->index();}]); // 如果 404 那就回主页
+    $data = App::GetViewData();
+    extract($data);
+    if($skip_head_foot??false){
+?>
         <html>
             <head>
             </head>
@@ -139,10 +146,8 @@ class Views
             <header style="border:1px gray solid;">I am Header</header>
 <?php
     }
-
-    public function main_view($data)
-    {
-        extract($data); ?>
+    if($view=='main_view'){
+?>
         <h1>数据</h1>
         <table>
             <tr><th>ID</th><th>内容</th></tr>
@@ -167,9 +172,8 @@ class Views
         </form>
 <?php
     }
-    public function show($vdata)
-    {
-        extract($vdata); ?>
+    if($view=='show'){
+        ?>
         <h1>查看/编辑</h1>
         原内容
         <p><?=__h($data['content'])?></p>
@@ -182,12 +186,10 @@ class Views
 
 <?php
     }
-    public function footer($data)
-    {
+    if($skip_head_foot??false){
         ?>
         <footer style="border:1px gray solid;">I am footer</footer>
     </body>
 </html>
 <?php
     }
-}

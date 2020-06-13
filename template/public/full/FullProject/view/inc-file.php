@@ -3,9 +3,10 @@
 <pre>
 <?php
 $files = get_included_files();
-//sort($files);
+sort($files);
 var_export($files);?>
 </pre>
+理论
 <pre>
 array (size=42)
   0 => string '@AutoLoadFile'

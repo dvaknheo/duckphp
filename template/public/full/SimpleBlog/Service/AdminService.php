@@ -5,13 +5,11 @@
  */
 namespace SimpleBlog\Service;
 
-use DuckPhp\Core\SingletonEx;
+use SimpleBlog\Base\BaseService;
 use SimpleBlog\Model as M;
 
-class AdminService
+class AdminService extends BaseService
 {
-    use SingletonEx;
-
     public function reset()
     {
         $password = mt_rand(100000, 999999);
