@@ -41,7 +41,7 @@ class CallableView extends View
         }
         return $ret;
     }
-    
+    //@override
     public function _Show($data = [], $view)
     {
         $callback = $this->viewToCallback($view);
@@ -59,7 +59,8 @@ class CallableView extends View
             ($footer)($data);
         }
     }
-    public function _ShowBlock($view, $data = null)
+    //@override
+    public function _Display($view, $data = null)
     {
         $func = $this->viewToCallback($view);
         if (null !== $func) {

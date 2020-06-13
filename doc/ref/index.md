@@ -63,16 +63,17 @@
    5. [Misc.php](Ext-Misc.md) 杂项功能组件
    6. [CallableView.php](Ext-CallableView.md) 可接受函数调用的视图组件
    7. [DBReusePoolProxy.php](Ext-DBReusePoolProxy.md) DB连接池组件，小心使用
-   8. [FacadesAutoLoader.php](Ext-FacadesAutoLoader.md) 门面组件用于偷懒
+   8. [EmptyView.php](Ext-EmptyView.md) 空视图组件
+   9. [FacadesAutoLoader.php](Ext-FacadesAutoLoader.md) 门面组件用于偷懒
         1. [FacadesBase.php](Ext-FacadesBase.md) 门面类的基类
-   9. [JsonRpcExt.php](Ext-JsonRpcExt.md) Json 远程调用组件
+   10. [JsonRpcExt.php](Ext-JsonRpcExt.md) Json 远程调用组件
          1. [JsonRpcClientBase.php](Ext-JsonRpcClientBase.md)
-   10. [PluginForSwooleHttpd.php](Ext-PluginForSwooleHttpd.md) 支持 SwooleHttpd 的组件
-   11. [RedisManager.php](Ext-RedisManager.md) Redis管理器组件
-   12. [RedisSimpleCache.php](Ext-RedisSimpleCache.md) redis 缓存组件
-   13. [RouteHookDirectoryMode.php](Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件
-   14. [RouteHookOneFileMode.php](Ext-RouteHookOneFileMode.md) 无程序路由设计模式组件
-   15. [StrictCheck.php](Ext-StrictCheck.md) 严格检查模式组件
+   11. [PluginForSwooleHttpd.php](Ext-PluginForSwooleHttpd.md) 支持 SwooleHttpd 的组件
+   12. [RedisManager.php](Ext-RedisManager.md) Redis管理器组件
+   13. [RedisSimpleCache.php](Ext-RedisSimpleCache.md) redis 缓存组件
+   14. [RouteHookDirectoryMode.php](Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件
+   15. [RouteHookOneFileMode.php](Ext-RouteHookOneFileMode.md) 无程序路由设计模式组件
+   16. [StrictCheck.php](Ext-StrictCheck.md) 严格检查模式组件
             1. [StrictCheckModelTrait.php](Ext-StrictCheckModelTrait.md) 严格检查模式的模型类基类
                  2. [StrictCheckServiceTrait.php](Ext-StrictCheckServiceTrait.md) 严格检查模式的服务类基类
 6. `Helper` 目录是各种助手类
@@ -116,7 +117,7 @@
 |   |-- CallableView.php
 |   |-- DBManager.php
 |   |-- DBReusePoolProxy.php
-|   |-- EmptyView.php.todo
+|   |-- EmptyView.php
 |   |-- FacadesAutoLoader.php
 |   |-- FacadesBase.php
 |   |-- JsonRpcClientBase.php
@@ -133,7 +134,6 @@
 |   |-- RouteHookRewrite.php
 |   |-- RouteHookRouteMap.php
 |   |-- StrictCheck.php
-|   |-- StrictCheck.php.bak
 |   |-- StrictCheckModelTrait.php
 |   `-- StrictCheckServiceTrait.php
 |-- Helper

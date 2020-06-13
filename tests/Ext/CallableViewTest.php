@@ -23,10 +23,10 @@ class CallableViewTest extends \PHPUnit\Framework\TestCase
         $view="main";
         $data=["abc"=>"d"];
         
-        CallableView::G()->_ShowBlock($view, $data);
+        CallableView::G()->_Display($view, $data);
         
         CallableView::G()->_Show($data , $view);
-        CallableView::G()->_ShowBlock( 'block',$data);
+        CallableView::G()->_Display( 'block',$data);
         
         CallableView::G()->_Show( $data, 'view');
         

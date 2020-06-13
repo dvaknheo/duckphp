@@ -28,6 +28,9 @@
 'plugin_files_config' => [],
 
     插件的配置文件列表
+'plugin_url_prefix' => '',
+
+    URL 前缀，限定插件的目录。
 ## 方法
     public function pluginModeInit(array $options, object $context = null)
     public static function PluginModeRouteHook($path_info)

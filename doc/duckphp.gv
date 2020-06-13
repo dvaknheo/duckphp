@@ -134,6 +134,7 @@ subgraph cluster_Ext {
     CallableView[shape="component"];
     DBManager[shape="component"];
     DBReusePoolProxy[shape="component"];
+    EmptyView[shape="component"];
     FacadesAutoLoader[shape="component"];
     FacadesBase ;
     JsonRpcClientBase ;
@@ -190,6 +191,7 @@ subgraph cluster_DuckPhp {
     App -> RouteHookRouteMap;
     App -> Pager;
     App -> DBManager;
+    App -> RouteHookOneFileMode;
 
     App [shape=Mdiamond];
     HttpServer [shape=Mdiamond;style=filled];

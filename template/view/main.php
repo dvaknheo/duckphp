@@ -43,7 +43,7 @@
     <li><a href="/full/blog.php">blog.php 简单的博客</a>
     <li><a href="/full/dbtest.php">dbtest.php 数据库演示</a>
     <li><a href="/full/index.php">index.php 待整理，旧的自声明文档</a>
-    <!-- <li><a href="/full/OneFile.php">OneFile.php 单一文件，用于 </a> -->
+    <li><a href="/full/traditional.php">traditional.php 传统模式,一个文件解决，不折腾那么多 </a>
 </ul>
 </div>
 </body>
