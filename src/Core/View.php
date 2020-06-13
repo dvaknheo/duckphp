@@ -86,7 +86,7 @@ class View extends ComponentBase
         $this->data = [];
     }
     
-    public function setViewWrapper($head_file, $foot_file)
+    public function setViewHeadFoot($head_file, $foot_file)
     {
         $this->head_file = $head_file;
         $this->foot_file = $foot_file;

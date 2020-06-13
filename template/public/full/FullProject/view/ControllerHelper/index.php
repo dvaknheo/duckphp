@@ -60,7 +60,7 @@ ContrlloerHelper 的方法很多很杂，但掌握了 ContrlloerHelper  方法�
     
     <dt><a href="#">Show($data = [], $view = null)</a></dt>
     <dd>【内容处理】显示视图， 默认为 view/$view.php 的文件， 并会带上页眉页脚</dd>
-    <dt><a href="#">setViewWrapper($head_file = null, $foot_file = null)</a></dt>
+    <dt><a href="#">setViewHeadFoot($head_file = null, $foot_file = null)</a></dt>
     <dd>【内容处理】设置页眉页脚</dd>
     <dt><a href="#">assignViewData($key, $value = null)</a></dt>
     <dd>【内容处理】分配视图变量，另一版本为 assignViewData($assoc);  </dd>

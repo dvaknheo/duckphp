@@ -167,7 +167,7 @@ trait Core_Handler
             return;
         }
         
-        $this->setViewWrapper(null, null);
+        $this->setViewHeadFoot(null, null);
         $this->_Show([], $error_view);
     }
     
@@ -216,7 +216,7 @@ trait Core_Handler
             return;
         }
         
-        $this->setViewWrapper(null, null);
+        $this->setViewHeadFoot(null, null);
         $this->_Show($data, $error_view);
     }
     public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
@@ -697,9 +697,9 @@ trait Core_Glue
         return Route::G()->setURLHandler($callback);
     }
     //view
-    public static function setViewWrapper($head_file = null, $foot_file = null)
+    public static function setViewHeadFoot($head_file = null, $foot_file = null)
     {
-        return View::G()->setViewWrapper($head_file, $foot_file);
+        return View::G()->setViewHeadFoot($head_file, $foot_file);
     }
     public static function assignViewData($key, $value = null)
     {

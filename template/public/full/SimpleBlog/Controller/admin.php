@@ -36,7 +36,7 @@ class admin
         array_walk($data, function (&$v) {
             $v = C::URL($v);
         });
-        C::setViewWrapper('admin/inc_head', 'admin/inc_foot');
+        C::setViewHeadFoot('admin/inc_head', 'admin/inc_foot');
         C::assignViewData($data);
     }
     public function index()

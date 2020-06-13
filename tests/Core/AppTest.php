@@ -316,7 +316,7 @@ App::PageHtml(123);
         
         
         $key="key";
-        App::setViewWrapper($head_file=null, $foot_file=null);
+        App::setViewHeadFoot($head_file=null, $foot_file=null);
         App::assignViewData($key, $value=null);
         
         //*/

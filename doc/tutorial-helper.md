@@ -240,7 +240,7 @@ getParameters(): array
 Show($data = [], $view = null)
 
     【内容处理】显示视图， 默认为 view/{$view}.php 的文件， 并会带上页眉页脚
-setViewWrapper($head_file = null, $foot_file = null)
+setViewHeadFoot($head_file = null, $foot_file = null)
 
     【内容处理】设置页眉页脚
 assignViewData($key, $value = null)

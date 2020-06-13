@@ -29,7 +29,7 @@ public function _Show($data = [], $view)
 public function _Display($view, $data = null)
 
     显示文件，不包括页眉页脚
-public function setViewWrapper($head_file, $foot_file)
+public function setViewHeadFoot($head_file, $foot_file)
 
     设置页眉页脚
 public function assignViewData($key, $value = null)

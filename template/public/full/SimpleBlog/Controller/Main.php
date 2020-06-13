@@ -53,7 +53,7 @@ class Main
     }
     public function _old_reg()
     {
-        C::setViewWrapper('user/inc_head.php', 'user/inc_foot.php');
+        C::setViewHeadFoot('user/inc_head.php', 'user/inc_foot.php');
         C::Show(get_defined_vars(), 'user/reg');
     }
     public function do_changepass()

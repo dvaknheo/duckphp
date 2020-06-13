@@ -29,7 +29,7 @@ L($str, $args = [])
 HL($str, $args = [])
 Display($view, $data = null)
 Show($data = [], $view = null)
-setViewWrapper($head_file = null, $foot_file = null)
+setViewHeadFoot($head_file = null, $foot_file = null)
 assignViewData($key, $value = null)
 
 ### 配置相关
@@ -149,7 +149,7 @@ Controller Helper 全是静态方法，调用 App 类的内容。
     public static function setRouteCallingMethod($method)
     public static function getPathInfo()
     public static function Show($data = [], $view = null)
-    public static function setViewWrapper($head_file = null, $foot_file = null)
+    public static function setViewHeadFoot($head_file = null, $foot_file = null)
     public static function assignViewData($key, $value = null)
     public static function ExitRedirect($url, $exit = true)
     public static function ExitRedirectOutside($url, $exit = true)

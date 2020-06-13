@@ -15,7 +15,7 @@ class ViewTest extends \PHPUnit\Framework\TestCase
             'path_view'=>$path_view,
         ];
         \DuckPhp\Core\View::G()->init($options);
-        View::G()->setViewWrapper('head', 'foot');
+        View::G()->setViewHeadFoot('head', 'foot');
         View::G()->assignViewData('A','aa');
         View::G()->assignViewData(['B'=>'bb','C'=>'cc']);
 
@@ -24,7 +24,7 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         View::Display("block",['A'=>'b']);
 
         View::G()->setOverridePath($path_view.'overrided/');
-        View::G()->setViewWrapper(null,null);
+        View::G()->setViewHeadFoot(null,null);
         View::G()->_Show(['A'=>'b'],"override");
         View::G()->isInited();
         $options=[

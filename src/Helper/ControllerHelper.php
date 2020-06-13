@@ -72,9 +72,9 @@ class ControllerHelper
     {
         return App::Show($data, $view);
     }
-    public static function setViewWrapper($head_file = null, $foot_file = null)
+    public static function setViewHeadFoot($head_file = null, $foot_file = null)
     {
-        return App::setViewWrapper($head_file, $foot_file);
+        return App::setViewHeadFoot($head_file, $foot_file);
     }
     public static function assignViewData($key, $value = null)
     {
