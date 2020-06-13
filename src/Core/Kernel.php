@@ -76,6 +76,10 @@ trait Kernel
         }
         return $instance->run();
     }
+    public static function Blank()
+    {
+        // keep me for callback
+    }
     protected function initOptions($options = [])
     {
         $this->options = array_replace_recursive($this->options, $options);

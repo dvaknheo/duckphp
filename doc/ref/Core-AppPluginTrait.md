@@ -31,16 +31,32 @@
 'plugin_url_prefix' => '',
 
     URL 前缀，限定插件的目录。
-## 方法
+## 公开方法
     public function pluginModeInit(array $options, object $context = null)
     public static function PluginModeRouteHook($path_info)
     public function _PluginModeRouteHook($path_info)
+
+    
+    public function pluginModeGetOldRoute()
+    
+## 用于重载的事件方法
+
+    protected function onPluginModePrepare()
+    protected function onPluginModeInit()
+    protected function onPluginModeBeforeRun()
+    protected function onPluginModeRun()
+onPluginModeBeforeRun 运行阶段就执行 onPluginModeRun 得到回调之后才执行。
+
+## 内部方法
     protected function pluginModeInitOptions($options)
     protected function pluginModeDefaultInit(array $options, object $context = null)
     protected function pluginModeIncludeConfigFile($file)
     protected function pluginModeSearchAllPluginFile($path, $setting_file = '')
     protected function pluginModeDefaultRouteHook($path_info)
     protected function pluginModeCloneHelpers()
+
+## 主流程
+
 ## 详解
 例子见于 template/public/full/
 
@@ -99,6 +115,7 @@ pluginModeDefaultRouteHook 通过 pluginModeCloneHelpers 把自己的 Helper  �
     
     protected function onPluginModePrepare()
     protected function onPluginModeInit()
+    protected function onPluginModeBeforeRun()
     protected function onPluginModeRun()
     protected function pluginModeBeforeRun($callback)
  

@@ -32,7 +32,7 @@ class KernelTest extends \PHPUnit\Framework\TestCase
             'error_exception' => NULL,
             'error_500' => NULL,
             'error_404' => NULL,
-            'error_debug' => NULL,
+            'error_debug' => [APP::class,'Blank'],
             'skip_view_notice_error' => true,
             'use_super_global' => true,
             'override_class'=>'\\'.KernelTestApp::class,

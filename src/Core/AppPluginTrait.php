@@ -13,15 +13,16 @@ use DuckPhp\Core\SuperGlobal;
 
 trait AppPluginTrait
 {
-    //public $plugin_options = [] => in parent
+    // public $plugin_options = [] => in parent
+    // protected componentClassMap=[] => in parent
     
     protected $path_view_override = '';
     protected $path_config_override = '';
     
     protected $plugin_context_class = '';
     protected $plugin_before_run_handler = null;
-    protected $plugin_route = null;
-    // protected componentClassMap=[] => in parent
+    protected $plugin_route_old = null;
+    protected $is_component_mapped = false;
     
     public function pluginModeInit(array $options, object $context = null)
     {
@@ -73,7 +74,12 @@ trait AppPluginTrait
         ////
     }
     //for override
-    protected function onPluginModeRun()
+    protected function onPluginModeBeforeRun()
+    {
+        ////
+    }
+    //for override
+    public function onPluginModeRun()
     {
         ////
     }
@@ -148,29 +154,41 @@ trait AppPluginTrait
                 return false;
             }
             $my_path_info = substr($path_info, $l - 1);
-            Route::G()->setUrlHandler([static::class,'OnURL']);
         }
-        // hit or not.
-        if ($this->plugin_options['plugin_use_helper'] && $this->componentClassMap) {
+        
+        if (!$this->is_component_mapped && $this->plugin_options['plugin_use_helper'] && $this->componentClassMap) {
             $this->pluginModeCloneHelpers();
+            $this->is_component_mapped = true;
         }
         
         View::G()->setOverridePath($this->path_view_override);
         
-        // route
+        $this->plugin_route_old = Route::G();
         $route = new Route();
-        $this->plugin_route = $route;
-        $options['namespace'] = $this->plugin_options['plugin_namespace'];
-        $route->init($options)->bindServerData(SuperGlobal::G()->_SERVER);
+        Route::G($route);
         
+        $options = [];
+        $options['namespace'] = $this->plugin_options['plugin_namespace'];
+        
+        $route->init($options)->bindServerData(SuperGlobal::G()->_SERVER);
         $route->setPathInfo($my_path_info);
+        $route->setUrlHandler([static::class,'OnURL']);
         
         if ($this->plugin_before_run_handler) {
             ($this->plugin_before_run_handler)();
         }
+        $this->onPluginModeBeforeRun();
+        
+        $callback = $route->defaultGetRouteCallback($my_path_info);
+        if (null === $callback) {
+            Route::G($this->plugin_route_old);
+            return false;
+        }
         $this->onPluginModeRun();
-        $flag = $route->defaultRunRouteCallback($my_path_info);
-        return $flag;
+        ($callback)();
+        
+        Route::G($this->plugin_route_old);
+        return true;
     }
     public function OnURL($url)
     {
@@ -181,7 +199,7 @@ trait AppPluginTrait
         $prefix = trim($this->plugin_options['plugin_url_prefix'], '/').'/';
         $url = $prefix.$url;
         
-        return $this->plugin_route->defaultURLHandler($url);
+        return Route::G()->defaultURLHandler($url);
     }
     protected function pluginModeCloneHelpers()
     {
@@ -191,8 +209,8 @@ trait AppPluginTrait
         
         $this->plugin_context_class::G()->cloneHelpers($namespace);
     }
-    public function pluginModeGetRoute()
+    public function pluginModeGetOldRoute()
     {
-        return $this->plugin_route;
+        return $this->plugin_route_old;
     }
 }
