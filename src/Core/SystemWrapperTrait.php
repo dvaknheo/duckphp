@@ -44,7 +44,7 @@ trait SystemWrapperTrait
             return ($this->system_handlers[$func])(...$input_args);
         }
         if (!is_callable($func)) {
-            throw new \Error("Call to undefined function $func");
+            throw new \ErrorException("Call to undefined function $func");
         }
         return ($func)(...$input_args);
     }

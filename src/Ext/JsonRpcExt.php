@@ -91,10 +91,10 @@ class JsonRpcExt extends ComponentBase
         $data = json_decode($str_data, true);
         if (empty($data)) {
             $str_data = $this->options['jsonrpc_is_debug']?$str_data:'';
-            throw new Exception("JsonRpc failed,(".var_export($this->options['jsonrpc_backend'], true).")returns:[".$str_data."]", -1);
+            throw new \ErrorException("JsonRpc failed,(".var_export($this->options['jsonrpc_backend'], true).")returns:[".$str_data."]", -1);
         }
         if (isset($data['error'])) {
-            throw new Exception($data['error']['message'], $data['error']['code']);
+            throw new \Exception($data['error']['message'], $data['error']['code']);
         }
         return $data['result'];
     }

@@ -20,7 +20,7 @@ class FacadesBase
     {
         $callback = FacadesAutoLoader::G()->getFacadesCallback(static::class, $name);
         if (!$callback) {
-            throw new \Exception("BadCall");
+            throw new \ErrorException("BadCall");
         }
         $ret = call_user_func_array($callback, $arguments);
         return $ret;

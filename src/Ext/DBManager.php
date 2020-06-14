@@ -57,7 +57,7 @@ class DBManager extends ComponentBase
             }
         }
         //if(!isset($this->database_config_list)){
-        //    throw new \Exception(static::class." setting error");
+        //    throw new \ErrorException(static::class." setting error");
         //}
         // db_before_get_object_handler
         if (is_array($this->db_before_get_object_handler) && $this->db_before_get_object_handler[0] === null) {
@@ -127,14 +127,14 @@ class DBManager extends ComponentBase
         }
         if (!isset($tag)) {
             if (empty($this->database_config_list)) {
-                throw new \Exception('DuckPhp: setting database_list missing');
+                throw new \ErrorException('DuckPhp: setting database_list missing');
             }
             $t = array_keys($this->database_config_list);
             $tag = $t[0];
         }
         $db_config = $this->database_config_list[$tag] ?? null;
         if ($db_config === null) {
-            throw new \Exception('DuckPhp: setting database_list['.$tag.'] missing');
+            throw new \ErrorException('DuckPhp: setting database_list['.$tag.'] missing');
         }
         return $this->getDatabase($db_config, $tag);
     }

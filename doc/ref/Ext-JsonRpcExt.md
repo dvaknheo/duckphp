@@ -3,25 +3,15 @@
 ## 简介
  json-rpc 扩展
 ## 选项
-'jsonrpc_namespace'=>'JsonRpc',
-'jsonrpc_backend'=>'https://127.0.0.1', 
-
-//TODO
-后端，允许用数组，后面表示是实际IP，用于方便调试，见例子。实际连的是 127.0.0.1。
-
-
-## 公开方法
-
-
-## 详解
-
-
-#### 默认选项
 
 'jsonrpc_namespace' => 'JsonRpc',
 'jsonrpc_backend' => 'https://127.0.0.1',
 'jsonrpc_is_debug' => false,
 'jsonrpc_enable_autoload' => true,
+'jsonrpc_check_token_handler' => null,
+'jsonrpc_wrap_auto_adjust' => true,
+'jsonrpc_service_interface' => '',
+'jsonrpc_service_namespace' => '',
 
 ## 示例
 ```php

@@ -7,7 +7,7 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
-use Exception;
+use ErrorException;
 
 class StrictCheck extends ComponentBase
 {
@@ -84,13 +84,13 @@ class StrictCheck extends ComponentBase
         $controller_base_class = $this->options['controller_base_class'];
         
         if (substr($caller_class, 0, strlen($namespace_controller)) == $namespace_controller) {
-            throw new Exception("$component_name Can not Call By Controller");
+            throw new ErrorException("$component_name Can not Call By Controller");
         }
         if ($controller_base_class && (is_subclass_of($caller_class, $controller_base_class) || $caller_class === $controller_base_class)) {
-            throw new Exception("$component_name Can not Call By Controller");
+            throw new ErrorException("$component_name Can not Call By Controller");
         }
         if (substr($caller_class, 0, strlen($namespace_service)) === $namespace_service) {
-            throw new Exception("$component_name Can not Call By Service");
+            throw new ErrorException("$component_name Can not Call By Service");
         }
     }
     public function checkStrictModel($trace_level)
@@ -110,7 +110,7 @@ class StrictCheck extends ComponentBase
             substr($caller_class, -strlen("ExModel")) == "ExModel") {
             return;
         }
-        throw new Exception("Model Can Only call by Service or ExModel!Caller is {$caller_class}");
+        throw new ErrorException("Model Can Only call by Service or ExModel!Caller is {$caller_class}");
     }
     public function checkStrictService($service_class, $trace_level)
     {
@@ -130,10 +130,10 @@ class StrictCheck extends ComponentBase
             return;
         }
         if (substr($caller_class, 0, strlen($namespace_service)) === $namespace_service) {
-            throw new Exception("Service($service_class) Can not call Service($caller_class)");
+            throw new ErrorException("Service($service_class) Can not call Service($caller_class)");
         }
         if (substr($caller_class, 0, strlen($namespace_model)) === $namespace_model) {
-            throw new Exception("Service Can not call by Model, ($caller_class)");
+            throw new ErrorException("Service Can not call by Model, ($caller_class)");
         }
     }
 }

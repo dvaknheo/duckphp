@@ -606,15 +606,15 @@ trait Core_Helper
     
     public function _DB($tag)
     {
-        throw new \Exception("No Impelement");
+        throw new \ErrorException("No Impelement");
     }
     public function _DB_W()
     {
-        throw new \Exception("No Impelement");
+        throw new \ErrorException("No Impelement");
     }
     public function _DB_R()
     {
-        throw new \Exception("No Impelement");
+        throw new \ErrorException("No Impelement");
     }
 }
 
