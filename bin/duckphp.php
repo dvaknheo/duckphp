@@ -162,6 +162,7 @@ class Installer
             }
             //decoct(fileperms($file) & 0777);
         }
+        copy($source.'config/setting.sample.php',$dest.'config/setting.php');
         echo  "\nDone.\n";
     }
     protected function checkFilesExist($source, $dest, $files)
@@ -229,6 +230,8 @@ class Installer
         }
         $str_header = "\$namespace = '$namespace';";
         $data = preg_replace('/^.*?@DUCKPHP_NAMESPACE.*?$/m', $str_header, $data);
+        $data =str_replace("MY\\","{$namespace}\\" ,$data);
+        
         return $data;
     }
     protected function changeHeadFile($data, $short_file_name)
