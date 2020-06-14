@@ -10,8 +10,8 @@ subgraph cluster_Core {
     Core_App [label="App";shape=Mdiamond;style=filled]; 
     Core_Kernel [label="Kernel";shape="diamond"];
     Core_SingletonEx [label="SingletonEx";shape=Mdiamond;style=filled];
-    Core_AutoLoader [label="AutoLoader"];
-    Core_ExceptionManager [label="ExceptionManager"];
+    Core_AutoLoader [label="AutoLoader";shape=Mdiamond;style=filled];
+    Core_ExceptionManager [label="ExceptionManager";shape=Mdiamond;style=filled];
     Core_View [label="View";shape="component"];
     Core_Configer [label="Configer";shape="component"];
     Core_Logger [label="Logger";shape="component"];
@@ -146,6 +146,7 @@ subgraph cluster_Ext {
     RedisManager[shape="component"];
     RedisSimpleCache[shape="component"];
     RouteHookDirectoryMode[shape="component"];
+    RouteHookManager[shape="component"];
     RouteHookOneFileMode[shape="component"];
     RouteHookRewrite[shape="component"];
     RouteHookRouteMap[shape="component"];
@@ -174,6 +175,7 @@ subgraph cluster_Ext {
     PluginForSwooleHttpd -> Core_ComponentBase [style="dotted"];
     StrictCheck -> Core_ComponentBase [style="dotted"];
     RouteHookDirectoryMode -> Core_ComponentBase [style="dotted"];
+    RouteHookManager -> Core_ComponentBase [style="dotted"];
     RouteHookOneFileMode -> Core_ComponentBase [style="dotted"];
     RouteHookRewrite -> Core_ComponentBase [style="dotted"];
     RouteHookRouteMap -> Core_ComponentBase [style="dotted"];
