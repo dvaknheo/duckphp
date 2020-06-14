@@ -32,26 +32,22 @@ class Route extends ComponentBase
     
     protected $url_handler = null;
     protected $path_info = '';
+    
     public $request_method = '';
     
     public $script_filename = '';
     public $document_root = '';
 
-    public $error = '';
+    protected $route_error = '';
     public $calling_path = '';
     public $calling_class = '';
     protected $calling_method = '';
-
-
-    protected $parameters = [];
-    protected $namespace_controller = '';
-    protected $controller_welcome_class = 'Main';
-    protected $controller_index_method = 'index';
-    protected $controller_base_class = null;
     
-    protected $controller_hide_boot_class = false;
-    protected $controller_methtod_for_miss = null;
-    protected $controller_prefix_post = 'do_';
+    protected $parameters = [];
+    
+    protected $namespace_controller = '';
+    protected $controller_base_class = null;
+    protected $controller_index_method = 'index';
     
     protected $has_bind_server_data = false;
     protected $enable_default_callback = true;
@@ -124,14 +120,6 @@ class Route extends ComponentBase
     //@override
     protected function initOptions(array $options)
     {
-        $this->controller_prefix_post = $this->options['controller_prefix_post'];
-        
-        $this->controller_hide_boot_class = $this->options['controller_hide_boot_class'];
-        $this->controller_methtod_for_miss = $this->options['controller_methtod_for_miss'];
-        
-        $this->controller_welcome_class = $this->options['controller_welcome_class'];
-        
-        
         $namespace = $this->options['namespace'];
         $namespace_controller = $this->options['namespace_controller'];
         if (substr($namespace_controller, 0, 1) !== '\\') {
@@ -287,17 +275,17 @@ class Route extends ComponentBase
         $method = array_pop($t);
         $path_class = implode('/', $t);
         
-        $this->calling_path = $path_class?$path_info:$this->controller_welcome_class.'/'.$method;
-        $this->error = '';
+        $this->calling_path = $path_class?$path_info:$this->options['controller_welcome_class'].'/'.$method;
+        $this->route_error = '';
         
-        if ($this->controller_hide_boot_class && $path_class === $this->controller_welcome_class) {
-            $this->error = "controller_hide_boot_class! {$this->controller_welcome_class} ";
+        if ($this->options['controller_hide_boot_class'] && $path_class === $this->options['controller_welcome_class']) {
+            $this->route_error = "controller_hide_boot_class! {$this->options['controller_welcome_class']} ";
             return null;
         }
-        $path_class = $path_class?:$this->controller_welcome_class;
+        $path_class = $path_class ?: $this->options['controller_welcome_class'];
         $full_class = $this->namespace_controller.'\\'.str_replace('/', '\\', $path_class).$this->options['controller_postfix'];
         if (!class_exists($full_class)) {
-            $this->error = "can't find class($full_class) by $path_class ";
+            $this->route_error = "can't find class($full_class) by $path_class ";
             return null;
         }
         
@@ -305,7 +293,7 @@ class Route extends ComponentBase
         $this->calling_method = !empty($method)?$method:'index';
         
         if ($this->controller_base_class && !is_subclass_of($full_class, $this->controller_base_class)) {
-            $this->error = "no the controller_base_class! {$this->controller_base_class} ";
+            $this->route_error = "no the controller_base_class! {$this->controller_base_class} ";
             return null;
         }
         $object = $this->createControllerObject($full_class);
@@ -318,25 +306,25 @@ class Route extends ComponentBase
     }
     protected function getMethodToCall($object, $method)
     {
-        $method = $method === ''?$this->controller_index_method:$method;
+        $method = ($method === '')?$this->controller_index_method : $method;
         if (substr($method, 0, 2) == '__') {
-            $this->error = 'can not call hidden method';
+            $this->route_error = 'can not call hidden method';
             return null;
         }
-        if ($this->controller_prefix_post && $this->request_method === 'POST' && method_exists($object, $this->controller_prefix_post.$method)) {
-            $method = $this->controller_prefix_post.$method;
+        if ($this->request_method === 'POST' && $this->options['controller_prefix_post'] && method_exists($object, $this->options['controller_prefix_post'].$method)) {
+            $method = $this->options['controller_prefix_post'].$method;
         }
-        if ($this->controller_methtod_for_miss) {
-            if ($method === $this->controller_methtod_for_miss) {
-                $this->error = 'can not direct call controller_methtod_for_miss ';
+        if ($this->options['controller_methtod_for_miss']) {
+            if ($method === $this->options['controller_methtod_for_miss']) {
+                $this->route_error = 'can not direct call controller_methtod_for_miss ';
                 return null;
             }
             if (!method_exists($object, $method)) {
-                $method = $this->controller_methtod_for_miss;
+                $method = $this->options['controller_methtod_for_miss'];
             }
         }
         if (!is_callable([$object,$method])) {
-            $this->error = 'method can not call';
+            $this->route_error = 'method can not call';
             return null;
         }
         return [$object,$method];
@@ -361,7 +349,7 @@ class Route extends ComponentBase
     }
     public function getRouteError()
     {
-        return $this->error;
+        return $this->route_error;
     }
     public function getRouteCallingPath()
     {
