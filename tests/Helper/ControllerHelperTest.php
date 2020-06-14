@@ -66,6 +66,7 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         ControllerHelper::setViewHeadFoot($head_file=null, $foot_file=null);
         ControllerHelper::assignViewData($key, $value=null);
         ControllerHelper::getPathInfo();
+        ControllerHelper::dumpAllRouteHooksAsString();
         
         //*/
         $url="/abc";

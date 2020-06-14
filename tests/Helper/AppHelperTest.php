@@ -53,12 +53,38 @@ class AppHelperTest extends \PHPUnit\Framework\TestCase
         AppHelper::session_set_save_handler( $handler);
 
         AppHelper::add404RouteHook( function(){var_dump('404!');});
-
-
+        ////[[[[
+        $this->do_Core_Component();
+        ////]]]]
         \MyCodeCoverage::G()->end();
 
     }
+    protected function do_Core_Component()
+    {
 
+        AppHelper::getStaticComponentClasses();
+        AppHelper::getDynamicComponentClasses();
+        $class="NoExits";
+        AppHelper::addDynamicComponentClass($class);
+        AppHelper::removeDynamicComponentClass($class);
+        
+        
+        $new_namespace=__NAMESPACE__;
+        $new_namespace.='\\';
+    
+        $options=[
+            //'path' => $path_app,
+            'is_debug' => true,
+            'skip_setting_file' => true,
+            'namespace'=> __NAMESPACE__,
+        ];
+        App::G()->init($options);
+        AppHelper::addBeforeShowHandler(function(){});
+
+        AppHelper::extendComponents(['Foo'=>[static::class,'Foo']],['V',"ZZZ"]);
+        AppHelper::cloneHelpers($new_namespace);
+        AppHelper::cloneHelpers($new_namespace, ['M'=>'no_exits_class']);
+    }
 }
 class HelperFakeSessionHandler implements \SessionHandlerInterface
 {

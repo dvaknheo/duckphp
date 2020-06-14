@@ -154,6 +154,8 @@ App::PageHtml(123);
         App::REQUEST('a');
         App::COOKIE('a');
         App::SERVER('SCRIPT_FILENAME');
+        
+        App::dumpAllRouteHooksAsString();
 
         \MyCodeCoverage::G()->end();
     return;

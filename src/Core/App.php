@@ -87,7 +87,7 @@ class App extends ComponentBase
         $this->hanlder_for_develop_exception = [static::class,'OnDevErrorHandler'];
         $this->hanlder_for_404 = [static::class,'On404'];
     }
-    public function extendComponents($method_map, $components = []): void
+    public function extendComponents($method_map, $components = [])
     {
         static::AssignExtendStaticMethod($method_map);
         
@@ -683,7 +683,6 @@ trait Core_Glue
     {
         return Route::G()->add404RouteHook($callback);
     }
-    
     public static function getRouteCallingMethod()
     {
         return Route::G()->getRouteCallingMethod();
@@ -695,6 +694,10 @@ trait Core_Glue
     public static function setURLHandler($callback)
     {
         return Route::G()->setURLHandler($callback);
+    }
+    public static function dumpAllRouteHooksAsString()
+    {
+        return Route::G()->dumpAllRouteHooksAsString();
     }
     //view
     public static function setViewHeadFoot($head_file = null, $foot_file = null)

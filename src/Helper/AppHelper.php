@@ -41,7 +41,6 @@ class AppHelper
     {
         return App::setUrlHandler($callback);
     }
-
     //
     public static function header($output, bool $replace = true, int $http_response_code = 0)
     {
@@ -90,5 +89,35 @@ class AppHelper
     public static function &CLASS_STATICS($class_name, $var_name)
     {
         return App::CLASS_STATICS($class_name, $var_name);
+    }
+    ////
+    public function extendComponents($method_map, $components = [])
+    {
+        return App::G()->extendComponents($method_map, $components);
+    }
+    public function cloneHelpers($new_namespace, $componentClassMap = [])
+    {
+        return App::G()->cloneHelpers($new_namespace, $componentClassMap);
+    }
+    public function addBeforeShowHandler($handler)
+    {
+        return App::G()->addBeforeShowHandler($handler);
+    }
+    ////
+    public static function getStaticComponentClasses()
+    {
+        return App::G()->getStaticComponentClasses();
+    }
+    public static function getDynamicComponentClasses()
+    {
+        return App::G()->getDynamicComponentClasses();
+    }
+    public static function addDynamicComponentClass($class)
+    {
+        return App::G()->addDynamicComponentClass($class);
+    }
+    public static function removeDynamicComponentClass($class)
+    {
+        return App::G()->removeDynamicComponentClass($class);
     }
 }

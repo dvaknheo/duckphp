@@ -127,7 +127,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->getNamespacePrefix();
         
         $this->foo2();
-        Route::G()->dumpAllHookAsString();
+        Route::G()->dumpAllRouteHooksAsString();
         
         \MyCodeCoverage::G()->end();
         return;

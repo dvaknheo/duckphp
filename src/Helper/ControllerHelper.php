@@ -67,6 +67,10 @@ class ControllerHelper
     {
         return App::getPathInfo();
     }
+    public static function dumpAllRouteHooksAsString()
+    {
+        return App::dumpAllRouteHooksAsString();
+    }
     ///////////////
     public static function Show($data = [], $view = null)
     {

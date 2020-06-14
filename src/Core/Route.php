@@ -383,7 +383,7 @@ class Route extends ComponentBase
     {
         return $this->namespace_controller.'\\';
     }
-    public function dumpAllHookAsString()
+    public function dumpAllRouteHooksAsString()
     {
         $ret = "-- pre run --\n";
         $ret .= var_export($this->pre_run_hook_list, true);

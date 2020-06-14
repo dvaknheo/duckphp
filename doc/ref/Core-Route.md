@@ -1,8 +1,11 @@
-# Core\Route
+# DuckPhp\Core\Route
 [toc]
+
 ## 简介
+
 `组件类` `入口类`
 很重要的路由类，可以在单独抽出来使用。
+
 ## 选项
 'namespace' => 'MY',
 
@@ -35,11 +38,10 @@
 'controller_postfix' => '',
 
 ​	控制器后缀，如果你觉得控制器类的方法不够显眼，你可以设置成其他的
-## 方法
 
-### 主流程方法
+## 公开属性
 
-### 公开方法
+## 公开方法
 public function __construct()
 
     空构造函数
@@ -75,17 +77,7 @@ public function defaultRunRouteCallback($path_info = null)
     运行默认的路由回调
 public function defaultGetRouteCallback($path_info)
 
-    获得默认的路由回调
-protected function beforeRun()
 
-    用于重写，在回调前执行
-protected function getRunResult()
-    获得运行结果
-protected function createControllerObject($full_class)
-    创建控制器对象
-protected function getMethodToCall($object, $method)
-
-    获得回调方法
 
 ### URL 相关
 
@@ -128,53 +120,35 @@ public function setRouteCallingMethod($calling_method)
 
     设置当前路由
 
-public function getRouteError()
+    //
+public function dumpAllRouteHooksAsString()
 
-获得
+    简单 dump 所有钩子
+
 
 ## 详解
 
 ## 方法索引
+##  内部方法
 
-    public function __construct()
-    public static function RunQuickly(array $options = [], callable $after_init = null)
-    public static function URL($url = null)
-    public function _URL($url = null)
-    public function defaultURLHandler($url = null)
-    public function init(array $options, object $context = null)
-    public function setURLHandler($callback)
-    public function getURLHandler()
-    public function bindServerData($server)
-    public function bind($path_info, $request_method = 'GET')
+    获得默认的路由回调
+protected function beforeRun()
+
+    用于重写，在回调前执行
+protected function getRunResult()
+    获得运行结果
+protected function createControllerObject($full_class)
+    创建控制器对象
+protected function getMethodToCall($object, $method)
+
+    获得回调方法
+    
+
     protected function beforeRun()
-    public function run()
     protected function getRunResult()
-    public function forceFail()
-    public function addRouteHook($callback, $position, $once = true)
-    public function add404Handler($callback)
-    public function defaulToggleRouteCallback($enable = true)
-    public function defaultRunRouteCallback($path_info = null)
-    public function defaultGetRouteCallback($path_info)
     protected function createControllerObject($full_class)
     protected function getMethodToCall($object, $method)
-    public function getPathInfo()
-    public function setPathInfo($path_info)
-    public function getParameters()
-    public function setParameters($parameters)
-    public function getRouteError()
-    public function getRouteCallingPath()
-    public function getRouteCallingClass()
-    public function getRouteCallingMethod()
-    public function setRouteCallingMethod($calling_method)
-    
-##### 
-
-### Core\Route
-
-DuckPhp\Core\Route 这个类可以单独拿出来做路由用。
-
-
-
+     
 ##### 示例
 
 这是一个单用 Route 组件的例子
@@ -222,4 +196,8 @@ if(!$flag){
 ##### URL 输出地址重写指南
 
 
-## Tip bind() 函数和 bindServerData 区别
+## Tip
+bind() 函数和 bindServerData 区别
+    public function bind($path_info, $request_method = 'GET')
+    会进行 bindServerData 然后设置 提纯后的 path_info 和 request_method:
+
