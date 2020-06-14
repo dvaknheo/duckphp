@@ -105,6 +105,7 @@ class Installer
     }
     public function dumpDir($source, $dest, $force = false, $is_full = false)
     {
+        $is_full = true; // OK we set this to full
         $source = rtrim(realpath($source), '/').'/';
         $dest = rtrim(realpath($dest), '/').'/';
         $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
