@@ -27,28 +27,32 @@ class Route extends ComponentBase
             'controller_prefix_post' => 'do_',
             'controller_postfix' => '',
         ];
+    //public input;
+    public $request_method = '';
+    public $script_filename = '';
+    public $document_root = '';
+
     public $pre_run_hook_list = [];
     public $post_run_hook_list = [];
     
     protected $url_handler = null;
+    
+    //input
     protected $path_info = '';
-    
-    public $request_method = '';
-    
-    public $script_filename = '';
-    public $document_root = '';
+    protected $parameters = [];
 
+    //calculated options;
+    protected $namespace_prefix = '';
+    protected $base_class = null;
+    protected $index_method = 'index'; //const
+
+    //properties
     protected $route_error = '';
-    public $calling_path = '';
-    public $calling_class = '';
+    protected $calling_path = '';
+    protected $calling_class = '';
     protected $calling_method = '';
     
-    protected $parameters = [];
-    
-    protected $namespace_controller = '';
-    protected $controller_base_class = null;
-    protected $controller_index_method = 'index';
-    
+    //flags
     protected $has_bind_server_data = false;
     protected $enable_default_callback = true;
     protected $is_failed = false;
@@ -126,11 +130,11 @@ class Route extends ComponentBase
             $namespace_controller = rtrim($namespace, '\\').'\\'.$namespace_controller;
         }
         $namespace_controller = trim($namespace_controller, '\\');
-        $this->namespace_controller = $namespace_controller;
+        $this->namespace_prefix = $namespace_controller.'\\';
         
-        $this->controller_base_class = $this->options['controller_base_class'];
-        if ($this->controller_base_class && substr($this->controller_base_class, 0, 1) === '~') {
-            $this->controller_base_class = $this->namespace_controller.'\\'.$this->controller_base_class;
+        $this->base_class = $this->options['controller_base_class'];
+        if ($this->base_class && substr($this->base_class, 0, 1) === '~') {
+            $this->base_class = $this->namespace_prefix.$this->base_class;
         }
     }
     
@@ -283,7 +287,7 @@ class Route extends ComponentBase
             return null;
         }
         $path_class = $path_class ?: $this->options['controller_welcome_class'];
-        $full_class = $this->namespace_controller.'\\'.str_replace('/', '\\', $path_class).$this->options['controller_postfix'];
+        $full_class = $this->namespace_prefix.str_replace('/', '\\', $path_class).$this->options['controller_postfix'];
         if (!class_exists($full_class)) {
             $this->route_error = "can't find class($full_class) by $path_class ";
             return null;
@@ -292,8 +296,8 @@ class Route extends ComponentBase
         $this->calling_class = $full_class;
         $this->calling_method = !empty($method)?$method:'index';
         
-        if ($this->controller_base_class && !is_subclass_of($full_class, $this->controller_base_class)) {
-            $this->route_error = "no the controller_base_class! {$this->controller_base_class} ";
+        if ($this->base_class && !is_subclass_of($full_class, $this->base_class)) {
+            $this->route_error = "no the controller_base_class! {$this->base_class} ";
             return null;
         }
         $object = $this->createControllerObject($full_class);
@@ -306,7 +310,7 @@ class Route extends ComponentBase
     }
     protected function getMethodToCall($object, $method)
     {
-        $method = ($method === '')?$this->controller_index_method : $method;
+        $method = ($method === '')?$this->index_method : $method;
         if (substr($method, 0, 2) == '__') {
             $this->route_error = 'can not call hidden method';
             return null;
@@ -369,7 +373,7 @@ class Route extends ComponentBase
     }
     public function getNamespacePrefix()
     {
-        return $this->namespace_controller.'\\';
+        return $this->namespace_prefix;
     }
     public function dumpAllRouteHooksAsString()
     {
