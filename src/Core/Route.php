@@ -28,17 +28,10 @@ class Route extends ComponentBase
             'controller_postfix' => '',
         ];
     
-    protected $parameters = [];
+    
     public $urlHandler = null;
-    
-    protected $namespace_controller = '';
-    protected $controller_welcome_class = 'Main';
-    protected $controller_index_method = 'index';
-    protected $controller_base_class = null;
-    
-    protected $controller_hide_boot_class = false;
-    protected $controller_methtod_for_miss = null;
-    protected $controller_prefix_post = 'do_';
+    public $pre_run_hook_list = [];
+    public $post_run_hook_list = [];
     
     public $path_info = '';
     public $request_method = '';
@@ -50,10 +43,19 @@ class Route extends ComponentBase
     public $calling_path = '';
     public $calling_class = '';
     public $calling_method = '';
+
+
+    protected $parameters = [];
+    protected $namespace_controller = '';
+    protected $controller_welcome_class = 'Main';
+    protected $controller_index_method = 'index';
+    protected $controller_base_class = null;
+    
+    protected $controller_hide_boot_class = false;
+    protected $controller_methtod_for_miss = null;
+    protected $controller_prefix_post = 'do_';
     
     protected $has_bind_server_data = false;
-    public $prependedCallbackList = [];
-    public $appendedCallbackList = [];
     protected $enable_default_callback = true;
     protected $is_failed = false;
 
@@ -200,7 +202,7 @@ class Route extends ComponentBase
     {
         $this->beforeRun();
         
-        foreach ($this->prependedCallbackList as $callback) {
+        foreach ($this->pre_run_hook_list as $callback) {
             $flag = ($callback)($this->path_info);
             if ($flag) {
                 return $this->getRunResult();
@@ -216,7 +218,7 @@ class Route extends ComponentBase
             $this->enable_default_callback = true;
         }
         
-        foreach ($this->appendedCallbackList as $callback) {
+        foreach ($this->post_run_hook_list as $callback) {
             $flag = ($callback)($this->path_info);
             if ($flag) {
                 return $this->getRunResult();
@@ -238,25 +240,25 @@ class Route extends ComponentBase
     public function addRouteHook($callback, $position, $once = true)
     {
         if ($once) {
-            if (($position === 'prepend-outter' || $position === 'prepend-inner') && in_array($callback, $this->prependedCallbackList)) {
+            if (($position === 'prepend-outter' || $position === 'prepend-inner') && in_array($callback, $this->pre_run_hook_list)) {
                 return false;
             }
-            if (($position === 'append-inner' || $position === 'append-outter') && in_array($callback, $this->appendedCallbackList)) {
+            if (($position === 'append-inner' || $position === 'append-outter') && in_array($callback, $this->post_run_hook_list)) {
                 return false;
             }
         }
         switch ($position) {
             case 'prepend-outter':
-                array_unshift($this->prependedCallbackList, $callback);
+                array_unshift($this->pre_run_hook_list, $callback);
                 break;
             case 'prepend-inner':
-                array_push($this->prependedCallbackList, $callback);
+                array_push($this->pre_run_hook_list, $callback);
                 break;
             case 'append-inner':
-                array_unshift($this->appendedCallbackList, $callback);
+                array_unshift($this->post_run_hook_list, $callback);
                 break;
             case 'append-outter':
-                array_push($this->appendedCallbackList, $callback);
+                array_push($this->post_run_hook_list, $callback);
                 break;
             default:
                 return false;
@@ -382,5 +384,14 @@ class Route extends ComponentBase
     public function getNamespacePrefix()
     {
         return $this->namespace_controller.'\\';
+    }
+    public function dumpAllHookAsString()
+    {
+        $ret = "-- pre run --\n";
+        $ret .= var_export($this->pre_run_hook_list, true);
+        $ret .= "\n-- run --\n";
+        $ret .= var_export($this->post_run_hook_list, true);
+        $ret .= "\n-- post run --\n";
+        return $ret;
     }
 }

@@ -2,7 +2,6 @@
 use DuckPhp\DuckPhp;
 use DuckPhp\Core\View;
 
-//未完工
 require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
 //// 这个例子极端点，没用任何类，全函数模式。
 

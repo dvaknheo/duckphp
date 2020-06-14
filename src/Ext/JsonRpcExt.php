@@ -22,14 +22,12 @@ class JsonRpcExt extends ComponentBase
         'jsonrpc_service_namespace' => '',
     ];
     
-    protected $backend;
     protected $prefix;
     protected $is_debug;
     
     //@override
     protected function initOptions(array $options)
     {
-        $this->backend = $this->options['jsonrpc_backend'];
         $this->is_debug = $this->options['jsonrpc_is_debug'];
         $this->prefix = trim($this->options['jsonrpc_namespace'], '\\').'\\';
         
@@ -89,11 +87,11 @@ class JsonRpcExt extends ComponentBase
         $post['params'] = $arguments;
         
         $post['id'] = time();
-        $str_data = $this->curl_file_get_contents($this->backend, $post);
+        $str_data = $this->curl_file_get_contents($this->options['jsonrpc_backend'], $post);
         $data = json_decode($str_data, true);
         if (empty($data)) {
-            $str_data = $this->is_debug?$str_data:'';
-            throw new Exception("rpc failed".$str_data, -1);
+            $str_data = $this->options['jsonrpc_is_debug']?$str_data:'';
+            throw new Exception("JsonRpc failed,(".var_export($this->options['jsonrpc_backend'], true).")returns:[".$str_data."]", -1);
         }
         if (isset($data['error'])) {
             throw new Exception($data['error']['message'], $data['error']['code']);

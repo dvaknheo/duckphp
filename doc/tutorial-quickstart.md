@@ -16,8 +16,9 @@ php template/bin/start_server.php
 Don't run the template file directly
 Hello DuckPhp
 
-Time Now is [2019-04-19T21:36:06+08:00]
-For More Take the DuckPhp-FullTest (TODO)
+Now is [<2020-06-14T11:45:46+08:00>]
+--
+(省略后面内容)
 ```
 发布的时候，把网站目录指向 public/index.php 就行。
 ### 另一种安装模式： Composer 安装
@@ -38,8 +39,9 @@ php bin/start_server.php
 Don't run the template file directly
 Hello DuckPhp
 
-Time Now is [2019-04-19T21:36:06+08:00]
-For More Take the DuckPhp-FullTest (TODO)
+Now is [<2020-06-14T11:45:46+08:00>]
+--
+(省略后面内容)
 ```
 细则可以看 --help 参数
 

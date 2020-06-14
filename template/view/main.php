@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 // use MY\Base\Helper\ViewHelper as V;
     
-    //var_dump(get_defined_vars());
     // change this file if you can
     $skip_in_full = true;
     $skip_in_full = false;  // @DUCKPHP_KEEP_IN_FULL
@@ -16,6 +15,8 @@
 </head>
 <body>
 <h1>Hello DuckPHP</h1>
+Now is [<?=$var?>]
+<hr/>
 <div>
     欢迎使用 DuckPHP ,<?php echo $var;?>
     <a href="<?=__url('test/done')?>">查看 Demo 结果</a>
@@ -44,6 +45,7 @@
     <li><a href="/full/dbtest.php">dbtest.php 数据库演示</a>
     <li><a href="/full/index.php">index.php 待整理，旧的自声明文档</a>
     <li><a href="/full/traditional.php">traditional.php 传统模式,一个文件解决，不折腾那么多 </a>
+    <li><a href="/full/rpc.php">一个远程调用 json rpc 的例子 </a>
 </ul>
 </div>
 </body>
