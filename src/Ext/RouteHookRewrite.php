@@ -150,8 +150,8 @@ class RouteHookRewrite extends ComponentBase
         $url = $this->filteRewrite($input_url);
         if ($url !== null) {
             $this->changeRouteUrl($url);
-            $path = parse_url($url, PHP_URL_PATH);
-            Route::G()->path_info = $path;
+            $path_info = parse_url($url, PHP_URL_PATH);
+            Route::G()->setPathInfo($path_info);
         }
         return  false;
     }

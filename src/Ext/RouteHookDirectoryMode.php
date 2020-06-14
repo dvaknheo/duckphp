@@ -110,8 +110,8 @@ class RouteHookDirectoryMode extends ComponentBase
     }
     public function _Hook($path_info)
     {
-        Route::G()->path_info = $this->adjustPathinfo($this->basepath, $path_info);
-        
+        $path_info = $this->adjustPathinfo($this->basepath, $path_info);
+        Route::G()->setPathInfo($path_info);
         return false;
     }
 }

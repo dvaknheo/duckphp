@@ -2,16 +2,6 @@
 <?php
 require_once(__DIR__.'/../autoload.php'); // @DUCKPHP_HEADFILE
 // delete this file if you don't need
-/*
-$dn_option=[
-    'swoole'=>[
-        'port'=>9528,
-        'with_http_handler_root'=>true,
-        'http_handler_basepath'=>realpath(dirname(__DIR__)).'/',
-        'http_handler_root'=>'public',
-    ],
-];
-//*/
 
 $path = realpath(__DIR__.'/');
 

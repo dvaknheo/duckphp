@@ -60,7 +60,7 @@ class SystemWrapperObject
         $this->system_wrapper_call('var_export', func_get_args());
         try{
         $this->system_wrapper_call('ttt', func_get_args());
-        }catch(\Error $ex){
+        }catch(\ErrorException $ex){
             var_dump($ex);
         }
     }

@@ -110,8 +110,6 @@ class RouteHookRouteMapTest_FakeObject
     }
     function adjustCallbackArrow()
     {
-        //var_dump(Route::Parameters());
-        //var_dump(Route::G()->path_info);
         echo __METHOD__;echo PHP_EOL;
     }
 }

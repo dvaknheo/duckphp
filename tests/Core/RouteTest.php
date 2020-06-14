@@ -11,7 +11,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(Route::class);
         
         Route::G()->document_root=__DIR__;
-        Route::G()->path_info='x/z';
+        Route::G()->setPathInfo('x/z');
         Route::G()->script_filename=__DIR__.'/aa/index.php';
         $t= Route::URL('aaa');
 

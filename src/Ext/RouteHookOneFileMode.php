@@ -125,7 +125,7 @@ class RouteHookOneFileMode extends ComponentBase
 
         $path_info = $module.'/'.$path_info;
         
-        Route::G()->path_info = $path_info;
+        Route::G()->setPathInfo($path_info);
         
         return false;
     }

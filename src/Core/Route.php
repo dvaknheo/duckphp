@@ -27,13 +27,11 @@ class Route extends ComponentBase
             'controller_prefix_post' => 'do_',
             'controller_postfix' => '',
         ];
-    
-    
-    public $urlHandler = null;
     public $pre_run_hook_list = [];
     public $post_run_hook_list = [];
     
-    public $path_info = '';
+    protected $url_handler = null;
+    protected $path_info = '';
     public $request_method = '';
     
     public $script_filename = '';
@@ -42,7 +40,7 @@ class Route extends ComponentBase
     public $error = '';
     public $calling_path = '';
     public $calling_class = '';
-    public $calling_method = '';
+    protected $calling_method = '';
 
 
     protected $parameters = [];
@@ -74,8 +72,8 @@ class Route extends ComponentBase
     ////
     public function _URL($url = null)
     {
-        if ($this->urlHandler) {
-            return ($this->urlHandler)($url);
+        if ($this->url_handler) {
+            return ($this->url_handler)($url);
         }
         return $this->defaultURLHandler($url);
     }
@@ -150,11 +148,11 @@ class Route extends ComponentBase
     
     public function setURLHandler($callback)
     {
-        $this->urlHandler = $callback;
+        $this->url_handler = $callback;
     }
     public function getURLHandler()
     {
-        return $this->urlHandler;
+        return $this->url_handler;
     }
     
     public function bindServerData($server)
