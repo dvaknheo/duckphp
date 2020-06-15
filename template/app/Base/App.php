@@ -19,7 +19,7 @@ class App extends DuckPhp
         'is_debug' => true, // @DUCKPHP_DELETE
         
         //'platform' => true,
-        'platform' => 'aaa', // @DUCKPHP_DELETE
+        'platform' => 'platform', // @DUCKPHP_DELETE
         
         
         'error_404' => '_sys/error_404',
@@ -35,6 +35,7 @@ class App extends DuckPhp
         
         // $options['all_config'] = array ( );
         // $options['autoload_cache_in_cli'] = false;
+        // $options['autoload_path_namespace_map'] = array ( );
         // $options['config_ext_files'] = array ( );
         // $options['controller_base_class'] = NULL;
         // $options['controller_hide_boot_class'] = false;
@@ -44,7 +45,7 @@ class App extends DuckPhp
         // $options['controller_welcome_class'] = 'Main';
         // $options['database_list'] = NULL;
         // $options['db_before_get_object_handler'] = NULL;
-        // $options['db_before_query_handler'] = array (   0 => 'DuckPhp\\App',   1 => 'OnQuery', );
+        // $options['db_before_query_handler'] = array (   0 => 'DuckPhp\\DuckPhp',   1 => 'OnQuery', );
         // $options['db_close_at_output'] = true;
         // $options['db_close_handler'] = NULL;
         // $options['db_create_handler'] = NULL;
@@ -57,11 +58,11 @@ class App extends DuckPhp
         // $options['handle_all_dev_error'] = true;
         // $options['handle_all_exception'] = true;
         // $options['is_debug'] = false;
-        // $options['log_errors'] = true;
         // $options['log_file_template'] = 'log_%Y-%m-%d_%H_%i.log';
         // $options['log_prefix'] = 'DuckPhpLog';
         // $options['log_sql_level'] = 'debug';
         // $options['log_sql_query'] = false;
+        // $options['mode_no_path_info'] = false;
         // $options['namespace'] = 'MY';
         // $options['namespace_controller'] = 'Controller';
         // $options['override_class'] = 'Base\\App';
@@ -86,6 +87,7 @@ class App extends DuckPhp
         // $options['skip_setting_file'] = false;
         // $options['skip_view_notice_error'] = true;
         // $options['use_autoloader'] = true;
+        // $options['use_error_log_on_exception'] = true;
         // $options['use_flag_by_setting'] = true;
         // $options['use_output_buffer'] = false;
         // $options['use_short_functions'] = true;

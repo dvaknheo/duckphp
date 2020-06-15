@@ -8,7 +8,14 @@ require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
 $namespace = 'MY';                              // @DUCKPHP_NAMESPACE
 $path = realpath(__DIR__.'/..');
 
-$options = [];
+$options = [
+//    'use_autoloader' => true,
+//    'skip_plugin_mode_check' => false,
+//    'handle_all_dev_error' => true,
+//    'handle_all_exception' => true,
+//    'override_class' => 'Base\App',
+//    'path_namespace'
+];
 $options['path'] = $path;
 $options['namespace'] = $namespace;
 // $options['path_namespace'] = 'app';

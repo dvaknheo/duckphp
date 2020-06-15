@@ -173,7 +173,7 @@ trait Core_Handler
     
     public function _OnDefaultException($ex): void
     {
-        if ($this->options['log_errors']) {
+        if ($this->options['use_error_log_on_exception']) {
             try {
                 static::Logger()->error('['.get_class($ex).']('.$ex->getMessage().')'.$ex->getMessage());
             } catch (\Throwable $ex) { // @codeCoverageIgnore

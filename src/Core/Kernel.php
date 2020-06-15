@@ -34,18 +34,18 @@ trait Kernel
             'handle_all_dev_error' => true,
             'handle_all_exception' => true,
             'override_class' => 'Base\App',
+            'path_namespace' => 'app',
             
             //// basic config ////
             'path' => '',
             'namespace' => 'MY',
-            'path_namespace' => 'app',
             
             //// properties ////
             'is_debug' => false,
             'platform' => '',
             'ext' => [],
-            'log_errors' => true,
             
+            'use_error_log_on_exception' => true,
             'use_flag_by_setting' => true,
             'use_super_global' => true,
             'use_short_functions' => true,
