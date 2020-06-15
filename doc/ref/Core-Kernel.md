@@ -1,8 +1,8 @@
-# Core\Kernel
+# DuckPhp\Core\Kernel
 [toc]
 
 ## 简介
-最核心的Trait，你通过 App 类来使用他。
+最核心的Trait，你通过 DuckPhp\DuckPhp 或 DuckPhp\Core\App 类来使用他。
 
 ## 引用
 [Core\\AutoLoader](ref/Core-AutoLoader.md)   自动加载
@@ -53,7 +53,6 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 'path_namespace' => 'app',
 
     命名空间路径
-
 'is_debug' => false,
 
     调试模式， 用于 IsDebug() 方法。
@@ -63,12 +62,12 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 'ext' => [],
     
     扩展
-'log_errors' => true,
+
+### 开关配置
+'use_error_log_on_exception' => true,
 
 	记录错误 // 内核流程中未使用，但被 App 类使用。
 
-
-### 开关配置
 'use_flag_by_setting' => true,
 
     从设置文件中再次重载 is_debug 和 platform
@@ -92,14 +91,17 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 ### 错误处理配置
 
 'error_404' => null,          //'_sys/error-404',
+
+    404 的View或者回调
 'error_500' => null,          //'_sys/error-500',
+
+    500 的View或者回调
 'error_debug' => null,        //'_sys/error-debug',
 
-## 属性
-    protected $options_project = []; 用于子类自己的 options
+    404 的View或者回调
 
-## 方法
-### 公开方法
+## 公开方法
+
 public static function RunQuickly(array $options=[], callable $after_init=null): bool
 
     快速开始，init() 后接 $after_init() 然年后 run() 
@@ -115,16 +117,14 @@ public function clear(): void
 public function replaceDefaultRunHandler(callable $handler = null): void
 
     不通过继承而是外挂替换默认的 Run 函数， `Ext\PluginForSwoole` 扩展用到。
-public function addBeforeShowHandler($handler)
 
-    挂接在显示前输入的方法。
-### 重写用的方法
+## 重写方法
 
 重写的方法默认都是空方法，用于在重写的时候实现留给功能
 
 protected function onPrepare()
 
-    准备阶段，你可以在这里替换默认类 (v1.2.5)
+    准备阶段，你可以在这里替换默认类
 protected function onInit()
 
     初始化完成
@@ -150,9 +150,10 @@ protected function initExtentions(array $exts): void
 protected function fixPathInfo(&$serverData)
 
     运行中 修复PATH_INFO
+
 ## 详解
 
-Kernel 这个 Trait 一般不直接使用。一般直接用的是 Core\App ， 而直接的 App 类，则是把常见扩展加进去形成完善的框架。
+Kernel 这个 Trait 一般不直接使用。一般直接用的是 Core\App ， 而直接的 DuckPhp\DuckPhp 类，则是把常见扩展加进去形成完善的框架。
 
 ### 流程说明
 Kernel 大致分为两个阶段

@@ -1,13 +1,13 @@
-# App
+# DuckPhp
 
 ## 简介
-总入口类，父类 Core\DuckPhp
+总入口类
 ## 依赖关系
 `DuckPhp\DuckPhp` 
     1. 继承 [Core\App](Core-App.md)
-    4. 使用 [Ext\DBManager](Ext-DBManager.md)
-    5. 使用 [Ext\Pager](Ext-Pager.md)
-    5. 使用 [Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
+    2. 使用 [Ext\DBManager](Ext-DBManager.md)
+    3. 使用 [Ext\Pager](Ext-Pager.md)
+    4. 使用 [Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
     5. 使用 [Ext\RouteHookOneFileMode](Ext-RouteHookOneFileMode.md)
     
 

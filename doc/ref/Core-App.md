@@ -13,7 +13,9 @@
 使用 [Core\Kernel](Core-Kernel.md) 的默认选项。
 
 ## 方法
+public function addBeforeShowHandler($handler)
 
+    挂接在显示前输入的方法。
 public function extendComponents($class, $methods, $components): void
 
     //
