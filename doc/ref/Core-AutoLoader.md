@@ -6,26 +6,34 @@
 ## 选项
 'path' => null,
 
-// 路径
+    路径
 'namespace' => 'MY',
 
-//命名空间
+    命名空间
 'path_namespace' => 'app',
 
-    // 命名空间的相对路径
-'skip_system_autoload' => true,
-
-    跳过系统加载
+    命名空间的相对路径
 'skip_app_autoload' => false,
 
-'enable_cache_classes_in_cli' => false,
+'autoload_cache_in_cli' => false,
     
-    //
-## 方法
+    在命令行模式下缓存
+'autoload_path_namespace_map' => [],
 
+    psr4 风格列表
+## 公开方法
+public $is_inited = false;
+
+    //是否已初始化
+public $namespace_paths = [];
+
+    // 路径 => 命名空间的映射表
 public function init($options=[], $context=null)
 
-    //
+    初始化
+public function isInited(): bool
+
+    
 public function run()
 
     //
@@ -44,13 +52,9 @@ public function cacheNamespacePath($path)
 public function clear()
 
     //
+public static function DuckPhpSystemAutoLoader(string $class): void
+
+    仅仅用于
 ## 详解
 
-    public function __construct()
-    public function init(array $options, object $context = null)
-    public function run()
-    public function _autoload($class)
-    public function assignPathNamespace($input_path, $namespace = null)
-    public function cacheClasses()
-    public function cacheNamespacePath($path)
-    public function clear()
+AutoLoader 类用于没 autoloader 的情况下临时用。

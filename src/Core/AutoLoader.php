@@ -14,8 +14,8 @@ class AutoLoader
             'path_namespace' => 'app',
             'skip_app_autoload' => false,
             
-            'autoload_path_namespace_map' => [],
             'autoload_cache_in_cli' => false,
+            'autoload_path_namespace_map' => [],
         ];
     protected $namespace;
     protected $path_namespace;
@@ -95,9 +95,9 @@ class AutoLoader
     }
     public static function AutoLoad(string $class): void
     {
-        static::G()->_autoload($class);
+        static::G()->_Autoload($class);
     }
-    public function _autoload(string $class):void
+    public function _Autoload(string $class):void
     {
         foreach ($this->namespace_paths as $base_dir => $prefix) {
             if (strncmp($prefix, $class, strlen($prefix)) !== 0) {
