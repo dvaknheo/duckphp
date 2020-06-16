@@ -1,7 +1,7 @@
-# Core\App
+# DuckPhp\Core\App
 
 ## 简介
-最核心的类，其他
+核心的类
 ## 依赖关系
 + `Core\App` 
     + Trait [Core\Kernel](Core-Kernel.md)

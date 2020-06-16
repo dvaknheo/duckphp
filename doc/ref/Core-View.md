@@ -15,14 +15,10 @@
 'skip_view_notice_error' => true,
 
     关闭 notice 警告，以避免麻烦的处理。
+
+
 ## 公开方法
 
-public function __construct()
-
-    空构造函数
-public function init(array $options, object $context = null)
-
-    初始化
 public function _Show($data = [], $view)
 
     显示文件，包括页眉页脚
@@ -38,10 +34,12 @@ public function assignViewData($key, $value = null)
 public function setOverridePath($path)
 
     插件模式下设置视图路径
+
+## 内部方法
+
 protected function getViewFile($path, $view)
 
     获得 View 文件。
-
 ## 详解
 
 Core\View 的选项共享一个 path,带一个 path_view.

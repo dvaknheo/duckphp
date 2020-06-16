@@ -1,4 +1,4 @@
-# Core\SingletonEx
+# DuckPhp\Core\SingletonEx
 ## 简介
 
 **可变单例类**

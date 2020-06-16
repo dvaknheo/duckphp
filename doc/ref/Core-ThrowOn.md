@@ -1,4 +1,4 @@
-# Core\ThrowOn
+# DuckPhp\Core\ThrowOn
 
 ## 简介
 快速抛出异常的 trait

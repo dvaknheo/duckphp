@@ -1,29 +1,45 @@
-# Core\RuntimeState
+# DuckPhp\Core\RuntimeState
 
 ## 简介
 
-`组件类` 保存运行时状态的类
+运行时组件，保存运行状态信息
+
 ## 选项
+
+'use_output_buffer' => false,
+
+启用 ob 函数保持
 
 ## 公开方法
 
-public function __construct()
-
-    空创建方法
 public static function ReCreateInstance()
 
     重新创建实例，避免旧实例状态干扰。
 public function isRunning()
 
     是否在运行状态
-public function begin()
+public function run()
 
     开始
-public function end()
+public function clear()
 
-    结束运行状态。
-public function skipNoticeError()
+    清理
+public function isRunning()
 
-    跳过 Notice 错误，用于视图显示。 这个函数可能会变更
+    是否运行。
+public function toggleInException($flag = true)
+
+    设置在异常状态
+public function isInException()
     
+    是否已经异常
+public function isOutputed()
+
+    是否已经输出
+public function toggleOutputed($flag = true)
+
+    设置已经输出
 ## 详解
+
+Runtime 类在运行期才重新初始化。
+

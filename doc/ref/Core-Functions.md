@@ -1,6 +1,6 @@
 # 全局函数
 
-需要开启 user_global_functions 才能用。
+需要开启 user_global_functions （默认开启） 才能用。
 
 view 的函数 全局化 
 这里的函数用于 view 里不想  use 的情况

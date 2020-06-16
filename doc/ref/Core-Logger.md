@@ -1,10 +1,12 @@
-# Core\Logger
+# DuckPhp\Core\Logger
 
 ## 简介
-`组件类` 日志类，满足 psr 标准的 日志类
+日志组件 ，满足 psr 标准的 日志类
 
 ## 使用于
-[DuckPhp\Core\App](Core-Kernel.md)
+
+[DuckPhp\Core\Kernel](Core-Kernel.md)
+
 ## 选项
 
 'path' => '',

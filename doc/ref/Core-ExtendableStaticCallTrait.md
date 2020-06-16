@@ -42,4 +42,4 @@ ExtendableStaticCallTrait 这个 Trait 用于 App, ControllerHelper, ServiceHelp
 
 assoc 用于批量调用的数组
 
-其中, $callback 为回调，额外的， $callback 还可以用 "MyClass::G::foo"  相当于回调 MyClass::G()->foo
+其中, $callback 为回调。 额外的， $callback 还可以用 "MyClass::G::foo"  相当于回调 MyClass::G()->foo

@@ -1,10 +1,8 @@
-# Core\SuperGlobal
+# DuckPhp\Core\SuperGlobal
 [toc]
 ## 简介
 
-超级变量类。 为了支持不仅仅 WEB 环境下的 超全局变量。
-
-
+超全局变量组件。 为了支持不仅仅 WEB 环境下的 超全局变量。
 
 ## 公开方法
 public function __construct()

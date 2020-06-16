@@ -1,4 +1,4 @@
-# Core\AppPluginTrait
+# DuckPhp\Core\AppPluginTrait
 
 ## 简介
 

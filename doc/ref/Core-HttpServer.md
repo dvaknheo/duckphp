@@ -1,7 +1,7 @@
-# Core\HttpServer
+# DuckPhp\Core\HttpServer
 
 ## 简介
-`组件类` Http 服务器类，实现一个简单的 Http 服务
+`组件` Http 服务器类，实现一个简单的 Http 服务
 ## 选项
 
 ## 公开方法
@@ -25,3 +25,6 @@ protected function showHelp()
 protected function runHttpServer()
 
     开始运行
+
+## 详解
+虽然是个组件类，但是只是 起服务器而已

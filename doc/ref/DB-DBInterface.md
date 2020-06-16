@@ -10,7 +10,7 @@ DB接口类
 ## 详解
 
     public function close();
-    public function getPDO();
+    public function PDO($new=null);
     public function quote($string);
     public function fetchAll($sql, ...$args);
     public function fetch($sql, ...$args);

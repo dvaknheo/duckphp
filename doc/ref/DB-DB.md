@@ -2,7 +2,7 @@
 
 ## 简介
 
-`伪组件类` DB 类是DuckPhp 自带的数据库类。 是 App::DB 和 M::DB 的实现。
+伪组件 DB 类是DuckPhp 自带的数据库类。 是 App::DB() 和 M::DB() 的实现。
 
 ## 选项
 
@@ -70,7 +70,7 @@ DB()
 #### DB 类的用法
 DB
     close(); //关闭, 你一般不用关闭,系统会自动关闭
-    getPDO(); //获取 PDO 对象
+    PDO($new=null); //获取/设置 PDO 对象
     quote($string);
     fetchAll($sql, ...$args);
     fetch($sql, ...$args);
@@ -117,7 +117,7 @@ public static function CreateDBInstance($db_config)
 public static function CloseDBInstance($db, $tag = null)
 protected function check_connect()
 public function close()
-public function getPDO()
+public function PDO($new)
 public function setBeforeQueryHandler($handler)
 public function quote($string)
 public function buildQueryString($sql, ...$args)

@@ -58,3 +58,5 @@ public static function DuckPhpSystemAutoLoader(string $class): void
 ## 详解
 
 AutoLoader 类用于没 autoloader 的情况下临时用。
+
+AutoLoader 类特意被设计成和其他类没联系

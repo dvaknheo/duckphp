@@ -1,10 +1,12 @@
-# Core\ExceptionManager
+# DuckPhp\Core\ExceptionManager
 
 ## 简介
-`组件类` 异常管理类
+异常管理"组件" ExceptionManager 类特意被设计成和其他类没联系
+
 
 ## 选项
 'handle_all_dev_error' => true,
+
 
 'handle_all_exception' => true,
 
@@ -37,3 +39,7 @@
     public function init(array $options, object $context = null)
     public function run()
     public function clear()
+    
+
+
+'system_exception_handler' ，'default_exception_handler' => null ，'dev_error_handler' => null 这三个选项内部使用一般不会去动

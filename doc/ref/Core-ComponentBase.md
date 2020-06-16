@@ -2,8 +2,11 @@
 [toc]
 ## 简介
 
-`组件类` 基类 
+`组件`的基类 
 
++ 实现 ComponentInterface 接口
++ 使用 SingletonEx Trait
+    
 ## 公开方法
 
 //public $options; /* array() */;
