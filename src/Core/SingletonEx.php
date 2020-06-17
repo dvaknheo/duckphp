@@ -9,6 +9,11 @@ namespace DuckPhp\Core;
 trait SingletonEx
 {
     protected static $_instances = [];
+    /**
+     * 
+     * @param type $object
+     * @return \static
+     */
     public static function G($object = null)
     {
         if (defined('__SINGLETONEX_REPALACER')) {
