@@ -7,8 +7,7 @@
 
     - 'context_class' => null
     - 'current' => null
-    - 'page_key' => "page"
-    - 'page_size' => 30
+
     - 'rewrite' => null
     - 'url' => null
 
@@ -31,7 +30,9 @@
 'context_class' => null,
 
     指定提供 SG 方法替代超全局函数的类
+'pager_context_class' => ''
 
+    设置 context 的class
 ## 公开方法
 
 ### 组件方法
