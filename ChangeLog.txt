@@ -20,8 +20,6 @@ ComponentBase
     DuckPhpSystemAutoLoader
 Configerr
     exitWhenNoSettingFile
-ExceptionManager
-    孤立化
 Functions 
     修复 __url
     

@@ -1,8 +1,7 @@
 # DuckPhp\Core\ExceptionManager
 
 ## 简介
-异常管理"组件" ExceptionManager 类特意被设计成和其他类没联系
-
+异常管理组件
 
 ## 选项
 'handle_all_dev_error' => true,
