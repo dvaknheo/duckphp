@@ -153,7 +153,7 @@ protected function fixPathInfo(&$serverData)
 
 ## 详解
 
-Kernel 这个 Trait 一般不直接使用。一般直接用的是 Core\App ， 而直接的 DuckPhp\DuckPhp 类，则是把常见扩展加进去形成完善的框架。
+Kernel 这个 Trait 一般不直接使用。一般直接用的是 DuckPhp\Core\App ， 而直接的 DuckPhp\DuckPhp 类，则是把常见扩展加进去形成完善的框架。
 
 ### 流程说明
 Kernel 大致分为两个阶段

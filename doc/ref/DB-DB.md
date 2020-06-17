@@ -25,21 +25,21 @@ public function fetch($sql, ...$args)
     运行SQL并获得单一行
 public function fetchColumn($sql, ...$args)
 
-    运行SQL并获得单一行
+    运行SQL并获得单个数据
 public function execute($sql, ...$args)
 
-    运行SQL并获得单一行
+    运行SQL 返回 true false
 protected function check_connect()
 
     用于 override ，连接的设置。
 public function close()
 
-public function getPDO()
+public function PDO($new=null)
 
-    获得 相关 PDO 对象。
+    获得/设置 相关 PDO 对象。
 public function setBeforeQueryHandler($handler)
 
-    在 query 前执行。
+    在 query 前执行。($handler)($this,$sql, ...$args)
 public function quote($string)
 
     编码

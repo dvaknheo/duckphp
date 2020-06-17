@@ -1,3 +1,69 @@
+v1.2.5 变更
+最大的不兼容变更是 Duckhp\App 入口类重命名成了 DuckPhp\DuckPhp 类
+DuckPhp\Core\App
+    现在是组件类 Platform() IsDebug() 可接管。
+    DB($tag),DB_R(),DB_W() 有默认抛出异常的实现。
+    add404RouteHook dumpAllRouteHooksAsString 新增
+    setViewHeadFoot
+    GET ，POST 等移动到 App 类里。
+AppPluginTrait
+    新增选项 plugin_url_prefix
+    新增事件函数 onPluginModePrepare onPluginModeInit onPluginModeBeforeRun onPluginModeRun
+    新增 方法 pluginModeBeforeRun
+    pluginModeGetOldRoute
+    OnURL _OnURL
+AutoLoader 
+    孤立化 autoload_cache_in_cli autoload_path_namespace_map
+    spl_autoload_register(self::class.'::AutoLoad');
+    DuckPhpSystemAutoLoader
+ComponentBase
+    DuckPhpSystemAutoLoader
+Configerr
+    exitWhenNoSettingFile
+ExceptionManager
+    孤立化
+Functions 
+    修复 __url
+    
+Kernel
+    $options 通用化
+    添加 use_autoloader 选项
+    initAfterOverride initDefaultComponents
+    onInit 拆分纯空函数
+Logger
+    调整使用 选项 'path_log' ,'log_file_template'
+Route
+    减少公开属性 dumpAllRouteHooksAsString
+RuntimeState
+    添加属性 use_output_buffer
+    去掉 begin/end 用run/clear代替
+View
+    添加 reset()，给主流程用
+    setViewWrapper => etViewHeadFoot
+DB
+    getPDO => PDO($new)
+    beforeQueryHandler 的参数多了个 $this
+DBInterface
+    public function PDO($object = null);
+    public function rowCount();
+    public function lastInsertId();
+CallableView
+    修复 _Display;
+EmptyView
+    新增扩展
+RouteHookManager
+    新增路由钩子管理类
+AppHelper
+    新增一些管理函数
+ControllerHelper
+    移动 GPC 函数的实现
+HelperTrait
+    使用 SingletonEx
+ModelHelper
+    DB函数显化
+示例代码修改
+    
+
 v1.2.2 发布。通过 phpstan level7 的检查，php-cs-fixer 的格式化。phpunit 的 100%覆盖测试。
 
 应用层方面，C::Parameters() 改成 C::getParameters() ，这个只用于自定义路由。
