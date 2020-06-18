@@ -28,17 +28,6 @@
     public function clear()
 ## 详解
 
-    public function __construct()
-    public static function CallException($ex)
-    public function setDefaultExceptionHandler($default_exception_handler)
-    public function assignExceptionHandler($class, $callback = null)
-    public function setMultiExceptionHandler(array $classes, $callback)
-    public function on_error_handler($errno, $errstr, $errfile, $errline)
-    public function _CallException($ex)
-    public function init(array $options, object $context = null)
-    public function run()
-    public function clear()
-    
-
-
 'system_exception_handler' ，'default_exception_handler' => null ，'dev_error_handler' => null 这三个选项内部使用一般不会去动
+
+ExeptionManager 在 Base\App 前初始化

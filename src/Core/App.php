@@ -15,7 +15,7 @@ use DuckPhp\Core\ThrowOn;
 use DuckPhp\Core\ExtendableStaticCallTrait;
 use DuckPhp\Core\SystemWrapperTrait;
 use DuckPhp\Core\AutoLoader;
-use DuckPhp\Core\ComponentInterface;
+use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Route;

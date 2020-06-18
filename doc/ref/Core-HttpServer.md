@@ -1,24 +1,42 @@
 # DuckPhp\Core\HttpServer
 
 ## 简介
-`组件` Http 服务器类，实现一个简单的 Http 服务
+Http 独立组件，实现一个简单的 Http 服务
+
 ## 选项
 'host' => '127.0.0.1',
+
+    Host
 'port' => '8080',
+
+    端口
 'path' => '',
+
+    工程路径
 'path_document' => 'public',
+
+    文档路径
 ## 公开方法
-public function __construct()
 public static function RunQuickly($options)
-public function init(array $options, object $context = null)
+
+    快速运行
 public function run()
 
-protected function getopt($options, $longopts, &$optind)
-protected function parseCaptures($cli_options)
-
+    运行
 public function getPid()
+
+    获取运行时候的 PID
 public function close()
 
+    关闭
+## 内部方法
+
+protected function getopt($options, $longopts, &$optind)
+
+    处理选项
+protected function parseCaptures($cli_options)
+
+    处理
 protected function showWelcome()
 
     显示欢迎信息，用于重写
@@ -28,6 +46,7 @@ protected function showHelp()
 protected function runHttpServer()
 
     开始运行
-
 ## 详解
 虽然是个组件类，但是在流程中没用到，在 start_serverphp 的时候用
+
+命令行的参数会合并进来

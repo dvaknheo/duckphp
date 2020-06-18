@@ -36,3 +36,4 @@ ComponentBase 使用 SingletonEx Trait 。 会帮你处理 init 里，裁剪你�
 
 你只需要 override initOptions 和 initContext 即可
 
+组件类的 选项会被 trim 到只需要的组件

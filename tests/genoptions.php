@@ -1,19 +1,18 @@
 <?php
 require_once(__DIR__.'/../autoload.php');
+
+var_dump(getAllOptionDeclareClasses());
+
+//echo getDefaultOptions();
+//echo dumpByFile();
+//dumpByFile();
+
+return;
 function getDefaultOptions()
 {
 //DuckPhp\\Core\\ExceptionManager
 
-    $classes="DuckPhp\\DuckPhp
-DuckPhp\\Core\\AutoLoader
-DuckPhp\\Core\\Configer
-DuckPhp\\Core\\Logger
-DuckPhp\\Core\\Route
-DuckPhp\\Core\\RuntimeState
-DuckPhp\\Core\\SuperGlobal
-DuckPhp\\Core\\View
-DuckPhp\\Ext\\DBManager
-DuckPhp\\Ext\\RouteHookRouteMap";
+    $classes=getDefaultComponentClasses();
     $classes=explode("\n",$classes);
     $ret=[];
     foreach($classes as $class){
@@ -31,25 +30,11 @@ DuckPhp\\Ext\\RouteHookRouteMap";
         }
     }
     ksort($ret);
-    return implode("\n",array_keys($ret));
+    return implode("\n",array_keys($ret))."\n";
 }
 function GetAviableExtentions()
 {
-$classes="DuckPhp\\Ext\\CallableView
-DuckPhp\\Ext\\DBManager
-DuckPhp\\Ext\\DBReusePoolProxy
-DuckPhp\\Ext\\FacadesAutoLoader
-DuckPhp\\Ext\\JsonRpcExt
-DuckPhp\\Ext\\Misc
-DuckPhp\\Ext\\PluginForSwooleHttpd
-DuckPhp\\Ext\\RedisManager
-DuckPhp\\Ext\\RedisSimpleCache
-DuckPhp\\Ext\\RouteHookDirectoryMode
-DuckPhp\\Ext\\RouteHookOneFileMode
-DuckPhp\\Ext\\RouteHookRewrite
-DuckPhp\\Ext\\RouteHookRouteMap
-DuckPhp\\Ext\\StrictCheck";
-    $classes=explode("\n",$classes);
+    $classes=getAviableExtClasses();
 
     foreach($classes as $class){
         $options=(new $class())->options;
@@ -62,37 +47,9 @@ DuckPhp\\Ext\\StrictCheck";
         echo "        //*/\n";
     }
 }
-echo getDefaultOptions();
 
-exit;
 
-$classes="DuckPhp/DuckPhp
-DuckPhp/Core/App
-DuckPhp/Core/AutoLoader
-DuckPhp/Core/Configer
-DuckPhp/Core/ExceptionManager
-DuckPhp/Core/HttpServer
-DuckPhp/Core/Logger
-DuckPhp/Core/Route
-DuckPhp/Core/RuntimeState
-DuckPhp/Core/SuperGlobal
-DuckPhp/Core/View
-DuckPhp/Ext/CallableView
-DuckPhp/Ext/DBManager
-DuckPhp/Ext/DBReusePoolProxy
-DuckPhp/Ext/FacadesAutoLoader
-DuckPhp/Ext/JsonRpcExt
-DuckPhp/Ext/Misc
-DuckPhp/Ext/Pager
-DuckPhp/Ext/PluginForSwooleHttpd
-DuckPhp/Ext/RedisManager
-DuckPhp/Ext/RedisSimpleCache
-DuckPhp/Ext/RouteHookDirectoryMode
-DuckPhp/Ext/RouteHookOneFileMode
-DuckPhp/Ext/RouteHookRewrite
-DuckPhp/Ext/RouteHookRouteMap
-DuckPhp/Ext/StrictCheck
-DuckPhp/HttpServer";
+
 function classToLink($class)
 {
     $name=$class;
@@ -102,10 +59,9 @@ function classToLink($class)
 }
 $classes=explode("\n",$classes);
 
-dumpByClass($classes);
-dumpByFile($classes);
-function dumpByClass($classes)
+function dumpByClass()
 {
+    $classes = getAllComponentClasses();
     foreach($classes as $class){
         $options=(new $class())->options;
         ksort($options);
@@ -118,13 +74,15 @@ function dumpByClass($classes)
     }
 }
 
-function dumpByFile($classes)
+function dumpByFile()
 {
+    $classes=getAllComponentClasses();
+    
     $ret=[];
     foreach($classes as $class){
         $options=(new $class())->options;
         foreach($options as $k =>$v){
-            $k="'$k' => ".json_encode($v)."";
+            $k="'$k' => ".var_export($v,true)."";
             if(!isset($ret[$k])){
                 $ret[$k]=[];
             }
@@ -139,4 +97,78 @@ function dumpByFile($classes)
         }
         echo "\n";
     }
+}
+/////////////////////
+function getDefaultComponentClasses()
+{
+    $classes="DuckPhp\\DuckPhp
+DuckPhp\\Core\\AutoLoader
+DuckPhp\\Core\\Configer
+DuckPhp\\Core\\Logger
+DuckPhp\\Core\\Route
+DuckPhp\\Core\\RuntimeState
+DuckPhp\\Core\\SuperGlobal
+DuckPhp\\Core\\View
+DuckPhp\\Ext\\DBManager
+DuckPhp\\Ext\\RouteHookRouteMap";
+    $classes=explode("\n",$classes);
+    return $classes;
+}
+function getAllComponentClasses()
+{
+$classes="DuckPhp\\DuckPhp
+DuckPhp\\Core\\App
+DuckPhp\\Core\\AutoLoader
+DuckPhp\\Core\\Configer
+DuckPhp\\Core\\ExceptionManager
+DuckPhp\\Core\\HttpServer
+DuckPhp\\Core\\Logger
+DuckPhp\\Core\\Route
+DuckPhp\\Core\\RuntimeState
+DuckPhp\\Core\\SuperGlobal
+DuckPhp\\Core\\View
+DuckPhp\\Ext\\CallableView
+DuckPhp\\Ext\\EmptyView
+DuckPhp\\Ext\\DBManager
+DuckPhp\\Ext\\DBReusePoolProxy
+DuckPhp\\Ext\\FacadesAutoLoader
+DuckPhp\\Ext\\JsonRpcExt
+DuckPhp\\Ext\\Misc
+DuckPhp\\Ext\\PluginForSwooleHttpd
+DuckPhp\\Ext\\RedisManager
+DuckPhp\\Ext\\RedisSimpleCache
+DuckPhp\\Ext\\RouteHookDirectoryMode
+DuckPhp\\Ext\\RouteHookOneFileMode
+DuckPhp\\Ext\\RouteHookRewrite
+DuckPhp\\Ext\\RouteHookRouteMap
+DuckPhp\\Ext\\StrictCheck
+DuckPhp\\HttpServer";
+    $classes=explode("\n",$classes);
+    return $classes;
+}
+function getAviableExtClasses()
+{
+    $default=getDefaultComponentClasses();
+    $all=getAllComponentClasses();
+    $ext=array_diff($all,$default);
+    $ext=array_filter($ext,function($v){if(substr($v,0,strlen("DuckPhp\\Ext\\"))==="DuckPhp\\Ext\\"){return true;}else{return false;}});
+    return $ext;
+}
+
+function getAllOptionDeclareClasses()
+{
+    $classes=getAllComponentClasses();
+    
+    $ret=[];
+    foreach($classes as $class){
+        $options=(new $class())->options;
+        foreach($options as $k =>$v){
+            if(!isset($ret[$k])){
+                $ret[$k]=[];
+            }
+            $ret[$k][$class]=$v;
+        }
+    }
+    ksort($ret);
+    return $ret;
 }
