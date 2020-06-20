@@ -36,7 +36,6 @@ php bin/start_server.php
 ```
 浏览器中打开 http://127.0.0.1:8080/ 得到下面欢迎页就表明 OK 了
 ```text
-Don't run the template file directly
 Hello DuckPhp
 
 Now is [<2020-06-14T11:45:46+08:00>]
