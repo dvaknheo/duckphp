@@ -117,7 +117,12 @@ public function clear(): void
 public function replaceDefaultRunHandler(callable $handler = null): void
 
     不通过继承而是外挂替换默认的 Run 函数， `Ext\PluginForSwoole` 扩展用到。
+public function clear(): void
 
+    不建议主动使用，用于清理现场。
+public function beforeRun()
+
+    不建议主动使用，加载运行状态数据，比如当前 URL 等。
 ## 重写方法
 
 重写的方法默认都是空方法，用于在重写的时候实现留给功能

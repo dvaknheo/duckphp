@@ -242,7 +242,7 @@ trait Kernel
         $this->clear();
         return $ret;
     }
-    protected function beforeRun()
+    public function beforeRun()
     {
         RuntimeState::ReCreateInstance()->init($this->options, $this)->run();
         View::G()->reset();
