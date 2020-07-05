@@ -16,7 +16,7 @@ use DuckPhp\Ext\RouteHookOneFileMode;
 
 class DuckPhp extends App
 {
-    const VERSION = '1.2.5';
+    const VERSION = '1.2.6-dev';
     
     public function __construct()
     {

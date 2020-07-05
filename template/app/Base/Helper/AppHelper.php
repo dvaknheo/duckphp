@@ -6,7 +6,7 @@
 
 namespace MY\Base\Helper;
 
-use DuckPhp\Helper\ModelHelper as Helper;
+use DuckPhp\Helper\AppHelper as Helper;
 
 class AppHelper extends Helper
 {
