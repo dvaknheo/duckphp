@@ -127,14 +127,14 @@ return [
 用 C::getParameters() 获取切片，对地址重写有效。
 如果要做权限判断 构造函数里 C::getRouteCallingMethod() 获取当前调用方法。
 
-## 文件模式的路由
+## 无 Pathinfo 的路由
 
-有时候，你只是做个局部项目，不打算修改 web 服务器配置，你可以使用 文件模式的路由。
+有时候，你只是做个局部项目，不打算修改 web 服务器配置，你可以使用无 PathInfo 的路由。
 
 在选项里取消注释的代码加载以下代码
 
 ```php
-$options['ext']['DuckPhp\\Ext\\X']=true;
+$options['ext']['DuckPhp\\Ext\\RouteHookOneFileMode']=true;
 $options['key_for_action' = "_r";
 $options['key_for_module'] = "";
 ```
