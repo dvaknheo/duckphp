@@ -41,6 +41,10 @@ class AppHelper
     {
         return App::setUrlHandler($callback);
     }
+    public static function getViewData()
+    {
+        return App::getViewData();
+    }
     //
     public static function header($output, bool $replace = true, int $http_response_code = 0)
     {

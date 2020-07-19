@@ -59,6 +59,10 @@ trait Kernel
             'error_500' => null,          //'_sys/error-500',
             'error_debug' => null,        //'_sys/error-debug',
         ];
+    public $onPrepare;
+    public $onInit;
+    public $onRun;
+    
     protected $default_run_handler = null;
     protected $error_view_inited = false;
 
@@ -205,17 +209,23 @@ trait Kernel
     //for override
     protected function onPrepare()
     {
-        return;
+        if($this->onPrepare){
+            return ($this->onPrepare)();
+        }
     }
     //for override
     protected function onInit()
     {
-        return;
+        if($this->onInit){
+            return ($this->onInit)();
+        }
     }
     //for override
     protected function onRun()
     {
-        return;
+        if($this->onRun){
+            return ($this->onRun)();
+        }
     }
     public function run(): bool
     {

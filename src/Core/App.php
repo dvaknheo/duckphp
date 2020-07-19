@@ -90,6 +90,7 @@ class App extends ComponentBase
     public function extendComponents($method_map, $components = [])
     {
         static::AssignExtendStaticMethod($method_map);
+        self::AssignExtendStaticMethod($method_map);
         
         $a = explode('\\', get_class($this));
         array_pop($a);
@@ -645,6 +646,10 @@ trait Core_Glue
     public static function Display($view, $data = null)
     {
         return View::G()->_Display($view, $data);
+    }
+    public static function getViewData()
+    {
+        return View::G()->getViewData();
     }
     // config static
     public static function Setting($key)

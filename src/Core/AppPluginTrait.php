@@ -16,6 +16,11 @@ trait AppPluginTrait
     // public $plugin_options = [] => in parent
     // protected componentClassMap=[] => in parent
     
+    public $onPluginModePrepare;
+    public $onPluginModeInit;
+    public $onPluginModeBeforeRun;
+    public $onPluginModeRun;
+    
     protected $path_view_override = '';
     protected $path_config_override = '';
     
@@ -66,22 +71,30 @@ trait AppPluginTrait
     //for override
     protected function onPluginModePrepare()
     {
-        ////
+        if($this->onPluginModePrepare){
+            return ($this->onPluginModePrepare)();
+        }
     }
     //for override
     protected function onPluginModeInit()
     {
-        ////
+        if($this->onPluginModeInit){
+            return ($this->onPluginModeInit)();
+        }
     }
     //for override
     protected function onPluginModeBeforeRun()
     {
-        ////
+        if($this->onPluginModeBeforeRun){
+            return ($this->onPluginModeBeforeRun)();
+        }
     }
     //for override
     public function onPluginModeRun()
     {
-        ////
+        if($this->onPluginModeRun){
+            return ($this->onPluginModeRun)();
+        }
     }
     public function pluginModeBeforeRun($handler)
     {
