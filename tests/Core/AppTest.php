@@ -315,6 +315,7 @@ App::PageHtml(123);
         App::G()->options['skip_view_notice_error']=true;
         App::Show(['A'=>'b'],"view");
         App::Display("view",['A'=>'b']);
+        App::getViewData();
         
         
         $key="key";

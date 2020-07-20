@@ -209,21 +209,21 @@ trait Kernel
     //for override
     protected function onPrepare()
     {
-        if($this->onPrepare){
+        if ($this->onPrepare) {
             return ($this->onPrepare)();
         }
     }
     //for override
     protected function onInit()
     {
-        if($this->onInit){
+        if ($this->onInit) {
             return ($this->onInit)();
         }
     }
     //for override
     protected function onRun()
     {
-        if($this->onRun){
+        if ($this->onRun) {
             return ($this->onRun)();
         }
     }

@@ -58,6 +58,9 @@ class KernelTest extends \PHPUnit\Framework\TestCase
             App::G()->options['is_debug']=false;
             $value = $cache[$key]; 
             App::G()->options['is_debug']=true;
+            App::G()->onPrepare=function(){ echo "onPrepare!";};
+            App::G()->onInit=function(){ echo "onInit!";};
+            App::G()->onRun=function(){ echo "onRun!";};
 
         });
         

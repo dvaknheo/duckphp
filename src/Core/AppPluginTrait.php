@@ -71,28 +71,28 @@ trait AppPluginTrait
     //for override
     protected function onPluginModePrepare()
     {
-        if($this->onPluginModePrepare){
+        if ($this->onPluginModePrepare) {
             return ($this->onPluginModePrepare)();
         }
     }
     //for override
     protected function onPluginModeInit()
     {
-        if($this->onPluginModeInit){
+        if ($this->onPluginModeInit) {
             return ($this->onPluginModeInit)();
         }
     }
     //for override
     protected function onPluginModeBeforeRun()
     {
-        if($this->onPluginModeBeforeRun){
+        if ($this->onPluginModeBeforeRun) {
             return ($this->onPluginModeBeforeRun)();
         }
     }
     //for override
     public function onPluginModeRun()
     {
-        if($this->onPluginModeRun){
+        if ($this->onPluginModeRun) {
             return ($this->onPluginModeRun)();
         }
     }

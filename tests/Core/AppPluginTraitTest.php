@@ -31,8 +31,15 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
 
         $options['ext'][AppPluginTraitApp::class]=$plugin_options;
         $options['ext'][AppPluginTraitApp2::class]=$plugin_options;
-        
+
         DuckPhp::G(new DuckPhp())->init($options);
+        
+        AppPluginTraitApp::G()->onPluginModePrepare=function(){ echo "onPrepare!";};
+        AppPluginTraitApp::G()->onPluginModeInit=function(){ echo "onInit!";};
+        AppPluginTraitApp::G()->onPluginModeBeforeRun=function(){ echo "onBeforeRun!";};
+        AppPluginTraitApp::G()->onPluginModeRun=function(){ echo "onPluginModeRun!";};
+        AppPluginTraitApp2::G()->onPluginModeRun=function(){ echo "onPluginModeRun!";};
+        
         \DuckPhp\Core\Route::G()->setPathInfo('/Test/second');
         DuckPhp::G()->run();
 
@@ -43,6 +50,7 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
         $plugin_options['plugin_path_namespace']=null;
         $plugin_options['plugin_search_config']=false;
         AppPluginTraitApp::G(new AppPluginTraitApp())->init($plugin_options,DuckPhp::G()->init($options));
+
         DuckPhp::G(new DuckPhp());
         
         
@@ -60,9 +68,14 @@ class AppPluginTraitApp extends DuckPhp
         parent::__construct();
         $this->plugin_options['plugin_files_conifg']='config';
         $this->pluginModeBeforeRun(function(){
-            var_dump("Before run!",get_class(AppPluginTraitApp::G()->pluginModeGetOldRoute()));}
+                var_dump("Before run!",get_class(AppPluginTraitApp::G()->pluginModeGetOldRoute()));
+                $this->onPluginModeRun=function(){ echo "onRun!";};
+                //var_dump($this->onPluginModeRun);
+            }
+            
         );
     }
+        
 }
 class AppHelper
 {

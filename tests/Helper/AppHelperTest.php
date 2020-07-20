@@ -55,6 +55,8 @@ class AppHelperTest extends \PHPUnit\Framework\TestCase
         AppHelper::add404RouteHook( function(){var_dump('404!');});
         ////[[[[
         $this->do_Core_Component();
+        
+        AppHelper::getViewData();
         ////]]]]
         \MyCodeCoverage::G()->end();
 

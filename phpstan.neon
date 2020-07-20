@@ -1,6 +1,7 @@
 parameters:
     # Needed only when you use "rules" block below
     level: 7
+    ### inferPrivatePropertyTypeFromConstructor: false
     paths:
         - src
 
