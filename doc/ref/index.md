@@ -75,7 +75,9 @@
    15. [RouteHookOneFileMode.php](Ext-RouteHookOneFileMode.md) 无程序路由设计模式组件
    16. [StrictCheck.php](Ext-StrictCheck.md) 严格检查模式组件
             1. [StrictCheckModelTrait.php](Ext-StrictCheckModelTrait.md) 严格检查模式的模型类基类
-                 2. [StrictCheckServiceTrait.php](Ext-StrictCheckServiceTrait.md) 严格检查模式的服务类基类
+            2. [StrictCheckServiceTrait.php](Ext-StrictCheckServiceTrait.md) 严格检查模式的服务类基类
+   17. [EventManager](Ext-EventManager.md) 事件管理器
+   18. [WrapperWithException](Ext-WrapperWithException.md) 封装异常的类
 6. `Helper` 目录是各种助手类
     1. **[HelperTrait.php](Helper-HelperTrait.md)** 助手类公用 Trait
     2. [ControllerHelper.php](Helper-ControllerHelper.md) 控制器助手类

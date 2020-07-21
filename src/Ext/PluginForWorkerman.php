@@ -9,7 +9,7 @@ namespace DuckPhp\Ext;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\SuperGlobal;
 
-class PluginForWorkerMan extends ComponentBase
+class PluginForWorkerMan extends ComponentBase  // @codeCoverageIgnoreStart
 {
     public $options = [
         //
@@ -151,4 +151,4 @@ class WorkermanSession implements \ArrayAccess
     {
         return isset($this->container[$offset]) ? $this->container[$offset] : null;
     }
-}
+}  // @codeCoverageIgnoreEnd
