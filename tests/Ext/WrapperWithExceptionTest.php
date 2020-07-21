@@ -2,7 +2,6 @@
 namespace tests\DuckPhp\Ext;
 
 use DuckPhp\Ext\WrapperWithException;
-use DuckPhp\DuckPhp;
 use DuckPhp\Core\SingletonEx;
 
 class WrapperWithExceptionTest extends \PHPUnit\Framework\TestCase
@@ -22,7 +21,6 @@ class WrapperWithExceptionTest extends \PHPUnit\Framework\TestCase
         }
         \MyCodeCoverage::G()->end();
     }
-    
 }
 class WrapperWithExceptionObject
 {

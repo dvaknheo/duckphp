@@ -17,7 +17,7 @@ class EventManager extends ComponentBase
     }
     public static function OnEvent($event, $callback)
     {
-        return static::G()->fire($event, $callback);
+        return static::G()->on($event, $callback);
     }
     public function on($event, $callback)
     {
@@ -28,6 +28,6 @@ class EventManager extends ComponentBase
         if (!isset($this->events[$event])) {
             return;
         }
-        return ($this->events)(...$args);
+        return ($this->events[$event])(...$args);
     }
 }
