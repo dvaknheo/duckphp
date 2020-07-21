@@ -86,16 +86,16 @@ class PluginForWorkerMan extends ComponentBase
     
     public function initWithRequest($request)
     {
-        $sg=
+        $superglobal = $
         $superglobal->_GET = $request->get();
         $superglobal->_POST = $request->post();
-        $superglobal->_REQUEST = array_merge($this->_GET, $this->_POST);
+        $superglobal->_REQUEST = array_merge($superglobal->_GET, $superglobal->_POST);
         
         $superglobal->_COOKIE = $request->cookie();
         $superglobal->_ENV = $_ENV;
         $superglobal->_SESSION = '';
         //$this->_FILES=;
-        $superglobal->_SERVER=;
+        $superglobal->_SERVER=null;
     }
     public function onMessage($connection, $request, $callback)
     {

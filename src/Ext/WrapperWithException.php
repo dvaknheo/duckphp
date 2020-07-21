@@ -34,7 +34,9 @@ class WrapperWithException extends ComponentBase
     public function __call($method, $args)
     {
         try {
-            return ($this->object->$method)(...$args);
+            /** @var mixed */
+            $caller = [$this->object,$method];
+            return ($caller)(...$args); //phpstan
         } catch (\Exception $ex) {
             return $ex;
         }
