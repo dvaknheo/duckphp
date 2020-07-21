@@ -44,6 +44,59 @@ class PluginForWorkerMan extends ComponentBase
     {
         return static::G()->onMessage($connection, $request, $callback);
     }
+    public static function WorkermanRequest()
+    {
+        //
+    }
+    public static function WorkermanResponse()
+    {
+        //
+    }
+    public function header()
+    {
+    }
+    public function setcookie()
+    {
+    }
+    public function exit()
+    {
+    }
+    public function register_shutdown_function()
+    {
+    }
+    
+    public function session_start()
+    {
+        //
+    }
+    public function session_id()
+    {
+        //
+    }
+    public function session_destroy()
+    {
+        //
+    }
+    public function session_set_save_handler()
+    {
+        //
+    }
+    
+    ///////////////////
+    
+    public function initWithRequest($request)
+    {
+        $sg=
+        $superglobal->_GET = $request->get();
+        $superglobal->_POST = $request->post();
+        $superglobal->_REQUEST = array_merge($this->_GET, $this->_POST);
+        
+        $superglobal->_COOKIE = $request->cookie();
+        $superglobal->_ENV = $_ENV;
+        $superglobal->_SESSION = '';
+        //$this->_FILES=;
+        $superglobal->_SERVER=;
+    }
     public function onMessage($connection, $request, $callback)
     {
         //$request->get();
@@ -66,30 +119,6 @@ class PluginForWorkerMan extends ComponentBase
         ob_end_flush();
     }
 }
-class WorkermanSuperGlobal extends SuperGlobal
-{
-    public $_GET;
-    public $_POST;
-    public $_REQUEST;
-    public $_SERVER;
-    public $_ENV;
-    public $_COOKIE;
-    public $_SESSION;
-    public $_FILES;
-    public function initWithRequest($request)
-    {
-        $this->_GET = $request->get();
-        $this->_POST = $request->post();
-        $this->_REQUEST = array_merge($this->_GET, $this->_POST);
-        
-        $this->_COOKIE = $request->cookie();
-        $this->_ENV = $_ENV;
-        //$this->_SERVER=;
-        $this->_SESSION = '';
-        //$this->_FILES=;
-    }
-}
-
 
 class WorkermanSession implements \ArrayAccess
 {

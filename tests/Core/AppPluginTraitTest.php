@@ -6,6 +6,22 @@ use DuckPhp\DuckPhp;
 
 class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
 {
+    public static function onPluginModePrepare()
+    {
+        var_dump("onPluginModePrepare");
+    }
+    public static function onPluginModeInit()
+    {
+        var_dump("onPluginModeInit");
+    }
+    public static function onPluginModeBeforeRun()
+    {
+        var_dump("onPluginModeBeforeRun");
+    }
+    public static function onPluginModeRun()
+    {
+        var_dump("onPluginModeRun");
+    }
     public function testAll()
     {
         \MyCodeCoverage::G()->begin(AppPluginTrait::class);
@@ -32,17 +48,24 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
         $options['ext'][AppPluginTraitApp::class]=$plugin_options;
         $options['ext'][AppPluginTraitApp2::class]=$plugin_options;
 
+        AppPluginTraitApp::G()->onPluginModePrepare=[static::class,"onPluginModePrepare"];// function(){ echo "onPrepare!";};
+        AppPluginTraitApp::G()->onPluginModeInit=[static::class,"onPluginModeInit"];// function(){ echo "onPrepare!";};
+        AppPluginTraitApp::G()->onPluginModeBeforeRun=[static::class,"onPluginModeBeforeRun"];// function(){ echo "onPrepare!";};
+        //AppPluginTraitApp::G()->onPluginModeRun=;// function(){ echo "onPrepare!";};
+        AppPluginTraitApp2::G()->onPluginModeRun=[static::class,"onPluginModeRun"];
+
         DuckPhp::G(new DuckPhp())->init($options);
         
-        AppPluginTraitApp::G()->onPluginModePrepare=function(){ echo "onPrepare!";};
-        AppPluginTraitApp::G()->onPluginModeInit=function(){ echo "onInit!";};
         AppPluginTraitApp::G()->onPluginModeBeforeRun=function(){ echo "onBeforeRun!";};
         AppPluginTraitApp::G()->onPluginModeRun=function(){ echo "onPluginModeRun!";};
-        AppPluginTraitApp2::G()->onPluginModeRun=function(){ echo "onPluginModeRun!";};
+        
+        
         
         \DuckPhp\Core\Route::G()->setPathInfo('/Test/second');
         DuckPhp::G()->run();
-
+        AppPluginTraitApp2::G()->onPluginModeRun=null;
+        DuckPhp::G()->run();
+        
         \DuckPhp\Core\Route::G()->setPathInfo('/Test2/second');
         DuckPhp::G()->run();
         
