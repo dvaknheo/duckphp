@@ -95,7 +95,7 @@ class PluginForWorkerMan extends ComponentBase
         $superglobal->_ENV = $_ENV;
         $superglobal->_SESSION = '';
         //$this->_FILES=;
-        $superglobal->_SERVER=null;
+        $superglobal->_SERVER = null;
     }
     public function onMessage($connection, $request, $callback)
     {

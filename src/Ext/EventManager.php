@@ -11,13 +11,13 @@ use DuckPhp\Core\ComponentBase;
 class EventManager extends ComponentBase
 {
     protected $events = [];
-    public static function FireEvent($event, ...$args)
-    {
-        return static::G()->fire($event, ...$args);
-    }
     public static function OnEvent($event, $callback)
     {
         return static::G()->on($event, $callback);
+    }
+    public static function FireEvent($event, ...$args)
+    {
+        return static::G()->fire($event, ...$args);
     }
     public function on($event, $callback)
     {
