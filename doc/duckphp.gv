@@ -154,7 +154,8 @@ subgraph cluster_Ext {
     StrictCheck[shape="component"];
     StrictModelTrait [shape=diamond];
     StrictServiceTrait [shape=diamond];
-
+    EventManager [shape="component"];
+    WrapperWithException [shape="component"];
 
     DBManager -> DB_DB;
     CallableView ->Core_View; 
@@ -181,6 +182,9 @@ subgraph cluster_Ext {
     RouteHookRewrite -> Core_ComponentBase [style="dotted"];
     RouteHookRouteMap -> Core_ComponentBase [style="dotted"];
     DBManager -> Core_ComponentBase [style="dotted"];
+
+    EventManager -> Core_ComponentBase [style="dotted"];
+    WrapperWithException -> Core_ComponentBase [style="dotted"];
 }
 
 
