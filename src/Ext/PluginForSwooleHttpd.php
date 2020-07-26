@@ -8,6 +8,7 @@ namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
 
+
 class PluginForSwooleHttpd extends ComponentBase // , SwooleExtAppInterface
 {
     public $options = [
@@ -34,6 +35,7 @@ class PluginForSwooleHttpd extends ComponentBase // , SwooleExtAppInterface
     {
         return $this->context_class::G()->run();
     }
+    // @interface SwooleExtAppInterface
     public function onSwooleHttpdInit($SwooleHttpd = null, ?callable $RunHandler = null)
     {
         $this->SwooleHttpd = $SwooleHttpd;
@@ -42,7 +44,7 @@ class PluginForSwooleHttpd extends ComponentBase // , SwooleExtAppInterface
         $app->options['use_super_global'] = true;
         $app->options['skip_exception_check'] = true;
         
-        $SwooleHttpd->set_http_exception_handler([$this->context_class,'handlerAllException']);
+        $SwooleHttpd->set_http_exception_handler([$this->context_class,'handlerAllException']);  //TODO
         $SwooleHttpd->set_http_404_handler([$this->context_class, 'On404']);             // 接管 404 处理。
         
         $flag = $SwooleHttpd->is_with_http_handler_root();                         // 如果还有子文件，做404后处理
@@ -75,17 +77,4 @@ class PluginForSwooleHttpd extends ComponentBase // , SwooleExtAppInterface
     {
         return $this->context_class::G()->getDynamicComponentClasses();
     }
-    /*
-    public static function Hook($path_info)
-    {
-        return static::G()->_Hook($path_info);
-    }
-    public function _Hook($path_info)
-    {
-
-        //$this->context_class::G()::SG($SwooleHttpd::SG());
-
-        return false;
-    }
-    //*/
 }

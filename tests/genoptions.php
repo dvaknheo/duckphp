@@ -10,8 +10,6 @@ var_dump(getAllOptionDeclareClasses());
 return;
 function getDefaultOptions()
 {
-//DuckPhp\\Core\\ExceptionManager
-
     $classes=getDefaultComponentClasses();
     $classes=explode("\n",$classes);
     $ret=[];
