@@ -593,7 +593,7 @@ trait Core_Helper
     {
         return static::G()->_Cache($object);
     }
-    public function _Pager($object = null)
+    public function _Cache($object = null)
     {
         if ($object) {
             $this->cache = $object;
