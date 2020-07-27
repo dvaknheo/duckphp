@@ -7,8 +7,8 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
-use ReflectionMethod;
 use ReflectionException;
+use ReflectionMethod;
 
 class Misc extends ComponentBase
 {

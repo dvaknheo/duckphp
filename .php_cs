@@ -20,6 +20,7 @@ return PhpCsFixer\Config::create()
         ],
         'declare_strict_types' => true,
         'binary_operator_spaces'=>true,
+        'ordered_imports'=>true,
     ])
     ->setFinder($finder)
     ->setUsingCache(false);

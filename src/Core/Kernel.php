@@ -9,17 +9,17 @@
 //OK，Lazy
 namespace DuckPhp\Core;
 
-use DuckPhp\Core\ComponentInterface;
-use DuckPhp\Core\SingletonEx;
-
 use DuckPhp\Core\AutoLoader;
+use DuckPhp\Core\ComponentInterface;
+
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\ExceptionManager;
+use DuckPhp\Core\Logger;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\RuntimeState;
-use DuckPhp\Core\View;
+use DuckPhp\Core\SingletonEx;
 use DuckPhp\Core\SuperGlobal;
-use DuckPhp\Core\Logger;
+use DuckPhp\Core\View;
 
 trait Kernel
 {

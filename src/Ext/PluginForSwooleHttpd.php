@@ -8,7 +8,6 @@ namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
 
-
 class PluginForSwooleHttpd extends ComponentBase // , SwooleExtAppInterface
 {
     public $options = [

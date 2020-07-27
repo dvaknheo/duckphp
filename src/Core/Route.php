@@ -26,7 +26,7 @@ class Route extends ComponentBase
             'controller_methtod_for_miss' => '_missing',
             'controller_prefix_post' => 'do_',
             'controller_class_postfix' => '',
-            'controller_file_postfix' => '', 
+            'controller_file_postfix' => '',
             'controller_enable_slash' => false,
         ];
     //public input;
@@ -277,16 +277,16 @@ class Route extends ComponentBase
     public function defaultGetRouteCallback($path_info)
     {
         $path_info = ltrim($path_info, '/');
-        if($this->options['controller_enable_slash']){
+        if ($this->options['controller_enable_slash']) {
             $path_info = rtrim($path_info, '/');
         }
-        if(!empty($this->options['controller_path_extention']) && !empty($path_info)) {
+        if (!empty($this->options['controller_path_extention']) && !empty($path_info)) {
             $l = strlen($this->options['controller_path_extention']);
-            if(substr($path_info,-$l) !== $this->options['controller_path_extention']) {
+            if (substr($path_info, -$l) !== $this->options['controller_path_extention']) {
                 $this->route_error = "path_extention error";
                 return false;
             }
-            $path_info = substr($path_info,0, -$l);
+            $path_info = substr($path_info, 0, -$l);
         }
         
         $t = explode('/', $path_info);

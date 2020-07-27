@@ -6,8 +6,8 @@
 
 namespace DuckPhp\Core;
 
-use Throwable;
 use Exception;
+use Throwable;
 
 trait ThrowOn
 {

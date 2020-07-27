@@ -6,8 +6,8 @@
 
 namespace DuckPhp\Helper;
 
-use DuckPhp\Helper\HelperTrait;
 use DuckPhp\Core\App;
+use DuckPhp\Helper\HelperTrait;
 
 class ModelHelper
 {

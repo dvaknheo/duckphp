@@ -10,9 +10,10 @@ namespace DuckPhp;
 
 use DuckPhp\Core\App;
 use DuckPhp\Ext\DBManager;
+use DuckPhp\Ext\EventManager;
 use DuckPhp\Ext\Pager;
-use DuckPhp\Ext\RouteHookRouteMap;
 use DuckPhp\Ext\RouteHookOneFileMode;
+use DuckPhp\Ext\RouteHookRouteMap;
 
 class DuckPhp extends App
 {
@@ -71,18 +72,29 @@ class DuckPhp extends App
         return $pager;
     }
     //@override
-    public function _DB($tag)
+    public static function DB($tag = null)
     {
         return DBManager::G()->_DB($tag);
     }
     //@override
-    public function _DB_R()
+    public static function DB_R()
     {
         return DBManager::G()->_DB_R();
     }
     //@override
-    public function _DB_W()
+    public static function DB_W()
     {
         return DBManager::G()->_DB_W();
+    }
+    
+    //@override
+    public static function FireEvent($event, ...$args)
+    {
+        return EventManager::G()->fire($event, ...$args);
+    }
+    //@override
+    public static function OnEvent($event, $callback)
+    {
+        return EventManager::G()->on($event, $callback);
     }
 }

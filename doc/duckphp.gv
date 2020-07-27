@@ -40,7 +40,6 @@ subgraph cluster_Core {
     Core_Kernel -> Core_SuperGlobal;
     
     Core_App -> Core_Kernel;
-    Core_App -> Core_ThrowOn;
     Core_App -> Core_ExtendableStaticCallTrait;
     Core_App -> Core_SystemWrapperTrait;
     
@@ -101,7 +100,6 @@ subgraph cluster_Helper {
     HelperTrait -> Core_SingletonEx;
     HelperTrait -> Core_App;
     HelperTrait -> Core_ExtendableStaticCallTrait ;
-    HelperTrait -> Core_ThrowOn;
     
     AppHelper -> HelperTrait; 
     ControllerHelper -> HelperTrait; 
@@ -199,6 +197,7 @@ subgraph cluster_DuckPhp {
     DuckPhp -> RouteHookRouteMap;
     DuckPhp -> Pager;
     DuckPhp -> DBManager;
+    DuckPhp -> EventManager;
     DuckPhp -> RouteHookOneFileMode;
 
     DuckPhp [shape=Mdiamond];

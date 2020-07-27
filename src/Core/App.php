@@ -9,20 +9,18 @@
 //OK，Lazy
 namespace DuckPhp\Core;
 
-use DuckPhp\Core\Kernel;
-
-use DuckPhp\Core\ThrowOn;
-use DuckPhp\Core\ExtendableStaticCallTrait;
-use DuckPhp\Core\SystemWrapperTrait;
 use DuckPhp\Core\AutoLoader;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\ExceptionManager;
+use DuckPhp\Core\ExtendableStaticCallTrait;
+use DuckPhp\Core\Kernel;
+use DuckPhp\Core\Logger;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\RuntimeState;
-use DuckPhp\Core\View;
 use DuckPhp\Core\SuperGlobal;
-use DuckPhp\Core\Logger;
+use DuckPhp\Core\SystemWrapperTrait;
+use DuckPhp\Core\View;
 
 class App extends ComponentBase
 {
@@ -32,7 +30,6 @@ class App extends ComponentBase
     const HOOK_APPPEND_OUTTER = 'append-outter';
     
     use Kernel;
-    use ThrowOn;
     use ExtendableStaticCallTrait;
     use SystemWrapperTrait;
     
@@ -41,6 +38,7 @@ class App extends ComponentBase
     use Core_Helper;
     use Core_SystemWrapper;
     use Core_Glue;
+    use Core_NotImplemented;
     use Core_Component;
     
     // for helper
@@ -76,6 +74,7 @@ class App extends ComponentBase
     protected $extDynamicComponentClasses = [];
     protected $beforeShowHandlers = [];
     protected $pager;
+    protected $cache;
     
     public function __construct()
     {
@@ -537,7 +536,19 @@ trait Core_Helper
         $ret = $scheme.':/'.'/'.$host.$port;
         return $ret;
     }
-    
+    public static function ThrowOn($flag, $message, $code = 0, $exception_class = null)
+    {
+        return static::G()->_ThrowOn($flag, $message, $code, $exception_class);
+    }
+    public function _ThrowOn($flag, $message, $code = 0, $exception_class = null)
+    {
+        if (!$flag) {
+            return;
+        }
+        $exception_class = $exception_class?:\Exception::class;
+        throw new $exception_class($message, $code);
+    }
+    ////
     public static function SqlForPager($sql, $pageNo, $pageSize = 10)
     {
         return static::G()->_SqlForPager($sql, $pageNo, $pageSize);
@@ -566,6 +577,17 @@ trait Core_Helper
     {
         return Logger::G($object);
     }
+    public static function Cache($object = null)
+    {
+        return static::G()->_Cache($object);
+    }
+    public function _Pager($object = null)
+    {
+        if ($object) {
+            $this->cache = $object;
+        }
+        return $this->cache;
+    }
     public static function Pager($object = null)
     {
         return static::G()->_Pager($object);
@@ -577,7 +599,6 @@ trait Core_Helper
         }
         return $this->pager;
     }
-    
     public static function PageNo($new_value = null)
     {
         return static::Pager()->current($new_value);
@@ -590,30 +611,26 @@ trait Core_Helper
     {
         return static::Pager()->render($total, $options);
     }
-    
-    //
+}
+trait Core_NotImplemented
+{
     public static function DB($tag = null)
     {
-        return static::G()->_DB($tag);
-    }
-    public static function DB_R()
-    {
-        return static::G()->_DB_R();
+        throw new \ErrorException("No Impelement");
     }
     public static function DB_W()
     {
-        return static::G()->_DB_W();
+        throw new \ErrorException("No Impelement");
     }
-    
-    public function _DB($tag)
+    public static function DB_R()
     {
         throw new \ErrorException("No Impelement");
     }
-    public function _DB_W()
+    public static function FireEvent($event, ...$args)
     {
         throw new \ErrorException("No Impelement");
     }
-    public function _DB_R()
+    public static function OnEvent($event, $callback)
     {
         throw new \ErrorException("No Impelement");
     }

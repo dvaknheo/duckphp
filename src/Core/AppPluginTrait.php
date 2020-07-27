@@ -7,9 +7,9 @@
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\Configer;
-use DuckPhp\Core\View;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\SuperGlobal;
+use DuckPhp\Core\View;
 
 trait AppPluginTrait
 {

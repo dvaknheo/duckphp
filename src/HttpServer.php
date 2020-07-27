@@ -6,8 +6,8 @@
 
 namespace DuckPhp;
 
-use DuckPhp\DuckPhp;
 use DuckPhp\Core\HttpServer as Server;
+use DuckPhp\DuckPhp;
 use DuckPhp\Ext\PluginForSwooleHttpd;
 
 class HttpServer extends Server

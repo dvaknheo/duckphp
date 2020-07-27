@@ -6,16 +6,14 @@
 
 namespace DuckPhp\Helper;
 
+use DuckPhp\Core\App;
 use DuckPhp\Core\ExtendableStaticCallTrait;
 use DuckPhp\Core\SingletonEx;
-use DuckPhp\Core\ThrowOn;
-use DuckPhp\Core\App;
 
 trait HelperTrait
 {
     use SingletonEx;
     use ExtendableStaticCallTrait;
-    use ThrowOn;
 
     public static function IsDebug()
     {
@@ -41,5 +39,9 @@ trait HelperTrait
     public static function var_dump(...$args)
     {
         return App::var_dump(...$args);
+    }
+    public static function ThrowOn($flag, $message, $code = 0, $exception_class = null)
+    {
+        return App::G()->_ThrowOn($flag, $message, $code, $exception_class);
     }
 }
