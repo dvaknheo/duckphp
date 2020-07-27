@@ -516,6 +516,18 @@ trait Core_Helper
         var_dump(...$args);
         echo "</pre>\n";
     }
+    public static function XCall($callback)
+    {
+        return static::G()->_XCall($callback);
+    }
+    public function _XCall($callback)
+    {
+        try{
+            return ($callback)();
+        } catch (\Exception $ex) {
+            return $ex;
+        }
+    }
     public static function Domain()
     {
         return static::G()->_Domain();
