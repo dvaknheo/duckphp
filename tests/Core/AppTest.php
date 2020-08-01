@@ -156,7 +156,13 @@ App::PageHtml(123);
         App::SERVER('SCRIPT_FILENAME');
         
         App::dumpAllRouteHooksAsString();
-
+        try{
+            App::ThrowOn(true,"HH");
+        }catch(\Exception $ex){
+        }
+        App::XCall(function(){return "abc";});
+        App::XCall(function(){ throw new \Exception('ex'); });
+        
         \MyCodeCoverage::G()->end();
     return;
 

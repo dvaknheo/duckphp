@@ -60,6 +60,11 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         \__url("test");
         \__display("block",[]);
         
+        
+        DuckPhp::OnEvent('MyEvent',function(...$args){ var_dump($args);});
+        DuckPhp::FireEvent('MyEvent','A','B','C');
+        DuckPhp::FireEvent('NoExist','A','B','C');
+        
         \MyCodeCoverage::G()->end(DuckPhp::class);
 
     }

@@ -43,7 +43,7 @@ class PluginForSwooleHttpd extends ComponentBase // , SwooleExtAppInterface
         $app->options['use_super_global'] = true;
         $app->options['skip_exception_check'] = true;
         
-        $SwooleHttpd->set_http_exception_handler([$this->context_class,'handlerAllException']);  //TODO
+        $SwooleHttpd->set_http_exception_handler([$this->context_class,'onException']);  //TODO
         $SwooleHttpd->set_http_404_handler([$this->context_class, 'On404']);             // 接管 404 处理。
         
         $flag = $SwooleHttpd->is_with_http_handler_root();                         // 如果还有子文件，做404后处理

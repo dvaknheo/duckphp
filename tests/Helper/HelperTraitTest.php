@@ -24,6 +24,10 @@ class HelperTraitTest extends \PHPUnit\Framework\TestCase
         HelperTraitObject::var_dump($options);
         HelperTraitObject::Logger();
 
+        try{
+            HelperTraitObject::ThrowOn(true,"HH");
+        }catch(\Exception $ex){
+        }
         \MyCodeCoverage::G()->end();
         /*
 

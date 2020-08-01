@@ -45,7 +45,7 @@ class StrictCheck extends ComponentBase
     
     public static function CheckStrictDB()
     {
-        return static::G()->checkStrictComponent('DB', 5, ['DuckPhp\\Core\\App','DuckPhp\\Helper\\ModelHelper']);
+        return static::G()->checkStrictComponent('DB', 4, ['DuckPhp\\Core\\App','DuckPhp\\Helper\\ModelHelper']);
     }
     ///////////////////////////////////////////////////////////
     public function getCallerByLevel($level, $parent_classes_to_skip = [])

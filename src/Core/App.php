@@ -522,7 +522,7 @@ trait Core_Helper
     }
     public function _XCall($callback)
     {
-        try{
+        try {
             return ($callback)();
         } catch (\Exception $ex) {
             return $ex;
