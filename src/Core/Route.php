@@ -26,8 +26,8 @@ class Route extends ComponentBase
             'controller_methtod_for_miss' => '_missing',
             'controller_prefix_post' => 'do_',
             'controller_class_postfix' => '',
-            'controller_file_postfix' => '',
             'controller_enable_slash' => false,
+            'controller_path_ext' => '',
         ];
     //public input;
     public $request_method = '';
@@ -280,9 +280,9 @@ class Route extends ComponentBase
         if ($this->options['controller_enable_slash']) {
             $path_info = rtrim($path_info, '/');
         }
-        if (!empty($this->options['controller_path_extention']) && !empty($path_info)) {
-            $l = strlen($this->options['controller_path_extention']);
-            if (substr($path_info, -$l) !== $this->options['controller_path_extention']) {
+        if (!empty($this->options['controller_path_ext']) && !empty($path_info)) {
+            $l = strlen($this->options['controller_path_ext']);
+            if (substr($path_info, -$l) !== $this->options['controller_path_ext']) {
                 $this->route_error = "path_extention error";
                 return false;
             }

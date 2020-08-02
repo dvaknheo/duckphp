@@ -129,6 +129,9 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         $this->foo2();
         Route::G()->dumpAllRouteHooksAsString();
         
+        Route::G(new Route())->init(['controller_enable_slash'=>true,'controller_path_ext'=>'.html']);
+        Route::G()->defaultGetRouteCallback('/a.html');
+        Route::G()->defaultGetRouteCallback('/a/b/');
         \MyCodeCoverage::G()->end();
         return;
     }

@@ -157,11 +157,21 @@ App::PageHtml(123);
         
         App::dumpAllRouteHooksAsString();
         try{
+            App::ThrowOn(false,"HH");
             App::ThrowOn(true,"HH");
         }catch(\Exception $ex){
         }
         App::XCall(function(){return "abc";});
         App::XCall(function(){ throw new \Exception('ex'); });
+        App::Cache(new \stdClass);
+        try{
+            App::OnEvent("test",null);
+        }catch(\Exception $ex){
+        }
+        try{
+            App::FireEvent("test",1,2,3);
+        }catch(\Exception $ex){
+        }
         
         \MyCodeCoverage::G()->end();
     return;
