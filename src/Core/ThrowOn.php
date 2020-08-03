@@ -11,16 +11,21 @@ use Throwable;
 
 trait ThrowOn
 {
-    public static function ThrowOn($flag, $message, $code = 0, $exception_class = null)
+    static $To;
+    public static function ThrowOn($flag, $message, $code = 0)
     {
         if (!$flag) {
             return;
         }
-        if ($exception_class === null && is_string($code) && class_exists($code)) {
-            $exception_class = $code;
-            $code = 0;
+        if(empty(static::$To) || empty(static::$To[static::class])){
+            throw new static($message, $code);
+        } else{
+            $exception_class = static::$To[static::class];
+            throw new $exception_class($message, $code);
         }
-        $exception_class = $exception_class?:(is_subclass_of(static::class, Exception::class)?static::class:Exception::class);
-        throw new $exception_class($message, $code);
+    }
+    public static function ThrowTo($class)
+    {
+        static::$To[static::class]=$class;
     }
 }

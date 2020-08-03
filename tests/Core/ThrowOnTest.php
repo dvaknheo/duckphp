@@ -10,24 +10,18 @@ class ThrowOnTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(ThrowOn::class);
         ThrowOnObject::ThrowOn(false, "123");
         try {
-            ThrowOnObject::ThrowOn(true, "Message", 2, null);
+            ThrowOnObject::ThrowOn(true, "Message", 2);
         } catch (\Throwable $ex) {
             echo "1Done";
         }
         try {
+            ThrowOnObject::ThrowTo(ThrowOnObject2::class);
             ThrowOnObject::ThrowOn(true, "Message", 2, ThrowOnException::class);
         } catch (\Throwable $ex) {
             echo "2Done";
         }
-        try {
-            ThrowOnObject::ThrowOn(true, "Message", ThrowOnException::class);
-        } catch (\Throwable $ex) {
-            echo "xxxxxxxxxxx\n";
-            echo $ex->getMessage();
-            echo  get_class($ex);
-            echo "3Done";
-        }
         
+
         \MyCodeCoverage::G()->end();
         /*
         ThrowOn::G()->ThrowOn($flag, $message, $code=0, $exception_class=null);
@@ -39,5 +33,8 @@ class ThrowOnObject
     use ThrowOn;
 }
 class ThrowOnException extends \Exception
+{
+}
+class ThrowOnObject2 extends ThrowOnObject
 {
 }
