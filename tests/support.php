@@ -1,7 +1,7 @@
 <?php
 
 require_once('bootstrap.php');
-class Supporter extends \PHPUnit\Framework\TestCase
+class support extends \PHPUnit\Framework\TestCase
 {
     public function testMain()
     {

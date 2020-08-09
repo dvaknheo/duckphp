@@ -7,7 +7,7 @@ class AutoLoaderTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        opcache_reset();
+        \opcache_reset();
         //$this->assertTrue(ini_get('opcache.enable_cli'));
         \MyCodeCoverage::G()->begin(AutoLoader::class);
         $path_autoload=\MyCodeCoverage::GetClassTestPath(AutoLoader::class);

@@ -86,11 +86,11 @@ class RouteHookRouteMapTest_FakeObject
     {
         var_dump(Route::G()->getParameters());
     }
-    function fifth()
+    public static function fifth()
     {
         var_dump(Route::G()->getParameters());
     }
-    function sixth()
+    public static function sixth()
     {
         var_dump(Route::G()->getParameters());
     }

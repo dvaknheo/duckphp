@@ -35,7 +35,7 @@ class MyCodeCoverage
         $this->namespace=null;
 
     }
-    public function GetClassTestPath($class)
+    public static function GetClassTestPath($class)
     {
         return static::G()->doGetClassTestPath($class);
     }

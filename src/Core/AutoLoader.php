@@ -147,7 +147,7 @@ class AutoLoader
             //    continue;
             //}
             try {
-                opcache_compile_file($file);
+                \opcache_compile_file($file);
             } catch (\Throwable $ex) { //@codeCoverageIgnore
             }
         }
@@ -169,7 +169,7 @@ class AutoLoader
             //    continue;
             //}
             try {
-                opcache_compile_file($file);
+                \opcache_compile_file($file);
             } catch (\Throwable $ex) { //@codeCoverageIgnore
             }
         }
