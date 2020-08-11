@@ -24,7 +24,11 @@ if(!$in_coverage && ini_get('tests.report')){
     });
 }
 
+$options=[
+	//
+];
 
+MyCodeCoverage::G()->init($options);
 
 return;
 //*/

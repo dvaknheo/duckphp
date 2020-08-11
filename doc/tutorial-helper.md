@@ -11,7 +11,7 @@
 - *[DuckPhp\Helper\AppHelper](ref/Helper-AppHelper.md)* 应用助手类，一般不常用。
 
 ## 开始
-助手类是业务工程师必须掌握的类。
+助手类是 `业务工程师` 必须掌握的类。
 我们搬出架构图。
 
 ![arch_full.gv.svg](arch_full.gv.svg)
@@ -19,22 +19,22 @@
 
 ```text
            /-> View-->ViewHelper
-Controller --> Service ------------------------------ ---> Model
+Controller --> Business ------------------------------ ---> Model
          \         \   \               \  /                  \
-          \         \   \-> LibService ----> ExModel----------->ModelHelper
+          \         \   \-> (Business)Lib ----> ExModel----------->ModelHelper
            \         \             \                
-            \         ---------------->ServiceHelper
+            \         ---------------->BusinessHelper
              \-->ControllerHelper
 ```
 上述构架图省略了命名空间。
 
 
 
-作为业务工程师， 你不能引入 DuckPhp 的任何东西，就当 DuckPhp 命名空间不存在。
+作为 `业务工程师` ， 你不能引入 DuckPhp 的任何东西，就当 DuckPhp 命名空间不存在。
 核心工程师才去研究 DuckPhp 类的东西。
 
 * 写 Model 你可能要引入 MY\Base\Helper\ModelHelper 助手类别名为 M 。
-* 写 Serivce 你可能要引入 MY\Base\Helper\SerivceHelper 助手类别名为 S 。
+* 写 Business 你可能要引入 MY\Base\Helper\BusinessHelper 助手类别名为 B 。
 * 写 Controller 你可能要引入 MY\Base\Helper\ControllerHelper 助手类别名为 C 。
 * 写 View 你可能要引入 MY\Base\Helper\ViewHelper 助手类别名为 V 。
 * 不能交叉引入其他层级的助手类。如果需要交叉，那么你就是错的。
@@ -132,9 +132,9 @@ Display($view, $data = null)
 
 	包含下一个 $view ， 如果 $data =null 则带入所有当前作用域的变量。 否则带入 $data 关联数组的内容
 
-## ServiceHelper 服务的助手类
+## BusinessHelper 业务的助手类
 
- ServiceHelper 用于 Service 层。
+ ServiceHelper 用于业务层。
 
     读取设置,设置默认在 config/setting.php 里， .env 的内容也会加进来
 Config($key, $file_basename = 'config')
@@ -173,7 +173,7 @@ SqlForPager($sql, $pageNo, $pageSize = 10)
 SqlForCountSimply($sql)
     
     简单的把 select ... from 替换成select count(*)as c from 
-    
+
 ## ControllerHelper 控制器的助手类
 
 本页面展示 ContrlloerHelper 方法。 ContrlloerHelper 的方法很多很杂，但掌握了 ContrlloerHelper 方法，基本就掌握了用法 大致分为 【通用杂项】【路由处理】【异常管理】【跳转】【swoole 兼容】 【内容处理】 几块 内容处理和 ViewHelper 基本通用。 ControllerHelper 方法

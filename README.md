@@ -27,18 +27,37 @@ composer require dvaknheo/duckphp # 用 require
 DuckPhp 也支持在子目录里使用，同时也支持无 path_info 配置的 web 服务器。
 ## DuckPhp 是什么
 
-一个 PHP Web 简单框架 
+DuckPhp 的名字来源：
 
-使用原则：比通常的 Model，Controller，View 多了 Service 缺层。弥补了 常见 Web 框架缺少的业务逻辑层。
-而因为这种缺层，导致了很多很糟糕的场景。你会发现很多人在 Contorller 里写一堆代码，或者在 Model 里写一堆代码。
+`Duck Typing` If it walks like a duck, swims like a duck, and quacks like a duck, then it probably is a duck. 
 
-使用 DuckPHP，让网站开发者专注于业务逻辑。
+鸭子类型，这东西看起来像鸭子，叫起来像鸭子，所以就是鸭子。
 
-DuckPhp 的名字源自鸭子类型，这东西看起来像鸭子，叫起来像鸭子，所以就是鸭子。
+起初，这是是想搞个简单的 PHP Web 简单框架 。现在是使用方式简单，实际方式不简单。
+
+DuckPhp 的版本历程
+
++ 1.0.\* 系列版本是前身 DNMVCS 单文件模式的版本
++ 1.1.\* 系列版本是前身 DNMVCS 拆分成多文件的版本
++ 1.2.\* 系列版本是改名 DuckPhp 后的版本，随着思想的变化，或许会有大的变更
++ 1.3.\* 系列版本将是计划开始有人大规模使用后的稳定版本，将会对历史负责了。
+
+## DuckPhp 的使用原则
+业务层。通常的 Model，Controller，View 少了一层。而因为这种缺层，导致了很多很糟糕的场景。你会发现很多人在 Contorller 里写一堆代码，或者在 Model 里写一堆代码。
+
+这个层。有人称呼 Service ,有人称呼 Logic 。我最初的时候称呼为 App ，很长时间内我都称为 Service 。现在，我称呼为 Business 业务层。之所以改过来， Business 就是业务的意思啊。不用多想。 而且现在 Service 服务 这个层被用滥了。现在第三方的平台过来的东西才叫 Service ，业务范围之内的，就叫 Business 吧。Service 给人的感觉是业务需要的服务，不能完成一个功能。
+
+所以，Business 按业务走，Model 层按数据库走，Controller 层按 URL 地址走，View 按页面走，这就是 DuckPhp 的理念。
+
+DuckPhp 的最大意义是思想，只要思想在，什么框架你都可以用。
+你可以不用 DuckPhp 实现 Controller-Business-Model 架构。
+只要有这个思想就是理念成功了。
+
+组合而非继承。这是 DuckPhp 提倡的另一个观点。
 
 ## DuckPhp 的优点
 ### 主要优点
-1. DuckPhp 可以做到你的应用和 DuckPhp 的系统代码只有一行关联。 这个是其他 PHP 框架目前都做不到的。你的代码，基本和 DuckPHP的系统代码无关。
+1. DuckPhp 可以做到你的应用和 DuckPhp 的系统代码只有一行关联。 这个是其他 PHP 框架目前都做不到的。你的代码，基本和 DuckPhp 的系统代码无关。
 2. DuckPhp 用可变单例方式，解决了【系统的调用形式不变，实现形式可变】，比如不用 hack 来改系统漏洞。而其他框架用的 IoC,DI 技术则复杂且不方便调试。
 3. DuckPhp 的应用调试非常方便，堆栈清晰，调用 debug_print_backtrace(2) 很容易发现。那些用了中间件的框架的堆栈很不清晰。
 4. DuckPhp 无第三方依赖，你不必担心第三方依赖改动而大费周折。
@@ -46,7 +65,7 @@ DuckPhp 的名字源自鸭子类型，这东西看起来像鸭子，叫起来像
 6. DuckPhp 是库，可以按 composer 库的方式引入
 7. DuckPhp 很容易嵌入其他 PHP 框架。根据 DuckPhp 的返回值判断是否继续后面其他框架。
 8. DuckPhp 支持 composer。无 composer 环境也可运。
-9. DuckPhp 做到了 swoole 和 fpm 代码无缝切换。单例变成协程单例。
+
 ### DuckPhp 还有以下优点：
 
 * DuckPhp 代码简洁，不做多余事情。最新版本默认demo运行只需要 406/5252 行。
@@ -59,7 +78,7 @@ DuckPhp 的名字源自鸭子类型，这东西看起来像鸭子，叫起来像
 * DuckPhp/Core 是 DuckPhp 的子框架。有时候你用 DuckPhp/Core 也行。类似 lumen 之于 Laravel
 * DuckPhp/Core 没有数据类，因为数据库类不是 Web 框架的必备。Laravel 的 ORM 确实很强大。但是意味着和 jquery 那样不可调试。
 * DuckPhp 不限制你的工程的命名空间固定为 app.
-* DuckPhp 可以规范为，Service 类只能用 MY\Base\ServiceHelper . Controller 类 只能用 MY\Base\ControllerHelper .Model 类只能引用 MY\Base\ModelHepler。 View 类只能用 ViewHelper ，其他类不允许用。也可以规范成 只用 MY\Base\App 类这个系统类。其中 MY 这个命名空间你可以自定义。
+* DuckPhp 可以规范为，Business 类只能用 MY\Base\BusinessHelper . Controller 类 只能用 MY\Base\ControllerHelper .Model 类只能引用 MY\Base\ModelHepler。 View 类只能用 ViewHelper ，其他类不允许用。也可以规范成 只用 MY\Base\App 类这个系统类。其中 MY 这个命名空间你可以自定义。
 
 ### 和其他框架简单对比
 
@@ -70,23 +89,12 @@ DuckPhp 的名字源自鸭子类型，这东西看起来像鸭子，叫起来像
 |可热修复，不改源码解决所有问题 |              |            |           | V       |
 |可把工程转成插件给第三方用 |              |            |           | V       |
 |全覆盖测试           |              |            |           | V       |
-|swoole/fpm 无缝切换  |              |            |           | V       |
 |以库引用             |              |            |           | V       |
 |单一 composer 框架   |              |            |           | V       |
 |无第三方依赖         |              |            |           | V       |
 |高性能               | V            | V          |           | V       |
 |代码简洁             | V            | V          |           | V       |
 |非固定全站框架                   |            |           |         | V |
-## 关于 Servivce 层
-
-MVC 结构的时候，你们业务逻辑放在哪里？
-新手放在 Controller ，后来的放到 Model ，后来觉得 Model 和数据库混一起太乱， 搞个 DAO 层吧。
-可是 一般的 PHP 框架不提供这个功能。
-所以，Service 按业务走，Model 层按数据库走，Controller 层按 URL 地址走，View 按页面走，这就是 DuckPhp 的理念。
-
-DuckPhp 的最大意义是思想，只要思想在，什么框架你都可以用。
-你可以不用 DuckPhp 实现 Controller-Service-Model 架构。
-只要有这个思想就是理念成功了。
 
 ## 理解 DuckPhp 的原则
 
@@ -94,11 +102,11 @@ DuckPhp 层级关系图
 
 ```text
            /-> View-->ViewHelper
-Controller --> Service ------------------------------ ---> Model
+Controller --> Business ------------------------------ ---> Model
          \         \   \               \  /                  \
-          \         \   \-> LibService ----> ExModel----------->ModelHelper
+          \         \   \-> (Business)Lib ----> ExModel----------->ModelHelper
            \         \             \                
-            \         ---------------->ServiceHelper
+            \         ---------------->BusinessHelper
              \-->ControllerHelper
 ```
 ![arch_full](doc/arch_full.gv.svg)
@@ -169,7 +177,7 @@ namespace
     require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
 }
 // 以下部分是核心工程师写。
-namespace MySpace\Base
+namespace MySpace\System
 {
     use DuckPhp\Ext\CallableView;
     use DuckPhp\Ext\RouteHookOneFileMode; // 我们要支持无路由的配置模式
@@ -339,6 +347,11 @@ namespace {
 ```
 ## 架构图
 ![DuckPhp](doc/duckphp.gv.svg)
+说明一下
+
+灰色的是公开给外部的类可单独使用的类。
+
+
 
 ## 还有什么要说的
 
