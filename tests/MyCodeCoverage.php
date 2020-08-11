@@ -4,14 +4,18 @@
 class MyCodeCoverage
 {
     public $options=[
+		'namespace' => null,
+		'path'=>null,
+		'path_src'=>'src',
+		'path_dump'=>'tests/test_coveragedumps',
+		'path_report'=>'tests/test_reports',
     ];
+	public $is_inited =true;
+	
     protected $extFile=null;
     protected $coverage;
     protected $test_class;
-    protected $path_source;
-    protected $path_dump;
-    public $path_report;
-    protected $namespace=null;
+
     public static function G($object=null)
     {
         //Simplist
@@ -19,21 +23,35 @@ class MyCodeCoverage
         $_instance=$object?:($_instance??new static);
         return $_instance;
     }
-    public function init(array $options, $context=null)
+    public function init(array $options, ?object $context = null)
     {
-        //return $this;
+        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
+		
+		$this->options['path']=$this->optionsp['path']?? realpath(__DIR__ .'/..').'/';
+		$this->options['path_src'] = $this->getComponenetPathByKey('path_src');
+		$this->options['path_dump'] = $this->getComponenetPathByKey('path_dump');
+        $this->options['path_report'] = $this->getComponenetPathByKey('path_report');
+		
+		if(!is_dir($this->options['path_dump'])){
+			mkdir($this->options['path_dump']);
+		}
+		if(!is_dir($this->options['path_report'])){
+			mkdir($this->options['path_report']);
+		}
+		$this->is_inited=true;
+        return $this;
+    }
+    protected function getComponenetPathByKey($path_key)
+    {
+        if (substr($this->options[$path_key], 0, 1) === '/') {
+            return rtrim($this->options[$path_key], '/').'/';
+        } else {
+            return $this->options['path'].rtrim($this->options[$path_key], '/').'/';
+        }
     }
     public function isInited():bool
     {
-        return true;
-    }
-    public function __construct()
-    {
-        $this->path_source=realpath(__DIR__.'/../src');
-        $this->path_dump=realpath(__DIR__.'/test_coveragedumps');
-        $this->path_report=realpath(__DIR__.'/test_reports');
-        $this->namespace=null;
-
+        return $this->is_inited;
     }
     public static function GetClassTestPath($class)
     {
@@ -43,8 +61,8 @@ class MyCodeCoverage
     {
         $blocks=explode('\\',$this->test_class);
         $root=array_shift($blocks);
-        $this->namespace=$this->namespace ?? $root;
-        $ret=__DIR__.'/data_for_tests'.str_replace([$this->namespace.'\\','\\'],['/','/'],$class).'/';
+        $this->options['namespace']=$this->options['namespace'] ?? $root;
+        $ret=__DIR__.'/data_for_tests'.str_replace([$this->options['namespace'].'\\','\\'],['/','/'],$class).'/';
         return $ret;
     }
     protected static function include_file($file)
@@ -54,15 +72,14 @@ class MyCodeCoverage
     public function createReport()
     {
         $coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage();
-        $coverage->filter()->addDirectoryToWhitelist($this->path_source);
+        $coverage->filter()->addDirectoryToWhitelist($this->options['path_src']);
         $coverage->setTests([
           'T' =>[
             'size' => 'unknown',
             'status' => -1,
           ],
         ]);
-
-        $directory = new \RecursiveDirectoryIterator($this->path_dump, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
+        $directory = new \RecursiveDirectoryIterator($this->options['path_dump'], \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
 
         $iterator = new \RecursiveIteratorIterator($directory);
         $files = \iterator_to_array($iterator, false);
@@ -70,7 +87,7 @@ class MyCodeCoverage
             $coverage->merge(static::include_file($file));
         }
         $writer = new \SebastianBergmann\CodeCoverage\Report\Html\Facade;
-        $writer->process($coverage, $this->path_report);
+        $writer->process($coverage, $this->options['path_report']);
         
         $report = $coverage->getReport();
         $lines_tested = $report->getNumExecutedLines();
@@ -123,9 +140,9 @@ class MyCodeCoverage
         
         $blocks=explode('\\',$this->test_class);
         $root=array_shift($blocks);
-        $this->namespace=$this->namespace ?? $root;
-        $path=substr(str_replace('\\', '/', $this->test_class), strlen($this->namespace.'\\'));
-        $path=realpath($this->path_dump).'/'.$path .'.php';
+        $this->options['namespace']=$this->options['namespace'] ?? $root;
+        $path=substr(str_replace('\\', '/', $this->test_class), strlen($this->options['namespace'].'\\'));
+        $path=realpath($this->options['path_dump']).'/'.$path .'.php';
         $writer->process($this->coverage, $path);
         
         $this->coverage=null;
