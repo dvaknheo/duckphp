@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 namespace tests\DuckPhp\Ext
 {
 
@@ -182,6 +182,7 @@ class FakeLibService
 }  // end tests\DuckPhp\Ext\Service
 
 namespace tests\DuckPhp\Ext\Controller {
+
 use tests\DuckPhp\Ext\Base\BaseController;
 use tests\DuckPhp\Ext\Base\BaseController2;
 use tests\DuckPhp\Ext\Service\FakeBatchService;

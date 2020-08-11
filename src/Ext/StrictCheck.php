@@ -21,6 +21,11 @@ class StrictCheck extends ComponentBase
             'controller_base_class' => null,
             'is_debug' => false,
             'strict_check_context_class' => null,
+			
+            'postfix_batch_service' => 'BatchService',
+            'postfix_lib_service' => 'BatchService',
+			'postfix_ex_model' => 'ExModel',
+
         ];
     
     protected $context_class = null;
@@ -79,17 +84,13 @@ class StrictCheck extends ComponentBase
         }
         $caller_class = $this->getCallerByLevel($trace_level, $parent_classes_to_skip);
         
-        $namespace_service = $this->options['namespace_service'];
-        $namespace_controller = $this->options['namespace_controller'];
-        $controller_base_class = $this->options['controller_base_class'];
-        
-        if (substr($caller_class, 0, strlen($namespace_controller)) == $namespace_controller) {
+        if (substr($caller_class, 0, strlen($this->options['namespace_controller'])) === $this->options['namespace_controller']) {
             throw new ErrorException("$component_name Can not Call By Controller");
         }
-        if ($controller_base_class && (is_subclass_of($caller_class, $controller_base_class) || $caller_class === $controller_base_class)) {
-            throw new ErrorException("$component_name Can not Call By Controller");
+        if ($controller_base_class && (is_subclass_of($caller_class, $this->options['controller_base_class']) || $caller_class === $this->options['controller_base_class'])) {
+            throw new ErrorException("$component_name Can not Call By Controller!");
         }
-        if (substr($caller_class, 0, strlen($namespace_service)) === $namespace_service) {
+        if (self::EndWith($caller_class, $this->options['namespace_service'])) {
             throw new ErrorException("$component_name Can not Call By Service");
         }
     }
@@ -99,15 +100,12 @@ class StrictCheck extends ComponentBase
             return;
         }
         $caller_class = $this->getCallerByLevel($trace_level);
-
-        $namespace_service = $this->options['namespace_service'];
-        $namespace_model = $this->options['namespace_model'];
         
-        if (substr($caller_class, 0, strlen($namespace_service)) === $namespace_service) {
+        if (self::StartWith($caller_class, $this->options['namespace_service'])) {
             return;
         }
-        if (substr($caller_class, 0, strlen($namespace_model)) === $namespace_model &&
-            substr($caller_class, -strlen("ExModel")) == "ExModel") {
+        if (self::StartWith($caller_class, $this->options['namespace_model']) &&
+            self::EndWith($caller_class, $this->options['postfix_ex_model'])) {
             return;
         }
         throw new ErrorException("Model Can Only call by Service or ExModel!Caller is {$caller_class}");
@@ -117,23 +115,31 @@ class StrictCheck extends ComponentBase
         if (!$this->checkEnv()) {
             return;
         }
+		if (empty($this->options['namespace_service'])) {
+            return;
+        }
+		
         $caller_class = $this->getCallerByLevel($trace_level);
-        $namespace_model = $this->options['namespace_model'];
-        $namespace_service = $this->options['namespace_service'];
-        if (empty($namespace_service)) {
+		
+        if (self::EndWith($caller_class, $this->options['postfix_batch_service'])) {
             return;
         }
-        if (substr($caller_class, -strlen("BatchService")) === "BatchService") {
+        if (self::EndWith($service_class, $this->options['postfix_lib_service'])) {
             return;
         }
-        if (substr($service_class, -strlen("LibService")) === "LibService") {
-            return;
-        }
-        if (substr($caller_class, 0, strlen($namespace_service)) === $namespace_service) {
+        if (self::EndWith($caller_class, $this->options['namespace_service'])) {
             throw new ErrorException("Service($service_class) Can not call Service($caller_class)");
         }
-        if (substr($caller_class, 0, strlen($namespace_model)) === $namespace_model) {
+        if (self::EndWith($caller_class, $this->options['namespace_model'])) {
             throw new ErrorException("Service Can not call by Model, ($caller_class)");
         }
     }
+	protected static function StartWith($str,$prefix)
+	{
+		return substr($str, 0, strlen($prefix)) === $prefix;
+	}
+	protected static function EndWith($str,$postfix)
+	{
+		return substr($str, -strlen($postfix)) === $postfix;
+	}
 }
