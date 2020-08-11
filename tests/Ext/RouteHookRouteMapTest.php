@@ -94,7 +94,7 @@ class RouteHookRouteMapTest_FakeObject
     {
         var_dump(Route::G()->getParameters());
     }
-    function seventh()
+    public static function seventh()
     {
         var_dump("seventh!");
         var_dump(Route::G()->getParameters());
