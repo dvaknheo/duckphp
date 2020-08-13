@@ -1,6 +1,4 @@
 <?php
-
-
 class MyCodeCoverage
 {
     public $options=[
@@ -9,6 +7,7 @@ class MyCodeCoverage
 		'path_src'=>'src',
 		'path_dump'=>'tests/test_coveragedumps',
 		'path_report'=>'tests/test_reports',
+		'path_data'=>'tests/data_for_tests',
     ];
 	public $is_inited =true;
 	
@@ -31,6 +30,7 @@ class MyCodeCoverage
 		$this->options['path_src'] = $this->getComponenetPathByKey('path_src');
 		$this->options['path_dump'] = $this->getComponenetPathByKey('path_dump');
         $this->options['path_report'] = $this->getComponenetPathByKey('path_report');
+        $this->options['path_data'] = $this->getComponenetPathByKey('path_data');
 		
 		if(!is_dir($this->options['path_dump'])){
 			mkdir($this->options['path_dump']);
@@ -62,9 +62,17 @@ class MyCodeCoverage
         $blocks=explode('\\',$this->test_class);
         $root=array_shift($blocks);
         $this->options['namespace']=$this->options['namespace'] ?? $root;
-        $ret=__DIR__.'/data_for_tests'.str_replace([$this->options['namespace'].'\\','\\'],['/','/'],$class).'/';
+        $ret=$this->options['path_data'].str_replace([$this->options['namespace'].'\\','\\'],['/','/'],$class).'/';
         return $ret;
     }
+	public static function GetTestSetting()
+	{
+		return static::G()->doGetTestSetting();
+	}
+	public function doGetTestSetting()
+	{
+		return include $this->options['path_data'].'setting.php';
+	}
     protected static function include_file($file)
     {
         return include $file;
