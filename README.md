@@ -1,4 +1,6 @@
 # DuckPhp 介绍
+* 注意：当前开发版本文档先行，会和 稳定 的 1.2.5 版本有好些改变。*
+
 作者QQ: 85811616
 
 官方QQ群: 714610448
@@ -62,8 +64,8 @@ DuckPhp 的最大意义是思想，只要思想在，什么框架你都可以用
 3. DuckPhp 的应用调试非常方便，堆栈清晰，调用 debug_print_backtrace(2) 很容易发现。那些用了中间件的框架的堆栈很不清晰。
 4. DuckPhp 无第三方依赖，你不必担心第三方依赖改动而大费周折。
 5. DuckPhp 耦合松散，扩展灵活方便，魔改容易。
-6. DuckPhp 是库，可以按 composer 库的方式引入
-7. DuckPhp 很容易嵌入其他 PHP 框架。根据 DuckPhp 的返回值判断是否继续后面其他框架。
+6. DuckPhp 很容易嵌入其他 PHP 框架。根据 DuckPhp 的返回值判断是否继续后面其他框架。
+7. DuckPhp 是库，可以按 composer 库的方式引入
 8. DuckPhp 支持 composer。无 composer 环境也可运。
 
 ### DuckPhp 还有以下优点：
@@ -75,10 +77,9 @@ DuckPhp 的最大意义是思想，只要思想在，什么框架你都可以用
 * DuckPhp 支持扩展。这些扩展可独立，不一定非要仅仅用于 DuckPHP。
 * DuckPhp 的数据库类很简洁，而且，你可以轻易方便的替换。如教程就有使用 thinkphp-db 的例子。
 * DuckPhp 有扩展能做到禁止你在 Controller 里直接写 sql 。有时候，框架必须为了防止人犯蠢，而牺牲了性能。但 DuckPhp 这么做几乎不影响性能。
-* DuckPhp/Core 是 DuckPhp 的子框架。有时候你用 DuckPhp/Core 也行。类似 lumen 之于 Laravel
-* DuckPhp/Core 没有数据类，因为数据库类不是 Web 框架的必备。Laravel 的 ORM 确实很强大。但是意味着和 jquery 那样不可调试。
-* DuckPhp 不限制你的工程的命名空间固定为 app.
-* DuckPhp 可以规范为，Business 类只能用 MY\Base\BusinessHelper . Controller 类 只能用 MY\Base\ControllerHelper .Model 类只能引用 MY\Base\ModelHepler。 View 类只能用 ViewHelper ，其他类不允许用。也可以规范成 只用 MY\Base\App 类这个系统类。其中 MY 这个命名空间你可以自定义。
+* DuckPhp/Core 是 DuckPhp 的子框架。有时候你用 DuckPhp/Core 也行。类似 lumen 之于 Laravel 。
+* DuckPhp 不限制你的工程的命名空间固定为 app 。你可以把你的工程作为其他项目的插件使用。
+* DuckPhp 可以规范为，Business 类只能用 MY\Base\BusinessHelper 。 Controller 类 只能用 MY\Base\ControllerHelper 。。 Model 类只能引用 MY\Base\ModelHepler。 View 类只能用 ViewHelper ，其他类不允许用。也可以规范成 只用 MY\Base\App 类这个系统类。其中 MY 这个命名空间你可以自定义。
 
 ### 和其他框架简单对比
 
@@ -116,10 +117,11 @@ Controller --> Business ------------------------------ ---> Model
 * Model 按数据库表走，基本上只实现和当前表相关的操作。
 * View 按页面走
 * 不建议 Model 抛异常
-* ControllerHelper,ServiceHelper,ModelHelper,ViewHelper 都为助手类，通常缩写为 C, S, M, V
+* ControllerHelper,BusinessHelper,ModelHelper,ViewHelper 都为助手类，通常缩写为 C, B, M, V
 
-1. 如果 Service 相互调用怎么办?
-添加后缀为 LibService 用于 Service 共享调用，不对外，如MyLibService
+1. 如果  Business 业务之间 相互调用怎么办?
+添加后缀为 Lib 用于 Business 共享调用，不对外，如 CacheLib.
+
 2. 如果跨表怎么办?，三种解决方案
     1. 在主表里附加，其他表估计用不到的情况。
     2. 添加后缀为 ExModel 用于表示这个 Model 是多个表的，如 UserExModel。
@@ -191,6 +193,7 @@ namespace MySpace\System
                 // 开启调试模式
             'skip_setting_file' => true,
                 // 本例特殊，跳过设置文件 这个选项防止没有上传设置文件到服务器
+                // DuckPhp 也支持  .env 文件配置模式。
              
             'ext' => [
                 RouteHookOneFileMode::class => true,

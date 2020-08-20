@@ -9,7 +9,7 @@
 到所在目录之下运行
 
 ```bash
-php template/bin/start_server.php
+php template/start_server.php
 ```
 浏览器中打开 http://127.0.0.1:8080/ 得到下面欢迎页就表明 OK 了
 ```text
