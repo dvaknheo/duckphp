@@ -9,35 +9,6 @@ class HttpServerTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(HttpServer::class);
         
-        
-            
-        $path=\MyCodeCoverage::GetClassTestPath(HttpServer::class);
-        
-        
-            
-        HttpServerParent::G()->test_checkSwoole();
-        HttpServerParent::G()->test_runHttpServer();
-
-        HttpServerParent::G()->test_runSwooleServer(__DIR__, '127.0.0.1', 9901);
-        defined('DuckPhp_WARNING_IN_TEMPLATE');
-        HttpServerParent::G()->test_runSwooleServer(__DIR__, '127.0.0.1', 9901);
-        
-        if (!function_exists('swoole_version')) {
-            include $path."fake_swoole.php";
-            var_dump("ffffffffffffffffffffff");
-            HttpServerParent::G(new HttpServerParent())->is_fake=true;
-            HttpServerParent::G()->test_runSwooleServer2(__DIR__, '127.0.0.1', 9901);
-        }
-        
-        
-            if (!function_exists('swoole_version')) {
-                include $path."fake_swoole.php";
-                var_dump("ffffffffffffffffffffff");
-                HttpServerParent::G()->is_fake=true;
-                HttpServerParent::G()->test_runSwooleServer2(__DIR__, '127.0.0.1', 9901);
-            }
-            
-            
         \MyCodeCoverage::G()->end();
         
         return;
@@ -67,11 +38,14 @@ class HttpServerParent extends HttpServer
                 'DuckPhp\PluginForSwoole'=>false,
             ]
         ];
-        
+
+
         $this->runHttpServer();
         $this->args['no-swoole']=true;
         $this->runHttpServer();
         unset($this->args['no-swoole']);
+var_dump("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");exit;
+
         $this->options['background']=true;
         $this->runHttpServer();
     }
