@@ -11,5 +11,4 @@ use DuckPhp\DuckPhp;
 
 class HttpServer extends Server
 {
-
 }

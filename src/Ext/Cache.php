@@ -12,7 +12,7 @@ class Cache extends ComponentBase //implements Psr\SimpleCache\CacheInterface;
 {
     public function get($key, $default = null)
     {
-		return $default;
+        return $default;
     }
     public function set($key, $value, $ttl = null)
     {
@@ -24,7 +24,7 @@ class Cache extends ComponentBase //implements Psr\SimpleCache\CacheInterface;
     }
     public function has($key)
     {
-		return false;
+        return false;
     }
     public function clear()
     {

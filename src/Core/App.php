@@ -628,13 +628,25 @@ trait Core_NotImplemented
 {
     public static function DB($tag = null)
     {
-        throw new \ErrorException("No Impelement");
+        return static::G()->_DB($tag);
     }
     public static function DB_W()
     {
-        throw new \ErrorException("No Impelement");
+        return static::G()->_DB_W();
     }
     public static function DB_R()
+    {
+        return static::G()->_DB_R();
+    }
+    public function _DB($tag)
+    {
+        throw new \ErrorException("No Impelement");
+    }
+    public function _DB_R()
+    {
+        throw new \ErrorException("No Impelement");
+    }
+    public function _DB_W()
     {
         throw new \ErrorException("No Impelement");
     }

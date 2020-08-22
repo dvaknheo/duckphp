@@ -21,10 +21,10 @@ class StrictCheck extends ComponentBase
             'controller_base_class' => null,
             'is_debug' => false,
             'strict_check_context_class' => null,
-			
+            
             'postfix_batch_service' => 'BatchService',
-            'postfix_lib_service' => 'BatchService',
-			'postfix_ex_model' => 'ExModel',
+            'postfix_lib_service' => 'LibService',
+            'postfix_ex_model' => 'ExModel',
 
         ];
     
@@ -47,10 +47,9 @@ class StrictCheck extends ComponentBase
             //do nothing;
         }
     }
-    
     public static function CheckStrictDB()
     {
-        return static::G()->checkStrictComponent('DB', 4, ['DuckPhp\\Core\\App','DuckPhp\\Helper\\ModelHelper']);
+        return static::G()->checkStrictComponent('DB', 5, ['DuckPhp\\Core\\App','DuckPhp\\Helper\\ModelHelper']);
     }
     ///////////////////////////////////////////////////////////
     public function getCallerByLevel($level, $parent_classes_to_skip = [])
@@ -83,15 +82,18 @@ class StrictCheck extends ComponentBase
             return;
         }
         $caller_class = $this->getCallerByLevel($trace_level, $parent_classes_to_skip);
+
+        $controller_base_class = $this->options['controller_base_class'];
         
-        if (substr($caller_class, 0, strlen($this->options['namespace_controller'])) === $this->options['namespace_controller']) {
+        if (self::StartWith($caller_class, $this->options['namespace_controller'])) {
             throw new ErrorException("$component_name Can not Call By Controller");
         }
-        if ($controller_base_class && (is_subclass_of($caller_class, $this->options['controller_base_class']) || $caller_class === $this->options['controller_base_class'])) {
-            throw new ErrorException("$component_name Can not Call By Controller!");
-        }
-        if (self::EndWith($caller_class, $this->options['namespace_service'])) {
+        if (self::StartWith($caller_class, $this->options['namespace_service'])) {
             throw new ErrorException("$component_name Can not Call By Service");
+        }
+        
+        if ($controller_base_class && (is_subclass_of($caller_class, $controller_base_class) || $caller_class === $controller_base_class)) {
+            throw new ErrorException("$component_name Can not Call By Controller");
         }
     }
     public function checkStrictModel($trace_level)
@@ -115,31 +117,31 @@ class StrictCheck extends ComponentBase
         if (!$this->checkEnv()) {
             return;
         }
-		if (empty($this->options['namespace_service'])) {
+        if (empty($this->options['namespace_service'])) {
             return;
         }
-		
+        
         $caller_class = $this->getCallerByLevel($trace_level);
-		
+        
         if (self::EndWith($caller_class, $this->options['postfix_batch_service'])) {
             return;
         }
         if (self::EndWith($service_class, $this->options['postfix_lib_service'])) {
             return;
         }
-        if (self::EndWith($caller_class, $this->options['namespace_service'])) {
+        if (self::StartWith($caller_class, $this->options['namespace_service'])) {
             throw new ErrorException("Service($service_class) Can not call Service($caller_class)");
         }
-        if (self::EndWith($caller_class, $this->options['namespace_model'])) {
-            throw new ErrorException("Service Can not call by Model, ($caller_class)");
+        if (self::StartWith($caller_class, $this->options['namespace_model'])) {
+            throw new ErrorException("Service($service_class) Can not call by Model, ($caller_class)");
         }
     }
-	protected static function StartWith($str,$prefix)
-	{
-		return substr($str, 0, strlen($prefix)) === $prefix;
-	}
-	protected static function EndWith($str,$postfix)
-	{
-		return substr($str, -strlen($postfix)) === $postfix;
-	}
+    protected static function StartWith($str, $prefix)
+    {
+        return substr($str, 0, strlen($prefix)) === $prefix;
+    }
+    protected static function EndWith($str, $postfix)
+    {
+        return substr($str, -strlen($postfix)) === $postfix;
+    }
 }

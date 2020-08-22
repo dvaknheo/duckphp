@@ -72,17 +72,17 @@ class DuckPhp extends App
         return $pager;
     }
     //@override
-    public static function DB($tag = null)
+    public function _DB($tag)
     {
         return DBManager::G()->_DB($tag);
     }
     //@override
-    public static function DB_R()
+    public function _DB_R()
     {
         return DBManager::G()->_DB_R();
     }
     //@override
-    public static function DB_W()
+    public function _DB_W()
     {
         return DBManager::G()->_DB_W();
     }
