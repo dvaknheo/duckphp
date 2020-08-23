@@ -3,10 +3,6 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-
-// MAIN FILE
-//dvaknheo@github.com
-//OK，Lazy
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\AutoLoader;
@@ -21,7 +17,12 @@ use DuckPhp\Core\RuntimeState;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapperTrait;
 use DuckPhp\Core\View;
-
+/**
+ * MAIN FILE
+ * dvaknheo@github.com
+ * OK，Lazy
+ *
+ */
 class App extends ComponentBase
 {
     const HOOK_PREPEND_OUTTER = 'prepend-outter';
@@ -256,7 +257,7 @@ trait Core_Handler
             echo  <<<EOT
 <!--DuckPhp  set options ['error_debug']='_sys/error-debug.php' to override me -->
 <fieldset class="_DNMVC_DEBUG">
-	<legend>$error_desc($errno)</legend>
+    <legend>$error_desc($errno)</legend>
 <pre>
 {$error_shortfile}:{$errline}
 {$errstr}
@@ -332,9 +333,9 @@ trait Core_SystemWrapper
         if ($this->system_wrapper_call_check(__FUNCTION__)) {
             return $this->system_wrapper_call(__FUNCTION__, func_get_args());
         }
-		/** @var mixed */
-		$t=$exception_handler;
-        return set_exception_handler($t);
+        /** @var mixed */
+        $handler = $exception_handler; //for phpstan
+        return set_exception_handler($handler);
     }
     public function _register_shutdown_function(callable $callback, ...$args)
     {

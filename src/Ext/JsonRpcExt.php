@@ -3,7 +3,6 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
@@ -60,7 +59,7 @@ class JsonRpcExt extends ComponentBase
         return $base;
     }
     
-    public function _autoload($class)
+    public function _autoload($class): void
     {
         if (substr($class, 0, strlen($this->prefix)) !== $this->prefix) {
             return;

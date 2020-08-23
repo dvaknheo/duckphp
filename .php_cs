@@ -21,6 +21,8 @@ return PhpCsFixer\Config::create()
         'declare_strict_types' => true,
         'binary_operator_spaces'=>true,
         'ordered_imports'=>true,
+		'no_blank_lines_before_namespace'=>false,
+		'single_blank_line_before_namespace'=>true,
     ])
     ->setFinder($finder)
     ->setUsingCache(false);

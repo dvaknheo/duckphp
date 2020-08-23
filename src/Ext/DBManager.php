@@ -3,7 +3,6 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
@@ -48,7 +47,7 @@ class DBManager extends ComponentBase
     protected function initContext(object $context)
     {
         if ($this->options['db_database_list_from_setting']) {
-            $database_list = get_class($context)::Setting('database_list') ?? null;
+            /** @var mixed */ $database_list = get_class($context)::Setting('database_list');
             if (!isset($database_list)) {
                 $database_list = isset($context->options) ? ($context->options['database_list'] ?? null) : null;
             }

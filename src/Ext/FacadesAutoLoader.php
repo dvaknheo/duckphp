@@ -3,7 +3,6 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
@@ -32,7 +31,7 @@ class FacadesAutoLoader extends ComponentBase
         }
     }
     
-    public function _autoload($class)
+    public function _autoload($class): void
     {
         $flag = (substr($class, 0, strlen($this->prefix)) === $this->prefix)?true:false;
         if (!$flag) {

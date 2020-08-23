@@ -3,7 +3,6 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
@@ -46,7 +45,7 @@ class RedisManager extends ComponentBase
     protected function initContext(object $context)
     {
         if ($this->options['use_context_redis_setting']) {
-            $redis_list = get_class($context)::Setting('redis_list') ?? null;
+            /** @var mixed */ $redis_list = get_class($context)::Setting('redis_list');
             if (!isset($redis_list)) {
                 $redis_list = isset($context->options) ? ($context->options['redis_list'] ?? null) : null;
             }

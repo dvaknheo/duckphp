@@ -3,7 +3,6 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
@@ -59,13 +58,13 @@ class RouteHookRewrite extends ComponentBase
             return null;
         }
         
-        $input_path = parse_url($input_url, PHP_URL_PATH) ?? '';
+        $input_path = (string) parse_url($input_url, PHP_URL_PATH);
         $input_get = [];
-        parse_str(parse_url($input_url, PHP_URL_QUERY) ?? '', $input_get);
+        parse_str((string) parse_url($input_url, PHP_URL_QUERY), $input_get);
         
         //$template_path=parse_url($template_url,PHP_URL_PATH);
         //$template_get=[];
-        parse_str(parse_url($template_url, PHP_URL_QUERY) ?? '', $template_get);
+        parse_str((string) parse_url($template_url, PHP_URL_QUERY), $template_get);
         $p = '/'.str_replace('/', '\/', substr($template_url, 1)).'/A';
         if (!preg_match($p, $input_path)) {
             return null;
@@ -77,7 +76,7 @@ class RouteHookRewrite extends ComponentBase
         
         $new_path = parse_url($new_url ?? '', PHP_URL_PATH) ?? '';
         $new_get = [];
-        parse_str(parse_url($new_url ?? '', PHP_URL_QUERY) ?? '', $new_get);
+        parse_str((string) parse_url($new_url ?? '', PHP_URL_QUERY), $new_get);
         
         $get = array_merge($input_get, $new_get);
         $query = $get?'?'.http_build_query($get):'';
@@ -91,11 +90,11 @@ class RouteHookRewrite extends ComponentBase
         
         $input_path = parse_url($input_url, PHP_URL_PATH);
         $input_get = [];
-        parse_str(parse_url($input_url, PHP_URL_QUERY) ?? '', $input_get);
+        parse_str((string) parse_url($input_url, PHP_URL_QUERY), $input_get);
         
         $template_path = parse_url($template_url, PHP_URL_PATH);
         $template_get = [];
-        parse_str(parse_url($template_url, PHP_URL_QUERY) ?? '', $template_get);
+        parse_str((string) parse_url($template_url, PHP_URL_QUERY), $template_get);
         
         $input_path = '/'.$input_path;
 
@@ -109,7 +108,7 @@ class RouteHookRewrite extends ComponentBase
         
         $new_path = parse_url($new_url, PHP_URL_PATH);
         $new_get = [];
-        parse_str(parse_url($new_url, PHP_URL_QUERY) ?? '', $new_get);
+        parse_str((string) parse_url($new_url, PHP_URL_QUERY), $new_get);
         
         $get = array_merge($input_get, $new_get);
         $query = $get?'?'.http_build_query($get):'';
@@ -135,7 +134,7 @@ class RouteHookRewrite extends ComponentBase
         $url = (string)$url;
         $path = parse_url($url, PHP_URL_PATH);
         $input_get = [];
-        parse_str(parse_url($url, PHP_URL_QUERY) ?? '', $input_get);
+        parse_str((string) parse_url($url, PHP_URL_QUERY), $input_get);
         SuperGlobal::G()->_SERVER['init_get'] = SuperGlobal::G()->_GET;
         SuperGlobal::G()->_GET = $input_get;
     }

@@ -104,8 +104,10 @@ class ExceptionManager extends ComponentBase
         if ($this->options['handle_all_exception']) {
             if ($this->system_exception_handler) {
                 $this->last_exception_handler = ($this->system_exception_handler)([$this,'_CallException']);
-            } else {				
-                $this->last_exception_handler = set_exception_handler([$this,'_CallException']);
+            } else {
+                /** @var mixed */
+                $handler = [$this,'_CallException'];
+                $this->last_exception_handler = set_exception_handler($handler);
             }
         }
     }

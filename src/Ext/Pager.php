@@ -3,7 +3,6 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
@@ -102,8 +101,8 @@ class Pager extends ComponentBase implements PagerInterface
             $page = $page != 1?$page:'';
             return str_replace('{'.$page_key.'}', $page, $url);
         }
-        $path = parse_url($url, PHP_URL_PATH) ?? '';
-        $query = parse_url($url, PHP_URL_QUERY) ?? '';
+        $path = (string) parse_url($url, PHP_URL_PATH);
+        $query = (string) parse_url($url, PHP_URL_QUERY);
         
         $get = [];
         parse_str($query, $get);

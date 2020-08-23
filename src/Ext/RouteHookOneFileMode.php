@@ -3,7 +3,6 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
@@ -52,7 +51,7 @@ class RouteHookOneFileMode extends ComponentBase
         $path_info = SuperGlobal::G()->_SERVER['PATH_INFO'] ?? '';
         $script_file = SuperGlobal::G()->_SERVER['SCRIPT_FILENAME'];
         
-        $path = parse_url($path, PHP_URL_PATH) ?? '';
+        $path = (string) parse_url($path, PHP_URL_PATH);
 
         if (strlen($path_info)) {
             $path = substr($path, 0, 0 - strlen($path_info));
@@ -63,9 +62,9 @@ class RouteHookOneFileMode extends ComponentBase
         ////////////////////////////////////
         $flag = false;
         $url = $this->filteRewrite($url, $flag);
-        $input_path = parse_url($url, PHP_URL_PATH) ?? '';
+        $input_path = (string) parse_url($url, PHP_URL_PATH);
         $input_get = [];
-        parse_str(parse_url($url, PHP_URL_QUERY) ?? '', $input_get);
+        parse_str((string) parse_url($url, PHP_URL_QUERY), $input_get);
         
         $blocks = explode('/', $input_path);
         if (isset($blocks[0])) {
