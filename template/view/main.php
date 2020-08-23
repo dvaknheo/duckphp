@@ -1,9 +1,6 @@
 <?php declare(strict_types=1);
 // use MY\Base\Helper\ViewHelper as V;
     
-    // change this file if you can
-    $skip_in_full = true;
-    $skip_in_full = false;  // @DUCKPHP_KEEP_IN_FULL
 ?>
 <!doctype html>
 <html>
@@ -22,15 +19,6 @@ Now is [<?=$var?>]
     <a href="<?=__url('test/done')?>">查看 Demo 结果</a>
 </div>
 <hr />
-<?php
-    if ($skip_in_full) {
-        ?>
-<div>
-    请使用安装选项 --full 以打开开启 <a href="javascript:;">完整演示</a>
-</div>
-<?php
-    }
-?>
 <div>
 所有例子
 <ul>
@@ -43,7 +31,6 @@ Now is [<?=$var?>]
     <li><a href="/full/auth.php">auth.php 简单的用户验证系统</a>
     <li><a href="/full/blog.php">blog.php 简单的博客</a>
     <li><a href="/full/dbtest.php">dbtest.php 数据库演示</a>
-    <li><a href="/full/index.php">index.php 待整理，旧的自声明文档</a>
     <li><a href="/full/traditional.php">traditional.php 传统模式,一个文件解决，不折腾那么多 </a>
     <li><a href="/full/rpc.php">一个远程调用 json rpc 的例子 </a>
 </ul>

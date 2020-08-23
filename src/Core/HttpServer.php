@@ -162,10 +162,10 @@ class HttpServer extends ComponentBase
     }
     protected function runHttpServer()
     {
-        $PHP = '/usr/bin/env php';
-        $host = escapeshellcmd((string)$this->host);
-        $port = escapeshellcmd((string)$this->port);
-        $document_root = escapeshellcmd($this->docroot);
+        $PHP = escapeshellcmd(PHP_BINARY);
+        $host = escapeshellarg((string)$this->host);
+        $port = escapeshellarg((string)$this->port);
+        $document_root = escapeshellarg($this->docroot);
        
         if (isset($this->args['background'])) {
             $this->options['background'] = true;
