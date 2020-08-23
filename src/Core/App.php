@@ -332,7 +332,9 @@ trait Core_SystemWrapper
         if ($this->system_wrapper_call_check(__FUNCTION__)) {
             return $this->system_wrapper_call(__FUNCTION__, func_get_args());
         }
-        return set_exception_handler($exception_handler);
+		/** @var mixed */
+		$t=$exception_handler;
+        return set_exception_handler($t);
     }
     public function _register_shutdown_function(callable $callback, ...$args)
     {

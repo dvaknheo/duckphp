@@ -3,7 +3,6 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-
 // MAIN FILE
 //dvaknheo@github.com
 //OK，Lazy
@@ -277,14 +276,13 @@ trait Kernel
             $serverData['PATH_INFO'] = $serverData['PATH_INFO'] ?? '';
             return $serverData;
         }
-        $request_path = parse_url($serverData['REQUEST_URI'], PHP_URL_PATH) ?? '';
+        $request_path = (string)parse_url($serverData['REQUEST_URI'], PHP_URL_PATH);
         $request_file = substr($serverData['SCRIPT_FILENAME'], strlen($serverData['DOCUMENT_ROOT']));
         
         if ($request_file === '/index.php' && substr($request_path, 0, strlen($request_file)) !== '/index.php') {
             $path_info = $request_path;
         } else {
             $path_info = substr($request_path, strlen($request_file));
-            $path_info = (string)$path_info;  //shit phpstan
         }
         
         $serverData['PATH_INFO'] = $path_info;

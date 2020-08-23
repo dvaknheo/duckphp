@@ -3,7 +3,6 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\ComponentBase;
@@ -64,8 +63,6 @@ class ExceptionManager extends ComponentBase
             break;
         default:
             throw new \ErrorException($errstr, $errno, $errno, $errfile, $errline);
-                //TODO test more in swoole;
-                break;
         }
         /* Don't execute PHP internal error handler */
         return true;
@@ -107,7 +104,7 @@ class ExceptionManager extends ComponentBase
         if ($this->options['handle_all_exception']) {
             if ($this->system_exception_handler) {
                 $this->last_exception_handler = ($this->system_exception_handler)([$this,'_CallException']);
-            } else {
+            } else {				
                 $this->last_exception_handler = set_exception_handler([$this,'_CallException']);
             }
         }
