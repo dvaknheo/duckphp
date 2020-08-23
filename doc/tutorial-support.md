@@ -43,6 +43,13 @@ svg 架构图形生成
 dot doc/duckphp.gv -T svg -O
 ```
 代码风格检查加代码检查加单元测试
+
 ```
-php-cs-fixer fix src && phpstan analyse && phpunit
+php-cs-fixer fix && phpstan analyse && phpunit
+
 ```
+相关版本
+php-cs-fixer 2.16.4 
+phpstan 0.12.35
+phpunit 9.2.0  // 不是 phpunit 9.3 版哦
+

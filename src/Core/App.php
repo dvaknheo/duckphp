@@ -17,6 +17,7 @@ use DuckPhp\Core\RuntimeState;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapperTrait;
 use DuckPhp\Core\View;
+
 /**
  * MAIN FILE
  * dvaknheo@github.com

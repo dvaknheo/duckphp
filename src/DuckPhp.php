@@ -3,9 +3,9 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-
 //dvaknheo@github.com
 //OK，Lazy
+
 namespace DuckPhp;
 
 use DuckPhp\Core\App;

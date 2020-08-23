@@ -44,7 +44,7 @@ class Route extends ComponentBase
 
     //calculated options;
     protected $namespace_prefix = '';
-    protected $base_class = '';
+    protected $base_class = null;
     protected $index_method = 'index'; //const
 
     //properties
@@ -309,7 +309,9 @@ class Route extends ComponentBase
         $this->calling_class = $full_class;
         $this->calling_method = !empty($method)?$method:'index';
         
-        if (!is_subclass_of($full_class, $this->base_class)) {
+        /** @var mixed */ $base_class = $this->base_class; // phpstan
+        /** @var mixed */ $class = $full_class; // phpstan
+        if (!empty($base_class) && !is_subclass_of($class, $base_class)) {
             $this->route_error = "no the controller_base_class! {$this->base_class} ";
             return null;
         }

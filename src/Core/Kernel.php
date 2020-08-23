@@ -6,6 +6,7 @@
 // MAIN FILE
 //dvaknheo@github.com
 //OK，Lazy
+
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\AutoLoader;

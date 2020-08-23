@@ -3,7 +3,6 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-
 namespace DuckPhp\Ext;
 
 interface PagerInterface
