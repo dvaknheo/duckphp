@@ -88,12 +88,12 @@ class DuckPhp extends App
     }
     
     //@override
-    public static function FireEvent($event, ...$args)
+    public static function _FireEvent($event, ...$args)
     {
         return EventManager::G()->fire($event, ...$args);
     }
     //@override
-    public static function OnEvent($event, $callback)
+    public static function _OnEvent($event, $callback)
     {
         return EventManager::G()->on($event, $callback);
     }

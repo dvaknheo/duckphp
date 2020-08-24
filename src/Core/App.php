@@ -642,25 +642,34 @@ trait Core_NotImplemented
     {
         return static::G()->_DB_R();
     }
-    public function _DB($tag)
-    {
-        throw new \ErrorException("No Impelement");
-    }
-    public function _DB_R()
-    {
-        throw new \ErrorException("No Impelement");
-    }
-    public function _DB_W()
-    {
-        throw new \ErrorException("No Impelement");
-    }
     public static function FireEvent($event, ...$args)
     {
-        throw new \ErrorException("No Impelement");
+        return static::G()->FireEvent($event, ...$args);
     }
     public static function OnEvent($event, $callback)
     {
-        throw new \ErrorException("No Impelement");
+        return static::G()->_OnEvent($event, $callback);
+    }
+    
+    public function _DB($tag)
+    {
+        throw new \ErrorException("DNMVCS No Impelement " . __FUNCTION__);
+    }
+    public function _DB_R()
+    {
+        throw new \ErrorException("DNMVCS No Impelement " . __FUNCTION__);
+    }
+    public function _DB_W()
+    {
+        throw new \ErrorException("DNMVCS No Impelement " . __FUNCTION__);
+    }
+    public static function _FireEvent($event, ...$args)
+    {
+        throw new \ErrorException("DNMVCS No Impelement " . __FUNCTION__);
+    }
+    public static function _OnEvent($event, $callback)
+    {
+        throw new \ErrorException("DNMVCS No Impelement " . __FUNCTION__);
     }
 }
 
