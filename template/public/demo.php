@@ -132,7 +132,7 @@ namespace MySpace\Model
 namespace MySpace\View {
     class Views
     {
-        public function header($data)
+        public static function header($data)
         {
             extract($data); ?>
             <html>
@@ -143,21 +143,21 @@ namespace MySpace\View {
     <?php
         }
 
-        public function main_view($data)
+        public static function main_view($data)
         {
             extract($data); ?>
             <h1><?=$output?></h1>
             <a href="<?=$url_about?>">go to "about/me"</a>
     <?php
         }
-        public function about_me($data)
+        public static function about_me($data)
         {
             extract($data); ?>
             <h1> OK, go back.</h1>
             <a href="<?=$url_main?>">back</a>
     <?php
         }
-        public function footer($data)
+        public static function footer($data)
         {
             ?>
             <footer style="border:1px gray solid;">I am footer</footer>

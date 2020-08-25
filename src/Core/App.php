@@ -644,7 +644,7 @@ trait Core_NotImplemented
     }
     public static function FireEvent($event, ...$args)
     {
-        return static::G()->FireEvent($event, ...$args);
+        return static::G()->_FireEvent($event, ...$args);
     }
     public static function OnEvent($event, $callback)
     {
