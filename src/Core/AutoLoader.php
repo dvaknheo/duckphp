@@ -62,16 +62,24 @@ class AutoLoader
         $path = rtrim($this->options['path'], '/').'/';
         
         $this->namespace = $this->options['namespace'];
-        
-        if (substr($this->options['path_namespace'], 0, 1) === '/') {
-            $this->path_namespace = rtrim($this->options['path_namespace'], '/').'/';
+
+        if (DIRECTORY_SEPARATOR==='/') {
+            if (substr($this->options['path_namespace'], 0, 1) === '/') {
+                $this->path_namespace = rtrim($this->options['path_namespace'], '/').'/';
+            } else {
+                $this->path_namespace = $path.rtrim($this->options['path_namespace'], '/').'/';
+            }
         } else {
-            $this->path_namespace = $path.rtrim($this->options['path_namespace'], '/').'/';
+            if (substr($this->options['path_namespace'], 1, 1) === ':') {
+                $this->path_namespace = rtrim($this->options['path_namespace'], '\\').'\\';
+            }else{
+                $this->path_namespace = $path.rtrim($this->options['path_namespace'], '\\').'\\';
+            }
         }
-        
         if (!$this->options['skip_app_autoload']) {
             $this->assignPathNamespace($this->path_namespace, $this->namespace);
         }
+        
         $this->assignPathNamespace($this->options['autoload_path_namespace_map']);
         
         return $this;
@@ -111,6 +119,7 @@ class AutoLoader
             include_once $file;
             return;
         }
+
         return;
     }
     public function assignPathNamespace($input_path, $namespace = null)

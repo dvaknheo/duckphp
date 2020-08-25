@@ -39,10 +39,18 @@ class ComponentBase implements ComponentInterface
     //helper
     protected function getComponenetPathByKey($path_key)
     {
-        if (substr($this->options[$path_key], 0, 1) === '/') {
-            return rtrim($this->options[$path_key], '/').'/';
+        if (DIRECTORY_SEPARATOR==='/') {
+            if (substr($this->options[$path_key], 0, 1) === '/') {
+                return rtrim($this->options[$path_key], '/').'/';
+            } else {
+                return $this->options['path'].rtrim($this->options[$path_key], '/').'/';
+            }
         } else {
-            return $this->options['path'].rtrim($this->options[$path_key], '/').'/';
+            if (substr($this->options[$path_key], 1, 1) === ':') {
+                return rtrim($this->options[$path_key], '\\').'\\';
+            } else {
+                return $this->options['path'].rtrim($this->options[$path_key], '\\').'\\';
+            }
         }
     }
 }
