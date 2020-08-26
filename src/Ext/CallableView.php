@@ -22,6 +22,12 @@ class CallableView extends View
         parent::__construct();
     }
     //@override
+    /**
+     *
+     * @param array $options
+     * @param object $context
+     * @return $this
+     */
     public function init(array $options, object $context = null)
     {
         parent::init($options, $context);
@@ -30,6 +36,11 @@ class CallableView extends View
         }
         return $this;
     }
+    /**
+     *
+     * @param  string $func
+     * @return ?callable
+     */
     protected function viewToCallback($func)
     {
         $ret = null;
@@ -41,9 +52,9 @@ class CallableView extends View
         return $ret;
     }
     //@override
-    public function _Show(array $data, $view)
+    public function _Show(array $data, ?string $view): void
     {
-        $callback = $this->viewToCallback($view);
+        $callback = $this->viewToCallback((string)$view);
         if (null === $callback) {
             parent::_Show($data, $view);
             return;
@@ -59,13 +70,13 @@ class CallableView extends View
         }
     }
     //@override
-    public function _Display($view, $data = null)
+    public function _Display(string $view, ?array $data = null): void
     {
         $func = $this->viewToCallback($view);
         if (null !== $func) {
             ($func)($data);
             return;
         }
-        return parent::_Show($data, $view);
+        parent::_Display($view, $data);
     }
 }

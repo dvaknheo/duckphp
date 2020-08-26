@@ -6,39 +6,45 @@
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Core\SingletonEx;
 
 class View extends ComponentBase
 {
+    /** @var array */
     public $options = [
         'path' => '',
         'path_view' => 'view',
         'path_view_override' => '',
         'skip_view_notice_error' => true,
     ];
+    /** @var string */
     public $path;
+    /** @var array */
     public $data = [];
     
+    /** @var ?string */
     protected $head_file;
+    /** @var ?string */
     protected $foot_file;
+    /** @var ?string */
     protected $view_file;
+    /** @var int */
     protected $error_reporting_old;
     
     //@override
-    protected function initOptions(array $options)
+    protected function initOptions(array $options): void
     {
         $this->path = parent::getComponenetPathByKey('path_view');
     }
-    public static function Show($data = [], $view)
+    public static function Show(array $data = [], ?string $view = null): void
     {
-        return static::G()->_Show($data, $view);
+        static::G()->_Show($data, $view);
     }
-    public static function Display($view, $data = null)
+    public static function Display(string $view, ?array $data = null): void
     {
-        return static::G()->_Display($view, $data);
+        static::G()->_Display($view, $data);
     }
     
-    public function _Show(array $data, $view)
+    public function _Show(array $data, ?string $view): void
     {
         if ($this->options['skip_view_notice_error'] ?? false) {
             $this->error_reporting_old = error_reporting();
@@ -68,7 +74,7 @@ class View extends ComponentBase
             error_reporting($this->error_reporting_old & ~E_NOTICE);
         }
     }
-    public function _Display($view, $data = null)
+    public function _Display(string $view, ?array $data = null): void
     {
         $this->view_file = $this->getViewFile($this->path, $view);
         $this->data = isset($data)?$data:$this->data;
@@ -78,22 +84,28 @@ class View extends ComponentBase
         
         include $this->view_file;
     }
-    public function reset()
+    public function reset(): void
     {
         $this->head_file = null;
         $this->foot_file = null;
         $this->data = [];
     }
-    public function getViewData()
+    public function getViewData(): array
     {
         return $this->data;
     }
-    public function setViewHeadFoot($head_file, $foot_file)
+    public function setViewHeadFoot(?string $head_file, ?string $foot_file): void
     {
         $this->head_file = $head_file;
         $this->foot_file = $foot_file;
     }
-    public function assignViewData($key, $value = null)
+    /**
+     *
+     * @param mixed $key
+     * @param mixed $value
+     * @return void
+     */
+    public function assignViewData($key, $value = null): void
     {
         if (is_array($key) && $value === null) {
             $this->data = array_merge($this->data, $key);
@@ -101,11 +113,11 @@ class View extends ComponentBase
             $this->data[$key] = $value;
         }
     }
-    public function setOverridePath($path)
+    public function setOverridePath(string $path): void
     {
         $this->options['path_view_override'] = $path;
     }
-    protected function getViewFile($path, $view)
+    protected function getViewFile(string $path, ?string $view): string
     {
         if (empty($view)) {
             return '';

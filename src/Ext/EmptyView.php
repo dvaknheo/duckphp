@@ -22,6 +22,12 @@ class EmptyView extends View
         parent::__construct();
     }
     //@override
+    /**
+     *
+     * @param array $options
+     * @param object $context
+     * @return $this
+     */
     public function init(array $options, object $context = null)
     {
         parent::init($options, $context);
@@ -31,8 +37,9 @@ class EmptyView extends View
         return $this;
     }
     //@override
-    public function _Show($data = [], $view)
+    public function _Show(array $data, ?string $view): void
     {
+        $view = (string)$view;
         $this->data = array_merge($this->data, $data);
         if ($this->options['empty_view_trim_view_wellcome'] ?? true) {
             $prefix = $this->options['empty_view_key_wellcome_class'] ?? 'Main/';
@@ -43,7 +50,7 @@ class EmptyView extends View
         $this->data[$this->options['empty_view_key_view']] = $view;
     }
     //@override
-    public function _Display($view, $data = null)
+    public function _Display(string $view, ?array $data = null): void
     {
         $this->data = isset($data)?$data:$this->data;
         $this->data[$this->options['empty_view_key_skip_head_foot'] ?? 'skip_head_foot'] = true;
