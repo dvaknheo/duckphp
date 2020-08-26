@@ -10,7 +10,7 @@ use DuckPhp\Core\Route;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Ext\RouteHookRewrite;
 
-class RouteHookOneFileMode extends ComponentBase
+class RouteHookPathInfoByGet extends ComponentBase
 {
     public $options = [
         'key_for_action' => '_r',

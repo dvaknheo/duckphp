@@ -8,7 +8,7 @@
     2. 使用 [Ext\DBManager](Ext-DBManager.md)
     3. 使用 [Ext\Pager](Ext-Pager.md)
     4. 使用 [Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
-    5. 使用 [Ext\RouteHookOneFileMode](Ext-RouteHookOneFileMode.md)
+    5. 使用 [Ext\RouteHookPathInfoByGet](Ext-RouteHookPathInfoByGet.md)
     
 
 ## 选项
@@ -17,7 +17,7 @@
 
 'mode_no_path_info' => false,
 
-    设置为 true 加载 Ext\RouteHookOneFileMode,
+    设置为 true 加载 Ext\RouteHookPathInfoByGet,
 'db_before_query_handler' => null,
 
     内部选项，将会填充为 [static::class, 'OnQuery'] 回调。

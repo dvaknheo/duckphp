@@ -156,7 +156,7 @@ test
 ### 如果没有配置 PATH_INFO
 如果你懒得配置 PATH_INFO，把 `public/index.php` 文件这项打开
 ```php
-$options['ext']['DuckPhp\\Ext\\RouteHookOneFileMode']=true;
+$options['ext']['DuckPhp\\Ext\\RouteHookPathInfoByGet']=true;
 ```
 同样访问  http://127.0.0.1:8080/index.php?_r=test/done  也是得到想同测试页面的结果
 

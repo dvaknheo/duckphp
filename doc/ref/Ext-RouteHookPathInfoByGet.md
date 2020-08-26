@@ -1,4 +1,4 @@
-# Ext\RouteHookOneFileMode
+# Ext\RouteHookPathInfoByGet
 
 ## 简介
 单文件模式的扩展

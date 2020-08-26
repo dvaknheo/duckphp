@@ -12,7 +12,7 @@ use DuckPhp\Core\App;
 use DuckPhp\Ext\DBManager;
 use DuckPhp\Ext\EventManager;
 use DuckPhp\Ext\Pager;
-use DuckPhp\Ext\RouteHookOneFileMode;
+use DuckPhp\Ext\RouteHookPathInfoByGet;
 use DuckPhp\Ext\RouteHookRouteMap;
 
 class DuckPhp extends App
@@ -47,7 +47,7 @@ class DuckPhp extends App
     {
         parent::initOptions($options);
         if ($this->options['mode_no_path_info'] ?? false) {
-            $this->options['ext'][RouteHookOneFileMode::class] = $this->options['ext'][RouteHookOneFileMode::class] ?? true;
+            $this->options['ext'][RouteHookPathInfoByGet::class] = $this->options['ext'][RouteHookPathInfoByGet::class] ?? true;
         }
     }
     //@override

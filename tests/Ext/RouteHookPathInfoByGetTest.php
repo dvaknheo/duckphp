@@ -1,20 +1,20 @@
 <?php
 namespace tests\DuckPhp\Ext;
 
-use DuckPhp\Ext\RouteHookOneFileMode;
+use DuckPhp\Ext\RouteHookPathInfoByGet;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\SuperGlobal;
 
-class RouteHookOneFileModeTest extends \PHPUnit\Framework\TestCase
+class RouteHookPathInfoByGetTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(RouteHookOneFileMode::class);
+        \MyCodeCoverage::G()->begin(RouteHookPathInfoByGet::class);
         
         $route_options=[
             'namespace'=>__NAMESPACE__,
             'namespace_controller'=>'\\'.__NAMESPACE__,
-            'controller_welcome_class'=> 'RouteHookOneFileModeTestMain',
+            'controller_welcome_class'=> 'RouteHookPathInfoByGetTestMain',
 
         ];
         Route::G(new Route())->init($route_options);
@@ -23,12 +23,12 @@ class RouteHookOneFileModeTest extends \PHPUnit\Framework\TestCase
             'key_for_action'=>'',
             'key_for_module'=>'',
         ];
-        RouteHookOneFileMode::G()->init($options);
+        RouteHookPathInfoByGet::G()->init($options);
         $options=[
             'key_for_action'=>'_r',
             'key_for_module'=>'',
         ];
-        RouteHookOneFileMode::G()->init($options, Route::G());
+        RouteHookPathInfoByGet::G()->init($options, Route::G());
         
         
 
@@ -44,7 +44,7 @@ class RouteHookOneFileModeTest extends \PHPUnit\Framework\TestCase
         
         echo "------------------------------------------------\n";
 if(true){
-        RouteHookOneFileMode::G()->onURL("zzz");
+        RouteHookPathInfoByGet::G()->onURL("zzz");
         echo "------------------------------------------------\n";
 }
         //x/index.php/init
@@ -57,27 +57,27 @@ if(true){
         ];
         var_dump(Route::URL('/Test'));
 
-        RouteHookOneFileMode::G()->init($options);
+        RouteHookPathInfoByGet::G()->init($options);
         
         var_dump(Route::URL(''));
 
-        var_dump(RouteHookOneFileMode::URL('index.php/bb?cc=dd&m=abc'));
-        var_dump(RouteHookOneFileMode::URL('aa/bb?cc=dd&m=abc'));
-        var_dump(RouteHookOneFileMode::URL('aa/bb?cc=dd&m='));
+        var_dump(RouteHookPathInfoByGet::URL('index.php/bb?cc=dd&m=abc'));
+        var_dump(RouteHookPathInfoByGet::URL('aa/bb?cc=dd&m=abc'));
+        var_dump(RouteHookPathInfoByGet::URL('aa/bb?cc=dd&m='));
 
         //------------
         
-                        RouteHookOneFileMode::G()->isInited();
+                        RouteHookPathInfoByGet::G()->isInited();
 
         \MyCodeCoverage::G()->end();
         /*
-        RouteHookOneFileMode::G()->init($options=[], $context=null);
-        RouteHookOneFileMode::G()->onURL($url=null);
-        RouteHookOneFileMode::G()->hook($route);
+        RouteHookPathInfoByGet::G()->init($options=[], $context=null);
+        RouteHookPathInfoByGet::G()->onURL($url=null);
+        RouteHookPathInfoByGet::G()->hook($route);
         //*/
     }
 }
-class RouteHookOneFileModeTestMain
+class RouteHookPathInfoByGetTestMain
 {    
     function index(){
         var_dump(DATE(DATE_ATOM));

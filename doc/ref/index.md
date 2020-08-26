@@ -70,7 +70,7 @@
    12. [RedisManager.php](Ext-RedisManager.md) Redis管理器组件
    13. [RedisSimpleCache.php](Ext-RedisSimpleCache.md) redis 缓存组件
    14. [RouteHookDirectoryMode.php](Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件
-   15. [RouteHookOneFileMode.php](Ext-RouteHookOneFileMode.md) 无程序路由设计模式组件
+   15. [RouteHookPathInfoByGet.php](Ext-RouteHookPathInfoByGet.md) 无程序路由设计模式组件
    16. [StrictCheck.php](Ext-StrictCheck.md) 严格检查模式组件
             1. [StrictCheckModelTrait.php](Ext-StrictCheckModelTrait.md) 严格检查模式的模型类基类
             2. [StrictCheckServiceTrait.php](Ext-StrictCheckServiceTrait.md) 严格检查模式的服务类基类
@@ -130,7 +130,7 @@
 |   |-- RedisSimpleCache.php
 |   |-- RouteHookDirectoryMode.php
 |   |-- RouteHookManager.php.todo
-|   |-- RouteHookOneFileMode.php
+|   |-- RouteHookPathInfoByGet.php
 |   |-- RouteHookRewrite.php
 |   |-- RouteHookRouteMap.php
 |   |-- StrictCheck.php

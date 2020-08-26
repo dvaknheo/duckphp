@@ -8,7 +8,7 @@ DuckPhp 的路由类比较复杂，也是重点
 **[Core\\Route](ref/Core-Route.md)**
 [Ext\\RouteHookRouteMap](ref/Ext-RouteHookRouteMap.md)
 *[Ext\\RouteHookRewrite](ref/Ext-RouteHookRewrite.md)*
-*[Ext\\RouteHookOneFileMode](ref/Ext-RouteHookOneFileMode.md)*
+*[Ext\\RouteHookPathInfoByGet](ref/Ext-RouteHookPathInfoByGet.md)*
 *[Ext\\RouteHookDirectoryMode](ref/RouteHookDirectoryMode.md)*
 
 ## 相关选项
@@ -134,7 +134,7 @@ return [
 在选项里取消注释的代码加载以下代码
 
 ```php
-$options['ext']['DuckPhp\\Ext\\RouteHookOneFileMode']=true;
+$options['ext']['DuckPhp\\Ext\\RouteHookPathInfoByGet']=true;
 $options['key_for_action' = "_r";
 $options['key_for_module'] = "";
 ```

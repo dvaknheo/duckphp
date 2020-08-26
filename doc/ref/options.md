@@ -162,10 +162,10 @@
     - [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md)
 
 + 'key_for_action' => "_r"
-    - [DuckPhp\Ext\RouteHookOneFileMode](Ext-RouteHookOneFileMode.md)
+    - [DuckPhp\Ext\RouteHookPathInfoByGet](Ext-RouteHookPathInfoByGet.md)
 
 + 'key_for_module' => ""
-    - [DuckPhp\Ext\RouteHookOneFileMode](Ext-RouteHookOneFileMode.md)
+    - [DuckPhp\Ext\RouteHookPathInfoByGet](Ext-RouteHookPathInfoByGet.md)
 
 + 'log_errors' => true
     - [DuckPhp\DuckPhp](App.md)
@@ -525,7 +525,7 @@
 + [DuckPhp\Ext\RouteHookDirectoryMode](Ext-RouteHookDirectoryMode.md)
     - 'mode_dir_basepath' => ""
 
-+ [DuckPhp\Ext\RouteHookOneFileMode](Ext-RouteHookOneFileMode.md)
++ [DuckPhp\Ext\RouteHookPathInfoByGet](Ext-RouteHookPathInfoByGet.md)
     - 'key_for_action' => "_r"
     - 'key_for_module' => ""
 

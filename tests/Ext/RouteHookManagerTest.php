@@ -18,7 +18,7 @@ $options['is_debug'] = true;
 $options['override_class'] = '';
 $options['skip_setting_file'] = true;
 // $options['path_namespace'] = 'app';
-$options['ext']['DuckPhp\\Ext\\RouteHookOneFileMode']=true; //@DUCKPHP_DELETE
+$options['ext']['DuckPhp\\Ext\\RouteHookPathInfoByGet']=true; //@DUCKPHP_DELETE
 
 DuckPhp::G()->init($options);
 Route::G()->bindServerData($_SERVER)->run();
@@ -27,7 +27,7 @@ echo "<pre>\n";
 echo RouteHookManager::G()->dump();
 
 RouteHookManager::G()->attachPostRun()->removeAll(['DuckPhp\\Ext\\RouteHookRouteMap','AppendHook'])->detach();
-RouteHookManager::G()->attachPreRun()->moveBefore(['DuckPhp\\Ext\\RouteHookRouteMap','PrependHook'],['DuckPhp\\Ext\\RouteHookOneFileMode','Hook'])->detach();
+RouteHookManager::G()->attachPreRun()->moveBefore(['DuckPhp\\Ext\\RouteHookRouteMap','PrependHook'],['DuckPhp\\Ext\\RouteHookPathInfoByGet','Hook'])->detach();
 $list=RouteHookManager::G()->attachPostRun()->getHookList();
 $list[]="abc";
 RouteHookManager::G()->attachPostRun()->setHookList($list);

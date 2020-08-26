@@ -196,7 +196,7 @@ namespace MySpace\System
                 // DuckPhp 也支持  .env 文件配置模式。
              
             'ext' => [
-                RouteHookOneFileMode::class => true,
+                RouteHookPathInfoByGet::class => true,
                     // 开启单一文件模式，服务器不配置也能运行
                 CallableView::class => true,
                     // 默认的 View 不支持函数调用，我们用扩展 CallableView 代替系统的 View
@@ -303,7 +303,7 @@ namespace MySpace\Model
 namespace MySpace\View {
     class Views
     {
-        public function header($data)
+        public static function header($data)
         {
             extract($data); ?>
             <html>
@@ -314,7 +314,7 @@ namespace MySpace\View {
     <?php
         }
 
-        public function main_view($data)
+        public static function main_view($data)
         {
             extract($data); ?>
             <h1><?=$output?></h1>
