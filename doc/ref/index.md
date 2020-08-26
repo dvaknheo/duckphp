@@ -62,13 +62,11 @@
    4. [RouteHookRewrite.php](Ext-RouteHookRewrite.md) 路由重写组件
    5. [Misc.php](Ext-Misc.md) 杂项功能组件
    6. [CallableView.php](Ext-CallableView.md) 可接受函数调用的视图组件
-   7. [DBReusePoolProxy.php](Ext-DBReusePoolProxy.md) DB连接池组件，小心使用
    8. [EmptyView.php](Ext-EmptyView.md) 空视图组件
    9. [FacadesAutoLoader.php](Ext-FacadesAutoLoader.md) 门面组件用于偷懒
         1. [FacadesBase.php](Ext-FacadesBase.md) 门面类的基类
    10. [JsonRpcExt.php](Ext-JsonRpcExt.md) Json 远程调用组件
          1. [JsonRpcClientBase.php](Ext-JsonRpcClientBase.md)
-   11. [PluginForSwooleHttpd.php](Ext-PluginForSwooleHttpd.md) 支持 SwooleHttpd 的组件
    12. [RedisManager.php](Ext-RedisManager.md) Redis管理器组件
    13. [RedisSimpleCache.php](Ext-RedisSimpleCache.md) redis 缓存组件
    14. [RouteHookDirectoryMode.php](Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件

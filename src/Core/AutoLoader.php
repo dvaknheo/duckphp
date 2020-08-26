@@ -63,7 +63,7 @@ class AutoLoader
         
         $this->namespace = $this->options['namespace'];
 
-        if (DIRECTORY_SEPARATOR==='/') {
+        if (DIRECTORY_SEPARATOR === '/') {
             if (substr($this->options['path_namespace'], 0, 1) === '/') {
                 $this->path_namespace = rtrim($this->options['path_namespace'], '/').'/';
             } else {
@@ -72,7 +72,7 @@ class AutoLoader
         } else { // @codeCoverageIgnoreStart
             if (substr($this->options['path_namespace'], 1, 1) === ':') {
                 $this->path_namespace = rtrim($this->options['path_namespace'], '\\').'\\';
-            }else{
+            } else {
                 $this->path_namespace = $path.rtrim($this->options['path_namespace'], '\\').'\\';
             }
         } // @codeCoverageIgnoreEnd

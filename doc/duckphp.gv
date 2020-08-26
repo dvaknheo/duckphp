@@ -109,11 +109,7 @@ subgraph cluster_Helper {
 
 }
 
-
-
-
 subgraph cluster_DB {
-    
     label = "[DuckPhp\\DB]";
 
     DB_DB [label="DB"];
@@ -124,16 +120,14 @@ subgraph cluster_DB {
     DB_DB -> DB_DBInterface;
 }
 
-
-
 subgraph cluster_Ext {
-    
     label = "[DuckPhp\\Ext]";
 
     CallableView[shape="component"];
+    Cache[shape="component"];
     DBManager[shape="component"];
-    DBReusePoolProxy[shape="component"];
     EmptyView[shape="component"];
+    EventManager[shape="component"];
     FacadesAutoLoader[shape="component"];
     FacadesBase ;
     JsonRpcClientBase ;
@@ -141,7 +135,6 @@ subgraph cluster_Ext {
     Misc[shape="component"];
     Pager[shape="component"];
     PagerInterface [shape=note];
-    PluginForSwooleHttpd[shape="component"];
     RedisManager[shape="component"];
     RedisSimpleCache[shape="component"];
     RouteHookDirectoryMode[shape="component"];
@@ -152,12 +145,10 @@ subgraph cluster_Ext {
     StrictCheck[shape="component"];
     StrictModelTrait [shape=diamond];
     StrictServiceTrait [shape=diamond];
-    EventManager [shape="component"];
-    WrapperWithException [shape="component"];
+    ExceptionWrapper [shape="component"];
 
     DBManager -> DB_DB;
     CallableView ->Core_View; 
-    DBReusePoolProxy ->DBManager;
     EmptyView ->Core_View; 
     JsonRpcClientBase ->JsonRpcExt;
     FacadesBase -> FacadesAutoLoader;
@@ -172,7 +163,7 @@ subgraph cluster_Ext {
     Misc -> Core_ComponentBase [style="dotted"];
     RedisSimpleCache -> Core_ComponentBase [style="dotted"];
     RedisManager -> Core_ComponentBase [style="dotted"];
-    PluginForSwooleHttpd -> Core_ComponentBase [style="dotted"];
+    Cache -> Core_ComponentBase [style="dotted"];
     StrictCheck -> Core_ComponentBase [style="dotted"];
     RouteHookDirectoryMode -> Core_ComponentBase [style="dotted"];
     RouteHookManager -> Core_ComponentBase [style="dotted"];
@@ -182,12 +173,10 @@ subgraph cluster_Ext {
     DBManager -> Core_ComponentBase [style="dotted"];
 
     EventManager -> Core_ComponentBase [style="dotted"];
-    WrapperWithException -> Core_ComponentBase [style="dotted"];
+    ExceptionWrapper -> Core_ComponentBase [style="dotted"];
 }
 
-
 subgraph cluster_DuckPhp {
-    
     label = "[DuckPhp]";
     node [style=filled];
 
@@ -199,6 +188,7 @@ subgraph cluster_DuckPhp {
     DuckPhp -> DBManager;
     DuckPhp -> EventManager;
     DuckPhp -> RouteHookOneFileMode;
+    DuckPhp -> Cache;
 
     DuckPhp [shape=Mdiamond];
     HttpServer [shape=Mdiamond;style=filled];
