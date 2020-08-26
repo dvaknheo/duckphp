@@ -15,6 +15,7 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \MyCodeCoverage::G()->begin(StrictCheck::class);
+        $database_list = include \MyCodeCoverage::G()->options['path_data'] . 'database_list.php';
 
         $dn_options=[
             'skip_setting_file'=>true,
@@ -25,15 +26,7 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
             'error_debug'=>null,
             'namespace'=> __NAMESPACE__,
             'controller_welcome_class'=> 'StrictCheckTestMain',
-            'database_list'=>[[
-                'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
-                'username'=>'admin',	
-                'password'=>'123456'
-            ],[
-                'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
-                'username'=>'admin',	
-                'password'=>'123456'
-            ]],
+            'database_list'=>$database_list,
 
         ];
         StrictCheck::G(new StrictCheck_FakeObject);

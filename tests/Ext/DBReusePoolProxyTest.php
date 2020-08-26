@@ -13,8 +13,8 @@ class DBReusePoolProxyTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
     $this->assertTrue(true); return;
-    
         \MyCodeCoverage::G()->begin(DBReusePoolProxy::class);
+        $database_list = include \MyCodeCoverage::G()->options['path_data'] . 'database_list.php';
 ////[[[[
     DBManager::G(DBReusePoolProxy::G());
 $dn_options=[
@@ -27,35 +27,14 @@ $dn_options=[
         'db_excption_handler'=>null,
         'db_before_get_object_handler'=>[null,'beforeGet'],
         
-        'database_list'=>[[
-	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
-	'username'=>'admin',	
-	'password'=>'123456'
-],
-[
-	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
-	'username'=>'admin',	
-	'password'=>'123456'
-]
-],
+        'database_list'=>$database_list,
             'use_context_db_setting'=>true,
         ];
         
 
         App::G()->extendComponents(static::class,['beforeGet'],[]);
         DBManager::G()->init($options,App::G());
-        $options['database_list']=[[
-	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
-	'username'=>'admin',	
-	'password'=>'123456'
-],
-[
-	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
-	'username'=>'admin',	
-	'password'=>'123456'
-]
-]
-;
+        $options['database_list']=$database_list;
         DBManager::G()->init($options,null);
         
         DBManager::G()->setDBHandler([DB::class,'CreateDBInstance'],[DB::class,'CloseDBInstance'],function(){echo "Exception!";});
@@ -77,11 +56,7 @@ $dn_options=[
         'db_excption_handler'=>null,
         'before_get_db_handler'=>null,
         
-        'database_list'=>[[
-	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
-	'username'=>'admin',	
-	'password'=>'123456'
-]],
+        'database_list'=>$database_list,
             'use_context_db_setting'=>true,
         ];
         DBManager::G(new DBManager())->init($options);
@@ -107,25 +82,11 @@ $options=[
         'db_excption_handler'=>null,
         'before_get_db_handler'=>null,
         
-        'database_list'=>[[
-	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
-	'username'=>'admin',	
-	'password'=>'123456'
-]],
+        'database_list'=>$database_list,
             'use_context_db_setting'=>true,
         ];    
-$options['database_list']=[[
-	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
-	'username'=>'admin',	
-	'password'=>'123456'
-],
-[
-	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
-	'username'=>'admin',	
-	'password'=>'123456'
-]
-]
-;
+$options['database_list']=$database_list;
+
         DBManager::G()->init($options,null);
         DBManager::G()->setDBHandler([DB::class,'CreateDBInstance'],null,[static::class,'onExceptions' ]);
 DBManager::G()->_DB();

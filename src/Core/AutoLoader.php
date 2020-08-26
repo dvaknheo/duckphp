@@ -69,13 +69,13 @@ class AutoLoader
             } else {
                 $this->path_namespace = $path.rtrim($this->options['path_namespace'], '/').'/';
             }
-        } else {
+        } else { // @codeCoverageIgnoreStart
             if (substr($this->options['path_namespace'], 1, 1) === ':') {
                 $this->path_namespace = rtrim($this->options['path_namespace'], '\\').'\\';
             }else{
                 $this->path_namespace = $path.rtrim($this->options['path_namespace'], '\\').'\\';
             }
-        }
+        } // @codeCoverageIgnoreEnd
         if (!$this->options['skip_app_autoload']) {
             $this->assignPathNamespace($this->path_namespace, $this->namespace);
         }

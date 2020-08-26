@@ -45,12 +45,12 @@ class ComponentBase implements ComponentInterface
             } else {
                 return $this->options['path'].rtrim($this->options[$path_key], '/').'/';
             }
-        } else {
+        } else { // @codeCoverageIgnoreStart
             if (substr($this->options[$path_key], 1, 1) === ':') {
                 return rtrim($this->options[$path_key], '\\').'\\';
             } else {
                 return $this->options['path'].rtrim($this->options[$path_key], '\\').'\\';
             }
-        }
+        } // @codeCoverageIgnoreStart
     }
 }
