@@ -8,14 +8,9 @@ class RedisSimpleCacheTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \MyCodeCoverage::G()->begin(RedisSimpleCache::class);
-        
+        $redis_list = include \MyCodeCoverage::G()->options['path_data'] . 'redis_list.php';
         $options=[
-            'redis_list'=>[[
-                'host'=>'127.0.0.1',
-                'port'=>'6379',
-                'auth'=>'cgbauth',
-                'select'=>'2',
-            ]],
+            'redis_list'=>$redis_list,
         ];
         RedisManager::G()->init($options);
         
