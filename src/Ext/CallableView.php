@@ -52,9 +52,9 @@ class CallableView extends View
         return $ret;
     }
     //@override
-    public function _Show(array $data, ?string $view): void
+    public function _Show(array $data, string $view): void
     {
-        $callback = $this->viewToCallback((string)$view);
+        $callback = $this->viewToCallback($view);
         if (null === $callback) {
             parent::_Show($data, $view);
             return;

@@ -37,9 +37,8 @@ class EmptyView extends View
         return $this;
     }
     //@override
-    public function _Show(array $data, ?string $view): void
+    public function _Show(array $data, string $view): void
     {
-        $view = (string)$view;
         $this->data = array_merge($this->data, $data);
         if ($this->options['empty_view_trim_view_wellcome'] ?? true) {
             $prefix = $this->options['empty_view_key_wellcome_class'] ?? 'Main/';

@@ -35,7 +35,7 @@ class View extends ComponentBase
     {
         $this->path = parent::getComponenetPathByKey('path_view');
     }
-    public static function Show(array $data = [], ?string $view = null): void
+    public static function Show(array $data = [], string $view = null): void
     {
         static::G()->_Show($data, $view);
     }
@@ -44,7 +44,7 @@ class View extends ComponentBase
         static::G()->_Display($view, $data);
     }
     
-    public function _Show(array $data, ?string $view): void
+    public function _Show(array $data, string $view): void
     {
         if ($this->options['skip_view_notice_error'] ?? false) {
             $this->error_reporting_old = error_reporting();

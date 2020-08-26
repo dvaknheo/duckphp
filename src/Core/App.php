@@ -433,7 +433,7 @@ trait Core_Helper
         //you can override this;
         return $this->options['is_debug'];
     }
-    public static function Show($data = [], $view = null)
+    public static function Show($data = [], $view = '')
     {
         return static::G()->_Show($data, $view);
     }
@@ -463,20 +463,13 @@ trait Core_Helper
         return $ret;
     }
     ////
-    public function _Show($data = [], $view = null)
+    public function _Show($data = [], $view = '')
     {
         foreach ($this->beforeShowHandlers as $v) {
             ($v)();
         }
-        $view = $view ?? Route::G()->getRouteCallingPath();
+        $view = $view ==='' ? Route::G()->getRouteCallingPath() : $view;
         
-        if ($this->options['is_debug']) {
-            View::G()->assignViewData([
-                '__is_debug' => $this->options['is_debug'],
-                '__duckphp_is_debug' => $this->options['is_debug'],
-                '__duckphp_platform' => $this->options['platform'],
-            ]);
-        }
         return View::G()->_Show($data, $view);
     }
     public function _H(&$str)
