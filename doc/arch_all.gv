@@ -1,0 +1,105 @@
+digraph G{
+/* This is a graphviz file */
+graph [rankdir = "LR"];
+
+subgraph g_Helper {
+    label = "[My\\Base\\Helper]";
+node [style=filled,color=gray];
+
+    ControllerHelper [label="ControllerHelper as C"];
+    BusinessHelper [label="BusinessHelper as S"];
+    ModelHepler [label="ModelHepler as M"];
+    ViewHepler [label="ViewHepler as V"];
+}
+subgraph g_Model {
+style=filled;
+node [style=filled,color=brown];
+    Table1Model;
+    Table2Model;
+    Table3Model;
+    Table1ExModel;
+ 
+}
+subgraph g_View {
+label = "[View]";
+node [style=filled,color=green];
+    ViewA -> ViewHepler;
+    ViewB -> ViewHepler;
+    ViewC -> ViewHepler;
+}
+subgraph g_Controller {
+label = "[Controller]";
+node [style=filled,color=red];
+        
+    ControllerA;
+    ControllerB;
+    ControllerC;
+
+}
+
+subgraph g_Business {
+label = "[Business]";
+node [style=filled,color=yellow];
+    XBusiness;
+    YBusiness;
+    ZBusiness;
+    
+    XxLib;
+    
+
+
+}
+
+subgraph g_relation {
+
+    ControllerA -> ControllerHelper[style="dotted"];
+    ControllerB -> ControllerHelper[style="dotted"];
+    ControllerC -> ControllerHelper[style="dotted"];
+    XBusiness -> BusinessHelper[style="dotted"];
+    YBusiness -> BusinessHelper[style="dotted"];
+    ZBusiness -> BusinessHelper[style="dotted"];
+    
+    Table1Model -> ModelHepler[style="dotted"];
+    Table2Model -> ModelHepler[style="dotted"];
+    Table3Model -> ModelHepler[style="dotted"];
+    
+    XxLib -> BusinessHelper[style="dotted"];
+    Table1ExModel -> ModelHepler[style="dotted"];
+    
+    ControllerA -> ViewA;
+    ControllerB -> ViewB;
+    ControllerC -> ViewC;
+    
+    ControllerA -> XBusiness;
+    ControllerB -> YBusiness;
+    ControllerC -> ZBusiness;
+    
+
+
+
+
+    YBusiness -> Table1Model;
+    ZBusiness -> Table1Model;
+    YBusiness->Table2Model;
+    ZBusiness->Table3Model;
+    
+    XBusiness->XxLib;
+    YBusiness->XxLib;
+
+    XBusiness -> Table1ExModel;
+    ZBusiness -> Table1ExModel;
+    
+    XBusiness->Table1Model;
+    XxLib ->Table1ExModel;
+    XxLib ->Table1Model;
+    
+
+    Table1ExModel -> Table1Model;
+    Table1ExModel -> Table2Model;
+
+
+    
+}
+
+
+}
