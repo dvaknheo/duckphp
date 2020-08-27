@@ -1,8 +1,7 @@
 <?php
 require_once(__DIR__.'/../autoload.php');
 
-$t = GenOptionsGenerator::G()->init([])->fetch();
-var_dump($t);
+GenOptionsGenerator::G()->init([])->run();
 
 //以options 为核心，其他都是 key ， 只要一个 value
 
@@ -10,7 +9,14 @@ var_dump($t);
 //echo dumpByFile();
 //dumpByFile();
 
+// $options['handle_all_dev_error'] = true;
+// $options['handle_all_exception'] = true;
+// $options['route_map'] = array ( );
+// $options['route_map_by_config_name'] = '';
+// $options['route_map_important'] = array ( );
+        
 return;
+
 class GenOptionsGenerator
 {
     public static function G($object=null)
@@ -23,10 +29,13 @@ class GenOptionsGenerator
     {
         return $this;
     }
-    public function fetch()
+    public function run()
     {
         $options=$this->getAllOptions();
+        // echo $this->getDefaultOptionsString($options);
+        echo $this->getExtOptionsString($options);
     }
+    
     function getAllOptions()
     {
         $classes=getAllComponentClasses();
@@ -34,46 +43,61 @@ class GenOptionsGenerator
         $ret=[];
         foreach($classes as $class){
             $options=(new $class())->options;
-            foreach($options as $option){
-                $ret[$option]=true;
+            foreach($options as $option => $value){
+                $ret[$option]=$ret[$option]??[];
+                $v= &$ret[$option];
+                $v['solid']=in_array($option,getKernelOptions());
+                $v['is_default']=$v['is_default']??false;
+                $v['is_default']=$v['is_default'] || in_array($class,getDefaultComponentClasses());
+
+                $v['defaut_value']=$value;
+                $v['class']=$v['class']??[];
+                $v['class'][]=$class;
+                unset($v);
             }
         }
+        
         ksort($ret);
         return $ret;
     }
-    
-}
-/**
-$option[
-    'value',
-    'class',
-    'is_default',
-    
-    ]
-*/
-
-function getDefaultOptions()
-{
-    $classes=getDefaultComponentClasses();
-    $classes=explode("\n",$classes);
-    $ret=[];
-    foreach($classes as $class){
-        $options=(new $class())->options;
-        foreach($options as $k =>$v){
+    protected function getDefaultOptionsString($input)
+    {
+        $data=[];
+        foreach($input as $option => $attrs) {
+            
+            if($attrs['solid']){ continue; }
+            if(!$attrs['is_default']){ continue; }
+            $v=$attrs['defaut_value'];
             $s=var_export($v,true);
             if(is_array($v)){
                 $s=str_replace("\n",' ',$s);
             }
-            $k="        // \$options['$k'] = ".$s.";";
-            if(!isset($ret[$k])){
-                $ret[$k]=[];
+            $data[$option]=$s;
+        }
+        $ret=[];
+        foreach($data as $k =>$v){
+            $ret[]="        // \$options['$k'] = {$v};\n            // --\n";
+        }
+        return implode("",$ret);
+    }
+    protected function getExtOptionsString()
+    {
+        $classes=getAviableExtClasses();
+
+        foreach($classes as $class){
+            $options=(new $class())->options;
+            ksort($options);
+            echo "        /*\n";
+            echo "        \$options['ext'][".var_export($class,true)."] = true;\n";
+            foreach($options as $k =>$v){
+                echo "            \$options[".var_export($k,true)."]=".var_export($v,true).";\n";
             }
-            $ret[$k][]=$class;
+            echo "        //*/\n";
         }
     }
-    ksort($ret);
-    return implode("\n",array_keys($ret))."\n";
+
 }
+
 function GetAviableExtentions()
 {
     $classes=getAviableExtClasses();
@@ -141,6 +165,14 @@ function dumpByFile()
     }
 }
 /////////////////////
+function getInDependComponentClasses()
+{
+$classes="DuckPhp\\Core\\HttpServer
+DuckPhp\\Ext\\Pager
+";
+    $classes=explode("\n",$classes);
+    return $classes;
+}
 function getDefaultComponentClasses()
 {
     $classes="DuckPhp\\DuckPhp
@@ -152,7 +184,11 @@ DuckPhp\\Core\\RuntimeState
 DuckPhp\\Core\\SuperGlobal
 DuckPhp\\Core\\View
 DuckPhp\\Ext\\DBManager
-DuckPhp\\Ext\\RouteHookRouteMap";
+DuckPhp\\Ext\\Pager
+DuckPhp\\Ext\\RouteHookPathInfoByGet
+DuckPhp\\Ext\\RouteHookRouteMap
+DuckPhp\\Ext\\Cache
+DuckPhp\\Ext\\EventManager";
     $classes=explode("\n",$classes);
     return $classes;
 }
@@ -172,15 +208,13 @@ DuckPhp\\Core\\View
 DuckPhp\\Ext\\CallableView
 DuckPhp\\Ext\\EmptyView
 DuckPhp\\Ext\\DBManager
-DuckPhp\\Ext\\DBReusePoolProxy
 DuckPhp\\Ext\\FacadesAutoLoader
 DuckPhp\\Ext\\JsonRpcExt
 DuckPhp\\Ext\\Misc
-DuckPhp\\Ext\\PluginForSwooleHttpd
 DuckPhp\\Ext\\RedisManager
 DuckPhp\\Ext\\RedisSimpleCache
 DuckPhp\\Ext\\RouteHookDirectoryMode
-DuckPhp\\Ext\\RouteHookOneFileMode
+DuckPhp\\Ext\\RouteHookPathInfoByGet
 DuckPhp\\Ext\\RouteHookRewrite
 DuckPhp\\Ext\\RouteHookRouteMap
 DuckPhp\\Ext\\StrictCheck
