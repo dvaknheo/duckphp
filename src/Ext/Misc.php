@@ -83,7 +83,8 @@ class Misc extends ComponentBase
     }
     public function _Import($file)
     {
-        include_once $this->path.rtrim($file, '.php').'.php';
+        $file = preg_replace('/\.php$/', '', $file).'.php';
+        include_once $this->path.$file;
     }
     
     public function _RecordsetUrl($data, $cols_map = [])
