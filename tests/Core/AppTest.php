@@ -155,6 +155,13 @@ App::PageHtml(123);
         App::COOKIE('a');
         App::SERVER('SCRIPT_FILENAME');
         
+        App::GET();
+        App::POST();
+        App::REQUEST();
+        App::COOKIE();
+        App::SERVER();
+        
+        
         App::dumpAllRouteHooksAsString();
         try{
             App::ThrowOn(false,"HH");

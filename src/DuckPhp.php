@@ -38,6 +38,7 @@ class DuckPhp extends App
         $this->options = array_merge($options, $this->options);
         $ext = [
             DBManager::class => true,
+            RouteHookPathInfoByGet::class => true,
             RouteHookRouteMap::class => true,
         ];
         $this->options['ext'] = array_merge($ext, $this->options['ext']);

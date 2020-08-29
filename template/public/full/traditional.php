@@ -116,10 +116,11 @@ function action_do_add()
 ////////////////////////////////////
 session_start();
 $options = [];
-$options['skip_setting_file'] = true;
 $options['is_debug'] = true;
+$options['skip_setting_file'] = true;
+$options['use_path_info_by_get'] = true;
+
 $options['ext'][\DuckPhp\Ext\EmptyView::class] = true;
-$options['ext'][\DuckPhp\Ext\RouteHookOneFileMode::class] = true;
 
 $flag=DuckPhp::RunQuickly($options,'onInit');
 if(!$flag){

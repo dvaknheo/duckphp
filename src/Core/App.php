@@ -468,8 +468,7 @@ trait Core_Helper
         foreach ($this->beforeShowHandlers as $v) {
             ($v)();
         }
-        $view = $view ==='' ? Route::G()->getRouteCallingPath() : $view;
-        
+        $view = $view === '' ? Route::G()->getRouteCallingPath() : $view;
         return View::G()->_Show($data, $view);
     }
     public function _H(&$str)
@@ -812,25 +811,45 @@ trait Core_Glue
         return SuperGlobal::G()->session_set_save_handler($handler);
     }
     
-    public static function GET($key, $default = null)
+    public static function GET($key = null, $default = null)
     {
-        return static::SG()->_GET[$key] ?? $default;
+        if (isset($key)) {
+            return static::SG()->_GET[$key] ?? $default;
+        } else {
+            return static::SG()->_GET ?? $default;
+        }
     }
-    public static function POST($key, $default = null)
+    public static function POST($key = null, $default = null)
     {
-        return static::SG()->_POST[$key] ?? $default;
+        if (isset($key)) {
+            return static::SG()->_POST[$key] ?? $default;
+        } else {
+            return static::SG()->_POST ?? $default;
+        }
     }
-    public static function REQUEST($key, $default = null)
+    public static function REQUEST($key = null, $default = null)
     {
-        return static::SG()->_REQUEST[$key] ?? $default;
+        if (isset($key)) {
+            return static::SG()->_REQUEST[$key] ?? $default;
+        } else {
+            return static::SG()->_REQUEST ?? $default;
+        }
     }
-    public static function COOKIE($key, $default = null)
+    public static function COOKIE($key = null, $default = null)
     {
-        return static::SG()->_COOKIE[$key] ?? $default;
+        if (isset($key)) {
+            return static::SG()->_COOKIE[$key] ?? $default;
+        } else {
+            return static::SG()->_COOKIE ?? $default;
+        }
     }
-    public static function SERVER($key, $default = null)
+    public static function SERVER($key = null, $default = null)
     {
-        return static::SG()->_SERVER[$key] ?? $default;
+        if (isset($key)) {
+            return static::SG()->_SERVER[$key] ?? $default;
+        } else {
+            return static::SG()->_SERVER ?? $default;
+        }
     }
 }
 trait Core_Component

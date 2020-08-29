@@ -17,10 +17,11 @@ $options = [];
 $options['is_debug'] = true;
 $options['override_class'] = '';
 $options['skip_setting_file'] = true;
-// $options['path_namespace'] = 'app';
-$options['ext']['DuckPhp\\Ext\\RouteHookPathInfoByGet']=true; //@DUCKPHP_DELETE
+$options['use_path_info_by_get'] = true;
 
 DuckPhp::G()->init($options);
+///////////////////////////
+
 Route::G()->bindServerData($_SERVER)->run();
 //Route::G()->addRouteHook(function(){},'prepend-inner');
 echo "<pre>\n";

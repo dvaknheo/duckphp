@@ -71,7 +71,7 @@ class ControllerHelper
         return App::dumpAllRouteHooksAsString();
     }
     ///////////////
-    public static function Show($data = [], $view = null)
+    public static function Show($data = [], $view = '')
     {
         return App::Show($data, $view);
     }

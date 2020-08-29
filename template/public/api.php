@@ -14,12 +14,12 @@ class MyApp extends DuckPhp
     protected function __construct()
     {
         $this->options['skip_setting_file']=true;
-        $this->options['is_debug']=true;
         parent::__construct();
         $this->options['ext'][Misc::class]=true;
     }
     protected function OnInit()
     {
+        $this->options['is_debug']=true;
         static::addRouteHook([static::class,'Hook'], 'prepend-inner');
     }
     public static function Hook($path_info)
@@ -31,15 +31,13 @@ class MyApp extends DuckPhp
 
         $class=implode('/',$class_array);
         $class = static::G()->options['api_class_prefix'] . $class;
-
         $object = new $class;
         
         if(static::IsDebug()){
-            $input = $_REQUEST; // To fixed bug  static::Request(null);
+            $input = $_REQUEST;
         }else{
             $input = $_POST;
         }
-        
         
         static::setDefaultExceptionHandler(function($e){
             static::ExitJson([
@@ -56,7 +54,8 @@ class MyApp extends DuckPhp
     }
     public function _ExitJson($ret, $exit = true)
     {
-        //覆盖父类的 ExitJson
+        //覆盖父类的 ExitJson ， route hook 的话可以用
+        
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Headers: Authori-zation,Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since, X-Requested-With');
         header('Access-Control-Allow-Methods: GET,POST,PATCH,PUT,DELETE,OPTIONS,DELETE');
@@ -68,11 +67,8 @@ class BaseApi
 {
     //use \DuckPhp\Core\SingletonEx;
 }
-$options=[
-    'path' => __DIR__,  // path 要指定。不指定会发生一个 bug. 控制器那套这里没用上了。
-];
-MyApp::RunQuickly($options,function(){
-});
+
+MyApp::RunQuickly([]);
 ////
 /// 后面是业务代码
 // 这里自己加 api 

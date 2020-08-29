@@ -20,11 +20,22 @@ class RouteHookPathInfoByGetTest extends \PHPUnit\Framework\TestCase
         Route::G(new Route())->init($route_options);
         
         $options=[
+            'use_path_info_by_get'=>false,
+            'key_for_action'=>'',
+            'key_for_module'=>'',
+
+        ];
+        RouteHookPathInfoByGet::G(new RouteHookPathInfoByGet())->init($options, Route::G());
+        
+        $options=[
+            'use_path_info_by_get'=>true,
             'key_for_action'=>'',
             'key_for_module'=>'',
         ];
-        RouteHookPathInfoByGet::G()->init($options);
+        RouteHookPathInfoByGet::G(new RouteHookPathInfoByGet())->init($options);
         $options=[
+            'use_path_info_by_get'=>true,
+
             'key_for_action'=>'_r',
             'key_for_module'=>'',
         ];

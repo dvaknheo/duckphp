@@ -13,19 +13,10 @@ use DuckPhp\Ext\RouteHookRewrite;
 class RouteHookPathInfoByGet extends ComponentBase
 {
     public $options = [
-        'use_path_info_by_get'=>false,
+        'use_path_info_by_get' => false,
         'key_for_action' => '_r',
         'key_for_module' => '',
     ];
-    public $key_for_action = '_r';
-    public $key_for_module = '';
-    
-    //@override
-    protected function initOptions(array $options)
-    {
-        $this->key_for_action = $this->options['key_for_action'];
-        $this->key_for_module = $this->options['key_for_module'];
-    }
     //@override
     protected function initContext(object $context)
     {
@@ -46,8 +37,8 @@ class RouteHookPathInfoByGet extends ComponentBase
             return $url;
         };
         
-        $key_for_action = $this->key_for_action;
-        $key_for_module = $this->key_for_module;
+        $key_for_action = $this->options['key_for_action'];
+        $key_for_module = $this->options['key_for_module'];
         $get = [];
         $path = '';
         
@@ -115,8 +106,8 @@ class RouteHookPathInfoByGet extends ComponentBase
     }
     public function _Hook($path_info)
     {
-        $k = $this->key_for_action;
-        $m = $this->key_for_module;
+        $k = $this->options['key_for_action'];
+        $m = $this->options['key_for_module'];
         
         //$old_path_info=SuperGlobal::G()->_SERVER['PATH_INFO']??'';
         
