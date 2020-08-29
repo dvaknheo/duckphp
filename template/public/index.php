@@ -13,12 +13,13 @@ $options = [
 //    'skip_plugin_mode_check' => false,
 //    'handle_all_dev_error' => true,
 //    'handle_all_exception' => true,
-//    'override_class' => 'Base\App',
-//    'path_namespace'
+    'override_class' => 'System\App',
+//    'path_namespace' => 'app',
 ];
 $options['path'] = $path;
 $options['namespace'] = $namespace;
-// $options['path_namespace'] = 'app';
+$options['is_debug'] = true;
+//$options['skip_setting_file'] = true;
 
 // $options['use_path_info_by_get']=false;
 $options['use_path_info_by_get']=true; //@DUCKPHP_DELETE

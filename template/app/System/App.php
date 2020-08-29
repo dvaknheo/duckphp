@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace LazyToChange\Base;
+namespace LazyToChange\System;
 
 use DuckPhp\DuckPhp;
 

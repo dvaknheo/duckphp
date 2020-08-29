@@ -4,11 +4,11 @@
  * From this time, you never be alone~
  */
 
-namespace LazyToChange\Base;
+namespace LazyToChange\System;
 
 use DuckPhp\Core\SingletonEx;
 
-// use DuckPhp\Base\StrictModelTrait;
+// use DuckPhp\Ext\StrictModelTrait;
 
 class BaseModel
 {

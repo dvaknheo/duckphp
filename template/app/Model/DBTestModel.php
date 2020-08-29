@@ -6,8 +6,8 @@
 
 namespace LazyToChange\Model;
 
-use LazyToChange\Base\BaseModel;
-use LazyToChange\Base\Helper\ModelHelper as M;
+use LazyToChange\System\BaseModel;
+use LazyToChange\System\Helper\ModelHelper as M;
 
 class DBTestModel extends BaseModel
 {

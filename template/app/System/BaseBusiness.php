@@ -4,13 +4,13 @@
  * From this time, you never be alone~
  */
 
-namespace LazyToChange\Base;
+namespace LazyToChange\System;
 
 use DuckPhp\Core\SingletonEx;
 
-// use DuckPhp\Base\StrictServiceTrait;
+// use DuckPhp\Ext\StrictServiceTrait;
 
-class BaseService
+class BaseBusiness
 {
     use SingletonEx;
     // use StrictServiceTrait;

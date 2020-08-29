@@ -4,9 +4,11 @@
  * From this time, you never be alone~
  */
 
-namespace LazyToChange\Base;
+namespace LazyToChange\System\Helper;
 
-class BaseController
+use DuckPhp\Helper\ModelHelper as Helper;
+
+class ModelHelper extends Helper
 {
     // override or add your code here
 }

@@ -6,16 +6,16 @@
 
 namespace LazyToChange\Controller;
 
-use LazyToChange\Base\Helper\ControllerHelper as C;
-// use LazyToChange\Base\BaseController;
-use LazyToChange\Service\TestService;
+use LazyToChange\System\Helper\ControllerHelper as C;
+// use LazyToChange\System\BaseController;
+use LazyToChange\Business\TestBusiness;
 
 class Main // extends BaseController
 {
     public function index()
     {
         //change if  you can
-        $var = C::H(TestService::G()->foo());
+        $var = C::H(TestBusiness::G()->foo());
         C::Show(get_defined_vars(), 'main');
     }
     // change if  you can

@@ -4,13 +4,13 @@
  * From this time, you never be alone~
  */
 
-namespace LazyToChange\Service;
+namespace LazyToChange\Business;
 
-use LazyToChange\Base\BaseService;
-use LazyToChange\Base\Helper\ServiceHelper as S;
+use LazyToChange\System\BaseBusiness;
+use LazyToChange\System\Helper\BusinessHelper as B;
 use LazyToChange\Model\TestModel;
 
-class TestService extends BaseService
+class TestBusiness extends BaseBusiness
 {
     public function foo()
     {

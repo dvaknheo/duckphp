@@ -6,14 +6,14 @@
 
 namespace LazyToChange\Controller;
 
-use LazyToChange\Base\Helper\ControllerHelper as C;
-use LazyToChange\Service\TestService;
+use LazyToChange\System\Helper\ControllerHelper as C;
+use LazyToChange\Business\TestBusiness;
 
 class test
 {
     public function done()
     {
-        $var = TestService::G()->foo();
+        $var = TestBusiness::G()->foo();
         C::Show(get_defined_vars());
     }
 }
