@@ -23,7 +23,6 @@ class DuckPhp extends App
     {
         parent::__construct();
         $options = [
-            'mode_no_path_info' => false,
             'log_sql_query' => false,
             'log_sql_level' => 'debug',
             'db_before_query_handler' => [static::class, 'OnQuery']
@@ -42,14 +41,6 @@ class DuckPhp extends App
             RouteHookRouteMap::class => true,
         ];
         $this->options['ext'] = array_merge($ext, $this->options['ext']);
-    }
-    //@override
-    protected function initOptions($options = [])
-    {
-        parent::initOptions($options);
-        if ($this->options['mode_no_path_info'] ?? false) {
-            $this->options['ext'][RouteHookPathInfoByGet::class] = $this->options['ext'][RouteHookPathInfoByGet::class] ?? true;
-        }
     }
     //@override
     public static function OnQuery($db, $sql, ...$args)
