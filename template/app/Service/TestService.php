@@ -4,11 +4,11 @@
  * From this time, you never be alone~
  */
 
-namespace MY\Service;
+namespace LazyToChange\Service;
 
-use MY\Base\BaseService;
-use MY\Base\Helper\ServiceHelper as S;
-use MY\Model\TestModel;
+use LazyToChange\Base\BaseService;
+use LazyToChange\Base\Helper\ServiceHelper as S;
+use LazyToChange\Model\TestModel;
 
 class TestService extends BaseService
 {

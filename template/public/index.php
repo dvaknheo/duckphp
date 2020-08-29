@@ -5,7 +5,7 @@
  */
 require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
 
-$namespace = 'MY';                              // @DUCKPHP_NAMESPACE
+$namespace = 'LazyToChange';                              // @DUCKPHP_NAMESPACE
 $path = realpath(__DIR__.'/..');
 
 $options = [
@@ -20,8 +20,8 @@ $options['path'] = $path;
 $options['namespace'] = $namespace;
 // $options['path_namespace'] = 'app';
 
-// $options['ext']['DuckPhp\\Ext\\RouteHookPathInfoByGet']=true;
-$options['ext']['DuckPhp\\Ext\\RouteHookPathInfoByGet']=true; //@DUCKPHP_DELETE
+// $options['use_path_info_by_get']=false;
+$options['use_path_info_by_get']=true; //@DUCKPHP_DELETE
 echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKPHP_DELETE
 echo "<div>不建议直接运行这文件，建议用安装模式 </div>\n"; //@DUCKPHP_DELETE
 

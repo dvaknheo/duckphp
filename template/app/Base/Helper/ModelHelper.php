@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace MY\Base\Helper;
+namespace LazyToChange\Base\Helper;
 
 use DuckPhp\Helper\ModelHelper as Helper;
 

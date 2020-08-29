@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace MY\Base;
+namespace LazyToChange\Base;
 
 use DuckPhp\Core\ThrowOn;
 

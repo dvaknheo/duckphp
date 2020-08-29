@@ -4,10 +4,10 @@
  * From this time, you never be alone~
  */
 
-namespace MY\Model;
+namespace LazyToChange\Model;
 
-use MY\Base\BaseModel;
-use MY\Base\Helper\ModelHelper as M;
+use LazyToChange\Base\BaseModel;
+use LazyToChange\Base\Helper\ModelHelper as M;
 
 class DBTestModel extends BaseModel
 {

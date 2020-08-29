@@ -4,10 +4,10 @@
  * From this time, you never be alone~
  */
 
-namespace MY\Controller;
+namespace LazyToChange\Controller;
 
-use MY\Base\App;
-use MY\Base\Helper\ModelHelper as M;
+use LazyToChange\Base\App;
+use LazyToChange\Base\Helper\ModelHelper as M;
 
 class dbtest
 {

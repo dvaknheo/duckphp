@@ -20,7 +20,7 @@ class Installer
     public $options = [
         'prune_helper' => false,
         'prune_core' => false,
-        'namespace' => 'MY',
+        'namespace' => 'LazyToChange',
         'src' => '',
         'dest' => '',
         'run' => false,
@@ -226,12 +226,12 @@ class Installer
     }
     protected function filteNamespace($data, $namespace)
     {
-        if ($namespace === 'MY') {
+        if ($namespace === 'LazyToChange') {
             return $data;
         }
         $str_header = "\$namespace = '$namespace';";
         $data = preg_replace('/^.*?@DUCKPHP_NAMESPACE.*?$/m', $str_header, $data);
-        $data =str_replace("MY\\","{$namespace}\\" ,$data);
+        $data =str_replace("LazyToChange\\","{$namespace}\\" ,$data);
         
         return $data;
     }

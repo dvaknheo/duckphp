@@ -4,11 +4,11 @@
  * From this time, you never be alone~
  */
 
-namespace MY\Controller;
+namespace LazyToChange\Controller;
 
-use MY\Base\Helper\ControllerHelper as C;
-// use MY\Base\BaseController;
-use MY\Service\TestService;
+use LazyToChange\Base\Helper\ControllerHelper as C;
+// use LazyToChange\Base\BaseController;
+use LazyToChange\Service\TestService;
 
 class Main // extends BaseController
 {

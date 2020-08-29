@@ -4,10 +4,10 @@
  * From this time, you never be alone~
  */
 
-namespace MY\Controller;
+namespace LazyToChange\Controller;
 
-use MY\Base\Helper\ControllerHelper as C;
-use MY\Service\TestService;
+use LazyToChange\Base\Helper\ControllerHelper as C;
+use LazyToChange\Service\TestService;
 
 class test
 {

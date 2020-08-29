@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace MY\Base;
+namespace LazyToChange\Base;
 
 use DuckPhp\DuckPhp;
 
@@ -63,7 +63,7 @@ class App extends DuckPhp
         // $options['log_sql_level'] = 'debug';
         // $options['log_sql_query'] = false;
         // $options['mode_no_path_info'] = false;
-        // $options['namespace'] = 'MY';
+        // $options['namespace'] = 'LazyToChange';
         // $options['namespace_controller'] = 'Controller';
         // $options['override_class'] = 'Base\\App';
         // $options['path'] = '';
@@ -191,7 +191,7 @@ class App extends DuckPhp
         $options['ext']['DuckPhp\\Ext\\StrictCheck'] = true;
             $options['controller_base_class']=NULL;
             $options['is_debug']=false;
-            $options['namespace']='MY';
+            $options['namespace']='LazyToChange';
             $options['namespace_controller']='Controller';
             $options['namespace_model']='';
             $options['namespace_service']='';
