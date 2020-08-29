@@ -13,6 +13,7 @@ use DuckPhp\Ext\RouteHookRewrite;
 class RouteHookPathInfoByGet extends ComponentBase
 {
     public $options = [
+        'use_path_info_by_get'=>false,
         'key_for_action' => '_r',
         'key_for_module' => '',
     ];
@@ -28,6 +29,9 @@ class RouteHookPathInfoByGet extends ComponentBase
     //@override
     protected function initContext(object $context)
     {
+        if (!$this->options['use_path_info_by_get']) {
+            return;
+        }
         Route::G()->addRouteHook([static::class,'Hook'], 'prepend-outter');
         Route::G()->setURLHandler([static::class,'URL']);
     }
