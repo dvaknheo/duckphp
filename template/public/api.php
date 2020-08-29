@@ -88,6 +88,7 @@ class API_test extends BaseApi
     }
 }
 ////////////////
-
+// 访问方式 http://duckphp.demo.dev/api.php/test.foo2?a=1&b=2
+// 访问方式 http://duckphp.demo.dev/api.php/test.foo
 
 //
