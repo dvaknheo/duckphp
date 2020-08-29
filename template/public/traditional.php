@@ -2,7 +2,7 @@
 use DuckPhp\DuckPhp;
 use DuckPhp\Core\View;
 
-require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
+require(__DIR__.'/../../autoload.php');  // @DUCKPHP_HEADFILE
 //// 这个例子极端点，没用任何类，全函数模式。
 
 ////[[[[
@@ -27,10 +27,6 @@ function onInit()
 function POST($k,$v=null)
 {
     return DuckPhp::POST($k,$v);
-}
-function AllViewData()
-{
-    return View::G()->data;
 }
 if (!function_exists('__show')) {
     function __show(...$args)
@@ -118,15 +114,16 @@ session_start();
 $options = [];
 $options['is_debug'] = true;
 $options['skip_setting_file'] = true;
+$options['override_class'] = '';
 $options['use_path_info_by_get'] = true;
 
-$options['ext'][\DuckPhp\Ext\EmptyView::class] = true;
+$options['ext'][\DuckPhp\Ext\EmptyView::class] = true; // for AllViewData();
 
 $flag=DuckPhp::RunQuickly($options,'onInit');
 if(!$flag){
     return;
 }
-extract(AllViewData());
+extract(DuckPhp::getViewData());
 error_reporting(error_reporting() & ~E_NOTICE);
 
 if(!empty($skip_head_foot)){
