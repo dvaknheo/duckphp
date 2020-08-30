@@ -664,11 +664,11 @@ trait Core_NotImplemented
     {
         throw new \ErrorException("DNMVCS No Impelement " . __FUNCTION__);
     }
-    public static function _FireEvent($event, ...$args)
+    public function _FireEvent($event, ...$args)
     {
         throw new \ErrorException("DNMVCS No Impelement " . __FUNCTION__);
     }
-    public static function _OnEvent($event, $callback)
+    public function _OnEvent($event, $callback)
     {
         throw new \ErrorException("DNMVCS No Impelement " . __FUNCTION__);
     }
