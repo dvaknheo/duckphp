@@ -27,13 +27,6 @@ class DuckPhp extends App
             'log_sql_level' => 'debug',
             'db_before_query_handler' => [static::class, 'OnQuery']
         ];
-        
-        /* no use
-        if (PHP_SAPI === 'cli' && extension_loaded('swoole')) {
-            //$t = ['DuckPhp\Ext\PluginForSwooleHttpd' => true];
-            //$options['ext'] = array_merge($t, $options); // make it first
-        }
-        */
         $this->options = array_merge($options, $this->options);
         $ext = [
             DBManager::class => true,

@@ -13,7 +13,7 @@ class App extends DuckPhp
             'M' => 'ModelHelper',
             'V' => 'ViewHelper',
             'C' => 'ControllerHelper',
-            'S' => 'ServiceHelper',
+            'B' => 'ServiceHelper',
     ];
     //@override
     public $options = [

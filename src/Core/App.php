@@ -48,7 +48,7 @@ class App extends ComponentBase
         'M' => 'Helper\ModelHelper',
         'V' => 'Helper\ViewHelper',
         'C' => 'Helper\ControllerHelper',
-        'S' => 'Helper\ServiceHelper',
+        'B' => 'Helper\BusinessHelper',
         'A' => 'Helper\AppHelper',
     ];
     // for trait

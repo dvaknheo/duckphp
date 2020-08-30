@@ -10,6 +10,7 @@ $options = [
     'path' => $project_root,
     'path_namespace' => $project_root,
     'namespace' => 'SimpleAuth',
+    'override_class'=>'Base\\App',
 
     'is_debug' => true,
 ];

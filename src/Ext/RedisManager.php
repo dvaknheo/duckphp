@@ -54,11 +54,11 @@ class RedisManager extends ComponentBase
             }
         }
         if (method_exists($context, 'extendComponents')) {
-            $context->extendComponents(['Redis' => [static::class, 'Redis']], ['S','A']);
+            $context->extendComponents(['Redis' => [static::class, 'Redis']], ['B','A']);
         }
         if ($this->options['enable_simple_cache']) {
             if (method_exists($context, 'extendComponents')) {
-                $context->extendComponents(['SimpleCache' => [static::class, 'SimpleCache']], ['S','A']);
+                $context->extendComponents(['SimpleCache' => [static::class, 'SimpleCache']], ['B','A']);
             }
         }
     }

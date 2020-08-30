@@ -8,7 +8,7 @@ namespace DuckPhp\Helper;
 use DuckPhp\Core\App;
 use DuckPhp\Helper\HelperTrait;
 
-class ServiceHelper
+class BusinessHelper
 {
     use HelperTrait;
     

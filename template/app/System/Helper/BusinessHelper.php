@@ -6,7 +6,7 @@
 
 namespace LazyToChange\System\Helper;
 
-use DuckPhp\System\ServiceHelper as Helper;
+use DuckPhp\System\BusinessHelper as Helper;
 
 class BusinessHelper extends Helper
 {
