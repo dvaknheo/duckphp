@@ -12,9 +12,9 @@ public static function var_dump(...$args)
 
 ## 由 DBManager 扩展的方法
 
-- DB [DuckPhp\Ext\DBManager::DB](Ext-DBManager.md#DB)
-- DB_R [DuckPhp\Ext\DBManager::DB_R](Ext-DBManager.md#DB_R)
-+ DB_W [DuckPhp\Ext\DBManager::DB_W](Ext-DBManager.md#DB_W)
+- Db [DuckPhp\Ext\DBManager::DB](Ext-DBManager.md#DB)
+- DbForRead [DuckPhp\Ext\DBManager::DB_R](Ext-DBManager.md#DbForRead)
+- DbForWrite [DuckPhp\Ext\DBManager::DB_W](Ext-DBManager.md#DbForWrite)
 
 ## 详解
 
