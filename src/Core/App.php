@@ -622,17 +622,22 @@ trait Core_Helper
 }
 trait Core_NotImplemented
 {
-    public static function DB($tag = null)
+    public static function Db($tag = null)
     {
-        return static::G()->_DB($tag);
+        return static::G()->_Db($tag);
     }
-    public static function DB_W()
+
+    public static function DbForWrite()
     {
-        return static::G()->_DB_W();
+        return static::G()->_DbForWrite();
     }
-    public static function DB_R()
+    public static function DbForRead()
     {
-        return static::G()->_DB_R();
+        return static::G()->_DbForRead();
+    }
+    public static function Event()
+    {
+        return static::G()->_Event();
     }
     public static function FireEvent($event, ...$args)
     {
@@ -643,15 +648,19 @@ trait Core_NotImplemented
         return static::G()->_OnEvent($event, $callback);
     }
     
-    public function _DB($tag)
+    public function _Db($tag)
     {
         throw new \ErrorException("DNMVCS No Impelement " . __FUNCTION__);
     }
-    public function _DB_R()
+    public function _DbForRead()
     {
         throw new \ErrorException("DNMVCS No Impelement " . __FUNCTION__);
     }
-    public function _DB_W()
+    public function _Event()
+    {
+        throw new \ErrorException("DNMVCS No Impelement " . __FUNCTION__);
+    }
+    public function _DbForWrite()
     {
         throw new \ErrorException("DNMVCS No Impelement " . __FUNCTION__);
     }

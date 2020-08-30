@@ -137,15 +137,19 @@ App::PageSize();
 App::PageHtml(123);
 
         try{
-            App::DB();
+            App::Db();
         }catch(\Throwable $ex){
         }
         try{
-            App::DB_W();
+            App::DbForWrite();
         }catch(\Throwable $ex){
         }
         try{
-            App::DB_R();
+            App::DbForRead();
+        }catch(\Throwable $ex){
+        }
+        try{
+            App::Event();
         }catch(\Throwable $ex){
         }
 

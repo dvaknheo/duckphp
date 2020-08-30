@@ -42,9 +42,9 @@ class DBManagerTest extends \PHPUnit\Framework\TestCase
         DBManager::G()->setBeforeGetDBHandler(function(){var_dump("OK");});
 
         DBManager::G()->getDBHandler();
-        DBManager::G()->_DB();
-        DBManager::G()->_DB_W();
-        DBManager::G()->_DB_R();
+        DBManager::G()->_Db();
+        DBManager::G()->_DbForWrite();
+        DBManager::G()->_DbForRead();
         DBManager::CloseAllDB();
         
         DBManager::OnException();
@@ -64,9 +64,9 @@ $options['database_list']=[
 ];
         DBManager::G()->init($options,null);
 
-        DBManager::DB();
-        DBManager::DB_W();
-        DBManager::DB_R();
+        DBManager::Db();
+        DBManager::DbForWrite();
+        DBManager::DbForRead();
         DBManager::OnException();
         DBManager::G()->init($options,null);
 
@@ -86,7 +86,7 @@ $options['database_list']=[
         
         DBManager::G()->init($options,null);
         DBManager::G()->setDBHandler([DB::class,'CreateDBInstance'],null,[static::class,'onExceptions' ]);
-        DBManager::G()->_DB();
+        DBManager::G()->_Db();
         
         DBManager::OnException();
         ////

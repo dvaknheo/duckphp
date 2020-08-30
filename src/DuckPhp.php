@@ -57,21 +57,25 @@ class DuckPhp extends App
         return $pager;
     }
     //@override
-    public function _DB($tag)
+    public function _Db($tag)
     {
-        return DBManager::G()->_DB($tag);
+        return DBManager::G()->_Db($tag);
     }
     //@override
-    public function _DB_R()
+    public function _DbForRead()
     {
-        return DBManager::G()->_DB_R();
+        return DBManager::G()->_DbForRead();
     }
     //@override
-    public function _DB_W()
+    public function _DbForWrite()
     {
-        return DBManager::G()->_DB_W();
+        return DBManager::G()->_DbForWrite();
     }
-    
+    //@override
+    public function _Event()
+    {
+        return EventManager::G();
+    }
     //@override
     public static function _FireEvent($event, ...$args)
     {

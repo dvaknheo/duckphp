@@ -84,17 +84,17 @@ class DBManager extends ComponentBase
     {
         return static::G()->_OnException();
     }
-    public static function DB($tag = null)
+    public static function Db($tag = null)
     {
-        return static::G()->_DB($tag);
+        return static::G()->_Db($tag);
     }
-    public static function DB_W()
+    public static function DbForWrite()
     {
-        return static::G()->_DB_W();
+        return static::G()->_DbForWrite();
     }
-    public static function DB_R()
+    public static function DbForRead()
     {
-        return static::G()->_DB_R();
+        return static::G()->_DbForRead();
     }
     
     public function setDBHandler($db_create_handler, $db_close_handler = null, $db_exception_handler = null)
@@ -111,7 +111,7 @@ class DBManager extends ComponentBase
     {
         return [$this->db_create_handler,$this->db_close_handler,$this->db_exception_handler];
     }
-    public function _DB($tag = null)
+    public function _Db($tag = null)
     {
         if (isset($this->db_before_get_object_handler)) {
             ($this->db_before_get_object_handler)($this, $tag);
@@ -146,11 +146,11 @@ class DBManager extends ComponentBase
             $db->setBeforeQueryHandler($this->before_query_handler);
         }
     }
-    public function _DB_W()
+    public function _DbForWrite()
     {
         return $this->_DB(static::TAG_WRITE);
     }
-    public function _DB_R()
+    public function _DbForRead()
     {
         if (!isset($this->database_config_list[static::TAG_READ])) {
             return $this->_DB(static::TAG_WRITE);

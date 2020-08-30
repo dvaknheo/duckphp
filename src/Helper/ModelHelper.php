@@ -14,27 +14,27 @@ class ModelHelper
     /**
      *
      * @param mixed $tag
-     * @return \DuckPhp\DB\DB
+     * @return \DuckPhp\DB\Db
      */
-    public static function DB($tag = null)
+    public static function Db($tag = null)
     {
-        return App::DB($tag);
+        return App::Db($tag);
     }
     /**
      *
-     * @return \DuckPhp\DB\DB
+     * @return \DuckPhp\DB\Db
      */
-    public static function DB_R()
+    public static function DbForRead()
     {
-        return App::DB_R();
+        return App::DbForRead();
     }
     /**
      *
-     * @return \DuckPhp\DB\DB
+     * @return \DuckPhp\Db\Db
      */
-    public static function DB_W()
+    public static function DbForWrite()
     {
-        return App::DB_W();
+        return App::DbForWrite();
     }
     public static function SqlForPager(string $sql, int $pageNo, int $pageSize = 10): string
     {

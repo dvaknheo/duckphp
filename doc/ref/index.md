@@ -54,7 +54,7 @@
    1. [DBAdvanceTrait.php](DB-DBAdvanceTrait.md)  这个 trait 增加了 DB类的高级功能
    2. [DBInterface.php](DB-DBInterface.md) DB 类满足 DBInterface 接口
    3. [DB.php](DB-DB.md) DB类
-5. `Ext` 目录是扩展目录，按字母排序。默认加载  **[DBManager.php](Ext-DBManager.md)**   **[RouteHookRouteMap.php](Ext-RouteHookRouteMap.md)**
+5. `Ext` 目录是扩展目录，按字母排序。默认加载  **[DBManager](Ext-DBManager.md)**   **[RouteHookRouteMap](Ext-RouteHookRouteMap.md)** **[RouteHookPathInfoByGet](ExtRouteHookPathInfoByGet.md)**
    1. **[DBManager.php](Ext-DBManager.md)** 数据库管理组件
    3. **[Pager.php](Ext-Pager.md)** 分页类
         1. [PagerInteface.php](Ext-PagerInteface.md) 分页接口
@@ -75,12 +75,12 @@
             1. [StrictCheckModelTrait.php](Ext-StrictCheckModelTrait.md) 严格检查模式的模型类基类
             2. [StrictCheckServiceTrait.php](Ext-StrictCheckServiceTrait.md) 严格检查模式的服务类基类
    17. [EventManager](Ext-EventManager.md) 事件管理器
-   18. [WrapperWithException](Ext-WrapperWithException.md) 封装异常的类
+   18. [ExceptionWrapper](Ext-ExceptionWrapper.md) 封装异常的类
 6. `Helper` 目录是各种助手类
     1. **[HelperTrait.php](Helper-HelperTrait.md)** 助手类公用 Trait
     2. [ControllerHelper.php](Helper-ControllerHelper.md) 控制器助手类
     3. [ModelHelper.php](Helper-ModelHelper.md) 模型助手类
-    4. [ServiceHelper.php](Helper-ServiceHelper.md) 服务助手类
+    4. [BusinessHelper.php](Helper-BusinessHelper.md) 服务助手类
     5. [ViewHelper.php](Helper-ViewHelper.md) 视图助手类
     6. *[AppHelper.php](Helper-AppHelper.md)* 工程应用助手类
     
@@ -114,10 +114,12 @@
 |   `-- DBInterface.php
 |-- DuckPhp.php
 |-- Ext
+|   |-- Cache.php
 |   |-- CallableView.php
 |   |-- DBManager.php
-|   |-- DBReusePoolProxy.php
 |   |-- EmptyView.php
+|   |-- EventManager.php
+|   |-- ExceptionWrapper.php
 |   |-- FacadesAutoLoader.php
 |   |-- FacadesBase.php
 |   |-- JsonRpcClientBase.php
@@ -125,11 +127,10 @@
 |   |-- Misc.php
 |   |-- Pager.php
 |   |-- PagerInterface.php
-|   |-- PluginForSwooleHttpd.php
 |   |-- RedisManager.php
 |   |-- RedisSimpleCache.php
 |   |-- RouteHookDirectoryMode.php
-|   |-- RouteHookManager.php.todo
+|   |-- RouteHookManager.php
 |   |-- RouteHookPathInfoByGet.php
 |   |-- RouteHookRewrite.php
 |   |-- RouteHookRouteMap.php
@@ -138,10 +139,10 @@
 |   `-- StrictCheckServiceTrait.php
 |-- Helper
 |   |-- AppHelper.php
+|   |-- BusinessHelper.php
 |   |-- ControllerHelper.php
 |   |-- HelperTrait.php
 |   |-- ModelHelper.php
-|   |-- ServiceHelper.php
 |   `-- ViewHelper.php
 `-- HttpServer.php
 ```

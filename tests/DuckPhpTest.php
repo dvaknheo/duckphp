@@ -39,13 +39,13 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::Pager();
         
         try{
-        DuckPhp::DB();
+        DuckPhp::Db();
         }catch(\Exception $ex){}
         try{
-        DuckPhp::DB_R();
+        DuckPhp::DbForRead();
         }catch(\Exception $ex){}
         try{
-        DuckPhp::DB_W();
+        DuckPhp::DbForWrite();
         }catch(\Exception $ex){}
         ////
                 $db=new \stdClass();
@@ -60,7 +60,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         \__url("test");
         \__display("block",[]);
         
-        
+        DuckPhp::Event();
         DuckPhp::OnEvent('MyEvent',function(...$args){ var_dump($args);});
         DuckPhp::FireEvent('MyEvent','A','B','C');
         DuckPhp::FireEvent('NoExist','A','B','C');

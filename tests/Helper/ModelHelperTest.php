@@ -17,10 +17,10 @@ class ModelHelperTest extends \PHPUnit\Framework\TestCase
             ModelHelper::DB();
         }catch(\Throwable $ex){}
         try{
-            ModelHelper::DB_R();
+            ModelHelper::DbForRead();
         }catch(\Throwable $ex){}
         try{
-            ModelHelper::DB_W();
+            ModelHelper::DbForWrite();
         }catch(\Throwable $ex){}
         \MyCodeCoverage::G()->end();
         /*
