@@ -150,7 +150,7 @@ class DBManager extends ComponentBase
     }
     public function setBeforeQueryHandler($db, $before_query_handler)
     {
-        if (is_callable([$db,'setBeforeQueryHandler'])) {
+        if (is_object($db) && is_callable([$db,'setBeforeQueryHandler'])) {
             $db->setBeforeQueryHandler($this->before_query_handler);
         }
     }
