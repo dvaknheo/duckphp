@@ -126,7 +126,7 @@ if(!$flag){
 extract(DuckPhp::getViewData());
 error_reporting(error_reporting() & ~E_NOTICE);
 
-if(!empty($skip_head_foot)){
+if(empty($skip_head_foot)){
 ?>
 <!doctype html>
 <html>
@@ -141,7 +141,7 @@ if(!empty($skip_head_foot)){
 	<div style="border:1px red solid;">
 <?php
 }
-if($view===''){
+if($view==='' || $view==='main'){
 ?>
 	<h1>首页</h1>
 <?php 
@@ -186,7 +186,7 @@ if($view==='dialog'){ ?>
 <?php
 }
 
-if(!empty($skip_head_foot)){
+if(empty($skip_head_foot)){
 ?>
 	<hr />
 	</div>
