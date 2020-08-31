@@ -72,18 +72,18 @@ try_files $uri $uri/ /index.php$request_uri;
 ```php
 <?php
 // app/Controller/test.php
-namespace MY\Controller;
+namespace LazyToChange\Controller;
 
-// use MY\Base\BaseController;
-use MY\Base\Helper\ControllerHelper as C;
-use MY\Service\MiscService;
+// use LazyToChange\System\BaseController;
+use LazyToChange\System\Helper\ControllerHelper as C;
+use LazyToChange\Business\MiscBusiness;
 
 class test // extends BaseController
 {
     public function done()
     {
         $data=[];
-        $data['var']=C::H(MiscService::G()->foo());
+        $data['var']=C::H(MiscBusiness::G()->foo());
         C::Show($data); // C::Show($data,'test/done');
     }
 }
@@ -103,13 +103,13 @@ C::Show($data); 是 C::Show($data,'test/done'); 的缩写， 调用 test/done �
 ```php
 <?php
 // app/Service/MiscService.php
-namespace MY\Service;
+namespace LazyToChange\Service;
 
-use MY\Base\Helper\BusinessHelper as S;
-use MY\Base\BaseService;
-use MY\Model\MiscModel;
+use LazyToChange\System\Helper\BusinessHelper as S;
+use LazyToChange\System\BaseBusiness;
+use LazyToChange\Model\MiscModel;
 
-class MiscService  extends BaseService
+class MiscService  extends BaseBusiness
 {
     public function foo()
     {
@@ -119,7 +119,7 @@ class MiscService  extends BaseService
     }
 }
 ```
-BaseService 也是不强求的，我们 extends BaseService 是为了能用 G 函数这个单例方法。
+BaseBusiness也是不强求的，我们 extends BaseBusiness 是为了能用 G 函数这个单例方法。
 
 这里调用了 MiscModel 。
 
@@ -132,10 +132,10 @@ Model 类是实现基本功能的。一般 Model 类的命名是和数据库表�
 ```php
 <?php
 // app/Model/MiscModel.php
-namespace MY\Model;
+namespace LazyToChange\Model;
 
-use MY\Base\BaseModel;
-use MY\Base\Helper\ModelHelper as M;
+use LazyToChange\System\BaseModel;
+use LazyToChange\System\Helper\ModelHelper as M;
 
 class MiscModel extends BaseModel
 {

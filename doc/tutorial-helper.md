@@ -98,7 +98,7 @@ var_dump(...$arg)
     调试状态下 Dump 当前变量，替代 var_dump
 GetExtendStaticStaticMethodList()
 
-    获得当前助手类扩展了什么，这个常用于查看核心代码给助手类加了什
+    获得当前助手类扩展了什么，这个常用于查看核心代码给助手类加了什么
 ThrowOn($flag, $message, $code = 0, $exception_class = null)
 
     如果 flag 成立，那么抛出消息为 $message, code为 $code, $exception_class 的异常，如 $exception_class =null ，则默认为 Exception::class 的异常。

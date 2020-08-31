@@ -91,7 +91,7 @@ trait Kernel
             $path = realpath($_SERVER['SCRIPT_FILENAME'].'/../');
             $this->options['path'] = (string)$path;
         }
-        $this->options['path'] = rtrim($this->options['path'], '/').'/';
+        $this->options['path'] = ($this->options['path']!=='') ? rtrim($this->options['path'], '/').'/' : '';
     }
     protected function checkOverride($options)
     {

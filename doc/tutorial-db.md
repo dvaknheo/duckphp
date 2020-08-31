@@ -44,7 +44,7 @@ DB
     fetchAll($sql, ...$args);
     fetch($sql, ...$args);
     fetchColumn($sql, ...$args);
-    execute($sql, ...$args); //   执行某条sql'
+    execute($sql, ...$args); //   执行某条sql
 
 #### 示例
 使用数据库，在 设置里正确设置 database_list 这个数组，包含多个数据库配置
