@@ -15,15 +15,16 @@ class StrictCheck extends ComponentBase
     public $options = [
             'namespace' => 'MY',
             'namespace_controller' => 'Controller',
-            'namespace_service' => '',
+            'namespace_business' => '',
             'namespace_model' => '',
             'controller_base_class' => null,
             'is_debug' => false,
             'strict_check_context_class' => null,
             
-            'postfix_batch_service' => 'BatchService',
-            'postfix_lib_service' => 'LibService',
+            'postfix_batch_business' => 'BatchBusiness',
+            'postfix_business_lib' => 'Lib',
             'postfix_ex_model' => 'ExModel',
+            'postfix_model' => 'Model',
 
         ];
     
@@ -87,7 +88,7 @@ class StrictCheck extends ComponentBase
         if (self::StartWith($caller_class, $this->options['namespace_controller'])) {
             throw new ErrorException("$component_name Can not Call By Controller");
         }
-        if (self::StartWith($caller_class, $this->options['namespace_service'])) {
+        if (self::StartWith($caller_class, $this->options['namespace_business'])) {
             throw new ErrorException("$component_name Can not Call By Service");
         }
         
@@ -95,44 +96,37 @@ class StrictCheck extends ComponentBase
             throw new ErrorException("$component_name Can not Call By Controller");
         }
     }
-    public function checkStrictModel($trace_level)
+    public function checkStrictClass($class, $trace_level)
     {
         if (!$this->checkEnv()) {
             return;
         }
         $caller_class = $this->getCallerByLevel($trace_level);
-        
-        if (self::StartWith($caller_class, $this->options['namespace_service'])) {
+        if (self::EndWith($class, $this->options['postfix_model'])) {
+            if (self::StartWith($caller_class, $this->options['namespace_business'])) {
+                return;
+            }
+            if (self::StartWith($caller_class, $this->options['namespace_model']) &&
+                self::EndWith($caller_class, $this->options['postfix_ex_model'])) {
+                return;
+            }
+            throw new ErrorException("Model Can Only call by Service or ExModel!Caller is {$caller_class}");
+        }
+
+        if (empty($this->options['namespace_business'])) {
             return;
         }
-        if (self::StartWith($caller_class, $this->options['namespace_model']) &&
-            self::EndWith($caller_class, $this->options['postfix_ex_model'])) {
+        if (self::EndWith($class, $this->options['postfix_business_lib'])) {
             return;
         }
-        throw new ErrorException("Model Can Only call by Service or ExModel!Caller is {$caller_class}");
-    }
-    public function checkStrictService($service_class, $trace_level)
-    {
-        if (!$this->checkEnv()) {
+        if (self::EndWith($caller_class, $this->options['postfix_batch_business'])) {
             return;
         }
-        if (empty($this->options['namespace_service'])) {
-            return;
-        }
-        
-        $caller_class = $this->getCallerByLevel($trace_level);
-        
-        if (self::EndWith($caller_class, $this->options['postfix_batch_service'])) {
-            return;
-        }
-        if (self::EndWith($service_class, $this->options['postfix_lib_service'])) {
-            return;
-        }
-        if (self::StartWith($caller_class, $this->options['namespace_service'])) {
-            throw new ErrorException("Service($service_class) Can not call Service($caller_class)");
+        if (self::StartWith($caller_class, $this->options['namespace_business'])) {
+            throw new ErrorException("Service($class) Can not call by Business($caller_class)");
         }
         if (self::StartWith($caller_class, $this->options['namespace_model'])) {
-            throw new ErrorException("Service($service_class) Can not call by Model, ($caller_class)");
+            throw new ErrorException("Service($class) Can not call by Model, ($caller_class)");
         }
     }
     protected static function StartWith($str, $prefix)

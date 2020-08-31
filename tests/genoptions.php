@@ -32,8 +32,8 @@ class GenOptionsGenerator
     public function run()
     {
         $options=$this->getAllOptions();
-        // echo $this->getDefaultOptionsString($options);
-        echo $this->getExtOptionsString($options);
+        echo $this->getDefaultOptionsString($options);
+        //echo $this->getExtOptionsString($options);
     }
     
     function getAllOptions()

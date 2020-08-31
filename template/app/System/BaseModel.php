@@ -8,12 +8,12 @@ namespace LazyToChange\System;
 
 use DuckPhp\Core\SingletonEx;
 
-// use DuckPhp\Ext\StrictModelTrait;
+// use DuckPhp\Ext\StrictCheckObjectTrait;
 
 class BaseModel
 {
     use SingletonEx;
-    // use StrictModelTrait;  // if you want to use strick check
+    // use StrictCheckObjectTrait;  // if you want to use strick check
 
     // override or add your code here
 }

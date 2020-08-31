@@ -36,7 +36,7 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
         $options=[
             'namespace'=> __NAMESPACE__,
             'namespace_controller'=>        __NAMESPACE__ .'\\'.'Controller'.'\\',
-            'namespace_service'=>           __NAMESPACE__ .'\\'.'Service'.'\\',
+            'namespace_business'=>           __NAMESPACE__ .'\\'.'Service'.'\\',
             'namespace_model'=>             __NAMESPACE__ .'\\'.'Model'.'\\',
             'controller_base_class'=>       __NAMESPACE__ .'\\'.'Base'.'\\'.'BaseController',
             'is_debug'=>true,
@@ -54,8 +54,8 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
         DuckPhp::G()->run();
 
         $options['is_debug']=true;
-        $options['namespace_service']='';
-        StrictCheck::G(new StrictCheck())->init($options)->checkStrictService('NoExt',0);
+        $options['namespace_business']='';
+        StrictCheck::G(new StrictCheck())->init($options)->checkStrictClass('NoExt',0);
         
 
         \MyCodeCoverage::G()->end();
@@ -102,13 +102,13 @@ class BaseController2 extends BaseController
 } // end tests\DuckPhp\Ext\Base
 
 namespace tests\DuckPhp\Ext\Model {
-use DuckPhp\Ext\StrictCheckModelTrait;
+use DuckPhp\Ext\StrictCheckObjectTrait;
 use tests\DuckPhp\Ext\Service\FakeService;
 use DuckPhp\Helper\ModelHelper as M;
 
 class FakeModel
 {
-    use StrictCheckModelTrait;
+    use StrictCheckObjectTrait;
     public function foo(){
         var_dump(DATE(DATE_ATOM));
     }
@@ -121,7 +121,7 @@ class FakeModel
 }
 class FakeExModel
 {
-    use StrictCheckModelTrait;
+    use StrictCheckObjectTrait;
     public function foo(){
         FakeModel::G()->foo();
     }
@@ -129,7 +129,7 @@ class FakeExModel
 }  // end tests\DuckPhp\Ext\Model
 
 namespace tests\DuckPhp\Ext\Service {
-use DuckPhp\Ext\StrictCheckServiceTrait;
+use DuckPhp\Ext\StrictCheckObjectTrait;
 //use DuckPhp\Ext\DBManager;
 use DuckPhp\DuckPhp;
 use tests\DuckPhp\Ext\Model\FakeExModel;
@@ -138,9 +138,9 @@ use tests\DuckPhp\Ext\Model\FakeModel;
 
 class FakeService
 {
-    use StrictCheckServiceTrait;
+    use StrictCheckObjectTrait;
     public function foo(){
-        FakeLibService::G()->foo();
+        FakeLib::G()->foo();
     }
     public function callService(){
         FakeService::G()->foo();
@@ -156,17 +156,17 @@ class FakeService
         FakeModel::G()->callDB();
     }
 }
-class FakeBatchService
+class FakeBatchBusiness
 {
-    use StrictCheckServiceTrait;
+    use StrictCheckObjectTrait;
     public function foo(){
         FakeService::G()->foo();
     }
 }
 
-class FakeLibService
+class FakeLib
 {
-    use StrictCheckServiceTrait;
+    use StrictCheckObjectTrait;
     public function foo(){
         FakeExModel::G()->foo();
     }
@@ -178,7 +178,7 @@ namespace tests\DuckPhp\Ext\Controller {
 
 use tests\DuckPhp\Ext\Base\BaseController;
 use tests\DuckPhp\Ext\Base\BaseController2;
-use tests\DuckPhp\Ext\Service\FakeBatchService;
+use tests\DuckPhp\Ext\Service\FakeBatchBusiness;
 use tests\DuckPhp\Ext\Service\FakeService;
 use tests\DuckPhp\Ext\Model\FakeModel;
 use DuckPhp\DuckPhp;
@@ -191,7 +191,7 @@ class StrictCheckTestMain extends BaseController
     }
     public function foo()
     {
-        echo "==========0000000000000000000000000000000000==================\n";
+        echo "0000000\n";
         
         try{
             DuckPhp::DB()->fetch("select 1+1 as t");
@@ -211,12 +211,14 @@ class StrictCheckTestMain extends BaseController
         }
         
         try{
+        
             FakeModel::G()->foo();
         }catch(\Throwable $ex){
             echo "4444444444444444444444444".$ex->getMessage().PHP_EOL;
         }
-
+    
         try{
+            
             FakeService::G()->callService();
         }catch(\Throwable $ex){
             echo "55555555555555555555555555555FakeService::G()->callService()".$ex->getMessage().PHP_EOL;
@@ -224,14 +226,14 @@ class StrictCheckTestMain extends BaseController
         try{
             FakeService::G()->modelCallService();
         }catch(\Throwable $ex){
-            echo "6666666666666 modelCallService sssssssssssssssssss".$ex->getMessage().PHP_EOL;
+            echo "6666666666666 modelCallService ".$ex->getMessage().PHP_EOL;
         }
         try{
             FakeService::G()->callDB();
         }catch(\Throwable $ex){
-            echo "7777777777777777 modelCallService sssssssssssssssssss".$ex->getMessage().PHP_EOL;
+            echo "7777777777777777 modelCallService ".$ex->getMessage().PHP_EOL;
         }
-        
+
         
         try{
             DuckPhp::DB()->fetch("select 1+1 as t");
@@ -243,15 +245,21 @@ class StrictCheckTestMain extends BaseController
         }catch(\Throwable $ex){
             echo "9999999999999999999 Catch S::DB ".$ex->getMessage().PHP_EOL;
         }
+
         try{
             (new BaseController2)->foo();
         }catch(\Throwable $ex){
             echo "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ".$ex->getMessage().PHP_EOL;
         }
-        FakeService::G()->normal();
-        echo "============================\n";
-        FakeBatchService::G()->foo();
+                               
 
+        FakeService::G()->normal();
+        
+        echo "============================\n";
+        
+         
+        FakeBatchBusiness::G()->foo();
+//exit;
     }
 }
 

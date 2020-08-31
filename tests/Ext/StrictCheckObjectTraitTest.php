@@ -1,20 +1,20 @@
 <?php
 namespace tests\DuckPhp\Ext;
 
-use DuckPhp\Ext\StrictCheckServiceTrait;
+use DuckPhp\Ext\StrictCheckObjectTrait;
 use DuckPhp\DuckPhp;
 
-class StrictServiceTraitTest extends \PHPUnit\Framework\TestCase
+class StrictCheckObjectTraitTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(StrictCheckServiceTrait::class);
+        \MyCodeCoverage::G()->begin(StrictCheckObjectTrait::class);
         
         $options=[
             'skip_setting_file'=>true,
         ];
         DuckPhp::G()->init($options);
-        StrictCheckServiceTraitObject::G();
+        StrictCheckObjectTraitObject::G();
         
         \MyCodeCoverage::G()->end();
         /*
@@ -22,7 +22,7 @@ class StrictServiceTraitTest extends \PHPUnit\Framework\TestCase
         //*/
     }
 }
-class StrictCheckServiceTraitObject
+class StrictCheckObjectTraitObject
 {
-    use StrictCheckServiceTrait;
+    use StrictCheckObjectTrait;
 }

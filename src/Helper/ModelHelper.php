@@ -14,7 +14,7 @@ class ModelHelper
     /**
      *
      * @param mixed $tag
-     * @return \DuckPhp\DB\Db
+     * @return \DuckPhp\DB\DB
      */
     public static function Db($tag = null)
     {
@@ -22,7 +22,7 @@ class ModelHelper
     }
     /**
      *
-     * @return \DuckPhp\DB\Db
+     * @return \DuckPhp\DB\DB
      */
     public static function DbForRead()
     {
@@ -30,7 +30,7 @@ class ModelHelper
     }
     /**
      *
-     * @return \DuckPhp\Db\Db
+     * @return \DuckPhp\DB\DB
      */
     public static function DbForWrite()
     {

@@ -8,14 +8,14 @@ namespace DuckPhp\Ext;
 use DuckPhp\Core\SingletonEx;
 use DuckPhp\Ext\StrictCheck;
 
-trait StrictCheckModelTrait
+trait StrictCheckObjectTrait
 {
     use SingletonEx {
         G as _ParentG;
     }
     public static function G($object = null)
     {
-        StrictCheck::G()->checkStrictModel(2);
+        StrictCheck::G()->checkStrictClass(static::class, 2);
         return static::_ParentG($object);
     }
 }

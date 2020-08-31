@@ -8,12 +8,12 @@ namespace LazyToChange\System;
 
 use DuckPhp\Core\SingletonEx;
 
-// use DuckPhp\Ext\StrictServiceTrait;
+// use DuckPhp\Ext\StrictCheckObjectTrait;
 
 class BaseBusiness
 {
     use SingletonEx;
-    // use StrictServiceTrait;
+    // use StrictCheckObjectTrait;
     
     // override or add your code here
 }
