@@ -12,7 +12,7 @@ DuckPhp 的路由类比较复杂，也是重点
 *[Ext\\RouteHookDirectoryMode](ref/RouteHookDirectoryMode.md)*
 
 ## 相关选项
-'namespace' => 'MY',
+'namespace' => 'LazyToChange',
 
 	默认的命名空间
 'namespace_controller' => 'Controller',
