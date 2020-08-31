@@ -7,6 +7,7 @@
 namespace LazyToChange\System;
 
 use DuckPhp\Core\ThrowOn;
+use DuckPhp\DuckPhp;
 
 class BaseException
 {
@@ -14,6 +15,6 @@ class BaseException
     
     public function display($ex)
     {
-        App::OnDefaultException($ex);
+        DuckPhp::OnDefaultException($ex);
     }
 }

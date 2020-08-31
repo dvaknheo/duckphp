@@ -25,6 +25,7 @@ DuckPhp 代码里的 template 目录就是我们的工程目录示例。也是�
 |   +---System              // 基类放在这里
 |       |   App.php         // 默认框架入口文件
 |       |   BaseController.php      // 控制器基类
+|       |   BaseException.php       // 系统错误基类
 |       |   BaseModel.php   // 模型基类
 |       |   BaseService.php // 服务基类
 |       \---Helper                  //助手类目录
@@ -49,7 +50,7 @@ DuckPhp 代码里的 template 目录就是我们的工程目录示例。也是�
 这个目录结构里，`业务工程师`只能写 `app/Controller`,`app/Model`,`app/Service`,`view` 这四个目录。
 有时候需要去读 `app/Base/Helper` 目录下的的类。其他则是`核心工程师`的活。
 
-app 目录，就是放 LazyToChange 开始命名空间的东西了。 app 目录可以在选项里设置成其他名字
+app 目录，就是放 LazyToChange 命名空间的东西了。 app 目录可以在选项里设置成其他名字
 命名空间 LazyToChange 是 可调的。比如调整成 MyProject ,TheBigOneProject  等。
 可以用 `./vendor/bin/duckphp --create --namespace TheBigOneProject` 调整。
 
@@ -61,10 +62,10 @@ System/App.php 这个文件的入口类继承 DuckPhp\DuckPhp 类，工程的入
 
 BaseController, BaseModel, BaseService 是你自己要改的基类，基本只实现了单例模式。
 
-Helper 目录里的所有类，如果你一个人偷懒，直接用 APP 类也行  
+Helper 目录，助手类，如果你一个人偷懒，直接用 APP 类也行  
 
 
-#### 总结如何精简目录
+### 总结如何精简目录
 * 移除 app/System/Helper/ 目录,如果你直接用 App::* 替代助手类。
 * 移除 app/System/BaseController.php 如果你的 Controller 和默认的一样不需要基本类。
 * 移除 app/System/BaseModel.php 如果你的 Model 用的全静态方法。
@@ -169,7 +170,7 @@ echo "<div>不建议直接运行这文件，建议用安装模式 </div>\n"; //@
 RunQuickly 相当于 \DuckPhp\DuckPhp::G()->init($options,function(){})->run(); 
 \DuckPhp\DuckPhp::G()->init($options,function(){})； 会执行根据选项，返回  `LazyToChange\System\App`
 
-为什么不是 `MY\Base\App::RunQuickly($options); ` 呢？ 可以，但是这要兼容不使用外部 autoloader 的情况。如 composer  。 如果你用外部加载器，只需直接 `LazyToChange\System\App::RunQuickly($options); `。
+为什么不是 `LazyToChange\System\App::RunQuickly($options); ` 呢？ 可以，但是这要兼容不使用外部 autoloader 的情况。如 composer  。 如果你用外部加载器，只需直接 `LazyToChange\System\App::RunQuickly($options); `。
 
 ###  工程入口文件
 
@@ -255,7 +256,7 @@ DuckPhp 只要更改选项就能实现很多强大的功能变化。
 如果这些选项都不能满足你，那就启用扩展吧，这样有更多的选项能用。
 如果连这都不行，那么，就自己写扩展吧。
 
-参考 [选项参考页](ref/options.md) 获得所有选项信息
+参考 [参考索引页的选项部分](ref/index.md) 获得所有选项信息
 
 
 ### 基本选项详解

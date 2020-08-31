@@ -134,8 +134,7 @@
 |   |-- RouteHookRewrite.php
 |   |-- RouteHookRouteMap.php
 |   |-- StrictCheck.php
-|   |-- StrictCheckModelTrait.php
-|   `-- StrictCheckServiceTrait.php
+|   |-- StrictCheckObjectTrait.php
 |-- Helper
 |   |-- AppHelper.php
 |   |-- BusinessHelper.php
@@ -145,8 +144,8 @@
 |   `-- ViewHelper.php
 `-- HttpServer.php
 ```
-##
 ## 选项索引
+
 - 'all_config' => array (), // 参见 [Core\Configer](Core-Configer.md)
 
     所有配置    
@@ -336,6 +335,6 @@
     从设置文件里再入
 - 'use_short_functions' => true, // 参见 [App](App.md)
 
-    使用短函数
+    使用短函数， __url, __h 等 ，详见 Core\Functions.php
 - 'use_super_global' => false, // 参见 [Core\Kernel](Core-Kernel.md)
     使用super_global 类。 

@@ -118,24 +118,23 @@ CallExtendStaticMethod($name, $arguments)
 
 H($str)
 
-	HTML 编码
+    HTML 编码
 L($str,$args=[])
 
-	语言处理函数，后面的关联数组替换 '{$key}'
+    语言处理函数，后面的关联数组替换 '{$key}'
 HL($str, $args=[])
 
-	对语言处理后进行 HTML 编码
+    对语言处理后进行 HTML 编码
 URL($url)
 
-	获得相对 url 地址
+    获得相对 url 地址
 Display($view, $data = null)
 
-	包含下一个 $view ， 如果 $data =null 则带入所有当前作用域的变量。 否则带入 $data 关联数组的内容
+    包含下一个 $view ， 如果 $data =null 则带入所有当前作用域的变量。 否则带入 $data 关联数组的内容
 
 ## BusinessHelper 业务的助手类
 
- BusinessHelper 用于业务层。
-
+BusinessHelper 用于业务层。
 
 
 Config($key, $file_basename = 'config')
@@ -150,6 +149,16 @@ Setting($key);
 LoadConfig($key,$basename="config");
 
     载入配置，Config($key); 获得配置项目。默认配置文件是在  config/config.php 。
+Cache
+
+XCall
+
+Event
+
+OnEvent
+
+FireEvent
+
 ## ModelHelper
 
 ModelHelper 用于 Model 层。 
@@ -158,13 +167,13 @@ ModelHelper 有数据库的三个独特方法。
 如何使用 DB 对象，看数据库部分的介绍。
 此外，还有两个快捷方法，方便分页
 
-DB($tag=null)
+Db($tag=null)
 
     获得 DB 数据库对象 ,第 $tag 个配置的数据库对象
-DB_W()
+DbForWrite()
 
     获得用于写入的 DB 对象,这是获得第 0 个配置列表里的数据库
-DB_R()
+DbForRead()
 
     获得用于读取的 DB 对象，这是获得第 1 个配置列表里的数据库
 
@@ -173,7 +182,7 @@ SqlForPager($sql, $pageNo, $pageSize = 10)
     分页 limte 的 sql 
 SqlForCountSimply($sql)
     
-    简单的把 select ... from 替换成select count(*)as c from 
+    简单的把 select ... from 替换成select count(*) as c from 
 
 ## ControllerHelper 控制器的助手类
 
@@ -309,6 +318,13 @@ PageSize($new_value = null)
 PageHtml($total, $options=[])
 
     获得分页结果 HTML，这里的 $options 的传递给 Pager 类的选项。
+### 其他新增
+Event
+
+    事件管理器
+XCall
+
+
 
 ## AppHelper
 
@@ -376,6 +392,36 @@ CallException($ex)
 &CLASS_STATICS($class_name, $var_name)
 
     替换类内静态变量
+### 其他
+
+## DuckPhp 类自带的非助手函数静态方法
+
+这些函数都是内部调用。
+Blank()
+
+    空函数，用于可能的特殊场合
+On404
+
+    404 处理函数
+OnDefaultException
+
+    默认异常处理函数
+OnDevErrorHandler
+
+    默认Notice等错误处理函数
+OnQuery
+
+    处理记录 sql 查询日志
+RunQuickly
+
+    重点，快速运行
+system_wrapper_replace
+
+    替换默认
+system_wrapper_get_providers
+
+    获得系统默认同名函数
+
 ## 高级话题：添加或修改助手类的方法 
 
 扩展 助手类。 最直接的方式就是  添加静态方法。
