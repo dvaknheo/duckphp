@@ -15,9 +15,9 @@ class AppHelper
     {
         return App::CallException($ex);
     }
-    public static function IsRunning()
+    public static function isRunning()
     {
-        return App::IsRunning();
+        return App::isRunning();
     }
     public static function isInException()
     {

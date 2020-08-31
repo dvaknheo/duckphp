@@ -24,4 +24,24 @@ class BusinessHelper
     {
         return App::LoadConfig($file_basename);
     }
+    public static function Cache($object = null)
+    {
+        return App::Cache($object);
+    }
+    public static function XCall($callback)
+    {
+        return App::XCall($callback);
+    }
+    public static function Event()
+    {
+        return App::Event();
+    }
+    public static function FireEvent($event, ...$args)
+    {
+        return App::FireEvent($event, ...$args);
+    }
+    public static function OnEvent($event, $callback)
+    {
+        return App::OnEvent($event, $callback);
+    }
 }

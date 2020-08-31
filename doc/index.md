@@ -9,7 +9,7 @@
 - [数据库](tutorial-db.md)
 - [路由](tutorial-route.md)
 - [异常处理](tutorial-exception.md)
-- [会话处理](tutorial-session.md)
+- [会话(Session)处理](tutorial-session.md)
 - [系统内部架构](tutorial-arch.md)
 - [扩展的使用和开发](tutorial-extension.md)
 - [使用第三方扩展包](tutorial-plugin.md)

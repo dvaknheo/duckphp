@@ -22,7 +22,24 @@ class BusinessHelperTest extends \PHPUnit\Framework\TestCase
         BusinessHelper::Setting($key);
         BusinessHelper::Config($key, $file_basename);
         BusinessHelper::LoadConfig($file_basename);
+
+        BusinessHelper::XCall(function(){return "abc";});
+        BusinessHelper::XCall(function(){ throw new \Exception('ex'); });
+        BusinessHelper::Cache(new \stdClass);
         
+        try{
+           BusinessHelper::Event();
+        }catch(\Exception $ex){
+        }
+        try{
+            BusinessHelper::OnEvent("test",null);
+        }catch(\Exception $ex){
+        }
+        try{
+            BusinessHelper::FireEvent("test",1,2,3);
+        }catch(\Exception $ex){
+        }
+
         \MyCodeCoverage::G()->end();
         /*
         BusinessHelper::G()->Setting($key);
