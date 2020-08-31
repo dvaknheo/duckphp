@@ -46,6 +46,8 @@ DB
     fetchColumn($sql, ...$args);
     execute($sql, ...$args); //   执行某条sql
 
+例子 full/dbtest.php 演示了这些增删改查怎么用。
+
 #### 示例
 使用数据库，在 设置里正确设置 database_list 这个数组，包含多个数据库配置
 然后在用到的地方调用 App::DB($tag=null) 得到的就是 DB 对象，用来做各种数据库操作。

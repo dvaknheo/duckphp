@@ -122,7 +122,22 @@ ControllerHelper::PageNo();
 ControllerHelper::PageSize();
 ControllerHelper::PageHtml(123);
 
-
+        ControllerHelper::XCall(function(){return "abc";});
+        ControllerHelper::XCall(function(){ throw new \Exception('ex'); });
+        
+        try{
+           ControllerHelper::Event();
+        }catch(\Exception $ex){
+        }
+        try{
+            ControllerHelper::OnEvent("test",null);
+        }catch(\Exception $ex){
+        }
+        try{
+            ControllerHelper::FireEvent("test",1,2,3);
+        }catch(\Exception $ex){
+        }
+        
         \MyCodeCoverage::G()->end();
 
         //*/
