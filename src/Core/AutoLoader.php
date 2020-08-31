@@ -9,7 +9,7 @@ class AutoLoader
 {
     public $options = [
             'path' => '',
-            'namespace' => 'MY',
+            'namespace' => 'LazyToChange',
             'path_namespace' => 'app',
             'skip_app_autoload' => false,
             

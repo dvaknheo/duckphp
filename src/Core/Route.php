@@ -15,7 +15,7 @@ class Route extends ComponentBase
     const HOOK_APPPEND_OUTTER = 'append-outter';
     
     public $options = [
-            'namespace' => 'MY',
+            'namespace' => 'LazyToChange',
             'namespace_controller' => 'Controller',
             
             'controller_base_class' => null,

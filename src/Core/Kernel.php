@@ -38,7 +38,7 @@ trait Kernel
             
             //// basic config ////
             'path' => '',
-            'namespace' => 'MY',
+            'namespace' => 'LazyToChange',
             
             //// properties ////
             'is_debug' => false,
