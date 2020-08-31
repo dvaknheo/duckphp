@@ -143,8 +143,7 @@ subgraph cluster_Ext {
     RouteHookRewrite[shape="component"];
     RouteHookRouteMap[shape="component"];
     StrictCheck[shape="component"];
-    StrictModelTrait [shape=diamond];
-    StrictServiceTrait [shape=diamond];
+    StrictCheckObjectTrait [shape=diamond];
     ExceptionWrapper [shape="component"];
 
     DBManager -> DB_DB;
@@ -154,8 +153,7 @@ subgraph cluster_Ext {
     FacadesBase -> FacadesAutoLoader;
     Pager -> PagerInterface; 
     RedisSimpleCache -> RedisManager;
-    StrictModelTrait -> StrictCheck; 
-    StrictServiceTrait -> StrictCheck; 
+    StrictCheckObjectTrait -> StrictCheck; 
     
     FacadesAutoLoader -> Core_ComponentBase [style="dotted"];
     JsonRpcExt -> Core_ComponentBase [style="dotted"];
