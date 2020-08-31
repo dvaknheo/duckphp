@@ -181,11 +181,11 @@ namespace
 // 以下部分是核心工程师写。
 namespace MySpace\System
 {
+    use DuckPhp\DuckPhp;
     use DuckPhp\Ext\CallableView;
-    use DuckPhp\Ext\RouteHookOneFileMode; // 我们要支持无路由的配置模式
     use MySpace\View\Views;
 
-    class App extends \DuckPhp\DuckPhp
+    class App extends DuckPhp
     {
         // @override
         public $options = [
@@ -193,11 +193,9 @@ namespace MySpace\System
                 // 开启调试模式
             'skip_setting_file' => true,
                 // 本例特殊，跳过设置文件 这个选项防止没有上传设置文件到服务器
-                // DuckPhp 也支持  .env 文件配置模式。
-             
+            'use_path_info_by_get' => true,
+                // 开启单一文件模式，服务器不配置也能运行
             'ext' => [
-                RouteHookPathInfoByGet::class => true,
-                    // 开启单一文件模式，服务器不配置也能运行
                 CallableView::class => true,
                     // 默认的 View 不支持函数调用，我们用扩展 CallableView 代替系统的 View
             ],
@@ -211,23 +209,23 @@ namespace MySpace\System
         }
         protected function onRun()
         {
-            //运行期在这里
+            //运行期代码在这里
         }
     }
     //服务基类, 为了 XXService::G() 可变单例。
-    class BaseService
+    class BaseBusiness
     {
         use \DuckPhp\Core\SingletonEx;
     }
 } // end namespace
 // 助手类
-namespace MySpace\Base\Helper
+namespace MySpace\System\Helper
 {
     class ControllerHelper extends \DuckPhp\Helper\ControllerHelper
     {
         // 添加你想要的助手函数
     }
-    class ServiceHelper extends \DuckPhp\Helper\ServiceHelper
+    class BusinessHelper extends \DuckPhp\Helper\BusinessHelper
     {
         // 添加你想要的助手函数
     }
@@ -244,8 +242,8 @@ namespace MySpace\Base\Helper
 // 以下部分由应用工程师编写，不再和 DuckPhp 的类有任何关系。
 namespace MySpace\Controller
 {
-    use MySpace\Base\Helper\ControllerHelper as C;  // 引用助手类
-    use MySpace\Service\MyService;                  // 引用相关服务类
+    use MySpace\System\Helper\ControllerHelper as C;  // 引用助手类
+    use MySpace\Business\MyBusiness;                  // 引用相关服务类
 
     class Main
     {
@@ -257,7 +255,7 @@ namespace MySpace\Controller
         public function index()
         {
             //获取数据
-            $output = "Hello, now time is " . C::H(MyService::G()->getTimeDesc());
+            $output = "Hello, now time is " . C::H(MyBusiness::G()->getTimeDesc());
             $url_about = C::URL('about/me');
             C::Show(get_defined_vars(), 'main_view'); //显示数据
         }
@@ -272,13 +270,13 @@ namespace MySpace\Controller
         }
     }
 } // end namespace
-namespace MySpace\Service
+namespace MySpace\Business
 {
-    use MySpace\Base\Helper\ServiceHelper as S;
-    use MySpace\Base\BaseService;
+    use MySpace\System\Helper\BusinessHelper as B;
+    use MySpace\System\BaseBusiness;
     use MySpace\Model\MyModel;
 
-    class MyService extends BaseService
+    class MyBusiness extends BaseBusiness
     {
         public function getTimeDesc()
         {
@@ -321,14 +319,14 @@ namespace MySpace\View {
             <a href="<?=$url_about?>">go to "about/me"</a>
     <?php
         }
-        public function about_me($data)
+        public static function about_me($data)
         {
             extract($data); ?>
             <h1> OK, go back.</h1>
             <a href="<?=$url_main?>">back</a>
     <?php
         }
-        public function footer($data)
+        public static function footer($data)
         {
             ?>
             <footer style="border:1px gray solid;">I am footer</footer>
