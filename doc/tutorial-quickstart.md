@@ -105,7 +105,7 @@ C::Show($data); 是 C::Show($data,'test/done'); 的缩写， 调用 test/done �
 // app/Service/MiscService.php
 namespace MY\Service;
 
-use MY\Base\Helper\ServiceHelper as S;
+use MY\Base\Helper\BusinessHelper as S;
 use MY\Base\BaseService;
 use MY\Model\MiscModel;
 

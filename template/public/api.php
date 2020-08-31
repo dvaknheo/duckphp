@@ -7,13 +7,13 @@ class MyApp extends DuckPhp
 {
     public $options =[
         'is_debug'=>true,  //调试状态开关， 开的情况下可以用 Get 访问
+        'skip_setting_file' =>true,
         
         'api_class_base'=>'BaseApi', 
         'api_class_prefix'=>'Api_',
     ];
     protected function __construct()
     {
-        $this->options['skip_setting_file']=true;
         parent::__construct();
         $this->options['ext'][Misc::class]=true;
     }
@@ -48,7 +48,7 @@ class MyApp extends DuckPhp
         
         // 这里用了 Misc 的 CallAPI
         $data=static::CallAPI($object, $method, $input, static::G()->options['api_class_base']);
-        static::ExitJson($data);
+        static::G()->_ExitJson($data);
         
         return true;
     }

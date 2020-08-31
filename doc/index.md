@@ -14,7 +14,5 @@
 - [扩展的使用和开发](tutorial-extension.md)
 - [使用第三方扩展包](tutorial-plugin.md)
 - [系统自带例子分析](tutorial-sample.md)
-- [swoole](tutorial-swoole.md)
 - [参与开发相关](tutorial-support.md)
 - [参考索引页面](ref/index.md)
-- [选项页面](ref/options.md)

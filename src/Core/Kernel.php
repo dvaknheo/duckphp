@@ -33,7 +33,7 @@ trait Kernel
             'skip_plugin_mode_check' => false,
             'handle_all_dev_error' => true,
             'handle_all_exception' => true,
-            'override_class' => 'Base\App',
+            'override_class' => 'System\App',
             'path_namespace' => 'app',
             
             //// basic config ////

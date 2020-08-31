@@ -27,7 +27,7 @@ protected static function CallExtendStaticMethod($name, $arguments)
     静态魔术方法的实质调用。
 ## 详解
 
-ExtendableStaticCallTrait 这个 Trait 用于 App, ControllerHelper, ServiceHelper, ModelHelper, ViewHelper
+ExtendableStaticCallTrait 这个 Trait 用于 App, ControllerHelper, BusinessHelper, ModelHelper, ViewHelper, AppHelper
 
 作用是动态扩展类的静态方法。
 

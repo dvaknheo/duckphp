@@ -4,7 +4,7 @@
 
 DuckPhp 的使用者角色分为 `业务工程师`和`核心工程师`两种。
 
-`业务工程师`负责日常 Curd 。作为业务工程师， 你不能引入 DuckPhp 的任何东西，就当 DuckPhp 命名空间里的东西不存在。
+`业务工程师`负责日常 Curd 。作为`业务工程师`， 你不能引入 DuckPhp 的任何东西，就当 DuckPhp 命名空间里的东西不存在。
 
 `核心工程师`才去研究 DuckPhp 类里的东西。做大家统一的底层代码。
 
@@ -16,23 +16,23 @@ DuckPhp 代码里的 template 目录就是我们的工程目录示例。也是�
 
 ```text
 +---app                     // psr-4 标准的自动加载目录。
-|   +---Base                // 基类放在这里
-|   |   |   App.php         // 默认框架入口文件
-|   |   |   BaseController.php  // 控制器基类
-|   |   |   BaseModel.php   // 模型基类
-|   |   |   BaseService.php // 服务基类
-|   |   \---Helper
-|   |           AppHelper.php       // 应用助手类
-|   |           ControllerHelper.php    // 控制器助手类
-|   |           ModelHelper.php     // 模型助手类
-|   |           ServiceHelper.php   // 服务助手类
-|   |           ViewHelper.php      // 视图助手类
+|   +---Business            // 业务目录
+|   |       TestService.php // 测试 Service
 |   +---Controller          // 控制器目录
 |   |       Main.php        // 默认控制器
 |   +---Model               // 模型放在里
 |   |       TestModel.php   // 测试模型
-|   \---Service             // 服务目录
-|           TestService.php // 测试 Service
+|   +---System              // 基类放在这里
+|       |   App.php         // 默认框架入口文件
+|       |   BaseController.php      // 控制器基类
+|       |   BaseModel.php   // 模型基类
+|       |   BaseService.php // 服务基类
+|       \---Helper                  //助手类目录
+|               AppHelper.php       // 应用助手类
+|               BusinessHelper.php  // 服务助手类
+|               ControllerHelper.php// 控制器助手类
+|               ModelHelper.php     // 模型助手类
+|               ViewHelper.php      // 视图助手类
 +---config                  // 配置文件放这里
 |       config.php          // 配置，目前是空数组
 |       setting.sample.php  // 设置，去除敏感信息的模板
@@ -49,26 +49,26 @@ DuckPhp 代码里的 template 目录就是我们的工程目录示例。也是�
 这个目录结构里，`业务工程师`只能写 `app/Controller`,`app/Model`,`app/Service`,`view` 这四个目录。
 有时候需要去读 `app/Base/Helper` 目录下的的类。其他则是`核心工程师`的活。
 
-app 目录，就是放 MY 开始命名空间的东西了。 app 目录可以在选项里设置成其他名字
-命名空间 MY 是 可调的。比如调整成 MyProject ,TheBigOneProject  等。
+app 目录，就是放 LazyToChange 开始命名空间的东西了。 app 目录可以在选项里设置成其他名字
+命名空间 LazyToChange 是 可调的。比如调整成 MyProject ,TheBigOneProject  等。
 可以用 `./vendor/bin/duckphp --create --namespace TheBigOneProject` 调整。
 
 文件都不复杂。基本都是空类或空继承类，便于不同处理。
 这些结构能精简么？
 可以，你可以一个目录都不要。
 
-Base/DuckPhp.php 这个文件的入口类继承 DuckPhp\DuckPhp 类，工程的入口流程会在这里进行，这里是`核心工程师`重点了解的类。
+System/App.php 这个文件的入口类继承 DuckPhp\DuckPhp 类，工程的入口流程会在这里进行，这里是`核心工程师`重点了解的类。
 
 BaseController, BaseModel, BaseService 是你自己要改的基类，基本只实现了单例模式。
-ContrllorHelper,ModelHelper,ServiceHelper 如果你一个人偷懒，直接用 APP 类也行  
+
+Helper 目录里的所有类，如果你一个人偷懒，直接用 APP 类也行  
 
 
-
-#### 如何精简目录
-* 移除 app/Base/Helper/ 目录,如果你直接用 App::* 替代 M,V,C,S 助手类。
-* 移除 app/Base/BaseController.php 如果你的 Controller 和默认的一样不需要基本类。
-* 移除 app/Base/BaseModel.php 如果你的 Model 用的全静态方法。
-* 移除 app/Base/BaseService.php 如果你的 Service 不需要 G() 可变单例方法。
+#### 总结如何精简目录
+* 移除 app/System/Helper/ 目录,如果你直接用 App::* 替代助手类。
+* 移除 app/System/BaseController.php 如果你的 Controller 和默认的一样不需要基本类。
+* 移除 app/System/BaseModel.php 如果你的 Model 用的全静态方法。
+* 移除 app/System/BaseService.php 如果你的 Service 不需要 G() 可变单例方法。
 * 移除 start_server.php 如果你使用外部 http 服务器
 * 移除 config/ 目录,在启动选项里加 'skip_setting_file'=>true ，如果你不需要 config/setting.php，
     并有自己的配置方案
@@ -89,11 +89,11 @@ ContrllorHelper,ModelHelper,ServiceHelper 如果你一个人偷懒，直接用 A
 文字版
 ```text
            /-> View-->ViewHelper
-Controller --> Service ------------------------------ ---> Model
+Controller --> Business ------------------------------ ---> Model
          \         \   \               \  /                  \
-          \         \   \-> LibService ----> ExModel----------->ModelHelper
+          \         \   \-> (Business)Lib ----> ExModel----------->ModelHelper
            \         \             \                
-            \         ---------------->ServiceHelper
+            \         ---------------->BusinessHelper
              \-->ControllerHelper
 ```
 
@@ -105,7 +105,7 @@ Controller --> Service ------------------------------ ---> Model
 * 写 View 你可能要引入 Base\Helper\ViewHelper 助手类别名为 V 。
 * 不能交叉引入其他层级的助手类。如果需要交叉，那么你就是错的。
 * 小工程可以用直接使用入口类 MY\Base\App 类，这包含了上述类的公用方法。
-* ContrllorHelper,ModelHelper,ServiceHelper,ViewHelper 如果你一个人偷懒，直接用 APP 类也行  
+* ContrllorHelper,ModelHelper,BusinessHelper,ViewHelper 如果你一个人偷懒，直接用 APP 类也行  
 * Service 按业务逻辑走， Model 按数据库表名走
 * LibService 其实是特殊的 Service 用于其他 Service 调用
 * ExModel 是特殊 Model 表示多个表混合调用。
@@ -133,18 +133,29 @@ Controller --> Service ------------------------------ ---> Model
  */
 require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
 
-$namespace = 'MY';                              // @DUCKPHP_NAMESPACE
+$namespace = 'LazyToChange';                              // @DUCKPHP_NAMESPACE
 $path = realpath(__DIR__.'/..');
 
-$options = [];
+$options = [
+//    'use_autoloader' => true,
+//    'skip_plugin_mode_check' => false,
+//    'handle_all_dev_error' => true,
+//    'handle_all_exception' => true,
+//    'override_class' => 'System\App',
+//    'path_namespace' => 'app',
+];
 $options['path'] = $path;
 $options['namespace'] = $namespace;
+$options['is_debug'] = true;
+//$options['skip_setting_file'] = true;
 
-// $options['ext']['DuckPhp\\Ext\\RouteHookPathInfoByGet']=true;
-$options['ext']['DuckPhp\\Ext\\RouteHookPathInfoByGet']=true; //@DUCKPHP_DELETE
+// $options['use_path_info_by_get']=false;
+$options['use_path_info_by_get']=true; //@DUCKPHP_DELETE
 echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKPHP_DELETE
+echo "<div>不建议直接运行这文件，建议用安装模式 </div>\n"; //@DUCKPHP_DELETE
 
 \DuckPhp\DuckPhp::RunQuickly($options);
+
 ```
 入口类前面部分是处理头文件的。
 
@@ -156,13 +167,13 @@ echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKP
 \DuckPhp\DuckPhp::RunQuickly($options);
 ```
 RunQuickly 相当于 \DuckPhp\DuckPhp::G()->init($options,function(){})->run(); 
-\DuckPhp\DuckPhp::G()->init($options,function(){})； 会执行根据选项，返回  `MY\Base\App`
+\DuckPhp\DuckPhp::G()->init($options,function(){})； 会执行根据选项，返回  `LazyToChange\System\App`
 
-为什么不是 `MY\Base\App::RunQuickly($options); ` 呢？ 可以，但是这要兼容不使用外部 autoloader 的情况。如 composer  。 如果你用外部加载器，只需直接 `MY\Base\App::RunQuickly($options); `。
+为什么不是 `MY\Base\App::RunQuickly($options); ` 呢？ 可以，但是这要兼容不使用外部 autoloader 的情况。如 composer  。 如果你用外部加载器，只需直接 `LazyToChange\System\App::RunQuickly($options); `。
 
 ###  工程入口文件
 
-所以我们现在来看 `app/Base/App.php` 对应的 MY\Base\App 类就是入口了。
+所以我们现在来看 `app/System/App.php` 对应的 LazyToChange\System\App 类就是入口了。
 
 ```php
 <?php declare(strict_types=1);
@@ -290,7 +301,7 @@ error_* 选项为 null 用默认，为 callable 是回调，为string 则是调�
 
 ## 请求流程和生命周期
 
-怎么就从 DuckPhp\DuckPhp 切到 MY\Base\App 类了？
+怎么就从 DuckPhp\DuckPhp 切到 LazyToChange\System\App 类了？
 
 index.php 就只执行了
 
@@ -307,7 +318,7 @@ init 为初始化阶段 ，run 为运行阶段。$callback 在init() 之后执�
     处理是否是插件模式
     处理自动加载  AutoLoader::G()->init($options, $this)->run();
     处理异常管理 ExceptionManager::G()->init($exception_options, $this)->run();
-    checkOverride() 检测如果有子类，切入子类（MY\Base\App）继续 
+    checkOverride() 检测如果有覆盖类，切入覆盖类（LazyToChange\System\App）继续 
     接下来是 initAfterOverride;
 
 #### initAfterOverride 初始化阶段
@@ -392,8 +403,8 @@ DuckPhp 扩展的加载是通过选项里添加，$options['ext']数组实现的
     
     $ext_class 为扩展的类名，如果找不到扩展类则不启用。
     $ext_class 满足组件接口。在初始化的时候会被调用。
-    $ext_class->init(array $options,$context=null);
+    $ext_class->init(array $options,$context=null); // context 为 DuckPhp 的实现类。
     
-    如果 $options 为  false 则不启用，
+    如果 $options 为 false 则不启用，
     如果 $options 为 true ，则会把当前全局 $options 传递进去。
 

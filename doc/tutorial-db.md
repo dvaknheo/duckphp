@@ -16,7 +16,7 @@
 'database_list'=>null,      //DB 列表
 
 ## 相关设置
-setting.php 以下配置，注意的是 DuckPhp 默认是支持多个数据库的，所以是databa
+setting.php 以下配置，注意的是 DuckPhp 默认是支持多个数据库的，所以是database_list
 ```php
 [
 'database_list' =>[[

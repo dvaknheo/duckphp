@@ -13,7 +13,7 @@ $options = [
 //    'skip_plugin_mode_check' => false,
 //    'handle_all_dev_error' => true,
 //    'handle_all_exception' => true,
-    'override_class' => 'System\App',
+//    'override_class' => 'System\App',
 //    'path_namespace' => 'app',
 ];
 $options['path'] = $path;

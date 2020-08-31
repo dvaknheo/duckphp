@@ -7,7 +7,7 @@
 - [DuckPhp\Helper\ViewHelper](ref/Helper-ViewHelper.md) 视图助手类
 - [DuckPhp\Helper\ModelHelper](ref/Helper-ModelHelper.md) 模型助手类
 - [DuckPhp\Helper\ControllerHelper](ref/Helper-ControllerHelper.md) 控制器助手类
-- [DuckPhp\Helper\ServiceHelper](ref/Helper-ServiceHelper.md) 服务助手类
+- [DuckPhp\Helper\BusinessHelper](ref/Helper-BusinessHelper.md) 服务助手类
 - *[DuckPhp\Helper\AppHelper](ref/Helper-AppHelper.md)* 应用助手类，一般不常用。
 
 ## 开始
@@ -134,9 +134,10 @@ Display($view, $data = null)
 
 ## BusinessHelper 业务的助手类
 
- ServiceHelper 用于业务层。
+ BusinessHelper 用于业务层。
 
-    读取设置,设置默认在 config/setting.php 里， .env 的内容也会加进来
+
+
 Config($key, $file_basename = 'config')
     读取配置，从 config/$file_basename.php 里读取配置
 LoadConfig($file_basename)
@@ -198,13 +199,13 @@ Display
 ### 配置相关
 Setting
 
-    【配置相关】见 ServiceHelper 的 Setting 介绍
+    【配置相关】见 BusinessHelper 的 Setting 介绍
 Config
 
-    【配置相关】见 ServiceHelper 的 Config 介绍
+    【配置相关】见 BusinessHelper 的 Config 介绍
 LoadConfig
 
-    【配置相关】见 ServiceHelper 的 LoadConfig 介绍
+    【配置相关】见 BusinessHelper 的 LoadConfig 介绍
 ### 跳转相关
 ExitRedirect 不能跳转到外站，要用 ExitRedirectOutside
 
