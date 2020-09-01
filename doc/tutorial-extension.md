@@ -23,12 +23,11 @@ DuckPhp/Core 的其他组件如 Configer, Route, View, AutoLoader 默认都在�
 
 所有的 DuckPhp 自带扩展 可以在 [参考文档](ref/index.md) 里按字母顺序查看
 
-DuckPhp 只启用了 DBManager 一个扩展。
 
 其他扩展按功能如下
 
 ### 
-RouteHookDirecotoryMode , RouteHookOnFileMode
+RouteHookDirecotoryMode ,
 
 这些路由钩子的扩展可以在  路由教程 里查看
 
@@ -49,11 +48,6 @@ RouteHookDirecotoryMode , RouteHookOnFileMode
 
 
 ### CallableView 函数方式的视图
-
-### DBReusePoolProxy 过时 ，连接池
-
-### PluginForSwooleHttpd
-
 
 
 ## 编写扩展
@@ -76,7 +70,7 @@ ComponentBase 帮你实现了 这些东西，
 
 extendComponents ，如果你要把你的类给助手类使用。
 
-['A','M','V','C','S'] 都是各助手类的名称缩写。
+['A','M','V','C','B'] 都是各助手类的名称缩写。
 
 
 ```
@@ -92,6 +86,5 @@ $context->extendComponents(
 
 
 
-## 把你的独立工程作为扩展给第三方使用
+## 把你的独立工程作为扩展给第三方使用 见下一章
 
-只要入口  App 类使用 AppPluginTrait 就行。
