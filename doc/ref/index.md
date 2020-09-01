@@ -74,7 +74,7 @@
    16. [StrictCheck.php](Ext-StrictCheck.md) 严格检查模式组件
         1. [StrictCheckObjectTrait.php](Ext-StrictCheckModelTrait.md) 严格检查模式的基类
    17. [EventManager](Ext-EventManager.md) 事件管理器
-   18. [ExceptionWrapper](Ext-ExceptionWrapper.md) 封装异常的类
+   18. [Cache](Ext-Cache.md) 空缓存类
 6. `Helper` 目录是各种助手类
     1. **[HelperTrait.php](Helper-HelperTrait.md)** 助手类公用 Trait
     2. [ControllerHelper.php](Helper-ControllerHelper.md) 控制器助手类
