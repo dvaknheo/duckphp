@@ -1,19 +1,19 @@
 <?php
-namespace tests\DuckPhp\DB;
+namespace tests\DuckPhp\Db;
 
-use DuckPhp\DB\DB;
+use DuckPhp\Db\Db;
 
-class DBTest extends \PHPUnit\Framework\TestCase
+class DbTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(DB::class);
+        \MyCodeCoverage::G()->begin(Db::class);
         $options=[
 	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
 	'username'=>'admin',	
 	'password'=>'123456'
 ];
-        $db=DB::CreateDBInstance($options);
+        $db=Db::CreateDbInstance($options);
         $pdo=$db->PDO();
         $db->PDO($pdo);
         $db->setBeforeQueryHandler(function($db, $sql,...$args){
@@ -52,13 +52,13 @@ class DBTest extends \PHPUnit\Framework\TestCase
         $db->rowCount();
         
         //code here
-        DB::CloseDBInstance($db);
+        Db::CloseDbInstance($db);
         
         \MyCodeCoverage::G()->end();
         /*
         $db->init($options=[], $context=null);
-        $db->CreateDBInstance($db_config);
-        $db->CloseDBInstance($db, $tag=null);
+        $db->CreateDbInstance($db_config);
+        $db->CloseDbInstance($db, $tag=null);
         $db->check_connect();
         $db->close();
         $db->getPDO();

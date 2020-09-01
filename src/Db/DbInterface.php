@@ -3,9 +3,9 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckPhp\DB;
+namespace DuckPhp\Db;
 
-interface DBInterface
+interface DbInterface
 {
     public function close();
     public function PDO($object = null);

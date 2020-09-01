@@ -3,11 +3,11 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckPhp\DB;
+namespace DuckPhp\Db;
 
-class DB implements DBInterface
+class Db implements DbInterface
 {
-    use DBAdvanceTrait;
+    use DbAdvanceTrait;
     
     public $pdo;
     public $config;
@@ -22,14 +22,14 @@ class DB implements DBInterface
         $this->config = $options;
         $this->check_connect();
     }
-    public static function CreateDBInstance($db_config)
+    public static function CreateDbInstance($db_config)
     {
         $class = static::class;
         $db = new $class();
         $db->init($db_config);
         return $db;
     }
-    public static function CloseDBInstance($db, $tag = null)
+    public static function CloseDbInstance($db, $tag = null)
     {
         $db->close();
     }

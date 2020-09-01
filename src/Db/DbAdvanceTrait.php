@@ -3,9 +3,9 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckPhp\DB;
+namespace DuckPhp\Db;
 
-trait DBAdvanceTrait
+trait DbAdvanceTrait
 {
     public function quoteIn($array)
     {

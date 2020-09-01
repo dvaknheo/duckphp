@@ -42,14 +42,14 @@ class StrictCheck extends ComponentBase
         $this->options['is_debug'] = isset($context->options) ? ($context->options['is_debug'] ?? $this->options['is_debug']) : $this->options['is_debug'];
         
         try {
-            get_class($context)::setBeforeGetDBHandler([static::class, 'CheckStrictDB']);
+            get_class($context)::setBeforeGetDBHandler([static::class, 'CheckStrictDb']);
         } catch (\BadMethodCallException $ex) { // @codeCoverageIgnore
             //do nothing;
         }
     }
-    public static function CheckStrictDB()
+    public static function CheckStrictDb()
     {
-        return static::G()->checkStrictComponent('DB', 5, ['DuckPhp\\Core\\App','DuckPhp\\Helper\\ModelHelper']);
+        return static::G()->checkStrictComponent('Db', 5, ['DuckPhp\\Core\\App','DuckPhp\\Helper\\ModelHelper']);
     }
     ///////////////////////////////////////////////////////////
     public function getCallerByLevel($level, $parent_classes_to_skip = [])

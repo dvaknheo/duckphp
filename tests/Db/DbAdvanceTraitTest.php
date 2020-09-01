@@ -1,21 +1,21 @@
 <?php
-namespace tests\DuckPhp\DB;
+namespace tests\DuckPhp\Db;
 
-use DuckPhp\DB\DBAdvanceTrait;
-use DuckPhp\DB\DB;
+use DuckPhp\Db\DbAdvanceTrait;
+use DuckPhp\Db\Db;
 
-class DBAdvanceTraitTest extends \PHPUnit\Framework\TestCase
+class DbAdvanceTraitTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(DBAdvanceTrait::class);
+        \MyCodeCoverage::G()->begin(DbAdvanceTrait::class);
         
         $options=[
 	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
 	'username'=>'admin',	
 	'password'=>'123456'
 ];
-        $db=DB::CreateDBInstance($options);
+        $db=Db::CreateDbInstance($options);
         
         $array=[];
         $db->quoteIn($array);
