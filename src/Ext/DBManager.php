@@ -15,39 +15,29 @@ class DBManager extends ComponentBase
     
     public $options = [
         'database_list' => null,
-        'db_create_handler' => null,
-        'db_close_handler' => null,
-        'db_exception_handler' => null,
         'db_before_get_object_handler' => null,
         'db_database_list_from_setting' => true,
         'db_close_at_output' => true,
+        
+        'log_sql_query' => false,
+        'log_sql_level' => 'debug',
     ];
-
     
     protected $database_config_list = [];
     protected $databases = [];
-    
-    protected $db_create_handler = null;
-    protected $db_close_handler = null;
-    protected $db_exception_handler = null;
-    
-    protected $db_before_get_object_handler = null;
-    protected $before_query_handler = null;
-
+    protected $context_class = null;
     //@override
     protected function initOptions(array $options)
     {
-        $this->db_before_get_object_handler = $this->options['db_before_get_object_handler'] ?? null;
         $this->database_config_list = $this->options['database_list'];
-        $this->db_create_handler = $this->options['db_create_handler'] ?? [DB::class,'CreateDbInstance'];
-        $this->db_close_handler = $this->options['db_close_handler'] ?? [DB::class,'CloseDbInstance'];
-        $this->db_exception_handler = $this->options['db_exception_handler'] ?? null;
     }
     //@override
     protected function initContext(object $context)
     {
+        $this->context_class = get_class($context);
         if ($this->options['db_database_list_from_setting']) {
-            /** @var mixed */ $database_list = get_class($context)::Setting('database_list');
+            /** @var mixed */
+            $database_list = get_class($context)::Setting('database_list');
             if (!isset($database_list)) {
                 $database_list = isset($context->options) ? ($context->options['database_list'] ?? null) : null;
             }
@@ -55,34 +45,19 @@ class DBManager extends ComponentBase
                 $this->database_config_list = $database_list;
             }
         }
-        //if(!isset($this->database_config_list)){
-        //    throw new \ErrorException(static::class." setting error");
-        //}
-        // db_before_get_object_handler
-        if (is_array($this->db_before_get_object_handler) && $this->db_before_get_object_handler[0] === null) {
-            $this->db_before_get_object_handler[0] = get_class($context);
-        }
-        if ($this->options['db_close_at_output'] && method_exists($context, 'addBeforeShowHandler')) {
-            $context->addBeforeShowHandler([static::class,'CloseAllDb']);
-        }
-        $this->before_query_handler = isset($context->options) ? ($context->options['db_before_query_handler'] ?? null) : null;
+        //////////////////////////
+        
+        // if ($this->options['db_close_at_output'] && method_exists($context, 'addBeforeShowHandler')) {
+        //    $context->addBeforeShowHandler([static::class,'CloseAllDb']);
+        // }
         if (method_exists($context, 'extendComponents')) {
             $context->extendComponents(
                 [
-                    'setDbHandler' => [static::class .'::G', 'setDbHandler'],
                     'setBeforeGetDbHandler' => [static::class .'::G', 'setBeforeGetDbHandler'],
                 ],
                 ['A']
             );
         }
-    }
-    public static function CloseAllDb()
-    {
-        return static::G()->_closeAllDb();
-    }
-    public function OnException()
-    {
-        return static::G()->_OnException();
     }
     public static function Db($tag = null)
     {
@@ -96,25 +71,26 @@ class DBManager extends ComponentBase
     {
         return static::G()->_DbForRead();
     }
-    
-    public function setDbHandler($db_create_handler, $db_close_handler = null, $db_exception_handler = null)
+    public static function CloseAllDb()
     {
-        $this->db_create_handler = $db_create_handler;
-        $this->db_close_handler = $db_close_handler;
-        $this->db_exception_handler = $db_exception_handler;
+        return static::G()->_closeAllDb();
     }
+    public static function OnQuery($db, $sql, ...$args)
+    {
+        return static::G()->_OnQuery($db, $sql, ...$args);
+    }
+
+    ///////////////////////
+    
     public function setBeforeGetDbHandler($db_before_get_object_handler)
     {
-        $this->db_before_get_object_handler = $db_before_get_object_handler;
+        $this->options['db_before_get_object_handler'] = $db_before_get_object_handler;
     }
-    public function getDBHandler()
-    {
-        return [$this->db_create_handler,$this->db_close_handler,$this->db_exception_handler];
-    }
+
     public function _Db($tag = null)
     {
-        if (isset($this->db_before_get_object_handler)) {
-            ($this->db_before_get_object_handler)($this, $tag);
+        if (isset($this->options['db_before_get_object_handler'])) {
+            ($this->options['db_before_get_object_handler'])($this, $tag);
         }
         if (!isset($tag)) {
             if (empty($this->database_config_list)) {
@@ -132,19 +108,12 @@ class DBManager extends ComponentBase
     protected function getDatabase($db_config, $tag)
     {
         if (!isset($this->databases[$tag])) {
-            $db = ($this->db_create_handler)($db_config, $tag);
-            if ($this->before_query_handler) {
-                $this->setBeforeQueryHandler($db, $this->before_query_handler);
-            }
+            $db = new Db($db_config);
+            $db->setBeforeQueryHandler([static::class, 'OnQuery']);
+            
             $this->databases[$tag] = $db;
         }
         return $this->databases[$tag];
-    }
-    public function setBeforeQueryHandler($db, $before_query_handler)
-    {
-        if (is_object($db) && is_callable([$db,'setBeforeQueryHandler'])) {
-            $db->setBeforeQueryHandler($this->before_query_handler);
-        }
     }
     public function _DbForWrite()
     {
@@ -160,23 +129,17 @@ class DBManager extends ComponentBase
     
     public function _closeAllDb()
     {
-        if (!$this->db_close_handler) {
-            return;
-        }
-        foreach ($this->databases as $tag => $v) {
-            ($this->db_close_handler)($v, $tag);
+        foreach ($this->databases as $tag => $db) {
+            $db->close();
         }
         $this->databases = [];
     }
-
-    public function _OnException()
+    public function _OnQuery($db, $sql, ...$args)
     {
-        if (!$this->db_exception_handler) {
+        if (!$this->options['log_sql_query']) {
             return;
         }
-        foreach ($this->databases as $tag => $v) {
-            ($this->db_exception_handler)($v, $tag);
-        }
-        $this->databases = [];
+        
+        ($this->context_class)::Logger()->log($this->options['log_sql_level'], '[sql]: ' . $sql, $args);
     }
 }

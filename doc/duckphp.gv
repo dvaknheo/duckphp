@@ -109,23 +109,23 @@ subgraph cluster_Helper {
 
 }
 
-subgraph cluster_DB {
-    label = "[DuckPhp\\DB]";
+subgraph cluster_Db {
+    label = "[DuckPhp\\Db]";
 
-    DB_DB [label="DB"];
-    DB_DBAdvanceTrait [label="DBAdvanceTrait";shape=diamond];
-    DB_DBInterface [label="DBInterface";shape=note];
+    Db_Db [label="Db"];
+    Db_DbAdvanceTrait [label="DbAdvanceTrait";shape=diamond];
+    Db_DbInterface [label="DbInterface";shape=note];
     
-    DB_DB -> DB_DBAdvanceTrait;
-    DB_DB -> DB_DBInterface;
+    Db_Db -> Db_DbAdvanceTrait;
+    Db_Db -> Db_DbInterface;
 }
 
 subgraph cluster_Ext {
     label = "[DuckPhp\\Ext]";
 
-    CallableView[shape="component"];
     Cache[shape="component"];
-    DBManager[shape="component"];
+    CallableView[shape="component"];
+    DbManager[shape="component"];
     EmptyView[shape="component"];
     EventManager[shape="component"];
     FacadesAutoLoader[shape="component"];
@@ -144,9 +144,8 @@ subgraph cluster_Ext {
     RouteHookRouteMap[shape="component"];
     StrictCheck[shape="component"];
     StrictCheckObjectTrait [shape=diamond];
-    ExceptionWrapper [shape="component"];
 
-    DBManager -> DB_DB;
+    DbManager -> Db_Db;
     CallableView ->Core_View; 
     EmptyView ->Core_View; 
     JsonRpcClientBase ->JsonRpcExt;
@@ -168,10 +167,9 @@ subgraph cluster_Ext {
     RouteHookPathInfoByGet -> Core_ComponentBase [style="dotted"];
     RouteHookRewrite -> Core_ComponentBase [style="dotted"];
     RouteHookRouteMap -> Core_ComponentBase [style="dotted"];
-    DBManager -> Core_ComponentBase [style="dotted"];
+    DbManager -> Core_ComponentBase [style="dotted"];
 
     EventManager -> Core_ComponentBase [style="dotted"];
-    ExceptionWrapper -> Core_ComponentBase [style="dotted"];
 }
 
 subgraph cluster_DuckPhp {
@@ -183,7 +181,7 @@ subgraph cluster_DuckPhp {
 
     DuckPhp -> RouteHookRouteMap;
     DuckPhp -> Pager;
-    DuckPhp -> DBManager;
+    DuckPhp -> DbManager;
     DuckPhp -> EventManager;
     DuckPhp -> RouteHookPathInfoByGet;
     DuckPhp -> Cache;

@@ -22,12 +22,6 @@ class DuckPhp extends App
     public function __construct()
     {
         parent::__construct();
-        $options = [
-            'log_sql_query' => false,
-            'log_sql_level' => 'debug',
-            'db_before_query_handler' => [static::class, 'OnQuery']
-        ];
-        $this->options = array_merge($options, $this->options);
         $ext = [
             DBManager::class => true,
             RouteHookPathInfoByGet::class => true,
@@ -35,19 +29,9 @@ class DuckPhp extends App
         ];
         $this->options['ext'] = array_merge($ext, $this->options['ext']);
     }
-    //@override
-    public static function OnQuery($db, $sql, ...$args)
+    protected function onBeforeShow()
     {
-        return static::G()->_OnQuery($db, $sql, ...$args);
-    }
-    //@override
-    public function _OnQuery($db, $sql, ...$args)
-    {
-        if (!$this->options['log_sql_query']) {
-            DBManager::G()->setBeforeQueryHandler($db, null);
-            return;
-        }
-        static::Logger()->log($this->options['log_sql_level'], '[sql]: ' . $sql, $args);
+        // return DBManager::G()->CloseDb();
     }
     //@override
     public function _Pager($object = null)
@@ -86,4 +70,5 @@ class DuckPhp extends App
     {
         return EventManager::G()->on($event, $callback);
     }
+
 }

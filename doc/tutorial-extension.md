@@ -21,10 +21,28 @@ DuckPhp/Core 的其他组件如 Configer, Route, View, AutoLoader 默认都在�
 
 ## 默认没启用的扩展
 
+
+
 所有的 DuckPhp 自带扩展 可以在 [参考文档](ref/index.md) 里按字母顺序查看
 
 
 其他扩展按功能如下
+
+
+### 按字母统计
+
+* CallableView
+* EmptyView
+* RouteHookRewrite
+* StrictCheck
+* FacadesAutoLoader
+* JsonRpcExt
+* RedisManager
+* RedisSimpleCache
+* RouteHookManager
+* Misc
+* RouteHookDirectoryMode
+
 
 ### 
 RouteHookDirecotoryMode ,
@@ -34,7 +52,6 @@ RouteHookDirecotoryMode ,
 
 
 ### RedisManager RedisSimpleCache Redis 的一些扩展
-
 
 
 ### JsonRpcExt
@@ -48,6 +65,18 @@ RouteHookDirecotoryMode ,
 
 
 ### CallableView 函数方式的视图
+
+## 分页
+
+## 默认已使用的扩展
+###  按字母排序
+
+* RouteHookRouteMap
+* RouteHookPathInfoByGet
+* Pager
+* Cache
+* EventManager
+* DbManager
 
 
 ## 编写扩展
