@@ -47,11 +47,7 @@ class DBManagerTest extends \PHPUnit\Framework\TestCase
         //----------------
         $database_sinlge=[$database_list[0]];
         $options=[
-        'db_create_handler'=>null,
-        'db_close_handler'=>null,
-        'db_excption_handler'=>null,
-        
-        'database_list'=>$database_sinlge,
+            'database_list'=>$database_sinlge,
         ];
         DBManager::G(new DBManager())->init($options);
         $options['database_list']=[
@@ -82,14 +78,16 @@ class DBManagerTest extends \PHPUnit\Framework\TestCase
             'log_sql'=>true,
         ];
         App::G(new App())->init($dn_options);
-        var_dump(App::G());
         $options=[
             'database_list'=>$database_list,
+            'log_sql_query'=>true,
         ];
         
-/*
         DBManager::G(new DBManager())->init($options,App::G());
         $data=App::Db()->fetchColumn('select ?+? as t',1,2);
+        DBManager::G()->options['log_sql_query']=false;
+        $data=App::Db()->fetchColumn('select ?+? as t',1,2);
+
         
         var_dump($data);
 
@@ -109,7 +107,7 @@ class DBManagerTest extends \PHPUnit\Framework\TestCase
             App::Db('zxvf');
         }catch(\Exception $ex){
         }
-*/
+
         \MyCodeCoverage::G()->end();
 
     }

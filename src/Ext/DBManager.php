@@ -17,7 +17,6 @@ class DBManager extends ComponentBase
         'database_list' => null,
         'db_before_get_object_handler' => null,
         'db_database_list_from_setting' => true,
-        'db_close_at_output' => true,
         
         'log_sql_query' => false,
         'log_sql_level' => 'debug',
@@ -35,6 +34,7 @@ class DBManager extends ComponentBase
     protected function initContext(object $context)
     {
         $this->context_class = get_class($context);
+        
         if ($this->options['db_database_list_from_setting']) {
             /** @var mixed */
             $database_list = get_class($context)::Setting('database_list');
@@ -45,11 +45,8 @@ class DBManager extends ComponentBase
                 $this->database_config_list = $database_list;
             }
         }
-        //////////////////////////
         
-        // if ($this->options['db_close_at_output'] && method_exists($context, 'addBeforeShowHandler')) {
-        //    $context->addBeforeShowHandler([static::class,'CloseAllDb']);
-        // }
+        //////////////////////////
         if (method_exists($context, 'extendComponents')) {
             $context->extendComponents(
                 [
@@ -89,26 +86,26 @@ class DBManager extends ComponentBase
 
     public function _Db($tag = null)
     {
-        if (isset($this->options['db_before_get_object_handler'])) {
-            ($this->options['db_before_get_object_handler'])($this, $tag);
-        }
         if (!isset($tag)) {
             if (empty($this->database_config_list)) {
                 throw new \ErrorException('DuckPhp: setting database_list missing');
             }
-            $t = array_keys($this->database_config_list);
-            $tag = $t[0];
+            $tag = static::TAG_WRITE;
         }
-        $db_config = $this->database_config_list[$tag] ?? null;
-        if ($db_config === null) {
-            throw new \ErrorException('DuckPhp: setting database_list['.$tag.'] missing');
-        }
-        return $this->getDatabase($db_config, $tag);
+        return $this->getDatabase($tag);
     }
-    protected function getDatabase($db_config, $tag)
+    protected function getDatabase($tag)
     {
+        if (isset($this->options['db_before_get_object_handler'])) {
+            ($this->options['db_before_get_object_handler'])($this, $tag);
+        }
         if (!isset($this->databases[$tag])) {
+            $db_config = $this->database_config_list[$tag] ?? null;
+            if ($db_config === null) {
+                throw new \ErrorException('DuckPhp: setting database_list['.$tag.'] missing');
+            }
             $db = new Db($db_config);
+            $db->init($db_config);
             $db->setBeforeQueryHandler([static::class, 'OnQuery']);
             
             $this->databases[$tag] = $db;
@@ -139,7 +136,6 @@ class DBManager extends ComponentBase
         if (!$this->options['log_sql_query']) {
             return;
         }
-        
         ($this->context_class)::Logger()->log($this->options['log_sql_level'], '[sql]: ' . $sql, $args);
     }
 }

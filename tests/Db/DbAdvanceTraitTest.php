@@ -15,7 +15,8 @@ class DbAdvanceTraitTest extends \PHPUnit\Framework\TestCase
 	'username'=>'admin',	
 	'password'=>'123456'
 ];
-        $db=Db::CreateDbInstance($options);
+        $db=new Db();
+        $db->init($options);
         
         $array=[];
         $db->quoteIn($array);

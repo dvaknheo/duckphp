@@ -29,9 +29,12 @@ class DuckPhp extends App
         ];
         $this->options['ext'] = array_merge($ext, $this->options['ext']);
     }
-    protected function onBeforeShow()
+    protected function onBeforeOutput()
     {
-        // return DBManager::G()->CloseDb();
+        if(!$this->options['close_resource_at_output']){
+            return;
+        }
+        DBManager::CloseAllDb();
     }
     //@override
     public function _Pager($object = null)
@@ -70,5 +73,4 @@ class DuckPhp extends App
     {
         return EventManager::G()->on($event, $callback);
     }
-
 }

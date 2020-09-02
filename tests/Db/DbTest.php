@@ -13,7 +13,8 @@ class DbTest extends \PHPUnit\Framework\TestCase
 	'username'=>'admin',	
 	'password'=>'123456'
 ];
-        $db=Db::CreateDbInstance($options);
+        $db=new Db;
+        $db->init($options);
         $pdo=$db->PDO();
         $db->PDO($pdo);
         $db->setBeforeQueryHandler(function($db, $sql,...$args){
@@ -52,7 +53,7 @@ class DbTest extends \PHPUnit\Framework\TestCase
         $db->rowCount();
         
         //code here
-        Db::CloseDbInstance($db);
+        $db->close($db);
         
         \MyCodeCoverage::G()->end();
         /*

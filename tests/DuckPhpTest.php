@@ -48,25 +48,30 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::DbForWrite();
         }catch(\Exception $ex){}
         ////
-                $db=new \stdClass();
-        DuckPhp::OnQuery($db,"SQL ",1,2);
-        DuckPhp::G()->options['log_sql_query']=false;
-        $db=new \stdClass();
-        DuckPhp::OnQuery($db,"SQL ",1,2);
+
         ////
-        \__h("test");
-        \__l("test");
-        \__hl("test");
-        \__url("test");
-        \__display("block",[]);
+        $this->doFunctions();
         
         DuckPhp::Event();
         DuckPhp::OnEvent('MyEvent',function(...$args){ var_dump($args);});
         DuckPhp::FireEvent('MyEvent','A','B','C');
         DuckPhp::FireEvent('NoExist','A','B','C');
         
+        
+        DuckPhp::Show([],'block');
+        DuckPhp::G()->options['close_resource_at_output']=false;
+        DuckPhp::Show([],'block');
+
         \MyCodeCoverage::G()->end(DuckPhp::class);
 
+    }
+    protected function doFunctions()
+    {
+        \__h("test");
+        \__l("test");
+        \__hl("test");
+        \__url("test");
+        \__display("block",[]);
     }
 }
 class fakeSwooleHttpd

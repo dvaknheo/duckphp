@@ -22,17 +22,6 @@ class Db implements DbInterface
         $this->config = $options;
         $this->check_connect();
     }
-    public static function CreateDbInstance($db_config)
-    {
-        $class = static::class;
-        $db = new $class();
-        $db->init($db_config);
-        return $db;
-    }
-    public static function CloseDbInstance($db, $tag = null)
-    {
-        $db->close();
-    }
     protected function check_connect()
     {
         if ($this->pdo) {

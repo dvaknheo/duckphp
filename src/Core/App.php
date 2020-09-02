@@ -463,11 +463,13 @@ trait Core_Helper
         return $ret;
     }
     ////
+    protected function onBeforeOutput()
+    {
+    }
     public function _Show($data = [], $view = '')
     {
-        foreach ($this->beforeShowHandlers as $v) {
-            ($v)();
-        }
+        $this->onBeforeOutput();
+        
         $view = $view === '' ? Route::G()->getRouteCallingPath() : $view;
         return View::G()->_Show($data, $view);
     }
