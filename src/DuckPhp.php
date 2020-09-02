@@ -31,7 +31,7 @@ class DuckPhp extends App
     }
     protected function onBeforeOutput()
     {
-        if(!$this->options['close_resource_at_output']){
+        if (!$this->options['close_resource_at_output']) {
             return;
         }
         DbManager::CloseAllDb();

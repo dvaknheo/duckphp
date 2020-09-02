@@ -50,12 +50,12 @@
         4. [Functions.php](Core-Functions.md) 全局函数列表
    6. **[AppPluginTrait.php](Core-AppPluginTrait.md) **  这个Trait用于把独立工程 App 转成插件 
    7. [HttpServer.php](Core-HttpServer.md) 单独的 Http 服务器
-4. `DB` 目录是数据库目录
-   1. [DBAdvanceTrait.php](DB-DBAdvanceTrait.md)  这个 trait 增加了 DB类的高级功能
-   2. [DBInterface.php](DB-DBInterface.md) DB 类满足 DBInterface 接口
-   3. [DB.php](DB-DB.md) DB类
-5. `Ext` 目录是扩展目录，按字母排序。默认加载  **[DBManager](Ext-DBManager.md)**   **[RouteHookRouteMap](Ext-RouteHookRouteMap.md)** **[RouteHookPathInfoByGet](ExtRouteHookPathInfoByGet.md)**
-   1. **[DBManager.php](Ext-DBManager.md)** 数据库管理组件
+4. `Db` 目录是数据库目录
+   1. [DbAdvanceTrait.php](Db-DbAdvanceTrait.md)  这个 trait 增加了 Db类的高级功能
+   2. [DbInterface.php](Db-DbInterface.md) Db 类满足 DbInterface 接口
+   3. [Db.php](Db-Db.md) Db类
+5. `Ext` 目录是扩展目录，按字母排序。默认加载  **[DbManager](Ext-DbManager.md)**   **[RouteHookRouteMap](Ext-RouteHookRouteMap.md)** **[RouteHookPathInfoByGet](ExtRouteHookPathInfoByGet.md)**
+   1. **[DbManager.php](Ext-DbManager.md)** 数据库管理组件
    3. **[Pager.php](Ext-Pager.md)** 分页类
         1. [PagerInteface.php](Ext-PagerInteface.md) 分页接口
    4. **[RouteHookRouteMap.php](Ext-RouteHookRouteMap.md)** 路由映射组件
@@ -107,15 +107,15 @@
 |   |-- SystemWrapperTrait.php
 |   |-- ThrowOn.php
 |   `-- View.php
-|-- DB
-|   |-- DB.php
-|   |-- DBAdvanceTrait.php
-|   `-- DBInterface.php
+|-- Db
+|   |-- Db.php
+|   |-- DbAdvanceTrait.php
+|   `-- DbInterface.php
 |-- DuckPhp.php
 |-- Ext
 |   |-- Cache.php
 |   |-- CallableView.php
-|   |-- DBManager.php
+|   |-- DbManager.php
 |   |-- EmptyView.php
 |   |-- EventManager.php
 |   |-- ExceptionWrapper.php
@@ -149,9 +149,9 @@
 - 'all_config' => array (), // 参见 [Core\Configer](Core-Configer.md)
 
     所有配置    
-- 'before\_get\_db\_handler' => NULL, // 参见 [Ext\DBManager](Ext-DBManager.md)
+- 'before\_get\_db\_handler' => NULL, // 参见 [Ext\DbManager](Ext-DbManager.md)
 
-    获取DB前调用的handler
+    获取Db前调用的handler
 - 'callable_view_head' => null, // 参见 [Ext\CallableView](Ext-CallableView.md)
 
     callableview 页眉
@@ -185,25 +185,25 @@
 - 'controller_welcome_class' => 'Main', // 参见 [Core\Route](Core-Route.md)
 
     控制器默认欢迎方法
-- 'database_list' => NULL, // 参见 [Ext\DBManager](Ext-DBManager.md)
+- 'database_list' => NULL, // 参见 [Ext\DbManager](Ext-DbManager.md)
 
     数据库列表
 - 'db_before_query_handler' => ['MY\\Base\\App','OnQuery'] // 参见 [Ext\XX](Ext-XX.md)
 
     数据库，查询前执行
-- 'db_close_at_output' => true, // 参见 [Ext\DBManager](Ext-DBManager.md)
+- 'db_close_at_output' => true, // 参见 [Ext\DbManager](Ext-DbManager.md)
 
     数据库，输出前关闭
-- 'db_close_handler' => NULL, // 参见 [Ext\DBManager](Ext-DBManager.md)
+- 'db_close_handler' => NULL, // 参见 [Ext\DbManager](Ext-DbManager.md)
 
     数据库，关闭句柄
-- 'db_create_handler' => NULL, // 参见 [Ext\DBManager](Ext-DBManager.md)
+- 'db_create_handler' => NULL, // 参见 [Ext\DbManager](Ext-DbManager.md)
 
     数据库，创建句柄
-- 'db_exception_handler' => NULL, // 参见 [Ext\DBManager](Ext-DBManager.md)
+- 'db_exception_handler' => NULL, // 参见 [Ext\DbManager](Ext-DbManager.md)
 
     数据库，异常句柄
-- 'default_exception_handler' => ['DuckPhp\\App',OnDefaultException'] // 参见 [Ext\DBManager](Ext-DBManager.md)
+- 'default_exception_handler' => ['DuckPhp\\App',OnDefaultException'] // 参见 [Ext\DbManager](Ext-DbManager.md)
     默认异常句柄
 
 - 'dev_error_handler' => 'DuckPhp\\App','OnDevErrorHandler'] // 参见 [Core\Kernel](Core-Kernel.md)
@@ -226,7 +226,7 @@
    array (
     'DuckPhp\\Ext\\Misc' => true,
     'DuckPhp\\Ext\\SimpleLogger' => true,
-    'DuckPhp\\Ext\\DBManager' => true,
+    'DuckPhp\\Ext\\DbManager' => true,
     'DuckPhp\\Ext\\RouteHookRewrite' => true,
     'DuckPhp\\Ext\\RouteHookRouteMap' => true,
    
@@ -327,7 +327,7 @@
 - 'system_exception_handler' =>  Duckphp\DuckPhp->set_exception_handler // 参见 [Core\Kernel](Core-Kernel.md)
 
     接管系统的异常管理
-- 'use_context_db_setting' => true, // 参见 [Ext\DBManager](Ext-DBManager.md)
+- 'use_context_db_setting' => true, // 参见 [Ext\DbManager](Ext-DbManager.md)
 
     使用父类的数据库配置
 - 'use_flag_by_setting' => true, // 参见 [Core\Kernel](Core-Kernel.md)

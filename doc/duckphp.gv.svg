@@ -114,7 +114,7 @@
 </g>
 <!-- Core_App&#45;&gt;Core_AutoLoader -->
 <g id="edge12" class="edge"><title>Core_App&#45;&gt;Core_AutoLoader</title>
-<path fill="none" stroke="black" stroke-dasharray="1,5" d="M509.66,-1333.98C525.68,-1354.09 559.601,-1392.2 598.285,-1409 716.419,-1460.3 774.718,-1371.73 886.901,-1435 910.439,-1448.27 901.748,-1467.18 922.901,-1484 932.261,-1491.44 943.614,-1497.47 954.601,-1502.21"/>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M509.66,-1333.98C525.68,-1354.09 559.601,-1392.2 598.285,-1409 716.419,-1460.3 774.718,-1371.73 886.901,-1435 910.439,-1448.27 901.748,-1467.18 922.901,-1484 932.261,-1491.44 943.614,-1497.47 954.601,-1502.21"/>
 <polygon fill="black" stroke="black" points="953.52,-1505.54 964.103,-1506.04 956.137,-1499.05 953.52,-1505.54"/>
 </g>
 <!-- Core_ExceptionManager -->
@@ -126,17 +126,17 @@
 </g>
 <!-- Core_App&#45;&gt;Core_ExceptionManager -->
 <g id="edge15" class="edge"><title>Core_App&#45;&gt;Core_ExceptionManager</title>
-<path fill="none" stroke="black" stroke-dasharray="1,5" d="M526.57,-1316.51C603.612,-1304.1 824.716,-1272.38 886.901,-1306 912.6,-1319.89 899.996,-1342.86 922.901,-1361 924.926,-1362.6 927.056,-1364.12 929.264,-1365.55"/>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M526.57,-1316.51C603.612,-1304.1 824.716,-1272.38 886.901,-1306 912.6,-1319.89 899.996,-1342.86 922.901,-1361 924.926,-1362.6 927.056,-1364.12 929.264,-1365.55"/>
 <polygon fill="black" stroke="black" points="927.696,-1368.68 938.107,-1370.64 931.191,-1362.62 927.696,-1368.68"/>
 </g>
 <!-- Core_App&#45;&gt;Core_View -->
 <g id="edge18" class="edge"><title>Core_App&#45;&gt;Core_View</title>
-<path fill="none" stroke="black" stroke-dasharray="1,5" d="M508.831,-1307.48C521.835,-1287.46 546.135,-1248.48 562.285,-1213 582.724,-1168.1 558.141,-1136.67 598.285,-1108 655.717,-1066.98 874.405,-1097.58 961.332,-1111.79"/>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M508.831,-1307.48C521.835,-1287.46 546.135,-1248.48 562.285,-1213 582.724,-1168.1 558.141,-1136.67 598.285,-1108 655.717,-1066.98 874.405,-1097.58 961.332,-1111.79"/>
 <polygon fill="black" stroke="black" points="960.823,-1115.25 971.26,-1113.43 961.967,-1108.34 960.823,-1115.25"/>
 </g>
 <!-- Core_App&#45;&gt;Core_Configer -->
 <g id="edge13" class="edge"><title>Core_App&#45;&gt;Core_Configer</title>
-<path fill="none" stroke="black" stroke-dasharray="1,5" d="M507.738,-1307.35C530.744,-1267.52 596.351,-1154.11 598.285,-1153 653.931,-1121.11 829.243,-1124.91 886.901,-1153 910.239,-1164.37 901.885,-1183.76 922.901,-1199 932.705,-1206.11 944.578,-1211.53 955.931,-1215.57"/>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M507.738,-1307.35C530.744,-1267.52 596.351,-1154.11 598.285,-1153 653.931,-1121.11 829.243,-1124.91 886.901,-1153 910.239,-1164.37 901.885,-1183.76 922.901,-1199 932.705,-1206.11 944.578,-1211.53 955.931,-1215.57"/>
 <polygon fill="black" stroke="black" points="955.117,-1218.99 965.71,-1218.78 957.3,-1212.34 955.117,-1218.99"/>
 </g>
 <!-- Core_Logger -->
@@ -148,12 +148,12 @@
 </g>
 <!-- Core_App&#45;&gt;Core_Logger -->
 <g id="edge14" class="edge"><title>Core_App&#45;&gt;Core_Logger</title>
-<path fill="none" stroke="black" stroke-dasharray="1,5" d="M532.222,-1319.4C620.007,-1315.33 858.019,-1306.26 886.901,-1326 922.125,-1350.08 892.189,-1385.38 922.901,-1415 933.064,-1424.8 947.057,-1431.09 960.165,-1435.1"/>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M532.222,-1319.4C620.007,-1315.33 858.019,-1306.26 886.901,-1326 922.125,-1350.08 892.189,-1385.38 922.901,-1415 933.064,-1424.8 947.057,-1431.09 960.165,-1435.1"/>
 <polygon fill="black" stroke="black" points="959.371,-1438.51 969.938,-1437.74 961.199,-1431.75 959.371,-1438.51"/>
 </g>
 <!-- Core_App&#45;&gt;Core_Route -->
 <g id="edge16" class="edge"><title>Core_App&#45;&gt;Core_Route</title>
-<path fill="none" stroke="black" stroke-dasharray="1,5" d="M510.806,-1333.18C527.58,-1350.83 561.584,-1382.74 598.285,-1395 659.119,-1415.32 827.301,-1418.7 886.901,-1395 907.351,-1386.87 904.168,-1372.55 922.901,-1361 934.433,-1353.89 948.119,-1348.25 960.587,-1344"/>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M510.806,-1333.18C527.58,-1350.83 561.584,-1382.74 598.285,-1395 659.119,-1415.32 827.301,-1418.7 886.901,-1395 907.351,-1386.87 904.168,-1372.55 922.901,-1361 934.433,-1353.89 948.119,-1348.25 960.587,-1344"/>
 <polygon fill="black" stroke="black" points="961.81,-1347.29 970.26,-1340.9 959.669,-1340.62 961.81,-1347.29"/>
 </g>
 <!-- Core_RuntimeState -->
@@ -165,7 +165,7 @@
 </g>
 <!-- Core_App&#45;&gt;Core_RuntimeState -->
 <g id="edge17" class="edge"><title>Core_App&#45;&gt;Core_RuntimeState</title>
-<path fill="none" stroke="black" stroke-dasharray="1,5" d="M508.504,-1307.32C521.101,-1287.11 544.897,-1247.89 562.285,-1213 580.585,-1176.28 564.083,-1150.66 598.285,-1128 651.754,-1092.58 824.318,-1113.97 886.901,-1128 904.166,-1131.87 906.567,-1138.2 922.901,-1145 929.29,-1147.66 936.046,-1150.32 942.776,-1152.88"/>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M508.504,-1307.32C521.101,-1287.11 544.897,-1247.89 562.285,-1213 580.585,-1176.28 564.083,-1150.66 598.285,-1128 651.754,-1092.58 824.318,-1113.97 886.901,-1128 904.166,-1131.87 906.567,-1138.2 922.901,-1145 929.29,-1147.66 936.046,-1150.32 942.776,-1152.88"/>
 <polygon fill="black" stroke="black" points="941.98,-1156.32 952.572,-1156.54 944.428,-1149.76 941.98,-1156.32"/>
 </g>
 <!-- Core_SystemWrapperTrait -->
@@ -180,7 +180,7 @@
 </g>
 <!-- Core_App&#45;&gt;Core_SuperGlobal -->
 <g id="edge19" class="edge"><title>Core_App&#45;&gt;Core_SuperGlobal</title>
-<path fill="none" stroke="black" stroke-dasharray="1,5" d="M508.765,-1307.43C524.02,-1285.56 557.491,-1243.35 598.285,-1227 657.818,-1203.14 825.875,-1207.27 886.901,-1227 905.68,-1233.07 905.457,-1243.77 922.901,-1253 930.15,-1256.84 938.065,-1260.35 945.94,-1263.49"/>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M508.765,-1307.43C524.02,-1285.56 557.491,-1243.35 598.285,-1227 657.818,-1203.14 825.875,-1207.27 886.901,-1227 905.68,-1233.07 905.457,-1243.77 922.901,-1253 930.15,-1256.84 938.065,-1260.35 945.94,-1263.49"/>
 <polygon fill="black" stroke="black" points="944.887,-1266.84 955.478,-1267.12 947.378,-1260.29 944.887,-1266.84"/>
 </g>
 <!-- Core_ExtendableStaticCallTrait -->
@@ -213,7 +213,7 @@
 </g>
 <!-- Core_App&#45;&gt;Core_Functions -->
 <g id="edge20" class="edge"><title>Core_App&#45;&gt;Core_Functions</title>
-<path fill="none" stroke="black" stroke-dasharray="1,5" d="M508.006,-1334.5C522.851,-1357.88 556.66,-1405.72 598.285,-1430 625.252,-1445.73 659.212,-1453.73 687.304,-1457.8"/>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M508.006,-1334.5C522.851,-1357.88 556.66,-1405.72 598.285,-1430 625.252,-1445.73 659.212,-1453.73 687.304,-1457.8"/>
 <polygon fill="black" stroke="black" points="686.992,-1461.29 697.364,-1459.13 687.909,-1454.35 686.992,-1461.29"/>
 </g>
 <!-- Core_Kernel&#45;&gt;Core_AutoLoader -->
@@ -490,7 +490,7 @@
 <text text-anchor="middle" x="742.593" y="-383.3" font-family="Times,serif" font-size="14.00">Cache</text>
 </g>
 <!-- Cache&#45;&gt;Core_ComponentBase -->
-<g id="edge65" class="edge"><title>Cache&#45;&gt;Core_ComponentBase</title>
+<g id="edge51" class="edge"><title>Cache&#45;&gt;Core_ComponentBase</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M769.977,-380.97C831.876,-368.52 987.666,-347.309 1073.64,-426 1165.73,-510.289 1198.14,-923.254 1205.33,-1035.69"/>
 <polygon fill="black" stroke="black" points="1201.86,-1036.14 1205.97,-1045.9 1208.84,-1035.7 1201.86,-1036.14"/>
 </g>
@@ -502,7 +502,7 @@
 <text text-anchor="middle" x="742.593" y="-977.3" font-family="Times,serif" font-size="14.00">CallableView</text>
 </g>
 <!-- CallableView&#45;&gt;Core_View -->
-<g id="edge52" class="edge"><title>CallableView&#45;&gt;Core_View</title>
+<g id="edge66" class="edge"><title>CallableView&#45;&gt;Core_View</title>
 <path fill="none" stroke="black" d="M788.407,-989.631C818.749,-997.258 858.353,-1010.87 886.901,-1034 910.183,-1052.86 899.562,-1072.21 922.901,-1091 933.984,-1099.92 948.276,-1106.05 961.365,-1110.17"/>
 <polygon fill="black" stroke="black" points="960.488,-1113.56 971.066,-1112.95 962.417,-1106.84 960.488,-1113.56"/>
 </g>
@@ -514,12 +514,12 @@
 <text text-anchor="middle" x="742.593" y="-167.3" font-family="Times,serif" font-size="14.00">DbManager</text>
 </g>
 <!-- DbManager&#45;&gt;Core_ComponentBase -->
-<g id="edge72" class="edge"><title>DbManager&#45;&gt;Core_ComponentBase</title>
+<g id="edge52" class="edge"><title>DbManager&#45;&gt;Core_ComponentBase</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M783.807,-160.382C852.919,-144.802 994.419,-125.013 1073.64,-199 1199.06,-316.132 1206.97,-900.006 1207.1,-1035.76"/>
 <polygon fill="black" stroke="black" points="1203.6,-1035.79 1207.09,-1045.79 1210.6,-1035.79 1203.6,-1035.79"/>
 </g>
 <!-- DbManager&#45;&gt;Db_Db -->
-<g id="edge51" class="edge"><title>DbManager&#45;&gt;Db_Db</title>
+<g id="edge68" class="edge"><title>DbManager&#45;&gt;Db_Db</title>
 <path fill="none" stroke="black" d="M783.789,-157.848C833.639,-141.538 917.692,-114.037 964.064,-98.865"/>
 <polygon fill="black" stroke="black" points="965.219,-102.17 973.635,-95.7336 963.042,-95.5168 965.219,-102.17"/>
 </g>
@@ -531,7 +531,7 @@
 <text text-anchor="middle" x="742.593" y="-923.3" font-family="Times,serif" font-size="14.00">EmptyView</text>
 </g>
 <!-- EmptyView&#45;&gt;Core_View -->
-<g id="edge53" class="edge"><title>EmptyView&#45;&gt;Core_View</title>
+<g id="edge67" class="edge"><title>EmptyView&#45;&gt;Core_View</title>
 <path fill="none" stroke="black" d="M784.275,-923.721C816.166,-923.459 859.578,-928.545 886.901,-954 932.964,-996.915 880.461,-1044.5 922.901,-1091 932.885,-1101.94 947.653,-1108.45 961.403,-1112.33"/>
 <polygon fill="black" stroke="black" points="960.608,-1115.74 971.153,-1114.71 962.269,-1108.94 960.608,-1115.74"/>
 </g>
@@ -543,7 +543,7 @@
 <text text-anchor="middle" x="742.593" y="-329.3" font-family="Times,serif" font-size="14.00">EventManager</text>
 </g>
 <!-- EventManager&#45;&gt;Core_ComponentBase -->
-<g id="edge73" class="edge"><title>EventManager&#45;&gt;Core_ComponentBase</title>
+<g id="edge53" class="edge"><title>EventManager&#45;&gt;Core_ComponentBase</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M791.309,-322.063C862.525,-308.814 996.485,-296.235 1073.64,-367 1174.57,-459.563 1200.77,-916.981 1205.92,-1035.77"/>
 <polygon fill="black" stroke="black" points="1202.42,-1036.04 1206.34,-1045.89 1209.42,-1035.75 1202.42,-1036.04"/>
 </g>
@@ -555,7 +555,7 @@
 <text text-anchor="middle" x="998.271" y="-827.3" font-family="Times,serif" font-size="14.00">FacadesAutoLoader</text>
 </g>
 <!-- FacadesAutoLoader&#45;&gt;Core_ComponentBase -->
-<g id="edge59" class="edge"><title>FacadesAutoLoader&#45;&gt;Core_ComponentBase</title>
+<g id="edge54" class="edge"><title>FacadesAutoLoader&#45;&gt;Core_ComponentBase</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M1051.92,-849.045C1059.64,-852.965 1067.17,-857.595 1073.64,-863 1132.69,-912.302 1175.66,-994.34 1195.22,-1036.75"/>
 <polygon fill="black" stroke="black" points="1192.05,-1038.24 1199.36,-1045.91 1198.43,-1035.35 1192.05,-1038.24"/>
 </g>
@@ -565,7 +565,7 @@
 <text text-anchor="middle" x="742.593" y="-653.3" font-family="Times,serif" font-size="14.00">FacadesBase</text>
 </g>
 <!-- FacadesBase&#45;&gt;FacadesAutoLoader -->
-<g id="edge55" class="edge"><title>FacadesBase&#45;&gt;FacadesAutoLoader</title>
+<g id="edge69" class="edge"><title>FacadesBase&#45;&gt;FacadesAutoLoader</title>
 <path fill="none" stroke="black" d="M798.006,-654.544C827.527,-656.066 862.802,-662.906 886.901,-684 925.29,-717.603 889.695,-754.267 922.901,-793 927.637,-798.525 933.374,-803.344 939.538,-807.521"/>
 <polygon fill="black" stroke="black" points="937.804,-810.564 948.155,-812.827 941.475,-804.603 937.804,-810.564"/>
 </g>
@@ -582,12 +582,12 @@
 <text text-anchor="middle" x="998.271" y="-762.3" font-family="Times,serif" font-size="14.00">JsonRpcExt</text>
 </g>
 <!-- JsonRpcClientBase&#45;&gt;JsonRpcExt -->
-<g id="edge54" class="edge"><title>JsonRpcClientBase&#45;&gt;JsonRpcExt</title>
+<g id="edge70" class="edge"><title>JsonRpcClientBase&#45;&gt;JsonRpcExt</title>
 <path fill="none" stroke="black" d="M822.087,-603.856C845.012,-607.564 868.755,-615.195 886.901,-630 919.643,-656.714 895.905,-685.49 922.901,-718 930.724,-727.421 940.883,-735.628 951.165,-742.464"/>
 <polygon fill="black" stroke="black" points="949.454,-745.522 959.783,-747.88 953.179,-739.595 949.454,-745.522"/>
 </g>
 <!-- JsonRpcExt&#45;&gt;Core_ComponentBase -->
-<g id="edge60" class="edge"><title>JsonRpcExt&#45;&gt;Core_ComponentBase</title>
+<g id="edge55" class="edge"><title>JsonRpcExt&#45;&gt;Core_ComponentBase</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M1038.95,-780.637C1051.14,-786.525 1063.89,-794.267 1073.64,-804 1142.49,-872.744 1183.02,-984.412 1199.03,-1036.11"/>
 <polygon fill="black" stroke="black" points="1195.74,-1037.34 1201.99,-1045.9 1202.44,-1035.32 1195.74,-1037.34"/>
 </g>
@@ -599,7 +599,7 @@
 <text text-anchor="middle" x="742.593" y="-275.3" font-family="Times,serif" font-size="14.00">Misc</text>
 </g>
 <!-- Misc&#45;&gt;Core_ComponentBase -->
-<g id="edge62" class="edge"><title>Misc&#45;&gt;Core_ComponentBase</title>
+<g id="edge56" class="edge"><title>Misc&#45;&gt;Core_ComponentBase</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M770.032,-271.943C832.048,-257.14 988.075,-230.348 1073.64,-309 1183.16,-409.662 1203.09,-910.047 1206.39,-1035.46"/>
 <polygon fill="black" stroke="black" points="1202.89,-1035.86 1206.64,-1045.77 1209.89,-1035.68 1202.89,-1035.86"/>
 </g>
@@ -611,7 +611,7 @@
 <text text-anchor="middle" x="742.593" y="-491.3" font-family="Times,serif" font-size="14.00">Pager</text>
 </g>
 <!-- Pager&#45;&gt;Core_ComponentBase -->
-<g id="edge61" class="edge"><title>Pager&#45;&gt;Core_ComponentBase</title>
+<g id="edge57" class="edge"><title>Pager&#45;&gt;Core_ComponentBase</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M769.75,-493.288C839.585,-489.288 1028.2,-482.388 1073.64,-521 1154.12,-589.376 1194.12,-933.745 1204.32,-1035.59"/>
 <polygon fill="black" stroke="black" points="1200.86,-1036.12 1205.32,-1045.73 1207.82,-1035.44 1200.86,-1036.12"/>
 </g>
@@ -623,7 +623,7 @@
 <text text-anchor="middle" x="998.271" y="-591.3" font-family="Times,serif" font-size="14.00">PagerInterface</text>
 </g>
 <!-- Pager&#45;&gt;PagerInterface -->
-<g id="edge56" class="edge"><title>Pager&#45;&gt;PagerInterface</title>
+<g id="edge71" class="edge"><title>Pager&#45;&gt;PagerInterface</title>
 <path fill="none" stroke="black" d="M769.835,-496.808C799.26,-499.542 847.954,-506.205 886.901,-522 916.408,-533.967 946.317,-554.374 967.543,-570.574"/>
 <polygon fill="black" stroke="black" points="965.473,-573.398 975.516,-576.774 969.77,-567.872 965.473,-573.398"/>
 </g>
@@ -635,7 +635,7 @@
 <text text-anchor="middle" x="998.271" y="-687.3" font-family="Times,serif" font-size="14.00">RedisManager</text>
 </g>
 <!-- RedisManager&#45;&gt;Core_ComponentBase -->
-<g id="edge64" class="edge"><title>RedisManager&#45;&gt;Core_ComponentBase</title>
+<g id="edge58" class="edge"><title>RedisManager&#45;&gt;Core_ComponentBase</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M1036.75,-709.126C1049.78,-716.877 1063.62,-726.946 1073.64,-739 1150.88,-831.913 1188.43,-975.649 1201.47,-1035.91"/>
 <polygon fill="black" stroke="black" points="1198.07,-1036.76 1203.55,-1045.83 1204.92,-1035.32 1198.07,-1036.76"/>
 </g>
@@ -647,12 +647,12 @@
 <text text-anchor="middle" x="742.593" y="-545.3" font-family="Times,serif" font-size="14.00">RedisSimpleCache</text>
 </g>
 <!-- RedisSimpleCache&#45;&gt;Core_ComponentBase -->
-<g id="edge63" class="edge"><title>RedisSimpleCache&#45;&gt;Core_ComponentBase</title>
+<g id="edge59" class="edge"><title>RedisSimpleCache&#45;&gt;Core_ComponentBase</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M802.773,-533.543C875.106,-518.471 997.279,-505.89 1073.64,-568 1148.33,-628.746 1191.89,-939.892 1203.7,-1035.81"/>
 <polygon fill="black" stroke="black" points="1200.25,-1036.41 1204.93,-1045.92 1207.2,-1035.57 1200.25,-1036.41"/>
 </g>
 <!-- RedisSimpleCache&#45;&gt;RedisManager -->
-<g id="edge57" class="edge"><title>RedisSimpleCache&#45;&gt;RedisManager</title>
+<g id="edge72" class="edge"><title>RedisSimpleCache&#45;&gt;RedisManager</title>
 <path fill="none" stroke="black" d="M802.781,-550.699C830.033,-553.763 861.81,-560.738 886.901,-576 909.08,-589.492 905.329,-602.889 922.901,-622 937.083,-637.425 954.145,-653.415 968.347,-666.114"/>
 <polygon fill="black" stroke="black" points="966.099,-668.798 975.907,-672.805 970.739,-663.556 966.099,-668.798"/>
 </g>
@@ -664,7 +664,7 @@
 <text text-anchor="middle" x="742.593" y="-221.3" font-family="Times,serif" font-size="14.00">RouteHookDirectoryMode</text>
 </g>
 <!-- RouteHookDirectoryMode&#45;&gt;Core_ComponentBase -->
-<g id="edge67" class="edge"><title>RouteHookDirectoryMode&#45;&gt;Core_ComponentBase</title>
+<g id="edge60" class="edge"><title>RouteHookDirectoryMode&#45;&gt;Core_ComponentBase</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M822.687,-206.994C897.19,-195.097 1007.03,-191.415 1073.64,-253 1191.35,-361.832 1205.16,-904.426 1206.78,-1035.48"/>
 <polygon fill="black" stroke="black" points="1203.28,-1035.9 1206.89,-1045.87 1210.28,-1035.83 1203.28,-1035.9"/>
 </g>
@@ -676,7 +676,7 @@
 <text text-anchor="middle" x="742.593" y="-437.3" font-family="Times,serif" font-size="14.00">RouteHookManager</text>
 </g>
 <!-- RouteHookManager&#45;&gt;Core_ComponentBase -->
-<g id="edge68" class="edge"><title>RouteHookManager&#45;&gt;Core_ComponentBase</title>
+<g id="edge61" class="edge"><title>RouteHookManager&#45;&gt;Core_ComponentBase</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M806.721,-430.495C880.42,-422.093 1001.4,-420.897 1073.64,-487 1156.61,-562.918 1195.15,-930.421 1204.61,-1035.74"/>
 <polygon fill="black" stroke="black" points="1201.15,-1036.26 1205.51,-1045.91 1208.12,-1035.64 1201.15,-1036.26"/>
 </g>
@@ -688,7 +688,7 @@
 <text text-anchor="middle" x="742.593" y="-761.3" font-family="Times,serif" font-size="14.00">RouteHookPathInfoByGet</text>
 </g>
 <!-- RouteHookPathInfoByGet&#45;&gt;Core_ComponentBase -->
-<g id="edge69" class="edge"><title>RouteHookPathInfoByGet&#45;&gt;Core_ComponentBase</title>
+<g id="edge62" class="edge"><title>RouteHookPathInfoByGet&#45;&gt;Core_ComponentBase</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M823.096,-764.685C846.066,-768.342 869.58,-776.238 886.901,-792 929.66,-830.911 881.091,-877.07 922.901,-917 972.713,-964.573 1012.05,-922.155 1073.64,-953 1116.84,-974.637 1158.26,-1012.74 1183.17,-1038.18"/>
 <polygon fill="black" stroke="black" points="1180.89,-1040.86 1190.35,-1045.63 1185.93,-1036 1180.89,-1040.86"/>
 </g>
@@ -700,7 +700,7 @@
 <text text-anchor="middle" x="742.593" y="-869.3" font-family="Times,serif" font-size="14.00">RouteHookRewrite</text>
 </g>
 <!-- RouteHookRewrite&#45;&gt;Core_ComponentBase -->
-<g id="edge70" class="edge"><title>RouteHookRewrite&#45;&gt;Core_ComponentBase</title>
+<g id="edge63" class="edge"><title>RouteHookRewrite&#45;&gt;Core_ComponentBase</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M803.931,-871.489C831.927,-873.773 863.996,-881.018 886.901,-900 920.708,-928.017 889.978,-962.949 922.901,-992 939.559,-1006.7 1065.72,-1034.86 1144.22,-1051.26"/>
 <polygon fill="black" stroke="black" points="1143.99,-1054.79 1154.49,-1053.4 1145.41,-1047.94 1143.99,-1054.79"/>
 </g>
@@ -712,7 +712,7 @@
 <text text-anchor="middle" x="742.593" y="-815.3" font-family="Times,serif" font-size="14.00">RouteHookRouteMap</text>
 </g>
 <!-- RouteHookRouteMap&#45;&gt;Core_ComponentBase -->
-<g id="edge71" class="edge"><title>RouteHookRouteMap&#45;&gt;Core_ComponentBase</title>
+<g id="edge64" class="edge"><title>RouteHookRouteMap&#45;&gt;Core_ComponentBase</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M811.224,-817.638C837.548,-820.438 866.276,-828.048 886.901,-846 924.747,-878.942 886.178,-918.81 922.901,-953 973.549,-1000.16 1009.23,-966.709 1073.64,-992 1107.38,-1005.25 1143.42,-1025.08 1169.52,-1040.59"/>
 <polygon fill="black" stroke="black" points="1167.94,-1043.72 1178.31,-1045.87 1171.54,-1037.72 1167.94,-1043.72"/>
 </g>
@@ -724,7 +724,7 @@
 <text text-anchor="middle" x="998.271" y="-886.3" font-family="Times,serif" font-size="14.00">StrictCheck</text>
 </g>
 <!-- StrictCheck&#45;&gt;Core_ComponentBase -->
-<g id="edge66" class="edge"><title>StrictCheck&#45;&gt;Core_ComponentBase</title>
+<g id="edge65" class="edge"><title>StrictCheck&#45;&gt;Core_ComponentBase</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M1038.6,-905.257C1050.38,-910.665 1062.98,-917.34 1073.64,-925 1119.32,-957.817 1162.54,-1007.51 1186.81,-1037.74"/>
 <polygon fill="black" stroke="black" points="1184.18,-1040.06 1193.14,-1045.72 1189.67,-1035.71 1184.18,-1040.06"/>
 </g>
@@ -734,7 +734,7 @@
 <text text-anchor="middle" x="742.593" y="-707.3" font-family="Times,serif" font-size="14.00">StrictCheckObjectTrait</text>
 </g>
 <!-- StrictCheckObjectTrait&#45;&gt;StrictCheck -->
-<g id="edge58" class="edge"><title>StrictCheckObjectTrait&#45;&gt;StrictCheck</title>
+<g id="edge73" class="edge"><title>StrictCheckObjectTrait&#45;&gt;StrictCheck</title>
 <path fill="none" stroke="black" d="M843.448,-715.278C859.409,-719.833 874.668,-726.992 886.901,-738 928.29,-775.248 885.853,-816.432 922.901,-858 929.917,-865.872 939.208,-871.879 948.838,-876.437"/>
 <polygon fill="black" stroke="black" points="947.54,-879.688 958.112,-880.377 950.277,-873.245 947.54,-879.688"/>
 </g>

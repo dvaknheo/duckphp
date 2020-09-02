@@ -43,16 +43,16 @@ subgraph cluster_Core {
     Core_App -> Core_ExtendableStaticCallTrait;
     Core_App -> Core_SystemWrapperTrait;
     
-    Core_App -> Core_AutoLoader [style="dotted"];
-    Core_App -> Core_Configer [style="dotted"];
-    Core_App -> Core_Logger [style="dotted"];
-    Core_App -> Core_ExceptionManager [style="dotted"];
-    Core_App -> Core_Route [style="dotted"];
-    Core_App -> Core_RuntimeState [style="dotted"];
-    Core_App -> Core_View [style="dotted"];
-    Core_App -> Core_SuperGlobal [style="dotted"];
+    Core_App -> Core_AutoLoader [style="dashed"];
+    Core_App -> Core_Configer [style="dashed"];
+    Core_App -> Core_Logger [style="dashed"];
+    Core_App -> Core_ExceptionManager [style="dashed"];
+    Core_App -> Core_Route [style="dashed"];
+    Core_App -> Core_RuntimeState [style="dashed"];
+    Core_App -> Core_View [style="dashed"];
+    Core_App -> Core_SuperGlobal [style="dashed"];
     
-    Core_App -> Core_Functions [style="dotted"];
+    Core_App -> Core_Functions [style="dashed"];
     Core_App -> Core_ComponentBase [style="dotted"];
 
 
@@ -145,31 +145,31 @@ subgraph cluster_Ext {
     StrictCheck[shape="component"];
     StrictCheckObjectTrait [shape=diamond];
 
-    DbManager -> Db_Db;
-    CallableView ->Core_View; 
-    EmptyView ->Core_View; 
-    JsonRpcClientBase ->JsonRpcExt;
-    FacadesBase -> FacadesAutoLoader;
-    Pager -> PagerInterface; 
-    RedisSimpleCache -> RedisManager;
-    StrictCheckObjectTrait -> StrictCheck; 
-    
+    Cache -> Core_ComponentBase [style="dotted"];
+    DbManager -> Core_ComponentBase [style="dotted"];
+    EventManager -> Core_ComponentBase [style="dotted"];
     FacadesAutoLoader -> Core_ComponentBase [style="dotted"];
     JsonRpcExt -> Core_ComponentBase [style="dotted"];
-    Pager -> Core_ComponentBase [style="dotted"];
     Misc -> Core_ComponentBase [style="dotted"];
-    RedisSimpleCache -> Core_ComponentBase [style="dotted"];
+    Pager -> Core_ComponentBase [style="dotted"];
     RedisManager -> Core_ComponentBase [style="dotted"];
-    Cache -> Core_ComponentBase [style="dotted"];
-    StrictCheck -> Core_ComponentBase [style="dotted"];
+    RedisSimpleCache -> Core_ComponentBase [style="dotted"];
     RouteHookDirectoryMode -> Core_ComponentBase [style="dotted"];
     RouteHookManager -> Core_ComponentBase [style="dotted"];
     RouteHookPathInfoByGet -> Core_ComponentBase [style="dotted"];
     RouteHookRewrite -> Core_ComponentBase [style="dotted"];
     RouteHookRouteMap -> Core_ComponentBase [style="dotted"];
-    DbManager -> Core_ComponentBase [style="dotted"];
-
-    EventManager -> Core_ComponentBase [style="dotted"];
+    StrictCheck -> Core_ComponentBase [style="dotted"];
+    
+    
+    CallableView ->Core_View; 
+    EmptyView ->Core_View;
+    DbManager -> Db_Db;
+    FacadesBase -> FacadesAutoLoader;
+    JsonRpcClientBase ->JsonRpcExt;
+    Pager -> PagerInterface; 
+    RedisSimpleCache -> RedisManager;
+    StrictCheckObjectTrait -> StrictCheck; 
 }
 
 subgraph cluster_DuckPhp {

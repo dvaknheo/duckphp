@@ -53,11 +53,11 @@ class StrictCheck extends ComponentBase
     }
     ///////////////////////////////////////////////////////////
 
-    protected function hit_class($caller_class,$parent_classes_to_skip)
+    protected function hit_class($caller_class, $parent_classes_to_skip)
     {
         foreach ($parent_classes_to_skip as $parent_class_to_skip) {
             if (is_subclass_of($caller_class, $parent_class_to_skip) || $parent_class_to_skip === $caller_class) {
-               return true;
+                return true;
             }
         }
         return false;
@@ -66,9 +66,9 @@ class StrictCheck extends ComponentBase
     {
         $level += 1;
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, static::MAX_TRACE_LEVEL);
-        for($i=$level;$i<static::MAX_TRACE_LEVEL;$i++){
+        for ($i = $level;$i < static::MAX_TRACE_LEVEL;$i++) {
             $caller_class = $backtrace[$i]['class'] ?? '';
-            if(!$this->hit_class($caller_class,$parent_classes_to_skip)){
+            if (!$this->hit_class($caller_class, $parent_classes_to_skip)) {
                 return $caller_class;
             }
         }

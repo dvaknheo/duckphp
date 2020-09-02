@@ -49,7 +49,7 @@ trait Kernel
             'use_flag_by_setting' => true,
             'use_super_global' => true,
             'use_short_functions' => true,
-            'close_resource_at_output' =>true,
+            'close_resource_at_output' => true,
             
             'skip_404_handler' => false,
             'skip_exception_check' => false,
