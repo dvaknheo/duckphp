@@ -95,7 +95,7 @@ class BaseController2 extends BaseController
 {
     public function foo()
     {
-        M::DB()->fetch("select 1+1 as t");
+        M::Db()->fetch("select 1+1 as t");
         var_dump("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
     }
 }
@@ -115,8 +115,8 @@ class FakeModel
     public function callService(){
         FakeService::G()->foo();
     }
-    public function callDB(){
-        M::DB()->fetch("select 1+1 as t");
+    public function callDb(){
+        M::Db()->fetch("select 1+1 as t");
     }
 }
 class FakeExModel
@@ -130,7 +130,7 @@ class FakeExModel
 
 namespace tests\DuckPhp\Ext\Service {
 use DuckPhp\Ext\StrictCheckObjectTrait;
-//use DuckPhp\Ext\DBManager;
+//use DuckPhp\Ext\DbManager;
 use DuckPhp\DuckPhp;
 use tests\DuckPhp\Ext\Model\FakeExModel;
 use tests\DuckPhp\Ext\Model\FakeModel;
@@ -148,12 +148,13 @@ class FakeService
     public function modelCallService(){
         FakeModel::G()->callService();
     }
-    public function callDB(){
-        DuckPhp::DB()->fetch("select 1+1 as t");
+    public function callDb(){
+        DuckPhp::Db()->fetch("select 1+1 as t");
+    
     }
     public function normal()
     {
-        FakeModel::G()->callDB();
+        FakeModel::G()->callDb();
     }
 }
 class FakeBatchBusiness
@@ -192,16 +193,15 @@ class StrictCheckTestMain extends BaseController
     public function foo()
     {
         echo "0000000\n";
-        
         try{
-            DuckPhp::DB()->fetch("select 1+1 as t");
+            DuckPhp::Db()->fetch("select 1+1 as t");
         }catch(\Throwable $ex){
             echo "111111111111".$ex->getMessage().PHP_EOL;
         }
         try{
-            M::DB()->fetch("select 1+1 as t");
+            M::Db()->fetch("select 1+1 as t");
         }catch(\Throwable $ex){
-            echo "2222222222222222222 Catch M::DB ".$ex->getMessage().PHP_EOL;
+            echo "2222222222222222222 Catch M::Db ".$ex->getMessage().PHP_EOL;
         }
         
         try{
@@ -229,21 +229,21 @@ class StrictCheckTestMain extends BaseController
             echo "6666666666666 modelCallService ".$ex->getMessage().PHP_EOL;
         }
         try{
-            FakeService::G()->callDB();
+            FakeService::G()->callDb();
         }catch(\Throwable $ex){
             echo "7777777777777777 modelCallService ".$ex->getMessage().PHP_EOL;
         }
 
         
         try{
-            DuckPhp::DB()->fetch("select 1+1 as t");
+            DuckPhp::Db()->fetch("select 1+1 as t");
         }catch(\Throwable $ex){
             echo "8888888888888888 ".$ex->getMessage().PHP_EOL;
         }
         try{
-            M::DB()->fetch("select 1+1 as t");
+            M::Db()->fetch("select 1+1 as t");
         }catch(\Throwable $ex){
-            echo "9999999999999999999 Catch S::DB ".$ex->getMessage().PHP_EOL;
+            echo "9999999999999999999 Catch S::Db ".$ex->getMessage().PHP_EOL;
         }
 
         try{

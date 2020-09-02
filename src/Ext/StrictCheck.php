@@ -42,28 +42,37 @@ class StrictCheck extends ComponentBase
         $this->options['is_debug'] = isset($context->options) ? ($context->options['is_debug'] ?? $this->options['is_debug']) : $this->options['is_debug'];
         
         try {
-            get_class($context)::setBeforeGetDBHandler([static::class, 'CheckStrictDb']);
+            get_class($context)::setBeforeGetDbHandler([static::class, 'CheckStrictDb']);
         } catch (\BadMethodCallException $ex) { // @codeCoverageIgnore
             //do nothing;
         }
     }
     public static function CheckStrictDb()
     {
-        return static::G()->checkStrictComponent('Db', 5, ['DuckPhp\\Core\\App','DuckPhp\\Helper\\ModelHelper']);
+        return static::G()->checkStrictComponent('Db', 5, ['DuckPhp\\Core\\App',"DuckPhp\\Helper\\ModelHelper"]);
     }
     ///////////////////////////////////////////////////////////
+
+    protected function hit_class($caller_class,$parent_classes_to_skip)
+    {
+        foreach ($parent_classes_to_skip as $parent_class_to_skip) {
+            if (is_subclass_of($caller_class, $parent_class_to_skip) || $parent_class_to_skip === $caller_class) {
+               return true;
+            }
+        }
+        return false;
+    }
     public function getCallerByLevel($level, $parent_classes_to_skip = [])
     {
         $level += 1;
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, static::MAX_TRACE_LEVEL);
-        $caller_class = $backtrace[$level]['class'] ?? '';
-        foreach ($parent_classes_to_skip as $parent_class_to_skip) {
-            if (is_subclass_of($caller_class, $parent_class_to_skip) || $parent_class_to_skip === $caller_class) {
-                $caller_class = $backtrace[$level + 1]['class'] ?? '';
+        for($i=$level;$i<static::MAX_TRACE_LEVEL;$i++){
+            $caller_class = $backtrace[$i]['class'] ?? '';
+            if(!$this->hit_class($caller_class,$parent_classes_to_skip)){
                 return $caller_class;
             }
         }
-        return $caller_class;
+        return ''; // @codeCoverageIgnore
     }
     public function checkEnv(): bool
     {
