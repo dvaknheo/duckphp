@@ -1,7 +1,7 @@
 <?php
 namespace tests\DuckPhp\Ext;
 
-use DuckPhp\Ext\DBManager;
+use DuckPhp\Ext\DbManager;
 use DuckPhp\DB\DB;
 use DuckPhp\DuckPhp as App;
 
@@ -9,7 +9,7 @@ class DBManagerTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(DBManager::class);
+        \MyCodeCoverage::G()->begin(DbManager::class);
         $database_list= include \MyCodeCoverage::G()->options['path_data'] . 'database_list.php';
         
         $dn_options=[
@@ -21,8 +21,8 @@ class DBManagerTest extends \PHPUnit\Framework\TestCase
         $options=[
             'database_list'=>$database_list,
         ];
-        DBManager::G()->init($options,App::G());
-        DBManager::G(new DBManager());
+        DbManager::G()->init($options,App::G());
+        DbManager::G(new DbManager());
         
         $options=[
 
@@ -33,34 +33,34 @@ class DBManagerTest extends \PHPUnit\Framework\TestCase
         
 
         App::G()->extendComponents(static::class,['beforeGet'],[]);
-        DBManager::G()->init($options,App::G());
+        DbManager::G()->init($options,App::G());
         $options['database_list']=$database_list;
-        DBManager::G()->init($options,null);
+        DbManager::G()->init($options,null);
         
-        DBManager::G()->setBeforeGetDBHandler(function(){var_dump("OK");});
+        DbManager::G()->setBeforeGetDBHandler(function(){var_dump("OK");});
 
-        DBManager::G()->_Db();
-        DBManager::G()->_DbForWrite();
-        DBManager::G()->_DbForRead();
-        DBManager::CloseAllDB();
+        DbManager::G()->_Db();
+        DbManager::G()->_DbForWrite();
+        DbManager::G()->_DbForRead();
+        DbManager::CloseAllDB();
                 
         //----------------
         $database_sinlge=[$database_list[0]];
         $options=[
             'database_list'=>$database_sinlge,
         ];
-        DBManager::G(new DBManager())->init($options);
+        DbManager::G(new DbManager())->init($options);
         $options['database_list']=[
         ];
-        DBManager::G()->init($options,null);
+        DbManager::G()->init($options,null);
 
-        DBManager::Db();
-        DBManager::DbForWrite();
-        DBManager::DbForRead();
-        DBManager::G()->init($options,null);
+        DbManager::Db();
+        DbManager::DbForWrite();
+        DbManager::DbForRead();
+        DbManager::G()->init($options,null);
 
 
-                DBManager::CloseAllDB();
+                DbManager::CloseAllDB();
 
         $options=[
 
@@ -69,8 +69,8 @@ class DBManagerTest extends \PHPUnit\Framework\TestCase
     
         $options['database_list']=$database_list;
         
-        DBManager::G()->init($options,null);
-        DBManager::G()->_Db();
+        DbManager::G()->init($options,null);
+        DbManager::G()->_Db();
         
         ////
         $dn_options=[
@@ -83,9 +83,9 @@ class DBManagerTest extends \PHPUnit\Framework\TestCase
             'log_sql_query'=>true,
         ];
         
-        DBManager::G(new DBManager())->init($options,App::G());
+        DbManager::G(new DbManager())->init($options,App::G());
         $data=App::Db()->fetchColumn('select ?+? as t',1,2);
-        DBManager::G()->options['log_sql_query']=false;
+        DbManager::G()->options['log_sql_query']=false;
         $data=App::Db()->fetchColumn('select ?+? as t',1,2);
 
         
@@ -96,7 +96,7 @@ class DBManagerTest extends \PHPUnit\Framework\TestCase
         $dn_options=[
             'skip_setting_file'=>true,
         ];
-        DBManager::G(new DBManager());
+        DbManager::G(new DbManager());
         App::G(new App())->init($dn_options);
 
         try{

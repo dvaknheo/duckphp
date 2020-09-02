@@ -8,7 +8,7 @@ namespace DuckPhp\Ext;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Db\Db;
 
-class DBManager extends ComponentBase
+class DbManager extends ComponentBase
 {
     const TAG_WRITE = 0;
     const TAG_READ = 1;
@@ -104,7 +104,7 @@ class DBManager extends ComponentBase
             if ($db_config === null) {
                 throw new \ErrorException('DuckPhp: setting database_list['.$tag.'] missing');
             }
-            $db = new Db($db_config);
+            $db = new Db();
             $db->init($db_config);
             $db->setBeforeQueryHandler([static::class, 'OnQuery']);
             

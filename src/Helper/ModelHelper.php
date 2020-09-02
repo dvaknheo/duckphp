@@ -22,7 +22,7 @@ class ModelHelper
     }
     /**
      *
-     * @return \DuckPhp\DB\DB
+     * @return \DuckPhp\Db\Db
      */
     public static function DbForRead()
     {

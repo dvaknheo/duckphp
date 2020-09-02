@@ -9,7 +9,7 @@
 namespace DuckPhp;
 
 use DuckPhp\Core\App;
-use DuckPhp\Ext\DBManager;
+use DuckPhp\Ext\DbManager;
 use DuckPhp\Ext\EventManager;
 use DuckPhp\Ext\Pager;
 use DuckPhp\Ext\RouteHookPathInfoByGet;
@@ -23,7 +23,7 @@ class DuckPhp extends App
     {
         parent::__construct();
         $ext = [
-            DBManager::class => true,
+            DbManager::class => true,
             RouteHookPathInfoByGet::class => true,
             RouteHookRouteMap::class => true,
         ];
@@ -34,7 +34,7 @@ class DuckPhp extends App
         if(!$this->options['close_resource_at_output']){
             return;
         }
-        DBManager::CloseAllDb();
+        DbManager::CloseAllDb();
     }
     //@override
     public function _Pager($object = null)
@@ -46,17 +46,17 @@ class DuckPhp extends App
     //@override
     public function _Db($tag)
     {
-        return DBManager::G()->_Db($tag);
+        return DbManager::G()->_Db($tag);
     }
     //@override
     public function _DbForRead()
     {
-        return DBManager::G()->_DbForRead();
+        return DbManager::G()->_DbForRead();
     }
     //@override
     public function _DbForWrite()
     {
-        return DBManager::G()->_DbForWrite();
+        return DbManager::G()->_DbForWrite();
     }
     //@override
     public function _Event()
