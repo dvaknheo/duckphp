@@ -9,6 +9,7 @@
 namespace DuckPhp;
 
 use DuckPhp\Core\App;
+use DuckPhp\Ext\Cache;
 use DuckPhp\Ext\DbManager;
 use DuckPhp\Ext\EventManager;
 use DuckPhp\Ext\Pager;
@@ -35,6 +36,11 @@ class DuckPhp extends App
             return;
         }
         DbManager::CloseAllDb();
+    }
+    //@override
+    public function _Cache($object = null)
+    {
+        return Cache::G($object);
     }
     //@override
     public function _Pager($object = null)

@@ -62,6 +62,8 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::G()->options['close_resource_at_output']=false;
         DuckPhp::Show([],'block');
 
+        $t=new \stdClass();
+        DuckPhp::Cache($t);
         \MyCodeCoverage::G()->end(DuckPhp::class);
 
     }

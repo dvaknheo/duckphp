@@ -532,11 +532,11 @@ trait Core_Helper
     }
     public function _Domain()
     {
-        $scheme = static::SG()->_SERVER['REQUEST_SCHEME'] ?? '';
-        $host = static::SG()->_SERVER['HTTP_HOST'] ?? (static::SG()->SERVER['SERVER_NAME'] ?? (static::SG()->_SERVER['SERVER_ADDR'] ?? ''));
+        $scheme = SuperGlobal::G()->_SERVER['REQUEST_SCHEME'] ?? '';
+        $host = SuperGlobal::G()->_SERVER['HTTP_HOST'] ?? (SuperGlobal::G()->SERVER['SERVER_NAME'] ?? (SuperGlobal::G()->_SERVER['SERVER_ADDR'] ?? ''));
         $host = $host ?? '';
         
-        $port = static::SG()->_SERVER['SERVER_PORT'] ?? '';
+        $port = SuperGlobal::G()->_SERVER['SERVER_PORT'] ?? '';
         $port = ($port == 443 && $scheme == 'https')?'':$port;
         $port = ($port == 80 && $scheme == 'http')?'':$port;
         $port = ($port)?(':'.$port):'';
@@ -825,41 +825,41 @@ trait Core_Glue
     public static function GET($key = null, $default = null)
     {
         if (isset($key)) {
-            return static::SG()->_GET[$key] ?? $default;
+            return SuperGlobal::G()->_GET[$key] ?? $default;
         } else {
-            return static::SG()->_GET ?? $default;
+            return SuperGlobal::G()->_GET ?? $default;
         }
     }
     public static function POST($key = null, $default = null)
     {
         if (isset($key)) {
-            return static::SG()->_POST[$key] ?? $default;
+            return SuperGlobal::G()->_POST[$key] ?? $default;
         } else {
-            return static::SG()->_POST ?? $default;
+            return SuperGlobal::G()->_POST ?? $default;
         }
     }
     public static function REQUEST($key = null, $default = null)
     {
         if (isset($key)) {
-            return static::SG()->_REQUEST[$key] ?? $default;
+            return SuperGlobal::G()->_REQUEST[$key] ?? $default;
         } else {
-            return static::SG()->_REQUEST ?? $default;
+            return SuperGlobal::G()->_REQUEST ?? $default;
         }
     }
     public static function COOKIE($key = null, $default = null)
     {
         if (isset($key)) {
-            return static::SG()->_COOKIE[$key] ?? $default;
+            return SuperGlobal::G()->_COOKIE[$key] ?? $default;
         } else {
-            return static::SG()->_COOKIE ?? $default;
+            return SuperGlobal::G()->_COOKIE ?? $default;
         }
     }
     public static function SERVER($key = null, $default = null)
     {
         if (isset($key)) {
-            return static::SG()->_SERVER[$key] ?? $default;
+            return SuperGlobal::G()->_SERVER[$key] ?? $default;
         } else {
-            return static::SG()->_SERVER ?? $default;
+            return SuperGlobal::G()->_SERVER ?? $default;
         }
     }
 }
