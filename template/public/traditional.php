@@ -8,8 +8,9 @@ require(__DIR__.'/../../autoload.php');  // @DUCKPHP_HEADFILE
 ////[[[[
 function onInit()
 {
+    //404 处理
     DuckPhp::G()->add404RouteHook(function(){
-        $path_info=DuckPhp::G()->getPathInfo();
+        $path_info=DuckPhp::getPathInfo();
         $path_info=ltrim($path_info,'/');
         $path_info=empty($path_info)?'index':$path_info;
         
@@ -23,6 +24,20 @@ function onInit()
         action_index();
         return true;
     });
+}
+function RunByDuckPhp()
+{
+    $options = [];
+    $options['is_debug'] = true;
+    $options['skip_setting_file'] = true;       // 不需要设置文件
+    $options['override_class'] = '\\';          // 不要替换成同级别的 app 类
+    $options['namespace'] = '\\';               // 不要替换成同级别的控制器类
+    $options['use_path_info_by_get'] = true;    // 不用配置路由
+
+    $options['ext'][\DuckPhp\Ext\EmptyView::class] = true; // for AllViewData();
+
+    $flag=DuckPhp::RunQuickly($options,'onInit');
+    return $flag;
 }
 function POST($k,$v=null)
 {
@@ -38,7 +53,7 @@ if (!function_exists('__show')) {
 ////]]]]
 function get_data()
 {
-    return$_SESSION['content'] ?? '';
+    return $_SESSION['content'] ?? '';
 }
 function add_data($content)
 {
@@ -64,7 +79,7 @@ function action_index()
     
     $data['url_del'] = __url('del?token='.$token);
 
-    __show($data,'');
+    __show($data,'index');
 }
 function action_add()
 {
@@ -107,25 +122,15 @@ function action_do_add()
     $data['url_back'] = __url('');
     __show($data, 'dialog');
 }
-
-
 ////////////////////////////////////
 session_start();
-$options = [];
-$options['is_debug'] = true;
-$options['skip_setting_file'] = true;
-$options['override_class'] = '';
-$options['use_path_info_by_get'] = true;
-
-$options['ext'][\DuckPhp\Ext\EmptyView::class] = true; // for AllViewData();
-
-$flag=DuckPhp::RunQuickly($options,'onInit');
+$flag = RunByDuckPhp();
 if(!$flag){
     return;
 }
 extract(DuckPhp::getViewData());
-error_reporting(error_reporting() & ~E_NOTICE);
 
+error_reporting(error_reporting() & ~E_NOTICE);
 if(empty($skip_head_foot)){
 ?>
 <!doctype html>
@@ -141,7 +146,7 @@ if(empty($skip_head_foot)){
 	<div style="border:1px red solid;">
 <?php
 }
-if($view==='' || $view==='main'){
+if($view==='index'){
 ?>
 	<h1>首页</h1>
 <?php 

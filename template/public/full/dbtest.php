@@ -1,9 +1,9 @@
 <?php
 require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
 
-use App as M;
-use App as C;
-use App as V;
+use App as M;  // Helper 都给我们省掉了
+use App as C;  // Helper 都给我们省掉了
+use App as V;  // Helper 都给我们省掉了
 
 use DuckPhp\Core\SingletonEx;
 use DuckPhp\Ext\EmptyView;
@@ -18,15 +18,14 @@ class App extends \DuckPhp\DuckPhp
             // 本例特殊，跳过设置文件 这个选项防止没有上传设置文件到服务器
         'mode_no_path_info' => true,
             // 单一文件模式
-        
         'namespace_controller'=>"\\",   
-            // 本例特殊，设置控制器的命名空间为根
+            // 设置控制器的命名空间为根 使得 Main 类为入口
         'ext' => [
             EmptyView::class => true,
             // 我们用扩展 EmptyView 代替系统的 View
         ],
         'setting'=>[
-        //数据库设置
+            //数据库设置，根据你的需要修改
             'database_list' => [
                 [
                     'dsn' => 'mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8mb4;',
@@ -36,40 +35,43 @@ class App extends \DuckPhp\DuckPhp
                 ],
             ],
         ],
+        
     ];
-    //视图数据
-    public static function GetViewData()
+    public function __construct()
     {
-        return EmptyView::G()->data;
+        parent::__construct();
+        $this->options['error_404']=function(){(new Main)->index();};
     }
 }
-//业务服务
-class MyService
+//业务类， 还是带上吧。
+class MyBusiness
 {
-    use SingletonEx;
-    public function getDataList($page,$pagesize)
+    use SingletonEx; // 单例模式。
+    
+    public function getDataList($page, $pagesize)
     {
-        return MyModel::getDataList($page,$pagesize);
+        return TestModel::getDataList($page, $pagesize);
     }
     public function getData($id)
     {
-        return MyModel::getData($id);
+        return TestModel::getData($id);
     }
     public function addData($data)
     {
-        return MyModel::addData($data);
+        return TestModel::addData($data);
     }
     public function updateData($id,$data)
     {
-        return MyModel::updateData($id,$data);
+        return TestModel::updateData($id,$data);
     }
     public function deleteData($id)
     {
-        return MyModel::deleteData($id);
+        return TestModel::deleteData($id);
     }
 }
 
-class MyModel
+// 模型类
+class TestModel
 {
     public static function getDataList($page,$pagesize)
     {
@@ -107,35 +109,40 @@ class Main
 {
     public function index()
     {
-        list($total,$list)=MyService::G()->getDataList(C::PageNo(),C::PageSize(3));
+        list($total,$list)=MyBusiness::G()->getDataList(C::PageNo(),C::PageSize(3));
         $pager=C::PageHtml($total);
         C::Show(get_defined_vars(),'main_view');
     }
     public function do_index()
     {
-        MyService::G()->addData(C::SG()->_POST);
+        MyBusiness::G()->addData($_POST);
         $this->index();
     }
     public function show()
     {
-        $data=MyService::G()->getData(C::SG()->_GET['id']??0);
+        $data=MyBusiness::G()->getData(C::GET('id',0));
         C::Show(get_defined_vars(),'show');
     }
     public function do_show()
     {
-        MyService::G()->updateData(C::SG()->_POST['id'],C::SG()->_POST);
+        MyBusiness::G()->updateData(C::POST('id',0),$_POST);
         $this->show();
     }
     public function delete()
     {
-        MyService::G()->deleteData(C::SG()->_GET['id']??0);
+        MyBusiness::G()->deleteData(C::GET('id',0));
         C::ExitRouteTo('');
     }
 }
 ///////////////
-
-    App::RunQuickly(['error_404'=>function(){(new Main)->index();}]); // 如果 404 那就回主页
+    // 开始了
+    
+    App::RunQuickly();
     $data = App::GetViewData();
+    if(!$flag){
+        return;
+    }
+
     extract($data);
     if($skip_head_foot??false){
 ?>

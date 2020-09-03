@@ -23,13 +23,21 @@ phpunit
 ```
 phpunit tests/Core/AppTest.php && phpunit tests/support.php
 ```
+代码风格检查加代码检查加单元测试
 
+```
+php-cs-fixer fix && phpstan analyse && phpunit
 
+```
 基本环境是 wsl .
 tests/test_coveragedumps 是保存的 phpunit dump 文件。
 tests/test_reports 是输出的报告文件。
 
 这两个在 phphunit 执行的时候要有写入权限。需要进一步判断文件权限，以防初级者不知道
+相关版本
+php-cs-fixer 2.16.4 
+phpstan 0.12.35
+phpunit 9.2.0  // 不是 phpunit 9.3 版哦
 
 ## 文档的生成
 
@@ -42,16 +50,8 @@ svg 架构图形生成
 ```
 dot doc/duckphp.gv -T svg -O
 ```
-代码风格检查加代码检查加单元测试
 
-```
-php-cs-fixer fix && phpstan analyse && phpunit
 
-```
-相关版本
-php-cs-fixer 2.16.4 
-phpstan 0.12.35
-phpunit 9.2.0  // 不是 phpunit 9.3 版哦
 
 
 
