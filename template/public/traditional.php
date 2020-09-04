@@ -6,25 +6,7 @@ require(__DIR__.'/../../autoload.php');  // @DUCKPHP_HEADFILE
 //// 这个例子极端点，没用任何类，全函数模式。
 
 ////[[[[
-function onInit()
-{
-    //404 处理
-    DuckPhp::G()->add404RouteHook(function(){
-        $path_info=DuckPhp::getPathInfo();
-        $path_info=ltrim($path_info,'/');
-        $path_info=empty($path_info)?'index':$path_info;
-        
-        $post_prefix=!empty($_POST)?'do_':'';
-        $callback="action_{$post_prefix}{$path_info}";
-        
-        if(is_callable($callback)){
-            ($callback)();
-            return true;
-        }
-        action_index();
-        return true;
-    });
-}
+
 function RunByDuckPhp()
 {
     $options = [];
@@ -36,7 +18,24 @@ function RunByDuckPhp()
 
     $options['ext'][\DuckPhp\Ext\EmptyView::class] = true; // for AllViewData();
 
-    $flag=DuckPhp::RunQuickly($options,'onInit');
+    $flag=DuckPhp::RunQuickly($options,function(){
+            //404 处理
+            DuckPhp::G()->add404RouteHook(function(){
+                $path_info=DuckPhp::getPathInfo();
+                $path_info=ltrim($path_info,'/');
+                $path_info=empty($path_info)?'index':$path_info;
+                
+                $post_prefix=!empty($_POST)?'do_':'';
+                $callback="action_{$post_prefix}{$path_info}";
+                
+                if(is_callable($callback)){
+                    ($callback)();
+                    return true;
+                }
+                action_index();
+                return true;
+            });
+        });
     return $flag;
 }
 function POST($k,$v=null)

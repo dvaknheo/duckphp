@@ -136,15 +136,16 @@ class Main
 }
 ///////////////
     // 开始了
-    
-    App::RunQuickly();
-    $data = App::GetViewData();
+        $options = [];
+
+
+    $flag=App::RunQuickly($options);
     if(!$flag){
         return;
     }
-
+    $data = App::GetViewData();
     extract($data);
-    if($skip_head_foot??false){
+    if(empty($skip_head_foot)){
 ?>
         <html>
             <head>
@@ -193,7 +194,7 @@ class Main
 
 <?php
     }
-    if($skip_head_foot??false){
+    if(empty($skip_head_foot)){
         ?>
         <footer style="border:1px gray solid;">I am footer</footer>
     </body>
