@@ -1,4 +1,4 @@
-# Core\ExtendableStaticCallTrait
+# DuckPhp\Core\ExtendableStaticCallTrait
 
 ## 简介
 
@@ -6,8 +6,6 @@
 
 ## 使用于
 - 核心类 Core\App 
-
-- 助手类 AppHelper 等
 
 使用于各助手类和 App 类
 
@@ -37,8 +35,8 @@ ExtendableStaticCallTrait 这个 Trait 用于 App, ControllerHelper, BusinessHel
 
 如果你要给相应 trait 添加静态方法，使用
 
-- AssignExtendStaticMethod($method,$callback);
-- AssignExtendStaticMethod($assoc);
+* AssignExtendStaticMethod($method,$callback);
+* AssignExtendStaticMethod($assoc);
 
 assoc 用于批量调用的数组
 

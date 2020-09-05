@@ -26,6 +26,6 @@ public function clear()
 示例
 
 ```php
-use Facades\MY\Model\TestModel;
-TestModel::foo(); // <=> \MY\Model\TestModel::G()->foo();
+use Facades\LazyToChange\Model\TestModel;
+TestModel::foo(); // <=> \LazyToChange\Model\TestModel::G()->foo();
 ```

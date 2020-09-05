@@ -189,9 +189,7 @@
 - 'database_list' => NULL, // 参见 [Ext\DbManager](Ext-DbManager.md)
 
     数据库列表
-- 'db_before_query_handler' => ['MY\\Base\\App','OnQuery'] // 参见 [Ext\XX](Ext-XX.md)
 
-    数据库，查询前执行
 - 'db_close_at_output' => true, // 参见 [Ext\DbManager](Ext-DbManager.md)
 
     数据库，输出前关闭
@@ -253,7 +251,7 @@
 - 'log_sql' => false,  // 参见 [App](App.md)
 
     记录sql
-- 'namespace' => 'MY', // 参见 [Core\Kernel](Core-Kernel.md)
+- 'namespace' => 'LazyToChange', // 参见 [Core\Kernel](Core-Kernel.md)
 
     命名空间
 - 'namespace_controller' => 'Controller', // 参见 [Core\Route](Core-Route.md)

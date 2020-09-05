@@ -6,7 +6,6 @@
 ## 选项
 'handle_all_dev_error' => true,
 
-
 'handle_all_exception' => true,
 
 'system_exception_handler' => null,

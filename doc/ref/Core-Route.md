@@ -7,16 +7,17 @@
 很重要的路由类，可以在单独抽出来使用。
 
 ## 选项
-'namespace' => 'MY',
+'namespace' => 'LazyToChange',
 
-	默认命名空间为 MY
+	默认命名空间为 LazyToChange
 'namespace_controller' => 'Controller',
 
 	默认子命名空间为 Controller
+    如果是 \ 开头的则忽略 namespace, 选项。
 'controller_base_class' => null,
 
-    限定控制器基类，配合 namespace namespace_controller 选项。
-    如果是 \ 开头的则忽略 namespace namespace_controller 选项。
+    限定控制器基类，配合 namespace ,namespace_controller 选项。
+    如果是 \ 开头的则忽略 namespace, namespace_controller 选项。
 'controller_welcome_class' => 'Main',
 
     欢迎类

@@ -1,13 +1,13 @@
-# Core\AutoLoader
+# DuckPhp\Core\AutoLoader
 
 ## 简介
-`组件类` DuckPhp\AutoLoader 类是 psr-4 自动加载类
+伪`组件类` DuckPhp\AutoLoader 类是 psr-4 自动加载类
 
 ## 选项
 'path' => null,
 
     路径
-'namespace' => 'MY',
+'namespace' => 'LazyToChange',
 
     命名空间
 'path_namespace' => 'app',

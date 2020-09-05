@@ -5,14 +5,14 @@
 最核心的Trait，你通过 DuckPhp\DuckPhp 或 DuckPhp\Core\App 类来使用他。
 
 ## 引用
-[Core\\AutoLoader](ref/Core-AutoLoader.md)   自动加载
-[Core\\Configer](ref/Core-Configer.md) 配置
-[Core\\ExceptionManager](ref/Core-ExceptionManager.md) 异常处理
-[Core\\Route](ref/Core-Route.md) 路由
-[Core\\RuntimeState](ref/Core-RuntimeState.md) 运行时状态
-[Core\\View](ref/Core-View.md) 视图
-[Core\\SuperGlobal](ref/Core-SuperGlobal.md) 超全局变量
-[Core\\Logger](ref/Core-Logger.md) 日志管理。
+[DuckPhp\\Core\\AutoLoader](ref/Core-AutoLoader.md)   自动加载
+[DuckPhp\\Core\\Configer](ref/Core-Configer.md) 配置
+[DuckPhp\\Core\\ExceptionManager](ref/Core-ExceptionManager.md) 异常处理
+[DuckPhp\\Core\\Route](ref/Core-Route.md) 路由
+[DuckPhp\\Core\\RuntimeState](ref/Core-RuntimeState.md) 运行时状态
+[DuckPhp\\Core\\View](ref/Core-View.md) 视图
+[DuckPhp\\Core\\SuperGlobal](ref/Core-SuperGlobal.md) 超全局变量
+[DuckPhp\\Core\\Logger](ref/Core-Logger.md) 日志管理。
 
 ## 选项
 use 开始的选项都是默认 true ，skip 开头的都是 false;
@@ -26,20 +26,18 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
  	跳过插件模式
 'handle_all_dev_error' => true,
 
-除了开发的错误 
-
+    处理开发时期的错误 
 'handle_all_exception' => true,
 
 	处理所有异常
-
 'override_class' => 'Base\App', 
 
     重新进入的切换的子类
 
-'override_class'=>'Base\App',**重要选项**
+'override_class'=>'System\App',**重要选项**
 
     基于 namespace ,如果这个选项的类存在，则在init()的时候会切换到这个类完成后续初始化，并返回这个类的实例。
-    注意到 app/Base/App.php 这个文件的类 MY\Base\App extends DuckPhp\DuckPhp;
+    注意到 app/Base/App.php 这个文件的类 DuckPhp\System\App extends DuckPhp\DuckPhp;
     如果以  \ 开头则是绝对 命名空间
 
 ### 基本配置
@@ -47,7 +45,7 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 'path' => null,
 
     基准目录
-'namespace' => 'MY',
+'namespace' => 'LazyToChange',
 
     基准命名空间
 'path_namespace' => 'app',
@@ -71,10 +69,10 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 'use_flag_by_setting' => true,
 
     从设置文件中再次重载 is_debug 和 platform
-'use_super_global' => false,
+'use_super_global' => true,
 
-    使用 `SuperGlobal` 类处理超全局变量，默认关闭以节约微乎其微的性能。
-'use_short_functions' => false,
+    使用 `SuperGlobal` 类处理超全局变量，关闭以节约微乎其微的性能。
+'use_short_functions' => true,
 
     允许使用短函数
 
@@ -165,8 +163,6 @@ Kernel 大致分为两个阶段
 
 init() 初始化阶段，和 run 阶段
 
-
-run 阶段，通过 PluginForSwoole 插件,调用 replaceDefaultRunHandler 修改默认流程
 
 run 阶段可重复调用
 

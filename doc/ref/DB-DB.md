@@ -11,12 +11,6 @@
 public function init($options = [], $context = null)
 
     虽然是组件类，只被 DB::CreateDBInstance 使用
-public static function CreateDBInstance($db_config)
-
-    用于创建实例
-public static function CloseDBInstance($db, $tag = null)
-
-    用于关闭实例
 public function fetchAll($sql, ...$args)
 
     运行SQL并获得所有行

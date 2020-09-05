@@ -9,6 +9,9 @@ public static function ThrowOn($flag, $message, $code=0, $exception_class=null)
     如果 $flag成立，则抛出异常
     如果未指定 $exception_class，则判断当前类是否是 Exception 类的子类，并抛出。
     如果不是，则默认为 Exception 类，并抛出
+public static function ThrowTo($class)
+
+    由 $class 接管 ThrowOn, 用于处理第三方的 ThrowOn
 ## 详解
 
 trait ThrowOn 是为了写代码更偷懒。

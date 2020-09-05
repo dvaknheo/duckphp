@@ -1,13 +1,14 @@
 # DuckPhp\Core\App
 
 ## 简介
-核心的类
+核心的类,`组件类`
 ## 依赖关系
 + `Core\App` 
+    + [Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md)
+    + [Core\SystemWrapperTrait](Core-SystemWrapperTrait.md)
+    + [Functions.php](Core-Functions.md)
     + Trait [Core\Kernel](Core-Kernel.md)
-    + Trait [Core\ThrowOn](Core-ThrowOn.md)
-    + Trait [Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md)
-    + Trait [Core\SystemWrapperTrait](Core-SystemWrapperTrait.md)
+
 
 ## 选项
 使用 [Core\Kernel](Core-Kernel.md) 的默认选项。
