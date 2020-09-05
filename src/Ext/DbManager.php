@@ -47,6 +47,7 @@ class DbManager extends ComponentBase
         }
         
         //////////////////////////
+        //$context->addBeforeOutputHandler([static::class, 'CloseAllDb']);
         if (method_exists($context, 'extendComponents')) {
             $context->extendComponents(
                 [

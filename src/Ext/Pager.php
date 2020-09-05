@@ -22,16 +22,16 @@ class Pager extends ComponentBase implements PagerInterface
     
     protected function getDefaultUrl()
     {
-        if (is_callable([$this->context_class,'SG'])) {
-            return ($this->context_class)::SG()->_SERVER['REQUEST_URI'] ?? '';
+        if (is_callable([$this->context_class,'SuperGlobal'])) {
+            return ($this->context_class)::SuperGlobal()->_SERVER['REQUEST_URI'] ?? '';
         } else {
             return $_SERVER['REQUEST_URI'] ?? '';
         }
     }
     protected function getDefaultPageNo()
     {
-        if (is_callable([$this->context_class,'SG'])) {
-            return ($this->context_class)::SG()->_GET[$this->options['page_key']] ?? 1;
+        if (is_callable([$this->context_class,'SuperGlobal'])) {
+            return ($this->context_class)::SuperGlobal()->_GET[$this->options['page_key']] ?? 1;
         } else {
             return $_GET[$this->options['page_key']] ?? 1;
         }

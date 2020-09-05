@@ -60,7 +60,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
 
         });
         
-        //App::SG()->_SERVER['PATH_INFO']='/NOOOOOOOOOOOOOOO';
+        //App::SuperGlobal()->_SERVER['PATH_INFO']='/NOOOOOOOOOOOOOOO';
         Route::G()->bind('/NOOOOOOOOOOOOOOO');  // 这两句居然有区别 ,TODO ，分析之
         
         App::G()->options['error_404']=function(){
@@ -373,7 +373,7 @@ App::PageHtml(123);
         $k="k";$v="v";
         $class_name=AppTestObject::class;
         $var_name="x";
-        App::SG();
+        App::SuperGlobal();
         App::GLOBALS($k, $v=null);
         App::STATICS($k, $v=null);
         App::CLASS_STATICS($class_name, $var_name);        

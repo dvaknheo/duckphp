@@ -130,9 +130,9 @@ class ControllerHelper
     {
         return App::setDefaultExceptionHandler($callback);
     }
-    public static function SG()
+    public static function SuperGlobal()
     {
-        return App::SG();
+        return App::SuperGlobal();
     }
     public static function Parameter($key, $default = null)
     {

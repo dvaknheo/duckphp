@@ -23,12 +23,12 @@ class Main
     }
     public function json_rpc()
     {
-        $post=DuckPhp::SG()->_POST;
+        $post=DuckPhp::POST(null);
         if($post['method']==='TestService.the500'){
             var_dump(DATE(DATE_ATOM));
             return;
         }
-        $ret= JsonRpcExt::G()->onRpcCall(DuckPhp::SG()->_POST);
+        $ret= JsonRpcExt::G()->onRpcCall(DuckPhp::POST(null));
         
         DuckPhp::ExitJson($ret);
     }

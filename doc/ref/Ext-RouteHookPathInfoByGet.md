@@ -5,7 +5,12 @@
 ## 选项
 
 'use_path_info_by_get' => false,
+
+    注意，这项开启扩展才启用。
+
 'key_for_action' => '_r',
+
+    替代的 action
 'key_for_module' => '',
     
 ## 公开方法

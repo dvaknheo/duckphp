@@ -134,6 +134,12 @@ class App extends ComponentBase
     {
         $this->beforeShowHandlers[] = $handler;
     }
+    public function removeBeforeOutputHandler($handler)
+    {
+        $this->beforeShowHandlers = array_filter($this->beforeShowHandlers, function($v) use ($handler){
+            return $v != $handler;
+        });
+    }
 }
 trait Core_Handler
 {
@@ -465,13 +471,12 @@ trait Core_Helper
     ////
     protected function onBeforeOutput()
     {
-        if (!$this->options['close_resource_at_output']) {
-            return;
-        }
-        foreach( $this->beforeShowHandlers as $v){
+        //if (!$this->options['close_resource_at_output']) {
+        //    return;
+        //}
+        foreach ($this->beforeShowHandlers as $v) {
             ($v)();
         }
-        
     }
     public function _Show($data = [], $view = '')
     {
@@ -795,7 +800,7 @@ trait Core_Glue
         return ExceptionManager::G()->_CallException($ex);
     }
     //super global
-    public static function SG($replacement_object = null)
+    public static function SuperGlobal($replacement_object = null)
     {
         return SuperGlobal::G($replacement_object);
     }
