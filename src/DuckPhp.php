@@ -30,13 +30,6 @@ class DuckPhp extends App
         ];
         $this->options['ext'] = array_merge($ext, $this->options['ext']);
     }
-    protected function onBeforeOutput()
-    {
-        if (!$this->options['close_resource_at_output']) {
-            return;
-        }
-        DbManager::CloseAllDb();
-    }
     //@override
     public function _Cache($object = null)
     {

@@ -16,8 +16,6 @@ class App extends \DuckPhp\DuckPhp
             // 开启调试模式
         'skip_setting_file' => true,
             // 本例特殊，跳过设置文件 这个选项防止没有上传设置文件到服务器
-        'mode_no_path_info' => true,
-            // 单一文件模式
         'namespace_controller'=>"\\",   
             // 设置控制器的命名空间为根 使得 Main 类为入口
         'ext' => [

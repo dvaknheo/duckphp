@@ -6,12 +6,10 @@
 // MAIN FILE
 //dvaknheo@github.com
 //OK，Lazy
-
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\AutoLoader;
 use DuckPhp\Core\ComponentInterface;
-
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Logger;

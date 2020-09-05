@@ -465,6 +465,13 @@ trait Core_Helper
     ////
     protected function onBeforeOutput()
     {
+        if (!$this->options['close_resource_at_output']) {
+            return;
+        }
+        foreach( $this->beforeShowHandlers as $v){
+            ($v)();
+        }
+        
     }
     public function _Show($data = [], $view = '')
     {
