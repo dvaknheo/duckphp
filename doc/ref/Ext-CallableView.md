@@ -25,7 +25,7 @@ CallableView 扩展扩充了默认的 view 类，用于用函数替代文件方�
 
 ## 方法
 
-继承 Core\\View 的所有方法。
+继承 DuckPhp\Core\View 的所有方法。
 
 protected function viewToCallback($func)
 

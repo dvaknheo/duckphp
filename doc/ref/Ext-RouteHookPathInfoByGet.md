@@ -1,9 +1,13 @@
-# Ext\RouteHookPathInfoByGet
+# DuckPhp\Ext\RouteHookPathInfoByGet
 
 ## 简介
-单文件模式的扩展
+`默认``组件类` 在不配置 PathInfo 下模拟
 ## 选项
 
+'use_path_info_by_get' => false,
+'key_for_action' => '_r',
+'key_for_module' => '',
+    
 ## 公开方法
 public function __construct()
 public function init(array $options, object $context = null)

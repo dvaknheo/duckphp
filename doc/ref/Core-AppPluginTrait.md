@@ -1,4 +1,5 @@
 # DuckPhp\Core\AppPluginTrait
+[toc]
 
 ## 简介
 

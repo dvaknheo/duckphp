@@ -1,7 +1,8 @@
-# DB\DBAdvanceTrait
+# DuckPhp\Db\DbAdvanceTrait
+[toc]
 
 ## 简介
-DBAdvanceTrait 这个 trait 给 DB类提供了常用的 高级的 DB 方法
+DbAdvanceTrait 这个 trait 给 Db 类提供了常用的 高级的 Db 方法
 ## 选项
 
 ## 方法

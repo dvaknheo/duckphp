@@ -1,16 +1,17 @@
-# Ext\DBManager
+# DuckPhp\Ext\DBManager
+[toc]
 
 ## 简介
-
+`组件类` Db 的 管理类 已经重写。
 ## 选项
-'db_create_handler' => null,
-'db_close_handler' => null,
-'db_exception_handler' => null,
-'before_get_db_handler' => null,
 
 'database_list' => null,
-'use_context_db_setting' => true,
-'db_close_at_output' => true,
+'db_before_get_object_handler' => null,
+'db_database_list_from_setting' => true,
+
+'log_sql_query' => false,
+'log_sql_level' => 'debug',
+
 ## 公开方法
 
 
@@ -18,22 +19,10 @@
 
     public function __construct()
     public function init(array $options, object $context = null)
-    protected function initContext($options = [], $context = null)
-    public static function CloseAllDB()
-    public static function DB($tag = null)
-    public static function DB_W()
-    public static function DB_R()
-    public function setDBHandler($db_create_handler, $db_close_handler = null, $db_exception_handler = null)
-    public function setBeforeGetDBHandler($before_get_db_handler)
-    public function getDBHandler()
-    public function _DB($tag = null)
-    protected function getDatabase($db_config, $tag)
-    public function _DB_W()
-    public function _DB_R()
-    public function _closeAllDB()
-    
 
+## 其他
 ### DBManager
+
 默认开启。DBManager 类是用来使用数据库的
 M::DB() 用到了这个组件。
 #### 选项

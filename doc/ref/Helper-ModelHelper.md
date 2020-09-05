@@ -1,4 +1,4 @@
-# Helper\ModelHelper
+# DuckPhp\Helper\ModelHelper
 
 ## 简介
 Model 助手类

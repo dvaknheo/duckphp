@@ -1,4 +1,5 @@
-# Helper\ViewHelper
+# DuckPhp\Helper\ViewHelper
+[toc]
 
 ## 简介
 

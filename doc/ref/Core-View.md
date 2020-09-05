@@ -1,4 +1,5 @@
-# Core\View
+# DuckPhp\Core\View
+[toc]
 
 ## 简介
 `组件类` 视图类
@@ -42,7 +43,7 @@ protected function getViewFile($path, $view)
     获得 View 文件。
 ## 详解
 
-Core\View 的选项共享一个 path,带一个 path_view.
+DuckPhp\Core\View 的选项共享一个 path,带一个 path_view.
 
 path_view 如果是 / 开始的，会忽略 path 选项
 

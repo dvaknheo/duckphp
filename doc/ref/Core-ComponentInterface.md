@@ -1,4 +1,5 @@
 # DuckPhp\Core\ComponentInterface
+[toc]
 
 ## 简介
 

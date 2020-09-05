@@ -1,4 +1,6 @@
 # DuckPhp\Core\SingletonEx
+[toc]
+
 ## 简介
 
 **可变单例类**

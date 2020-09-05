@@ -6,10 +6,10 @@
 
 ## 选项
 
-+ 'route_map_important'=>[],
+* 'route_map_important'=>[],
 
     在默认路由前执行的路由映射
-+ 'route_map'=>[]
+* 'route_map'=>[]
 
   在默认路由失败后执行的路由映射
 

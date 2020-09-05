@@ -1,4 +1,5 @@
 # DuckPhp\Core\Logger
+[toc]
 
 ## 简介
 日志组件 ，满足 psr 标准的 日志类

@@ -1,7 +1,7 @@
 # DuckPhp\Ext\RouteHookDirectoryMode
 
 ## 简介
-`组件类`路由钩子管理器
+`伪组件类` 路由钩子管理器
 ##### 
 ## 选项
 无选项

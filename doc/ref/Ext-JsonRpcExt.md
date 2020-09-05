@@ -1,7 +1,8 @@
-# Ext\JsonRpcExt
+# DuckPhp\Ext\JsonRpcExt
+[toc]
 
 ## 简介
- json-rpc 扩展
+ `组件类` json-rpc 扩展
 ## 选项
 
 'jsonrpc_namespace' => 'JsonRpc',

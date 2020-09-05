@@ -1,4 +1,4 @@
-# Helper\HelperTrait
+# DuckPhp\Helper\HelperTrait
 
 ## 简介
 所有助手类都有的trait

@@ -1,4 +1,5 @@
 # DuckPhp\Core\ExtendableStaticCallTrait
+[toc]
 
 ## 简介
 

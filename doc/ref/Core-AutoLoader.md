@@ -1,4 +1,5 @@
 # DuckPhp\Core\AutoLoader
+[toc]
 
 ## 简介
 伪`组件类` DuckPhp\AutoLoader 类是 psr-4 自动加载类

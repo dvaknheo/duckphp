@@ -1,4 +1,5 @@
 # DuckPhp\Core\ExceptionManager
+[toc]
 
 ## 简介
 异常管理组件

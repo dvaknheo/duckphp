@@ -1,4 +1,4 @@
-# Ext\RedisSimpleCache
+# DuckPhp\Ext\RedisSimpleCache
 
 ## 简介
 Redis 的 SimpleCache  类

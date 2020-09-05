@@ -1,4 +1,5 @@
-# Ext\Misc
+# DuckPhp\Ext\Misc
+[toc]
 
 ## 简介
 `组件类` 杂项扩展， 提供了一批函数。

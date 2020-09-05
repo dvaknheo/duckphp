@@ -1,4 +1,4 @@
-# Ext\RouteHookRewrite
+# DuckPhp\Ext\RouteHookRewrite
 
 ## 简介
 用于重写URL.
@@ -23,11 +23,7 @@ protected function doHook($path_info)
 默认开启 实现了rewrite 。
 
 rewrite 支持以 ~ 开始表示的正则， 并且转换后自动拼凑 $_GET
-#### 选项
-    'rewrite_map'=>[],
-#### 方法
-assignRewrite()
-getRewrites()
+
 
 
 assignRewrite($old_url,$new_url=null)

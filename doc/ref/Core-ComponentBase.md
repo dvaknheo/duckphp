@@ -1,5 +1,6 @@
 # DuckPhp\Core\ComponentBase
 [toc]
+
 ## 简介
 
 `组件`的基类 

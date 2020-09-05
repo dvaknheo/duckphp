@@ -1,4 +1,4 @@
-# Ext\JsonRpcClientBase
+# DuckPhp\Ext\JsonRpcClientBase
 
 ## 简介
 JsonRPC 的客户端基类

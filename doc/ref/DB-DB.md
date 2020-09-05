@@ -1,8 +1,9 @@
-# DB\DB
+# DuckPhp\Db\Db
+[toc]
 
 ## 简介
 
-伪组件 DB 类是DuckPhp 自带的数据库类。 是 App::DB() 和 M::DB() 的实现。
+伪组件 Db 类是DuckPhp 自带的数据库类。 是 App::Db() 和 M::Db() 的实现。
 
 ## 选项
 
@@ -10,7 +11,7 @@
 
 public function init($options = [], $context = null)
 
-    虽然是组件类，只被 DB::CreateDBInstance 使用
+    虽然是组件类，只被 Db::CreateDbInstance 使用
 public function fetchAll($sql, ...$args)
 
     运行SQL并获得所有行
@@ -47,7 +48,7 @@ public function lastInsertId()
     
     获得插入的ID.
 
-### DBAdvance 的方法
+### DbAdvance 的方法
 
 public function quoteIn($array)
 public function quoteSetArray($array)
@@ -59,10 +60,10 @@ public function updateData($table_name, $id, $data, $key = 'id')
 
 ## 详解
 
-DB()
+Db()
     
-#### DB 类的用法
-DB
+#### Db 类的用法
+Db
     close(); //关闭, 你一般不用关闭,系统会自动关闭
     PDO($new=null); //获取/设置 PDO 对象
     quote($string);
@@ -72,10 +73,10 @@ DB
     execute($sql, ...$args); //   执行某条sql ，不用 exec , execute 是为了兼容其他类。
 #### 示例
 使用数据库，在 设置里正确设置 database_list 这个数组，包含多个数据库配置
-然后在用到的地方调用 DuckPhpDuckPhp::DB($tag=null) 得到的就是 DB 对象，用来做各种数据库操作。
+然后在用到的地方调用 DuckPhp::Db($tag=null) 得到的就是 Db 对象，用来做各种数据库操作。
 $tag 对应 $setting['database_list'][$tag]。默认会得到最前面的 tag 的配置。
 
-你不必担心每次框架初始化会连接数据库。只有第一次调用 DuckPhp::DB() 的时候，才进行数据库类的创建。
+你不必担心每次框架初始化会连接数据库。只有第一次调用 DuckPhp::Db() 的时候，才进行数据库类的创建。
 
 
 ## 示例如下
@@ -98,7 +99,7 @@ $options['database_list']=[[
 ]]; // 这里用选项里的
 DuckPhp::RunQuickly($options,function(){    
     $sql="select 1+? as t";
-    $data=M::DB()->fetch($sql,2);
+    $data=M::Db()->fetch($sql,2);
     DuckPhp::var_dump($data);
     DuckPhp::exit(0);
 });
@@ -107,8 +108,6 @@ DuckPhp::RunQuickly($options,function(){
 ## 方法索引
 
 public function init($options = [], $context = null)
-public static function CreateDBInstance($db_config)
-public static function CloseDBInstance($db, $tag = null)
 protected function check_connect()
 public function close()
 public function PDO($new)

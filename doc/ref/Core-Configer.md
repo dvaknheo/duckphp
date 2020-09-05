@@ -1,4 +1,5 @@
 # DuckPhp\Core\Configer
+[toc]
 
 ## 简介
 

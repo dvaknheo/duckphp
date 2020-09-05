@@ -1,4 +1,4 @@
-# Ext\PagerInterface
+# DuckPhp\Ext\PagerInterface
 
 ## 简介
 分页类的接口

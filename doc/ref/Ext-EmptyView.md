@@ -22,13 +22,16 @@ EmptyView 组件 扩展扩充了默认的 View 类，用于用函数替代文件
 ## 详解
 
 这个类 是用函数来代替默认的文件 View。 默认没打开。
+
 用途是得到空数据，不用于显示。作用和演示效果见：
+
 `template/full/traditional.php`
 
 _Show 函数的时候，会把 $view 变量加进来
+
 _Display 函数的时候，会把 $skip_head_foot 变量加进来。
 
-empty_view_skip_replace  = true 则把不替换默认的 View 类。
+empty_view_skip_replace  = true 则不替换默认的 View 类。
 
 
 'empty_view_view_wellcome'=> 'Main/', // view 为这个的时候跳过显示

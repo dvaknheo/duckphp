@@ -1,4 +1,4 @@
-# Helper\ControllerHelper
+# DuckPhp\Helper\ControllerHelper
 [toc]
 
 ## 简介

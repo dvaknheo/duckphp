@@ -1,4 +1,4 @@
-# DuckPhp\\Ext\\EventManager
+# DuckPhp\Ext\EventManager
 
 ## 简介
 事件管理器， 这个类只是一对一绑定。

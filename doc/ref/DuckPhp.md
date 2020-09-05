@@ -1,4 +1,5 @@
-# DuckPhp
+# DuckPhp\DuckPhp
+[toc]
 
 ## 简介
 总入口类

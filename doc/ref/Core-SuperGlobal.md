@@ -1,8 +1,9 @@
 # DuckPhp\Core\SuperGlobal
 [toc]
+
 ## 简介
 
-超全局变量组件。 为了支持不仅仅 WEB 环境下的 超全局变量。
+`组件类` 超全局变量组件。 为了支持不仅仅 WEB 环境下的 超全局变量。
 
 ## 公开方法
 public function __construct()
@@ -38,7 +39,7 @@ public function &_CLASS_STATICS($class_name, $var_name)
 ## 详解
 常规的操作
 ```
-$_GET['x'] => SuperGlobal::G()->_GET['x']
+$_GET['x'] => SuperGlobal::G()->_GET['x'];
 ```
 
 

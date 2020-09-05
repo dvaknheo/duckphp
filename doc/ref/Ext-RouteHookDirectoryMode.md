@@ -1,4 +1,4 @@
-# Ext\RouteHookDirectoryMode
+# DuckPhp\Ext\RouteHookDirectoryMode
 
 ## 简介
 多目录模式的 hook

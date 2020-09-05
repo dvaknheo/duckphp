@@ -1,4 +1,5 @@
-# Ext\RedisManager
+# DuckPhp\Ext\RedisManager
+[toc]
 
 ## 简介
 Redis 管理类

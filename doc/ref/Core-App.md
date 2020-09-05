@@ -1,17 +1,18 @@
 # DuckPhp\Core\App
+[toc]
 
 ## 简介
 核心的类,`组件类`
 ## 依赖关系
-+ `Core\App` 
-    + [Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md)
-    + [Core\SystemWrapperTrait](Core-SystemWrapperTrait.md)
++ `DuckPhp\Core\App` 
+    + [DuckPhp\Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md)
+    + [DuckPhp\Core\SystemWrapperTrait](Core-SystemWrapperTrait.md)
     + [Functions.php](Core-Functions.md)
-    + Trait [Core\Kernel](Core-Kernel.md)
+    + Trait [DuckPhp\Core\Kernel](Core-Kernel.md)
 
 
 ## 选项
-使用 [Core\Kernel](Core-Kernel.md) 的默认选项。
+使用 [DuckPhp\Core\Kernel](Core-Kernel.md) 的默认选项。
 
 ## 方法
 public function addBeforeShowHandler($handler)
@@ -44,7 +45,7 @@ public function removeDynamicComponentClass($class)
     //
 
 ## 详解
-Core\App 类 可以视为几个类的组合
+DuckPhp\Core\App 类 可以视为几个类的组合
 
 ### 作为内核的 App 入口类
 

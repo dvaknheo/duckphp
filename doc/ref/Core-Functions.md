@@ -1,4 +1,5 @@
 # 全局函数
+[toc]
 
 需要开启 user_global_functions （默认开启） 才能用。
 

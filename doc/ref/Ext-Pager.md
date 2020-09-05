@@ -5,13 +5,6 @@
 
 ## 选项
 
-    - 'context_class' => null
-    - 'current' => null
-
-    - 'rewrite' => null
-    - 'url' => null
-
-
 'url' => null,
 
     url

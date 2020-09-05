@@ -1,7 +1,8 @@
-# Helper\AppHelper
+# DuckPhp\Helper\AppHelper
+[toc]
 
 ## 简介
-这个助手类是 App 类中系统相关部分。不
+这个助手类是 App 类中系统相关部分。
 
 App 助手类。 
 助手类，全静态方法
