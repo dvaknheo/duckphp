@@ -32,14 +32,14 @@ class Main
             C::Logger()->warning(''.(get_class($ex)).'('.$ex->getCode().'): '.$ex->getMessage());
             C::ExitRouteTo('login');
         });
-        if (!empty(C::SG()->_POST)) {
-            $referer = C::SG()->_SERVER['HTTP_REFERER'] ?? '';
+        if (!empty(C::SuperGlobal()->_POST)) {
+            $referer = C::SuperGlobal()->_SERVER['HTTP_REFERER'] ?? '';
             $domain = C::Domain().'/';
             if (substr($referer, 0, strlen($domain)) !== $domain) {
                 SessionServiceException::ThrowOn(true, "CRSF", 419);
                 //防止 csrf 攻击，用于站内无跳板的简单情况
             }
-            //$flag=SessionService::G()->checkCsrf(C::SG()->_POST['_token']??null);
+            //$flag=SessionService::G()->checkCsrf(C::SuperGlobal()->_POST['_token']??null);
         }
         $this->setLayoutData();
     }
@@ -90,7 +90,7 @@ class Main
     }
     public function logout()
     {
-        $flag = SessionService::G()->checkCsrf(C::SG()->_GET['_token'] ?? null);
+        $flag = SessionService::G()->checkCsrf(C::SuperGlobal()->_GET['_token'] ?? null);
         SessionService::G()->logout();
         C::ExitRouteTo('index');
     }
@@ -107,7 +107,7 @@ class Main
     ////////////////////////////////////////////
     public function do_register()
     {
-        $post = C::SG()->_POST;
+        $post = C::SuperGlobal()->_POST;
         try {
             $post['password'] = $post['password'] ?? '';
             $post['password_confirm'] = $post['password_confirm'] ?? '';
@@ -124,7 +124,7 @@ class Main
     }
     public function do_login()
     {
-        $post = C::SG()->_POST;
+        $post = C::SuperGlobal()->_POST;
         try {
             $user = UserService::G()->login($post);
             SessionService::G()->setCurrentUser($user);
@@ -138,7 +138,7 @@ class Main
     }
     public function do_password()
     {
-        $post = C::SG()->_POST;
+        $post = C::SuperGlobal()->_POST;
         
         $old_pass = $post['oldpassword'] ?? '';
         $new_pass = $post['newpassword'] ?? '';

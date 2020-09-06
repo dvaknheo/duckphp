@@ -136,7 +136,7 @@ subgraph cluster_Ext {
     Pager[shape="component"];
     PagerInterface [shape=note];
     RedisManager[shape="component"];
-    RedisSimpleCache[shape="component"];
+    RedisCache[shape="component"];
     RouteHookDirectoryMode[shape="component"];
     RouteHookManager[shape="component"];
     RouteHookPathInfoByGet[shape="component"];

@@ -38,7 +38,7 @@ class Main
     public function article()
     {
         $page = C::PageNo();
-        $id = intval(C::SG()->_GET['id'] ?? 1);
+        $id = intval(C::SuperGlobal()->_GET['id'] ?? 1);
         
         $page_size = 10;
         
@@ -63,13 +63,13 @@ class Main
     public function do_addcomment()
     {
         $uid = SessionService::G()->getCurrentUid();
-        UserService::G()->addComment($uid, C::SG()->_POST['article_id'], C::SG()->_POST['content']);
-        C::ExitRouteTo('article/'.C::SG()->_POST['article_id']);
+        UserService::G()->addComment($uid, C::SuperGlobal()->_POST['article_id'], C::SuperGlobal()->_POST['content']);
+        C::ExitRouteTo('article/'.C::SuperGlobal()->_POST['article_id']);
     }
     public function do_delcomment()
     {
         $user = SessionService::G()->getCurrentUser();
-        UserService::G()->deleteCommentByUser($user['id'], DN::SG()->_POST['id']);
+        UserService::G()->deleteCommentByUser($user['id'], DN::SuperGlobal()->_POST['id']);
         C::ExitRouteTo('');
     }
     public function dump()

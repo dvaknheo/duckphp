@@ -17,7 +17,7 @@ class SessionService extends BaseService
     }
     public function getCurrentUser()
     {
-        $ret = App::SG()->_SESSION['user'] ?? [];
+        $ret = App::SuperGlobal()->_SESSION['user'] ?? [];
         SessionServiceException::ThrowOn(empty($ret), '请重新登录');
         
         return $ret;
@@ -31,26 +31,26 @@ class SessionService extends BaseService
     
     public function setCurrentUser($user)
     {
-        App::SG()->_SESSION['user'] = $user;
+        App::SuperGlobal()->_SESSION['user'] = $user;
     }
     public function logout()
     {
-        unset(App::SG()->_SESSION['user']);
+        unset(App::SuperGlobal()->_SESSION['user']);
         App::session_destroy();
     }
     public function checkCsrf($token)
     {
-        $session_token = App::SG()->_SESSION['_token'] ?? null;
+        $session_token = App::SuperGlobal()->_SESSION['_token'] ?? null;
         SessionServiceException::ThrowOn($token !== $session_token, 'csrf_token 失败', 419);
     }
     ////////////////////////////////////////////////////////////////////////
     public function csrf_token()
     {
-        if (!isset(App::SG()->_SESSION['_token'])) {
+        if (!isset(App::SuperGlobal()->_SESSION['_token'])) {
             $token = $this->randomString(40);
-            App::SG()->_SESSION['_token'] = $token;
+            App::SuperGlobal()->_SESSION['_token'] = $token;
         }
-        return App::SG()->_SESSION['_token'];
+        return App::SuperGlobal()->_SESSION['_token'];
     }
     public function csrf_field()
     {

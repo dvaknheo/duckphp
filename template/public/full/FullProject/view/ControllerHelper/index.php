@@ -82,7 +82,7 @@ ContrlloerHelper 的方法很多很杂，但掌握了 ContrlloerHelper  方法�
     <dd>【系统替代】 退出函数，以便于接管</dd>
     
     <dt><a href="#">SG</a></dt>
-    <dd>【swoole 兼容】 SG()-> 前缀替代  超全局变量做 swoole 兼容， 如 C::SG()->_GET[] , C::SG()->_POST[] 等。</dd>
+    <dd>【swoole 兼容】 SuperGlobal()-> 前缀替代  超全局变量做 swoole 兼容， 如 C::SuperGlobal()->_GET[] , C::SuperGlobal()->_POST[] 等。</dd>
     </dl>
 </fieldset>
 </body>

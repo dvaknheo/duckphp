@@ -15,9 +15,7 @@ class RouteHookApiServer extends ComponentBase
         'api_config_file' => '',
     ];
     protected $context_class;
-    protected function initOptions(array $options)
-    {
-    }
+
     //@override
     protected function initContext(object $context)
     {
@@ -29,29 +27,39 @@ class RouteHookApiServer extends ComponentBase
     }
     public function _Hook($path_info)
     {
-        $path_info = trim($path_info, '/');
-
-        $class_array = explode('.', $path_info);
-        $method = array_pop($class_array);
-
-        $class = implode('/', $class_array);
-        $class = $this->options['api_class_prefix'] . $class;
-        $object = new $class;
+        ($this->context_class)::setDefaultExceptionHandler([static::class,'OnJsonError']);
         
+        list($class,$method) = $this->getClassAndMethod();
         $inputs = $this->getInputs();
         
-        ($this->context_class)::setDefaultExceptionHandler(function ($e) {
-            $this->exitJson([
-                'error_code' => $e->getCode(),
-                'error_message' => $e->getMessage(),
-            ]);
-        });
-        
+        $object = new $class;        
         $data = $this->callAPI($object, $method, $inputs, $this->options['api_class_base']);
         $this->exitJson($data);
         
         return true;
     }
+    public static function OnJsonError($e)
+    {
+        return static::G()->_OnJsonError($e);
+    }
+    protected function _OnJsonError($e)
+    {
+        $this->exitJson([
+            'error_code' => $e->getCode(),
+            'error_message' => $e->getMessage(),
+        ]);
+    }
+    protected function getClassAndMethod()
+    {
+        $path_info = trim($path_info, '/');
+        $class_array = explode('.', $path_info);
+        $method = array_pop($class_array);
+
+        $class = implode('/', $class_array);
+        $class = $this->options['api_class_prefix'] . $class;
+        return [$class,$method];
+    }
+    
     protected function getInputs()
     {
         if (($this->context_class)::IsDebug()) {
