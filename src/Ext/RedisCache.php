@@ -7,28 +7,29 @@ namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
 
-class RedisSimpleCache extends ComponentBase //implements Psr\SimpleCache\CacheInterface;
+class RedisCache extends ComponentBase //implements Psr\SimpleCache\CacheInterface;
 {
     public $options = [
-        'redis' => null,
+        'redis_cache_skip_replace' => false,
         'redis_cache_prefix' => '',
     ];
-    public $redis = null;
-    public $prefix = '';
-    
+    protected $context_class;
     //override
-    protected function initOptions(array $options)
+    protected function initContext(object $context)
     {
-        $this->redis = $this->options['redis'] ?? null;
-        $this->prefix = $this->options['redis_cache_prefix'] ?? '';
+        $this->context_class = get_class($context);
+        if (!$this->options['callable_view_skip_replace']) {
+            $this->context_class::Cache($this);
+        }
     }
-    
+    //////////////////////////////
+    protected function redis()
+    {
+        return $this->context_class::Redis();
+    }
     public function get($key, $default = null)
     {
-        if (!$this->redis || !$this->redis->isConnected()) {
-            return $default;
-        }
-        $ret = $this->redis->get($this->prefix.$key);
+        $ret = $this->redis()->get($this->options['redis_cache_prefix'].$key);
         
         if ($ret !== false) {
             $ret = json_decode($ret, true);
@@ -37,35 +38,27 @@ class RedisSimpleCache extends ComponentBase //implements Psr\SimpleCache\CacheI
     }
     public function set($key, $value, $ttl = null)
     {
-        if (!$this->redis || !$this->redis->isConnected()) {
-            return false;
-        }
         $value = json_encode($value, JSON_UNESCAPED_UNICODE);
-        $ret = $this->redis->set($this->prefix.$key, $value, $ttl);
+        $ret = $this->redis()->set($this->options['redis_cache_prefix'].$key, $value, $ttl);
         return $ret;
     }
     public function delete($key)
     {
-        if (!$this->redis || !$this->redis->isConnected()) {
-            return false;
-        }
         $key = is_array($key)?$key:[$key];
         foreach ($key as &$v) {
-            $v = $this->prefix.$v;
+            $v = $this->options['redis_cache_prefix'].$v;
         }
         unset($v);
         
-        $ret = $this->redis->del($key);
+        $ret = $this->redis()->del($key);
         return $ret;
     }
     public function has($key)
     {
-        if (!$this->redis || !$this->redis->isConnected()) {
-            return false;
-        }
-        $ret = $this->redis->exists($this->prefix.$key);
+        $ret = $this->redis()->exists($this->options['redis_cache_prefix'].$key);
         return $ret;
     }
+    /////////
     public function clear()
     {
         //NO Impelment this;

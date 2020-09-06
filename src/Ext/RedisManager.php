@@ -23,8 +23,6 @@ class RedisManager extends ComponentBase
     public $options = [
         'redis_list' => null,
         'use_context_redis_setting' => true,
-        'enable_simple_cache' => true,
-        'simple_cache_prefix' => '',
     ];
     const TAG_WRITE = 0;
     const TAG_READ = 1;
@@ -34,12 +32,6 @@ class RedisManager extends ComponentBase
     protected function initOptions(array $options)
     {
         $this->redis_config_list = $this->options['redis_list'];
-        if ($this->options['enable_simple_cache']) {
-            RedisSimpleCache::G()->init([
-                'redis' => $this->getServer(),
-                'redis_cache_prefix' => $this->options['simple_cache_prefix']
-            ]);
-        }
     }
     //@override
     protected function initContext(object $context)
@@ -56,19 +48,10 @@ class RedisManager extends ComponentBase
         if (method_exists($context, 'extendComponents')) {
             $context->extendComponents(['Redis' => [static::class, 'Redis']], ['B','A']);
         }
-        if ($this->options['enable_simple_cache']) {
-            if (method_exists($context, 'extendComponents')) {
-                $context->extendComponents(['SimpleCache' => [static::class, 'SimpleCache']], ['B','A']);
-            }
-        }
     }
     public static function Redis($tag = 0)
     {
         return static::G()->getServer($tag);
-    }
-    public static function SimpleCache()
-    {
-        return RedisSimpleCache::G();
     }
     public function getServer($tag = 0)
     {

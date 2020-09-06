@@ -136,7 +136,7 @@ class App extends ComponentBase
     }
     public function removeBeforeOutputHandler($handler)
     {
-        $this->beforeShowHandlers = array_filter($this->beforeShowHandlers, function($v) use ($handler){
+        $this->beforeShowHandlers = array_filter($this->beforeShowHandlers, function ($v) use ($handler) {
             return $v != $handler;
         });
     }

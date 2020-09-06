@@ -67,8 +67,8 @@
     8. [Misc.php](Ext-Misc.md) 杂项功能组件
    9. **[Pager.php](Ext-Pager.md)** 分页类
         1. [PagerInteface.php](Ext-PagerInteface.md) 分页接口
-   10. [RedisManager.php](Ext-RedisManager.md) Redis管理器组件
-   11. [RedisSimpleCache.php](Ext-RedisSimpleCache.md) redis 缓存组件
+   10. [RedisCache.php](Ext-RedisSimpleCache.md) redis 缓存组件
+   11. [RedisManager.php](Ext-RedisManager.md) Redis管理器组件
    12. [RouteHookDirectoryMode.php](Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件
    13. [RouteHookManager.php](Ext-RouteHookManager.md) 路由钩子管理器
    14. **[RouteHookPathInfoByGet.php](Ext-RouteHookPathInfoByGet.md) **无程序路由设计模式组件

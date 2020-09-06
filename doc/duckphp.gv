@@ -153,7 +153,7 @@ subgraph cluster_Ext {
     Misc -> Core_ComponentBase [style="dotted"];
     Pager -> Core_ComponentBase [style="dotted"];
     RedisManager -> Core_ComponentBase [style="dotted"];
-    RedisSimpleCache -> Core_ComponentBase [style="dotted"];
+    RedisCache -> Core_ComponentBase [style="dotted"];
     RouteHookDirectoryMode -> Core_ComponentBase [style="dotted"];
     RouteHookManager -> Core_ComponentBase [style="dotted"];
     RouteHookPathInfoByGet -> Core_ComponentBase [style="dotted"];
@@ -168,7 +168,6 @@ subgraph cluster_Ext {
     FacadesBase -> FacadesAutoLoader;
     JsonRpcClientBase ->JsonRpcExt;
     Pager -> PagerInterface; 
-    RedisSimpleCache -> RedisManager;
     StrictCheckObjectTrait -> StrictCheck; 
 }
 

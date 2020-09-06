@@ -1,4 +1,4 @@
-# DuckPhp\Ext\RouteHookDirectoryMode
+# DuckPhp\Ext\RouteHookManager
 
 ## 简介
 `伪组件类` 路由钩子管理器
@@ -20,3 +20,10 @@
 ## 详解
 
 一个简单的路由钩子管理器。
+
+attachPreRun 管理 运行前钩子， attachPostRun  管理运行后勾子。 detach释放绑定。
+
+getHookList 获得钩子列表  setHookList 设置钩子列表
+moveBefore insertBefore removeAll
+
+dump(); 
