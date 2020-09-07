@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Ext{
 use DuckPhp\Core\SingletonEx;
 
 use DuckPhp\Ext\JsonRpcExt;
-use DuckPhp\Core\HttpServer;
+use DuckPhp\HttpServer\HttpServer;
 use TestService;
 use JsonRpc\TestService as JS;
 class JsonRpcExtTest extends \PHPUnit\Framework\TestCase

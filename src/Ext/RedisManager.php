@@ -6,7 +6,6 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Ext\RedisSimpleCache;
 use Redis;
 
 class RedisManager extends ComponentBase

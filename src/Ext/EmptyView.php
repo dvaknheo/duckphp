@@ -53,7 +53,7 @@ class EmptyView extends View
     //@override
     protected function getViewFile(string $path, ?string $view): string
     {
-        $view=(string)$view;
+        $view = (string)$view;
         if ($this->options['empty_view_trim_view_wellcome'] ?? true) {
             $prefix = $this->options['empty_view_key_wellcome_class'] ?? 'Main/';
             if (substr($view, 0, strlen($prefix)) === $prefix) {

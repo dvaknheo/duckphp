@@ -20,7 +20,7 @@ class RouteHookApiServer extends ComponentBase
     protected function initContext(object $context)
     {
         $this->context_class = get_class($context);
-        $context::addRouteHook([static::class,'Hook'], 'prepend-inner');
+        ($this->context_class)::addRouteHook([static::class,'Hook'], 'prepend-inner');
     }
     public static function Hook($path_info)
     {
@@ -30,10 +30,9 @@ class RouteHookApiServer extends ComponentBase
     {
         ($this->context_class)::setDefaultExceptionHandler([static::class,'OnJsonError']);
         
-        list($class,$method) = $this->getClassAndMethod($path_info);
+        list($object, $method) = $this->getObjectAndMethod($path_info);
         $inputs = $this->getInputs($path_info);
         
-        $object = new $class;        
         $data = $this->callAPI($object, $method, $inputs, $this->options['api_class_base']);
         $this->exitJson($data);
         
@@ -50,7 +49,7 @@ class RouteHookApiServer extends ComponentBase
             'error_message' => $e->getMessage(),
         ]);
     }
-    protected function getClassAndMethod($path_info)
+    protected function getObjectAndMethod($path_info)
     {
         $path_info = trim($path_info, '/');
         $class_array = explode('.', $path_info);
@@ -58,10 +57,12 @@ class RouteHookApiServer extends ComponentBase
 
         $class = implode('/', $class_array);
         $class = $this->options['api_class_prefix'] . $class;
-        return [$class,$method];
+        
+        $object = new $class; // $object = $class::G();
+        return [$object,$method];
     }
     
-    protected function getInputs()
+    protected function getInputs($path_info)
     {
         if (($this->context_class)::IsDebug()) {
             $inputs = ($this->context_class)::SuperGlobal()->_REQUEST;
@@ -118,7 +119,6 @@ class RouteHookApiServer extends ComponentBase
             }
             if (!$param->isDefaultValueAvailable()) {
                 throw new \ReflectionException("Need Parameter: {$name}", -2);
-                
             }
             $args[] = $param->getDefaultValue();
         }

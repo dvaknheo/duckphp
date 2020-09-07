@@ -46,7 +46,9 @@ class AppTest extends \PHPUnit\Framework\TestCase
         ];
         App::RunQuickly($options,function(){
             App::G()->addBeforeShowHandler(function(){ echo "beforeShowHandlers";});
-            
+                        App::G()->addBeforeShowHandler("testsssssssssss");
+                        App::G()->removeBeforeOutputHandler("testsssssssssss");
+
             $value = $cache[$key]; // trigger notice
             App::G()->options['error_debug']='_sys/error-debug';
             $value = $cache[$key]; 
