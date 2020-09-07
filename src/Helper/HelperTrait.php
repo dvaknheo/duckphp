@@ -7,11 +7,9 @@ namespace DuckPhp\Helper;
 
 use DuckPhp\Core\App;
 use DuckPhp\Core\ExtendableStaticCallTrait;
-use DuckPhp\Core\SingletonEx;
 
 trait HelperTrait
 {
-    use SingletonEx;
     use ExtendableStaticCallTrait;
 
     public static function IsDebug()
