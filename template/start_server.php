@@ -12,4 +12,4 @@ $options = [
     //'port'=>'8080',         // default is 8080 uncomment or  --port to override
 ];
 
-DuckPhp\HttpServer::RunQuickly($options);
+DuckPhp\HttpServer\HttpServer::RunQuickly($options);
