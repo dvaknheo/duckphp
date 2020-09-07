@@ -19,6 +19,7 @@ class RouteHookApiServer extends ComponentBase
     //@override
     protected function initContext(object $context)
     {
+        $this->context_class = get_class($context);
         $context::addRouteHook([static::class,'Hook'], 'prepend-inner');
     }
     public static function Hook($path_info)
@@ -29,8 +30,8 @@ class RouteHookApiServer extends ComponentBase
     {
         ($this->context_class)::setDefaultExceptionHandler([static::class,'OnJsonError']);
         
-        list($class,$method) = $this->getClassAndMethod();
-        $inputs = $this->getInputs();
+        list($class,$method) = $this->getClassAndMethod($path_info);
+        $inputs = $this->getInputs($path_info);
         
         $object = new $class;        
         $data = $this->callAPI($object, $method, $inputs, $this->options['api_class_base']);
@@ -42,14 +43,14 @@ class RouteHookApiServer extends ComponentBase
     {
         return static::G()->_OnJsonError($e);
     }
-    protected function _OnJsonError($e)
+    public function _OnJsonError($e)
     {
         $this->exitJson([
             'error_code' => $e->getCode(),
             'error_message' => $e->getMessage(),
         ]);
     }
-    protected function getClassAndMethod()
+    protected function getClassAndMethod($path_info)
     {
         $path_info = trim($path_info, '/');
         $class_array = explode('.', $path_info);
@@ -92,9 +93,9 @@ class RouteHookApiServer extends ComponentBase
             'string' => FILTER_SANITIZE_STRING,
         ];
         if ($interface && !is_a($class, $interface)) {
-            throw new ReflectionException("Bad interface", -3);
+            throw new \ReflectionException("Bad interface", -3);
         }
-        $reflect = new ReflectionMethod($class, $method);
+        $reflect = new \ReflectionMethod($class, $method);
         
         $params = $reflect->getParameters();
         $args = array();
@@ -109,14 +110,14 @@ class RouteHookApiServer extends ComponentBase
                 if (in_array((string)$type, array_keys($f))) {
                     $flag = filter_var($input[$name], $f[(string)$type], FILTER_NULL_ON_FAILURE);
                     if ($flag === null) {
-                        throw new ReflectionException("Type Unmatch: {$name}", -1);
+                        throw new \ReflectionException("Type Unmatch: {$name}", -1);
                     }
                 }
                 $args[] = $input[$name];
                 continue;
             }
             if (!$param->isDefaultValueAvailable()) {
-                throw new ReflectionException("Need Parameter: {$name}", -2);
+                throw new \ReflectionException("Need Parameter: {$name}", -2);
                 
             }
             $args[] = $param->getDefaultValue();
