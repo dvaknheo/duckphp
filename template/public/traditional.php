@@ -130,7 +130,8 @@ if(!$flag){
 extract(DuckPhp::getViewData());
 
 error_reporting(error_reporting() & ~E_NOTICE);
-if(empty($skip_head_foot)){
+
+if(isset($view_head)){
 ?>
 <!doctype html>
 <html>
@@ -190,7 +191,7 @@ if($view==='dialog'){ ?>
 <?php
 }
 
-if(empty($skip_head_foot)){
+if(isset($view_foot)){
 ?>
 	<hr />
 	</div>

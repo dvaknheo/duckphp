@@ -143,7 +143,7 @@ class Main
     }
     $data = App::GetViewData();
     extract($data);
-    if(empty($skip_head_foot)){
+    if(isset($view_head)){
 ?>
         <html>
             <head>
@@ -192,7 +192,7 @@ class Main
 
 <?php
     }
-    if(empty($skip_head_foot)){
+    if(isset($view_foot)){
         ?>
         <footer style="border:1px gray solid;">I am footer</footer>
     </body>

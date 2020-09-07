@@ -40,19 +40,26 @@ class EmptyView extends View
     public function _Show(array $data, string $view): void
     {
         $this->data = array_merge($this->data, $data);
+        $this->data[$this->options['empty_view_key_view']] = $this->getViewFile($this->path, $view);
+        $this->data[$this->options['empty_view_key_view'].'_head'] = $this->getViewFile($this->path, $this->head_file);
+        $this->data[$this->options['empty_view_key_view'].'_foot'] = $this->getViewFile($this->path, $this->foot_file);
+    }
+    //@override
+    public function _Display(string $view, ?array $data = null): void
+    {
+        $this->data = isset($data)?$data:$this->data;
+        $this->data[$this->options['empty_view_key_view']] = $this->getViewFile($this->path, $view);
+    }
+    //@override
+    protected function getViewFile(string $path, ?string $view): string
+    {
+        $view=(string)$view;
         if ($this->options['empty_view_trim_view_wellcome'] ?? true) {
             $prefix = $this->options['empty_view_key_wellcome_class'] ?? 'Main/';
             if (substr($view, 0, strlen($prefix)) === $prefix) {
                 $view = substr($view, strlen($prefix));
             }
         }
-        $this->data[$this->options['empty_view_key_view']] = $view;
-    }
-    //@override
-    public function _Display(string $view, ?array $data = null): void
-    {
-        $this->data = isset($data)?$data:$this->data;
-        $this->data[$this->options['empty_view_key_skip_head_foot'] ?? 'skip_head_foot'] = true;
-        $this->data[$this->options['empty_view_key_view'] ?? 'view'] = $view;
+        return $view;
     }
 }

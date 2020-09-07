@@ -8,7 +8,6 @@ namespace DuckPhp\Ext;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\SuperGlobal;
-use DuckPhp\Ext\RouteHookRewrite;
 
 class RouteHookPathInfoByGet extends ComponentBase
 {
