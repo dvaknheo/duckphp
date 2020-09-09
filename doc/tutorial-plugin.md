@@ -38,7 +38,6 @@ AppPluginTrait 帮你做了什么，如果不满要求应该怎么办
 
 AppPluginTrait 的默认选项
 ```
-
 [
         'plugin_path_namespace' => null,
         'plugin_namespace' => null,

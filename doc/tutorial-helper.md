@@ -69,9 +69,7 @@ Controller --> Business ------------------------------ ---> Model
 所有助手类都有的静态方法。
 
 
-ThrowOn($flag,$messsage,$code=0,$exception_class=null)
 
-    抛异常 如果 flag 成立，抛出 $exception_class(默认为 \Exception 类);
 GetExtendStaticStaticMethodList()
 
     用来查看当前类有什么额外的静态方法。
@@ -80,7 +78,7 @@ GetExtendStaticStaticMethodList()
     静态方法已经被扩展。
 IsDebug()
 
-    判断是否在调试状态, 默认读取选项和设置字段里的 duckphp_is_debug
+    判断是否在调试状态, 默认读取选项 is_debug 和设置字段里的 duckphp_is_debug
 IsRealDebug()
 
     IsRealDebug 切莫乱用。用于环境设置为其他。比如线上环境，但是还是要特殊调试的场合。 如果没被接管，和 IsDebug() 一致。
@@ -103,7 +101,6 @@ ThrowOn($flag, $message, $code = 0, $exception_class = null)
 
     如果 flag 成立，那么抛出消息为 $message, code为 $code, $exception_class 的异常，如 $exception_class =null ，则默认为 Exception::class 的异常。
     另一调用方式：ThrowOn($flag, $message, $exception_class = null)  相当于 $code=0;
-    参见 trait Duckphp\\Core\\ThrowOn
 AssignExtendStaticMethod($key, $value = null)
 
     高级函数
@@ -180,8 +177,7 @@ DbForRead()
 SqlForPager($sql, $pageNo, $pageSize = 10)
 
     分页 limte 的 sql 
-SqlForCountSimply($sql)
-    
+SqlForCountSimply($sql)    
     简单的把 select ... from 替换成select count(*) as c from 
 
 ## ControllerHelper 控制器的助手类
@@ -278,12 +274,12 @@ setcookie()
 exit
 
     【系统替代】 退出函数，以便于接管
-SG
+SuperGlobal
 
-    【swoole 兼容】 SG()-> 前缀替代 超全局变量做 swoole 兼容， 如 C::SG()->_GET[] , C::SG()->_POST[] 等。
+    【swoole 兼容】 SuperGlobal()-> 前缀替代 超全局变量做 swoole 兼容， 如 C::SuperGlobal()->_GET[] , C::SuperGlobal()->_POST[] 等。
 ### 输入相关
 替代同名 GET / POST /REQUEST /COOKIE 。如果没的话返回 后面的默认值。
-注意没有 \_SESSION ，这是故意设计成这样的，不希望 \_SESSION 到处飞，\ _SESSION 应该集中于 SessionService 或 SessionLib 里。
+注意没有 \_SESSION ，这是故意设计成这样的，不希望 \_SESSION 到处飞， _SESSION 应该集中于 SessionBusiness 或 SessionLib 里。
 
 ENV 也是不希望人用所以没有。
 
@@ -323,6 +319,8 @@ Event
 
     事件管理器
 XCall
+
+包裹异常调用
 
 
 
@@ -409,9 +407,6 @@ OnDefaultException
 OnDevErrorHandler
 
     默认Notice等错误处理函数
-OnQuery
-
-    处理记录 sql 查询日志
 RunQuickly
 
     重点，快速运行

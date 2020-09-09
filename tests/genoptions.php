@@ -212,13 +212,13 @@ DuckPhp\\Ext\\FacadesAutoLoader
 DuckPhp\\Ext\\JsonRpcExt
 DuckPhp\\Ext\\Misc
 DuckPhp\\Ext\\RedisManager
-DuckPhp\\Ext\\RedisSimpleCache
+DuckPhp\\Ext\\RedisCache
+DuckPhp\\Ext\\RouteHookApiServer
 DuckPhp\\Ext\\RouteHookDirectoryMode
 DuckPhp\\Ext\\RouteHookPathInfoByGet
 DuckPhp\\Ext\\RouteHookRewrite
 DuckPhp\\Ext\\RouteHookRouteMap
-DuckPhp\\Ext\\StrictCheck
-DuckPhp\\HttpServer";
+DuckPhp\\Ext\\StrictCheck";
     $classes=explode("\n",$classes);
     return $classes;
 }

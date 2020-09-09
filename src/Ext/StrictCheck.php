@@ -51,6 +51,33 @@ class StrictCheck extends ComponentBase
     {
         return static::G()->checkStrictComponent('Db', 5, ['DuckPhp\\Core\\App',"DuckPhp\\Helper\\ModelHelper"]);
     }
+    //////
+    /*
+    protected static $classes;
+    public static function SingletonExReplacer($class, $object)
+    {
+        //StrictCheck::G()->checkStrictClass(static::class, 2);
+        if(isset($object)){
+            static::$classes[$class] = $object;
+            return static::$classes[$class];
+        }
+        if(isset(static::$classes[$class])){
+            return static::$classes[$class];
+        }
+        
+        $ref=new \ReflectionClass($class);
+        $prop=$ref->getProperty('_instances'); //OK Get It
+        $prop->setAccessible(true);
+        $array=$prop->getValue();
+        if(!empty($array[$class])) {
+            static::$classes[$class]=$array[$class];
+        }else{
+            static::$classes[$class]=new $class;
+        }
+        return static::$classes[$class];
+    }
+    */
+    
     ///////////////////////////////////////////////////////////
 
     protected function hit_class($caller_class, $parent_classes_to_skip)
