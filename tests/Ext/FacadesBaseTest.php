@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Ext;
 use DuckPhp\Ext\FacadesBase;
 use DuckPhp\Ext\FacadesAutoLoader;
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\SingletonEx\SingletonEx;
 
 class FacadesBaseTest extends \PHPUnit\Framework\TestCase
 {

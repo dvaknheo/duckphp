@@ -3,7 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckPhp\Core;
+namespace DuckPhp\ThrowOn;
 
 use Exception;
 use Throwable;

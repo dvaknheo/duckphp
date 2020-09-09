@@ -1,7 +1,7 @@
 <?php
-namespace tests\DuckPhp\Core;
+namespace tests\DuckPhp\ThrowOn;
 
-use DuckPhp\Core\ThrowOn;
+use DuckPhp\ThrowOn\ThrowOn;
 
 class ThrowOnTest extends \PHPUnit\Framework\TestCase
 {
@@ -30,7 +30,7 @@ class ThrowOnTest extends \PHPUnit\Framework\TestCase
 }
 class ThrowOnObject
 {
-    use ThrowOn;
+    use \DuckPhp\ThrowOn\ThrowOn;
 }
 class ThrowOnException extends \Exception
 {

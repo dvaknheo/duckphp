@@ -12,8 +12,8 @@ namespace MySpace\System
 {
     use DuckPhp\DuckPhp;
     use DuckPhp\Ext\CallableView;
+    use DuckPhp\SingletonEx\SingletonEx;
     use MySpace\View\Views;
-
     class App extends DuckPhp
     {
         // @override
@@ -44,7 +44,7 @@ namespace MySpace\System
     //服务基类, 为了 XXService::G() 可变单例。
     class BaseBusiness
     {
-        use \DuckPhp\Core\SingletonEx;
+        use SingletonEx;
     }
 } // end namespace
 // 助手类

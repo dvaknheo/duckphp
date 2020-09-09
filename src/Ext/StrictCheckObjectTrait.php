@@ -5,8 +5,8 @@
  */
 namespace DuckPhp\Ext;
 
-use DuckPhp\Core\SingletonEx;
 use DuckPhp\Ext\StrictCheck;
+use DuckPhp\SingletonEx\SingletonEx;
 
 trait StrictCheckObjectTrait
 {

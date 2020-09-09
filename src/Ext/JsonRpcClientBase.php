@@ -5,8 +5,8 @@
  */
 namespace DuckPhp\Ext;
 
-use DuckPhp\Core\SingletonEx;
 use DuckPhp\Ext\JsonRpcExt;
+use DuckPhp\SingletonEx\SingletonEx;
 
 class JsonRpcClientBase
 {

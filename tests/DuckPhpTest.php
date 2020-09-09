@@ -2,7 +2,7 @@
 namespace tests\DuckPhp;
 
 use DuckPhp\DuckPhp;
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\SingletonEx\SingletonEx;
 use DuckPhp\Ext\Misc;
 
 class DuckPhpTest extends \PHPUnit\Framework\TestCase

@@ -65,7 +65,7 @@ class MyApp extends DuckPhp
 }
 class BaseApi
 {
-    //use \DuckPhp\Core\SingletonEx;
+    //use \DuckPhp\SingletonEx\SingletonEx;
 }
 
 MyApp::RunQuickly(['override_class'=>'',]);

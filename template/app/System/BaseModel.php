@@ -6,7 +6,7 @@
 
 namespace LazyToChange\System;
 
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\SingletonEx\SingletonEx;
 
 // use DuckPhp\Ext\StrictCheckObjectTrait;
 

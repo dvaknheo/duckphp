@@ -6,8 +6,8 @@
 
 namespace LazyToChange\System;
 
-use DuckPhp\Core\ThrowOn;
 use DuckPhp\DuckPhp;
+use DuckPhp\ThrowOn\ThrowOn;
 
 class BaseException
 {

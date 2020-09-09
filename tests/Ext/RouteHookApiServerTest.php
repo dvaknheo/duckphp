@@ -52,7 +52,7 @@ class RouteHookApiServerTest extends \PHPUnit\Framework\TestCase
 }
 class BaseApi
 {
-    //use \DuckPhp\Core\SingletonEx;
+    //use \DuckPhp\SingletonEx\SingletonEx;
 }
 class API_test extends BaseApi
 {

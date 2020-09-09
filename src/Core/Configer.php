@@ -5,8 +5,7 @@
  */
 namespace DuckPhp\Core;
 
-use DuckPhp\Core\ComponentInterface;
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\Core\ComponentBase;
 
 class Configer extends ComponentBase
 {

@@ -5,7 +5,7 @@ namespace tests\DuckPhp\Ext
 use DuckPhp\Ext\StrictCheck;
 use DuckPhp\DuckPhp;
 use DuckPhp\Core\Route;
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\SingletonEx\SingletonEx;
 
 use tests\DuckPhp\Ext\Model\FakeModel;
 use tests\DuckPhp\Ext\Service\FakeService;

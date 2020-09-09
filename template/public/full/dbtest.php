@@ -5,7 +5,7 @@ use App as M;  // Helper 都给我们省掉了
 use App as C;  // Helper 都给我们省掉了
 use App as V;  // Helper 都给我们省掉了
 
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\SingletonEx\SingletonEx;
 use DuckPhp\Ext\EmptyView;
 
 class App extends \DuckPhp\DuckPhp

@@ -3,7 +3,7 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\SingletonEx\SingletonEx;
 
 class MiscService
 {

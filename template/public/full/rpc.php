@@ -6,7 +6,7 @@
 require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
 
 use DuckPhp\DuckPhp;
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\SingletonEx\SingletonEx;
 use DuckPhp\Ext\JsonRpcExt;
 
 use JsonRpc\CalcService as RemoteCalcService;

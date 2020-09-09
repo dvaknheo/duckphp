@@ -5,6 +5,8 @@
  */
 namespace DuckPhp\Core;
 
+use DuckPhp\SingletonEx\SingletonEx;
+
 class ComponentBase implements ComponentInterface
 {
     use SingletonEx;

@@ -1,6 +1,12 @@
-digraph G{
+digraph gDuckPhp{
 /* This is a graphviz file */
 graph [rankdir = "LR"];
+
+subgraph cluster_SingletonEx {
+    label = "[DuckPhp\\SingletonEx]";
+
+    SingletonEx [label="SingletonEx";shape=Mdiamond;style=filled];
+}
 
 subgraph cluster_Core {
     
@@ -9,7 +15,6 @@ subgraph cluster_Core {
     Core_AppPluginTrait [label="AppPluginTrait";shape=diamond];
     Core_App [label="App";shape=Mdiamond;style=filled]; 
     Core_Kernel [label="Kernel";shape="diamond"];
-    Core_SingletonEx [label="SingletonEx";shape=Mdiamond;style=filled];
     Core_AutoLoader [label="AutoLoader";shape=Mdiamond;style=filled];
     Core_ExceptionManager [label="ExceptionManager";shape="component"];
     Core_View [label="View";shape="component"];
@@ -18,13 +23,10 @@ subgraph cluster_Core {
     Core_Route [label="Route";shape=Mdiamond;style=filled];
     Core_RuntimeState [label="RuntimeState";shape="component"];
     Core_SystemWrapperTrait [label="SystemWrapperTrait";shape=diamond];
-    
-    Core_HttpServer [label="HttpServer";shape=Mdiamond;style=filled];
     Core_SuperGlobal [label="SuperGlobal";shape="component"];
 
     Core_ExtendableStaticCallTrait [label="ExtendableStaticCallTrait";shape=diamond];
     
-    Core_ThrowOn [label="ThrowOn";shape=Mdiamond;style=filled];
     Core_ComponentInterface [label="ComponentInterface";shape=note];
     Core_ComponentBase [label="ComponentBase";shape=box3d];
     Core_Functions [label="Functions"];
@@ -69,17 +71,12 @@ subgraph cluster_Core {
     Core_RuntimeState -> Core_ComponentBase [style="dotted"];
     Core_View -> Core_ComponentBase [style="dotted"];
     Core_Logger -> Core_ComponentBase [style="dotted"];
-    Core_HttpServer -> Core_ComponentBase [style="dotted"];
-
     
     Core_ComponentBase -> Core_ComponentInterface;
-    Core_ComponentBase -> Core_SingletonEx;
+    Core_ComponentBase -> SingletonEx;
     
     
 }
-
-
-
 
 subgraph cluster_Helper {
     
@@ -97,7 +94,6 @@ subgraph cluster_Helper {
     ModelHelper -> Core_App; 
     ServiceHelper -> Core_App; 
     ViewHelper -> Core_App; 
-    HelperTrait -> Core_SingletonEx;
     HelperTrait -> Core_App;
     HelperTrait -> Core_ExtendableStaticCallTrait ;
     
@@ -112,8 +108,8 @@ subgraph cluster_Helper {
 subgraph cluster_Db {
     label = "[DuckPhp\\Db]";
 
-    Db_Db [label="Db"];
-    Db_DbAdvanceTrait [label="DbAdvanceTrait";shape=diamond];
+    Db_Db [label="Db";shape=Mdiamond;style=filled];
+    Db_DbAdvanceTrait [label="DbAdvanceTrait";shape=Mdiamond];
     Db_DbInterface [label="DbInterface";shape=note];
     
     Db_Db -> Db_DbAdvanceTrait;
@@ -137,6 +133,7 @@ subgraph cluster_Ext {
     PagerInterface [shape=note];
     RedisManager[shape="component"];
     RedisCache[shape="component"];
+    RouteHookApiServer[shape="component"];
     RouteHookDirectoryMode[shape="component"];
     RouteHookManager[shape="component"];
     RouteHookPathInfoByGet[shape="component"];
@@ -154,6 +151,7 @@ subgraph cluster_Ext {
     Pager -> Core_ComponentBase [style="dotted"];
     RedisManager -> Core_ComponentBase [style="dotted"];
     RedisCache -> Core_ComponentBase [style="dotted"];
+    RouteHookApiServer -> Core_ComponentBase [style="dotted"];
     RouteHookDirectoryMode -> Core_ComponentBase [style="dotted"];
     RouteHookManager -> Core_ComponentBase [style="dotted"];
     RouteHookPathInfoByGet -> Core_ComponentBase [style="dotted"];
@@ -166,16 +164,30 @@ subgraph cluster_Ext {
     EmptyView ->Core_View;
     DbManager -> Db_Db;
     FacadesBase -> FacadesAutoLoader;
+    FacadesBase -> SingletonEx [style="dashed"];
     JsonRpcClientBase ->JsonRpcExt;
+    JsonRpcClientBase -> SingletonEx [style="dashed"];
+
     Pager -> PagerInterface; 
+    
+    RouteHookApiServer->Core_Route[style="dashed"];
+    RouteHookDirectoryMode->Core_Route[style="dashed"];
+    RouteHookDirectoryMode->Core_SuperGlobal[style="dashed"];
+    RouteHookManager->Core_Route[style="dashed"];
+    RouteHookPathInfoByGet->Core_Route[style="dashed"];
+    RouteHookPathInfoByGet->Core_SuperGlobal[style="dashed"];
+    RouteHookRewrite->Core_Route[style="dashed"];
+    RouteHookRewrite->Core_SuperGlobal[style="dashed"];
+    RouteHookRouteMap->Core_Route[style="dashed"];
+    
     StrictCheckObjectTrait -> StrictCheck; 
+    StrictCheckObjectTrait -> SingletonEx [style="dashed"];
 }
 
 subgraph cluster_DuckPhp {
     label = "[DuckPhp]";
     node [style=filled];
 
-    HttpServer -> Core_HttpServer;
     DuckPhp -> Core_App;
 
     DuckPhp -> RouteHookRouteMap;
@@ -186,8 +198,19 @@ subgraph cluster_DuckPhp {
     DuckPhp -> Cache;
 
     DuckPhp [shape=Mdiamond];
-    HttpServer [shape=Mdiamond;style=filled];
-
 }
+
+subgraph cluster_HttpServer {
+    label = "[DuckPhp\\HttpServer]";
+
+    HttpServer [label="HttpServer";shape=Mdiamond;style=filled];
+}
+
+subgraph cluster_ThrowOn {
+    label = "[DuckPhp\\ThrowOn]";
+
+    ThrowOn [label="ThrowOn";shape=Mdiamond;style=filled];
+}
+
 
 }

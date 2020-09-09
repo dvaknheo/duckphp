@@ -7,7 +7,6 @@ namespace MY\Base;
 
 use Facades\MY\Base\App as FA;
 use JsonRpc\MY\Service\TestSerice;
-use DuckPhp\Core\AutoLoader;
 
 class App extends \DuckPhp\DuckPhp
 {

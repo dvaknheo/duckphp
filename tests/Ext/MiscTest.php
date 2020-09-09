@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Ext;
 
 use DuckPhp\Ext\Misc;
 use DuckPhp\DuckPhp;
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\SingletonEx\SingletonEx;
 
 class MiscTest extends \PHPUnit\Framework\TestCase
 {

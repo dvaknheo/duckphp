@@ -5,7 +5,7 @@
  */
 namespace MY\Base;
 
-use DuckPhp\Core\ThrowOn;
+use DuckPhp\ThrowOn\ThrowOn;
 use Exception;
 
 class BaseException extends Exception

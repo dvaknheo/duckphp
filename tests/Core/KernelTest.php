@@ -8,7 +8,7 @@ use DuckPhp\DuckPhp;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\View;
 use DuckPhp\Core\Route;
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\SingletonEx\SingletonEx;
 use DuckPhp\Ext\Pager;
 
 class KernelTest extends \PHPUnit\Framework\TestCase

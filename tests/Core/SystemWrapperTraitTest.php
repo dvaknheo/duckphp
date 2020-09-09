@@ -1,7 +1,7 @@
 <?php 
 namespace tests\DuckPhp\Core;
 use DuckPhp\Core\SystemWrapperTrait;
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\SingletonEx\SingletonEx;
 
 class SystemWrapperTraitTest extends \PHPUnit\Framework\TestCase
 {

@@ -5,7 +5,7 @@
  */
 namespace SimpleAuth\Base;
 
-use DuckPhp\Core\ThrowOn;
+use DuckPhp\ThrowOn\ThrowOn;
 
 class BaseException extends \Exception
 {

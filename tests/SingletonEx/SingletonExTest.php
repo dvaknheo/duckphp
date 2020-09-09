@@ -1,7 +1,7 @@
 <?php
-namespace tests\DuckPhp\Core;
+namespace tests\DuckPhp\SingletonEx;
 
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\SingletonEx\SingletonEx;
 
 class SingletonExTest extends \PHPUnit\Framework\TestCase
 {
@@ -22,7 +22,7 @@ class SingletonExTest extends \PHPUnit\Framework\TestCase
 }
 class SingletonExObject
 {
-    use SingletonEx;
+    use \DuckPhp\SingletonEx\SingletonEx;
     
     public static function CreateObject($class, $object)
     {

@@ -5,12 +5,12 @@
  */
 namespace SimpleBlog\Base;
 
-use DuckPhp\Core\SingletonEx;
+use DuckPhp\SingletonEx\SingletonEx;
 
-// use DuckPhp\Base\StrictServiceTrait;
+// use DuckPhp\Ext\StrictCheckObjectTrait;
 
 class BaseService
 {
     use SingletonEx;
-    // use StrictServiceTrait;
+    // use StrictCheckObjectTrait;
 }
