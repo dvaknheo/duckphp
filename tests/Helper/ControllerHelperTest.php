@@ -130,7 +130,7 @@ ControllerHelper::PageHtml(123);
         }catch(\Exception $ex){
         }
         try{
-            ControllerHelper::OnEvent("test",null);
+            ControllerHelper::OnEvent("test",function(){return "abc";});
         }catch(\Exception $ex){
         }
         try{
