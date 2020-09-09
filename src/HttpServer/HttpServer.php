@@ -5,9 +5,7 @@
  */
 namespace DuckPhp\HttpServer;
 
-use DuckPhp\Core\ComponentBase;
-
-class HttpServer extends ComponentBase
+class HttpServer
 {
     public $options = [
             'host' => '127.0.0.1',
@@ -61,14 +59,36 @@ class HttpServer extends ComponentBase
     protected $host;
     protected $port;
     protected $is_inited = false;
-
+    
+    protected static $_instances = [];
+    //embed
+    public static function G($object = null)
+    {
+        if (defined('__SINGLETONEX_REPALACER')) {
+            $callback = __SINGLETONEX_REPALACER;
+            return ($callback)(static::class, $object);
+        }
+        if ($object) {
+            self::$_instances[static::class] = $object;
+            return $object;
+        }
+        $me = self::$_instances[static::class] ?? null;
+        if (null === $me) {
+            $me = new static();
+            self::$_instances[static::class] = $me;
+        }
+        
+        return $me;
+    }
+    public function __construct()
+    {
+    }
     public static function RunQuickly($options)
     {
         return static::G()->init($options)->run();
     }
     
-    //@override
-    protected function initOptions(array $options)
+    public function init(array $options, object $context = null)
     {
         $this->options = array_replace_recursive($this->options, $options);
         $this->host = $this->options['host'];
@@ -80,6 +100,12 @@ class HttpServer extends ComponentBase
         $this->host = $this->args['host'] ?? $this->host;
         $this->port = $this->args['port'] ?? $this->port;
         $this->docroot = $this->args['docroot'] ?? $this->docroot;
+        
+        return $this;
+    }
+    public function isInited(): bool
+    {
+        return $this->is_inited;
     }
     protected function getopt($options, $longopts, &$optind)
     {

@@ -12,7 +12,8 @@ class HttpServerTest extends \PHPUnit\Framework\TestCase
         $options=[
             'path_document'=>__DIR__,
         ];
-        HttpServerParent::G()->RunQuickly($options);
+        HttpServerParent::G();
+        HttpServerParent::G(new HttpServerParent())->RunQuickly($options);
         HttpServerParent::G()->close();
         HttpServerParent::G()->test_showHelp();
         HttpServerParent::G()->test_run2();
@@ -26,13 +27,22 @@ HttpServerParent::G()->isInited();
 
         echo HttpServerParent::G()->getPid();
         HttpServerParent::G()->close();
-        
+        define('__SINGLETONEX_REPALACER',HttpServerParent::class.'::CreateObject');
+        HttpServerParent::G();
         echo "zzzzzzzzzzzzzzzzzzzzzzzz";
         \MyCodeCoverage::G()->end();
     }
 }
 class HttpServerParent extends HttpServer
 {
+    public static function CreateObject($class, $object)
+    {
+        static $_instance;
+        $_instance=$_instance??[];
+        $_instance[$class]=$object?:($_instance[$class]??($_instance[$class]??new static));
+        return $_instance[$class];
+    }
+
     protected $my_cli_options=[
             'just-test'=>[
                 'short'=>'z',
