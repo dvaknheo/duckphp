@@ -13,10 +13,10 @@
 
 扩展包是一套完整业务组件，用于不影响整个工程底下处理一套完整的功能。比如例子里的用户系统。
 你直接用
-http://duckphp.demo.dev/full/blog.php/login 来访问。 这就是通过在博客 Demo 这个项目里，使用 扩展包的形势访问
+http://127.0.0.1:8080/full/blog.php/login 来访问。 这就是通过在博客 Demo 这个项目里，使用 扩展包的形势访问
 UserSystemDemo 这个扩展包。
 
-http://duckphp.demo.dev/full/auth.php 来访问。这就是 UserSystemDemo 这个项目。
+http://127.0.0.1:8080/full/auth.php 来访问。这就是 UserSystemDemo 这个项目。
 
 使用方法
 

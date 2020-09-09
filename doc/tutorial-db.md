@@ -66,7 +66,6 @@ require_once('../vendor/autoload.php');
 $options=[];
 $options['override_class']='';      // 示例文件不要被子类干扰。
 $options['skip_setting_file']=true; // 不需要配置文件。
-$options['error_exception']=true; // 使用默认的错误视图
 
 $options['database_list']=[[
     'dsn'=>'mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;',
