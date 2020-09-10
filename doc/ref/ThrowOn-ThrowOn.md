@@ -1,4 +1,4 @@
-# DuckPhp\Core\ThrowOn
+# DuckPhp\ThrowOn\ThrowOn
 [toc]
 
 ## 简介
@@ -20,11 +20,10 @@ trait ThrowOn 是为了写代码更偷懒。
 ```
 class MyException extends \Exception
 {
-    use \DuckPhp\Core\ThrowOn;
 }
 class SystemException extends \Exception
 {
-    use \DuckPhp\Core\ThrowOn;
+    use \DuckPhp\ThrowOn\ThrowOn;
 }
 
 

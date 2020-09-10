@@ -22,7 +22,7 @@
     重写函数，替代 defaultGetUrl
 'context_class' => null,
 
-    指定提供 SG 方法替代超全局函数的类
+    指定提供 SuperGlobal 方法替代超全局函数的类
 'pager_context_class' => ''
 
     设置 context 的class

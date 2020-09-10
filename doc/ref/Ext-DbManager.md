@@ -26,8 +26,7 @@
 默认开启。DBManager 类是用来使用数据库的
 M::DB() 用到了这个组件。
 #### 选项
-    'db_create_handler'=>null,  // 默认用 [DB::class,'CreateDBInstance']
-    'db_close_handler'=>null,   // 默认等于 [DB::class,'CloseDBInstance']
+
     'before_get_db_handler'=>null, // 在调用 DB 前调用
     'use_context_db_setting'=>true, //使用 setting 里的。
     'database_list'=>null,      //DB 列表

@@ -1,4 +1,4 @@
-# DuckPhp\Core\SingletonEx
+# DuckPhp\SingletonEx\SingletonEx
 [toc]
 
 ## 简介
@@ -21,7 +21,7 @@ public static function G($object=null)
 ```php
 class A
 {
-    use DuckPhp\Core\SingletonEx;
+    use DuckPhp\SingletonEx\SingletonEx;
     public function foo()
     {
         echo "猪年快乐\n";
@@ -29,7 +29,7 @@ class A
 }
 class B extends A
 {
-    use DuckPhp\Core\SingletonEx;
+    use DuckPhp\SingletonEx\SingletonEx;
 
     public function foo()
     {
