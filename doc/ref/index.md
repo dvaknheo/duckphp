@@ -46,7 +46,7 @@
          4. [Functions.php](Core-Functions.md) 全局函数列表
     6. **[AppPluginTrait.php](Core-AppPluginTrait.md) **  这个Trait用于把独立工程 App 转成插件 
     7. [HttpServer.php](Core-HttpServer.md) 单独的 Http 服务器
-4. `Db` 目录是数据库目录
+2. `Db` 目录是数据库目录
    1. [DbAdvanceTrait.php](Db-DbAdvanceTrait.md)  这个 trait 增加了 Db类的高级功能
    2. [DbInterface.php](Db-DbInterface.md) Db 类满足 DbInterface 接口
    3. [Db.php](Db-Db.md) Db类
@@ -60,8 +60,8 @@
    6. [FacadesAutoLoader.php](Ext-FacadesAutoLoader.md) 门面组件用于偷懒
         1. [FacadesBase.php](Ext-FacadesBase.md) 门面类的基类
    7. [JsonRpcExt.php](Ext-JsonRpcExt.md) Json 远程调用组件
-          1. [JsonRpcClientBase.php](Ext-JsonRpcClientBase.md)
-    8. [Misc.php](Ext-Misc.md) 杂项功能组件
+        1. [JsonRpcClientBase.php](Ext-JsonRpcClientBase.md)
+   8. [Misc.php](Ext-Misc.md) 杂项功能组件
    9. **[Pager.php](Ext-Pager.md)** 分页类
         1. [PagerInteface.php](Ext-PagerInteface.md) 分页接口
    10. [RedisCache.php](Ext-RedisSimpleCache.md) redis 缓存组件
@@ -72,7 +72,6 @@
    15. **[RouteHookRouteMap.php](Ext-RouteHookRouteMap.md)** 路由映射组件
    16. [RouteHookRewrite.php](Ext-RouteHookRewrite.md) 路由重写组件
    17. [StrictCheck.php](Ext-StrictCheck.md) 严格检查模式组件
-          1. [StrictCheckObjectTrait.php](Ext-StrictCheckModelTrait.md) 严格检查模式的基类
 5. `Helper` 目录，各种助手类
     1. **[HelperTrait.php](Helper-HelperTrait.md)** 助手类公用 Trait
     2. [ControllerHelper.php](Helper-ControllerHelper.md) 控制器助手类
@@ -136,8 +135,7 @@ src
 |   |-- RouteHookPathInfoByGet.php
 |   |-- RouteHookRewrite.php
 |   |-- RouteHookRouteMap.php
-|   |-- StrictCheck.php
-|   `-- StrictCheckObjectTrait.php
+|   `-- StrictCheck.php
 |-- Helper
 |   |-- AppHelper.php
 |   |-- BusinessHelper.php

@@ -55,7 +55,7 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
 
         $options['is_debug']=true;
         $options['namespace_business']='';
-        StrictCheck::G(new StrictCheck())->init($options)->checkStrictClass('NoExt',0);
+        //StrictCheck::G(new StrictCheck())->init($options)->checkStrictClass('NoExt',0);
         
 
         \MyCodeCoverage::G()->end();
@@ -105,10 +105,11 @@ namespace tests\DuckPhp\Ext\Model {
 use DuckPhp\Ext\StrictCheckObjectTrait;
 use tests\DuckPhp\Ext\Service\FakeService;
 use DuckPhp\Helper\ModelHelper as M;
+use DuckPhp\SingletonEx\SingletonEx;
 
 class FakeModel
 {
-    use StrictCheckObjectTrait;
+    use SingletonEx;
     public function foo(){
         var_dump(DATE(DATE_ATOM));
     }
@@ -121,7 +122,7 @@ class FakeModel
 }
 class FakeExModel
 {
-    use StrictCheckObjectTrait;
+    use SingletonEx;
     public function foo(){
         FakeModel::G()->foo();
     }
@@ -129,16 +130,16 @@ class FakeExModel
 }  // end tests\DuckPhp\Ext\Model
 
 namespace tests\DuckPhp\Ext\Service {
-use DuckPhp\Ext\StrictCheckObjectTrait;
 //use DuckPhp\Ext\DbManager;
 use DuckPhp\DuckPhp;
 use tests\DuckPhp\Ext\Model\FakeExModel;
 use tests\DuckPhp\Ext\Model\FakeModel;
 //use tests\DuckPhp\Ext\Model\FakeModel;
+use DuckPhp\SingletonEx\SingletonEx;
 
 class FakeService
 {
-    use StrictCheckObjectTrait;
+    use SingletonEx;
     public function foo(){
         FakeLib::G()->foo();
     }
@@ -159,7 +160,7 @@ class FakeService
 }
 class FakeBatchBusiness
 {
-    use StrictCheckObjectTrait;
+    use SingletonEx;
     public function foo(){
         FakeService::G()->foo();
     }
@@ -167,7 +168,7 @@ class FakeBatchBusiness
 
 class FakeLib
 {
-    use StrictCheckObjectTrait;
+    use SingletonEx;
     public function foo(){
         FakeExModel::G()->foo();
     }
@@ -251,8 +252,7 @@ class StrictCheckTestMain extends BaseController
         }catch(\Throwable $ex){
             echo "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ".$ex->getMessage().PHP_EOL;
         }
-                               
-
+        echo "===========================111111111=\n";
         FakeService::G()->normal();
         
         echo "============================\n";

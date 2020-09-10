@@ -140,7 +140,6 @@ subgraph cluster_Ext {
     RouteHookRewrite[shape="component"];
     RouteHookRouteMap[shape="component"];
     StrictCheck[shape="component"];
-    StrictCheckObjectTrait [shape=diamond];
 
     Cache -> Core_ComponentBase [style="dotted"];
     DbManager -> Core_ComponentBase [style="dotted"];
@@ -179,9 +178,6 @@ subgraph cluster_Ext {
     RouteHookRewrite->Core_Route[style="dashed"];
     RouteHookRewrite->Core_SuperGlobal[style="dashed"];
     RouteHookRouteMap->Core_Route[style="dashed"];
-    
-    StrictCheckObjectTrait -> StrictCheck; 
-    StrictCheckObjectTrait -> SingletonEx [style="dashed"];
 }
 
 subgraph cluster_DuckPhp {
