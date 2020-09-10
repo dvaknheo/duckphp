@@ -1,12 +1,5 @@
 # 扩展教程
 [toc]
-默认启用的扩展
-
-默认没启用的扩展
-
-如何写扩展
-
-把你的应用变成扩展
 
 
 ## 简介
@@ -31,7 +24,7 @@ $this->options['ext']['SimpleAuth\Base\App'] = true;
 然后打开地址。
 
 
-然后你发先 auth 也是个 DuckPHP 独立工程。是的，开发 DuckPHP 扩展包 很容易
+然后你发先 auth 也是个 DuckPhp 独立工程。是的，开发 DuckPhp 扩展包 很容易
 只要入口  App 类使用 AppPluginTrait 就行。
 
 AppPluginTrait 帮你做了什么，如果不满要求应该怎么办

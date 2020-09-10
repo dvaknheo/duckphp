@@ -9,7 +9,7 @@ DuckPhp 的路由类比较复杂，也是重点
 [Ext\\RouteHookRouteMap](ref/Ext-RouteHookRouteMap.md)
 *[Ext\\RouteHookRewrite](ref/Ext-RouteHookRewrite.md)*
 *[Ext\\RouteHookPathInfoByGet](ref/Ext-RouteHookPathInfoByGet.md)*
-*[Ext\\RouteHookDirectoryMode](ref/RouteHookDirectoryMode.md)*
+*[Ext\\RouteHookDirectoryMode](ref/Ext-RouteHookDirectoryMode.md)*
 
 ## 相关选项
 'namespace' => 'LazyToChange',
