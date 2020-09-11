@@ -5,8 +5,8 @@ class MyCodeCoverage
 		'namespace' => null,
 		'path'=>null,
 		'path_src'=>'src',
-		'path_dump'=>'tests/test_coveragedumps',
-		'path_report'=>'tests/test_reports',
+		'path_dump'=>'test_coveragedumps',
+		'path_report'=>'test_reports',
 		'path_data'=>'tests/data_for_tests',
     ];
 	public $is_inited =true;
