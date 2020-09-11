@@ -66,19 +66,19 @@ class Route extends ComponentBase
         }
         return $instance->run();
     }
-    public static function URL($url = null)
+    public static function Url($url = null)
     {
-        return static::G()->_URL($url);
+        return static::G()->_Url($url);
     }
     ////
-    public function _URL($url = null)
+    public function _Url($url = null)
     {
         if ($this->url_handler) {
             return ($this->url_handler)($url);
         }
-        return $this->defaultURLHandler($url);
+        return $this->defaultUrlHandler($url);
     }
-    public function defaultURLHandler($url = null)
+    public function defaultUrlHandler($url = null)
     {
         if (isset($url) && strlen($url) > 0 && substr($url, 0, 1) === '/') {
             return $url;
@@ -139,11 +139,11 @@ class Route extends ComponentBase
         }
     }
     
-    public function setURLHandler($callback)
+    public function setUrlHandler($callback)
     {
         $this->url_handler = $callback;
     }
-    public function getURLHandler()
+    public function getUrlHandler()
     {
         return $this->url_handler;
     }

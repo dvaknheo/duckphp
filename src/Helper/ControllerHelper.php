@@ -41,9 +41,9 @@ class ControllerHelper
     {
         return App::Display($view, $data);
     }
-    public static function URL($url)
+    public static function Url($url)
     {
-        return App::URL($url);
+        return App::Url($url);
     }
     public static function Domain()
     {
@@ -94,7 +94,7 @@ class ControllerHelper
     }
     public static function ExitRouteTo($url, $exit = true)
     {
-        return App::ExitRedirect(static::URL($url), $exit);
+        return App::ExitRouteTo($url, $exit);
     }
     public static function Exit404($exit = true)
     {

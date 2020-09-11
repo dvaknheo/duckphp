@@ -107,7 +107,7 @@ class Misc extends ComponentBase
             foreach ($cols_map as $k => $r) {
                 $values = array_values($v);
                 $changed_value = str_replace($keys, $values, $r);
-                $v[$k] = $this->context_class::URL($changed_value);
+                $v[$k] = $this->context_class::Url($changed_value);
             }
         }
         unset($v);

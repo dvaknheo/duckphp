@@ -184,7 +184,7 @@ trait AppPluginTrait
         
         $route->init($options)->bindServerData(SuperGlobal::G()->_SERVER);
         $route->setPathInfo($my_path_info);
-        $route->setUrlHandler([static::class,'OnURL']);
+        $route->setUrlHandler([static::class,'OnUrl']);
         
         if ($this->plugin_before_run_handler) {
             ($this->plugin_before_run_handler)();
@@ -202,16 +202,16 @@ trait AppPluginTrait
         Route::G($this->plugin_route_old);
         return true;
     }
-    public function OnURL($url)
+    public function OnUrl($url)
     {
-        return static::G()->_OnURL($url);
+        return static::G()->_OnUrlL($url);
     }
-    public function _OnURL($url)
+    public function _OnUrlL($url)
     {
         $prefix = trim($this->plugin_options['plugin_url_prefix'], '/').'/';
         $url = $prefix.$url;
         
-        return Route::G()->defaultURLHandler($url);
+        return Route::G()->defaultUrlHandler($url);
     }
     protected function pluginModeCloneHelpers()
     {

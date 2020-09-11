@@ -371,7 +371,7 @@ trait Core_Helper
     }
     public static function ExitRouteTo($url, $exit = true)
     {
-        return static::G()->_ExitRedirect(static::URL($url), $exit);
+        return static::G()->_ExitRedirect(static::Url($url), $exit);
     }
     public static function Exit404($exit = true)
     {
@@ -702,9 +702,9 @@ trait Core_Glue
         return RuntimeState::G()->isRunning();
     }
     // route static
-    public static function URL($url = null)
+    public static function Url($url = null)
     {
-        return Route::G()->_URL($url);
+        return Route::G()->_Url($url);
     }
     public static function Parameter($key, $default = null)
     {

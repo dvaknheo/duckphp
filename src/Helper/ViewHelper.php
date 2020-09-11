@@ -28,9 +28,9 @@ class ViewHelper
     {
         return App::Display($view, $data);
     }
-    public static function URL($url)
+    public static function Url($url)
     {
-        return App::URL($url);
+        return App::Url($url);
     }
     public static function Domain()
     {

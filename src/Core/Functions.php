@@ -26,7 +26,7 @@ if (! function_exists('__hl')) {
 if (! function_exists('__url')) {
     function __url(...$args)
     {
-        return App::URL(...$args);
+        return App::Url(...$args);
     }
 }
 if (! function_exists('__display')) {

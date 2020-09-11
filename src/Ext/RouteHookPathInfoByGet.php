@@ -23,14 +23,14 @@ class RouteHookPathInfoByGet extends ComponentBase
             return;
         }
         ($this->context_class)::Route()->addRouteHook([static::class,'Hook'], 'prepend-outter');
-        ($this->context_class)::Route()->setURLHandler([static::class,'URL']);
+        ($this->context_class)::Route()->setUrlHandler([static::class,'Url']);
     }
     
-    public static function URL($url = null)
+    public static function Url($url = null)
     {
         return static::G()->onURL($url);
     }
-    public function onURL($url = null)
+    public function onUrl($url = null)
     {
         if (strlen($url) > 0 && '/' == $url{0}) {
             return $url;
