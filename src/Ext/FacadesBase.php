@@ -5,13 +5,11 @@
  */
 namespace DuckPhp\Ext;
 
+use DuckPhp\Core\ComponentBase;
 use DuckPhp\Ext\FacadesAutoLoader;
-use DuckPhp\SingletonEx\SingletonEx;
 
-class FacadesBase
+class FacadesBase extends ComponentBase
 {
-    use SingletonEx;
-    
     public function __construct()
     {
     }

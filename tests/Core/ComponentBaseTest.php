@@ -12,6 +12,12 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
         ComponentBaseObject::G()->init(['a'=>'b'],new \stdClass());
         ComponentBaseObject::G()->isInited();
 
+
+        ComponentBaseObject::G();
+        ComponentBaseObject::G(new ComponentBaseObject());
+        define('__SINGLETONEX_REPALACER',ComponentBaseObject::class.'::CreateObject');
+        ComponentBaseObject::G();
+        
         \MyCodeCoverage::G()->end();
     }
 }
@@ -30,5 +36,12 @@ class ComponentBaseObject extends ComponentBase  implements ComponentInterface
         $this->options['path_test']='/tmp';
         $this->path = parent::getComponenetPathByKey('path_test');
         
+    }
+    public static function CreateObject($class, $object)
+    {
+        static $_instance;
+        $_instance=$_instance??[];
+        $_instance[$class]=$object?:($_instance[$class]??($_instance[$class]??new static));
+        return $_instance[$class];
     }
 }

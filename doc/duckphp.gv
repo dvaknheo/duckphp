@@ -73,9 +73,6 @@ subgraph cluster_Core {
     Core_Logger -> Core_ComponentBase [style="dotted"];
     
     Core_ComponentBase -> Core_ComponentInterface;
-    Core_ComponentBase -> SingletonEx;
-    
-    
 }
 
 subgraph cluster_Helper {
@@ -125,8 +122,8 @@ subgraph cluster_Ext {
     EmptyView[shape="component"];
     EventManager[shape="component"];
     FacadesAutoLoader[shape="component"];
-    FacadesBase ;
-    JsonRpcClientBase ;
+    FacadesBase [shape="component"];
+    JsonRpcClientBase [shape="component"];
     JsonRpcExt[shape="component"];
     Misc[shape="component"];
     Pager[shape="component"];
@@ -163,9 +160,9 @@ subgraph cluster_Ext {
     EmptyView ->Core_View;
     DbManager -> Db_Db;
     FacadesBase -> FacadesAutoLoader;
-    FacadesBase -> SingletonEx [style="dashed"];
+    FacadesBase -> Core_ComponentBase [style="dotted"];
     JsonRpcClientBase ->JsonRpcExt;
-    JsonRpcClientBase -> SingletonEx [style="dashed"];
+    JsonRpcClientBase -> Core_ComponentBase [style="dotted"];
 
     Pager -> PagerInterface; 
 }

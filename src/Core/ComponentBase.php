@@ -5,16 +5,32 @@
  */
 namespace DuckPhp\Core;
 
-use DuckPhp\SingletonEx\SingletonEx;
-
 class ComponentBase implements ComponentInterface
 {
-    use SingletonEx;
-    
     public $options = [];
     protected $is_inited = false;
     public function __construct()
     {
+    }
+    protected static $_instances = [];
+    //embed
+    public static function G($object = null)
+    {
+        if (defined('__SINGLETONEX_REPALACER')) {
+            $callback = __SINGLETONEX_REPALACER;
+            return ($callback)(static::class, $object);
+        }
+        if ($object) {
+            self::$_instances[static::class] = $object;
+            return $object;
+        }
+        $me = self::$_instances[static::class] ?? null;
+        if (null === $me) {
+            $me = new static();
+            self::$_instances[static::class] = $me;
+        }
+        
+        return $me;
     }
     public function init(array $options, ?object $context = null)
     {

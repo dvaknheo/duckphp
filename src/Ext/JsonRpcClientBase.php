@@ -5,15 +5,13 @@
  */
 namespace DuckPhp\Ext;
 
+use DuckPhp\Core\ComponentBase;
 use DuckPhp\Ext\JsonRpcExt;
-use DuckPhp\SingletonEx\SingletonEx;
 
-class JsonRpcClientBase
+class JsonRpcClientBase extends ComponentBase
 {
-    use SingletonEx;
     public $_base_class = null;
 
-    
     public function __construct()
     {
     }

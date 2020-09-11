@@ -60,8 +60,8 @@ class StrictCheck extends ComponentBase
     protected static $classes;
     public static function SingletonExReplacer($class, $object)
     {
-        if ($class !== self::class) {
-            $c = (self::$classes[self::class]) ?? new static();
+        if ($class !== static::class) {
+            $c = (static::$classes[self::class]) ?? new static();
             $c->check_strict_class($class);
         }
         if (isset($object)) {
