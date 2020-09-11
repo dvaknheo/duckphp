@@ -60,9 +60,9 @@ class StrictCheck extends ComponentBase
     protected static $classes;
     public static function SingletonExReplacer($class, $object)
     {
-        if ($class !== static::class) {
-            $c = (static::$classes[static::class]) ?? new static();
-            $c->_checkStrictClass($class);
+        if ($class !== self::class) {
+            $c = (self::$classes[self::class]) ?? new static();
+            $c->check_strict_class($class);
         }
         if (isset($object)) {
             static::$classes[$class] = $object;
@@ -135,7 +135,7 @@ class StrictCheck extends ComponentBase
             throw new ErrorException("$component_name Can not Call By Controller");
         }
     }
-    public function _checkStrictClass($class)
+    public function check_strict_class($class)
     {
         if (!$this->checkEnv()) {
             return;
