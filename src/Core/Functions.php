@@ -20,7 +20,7 @@ if (! function_exists('__l')) {
 if (! function_exists('__hl')) {
     function __hl(...$args)
     {
-        return App::HL(...$args);
+        return App::Hl(...$args);
     }
 }
 if (! function_exists('__url')) {

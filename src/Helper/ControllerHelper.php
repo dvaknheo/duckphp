@@ -33,9 +33,9 @@ class ControllerHelper
     {
         return App::L($str, $args);
     }
-    public static function HL($str, $args = [])
+    public static function Hl($str, $args = [])
     {
-        return App::HL($str, $args);
+        return App::Hl($str, $args);
     }
     public static function Display($view, $data = null)
     {

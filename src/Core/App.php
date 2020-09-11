@@ -451,7 +451,7 @@ trait Core_Helper
     {
         return static::G()->_L($str, $args);
     }
-    public static function HL($str, $args = [])
+    public static function Hl($str, $args = [])
     {
         return static::H(static::L($str, $args));
     }
