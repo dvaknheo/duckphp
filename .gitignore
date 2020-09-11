@@ -1,4 +1,4 @@
-/tests/test_reports
-/tests/test_coveragedumps
+/test_reports
+/test_coveragedumps
 /nbproject
 *.cache

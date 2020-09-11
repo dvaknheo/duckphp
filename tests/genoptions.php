@@ -33,7 +33,8 @@ class GenOptionsGenerator
     {
         $options=$this->getAllOptions();
         echo $this->getDefaultOptionsString($options);
-        //echo $this->getExtOptionsString($options);
+        echo "\n";
+        echo $this->getExtOptionsString($options);
     }
     
     function getAllOptions()
@@ -167,7 +168,7 @@ function dumpByFile()
 /////////////////////
 function getInDependComponentClasses()
 {
-$classes="DuckPhp\\Core\\HttpServer
+$classes="DuckPhp\\HttpServer
 DuckPhp\\Ext\\Pager
 ";
     $classes=explode("\n",$classes);
@@ -183,12 +184,11 @@ DuckPhp\\Core\\Route
 DuckPhp\\Core\\RuntimeState
 DuckPhp\\Core\\SuperGlobal
 DuckPhp\\Core\\View
-DuckPhp\\Ext\\DBManager
-DuckPhp\\Ext\\Pager
-DuckPhp\\Ext\\RouteHookPathInfoByGet
-DuckPhp\\Ext\\RouteHookRouteMap
 DuckPhp\\Ext\\Cache
-DuckPhp\\Ext\\EventManager";
+DuckPhp\\Ext\\DbManager
+DuckPhp\\Ext\\EventManager
+DuckPhp\\Ext\\RouteHookPathInfoByGet
+DuckPhp\\Ext\\RouteHookRouteMap";
     $classes=explode("\n",$classes);
     return $classes;
 }
@@ -199,20 +199,21 @@ DuckPhp\\Core\\App
 DuckPhp\\Core\\AutoLoader
 DuckPhp\\Core\\Configer
 DuckPhp\\Core\\ExceptionManager
-DuckPhp\\Core\\HttpServer
 DuckPhp\\Core\\Logger
 DuckPhp\\Core\\Route
 DuckPhp\\Core\\RuntimeState
 DuckPhp\\Core\\SuperGlobal
 DuckPhp\\Core\\View
 DuckPhp\\Ext\\CallableView
-DuckPhp\\Ext\\EmptyView
+DuckPhp\\Ext\\Cache
 DuckPhp\\Ext\\DBManager
+DuckPhp\\Ext\\EmptyView
+DuckPhp\\Ext\\EventManager
 DuckPhp\\Ext\\FacadesAutoLoader
 DuckPhp\\Ext\\JsonRpcExt
 DuckPhp\\Ext\\Misc
-DuckPhp\\Ext\\RedisManager
 DuckPhp\\Ext\\RedisCache
+DuckPhp\\Ext\\RedisManager
 DuckPhp\\Ext\\RouteHookApiServer
 DuckPhp\\Ext\\RouteHookDirectoryMode
 DuckPhp\\Ext\\RouteHookPathInfoByGet
