@@ -18,6 +18,7 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
 
         ];
         Route::G(new Route())->init($route_options);
+        App::G()->init(['skip_setting_file'=>true]);
         
         $options=[
             'route_map'=>[
@@ -27,7 +28,7 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
         
         $options['route_map_important']['@posts/{post}/comments/{comment:\d+}'] = RouteHookRouteMapTest_FakeObject::class.'@foo';
         
-        RouteHookRouteMap::G()->init($options, Route::G());
+        RouteHookRouteMap::G()->init($options, App::G());
         RouteHookRouteMap::G()->assignRoute('/first',RouteHookRouteMapTest_FakeObject::class.'::'.'fifth');
         RouteHookRouteMap::G()->assignRoute('/sixth','~RouteHookRouteMapTest_FakeObject::sixth');
         RouteHookRouteMap::G()->assignRoute('/seventh',[RouteHookRouteMapTest_FakeObject::class,'seventh']);

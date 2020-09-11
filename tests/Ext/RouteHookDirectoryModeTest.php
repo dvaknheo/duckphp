@@ -2,6 +2,7 @@
 namespace tests\DuckPhp\Ext;
 
 use DuckPhp\Ext\RouteHookDirectoryMode;
+use DuckPhp\Core\App;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\SuperGlobal;
 
@@ -19,6 +20,7 @@ class RouteHookDirectoryModeTest extends \PHPUnit\Framework\TestCase
 
         ];
         Route::G(new Route())->init($route_options);
+        
         $options=[
                 'mode_dir_basepath'=>$base_path,
                 'mode_dir_index_file'=>'',
@@ -27,7 +29,8 @@ class RouteHookDirectoryModeTest extends \PHPUnit\Framework\TestCase
                 'mode_dir_key_for_action'=>true,
         ];
         RouteHookDirectoryMode::G()->init($options, $context=null);
-        RouteHookDirectoryMode::G()->init($options, Route::G());
+        App::G()->init(['skip_setting_file'=>true]);
+        RouteHookDirectoryMode::G()->init($options, App::G());
         
         SuperGlobal::G()->_SERVER['REQUEST_URI']='';
         SuperGlobal::G()->_SERVER['PATH_INFO']='';

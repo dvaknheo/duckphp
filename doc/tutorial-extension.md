@@ -29,7 +29,7 @@ DuckPhp/Core 的其他组件如 Configer, Route, View, AutoLoader 默认都在�
 其他扩展按功能如下
 
 
-### 按字母统计
+### 按字母统计=
 
 * CallableView
 * EmptyView

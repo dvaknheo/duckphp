@@ -168,16 +168,6 @@ subgraph cluster_Ext {
     JsonRpcClientBase -> SingletonEx [style="dashed"];
 
     Pager -> PagerInterface; 
-    
-    RouteHookApiServer->Core_Route[style="dashed"];
-    RouteHookDirectoryMode->Core_Route[style="dashed"];
-    RouteHookDirectoryMode->Core_SuperGlobal[style="dashed"];
-    RouteHookManager->Core_Route[style="dashed"];
-    RouteHookPathInfoByGet->Core_Route[style="dashed"];
-    RouteHookPathInfoByGet->Core_SuperGlobal[style="dashed"];
-    RouteHookRewrite->Core_Route[style="dashed"];
-    RouteHookRewrite->Core_SuperGlobal[style="dashed"];
-    RouteHookRouteMap->Core_Route[style="dashed"];
 }
 
 subgraph cluster_DuckPhp {

@@ -6,8 +6,6 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Core\Route;
-use DuckPhp\Core\SuperGlobal;
 
 class RouteHookDirectoryMode extends ComponentBase
 {
@@ -18,6 +16,7 @@ class RouteHookDirectoryMode extends ComponentBase
         //'mode_dir_key_for_action'=>true,
     ];
     protected $basepath;
+    protected $context_class;
     
     protected function initOptions(array $options)
     {
@@ -26,15 +25,16 @@ class RouteHookDirectoryMode extends ComponentBase
     //@override
     protected function initContext(object $context)
     {
-        Route::G()->addRouteHook([static::class,'Hook'], 'prepend-outter');
-        Route::G()->setURLHandler([static::class,'URL']);
+        $this->context_class = get_class($context);
+        ($this->context_class)::Route()->addRouteHook([static::class,'Hook'], 'prepend-outter');
+        ($this->context_class)::Route()->setURLHandler([static::class,'URL']);
     }
     
     protected function adjustPathinfo($basepath, $path_info)
     {
-        $input_path = parse_url(SuperGlobal::G()->_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        $script_filename = SuperGlobal::G()->_SERVER['SCRIPT_FILENAME'];
-        $document_root = SuperGlobal::G()->_SERVER['DOCUMENT_ROOT'];
+        $input_path = parse_url(($this->context_class)::SuperGlobal()->_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $script_filename = ($this->context_class)::SuperGlobal()->_SERVER['SCRIPT_FILENAME'];
+        $document_root = ($this->context_class)::SuperGlobal()->_SERVER['DOCUMENT_ROOT'];
         
         $path_info = substr($document_root.$input_path, strlen($basepath));
         $path_info = ltrim((string)$path_info, '/').'/';
@@ -68,7 +68,7 @@ class RouteHookDirectoryMode extends ComponentBase
             return $url;
         };
         
-        $document_root = SuperGlobal::G()->_SERVER['DOCUMENT_ROOT'];
+        $document_root = ($this->context_class)::SuperGlobal()->_SERVER['DOCUMENT_ROOT'];
         $base_url = substr($this->basepath, strlen($document_root));
         $input_path = (string) parse_url($url, PHP_URL_PATH);
         
@@ -110,7 +110,7 @@ class RouteHookDirectoryMode extends ComponentBase
     public function _Hook($path_info)
     {
         $path_info = $this->adjustPathinfo($this->basepath, $path_info);
-        Route::G()->setPathInfo($path_info);
+        ($this->context_class)::Route()->setPathInfo($path_info);
         return false;
     }
 }

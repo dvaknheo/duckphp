@@ -166,6 +166,7 @@ App::PageHtml(123);
         App::REQUEST();
         App::COOKIE();
         App::SERVER();
+        App::Route();
         
         
         App::dumpAllRouteHooksAsString();

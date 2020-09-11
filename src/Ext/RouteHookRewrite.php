@@ -6,8 +6,6 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Core\Route;
-use DuckPhp\Core\SuperGlobal;
 
 class RouteHookRewrite extends ComponentBase
 {
@@ -15,6 +13,7 @@ class RouteHookRewrite extends ComponentBase
         'rewrite_map' => [],
     ];
     protected $rewrite_map = [];
+    protected $context_class;
     
     public static function Hook($path_info)
     {
@@ -28,7 +27,8 @@ class RouteHookRewrite extends ComponentBase
     //@override
     protected function initContext(object $context)
     {
-        Route::G()->addRouteHook([static::class,'Hook'], 'prepend-outter');
+        $this->context_class = get_class($context);
+        ($this->context_class)::Route()->addRouteHook([static::class,'Hook'], 'prepend-outter');
         if (\method_exists($context, 'extendComponents')) {
             $context->extendComponents(
                 [
@@ -135,13 +135,13 @@ class RouteHookRewrite extends ComponentBase
         $path = parse_url($url, PHP_URL_PATH);
         $input_get = [];
         parse_str((string) parse_url($url, PHP_URL_QUERY), $input_get);
-        SuperGlobal::G()->_SERVER['init_get'] = SuperGlobal::G()->_GET;
-        SuperGlobal::G()->_GET = $input_get;
+        ($this->context_class)::SuperGlobal()->_SERVER['init_get'] = ($this->context_class)::SuperGlobal()->_GET;
+        ($this->context_class)::SuperGlobal()->_GET = $input_get;
     }
     protected function doHook($path_info)
     {
         $path_info = ltrim($path_info, '/');
-        $query = SuperGlobal::G()->_GET;
+        $query = ($this->context_class)::SuperGlobal()->_GET;
         $query = $query?'?'.http_build_query($query):'';
         
         $input_url = $path_info.$query;
@@ -150,7 +150,7 @@ class RouteHookRewrite extends ComponentBase
         if ($url !== null) {
             $this->changeRouteUrl($url);
             $path_info = parse_url($url, PHP_URL_PATH);
-            Route::G()->setPathInfo($path_info);
+            ($this->context_class)::Route()->setPathInfo($path_info);
         }
         return  false;
     }

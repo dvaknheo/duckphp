@@ -741,6 +741,10 @@ trait Core_Glue
         return AutoLoader::G()->assignPathNamespace($path, $namespace);
     }
     // route
+    public static function Route($replacement_object = null)
+    {
+        return Route::G($replacement_object);
+    }
     public static function getPathInfo()
     {
         return Route::G()->getPathInfo();

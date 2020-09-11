@@ -6,8 +6,6 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Core\Route;
-use DuckPhp\Core\SuperGlobal;
 
 class RouteHookPathInfoByGet extends ComponentBase
 {
@@ -16,14 +14,16 @@ class RouteHookPathInfoByGet extends ComponentBase
         'key_for_action' => '_r',
         'key_for_module' => '',
     ];
+    protected $context_class;
     //@override
     protected function initContext(object $context)
     {
+        $this->context_class = get_class($context);
         if (!$this->options['use_path_info_by_get']) {
             return;
         }
-        Route::G()->addRouteHook([static::class,'Hook'], 'prepend-outter');
-        Route::G()->setURLHandler([static::class,'URL']);
+        ($this->context_class)::Route()->addRouteHook([static::class,'Hook'], 'prepend-outter');
+        ($this->context_class)::Route()->setURLHandler([static::class,'URL']);
     }
     
     public static function URL($url = null)
@@ -41,9 +41,9 @@ class RouteHookPathInfoByGet extends ComponentBase
         $get = [];
         $path = '';
         
-        $path = SuperGlobal::G()->_SERVER['REQUEST_URI'] ?? '';
-        $path_info = SuperGlobal::G()->_SERVER['PATH_INFO'] ?? '';
-        $script_file = SuperGlobal::G()->_SERVER['SCRIPT_FILENAME'];
+        $path = ($this->context_class)::SuperGlobal()->_SERVER['REQUEST_URI'] ?? '';
+        $path_info = ($this->context_class)::SuperGlobal()->_SERVER['PATH_INFO'] ?? '';
+        $script_file = ($this->context_class)::SuperGlobal()->_SERVER['SCRIPT_FILENAME'];
         
         $path = (string) parse_url($path, PHP_URL_PATH);
 
@@ -108,14 +108,14 @@ class RouteHookPathInfoByGet extends ComponentBase
         $k = $this->options['key_for_action'];
         $m = $this->options['key_for_module'];
         
-        //$old_path_info=SuperGlobal::G()->_SERVER['PATH_INFO']??'';
+        //$old_path_info=($this->context_class)::SuperGlobal()->_SERVER['PATH_INFO']??'';
         
-        $module = SuperGlobal::G()->_REQUEST[$m] ?? null;
-        $path_info = SuperGlobal::G()->_REQUEST[$k] ?? null;
+        $module = ($this->context_class)::SuperGlobal()->_REQUEST[$m] ?? null;
+        $path_info = ($this->context_class)::SuperGlobal()->_REQUEST[$k] ?? null;
 
         $path_info = $module.'/'.$path_info;
         
-        Route::G()->setPathInfo($path_info);
+        ($this->context_class)::Route()->setPathInfo($path_info);
         
         return false;
     }

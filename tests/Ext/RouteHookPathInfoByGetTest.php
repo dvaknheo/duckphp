@@ -2,6 +2,7 @@
 namespace tests\DuckPhp\Ext;
 
 use DuckPhp\Ext\RouteHookPathInfoByGet;
+use DuckPhp\Core\App;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\SuperGlobal;
 
@@ -18,14 +19,14 @@ class RouteHookPathInfoByGetTest extends \PHPUnit\Framework\TestCase
 
         ];
         Route::G(new Route())->init($route_options);
-        
+        App::G()->init(['skip_setting_file'=>true]);
         $options=[
             'use_path_info_by_get'=>false,
             'key_for_action'=>'',
             'key_for_module'=>'',
 
         ];
-        RouteHookPathInfoByGet::G(new RouteHookPathInfoByGet())->init($options, Route::G());
+        RouteHookPathInfoByGet::G(new RouteHookPathInfoByGet())->init($options, App::G());
         
         $options=[
             'use_path_info_by_get'=>true,
@@ -39,7 +40,7 @@ class RouteHookPathInfoByGetTest extends \PHPUnit\Framework\TestCase
             'key_for_action'=>'_r',
             'key_for_module'=>'',
         ];
-        RouteHookPathInfoByGet::G()->init($options, Route::G());
+        RouteHookPathInfoByGet::G()->init($options, App::G());
         
         
 
