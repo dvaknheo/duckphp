@@ -11,7 +11,6 @@ class EmptyView extends View
 {
     public $options = [
         'empty_view_key_view' => 'view',
-        'empty_view_key_skip_head_foot' => 'skip_head_foot',
         'empty_view_key_wellcome_class' => 'Main/',
         'empty_view_trim_view_wellcome' => true,
         'empty_view_skip_replace' => false,

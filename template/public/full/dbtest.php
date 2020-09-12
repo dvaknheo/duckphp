@@ -20,7 +20,7 @@ class App extends \DuckPhp\DuckPhp
             // 设置控制器的命名空间为根 使得 Main 类为入口
         'ext' => [
             EmptyView::class => true,
-            // 我们用扩展 EmptyView 代替系统的 View
+            // 我们用自带扩展 EmptyView 代替系统的 View
         ],
         'setting'=>[
             //数据库设置，根据你的需要修改
@@ -38,7 +38,7 @@ class App extends \DuckPhp\DuckPhp
     public function __construct()
     {
         parent::__construct();
-        $this->options['error_404']=function(){(new Main)->index();};
+        $this->options['error_404']=function(){(new Main)->index();}; //404 都给我跳转到首页
     }
 }
 //业务类， 还是带上吧。
