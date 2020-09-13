@@ -23,7 +23,7 @@ class DuckPhp extends App
     //@override
     protected $core_options = [
         'default_exception_do_log' => true,
-        'default_exception_do_check_display' => true,
+        'default_exception_self_display' => true,
         'ext' => [
             DbManager::class => true,
             RouteHookPathInfoByGet::class => true,

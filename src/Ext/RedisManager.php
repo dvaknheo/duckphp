@@ -18,10 +18,14 @@ class RedisManager extends ComponentBase
                 'auth'=>'',
                 'select'=>'',
             ]
+    ]
     */
     public $options = [
+        'redis' => null,
         'redis_list' => null,
-        'use_context_redis_setting' => true,
+        'redis_list_reload_by_setting' => true,
+        'redis_list_try_single' => true,
+
     ];
     const TAG_WRITE = 0;
     const TAG_READ = 1;
@@ -35,7 +39,7 @@ class RedisManager extends ComponentBase
     //@override
     protected function initContext(object $context)
     {
-        if ($this->options['use_context_redis_setting']) {
+        if ($this->options['redis_list_reload_by_setting']) {
             /** @var mixed */ $redis_list = get_class($context)::Setting('redis_list');
             if (!isset($redis_list)) {
                 $redis_list = isset($context->options) ? ($context->options['redis_list'] ?? null) : null;

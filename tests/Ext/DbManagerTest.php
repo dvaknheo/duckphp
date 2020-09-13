@@ -80,12 +80,12 @@ class DBManagerTest extends \PHPUnit\Framework\TestCase
         App::G(new App())->init($dn_options);
         $options=[
             'database_list'=>$database_list,
-            'log_sql_query'=>true,
+            'database_log_sql_query'=>true,
         ];
         
         DbManager::G(new DbManager())->init($options,App::G());
         $data=App::Db()->fetchColumn('select ?+? as t',1,2);
-        DbManager::G()->options['log_sql_query']=false;
+        DbManager::G()->options['database_log_sql_query']=false;
         $data=App::Db()->fetchColumn('select ?+? as t',1,2);
 
         

@@ -37,7 +37,7 @@ class App extends DuckPhp
         // $options['all_config'] = array ( );
             // 所有配置 (DuckPhp\Core\Configer)
         // $options['autoload_cache_in_cli'] = false;
-            // CLI 下缓存加载 (DuckPhp\Core\AutoLoader)
+            // 在 cli 下开启缓存模式 (DuckPhp\Core\AutoLoader)
         // $options['autoload_path_namespace_map'] = array ( );
             // 自动加载的目录和命名空间映射 (DuckPhp\Core\AutoLoader)
         // $options['close_resource_at_output'] = true;
@@ -60,6 +60,22 @@ class App extends DuckPhp
             // 控制器，POST 方法前缀 (DuckPhp\Core\Route)
         // $options['controller_welcome_class'] = 'Main';
             // 控制器默认欢迎方法 (DuckPhp\Core\Route)
+        // $options['database'] = NULL;
+            // 单一数据库配置 (DuckPhp\Ext\DbManager)
+        // $options['database_list'] = NULL;
+            // 数据库列表 (DuckPhp\Ext\DbManager)
+        // $options['database_list_reload_by_setting'] = true;
+            // 从设置里读取数据库列表 (DuckPhp\Ext\DbManager)
+        // $options['database_list_try_single'] = true;
+            // 尝试使用单一数据配置 (DuckPhp\Ext\DbManager)
+        // $options['database_log_sql_level'] = 'debug';
+            // 记录sql 错误等级 (DuckPhp\Ext\DbManager)
+        // $options['database_log_sql_query'] = false;
+            // 记录sql 查询 (DuckPhp\Ext\DbManager)
+        // $options['default_exception_do_log'] = true;
+            // 错误的时候打开日志 (DuckPhp\DuckPhp)
+        // $options['default_exception_self_display'] = true;
+            // 错误的时候打开日志 (DuckPhp\DuckPhp)
         // $options['error_404'] = NULL;
             // 404 页面 (DuckPhp\DuckPhp)
         // $options['error_500'] = NULL;
@@ -118,8 +134,6 @@ class App extends DuckPhp
             // 跳过设置文件 (DuckPhp\Core\Configer)
         // $options['skip_view_notice_error'] = true;
             // 跳过 View 视图的 notice (DuckPhp\Core\View, DuckPhp\Ext\CallableView, DuckPhp\Ext\EmptyView)
-        // $options['use_error_log_on_exception'] = true;
-            // 错误的时候打开日志 (DuckPhp\DuckPhp)
         // $options['use_flag_by_setting'] = true;
             // 从设置文件里再入is_debug,platform.  (DuckPhp\DuckPhp)
         // $options['use_output_buffer'] = false;
@@ -152,19 +166,6 @@ class App extends DuckPhp
                 // 【共享】覆盖视图目录
             // $options['skip_view_notice_error'] = true;
                 // 【共享】跳过 View 视图的 notice
-        //*/
-        /*
-        $options['ext']['DuckPhp\\Ext\\DBManager'] = true;
-            $options['database_list'] = NULL;
-                // 数据库列表
-            $options['db_before_get_object_handler'] = NULL;
-                // 已经废弃在获得DB对象前先执行的回调
-            $options['db_database_list_from_setting'] = true;
-                // 设置
-            $options['log_sql_level'] = 'debug';
-                // 记录sql的等级
-            $options['log_sql_query'] = false;
-                // 记录sql
         //*/
         /*
         $options['ext']['DuckPhp\\Ext\\EmptyView'] = true;
@@ -229,15 +230,19 @@ class App extends DuckPhp
         //*/
         /*
         $options['ext']['DuckPhp\\Ext\\RedisManager'] = true;
+            $options['redis'] = NULL;
+                // 单一Redisc配置
             $options['redis_list'] = NULL;
                 //  redis 配置列表
-            $options['use_context_redis_setting'] = true;
+            $options['redis_list_reload_by_setting'] = true;
                 //  redis 使用 settting 文件
+            $options['redis_list_try_single'] = true;
+                // 尝试使用单一Redis配置
         //*/
         /*
         $options['ext']['DuckPhp\\Ext\\RouteHookApiServer'] = true;
             $options['api_class_base'] = 'BaseApi';
-                // api 服务接口，只
+                // api 服务接口
             $options['api_class_prefix'] = 'Api_';
                 // api类的前缀
             $options['api_config_file'] = '';

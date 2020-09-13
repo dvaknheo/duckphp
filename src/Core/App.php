@@ -80,7 +80,7 @@ class App extends ComponentBase
     
     protected $core_options = [
         'default_exception_do_log' => true,
-        'default_exception_try_display' => true,
+        'default_exception_self_display' => true,
     ];
     public function __construct()
     {
@@ -192,7 +192,7 @@ trait Core_Handler
                 //do nothing
             } // @codeCoverageIgnore
         }
-        if ($this->options['default_exception_try_display'] && method_exists($ex, 'display')) {
+        if ($this->options['default_exception_self_display'] && method_exists($ex, 'display')) {
             $ex->display($ex);
             return;
         }
