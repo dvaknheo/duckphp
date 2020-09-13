@@ -5,7 +5,7 @@
 CallableView 扩展扩充了默认的 view 类，用于用函数替代文件方式显示视图
 ## 选项
 
-继承 DuckPhp\Core\View 的所有选项，且有
+继承 [DuckPhp\Core\View](Core-View.md) 的所有选项，且有
 
 'callable_view_head' => null,
    //  页眉函数

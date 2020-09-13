@@ -1,7 +1,7 @@
 # DuckPhp\Ext\FacadesBase
 
 ## 简介
-`可变单例` Facades 的基类
+伪`组件类` Facades 的基类
 ## 依赖关系
 
 
@@ -23,4 +23,3 @@ use Facades\LazyToChange\Model\TestModel;
 TestModel::foo(); // => \LazyToChange\Model\TestModel::G()->foo();
 ```
 这其中，Facades\LazyToChange\Model\TestModel 就是 extends DuckPhhp\Ext\FacadesBase 的类。
-然后根据类名，

@@ -1,11 +1,14 @@
-# DuckPhp\Ext\RedisSimpleCache
+# DuckPhp\Ext\RedisCache
 
 ## 简介
 Redis 的 SimpleCache  类
 ## 选项
-- redis
-- redis_cache_prefix
+'redis_cache_skip_replace' => false,
 
+    跳过默认 cache 替换
+'redis_cache_prefix' => '',
+
+    cache 前缀
 ## 公开方法
 
 
@@ -23,5 +26,5 @@ Redis 的 SimpleCache  类
     public function deleteMultiple($keys)
     
 
-### RedisSimpleCache
+### RedisCache
 适配 redis 的 psr-16 (注意没实现 psr-16接口)

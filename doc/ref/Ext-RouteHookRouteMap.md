@@ -13,6 +13,9 @@
 
   在默认路由失败后执行的路由映射
 
+'route_map_by_config_name' => '',
+
+从配置中读取  route_map_important 和 route_map
 ## 扩充方法
 
 'assignImportantRoute' => [static::class.'::G','assignImportantRoute'],

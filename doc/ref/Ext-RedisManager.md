@@ -4,10 +4,10 @@
 ## 简介
 Redis 管理类
 ## 选项
+        'redis' => null,
         'redis_list' => null,
-        'use_context_redis_setting' => true,
-        'enable_simple_cache' => true,
-        'simple_cache_prefix' => '',
+        'redis_list_reload_by_setting' => true,
+        'redis_list_try_single' => true,
 /*
     [
                 'host'=>'',
@@ -25,7 +25,8 @@ Redis 管理类
     public function init(array $options, object $context = null)
     protected function initContext($options = [], $context = null)
     public static function Redis($tag = 0)
-    public static function SimpleCache()
+    
+    
     public function getServer($tag = 0)
     public function createServer($config)
     

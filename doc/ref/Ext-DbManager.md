@@ -5,13 +5,24 @@
 `组件类` Db 的 管理类 已经重写。
 ## 选项
 
+'database' => null,
+
+    //
 'database_list' => null,
-'db_before_get_object_handler' => null,
-'db_database_list_from_setting' => true,
 
-'log_sql_query' => false,
-'log_sql_level' => 'debug',
+    //
+'database_list_reload_by_setting' => true,
 
+    //
+'database_list_try_single' => true,
+
+    //
+'database_log_sql_query' => false,
+
+    //
+'database_log_sql_level' => 'debug',
+
+    //
 ## 公开方法
 
 

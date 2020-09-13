@@ -17,16 +17,20 @@
 继承 [Core\Kernel](Core-Kernel.md) 的默认选项。详细查看 [Core\Kernel](Core-Kernel.md) 的文档。
 
 'ext' => \[\]
+    
 
-    默认启用的扩展
-    DBManager::class => true,
+'default_exception_do_log' => true,
+'default_exception_self_display' => true,
+
+'ext' => [
+    DbManager::class => true,
+    RouteHookPathInfoByGet::class => true,
     RouteHookRouteMap::class => true,
+],
 
 ## 公开方法
 
-public function __construct()
 
-    构造函数被重载，以在前面加上选项
 
 ## 重载保护方法
 

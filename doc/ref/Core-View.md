@@ -48,3 +48,5 @@ DuckPhp\Core\View 的选项共享一个 path,带一个 path_view.
 path_view 如果是 / 开始的，会忽略 path 选项
 
 当你想把视图目录 放入 app 目录的时候，请自行调整 path_view
+
+setOverridePath 用于 AppPluginTrait

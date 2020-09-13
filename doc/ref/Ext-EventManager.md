@@ -1,7 +1,7 @@
 # DuckPhp\Ext\EventManager
 
 ## 简介
-事件管理器， 这个类只是一对一绑定。
+事件管理器， 这个类是一对多绑定。
 ## 选项
 无选项
 ## 方法
@@ -19,6 +19,12 @@ public function on($event, $callback)
 public function fire($event, ...$args)
 
     实际执行函数
+public static function AllEvents()
+
+    获取所有事件
+public static function RemoveEvent($event, $callback = null)
+
+    移除事件
 ## 例子
 
 ```php

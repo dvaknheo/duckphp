@@ -9,7 +9,7 @@
 
 'use_output_buffer' => false,
 
-启用 ob 函数保持
+    启用 ob 函数
 
 ## 公开方法
 

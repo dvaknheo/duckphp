@@ -98,8 +98,8 @@ _PluginModeRouteHook 就是你可以继承修改的方法
 
 pluginModeDefaultRouteHook 默认的路由钩子
 
-pluginModeDefaultRouteHook 通过 pluginModeCloneHelpers 把自己的 Helper  克隆过去
-调整 View 目录。
+pluginModeDefaultRouteHook 通过 pluginModeCloneHelpers 把自己的 Helper  克隆过去调整 View 目录。
+
 然后切入自己的 namespace 执行控制器。
 
 

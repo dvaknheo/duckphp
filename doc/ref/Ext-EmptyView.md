@@ -7,11 +7,11 @@ EmptyView 组件 扩展扩充了默认的 View 类，用于用函数替代文件
 
 继承 DuckPhp\Core\View 的所有选项，且有
 
-    'empty_view_key_view'=> 'view', // _Show 的时候给的$data 的key
-    'empty_view_key_skip_head_foot'=> 'skip_head_foot',  //_Show 的时候给的$data 的 key 标记跳过页眉页脚
-    'empty_view_view_wellcome'=> 'Main/', // view 为这个的时候跳过显示
-    'empty_view_trim_view_wellcome'=> true,     // 剪掉 view。 
-    'empty_view_skip_replace'=> false,     //替换默认的 view
+'empty_view_key_view'=> 'view', // _Show 的时候给的$data 的key
+'empty_view_key_skip_head_foot'=> 'skip_head_foot',  //_Show 的时候给的$data 的 key 标记跳过页眉页脚
+'empty_view_view_wellcome'=> 'Main/', // view 为这个的时候跳过显示
+'empty_view_trim_view_wellcome'=> true,     // 剪掉 view。 
+'empty_view_skip_replace'=> false,     //替换默认的 view
 
 
 ## 方法

@@ -5,6 +5,8 @@
 
 ## 选项
 rewrite_map => []
+
+    选项
 ## 方法
 public function __construct()
 public static function Hook($path_info)

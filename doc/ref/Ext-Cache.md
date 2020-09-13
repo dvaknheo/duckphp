@@ -11,6 +11,7 @@
 
     public function __construct()
     public function init(array $options, object $context = null)
+    
     public function get($key, $default = null)
     public function set($key, $value, $ttl = null)
     public function delete($key)

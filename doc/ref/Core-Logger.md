@@ -13,12 +13,15 @@
 'path' => '',
     
     基础路径
-'log_file' => '',
+'path_log' => 'logs',
 
     日志文件名称
 'log_prefix' => 'DuckPhpLog',
 
-    日志的前缀
+    日志前缀
+'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
+
+   日志文件模板 
 ## 方法
     public function __construct()
     public function reset()
@@ -39,6 +42,8 @@ App::Logger() 函数得到的就是这个类
 
 和 SuperGlobal 类意义这个租金类是初始化的时候就直接调用 init() ，你可调用 reset() 重置
 
-其他方法都遵循 PSR 标准 *但是这个类没实现 PSR 接口*。
+其他方法都遵循 PSR 标准 **但是这个类没实现 PSR 接口。**
+
+自带 reset() 方法 ，可以重置
 
 

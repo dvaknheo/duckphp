@@ -34,3 +34,4 @@ public function clear()
 use Facades\LazyToChange\Model\TestModel;
 TestModel::foo(); // <=> \LazyToChange\Model\TestModel::G()->foo();
 ```
+注意， ComponentBase 的方法无法这么来。

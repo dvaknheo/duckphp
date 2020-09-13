@@ -12,3 +12,5 @@ JsonRPC 的客户端基类
 
     public function __construct()
     public function __call($method, $arguments)
+    
+注意， ComponentBase 的方法无法这么来。
