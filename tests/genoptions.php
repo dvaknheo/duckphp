@@ -151,11 +151,73 @@ class GenOptionsGenerator
         //var_export(array_diff(array_keys($options),array_keys($desc)));
         //var_export(array_diff(array_keys($desc),array_keys($options)));
         //var_export(count($options));
-        echo $this->getDefaultOptionsString($options);
-        echo "\n // 下面是默认没开的扩展 \n";
-        echo $this->getExtOptionsString($options);
+        //echo $this->getDefaultOptionsString($options);
+        //echo "\n // 下面是默认没开的扩展 \n";
+        //echo $this->getExtOptionsString($options);
+        
+        //echo $this->genMdBySort($options);
+        //echo $this->genMdByClass($options);
     }
-    
+    public function genMdBySort($input)
+    {
+        $ret=[];
+        foreach($input as $option => $attrs) {
+            $str="";
+            $b=$attrs['is_default']?'**':'';
+            $var_option=var_export($option,true);
+            $comment=$attrs['desc']??'';
+            $s=str_replace("\n"," ",var_export($attrs['defaut_value'],true));
+            
+            $classes=$attrs['class'];
+            $classes=array_filter($classes,function($v){return $v!='DuckPhp\\DuckPhp';});
+            array_walk($classes,function(&$v, $key){$v="[$v](".str_replace(['DuckPhp\\','\\'],['','-'],$v).".md)";});
+            $x="  // ".implode(", ",$classes) ."";
+            $str.=<<<EOT
++ {$b} $var_option => $s,  {$b} 
+
+    $comment $x
+
+EOT;
+            
+            $ret[]=$str;
+       }
+        return implode("",$ret);
+    }
+    public function genMdByClass($input)
+    {
+        $classes=getAllComponentClasses();
+        array_shift($classes);
+        
+        $ret=[];
+        foreach($classes as $class){
+            $str='';
+            $options=(new $class())->options;
+            ksort($options);
+            $var_class=var_export($class,true);
+            
+            $str.=<<<EOT
++ $class
+
+EOT;
+
+            foreach($options as $k =>$v){
+                $flag = ($input[$k]['is_default'])? '// ': '';
+                $flag2 = ($input[$k]['is_default'])? '【共享】': '';
+                $var_option=var_export($k,true);
+                $comment=$input[$k]['desc']??'';
+                $value=str_replace("\n"," ",var_export($v,true));
+                $str.=<<<EOT
+    - $var_option => $value,
+        $comment
+
+EOT;
+            }
+            $str.=<<<EOT
+
+EOT;
+            $ret[]=$str;
+        }
+        return implode("",$ret);    }
     function getAllOptions()
     {
         $classes=getAllComponentClasses();
@@ -200,7 +262,7 @@ class GenOptionsGenerator
             //$data[$option]=$s;
             $str="        // \$options['$option'] = {$s};\n            // ".($attrs['desc']??'') ."";
             $classes=$attrs['class'];
-            $classes=array_filter($classes,function($v){return $v!='DuckPhp\\Core\\App';});
+            $classes=array_filter($classes,function($v){return $v!='DuckPhp\\DuckPhp';});
             $str.=" (".implode(", ",$classes) .")\n";
             
             $data[$option]=$str; 

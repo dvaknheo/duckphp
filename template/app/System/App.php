@@ -12,13 +12,13 @@ class App extends DuckPhp
 {
     //@override
     public $options = [
-        //'skip_setting_file' => true,
+        //'skip_setting_file' => false,
         'skip_setting_file' => true, // @DUCKPHP_DELETE
         
-        //'is_debug' => true,
-        'is_debug' => true, // @DUCKPHP_DELETE
+        //'is_debug' => false,
+        'is_debug' => true,
         
-        //'platform' => true,
+        //'platform' => '',
         'platform' => 'platform', // @DUCKPHP_DELETE
         
         
@@ -26,6 +26,7 @@ class App extends DuckPhp
         'error_500' => '_sys/error_500',
         'error_debug' => '_sys/error_debug',
         
+        //'use_path_info_by_get' => false,
         'use_path_info_by_get' => true, // @DUCKPHP_DELETE
     ];
     public function __construct()
@@ -43,7 +44,7 @@ class App extends DuckPhp
         // $options['autoload_path_namespace_map'] = array ( );
             // 自动加载的目录和命名空间映射 (DuckPhp\Core\AutoLoader)
         // $options['close_resource_at_output'] = true;
-            // 在输出前关闭资源（DB,Redis） (DuckPhp\DuckPhp)
+            // 在输出前关闭资源（DB,Redis） (DuckPhp\Core\App)
         // $options['config_ext_files'] = array ( );
             // 额外的配置文件数组 (DuckPhp\Core\Configer)
         // $options['controller_base_class'] = NULL;
@@ -75,19 +76,19 @@ class App extends DuckPhp
         // $options['database_log_sql_query'] = false;
             // 记录sql 查询 (DuckPhp\Ext\DbManager)
         // $options['default_exception_do_log'] = true;
-            // 错误的时候打开日志 (DuckPhp\DuckPhp)
+            // 错误的时候打开日志 (DuckPhp\Core\App)
         // $options['default_exception_self_display'] = true;
-            // 错误的时候打开日志 (DuckPhp\DuckPhp)
+            // 错误的时候打开日志 (DuckPhp\Core\App)
         // $options['error_404'] = NULL;
-            // 404 页面 (DuckPhp\DuckPhp)
+            // 404 页面 (DuckPhp\Core\App)
         // $options['error_500'] = NULL;
-            // 500 页面 (DuckPhp\DuckPhp)
+            // 500 页面 (DuckPhp\Core\App)
         // $options['error_debug'] = NULL;
-            // 错误调试页面 (DuckPhp\DuckPhp)
+            // 错误调试页面 (DuckPhp\Core\App)
         // $options['ext'] = array ( );
-            // 默认开启的扩展 (DuckPhp\DuckPhp)
+            // 默认开启的扩展 (DuckPhp\Core\App)
         // $options['is_debug'] = false;
-            // 是否调试状态 (DuckPhp\DuckPhp, DuckPhp\Ext\StrictCheck)
+            // 是否调试状态 (DuckPhp\Core\App, DuckPhp\Ext\StrictCheck)
         // $options['key_for_action'] = '_r';
             // GET 方法名的 key (DuckPhp\Ext\RouteHookPathInfoByGet)
         // $options['key_for_module'] = '';
@@ -97,11 +98,11 @@ class App extends DuckPhp
         // $options['log_prefix'] = 'DuckPhpLog';
             // 日志前缀 (DuckPhp\Core\Logger)
         // $options['namespace'] = 'LazyToChange';
-            // 命名空间 (DuckPhp\DuckPhp, DuckPhp\Core\AutoLoader, DuckPhp\Core\Route, DuckPhp\Ext\StrictCheck)
+            // 命名空间 (DuckPhp\Core\App, DuckPhp\Core\AutoLoader, DuckPhp\Core\Route, DuckPhp\Ext\StrictCheck)
         // $options['namespace_controller'] = 'Controller';
             // 控制器的命名空间 (DuckPhp\Core\Route, DuckPhp\Ext\StrictCheck)
         // $options['path'] = '';
-            // 基础目录 (DuckPhp\DuckPhp, DuckPhp\Core\AutoLoader, DuckPhp\Core\Configer, DuckPhp\Core\Logger, DuckPhp\Core\View, DuckPhp\Ext\CallableView, DuckPhp\Ext\EmptyView, DuckPhp\Ext\Misc)
+            // 基础目录 (DuckPhp\Core\App, DuckPhp\Core\AutoLoader, DuckPhp\Core\Configer, DuckPhp\Core\Logger, DuckPhp\Core\View, DuckPhp\Ext\CallableView, DuckPhp\Ext\EmptyView, DuckPhp\Ext\Misc)
         // $options['path_config'] = 'config';
             // 配置目录 (DuckPhp\Core\Configer)
         // $options['path_log'] = 'logs';
@@ -111,7 +112,7 @@ class App extends DuckPhp
         // $options['path_view_override'] = '';
             // 覆盖视图目录 (DuckPhp\Core\View, DuckPhp\Ext\CallableView, DuckPhp\Ext\EmptyView)
         // $options['platform'] = '';
-            // 平台 (DuckPhp\DuckPhp)
+            // 平台 (DuckPhp\Core\App)
         // $options['route_map'] = array ( );
             // 路由映射 (DuckPhp\Ext\RouteHookRouteMap)
         // $options['route_map_by_config_name'] = '';
@@ -123,29 +124,29 @@ class App extends DuckPhp
         // $options['setting_file'] = 'setting';
             // 设置文件 (DuckPhp\Core\Configer)
         // $options['skip_404_handler'] = false;
-            // 跳过404处理 (DuckPhp\DuckPhp)
+            // 跳过404处理 (DuckPhp\Core\App)
         // $options['skip_app_autoload'] = false;
             // 跳过 自动加载 (DuckPhp\Core\AutoLoader)
         // $options['skip_env_file'] = true;
             // 跳过 .env 文件 (DuckPhp\Core\Configer)
         // $options['skip_exception_check'] = false;
-            // 跳过异常检查 (DuckPhp\DuckPhp)
+            // 跳过异常检查 (DuckPhp\Core\App)
         // $options['skip_fix_path_info'] = false;
-            // 跳过 PATH_INFO 修复 (DuckPhp\DuckPhp)
+            // 跳过 PATH_INFO 修复 (DuckPhp\Core\App)
         // $options['skip_setting_file'] = false;
             // 跳过设置文件 (DuckPhp\Core\Configer)
         // $options['skip_view_notice_error'] = true;
             // 跳过 View 视图的 notice (DuckPhp\Core\View, DuckPhp\Ext\CallableView, DuckPhp\Ext\EmptyView)
         // $options['use_flag_by_setting'] = true;
-            // 从设置文件里再入is_debug,platform.  (DuckPhp\DuckPhp)
+            // 从设置文件里再入is_debug,platform.  (DuckPhp\Core\App)
         // $options['use_output_buffer'] = false;
             // 使用 OB 函数缓冲数据 (DuckPhp\Core\RuntimeState)
         // $options['use_path_info_by_get'] = false;
             // 使用 _GET 模拟无 PathInfo 配置 (DuckPhp\Ext\RouteHookPathInfoByGet)
         // $options['use_short_functions'] = true;
-            // 使用短函数， \_\_url, \_\_h 等 ，详见 Core\Functions.php (DuckPhp\DuckPhp)
+            // 使用短函数， \_\_url, \_\_h 等 ，详见 Core\Functions.php (DuckPhp\Core\App)
         // $options['use_super_global'] = true;
-            // 使用super_global 类。关闭以节约性能 (DuckPhp\DuckPhp)
+            // 使用super_global 类。关闭以节约性能 (DuckPhp\Core\App)
 
  // 下面是默认没开的扩展 
         /*

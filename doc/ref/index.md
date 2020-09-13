@@ -80,7 +80,7 @@
     5. [ViewHelper.php](Helper-ViewHelper.md) 视图助手类
     6. *[AppHelper.php](Helper-AppHelper.md)* 工程应用助手类
 6. `HttpServer` 目录
-    1. [HttpServer.php](HttpServer-HttpServer.md)  加了 Swoole 的 Http 服务器。
+    1. [HttpServer.php](HttpServer-HttpServer.md)  Http 服务器。
 7. `SingletonEx`目录
     1. **[SingletonEx.php](SingletonEx-SingletonEx.php)**  可变单例trait
 8. `ThrowOn`目录
@@ -151,185 +151,628 @@ src
     `-- ThrowOn.php
 ```
 ## 选项索引
+按字母顺序，加粗表示默认选项。
 
-- 'all_config' => array (), // 参见 [Core\Configer](Core-Configer.md)
++ **'all_config' => array ( ), ** 
 
-    所有配置    
-- 'before\_get\_db\_handler' => NULL, // 参见 [Ext\DbManager](Ext-DbManager.md)
+    所有配置   // [DuckPhp\Core\Configer](Core-Configer.md)
++ 'api_class_base' => 'BaseApi',  
 
-    获取Db前调用的handler
-- 'callable_view_head' => null, // 参见 [Ext\CallableView](Ext-CallableView.md)
+    api 服务接口   // [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md)
++ 'api_class_prefix' => 'Api_',  
 
-    callableview 页眉
-- 'callable_view_foot' => null, // 参见 [Ext\CallableView](Ext-CallableView.md)
+    api类的前缀   // [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md)
++ 'api_config_file' => '',  
 
-    callableview 页脚    
-- 'callable_view_class' => null, // 参见 [Ext\CallableView](Ext-CallableView.md)
+    api配置文件   // [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md)
++ **'autoload_cache_in_cli' => false, ** 
 
-   callableview 视图类
-- 'callable_view_prefix' => null, // 参见 [Ext\CallableView](Ext-CallableView.md)
+    在 cli 下开启缓存模式   // [DuckPhp\Core\AutoLoader](Core-AutoLoader.md)
++ **'autoload_path_namespace_map' => array ( ), ** 
 
-   callableview 视图函数模板
-- 'callable_view_skip_replace' => false, // 参见 [Ext\CallableView](Ext-CallableView.md)
+    自动加载的目录和命名空间映射   // [DuckPhp\Core\AutoLoader](Core-AutoLoader.md)
++ 'callable_view_class' => NULL,  
 
-    callableview 可调用视图跳过默认视图替换
-- 'controller_base_class' => NULL, // 参见 [Core\Route](Core-Route.md)
+    callableview 视图类   // [DuckPhp\Ext\CallableView](Ext-CallableView.md)
++ 'callable_view_foot' => NULL,  
 
-    控制器基类
-- 'controller_hide_boot_class' => false, // 参见 [Core\Route](Core-Route.md)
+    callableview 页脚   // [DuckPhp\Ext\CallableView](Ext-CallableView.md)
++ 'callable_view_head' => NULL,  
 
-    控制器标记，隐藏特别的入口
-- 'controller_methtod_for_miss' => '_missing', // 参见 [Core\Route](Core-Route.md)
+    callableview 页眉   // [DuckPhp\Ext\CallableView](Ext-CallableView.md)
++ 'callable_view_prefix' => NULL,  
 
-    控制器，缺失方法的调用方法
-- 'controller_postfix' => '', // 参见 [Core\Route](Core-Route.md)
+    callableview 视图函数模板   // [DuckPhp\Ext\CallableView](Ext-CallableView.md)
++ 'callable_view_skip_replace' => false,  
 
-    控制器方法后缀
-- 'controller_prefix_post' => 'do_', // 参见 [Core\Route](Core-Route.md)
+    callableview 可调用视图跳过默认视图替换   // [DuckPhp\Ext\CallableView](Ext-CallableView.md)
++ **'close_resource_at_output' => true, ** 
 
-    控制器，POST 方法前缀
-- 'controller_welcome_class' => 'Main', // 参见 [Core\Route](Core-Route.md)
+    在输出前关闭资源（DB,Redis）   // [DuckPhp\Core\App](Core-App.md)
++ **'config_ext_files' => array ( ), ** 
 
-    控制器默认欢迎方法
-- 'database_list' => NULL, // 参见 [Ext\DbManager](Ext-DbManager.md)
+    额外的配置文件数组   // [DuckPhp\Core\Configer](Core-Configer.md)
++ **'controller_base_class' => NULL, ** 
 
-    数据库列表
+    控制器基类   // [DuckPhp\Core\Route](Core-Route.md), [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
++ **'controller_class_postfix' => '', ** 
 
-- 'db_close_at_output' => true, // 参见 [Ext\DbManager](Ext-DbManager.md)
+    控制器类名后缀   // [DuckPhp\Core\Route](Core-Route.md)
++ **'controller_enable_slash' => false, ** 
 
-    数据库，输出前关闭
-- 'db_close_handler' => NULL, // 参见 [Ext\DbManager](Ext-DbManager.md)
+    激活兼容后缀的 /    // [DuckPhp\Core\Route](Core-Route.md)
++ **'controller_hide_boot_class' => false, ** 
 
-    数据库，关闭句柄
-- 'db_create_handler' => NULL, // 参见 [Ext\DbManager](Ext-DbManager.md)
+    控制器标记，隐藏特别的入口   // [DuckPhp\Core\Route](Core-Route.md)
++ **'controller_methtod_for_miss' => '_missing', ** 
 
-    数据库，创建句柄
-- 'db_exception_handler' => NULL, // 参见 [Ext\DbManager](Ext-DbManager.md)
+    控制器，缺失方法的调用方法   // [DuckPhp\Core\Route](Core-Route.md)
++ **'controller_path_ext' => '', ** 
 
-    数据库，异常句柄
-- 'default_exception_handler' => ['DuckPhp\\App',OnDefaultException'] // 参见 [Ext\DbManager](Ext-DbManager.md)
-    默认异常句柄
+    扩展名，比如你要 .html   // [DuckPhp\Core\Route](Core-Route.md)
++ **'controller_prefix_post' => 'do_', ** 
 
-- 'dev_error_handler' => 'DuckPhp\\App','OnDevErrorHandler'] // 参见 [Core\Kernel](Core-Kernel.md)
+    控制器，POST 方法前缀   // [DuckPhp\Core\Route](Core-Route.md)
++ **'controller_welcome_class' => 'Main', ** 
 
-    默认开发错误句柄
-- 'enable_cache_classes_in_cli' => false, // 参见 [Core\AutoLoader](Core\AutoLoader.md)
+    控制器默认欢迎方法   // [DuckPhp\Core\Route](Core-Route.md)
++ **'database' => NULL, ** 
 
-    在 cli 下开启缓存模式
-- 'error_404' => '\_sys/error_404',  // 参见 [Core\Kernel](Core-Kernel.md)
+    单一数据库配置   // [DuckPhp\Ext\DbManager](Ext-DbManager.md)
++ **'database_list' => NULL, ** 
 
-    404 页面
-- 'error_500' => '\_sys/error_500',   // 参见 [Core\Kernel](Core-Kernel.md)
+    数据库列表   // [DuckPhp\Ext\DbManager](Ext-DbManager.md)
++ **'database_list_reload_by_setting' => true, ** 
 
-    500 页面
-- 'error_debug' => '\_sys/error_debug',  // 参见 [Core\Kernel](Core-Kernel.md)
+    从设置里读取数据库列表   // [DuckPhp\Ext\DbManager](Ext-DbManager.md)
++ **'database_list_try_single' => true, ** 
 
-    错误调试页面
-- 'ext' =>  // 参见 [Core\Kernel](Core-Kernel.md)
+    尝试使用单一数据配置   // [DuckPhp\Ext\DbManager](Ext-DbManager.md)
++ **'database_log_sql_level' => 'debug', ** 
 
-    默认开启的扩展
-   
-- 'handle_all_dev_error' => true, // 参见 [Core\Kernel](Core-Kernel.md)
+    记录sql 错误等级   // [DuckPhp\Ext\DbManager](Ext-DbManager.md)
++ **'database_log_sql_query' => false, ** 
 
-    接管一切开发错误
-- 'handle_all_exception' => true, // 参见 [Core\Kernel](Core-Kernel.md)
+    记录sql 查询   // [DuckPhp\Ext\DbManager](Ext-DbManager.md)
++ **'default_exception_do_log' => true, ** 
 
-    接管一切异常
-- 'is_debug' => true, // 参见 [Core\Kernel](Core-Kernel.md)
+    错误的时候打开日志   // [DuckPhp\Core\App](Core-App.md)
++ 'default_exception_handler' => NULL,  
 
-    是否调试状态
-- 'log_file' => '', // 参见 [Core\Logger](Core-Logger.md)
+    默认异常句柄   // [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
++ **'default_exception_self_display' => true, ** 
 
-    日志文件
-- 'log_prefix' => 'DuckPhpLog', // 参见 [Core\Logger](Core-Logger.md)
+    错误的时候打开日志   // [DuckPhp\Core\App](Core-App.md)
++ 'dev_error_handler' => NULL,  
 
-    日志前缀
-- 'log_sql' => false,  // 参见 [App](App.md)
+    默认开发错误句柄   // [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
++ 'empty_view_key_view' => 'view',  
 
-    记录sql
-- 'namespace' => 'LazyToChange', // 参见 [Core\Kernel](Core-Kernel.md)
+    给View 的key   // [DuckPhp\Ext\EmptyView](Ext-EmptyView.md)
++ 'empty_view_key_wellcome_class' => 'Main/',  
 
-    命名空间
-- 'namespace_controller' => 'Controller', // 参见 [Core\Route](Core-Route.md)
+    默认的 Main   // [DuckPhp\Ext\EmptyView](Ext-EmptyView.md)
++ 'empty_view_skip_replace' => false,  
 
-    控制器的命名空间
-- 'override_class' => 'Base\\App', // 参见 [Core\Kernel](Core-Kernel.md)
+    跳过默认的view   // [DuckPhp\Ext\EmptyView](Ext-EmptyView.md)
++ 'empty_view_trim_view_wellcome' => true,  
 
-    重写类名
-- 'path' => '@ProjectPath', // 参见 [Core\Kernel](Core-Kernel.md)
+    跳过 Main/   // [DuckPhp\Ext\EmptyView](Ext-EmptyView.md)
++ **'error_404' => NULL, ** 
 
-    路径
-- 'path_config' => 'config', // 参见 [Core\Configer](Core-Configer.md)
+    404 页面   // [DuckPhp\Core\App](Core-App.md)
++ **'error_500' => NULL, ** 
 
-    配置路径
-- 'path_lib' => 'lib',  // 参见 [Ext\Misc](Ext-Misc.md)
+    500 页面   // [DuckPhp\Core\App](Core-App.md)
++ **'error_debug' => NULL, ** 
 
-    库路径
-- 'path_namespace' => 'app', // 参见 [Core\Autoloader](Core\AutoLoader.md)
+    错误调试页面   // [DuckPhp\Core\App](Core-App.md)
++ **'ext' => array ( ), ** 
 
-    命名空间路径
-- 'path_view' => 'view', // 参见 [Core\View](Core-View.md)
+    默认开启的扩展   // [DuckPhp\Core\App](Core-App.md)
++ 'facades_enable_autoload' => true,  
 
-    视图路径
-- 'path_view_override' => '', // 参见 [Core\View](Core-View.md)
+    使用 facdes 的 autoload   // [DuckPhp\Ext\FacadesAutoLoader](Ext-FacadesAutoLoader.md)
++ 'facades_map' => array ( ),  
 
-    覆盖视图路径
-- 'platform' => '', // 参见 [Core\Kernel](Core-Kernel.md)
+    facade 映射   // [DuckPhp\Ext\FacadesAutoLoader](Ext-FacadesAutoLoader.md)
++ 'facades_namespace' => 'Facades',  
 
-    平台
-- 'rewrite_map' => array ( ), // 参见 [Ext\RouteHookRewrite](Ext-RouteHookRewrite.md)
+    facades 开始的namespace   // [DuckPhp\Ext\FacadesAutoLoader](Ext-FacadesAutoLoader.md)
++ **'handle_all_dev_error' => true, ** 
 
-    路径重写映射
-- 'route_map' => array ( ), // 参见 [Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
+    接管一切开发错误   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
++ **'handle_all_exception' => true, ** 
 
-    路由映射
-- 'route_map_important' => array ( ), // 参见 [Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
+    接管一切异常   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
++ **'is_debug' => false, ** 
 
-    重要路由映射
-- 'setting' => array ( ), // 参见 [Core\Configer](Core-Configer.md)
+    是否调试状态   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
++ 'jsonrpc_backend' => 'https://127.0.0.1',  
 
-    设置，预先载入的设置
-- 'setting_file' => 'setting', // 参见 [Core\Configer](Core-Configer.md)
+    json 的后端   // [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md)
++ 'jsonrpc_check_token_handler' => NULL,  
 
-    设置文件
-- 'skip_404_handler' => false, // 参见 [Core\Kernel](Core-Kernel.md)
+    设置 token 检查回调   // [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md)
++ 'jsonrpc_enable_autoload' => true,  
 
-    跳过404处理
-- 'skip_app_autoload' => false, // 参见 [Core\Autoloader](Core\AutoLoader.md)
+    json 启用 autoload   // [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md)
++ 'jsonrpc_is_debug' => false,  
 
-    跳过 自动加载
-- 'skip_env_file' => true, // 参见 [Core\Configer](Core-Configer.md)
+    jsonrpc 是否开启 debug 模式   // [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md)
++ 'jsonrpc_namespace' => 'JsonRpc',  
 
-    跳过 .env 文件
-- 'skip_exception_check' => false, // 参见 [Core\Kernel](Core-Kernel.md)
+    jsonrpc 默认的命名空间   // [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md)
++ 'jsonrpc_service_interface' => '',  
 
-    跳过异常检查
-- 'skip_fix_path_info' => false, // 参见 [Core\Kernel](Core-Kernel.md)
+    json 服务接口   // [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md)
++ 'jsonrpc_service_namespace' => '',  
 
-    跳过 PATH_INFO 修复
-- 'skip_plugin_mode_check' => false, // 参见 [Core\Kernel](Core-Kernel.md)
+    json 命名空间   // [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md)
++ 'jsonrpc_wrap_auto_adjust' => true,  
 
-    跳过插件模式检查
-- 'skip_setting_file' => true, // 参见 [Core\Configer](Core-Configer.md)
+    jsonrpc 自动调整 wrap   // [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md)
++ **'key_for_action' => '_r', ** 
 
-    跳过设置文件
-- 'skip_system_autoload' => true, // 参见 [Core\AutoLoader](Core-AutoLoader.md)
+    GET 方法名的 key   // [DuckPhp\Ext\RouteHookPathInfoByGet](Ext-RouteHookPathInfoByGet.md)
++ **'key_for_module' => '', ** 
 
-    跳过 系统自动加载
-- 'skip_view_notice_error' => true, // 参见 [Core\Kernel](Core-Kernel.md)
+    GET 模式 类名的 key   // [DuckPhp\Ext\RouteHookPathInfoByGet](Ext-RouteHookPathInfoByGet.md)
++ **'log_file_template' => 'log_%Y-%m-%d_%H_%i.log', ** 
 
-    跳过 View 视图的 notice
-- 'system_exception_handler' =>  Duckphp\DuckPhp->set_exception_handler // 参见 [Core\Kernel](Core-Kernel.md)
+    日志文件名模板   // [DuckPhp\Core\Logger](Core-Logger.md)
++ **'log_prefix' => 'DuckPhpLog', ** 
 
-    接管系统的异常管理
-- 'use_context_db_setting' => true, // 参见 [Ext\DbManager](Ext-DbManager.md)
+    日志前缀   // [DuckPhp\Core\Logger](Core-Logger.md)
++ 'mode_dir_basepath' => '',  
 
-    使用父类的数据库配置
-- 'use_flag_by_setting' => true, // 参见 [Core\Kernel](Core-Kernel.md)
+    目录模式的基类   // [DuckPhp\Ext\RouteHookDirectoryMode](Ext-RouteHookDirectoryMode.md)
++ **'namespace' => 'LazyToChange', ** 
 
-    从设置文件里再入
-- 'use_short_functions' => true, // 参见 [App](App.md)
+    命名空间   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Core\AutoLoader](Core-AutoLoader.md), [DuckPhp\Core\Route](Core-Route.md), [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
++ 'namespace_business' => '',  
 
-    使用短函数， \_\_url, \_\_h 等 ，详见 Core\Functions.php
-- 'use_super_global' => false, // 参见 [Core\Kernel](Core-Kernel.md)
-    使用super_global 类。 
+    strict_check 的business目录   // [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
++ **'namespace_controller' => 'Controller', ** 
+
+    控制器的命名空间   // [DuckPhp\Core\Route](Core-Route.md), [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
++ 'namespace_model' => '',  
+
+    strict_check 的model 目录   // [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
++ **'override_class' => 'System\\App', ** 
+
+    重写类名   // [DuckPhp\Core\App](Core-App.md)
++ **'path' => '', ** 
+
+    基础目录   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Core\AutoLoader](Core-AutoLoader.md), [DuckPhp\Core\Configer](Core-Configer.md), [DuckPhp\Core\Logger](Core-Logger.md), [DuckPhp\Core\View](Core-View.md), [DuckPhp\Ext\CallableView](Ext-CallableView.md), [DuckPhp\Ext\EmptyView](Ext-EmptyView.md), [DuckPhp\Ext\Misc](Ext-Misc.md)
++ **'path_config' => 'config', ** 
+
+    配置目录   // [DuckPhp\Core\Configer](Core-Configer.md)
++ 'path_lib' => 'lib',  
+
+    库目录   // [DuckPhp\Ext\Misc](Ext-Misc.md)
++ **'path_log' => 'logs', ** 
+
+    日志目录   // [DuckPhp\Core\Logger](Core-Logger.md)
++ **'path_namespace' => 'app', ** 
+
+    命名空间目录   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Core\AutoLoader](Core-AutoLoader.md)
++ **'path_view' => 'view', ** 
+
+    视图目录   // [DuckPhp\Core\View](Core-View.md), [DuckPhp\Ext\CallableView](Ext-CallableView.md), [DuckPhp\Ext\EmptyView](Ext-EmptyView.md)
++ **'path_view_override' => '', ** 
+
+    覆盖视图目录   // [DuckPhp\Core\View](Core-View.md), [DuckPhp\Ext\CallableView](Ext-CallableView.md), [DuckPhp\Ext\EmptyView](Ext-EmptyView.md)
++ **'platform' => '', ** 
+
+    平台   // [DuckPhp\Core\App](Core-App.md)
++ 'postfix_batch_business' => 'BatchBusiness',  
+
+    batchbusiness   // [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
++ 'postfix_business_lib' => 'Lib',  
+
+     businesslib   // [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
++ 'postfix_ex_model' => 'ExModel',  
+
+    ExModel   // [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
++ 'postfix_model' => 'Model',  
+
+    model   // [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
++ 'redis' => NULL,  
+
+    单一Redisc配置   // [DuckPhp\Ext\RedisManager](Ext-RedisManager.md)
++ 'redis_cache_prefix' => '',  
+
+     redis cache 缓存前缀   // [DuckPhp\Ext\RedisCache](Ext-RedisCache.md)
++ 'redis_cache_skip_replace' => false,  
+
+    redis cache 跳过 默认 cache替换   // [DuckPhp\Ext\RedisCache](Ext-RedisCache.md)
++ 'redis_list' => NULL,  
+
+     redis 配置列表   // [DuckPhp\Ext\RedisManager](Ext-RedisManager.md)
++ 'redis_list_reload_by_setting' => true,  
+
+     redis 使用 settting 文件   // [DuckPhp\Ext\RedisManager](Ext-RedisManager.md)
++ 'redis_list_try_single' => true,  
+
+    尝试使用单一Redis配置   // [DuckPhp\Ext\RedisManager](Ext-RedisManager.md)
++ 'rewrite_map' => array ( ),  
+
+    目录重写映射   // [DuckPhp\Ext\RouteHookRewrite](Ext-RouteHookRewrite.md)
++ **'route_map' => array ( ), ** 
+
+    路由映射   // [DuckPhp\Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
++ **'route_map_by_config_name' => '', ** 
+
+    路由配置名，使用配置模式用路由   // [DuckPhp\Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
++ **'route_map_important' => array ( ), ** 
+
+    重要路由映射   // [DuckPhp\Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
++ **'setting' => array ( ), ** 
+
+    设置，预先载入的设置   // [DuckPhp\Core\Configer](Core-Configer.md)
++ **'setting_file' => 'setting', ** 
+
+    设置文件   // [DuckPhp\Core\Configer](Core-Configer.md)
++ **'skip_404_handler' => false, ** 
+
+    跳过404处理   // [DuckPhp\Core\App](Core-App.md)
++ **'skip_app_autoload' => false, ** 
+
+    跳过 自动加载   // [DuckPhp\Core\AutoLoader](Core-AutoLoader.md)
++ **'skip_env_file' => true, ** 
+
+    跳过 .env 文件   // [DuckPhp\Core\Configer](Core-Configer.md)
++ **'skip_exception_check' => false, ** 
+
+    跳过异常检查   // [DuckPhp\Core\App](Core-App.md)
++ **'skip_fix_path_info' => false, ** 
+
+    跳过 PATH_INFO 修复   // [DuckPhp\Core\App](Core-App.md)
++ **'skip_plugin_mode_check' => false, ** 
+
+    跳过插件模式检查   // [DuckPhp\Core\App](Core-App.md)
++ **'skip_setting_file' => false, ** 
+
+    跳过设置文件   // [DuckPhp\Core\Configer](Core-Configer.md)
++ **'skip_view_notice_error' => true, ** 
+
+    跳过 View 视图的 notice   // [DuckPhp\Core\View](Core-View.md), [DuckPhp\Ext\CallableView](Ext-CallableView.md), [DuckPhp\Ext\EmptyView](Ext-EmptyView.md)
++ 'strict_check_context_class' => NULL,  
+
+    不用传输过来的 app类，而是特别指定类   // [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
++ 'strict_check_enable' => true,  
+
+    是否开启 strict chck   // [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
++ 'system_exception_handler' => NULL,  
+
+    接管系统的异常管理   // [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
++ **'use_autoloader' => true, ** 
+
+    使用系统自带加载器   // [DuckPhp\Core\App](Core-App.md)
++ **'use_flag_by_setting' => true, ** 
+
+    从设置文件里再入is_debug,platform.    // [DuckPhp\Core\App](Core-App.md)
++ **'use_output_buffer' => false, ** 
+
+    使用 OB 函数缓冲数据   // [DuckPhp\Core\RuntimeState](Core-RuntimeState.md)
++ **'use_path_info_by_get' => false, ** 
+
+    使用 _GET 模拟无 PathInfo 配置   // [DuckPhp\Ext\RouteHookPathInfoByGet](Ext-RouteHookPathInfoByGet.md)
++ **'use_short_functions' => true, ** 
+
+    使用短函数， \_\_url, \_\_h 等 ，详见 Core\Functions.php   // [DuckPhp\Core\App](Core-App.md)
++ **'use_super_global' => true, ** 
+
+    使用super_global 类。关闭以节约性能   // [DuckPhp\Core\App](Core-App.md)
+## 选项索引
+按类名排序加粗表示默认选项。
+
++ DuckPhp\Core\App
+    - 'close_resource_at_output' => true,
+        在输出前关闭资源（DB,Redis）
+    - 'default_exception_do_log' => true,
+        错误的时候打开日志
+    - 'default_exception_self_display' => true,
+        错误的时候打开日志
+    - 'error_404' => NULL,
+        404 页面
+    - 'error_500' => NULL,
+        500 页面
+    - 'error_debug' => NULL,
+        错误调试页面
+    - 'ext' => array ( ),
+        默认开启的扩展
+    - 'handle_all_dev_error' => true,
+        接管一切开发错误
+    - 'handle_all_exception' => true,
+        接管一切异常
+    - 'is_debug' => false,
+        是否调试状态
+    - 'namespace' => 'LazyToChange',
+        命名空间
+    - 'override_class' => 'System\\App',
+        重写类名
+    - 'path' => '',
+        基础目录
+    - 'path_namespace' => 'app',
+        命名空间目录
+    - 'platform' => '',
+        平台
+    - 'skip_404_handler' => false,
+        跳过404处理
+    - 'skip_exception_check' => false,
+        跳过异常检查
+    - 'skip_fix_path_info' => false,
+        跳过 PATH_INFO 修复
+    - 'skip_plugin_mode_check' => false,
+        跳过插件模式检查
+    - 'use_autoloader' => true,
+        使用系统自带加载器
+    - 'use_flag_by_setting' => true,
+        从设置文件里再入is_debug,platform. 
+    - 'use_short_functions' => true,
+        使用短函数， \_\_url, \_\_h 等 ，详见 Core\Functions.php
+    - 'use_super_global' => true,
+        使用super_global 类。关闭以节约性能
++ DuckPhp\Core\AutoLoader
+    - 'autoload_cache_in_cli' => false,
+        在 cli 下开启缓存模式
+    - 'autoload_path_namespace_map' => array ( ),
+        自动加载的目录和命名空间映射
+    - 'namespace' => 'LazyToChange',
+        命名空间
+    - 'path' => '',
+        基础目录
+    - 'path_namespace' => 'app',
+        命名空间目录
+    - 'skip_app_autoload' => false,
+        跳过 自动加载
++ DuckPhp\Core\Configer
+    - 'all_config' => array ( ),
+        所有配置
+    - 'config_ext_files' => array ( ),
+        额外的配置文件数组
+    - 'path' => '',
+        基础目录
+    - 'path_config' => 'config',
+        配置目录
+    - 'setting' => array ( ),
+        设置，预先载入的设置
+    - 'setting_file' => 'setting',
+        设置文件
+    - 'skip_env_file' => true,
+        跳过 .env 文件
+    - 'skip_setting_file' => false,
+        跳过设置文件
++ DuckPhp\Core\ExceptionManager
+    - 'default_exception_handler' => NULL,
+        默认异常句柄
+    - 'dev_error_handler' => NULL,
+        默认开发错误句柄
+    - 'handle_all_dev_error' => true,
+        接管一切开发错误
+    - 'handle_all_exception' => true,
+        接管一切异常
+    - 'system_exception_handler' => NULL,
+        接管系统的异常管理
++ DuckPhp\Core\Logger
+    - 'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
+        日志文件名模板
+    - 'log_prefix' => 'DuckPhpLog',
+        日志前缀
+    - 'path' => '',
+        基础目录
+    - 'path_log' => 'logs',
+        日志目录
++ DuckPhp\Core\Route
+    - 'controller_base_class' => NULL,
+        控制器基类
+    - 'controller_class_postfix' => '',
+        控制器类名后缀
+    - 'controller_enable_slash' => false,
+        激活兼容后缀的 / 
+    - 'controller_hide_boot_class' => false,
+        控制器标记，隐藏特别的入口
+    - 'controller_methtod_for_miss' => '_missing',
+        控制器，缺失方法的调用方法
+    - 'controller_path_ext' => '',
+        扩展名，比如你要 .html
+    - 'controller_prefix_post' => 'do_',
+        控制器，POST 方法前缀
+    - 'controller_welcome_class' => 'Main',
+        控制器默认欢迎方法
+    - 'namespace' => 'LazyToChange',
+        命名空间
+    - 'namespace_controller' => 'Controller',
+        控制器的命名空间
++ DuckPhp\Core\RuntimeState
+    - 'use_output_buffer' => false,
+        使用 OB 函数缓冲数据
++ DuckPhp\Core\SuperGlobal
++ DuckPhp\Core\View
+    - 'path' => '',
+        基础目录
+    - 'path_view' => 'view',
+        视图目录
+    - 'path_view_override' => '',
+        覆盖视图目录
+    - 'skip_view_notice_error' => true,
+        跳过 View 视图的 notice
++ DuckPhp\Ext\CallableView
+    - 'callable_view_class' => NULL,
+        callableview 视图类
+    - 'callable_view_foot' => NULL,
+        callableview 页脚
+    - 'callable_view_head' => NULL,
+        callableview 页眉
+    - 'callable_view_prefix' => NULL,
+        callableview 视图函数模板
+    - 'callable_view_skip_replace' => false,
+        callableview 可调用视图跳过默认视图替换
+    - 'path' => '',
+        基础目录
+    - 'path_view' => 'view',
+        视图目录
+    - 'path_view_override' => '',
+        覆盖视图目录
+    - 'skip_view_notice_error' => true,
+        跳过 View 视图的 notice
++ DuckPhp\Ext\Cache
++ DuckPhp\Ext\DbManager
+    - 'database' => NULL,
+        单一数据库配置
+    - 'database_list' => NULL,
+        数据库列表
+    - 'database_list_reload_by_setting' => true,
+        从设置里读取数据库列表
+    - 'database_list_try_single' => true,
+        尝试使用单一数据配置
+    - 'database_log_sql_level' => 'debug',
+        记录sql 错误等级
+    - 'database_log_sql_query' => false,
+        记录sql 查询
++ DuckPhp\Ext\EmptyView
+    - 'empty_view_key_view' => 'view',
+        给View 的key
+    - 'empty_view_key_wellcome_class' => 'Main/',
+        默认的 Main
+    - 'empty_view_skip_replace' => false,
+        跳过默认的view
+    - 'empty_view_trim_view_wellcome' => true,
+        跳过 Main/
+    - 'path' => '',
+        基础目录
+    - 'path_view' => 'view',
+        视图目录
+    - 'path_view_override' => '',
+        覆盖视图目录
+    - 'skip_view_notice_error' => true,
+        跳过 View 视图的 notice
++ DuckPhp\Ext\EventManager
++ DuckPhp\Ext\FacadesAutoLoader
+    - 'facades_enable_autoload' => true,
+        使用 facdes 的 autoload
+    - 'facades_map' => array ( ),
+        facade 映射
+    - 'facades_namespace' => 'Facades',
+        facades 开始的namespace
++ DuckPhp\Ext\JsonRpcExt
+    - 'jsonrpc_backend' => 'https://127.0.0.1',
+        json 的后端
+    - 'jsonrpc_check_token_handler' => NULL,
+        设置 token 检查回调
+    - 'jsonrpc_enable_autoload' => true,
+        json 启用 autoload
+    - 'jsonrpc_is_debug' => false,
+        jsonrpc 是否开启 debug 模式
+    - 'jsonrpc_namespace' => 'JsonRpc',
+        jsonrpc 默认的命名空间
+    - 'jsonrpc_service_interface' => '',
+        json 服务接口
+    - 'jsonrpc_service_namespace' => '',
+        json 命名空间
+    - 'jsonrpc_wrap_auto_adjust' => true,
+        jsonrpc 自动调整 wrap
++ DuckPhp\Ext\Misc
+    - 'path' => '',
+        基础目录
+    - 'path_lib' => 'lib',
+        库目录
++ DuckPhp\Ext\RedisCache
+    - 'redis_cache_prefix' => '',
+         redis cache 缓存前缀
+    - 'redis_cache_skip_replace' => false,
+        redis cache 跳过 默认 cache替换
++ DuckPhp\Ext\RedisManager
+    - 'redis' => NULL,
+        单一Redisc配置
+    - 'redis_list' => NULL,
+         redis 配置列表
+    - 'redis_list_reload_by_setting' => true,
+         redis 使用 settting 文件
+    - 'redis_list_try_single' => true,
+        尝试使用单一Redis配置
++ DuckPhp\Ext\RouteHookApiServer
+    - 'api_class_base' => 'BaseApi',
+        api 服务接口
+    - 'api_class_prefix' => 'Api_',
+        api类的前缀
+    - 'api_config_file' => '',
+        api配置文件
++ DuckPhp\Ext\RouteHookDirectoryMode
+    - 'mode_dir_basepath' => '',
+        目录模式的基类
++ DuckPhp\Ext\RouteHookPathInfoByGet
+    - 'key_for_action' => '_r',
+        GET 方法名的 key
+    - 'key_for_module' => '',
+        GET 模式 类名的 key
+    - 'use_path_info_by_get' => false,
+        使用 _GET 模拟无 PathInfo 配置
++ DuckPhp\Ext\RouteHookRewrite
+    - 'rewrite_map' => array ( ),
+        目录重写映射
++ DuckPhp\Ext\RouteHookRouteMap
+    - 'route_map' => array ( ),
+        路由映射
+    - 'route_map_by_config_name' => '',
+        路由配置名，使用配置模式用路由
+    - 'route_map_important' => array ( ),
+        重要路由映射
++ DuckPhp\Ext\StrictCheck
+    - 'controller_base_class' => NULL,
+        控制器基类
+    - 'is_debug' => false,
+        是否调试状态
+    - 'namespace' => 'LazyToChange',
+        命名空间
+    - 'namespace_business' => '',
+        strict_check 的business目录
+    - 'namespace_controller' => 'Controller',
+        控制器的命名空间
+    - 'namespace_model' => '',
+        strict_check 的model 目录
+    - 'postfix_batch_business' => 'BatchBusiness',
+        batchbusiness
+    - 'postfix_business_lib' => 'Lib',
+         businesslib
+    - 'postfix_ex_model' => 'ExModel',
+        ExModel
+    - 'postfix_model' => 'Model',
+        model
+    - 'strict_check_context_class' => NULL,
+        不用传输过来的 app类，而是特别指定类
+    - 'strict_check_enable' => true,
+        是否开启 strict chck
+
+## 其他选项
+这几个选项，不是放在 $options 的，所以特地在这里参考
+### DuckPhp\Core\AppPluginTrait
+
+    'plugin_path_namespace' => null,
+    'plugin_namespace' => null,
+    
+    'plugin_routehook_position' => 'append-outter',
+    
+    'plugin_path_conifg' => 'config',
+    'plugin_path_view' => 'view',
+    
+    'plugin_search_config' => false,
+    'plugin_use_helper' => true,
+    'plugin_files_config' => [],
+    'plugin_url_prefix' => '',
+###  DuckPhp\HttpServer\HttpServer
+
+    'host' => '127.0.0.1',
+    'port' => '8080',
+    'path' => '',
+    'path_document' => 'public',
+### DuckPhp\Ext\Pager
+
+    'url' => null,
+    'current' => null,
+    'page_size' => 30,
+    'page_key' => 'page',
+    'rewrite' => null,
+    'pager_context_class' => null,
