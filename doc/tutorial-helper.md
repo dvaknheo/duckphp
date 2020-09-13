@@ -269,6 +269,9 @@ setMultiExceptionHandler
 setDefaultExceptionHandler
 
     【异常处理】设置异常的默认处理
+XCall($callback, ...$args)
+
+    【其他】见 BusinessHelper 的 Event 介绍
 ### 系统替代
 header
 
@@ -284,7 +287,7 @@ SuperGlobal
     【swoole 兼容】 SuperGlobal()-> 前缀替代 超全局变量做 swoole 兼容， 如 C::SuperGlobal()->_GET[] , C::SuperGlobal()->_POST[] 等。
 ### 输入相关
 替代同名 GET / POST /REQUEST /COOKIE 。如果没的话返回 后面的默认值。
-注意没有 \_SESSION ，这是故意设计成这样的，不希望 \_SESSION 到处飞， _SESSION 应该集中于 SessionBusiness 或 SessionLib 里。Session 在 AppHelper 里有
+注意没有 \_SESSION ，这是故意设计成这样的，不希望 \_SESSION 到处飞， _SESSION 应该集中于 SessionBusiness 或 SessionLib 里。
 
 ENV 也是不希望人用所以没有。 
 
@@ -319,10 +322,8 @@ PageSize($new_value = null)
 PageHtml($total, $options=[])
 
     获得分页结果 HTML，这里的 $options 的传递给 Pager 类的选项。
-###  异常与事件
-XCall($callback, ...$args)
+###  事件
 
-    【其他】见 BusinessHelper 的 Event 介绍
 Event()
 
     【其他】见 BusinessHelper 的 Event 介绍

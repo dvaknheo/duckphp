@@ -44,9 +44,17 @@ use DuckPhp\DuckPhp;
 require_once('../vendor/autoload.php');
 
 $options=[];
-$options['override_class']='';      // 示例文件不要被子类干扰。
+$options['override_class']=App::class;
 $options['skip_setting_file']=true;// 不需要配置文件。
-$options['error_exception']=null; // 使用默认的错误视图
+
+class App extends DuckPhp
+{
+    public function _Db($tag)
+    {
+        return Db::class;
+    }
+}
+
 DuckPhp::RunQuickly($options,function(){
     Db::setConfig([
         'default'     => 'mysql',
@@ -60,11 +68,6 @@ DuckPhp::RunQuickly($options,function(){
             ]
         ]
     ]);
-    //就这句话了
-    DBManager::G()->setDBHandler(function(){return Db::class;});
-    $sql="select * from Users where true limit 1";
-    $data=DuckPhp::DB()::query($sql);
-    var_dump($data);
 });
 
 ```

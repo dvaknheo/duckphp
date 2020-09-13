@@ -125,6 +125,7 @@ Controller --> Business ------------------------------ ---> Model
 ### Web 的入口文件
 
 和很多 Web 框架一样，我们的工程是从 public/index.php 开始的
+File: `template/public/index.php`
 
 ```php
 <?php declare(strict_types=1);
@@ -175,7 +176,7 @@ RunQuickly 相当于 \DuckPhp\DuckPhp::G()->init($options,function(){})->run();
 ###  工程入口文件
 
 所以我们现在来看 `app/System/App.php` 对应的 LazyToChange\System\App 类就是入口了。
-
+File: `template/app/System/App.php`
 ```php
 <?php declare(strict_types=1);
 /**
