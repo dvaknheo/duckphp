@@ -125,7 +125,7 @@ function action_do_add()
 session_start();
 $flag = RunByDuckPhp();
 if(!$flag){
-    return;
+    // 我们 404 了，返回吧
 }
 extract(DuckPhp::getViewData());
 

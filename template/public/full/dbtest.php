@@ -1,46 +1,13 @@
 <?php
 require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
 
-use App as M;  // Helper 都给我们省掉了
-use App as C;  // Helper 都给我们省掉了
-use App as V;  // Helper 都给我们省掉了
-
+use DuckPhp\DuckPhp;
+use DuckPhp\DuckPhp as M;  // Helper 都给我们省掉了
+use DuckPhp\DuckPhp as C;  // Helper 都给我们省掉了
+use DuckPhp\DuckPhp as V;  // Helper 都给我们省掉了
 use DuckPhp\SingletonEx\SingletonEx;
 use DuckPhp\Ext\EmptyView;
 
-class App extends \DuckPhp\DuckPhp
-{
-    // @override
-    public $options = [
-        'is_debug' => true,
-            // 开启调试模式
-        'skip_setting_file' => true,
-            // 本例特殊，跳过设置文件 这个选项防止没有上传设置文件到服务器
-        'namespace_controller'=>"\\",   
-            // 设置控制器的命名空间为根 使得 Main 类为入口
-        'ext' => [
-            EmptyView::class => true,
-            // 我们用自带扩展 EmptyView 代替系统的 View
-        ],
-        'setting'=>[
-            //数据库设置，根据你的需要修改
-            'database_list' => [
-                [
-                    'dsn' => 'mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8mb4;',
-                    'username' => 'admin',
-                    'password' => '123456',
-                    'driver_options' => [],
-                ],
-            ],
-        ],
-        
-    ];
-    public function __construct()
-    {
-        parent::__construct();
-        $this->options['error_404']=function(){(new Main)->index();}; //404 都给我跳转到首页
-    }
-}
 //业务类， 还是带上吧。
 class MyBusiness
 {
@@ -134,14 +101,34 @@ class Main
 }
 ///////////////
     // 开始了
-        $options = [];
-
-
-    $flag=App::RunQuickly($options);
-    if(!$flag){
-        return;
-    }
-    $data = App::GetViewData();
+    $options = [
+        'is_debug' => true,
+            // 开启调试模式
+        'skip_setting_file' => true,
+            // 本例特殊，跳过设置文件 这个选项防止没有上传设置文件到服务器
+        'namespace_controller'=>"\\",   
+            // 设置控制器的命名空间为根 使得 Main 类为入口
+        'ext' => [
+            EmptyView::class => true,
+            // 我们用自带扩展 EmptyView 代替系统的 View
+        ],
+        'setting'=>[
+            //数据库设置，根据你的需要修改
+            'database_list' => [
+                [
+                    'dsn' => 'mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8mb4;',
+                    'username' => 'admin',
+                    'password' => '123456',
+                    'driver_options' => [],
+                ],
+            ],
+        ],
+        
+    ];
+    $options['error_404'] = function(){(new Main)->index();}; //404 都给我跳转到首页
+    $flag=DuckPhp::RunQuickly($options);
+    $data = DuckPhp::GetViewData();
+    
     extract($data);
     if(isset($view_head)){
 ?>

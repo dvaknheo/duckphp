@@ -25,6 +25,8 @@ class App extends DuckPhp
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
         'error_debug' => '_sys/error_debug',
+        
+        'use_path_info_by_get' => true, // @DUCKPHP_DELETE
     ];
     public function __construct()
     {
@@ -291,6 +293,7 @@ class App extends DuckPhp
     //@override
     protected function onPrepare()
     {
+        //your code here
     }
     //@override
     protected function onInit()
