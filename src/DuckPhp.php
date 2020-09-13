@@ -20,16 +20,17 @@ class DuckPhp extends App
 {
     const VERSION = '1.2.6-dev';
     
-    public function __construct()
-    {
-        parent::__construct();
-        $ext = [
+    //@override
+    protected $core_options = [
+        'default_exception_do_log' => true,
+        'default_exception_do_check_display' => true,
+        'ext' => [
             DbManager::class => true,
             RouteHookPathInfoByGet::class => true,
             RouteHookRouteMap::class => true,
-        ];
-        $this->options['ext'] = array_merge($ext, $this->options['ext']);
-    }
+        ],
+    ];
+    
     //@override
     public function _Cache($object = null)
     {

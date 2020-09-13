@@ -78,10 +78,14 @@ class App extends ComponentBase
     protected $pager;
     protected $cache;
     
+    protected $core_options = [
+        'default_exception_do_log' => true,
+        'default_exception_try_display' => true,
+    ];
     public function __construct()
     {
         parent::__construct();
-        $this->options = array_merge(static::$options_default, $this->options);
+        $this->options = array_merge(static::$options_default, $this->core_options, $this->options);
         $this->options['ext'] = $this->options['ext'] ?? [];
         $this->hanlder_for_exception_handler = [static::class,'set_exception_handler'];
         $this->hanlder_for_exception = [static::class,'OnDefaultException'];
@@ -181,14 +185,14 @@ trait Core_Handler
     
     public function _OnDefaultException($ex): void
     {
-        if ($this->options['use_error_log_on_exception']) {
+        if ($this->options['default_exception_do_log']) {
             try {
                 static::Logger()->error('['.get_class($ex).']('.$ex->getMessage().')'.$ex->getMessage());
             } catch (\Throwable $ex) { // @codeCoverageIgnore
                 //do nothing
             } // @codeCoverageIgnore
         }
-        if (method_exists($ex, 'display')) {
+        if ($this->options['default_exception_try_display'] && method_exists($ex, 'display')) {
             $ex->display($ex);
             return;
         }

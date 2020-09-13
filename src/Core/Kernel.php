@@ -16,7 +16,6 @@ use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Logger;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\RuntimeState;
-use DuckPhp\Core\SingletonEx;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\View;
 
@@ -44,7 +43,6 @@ trait Kernel
             'platform' => '',
             'ext' => [],
             
-            'use_error_log_on_exception' => true,
             'use_flag_by_setting' => true,
             'use_super_global' => true,
             'use_short_functions' => true,
