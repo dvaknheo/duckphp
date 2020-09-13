@@ -11,12 +11,12 @@ class RedisManagerTest extends \PHPUnit\Framework\TestCase
         $redis_list = include \MyCodeCoverage::G()->options['path_data'] . 'redis_list.php';
         //code here
         $options=[
-            'redis_list'=>$redis_list,
+            'redis'=>$redis_list[0],
+            //'redis_list'=>$redis_list,
         ];
         RedisManager::G()->init($options,App::G()->init(['skip_setting_file'=>true,'redis_list'=>$redis_list,]));
         RedisManager::G()->Redis();
-        RedisManager::G()->isInited();
-
+        
         \MyCodeCoverage::G()->end();
         /*
         RedisManager::G()->init($options = [], $context = null);

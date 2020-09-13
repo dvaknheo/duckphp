@@ -5,7 +5,7 @@ use DuckPhp\Ext\DbManager;
 use DuckPhp\DB\DB;
 use DuckPhp\DuckPhp as App;
 
-class DBManagerTest extends \PHPUnit\Framework\TestCase
+class DbManagerTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
@@ -107,6 +107,18 @@ class DBManagerTest extends \PHPUnit\Framework\TestCase
             App::Db('zxvf');
         }catch(\Exception $ex){
         }
+
+        $options=[
+            'database_log_sql_query'=>true,
+            'database' => null,
+            'database_list' => null,
+            'database_list_reload_by_setting'=>false,
+        ];
+        try{
+            App::Db();
+        }catch(\Exception $ex){
+        }
+        DbManager::G(new DbManager())->init($options,App::G());
 
         \MyCodeCoverage::G()->end();
 

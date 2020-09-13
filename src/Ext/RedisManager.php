@@ -11,7 +11,7 @@ use Redis;
 class RedisManager extends ComponentBase
 {
     /*
-    redis_lis=>
+    redis_list=>
     [[
                 'host'=>'',
                 'port'=>'',
@@ -34,20 +34,26 @@ class RedisManager extends ComponentBase
     //@override
     protected function initOptions(array $options)
     {
-        $this->redis_config_list = $this->options['redis_list'];
+        $redis_list = $this->options['redis_list'];
+        if (!isset($redis_list) && $this->options['redis_list_try_single']) {
+            $redis = $this->options['redis'];
+            $redis_list = $redis ? array($redis) : null;
+        }
+        $this->redis_config_list = $redis_list;
     }
     //@override
     protected function initContext(object $context)
     {
         if ($this->options['redis_list_reload_by_setting']) {
-            /** @var mixed */ $redis_list = get_class($context)::Setting('redis_list');
-            if (!isset($redis_list)) {
-                $redis_list = isset($context->options) ? ($context->options['redis_list'] ?? null) : null;
+            /** @var mixed */
+            $redis_list = get_class($context)::Setting('redis_list');
+            if (!isset($redis_list) && $this->options['redis_list_try_single']) {
+                $redis = get_class($context)::Setting('redis');
+                $redis_list = $redis ? array($redis) : null;
             }
-            if ($redis_list) {
-                $this->redis_config_list = $redis_list;
-            }
+            $this->redis_config_list = $redis_list ?? $this->redis_config_list;
         }
+        
         if (method_exists($context, 'extendComponents')) {
             $context->extendComponents(['Redis' => [static::class, 'Redis']], ['B','A']);
         }

@@ -12,7 +12,14 @@ class DbManager extends ComponentBase
 {
     const TAG_WRITE = 0;
     const TAG_READ = 1;
-    
+    /*
+     database_list=>
+    [[
+        'dsn'=>"",
+        'username'=>'???',
+        'password'=>'???'
+    ]]
+    */
     public $options = [
         'database' => null,
         'database_list' => null,
@@ -29,7 +36,12 @@ class DbManager extends ComponentBase
     //@override
     protected function initOptions(array $options)
     {
-        $this->database_config_list = $this->options['database_list'];
+        $database_list = $this->options['database_list'];
+        if (!isset($database_list) && $this->options['database_list_try_single']) {
+            $database = $this->options['database'];
+            $database_list = $database ? array($database) : null;
+        }
+        $this->database_config_list = $database_list;
     }
     //@override
     protected function initContext(object $context)
@@ -38,7 +50,11 @@ class DbManager extends ComponentBase
         
         if ($this->options['database_list_reload_by_setting']) {
             /** @var mixed */
-            $database_list = get_class($context)::Setting('database_list');
+            $database_list = ($this->context_class)::Setting('database_list');
+            if (!isset($database_list) && $this->options['database_list_try_single']) {
+                $database = ($this->context_class)::Setting('database');
+                $database_list = $database ? array($database) : null;
+            }
             $this->database_config_list = $database_list ?? $this->database_config_list;
         }
         
