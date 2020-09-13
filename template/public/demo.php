@@ -26,7 +26,7 @@ namespace MySpace\System
                 // 开启单一文件模式，服务器不配置也能运行
             'ext' => [
                 CallableView::class => true,
-                    // 默认的 View 不支持函数调用，我们用扩展 CallableView 代替系统的 View
+                    // 默认的 View 不支持函数调用，我们开启自带扩展 CallableView 代替系统的 View
             ],
             'callable_view_class' => Views::class, 
                     // 替换的 View 类。
@@ -41,7 +41,7 @@ namespace MySpace\System
             //运行期代码在这里
         }
     }
-    //服务基类, 为了 XXService::G() 可变单例。
+    //服务基类, 为了 Business::G() 可变单例。
     class BaseBusiness
     {
         use SingletonEx;

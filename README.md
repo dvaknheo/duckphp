@@ -143,9 +143,12 @@ Controller --> Business ------------------------------ ---> Model
 * 更多的杀手级应用。
 ## 样例
 ### 1. hello world
+
+来自 `template/public/helloworld.php`
+
 ```php
 <?php
-require_once __DIR__.'/../vendor/autoload.php';
+require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
 
 class Main
 {
@@ -158,7 +161,7 @@ $options=[
     'namespace_controller'=>"\\",   // 本例特殊，设置控制器的命名空间为根
     'skip_setting_file'=>true,      // 本例特殊，跳过配置文件
 ];
-DuckPhp\DuckPhp::RunQuickly($options);
+\DuckPhp\DuckPhp::RunQuickly($options);
 
 ```
 ### 2. 复杂样例
@@ -183,8 +186,8 @@ namespace MySpace\System
 {
     use DuckPhp\DuckPhp;
     use DuckPhp\Ext\CallableView;
+    use DuckPhp\SingletonEx\SingletonEx;
     use MySpace\View\Views;
-
     class App extends DuckPhp
     {
         // @override
@@ -197,7 +200,7 @@ namespace MySpace\System
                 // 开启单一文件模式，服务器不配置也能运行
             'ext' => [
                 CallableView::class => true,
-                    // 默认的 View 不支持函数调用，我们用扩展 CallableView 代替系统的 View
+                    // 默认的 View 不支持函数调用，我们开启自带扩展 CallableView 代替系统的 View
             ],
             'callable_view_class' => Views::class, 
                     // 替换的 View 类。
@@ -212,10 +215,10 @@ namespace MySpace\System
             //运行期代码在这里
         }
     }
-    //服务基类, 为了 XXService::G() 可变单例。
+    //服务基类, 为了 Business::G() 可变单例。
     class BaseBusiness
     {
-        use \DuckPhp\Core\SingletonEx;
+        use SingletonEx;
     }
 } // end namespace
 // 助手类
@@ -344,6 +347,7 @@ namespace {
     ];
     \DuckPhp\DuckPhp::RunQuickly($options);
 }
+
 
 ```
 ## 架构图
