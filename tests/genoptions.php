@@ -465,6 +465,56 @@ function getAllOptionDeclareClasses()
     return $ret;
 }
 
+function SliceReplace($data, $replacement, $str1, $str2, $is_outside = false, $wrap = false)
+{
+    $pos_begin = strpos($data, $str1);
+    $extlen = ($pos_begin === false)?0:strlen($str1);
+    $pos_end = strpos($data, $str2, $pos_begin + $extlen);
+    
+    if ($pos_begin === false || $pos_end === false) {
+        if (!$wrap) {
+            return  $data;
+        }
+    }
+    if ($is_outside) {
+        $pos_begin = ($pos_begin === false)?0:$pos_begin;
+        $pos_end = ($pos_end === false)?strlen($data):$pos_end + strlen($str2);
+    } else {
+        $pos_begin = ($pos_begin === false)?0:$pos_begin + strlen($str1);
+        $pos_end = ($pos_end === false)?strlen($data):$pos_end;
+    }
+    
+    return substr_replace($data, $replacement, $pos_begin, $pos_end - $pos_begin);
+}
+function replaceData($data,$file,$dir='')
+{
+    $content=file_get_contents($dir.$file);
 
+    $str1="File: `$file`\n\n```php\n";
+    $str2="\n```\n";
+    $replacement = $content;
+    $data=SliceReplace($data, $replacement, $str1, $str2);
+    
+    return $data;
+}
+
+return ;
+
+//*
+$data=file_get_contents("README.md");
+$file="template/public/helloworld.php";
+$data=replaceData($data,$file,$dir='');
+$file="template/public/demo.php";
+$data=replaceData($data,$file,$dir='');
+file_put_contents("README.md",$data);
+//*/
+
+
+$data=file_get_contents("doc/tutorial-general.md");
+$file="template/public/index.php";
+$data=replaceData($data,$file,$dir='');
+$file="template/app/System/App.php";
+$data=replaceData($data,$file,$dir='');
+file_put_contents("doc/tutorial-general.md",$data);
 
 

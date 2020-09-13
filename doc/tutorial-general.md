@@ -139,20 +139,23 @@ $namespace = 'LazyToChange';                              // @DUCKPHP_NAMESPACE
 $path = realpath(__DIR__.'/..');
 
 $options = [
+// 这几项目是在子类里无法更改的
 //    'use_autoloader' => true,
+    // 使用 DuckPhp\AutoLoader 加载器，你可以用composer
 //    'skip_plugin_mode_check' => false,
+    // 跳过插件模式检查
 //    'handle_all_dev_error' => true,
+    // 处理所有开发期异常
 //    'handle_all_exception' => true,
+    // 处理所有异常
 //    'override_class' => 'System\App',
+    // 再入的子类
 //    'path_namespace' => 'app',
+    // 自动加载的目录
 ];
-$options['path'] = $path;
 $options['namespace'] = $namespace;
-$options['is_debug'] = true;
-//$options['skip_setting_file'] = true;
+$options['path'] = $path;
 
-// $options['use_path_info_by_get']=false;
-$options['use_path_info_by_get']=true; //@DUCKPHP_DELETE
 echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKPHP_DELETE
 echo "<div>不建议直接运行这文件，建议用安装模式 </div>\n"; //@DUCKPHP_DELETE
 
@@ -177,13 +180,15 @@ RunQuickly 相当于 \DuckPhp\DuckPhp::G()->init($options,function(){})->run();
 
 所以我们现在来看 `app/System/App.php` 对应的 LazyToChange\System\App 类就是入口了。
 File: `template/app/System/App.php`
+
 ```php
 <?php declare(strict_types=1);
 /**
- * DuckPHP
+ * DuckPhp
  * From this time, you never be alone~
  */
-namespace MY\Base;
+
+namespace LazyToChange\System;
 
 use DuckPhp\DuckPhp;
 
@@ -191,25 +196,37 @@ class App extends DuckPhp
 {
     //@override
     public $options = [
-        'error_404' => '_sys/error_404',
-        'error_500' => '_sys/error_exception',
-        'error_debug' =>  '_sys/error_debug',
-        
-        //'is_debug' => true, 
-        'is_debug' => true, // @DUCKPHP_DELETE
-        //'skip_setting_file' => true,
+        //'skip_setting_file' => false,
         'skip_setting_file' => true, // @DUCKPHP_DELETE
+        
+        //'is_debug' => false,
+        'is_debug' => true,
+        
+        //'platform' => '',
+        'platform' => 'platform', // @DUCKPHP_DELETE
+        
+        
+        'error_404' => '_sys/error_404',
+        'error_500' => '_sys/error_500',
+        'error_debug' => '_sys/error_debug',
+        
+        //'use_path_info_by_get' => false,
+        'use_path_info_by_get' => true, // @DUCKPHP_DELETE
     ];
     public function __construct()
     {
         parent::__construct();
         $options = [];
-        // 省略一堆注释
+
+        // options_start
+        // ...
+        // options_end
         $this->options = array_replace_recursive($this->options, $options);
     }
     //@override
     protected function onPrepare()
     {
+        //your code here
     }
     //@override
     protected function onInit()
