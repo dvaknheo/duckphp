@@ -176,9 +176,9 @@ class ControllerHelper
         return  App::PageHtml($total, $options);
     }
     ////
-    public static function XCall($callback)
+    public static function XCall($callback, ...$args)
     {
-        return App::XCall($callback);
+        return App::XCall($callback, ...$args);
     }
     public static function Event()
     {

@@ -530,14 +530,14 @@ trait Core_Helper
         var_dump(...$args);
         echo "</pre>\n";
     }
-    public static function XCall($callback)
+    public static function XCall($callback, ...$args)
     {
-        return static::G()->_XCall($callback);
+        return static::G()->_XCall($callback, ...$args);
     }
-    public function _XCall($callback)
+    public function _XCall($callback, ...$args)
     {
         try {
-            return ($callback)();
+            return ($callback)(...$args);
         } catch (\Exception $ex) {
             return $ex;
         }

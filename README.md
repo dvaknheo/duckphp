@@ -144,7 +144,7 @@ Controller --> Business ------------------------------ ---> Model
 ## 样例
 ### 1. hello world
 
-来自 `template/public/helloworld.php`
+File: `template/public/helloworld.php`
 
 ```php
 <?php
@@ -170,6 +170,8 @@ $options=[
 
 需要注意的是，这个样例是为了演示特性把所有东西集中到一个文件，实际编码不会把所有东西全放在同一个文件里。
 
+
+File: `template/public/demo.php`
 
 ```php
 <?php declare(strict_types=1);

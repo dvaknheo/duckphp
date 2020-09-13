@@ -33,15 +33,15 @@ Controller --> Business ------------------------------ ---> Model
 作为 `业务工程师` ， 你不能引入 DuckPhp 的任何东西，就当 DuckPhp 命名空间不存在。
 核心工程师才去研究 DuckPhp 类的东西。
 
-* 写 Model 你可能要引入 MY\Base\Helper\ModelHelper 助手类别名为 M 。
-* 写 Business 你可能要引入 MY\Base\Helper\BusinessHelper 助手类别名为 B 。
-* 写 Controller 你可能要引入 MY\Base\Helper\ControllerHelper 助手类别名为 C 。
-* 写 View 你可能要引入 MY\Base\Helper\ViewHelper 助手类别名为 V 。
+* 写 Model 你可能要引入 LazyToChange\Base\Helper\ModelHelper 助手类别名为 M 。
+* 写 Business 你可能要引入 LazyToChange\Base\Helper\BusinessHelper 助手类别名为 B 。
+* 写 Controller 你可能要引入 LazyToChange\Base\Helper\ControllerHelper 助手类别名为 C 。
+* 写 View 你可能要引入 LazyToChange\Base\Helper\ViewHelper 助手类别名为 V 。
 * 不能交叉引入其他层级的助手类。如果需要交叉，那么你就是错的。
-* 小工程可以用直接使用入口类 MY\Base\App 类，这包含了上述类的公用方法。
+* 小工程可以用直接使用入口类 LazyToChange\Base\App 类，这包含了上述类的公用方法。
 * App 类包含助手类的全部内容。但是不推荐使用 App 类的助手类方法代替助手类。
 
-工程的命名空间 MY 是 可调的。比如调整成 MyProject ,TheBigOneProject  等。
+工程的命名空间 LazyToChange 是 可调的。比如调整成 LazyToChangeProject ,TheBigOneProject  等。
 参见 $options['namespace'];
 
 ## 小问答
@@ -119,10 +119,10 @@ H($str)
 L($str,$args=[])
 
     语言处理函数，后面的关联数组替换 '{$key}'
-HL($str, $args=[])
+Hl($str, $args=[])
 
     对语言处理后进行 HTML 编码
-URL($url)
+Url($url)
 
     获得相对 url 地址
 Display($view, $data = null)
@@ -133,8 +133,8 @@ Display($view, $data = null)
 
 BusinessHelper 用于业务层。
 
-
 Config($key, $file_basename = 'config')
+
     读取配置，从 config/$file_basename.php 里读取配置
 LoadConfig($file_basename)
 
@@ -146,16 +146,21 @@ Setting($key);
 LoadConfig($key,$basename="config");
 
     载入配置，Config($key); 获得配置项目。默认配置文件是在  config/config.php 。
-Cache
+Cache($replace_object)
 
-XCall
+    获得缓存管理器
+XCall($callback, ...args)
 
-Event
+    包裹callback输出，如果抛出异常则返回异常，否则返回 $callback();
+Event()
 
-OnEvent
+    获得事件管理器
+FireEvent($event, ...$args)
 
-FireEvent
+    触发事件
+OnEvent($event, $callback)
 
+    绑定事件
 ## ModelHelper
 
 ModelHelper 用于 Model 层。 
@@ -192,12 +197,12 @@ H
 L
 
     【显示相关】见 ViewHelper 的 L 介绍
-HL
+Hrl
 
-    【显示相关】见 ViewHelper 的 HL 介绍
-URL
+    【显示相关】见 ViewHelper 的 Hl 介绍
+Url
 
-    【显示相关】见 ViewHelper 的 URL 介绍
+    【显示相关】见 ViewHelper 的 Url 介绍
 Display
 
     【显示相关】见 ViewHelper 的 Display 介绍
@@ -279,9 +284,9 @@ SuperGlobal
     【swoole 兼容】 SuperGlobal()-> 前缀替代 超全局变量做 swoole 兼容， 如 C::SuperGlobal()->_GET[] , C::SuperGlobal()->_POST[] 等。
 ### 输入相关
 替代同名 GET / POST /REQUEST /COOKIE 。如果没的话返回 后面的默认值。
-注意没有 \_SESSION ，这是故意设计成这样的，不希望 \_SESSION 到处飞， _SESSION 应该集中于 SessionBusiness 或 SessionLib 里。
+注意没有 \_SESSION ，这是故意设计成这样的，不希望 \_SESSION 到处飞， _SESSION 应该集中于 SessionBusiness 或 SessionLib 里。Session 在 AppHelper 里有
 
-ENV 也是不希望人用所以没有。
+ENV 也是不希望人用所以没有。 
 
 GET($key, $default = null)
 
@@ -314,15 +319,19 @@ PageSize($new_value = null)
 PageHtml($total, $options=[])
 
     获得分页结果 HTML，这里的 $options 的传递给 Pager 类的选项。
-### 其他新增
-Event
+###  异常与事件
+XCall($callback, ...$args)
 
-    事件管理器
-XCall
+    【其他】见 BusinessHelper 的 Event 介绍
+Event()
 
-包裹异常调用
+    【其他】见 BusinessHelper 的 Event 介绍
+FireEvent($event, ...$args)
 
+    【其他】见 BusinessHelper 的 FireEvent 介绍
+OnEvent($event, $callback)
 
+    【其他】见 BusinessHelper 的 OnEvent 介绍
 
 ## AppHelper
 
@@ -377,6 +386,8 @@ assignPathNamespace($path, $namespace = null)
 CallException($ex)
 
     调用异常处理，一般也不用，而是看异常处理那章
+//session
+
 ### Swoole 兼容
 
 这是 Swoole 开发才会用到的方法。这里暂时不解释
@@ -426,7 +437,7 @@ system_wrapper_get_providers
 
 ```php
 <?php
-namespace MY\Base\Helper;
+namespace LazyToChange\System\Helper;
 
 use DuckPhp\Helper\ModelHelper as Helper;
 
