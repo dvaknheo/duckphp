@@ -34,9 +34,8 @@ class App extends DuckPhp
         parent::__construct();
         $options = [];
 
-        // deafalt options;
-        
-
+        // @autogen by tests/genoptions.php
+// 脚本生成,下面是可用的默认选项
         // $options['all_config'] = array ( );
             // 所有配置 (DuckPhp\Core\Configer)
         // $options['autoload_cache_in_cli'] = false;
@@ -70,7 +69,7 @@ class App extends DuckPhp
         // $options['database_list_reload_by_setting'] = true;
             // 从设置里读取数据库列表 (DuckPhp\Ext\DbManager)
         // $options['database_list_try_single'] = true;
-            // 尝试使用单一数据配置 (DuckPhp\Ext\DbManager)
+            // 尝试使用单一数据库配置 (DuckPhp\Ext\DbManager)
         // $options['database_log_sql_level'] = 'debug';
             // 记录sql 错误等级 (DuckPhp\Ext\DbManager)
         // $options['database_log_sql_query'] = false;
@@ -148,7 +147,7 @@ class App extends DuckPhp
         // $options['use_super_global'] = true;
             // 使用super_global 类。关闭以节约性能 (DuckPhp\Core\App)
 
- // 下面是默认没开的扩展 
+// 下面是默认使用的扩展 
         /*
         $options['ext']['DuckPhp\\Ext\\CallableView'] = true;
             $options['callable_view_class'] = NULL;
@@ -288,7 +287,8 @@ class App extends DuckPhp
             $options['strict_check_enable'] = true;
                 // 是否开启 strict chck
         //*/
-
+        // @autogen end
+        
         $this->options = array_replace_recursive($this->options, $options);
     }
     //@override

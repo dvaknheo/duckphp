@@ -135,11 +135,8 @@ File: `template/public/index.php`
  */
 require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
 
-$namespace = 'LazyToChange';                              // @DUCKPHP_NAMESPACE
-$path = realpath(__DIR__.'/..');
-
+// 这几项是在子类里无法更改的
 $options = [
-// 这几项目是在子类里无法更改的
 //    'use_autoloader' => true,
     // 使用 DuckPhp\AutoLoader 加载器，你可以用composer
 //    'skip_plugin_mode_check' => false,
@@ -153,6 +150,10 @@ $options = [
 //    'path_namespace' => 'app',
     // 自动加载的目录
 ];
+
+
+$namespace = 'LazyToChange';                              // @DUCKPHP_NAMESPACE
+$path = realpath(__DIR__.'/..');
 $options['namespace'] = $namespace;
 $options['path'] = $path;
 
@@ -218,9 +219,10 @@ class App extends DuckPhp
         parent::__construct();
         $options = [];
 
-        // options_start
-        // ...
-        // options_end
+        // @autogen by tests/genoptions.php
+// 【省略选项注释】
+        // @autogen end
+        
         $this->options = array_replace_recursive($this->options, $options);
     }
     //@override
