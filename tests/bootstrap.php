@@ -30,6 +30,8 @@ $options=[
 
 MyCodeCoverage::G()->init($options);
 
+//生成文档
+//RefFileGenerator::Run();
 return;
 //*/
 //-----------------------------------------------

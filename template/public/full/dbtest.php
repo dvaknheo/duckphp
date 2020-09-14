@@ -1,12 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
 
 use DuckPhp\DuckPhp;
-use DuckPhp\DuckPhp as M;  // Helper 都给我们省掉了
 use DuckPhp\DuckPhp as C;  // Helper 都给我们省掉了
+use DuckPhp\DuckPhp as M;  // Helper 都给我们省掉了
 use DuckPhp\DuckPhp as V;  // Helper 都给我们省掉了
-use DuckPhp\SingletonEx\SingletonEx;
 use DuckPhp\Ext\EmptyView;
+use DuckPhp\SingletonEx\SingletonEx;
 
 //业务类， 还是带上吧。
 class MyBusiness
@@ -25,9 +25,9 @@ class MyBusiness
     {
         return TestModel::addData($data);
     }
-    public function updateData($id,$data)
+    public function updateData($id, $data)
     {
-        return TestModel::updateData($id,$data);
+        return TestModel::updateData($id, $data);
     }
     public function deleteData($id)
     {
@@ -38,35 +38,35 @@ class MyBusiness
 // 模型类
 class TestModel
 {
-    public static function getDataList($page,$pagesize)
+    public static function getDataList($page, $pagesize)
     {
-        $sql="select * from test order by id desc";
-        $total=M::DB()->fetchColumn(M::SqlForCountSimply($sql));
-        $list=M::DB()->fetchAll(M::SqlForPager($sql,$page,$pagesize));
+        $sql = "select * from test order by id desc";
+        $total = M::Db()->fetchColumn(M::SqlForCountSimply($sql));
+        $list = M::Db()->fetchAll(M::SqlForPager($sql, $page, $pagesize));
 
         return [$total,$list];
     }
     public static function getData($id)
     {
-        $sql="select * from test where id=?";
-        return M::DB()->fetch($sql,$id);
+        $sql = "select * from test where id=?";
+        return M::Db()->fetch($sql, $id);
     }
     public static function addData($data)
     {
-        $sql="insert test (content) values(?)";
-        M::DB()->execute($sql,$data['content']);
-        return M::DB()->lastInsertId();
+        $sql = "insert test (content) values(?)";
+        M::Db()->execute($sql, $data['content']);
+        return M::Db()->lastInsertId();
     }
-    public static function updateData($id,$data)
+    public static function updateData($id, $data)
     {
-        $sql="update test set content = ? where id=?";
-        $flag=M::DB()->execute($sql,$data['content'],$id);
+        $sql = "update test set content = ? where id=?";
+        $flag = M::Db()->execute($sql, $data['content'], $id);
         return $flag;
     }
     public static function deleteData($id)
     {
-        $sql="delete from test where id=? limit 1";
-        M::DB()->execute($sql,$id);
+        $sql = "delete from test where id=? limit 1";
+        M::Db()->execute($sql, $id);
     }
 }
 /////////////////////////////////////////
@@ -74,9 +74,9 @@ class Main
 {
     public function index()
     {
-        list($total,$list)=MyBusiness::G()->getDataList(C::PageNo(),C::PageSize(3));
-        $pager=C::PageHtml($total);
-        C::Show(get_defined_vars(),'main_view');
+        list($total, $list) = MyBusiness::G()->getDataList(C::PageNo(), C::PageSize(3));
+        $pager = C::PageHtml($total);
+        C::Show(get_defined_vars(), 'main_view');
     }
     public function do_index()
     {
@@ -85,34 +85,42 @@ class Main
     }
     public function show()
     {
-        $data=MyBusiness::G()->getData(C::GET('id',0));
-        C::Show(get_defined_vars(),'show');
+        $data = MyBusiness::G()->getData(C::GET('id', 0));
+        C::Show(get_defined_vars(), 'show');
     }
     public function do_show()
     {
-        MyBusiness::G()->updateData(C::POST('id',0),$_POST);
+        MyBusiness::G()->updateData(C::POST('id', 0), $_POST);
         $this->show();
     }
     public function delete()
     {
-        MyBusiness::G()->deleteData(C::GET('id',0));
+        MyBusiness::G()->deleteData(C::GET('id', 0));
         C::ExitRouteTo('');
     }
 }
 ///////////////
+    // 数据库表结构
+/*
+CREATE TABLE `test` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `content` varchar(250) NOT NULL COMMENT '内容',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDb AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4
+*/
     // 开始了
     $options = [
         'is_debug' => true,
             // 开启调试模式
         'skip_setting_file' => true,
             // 本例特殊，跳过设置文件 这个选项防止没有上传设置文件到服务器
-        'namespace_controller'=>"\\",   
+        'namespace_controller' => "\\",
             // 设置控制器的命名空间为根 使得 Main 类为入口
         'ext' => [
             EmptyView::class => true,
             // 我们用自带扩展 EmptyView 代替系统的 View
         ],
-        'setting'=>[
+        'setting' => [
             //数据库设置，根据你的需要修改
             'database_list' => [
                 [
@@ -123,15 +131,16 @@ class Main
                 ],
             ],
         ],
-        
     ];
-    $options['error_404'] = function(){(new Main)->index();}; //404 都给我跳转到首页
-    $flag=DuckPhp::RunQuickly($options);
+    $options['error_404'] = function () {
+        (new Main)->index();
+    }; //404 都给我跳转到首页
+    $flag = DuckPhp::RunQuickly($options);
     $data = DuckPhp::GetViewData();
     
     extract($data);
-    if(isset($view_head)){
-?>
+    if (isset($view_head)) {
+        ?>
         <html>
             <head>
             </head>
@@ -139,14 +148,14 @@ class Main
             <header style="border:1px gray solid;">I am Header</header>
 <?php
     }
-    if($view=='main_view'){
-?>
+    if ($view == 'main_view') {
+        ?>
         <h1>数据</h1>
         <table>
             <tr><th>ID</th><th>内容</th></tr>
 <?php
-        foreach($list as $v){
-?>
+        foreach ($list as $v) {
+            ?>
             <tr>
                 <td><?=$v['id']?></td>
                 <td><?=__h($v['content'])?></td>
@@ -154,8 +163,7 @@ class Main
                 <td><a href="<?=__url('delete?id='.$v['id'])?>">删除</a></td>
             </tr>
 <?php
-        }
-?>
+        } ?>
         </table>
         <?=$pager?>
         <h1>新增</h1>
@@ -165,7 +173,7 @@ class Main
         </form>
 <?php
     }
-    if($view=='show'){
+    if ($view == 'show') {
         ?>
         <h1>查看/编辑</h1>
         原内容
@@ -179,7 +187,7 @@ class Main
 
 <?php
     }
-    if(isset($view_foot)){
+    if (isset($view_foot)) {
         ?>
         <footer style="border:1px gray solid;">I am footer</footer>
     </body>

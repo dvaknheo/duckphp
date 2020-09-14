@@ -2,10 +2,10 @@
 [toc]
 ## 相关类和配置。
 
-- [Ext/DBManager](ref/Ext-DBManager.md) 管理数据库
-- [DB/DB](ref/DB-DB.md)
-    - 使用 [DB/DBAdvance](ref/DB-DBAdvance.md)
-    - 实现 [DB/DBInterface](ref/DB-DBInterface.md)
+- [DuckPhp\Ext\DbManager](ref/Ext-DbManager.md) 管理数据库
+- [DuckPhp\Db\Db](ref/Db-Db.md)
+    - 使用 [DuckPhp\Db\DbAdvance](ref/DB-DBAdvance.md)
+    - 实现 [DuckPhp\Db\DbInterface](ref/DB-DBInterface.md)
 
 ## 相关选项
 
@@ -46,6 +46,9 @@ DB
 
 例子 full/dbtest.php 演示了这些增删改查怎么用。
 
+```php
+
+```
 #### 示例
 使用数据库，在 设置里正确设置 database_list 这个数组，包含多个数据库配置
 然后在用到的地方调用 App::DB($tag=null) 得到的就是 DB 对象，用来做各种数据库操作。
@@ -132,12 +135,22 @@ DB_R() 则的对应第0 号数库 ,DB_W() 对应第一号数据库。
 ```php
 <?php
 use think\facade\Db;
+use DuckPhp\Ext\DBManager;
 use DuckPhp\DuckPhp;
 require_once('../vendor/autoload.php');
 
 $options=[];
-$options['override_class']='';      // 示例文件，不要被子类干扰。
-$options['skip_setting_file']=true; // 示例文件，不需要配置文件。
+$options['override_class']=App::class;
+$options['skip_setting_file']=true;// 不需要配置文件。
+
+class App extends DuckPhp
+{
+    public function _Db($tag)
+    {
+        return Db::class;
+    }
+}
+
 DuckPhp::RunQuickly($options,function(){
     Db::setConfig([
         'default'     => 'mysql',
@@ -151,11 +164,6 @@ DuckPhp::RunQuickly($options,function(){
             ]
         ]
     ]);
-    //就这句话了
-    DuckPhp::G()->setDBHandler(function(){return Db::class;});
-    $sql="select * from Users where true limit 1";
-    $data=DuckPhp::DB()::query($sql);
-    var_dump($data);
 });
 
 ```

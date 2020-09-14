@@ -23,7 +23,6 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
         'path_log' => 'logs',
         'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
         'log_prefix' => 'DuckPhpLog',
-        // 多文件系统。
     ];
     protected $path;
     
