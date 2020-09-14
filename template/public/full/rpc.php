@@ -9,8 +9,6 @@ use DuckPhp\DuckPhp;
 use DuckPhp\SingletonEx\SingletonEx;
 use DuckPhp\Ext\JsonRpcExt;
 
-use JsonRpc\CalcService as RemoteCalcService;
-
 class CalcService
 {
     use SingletonEx;
@@ -23,15 +21,18 @@ class Main
 {
     public function index()
     {
-        $t=CalcService::G()->add(1,2);
-        var_dump($t);
+        $t1=CalcService::G()->add(1,2);
+        
         
         CalcService::G(JsonRpcExt::Wrap(CalcService::class));
-        $t=CalcService::G()->add(3,4);
-        var_dump($t);
+        $t2 = CalcService::G()->add(3,4);
         
-        $t=RemoteCalcService::G()->add(5,6);
-        var_dump($t);
+        $t3 = \JsonRpc\CalcService::G()->add(5,6);
+echo <<<EOT
+本地调用 1 + 2 = $t1 <br />
+远程调用 3 + 4 = $t2 <br />
+远程调用 5 + 6 = $t3 <br />
+EOT;
         
         var_dump(DATE(DATE_ATOM));
     }
@@ -43,7 +44,7 @@ class Main
 }
 
 $options=[
-    'is_debug'=>true,
+    //'is_debug'=>true,
     'skip_setting_file'=>true,
     'namespace_controller'=>'\\',
     'ext'=> [
@@ -57,7 +58,7 @@ $options=[
 ];
 
 DuckPhp::RunQuickly($options,function(){
-    $url=DuckPhp::Domain().$_SERVER['SCRIPT_NAME'].'/json_rpc';
-    $ip=$_SERVER['SERVER_ADDR'].':'.$_SERVER['SERVER_PORT'];
+    $url = DuckPhp::Domain().$_SERVER['SCRIPT_NAME'].'/json_rpc';
+    $ip = $_SERVER['SERVER_ADDR'].':'.$_SERVER['SERVER_PORT'];
     JsonRpcExt::G()->options['jsonrpc_backend']=[$url,$ip];
 });
