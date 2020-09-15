@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 /**
- * DuckPHP
+ * DuckPhp
  * From this time, you never be alone~
  */
 require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE

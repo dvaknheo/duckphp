@@ -1,4 +1,8 @@
 <?php declare(strict_types=1);
+/**
+ * DuckPhp
+ * From this time, you never be alone~
+ */
 require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
 
 use DuckPhp\DuckPhp;
@@ -6,7 +10,7 @@ use DuckPhp\DuckPhp as C;  // Helper 都给我们省掉了
 use DuckPhp\DuckPhp as M;  // Helper 都给我们省掉了
 use DuckPhp\DuckPhp as V;  // Helper 都给我们省掉了
 use DuckPhp\Ext\EmptyView;
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonEx; // 可变单例模式
 
 //业务类， 还是带上吧。
 class MyBusiness

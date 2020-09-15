@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
-use DuckPhp\DuckPhp;
 use DuckPhp\Core\View;
+use DuckPhp\DuckPhp;
 
 require(__DIR__.'/../../autoload.php');  // @DUCKPHP_HEADFILE
 //// 这个例子极端点，没用任何类，全函数模式。
@@ -18,29 +18,29 @@ function RunByDuckPhp()
 
     $options['ext'][\DuckPhp\Ext\EmptyView::class] = true; // for AllViewData();
 
-    $flag=DuckPhp::RunQuickly($options,function(){
-            //404 处理
-            DuckPhp::G()->add404RouteHook(function(){
-                $path_info=DuckPhp::getPathInfo();
-                $path_info=ltrim($path_info,'/');
-                $path_info=empty($path_info)?'index':$path_info;
+    $flag = DuckPhp::RunQuickly($options, function () {
+        //404 处理
+        DuckPhp::G()->add404RouteHook(function () {
+            $path_info = DuckPhp::getPathInfo();
+            $path_info = ltrim($path_info, '/');
+            $path_info = empty($path_info)?'index':$path_info;
                 
-                $post_prefix=!empty($_POST)?'do_':'';
-                $callback="action_{$post_prefix}{$path_info}";
+            $post_prefix = !empty($_POST)?'do_':'';
+            $callback = "action_{$post_prefix}{$path_info}";
                 
-                if(is_callable($callback)){
-                    ($callback)();
-                    return true;
-                }
-                action_index();
+            if (is_callable($callback)) {
+                ($callback)();
                 return true;
-            });
+            }
+            action_index();
+            return true;
         });
+    });
     return $flag;
 }
-function POST($k,$v=null)
+function POST($k, $v = null)
 {
-    return DuckPhp::POST($k,$v);
+    return DuckPhp::POST($k, $v);
 }
 if (!function_exists('__show')) {
     function __show(...$args)
@@ -56,11 +56,11 @@ function get_data()
 }
 function add_data($content)
 {
-   $_SESSION['content'] = $content;
+    $_SESSION['content'] = $content;
 }
 function update_data($content)
 {
-   $_SESSION['content'] = $content;
+    $_SESSION['content'] = $content;
 }
 function delete_data()
 {
@@ -74,11 +74,11 @@ function action_index()
     $data['url_add'] = __url('add');
     $data['url_edit'] = __url('edit');
     
-    $token =$_SESSION['token'] = md5(''.mt_rand());
+    $token = $_SESSION['token'] = md5(''.mt_rand());
     
     $data['url_del'] = __url('del?token='.$token);
 
-    __show($data,'index');
+    __show($data, 'index');
 }
 function action_add()
 {
@@ -95,8 +95,8 @@ function action_edit()
 }
 function action_del()
 {
-    $old_token =$_SESSION['token'];
-    $new_token =$_GET['token'];
+    $old_token = $_SESSION['token'];
+    $new_token = $_GET['token'];
     $flag = ($old_token === $new_token)?true:false;
     if ($flag) {
         unset($_SESSION['content']);
@@ -124,15 +124,15 @@ function action_do_add()
 ////////////////////////////////////
 session_start();
 $flag = RunByDuckPhp();
-if(!$flag){
+if (!$flag) {
     // 我们 404 了，返回吧
 }
 extract(DuckPhp::getViewData());
 
 error_reporting(error_reporting() & ~E_NOTICE);
 
-if(isset($view_head)){
-?>
+if (isset($view_head)) {
+    ?>
 <!doctype html>
 <html>
  <meta charset="UTF-8">
@@ -146,12 +146,12 @@ if(isset($view_head)){
 	<div style="border:1px red solid;">
 <?php
 }
-if($view==='index'){
-?>
+if ($view === 'index') {
+    ?>
 	<h1>首页</h1>
-<?php 
+<?php
     if ($content === '') {
-?>
+        ?>
 	还没有内容，
 	<a href="<?=$url_add?>">添加内容</a>
 <?php
@@ -162,12 +162,11 @@ if($view==='index'){
 	<a href="<?=$url_edit?>">编辑内容</a>
 	<a href="<?=$url_del?>">删除内容（已做GET安全处理）</a>
 <?php
-    }
-?>
+    } ?>
 <?php
 }
-if($view==='add'){
-?>
+if ($view === 'add') {
+    ?>
 	<h1>添加</h1>
 	<form method="post" >
 		<div><textarea name="content"></textarea></div>
@@ -175,8 +174,8 @@ if($view==='add'){
 	</form>
 <?php
 }
-if($view==='edit'){
- ?>
+if ($view === 'edit') {
+    ?>
 	编辑
 	<form method="post">
 		<div><textarea name="content"><?=$content?></textarea></div>
@@ -184,15 +183,15 @@ if($view==='edit'){
 	</form>
 <?php
 }
-if($view==='dialog'){ ?>
-	<?php if (!($msg??false)) {?>已经完成<?php } else {
-        echo $msg;
-    } ?> <a href="<?=$url_back?>">返回主页</a>
+if ($view === 'dialog') { ?>
+	<?php if (!($msg ?? false)) {?>已经完成<?php } else {
+    echo $msg;
+} ?> <a href="<?=$url_back?>">返回主页</a>
 <?php
 }
 
-if(isset($view_foot)){
-?>
+if (isset($view_foot)) {
+    ?>
 	<hr />
 	</div>
 </fieldset>

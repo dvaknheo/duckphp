@@ -1,4 +1,8 @@
-<?php
+<?php declare(strict_types=1);
+/**
+ * DuckPhp
+ * From this time, you never be alone~
+ */
 require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
 use DuckPhp\DuckPhp;
 
@@ -8,29 +12,29 @@ class BaseApi
 }
 
 $options = [
-    'is_debug'=>true,
-    'skip_setting_file'=>true,
-    'override_class'=>'',
-    'ext'=>[
+    'is_debug' => true,
+    'skip_setting_file' => true,
+    'override_class' => '',
+    'ext' => [
         'DuckPhp\\Ext\\RouteHookApiServer' => true,
     ],
-    'api_class_base'=>'BaseApi', 
-    'api_class_prefix'=>'Api_',
+    'api_class_base' => 'BaseApi',
+    'api_class_prefix' => 'Api_',
 ];
 
 DuckPhp::RunQuickly($options);
 ////
 /// 后面是业务代码
-// 这里自己加 api 
+// 这里自己加 api
 class API_test extends BaseApi
 {
     public function foo()
     {
         return DATE(DATE_ATOM);
     }
-    public function foo2($a,$b)
+    public function foo2($a, $b)
     {
-        return [$a+$b, DATE(DATE_ATOM)];
+        return [$a + $b, DATE(DATE_ATOM)];
     }
 }
 ////////////////

@@ -1,10 +1,6 @@
 <?php
 require_once(__DIR__.'/../autoload.php');
-function getDescs()
-{
-    
-    return json_decode(file_get_contents(__DIR__ . '/../doc/options-desc.json'),true);
-}
+// 自动化文档脚本
 
 GenOptionsGenerator::G()->init([])->run();
 var_dump(DATE(DATE_ATOM));
@@ -25,7 +21,6 @@ class GenOptionsGenerator
     }
     public function run()
     {
-
         WrapFileAction(__DIR__ . '/../template/app/System/App.php',function($content){
             $data=$this->getOptionStringForApp();
             
@@ -34,38 +29,16 @@ class GenOptionsGenerator
             $content=SliceReplace($content, $data, $str1, $str2);
             return $content;
         });
-        WrapFileAction(__DIR__ . '/../doc/ref/index.md',function($content){
-            $options=$this->getAllOptions();
-            $data=$this->genMdBySort($options);
-            
-            $str1="@forscript genoptions.php#options-md-alpha\n";
-            $str2="\n@forscript end";
-            $content=SliceReplace($content, $data, $str1, $str2);
-            
-            $data=$this->genMdByClass($options);
-            $str1="@forscript genoptions.php#options-md-class\n";
-            $str2="\n@forscript end";
-            $content=SliceReplace($content, $data, $str1, $str2);
-            
-            return $content;
-        });
-        WrapFileAction(__DIR__ . '/../doc/tutorial-general.md',function($content){
-            $file="template/public/index.php";
-            $content=replaceData($content,$file);
-            $file="template/app/System/App.php";
-            $content=replaceData($content,$file);
-            $str1="        // @autogen by tests/genoptions.php\n";
-            $str2="        // @autogen end\n";
-            $content=SliceReplace($content, "// 【省略选项注释】\n", $str1, $str2);
-            
-            return $content;
-        });
-
+        $docs=GetAllDocFile();
+        foreach($docs as $file){
+            WrapFileAction($file,'replaceData');
+        }
+        
     }
     public function diff()
     {
         $options=$this->getAllOptions();
-        $desc=getDescs();
+        $desc=DataProvider::G()->getDescs();
         var_export(array_diff(array_keys($options),array_keys($desc)));
         var_export(array_diff(array_keys($desc),array_keys($options)));
     }
@@ -138,12 +111,12 @@ EOT;
             $ret[]=$str;
         }
         return implode("",$ret);    }
-    function getAllOptions()
+    public function getAllOptions()
     {
         $classes=DataProvider::G()->getAllComponentClasses();
         $ext_classes=DataProvider::G()->getAviableExtClasses();
         $default_classes=DataProvider::G()->getDefaultComponentClasses();
-        $desc=getDescs();
+        $desc=DataProvider::G()->getDescs();
         $ret=[];
         foreach($classes as $class){
             $options=(new $class())->options;
@@ -169,7 +142,7 @@ EOT;
     }
     protected function getDefaultOptionsString($input)
     {
-        $desc=getDescs();
+        $desc=DataProvider::G()->getDescs();
         $data=[];
         foreach($input as $option => $attrs) {
             if($attrs['solid']){ continue; }
@@ -267,6 +240,14 @@ class DataProvider
             'path_namespace',
         ];
     }
+    public function getDescs()
+    {
+        static $cache;
+        if(!isset($cache)){
+            $cache=json_decode(file_get_contents(__DIR__ . '/../doc/options-desc.json'),true);
+        }
+        return $cache;
+    }
     public function getAviableExtClasses()
     {
         $default=$this->getDefaultComponentClasses();
@@ -357,49 +338,56 @@ function SliceReplace($data, $replacement, $str1, $str2, $is_outside = false, $w
     
     return substr_replace($data, $replacement, $pos_begin, $pos_end - $pos_begin);
 }
-function replaceData($data,$file)
+function replaceData($content)
 {
     $dir=__DIR__.'/../';
-    $content=file_get_contents($dir.$file);
-
-    $str1="File: `$file`\n\n```php\n";
-    $str2="\n```\n";
-    $replacement = $content;
-    $data=SliceReplace($data, $replacement, $str1, $str2);
     
-    return $data;
-}
-
-return ;
-
-//*
-$data=file_get_contents("README.md");
-$file="template/public/helloworld.php";
-$data=replaceData($data,$file);
-$file="template/public/demo.php";
-$data=replaceData($data,$file);
-file_put_contents("README.md",$data);
-//*/
-
-
-$data=file_get_contents("doc/tutorial-general.md");
-$file="template/public/index.php";
-$data=replaceData($data,$file,$dir='');
-$file="template/app/System/App.php";
-$data=replaceData($data,$file,$dir='');
-
+    if(false !== strpos($content,'@forscript')){
+        $options=GenOptionsGenerator::G()->getAllOptions();
+        $data=GenOptionsGenerator::G()->genMdBySort($options);
+        
+        $str1="@forscript genoptions.php#options-md-alpha\n";
+        $str2="\n@forscript end";
+        $content=SliceReplace($content, $data, $str1, $str2);
+        
+        $data=GenOptionsGenerator::G()->genMdByClass($options);
+        $str1="@forscript genoptions.php#options-md-class\n";
+        $str2="\n@forscript end";
+        $content=SliceReplace($content, $data, $str1, $str2);
+    }
+    
+    
+    $flag=preg_match_all('/File: `([^`]+)`/',$content,$m);
+    $files=$flag ? $m[1]:[];
+    foreach($files as $file){
+        $replacement=file_get_contents($dir.$file);
+        if($file==='template/app/System/App.php'){
             $str1="        // @autogen by tests/genoptions.php\n";
             $str2="        // @autogen end\n";
-$data=replaceData($data,$file);
+            $replacement=SliceReplace($replacement, "// 【省略选项注释】\n", $str1, $str2);
+        }
+        
 
-file_put_contents("doc/tutorial-general.md",$data);
-
-
-
-//foo1("xx1",function($data){ return replaceData($data,$file); }
+        $str1="File: `$file`\n\n```php\n";
+        $str2="\n```\n";
+        $content=SliceReplace($content, $replacement, $str1, $str2);
+    }
+    
+    return $content;
+}
 function WrapFileAction($file,$callback)
 {
     $data=file_get_contents($file);
     $data=$callback($data,$file);
     file_put_contents($file,$data);
+}
+function GetAllDocFile()
+{
+    $source=realpath(__DIR__.'/../doc/');
+    $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
+    $iterator = new \RecursiveIteratorIterator($directory);
+    $it=new \RegexIterator($iterator,'/\.md$/', RegexIterator::MATCH);
+    $ret=\iterator_to_array($it, false);
+    array_unshift($ret,realpath(__DIR__.'/../README.md'));
+    return $ret;
 }

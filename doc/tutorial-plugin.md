@@ -35,7 +35,7 @@ AppPluginTrait 的默认选项
         'plugin_path_namespace' => null,
         'plugin_namespace' => null,
         
-        'plugin_routehook_position' => 'append-outter', // 路由狗子位置
+        'plugin_routehook_position' => 'append-outter', // 路由钩子位置
         
         'plugin_path_conifg' => 'config',            //路径
         'plugin_path_view' => 'view',         // view 

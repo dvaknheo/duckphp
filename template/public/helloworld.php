@@ -1,4 +1,8 @@
-<?php
+<?php declare(strict_types=1);
+/**
+ * DuckPhp
+ * From this time, you never be alone~
+ */
 require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
 
 class Main
@@ -8,8 +12,8 @@ class Main
         echo "hello world";
     }
 }
-$options=[
-    'namespace_controller'=>"\\",   // 本例特殊，设置控制器的命名空间为根
-    'skip_setting_file'=>true,      // 本例特殊，跳过配置文件
+$options = [
+    'namespace_controller' => "\\",   // 本例特殊，设置控制器的命名空间为根
+    'skip_setting_file' => true,      // 本例特殊，跳过配置文件
 ];
 \DuckPhp\DuckPhp::RunQuickly($options);
