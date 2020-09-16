@@ -81,6 +81,7 @@ class App extends ComponentBase
     protected $core_options = [
         'default_exception_do_log' => true,
         'default_exception_self_display' => true,
+        'close_resource_at_output' => false,
     ];
     public function __construct()
     {
@@ -138,7 +139,7 @@ class App extends ComponentBase
     {
         $this->beforeShowHandlers[] = $handler;
     }
-    public function removeBeforeOutputHandler($handler)
+    public function removeBeforeShowHandler($handler)
     {
         $this->beforeShowHandlers = array_filter($this->beforeShowHandlers, function ($v) use ($handler) {
             return $v != $handler;

@@ -1,6 +1,98 @@
 v1.2.6 变更
 1 支持 windows
 2 架构更新， 原先的 Service 重命名为 Business 导致模板目录变更
+3 更新测试套件
+4 规范函数名字里的缩写词，统一用大写开头全小写形式， 如 URL => Url
+5 有了部分自动文档脚本。
+6 添加了事件系统。
+
+代码变更
+DuckPhp\Core\App
+    core_options
+        有了自己的核心配置（但你不必动用他们
+    XCall
+        添加 XCall
+    ThrowOn
+        ThrowOn 方法重写
+    Cache
+        添加了 Cache 类
+    Db, Event
+        DB_R ,DB_W 改为 DbForRead,
+    Event
+        添加了事件系统
+    Show()
+        调整
+    Route()
+        添加了获取 Route 类的代理方法
+    SG() => SuperGlobal()
+        引发了其他类一些变化
+    GET(),POST()
+        从 Helper实现变成 App实现。
+DuckPhp\Core\AutoLoader
+
+    支持windows
+DuckPhp\Core\ComponentBase
+
+    内嵌 SingletonEx 实现
+    支持windows
+DuckPhp\Core\Kernel
+
+    默认命名空间改为 LazyToChange
+    onInit() 等有同名属性接挂
+DuckPhp\Core\Route
+    'controller_class_postfix' => '',
+    'controller_enable_slash' => false,
+    'controller_path_ext' => '',
+DuckPhp\Core\ThrowOn
+
+    已经删除
+DuckPhp\Core\View
+
+    尝试严格化
+    添加 getViewData
+DuckPhp\DuckPhp
+
+    不再调用扩展类的方法
+DuckPhp\Ext\Cache
+
+    新的空 cache 类
+DuckPhp\Ext\DbManager
+
+    重写以化简 DbManager 类，现在是和 DuckPhp\Db\Db 强相关的类。
+    要替换默认 Db 类，请重写 Db 方法。
+
+DuckPhp\Ext\EventManager
+
+    新增事件系统
+DuckPhp\Ext\PulginForSwooleHttpd
+
+    已移除，未来在其他附属工程里添加
+DuckPhp\Ext\RedisCache
+
+    从 RedisSimpleCache 重写
+DuckPhp\Ext\RedisManager
+
+    调整选项
+DuckPhp\Ext\RouteHookApiServer
+
+    新增API服务器路由钩子。（不够成熟，但可用）
+DuckPhp\Ext\RouteHookPathInfoByGet
+
+    重命名自 RouteHookOneFileMode 并且默认内置
+    
+DuckPhp\Ext\StritCheck
+
+    重写并不再需要辅助类
+DuckPhp\HttpServer\HttpServer
+
+    从Core 中移出，完成 windows 支持
+DuckPhp\SingletoEx\SingletoEx
+
+    从Core 中移出，成为孤立的类
+DuckPhp\ThrowOn\ThrowOn
+
+    从Core 中移出，成为孤立的类
+    
 v1.2.5 变更
 最大的不兼容变更是 Duckhp\App 入口类重命名成了 DuckPhp\DuckPhp 类
 DuckPhp\Core\App

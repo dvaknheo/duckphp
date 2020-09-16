@@ -24,6 +24,7 @@ class DuckPhp extends App
     protected $core_options = [
         'default_exception_do_log' => true,
         'default_exception_self_display' => true,
+        'close_resource_at_output' => false,
         'ext' => [
             DbManager::class => true,
             RouteHookPathInfoByGet::class => true,
