@@ -83,7 +83,7 @@ trait Kernel
     {
         // keep me for callback
     }
-    protected function initOptions($options = [])
+    protected function initOptions(array $options)
     {
         $this->options = array_replace_recursive($this->options, $options);
         if (empty($this->options['path'])) {
