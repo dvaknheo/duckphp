@@ -39,12 +39,11 @@ php-cs-fixer 2.16.4
 phpstan 0.12.35
 phpunit 9.2.0  // 不是 phpunit 9.3 版哦
 
-## 文档的生成
+## 文档例子，选项重新的生成
 
-tests/genref 可以生成 doc 文档。
 
 ```
-phpunit tests/genref.php
+phpunit tests/genoptions.php
 ```
 svg 架构图形生成
 ```

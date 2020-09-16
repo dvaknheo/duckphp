@@ -1,3 +1,6 @@
+v1.2.6 变更
+1 支持 windows
+2 架构更新， 原先的 Service 重命名为 Business 导致模板目录变更
 v1.2.5 变更
 最大的不兼容变更是 Duckhp\App 入口类重命名成了 DuckPhp\DuckPhp 类
 DuckPhp\Core\App
