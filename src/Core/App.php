@@ -86,7 +86,7 @@ class App extends ComponentBase
     public function __construct()
     {
         parent::__construct();
-        $this->options = array_merge(static::$options_default, $this->core_options, $this->options);
+        $this->options = array_merge_recursive(static::$options_default, $this->core_options, $this->options);
         unset($this->core_options); // not use again;
         $this->hanlder_for_exception_handler = [static::class,'set_exception_handler'];
         $this->hanlder_for_exception = [static::class,'OnDefaultException'];
