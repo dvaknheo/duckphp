@@ -17,7 +17,10 @@ class MyCodeCoverage
 
     public static function G($object=null)
     {
-        //Simplist
+        if (defined('__SINGLETONEX_REPALACER')) {
+            $callback = __SINGLETONEX_REPALACER;
+            return ($callback)(static::class, $object);
+        }
         static $_instance;
         $_instance=$object?:($_instance??new static);
         return $_instance;
