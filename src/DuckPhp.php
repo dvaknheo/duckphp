@@ -18,7 +18,7 @@ use DuckPhp\Ext\RouteHookRouteMap;
 
 class DuckPhp extends App
 {
-    const VERSION = '1.2.6';
+    const VERSION = '1.2.7-dev';
     
     //@override
     protected $core_options = [

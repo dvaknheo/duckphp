@@ -7,8 +7,8 @@ require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
 
 // 这几项是在子类里无法更改的
 $options = [
-//    'use_autoloader' => true,
-    // 使用 DuckPhp\AutoLoader 加载器，你可以用composer
+//    'use_autoloader' => true,                     //@DUCKPHP_DELETE
+    // 使用 DuckPhp\AutoLoader 加载器，你可以用composer //@DUCKPHP_DELETE
 //    'skip_plugin_mode_check' => false,
     // 跳过插件模式检查
 //    'handle_all_dev_error' => true,

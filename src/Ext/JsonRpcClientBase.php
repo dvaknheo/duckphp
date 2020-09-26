@@ -21,4 +21,18 @@ class JsonRpcClientBase extends ComponentBase
         $ret = JsonRpcExt::G()->callRPC($this->_base_class, $method, $arguments);
         return $ret;
     }
+    public function init(array $options, ?object $context = null)
+    {
+        if ($this->_base_class) {
+            return $this->_base_class->init($options, $context);
+        }
+        return parent::init($options, $context);
+    }
+    public function isInited(): bool
+    {
+        if ($this->_base_class) {
+            return $this->_base_class->isInited();
+        }
+        return parent::isInited();
+    }
 }
