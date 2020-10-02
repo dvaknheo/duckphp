@@ -9,6 +9,8 @@ use DuckPhp\Core\ComponentBase;
 
 class Route extends ComponentBase
 {
+    use Route_UrlManager;
+    
     const HOOK_PREPEND_OUTTER = 'prepend-outter';
     const HOOK_PREPEND_INNER = 'prepend-inner';
     const HOOK_APPPEND_INNER = 'append-inner';
@@ -66,52 +68,9 @@ class Route extends ComponentBase
         }
         return $instance->run();
     }
-    public static function Url($url = null)
+    public static function Route()
     {
-        return static::G()->_Url($url);
-    }
-    ////
-    public function _Url($url = null)
-    {
-        if ($this->url_handler) {
-            return ($this->url_handler)($url);
-        }
-        return $this->defaultUrlHandler($url);
-    }
-    public function defaultUrlHandler($url = null)
-    {
-        if (isset($url) && strlen($url) > 0 && substr($url, 0, 1) === '/') {
-            return $url;
-        }
-        
-        //get basepath.
-        $document_root = rtrim($this->document_root, '/');
-        $basepath = substr(rtrim($this->script_filename, '/'), strlen($document_root));
-        
-        /* something error ?
-        if (substr($basepath, -strlen('/index.php'))==='/index.php') {
-            $basepath=substr($basepath, 0, -strlen('/index.php'));
-        }
-        */
-        if ($basepath === '/index.php') {
-            $basepath = '/';
-        }
-        if ('' === $url) {
-            return $basepath;
-        }
-        if (isset($url) && '?' === substr($url, 0, 1)) {
-            $path_info = $this->path_info;
-            return $basepath.$path_info.$url;
-        }
-        if (isset($url) && '#' === substr($url, 0, 1)) {
-            $path_info = $this->path_info;
-            return $basepath.$path_info.$url;
-        }
-        // ugly.
-        $basepath = rtrim($basepath, '/');
-        $url = '/'.$url;
-        
-        return $basepath.$url;
+        return static::G();
     }
     public static function Parameter($key, $default = null)
     {
@@ -138,16 +97,6 @@ class Route extends ComponentBase
             $this->base_class = $this->namespace_prefix.$this->base_class;
         }
     }
-    
-    public function setUrlHandler($callback)
-    {
-        $this->url_handler = $callback;
-    }
-    public function getUrlHandler()
-    {
-        return $this->url_handler;
-    }
-    
     public function bindServerData($server)
     {
         $this->script_filename = $server['SCRIPT_FILENAME'] ?? '';
@@ -398,5 +347,67 @@ class Route extends ComponentBase
         $ret .= var_export($this->post_run_hook_list, true);
         $ret .= "\n-- post run --\n";
         return $ret;
+    }
+}
+trait Route_URLManager
+{
+    //$url_handler;
+    //$this->document_root
+    //$this->script_filename
+    //path_info
+    
+    public static function Url($url = null)
+    {
+        return static::G()->_Url($url);
+    }
+    public function _Url($url = null)
+    {
+        if ($this->url_handler) {
+            return ($this->url_handler)($url);
+        }
+        return $this->defaultUrlHandler($url);
+    }
+    public function defaultUrlHandler($url = null)
+    {
+        if (isset($url) && strlen($url) > 0 && substr($url, 0, 1) === '/') {
+            return $url;
+        }
+        
+        //get basepath.
+        $document_root = rtrim($this->document_root, '/');
+        $basepath = substr(rtrim($this->script_filename, '/'), strlen($document_root));
+        
+        /* something error ?
+        if (substr($basepath, -strlen('/index.php'))==='/index.php') {
+            $basepath=substr($basepath, 0, -strlen('/index.php'));
+        }
+        */
+        if ($basepath === '/index.php') {
+            $basepath = '/';
+        }
+        if ('' === $url) {
+            return $basepath;
+        }
+        if (isset($url) && '?' === substr($url, 0, 1)) {
+            $path_info = $this->path_info;
+            return $basepath.$path_info.$url;
+        }
+        if (isset($url) && '#' === substr($url, 0, 1)) {
+            $path_info = $this->path_info;
+            return $basepath.$path_info.$url;
+        }
+        // ugly.
+        $basepath = rtrim($basepath, '/');
+        $url = '/'.$url;
+        
+        return $basepath.$url;
+    }
+    public function setUrlHandler($callback)
+    {
+        $this->url_handler = $callback;
+    }
+    public function getUrlHandler()
+    {
+        return $this->url_handler;
     }
 }

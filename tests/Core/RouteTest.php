@@ -14,7 +14,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->setPathInfo('x/z');
         Route::G()->script_filename=__DIR__.'/aa/index.php';
         $t= Route::URL('aaa');
-
+        $z=Route::Route();
         
         $this->hooks();
         //Main
