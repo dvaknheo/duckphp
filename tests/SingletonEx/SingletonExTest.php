@@ -11,7 +11,9 @@ class SingletonExTest extends \PHPUnit\Framework\TestCase
         
         SingletonExObject::G();
         SingletonExObject::G(new SingletonExObject());
+        $t=\MyCodeCoverage::G();
         define('__SINGLETONEX_REPALACER',SingletonExObject::class.'::CreateObject');
+        \MyCodeCoverage::G($t);
         SingletonExObject::G();
         
         \MyCodeCoverage::G()->end();

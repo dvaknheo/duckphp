@@ -54,9 +54,8 @@ class JsonRpcExt extends ComponentBase
     public static function _Wrap($class)
     {
         $class = is_object($class)?get_class($class):$class;
-        $base = new JsonRpcClientBase();
-        $base->_base_class = $class;
-        return $base;
+        $base = (new JsonRpcClientBase())->setJsonRpcClientBase($class);
+        return $class::G($base);
     }
     
     public function _autoload($class): void

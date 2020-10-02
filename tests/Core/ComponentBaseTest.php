@@ -15,7 +15,9 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
 
         ComponentBaseObject::G();
         ComponentBaseObject::G(new ComponentBaseObject());
+        $t=\MyCodeCoverage::G();
         define('__SINGLETONEX_REPALACER',ComponentBaseObject::class.'::CreateObject');
+        \MyCodeCoverage::G($t);
         ComponentBaseObject::G();
         
         \MyCodeCoverage::G()->end();

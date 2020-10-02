@@ -62,7 +62,9 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
 
 
         ExceptionManager::G(new ExceptionManager());
+        $t=\MyCodeCoverage::G();
         define('__SINGLETONEX_REPALACER',ExceptionAutoLoaderObject::class.'::CreateObject');
+        \MyCodeCoverage::G($t);
         ExceptionManager::G();
         
         \MyCodeCoverage::G()->end();

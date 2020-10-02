@@ -69,7 +69,9 @@ class AutoLoaderTest extends \PHPUnit\Framework\TestCase
 
         AutoLoader::G();
         AutoLoader::G(new AutoLoader());
+        $t = \MyCodeCoverage::G();
         define('__SINGLETONEX_REPALACER',AutoLoaderObject::class.'::CreateObject');
+        \MyCodeCoverage::G($t);
         AutoLoader::G();
         
         \MyCodeCoverage::G()->end();

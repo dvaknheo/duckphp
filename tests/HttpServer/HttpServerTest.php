@@ -27,7 +27,9 @@ HttpServerParent::G()->isInited();
 
         echo HttpServerParent::G()->getPid();
         HttpServerParent::G()->close();
+        $t=\MyCodeCoverage::G();
         define('__SINGLETONEX_REPALACER',HttpServerParent::class.'::CreateObject');
+        \MyCodeCoverage::G($t);
         HttpServerParent::G();
         echo "zzzzzzzzzzzzzzzzzzzzzzzz";
         \MyCodeCoverage::G()->end();

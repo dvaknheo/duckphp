@@ -10,10 +10,15 @@ use DuckPhp\Ext\JsonRpcExt;
 
 class JsonRpcClientBase extends ComponentBase
 {
-    public $_base_class = null;
+    protected $_base_class = null;
 
     public function __construct()
     {
+    }
+    public function setJsonRpcClientBase($class)
+    {
+        $this->_base_class = $class;
+        return $this;
     }
     public function __call($method, $arguments)
     {
@@ -24,14 +29,14 @@ class JsonRpcClientBase extends ComponentBase
     public function init(array $options, ?object $context = null)
     {
         if ($this->_base_class) {
-            return $this->_base_class->init($options, $context);
+            JsonRpcExt::G()->callRPC($this->_base_class, __FUNCTION__, func_get_args());
         }
         return parent::init($options, $context);
     }
     public function isInited(): bool
     {
         if ($this->_base_class) {
-            return $this->_base_class->isInited();
+            JsonRpcExt::G()->callRPC($this->_base_class, __FUNCTION__, func_get_args());
         }
         return parent::isInited();
     }

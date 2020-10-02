@@ -30,7 +30,7 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
 
         ];
         StrictCheck::G(new StrictCheck_FakeObject);
-
+        
         DuckPhp::G()->init($dn_options);
 
         $options=[
@@ -45,7 +45,10 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
             ],
 
         ];
+        
+        $t=\MyCodeCoverage::G();
         StrictCheck::G(new StrictCheck)->init($options, DuckPhp::G());
+        \MyCodeCoverage::G($t);
         Route::G()->bind('foo');
 
         DuckPhp::G()->run();

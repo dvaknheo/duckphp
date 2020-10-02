@@ -1,5 +1,7 @@
 <?php 
 namespace tests\DuckPhp\Ext;
+
+use DuckPhp\Core\ComponentBase;
 use DuckPhp\Ext\JsonRpcClientBase;
 use DuckPhp\Ext\JsonRpcExt;
 
@@ -9,10 +11,13 @@ class JsonRpcClientBaseTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(JsonRpcClientBase::class);
         
-        //code here
         JsonRpcExt::G(JsonRpcClientBaseJsonRpcExt::G());
-        $x=new JsonRpcClientBase();
-        $x->foo();
+        
+        JsonRpcExt::Wrap(JsonRpcClientBaseObject::class);
+        
+        JsonRpcClientBaseObject::G()->init([])->isInited();
+        JsonRpcClientBaseObject::G()->foo();
+        
         \MyCodeCoverage::G()->end();
         /*
         JsonRpcClientBase::G()->__call($method, $arguments);
@@ -30,4 +35,8 @@ class JsonRpcClientBaseJsonRpcExt extends JsonRpcExt
         var_dump(func_get_args());
         return;
     }
+}
+class JsonRpcClientBaseObject extends ComponentBase
+{
+    
 }
