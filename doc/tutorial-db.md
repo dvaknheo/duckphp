@@ -123,10 +123,12 @@ class DBModel extends BaseModel
 ```
 
 注意到配置是  database_list ,是支持多个数据库的。
+1.2.6 版本变更，你可以直接使用 database 配置。
+
 
 `M::DB($tag)` 的 $tag 对应 $setting\['database_list'\][$tag]。默认会得到最前面的 tag 的配置。
 
-DB_R() 则的对应第0 号数库 ,DB_W() 对应第一号数据库。
+DbForWrite() 则的对应第0 号数库 ,DbForRead() 对应第 1号数据库。
 
 你不必担心每次框架初始化会连接数据库。只有第一次调用 DuckPhp::DB() 的时候，才进行数据库类的创建。
 

@@ -2,14 +2,14 @@
 [toc]
 
 ## 简介
-总入口类
+总入口类。
 ## 依赖关系
 `DuckPhp\DuckPhp` 
-    1. 继承 [Core\App](Core-App.md)
-    2. 使用 [Ext\DBManager](Ext-DBManager.md)
-    3. 使用 [Ext\Pager](Ext-Pager.md)
-    4. 使用 [Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
-    5. 使用 [Ext\RouteHookPathInfoByGet](Ext-RouteHookPathInfoByGet.md)
+    1. 继承 [DuckPhp\Core\App](Core-App.md)
+    2. 使用 [DuckPhp\Ext\DBManager](Ext-DBManager.md)
+    3. 使用 [DuckPhp\Ext\Pager](Ext-Pager.md)
+    4. 使用 [DuckPhp\Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
+    5. 使用 [DuckPhp\Ext\RouteHookPathInfoByGet](Ext-RouteHookPathInfoByGet.md)
     
 
 ## 选项
@@ -27,7 +27,10 @@
     RouteHookPathInfoByGet::class => true,
     RouteHookRouteMap::class => true,
 ],
-
+## 说明
+DuckPhp 类只是弥补了 DuckPhp 缺失的方法。
+具体的方法在 Core\App 里
+主要流程在 Core\Kernel 里
 ## 公开方法
 
 
@@ -36,10 +39,7 @@
 
 * 下划线开始的公开方法被视为内部方法 *
 
-protected function initOptions()
 
-    重写这个方法
-    处理 `log_sql`，如果 log_sql 不为 false 则联立 OnQuery,
 
 public function _Pager($object = null)
 

@@ -3,7 +3,7 @@
 
 ## 简介
 
-伪组件 Db 类是DuckPhp 自带的数据库类。 是 App::Db() 和 M::Db() 的实现。
+`伪组件` Db 类是DuckPhp 自带的数据库类。 是 App::Db() 和 M::Db() 的实现。
 
 ## 选项
 
@@ -11,7 +11,7 @@
 
 public function init($options = [], $context = null)
 
-    虽然是组件类，只被 Db::CreateDbInstance 使用
+    初始化
 public function fetchAll($sql, ...$args)
 
     运行SQL并获得所有行
