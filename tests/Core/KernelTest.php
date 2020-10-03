@@ -38,7 +38,6 @@ class KernelTest extends \PHPUnit\Framework\TestCase
             'override_class'=>'\\'.KernelTestApp::class,
             'skip_fix_path_info'=>true,
         ];
-        
         $options['ext']=[
             'noclass'=>true,
             KernelTestObject::class=>false,
@@ -61,6 +60,7 @@ class KernelTest extends \PHPUnit\Framework\TestCase
             App::G()->onPrepare=function(){ echo "onPrepare!";};
             App::G()->onInit=function(){ echo "onInit!";};
             App::G()->onRun=function(){ echo "onRun!";};
+            App::G()->onAfterRun=function(){ echo "onAfterRun!";};
 
         });
         
@@ -78,7 +78,7 @@ echo "-------------------------------------\n";
         App::G()->run();
 
         try{
-                App::G()->options['skip_exception_check']=true;
+            App::G()->options['skip_exception_check']=true;
             Route::G()->bind('/exception');
             App::G()->run();
         }catch(\Throwable $ex){
@@ -128,7 +128,6 @@ echo "-------------------------------------\n";
         App::G()->replaceDefaultRunHandler($xfunc);
         App::G()->run();
         
-        $this->doFixPathinfo();
 
         ////
         RuntimeState::G()->toggleOutputed(false);
@@ -143,36 +142,6 @@ echo "-------------------------------------\n";
     return;
 
     }
-    protected function doFixPathinfo()
-    {
-        KernelTestApp::G()->init([]);
-        $serverData=[
-        ];
-        KernelTestApp::G()->fixPathInfo($serverData);
-        
-        $serverData=[
-            'PATH_INFO'=>'abc',
-        ];
-        KernelTestApp::G()->fixPathInfo($serverData);
-        $serverData=[
-            'REQUEST_URI'=>'/',
-            'SCRIPT_FILENAME'=>__DIR__ . '/index.php',
-            'DOCUMENT_ROOT'=>__DIR__,
-        ];
-        
-        KernelTestApp::G()->fixPathInfo($serverData);
-        
-        $serverData=[
-            'REQUEST_URI'=>'/abc/d',
-            'SCRIPT_FILENAME'=>__FILE__,
-            'DOCUMENT_ROOT'=>__DIR__,
-        ];
-        KernelTestApp::G()->fixPathInfo($serverData);
-        
-        
-    }
-
-
     protected function do404()
     {
         

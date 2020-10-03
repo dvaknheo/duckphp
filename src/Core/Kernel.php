@@ -49,18 +49,16 @@ trait Kernel
             
             'skip_404_handler' => false,
             'skip_exception_check' => false,
-            'skip_fix_path_info' => false,
             
             //// error handler ////
             'error_404' => null,          //'_sys/error-404',
             'error_500' => null,          //'_sys/error-500',
             'error_debug' => null,        //'_sys/error-debug',
-            
-            
         ];
     public $onPrepare;
     public $onInit;
     public $onRun;
+    public $onAfterRun;
     
     protected $default_run_handler = null;
     protected $error_view_inited = false;
@@ -226,6 +224,13 @@ trait Kernel
             return ($this->onRun)();
         }
     }
+    //for override
+    protected function onAfterRun()
+    {
+        if ($this->onAfterRun) {
+            return ($this->onAfterRun)();
+        }
+    }
     public function run(): bool
     {
         if ($this->default_run_handler) {
@@ -248,6 +253,7 @@ trait Kernel
             ExceptionManager::CallException($ex);
             $ret = true;
         }
+        $this->onAfterRun();
         $this->clear();
         return $ret;
     }
@@ -255,38 +261,12 @@ trait Kernel
     {
         RuntimeState::ReCreateInstance()->init($this->options, $this)->run();
         View::G()->reset();
-        
         $serverData = ($this->options['use_super_global'] ?? false) ? SuperGlobal::G()->_SERVER : $_SERVER;
-        if (!$this->options['skip_fix_path_info'] && PHP_SAPI != 'cli') {
-            $serverData = $this->fixPathInfo($serverData); // @codeCoverageIgnore
-        }
         Route::G()->bindServerData($serverData);
     }
     public function clear(): void
     {
         RuntimeState::G()->clear();
-    }
-    protected function fixPathInfo(&$serverData)
-    {
-        if (!empty($serverData['PATH_INFO'])) {
-            $serverData['PATH_INFO'] = $serverData['PATH_INFO'] ?? '';
-            return $serverData;
-        }
-        if (!isset($serverData['REQUEST_URI'])) {
-            $serverData['PATH_INFO'] = $serverData['PATH_INFO'] ?? '';
-            return $serverData;
-        }
-        $request_path = (string)parse_url($serverData['REQUEST_URI'], PHP_URL_PATH);
-        $request_file = substr($serverData['SCRIPT_FILENAME'], strlen($serverData['DOCUMENT_ROOT']));
-        
-        if ($request_file === '/index.php' && substr($request_path, 0, strlen($request_file)) !== '/index.php') {
-            $path_info = $request_path;
-        } else {
-            $path_info = substr($request_path, strlen($request_file));
-        }
-        
-        $serverData['PATH_INFO'] = $path_info;
-        return $serverData;
     }
     //main produce end
     

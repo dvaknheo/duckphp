@@ -22,6 +22,7 @@ class HelperTraitTest extends \PHPUnit\Framework\TestCase
         HelperTraitObject::Platform();
         HelperTraitObject::trace_dump();
         HelperTraitObject::var_dump($options);
+        HelperTraitObject::debug_log('...',['a'=>'b']);
         HelperTraitObject::Logger();
 
         try{

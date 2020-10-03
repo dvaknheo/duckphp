@@ -132,8 +132,41 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G(new Route())->init(['controller_enable_slash'=>true,'controller_path_ext'=>'.html']);
         Route::G()->defaultGetRouteCallback('/a.html');
         Route::G()->defaultGetRouteCallback('/a/b/');
+        
+        $this->doFixPathinfo();
         \MyCodeCoverage::G()->end();
         return;
+    }
+    protected function doFixPathinfo()
+    {
+        // 这里要扩展个 Route 类。
+        MyRoute::G(new MyRoute())->init([]);
+        $serverData=[
+        ];
+        MyRoute::G()->bindServerData($serverData);
+        
+        $serverData=[
+            'PATH_INFO'=>'abc',
+        ];
+        MyRoute::G()->bindServerData($serverData);
+        $serverData=[
+            'REQUEST_URI'=>'/',
+            'SCRIPT_FILENAME'=>__DIR__ . '/index.php',
+            'DOCUMENT_ROOT'=>__DIR__,
+        ];
+        
+        MyRoute::G()->bindServerData($serverData);
+        
+        $serverData=[
+            'REQUEST_URI'=>'/abc/d',
+            'SCRIPT_FILENAME'=>__FILE__,
+            'DOCUMENT_ROOT'=>__DIR__,
+        ];
+        MyRoute::G()->bindServerData($serverData);
+
+        MyRoute::G(new MyRoute())->init(['skip_fix_path_info'=>true]);
+        MyRoute::G()->bindServerData($serverData);
+
     }
     protected function foo2()
     {
@@ -246,6 +279,8 @@ class MyRoute extends Route
     {
         return $this->getMethodToCall(new $class,$method);
     }
+    
+    
 }
 
 }

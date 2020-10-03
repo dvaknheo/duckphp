@@ -29,6 +29,7 @@ class Route extends ComponentBase
             'controller_class_postfix' => '',
             'controller_enable_slash' => false,
             'controller_path_ext' => '',
+            'skip_fix_path_info' => false,
         ];
     //public input;
     public $request_method = '';
@@ -96,26 +97,43 @@ class Route extends ComponentBase
         if ($this->base_class && substr($this->base_class, 0, 1) === '~') {
             $this->base_class = $this->namespace_prefix.$this->base_class;
         }
+        $this->path_info = $_SERVER['PATH_INFO'] ?? '';
+        $this->request_method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
     }
     public function bindServerData($server)
     {
         $this->script_filename = $server['SCRIPT_FILENAME'] ?? '';
         $this->document_root = $server['DOCUMENT_ROOT'] ?? '';
         $this->request_method = $server['REQUEST_METHOD'] ?? 'GET';
-        if (isset($server['PATH_INFO'])) {
-            $this->path_info = $server['PATH_INFO'];
-        } elseif (PHP_SAPI === 'cli' && empty($this->path_info)) {
-            $argv = $server['argv'] ?? [];
-            if (count($argv) >= 2) {
-                $this->path_info = $argv[1];
-                array_shift($argv);
-                array_shift($argv);
-                $this->parameters = $argv;
-            }
-        }
+        //REQUEST_URI
+        //SCRIPT_FILENAME
         
+        $this->path_info = $this->fixPathInfo($server, $this->path_info);
         $this->has_bind_server_data = true;
         return $this;
+    }
+    protected function fixPathInfo($serverData, $default)
+    {
+        if ($this->options['skip_fix_path_info']) {
+            return $serverData['PATH_INFO'] ?? $default;
+        }
+
+        if (!empty($serverData['PATH_INFO'])) {
+            return $serverData['PATH_INFO'] ?? $default;
+        }
+        if (!isset($serverData['REQUEST_URI'])) {
+            return $serverData['PATH_INFO'] ?? $default;
+        }
+        $request_path = (string)parse_url($serverData['REQUEST_URI'], PHP_URL_PATH);
+        $request_file = substr($serverData['SCRIPT_FILENAME'], strlen($serverData['DOCUMENT_ROOT']));
+        
+        if ($request_file === '/index.php' && substr($request_path, 0, strlen($request_file)) !== '/index.php') {
+            $path_info = $request_path;
+        } else {
+            $path_info = substr($request_path, strlen($request_file));
+        }
+        
+        return $path_info;
     }
     public function bind($path_info, $request_method = 'GET')
     {
@@ -141,7 +159,7 @@ class Route extends ComponentBase
     public function run()
     {
         $this->beforeRun();
-        
+        Route::G()->bindServerData($_SERVER);
         foreach ($this->pre_run_hook_list as $callback) {
             $flag = ($callback)($this->path_info);
             if ($flag) {
@@ -279,7 +297,7 @@ class Route extends ComponentBase
             $this->route_error = 'can not call hidden method';
             return null;
         }
-        if ($this->request_method === 'POST' && $this->options['controller_prefix_post'] && method_exists($object, $this->options['controller_prefix_post'].$method)) {
+        if ($this->options['controller_prefix_post'] && $this->request_method === 'POST' && method_exists($object, $this->options['controller_prefix_post'].$method)) {
             $method = $this->options['controller_prefix_post'].$method;
         }
         if ($this->options['controller_methtod_for_miss']) {
@@ -349,7 +367,7 @@ class Route extends ComponentBase
         return $ret;
     }
 }
-trait Route_URLManager
+trait Route_UrlManager
 {
     //$url_handler;
     //$this->document_root

@@ -131,7 +131,6 @@ echo "-------------------------------------\n";
         
         $this->do_Core_Component();
         
-        $this->doFixPathinfo();
         
 App::Pager(Pager::G());
 App::PageNo();
@@ -191,34 +190,7 @@ App::PageHtml(123);
     return;
 
     }
-    protected function doFixPathinfo()
-    {
-        AppTestApp::G()->init([]);
-        $serverData=[
-        ];
-        AppTestApp::G()->fixPathInfo($serverData);
-        
-        $serverData=[
-            'PATH_INFO'=>'abc',
-        ];
-        AppTestApp::G()->fixPathInfo($serverData);
-        $serverData=[
-            'REQUEST_URI'=>'/',
-            'SCRIPT_FILENAME'=>__DIR__ . '/index.php',
-            'DOCUMENT_ROOT'=>__DIR__,
-        ];
-        
-        AppTestApp::G()->fixPathInfo($serverData);
-        
-        $serverData=[
-            'REQUEST_URI'=>'/abc/d',
-            'SCRIPT_FILENAME'=>__FILE__,
-            'DOCUMENT_ROOT'=>__DIR__,
-        ];
-        AppTestApp::G()->fixPathInfo($serverData);
-        
-        
-    }
+
     public function doSystemWrapper()
     {
         App::system_wrapper_get_providers();
@@ -296,9 +268,12 @@ App::PageHtml(123);
         App::G()->options['is_debug']=true;
         App::trace_dump();
         App::var_dump("OK");
+        App::debug_log("OK");
         App::G()->options['is_debug']=false;
         App::trace_dump();
         App::var_dump("OK");
+        App::debug_log("OK");
+
         App::G()->options['is_debug']=$flag;
         
         $sql="Select * from users";
@@ -429,7 +404,9 @@ App::PageHtml(123);
         AppTestApp::RunQuickly($options);
         
         AppTestApp::G()->options['error_404']='_sys/error-404';
-        AppTestApp::On404();        
+        AppTestApp::On404();
+        AppTestApp::G()->options['error_404']=function(){};
+        AppTestApp::On404();                
         AppTestApp2::RunQuickly([]);
     }
     protected function do_Core_Redirect()

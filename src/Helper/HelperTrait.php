@@ -37,6 +37,10 @@ trait HelperTrait
     {
         return App::var_dump(...$args);
     }
+    public static function debug_log($message, array $context = array())
+    {
+        return App::debug_log($message, $context);
+    }
     public static function ThrowOn($flag, $message, $code = 0, $exception_class = null)
     {
         return App::G()->_ThrowOn($flag, $message, $code, $exception_class);

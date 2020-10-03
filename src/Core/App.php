@@ -86,7 +86,7 @@ class App extends ComponentBase
     public function __construct()
     {
         parent::__construct();
-        $this->options = array_merge_recursive(static::$options_default, $this->core_options, $this->options);
+        $this->options = array_replace_recursive(static::$options_default, $this->core_options, $this->options);
         unset($this->core_options); // not use again;
         $this->hanlder_for_exception_handler = [static::class,'set_exception_handler'];
         $this->hanlder_for_exception = [static::class,'OnDefaultException'];
@@ -486,7 +486,6 @@ trait Core_Helper
     public function _Show($data = [], $view = '')
     {
         $this->onBeforeOutput();
-        
         $view = $view === '' ? Route::G()->getRouteCallingPath() : $view;
         return View::G()->_Show($data, $view);
     }
@@ -603,6 +602,17 @@ trait Core_Helper
     public static function Logger($object = null)
     {
         return Logger::G($object);
+    }
+    public static function debug_log($message, array $context = array())
+    {
+        return static::G()->_debug_log($message, $context);
+    }
+    public function _debug_log($message, array $context = array())
+    {
+        if ($this->options['is_debug']) {
+            return Logger::G()->debug($message, $context);
+        }
+        return false;
     }
     public static function Cache($object = null)
     {
