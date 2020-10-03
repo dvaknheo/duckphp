@@ -45,9 +45,9 @@ class GenOptionsGenerator
     public function getOptionStringForApp()
     {
         $options=$this->getAllOptions();
-        $str="// 脚本生成,下面是可用的默认选项\n";
+        $str="        // ---- 脚本生成,下面是可用的默认选项 ---- \n\n";
         $str.=$this->getDefaultOptionsString($options);
-        $str.="\n// 下面是默认使用的扩展 \n";
+        $str.="        // ---- 下面是默认未使用的扩展 ----\n\n";
         $str.=$this->getExtOptionsString($options);
         return $str;
     }
@@ -153,11 +153,16 @@ EOT;
                 $s=str_replace("\n",' ',$s);
             }
             //$data[$option]=$s;
-            $str="        // \$options['$option'] = {$s};\n            // ".($attrs['desc']??'') ."";
-            $classes=$attrs['class'];
+            $desc = ($attrs['desc']??'');
+                        $classes=$attrs['class'];
             $classes=array_filter($classes,function($v){return $v!='DuckPhp\\DuckPhp';});
-            $str.=" (".implode(", ",$classes) .")\n";
-            
+            $classes_desc =implode(", ",$classes);
+            $str=<<<EOT
+        // $desc ($classes_desc)
+        // \$options['$option'] = $s;
+
+
+EOT;            
             $data[$option]=$str; 
             
             if(empty($attrs['desc'])){
@@ -196,8 +201,9 @@ EOT;
                 }
                 $value=str_replace("\n"," ",var_export($v,true));
                 $str.=<<<EOT
+            // {$flag2}$comment
             {$flag}\$options[$var_option] = $value;
-                // {$flag2}$comment
+
 
 EOT;
             }

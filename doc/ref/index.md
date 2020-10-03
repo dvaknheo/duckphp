@@ -187,7 +187,7 @@ src
 +  'callable_view_skip_replace' => false,   
 
     callableview 可调用视图跳过默认视图替换   // [DuckPhp\Ext\CallableView](Ext-CallableView.md)
-+ ** 'close_resource_at_output' => true,  ** 
++ ** 'close_resource_at_output' => false,  ** 
 
     在输出前关闭资源（DB,Redis）   // [DuckPhp\Core\App](Core-App.md)
 + ** 'config_ext_files' => array ( ),  ** 
@@ -429,7 +429,7 @@ src
     跳过异常检查   // [DuckPhp\Core\App](Core-App.md)
 + ** 'skip_fix_path_info' => false,  ** 
 
-    跳过 PATH_INFO 修复   // [DuckPhp\Core\App](Core-App.md)
+    跳过 PATH_INFO 修复   // [DuckPhp\Core\Route](Core-Route.md)
 + ** 'skip_plugin_mode_check' => false,  ** 
 
     跳过插件模式检查   // [DuckPhp\Core\App](Core-App.md)
@@ -474,7 +474,7 @@ src
 
 @forscript genoptions.php#options-md-class
 + DuckPhp\Core\App
-    - 'close_resource_at_output' => true,
+    - 'close_resource_at_output' => false,
         在输出前关闭资源（DB,Redis）
     - 'default_exception_do_log' => true,
         错误的时候打开日志
@@ -508,8 +508,6 @@ src
         跳过404处理
     - 'skip_exception_check' => false,
         跳过异常检查
-    - 'skip_fix_path_info' => false,
-        跳过 PATH_INFO 修复
     - 'skip_plugin_mode_check' => false,
         跳过插件模式检查
     - 'use_autoloader' => true,
@@ -591,6 +589,8 @@ src
         命名空间
     - 'namespace_controller' => 'Controller',
         控制器的命名空间
+    - 'skip_fix_path_info' => false,
+        跳过 PATH_INFO 修复
 + DuckPhp\Core\RuntimeState
     - 'use_output_buffer' => false,
         使用 OB 函数缓冲数据
