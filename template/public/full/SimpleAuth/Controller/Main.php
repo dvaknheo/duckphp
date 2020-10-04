@@ -32,8 +32,8 @@ class Main
             C::Logger()->warning(''.(get_class($ex)).'('.$ex->getCode().'): '.$ex->getMessage());
             C::ExitRouteTo('login');
         });
-        if (!empty(C::SuperGlobal()->_POST)) {
-            $referer = C::SuperGlobal()->_SERVER['HTTP_REFERER'] ?? '';
+        if (!empty(C::POST)) {
+            $referer = C::SERVER('HTTP_REFERER','');
             $domain = C::Domain().'/';
             if (substr($referer, 0, strlen($domain)) !== $domain) {
                 SessionServiceException::ThrowOn(true, "CRSF", 419);
@@ -90,12 +90,15 @@ class Main
     }
     public function logout()
     {
-        $flag = SessionService::G()->checkCsrf(C::SuperGlobal()->_GET['_token'] ?? null);
+        $flag = SessionService::G()->checkCsrf(C::GET('_token'));
         SessionService::G()->logout();
         C::ExitRouteTo('index');
     }
     public function test()
     {
+        if( !C::IsDebug()){
+            return;
+        }
         $name = 'DKTest4';
         $user = UserService::G()->login(['name' => $name,'password' => '123456']);
         SessionService::G()->setCurrentUser($user);
@@ -107,7 +110,7 @@ class Main
     ////////////////////////////////////////////
     public function do_register()
     {
-        $post = C::SuperGlobal()->_POST;
+        $post = C::POST;
         try {
             $post['password'] = $post['password'] ?? '';
             $post['password_confirm'] = $post['password_confirm'] ?? '';
@@ -124,7 +127,7 @@ class Main
     }
     public function do_login()
     {
-        $post = C::SuperGlobal()->_POST;
+        $post = C::POST();
         try {
             $user = UserService::G()->login($post);
             SessionService::G()->setCurrentUser($user);
@@ -138,7 +141,7 @@ class Main
     }
     public function do_password()
     {
-        $post = C::SuperGlobal()->_POST;
+        $post = C::POST();
         
         $old_pass = $post['oldpassword'] ?? '';
         $new_pass = $post['newpassword'] ?? '';

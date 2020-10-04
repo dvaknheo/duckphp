@@ -122,7 +122,9 @@ public function setRouteCallingMethod($calling_method)
 public function dumpAllRouteHooksAsString()
 
     简单 dump 所有钩子
+public static function Route()
 
+    返回单例，用于 DuckPhp/Route 双兼容 RouteHook;
 
 ## 详解
 

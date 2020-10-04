@@ -93,7 +93,7 @@ class Db implements DbInterface
         $sth = $this->pdo->prepare($sql);
         $sth->execute($args);
         
-        $ret = $sth->fetchAll();
+        $ret = $sth->fetchAll(\PDO::FETCH_ASSOC);
         return $ret;
     }
     public function fetch($sql, ...$args)
@@ -108,7 +108,7 @@ class Db implements DbInterface
         
         $sth = $this->pdo->prepare($sql);
         $sth->execute($args);
-        $ret = $sth->fetch();
+        $ret = $sth->fetch(\PDO::FETCH_ASSOC);
         return $ret;
     }
     public function fetchColumn($sql, ...$args)
@@ -126,6 +126,43 @@ class Db implements DbInterface
         $ret = $sth->fetchColumn();
         return $ret;
     }
+    /**
+    protected $resultClass='stdClass';
+    public function setResultClass($resultClass)
+    {
+        $this->resultClass = $resultClass;
+    }
+    public function fetchObject($sql, ...$args)
+    {
+        if ($this->beforeQueryHandler) {
+            ($this->beforeQueryHandler)($this, $sql, ...$args);
+        }
+
+        if (count($args) === 1 && is_array($args[0])) {
+            $args = $args[0];
+        }
+
+        $sth = $this->pdo->prepare($sql);
+        $sth->execute($args);
+        $ret = $sth->fetchObject($this->resultClass);
+        return $ret;
+    }
+    public function fetchObjectAll($sql, ...$args)
+    {
+        if ($this->beforeQueryHandler) {
+            ($this->beforeQueryHandler)($this, $sql, ...$args);
+        }
+        if (count($args) === 1 && is_array($args[0])) {
+            $args = $args[0];
+        }
+
+        $sth = $this->pdo->prepare($sql);
+        $sth->execute($args);
+
+        $ret = $sth->fetchAll(PDO::FETCH_CLASS, $this->resultClass);
+        return $ret;
+    }
+    */
     public function execute($sql, ...$args)
     {
         if ($this->beforeQueryHandler) {

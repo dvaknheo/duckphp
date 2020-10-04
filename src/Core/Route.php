@@ -33,13 +33,10 @@ class Route extends ComponentBase
         ];
     //public input;
     public $request_method = '';
-    public $script_filename = '';
-    public $document_root = '';
 
     public $pre_run_hook_list = [];
     public $post_run_hook_list = [];
     
-    protected $url_handler = null;
     
     //input
     protected $path_info = '';
@@ -102,8 +99,7 @@ class Route extends ComponentBase
     }
     public function bindServerData($server)
     {
-        $this->script_filename = $server['SCRIPT_FILENAME'] ?? '';
-        $this->document_root = $server['DOCUMENT_ROOT'] ?? '';
+        $this->bindServerDataForUrl($server);
         $this->request_method = $server['REQUEST_METHOD'] ?? 'GET';
         //REQUEST_URI
         //SCRIPT_FILENAME
@@ -369,10 +365,11 @@ class Route extends ComponentBase
 }
 trait Route_UrlManager
 {
-    //$url_handler;
-    //$this->document_root
-    //$this->script_filename
-    //path_info
+    public $script_filename = '';
+    public $document_root = '';
+    
+    protected $url_handler = null;
+    //protected $path_info = '';
     
     public static function Url($url = null)
     {
@@ -427,5 +424,10 @@ trait Route_UrlManager
     public function getUrlHandler()
     {
         return $this->url_handler;
+    }
+    protected function bindServerDataForUrl($serverData)
+    {
+        $this->script_filename = $serverData['SCRIPT_FILENAME'] ?? '';
+        $this->document_root = $serverData['DOCUMENT_ROOT'] ?? '';
     }
 }
