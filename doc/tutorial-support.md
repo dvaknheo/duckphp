@@ -51,7 +51,7 @@ dot doc/duckphp.gv -T svg -O
 ```
 合并起来，需要手工性的重新合并
 ```
-phptests/genoptions.php && dot doc/duckphp.gv -T svg -O
+php tests/genoptions.php && dot doc/duckphp.gv -T svg -O
 
 ```
 

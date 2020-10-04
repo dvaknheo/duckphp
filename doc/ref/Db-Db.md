@@ -47,7 +47,15 @@ public function rowCount()
 public function lastInsertId()
     
     获得插入的ID.
+public function fetchObjectAll($sql, ...$args)
 
+    运行SQL并获得所有行(对象数组)
+public function fetchObject($sql, ...$args)
+
+    运行SQL并获得单一行(对象形式)
+public function setResultClass($class)
+
+    设置返回的类，配合 fetchObject fetchObjectAll 使用。
 ### DbAdvance 的方法
 
 public function quoteIn($array)

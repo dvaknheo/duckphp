@@ -126,7 +126,7 @@ class Db implements DbInterface
         $ret = $sth->fetchColumn();
         return $ret;
     }
-    /**
+    //*
     protected $resultClass='stdClass';
     public function setResultClass($resultClass)
     {
@@ -159,10 +159,10 @@ class Db implements DbInterface
         $sth = $this->pdo->prepare($sql);
         $sth->execute($args);
 
-        $ret = $sth->fetchAll(PDO::FETCH_CLASS, $this->resultClass);
+        $ret = $sth->fetchAll(\PDO::FETCH_CLASS, $this->resultClass);
         return $ret;
     }
-    */
+    //*/
     public function execute($sql, ...$args)
     {
         if ($this->beforeQueryHandler) {

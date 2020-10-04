@@ -22,7 +22,7 @@ class DbTest extends \PHPUnit\Framework\TestCase
         });
         echo $db->quote("'");
         $db->quote(["'"]);
-         $db->quote(new \stdClass);
+        $db->quote(new \stdClass);
         echo PHP_EOL;
         
         $sql="select * from Users limit 1";
@@ -52,23 +52,42 @@ class DbTest extends \PHPUnit\Framework\TestCase
         var_dump($ret);
         $db->rowCount();
         
+        ////[[[[
+        $db->setResultClass(DbTestUser::class);
+        $sql="select * from Users limit 1";
+        $x=$db->fetchObjectAll($sql);
+        $sql="select * from Users where username=:username";
+        $x=$db->fetchObjectAll($sql,['username'=>'aa']);
+
+        $sql="select * from Users limit 1";
+        $x=$db->fetchObject($sql);
+        $sql="select * from Users where username=:username";
+        $x=$db->fetchObject($sql,['username'=>'aa']);
+        
+        ////]]]]
+        
+        
         //code here
         $db->close($db);
         
         \MyCodeCoverage::G()->end();
         /*
-        $db->init($options=[], $context=null);
-        $db->CreateDbInstance($db_config);
-        $db->CloseDbInstance($db, $tag=null);
-        $db->check_connect();
-        $db->close();
-        $db->getPDO();
-        $db->quote($string);
-        $db->fetchAll($sql, ...$args);
-        $db->fetch($sql, ...$args);
-        $db->fetchColumn($sql, ...$args);
-        $db->execute($sql, ...$args);
+  `username` varchar(32) COLLATE utf8_bin NOT NULL,
+  `password` varchar(64) COLLATE utf8_bin NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  
         $db->rowCount();
         //*/
+    }
+}
+class DbTestUser
+{
+    public $username;
+    public $password;
+    public $created_at;
+    public function foo(){
+        return;
     }
 }

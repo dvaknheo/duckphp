@@ -62,13 +62,11 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
     扩展
 
 ### 开关配置
-'use_error_log_on_exception' => true,
 
-	记录错误 // 内核流程中未使用，但被 App 类使用。
 
 'use_flag_by_setting' => true,
 
-    从设置文件中再次重载 is_debug 和 platform
+    从设置文件中再次重载 is_debug 和 platform ,对应的设置选项是 duckphp_is_debug ，和 duckphp_platform
 'use_super_global' => true,
 
     使用 `SuperGlobal` 类处理超全局变量，关闭以节约微乎其微的性能。
