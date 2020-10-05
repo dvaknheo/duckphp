@@ -262,7 +262,7 @@ trait Kernel
         RuntimeState::ReCreateInstance()->init($this->options, $this)->run();
         View::G()->reset();
         $serverData = ($this->options['use_super_global'] ?? false) ? SuperGlobal::G()->_SERVER : $_SERVER;
-        Route::G()->bindServerData($serverData);
+        Route::G()->prepare($serverData);
     }
     public function clear(): void
     {

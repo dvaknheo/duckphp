@@ -52,4 +52,4 @@ B::G()->foo();
 
 SwooleHttpd 通过这个方法，实现了 协程单例。
 
-这个宏也可以用于特殊调试的场合
+这个宏也可以用于特殊调试的场合， 如 StrictCheck 就用到了 __SINGLETONEX_REPALACER

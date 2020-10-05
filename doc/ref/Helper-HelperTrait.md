@@ -17,6 +17,9 @@
 - Logger($object=null)
     返回Logger类。
     $object 是替换入的新的 Logger 类。
+
+- debug_log($message, $context=[])
+    测试状态 Log 数据。
     
 - trace_dump()
     显示调用堆栈
@@ -38,9 +41,4 @@
 
 HelperTrait 只有静态方法
 
-`ThrowOn()` 是来自 `Core/ThrowOn` 用于跑异常
-
 `__callStatic` 和 `GetExtendStaticMethodList`, `AssignExtendStaticMethod`, 是 来自 `Core/ExtendableStaticCallTrait`
-
-`G()` 是来自 `Core/SingletonEx` 用于跑异常
-

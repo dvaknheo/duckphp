@@ -36,7 +36,9 @@
 
     POST 的方法会在方法名前加前缀 do_
     如果找不到方法名，调用默认方法名。
+'skip_fix_path_info' => false,
 
+    修复默认没配置 PATH_INFO ，打开以节约性能
 ## 公开属性
 
 ## 公开方法
@@ -49,7 +51,7 @@ public function init(array $options, object $context = null)
 public static function RunQuickly(array $options=[], callable $after_init=null)
 
     快速方法，等同于 init([])->run();
-public function bindServerData($server)
+public function prepare($server)
 
     绑定 $_SERVER 数组
 public function bind($path_info, $request_method = 'GET')

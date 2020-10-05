@@ -81,9 +81,7 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 'skip_exception_check' => false,
     
     不在 Run 流程检查异常，把异常抛出外面，打开以节约微乎其微的性能。
-'skip_fix_path_info' => false,
 
-    修复默认没配置 PATH_INFO ，打开以节约性能
 ### 错误处理配置
 
 'error_404' => null,          //'_sys/error-404',

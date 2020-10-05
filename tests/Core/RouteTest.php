@@ -42,7 +42,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         ];
         Route::G(new Route());
         Route::RunQuickly($options,function(){
-            Route::G()->bindServerData([
+            Route::G()->prepare([
                 'SCRIPT_FILENAME'=> 'script_filename',
                 'DOCUMENT_ROOT'=>'document_root',
                 'REQUEST_METHOD'=>'POST',
@@ -55,21 +55,21 @@ class RouteTest extends \PHPUnit\Framework\TestCase
 
         });
         
-        Route::G()->bindServerData([
+        Route::G()->prepare([
             'PATH_INFO'=>'about/me',
         ]);
         Route::G()->run();
         
         var_dump("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
         
-        Route::G()->bindServerData([
+        Route::G()->prepare([
             'PATH_INFO'=>'Main/index',
             'REQUEST_METHOD'=>'POST',
         ]);
         Route::G()->run();
         
         Route::G(MyRoute::G()->init(Route::G()->options));
-        Route::G()->bindServerData([
+        Route::G()->prepare([
             'PATH_INFO'=>'Main/index',
             'REQUEST_METHOD'=>'POST',
         ]);
@@ -91,7 +91,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         $_SERVER['argc']=count($_SERVER['argv']);
         
         Route::G(new Route())->init($options);
-        Route::G()->bindServerData([
+        Route::G()->prepare([
             'PATH_INFO'=>'NoExists/Mazndex',
             'REQUEST_METHOD'=>'POST',
         ]);
@@ -109,7 +109,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G(new Route())->init($options);
 
         
-        Route::G()->bindServerData([
+        Route::G()->prepare([
             'PATH_INFO'=>'Main/index',
             'REQUEST_METHOD'=>'POST',
         ]);
@@ -118,7 +118,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G(new Route())->init($options);
         Route::G()->bind("good")->run();
 
-        Route::G()->bindServerData([
+        Route::G()->prepare([
             'PATH_INFO'=>'Missed',
             'REQUEST_METHOD'=>'POST',
         ]);
@@ -143,29 +143,29 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         MyRoute::G(new MyRoute())->init([]);
         $serverData=[
         ];
-        MyRoute::G()->bindServerData($serverData);
+        MyRoute::G()->prepare($serverData);
         
         $serverData=[
             'PATH_INFO'=>'abc',
         ];
-        MyRoute::G()->bindServerData($serverData);
+        MyRoute::G()->prepare($serverData);
         $serverData=[
             'REQUEST_URI'=>'/',
             'SCRIPT_FILENAME'=>__DIR__ . '/index.php',
             'DOCUMENT_ROOT'=>__DIR__,
         ];
         
-        MyRoute::G()->bindServerData($serverData);
+        MyRoute::G()->prepare($serverData);
         
         $serverData=[
             'REQUEST_URI'=>'/abc/d',
             'SCRIPT_FILENAME'=>__FILE__,
             'DOCUMENT_ROOT'=>__DIR__,
         ];
-        MyRoute::G()->bindServerData($serverData);
+        MyRoute::G()->prepare($serverData);
 
         MyRoute::G(new MyRoute())->init(['skip_fix_path_info'=>true]);
-        MyRoute::G()->bindServerData($serverData);
+        MyRoute::G()->prepare($serverData);
 
     }
     protected function foo2()
@@ -230,7 +230,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
     {
         echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzz";
         echo PHP_EOL;
-        Route::G()->bindServerData([
+        Route::G()->prepare([
             'SCRIPT_FILENAME'=> 'x/z/index.php',
             'DOCUMENT_ROOT'=>'x',
         ]);
@@ -246,7 +246,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->getURLHandler();
         
         Route::G()->setURLHandler(null);
-        Route::G()->bindServerData([
+        Route::G()->prepare([
             'SCRIPT_FILENAME'=> 'x/index.php',
             'DOCUMENT_ROOT'=>'x',
         ]);

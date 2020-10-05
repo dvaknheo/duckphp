@@ -182,7 +182,7 @@ trait AppPluginTrait
         $options = [];
         $options['namespace'] = $this->plugin_options['plugin_namespace'];
         
-        $route->init($options)->bindServerData(SuperGlobal::G()->_SERVER);
+        $route->init($options)->prepare(SuperGlobal::G()->_SERVER);
         $route->setPathInfo($my_path_info);
         $route->setUrlHandler([static::class,'OnUrl']);
         

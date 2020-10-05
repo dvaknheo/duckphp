@@ -22,7 +22,7 @@ $options['use_path_info_by_get'] = true;
 DuckPhp::G()->init($options);
 ///////////////////////////
 
-Route::G()->bindServerData($_SERVER)->run();
+Route::G()->prepare($_SERVER)->run();
 //Route::G()->addRouteHook(function(){},'prepend-inner');
 echo "<pre>\n";
 echo RouteHookManager::G()->dump();

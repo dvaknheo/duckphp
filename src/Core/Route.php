@@ -97,9 +97,9 @@ class Route extends ComponentBase
         $this->path_info = $_SERVER['PATH_INFO'] ?? '';
         $this->request_method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
     }
-    public function bindServerData($server)
+    public function prepare($server)
     {
-        $this->bindServerDataForUrl($server);
+        $this->prepareForUrl($server);
         $this->request_method = $server['REQUEST_METHOD'] ?? 'GET';
         //REQUEST_URI
         //SCRIPT_FILENAME
@@ -136,7 +136,7 @@ class Route extends ComponentBase
         $path_info = parse_url($path_info, PHP_URL_PATH);
         
         if (!$this->has_bind_server_data) {
-            $this->bindServerData($_SERVER);
+            $this->prepare($_SERVER);
         }
         $this->path_info = $path_info;
         
@@ -149,13 +149,13 @@ class Route extends ComponentBase
     {
         $this->is_failed = false;
         if (!$this->has_bind_server_data) {
-            $this->bindServerData($_SERVER);
+            $this->prepare($_SERVER);
         }
     }
     public function run()
     {
         $this->beforeRun();
-        Route::G()->bindServerData($_SERVER);
+        Route::G()->prepare($_SERVER);
         foreach ($this->pre_run_hook_list as $callback) {
             $flag = ($callback)($this->path_info);
             if ($flag) {
@@ -425,7 +425,7 @@ trait Route_UrlManager
     {
         return $this->url_handler;
     }
-    protected function bindServerDataForUrl($serverData)
+    protected function prepareForUrl($serverData)
     {
         $this->script_filename = $serverData['SCRIPT_FILENAME'] ?? '';
         $this->document_root = $serverData['DOCUMENT_ROOT'] ?? '';

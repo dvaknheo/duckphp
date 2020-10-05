@@ -48,7 +48,7 @@ class RouteHookPathInfoByGetTest extends \PHPUnit\Framework\TestCase
         SuperGlobal::G()->_SERVER['PATH_INFO']='';
 
 
-        Route::G()->bindServerData([
+        Route::G()->prepare([
             'PATH_INFO'=>'Missed',
             'REQUEST_METHOD'=>'POST',
         ]);
