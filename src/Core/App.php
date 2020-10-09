@@ -165,7 +165,7 @@ trait Core_Handler
     }
     public function _On404(): void
     {
-        Route::G()->forceFail();
+        // Route::G()->forceFail();  // why? I forgot.
         $error_view = $this->options['error_404'] ?? null;
         $error_view = $this->error_view_inited?$error_view:null;
         
