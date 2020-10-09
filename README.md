@@ -204,7 +204,7 @@ namespace MySpace\System
                 // 开启调试模式
             'skip_setting_file' => true,
                 // 本例特殊，跳过设置文件 这个选项防止没有上传设置文件到服务器
-            'use_path_info_by_get' => true,
+            'path_info_compact_enable' => true,
                 // 开启单一文件模式，服务器不配置也能运行
             'ext' => [
                 CallableView::class => true,

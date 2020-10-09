@@ -17,7 +17,7 @@ $options = [];
 $options['is_debug'] = true;
 $options['override_class'] = '';
 $options['skip_setting_file'] = true;
-$options['use_path_info_by_get'] = true;
+$options['path_info_compact_enable'] = true;
 
 DuckPhp::G()->init($options);
 ///////////////////////////
@@ -28,7 +28,7 @@ echo "<pre>\n";
 echo RouteHookManager::G()->dump();
 
 RouteHookManager::G()->attachPostRun()->removeAll(['DuckPhp\\Ext\\RouteHookRouteMap','AppendHook'])->detach();
-RouteHookManager::G()->attachPreRun()->moveBefore(['DuckPhp\\Ext\\RouteHookRouteMap','PrependHook'],['DuckPhp\\Ext\\RouteHookPathInfoByGet','Hook'])->detach();
+RouteHookManager::G()->attachPreRun()->moveBefore(['DuckPhp\\Ext\\RouteHookRouteMap','PrependHook'],['DuckPhp\\Ext\\RouteHookPathInfoCompat','Hook'])->detach();
 $list=RouteHookManager::G()->attachPostRun()->getHookList();
 $list[]="abc";
 RouteHookManager::G()->attachPostRun()->setHookList($list);

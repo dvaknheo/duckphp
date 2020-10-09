@@ -133,7 +133,7 @@ subgraph cluster_Ext {
     RouteHookApiServer[shape="component"];
     RouteHookDirectoryMode[shape="component"];
     RouteHookManager[shape="component"];
-    RouteHookPathInfoByGet[shape="component"];
+    RouteHookPathInfoCompat[shape="component"];
     RouteHookRewrite[shape="component"];
     RouteHookRouteMap[shape="component"];
     StrictCheck[shape="component"];
@@ -150,7 +150,7 @@ subgraph cluster_Ext {
     RouteHookApiServer -> Core_ComponentBase [style="dotted"];
     RouteHookDirectoryMode -> Core_ComponentBase [style="dotted"];
     RouteHookManager -> Core_ComponentBase [style="dotted"];
-    RouteHookPathInfoByGet -> Core_ComponentBase [style="dotted"];
+    RouteHookPathInfoCompat -> Core_ComponentBase [style="dotted"];
     RouteHookRewrite -> Core_ComponentBase [style="dotted"];
     RouteHookRouteMap -> Core_ComponentBase [style="dotted"];
     StrictCheck -> Core_ComponentBase [style="dotted"];
@@ -177,7 +177,7 @@ subgraph cluster_DuckPhp {
     DuckPhp -> Pager;
     DuckPhp -> DbManager;
     DuckPhp -> EventManager;
-    DuckPhp -> RouteHookPathInfoByGet;
+    DuckPhp -> RouteHookPathInfoCompat;
     DuckPhp -> Cache;
 
     DuckPhp [shape=Mdiamond];

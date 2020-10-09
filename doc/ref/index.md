@@ -68,7 +68,7 @@
    11. [RedisManager.php](Ext-RedisManager.md) Redis管理器组件
    12. [RouteHookDirectoryMode.php](Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件
    13. [RouteHookManager.php](Ext-RouteHookManager.md) 路由钩子管理器
-   14. **[RouteHookPathInfoByGet.php](Ext-RouteHookPathInfoByGet.md) **无程序路由设计模式组件
+   14. **[RouteHookPathInfoCompat.php](Ext-RouteHookPathInfoCompat.md) **无程序路由设计模式组件
    15. **[RouteHookRouteMap.php](Ext-RouteHookRouteMap.md)** 路由映射组件
    16. [RouteHookRewrite.php](Ext-RouteHookRewrite.md) 路由重写组件
    17. [StrictCheck.php](Ext-StrictCheck.md) 严格检查模式组件
@@ -132,7 +132,7 @@ src
 |   |-- RouteHookApiServer.php
 |   |-- RouteHookDirectoryMode.php
 |   |-- RouteHookManager.php
-|   |-- RouteHookPathInfoByGet.php
+|   |-- RouteHookPathInfoCompat.php
 |   |-- RouteHookRewrite.php
 |   |-- RouteHookRouteMap.php
 |   `-- StrictCheck.php
@@ -313,12 +313,6 @@ src
 +  'jsonrpc_wrap_auto_adjust' => true,   
 
     jsonrpc 自动调整 wrap   // [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md)
-+ ** 'key_for_action' => '_r',  ** 
-
-    GET 方法名的 key   // [DuckPhp\Ext\RouteHookPathInfoByGet](Ext-RouteHookPathInfoByGet.md)
-+ ** 'key_for_module' => '',  ** 
-
-    GET 模式 类名的 key   // [DuckPhp\Ext\RouteHookPathInfoByGet](Ext-RouteHookPathInfoByGet.md)
 + ** 'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',  ** 
 
     日志文件名模板   // [DuckPhp\Core\Logger](Core-Logger.md)
@@ -349,6 +343,15 @@ src
 + ** 'path_config' => 'config',  ** 
 
     配置目录   // [DuckPhp\Core\Configer](Core-Configer.md)
++ ** 'path_info_compact_action_key' => '_r',  ** 
+
+    GET 动作方法名的 key   // [DuckPhp\Ext\RouteHookPathInfoCompat](Ext-RouteHookPathInfoCompat.md)
++ ** 'path_info_compact_class_key' => '',  ** 
+
+    GET 模式类名的 key   // [DuckPhp\Ext\RouteHookPathInfoCompat](Ext-RouteHookPathInfoCompat.md)
++ ** 'path_info_compact_enable' => false,  ** 
+
+    使用 _GET 模拟无 PathInfo 配置   // [DuckPhp\Ext\RouteHookPathInfoCompat](Ext-RouteHookPathInfoCompat.md)
 +  'path_lib' => 'lib',   
 
     库目录   // [DuckPhp\Ext\Misc](Ext-Misc.md)
@@ -457,9 +460,6 @@ src
 + ** 'use_output_buffer' => false,  ** 
 
     使用 OB 函数缓冲数据   // [DuckPhp\Core\RuntimeState](Core-RuntimeState.md)
-+ ** 'use_path_info_by_get' => false,  ** 
-
-    使用 _GET 模拟无 PathInfo 配置   // [DuckPhp\Ext\RouteHookPathInfoByGet](Ext-RouteHookPathInfoByGet.md)
 + ** 'use_short_functions' => true,  ** 
 
     使用短函数， \_\_url, \_\_h 等 ，详见 Core\Functions.php   // [DuckPhp\Core\App](Core-App.md)
@@ -708,12 +708,12 @@ src
 + DuckPhp\Ext\RouteHookDirectoryMode
     - 'mode_dir_basepath' => '',
         目录模式的基类
-+ DuckPhp\Ext\RouteHookPathInfoByGet
-    - 'key_for_action' => '_r',
-        GET 方法名的 key
-    - 'key_for_module' => '',
-        GET 模式 类名的 key
-    - 'use_path_info_by_get' => false,
++ DuckPhp\Ext\RouteHookPathInfoCompat
+    - 'path_info_compact_action_key' => '_r',
+        GET 动作方法名的 key
+    - 'path_info_compact_class_key' => '',
+        GET 模式类名的 key
+    - 'path_info_compact_enable' => false,
         使用 _GET 模拟无 PathInfo 配置
 + DuckPhp\Ext\RouteHookRewrite
     - 'rewrite_map' => array ( ),

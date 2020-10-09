@@ -72,7 +72,7 @@ RouteHookDirecotoryMode ,
 ###  按字母排序
 
 * RouteHookRouteMap
-* RouteHookPathInfoByGet
+* RouteHookPathInfoCompat
 * Pager
 * Cache
 * EventManager

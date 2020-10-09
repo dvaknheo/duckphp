@@ -7,19 +7,19 @@ namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
 
-class RouteHookPathInfoByGet extends ComponentBase
+class RouteHookPathInfoCompat extends ComponentBase
 {
     public $options = [
-        'use_path_info_by_get' => false,
-        'key_for_action' => '_r',
-        'key_for_module' => '',
+        'path_info_compact_enable' => false,
+        'path_info_compact_action_key' => '_r',
+        'path_info_compact_class_key' => '',
     ];
     protected $context_class;
     //@override
     protected function initContext(object $context)
     {
         $this->context_class = get_class($context);
-        if (!$this->options['use_path_info_by_get']) {
+        if (!$this->options['path_info_compact_enable']) {
             return;
         }
         ($this->context_class)::Route()->addRouteHook([static::class,'Hook'], 'prepend-outter');
@@ -36,8 +36,8 @@ class RouteHookPathInfoByGet extends ComponentBase
             return $url;
         };
         
-        $key_for_action = $this->options['key_for_action'];
-        $key_for_module = $this->options['key_for_module'];
+        $path_info_compact_action_key = $this->options['path_info_compact_action_key'];
+        $path_info_compact_class_key = $this->options['path_info_compact_class_key'];
         $get = [];
         $path = '';
         
@@ -68,19 +68,19 @@ class RouteHookPathInfoByGet extends ComponentBase
             }
         }
         
-        if ($key_for_module) {
+        if ($path_info_compact_class_key) {
             $action = array_pop($blocks);
             $module = implode('/', $blocks);
             if ($module) {
-                $get[$key_for_module] = $module;
+                $get[$path_info_compact_class_key] = $module;
             }
-            $get[$key_for_action] = $action;
+            $get[$path_info_compact_action_key] = $action;
         } else {
-            $get[$key_for_action] = $input_path;
+            $get[$path_info_compact_action_key] = $input_path;
         }
         $get = array_merge($input_get, $get);
-        //if ($key_for_module && isset($get[$key_for_module]) && $get[$key_for_module]==='') {
-        //    unset($get[$key_for_module]);
+        //if ($path_info_compact_class_key && isset($get[$path_info_compact_class_key]) && $get[$path_info_compact_class_key]==='') {
+        //    unset($get[$path_info_compact_class_key]);
         //}
         $query = $get?'?'.http_build_query($get):'';
         $url = $path.$query;
@@ -105,8 +105,8 @@ class RouteHookPathInfoByGet extends ComponentBase
     }
     public function _Hook($path_info)
     {
-        $k = $this->options['key_for_action'];
-        $m = $this->options['key_for_module'];
+        $k = $this->options['path_info_compact_action_key'];
+        $m = $this->options['path_info_compact_class_key'];
         
         //$old_path_info=($this->context_class)::SuperGlobal()->_SERVER['PATH_INFO']??'';
         

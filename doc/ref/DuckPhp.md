@@ -9,7 +9,7 @@
     2. 使用 [DuckPhp\Ext\DBManager](Ext-DBManager.md)
     3. 使用 [DuckPhp\Ext\Pager](Ext-Pager.md)
     4. 使用 [DuckPhp\Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
-    5. 使用 [DuckPhp\Ext\RouteHookPathInfoByGet](Ext-RouteHookPathInfoByGet.md)
+    5. 使用 [DuckPhp\Ext\RouteHookPathInfoCompat](Ext-RouteHookPathInfoCompat.md)
     
 
 ## 选项
@@ -24,7 +24,7 @@
 
 'ext' => [
     DbManager::class => true,
-    RouteHookPathInfoByGet::class => true,
+    RouteHookPathInfoCompat::class => true,
     RouteHookRouteMap::class => true,
 ],
 ## 说明

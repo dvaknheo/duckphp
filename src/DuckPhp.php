@@ -13,7 +13,7 @@ use DuckPhp\Ext\Cache;
 use DuckPhp\Ext\DbManager;
 use DuckPhp\Ext\EventManager;
 use DuckPhp\Ext\Pager;
-use DuckPhp\Ext\RouteHookPathInfoByGet;
+use DuckPhp\Ext\RouteHookPathInfoCompat;
 use DuckPhp\Ext\RouteHookRouteMap;
 
 class DuckPhp extends App
@@ -27,7 +27,7 @@ class DuckPhp extends App
         'close_resource_at_output' => false,
         'ext' => [
             DbManager::class => true,
-            RouteHookPathInfoByGet::class => true,
+            RouteHookPathInfoCompat::class => true,
             RouteHookRouteMap::class => true,
         ],
     ];

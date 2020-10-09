@@ -14,7 +14,7 @@ function RunByDuckPhp()
     $options['skip_setting_file'] = true;       // 不需要设置文件
     $options['override_class'] = '\\';          // 不要替换成同级别的 app 类
     $options['namespace'] = '\\';               // 不要替换成同级别的控制器类
-    $options['use_path_info_by_get'] = true;    // 不用配置路由
+    $options['path_info_compact_enable'] = true;    // 不用配置路由
 
     $options['ext'][\DuckPhp\Ext\EmptyView::class] = true; // for AllViewData();
 

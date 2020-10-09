@@ -53,7 +53,7 @@
    12. [RedisManager.php](ref/Ext-RedisManager.md)
    13. [RedisSimpleCache.php](ref/Ext-RedisSimpleCache.md)
    14. [RouteHookDirectoryMode.php](ref/Ext-RouteHookDirectoryMode.md)
-   15. [RouteHookPathInfoByGet.php](ref/Ext-RouteHookPathInfoByGet.md)
+   15. [RouteHookPathInfoCompat.php](ref/Ext-RouteHookPathInfoCompat.md)
    16. [StrictCheck.php](ref/Ext-StrictCheck.md)
          1. [StrictCheckModelTrait.php](ref/Ext-StrictCheckModelTrait.md)
          2. [StrictCheckServiceTrait.php](ref/Ext-StrictCheckServiceTrait.md)

@@ -1,10 +1,10 @@
-# DuckPhp\Ext\RouteHookPathInfoByGet
+# DuckPhp\Ext\RouteHookPathInfoCompat
 
 ## 简介
 `默认``组件类` 在不配置 PathInfo 下模拟
 ## 选项
 
-'use_path_info_by_get' => false,
+'path_info_compact_enable' => false,
 
     注意，这项开启扩展才启用。
 

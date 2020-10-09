@@ -26,8 +26,8 @@ class App extends DuckPhp
         'error_500' => '_sys/error_500',
         'error_debug' => '_sys/error_debug',
         
-        //'use_path_info_by_get' => false,
-        'use_path_info_by_get' => true, // @DUCKPHP_DELETE
+        //'path_info_compact_enable' => false,
+        'path_info_compact_enable' => true, // @DUCKPHP_DELETE
     ];
     public function __construct()
     {
@@ -115,12 +115,6 @@ class App extends DuckPhp
         // 是否调试状态 (DuckPhp\Core\App, DuckPhp\Ext\StrictCheck)
         // $options['is_debug'] = false;
 
-        // GET 方法名的 key (DuckPhp\Ext\RouteHookPathInfoByGet)
-        // $options['key_for_action'] = '_r';
-
-        // GET 模式 类名的 key (DuckPhp\Ext\RouteHookPathInfoByGet)
-        // $options['key_for_module'] = '';
-
         // 日志文件名模板 (DuckPhp\Core\Logger)
         // $options['log_file_template'] = 'log_%Y-%m-%d_%H_%i.log';
 
@@ -138,6 +132,15 @@ class App extends DuckPhp
 
         // 配置目录 (DuckPhp\Core\Configer)
         // $options['path_config'] = 'config';
+
+        // GET 动作方法名的 key (DuckPhp\Ext\RouteHookPathInfoCompat)
+        // $options['path_info_compact_action_key'] = '_r';
+
+        // GET 模式类名的 key (DuckPhp\Ext\RouteHookPathInfoCompat)
+        // $options['path_info_compact_class_key'] = '';
+
+        // 使用 _GET 模拟无 PathInfo 配置 (DuckPhp\Ext\RouteHookPathInfoCompat)
+        // $options['path_info_compact_enable'] = false;
 
         // 日志目录 (DuckPhp\Core\Logger)
         // $options['path_log'] = 'logs';
@@ -192,9 +195,6 @@ class App extends DuckPhp
 
         // 使用 OB 函数缓冲数据 (DuckPhp\Core\RuntimeState)
         // $options['use_output_buffer'] = false;
-
-        // 使用 _GET 模拟无 PathInfo 配置 (DuckPhp\Ext\RouteHookPathInfoByGet)
-        // $options['use_path_info_by_get'] = false;
 
         // 使用短函数， \_\_url, \_\_h 等 ，详见 Core\Functions.php (DuckPhp\Core\App)
         // $options['use_short_functions'] = true;

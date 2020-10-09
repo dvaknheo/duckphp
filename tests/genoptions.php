@@ -283,7 +283,7 @@ DuckPhp\\Core\\View
 DuckPhp\\Ext\\Cache
 DuckPhp\\Ext\\DbManager
 DuckPhp\\Ext\\EventManager
-DuckPhp\\Ext\\RouteHookPathInfoByGet
+DuckPhp\\Ext\\RouteHookPathInfoCompat
 DuckPhp\\Ext\\RouteHookRouteMap";
         $classes=explode("\n",$classes);
         return $classes;
@@ -312,7 +312,7 @@ DuckPhp\\Ext\\RedisCache
 DuckPhp\\Ext\\RedisManager
 DuckPhp\\Ext\\RouteHookApiServer
 DuckPhp\\Ext\\RouteHookDirectoryMode
-DuckPhp\\Ext\\RouteHookPathInfoByGet
+DuckPhp\\Ext\\RouteHookPathInfoCompat
 DuckPhp\\Ext\\RouteHookRewrite
 DuckPhp\\Ext\\RouteHookRouteMap
 DuckPhp\\Ext\\StrictCheck";

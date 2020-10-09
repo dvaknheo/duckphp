@@ -40,7 +40,7 @@
    11. [RedisManager.php](Ext-RedisManager.md) Redis管理器组件
    12. [RouteHookDirectoryMode.php](Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件
    13. [RouteHookManager.php](Ext-RouteHookManager.md) 路由钩子管理器
-   14. **[RouteHookPathInfoByGet.php](Ext-RouteHookPathInfoByGet.md) **无程序路由设计模式组件
+   14. **[RouteHookPathInfoCompat.php](Ext-RouteHookPathInfoCompat.md) **无程序路由设计模式组件
    15. **[RouteHookRouteMap.php](Ext-RouteHookRouteMap.md)** 路由映射组件
    16. [RouteHookRewrite.php](Ext-RouteHookRewrite.md) 路由重写组件
    17. [StrictCheck.php](Ext-StrictCheck.md) 严格检查模式组件
