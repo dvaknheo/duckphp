@@ -13,11 +13,6 @@ class App extends DuckPhp
     use AppPluginTrait;
     
     //@override
-    public $options = [
-        'path_config' => 'config',
-        'path_view' => 'view',
-    ];
-    //@override
     protected $plugin_options = [
     ];
     //@override
