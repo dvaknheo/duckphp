@@ -155,7 +155,6 @@ class Route extends ComponentBase
     public function run()
     {
         $this->beforeRun();
-        Route::G()->prepare($_SERVER);
         foreach ($this->pre_run_hook_list as $callback) {
             $flag = ($callback)($this->path_info);
             if ($flag) {

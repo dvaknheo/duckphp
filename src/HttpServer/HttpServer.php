@@ -197,7 +197,7 @@ class HttpServer
             $this->options['background'] = true;
         }
         if ($this->options['background'] ?? false) {
-            echo "DuckPhp: RunServer by PHP inner http server $host:$port\n";
+            echo "DuckPhp: RunServer by PHP inner http server {$this->host}:{$this->port}\n";
         }
         $cmd = "$PHP -S $host:$port -t $document_root ";
         if (isset($this->args['dry'])) {
