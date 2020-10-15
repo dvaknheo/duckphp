@@ -43,8 +43,7 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         }catch(\Exception $ex){
             echo $ex->getMessage();
         }
-        
-
+        ControllerHelper::DbCloseAll();
         //*/
         //*
         $path_base=realpath(__DIR__.'/../');

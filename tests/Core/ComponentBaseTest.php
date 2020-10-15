@@ -28,7 +28,9 @@ class ComponentBaseObject extends ComponentBase  implements ComponentInterface
 {
     public $options=[
         'path'=>'',
+        'namespace'=>'zzz',
         'path_test'=>'test',
+        'namespace_test'=>'zef',
     ];
     protected function initOptions(array $options)
     {
@@ -38,6 +40,10 @@ class ComponentBaseObject extends ComponentBase  implements ComponentInterface
         $this->options['path_test']='/tmp';
         $this->path = parent::getComponenetPathByKey('path_test');
         
+        
+        $this->namespace = parent::getComponenetNameSpace('namespace_test');
+        $this->options['namespace_test']='\\mynamespace';
+        $this->namespace = parent::getComponenetNameSpace('namespace_test');
     }
     public static function CreateObject($class, $object)
     {

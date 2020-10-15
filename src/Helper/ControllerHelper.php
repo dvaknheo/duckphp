@@ -138,25 +138,29 @@ class ControllerHelper
     {
         return App::Parameter($key, $default);
     }
-    public static function GET($key, $default = null)
+    public static function GET($key = null, $default = null)
     {
         return App::GET($key, $default);
     }
-    public static function POST($key, $default = null)
+    public static function POST($key = null, $default = null)
     {
         return App::POST($key, $default);
     }
-    public static function REQUEST($key, $default = null)
+    public static function REQUEST($key = null, $default = null)
     {
         return App::REQUEST($key, $default);
     }
-    public static function COOKIE($key, $default = null)
+    public static function COOKIE($key = null, $default = null)
     {
         return App::COOKIE($key, $default);
     }
     public static function SERVER($key, $default = null)
     {
         return App::SERVER($key, $default);
+    }
+    public static function DbCloseAll()
+    {
+        return App::DbCloseAll();
     }
     ////
     public static function Pager($object = null)

@@ -48,6 +48,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::DbForWrite();
         }catch(\Exception $ex){}
         ////
+        DuckPhp::DbCloseAll();
 
         ////
         $this->doFunctions();

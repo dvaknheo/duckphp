@@ -68,7 +68,16 @@ class ComponentBase implements ComponentInterface
                 return rtrim($this->options[$path_key], '\\').'\\';
             } else {
                 return $this->options['path'].rtrim($this->options[$path_key], '\\').'\\';
-            }
-        } // @codeCoverageIgnoreStart
+            } // @codeCoverageIgnoreEnd
+        }
+    }
+    protected function getComponenetNamespace($namespace_key)
+    {
+        $namespace = $this->options['namespace'];
+        $namespace_componenet = $this->options[$namespace_key];
+        if (substr($namespace_componenet, 0, 1) !== '\\') {
+            $namespace_componenet = rtrim($namespace, '\\').'\\'.$namespace_componenet;
+        }
+        return $namespace_componenet;
     }
 }

@@ -153,6 +153,7 @@ App::PageHtml(123);
             App::Event();
         }catch(\Throwable $ex){
         }
+        App::DbCloseAll();
 
         App::GET('a');
         App::POST('a');

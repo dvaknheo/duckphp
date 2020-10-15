@@ -655,7 +655,10 @@ trait Core_NotImplemented
     {
         return static::G()->_Db($tag);
     }
-
+    public static function DbCloseAll()
+    {
+        return static::G()->_DbCloseAll();
+    }
     public static function DbForWrite()
     {
         return static::G()->_DbForWrite();
@@ -677,6 +680,10 @@ trait Core_NotImplemented
         return static::G()->_OnEvent($event, $callback);
     }
     
+    public function _DbCloseAll()
+    {
+        return; // do nothing. for override
+    }
     public function _Db($tag)
     {
         throw new \ErrorException("DNMVCS No Impelement " . __FUNCTION__);

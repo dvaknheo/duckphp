@@ -50,6 +50,11 @@ class DuckPhp extends App
         return DbManager::G()->_Db($tag);
     }
     //@override
+    public function _DbCloseAll()
+    {
+        return DbManager::G()->_CloseAll();
+    }
+    //@override
     public function _DbForRead()
     {
         return DbManager::G()->_DbForRead();

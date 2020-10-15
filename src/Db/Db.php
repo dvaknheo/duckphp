@@ -127,7 +127,7 @@ class Db implements DbInterface
         return $ret;
     }
     //*
-    protected $resultClass='stdClass';
+    protected $resultClass = 'stdClass';
     public function setResultClass($resultClass)
     {
         $this->resultClass = $resultClass;
