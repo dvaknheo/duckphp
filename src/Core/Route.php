@@ -29,6 +29,7 @@ class Route extends ComponentBase
             'controller_class_postfix' => '',
             'controller_enable_slash' => false,
             'controller_path_ext' => '',
+            'controller_use_singletonex' => false,
             'skip_fix_path_info' => false,
         ];
     //public input;
@@ -282,14 +283,31 @@ class Route extends ComponentBase
     }
     protected function createControllerObject($full_class)
     {
-        // OK, you may use other mode.
-        return new $full_class();
+        //A::G((new ReflectionClass(B::class))->newInstanceWithoutConstructor());
+        if (!$this->options['controller_use_singletonex'] || !is_callable([$full_class,'G'])) {
+            return new $full_class();
+        }
+        $object=$full_class::G();
+        $class_name = get_class($object);
+        if($class_name === $full_class){
+            $full_class::G(new \stdClass);
+            return $object;
+        }
+        if($class_name === 'stdClass'){
+            return new $full_class();
+        }
+        $object = new $class_name();
+        return $object;
     }
     protected function getMethodToCall($object, $method)
     {
         $method = ($method === '')?$this->index_method : $method;
         if (substr($method, 0, 2) == '__') {
             $this->route_error = 'can not call hidden method';
+            return null;
+        }
+        if ($this->options['controller_use_singletonex'] && $method === 'G') {
+            $this->route_error = 'can not call G()';
             return null;
         }
         if ($this->options['controller_prefix_post'] && $this->request_method === 'POST' && method_exists($object, $this->options['controller_prefix_post'].$method)) {

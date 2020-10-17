@@ -134,6 +134,21 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->defaultGetRouteCallback('/a/b/');
         
         $this->doFixPathinfo();
+        
+        
+        $options=[
+            'namespace_controller'=>'\\tests_Core_Route',
+            'controller_use_singletonex' => true,
+        ];
+        Route::G(new Route())->init($options);
+        Route::G()->defaultGetRouteCallback('/about/me');
+        Route::G()->defaultGetRouteCallback('/about/me');
+
+        \tests_Core_Route\about::G((new \ReflectionClass(\tests_Core_Route\about2::class))->newInstanceWithoutConstructor());
+        Route::G()->defaultGetRouteCallback('/about/me');
+        Route::G()->defaultGetRouteCallback('/about/me');
+        Route::G()->defaultGetRouteCallback('/about/G');
+        
         \MyCodeCoverage::G()->end();
         return;
     }
@@ -288,13 +303,20 @@ namespace tests_Core_Route
 {
 class baseController
 {
-
+    use \DuckPhp\SingletonEx\SingletonEx;
 }
 class about extends baseController
 {
     public function me()
     {
         //var_dump(DATE(DATE_ATOM));
+    }
+}
+class about2 extends baseController
+{
+    public function me()
+    {
+        var_dump(DATE(DATE_ATOM));
     }
 }
 class Main  extends baseController
