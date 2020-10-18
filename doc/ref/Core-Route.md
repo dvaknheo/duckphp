@@ -124,6 +124,11 @@ public function setRouteCallingMethod($calling_method)
 public function dumpAllRouteHooksAsString()
 
     简单 dump 所有钩子
+
+public function replaceControllerSingelton($old_class,$new_class)
+
+    替换控制器的单例,配合 controller_use_singletonex 使用。不能直接使用 $old_class::G($new_class::G());
+    
 public static function Route()
 
     返回单例，用于 DuckPhp/Route 双兼容 RouteHook;

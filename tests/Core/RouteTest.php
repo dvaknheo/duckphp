@@ -3,6 +3,7 @@ namespace tests\DuckPhp\Core
 {
 
 use DuckPhp\Core\Route;
+use DuckPhp\SingletonEx\SingletonEx;
 
 class RouteTest extends \PHPUnit\Framework\TestCase
 {
@@ -144,7 +145,8 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->defaultGetRouteCallback('/about/me');
         Route::G()->defaultGetRouteCallback('/about/me');
 
-        \tests_Core_Route\about::G((new \ReflectionClass(\tests_Core_Route\about2::class))->newInstanceWithoutConstructor());
+        Route::G()->replaceControllerSingelton(\tests_Core_Route\about::class, \tests_Core_Route\about2::class);
+        
         Route::G()->defaultGetRouteCallback('/about/me');
         Route::G()->defaultGetRouteCallback('/about/me');
         Route::G()->defaultGetRouteCallback('/about/G');
@@ -316,6 +318,7 @@ class about2 extends baseController
 {
     public function me()
     {
+        echo "about2about2about2about2about2about2about2meeeeeeeeeeee";
         var_dump(DATE(DATE_ATOM));
     }
 }

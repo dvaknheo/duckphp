@@ -3,6 +3,7 @@ namespace tests\DuckPhp\Helper;
 
 use DuckPhp\Helper\AppHelper;
 use DuckPhp\Core\App;
+use DuckPhp\SingletonEx\SingletonEx;
 
 class AppHelperTest extends \PHPUnit\Framework\TestCase
 {
@@ -57,6 +58,10 @@ class AppHelperTest extends \PHPUnit\Framework\TestCase
         $this->do_Core_Component();
         
         AppHelper::getViewData();
+        
+        $old_class = AppHelperTestObject::class;
+        $new_class = AppHelperTestObject::class;
+        AppHelper::replaceControllerSingelton($old_class, $new_class);
         ////]]]]
         \MyCodeCoverage::G()->end();
 
@@ -111,5 +116,15 @@ class HelperFakeSessionHandler implements \SessionHandlerInterface
     public function gc($maxlifetime)
     {
         return true;
+    }
+}
+class AppHelperTestObject
+{
+    static $x;
+    use SingletonEx;
+
+    public static function Foo()
+    {
+        return "OK";
     }
 }

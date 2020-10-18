@@ -281,19 +281,19 @@ class Route extends ComponentBase
         $object = $this->createControllerObject($full_class);
         return $this->getMethodToCall($object, $method);
     }
+
     protected function createControllerObject($full_class)
     {
-        //A::G((new ReflectionClass(B::class))->newInstanceWithoutConstructor());
         if (!$this->options['controller_use_singletonex'] || !is_callable([$full_class,'G'])) {
             return new $full_class();
         }
-        $object=$full_class::G();
+        $object = $full_class::G();
         $class_name = get_class($object);
-        if($class_name === $full_class){
+        if ($class_name == $full_class) {
             $full_class::G(new \stdClass);
             return $object;
         }
-        if($class_name === 'stdClass'){
+        if ($class_name === 'stdClass') {
             return new $full_class();
         }
         $object = new $class_name();
@@ -378,6 +378,10 @@ class Route extends ComponentBase
         $ret .= var_export($this->post_run_hook_list, true);
         $ret .= "\n-- post run --\n";
         return $ret;
+    }
+    public function replaceControllerSingelton($old_class, $new_class)
+    {
+        $old_class::G((new \ReflectionClass($new_class))->newInstanceWithoutConstructor());
     }
 }
 trait Route_UrlManager

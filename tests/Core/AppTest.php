@@ -169,6 +169,8 @@ App::PageHtml(123);
         App::Route();
         
         
+
+        
         App::dumpAllRouteHooksAsString();
         try{
             App::ThrowOn(false,"HH");
@@ -186,6 +188,10 @@ App::PageHtml(123);
             App::FireEvent("test",1,2,3);
         }catch(\Exception $ex){
         }
+        
+        $old_class = AppTestObjectA::class;
+        $new_class = AppTestObjectB::class;
+        App::replaceControllerSingelton($old_class, $new_class);
         
         \MyCodeCoverage::G()->end();
     return;
