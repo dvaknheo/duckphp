@@ -93,7 +93,7 @@ class Route extends ComponentBase
         
         $this->base_class = $this->options['controller_base_class'];
         if ($this->base_class && substr($this->base_class, 0, 1) === '~') {
-            $this->base_class = $this->namespace_prefix.$this->base_class;
+            $this->base_class = $this->namespace_prefix.substr($this->base_class,1);
         }
         $this->path_info = $_SERVER['PATH_INFO'] ?? '';
         $this->request_method = $_SERVER['REQUEST_METHOD'] ?? 'GET';

@@ -78,6 +78,8 @@ class ComponentBase implements ComponentInterface
         if (substr($namespace_componenet, 0, 1) !== '\\') {
             $namespace_componenet = rtrim($namespace, '\\').'\\'.$namespace_componenet;
         }
+        $namespace_componenet = trim($namespace_componenet, '\\');
+        
         return $namespace_componenet;
     }
 }

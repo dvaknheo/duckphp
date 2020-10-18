@@ -131,6 +131,7 @@ class Db implements DbInterface
     public function setResultClass($resultClass)
     {
         $this->resultClass = $resultClass;
+        return $this;
     }
     public function fetchObject($sql, ...$args)
     {
