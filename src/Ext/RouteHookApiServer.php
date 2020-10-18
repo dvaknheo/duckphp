@@ -21,9 +21,9 @@ class RouteHookApiServer extends ComponentBase
     ];
     protected $context_class;
     protected $headers = [
-        'Access-Control-Allow-Origin'      => '*',
-        'Access-Control-Allow-Methods'     => 'POST,PUT,GET,DELETE',
-        'Access-Control-Allow-Headers'     => 'version, access-token, user-token, apiAuth, User-Agent, Keep-Alive, Origin, No-Cache, X-Requested-With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type, X-E4M-With',
+        'Access-Control-Allow-Origin' => '*',
+        'Access-Control-Allow-Methods' => 'POST,PUT,GET,DELETE',
+        'Access-Control-Allow-Headers' => 'version, access-token, user-token, apiAuth, User-Agent, Keep-Alive, Origin, No-Cache, X-Requested-With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type, X-E4M-With',
         'Access-Control-Allow-Credentials' => 'true',
     ];
     //@override
@@ -41,7 +41,7 @@ class RouteHookApiServer extends ComponentBase
         ($this->context_class)::setDefaultExceptionHandler([static::class,'OnJsonError']);
         
         list($object, $method) = $this->getObjectAndMethod($path_info);
-        if($object ===null && $method === null) {
+        if ($object === null && $method === null) {
             return $this->onMissing();
         }
         $inputs = $this->getInputs($path_info);
@@ -53,7 +53,7 @@ class RouteHookApiServer extends ComponentBase
     }
     protected function onMissing()
     {
-        if ($this->options['api_server_404_as_exception']){
+        if ($this->options['api_server_404_as_exception']) {
             throw new \ReflectionException("404", -1);
         }
         return false;
@@ -83,17 +83,17 @@ class RouteHookApiServer extends ComponentBase
         $namespace = $this->getComponenetNamespace('api_server_namespace');
         $namespace_prefix = $namespace ? $namespace .'\\':'';
         
-        $class = $namespace_prefix . $class;
+        $class = $namespace_prefix . $class . $this->options['api_server_class_postfix'];
         
         $interface = $this->options['api_server_interface'];
         if ($interface && substr($interface, 0, 1) === '~') {
-            $interface = ltrim($namespace_prefix.substr($interface,1),'\\').$this->options['api_server_class_postfix'];
+            $interface = ltrim($namespace_prefix.substr($interface, 1), '\\');
         }
-        if ($interface && !is_subclass_of($class,$interface)) {
+        if ($interface && !is_subclass_of($class, $interface)) {
             return [null, null];
         }
-        if($this->options['api_server_use_singletonex']){
-            if($method==='G'){
+        if ($this->options['api_server_use_singletonex']) {
+            if ($method === 'G') {
                 return [null, null];
             }
             return [$class::G(), $method];
@@ -123,7 +123,7 @@ class RouteHookApiServer extends ComponentBase
         }
         echo json_encode($ret, $flag);
     }
-    protected function callAPI($class, $method, $input)
+    protected function callAPI($object, $method, $input)
     {
         $f = [
             'bool' => FILTER_VALIDATE_BOOLEAN  ,
@@ -132,7 +132,7 @@ class RouteHookApiServer extends ComponentBase
             'string' => FILTER_SANITIZE_STRING,
         ];
 
-        $reflect = new \ReflectionMethod($class, $method);
+        $reflect = new \ReflectionMethod($object, $method);
         
         $params = $reflect->getParameters();
         $args = array();
@@ -159,7 +159,7 @@ class RouteHookApiServer extends ComponentBase
             $args[] = $param->getDefaultValue();
         }
         
-        $ret = $reflect->invokeArgs(new $class(), $args);
+        $ret = $reflect->invokeArgs($object, $args);
         return $ret;
     }
 }

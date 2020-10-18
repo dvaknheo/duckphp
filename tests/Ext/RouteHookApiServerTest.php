@@ -4,6 +4,7 @@ namespace tests\DuckPhp\Ext;
 use DuckPhp\DuckPhp;
 use DuckPhp\Core\Route;
 use DuckPhp\Ext\RouteHookApiServer;
+use DuckPhp\SingletonEx\SingletonEx;
 
 class RouteHookApiServerTest extends \PHPUnit\Framework\TestCase
 {
@@ -17,9 +18,16 @@ class RouteHookApiServerTest extends \PHPUnit\Framework\TestCase
             'ext'=>[
                 RouteHookApiServer::class => true,
             ],
-            'api_class_base'=>'tests\DuckPhp\Ext\\'.'BaseApi', 
-            'api_class_prefix'=>'tests\DuckPhp\Ext\\'.'Api_',
+            
+            'api_server_interface' => '~BaseApi',
+            'api_server_namespace' => '\tests\DuckPhp\Ext',
+            'api_server_class_postfix' => 'API',
+            //'api_server_config_cache_file' => '',
+            //'api_server_on_missing' => '',
+            'api_server_use_singletonex' => false,
+            'api_server_404_as_exception' => false,
         ];
+        
         DuckPhp::G()->init($options);
         Route::G()->bind('/test.foo2');
         DuckPhp::SuperGlobal()->_REQUEST=['a'=>'1','b'=>3];
@@ -43,8 +51,18 @@ class RouteHookApiServerTest extends \PHPUnit\Framework\TestCase
         DuckPhp::G()->options['is_debug']=false;
         Route::G()->bind('/test.foo2');
         DuckPhp::SuperGlobal()->_POST = ['a'=>'1','b'=>3];
-        Route::G()->run();
-
+        DuckPhp::G()->run();
+        
+        
+        RouteHookApiServer::G()->options['api_server_404_as_exception']=true;
+        Route::G()->bind('/');
+        DuckPhp::G()->run();
+        
+        RouteHookApiServer::G()->options['api_server_use_singletonex']=true;
+        Route::G()->bind('/test.G');
+        DuckPhp::G()->run();
+        Route::G()->bind('/test.foo');
+        DuckPhp::G()->run();
 ////
         \MyCodeCoverage::G()->end();
 
@@ -54,8 +72,9 @@ class BaseApi
 {
     //use \DuckPhp\SingletonEx\SingletonEx;
 }
-class API_test extends BaseApi
+class testAPI extends BaseApi
 {
+    use SingletonEx;
     public function foo()
     {
         return DATE(DATE_ATOM);

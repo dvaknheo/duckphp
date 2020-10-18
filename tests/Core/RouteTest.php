@@ -151,6 +151,14 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->defaultGetRouteCallback('/about/me');
         Route::G()->defaultGetRouteCallback('/about/G');
         
+        $options=[
+            'namespace_controller'=>'\\tests_Core_Route',
+            'controller_base_class'=>'~baseController',
+            'controller_class_postfix'=>'Controller',
+        ];
+         Route::G(new Route())->init($options);
+        Route::G()->defaultGetRouteCallback('/noBase/me');
+        
         \MyCodeCoverage::G()->end();
         return;
     }
@@ -200,6 +208,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             };
             Route::G()->addRouteHook($appended, 'append-outter', true);
         });
+
         var_dump("zzzzzzzzzzzzzzzzzzzzzzzzzzz",$flag);
     }
     protected function hooks()
@@ -306,6 +315,13 @@ namespace tests_Core_Route
 class baseController
 {
     use \DuckPhp\SingletonEx\SingletonEx;
+}
+class noBaseController
+{
+    public function me()
+    {
+        //var_dump(DATE(DATE_ATOM));
+    }
 }
 class about extends baseController
 {
