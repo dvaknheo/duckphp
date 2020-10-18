@@ -18,7 +18,7 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
 
         ];
         Route::G(new Route())->init($route_options);
-        App::G()->init(['skip_setting_file'=>true]);
+        App::G()->init([]);
         
         $options=[
             'route_map'=>[
@@ -56,7 +56,6 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
         App::G()->init([
             'path'=>$path,
             'path_config'=>'',
-            'skip_setting_file'=>true,
             
         ]);
         $options['route_map_by_config_name']='routes';

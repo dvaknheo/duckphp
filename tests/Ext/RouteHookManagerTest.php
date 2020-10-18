@@ -16,7 +16,6 @@ $options = [];
 
 $options['is_debug'] = true;
 $options['override_class'] = '';
-$options['skip_setting_file'] = true;
 $options['path_info_compact_enable'] = true;
 
 DuckPhp::G()->init($options);

@@ -13,7 +13,8 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
         $options=[
             'path'=>$path_config,
             'path_config'=>$path_config,
-            'skip_env_file'=>false,
+            'use_setting_file'=>true,
+            'use_env_file'=>true,
         ];
         Configer::G()->init($options);
         Configer::G()->init($options);

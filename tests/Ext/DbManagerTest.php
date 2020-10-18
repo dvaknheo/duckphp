@@ -13,7 +13,6 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         $database_list= include \MyCodeCoverage::G()->options['path_data'] . 'database_list.php';
         
         $dn_options=[
-            'skip_setting_file'=>true,
             'database_list'=>['zzz'],
         ];
         App::G()->init($dn_options);
@@ -74,7 +73,6 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         
         ////
         $dn_options=[
-            'skip_setting_file'=>true,
             'log_sql'=>true,
         ];
         App::G(new App())->init($dn_options);
@@ -94,7 +92,6 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         //
         echo "zzzzzzzzzzzzzzzzzzzzzzzzzz";
         $dn_options=[
-            'skip_setting_file'=>true,
         ];
         DbManager::G(new DbManager());
         App::G(new App())->init($dn_options);

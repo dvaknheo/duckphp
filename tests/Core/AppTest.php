@@ -25,7 +25,6 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'namespace' => __NAMESPACE__,
             'platform' => 'ForTests',
             'is_debug' => true,
-            'skip_setting_file' => true,
             'use_flag_by_setting' => false,
             'error_exception' => NULL,
             'error_500' => NULL,
@@ -292,7 +291,6 @@ App::PageHtml(123);
         $path_base=realpath(__DIR__.'/../');
         $path_config=$path_base.'/data_for_tests/Helper/ControllerHelper/';
         $options=[
-            'skip_setting_file'=>true,
             'path_config'=>$path_config,
         ];
         Configer::G()->init($options);
@@ -405,7 +403,6 @@ App::PageHtml(123);
         
         $options=[
             'path' => $path_app,
-            'skip_setting_file' => true,
             'is_debug'=>false,
         ];
         AppTestApp::RunQuickly($options);
@@ -449,7 +446,6 @@ App::PageHtml(123);
         $options=[
             //'path' => $path_app,
             'is_debug' => true,
-            'skip_setting_file' => true,
             'namespace'=> __NAMESPACE__,
             'override_class'=>'\\'.AppTestApp::class,
         ];

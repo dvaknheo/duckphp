@@ -29,7 +29,6 @@ class RouteHookDirectoryModeTest extends \PHPUnit\Framework\TestCase
                 'mode_dir_key_for_action'=>true,
         ];
         RouteHookDirectoryMode::G()->init($options, $context=null);
-        App::G()->init(['skip_setting_file'=>true]);
         RouteHookDirectoryMode::G()->init($options, App::G());
         
         SuperGlobal::G()->_SERVER['REQUEST_URI']='';

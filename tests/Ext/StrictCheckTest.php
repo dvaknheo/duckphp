@@ -18,7 +18,6 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
         $database_list = include \MyCodeCoverage::G()->options['path_data'] . 'database_list.php';
 
         $dn_options=[
-            'skip_setting_file'=>true,
             'error_404'=>null,
             
             'is_debug'=>true,

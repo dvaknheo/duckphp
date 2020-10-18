@@ -19,7 +19,6 @@ class MiscTest extends \PHPUnit\Framework\TestCase
         $options=[
             'path_lib'=>$path_lib,
             'use_super_global'=>false,
-            'skip_setting_file'=>true,
             'error_404'=>null,
         ];
         Misc::G()->init($options,DuckPhp::G());

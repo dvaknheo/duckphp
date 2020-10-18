@@ -13,7 +13,6 @@ class RouteHookApiServerTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(RouteHookApiServer::class);
         $options = [
             'is_debug'=>true,
-            'skip_setting_file'=>true,
             'override_class'=>'',
             'ext'=>[
                 RouteHookApiServer::class => true,

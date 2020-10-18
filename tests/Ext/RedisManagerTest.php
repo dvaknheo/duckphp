@@ -14,7 +14,7 @@ class RedisManagerTest extends \PHPUnit\Framework\TestCase
             'redis'=>$redis_list[0],
             //'redis_list'=>$redis_list,
         ];
-        RedisManager::G()->init($options,App::G()->init(['skip_setting_file'=>true,'redis_list'=>$redis_list,]));
+        RedisManager::G()->init($options,App::G()->init(['redis_list'=>$redis_list,]));
         RedisManager::G()->Redis();
         
         \MyCodeCoverage::G()->end();

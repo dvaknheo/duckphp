@@ -27,8 +27,7 @@ class KernelTest extends \PHPUnit\Framework\TestCase
             'namespace' => __NAMESPACE__,
             'platform' => 'ForTests',
             'is_debug' => true,
-            'skip_setting_file' => true,
-            'use_flag_by_setting' => false,
+            'use_flag_by_setting' => true,
             'error_exception' => NULL,
             'error_500' => NULL,
             'error_404' => NULL,
@@ -154,7 +153,6 @@ echo "-------------------------------------\n";
             'path_config' => $path_config,
             'platform' => 'BJ',
             'is_debug' => true,
-            'skip_setting_file' => true,
             'use_flag_by_setting' => true,
             
             'skip_view_notice_error' => true,
@@ -166,7 +164,6 @@ echo "-------------------------------------\n";
         
         $options=[
             'path' => $path_app,
-            'skip_setting_file' => true,
             'is_debug'=>false,
         ];
         KernelTestApp::RunQuickly($options);

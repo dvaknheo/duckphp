@@ -30,7 +30,6 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
             'path' =>$path_app,
             'platform' => 'BJ',
             'is_debug' => true,
-            'skip_setting_file' => true,
             'override_class'=>'',
         ];
         $plugin_options=[

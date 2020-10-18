@@ -12,7 +12,6 @@ class BusinessHelperTest extends \PHPUnit\Framework\TestCase
         $path_base=realpath(__DIR__.'/../');
         $path_config=$path_base.'/data_for_tests/Helper/BusinessHelper/';
         $options=[
-            'skip_setting_file'=>true,
             'path_config'=>$path_config,
         ];
         \DuckPhp\Core\Configer::G()->init($options);

@@ -12,7 +12,6 @@ class RouteHookRewriteTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(RouteHookRewrite::class);
         $route_options=[
             'is_debug'=>true,
-            'skip_setting_file'=>true,
             'namespace'=>__NAMESPACE__,
             'namespace_controller'=>'\\'.__NAMESPACE__,
             'controller_welcome_class'=> 'RouteHookRewriteTestMain',

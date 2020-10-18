@@ -17,7 +17,6 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
         $context=['a'=>'b'];
         
         $dn_options=[
-            'skip_setting_file'=>true,
         ];
         DuckPhp::G()->init($dn_options);
         Logger::G()->reset()->init($options,DuckPhp::G());

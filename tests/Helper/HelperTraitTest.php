@@ -11,7 +11,6 @@ class HelperTraitTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(HelperTrait::class);
         
         $options=[
-            'skip_setting_file'=>true,
             'is_debug'=>true,
             'platform'=>'for_tests',
         ];

@@ -25,7 +25,6 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         $path_view=\MyCodeCoverage::GetClassTestPath(DuckPhp::class).'views/';
 
         $options=[
-            'skip_setting_file'=>true,
             'path_lib'=>$path_lib,
             'log_sql_query'=>true,
             'use_short_functions'=>true,

@@ -16,8 +16,8 @@ class Configer extends ComponentBase
         'setting' => [],
         'all_config' => [],
         'setting_file' => 'setting',
-        'skip_setting_file' => false,
-        'skip_env_file' => true,
+        'use_setting_file' => false,
+        'use_env_file' => false,
         'config_ext_files' => [],
     ];
     protected $base_path;
@@ -42,12 +42,12 @@ class Configer extends ComponentBase
         if ($this->is_setting_inited) {
             return $this->setting[$key] ?? null;
         }
-        if (!$this->options['skip_env_file']) {
+        if ($this->options['use_env_file']) {
             $env_setting = parse_ini_file(realpath($this->base_path).'/.env');
             $env_setting = $env_setting?:[];
             $this->setting = array_merge($this->setting, $env_setting);
         }
-        if (!$this->options['skip_setting_file']) {
+        if ($this->options['use_setting_file']) {
             $setting_file = $this->options['setting_file'];
             $full_setting_file = $this->path.$setting_file.'.php';
             if (!is_file($full_setting_file)) {

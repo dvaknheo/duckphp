@@ -12,7 +12,6 @@ class RedisCacheTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(RedisCache::class);
         $redis_list = include \MyCodeCoverage::G()->options['path_data'] . 'redis_list.php';
         $options=[
-            'skip_setting_file'=>true,
             'redis_list'=>$redis_list,
             'ext'=>[
                 RedisManager::class => true,

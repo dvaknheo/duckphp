@@ -82,7 +82,6 @@ class AppHelperTest extends \PHPUnit\Framework\TestCase
         $options=[
             //'path' => $path_app,
             'is_debug' => true,
-            'skip_setting_file' => true,
             'namespace'=> __NAMESPACE__,
         ];
         App::G()->init($options);

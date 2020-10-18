@@ -19,7 +19,7 @@ class RouteHookPathInfoCompatTest extends \PHPUnit\Framework\TestCase
 
         ];
         Route::G(new Route())->init($route_options);
-        App::G()->init(['skip_setting_file'=>true]);
+        App::G()->init([]);
         $options=[
             'path_info_compact_enable'=>false,
             'path_info_compact_action_key'=>'',
