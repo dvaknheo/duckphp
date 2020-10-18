@@ -26,8 +26,8 @@
 <text text-anchor="middle" x="1083.83" y="-121.8" font-family="Times,serif" font-size="14.00">[DuckPhp\Db]</text>
 </g>
 <g id="clust5" class="cluster"><title>cluster_Ext</title>
-<polygon fill="none" stroke="black" points="599.782,-145 599.782,-1138 1015.46,-1138 1015.46,-145 599.782,-145"/>
-<text text-anchor="middle" x="807.621" y="-1122.8" font-family="Times,serif" font-size="14.00">[DuckPhp\Ext]</text>
+<polygon fill="none" stroke="black" points="596.782,-145 596.782,-1138 1015.46,-1138 1015.46,-145 596.782,-145"/>
+<text text-anchor="middle" x="806.121" y="-1122.8" font-family="Times,serif" font-size="14.00">[DuckPhp\Ext]</text>
 </g>
 <g id="clust6" class="cluster"><title>cluster_DuckPhp</title>
 <polygon fill="none" stroke="black" points="256.325,-361 256.325,-436 395.492,-436 395.492,-361 256.325,-361"/>
@@ -688,16 +688,16 @@
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M753.403,-534.821C826.812,-522.341 947.236,-514.875 1020.33,-579 1107.37,-655.362 1143.18,-1036.61 1151.63,-1143.88"/>
 <polygon fill="black" stroke="black" points="1148.14,-1144.23 1152.4,-1153.94 1155.12,-1143.7 1148.14,-1144.23"/>
 </g>
-<!-- RouteHookPathInfoByGet -->
-<g id="node44" class="node"><title>RouteHookPathInfoByGet</title>
-<polygon fill="none" stroke="black" points="769.782,-513 608.782,-513 608.782,-509 604.782,-509 604.782,-505 608.782,-505 608.782,-485 604.782,-485 604.782,-481 608.782,-481 608.782,-477 769.782,-477 769.782,-513"/>
-<polyline fill="none" stroke="black" points="608.782,-509 612.782,-509 612.782,-505 608.782,-505 "/>
-<polyline fill="none" stroke="black" points="608.782,-485 612.782,-485 612.782,-481 608.782,-481 "/>
-<text text-anchor="middle" x="689.282" y="-491.3" font-family="Times,serif" font-size="14.00">RouteHookPathInfoByGet</text>
+<!-- RouteHookPathInfoCompat -->
+<g id="node44" class="node"><title>RouteHookPathInfoCompat</title>
+<polygon fill="none" stroke="black" points="773.782,-513 604.782,-513 604.782,-509 600.782,-509 600.782,-505 604.782,-505 604.782,-485 600.782,-485 600.782,-481 604.782,-481 604.782,-477 773.782,-477 773.782,-513"/>
+<polyline fill="none" stroke="black" points="604.782,-509 608.782,-509 608.782,-505 604.782,-505 "/>
+<polyline fill="none" stroke="black" points="604.782,-485 608.782,-485 608.782,-481 604.782,-481 "/>
+<text text-anchor="middle" x="689.282" y="-491.3" font-family="Times,serif" font-size="14.00">RouteHookPathInfoCompat</text>
 </g>
-<!-- RouteHookPathInfoByGet&#45;&gt;Core_ComponentBase -->
-<g id="edge60" class="edge"><title>RouteHookPathInfoByGet&#45;&gt;Core_ComponentBase</title>
-<path fill="none" stroke="black" stroke-dasharray="1,5" d="M769.93,-477.705C844.041,-466.631 952.9,-463.928 1020.33,-524 1115.15,-608.468 1145.66,-1030.46 1152.21,-1143.89"/>
+<!-- RouteHookPathInfoCompat&#45;&gt;Core_ComponentBase -->
+<g id="edge60" class="edge"><title>RouteHookPathInfoCompat&#45;&gt;Core_ComponentBase</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M773.856,-477.131C847.842,-466.556 954.081,-464.981 1020.33,-524 1115.15,-608.468 1145.66,-1030.46 1152.21,-1143.89"/>
 <polygon fill="black" stroke="black" points="1148.72,-1144.09 1152.77,-1153.88 1155.7,-1143.7 1148.72,-1144.09"/>
 </g>
 <!-- RouteHookRewrite -->
@@ -770,10 +770,10 @@
 <path fill="none" stroke="black" d="M328.569,-404.616C336.524,-478.443 377.588,-765.321 544.974,-900 575.19,-924.312 620.556,-929.196 652.123,-929.197"/>
 <polygon fill="black" stroke="black" points="652.316,-932.695 662.258,-929.032 652.202,-925.696 652.316,-932.695"/>
 </g>
-<!-- DuckPhp&#45;&gt;RouteHookPathInfoByGet -->
-<g id="edge77" class="edge"><title>DuckPhp&#45;&gt;RouteHookPathInfoByGet</title>
-<path fill="none" stroke="black" d="M351.313,-397.621C391.162,-414.608 472.986,-448.004 544.974,-468 562.16,-472.774 580.741,-476.965 598.647,-480.533"/>
-<polygon fill="black" stroke="black" points="598.028,-483.978 608.512,-482.45 599.364,-477.106 598.028,-483.978"/>
+<!-- DuckPhp&#45;&gt;RouteHookPathInfoCompat -->
+<g id="edge77" class="edge"><title>DuckPhp&#45;&gt;RouteHookPathInfoCompat</title>
+<path fill="none" stroke="black" d="M351.313,-397.621C391.162,-414.608 472.986,-448.004 544.974,-468 560.832,-472.405 577.877,-476.314 594.484,-479.694"/>
+<polygon fill="black" stroke="black" points="594.263,-483.219 604.753,-481.731 595.625,-476.352 594.263,-483.219"/>
 </g>
 <!-- DuckPhp&#45;&gt;RouteHookRouteMap -->
 <g id="edge73" class="edge"><title>DuckPhp&#45;&gt;RouteHookRouteMap</title>

@@ -25,6 +25,7 @@
     "controller_methtod_for_miss": "控制器，缺失方法的调用方法",
     "controller_prefix_post": "控制器，POST 方法前缀",
     "controller_welcome_class": "控制器默认欢迎方法",
+    "controller_use_singletonex": "控制器使用单例模式",
     "database_list": "数据库列表",
     "use_autoloader": "使用系统自带加载器",
     "default_exception_handler": "默认异常句柄",
@@ -87,9 +88,6 @@
     "redis_cache_skip_replace": "redis cache 跳过 默认 cache替换",
     "redis_list": " redis 配置列表",
     "redis_list_reload_by_setting": " redis 使用 settting 文件",
-    "api_class_base": "api 服务接口",
-    "api_class_prefix": "api类的前缀",
-    "api_config_file": "api配置文件",
     "mode_dir_basepath": "目录模式的基类",
     "namespace_business": "strict_check 的business目录",
     "namespace_model": "strict_check 的model 目录",
@@ -102,5 +100,12 @@
     "database": "单一数据库配置",
     "database_list_try_single": "尝试使用单一数据库配置",
     "redis": "单一Redisc配置",
-    "redis_list_try_single": "尝试使用单一Redis配置"
+    "redis_list_try_single": "尝试使用单一Redis配置",
+    
+    "api_server_404_as_exception": "API服务器， 404 引发异常的模式",
+    "api_server_class_postfix": "API服务器， 类名后缀",
+    "api_server_interface": "API服务器， 接口，  ~ 开始的表示是当前命名空间",
+    "api_server_namespace": "API服务器， 命名空间，配合 namespace选项使用",
+    "api_server_use_singletonex": "API服务器，  使用可变单例模式，方便替换实现"
+
 }

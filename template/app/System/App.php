@@ -73,6 +73,9 @@ class App extends DuckPhp
         // 控制器，POST 方法前缀 (DuckPhp\Core\Route)
         // $options['controller_prefix_post'] = 'do_';
 
+        // 控制器使用单例模式 (DuckPhp\Core\Route)
+        // $options['controller_use_singletonex'] = false;
+
         // 控制器默认欢迎方法 (DuckPhp\Core\Route)
         // $options['controller_welcome_class'] = 'Main';
 
@@ -121,7 +124,7 @@ class App extends DuckPhp
         // 日志前缀 (DuckPhp\Core\Logger)
         // $options['log_prefix'] = 'DuckPhpLog';
 
-        // 命名空间 (DuckPhp\Core\App, DuckPhp\Core\AutoLoader, DuckPhp\Core\Route, DuckPhp\Ext\StrictCheck)
+        // 命名空间 (DuckPhp\Core\App, DuckPhp\Core\AutoLoader, DuckPhp\Core\Route, DuckPhp\Ext\RouteHookApiServer, DuckPhp\Ext\StrictCheck)
         // $options['namespace'] = 'LazyToChange';
 
         // 控制器的命名空间 (DuckPhp\Core\Route, DuckPhp\Ext\StrictCheck)
@@ -335,14 +338,23 @@ class App extends DuckPhp
         //*/
         /*
         $options['ext']['DuckPhp\\Ext\\RouteHookApiServer'] = true;
-            // api 服务接口
-            $options['api_class_base'] = 'BaseApi';
+            // API服务器， 404 引发异常的模式
+            $options['api_server_404_as_exception'] = false;
 
-            // api类的前缀
-            $options['api_class_prefix'] = 'Api_';
+            // API服务器， 类名后缀
+            $options['api_server_class_postfix'] = '';
 
-            // api配置文件
-            $options['api_config_file'] = '';
+            // API服务器， 接口，  ~ 开始的表示是当前命名空间
+            $options['api_server_interface'] = '';
+
+            // API服务器， 命名空间，配合 namespace选项使用
+            $options['api_server_namespace'] = 'Api';
+
+            // API服务器，  使用可变单例模式，方便替换实现
+            $options['api_server_use_singletonex'] = false;
+
+            // 【共享】命名空间
+            // $options['namespace'] = '';
 
         //*/
         /*

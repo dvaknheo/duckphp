@@ -157,15 +157,21 @@ src
 + ** 'all_config' => array ( ),  ** 
 
     所有配置   // [DuckPhp\Core\Configer](Core-Configer.md)
-+  'api_class_base' => 'BaseApi',   
++  'api_server_404_as_exception' => false,   
 
-    api 服务接口   // [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md)
-+  'api_class_prefix' => 'Api_',   
+    API服务器， 404 引发异常的模式   // [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md)
++  'api_server_class_postfix' => '',   
 
-    api类的前缀   // [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md)
-+  'api_config_file' => '',   
+    API服务器， 类名后缀   // [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md)
++  'api_server_interface' => '',   
 
-    api配置文件   // [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md)
+    API服务器， 接口，  ~ 开始的表示是当前命名空间   // [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md)
++  'api_server_namespace' => 'Api',   
+
+    API服务器， 命名空间，配合 namespace选项使用   // [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md)
++  'api_server_use_singletonex' => false,   
+
+    API服务器，  使用可变单例模式，方便替换实现   // [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md)
 + ** 'autoload_cache_in_cli' => false,  ** 
 
     在 cli 下开启缓存模式   // [DuckPhp\Core\AutoLoader](Core-AutoLoader.md)
@@ -214,6 +220,9 @@ src
 + ** 'controller_prefix_post' => 'do_',  ** 
 
     控制器，POST 方法前缀   // [DuckPhp\Core\Route](Core-Route.md)
++ ** 'controller_use_singletonex' => false,  ** 
+
+    控制器使用单例模式   // [DuckPhp\Core\Route](Core-Route.md)
 + ** 'controller_welcome_class' => 'Main',  ** 
 
     控制器默认欢迎方法   // [DuckPhp\Core\Route](Core-Route.md)
@@ -324,7 +333,7 @@ src
     目录模式的基类   // [DuckPhp\Ext\RouteHookDirectoryMode](Ext-RouteHookDirectoryMode.md)
 + ** 'namespace' => 'LazyToChange',  ** 
 
-    命名空间   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Core\AutoLoader](Core-AutoLoader.md), [DuckPhp\Core\Route](Core-Route.md), [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
+    命名空间   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Core\AutoLoader](Core-AutoLoader.md), [DuckPhp\Core\Route](Core-Route.md), [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md), [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
 +  'namespace_business' => '',   
 
     strict_check 的business目录   // [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
@@ -583,6 +592,8 @@ src
         扩展名，比如你要 .html
     - 'controller_prefix_post' => 'do_',
         控制器，POST 方法前缀
+    - 'controller_use_singletonex' => false,
+        控制器使用单例模式
     - 'controller_welcome_class' => 'Main',
         控制器默认欢迎方法
     - 'namespace' => 'LazyToChange',
@@ -699,12 +710,18 @@ src
     - 'redis_list_try_single' => true,
         尝试使用单一Redis配置
 + DuckPhp\Ext\RouteHookApiServer
-    - 'api_class_base' => 'BaseApi',
-        api 服务接口
-    - 'api_class_prefix' => 'Api_',
-        api类的前缀
-    - 'api_config_file' => '',
-        api配置文件
+    - 'api_server_404_as_exception' => false,
+        API服务器， 404 引发异常的模式
+    - 'api_server_class_postfix' => '',
+        API服务器， 类名后缀
+    - 'api_server_interface' => '',
+        API服务器， 接口，  ~ 开始的表示是当前命名空间
+    - 'api_server_namespace' => 'Api',
+        API服务器， 命名空间，配合 namespace选项使用
+    - 'api_server_use_singletonex' => false,
+        API服务器，  使用可变单例模式，方便替换实现
+    - 'namespace' => '',
+        命名空间
 + DuckPhp\Ext\RouteHookDirectoryMode
     - 'mode_dir_basepath' => '',
         目录模式的基类
