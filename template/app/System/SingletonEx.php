@@ -6,9 +6,7 @@
 
 namespace LazyToChange\System;
 
-use LazyToChange\System\SingletonEx;
-
-class BaseBusiness
+trait SingletonEx
 {
-    use SingletonEx;
+    use \DuckPhp\SingletonEx\SingletonEx;
 }
