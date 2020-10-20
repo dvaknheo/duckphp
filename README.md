@@ -161,8 +161,7 @@ class Main
     }
 }
 $options = [
-    'namespace_controller' => "\\",   // 本例特殊，设置控制器的命名空间为根
-    'skip_setting_file' => true,      // 本例特殊，跳过配置文件
+    'namespace_controller' => "\\",   // 本例特殊，设置控制器的命名空间为根，而不是默认的 Controller
 ];
 \DuckPhp\DuckPhp::RunQuickly($options);
 
@@ -186,6 +185,12 @@ File: `template/public/demo.php`
 namespace
 {
     require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
+    /*
+    $options = [
+        'override_class' => '\MySpace\System\App'
+    ];
+    \DuckPhp\DuckPhp::RunQuickly($options);
+*/
 }
 // 以下部分是核心工程师写。
 
@@ -355,13 +360,16 @@ namespace MySpace\View {
 //------------------------------
 // 入口，放最后面避免自动加载问题
 
-namespace {
+
+namespace
+{
+    require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
     $options = [
-        'namespace' => 'MySpace', //项目命名空间为 MySpace，  你可以随意命名
+        'override_class' => 'MySpace\System\App',
     ];
+    //\MySpace\System\App::RunQuickly($options);
     \DuckPhp\DuckPhp::RunQuickly($options);
 }
-
 ```
 ## 架构图
 系统架构图

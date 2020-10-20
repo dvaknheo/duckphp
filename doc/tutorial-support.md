@@ -25,6 +25,7 @@ phpunit tests/Core/AppTest.php && phpunit tests/support.php
 ```
 代码风格检查加代码检查加单元测试
 
+
 ```
 php-cs-fixer fix && phpstan analyse && phpunit
 
@@ -54,7 +55,18 @@ dot doc/duckphp.gv -T svg -O
 php tests/genoptions.php && dot doc/duckphp.gv -T svg -O
 
 ```
+重申
+--
+三连
+```
+php-cs-fixer fix && phpstan analyse && phpunit
 
+```
+五连
+```
+php-cs-fixer fix && phpstan analyse && phpunit && php tests/genoptions.php && dot doc/duckphp.gv -T svg -O
+
+```
 
 
 

@@ -178,26 +178,26 @@ class App extends DuckPhp
         // 跳过 自动加载 (DuckPhp\Core\AutoLoader)
         // $options['skip_app_autoload'] = false;
 
-        // 跳过 .env 文件 (DuckPhp\Core\Configer)
-        // $options['skip_env_file'] = true;
-
         // 跳过异常检查 (DuckPhp\Core\App)
         // $options['skip_exception_check'] = false;
 
         // 跳过 PATH_INFO 修复 (DuckPhp\Core\Route)
         // $options['skip_fix_path_info'] = false;
 
-        // 跳过设置文件 (DuckPhp\Core\Configer)
-        // $options['skip_setting_file'] = false;
-
         // 跳过 View 视图的 notice (DuckPhp\Core\View, DuckPhp\Ext\CallableView, DuckPhp\Ext\EmptyView)
         // $options['skip_view_notice_error'] = true;
+
+        // 使用 .env 文件 (DuckPhp\Core\Configer)
+        // $options['use_env_file'] = false;
 
         // 从设置文件里再入is_debug,platform.  (DuckPhp\Core\App)
         // $options['use_flag_by_setting'] = true;
 
         // 使用 OB 函数缓冲数据 (DuckPhp\Core\RuntimeState)
         // $options['use_output_buffer'] = false;
+
+        // 使用设置文件 (DuckPhp\Core\Configer)
+        // $options['use_setting_file'] = false;
 
         // 使用短函数， \_\_url, \_\_h 等 ，详见 Core\Functions.php (DuckPhp\Core\App)
         // $options['use_short_functions'] = true;

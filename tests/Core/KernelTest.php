@@ -138,6 +138,25 @@ echo "-------------------------------------\n";
         ////
         
             App::G()->isInited();
+//////////////////
+        App::G(new App());
+        App::G()->init([
+            'handle_all_dev_error' => false,
+            'handle_all_exception' => false,
+            'override_class' => 'no_Exits',
+        ]);
+        App::G()->init([
+            'handle_all_dev_error' => false,
+            'handle_all_exception' => false,
+            'override_class' => App::class,
+        ]);
+        App::G()->init([
+            'handle_all_dev_error' => false,
+            'handle_all_exception' => false,
+            'use_autoloader' => true,
+        ]);
+////////////////////////
+
 
         \MyCodeCoverage::G()->end();
     return;

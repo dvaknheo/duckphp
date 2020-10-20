@@ -343,7 +343,7 @@ src
 +  'namespace_model' => '',   
 
     strict_check 的model 目录   // [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
-+ ** 'override_class' => 'System\\App',  ** 
++ ** 'override_class' => '',  ** 
 
     重写类名   // [DuckPhp\Core\App](Core-App.md)
 + ** 'path' => '',  ** 
@@ -369,7 +369,7 @@ src
     日志目录   // [DuckPhp\Core\Logger](Core-Logger.md)
 + ** 'path_namespace' => 'app',  ** 
 
-    命名空间目录   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Core\AutoLoader](Core-AutoLoader.md)
+    命名空间目录   // [DuckPhp\Core\AutoLoader](Core-AutoLoader.md)
 + ** 'path_view' => 'view',  ** 
 
     视图目录   // [DuckPhp\Core\View](Core-View.md), [DuckPhp\Ext\CallableView](Ext-CallableView.md), [DuckPhp\Ext\EmptyView](Ext-EmptyView.md)
@@ -433,9 +433,6 @@ src
 + ** 'skip_app_autoload' => false,  ** 
 
     跳过 自动加载   // [DuckPhp\Core\AutoLoader](Core-AutoLoader.md)
-+ ** 'skip_env_file' => true,  ** 
-
-    跳过 .env 文件   // [DuckPhp\Core\Configer](Core-Configer.md)
 + ** 'skip_exception_check' => false,  ** 
 
     跳过异常检查   // [DuckPhp\Core\App](Core-App.md)
@@ -445,9 +442,6 @@ src
 + ** 'skip_plugin_mode_check' => false,  ** 
 
     跳过插件模式检查   // [DuckPhp\Core\App](Core-App.md)
-+ ** 'skip_setting_file' => false,  ** 
-
-    跳过设置文件   // [DuckPhp\Core\Configer](Core-Configer.md)
 + ** 'skip_view_notice_error' => true,  ** 
 
     跳过 View 视图的 notice   // [DuckPhp\Core\View](Core-View.md), [DuckPhp\Ext\CallableView](Ext-CallableView.md), [DuckPhp\Ext\EmptyView](Ext-EmptyView.md)
@@ -460,15 +454,21 @@ src
 +  'system_exception_handler' => NULL,   
 
     接管系统的异常管理   // [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
-+ ** 'use_autoloader' => true,  ** 
++ ** 'use_autoloader' => false,  ** 
 
     使用系统自带加载器   // [DuckPhp\Core\App](Core-App.md)
++ ** 'use_env_file' => false,  ** 
+
+    使用 .env 文件   // [DuckPhp\Core\Configer](Core-Configer.md)
 + ** 'use_flag_by_setting' => true,  ** 
 
     从设置文件里再入is_debug,platform.    // [DuckPhp\Core\App](Core-App.md)
 + ** 'use_output_buffer' => false,  ** 
 
     使用 OB 函数缓冲数据   // [DuckPhp\Core\RuntimeState](Core-RuntimeState.md)
++ ** 'use_setting_file' => false,  ** 
+
+    使用设置文件   // [DuckPhp\Core\Configer](Core-Configer.md)
 + ** 'use_short_functions' => true,  ** 
 
     使用短函数， \_\_url, \_\_h 等 ，详见 Core\Functions.php   // [DuckPhp\Core\App](Core-App.md)
@@ -503,14 +503,12 @@ src
         接管一切异常
     - 'is_debug' => false,
         是否调试状态
-    - 'namespace' => 'LazyToChange',
+    - 'namespace' => NULL,
         命名空间
-    - 'override_class' => 'System\\App',
+    - 'override_class' => '',
         重写类名
-    - 'path' => '',
+    - 'path' => NULL,
         基础目录
-    - 'path_namespace' => 'app',
-        命名空间目录
     - 'platform' => '',
         平台
     - 'skip_404_handler' => false,
@@ -519,7 +517,7 @@ src
         跳过异常检查
     - 'skip_plugin_mode_check' => false,
         跳过插件模式检查
-    - 'use_autoloader' => true,
+    - 'use_autoloader' => false,
         使用系统自带加载器
     - 'use_flag_by_setting' => true,
         从设置文件里再入is_debug,platform. 
@@ -553,10 +551,10 @@ src
         设置，预先载入的设置
     - 'setting_file' => 'setting',
         设置文件
-    - 'skip_env_file' => true,
-        跳过 .env 文件
-    - 'skip_setting_file' => false,
-        跳过设置文件
+    - 'use_env_file' => false,
+        使用 .env 文件
+    - 'use_setting_file' => false,
+        使用设置文件
 + DuckPhp\Core\ExceptionManager
     - 'default_exception_handler' => NULL,
         默认异常句柄
