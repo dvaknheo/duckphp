@@ -168,6 +168,7 @@ trait AppPluginTrait
             $my_path_info = substr($path_info, $l - 1);
         }
         
+        
         if (!$this->is_component_mapped && $this->plugin_options['plugin_use_helper'] && $this->componentClassMap) {
             $this->pluginModeCloneHelpers();
             $this->is_component_mapped = true;
@@ -208,9 +209,8 @@ trait AppPluginTrait
     }
     public function _OnUrl($url)
     {
-        $prefix = trim($this->plugin_options['plugin_url_prefix'], '/').'/';
+        $prefix = trim($this->plugin_options['plugin_url_prefix'], '/');
         $url = $prefix.$url;
-        
         
         return Route::G()->defaultUrlHandler($url);
     }
