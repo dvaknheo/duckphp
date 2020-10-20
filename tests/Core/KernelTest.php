@@ -27,6 +27,7 @@ class KernelTest extends \PHPUnit\Framework\TestCase
             'namespace' => __NAMESPACE__,
             'platform' => 'ForTests',
             'is_debug' => true,
+            'use_setting_file' => true,
             'use_flag_by_setting' => true,
             'error_exception' => NULL,
             'error_500' => NULL,
@@ -105,6 +106,7 @@ echo "-------------------------------------\n";
             'path_view' => $path_app.'view/',
             'is_debug' => true,
             'use_short_functions' => true,
+            'use_setting_file' => true,
 
         ];
         View::G(new View());
@@ -153,8 +155,8 @@ echo "-------------------------------------\n";
             'path_config' => $path_config,
             'platform' => 'BJ',
             'is_debug' => true,
-            'use_flag_by_setting' => true,
-            
+            'use_flag_by_setting' => false,
+            'use_setting_file' => true,
             'skip_view_notice_error' => true,
             'use_super_global' => true,
             'override_class'=>'\\'.KernelTestApp::class,
