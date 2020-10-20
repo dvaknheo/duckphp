@@ -116,8 +116,6 @@ CREATE TABLE `test` (
     $options = [
         'is_debug' => true,
             // 开启调试模式
-        'skip_setting_file' => true,
-            // 本例特殊，跳过设置文件 这个选项防止没有上传设置文件到服务器
         'namespace_controller' => "\\",
             // 设置控制器的命名空间为根 使得 Main 类为入口
         'ext' => [
@@ -137,8 +135,8 @@ CREATE TABLE `test` (
         ],
     ];
     $options['error_404'] = function () {
-        (new Main)->index();
-    }; //404 都给我跳转到首页
+        (new Main)->index(); //404 都给我跳转到首页
+    }; 
     $flag = DuckPhp::RunQuickly($options);
     $data = DuckPhp::GetViewData();
     

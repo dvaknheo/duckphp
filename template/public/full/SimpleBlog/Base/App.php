@@ -17,6 +17,7 @@ class App extends DuckPhp
     ];
     //@override
     public $options = [
+        'use_setting_file' => true,
         'ext' => [
             'DuckPhp\\Ext\\Misc' => true,
             'DuckPhp\\Ext\\RouteHookRewrite' => true,

@@ -31,12 +31,12 @@ trait Kernel
             'skip_plugin_mode_check' => false,
             'handle_all_dev_error' => true,
             'handle_all_exception' => true,
-            'override_class' => 'System\App',
-            'path_namespace' => 'app',
+            
             
             //// basic config ////
-            'path' => '',
-            'namespace' => 'LazyToChange',
+            'path' => null,
+            'namespace' => null,
+            'override_class' => '',
             
             //// properties ////
             'is_debug' => false,
@@ -89,16 +89,25 @@ trait Kernel
             $this->options['path'] = (string)$path;
         }
         $this->options['path'] = ($this->options['path'] !== '') ? rtrim($this->options['path'], '/').'/' : '';
+        
+        if(!isset($options['namespace'])){
+            $a = explode('\\', get_class($this));
+            array_pop($a);
+            $namespace = ltrim(implode('\\', $a).'\\', '\\');
+            $this->options['namespace'] = $namespace;
+        }
     }
     protected function checkOverride($options)
     {
-        $override_class = $options['override_class'] ?? self::$options_default['override_class'];
-        $namespace = $options['namespace'] ?? self::$options_default['namespace'];
-        
+        $override_class = $options['override_class'] ?? null;
+        if(empty($override_class)){
+            return $this;
+        }
         if (substr($override_class, 0, 1) !== '\\') {
+            $namespace = $options['namespace'] ?? '';
             $override_class = $namespace.'\\'.$override_class;
         }
-        $override_class = ltrim($override_class, '\\');
+        $override_class = ltrim($override_class, '\\'); // 看看有没有必要。
         
         $object = null;
         if (!$override_class || !class_exists($override_class)) {
@@ -108,10 +117,6 @@ trait Kernel
         } else {
             $object = $override_class::G();
         }
-        
-        (self::class)::G($object);
-        static::G($object);
-        
         return $object;
     }
     //init
@@ -138,6 +143,8 @@ trait Kernel
         ExceptionManager::G()->init($exception_options, $this)->run();
         
         $object = $this->checkOverride($options);
+        (self::class)::G($object);
+        static::G($object);
         return $object->initAfterOverride($options, $context);
     }
     //for override

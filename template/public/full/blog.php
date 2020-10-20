@@ -4,14 +4,12 @@
  * From this time, you never be alone~
  */
 require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
-
 $project_root = realpath(__DIR__).'/SimpleBlog';
+
+require_once $project_root . '/Base/App.php';
+
 $options = [
     'path' => $project_root,
-    'path_namespace' => $project_root,
-    'namespace' => 'SimpleBlog',
-    'override_class'=>'Base\\App',
-
-    'is_debug' => true,
+    'path_project_autoload' => $project_root,
 ];
-\DuckPhp\DuckPhp::RunQuickly($options);
+\SimpleBlog\Base\App::RunQuickly($options);
