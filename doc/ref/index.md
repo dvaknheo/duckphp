@@ -530,7 +530,7 @@ src
         在 cli 下开启缓存模式
     - 'autoload_path_namespace_map' => array ( ),
         自动加载的目录和命名空间映射
-    - 'namespace' => 'LazyToChange',
+    - 'namespace' => '',
         命名空间
     - 'path' => '',
         基础目录

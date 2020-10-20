@@ -9,7 +9,7 @@ class AutoLoader
 {
     public $options = [
             'path' => '',
-            'namespace' => 'LazyToChange',
+            'namespace' => '',
             'path_namespace' => 'app',
             'skip_app_autoload' => false,
             
@@ -54,7 +54,7 @@ class AutoLoader
         }
         $this->is_inited = true;
         
-        $this->options = array_merge($this->options, $options);
+        $this->options = array_replace_recursive($this->options, $options);
         if (empty($this->options['path'])) {
             $path = realpath(getcwd().'/../');
             $this->options['path'] = $path;
@@ -74,9 +74,9 @@ class AutoLoader
                 $this->path_namespace = rtrim($this->options['path_namespace'], '\\').'\\';
             } else {
                 $this->path_namespace = $path.rtrim($this->options['path_namespace'], '\\').'\\';
-            }
-        } // @codeCoverageIgnoreEnd
-        if (!$this->options['skip_app_autoload']) {
+            } // @codeCoverageIgnoreEnd
+        }
+        if (!$this->options['skip_app_autoload'] && !empty($this->namespace)) {
             $this->assignPathNamespace($this->path_namespace, $this->namespace);
         }
         
