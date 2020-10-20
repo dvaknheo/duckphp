@@ -27,7 +27,7 @@ trait Kernel
     protected static $options_default = [
     
             //// not override options ////
-            'use_autoloader' => true,
+            'use_autoloader' => false,
             'skip_plugin_mode_check' => false,
             'handle_all_dev_error' => true,
             'handle_all_exception' => true,
@@ -84,40 +84,41 @@ trait Kernel
     protected function initOptions(array $options)
     {
         $this->options = array_replace_recursive($this->options, $options);
-        if (empty($this->options['path'])) {
-            $path = realpath($_SERVER['SCRIPT_FILENAME'].'/../');
-            $this->options['path'] = (string)$path;
-        }
-        $this->options['path'] = ($this->options['path'] !== '') ? rtrim($this->options['path'], '/').'/' : '';
-        
-        if(!isset($options['namespace'])){
-            $a = explode('\\', get_class($this));
-            array_pop($a);
-            $namespace = ltrim(implode('\\', $a).'\\', '\\');
-            $this->options['namespace'] = $namespace;
-        }
     }
     protected function checkOverride($options)
     {
         $override_class = $options['override_class'] ?? null;
-        if(empty($override_class)){
+        if (empty($override_class)) {
             return $this;
         }
-        if (substr($override_class, 0, 1) !== '\\') {
-            $namespace = $options['namespace'] ?? '';
-            $override_class = $namespace.'\\'.$override_class;
+        if (!class_exists($override_class)) {
+            return $this;
         }
-        $override_class = ltrim($override_class, '\\'); // 看看有没有必要。
+        if (static::class === $override_class) {
+            return $this;
+        }
         
-        $object = null;
-        if (!$override_class || !class_exists($override_class)) {
-            $object = $this;
-        } elseif (static::class === $override_class) {
-            $object = $this;
-        } else {
-            $object = $override_class::G();
-        }
+        $object = $override_class::G();
+        
+        //$object->options['namespace']= $this->getDefaultProjectNameSpace($override_class); //??? 为什么不需要？
+        
         return $object;
+    }
+    protected function getDefaultProjectNameSpace($class)
+    {
+        $a = explode('\\', $class ?? static::class);
+        array_pop($a);
+        array_pop($a);
+        $namespace = implode('\\', $a);
+        return $namespace;
+    }
+    protected function getDefaultProjectPath()
+    {
+        $path = realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
+        $path = (string)$path;
+        $path = ($path !== '') ? rtrim($path, '/').'/' : '';
+        
+        return $path;
     }
     //init
     public function init(array $options, object $context = null)
@@ -126,7 +127,9 @@ trait Kernel
             return $this->pluginModeInit($options, $context);
         }
         
-        if ($options['use_autoloader'] ?? self::$options_default['use_autoloader']) {
+        $options['path'] = $options['path'] ?? $this->getDefaultProjectPath();
+        $options['namespace'] = $options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
+        if (($options['use_autoloader'] ?? self::$options_default['use_autoloader']) || ($options['path_namespace'] ?? false)) {
             AutoLoader::G()->init($options, $this)->run();
         }
         
@@ -141,7 +144,6 @@ trait Kernel
             'dev_error_handler' => $this->hanlder_for_develop_exception,
         ];
         ExceptionManager::G()->init($exception_options, $this)->run();
-        
         $object = $this->checkOverride($options);
         (self::class)::G($object);
         static::G($object);
@@ -155,7 +157,6 @@ trait Kernel
     protected function initAfterOverride(array $options, object $context = null)
     {
         $this->initOptions($options);
-        
         $this->onPrepare();
         
         $this->initDefaultComponents();

@@ -13,7 +13,6 @@ class Main
     }
 }
 $options = [
-    'namespace_controller' => "\\",   // 本例特殊，设置控制器的命名空间为根
-    'skip_setting_file' => true,      // 本例特殊，跳过配置文件
+    'namespace_controller' => "\\",   // 本例特殊，设置控制器的命名空间为根，而不是默认的 Controller
 ];
 \DuckPhp\DuckPhp::RunQuickly($options);

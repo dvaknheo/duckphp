@@ -21,7 +21,7 @@ class Main
     }
 }
 $options = [
-    'namespace_controller' => '\\',
+    'namespace_controller' => '\\', // 默认的是 Controller。 我们不需要这一层
 ];
 $flag = Route::RunQuickly($options);
 if (!$flag) {

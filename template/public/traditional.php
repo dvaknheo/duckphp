@@ -6,13 +6,11 @@ require(__DIR__.'/../../autoload.php');  // @DUCKPHP_HEADFILE
 //// 这个例子极端点，没用任何类，全函数模式。
 
 ////[[[[
-
+//// 这部分是核心程序员写的。
 function RunByDuckPhp()
 {
     $options = [];
     $options['is_debug'] = true;
-    $options['skip_setting_file'] = true;       // 不需要设置文件
-    $options['override_class'] = '\\';          // 不要替换成同级别的 app 类
     $options['namespace'] = '\\';               // 不要替换成同级别的控制器类
     $options['path_info_compact_enable'] = true;    // 不用配置路由
 
@@ -37,6 +35,10 @@ function RunByDuckPhp()
         });
     });
     return $flag;
+}
+function GetRunResult()
+{
+    return DuckPhp::getViewData();
 }
 function POST($k, $v = null)
 {
@@ -125,9 +127,9 @@ function action_do_add()
 session_start();
 $flag = RunByDuckPhp();
 if (!$flag) {
-    // 我们 404 了，返回吧
+    // 我们 404 了
 }
-extract(DuckPhp::getViewData());
+extract(GetRunResult());
 
 error_reporting(error_reporting() & ~E_NOTICE);
 

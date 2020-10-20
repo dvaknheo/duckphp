@@ -202,14 +202,15 @@ trait AppPluginTrait
         Route::G($this->plugin_route_old);
         return true;
     }
-    public function OnUrl($url)
+    public static function OnUrl($url)
     {
-        return static::G()->_OnUrlL($url);
+        return static::G()->_OnUrl($url);
     }
-    public function _OnUrlL($url)
+    public function _OnUrl($url)
     {
         $prefix = trim($this->plugin_options['plugin_url_prefix'], '/').'/';
         $url = $prefix.$url;
+        
         
         return Route::G()->defaultUrlHandler($url);
     }

@@ -48,7 +48,7 @@ $options = [
     'namespace_controller' => '\\',
     'ext' => [
         JsonRpcExt::class => [
-            'jsonrpc_namespace' => 'JsonRpc',
+            'jsonrpc_namespace' => 'JsonRpc',  //对应  \JsonRpc\ 这个命名空间
             'jsonrpc_is_debug' => true,
             //'jsonrpc_backend'=>'';
         ],
