@@ -116,7 +116,7 @@ class RouteHookApiServer extends ComponentBase
         foreach ($this->headers as $k => $v) {
             ($this->context_class)::header("$k: $v");
         }
-        
+        ($this->context_class)::header('Content-Type: text/plain; charset=utf-8');
         $flag = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
         if ($this->context_class::IsDebug()) {
             $flag = $flag | JSON_PRETTY_PRINT;

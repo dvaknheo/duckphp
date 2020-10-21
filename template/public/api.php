@@ -18,6 +18,21 @@ namespace Api {
 // 访问方式 http://duckphp.demo.dev/api.php/test.foo2?a=1&b=2
 // 访问方式 http://duckphp.demo.dev/api.php/test.foo
 
+        public function index()
+        {
+            $domain=\DuckPhp\DuckPhp::Domain();
+        $url=$domain . \DuckPhp\DuckPhp::Url('test.foo');
+        $url2=$domain .\DuckPhp\DuckPhp::Url('test.foo2?a=1&b=2');
+        $message = <<<EOT
+    不带参数访问： {$url}
+    带参数访问：{$url2} 将会反射到 相应参数
+    如果需要修改 uid ，则继承本扩展 RouteHookApiServer 覆盖 getObjectAndMethod() 和 getInputs()
+EOT;
+            
+            $ret['message']=$message;
+            $ret['date']=DATE(DATE_ATOM);
+            return $ret;
+        }
         public function foo()
         {
             return DATE(DATE_ATOM);
@@ -41,30 +56,6 @@ namespace {
         'api_server_namespace' => '\\Api',
         'api_server_interface' => '~BaseApi',
         'api_server_404_as_exception' => true,
-        //'api_server_on_missing' => function(){ return OnIndex();},
     ];
     \DuckPhp\DuckPhp::RunQuickly($options);
-    function On404()
-    {
-        $domain=\DuckPhp\DuckPhp::Domain();
-        $url=$domain . \DuckPhp\DuckPhp::Url('test.foo');
-        $url2=$domain .\DuckPhp\DuckPhp::Url('test.foo2?a=1&b=2');
-echo  <<<EOT
-    访问方式 <a href="{$url}">{$url}</a><br />
-    访问方式 <a href="{$url2}">{$url2}</a><br />
-EOT;
-
-    }
-    function OnIndex()
-    {
-        $domain=\DuckPhp\DuckPhp::Domain();
-        $url=$domain . \DuckPhp\DuckPhp::Url('test.foo');
-        $url2=$domain .\DuckPhp\DuckPhp::Url('test.foo2?a=1&b=2');
-echo  <<<EOT
-!!!
-    访问方式 <a href="{$url}">{$url}</a><br />
-    访问方式 <a href="{$url2}">{$url2}</a><br />
-EOT;
-        return true;
-    }
 }
