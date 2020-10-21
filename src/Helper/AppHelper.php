@@ -98,15 +98,15 @@ class AppHelper
         return App::CLASS_STATICS($class_name, $var_name);
     }
     ////
-    public function extendComponents($method_map, $components = [])
+    public static function extendComponents($method_map, $components = [])
     {
         return App::G()->extendComponents($method_map, $components);
     }
-    public function cloneHelpers($new_namespace, $componentClassMap = [])
+    public static function cloneHelpers($new_namespace, $componentClassMap = [])
     {
         return App::G()->cloneHelpers($new_namespace, $componentClassMap);
     }
-    public function addBeforeShowHandler($handler)
+    public static function addBeforeShowHandler($handler)
     {
         return App::G()->addBeforeShowHandler($handler);
     }

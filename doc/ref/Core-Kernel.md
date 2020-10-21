@@ -34,23 +34,21 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 
     重新进入的切换的子类
 
-'override_class'=>'System\App',**重要选项**
+'override_class'=>'',**重要选项**
 
-    基于 namespace ,如果这个选项的类存在，则在init()的时候会切换到这个类完成后续初始化，并返回这个类的实例。
-    注意到 app/Base/App.php 这个文件的类 DuckPhp\System\App extends DuckPhp\DuckPhp;
-    如果以  \ 开头则是绝对 命名空间
-
+    如果这个选项的类存在，则在init()的时候会切换到这个类完成后续初始化，并返回这个类的实例。
 ### 基本配置
 
 'path' => null,
 
-    基准目录
-'namespace' => 'LazyToChange',
+    基准目录，如果没设置，将设置为 $_SERVER['SCRIPT_FILENAME']的父级目录。
+'namespace' => null,
 
-    基准命名空间
-'path_namespace' => 'app',
+    基准命名空间，如果没设置，将设置为当前类的命名空间的上级命名空间，如MyProject\\System\\App => MyProject
+'path_namespace' => null,
 
-    命名空间路径
+    命名空间路径,如果设置了本值，将会使用自动加载， 基准目录是 path。
+    
 'is_debug' => false,
 
     调试模式， 用于 IsDebug() 方法。
@@ -63,7 +61,6 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 
 ### 开关配置
 
-
 'use_flag_by_setting' => true,
 
     从设置文件中再次重载 is_debug 和 platform ,对应的设置选项是 duckphp_is_debug ，和 duckphp_platform
@@ -72,7 +69,7 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
     使用 `SuperGlobal` 类处理超全局变量，关闭以节约微乎其微的性能。
 'use_short_functions' => true,
 
-    允许使用短函数
+    允许使用短函数，__h,__url, 等。
 
 'skip_404_handler' => false,
 
@@ -80,7 +77,7 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 
 'skip_exception_check' => false,
     
-    不在 Run 流程检查异常，把异常抛出外面，打开以节约微乎其微的性能。
+    不在 Run 流程检查异常，把异常抛出外面，或许
 
 ### 错误处理配置
 
@@ -98,7 +95,7 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 
 public static function RunQuickly(array $options=[], callable $after_init=null): bool
 
-    快速开始，init() 后接 $after_init() 然年后 run() 
+    快速开始，init() 后接 $after_init() 然后 run();
 public function init(array $options=[], object $context=null)
 
     初始化
@@ -108,18 +105,15 @@ public function run(): bool
 public function clear(): void
 
     不建议主动使用，用于清理现场。
-public function replaceDefaultRunHandler(callable $handler = null): void
-
-    不通过继承而是外挂替换默认的 Run 函数， `Ext\PluginForSwoole` 扩展用到。
-public function clear(): void
-
-    不建议主动使用，用于清理现场。
 public function beforeRun()
 
     不建议主动使用，加载运行状态数据，比如当前 URL 等。
+public function replaceDefaultRunHandler(callable $handler = null): void
+
+    不通过继承而是外挂替换默认的 Run 函数， 用于第三方接管。
 ## 重写方法
 
-重写的方法默认都是空方法，用于在重写的时候实现留给功能
+用于重写的方法默认都是空方法，预留用户功能。用于重写的方法都带有同名属性，可以用同名属性方式赋值
 
 protected function onPrepare()
 
@@ -130,6 +124,11 @@ protected function onInit()
 protected function onRun()
 
     运行阶段。不建议重写 run ，而是在这里添加运行阶段处理
+
+protected function onAfterRun()
+
+    运行完毕阶段执行的方法
+
 ### 流程相关方法
 protected function checkOverride($options)
 
@@ -146,10 +145,12 @@ protected function reloadFlags(): void
 protected function initExtentions(array $exts): void
 
     初始化中，初始化扩展
-protected function fixPathInfo(&$serverData)
+protected function getDefaultProjectNameSpace($class)
 
-    运行中 修复PATH_INFO
+    辅助方法，用于在 init() 中设置 namespace.
+protected function getDefaultProjectPath()
 
+    辅助方法，用于在 init() 中设置 path.
 ## 详解
 
 Kernel 这个 Trait 一般不直接使用。一般直接用的是 DuckPhp\Core\App ， 而直接的 DuckPhp\DuckPhp 类，则是把常见扩展加进去形成完善的框架。

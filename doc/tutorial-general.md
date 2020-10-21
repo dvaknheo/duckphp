@@ -134,17 +134,11 @@ File: `template/public/index.php`
  * From this time, you never be alone~
  */
 require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
-require_once __DIR__.'/../app/System/App.php';
 
+require_once __DIR__.'/../app/System/App.php';
 $options =[];
 
-// 默认选项，全局处理所有开发期异常
-// $options ['handle_all_dev_error'] = true;
-
-// 默认选项，全局处理所有异常
-// $options ['handle_all_exception'] = true;
-
-//强烈建议去掉这项，用 composer.json 加载工程文件。
+//设置命名空间 LazyToChange 对应的目录，但强烈建议用 composer 加载。
 $options['path_namespace'] = 'app';
 
 echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKPHP_DELETE

@@ -37,7 +37,7 @@ protected function getopt($options, $longopts, &$optind)
     处理选项
 protected function parseCaptures($cli_options)
 
-    处理
+    处理命令行选项
 protected function showWelcome()
 
     显示欢迎信息，用于重写

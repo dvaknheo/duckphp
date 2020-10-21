@@ -91,10 +91,7 @@ class Route extends ComponentBase
         $namespace_controller = trim($namespace_controller, '\\');
         $this->namespace_prefix = $namespace_controller.'\\';
         
-        $this->base_class = $this->options['controller_base_class'];
-        if ($this->base_class && substr($this->base_class, 0, 1) === '~') {
-            $this->base_class = $this->namespace_prefix.substr($this->base_class, 1);
-        }
+
         $this->path_info = $_SERVER['PATH_INFO'] ?? '';
         $this->request_method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
     }
@@ -272,10 +269,11 @@ class Route extends ComponentBase
         $this->calling_class = $full_class;
         $this->calling_method = !empty($method)?$method:'index';
         
-        /** @var mixed */ $base_class = $this->base_class; // phpstan
+        /** @var string */
+        $base_class = str_replace('~', $this->namespace_prefix, $this->options['controller_base_class']);
         /** @var mixed */ $class = $full_class; // phpstan
         if (!empty($base_class) && !is_subclass_of($class, $base_class)) {
-            $this->route_error = "no the controller_base_class! {$this->base_class} ";
+            $this->route_error = "no the controller_base_class! {$base_class} ";
             return null;
         }
         $object = $this->createControllerObject($full_class);

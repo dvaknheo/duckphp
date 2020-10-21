@@ -11,7 +11,7 @@ class RouteHookApiServer extends ComponentBase
 {
     public $options = [
         'namespace' => '',
-        'api_server_interface' => '',
+        'api_server_base_class' => '',
         'api_server_namespace' => 'Api',
         'api_server_class_postfix' => '',
         //'api_server_config_cache_file' => '',
@@ -84,12 +84,9 @@ class RouteHookApiServer extends ComponentBase
         $namespace_prefix = $namespace ? $namespace .'\\':'';
         
         $class = $namespace_prefix . $class . $this->options['api_server_class_postfix'];
-        
-        $interface = $this->options['api_server_interface'];
-        if ($interface && substr($interface, 0, 1) === '~') {
-            $interface = ltrim($namespace_prefix.substr($interface, 1), '\\');
-        }
-        if ($interface && !is_subclass_of($class, $interface)) {
+        /** @var string */
+        $base_class = str_replace('~', $namespace_prefix, $this->options['api_server_base_class']);
+        if ($base_class && !is_subclass_of($class, $base_class)) {
             return [null, null];
         }
         if ($this->options['api_server_use_singletonex']) {

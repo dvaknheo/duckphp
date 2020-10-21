@@ -18,7 +18,7 @@ class RouteHookApiServerTest extends \PHPUnit\Framework\TestCase
                 RouteHookApiServer::class => true,
             ],
             
-            'api_server_interface' => '~BaseApi',
+            'api_server_base_class' => '~BaseApi',
             'api_server_namespace' => '\tests\DuckPhp\Ext',
             'api_server_class_postfix' => 'API',
             //'api_server_config_cache_file' => '',

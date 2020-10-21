@@ -74,7 +74,7 @@ App 类 use AppPluginTrait
 因为是 trait 不是父类，所以要在 再调用父类 的 同名方法的地方使用 pluginModeDefaultInit 。
 
 插件的选项是通过  plugin_options 变量而不是 options 变量修改，目的就是子类化的时候可使用父类的选项。
-'plugin_path_namespace' => null, 是指定插件类的基准文件目录，以配合插件的其他类使用。 默认为空的时候，会去搜索插件类的上一级类， 如 UserSystem\\Base\\App => UserSystem 。 这里注意到是在插件类的爷级命名空间，而不是父级命名空间，是 UserSystem 而不是 UserSystem\\Base 
+'plugin_path_namespace' => null, 是指定插件类的基准文件目录，以配合插件的其他类使用。 默认为空的时候，会去搜索插件类的上一级类， 如 UserSystem\\Base\\App => UserSystem 。 这里注意到是，是 UserSystem 而不是 UserSystem\\Base 
 
 'plugin_path_conifg' => 'config', 配置文件的目录，  'plugin_path_view' => 'view',  视图文件的目录。
 这两在默认模式， 会提供默认的视图和配置，如果在你的应用里有同名文件，则会被覆盖。

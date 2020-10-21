@@ -341,11 +341,11 @@ class App extends DuckPhp
             // API服务器， 404 引发异常的模式
             $options['api_server_404_as_exception'] = false;
 
+            // API服务器， 接口，或基类，  ~ 开始的表示是当前命名空间
+            $options['api_server_base_class'] = '';
+
             // API服务器， 类名后缀
             $options['api_server_class_postfix'] = '';
-
-            // API服务器， 接口，  ~ 开始的表示是当前命名空间
-            $options['api_server_interface'] = '';
 
             // API服务器， 命名空间，配合 namespace选项使用
             $options['api_server_namespace'] = 'Api';

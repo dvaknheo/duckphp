@@ -21,8 +21,6 @@ use DuckPhp\Core\View;
 
 trait Kernel
 {
-    // use SingletonEx; OK ，turn on this for full work;
-    
     public $options = [];
     protected static $options_default = [
     
@@ -31,7 +29,6 @@ trait Kernel
             'skip_plugin_mode_check' => false,
             'handle_all_dev_error' => true,
             'handle_all_exception' => true,
-            
             
             //// basic config ////
             'path' => null,
@@ -99,9 +96,6 @@ trait Kernel
         }
         
         $object = $override_class::G();
-        
-        //$object->options['namespace']= $this->getDefaultProjectNameSpace($override_class); //??? 为什么不需要？
-        
         return $object;
     }
     protected function getDefaultProjectNameSpace($class)
@@ -129,12 +123,14 @@ trait Kernel
         
         $options['path'] = $options['path'] ?? $this->getDefaultProjectPath();
         $options['namespace'] = $options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
+        
         if (($options['use_autoloader'] ?? self::$options_default['use_autoloader']) || ($options['path_namespace'] ?? false)) {
             AutoLoader::G()->init($options, $this)->run();
         }
         
         $handle_all_dev_error = $options['handle_all_dev_error'] ?? self::$options_default['handle_all_dev_error'];
         $handle_all_exception = $options['handle_all_exception'] ?? self::$options_default['handle_all_exception'];
+        
         $exception_options = [
             'handle_all_dev_error' => $handle_all_dev_error,
             'handle_all_exception' => $handle_all_exception,
@@ -144,9 +140,11 @@ trait Kernel
             'dev_error_handler' => $this->hanlder_for_develop_exception,
         ];
         ExceptionManager::G()->init($exception_options, $this)->run();
+        
         $object = $this->checkOverride($options);
         (self::class)::G($object);
         static::G($object);
+        
         return $object->initAfterOverride($options, $context);
     }
     //for override

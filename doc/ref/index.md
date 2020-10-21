@@ -160,12 +160,12 @@ src
 +  'api_server_404_as_exception' => false,   
 
     API服务器， 404 引发异常的模式   // [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md)
++  'api_server_base_class' => '',   
+
+    API服务器， 接口，或基类，  ~ 开始的表示是当前命名空间   // [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md)
 +  'api_server_class_postfix' => '',   
 
     API服务器， 类名后缀   // [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md)
-+  'api_server_interface' => '',   
-
-    API服务器， 接口，  ~ 开始的表示是当前命名空间   // [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md)
 +  'api_server_namespace' => 'Api',   
 
     API服务器， 命名空间，配合 namespace选项使用   // [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md)
@@ -710,10 +710,10 @@ src
 + DuckPhp\Ext\RouteHookApiServer
     - 'api_server_404_as_exception' => false,
         API服务器， 404 引发异常的模式
+    - 'api_server_base_class' => '',
+        API服务器， 接口，或基类，  ~ 开始的表示是当前命名空间
     - 'api_server_class_postfix' => '',
         API服务器， 类名后缀
-    - 'api_server_interface' => '',
-        API服务器， 接口，  ~ 开始的表示是当前命名空间
     - 'api_server_namespace' => 'Api',
         API服务器， 命名空间，配合 namespace选项使用
     - 'api_server_use_singletonex' => false,

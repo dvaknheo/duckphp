@@ -28,7 +28,7 @@
     RouteHookRouteMap::class => true,
 ],
 ## 说明
-DuckPhp 类只是弥补了 DuckPhp 缺失的方法。
+DuckPhp 类只是弥补了 Core\App 缺失的方法。
 具体的方法在 Core\App 里
 主要流程在 Core\Kernel 里
 ## 公开方法
@@ -40,13 +40,11 @@ DuckPhp 类只是弥补了 DuckPhp 缺失的方法。
 * 下划线开始的公开方法被视为内部方法 *
 
 
-
-public function _Pager($object = null)
-
-    重写了 `Core\App` 的 _Pager 方法，填充默认 DuckPhp\Ext
-    Pager 对象。
 ## 详解
 
 App 类，继承了 Core\App 的功能，在默认配置里，还加载了其他 Ext 扩展的内容。
 
 
++ 如果你要看有什么选项，查看  Kernel  文档
++ 如果你要看核心流程，查看  Kernel  文档
++ 如果你要看有什么方法，查看 App 文档。
