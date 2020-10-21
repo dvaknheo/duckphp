@@ -211,7 +211,7 @@ class HttpServer
             $this->pid = (int)$pid;
             return $pid;
         }
-        echo "DuckPhp running at : http://$host:$port/ \n"; // @codeCoverageIgnore
+        echo "DuckPhp running at : http://{$this->host}:{$this->port}/ \n"; // @codeCoverageIgnore
         return system($cmd); // @codeCoverageIgnore
     }
 }

@@ -128,7 +128,7 @@ class Db implements DbInterface
     }
     //*
     protected $resultClass = 'stdClass';
-    public function setResultClass($resultClass)
+    public function setObjectResultClass($resultClass)
     {
         $this->resultClass = $resultClass;
         return $this;

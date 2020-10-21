@@ -1,3 +1,40 @@
+v1.2.7 变更
+修复上一版本默认不加载任何扩展的严重 bug
+
+完善自动文档脚本
+
+Controller 可以用 G 函数了。 第三方库提供者的控制器可以让人热修改了。
+相应的是 'controller_use_singletonex' 选项 和 replaceControllerSingelton($old_class, $new_class)
+
+debug_log($str,$arg=[]) 不要考虑 App::Logger()->info,debug 还是什么。
+
+添加了手动关闭数据库的 DbCloseAll();
+
+默认不再和额外命名空间 LazyToChange 有任何联系
+
+设置文件的手动选项， 'use_setting_file'  'use_env_file'  不再默认必须有设置文件了。
+
+Kernel 方面，override_class 选项不再和 namespace 相关。path ， namespace 这两项默认不需要提供了。
+
+Kernel 增加了 onAfterRun 事件处理。
+
+
+Route 析出内部 trait Route_UrlManager 处理 url ， skip_fix_path_info 现在是由 Route 类处理
+
+
+Db 丰富了 Object 方式的查询 。setObjectResultClass （链式） ,fetchObject ,fetchObjectAll
+
+RouteHookPathInfoByGet 改名 RouteHookPathInfoCompat
+RouteHookApiServer 完善可用
+
+JsonRpcClientBase 修复了代理的 init(),isInit() 函数
+AppPluginTrait 修复 OnUrl，希望没出其他额外事
+ComponentBase 多了 getComponenetNamespace
+
+
+示例文件更精简。
+其他一些可虎烈的小改动。
+
 v1.2.6 变更
 1 支持 windows
 2 架构更新， 原先的 Service 重命名为 Business 导致模板目录变更

@@ -5,9 +5,11 @@
  */
 require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
 
-require_once __DIR__.'/../app/System/App.php';
-$options =[];
+$options =[
+    //'is_debug'=>true,
+];
 
+require_once __DIR__.'/../app/System/App.php';
 //设置命名空间 LazyToChange 对应的目录，但强烈建议用 composer 加载。
 $options['path_namespace'] = 'app';
 

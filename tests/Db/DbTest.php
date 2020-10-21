@@ -53,9 +53,8 @@ class DbTest extends \PHPUnit\Framework\TestCase
         $db->rowCount();
         
         ////[[[[
-        $db->setResultClass(DbTestUser::class);
         $sql="select * from Users limit 1";
-        $x=$db->fetchObjectAll($sql);
+        $x=$db->setObjectResultClass(DbTestUser::class)->fetchObjectAll($sql);
         $sql="select * from Users where username=:username";
         $x=$db->fetchObjectAll($sql,['username'=>'aa']);
 

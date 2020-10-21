@@ -135,9 +135,11 @@ File: `template/public/index.php`
  */
 require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
 
-require_once __DIR__.'/../app/System/App.php';
-$options =[];
+$options =[
+    //'is_debug'=>true,
+];
 
+require_once __DIR__.'/../app/System/App.php';
 //设置命名空间 LazyToChange 对应的目录，但强烈建议用 composer 加载。
 $options['path_namespace'] = 'app';
 
@@ -145,6 +147,7 @@ echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKP
 echo "<div>不建议直接运行这文件，建议用安装模式 </div>\n"; //@DUCKPHP_DELETE
 
 \LazyToChange\System\App::RunQuickly($options);
+
 ```
 入口类前面部分是处理头文件的。
 
