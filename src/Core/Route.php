@@ -10,6 +10,7 @@ use DuckPhp\Core\ComponentBase;
 class Route extends ComponentBase
 {
     use Route_UrlManager;
+    use Route_Helper;
     
     const HOOK_PREPEND_OUTTER = 'prepend-outter';
     const HOOK_PREPEND_INNER = 'prepend-inner';
@@ -37,7 +38,6 @@ class Route extends ComponentBase
 
     public $pre_run_hook_list = [];
     public $post_run_hook_list = [];
-    
     
     //input
     protected $path_info = '';
@@ -97,7 +97,8 @@ class Route extends ComponentBase
     }
     public function prepare($server)
     {
-        $this->prepareForUrl($server);
+        $this->prepareForUrl($server); // urlmansage.
+        
         $this->request_method = $server['REQUEST_METHOD'] ?? 'GET';
         //REQUEST_URI
         //SCRIPT_FILENAME
@@ -106,6 +107,7 @@ class Route extends ComponentBase
         $this->has_bind_server_data = true;
         return $this;
     }
+    // TODO move to other extend
     protected function fixPathInfo($serverData, $default)
     {
         if ($this->options['skip_fix_path_info']) {
@@ -131,6 +133,7 @@ class Route extends ComponentBase
     }
     public function bind($path_info, $request_method = 'GET')
     {
+        //TODO  Remove
         $path_info = parse_url($path_info, PHP_URL_PATH);
         
         if (!$this->has_bind_server_data) {
@@ -326,7 +329,9 @@ class Route extends ComponentBase
         }
         return [$object,$method];
     }
-    
+}
+trait Route_Helper
+{
     ////
     public function getPathInfo()
     {

@@ -180,7 +180,7 @@ trait AppPluginTrait
         $route = new Route();
         Route::G($route);
         
-        $options = [];
+        $options = $this->plugin_options;
         $options['namespace'] = $this->plugin_options['plugin_namespace'];
         
         $route->init($options)->prepare(SuperGlobal::G()->_SERVER);

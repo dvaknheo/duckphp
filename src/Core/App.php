@@ -82,6 +82,11 @@ class App extends ComponentBase
         'default_exception_do_log' => true,
         'default_exception_self_display' => true,
         'close_resource_at_output' => false,
+        
+        //// error handler ////
+        'error_404' => null,          //'_sys/error-404',
+        'error_500' => null,          //'_sys/error-500',
+        'error_debug' => null,        //'_sys/error-debug',
     ];
     public function __construct()
     {
@@ -267,7 +272,7 @@ trait Core_Handler
             extract($data);
             echo  <<<EOT
 <!--DuckPhp  set options ['error_debug']='_sys/error-debug.php' to override me -->
-<fieldset class="_DNMVC_DEBUG">
+<fieldset class="_DuckPhp_DEBUG">
     <legend>$error_desc($errno)</legend>
 <pre>
 {$error_shortfile}:{$errline}
@@ -685,27 +690,27 @@ trait Core_NotImplemented
     }
     public function _Db($tag)
     {
-        throw new \ErrorException("DNMVCS No Impelement " . __FUNCTION__);
+        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
     }
     public function _DbForRead()
     {
-        throw new \ErrorException("DNMVCS No Impelement " . __FUNCTION__);
+        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
     }
     public function _Event()
     {
-        throw new \ErrorException("DNMVCS No Impelement " . __FUNCTION__);
+        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
     }
     public function _DbForWrite()
     {
-        throw new \ErrorException("DNMVCS No Impelement " . __FUNCTION__);
+        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
     }
     public function _FireEvent($event, ...$args)
     {
-        throw new \ErrorException("DNMVCS No Impelement " . __FUNCTION__);
+        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
     }
     public function _OnEvent($event, $callback)
     {
-        throw new \ErrorException("DNMVCS No Impelement " . __FUNCTION__);
+        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
     }
 }
 
@@ -922,6 +927,9 @@ trait Core_Component
         ];
         if (!in_array(static::class, $ret)) {
             $ret[] = static::class;
+        }
+        foreach ($this->options['ext'] as $class => $v) {
+            $ret[] = $class;
         }
         return $ret;
     }

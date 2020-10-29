@@ -23,12 +23,9 @@ trait Kernel
 {
     public $options = [];
     protected static $options_default = [
-    
             //// not override options ////
             'use_autoloader' => false,
             'skip_plugin_mode_check' => false,
-            'handle_all_dev_error' => true,
-            'handle_all_exception' => true,
             
             //// basic config ////
             'path' => null,
@@ -46,11 +43,6 @@ trait Kernel
             
             'skip_404_handler' => false,
             'skip_exception_check' => false,
-            
-            //// error handler ////
-            'error_404' => null,          //'_sys/error-404',
-            'error_500' => null,          //'_sys/error-500',
-            'error_debug' => null,        //'_sys/error-debug',
         ];
     public $onPrepare;
     public $onInit;
@@ -117,7 +109,7 @@ trait Kernel
     //init
     public function init(array $options, object $context = null)
     {
-        if (!($options['skip_plugin_mode_check'] ?? self::$options_default['skip_plugin_mode_check']) && isset($context)) {
+        if (isset($context) && !($options['skip_plugin_mode_check'] ?? self::$options_default['skip_plugin_mode_check'])) {
             return $this->pluginModeInit($options, $context);
         }
         
@@ -128,13 +120,8 @@ trait Kernel
             AutoLoader::G()->init($options, $this)->run();
         }
         
-        $handle_all_dev_error = $options['handle_all_dev_error'] ?? self::$options_default['handle_all_dev_error'];
-        $handle_all_exception = $options['handle_all_exception'] ?? self::$options_default['handle_all_exception'];
-        
+
         $exception_options = [
-            'handle_all_dev_error' => $handle_all_dev_error,
-            'handle_all_exception' => $handle_all_exception,
-            
             'system_exception_handler' => $this->hanlder_for_exception_handler,
             'default_exception_handler' => $this->hanlder_for_exception,
             'dev_error_handler' => $this->hanlder_for_develop_exception,
