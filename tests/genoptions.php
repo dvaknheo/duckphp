@@ -132,7 +132,7 @@ EOT;
                 $v['class']=$v['class']??[];
                 $v['class'][]=$class;
                 $v['desc']=$desc[$option]??'';
-                
+
                 unset($v);
             }
         }
@@ -238,12 +238,9 @@ class DataProvider
     public function getKernelOptions()
     {
         return [
-            'use_autoloader',
-            'skip_plugin_mode_check',
-            'handle_all_dev_error',
-            'handle_all_exception',
-            'override_class',
-            'path_namespace',
+            //'use_autoloader',
+            //'skip_plugin_mode_check',
+            //'override_class',
         ];
     }
     public function getDescs()
@@ -273,6 +270,7 @@ DuckPhp\\Ext\\Pager
     function getDefaultComponentClasses()
     {
         $classes="DuckPhp\\DuckPhp
+DuckPhp\\Core\\App
 DuckPhp\\Core\\AutoLoader
 DuckPhp\\Core\\Configer
 DuckPhp\\Core\\Logger

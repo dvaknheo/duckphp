@@ -44,7 +44,7 @@ phpunit 9.2.0  // 不是 phpunit 9.3 版哦
 
 
 ```
-phpunit tests/genoptions.php
+php tests/genoptions.php
 ```
 svg 架构图形生成
 ```

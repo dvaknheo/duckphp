@@ -289,12 +289,12 @@ src
 +  'facades_namespace' => 'Facades',   
 
     facades 开始的namespace   // [DuckPhp\Ext\FacadesAutoLoader](Ext-FacadesAutoLoader.md)
-+ ** 'handle_all_dev_error' => true,  ** 
++  'handle_all_dev_error' => true,   
 
-    接管一切开发错误   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
-+ ** 'handle_all_exception' => true,  ** 
+    接管一切开发错误   // [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
++  'handle_all_exception' => true,   
 
-    接管一切异常   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
+    接管一切异常   // [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
 + ** 'is_debug' => false,  ** 
 
     是否调试状态   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
@@ -497,10 +497,6 @@ src
         错误调试页面
     - 'ext' => array ( ),
         默认开启的扩展
-    - 'handle_all_dev_error' => true,
-        接管一切开发错误
-    - 'handle_all_exception' => true,
-        接管一切异常
     - 'is_debug' => false,
         是否调试状态
     - 'namespace' => NULL,

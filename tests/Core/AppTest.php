@@ -432,7 +432,7 @@ App::PageHtml(123);
     }
     protected function do_Core_Component()
     {
-
+        App::G()->options['ext']['Xclass']=true;
         App::G()->getStaticComponentClasses();
         App::G()->getDynamicComponentClasses();
         $class="NoExits";

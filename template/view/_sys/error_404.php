@@ -6,7 +6,7 @@ use DuckPhp\Helper\ViewHelper as V;
 
 $is_debug = V::IsDebug();
 ?>
-404
+<h1>404!</h1>
 <?php
     if ($is_debug) {
         ?>

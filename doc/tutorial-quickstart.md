@@ -60,64 +60,80 @@ try_files $uri $uri/ /index.php$request_uri;
 
 ### View 视图
 先做出要显示的样子。
+
+File: `template/view/test/done.php`
+
 ```php
-<?php // view/test/done.php ?>
-<!doctype html><html><body>
+<?php declare(strict_types=1);
+// view/test/done.php?>
+<!doctype html><html>
 <h1>test</h1>
 <div><?=$var ?></div>
 </body></html>
 ```
 ### Controller控制器
 写 /test/done 控制器对应的内容。
+
+File: `template/app/Controller/test.php`
+
 ```php
-<?php
-// app/Controller/test.php
+<?php declare(strict_types=1);
+/**
+ * DuckPhp
+ * From this time, you never be alone~
+ */
+
 namespace LazyToChange\Controller;
 
-// use LazyToChange\System\BaseController;
 use LazyToChange\System\Helper\ControllerHelper as C;
-use LazyToChange\Business\MiscBusiness;
+use LazyToChange\Business\TestBusiness;
 
-class test // extends BaseController
+class test
 {
     public function done()
     {
-        $data=[];
-        $data['var']=C::H(MiscBusiness::G()->foo());
-        C::Show($data); // C::Show($data,'test/done');
+        $var = TestBusiness::G()->foo();
+        C::Show(get_defined_vars());
     }
 }
+
 ```
-控制器里，我们处理外部数据，不做业务逻辑，业务逻辑在 Service 层做。
+控制器里，我们处理外部数据，不做业务逻辑，业务逻辑在 Business 层做。
 
 BaseController  这个基类，如果不强制要求也可以不用。
 
-MY 这个命名空间前缀可在选项 ['namespace'] 中变更。
+LazyToChange 这个命名空间前缀可在选项 ['namespace'] 中变更。
 
 C::H 用来做 html编码。
 
 C::Show($data); 是 C::Show($data,'test/done'); 的缩写， 调用 test/done 这个视图。
 
-### Service 服务
+### Business 业务层
 业务逻辑层。根据业务逻辑来命名。
+
+File: `template/app/Business/TestBusiness.php`
+
 ```php
-<?php
-// app/Service/MiscService.php
-namespace LazyToChange\Service;
+<?php declare(strict_types=1);
+/**
+ * DuckPhp
+ * From this time, you never be alone~
+ */
 
-use LazyToChange\System\Helper\BusinessHelper as S;
+namespace LazyToChange\Business;
+
 use LazyToChange\System\BaseBusiness;
-use LazyToChange\Model\MiscModel;
+use LazyToChange\System\Helper\BusinessHelper as B;
+use LazyToChange\Model\TestModel;
 
-class MiscService  extends BaseBusiness
+class TestBusiness extends BaseBusiness
 {
     public function foo()
     {
-        $time=MiscModel::G()->getTime();
-        $ret="<".$time.">";
-        return $ret;
+        return "<" . TestModel::G()->foo().">";
     }
 }
+
 ```
 BaseBusiness也是不强求的，我们 extends BaseBusiness 是为了能用 G 函数这个单例方法。
 
@@ -129,21 +145,28 @@ BaseBusiness也是不强求的，我们 extends BaseBusiness 是为了能用 G �
 
 Model 类是实现基本功能的。一般 Model 类的命名是和数据库表一致的。
 
+File: `template/app/Model/TestModel.php`
+
 ```php
-<?php
-// app/Model/MiscModel.php
+<?php declare(strict_types=1);
+/**
+ * DuckPhp
+ * From this time, you never be alone~
+ */
+
 namespace LazyToChange\Model;
 
 use LazyToChange\System\BaseModel;
 use LazyToChange\System\Helper\ModelHelper as M;
 
-class MiscModel extends BaseModel
+class TestModel extends BaseModel
 {
-    public function getTime()
+    public function foo()
     {
         return DATE(DATE_ATOM);
     }
 }
+
 ```
 同样 BaseModel 也是不强求的，我们 extends BaseModel 是为了能用 G 函数这个单例方法。
 
@@ -161,11 +184,11 @@ $options['ext']['DuckPhp\\Ext\\RouteHookPathInfoCompat']=true;
 同样访问  http://127.0.0.1:8080/index.php?_r=test/done  也是得到想同测试页面的结果
 
 ### 数据库操作
-前提工作，我们注释掉 `public/index.php` 中跳过设置文件的选项
+前提工作，我们加上 `public/index.php` 中跳过设置文件的选项
 ```php
-//$options['skip_setting_file']=true;
+$options['use_setting_file']=true;
 ```
-`./vendor/bin/duckphp --create` 脚本会删去这一行。
+
 
 数据库演示需要数据库配置。
 
@@ -188,8 +211,8 @@ return [
 ```
 然后，我们写 `app/Controller/dbtest.php` 如下
 ```php
-namespace MY\Controller;
-use MY\Base\App as M;
+namespace LazyToChange\Controller;
+use LazyToChange\Base\App as M;
 
 class dbtest
 {

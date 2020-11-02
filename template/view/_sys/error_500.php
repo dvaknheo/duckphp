@@ -3,9 +3,9 @@ use DuckPhp\Helper\ViewHelper as V;
 
 // change this file if you can.
 //var_dump(get_defined_vars());
+$is_debug = V::IsDebug();
 if ($is_debug) {
 
-    $is_debug = V::IsDebug();
     $class = get_class($ex);
 
     $code = $ex->getCode();
@@ -15,7 +15,7 @@ if ($is_debug) {
     
     $trace = '';
     try{
-        $trace = $ex->getTraceString();
+        $trace = ''.$ex;
     }catch(\Throwable $e){}
     ?>
 <fieldset>

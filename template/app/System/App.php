@@ -12,8 +12,8 @@ class App extends DuckPhp
 {
     //@override
     public $options = [
-        //'skip_setting_file' => false,
-        'skip_setting_file' => true, // @DUCKPHP_DELETE
+        // 'use_setting_file' => false,
+        // 'use_setting_file' => true,
         
         //'is_debug' => false,
         'is_debug' => true,
@@ -27,7 +27,7 @@ class App extends DuckPhp
         'error_debug' => '_sys/error_debug',
         
         //'path_info_compact_enable' => false,
-        'path_info_compact_enable' => true, // @DUCKPHP_DELETE
+        //'path_info_compact_enable' => true, // @DUCKPHP_DELETE
     ];
     public function __construct()
     {
@@ -130,6 +130,9 @@ class App extends DuckPhp
         // 控制器的命名空间 (DuckPhp\Core\Route, DuckPhp\Ext\StrictCheck)
         // $options['namespace_controller'] = 'Controller';
 
+        // 重写类名 (DuckPhp\Core\App)
+        // $options['override_class'] = '';
+
         // 基础目录 (DuckPhp\Core\App, DuckPhp\Core\AutoLoader, DuckPhp\Core\Configer, DuckPhp\Core\Logger, DuckPhp\Core\View, DuckPhp\Ext\CallableView, DuckPhp\Ext\EmptyView, DuckPhp\Ext\Misc)
         // $options['path'] = '';
 
@@ -147,6 +150,9 @@ class App extends DuckPhp
 
         // 日志目录 (DuckPhp\Core\Logger)
         // $options['path_log'] = 'logs';
+
+        // 命名空间目录 (DuckPhp\Core\AutoLoader)
+        // $options['path_namespace'] = 'app';
 
         // 视图目录 (DuckPhp\Core\View, DuckPhp\Ext\CallableView, DuckPhp\Ext\EmptyView)
         // $options['path_view'] = 'view';
@@ -184,8 +190,14 @@ class App extends DuckPhp
         // 跳过 PATH_INFO 修复 (DuckPhp\Core\Route)
         // $options['skip_fix_path_info'] = false;
 
+        // 跳过插件模式检查 (DuckPhp\Core\App)
+        // $options['skip_plugin_mode_check'] = false;
+
         // 跳过 View 视图的 notice (DuckPhp\Core\View, DuckPhp\Ext\CallableView, DuckPhp\Ext\EmptyView)
         // $options['skip_view_notice_error'] = true;
+
+        // 使用系统自带加载器 (DuckPhp\Core\App)
+        // $options['use_autoloader'] = false;
 
         // 使用 .env 文件 (DuckPhp\Core\Configer)
         // $options['use_env_file'] = false;
