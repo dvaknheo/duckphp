@@ -40,7 +40,7 @@ class AppHelper
     {
         return App::setUrlHandler($callback);
     }
-    public function replaceControllerSingelton($old_class, $new_class)
+    public static function replaceControllerSingelton($old_class, $new_class)
     {
         return App::replaceControllerSingelton($old_class, $new_class);
     }

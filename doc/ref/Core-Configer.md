@@ -21,12 +21,14 @@
 'setting_file' => 'setting',
 
     设置文件名。
-'skip_setting_file' => false,
+'use_setting_file' => false,
 
     跳过设置文件
-'skip_env_file' => true,
+'use_env_file' => false,
 
     打开这项，可以读取 path 选项下的 env 文件
+    
+"config_ext_files"
 ## 公开方法
 
     public function init($options=[], $context=null)

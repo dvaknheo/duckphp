@@ -79,17 +79,7 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
     
     不在 Run 流程检查异常，把异常抛出外面，或许
 
-### 错误处理配置
 
-'error_404' => null,          //'_sys/error-404',
-
-    404 的View或者回调
-'error_500' => null,          //'_sys/error-500',
-
-    500 的View或者回调
-'error_debug' => null,        //'_sys/error-debug',
-
-    404 的View或者回调
 
 ## 公开方法
 

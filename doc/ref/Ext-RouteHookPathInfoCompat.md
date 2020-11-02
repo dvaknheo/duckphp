@@ -8,11 +8,11 @@
 
     注意，这项开启扩展才启用。
 
-'key_for_action' => '_r',
-
+'path_info_compact_action_key' => '_r',
     替代的 action
-'key_for_module' => '',
-    
+'path_info_compact_class_key' => '',
+
+    替代的 class
 ## 公开方法
 public function __construct()
 public function init(array $options, object $context = null)

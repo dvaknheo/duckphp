@@ -25,6 +25,12 @@ class DuckPhp extends App
         'default_exception_do_log' => true,
         'default_exception_self_display' => true,
         'close_resource_at_output' => false,
+        
+        //// error handler ////
+        'error_404' => null,          //'_sys/error-404',
+        'error_500' => null,          //'_sys/error-500',
+        'error_debug' => null,        //'_sys/error-debug',
+
         'ext' => [
             DbManager::class => true,
             RouteHookPathInfoCompat::class => true,

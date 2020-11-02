@@ -7,11 +7,17 @@
 ## 选项
     'namespace' => '',
     'namespace_controller' => '',
-    'namespace_service' => '',
     'namespace_model' => '',
     'controller_base_class' => '',
     'is_debug' => true,
-    'app_class' => null,
+            'namespace_business' => '',
+            'strict_check_context_class' => null,
+            
+            'strict_check_enable' => true,
+    'postfix_batch_business' => 'BatchBusiness',
+    'postfix_business_lib' => 'Lib',
+    'postfix_ex_model' => 'ExModel',
+    'postfix_model' => 'Model',
 ## 扩充方法
 
 ### 方法

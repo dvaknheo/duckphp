@@ -3,12 +3,42 @@ require_once(__DIR__.'/../autoload.php');
 // 自动化文档脚本
 
 GenOptionsGenerator::G()->init([])->run();
+
 var_dump(DATE(DATE_ATOM));
 
 return;
 
 class GenOptionsGenerator
 {
+    public function checkHasDoced()
+    {
+        $ret=[];
+        $input=GenOptionsGenerator::G()->getAllOptions();
+
+        $classes=DataProvider::G()->getAllComponentClasses();
+        array_shift($classes);
+        foreach($classes as $class){
+            //var_dump($class);
+            $file=realpath(__DIR__.'/../doc/');
+            $str=str_replace(['DuckPhp\\','\\'],['/ref/','-'],$class);
+            $file=$file.$str.'.md';
+            $data=file_get_contents($file);
+            $options=(new $class())->options;
+            $row=[];
+            foreach($options as $k =>$v){
+                if(false ===strpos($data,$k)){
+                    $row[]=$k;
+                }
+            }
+            if(!empty($row)){
+                $ret[$class]=$row;
+            }
+        }
+        if(!empty($ret)){
+            var_dump($ret);
+        }
+    }
+    
     public static function G($object=null)
     {
         static $_instance;
@@ -33,6 +63,7 @@ class GenOptionsGenerator
         foreach($docs as $file){
             WrapFileAction($file,'replaceData');
         }
+        $this->checkHasDoced();
         
     }
     public function diff()
@@ -110,7 +141,8 @@ EOT;
 EOT;
             $ret[]=$str;
         }
-        return implode("",$ret);    }
+        return implode("",$ret);    
+    }
     public function getAllOptions()
     {
         $classes=DataProvider::G()->getAllComponentClasses();
@@ -395,3 +427,25 @@ function GetAllDocFile()
     array_unshift($ret,realpath(__DIR__.'/../README.md'));
     return $ret;
 }
+
+function getClassStaticMethods($class)
+{
+    $ref=new ReflectionClass($class);
+    $a=$ref->getMethods(ReflectionMethod::IS_STATIC);
+    $ret=[];
+    foreach($a as $v){
+        $ret[]=$v->getName();
+    }
+    return $ret;
+}
+
+
+$m=getClassStaticMethods(DuckPhp::class);
+$m_a=getClassStaticMethods(\DuckPhp\Helper\AppHelper::class);
+$m_b=getClassStaticMethods(\DuckPhp\Helper\BusinessHelper::class);
+$m_c=getClassStaticMethods(\DuckPhp\Helper\ControllerHelper::class);
+$m_m=getClassStaticMethods(\DuckPhp\Helper\ModelHelper::class);
+$m_v=getClassStaticMethods(\DuckPhp\Helper\ViewHelper::class);
+
+$ret=array_diff($m,$m_a,$m_b,$m_c,$m_m,$m_v);
+var_dump(array_values($ret));

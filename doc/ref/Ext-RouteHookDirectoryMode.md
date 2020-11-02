@@ -6,7 +6,9 @@
 ##### 
 ## 选项
 'mode_dir_use_path_info'=>true,
+mode_dir_basepath
 
+基准路径
 ## 公开方法
 
 

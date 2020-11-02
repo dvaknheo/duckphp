@@ -39,6 +39,10 @@
 'skip_fix_path_info' => false,
 
     修复默认没配置 PATH_INFO ，打开以节约性能
+    
+"controller_class_postfix"
+"controller_enable_slash"
+"controller_path_ext"
 ## 公开属性
 
 ## 公开方法

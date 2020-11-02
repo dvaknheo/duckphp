@@ -169,6 +169,7 @@ RunQuickly 相当于 \DuckPhp\DuckPhp::G()->init($options,function(){})->run();
 ###  工程入口文件
 
 所以我们现在来看 `app/System/App.php` 对应的 LazyToChange\System\App 类就是入口了。
+
 File: `template/app/System/App.php`
 
 ```php
@@ -186,8 +187,8 @@ class App extends DuckPhp
 {
     //@override
     public $options = [
-        //'skip_setting_file' => false,
-        'skip_setting_file' => true, // @DUCKPHP_DELETE
+        // 'use_setting_file' => false,
+        // 'use_setting_file' => true,
         
         //'is_debug' => false,
         'is_debug' => true,
