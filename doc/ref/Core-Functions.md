@@ -13,7 +13,13 @@ __l
 __hl
 __url
 __display
+__trace_dump
+__var_dump()
+__debug_log()
+__db()
 
 为了通用化，这些函数的参数都是 (...$args) 动态参数
 
+都是 App 的函数
 你可以在 onPrepare() 时候 替换相应函数。
+

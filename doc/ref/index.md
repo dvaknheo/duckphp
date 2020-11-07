@@ -150,6 +150,27 @@ src
 `-- ThrowOn
     `-- ThrowOn.php
 ```
+
+## nginx
+
+```
+server {
+	server_name  duckphp.demo.dev;
+	root /mnt/d/MyWork/sites/DNMVCS/template/public;
+    index index.php index.html index.htm;
+    
+    try_files $uri $uri/ /index.php$request_uri;
+    location ~ \.php {
+        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_index index.php;
+        fastcgi_split_path_info ^(.*\.php)(/.*)?$;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}
+```
+
 ## 选项索引
 按字母顺序，加粗表示默认选项。
 

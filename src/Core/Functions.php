@@ -35,3 +35,28 @@ if (! function_exists('__display')) {
         return App::Display(...$args);
     }
 }
+if (! function_exists('__trace_dump')) {
+    function __trace_dump(...$args)
+    {
+        return App::trace_dump(...$args);
+    }
+}
+if (! function_exists('__var_dump')) {
+    function __var_dump(...$args)
+    {
+        return App::var_dump(...$args);
+    }
+}
+if (! function_exists('__debug_log')) {
+    function __debug_log(...$args)
+    {
+        return App::debug_log(...$args);
+    }
+}
+
+if (! function_exists('__db')) {
+    function __db(...$args)
+    {
+        return App::Db(...$args);
+    }
+}
