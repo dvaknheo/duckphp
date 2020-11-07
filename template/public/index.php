@@ -15,6 +15,8 @@ $options['path_namespace'] = 'app';
 
 // 启用命令行模式， 加载命令行插件
 $options['console_mode_enable'] = defined('DUCKPHP_CLI_MODE')?true:false;
+//$options['ext']['DuckPhp\\Ext\\RouteHookPathInfoCompat']=true;
+//$options['use_setting_file'] = true;
 
 echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKPHP_DELETE
 echo "<div>不建议直接运行这文件，建议用安装模式 </div>\n"; //@DUCKPHP_DELETE

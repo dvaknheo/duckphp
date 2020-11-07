@@ -4,7 +4,7 @@
 ### 安装
 假定不管什么原因，选用了 DuckPhp 这个框架，需要快速入门.
 
-最快的方式是从 github 下载 DuckPHP。
+最快的方式是从 github 下载 DuckPhp。
 
 到所在目录之下运行
 
@@ -102,13 +102,14 @@ class test
 
 BaseController  这个基类，如果不强制要求也可以不用。
 
-LazyToChange 这个命名空间前缀可在选项 ['namespace'] 中变更。
+LazyToChange 这个命名空间前缀是工程命名前缀，怎么修改先略过。
 
 C::H 用来做 html编码。
 
 C::Show($data); 是 C::Show($data,'test/done'); 的缩写， 调用 test/done 这个视图。
 
 ### Business 业务层
+
 业务逻辑层。根据业务逻辑来命名。
 
 File: `template/app/Business/TestBusiness.php`
@@ -135,7 +136,7 @@ class TestBusiness extends BaseBusiness
 }
 
 ```
-BaseBusiness也是不强求的，我们 extends BaseBusiness 是为了能用 G 函数这个单例方法。
+BaseBusiness也是不强求的，我们 extends BaseBusiness 是为了能用 TestBusiness::G() 可变单例。
 
 这里调用了 MiscModel 。
 
@@ -168,7 +169,7 @@ class TestModel extends BaseModel
 }
 
 ```
-同样 BaseModel 也是不强求的，我们 extends BaseModel 是为了能用 G 函数这个单例方法。
+同样 BaseModel 也是不强求的，我们 extends BaseModel 是为了能用 TestModel::G() 可变单例。
 
 ### 最后显示结果
 ```text
@@ -186,7 +187,7 @@ $options['ext']['DuckPhp\\Ext\\RouteHookPathInfoCompat']=true;
 ### 数据库操作
 前提工作，我们加上 `public/index.php` 中跳过设置文件的选项
 ```php
-$options['use_setting_file']=true;
+$options['use_setting_file'] = true;
 ```
 
 

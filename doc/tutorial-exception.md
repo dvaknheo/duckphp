@@ -45,15 +45,10 @@ C::assignExceptionHandler([$class=>$callback]);
 C::setMultiExceptionHandler(array $classes, $callback)
 
     为了方便多个异常统一调用， 添加了这种错误回调的形势，  $classes 为异常类名列表
-C::setDefaultExceptionHandler setDefaultExceptionHandler($callback)
+C::setDefaultExceptionHandler($callback)
 
     没在异常类列表里的默认调用 $callback($exception);
 
-C::ThrowOn($flag,$message,$code);
-C::ThrowOn($flag,$message,$exception_class);
-C::ThrowOn($flag,$message,$code,$exception_class);
-
-    如果 $flag 成立，则抛出异常。ThrowOn 使用于所有助手类，以及 use DuckPhp\Core\ThrowOn 的类。如果该类是 异常类，则默认的 $exception_class 为 该类，否则为 \Exception
 
 ### 异常处理的一般守则
 
@@ -70,4 +65,6 @@ Model 不抛出异常。Service 抛出自己错误的时候，来个同名 excep
 
 'skip_exception_check'=>false, 开启时候 运行阶段，跳过异常检查抛出给上层。如果你不打算自己管理错误的话。 技巧，管理错误的时候，把这个选项 打开 throw $ex ；则由上层管理错误
 	
-如果没调用 C::setDefaultExceptionHandler  则由 APP::OnDefaultException 处理 exception 。你可以重写 APP::\_OnDefaultException 来实现自己的异常管理，如加日志等等。
+'default_exception_do_log' => true, 'default_exception_self_display' => true,
+
+如果没调用 C::setDefaultExceptionHandler  则由 App::OnDefaultException 处理 exception 。你可以重写 App::\_OnDefaultException 来实现自己的异常管理，如加日志等等。

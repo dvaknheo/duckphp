@@ -12,39 +12,17 @@
 
 
 ## 选项
-使用 [DuckPhp\Core\Kernel](Core-Kernel.md) 的默认选项。
 
-并且有：
-
-   [0] =>
-    string(14) "use_autoloader"
-    [1] =>
-    string(22) "skip_plugin_mode_check"
-    [2] =>
-    string(4) "path"
-    [3] =>
-    string(14) "override_class"
-    [4] =>
-    string(8) "is_debug"
-    [5] =>
-    string(8) "platform"
-    [6] =>
-    string(19) "use_flag_by_setting"
-    [7] =>
-    string(16) "use_super_global"
-    [8] =>
-    string(19) "use_short_functions"
-    [9] =>
-    string(16) "skip_404_handler"
-    [10] =>
-    string(20) "skip_exception_check"
-
-
-###
+### 专有选项
 'default_exception_do_log' => true,
+
+    发生异常时候记录日志
 'default_exception_self_display' => true,
+
+    发生异常的时候如有可能，调用异常类的 display() 方法。
 'close_resource_at_output' => false,
     
+    输出时候关闭资源输出（仅供第三方扩展参考
 ### 错误处理配置
 
 'error_404' => null,          //'_sys/error-404',
@@ -56,6 +34,22 @@
 'error_debug' => null,        //'_sys/error-debug',
 
     404 的View或者回调
+    
+### 扩展 [DuckPhp\Core\Kernel](Core-Kernel.md) 的默认选项。
+详情见 DuckPhp\Core\Kernel 参考文档
+
+"use_autoloader"
+"skip_plugin_mode_check"
+"path"
+"override_class"
+"is_debug"
+"platform"
+"use_flag_by_setting"
+"use_super_global"
+"use_short_functions"
+"skip_404_handler"
+"skip_exception_check"
+
 ## 方法
 
 
@@ -72,10 +66,6 @@
   8 => string 'Route' (length=5)
 
 
-
-public function extendComponents($class, $methods, $components): void
-
-    //
 public static function On404(): void
 
     //
@@ -86,18 +76,6 @@ public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline): v
 
 
     //
-public function getStaticComponentClasses()
-
-    //
-public function getDynamicComponentClasses()
-
-    //
-public function addDynamicComponentClass($class)
-
-    //
-public function removeDynamicComponentClass($class)
-
-    //
 
 ## 详解
 DuckPhp\Core\App 类 可以视为几个类的组合
@@ -106,7 +84,7 @@ DuckPhp\Core\App 类 可以视为几个类的组合
 
 ### 作为 500,404 处理的 trait
 
-### 覆盖系统的 core_systemwrapper
+### 覆盖系统默认函数的 core_systemwrapper
 
 ### 助手类
 相关代码请参考 
@@ -122,18 +100,6 @@ DuckPhp\Core\App 类 可以视为几个类的组合
 
 
  
- ## 方法索引
-
-
-    public function __construct()
-    public function extendComponents($method_map, $components = []): void
-    public function cloneHelpers($new_namespace, $componentClassMap = [])
-    
-    public static function On404(): void
-    public static function OnDefaultException($ex): void
-    public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
-
-    public function getStaticComponentClasses()
-    public function getDynamicComponentClasses()
-    public function addDynamicComponentClass($class)
-    public function removeDynamicComponentClass($class)
+ ## 全方法索引
+ 
+ @autogen:
