@@ -15,6 +15,7 @@ use DuckPhp\Ext\EventManager;
 use DuckPhp\Ext\Pager;
 use DuckPhp\Ext\RouteHookPathInfoCompat;
 use DuckPhp\Ext\RouteHookRouteMap;
+use DuckPhp\Ext\Console;
 
 class DuckPhp extends App
 {
@@ -35,6 +36,7 @@ class DuckPhp extends App
             DbManager::class => true,
             RouteHookPathInfoCompat::class => true,
             RouteHookRouteMap::class => true,
+            Console::class => true,
         ],
     ];
     

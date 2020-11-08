@@ -12,6 +12,9 @@ class HttpServer
             'port' => '8080',
             'path' => '',
             'path_document' => 'public',
+            // 'docroot'
+            // 'dry'
+            //'background' =>true,
         ];
     protected $cli_options = [
             'help' => [
@@ -28,18 +31,9 @@ class HttpServer
                 'desc' => 'set server port,default is 8080',
                 'required' => true,
             ],
-            'inner-server' => [
-                'short' => 'i',
-                'desc' => 'use inner server',
-            ],
             'docroot' => [
                 'short' => 't',
                 'desc' => 'document root',
-                'required' => true,
-            ],
-            'file' => [
-                'short' => 'f',
-                'desc' => 'index file',
                 'required' => true,
             ],
             'dry' => [

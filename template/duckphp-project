@@ -1,4 +1,5 @@
 #!/usr/bin/env php
 <?php
-define('DUCKPHP_CLI_MODE',true);
+
+chdir(__DIR__.'/public/');
 include __DIR__.'/public/index.php';

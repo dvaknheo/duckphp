@@ -10,27 +10,11 @@ use DuckPhp\Core\ComponentBase;
 class Installer extends ComponentBase
 {
     public $options = [
-        'prune_helper' => false,
-        'prune_core' => false,
-        'namespace' => 'LazyToChange',
         'src' => '',
         'dest' => '',
-        'run' => false,
-        
-        /*
-        "help",
-        "start",
-        "create",
-        "force",
-        "full",
-        "verbose",
-        
-        "namespace:",
-        "dest:",
-        "autoload-file:",
-        'host:',
-        'port:',
-        */
+        'force'=>true,
+        'autoload_file'=>'vendor/autoload.php',
+        'verbose'=>false,
     ];
     public function init($options)
     {
@@ -39,18 +23,12 @@ class Installer extends ComponentBase
     }
     public function run()
     {
-        $is_done = false;
-        if ($this->options['create']) {
-            $source = __DIR__ .'/../template';
-            $dest = $this->options['dest'];
-            $this->dumpDir($source, $dest, $this->options['force'], $this->options['full']);
-            
-            $is_done = true;
-        }
+        $source = __DIR__ .'/../template';
+        $dest = $this->options['dest'];
+        $this->dumpDir($source, $dest, $this->options['force'], $this->options['full']);
     }
-    public function dumpDir($source, $dest, $force = false, $is_full = false)
+    public function dumpDir($source, $dest, $force = false)
     {
-        $is_full = true; // OK we set this to full
         $source = rtrim(realpath($source), '/').'/';
         $dest = rtrim(realpath($dest), '/').'/';
         $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
@@ -60,10 +38,6 @@ class Installer extends ComponentBase
         
         foreach ($t_files as $file) {
             $short_file_name = substr($file, strlen($source));
-            $is_in_full = (substr($short_file_name, 0, strlen('public/full/'))) === 'public/full/'?true:false;
-            if (!$is_full && $is_in_full) {
-                continue;
-            }
             $files[$file] = $short_file_name;
         }
         
@@ -81,18 +55,6 @@ class Installer extends ComponentBase
         }
         
         foreach ($files as $file => $short_file_name) {
-            $is_in_full = (substr($short_file_name, 0, strlen('public/full/'))) === 'public/full/'?true:false;
-            if (!$is_full && $is_in_full) {
-                continue;
-            }
-            /*
-            if ($this->options['prune_helper']) {
-                if ($this->pruneHelper($short_file_name)) {
-                    echo "prune skip: $short_file_name \n";
-                    continue;
-                }
-            }
-            */
             $dest_file = $dest.$short_file_name;
             $data = file_get_contents($file);
             $data = $this->filteText($data, $is_in_full, $short_file_name);
@@ -147,7 +109,7 @@ class Installer extends ComponentBase
     
     protected function filteText($data, $is_in_full, $short_file_name)
     {
-        $autoload_file = $this->options['autoload_file']?$this->options['autoload_file']:"vendor/autoload.php";
+        $autoload_file = $this->options['autoload_file'];
         $data = $this->changeHeadFile($data, $short_file_name, $autoload_file);
         
         if (!$is_in_full) {
