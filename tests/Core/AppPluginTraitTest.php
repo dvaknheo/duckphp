@@ -31,6 +31,7 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
             'platform' => 'BJ',
             'is_debug' => true,
             'override_class'=>'',
+            'cli_enable'=>false,
         ];
         $plugin_options=[
             'plugin_path_namespace'=>$path_app.'secondapp/',

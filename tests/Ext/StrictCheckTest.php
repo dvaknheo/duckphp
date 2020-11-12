@@ -26,6 +26,7 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
             'namespace'=> __NAMESPACE__,
             'controller_welcome_class'=> 'StrictCheckTestMain',
             'database_list'=>$database_list,
+            'cli_enable'=>false,
 
         ];
         StrictCheck::G(new StrictCheck_FakeObject);

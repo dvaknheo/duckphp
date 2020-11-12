@@ -25,6 +25,7 @@ class RouteHookApiServerTest extends \PHPUnit\Framework\TestCase
             //'api_server_on_missing' => '',
             'api_server_use_singletonex' => false,
             'api_server_404_as_exception' => false,
+            'cli_enable'=>false,
         ];
         
         DuckPhp::G()->init($options);

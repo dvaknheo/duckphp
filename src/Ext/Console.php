@@ -14,8 +14,9 @@ class Console extends ComponentBase
     use Console_Command;
     
     public $options = [
-        'console_mode' => 'replace',
-        'console_command_alias' => [],
+        'cli_enable' => true,
+        'cli_mode' => 'replace',
+        'cli_command_alias' => [],
     ];
     protected $context_class = null;
     protected $parameters = [];
@@ -25,9 +26,12 @@ class Console extends ComponentBase
         if (PHP_SAPI !== 'cli') {
             return $this; // @codeCoverageIgnore
         }
-        $context->replaceDefaultRunHandler([static::class,'OnRun']);
+        if (!$this->options['cli_enable']){
+            return;
+        }
+        $context->replaceDefaultRunHandler([static::class,'DoRun']);
         $this->context_class = get_class($context);
-        $this->options['console_command_alias'][$this->context_class] = '';
+        $this->options['cli_command_alias'][$this->context_class] = '';
     }
     public function getCliParameters()
     {
@@ -35,9 +39,9 @@ class Console extends ComponentBase
     }
     public function regCliCommandGroup($class, $alias)
     {
-        $this->options['console_command_alias'][$class] = $alias;
+        $this->options['cli_command_alias'][$class] = $alias;
     }
-    public static function OnRun()
+    public static function DoRun()
     {
         return static::G()->run();
     }
@@ -45,13 +49,7 @@ class Console extends ComponentBase
     {
         $this->parameters = $this->parseCliArgs($_SERVER['argv']);
         $func_args = $this->parameters['--'];
-        if (!is_array($func_args)) {
-            $cmd = $func_args;
-            $cmd = is_string($cmd)?$cmd:'help';
-            $func_args = [];
-        } else {
-            $cmd = array_shift($func_args);
-        }
+        $cmd = array_shift($func_args);
         list($class, $method) = $this->getClassAndMethod($cmd);
         $this->callObject($class, $method, $func_args, $this->parameters);
         return true;
@@ -80,9 +78,13 @@ class Console extends ComponentBase
             }
         }
         if (!isset($ret[$lastkey])) {
-            $ret[$lastkey] = true;
+            $ret[$lastkey] = '';
         }
-
+        
+        $args = $ret['--'];
+        if(!is_array($args)){
+            $ret['--']=[$args?$args:'help'];
+        }
         return $ret;
     }
     protected function callObject($class, $method, $args, $input)
@@ -114,7 +116,7 @@ class Console extends ComponentBase
         }
         $method = 'command_'.$method;
         
-        $t = $this->options['console_command_alias'];
+        $t = $this->options['cli_command_alias'];
         $alias = array_flip($t);
         $class = $alias[$name] ?? null;
         
@@ -122,8 +124,9 @@ class Console extends ComponentBase
             $class = static::class;
             return [$class,$method];
         }
+        
         $name = str_replace('/', '\\', $name);
-        $class = $this->options['console_command_alias'][$name] ?? null;
+        $class = $this->options['cli_command_alias'][$name] ?? $class;
         
         if (!isset($class)) {
             throw new \ReflectionException("Command Not Found: {$cmd}\n", -3);
@@ -159,7 +162,7 @@ class Console extends ComponentBase
             'commands' => [],
             'alias' => [],
         ];
-        $t = $this->options['console_command_alias'];
+        $t = $this->options['cli_command_alias'];
         
         $ret['alias'] = array_flip(array_flip($t));
         
@@ -260,7 +263,7 @@ EOT;
     public function command_call()
     {
         $args = func_get_args();
-        $class = array_shift($args);
+        $cmd = array_shift($args);
         list($class, $method) = explode('@', $cmd);
         $class = str_replace('/', '\\', $class);
         echo "calling $class::G()->$method\n";

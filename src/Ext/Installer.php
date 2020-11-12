@@ -22,7 +22,7 @@ class Installer extends ComponentBase
     {
         return static::G()->init($options)->run();
     }
-    public function init($options)
+    public function init(array $options,$context=null)
     {
         $this->options = array_replace_recursive($this->options, $options);
         return $this;
@@ -154,7 +154,7 @@ class Installer extends ComponentBase
     {
         $level = substr_count($short_file_name, '/');
         $subdir = str_repeat('../', $level);
-        $str_header = "require_once(__DIR__.'/{$subdir}{$autoload_file'});";
+        $str_header = "require_once(__DIR__.'/{$subdir}{$autoload_file}');";
         $data = preg_replace('/^.*?@DUCKPHP_HEADFILE.*?$/m', $str_header, $data);
         return $data;
     }
