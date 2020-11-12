@@ -94,7 +94,7 @@ class Console extends ComponentBase
             $name = $param->getName();
             if (isset($input[$name])) {
                 $args[$i] = $input[$name];
-            } elseif ($param->isDefaultValueAvailable()) {
+            } elseif ($param->isDefaultValueAvailable() && !isset($args[$i])) {
                 $args[$i] = $param->getDefaultValue();
             } elseif (!isset($args[$i])) {
                 throw new \ReflectionException("Command Need Parameter: {$name}\n", -2);
@@ -275,11 +275,12 @@ EOT;
      */
     public function command_fetch($uri = '', $post = false)
     {
+        $uri = !empty($uri) ? $uri : '/';
         $_SERVER['REQUEST_URI'] = $uri;
         $_SERVER['PATH_INFO'] = parse_url($uri, PHP_URL_PATH);
         $_SERVER['HTTP_METHOD'] = $post? $post:'GET';
-        App::G()->replaceDefaultRunHandler(null);
-        App::G()->run();
+        $this->context_class::G()->replaceDefaultRunHandler(null);
+        $this->context_class::G()->run();
     }
     ///////////////////////////////////
     /**
