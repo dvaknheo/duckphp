@@ -122,6 +122,9 @@ class Console extends ComponentBase
         
         if (isset($class) && $name === '' && !method_exists($class, $method)) {
             $class = static::class;
+            if (!method_exists($class, $method)) {
+                throw new \ReflectionException("Command Not Found: {$cmd}\n", -2);
+            }
             return [$class,$method];
         }
         
@@ -209,10 +212,8 @@ trait Console_Command
      */
     public function command_help()
     {
-        $version = "UNKOWN";
         echo "Welcome to Use DuckPhp ,version: ";
-        $this->command_version();
-    
+        $this->command_version();    
         echo  <<<EOT
 Usage:
   command [arguments] [options] 
@@ -257,7 +258,7 @@ EOT;
         echo $str;
     }
     /**
-     * call a function. e.g. namespace/class@method arg1 arg2
+     * call a function. e.g. namespace/class@method arg1 --parameter arg2
      * @param type $arg
      */
     public function command_call()
