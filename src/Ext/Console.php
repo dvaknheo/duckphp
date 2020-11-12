@@ -26,7 +26,7 @@ class Console extends ComponentBase
         if (PHP_SAPI !== 'cli') {
             return $this; // @codeCoverageIgnore
         }
-        if (!$this->options['cli_enable']){
+        if (!$this->options['cli_enable']) {
             return;
         }
         $context->replaceDefaultRunHandler([static::class,'DoRun']);
@@ -78,12 +78,13 @@ class Console extends ComponentBase
             }
         }
         if (!isset($ret[$lastkey])) {
-            $ret[$lastkey] = '';
+            $ret[$lastkey] = true;
         }
         
         $args = $ret['--'];
-        if(!is_array($args)){
-            $ret['--']=[$args?$args:'help'];
+        if (!is_array($args)) {
+            $args = ($args === true)?'':$args;
+            $ret['--'] = [$args?$args:'help'];
         }
         return $ret;
     }
@@ -213,7 +214,7 @@ trait Console_Command
     public function command_help()
     {
         echo "Welcome to Use DuckPhp ,version: ";
-        $this->command_version();    
+        $this->command_version();
         echo  <<<EOT
 Usage:
   command [arguments] [options] 

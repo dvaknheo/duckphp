@@ -10,10 +10,9 @@ use DuckPhp\Core\ComponentBase;
 class Installer extends ComponentBase
 {
     public $options = [
-        'src' => '',
-        'dest' => '',
-        'force'=>true,
-        'autoload_file'=>'vendor/autoload.php',
+        'path' => '',
+        'force' => true,
+        'autoload_file' => 'vendor/autoload.php',
         'verbose' => false,
         'namespace' => '',
         'help' => false,
@@ -22,23 +21,21 @@ class Installer extends ComponentBase
     {
         return static::G()->init($options)->run();
     }
-    public function init(array $options,$context=null)
+    public function init(array $options, $context = null)
     {
         $this->options = array_replace_recursive($this->options, $options);
         return $this;
     }
     public function run()
     {
-        if($this->options['help']){
+        if ($this->options['help']) {
             $this->showHelp();
             return;
         }
-        $source = __DIR__ .'/../template';
-        // if(is_index()){ paramter must }
-        $dest = $this->options['dest'];
-        
-        
-        $this->dumpDir($source, $dest, $this->options['force'], $this->options['full']);
+        $source = __DIR__ .'/../../template';
+        $dest = $this->options['path'];
+
+        $this->dumpDir($source, $dest, $this->options['force'], );
     }
     public function dumpDir($source, $dest, $force = false)
     {
@@ -66,6 +63,7 @@ class Installer extends ComponentBase
         if (!$flag) {
             return;
         }
+        $is_in_full = false;
         
         foreach ($files as $file => $short_file_name) {
             $dest_file = $dest.$short_file_name;
@@ -79,7 +77,7 @@ class Installer extends ComponentBase
             }
             //decoct(fileperms($file) & 0777);
         }
-        copy($source.'config/setting.sample.php',$dest.'config/setting.php');
+        copy($source.'config/setting.sample.php', $dest.'config/setting.php');
         echo  "\nDone.\n";
     }
     protected function checkFilesExist($source, $dest, $files)
@@ -146,11 +144,11 @@ class Installer extends ComponentBase
         }
         $str_header = "\$namespace = '$namespace';";
         $data = preg_replace('/^.*?@DUCKPHP_NAMESPACE.*?$/m', $str_header, $data);
-        $data =str_replace("LazyToChange\\","{$namespace}\\" ,$data);
+        $data = str_replace("LazyToChange\\", "{$namespace}\\", $data);
         
         return $data;
     }
-    protected function changeHeadFile($data, $short_file_name,$autoload_file)
+    protected function changeHeadFile($data, $short_file_name, $autoload_file)
     {
         $level = substr_count($short_file_name, '/');
         $subdir = str_repeat('../', $level);
