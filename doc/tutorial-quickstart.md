@@ -23,18 +23,16 @@ Now is [<2020-06-14T11:45:46+08:00>]
 发布的时候，把网站目录指向 public/index.php 就行。
 ### 另一种安装模式： Composer 安装
 在工程目录下执行：
-```
-composer require dvaknheo/duckphp # 用 require 
-./vendor/bin/duckphp --help     # 查看有什么指令
-./vendor/bin/duckphp --create   # --full # --force # 创建工程
-./start_server.php    # --host=127.0.0.1 --port=9527 # 开始 web 服务器
 
 ```
-将会直接把 template 的东西复制到工程并做调整，同样执行
-```bash
-php bin/start_server.php
+composer require dvaknheo/duckphp # 用 require 
+./vendor/bin/duckphp new --help     # 查看有什么指令
+./vendor/bin/duckphp new   # 创建工程
+./duckphp-project run    # --host=127.0.0.1 --port=9527 # 开始 web 服务器
+
 ```
 浏览器中打开 http://127.0.0.1:8080/ 得到下面欢迎页就表明 OK 了
+
 ```text
 Hello DuckPhp
 
@@ -42,7 +40,6 @@ Now is [<2020-06-14T11:45:46+08:00>]
 --
 (省略后面内容)
 ```
-细则可以看 --help 参数
 
 当然你也可以用 nginx 或apache 安装。
 nginx 把 document_root 配置成 `public` 目录。
@@ -180,7 +177,7 @@ test
 ### 如果没有配置 PATH_INFO
 如果你懒得配置 PATH_INFO，把 `public/index.php` 文件这项打开
 ```php
-$options['ext']['DuckPhp\\Ext\\RouteHookPathInfoCompat']=true;
+//$options['path_info_compact_enable'] => true;
 ```
 同样访问  http://127.0.0.1:8080/index.php?_r=test/done  也是得到想同测试页面的结果
 

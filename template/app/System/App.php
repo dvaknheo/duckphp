@@ -29,6 +29,13 @@ class App extends DuckPhp
         //'path_info_compact_enable' => false,
         //'path_info_compact_enable' => true, // @DUCKPHP_DELETE
     ];
+    /**
+      aaaaaaaaaaaaa
+     */
+    public function command_routes()
+    {
+        echo "override you the routes\n";
+    }
     public function __construct()
     {
         parent::__construct();

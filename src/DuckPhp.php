@@ -10,12 +10,12 @@ namespace DuckPhp;
 
 use DuckPhp\Core\App;
 use DuckPhp\Ext\Cache;
+use DuckPhp\Ext\Console;
 use DuckPhp\Ext\DbManager;
 use DuckPhp\Ext\EventManager;
 use DuckPhp\Ext\Pager;
 use DuckPhp\Ext\RouteHookPathInfoCompat;
 use DuckPhp\Ext\RouteHookRouteMap;
-use DuckPhp\Ext\Console;
 
 class DuckPhp extends App
 {

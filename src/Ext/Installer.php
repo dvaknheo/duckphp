@@ -14,8 +14,14 @@ class Installer extends ComponentBase
         'dest' => '',
         'force'=>true,
         'autoload_file'=>'vendor/autoload.php',
-        'verbose'=>false,
+        'verbose' => false,
+        'namespace' => '',
+        'help' => false,
     ];
+    public static function RunQuickly($options)
+    {
+        return static::G()->init($options)->run();
+    }
     public function init($options)
     {
         $this->options = array_replace_recursive($this->options, $options);
@@ -23,8 +29,15 @@ class Installer extends ComponentBase
     }
     public function run()
     {
+        if($this->options['help']){
+            $this->showHelp();
+            return;
+        }
         $source = __DIR__ .'/../template';
+        // if(is_index()){ paramter must }
         $dest = $this->options['dest'];
+        
+        
         $this->dumpDir($source, $dest, $this->options['force'], $this->options['full']);
     }
     public function dumpDir($source, $dest, $force = false)
@@ -144,5 +157,20 @@ class Installer extends ComponentBase
         $str_header = "require_once(__DIR__.'/{$subdir}{$autoload_file'});";
         $data = preg_replace('/^.*?@DUCKPHP_HEADFILE.*?$/m', $str_header, $data);
         return $data;
+    }
+    
+    protected function showHelp()
+    {
+        echo <<<EOT
+Well Come to use DuckPhp Installer ;
+  --help                    Show this help.
+  --namespace <namespace>   Use another project namespace.
+  --force                   Overwrite exited files.
+  --verbose                 Show Progress
+  --autoload-file <path>    Use another autoload file.
+  --dest <path>             Copy project file to here.
+EOT;
+        //--use-helper            Do not use the Helper class,
+        //--full                    Use The demo template
     }
 }
