@@ -4,4 +4,4 @@
  * From this time, you never be alone~
  */
 
-return require __DIR__.'/../../FullProject/config/setting.php';
+return require __DIR__.'/../../Common/config/setting.php';
