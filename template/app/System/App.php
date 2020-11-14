@@ -257,6 +257,18 @@ class App extends DuckPhp
 
         //*/
         /*
+        $options['ext']['DuckPhp\\Ext\\Console'] = true;
+            // 命令行类别名
+            $options['cli_command_alias'] = array ( );
+
+            // 启用命令行
+            $options['cli_enable'] = true;
+
+            // 命令行启用模式
+            $options['cli_mode'] = 'replace';
+
+        //*/
+        /*
         $options['ext']['DuckPhp\\Ext\\EmptyView'] = true;
             // 给View 的key
             $options['empty_view_key_view'] = 'view';

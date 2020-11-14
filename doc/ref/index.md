@@ -214,6 +214,15 @@ server {
 +  'callable_view_skip_replace' => false,   
 
     callableview 可调用视图跳过默认视图替换   // [DuckPhp\Ext\CallableView](Ext-CallableView.md)
++  'cli_command_alias' => array ( ),   
+
+    命令行类别名   // [DuckPhp\Ext\Console](Ext-Console.md)
++  'cli_enable' => true,   
+
+    启用命令行   // [DuckPhp\Ext\Console](Ext-Console.md)
++  'cli_mode' => 'replace',   
+
+    命令行启用模式   // [DuckPhp\Ext\Console](Ext-Console.md)
 + ** 'close_resource_at_output' => false,  ** 
 
     在输出前关闭资源（DB,Redis）   // [DuckPhp\Core\App](Core-App.md)
@@ -630,6 +639,7 @@ server {
         覆盖视图目录
     - 'skip_view_notice_error' => true,
         跳过 View 视图的 notice
++ DuckPhp\Ext\Cache
 + DuckPhp\Ext\CallableView
     - 'callable_view_class' => NULL,
         callableview 视图类
@@ -649,7 +659,13 @@ server {
         覆盖视图目录
     - 'skip_view_notice_error' => true,
         跳过 View 视图的 notice
-+ DuckPhp\Ext\Cache
++ DuckPhp\Ext\Console
+    - 'cli_command_alias' => array ( ),
+        命令行类别名
+    - 'cli_enable' => true,
+        启用命令行
+    - 'cli_mode' => 'replace',
+        命令行启用模式
 + DuckPhp\Ext\DbManager
     - 'database' => NULL,
         单一数据库配置

@@ -3,8 +3,9 @@
 ## 简介
 `组件类` 完成命令行功能
 ## 选项
-    'console_mode' => 'replace',    
-    'console_command_alias'=>[],
+    'cli_enable' => true,
+    'cli_mode' => 'replace',    
+    'cli_command_alias'=>[],
 ## 公开方法
 
 ### 组件方法

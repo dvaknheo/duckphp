@@ -10,7 +10,7 @@ class InstallerTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(Installer::class);
         $path = \MyCodeCoverage::GetClassTestPath(Installer::class);
         $time = date('Y-m-d_H_i_s');
-        $path = $path . 'test'.$time;
+        $path = $path . $time . 'test';
         mkdir($path);
         
         $options=[

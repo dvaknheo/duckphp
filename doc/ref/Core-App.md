@@ -50,6 +50,9 @@
 "skip_404_handler"
 "skip_exception_check"
 
+'ext'
+
+'namespace'
 ## 方法
 
 

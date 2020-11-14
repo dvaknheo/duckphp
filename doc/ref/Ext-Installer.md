@@ -3,13 +3,15 @@
 ## 简介
 `组件类` 安装类
 ## 选项
-    'src' => '',
-    'dest' => '',
-    'force' => true,
-    'autoload_file' => 'vendor/autoload.php',
-    'verbose' => false,
-    'namespace' => '',
-    'help' => false,
+
+        'path' => '',
+        'namespace' => '',
+        
+        'force' => false,
+        'autoloader' => 'vendor/autoload.php',
+        
+        'verbose' => false,
+        'help' => false,
 ## 公开方法
 
 ### 组件方法

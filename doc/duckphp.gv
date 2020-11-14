@@ -112,17 +112,24 @@ subgraph cluster_Db {
     Db_Db -> Db_DbAdvanceTrait;
     Db_Db -> Db_DbInterface;
 }
+subgraph cluster_HttpServer {
+    label = "[DuckPhp\\HttpServer]";
+
+    HttpServer [label="HttpServer";shape=Mdiamond;style=filled];
+}
 
 subgraph cluster_Ext {
     label = "[DuckPhp\\Ext]";
 
     Cache[shape="component"];
     CallableView[shape="component"];
+    Console[shape="component"];
     DbManager[shape="component"];
     EmptyView[shape="component"];
     EventManager[shape="component"];
     FacadesAutoLoader[shape="component"];
     FacadesBase [shape="component"];
+    Installer [shape="component"];
     JsonRpcClientBase [shape="component"];
     JsonRpcExt[shape="component"];
     Misc[shape="component"];
@@ -139,9 +146,11 @@ subgraph cluster_Ext {
     StrictCheck[shape="component"];
 
     Cache -> Core_ComponentBase [style="dotted"];
+    Console -> Core_ComponentBase [style="dotted"];
     DbManager -> Core_ComponentBase [style="dotted"];
     EventManager -> Core_ComponentBase [style="dotted"];
     FacadesAutoLoader -> Core_ComponentBase [style="dotted"];
+    Installer -> Core_ComponentBase [style="dotted"];
     JsonRpcExt -> Core_ComponentBase [style="dotted"];
     Misc -> Core_ComponentBase [style="dotted"];
     Pager -> Core_ComponentBase [style="dotted"];
@@ -156,8 +165,11 @@ subgraph cluster_Ext {
     StrictCheck -> Core_ComponentBase [style="dotted"];
     
     
-    CallableView ->Core_View; 
-    EmptyView ->Core_View;
+    CallableView ->Core_View;
+    Console -> Installer; 
+    Console -> HttpServer; 
+
+    EmptyView -> Core_View;
     DbManager -> Db_Db;
     FacadesBase -> FacadesAutoLoader;
     FacadesBase -> Core_ComponentBase [style="dotted"];
@@ -179,15 +191,11 @@ subgraph cluster_DuckPhp {
     DuckPhp -> EventManager;
     DuckPhp -> RouteHookPathInfoCompat;
     DuckPhp -> Cache;
+    DuckPhp -> Console;
 
     DuckPhp [shape=Mdiamond];
 }
 
-subgraph cluster_HttpServer {
-    label = "[DuckPhp\\HttpServer]";
-
-    HttpServer [label="HttpServer";shape=Mdiamond;style=filled];
-}
 
 subgraph cluster_ThrowOn {
     label = "[DuckPhp\\ThrowOn]";

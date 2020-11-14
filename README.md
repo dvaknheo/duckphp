@@ -181,21 +181,16 @@ File: `template/public/demo.php`
  * DuckPHP
  * From this time, you never be alone~
  */
-
 namespace
 {
+    //自动加载文件
     require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
-    /*
-    $options = [
-        'override_class' => '\MySpace\System\App'
-    ];
-    \DuckPhp\DuckPhp::RunQuickly($options);
-*/
 }
-// 以下部分是核心工程师写。
 
+// 以下部分是核心工程师写。
 namespace MySpace\System
 {
+
     use DuckPhp\DuckPhp;
     use DuckPhp\Ext\CallableView;
     use DuckPhp\SingletonEx\SingletonEx;
@@ -361,12 +356,10 @@ namespace MySpace\View {
 
 namespace
 {
-    require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
     $options = [
-        'override_class' => 'MySpace\System\App',
+        //'override_class' => 'MySpace\System\App', // 你也可以在这里调整选项。
     ];
-    //\MySpace\System\App::RunQuickly($options);
-    \DuckPhp\DuckPhp::RunQuickly($options);
+    \MySpace\System\App::RunQuickly($options);
 }
 ```
 ## 架构图

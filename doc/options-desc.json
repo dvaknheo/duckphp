@@ -106,6 +106,16 @@
     "api_server_class_postfix": "API服务器， 类名后缀",
     "api_server_base_class": "API服务器， 接口，或基类，  ~ 开始的表示是当前命名空间",
     "api_server_namespace": "API服务器， 命名空间，配合 namespace选项使用",
-    "api_server_use_singletonex": "API服务器，  使用可变单例模式，方便替换实现"
+    "api_server_use_singletonex": "API服务器，  使用可变单例模式，方便替换实现",
+    
+    "cli_enable" : "启用命令行",
+    "cli_mode"   : "命令行启用模式",
+    "cli_command_alias" : "命令行类别名",
+
+    "force":"强制模式",
+    "autoloader": "设置安装时候的自动加载文件",
+    
+    "verbose" :"详情模式",
+    "help" : "显示帮助"
 
 }

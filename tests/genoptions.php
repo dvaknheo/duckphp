@@ -330,8 +330,9 @@ DuckPhp\\Core\\Route
 DuckPhp\\Core\\RuntimeState
 DuckPhp\\Core\\SuperGlobal
 DuckPhp\\Core\\View
-DuckPhp\\Ext\\CallableView
 DuckPhp\\Ext\\Cache
+DuckPhp\\Ext\\CallableView
+DuckPhp\\Ext\\Console
 DuckPhp\\Ext\\DbManager
 DuckPhp\\Ext\\EmptyView
 DuckPhp\\Ext\\EventManager
