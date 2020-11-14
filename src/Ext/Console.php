@@ -29,7 +29,9 @@ class Console extends ComponentBase
         if (!$this->options['cli_enable']) {
             return;
         }
-        $context->replaceDefaultRunHandler([static::class,'DoRun']);
+        if (method_exists($context, 'replaceDefaultRunHandler')) {
+            $context->replaceDefaultRunHandler([static::class,'DoRun']);
+        }
         $this->context_class = get_class($context);
         $this->options['cli_command_alias'][$this->context_class] = '';
     }
@@ -72,7 +74,7 @@ class Console extends ComponentBase
                 $ret[$lastkey][] = $v;
             } else {
                 $t = $ret[$lastkey];
-                $t = is_array($t)?$t:[$t];
+                $t = is_array($ret[$lastkey]) ? $t: [$t];
                 $t[] = $v;
                 $ret[$lastkey] = $t;
             }
@@ -229,7 +231,7 @@ EOT;
      */
     public function command_version()
     {
-        echo  \DuckPhp\Duckphp::VERSION;
+        echo  \DuckPhp\DuckPhp::VERSION;
         echo "\n";
     }
     /**
@@ -260,7 +262,6 @@ EOT;
     }
     /**
      * call a function. e.g. namespace/class@method arg1 --parameter arg2
-     * @param type $arg
      */
     public function command_call()
     {
@@ -275,15 +276,13 @@ EOT;
     }
     /**
      * fetch a url
-     * @param type $uri
-     * @param type $post
      */
     public function command_fetch($uri = '', $post = false)
     {
         $uri = !empty($uri) ? $uri : '/';
         $_SERVER['REQUEST_URI'] = $uri;
         $_SERVER['PATH_INFO'] = parse_url($uri, PHP_URL_PATH);
-        $_SERVER['HTTP_METHOD'] = $post? $post:'GET';
+        $_SERVER['HTTP_METHOD'] = $post ? $post :'GET';
         $this->context_class::G()->replaceDefaultRunHandler(null);
         $this->context_class::G()->run();
     }
@@ -297,7 +296,6 @@ EOT;
     }
     /**
      * depoly project.
-     * @param type $class
      */
     public function command_depoly()
     {

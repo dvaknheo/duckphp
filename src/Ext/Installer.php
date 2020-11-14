@@ -11,10 +11,12 @@ class Installer extends ComponentBase
 {
     public $options = [
         'path' => '',
-        'force' => true,
-        'autoload_file' => 'vendor/autoload.php',
-        'verbose' => false,
         'namespace' => '',
+        
+        'force' => false,
+        'autoloader' => 'vendor/autoload.php',
+        
+        'verbose' => false,
         'help' => false,
     ];
     public static function RunQuickly($options)
@@ -39,8 +41,8 @@ class Installer extends ComponentBase
     }
     public function dumpDir($source, $dest, $force = false)
     {
-        $source = rtrim(realpath($source), '/').'/';
-        $dest = rtrim(realpath($dest), '/').'/';
+        $source = rtrim(''.realpath($source), '/').'/';
+        $dest = rtrim(''.realpath($dest), '/').'/';
         $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
         $iterator = new \RecursiveIteratorIterator($directory);
         $t_files = \iterator_to_array($iterator, false);
@@ -54,20 +56,20 @@ class Installer extends ComponentBase
         if (!$force) {
             $flag = $this->checkFilesExist($source, $dest, $files);
             if (!$flag) {
-                return;
+                return; // @codeCoverageIgnore
             }
         }
         echo "Copying file...\n";
         
         $flag = $this->createDirectories($dest, $files);
         if (!$flag) {
-            return;
+            return; // @codeCoverageIgnore
         }
         $is_in_full = false;
         
         foreach ($files as $file => $short_file_name) {
             $dest_file = $dest.$short_file_name;
-            $data = file_get_contents($file);
+            $data = file_get_contents(''.$file);
             $data = $this->filteText($data, $is_in_full, $short_file_name);
             $flag = file_put_contents($dest_file, $data);
             
@@ -83,11 +85,6 @@ class Installer extends ComponentBase
     protected function checkFilesExist($source, $dest, $files)
     {
         foreach ($files as $file => $short_file_name) {
-            if (!$this->options['full']) {
-                if (substr($short_file_name, 0, strlen('public/full/')) === 'public/full/') {
-                    continue;
-                }
-            }
             $dest_file = $dest.$short_file_name;
             if (is_file($dest_file)) {
                 echo "file exists: $dest_file \n";
@@ -108,9 +105,9 @@ class Installer extends ComponentBase
                 $full_dir .= DIRECTORY_SEPARATOR.$t;
                 if (!is_dir($full_dir)) {
                     $flag = mkdir($full_dir);
-                    if (!$flag) {
-                        echo "create file failed $full_dir \n";
-                        return false;
+                    if (!$flag) {                               // @codeCoverageIgnore
+                        echo "create file failed: $full_dir \n";// @codeCoverageIgnore
+                        return false;   // @codeCoverageIgnore
                     }
                 }
             }
@@ -120,7 +117,7 @@ class Installer extends ComponentBase
     
     protected function filteText($data, $is_in_full, $short_file_name)
     {
-        $autoload_file = $this->options['autoload_file'];
+        $autoload_file = $this->options['autoloader'];
         $data = $this->changeHeadFile($data, $short_file_name, $autoload_file);
         
         if (!$is_in_full) {
@@ -139,7 +136,7 @@ class Installer extends ComponentBase
     }
     protected function filteNamespace($data, $namespace)
     {
-        if ($namespace === 'LazyToChange') {
+        if ($namespace === 'LazyToChange' || $namespace === '') {
             return $data;
         }
         $str_header = "\$namespace = '$namespace';";
@@ -165,8 +162,8 @@ Well Come to use DuckPhp Installer ;
   --namespace <namespace>   Use another project namespace.
   --force                   Overwrite exited files.
   --verbose                 Show Progress
-  --autoload-file <path>    Use another autoload file.
-  --dest <path>             Copy project file to here.
+  --autoloadfile <path>    Use another autoload file.
+  --path <path>             Copy project file to here.
 EOT;
         //--use-helper            Do not use the Helper class,
         //--full                    Use The demo template
