@@ -231,7 +231,7 @@ EOT;
      */
     public function command_version()
     {
-        echo  \DuckPhp\DuckPhp::VERSION;
+        echo  $this->context_class::G()->version();
         echo "\n";
     }
     /**

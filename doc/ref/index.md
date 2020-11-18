@@ -818,7 +818,6 @@ server {
     'plugin_files_config' => [],
     'plugin_url_prefix' => '',
 ###  DuckPhp\HttpServer\HttpServer
-
     'host' => '127.0.0.1',
     'port' => '8080',
     'path' => '',

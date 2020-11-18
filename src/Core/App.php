@@ -26,6 +26,8 @@ use DuckPhp\Core\View;
  */
 class App extends ComponentBase
 {
+    const VERSION = '1.2.8-dev';
+
     const HOOK_PREPEND_OUTTER = 'prepend-outter';
     const HOOK_PREPEND_INNER = 'prepend-inner';
     const HOOK_APPPEND_INNER = 'append-inner';
@@ -151,6 +153,10 @@ class App extends ComponentBase
         $this->beforeShowHandlers = array_filter($this->beforeShowHandlers, function ($v) use ($handler) {
             return $v != $handler;
         });
+    }
+    public function version()
+    {
+        return static::VERSION;
     }
 }
 trait Core_Handler

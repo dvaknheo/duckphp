@@ -48,7 +48,6 @@ help    详细介绍
 install 安装
 list
 new     创建工程
-routes  *aaaaaaaaaaaaa
 run
 test
 version

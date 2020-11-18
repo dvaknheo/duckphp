@@ -117,13 +117,18 @@ class DbManager extends ComponentBase
             if ($db_config === null) {
                 throw new \ErrorException('DuckPhp: setting database_list['.$tag.'] missing');
             }
-            $db = new Db();
-            $db->init($db_config);
-            $db->setBeforeQueryHandler([static::class, 'OnQuery']);
+            $db = $this->getDb($db_config);
             
             $this->databases[$tag] = $db;
         }
         return $this->databases[$tag];
+    }
+    protected function getDb($db_config)
+    {
+        $db = new Db();
+        $db->init($db_config);
+        $db->setBeforeQueryHandler([static::class, 'OnQuery']);
+        return $db;
     }
     public function _DbForWrite()
     {

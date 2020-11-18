@@ -7,7 +7,6 @@
 + `DuckPhp\Core\App` 
     + [DuckPhp\Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md)
     + [DuckPhp\Core\SystemWrapperTrait](Core-SystemWrapperTrait.md)
-    + [Functions.php](Core-Functions.md)
     + Trait [DuckPhp\Core\Kernel](Core-Kernel.md)
 
 
@@ -34,40 +33,46 @@
 'error_debug' => null,        //'_sys/error-debug',
 
     404 的View或者回调
-    
-### 扩展 [DuckPhp\Core\Kernel](Core-Kernel.md) 的默认选项。
+
+### 扩充 [DuckPhp\Core\Kernel](Core-Kernel.md) 的默认选项。
 详情见 DuckPhp\Core\Kernel 参考文档
 
-"use_autoloader"
-"skip_plugin_mode_check"
-"path"
-"override_class"
-"is_debug"
-"platform"
-"use_flag_by_setting"
-"use_super_global"
-"use_short_functions"
-"skip_404_handler"
-"skip_exception_check"
+    use_autoloader
+    path
+    namespace
+    skip_plugin_mode_check
 
-'ext'
+    override_class
+    is_debug
+    platform
+    use_flag_by_setting
+    use_super_global
+    use_short_functions
+    skip_404_handler
+    skip_exception_check
+    ext
 
-'namespace'
 ## 方法
 
 
 ### 独有的静态方法
 
-  0 => string 'G' (length=1)
   1 => string 'RunQuickly' (length=10)
+快速运行
   2 => string 'Blank' (length=5)
+空函数
   3 => string 'system_wrapper_replace' (length=22)
+替换系统默认函数
   4 => string 'system_wrapper_get_providers' (length=28)
+返回能提供的系统默认函数
   5 => string 'On404' (length=5)
+默认404
   6 => string 'OnDefaultException' (length=18)
-  7 => string 'OnDevErrorHandler' (length=17)
+默认异常处理
+  7 => string 'OnDevErrorHandler' (length=17)s
+默认开发期错误处理
   8 => string 'Route' (length=5)
-
+返回路由类
 
 public static function On404(): void
 
@@ -75,34 +80,28 @@ public static function On404(): void
 public static function CallException($ex): void
 
     //
-public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
-
-
-    //
-
 ## 详解
 DuckPhp\Core\App 类 可以视为几个类的组合
 
 ### 作为内核的 App 入口类
+详见 DuckPhp\Core\Kernel
 
-### 作为 500,404 处理的 trait
+### 助手类引用的静态方法
 
-### 覆盖系统默认函数的 core_systemwrapper
+助手类的静态方法都调用本类的静态方法实现。
 
-### 助手类
+为了避免重复，请在相关助手类里查看参考
+
 相关代码请参考 
- + HelperTrait
- + AppHelper
- + ControllerHelper
- + ModelHelper
- + ViewHelper
- + BusinessHelper
 
- ## 其他独特方法
- 
+ + [HelperTrait](Helper-AppHelper.md)
+ + [AppHelper](Helper-AppHelper.md)
+ + [BusinessHelper](Helper-BusinessHelper.md)
+ + [ControllerHelper](Helper-ControllerHelper.md)
+ + [ModelHelper](Helper-ModelHelper.md)
+ + [ViewHelper](Helper-ViewHelper.md)
 
 
- 
  ## 全方法索引
- 
- @autogen:
+
+//待脚本

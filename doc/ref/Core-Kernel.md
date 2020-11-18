@@ -2,7 +2,7 @@
 [toc]
 
 ## 简介
-最核心的Trait，你通过 DuckPhp\DuckPhp 或 DuckPhp\Core\App 类来使用他。
+最核心的 Trait，仅完成基本流程。你通过 DuckPhp\DuckPhp 或 DuckPhp\Core\App 类来使用他。
 
 ## 引用
 [DuckPhp\\Core\\AutoLoader](ref/Core-AutoLoader.md)   自动加载
@@ -20,10 +20,10 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 ### 子类无法更改的选项
 'use_autoloader' => true,
 
- 	使用自动加载
+    使用自动加载
 'skip_plugin_mode_check' => false,
 
- 	跳过插件模式
+    跳过插件模式
 'handle_all_dev_error' => true,
 
     处理开发时期的错误 
@@ -48,7 +48,7 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 'path_namespace' => null,
 
     命名空间路径,如果设置了本值，将会使用自动加载， 基准目录是 path。
-    
+
 'is_debug' => false,
 
     调试模式， 用于 IsDebug() 方法。
@@ -76,7 +76,6 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
     不处理 404 ，用于配合其他框架使用。
 
 'skip_exception_check' => false,
-    
     不在 Run 流程检查异常，把异常抛出外面，或许
 
 
@@ -145,13 +144,40 @@ protected function getDefaultProjectPath()
 
 Kernel 这个 Trait 一般不直接使用。一般直接用的是 DuckPhp\Core\App ， 而直接的 DuckPhp\DuckPhp 类，则是把常见扩展加进去形成完善的框架。
 
-### 流程说明
 Kernel 大致分为两个阶段
 
 init() 初始化阶段，和 run 阶段
 
+### init 初始化阶段
 
+    处理是否是插件模式
+    处理自动加载  AutoLoader::G()->init($options, $this)->run();
+    处理异常管理 ExceptionManager::G()->init($exception_options, $this)->run();
+    checkOverride() 检测如果有覆盖类，切入覆盖类（LazyToChange\System\App）继续 
+    接下来是 initAfterOverride;
+
+#### initAfterOverride 初始化阶段
+
+    调整选项 initOptions()
+    调整外界 initContext()
+    调用用于重写的 onPrepare(); 
+    初始化默认组件 initDefaultComponenents()
+    加入扩展 initExtends()
+    调用用于重写的  onInit();
+
+### run 运行阶段
 run 阶段可重复调用
-
-### run() 详解
+    处理 setBeforeRunHandler() 引入的 beforeRunHandlers
+    异常准备
+        beforeRun()；
+            重制 RuntimeState 并设置为开始
+            绑定路由
+        * onRun ，可 override 处理这里了。
+        ** 开始路由处理 Route::G()->run();
+        如果返回 404 则 On404() 处理 404
+    如果发生异常
+        进入异常流程
+    清理流程
+### clear 清理
+只有一个动作： 设置 RuntimeState 为结束
 
