@@ -331,6 +331,9 @@ server {
 +  'handle_all_exception' => true,   
 
     接管一切异常   // [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
++ ** 'helper_map' => '',  ** 
+
+    助手类映射，比较复杂，默认可不管   // [DuckPhp\Core\App](Core-App.md)
 + ** 'is_debug' => false,  ** 
 
     是否调试状态   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
@@ -533,6 +536,8 @@ server {
         错误调试页面
     - 'ext' => array ( ),
         默认开启的扩展
+    - 'helper_map' => '',
+        助手类映射，比较复杂，默认可不管
     - 'is_debug' => false,
         是否调试状态
     - 'namespace' => NULL,

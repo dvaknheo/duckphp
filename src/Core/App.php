@@ -45,14 +45,6 @@ class App extends ComponentBase
     use Core_NotImplemented;
     use Core_Component;
     
-    // for helper
-    public $componentClassMap = [
-        'M' => 'Helper\ModelHelper',
-        'V' => 'Helper\ViewHelper',
-        'C' => 'Helper\ControllerHelper',
-        'B' => 'Helper\BusinessHelper',
-        'A' => 'Helper\AppHelper',
-    ];
     // for trait
     protected $system_handlers = [
         'header' => null,
@@ -84,7 +76,7 @@ class App extends ComponentBase
         'default_exception_do_log' => true,
         'default_exception_self_display' => true,
         'close_resource_at_output' => false,
-        'helper_extend' => false,
+        'helper_map' => '',
         
         //// error handler ////
         'error_404' => null,          //'_sys/error-404',
@@ -103,73 +95,62 @@ class App extends ComponentBase
         $this->hanlder_for_develop_exception = [static::class,'OnDevErrorHandler'];
         $this->hanlder_for_404 = [static::class,'On404'];
     }
-    protected function extendComponentClassMap($map)
+    protected function extendComponentClassMap($map, $namespace)
     {
-        if(empty($map)){
+        if (empty($map)) {
             return [];
         }
-        if(is_array($map)){
-            return [];
-        }
-        if($map==='namespace'){
+        if (is_string($map)) {
+            // for helper
             $map = [
-                'M' => '~Helper\ModelHelper',
-                'V' => '~Helper\ViewHelper',
-                'C' => '~Helper\ControllerHelper',
-                'B' => '~Helper\BusinessHelper',
-                'A' => '~Helper\AppHelper',
-            ];
-        }else if($map ==='class'){
-            $a = explode('\\', get_class($this));
-            array_pop($a);
-            $namespace = implode('\\', $a).'\\';  // __NAMESPACE__
-            $map = [
-                'M' => $namespace . 'Helper\ModelHelper',
-                'V' => $namespace . 'Helper\ViewHelper',
-                'C' => $namespace . 'Helper\ControllerHelper',
-                'B' => $namespace . 'Helper\BusinessHelper',
-                'A' => $namespace . 'Helper\AppHelper',
+                'A' => $map . 'AppHelper',
+                'B' => $map . 'BusinessHelper',
+                'C' => $map . 'ControllerHelper',
+                'M' => $map . 'ModelHelper',
+                'V' => $map . 'ViewHelper',
             ];
         }
-        foreach ($map as &$v) {
-
-        }
-        return  $
+        return $map;
+    }
+    protected function fixNamespace($class, $namespace)
+    {
+        $class = str_replace('~', $namespace, $class);
+        $class = str_replace("\\\\", "\\", $class);
+        return $class;
     }
     public function extendComponents($method_map, $components = [])
     {
         static::AssignExtendStaticMethod($method_map);
         self::AssignExtendStaticMethod($method_map);
         
-        $this->componentClassMap = $this->extendComponentClassMap();
-        
+        $helperMap = $this->extendComponentClassMap($this->options['helper_map'], $this->options['namespace']);
+        $this->options['helper_map'] = $helperMap;
         foreach ($components as $component) {
-            $class = $this->componentClassMap[strtoupper($component)] ?? null;
+            $class = $helperMap[strtoupper($component)] ?? null;
+            $class = ($class === null) ? $component : $class;
+            $class = $this->fixNamespace($class, $this->options['namespace']);
             
-            //$class = str_replace('~',$this->options['namespace'],$class);
-            //$class  = str_replace("\\\\","\\",$class);
-            
-            $full_class = ($class === null) ? $component : $class;
-            if (!class_exists($full_class)) {
+            if (!class_exists($class)) {
                 continue;
             }
-            $full_class::AssignExtendStaticMethod($method_map);
+            $class::AssignExtendStaticMethod($method_map);
         }
     }
-    public function cloneHelpers($new_namespace, $componentClassMap = [])
+    public function cloneHelpers($new_namespace, $new_helper_map = [])
     {
-        if (empty($componentClassMap)) {
-            $componentClassMap = $this->componentClassMap;
+        if (empty($new_helper_map)) {
+            return;
         }
+        $helperMap = $this->extendComponentClassMap($this->options['helper_map'], $this->options['namespace']);
 
-        foreach ($this->componentClassMap as $name => $class) {
-            $new_class = $componentClassMap[$name] ?? null;
+        foreach ($helperMap as $name => $old_class) {
+            $new_class = $new_helper_map[$name] ?? null;
             if (!$new_class) {
                 continue;
             }
-            $old_class = $namespace.$class;
-            $new_class = $new_namespace.$new_class;
-            if (!class_exists($new_class) || !class_exists($old_class)) {
+            $old_class = $this->fixNamespace($old_class, $this->options['namespace']);
+            $new_class = $this->fixNamespace($new_class, $new_namespace);
+            if (!class_exists($old_class) || !class_exists($new_class)) {
                 continue;
             }
             $new_class::AssignExtendStaticMethod($old_class::GetExtendStaticMethodList());
@@ -951,7 +932,6 @@ trait Core_Glue
 }
 trait Core_Component
 {
-    //protected $componentClassMap;
     //protected $extDynamicComponentClasses = [];
     
     public function getStaticComponentClasses()

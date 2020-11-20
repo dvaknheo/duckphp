@@ -22,6 +22,9 @@
 'close_resource_at_output' => false,
     
     输出时候关闭资源输出（仅供第三方扩展参考
+"helper_map": "助手类映射"
+
+    helper_map 比较复杂待文档。和助手类映射相关。 v1.2.8-dev
 ### 错误处理配置
 
 'error_404' => null,          //'_sys/error-404',
@@ -33,6 +36,7 @@
 'error_debug' => null,        //'_sys/error-debug',
 
     404 的View或者回调
+
 
 ### 扩充 [DuckPhp\Core\Kernel](Core-Kernel.md) 的默认选项。
 详情见 DuckPhp\Core\Kernel 参考文档

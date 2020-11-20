@@ -13,7 +13,7 @@ use DuckPhp\Core\View;
 trait AppPluginTrait
 {
     // public $plugin_options = [] => in parent
-    // protected componentClassMap=[] => in parent
+    // public $options['helper_map'] => in parent
     
     public $onPluginModePrepare;
     public $onPluginModeInit;
@@ -26,7 +26,6 @@ trait AppPluginTrait
     protected $plugin_context_class = '';
     protected $plugin_before_run_handler = null;
     protected $plugin_route_old = null;
-    protected $is_component_mapped = false;
     
     public function pluginModeInit(array $options, object $context = null)
     {
@@ -168,10 +167,9 @@ trait AppPluginTrait
             $my_path_info = substr($path_info, $l - 1);
         }
         
-        
-        if (!$this->is_component_mapped && $this->plugin_options['plugin_use_helper'] && $this->componentClassMap) {
-            $this->pluginModeCloneHelpers($this->componentClassMap);
-            $this->is_component_mapped = true;
+        if ($this->plugin_options['plugin_use_helper']) {
+            $helper_map = $this->options['helper_map'] ?? [];
+            $this->pluginModeCloneHelpers($helper_map);
         }
         
         View::G()->setOverridePath($this->path_view_override);
@@ -216,7 +214,7 @@ trait AppPluginTrait
     }
     protected function pluginModeCloneHelpers($componentClassMap)
     {
-        $this->plugin_context_class::G()->cloneHelpers($componentClassMap);
+        $this->plugin_context_class::G()->cloneHelpers($this->plugin_namespace, $componentClassMap);
     }
     public function pluginModeGetOldRoute()
     {

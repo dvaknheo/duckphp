@@ -128,6 +128,9 @@ class App extends DuckPhp
         // 默认开启的扩展 (DuckPhp\Core\App)
         // $options['ext'] = array ( );
 
+        // 助手类映射，比较复杂，默认可不管 (DuckPhp\Core\App)
+        // $options['helper_map'] = '';
+
         // 是否调试状态 (DuckPhp\Core\App, DuckPhp\Ext\StrictCheck)
         // $options['is_debug'] = false;
 

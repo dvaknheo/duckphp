@@ -452,8 +452,14 @@ App::PageHtml(123);
         App::G()->init($options);
 
         App::G()->extendComponents(['Foo'=>[AppTest::class,'Foo']],['V',"ZZZ"]);
+        
+        App::G()->options['helper_map']='~\Helper\\';
+        App::G()->extendComponents(['Foo'=>[AppTest::class,'Foo']],['V',"ZZZ"]);
+
+
+        //cloneHelpers
         App::G()->cloneHelpers($new_namespace);
-        App::G()->cloneHelpers($new_namespace, ['M'=>'no_exits_class']);
+        App::G()->cloneHelpers($new_namespace.'\\Helper\\', ['M'=>'no_exits_class','C'=>'~\\ControllerHelper']);
     }
     public static function Foo()
     {
