@@ -24,6 +24,7 @@ class DuckPhp extends App
         'default_exception_do_log' => true,
         'default_exception_self_display' => true,
         'close_resource_at_output' => false,
+        'helper_extend' =>false,
         
         //// error handler ////
         'error_404' => null,          //'_sys/error-404',

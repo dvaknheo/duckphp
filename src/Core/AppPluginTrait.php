@@ -170,7 +170,7 @@ trait AppPluginTrait
         
         
         if (!$this->is_component_mapped && $this->plugin_options['plugin_use_helper'] && $this->componentClassMap) {
-            $this->pluginModeCloneHelpers();
+            $this->pluginModeCloneHelpers($this->componentClassMap);
             $this->is_component_mapped = true;
         }
         
@@ -214,13 +214,9 @@ trait AppPluginTrait
         
         return Route::G()->defaultUrlHandler($url);
     }
-    protected function pluginModeCloneHelpers()
+    protected function pluginModeCloneHelpers($componentClassMap)
     {
-        $a = explode('\\', get_class($this));
-        array_pop($a);
-        $namespace = ltrim(implode('\\', $a).'\\', '\\');
-        
-        $this->plugin_context_class::G()->cloneHelpers($namespace);
+        $this->plugin_context_class::G()->cloneHelpers($componentClassMap);
     }
     public function pluginModeGetOldRoute()
     {

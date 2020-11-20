@@ -84,6 +84,7 @@ class App extends ComponentBase
         'default_exception_do_log' => true,
         'default_exception_self_display' => true,
         'close_resource_at_output' => false,
+        'helper_extend' => false,
         
         //// error handler ////
         'error_404' => null,          //'_sys/error-404',
@@ -102,18 +103,53 @@ class App extends ComponentBase
         $this->hanlder_for_develop_exception = [static::class,'OnDevErrorHandler'];
         $this->hanlder_for_404 = [static::class,'On404'];
     }
+    protected function extendComponentClassMap($map)
+    {
+        if(empty($map)){
+            return [];
+        }
+        if(is_array($map)){
+            return [];
+        }
+        if($map==='namespace'){
+            $map = [
+                'M' => '~Helper\ModelHelper',
+                'V' => '~Helper\ViewHelper',
+                'C' => '~Helper\ControllerHelper',
+                'B' => '~Helper\BusinessHelper',
+                'A' => '~Helper\AppHelper',
+            ];
+        }else if($map ==='class'){
+            $a = explode('\\', get_class($this));
+            array_pop($a);
+            $namespace = implode('\\', $a).'\\';  // __NAMESPACE__
+            $map = [
+                'M' => $namespace . 'Helper\ModelHelper',
+                'V' => $namespace . 'Helper\ViewHelper',
+                'C' => $namespace . 'Helper\ControllerHelper',
+                'B' => $namespace . 'Helper\BusinessHelper',
+                'A' => $namespace . 'Helper\AppHelper',
+            ];
+        }
+        foreach ($map as &$v) {
+
+        }
+        return  $
+    }
     public function extendComponents($method_map, $components = [])
     {
         static::AssignExtendStaticMethod($method_map);
         self::AssignExtendStaticMethod($method_map);
         
-        $a = explode('\\', get_class($this));
-        array_pop($a);
-        $namespace = ltrim(implode('\\', $a).'\\', '\\');  // __NAMESPACE__
+        $this->componentClassMap = $this->extendComponentClassMap();
         
         foreach ($components as $component) {
             $class = $this->componentClassMap[strtoupper($component)] ?? null;
-            $full_class = ($class === null)?$component:$namespace.$class;
+            
+            //$class = str_replace('~',$this->options['namespace'],$class);
+            //$class  = str_replace("\\\\","\\",$class);
+            
+            $full_class = ($class === null) ? $component : $class;
             if (!class_exists($full_class)) {
                 continue;
             }
@@ -125,11 +161,7 @@ class App extends ComponentBase
         if (empty($componentClassMap)) {
             $componentClassMap = $this->componentClassMap;
         }
-        //Get Namespace.
-        $a = explode('\\', get_class($this));
-        array_pop($a);
-        $namespace = ltrim(implode('\\', $a).'\\', '\\');
-        
+
         foreach ($this->componentClassMap as $name => $class) {
             $new_class = $componentClassMap[$name] ?? null;
             if (!$new_class) {
