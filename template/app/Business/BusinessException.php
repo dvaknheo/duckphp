@@ -6,9 +6,9 @@
 
 namespace LazyToChange\Business;
 
-use LazyToChange\System\BaseBusiness;
+use LazyToChange\System\BaseException;
 
-class BusinessException extends BaseBusiness
+class BusinessException extends BaseException
 {
     // 业务异常基类
 }

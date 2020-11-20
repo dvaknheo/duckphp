@@ -80,8 +80,11 @@ class App extends DuckPhp
         // 控制器，POST 方法前缀 (DuckPhp\Core\Route)
         // $options['controller_prefix_post'] = 'do_';
 
-        // 禁止直接访问G函数 (DuckPhp\Core\Route)
+        // 控制器禁止直接访问G方法 (DuckPhp\Core\Route)
         // $options['controller_stop_g_method'] = false;
+
+        // 控制器禁止直接访问静态方法 (DuckPhp\Core\Route)
+        // $options['controller_stop_static_method'] = false;
 
         // 控制器使用单例模式 (DuckPhp\Core\Route)
         // $options['controller_use_singletonex'] = false;

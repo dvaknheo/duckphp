@@ -51,7 +51,10 @@
     后缀如 .html
 "controller_stop_g_method" => false
 
-    禁止直接访问G函数",
+    路由禁止直接访问G方法
+controller_stop_static_method
+
+    路由禁止直接访问静态方法
 ## 公开属性
 
 ## 公开方法

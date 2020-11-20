@@ -6,6 +6,7 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Ext\DbManager;
 use ErrorException;
 
 class StrictCheck extends ComponentBase
@@ -45,7 +46,7 @@ class StrictCheck extends ComponentBase
     {
         $this->context_class = get_class($context);
         try {
-            ($this->context_class)::setBeforeGetDbHandler([static::class, 'CheckStrictDb']);
+            DbManager::G()->setBeforeGetDbHandler([static::class, 'CheckStrictDb']);
         } catch (\BadMethodCallException $ex) { // @codeCoverageIgnore
             //do nothing;
         }

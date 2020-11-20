@@ -175,6 +175,7 @@ subgraph cluster_Ext {
     FacadesBase -> Core_ComponentBase [style="dotted"];
     JsonRpcClientBase ->JsonRpcExt;
     JsonRpcClientBase -> Core_ComponentBase [style="dotted"];
+    StrictCheck -> DbManager;
 
     Pager -> PagerInterface; 
 }

@@ -32,6 +32,7 @@ class Route extends ComponentBase
             'controller_path_ext' => '',
             'controller_use_singletonex' => false,
             'controller_stop_g_method' => false,
+            'controller_stop_static_method' => false,
             'skip_fix_path_info' => false,
         ];
     //public input;
@@ -324,6 +325,13 @@ class Route extends ComponentBase
                 $method = $this->options['controller_methtod_for_miss'];
             }
         }
+        if ($this->options['controller_stop_static_method']) {
+            $ref = new \ReflectionMethod($object, $method);
+            if ($ref->isStatic()) {
+                $this->route_error = 'can not call static function';
+                return null;
+            }
+        }
         if (!is_callable([$object,$method])) {
             $this->route_error = 'method can not call';
             return null;
@@ -390,8 +398,8 @@ trait Route_Helper
 }
 trait Route_UrlManager
 {
-    public $script_filename = '';
-    public $document_root = '';
+    public $script_filename = '';   //TODO protected
+    public $document_root = '';     //TODO protected
     
     protected $url_handler = null;
     //protected $path_info = '';

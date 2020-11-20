@@ -83,11 +83,13 @@ DuckPhp 的路由也可以单独抽出使用。
 
 #### 简洁
 
-DuckPhp 代码简洁，不做多余事情。最新版本默认demo运行只需要 421/3067 行。
+DuckPhp 代码简洁，不做多余事情。最新版本默认 demo 运行只需要行数 421/3067 (v1.2.7) 。
 
 DuckPhp 框架的设计原则：这东西非得框架自带么，不自带行么。
 
 DuckPhp 的应用调试非常方便，堆栈清晰，调用 debug_print_backtrace(2) 很容易发现。那些用了中间件的框架的堆栈很不清晰。
+
+而且， DuckPhp 各组件是无直接引用的，所以 var_dump() 能看出来。
 
 DuckPhp/Core/App 是 DuckPhp 的子框架。有时候你用 DuckPhp/Core/App 也行。类似 lumen 之于 Laravel 。
 
@@ -296,16 +298,13 @@ File: `template/public/demo.php`
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace
-{
-    //自动加载文件
-    require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
-}
 
 // 以下部分是核心工程师写。
 namespace MySpace\System
 {
-
+    //自动加载文件
+    require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
+    
     use DuckPhp\DuckPhp;
     use DuckPhp\Ext\CallableView;
     use DuckPhp\SingletonEx\SingletonEx;
@@ -321,10 +320,10 @@ namespace MySpace\System
                 // 开启单一文件模式，服务器不配置也能运行
             'ext' => [
                 CallableView::class => true,
-                    // 默认的 View 不支持函数调用，我们开启自带扩展 CallableView 代替系统的 View
+                // 默认的 View 不支持函数调用，我们开启自带扩展 CallableView 代替系统的 View
             ],
             'callable_view_class' => Views::class,
-                    // 替换的 View 类。
+                // 替换的 View 类。
         ];
         protected function onInit()
         {
@@ -333,7 +332,7 @@ namespace MySpace\System
         }
         protected function onRun()
         {
-            //运行期代码在这里
+            //运行期代码在这里，你可以在这里 session_start();
         }
     }
     //服务基类, 为了 Business::G() 可变单例。
@@ -363,13 +362,14 @@ namespace MySpace\System\Helper
         // 添加你想要的助手函数
     }
 } // end namespace
+
 //------------------------------
 // 以下部分由应用工程师编写，不再和 DuckPhp 的类有任何关系。
 
 namespace MySpace\Controller
 {
     use MySpace\Business\MyBusiness;  // 引用助手类
-    use MySpace\System\Helper\ControllerHelper as C;                  // 引用相关服务类
+    use MySpace\System\Helper\ControllerHelper as C; // 引用相关服务类
 
     class Main
     {
@@ -465,14 +465,15 @@ namespace MySpace\View {
         }
     }
 } // end namespace
+
 //------------------------------
 // 入口，放最后面避免自动加载问题
-
 
 namespace
 {
     $options = [
-        //'override_class' => 'MySpace\System\App', // 你也可以在这里调整选项。
+        //'override_class' => 'MySpace\System\App', 
+            // 你也可以在这里调整选项。
     ];
     \MySpace\System\App::RunQuickly($options);
 }

@@ -156,8 +156,18 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'controller_base_class'=>'~baseController',
             'controller_class_postfix'=>'Controller',
         ];
-         Route::G(new Route())->init($options);
+        Route::G(new Route())->init($options);
         Route::G()->defaultGetRouteCallback('/noBase/me');
+        
+        
+        $options=[
+            'namespace_controller'=>'\\tests_Core_Route',
+            'controller_stop_g_method' => true,
+            'controller_stop_static_method' => true,
+        ];
+        Route::G(new Route())->init($options);
+        Route::G()->defaultGetRouteCallback('/Main/G');
+        Route::G()->defaultGetRouteCallback('/Main/MyStatic');
         
         \MyCodeCoverage::G()->end();
         return;
@@ -347,6 +357,10 @@ class Main  extends baseController
     public function do_post()
     {
         //var_dump(DATE(DATE_ATOM));
+    }
+    public static function MyStatic()
+    {
+        
     }
 }
 
