@@ -41,8 +41,17 @@
     修复默认没配置 PATH_INFO ，打开以节约性能
     
 "controller_class_postfix"
+
+    控制器类名后缀
 "controller_enable_slash"
+
+    允许结尾的 /
 "controller_path_ext"
+
+    后缀如 .html
+"controller_stop_g_method" => false
+
+    禁止直接访问G函数",
 ## 公开属性
 
 ## 公开方法

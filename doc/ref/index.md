@@ -250,6 +250,9 @@ server {
 + ** 'controller_prefix_post' => 'do_',  ** 
 
     控制器，POST 方法前缀   // [DuckPhp\Core\Route](Core-Route.md)
++ ** 'controller_stop_g_method' => false,  ** 
+
+    禁止直接访问G函数   // [DuckPhp\Core\Route](Core-Route.md)
 + ** 'controller_use_singletonex' => false,  ** 
 
     控制器使用单例模式   // [DuckPhp\Core\Route](Core-Route.md)
@@ -616,6 +619,8 @@ server {
         扩展名，比如你要 .html
     - 'controller_prefix_post' => 'do_',
         控制器，POST 方法前缀
+    - 'controller_stop_g_method' => false,
+        禁止直接访问G函数
     - 'controller_use_singletonex' => false,
         控制器使用单例模式
     - 'controller_welcome_class' => 'Main',

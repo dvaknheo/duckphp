@@ -26,6 +26,7 @@
     "controller_prefix_post": "控制器，POST 方法前缀",
     "controller_welcome_class": "控制器默认欢迎方法",
     "controller_use_singletonex": "控制器使用单例模式",
+    "controller_stop_g_method": "禁止直接访问G函数",
     "database_list": "数据库列表",
     "use_autoloader": "使用系统自带加载器",
     "default_exception_handler": "默认异常句柄",

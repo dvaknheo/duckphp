@@ -31,6 +31,7 @@ class Route extends ComponentBase
             'controller_enable_slash' => false,
             'controller_path_ext' => '',
             'controller_use_singletonex' => false,
+            'controller_stop_g_method' => false,
             'skip_fix_path_info' => false,
         ];
     //public input;
@@ -307,7 +308,7 @@ class Route extends ComponentBase
             $this->route_error = 'can not call hidden method';
             return null;
         }
-        if ($this->options['controller_use_singletonex'] && $method === 'G') {
+        if (($this->options['controller_use_singletonex'] || $this->options['controller_stop_g_method']) && $method === 'G') {
             $this->route_error = 'can not call G()';
             return null;
         }
