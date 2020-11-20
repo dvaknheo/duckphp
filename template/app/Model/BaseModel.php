@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace LazyToChange\System;
+namespace LazyToChange\Model;
 
 use LazyToChange\System\SingletonEx;
 

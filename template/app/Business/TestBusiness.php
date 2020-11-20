@@ -6,7 +6,6 @@
 
 namespace LazyToChange\Business;
 
-use LazyToChange\System\BaseBusiness;
 use LazyToChange\System\Helper\BusinessHelper as B;
 use LazyToChange\Model\TestModel;
 

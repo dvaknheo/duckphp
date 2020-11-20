@@ -6,7 +6,7 @@
 
 namespace LazyToChange\Model;
 
-use LazyToChange\System\BaseModel;
+use LazyToChange\Model\BaseModel;
 use LazyToChange\System\Helper\ModelHelper as M;
 
 class TestModel extends BaseModel

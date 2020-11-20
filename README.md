@@ -12,16 +12,15 @@
 ### 直接运行演示。
 进入 template 目录
 ```
-php start_server.php
+php ./duckphp-project run
 ```
-即可
 ### Composer 安装
 
 ```
 composer require dvaknheo/duckphp # 用 require 
 ./vendor/bin/duckphp --help     # 查看有什么指令
-./vendor/bin/duckphp --create   # --full # 创建工程，把 template 目录内容复制到当前目录
-./vendor/bin/duckphp --start    # --host=127.0.0.1 --port=8080 # 开始 web 服务器
+./vendor/bin/duckphp new   # 创建工程，把 template 目录内容复制到当前目录，并且加以调整
+./duckphp-project run    # --host 127.0.0.1 --port 8080 # 开始 web 服务器
 ```
 不建议使用命令行的 web 服务器， 你把 nginx 或 apache 的 document_root 设置为  public 目录按常规框架调整即可。
 
@@ -57,28 +56,71 @@ DuckPhp 的最大意义是思想，只要思想在，什么框架你都可以用
 组合而非继承。这是 DuckPhp 提倡的另一个观点。
 
 ## DuckPhp 的优点
-### 主要优点
-1. DuckPhp 可以做到你的应用和 DuckPhp 的系统代码只有一行关联。 这个是其他 PHP 框架目前都做不到的。你的代码，基本和 DuckPhp 的系统代码无关。
-2. DuckPhp 用可变单例方式，解决了【系统的调用形式不变，实现形式可变】，比如不用 hack 来改系统漏洞。而其他框架用的 IoC,DI 技术则复杂且不方便调试。
-3. DuckPhp 的应用调试非常方便，堆栈清晰，调用 debug_print_backtrace(2) 很容易发现。那些用了中间件的框架的堆栈很不清晰。
-4. DuckPhp 无第三方依赖，你不必担心第三方依赖改动而大费周折。
-5. DuckPhp 耦合松散，扩展灵活方便，魔改容易。
-6. DuckPhp 很容易嵌入其他 PHP 框架。根据 DuckPhp 的返回值判断是否继续后面其他框架。
-7. DuckPhp 是库，可以按 composer 库的方式引入
-8. DuckPhp 支持 composer。无 composer 环境也可运。
 
-### DuckPhp 还有以下优点：
+#### 全组件可替换
 
-* DuckPhp 代码简洁，不做多余事情。最新版本默认demo运行只需要 421/3067 行。
-* DuckPhp 的 Controller 切换容易，独立，和其他类无关，简单明了。
-* DuckPhp 支持全站路由，还支持局部路径路由和非 PATH_INFO 路由，不需要配服务器也能用。 可以在不修改 Web 服务器设置（如设置 PATH_INFO）的情况下使用，也可以在子目录里使用。
-* DuckPhp 的路由也可以单独抽出使用。
-* DuckPhp 支持扩展。这些扩展可独立，不一定非要仅仅用于 DuckPHP。
-* DuckPhp 的数据库类很简洁，而且，你可以轻易方便的替换。如教程就有使用 thinkphp-db 的例子。
-* DuckPhp 有扩展能做到禁止你在 Controller 里直接写 sql 。有时候，框架必须为了防止人犯蠢，而牺牲了性能。但 DuckPhp 这么做几乎不影响性能。
-* DuckPhp/Core 是 DuckPhp 的子框架。有时候你用 DuckPhp/Core 也行。类似 lumen 之于 Laravel 。
-* DuckPhp 不限制你的工程的命名空间固定为 app 。你可以把你的工程作为其他项目的插件使用。
-* DuckPhp 可以规范为，Business 类只能用 MY\Base\BusinessHelper 。 Controller 类 只能用 MY\Base\ControllerHelper 。。 Model 类只能引用 MY\Base\ModelHepler。 View 类只能用 ViewHelper ，其他类不允许用。也可以规范成 只用 MY\Base\App 类这个系统类。其中 MY 这个命名空间你可以自定义。
+作为一个现代的 PHP 库， 全组件可替换是必须的。
+
+DuckPhp 用可变单例方式，解决了【系统的调用形式不变，实现形式可变】，比如不用 hack 来改系统漏洞。而其他框架用的 IoC,DI 技术则复杂且不方便调试。
+
+#### 高可靠性，无依赖
+
+DuckPhp 无第三方依赖，你不必担心第三方依赖改动而大费周折。（不需要引入101 个包，就能工作）
+
+如果对默认实现不满，你也可以很容易改用需要第三方依赖的实现。
+
+比如 DuckPhp 的数据库类很简洁，而且，你可以轻易方便的替换。如教程就有使用 thinkphp-db 的例子。
+
+#### 超低耦合
+
+DuckPhp 耦合松散，扩展灵活方便，魔改容易。
+
+DuckPhp 可以做到你的应用和 DuckPhp 的系统代码只有一行关联。 这个是其他 PHP 框架目前都做不到的。你的代码，基本和 DuckPhp 的系统代码无关。你只要研究业务代码，不要研究框架代码。
+
+DuckPhp 的 Controller 切换容易，独立，和其他类无关，简单明了。
+
+DuckPhp 的路由也可以单独抽出使用。
+
+#### 简洁
+
+DuckPhp 代码简洁，不做多余事情。最新版本默认demo运行只需要 421/3067 行。
+
+DuckPhp 框架的设计原则：这东西非得框架自带么，不自带行么。
+
+DuckPhp 的应用调试非常方便，堆栈清晰，调用 debug_print_backtrace(2) 很容易发现。那些用了中间件的框架的堆栈很不清晰。
+
+DuckPhp/Core/App 是 DuckPhp 的子框架。有时候你用 DuckPhp/Core/App 也行。类似 lumen 之于 Laravel 。
+
+#### 可扩展
+
+DuckPhp 支持扩展。这些扩展可独立，不一定非要仅仅用于 DuckPHP。
+
+#### 灵活自由
+
+DuckPhp 不限制你的工程的命名空间固定为 app 。你可以把你的工程作为其他项目的插件使用。
+
+DuckPhp 支持全站路由，还支持局部路径路由和非 PATH_INFO 路由，不需要配服务器也能用。 可以在不修改 Web 服务器设置（如设置 PATH_INFO）的情况下使用，也可以在子目录里使用。
+
+DuckPhp 很容易嵌入其他 PHP 框架。根据 DuckPhp 的返回值判断是否继续后面其他框架。
+
+DuckPhp 支持 composer。无 composer 环境也可运。DuckPhp 是 Composer 库，不需要单独的脚手架工程。
+
+#### 全覆盖测试
+
+强迫症，DuckPhp 每次发布都是通过全代码覆盖的测试。
+
+#### 最小惊奇原则
+
+DuckPhp 遵守最小惊奇原则，尽量避免一下常见问题：
+
+这东西从哪里来的，怎么就出现。这东西能干什么，我删除不行么。
+
+
+#### 其他优点
+
+DuckPhp 有扩展能做到禁止你在 Controller 里直接写 sql 。有时候，框架必须为了防止人犯蠢，而牺牲了性能。但 DuckPhp 这么做几乎不影响性能。
+
+DuckPhp 工程层级分明，不交叉引用。
 
 ### 和其他框架简单对比
 
@@ -96,9 +138,24 @@ DuckPhp 的最大意义是思想，只要思想在，什么框架你都可以用
 |代码简洁             | V            | V          |           | V       |
 |非固定全站框架                   |            |           |         | V |
 
+## DuckPhp 不做什么
+
+* ORM ，和各种屏蔽 sql 的行为，根据日志查 sql 方便多了。 自己简单封装了 pdo 。你也可以使用自己的DB类。 你也可以用第三方ORM（教程最末有替换成 think-orm 的方法）
+* 模板引擎，PHP本身就是模板引擎。
+* Widget ， 和 MVC 分离违背。
+* 接管替代默认的POST，GET，SESSION 。系统提供给你就用，不要折腾这些。 *除非为了支持 swoole*
+
+## DuckPhp 还要做什么
+
+**我真的很需要反馈啊，给我个反馈吧**
+
+* 文档，教程是有了，但还是不太够。
+* 范例，例子还太少太简单了。
+* 更多的杀手级应用。
+
 ## 理解 DuckPhp 的原则
 
-DuckPhp 层级关系图
+DuckPhp 工程层级关系图
 
 ```text
            /-> View-->ViewHelper
@@ -125,21 +182,77 @@ Controller --> Business ------------------------------ ---> Model
     1. 在主表里附加，其他表估计用不到的情况。
     2. 添加后缀为 ExModel 用于表示这个 Model 是多个表的，如 UserExModel。
     3. 或者单独和数据库不一致如取名 UserAndPlayerRelationModel
+## 常用工程目录结构
 
-## DuckPhp 不做什么
+v1.2.8-dev 调整中
 
-* ORM ，和各种屏蔽 sql 的行为，根据日志查 sql 方便多了。 自己简单封装了 pdo 。你也可以使用自己的DB类。 你也可以用第三方ORM（教程最末有替换成 think-orm 的方法）
-* 模板引擎，PHP本身就是模板引擎。
-* Widget ， 和 MVC 分离违背。
-* 接管替代默认的POST，GET，SESSION 。系统提供给你就用，不要折腾这些。 *除非为了支持 swoole*
+DuckPhp 代码里的 template 目录就是我们的工程目录示例。也是工程桩代码。
 
-## DuckPhp 还要做什么
+在执行 `./vendor/bin/duckphp new` 的时候，会把代码复制到工程目录。 并做一些改动。
 
-**我真的很需要反馈啊，给我个反馈吧**
+```text
++---app                     // psr-4 标准的自动加载目录。
+|   +---Business            // 业务目录
+|   |       TestBusiness.php // 测试 Business
+|   +---Controller          // 控制器目录
+|   |       Main.php        // 默认控制器
+|   +---Model               // 模型放在里
+|   |       TestModel.php   // 测试模型
+|   +---System              // 基类放在这里
+|       |   App.php         // 默认框架入口文件
+|       |   BaseController.php      // 控制器基类
+|       |   BaseException.php       // 系统错误基类
+|       |   BaseModel.php   // 模型基类
+|       |   BaseBusiness.php // 服务基类
+|       \---Helper                  //助手类目录
+|               AppHelper.php       // 应用助手类
+|               BusinessHelper.php  // 服务助手类
+|               ControllerHelper.php// 控制器助手类
+|               ModelHelper.php     // 模型助手类
+|               ViewHelper.php      // 视图助手类
++---config                  // 配置文件放这里
+|       config.php          // 配置，目前是空数组
+|       setting.sample.php  // 设置，去除敏感信息的模板
++---view                    // 视图文件放这里，可调
+|   |   main.php            // 视图文件
+|   \---_sys                // 系统错误视图文件放这里
+|           error-404.php   // 404 页面
+|           error-500.php   // 500 页面
+|           error-debug.php // 调试的时候显示的视图
++---public                  // 网站目录
+|       index.php           // 主页，入口页
+\---duckphp-project         // 命令行入口
+```
+这个目录结构里，`业务工程师`只能写 `app/Controller`,`app/Model`,`app/Business,`view` 这四个目录。
+有时候需要去读 `app/Base/Helper` 目录下的的类。其他则是`核心工程师`的活。
 
-* 文档，教程是有了，但还是不太够。
-* 范例，例子还太少太简单了。
-* 更多的杀手级应用。
+app 目录，就是放 LazyToChange 命名空间的东西了。 app 目录可以在选项里设置成其他名字
+命名空间 LazyToChange 是 可调的。比如调整成 MyProject ,TheBigOneProject  等。
+可以用 `./vendor/bin/duckphp new--namespace TheBigOneProject` 调整。
+
+文件都不复杂。基本都是空类或空继承类，便于不同处理。
+这些结构能精简么？
+可以，你可以一个目录都不要。
+
+System/App.php 这个文件的入口类继承 DuckPhp\DuckPhp 类，工程的入口流程会在这里进行，这里是`核心工程师`重点了解的类。
+
+BaseController, BaseModel, BaseBusiness 是你自己要改的基类，基本只实现了单例模式。
+
+Helper 目录，助手类，如果你一个人偷懒，直接用 APP 类也行  
+
+
+### 总结如何精简目录
+* 移除 app/System/Helper/ 目录,如果你直接用 App::* 替代助手类。
+* 移除 app/System/BaseController.php 如果你的 Controller 和默认的一样不需要基本类。
+* 移除 app/System/BaseModel.php 如果你的 Model 用的全静态方法。
+* 移除 app/System/BaseBusiness.php 如果你的 Business 不需要 G() 可变单例方法。
+* 移除 duckphp-project 如果你不需要额外的命令行
+* 移除 config/ 目录,在启动选项里删除 'use_setting_file'=>true ，如果你不需要 config/setting.php，
+    并有自己的配置方案
+* 移除 view/\_sys  目录 你需要设置启动选项里 'error\_404','error\_500,'error_debug‘’。
+* 移除 view 目录如果你不需要 view ，如 API 项目。
+* 移除 TestBusiness.php ， TestModel.php  测试用的东西
+
 ## 样例
 ### 1. hello world
 
@@ -166,6 +279,8 @@ $options = [
 \DuckPhp\DuckPhp::RunQuickly($options);
 
 ```
+从这个样例，我们可以简单的知道调整  $options 选项可以得到不同的结果。
+
 ### 2. 复杂样例
 
 工程附带的模板文件 `template/public/demo.php` 在单一的文件里演示如何使用 `DuckPhp`。
