@@ -29,9 +29,9 @@
 链接指向参考文件。
 
 1. `Core` 目录是核心目录，核心框架。基本功能都在 Core 里实现
-    3. **[ComponentBase.php](Core-ComponentBase.md)** 组件基类
+    1. **[ComponentBase.php](Core-ComponentBase.md)** 组件基类
          4. [ComponentInterface.php](Core-ComponentInterface.md) 组件接口
-    5. **[App.php](Core-App.md)** 核心应用类。
+    2. **[App.php](Core-App.md)** 核心应用类。
          1. [Kernel.php](Core-Kernel.md) 核心Trait 以下是 `核心必备组件`
             1. [AutoLoader.php](Core-AutoLoader.md) 自动加载类
             2. [Configer.php](Core-Configer.md) 配置组件
@@ -44,8 +44,8 @@
          2. [ExtendableStaticCallTrait.php](Core-ExtendableStaticCallTrait.md) 扩展静态调用的 trait
          3. [SystemWrapperTrait.php](Core-SystemWrapperTrait.md) 替换系统同名函数的 trait
          4. [Functions.php](Core-Functions.md) 全局函数列表
-    6. **[AppPluginTrait.php](Core-AppPluginTrait.md) **  这个Trait用于把独立工程 App 转成插件 
-    7. [HttpServer.php](Core-HttpServer.md) 单独的 Http 服务器
+    3. **[AppPluginTrait.php](Core-AppPluginTrait.md) **  这个Trait用于把独立工程 App 转成插件 
+    4. [HttpServer.php](Core-HttpServer.md) 单独的 Http 服务器
 2. `Db` 目录是数据库目录
    1. [DbAdvanceTrait.php](Db-DbAdvanceTrait.md)  这个 trait 增加了 Db类的高级功能
    2. [DbInterface.php](Db-DbInterface.md) Db 类满足 DbInterface 接口
@@ -68,7 +68,7 @@
    11. [RedisManager.php](Ext-RedisManager.md) Redis管理器组件
    12. [RouteHookDirectoryMode.php](Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件
    13. [RouteHookManager.php](Ext-RouteHookManager.md) 路由钩子管理器
-   14. **[RouteHookPathInfoCompat.php](Ext-RouteHookPathInfoCompat.md) **无程序路由设计模式组件
+   14. **[RouteHookPathInfoCompat.php](Ext-RouteHookPathInfoCompat.md)** 无程序路由设计模式组件
    15. **[RouteHookRouteMap.php](Ext-RouteHookRouteMap.md)** 路由映射组件
    16. [RouteHookRewrite.php](Ext-RouteHookRewrite.md) 路由重写组件
    17. [StrictCheck.php](Ext-StrictCheck.md) 严格检查模式组件
