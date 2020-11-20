@@ -207,7 +207,9 @@ trait Console_Command
      */
     public function command_run()
     {
-        HttpServer::RunQuickly($this->getCliParameters());
+        $options=$this->getCliParameters();
+        $options['path']= $this->context_class::G()->options['path'];
+        HttpServer::RunQuickly($options);
     }
     ///////////////////////////////////////
     /**
