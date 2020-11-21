@@ -30,7 +30,7 @@
 
 1. `Core` 目录是核心目录，核心框架。基本功能都在 Core 里实现
     1. **[ComponentBase.php](Core-ComponentBase.md)** 组件基类
-         4. [ComponentInterface.php](Core-ComponentInterface.md) 组件接口
+         1. [ComponentInterface.php](Core-ComponentInterface.md) 组件接口
     2. **[App.php](Core-App.md)** 核心应用类。
          1. [Kernel.php](Core-Kernel.md) 核心Trait 以下是 `核心必备组件`
             1. [AutoLoader.php](Core-AutoLoader.md) 自动加载类

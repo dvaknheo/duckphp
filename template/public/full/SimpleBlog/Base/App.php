@@ -10,10 +10,7 @@ use DuckPhp\DuckPhp;
 class App extends DuckPhp
 {
     public $componentClassMap = [
-            'M' => 'ModelHelper',
-            'V' => 'ViewHelper',
-            'C' => 'ControllerHelper',
-            'B' => 'ServiceHelper',
+            
     ];
     //@override
     public $options = [
@@ -28,6 +25,8 @@ class App extends DuckPhp
         'rewrite_map' => [
             '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
         ],
+        'helper_map' =>  '~\Base\\',
+
     ];
     public function __construct()
     {
