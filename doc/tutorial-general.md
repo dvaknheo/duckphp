@@ -201,13 +201,12 @@ class App extends DuckPhp
         
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
-        'error_debug' => '_sys/error_debug',
         
         //'path_info_compact_enable' => false,
         //'path_info_compact_enable' => true, // @DUCKPHP_DELETE
     ];
     /**
-      aaaaaaaaaaaaa
+     * console command sample
      */
     public function command_routes()
     {

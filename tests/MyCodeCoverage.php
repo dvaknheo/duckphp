@@ -166,6 +166,107 @@ class MyCodeCoverage
         \PHPUnit\Framework\Assert::assertTrue(true);
         echo "\n";
     }
-    
+    public function showAllReport()
+    {
+        $data = $this->createReport();
+        echo "\nSTART CREATE REPORT AT " .DATE(DATE_ATOM)."\n";
+        echo "File:\nfile://".$this->options['path_report']."index.html" ."\n"; 
+                echo "\n\033[42;30m All Done \033[0m Test Done!";
+
+        echo "\nTest Lines: \033[42;30m{$data['lines_tested']}/{$data['lines_total']}({$data['lines_percent']})\033[0m\n";
+        echo "\n\n";
+    }
     ///////////////////////
+    public function DoTestFileGeneratorRun($source,$dest)
+    {
+        //先放这里
+        return TestFileGenerator::Run($source, $dest);
+    }
+
+}
+
+class TestFileGenerator
+{
+    public static function Run($source, $dest)
+    {
+        $source=realpath($source).'/';
+        $dest=realpath($dest).'/';
+        
+        $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
+        $iterator = new \RecursiveIteratorIterator($directory);
+        $files = \iterator_to_array($iterator, false);
+        foreach ($files as $file) {
+            $short_file=substr($file, strlen($source));
+            static::MakeDir($short_file, $dest);
+            
+            $data =static::MakeTest($file, $short_file);
+            
+            $file_name=$dest.str_replace('.php', 'Test.php', $short_file);
+            if (is_file($file_name)) {
+                echo "Skip Existed File:".$file_name."\n";
+                continue;
+            }
+            file_put_contents($file_name, $data);
+        }
+    }
+    protected static function MakeDir($short_file, $dest)
+    {
+        $blocks=explode(DIRECTORY_SEPARATOR, $short_file);
+        array_pop($blocks);
+        $full_dir=$dest;
+        foreach ($blocks as $t) {
+            $full_dir.=DIRECTORY_SEPARATOR.$t;
+            if (!is_dir($full_dir)) {
+                mkdir($full_dir);
+            }
+        }
+    }
+    protected static function MakeTest($file, $short_file)
+    {
+        $data=file_get_contents($file);
+        preg_match_all('/ function (([^\(]+)\([^\)]*\))/', $data, $m);
+        $funcs=$m[1];
+        
+        $ns='DuckPhp\\'.str_replace('/', '\\', dirname($short_file));
+        $ns=str_replace('\.', '', $ns);
+        if (dirname($short_file)=='.') {
+            $namespace='tests';
+        }
+        $TestClass=basename($short_file, '.php').'Test';
+        $InitClass=basename($short_file, '.php').'';
+        
+        $ret="<"."?php \n";
+        $ret.=<<<EOT
+namespace tests\\{$ns};
+use {$ns}\\{$InitClass};
+
+class $TestClass extends \PHPUnit\Framework\TestCase
+{
+    public function testAll()
+    {
+        \\MyCodeCoverage::G()->begin({$InitClass}::class);
+        
+        //code here
+        
+        \\MyCodeCoverage::G()->end({$InitClass}::class);
+        \$this->assertTrue(true);
+        /*
+
+EOT;
+        foreach ($funcs as $v) {
+            $v=str_replace(['&','callable '], ['',''], $v);
+            $ret.=<<<EOT
+        {$InitClass}::G()->$v;
+
+EOT;
+        }
+        $ret.=<<<EOT
+        //*/
+    }
+}
+
+EOT;
+
+        return $ret;
+    }
 }

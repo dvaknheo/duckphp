@@ -13,7 +13,6 @@ use DuckPhp\Core\View;
 trait AppPluginTrait
 {
     // public $plugin_options = [] => in parent
-    // public $options['helper_map'] => in parent
     
     public $onPluginModePrepare;
     public $onPluginModeInit;
@@ -39,7 +38,7 @@ trait AppPluginTrait
             'plugin_path_view' => 'view',
             
             'plugin_search_config' => false,
-            'plugin_use_helper' => true,
+            'plugin_helper_map' => '',
             'plugin_files_config' => [],
             'plugin_url_prefix' => '',
         ];
@@ -137,7 +136,7 @@ trait AppPluginTrait
     }
     protected function pluginModeSearchAllPluginFile($path, $setting_file = '')
     {
-        $setting_file = !empty($setting_file)?$path.$setting_file.'.php':'';
+        $setting_file = !empty($setting_file) ? $path.$setting_file . '.php' : '';
         $flags = \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::UNIX_PATHS | \FilesystemIterator::FOLLOW_SYMLINKS ;
         $directory = new \RecursiveDirectoryIterator($path, $flags);
         $it = new \RecursiveIteratorIterator($directory);
@@ -167,9 +166,8 @@ trait AppPluginTrait
             $my_path_info = substr($path_info, $l - 1);
         }
         
-        if ($this->plugin_options['plugin_use_helper']) {
-            $helper_map = $this->options['helper_map'] ?? [];
-            $this->pluginModeCloneHelpers($helper_map);
+        if ($this->plugin_options['plugin_helper_map']) {
+            $this->plugin_context_class::G()->cloneHelpers($this->plugin_options['plugin_namespace'], $this->plugin_options['plugin_helper_map']);
         }
         
         View::G()->setOverridePath($this->path_view_override);
@@ -211,10 +209,6 @@ trait AppPluginTrait
         $url = $prefix.$url;
         
         return Route::G()->defaultUrlHandler($url);
-    }
-    protected function pluginModeCloneHelpers($componentClassMap)
-    {
-        $this->plugin_context_class::G()->cloneHelpers($this->plugin_options['plugin_namespace'], $componentClassMap);
     }
     public function pluginModeGetOldRoute()
     {

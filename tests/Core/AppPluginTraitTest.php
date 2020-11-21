@@ -43,6 +43,7 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
             
             'plugin_search_config'=>true,
             //'plugin_files_conifg'=>[],
+            'plugin_helper_map' => '~\\Helper\\',
         ];
 
         $options['ext'][AppPluginTraitApp::class]=$plugin_options;

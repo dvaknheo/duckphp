@@ -5,7 +5,7 @@
  */
 namespace SimpleBlog\Controller;
 
-use SimpleBlog\Base\ControllerHelper  as C;
+use SimpleBlog\Helper\ControllerHelper  as C;
 
 class install
 {

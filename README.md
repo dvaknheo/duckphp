@@ -111,9 +111,9 @@ DuckPhp 支持 composer。无 composer 环境也可运。DuckPhp 是 Composer �
 
 强迫症，DuckPhp 每次发布都是通过全代码覆盖的测试。
 
-#### 最小惊奇原则
+#### 最小惊讶原则(Principle of least astonishment)
 
-DuckPhp 遵守最小惊奇原则，尽量避免一下常见问题：
+DuckPhp 遵守最小惊讶原则，尽量避免一下常见问题：
 
 这东西从哪里来的，怎么就出现。这东西能干什么，我删除不行么。
 
