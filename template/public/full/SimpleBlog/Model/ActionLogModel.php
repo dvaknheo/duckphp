@@ -5,7 +5,7 @@
  */
 namespace SimpleBlog\Model;
 
-use SimpleBlog\Base\ModelHelper as M;
+use SimpleBlog\Helper\ModelHelper as M;
 
 class ActionLogModel extends BaseModel
 {

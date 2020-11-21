@@ -3,12 +3,11 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleBlog\Service;
+namespace SimpleBlog\Business;
 
-use SimpleBlog\Base\BaseService;
 use SimpleBlog\Model as M;
 
-class AdminService extends BaseService
+class AdminBusiness extends BaseBusiness
 {
     public function reset()
     {

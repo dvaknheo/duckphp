@@ -5,7 +5,7 @@
  */
 namespace SimpleBlog\Model;
 
-use SimpleBlog\Base\ModelHelper as M;
+use SimpleBlog\Helper\ModelHelper as M;
 
 //开发人员备注，这个表和
 class CommentExModel extends BaseModel

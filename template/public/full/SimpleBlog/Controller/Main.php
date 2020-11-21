@@ -5,46 +5,40 @@
  */
 namespace SimpleBlog\Controller;
 
-use SimpleBlog\Base\ControllerHelper as C;
-
-use SimpleBlog\Service\SessionService;
-use SimpleBlog\Service\ArticleService;
-use SimpleBlog\Service\UserService;
+use SimpleBlog\Business\SessionBusiness;
+use SimpleBlog\Business\ArticleBusiness;
+use SimpleBlog\Business\UserBusiness;
+use SimpleBlog\Helper\ControllerHelper as C;
 
 class Main
 {
     public function __construct()
     {
-        //C::assignExceptionHandel( )
+        //C::CheckDatabase();
     }
     public function index()
     {
-        $page = C::PageNo();
-
-        $user = SessionService::G()->getCurrentUser();
-        
-        list($articles, $total) = ArticleService::G()->getRecentArticle($page);
-        $articles = C::RecordsetH($articles, ['title']);
-        $articles = C::RecordsetUrl($articles, ['url' => 'article/{id}']);
-
-
         $url_reg = C::URL('register');
         $url_login = C::URL('login');
         $url_logout = C::URL('logout');
         $url_admin = C::URL('admin/index');
+
+        $user = SessionBusiness::G()->getCurrentUser();
+        list($articles, $total) = ArticleBusiness::G()->getRecentArticle(C::PageNo());
+        
+        $articles = C::RecordsetH($articles, ['title']);
+        $articles = C::RecordsetUrl($articles, ['url' => 'article/{id}']);
         
         C::Show(get_defined_vars(), 'main');
     }
     public function article()
     {
-        $page = C::PageNo();
-        $id = intval(C::SuperGlobal()->_GET['id'] ?? 1);
+        $id = C::GET('id',1);
         
-        $page_size = 10;
-        
-        $article = ArticleService::G()->getArticleFullInfo($id, $page, $page_size);
+        $article = ArticleBusiness::G()->getArticleFullInfo($id, C::PageNo(), C::PageSize());
         if (!$article) {
             C::Exit404();
+            return;
         }
         $article['comments'] = C::RecordsetH($article['comments'], ['content','username']);
         $html_pager = C::PageHtml($article['comments_total']);
@@ -58,35 +52,20 @@ class Main
     }
     public function do_changepass()
     {
-        $uid = SessionService::G()->getCurrentUid();
+        $uid = SessionBusiness::G()->getCurrentUid();
+        //TODO 
     }
     public function do_addcomment()
     {
-        $uid = SessionService::G()->getCurrentUid();
-        UserService::G()->addComment($uid, C::SuperGlobal()->_POST['article_id'], C::SuperGlobal()->_POST['content']);
-        C::ExitRouteTo('article/'.C::SuperGlobal()->_POST['article_id']);
+        $uid = SessionBusiness::G()->getCurrentUid();
+        UserBusiness::G()->addComment($uid, C::POST('article_id'), C::POST('content'));
+        C::ExitRouteTo('article/'.C::POST('article_id'));
     }
     public function do_delcomment()
     {
-        $user = SessionService::G()->getCurrentUser();
-        UserService::G()->deleteCommentByUser($user['id'], DN::SuperGlobal()->_POST['id']);
+        $uid = SessionBusiness::G()->getCurrentUid();
+        UserBusiness::G()->deleteCommentByUser($uid, C::POST('id'));
         C::ExitRouteTo('');
     }
-    public function dump()
-    {
-        $ret = [];
-        $tables = ['Articles'];
-        foreach ($tables as $table) {
-            try {
-                $sql = "SHOW CREATE TABLE $table";
-                $data = DN::DB()->fetch($sql);
-                $str = $data['Create Table'];
-                $str = preg_replace('/AUTO_INCREMENT=\d+/', 'AUTO_INCREMENT=1', $str);
-                $ret[$table] = $str;
-            } catch (\PDOException $ex) {
-            }
-        }
-        var_dump($ret);
-        return $ret;
-    }
+
 }

@@ -214,7 +214,7 @@ trait AppPluginTrait
     }
     protected function pluginModeCloneHelpers($componentClassMap)
     {
-        $this->plugin_context_class::G()->cloneHelpers($this->plugin_namespace, $componentClassMap);
+        $this->plugin_context_class::G()->cloneHelpers($this->plugin_options['plugin_namespace'], $componentClassMap);
     }
     public function pluginModeGetOldRoute()
     {

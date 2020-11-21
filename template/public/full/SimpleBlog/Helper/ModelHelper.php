@@ -1,13 +1,14 @@
 <?php declare(strict_types=1);
 /**
- * DuckPHP
+ * DuckPhp
  * From this time, you never be alone~
  */
-namespace SimpleBlog\Base;
+
+namespace SimpleBlog\Helper;
 
 use DuckPhp\Helper\ModelHelper as Helper;
 
 class ModelHelper extends Helper
 {
-    //
+    // override or add your code here
 }

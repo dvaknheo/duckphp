@@ -3,20 +3,21 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleBlog\Service;
+namespace SimpleBlog\Business;
 
-use SimpleBlog\Base\BaseService;
-use SimpleBlog\Base\ServiceHelper;
-use SimpleBlog\Base\App;
+use SimpleBlog\Helper\ServiceHelper;
+use SimpleBlog\System\App;
 
-class SessionService extends BaseService
+class SessionBusiness extends BaseBusiness
 {
     // 注意这里是有状态的，和其他 Service 不同。
-    // 属于特殊的 Service
     public function __construct()
     {
-        //session_start();
         App::session_start();
+    }
+    public function logout()
+    {
+        App::session_destroy();
     }
     public function getCurrentUser()
     {
@@ -34,11 +35,7 @@ class SessionService extends BaseService
     {
         $_SESSION['user'] = $user;
     }
-    public function logout()
-    {
-        //unset($_SESSION);
-        session_destroy();
-    }
+    //////////////////////
     public function adminLogin()
     {
         $_SESSION['admin_logined'] = true;

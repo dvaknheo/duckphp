@@ -5,11 +5,13 @@
  */
 namespace SimpleBlog\Model;
 
-use SimpleBlog\Base\BaseModel as Model;
-use SimpleBlog\Base\ModelHelper as M;
+use SimpleBlog\Helper\ModelHelper as M;
+use SimpleBlog\System\SingletonEx;
 
-class BaseModel extends Model
+class BaseModel
 {
+    use SingletonEx;
+
     public $table_name = null;
     public function getList(int $page = 1, int $page_size = 10)
     {

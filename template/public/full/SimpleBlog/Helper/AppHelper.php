@@ -4,11 +4,11 @@
  * From this time, you never be alone~
  */
 
-namespace LazyToChange\System\Helper;
+namespace SimpleBlog\Helper;
 
-use DuckPhp\Helper\BusinessHelper as Helper;
+use DuckPhp\Helper\AppHelper as Helper;
 
-class BusinessHelper extends Helper
+class AppHelper extends Helper
 {
     // override or add your code here
 }
