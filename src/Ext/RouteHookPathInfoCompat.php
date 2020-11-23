@@ -41,9 +41,9 @@ class RouteHookPathInfoCompat extends ComponentBase
         $get = [];
         $path = '';
         
-        $path = ($this->context_class)::SuperGlobal()->_SERVER['REQUEST_URI'] ?? '';
-        $path_info = ($this->context_class)::SuperGlobal()->_SERVER['PATH_INFO'] ?? '';
-        $script_file = ($this->context_class)::SuperGlobal()->_SERVER['SCRIPT_FILENAME'];
+        $path = $_SERVER['REQUEST_URI'] ?? '';
+        $path_info = $_SERVER['PATH_INFO'] ?? '';
+        $script_file = $_SERVER['SCRIPT_FILENAME'];
         
         $path = (string) parse_url($path, PHP_URL_PATH);
 
@@ -108,10 +108,10 @@ class RouteHookPathInfoCompat extends ComponentBase
         $k = $this->options['path_info_compact_action_key'];
         $m = $this->options['path_info_compact_class_key'];
         
-        //$old_path_info=($this->context_class)::SuperGlobal()->_SERVER['PATH_INFO']??'';
+        //$old_path_info=$_SERVER['PATH_INFO']??'';
         
-        $module = ($this->context_class)::SuperGlobal()->_REQUEST[$m] ?? null;
-        $path_info = ($this->context_class)::SuperGlobal()->_REQUEST[$k] ?? null;
+        $module = $_REQUEST[$m] ?? null;
+        $path_info = $_REQUEST[$k] ?? null;
 
         $path_info = $module.'/'.$path_info;
         

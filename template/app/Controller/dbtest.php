@@ -7,7 +7,7 @@
 namespace LazyToChange\Controller;
 
 use LazyToChange\System\App;
-use LazyToChange\System\Helper\ModelHelper as M;
+use LazyToChange\Helper\ModelHelper as M;
 
 class dbtest
 {

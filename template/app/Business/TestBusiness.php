@@ -6,7 +6,7 @@
 
 namespace LazyToChange\Business;
 
-use LazyToChange\System\Helper\BusinessHelper as B;
+use LazyToChange\Helper\BusinessHelper as B;
 use LazyToChange\Model\TestModel;
 
 class TestBusiness extends BaseBusiness

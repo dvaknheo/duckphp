@@ -33,6 +33,8 @@ class App extends ComponentBase
     const HOOK_APPPEND_INNER = 'append-inner';
     const HOOK_APPPEND_OUTTER = 'append-outter';
     
+    const DEFAULT_HELPER_MAP = '~\\Helper\\';
+    
     use Kernel;
     use ExtendableStaticCallTrait;
     use SystemWrapperTrait;

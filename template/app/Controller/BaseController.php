@@ -6,7 +6,7 @@
 
 namespace LazyToChange\Controller;
 
-use LazyToChange\System\Helper\ControllerHelper as C;
+use LazyToChange\Helper\ControllerHelper as C;
 use LazyToChange\System\SingletonEx;
 
 class BaseController

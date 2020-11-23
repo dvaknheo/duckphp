@@ -4,11 +4,11 @@
  * From this time, you never be alone~
  */
 
-namespace LazyToChange\System\Helper;
+namespace LazyToChange\Helper;
 
-use DuckPhp\Helper\BusinessHelper as Helper;
+use DuckPhp\Helper\ModelHelper as Helper;
 
-class BusinessHelper extends Helper
+class ModelHelper extends Helper
 {
     // override or add your code here
 }

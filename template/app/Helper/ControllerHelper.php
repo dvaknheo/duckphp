@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace LazyToChange\System\Helper;
+namespace LazyToChange\Helper;
 
 use DuckPhp\Helper\ControllerHelper as Helper;
 

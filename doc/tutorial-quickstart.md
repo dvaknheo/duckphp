@@ -82,7 +82,7 @@ File: `template/app/Controller/test.php`
 
 namespace LazyToChange\Controller;
 
-use LazyToChange\System\Helper\ControllerHelper as C;
+use LazyToChange\Helper\ControllerHelper as C;
 use LazyToChange\Business\TestBusiness;
 
 class test
@@ -120,7 +120,7 @@ File: `template/app/Business/TestBusiness.php`
 
 namespace LazyToChange\Business;
 
-use LazyToChange\System\Helper\BusinessHelper as B;
+use LazyToChange\Helper\BusinessHelper as B;
 use LazyToChange\Model\TestModel;
 
 class TestBusiness extends BaseBusiness
@@ -154,7 +154,7 @@ File: `template/app/Model/TestModel.php`
 namespace LazyToChange\Model;
 
 use LazyToChange\Model\BaseModel;
-use LazyToChange\System\Helper\ModelHelper as M;
+use LazyToChange\Helper\ModelHelper as M;
 
 class TestModel extends BaseModel
 {

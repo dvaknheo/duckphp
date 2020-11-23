@@ -119,6 +119,8 @@
     
     "verbose" :"详情模式",
     "help" : "显示帮助",
-    "helper_map": "助手类映射，比较复杂，默认可不管"
+    "helper_map": "助手类映射，比较复杂",
+    
+    "database_method_auto_extend": "是否扩充数据库方法至助手类"
 
 }

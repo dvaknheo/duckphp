@@ -280,6 +280,9 @@ server {
 + ** 'database_log_sql_query' => false,  ** 
 
     记录sql 查询   // [DuckPhp\Ext\DbManager](Ext-DbManager.md)
++ ** 'database_method_auto_extend' => false,  ** 
+
+    是否扩充数据库方法至助手类   // [DuckPhp\Ext\DbManager](Ext-DbManager.md)
 + ** 'default_exception_do_log' => true,  ** 
 
     错误的时候打开日志   // [DuckPhp\Core\App](Core-App.md)
@@ -333,7 +336,7 @@ server {
     接管一切异常   // [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
 + ** 'helper_map' => '',  ** 
 
-    助手类映射，比较复杂，默认可不管   // [DuckPhp\Core\App](Core-App.md)
+    助手类映射，比较复杂   // [DuckPhp\Core\App](Core-App.md)
 + ** 'is_debug' => false,  ** 
 
     是否调试状态   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
@@ -460,6 +463,9 @@ server {
 + ** 'route_map_important' => array ( ),  ** 
 
     重要路由映射   // [DuckPhp\Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
++ ** 'route_map_method_auto_extend' => false,  ** 
+
+       // [DuckPhp\Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
 + ** 'setting' => array ( ),  ** 
 
     设置，预先载入的设置   // [DuckPhp\Core\Configer](Core-Configer.md)
@@ -537,7 +543,7 @@ server {
     - 'ext' => array ( ),
         默认开启的扩展
     - 'helper_map' => '',
-        助手类映射，比较复杂，默认可不管
+        助手类映射，比较复杂
     - 'is_debug' => false,
         是否调试状态
     - 'namespace' => NULL,
@@ -694,6 +700,8 @@ server {
         记录sql 错误等级
     - 'database_log_sql_query' => false,
         记录sql 查询
+    - 'database_method_auto_extend' => false,
+        是否扩充数据库方法至助手类
 + DuckPhp\Ext\EmptyView
     - 'empty_view_key_view' => 'view',
         给View 的key
@@ -788,6 +796,8 @@ server {
         路由配置名，使用配置模式用路由
     - 'route_map_important' => array ( ),
         重要路由映射
+    - 'route_map_method_auto_extend' => false,
+        
 + DuckPhp\Ext\StrictCheck
     - 'controller_base_class' => NULL,
         控制器基类

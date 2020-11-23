@@ -8,7 +8,7 @@ namespace LazyToChange\Controller;
 
 // use LazyToChange\Controller\BaseController;
 use LazyToChange\Business\TestBusiness;
-use LazyToChange\System\Helper\ControllerHelper as C;
+use LazyToChange\Helper\ControllerHelper as C;
 
 class Main // extends BaseController
 {

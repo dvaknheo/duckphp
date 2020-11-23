@@ -4,11 +4,11 @@
  * From this time, you never be alone~
  */
 
-namespace LazyToChange\System\Helper;
+namespace LazyToChange\Helper;
 
-use DuckPhp\Helper\AppHelper as Helper;
+use DuckPhp\Helper\ViewHelper as Helper;
 
-class AppHelper extends Helper
+class ViewHelper extends Helper
 {
     // override or add your code here
 }

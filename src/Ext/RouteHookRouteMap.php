@@ -13,6 +13,7 @@ class RouteHookRouteMap extends ComponentBase
         'route_map_important' => [],
         'route_map' => [],
         'route_map_by_config_name' => '',
+        // 'route_map_method_auto_extend' => false,
     ];
     protected $route_map = [];
     protected $route_map_important = [];

@@ -27,6 +27,8 @@ class App extends DuckPhp
         
         //'path_info_compact_enable' => false,
         //'path_info_compact_enable' => true, // @DUCKPHP_DELETE
+        
+        'helper_map' => DuckPhp::DEFAULT_HELPER_MAP,
     ];
     /**
      * console command sample
@@ -109,6 +111,9 @@ class App extends DuckPhp
         // 记录sql 查询 (DuckPhp\Ext\DbManager)
         // $options['database_log_sql_query'] = false;
 
+        // 是否扩充数据库方法至助手类 (DuckPhp\Ext\DbManager)
+        // $options['database_method_auto_extend'] = false;
+
         // 错误的时候打开日志 (DuckPhp\Core\App)
         // $options['default_exception_do_log'] = true;
 
@@ -127,7 +132,7 @@ class App extends DuckPhp
         // 默认开启的扩展 (DuckPhp\Core\App)
         // $options['ext'] = array ( );
 
-        // 助手类映射，比较复杂，默认可不管 (DuckPhp\Core\App)
+        // 助手类映射，比较复杂 (DuckPhp\Core\App)
         // $options['helper_map'] = '';
 
         // 是否调试状态 (DuckPhp\Core\App, DuckPhp\Ext\StrictCheck)
@@ -186,6 +191,9 @@ class App extends DuckPhp
 
         // 重要路由映射 (DuckPhp\Ext\RouteHookRouteMap)
         // $options['route_map_important'] = array ( );
+
+        //  (DuckPhp\Ext\RouteHookRouteMap)
+        // $options['route_map_method_auto_extend'] = false;
 
         // 设置，预先载入的设置 (DuckPhp\Core\Configer)
         // $options['setting'] = array ( );

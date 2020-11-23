@@ -24,7 +24,9 @@
 
     记录sql 查询
 
+'database_method_auto_extend' => false,
 
+    是否扩充 setBeforeGetDbHandler 入助手类。
 ## 公开方法
 
     public static function Db($tag = null)
