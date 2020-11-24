@@ -7,6 +7,8 @@ Redis 管理类
         'redis' => null,
         'redis_list' => null,
         'redis_list_reload_by_setting' => true,
+        'redis_auto_extend_method' => true,
+
         'redis_list_try_single' => true,
 /*
     [

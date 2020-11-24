@@ -8,6 +8,8 @@
     public $options = [
         'path' => '',
         'path_lib' => 'lib',
+        'misc_auto_method_extend' => true,
+
     ];
 ##  扩充方法。
 ### AppHelper 扩充

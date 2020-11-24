@@ -5,6 +5,7 @@
 
 ## 选项
 rewrite_map => []
+        'rewrite_auto_extend_method' => true,
 
     选项
 ## 方法

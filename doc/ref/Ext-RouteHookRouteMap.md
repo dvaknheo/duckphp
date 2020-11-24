@@ -15,7 +15,9 @@
 
 'route_map_by_config_name' => '',
 
-从配置中读取  route_map_important 和 route_map
+    从配置中读取  route_map_important 和 route_map
+'route_map_auto_extend_method' => true,
+
 ## 扩充方法
 
 'assignImportantRoute' => [static::class.'::G','assignImportantRoute'],

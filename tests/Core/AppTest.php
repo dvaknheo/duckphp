@@ -453,7 +453,7 @@ App::PageHtml(123);
 
         App::G()->extendComponents(['Foo'=>[AppTest::class,'Foo']],['V',"ZZZ"]);
         
-        App::G()->options['helper_map']='~\Helper\\';
+        App::G()->options['injected_helper_map']='~\Helper\\';
         App::G()->extendComponents(['Foo'=>[AppTest::class,'Foo']],['V',"ZZZ"]);
 
 

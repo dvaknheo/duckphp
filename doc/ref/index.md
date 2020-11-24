@@ -265,6 +265,9 @@ server {
 + ** 'database' => NULL,  ** 
 
     单一数据库配置   // [DuckPhp\Ext\DbManager](Ext-DbManager.md)
++ ** 'database_auto_method_extend' => true,  ** 
+
+    是否扩充方法至助手类   // [DuckPhp\Ext\DbManager](Ext-DbManager.md)
 + ** 'database_list' => NULL,  ** 
 
     数据库列表   // [DuckPhp\Ext\DbManager](Ext-DbManager.md)
@@ -280,9 +283,6 @@ server {
 + ** 'database_log_sql_query' => false,  ** 
 
     记录sql 查询   // [DuckPhp\Ext\DbManager](Ext-DbManager.md)
-+ ** 'database_method_auto_extend' => false,  ** 
-
-    是否扩充数据库方法至助手类   // [DuckPhp\Ext\DbManager](Ext-DbManager.md)
 + ** 'default_exception_do_log' => true,  ** 
 
     错误的时候打开日志   // [DuckPhp\Core\App](Core-App.md)
@@ -334,7 +334,7 @@ server {
 +  'handle_all_exception' => true,   
 
     接管一切异常   // [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
-+ ** 'helper_map' => '',  ** 
++ ** 'injected_helper_map' => '',  ** 
 
     助手类映射，比较复杂   // [DuckPhp\Core\App](Core-App.md)
 + ** 'is_debug' => false,  ** 
@@ -370,6 +370,9 @@ server {
 + ** 'log_prefix' => 'DuckPhpLog',  ** 
 
     日志前缀   // [DuckPhp\Core\Logger](Core-Logger.md)
++  'misc_auto_method_extend' => true,   
+
+    是否扩方法至助手类   // [DuckPhp\Ext\Misc](Ext-Misc.md)
 +  'mode_dir_basepath' => '',   
 
     目录模式的基类   // [DuckPhp\Ext\RouteHookDirectoryMode](Ext-RouteHookDirectoryMode.md)
@@ -436,6 +439,9 @@ server {
 +  'redis' => NULL,   
 
     单一Redisc配置   // [DuckPhp\Ext\RedisManager](Ext-RedisManager.md)
++  'redis_auto_extend_method' => true,   
+
+    是否扩充方法至助手类   // [DuckPhp\Ext\RedisManager](Ext-RedisManager.md)
 +  'redis_cache_prefix' => '',   
 
      redis cache 缓存前缀   // [DuckPhp\Ext\RedisCache](Ext-RedisCache.md)
@@ -451,21 +457,24 @@ server {
 +  'redis_list_try_single' => true,   
 
     尝试使用单一Redis配置   // [DuckPhp\Ext\RedisManager](Ext-RedisManager.md)
++  'rewrite_auto_extend_method' => true,   
+
+    是否扩充方法至助手类   // [DuckPhp\Ext\RouteHookRewrite](Ext-RouteHookRewrite.md)
 +  'rewrite_map' => array ( ),   
 
     目录重写映射   // [DuckPhp\Ext\RouteHookRewrite](Ext-RouteHookRewrite.md)
 + ** 'route_map' => array ( ),  ** 
 
     路由映射   // [DuckPhp\Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
++ ** 'route_map_auto_extend_method' => true,  ** 
+
+    是否扩充方法至助手类   // [DuckPhp\Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
 + ** 'route_map_by_config_name' => '',  ** 
 
     路由配置名，使用配置模式用路由   // [DuckPhp\Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
 + ** 'route_map_important' => array ( ),  ** 
 
     重要路由映射   // [DuckPhp\Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
-+ ** 'route_map_method_auto_extend' => false,  ** 
-
-       // [DuckPhp\Ext\RouteHookRouteMap](Ext-RouteHookRouteMap.md)
 + ** 'setting' => array ( ),  ** 
 
     设置，预先载入的设置   // [DuckPhp\Core\Configer](Core-Configer.md)
@@ -542,7 +551,7 @@ server {
         错误调试页面
     - 'ext' => array ( ),
         默认开启的扩展
-    - 'helper_map' => '',
+    - 'injected_helper_map' => '',
         助手类映射，比较复杂
     - 'is_debug' => false,
         是否调试状态
@@ -690,6 +699,8 @@ server {
 + DuckPhp\Ext\DbManager
     - 'database' => NULL,
         单一数据库配置
+    - 'database_auto_method_extend' => true,
+        是否扩充方法至助手类
     - 'database_list' => NULL,
         数据库列表
     - 'database_list_reload_by_setting' => true,
@@ -700,8 +711,6 @@ server {
         记录sql 错误等级
     - 'database_log_sql_query' => false,
         记录sql 查询
-    - 'database_method_auto_extend' => false,
-        是否扩充数据库方法至助手类
 + DuckPhp\Ext\EmptyView
     - 'empty_view_key_view' => 'view',
         给View 的key
@@ -745,6 +754,8 @@ server {
     - 'jsonrpc_wrap_auto_adjust' => true,
         jsonrpc 自动调整 wrap
 + DuckPhp\Ext\Misc
+    - 'misc_auto_method_extend' => true,
+        是否扩方法至助手类
     - 'path' => '',
         基础目录
     - 'path_lib' => 'lib',
@@ -757,6 +768,8 @@ server {
 + DuckPhp\Ext\RedisManager
     - 'redis' => NULL,
         单一Redisc配置
+    - 'redis_auto_extend_method' => true,
+        是否扩充方法至助手类
     - 'redis_list' => NULL,
          redis 配置列表
     - 'redis_list_reload_by_setting' => true,
@@ -787,17 +800,19 @@ server {
     - 'path_info_compact_enable' => false,
         使用 _GET 模拟无 PathInfo 配置
 + DuckPhp\Ext\RouteHookRewrite
+    - 'rewrite_auto_extend_method' => true,
+        是否扩充方法至助手类
     - 'rewrite_map' => array ( ),
         目录重写映射
 + DuckPhp\Ext\RouteHookRouteMap
     - 'route_map' => array ( ),
         路由映射
+    - 'route_map_auto_extend_method' => true,
+        是否扩充方法至助手类
     - 'route_map_by_config_name' => '',
         路由配置名，使用配置模式用路由
     - 'route_map_important' => array ( ),
         重要路由映射
-    - 'route_map_method_auto_extend' => false,
-        
 + DuckPhp\Ext\StrictCheck
     - 'controller_base_class' => NULL,
         控制器基类
@@ -842,7 +857,7 @@ server {
     'plugin_use_helper' => true,
     'plugin_files_config' => [],
     'plugin_url_prefix' => '',
-    'plugin_helper_map' => '',
+    'plugin_injected_helper_map' => '',
 ###  DuckPhp\HttpServer\HttpServer
     'host' => '127.0.0.1',
     'port' => '8080',

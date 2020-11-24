@@ -33,7 +33,7 @@ class App extends ComponentBase
     const HOOK_APPPEND_INNER = 'append-inner';
     const HOOK_APPPEND_OUTTER = 'append-outter';
     
-    const DEFAULT_HELPER_MAP = '~\\Helper\\';
+    const DEFAULT_INJECTED_HELPER_MAP = '~\\Helper\\';
     
     use Kernel;
     use ExtendableStaticCallTrait;
@@ -78,7 +78,7 @@ class App extends ComponentBase
         'default_exception_do_log' => true,
         'default_exception_self_display' => true,
         'close_resource_at_output' => false,
-        'helper_map' => '',
+        'injected_helper_map' => '',
         
         //// error handler ////
         'error_404' => null,          //'_sys/error-404',
@@ -125,10 +125,9 @@ class App extends ComponentBase
         static::AssignExtendStaticMethod($method_map);
         self::AssignExtendStaticMethod($method_map);
         
-        $helperMap = $this->extendComponentClassMap($this->options['helper_map'], $this->options['namespace']);
-        $this->options['helper_map'] = $helperMap;
+        $this->options['injected_helper_map'] = $this->extendComponentClassMap($this->options['injected_helper_map'], $this->options['namespace']);
         foreach ($components as $component) {
-            $class = $helperMap[strtoupper($component)] ?? null;
+            $class = $this->options['injected_helper_map'][strtoupper($component)] ?? null;
             $class = ($class === null) ? $component : $class;
             $class = $this->fixNamespace($class, $this->options['namespace']);
             
@@ -143,7 +142,7 @@ class App extends ComponentBase
         if (empty($new_helper_map)) {
             return;
         }
-        $helperMap = $this->extendComponentClassMap($this->options['helper_map'], $this->options['namespace']);
+        $helperMap = $this->extendComponentClassMap($this->options['injected_helper_map'], $this->options['namespace']);
 
         foreach ($helperMap as $name => $old_class) {
             $new_class = $new_helper_map[$name] ?? null;

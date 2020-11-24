@@ -24,7 +24,7 @@ class DuckPhp extends App
         'default_exception_do_log' => true,
         'default_exception_self_display' => true,
         'close_resource_at_output' => false,
-        'helper_map' => '',
+        'injected_helper_map' => '',
         
         //// error handler ////
         'error_404' => null,          //'_sys/error-404',
@@ -37,6 +37,9 @@ class DuckPhp extends App
             RouteHookRouteMap::class => true,
             Console::class => true,
         ],
+        
+        'database_auto_method_extend' => true,
+        'route_map_auto_extend_method' => true,
     ];
     
     //@override

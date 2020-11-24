@@ -205,7 +205,7 @@ class App extends DuckPhp
         //'path_info_compact_enable' => false,
         //'path_info_compact_enable' => true, // @DUCKPHP_DELETE
         
-        'helper_map' => DuckPhp::DEFAULT_HELPER_MAP,
+        // 'helper_map' => DuckPhp::DEFAULT_HELPER_MAP,
     ];
     /**
      * console command sample

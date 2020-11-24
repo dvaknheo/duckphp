@@ -22,9 +22,9 @@
 'close_resource_at_output' => false,
     
     输出时候关闭资源输出（仅供第三方扩展参考
-"helper_map": "助手类映射"
+"injected_helper_map": "助手类映射"
 
-    helper_map 比较复杂待文档。和助手类映射相关。 v1.2.8-dev
+    injected_helper_map 比较复杂待文档。和助手类映射相关。 v1.2.8-dev
 ### 错误处理配置
 
 'error_404' => null,          //'_sys/error-404',

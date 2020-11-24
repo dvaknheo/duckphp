@@ -24,7 +24,7 @@
 
     记录sql 查询
 
-'database_method_auto_extend' => false,
+        'database_auto_method_extend' => true,
 
     是否扩充 setBeforeGetDbHandler 入助手类。
 ## 公开方法

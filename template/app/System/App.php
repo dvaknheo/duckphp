@@ -28,7 +28,7 @@ class App extends DuckPhp
         //'path_info_compact_enable' => false,
         //'path_info_compact_enable' => true, // @DUCKPHP_DELETE
         
-        'helper_map' => DuckPhp::DEFAULT_HELPER_MAP,
+        // 'helper_map' => DuckPhp::DEFAULT_HELPER_MAP,
     ];
     /**
      * console command sample
@@ -96,6 +96,9 @@ class App extends DuckPhp
         // 单一数据库配置 (DuckPhp\Ext\DbManager)
         // $options['database'] = NULL;
 
+        // 是否扩充方法至助手类 (DuckPhp\Ext\DbManager)
+        // $options['database_auto_method_extend'] = true;
+
         // 数据库列表 (DuckPhp\Ext\DbManager)
         // $options['database_list'] = NULL;
 
@@ -110,9 +113,6 @@ class App extends DuckPhp
 
         // 记录sql 查询 (DuckPhp\Ext\DbManager)
         // $options['database_log_sql_query'] = false;
-
-        // 是否扩充数据库方法至助手类 (DuckPhp\Ext\DbManager)
-        // $options['database_method_auto_extend'] = false;
 
         // 错误的时候打开日志 (DuckPhp\Core\App)
         // $options['default_exception_do_log'] = true;
@@ -133,7 +133,7 @@ class App extends DuckPhp
         // $options['ext'] = array ( );
 
         // 助手类映射，比较复杂 (DuckPhp\Core\App)
-        // $options['helper_map'] = '';
+        // $options['injected_helper_map'] = '';
 
         // 是否调试状态 (DuckPhp\Core\App, DuckPhp\Ext\StrictCheck)
         // $options['is_debug'] = false;
@@ -186,14 +186,14 @@ class App extends DuckPhp
         // 路由映射 (DuckPhp\Ext\RouteHookRouteMap)
         // $options['route_map'] = array ( );
 
+        // 是否扩充方法至助手类 (DuckPhp\Ext\RouteHookRouteMap)
+        // $options['route_map_auto_extend_method'] = true;
+
         // 路由配置名，使用配置模式用路由 (DuckPhp\Ext\RouteHookRouteMap)
         // $options['route_map_by_config_name'] = '';
 
         // 重要路由映射 (DuckPhp\Ext\RouteHookRouteMap)
         // $options['route_map_important'] = array ( );
-
-        //  (DuckPhp\Ext\RouteHookRouteMap)
-        // $options['route_map_method_auto_extend'] = false;
 
         // 设置，预先载入的设置 (DuckPhp\Core\Configer)
         // $options['setting'] = array ( );
@@ -352,6 +352,9 @@ class App extends DuckPhp
         //*/
         /*
         $options['ext']['DuckPhp\\Ext\\Misc'] = true;
+            // 是否扩方法至助手类
+            $options['misc_auto_method_extend'] = true;
+
             // 【共享】基础目录
             // $options['path'] = '';
 
@@ -372,6 +375,9 @@ class App extends DuckPhp
         $options['ext']['DuckPhp\\Ext\\RedisManager'] = true;
             // 单一Redisc配置
             $options['redis'] = NULL;
+
+            // 是否扩充方法至助手类
+            $options['redis_auto_extend_method'] = true;
 
             //  redis 配置列表
             $options['redis_list'] = NULL;
@@ -412,6 +418,9 @@ class App extends DuckPhp
         //*/
         /*
         $options['ext']['DuckPhp\\Ext\\RouteHookRewrite'] = true;
+            // 是否扩充方法至助手类
+            $options['rewrite_auto_extend_method'] = true;
+
             // 目录重写映射
             $options['rewrite_map'] = array ( );
 

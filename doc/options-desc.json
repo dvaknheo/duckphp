@@ -119,8 +119,12 @@
     
     "verbose" :"详情模式",
     "help" : "显示帮助",
-    "helper_map": "助手类映射，比较复杂",
+    "injected_helper_map": "助手类映射，比较复杂",
     
-    "database_method_auto_extend": "是否扩充数据库方法至助手类"
+    "database_auto_method_extend": "是否扩充方法至助手类",
+    "misc_auto_method_extend": "是否扩方法至助手类",
+    "redis_auto_extend_method": "是否扩充方法至助手类",
+    "rewrite_auto_extend_method": "是否扩充方法至助手类",
+    "route_map_auto_extend_method": "是否扩充方法至助手类"
 
 }

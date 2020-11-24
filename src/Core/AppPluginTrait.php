@@ -38,7 +38,7 @@ trait AppPluginTrait
             'plugin_path_view' => 'view',
             
             'plugin_search_config' => false,
-            'plugin_helper_map' => '',
+            'plugin_injected_helper_map' => '',
             'plugin_files_config' => [],
             'plugin_url_prefix' => '',
         ];
@@ -166,8 +166,8 @@ trait AppPluginTrait
             $my_path_info = substr($path_info, $l - 1);
         }
         
-        if ($this->plugin_options['plugin_helper_map']) {
-            $this->plugin_context_class::G()->cloneHelpers($this->plugin_options['plugin_namespace'], $this->plugin_options['plugin_helper_map']);
+        if ($this->plugin_options['plugin_injected_helper_map']) {
+            $this->plugin_context_class::G()->cloneHelpers($this->plugin_options['plugin_namespace'], $this->plugin_options['plugin_injected_helper_map']);
         }
         
         View::G()->setOverridePath($this->path_view_override);

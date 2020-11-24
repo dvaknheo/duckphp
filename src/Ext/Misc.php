@@ -14,6 +14,7 @@ class Misc extends ComponentBase
     public $options = [
         'path' => '',
         'path_lib' => 'lib',
+        'misc_auto_method_extend' => true,
     ];
     protected $path = null;
     protected $context_class;
@@ -33,7 +34,7 @@ class Misc extends ComponentBase
     {
         $this->context_class = get_class($context);
         
-        if (\method_exists($context, 'extendComponents')) {
+        if ($this->options['misc_auto_method_extend'] && \method_exists($context, 'extendComponents')) {
             $context->extendComponents(
                 [
                     'Import' => [static::class,'Import'],
