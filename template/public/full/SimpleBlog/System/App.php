@@ -15,7 +15,7 @@ class App extends DuckPhp
         'use_setting_file' => true, // 启用设置文件
         'error_404' =>'_sys/error-404',
         'error_500' => '_sys/error-exception',
-        'helper_map' =>  '~\\Helper\\',  // 打开助手类注入模式
+        'injected_helper_map' =>  '~\\Helper\\',  // 打开助手类注入模式
 
         'ext' => [
             'DuckPhp\\Ext\\RouteHookRewrite' => true, // 我们需要 重写 url
