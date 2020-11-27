@@ -15,40 +15,39 @@ DuckPhp 代码里的 template 目录就是我们的工程目录示例。也是�
 在执行 `./vendor/bin/duckphp new` 的时候，会把代码复制到工程目录。 并做一些改动。
 
 ```text
-+---app                     // psr-4 标准的自动加载目录。
-|   +---Business            // 业务目录
-|   |       TestService.php // 测试 Service
-|   +---Controller          // 控制器目录
-|   |       Main.php        // 默认控制器
-|   +---Model               // 模型放在里
-|   |       TestModel.php   // 测试模型
-|   +---System              // 基类放在这里
-|       |   App.php         // 默认框架入口文件
-|       |   BaseController.php      // 控制器基类
-|       |   BaseException.php       // 系统错误基类
-|       |   BaseModel.php   // 模型基类
-|       |   BaseService.php // 服务基类
-|       \---Helper                  //助手类目录
-|               AppHelper.php       // 应用助手类
-|               BusinessHelper.php  // 服务助手类
-|               ControllerHelper.php// 控制器助手类
-|               ModelHelper.php     // 模型助手类
-|               ViewHelper.php      // 视图助手类
-+---config                  // 配置文件放这里
-|       config.php          // 配置，目前是空数组
-|       setting.sample.php  // 设置，去除敏感信息的模板
-+---view                    // 视图文件放这里，可调
-|   |   main.php            // 视图文件
-|   \---_sys                // 系统错误视图文件放这里
-|           error-404.php   // 404 页面
-|           error-500.php   // 500 页面
-|           error-debug.php // 调试的时候显示的视图
-+---public                  // 网站目录
-|       index.php           // 主页，入口页
-\---start_server.php    // 启动 Htttp 服务
++---app                         // psr-4 标准的自动加载目录。
+|   +---Business                // 业务目录
+|   |       TestBusiness.php    // 测试 Business
+|   +---Controller              // 控制器目录
+|   |       Main.php            // 默认控制器
+|   +---Model                   // 模型放在里
+|   |       TestModel.php       // 测试模型
+|   +---System                  // 基类放在这里
+|   |       App.php             // 默认框架入口文件
+|   |       BaseController.php  // 控制器基类
+|   |       BaseException.php   // 系统错误基类
+|   |       BaseModel.php       // 模型基类
+|   |       BaseBusiness.php    // 服务基类
+|   \---Helper                  //助手类目录
+|           AppHelper.php       // 应用助手类
+|           BusinessHelper.php  // 服务助手类
+|           ControllerHelper.php// 控制器助手类
+|           ModelHelper.php     // 模型助手类
+|           ViewHelper.php      // 视图助手类
++---config                      // 配置文件放这里
+|       config.php              // 配置，目前是空数组
+|       setting.sample.php      // 设置，去除敏感信息的模板
++---view                        // 视图文件放这里，可调
+|   |   main.php                // 视图文件
+|   \---_sys                    // 系统错误视图文件放这里
+|           error-404.php       // 404 页面
+|           error-500.php       // 500 页面
++---public                      // 网站目录
+|       index.php               // 主页，入口页
+\---duckphp-project             // 命令行入口
 ```
-这个目录结构里，`业务工程师`只能写 `app/Controller`,`app/Model`,`app/Service`,`view` 这四个目录。
-有时候需要去读 `app/Base/Helper` 目录下的的类。其他则是`核心工程师`的活。
+这个目录结构里，`业务工程师`只能写 `app/Controller`,`app/Model`,`app/Business,`view` 这四个目录。
+有时候需要去读 `app/Helper` 目录下的的类。其他则是`核心工程师`的活。
 
 app 目录，就是放 LazyToChange 命名空间的东西了。 app 目录可以在选项里设置成其他名字
 命名空间 LazyToChange 是 可调的。比如调整成 MyProject ,TheBigOneProject  等。

@@ -224,8 +224,8 @@ DuckPhp 代码里的 template 目录就是我们的工程目录示例。也是�
 |       index.php               // 主页，入口页
 \---duckphp-project             // 命令行入口
 ```
-这个目录结构里，`业务工程师`只能写 `app/Controller`,`app/Model`,`app/Business,`view` 这四个目录。
-有时候需要去读 `app/Base/Helper` 目录下的的类。其他则是`核心工程师`的活。
+这个目录结构里，`业务工程师`只能写 `app/Controller`,`app/Model`,`app/Business`,`view` 这四个目录。
+有时候需要去读 `app/Helper` 目录下的的类。其他则是 `核心工程师` 的活。
 
 app 目录，就是放 LazyToChange 命名空间的东西了。 app 目录可以在选项里设置成其他名字
 命名空间 LazyToChange 是 可调的。比如调整成 MyProject ,TheBigOneProject  等。
