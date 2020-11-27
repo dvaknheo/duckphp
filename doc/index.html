@@ -1,10 +1,65 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Hello DuckPhp!</title>
+  <meta charset="utf-8"/>
+  <title>Marked in the browser</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-尝试使用gitee pages markdown
+<div>
+一个简单的 md 文件读取，够本文档用就行了。
+<a href="#">返回主页</a>
+</div>
+  <div id="content" style="border:1px solid gray;"></div>
+<script>
+
+function fetchMarkdown(url){
+    url=url?url:'##/index.md';
+    url=url.substring(2);
+    //baseUrl:"/" marked 的这项好像无效。
+    var a =location.hash.substr(2).split('/');
+    a.pop();
+    baseUrl=a.join('/')+'/';
+    fetch(url).then(function(res){
+        return res.body.getReader().read();
+    }).then(function(ret,done){
+        var txt = new TextDecoder("utf-8").decode(ret.value);
+        document.getElementById('content').innerHTML = marked(txt,{ },function(err,res){
+            res=res.replace(/href="/g,'href="##'+baseUrl);
+            return res;
+        });
+    });
+}
+fetchMarkdown(location.hash);
+window.onhashchange= function(){ fetchMarkdown(location.hash);}; 
+</script>
 </body>
 </html>
+
+
+<!-- 
+/**
+ * Converts an array buffer to a string
+ *
+ * @param {Uin8} uint8arr | The buffer to convert
+ * @param {Function} callback | The function to call when conversion is complete
+ */
+function largeuint8ArrToString(uint8arr, callback) {
+    var bb = new Blob([uint8arr]);
+    var f = new FileReader();
+    f.onload = function(e) {
+        callback(e.target.result);
+    };
+    
+    f.readAsText(bb);
+}
+
+// Usage example
+// "Hello" in Uint8Array format
+var myuint8Arr = new Uint8Array([72, 101, 108, 108, 111, 32, 33]);
+
+largeuint8ArrToString(myuint8Arr, function(text){
+    // Hello
+    console.log(text);
+});
+-->
