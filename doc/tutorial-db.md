@@ -9,8 +9,7 @@
 
 ## 相关选项
 
-'before_get_db_handler'=>null, // 在调用 DB 前调用
-'use_context_db_setting'=>true, //使用 setting 里的 database_list 配置。
+
 'database_list'=>[],      //DB 列表
 
 ## 相关设置

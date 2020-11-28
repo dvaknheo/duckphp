@@ -39,13 +39,14 @@
 
 
 ### 扩充 [DuckPhp\Core\Kernel](Core-Kernel.md) 的默认选项。
+
+
 详情见 DuckPhp\Core\Kernel 参考文档
 
     use_autoloader
     path
     namespace
     skip_plugin_mode_check
-
     override_class
     is_debug
     platform
@@ -79,9 +80,6 @@
 返回路由类
 
 public static function On404(): void
-
-    //
-public static function CallException($ex): void
 
     //
 ## 详解

@@ -11,7 +11,6 @@
 ![DuckPhp](../duckphp.gv.svg)
 
 
-
 图解:
 
 灰色尖框为可单独使用类
@@ -21,10 +20,9 @@
 组件类用统一标志
 
 
-
 ## 按 DuckPhp 文件结构介绍的类
 
-遵循 PSR-4 的文件结构，`Core/App`, `Core/Kernel`, `Core/HttpServer` 是连接性节点。 其他节点都是独立的。
+遵循 PSR-4 的文件结构
 
 链接指向参考文件。
 
@@ -151,12 +149,12 @@ src
     `-- ThrowOn.php
 ```
 
-## nginx
+## nginx 配置
+
 
 ```
 server {
-	server_name  duckphp.demo.dev;
-	root /mnt/d/MyWork/sites/DNMVCS/template/public;
+    root DUCKPHP_ROOT/template/public;
     index index.php index.html index.htm;
     
     try_files $uri $uri/ /index.php$request_uri;
