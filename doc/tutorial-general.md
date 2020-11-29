@@ -13,6 +13,7 @@ DuckPhp 的使用者角色分为 `业务工程师`和`核心工程师`两种。
 DuckPhp 代码里的 template 目录就是我们的工程目录示例。也是工程桩代码。
 
 在执行 `./vendor/bin/duckphp new` 的时候，会把代码复制到工程目录。 并做一些改动。
+@script 目录结构
 
 ```text
 +---app                         // psr-4 标准的自动加载目录。
@@ -22,18 +23,18 @@ DuckPhp 代码里的 template 目录就是我们的工程目录示例。也是�
 |   |       Main.php            // 默认控制器
 |   +---Model                   // 模型放在里
 |   |       TestModel.php       // 测试模型
-|   +---System                  // 基类放在这里
-|   |       App.php             // 默认框架入口文件
-|   |       BaseController.php  // 控制器基类
-|   |       BaseException.php   // 系统错误基类
-|   |       BaseModel.php       // 模型基类
-|   |       BaseBusiness.php    // 服务基类
-|   \---Helper                  //助手类目录
-|           AppHelper.php       // 应用助手类
-|           BusinessHelper.php  // 服务助手类
-|           ControllerHelper.php// 控制器助手类
-|           ModelHelper.php     // 模型助手类
-|           ViewHelper.php      // 视图助手类
+|   +---Helper                  //助手类目录
+|   |       AppHelper.php       // 应用助手类
+|   |       BusinessHelper.php  // 服务助手类
+|   |       ControllerHelper.php// 控制器助手类
+|   |       ModelHelper.php     // 模型助手类
+|   |       ViewHelper.php      // 视图助手类
+|   \---System                  // 基类放在这里
+|           App.php             // 默认框架入口文件
+|           BaseController.php  // 控制器基类
+|           BaseException.php   // 系统错误基类
+|           BaseModel.php       // 模型基类
+|           BaseBusiness.php    // 服务基类
 +---config                      // 配置文件放这里
 |       config.php              // 配置，目前是空数组
 |       setting.sample.php      // 设置，去除敏感信息的模板
@@ -65,16 +66,17 @@ Helper 目录，助手类，如果你一个人偷懒，直接用 APP 类也行
 
 
 ### 总结如何精简目录
-* 移除 app/System/Helper/ 目录,如果你直接用 App::* 替代助手类。
+* 移除 app/Helper/ 目录,如果你直接用 App::* 替代助手类。
 * 移除 app/System/BaseController.php 如果你的 Controller 和默认的一样不需要基本类。
 * 移除 app/System/BaseModel.php 如果你的 Model 用的全静态方法。
 * 移除 app/System/BaseBusiness.php 如果你的 Business 不需要 G() 可变单例方法。
-* 移除 start_server.php 如果你使用外部 http 服务器
+* 移除 duckphp-project 如果你使用外部 http 服务器
 * 移除 config/ 目录,在启动选项里加 'skip_setting_file'=>true ，如果你不需要 config/setting.php，
     并有自己的配置方案
 * 移除 view/\_sys  目录 你需要设置启动选项里 'error\_404','error\_500,'error_debug‘’。
 * 移除 view 目录如果你不需要 view ，如 API 项目。
 * 移除 TestBusiness.php ， TestModel.php  测试用的东西
+@script 目录结构
 
 ----
 

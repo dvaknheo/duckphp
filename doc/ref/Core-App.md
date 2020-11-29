@@ -103,7 +103,9 @@ DuckPhp\Core\App 类 可以视为几个类的组合
  + [ModelHelper](Helper-ModelHelper.md)
  + [ViewHelper](Helper-ViewHelper.md)
 
+### 关于 injected_helper_map
 
- ## 全方法索引
+
+## 全方法索引
 
 //待脚本

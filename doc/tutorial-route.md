@@ -11,6 +11,7 @@ DuckPhp 的路由类比较复杂，也是重点
 
 ## 相关选项
 
+### Route
 - 'controller_base_class' => NULL,
     控制器基类
 - 'controller_class_postfix' => '',
@@ -39,7 +40,9 @@ DuckPhp 的路由类比较复杂，也是重点
     控制器的命名空间
 - 'skip_fix_path_info' => false,
     跳过 PATH_INFO 修复
-//RouteHookPathInfoCompat
+
+### RouteHookPathInfoCompat
+
 - 'path_info_compact_action_key' => '_r',
     GET 动作方法名的 key
 - 'path_info_compact_class_key' => '',
@@ -47,7 +50,7 @@ DuckPhp 的路由类比较复杂，也是重点
 - 'path_info_compact_enable' => false,
     使用 _GET 模拟无 PathInfo 配置
 
-//以下是RouteHookRouteMap
+### RouteHookRouteMap
 
 - 'route_map' => array ( ),
     路由映射
@@ -77,7 +80,7 @@ DuckPhp 支持很多种 路由方式，默认最常见最基本的就是文件�
 
 为了把 post 和 get 区分， 我们有了 controller_prefix_post 。如果没有 相关方法存在也是没问题的。 这个技巧用于很多需要的情况
 
-### 路由钩子（核心工程师）
+## 路由钩子（核心工程师）
 
 路由钩子，是在路由运行前后执行的一组钩子。添加的方式是调用 `App::addRouteHook($callback, $position, $once = true)`
 
@@ -121,30 +124,6 @@ value 对应的规则是
 - 如果是闭包，直接执行闭包。
 
 例子：
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -203,7 +182,7 @@ DuckPhp 还有一种很特殊的路由模式。
 参见 [DuckPhp\\Ext\\RouteHookDirectoryMode](ref/RouteHookDirectoryMode.md)
 
 
-### 默认路由生命周期
+## 默认路由生命周期
 
     run 函数。
     

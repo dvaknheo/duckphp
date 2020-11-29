@@ -1,8 +1,11 @@
 <?php
+require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
+
 function getfile($f)
 {
     if(!$f)return;
-    $path=realpath(__DIR__ . '/../../../doc').'/';
+    $ref=new ReflectionClass(\DuckPhp\DuckPhp::class);
+    $path=realpath(dirname($ref->getFileName()) . '/../doc').'/';
     $file=realpath($path.$f);
     if(substr($file,0,strlen($path))!=$path){ return;} // 安全处理
     
@@ -27,15 +30,12 @@ getfile($f);
 <html>
 <head>
   <meta charset="utf-8"/>
-  <title>Marked in the browser</title>
+  <title>文档</title>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
 <div>
-一个简单的 md 文件读取，够本文档用就行了。
-
-只能在 template 下执行，在工程里不能执行。
-
+一个简单的 md 文件读取器，够本文档用就行了。 <br />
 <a href="#">返回主页</a>
 </div>
   <div id="content" style="border:1px solid gray;"></div>

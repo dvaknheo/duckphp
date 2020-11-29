@@ -33,3 +33,9 @@ EventManager::FireEvent('MyEvent','A','B','C');
 EventManager::FireEvent('NoExist','A','B','C');
 
 ```
+
+## 详细解答
+App::OnEvent 绑定事件
+App::FireEvent 触发时间
+用 App::RemoveEvent 移除事件
+DuckPhp 的事件系统是 一对多的
