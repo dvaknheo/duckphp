@@ -170,12 +170,12 @@ Controller --> Business ------------------------------ ---> Model
 ```
 ![arch_full](doc/arch_full.gv.svg)
 
-* Controller 按 URL 入口走 调用 view 和service
-* Service 按业务走 ,调用 model 和其他第三方代码。
+* Controller 按 URL 入口走 调用 View 和 Business
+* Business 按业务走 ,调用 model 和其他第三方代码。
 * Model 按数据库表走，基本上只实现和当前表相关的操作。
 * View 按页面走
 * 不建议 Model 抛异常
-* ControllerHelper,BusinessHelper,ModelHelper,ViewHelper 都为助手类，通常缩写为 C, B, M, V
+* ControllerHelper, BusinessHelper, ModelHelper, ViewHelper 都为助手类，通常缩写为 C, B, M, V
 
 1. 如果  Business 业务之间 相互调用怎么办?
 添加后缀为 Lib 用于 Business 共享调用，不对外，如 CacheLib.
@@ -250,9 +250,9 @@ Helper 目录，助手类，如果你一个人偷懒，直接用 APP 类也行
 * 移除 app/System/BaseModel.php 如果你的 Model 用的全静态方法。
 * 移除 app/System/BaseBusiness.php 如果你的 Business 不需要 G() 可变单例方法。
 * 移除 config/ 目录,在启动选项里删除 'use_setting_file'=>true
-* 移除 view/\_sys  目录 你需要设置启动选项里 'error\_404','error\_500 。
+* 移除 view/\_sys/ 目录 你需要设置启动选项里404和500错误 'error\_404','error\_500 。
 * 移除 view 目录如果你不需要 view ，如 API 项目。
-* 移除 duckphp-project 如果你不需要额外的命令行
+* 移除 duckphp-project 如果你不需要额外的命令行。
 * 移除 TestBusiness.php ， TestModel.php  测试用的东西
 
 @script 目录结构

@@ -24,7 +24,7 @@ public static function AllEvents()
     获取所有事件
 public static function RemoveEvent($event, $callback = null)
 
-    移除事件
+    移除事件， 如果指定 $callback 则移除 $event 中
 ## 例子
 
 ```php
@@ -35,7 +35,11 @@ EventManager::FireEvent('NoExist','A','B','C');
 ```
 
 ## 详细解答
-App::OnEvent 绑定事件
-App::FireEvent 触发时间
+
+App::OnEvent 绑定事件， 支持一个事件绑定多个回调，先绑定的事件会先处理。
+
+App::FireEvent 触发事件
+
 用 App::RemoveEvent 移除事件
+
 DuckPhp 的事件系统是 一对多的

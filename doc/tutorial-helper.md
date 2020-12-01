@@ -63,11 +63,9 @@ Controller --> Business ------------------------------ ---> Model
 答：`AppHelper` 助手类只由`核心工程师`来调用 。当你要从 App 类里找出复杂的助手类，还不如在 AppHelper 里找。Session 管理就用到了 AppHelper 类。
 
 
-
 ## 助手类的公用静态方法
 
 所有助手类都有的静态方法。
-
 
 
 GetExtendStaticStaticMethodList()
@@ -76,31 +74,24 @@ GetExtendStaticStaticMethodList()
 \_\_callStatic
 
     静态方法已经被扩展。
-IsDebug()
-
-    判断是否在调试状态, 默认读取选项 is_debug 和设置字段里的 duckphp_is_debug
-IsRealDebug()
-
-    IsRealDebug 切莫乱用。用于环境设置为其他。比如线上环境，但是还是要特殊调试的场合。 如果没被接管，和 IsDebug() 一致。
-Platform()
-
-    获得当前所在平台,默认读取选项和设置字段里的 duckphp_platform，用于判断当前是哪台机器等
-Logger($object = null)
-
-    获得或设置 psr 标准的 Logger 类。默认是 DuckPhp\Core\Logger 类。
 trace_dump()
 
     调试状态下，查看当前堆栈，打印当前堆栈，类似 debug_print_backtrce(2)
 var_dump(...$arg)
 
     调试状态下 Dump 当前变量，替代 var_dump
-GetExtendStaticStaticMethodList()
+IsDebug()
 
-    获得当前助手类扩展了什么，这个常用于查看核心代码给助手类加了什么
-ThrowOn($flag, $message, $code = 0, $exception_class = null)
+    判断是否在调试状态, 默认读取选项 is_debug 和设置字段里的 duckphp_is_debug
+IsRealDebug()
 
-    如果 flag 成立，那么抛出消息为 $message, code为 $code, $exception_class 的异常，如 $exception_class =null ，则默认为 Exception::class 的异常。
-    另一调用方式：ThrowOn($flag, $message, $exception_class = null)  相当于 $code=0;
+    IsRealDebug 。 切莫乱用。用于环境设置为其他。比如线上环境，但是还是要特殊调试的场合。 如果没被接管，和 IsDebug() 一致。
+Platform()
+
+    获得当前所在平台,默认读取选项和设置字段里的 duckphp_platform，用于判断当前是哪台机器等
+Logger($object = null)
+
+    获得或设置 psr 标准的 Logger 类。默认是 DuckPhp\Core\Logger 类。
 AssignExtendStaticMethod($key, $value = null)
 
     高级函数
@@ -110,24 +101,28 @@ CallExtendStaticMethod($name, $arguments)
 
 ## ViewHelper 视图助手类
 
-本页面展示 ViewHelper 方法。 ViewHelper 是在View 里使用。 ViewHelper 默认的方法在 ControllerHelper 里都有。 但是 ViewHelper 不是 ControllerHelper 的子集。
+ViewHelper 是在View 里使用， 比较简单。
+
+ViewHelper 默认的方法在 ControllerHelper 里都有。 但是 ViewHelper 不是 ControllerHelper 的子集。
 
 
 H($str)
 
-    HTML 编码
+    __h() HTML 编码
 L($str,$args=[])
 
-    语言处理函数，后面的关联数组替换 '{$key}'
+    __l() 语言处理函数，后面的关联数组替换 '{$key}'
 Hl($str, $args=[])
 
-    对语言处理后进行 HTML 编码
+    __hl() 对语言处理后进行 HTML 编码
 Url($url)
 
-    获得相对 url 地址
+    __url() 获得相对 url 地址
 Display($view, $data = null)
 
-    包含下一个 $view ， 如果 $data =null 则带入所有当前作用域的变量。 否则带入 $data 关联数组的内容
+    __display() 包含下一个 $view ， 如果 $data = null 则带入所有当前作用域的变量。 否则带入 $data 关联数组的内容
+
+Display 用于嵌套包含视图。
 
 ## BusinessHelper 业务的助手类
 
@@ -146,6 +141,7 @@ Setting($key);
 LoadConfig($key,$basename="config");
 
     载入配置，Config($key); 获得配置项目。默认配置文件是在  config/config.php 。
+
 Cache($replace_object)
 
     获得缓存管理器
@@ -161,13 +157,17 @@ FireEvent($event, ...$args)
 OnEvent($event, $callback)
 
     绑定事件
+
+
 ## ModelHelper
 
-ModelHelper 用于 Model 层。 
-ModelHelper 有数据库的三个独特方法。
-这几个方法在 ControllerHelper 里没有。
-如何使用 DB 对象，看数据库部分的介绍。
-此外，还有两个快捷方法，方便分页
+ModelHelper 用于 Model 层。  ModelHelper 有数据库的三个独特方法。
+
+这几个方法在 ControllerHelper 里没有。 如何使用 Db 对象，看数据库部分的介绍。
+
+此外，还有两个快捷方法，方便分页。
+
+Db() 静态方法也可以用 __db() 函数代替
 
 Db($tag=null)
 
@@ -216,7 +216,9 @@ Config
 LoadConfig
 
     【配置相关】见 BusinessHelper 的 LoadConfig 介绍
+    
 ### 跳转相关
+
 ExitRedirect 不能跳转到外站，要用 ExitRedirectOutside
 
 ExitRedirect($url, $exit = true)
@@ -234,7 +236,9 @@ Exit404($exit = true)
 ExitJson($ret, $exit = true)
 
     【跳转】输出 json 结果，$exit 为 true 则附加 exit()
+    
 ### 路由相关
+
 setRouteCallingMethod
 
     【路由相关】设置当前的路由调用方法，用于跨方法调用时候 view 修正
@@ -247,6 +251,7 @@ getPathInfo()
 getParameters(): array
 
     【路由相关】获得路由重写相关的数据
+
 ### 内容处理
 Show($data = [], $view = null)
 
@@ -334,9 +339,13 @@ OnEvent($event, $callback)
 
     【其他】见 BusinessHelper 的 OnEvent 介绍
 
-## AppHelper
+## AppHelper 高级助手类。
 
-应用 助手的方法
+AppHelper 是 `核心工程师` 才使用的高级助手类。特殊的 Business 会用到。
+
+一部分只是展示了 App 类里有的非主要生命周期流程外的方法。
+
+
 ### 系统替代
 
 AppHelper 的系统替代更全面，包括 session 族函数
@@ -387,7 +396,6 @@ assignPathNamespace($path, $namespace = null)
 CallException($ex)
 
     调用异常处理，一般也不用，而是看异常处理那章
-//session
 
 ### Swoole 兼容
 
@@ -402,11 +410,11 @@ CallException($ex)
 &CLASS_STATICS($class_name, $var_name)
 
     替换类内静态变量
-### 其他
 
-## DuckPhp 类自带的非助手函数静态方法
+### 其 DuckPhp 类自带的非助手函数静态方法
 
 这些函数都是内部调用。
+
 Blank()
 
     空函数，用于可能的特殊场合
@@ -433,7 +441,8 @@ system_wrapper_get_providers
 
 扩展 助手类。 最直接的方式就是  添加静态方法。
 
-一般工程，都会重写自己的助手类，而不是直接使用 DuckPhp 的助手类。
+一般工程，都会自 DuckPhp 的助手类 扩展自己的助手类，而不是直接使用 DuckPhp 的助手类。
+
 类似 自己对 ModelHelper 扩展:
 
 ```php

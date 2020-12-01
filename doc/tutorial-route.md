@@ -11,6 +11,8 @@ DuckPhp 的路由类比较复杂，也是重点
 
 ## 相关选项
 
+按不同类的来源分为：
+
 ### Route
 - 'controller_base_class' => NULL,
     控制器基类
@@ -71,16 +73,15 @@ DuckPhp 支持很多种 路由方式，默认最常见最基本的就是文件�
 
 注意的是， DuckPhp 不支持 /test/  这样的 url ，最后的 / 需要自己处理。
 
-
 路由的流程在 DuckPhp\Core\Route 类里run() 方法。
 
 限定的类是在  namespace namespace_controller 选项
 
 根目录的路由会使用 Main（controller_welcome_class 选项） 来代替。
 
-为了把 post 和 get 区分， 我们有了 controller_prefix_post 。如果没有 相关方法存在也是没问题的。 这个技巧用于很多需要的情况
+为了把 POST 和 GET 区分， 我们有了 controller_prefix_post 。如果没有 相关方法存在也是没问题的。 这个技巧用于很多需要的情况
 
-## 路由钩子（核心工程师）
+## 路由钩子 `核心工程师`
 
 路由钩子，是在路由运行前后执行的一组钩子。添加的方式是调用 `App::addRouteHook($callback, $position, $once = true)`
 
@@ -176,8 +177,7 @@ URL ($url) 函数也被接管。 自动替换成相应的实现。
 
 ### 目录模式的路由
 
-DuckPhp 还有一种很特殊的路由模式。
-目录方式
+DuckPhp 还有一种很特殊的路由模式： 目录方式。
 
 参见 [DuckPhp\\Ext\\RouteHookDirectoryMode](ref/RouteHookDirectoryMode.md)
 
