@@ -69,6 +69,17 @@ class RouteHookApiServer extends ComponentBase
             'error_message' => $e->getMessage(),
         ]);
     }
+    protected function getComponenetNamespace($namespace_key)
+    {
+        $namespace = $this->options['namespace'];
+        $namespace_componenet = $this->options[$namespace_key];
+        if (substr($namespace_componenet, 0, 1) !== '\\') {
+            $namespace_componenet = rtrim($namespace, '\\').'\\'.$namespace_componenet;
+        }
+        $namespace_componenet = trim($namespace_componenet, '\\');
+        
+        return $namespace_componenet;
+    }
     protected function getObjectAndMethod($path_info)
     {
         $path_info = trim($path_info, '/');

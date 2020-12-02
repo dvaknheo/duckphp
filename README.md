@@ -279,6 +279,7 @@ class Main
 }
 $options = [
     'namespace_controller' => "\\",   // 本例特殊，设置控制器的命名空间为根，而不是默认的 Controller
+    // 还有百来个选项以上可用，详细请查看参考文档
 ];
 \DuckPhp\DuckPhp::RunQuickly($options);
 
@@ -316,7 +317,7 @@ namespace MySpace\System
 
     class App extends DuckPhp
     {
-        // @override
+        // @override 重写
         public $options = [
             'is_debug' => true,
                 // 开启调试模式
@@ -329,11 +330,13 @@ namespace MySpace\System
             'callable_view_class' => Views::class,
                 // 替换的 View 类。
         ];
+        // @override 重写
         protected function onInit()
         {
             //初始化之后在这里运行。
             //var_dump($this->options);//查看总共多少选项
         }
+        // @override 重写
         protected function onRun()
         {
             //运行期代码在这里，你可以在这里 session_start();
