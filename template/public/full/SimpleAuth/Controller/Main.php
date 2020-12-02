@@ -94,23 +94,10 @@ class Main
         SessionService::G()->logout();
         C::ExitRouteTo('index');
     }
-    public function test()
-    {
-        if( !C::IsDebug()){
-            return;
-        }
-        $name = 'DKTest4';
-        $user = UserService::G()->login(['name' => $name,'password' => '123456']);
-        SessionService::G()->setCurrentUser($user);
-        $user = SessionService::G()->getCurrentUser();
-        SessionService::G()->logout();
-        
-        var_dump(DATE(DATE_ATOM));
-    }
     ////////////////////////////////////////////
     public function do_register()
     {
-        $post = C::POST;
+        $post = C::POST();
         try {
             $post['password'] = $post['password'] ?? '';
             $post['password_confirm'] = $post['password_confirm'] ?? '';

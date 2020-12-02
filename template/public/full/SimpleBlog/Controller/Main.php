@@ -14,7 +14,7 @@ class Main
 {
     public function __construct()
     {
-        //C::CheckDatabase();
+        C::CheckInstall();
     }
     public function index()
     {
