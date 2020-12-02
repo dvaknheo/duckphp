@@ -29,10 +29,16 @@ class Console extends ComponentBase
         if (!$this->options['cli_enable']) {
             return;
         }
-        if (method_exists($context, 'replaceDefaultRunHandler')) {
-            $context->replaceDefaultRunHandler([static::class,'DoRun']);
-        }
+        
         $this->context_class = get_class($context);
+        
+        if($this->options['cli_mode']==='replace'){
+            if (method_exists($context, 'replaceDefaultRunHandler')) {
+                $context->replaceDefaultRunHandler([static::class,'DoRun']);
+            }
+        }else if($this->options['cli_mode']==='hook'){
+            ($this->context_class)::Route()->addRouteHook([static::class,'DoRun'], 'prepend-outter');
+        }
         $this->options['cli_command_alias'][$this->context_class] = '';
     }
     public function getCliParameters()
@@ -43,7 +49,7 @@ class Console extends ComponentBase
     {
         $this->options['cli_command_alias'][$class] = $alias;
     }
-    public static function DoRun()
+    public static function DoRun($path_info='')
     {
         return static::G()->run();
     }
@@ -68,6 +74,13 @@ class Console extends ComponentBase
                     $ret[$lastkey] = true;
                 }
                 $lastkey = substr($v, 2);
+                $pos = strpos($lastkey,'=');
+                if($pos !== false){
+                    $a = substr($lastkey,0,$pos);
+                    $b = substr($lastkey,$pos+1);
+                    $lastkey = $a;
+                    $ret[$lastkey] = $b;
+                }
             } elseif (!isset($ret[$lastkey])) {
                 $ret[$lastkey] = $v;
             } elseif (is_array($ret[$lastkey])) {
@@ -209,6 +222,7 @@ trait Console_Command
     {
         $options = $this->getCliParameters();
         $options['path'] = $this->context_class::G()->options['path'];
+        //'cli_httpserver_class'
         HttpServer::RunQuickly($options);
     }
     ///////////////////////////////////////

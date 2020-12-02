@@ -89,4 +89,10 @@ class DuckPhp extends App
     {
         return EventManager::G()->on($event, $callback);
     }
+    // setBeforeGetDbHandler
+    //'assignImportantRoute' => [static::class.'::G','assignImportantRoute'],
+    //'assignRoute' => [static::class.'::G','assignRoute'],
+    //'routeMapNameToRegex' => [static::class.'::G','routeMapNameToRegex'],
+    //'getRoutes' => [static::class.'::G','getRoutes'],
+
 }
