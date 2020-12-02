@@ -33,8 +33,8 @@ class RouteHookRewrite extends ComponentBase
         if ($this->options['rewrite_auto_extend_method'] && \method_exists($context, 'extendComponents')) {
             $context->extendComponents(
                 [
-                    'assignRewrite' => [static::class.'::G','assignRewrite'],
-                    'getRewrites' => [static::class.'::G','getRewrites']
+                    'assignRewrite' => static::class . '@assignRewrite',
+                    'getRewrites' => static::class . '@getRewrites',
                 ],
                 ['C','A']
             );

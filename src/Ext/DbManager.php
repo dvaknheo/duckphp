@@ -63,7 +63,7 @@ class DbManager extends ComponentBase
         if ($this->options['database_auto_method_extend'] && \method_exists($context, 'extendComponents')) {
             $context->extendComponents(
                 [
-                    'setBeforeGetDbHandler' => [static::class .'::G', 'setBeforeGetDbHandler'],
+                    'setBeforeGetDbHandler' => static::class . '@setBeforeGetDbHandler',
                 ],
                 ['A']
             );

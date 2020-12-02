@@ -14,7 +14,7 @@ class StrictCheck extends ComponentBase
     const MAX_TRACE_LEVEL = 20;
     
     public $options = [
-            'namespace' => 'LazyToChange',
+            'namespace' => '',
             'namespace_controller' => 'Controller',
             'namespace_business' => '',
             'namespace_model' => '',

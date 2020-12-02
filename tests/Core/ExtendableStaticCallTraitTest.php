@@ -11,22 +11,18 @@ class ExtendableStaticCallTraitTest extends \PHPUnit\Framework\TestCase
         
         //code here
         ExtendableStaticCallTraitObject::AssignExtendStaticMethod('Foo',[static::class,'Foo']);
-        ExtendableStaticCallTraitObject::AssignExtendStaticMethod(['Foo1'=>[ExtendableStaticCallTraitObject::class.'::G','FooX']]);
-        ExtendableStaticCallTraitObject::AssignExtendStaticMethod(['Foo2'=>ExtendableStaticCallTraitObject::class.'::G'.'::'.'FooX']);
+        ExtendableStaticCallTraitObject::AssignExtendStaticMethod(['Foo1'=> ExtendableStaticCallTraitObject::class .'@FooX']);
+        ExtendableStaticCallTraitObject::AssignExtendStaticMethod(['Foo2'=>ExtendableStaticCallTraitObject::class .'->FooX']);
+        //ExtendableStaticCallTraitObject::AssignExtendStaticMethod(['Foo2'=>ExtendableStaticCallTraitObject::class.'::G'.'::'.'FooX']);
         
         ExtendableStaticCallTraitObject::GetExtendStaticMethodList();
         
         ExtendableStaticCallTraitObject::Foo(123);
-        
         ExtendableStaticCallTraitObject::Foo1(123);
+        ExtendableStaticCallTraitObject::Foo2(123);
 
-        try{
-        
-            ExtendableStaticCallTraitObject::Foo2(123);
-        }catch(\Throwable $ex){
-        }
          try{
-            ExtendableStaticCallTraitObject::Foo3(123);
+            ExtendableStaticCallTraitObject::Foo2(123);
         }catch(\Throwable $ex){
         }
         try{

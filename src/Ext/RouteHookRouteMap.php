@@ -47,15 +47,15 @@ class RouteHookRouteMap extends ComponentBase
         if ($this->options['route_map_auto_extend_method'] && \method_exists($context, 'extendComponents')) {
             $context->extendComponents(
                 [
-                    'assignImportantRoute' => [static::class.'::G','assignImportantRoute'],
-                    'assignRoute' => [static::class.'::G','assignRoute'],
-                    'routeMapNameToRegex' => [static::class.'::G','routeMapNameToRegex'],
+                    'assignImportantRoute' => static::class . '@assignImportantRoute',
+                    'assignRoute' => static::class . '@assignRoute',
+                    'routeMapNameToRegex' => static::class . '@routeMapNameToRegex',
                 ],
                 ['A']
             );
             $context->extendComponents(
                 [
-                    'getRoutes' => [static::class.'::G','getRoutes'],
+                    'getRoutes' => static::class . '@getRoutes',
                 ],
                 ['C','A']
             );
