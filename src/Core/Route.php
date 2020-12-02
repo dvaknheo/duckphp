@@ -18,7 +18,7 @@ class Route extends ComponentBase
     const HOOK_APPPEND_OUTTER = 'append-outter';
     
     public $options = [
-            'namespace' => 'LazyToChange',
+            'namespace' => '',
             'namespace_controller' => 'Controller',
             
             'controller_base_class' => null,
@@ -47,7 +47,6 @@ class Route extends ComponentBase
 
     //calculated options;
     protected $namespace_prefix = '';
-    protected $base_class = null;
     protected $index_method = 'index'; //const
 
     //properties
@@ -81,7 +80,6 @@ class Route extends ComponentBase
     {
         return $this->parameters[$key] ?? $default;
     }
-    
     //@override
     protected function initOptions(array $options)
     {
@@ -100,11 +98,11 @@ class Route extends ComponentBase
     public function prepare($server)
     {
         $this->prepareForUrl($server); // urlmansage.
-        
         $this->request_method = $server['REQUEST_METHOD'] ?? 'GET';
+        
         //REQUEST_URI
         //SCRIPT_FILENAME
-        
+        //DOCUMENT_ROOT
         $this->path_info = $this->fixPathInfo($server, $this->path_info);
         $this->has_bind_server_data = true;
         return $this;
@@ -191,6 +189,7 @@ class Route extends ComponentBase
     }
     public function forceFail()
     {
+        // TODO . force result ?
         $this->is_failed = true;
     }
     public function addRouteHook($callback, $position, $once = true)
@@ -398,8 +397,8 @@ trait Route_Helper
 }
 trait Route_UrlManager
 {
-    public $script_filename = '';   //TODO protected
-    public $document_root = '';     //TODO protected
+    protected $script_filename = '';
+    protected $document_root = '';
     
     protected $url_handler = null;
     //protected $path_info = '';
