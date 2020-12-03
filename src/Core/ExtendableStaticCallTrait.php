@@ -26,20 +26,23 @@ trait ExtendableStaticCallTrait
     protected static function CallExtendStaticMethod($name, $arguments)
     {
         self::$static_methods[static::class] = self::$static_methods[static::class] ?? [];
+        
         $callback = (self::$static_methods[static::class][$name]) ?? null;
         
-        if (!\is_callable($callback)){
+        if (!\is_callable($callback)) {
             if (is_string($callback)) {
                 if (false !== strpos($callback, '@')) {
                     list($class, $method) = explode('@', $callback);
+                    /** @var callable */
                     $callback = [$class::G(), $method];
                 } elseif (false !== strpos($callback, '->')) {
                     list($class, $method) = explode('->', $callback);
+                    /** @var callable */
                     $callback = [ new $class(), $method];
                 } else {
                     throw new \BadMethodCallException("Call to undefined static method ".static::class ."::$name()");
                 }
-            }else{
+            } else {
                 throw new \BadMethodCallException("Call to undefined static method ".static::class ."::$name()");
             }
         }

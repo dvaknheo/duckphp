@@ -374,7 +374,7 @@ server {
 +  'mode_dir_basepath' => '',   
 
     目录模式的基类   // [DuckPhp\Ext\RouteHookDirectoryMode](Ext-RouteHookDirectoryMode.md)
-+ ** 'namespace' => 'LazyToChange',  ** 
++ ** 'namespace' => '',  ** 
 
     命名空间   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Core\AutoLoader](Core-AutoLoader.md), [DuckPhp\Core\Route](Core-Route.md), [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md), [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
 +  'namespace_business' => '',   
@@ -648,7 +648,7 @@ server {
         控制器使用单例模式
     - 'controller_welcome_class' => 'Main',
         控制器默认欢迎方法
-    - 'namespace' => 'LazyToChange',
+    - 'namespace' => '',
         命名空间
     - 'namespace_controller' => 'Controller',
         控制器的命名空间
@@ -816,7 +816,7 @@ server {
         控制器基类
     - 'is_debug' => false,
         是否调试状态
-    - 'namespace' => 'LazyToChange',
+    - 'namespace' => '',
         命名空间
     - 'namespace_business' => '',
         strict_check 的business目录

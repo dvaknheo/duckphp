@@ -94,5 +94,4 @@ class DuckPhp extends App
     //'assignRoute' => [static::class.'::G','assignRoute'],
     //'routeMapNameToRegex' => [static::class.'::G','routeMapNameToRegex'],
     //'getRoutes' => [static::class.'::G','getRoutes'],
-
 }

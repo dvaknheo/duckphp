@@ -32,11 +32,11 @@ class Console extends ComponentBase
         
         $this->context_class = get_class($context);
         
-        if($this->options['cli_mode']==='replace'){
+        if ($this->options['cli_mode'] === 'replace') {
             if (method_exists($context, 'replaceDefaultRunHandler')) {
                 $context->replaceDefaultRunHandler([static::class,'DoRun']);
             }
-        }else if($this->options['cli_mode']==='hook'){
+        } elseif ($this->options['cli_mode'] === 'hook') {
             ($this->context_class)::Route()->addRouteHook([static::class,'DoRun'], 'prepend-outter');
         }
         $this->options['cli_command_alias'][$this->context_class] = '';
@@ -49,7 +49,7 @@ class Console extends ComponentBase
     {
         $this->options['cli_command_alias'][$class] = $alias;
     }
-    public static function DoRun($path_info='')
+    public static function DoRun($path_info = '')
     {
         return static::G()->run();
     }
@@ -74,10 +74,10 @@ class Console extends ComponentBase
                     $ret[$lastkey] = true;
                 }
                 $lastkey = substr($v, 2);
-                $pos = strpos($lastkey,'=');
-                if($pos !== false){
-                    $a = substr($lastkey,0,$pos);
-                    $b = substr($lastkey,$pos+1);
+                $pos = strpos($lastkey, '=');
+                if ($pos !== false) {
+                    $a = substr($lastkey, 0, $pos);
+                    $b = substr($lastkey, $pos + 1);
                     $lastkey = $a;
                     $ret[$lastkey] = $b;
                 }

@@ -118,39 +118,57 @@ subgraph cluster_HttpServer {
     HttpServer [label="HttpServer";shape=Mdiamond;style=filled];
 }
 
-subgraph cluster_Ext {
+subgraph cluster_DefaultExt {
     label = "[DuckPhp\\Ext]";
 
     Cache[shape="component"];
-    CallableView[shape="component"];
     Console[shape="component"];
     DbManager[shape="component"];
-    EmptyView[shape="component"];
     EventManager[shape="component"];
-    FacadesAutoLoader[shape="component"];
-    FacadesBase [shape="component"];
     Installer [shape="component"];
-    JsonRpcClientBase [shape="component"];
-    JsonRpcExt[shape="component"];
-    Misc[shape="component"];
     Pager[shape="component"];
     PagerInterface [shape=note];
-    RedisManager[shape="component"];
-    RedisCache[shape="component"];
-    RouteHookApiServer[shape="component"];
-    RouteHookDirectoryMode[shape="component"];
-    RouteHookManager[shape="component"];
     RouteHookPathInfoCompat[shape="component"];
-    RouteHookRewrite[shape="component"];
     RouteHookRouteMap[shape="component"];
-    StrictCheck[shape="component"];
 
     Cache -> Core_ComponentBase [style="dotted"];
     Console -> Core_ComponentBase [style="dotted"];
     DbManager -> Core_ComponentBase [style="dotted"];
     EventManager -> Core_ComponentBase [style="dotted"];
-    FacadesAutoLoader -> Core_ComponentBase [style="dotted"];
     Installer -> Core_ComponentBase [style="dotted"];
+    Pager -> Core_ComponentBase [style="dotted"];
+    RouteHookPathInfoCompat -> Core_ComponentBase [style="dotted"];
+    RouteHookRouteMap -> Core_ComponentBase [style="dotted"];
+    
+    
+    Console -> Installer; 
+    Console -> HttpServer; 
+    DbManager -> Db_Db;
+
+    Pager -> PagerInterface; 
+}
+subgraph cluster_Ext {
+    label = "[DuckPhp\\Ext]";
+
+    CallableView[shape="component"];
+    EmptyView[shape="component"];
+    FacadesAutoLoader[shape="component"];
+    FacadesBase [shape="component"];
+    FakeMiddleware [shape="component"];
+    JsonRpcClientBase [shape="component"];
+    JsonRpcExt[shape="component"];
+    JsonView[shape="component"];
+    Misc[shape="component"];
+    RedisManager[shape="component"];
+    RedisCache[shape="component"];
+    RouteHookApiServer[shape="component"];
+    RouteHookDirectoryMode[shape="component"];
+    RouteHookManager[shape="component"];
+    RouteHookRewrite[shape="component"];
+    StrictCheck[shape="component"];
+
+    FacadesAutoLoader -> Core_ComponentBase [style="dotted"];
+    FakeMiddleware -> Core_ComponentBase [style="dotted"];
     JsonRpcExt -> Core_ComponentBase [style="dotted"];
     Misc -> Core_ComponentBase [style="dotted"];
     Pager -> Core_ComponentBase [style="dotted"];
@@ -159,27 +177,22 @@ subgraph cluster_Ext {
     RouteHookApiServer -> Core_ComponentBase [style="dotted"];
     RouteHookDirectoryMode -> Core_ComponentBase [style="dotted"];
     RouteHookManager -> Core_ComponentBase [style="dotted"];
-    RouteHookPathInfoCompat -> Core_ComponentBase [style="dotted"];
     RouteHookRewrite -> Core_ComponentBase [style="dotted"];
-    RouteHookRouteMap -> Core_ComponentBase [style="dotted"];
     StrictCheck -> Core_ComponentBase [style="dotted"];
     
     
     CallableView ->Core_View;
-    Console -> Installer; 
-    Console -> HttpServer; 
 
     EmptyView -> Core_View;
-    DbManager -> Db_Db;
     FacadesBase -> FacadesAutoLoader;
     FacadesBase -> Core_ComponentBase [style="dotted"];
     JsonRpcClientBase ->JsonRpcExt;
     JsonRpcClientBase -> Core_ComponentBase [style="dotted"];
+    JsonView -> Core_View;
+
     StrictCheck -> DbManager;
 
-    Pager -> PagerInterface; 
 }
-
 subgraph cluster_DuckPhp {
     label = "[DuckPhp]";
     node [style=filled];

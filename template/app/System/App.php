@@ -145,7 +145,7 @@ class App extends DuckPhp
         // $options['log_prefix'] = 'DuckPhpLog';
 
         // 命名空间 (DuckPhp\Core\App, DuckPhp\Core\AutoLoader, DuckPhp\Core\Route, DuckPhp\Ext\RouteHookApiServer, DuckPhp\Ext\StrictCheck)
-        // $options['namespace'] = 'LazyToChange';
+        // $options['namespace'] = '';
 
         // 控制器的命名空间 (DuckPhp\Core\Route, DuckPhp\Ext\StrictCheck)
         // $options['namespace_controller'] = 'Controller';
@@ -434,7 +434,7 @@ class App extends DuckPhp
             // $options['is_debug'] = false;
 
             // 【共享】命名空间
-            // $options['namespace'] = 'LazyToChange';
+            // $options['namespace'] = '';
 
             // strict_check 的business目录
             $options['namespace_business'] = '';
