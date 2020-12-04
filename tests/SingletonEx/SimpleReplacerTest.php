@@ -16,8 +16,8 @@ class SimpleReplacerTest extends \PHPUnit\Framework\TestCase
         SimpleReplacer::Replace();
         \MyCodeCoverage::G($t);
         //SimpleReplacer::ReplaceSingletonEx();
-        SingletonExObject::G(new SingletonExObject());
-        SingletonExObject::G();
+        SingletonExObjectX::G(new SingletonExObjectX());
+        SingletonExObjectX::G();
         SingletonExObject2::G();
         
         SimpleReplacer::$EnableCompactable=true;
@@ -28,7 +28,7 @@ class SimpleReplacerTest extends \PHPUnit\Framework\TestCase
 
     }
 }
-class SingletonExObject
+class SingletonExObjectX
 {
     use \DuckPhp\SingletonEx\SingletonEx;
     
@@ -41,6 +41,6 @@ class SingletonExObject
     }
 
 }
-class SingletonExObject2 extends SingletonExObject{}
-class SingletonExObject3 extends SingletonExObject{}
-class SingletonExObject4 extends SingletonExObject{}
+class SingletonExObject2 extends SingletonExObjectX{}
+class SingletonExObject3 extends SingletonExObjectX{}
+class SingletonExObject4 extends SingletonExObjectX{}

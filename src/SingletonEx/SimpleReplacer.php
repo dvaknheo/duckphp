@@ -9,10 +9,11 @@ class SimpleReplacer
 {
     protected static $classes;
     public static $EnableCompactable = false;
-    public static function Replace()
+    public static function Replace($enableCompactable = false)
     {
         if (!defined('__SINGLETONEX_REPALACER')) {
             define('__SINGLETONEX_REPALACER', static::class . '::GetObject');
+            self::$EnableCompactable = $enableCompactable;
             return true;
         }
         return false;
