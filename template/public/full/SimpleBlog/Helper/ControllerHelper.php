@@ -13,9 +13,9 @@ class ControllerHelper extends Helper
     // override or add your code here
     public static function CheckInstall()
     {
-        $flag = false;
+        $flag = true;
         if (!$flag) {
-            static::RedirectTo('install/index');
+            static::ExitRedirect('install/index');
         }
     }
 }
