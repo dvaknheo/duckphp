@@ -51,8 +51,8 @@ class admin
     }
     public function do_login()
     {
-        $pass = POST('password', '');
-        $r = REQUEST('r','');
+        $pass = C::POST('password', '');
+        $r = C::REQUEST('r','');
         
         $flag = AdminBusiness::G()->login($pass);
         if (!$flag) {

@@ -64,7 +64,7 @@ class RouteHookDirectoryMode extends ComponentBase
     }
     public function onUrl($url = null)
     {
-        if (strlen($url) > 0 && '/' === $url{0}) {
+        if (strlen($url) > 0 && '/' === substr($url, 0, 1)) {
             return $url;
         };
         

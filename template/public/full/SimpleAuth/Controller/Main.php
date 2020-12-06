@@ -32,7 +32,7 @@ class Main
             C::Logger()->warning(''.(get_class($ex)).'('.$ex->getCode().'): '.$ex->getMessage());
             C::ExitRouteTo('login');
         });
-        if (!empty(C::POST)) {
+        if (!empty(C::POST())) {
             $referer = C::SERVER('HTTP_REFERER','');
             $domain = C::Domain().'/';
             if (substr($referer, 0, strlen($domain)) !== $domain) {
@@ -90,7 +90,7 @@ class Main
     }
     public function logout()
     {
-        $flag = SessionService::G()->checkCsrf(C::GET('_token'));
+        //$flag = SessionService::G()->checkCsrf(C::GET('_token'));
         SessionService::G()->logout();
         C::ExitRouteTo('index');
     }
