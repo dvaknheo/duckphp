@@ -44,9 +44,12 @@ Now is [<2020-06-14T11:45:46+08:00>]
 当然你也可以用 nginx 或apache 安装。
 nginx 把 document_root 配置成 `public` 目录。
 
+nginx 的配置：
+
 ```
 try_files $uri $uri/ /index.php$request_uri;
 ```
+
 ### 第一个任务
 路径： http://127.0.0.1:8080/test/done 
 作用是显示当前时间的任务。

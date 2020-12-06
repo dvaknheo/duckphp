@@ -74,17 +74,6 @@ php-cs-fixer fix && phpstan analyse && phpunit && php tests/genoptions.php && do
 
 
 
-DuckPhp 类中的在其他 Helper 里没出现的方法。
-
-  1 => string 'RunQuickly' (length=10)
-  2 => string 'Blank' (length=5)
-  3 => string 'system_wrapper_replace' (length=22)
-  4 => string 'system_wrapper_get_providers' (length=28)
-  5 => string 'On404' (length=5)
-  6 => string 'OnDefaultException' (length=18)
-  7 => string 'OnDevErrorHandler' (length=17)
-  
-
 Helper 类为什么要在 Helper 目录下，
 
 原因，配合 cloneHelper 用。
@@ -99,9 +88,11 @@ System 目录下，为什么以 Base 开头。
 可变单例是 DuckPhp 的核心。
 你如果引入第三方包的时候，不满意默认实现，可以通过可变单例来替换他
 
+var_dump(MyClass::G()); 使用 Facades 就没法做到这个功能。
 
-为什么不直接用 DB 类，而是用 DBManager
-因为想着 swoole 兼容
+
+为什么不直接用 DB 类，而是用 DbManager
+做日志之类的处理用
 
 为什么名字要以 *Model *Business 结尾
 让单词独一无二，便于搜索

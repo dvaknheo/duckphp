@@ -38,8 +38,8 @@ class DuckPhp extends App
             Console::class => true,
         ],
         
-        'database_auto_method_extend' => true,
-        'route_map_auto_extend_method' => true,
+        //'database_auto_extend_method' => true,
+        //'route_map_auto_extend_method' => true,
     ];
     
     //@override
