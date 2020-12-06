@@ -9,6 +9,8 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(Logger::class);
         
         $path_log=\MyCodeCoverage::GetClassTestPath(Logger::class);
+        \MyCodeCoverage::G()->cleanDirectory($path_log);
+
         $options=[
             'path_log' => $path_log,
             'log_prefix'=>'DuckPhpLog',

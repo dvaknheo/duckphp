@@ -68,14 +68,6 @@ class MyCodeCoverage
         $ret=$this->options['path_data'].str_replace([$this->options['namespace'].'\\','\\'],['/','/'],$class).'/';
         return $ret;
     }
-	public static function GetTestSetting()
-	{
-		return static::G()->doGetTestSetting();
-	}
-	public function doGetTestSetting()
-	{
-		return include $this->options['path_data'].'setting.php';
-	}
     protected static function include_file($file)
     {
         return include $file;
@@ -175,6 +167,32 @@ class MyCodeCoverage
 
         echo "\nTest Lines: \033[42;30m{$data['lines_tested']}/{$data['lines_total']}({$data['lines_percent']})\033[0m\n";
         echo "\n\n";
+    }
+    ////
+    public function cleanDirectory($dir)
+    {
+        $dir = rtrim($dir,'/');
+        $result = false;
+        if ($handle = opendir("$dir")){
+            $result = true;
+            while ((($file=readdir($handle))!==false) && ($result)){
+                if ($file!='.' && $file!='..'){
+                    if($file==='.gitignore'){
+                        continue;
+                    }
+                    if (is_dir("$dir/$file")){
+                        $result = $this->cleanDirectory("$dir/$file");
+                    } else {
+                        $result = unlink("$dir/$file");
+                    }
+                }
+            }
+            closedir($handle);
+            if ($result){
+                $result = @rmdir($dir);
+            }
+        }
+        return $result;
     }
     ///////////////////////
     public function DoTestFileGeneratorRun($source,$dest)

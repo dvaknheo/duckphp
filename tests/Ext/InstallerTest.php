@@ -9,6 +9,8 @@ class InstallerTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(Installer::class);
         $path = \MyCodeCoverage::GetClassTestPath(Installer::class);
+        \MyCodeCoverage::G()->cleanDirectory($path);
+        
         $time = date('Y-m-d_H_i_s');
         $path = $path . $time . 'test';
         mkdir($path);
@@ -30,4 +32,5 @@ class InstallerTest extends \PHPUnit\Framework\TestCase
         
         \MyCodeCoverage::G()->end();
     }
+
 }
