@@ -27,7 +27,7 @@ class DbManager extends ComponentBase
         'database_list_try_single' => true,
         'database_log_sql_query' => false,
         'database_log_sql_level' => 'debug',
-        'database_auto_method_extend' => true,
+        'database_auto_extend_method' => true,
     ];
     
     protected $database_config_list = [];
@@ -60,7 +60,7 @@ class DbManager extends ComponentBase
         }
         
         //////////////////////////
-        if ($this->options['database_auto_method_extend'] && \method_exists($context, 'extendComponents')) {
+        if ($this->options['database_auto_extend_method'] && \method_exists($context, 'extendComponents')) {
             $context->extendComponents(
                 [
                     'setBeforeGetDbHandler' => static::class . '@setBeforeGetDbHandler',

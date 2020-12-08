@@ -175,6 +175,9 @@ class RouteHookRouteMap extends ComponentBase
     }
     public function doHook($path_info, $is_append)
     {
+        if(!$this->options['route_map'] && !$this->options['route_map_important']){
+            return false;
+        }
         if (!$this->is_compiled) {
             $namespace_controller = ($this->context_class)::Route()->getNamespacePrefix();
             $this->route_map = $this->compileMap($this->options['route_map'], $namespace_controller);

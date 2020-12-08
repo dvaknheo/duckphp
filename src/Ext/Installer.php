@@ -41,8 +41,8 @@ class Installer extends ComponentBase
     }
     public function dumpDir($source, $dest, $force = false)
     {
-        $source = rtrim(''.realpath($source), '/').'/';
-        $dest = rtrim(''.realpath($dest), '/').'/';
+        $source = rtrim(''.realpath($source), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        $dest = rtrim(''.realpath($dest), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
         $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
         $iterator = new \RecursiveIteratorIterator($directory);
         $t_files = \iterator_to_array($iterator, false);
@@ -98,7 +98,7 @@ class Installer extends ComponentBase
     {
         foreach ($files as $file => $short_file_name) {
             // mkdir.
-            $blocks = explode('/', $short_file_name);
+            $blocks = explode(DIRECTORY_SEPARATOR, $short_file_name);
             array_pop($blocks);
             $full_dir = $dest;
             foreach ($blocks as $t) {
@@ -162,10 +162,9 @@ Well Come to use DuckPhp Installer ;
   --namespace <namespace>   Use another project namespace.
   --force                   Overwrite exited files.
   --verbose                 Show Progress
-  --autoloadfile <path>    Use another autoload file.
+  --autoloadfile <path>     Use another autoload file.
   --path <path>             Copy project file to here.
 EOT;
-        //--use-helper            Do not use the Helper class,
         //--full                    Use The demo template
     }
 }
