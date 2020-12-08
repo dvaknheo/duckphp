@@ -267,7 +267,7 @@ server {
 + ** 'database' => NULL,  ** 
 
     单一数据库配置   // [DuckPhp\Ext\DbManager](Ext-DbManager.md)
-+ ** 'database_auto_method_extend' => true,  ** 
++ ** 'database_auto_extend_method' => true,  ** 
 
     是否扩充方法至助手类   // [DuckPhp\Ext\DbManager](Ext-DbManager.md)
 + ** 'database_list' => NULL,  ** 
@@ -701,7 +701,7 @@ server {
 + DuckPhp\Ext\DbManager
     - 'database' => NULL,
         单一数据库配置
-    - 'database_auto_method_extend' => true,
+    - 'database_auto_extend_method' => true,
         是否扩充方法至助手类
     - 'database_list' => NULL,
         数据库列表
