@@ -119,15 +119,6 @@ trait Kernel
         if (($options['use_autoloader'] ?? self::$options_default['use_autoloader']) || ($options['path_namespace'] ?? false)) {
             AutoLoader::G()->init($options, $this)->run();
         }
-        
-
-        $exception_options = [
-            'system_exception_handler' => $this->hanlder_for_exception_handler,
-            'default_exception_handler' => $this->hanlder_for_exception,
-            'dev_error_handler' => $this->hanlder_for_develop_exception,
-        ];
-        ExceptionManager::G()->init($exception_options, $this)->run();
-        
         $object = $this->checkOverride($options);
         (self::class)::G($object);
         static::G($object);
@@ -142,6 +133,14 @@ trait Kernel
     protected function initAfterOverride(array $options, object $context = null)
     {
         $this->initOptions($options);
+        
+        $exception_options = [
+            'system_exception_handler' => $this->hanlder_for_exception_handler,
+            'default_exception_handler' => $this->hanlder_for_exception,
+            'dev_error_handler' => $this->hanlder_for_develop_exception,
+        ];
+        ExceptionManager::G()->init($exception_options, $this)->run();
+        
         $this->onPrepare();
         
         $this->initDefaultComponents();
@@ -253,9 +252,10 @@ trait Kernel
     public function beforeRun()
     {
         RuntimeState::ReCreateInstance()->init($this->options, $this)->run();
+        //RuntimeState::Reload($this->options,$this);
         View::G()->reset();
         $serverData = ($this->options['use_super_global'] ?? false) ? SuperGlobal::G()->_SERVER : $_SERVER;
-        Route::G()->prepare($serverData);
+        Route::G()->prepare($serverData); // 能否不要？
     }
     public function clear(): void
     {
