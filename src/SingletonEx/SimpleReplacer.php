@@ -41,5 +41,6 @@ class SimpleReplacer
         } else {
             self::$classes[$class] = new $class;
         }
+        return self::$classes[$class];
     }
 }
