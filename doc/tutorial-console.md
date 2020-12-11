@@ -71,5 +71,5 @@ App 的同名 command_*() 会覆盖 DuckPhp\\Ext\\Console 的 command_*() 被调
 
 regCliCommandGroup($class, $alias) 则可以注册别名
 
-命令里， 用 / 代替 \ 表示类名。 如命令  NS/Class:Method 
+ 用 / 代替 \ 表示类名。 如命令  NS/Class:Method 
 对应 \NS\Class::G()->command_Method();
