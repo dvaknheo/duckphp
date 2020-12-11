@@ -172,12 +172,8 @@ trait Kernel
         }
         $is_debug = Configer::G()->_Setting('duckphp_is_debug');
         $platform = Configer::G()->_Setting('duckphp_platform');
-        if (isset($is_debug)) {
-            $this->options['is_debug'] = $is_debug;
-        }
-        if (isset($platform)) {
-            $this->options['platform'] = $platform;
-        }
+        $this->options['is_debug'] = $is_debug ?? $this->options['is_debug'];
+        $this->options['platform'] = $platform ?? $this->options['platform'];
     }
     protected function initExtentions(array $exts): void
     {
