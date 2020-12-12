@@ -185,9 +185,6 @@ class RouteHookRouteMap extends ComponentBase
             $this->is_compiled = true;
         }
         $map = $is_append ? $this->route_map : $this->route_map_important;
-        if (empty($map)) {
-            return false;
-        }
         
         return $this->doHookByMap($path_info, $map);
     }

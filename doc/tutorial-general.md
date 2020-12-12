@@ -153,7 +153,14 @@ $options['path_namespace'] = 'app';
 //$options['use_setting_file'] = true; // 如果你使用设置文件。
 
 \LazyToChange\System\App::RunQuickly($options);
+return;
+/*
+//也可以用
+$options['override_class'] = \LazyToChange\System\App::class;
+\DuckPhp\DuckPhp::RunQuickly($options);
 
+return;
+*/
 ```
 入口类前面部分是处理头文件的。
 

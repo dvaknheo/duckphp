@@ -143,6 +143,8 @@ DuckPhp 工程层级分明，不交叉引用。
 
 DuckPhp 一度通过SwooleHttpd 不需要改代码就支持 swoole 。将来版本将支持 swoole 和 workerman ，和更多其他平台。
 
+DuckPhp 的类绝大多数都是无状态的。
+
 ### 和其他框架简单对比
 
 |功能                 | CodeIgniter 4 | ThinkPHP 6 | Laravel 6 | DuckPhp |
@@ -511,33 +513,33 @@ DuckPhp 类/文件结构参考。
 ----
 1. `Core` 目录是核心目录，核心框架。基本功能都在 Core 里实现
     1. **[ComponentBase](doc/ref/Core-ComponentBase.md)** 组件基类
-         1. [ComponentInterface](doc/ref/Core-ComponentInterface.md) 组件接口
+         1. **[ComponentInterface](doc/ref/Core-ComponentInterface.md)** 组件接口
     2. **[App](doc/ref/Core-App.md)** 核心应用类。引用一下类
-         1. [Kernel](doc/ref/Core-Kernel.md) 核心Trait 以下是 `核心必备组件`
+         1. **[Kernel](doc/ref/Core-Kernel.md)** 核心Trait 以下是 `核心必备组件`
             1. [AutoLoader](doc/ref/Core-AutoLoader.md) 自动加载类
-            2. [Configer](doc/ref/Core-Configer.md) 配置组件
-            3. [View](doc/ref/Core-View.md) 视图组件
-            4. [Route](doc/ref/Core-Route.md) 路由组件
-            5. [SuperGlobal](doc/ref/SuperGlobal.md) 超全局变量替换组件
-            6. [Logger](doc/ref/Core-Logger.md) 日志组件
-            7. [ExceptionManager](doc/ref/Core-ExceptionManager.md)   异常管理组件
-            8. [RuntimeState](doc/ref/Core-RuntimeState.md) 运行期数据保存组件
+            2. **[Configer](doc/ref/Core-Configer.md)** 配置组件
+            3. **[View](doc/ref/Core-View.md)** 视图组件
+            4. **[Route](doc/ref/Core-Route.md)** 路由组件
+            5. **[SuperGlobal](doc/ref/SuperGlobal.md)** 超全局变量替换组件
+            6. **[Logger](doc/ref/Core-Logger.md)** 日志组件
+            7. **[ExceptionManager](doc/ref/Core-ExceptionManager.md)**   异常管理组件
+            8. **[RuntimeState](doc/ref/Core-RuntimeState.md)** 运行期数据保存组件
          2. [ExtendableStaticCallTrait](doc/ref/Core-ExtendableStaticCallTrait.md) 扩展静态调用的 trait
          3. [SystemWrapperTrait](doc/ref/Core-SystemWrapperTrait.md) 替换系统同名函数的 trait
-         4. [Functions](doc/ref/Core-Functions.md) 全局函数列表
-    3. **[AppPluginTrait](doc/ref/Core-AppPluginTrait.md) **  这个Trait用于把独立工程 App 转成插件 
+         4. **[Functions](doc/ref/Core-Functions.md)** 全局函数列表
+    3. [AppPluginTrait](doc/ref/Core-AppPluginTrait.md)   这个Trait用于把独立工程 App 转成插件 
 2. `Db` 目录是数据库目录
    1. [DbAdvanceTrait](doc/ref/Db-DbAdvanceTrait.md)  这个 trait 增加了 Db类的高级功能
    2. [DbInterface](doc/ref/Db-DbInterface.md) Db 类满足 DbInterface 接口
    3. [Db](doc/ref/Db-Db.md) Db类
 3. [DuckPhp](doc/ref/DuckPhp.md) 加载了默认扩展的 DuckPhp 入口 ，扩展自 [DuckPhp\\Core\\App](doc/ref/Core-App.md)
 4. `Ext` 目录是扩展目录，默认加载的扩展。按字母排序。
-   1. **[Cache](doc/ref/Ext-Cache.md)** 空缓存组件
+   1. [Cache](doc/ref/Ext-Cache.md) 缓存组件
    2. **[Console](doc/ref/Ext-Cache.md)** 命令行模式扩展组件
         1. [Installer](doc/ref/Ext-Installer.md) 安装器
    3. **[DbManager](doc/ref/Ext-DbManager.md)** 数据库管理组件
-   4. **[EventManager](doc/ref/Ext-EventManager.md)** 事件管理组件
-   5. **[Pager](doc/ref/Ext-Pager.md)** 分页类
+   4. [EventManager](doc/ref/Ext-EventManager.md) 事件管理组件
+   5. [Pager](doc/ref/Ext-Pager.md) 分页类
         1. [PagerInteface](doc/ref/Ext-PagerInteface.md) 分页接口
    6. **[RouteHookPathInfoCompat](doc/ref/Ext-RouteHookPathInfoCompat.md)** 无程序路由设计模式组件
    7. **[RouteHookRouteMap](doc/ref/Ext-RouteHookRouteMap.md)** 路由映射组件

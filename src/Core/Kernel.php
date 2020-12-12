@@ -74,9 +74,8 @@ trait Kernel
     {
         $this->options = array_replace_recursive($this->options, $options);
     }
-    protected function checkOverride($options)
+    protected function checkOverride($override_class)
     {
-        $override_class = $options['override_class'] ?? null;
         if (empty($override_class)) {
             return $this;
         }
@@ -119,7 +118,7 @@ trait Kernel
         if (($options['use_autoloader'] ?? self::$options_default['use_autoloader']) || ($options['path_namespace'] ?? false)) {
             AutoLoader::G()->init($options, $this)->run();
         }
-        $object = $this->checkOverride($options);
+        $object = $this->checkOverride($options['override_class'] ?? null);
         (self::class)::G($object);
         static::G($object);
         
