@@ -64,9 +64,6 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 'use_flag_by_setting' => true,
 
     从设置文件中再次重载 is_debug 和 platform ,对应的设置选项是 duckphp_is_debug ，和 duckphp_platform
-'use_super_global' => true,
-
-    使用 `SuperGlobal` 类处理超全局变量，关闭以节约微乎其微的性能。
 'use_short_functions' => true,
 
     允许使用短函数，__h,__url, 等。

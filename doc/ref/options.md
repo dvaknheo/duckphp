@@ -356,9 +356,6 @@
 + ** 'use_short_functions' => true,  ** 
 
     使用短函数， \_\_url, \_\_h 等 ，详见 Core\Functions.php   // [DuckPhp\Core\App](Core-App.md)
-+ ** 'use_super_global' => true,  ** 
-
-    使用super_global 类。关闭以节约性能   // [DuckPhp\Core\App](Core-App.md)
 
 @forscript end
 
@@ -405,8 +402,6 @@
         从设置文件里再入is_debug,platform. 
     - 'use_short_functions' => true,
         使用短函数， \_\_url, \_\_h 等 ，详见 Core\Functions.php
-    - 'use_super_global' => true,
-        使用super_global 类。关闭以节约性能
 + DuckPhp\Core\AutoLoader
     - 'autoload_cache_in_cli' => false,
         在 cli 下开启缓存模式

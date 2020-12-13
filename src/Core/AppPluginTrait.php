@@ -7,7 +7,6 @@ namespace DuckPhp\Core;
 
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\Route;
-use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\View;
 
 trait AppPluginTrait
@@ -179,7 +178,7 @@ trait AppPluginTrait
         $options = $this->plugin_options;
         $options['namespace'] = $this->plugin_options['plugin_namespace'];
         
-        $route->init($options)->prepare(SuperGlobal::G()->_SERVER);
+        $route->init($options)->prepare($_SERVER);
         $route->setPathInfo($my_path_info);
         $route->setUrlHandler([static::class,'OnUrl']);
         

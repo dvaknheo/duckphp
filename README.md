@@ -20,7 +20,7 @@ php ./duckphp-project run
 composer require dvaknheo/duckphp # 用 require 
 ./vendor/bin/duckphp --help     # 查看有什么指令
 ./vendor/bin/duckphp new   # 创建工程，把 template 目录内容复制到当前目录，并且加以调整
-./duckphp-project run    # --host 127.0.0.1 --port 8080 # 开始 web 服务器
+php ./duckphp-project run    # --host 127.0.0.1 --port 8080 # 开始 web 服务器
 ```
 不建议使用命令行的 web 服务器， 你把 nginx 或 apache 的 document_root 设置为  public 目录按常规框架调整即可。
 
@@ -508,7 +508,7 @@ namespace
 ## 架构图
 系统架构图
 ![DuckPhp](doc/duckphp.gv.svg)
-DuckPhp 类/文件结构参考。
+DuckPhp 类/文件结构参考。(粗体部分是启动的时候引用的文件)
 
 ----
 1. `Core` 目录是核心目录，核心框架。基本功能都在 Core 里实现

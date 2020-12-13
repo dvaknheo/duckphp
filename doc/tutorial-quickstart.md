@@ -28,7 +28,7 @@ Now is [<2020-06-14T11:45:46+08:00>]
 composer require dvaknheo/duckphp # 用 require 
 ./vendor/bin/duckphp new --help   # 查看有什么指令
 ./vendor/bin/duckphp new    # 创建工程
-./vendor/bin/duckphp run    # --host=127.0.0.1 --port=9527 # 开始 web 服务器
+php  ./duckphp-project run    # --host=127.0.0.1 --port=9527 # 开始 web 服务器
 
 ```
 浏览器中打开 http://127.0.0.1:8080/ 得到下面欢迎页就表明 OK 了
@@ -106,7 +106,7 @@ LazyToChange 这个命名空间前缀是工程命名前缀，怎么修改先略�
 
 C::H 用来做 html编码。
 
-C::Show(\$data); 是 C::Show(\$data,'test/done'); 的缩写， 调用 test/done 这个视图。
+C::Show($data); 是 C::Show($data,'test/done'); 的缩写， 调用 test/done 这个视图。
 
 ### Business 业务层
 

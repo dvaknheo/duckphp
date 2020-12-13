@@ -10,13 +10,10 @@
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\AutoLoader;
-use DuckPhp\Core\ComponentInterface;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\ExceptionManager;
-use DuckPhp\Core\Logger;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\RuntimeState;
-use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\View;
 
 trait Kernel
@@ -38,7 +35,6 @@ trait Kernel
             'ext' => [],
             
             'use_flag_by_setting' => true,
-            'use_super_global' => true,
             'use_short_functions' => true,
             
             'skip_404_handler' => false,
@@ -162,7 +158,6 @@ trait Kernel
         $this->error_view_inited = true;
         
         Route::G()->init($this->options, $this);
-        Logger::G()->init($this->options, $this);
     }
     protected function reloadFlags(): void
     {
@@ -247,10 +242,10 @@ trait Kernel
     public function beforeRun()
     {
         RuntimeState::ReCreateInstance()->init($this->options, $this)->run();
-        //RuntimeState::Reload($this->options,$this);
+        // RuntimeState::G()->reset(); 找不context; . 那在 init 一遍？ // 反正就固定了。
+        //RuntimeState::ReCreateInstance()->reset($this->options,$this);
         View::G()->reset();
-        $serverData = ($this->options['use_super_global'] ?? false) ? SuperGlobal::G()->_SERVER : $_SERVER;
-        Route::G()->prepare($serverData); // 能否不要？
+        Route::G()->prepare($_SERVER); //TODO: 统一用 reset.
     }
     public function clear(): void
     {

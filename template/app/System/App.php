@@ -237,9 +237,6 @@ class App extends DuckPhp
         // 使用短函数， \_\_url, \_\_h 等 ，详见 Core\Functions.php (DuckPhp\Core\App)
         // $options['use_short_functions'] = true;
 
-        // 使用super_global 类。关闭以节约性能 (DuckPhp\Core\App)
-        // $options['use_super_global'] = true;
-
         // ---- 下面是默认未使用的扩展 ----
 
         /*

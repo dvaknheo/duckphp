@@ -282,21 +282,21 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         
         //
         Route::G()->getURLHandler();
-        
+        Route::G(new Route());
         Route::G()->setURLHandler(null);
         Route::G()->prepare([
             'SCRIPT_FILENAME'=> 'x/index.php',
             'DOCUMENT_ROOT'=>'x',
         ]);
         echo "--";
+        $_SERVER['SCRIPT_FILENAME']='x/index.php';
+        $_SERVER['DOCUMENT_ROOT']='x';
         echo Route::URL("");
         echo PHP_EOL;
         echo Route::URL("?11");
         echo PHP_EOL;
         echo Route::URL("#22");
         echo PHP_EOL;
-        
-
     }
     protected function doGetterSetter()
     {

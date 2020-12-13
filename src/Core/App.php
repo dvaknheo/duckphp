@@ -92,7 +92,7 @@ class App extends ComponentBase
         parent::__construct();
         $this->options = array_replace_recursive(static::$options_default, $this->core_options, $this->options);
         unset($this->core_options); // not use again;
-        $this->hanlder_for_exception_handler = [static::class,'set_exception_handler'];
+        //$this->hanlder_for_exception_handler = [static::class,'set_exception_handler'];// TODO 这里改用选项
         $this->hanlder_for_exception = [static::class,'OnDefaultException'];
         $this->hanlder_for_develop_exception = [static::class,'OnDevErrorHandler'];
         $this->hanlder_for_404 = [static::class,'On404'];
@@ -574,11 +574,11 @@ trait Core_Helper
     }
     public function _Domain()
     {
-        $scheme = SuperGlobal::G()->_SERVER['REQUEST_SCHEME'] ?? '';
-        $host = SuperGlobal::G()->_SERVER['HTTP_HOST'] ?? (SuperGlobal::G()->SERVER['SERVER_NAME'] ?? (SuperGlobal::G()->_SERVER['SERVER_ADDR'] ?? ''));
+        $scheme = $_SERVER['REQUEST_SCHEME'] ?? '';
+        $host = $_SERVER['HTTP_HOST'] ?? (SuperGlobal::G()->SERVER['SERVER_NAME'] ?? ($_SERVER['SERVER_ADDR'] ?? ''));
         $host = $host ?? '';
         
-        $port = SuperGlobal::G()->_SERVER['SERVER_PORT'] ?? '';
+        $port = $_SERVER['SERVER_PORT'] ?? '';
         $port = ($port == 443 && $scheme == 'https')?'':$port;
         $port = ($port == 80 && $scheme == 'http')?'':$port;
         $port = ($port)?(':'.$port):'';
@@ -893,41 +893,41 @@ trait Core_Glue
     public static function GET($key = null, $default = null)
     {
         if (isset($key)) {
-            return SuperGlobal::G()->_GET[$key] ?? $default;
+            return $_GET[$key] ?? $default;
         } else {
-            return SuperGlobal::G()->_GET ?? $default;
+            return $_GET ?? $default;
         }
     }
     public static function POST($key = null, $default = null)
     {
         if (isset($key)) {
-            return SuperGlobal::G()->_POST[$key] ?? $default;
+            return $_POST[$key] ?? $default;
         } else {
-            return SuperGlobal::G()->_POST ?? $default;
+            return $_POST ?? $default;
         }
     }
     public static function REQUEST($key = null, $default = null)
     {
         if (isset($key)) {
-            return SuperGlobal::G()->_REQUEST[$key] ?? $default;
+            return $_REQUEST[$key] ?? $default;
         } else {
-            return SuperGlobal::G()->_REQUEST ?? $default;
+            return $_REQUEST ?? $default;
         }
     }
     public static function COOKIE($key = null, $default = null)
     {
         if (isset($key)) {
-            return SuperGlobal::G()->_COOKIE[$key] ?? $default;
+            return $_COOKIE[$key] ?? $default;
         } else {
-            return SuperGlobal::G()->_COOKIE ?? $default;
+            return $_COOKIE ?? $default;
         }
     }
     public static function SERVER($key = null, $default = null)
     {
         if (isset($key)) {
-            return SuperGlobal::G()->_SERVER[$key] ?? $default;
+            return $_SERVER[$key] ?? $default;
         } else {
-            return SuperGlobal::G()->_SERVER ?? $default;
+            return $_SERVER ?? $default;
         }
     }
 }

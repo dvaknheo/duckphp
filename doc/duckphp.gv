@@ -35,12 +35,10 @@ subgraph cluster_Core {
 
     Core_Kernel -> Core_AutoLoader ;
     Core_Kernel -> Core_Configer;
-    Core_Kernel -> Core_Logger;
     Core_Kernel -> Core_ExceptionManager;
     Core_Kernel -> Core_Route;
     Core_Kernel -> Core_RuntimeState;
     Core_Kernel -> Core_View;
-    Core_Kernel -> Core_SuperGlobal;
     
     Core_App -> Core_Kernel;
     Core_App -> Core_ExtendableStaticCallTrait;
@@ -57,13 +55,10 @@ subgraph cluster_Core {
     
     Core_App -> Core_Functions [style="dashed"];
     Core_App -> Core_ComponentBase [style="dotted"];
-
-
+    
     Core_AppPluginTrait -> Core_Configer;
     Core_AppPluginTrait -> Core_View;
     Core_AppPluginTrait -> Core_Route;
-    Core_AppPluginTrait -> Core_SuperGlobal;
-    
     
     Core_ExceptionManager -> Core_ComponentBase [style="dotted"];
     Core_Configer -> Core_ComponentBase [style="dotted"];

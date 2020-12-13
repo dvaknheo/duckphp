@@ -195,6 +195,20 @@ class MyCodeCoverage
         return $result;
     }
     ///////////////////////
+    
+    public static function SimpleCover($src,$dest)
+    {
+        //
+        $coverage = new \SebastianBergmann\CodeCoverage\CodeCoverage();    
+        $coverage->filter()->addDirectoryToWhitelist($src);
+        $coverage->start(DATE(DATE_ATOM));
+        register_shutdown_function(function()use($coverage, $dest){
+            $coverage->stop();
+            $writer = new \SebastianBergmann\CodeCoverage\Report\Html\Facade;
+            $writer->process($coverage,$dest);
+        });
+    }
+
     public function DoTestFileGeneratorRun($source,$dest)
     {
         //先放这里

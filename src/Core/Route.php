@@ -97,12 +97,8 @@ class Route extends ComponentBase
     }
     public function prepare($server)
     {
-        $this->prepareForUrl($server); // urlmansage.
         $this->request_method = $server['REQUEST_METHOD'] ?? 'GET';
-        
-        //REQUEST_URI
-        //SCRIPT_FILENAME
-        //DOCUMENT_ROOT
+
         $this->path_info = $this->fixPathInfo($server, $this->path_info);
         $this->has_bind_server_data = true;
         return $this;
@@ -303,7 +299,7 @@ class Route extends ComponentBase
     }
     protected function getMethodToCall($object, $method)
     {
-        $method = ($method === '')?$this->index_method : $method;
+        $method = ($method === '') ? $this->index_method : $method;
         if (substr($method, 0, 2) == '__') {
             $this->route_error = 'can not call hidden method';
             return null;
@@ -397,12 +393,11 @@ trait Route_Helper
 }
 trait Route_UrlManager
 {
-    protected $script_filename = '';
-    protected $document_root = '';
+    //protected $path_info = '';  // shared
+    protected $script_filename = null; // need a setter
+    protected $document_root = null;   // need a setter
     
     protected $url_handler = null;
-    //protected $path_info = '';
-    
     public static function Url($url = null)
     {
         return static::G()->_Url($url);
@@ -421,10 +416,10 @@ trait Route_UrlManager
         }
         
         //get basepath.
-        $document_root = rtrim($this->document_root, '/');
-        $basepath = substr(rtrim($this->script_filename, '/'), strlen($document_root));
+        $document_root = rtrim($this->document_root ?? $_SERVER['DOCUMENT_ROOT'], '/');
+        $basepath = substr(rtrim($this->script_filename ?? $_SERVER['SCRIPT_FILENAME'], '/'), strlen($document_root));
         
-        /* something error ?
+        /* something wrong ?
         if (substr($basepath, -strlen('/index.php'))==='/index.php') {
             $basepath=substr($basepath, 0, -strlen('/index.php'));
         }
@@ -456,10 +451,5 @@ trait Route_UrlManager
     public function getUrlHandler()
     {
         return $this->url_handler;
-    }
-    protected function prepareForUrl($serverData)
-    {
-        $this->script_filename = $serverData['SCRIPT_FILENAME'] ?? '';
-        $this->document_root = $serverData['DOCUMENT_ROOT'] ?? '';
     }
 }
