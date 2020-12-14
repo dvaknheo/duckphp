@@ -39,13 +39,14 @@
 
 
 ### 扩充 [DuckPhp\Core\Kernel](Core-Kernel.md) 的默认选项。
+
+
 详情见 DuckPhp\Core\Kernel 参考文档
 
     use_autoloader
     path
     namespace
     skip_plugin_mode_check
-
     override_class
     is_debug
     platform
@@ -81,9 +82,6 @@
 public static function On404(): void
 
     //
-public static function CallException($ex): void
-
-    //
 ## 详解
 DuckPhp\Core\App 类 可以视为几个类的组合
 
@@ -105,7 +103,9 @@ DuckPhp\Core\App 类 可以视为几个类的组合
  + [ModelHelper](Helper-ModelHelper.md)
  + [ViewHelper](Helper-ViewHelper.md)
 
+### 关于 injected_helper_map
 
- ## 全方法索引
+
+## 全方法索引
 
 //待脚本

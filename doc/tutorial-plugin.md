@@ -51,6 +51,7 @@ AppPluginTrait 的默认选项
  AppPluginTrait 兼容 App ，初始化不从 init() 开始，而是从 pluginModeInit() 开始
     public function puglinModeInit(array $options, object $context = null)
 
+ThroOn trait ::ThrowTo 就在这里用的
 
 运行阶段
 钩子名字，

@@ -9,7 +9,7 @@
 到所在目录之下运行
 
 ```bash
-php template/start_server.php
+php template/duckphp-project
 ```
 浏览器中打开 http://127.0.0.1:8080/ 得到下面欢迎页就表明 OK 了
 ```text
@@ -26,9 +26,9 @@ Now is [<2020-06-14T11:45:46+08:00>]
 
 ```
 composer require dvaknheo/duckphp # 用 require 
-./vendor/bin/duckphp new --help     # 查看有什么指令
-./vendor/bin/duckphp new   # 创建工程
-./duckphp-project run    # --host=127.0.0.1 --port=9527 # 开始 web 服务器
+./vendor/bin/duckphp new --help   # 查看有什么指令
+./vendor/bin/duckphp new    # 创建工程
+php  ./duckphp-project run    # --host=127.0.0.1 --port=9527 # 开始 web 服务器
 
 ```
 浏览器中打开 http://127.0.0.1:8080/ 得到下面欢迎页就表明 OK 了
@@ -44,9 +44,12 @@ Now is [<2020-06-14T11:45:46+08:00>]
 当然你也可以用 nginx 或apache 安装。
 nginx 把 document_root 配置成 `public` 目录。
 
+nginx 的配置：
+
 ```
 try_files $uri $uri/ /index.php$request_uri;
 ```
+
 ### 第一个任务
 路径： http://127.0.0.1:8080/test/done 
 作用是显示当前时间的任务。

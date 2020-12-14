@@ -32,6 +32,8 @@ Now is [<?=$var?>]
     <li><a href="/full/blog.php">blog.php 简单的博客</a>
     <li><a href="/full/dbtest.php">dbtest.php 数据库演示</a>
     <li><a href="/full/rpc.php">一个远程调用 json rpc 的例子 </a>
+    <li><a href="/full/doc.php">doc.php 简单的 md 文档查看</a>
+
 </ul>
 </div>
 </body>

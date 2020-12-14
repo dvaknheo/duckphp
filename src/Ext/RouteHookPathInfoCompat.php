@@ -32,7 +32,7 @@ class RouteHookPathInfoCompat extends ComponentBase
     }
     public function onUrl($url = null)
     {
-        if (strlen($url) > 0 && '/' == $url[0]) {
+        if (strlen($url) > 0 && '/' == substr($url, 0, 1)) {
             return $url;
         };
         
@@ -92,7 +92,7 @@ class RouteHookPathInfoCompat extends ComponentBase
         $new_url=RouteHookRewrite::G()->filteRewrite($url);
         if ($new_url) {
             $url=$new_url;
-            if (strlen($url)>0 && '/'==$url{0}) {
+            if (strlen($url)>0 && '/'==substr($url,0,1)) {
                 return $url;
             };
         }

@@ -69,7 +69,6 @@
     "system_exception_handler": "接管系统的异常管理",
     "use_flag_by_setting": "从设置文件里再入is_debug,platform. ",
     "use_short_functions": "使用短函数， \\_\\_url, \\_\\_h 等 ，详见 Core\\Functions.php",
-    "use_super_global": "使用super_global 类。关闭以节约性能",
     "database_list_reload_by_setting": "从设置里读取数据库列表",
     "empty_view_key_view": "给View 的key",
     "empty_view_key_wellcome_class": "默认的 Main",
@@ -121,7 +120,7 @@
     "help" : "显示帮助",
     "injected_helper_map": "助手类映射，比较复杂",
     
-    "database_auto_method_extend": "是否扩充方法至助手类",
+    "database_auto_extend_method": "是否扩充方法至助手类",
     "misc_auto_method_extend": "是否扩方法至助手类",
     "redis_auto_extend_method": "是否扩充方法至助手类",
     "rewrite_auto_extend_method": "是否扩充方法至助手类",

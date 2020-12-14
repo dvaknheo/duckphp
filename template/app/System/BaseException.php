@@ -9,7 +9,7 @@ namespace LazyToChange\System;
 use DuckPhp\ThrowOn\ThrowOn;
 use LazyToChange\System\App;
 
-class BaseException
+class BaseException extends \Exception
 {
     use ThrowOn;
     

@@ -10,13 +10,10 @@
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\AutoLoader;
-use DuckPhp\Core\ComponentInterface;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\ExceptionManager;
-use DuckPhp\Core\Logger;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\RuntimeState;
-use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\View;
 
 trait Kernel
@@ -38,7 +35,6 @@ trait Kernel
             'ext' => [],
             
             'use_flag_by_setting' => true,
-            'use_super_global' => true,
             'use_short_functions' => true,
             
             'skip_404_handler' => false,
@@ -74,9 +70,8 @@ trait Kernel
     {
         $this->options = array_replace_recursive($this->options, $options);
     }
-    protected function checkOverride($options)
+    protected function checkOverride($override_class)
     {
-        $override_class = $options['override_class'] ?? null;
         if (empty($override_class)) {
             return $this;
         }
@@ -119,16 +114,7 @@ trait Kernel
         if (($options['use_autoloader'] ?? self::$options_default['use_autoloader']) || ($options['path_namespace'] ?? false)) {
             AutoLoader::G()->init($options, $this)->run();
         }
-        
-
-        $exception_options = [
-            'system_exception_handler' => $this->hanlder_for_exception_handler,
-            'default_exception_handler' => $this->hanlder_for_exception,
-            'dev_error_handler' => $this->hanlder_for_develop_exception,
-        ];
-        ExceptionManager::G()->init($exception_options, $this)->run();
-        
-        $object = $this->checkOverride($options);
+        $object = $this->checkOverride($options['override_class'] ?? null);
         (self::class)::G($object);
         static::G($object);
         
@@ -142,6 +128,14 @@ trait Kernel
     protected function initAfterOverride(array $options, object $context = null)
     {
         $this->initOptions($options);
+        
+        $exception_options = [
+            'system_exception_handler' => $this->hanlder_for_exception_handler,
+            'default_exception_handler' => $this->hanlder_for_exception,
+            'dev_error_handler' => $this->hanlder_for_develop_exception,
+        ];
+        ExceptionManager::G()->init($exception_options, $this)->run();
+        
         $this->onPrepare();
         
         $this->initDefaultComponents();
@@ -164,7 +158,6 @@ trait Kernel
         $this->error_view_inited = true;
         
         Route::G()->init($this->options, $this);
-        Logger::G()->init($this->options, $this);
     }
     protected function reloadFlags(): void
     {
@@ -173,12 +166,8 @@ trait Kernel
         }
         $is_debug = Configer::G()->_Setting('duckphp_is_debug');
         $platform = Configer::G()->_Setting('duckphp_platform');
-        if (isset($is_debug)) {
-            $this->options['is_debug'] = $is_debug;
-        }
-        if (isset($platform)) {
-            $this->options['platform'] = $platform;
-        }
+        $this->options['is_debug'] = $is_debug ?? $this->options['is_debug'];
+        $this->options['platform'] = $platform ?? $this->options['platform'];
     }
     protected function initExtentions(array $exts): void
     {
@@ -253,9 +242,9 @@ trait Kernel
     public function beforeRun()
     {
         RuntimeState::ReCreateInstance()->init($this->options, $this)->run();
+        // RuntimeState::G()->reset();
         View::G()->reset();
-        $serverData = ($this->options['use_super_global'] ?? false) ? SuperGlobal::G()->_SERVER : $_SERVER;
-        Route::G()->prepare($serverData);
+        Route::G()->reset(); //TODO: 统一用 reset.
     }
     public function clear(): void
     {

@@ -37,6 +37,8 @@ public function &_CLASS_STATICS($class_name, $var_name)
 
     static 类内语句的替代方式
 ## 详解
+
+v1.2.8 兼容方式变更，不再需要这样兼容 GET POST 等。
 常规的操作
 ```
 $_GET['x'] => SuperGlobal::G()->_GET['x'];

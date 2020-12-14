@@ -19,6 +19,11 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         Console::G(new Console())->init($options,App::G());
         App::G()->run();
         
+        Console::G()->init(['cli_enable'=>true,'cli_mode' => 'hook',],App::G());
+        
+        Console::G(new Console())->init($options,App::G());
+        App::G()->run();
+        
         Console::G()->init($options,App::G());
         Console::G()->getCliParameters();
         
@@ -37,6 +42,11 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         App::G()->run();
         $_SERVER['argv']=[
             '-','test:foo2','arg1','arg2','--a1',"--a2","a","--a3","a","b"
+        ];
+        App::G()->run();
+
+        $_SERVER['argv']=[
+            '-','test:foo2','--a1=aaa',"--a2","a","--a3","a","b"
         ];
         App::G()->run();
         try{

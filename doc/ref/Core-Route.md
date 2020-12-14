@@ -67,9 +67,9 @@ public function init(array $options, object $context = null)
 public static function RunQuickly(array $options=[], callable $after_init=null)
 
     快速方法，等同于 init([])->run();
-public function prepare($server)
+public function reset()
 
-    绑定 $_SERVER 数组
+    重置，初始化之后的重置
 public function bind($path_info, $request_method = 'GET')
 
     绑定 PATH_INFO

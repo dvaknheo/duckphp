@@ -38,8 +38,8 @@ class DuckPhp extends App
             Console::class => true,
         ],
         
-        'database_auto_method_extend' => true,
-        'route_map_auto_extend_method' => true,
+        'database_auto_extend_method' => false,
+        'route_map_auto_extend_method' => false,
     ];
     
     //@override
@@ -50,9 +50,7 @@ class DuckPhp extends App
     //@override
     public function _Pager($object = null)
     {
-        $pager = Pager::G($object);
-        $pager->options['pager_context_class'] = static::class;
-        return $pager;
+        return Pager::G($object);
     }
     //@override
     public function _Db($tag)
@@ -89,4 +87,9 @@ class DuckPhp extends App
     {
         return EventManager::G()->on($event, $callback);
     }
+    // setBeforeGetDbHandler
+    //'assignImportantRoute' => [static::class.'::G','assignImportantRoute'],
+    //'assignRoute' => [static::class.'::G','assignRoute'],
+    //'routeMapNameToRegex' => [static::class.'::G','routeMapNameToRegex'],
+    //'getRoutes' => [static::class.'::G','getRoutes'],
 }

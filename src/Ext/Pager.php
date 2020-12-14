@@ -15,26 +15,17 @@ class Pager extends ComponentBase implements PagerInterface
         'page_size' => 30,
         'page_key' => 'page',
         'rewrite' => null,
-        'pager_context_class' => null,
     ];
     protected $context_class = null;
     protected $url;
     
     protected function getDefaultUrl()
     {
-        if (is_callable([$this->context_class,'SuperGlobal'])) {
-            return ($this->context_class)::SuperGlobal()->_SERVER['REQUEST_URI'] ?? '';
-        } else {
-            return $_SERVER['REQUEST_URI'] ?? '';
-        }
+        return $_SERVER['REQUEST_URI'] ?? '';
     }
     protected function getDefaultPageNo()
     {
-        if (is_callable([$this->context_class,'SuperGlobal'])) {
-            return ($this->context_class)::SuperGlobal()->_GET[$this->options['page_key']] ?? 1;
-        } else {
-            return $_GET[$this->options['page_key']] ?? 1;
-        }
+        return $_GET[$this->options['page_key']] ?? 1;
     }
     ////////////////////////
     //@override
@@ -48,7 +39,6 @@ class Pager extends ComponentBase implements PagerInterface
     protected function initOptions(array $options)
     {
         $this->url = $this->options['url'] ?? $this->getDefaultUrl();
-        $this->context_class = $this->options['pager_context_class'];
     }
     //@override
     protected function initContext(object $context)

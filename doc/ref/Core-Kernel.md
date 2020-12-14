@@ -5,14 +5,14 @@
 最核心的 Trait，仅完成基本流程。你通过 DuckPhp\DuckPhp 或 DuckPhp\Core\App 类来使用他。
 
 ## 引用
-[DuckPhp\\Core\\AutoLoader](ref/Core-AutoLoader.md)   自动加载
-[DuckPhp\\Core\\Configer](ref/Core-Configer.md) 配置
-[DuckPhp\\Core\\ExceptionManager](ref/Core-ExceptionManager.md) 异常处理
-[DuckPhp\\Core\\Route](ref/Core-Route.md) 路由
-[DuckPhp\\Core\\RuntimeState](ref/Core-RuntimeState.md) 运行时状态
-[DuckPhp\\Core\\View](ref/Core-View.md) 视图
-[DuckPhp\\Core\\SuperGlobal](ref/Core-SuperGlobal.md) 超全局变量
-[DuckPhp\\Core\\Logger](ref/Core-Logger.md) 日志管理。
+[DuckPhp\\Core\\AutoLoader](Core-AutoLoader.md)   自动加载
+[DuckPhp\\Core\\Configer](Core-Configer.md) 配置
+[DuckPhp\\Core\\ExceptionManager](Core-ExceptionManager.md) 异常处理
+[DuckPhp\\Core\\Route](Core-Route.md) 路由
+[DuckPhp\\Core\\RuntimeState](Core-RuntimeState.md) 运行时状态
+[DuckPhp\\Core\\View](Core-View.md) 视图
+[DuckPhp\\Core\\SuperGlobal](Core-SuperGlobal.md) 超全局变量
+[DuckPhp\\Core\\Logger](Core-Logger.md) 日志管理。
 
 ## 选项
 use 开始的选项都是默认 true ，skip 开头的都是 false;
@@ -64,9 +64,6 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 'use_flag_by_setting' => true,
 
     从设置文件中再次重载 is_debug 和 platform ,对应的设置选项是 duckphp_is_debug ，和 duckphp_platform
-'use_super_global' => true,
-
-    使用 `SuperGlobal` 类处理超全局变量，关闭以节约微乎其微的性能。
 'use_short_functions' => true,
 
     允许使用短函数，__h,__url, 等。

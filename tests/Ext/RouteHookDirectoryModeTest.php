@@ -34,11 +34,12 @@ class RouteHookDirectoryModeTest extends \PHPUnit\Framework\TestCase
         SuperGlobal::G()->_SERVER['REQUEST_URI']='';
         SuperGlobal::G()->_SERVER['PATH_INFO']='';
         
-        Route::G()->prepare([
+        $server=[
             'DOCUMENT_ROOT'=>rtrim($base_path,'/'),
             'PATH_INFO'=>'Missed',
             'REQUEST_METHOD'=>'POST',
-        ]);
+        ];
+        Route::G()->reset();
         Route::G()->run();
         
         SuperGlobal::G()->_SERVER['REQUEST_URI']='';
@@ -73,9 +74,10 @@ echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n";
         
         var_dump(SuperGlobal::G()->_SERVER['REQUEST_URI']);
 
-        Route::G()->prepare(SuperGlobal::G()->_SERVER);
+        $_SERVER=SuperGlobal::G()->_SERVER;
+        Route::G()->reset();
         Route::G()->run();
-                RouteHookDirectoryMode::G()->isInited();
+        RouteHookDirectoryMode::G()->isInited();
 
         \MyCodeCoverage::G()->end();
     }

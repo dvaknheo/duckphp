@@ -32,7 +32,7 @@ class Main
             C::Logger()->warning(''.(get_class($ex)).'('.$ex->getCode().'): '.$ex->getMessage());
             C::ExitRouteTo('login');
         });
-        if (!empty(C::POST)) {
+        if (!empty(C::POST())) {
             $referer = C::SERVER('HTTP_REFERER','');
             $domain = C::Domain().'/';
             if (substr($referer, 0, strlen($domain)) !== $domain) {
@@ -90,27 +90,14 @@ class Main
     }
     public function logout()
     {
-        $flag = SessionService::G()->checkCsrf(C::GET('_token'));
+        //$flag = SessionService::G()->checkCsrf(C::GET('_token'));
         SessionService::G()->logout();
         C::ExitRouteTo('index');
-    }
-    public function test()
-    {
-        if( !C::IsDebug()){
-            return;
-        }
-        $name = 'DKTest4';
-        $user = UserService::G()->login(['name' => $name,'password' => '123456']);
-        SessionService::G()->setCurrentUser($user);
-        $user = SessionService::G()->getCurrentUser();
-        SessionService::G()->logout();
-        
-        var_dump(DATE(DATE_ATOM));
     }
     ////////////////////////////////////////////
     public function do_register()
     {
-        $post = C::POST;
+        $post = C::POST();
         try {
             $post['password'] = $post['password'] ?? '';
             $post['password_confirm'] = $post['password_confirm'] ?? '';

@@ -12,7 +12,7 @@ class RuntimeState extends ComponentBase
     public $options = [
         'use_output_buffer' => false,
     ];
-    
+    public $context_class;
     protected $is_running = false;
     protected $is_in_exception = false;
     protected $is_outputed = false;
@@ -32,6 +32,15 @@ class RuntimeState extends ComponentBase
         }
         $this->is_running = true;
     }
+    /*
+    public function reset()
+    {
+        $current_instance = self::G();
+        $options = $current_instance->options;
+        $context = $current_instance->context_class ? $current_instance->context_class::G() : null;
+        self::G( new $current_class())->init($options, $context)->run();
+    }
+    */
     public function clear()
     {
         if ($this->options['use_output_buffer']) {

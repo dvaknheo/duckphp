@@ -14,6 +14,8 @@ class admin
 {
     public function __construct()
     {
+        C::CheckInstall();
+        
         $method = C::getRouteCallingMethod();
         if (in_array($method, ['login'])) {
             return;
@@ -49,8 +51,9 @@ class admin
     }
     public function do_login()
     {
-        $pass = $_POST['password'] ?? '';
-        $r = $_REQUEST['r'] ?? '';
+        $pass = C::POST('password', '');
+        $r = C::REQUEST('r','');
+        
         $flag = AdminBusiness::G()->login($pass);
         if (!$flag) {
             $method = C::getRouteCallingMethod();
@@ -73,15 +76,13 @@ class admin
     }
     public function do_reset_password()
     {
-        AdminBusiness::G()->changePassword($_POST['password']);
+        AdminBusiness::G()->changePassword(POST('password'));
         C::ExitRouteTo('admin');
     }
     public function articles()
     {
         $url_add = C::URL('admin/article_add');
-        $page = intval($_GET['page'] ?? 1);
-        $page = ($page > 1)?:1;
-        list($list, $total) = ArticleBusiness::G()->getArticleList($page);
+        list($list, $total) = ArticleBusiness::G()->getArticleList(C::PageNo());
         $list = C::RecordsetUrl($list, [
             'url_edit' => 'admin/article_edit?id={id}',
             'url_delete' => 'admin/article_delete?id={id}',
@@ -94,39 +95,30 @@ class admin
     }
     public function do_article_add()
     {
-        $title = $_POST['title'];
-        $content = $_POST['content'];
-        AdminBusiness::G()->addArticle($title, $content);
+        AdminBusiness::G()->addArticle(C::POST('title'), C::POST('content'));
         C::ExitRouteTo('admin/articles');
     }
     public function article_edit()
     {
-        $id = $_GET['id'] ?? 0;
-        $article = AdminBusiness::G()->getArticle($id);
-        C::ThrowOn(!$article, "找不到文章");
+        $article = AdminBusiness::G()->getArticle(C::GET('id',0));
+        //C::ThrowOn(!$article, "找不到文章"); => TODO
         $article['title'] = C::H($article['title']);
         $article['content'] = C::H($article['content']);
         C::Show(get_defined_vars(), 'admin/article_update');
     }
     public function do_article_edit()
     {
-        $id = $_POST['id'];
-        $title = $_POST['title'];
-        $content = $_POST['content'];
-        AdminBusiness::G()->updateArticle($id, $title, $content);
+        AdminBusiness::G()->updateArticle(C::POST('id'), C::POST('title'), C::POST('content'));
         C::ExitRouteTo('admin/articles');
     }
     public function do_article_delete()
     {
-        $id = $_POST['id'];
-        AdminBusiness::G()->deleteArticle($id);
+        AdminBusiness::G()->deleteArticle(C::POST('id'));
         C::ExitRouteTo('admin/articles');
     }
     public function users()
     {
-        $page = intval($_GET['page'] ?? 1);
-        $page = ($page > 1)?:1;
-        list($list, $total) = AdminBusiness::G()->getUserList($page);
+        list($list, $total) = AdminBusiness::G()->getUserList(C::PageNo());
         $csrf_token = '';
         foreach ($list as  &$v) {
             $v['url_delete'] = C::URL("admin/delete_user?id={$v['id']}&_token={$csrf_token}");
@@ -135,15 +127,12 @@ class admin
     }
     public function delete_user()
     {
-        $id = $_REQUEST['id'] ?? 0;
-        AdminBusiness::G()->deleteUser($id);
+        AdminBusiness::G()->deleteUser(C::REQUEST('id'));
         C::ExitRouteTo('admin/users');
     }
     public function logs()
     {
-        $page = intval($_GET['page'] ?? 1);
-        $page = ($page > 1)?:1;
-        list($list, $total) = AdminBusiness::G()->getLogList($page);
+        list($list, $total) = AdminBusiness::G()->getLogList(C::PageNo());
         
         $list = C::RecordsetUrl($list, [
             'url_edit' => 'admin/article_edit?id={id}',
@@ -154,17 +143,12 @@ class admin
     }
     public function comments()
     {
-        $page = intval($_GET['page'] ?? 1);
-        $page = ($page > 1)?:1;
-        
-        list($list, $total) = AdminBusiness::G()->getCommentList($page);
+        list($list, $total) = AdminBusiness::G()->getCommentList(C::PageNo());
         C::Show(get_defined_vars());
     }
     public function delete_comments()
     {
-        $id = $_POST['id'];
-        AdminBusiness::G()->deleteComment($id);
-        
+        AdminBusiness::G()->deleteComment(C::POST('id'));
         C::ExitRouteTo('admin/comments');
     }
 }

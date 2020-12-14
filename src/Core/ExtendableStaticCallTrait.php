@@ -26,22 +26,27 @@ trait ExtendableStaticCallTrait
     protected static function CallExtendStaticMethod($name, $arguments)
     {
         self::$static_methods[static::class] = self::$static_methods[static::class] ?? [];
+        
         $callback = (self::$static_methods[static::class][$name]) ?? null;
         
         if (!\is_callable($callback)) {
-            if (is_array($callback) && is_string($callback[0]) && substr($callback[0], -3) === '::G') {
-                $class = substr($callback[0], 0, -3);
-                $object = $class::G();
-                $callback = [$object,$callback[1]];
-                if (!\is_callable($callback)) {
+            if (is_string($callback)) {
+                if (false !== strpos($callback, '@')) {
+                    list($class, $method) = explode('@', $callback);
+                    /** @var callable */
+                    $callback = [$class::G(), $method];
+                } elseif (false !== strpos($callback, '->')) {
+                    list($class, $method) = explode('->', $callback);
+                    /** @var callable */
+                    $callback = [ new $class(), $method];
+                } else {
                     throw new \BadMethodCallException("Call to undefined static method ".static::class ."::$name()");
                 }
-            } elseif (is_string($callback)) {
-                throw new \BadMethodCallException("Call to undefined static method ".static::class ."::$name()");
             } else {
                 throw new \BadMethodCallException("Call to undefined static method ".static::class ."::$name()");
             }
         }
+        
         return call_user_func_array($callback, $arguments);
     }
     public static function __callStatic($name, $arguments)

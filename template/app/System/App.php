@@ -97,7 +97,7 @@ class App extends DuckPhp
         // $options['database'] = NULL;
 
         // 是否扩充方法至助手类 (DuckPhp\Ext\DbManager)
-        // $options['database_auto_method_extend'] = true;
+        // $options['database_auto_extend_method'] = true;
 
         // 数据库列表 (DuckPhp\Ext\DbManager)
         // $options['database_list'] = NULL;
@@ -145,7 +145,7 @@ class App extends DuckPhp
         // $options['log_prefix'] = 'DuckPhpLog';
 
         // 命名空间 (DuckPhp\Core\App, DuckPhp\Core\AutoLoader, DuckPhp\Core\Route, DuckPhp\Ext\RouteHookApiServer, DuckPhp\Ext\StrictCheck)
-        // $options['namespace'] = 'LazyToChange';
+        // $options['namespace'] = '';
 
         // 控制器的命名空间 (DuckPhp\Core\Route, DuckPhp\Ext\StrictCheck)
         // $options['namespace_controller'] = 'Controller';
@@ -236,9 +236,6 @@ class App extends DuckPhp
 
         // 使用短函数， \_\_url, \_\_h 等 ，详见 Core\Functions.php (DuckPhp\Core\App)
         // $options['use_short_functions'] = true;
-
-        // 使用super_global 类。关闭以节约性能 (DuckPhp\Core\App)
-        // $options['use_super_global'] = true;
 
         // ---- 下面是默认未使用的扩展 ----
 
@@ -434,7 +431,7 @@ class App extends DuckPhp
             // $options['is_debug'] = false;
 
             // 【共享】命名空间
-            // $options['namespace'] = 'LazyToChange';
+            // $options['namespace'] = '';
 
             // strict_check 的business目录
             $options['namespace_business'] = '';

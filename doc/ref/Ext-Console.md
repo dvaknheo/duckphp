@@ -41,17 +41,18 @@ duckphp-project run
 
 默认命令
 
+```
 call    调用一个类的方法
-depoly  部署脚本
+depoly  部署脚本，未override前只是提示
 fetch   模拟一个 url 请求
 help    详细介绍    
 install 安装
-list
+list    显示方法列表
 new     创建工程
-run
-test
-version
-
+run     运行 server （v1.2.8 只运行默认的httpserver。以后改进可以使用其他 httpserer
+test    未override前只是提示
+version 显示版本号码
+```
 
 添加自定义命令。
 
@@ -60,5 +61,11 @@ version
 
 使用参数
 命令行中的 --XX 会成为方法中的 $XX 参数
-cmd a b --x c d --y z =>
+cmd a b --x c d --y z 
+=>
 command_cmd('a','b');
+
+你可以用
+Console::G()->getCliParameters(); 获得参数的值
+
+你的 app 类，还有其他 command_$cmd 会加入或覆盖 默认的 方法。

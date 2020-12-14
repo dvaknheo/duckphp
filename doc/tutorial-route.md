@@ -5,38 +5,63 @@ DuckPhp 的路由类比较复杂，也是重点
 
 ## 相关类
 
-**[Core\\Route](ref/Core-Route.md)**
-[Ext\\RouteHookRouteMap](ref/Ext-RouteHookRouteMap.md)
-*[Ext\\RouteHookRewrite](ref/Ext-RouteHookRewrite.md)*
-*[Ext\\RouteHookPathInfoCompat](ref/Ext-RouteHookPathInfoCompat.md)*
-*[Ext\\RouteHookDirectoryMode](ref/Ext-RouteHookDirectoryMode.md)*
+- [DuckPhp\\Core\\Route](ref/Core-Route.md)
+- [DuckPhp\\Ext\\RouteHookRouteMap](ref/Ext-RouteHookRouteMap.md)
+- [DuckPhp\\Ext\\RouteHookPathInfoCompat](ref/Ext-RouteHookPathInfoCompat.md)
 
 ## 相关选项
-'namespace' => 'LazyToChange',
 
-	默认的命名空间
-'namespace_controller' => 'Controller',
+按不同类的来源分为：
 
-	控制器命名空间， \ 开始的话，则忽略 namespace 选项的设置
-'controller_base_class' => null,
+### Route
+- 'controller_base_class' => NULL,
+    控制器基类
+- 'controller_class_postfix' => '',
+    控制器类名后缀
+- 'controller_enable_slash' => false,
+    激活兼容后缀的 / 
+- 'controller_hide_boot_class' => false,
+    控制器标记，隐藏特别的入口
+- 'controller_methtod_for_miss' => '_missing',
+    控制器，缺失方法的调用方法
+- 'controller_path_ext' => '',
+    扩展名，比如你要 .html
+- 'controller_prefix_post' => 'do_',
+    控制器，POST 方法前缀
+- 'controller_stop_g_method' => false,
+    控制器禁止直接访问G方法
+- 'controller_stop_static_method' => false,
+    控制器禁止直接访问静态方法
+- 'controller_use_singletonex' => false,
+    控制器使用单例模式
+- 'controller_welcome_class' => 'Main',
+    控制器默认欢迎方法
+- 'namespace' => '',
+    命名空间
+- 'namespace_controller' => 'Controller',
+    控制器的命名空间
+- 'skip_fix_path_info' => false,
+    跳过 PATH_INFO 修复
 
-	控制器基类, 如果设置，则控制器必须基于这个类
-'controller_welcome_class' => 'Main',
+### RouteHookPathInfoCompat
 
-	控制器欢迎类， /test 之类的 放在这个相对的类里
-'controller_hide_boot_class' => false,
+- 'path_info_compact_action_key' => '_r',
+    GET 动作方法名的 key
+- 'path_info_compact_class_key' => '',
+    GET 模式类名的 key
+- 'path_info_compact_enable' => false,
+    使用 _GET 模拟无 PathInfo 配置
 
-	隐藏默认的路径,你不想让用户访问 /Main/index 也能看到主页的话。
-'controller_methtod_for_miss' => '_missing',
+### RouteHookRouteMap
 
-	控制器丢失方法，如果有这个方法，则所有动作都在这里处理
-'controller_prefix_post' => 'do_',
-
-	POST 方法前缀。 有这个前缀的方法函数处理 post ，没有的话还是同一方法函数处理 所有请求方法
-'controller_postfix' => '',
-
-	控制器方法后缀，如果你觉得不好看，比如 indexAction ,testAction ，则自己加上 'Action'
-
+- 'route_map' => array ( ),
+    路由映射
+- 'route_map_auto_extend_method' => true,
+    是否扩充方法至助手类
+- 'route_map_by_config_name' => '',
+    路由配置名，使用配置模式用路由
+- 'route_map_important' => array ( ),
+    重要路由映射
 
 ##  默认基础路由
 
@@ -46,8 +71,7 @@ DuckPhp 支持很多种 路由方式，默认最常见最基本的就是文件�
 
 如果只有一个 / 如 /test ，那么就对应到 Main/test。
 
-注意的是，  DuckPhp 不支持 /test/  这样的 url ，最后的 / 需要自己处理。
-
+注意的是， DuckPhp 不支持 /test/  这样的 url ，最后的 / 需要自己处理。
 
 路由的流程在 DuckPhp\Core\Route 类里run() 方法。
 
@@ -55,9 +79,9 @@ DuckPhp 支持很多种 路由方式，默认最常见最基本的就是文件�
 
 根目录的路由会使用 Main（controller_welcome_class 选项） 来代替。
 
-为了把 post 和 get 区分， 我们有了 controller_prefix_post 。如果没有 相关方法存在也是没问题的。 这个技巧用于很多需要的情况
+为了把 POST 和 GET 区分， 我们有了 controller_prefix_post 。如果没有 相关方法存在也是没问题的。 这个技巧用于很多需要的情况
 
-### 路由钩子（核心工程师）
+## 路由钩子 `核心工程师`
 
 路由钩子，是在路由运行前后执行的一组钩子。添加的方式是调用 `App::addRouteHook($callback, $position, $once = true)`
 
@@ -74,10 +98,6 @@ DuckPhp 默认加载了 DuckPhp\\Ext\\RouteHookRouteMap 插件。 实现了路�
 其他扩展可能还会有更多的钩子。如果发现“为什么会有这个地址”，去问`核心工程师`吧。
 
 ## 路由映射
-
-'route_map'
-'route_map_important'
-
 
 
 我们知道，路由重写是经常干的事情，比如  /res/{id} 这样的。
@@ -105,6 +125,10 @@ value 对应的规则是
 - 如果是闭包，直接执行闭包。
 
 例子：
+
+
+
+
 
 ```PHP
 <?php declare(strict_types=1);
@@ -135,28 +159,31 @@ return [
 
 ```php
 $options['ext']['DuckPhp\\Ext\\RouteHookPathInfoCompat']=true;
-$options['key_for_action' = "_r";
-$options['key_for_module'] = "";
+$options['path_info_compact_action_key' = "_r";
+$options['path_info_compact_class_key'] = "";
 ```
-选项说明：key_for_action 就是 用于路由的 $\_GET 参数
+选项说明： path_info_compact_action_key 就是 用于路由的 $\_GET 参数
 
-如果没有 key_for_module ，直接就是  ?\_r=/test/done ,  有，就成了 ?\_m=test&_r=done
+如果没有 path_info_compact_class_key ，直接就是  ?\_r=/test/done ,  有，就成了 ?\_m=test&_r=done
 
 URL ($url) 函数也被接管。 自动替换成相应的实现。
 
-### 目录模式的路由
 
-DuckPhp 还有一种很特殊的路由模式。
-目录方式
-
-参见 [DuckPhp\\Ext\\RouteHookDirectoryMode](ref/RouteHookDirectoryMode.md)
-
-### 路由重写
+## 路由重写
 
 \+ [DuckPhp\Ext\RouteHookRewrite](Ext-RouteHookRewrite.md)
 
 ​    \- 'rewrite_map' => []
-#### 默认路由生命周期
+
+### 目录模式的路由
+
+DuckPhp 还有一种很特殊的路由模式： 目录方式。
+
+参见 [DuckPhp\\Ext\\RouteHookDirectoryMode](ref/RouteHookDirectoryMode.md)
+
+
+## 默认路由生命周期
+
     run 函数。
     
     BeforeRun 设置 failed 为假

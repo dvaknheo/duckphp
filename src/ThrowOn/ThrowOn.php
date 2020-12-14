@@ -27,4 +27,10 @@ trait ThrowOn
     {
         static::$To[static::class] = $class;
     }
+    /*
+    public static function ProxyWith($ex)
+    {
+        throw new static::class($ex->getMessage, $ex->getCode());
+    }
+    //*/
 }

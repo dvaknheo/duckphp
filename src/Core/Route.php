@@ -18,7 +18,7 @@ class Route extends ComponentBase
     const HOOK_APPPEND_OUTTER = 'append-outter';
     
     public $options = [
-            'namespace' => 'LazyToChange',
+            'namespace' => '',
             'namespace_controller' => 'Controller',
             
             'controller_base_class' => null,
@@ -47,7 +47,6 @@ class Route extends ComponentBase
 
     //calculated options;
     protected $namespace_prefix = '';
-    protected $base_class = null;
     protected $index_method = 'index'; //const
 
     //properties
@@ -81,7 +80,6 @@ class Route extends ComponentBase
     {
         return $this->parameters[$key] ?? $default;
     }
-    
     //@override
     protected function initOptions(array $options)
     {
@@ -97,16 +95,13 @@ class Route extends ComponentBase
         $this->path_info = $_SERVER['PATH_INFO'] ?? '';
         $this->request_method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
     }
-    public function prepare($server)
+    public function reset()
     {
-        $this->prepareForUrl($server); // urlmansage.
-        
-        $this->request_method = $server['REQUEST_METHOD'] ?? 'GET';
-        //REQUEST_URI
-        //SCRIPT_FILENAME
-        
-        $this->path_info = $this->fixPathInfo($server, $this->path_info);
+        $this->request_method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $this->path_info = $this->fixPathInfo($_SERVER, $this->path_info);
         $this->has_bind_server_data = true;
+        $this->is_failed = false;
+
         return $this;
     }
     // TODO move to other extend
@@ -139,7 +134,7 @@ class Route extends ComponentBase
         $path_info = parse_url($path_info, PHP_URL_PATH);
         
         if (!$this->has_bind_server_data) {
-            $this->prepare($_SERVER);
+            $this->reset();
         }
         $this->path_info = $path_info;
         
@@ -152,7 +147,7 @@ class Route extends ComponentBase
     {
         $this->is_failed = false;
         if (!$this->has_bind_server_data) {
-            $this->prepare($_SERVER);
+            $this->reset();
         }
     }
     public function run()
@@ -191,6 +186,7 @@ class Route extends ComponentBase
     }
     public function forceFail()
     {
+        // TODO . force result ?
         $this->is_failed = true;
     }
     public function addRouteHook($callback, $position, $once = true)
@@ -304,7 +300,7 @@ class Route extends ComponentBase
     }
     protected function getMethodToCall($object, $method)
     {
-        $method = ($method === '')?$this->index_method : $method;
+        $method = ($method === '') ? $this->index_method : $method;
         if (substr($method, 0, 2) == '__') {
             $this->route_error = 'can not call hidden method';
             return null;
@@ -398,12 +394,11 @@ trait Route_Helper
 }
 trait Route_UrlManager
 {
-    public $script_filename = '';   //TODO protected
-    public $document_root = '';     //TODO protected
+    //protected $path_info = '';  // shared
+    protected $script_filename = null; // need a setter
+    protected $document_root = null;   // need a setter
     
     protected $url_handler = null;
-    //protected $path_info = '';
-    
     public static function Url($url = null)
     {
         return static::G()->_Url($url);
@@ -422,10 +417,10 @@ trait Route_UrlManager
         }
         
         //get basepath.
-        $document_root = rtrim($this->document_root, '/');
-        $basepath = substr(rtrim($this->script_filename, '/'), strlen($document_root));
+        $document_root = rtrim($this->document_root ?? $_SERVER['DOCUMENT_ROOT'], '/');
+        $basepath = substr(rtrim($this->script_filename ?? $_SERVER['SCRIPT_FILENAME'], '/'), strlen($document_root));
         
-        /* something error ?
+        /* something wrong ?
         if (substr($basepath, -strlen('/index.php'))==='/index.php') {
             $basepath=substr($basepath, 0, -strlen('/index.php'));
         }
@@ -457,10 +452,5 @@ trait Route_UrlManager
     public function getUrlHandler()
     {
         return $this->url_handler;
-    }
-    protected function prepareForUrl($serverData)
-    {
-        $this->script_filename = $serverData['SCRIPT_FILENAME'] ?? '';
-        $this->document_root = $serverData['DOCUMENT_ROOT'] ?? '';
     }
 }

@@ -47,15 +47,15 @@ class RouteHookRouteMap extends ComponentBase
         if ($this->options['route_map_auto_extend_method'] && \method_exists($context, 'extendComponents')) {
             $context->extendComponents(
                 [
-                    'assignImportantRoute' => [static::class.'::G','assignImportantRoute'],
-                    'assignRoute' => [static::class.'::G','assignRoute'],
-                    'routeMapNameToRegex' => [static::class.'::G','routeMapNameToRegex'],
+                    'assignImportantRoute' => static::class . '@assignImportantRoute',
+                    'assignRoute' => static::class . '@assignRoute',
+                    'routeMapNameToRegex' => static::class . '@routeMapNameToRegex',
                 ],
                 ['A']
             );
             $context->extendComponents(
                 [
-                    'getRoutes' => [static::class.'::G','getRoutes'],
+                    'getRoutes' => static::class . '@getRoutes',
                 ],
                 ['C','A']
             );
@@ -175,6 +175,9 @@ class RouteHookRouteMap extends ComponentBase
     }
     public function doHook($path_info, $is_append)
     {
+        if (!$this->options['route_map'] && !$this->options['route_map_important']) {
+            return false;
+        }
         if (!$this->is_compiled) {
             $namespace_controller = ($this->context_class)::Route()->getNamespacePrefix();
             $this->route_map = $this->compileMap($this->options['route_map'], $namespace_controller);
@@ -182,9 +185,6 @@ class RouteHookRouteMap extends ComponentBase
             $this->is_compiled = true;
         }
         $map = $is_append ? $this->route_map : $this->route_map_important;
-        if (empty($map)) {
-            return false;
-        }
         
         return $this->doHookByMap($path_info, $map);
     }
