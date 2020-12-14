@@ -178,7 +178,7 @@ trait AppPluginTrait
         $options = $this->plugin_options;
         $options['namespace'] = $this->plugin_options['plugin_namespace'];
         
-        $route->init($options)->prepare($_SERVER);
+        $route->init($options)->reset();
         $route->setPathInfo($my_path_info);
         $route->setUrlHandler([static::class,'OnUrl']);
         

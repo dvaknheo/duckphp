@@ -242,10 +242,9 @@ trait Kernel
     public function beforeRun()
     {
         RuntimeState::ReCreateInstance()->init($this->options, $this)->run();
-        // RuntimeState::G()->reset(); 找不context; . 那在 init 一遍？ // 反正就固定了。
-        //RuntimeState::ReCreateInstance()->reset($this->options,$this);
+        // RuntimeState::G()->reset();
         View::G()->reset();
-        Route::G()->prepare($_SERVER); //TODO: 统一用 reset.
+        Route::G()->reset(); //TODO: 统一用 reset.
     }
     public function clear(): void
     {

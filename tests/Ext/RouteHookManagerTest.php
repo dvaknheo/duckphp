@@ -21,7 +21,7 @@ $options['path_info_compact_enable'] = true;
 DuckPhp::G()->init($options);
 ///////////////////////////
 
-Route::G()->prepare($_SERVER)->run();
+Route::G()->reset()->run();
 //Route::G()->addRouteHook(function(){},'prepend-inner');
 echo "<pre>\n";
 echo RouteHookManager::G()->dump();

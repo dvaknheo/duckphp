@@ -48,10 +48,7 @@ class RouteHookPathInfoCompatTest extends \PHPUnit\Framework\TestCase
         SuperGlobal::G()->_SERVER['PATH_INFO']='';
 
 
-        Route::G()->prepare([
-            'PATH_INFO'=>'Missed',
-            'REQUEST_METHOD'=>'POST',
-        ]);
+        Route::G()->bind('Missed','POST');
         Route::G()->run();
         
         echo "------------------------------------------------\n";

@@ -95,12 +95,13 @@ class Route extends ComponentBase
         $this->path_info = $_SERVER['PATH_INFO'] ?? '';
         $this->request_method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
     }
-    public function prepare($server)
+    public function reset()
     {
-        $this->request_method = $server['REQUEST_METHOD'] ?? 'GET';
-
-        $this->path_info = $this->fixPathInfo($server, $this->path_info);
+        $this->request_method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $this->path_info = $this->fixPathInfo($_SERVER, $this->path_info);
         $this->has_bind_server_data = true;
+        $this->is_failed = false;
+
         return $this;
     }
     // TODO move to other extend
@@ -133,7 +134,7 @@ class Route extends ComponentBase
         $path_info = parse_url($path_info, PHP_URL_PATH);
         
         if (!$this->has_bind_server_data) {
-            $this->prepare($_SERVER);
+            $this->reset();
         }
         $this->path_info = $path_info;
         
@@ -146,7 +147,7 @@ class Route extends ComponentBase
     {
         $this->is_failed = false;
         if (!$this->has_bind_server_data) {
-            $this->prepare($_SERVER);
+            $this->reset();
         }
     }
     public function run()

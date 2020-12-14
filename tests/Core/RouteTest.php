@@ -11,10 +11,11 @@ class RouteTest extends \PHPUnit\Framework\TestCase
     {
         \MyCodeCoverage::G()->begin(Route::class);
         
-        Route::G()->prepare([
+        $_SERVER = [
             'DOCUMENT_ROOT'=> __DIR__,
             'SCRIPT_FILENAME'=>__DIR__.'/aa/index.php',
-        ]);
+        ];
+        Route::G()->reset();
         Route::G()->setPathInfo('x/z');
         $t= Route::URL('aaa');
         $z=Route::Route();
@@ -45,12 +46,13 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         ];
         Route::G(new Route());
         Route::RunQuickly($options,function(){
-            Route::G()->prepare([
+            $_SERVER=[
                 'SCRIPT_FILENAME'=> 'script_filename',
                 'DOCUMENT_ROOT'=>'document_root',
                 'REQUEST_METHOD'=>'POST',
                 'PATH_INFO'=>'/',
-            ]);
+            ];
+            Route::G()->reset();
             
             $callback=function () {
                 var_dump(DATE(DATE_ATOM));
@@ -58,24 +60,16 @@ class RouteTest extends \PHPUnit\Framework\TestCase
 
         });
         
-        Route::G()->prepare([
-            'PATH_INFO'=>'about/me',
-        ]);
+        Route::G()->bind('about/me');
         Route::G()->run();
         
         var_dump("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
         
-        Route::G()->prepare([
-            'PATH_INFO'=>'Main/index',
-            'REQUEST_METHOD'=>'POST',
-        ]);
+        Route::G()->bind('Main/index','POST');
         Route::G()->run();
         
         Route::G(MyRoute::G()->init(Route::G()->options));
-        Route::G()->prepare([
-            'PATH_INFO'=>'Main/index',
-            'REQUEST_METHOD'=>'POST',
-        ]);
+        Route::G()->bind('Main/index','POST');
         //Route::G()->getCallback(null,'');
         Route::G()->getCallback('tests_Core_Route\\Main','__');
         Route::G()->getCallback('tests_Core_Route\\Main','post');
@@ -94,10 +88,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         $_SERVER['argc']=count($_SERVER['argv']);
         
         Route::G(new Route())->init($options);
-        Route::G()->prepare([
-            'PATH_INFO'=>'NoExists/Mazndex',
-            'REQUEST_METHOD'=>'POST',
-        ]);
+        Route::G()->bind('NoExists/Mazndex','POST');
         Route::G()->defaultGetRouteCallback('/');
         
         Route::G(new Route())->init($options);
@@ -112,19 +103,13 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G(new Route())->init($options);
 
         
-        Route::G()->prepare([
-            'PATH_INFO'=>'Main/index',
-            'REQUEST_METHOD'=>'POST',
-        ]);
+        Route::G()->bind('Main/index','POST');
         Route::G()->run();
         
         Route::G(new Route())->init($options);
         Route::G()->bind("good")->run();
 
-        Route::G()->prepare([
-            'PATH_INFO'=>'Missed',
-            'REQUEST_METHOD'=>'POST',
-        ]);
+        Route::G()->bind('Missed','POST');
         Route::G()->run();
         Route::G()->bind("again",null)->run();
         Route::G()->getNamespacePrefix();
@@ -180,29 +165,36 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         MyRoute::G(new MyRoute())->init([]);
         $serverData=[
         ];
-        MyRoute::G()->prepare($serverData);
+        $_SERVER=[];
+
+        MyRoute::G()->reset();
         
         $serverData=[
             'PATH_INFO'=>'abc',
         ];
-        MyRoute::G()->prepare($serverData);
+        $_SERVER=$serverData;
+
+        MyRoute::G()->reset();
         $serverData=[
             'REQUEST_URI'=>'/',
             'SCRIPT_FILENAME'=>__DIR__ . '/index.php',
             'DOCUMENT_ROOT'=>__DIR__,
         ];
-        
-        MyRoute::G()->prepare($serverData);
+        $_SERVER=$serverData;
+        MyRoute::G()->reset();
         
         $serverData=[
             'REQUEST_URI'=>'/abc/d',
             'SCRIPT_FILENAME'=>__FILE__,
             'DOCUMENT_ROOT'=>__DIR__,
         ];
-        MyRoute::G()->prepare($serverData);
+        
+        $_SERVER=$serverData;
+        MyRoute::G()->reset();
 
         MyRoute::G(new MyRoute())->init(['skip_fix_path_info'=>true]);
-        MyRoute::G()->prepare($serverData);
+        $_SERVER=$serverData;
+        MyRoute::G()->reset();
 
     }
     protected function foo2()
@@ -268,10 +260,11 @@ class RouteTest extends \PHPUnit\Framework\TestCase
     {
         echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzz";
         echo PHP_EOL;
-        Route::G()->prepare([
+        $_SERVER=[
             'SCRIPT_FILENAME'=> 'x/z/index.php',
             'DOCUMENT_ROOT'=>'x',
-        ]);
+        ];
+        Route::G()->reset();
         echo Route::URL("/aaaaaaaa");
         echo PHP_EOL;
         echo Route::URL("A");
@@ -284,10 +277,11 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->getURLHandler();
         Route::G(new Route());
         Route::G()->setURLHandler(null);
-        Route::G()->prepare([
+        $_SERVER = [
             'SCRIPT_FILENAME'=> 'x/index.php',
             'DOCUMENT_ROOT'=>'x',
-        ]);
+        ];
+        Route::G()->reset();
         echo "--";
         $_SERVER['SCRIPT_FILENAME']='x/index.php';
         $_SERVER['DOCUMENT_ROOT']='x';

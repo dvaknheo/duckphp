@@ -520,8 +520,8 @@ DuckPhp 类/文件结构参考。(粗体部分是启动的时候引用的文件)
             2. **[Configer](doc/ref/Core-Configer.md)** 配置组件
             3. **[View](doc/ref/Core-View.md)** 视图组件
             4. **[Route](doc/ref/Core-Route.md)** 路由组件
-            5. **[SuperGlobal](doc/ref/SuperGlobal.md)** 超全局变量替换组件
-            6. **[Logger](doc/ref/Core-Logger.md)** 日志组件
+            5. [SuperGlobal](doc/ref/SuperGlobal.md) 超全局变量替换组件
+            6. [Logger](doc/ref/Core-Logger.md) 日志组件
             7. **[ExceptionManager](doc/ref/Core-ExceptionManager.md)**   异常管理组件
             8. **[RuntimeState](doc/ref/Core-RuntimeState.md)** 运行期数据保存组件
          2. [ExtendableStaticCallTrait](doc/ref/Core-ExtendableStaticCallTrait.md) 扩展静态调用的 trait
@@ -532,12 +532,12 @@ DuckPhp 类/文件结构参考。(粗体部分是启动的时候引用的文件)
    1. [DbAdvanceTrait](doc/ref/Db-DbAdvanceTrait.md)  这个 trait 增加了 Db类的高级功能
    2. [DbInterface](doc/ref/Db-DbInterface.md) Db 类满足 DbInterface 接口
    3. [Db](doc/ref/Db-Db.md) Db类
-3. [DuckPhp](doc/ref/DuckPhp.md) 加载了默认扩展的 DuckPhp 入口 ，扩展自 [DuckPhp\\Core\\App](doc/ref/Core-App.md)
+3. **[DuckPhp](doc/ref/DuckPhp.md)** 入口类，加载了默认扩展的 DuckPhp 入口 ，扩展自 [DuckPhp\\Core\\App](doc/ref/Core-App.md)
 4. `Ext` 目录是扩展目录，默认加载的扩展。按字母排序。
    1. [Cache](doc/ref/Ext-Cache.md) 缓存组件
    2. **[Console](doc/ref/Ext-Cache.md)** 命令行模式扩展组件
         1. [Installer](doc/ref/Ext-Installer.md) 安装器
-   3. **[DbManager](doc/ref/Ext-DbManager.md)** 数据库管理组件
+   3. [DbManager](doc/ref/Ext-DbManager.md) 数据库管理组件
    4. [EventManager](doc/ref/Ext-EventManager.md) 事件管理组件
    5. [Pager](doc/ref/Ext-Pager.md) 分页类
         1. [PagerInteface](doc/ref/Ext-PagerInteface.md) 分页接口
