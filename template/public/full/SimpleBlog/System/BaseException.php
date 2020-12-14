@@ -7,14 +7,17 @@
 namespace SimpleBlog\System;
 
 use DuckPhp\ThrowOn\ThrowOn;
+use Exception;
 use SimpleBlog\System\App;
 
-class BaseException
+class BaseException extends Exception
 {
     use ThrowOn;
     
+    /*
     public function display($ex)
     {
         App::OnDefaultException($ex);
     }
+    */
 }

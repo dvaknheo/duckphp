@@ -13,13 +13,13 @@ use SimpleAuth\Base\Helper\ViewHelper as V;
 </head>
 <body>
     <div id="app">
-用户注册登录
+Simple Blog 用户注册登录
 <hr>
         <main class="py-4">
             <?= V::yieldContent('content'); ?>
         </main>
 <hr>
-用户注册登录
+Simple Blog  用户注册登录
     </div>
 </body>
 </html>

@@ -175,7 +175,7 @@ trait AppPluginTrait
         $this->plugin_route_old = Route::G();
         
         //TODO 这里我们还要做更多处理 
-        View::G(new View())->init($this->plugin_view_old->$options)->setOverridePath($this->path_view_override);
+        View::G(new View())->init($this->plugin_view_old->options)->setOverridePath($this->path_view_override);
         
         // reset route
         $route = Route::G(new Route());
