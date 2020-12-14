@@ -22,8 +22,8 @@ trait AppPluginTrait
     protected $path_config_override = '';
     
     protected $plugin_context_class = '';
-    protected $plugin_before_run_handler = null;
     protected $plugin_route_old = null;
+    protected $plugin_view_old = null;
     
     public function pluginModeInit(array $options, object $context = null)
     {
@@ -58,6 +58,11 @@ trait AppPluginTrait
         if (!empty($ext_config_files)) {
             Configer::G()->assignExtConfigFile($ext_config_files);
         }
+        //clone Helper
+        if ($this->plugin_options['plugin_injected_helper_map']) {
+            $this->plugin_context_class::G()->cloneHelpers($this->plugin_options['plugin_namespace'], $this->plugin_options['plugin_injected_helper_map']);
+        }
+        
         Route::G()->addRouteHook([static::class,'PluginModeRouteHook'], $this->plugin_options['plugin_routehook_position']);
         
         $this->onPluginModeInit();
@@ -91,10 +96,6 @@ trait AppPluginTrait
         if ($this->onPluginModeRun) {
             return ($this->onPluginModeRun)();
         }
-    }
-    public function pluginModeBeforeRun($handler)
-    {
-        $this->plugin_before_run_handler = $handler;
     }
     public static function PluginModeRouteHook($path_info)
     {
@@ -152,8 +153,7 @@ trait AppPluginTrait
         }
         return $ret;
     }
-
-    protected function _PluginModeRouteHook($path_info)
+    protected function getPluginModePathInfo($path_info)
     {
         $my_path_info = $path_info;
         if ($this->plugin_options['plugin_url_prefix'] ?? false) {
@@ -164,45 +164,55 @@ trait AppPluginTrait
             }
             $my_path_info = substr($path_info, $l - 1);
         }
-        
-        if ($this->plugin_options['plugin_injected_helper_map']) {
-            $this->plugin_context_class::G()->cloneHelpers($this->plugin_options['plugin_namespace'], $this->plugin_options['plugin_injected_helper_map']);
-        }
-        
-        View::G()->setOverridePath($this->path_view_override);
-        
-        $this->plugin_route_old = Route::G();
-        $route = new Route();
-        Route::G($route);
-        
+        return $my_path_info;
+    }
+    protected function _PluginModeRouteHook($path_info)
+    {
         $options = $this->plugin_options;
         $options['namespace'] = $this->plugin_options['plugin_namespace'];
         
-        $route->init($options)->reset();
-        $route->setPathInfo($my_path_info);
-        $route->setUrlHandler([static::class,'OnUrl']);
+        $this->plugin_view_old = View::G();
+        $this->plugin_route_old = Route::G();
         
-        if ($this->plugin_before_run_handler) {
-            ($this->plugin_before_run_handler)();
-        }
+        //TODO 这里我们还要做更多处理 
+        View::G(new View())->init($this->plugin_view_old->$options)->setOverridePath($this->path_view_override);
+        
+        // reset route
+        $route = Route::G(new Route());
+        
+
+        
+        $route->init($options)->reset();
+        $path_info = $this->getPluginModePathInfo($path_info);
+        $route->setPathInfo($path_info);
+        $route->setUrlHandler([static::class,'OnPluginModeUrl']);
+        
         $this->onPluginModeBeforeRun();
         
-        $callback = $route->defaultGetRouteCallback($my_path_info);
+        $callback = $route->defaultGetRouteCallback($path_info);
         if (null === $callback) {
-            Route::G($this->plugin_route_old);
+            $this->pluginModeClear();
             return false;
         }
         $this->onPluginModeRun();
         ($callback)();
         
-        Route::G($this->plugin_route_old);
+        $this->pluginModeClear();
         return true;
     }
-    public static function OnUrl($url)
+    protected function pluginModeClear()
     {
-        return static::G()->_OnUrl($url);
+        View::G($this->plugin_view_old);
+        Route::G($this->plugin_route_old);
+        $this->plugin_view_old = null;
+        $this->plugin_route_old = null;
     }
-    public function _OnUrl($url)
+        
+    public static function OnPluginModeUrl($url)
+    {
+        return static::G()->_OnPluginModeUrl($url);
+    }
+    public function _OnPluginModeUrl($url)
     {
         $prefix = trim($this->plugin_options['plugin_url_prefix'], '/');
         $url = $prefix.$url;
