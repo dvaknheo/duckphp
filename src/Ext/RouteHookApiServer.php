@@ -113,9 +113,9 @@ class RouteHookApiServer extends ComponentBase
     protected function getInputs($path_info)
     {
         if (($this->context_class)::IsDebug()) {
-            $inputs = ($this->context_class)::SuperGlobal()->_REQUEST;
+            $inputs = $_REQUEST;
         } else {
-            $inputs = ($this->context_class)::SuperGlobal()->_POST;
+            $inputs = $_POST;
         }
         return $inputs;
     }

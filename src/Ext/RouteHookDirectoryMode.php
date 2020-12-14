@@ -32,9 +32,9 @@ class RouteHookDirectoryMode extends ComponentBase
     
     protected function adjustPathinfo($basepath, $path_info)
     {
-        $input_path = parse_url(($this->context_class)::SuperGlobal()->_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        $script_filename = ($this->context_class)::SuperGlobal()->_SERVER['SCRIPT_FILENAME'];
-        $document_root = ($this->context_class)::SuperGlobal()->_SERVER['DOCUMENT_ROOT'];
+        $input_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $script_filename = $_SERVER['SCRIPT_FILENAME'];
+        $document_root = $_SERVER['DOCUMENT_ROOT'];
         
         $path_info = substr($document_root.$input_path, strlen($basepath));
         $path_info = ltrim((string)$path_info, '/').'/';
@@ -68,7 +68,7 @@ class RouteHookDirectoryMode extends ComponentBase
             return $url;
         };
         
-        $document_root = ($this->context_class)::SuperGlobal()->_SERVER['DOCUMENT_ROOT'];
+        $document_root = $_SERVER['DOCUMENT_ROOT'];
         $base_url = substr($this->basepath, strlen($document_root));
         $input_path = (string) parse_url($url, PHP_URL_PATH);
         

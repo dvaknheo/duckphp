@@ -50,9 +50,7 @@ class DuckPhp extends App
     //@override
     public function _Pager($object = null)
     {
-        $pager = Pager::G($object);
-        $pager->options['pager_context_class'] = static::class;
-        return $pager;
+        return Pager::G($object);
     }
     //@override
     public function _Db($tag)
