@@ -134,7 +134,6 @@ File: `template/public/index.php`
  * DuckPhp
  * From this time, you never be alone~
  */
-use \DuckPhp\Core\Route;
 require_once(__DIR__.'/../../autoload.php');    // @DUCKPHP_HEADFILE
 
 echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKPHP_DELETE
@@ -153,16 +152,7 @@ $options['path_namespace'] = 'app';
 //$options['path_info_compact_enable'] => true; // 如果你没设置 PATH_INFO 打开这项兼容
 //$options['use_setting_file'] = true; // 如果你使用设置文件。
 
-//\LazyToChange\System\App::RunQuickly($options);
-
-Route::G(new Route());
-        Route::G()->setURLHandler(null);
-        Route::G()->prepare([
-            'SCRIPT_FILENAME'=> 'x/index.php',
-            'DOCUMENT_ROOT'=>'x',
-        ]);
-        echo "--";
-        echo Route::URL("");
+\LazyToChange\System\App::RunQuickly($options);
 return;
 /*
 //也可以用
