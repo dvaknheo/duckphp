@@ -29,9 +29,6 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
     public function __construct()
     {
         parent::__construct();
-        
-        
-        //debug_print_backtrace(1);exit;
         $this->init([]);
     }
     public function reset()

@@ -1,3 +1,19 @@
+v1.2.9 变更
+AppPluginTrait 微调（下个版本解决 view 不明显问题
+ComponentBase 简化
+ExtendableStaticCallTrait::CallExtendStaticMethod 调用方式用@分割对象和方法
+Kernel 内核简化，减少不必要东西 取消 use_super_global 选项
+Route prepare($serverData); 统一为 reset
+DuckPhp 精简东西，不再需要载入太多东西
+Console 支持 cli_mode
+Installer 尝试支持 windows
+JsonView 新增 JsonView
+Pager 去掉 SuperGlobal
+其他因去掉 SuperGlobal 做了一些改动
+ToDo ，下个版本完善并加入 SuperGlobalReplacer 类
+SingletonEx 添加一个集中式处理的 SimpleReplacer 类。
+添加了 doc 页面查看页面
+
 v1.2.8 变更
 添加了比较完善的命令行模式
 调整了好些选项
