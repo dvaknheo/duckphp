@@ -37,7 +37,7 @@ class Installer extends ComponentBase
         $source = __DIR__ .'/../../template';
         $dest = $this->options['path'];
 
-        $this->dumpDir($source, $dest, $this->options['force'], );
+        $this->dumpDir($source, $dest, $this->options['force']);
     }
     public function dumpDir($source, $dest, $force = false)
     {

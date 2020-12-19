@@ -236,7 +236,7 @@ class Route extends ComponentBase
     }
     public function defaultGetRouteCallback($path_info)
     {
-        $path_info = ltrim($path_info, '/');
+        $path_info = ltrim((string)$path_info, '/');
         if ($this->options['controller_enable_slash']) {
             $path_info = rtrim($path_info, '/');
         }
