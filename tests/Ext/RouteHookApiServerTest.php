@@ -30,7 +30,7 @@ class RouteHookApiServerTest extends \PHPUnit\Framework\TestCase
         
         DuckPhp::G()->init($options);
         Route::G()->bind('/test.foo2');
-        DuckPhp::SuperGlobal()->_REQUEST=['a'=>'1','b'=>3];
+        $_REQUEST=['a'=>'1','b'=>3];
         Route::G()->run();
         
         Route::G()->bind('/test.mustexception');
@@ -40,7 +40,7 @@ class RouteHookApiServerTest extends \PHPUnit\Framework\TestCase
         DuckPhp::G()->run();
         
         Route::G()->bind('/test.foo3');
-        DuckPhp::SuperGlobal()->_REQUEST=['name'=>'a','id'=>[]];
+        $_REQUEST=['name'=>'a','id'=>[]];
         DuckPhp::G()->run();
         
         Route::G()->bind('/test.mustarg');
@@ -50,7 +50,7 @@ class RouteHookApiServerTest extends \PHPUnit\Framework\TestCase
         
         DuckPhp::G()->options['is_debug']=false;
         Route::G()->bind('/test.foo2');
-        DuckPhp::SuperGlobal()->_POST = ['a'=>'1','b'=>3];
+        $_POST = ['a'=>'1','b'=>3];
         DuckPhp::G()->run();
         
         
@@ -82,7 +82,7 @@ class RouteHookApiServerTest extends \PHPUnit\Framework\TestCase
         
         DuckPhp::G()->init($options);
         Route::G()->bind('/test.foo2');
-        DuckPhp::SuperGlobal()->_REQUEST=['a'=>'1','b'=>3];
+        $_REQUEST=['a'=>'1','b'=>3];
         Route::G()->run();
 ////
         \MyCodeCoverage::G()->end();

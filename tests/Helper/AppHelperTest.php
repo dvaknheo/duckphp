@@ -28,12 +28,9 @@ class AppHelperTest extends \PHPUnit\Framework\TestCase
         $k="k";$v="v";
         $class_name=HelperFakeSessionHandler::class;
         $var_name="x";
+         
         
-        AppHelper::GLOBALS($k, $v=null);
-        AppHelper::STATICS($k, $v=null);
-        AppHelper::CLASS_STATICS($class_name, $var_name);        
-        
-                $output="";
+        $output="";
 
         
         App::G()->system_wrapper_replace([

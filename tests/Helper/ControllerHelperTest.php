@@ -101,7 +101,6 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         ControllerHelper::setMultiExceptionHandler($classes, $callback);
         ControllerHelper::setDefaultExceptionHandler($callback);
         
-        ControllerHelper::SuperGlobal();
 
 
         ControllerHelper::GET('a');

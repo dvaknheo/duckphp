@@ -411,6 +411,9 @@ trait Core_SystemWrapper
             $this->system_wrapper_call(__FUNCTION__, func_get_args());
             return;
         }
+        if (!isset($session_id)) {
+            return session_id();
+        }
         return session_id($session_id);
     }
     public function _session_destroy()
@@ -430,7 +433,6 @@ trait Core_SystemWrapper
         return session_set_save_handler($handler);
     }
     ////]]]]
-    
 }
 trait Core_Helper
 {
@@ -902,7 +904,7 @@ trait Core_Glue
     public static function CallException($ex)
     {
         return ExceptionManager::G()->_CallException($ex);
-    }    
+    }
     public static function GET($key = null, $default = null)
     {
         if (isset($key)) {

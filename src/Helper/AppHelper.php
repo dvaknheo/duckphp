@@ -85,18 +85,6 @@ class AppHelper
     {
         return App::session_set_save_handler($handler);
     }
-    public static function &GLOBALS($k, $v = null)
-    {
-        return App::GLOBALS($k, $v);
-    }
-    public static function &STATICS($k, $v = null, $_level = 1)
-    {
-        return App::STATICS($k, $v, $_level + 1);
-    }
-    public static function &CLASS_STATICS($class_name, $var_name)
-    {
-        return App::CLASS_STATICS($class_name, $var_name);
-    }
     ////
     public static function extendComponents($method_map, $components = [])
     {

@@ -61,7 +61,6 @@ class AppTest extends \PHPUnit\Framework\TestCase
 
         });
         
-        //App::SuperGlobal()->_SERVER['PATH_INFO']='/NOOOOOOOOOOOOOOO';
         Route::G()->bind('/NOOOOOOOOOOOOOOO');  // 这两句居然有区别 ,TODO ，分析之
         
         App::G()->options['error_404']=function(){
@@ -210,12 +209,27 @@ App::PageHtml(123);
         });
         App::register_shutdown_function(function(){echo "shutdowning";});
         
+        App::session_start([]);
+        try{
+        App::session_id(md5('123456'));
+        }catch(\ErrorException $ex){
+        }
+        App::session_id(null);
+        App::session_destroy();
+        $handler=new FakeSessionHandler();
+        App::session_set_save_handler( $handler);
+        
+        
         App::G()->system_wrapper_replace([
             'header' =>function(){ echo "change!\n";},
             'setcookie' =>function(){ echo "change!\n";},
             'exit' =>function(){ echo "change!\n";},
             'set_exception_handler' =>function(){ echo "change!\n";},
             'register_shutdown_function' =>function(){ echo "change!\n";},
+            'session_start' => function(){ echo "change!\n";},
+            'session_id' =>  function(){ echo "change!\n";},
+            'session_destroy' => function(){ echo "change!\n";},
+            'session_set_save_handler' => function(){ echo "change!\n";},
         ]);
         
         App::header($output,$replace = true, $http_response_code=0);
@@ -225,6 +239,16 @@ App::PageHtml(123);
             return set_exception_handler($handler);
         });
         App::register_shutdown_function(function(){echo "shutdowning";});
+        
+        
+        App::session_start([]);
+        App::session_id(null);
+        App::session_id(md5('123456'));
+        App::session_destroy();
+        $handler=new FakeSessionHandler();
+        App::session_set_save_handler( $handler);
+        
+        
         
     }
     public function doException()
@@ -356,16 +380,9 @@ App::PageHtml(123);
         $k="k";$v="v";
         $class_name=AppTestObject::class;
         $var_name="x";
-        App::SuperGlobal();
-        App::GLOBALS($k, $v=null);
-        App::STATICS($k, $v=null);
-        App::CLASS_STATICS($class_name, $var_name);        
+
         
-        App::session_start($options=[]);
-        App::session_id(null);
-        App::session_destroy();
-        $handler=new FakeSessionHandler();
-        App::session_set_save_handler( $handler);
+
         
         App::assignPathNamespace("NoPath","NoName");
         App::addRouteHook(function(){},'append-outter',true);
