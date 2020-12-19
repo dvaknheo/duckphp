@@ -147,7 +147,7 @@ class Installer extends ComponentBase
     }
     protected function changeHeadFile($data, $short_file_name, $autoload_file)
     {
-        $level = substr_count($short_file_name, '/');
+        $level = substr_count($short_file_name, DIRECTORY_SEPARATOR);
         $subdir = str_repeat('../', $level);
         $str_header = "require_once(__DIR__.'/{$subdir}{$autoload_file}');";
         $data = preg_replace('/^.*?@DUCKPHP_HEADFILE.*?$/m', $str_header, $data);
