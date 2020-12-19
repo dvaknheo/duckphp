@@ -17,7 +17,7 @@ class SessionService extends BaseService
     }
     public function getCurrentUser()
     {
-        $ret = App::SuperGlobal()->_SESSION['user'] ?? [];
+        $ret = $_SESSION['user'] ?? [];
         SessionServiceException::ThrowOn(empty($ret), '请重新登录');
         
         return $ret;
@@ -31,26 +31,26 @@ class SessionService extends BaseService
     
     public function setCurrentUser($user)
     {
-        App::SuperGlobal()->_SESSION['user'] = $user;
+        $_SESSION['user'] = $user;
     }
     public function logout()
     {
-        unset(App::SuperGlobal()->_SESSION['user']);
+        unset($_SESSION['user']);
         App::session_destroy();
     }
     public function checkCsrf($token)
     {
-        $session_token = App::SuperGlobal()->_SESSION['_token'] ?? null;
+        $session_token = $_SESSION['_token'] ?? null;
         SessionServiceException::ThrowOn($token !== $session_token, 'csrf_token 失败', 419);
     }
     ////////////////////////////////////////////////////////////////////////
     public function csrf_token()
     {
-        if (!isset(App::SuperGlobal()->_SESSION['_token'])) {
+        if (!isset($_SESSION['_token'])) {
             $token = $this->randomString(40);
-            App::SuperGlobal()->_SESSION['_token'] = $token;
+            $_SESSION['_token'] = $token;
         }
-        return App::SuperGlobal()->_SESSION['_token'];
+        return $_SESSION['_token'];
     }
     public function csrf_field()
     {
@@ -59,12 +59,9 @@ class SessionService extends BaseService
     protected function randomString($length = 16)
     {
         $string = '';
-
         while (($len = strlen($string)) < $length) {
             $size = $length - $len;
-
             $bytes = random_bytes($size);
-
             $string .= substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), 0, $size);
         }
 

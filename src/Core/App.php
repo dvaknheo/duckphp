@@ -14,7 +14,6 @@ use DuckPhp\Core\Kernel;
 use DuckPhp\Core\Logger;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\RuntimeState;
-use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapperTrait;
 use DuckPhp\Core\View;
 
@@ -311,8 +310,6 @@ EOT;
 
 trait Core_SystemWrapper
 {
-    // use SystemWrapper;
-
     public static function header($output, bool $replace = true, int $http_response_code = 0)
     {
         return static::G()->_header($output, $replace, $http_response_code);
@@ -332,6 +329,22 @@ trait Core_SystemWrapper
     public static function register_shutdown_function(callable $callback, ...$args)
     {
         return static::G()->_register_shutdown_function($callback, ...$args);
+    }
+    public static function session_start(array $options = [])
+    {
+        return static::G()->_session_start($options);
+    }
+    public static function session_id($session_id = null)
+    {
+        return static::G()->_session_id($session_id);
+    }
+    public static function session_destroy()
+    {
+        return static::G()->_session_destroy();
+    }
+    public static function session_set_save_handler(\SessionHandlerInterface $handler)
+    {
+        return static::G()->_session_set_save_handler($handler);
     }
     public function _header($output, bool $replace = true, int $http_response_code = 0)
     {
@@ -383,6 +396,41 @@ trait Core_SystemWrapper
         }
         register_shutdown_function($callback, ...$args);
     }
+    ////[[[[
+    public function _session_start(array $options = [])
+    {
+        if ($this->system_wrapper_call_check(__FUNCTION__)) {
+            $this->system_wrapper_call(__FUNCTION__, func_get_args());
+            return;
+        }
+        return session_start($options);
+    }
+    public function _session_id($session_id = null)
+    {
+        if ($this->system_wrapper_call_check(__FUNCTION__)) {
+            $this->system_wrapper_call(__FUNCTION__, func_get_args());
+            return;
+        }
+        return session_id($session_id);
+    }
+    public function _session_destroy()
+    {
+        if ($this->system_wrapper_call_check(__FUNCTION__)) {
+            $this->system_wrapper_call(__FUNCTION__, func_get_args());
+            return;
+        }
+        return session_destroy();
+    }
+    public function _session_set_save_handler(\SessionHandlerInterface $handler)
+    {
+        if ($this->system_wrapper_call_check(__FUNCTION__)) {
+            $this->system_wrapper_call(__FUNCTION__, func_get_args());
+            return;
+        }
+        return session_set_save_handler($handler);
+    }
+    ////]]]]
+    
 }
 trait Core_Helper
 {
@@ -575,7 +623,7 @@ trait Core_Helper
     public function _Domain()
     {
         $scheme = $_SERVER['REQUEST_SCHEME'] ?? '';
-        $host = $_SERVER['HTTP_HOST'] ?? (SuperGlobal::G()->SERVER['SERVER_NAME'] ?? ($_SERVER['SERVER_ADDR'] ?? ''));
+        $host = $_SERVER['HTTP_HOST'] ?? ($_SERVER['SERVER_NAME'] ?? ($_SERVER['SERVER_ADDR'] ?? ''));
         $host = $host ?? '';
         
         $port = $_SERVER['SERVER_PORT'] ?? '';
@@ -854,42 +902,7 @@ trait Core_Glue
     public static function CallException($ex)
     {
         return ExceptionManager::G()->_CallException($ex);
-    }
-    //super global
-    public static function SuperGlobal($replacement_object = null)
-    {
-        return SuperGlobal::G($replacement_object);
-    }
-    public static function &GLOBALS($k, $v = null)
-    {
-        return SuperGlobal::G()->_GLOBALS($k, $v);
-    }
-    public static function &STATICS($k, $v = null, $_level = 1)
-    {
-        return SuperGlobal::G()->_STATICS($k, $v, $_level);
-    }
-    public static function &CLASS_STATICS($class_name, $var_name)
-    {
-        return SuperGlobal::G()->_CLASS_STATICS($class_name, $var_name);
-    }
-    ////super global
-    public static function session_start(array $options = [])
-    {
-        return SuperGlobal::G()->session_start($options);
-    }
-    public static function session_id($session_id = null)
-    {
-        return SuperGlobal::G()->session_id($session_id);
-    }
-    public static function session_destroy()
-    {
-        return SuperGlobal::G()->session_destroy();
-    }
-    public static function session_set_save_handler(\SessionHandlerInterface $handler)
-    {
-        return SuperGlobal::G()->session_set_save_handler($handler);
-    }
-    
+    }    
     public static function GET($key = null, $default = null)
     {
         if (isset($key)) {
@@ -958,7 +971,6 @@ trait Core_Component
     {
         $ret = [
             RuntimeState::class,
-            SuperGlobal::class,
             View::class,
         ];
         $ret = array_merge($ret, $this->extDynamicComponentClasses);

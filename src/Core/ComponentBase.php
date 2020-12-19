@@ -46,6 +46,15 @@ class ComponentBase implements ComponentInterface
     {
         return $this->is_inited;
     }
+    /*
+    public function checkInstall($context)
+    {
+        if($this->isInited){
+            return;
+        }
+        $this->init($context->options,$context);
+    }
+    */
     //for override
     protected function initOptions(array $options)
     {

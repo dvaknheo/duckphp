@@ -39,7 +39,7 @@ class Main
                 SessionServiceException::ThrowOn(true, "CRSF", 419);
                 //防止 csrf 攻击，用于站内无跳板的简单情况
             }
-            //$flag=SessionService::G()->checkCsrf(C::SuperGlobal()->_POST['_token']??null);
+            //$flag=SessionService::G()->checkCsrf($_POST['_token']??null);
         }
         $this->setLayoutData();
     }
