@@ -15,10 +15,14 @@ class ThrowOnTest extends \PHPUnit\Framework\TestCase
             echo "1Done";
         }
         try {
-            ThrowOnObject::ThrowTo(ThrowOnObject2::class);
+            ThrowOnObject2::Handle(ThrowOnObject::class);
             ThrowOnObject::ThrowOn(true, "Message", 2, ThrowOnException::class);
         } catch (\Throwable $ex) {
-            echo "2Done";
+            try{
+                ThrowOnObject::Proxy($ex);
+            }catch(ThrowOnObject $ex){
+                echo "2Done";
+            }
         }
         
 
@@ -28,7 +32,7 @@ class ThrowOnTest extends \PHPUnit\Framework\TestCase
         //*/
     }
 }
-class ThrowOnObject
+class ThrowOnObject extends \Exception
 {
     use \DuckPhp\ThrowOn\ThrowOn;
 }

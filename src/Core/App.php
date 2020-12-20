@@ -464,7 +464,7 @@ trait Core_Helper
     ////
     public function _ExitJson($ret, $exit = true)
     {
-        static::header('Content-Type:text/json');
+        static::header('Content-Type:application/json; charset=utf-8');
         
         $flag = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
         if ($this->_IsDebug()) {

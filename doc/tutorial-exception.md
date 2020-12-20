@@ -38,7 +38,7 @@ ExceptionManager
 C::assignExceptionHandler($classes, $callback = null);
 C::assignExceptionHandler([$class=>$callback]);
 
-    为特定 异常类设置回调， 发生异常的时候 $callback($exception);这个方法是 assign 方法，两种调用形式，另一种调用形势是 
+    为特定 异常类设置回调， 发生异常的时候 $callback($exception);这个方法是 assign 方法，两种调用形式。
 
 C::setMultiExceptionHandler(array $classes, $callback)
 
@@ -67,7 +67,7 @@ Business 抛出自己错误的时候，来个同名 exception 类。如 SessionB
 
 如果没调用 C::setDefaultExceptionHandler  则由 App::OnDefaultException 处理 exception 。你可以重写 App::\_OnDefaultException 来实现自己的异常管理，如加日志等等。
 
-### ThrowOn trai
+### ThrowOn trait
 
 DuckPhp 工程几乎不得不引用的类之一就是 ThrowOn 这个 trait
 
@@ -82,8 +82,12 @@ PHP 有个函数 assert ， ThrowOn 和他逻辑相反。ThrowOn的方式会更�
 
 另一个静态方法：
 
-public static function ThrowTo($class)
+public static function Handle($class)
 
-如果指定为 ThrowTo 则会把本来 ThrowOn 到本类的异常 ， Throw 到相应 $class 异常类。
+把本来 $class ThrowOn 到本类的异常 ， Throw 到当前异常类。
 
 这个方法的作用是用于提供第三方异常类的时候。让人无缝处理异常类。
+
+public static function Proxy($ex)
+        
+throw new static($ex->getMessage, $ex->getCode()); 的缩写

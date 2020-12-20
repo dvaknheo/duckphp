@@ -101,15 +101,15 @@ Controller --> Business ------------------------------ ---> Model
 
 同级之间的东西不能相互调用
 
-* 写 Model 你可能要引入 Base\Helper\ModelHelper 助手类别名为 M 。
-* 写 Serivce 你可能要引入 Base\Helper\SerivceHelper 助手类别名为 S 。
-* 写 Controller 你可能要引入 Base\Helper\ControllerHelper 助手类别名为 C 。
-* 写 View 你可能要引入 Base\Helper\ViewHelper 助手类别名为 V 。
+* 写 Model 你可能要引入 MyProject\Helper\ModelHelper 助手类别名为 M 。
+* 写 Business 你可能要引入 MyProject\Helper\BusinessHelper 助手类别名为 B 。
+* 写 Controller 你可能要引入 MyProject\Helper\ControllerHelper 助手类别名为 C 。
+* 写 View 你可能要引入 MyProject\Helper\ViewHelper 助手类别名为 V 。
 * 不能交叉引入其他层级的助手类。如果需要交叉，那么你就是错的。
 * 小工程可以用直接使用入口类 MY\Base\App 类，这包含了上述类的公用方法。
 * ContrllorHelper,ModelHelper,BusinessHelper,ViewHelper 如果你一个人偷懒，直接用 APP 类也行  
-* Service 按业务逻辑走， Model 按数据库表名走
-* LibService 其实是特殊的 Service 用于其他 Service 调用
+* Business 按业务逻辑走， Model 按数据库表名走
+* Lib 其实是特殊的 Business 用于其他 Business 调用
 * ExModel 是特殊 Model 表示多个表混合调用。
 
 * 图上没显示特殊的 AppHelper
@@ -222,17 +222,6 @@ class App extends DuckPhp
     {
         echo "override you the routes\n";
     }
-    public function __construct()
-    {
-        parent::__construct();
-        $options = [];
-
-        // @autogen by tests/genoptions.php
-// 【省略选项注释】
-        // @autogen end
-        
-        $this->options = array_replace_recursive($this->options, $options);
-    }
     //@override
     protected function onPrepare()
     {
@@ -247,6 +236,17 @@ class App extends DuckPhp
     protected function onRun()
     {
         // your code here
+    }
+    public function __construct()
+    {
+        parent::__construct();
+        $options = [];
+
+        // @autogen by tests/genoptions.php
+// 【省略选项注释】
+        // @autogen end
+        
+        $this->options = array_replace_recursive($this->options, $options);
     }
 }
 

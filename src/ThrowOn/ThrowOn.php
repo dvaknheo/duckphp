@@ -23,20 +23,12 @@ trait ThrowOn
             throw new $exception_class($message, $code);
         }
     }
-    public static function ThrowTo($class)
-    {
-        static::$To[static::class] = $class;
-    }
-    /*
-    public static function HandlerThrow($class)
+    public static function Handle($class)
     {
         $class::$To[$class] = static::class;
     }
-
-
-    public static function ProxyWith($ex)
+    public static function Proxy($ex)
     {
-        throw new static::class($ex->getMessage, $ex->getCode());
+        throw new static($ex->getMessage(), $ex->getCode());
     }
-    //*/
 }

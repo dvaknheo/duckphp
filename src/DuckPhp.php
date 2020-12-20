@@ -33,15 +33,22 @@ class DuckPhp extends App
 
         'ext' => [
             DbManager::class => true,
-            RouteHookPathInfoCompat::class => true,
             RouteHookRouteMap::class => true,
-            Console::class => true,
         ],
         
         'database_auto_extend_method' => false,
         'route_map_auto_extend_method' => false,
     ];
-    
+    protected function initAfterOverride(array $options, object $context = null)
+    {
+        if (PHP_SAPI === 'cli') {
+            $this->options['ext'][Console::class] = $this->options['ext'][Console::class] ?? true;
+        }
+        if ($options['path_info_compact_enable'] ?? false) {
+            $this->options['ext'][RouteHookPathInfoCompat::class] = $this->options['ext'][RouteHookPathInfoCompat::class] ?? true;
+        }
+        return parent::initAfterOverride($options, $context);
+    }
     //@override
     public function _Cache($object = null)
     {

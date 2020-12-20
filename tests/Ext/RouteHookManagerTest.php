@@ -19,6 +19,8 @@ $options['override_class'] = '';
 $options['path_info_compact_enable'] = true;
 
 DuckPhp::G()->init($options);
+
+var_dump(DuckPhp::G()->options);
 ///////////////////////////
 
 Route::G()->reset()->run();

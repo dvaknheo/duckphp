@@ -216,7 +216,7 @@ Config
 LoadConfig
 
     【配置相关】见 BusinessHelper 的 LoadConfig 介绍
-    
+
 ### 跳转相关
 
 ExitRedirect 不能跳转到外站，要用 ExitRedirectOutside
@@ -236,7 +236,7 @@ Exit404($exit = true)
 ExitJson($ret, $exit = true)
 
     【跳转】输出 json 结果，$exit 为 true 则附加 exit()
-    
+
 ### 路由相关
 
 setRouteCallingMethod
@@ -369,6 +369,7 @@ session_start(array $options = [])
 
     【系统替代】
 session_id($session_id = null)
+
     【系统替代】
 session_destroy()
 
@@ -396,20 +397,6 @@ assignPathNamespace($path, $namespace = null)
 CallException($ex)
 
     调用异常处理，一般也不用，而是看异常处理那章
-
-### Swoole 兼容
-
-这是 Swoole 开发才会用到的方法。这里暂时不解释
-
-&GLOBALS($k, $v = null)
-
-    替换全局变量
-&STATICS($k, $v = null, $_level = 1)
-
-    替换静态变量
-&CLASS_STATICS($class_name, $var_name)
-
-    替换类内静态变量
 
 ### 其 DuckPhp 类自带的非助手函数静态方法
 

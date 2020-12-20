@@ -30,6 +30,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
             'use_short_functions'=>true,
             'mode_no_path_info'=>true,
             'path_view'=>$path_view,
+            'path_info_compact_enable'=>true,
         ];
         DuckPhp::G()->init($options);
         DuckPhp::G()->system_wrapper_replace([
