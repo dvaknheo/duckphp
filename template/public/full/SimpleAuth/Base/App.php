@@ -15,22 +15,27 @@ class App extends DuckPhp
     //@override
     protected $plugin_options = [
     ];
-    //@override
-    protected function onPrepare()
+
+    
+    public static $Sections = [];
+    public static function startSection($name)
     {
+        ob_start(function ($str) use ($name) {
+            if (!isset(static::$Sections[$name])) {
+                static::$Sections[$name] = '';
+            }
+            static::$Sections[$name] .= $str;
+        });
     }
-    //@override
-    protected function onRun()
+    public static function stopSection()
     {
+        ob_end_flush();
     }
-	//@override
-    protected function onPluginModeInit()
+    public static function yieldContent($name)
     {
-        //your code here
-    }
-    //@override
-	protected function onPluginModeRun()
-    {
-        //your code here
+        if (isset(static::$Sections[$name])) {
+            return static::$Sections[$name];
+        }
+        return '';
     }
 }

@@ -65,7 +65,7 @@ DuckPhp 用可变单例方式，解决了**系统的调用形式不变，实现�
 
 #### 高可靠性，无依赖
 
-DuckPhp 无第三方依赖，你不必担心第三方依赖改动而大费周折。（不需要引入101 个包，就能工作）
+DuckPhp 无第三方依赖，你不必担心第三方依赖改动而大费周折。**不需要引入101 个第三方包，就能工作**，稳定性完全可控。
 
 如果对默认实现不满，你也可以很容易改用需要第三方依赖的实现。
 
@@ -85,11 +85,11 @@ DuckPhp 的路由也可以单独抽出使用。
 
 DuckPhp 以库方式引入，所以 DuckPhp 工程骨架不像其他框架那样一大堆不可删除的文件
 
+DuckPhp 框架的设计原则：这东西非得框架自带么，不自带行么。
+
 DuckPhp 的配置基本都是使用默认方式。 不需要一大堆的配置文件。
 
 DuckPhp 代码简洁，不做多余事情。最新版本默认 demo 运行根据 CodeCoverage 覆盖统计， 只需要行数 320 / 3495 (v1.2.9)  执行行数/总可执行行数  。
-
-DuckPhp 框架的设计原则：这东西非得框架自带么，不自带行么。
 
 DuckPhp 的应用调试非常方便，堆栈清晰，调用 debug_print_backtrace(2) 很容易发现。那些用了中间件的框架的堆栈很不清晰。
 
@@ -117,13 +117,13 @@ DuckPhp 遵守最小惊讶原则，尽量避免一下常见问题：
 
 “这东西从哪里来的，怎么就出现。这东西能干什么，我删除不行么。”
 
-避免了注解之类冒出来的东西。
+避免了注解之类不知道从哪里冒出来的东西。
 
 #### 全覆盖测试
 
 由于作者强迫症，DuckPhp 每次发布都是通过全代码覆盖的测试。
 
-DuckPhp 有很大健壮性。
+DuckPhp 因此有很大健壮性。
 
 #### 区分使用角色
 
@@ -143,7 +143,7 @@ DuckPhp 工程层级分明，不交叉引用。
 
 DuckPhp 一度通过SwooleHttpd 不需要改代码就支持 swoole 。将来版本将支持 swoole 和 workerman ，和更多其他平台。
 
-DuckPhp 的类绝大多数都是无状态的。
+DuckPhp 的类尽量无状态。
 
 ### 和其他框架简单对比
 
@@ -205,8 +205,6 @@ Controller --> Business ------------------------------ ---> Model
     2. 添加后缀为 ExModel 用于表示这个 Model 是多个表的，如 UserExModel。
     3. 或者单独和数据库不一致如取名 UserAndPlayerRelationModel
 ## 常用工程目录结构
-
-v1.2.8-dev 调整中
 
 DuckPhp 代码里的 template 目录就是我们的工程目录示例。也是工程桩代码。
 
@@ -515,25 +513,24 @@ DuckPhp 类/文件结构参考。(粗体部分是启动的时候引用的文件)
     1. **[ComponentBase](doc/ref/Core-ComponentBase.md)** 组件基类
          1. **[ComponentInterface](doc/ref/Core-ComponentInterface.md)** 组件接口
     2. **[App](doc/ref/Core-App.md)** 核心应用类。引用一下类
-         1. **[Kernel](doc/ref/Core-Kernel.md)** 核心Trait 以下是 `核心必备组件`
+        1. **[Kernel](doc/ref/Core-Kernel.md)** 核心Trait 以下是 `核心必备组件`
             1. [AutoLoader](doc/ref/Core-AutoLoader.md) 自动加载类
             2. **[Configer](doc/ref/Core-Configer.md)** 配置组件
             3. **[View](doc/ref/Core-View.md)** 视图组件
             4. **[Route](doc/ref/Core-Route.md)** 路由组件
-            5. [SuperGlobal](doc/ref/SuperGlobal.md) 超全局变量替换组件
-            6. [Logger](doc/ref/Core-Logger.md) 日志组件
-            7. **[ExceptionManager](doc/ref/Core-ExceptionManager.md)**   异常管理组件
-            8. **[RuntimeState](doc/ref/Core-RuntimeState.md)** 运行期数据保存组件
-         2. [ExtendableStaticCallTrait](doc/ref/Core-ExtendableStaticCallTrait.md) 扩展静态调用的 trait
-         3. [SystemWrapperTrait](doc/ref/Core-SystemWrapperTrait.md) 替换系统同名函数的 trait
-         4. **[Functions](doc/ref/Core-Functions.md)** 全局函数列表
+            5. **[ExceptionManager](doc/ref/Core-ExceptionManager.md)**   异常管理组件
+            6. **[RuntimeState](doc/ref/Core-RuntimeState.md)** 运行期数据保存组件
+        2. [ExtendableStaticCallTrait](doc/ref/Core-ExtendableStaticCallTrait.md) 扩展静态调用的 trait
+        3. [SystemWrapperTrait](doc/ref/Core-SystemWrapperTrait.md) 替换系统同名函数的 trait
+        4. **[Functions](doc/ref/Core-Functions.md)** 全局函数列表
+        5. [Logger](doc/ref/Core-Logger.md) 日志组件
     3. [AppPluginTrait](doc/ref/Core-AppPluginTrait.md)   这个Trait用于把独立工程 App 转成插件 
 2. `Db` 目录是数据库目录
    1. [DbAdvanceTrait](doc/ref/Db-DbAdvanceTrait.md)  这个 trait 增加了 Db类的高级功能
    2. [DbInterface](doc/ref/Db-DbInterface.md) Db 类满足 DbInterface 接口
    3. [Db](doc/ref/Db-Db.md) Db类
 3. **[DuckPhp](doc/ref/DuckPhp.md)** 入口类，加载了默认扩展的 DuckPhp 入口 ，扩展自 [DuckPhp\\Core\\App](doc/ref/Core-App.md)
-4. `Ext` 目录是扩展目录，默认加载的扩展。按字母排序。
+4. `Ext` 目录是扩展目录，**默认加载的扩展**。按字母排序。
    1. [Cache](doc/ref/Ext-Cache.md) 缓存组件
    2. **[Console](doc/ref/Ext-Cache.md)** 命令行模式扩展组件
         1. [Installer](doc/ref/Ext-Installer.md) 安装器
@@ -559,8 +556,8 @@ DuckPhp 类/文件结构参考。(粗体部分是启动的时候引用的文件)
    10. [RouteHookManager](doc/ref/Ext-RouteHookManager.md) 路由钩子管理器
    11. [RouteHookRewrite](doc/ref/Ext-RouteHookRewrite.md) 路由重写组件
    12. [StrictCheck](doc/ref/Ext-StrictCheck.md) 严格检查模式组件
-6. `Helper` 目录，各种助手类。应用工程
-    1. **[HelperTrait](doc/ref/Helper-HelperTrait.md)** 助手类公用 Trait
+6. `Helper` 目录，各种助手类。
+    1. [HelperTrait](doc/ref/Helper-HelperTrait.md) 助手类公用 Trait
     2. [ControllerHelper](doc/ref/Helper-ControllerHelper.md) 控制器助手类
     3. [ModelHelper](doc/ref/Helper-ModelHelper.md) 模型助手类
     4. [BusinessHelper](doc/ref/Helper-BusinessHelper.md) 服务助手类

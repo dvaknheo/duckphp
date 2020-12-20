@@ -18,7 +18,7 @@ graph [rankdir = "LR"];
     ExModel ->ModelHepler;
     View -> ViewHepler;
     ControllerHelper [label="ControllerHelper as C"];
-    BusinessHelper [label="BusinessHelper as S"];
+    BusinessHelper [label="BusinessHelper as B"];
     ModelHepler [label="ModelHepler as M"];
     ViewHepler [label="ViewHepler as V"];
 

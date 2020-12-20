@@ -271,7 +271,7 @@ class Route extends ComponentBase
         $this->calling_method = !empty($method)?$method:'index';
         
         /** @var string */
-        $base_class = str_replace('~', $this->namespace_prefix, $this->options['controller_base_class']);
+        $base_class = str_replace('~', $this->namespace_prefix, $this->options['controller_base_class'] ?? '');
         /** @var mixed */ $class = $full_class; // phpstan
         if (!empty($base_class) && !is_subclass_of($class, $base_class)) {
             $this->route_error = "no the controller_base_class! {$base_class} ";

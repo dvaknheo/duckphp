@@ -37,6 +37,21 @@ class App extends DuckPhp
     {
         echo "override you the routes\n";
     }
+    //@override
+    protected function onPrepare()
+    {
+        //your code here
+    }
+    //@override
+    protected function onInit()
+    {
+        // your code here
+    }
+    //@override
+    protected function onRun()
+    {
+        // your code here
+    }
     public function __construct()
     {
         parent::__construct();
@@ -464,20 +479,5 @@ class App extends DuckPhp
         // @autogen end
         
         $this->options = array_replace_recursive($this->options, $options);
-    }
-    //@override
-    protected function onPrepare()
-    {
-        //your code here
-    }
-    //@override
-    protected function onInit()
-    {
-        // your code here
-    }
-    //@override
-    protected function onRun()
-    {
-        // your code here
     }
 }

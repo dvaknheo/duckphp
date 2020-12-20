@@ -34,7 +34,7 @@ class UserService extends BaseService
         $password = $form['password'];
         $user = UserModel::G()->getUserByUsername($username);
         UserServiceException::ThrowOn(empty($user), "用户不存在");
-        UserServiceException::ThrowOn(!empty($user['deletee_at']), "用户已被禁用");
+        UserServiceException::ThrowOn(!empty($user['delete_at']), "用户已被禁用");
         $flag = UserModel::G()->verifyPassword($user, $password);
         UserServiceException::ThrowOn(!$flag, "密码错误");
         
@@ -46,7 +46,7 @@ class UserService extends BaseService
     {
         UserServiceException::ThrowOn($new_password === '', "空密码");
         $user = UserModel::G()->getUserById($uid);
-        UserServiceException::ThrowOn(!empty($user['deletee_at']), "用户已被禁用");
+        UserServiceException::ThrowOn(!empty($user['delete_at']), "用户已被禁用");
         $flag = UserModel::G()->verifyPassword($user, $password);
         UserServiceException::ThrowOn(!$flag, "旧密码错误");
         

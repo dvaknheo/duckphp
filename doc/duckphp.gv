@@ -24,7 +24,6 @@ subgraph cluster_Core {
     Core_Route [label="Route";shape=Mdiamond;style=filled];
     Core_RuntimeState [label="RuntimeState";shape="component"];
     Core_SystemWrapperTrait [label="SystemWrapperTrait";shape=diamond];
-    Core_SuperGlobal [label="SuperGlobal";shape="component"];
 
     Core_ExtendableStaticCallTrait [label="ExtendableStaticCallTrait";shape=diamond];
     
@@ -51,7 +50,6 @@ subgraph cluster_Core {
     Core_App -> Core_Route [style="dashed"];
     Core_App -> Core_RuntimeState [style="dashed"];
     Core_App -> Core_View [style="dashed"];
-    Core_App -> Core_SuperGlobal [style="dashed"];
     
     Core_App -> Core_Functions [style="dashed"];
     Core_App -> Core_ComponentBase [style="dotted"];
@@ -63,7 +61,6 @@ subgraph cluster_Core {
     Core_ExceptionManager -> Core_ComponentBase [style="dotted"];
     Core_Configer -> Core_ComponentBase [style="dotted"];
     Core_Route -> Core_ComponentBase [style="dotted"];
-    Core_SuperGlobal -> Core_ComponentBase [style="dotted"];
     Core_RuntimeState -> Core_ComponentBase [style="dotted"];
     Core_View -> Core_ComponentBase [style="dotted"];
     Core_Logger -> Core_ComponentBase [style="dotted"];
