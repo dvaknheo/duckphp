@@ -838,6 +838,11 @@ trait Core_Glue
     {
         return AutoLoader::G()->assignPathNamespace($path, $namespace);
     }
+    //
+    public static function runAutoLoader()
+    {
+        return AutoLoader::G()->runAutoLoader();
+    }
     // route
     public static function Route($replacement_object = null)
     {

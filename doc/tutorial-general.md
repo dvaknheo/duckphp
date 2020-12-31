@@ -136,31 +136,24 @@ File: `template/public/index.php`
  */
 require_once(__DIR__.'/../../autoload.php');    // @DUCKPHP_HEADFILE
 
+//如果配置了 compose.json 加载 ，可以省略这两句
+\DuckPhp\DuckPhp::assignPathNamespace(__DIR__ . '/../app', 'LazyToChange');
+\DuckPhp\DuckPhp::runAutoLoader();
+
 echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKPHP_DELETE
-echo "<div>不建议直接运行这文件，建议用安装模式 </div>\n"; //@DUCKPHP_DELETE
+echo "<div>不建议直接运行这文件，建议用安装模式 </div>\n";              //@DUCKPHP_DELETE
 
-$options =[
-    //'is_debug'=>true,
+$options = [
+    // 这里可以添加更多选项。
 ];
-
-// 设置工程命名空间对应的目录，但强烈推荐修改 composer.json 使用 composer 加载。 
-require_once __DIR__.'/../app/System/App.php';
-$options['path_namespace'] = 'app';
-
-
-//其他默认选项
-//$options['path_info_compact_enable'] => true; // 如果你没设置 PATH_INFO 打开这项兼容
-//$options['use_setting_file'] = true; // 如果你使用设置文件。
-
+//*/
 \LazyToChange\System\App::RunQuickly($options);
-return;
-/*
-//也可以用
-$options['override_class'] = \LazyToChange\System\App::class;
-\DuckPhp\DuckPhp::RunQuickly($options);
+//*/
 
-return;
-*/
+/* //等价于
+$options['override_class'] = LazyToChange\System\App::class,
+\DuckPhp\DuckPhp::RunQuickly($options);
+//*/
 ```
 入口类前面部分是处理头文件的。
 

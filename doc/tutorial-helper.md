@@ -33,12 +33,12 @@ Controller --> Business ------------------------------ ---> Model
 作为 `业务工程师` ， 你不能引入 DuckPhp 的任何东西，就当 DuckPhp 命名空间不存在。
 核心工程师才去研究 DuckPhp 类的东西。
 
-* 写 Model 你可能要引入 LazyToChange\Base\Helper\ModelHelper 助手类别名为 M 。
-* 写 Business 你可能要引入 LazyToChange\Base\Helper\BusinessHelper 助手类别名为 B 。
-* 写 Controller 你可能要引入 LazyToChange\Base\Helper\ControllerHelper 助手类别名为 C 。
-* 写 View 你可能要引入 LazyToChange\Base\Helper\ViewHelper 助手类别名为 V 。
+* 写 Model 你可能要引入 LazyToChange\Helper\ModelHelper 助手类别名为 M 。
+* 写 Business 你可能要引入 LazyToChange\Helper\BusinessHelper 助手类别名为 B 。
+* 写 Controller 你可能要引入 LazyToChange\Helper\ControllerHelper 助手类别名为 C 。
+* 写 View 你可能要引入 LazyToChange\Helper\ViewHelper 助手类别名为 V 。
 * 不能交叉引入其他层级的助手类。如果需要交叉，那么你就是错的。
-* 小工程可以用直接使用入口类 LazyToChange\Base\App 类，这包含了上述类的公用方法。
+* 小工程可以用直接使用入口类 LazyToChange\System\App 类 甚至  DuckPhp\DuckPhp 类，这包含了上述类的公用方法。
 * App 类包含助手类的全部内容。但是不推荐使用 App 类的助手类方法代替助手类。
 
 工程的命名空间 LazyToChange 是 可调的。比如调整成 LazyToChangeProject ,TheBigOneProject  等。
@@ -287,9 +287,6 @@ setcookie()
 exit
 
     【系统替代】 退出函数，以便于接管
-SuperGlobal
-
-    【swoole 兼容】 SuperGlobal()-> 前缀替代 超全局变量做 swoole 兼容， 如 C::SuperGlobal()->_GET[] , C::SuperGlobal()->_POST[] 等。
 ### 输入相关
 替代同名 GET / POST /REQUEST /COOKIE 。如果没的话返回 后面的默认值。
 注意没有 \_SESSION ，这是故意设计成这样的，不希望 \_SESSION 到处飞， _SESSION 应该集中于 SessionBusiness 或 SessionLib 里。

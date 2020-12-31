@@ -191,6 +191,8 @@ App::PageHtml(123);
         $new_class = AppTestObjectB::class;
         App::replaceControllerSingelton($old_class, $new_class);
         App::G()->version();
+        
+        App::G()->runAutoLoader();
         \MyCodeCoverage::G()->end();
     return;
 

@@ -100,6 +100,11 @@ class AutoLoader
         }
         spl_autoload_register(self::class.'::AutoLoad'); // phpstan can't use static::class :(
     }
+    public function runAutoLoader()
+    {
+        //proxy to run();
+        return $this->run();
+    }
     public static function AutoLoad(string $class): void
     {
         static::G()->_Autoload($class);

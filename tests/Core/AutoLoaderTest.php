@@ -31,7 +31,8 @@ class AutoLoaderTest extends \PHPUnit\Framework\TestCase
             $path_autoload.'AutoApp2'=> 'for_autoloadertest2',
         ]);
         $G->run();
-        $G->run(); //retest
+        $G->runAutoLoader(); //re-test
+        
         
 
         $t=new \for_autoloadertest\LoadMe(); //_autoload

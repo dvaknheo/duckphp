@@ -38,6 +38,9 @@ public function isInited(): bool
 public function run()
 
     //
+public function runAutoLoader()
+
+    // 别名，方便调用
 public function _autoload($class)
 
     //
@@ -54,6 +57,8 @@ public function clear()
 
     //
 public static function DuckPhpSystemAutoLoader(string $class): void
+
+
 
     仅仅用于
 ## 详解
