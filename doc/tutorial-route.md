@@ -14,6 +14,7 @@ DuckPhp 的路由类比较复杂，也是重点
 按不同类的来源分为：
 
 ### Route
+
 - 'controller_base_class' => NULL,
     控制器基类
 - 'controller_class_postfix' => '',
@@ -73,9 +74,22 @@ DuckPhp 支持很多种 路由方式，默认最常见最基本的就是文件�
 
 注意的是， DuckPhp 不支持 /test/  这样的 url ，最后的 / 需要自己处理。
 
+假定 我们的工程命名空间是 ，即 $options['namespace'] = 'MyProject';
+默认选项 $options['namespace_controller'] => 'Controller';
+对应的 类->方法 如下
+
+
+```
+/       => MyProejct\Controller\Main->index
+/test   => MyProejct\Controller\Main->test
+/a/b    => MyProejct\Controller\a->b
+/x/y/z  => MyProejct\Controller\x\y->z
+
+```
+
 路由的流程在 DuckPhp\Core\Route 类里run() 方法。
 
-限定的类是在  namespace namespace_controller 选项
+限定的类是在  namespace namespace_controller 选项。
 
 根目录的路由会使用 Main（controller_welcome_class 选项） 来代替。
 
