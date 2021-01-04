@@ -205,8 +205,9 @@ trait Core_Handler
             return;
         }
         
-        $this->setViewHeadFoot(null, null);
-        $this->_Show([], $error_view);
+        View::G(new View())->init($this->options);
+        $this->onBeforeOutput();
+        View::G()->_Show([],$error_view);
     }
     
     public function _OnDefaultException($ex): void
@@ -254,8 +255,9 @@ trait Core_Handler
             return;
         }
         
-        $this->setViewHeadFoot(null, null);
-        $this->_Show($data, $error_view);
+        View::G(new View())->init($this->options);
+        $this->onBeforeOutput();
+        View::G()->_Show($data,$error_view);
     }
     public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
     {
