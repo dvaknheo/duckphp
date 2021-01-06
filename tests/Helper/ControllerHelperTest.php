@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Helper;
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Helper\ControllerHelper;
-use DuckPhp\Ext\Pager;
+use DuckPhp\Component\Pager;
 
 class ControllerHelperTest extends \PHPUnit\Framework\TestCase
 {

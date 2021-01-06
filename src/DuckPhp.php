@@ -8,14 +8,14 @@
 
 namespace DuckPhp;
 
+use DuckPhp\Component\Cache;
+use DuckPhp\Component\Console;
+use DuckPhp\Component\DbManager;
+use DuckPhp\Component\EventManager;
+use DuckPhp\Component\Pager;
+use DuckPhp\Component\RouteHookPathInfoCompat;
+use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Core\App;
-use DuckPhp\Ext\Cache;
-use DuckPhp\Ext\Console;
-use DuckPhp\Ext\DbManager;
-use DuckPhp\Ext\EventManager;
-use DuckPhp\Ext\Pager;
-use DuckPhp\Ext\RouteHookPathInfoCompat;
-use DuckPhp\Ext\RouteHookRouteMap;
 
 class DuckPhp extends App
 {

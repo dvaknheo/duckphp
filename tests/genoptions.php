@@ -330,12 +330,12 @@ DuckPhp\\Core\\Route
 DuckPhp\\Core\\RuntimeState
 DuckPhp\\Core\\SuperGlobal
 DuckPhp\\Core\\View
-DuckPhp\\Ext\\Cache
+DuckPhp\\Component\\Cache
 DuckPhp\\Ext\\CallableView
-DuckPhp\\Ext\\Console
-DuckPhp\\Ext\\DbManager
+DuckPhp\\Component\\Console
+DuckPhp\\Component\\DbManager
 DuckPhp\\Ext\\EmptyView
-DuckPhp\\Ext\\EventManager
+DuckPhp\\Component\\EventManager
 DuckPhp\\Ext\\FacadesAutoLoader
 DuckPhp\\Ext\\JsonRpcExt
 DuckPhp\\Ext\\Misc
@@ -343,9 +343,9 @@ DuckPhp\\Ext\\RedisCache
 DuckPhp\\Ext\\RedisManager
 DuckPhp\\Ext\\RouteHookApiServer
 DuckPhp\\Ext\\RouteHookDirectoryMode
-DuckPhp\\Ext\\RouteHookPathInfoCompat
+DuckPhp\\Component\\RouteHookPathInfoCompat
 DuckPhp\\Ext\\RouteHookRewrite
-DuckPhp\\Ext\\RouteHookRouteMap
+DuckPhp\\Component\\RouteHookRouteMap
 DuckPhp\\Ext\\StrictCheck";
         $classes=explode("\n",$classes);
         return $classes;

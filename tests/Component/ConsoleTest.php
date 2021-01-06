@@ -1,8 +1,8 @@
 <?php 
-namespace tests\DuckPhp\Ext;
-use DuckPhp\Ext\Console;
+namespace tests\DuckPhp\Component;
+use DuckPhp\Component\Console;
 use DuckPhp\HttpServer\HttpServer;
-use DuckPhp\Ext\Installer;
+use DuckPhp\Component\Installer;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 

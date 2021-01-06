@@ -1,7 +1,7 @@
 <?php
-namespace tests\DuckPhp\Ext;
+namespace tests\DuckPhp\Component;
 
-use DuckPhp\Ext\DbManager;
+use DuckPhp\Component\DbManager;
 use DuckPhp\DB\DB;
 use DuckPhp\DuckPhp as App;
 

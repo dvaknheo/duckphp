@@ -1,7 +1,7 @@
 <?php
-namespace tests\DuckPhp\Ext;
+namespace tests\DuckPhp\Component;
 
-use DuckPhp\Ext\RouteHookRouteMap;
+use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\App;
 

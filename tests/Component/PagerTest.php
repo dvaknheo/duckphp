@@ -1,7 +1,7 @@
 <?php
-namespace tests\DuckPhp\Ext;
+namespace tests\DuckPhp\Component;
 
-use DuckPhp\Ext\Pager;
+use DuckPhp\Component\Pager;
 use DuckPhp\DuckPhp;
 
 class PagerTest extends \PHPUnit\Framework\TestCase

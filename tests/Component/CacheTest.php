@@ -1,7 +1,7 @@
 <?php 
-namespace tests\DuckPhp\Ext;
-use DuckPhp\Ext\Cache;
-use DuckPhp\Ext\RedisManager;
+namespace tests\DuckPhp\Component;
+use DuckPhp\Component\Cache;
+use DuckPhp\Component\RedisManager;
 
 class CacheTest extends \PHPUnit\Framework\TestCase
 {

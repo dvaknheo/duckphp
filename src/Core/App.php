@@ -207,7 +207,7 @@ trait Core_Handler
         
         View::G(new View())->init($this->options);
         $this->onBeforeOutput();
-        View::G()->_Show([],$error_view);
+        View::G()->_Show([], $error_view);
     }
     
     public function _OnDefaultException($ex): void
@@ -257,7 +257,7 @@ trait Core_Handler
         
         View::G(new View())->init($this->options);
         $this->onBeforeOutput();
-        View::G()->_Show($data,$error_view);
+        View::G()->_Show($data, $error_view);
     }
     public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
     {

@@ -7,7 +7,7 @@ use DuckPhp\Core\Configer;
 use DuckPhp\Core\View;
 use DuckPhp\Core\Route;
 use DuckPhp\SingletonEx\SingletonEx;
-use DuckPhp\Ext\Pager;
+use DuckPhp\Component\Pager;
 
 class AppTest extends \PHPUnit\Framework\TestCase
 {

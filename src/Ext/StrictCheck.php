@@ -5,8 +5,8 @@
  */
 namespace DuckPhp\Ext;
 
+use DuckPhp\Component\DbManager;
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Ext\DbManager;
 use ErrorException;
 
 class StrictCheck extends ComponentBase

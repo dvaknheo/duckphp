@@ -1,6 +1,6 @@
 <?php 
-namespace tests\DuckPhp\Ext;
-use DuckPhp\Ext\Installer;
+namespace tests\DuckPhp\Component;
+use DuckPhp\Component\Installer;
 use DuckPhp\Core\App;
 
 class InstallerTest extends \PHPUnit\Framework\TestCase

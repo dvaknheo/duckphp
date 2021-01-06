@@ -3,10 +3,10 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckPhp\Ext;
+namespace DuckPhp\Component;
 
+use DuckPhp\Component\Installer;
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Ext\Installer;
 use DuckPhp\HttpServer\HttpServer;
 
 class Console extends ComponentBase

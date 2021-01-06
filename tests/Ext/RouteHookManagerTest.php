@@ -28,8 +28,8 @@ Route::G()->reset()->run();
 echo "<pre>\n";
 echo RouteHookManager::G()->dump();
 
-RouteHookManager::G()->attachPostRun()->removeAll(['DuckPhp\\Ext\\RouteHookRouteMap','AppendHook'])->detach();
-RouteHookManager::G()->attachPreRun()->moveBefore(['DuckPhp\\Ext\\RouteHookRouteMap','PrependHook'],['DuckPhp\\Ext\\RouteHookPathInfoCompat','Hook'])->detach();
+RouteHookManager::G()->attachPostRun()->removeAll(['DuckPhp\\Component\\RouteHookRouteMap','AppendHook'])->detach();
+RouteHookManager::G()->attachPreRun()->moveBefore(['DuckPhp\\Component\\RouteHookRouteMap','PrependHook'],['DuckPhp\\Component\\RouteHookPathInfoCompat','Hook'])->detach();
 $list=RouteHookManager::G()->attachPostRun()->getHookList();
 $list[]="abc";
 RouteHookManager::G()->attachPostRun()->setHookList($list);
