@@ -7,18 +7,17 @@ use DuckPhp\Component\Installer;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 
-class ConsoleTest extends \PHPUnit\Framework\TestCase
+class DefaultCommandTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(Console::class);
+        \MyCodeCoverage::G()->begin(DefaultCommand::class);
         
         $_SERVER['argv']=[];
         $options=[];
         Console::G()->init(['cli_enable'=>false],App::G());
         
         Console::G(new Console())->init($options,App::G());
-        Console::G()->app();
         App::G()->run();
         
         Console::G()->init(['cli_enable'=>true,'cli_mode' => 'hook',],App::G());
@@ -29,7 +28,7 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         Console::G()->init($options,App::G());
         Console::G()->getCliParameters();
         
-        Console::G()->regCliCommandGroup(Console_Command::class,"test");
+        Console::G()->regCliCommandGroup(DefaultCommand_Command::class,"test");
         $_SERVER['argv']=[
             '-','test:foo',
         ];
@@ -75,26 +74,56 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         }catch(\Exception $ex){
             var_dump("Hit!");
         }
+        Installer::G(new Console_Installer());
+        HttpServer::G(new Console_HttpServer());
+        DefaultCommand::G()->command_new();
+        DefaultCommand::G()->command_run();
+        DefaultCommand::G()->command_help();
+        DefaultCommand::G()->command_version();
+        
 
         
+        DefaultCommand::G()->command_list();
+        
+        DefaultCommand::G()->command_fetch();
+        DefaultCommand::G()->command_routes();
+        DefaultCommand::G()->command_depoly();
+        DefaultCommand::G()->command_test();
+        
         //*/
-        Console::G(new Console())->init([],Console_App::G());
+        Console::G(new Console())->init([],DefaultCommand_App::G());
         $_SERVER['argv']=[
             '-','list',
         ];
-        Console::G()->regCliCommandGroup(Console_Command::class,"aa");
-        Console::G()->regCliCommandGroup(Console_Command2::class,"aa");
-        Console_App::G()->run();
+        Console::G()->regCliCommandGroup(DefaultCommand_Command::class,"aa");
+        Console::G()->regCliCommandGroup(DefaultCommand_Command2::class,"aa");
+        DefaultCommand_App::G()->run();
         $_SERVER['argv']=[
-            '-','call',str_replace('\\','/',Console_Command2::class).'@command_foo4','A1'
+            '-','call',str_replace('\\','/',DefaultCommand_Command2::class).'@command_foo4','A1'
         ];
-        Console_App::G()->run();
+        DefaultCommand_App::G()->run();
         
         //*/
         \MyCodeCoverage::G()->end();
     }
 }
-class Console_App extends App
+
+class Console_Installer extends Installer
+{
+    public function run()
+    {
+        return true;
+    }
+}
+class Console_HttpServer extends HttpServer
+{
+    public function run()
+    {
+        return true;
+    }
+}
+
+class DefaultCommand_App extends App
 {
     /** overrid test*/
     public function command_test()
@@ -104,7 +133,7 @@ class Console_App extends App
 }
 
 
-class Console_Command extends ComponentBase
+class DefaultCommand_Command extends ComponentBase
 {
     public function command_foo()
     {
@@ -124,7 +153,7 @@ class Console_Command extends ComponentBase
     
     }
 }
-class Console_Command2 extends Console_Command
+class DefaultCommand_Command2 extends DefaultCommand_Command
 {
     /**
      * desc2
@@ -134,3 +163,4 @@ class Console_Command2 extends Console_Command
     
     }
 }
+

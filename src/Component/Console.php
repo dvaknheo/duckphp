@@ -5,18 +5,16 @@
  */
 namespace DuckPhp\Component;
 
-use DuckPhp\Component\Installer;
+use DuckPhp\Component\DefaultCommand;
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\HttpServer\HttpServer;
 
 class Console extends ComponentBase
 {
-    use Console_Command;
-    
     public $options = [
         'cli_enable' => true,
         'cli_mode' => 'replace',
         'cli_command_alias' => [],
+        'cli_default_command_class' => DefaultCommand::class,
     ];
     protected $context_class = null;
     protected $parameters = [];
@@ -62,6 +60,10 @@ class Console extends ComponentBase
         $this->callObject($class, $method, $func_args, $this->parameters);
         return true;
     }
+    public function app()
+    {
+        return $this->context_class::G();
+    }
 
     protected function parseCliArgs($argv)
     {
@@ -103,7 +105,7 @@ class Console extends ComponentBase
         }
         return $ret;
     }
-    protected function callObject($class, $method, $args, $input)
+    public function callObject($class, $method, $args, $input)
     {
         $object = $class::G();
         $reflect = new \ReflectionMethod($object, $method);
@@ -137,10 +139,15 @@ class Console extends ComponentBase
         $class = $alias[$name] ?? null;
         
         if (isset($class) && $name === '' && !method_exists($class, $method)) {
-            $class = static::class;
+            $class = $this->options['cli_default_command_class'];
             if (!method_exists($class, $method)) {
                 throw new \ReflectionException("Command Not Found: {$cmd}\n", -2);
             }
+            $options = $this->context_class::G()->options;
+            $options = $options['ext'][$class] ?? $options;
+            $options = is_string($options) ? $this->context_class::G()->options[$options] : $options;
+            $options = is_array($options) ? $options : [];
+            $class::G()->init($options, $this);
             return [$class,$method];
         }
         
@@ -175,7 +182,7 @@ class Console extends ComponentBase
         }
         return $ret;
     }
-    protected function getCommandGroupInfo()
+    public function getCommandGroupInfo()
     {
         $ret = [
             'commands' => [],
@@ -194,7 +201,7 @@ class Console extends ComponentBase
             }
             $ret['commands'][$class] = $data;
         }
-        $default = $this->getCommandsByClass(static::class);
+        $default = $this->getCommandsByClass($this->options['cli_default_command_class']);
         $app_class = $this->context_class;
 
         $ret['commands'][$app_class] = array_merge($default, $ret['commands'][$app_class]);
@@ -203,125 +210,5 @@ class Console extends ComponentBase
             ksort($v);
         }
         return $ret;
-    }
-}
-
-trait Console_Command
-{
-    /**
-     * create new project in current diretory.
-     */
-    public function command_new()
-    {
-        Installer::G()->init($this->getCliParameters())->run();
-    }
-    /**
-     * run inner server.
-     */
-    public function command_run()
-    {
-        $options = $this->getCliParameters();
-        $options['path'] = $this->context_class::G()->options['path'];
-        //'cli_httpserver_class'
-        HttpServer::RunQuickly($options);
-    }
-    ///////////////////////////////////////
-    /**
-     * show this help.
-     */
-    public function command_help()
-    {
-        echo "Welcome to Use DuckPhp ,version: ";
-        $this->command_version();
-        echo  <<<EOT
-Usage:
-  command [arguments] [options] 
-Options:
-  --help            Display this help message
-EOT;
-        
-        $this->command_list();
-    }
-    /**
-     * show version
-     */
-    public function command_version()
-    {
-        echo  $this->context_class::G()->version();
-        echo "\n";
-    }
-    /**
-     * show aviable commands.
-     */
-    public function command_list()
-    {
-        $info = $this->getCommandGroupInfo();
-        $str = '';
-        foreach ($info['commands'] as $class => $v) {
-            $class_alias = $info['alias'][$class] ?? null;
-            if ($class_alias === '') {
-                $str .= "system default commands\n";
-            } elseif ($class_alias) {
-                $str .= "commands power by '$class' alias '$class_alias':\n";
-            } else {
-                $str .= "commands power by '$class':\n";
-            }
-            foreach ($v as $cmd => $desc) {
-                $cmd = "\e[32;1m".str_pad($cmd, 7)."\033[0m";
-                $str .= "  $cmd $desc\n";
-            }
-            if ($class_alias === '') {
-                $str .= "  \e[32;1m*\e[0m is overrided by '$class'.\n";
-            }
-        }
-        echo $str;
-    }
-    /**
-     * call a function. e.g. namespace/class@method arg1 --parameter arg2
-     */
-    public function command_call()
-    {
-        $args = func_get_args();
-        $cmd = array_shift($args);
-        list($class, $method) = explode('@', $cmd);
-        $class = str_replace('/', '\\', $class);
-        echo "calling $class::G()->$method\n";
-        $ret = $this->callObject($class, $method, $args, $this->getCliParameters());
-        echo "--result--\n";
-        echo json_encode($ret);
-    }
-    /**
-     * fetch a url
-     */
-    public function command_fetch($uri = '', $post = false)
-    {
-        $uri = !empty($uri) ? $uri : '/';
-        $_SERVER['REQUEST_URI'] = $uri;
-        $_SERVER['PATH_INFO'] = parse_url($uri, PHP_URL_PATH);
-        $_SERVER['HTTP_METHOD'] = $post ? $post :'GET';
-        $this->context_class::G()->replaceDefaultRunHandler(null);
-        $this->context_class::G()->run();
-    }
-    ///////////////////////////////////
-    /**
-     * show all routes
-     */
-    public function command_routes()
-    {
-        echo "Override this to use to show you project routes .\n";
-    }
-    /**
-     * depoly project.
-     */
-    public function command_depoly()
-    {
-        echo "Override this to use to depoly you project.\n";
-    }
-    /**
-     * run test in you project
-     */
-    public function command_test()
-    {
-        echo "Override this to use to test you project.\n";
     }
 }
