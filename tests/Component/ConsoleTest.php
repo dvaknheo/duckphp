@@ -101,6 +101,13 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         }
         
         //*/
+        
+        $t=\MyCodeCoverage::G();
+        define('__SINGLETONEX_REPALACER',ConsoleParent::class.'::CreateObject');
+        \MyCodeCoverage::G($t);
+        ConsoleParent::G()->isInited();
+        echo "zzzzzzzzzzzzzzzzzzzzzzzz";
+        
         \MyCodeCoverage::G()->end();
     }
 }
@@ -142,5 +149,15 @@ class Console_Command2 extends Console_Command
     public function command_foo4($a1)
     {
     
+    }
+}
+class ConsoleParent extends Console
+{
+    public static function CreateObject($class, $object)
+    {
+        static $_instance;
+        $_instance=$_instance??[];
+        $_instance[$class]=$object?:($_instance[$class]??($_instance[$class]??new static));
+        return $_instance[$class];
     }
 }

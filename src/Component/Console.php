@@ -8,7 +8,7 @@ namespace DuckPhp\Component;
 use DuckPhp\Component\DefaultCommand;
 use DuckPhp\Core\ComponentBase;
 
-class Console extends ComponentBase
+class Console
 {
     public $options = [
         'cli_enable' => true,
@@ -19,25 +19,53 @@ class Console extends ComponentBase
     ];
     protected $context_class = null;
     protected $parameters = [];
-    //@override
-    protected function initContext(object $context)
+    protected $is_inited = false;
+    
+    protected static $_instances = [];
+    //embed
+    public static function G($object = null)
     {
+        if (defined('__SINGLETONEX_REPALACER')) {
+            $callback = __SINGLETONEX_REPALACER;
+            return ($callback)(static::class, $object);
+        }
+        if ($object) {
+            self::$_instances[static::class] = $object;
+            return $object;
+        }
+        $me = self::$_instances[static::class] ?? null;
+        if (null === $me) {
+            $me = new static();
+            self::$_instances[static::class] = $me;
+        }
+        
+        return $me;
+    }
+    public function isInited(): bool
+    {
+        return $this->is_inited;
+    }
+    public function init(array $options, ?object $context = null)
+    {
+        $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         if (PHP_SAPI !== 'cli') {
             return $this; // @codeCoverageIgnore
         }
         if (!$this->options['cli_enable']) {
             return;
         }
-        
-        $this->context_class = get_class($context);
-        
-        if ($this->options['cli_mode'] === 'replace') {
-            if (method_exists($context, 'replaceDefaultRunHandler')) {
-                $context->replaceDefaultRunHandler([static::class,'DoRun']);
+        if ($context !== null) {
+            $this->context_class = get_class($context);
+            if ($this->options['cli_mode'] === 'replace') {
+                if (method_exists($context, 'replaceDefaultRunHandler')) {
+                    $context->replaceDefaultRunHandler([static::class,'DoRun']);
+                }
+            } elseif ($this->options['cli_mode'] === 'hook') {
+                ($this->context_class)::Route()->addRouteHook([static::class,'DoRun'], 'prepend-outter');
             }
-        } elseif ($this->options['cli_mode'] === 'hook') {
-            ($this->context_class)::Route()->addRouteHook([static::class,'DoRun'], 'prepend-outter');
         }
+        $this->is_inited = true;
+        return $this;
     }
     public function getCliParameters()
     {
