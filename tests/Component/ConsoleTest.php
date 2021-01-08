@@ -29,7 +29,7 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         Console::G()->init($options,App::G());
         Console::G()->getCliParameters();
         
-        Console::G()->regCliCommandGroup(Console_Command::class,"test");
+        Console::G()->regCommandClass(Console_Command::class,"test");
         $_SERVER['argv']=[
             '-','test:foo',
         ];
@@ -75,20 +75,30 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         }catch(\Exception $ex){
             var_dump("Hit!");
         }
-
+        
         
         //*/
         Console::G(new Console())->init([],Console_App::G());
         $_SERVER['argv']=[
             '-','list',
         ];
-        Console::G()->regCliCommandGroup(Console_Command::class,"aa");
-        Console::G()->regCliCommandGroup(Console_Command2::class,"aa");
+        Console::G()->regCommandClass(Console_Command::class,"aa");
+        Console::G()->regCommandClass(Console_Command2::class,"aa");
         Console_App::G()->run();
         $_SERVER['argv']=[
             '-','call',str_replace('\\','/',Console_Command2::class).'@command_foo4','A1'
         ];
         Console_App::G()->run();
+        
+        
+        try{
+            $_SERVER['argv']=[
+                '-','test',
+            ];
+           Console::G(new Console())->init(['cli_default_command_class'=>''])->run();
+        }catch(\Exception $ex){
+            var_dump("Hit!");
+        }
         
         //*/
         \MyCodeCoverage::G()->end();

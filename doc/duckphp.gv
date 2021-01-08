@@ -111,11 +111,12 @@ subgraph cluster_HttpServer {
     HttpServer [label="HttpServer";shape=Mdiamond;style=filled];
 }
 
-subgraph cluster_DefaultExt {
-    label = "[DuckPhp\\Ext]";
+subgraph cluster_Component {
+    label = "[DuckPhp\\Component]";
 
     Cache[shape="component"];
-    Console[shape="component"];
+    Console[shape=Mdiamond;style=filled];
+    DefaultCommand[shape="component"];
     DbManager[shape="component"];
     EventManager[shape="component"];
     Installer [shape="component"];
@@ -125,17 +126,17 @@ subgraph cluster_DefaultExt {
     RouteHookRouteMap[shape="component"];
 
     Cache -> Core_ComponentBase [style="dotted"];
-    Console -> Core_ComponentBase [style="dotted"];
+    DefaultCommand -> Core_ComponentBase [style="dotted"];
     DbManager -> Core_ComponentBase [style="dotted"];
     EventManager -> Core_ComponentBase [style="dotted"];
     Installer -> Core_ComponentBase [style="dotted"];
     Pager -> Core_ComponentBase [style="dotted"];
     RouteHookPathInfoCompat -> Core_ComponentBase [style="dotted"];
     RouteHookRouteMap -> Core_ComponentBase [style="dotted"];
-    
-    
-    Console -> Installer; 
-    Console -> HttpServer; 
+
+    Console -> DefaultCommand; 
+    DefaultCommand -> Installer; 
+    DefaultCommand -> HttpServer; 
     DbManager -> Db_Db;
 
     Pager -> PagerInterface; 
@@ -162,7 +163,6 @@ subgraph cluster_Ext {
     FacadesAutoLoader -> Core_ComponentBase [style="dotted"];
     JsonRpcExt -> Core_ComponentBase [style="dotted"];
     Misc -> Core_ComponentBase [style="dotted"];
-    Pager -> Core_ComponentBase [style="dotted"];
     RedisManager -> Core_ComponentBase [style="dotted"];
     RedisCache -> Core_ComponentBase [style="dotted"];
     RouteHookApiServer -> Core_ComponentBase [style="dotted"];

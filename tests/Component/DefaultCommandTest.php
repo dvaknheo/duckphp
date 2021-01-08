@@ -28,7 +28,7 @@ class DefaultCommandTest extends \PHPUnit\Framework\TestCase
         Console::G()->init($options,App::G());
         Console::G()->getCliParameters();
         
-        Console::G()->regCliCommandGroup(DefaultCommand_Command::class,"test");
+        Console::G()->regCommandClass(DefaultCommand_Command::class,"test");
         $_SERVER['argv']=[
             '-','test:foo',
         ];
@@ -95,8 +95,8 @@ class DefaultCommandTest extends \PHPUnit\Framework\TestCase
         $_SERVER['argv']=[
             '-','list',
         ];
-        Console::G()->regCliCommandGroup(DefaultCommand_Command::class,"aa");
-        Console::G()->regCliCommandGroup(DefaultCommand_Command2::class,"aa");
+        Console::G()->regCommandClass(DefaultCommand_Command::class,"aa");
+        Console::G()->regCommandClass(DefaultCommand_Command2::class,"aa");
         DefaultCommand_App::G()->run();
         $_SERVER['argv']=[
             '-','call',str_replace('\\','/',DefaultCommand_Command2::class).'@command_foo4','A1'

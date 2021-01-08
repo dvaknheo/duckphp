@@ -15,6 +15,7 @@ class Console extends ComponentBase
         'cli_mode' => 'replace',
         'cli_command_alias' => [],
         'cli_default_command_class' => DefaultCommand::class,
+        'cli_command_method_prefix' => 'command_',
     ];
     protected $context_class = null;
     protected $parameters = [];
@@ -37,14 +38,14 @@ class Console extends ComponentBase
         } elseif ($this->options['cli_mode'] === 'hook') {
             ($this->context_class)::Route()->addRouteHook([static::class,'DoRun'], 'prepend-outter');
         }
-        $this->options['cli_command_alias'][$this->context_class] = '';
     }
     public function getCliParameters()
     {
         return $this->parameters;
     }
-    public function regCliCommandGroup($class, $alias)
+    public function regCommandClass($class, $alias = null)
     {
+        $alias = $alias ?? $class;
         $this->options['cli_command_alias'][$class] = $alias;
     }
     public static function DoRun($path_info = '')
@@ -107,7 +108,7 @@ class Console extends ComponentBase
     }
     public function callObject($class, $method, $args, $input)
     {
-        $object = $class::G();
+        $object = is_callable([$class,'G']) ? $class::G() : new $class;
         $reflect = new \ReflectionMethod($object, $method);
         $params = $reflect->getParameters();
         foreach ($params as $i => $param) {
@@ -132,34 +133,31 @@ class Console extends ComponentBase
         if (strpos($cmd, ':') !== false) {
             list($name, $method) = explode(':', $cmd);
         }
-        $method = 'command_'.$method;
+        $method = $this->options['cli_command_method_prefix'].$method;
+        if ($name === '') {
+            $class = method_exists($this->context_class ?? '', $method) ? $this->context_class : $this->options['cli_default_command_class'];
+        } else {
+            $name = str_replace('/', '\\', $name);
+            
+            $t = $this->options['cli_command_alias'];
+            $alias = array_flip($t);
+            $class = $alias[$name] ?? null;
+            $class = $class ?? $name;
+        }
+        // $this->options['cli_default_command_class'] ===''
+        if (!$class || !class_exists($class)) {
+            throw new \ReflectionException("Command Not Found: {$cmd}\n", -3);
+        }
         
-        $t = $this->options['cli_command_alias'];
-        $alias = array_flip($t);
-        $class = $alias[$name] ?? null;
-        
-        if (isset($class) && $name === '' && !method_exists($class, $method)) {
-            $class = $this->options['cli_default_command_class'];
-            if (!method_exists($class, $method)) {
-                throw new \ReflectionException("Command Not Found: {$cmd}\n", -2);
-            }
-            $options = $this->context_class::G()->options;
+        if (method_exists($class, 'G') && method_exists($class, 'isInited') && !$class::G()->isInited()) {
+            $options = $this->context_class ? $this->context_class::G()->options : [];
             $options = $options['ext'][$class] ?? $options;
             $options = is_string($options) ? $this->context_class::G()->options[$options] : $options;
             $options = is_array($options) ? $options : [];
             $class::G()->init($options, $this);
-            return [$class,$method];
-        }
-        
-        $name = str_replace('/', '\\', $name);
-        $class = $this->options['cli_command_alias'][$name] ?? $class;
-        
-        if (!isset($class)) {
-            throw new \ReflectionException("Command Not Found: {$cmd}\n", -3);
         }
         return [$class,$method];
     }
-    
     protected function getCommandsByClass($class)
     {
         $class = new \ReflectionClass($class);
@@ -167,10 +165,10 @@ class Console extends ComponentBase
         $ret = [];
         foreach ($methods as $v) {
             $name = $v->getName();
-            if (substr($name, 0, strlen('command_')) !== 'command_') {
+            if (substr($name, 0, strlen($this->options['cli_command_method_prefix'])) !== $this->options['cli_command_method_prefix']) {
                 continue;
             }
-            $command = substr($name, strlen('command_'));
+            $command = substr($name, strlen($this->options['cli_command_method_prefix']));
             $doc = $v->getDocComment();
             
             // first line;
@@ -182,33 +180,63 @@ class Console extends ComponentBase
         }
         return $ret;
     }
-    public function getCommandGroupInfo()
+    protected function getCommandGroupInfo()
     {
         $ret = [
-            'commands' => [],
+            'commands' => [
+                '' => [],
+            ],
             'alias' => [],
         ];
-        $t = $this->options['cli_command_alias'];
         
+        $t = $this->options['cli_command_alias'];
         $ret['alias'] = array_flip(array_flip($t));
         
         foreach ($t as $class => $alias) {
             $data = $this->getCommandsByClass($class);
-            if ($alias === '') {
-                $data = array_map(function ($v) {
-                    return "\e[32;1m*\e[0m".$v;
-                }, $data);
-            }
             $ret['commands'][$class] = $data;
+            if ($class === $this->context_class) {
+            }
         }
-        $default = $this->getCommandsByClass($this->options['cli_default_command_class']);
-        $app_class = $this->context_class;
-
-        $ret['commands'][$app_class] = array_merge($default, $ret['commands'][$app_class]);
+        $default = class_exists($this->options['cli_default_command_class']) ? $this->getCommandsByClass($this->options['cli_default_command_class']) :[];
+        $default2 = $this->context_class ? $this->getCommandsByClass($this->context_class) : [];
+        $default2 = array_map(function ($v) {
+            return "\e[32;1m*\e[0m".$v;
+        }, $default2);
+        $default = array_merge($default, $default2);
+        
+        $ret['commands'][''] = $default;
         
         foreach ($ret['commands'] as &$v) {
             ksort($v);
         }
         return $ret;
+    }
+    public function getCommandListInfo()
+    {
+        $info = $this->getCommandGroupInfo();
+        $str = '';
+        foreach ($info['commands'] as $class => $v) {
+            $class_alias = $info['alias'][$class] ?? null;
+            if ($class === '') {
+                $alias = '';
+                $str .= "System default commands:\n";
+            } elseif ($class_alias === $class || empty($class_alias)) {
+                $alias = $class .':';
+                $str .= "Commands power by '$class':\n";
+            } else {
+                $alias = $class_alias.':';
+                $str .= "Commands power by '$class' alias '$class_alias':\n";
+            }
+            
+            foreach ($v as $cmd => $desc) {
+                $cmd = "\e[32;1m".$alias. str_pad($cmd, 7)."\033[0m";
+                $str .= "  $cmd $desc\n";
+            }
+            if ($class === '' && $this->context_class) {
+                $str .= "  \e[32;1m*\e[0m is overrided by '{$this->context_class}'.\n";
+            }
+        }
+        return $str;
     }
 }

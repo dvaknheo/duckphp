@@ -12,7 +12,6 @@ use DuckPhp\HttpServer\HttpServer;
 class DefaultCommand extends ComponentBase
 {
     protected $context_class = null;
-    protected $parameters = [];
     //@override
     protected function initContext(object $context)
     {
@@ -65,26 +64,7 @@ EOT;
      */
     public function command_list()
     {
-        $info = $this->context_class::G()->getCommandGroupInfo();
-        $str = '';
-        foreach ($info['commands'] as $class => $v) {
-            $class_alias = $info['alias'][$class] ?? null;
-            if ($class_alias === '') {
-                $str .= "system default commands\n";
-            } elseif ($class_alias) {
-                $str .= "commands power by '$class' alias '$class_alias':\n";
-            } else {
-                $str .= "commands power by '$class':\n";
-            }
-            foreach ($v as $cmd => $desc) {
-                $cmd = "\e[32;1m".str_pad($cmd, 7)."\033[0m";
-                $str .= "  $cmd $desc\n";
-            }
-            if ($class_alias === '') {
-                $str .= "  \e[32;1m*\e[0m is overrided by '$class'.\n";
-            }
-        }
-        echo $str;
+        echo $this->context_class::G()->getCommandListInfo();
     }
     /**
      * call a function. e.g. namespace/class@method arg1 --parameter arg2
