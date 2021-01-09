@@ -106,7 +106,7 @@ class ExceptionAutoLoaderObject
     {
         static $_instance;
         $_instance=$_instance??[];
-        $_instance[$class]=$object?:($_instance[$class]??($_instance[$class]??new static));
+        $_instance[$class]=$object?:($_instance[$class]??($_instance[$class]??new $class));
         return $_instance[$class];
     }
 
