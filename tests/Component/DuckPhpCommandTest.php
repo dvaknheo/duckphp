@@ -1,17 +1,17 @@
 <?php 
 namespace tests\DuckPhp\Component;
 use DuckPhp\Component\Console;
-use DuckPhp\Component\DefaultCommand;
+use DuckPhp\Component\DuckPhpCommand;
 use DuckPhp\HttpServer\HttpServer;
 use DuckPhp\Component\Installer;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 
-class DefaultCommandTest extends \PHPUnit\Framework\TestCase
+class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(DefaultCommand::class);
+        \MyCodeCoverage::G()->begin(DuckPhpCommand::class);
         
         $_SERVER['argv']=[];
         $options=[];
@@ -28,7 +28,7 @@ class DefaultCommandTest extends \PHPUnit\Framework\TestCase
         Console::G()->init($options,App::G());
         Console::G()->getCliParameters();
         
-        Console::G()->regCommandClass(DefaultCommand_Command::class,"test");
+        Console::G()->regCommandClass(DuckPhpCommand_Command::class,"test");
         $_SERVER['argv']=[
             '-','test:foo',
         ];
@@ -76,32 +76,32 @@ class DefaultCommandTest extends \PHPUnit\Framework\TestCase
         }
         Installer::G(new Console_Installer());
         HttpServer::G(new Console_HttpServer());
-        DefaultCommand::G()->command_new();
-        DefaultCommand::G()->command_run();
-        DefaultCommand::G()->command_help();
-        DefaultCommand::G()->command_version();
+        DuckPhpCommand::G()->command_new();
+        DuckPhpCommand::G()->command_run();
+        DuckPhpCommand::G()->command_help();
+        DuckPhpCommand::G()->command_version();
         
 
         
-        DefaultCommand::G()->command_list();
+        DuckPhpCommand::G()->command_list();
         
-        DefaultCommand::G()->command_fetch();
-        DefaultCommand::G()->command_routes();
-        DefaultCommand::G()->command_depoly();
-        DefaultCommand::G()->command_test();
+        DuckPhpCommand::G()->command_fetch();
+        DuckPhpCommand::G()->command_routes();
+        DuckPhpCommand::G()->command_depoly();
+        DuckPhpCommand::G()->command_test();
         
         //*/
-        Console::G(new Console())->init([],DefaultCommand_App::G());
+        Console::G(new Console())->init([],DuckPhpCommand_App::G());
         $_SERVER['argv']=[
             '-','list',
         ];
-        Console::G()->regCommandClass(DefaultCommand_Command::class,"aa");
-        Console::G()->regCommandClass(DefaultCommand_Command2::class,"aa");
-        DefaultCommand_App::G()->run();
+        Console::G()->regCommandClass(DuckPhpCommand_Command::class,"aa");
+        Console::G()->regCommandClass(DuckPhpCommand_Command2::class,"aa");
+        DuckPhpCommand_App::G()->run();
         $_SERVER['argv']=[
-            '-','call',str_replace('\\','/',DefaultCommand_Command2::class).'@command_foo4','A1'
+            '-','call',str_replace('\\','/',DuckPhpCommand_Command2::class).'@command_foo4','A1'
         ];
-        DefaultCommand_App::G()->run();
+        DuckPhpCommand_App::G()->run();
         
         //*/
         \MyCodeCoverage::G()->end();
@@ -123,7 +123,7 @@ class Console_HttpServer extends HttpServer
     }
 }
 
-class DefaultCommand_App extends App
+class DuckPhpCommand_App extends App
 {
     /** overrid test*/
     public function command_test()
@@ -133,7 +133,7 @@ class DefaultCommand_App extends App
 }
 
 
-class DefaultCommand_Command extends ComponentBase
+class DuckPhpCommand_Command extends ComponentBase
 {
     public function command_foo()
     {
@@ -153,7 +153,7 @@ class DefaultCommand_Command extends ComponentBase
     
     }
 }
-class DefaultCommand_Command2 extends DefaultCommand_Command
+class DuckPhpCommand_Command2 extends DuckPhpCommand_Command
 {
     /**
      * desc2

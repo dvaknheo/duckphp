@@ -6,11 +6,12 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Ext\MyFacadesBase;
 
-class FacadesAutoLoader extends ComponentBase
+class MyFacadesAutoLoader extends ComponentBase
 {
     public $options = [
-        'facades_namespace' => 'Facades',
+        'facades_namespace' => 'MyFacades',
         'facades_map' => [],
         'facades_enable_autoload' => true,
     ];
@@ -44,7 +45,7 @@ class FacadesAutoLoader extends ComponentBase
         $basename = array_pop($blocks);
         $namespace = implode('\\', $blocks);
         
-        $code = "namespace $namespace{ class $basename extends \\". __NAMESPACE__  ."\\FacadesBase{} }";
+        $code = "namespace $namespace{ class $basename extends \\". MyFacadesBase::class ."{} }";
         eval($code);
     }
     public function getFacadesCallback($input_class, $name)

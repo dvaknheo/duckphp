@@ -9,7 +9,7 @@ use DuckPhp\Component\Installer;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\HttpServer\HttpServer;
 
-class DefaultCommand extends ComponentBase
+class DuckPhpCommand extends ComponentBase
 {
     protected $context_class = null;
     //@override

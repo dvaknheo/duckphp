@@ -1,17 +1,17 @@
 <?php 
 namespace tests\DuckPhp\Ext;
-use DuckPhp\Ext\FacadesBase;
-use DuckPhp\Ext\FacadesAutoLoader;
+use DuckPhp\Ext\MyFacadesBase;
+use DuckPhp\Ext\MyFacadesAutoLoader;
 use DuckPhp\SingletonEx\SingletonEx;
 
-class FacadesBaseTest extends \PHPUnit\Framework\TestCase
+class MyFacadesBaseTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(FacadesBase::class);
+        \MyCodeCoverage::G()->begin(MyFacadesBase::class);
         
         //code here
-        FacadesAutoLoader::G()->init(['facades_map'=>[
+        MyFacadesAutoLoader::G()->init(['facades_map'=>[
             F::class=>B::class
         ]]);
             F::Z();
@@ -20,17 +20,17 @@ class FacadesBaseTest extends \PHPUnit\Framework\TestCase
         }catch(\Exception $ex){
             echo "EXXXXXXXXXXXXx";
         }
-        new FacadesBase();
+        new MyFacadesBase();
         \MyCodeCoverage::G()->end();
         /*
-        FacadesBase::G()->__callStatic($name, $arguments);
+        MyFacadesBase::G()->__callStatic($name, $arguments);
         //*/
     }
 }
-class F extends FacadesBase
+class F extends MyFacadesBase
 {
 }
-class F2 extends FacadesBase
+class F2 extends MyFacadesBase
 {
 }
 class B

@@ -5,16 +5,13 @@
  */
 namespace DuckPhp\Component;
 
-use DuckPhp\Component\DefaultCommand;
-use DuckPhp\Core\ComponentBase;
-
 class Console
 {
     public $options = [
         'cli_enable' => true,
         'cli_mode' => 'replace',
         'cli_command_alias' => [],
-        'cli_default_command_class' => DefaultCommand::class,
+        'cli_default_command_class' => DuckPhpCommand::class,
         'cli_command_method_prefix' => 'command_',
     ];
     protected $context_class = null;

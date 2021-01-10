@@ -6,16 +6,16 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Ext\FacadesAutoLoader;
+use DuckPhp\Ext\MyFacadesAutoLoader;
 
-class FacadesBase extends ComponentBase
+class MyFacadesBase extends ComponentBase
 {
     public function __construct()
     {
     }
     public static function __callStatic($name, $arguments)
     {
-        $callback = FacadesAutoLoader::G()->getFacadesCallback(static::class, $name);
+        $callback = MyFacadesAutoLoader::G()->getFacadesCallback(static::class, $name);
         if (!$callback) {
             throw new \ErrorException("BadCall");
         }
