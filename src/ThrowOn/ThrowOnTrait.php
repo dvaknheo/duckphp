@@ -8,7 +8,7 @@ namespace DuckPhp\ThrowOn;
 use Exception;
 use Throwable;
 
-trait ThrowOn
+trait ThrowOnTrait
 {
     public static $To;
     public static function ThrowOn($flag, $message, $code = 0)

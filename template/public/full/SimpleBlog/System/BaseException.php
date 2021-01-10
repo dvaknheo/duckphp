@@ -12,7 +12,7 @@ use SimpleBlog\System\App;
 
 class BaseException extends Exception
 {
-    use ThrowOn;
+    use ThrowOnTrait;
     
     /*
     public function display($ex)

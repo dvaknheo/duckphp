@@ -9,5 +9,5 @@ use DuckPhp\ThrowOn\ThrowOn;
 
 class BaseException extends \Exception
 {
-    use ThrowOn;
+    use ThrowOnTrait;
 }

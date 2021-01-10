@@ -6,12 +6,12 @@
 
 namespace LazyToChange\System;
 
-use DuckPhp\ThrowOn\ThrowOn;
+use DuckPhp\ThrowOn\ThrowOnTrait;
 use LazyToChange\System\App;
 
 class BaseException extends \Exception
 {
-    use ThrowOn;
+    use ThrowOnTrait;
     
     public function display($ex)
     {

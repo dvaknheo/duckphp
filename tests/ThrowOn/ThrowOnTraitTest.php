@@ -1,13 +1,13 @@
 <?php
 namespace tests\DuckPhp\ThrowOn;
 
-use DuckPhp\ThrowOn\ThrowOn;
+use DuckPhp\ThrowOn\ThrowOnTrait;
 
 class ThrowOnTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(ThrowOn::class);
+        \MyCodeCoverage::G()->begin(ThrowOnTrait::class);
         ThrowOnObject::ThrowOn(false, "123");
         try {
             ThrowOnObject::ThrowOn(true, "Message", 2);
@@ -34,7 +34,7 @@ class ThrowOnTest extends \PHPUnit\Framework\TestCase
 }
 class ThrowOnObject extends \Exception
 {
-    use \DuckPhp\ThrowOn\ThrowOn;
+    use ThrowOnTrait;
 }
 class ThrowOnException extends \Exception
 {
