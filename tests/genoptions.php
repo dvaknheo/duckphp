@@ -2,18 +2,17 @@
 require_once(__DIR__.'/../autoload.php');
 // 自动化文档脚本
 
-GenOptionsGenerator::G()->init([])->run();
-
+OptionsGenerator::G()->init([])->run();
 var_dump(DATE(DATE_ATOM));
 
 return;
 
-class GenOptionsGenerator
+class OptionsGenerator
 {
     public function checkHasDoced()
     {
         $ret=[];
-        $input=GenOptionsGenerator::G()->getAllOptions();
+        $input=$this->getAllOptions();
 
         $classes=DataProvider::G()->getAllComponentClasses();
         array_shift($classes);
@@ -293,9 +292,9 @@ class DataProvider
     }
     function getInDependComponentClasses()
     {
-        $classes="DuckPhp\\HttpServer
-DuckPhp\\Ext\\Pager
-";
+        $classes="DuckPhp\\HttpServer\\HttpServer
+DuckPhp\\Component\\Pager
+DuckPhp\\Component\\Installer";
         $classes=explode("\n",$classes);
         return $classes;
     }
@@ -308,13 +307,13 @@ DuckPhp\\Core\\Configer
 DuckPhp\\Core\\Logger
 DuckPhp\\Core\\Route
 DuckPhp\\Core\\RuntimeState
-DuckPhp\\Core\\SuperGlobal
 DuckPhp\\Core\\View
-DuckPhp\\Ext\\Cache
-DuckPhp\\Ext\\DbManager
-DuckPhp\\Ext\\EventManager
-DuckPhp\\Ext\\RouteHookPathInfoCompat
-DuckPhp\\Ext\\RouteHookRouteMap";
+DuckPhp\\Component\\Cache
+DuckPhp\\Component\\DbManager
+DuckPhp\\Component\\EventManager
+DuckPhp\\Component\\RouteHookPathInfoCompat
+DuckPhp\\Component\\RouteHookRouteMap
+";
         $classes=explode("\n",$classes);
         return $classes;
     }
@@ -328,14 +327,14 @@ DuckPhp\\Core\\ExceptionManager
 DuckPhp\\Core\\Logger
 DuckPhp\\Core\\Route
 DuckPhp\\Core\\RuntimeState
-DuckPhp\\Core\\SuperGlobal
 DuckPhp\\Core\\View
 DuckPhp\\Component\\Cache
-DuckPhp\\Ext\\CallableView
-DuckPhp\\Component\\Console
 DuckPhp\\Component\\DbManager
-DuckPhp\\Ext\\EmptyView
 DuckPhp\\Component\\EventManager
+DuckPhp\\Component\\RouteHookPathInfoCompat
+DuckPhp\\Component\\RouteHookRouteMap
+DuckPhp\\Ext\\CallableView
+DuckPhp\\Ext\\EmptyView
 DuckPhp\\Ext\\FacadesAutoLoader
 DuckPhp\\Ext\\JsonRpcExt
 DuckPhp\\Ext\\Misc
@@ -380,14 +379,14 @@ function replaceData($content)
     $dir=__DIR__.'/../';
     
     if(false !== strpos($content,'@forscript')){
-        $options=GenOptionsGenerator::G()->getAllOptions();
-        $data=GenOptionsGenerator::G()->genMdBySort($options);
+        $options=OptionsGenerator::G()->getAllOptions();
+        $data=OptionsGenerator::G()->genMdBySort($options);
         
         $str1="@forscript genoptions.php#options-md-alpha\n";
         $str2="\n@forscript end";
         $content=SliceReplace($content, $data, $str1, $str2);
         
-        $data=GenOptionsGenerator::G()->genMdByClass($options);
+        $data=OptionsGenerator::G()->genMdByClass($options);
         $str1="@forscript genoptions.php#options-md-class\n";
         $str2="\n@forscript end";
         $content=SliceReplace($content, $data, $str1, $str2);
@@ -440,7 +439,7 @@ function getClassStaticMethods($class)
     return $ret;
 }
 
-
+/*
 $m=getClassStaticMethods(DuckPhp::class);
 $m_a=getClassStaticMethods(\DuckPhp\Helper\AppHelper::class);
 $m_b=getClassStaticMethods(\DuckPhp\Helper\BusinessHelper::class);
@@ -450,3 +449,4 @@ $m_v=getClassStaticMethods(\DuckPhp\Helper\ViewHelper::class);
 
 $ret=array_diff($m,$m_a,$m_b,$m_c,$m_m,$m_v);
 var_dump(array_values($ret));
+*/

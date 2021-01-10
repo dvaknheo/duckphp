@@ -108,8 +108,26 @@ class App extends DuckPhp
         // 控制器默认欢迎方法 (DuckPhp\Core\Route)
         // $options['controller_welcome_class'] = 'Main';
 
+        // 单一数据库配置 (DuckPhp\Component\DbManager)
+        // $options['database'] = NULL;
+
         // 是否扩充方法至助手类 (DuckPhp\Component\DbManager)
         // $options['database_auto_extend_method'] = true;
+
+        // 数据库列表 (DuckPhp\Component\DbManager)
+        // $options['database_list'] = NULL;
+
+        // 从设置里读取数据库列表 (DuckPhp\Component\DbManager)
+        // $options['database_list_reload_by_setting'] = true;
+
+        // 尝试使用单一数据库配置 (DuckPhp\Component\DbManager)
+        // $options['database_list_try_single'] = true;
+
+        // 记录sql 错误等级 (DuckPhp\Component\DbManager)
+        // $options['database_log_sql_level'] = 'debug';
+
+        // 记录sql 查询 (DuckPhp\Component\DbManager)
+        // $options['database_log_sql_query'] = false;
 
         // 错误的时候打开日志 (DuckPhp\Core\App)
         // $options['default_exception_do_log'] = true;
@@ -156,6 +174,15 @@ class App extends DuckPhp
         // 配置目录 (DuckPhp\Core\Configer)
         // $options['path_config'] = 'config';
 
+        // GET 动作方法名的 key (DuckPhp\Component\RouteHookPathInfoCompat, DuckPhp\Component\RouteHookPathInfoCompat)
+        // $options['path_info_compact_action_key'] = '_r';
+
+        // GET 模式类名的 key (DuckPhp\Component\RouteHookPathInfoCompat, DuckPhp\Component\RouteHookPathInfoCompat)
+        // $options['path_info_compact_class_key'] = '';
+
+        // 使用 _GET 模拟无 PathInfo 配置 (DuckPhp\Component\RouteHookPathInfoCompat, DuckPhp\Component\RouteHookPathInfoCompat)
+        // $options['path_info_compact_enable'] = false;
+
         // 日志目录 (DuckPhp\Core\Logger)
         // $options['path_log'] = 'logs';
 
@@ -171,8 +198,17 @@ class App extends DuckPhp
         // 平台 (DuckPhp\Core\App)
         // $options['platform'] = '';
 
-        // 是否扩充方法至助手类 (DuckPhp\Component\RouteHookRouteMap)
+        // 路由映射 (DuckPhp\Component\RouteHookRouteMap, DuckPhp\Component\RouteHookRouteMap)
+        // $options['route_map'] = array ( );
+
+        // 是否扩充方法至助手类 (DuckPhp\Component\RouteHookRouteMap, DuckPhp\Component\RouteHookRouteMap)
         // $options['route_map_auto_extend_method'] = true;
+
+        // 路由配置名，使用配置模式用路由 (DuckPhp\Component\RouteHookRouteMap, DuckPhp\Component\RouteHookRouteMap)
+        // $options['route_map_by_config_name'] = '';
+
+        // 重要路由映射 (DuckPhp\Component\RouteHookRouteMap, DuckPhp\Component\RouteHookRouteMap)
+        // $options['route_map_important'] = array ( );
 
         // 设置，预先载入的设置 (DuckPhp\Core\Configer)
         // $options['setting'] = array ( );

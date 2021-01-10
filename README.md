@@ -63,7 +63,7 @@ DuckPhp 的最大意义是思想，只要思想在，什么框架你都可以用
 
 作为一个现代的 PHP 库， 全组件可替换是必须的。
 
-DuckPhp 用可变单例方式，解决了**系统的调用形式不变，实现形式可变**，比如不需要魔改来修复系统漏洞。而其他框架用的 IoC,DI 技术则复杂且不方便调试。
+DuckPhp 用可变单例方式，解决了**系统的调用形式不变，实现形式可变**，不需要魔改来修复系统漏洞。而其他框架用的 IoC,DI 技术则复杂且不方便调试。
 
 #### 高可靠性，无依赖
 
@@ -263,7 +263,7 @@ BaseController, BaseModel, BaseBusiness 是你自己要改的基类，基本只�
 Helper 目录，助手类，如果你一个人偷懒，直接用 APP 类也行  
 
 
-### 总结如何精简目录
+### 如何精简目录
 * 移除 app/Helper/ 目录,如果你直接用 App::* 替代助手类。
 * 移除 app/System/BaseController.php 如果你的 Controller 和默认的一样不需要基本类。
 * 移除 app/Model/BaseModel.php 如果你的 Model 用的全静态方法。
@@ -369,7 +369,7 @@ namespace MySpace\System
 } // end namespace
 // 助手类
 
-namespace MySpace\System\Helper
+namespace MySpace\Helper
 {
     class ControllerHelper extends \DuckPhp\Helper\ControllerHelper
     {
@@ -427,7 +427,7 @@ namespace MySpace\Business
 {
     use MySpace\Model\MyModel;
     use MySpace\System\BaseBusiness;
-    use MySpace\System\Helper\BusinessHelper as B;
+    use MySpace\Helper\BusinessHelper as B;
 
     class MyBusiness extends BaseBusiness
     {
@@ -441,7 +441,7 @@ namespace MySpace\Business
 
 namespace MySpace\Model
 {
-    use MySpace\Base\Helper\ModelHelper as M;
+    use MySpace\Helper\ModelHelper as M;
 
     class MyModel
     {
@@ -513,7 +513,7 @@ DuckPhp 类/文件结构参考。(粗体部分是启动的时候引用的文件)
 1. `Core` 目录是核心目录，核心框架。基本功能都在 Core 里实现
     1. **[ComponentBase](doc/ref/Core-ComponentBase.md)** 组件基类
          1. **[ComponentInterface](doc/ref/Core-ComponentInterface.md)** 组件接口
-    2. **[App](doc/ref/Core-App.md)** 核心应用类。引用一下类
+    2. **[App](doc/ref/Core-App.md)** 核心应用类。引用以下类
         1. **[Kernel](doc/ref/Core-Kernel.md)** 核心Trait 以下是 `核心必备组件`
             1. [AutoLoader](doc/ref/Core-AutoLoader.md) 自动加载类
             2. **[Configer](doc/ref/Core-Configer.md)** 配置组件

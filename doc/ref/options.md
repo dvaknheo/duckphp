@@ -44,15 +44,6 @@
 +  'callable_view_skip_replace' => false,   
 
     callableview 可调用视图跳过默认视图替换   // [DuckPhp\Ext\CallableView](Ext-CallableView.md)
-+  'cli_command_alias' => array ( ),   
-
-    命令行类别名   // [DuckPhp\Component\Console](Component-Console.md)
-+  'cli_enable' => true,   
-
-    启用命令行   // [DuckPhp\Component\Console](Component-Console.md)
-+  'cli_mode' => 'replace',   
-
-    命令行启用模式   // [DuckPhp\Component\Console](Component-Console.md)
 + ** 'close_resource_at_output' => false,  ** 
 
     在输出前关闭资源（DB,Redis）   // [DuckPhp\Core\App](Core-App.md)
@@ -92,25 +83,25 @@
 + ** 'controller_welcome_class' => 'Main',  ** 
 
     控制器默认欢迎方法   // [DuckPhp\Core\Route](Core-Route.md)
-+  'database' => NULL,   
++ ** 'database' => NULL,  ** 
 
     单一数据库配置   // [DuckPhp\Component\DbManager](Component-DbManager.md)
 + ** 'database_auto_extend_method' => true,  ** 
 
     是否扩充方法至助手类   // [DuckPhp\Component\DbManager](Component-DbManager.md)
-+  'database_list' => NULL,   
++ ** 'database_list' => NULL,  ** 
 
     数据库列表   // [DuckPhp\Component\DbManager](Component-DbManager.md)
-+  'database_list_reload_by_setting' => true,   
++ ** 'database_list_reload_by_setting' => true,  ** 
 
     从设置里读取数据库列表   // [DuckPhp\Component\DbManager](Component-DbManager.md)
-+  'database_list_try_single' => true,   
++ ** 'database_list_try_single' => true,  ** 
 
     尝试使用单一数据库配置   // [DuckPhp\Component\DbManager](Component-DbManager.md)
-+  'database_log_sql_level' => 'debug',   
++ ** 'database_log_sql_level' => 'debug',  ** 
 
     记录sql 错误等级   // [DuckPhp\Component\DbManager](Component-DbManager.md)
-+  'database_log_sql_query' => false,   
++ ** 'database_log_sql_query' => false,  ** 
 
     记录sql 查询   // [DuckPhp\Component\DbManager](Component-DbManager.md)
 + ** 'default_exception_do_log' => true,  ** 
@@ -227,15 +218,15 @@
 + ** 'path_config' => 'config',  ** 
 
     配置目录   // [DuckPhp\Core\Configer](Core-Configer.md)
-+  'path_info_compact_action_key' => '_r',   
++ ** 'path_info_compact_action_key' => '_r',  ** 
 
-    GET 动作方法名的 key   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
-+  'path_info_compact_class_key' => '',   
+    GET 动作方法名的 key   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md), [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
++ ** 'path_info_compact_class_key' => '',  ** 
 
-    GET 模式类名的 key   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
-+  'path_info_compact_enable' => false,   
+    GET 模式类名的 key   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md), [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
++ ** 'path_info_compact_enable' => false,  ** 
 
-    使用 _GET 模拟无 PathInfo 配置   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
+    使用 _GET 模拟无 PathInfo 配置   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md), [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
 +  'path_lib' => 'lib',   
 
     库目录   // [DuckPhp\Ext\Misc](Ext-Misc.md)
@@ -293,18 +284,18 @@
 +  'rewrite_map' => array ( ),   
 
     目录重写映射   // [DuckPhp\Ext\RouteHookRewrite](Ext-RouteHookRewrite.md)
-+  'route_map' => array ( ),   
++ ** 'route_map' => array ( ),  ** 
 
-    路由映射   // [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md)
+    路由映射   // [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md), [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md)
 + ** 'route_map_auto_extend_method' => true,  ** 
 
-    是否扩充方法至助手类   // [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md)
-+  'route_map_by_config_name' => '',   
+    是否扩充方法至助手类   // [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md), [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md)
++ ** 'route_map_by_config_name' => '',  ** 
 
-    路由配置名，使用配置模式用路由   // [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md)
-+  'route_map_important' => array ( ),   
+    路由配置名，使用配置模式用路由   // [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md), [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md)
++ ** 'route_map_important' => array ( ),  ** 
 
-    重要路由映射   // [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md)
+    重要路由映射   // [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md), [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md)
 + ** 'setting' => array ( ),  ** 
 
     设置，预先载入的设置   // [DuckPhp\Core\Configer](Core-Configer.md)
@@ -484,7 +475,6 @@
 + DuckPhp\Core\RuntimeState
     - 'use_output_buffer' => false,
         使用 OB 函数缓冲数据
-+ DuckPhp\Core\SuperGlobal
 + DuckPhp\Core\View
     - 'path' => '',
         基础目录
@@ -495,6 +485,38 @@
     - 'skip_view_notice_error' => true,
         跳过 View 视图的 notice
 + DuckPhp\Component\Cache
++ DuckPhp\Component\DbManager
+    - 'database' => NULL,
+        单一数据库配置
+    - 'database_auto_extend_method' => true,
+        是否扩充方法至助手类
+    - 'database_list' => NULL,
+        数据库列表
+    - 'database_list_reload_by_setting' => true,
+        从设置里读取数据库列表
+    - 'database_list_try_single' => true,
+        尝试使用单一数据库配置
+    - 'database_log_sql_level' => 'debug',
+        记录sql 错误等级
+    - 'database_log_sql_query' => false,
+        记录sql 查询
++ DuckPhp\Component\EventManager
++ DuckPhp\Component\RouteHookPathInfoCompat
+    - 'path_info_compact_action_key' => '_r',
+        GET 动作方法名的 key
+    - 'path_info_compact_class_key' => '',
+        GET 模式类名的 key
+    - 'path_info_compact_enable' => false,
+        使用 _GET 模拟无 PathInfo 配置
++ DuckPhp\Component\RouteHookRouteMap
+    - 'route_map' => array ( ),
+        路由映射
+    - 'route_map_auto_extend_method' => true,
+        是否扩充方法至助手类
+    - 'route_map_by_config_name' => '',
+        路由配置名，使用配置模式用路由
+    - 'route_map_important' => array ( ),
+        重要路由映射
 + DuckPhp\Ext\CallableView
     - 'callable_view_class' => NULL,
         callableview 视图类
@@ -514,28 +536,6 @@
         覆盖视图目录
     - 'skip_view_notice_error' => true,
         跳过 View 视图的 notice
-+ DuckPhp\Component\Console
-    - 'cli_command_alias' => array ( ),
-        命令行类别名
-    - 'cli_enable' => true,
-        启用命令行
-    - 'cli_mode' => 'replace',
-        命令行启用模式
-+ DuckPhp\Component\DbManager
-    - 'database' => NULL,
-        单一数据库配置
-    - 'database_auto_extend_method' => true,
-        是否扩充方法至助手类
-    - 'database_list' => NULL,
-        数据库列表
-    - 'database_list_reload_by_setting' => true,
-        从设置里读取数据库列表
-    - 'database_list_try_single' => true,
-        尝试使用单一数据库配置
-    - 'database_log_sql_level' => 'debug',
-        记录sql 错误等级
-    - 'database_log_sql_query' => false,
-        记录sql 查询
 + DuckPhp\Ext\EmptyView
     - 'empty_view_key_view' => 'view',
         给View 的key
@@ -553,7 +553,6 @@
         覆盖视图目录
     - 'skip_view_notice_error' => true,
         跳过 View 视图的 notice
-+ DuckPhp\Component\EventManager
 + DuckPhp\Ext\FacadesAutoLoader
     - 'facades_enable_autoload' => true,
         使用 facdes 的 autoload

@@ -43,15 +43,15 @@ subgraph cluster_Core {
     Core_App -> Core_ExtendableStaticCallTrait;
     Core_App -> Core_SystemWrapperTrait;
     
-    Core_App -> Core_AutoLoader [style="dashed"];
-    Core_App -> Core_Configer [style="dashed"];
-    Core_App -> Core_Logger [style="dashed"];
-    Core_App -> Core_ExceptionManager [style="dashed"];
-    Core_App -> Core_Route [style="dashed"];
-    Core_App -> Core_RuntimeState [style="dashed"];
-    Core_App -> Core_View [style="dashed"];
+    Core_App -> Core_AutoLoader;
+    Core_App -> Core_Configer;
+    Core_App -> Core_Logger;
+    Core_App -> Core_ExceptionManager;
+    Core_App -> Core_Route;
+    Core_App -> Core_RuntimeState;
+    Core_App -> Core_View;
     
-    Core_App -> Core_Functions [style="dashed"];
+    Core_App -> Core_Functions;
     Core_App -> Core_ComponentBase [style="dotted"];
     
     Core_AppPluginTrait -> Core_Configer;

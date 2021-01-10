@@ -50,7 +50,7 @@ namespace MySpace\System
 } // end namespace
 // 助手类
 
-namespace MySpace\System\Helper
+namespace MySpace\Helper
 {
     class ControllerHelper extends \DuckPhp\Helper\ControllerHelper
     {
@@ -108,7 +108,7 @@ namespace MySpace\Business
 {
     use MySpace\Model\MyModel;
     use MySpace\System\BaseBusiness;
-    use MySpace\System\Helper\BusinessHelper as B;
+    use MySpace\Helper\BusinessHelper as B;
 
     class MyBusiness extends BaseBusiness
     {
@@ -122,7 +122,7 @@ namespace MySpace\Business
 
 namespace MySpace\Model
 {
-    use MySpace\Base\Helper\ModelHelper as M;
+    use MySpace\Helper\ModelHelper as M;
 
     class MyModel
     {
