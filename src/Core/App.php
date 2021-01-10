@@ -608,11 +608,11 @@ trait Core_Helper
         var_dump(...$args);
         echo "</pre>\n";
     }
-    public static function XCall($callback, ...$args)
+    public static function XpCall($callback, ...$args)
     {
-        return static::G()->_XCall($callback, ...$args);
+        return static::G()->_XpCall($callback, ...$args);
     }
-    public function _XCall($callback, ...$args)
+    public function _XpCall($callback, ...$args)
     {
         try {
             return ($callback)(...$args);

@@ -119,8 +119,8 @@ ControllerHelper::PageNo();
 ControllerHelper::PageSize();
 ControllerHelper::PageHtml(123);
 
-        ControllerHelper::XCall(function(){return "abc";});
-        ControllerHelper::XCall(function(){ throw new \Exception('ex'); });
+        ControllerHelper::XpCall(function(){return "abc";});
+        ControllerHelper::XpCall(function(){ throw new \Exception('ex'); });
         
         try{
            ControllerHelper::Event();

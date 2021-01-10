@@ -24,8 +24,8 @@ class BusinessHelperTest extends \PHPUnit\Framework\TestCase
 
         BusinessHelper::Cache(new \stdClass);
         
-        BusinessHelper::XCall(function(){return "abc";});
-        BusinessHelper::XCall(function(){ throw new \Exception('ex'); });
+        BusinessHelper::XpCall(function(){return "abc";});
+        BusinessHelper::XpCall(function(){ throw new \Exception('ex'); });
         
         try{
            BusinessHelper::Event();

@@ -175,8 +175,8 @@ App::PageHtml(123);
             App::ThrowOn(true,"HH");
         }catch(\Exception $ex){
         }
-        App::XCall(function(){return "abc";});
-        App::XCall(function(){ throw new \Exception('ex'); });
+        App::XpCall(function(){return "abc";});
+        App::XpCall(function(){ throw new \Exception('ex'); });
         App::Cache(new \stdClass);
         try{
             App::OnEvent("test",null);

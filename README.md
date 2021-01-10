@@ -1,5 +1,6 @@
 # DuckPhp 介绍
 ***v1.2.9版***
+
 作者QQ: 85811616
 
 官方QQ群: 714610448
@@ -25,6 +26,7 @@ php ./duckphp-project run    # --host 127.0.0.1 --port 8080 # 开始 web 服务�
 不建议使用命令行的 web 服务器， 你把 nginx 或 apache 的 document_root 设置为  public 目录按常规框架调整即可。
 
 DuckPhp 也支持在子目录里使用，同时也支持无 path_info 配置的 web 服务器。
+
 ## DuckPhp 是什么
 
 DuckPhp 的名字来源：
@@ -119,11 +121,9 @@ DuckPhp 遵守最小惊讶原则，尽量避免一下常见问题：
 
 避免了注解之类不知道从哪里冒出来的东西。
 
-#### 全覆盖测试
+#### 全覆盖单元测试
 
-由于作者强迫症，DuckPhp 每次发布都是通过全代码覆盖的测试。
-
-DuckPhp 因此有很大健壮性。
+DuckPhp 因为作者强迫症，每次发布都是通过全代码覆盖的测试，因此有很大健壮性。
 
 #### 区分使用角色
 
@@ -135,15 +135,16 @@ DuckPhp 的使用者角色分为 `业务工程师`和`核心工程师`。
 
 #### 其他优点
 
-DuckPhp 有扩展能做到禁止你在 Controller 里直接写 sql 。有时候，框架必须为了防止人犯蠢，而牺牲了性能。但 DuckPhp 这么做几乎不影响性能。
-
 DuckPhp 工程层级分明，不交叉引用。
+
+DuckPhp 的类尽量无状态。
 
 其他还有更多说到的优点，用到的时候会觉得精妙。
 
-DuckPhp 一度通过SwooleHttpd 不需要改代码就支持 swoole 。将来版本将支持 swoole 和 workerman ，和更多其他平台。
 
-DuckPhp 的类尽量无状态。
+DuckPhp 有扩展能做到禁止你在 Controller 里直接写 sql 。有时候，框架必须为了防止人犯蠢，而牺牲了性能。但 DuckPhp 这么做几乎不影响性能。
+
+DuckPhp 一度通过SwooleHttpd 不需要改代码就支持 swoole 。将来版本将支持 swoole 和 workerman ，和更多其他平台。
 
 ### 和其他框架简单对比
 
@@ -216,7 +217,7 @@ DuckPhp 代码里的 template 目录就是我们的工程目录示例。也是�
 +---app                         // psr-4 标准的自动加载目录。
 |   +---Business                // 业务目录
 |   |       BaseBusiness.php    //   服务基类
-|   |       TestBusiness.php    //   测试 Business
+|   |       TestBusiness.php    //   测试的业务
 |   +---Controller              // 控制器目录
 |   |       Main.php            //   默认控制器
 |   +---Model                   // 模型目录
@@ -265,7 +266,7 @@ Helper 目录，助手类，如果你一个人偷懒，直接用 APP 类也行
 ### 总结如何精简目录
 * 移除 app/Helper/ 目录,如果你直接用 App::* 替代助手类。
 * 移除 app/System/BaseController.php 如果你的 Controller 和默认的一样不需要基本类。
-* 移除 app/System/BaseModel.php 如果你的 Model 用的全静态方法。
+* 移除 app/Model/BaseModel.php 如果你的 Model 用的全静态方法。
 * 移除 app/System/BaseBusiness.php 如果你的 Business 不需要 G() 可变单例方法。
 * 移除 config/ 目录,在启动选项里删除 'use_setting_file'=>true
 * 移除 view/\_sys/ 目录 你需要设置启动选项里404和500错误 'error\_404','error\_500 。
@@ -530,16 +531,17 @@ DuckPhp 类/文件结构参考。(粗体部分是启动的时候引用的文件)
    2. [DbInterface](doc/ref/Db-DbInterface.md) Db 类满足 DbInterface 接口
    3. [Db](doc/ref/Db-Db.md) Db类
 3. **[DuckPhp](doc/ref/DuckPhp.md)** 入口类，加载了默认扩展的 DuckPhp 入口 ，扩展自 [DuckPhp\\Core\\App](doc/ref/Core-App.md)
-4. `Ext` 目录是扩展目录，**默认加载的扩展**。按字母排序。
-   1. [Cache](doc/ref/Ext-Cache.md) 缓存组件
-   2. **[Console](doc/ref/Ext-Cache.md)** 命令行模式扩展组件
-        1. [Installer](doc/ref/Ext-Installer.md) 安装器
-   3. [DbManager](doc/ref/Ext-DbManager.md) 数据库管理组件
-   4. [EventManager](doc/ref/Ext-EventManager.md) 事件管理组件
-   5. [Pager](doc/ref/Ext-Pager.md) 分页类
-        1. [PagerInteface](doc/ref/Ext-PagerInteface.md) 分页接口
-   6. **[RouteHookPathInfoCompat](doc/ref/Ext-RouteHookPathInfoCompat.md)** 无程序路由设计模式组件
-   7. **[RouteHookRouteMap](doc/ref/Ext-RouteHookRouteMap.md)** 路由映射组件
+4. `Components` 目录是自带组件扩展，**默认加载的扩展**。按字母排序。
+   1. [Cache](doc/ref/Component-Cache.md) 缓存组件
+   2. **[Console](doc/ref/Component-Cache.md)** 命令行模式扩展组件
+        1. [Installer](doc/ref/Component-Installer.md) 安装器
+   3. [DefaultCommand](doc/ref/Component-DefaultCommand.md) DuckPhp 的默认命令组件
+   4. [DbManager](doc/ref/Component-DbManager.md) 数据库管理组件
+   5. [EventManager](doc/ref/Component-EventManager.md) 事件管理组件
+   6. [Pager](doc/ref/Component-Pager.md) 分页类
+        1. [PagerInteface](doc/ref/Component-PagerInteface.md) 分页接口
+   7. **[RouteHookPathInfoCompat](doc/ref/Component-RouteHookPathInfoCompat.md)** 无程序路由设计模式组件
+   8. **[RouteHookRouteMap](doc/ref/Component-RouteHookRouteMap.md)** 路由映射组件
 
 5. `Ext` 扩展目录，非默认加载的扩展。按字母排序。
    1. [CallableView](doc/ref/Ext-CallableView.md) 可接受函数调用的视图组件

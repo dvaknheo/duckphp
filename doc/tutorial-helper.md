@@ -145,7 +145,7 @@ LoadConfig($key,$basename="config");
 Cache($replace_object)
 
     获得缓存管理器
-XCall($callback, ...args)
+XpCall($callback, ...args)
 
     包裹callback输出，如果抛出异常则返回异常，否则返回 $callback();
 Event()
@@ -274,9 +274,9 @@ setMultiExceptionHandler
 setDefaultExceptionHandler
 
     【异常处理】设置异常的默认处理
-XCall($callback, ...$args)
+XpCall($callback, ...$args)
 
-    【其他】见 BusinessHelper 的 Event 介绍
+    【其他】见 BusinessHelper 的 XpCall 介绍
 ### 系统替代
 header
 

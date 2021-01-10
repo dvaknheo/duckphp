@@ -28,9 +28,9 @@ class BusinessHelper
     {
         return App::Cache($object);
     }
-    public static function XCall($callback, ...$args)
+    public static function XpCall($callback, ...$args)
     {
-        return App::XCall($callback, ...$args);
+        return App::XpCall($callback, ...$args);
     }
     public static function Event()
     {
