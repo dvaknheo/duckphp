@@ -19,7 +19,7 @@
 
 ## 详解
 
-一个简单的路由钩子管理器。
+RouHookManager 并非是一个路由钩子，而是一个简单的路由钩子管理器。
 
 attachPreRun 管理 运行前钩子， attachPostRun  管理运行后勾子。 detach释放绑定。
 

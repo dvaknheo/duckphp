@@ -2,7 +2,7 @@
 [toc]
 
 ## 简介
-未加载的`组件类`。你们要的 Facades 伪静态方法
+你们要的 Facades 伪静态方法
 
 ## 选项
 'facades_namespace' => 'Facades',

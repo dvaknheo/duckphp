@@ -3,6 +3,7 @@ parameters:
     level: 8
     checkMissingIterableValueType: false
     ### inferPrivatePropertyTypeFromConstructor: false
+    checkGenericClassInNonGenericObjectType: false
     paths:
         - src
 
