@@ -16,6 +16,8 @@ Now is [<?=$var?>]
     <a href="<?=__url('test/done')?>">查看 Demo 结果</a>
 </div>
 <hr />
+<a href="/full/doc.php"> DuckPhp 文档</a>
+<hr />
 <div>
 常用例子，不需要单独配置
 <ul>
@@ -31,7 +33,6 @@ Now is [<?=$var?>]
     <li><a href="/full/auth.php">auth.php 简单的用户验证系统</a>
     <li><a href="/full/blog.php">blog.php 简单的博客</a>
     <li><a href="/full/dbtest.php">dbtest.php 数据库演示</a>
-    <li><a href="/full/doc.php">doc.php DuckPhp 简单文档</a>
 </ul>
 </div>
 </body>

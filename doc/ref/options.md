@@ -142,13 +142,13 @@
     默认开启的扩展   // [DuckPhp\Core\App](Core-App.md)
 +  'facades_enable_autoload' => true,   
 
-    使用 facdes 的 autoload   // [DuckPhp\Ext\FacadesAutoLoader](Ext-FacadesAutoLoader.md)
+    使用 facdes 的 autoload   // [DuckPhp\Ext\MyFacadesAutoLoader](Ext-MyFacadesAutoLoader.md)
 +  'facades_map' => array ( ),   
 
-    facade 映射   // [DuckPhp\Ext\FacadesAutoLoader](Ext-FacadesAutoLoader.md)
-+  'facades_namespace' => 'Facades',   
+    facade 映射   // [DuckPhp\Ext\MyFacadesAutoLoader](Ext-MyFacadesAutoLoader.md)
++  'facades_namespace' => 'MyFacades',   
 
-    facades 开始的namespace   // [DuckPhp\Ext\FacadesAutoLoader](Ext-FacadesAutoLoader.md)
+    facades 开始的namespace   // [DuckPhp\Ext\MyFacadesAutoLoader](Ext-MyFacadesAutoLoader.md)
 +  'handle_all_dev_error' => true,   
 
     接管一切开发错误   // [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
@@ -220,13 +220,13 @@
     配置目录   // [DuckPhp\Core\Configer](Core-Configer.md)
 + ** 'path_info_compact_action_key' => '_r',  ** 
 
-    GET 动作方法名的 key   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md), [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
+    GET 动作方法名的 key   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
 + ** 'path_info_compact_class_key' => '',  ** 
 
-    GET 模式类名的 key   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md), [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
+    GET 模式类名的 key   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
 + ** 'path_info_compact_enable' => false,  ** 
 
-    使用 _GET 模拟无 PathInfo 配置   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md), [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
+    使用 _GET 模拟无 PathInfo 配置   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
 +  'path_lib' => 'lib',   
 
     库目录   // [DuckPhp\Ext\Misc](Ext-Misc.md)
@@ -286,16 +286,16 @@
     目录重写映射   // [DuckPhp\Ext\RouteHookRewrite](Ext-RouteHookRewrite.md)
 + ** 'route_map' => array ( ),  ** 
 
-    路由映射   // [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md), [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md)
+    路由映射   // [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md)
 + ** 'route_map_auto_extend_method' => true,  ** 
 
-    是否扩充方法至助手类   // [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md), [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md)
+    是否扩充方法至助手类   // [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md)
 + ** 'route_map_by_config_name' => '',  ** 
 
-    路由配置名，使用配置模式用路由   // [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md), [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md)
+    路由配置名，使用配置模式用路由   // [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md)
 + ** 'route_map_important' => array ( ),  ** 
 
-    重要路由映射   // [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md), [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md)
+    重要路由映射   // [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md)
 + ** 'setting' => array ( ),  ** 
 
     设置，预先载入的设置   // [DuckPhp\Core\Configer](Core-Configer.md)
@@ -553,12 +553,12 @@
         覆盖视图目录
     - 'skip_view_notice_error' => true,
         跳过 View 视图的 notice
-+ DuckPhp\Ext\FacadesAutoLoader
++ DuckPhp\Ext\MyFacadesAutoLoader
     - 'facades_enable_autoload' => true,
         使用 facdes 的 autoload
     - 'facades_map' => array ( ),
         facade 映射
-    - 'facades_namespace' => 'Facades',
+    - 'facades_namespace' => 'MyFacades',
         facades 开始的namespace
 + DuckPhp\Ext\JsonRpcExt
     - 'jsonrpc_backend' => 'https://127.0.0.1',
@@ -616,27 +616,11 @@
 + DuckPhp\Ext\RouteHookDirectoryMode
     - 'mode_dir_basepath' => '',
         目录模式的基类
-+ DuckPhp\Component\RouteHookPathInfoCompat
-    - 'path_info_compact_action_key' => '_r',
-        GET 动作方法名的 key
-    - 'path_info_compact_class_key' => '',
-        GET 模式类名的 key
-    - 'path_info_compact_enable' => false,
-        使用 _GET 模拟无 PathInfo 配置
 + DuckPhp\Ext\RouteHookRewrite
     - 'rewrite_auto_extend_method' => true,
         是否扩充方法至助手类
     - 'rewrite_map' => array ( ),
         目录重写映射
-+ DuckPhp\Component\RouteHookRouteMap
-    - 'route_map' => array ( ),
-        路由映射
-    - 'route_map_auto_extend_method' => true,
-        是否扩充方法至助手类
-    - 'route_map_by_config_name' => '',
-        路由配置名，使用配置模式用路由
-    - 'route_map_important' => array ( ),
-        重要路由映射
 + DuckPhp\Ext\StrictCheck
     - 'controller_base_class' => NULL,
         控制器基类

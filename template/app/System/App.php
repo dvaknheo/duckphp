@@ -174,13 +174,13 @@ class App extends DuckPhp
         // 配置目录 (DuckPhp\Core\Configer)
         // $options['path_config'] = 'config';
 
-        // GET 动作方法名的 key (DuckPhp\Component\RouteHookPathInfoCompat, DuckPhp\Component\RouteHookPathInfoCompat)
+        // GET 动作方法名的 key (DuckPhp\Component\RouteHookPathInfoCompat)
         // $options['path_info_compact_action_key'] = '_r';
 
-        // GET 模式类名的 key (DuckPhp\Component\RouteHookPathInfoCompat, DuckPhp\Component\RouteHookPathInfoCompat)
+        // GET 模式类名的 key (DuckPhp\Component\RouteHookPathInfoCompat)
         // $options['path_info_compact_class_key'] = '';
 
-        // 使用 _GET 模拟无 PathInfo 配置 (DuckPhp\Component\RouteHookPathInfoCompat, DuckPhp\Component\RouteHookPathInfoCompat)
+        // 使用 _GET 模拟无 PathInfo 配置 (DuckPhp\Component\RouteHookPathInfoCompat)
         // $options['path_info_compact_enable'] = false;
 
         // 日志目录 (DuckPhp\Core\Logger)
@@ -198,16 +198,16 @@ class App extends DuckPhp
         // 平台 (DuckPhp\Core\App)
         // $options['platform'] = '';
 
-        // 路由映射 (DuckPhp\Component\RouteHookRouteMap, DuckPhp\Component\RouteHookRouteMap)
+        // 路由映射 (DuckPhp\Component\RouteHookRouteMap)
         // $options['route_map'] = array ( );
 
-        // 是否扩充方法至助手类 (DuckPhp\Component\RouteHookRouteMap, DuckPhp\Component\RouteHookRouteMap)
+        // 是否扩充方法至助手类 (DuckPhp\Component\RouteHookRouteMap)
         // $options['route_map_auto_extend_method'] = true;
 
-        // 路由配置名，使用配置模式用路由 (DuckPhp\Component\RouteHookRouteMap, DuckPhp\Component\RouteHookRouteMap)
+        // 路由配置名，使用配置模式用路由 (DuckPhp\Component\RouteHookRouteMap)
         // $options['route_map_by_config_name'] = '';
 
-        // 重要路由映射 (DuckPhp\Component\RouteHookRouteMap, DuckPhp\Component\RouteHookRouteMap)
+        // 重要路由映射 (DuckPhp\Component\RouteHookRouteMap)
         // $options['route_map_important'] = array ( );
 
         // 设置，预先载入的设置 (DuckPhp\Core\Configer)
@@ -312,7 +312,7 @@ class App extends DuckPhp
 
         //*/
         /*
-        $options['ext']['DuckPhp\\Ext\\FacadesAutoLoader'] = true;
+        $options['ext']['DuckPhp\\Ext\\MyFacadesAutoLoader'] = true;
             // 使用 facdes 的 autoload
             $options['facades_enable_autoload'] = true;
 
@@ -320,7 +320,7 @@ class App extends DuckPhp
             $options['facades_map'] = array ( );
 
             // facades 开始的namespace
-            $options['facades_namespace'] = 'Facades';
+            $options['facades_namespace'] = 'MyFacades';
 
         //*/
         /*

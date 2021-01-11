@@ -7,13 +7,13 @@
 namespace LazyToChange\Controller;
 
 use LazyToChange\Helper\ControllerHelper as C;
-use LazyToChange\Business\TestBusiness;
+use LazyToChange\Business\DemoBusiness;
 
 class test
 {
     public function done()
     {
-        $var = TestBusiness::G()->foo();
+        $var = DemoBusiness::G()->foo();
         C::Show(get_defined_vars());
     }
 }

@@ -5,7 +5,7 @@
 你们要的 Facades 伪静态方法
 
 ## 选项
-'facades_namespace' => 'Facades',
+'facades_namespace' => 'MyFacades',
 
     前缀
 'facades_map' => [],
@@ -31,7 +31,7 @@ public function clear()
 示例
 
 ```php
-use Facades\LazyToChange\Model\TestModel;
+use MyFacades\LazyToChange\Model\TestModel;
 TestModel::foo(); // <=> \LazyToChange\Model\TestModel::G()->foo();
 ```
 注意， ComponentBase 的方法无法这么来。

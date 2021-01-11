@@ -36,9 +36,11 @@ getfile($f);
 <body>
 <div>
 一个简单的 md 文件读取器，够本文档用就行了。 <br />
-<a href="#">返回主页</a>
+<a href="#">返回文档主页</a>
 </div>
-  <div id="content" style="border:1px solid gray;"></div>
+  <div id="content" style="border:1px solid gray;">
+  正在打开文档。请保证 cdn.jsdelivr.net ，外接 js 能访问
+  </div>
 <script>
 
 function fetchMarkdown(url){

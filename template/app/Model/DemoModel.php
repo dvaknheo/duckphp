@@ -7,9 +7,9 @@
 namespace LazyToChange\Model;
 
 use LazyToChange\Model\BaseModel;
-use LazyToChange\Helper\ModelHelper as M;
+// use LazyToChange\Helper\ModelHelper as M;
 
-class TestModel extends BaseModel
+class DemoModel extends BaseModel
 {
     public function foo()
     {

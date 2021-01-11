@@ -217,12 +217,12 @@ DuckPhp 代码里的 template 目录就是我们的工程目录示例。也是�
 +---app                         // psr-4 标准的自动加载目录。
 |   +---Business                // 业务目录
 |   |       BaseBusiness.php    //   服务基类
-|   |       TestBusiness.php    //   测试的业务
+|   |       DemoBusiness.php    //   测试的业务
 |   +---Controller              // 控制器目录
 |   |       Main.php            //   默认控制器
 |   +---Model                   // 模型目录
 |   |       BaseModel.php       //   模型基类
-|   |       TestModel.php       //   测试模型
+|   |       DemoModel.php       //   测试模型
 |   +---Helper                  // 助手类目录
 |   |       AppHelper.php       //   应用助手类
 |   |       BusinessHelper.php  //   服务助手类
@@ -395,7 +395,7 @@ namespace MySpace\Helper
 namespace MySpace\Controller
 {
     use MySpace\Business\MyBusiness;  // 引用助手类
-    use MySpace\System\Helper\ControllerHelper as C; // 引用相关服务类
+    use MySpace\Helper\ControllerHelper as C; // 引用相关服务类
 
     class Main
     {
@@ -526,38 +526,43 @@ DuckPhp 类/文件结构参考。(粗体部分是启动的时候引用的文件)
         4. **[Functions](doc/ref/Core-Functions.md)** 全局函数列表
         5. [Logger](doc/ref/Core-Logger.md) 日志组件
     3. [AppPluginTrait](doc/ref/Core-AppPluginTrait.md)   这个Trait用于把独立工程 App 转成插件 
-2. `Db` 目录是数据库目录
+2. `Db` 目录，数据库目录
    1. [DbAdvanceTrait](doc/ref/Db-DbAdvanceTrait.md)  这个 trait 增加了 Db类的高级功能
    2. [DbInterface](doc/ref/Db-DbInterface.md) Db 类满足 DbInterface 接口
    3. [Db](doc/ref/Db-Db.md) Db类
 3. **[DuckPhp](doc/ref/DuckPhp.md)** 入口类，加载了默认扩展的 DuckPhp 入口 ，扩展自 [DuckPhp\\Core\\App](doc/ref/Core-App.md)
-4. `Components` 目录是自带组件扩展，**默认加载的扩展**。按字母排序。
+4. `Component` 目录，自带组件扩展，**默认加载的扩展**。按字母排序。
    1. [Cache](doc/ref/Component-Cache.md) 缓存组件
    2. **[Console](doc/ref/Component-Cache.md)** 命令行模式扩展组件
-        1. [Installer](doc/ref/Component-Installer.md) 安装器
-   3. [DefaultCommand](doc/ref/Component-DefaultCommand.md) DuckPhp 的默认命令组件
-   4. [DbManager](doc/ref/Component-DbManager.md) 数据库管理组件
-   5. [EventManager](doc/ref/Component-EventManager.md) 事件管理组件
-   6. [Pager](doc/ref/Component-Pager.md) 分页类
+   3. [Installer](doc/ref/Component-Installer.md) 安装器
+   4. [DuckPhpCommand](doc/ref/Component-DuckPhpCommand.md) DuckPhp 的默认指令组件
+   5. [DbManager](doc/ref/Component-DbManager.md) 数据库管理组件
+   6. [EventManager](doc/ref/Component-EventManager.md) 事件管理组件
+   7. [Pager](doc/ref/Component-Pager.md) 分页类
         1. [PagerInteface](doc/ref/Component-PagerInteface.md) 分页接口
-   7. **[RouteHookPathInfoCompat](doc/ref/Component-RouteHookPathInfoCompat.md)** 无程序路由设计模式组件
-   8. **[RouteHookRouteMap](doc/ref/Component-RouteHookRouteMap.md)** 路由映射组件
+   8. **[RouteHookPathInfoCompat](doc/ref/Component-RouteHookPathInfoCompat.md)** 无程序路由设计模式组件
+   9. **[RouteHookRouteMap](doc/ref/Component-RouteHookRouteMap.md)** 路由映射组件
 
 5. `Ext` 扩展目录，非默认加载的扩展。按字母排序。
-   1. [CallableView](doc/ref/Ext-CallableView.md) 可接受函数调用的视图组件
-   2. [EmptyView](doc/ref/Ext-EmptyView.md) 空视图组件
-   3. [FacadesAutoLoader](doc/ref/Ext-FacadesAutoLoader.md) 门面组件，用于偷懒
-        1. [FacadesBase](doc/ref/Ext-FacadesBase.md) 门面类的基类
-   4. [JsonRpcExt](doc/ref/Ext-JsonRpcExt.md) Json 远程调用组件，把本地调用改为远程调用
+    1. [CallableView](doc/ref/Ext-CallableView.md) 可接受函数调用的视图组件
+    2. [EmptyView](doc/ref/Ext-EmptyView.md) 空视图组件
+    3. [HookChain](doc/ref/Ext-HookChain.md) 把回调扩展成链的类
+    4. [HttpServerPlugin](doc/ref/Ext-HttpServerPlugin.md) TODO http 扩展插件
+    5. [JsonRpcExt](doc/ref/Ext-JsonRpcExt.md) Json 远程调用组件，把本地调用改为远程调用
         1. [JsonRpcClientBase](doc/ref/Ext-JsonRpcClientBase.md)
-   5. [JsonView](doc/ref/Ext-JsonView.md) Json 视图组件
-   6. [Misc](doc/ref/Ext-Misc.md) 杂项功能组件
-   7. [RedisCache](doc/ref/Ext-RedisSimpleCache.md) redis 缓存组件
-   8. [RedisManager](doc/ref/Ext-RedisManager.md) Redis管理器组件
-   9. [RouteHookDirectoryMode](doc/ref/Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件
-   10. [RouteHookManager](doc/ref/Ext-RouteHookManager.md) 路由钩子管理器
-   11. [RouteHookRewrite](doc/ref/Ext-RouteHookRewrite.md) 路由重写组件
-   12. [StrictCheck](doc/ref/Ext-StrictCheck.md) 严格检查模式组件
+    6. [JsonView](doc/ref/Ext-JsonView.md) Json 视图组件
+    7. [Misc](doc/ref/Ext-Misc.md) 杂项功能组件
+    8. [MyFacadesAutoLoader](doc/ref/Ext-MyFacadesAutoLoader.md) 门面组件，不推荐
+        1. [MyFacadesBase](doc/ref/Ext-MyFacadesBase.md) 门面类的基类，不推荐
+    9. [MyMiddleware](doc/ref/Ext-MyMiddleware.md) 中间件，不推荐
+    10. [RedisCache](doc/ref/Ext-RedisSimpleCache.md) redis 缓存组件
+    11. [RedisManager](doc/ref/Ext-RedisManager.md) Redis管理器组件
+    12. [RouteHookDirectoryMode](doc/ref/Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件
+    13. [RouteHookManager](doc/ref/Ext-RouteHookManager.md) 路由钩子管理器
+    14. [RouteHookRewrite](doc/ref/Ext-RouteHookRewrite.md) 路由重写组件
+    15. [SimpleModel](doc/ref/Ext-SimpleModel.md) TODO 简单的模型基类
+    16. [StaticReplacer](doc/ref/Ext-StaticReplacer.md) TODO 适配协程的语法替换写法类
+    17. [StrictCheck](doc/ref/Ext-StrictCheck.md) 严格检查模式组件
 6. `Helper` 目录，各种助手类。
     1. [HelperTrait](doc/ref/Helper-HelperTrait.md) 助手类公用 Trait
     2. [ControllerHelper](doc/ref/Helper-ControllerHelper.md) 控制器助手类
@@ -571,7 +576,7 @@ DuckPhp 类/文件结构参考。(粗体部分是启动的时候引用的文件)
     1. **[SingletonEx](doc/ref/SingletonEx-SingletonEx)**  可变单例 trait
     1. [SimpleReplacer](doc/ref/SingletonEx-SimpleReplacer)  可选可变单例容器
 9. `ThrowOn`目录
-    1. **[ThrowOn](doc/ref/ThrowOn-ThrowOn.md)** 可抛 trait，应用工程引用它方便异常处理
+    1. [ThrowOnTrait](doc/ref/ThrowOn-ThrowOnTrait.md) 可抛 trait，应用工程引用它方便异常处理
 
 ----
 完整应用架构图（缺事件和异常处理部分）

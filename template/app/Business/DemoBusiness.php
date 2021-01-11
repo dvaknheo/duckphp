@@ -5,14 +5,14 @@
  */
 
 namespace LazyToChange\Business;
-
 use LazyToChange\Helper\BusinessHelper as B;
-use LazyToChange\Model\TestModel;
 
-class TestBusiness extends BaseBusiness
+use LazyToChange\Model\DemoModel;
+
+class DemoBusiness extends BaseBusiness
 {
     public function foo()
     {
-        return "<" . TestModel::G()->foo().">";
+        return "<" . DemoModel::G()->foo().">";
     }
 }

@@ -76,7 +76,7 @@ namespace MySpace\Helper
 namespace MySpace\Controller
 {
     use MySpace\Business\MyBusiness;  // 引用助手类
-    use MySpace\System\Helper\ControllerHelper as C; // 引用相关服务类
+    use MySpace\Helper\ControllerHelper as C; // 引用相关服务类
 
     class Main
     {

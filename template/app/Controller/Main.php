@@ -7,7 +7,7 @@
 namespace LazyToChange\Controller;
 
 // use LazyToChange\Controller\BaseController;
-use LazyToChange\Business\TestBusiness;
+use LazyToChange\Business\DemoBusiness;
 use LazyToChange\Helper\ControllerHelper as C;
 
 class Main // extends BaseController
@@ -15,7 +15,7 @@ class Main // extends BaseController
     public function index()
     {
         //change it if  you can
-        $var = C::H(TestBusiness::G()->foo());
+        $var = C::H(DemoBusiness::G()->foo());
         C::Show(get_defined_vars(), 'main');
     }
     // change it  if  you can

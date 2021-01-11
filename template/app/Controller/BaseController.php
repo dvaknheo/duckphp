@@ -15,7 +15,7 @@ class BaseController
     
     public function __construct()
     {
-        // 这个类阻止了直接访问
+        // block direct visit
         if (static::class === self::class) {
             C::Exit404();
         }
