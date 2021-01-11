@@ -86,13 +86,13 @@ File: `template/app/Controller/test.php`
 namespace LazyToChange\Controller;
 
 use LazyToChange\Helper\ControllerHelper as C;
-use LazyToChange\Business\TestBusiness;
+use LazyToChange\Business\DemoBusiness;
 
 class test
 {
     public function done()
     {
-        $var = TestBusiness::G()->foo();
+        $var = DemoBusiness::G()->foo();
         C::Show(get_defined_vars());
     }
 }
@@ -112,7 +112,7 @@ C::Show($data); 是 C::Show($data,'test/done'); 的缩写， 调用 test/done �
 
 业务逻辑层。根据业务逻辑来命名。
 
-File: `template/app/Business/TestBusiness.php`
+File: `template/app/Business/DemoBusiness.php`
 
 ```php
 <?php declare(strict_types=1);
@@ -122,20 +122,20 @@ File: `template/app/Business/TestBusiness.php`
  */
 
 namespace LazyToChange\Business;
-
 use LazyToChange\Helper\BusinessHelper as B;
-use LazyToChange\Model\TestModel;
 
-class TestBusiness extends BaseBusiness
+use LazyToChange\Model\DemoModel;
+
+class DemoBusiness extends BaseBusiness
 {
     public function foo()
     {
-        return "<" . TestModel::G()->foo().">";
+        return "<" . DemoModel::G()->foo().">";
     }
 }
 
 ```
-BaseBusiness也是不强求的，我们 extends BaseBusiness 是为了能用 TestBusiness::G() 可变单例。
+BaseBusiness也是不强求的，我们 extends BaseBusiness 是为了能用 DemoBusiness::G() 可变单例。
 
 这里调用了 MiscModel 。
 
@@ -145,7 +145,7 @@ BaseBusiness也是不强求的，我们 extends BaseBusiness 是为了能用 Tes
 
 Model 类是实现基本功能的。一般 Model 类的命名是和数据库表一致的。
 
-File: `template/app/Model/TestModel.php`
+File: `template/app/Model/DemoModel.php`
 
 ```php
 <?php declare(strict_types=1);
@@ -157,9 +157,9 @@ File: `template/app/Model/TestModel.php`
 namespace LazyToChange\Model;
 
 use LazyToChange\Model\BaseModel;
-use LazyToChange\Helper\ModelHelper as M;
+// use LazyToChange\Helper\ModelHelper as M;
 
-class TestModel extends BaseModel
+class DemoModel extends BaseModel
 {
     public function foo()
     {
@@ -168,7 +168,7 @@ class TestModel extends BaseModel
 }
 
 ```
-同样 BaseModel 也是不强求的，我们 extends BaseModel 是为了能用 TestModel::G() 可变单例。
+同样 BaseModel 也是不强求的，我们 extends BaseModel 是为了能用 DemoModel::G() 可变单例。
 
 ### 最后显示结果
 ```text
