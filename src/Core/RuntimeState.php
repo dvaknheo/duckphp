@@ -18,11 +18,6 @@ class RuntimeState extends ComponentBase
     protected $is_outputed = false;
     protected $init_ob_level = 0;
     
-    public static function ReCreateInstance()
-    {
-        $class = get_class(static::G());
-        return static::G(new $class);
-    }
     public function run()
     {
         if ($this->options['use_output_buffer']) {
@@ -32,15 +27,13 @@ class RuntimeState extends ComponentBase
         }
         $this->is_running = true;
     }
-    /*
     public function reset()
     {
         $current_instance = self::G();
         $options = $current_instance->options;
         $context = $current_instance->context_class ? $current_instance->context_class::G() : null;
-        self::G( new $current_class())->init($options, $context)->run();
+        self::G(new static())->init($options, $context)->run();
     }
-    */
     public function clear()
     {
         if ($this->options['use_output_buffer']) {

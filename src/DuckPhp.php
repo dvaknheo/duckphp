@@ -11,6 +11,7 @@ namespace DuckPhp;
 use DuckPhp\Component\Cache;
 use DuckPhp\Component\Console;
 use DuckPhp\Component\DbManager;
+use DuckPhp\Component\DuckPhpCommand;
 use DuckPhp\Component\EventManager;
 use DuckPhp\Component\Pager;
 use DuckPhp\Component\RouteHookPathInfoCompat;
@@ -42,7 +43,9 @@ class DuckPhp extends App
     protected function initAfterOverride(array $options, object $context = null)
     {
         if (PHP_SAPI === 'cli') {
+            Console::G()->options['cli_default_command_class'] = DuckPhpCommand::class;
             $this->options['ext'][Console::class] = $this->options['ext'][Console::class] ?? true;
+            $this->options['ext'][DuckPhpCommand::class] = $this->options['ext'][DuckPhpCommand::class] ?? true;
         }
         if ($options['path_info_compact_enable'] ?? false) {
             $this->options['ext'][RouteHookPathInfoCompat::class] = $this->options['ext'][RouteHookPathInfoCompat::class] ?? true;

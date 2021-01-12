@@ -158,6 +158,7 @@ trait Kernel
         $this->error_view_inited = true;
         
         Route::G()->init($this->options, $this);
+        RuntimeState::G()->init($this->options, $this);
     }
     protected function reloadFlags(): void
     {
@@ -241,10 +242,9 @@ trait Kernel
     }
     public function beforeRun()
     {
-        RuntimeState::ReCreateInstance()->init($this->options, $this)->run();
-        // RuntimeState::G()->reset();
+        RuntimeState::G()->reset();
         View::G()->reset();
-        Route::G()->reset(); //TODO: 统一用 reset.
+        Route::G()->reset();
     }
     public function clear(): void
     {

@@ -4,7 +4,7 @@ use DuckPhp\Component\Console;
 use DuckPhp\Component\DefaultCommand;
 use DuckPhp\HttpServer\HttpServer;
 use DuckPhp\Component\Installer;
-use DuckPhp\Core\App;
+use DuckPhp\DuckPhp as App;
 use DuckPhp\Core\ComponentBase;
 
 class ConsoleTest extends \PHPUnit\Framework\TestCase

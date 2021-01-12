@@ -50,6 +50,7 @@ trait AppPluginTrait
         $this->pluginModeInitOptions($options);
         $this->pluginModeInitVars($context);
         
+        // initConfig
         $ext_config_files = [];
         foreach ($this->plugin_options['plugin_files_config'] as $name) {
             $file = $this->path_config_override.$name.'.php';
@@ -155,37 +156,28 @@ trait AppPluginTrait
     }
     protected function getPluginModePathInfo($path_info)
     {
-        $my_path_info = $path_info;
+        $ret = $path_info;
         if ($this->plugin_options['plugin_url_prefix'] ?? false) {
             $prefix = '/'.trim($this->plugin_options['plugin_url_prefix'], '/').'/';
             $l = strlen($prefix);
             if (substr($path_info, 0, $l) !== $prefix) {
                 return false;
             }
-            $my_path_info = substr($path_info, $l - 1);
+            $ret = substr($path_info, $l - 1);
         }
-        return $my_path_info;
+        return $ret;
     }
     protected function _PluginModeRouteHook($path_info)
     {
-        $options = $this->plugin_options;
-        $options['namespace'] = $this->plugin_options['plugin_namespace'];
-        
-        $this->plugin_view_old = View::G();
-        $this->plugin_route_old = Route::G();
-        
-        //TODO 这里我们还要做更多处理
-        View::G(new View())->init($this->plugin_view_old->options)->setOverridePath($this->path_view_override);
-        
-        // reset route
-        $route = Route::G(new Route());
-        
-
-        
-        $route->init($options)->reset();
         $path_info = $this->getPluginModePathInfo($path_info);
+        if ($path_info === false) {
+            return false;
+        }
+        $this->pluginModeBeforeRun();
+        
+        $route = Route::G();
         $route->setPathInfo($path_info);
-        $route->setUrlHandler([static::class,'OnPluginModeUrl']);
+        $route->setUrlHandler([static::class,'OnPluginModeUrl']); //context->url?
         
         $this->onPluginModeBeforeRun();
         
@@ -199,6 +191,23 @@ trait AppPluginTrait
         
         $this->pluginModeClear();
         return true;
+    }
+    protected function pluginModeBeforeRun()
+    {
+        $namespace = $this->plugin_options['plugin_namespace'];
+        
+        $this->plugin_view_old = View::G();
+        $view_options = $this->plugin_view_old->options;
+        $view_options['path_view'] = $view_options['path_view'] ?? '';
+        $view_options['path_view'] = $view_options['path_view'] === '' ? '': rtrim($view_options['path_view'], 'DIRECTORY_SEPARATOR') .DIRECTORY_SEPARATOR;
+        $view_options['path_view'] .= str_replace('\\', DIRECTORY_SEPARATOR, $namespace);
+        $view_options['path_view_override'] = $this->path_view_override;
+        View::G(new View())->init($view_options)->reset();
+        
+        $this->plugin_route_old = Route::G();
+        $route_options = $this->plugin_route_old->options;
+        $route_options['namespace'] = $namespace;
+        Route::G(new Route())->init($route_options)->reset();
     }
     protected function pluginModeClear()
     {
@@ -220,6 +229,10 @@ trait AppPluginTrait
         return Route::G()->defaultUrlHandler($url);
     }
     public function pluginModeGetOldRoute()
+    {
+        return $this->plugin_route_old;
+    }
+    public function pluginModeGetOldView()
     {
         return $this->plugin_route_old;
     }

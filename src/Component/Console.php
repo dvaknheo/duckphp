@@ -11,7 +11,7 @@ class Console
         'cli_enable' => true,
         'cli_mode' => 'replace',
         'cli_command_alias' => [],
-        'cli_default_command_class' => DuckPhpCommand::class,
+        'cli_default_command_class' => '',
         'cli_command_method_prefix' => 'command_',
     ];
     protected $context_class = null;
@@ -44,6 +44,7 @@ class Console
     }
     public function init(array $options, ?object $context = null)
     {
+        var_dump($this->options, $options);exit;
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         if (PHP_SAPI !== 'cli') {
             return $this; // @codeCoverageIgnore
@@ -160,6 +161,7 @@ class Console
         }
         $method = $this->options['cli_command_method_prefix'].$method;
         if ($name === '') {
+            var_dump($this->options);
             $class = method_exists($this->context_class ?? '', $method) ? $this->context_class : $this->options['cli_default_command_class'];
         } else {
             $name = str_replace('/', '\\', $name);
@@ -171,6 +173,7 @@ class Console
         }
         // $this->options['cli_default_command_class'] ===''
         if (!$class || !class_exists($class)) {
+            var_dump($class);
             throw new \ReflectionException("Command Not Found: {$cmd}\n", -3);
         }
         

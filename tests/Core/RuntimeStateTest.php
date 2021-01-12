@@ -10,7 +10,7 @@ class RuntimeStateTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(RuntimeState::class);
         
         RuntimeState::G()->isRunning();
-        RuntimeState::G()->ReCreateInstance()->init(['use_output_buffer'=>true])->run();
+        RuntimeState::G()->reset();
         RuntimeState::G()->clear();
         
         RuntimeState::G()->toggleInException();
