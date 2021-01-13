@@ -8,12 +8,12 @@ namespace DuckPhp\Ext;
 use DuckPhp\Core\ComponentBase;
 
 class StaticReplacer extends ComponentBase
-{    
+{
     public $GLOBALS = [];
     public $STATICS = [];
     public $CLASS_STATICS = [];
     ///////////////////////////////
-    //TODO 添加 Replace 
+    //TODO 添加 Replace
     public function &_GLOBALS($k, $v = null)
     {
         if (!isset($this->GLOBALS[$k])) {

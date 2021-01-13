@@ -4,7 +4,6 @@ namespace tests\DuckPhp\Ext;
 use DuckPhp\Ext\RouteHookDirectoryMode;
 use DuckPhp\Core\App;
 use DuckPhp\Core\Route;
-use DuckPhp\Core\SuperGlobal;
 
 class RouteHookDirectoryModeTest extends \PHPUnit\Framework\TestCase
 {
@@ -31,8 +30,8 @@ class RouteHookDirectoryModeTest extends \PHPUnit\Framework\TestCase
         RouteHookDirectoryMode::G()->init($options, $context=null);
         RouteHookDirectoryMode::G()->init($options, App::G());
         
-        SuperGlobal::G()->_SERVER['REQUEST_URI']='';
-        SuperGlobal::G()->_SERVER['PATH_INFO']='';
+        $_SERVER['REQUEST_URI']='';
+        $_SERVER['PATH_INFO']='';
         
         $server=[
             'DOCUMENT_ROOT'=>rtrim($base_path,'/'),
@@ -42,10 +41,10 @@ class RouteHookDirectoryModeTest extends \PHPUnit\Framework\TestCase
         Route::G()->reset();
         Route::G()->run();
         
-        SuperGlobal::G()->_SERVER['REQUEST_URI']='';
-        SuperGlobal::G()->_SERVER['PATH_INFO']='';
+        $_SERVER['REQUEST_URI']='';
+        $_SERVER['PATH_INFO']='';
 echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n";
-        SuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=rtrim($base_path,'/');
+        $_SERVER['DOCUMENT_ROOT']=rtrim($base_path,'/');
         echo RouteHookDirectoryMode::URL("/izx");
         echo RouteHookDirectoryMode::G()->onURL("/izx");
         echo PHP_EOL;
@@ -66,15 +65,15 @@ echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n";
 
     
         $file='/a/b.php';
-        SuperGlobal::G()->_SERVER['DOCUMENT_ROOT']=rtrim($base_path,'/'); ///a/b.php
-        SuperGlobal::G()->_SERVER['SCRIPT_FILENAME']=rtrim($base_path,'/').$file;
-        SuperGlobal::G()->_SERVER['PATH_INFO']='';
-        SuperGlobal::G()->_SERVER['REQUEST_URI']=$file;
-        SuperGlobal::G()->_SERVER['REQUEST_URI'].=SuperGlobal::G()->_SERVER['PATH_INFO'];
+        $_SERVER['DOCUMENT_ROOT']=rtrim($base_path,'/'); ///a/b.php
+        $_SERVER['SCRIPT_FILENAME']=rtrim($base_path,'/').$file;
+        $_SERVER['PATH_INFO']='';
+        $_SERVER['REQUEST_URI']=$file;
+        $_SERVER['REQUEST_URI'].=$_SERVER['PATH_INFO'];
         
-        var_dump(SuperGlobal::G()->_SERVER['REQUEST_URI']);
+        var_dump($_SERVER['REQUEST_URI']);
 
-        $_SERVER=SuperGlobal::G()->_SERVER;
+        $_SERVER=$_SERVER;
         Route::G()->reset();
         Route::G()->run();
         RouteHookDirectoryMode::G()->isInited();

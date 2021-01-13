@@ -4,7 +4,6 @@ namespace tests\DuckPhp\Component;
 use DuckPhp\Component\RouteHookPathInfoCompat;
 use DuckPhp\Core\App;
 use DuckPhp\Core\Route;
-use DuckPhp\Core\SuperGlobal;
 
 class RouteHookPathInfoCompatTest extends \PHPUnit\Framework\TestCase
 {
@@ -44,8 +43,8 @@ class RouteHookPathInfoCompatTest extends \PHPUnit\Framework\TestCase
         
         
 
-        SuperGlobal::G()->_SERVER['REQUEST_URI']='';
-        SuperGlobal::G()->_SERVER['PATH_INFO']='';
+        $_SERVER['REQUEST_URI']='';
+        $_SERVER['PATH_INFO']='';
 
 
         Route::G()->bind('Missed','POST');
@@ -57,9 +56,9 @@ if(true){
         echo "------------------------------------------------\n";
 }
         //x/index.php/init
-        SuperGlobal::G()->_SERVER['REQUEST_URI']='/x/index.php/model/action';
-        SuperGlobal::G()->_SERVER['PATH_INFO']='/model/action';
-        SuperGlobal::G()->_SERVER['SCRIPT_FILENAME']='/test/index.php';
+        $_SERVER['REQUEST_URI']='/x/index.php/model/action';
+        $_SERVER['PATH_INFO']='/model/action';
+        $_SERVER['SCRIPT_FILENAME']='/test/index.php';
         $options=[
             'path_info_compact_action_key'=>'_r',
             'path_info_compact_class_key'=>'m',

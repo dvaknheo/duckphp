@@ -14,6 +14,8 @@ class MyCodeCoverage
     protected $extFile=null;
     protected $coverage;
     protected $test_class;
+    
+    protected $enable = true;
 
     public static function G($object=null)
     {
@@ -27,6 +29,24 @@ class MyCodeCoverage
     }
     public function init(array $options, ?object $context = null)
     {
+$c_args=[
+    '--coverage-clover',
+    '--coverage-crap4j',
+    '--coverage-html',
+    '--coverage-php',
+    '--coverage-text',
+];
+$flag = array_reduce(
+    $c_args,
+    function($flag,$v){
+        return $flag || in_array($v,$_SERVER['argv']);
+    },
+    false
+);
+if($flag) {
+    $this->enable=false;
+    return $this;
+}
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
 		
 		$this->options['path']=$this->optionsp['path']?? realpath(__DIR__ .'/..').'/';
@@ -125,6 +145,9 @@ class MyCodeCoverage
     }
     public function begin($class)
     {
+        if(!$this->enable){
+            return;
+        }
         $this->test_class=$class;
         if(!$this->isInited()){
             $this->init([]);
@@ -138,6 +161,9 @@ class MyCodeCoverage
     }
     public function end()
     {
+        if(!$this->enable){
+            return;
+        }
         $this->coverage->stop();
         $writer = new \SebastianBergmann\CodeCoverage\Report\PHP;
         
