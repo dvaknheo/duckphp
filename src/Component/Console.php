@@ -38,13 +38,15 @@ class Console
         
         return $me;
     }
+    public function __construct()
+    {
+    }
     public function isInited(): bool
     {
         return $this->is_inited;
     }
     public function init(array $options, ?object $context = null)
     {
-        var_dump($this->options, $options);exit;
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         if (PHP_SAPI !== 'cli') {
             return $this; // @codeCoverageIgnore
@@ -176,7 +178,7 @@ class Console
             var_dump($class);
             throw new \ReflectionException("Command Not Found: {$cmd}\n", -3);
         }
-        
+        /*
         if (method_exists($class, 'G') && method_exists($class, 'isInited') && !$class::G()->isInited()) {
             $options = $this->context_class ? $this->context_class::G()->options : [];
             $options = $options['ext'][$class] ?? $options;
@@ -184,6 +186,7 @@ class Console
             $options = is_array($options) ? $options : [];
             $class::G()->init($options, $this);
         }
+        */
         return [$class,$method];
     }
     protected function getCommandsByClass($class)

@@ -22,15 +22,15 @@ class DuckPhpCommand extends ComponentBase
      */
     public function command_new()
     {
-        Installer::G()->init($this->context_class::G()->getCliParameters())->run();
+        Installer::G()->init(Console::G()->getCliParameters())->run();
     }
     /**
      * run inner server.
      */
     public function command_run()
     {
-        $options = $this->context_class::G()->getCliParameters();
-        $options['path'] = $this->context_class::G()->app()->options['path'];
+        $options = Console::G()->getCliParameters();
+        $options['path'] = $this->context_class::G()->options['path'];
         //'cli_httpserver_class'
         HttpServer::RunQuickly($options);
     }
@@ -56,7 +56,7 @@ EOT;
      */
     public function command_version()
     {
-        echo  $this->context_class::G()->app()->version();
+        echo  $this->context_class::G()->version();
         echo "\n";
     }
     /**
@@ -64,7 +64,7 @@ EOT;
      */
     public function command_list()
     {
-        echo $this->context_class::G()->getCommandListInfo();
+        echo Console::G()->getCommandListInfo();
     }
     /**
      * call a function. e.g. namespace/class@method arg1 --parameter arg2
@@ -76,7 +76,7 @@ EOT;
         list($class, $method) = explode('@', $cmd);
         $class = str_replace('/', '\\', $class);
         echo "calling $class::G()->$method\n";
-        $ret = $this->context_class::G()->callObject($class, $method, $args, $this->context_class::G()->getCliParameters());
+        $ret = Console::G()->callObject($class, $method, $args, Console::G()->getCliParameters());
         echo "--result--\n";
         echo json_encode($ret);
     }
@@ -89,8 +89,8 @@ EOT;
         $_SERVER['REQUEST_URI'] = $uri;
         $_SERVER['PATH_INFO'] = parse_url($uri, PHP_URL_PATH);
         $_SERVER['HTTP_METHOD'] = $post ? $post :'GET';
-        $this->context_class::G()->app()->replaceDefaultRunHandler(null);
-        $this->context_class::G()->app()->run();
+        $this->context_class::G()->replaceDefaultRunHandler(null);
+        $this->context_class::G()->run();
     }
     ///////////////////////////////////
     /**

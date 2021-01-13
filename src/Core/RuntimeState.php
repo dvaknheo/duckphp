@@ -29,9 +29,9 @@ class RuntimeState extends ComponentBase
     }
     public function reset()
     {
-        $current_instance = self::G();
-        $options = $current_instance->options;
-        $context = $current_instance->context_class ? $current_instance->context_class::G() : null;
+        $self = self::G();
+        $options = $self->options;
+        $context = $self->context_class ? $self->context_class::G() : null;
         self::G(new static())->init($options, $context)->run();
     }
     public function clear()

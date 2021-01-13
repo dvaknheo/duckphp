@@ -14,19 +14,21 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(Console::class);
         
         $_SERVER['argv']=[];
-        $options=[];
         Console::G()->init(['cli_enable'=>false],App::G());
         
-        Console::G(new Console())->init($options,App::G());
+        Console::G(new Console());
+        App::G()->init([]);
+        Console::G()->init(['cli_enable'=>true],App::G());
         Console::G()->app();
         App::G()->run();
         
         Console::G()->init(['cli_enable'=>true,'cli_mode' => 'hook',],App::G());
         
-        Console::G(new Console())->init($options,App::G());
+        Console::G(new Console())->init(['cli_enable'=>true], App::G());
+        App::G()->init([]);
         App::G()->run();
         
-        Console::G()->init($options,App::G());
+        Console::G()->init(['cli_enable'=>true],App::G());
         Console::G()->getCliParameters();
         
         Console::G()->regCommandClass(Console_Command::class,"test");
@@ -79,6 +81,7 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         
         //*/
         Console::G(new Console())->init([],Console_App::G());
+        Console_App::G()->init([]);
         $_SERVER['argv']=[
             '-','list',
         ];

@@ -4,7 +4,7 @@ use DuckPhp\Component\Console;
 use DuckPhp\Component\DuckPhpCommand;
 use DuckPhp\HttpServer\HttpServer;
 use DuckPhp\Component\Installer;
-use DuckPhp\Core\App;
+use DuckPhp\DuckPhp as App;
 use DuckPhp\Core\ComponentBase;
 
 class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
@@ -14,19 +14,8 @@ class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
         \MyCodeCoverage::G()->begin(DuckPhpCommand::class);
         
         $_SERVER['argv']=[];
-        $options=[];
-        Console::G()->init(['cli_enable'=>false],App::G());
+        App::G()->init([])->run();
         
-        Console::G(new Console())->init($options,App::G());
-        App::G()->run();
-        
-        Console::G()->init(['cli_enable'=>true,'cli_mode' => 'hook',],App::G());
-        
-        Console::G(new Console())->init($options,App::G());
-        App::G()->run();
-        
-        Console::G()->init($options,App::G());
-        Console::G()->getCliParameters();
         
         Console::G()->regCommandClass(DuckPhpCommand_Command::class,"test");
         $_SERVER['argv']=[
@@ -91,7 +80,8 @@ class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
         DuckPhpCommand::G()->command_test();
         
         //*/
-        Console::G(new Console())->init([],DuckPhpCommand_App::G());
+        DuckPhpCommand_App::G()->init([]);
+        //Console::G(new Console())->init([],DuckPhpCommand_App::G());
         $_SERVER['argv']=[
             '-','list',
         ];

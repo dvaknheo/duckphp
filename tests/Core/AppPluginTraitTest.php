@@ -92,6 +92,7 @@ class AppPluginTraitApp extends DuckPhp
         parent::__construct();
         $this->plugin_options['plugin_files_conifg']='config';
         $this->pluginModeGetOldRoute();
+        $this->pluginModeGetOldView();
         $this->onPluginModeBeforeRun = function(){
                 // ??? not hit ?
                 var_dump("Before run!",get_class(AppPluginTraitApp::G()->pluginModeGetOldRoute()));
