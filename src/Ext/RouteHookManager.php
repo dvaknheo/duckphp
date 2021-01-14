@@ -66,6 +66,10 @@ class RouteHookManager extends ComponentBase
         $this->hook_list = $ret;
         return $this;
     }
+    public function append($name)
+    {
+        $this->hook_list[] = $name;
+    }
     public function dump()
     {
         $ret = Route::G()->dumpAllRouteHooksAsString();

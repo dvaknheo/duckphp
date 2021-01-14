@@ -34,6 +34,8 @@ $list=RouteHookManager::G()->attachPostRun()->getHookList();
 $list[]="abc";
 RouteHookManager::G()->attachPostRun()->setHookList($list);
 
+RouteHookManager::G()->attachPostRun()->append(['DuckPhp\\Component\\RouteHookRouteMap','AppendHook']);
+
 
 echo "\n------------------------------------\n";
 echo RouteHookManager::G()->dump();
