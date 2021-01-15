@@ -1,7 +1,7 @@
 digraph DuckPhp{
 /* This is a graphviz file */
-graph [rankdir = "LR";fontsize="12"];
-node [fontsize="12"];
+graph [rankdir = "LR";fontsize="12";];
+node [fontsize="12";];
 
 subgraph cluster_SingletonEx {
     label = "[DuckPhp\\SingletonEx]";
@@ -110,26 +110,34 @@ subgraph cluster_HttpServer {
     label = "[DuckPhp\\HttpServer]";
 
     HttpServer [label="HttpServer";shape=Mdiamond;style=filled];
-    
-    PluginInterface [label="PluginInterface(todo)";shape="note"];
+    HttpServerInterface [label="HttpServerInterface(todo)";shape="note"];
+    HttpServerPluginInterface [label="PluginInterface(todo)";shape="note"];
     FileRunnerTrait [label="FileRunnerTrait(todo)";shape="diamond"];
 
+    HttpServer -> HttpServerInterface;
+    HttpServer -> FileRunnerTrait;
 }
 
 subgraph cluster_Component {
+
     label = "[DuckPhp\\Component]";
 
     Cache[shape="component"];
     Console[shape=Mdiamond;style=filled];
-    DuckPhpCommand[shape="component"];
     DbManager[shape="component"];
+    DuckPhpCommand[shape="component"];
     EventManager[shape="component"];
     Installer [shape="component"];
     Pager[shape="component"];
     PagerInterface [shape=note];
     RouteHookPathInfoCompat[shape="component"];
     RouteHookRouteMap[shape="component"];
-
+    
+    /*
+    X_HttpServer[label="DuckPhp\\HttpServer\\HttpServer",shape="rarrow"];
+    X_Db[label="DuckPhp\\Db\\Db",shape="rarrow"];
+   */
+   
     Cache -> ComponentBase [style="dotted"];
     DuckPhpCommand -> ComponentBase [style="dotted"];
     DbManager -> ComponentBase [style="dotted"];
@@ -139,10 +147,11 @@ subgraph cluster_Component {
     RouteHookPathInfoCompat -> ComponentBase [style="dotted"];
     RouteHookRouteMap -> ComponentBase [style="dotted"];
 
-    Console -> DuckPhpCommand[style="invis"]; 
+    /*Console -> DuckPhpCommand [style="invis"]; */
+    DuckPhpCommand -> Console [style="dashed"]; 
     DuckPhpCommand -> Installer; 
-    DuckPhpCommand -> HttpServer; 
-    DbManager -> Db_Db;
+    DuckPhpCommand -> HttpServer [style="dashed"]; 
+    DbManager -> Db_Db [style="dashed"]; 
 
     Pager -> PagerInterface; 
 }
@@ -182,11 +191,12 @@ subgraph cluster_Ext {
     HookChain;
     HttpServerPlugin[label="HttpServerPlugin(todo)";shape="component"];
     JsonRpcClientBase [shape="component"];
-    JsonView[shape="component"];
+    JsonRpcExt [shape="component"];
+    JsonView [shape="component"];
     Misc[shape="component"];
     MyFacadesAutoLoader[shape="component"];
     MyFacadesBase [shape="component"];
-    MyMiddleware [label="MyMiddleware(todo)";shape="component"];
+    MyMiddlewareManager [shape="component"];
     
     RedisManager[shape="component"];
     RedisCache[shape="component"];
@@ -195,9 +205,10 @@ subgraph cluster_Ext {
     RouteHookManager[shape="component"];
     RouteHookRewrite[shape="component"];
     SimpleModel [label="SimpleModel(todo)";shape="component"];
-    StaticReplacer [label="StaticReplacer(todo)";shape="component"];
+    StaticReplacer [shape="component"];
     StrictCheck[shape="component"];
 
+    X_Core_Route[label="DuckPhp\\Core\\Route",shape="rarrow"];
     X_Core_View[label="DuckPhp\\Core\\View",shape="rarrow"];
     X_DbManager[label="DuckPhp\\Component\\DbManager",shape="rarrow"];
 
@@ -208,7 +219,7 @@ subgraph cluster_Ext {
     Misc -> ComponentBase [style="dotted"];
     MyFacadesBase -> ComponentBase [style="dotted"];
     MyFacadesAutoLoader -> ComponentBase [style="dotted"];
-    MyMiddleware -> ComponentBase [style="dotted"];
+    MyMiddlewareManager -> ComponentBase [style="dotted"];
     RedisManager -> ComponentBase [style="dotted"];
     RedisCache -> ComponentBase [style="dotted"];
     RouteHookApiServer -> ComponentBase [style="dotted"];
@@ -223,12 +234,16 @@ subgraph cluster_Ext {
     EmptyView -> X_Core_View[style="solid"];
     MyFacadesBase -> MyFacadesAutoLoader [style="dashed"];
     MyFacadesAutoLoader -> MyFacadesBase;
+    MyMiddlewareManager -> RouteHookManager;
+    MyMiddlewareManager -> X_Core_Route;
     JsonRpcExt ->JsonRpcClientBase;
     JsonRpcClientBase ->JsonRpcExt[style="dashed"];
     JsonRpcClientBase -> ComponentBase [style="dotted"];
     JsonView -> X_Core_View[style="solid"];
 
+    SimpleModel ->Db_Db [style="dashed"];
     StrictCheck -> X_DbManager[style="solid"];
+    
 
 }
 

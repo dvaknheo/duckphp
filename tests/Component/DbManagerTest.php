@@ -28,6 +28,8 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         'db_before_get_object_handler'=>[null,'beforeGet'],
         
         'database_list'=> $database_list,
+            'database_class' => MyDB::class,
+
         ];
         
 
@@ -125,4 +127,7 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         var_dump("OK");
     }
    
+}
+class MyDB extends DB
+{
 }

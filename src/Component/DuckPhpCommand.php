@@ -5,6 +5,7 @@
  */
 namespace DuckPhp\Component;
 
+use DuckPhp\Component\Console;
 use DuckPhp\Component\Installer;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\HttpServer\HttpServer;

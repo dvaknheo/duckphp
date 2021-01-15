@@ -27,6 +27,9 @@
 'database_auto_extend_method' => true,
 
     是否扩充 setBeforeGetDbHandler 入助手类。
+'database_class' => '',
+
+    默认为 DB::class 如果你扩展了 DB 类，可以调用这个。更高级的可以调整 getDb 方法
 ## 公开方法
 
     public static function Db($tag = null)

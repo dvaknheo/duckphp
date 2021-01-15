@@ -28,6 +28,7 @@ class DbManager extends ComponentBase
         'database_log_sql_query' => false,
         'database_log_sql_level' => 'debug',
         'database_auto_extend_method' => true,
+        'database_class' => '',
     ];
     
     protected $database_config_list = [];
@@ -125,7 +126,12 @@ class DbManager extends ComponentBase
     }
     protected function getDb($db_config)
     {
-        $db = new Db();
+        if(empty($this->options['database_class'])){
+            $db = new Db();
+        } else {
+            $class = $this->options['database_class'];
+            $db = new $class();
+        }
         $db->init($db_config);
         $db->setBeforeQueryHandler([static::class, 'OnQuery']);
         return $db;

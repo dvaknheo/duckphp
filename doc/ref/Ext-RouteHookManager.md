@@ -15,6 +15,7 @@
     public function moveBefore($new, $old)
     public function insertBefore($new, $old)
     public function removeAll($name)
+    public function append($name);
     public function dump()
 
 ## 详解
@@ -26,4 +27,4 @@ attachPreRun 管理 运行前钩子， attachPostRun  管理运行后勾子。 d
 getHookList 获得钩子列表  setHookList 设置钩子列表
 moveBefore insertBefore removeAll
 
-dump(); 
+dump();  打印钩子列表
