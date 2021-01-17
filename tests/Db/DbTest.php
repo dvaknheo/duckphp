@@ -8,11 +8,9 @@ class DbTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \MyCodeCoverage::G()->begin(Db::class);
-        $options=[
-	'dsn'=>"mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;",
-	'username'=>'admin',	
-	'password'=>'123456'
-];
+        $database_list = include \MyCodeCoverage::G()->options['path_data'] . 'database_list.php';
+        $options = $database_list[0];
+        
         $db=new Db;
         $db->init($options);
         $pdo=$db->PDO();
