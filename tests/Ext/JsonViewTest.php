@@ -8,7 +8,7 @@ class JsonViewTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(JsonView::class);
+        \LibCoverage\LibCoverage::Begin(JsonView::class);
 
         $options=[
             'json_view_skip_replace'=> false,
@@ -25,7 +25,7 @@ class JsonViewTest extends \PHPUnit\Framework\TestCase
         
         JsonView::G()->_Show($data , $view);
         
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
        
     }
 }

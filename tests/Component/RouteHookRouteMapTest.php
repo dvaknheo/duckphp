@@ -9,7 +9,7 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(RouteHookRouteMap::class);
+        \LibCoverage\LibCoverage::Begin(RouteHookRouteMap::class);
         
         $route_options=[
             'namespace'=>__NAMESPACE__,
@@ -52,7 +52,7 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
         Route::G()->bind('/seventh')->run();
 
         var_dump("-------------------------");
-        $path=\MyCodeCoverage::GetClassTestPath(RouteHookRouteMap::class);
+        $path=\LibCoverage\LibCoverage::G()->getClassTestPath(RouteHookRouteMap::class);
         App::G()->init([
             'path'=>$path,
             'path_config'=>'',
@@ -65,7 +65,7 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
         //Route::G()->bind('/eighth')->run();
 
         RouteHookRouteMap::G()->isInited();
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
     }
 }
 class RouteHookRouteMapTestMain{

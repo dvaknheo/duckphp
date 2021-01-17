@@ -11,7 +11,7 @@ class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(DuckPhpCommand::class);
+        \LibCoverage\LibCoverage::Begin(DuckPhpCommand::class);
         
         $_SERVER['argv']=[];
         App::G()->init([])->run();
@@ -94,7 +94,7 @@ class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
         DuckPhpCommand_App::G()->run();
         
         //*/
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
     }
 }
 

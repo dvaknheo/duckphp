@@ -13,10 +13,10 @@ class AppTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(App::class);
+        \LibCoverage\LibCoverage::Begin(App::class);
     
-        $path_app=\MyCodeCoverage::GetClassTestPath(App::class);
-        $path_config=\MyCodeCoverage::GetClassTestPath(Configer::class);
+        $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(App::class);
+        $path_config=\LibCoverage\LibCoverage::G()->getClassTestPath(Configer::class);
         
         $options=[
             'path' => $path_app,
@@ -82,7 +82,7 @@ echo "-------------------------------------\n";
             echo $ex->getMessage();
         }
         App::G()->options['skip_exception_check']=false;
-//\MyCodeCoverage::G()->end(App::class);
+//\LibCoverage\LibCoverage::End(App::class);
 //$this->assertTrue(true);
 //return;
         //Route::G()->bind('')
@@ -193,7 +193,7 @@ App::PageHtml(123);
         App::G()->version();
         
         App::G()->runAutoLoader();
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
     return;
 
     }
@@ -340,7 +340,7 @@ App::PageHtml(123);
         App::URL('abc');
         //*/
         //*
-        $path_view=\MyCodeCoverage::GetClassTestPath(App::class).'view/';
+        $path_view=\LibCoverage\LibCoverage::G()->getClassTestPath(App::class).'view/';
 
         $options=[
             'path_view'=>$path_view,
@@ -403,8 +403,8 @@ App::PageHtml(123);
         
         
         echo "-----------------------\n";
-        $path_app=\MyCodeCoverage::GetClassTestPath(App::class);
-        $path_config=\MyCodeCoverage::GetClassTestPath(Configer::class);
+        $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(App::class);
+        $path_config=\LibCoverage\LibCoverage::G()->getClassTestPath(Configer::class);
         $options=[
             'path' => $path_app,
             'path_config' => $path_config,

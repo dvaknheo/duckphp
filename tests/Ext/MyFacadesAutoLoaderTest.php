@@ -9,7 +9,7 @@ class MyFacadesAutoLoaderTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(MyFacadesAutoLoader::class);
+        \LibCoverage\LibCoverage::Begin(MyFacadesAutoLoader::class);
         $options=[
             'facades_namespace'=>'MyFacades',
             'facades_map'=>[
@@ -36,7 +36,7 @@ class MyFacadesAutoLoaderTest extends \PHPUnit\Framework\TestCase
         
         
         MyFacadesAutoLoader::G()->isInited();
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
         /*
         MyFacadesAutoLoader::G()->init($options=[], $context);
         MyFacadesAutoLoader::G()->_autoload($class);

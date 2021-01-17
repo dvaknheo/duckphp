@@ -9,7 +9,7 @@ class MyMiddlewareManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(MyMiddlewareManager::class);
+        \LibCoverage\LibCoverage::Begin(MyMiddlewareManager::class);
         
         App::RunQuickly([
             'namespace'=>'tests\DuckPhp\Ext',
@@ -24,7 +24,7 @@ class MyMiddlewareManagerTest extends \PHPUnit\Framework\TestCase
                 Z::class . '::handle',
             ],
         ]);
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
     }
 }
 class X

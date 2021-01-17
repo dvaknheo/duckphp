@@ -7,9 +7,9 @@ class CallableViewTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(CallableView::class);
+        \LibCoverage\LibCoverage::Begin(CallableView::class);
         
-        $path_view=\MyCodeCoverage::GetClassTestPath(CallableView::class);
+        $path_view=\LibCoverage\LibCoverage::G()->getClassTestPath(CallableView::class);
         $options=[
             'callable_view_head'=>'head',
             'callable_view_foot'=>'foot',
@@ -30,7 +30,7 @@ class CallableViewTest extends \PHPUnit\Framework\TestCase
         
         CallableView::G()->_Show( $data, 'view');
         
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
        
     }
 }

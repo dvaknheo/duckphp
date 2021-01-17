@@ -7,7 +7,7 @@ class CacheTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(Cache::class);
+        \LibCoverage\LibCoverage::Begin(Cache::class);
 
         $key="ABC";
         $keys=["A","B"];
@@ -31,7 +31,7 @@ class CacheTest extends \PHPUnit\Framework\TestCase
         Cache::G()->has($key);
         
 
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
         /*
 
         //*/

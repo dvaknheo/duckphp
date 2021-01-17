@@ -8,7 +8,7 @@ class ExceptionWrapperTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(ExceptionWrapper::class);
+        \LibCoverage\LibCoverage::Begin(ExceptionWrapper::class);
         //
         ExceptionWrapperObject::G(ExceptionWrapper::Wrap(ExceptionWrapperObject::G()));
         $x=ExceptionWrapperObject::G()->foo();
@@ -19,7 +19,7 @@ class ExceptionWrapperTest extends \PHPUnit\Framework\TestCase
         }catch(\Exception $ex){
             var_dump($ex->getMessage());
         }
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
     }
 }
 class ExceptionWrapperObject

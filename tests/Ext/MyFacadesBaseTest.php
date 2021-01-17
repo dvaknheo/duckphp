@@ -8,7 +8,7 @@ class MyFacadesBaseTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(MyFacadesBase::class);
+        \LibCoverage\LibCoverage::Begin(MyFacadesBase::class);
         
         //code here
         MyFacadesAutoLoader::G()->init(['facades_map'=>[
@@ -21,7 +21,7 @@ class MyFacadesBaseTest extends \PHPUnit\Framework\TestCase
             echo "EXXXXXXXXXXXXx";
         }
         new MyFacadesBase();
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
         /*
         MyFacadesBase::G()->__callStatic($name, $arguments);
         //*/

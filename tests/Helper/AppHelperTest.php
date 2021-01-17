@@ -9,7 +9,7 @@ class AppHelperTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(AppHelper::class);
+        \LibCoverage\LibCoverage::Begin(AppHelper::class);
         
         AppHelper::assignPathNamespace(__DIR__,'NoExistsByAppHelper');
         AppHelper::setUrlHandler(function($url){});
@@ -60,7 +60,7 @@ class AppHelperTest extends \PHPUnit\Framework\TestCase
         $new_class = AppHelperTestObject::class;
         AppHelper::replaceControllerSingelton($old_class, $new_class);
         ////]]]]
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
 
     }
     protected function do_Core_Component()

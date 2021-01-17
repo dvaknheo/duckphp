@@ -7,7 +7,7 @@ class ExtendableStaticCallTraitTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(ExtendableStaticCallTrait::class);
+        \LibCoverage\LibCoverage::Begin(ExtendableStaticCallTrait::class);
         
         //code here
         ExtendableStaticCallTraitObject::AssignExtendStaticMethod('Foo',[static::class,'Foo']);
@@ -30,7 +30,7 @@ class ExtendableStaticCallTraitTest extends \PHPUnit\Framework\TestCase
         }catch(\Throwable $ex){
         }
         
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
         /*
 
         ExtendableStaticCallTraitObject::__callStatic($name, $arguments);

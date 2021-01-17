@@ -15,10 +15,10 @@ class KernelTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(KernelTrait::class);
+        \LibCoverage\LibCoverage::Begin(KernelTrait::class);
     
-        $path_app=\MyCodeCoverage::GetClassTestPath(App::class);
-        $path_config=\MyCodeCoverage::GetClassTestPath(Configer::class);
+        $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(App::class);
+        $path_config=\LibCoverage\LibCoverage::G()->getClassTestPath(Configer::class);
         
         $options=[
             'path' => $path_app,
@@ -158,7 +158,7 @@ echo "-------------------------------------\n";
 ////////////////////////
 
 
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
     return;
 
     }
@@ -167,8 +167,8 @@ echo "-------------------------------------\n";
         
         
         echo "-----------------------\n";
-        $path_app=\MyCodeCoverage::GetClassTestPath(App::class);
-        $path_config=\MyCodeCoverage::GetClassTestPath(Configer::class);
+        $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(App::class);
+        $path_config=\LibCoverage\LibCoverage::G()->getClassTestPath(Configer::class);
         $options=[
             'path' => $path_app,
             'path_config' => $path_config,

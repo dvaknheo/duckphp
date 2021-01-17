@@ -7,7 +7,7 @@ class EventManagerTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(EventManager::class);
+        \LibCoverage\LibCoverage::Begin(EventManager::class);
         EventManager::OnEvent('MyEvent',function(...$args){ var_dump($args);});
         EventManager::OnEvent('MyEvent',[static::class, 'callit']);
         EventManager::OnEvent('MyEvent',[static::class, 'callit']);
@@ -17,7 +17,7 @@ class EventManagerTest extends \PHPUnit\Framework\TestCase
         EventManager::RemoveEvent('MyEvent',[static::class, 'callit']);
         EventManager::RemoveEvent('NoExist');
         EventManager::RemoveEvent('MyEvent');
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
     }
     public static function callit()
     {

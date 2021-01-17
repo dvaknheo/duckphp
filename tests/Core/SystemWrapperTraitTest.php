@@ -7,7 +7,7 @@ class SystemWrapperTraitTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(SystemWrapperTrait::class);
+        \LibCoverage\LibCoverage::Begin(SystemWrapperTrait::class);
         
         //SystemWrapper::G()->system_wrapper_replace(array $funcs);
         $data=\DuckPhp\Core\App::system_wrapper_get_providers();
@@ -20,7 +20,7 @@ class SystemWrapperTraitTest extends \PHPUnit\Framework\TestCase
         var_dump($data);
 
 
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
         /*
         SystemWrapper::G()->system_wrapper_replace(array $funcs);
         SystemWrapper::G()->system_wrapper_get_providers();

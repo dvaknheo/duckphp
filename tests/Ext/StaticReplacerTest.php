@@ -8,7 +8,7 @@ class StaticReplacerTest extends \PHPUnit\Framework\TestCase
 
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(StaticReplacer::class);
+        \LibCoverage\LibCoverage::Begin(StaticReplacer::class);
         
         //code here        
         $k="k";$v="v";
@@ -17,7 +17,7 @@ class StaticReplacerTest extends \PHPUnit\Framework\TestCase
         StaticReplacer::G()->_CLASS_STATICS(StaticReplacer_SimpleObject::class, 'class_var');        
 
         
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
     }
 }
 class StaticReplacer_SimpleObject

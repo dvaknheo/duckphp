@@ -7,7 +7,7 @@ class ViewHelperTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(ViewHelper::class);
+        \LibCoverage\LibCoverage::Begin(ViewHelper::class);
         
         $str="str";
         $a="a";$b="b";$c="c";
@@ -28,6 +28,6 @@ class ViewHelperTest extends \PHPUnit\Framework\TestCase
         echo ViewHelper::URL('xxxx');
         echo ViewHelper::Domain();
         
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
     }
 }

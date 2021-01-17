@@ -8,9 +8,9 @@ class DbAdvanceTraitTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(DbAdvanceTrait::class);
+        \LibCoverage\LibCoverage::Begin(DbAdvanceTrait::class);
         
-        $path_setting = \MyCodeCoverage::GetClassTestPath(Db::class);
+        $path_setting = \LibCoverage\LibCoverage::G()->getClassTestPath(Db::class);
         $setting = include $path_setting . 'setting.php';
         $options = $setting['database_list'][0];
         
@@ -44,7 +44,7 @@ class DbAdvanceTraitTest extends \PHPUnit\Framework\TestCase
         $db->pdo=null;
         $db->qouteInsertArray($array);
         
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
         /*
         $db->quoteIn($array);
         $db->quoteSetArray($array);

@@ -7,9 +7,9 @@ class DbTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(Db::class);
+        \LibCoverage\LibCoverage::Begin(Db::class);
         
-        $path_setting = \MyCodeCoverage::GetClassTestPath(Db::class);
+        $path_setting = \LibCoverage\LibCoverage::G()->getClassTestPath(Db::class);
         $setting = include $path_setting . 'setting.php';
         $options = $setting['database_list'][0];
         
@@ -69,7 +69,7 @@ class DbTest extends \PHPUnit\Framework\TestCase
         //code here
         $db->close($db);
         
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
         /*
   `username` varchar(32) COLLATE utf8_bin NOT NULL,
   `password` varchar(64) COLLATE utf8_bin NOT NULL,

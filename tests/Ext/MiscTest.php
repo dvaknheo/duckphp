@@ -9,8 +9,8 @@ class MiscTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(Misc::class);
-        $path_lib=\MyCodeCoverage::GetClassTestPath(Misc::class);
+        \LibCoverage\LibCoverage::Begin(Misc::class);
+        $path_lib=\LibCoverage\LibCoverage::G()->getClassTestPath(Misc::class);
         $options=[
             'path'=>$path_lib,
             'path_lib'=>'',
@@ -66,7 +66,7 @@ class MiscTest extends \PHPUnit\Framework\TestCase
                     Misc::CallAPI(FakeService::class,'m1',['id'=>'1']);
         Misc::G()->isInited();
 
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
         /*
         Misc::G()->init($options=[], $context=null);
         Misc::G()->_Import($file);

@@ -9,7 +9,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
 {
     public function testA()
     {
-        \MyCodeCoverage::G()->begin(Route::class);
+        \LibCoverage\LibCoverage::Begin(Route::class);
         
         $_SERVER = [
             'DOCUMENT_ROOT'=> __DIR__,
@@ -156,7 +156,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->defaultGetRouteCallback('/Main/G');
         Route::G()->defaultGetRouteCallback('/Main/MyStatic');
         
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
         return;
     }
     protected function doFixPathinfo()

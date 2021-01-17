@@ -7,16 +7,16 @@ class SingletonExTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(SingletonExTrait::class);
+        \LibCoverage\LibCoverage::Begin(SingletonExTrait::class);
         
         SingletonExObject::G();
         SingletonExObject::G(new SingletonExObject());
-        $t=\MyCodeCoverage::G();
+        $t=\LibCoverage\LibCoverage::G();
         define('__SINGLETONEX_REPALACER',SingletonExObject::class.'::CreateObject');
-        \MyCodeCoverage::G($t);
+        \LibCoverage\LibCoverage::G($t);
         SingletonExObject::G();
         
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
         /*
         SingletonEx::G()->G($object=null);
         //*/

@@ -10,7 +10,7 @@ class RouteHookApiServerTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(RouteHookApiServer::class);
+        \LibCoverage\LibCoverage::Begin(RouteHookApiServer::class);
         $options = [
             'is_debug'=>true,
             'override_class'=>'',
@@ -85,7 +85,7 @@ class RouteHookApiServerTest extends \PHPUnit\Framework\TestCase
         $_REQUEST=['a'=>'1','b'=>3];
         Route::G()->run();
 ////
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
 
     }
 }

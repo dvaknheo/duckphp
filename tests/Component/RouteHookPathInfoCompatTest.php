@@ -9,7 +9,7 @@ class RouteHookPathInfoCompatTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(RouteHookPathInfoCompat::class);
+        \LibCoverage\LibCoverage::Begin(RouteHookPathInfoCompat::class);
         
         $route_options=[
             'namespace'=>__NAMESPACE__,
@@ -77,7 +77,7 @@ if(true){
         
                         RouteHookPathInfoCompat::G()->isInited();
 
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
         /*
         RouteHookPathInfoCompat::G()->init($options=[], $context=null);
         RouteHookPathInfoCompat::G()->onURL($url=null);

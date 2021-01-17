@@ -7,7 +7,7 @@ class EmptyViewTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(EmptyView::class);
+        \LibCoverage\LibCoverage::Begin(EmptyView::class);
 
         $options=[
             'empty_view_key_view'=> 'view',
@@ -29,7 +29,7 @@ class EmptyViewTest extends \PHPUnit\Framework\TestCase
         EmptyView::G()->_Show( $data, 'view');
         EmptyView::G()->_Show( $data, 'Main/');
         
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
        
     }
 }

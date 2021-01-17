@@ -7,9 +7,9 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(Configer::class);
+        \LibCoverage\LibCoverage::Begin(Configer::class);
         
-        $path_config=\MyCodeCoverage::GetClassTestPath(Configer::class);
+        $path_config=\LibCoverage\LibCoverage::G()->getClassTestPath(Configer::class);
         $options=[
             'path'=>$path_config,
             'path_config'=>$path_config,
@@ -36,7 +36,7 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
         
         Configer::G()->isInited();
         
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
         /*
         Configer::G()->init($options=[], $context=null);
         Configer::G()->_Setting($key);

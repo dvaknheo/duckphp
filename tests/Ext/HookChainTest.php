@@ -6,7 +6,7 @@ class HookChainTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(HookChain::class);
+        \LibCoverage\LibCoverage::Begin(HookChain::class);
         
         $hooks=null;
         $callable1=function(){ var_dump(DATE(DATE_ATOM));};
@@ -34,7 +34,7 @@ class HookChainTest extends \PHPUnit\Framework\TestCase
         ($hooks2)();
         echo "zzzzzzzzzzzzzzzzzzzzzzzzzz";
 
-        \MyCodeCoverage::G()->end(HookChain::class);
+        \LibCoverage\LibCoverage::End(HookChain::class);
         $this->assertTrue(true);
         /*
         HookChain::G()->__invoke();

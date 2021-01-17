@@ -7,7 +7,7 @@ class ThrowOnTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(ThrowOnTrait::class);
+        \LibCoverage\LibCoverage::Begin(ThrowOnTrait::class);
         ThrowOnObject::ThrowOn(false, "123");
         try {
             ThrowOnObject::ThrowOn(true, "Message", 2);
@@ -26,7 +26,7 @@ class ThrowOnTest extends \PHPUnit\Framework\TestCase
         }
         
 
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
         /*
         ThrowOn::G()->ThrowOn($flag, $message, $code=0, $exception_class=null);
         //*/

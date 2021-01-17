@@ -9,9 +9,9 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(DbManager::class);
+        \LibCoverage\LibCoverage::Begin(DbManager::class);
         
-        $path_setting = \MyCodeCoverage::GetClassTestPath(Db::class);
+        $path_setting = \LibCoverage\LibCoverage::G()->getClassTestPath(Db::class);
         $setting = include $path_setting . 'setting.php';
         $database_list = $setting['database_list'];
         
@@ -122,7 +122,7 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         }
         DbManager::G(new DbManager())->init($options,App::G());
 
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
 
     }
     public static function beforeGet()

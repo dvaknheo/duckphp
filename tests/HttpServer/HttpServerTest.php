@@ -7,7 +7,7 @@ class HttpServerTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(HttpServer::class);
+        \LibCoverage\LibCoverage::Begin(HttpServer::class);
         
         $options=[
             'path_document'=>__DIR__,
@@ -27,12 +27,12 @@ HttpServerParent::G()->isInited();
 
         echo HttpServerParent::G()->getPid();
         HttpServerParent::G()->close();
-        $t=\MyCodeCoverage::G();
+        $t=\LibCoverage\LibCoverage::G();
         define('__SINGLETONEX_REPALACER',HttpServerParent::class.'::CreateObject');
-        \MyCodeCoverage::G($t);
+        \LibCoverage\LibCoverage::G($t);
         HttpServerParent::G();
         echo "zzzzzzzzzzzzzzzzzzzzzzzz";
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
     }
 }
 class HttpServerParent extends HttpServer

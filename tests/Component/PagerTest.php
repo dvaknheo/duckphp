@@ -8,7 +8,7 @@ class PagerTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(Pager::class);
+        \LibCoverage\LibCoverage::Begin(Pager::class);
         
         $options=[
             //'url'=>'/user',
@@ -40,6 +40,6 @@ class PagerTest extends \PHPUnit\Framework\TestCase
         Pager::G()->current(1);
         Pager::G()->pageSize();
         Pager::G()->isInited();
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
     }
 }

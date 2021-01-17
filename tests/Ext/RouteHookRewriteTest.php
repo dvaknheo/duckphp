@@ -9,7 +9,7 @@ class RouteHookRewriteTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(RouteHookRewrite::class);
+        \LibCoverage\LibCoverage::Begin(RouteHookRewrite::class);
         $route_options=[
             'is_debug'=>true,
             'namespace'=>__NAMESPACE__,
@@ -41,7 +41,7 @@ class RouteHookRewriteTest extends \PHPUnit\Framework\TestCase
 
                         RouteHookRewrite::G()->isInited();
 
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
     }
 }
 class RouteHookRewriteTestMain{

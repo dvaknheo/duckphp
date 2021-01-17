@@ -11,7 +11,7 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(Console::class);
+        \LibCoverage\LibCoverage::Begin(Console::class);
         
         $_SERVER['argv']=[];
         Console::G()->init(['cli_enable'=>false],App::G());
@@ -105,13 +105,13 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         
         //*/
         
-        $t=\MyCodeCoverage::G();
+        $t=\LibCoverage\LibCoverage::G();
         define('__SINGLETONEX_REPALACER',ConsoleParent::class.'::CreateObject');
-        \MyCodeCoverage::G($t);
+        \LibCoverage\LibCoverage::G($t);
         ConsoleParent::G()->isInited();
         echo "zzzzzzzzzzzzzzzzzzzzzzzz";
         
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
     }
 }
 class Console_App extends App

@@ -9,9 +9,12 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        $extFile=dirname(\MyCodeCoverage::G()->classToPath(DuckPhp::class)).'/Core/Functions.php';
-        \MyCodeCoverage::G()->prepareAttachFile($extFile);
-        \MyCodeCoverage::G()->begin(DuckPhp::class);
+        $ref = new \ReflectionClass(DuckPhp::class);
+        $path = $ref->getFileName();
+        
+        $extFile=dirname($path).'/Core/Functions.php';
+        \LibCoverage\LibCoverage::G()->addExtFile($extFile);
+        \LibCoverage\LibCoverage::Begin(DuckPhp::class);
         
         //code here
         //$handler=null;
@@ -21,7 +24,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         //DuckPhp::G()->onSwooleHttpdInit($SwooleHttpd, false,function(){var_dump("OK");});
         //DuckPhp::G()->onSwooleHttpdInit($SwooleHttpd,true,null);
 
-        $path_view=\MyCodeCoverage::GetClassTestPath(DuckPhp::class).'views/';
+        $path_view=\LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class).'views/';
 
         $options=[
             'log_sql_query'=>true,
@@ -63,7 +66,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
 
         $t=new \stdClass();
         DuckPhp::Cache($t);
-        \MyCodeCoverage::G()->end(DuckPhp::class);
+        \LibCoverage\LibCoverage::End(DuckPhp::class);
 
     }
     protected function doFunctions()

@@ -7,9 +7,9 @@ class InstallerTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(Installer::class);
-        $path = \MyCodeCoverage::GetClassTestPath(Installer::class);
-        \MyCodeCoverage::G()->cleanDirectory($path);
+        \LibCoverage\LibCoverage::Begin(Installer::class);
+        $path = \LibCoverage\LibCoverage::G()->getClassTestPath(Installer::class);
+        \LibCoverage\LibCoverage::G()->cleanDirectory($path);
         
         $time = date('Y-m-d_H_i_s');
         $path = $path . $time . 'test';
@@ -30,7 +30,7 @@ class InstallerTest extends \PHPUnit\Framework\TestCase
         Installer::G(new Installer());
         Installer::RunQuickly($options);
         
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
     }
 
 }

@@ -7,7 +7,7 @@ class BusinessHelperTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(BusinessHelper::class);
+        \LibCoverage\LibCoverage::Begin(BusinessHelper::class);
         
         $path_base=realpath(__DIR__.'/../');
         $path_config=$path_base.'/data_for_tests/Helper/BusinessHelper/';
@@ -40,7 +40,7 @@ class BusinessHelperTest extends \PHPUnit\Framework\TestCase
         }catch(\Exception $ex){
         }
 
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
         /*
         BusinessHelper::G()->Setting($key);
         BusinessHelper::G()->Config($key, $file_basename='config');

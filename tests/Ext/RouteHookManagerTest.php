@@ -9,7 +9,7 @@ class RouteHookManagerTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(RouteHookManager::class);
+        \LibCoverage\LibCoverage::Begin(RouteHookManager::class);
 ////[[[[
 
 $options = [];
@@ -42,7 +42,7 @@ echo RouteHookManager::G()->dump();
 echo "\n<pre>\n";
 ////]]]]
         
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
        
     }
 }

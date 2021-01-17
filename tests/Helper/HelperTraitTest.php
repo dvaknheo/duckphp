@@ -8,7 +8,7 @@ class HelperTraitTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(HelperTrait::class);
+        \LibCoverage\LibCoverage::Begin(HelperTrait::class);
         
         $options=[
             'is_debug'=>true,
@@ -28,7 +28,7 @@ class HelperTraitTest extends \PHPUnit\Framework\TestCase
             HelperTraitObject::ThrowOn(true,"HH");
         }catch(\Exception $ex){
         }
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
         /*
 
         //*/

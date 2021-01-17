@@ -24,8 +24,8 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
     }
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(AppPluginTrait::class);
-        $path_app=\MyCodeCoverage::GetClassTestPath(AppPluginTrait::class);
+        \LibCoverage\LibCoverage::Begin(AppPluginTrait::class);
+        $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(AppPluginTrait::class);
         $options=[
             'path' =>$path_app,
             'platform' => 'BJ',
@@ -78,7 +78,7 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
         DuckPhp::G(new DuckPhp());
         
         
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
     }
 }
 class AppPluginTraitApp extends DuckPhp

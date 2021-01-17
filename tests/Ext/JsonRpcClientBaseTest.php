@@ -9,7 +9,7 @@ class JsonRpcClientBaseTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(JsonRpcClientBase::class);
+        \LibCoverage\LibCoverage::Begin(JsonRpcClientBase::class);
         
         JsonRpcExt::G(JsonRpcClientBaseJsonRpcExt::G());
         
@@ -18,7 +18,7 @@ class JsonRpcClientBaseTest extends \PHPUnit\Framework\TestCase
         JsonRpcClientBaseObject::G()->init([])->isInited();
         JsonRpcClientBaseObject::G()->foo();
         
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
         /*
         JsonRpcClientBase::G()->__call($method, $arguments);
         //*/

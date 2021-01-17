@@ -9,9 +9,9 @@ class RedisCacheTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(RedisCache::class);
+        \LibCoverage\LibCoverage::Begin(RedisCache::class);
         
-        $path_setting = \MyCodeCoverage::GetClassTestPath(RedisCache::class);
+        $path_setting = \LibCoverage\LibCoverage::G()->getClassTestPath(RedisCache::class);
         $setting = include $path_setting . 'setting.php';
         $redis_list = $setting['redis_list'];
 
@@ -53,7 +53,7 @@ class RedisCacheTest extends \PHPUnit\Framework\TestCase
         
         RedisCache::G()->isInited();
 
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
         /*
 
         //*/

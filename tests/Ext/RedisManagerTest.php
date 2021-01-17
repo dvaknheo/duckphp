@@ -7,9 +7,9 @@ class RedisManagerTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(RedisManager::class);
+        \LibCoverage\LibCoverage::Begin(RedisManager::class);
         
-        $path_setting = \MyCodeCoverage::GetClassTestPath(RedisManager::class);
+        $path_setting = \LibCoverage\LibCoverage::G()->getClassTestPath(RedisManager::class);
         $setting = include $path_setting . 'setting.php';
         $redis_list = $setting['redis_list'];
         
@@ -21,7 +21,7 @@ class RedisManagerTest extends \PHPUnit\Framework\TestCase
         RedisManager::G()->init($options,App::G()->init(['redis_list'=>$redis_list,]));
         RedisManager::G()->Redis();
         
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
         /*
         RedisManager::G()->init($options = [], $context = null);
         RedisManager::G()->Redis();

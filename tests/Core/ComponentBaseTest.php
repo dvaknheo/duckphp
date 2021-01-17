@@ -7,7 +7,7 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(ComponentBase::class);
+        \LibCoverage\LibCoverage::Begin(ComponentBase::class);
 
         ComponentBaseObject::G()->init(['a'=>'b'],new \stdClass());
         ComponentBaseObject::G()->isInited();
@@ -15,12 +15,12 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
 
         ComponentBaseObject::G();
         ComponentBaseObject::G(new ComponentBaseObject());
-        $t=\MyCodeCoverage::G();
+        $t=\LibCoverage\LibCoverage::G();
         define('__SINGLETONEX_REPALACER',ComponentBaseObject::class.'::CreateObject');
-        \MyCodeCoverage::G($t);
+        \LibCoverage\LibCoverage::G($t);
         ComponentBaseObject::G();
         
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
     }
 }
 

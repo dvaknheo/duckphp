@@ -10,7 +10,7 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
     static $x;
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(ControllerHelper::class);
+        \LibCoverage\LibCoverage::Begin(ControllerHelper::class);
         
         //code here
         //*
@@ -135,7 +135,7 @@ ControllerHelper::PageHtml(123);
         }catch(\Exception $ex){
         }
         
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
 
         //*/
     }

@@ -7,7 +7,7 @@ class ModelHelperTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(ModelHelper::class);
+        \LibCoverage\LibCoverage::Begin(ModelHelper::class);
 
         $sql="Select * from users";
         ModelHelper::SqlForPager($sql,1,5);
@@ -22,7 +22,7 @@ class ModelHelperTest extends \PHPUnit\Framework\TestCase
         try{
             ModelHelper::DbForWrite();
         }catch(\Throwable $ex){}
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
         /*
         //*/
     }

@@ -10,11 +10,11 @@ class SimpleReplacerTest extends \PHPUnit\Framework\TestCase
     {
         SingletonExObject3::G();
 
-        \MyCodeCoverage::G()->begin(SimpleReplacer::class);
-        $t=\MyCodeCoverage::G();
+        \LibCoverage\LibCoverage::Begin(SimpleReplacer::class);
+        $t=\LibCoverage\LibCoverage::G();
         SimpleReplacer::Replace();
         SimpleReplacer::Replace();
-        \MyCodeCoverage::G($t);
+        \LibCoverage\LibCoverage::G($t);
         //SimpleReplacer::ReplaceSingletonEx();
         SingletonExObjectX::G(new SingletonExObjectX());
         SingletonExObjectX::G();
@@ -24,7 +24,7 @@ class SimpleReplacerTest extends \PHPUnit\Framework\TestCase
         SingletonExObject3::G();
         SingletonExObject4::G();
 
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
 
     }
 }

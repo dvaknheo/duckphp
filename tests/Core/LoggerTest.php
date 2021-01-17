@@ -6,10 +6,10 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(Logger::class);
+        \LibCoverage\LibCoverage::Begin(Logger::class);
         
-        $path_log=\MyCodeCoverage::GetClassTestPath(Logger::class);
-        \MyCodeCoverage::G()->cleanDirectory($path_log);
+        $path_log=\LibCoverage\LibCoverage::G()->getClassTestPath(Logger::class);
+        \LibCoverage\LibCoverage::G()->cleanDirectory($path_log);
 
         $options=[
             'path_log' => $path_log,
@@ -41,6 +41,6 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
         file_put_contents($path_log.'log.log','');// clear
         Logger::G()->isInited();
 
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
     }
 }

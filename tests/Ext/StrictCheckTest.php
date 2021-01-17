@@ -14,9 +14,9 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(StrictCheck::class);
+        \LibCoverage\LibCoverage::Begin(StrictCheck::class);
         
-        $path_setting = \MyCodeCoverage::GetClassTestPath(StrictCheck::class);
+        $path_setting = \LibCoverage\LibCoverage::G()->getClassTestPath(StrictCheck::class);
         $setting = include $path_setting . 'setting.php';
         $database_list = $setting['database_list'];
 
@@ -49,9 +49,9 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
 
         ];
         
-        $t=\MyCodeCoverage::G();
+        $t=\LibCoverage\LibCoverage::G();
         StrictCheck::G(new StrictCheck)->init($options, DuckPhp::G());
-        \MyCodeCoverage::G($t);
+        \LibCoverage\LibCoverage::G($t);
         Route::G()->bind('foo');
 
         DuckPhp::G()->run();
@@ -64,7 +64,7 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
         //StrictCheck::G(new StrictCheck())->init($options)->checkStrictClass('NoExt',0);
         
 
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
     }
 }
 class StrictCheck_FakeObject
