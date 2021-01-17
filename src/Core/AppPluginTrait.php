@@ -192,22 +192,31 @@ trait AppPluginTrait
         $this->pluginModeClear();
         return true;
     }
+    protected function pluginModeReplaceComponent()
+    {
+        View::G(new View());
+        Route::G(new Route());
+    }
     protected function pluginModeBeforeRun()
     {
         $namespace = $this->plugin_options['plugin_namespace'];
         
         $this->plugin_view_old = View::G();
+        $this->plugin_route_old = Route::G();
+        
         $view_options = $this->plugin_view_old->options;
         $view_options['path_view'] = $view_options['path_view'] ?? '';
         $view_options['path_view'] = $view_options['path_view'] === '' ? '': rtrim($view_options['path_view'], 'DIRECTORY_SEPARATOR') .DIRECTORY_SEPARATOR;
         $view_options['path_view'] .= str_replace('\\', DIRECTORY_SEPARATOR, $namespace);
         $view_options['path_view_override'] = $this->path_view_override;
-        View::G(new View())->init($view_options)->reset();
         
-        $this->plugin_route_old = Route::G();
         $route_options = $this->plugin_route_old->options;
         $route_options['namespace'] = $namespace;
-        Route::G(new Route())->init($route_options)->reset();
+        
+        $this->pluginModeReplaceComponent();
+        
+        View::G()->init($view_options)->reset();
+        Route::G()->init($route_options)->reset();
     }
     protected function pluginModeClear()
     {
@@ -216,7 +225,6 @@ trait AppPluginTrait
         $this->plugin_view_old = null;
         $this->plugin_route_old = null;
     }
-        
     public static function OnPluginModeUrl($url)
     {
         return static::G()->_OnPluginModeUrl($url);
