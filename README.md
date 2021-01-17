@@ -227,11 +227,11 @@ DuckPhp 代码里的 template 目录就是我们的工程目录示例。也是�
 |   |       BaseModel.php       //   模型基类
 |   |       DemoModel.php       //   测试模型
 |   +---Helper                  // 助手类目录
-|   |       AppHelper.php       //   应用助手类
+|   |       AppHelper.php       //   应用助手类，不太需要
 |   |       BusinessHelper.php  //   服务助手类
 |   |       ControllerHelper.php//   控制器助手类
 |   |       ModelHelper.php     //   模型助手类
-|   |       ViewHelper.php      //   视图助手类
+|   |       ViewHelper.php      //   视图助手类，不太需要
 |   \---System                  // 系统基类放在这里
 |           App.php             //   默认框架入口文件
 |           BaseController.php  //   控制器基类
@@ -367,7 +367,7 @@ namespace MySpace\System
     //服务基类, 为了 Business::G() 可变单例。
     class BaseBusiness
     {
-        use SingletonEx;
+        use SingletonExTrait;
     }
 } // end namespace
 // 助手类
@@ -388,7 +388,7 @@ namespace MySpace\Helper
     }
     class ViewHelper extends \DuckPhp\Helper\ViewHelper
     {
-        // 添加你想要的助手函数
+        // 添加你想要的助手函数 ,ViewHelper 一般来说是不使用的
     }
 } // end namespace
 
@@ -518,7 +518,7 @@ DuckPhp 类/文件结构参考。(粗体部分是启动的时候引用的文件)
     1. **[ComponentBase](docs/ref/Core-ComponentBase.md)** 组件基类
          1. **[ComponentInterface](docs/ref/Core-ComponentInterface.md)** 组件接口
     2. **[App](docs/ref/Core-App.md)** 核心应用类。引用以下类
-        1. **[Kernel](docs/ref/Core-Kernel.md)** 核心Trait 以下是 `核心必备组件`
+        1. **[KernelTrait](docs/ref/Core-Kernel.md)** 核心Trait 以下是 `核心必备组件`
             1. [AutoLoader](docs/ref/Core-AutoLoader.md) 自动加载类
             2. **[Configer](docs/ref/Core-Configer.md)** 配置组件
             3. **[View](docs/ref/Core-View.md)** 视图组件
@@ -577,8 +577,8 @@ DuckPhp 类/文件结构参考。(粗体部分是启动的时候引用的文件)
 7. `HttpServer` 目录
     1. [HttpServer](docs/ref/HttpServer-HttpServer.md)  Http 服务器
 8. `SingletonEx`目录
-    1. **[SingletonEx](docs/ref/SingletonEx-SingletonEx)**  可变单例 trait
-    1. [SimpleReplacer](docs/ref/SingletonEx-SimpleReplacer)  可选可变单例容器
+    1. **[SingletonExTrait](docs/ref/SingletonEx-SingletonExTrait.md)**  可变单例 trait
+    1. [SimpleReplacer](docs/ref/SingletonEx-SimpleReplacer.md)  可选可变单例容器
 9. `ThrowOn`目录
     1. [ThrowOnTrait](docs/ref/ThrowOn-ThrowOnTrait.md) 可抛 trait，应用工程引用它方便异常处理
 

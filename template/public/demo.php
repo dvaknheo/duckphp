@@ -66,7 +66,7 @@ namespace MySpace\Helper
     }
     class ViewHelper extends \DuckPhp\Helper\ViewHelper
     {
-        // 添加你想要的助手函数
+        // 添加你想要的助手函数 ,ViewHelper 一般来说是不使用的
     }
 } // end namespace
 
