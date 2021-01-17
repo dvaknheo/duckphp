@@ -10,7 +10,11 @@ class RedisCacheTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \MyCodeCoverage::G()->begin(RedisCache::class);
-        $redis_list = include \MyCodeCoverage::G()->options['path_data'] . 'redis_list.php';
+        
+        $path_setting = \MyCodeCoverage::GetClassTestPath(RedisCache::class);
+        $setting = include $path_setting . 'setting.php';
+        $redis_list = $setting['redis_list'];
+
         $options=[
             'redis_list'=>$redis_list,
             'ext'=>[

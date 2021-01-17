@@ -10,7 +10,10 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \MyCodeCoverage::G()->begin(DbManager::class);
-        $database_list= include \MyCodeCoverage::G()->options['path_data'] . 'database_list.php';
+        
+        $path_setting = \MyCodeCoverage::GetClassTestPath(Db::class);
+        $setting = include $path_setting . 'setting.php';
+        $database_list = $setting['database_list'];
         
         $dn_options=[
             'database_list'=>['zzz'],

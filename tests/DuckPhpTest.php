@@ -21,11 +21,9 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         //DuckPhp::G()->onSwooleHttpdInit($SwooleHttpd, false,function(){var_dump("OK");});
         //DuckPhp::G()->onSwooleHttpdInit($SwooleHttpd,true,null);
 
-        $path_lib=\MyCodeCoverage::GetClassTestPath(DuckPhp::class).'lib/';
         $path_view=\MyCodeCoverage::GetClassTestPath(DuckPhp::class).'views/';
 
         $options=[
-            'path_lib'=>$path_lib,
             'log_sql_query'=>true,
             'use_short_functions'=>true,
             'mode_no_path_info'=>true,

@@ -8,8 +8,10 @@ class DbTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \MyCodeCoverage::G()->begin(Db::class);
-        $database_list = include \MyCodeCoverage::G()->options['path_data'] . 'database_list.php';
-        $options = $database_list[0];
+        
+        $path_setting = \MyCodeCoverage::GetClassTestPath(Db::class);
+        $setting = include $path_setting . 'setting.php';
+        $options = $setting['database_list'][0];
         
         $db=new Db;
         $db->init($options);

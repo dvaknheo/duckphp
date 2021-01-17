@@ -15,7 +15,10 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \MyCodeCoverage::G()->begin(StrictCheck::class);
-        $database_list = include \MyCodeCoverage::G()->options['path_data'] . 'database_list.php';
+        
+        $path_setting = \MyCodeCoverage::GetClassTestPath(StrictCheck::class);
+        $setting = include $path_setting . 'setting.php';
+        $database_list = $setting['database_list'];
 
         $dn_options=[
             'error_404'=>null,

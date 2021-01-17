@@ -8,7 +8,11 @@ class RedisManagerTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \MyCodeCoverage::G()->begin(RedisManager::class);
-        $redis_list = include \MyCodeCoverage::G()->options['path_data'] . 'redis_list.php';
+        
+        $path_setting = \MyCodeCoverage::GetClassTestPath(RedisManager::class);
+        $setting = include $path_setting . 'setting.php';
+        $redis_list = $setting['redis_list'];
+        
         //code here
         $options=[
             'redis'=>$redis_list[0],
