@@ -1,7 +1,7 @@
 <?php 
 namespace tests\DuckPhp\Core;
 use DuckPhp\Core\SystemWrapperTrait;
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
 class SystemWrapperTraitTest extends \PHPUnit\Framework\TestCase
 {
@@ -32,7 +32,7 @@ class SystemWrapperTraitTest extends \PHPUnit\Framework\TestCase
 class SystemWrapperObject
 {
     
-    use SingletonEx;
+    use SingletonExTrait;
     use SystemWrapperTrait;
     protected $system_handlers=[
         'var_dump'=>null,

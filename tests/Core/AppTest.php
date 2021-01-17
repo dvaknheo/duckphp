@@ -6,7 +6,7 @@ use DuckPhp\DuckPhp;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\View;
 use DuckPhp\Core\Route;
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckPhp\Component\Pager;
 
 class AppTest extends \PHPUnit\Framework\TestCase
@@ -527,7 +527,7 @@ class AppTestApp2 extends App
 class AppTestObject
 {
     static $x;
-    use SingletonEx;
+    use SingletonExTrait;
 
     public static function Foo()
     {
@@ -537,7 +537,7 @@ class AppTestObject
 class AppTestObjectA
 {
     static $x;
-    use SingletonEx;
+    use SingletonExTrait;
     public static function Foo()
     {
         return "OK";
@@ -549,7 +549,7 @@ class AppTestObjectA
 class AppTestObjectB
 {
     static $x;
-    use SingletonEx;
+    use SingletonExTrait;
     public static function Foo()
     {
         return "OK";

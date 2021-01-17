@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Ext;
 use DuckPhp\Ext\MyFacadesBase;
 use DuckPhp\Ext\MyFacadesAutoLoader;
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
 class MyFacadesBaseTest extends \PHPUnit\Framework\TestCase
 {
@@ -35,7 +35,7 @@ class F2 extends MyFacadesBase
 }
 class B
 {
-    use SingletonEx;
+    use SingletonExTrait;
     public function Z()
     {
         var_dump("OK");

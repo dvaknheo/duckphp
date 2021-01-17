@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Ext;
 
 use DuckPhp\Ext\MyFacadesAutoLoader;
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonExTrait;
 use MyFacades\tests\DuckPhp\Ext\MyFacadesAutoLoaderTestObject as TestObject;
 
 class MyFacadesAutoLoaderTest extends \PHPUnit\Framework\TestCase
@@ -47,7 +47,7 @@ class MyFacadesAutoLoaderTest extends \PHPUnit\Framework\TestCase
 }
 class MyFacadesAutoLoaderTestObject
 {
-    use SingletonEx;
+    use SingletonExTrait;
     public function foo()
     {
         var_dump("OK");

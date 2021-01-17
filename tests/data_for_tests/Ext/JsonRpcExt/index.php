@@ -1,11 +1,11 @@
 <?php
 require_once realpath (__DIR__.'/../../../../autoload.php');
 use DuckPhp\DuckPhp;
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckPhp\Ext\JsonRpcExt;
 class TestService
 {
-    use SingletonEx;
+    use SingletonExTrait;
     public function foo()
     {
         return 'Server:'.DATE(DATE_ATOM);

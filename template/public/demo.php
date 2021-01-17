@@ -12,7 +12,7 @@ namespace MySpace\System
     
     use DuckPhp\DuckPhp;
     use DuckPhp\Ext\CallableView;
-    use DuckPhp\SingletonEx\SingletonEx;
+    use DuckPhp\SingletonEx\SingletonExTrait;
     use MySpace\View\Views;
 
     class App extends DuckPhp

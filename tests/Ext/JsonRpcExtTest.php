@@ -1,6 +1,6 @@
 <?php
 namespace tests\DuckPhp\Ext{
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
 use DuckPhp\Ext\JsonRpcExt;
 use DuckPhp\HttpServer\HttpServer;
@@ -116,7 +116,7 @@ interface testInterface
 
 class TestService2 implements testInterface
 {
-    use SingletonEx;
+    use SingletonExTrait;
     public function foo()
     {
         return 'Client:'.DATE(DATE_ATOM);
@@ -127,10 +127,10 @@ class TestService2 implements testInterface
 namespace
 {
 
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonExTrait;
 class TestService
 {
-    use SingletonEx;
+    use SingletonExTrait;
     public function foo()
     {
         return 'Client:'.DATE(DATE_ATOM);

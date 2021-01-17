@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Component;
 
 use DuckPhp\Component\DbManager;
-use DuckPhp\DB\DB;
+use DuckPhp\Db\Db;
 use DuckPhp\DuckPhp as App;
 
 class DbManagerTest extends \PHPUnit\Framework\TestCase
@@ -28,7 +28,7 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         'db_before_get_object_handler'=>[null,'beforeGet'],
         
         'database_list'=> $database_list,
-            'database_class' => MyDB::class,
+            'database_class' => MyDb::class,
 
         ];
         
@@ -38,7 +38,7 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         $options['database_list']=$database_list;
         DbManager::G()->init($options,null);
         
-        DbManager::G()->setBeforeGetDBHandler(function(){var_dump("OK");});
+        DbManager::G()->setBeforeGetDbHandler(function(){var_dump("OK");});
 
         DbManager::G()->_Db();
         DbManager::G()->_DbForWrite();
@@ -128,6 +128,6 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
     }
    
 }
-class MyDB extends DB
+class MyDB extends Db
 {
 }

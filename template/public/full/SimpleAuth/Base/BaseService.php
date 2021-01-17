@@ -5,9 +5,9 @@
  */
 namespace SimpleAuth\Base;
 
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
 class BaseService
 {
-    use SingletonEx;
+    use SingletonExTrait;
 }

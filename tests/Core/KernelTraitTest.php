@@ -2,20 +2,20 @@
 namespace tests\DuckPhp\Core{
 
 use DuckPhp\Core\App;
-use DuckPhp\Core\Kernel;
+use DuckPhp\Core\KernelTrait;
 use DuckPhp\Core\RuntimeState;
 use DuckPhp\DuckPhp;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\View;
 use DuckPhp\Core\Route;
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckPhp\Ext\Pager;
 
 class KernelTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(Kernel::class);
+        \MyCodeCoverage::G()->begin(KernelTrait::class);
     
         $path_app=\MyCodeCoverage::GetClassTestPath(App::class);
         $path_config=\MyCodeCoverage::GetClassTestPath(Configer::class);
@@ -226,7 +226,7 @@ class KernelTestApp2 extends App
 class KernelTestObject
 {
     static $x;
-    use SingletonEx;
+    use SingletonExTrait;
 
     public static function Foo()
     {
@@ -236,7 +236,7 @@ class KernelTestObject
 class KernelTestObjectA
 {
     static $x;
-    use SingletonEx;
+    use SingletonExTrait;
     public static function Foo()
     {
         return "OK";
@@ -248,7 +248,7 @@ class KernelTestObjectA
 class KernelTestObjectB
 {
     static $x;
-    use SingletonEx;
+    use SingletonExTrait;
     public static function Foo()
     {
         return "OK";

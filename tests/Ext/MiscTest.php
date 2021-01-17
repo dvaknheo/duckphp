@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Ext;
 
 use DuckPhp\Ext\Misc;
 use DuckPhp\DuckPhp;
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
 class MiscTest extends \PHPUnit\Framework\TestCase
 {
@@ -85,7 +85,7 @@ interface FakeInterface
 }
 class FakeService
 {
-    use SingletonEx;
+    use SingletonExTrait;
 
     public function m1(int $id,string $name="xx")
     {
@@ -101,7 +101,7 @@ class FakeObject
     public $fakeService=null;
     public $notServcieVar=null;
     
-    use SingletonEx;
+    use SingletonExTrait;
     public function foo()
     {
         var_dump(DATE(DATE_ATOM));

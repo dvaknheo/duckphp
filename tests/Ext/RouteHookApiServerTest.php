@@ -4,7 +4,7 @@ namespace tests\DuckPhp\Ext;
 use DuckPhp\DuckPhp;
 use DuckPhp\Core\Route;
 use DuckPhp\Ext\RouteHookApiServer;
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
 class RouteHookApiServerTest extends \PHPUnit\Framework\TestCase
 {
@@ -91,11 +91,11 @@ class RouteHookApiServerTest extends \PHPUnit\Framework\TestCase
 }
 class BaseApi
 {
-    //use \DuckPhp\SingletonEx\SingletonEx;
+    //use \DuckPhp\SingletonEx\SingletonExTrait;
 }
 class testAPI extends BaseApi
 {
-    use SingletonEx;
+    use SingletonExTrait;
     public function foo()
     {
         return DATE(DATE_ATOM);

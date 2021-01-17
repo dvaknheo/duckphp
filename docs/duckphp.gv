@@ -6,7 +6,7 @@ node [fontsize="12";];
 subgraph cluster_SingletonEx {
     label = "[DuckPhp\\SingletonEx]";
 
-    SingletonEx [label="SingletonEx";shape=Mdiamond;style=filled];
+    SingletonExTrait [shape=Mdiamond;style=filled];
     SimpleReplacer [label="SimpleReplacer"];
 }
 
@@ -16,7 +16,7 @@ subgraph cluster_Core {
 
     AppPluginTrait [shape=Mdiamond;style=filled];
     App [label="App";shape=Mdiamond;style=filled]; 
-    Kernel [label="Kernel";shape="diamond"];
+    KernelTrait [label="KernelTrait";shape="diamond"];
     AutoLoader [label="AutoLoader";shape=Mdiamond;style=filled];
     ExceptionManager [label="ExceptionManager";shape="component"];
     View [label="View";shape="component"];
@@ -33,14 +33,14 @@ subgraph cluster_Core {
     Functions [label="Functions"];
 
 
-    Kernel -> AutoLoader ;
-    Kernel -> Configer;
-    Kernel -> ExceptionManager;
-    Kernel -> Route;
-    Kernel -> RuntimeState;
-    Kernel -> View;
+    KernelTrait -> AutoLoader ;
+    KernelTrait -> Configer;
+    KernelTrait -> ExceptionManager;
+    KernelTrait -> Route;
+    KernelTrait -> RuntimeState;
+    KernelTrait -> View;
     
-    App -> Kernel;
+    App -> KernelTrait;
     App -> ExtendableStaticCallTrait;
     App -> SystemWrapperTrait;
     
@@ -132,12 +132,6 @@ subgraph cluster_Component {
     PagerInterface [shape=note];
     RouteHookPathInfoCompat[shape="component"];
     RouteHookRouteMap[shape="component"];
-    
-    /*
-    X_HttpServer[label="DuckPhp\\HttpServer\\HttpServer",shape="rarrow"];
-    X_Db[label="DuckPhp\\Db\\Db",shape="rarrow"];
-   */
-   
     Cache -> ComponentBase [style="dotted"];
     DuckPhpCommand -> ComponentBase [style="dotted"];
     DbManager -> ComponentBase [style="dotted"];

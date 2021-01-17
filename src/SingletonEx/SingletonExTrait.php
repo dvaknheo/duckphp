@@ -5,7 +5,7 @@
  */
 namespace DuckPhp\SingletonEx;
 
-trait SingletonEx
+trait SingletonExTrait
 {
     protected static $_instances = [];
     public static function G($object = null)

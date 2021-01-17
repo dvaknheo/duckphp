@@ -10,7 +10,7 @@ use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\ExtendableStaticCallTrait;
-use DuckPhp\Core\Kernel;
+use DuckPhp\Core\KernelTrait;
 use DuckPhp\Core\Logger;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\RuntimeState;
@@ -34,7 +34,7 @@ class App extends ComponentBase
     
     const DEFAULT_INJECTED_HELPER_MAP = '~\\Helper\\';
     
-    use Kernel;
+    use KernelTrait;
     use ExtendableStaticCallTrait;
     use SystemWrapperTrait;
     

@@ -16,7 +16,7 @@ use DuckPhp\Core\Route;
 use DuckPhp\Core\RuntimeState;
 use DuckPhp\Core\View;
 
-trait Kernel
+trait KernelTrait
 {
     public $options = [];
     protected static $options_default = [

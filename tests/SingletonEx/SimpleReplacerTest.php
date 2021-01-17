@@ -1,7 +1,7 @@
 <?php
 namespace tests\DuckPhp\SingletonEx;
 
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckPhp\SingletonEx\SimpleReplacer;
 
 class SimpleReplacerTest extends \PHPUnit\Framework\TestCase
@@ -30,7 +30,7 @@ class SimpleReplacerTest extends \PHPUnit\Framework\TestCase
 }
 class SingletonExObjectX
 {
-    use \DuckPhp\SingletonEx\SingletonEx;
+    use \DuckPhp\SingletonEx\SingletonExTrait;
     
     public static function CreateObject($class, $object)
     {

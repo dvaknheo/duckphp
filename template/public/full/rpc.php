@@ -7,11 +7,11 @@ require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Ext\JsonRpcExt;
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
 class CalcService
 {
-    use SingletonEx;
+    use SingletonExTrait;
     public function add($a, $b)
     {
         return $a + $b;

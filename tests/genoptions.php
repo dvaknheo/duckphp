@@ -18,7 +18,7 @@ class OptionsGenerator
         array_shift($classes);
         foreach($classes as $class){
             //var_dump($class);
-            $file=realpath(__DIR__.'/../doc/');
+            $file=realpath(__DIR__.'/../docs/');
             $str=str_replace(['DuckPhp\\','\\'],['/ref/','-'],$class);
             $file=$file.$str.'.md';
             $data=file_get_contents($file);
@@ -278,7 +278,7 @@ class DataProvider
     {
         static $cache;
         if(!isset($cache)){
-            $cache=json_decode(file_get_contents(__DIR__ . '/../doc/options-desc.json'),true);
+            $cache=json_decode(file_get_contents(__DIR__ . '/../docs/options-desc.json'),true);
         }
         return $cache;
     }
@@ -417,7 +417,7 @@ function WrapFileAction($file,$callback)
 }
 function GetAllDocFile()
 {
-    $source=realpath(__DIR__.'/../doc/');
+    $source=realpath(__DIR__.'/../docs/');
     $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
     $iterator = new \RecursiveIteratorIterator($directory);
     $it=new \RegexIterator($iterator,'/\.md$/', RegexIterator::MATCH);

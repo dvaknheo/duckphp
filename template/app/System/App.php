@@ -114,6 +114,9 @@ class App extends DuckPhp
         // 是否扩充方法至助手类 (DuckPhp\Component\DbManager)
         // $options['database_auto_extend_method'] = true;
 
+        // DB类 (DuckPhp\Component\DbManager)
+        // $options['database_class'] = '';
+
         // 数据库列表 (DuckPhp\Component\DbManager)
         // $options['database_list'] = NULL;
 

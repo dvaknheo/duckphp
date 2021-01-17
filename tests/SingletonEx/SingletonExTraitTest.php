@@ -1,13 +1,13 @@
 <?php
 namespace tests\DuckPhp\SingletonEx;
 
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
 class SingletonExTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(SingletonEx::class);
+        \MyCodeCoverage::G()->begin(SingletonExTrait::class);
         
         SingletonExObject::G();
         SingletonExObject::G(new SingletonExObject());
@@ -24,7 +24,7 @@ class SingletonExTest extends \PHPUnit\Framework\TestCase
 }
 class SingletonExObject
 {
-    use \DuckPhp\SingletonEx\SingletonEx;
+    use \DuckPhp\SingletonEx\SingletonExTrait;
     
     public static function CreateObject($class, $object)
     {

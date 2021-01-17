@@ -52,7 +52,7 @@ dot doc/duckphp.gv -T svg -O
 ```
 合并起来，需要手工性的重新合并
 ```
-php tests/genoptions.php && dot doc/duckphp.gv -T svg -O
+php tests/genoptions.php && dot docs/duckphp.gv -T svg -O
 
 ```
 重申
@@ -64,7 +64,7 @@ php-cs-fixer fix && phpstan analyse && phpunit
 ```
 五连
 ```
-php-cs-fixer fix && phpstan analyse && phpunit && php tests/genoptions.php && dot doc/duckphp.gv -T svg -O
+php-cs-fixer fix && phpstan analyse && phpunit && php tests/genoptions.php && dot docs/duckphp.gv -T svg -O
 
 ```
 

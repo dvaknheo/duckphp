@@ -2,7 +2,7 @@
 namespace tests\DuckPhp;
 
 use DuckPhp\DuckPhp;
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckPhp\Ext\Misc;
 
 class DuckPhpTest extends \PHPUnit\Framework\TestCase
@@ -110,11 +110,11 @@ class fakeSwooleHttpd
 }
 class FakeService
 {
-use SingletonEx;
+    use SingletonExTrait;
 }
 class FakeObject 
 {
-    use SingletonEx;
+    use SingletonExTrait;
     
 }
 

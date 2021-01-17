@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Ext;
 
 use DuckPhp\Ext\ExceptionWrapper;
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
 class ExceptionWrapperTest extends \PHPUnit\Framework\TestCase
 {
@@ -24,7 +24,7 @@ class ExceptionWrapperTest extends \PHPUnit\Framework\TestCase
 }
 class ExceptionWrapperObject
 {
-    use SingletonEx;
+    use SingletonExTrait;
     public function foo()
     {
         throw new \Exception("HHH");

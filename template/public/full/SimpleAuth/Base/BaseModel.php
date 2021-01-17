@@ -5,10 +5,10 @@
  */
 namespace SimpleAuth\Base;
 
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
 class BaseModel
 {
-    use SingletonEx;
+    use SingletonExTrait;
     // use StrictModelTrait;
 }

@@ -89,6 +89,9 @@
 + ** 'database_auto_extend_method' => true,  ** 
 
     是否扩充方法至助手类   // [DuckPhp\Component\DbManager](Component-DbManager.md)
++ ** 'database_class' => '',  ** 
+
+    DB类   // [DuckPhp\Component\DbManager](Component-DbManager.md)
 + ** 'database_list' => NULL,  ** 
 
     数据库列表   // [DuckPhp\Component\DbManager](Component-DbManager.md)
@@ -490,6 +493,8 @@
         单一数据库配置
     - 'database_auto_extend_method' => true,
         是否扩充方法至助手类
+    - 'database_class' => '',
+        DB类
     - 'database_list' => NULL,
         数据库列表
     - 'database_list_reload_by_setting' => true,

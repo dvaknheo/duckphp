@@ -120,10 +120,12 @@
     "help" : "显示帮助",
     "injected_helper_map": "助手类映射，比较复杂",
     
+    "database_class":"DB类",
     "database_auto_extend_method": "是否扩充方法至助手类",
     "misc_auto_method_extend": "是否扩方法至助手类",
     "redis_auto_extend_method": "是否扩充方法至助手类",
     "rewrite_auto_extend_method": "是否扩充方法至助手类",
     "route_map_auto_extend_method": "是否扩充方法至助手类"
+    
 
 }

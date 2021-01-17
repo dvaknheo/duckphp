@@ -5,7 +5,7 @@ namespace tests\DuckPhp\Ext
 use DuckPhp\Ext\StrictCheck;
 use DuckPhp\DuckPhp;
 use DuckPhp\Core\Route;
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
 use tests\DuckPhp\Ext\Model\FakeModel;
 use tests\DuckPhp\Ext\Service\FakeService;
@@ -66,7 +66,7 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
 }
 class StrictCheck_FakeObject
 {
-    use SingletonEx;
+    use SingletonExTrait;
     public function init($options,$context)
     {
         echo "FakeOject init...";
@@ -108,11 +108,11 @@ namespace tests\DuckPhp\Ext\Model {
 use DuckPhp\Ext\StrictCheckObjectTrait;
 use tests\DuckPhp\Ext\Service\FakeService;
 use DuckPhp\Helper\ModelHelper as M;
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
 class FakeModel
 {
-    use SingletonEx;
+    use SingletonExTrait;
     public function foo(){
         var_dump(DATE(DATE_ATOM));
     }
@@ -125,7 +125,7 @@ class FakeModel
 }
 class FakeExModel
 {
-    use SingletonEx;
+    use SingletonExTrait;
     public function foo(){
         FakeModel::G()->foo();
     }
@@ -138,11 +138,11 @@ use DuckPhp\DuckPhp;
 use tests\DuckPhp\Ext\Model\FakeExModel;
 use tests\DuckPhp\Ext\Model\FakeModel;
 //use tests\DuckPhp\Ext\Model\FakeModel;
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
 class FakeService
 {
-    use SingletonEx;
+    use SingletonExTrait;
     public function foo(){
         FakeLib::G()->foo();
     }
@@ -163,7 +163,7 @@ class FakeService
 }
 class FakeBatchBusiness
 {
-    use SingletonEx;
+    use SingletonExTrait;
     public function foo(){
         FakeService::G()->foo();
     }
@@ -171,7 +171,7 @@ class FakeBatchBusiness
 
 class FakeLib
 {
-    use SingletonEx;
+    use SingletonExTrait;
     public function foo(){
         FakeExModel::G()->foo();
     }

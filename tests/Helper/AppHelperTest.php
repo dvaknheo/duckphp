@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Helper;
 
 use DuckPhp\Helper\AppHelper;
 use DuckPhp\Core\App;
-use DuckPhp\SingletonEx\SingletonEx;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
 class AppHelperTest extends \PHPUnit\Framework\TestCase
 {
@@ -117,7 +117,7 @@ class HelperFakeSessionHandler implements \SessionHandlerInterface
 class AppHelperTestObject
 {
     static $x;
-    use SingletonEx;
+    use SingletonExTrait;
 
     public static function Foo()
     {

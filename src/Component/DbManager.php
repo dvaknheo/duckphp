@@ -126,7 +126,7 @@ class DbManager extends ComponentBase
     }
     protected function getDb($db_config)
     {
-        if(empty($this->options['database_class'])){
+        if (empty($this->options['database_class'])) {
             $db = new Db();
         } else {
             $class = $this->options['database_class'];
