@@ -8,5 +8,5 @@ namespace SimpleBlog\System;
 
 trait SingletonEx
 {
-    use \DuckPhp\SingletonEx\SingletonEx;
+    use \DuckPhp\SingletonEx\SingletonExTrait;
 }

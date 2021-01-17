@@ -45,7 +45,7 @@ namespace MySpace\System
     //服务基类, 为了 Business::G() 可变单例。
     class BaseBusiness
     {
-        use SingletonEx;
+        use SingletonExTrait;
     }
 } // end namespace
 // 助手类

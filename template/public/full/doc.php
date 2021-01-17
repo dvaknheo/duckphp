@@ -5,7 +5,7 @@ function getfile($f)
 {
     if(!$f)return;
     $ref=new ReflectionClass(\DuckPhp\DuckPhp::class);
-    $path=realpath(dirname($ref->getFileName()) . '/../doc').'/';
+    $path=realpath(dirname($ref->getFileName()) . '/../docs').'/';
     $file=realpath($path.$f);
     if(substr($file,0,strlen($path))!=$path){ return;} // 安全处理
     
