@@ -52,15 +52,15 @@ DuckPhp 代码里的 template 目录就是我们的工程目录示例。也是�
 
 app 目录，就是放 LazyToChange 命名空间的东西了。 app 目录可以在选项里设置成其他名字
 命名空间 LazyToChange 是 可调的。比如调整成 MyProject ,TheBigOneProject  等。
-可以用 `./vendor/bin/duckphp --create --namespace TheBigOneProject` 调整。
+可以用 `./vendor/bin/duckphp new --namespace TheBigOneProject` 调整。
 
 文件都不复杂。基本都是空类或空继承类，便于不同处理。
 这些结构能精简么？
 可以，你可以一个目录都不要。
 
-System/App.php 这个文件的入口类继承 DuckPhp\DuckPhp 类，工程的入口流程会在这里进行，这里是`核心工程师`重点了解的类。
+`System/App.php` 这个文件的入口类继承 `DuckPhp\DuckPhp` 类，工程的入口流程会在这里进行，这里是`核心工程师`重点了解的类。
 
-BaseController, BaseModel, BaseService 是你自己要改的基类，基本只实现了单例模式。
+BaseController, BaseModel, BaseBusiness 是你自己要改的基类，基本只实现了单例模式。
 
 Helper 目录，助手类，如果你一个人偷懒，直接用 APP 类也行  
 
@@ -164,10 +164,8 @@ $options['override_class'] = LazyToChange\System\App::class,
 ```php
 \DuckPhp\DuckPhp::RunQuickly($options);
 ```
-RunQuickly 相当于 \DuckPhp\DuckPhp::G()->init($options,function(){})->run(); 
-\DuckPhp\DuckPhp::G()->init($options,function(){})； 会执行根据选项，返回  `LazyToChange\System\App`
-
-为什么不是 `LazyToChange\System\App::RunQuickly($options); ` 呢？ 可以，但是这要兼容不使用外部 autoloader 的情况。如 composer  。 如果你用外部加载器，只需直接 `LazyToChange\System\App::RunQuickly($options); `。
+RunQuickly 相当于 `\DuckPhp\DuckPhp::G()->init($options,function(){})->run(); `
+ 会执行根据选项，返回  `LazyToChange\System\App`
 
 ###  工程入口文件
 
@@ -259,11 +257,10 @@ class App extends DuckPhp
 + // @DUCKPHP_DELETE 模板引入后删除
 + // @DUCKPHP_HEADFILE 头文件调整
 + // @DUCKPHP_NAMESPACE 调整命名空间
-+ // @DUCKPHP_KEEP_IN_FULL 如果是 --full 选项则保留。
 
 ### 关于选项
 
-术语 `选项`和 `设置`， `配置 相区分如下：
+术语 `选项`和 `设置`， `配置` 相区分如下：
 
 - 选项 ，传递给入口类的内容
 - 配置，可有可无的配置文件。
@@ -415,7 +412,7 @@ Core 下面的扩展不会单独拿出来用。如果你扩展了该方面的类
 
 DuckPhp 扩展的加载是通过选项里添加，$options['ext']数组实现的
 
-    扩展映射 ,$ext_class => $options。
+    扩展映射 ,$ext_class => $options 。
     
     $ext_class 为扩展的类名，如果找不到扩展类则不启用。
     $ext_class 满足组件接口。在初始化的时候会被调用。
@@ -423,4 +420,6 @@ DuckPhp 扩展的加载是通过选项里添加，$options['ext']数组实现的
     
     如果 $options 为 false 则不启用，
     如果 $options 为 true ，则会把当前全局 $options 传递进去。
+    如果 $options 为 string 则会映射到全局 $options 的键为 $optoins 的值
+    
 

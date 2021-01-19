@@ -66,16 +66,16 @@ DuckPhp 的路由类比较复杂，也是重点
 
 ##  默认基础路由
 
-DuckPhp 支持很多种 路由方式，默认最常见最基本的就是文件型路由方式了。
+`DuckPhp` 支持很多种 路由方式，默认最常见最基本的就是文件型路由方式了。
 
-以 PATH_INFO 的 / 为切分，最后一个是方法，前面是命名空间和类名， 当然，还有控制器前缀。
+以 `PATH_INFO 的` / 为切分，最后一个是方法，前面是命名空间和类名， 当然，还有控制器前缀。
 
 如果只有一个 / 如 /test ，那么就对应到 Main/test。
 
-注意的是， DuckPhp 不支持 /test/  这样的 url ，最后的 / 需要自己处理。
+注意的是， `DuckPhp` 不支持 /test/  这样的 url ，最后的 / 需要自己处理。
 
-假定 我们的工程命名空间是 ，即 $options['namespace'] = 'MyProject';
-默认选项 $options['namespace_controller'] => 'Controller';
+假定 我们的工程命名空间是 ，即 `$options['namespace'] = 'MyProject'`;
+默认选项 `$options['namespace_controller'] => 'Controller`';
 对应的 类->方法 如下
 
 
@@ -93,7 +93,7 @@ DuckPhp 支持很多种 路由方式，默认最常见最基本的就是文件�
 
 根目录的路由会使用 Main（controller_welcome_class 选项） 来代替。
 
-为了把 POST 和 GET 区分， 我们有了 controller_prefix_post 。如果没有 相关方法存在也是没问题的。 这个技巧用于很多需要的情况
+为了把 POST 和 GET 区分， 我们有了 `controller_prefix_post`  选项。如果没有 相关方法存在也是没问题的。 这个技巧用于很多需要的情况
 
 ## 路由钩子 `核心工程师`
 
@@ -142,8 +142,6 @@ value 对应的规则是
 
 
 
-
-
 ```PHP
 <?php declare(strict_types=1);
 return [
@@ -178,9 +176,9 @@ $options['path_info_compact_class_key'] = "";
 ```
 选项说明： path_info_compact_action_key 就是 用于路由的 $\_GET 参数
 
-如果没有 path_info_compact_class_key ，直接就是  ?\_r=/test/done ,  有，就成了 ?\_m=test&_r=done
+如果没有 path_info_compact_class_key ，直接就是  `?\_r=/test/done` ,  有，就成了 `?\_m=test&_r=done`
 
-URL ($url) 函数也被接管。 自动替换成相应的实现。
+`URL ($url) `函数也被接管。 自动替换成相应的实现。
 
 
 ## 路由重写

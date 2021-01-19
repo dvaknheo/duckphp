@@ -1,4 +1,4 @@
-# DuckPhp\Ext\Console
+# DuckPhp\Component\Console
 [toc]
 ## 简介
 `组件类` 完成命令行功能

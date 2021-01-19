@@ -53,7 +53,7 @@ CallbableView 是用来代替 View 的一个扩展
 EmptyView 替换 View ，效果是空，用来收集输出。
 
 #### RouteHookRewrite
- 
+
 #### RouteHookDirecotoryMode ,
 
 
@@ -74,17 +74,7 @@ EmptyView 替换 View ，效果是空，用来收集输出。
 
 ### CallableView 函数方式的视图
 
-## 分页
 
-## 默认已使用的扩展
-###  按字母排序
-
-* RouteHookRouteMap
-* RouteHookPathInfoCompat
-* Pager
-* Cache
-* EventManager
-* DbManager
 
 
 ## 编写扩展

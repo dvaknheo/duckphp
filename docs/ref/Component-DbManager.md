@@ -1,8 +1,9 @@
-# DuckPhp\Ext\DBManager
+# DuckPhp\Component\DBManager
 [toc]
 
 ## 简介
-`组件类` [DuckPhp\Db\Db](Db-Db.md) 的管理类。默认使用。
+[DuckPhp\Db\Db](Db-Db.md) 的管理组件
+
 ## 选项
 
 'database' => null,

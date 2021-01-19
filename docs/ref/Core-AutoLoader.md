@@ -40,7 +40,7 @@ public function run()
     //
 public function runAutoLoader()
 
-    // 别名，方便调用
+    // run() 的 别名，方便调用
 public function _autoload($class)
 
     //

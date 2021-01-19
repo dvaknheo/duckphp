@@ -133,7 +133,9 @@ class DbManager extends ComponentBase
             $db = new $class();
         }
         $db->init($db_config);
-        $db->setBeforeQueryHandler([static::class, 'OnQuery']);
+        if ($this->options['database_log_sql_query'] && is_callable([$db,'setBeforeQueryHandler'])) {
+            $db->setBeforeQueryHandler([static::class, 'OnQuery']);
+        }
         return $db;
     }
     public function _DbForWrite()

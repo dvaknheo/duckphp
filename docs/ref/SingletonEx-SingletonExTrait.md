@@ -1,4 +1,4 @@
-# DuckPhp\SingletonEx\SingletonEx
+# DuckPhp\SingletonEx\SingletonExTrait
 [toc]
 
 ## 简介

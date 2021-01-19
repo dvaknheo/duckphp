@@ -1,27 +1,20 @@
-# DuckPhp\Ext\Console
+# DuckPhp\Componet
 [toc]
 ## 简介
-`组件类` 安装类
+
+安装器组件
+
 ## 选项
 
 'path' => '',
-
-    默认路径
 'namespace' => '',
 
-    默认命名空间
 'force' => false,
-
-    是否强制模式
 'autoloader' => 'vendor/autoload.php',
 
-    加载器位置
 'verbose' => false,
-
-    显示详情
 'help' => false,
 
-    只是显示帮助
 ## 公开方法
 
 ### 组件方法

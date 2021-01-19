@@ -6,7 +6,7 @@
 
 namespace SimpleBlog\System;
 
-use DuckPhp\ThrowOn\ThrowOn;
+use DuckPhp\ThrowOn\ThrowOnTrait;
 use Exception;
 use SimpleBlog\System\App;
 

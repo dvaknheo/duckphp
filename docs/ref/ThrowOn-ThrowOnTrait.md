@@ -1,4 +1,4 @@
-# DuckPhp\ThrowOn\ThrowOn
+# DuckPhp\ThrowOn\ThrowOnTrait
 [toc]
 
 ## 简介
@@ -8,9 +8,6 @@
 public static function ThrowOn($flag, $message, $code=0)
 
     如果 $flag成立，则抛出异常
-public static function ThrowTo($class)
-
-    由 $class 接管 ThrowOn, 用于处理第三方的 ThrowOn
 ## 详解
 
 trait ThrowOn 是为了写代码更偷懒。
@@ -23,7 +20,7 @@ class MyException extends \Exception
 }
 class SystemException extends \Exception
 {
-    use \DuckPhp\ThrowOn\ThrowOn;
+    use \DuckPhp\ThrowOn\ThrowOnTrait;
 }
 
 
@@ -36,5 +33,5 @@ SystemException::ThrowOn(true,"something exception",142857);
 
 ```
 
-ThrowOn 的弊病是多了一层堆栈。调试的时候要注意。
+ThrowOnTrait 的弊病是多了一层堆栈。调试的时候要注意。
 

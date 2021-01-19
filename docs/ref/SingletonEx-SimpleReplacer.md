@@ -1,4 +1,4 @@
-# DuckPhp\SingletonEx\SingletonEx
+# DuckPhp\SingletonEx\SimpleReplacer
 [toc]
 
 ## 简介

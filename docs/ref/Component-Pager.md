@@ -1,7 +1,7 @@
-# DuckPhp\Ext\Pager
+# DuckPhp\Component\Pager
 [toc]
 ## 简介
-`组件类` 分页类 符合接口  DuckPhp\Ext\PagerInterface
+`组件类` 分页类 符合接口  DuckPhp\Component\PagerInterface
 
 ## 选项
 
@@ -60,4 +60,4 @@ Pager 类并没有像其他扩展那样初始化，而是在调用 App::Pager() 
 
 Page 在 render($total, $options = []) 的时候会初始化一遍
 
-App::Pager 得到的就是这个类 在得到这个类后，会填充 pager_context_class,使得兼容非 web 环境
+App::Pager 得到的就是这个类

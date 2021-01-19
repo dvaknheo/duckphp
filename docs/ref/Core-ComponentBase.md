@@ -33,7 +33,7 @@ protected function initContext(object $contetxt);
 
 ComponentBase 是所有组件类的基类。
 
-ComponentBase 使用 SingletonEx Trait 。 会帮你处理 init 里，裁剪你只需要的选项。
+ComponentBase 使用 SingletonExTrait 。 会帮你处理 init 里，裁剪你只需要的选项。
 
 你只需要 override initOptions 和 initContext 即可
 

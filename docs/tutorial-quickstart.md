@@ -28,7 +28,7 @@ Now is [<2020-06-14T11:45:46+08:00>]
 composer require dvaknheo/duckphp # 用 require 
 ./vendor/bin/duckphp new --help   # 查看有什么指令
 ./vendor/bin/duckphp new    # 创建工程
-php  ./duckphp-project run    # --host=127.0.0.1 --port=9527 # 开始 web 服务器
+./vendor/bin/duckphp run    # --host=127.0.0.1 --port=9527 # 开始 web 服务器
 
 ```
 浏览器中打开 http://127.0.0.1:8080/ 得到下面欢迎页就表明 OK 了

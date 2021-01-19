@@ -12,6 +12,7 @@
     路径
 'path_config' => 'config',
 
+    路径
 'setting' => [],
 
     默认自带的设置
@@ -29,6 +30,8 @@
     打开这项，可以读取 path 选项下的 env 文件
     
 "config_ext_files"
+
+    用于 AppPluginTrait
 ## 公开方法
 
     public function init($options=[], $context=null)
