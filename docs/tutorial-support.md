@@ -78,9 +78,7 @@ Helper 类为什么要在 Helper 目录下，
 
 原因，配合 cloneHelper 用。
 
-System 目录下，为什么以 Base 开头。
 
-因为一开始是 Base 目录
 
 为什么会有个“我觉得恶心的”G() 单字母静态方法
 
@@ -99,3 +97,51 @@ var_dump(MyClass::G()); 使用 Facades 就没法做到这个功能。
 
 为什么是 Db 而不是 DB 。
 为了统一起来。  缩写都驼峰而非全大写
+
+回调
+Class::Method Class@Method Class->Method 的区别
+
+-> => 表示 new 一个实例
+@ 表示 $class::G()->
+
+:: 表示 Class::Method
+
+
+~ => 扩充到当前命名空间
+
+门面， DuckPhp 用可变单例代替了门面
+中间件， DuckPhp 提供了简单的中间件扩展 MyMiddlewareManager，但不建议使用。
+
+事件，见事件这一篇
+
+请求和响应， DuckPhp 没这个概念
+但在 控制器助手类里有很多相同的行为
+
+数据库 ，DuckPhp 的数据库没那么强大
+
+模型 
+
+
+视图 DuckPhp 的视图原则
+
+
+错误处理
+日志
+验证， duckphp 没验证处理，你需要第三方类
+
+缓存
+
+Session
+
+Cookie
+
+多语言
+
+上传
+
+命令行
+
+扩展库
+
+
+

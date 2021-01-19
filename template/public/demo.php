@@ -39,7 +39,7 @@ namespace MySpace\System
         // @override 重写
         protected function onRun()
         {
-            //运行期代码在这里，你可以在这里 session_start();
+            //运行期代码在这里，你可以在这里 static::session_start();
         }
     }
     //服务基类, 为了 Business::G() 可变单例。
@@ -66,7 +66,11 @@ namespace MySpace\Helper
     }
     class ViewHelper extends \DuckPhp\Helper\ViewHelper
     {
-        // 添加你想要的助手函数 ,ViewHelper 一般来说是不使用的
+        // 添加你想要的助手函数。 ViewHelper 一般来说是不使用的
+    }
+    class AppHelper extends \DuckPhp\Helper\AppHelper
+    {
+        // 添加你想要的助手函数。 AppHelper 一般来说是不使用的
     }
 } // end namespace
 
@@ -179,8 +183,8 @@ namespace MySpace\View {
 namespace
 {
     $options = [
-        //'override_class' => 'MySpace\System\App', 
-            // 你也可以在这里调整选项。
+        // 'override_class' => 'MySpace\System\App', 
+        // 你也可以在这里调整选项。覆盖类内选项
     ];
     \MySpace\System\App::RunQuickly($options);
 }

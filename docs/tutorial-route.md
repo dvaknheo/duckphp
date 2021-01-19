@@ -13,45 +13,9 @@ DuckPhp 的路由类比较复杂，也是重点
 
 按不同类的来源分为：
 
-### Route
-
-- 'controller_base_class' => NULL,
-    控制器基类
-- 'controller_class_postfix' => '',
-    控制器类名后缀
-- 'controller_enable_slash' => false,
-    激活兼容后缀的 / 
-- 'controller_hide_boot_class' => false,
-    控制器标记，隐藏特别的入口
-- 'controller_methtod_for_miss' => '_missing',
-    控制器，缺失方法的调用方法
-- 'controller_path_ext' => '',
-    扩展名，比如你要 .html
-- 'controller_prefix_post' => 'do_',
-    控制器，POST 方法前缀
-- 'controller_stop_g_method' => false,
-    控制器禁止直接访问G方法
-- 'controller_stop_static_method' => false,
-    控制器禁止直接访问静态方法
-- 'controller_use_singletonex' => false,
-    控制器使用单例模式
-- 'controller_welcome_class' => 'Main',
-    控制器默认欢迎方法
-- 'namespace' => '',
-    命名空间
-- 'namespace_controller' => 'Controller',
-    控制器的命名空间
-- 'skip_fix_path_info' => false,
-    跳过 PATH_INFO 修复
-
 ### RouteHookPathInfoCompat
 
-- 'path_info_compact_action_key' => '_r',
-    GET 动作方法名的 key
-- 'path_info_compact_class_key' => '',
-    GET 模式类名的 key
-- 'path_info_compact_enable' => false,
-    使用 _GET 模拟无 PathInfo 配置
+
 
 ### RouteHookRouteMap
 
@@ -87,13 +51,37 @@ DuckPhp 的路由类比较复杂，也是重点
 
 ```
 
+和流行框架不同，Duckphp 的控制器方法是不用返回任何东西的
+
+你要输出用其他类来输出
+
+
 路由的流程在 DuckPhp\Core\Route 类里run() 方法。
 
-限定的类是在  namespace namespace_controller 选项。
 
-根目录的路由会使用 Main（controller_welcome_class 选项） 来代替。
+根目录的路由会使用 Main（`controller_welcome_class` 选项） 来代替。
 
 为了把 POST 和 GET 区分， 我们有了 `controller_prefix_post`  选项。如果没有 相关方法存在也是没问题的。 这个技巧用于很多需要的情况
+
+`skip_fix_path_info`  .
+
+选项介绍
+
+- 'controller_base_class' => NULL, 限定控制器必须继承基类或实现接口
+- 'controller_class_postfix' => '', 控制器类名后缀，或许你会加上 Action  ，于是就变成了 MyProejct\Controller\MainAction ....
+- 'controller_enable_slash' => false, 激活兼容 URL / 后缀 
+- 'controller_hide_boot_class' => false, 控制器标记，隐藏特别的入口，比如你不想人也从 /Main/index 访问 / MyProejct\Controller\Main->index
+- 'controller_methtod_for_miss' => '_missing', // 如果有这个方法，则定位到的类后，缺失方法的时候调用这个方法
+- 'controller_path_ext' => '', 扩展名，比如你要 .html
+- 'controller_prefix_post' => 'do_', 控制器，POST 方法前缀，用来方便把 POST 方法和其他方法分开，如果没相应类方法则忽略
+- 'controller_stop_g_method' => false, 控制器禁止直接访问 G()方法 ，用于一些技巧
+- 'controller_stop_static_method' => false, 控制器禁止直接访问静态方法 严格禁止访问静态方法，一般不打开
+- 'controller_use_singletonex' => false, 控制器使用单例模式，打开的话全用 G() 方法来访问类
+- 'controller_welcome_class' => 'Main', 控制器默认欢迎类
+- 'namespace' => '',命名空间
+- 'namespace_controller' => 'Controller', 控制器的命名空间 如果以 \\ 开始，则忽略 namespace 选项的配置
+- 'skip_fix_path_info' => false,  跳过 PATH_INFO 修复，用于nginx 配置无 PATH_INFO 的时候找到正确的 PATH_INFO
+
 
 ## 路由钩子 `核心工程师`
 
@@ -102,17 +90,17 @@ DuckPhp 的路由类比较复杂，也是重点
 $once 是表示同类型钩子，只有一个同名 callback 就够了
 
 position 一共有4个位置
+```
     const HOOK_PREPEND_OUTTER = 'prepend-outter';
     const HOOK_PREPEND_INNER = 'prepend-inner';
     const HOOK_APPPEND_INNER = 'append-inner';
     const HOOK_APPPEND_OUTTER = 'append-outter';
-
+````
 DuckPhp 默认加载了 DuckPhp\\Ext\\RouteHookRouteMap 插件。 实现了路由映射。
 
 其他扩展可能还会有更多的钩子。如果发现“为什么会有这个地址”，去问`核心工程师`吧。
 
 ## 路由映射
-
 
 我们知道，路由重写是经常干的事情，比如  /res/{id} 这样的。
 
@@ -132,7 +120,7 @@ value 对应的规则是
 
 - class::method 静态方法
 
-- class@method 动态方法
+- class@method 单例动态方法
 
 - class->method 动态方法
 
@@ -145,17 +133,17 @@ value 对应的规则是
 ```PHP
 <?php declare(strict_types=1);
 return [
-            '^user(/page-(?<page>\d+))?'      => '~user->index',
-            '^user/(?<login>\w+)'             => '~user->profile',
+    '^user(/page-(?<page>\d+))?'      => '~user->index',
+    '^user/(?<login>\w+)'             => '~user->profile',
 
-            '^api/user/(?<login>\w+)'         => "~api@profile",
-            
-            '^blog/archive/(?<year>\d+)'      =>"~blog@archive_yearly",
-            '^blog/archive/(?<year>\d+)-(?<month>\d+)(/page(?<page>\d+))?'    =>"~blog@archive_monthly",
-            '^blog/ tag/(?<label>\w+)(/page(?<page>\d+))?'                     =>"~blog@tag",
-            '^blog/page/(?<slug>\S+)'                                         =>"~blog@post",
-            '^blog(/(?<id>\d+))?'                                              =>"~blog@index",
-        ];
+    '^api/user/(?<login>\w+)'         => "~api->profile",
+    
+    '^blog/archive/(?<year>\d+)'                                    =>"~blog->archive_yearly",
+    '^blog/archive/(?<year>\d+)-(?<month>\d+)(/page(?<page>\d+))?'  =>"~blog->archive_monthly",
+    '^blog/ tag/(?<label>\w+)(/page(?<page>\d+))?'                  =>"~blog->tag",
+    '^blog/page/(?<slug>\S+)'                                       =>"~blog->post",
+    '^blog(/(?<id>\d+))?'                                           =>"~blog@index",
+];
 
 ```
 
@@ -163,9 +151,9 @@ return [
 用 C::getParameters() 获取切片，对地址重写有效。
 如果要做权限判断 构造函数里 C::getRouteCallingMethod() 获取当前调用方法。
 
-## 无 Pathinfo 的路由
+## 无 PATH_INFO 的路由
 
-有时候，你只是做个局部项目，不打算修改 web 服务器配置，你可以使用无 PathInfo 的路由。
+有时候，你只是做个局部项目，不打算修改 web 服务器配置，你可以使用无 PATH_INFO 的路由。
 
 在选项里取消注释的代码加载以下代码
 
@@ -180,31 +168,26 @@ $options['path_info_compact_class_key'] = "";
 
 `URL ($url) `函数也被接管。 自动替换成相应的实现。
 
+选项
 
-## 路由重写
+- 'path_info_compact_action_key' => '_r', GET 动作方法名的 key
+- 'path_info_compact_class_key' => '', GET 模式类名的 key
+- 'path_info_compact_enable' => false, 使用 _GET 模拟无 PathInfo 配置
 
-\+ [DuckPhp\Ext\RouteHookRewrite](Ext-RouteHookRewrite.md)
+## 其他路由模式
 
-​    \- 'rewrite_map' => []
-
-### 目录模式的路由
-
-DuckPhp 还有一种很特殊的路由模式： 目录方式。
-
-参见 [DuckPhp\\Ext\\RouteHookDirectoryMode](ref/RouteHookDirectoryMode.md)
-
+路由重写，目录模式路由等，都是由路由钩子来完成。参见扩展
 
 ## 默认路由生命周期
 
-    run 函数。
-    
-    BeforeRun 设置 failed 为假
-    绑定服务端数据
-    执行前钩子
-    执行默认路由
-    执行后钩子
-    ////
-    
-    默认路由：获得默认回调 。执行默认回调 defaultGetRouteCallback
-    获取默认类
-    创建实例 获取要调用的方法 getMethodToCall调用类方法
+run 函数。
+
+绑定服务端数据
+执行前钩子
+执行默认路由
+执行后钩子
+////
+
+默认路由：获得默认回调 。执行默认回调 defaultGetRouteCallback
+获取默认类
+创建实例 获取要调用的方法 getMethodToCall调用类方法

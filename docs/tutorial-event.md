@@ -1,5 +1,10 @@
 # 事件
 
+DuckPhp 在主流程中并不使用事件。
+
+DuckPhp 提供了事件系统 尤其是第三方使用
+
+
 ## 相关类
 
 
@@ -9,10 +14,21 @@
 
 
 
-App::OnEvent 绑定事件， 支持一个事件绑定多个回调，先绑定的事件会先处理。
+App::OnEvent() 绑定事件， 支持一个事件绑定多个回调，先绑定的事件会先处理。
 
-App::FireEvent 触发事件
+DuckPhp 的事件名称规范是： 
 
-用 App::RemoveEvent 移除事件
+触发事件的类名加类内常量，用 ":"分割
+如：
+
+```
+static::class .':'.static::EVNET_CREATE;
+
+```
+这样以方便找到事件在哪里定义的
+
+App::FireEvent() 触发事件
+
+用 App::RemoveEvent() 移除事件
 
 DuckPhp 的事件系统是 一对多的

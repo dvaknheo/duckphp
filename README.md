@@ -19,9 +19,9 @@ php ./duckphp-project run
 
 ```
 composer require dvaknheo/duckphp # 用 require 
-./vendor/bin/duckphp --help     # 查看有什么指令
-./vendor/bin/duckphp new   # 创建工程，把 template 目录内容复制到当前目录，并且加以调整
-php ./duckphp-project run    # --host 127.0.0.1 --port 8080 # 开始 web 服务器
+./vendor/bin/duckphp --help       # 查看有什么指令
+./vendor/bin/duckphp new          # 新建工程，把 template 目录内容复制到当前目录，并调整
+php ./duckphp-project run         # --host 127.0.0.1 --port 8080 # 开始 web 服务器
 ```
 不建议使用命令行的 web 服务器， 你把 nginx 或 apache 的 document_root 设置为  public 目录按常规框架调整即可。
 
@@ -44,7 +44,7 @@ DuckPhp 的版本历程
 + 1.2.\* 系列版本是改名 DuckPhp 后的版本，随着思想的变化，或许会有大的变更
 + 1.3.\* 系列版本将是计划开始有人大规模使用后的稳定版本，将会对历史负责了。
 
-## DuckPhp 的使用原则
+## DuckPhp 的理念
 **业务层**。通常的 Model，Controller，View 少了一层。而因为这种缺层，导致了很多很糟糕的场景。你会发现很多人在 Contorller 里写一堆代码，或者在 Model 里写一堆代码。
 
 这个层。有人称呼 Service ,有人称呼 Logic 。我最初的时候称呼为 App ，很长时间内我都称为 Service 。现在，我称呼为 Business 业务层。之所以改过来， Business 就是业务的意思啊。不用多想。 而且现在 Service 服务 这个层被用滥了。现在第三方的平台过来的东西才叫 Service ，业务范围之内的，就叫 Business 吧。Service 给人的感觉是业务需要的服务，不能完成一个功能。
@@ -95,7 +95,7 @@ DuckPhp 代码简洁，不做多余事情。最新版本默认 demo 运行根据
 
 DuckPhp 的应用调试非常方便，堆栈清晰，调用 debug_print_backtrace(2) 很容易发现。那些用了中间件的框架的堆栈很不清晰。
 
-而且， DuckPhp 各组件是无直接引用的，所以 var_dump() 能看出来。
+DuckPhp 各组件是无直接引用的，所以 var_dump() 能看出来。
 
 DuckPhp/Core/App 是 DuckPhp 的子框架。有时候你用 DuckPhp/Core/App 也行。类似 lumen 之于 Laravel 。
 
@@ -227,11 +227,9 @@ DuckPhp 代码里的 template 目录就是我们的工程目录示例。也是�
 |   |       BaseModel.php       //   模型基类
 |   |       DemoModel.php       //   测试模型
 |   +---Helper                  // 助手类目录
-|   |       AppHelper.php       //   应用助手类，不太需要
 |   |       BusinessHelper.php  //   服务助手类
 |   |       ControllerHelper.php//   控制器助手类
 |   |       ModelHelper.php     //   模型助手类
-|   |       ViewHelper.php      //   视图助手类，不太需要
 |   \---System                  // 系统基类放在这里
 |           App.php             //   默认框架入口文件
 |           BaseController.php  //   控制器基类
@@ -361,7 +359,7 @@ namespace MySpace\System
         // @override 重写
         protected function onRun()
         {
-            //运行期代码在这里，你可以在这里 session_start();
+            //运行期代码在这里，你可以在这里 static::session_start();
         }
     }
     //服务基类, 为了 Business::G() 可变单例。
@@ -388,7 +386,11 @@ namespace MySpace\Helper
     }
     class ViewHelper extends \DuckPhp\Helper\ViewHelper
     {
-        // 添加你想要的助手函数 ,ViewHelper 一般来说是不使用的
+        // 添加你想要的助手函数。 ViewHelper 一般来说是不使用的
+    }
+    class AppHelper extends \DuckPhp\Helper\AppHelper
+    {
+        // 添加你想要的助手函数。 AppHelper 一般来说是不使用的
     }
 } // end namespace
 
@@ -501,8 +503,8 @@ namespace MySpace\View {
 namespace
 {
     $options = [
-        //'override_class' => 'MySpace\System\App', 
-            // 你也可以在这里调整选项。
+        // 'override_class' => 'MySpace\System\App', 
+        // 你也可以在这里调整选项。覆盖类内选项
     ];
     \MySpace\System\App::RunQuickly($options);
 }
