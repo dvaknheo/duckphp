@@ -152,11 +152,11 @@ class RouteHookRouteMap extends ComponentBase
     protected function adjustCallback($callback, $parameters)
     {
         ($this->context_class)::Route()->setParameters($parameters);
-        if (is_string($callback)) {
+        if (is_string($callback) && !\is_callable($callback)) {
             if (false !== strpos($callback, '@')) {
                 list($class, $method) = explode('@', $callback);
                 ($this->context_class)::Route()->setRouteCallingMethod($method);
-                return [new $class(),$method];
+                return [$class::G(),$method];
             } elseif (false !== strpos($callback, '->')) {
                 list($class, $method) = explode('->', $callback);
                 ($this->context_class)::Route()->setRouteCallingMethod($method);
