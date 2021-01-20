@@ -5,8 +5,8 @@
  */
 require_once(__DIR__.'/../../autoload.php');    //@DUCKPHP_HEADFILE
 
-// 设置工程命名空间对应的目录，但强烈推荐修改 composer.json 使用 composer 加载
-\DuckPhp\DuckPhp::assignPathNamespace(__DIR__ . '/../app', 'LazyToChange');
+// 设置工程命名空间对应的目录，但强烈推荐修改 composer.json 使用 composer 加载 
+\DuckPhp\DuckPhp::assignPathNamespace(__DIR__ . '/../app', "LazyToChange\\"); 
 \DuckPhp\DuckPhp::runAutoLoader();
 
 echo "<div>Don't run the template file directly, Install it! </div>\n"; //@DUCKPHP_DELETE

@@ -6,6 +6,8 @@
     'cli_enable' => true,
     'cli_mode' => 'replace',    
     'cli_command_alias'=>[],
+        'cli_command_default' => 'help',
+
 ## 公开方法
 
 ### 组件方法

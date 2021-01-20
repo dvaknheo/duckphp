@@ -126,12 +126,9 @@ class Installer extends ComponentBase
         }
         return $data;
     }
-    protected function filteMacro($data, $is_in_full)
+    protected function filteMacro($data)
     {
         $data = preg_replace('/^.*?@DUCKPHP_DELETE.*?$/m', '', $data);
-        if (!$is_in_full) {
-            $data = preg_replace('/^.*?@DUCKPHP_KEEP_IN_FULL.*?$/m', '', $data);
-        }
         return $data;
     }
     protected function filteNamespace($data, $namespace)

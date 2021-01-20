@@ -1,3 +1,24 @@
+v1.2.10 变更（施工中）
+目录结构调整
+所有 Trait 都以 Trait 结尾
+常用组件抽入 Component 目录
+ext 目录则是默认不加载的目录
+
+Console 命令行组件独立化， 和 DuckPhp 相关内容放入 DuckPhpCommand 组件
+RouteHookRouteMap，ExtendableStaticCallTrait， 回调的 ->,@,添加区分度 @ 表示 ::G()->
+App SuperGlobal 类删除 ExitJson() header 变更,XCall => XpCall
+AppPluginTrait ,view 目录在类名目录底下
+AutoLoader::G()->runAutoLoader 方便同名操作
+RuntimeState 统一用 reset()
+DuckPhp 优化不必要的类加载
+
+Ext 扩展
+加回了  ExceptionWrapper,HookChain
+FacadesAutoLoader 前缀改加 MyFacadesAutoLoader
+添加中间件 MyMiddlewareManager
+原先 SuperGlobal 的部分功能划入新类 StaticReplacer
+使用 LibCoverage 来做全覆盖测试
+
 v1.2.9 变更
 AppPluginTrait 微调（下个版本解决 view 不明显问题
 ComponentBase 简化

@@ -85,6 +85,7 @@ App 类 use AppPluginTrait
     protected function pluginModeSearchAllPluginFile($path, $setting_file = '')
 搜索所有配置文件
 
+AppPluginTrait 会在现有 View  / [plugin_path_namespace] 下搜索 view ，如果没有则退化 到 plugin_path_view
 
 ##  运行阶段
 

@@ -23,12 +23,12 @@
         "php": ">=7.2.0"
 	},
     "require-dev": {
-        
+        "dvaknheo/libcoverage": ">=1.0.4"
     },
     "bin": [
         "bin/duckphp"
     ],
     "post-install-cmd": [
-            "echo 'Welcome to use DuckPHP ,run bin/duckphp form more.'"
+        "echo 'Welcome to use DuckPHP ,run bin/duckphp form more.'"
     ]
 }

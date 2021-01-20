@@ -47,7 +47,7 @@ class DuckPhp extends App
             $this->options['ext'][Console::class] = $this->options['ext'][Console::class] ?? true;
             $this->options['ext'][DuckPhpCommand::class] = $this->options['ext'][DuckPhpCommand::class] ?? true;
         }
-        if ($options['path_info_compact_enable'] ?? false || $this->options['path_info_compact_enable']) {
+        if (($options['path_info_compact_enable'] ?? false) || ($this->options['path_info_compact_enable'] ?? false)) {
             $this->options['ext'][RouteHookPathInfoCompat::class] = $this->options['ext'][RouteHookPathInfoCompat::class] ?? true;
         }
         return parent::initAfterOverride($options, $context);

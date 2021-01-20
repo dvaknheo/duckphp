@@ -405,7 +405,7 @@ trait Core_SystemWrapper
             $this->system_wrapper_call(__FUNCTION__, func_get_args());
             return;
         }
-        return session_start($options);
+        return @session_start($options);
     }
     public function _session_id($session_id = null)
     {

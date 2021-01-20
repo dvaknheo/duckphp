@@ -13,6 +13,7 @@ class Console
         'cli_command_alias' => [],
         'cli_default_command_class' => '',
         'cli_command_method_prefix' => 'command_',
+        'cli_command_default' => 'help',
     ];
     protected $context_class = null;
     protected $parameters = [];
@@ -130,7 +131,7 @@ class Console
         $args = $ret['--'];
         if (!is_array($args)) {
             $args = ($args === true)?'':$args;
-            $ret['--'] = [$args?$args:'help'];
+            $ret['--'] = [$args?$args:$this->options['cli_command_default']];
         }
         return $ret;
     }
@@ -163,7 +164,6 @@ class Console
         }
         $method = $this->options['cli_command_method_prefix'].$method;
         if ($name === '') {
-            var_dump($this->options);
             $class = method_exists($this->context_class ?? '', $method) ? $this->context_class : $this->options['cli_default_command_class'];
         } else {
             $name = str_replace('/', '\\', $name);

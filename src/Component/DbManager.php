@@ -126,6 +126,7 @@ class DbManager extends ComponentBase
     }
     protected function getDb($db_config)
     {
+        // todo $db = (clone Db::G())->init([...$db_config 'log_func'=>static::class.'::OnQuery']);
         if (empty($this->options['database_class'])) {
             $db = new Db();
         } else {
