@@ -25,7 +25,7 @@ use DuckPhp\Core\View;
  */
 class App extends ComponentBase
 {
-    const VERSION = '1.2.10-dev';
+    const VERSION = '1.2.10';
 
     const HOOK_PREPEND_OUTTER = 'prepend-outter';
     const HOOK_PREPEND_INNER = 'prepend-inner';

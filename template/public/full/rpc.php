@@ -58,6 +58,6 @@ $options = [
 
 DuckPhp::RunQuickly($options, function () {
     $url = DuckPhp::Domain().$_SERVER['SCRIPT_NAME'].'/json_rpc';
-    $ip = $_SERVER['SERVER_ADDR'].':'.$_SERVER['SERVER_PORT'];
+    $ip = ($_SERVER['SERVER_ADDR'] ?? '127.0.0.1').':'.$_SERVER['SERVER_PORT'];
     JsonRpcExt::G()->options['jsonrpc_backend'] = [$url,$ip];
 });

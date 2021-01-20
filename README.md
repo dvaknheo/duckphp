@@ -1,5 +1,5 @@
 # DuckPhp 介绍
-***v1.2.9版***
+***v1.2.10版***
 
 作者QQ: 85811616
 
@@ -13,15 +13,16 @@
 ### 直接运行演示。
 进入 template 目录
 ```
+cd template
 php ./duckphp-project run
 ```
 ### Composer 安装
 
 ```
 composer require dvaknheo/duckphp # 用 require 
-./vendor/bin/duckphp --help       # 查看有什么指令
-./vendor/bin/duckphp new          # 新建工程，把 template 目录内容复制到当前目录，并调整
-php ./duckphp-project run         # --host 127.0.0.1 --port 8080 # 开始 web 服务器
+./vendor/bin/duckphp new --help   # 查看有什么指令
+./vendor/bin/duckphp new    # 创建工程
+./vendor/bin/duckphp run    # --host=127.0.0.1 --port=9527 # 开始 web 服务器
 ```
 不建议使用命令行的 web 服务器， 你把 nginx 或 apache 的 document_root 设置为  public 目录按常规框架调整即可。
 
