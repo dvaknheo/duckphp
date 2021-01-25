@@ -21,7 +21,7 @@ class Route extends ComponentBase
             'namespace' => '',
             'namespace_controller' => 'Controller',
             
-            'controller_base_class' => null,
+            'controller_base_class' => '',
             'controller_welcome_class' => 'Main',
             
             'controller_hide_boot_class' => false,
