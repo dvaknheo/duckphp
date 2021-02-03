@@ -40,7 +40,7 @@
 
 App::Logger() 函数得到的就是这个类
 
-和 SuperGlobal 类意义这个租金类是初始化的时候就直接调用 init() ，你可调用 reset() 重置
+Logger 类初始化的时候就直接调用 init() ，你可调用 reset() 重置
 
 其他方法都遵循 PSR 标准 **但是这个类没实现 PSR 接口。**
 

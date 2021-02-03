@@ -39,11 +39,11 @@ subgraph cluster_Core {
     KernelTrait -> Route;
     KernelTrait -> RuntimeState;
     KernelTrait -> View;
-    
+    KernelTrait -> Functions;
+
     App -> KernelTrait;
     App -> ExtendableStaticCallTrait;
     App -> SystemWrapperTrait;
-    
     App -> AutoLoader;
     App -> Configer;
     App -> Logger;
@@ -52,7 +52,6 @@ subgraph cluster_Core {
     App -> RuntimeState;
     App -> View;
     
-    App -> Functions;
     App -> ComponentBase [style="dotted"];
     
     AppPluginTrait -> Configer;

@@ -15,7 +15,22 @@ class App extends DuckPhp
     //@override
     protected $plugin_options = [
     ];
+//////////////////////
+    //@override
+    public $options = [
+        'use_setting_file' => true, // 启用设置文件
+        
+        'error_404' =>'_sys/error-404',
+        'error_500' => '_sys/error-exception',
+        'ext' => [
+            // TODO 我插我自己，不用你们的插件方式
+            //SimpleAuthApp::class => [
+            ],
+        ],
+    ];
 
+
+//////////////////////
     
     public static $Sections = [];
     public static function startSection($name)

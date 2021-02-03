@@ -9,7 +9,7 @@
 
 'path' => '',
 
-    路径
+    基本路径
 'path_config' => 'config',
 
     路径
@@ -24,12 +24,12 @@
     设置文件名。
 'use_setting_file' => false,
 
-    跳过设置文件
+    使用设置文件: $path/$path_config/$setting_file.php
 'use_env_file' => false,
 
     打开这项，可以读取 path 选项下的 env 文件
-    
-"config_ext_files"
+
+'config_ext_files' =>[]
 
     用于 AppPluginTrait
 ## 公开方法
@@ -38,27 +38,11 @@
     public function _Setting($key)
     public function _Config($key, $file_basename='config')
     public function _LoadConfig($file_basename='config')
-    public function prependConfig($name, $data)
-## 详解
-
-
-    
-### Core\Configer
-
-##### 选项
-
-```
-    'path'=>null,
-    'path_config'=>'config',    //配置路径目录
-    'all_config'=>[],
-    'setting'=>[],
-    'setting_file'=>'setting',
-    'skip_setting_file'=>false,
-```
+    public function assignExtConfigFile($key, $value = null)
 
 ##### 说明
 
-Core\Configer 的选项共享个 path,带个 path_config
+DuckPhp\Core\Configer 的选项共享个 path,带个 path_config
 
 path_config 如果是 / 开始的，会忽略 path 选项
 

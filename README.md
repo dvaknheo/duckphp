@@ -528,17 +528,17 @@ DuckPhp 类/文件结构参考。(粗体部分是启动的时候引用的文件)
             4. **[Route](docs/ref/Core-Route.md)** 路由组件
             5. **[ExceptionManager](docs/ref/Core-ExceptionManager.md)**   异常管理组件
             6. **[RuntimeState](docs/ref/Core-RuntimeState.md)** 运行期数据保存组件
+            7. **[Functions](docs/ref/Core-Functions.md)** 全局函数列表
         2. [ExtendableStaticCallTrait](docs/ref/Core-ExtendableStaticCallTrait.md) 扩展静态调用的 trait
         3. [SystemWrapperTrait](docs/ref/Core-SystemWrapperTrait.md) 替换系统同名函数的 trait
-        4. **[Functions](docs/ref/Core-Functions.md)** 全局函数列表
-        5. [Logger](docs/ref/Core-Logger.md) 日志组件
+        4. [Logger](docs/ref/Core-Logger.md) 日志组件
     3. [AppPluginTrait](docs/ref/Core-AppPluginTrait.md)   这个Trait用于把独立工程 App 转成插件 
 2. `Db` 目录，数据库目录
    1. [DbAdvanceTrait](docs/ref/Db-DbAdvanceTrait.md)  这个 trait 增加了 Db类的高级功能
    2. [DbInterface](docs/ref/Db-DbInterface.md) Db 类满足 DbInterface 接口
    3. [Db](docs/ref/Db-Db.md) Db类
 3. **[DuckPhp](docs/ref/DuckPhp.md)** 入口类，加载了默认扩展的 DuckPhp 入口 ，扩展自 [DuckPhp\\Core\\App](docs/ref/Core-App.md)
-4. `Component` 目录，自带组件扩展，**默认加载的扩展**。按字母排序。
+4. `Component` 目录，自带组件扩展。
    1. [Cache](docs/ref/Component-Cache.md) 缓存组件
    2. **[Console](docs/ref/Component-Cache.md)** 命令行模式扩展组件
    3. [Installer](docs/ref/Component-Installer.md) 安装器

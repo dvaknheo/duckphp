@@ -20,9 +20,7 @@
 'rewrite' => null,
 
     重写函数，替代 defaultGetUrl
-'pager_context_class' => ''
 
-    设置 context 的class，指定提供 SuperGlobal 方法替代超全局函数的类
 ## 公开方法
 
 ### 组件方法

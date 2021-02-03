@@ -7,13 +7,17 @@
 ## 选项
 
 'path' => '',
+安装路径
 'namespace' => '',
-
+安装的命名空间
 'force' => false,
+强制模式
 'autoloader' => 'vendor/autoload.php',
-
+自动加载模式
 'verbose' => false,
+显示详情
 'help' => false,
+显示帮助
 
 ## 公开方法
 

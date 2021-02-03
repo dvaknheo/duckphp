@@ -33,10 +33,6 @@ public static function session_destroy()
 public static function session_set_save_handler(\SessionHandlerInterface $handler)
 
 
-public static function &GLOBALS($k, $v = null)
-public static function &STATICS($k, $v = null, $_level = 1)
-public static function &CLASS_STATICS($class_name, $var_name)
-
 ## 详解
 
 

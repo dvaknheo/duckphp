@@ -3,11 +3,11 @@
 
 ## 简介
 核心的类,`组件类`
-## 依赖关系
-+ `DuckPhp\Core\App` 
-    + [DuckPhp\Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md)
-    + [DuckPhp\Core\SystemWrapperTrait](Core-SystemWrapperTrait.md)
-    + Trait [DuckPhp\Core\Kernel](Core-Kernel.md)
+## 引用
+[DuckPhp\Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md)
+[DuckPhp\Core\SystemWrapperTrait](Core-SystemWrapperTrait.md)
+[DuckPhp\Core\KernelTrait](Core-KernelTrait.md)
+[DuckPhp\Core\Logger](Core-Logger.md)
 
 
 ## 选项
@@ -22,26 +22,25 @@
 'close_resource_at_output' => false,
     
     输出时候关闭资源输出（仅供第三方扩展参考
-"injected_helper_map": "助手类映射"
+"injected_helper_map" =>'', 
 
     injected_helper_map 比较复杂待文档。和助手类映射相关。 v1.2.8-dev
-### 错误处理配置
 
 'error_404' => null,          //'_sys/error-404',
 
-    404 的View或者回调
+    404 错误处理 的View或者回调
 'error_500' => null,          //'_sys/error-500',
 
-    500 的View或者回调
+    500 错误处理 View或者回调
 'error_debug' => null,        //'_sys/error-debug',
 
-    404 的View或者回调
+    调试的View或者回调
 
 
-### 扩充 [DuckPhp\Core\Kernel](Core-Kernel.md) 的默认选项。
+### 扩充 [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) 的默认选项。
 
 
-详情见 DuckPhp\Core\Kernel 参考文档
+详情见 DuckPhp\Core\KernelTrait 参考文档
 
     use_autoloader
     path
@@ -62,26 +61,17 @@
 
 ### 独有的静态方法
 
-  1 => string 'RunQuickly' (length=10)
-快速运行
-  2 => string 'Blank' (length=5)
-空函数
-  3 => string 'system_wrapper_replace' (length=22)
-替换系统默认函数
-  4 => string 'system_wrapper_get_providers' (length=28)
-返回能提供的系统默认函数
-  5 => string 'On404' (length=5)
-默认404
-  6 => string 'OnDefaultException' (length=18)
-默认异常处理
-  7 => string 'OnDevErrorHandler' (length=17)s
-默认开发期错误处理
-  8 => string 'Route' (length=5)
-返回路由类
+RunQuickly() 快速运行
+Blank() 空函数
 
-public static function On404(): void
+system_wrapper_replace 替换系统默认函数
+system_wrapper_get_providers 能提供的系统默认函数列表
 
-    //
+On404() 默认404 处理
+OnDefaultException 默认异常处理
+OnDevErrorHandler 默认开发期错误处理
+Route() 路由类
+
 ## 详解
 DuckPhp\Core\App 类 可以视为几个类的组合
 
@@ -103,8 +93,19 @@ DuckPhp\Core\App 类 可以视为几个类的组合
  + [ModelHelper](Helper-ModelHelper.md)
  + [ViewHelper](Helper-ViewHelper.md)
 
-### 关于 injected_helper_map
 
+    public function extendComponents($method_map, $components = [])
+    public function cloneHelpers($new_namespace, $new_helper_map = [])
+    public function version()
+    public function addBeforeShowHandler($handler)
+
+    public function removeBeforeShowHandler($handler)
+
+    public function getStaticComponentClasses()
+    public function addDynamicComponentClass($class)
+    public function removeDynamicComponentClass($class)
+
+### 关于 injected_helper_map
 
 ## 全方法索引
 

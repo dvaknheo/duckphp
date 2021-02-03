@@ -8,7 +8,7 @@
 'path' => null,
 
     路径
-'namespace' => 'LazyToChange',
+'namespace' => '',
 
     命名空间
 'path_namespace' => 'app',
@@ -59,8 +59,7 @@ public function clear()
 public static function DuckPhpSystemAutoLoader(string $class): void
 
 
-
-    仅仅用于
+    仅仅用于autoload.php 加载 DuckPhp 文件
 ## 详解
 
 AutoLoader 类用于没 autoloader 的情况下临时用。

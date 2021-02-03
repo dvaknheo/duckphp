@@ -1,4 +1,4 @@
-# DuckPhp\Core\Kernel
+# DuckPhp\Core\KernelTrait
 [toc]
 
 ## 简介
@@ -11,10 +11,10 @@
 [DuckPhp\\Core\\Route](Core-Route.md) 路由
 [DuckPhp\\Core\\RuntimeState](Core-RuntimeState.md) 运行时状态
 [DuckPhp\\Core\\View](Core-View.md) 视图
-[DuckPhp\\Core\\SuperGlobal](Core-SuperGlobal.md) 超全局变量
-[DuckPhp\\Core\\Logger](Core-Logger.md) 日志管理。
+[Functions](Core-Functions.md) 视图
 
 ## 选项
+
 use 开始的选项都是默认 true ，skip 开头的都是 false;
 
 ### 子类无法更改的选项
@@ -24,19 +24,6 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 'skip_plugin_mode_check' => false,
 
     跳过插件模式
-'handle_all_dev_error' => true,
-
-    处理开发时期的错误 
-'handle_all_exception' => true,
-
-	处理所有异常
-'override_class' => 'Base\App', 
-
-    重新进入的切换的子类
-
-'override_class'=>'',**重要选项**
-
-    如果这个选项的类存在，则在init()的时候会切换到这个类完成后续初始化，并返回这个类的实例。
 ### 基本配置
 
 'path' => null,
@@ -48,6 +35,11 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 'path_namespace' => null,
 
     命名空间路径,如果设置了本值，将会使用自动加载， 基准目录是 path。
+'override_class'=>'',**重要选项**
+
+    如果这个选项的类存在，则在init()的时候会切换到这个类完成后续初始化，并返回这个类的实例。
+
+### 属性
 
 'is_debug' => false,
 
@@ -55,14 +47,13 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 'platform' => '',
 
     平台， 自定义字符，用于 Platform() 方法。
-'ext' => [],
+'ext' => [], **重要选项**
     
     扩展
 
 ### 开关配置
 
 'use_flag_by_setting' => true,
-
     从设置文件中再次重载 is_debug 和 platform ,对应的设置选项是 duckphp_is_debug ，和 duckphp_platform
 'use_short_functions' => true,
 
@@ -73,9 +64,7 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
     不处理 404 ，用于配合其他框架使用。
 
 'skip_exception_check' => false,
-    不在 Run 流程检查异常，把异常抛出外面，或许
-
-
+    不在 Run 流程检查异常，把异常抛出外面。用于配合其他框架使用
 
 ## 公开方法
 
