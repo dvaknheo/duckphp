@@ -31,7 +31,7 @@
     1. **[ComponentBase](Core-ComponentBase.md)** 组件基类
          1. **[ComponentInterface](Core-ComponentInterface.md)** 组件接口
     2. **[App](Core-App.md)** 核心应用类。引用以下类
-        1. **[KernelTrait](Core-Kernel.md)** 核心Trait 以下是 `核心必备组件`
+        1. **[KernelTrait](Core-KernelTrait.md)** 核心Trait 以下是 `核心必备组件`
             1. [AutoLoader](Core-AutoLoader.md) 自动加载类
             2. **[Configer](Core-Configer.md)** 配置组件
             3. **[View](Core-View.md)** 视图组件

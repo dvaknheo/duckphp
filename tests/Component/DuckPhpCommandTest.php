@@ -66,7 +66,7 @@ class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
         Installer::G(new Console_Installer());
         HttpServer::G(new Console_HttpServer());
         DuckPhpCommand::G()->command_new();
-        DuckPhpCommand::G()->command_run();
+        DuckPhpCommand::G()->command_start();
         DuckPhpCommand::G()->command_help();
         DuckPhpCommand::G()->command_version();
         
