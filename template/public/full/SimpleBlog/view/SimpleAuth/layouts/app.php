@@ -13,7 +13,7 @@ use SimpleAuth\Base\Helper\ViewHelper as V;
 </head>
 <body>
     <div id="app">
-Simple Blog 用户注册登录
+Simple Blog 这里用于 用户注册登录 修改了父类
 <hr>
         <main class="py-4">
             <?= V::yieldContent('content'); ?>

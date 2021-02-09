@@ -12,23 +12,12 @@ class App extends DuckPhp
 {
     //@override
     public $options = [
-        // 'use_setting_file' => false,
+        'is_debug' => true,        
         // 'use_setting_file' => true,
-        
-        //'is_debug' => false,
-        'is_debug' => true,
-        
-        //'platform' => '',
-        'platform' => 'platform', // @DUCKPHP_DELETE
-        
-        
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
         
-        //'path_info_compact_enable' => false,
-        //'path_info_compact_enable' => true, // @DUCKPHP_DELETE
-        
-        // 'helper_map' => DuckPhp::DEFAULT_HELPER_MAP,
+        //'path_info_compact_enable' => false,        
     ];
     /**
      * console command sample

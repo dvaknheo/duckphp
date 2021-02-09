@@ -121,7 +121,7 @@ class Installer extends ComponentBase
         $data = $this->changeHeadFile($data, $short_file_name, $autoload_file);
         
         if (!$is_in_full) {
-            $data = $this->filteMacro($data, $is_in_full);
+            $data = $this->filteMacro($data);
             $data = $this->filteNamespace($data, $this->options['namespace']);
         }
         return $data;

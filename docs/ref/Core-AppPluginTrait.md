@@ -32,6 +32,12 @@
 'plugin_url_prefix' => '',
 
     URL 前缀，限定插件的目录。
+'plugin_view_options' => [],
+
+    传递给 View 的选项
+'plugin_route_options' => [],
+
+    传递给 Route 的选项
 ## 公开方法
     public function pluginModeInit(array $options, object $context = null)
     public static function PluginModeRouteHook($path_info)
@@ -93,7 +99,6 @@ AppPluginTrait 会在现有 View  / [plugin_path_namespace] 下搜索 view ，�
 
 PluginModeRouteHook -> _PluginModeRouteHook -> pluginModeDefaultRouteHook 。
 
-为什么 PluginModeRouteHook 是静态的，是为了Swoole 模式不用修改。
 
 _PluginModeRouteHook 就是你可以继承修改的方法
 

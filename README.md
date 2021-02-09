@@ -22,7 +22,7 @@ php ./duckphp-project run
 composer require dvaknheo/duckphp # 用 require 
 ./vendor/bin/duckphp new --help   # 查看有什么指令
 ./vendor/bin/duckphp new    # 创建工程
-./vendor/bin/duckphp run    # --host=127.0.0.1 --port=9527 # 开始 web 服务器
+./vendor/bin/duckphp start    # --host=127.0.0.1 --port=9527 # 开始 web 服务器
 ```
 不建议使用命令行的 web 服务器， 你把 nginx 或 apache 的 document_root 设置为  public 目录按常规框架调整即可。
 
@@ -521,7 +521,7 @@ DuckPhp 类/文件结构参考。(粗体部分是启动的时候引用的文件)
     1. **[ComponentBase](docs/ref/Core-ComponentBase.md)** 组件基类
          1. **[ComponentInterface](docs/ref/Core-ComponentInterface.md)** 组件接口
     2. **[App](docs/ref/Core-App.md)** 核心应用类。引用以下类
-        1. **[KernelTrait](docs/ref/Core-Kernel.md)** 核心Trait 以下是 `核心必备组件`
+        1. **[KernelTrait](docs/ref/Core-KernelTrait.md)** 核心Trait 以下是 `核心必备组件`
             1. [AutoLoader](docs/ref/Core-AutoLoader.md) 自动加载类
             2. **[Configer](docs/ref/Core-Configer.md)** 配置组件
             3. **[View](docs/ref/Core-View.md)** 视图组件

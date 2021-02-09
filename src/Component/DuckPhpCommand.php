@@ -19,20 +19,19 @@ class DuckPhpCommand extends ComponentBase
         $this->context_class = get_class($context);
     }
     /**
-     * create new project in current diretory.
+     * create new project in current diretory. --help for help
      */
     public function command_new()
     {
         Installer::G()->init(Console::G()->getCliParameters())->run();
     }
     /**
-     * run inner server.
+     * start inner server.
      */
-    public function command_run()
+    public function command_start()
     {
         $options = Console::G()->getCliParameters();
         $options['path'] = $this->context_class::G()->options['path'];
-        //'cli_httpserver_class'
         HttpServer::RunQuickly($options);
     }
     ///////////////////////////////////////

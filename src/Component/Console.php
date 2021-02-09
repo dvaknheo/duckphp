@@ -83,6 +83,9 @@ class Console
     }
     public function run()
     {
+        if ($this->options['cli_mode'] === 'replace' && method_exists($this->context_class, 'replaceDefaultRunHandler') && method_exists($this->context_class, 'G')) {
+            $this->context_class::G()->replaceDefaultRunHandler(null);
+        }
         $this->parameters = $this->parseCliArgs($_SERVER['argv']);
         $func_args = $this->parameters['--'];
         $cmd = array_shift($func_args);

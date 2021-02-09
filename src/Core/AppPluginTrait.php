@@ -40,6 +40,8 @@ trait AppPluginTrait
             'plugin_injected_helper_map' => '',
             'plugin_files_config' => [],
             'plugin_url_prefix' => '',
+            'plugin_view_options' => [],
+            'plugin_route_options' => [],
         ];
         
         
@@ -128,8 +130,8 @@ trait AppPluginTrait
         $this->plugin_context_class = get_class($context);
         $setting_file = $context->options['setting_file'] ?? 'setting';
         
-        $this->path_view_override = rtrim($this->plugin_options['plugin_path_namespace'].$this->plugin_options['plugin_path_view'], '/').'/';
-        $this->path_config_override = rtrim($this->plugin_options['plugin_path_namespace'].$this->plugin_options['plugin_path_conifg'], '/').'/';
+        $this->path_view_override = rtrim($this->plugin_options['plugin_path_namespace'].$this->plugin_options['plugin_path_view'], DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        $this->path_config_override = rtrim($this->plugin_options['plugin_path_namespace'].$this->plugin_options['plugin_path_conifg'], DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
 
         if ($this->plugin_options['plugin_search_config']) {
             $this->plugin_options['plugin_files_config'] = $this->pluginModeSearchAllPluginFile($this->path_config_override, $setting_file);
@@ -197,23 +199,27 @@ trait AppPluginTrait
         View::G(new View());
         Route::G(new Route());
     }
+    protected function getPathView($path_view, $namespace)
+    {
+        $path_view = $path_view === '' ? '': rtrim($path_view, DIRECTORY_SEPARATOR) .DIRECTORY_SEPARATOR;
+        $path_view .= str_replace('\\', DIRECTORY_SEPARATOR, $namespace);
+        
+        return $path_view;
+    }
     protected function pluginModeBeforeRun()
     {
-        $namespace = $this->plugin_options['plugin_namespace'];
-        
         $this->plugin_view_old = View::G();
         $this->plugin_route_old = Route::G();
-        
-        $view_options = $this->plugin_view_old->options;
-        $view_options['path_view'] = $view_options['path_view'] ?? '';
-        $view_options['path_view'] = $view_options['path_view'] === '' ? '': rtrim($view_options['path_view'], 'DIRECTORY_SEPARATOR') .DIRECTORY_SEPARATOR;
-        $view_options['path_view'] .= str_replace('\\', DIRECTORY_SEPARATOR, $namespace);
-        $view_options['path_view_override'] = $this->path_view_override;
-        
-        $route_options = $this->plugin_route_old->options;
-        $route_options['namespace'] = $namespace;
-        
         $this->pluginModeReplaceComponent();
+        
+        $view_options = $this->options['plugin_view_options'];
+        $view_options['path'] = $this->plugin_view_old->options['path'] ?? '';
+        $view_options['path_view'] = $this->getPathView($this->plugin_view_old->options['path_view'] ?? '', $this->plugin_options['plugin_namespace']);
+        
+        $view_options['path_view_override'] = rtrim($this->plugin_options['plugin_path_namespace'].$this->plugin_options['plugin_path_view'], DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        
+        $route_options = $this->options['plugin_route_options'];
+        $route_options['namespace'] = $this->plugin_options['plugin_namespace'];
         
         View::G()->init($view_options)->reset();
         Route::G()->init($route_options)->reset();

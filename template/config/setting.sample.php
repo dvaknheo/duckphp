@@ -5,8 +5,8 @@
  */
 
 return [
-    'duckphp_is_debug' => false,
-    'duckphp_platform' => 'default',
+    //'duckphp_is_debug' => false,
+    //'duckphp_platform' => 'default',
     'database_list' => [
         [
         'dsn' => 'mysql:host=???;port=???;dbname=???;charset=utf8mb4;',

@@ -25,7 +25,7 @@ class App extends DuckPhp
         'ext' => [
             // TODO 我插我自己，不用你们的插件方式
             //SimpleAuthApp::class => [
-            ],
+            //],
         ],
     ];
 

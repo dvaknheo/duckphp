@@ -447,7 +447,7 @@
     - 'path_log' => 'logs',
         日志目录
 + DuckPhp\Core\Route
-    - 'controller_base_class' => NULL,
+    - 'controller_base_class' => '',
         控制器基类
     - 'controller_class_postfix' => '',
         控制器类名后缀
