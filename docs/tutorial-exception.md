@@ -1,12 +1,11 @@
 # 异常处理
 [toc]
 ## 相关类
-
-ThrowOn ,
+App
+ThrowOnTrait
 ExceptionManager
 
 ## 相关配置
-
 'error_404' => null,          //'_sys/error-404',
 
     404 视图/闭包
@@ -32,6 +31,7 @@ ExceptionManager
 ## 基本的异常处理
 
 默认异常， 会调用 error_500 选项里设置的 view ，如果值是闭包则回调闭包而不是显示。
+默认异常处理会做以下选项：
 
 ### 控制器处理异常
 
@@ -59,8 +59,6 @@ Business 抛出自己错误的时候，来个同名 exception 类。如 SessionB
 
 'handle_all_dev_error' => true, 'handle_all_exception' => true, 选项用于接管系统错误。
 
-该选项用于 DuckPhp\DuckPhp 类，而不是 MY\Base\App 这样后者接管类
-
 'skip_exception_check'=>false, 开启时候 运行阶段，跳过异常检查抛出给上层。如果你不打算自己管理错误的话。 技巧，管理错误的时候，把这个选项 打开 throw $ex ；则由上层管理错误
     
 'default_exception_do_log' => true,
@@ -68,27 +66,26 @@ Business 抛出自己错误的时候，来个同名 exception 类。如 SessionB
 
 如果没调用 C::setDefaultExceptionHandler  则由 App::OnDefaultException 处理 exception 。你可以重写 App::\_OnDefaultException 来实现自己的异常管理，如加日志等等。
 
-### ThrowOn trait
+### ThrowOnTrait
 
-DuckPhp 工程几乎不得不引用的类之一就是 ThrowOn 这个 trait
+DuckPhp 工程几乎不得不引用的类之一就是 ThrowOnTrait 这个 trait
 
-ThrowOn trait 提供了两个静态方法:
+ThrowOnTrait 提供了三个静态方法:
 
-public static function ThrowOn($flag, $message, $code)
+* public static function ThrowOn($flag, $message, $code)
 
 这个方法用于如果 $flag 成立，则抛出当前异常类
 
 PHP 有个函数 assert ， ThrowOn 和他逻辑相反。ThrowOn的方式会更直接些
 
-
-另一个静态方法：
-
-public static function Handle($class)
+* public static function Handle($class)
 
 把本来 $class ThrowOn 到本类的异常 ， Throw 到当前异常类。
 
 这个方法的作用是用于提供第三方异常类的时候。让人无缝处理异常类。
 
-public static function Proxy($ex)
-        
-throw new static($ex->getMessage, $ex->getCode()); 的缩写
+* public static function Proxy($ex)
+
+throw new static($ex->getMessage, $ex->getCode());
+
+用于把其他异常转成自己异常

@@ -20,63 +20,6 @@ $options['ext']数组实现的
 
 DuckPhp/Core 的其他组件如 Configer, Route, View, AutoLoader 默认都在这调用
 
-## 默认没启用的扩展
-
-
-
-所有的 DuckPhp 自带扩展 可以在 [参考文档](ref/index.md) 里按字母顺序查看
-
-
-其他扩展按功能如下
-
-
-### 按字母计
-
-* CallableView
-* EmptyView
-* RouteHookRewrite
-* FacadesAutoLoader
-* JsonRpcExt
-* Misc
-* RedisCache
-* RedisManager
-* RouteHookApiServer
-* RouteHookRewrite
-* RouteHookDirectoryMode
-* StrictCheck
-
-#### CallableView
-CallbableView 是用来代替 View 的一个扩展
-把 View 的视图文件都替换成了函数方法
-
-#### EmptyView
-EmptyView 替换 View ，效果是空，用来收集输出。
-
-#### RouteHookRewrite
-
-#### RouteHookDirecotoryMode ,
-
-
-
-
-### RedisManager RedisSimpleCache Redis 的一些扩展
-
-
-### JsonRpcExt
-
-### StrictCheck 严格检查
-
-### FacadesAutoLoader Facade 门面
-
-### Misc 一些通用方法
-
-
-
-### CallableView 函数方式的视图
-
-
-
-
 ## 编写扩展
 
 假如你要做个自己的扩展 MyExtention , 你的类只要能实现这样的调用。
@@ -111,7 +54,61 @@ $context->extendComponents(
 );
 ```
 
+## 默认没启用的扩展
 
 
-## 把你的独立工程作为扩展给第三方使用 见下一章
+
+所有的 DuckPhp 自带扩展 可以在 [参考文档](ref/index.md) 里按字母顺序查看
+
+
+默认没启用的扩展列表如下
+
+
+### 按字母计
+
+* CallableView
+* EmptyView
+* JsonRpcExt
+* Misc
+* JsonView
+* MyFacadesAutoLoader
+* MyMiddlewareManager
+* RedisCache
+* RedisManager
+* RouteHookApiServer
+* RouteHookRewrite
+* RouteHookDirectoryMode
+* StaticReplacer
+* StrictCheck
+
+扩展支持的文件
+
+#### CallableView
+CallbableView 是用来代替 View 的一个扩展
+把 View 的视图文件都替换成了函数方法
+
+#### EmptyView
+EmptyView 替换 View ，效果是空，用来收集输出。
+
+#### RouteHookRewrite
+
+#### RouteHookDirecotoryMode ,
+
+
+
+
+### RedisManager  Redis 的一些扩展
+
+
+### JsonRpcExt
+
+### StrictCheck 严格检查
+
+### FacadesAutoLoader Facade 门面
+
+### Misc 一些通用方法
+
+
+
+### CallableView 函数方式的视图
 
