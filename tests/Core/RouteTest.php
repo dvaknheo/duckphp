@@ -146,6 +146,15 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G(new Route())->init($options);
         Route::G()->defaultGetRouteCallback('/noBase/me');
         
+        $options=[
+            'namespace_controller'=>'\\tests_Core_Route',
+            'controller_base_class'=>'~baseController',
+            'controller_class_postfix'=>'Controller',
+            'controller_path_prefix'=>'/prefix/',
+        ];
+        Route::G(new Route())->init($options);        
+        Route::G()->defaultGetRouteCallback('/prefix/about/me');
+        Route::G()->defaultGetRouteCallback('/about/me');
         
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',

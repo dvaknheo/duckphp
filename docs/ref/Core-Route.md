@@ -36,9 +36,9 @@
 
     POST 的方法会在方法名前加前缀 do_
     如果找不到方法名，调用默认方法名。
-'skip_fix_path_info' => false,
+'controller_path_prefix' => '',
 
-    修复默认没配置 PATH_INFO ，打开以节约性能
+    添加路由的前缀
     
 "controller_class_postfix"
 

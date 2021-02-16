@@ -29,11 +29,11 @@ class Route extends ComponentBase
             'controller_prefix_post' => 'do_',
             'controller_class_postfix' => '',
             'controller_enable_slash' => false,
+            'controller_path_prefix' => '',
             'controller_path_ext' => '',
             'controller_use_singletonex' => false,
             'controller_stop_g_method' => false,
             'controller_stop_static_method' => false,
-            'skip_fix_path_info' => false,
         ];
     //public input;
     public $request_method = '';
@@ -91,42 +91,18 @@ class Route extends ComponentBase
         $namespace_controller = trim($namespace_controller, '\\');
         $this->namespace_prefix = $namespace_controller.'\\';
         
-
         $this->path_info = $_SERVER['PATH_INFO'] ?? '';
         $this->request_method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
     }
     public function reset()
     {
+        $this->path_info = $_SERVER['PATH_INFO'] ?? '';
         $this->request_method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-        $this->path_info = $this->fixPathInfo($_SERVER, $this->path_info);
+        
         $this->has_bind_server_data = true;
         $this->is_failed = false;
 
         return $this;
-    }
-    // TODO move to other extend
-    protected function fixPathInfo($serverData, $default)
-    {
-        if ($this->options['skip_fix_path_info']) {
-            return $serverData['PATH_INFO'] ?? $default;
-        }
-
-        if (!empty($serverData['PATH_INFO'])) {
-            return $serverData['PATH_INFO'] ?? $default;
-        }
-        if (!isset($serverData['REQUEST_URI'])) {
-            return $serverData['PATH_INFO'] ?? $default;
-        }
-        $request_path = (string)parse_url($serverData['REQUEST_URI'], PHP_URL_PATH);
-        $request_file = substr($serverData['SCRIPT_FILENAME'], strlen($serverData['DOCUMENT_ROOT']));
-        
-        if ($request_file === '/index.php' && substr($request_path, 0, strlen($request_file)) !== '/index.php') {
-            $path_info = $request_path;
-        } else {
-            $path_info = substr($request_path, strlen($request_file));
-        }
-        
-        return $path_info;
     }
     public function bind($path_info, $request_method = 'GET')
     {
@@ -237,6 +213,17 @@ class Route extends ComponentBase
     public function defaultGetRouteCallback($path_info)
     {
         $path_info = ltrim((string)$path_info, '/');
+        
+        if ($this->options['controller_path_prefix'] ?? false) {
+            $prefix = trim($this->options['controller_path_prefix'], '/').'/';
+            $l = strlen($prefix);
+            if (substr($path_info, 0, $l) !== $prefix) {
+                $this->route_error = "path_prefix error";
+                return false;
+            }
+            $path_info = substr($path_info, $l - 1);
+            $path_info = ltrim((string)$path_info, '/');
+        }
         if ($this->options['controller_enable_slash']) {
             $path_info = rtrim($path_info, '/');
         }
@@ -306,6 +293,7 @@ class Route extends ComponentBase
             return null;
         }
         if (($this->options['controller_use_singletonex'] || $this->options['controller_stop_g_method']) && $method === 'G') {
+            //这里也要修改
             $this->route_error = 'can not call G()';
             return null;
         }
