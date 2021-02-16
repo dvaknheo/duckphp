@@ -178,10 +178,10 @@ class Console
         }
         // $this->options['cli_default_command_class'] ===''
         if (!$class || !class_exists($class)) {
-            var_dump($class);
             throw new \ReflectionException("Command Not Found: {$cmd}\n", -3);
         }
         /*
+            //???
         if (method_exists($class, 'G') && method_exists($class, 'isInited') && !$class::G()->isInited()) {
             $options = $this->context_class ? $this->context_class::G()->options : [];
             $options = $options['ext'][$class] ?? $options;

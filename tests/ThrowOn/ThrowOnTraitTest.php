@@ -3,7 +3,7 @@ namespace tests\DuckPhp\ThrowOn;
 
 use DuckPhp\ThrowOn\ThrowOnTrait;
 
-class ThrowOnTest extends \PHPUnit\Framework\TestCase
+class ThrowOnTraitTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {

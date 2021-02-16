@@ -161,11 +161,15 @@ class RouteHookRouteMap extends ComponentBase
                 list($class, $method) = explode('->', $callback);
                 ($this->context_class)::Route()->setRouteCallingMethod($method);
                 return [new $class(),$method];
-            } elseif (false !== strpos($callback, '::')) {
+            }
+            /*
+            // ???
+            elseif (false !== strpos($callback, '::')) {
                 list($class, $method) = explode('::', $callback);
                 ($this->context_class)::Route()->setRouteCallingMethod($method);
                 return [$class,$method];
             }
+            //*/
         }
         if (is_array($callback) && isset($callback[1])) {
             $method = $callback[1];

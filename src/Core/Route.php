@@ -113,7 +113,7 @@ class Route extends ComponentBase
             $this->reset();
         }
         $this->path_info = $path_info;
-        
+        $_SERVER['PATH_INFO'] = $path_info;
         if (isset($request_method)) {
             $this->request_method = $request_method;
         }

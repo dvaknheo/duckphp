@@ -19,8 +19,8 @@ class MyMiddlewareManagerTest extends \PHPUnit\Framework\TestCase
                 MyMiddlewareManager::class => true,
             ],
             'middleware' =>[
-                X::class . '::handle',
-                Y::class . '::handle',
+                X::class . '@handle',
+                Y::class . '->handle',
                 Z::class . '::handle',
             ],
         ]);
@@ -29,7 +29,8 @@ class MyMiddlewareManagerTest extends \PHPUnit\Framework\TestCase
 }
 class X
 {
-    public static function handle($request, \Closure $next)
+    use \DuckPhp\SingletonEx\SingletonExTrait;
+    public function handle($request, \Closure $next)
     {
         var_dump('[[XXXX[['); 
 
@@ -40,7 +41,7 @@ class X
 }
 class Y
 {
-    public static function handle($request, \Closure $next)
+    public function handle($request, \Closure $next)
     {
         var_dump('[[YYYY[[');
 

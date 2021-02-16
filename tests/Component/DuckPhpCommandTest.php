@@ -88,10 +88,13 @@ class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
         Console::G()->regCommandClass(DuckPhpCommand_Command::class,"aa");
         Console::G()->regCommandClass(DuckPhpCommand_Command2::class,"aa");
         DuckPhpCommand_App::G()->run();
-        $_SERVER['argv']=[
+
+        DuckPhpCommand_App::G(new DuckPhpCommand_App()); //得从头来了？
+        DuckPhpCommand_App::G()->options['error_404']=function(){debug_print_backtrace(2);};
+                $_SERVER['argv']=[
             '-','call',str_replace('\\','/',DuckPhpCommand_Command2::class).'@command_foo4','A1'
         ];
-        DuckPhpCommand_App::G()->run();
+        DuckPhpCommand_App::G()->init([])->run();
         
         //*/
         \LibCoverage\LibCoverage::End();
@@ -115,6 +118,8 @@ class Console_HttpServer extends HttpServer
 
 class DuckPhpCommand_App extends App
 {
+    public $options =[
+    ];
     /** overrid test*/
     public function command_test()
     {

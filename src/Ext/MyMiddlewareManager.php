@@ -44,7 +44,7 @@ class MyMiddlewareManager extends ComponentBase
 
         $callback = array_reduce($middleware, function ($carry, $pipe) {
             return function () use ($carry, $pipe) {
-                if (is_string($pipe) && \is_callable($pipe)) {
+                if (is_string($pipe) && !\is_callable($pipe)) {
                     if (false !== strpos($pipe, '@')) {
                         list($class, $method) = explode('@', $pipe);
                         /** @var callable */ $pipe = [$class::G(), $method];

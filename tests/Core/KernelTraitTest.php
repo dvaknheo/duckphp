@@ -11,7 +11,7 @@ use DuckPhp\Core\Route;
 use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckPhp\Ext\Pager;
 
-class KernelTest extends \PHPUnit\Framework\TestCase
+class KernelTraitTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {

@@ -147,7 +147,6 @@ trait AppPluginTrait
         $this->plugin_view_path = $path_view;
         
         $this->plugin_view_path_override = rtrim($this->plugin_options['plugin_path_namespace'].$this->plugin_options['plugin_path_view'], DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
-
     }
     protected function pluginModeSearchAllPluginFile($path, $setting_file = '')
     {
@@ -184,7 +183,7 @@ trait AppPluginTrait
     protected function _PluginModeRouteHook($path_info)
     {
         $flag = $this->getPluginModePathInfo($path_info);
-        if(!$flag){
+        if (!$flag) {
             return false;
         }
         $this->pluginModeReplaceComponent();
