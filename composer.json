@@ -23,7 +23,7 @@
         "php": ">=7.2.0"
 	},
     "require-dev": {
-        "dvaknheo/libcoverage": ">=1.0.4"
+        "dvaknheo/libcoverage": ">=1.0.5"
     },
     "bin": [
         "bin/duckphp"

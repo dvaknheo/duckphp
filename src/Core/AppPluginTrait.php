@@ -25,28 +25,29 @@ trait AppPluginTrait
     protected $plugin_route_old = null;
     protected $plugin_view_old = null;
     
+    protected $plugin_view_path_base = null;
+    protected $plugin_view_path = null;
+    protected $plugin_view_path_override = null;
+    
     public function pluginModeInit(array $options, object $context = null)
     {
         $plugin_options_default = [
             'plugin_path_namespace' => null,
             'plugin_namespace' => null,
+            'plugin_path_conifg' => 'config',
+            'plugin_path_view' => 'view',
+            'plugin_url_prefix' => '',
             
             'plugin_routehook_position' => 'append-outter',
             
-            'plugin_path_conifg' => 'config',
-            'plugin_path_view' => 'view',
-            
             'plugin_search_config' => false,
             'plugin_injected_helper_map' => '',
+            
             'plugin_files_config' => [],
-            'plugin_url_prefix' => '',
             'plugin_view_options' => [],
             'plugin_route_options' => [],
         ];
-        
-        
-        $this->plugin_options = array_merge($plugin_options_default, $this->plugin_options ?? []);
-        $this->plugin_options['plugin_files_config'] = $this->plugin_options['plugin_files_config'] ?? [];
+        $this->plugin_options = array_replace_recursive($plugin_options_default, $this->plugin_options ?? []);
         
         $this->onPluginModePrepare();
         $this->pluginModeInitOptions($options);
@@ -136,6 +137,17 @@ trait AppPluginTrait
         if ($this->plugin_options['plugin_search_config']) {
             $this->plugin_options['plugin_files_config'] = $this->pluginModeSearchAllPluginFile($this->path_config_override, $setting_file);
         }
+        
+        
+        $this->plugin_view_path_base = View::G()->options['path'] ?? '';
+        
+        $path_view = $this->plugin_view_path_base === '' ? '': rtrim($this->plugin_view_path_base, DIRECTORY_SEPARATOR) .DIRECTORY_SEPARATOR;
+        $path_view .= str_replace('\\', DIRECTORY_SEPARATOR, $this->plugin_options['plugin_namespace']);
+
+        $this->plugin_view_path = $path_view;
+        
+        $this->plugin_view_path_override = rtrim($this->plugin_options['plugin_path_namespace'].$this->plugin_options['plugin_path_view'], DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+
     }
     protected function pluginModeSearchAllPluginFile($path, $setting_file = '')
     {
@@ -158,90 +170,63 @@ trait AppPluginTrait
     }
     protected function getPluginModePathInfo($path_info)
     {
-        $ret = $path_info;
-        if ($this->plugin_options['plugin_url_prefix'] ?? false) {
-            $prefix = '/'.trim($this->plugin_options['plugin_url_prefix'], '/').'/';
-            $l = strlen($prefix);
-            if (substr($path_info, 0, $l) !== $prefix) {
-                return false;
-            }
-            $ret = substr($path_info, $l - 1);
+        $flag = $this->plugin_options['plugin_url_prefix'] ?? false;
+        if (!$flag) {
+            return true;
         }
-        return $ret;
+        $prefix = '/'.trim($this->plugin_options['plugin_url_prefix'], '/').'/';
+        $l = strlen($prefix);
+        if (substr($path_info, 0, $l) !== $prefix) {
+            return false;
+        }
+        return true;
     }
     protected function _PluginModeRouteHook($path_info)
     {
-        $path_info = $this->getPluginModePathInfo($path_info);
-        if ($path_info === false) {
+        $flag = $this->getPluginModePathInfo($path_info);
+        if(!$flag){
             return false;
         }
+        $this->pluginModeReplaceComponent();
         $this->pluginModeBeforeRun();
-        
-        $route = Route::G();
-        $route->setPathInfo($path_info);
-        $route->setUrlHandler([static::class,'OnPluginModeUrl']); //context->url?
-        
         $this->onPluginModeBeforeRun();
         
-        $callback = $route->defaultGetRouteCallback($path_info);
-        if (null === $callback) {
-            $this->pluginModeClear();
-            return false;
-        }
+        $flag = Route::G()->run();
         $this->onPluginModeRun();
-        ($callback)();
-        
         $this->pluginModeClear();
-        return true;
+        return $flag;
     }
     protected function pluginModeReplaceComponent()
     {
+        $this->plugin_view_old = View::G();
+        $this->plugin_route_old = Route::G();
+        
         View::G(new View());
         Route::G(new Route());
     }
-    protected function getPathView($path_view, $namespace)
-    {
-        $path_view = $path_view === '' ? '': rtrim($path_view, DIRECTORY_SEPARATOR) .DIRECTORY_SEPARATOR;
-        $path_view .= str_replace('\\', DIRECTORY_SEPARATOR, $namespace);
-        
-        return $path_view;
-    }
     protected function pluginModeBeforeRun()
     {
-        $this->plugin_view_old = View::G();
-        $this->plugin_route_old = Route::G();
-        $this->pluginModeReplaceComponent();
+        $view_options = $this->plugin_options['plugin_view_options'];
+        $view_options['path'] = $this->plugin_view_path_base;
+        $view_options['path_view'] = $this->plugin_view_path;
+        $view_options['path_view_override'] = $this->plugin_view_path_override;
+        View::G()->init($view_options);
         
-        $view_options = $this->options['plugin_view_options'];
-        $view_options['path'] = $this->plugin_view_old->options['path'] ?? '';
-        $view_options['path_view'] = $this->getPathView($this->plugin_view_old->options['path_view'] ?? '', $this->plugin_options['plugin_namespace']);
-        
-        $view_options['path_view_override'] = rtrim($this->plugin_options['plugin_path_namespace'].$this->plugin_options['plugin_path_view'], DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
-        
-        $route_options = $this->options['plugin_route_options'];
+        $route_options = $this->plugin_options['plugin_route_options'];
         $route_options['namespace'] = $this->plugin_options['plugin_namespace'];
+        $route_options['controller_path_prefix'] = $this->plugin_options['plugin_url_prefix'];
         
-        View::G()->init($view_options)->reset();
-        Route::G()->init($route_options)->reset();
+        // path_info . Route Hook 不在这里继承。
+        Route::G()->init($route_options);
     }
-    protected function pluginModeClear()
+    public function pluginModeClear()
     {
         View::G($this->plugin_view_old);
         Route::G($this->plugin_route_old);
         $this->plugin_view_old = null;
         $this->plugin_route_old = null;
     }
-    public static function OnPluginModeUrl($url)
-    {
-        return static::G()->_OnPluginModeUrl($url);
-    }
-    public function _OnPluginModeUrl($url)
-    {
-        $prefix = trim($this->plugin_options['plugin_url_prefix'], '/');
-        $url = $prefix.$url;
-        
-        return Route::G()->defaultUrlHandler($url);
-    }
+    /////////////////////////////
     public function pluginModeGetOldRoute()
     {
         return $this->plugin_route_old;

@@ -62,12 +62,12 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
         
         
         
-        \DuckPhp\Core\Route::G()->setPathInfo('/Test/second');
+        $_SERVER['PATH_INFO']='/Test/second';
         DuckPhp::G()->run();
         AppPluginTraitApp2::G()->onPluginModeRun=null;
         DuckPhp::G()->run();
         
-        \DuckPhp\Core\Route::G()->setPathInfo('/Test2/second');
+        $_SERVER['PATH_INFO']='/Test2/second';
         DuckPhp::G()->run();
         
         
