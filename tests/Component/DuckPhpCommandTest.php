@@ -66,6 +66,7 @@ class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
         Installer::G(new Console_Installer());
         HttpServer::G(new Console_HttpServer());
         DuckPhpCommand::G()->command_new();
+
         DuckPhpCommand::G()->command_start();
         DuckPhpCommand::G()->command_help();
         DuckPhpCommand::G()->command_version();
@@ -78,7 +79,7 @@ class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
         DuckPhpCommand::G()->command_routes();
         DuckPhpCommand::G()->command_depoly();
         DuckPhpCommand::G()->command_test();
-        
+        DuckPhpCommand::G(new DuckPhpCommand());
         //*/
         DuckPhpCommand_App::G()->init([]);
         //Console::G(new Console())->init([],DuckPhpCommand_App::G());
@@ -89,13 +90,26 @@ class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
         Console::G()->regCommandClass(DuckPhpCommand_Command2::class,"aa");
         DuckPhpCommand_App::G()->run();
 
-        DuckPhpCommand_App::G(new DuckPhpCommand_App()); //得从头来了？
+        DuckPhpCommand_App::G(new DuckPhpCommand_App());
         DuckPhpCommand_App::G()->options['error_404']=function(){debug_print_backtrace(2);};
                 $_SERVER['argv']=[
             '-','call',str_replace('\\','/',DuckPhpCommand_Command2::class).'@command_foo4','A1'
         ];
         DuckPhpCommand_App::G()->init([])->run();
+        //////////////////
         
+        DuckPhpCommand_App::G(new DuckPhpCommand_App());
+        DuckPhpCommand_HttpServer::G(new DuckPhpCommand_HttpServer());
+        App::G(new App());
+        DuckPhpCommand_App::G()->options['error_404']=function(){debug_print_backtrace(2);};
+        $_SERVER['argv']=[
+            '-','start', '--override-class=tests/DuckPhp/Component/DuckPhpCommand_HttpServer',
+        ];
+        try{
+        DuckPhpCommand_App::G()->init([])->run();
+        }catch(\Throwable $ex){
+            debug_print_backtrace(2);
+        }
         //*/
         \LibCoverage\LibCoverage::End();
     }
@@ -156,6 +170,13 @@ class DuckPhpCommand_Command2 extends DuckPhpCommand_Command
     public function command_foo4($a1)
     {
     
+    }
+}
+class DuckPhpCommand_HttpServer extends HttpServer
+{
+    public function run()
+    {
+        var_dump("OK");
     }
 }
 

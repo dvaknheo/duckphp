@@ -108,7 +108,7 @@ class Console
                 if (!isset($ret[$lastkey])) {
                     $ret[$lastkey] = true;
                 }
-                $lastkey = substr($v, 2);
+                $lastkey = str_replace('-', '_', substr($v, 2));
                 $pos = strpos($lastkey, '=');
                 if ($pos !== false) {
                     $a = substr($lastkey, 0, $pos);
