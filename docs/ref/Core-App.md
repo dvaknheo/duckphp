@@ -4,10 +4,19 @@
 ## 简介
 核心的类,`组件类`
 ## 引用
-[DuckPhp\Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md)
-[DuckPhp\Core\SystemWrapperTrait](Core-SystemWrapperTrait.md)
-[DuckPhp\Core\KernelTrait](Core-KernelTrait.md)
-[DuckPhp\Core\Logger](Core-Logger.md)
+
+    组件基类 [DuckPhp\Core\ComponentBase](Core-ComponentBase.md)
+    可扩展静态Trait [DuckPhp\Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md)
+    系统同名函数替代Trait [DuckPhp\Core\SystemWrapperTrait](Core-SystemWrapperTrait.md)
+    核心Trait [DuckPhp\Core\KernelTrait](Core-KernelTrait.md)
+    日志类 [DuckPhp\Core\Logger](Core-Logger.md)
+    自动加载类 [DuckPhp\Core\AutoLoader](Core-AutoLoader.md)
+    配置类 [DuckPhp\Core\Configer](Core-Configer.md)
+    异常管理类 [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
+    路由类 [DuckPhp\Core\Route](Core-Route.md)
+    运行时数据类 [DuckPhp\Core\RuntimeState](Core-RuntimeState.md)
+    视图类[DuckPhp\Core\View](Core-View.md)
+
 
 
 ## 选项
@@ -40,7 +49,7 @@
 ### 扩充 [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) 的默认选项。
 
 
-详情见 DuckPhp\Core\KernelTrait 参考文档
+详情见 [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) 参考文档
 
     use_autoloader
     path
@@ -97,10 +106,7 @@ DuckPhp\Core\App 类 可以视为几个类的组合
     public function extendComponents($method_map, $components = [])
     public function cloneHelpers($new_namespace, $new_helper_map = [])
     public function version()
-    public function addBeforeShowHandler($handler)
-
-    public function removeBeforeShowHandler($handler)
-
+    
     public function getStaticComponentClasses()
     public function addDynamicComponentClass($class)
     public function removeDynamicComponentClass($class)

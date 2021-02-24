@@ -66,6 +66,23 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 'skip_exception_check' => false,
     不在 Run 流程检查异常，把异常抛出外面。用于配合其他框架使用
 
+'skip_plugin_mode_check' => false,
+
+    如果 初始化的时候 context 有对象，则进入 plugin 模式 pluginModeInit()，打开以避免进入 plugin 模式.
+## 公开属性
+
+和方法同名，便于不修改类实现的情况。
+
+onPrepare
+    准备阶段，你可以在这里替换默认类
+onInit
+    初始化完成
+onRun
+    运行阶段。不建议重写 run ，而是在这里添加运行阶段处理
+
+onAfterRun
+    运行完毕阶段执行的方法
+    
 ## 公开方法
 
 public static function RunQuickly(array $options=[], callable $after_init=null): bool

@@ -101,7 +101,7 @@ CallExtendStaticMethod($name, $arguments)
 
 ## ViewHelper 视图助手类
 
-ViewHelper 是在View 里使用， 比较简单。
+ViewHelper 是在视图里使用， 比较简单。一般来说，不需要特殊的用处
 
 ViewHelper 默认的方法在 ControllerHelper 里都有。 但是 ViewHelper 不是 ControllerHelper 的子集。
 
@@ -145,7 +145,7 @@ LoadConfig($key,$basename="config");
 Cache($replace_object)
 
     获得缓存管理器
-XpCall($callback, ...args)
+XpCall($callback, ...$args)
 
     包裹callback输出，如果抛出异常则返回异常，否则返回 $callback();
 Event()
@@ -167,11 +167,10 @@ ModelHelper 用于 Model 层。  ModelHelper 有数据库的三个独特方法�
 
 此外，还有两个快捷方法，方便分页。
 
-Db() 静态方法也可以用 __db() 函数代替
-
 Db($tag=null)
 
     获得 DB 数据库对象 ,第 $tag 个配置的数据库对象
+    Db() 方法也可以用 __db() 函数代替
 DbForWrite()
 
     获得用于写入的 DB 对象,这是获得第 0 个配置列表里的数据库
@@ -182,14 +181,19 @@ DbForRead()
 SqlForPager($sql, $pageNo, $pageSize = 10)
 
     分页 limte 的 sql 
-SqlForCountSimply($sql)    
+SqlForCountSimply($sql)
+
     简单的把 select ... from 替换成select count(*) as c from 
 
 ## ControllerHelper 控制器的助手类
 
-本页面展示 ContrlloerHelper 方法。 ContrlloerHelper 的方法很多很杂，但掌握了 ContrlloerHelper 方法，基本就掌握了用法 大致分为 【通用杂项】【路由处理】【异常管理】【跳转】【swoole 兼容】 【内容处理】 几块 内容处理和 ViewHelper 基本通用。 ControllerHelper 方法
+ ContrlloerHelper 的方法很多很杂，但掌握了 ContrlloerHelper 方法，基本就掌握了使用方法
+
+大致分为 【显示相关】【配置相关】【跳转相关】【路由处理】【异常管理】【跳转】【内容处理】 几块 内容处理和 ViewHelper 基本通用。 ControllerHelper 方法
 
 ### 显示相关
+
+包含 ViewHelper 的所有方法。
 
 H
 
@@ -206,7 +210,25 @@ Url
 Display
 
     【显示相关】见 ViewHelper 的 Display 介绍
+### 内容处理
+
+Show($data = [], $view = null)
+
+    【内容处理】显示视图， 默认为 view/{$view}.php 的文件， 并会带上页眉页脚
+setViewHeadFoot($head_file = null, $foot_file = null)
+
+    【内容处理】设置页眉页脚
+assignViewData($key, $value = null)
+
+    【内容处理】分配视图变量，另一版本为 assignViewData([$key=>$value]);
+Domain()
+
+    【内容处理】 获得带协议的域名
+DbCloseAll()
+
+    【内容处理】 关闭所有数据库
 ### 配置相关
+
 Setting
 
     【配置相关】见 BusinessHelper 的 Setting 介绍
@@ -216,26 +238,6 @@ Config
 LoadConfig
 
     【配置相关】见 BusinessHelper 的 LoadConfig 介绍
-
-### 跳转相关
-
-ExitRedirect 不能跳转到外站，要用 ExitRedirectOutside
-
-ExitRedirect($url, $exit = true)
-
-    【跳转】跳转到站内URL ，$exit 为 true 则附加 exit()
-ExitRedirectOutside($url, $exit = true)
-
-    【跳转】跳转到站外URL, $exit 为 true 则附加 exit()
-ExitRouteTo($url, $exit = true)
-
-    【跳转】跳转到相对 url , $exit 为 true 则附加 exit()
-Exit404($exit = true)
-
-    【跳转】报 404，显示后续页面，$exit 为 true 则附加 exit()
-ExitJson($ret, $exit = true)
-
-    【跳转】输出 json 结果，$exit 为 true 则附加 exit()
 
 ### 路由相关
 
@@ -251,17 +253,28 @@ getPathInfo()
 getParameters(): array
 
     【路由相关】获得路由重写相关的数据
+dumpAllRouteHooksAsString()
 
-### 内容处理
-Show($data = [], $view = null)
+    Dump 所有路由钩子
+### 跳转相关
 
-    【内容处理】显示视图， 默认为 view/{$view}.php 的文件， 并会带上页眉页脚
-setViewHeadFoot($head_file = null, $foot_file = null)
+ExitRedirect($url, $exit = true)
 
-    【内容处理】设置页眉页脚
-assignViewData($key, $value = null)
+    【跳转】跳转到站内URL ，$exit 为 true 则附加 exit()
+    ExitRedirect 不能跳转到外站，要用 ExitRedirectOutside
+ExitRedirectOutside($url, $exit = true)
 
-    【内容处理】分配视图变量，另一版本为 assignViewData([$key=>$value]);
+    【跳转】跳转到站外URL, $exit 为 true 则附加 exit()
+ExitRouteTo($url, $exit = true)
+
+    【跳转】跳转到相对 url , $exit 为 true 则附加 exit()
+Exit404($exit = true)
+
+    【跳转】报 404，显示后续页面，$exit 为 true 则附加 exit()
+ExitJson($ret, $exit = true)
+
+    【跳转】输出 json 结果，$exit 为 true 则附加 exit()
+
 ### 异常处理
 见 异常管理 一节
 
@@ -278,13 +291,13 @@ XpCall($callback, ...$args)
 
     【其他】见 BusinessHelper 的 XpCall 介绍
 ### 系统替代
-header
+header()
 
     【系统替代】 header 函数以兼容命令行模式
 setcookie()
 
     【系统替代】 setcookie 函数以兼容命令行模式
-exit
+exit()
 
     【系统替代】 退出函数，以便于接管
 ### 输入相关
@@ -315,7 +328,7 @@ SEVER($key, $default = null)
 Pager()
 
     获得分页器对象, 分页器参考 DuckPhp\Ext\Pager。 DuckPhp 只是做了最小的分页器
-PageNo(new_value = null)
+PageNo($new_value = null)
 
     获得或设置当前页码
 PageSize($new_value = null)
@@ -323,7 +336,7 @@ PageSize($new_value = null)
     获得或设置当前每页数据条目
 PageHtml($total, $options=[])
 
-    获得分页结果 HTML，这里的 $options 的传递给 Pager 类的选项。
+    获得分页结果 HTML，这里的 $options 是传递给 Pager 类的选项。
 ###  事件
 
 Event()
@@ -416,7 +429,7 @@ RunQuickly
     重点，快速运行
 system_wrapper_replace
 
-    替换默认
+    替换系统默认同名函数
 system_wrapper_get_providers
 
     获得系统默认同名函数

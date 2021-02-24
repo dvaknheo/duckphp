@@ -44,7 +44,7 @@ help    详细介绍
 install 安装
 list    查看有什么命令。
 new     创建工程
-run     启动服务器
+start     启动服务器
 test    启动测试
 version 显示版本
 

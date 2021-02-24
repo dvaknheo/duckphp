@@ -2,11 +2,11 @@
 [toc]
 
 ## 简介
-日志组件 ，满足 psr 标准的 日志类
+日志组件 ，满足 psr 标准的日志组件
 
 ## 使用于
 
-[DuckPhp\Core\Kernel](Core-Kernel.md)
+[DuckPhp\Core\App](Core-App.md)
 
 ## 选项
 
@@ -44,6 +44,5 @@ Logger 类初始化的时候就直接调用 init() ，你可调用 reset() 重�
 
 其他方法都遵循 PSR 标准 **但是这个类没实现 PSR 接口。**
 
-自带 reset() 方法 ，可以重置
 
 

@@ -12,7 +12,25 @@ public static function ThrowOn($flag, $message, $code=0)
 
 trait ThrowOn 是为了写代码更偷懒。
 
+ThrowOnTrait 提供了三个静态方法:
 
+* public static function ThrowOn($flag, $message, $code)
+
+这个方法用于如果 $flag 成立，则抛出当前异常类
+
+PHP 有个函数 assert ， ThrowOn 和他逻辑相反。ThrowOn的方式会更直接些
+
+* public static function Handle($class)
+
+把本来 $class ThrowOn 到本类的异常 ， Throw 到当前异常类。
+
+这个方法的作用是用于提供第三方异常类的时候。让人无缝处理异常类。
+
+* public static function Proxy($ex)
+
+throw new static($ex->getMessage, $ex->getCode());
+
+用于把其他异常转成自己异常
 ## 例子
 ```
 class MyException extends \Exception
@@ -27,7 +45,7 @@ class SystemException extends \Exception
 SystemException::ThrowOn(true,"something exception",142857);
 // 丢出异常。
 
-SystemException::ThrowTo(MyException::class);
+MyException::Handle(SystemException::class);
 // 当你要接管 SystemException 的错误的时候，丢出 MyException 异常
 SystemException::ThrowOn(true,"something exception",142857);
 

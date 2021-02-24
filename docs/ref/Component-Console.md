@@ -45,11 +45,15 @@ Console 类是 DuckPhp 的 命令行支持类。
 
 使用参数
 命令行中的 --XX 会成为方法中的 $XX 参数
-cmd a b --x c d --y z 
+cmd a b --x c d --y z  --abc-d
 =>
 command_cmd('a','b');
+
+abc-d 会转成 $abc_d
 
 你可以用
 Console::G()->getCliParameters(); 获得参数的值
 
 你的 app 类，还有其他 command_$cmd 会加入或覆盖 默认的 方法。
+
+
