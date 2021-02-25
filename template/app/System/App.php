@@ -82,10 +82,13 @@ class App extends DuckPhp
         // 扩展名，比如你要 .html (DuckPhp\Core\Route)
         // $options['controller_path_ext'] = '';
 
+        // 路由前缀，特殊情况用，限定前缀的 Path_info (DuckPhp\Core\Route)
+        // $options['controller_path_prefix'] = '';
+
         // 控制器，POST 方法前缀 (DuckPhp\Core\Route)
         // $options['controller_prefix_post'] = 'do_';
 
-        // 控制器禁止直接访问G方法 (DuckPhp\Core\Route)
+        // 控制器禁止直接访问G方法，基本不用 (DuckPhp\Core\Route)
         // $options['controller_stop_g_method'] = false;
 
         // 控制器禁止直接访问静态方法 (DuckPhp\Core\Route)
@@ -216,9 +219,6 @@ class App extends DuckPhp
 
         // 跳过异常检查 (DuckPhp\Core\App)
         // $options['skip_exception_check'] = false;
-
-        // 跳过 PATH_INFO 修复 (DuckPhp\Core\Route)
-        // $options['skip_fix_path_info'] = false;
 
         // 跳过插件模式检查 (DuckPhp\Core\App)
         // $options['skip_plugin_mode_check'] = false;

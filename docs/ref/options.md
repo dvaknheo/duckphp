@@ -68,12 +68,15 @@
 + ** 'controller_path_ext' => '',  ** 
 
     扩展名，比如你要 .html   // [DuckPhp\Core\Route](Core-Route.md)
++ ** 'controller_path_prefix' => '',  ** 
+
+    路由前缀，特殊情况用，限定前缀的 Path_info   // [DuckPhp\Core\Route](Core-Route.md)
 + ** 'controller_prefix_post' => 'do_',  ** 
 
     控制器，POST 方法前缀   // [DuckPhp\Core\Route](Core-Route.md)
 + ** 'controller_stop_g_method' => false,  ** 
 
-    控制器禁止直接访问G方法   // [DuckPhp\Core\Route](Core-Route.md)
+    控制器禁止直接访问G方法，基本不用   // [DuckPhp\Core\Route](Core-Route.md)
 + ** 'controller_stop_static_method' => false,  ** 
 
     控制器禁止直接访问静态方法   // [DuckPhp\Core\Route](Core-Route.md)
@@ -314,9 +317,6 @@
 + ** 'skip_exception_check' => false,  ** 
 
     跳过异常检查   // [DuckPhp\Core\App](Core-App.md)
-+ ** 'skip_fix_path_info' => false,  ** 
-
-    跳过 PATH_INFO 修复   // [DuckPhp\Core\Route](Core-Route.md)
 + ** 'skip_plugin_mode_check' => false,  ** 
 
     跳过插件模式检查   // [DuckPhp\Core\App](Core-App.md)
@@ -459,10 +459,12 @@
         控制器，缺失方法的调用方法
     - 'controller_path_ext' => '',
         扩展名，比如你要 .html
+    - 'controller_path_prefix' => '',
+        路由前缀，特殊情况用，限定前缀的 Path_info
     - 'controller_prefix_post' => 'do_',
         控制器，POST 方法前缀
     - 'controller_stop_g_method' => false,
-        控制器禁止直接访问G方法
+        控制器禁止直接访问G方法，基本不用
     - 'controller_stop_static_method' => false,
         控制器禁止直接访问静态方法
     - 'controller_use_singletonex' => false,
@@ -473,8 +475,6 @@
         命名空间
     - 'namespace_controller' => 'Controller',
         控制器的命名空间
-    - 'skip_fix_path_info' => false,
-        跳过 PATH_INFO 修复
 + DuckPhp\Core\RuntimeState
     - 'use_output_buffer' => false,
         使用 OB 函数缓冲数据

@@ -180,16 +180,6 @@ class Console
         if (!$class || !class_exists($class)) {
             throw new \ReflectionException("Command Not Found: {$cmd}\n", -3);
         }
-        /*
-            //???
-        if (method_exists($class, 'G') && method_exists($class, 'isInited') && !$class::G()->isInited()) {
-            $options = $this->context_class ? $this->context_class::G()->options : [];
-            $options = $options['ext'][$class] ?? $options;
-            $options = is_string($options) ? $this->context_class::G()->options[$options] : $options;
-            $options = is_array($options) ? $options : [];
-            $class::G()->init($options, $this);
-        }
-        */
         return [$class,$method];
     }
     protected function getCommandsByClass($class)

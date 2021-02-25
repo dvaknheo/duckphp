@@ -32,8 +32,9 @@ class DuckPhpCommand extends ComponentBase
     {
         $options = Console::G()->getCliParameters();
         $options['path'] = $this->context_class::G()->options['path'];
-        if(!empty($options['override_class'])){
-            $class=str_replace('/', '\\', $options['override_class']);
+        if (!empty($options['override_class'])) {
+            /** @var string */
+            $class = str_replace('/', '\\', $options['override_class']);
             HttpServer::G($class::G());
         }
         HttpServer::RunQuickly($options);
