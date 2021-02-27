@@ -39,7 +39,6 @@ class App extends ComponentBase
     use SystemWrapperTrait;
     
     //inner trait
-    use Core_Handler;
     use Core_Helper;
     use Core_SystemWrapper;
     use Core_Glue;
@@ -62,10 +61,7 @@ class App extends ComponentBase
     ];
     
     // from kernel
-    protected $hanlder_for_exception_handler;
-    protected $hanlder_for_exception;
-    protected $hanlder_for_develop_exception;
-    protected $hanlder_for_404;
+    protected $handler_for_exception_handler;
     
     // for trait
     protected $extDynamicComponentClasses = [];
@@ -83,18 +79,13 @@ class App extends ComponentBase
         'error_404' => null,          //'_sys/error-404',
         'error_500' => null,          //'_sys/error-500',
         'error_debug' => null,        //'_sys/error-debug',
-
-
     ];
     public function __construct()
     {
         parent::__construct();
         $this->options = array_replace_recursive(static::$options_default, $this->core_options, $this->options);
         unset($this->core_options); // not use again;
-        //$this->hanlder_for_exception_handler = [static::class,'set_exception_handler'];// TODO 这里改用选项
-        $this->hanlder_for_exception = [static::class,'OnDefaultException'];
-        $this->hanlder_for_develop_exception = [static::class,'OnDevErrorHandler'];
-        $this->hanlder_for_404 = [static::class,'On404'];
+        //$this->handler_for_exception_handler = [static::class,'set_exception_handler'];// TODO 这里改用选项
     }
     protected function extendComponentClassMap($map, $namespace)
     {
@@ -170,24 +161,6 @@ class App extends ComponentBase
     public function version()
     {
         return static::VERSION;
-    }
-}
-trait Core_Handler
-{
-    //protected $beforeShowHandlers = [];
-    //protected $error_view_inited = false;
-    
-    public static function On404(): void
-    {
-        static::G()->_On404();
-    }
-    public static function OnDefaultException($ex): void
-    {
-        static::G()->_OnDefaultException($ex);
-    }
-    public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
-    {
-        static::G()->_OnDevErrorHandler($errno, $errstr, $errfile, $errline);
     }
     public function _On404(): void
     {

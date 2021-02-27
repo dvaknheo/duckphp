@@ -49,10 +49,7 @@ trait KernelTrait
     protected $error_view_inited = false;
 
     // for app
-    protected $hanlder_for_exception_handler;
-    protected $hanlder_for_exception;
-    protected $hanlder_for_develop_exception;
-    protected $hanlder_for_404;
+    protected $handler_for_exception_handler;
 
     public static function RunQuickly(array $options = [], callable $after_init = null): bool
     {
@@ -128,11 +125,10 @@ trait KernelTrait
     protected function initAfterOverride(array $options, object $context = null)
     {
         $this->initOptions($options);
-        
         $exception_options = [
-            'system_exception_handler' => $this->hanlder_for_exception_handler,
-            'default_exception_handler' => $this->hanlder_for_exception,
-            'dev_error_handler' => $this->hanlder_for_develop_exception,
+            'system_exception_handler' => $this->handler_for_exception_handler, //////TODO
+            'default_exception_handler' => [static::class,'OnDefaultException'],
+            'dev_error_handler' => [static::class,'OnDevErrorHandler'],
         ];
         ExceptionManager::G()->init($exception_options, $this)->run();
         
@@ -225,7 +221,7 @@ trait KernelTrait
             $ret = Route::G()->run();
             
             if (!$ret && !$this->options['skip_404_handler']) {
-                ($this->hanlder_for_404)();
+                $this->_On404();
             }
         } catch (\Throwable $ex) {
             RuntimeState::G()->toggleInException();
@@ -252,9 +248,34 @@ trait KernelTrait
     }
     //main produce end
     
-    ////////////////////////
+    
     public function replaceDefaultRunHandler(callable $handler = null): void
     {
         $this->default_run_handler = $handler;
+    }
+    ////////////////////////
+    public static function On404(): void
+    {
+        static::G()->_On404();
+    }
+    public static function OnDefaultException($ex): void
+    {
+        static::G()->_OnDefaultException($ex);
+    }
+    public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
+    {
+        static::G()->_OnDevErrorHandler($errno, $errstr, $errfile, $errline);
+    }
+    public function _On404(): void
+    {
+        echo "no found";
+    }
+    public function _OnDefaultException($ex): void
+    {
+        echo "_OnDefaultException";
+    }
+    public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
+    {
+        echo "_OnDevErrorHandler";
     }
 }

@@ -35,5 +35,8 @@ Now is [<?=$var?>]
     <li><a href="/full/dbtest.php">dbtest.php 数据库演示</a>
 </ul>
 </div>
+<pre>
+<?php // var_dump(\DuckPhp\Core\App::G());?>
+</pre>
 </body>
 </html>

@@ -117,7 +117,6 @@ echo "-------------------------------------\n";
         
 
 
-
         $this->do404();
         
 
@@ -156,7 +155,9 @@ echo "-------------------------------------\n";
             'use_autoloader' => true,
         ]);
 ////////////////////////
-
+MyKernelTrait::OnDefaultException(new \Exception("error"));
+MyKernelTrait::OnDevErrorHandler("", "", "", "");
+MyKernelTrait::On404();
 
         \LibCoverage\LibCoverage::End();
     return;
@@ -195,7 +196,11 @@ echo "-------------------------------------\n";
     }
     
 }
-
+class MyKernelTrait
+{
+    use SingletonExTrait;
+    use KernelTrait;
+}
 
 class KernelTestApp extends App
 {
@@ -261,6 +266,7 @@ class KernelTestObjectB
 
 
 }
+
 
 namespace tests\DuckPhp\Core\Controller{
 class Main
