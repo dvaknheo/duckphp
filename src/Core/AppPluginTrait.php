@@ -142,6 +142,7 @@ trait AppPluginTrait
         $this->plugin_view_path_base = View::G()->options['path'] ?? '';
         
         $path_view = $this->plugin_view_path_base === '' ? '': rtrim($this->plugin_view_path_base, DIRECTORY_SEPARATOR) .DIRECTORY_SEPARATOR;
+        $path_view .= View::G()->options['path_view'].DIRECTORY_SEPARATOR;
         $path_view .= str_replace('\\', DIRECTORY_SEPARATOR, $this->plugin_options['plugin_namespace']);
 
         $this->plugin_view_path = $path_view;
