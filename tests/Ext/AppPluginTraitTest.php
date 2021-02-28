@@ -1,7 +1,7 @@
 <?php 
 namespace tests\DuckPhp\Core
 {
-use DuckPhp\Core\AppPluginTrait;
+use DuckPhp\Ext\AppPluginTrait;
 use DuckPhp\DuckPhp;
 
 class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
