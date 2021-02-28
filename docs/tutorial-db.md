@@ -4,8 +4,8 @@
 
 - [DuckPhp\Ext\DbManager](ref/Ext-DbManager.md) 管理数据库
 - [DuckPhp\Db\Db](ref/Db-Db.md)
-    - 使用 [DuckPhp\Db\DbAdvance](ref/DB-DBAdvance.md)
-    - 实现 [DuckPhp\Db\DbInterface](ref/DB-DBInterface.md)
+    - 使用 [DuckPhp\Db\DbAdvanceTrait](ref/Db-DbAdvanceTrait.md)
+    - 实现 [DuckPhp\Db\DbInterface](ref/Db-DbInterface.md)
 
 ## 相关选项
 

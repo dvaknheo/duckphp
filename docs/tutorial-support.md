@@ -48,7 +48,7 @@ php tests/genoptions.php
 ```
 svg 架构图形生成
 ```
-dot doc/duckphp.gv -T svg -O
+dot docs/duckphp.gv -T svg -O
 ```
 合并起来，需要手工性的重新合并
 ```
