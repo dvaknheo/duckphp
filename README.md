@@ -281,7 +281,7 @@ Helper 目录，助手类，如果你一个人偷懒，直接用 APP 类也行
 ## 样例
 ### 1. hello world
 
-File: `template/public/helloworld.php`
+@script File: `template/public/helloworld.php`
 
 ```php
 <?php declare(strict_types=1);
@@ -316,7 +316,7 @@ DuckPhp 工程有上百个选项调整得到不同的结果。具体参考 [选�
 需要注意的是，这个样例是为了演示特性把所有东西集中到一个文件，实际编码不会把所有东西全放在同一个文件里。
 
 
-File: `template/public/demo.php`
+@script File: `template/public/demo.php`
 
 ```php
 <?php declare(strict_types=1);
@@ -551,25 +551,26 @@ DuckPhp 类/文件结构参考。(粗体部分是启动的时候引用的文件)
    9. **[RouteHookRouteMap](docs/ref/Component-RouteHookRouteMap.md)** 路由映射组件
 
 5. `Ext` 扩展目录，非默认加载的扩展。按字母排序。
-    1. [CallableView](docs/ref/Ext-CallableView.md) 可接受函数调用的视图组件
-    2. [EmptyView](docs/ref/Ext-EmptyView.md) 空视图组件
-    3. [HookChain](docs/ref/Ext-HookChain.md) 把回调扩展成链的类
-    4. [HttpServerPlugin](docs/ref/Ext-HttpServerPlugin.md) TODO http 扩展插件
-    5. [JsonRpcExt](docs/ref/Ext-JsonRpcExt.md) Json 远程调用组件，把本地调用改为远程调用
+    1. [AppPluginTrait](docs/ref/Ext-AppPluginTrait.md)   这个Trait用于把独立工程 App 转成插件 
+    2. [CallableView](docs/ref/Ext-CallableView.md) 可接受函数调用的视图组件
+    3. [EmptyView](docs/ref/Ext-EmptyView.md) 空视图组件
+    4. [HookChain](docs/ref/Ext-HookChain.md) 把回调扩展成链的类
+    5. [HttpServerPlugin](docs/ref/Ext-HttpServerPlugin.md) TODO http 扩展插件
+    6. [JsonRpcExt](docs/ref/Ext-JsonRpcExt.md) Json 远程调用组件，把本地调用改为远程调用
         1. [JsonRpcClientBase](docs/ref/Ext-JsonRpcClientBase.md)
-    6. [JsonView](docs/ref/Ext-JsonView.md) Json 视图组件
-    7. [Misc](docs/ref/Ext-Misc.md) 杂项功能组件
-    8. [MyFacadesAutoLoader](docs/ref/Ext-MyFacadesAutoLoader.md) 门面组件，不推荐
+    7. [JsonView](docs/ref/Ext-JsonView.md) Json 视图组件
+    8. [Misc](docs/ref/Ext-Misc.md) 杂项功能组件
+    9. [MyFacadesAutoLoader](docs/ref/Ext-MyFacadesAutoLoader.md) 门面组件，不推荐
         1. [MyFacadesBase](docs/ref/Ext-MyFacadesBase.md) 门面类的基类，不推荐
-    9. [MyMiddleware](docs/ref/Ext-MyMiddleware.md) 中间件，不推荐
-    10. [RedisCache](docs/ref/Ext-RedisSimpleCache.md) redis 缓存组件
-    11. [RedisManager](docs/ref/Ext-RedisManager.md) Redis管理器组件
-    12. [RouteHookDirectoryMode](docs/ref/Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件
-    13. [RouteHookManager](docs/ref/Ext-RouteHookManager.md) 路由钩子管理器
-    14. [RouteHookRewrite](docs/ref/Ext-RouteHookRewrite.md) 路由重写组件
-    15. [SimpleModel](docs/ref/Ext-SimpleModel.md) TODO 简单的模型基类
-    16. [StaticReplacer](docs/ref/Ext-StaticReplacer.md) 适配协程的语法替换写法类
-    17. [StrictCheck](docs/ref/Ext-StrictCheck.md) 严格检查模式组件
+    10. [MyMiddleware](docs/ref/Ext-MyMiddleware.md) 中间件，不推荐
+    11. [RedisCache](docs/ref/Ext-RedisSimpleCache.md) redis 缓存组件
+    12. [RedisManager](docs/ref/Ext-RedisManager.md) Redis管理器组件
+    13. [RouteHookDirectoryMode](docs/ref/Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件
+    14. [RouteHookManager](docs/ref/Ext-RouteHookManager.md) 路由钩子管理器
+    15. [RouteHookRewrite](docs/ref/Ext-RouteHookRewrite.md) 路由重写组件
+    16. [SimpleModel](docs/ref/Ext-SimpleModel.md) TODO 简单的模型基类
+    17. [StaticReplacer](docs/ref/Ext-StaticReplacer.md) 适配协程的语法替换写法类
+    18. [StrictCheck](docs/ref/Ext-StrictCheck.md) 严格检查模式组件
 6. `Helper` 目录，各种助手类。
     1. [HelperTrait](docs/ref/Helper-HelperTrait.md) 助手类公用 Trait
     2. [ControllerHelper](docs/ref/Helper-ControllerHelper.md) 控制器助手类

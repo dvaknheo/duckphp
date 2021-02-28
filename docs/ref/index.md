@@ -61,7 +61,7 @@
    9. **[RouteHookRouteMap](Component-RouteHookRouteMap.md)** 路由映射组件
 
 5. `Ext` 扩展目录，非默认加载的扩展。按字母排序。
-    1. [AppPluginTrait](Core-AppPluginTrait.md)   这个Trait用于把独立工程 App 转成插件 
+    1. [AppPluginTrait](Ext-AppPluginTrait.md)   这个Trait用于把独立工程 App 转成插件 
     2. [CallableView](Ext-CallableView.md) 可接受函数调用的视图组件
     3. [EmptyView](Ext-EmptyView.md) 空视图组件
     4. [HookChain](Ext-HookChain.md) 把回调扩展成链的类

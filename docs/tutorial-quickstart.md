@@ -60,7 +60,7 @@ try_files $uri $uri/ /index.php$request_uri;
 ### View 视图
 先做出要显示的样子。
 
-File: `template/view/test/done.php`
+@script File: `template/view/test/done.php`
 
 ```php
 <?php declare(strict_types=1);
@@ -73,7 +73,7 @@ File: `template/view/test/done.php`
 ### Controller控制器
 写 /test/done 控制器对应的内容。
 
-File: `template/app/Controller/test.php`
+@script File: `template/app/Controller/test.php`
 
 ```php
 <?php declare(strict_types=1);
@@ -111,7 +111,7 @@ C::Show($data); 是 C::Show($data,'test/done'); 的缩写， 调用 test/done �
 
 业务逻辑层。根据业务逻辑来命名。
 
-File: `template/app/Business/DemoBusiness.php`
+@script File: `template/app/Business/DemoBusiness.php`
 
 ```php
 <?php declare(strict_types=1);
@@ -144,7 +144,7 @@ BaseBusiness也是不强求的，我们 extends BaseBusiness 是为了能用 Dem
 
 Model 类是实现基本功能的。一般 Model 类的命名是和数据库表一致的。
 
-File: `template/app/Model/DemoModel.php`
+@script File: `template/app/Model/DemoModel.php`
 
 ```php
 <?php declare(strict_types=1);
