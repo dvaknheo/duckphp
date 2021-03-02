@@ -112,10 +112,14 @@ trait KernelTrait
             AutoLoader::G()->init($options, $this)->run();
         }
         $object = $this->checkOverride($options['override_class'] ?? null);
-        (self::class)::G($object);
-        static::G($object);
+        $this->saveInstance($object);
         
         return $object->initAfterOverride($options, $context);
+    }
+    protected function saveInstance($object)
+    {
+        (self::class)::G($object);
+        static::G($object);
     }
     //for override
     protected function pluginModeInit(array $options, object $context = null)

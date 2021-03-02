@@ -333,6 +333,7 @@ trait Route_Helper
     public function setPathInfo($path_info)
     {
         $this->path_info = $path_info;
+        $_SERVER['PATH_INFO'] = $path_info;
     }
     public function getParameters()
     {
@@ -420,11 +421,11 @@ trait Route_UrlManager
             return $basepath;
         }
         if (isset($url) && '?' === substr($url, 0, 1)) {
-            $path_info = $this->path_info;
+            $path_info = $_SERVER['PATH_INFO'] ?? $this->path_info;
             return $basepath.$path_info.$url;
         }
         if (isset($url) && '#' === substr($url, 0, 1)) {
-            $path_info = $this->path_info;
+            $path_info = $_SERVER['PATH_INFO'] ?? $this->path_info;
             return $basepath.$path_info.$url;
         }
         // ugly.
