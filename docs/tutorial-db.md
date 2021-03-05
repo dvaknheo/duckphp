@@ -2,7 +2,7 @@
 [toc]
 ## 相关类和配置。
 
-- [DuckPhp\Ext\DbManager](ref/Ext-DbManager.md) 管理数据库
+- [DuckPhp\Component\DbManager](ref/Component-DbManager.md) 管理数据库
 - [DuckPhp\Db\Db](ref/Db-Db.md)
     - 使用 [DuckPhp\Db\DbAdvanceTrait](ref/Db-DbAdvanceTrait.md)
     - 实现 [DuckPhp\Db\DbInterface](ref/Db-DbInterface.md)

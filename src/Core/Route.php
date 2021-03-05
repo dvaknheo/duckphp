@@ -293,7 +293,7 @@ class Route extends ComponentBase
             return null;
         }
         if (($this->options['controller_use_singletonex'] || $this->options['controller_stop_g_method']) && $method === 'G') {
-            //杩欓噷涔熻淇敼
+            //这里也要修改
             $this->route_error = 'can not call G()';
             return null;
         }

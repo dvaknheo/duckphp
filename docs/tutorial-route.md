@@ -6,27 +6,8 @@ DuckPhp 的路由类比较复杂，也是重点
 ## 相关类
 
 - [DuckPhp\\Core\\Route](ref/Core-Route.md)
-- [DuckPhp\\Ext\\RouteHookRouteMap](ref/Ext-RouteHookRouteMap.md)
-- [DuckPhp\\Ext\\RouteHookPathInfoCompat](ref/Ext-RouteHookPathInfoCompat.md)
-
-## 相关选项
-
-按不同类的来源分为：
-
-### RouteHookPathInfoCompat
-
-///
-
-### RouteHookRouteMap
-
-- 'route_map' => array ( ),
-    路由映射
-- 'route_map_auto_extend_method' => true,
-    是否扩充方法至助手类
-- 'route_map_by_config_name' => '',
-    路由配置名，使用配置模式用路由
-- 'route_map_important' => array ( ),
-    重要路由映射
+- [DuckPhp\\Component\\RouteHookRouteMap](ref/Component-RouteHookRouteMap.md)
+- [DuckPhp\\Component\\RouteHookPathInfoCompat](ref/Component-RouteHookPathInfoCompat.md)
 
 ##  默认基础路由
 
@@ -56,18 +37,17 @@ DuckPhp 的路由类比较复杂，也是重点
 你要输出用其他类来输出
 
 
-路由的流程在 DuckPhp\Core\Route 类里run() 方法。
+路由的流程在 [DuckPhp\Core\Route](ref/Core-Route.md) 类里run() 方法。
 
 
 根目录的路由会使用 Main（`controller_welcome_class` 选项） 来代替。
 
 为了把 POST 和 GET 区分， 我们有了 `controller_prefix_post`  选项。如果没有 相关方法存在也是没问题的。 这个技巧用于很多需要的情况
 
-`skip_fix_path_info`  .
 
 选项介绍
 
-- 'controller_base_class' => NULL, 限定控制器必须继承基类或实现接口
+- 'controller_base_class' => '', 限定控制器必须继承基类或实现接口
 - 'controller_class_postfix' => '', 控制器类名后缀，或许你会加上 Action  ，于是就变成了 MyProejct\Controller\MainAction ....
 - 'controller_enable_slash' => false, 激活兼容 URL / 后缀 
 - 'controller_hide_boot_class' => false, 控制器标记，隐藏特别的入口，比如你不想人也从 /Main/index 访问 / MyProejct\Controller\Main->index
@@ -80,7 +60,7 @@ DuckPhp 的路由类比较复杂，也是重点
 - 'controller_welcome_class' => 'Main', 控制器默认欢迎类
 - 'namespace' => '',命名空间
 - 'namespace_controller' => 'Controller', 控制器的命名空间 如果以 \\ 开始，则忽略 namespace 选项的配置
-- 'skip_fix_path_info' => false,  跳过 PATH_INFO 修复，用于nginx 配置无 PATH_INFO 的时候找到正确的 PATH_INFO
+-  'controller_path_prefix' => '', 有时候，你只处理特定开头的 路由
 
 
 ## 路由钩子 `核心工程师`
@@ -104,9 +84,11 @@ DuckPhp 默认加载了 DuckPhp\\Ext\\RouteHookRouteMap 插件。 实现了路�
 
 我们知道，路由重写是经常干的事情，比如  /res/{id} 这样的。
 
-DuckPhp 默认加了扩展插件，添加了两个选项
+DuckPhp 默认加了 `` 扩展插件，添加了两个选项
 
 这些设置在 选项 route_map 和 route_map_important 里设置个映射表.
+
+route_map_important  会在普通路由之前执行 ， route_map 在普通路由之后执行。
 
 映射表的 key 为有以下规则
 
@@ -147,9 +129,22 @@ return [
 
 ```
 
+如果开启 `route_map_auto_extend_method` 你可以用以下方法得到相应方法
+
 可以用 C::getRoutes();  得到路由表
 用 C::getParameters() 获取切片，对地址重写有效。
 如果要做权限判断 构造函数里 C::getRouteCallingMethod() 获取当前调用方法。
+
+选项
+
+- 'route_map' => array ( ),
+    路由映射
+- 'route_map_auto_extend_method' => false,
+    是否扩充方法至助手类
+- 'route_map_by_config_name' => '',
+    路由配置名，使用配置模式用路由
+- 'route_map_important' => array ( ),
+    重要路由映射
 
 ## 无 PATH_INFO 的路由
 
@@ -174,10 +169,6 @@ $options['path_info_compact_class_key'] = "";
 - 'path_info_compact_class_key' => '', GET 模式类名的 key
 - 'path_info_compact_enable' => false, 使用 _GET 模拟无 PathInfo 配置
 
-## 其他路由模式
-
-路由重写，目录模式路由等，都是由路由钩子来完成。参见扩展
-
 ## 默认路由生命周期
 
 run 函数。
@@ -191,3 +182,8 @@ run 函数。
 默认路由：获得默认回调 。执行默认回调 defaultGetRouteCallback
 获取默认类
 创建实例 获取要调用的方法 getMethodToCall调用类方法
+
+## 高级内容：制作路由钩子
+
+...
+

@@ -291,6 +291,9 @@ XpCall($callback, ...$args)
 
     【其他】见 BusinessHelper 的 XpCall 介绍
 ### 系统替代
+
+系统替代静态方法和系统函数一样的参数。为了兼容不同平台，如 CLI, workerman,swoole 使用这些函数替代。
+
 header()
 
     【系统替代】 header 函数以兼容命令行模式
@@ -408,7 +411,7 @@ CallException($ex)
 
     调用异常处理，一般也不用，而是看异常处理那章
 
-### 其 DuckPhp 类自带的非助手函数静态方法
+## 其他 DuckPhp 类自带的非助手函数静态方法
 
 这些函数都是内部调用。
 

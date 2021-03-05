@@ -87,7 +87,7 @@ class HttpServer
         $this->options = array_replace_recursive($this->options, $options);
         $this->host = $this->options['host'];
         $this->port = $this->options['port'];
-        $this->args = $this->parseCaptures($this->cli_options);
+        $this->args = $this->parseCaptures($this->cli_options); // TODO remove
         
         $this->docroot = rtrim($this->options['path'] ?? '', '/').'/'.$this->options['path_document'];
         

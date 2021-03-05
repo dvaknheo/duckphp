@@ -8,12 +8,10 @@ DuckPhp 扩展的加载是通过选项里添加
 $options['ext']数组实现的
 
     扩展映射 ,$ext_class => $my_options。
-    
     $ext_class 为扩展的类名，如果找不到扩展类则不启用。
-    
     $ext_class 满足组件接口。在初始化的时候会被调用。
     $ext_class->init(array $options,$context=null);
-    
+
     如果 $my_options。 为  false 则不启用，
     如果 $my_options。 为 true ，则会把当前 $options 传递进去。
     如果 $my_options。 为 字符串 ，则会映射到 $optioins[$my_options]。
@@ -54,7 +52,7 @@ $context->extendComponents(
 );
 ```
 
-## 默认没启用的扩展
+## 默认扩展
 
 
 
@@ -65,7 +63,6 @@ $context->extendComponents(
 
 
 ### 按字母计
-
 * CallableView
 * EmptyView
 * JsonRpcExt
@@ -83,16 +80,16 @@ $context->extendComponents(
 
 扩展支持的文件
 
-#### CallableView
+### CallableView
 CallbableView 是用来代替 View 的一个扩展
 把 View 的视图文件都替换成了函数方法
 
-#### EmptyView
+### EmptyView
 EmptyView 替换 View ，效果是空，用来收集输出。
 
-#### RouteHookRewrite
+### RouteHookRewrite
 
-#### RouteHookDirecotoryMode ,
+### RouteHookDirecotoryMode ,
 
 
 
@@ -111,4 +108,10 @@ EmptyView 替换 View ，效果是空，用来收集输出。
 
 
 ### CallableView 函数方式的视图
+
+## Ext 下面非扩展组件但有用的类
+
+AppPluginTrait
+HookChain
+
 
