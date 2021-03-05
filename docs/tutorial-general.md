@@ -18,23 +18,21 @@ DuckPhp 代码里的 template 目录就是我们的工程目录示例。也是�
 ```text
 +---app                         // psr-4 标准的自动加载目录。
 |   +---Business                // 业务目录
+|           BaseBusiness.php    // 服务基类
 |   |       TestBusiness.php    // 测试 Business
 |   +---Controller              // 控制器目录
+|           BaseController.php  // 控制器基类
 |   |       Main.php            // 默认控制器
 |   +---Model                   // 模型放在里
+|           BaseModel.php       // 模型基类
 |   |       TestModel.php       // 测试模型
-|   +---Helper                  //助手类目录
-|   |       AppHelper.php       // 应用助手类
+|   +---Helper                  // 助手类目录
 |   |       BusinessHelper.php  // 服务助手类
 |   |       ControllerHelper.php// 控制器助手类
 |   |       ModelHelper.php     // 模型助手类
-|   |       ViewHelper.php      // 视图助手类
 |   \---System                  // 基类放在这里
 |           App.php             // 默认框架入口文件
-|           BaseController.php  // 控制器基类
 |           BaseException.php   // 系统错误基类
-|           BaseModel.php       // 模型基类
-|           BaseBusiness.php    // 服务基类
 +---config                      // 配置文件放这里
 |       config.php              // 配置，目前是空数组
 |       setting.sample.php      // 设置，去除敏感信息的模板

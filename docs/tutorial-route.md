@@ -169,7 +169,7 @@ $options['path_info_compact_class_key'] = "";
 - 'path_info_compact_class_key' => '', GET 模式类名的 key
 - 'path_info_compact_enable' => false, 使用 _GET 模拟无 PathInfo 配置
 
-## 默认路由生命周期
+## 默认路由生命周期`核心工程师`
 
 run 函数。
 
@@ -183,7 +183,7 @@ run 函数。
 获取默认类
 创建实例 获取要调用的方法 getMethodToCall调用类方法
 
-## 高级内容：制作路由钩子
+## 高级内容：制作路由钩子`核心工程师`
 
 ...
 

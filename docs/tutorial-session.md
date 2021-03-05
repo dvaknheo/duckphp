@@ -27,7 +27,7 @@ class SessionBusiness extends BaseService
     }
     public function getCurrentUser()
     {
-        $ret = App::SuperGloabl()->_SESSION['user'] ?? [];
+        $ret = $_SESSION['user'] ?? [];
         SessionBusinessException::ThrowOn(empty($ret), '请重新登录');
         
         return $ret;

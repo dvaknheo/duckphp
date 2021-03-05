@@ -63,6 +63,6 @@ ThroOn trait ::ThrowTo 就在这里用的
 
 
 依赖关系
-AppPluginTrait  依赖 Route , View , Configer,SuperGlobal
+AppPluginTrait  依赖 Route , View , Configer
 ///////////////////////// 
 //TODO 如何通讯？

@@ -62,21 +62,22 @@ $context->extendComponents(
 默认没启用的扩展列表如下
 
 
-### 按字母计
-* CallableView
-* EmptyView
-* JsonRpcExt
-* Misc
-* JsonView
-* MyFacadesAutoLoader
-* MyMiddlewareManager
-* RedisCache
-* RedisManager
-* RouteHookApiServer
-* RouteHookRewrite
-* RouteHookDirectoryMode
-* StaticReplacer
-* StrictCheck
+### 按字母顺序
+* [CallableView](ref/Ext-CallableView.md) 函数方式的视图
+* [EmptyView](ref/Ext-EmptyView.md) 替换 View ，效果是空，用来收集输出。
+* [JsonRpcExt](ref/Ext-JsonRpcExt.md)
+* [ExceptionWrapper](ref/Ext-ExceptionWrapper.md)
+* [JsonView](ref/Ext-JsonView.md)
+* [Misc](ref/Ext-Misc.md) 一些通用方法
+* [MyFacadesAutoLoader](ref/Ext-MyFacadesAutoLoader.md) Facade 门面
+* [MyMiddlewareManager](ref/Ext-MyMiddlewareManager.md)
+* [RedisCache](ref/Ext-RedisCache.md)
+* [RedisManager](ref/Ext-RedisManager.md)
+* [RouteHookApiServer](ref/Ext-RouteHookApiServer.md)
+* [RouteHookRewrite](ref/Ext-RouteHookRewrite.md)
+* [RouteHookDirectoryMode](ref/Ext-RouteHookDirectoryMode.md)
+* [StaticReplacer](ref/Ext-StaticReplacer.md)
+* [StrictCheck](ref/Ext-StrictCheck.md) 严格检查
 
 扩展支持的文件
 
@@ -87,11 +88,6 @@ CallbableView 是用来代替 View 的一个扩展
 ### EmptyView
 EmptyView 替换 View ，效果是空，用来收集输出。
 
-### RouteHookRewrite
-
-### RouteHookDirecotoryMode ,
-
-
 
 
 ### RedisManager  Redis 的一些扩展
@@ -99,15 +95,7 @@ EmptyView 替换 View ，效果是空，用来收集输出。
 
 ### JsonRpcExt
 
-### StrictCheck 严格检查
 
-### FacadesAutoLoader Facade 门面
-
-### Misc 一些通用方法
-
-
-
-### CallableView 函数方式的视图
 
 ## Ext 下面非扩展组件但有用的类
 

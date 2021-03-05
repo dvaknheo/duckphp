@@ -27,7 +27,7 @@ subgraph cluster_Core {
 
     ExtendableStaticCallTrait [label="ExtendableStaticCallTrait";shape=diamond];
     
-    ComponentInterface [label="ComponentBase";shape=note];
+    ComponentInterface [label="ComponentInterface";shape=note];
     ComponentBase [label="ComponentBase";shape=box3d];
     Functions [label="Functions"];
 
