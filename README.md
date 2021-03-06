@@ -510,6 +510,27 @@ namespace
     \MySpace\System\App::RunQuickly($options);
 }
 ```
+## nginx 配置
+这是我的 nginx 配置，如果在安装时候，欢迎反馈。
+毕竟一般配置好后都不会去动。出现什么安装问题会没特别在意
+
+
+```
+server {
+    root DUCKPHP_ROOT/template/public;
+    index index.php index.html index.htm;
+    
+    try_files $uri $uri/ /index.php$request_uri;
+    location ~ \.php {
+        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_index index.php;
+        fastcgi_split_path_info ^(.*\.php)(/.*)?$;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}
+```
 ## 架构图
 系统架构图
 
