@@ -10,6 +10,7 @@ use DuckPhp\Ext\AppPluginTrait;
 
 class App extends DuckPhp
 {
+    protected $is_plugin = false;
     use AppPluginTrait;
     
     //@override
@@ -28,8 +29,11 @@ class App extends DuckPhp
             //],
         ],
     ];
-
-
+    //
+    protected function onPluginModePrepare()
+    {
+        $this->is_plugin = true;
+    }
 //////////////////////
     
     public static $Sections = [];

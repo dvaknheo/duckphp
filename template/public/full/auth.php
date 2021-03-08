@@ -5,11 +5,17 @@
  */
 require_once __DIR__.'/../../../autoload.php';  // @DUCKPHP_HEADFILE
 $project_root = realpath(__DIR__).'/SimpleAuth/';
-require_once $project_root . 'Base/App.php';
+if (!class_exists(\SimpleAuth\Base\App::class)) {
+    \DuckPhp\DuckPhp::assignPathNamespace($project_root , "SimpleAuth\\"); 
+    \DuckPhp\DuckPhp::runAutoLoader();
+}
 
 $options = [
     'path' => $project_root,
     'path_namespace' => $project_root,
+    'ext'=>[
+        \SimpleAuth\Base\App::class => true,
+    ],
 ];
 
-\SimpleAuth\Base\App::RunQuickly($options);
+\DuckPhp\DuckPhp::RunQuickly($options);

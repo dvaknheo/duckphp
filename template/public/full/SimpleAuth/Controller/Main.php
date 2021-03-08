@@ -45,6 +45,7 @@ class Main
     }
     public function index()
     {
+        //TODO  首页，如果不是直接运行模式，则 404
         $url_reg = C::URL('register');
         $url_login = C::URL('login');
         C::Show(get_defined_vars(), 'main');
