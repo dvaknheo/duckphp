@@ -47,9 +47,9 @@ class RouteHookPathInfoCompat extends ComponentBase
         
         $path = (string) parse_url($path, PHP_URL_PATH);
 
-        if (strlen($path_info)) {
-            $path = substr($path, 0, 0 - strlen($path_info));
-        }
+        //if (strlen($path_info)) {
+        //    $path = substr($path, 0, 0 - strlen($path_info));
+        //}
         if ($url === null || $url === '') {
             return $path;
         }
@@ -67,7 +67,7 @@ class RouteHookPathInfoCompat extends ComponentBase
                 array_shift($blocks);
             }
         }
-        
+
         if ($path_info_compact_class_key) {
             $action = array_pop($blocks);
             $module = implode('/', $blocks);
