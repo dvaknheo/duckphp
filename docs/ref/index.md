@@ -44,43 +44,43 @@
         3. [SystemWrapperTrait](Core-SystemWrapperTrait.md) 替换系统同名函数的 trait
         4. [Logger](Core-Logger.md) 日志组件
 2. `Db` 目录，数据库目录
-   1. [DbAdvanceTrait](Db-DbAdvanceTrait.md)  这个 trait 增加了 Db类的高级功能
-   2. [DbInterface](Db-DbInterface.md) Db 类满足 DbInterface 接口
-   3. [Db](Db-Db.md) Db类
+    1. [DbAdvanceTrait](Db-DbAdvanceTrait.md)  这个 trait 增加了 Db类的高级功能
+    2. [DbInterface](Db-DbInterface.md) Db 类满足 DbInterface 接口
+    3. [Db](Db-Db.md) Db类
 3. **[DuckPhp](DuckPhp.md)** 入口类，加载了默认扩展的 DuckPhp 入口 ，扩展自 [DuckPhp\\Core\\App](Core-App.md)
 4. `Component` 目录，自带组件扩展，**默认加载的扩展**。按字母排序。
-   1. [Cache](Component-Cache.md) 缓存组件
-   2. **[Console](Component-Cache.md)** 命令行模式扩展组件
-   3. [Installer](Component-Installer.md) 安装器
-   4. [DuckPhpCommand](Component-DuckPhpCommand.md) DuckPhp 的默认指令组件
-   5. [DbManager](Component-DbManager.md) 数据库管理组件
-   6. [EventManager](Component-EventManager.md) 事件管理组件
-   7. [Pager](Component-Pager.md) 分页类
+    1. [AppPluginTrait](Component-AppPluginTrait.md)   这个Trait用于把独立工程 App 转成插件 
+    2. [Cache](Component-Cache.md) 缓存组件
+    3. **[Console](Component-Cache.md)** 命令行模式扩展组件
+    4. [Installer](Component-Installer.md) 安装器
+    5. [DuckPhpCommand](Component-DuckPhpCommand.md) DuckPhp 的默认指令组件
+    6. [DbManager](Component-DbManager.md) 数据库管理组件
+    7. [EventManager](Component-EventManager.md) 事件管理组件
+    8. [Pager](Component-Pager.md) 分页类
         1. [PagerInteface](Component-PagerInteface.md) 分页接口
-   8. **[RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)** 无程序路由设计模式组件
-   9. **[RouteHookRouteMap](Component-RouteHookRouteMap.md)** 路由映射组件
+    9. **[RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)** 无程序路由设计模式组件
+    10. **[RouteHookRouteMap](Component-RouteHookRouteMap.md)** 路由映射组件
 
 5. `Ext` 扩展目录，非默认加载的扩展。按字母排序。
-    1. [AppPluginTrait](Ext-AppPluginTrait.md)   这个Trait用于把独立工程 App 转成插件 
-    2. [CallableView](Ext-CallableView.md) 可接受函数调用的视图组件
-    3. [EmptyView](Ext-EmptyView.md) 空视图组件
-    4. [HookChain](Ext-HookChain.md) 把回调扩展成链的类
-    5. [HttpServerPlugin](Ext-HttpServerPlugin.md) TODO http 扩展插件
-    6. [JsonRpcExt](Ext-JsonRpcExt.md) Json 远程调用组件，把本地调用改为远程调用
+    1. [CallableView](Ext-CallableView.md) 可接受函数调用的视图组件
+    2. [EmptyView](Ext-EmptyView.md) 空视图组件
+    3. [HookChain](Ext-HookChain.md) 把回调扩展成链的类
+    4. [HttpServerPlugin](Ext-HttpServerPlugin.md) TODO http 扩展插件
+    5. [JsonRpcExt](Ext-JsonRpcExt.md) Json 远程调用组件，把本地调用改为远程调用
         1. [JsonRpcClientBase](Ext-JsonRpcClientBase.md)
-    7. [JsonView](Ext-JsonView.md) Json 视图组件
-    8. [Misc](Ext-Misc.md) 杂项功能组件
-    9. [MyFacadesAutoLoader](Ext-MyFacadesAutoLoader.md) 门面组件，不推荐
+    6. [JsonView](Ext-JsonView.md) Json 视图组件
+    7. [Misc](Ext-Misc.md) 杂项功能组件
+    8. [MyFacadesAutoLoader](Ext-MyFacadesAutoLoader.md) 门面组件，不推荐
         1. [MyFacadesBase](Ext-MyFacadesBase.md) 门面类的基类，不推荐
-    10. [MyMiddleware](Ext-MyMiddleware.md) 中间件，不推荐
-    11. [RedisCache](Ext-RedisSimpleCache.md) redis 缓存组件
-    12. [RedisManager](Ext-RedisManager.md) Redis管理器组件
-    13. [RouteHookDirectoryMode](Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件
-    14. [RouteHookManager](Ext-RouteHookManager.md) 路由钩子管理器
-    15. [RouteHookRewrite](Ext-RouteHookRewrite.md) 路由重写组件
-    16. [SimpleModel](Ext-SimpleModel.md) TODO 简单的模型基类
-    17. [StaticReplacer](Ext-StaticReplacer.md) 适配协程的语法替换写法类
-    18. [StrictCheck](Ext-StrictCheck.md) 严格检查模式组件
+    9. [MyMiddleware](Ext-MyMiddleware.md) 中间件，不推荐
+    10. [RedisCache](Ext-RedisSimpleCache.md) redis 缓存组件
+    11. [RedisManager](Ext-RedisManager.md) Redis管理器组件
+    12. [RouteHookDirectoryMode](Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件
+    13. [RouteHookManager](Ext-RouteHookManager.md) 路由钩子管理器
+    14. [RouteHookRewrite](Ext-RouteHookRewrite.md) 路由重写组件
+    15. [SimpleModel](Ext-SimpleModel.md) TODO 简单的模型基类
+    16. [StaticReplacer](Ext-StaticReplacer.md) 适配协程的语法替换写法类
+    17. [StrictCheck](Ext-StrictCheck.md) 严格检查模式组件
 6. `Helper` 目录，各种助手类。
     1. [HelperTrait](Helper-HelperTrait.md) 助手类公用 Trait
     2. [ControllerHelper](Helper-ControllerHelper.md) 控制器助手类

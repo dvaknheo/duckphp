@@ -116,6 +116,7 @@ subgraph cluster_HttpServer {
 subgraph cluster_Component {
 
     label = "[DuckPhp\\Component]";
+    AppPluginTrait [shape=Mdiamond;style=filled];
 
     Cache[shape="component"];
     Console[shape=Mdiamond;style=filled];
@@ -127,6 +128,11 @@ subgraph cluster_Component {
     PagerInterface [shape=note];
     RouteHookPathInfoCompat[shape="component"];
     RouteHookRouteMap[shape="component"];
+    
+    AppPluginTrait -> Configer [style="dashed"]; 
+    AppPluginTrait -> View [style="dashed"]; 
+    AppPluginTrait -> Route [style="dashed"]; 
+    
     Cache -> ComponentBase [style="dotted"];
     DuckPhpCommand -> ComponentBase [style="dotted"];
     DbManager -> ComponentBase [style="dotted"];
@@ -136,6 +142,8 @@ subgraph cluster_Component {
     RouteHookPathInfoCompat -> ComponentBase [style="dotted"];
     RouteHookRouteMap -> ComponentBase [style="dotted"];
 
+
+    
     /*Console -> DuckPhpCommand [style="invis"]; */
     DuckPhpCommand -> Console [style="dashed"]; 
     DuckPhpCommand -> Installer; 
@@ -234,10 +242,7 @@ subgraph cluster_Ext {
     SimpleModel ->Db_Db [style="dashed"];
     StrictCheck -> X_DbManager[style="solid"];
     
-    AppPluginTrait [shape=Mdiamond;style=filled];
-    AppPluginTrait -> X_Core_Configer;
-    AppPluginTrait -> X_Core_View;
-    AppPluginTrait -> X_Core_Route;
+
 
 
 }
