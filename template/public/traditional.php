@@ -90,7 +90,7 @@ function action_add()
 }
 function action_edit()
 {
-    $data = ['x' => 'add'];
+    $data = ['x' => 'edit'];
     $data['content'] = __h(get_data());
 
     __show($data);

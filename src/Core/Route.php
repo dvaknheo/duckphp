@@ -90,15 +90,9 @@ class Route extends ComponentBase
         }
         $namespace_controller = trim($namespace_controller, '\\');
         $this->namespace_prefix = $namespace_controller.'\\';
-        
-        $this->path_info = $_SERVER['PATH_INFO'] ?? '';
-        $this->request_method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
     }
     public function reset()
-    {
-        $this->path_info = $_SERVER['PATH_INFO'] ?? '';
-        $this->request_method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-        
+    {        
         $this->has_bind_server_data = true;
         $this->is_failed = false;
 
@@ -112,10 +106,9 @@ class Route extends ComponentBase
         if (!$this->has_bind_server_data) {
             $this->reset();
         }
-        $this->path_info = $path_info;
-        $_SERVER['PATH_INFO'] = $path_info;
+        $this->setPathInfo($path_info);
         if (isset($request_method)) {
-            $this->request_method = $request_method;
+            $_SERVER['REQUEST_METHOD'] = $request_method;
         }
         return $this;
     }
@@ -130,14 +123,14 @@ class Route extends ComponentBase
     {
         $this->beforeRun();
         foreach ($this->pre_run_hook_list as $callback) {
-            $flag = ($callback)($this->path_info);
+            $flag = ($callback)($this->getPathInfo());
             if ($flag) {
                 return $this->getRunResult();
             }
         }
         
         if ($this->enable_default_callback) {
-            $flag = $this->defaultRunRouteCallback($this->path_info);
+            $flag = $this->defaultRunRouteCallback($this->getPathInfo());
             if ($flag && (!$this->is_failed)) {
                 return $this->getRunResult();
             }
@@ -146,7 +139,7 @@ class Route extends ComponentBase
         }
         
         foreach ($this->post_run_hook_list as $callback) {
-            $flag = ($callback)($this->path_info);
+            $flag = ($callback)($this->getPathInfo());
             if ($flag) {
                 return $this->getRunResult();
             }
@@ -293,11 +286,10 @@ class Route extends ComponentBase
             return null;
         }
         if (($this->options['controller_use_singletonex'] || $this->options['controller_stop_g_method']) && $method === 'G') {
-            //这里也要修改
             $this->route_error = 'can not call G()';
             return null;
         }
-        if ($this->options['controller_prefix_post'] && $this->request_method === 'POST' && method_exists($object, $this->options['controller_prefix_post'].$method)) {
+        if ($this->options['controller_prefix_post'] && $_SERVER['REQUEST_METHOD'] === 'POST' && method_exists($object, $this->options['controller_prefix_post'].$method)) {
             $method = $this->options['controller_prefix_post'].$method;
         }
         if ($this->options['controller_methtod_for_miss']) {
@@ -328,11 +320,10 @@ trait Route_Helper
     ////
     public function getPathInfo()
     {
-        return $this->path_info;
+        return $_SERVER['PATH_INFO'];
     }
     public function setPathInfo($path_info)
     {
-        $this->path_info = $path_info;
         $_SERVER['PATH_INFO'] = $path_info;
     }
     public function getParameters()
@@ -383,10 +374,6 @@ trait Route_Helper
 }
 trait Route_UrlManager
 {
-    //protected $path_info = '';  // shared
-    protected $script_filename = null; // need a setter
-    protected $document_root = null;   // need a setter
-    
     protected $url_handler = null;
     public static function Url($url = null)
     {
@@ -399,16 +386,12 @@ trait Route_UrlManager
         }
         return $this->defaultUrlHandler($url);
     }
-    public function defaultUrlHandler($url = null)
+    protected function getBasePath()
     {
-        if (isset($url) && strlen($url) > 0 && substr($url, 0, 1) === '/') {
-            return $url;
-        }
-        
         //get basepath.
-        $document_root = rtrim($this->document_root ?? $_SERVER['DOCUMENT_ROOT'], '/');
-        $basepath = substr(rtrim($this->script_filename ?? $_SERVER['SCRIPT_FILENAME'], '/'), strlen($document_root));
-        
+        $document_root = rtrim($_SERVER['DOCUMENT_ROOT'], '/');
+        $basepath = substr(rtrim($_SERVER['SCRIPT_FILENAME'], '/'), strlen($document_root));
+
         /* something wrong ?
         if (substr($basepath, -strlen('/index.php'))==='/index.php') {
             $basepath=substr($basepath, 0, -strlen('/index.php'));
@@ -417,17 +400,27 @@ trait Route_UrlManager
         if ($basepath === '/index.php') {
             $basepath = '/';
         }
+        
+        return $basepath;
+    }
+    public function defaultUrlHandler($url = null)
+    {
+        if (isset($url) && strlen($url) > 0 && substr($url, 0, 1) === '/') {
+            return $url;
+        }
+        $basepath = $this->getBasePath();
+        $path_info = $this->getPathInfo();
+        
         if ('' === $url) {
             return $basepath;
         }
         if (isset($url) && '?' === substr($url, 0, 1)) {
-            $path_info = $_SERVER['PATH_INFO'] ?? $this->path_info;
             return $basepath.$path_info.$url;
         }
         if (isset($url) && '#' === substr($url, 0, 1)) {
-            $path_info = $_SERVER['PATH_INFO'] ?? $this->path_info;
             return $basepath.$path_info.$url;
         }
+        
         // ugly.
         $basepath = rtrim($basepath, '/');
         $url = '/'.$url;
