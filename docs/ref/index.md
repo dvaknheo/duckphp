@@ -103,6 +103,7 @@ export LC_ALL='C';tree src
 
 src
 |-- Component
+|   |-- AppPluginTrait.php
 |   |-- Cache.php
 |   |-- Console.php
 |   |-- DbManager.php
@@ -134,7 +135,6 @@ src
 |   `-- DbInterface.php
 |-- DuckPhp.php
 |-- Ext
-|   |-- AppPluginTrait.php
 |   |-- CallableView.php
 |   |-- EmptyView.php
 |   |-- ExceptionWrapper.php

@@ -205,7 +205,6 @@ subgraph cluster_Ext {
     StaticReplacer [shape="component"];
     StrictCheck[shape="component"];
 
-    X_Core_Configer[label="DuckPhp\\Core\\Configer",shape="rarrow"];
     X_Core_Route[label="DuckPhp\\Core\\Route",shape="rarrow"];
     X_Core_View[label="DuckPhp\\Core\\View",shape="rarrow"];
     X_DbManager[label="DuckPhp\\Component\\DbManager",shape="rarrow"];
