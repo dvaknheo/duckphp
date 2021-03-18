@@ -4,6 +4,7 @@ namespace tests\DuckPhp\Component;
 use DuckPhp\Component\RouteHookPathInfoCompat;
 use DuckPhp\Core\App;
 use DuckPhp\Core\Route;
+use DuckPhp\Component\SuperGlobalContext;
 
 class RouteHookPathInfoCompatTest extends \PHPUnit\Framework\TestCase
 {
@@ -17,6 +18,7 @@ class RouteHookPathInfoCompatTest extends \PHPUnit\Framework\TestCase
             'controller_welcome_class'=> 'RouteHookPathInfoCompatTestMain',
 
         ];
+        
         Route::G(new Route())->init($route_options);
         App::G()->init([]);
         $options=[
@@ -77,6 +79,15 @@ if(true){
         
                         RouteHookPathInfoCompat::G()->isInited();
 
+SuperGlobalContext::DefineSuperGlobalContext();
+Route::G()->bind('Missed','POST');
+        Route::G()->run();
+        
+        var_dump(RouteHookPathInfoCompat::URL('index.php/bb?cc=dd&m=abc'));
+        var_dump(RouteHookPathInfoCompat::URL('aa/bb?cc=dd&m=abc'));
+        var_dump(RouteHookPathInfoCompat::URL('aa/bb?cc=dd&m='));
+        
+        
         \LibCoverage\LibCoverage::End();
         /*
         RouteHookPathInfoCompat::G()->init($options=[], $context=null);

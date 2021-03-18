@@ -2,6 +2,7 @@
 namespace tests\DuckPhp\Ext;
 
 use DuckPhp\Ext\RouteHookRewrite;
+use DuckPhp\Component\SuperGlobalContext;
 use DuckPhp\Core\Route;
 use DuckPhp\DuckPhp;
 
@@ -39,7 +40,12 @@ class RouteHookRewriteTest extends \PHPUnit\Framework\TestCase
         echo "-----------xxxxxxxxxxxxxxxxxxxxx-----\n";
         RouteHookRewrite::G()->filteRewrite('k/v?a=b&g=h');
 
-                        RouteHookRewrite::G()->isInited();
+        RouteHookRewrite::G()->isInited();
+        
+        SuperGlobalContext::DefineSuperGlobalContext();
+        
+        Route::G()->bind('/article/3/4')->run();
+
 
         \LibCoverage\LibCoverage::End();
     }

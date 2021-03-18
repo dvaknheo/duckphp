@@ -60,6 +60,7 @@
         1. [PagerInteface](Component-PagerInteface.md) 分页接口
     9. **[RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)** 无程序路由设计模式组件
     10. **[RouteHookRouteMap](Component-RouteHookRouteMap.md)** 路由映射组件
+    11. [SuperGlobalContext](Component-SuperGlobalContext.md) 超全局上下文组件
 
 5. `Ext` 扩展目录，非默认加载的扩展。按字母排序。
     1. [CallableView](Ext-CallableView.md) 可接受函数调用的视图组件

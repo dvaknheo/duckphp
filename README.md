@@ -560,17 +560,18 @@ DuckPhp 类/文件结构参考。(粗体部分是启动的时候引用的文件)
    3. [Db](docs/ref/Db-Db.md) Db类
 3. **[DuckPhp](docs/ref/DuckPhp.md)** 入口类，加载了默认扩展的 DuckPhp 入口 ，扩展自 [DuckPhp\\Core\\App](docs/ref/Core-App.md)
 4. `Component` 目录，自带组件扩展。
-   1. [AppPluginTrait](docs/ref/Component-AppPluginTrait.md)   这个Trait用于把独立工程 App 转成插件 
-   2. [Cache](docs/ref/Component-Cache.md) 缓存组件
-   3. **[Console](docs/ref/Component-Cache.md)** 命令行模式扩展组件
-   4. [Installer](docs/ref/Component-Installer.md) 安装器
-   5. [DuckPhpCommand](docs/ref/Component-DuckPhpCommand.md) DuckPhp 的默认指令组件
-   6. [DbManager](docs/ref/Component-DbManager.md) 数据库管理组件
-   7. [EventManager](docs/ref/Component-EventManager.md) 事件管理组件
-   8. [Pager](docs/ref/Component-Pager.md) 分页类
+    1. [AppPluginTrait](docs/ref/Component-AppPluginTrait.md)   这个Trait用于把独立工程 App 转成插件 
+    2. [Cache](docs/ref/Component-Cache.md) 缓存组件
+    3. **[Console](docs/ref/Component-Cache.md)** 命令行模式扩展组件
+    4. [Installer](docs/ref/Component-Installer.md) 安装器
+    5. [DuckPhpCommand](docs/ref/Component-DuckPhpCommand.md) DuckPhp 的默认指令组件
+    6. [DbManager](docs/ref/Component-DbManager.md) 数据库管理组件
+    7. [EventManager](docs/ref/Component-EventManager.md) 事件管理组件
+    8. [Pager](docs/ref/Component-Pager.md) 分页类
         1. [PagerInteface](docs/ref/Component-PagerInteface.md) 分页接口
-   9. **[RouteHookPathInfoCompat](docs/ref/Component-RouteHookPathInfoCompat.md)** 无程序路由设计模式组件
-   10. **[RouteHookRouteMap](docs/ref/Component-RouteHookRouteMap.md)** 路由映射组件
+    9. **[RouteHookPathInfoCompat](docs/ref/Component-RouteHookPathInfoCompat.md)** 无程序路由设计模式组件
+    10. **[RouteHookRouteMap](docs/ref/Component-RouteHookRouteMap.md)** 路由映射组件
+    11. [SuperGlobalContext](docs/ref/Component-SuperGlobalContext.md) 超全局上下文组件
 
 5. `Ext` 扩展目录，非默认加载的扩展。按字母排序。
     1. [CallableView](docs/ref/Ext-CallableView.md) 可接受函数调用的视图组件

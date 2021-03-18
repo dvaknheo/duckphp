@@ -110,7 +110,7 @@ class Route extends ComponentBase
         if (isset($request_method)) {
             $_SERVER['REQUEST_METHOD'] = $request_method;
             if (defined('__SUPERGLOBAL_CONTEXT')) {
-                (__SUPERGLOBAL_CONTEXT)()->_SERVER = _SERVER;
+                (__SUPERGLOBAL_CONTEXT)()->_SERVER = $_SERVER;
             }
         }
         return $this;

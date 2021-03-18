@@ -8,13 +8,15 @@ use DuckPhp\Core\View;
 use DuckPhp\Core\Route;
 use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckPhp\Component\Pager;
+use DuckPhp\Component\SuperGlobalContext;
 
 class AppTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(App::class);
-    
+        SuperGlobalContext::DefineSuperGlobalContext();
+        
         $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(App::class);
         $path_config=\LibCoverage\LibCoverage::G()->getClassTestPath(Configer::class);
         
@@ -164,6 +166,9 @@ App::PageHtml(123);
         App::REQUEST();
         App::COOKIE();
         App::SERVER();
+        App::SESSION();
+        App::FILES();
+        
         App::Route();
         
         

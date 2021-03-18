@@ -4,6 +4,7 @@ namespace tests\DuckPhp\Core
 
 use DuckPhp\Core\Route;
 use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Component\SuperGlobalContext;
 
 class RouteTest extends \PHPUnit\Framework\TestCase
 {
@@ -29,6 +30,8 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         $_SERVER['argv']=[ __FILE__ ,'about/me' ];
         $_SERVER['argc']=count($_SERVER['argv']);
         
+        
+
         //First Run;
         $flag=Route::RunQuickly($options);
         Route::G()->getParameters();
@@ -165,6 +168,12 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->defaultGetRouteCallback('/Main/G');
         Route::G()->defaultGetRouteCallback('/Main/MyStatic');
         
+        
+        SuperGlobalContext::DefineSuperGlobalContext();
+        Route::G()->bind('Main/index','POST');
+        Route::G()->run();
+        Route::G()->setPathInfo('xx');
+
         \LibCoverage\LibCoverage::End();
         return;
     }

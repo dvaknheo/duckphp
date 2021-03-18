@@ -892,31 +892,31 @@ trait Core_SuperGlobal
 {
     public static function GET($key = null, $default = null)
     {
-        return static::G()->_Get();
+        return static::G()->_Get($key, $default);
     }
     public static function POST($key = null, $default = null)
     {
-        return static::G()->_POST();
+        return static::G()->_POST($key, $default);
     }
     public static function REQUEST($key = null, $default = null)
     {
-        return static::G()->_REQUEST();
+        return static::G()->_REQUEST($key, $default);
     }
     public static function COOKIE($key = null, $default = null)
     {
-        return static::G()->_COOKIE();
+        return static::G()->_COOKIE($key, $default);
     }
     public static function SERVER($key = null, $default = null)
     {
-        return static::G()->_SERVER();
+        return static::G()->_SERVER($key, $default);
     }
     public static function SESSION($key = null, $default = null)
     {
-        return static::G()->_SESSION();
+        return static::G()->_SESSION($key, $default);
     }
     public static function FILES($key = null, $default = null)
     {
-        return static::G()->_FILES();
+        return static::G()->_FILES($key, $default);
     }
     protected function getSuperGlobalData($superglobal_key, $key, $default)
     {

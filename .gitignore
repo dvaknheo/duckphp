@@ -2,3 +2,4 @@
 /test_coveragedumps
 /nbproject
 *.cache
+/vendor

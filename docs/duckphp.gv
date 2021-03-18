@@ -128,6 +128,8 @@ subgraph cluster_Component {
     PagerInterface [shape=note];
     RouteHookPathInfoCompat[shape="component"];
     RouteHookRouteMap[shape="component"];
+    SuperGlobalContext[shape="component"];
+    X_ComponentBase[label="DuckPhp\\Core\\ComponentBase",shape="rarrow"];
     
     AppPluginTrait -> Configer [style="dashed"]; 
     AppPluginTrait -> View [style="dashed"]; 
@@ -141,10 +143,10 @@ subgraph cluster_Component {
     Pager -> ComponentBase [style="dotted"];
     RouteHookPathInfoCompat -> ComponentBase [style="dotted"];
     RouteHookRouteMap -> ComponentBase [style="dotted"];
+    SuperGlobalContext -> X_ComponentBase [style="dotted"];
 
 
     
-    /*Console -> DuckPhpCommand [style="invis"]; */
     DuckPhpCommand -> Console [style="dashed"]; 
     DuckPhpCommand -> Installer; 
     DuckPhpCommand -> HttpServer [style="dashed"]; 
@@ -238,7 +240,7 @@ subgraph cluster_Ext {
     JsonRpcClientBase -> ComponentBase [style="dotted"];
     JsonView -> X_Core_View[style="solid"];
 
-    SimpleModel ->Db_Db [style="dashed"];
+    /* SimpleModel ->Db_Db [style="dashed"]; */
     StrictCheck -> X_DbManager[style="solid"];
     
 
