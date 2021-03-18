@@ -21,10 +21,12 @@ class Pager extends ComponentBase implements PagerInterface
     
     protected function getDefaultUrl()
     {
+        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         return $_SERVER['REQUEST_URI'] ?? '';
     }
     protected function getDefaultPageNo()
     {
+        $_GET = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_GET : $_GET;
         return $_GET[$this->options['page_key']] ?? 1;
     }
     ////////////////////////

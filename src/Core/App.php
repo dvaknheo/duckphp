@@ -43,6 +43,7 @@ class App extends ComponentBase
     use Core_SystemWrapper;
     use Core_Glue;
     use Core_NotImplemented;
+    use Core_SuperGlobal;
     use Core_Component;
     
     // for trait
@@ -599,6 +600,7 @@ trait Core_Helper
     }
     public function _Domain()
     {
+        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         $scheme = $_SERVER['REQUEST_SCHEME'] ?? '';
         $host = $_SERVER['HTTP_HOST'] ?? ($_SERVER['SERVER_NAME'] ?? ($_SERVER['SERVER_ADDR'] ?? ''));
         $host = $host ?? '';
@@ -885,45 +887,74 @@ trait Core_Glue
     {
         return ExceptionManager::G()->_CallException($ex);
     }
+}
+trait Core_SuperGlobal
+{
     public static function GET($key = null, $default = null)
     {
-        if (isset($key)) {
-            return $_GET[$key] ?? $default;
-        } else {
-            return $_GET ?? $default;
-        }
+        return static::G()->_Get();
     }
     public static function POST($key = null, $default = null)
     {
-        if (isset($key)) {
-            return $_POST[$key] ?? $default;
-        } else {
-            return $_POST ?? $default;
-        }
+        return static::G()->_POST();
     }
     public static function REQUEST($key = null, $default = null)
     {
-        if (isset($key)) {
-            return $_REQUEST[$key] ?? $default;
-        } else {
-            return $_REQUEST ?? $default;
-        }
+        return static::G()->_REQUEST();
     }
     public static function COOKIE($key = null, $default = null)
     {
-        if (isset($key)) {
-            return $_COOKIE[$key] ?? $default;
-        } else {
-            return $_COOKIE ?? $default;
-        }
+        return static::G()->_COOKIE();
     }
     public static function SERVER($key = null, $default = null)
     {
+        return static::G()->_SERVER();
+    }
+    public static function SESSION($key = null, $default = null)
+    {
+        return static::G()->_SESSION();
+    }
+    public static function FILES($key = null, $default = null)
+    {
+        return static::G()->_FILES();
+    }
+    protected function getSuperGlobalData($superglobal_key, $key, $default)
+    {
+        $data = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->$superglobal_key : $GLOBALS[$superglobal_key];
+        
         if (isset($key)) {
-            return $_SERVER[$key] ?? $default;
+            return $data[$key] ?? $default;
         } else {
-            return $_SERVER ?? $default;
+            return $data ?? $default;
         }
+    }
+    public function _GET($key = null, $default = null)
+    {
+        return $this->getSuperGlobalData('_GET', $key, $default);
+    }
+    public function _POST($key = null, $default = null)
+    {
+        return $this->getSuperGlobalData('_POST', $key, $default);
+    }
+    public function _REQUEST($key = null, $default = null)
+    {
+        return $this->getSuperGlobalData('_REQUEST', $key, $default);
+    }
+    public function _COOKIE($key = null, $default = null)
+    {
+        return $this->getSuperGlobalData('_COOKIE', $key, $default);
+    }
+    public function _SERVER($key = null, $default = null)
+    {
+        return $this->getSuperGlobalData('_SERVER', $key, $default);
+    }
+    public function _SESSION($key = null, $default = null)
+    {
+        return $this->getSuperGlobalData('_SESSION', $key, $default);
+    }
+    public function _FILES($key = null, $default = null)
+    {
+        return $this->getSuperGlobalData('_FILES', $key, $default);
     }
 }
 trait Core_Component

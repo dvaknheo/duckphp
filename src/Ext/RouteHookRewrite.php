@@ -136,12 +136,21 @@ class RouteHookRewrite extends ComponentBase
         $path = parse_url($url, PHP_URL_PATH);
         $input_get = [];
         parse_str((string) parse_url($url, PHP_URL_QUERY), $input_get);
+        
+        
+        
         $_SERVER['init_get'] = $_GET;
         $_GET = $input_get;
+        
+        if (defined('__SUPERGLOBAL_CONTEXT')) {
+            (__SUPERGLOBAL_CONTEXT)()->_SERVER = $_SERVER;
+            (__SUPERGLOBAL_CONTEXT)()->_GET = $_GET;
+        }
     }
     protected function doHook($path_info)
     {
         $path_info = ltrim($path_info, '/');
+        $_GET = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_GET : $_GET;
         $query = $_GET;
         $query = $query?'?'.http_build_query($query):'';
         

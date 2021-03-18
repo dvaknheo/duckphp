@@ -92,7 +92,7 @@ class Route extends ComponentBase
         $this->namespace_prefix = $namespace_controller.'\\';
     }
     public function reset()
-    {        
+    {
         $this->has_bind_server_data = true;
         $this->is_failed = false;
 
@@ -109,6 +109,9 @@ class Route extends ComponentBase
         $this->setPathInfo($path_info);
         if (isset($request_method)) {
             $_SERVER['REQUEST_METHOD'] = $request_method;
+            if (defined('__SUPERGLOBAL_CONTEXT')) {
+                (__SUPERGLOBAL_CONTEXT)()->_SERVER = _SERVER;
+            }
         }
         return $this;
     }
@@ -289,6 +292,8 @@ class Route extends ComponentBase
             $this->route_error = 'can not call G()';
             return null;
         }
+        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+        $_SERVER['REQUEST_METHOD'] = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         if ($this->options['controller_prefix_post'] && $_SERVER['REQUEST_METHOD'] === 'POST' && method_exists($object, $this->options['controller_prefix_post'].$method)) {
             $method = $this->options['controller_prefix_post'].$method;
         }
@@ -320,11 +325,15 @@ trait Route_Helper
     ////
     public function getPathInfo()
     {
-        return $_SERVER['PATH_INFO'];
+        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+        return $_SERVER['PATH_INFO'] ?? '';
     }
     public function setPathInfo($path_info)
     {
         $_SERVER['PATH_INFO'] = $path_info;
+        if (defined('__SUPERGLOBAL_CONTEXT')) {
+            (__SUPERGLOBAL_CONTEXT)()->_SERVER = $_SERVER;
+        }
     }
     public function getParameters()
     {
@@ -388,6 +397,7 @@ trait Route_UrlManager
     }
     protected function getBasePath()
     {
+        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         //get basepath.
         $document_root = rtrim($_SERVER['DOCUMENT_ROOT'], '/');
         $basepath = substr(rtrim($_SERVER['SCRIPT_FILENAME'], '/'), strlen($document_root));

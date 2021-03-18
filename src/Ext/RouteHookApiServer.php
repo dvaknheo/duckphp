@@ -113,8 +113,10 @@ class RouteHookApiServer extends ComponentBase
     protected function getInputs($path_info)
     {
         if (($this->context_class)::IsDebug()) {
+            $_REQUEST = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_REQUEST : $_REQUEST;
             $inputs = $_REQUEST;
         } else {
+            $_POST = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_POST : $_POST;
             $inputs = $_POST;
         }
         return $inputs;
