@@ -64,19 +64,19 @@ class ComponentBase implements ComponentInterface
     {
     }
     //helper
-    protected function getComponenetPathByKey($path_key): string
+    protected function getComponenetPathByKey($path_key, $path_key_parent = 'path'): string
     {
         if (DIRECTORY_SEPARATOR === '/') {
             if (substr($this->options[$path_key], 0, 1) === '/') {
                 return rtrim($this->options[$path_key], '/').'/';
             } else {
-                return $this->options['path'].rtrim($this->options[$path_key], '/').'/';
+                return $this->options[$path_key_parent].rtrim($this->options[$path_key], '/').'/';
             }
         } else { // @codeCoverageIgnoreStart
             if (substr($this->options[$path_key], 1, 1) === ':') {
                 return rtrim($this->options[$path_key], '\\').'\\';
             } else {
-                return $this->options['path'].rtrim($this->options[$path_key], '\\').'\\';
+                return $this->options[$path_key_parent].rtrim($this->options[$path_key], '\\').'\\';
             } // @codeCoverageIgnoreEnd
         }
     }

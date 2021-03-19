@@ -9,7 +9,7 @@ use DuckPhp\Core\ComponentBase;
 
 class SuperGlobalContext extends ComponentBase
 {
-    public $options  = [
+    public $options = [
         'superglobal_auto_extend_method' => false,
         'superglobal_auto_define' => false,
     ];
@@ -34,7 +34,7 @@ class SuperGlobalContext extends ComponentBase
     }
     protected function initContext(object $context)
     {
-        $this->context_class = get_class($context);
+        //$this->context_class = get_class($context);
         //////////////////////////
         if ($this->options['superglobal_auto_extend_method'] && \method_exists($context, 'extendComponents')) {
             $context->extendComponents(
@@ -49,8 +49,8 @@ class SuperGlobalContext extends ComponentBase
     
     public static function DefineSuperGlobalContext()
     {
-        if(!defined('__SUPERGLOBAL_CONTEXT')){
-            define('__SUPERGLOBAL_CONTEXT',static::class .'::G');
+        if (!defined('__SUPERGLOBAL_CONTEXT')) {
+            define('__SUPERGLOBAL_CONTEXT', static::class .'::G');
             return true;
         }
         return false;
@@ -84,5 +84,22 @@ class SuperGlobalContext extends ComponentBase
         $_COOKIE = $this->_COOKIE;
         $_SESSION = $this->_SESSION;
         $_FILES = $this->_FILES;
+    }
+    //////////////////////
+    public static function LoadSuperGlobal($key)
+    {
+        return static::G()->_LoadSuperGlobal($key);
+    }
+    public static function SaveSuperGlobal($key)
+    {
+        return static::G()->_SaveSuperGlobal($key);
+    }
+    public function _LoadSuperGlobal($key)
+    {
+        $this->$key = $GLOBALS[$key];
+    }
+    public function _SaveSuperGlobal($key)
+    {
+        $GLOBALS[$key] = $this->$key;
     }
 }

@@ -26,9 +26,9 @@ class DuckPhpCommand extends ComponentBase
         Installer::G()->init(Console::G()->getCliParameters())->run();
     }
     /**
-     * start inner server.
+     * run inner server.
      */
-    public function command_start()
+    public function command_run()
     {
         $options = Console::G()->getCliParameters();
         $options['path'] = $this->context_class::G()->options['path'];

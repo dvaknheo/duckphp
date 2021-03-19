@@ -15,7 +15,8 @@ class SuperGlobalContextTest extends \PHPUnit\Framework\TestCase
         SuperGlobalContext::DefineSuperGlobalContext();
         SuperGlobalContext::LoadSuperGlobalAll();
         SuperGlobalContext::SaveSuperGlobalAll();
-
+        SuperGlobalContext::LoadSuperGlobal('_SERVER');
+        SuperGlobalContext::SaveSuperGlobal('_SERVER');
         SuperGlobalContext::G()->_SERVER;
         
         SuperGlobalContext::G()->init([

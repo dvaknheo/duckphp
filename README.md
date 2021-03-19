@@ -22,7 +22,7 @@ php ./duckphp-project run
 composer require dvaknheo/duckphp # 用 require 
 ./vendor/bin/duckphp new --help   # 查看有什么指令
 ./vendor/bin/duckphp new    # 创建工程
-./vendor/bin/duckphp start    # --host=127.0.0.1 --port=9527 # 开始 web 服务器
+./vendor/bin/duckphp run    # --host=127.0.0.1 --port=9527 # 开始 web 服务器
 ```
 不建议使用命令行的 web 服务器， 你把 nginx 或 apache 的 document_root 设置为  public 目录按常规框架调整即可。
 

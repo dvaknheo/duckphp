@@ -46,6 +46,8 @@ trait AppPluginTrait
             'plugin_files_config' => [],
             'plugin_view_options' => [],
             'plugin_route_options' => [],
+            'plugin_component_class_view' => '',
+            'plugin_component_class_route' => '',
         ];
         $this->plugin_options = array_replace_recursive($plugin_options_default, $this->plugin_options ?? []);
         
@@ -201,8 +203,11 @@ trait AppPluginTrait
         $this->plugin_view_old = View::G();
         $this->plugin_route_old = Route::G();
         
-        View::G(new View());
-        Route::G(new Route());
+        // 这里的要可
+        $view_class = $this->plugin_options['plugin_component_class_view'] ? : View::class;
+        $route_class = $this->plugin_options['plugin_component_class_route'] ? : Route::class;
+        View::G(new $view_class());
+        Route::G(new $route_class());
     }
     protected function pluginModeBeforeRun()
     {

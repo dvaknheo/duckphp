@@ -66,8 +66,7 @@ class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
         Installer::G(new Console_Installer());
         HttpServer::G(new Console_HttpServer());
         DuckPhpCommand::G()->command_new();
-
-        DuckPhpCommand::G()->command_start();
+        DuckPhpCommand::G()->command_run();
         DuckPhpCommand::G()->command_help();
         DuckPhpCommand::G()->command_version();
         
@@ -103,7 +102,7 @@ class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
         App::G(new App());
         DuckPhpCommand_App::G()->options['error_404']=function(){debug_print_backtrace(2);};
         $_SERVER['argv']=[
-            '-','start', '--override-class=tests/DuckPhp/Component/DuckPhpCommand_HttpServer',
+            '-','run', '--override-class=tests/DuckPhp/Component/DuckPhpCommand_HttpServer',
         ];
         try{
         DuckPhpCommand_App::G()->init([])->run();
