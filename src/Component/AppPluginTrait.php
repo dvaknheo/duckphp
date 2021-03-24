@@ -8,6 +8,7 @@ namespace DuckPhp\Component;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\View;
+use DuckPhp\Core\App;
 
 trait AppPluginTrait
 {
@@ -36,6 +37,7 @@ trait AppPluginTrait
             'plugin_namespace' => null,
             'plugin_path_conifg' => 'config',
             'plugin_path_view' => 'view',
+            'plugin_path_document' => '../public',
             'plugin_url_prefix' => '',
             
             'plugin_routehook_position' => 'append-outter',
@@ -48,6 +50,8 @@ trait AppPluginTrait
             'plugin_route_options' => [],
             'plugin_component_class_view' => '',
             'plugin_component_class_route' => '',
+            
+            'plugin_enable_readfile' =>false,
         ];
         $this->plugin_options = array_replace_recursive($plugin_options_default, $this->plugin_options ?? []);
         
@@ -194,16 +198,39 @@ trait AppPluginTrait
         $this->onPluginModeBeforeRun();
         
         $flag = Route::G()->run();
+        if(!$flag && $this->plugin_options['plugin_enable_readfile']){
+            $flag = $this->pluginModeReadFile($path_info);
+            if ($flag) {
+                return true;
+            }
+        }
         $this->onPluginModeRun();
         $this->pluginModeClear();
         return $flag;
+    }
+    protected function pluginModeReadFile($path_info)
+    {
+        $path_document = realpath($this->plugin_options['plugin_path_namespace'].$this->plugin_options['plugin_path_document']);
+        $file = urldecode(substr($path_info,strlen($this->plugin_options['plugin_url_prefix'])));
+        if (strpos($file,'../')) {
+            return false;
+        }
+        if (strtolower(substr($file,-4))==='.php') {
+            return false;
+        }
+        $file = $path_document.$file;
+        if(!is_file($file)){
+            return false;
+        }
+        App::header('Content-Type: '.mime_content_type($file)); // :(
+        echo file_get_contents($file);
+        return true;
     }
     protected function pluginModeReplaceComponent()
     {
         $this->plugin_view_old = View::G();
         $this->plugin_route_old = Route::G();
         
-        // 这里的要可
         $view_class = $this->plugin_options['plugin_component_class_view'] ? : View::class;
         $route_class = $this->plugin_options['plugin_component_class_route'] ? : Route::class;
         View::G(new $view_class());

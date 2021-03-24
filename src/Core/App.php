@@ -225,6 +225,8 @@ class App extends ComponentBase
                 echo "\n<pre>Debug On\n\n";
                 echo $data['trace'];
                 echo "\n</pre>\n";
+            } else {
+                echo "<!-- DuckPhp set options ['is_debug'] to show debug info>\n";
             }
             return;
         }
@@ -960,7 +962,7 @@ trait Core_SuperGlobal
 trait Core_Component
 {
     //protected $extDynamicComponentClasses = [];
-    
+    /*
     public function getStaticComponentClasses()
     {
         $ret = [
@@ -968,8 +970,9 @@ trait Core_Component
             AutoLoader::class,
             ExceptionManager::class,
             Configer::class,
-            Route::class,
             Logger::class,
+            
+            Route::class,
             View::class,
         ];
         if (!in_array(static::class, $ret)) {
@@ -980,11 +983,13 @@ trait Core_Component
         }
         return $ret;
     }
+    //*/
     public function getDynamicComponentClasses()
     {
         $ret = [
             RuntimeState::class,
             View::class,
+            Route::class,
         ];
         $ret = array_merge($ret, $this->extDynamicComponentClasses);
         return $ret;

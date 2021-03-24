@@ -35,8 +35,6 @@ class Route extends ComponentBase
             'controller_stop_g_method' => false,
             'controller_stop_static_method' => false,
         ];
-    //public input;
-    public $request_method = '';
 
     public $pre_run_hook_list = [];
     public $post_run_hook_list = [];
@@ -410,7 +408,8 @@ trait Route_UrlManager
         if ($basepath === '/index.php') {
             $basepath = '/';
         }
-        
+        $prefix = $this->options['controller_path_prefix']? '/'.trim($this->options['controller_path_prefix'],'/').'/' : '/';
+        $basepath.=$prefix;
         return $basepath;
     }
     public function defaultUrlHandler($url = null)
@@ -430,11 +429,6 @@ trait Route_UrlManager
         if (isset($url) && '#' === substr($url, 0, 1)) {
             return $basepath.$path_info.$url;
         }
-        
-        // ugly.
-        $basepath = rtrim($basepath, '/');
-        $url = '/'.$url;
-        
         return $basepath.$url;
     }
     public function setUrlHandler($callback)

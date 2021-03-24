@@ -33,14 +33,18 @@ class SimpleReplacer
         }
         
         $ref = new \ReflectionClass($class);
-        $prop = $ref->getProperty('_instances'); //OK Get It
+        $prop = $ref->getProperty('_instances');
+        if(empty($prop)){
+            self::$classes[$class] = new $class;
+            return self::$classes[$class];
+        }
         $prop->setAccessible(true);
         $array = $prop->getValue();
-        if (!empty($array[$class])) {
-            self::$classes[$class] = $array[$class];
-        } else {
+        if (empty($array[$class])) {
             self::$classes[$class] = new $class;
+            return self::$classes[$class];
         }
+        self::$classes[$class] = $array[$class];
         return self::$classes[$class];
     }
 }
