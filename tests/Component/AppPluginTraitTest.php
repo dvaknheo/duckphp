@@ -70,7 +70,20 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
         $_SERVER['PATH_INFO']='/Test2/second';
         DuckPhp::G()->run();
         
+        ////[[[[
+        AppPluginTraitApp2::G()->plugin_options['plugin_enable_readfile']=true;
+        AppPluginTraitApp2::G()->plugin_options['plugin_path_document']='../public';
         
+        $_SERVER['PATH_INFO']='/Test/../x.html';
+        DuckPhp::G()->run();
+        $_SERVER['PATH_INFO']='/Test/x.php';
+        DuckPhp::G()->run();
+        $_SERVER['PATH_INFO']='/Test/z.html';
+        DuckPhp::G()->run();
+        $_SERVER['PATH_INFO']='/Test/x.html';
+        DuckPhp::G()->run();
+        ////]]]]
+        ////
         $plugin_options['plugin_path_namespace']=null;
         $plugin_options['plugin_search_config']=false;
         AppPluginTraitApp::G(new AppPluginTraitApp())->init($plugin_options,DuckPhp::G()->init($options));
@@ -115,7 +128,7 @@ class AppPluginTraitApp2 extends DuckPhp
 {
     use AppPluginTrait;
     public $plugin_options=[
-        'plugin_url_prefix'=>'Test',
+        'plugin_url_prefix'=>'/Test',
     ];
     public function __construct()
     {

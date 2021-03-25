@@ -14,6 +14,7 @@ use SimpleAuth\Base\Helper\ViewHelper as V;
 <body>
     <div id="app">
 Simple Blog 这里用于 用户注册登录 修改了父类
+[<a href='<?= __url('test/x.html')?>'><?= __url('test/x.html')?></a>]
 <hr>
         <main class="py-4">
             <?= V::yieldContent('content'); ?>

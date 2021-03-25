@@ -65,12 +65,9 @@ class AppHelperTest extends \PHPUnit\Framework\TestCase
     }
     protected function do_Core_Component()
     {
-
-        AppHelper::getStaticComponentClasses();
         AppHelper::getDynamicComponentClasses();
         $class="NoExits";
         AppHelper::addDynamicComponentClass($class);
-        AppHelper::removeDynamicComponentClass($class);
         
         
         $new_namespace=__NAMESPACE__;

@@ -457,11 +457,10 @@ App::PageHtml(123);
     protected function do_Core_Component()
     {
         App::G()->options['ext']['Xclass']=true;
-        App::G()->getStaticComponentClasses();
+        //App::G()->getStaticComponentClasses();
         App::G()->getDynamicComponentClasses();
         $class="NoExits";
         App::G()->addDynamicComponentClass($class);
-        App::G()->removeDynamicComponentClass($class);
         
         
         $new_namespace=__NAMESPACE__;

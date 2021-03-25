@@ -408,8 +408,8 @@ trait Route_UrlManager
         if ($basepath === '/index.php') {
             $basepath = '/';
         }
-        $prefix = $this->options['controller_path_prefix']? '/'.trim($this->options['controller_path_prefix'],'/').'/' : '/';
-        $basepath.=$prefix;
+        $prefix = $this->options['controller_path_prefix']? '/'.trim($this->options['controller_path_prefix'], '/').'/' : '/';
+        $basepath .= $prefix;
         return $basepath;
     }
     public function defaultUrlHandler($url = null)

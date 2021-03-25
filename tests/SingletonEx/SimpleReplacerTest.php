@@ -23,6 +23,7 @@ class SimpleReplacerTest extends \PHPUnit\Framework\TestCase
         SimpleReplacer::$EnableCompactable=true;
         SingletonExObject3::G();
         SingletonExObject4::G();
+        SingletonExObject5::G();
 
         \LibCoverage\LibCoverage::End();
 
@@ -44,3 +45,13 @@ class SingletonExObjectX
 class SingletonExObject2 extends SingletonExObjectX{}
 class SingletonExObject3 extends SingletonExObjectX{}
 class SingletonExObject4 extends SingletonExObjectX{}
+class SingletonExObject5
+{
+     public static function G($object = null)
+    {
+        if (defined('__SINGLETONEX_REPALACER')) {
+            $callback = __SINGLETONEX_REPALACER;
+            return ($callback)(static::class, $object);
+        }
+    }
+}

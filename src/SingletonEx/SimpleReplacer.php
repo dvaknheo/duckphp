@@ -33,8 +33,9 @@ class SimpleReplacer
         }
         
         $ref = new \ReflectionClass($class);
-        $prop = $ref->getProperty('_instances');
-        if(empty($prop)){
+        try {
+            $prop = $ref->getProperty('_instances');
+        } catch (\ReflectionException $ex) {
             self::$classes[$class] = new $class;
             return self::$classes[$class];
         }

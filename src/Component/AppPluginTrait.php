@@ -5,10 +5,10 @@
  */
 namespace DuckPhp\Component;
 
+use DuckPhp\Core\App;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\View;
-use DuckPhp\Core\App;
 
 trait AppPluginTrait
 {
@@ -51,7 +51,7 @@ trait AppPluginTrait
             'plugin_component_class_view' => '',
             'plugin_component_class_route' => '',
             
-            'plugin_enable_readfile' =>false,
+            'plugin_enable_readfile' => false,
         ];
         $this->plugin_options = array_replace_recursive($plugin_options_default, $this->plugin_options ?? []);
         
@@ -198,7 +198,7 @@ trait AppPluginTrait
         $this->onPluginModeBeforeRun();
         
         $flag = Route::G()->run();
-        if(!$flag && $this->plugin_options['plugin_enable_readfile']){
+        if (!$flag && $this->plugin_options['plugin_enable_readfile']) {
             $flag = $this->pluginModeReadFile($path_info);
             if ($flag) {
                 return true;
@@ -211,11 +211,11 @@ trait AppPluginTrait
     protected function pluginModeReadFile($path_info)
     {
         $path_document = realpath($this->plugin_options['plugin_path_namespace'].$this->plugin_options['plugin_path_document']);
-        $file = urldecode(substr($path_info,strlen($this->plugin_options['plugin_url_prefix'])));
-        if (strpos($file,'../')) {
+        $file = urldecode(substr($path_info, strlen($this->plugin_options['plugin_url_prefix'])));
+        if (strpos($file, '../')) {
             return false;
         }
-        if (strtolower(substr($file,-4))==='.php') {
+        if (strtolower(substr($file, -4)) === '.php') {
             return false;
         }
         $file = $path_document.$file;

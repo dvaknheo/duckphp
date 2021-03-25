@@ -99,10 +99,6 @@ class AppHelper
         return App::G()->addBeforeShowHandler($handler);
     }
     ////
-    public static function getStaticComponentClasses()
-    {
-        return App::G()->getStaticComponentClasses();
-    }
     public static function getDynamicComponentClasses()
     {
         return App::G()->getDynamicComponentClasses();
@@ -110,9 +106,5 @@ class AppHelper
     public static function addDynamicComponentClass($class)
     {
         return App::G()->addDynamicComponentClass($class);
-    }
-    public static function removeDynamicComponentClass($class)
-    {
-        return App::G()->removeDynamicComponentClass($class);
     }
 }

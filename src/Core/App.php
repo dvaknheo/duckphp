@@ -962,28 +962,7 @@ trait Core_SuperGlobal
 trait Core_Component
 {
     //protected $extDynamicComponentClasses = [];
-    /*
-    public function getStaticComponentClasses()
-    {
-        $ret = [
-            self::class,
-            AutoLoader::class,
-            ExceptionManager::class,
-            Configer::class,
-            Logger::class,
-            
-            Route::class,
-            View::class,
-        ];
-        if (!in_array(static::class, $ret)) {
-            $ret[] = static::class;
-        }
-        foreach ($this->options['ext'] as $class => $v) {
-            $ret[] = $class;
-        }
-        return $ret;
-    }
-    //*/
+
     public function getDynamicComponentClasses()
     {
         $ret = [
@@ -997,11 +976,5 @@ trait Core_Component
     public function addDynamicComponentClass($class)
     {
         $this->extDynamicComponentClasses[] = $class;
-    }
-    public function removeDynamicComponentClass($class)
-    {
-        array_filter($this->extDynamicComponentClasses, function ($v) use ($class) {
-            return $v !== $class?true:false;
-        });
     }
 }
