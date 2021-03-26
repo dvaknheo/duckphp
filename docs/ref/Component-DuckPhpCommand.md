@@ -2,6 +2,7 @@
 [toc]
 ## 简介
 `组件类` 完成DuckPhp 的命令行功能
+
 ## 选项
     无选项
 ## 公开方法
@@ -47,9 +48,9 @@ help    详细介绍
 install 安装
 list    显示方法列表
 new     创建工程
-start   运行 server （v1.2.8 只运行默认的httpserver。以后改进可以使用其他 httpserer
+run   运行 httpserver 
 test    未override前只是提示
 version 显示版本号码
 ```
-start   运行 server （v1.2.8 由 run 改为 start ，为了兼容 workerman.
+run 运行 server 
 

@@ -38,7 +38,7 @@ __db() 对应 App::Db();
 
 为了通用化，这些函数的参数都是 (...$args) 动态参数
 
-都是 App 的函数
+都是 DuckPhp\Core\App 类的函数
 
 你可以在 onPrepare() 时候 替换相应函数。
 

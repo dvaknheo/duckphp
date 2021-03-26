@@ -1,4 +1,5 @@
 # DuckPhp\Ext\EventManager
+[toc]
 
 ## 简介
 事件管理器组件， 这个类是一对多绑定。
@@ -14,7 +15,7 @@ public static function OnEvent($event, $callback)
 public static function FireEvent($event, ...$args)
 
     触发事件
-    
+
 public function on($event, $callback)
 
     实际执行函数

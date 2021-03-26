@@ -2,7 +2,7 @@
 [toc]
 
 ## 简介
-伪`组件类` DuckPhp\AutoLoader 类是 psr-4 自动加载类
+伪`组件类` DuckPhp\AutoLoader 类是 psr-4 自动加载类，一般用 Composer 加载而不使用他
 
 ## 选项
 'path' => null,
@@ -15,6 +15,8 @@
 
     命名空间的相对路径
 'skip_app_autoload' => false,
+
+
 
 'autoload_cache_in_cli' => false,
     
@@ -34,7 +36,7 @@ public function init($options=[], $context=null)
     初始化
 public function isInited(): bool
 
-    
+
 public function run()
 
     //
@@ -65,3 +67,11 @@ public static function DuckPhpSystemAutoLoader(string $class): void
 AutoLoader 类用于没 autoloader 的情况下临时用。
 
 AutoLoader 类特意被设计成和其他类没联系
+
+这是样例里，不在 `composer.json` 加载主类而是用 AutoLoader 加载主类的例子
+```php
+if (!class_exists(\LazyToChange\System\App::class)) {
+    \DuckPhp\DuckPhp::assignPathNamespace(__DIR__ . '/../app', "LazyToChange\\"); 
+    \DuckPhp\DuckPhp::runAutoLoader();
+}
+```

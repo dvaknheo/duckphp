@@ -11,7 +11,7 @@
 [DuckPhp\\Core\\Route](Core-Route.md) 路由
 [DuckPhp\\Core\\RuntimeState](Core-RuntimeState.md) 运行时状态
 [DuckPhp\\Core\\View](Core-View.md) 视图
-[Functions](Core-Functions.md) 视图
+[Functions](Core-Functions.md) 全局函数
 
 ## 选项
 
@@ -54,6 +54,7 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 ### 开关配置
 
 'use_flag_by_setting' => true,
+
     从设置文件中再次重载 is_debug 和 platform ,对应的设置选项是 duckphp_is_debug ，和 duckphp_platform
 'use_short_functions' => true,
 
@@ -62,10 +63,9 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 'skip_404_handler' => false,
 
     不处理 404 ，用于配合其他框架使用。
-
 'skip_exception_check' => false,
-    不在 Run 流程检查异常，把异常抛出外面。用于配合其他框架使用
 
+    不在 Run 流程检查异常，把异常抛出外面。用于配合其他框架使用
 'skip_plugin_mode_check' => false,
 
     如果 初始化的时候 context 有对象，则进入 plugin 模式 pluginModeInit()，打开以避免进入 plugin 模式.
@@ -74,6 +74,7 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 和方法同名，便于不修改类实现的情况。
 
 onPrepare
+
     准备阶段，你可以在这里替换默认类
 onInit
     初始化完成
@@ -124,10 +125,10 @@ protected function onAfterRun()
 ### 流程相关方法
 protected function checkOverride($options)
 
-    在 init() 里检测重入类。
+    在 init() 里检测再入类。
 protected function initAfterOverride($options)
 
-    真正的 init 按顺序执行 initOptions, onPrepare,initDefaultComponents，initExtentions,onInit
+    真正的 init 。依次执行 initOptions, onPrepare,initDefaultComponents，initExtentions,onInit
 protected function initOptions($options = [])
 
     init() 中初始化选项
@@ -145,7 +146,7 @@ protected function getDefaultProjectPath()
     辅助方法，用于在 init() 中设置 path.
 ## 详解
 
-Kernel 这个 Trait 一般不直接使用。一般直接用的是 DuckPhp\Core\App ， 而直接的 DuckPhp\DuckPhp 类，则是把常见扩展加进去形成完善的框架。
+Kernel 这个 Trait 一般不直接使用。一般用的是 DuckPhp\Core\App ， 而直接的 DuckPhp\DuckPhp 类，则是把常见扩展加进去形成完善的框架。
 
 Kernel 大致分为两个阶段
 

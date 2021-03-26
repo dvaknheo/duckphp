@@ -13,15 +13,12 @@
 
 ## 公开方法
 
-public static function ReCreateInstance()
+public function reset()
 
-    重新创建实例，避免旧实例状态干扰。
-public function isRunning()
-
-    是否在运行状态
+    重新创建实例，避免旧实例的状态干扰。
 public function run()
 
-    开始
+    运行
 public function clear()
 
     清理
@@ -41,6 +38,8 @@ public function toggleOutputed($flag = true)
 
     设置已经输出
 ## 详解
+
+运行时组件，保存运行状态信息。
 
 Runtime 类在运行期才重新初始化。
 

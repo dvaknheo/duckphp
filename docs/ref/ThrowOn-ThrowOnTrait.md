@@ -7,7 +7,7 @@
 ## 方法
 public static function ThrowOn($flag, $message, $code=0)
 
-    如果 $flag成立，则抛出异常
+    如果 $flag 成立，则抛出异常
 ## 详解
 
 trait ThrowOn 是为了写代码更偷懒。
@@ -46,7 +46,7 @@ SystemException::ThrowOn(true,"something exception",142857);
 // 丢出异常。
 
 MyException::Handle(SystemException::class);
-// 当你要接管 SystemException 的错误的时候，丢出 MyException 异常
+// 当你接管 SystemException 的错误的时候，丢出 MyException 异常
 SystemException::ThrowOn(true,"something exception",142857);
 
 ```

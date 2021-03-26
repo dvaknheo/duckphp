@@ -250,7 +250,7 @@ getRouteCallingMethod
 getPathInfo()
 
     【路由相关】获得当前的 PATH_INFO
-getParameters(): array
+Parameter($key, $default = null)
 
     【路由相关】获得路由重写相关的数据
 dumpAllRouteHooksAsString()
@@ -411,6 +411,27 @@ CallException($ex)
 
     调用异常处理，一般也不用，而是看异常处理那章
 
+    public static function extendComponents($method_map, $components = [])
+    {
+        return App::G()->extendComponents($method_map, $components);
+    }
+    public static function cloneHelpers($new_namespace, $componentClassMap = [])
+    {
+        return App::G()->cloneHelpers($new_namespace, $componentClassMap);
+    }
+    public static function addBeforeShowHandler($handler)
+    {
+        return App::G()->addBeforeShowHandler($handler);
+    }
+    ////
+    public static function getDynamicComponentClasses()
+    {
+        return App::G()->getDynamicComponentClasses();
+    }
+    public static function addDynamicComponentClass($class)
+    {
+        return App::G()->addDynamicComponentClass($class);
+    }
 ## 其他 DuckPhp 类自带的非助手函数静态方法
 
 这些函数都是内部调用。

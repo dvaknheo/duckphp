@@ -12,7 +12,7 @@
     基本路径
 'path_config' => 'config',
 
-    路径
+    配置路径
 'setting' => [],
 
     默认自带的设置
@@ -48,5 +48,6 @@ path_config 如果是 / 开始的，会忽略 path 选项
 
     当你想把配置目录 放入 app 目录的时候，调整 path_config
     当我们要额外设置，配置的时候，把 setting , all_config 的值 带入
-    当我们不需要额外的配置文件的时候  skip_setting_file 设置为 true
+    当我们需要额外的配置文件的时候  use_setting_file 设置为 true
 
+基于  AppPluginTrait  需要， Configer 类比普通类多了 config_ext_files 选项

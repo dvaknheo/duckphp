@@ -38,6 +38,13 @@
 'plugin_route_options' => [],
 
     传递给 Route 的选项
+
+'plugin_path_document' => '../public',
+
+    用于读取资源的目录
+'plugin_enable_readfile' => false,
+
+    启用用于读取资源的目录
 ## 公开方法
     public function pluginModeInit(array $options, object $context = null)
     public static function PluginModeRouteHook($path_info)

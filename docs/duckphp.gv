@@ -106,7 +106,6 @@ subgraph cluster_HttpServer {
 
     HttpServer [label="HttpServer";shape=Mdiamond;style=filled];
     HttpServerInterface [label="HttpServerInterface(todo)";shape="note"];
-    HttpServerPluginInterface [label="PluginInterface(todo)";shape="note"];
     FileRunnerTrait [label="FileRunnerTrait(todo)";shape="diamond"];
 
     HttpServer -> HttpServerInterface;
@@ -129,11 +128,12 @@ subgraph cluster_Component {
     RouteHookPathInfoCompat[shape="component"];
     RouteHookRouteMap[shape="component"];
     SuperGlobalContext[shape="component"];
-    X_ComponentBase[label="DuckPhp\\Core\\ComponentBase",shape="rarrow"];
+    X_App[label="DuckPhp\\Core\\App",shape="rarrow"];
     
     AppPluginTrait -> Configer [style="dashed"]; 
     AppPluginTrait -> View [style="dashed"]; 
     AppPluginTrait -> Route [style="dashed"]; 
+    AppPluginTrait -> X_App [style="dashed"]; 
     
     Cache -> ComponentBase [style="dotted"];
     DuckPhpCommand -> ComponentBase [style="dotted"];
@@ -143,7 +143,7 @@ subgraph cluster_Component {
     Pager -> ComponentBase [style="dotted"];
     RouteHookPathInfoCompat -> ComponentBase [style="dotted"];
     RouteHookRouteMap -> ComponentBase [style="dotted"];
-    SuperGlobalContext -> X_ComponentBase [style="dotted"];
+    SuperGlobalContext -> ComponentBase [style="dotted"];
 
 
     
@@ -188,7 +188,6 @@ subgraph cluster_Ext {
     ExceptionWrapper [shape="component"];
     ExceptionWrapper [shape="component"];
     HookChain;
-    HttpServerPlugin[label="HttpServerPlugin(todo)";shape="component"];
     JsonRpcClientBase [shape="component"];
     JsonRpcExt [shape="component"];
     JsonView [shape="component"];

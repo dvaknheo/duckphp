@@ -6,7 +6,9 @@
 `组件`的基类 
 
 + 实现 ComponentInterface 接口
-    
+
+`ComponentBase` 也内嵌实现了可变单例方法
+
 ## 公开方法
 
 //public $options; /* array() */;
@@ -28,6 +30,10 @@ protected function initOptions(array $options);
 protected function initContext(object $contetxt);
 
     空函数，你可以 override 做 context 处理。
+protected function getComponenetPathByKey($path_key,$path): string
+
+    便于获得 path - path_key 组合的 路径
+
 ## 说明
 
 ComponentBase 是所有组件类的基类。
@@ -38,6 +44,7 @@ ComponentBase 裁剪你只需要的选项。
 
 组件类的 选项会被 trim 到只需要的组件
 
-protected function getComponenetPathByKey($path_key): string
+getComponenetPathByKey 这个方法，用于辅助  'path' ,'path' 这样的联合 path 选项
 
-便于获得 path - path_key 组合的 路径
+如果 'path_x' 是绝对路径，则返回 'path_x' ，否则返回 'path'.'path_x'
+

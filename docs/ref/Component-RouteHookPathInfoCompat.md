@@ -1,7 +1,10 @@
 # DuckPhp\Component\RouteHookPathInfoCompat
+[toc]
+
 
 ## 简介
-`默认``组件类` 在不配置 PathInfo 下模拟
+`默认` `组件类` 在不配置 PathInfo 下模拟 PathInfo 
+
 ## 选项
 
 'path_info_compact_enable' => false,
@@ -9,6 +12,7 @@
     注意，这项开启扩展才启用。
 
 'path_info_compact_action_key' => '_r',
+
     替代的 action
 'path_info_compact_class_key' => '',
 
@@ -29,9 +33,9 @@ protected function filteRewrite($url, &$ret = false)
 在选项里取消注释的代码加载以下代码
 
 ```php
-$options['ext']['DuckPhp\\Ext\\RouteHookPathInfoCompat']=true;
-$options['path_info_compact_action_key' = "_r";
-$options['path_info_compact_class_key'] = "";
+$options['path_info_compact_enable'] = true;
+//$options['path_info_compact_action_key'] = "_r";
+//$options['path_info_compact_class_key'] = "";
 ```
 选项说明： path_info_compact_action_key 就是 用于路由的 $\_GET 参数
 
@@ -39,4 +43,4 @@ $options['path_info_compact_class_key'] = "";
 
 `URL ($url) `函数也被接管。 自动替换成相应的实现。
 
-    
+​    

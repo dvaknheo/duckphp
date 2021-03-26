@@ -2,20 +2,19 @@
 [toc]
 
 ## 简介
-核心的类,`组件类`
-## 引用
-
-    组件基类 [DuckPhp\Core\ComponentBase](Core-ComponentBase.md)
-    可扩展静态Trait [DuckPhp\Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md)
-    系统同名函数替代Trait [DuckPhp\Core\SystemWrapperTrait](Core-SystemWrapperTrait.md)
-    核心Trait [DuckPhp\Core\KernelTrait](Core-KernelTrait.md)
-    日志类 [DuckPhp\Core\Logger](Core-Logger.md)
-    自动加载类 [DuckPhp\Core\AutoLoader](Core-AutoLoader.md)
-    配置类 [DuckPhp\Core\Configer](Core-Configer.md)
-    异常管理类 [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
-    路由类 [DuckPhp\Core\Route](Core-Route.md)
-    运行时数据类 [DuckPhp\Core\RuntimeState](Core-RuntimeState.md)
-    视图类[DuckPhp\Core\View](Core-View.md)
+Core 目录下的微框架入口
+## 依赖关系
+* 组件基类 [DuckPhp\Core\ComponentBase](Core-ComponentBase.md)
+* 可扩展静态Trait [DuckPhp\Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md)
+* 系统同名函数替代Trait [DuckPhp\Core\SystemWrapperTrait](Core-SystemWrapperTrait.md)
+* 核心Trait [DuckPhp\Core\KernelTrait](Core-KernelTrait.md)
+* 日志类 [DuckPhp\Core\Logger](Core-Logger.md)
+* 自动加载类 [DuckPhp\Core\AutoLoader](Core-AutoLoader.md)
+* 配置类 [DuckPhp\Core\Configer](Core-Configer.md)
+* 异常管理类 [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
+* 路由类 [DuckPhp\Core\Route](Core-Route.md)
+* 运行时数据类 [DuckPhp\Core\RuntimeState](Core-RuntimeState.md)
+* 视图类 [DuckPhp\Core\View](Core-View.md)
 
 
 
@@ -80,12 +79,15 @@ On404() 默认404 处理
 OnDefaultException 默认异常处理
 OnDevErrorHandler 默认开发期错误处理
 Route() 路由类
+public function version()    得到当前版本
+
+​    \DuckPhp\DuckPhp::runAutoLoader();
 
 ## 详解
 DuckPhp\Core\App 类 可以视为几个类的组合
 
 ### 作为内核的 App 入口类
-详见 DuckPhp\Core\Kernel
+详见 DuckPhp\Core\KernelTrait
 
 ### 助手类引用的静态方法
 
@@ -103,13 +105,7 @@ DuckPhp\Core\App 类 可以视为几个类的组合
  + [ViewHelper](Helper-ViewHelper.md)
 
 
-    public function extendComponents($method_map, $components = [])
-    public function cloneHelpers($new_namespace, $new_helper_map = [])
-    public function version()
-    
-    public function getStaticComponentClasses()
-    public function addDynamicComponentClass($class)
-    public function removeDynamicComponentClass($class)
+
 
 ### 关于 injected_helper_map
 
