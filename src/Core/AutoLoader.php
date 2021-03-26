@@ -29,8 +29,7 @@ class AutoLoader
     public static function G($object = null)
     {
         if (defined('__SINGLETONEX_REPALACER')) {
-            $callback = __SINGLETONEX_REPALACER;
-            return ($callback)(static::class, $object);
+            return (__SINGLETONEX_REPALACER)(static::class, $object);
         }
         if ($object) {
             self::$_instances[static::class] = $object;

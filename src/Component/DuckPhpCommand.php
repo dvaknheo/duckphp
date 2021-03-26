@@ -31,6 +31,7 @@ class DuckPhpCommand extends ComponentBase
     public function command_run()
     {
         $options = Console::G()->getCliParameters();
+        $options['http_app_class'] = $this->context_class;
         $options['path'] = $this->context_class::G()->options['path'];
         if (!empty($options['override_class'])) {
             /** @var string */
