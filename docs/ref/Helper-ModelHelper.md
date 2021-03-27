@@ -4,10 +4,10 @@
 Model 助手类
 ## 详解
 
-    
+
 Db [DuckPhp\Ext\DBManager::Db](Ext-DBManager.md#Db)
 
-    //
+    // 
 DbForRead [DuckPhp\Ext\DBManager::DbForRead](Ext-DBManager.md#DbForRead)
 
     //
@@ -46,9 +46,6 @@ SqlForCountSimply($sql)
 - var_dump(...$args)
     替代 var_dump ，在非调试状态下不显示。
     
-- ThrowOn($flag, $message, $code = 0, $exception_class = null) 详见 [Core/ThrowOn](Core-ThrowOn.md)
-
-    如果 $flag成立则抛出异常，如果未指定 $exception_class，抛则判断当前类是否是 Exception 类的子类，如果不是，则默认为 Exception 类。    
 - AssignExtendStaticMethod($key, $value = null)   详见 [Core/ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md)
     分配固定方法。
 

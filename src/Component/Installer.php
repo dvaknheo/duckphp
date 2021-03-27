@@ -39,7 +39,7 @@ class Installer extends ComponentBase
 
         $this->dumpDir($source, $dest, $this->options['force']);
     }
-    public function dumpDir($source, $dest, $force = false)
+    protected function dumpDir($source, $dest, $force = false)
     {
         $source = rtrim(''.realpath($source), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
         $dest = rtrim(''.realpath($dest), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;

@@ -15,7 +15,7 @@
     基础路径
 'path_log' => 'logs',
 
-    日志文件名称
+    日志文件目录
 'log_prefix' => 'DuckPhpLog',
 
     日志前缀

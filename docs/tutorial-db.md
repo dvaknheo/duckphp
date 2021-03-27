@@ -142,7 +142,6 @@ require_once('../vendor/autoload.php');
 
 $options=[];
 $options['override_class']=App::class;
-$options['skip_setting_file']=true;// 不需要配置文件。
 
 class App extends DuckPhp
 {
@@ -152,7 +151,7 @@ class App extends DuckPhp
     }
 }
 
-DuckPhp::RunQuickly($options,function(){
+App::RunQuickly($options,function(){
     Db::setConfig([
         'default'     => 'mysql',
         'connections' => [

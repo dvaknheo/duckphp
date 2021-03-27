@@ -22,7 +22,7 @@ public static function assignPathNamespace($path, $namespace = null)
 public static function addRouteHook($hook, $position, $once = true)
 public static function setUrlHandler($callback)
 
-### 系统替代 函数
+## 系统替代 函数
 这些函数，和系统函数同名，目的是兼容 swoole/workerman 等平台。
 
 public static function set_exception_handler(callable $exception_handler)

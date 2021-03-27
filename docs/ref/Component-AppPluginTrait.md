@@ -1,9 +1,9 @@
-# DuckPhp\Core\AppPluginTrait
+# DuckPhp\Component\AppPluginTrait
 [toc]
 
 ## 简介
 
-这个Trait 把App类变成插件
+这个Trait 把 App 类变成插件
 
 ## 选项
 *需要注意的是：AppPluginTrait 的选项是在 plugin_options 设置.*
@@ -50,9 +50,10 @@
     public static function PluginModeRouteHook($path_info)
     public function _PluginModeRouteHook($path_info)
 
-    
-    public function pluginModeGetOldRoute()
-    
+
+​    
+​    public function pluginModeGetOldRoute()
+
 ## 用于重载的事件方法
 
     protected function onPluginModePrepare()
@@ -125,11 +126,11 @@ pluginModeDefaultRouteHook 通过 pluginModeCloneHelpers 把自己的 Helper  �
     protected function pluginModeSearchAllPluginFile($path, $setting_file = '')
     protected function pluginModeDefaultRouteHook($path_info)
     protected function pluginModeCloneHelpers()
-    
-    
-    protected function onPluginModePrepare()
-    protected function onPluginModeInit()
-    protected function onPluginModeBeforeRun()
-    protected function onPluginModeRun()
-    protected function pluginModeBeforeRun($callback)
- 
+
+
+​    
+​    protected function onPluginModePrepare()
+​    protected function onPluginModeInit()
+​    protected function onPluginModeBeforeRun()
+​    protected function onPluginModeRun()
+​    protected function pluginModeBeforeRun($callback)

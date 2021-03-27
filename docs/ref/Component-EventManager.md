@@ -1,4 +1,4 @@
-# DuckPhp\Ext\EventManager
+# DuckPhp\Component\EventManager
 [toc]
 
 ## 简介
@@ -27,7 +27,7 @@ public static function AllEvents()
     获取所有事件
 public static function RemoveEvent($event, $callback = null)
 
-    移除事件， 如果指定 $callback 则移除 $event 中
+    移除事件， 如果指定 $callback 则移除 $event 中等于callback的事件处理
 ## 例子
 
 ```php

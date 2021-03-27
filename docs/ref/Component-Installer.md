@@ -1,4 +1,4 @@
-# DuckPhp\Componet
+# DuckPhp\Component\Installer
 [toc]
 ## 简介
 
@@ -7,30 +7,30 @@
 ## 选项
 
 'path' => '',
-安装路径
+
+    安装路径
 'namespace' => '',
-安装的命名空间
+
+    安装的命名空间
 'force' => false,
-强制模式
+
+    强制模式，强制安装，覆盖现有文件
 'autoloader' => 'vendor/autoload.php',
-自动加载模式
+
+    自动加载器指向位置
 'verbose' => false,
-显示详情
+
+    显示详情
 'help' => false,
-显示帮助
 
-## 公开方法
+    显示帮助
 
-### 组件方法
-
-### 其他方法
-
-## 详解
+## 说明
 
 Installer 是辅助安装类。
 
-选项同时作为命令行参数
- 
+`选项`同时作为`命令行参数`使用
+
 一般不在系统里加载，使用以下命令查看帮助
 
 ```

@@ -32,7 +32,7 @@ throw new static($ex->getMessage, $ex->getCode());
 
 用于把其他异常转成自己异常
 ## 例子
-```
+```php
 class MyException extends \Exception
 {
 }

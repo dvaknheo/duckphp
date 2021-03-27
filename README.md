@@ -10,8 +10,7 @@
 
 [**文档索引页**](docs/index.md) ,所有文档索引页面，所有文档的集合入口
 
-### 直接运行演示。
-进入 template 目录
+### 直接运行演示
 ```
 cd template
 php ./duckphp-project run
@@ -168,17 +167,9 @@ DuckPhp 一度通过SwooleHttpd 不需要改代码就支持 swoole 。将来版�
 
 ## DuckPhp 不做什么
 
-* ORM ，和各种屏蔽 sql 的行为，根据日志查 sql 方便多了。 自己简单封装了 pdo 。你也可以使用自己的DB类。 你也可以用第三方ORM（教程最末有替换成 think-orm 的方法）
+* ORM ，和各种屏蔽 sql 的行为，根据日志查 sql 方便多了。 自己简单封装了 pdo 。你也可以使用自己的DB类。 你也可以用第三方ORM（教程就有使用 thinkphp-db 的例子。[链接](docs/tutorial-db.db)）
 * 模板引擎，PHP本身就是模板引擎。
 * Widget ， 和 MVC 分离违背。
-
-## DuckPhp 还要做什么
-
-**我真的很需要反馈啊，给我个反馈吧**
-
-* 文档，文档目前已经有很多了。但是还存在缺失，需要人帮我过一下。
-* 范例，例子还太少太简单了。
-* 更多的杀手级应用。
 
 ## 理解 DuckPhp 的原则
 
@@ -274,7 +265,7 @@ Helper 目录，助手类，如果你一个人偷懒，直接用 APP 类也行
 * 移除 view/\_sys/ 目录 你需要设置启动选项里404和500错误 'error\_404','error\_500 。
 * 移除 view 目录如果你不需要 view ，如 API 项目。
 * 移除 duckphp-project 如果你不需要额外的命令行。
-* 移除 TestBusiness.php ， TestModel.php  测试用的东西
+* 移除 测试和示例文件
 
 @script 目录结构
 
@@ -511,7 +502,7 @@ namespace
 }
 ```
 ## nginx 配置
-这是我的 nginx 配置，如果在安装时候，欢迎反馈。
+这是我的 nginx 配置，如果在安装时候出现什么问题，欢迎反馈。
 毕竟一般配置好后都不会去动。出现什么安装问题会没特别在意
 
 
@@ -531,12 +522,14 @@ server {
     }
 }
 ```
-## 架构图
-系统架构图
+## 架构
+### 系统架构图
 
 ![DuckPhp](docs/duckphp.gv.svg)
 
-DuckPhp 类/文件结构参考。(粗体部分是启动的时候引用的文件)
+### DuckPhp 类/文件结构参考
+
+ (粗体部分是启动的时候引用的文件)
 
 1. `Core` 目录是核心目录，核心框架。基本功能都在 Core 里实现
     1. **[ComponentBase](docs/ref/Core-ComponentBase.md)** 组件基类
@@ -608,12 +601,19 @@ DuckPhp 类/文件结构参考。(粗体部分是启动的时候引用的文件)
 9. `ThrowOn`目录
     1. [ThrowOnTrait](docs/ref/ThrowOn-ThrowOnTrait.md) 可抛 trait，应用工程引用它方便异常处理
 
-----
 
-完整应用架构图（缺事件和异常处理部分）
+
+### 应用架构图（缺事件和异常处理部分）
 
 ![DuckPhp](docs/arch_all.gv.svg)
 
+## DuckPhp 还要做什么
+
+**我真的很需要反馈啊，给我个反馈吧**
+
+* 文档，文档目前已经有很多了。但是还存在缺失，需要人帮我过一下。
+* 范例，例子还太少太简单了。
+* 更多的杀手级应用。
 
 ## 还有什么要说的
 
