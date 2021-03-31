@@ -73,21 +73,18 @@ subgraph cluster_Helper {
     ModelHelper [label="ModelHelper";shape=Mdiamond;style=filled];
     ServiceHelper [label="ServiceHelper";shape=Mdiamond;style=filled];
     ViewHelper [label="ViewHelper";shape=Mdiamond;style=filled];
-    HelperTrait [label="HelperTrait";shape=diamond];
     
     AppHelper -> App; 
     ControllerHelper -> App; 
     ModelHelper -> App; 
     ServiceHelper -> App; 
     ViewHelper -> App; 
-    HelperTrait -> App;
-    HelperTrait -> ExtendableStaticCallTrait ;
     
-    AppHelper -> HelperTrait; 
-    ControllerHelper -> HelperTrait; 
-    ModelHelper -> HelperTrait; 
-    ServiceHelper -> HelperTrait; 
-    ViewHelper -> HelperTrait; 
+    AppHelper -> ExtendableStaticCallTrait; 
+    ControllerHelper -> ExtendableStaticCallTrait; 
+    ModelHelper -> ExtendableStaticCallTrait; 
+    ServiceHelper -> ExtendableStaticCallTrait; 
+    ViewHelper -> ExtendableStaticCallTrait; 
 
 }
 
@@ -103,13 +100,14 @@ subgraph cluster_Db {
 }
 subgraph cluster_HttpServer {
     label = "[DuckPhp\\HttpServer]";
+    
+    AppInterface [shape="note"];
 
     HttpServer [label="HttpServer";shape=Mdiamond;style=filled];
-    HttpServerInterface [label="HttpServerInterface(todo)";shape="note"];
+    ServerInterface [label="ServerInterface";shape="note"];
     FileRunnerTrait [label="FileRunnerTrait(todo)";shape="diamond"];
 
-    HttpServer -> HttpServerInterface;
-    HttpServer -> FileRunnerTrait;
+    
 }
 
 subgraph cluster_Component {
@@ -127,8 +125,6 @@ subgraph cluster_Component {
     RouteHookPathInfoCompat[shape="component"];
     RouteHookRouteMap[shape="component"];
     SuperGlobalContext[shape="component"];
-    X_HttpServer[label="DuckPhp\\HttpServer\\HttpServer",shape="rarrow"];
-    X_Db_Db[label="DuckPhp\\Db\\Db",shape="rarrow"];
     
     AppPluginTrait -> Configer [style="dashed"]; 
     AppPluginTrait -> View [style="dashed"]; 
@@ -149,8 +145,8 @@ subgraph cluster_Component {
     
     DuckPhpCommand -> Console [style="dashed"]; 
     DuckPhpCommand -> Installer; 
-    DuckPhpCommand -> X_HttpServer [style="dashed"]; 
-    DbManager -> X_Db_Db [style="dashed"]; 
+    DuckPhpCommand -> HttpServer [style="dashed"]; 
+    DbManager -> Db_Db [style="dashed"]; 
 
     Pager -> PagerInterface; 
 }
@@ -239,7 +235,7 @@ subgraph cluster_Ext {
     JsonRpcClientBase -> ComponentBase [style="dotted"];
     JsonView -> X_Core_View[style="solid"];
 
-    /* SimpleModel ->Db_Db [style="dashed"]; */
+    SimpleModel ->Db_Db [style="dashed"];
     StrictCheck -> X_DbManager[style="solid"];
     
 

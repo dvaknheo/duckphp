@@ -461,6 +461,7 @@ App::PageHtml(123);
         App::G()->getDynamicComponentClasses();
         $class="NoExits";
         App::G()->addDynamicComponentClass($class);
+        App::G()->skip404Handler();
         
         
         $new_namespace=__NAMESPACE__;

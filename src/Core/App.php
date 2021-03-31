@@ -163,6 +163,8 @@ class App extends ComponentBase
     {
         return static::VERSION;
     }
+    
+    /////
     public function _On404(): void
     {
         $error_view = $this->options['error_404'] ?? null;
@@ -976,5 +978,9 @@ trait Core_Component
     public function addDynamicComponentClass($class)
     {
         $this->extDynamicComponentClasses[] = $class;
+    }
+    public function skip404Handler()
+    {
+        $this->options['skip_404_handler'] = true;
     }
 }

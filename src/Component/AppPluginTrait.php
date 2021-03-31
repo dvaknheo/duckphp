@@ -215,11 +215,12 @@ trait AppPluginTrait
         if (strpos($file, '../')) {
             return false;
         }
+        //$ext = pathinfo($full_file, PATHINFO_EXTENSION);
         if (strtolower(substr($file, -4)) === '.php') {
             return false;
         }
         $file = $path_document.$file;
-        if(!is_file($file)){
+        if (!is_file($file)) {
             return false;
         }
         App::header('Content-Type: '.mime_content_type($file)); // :(
