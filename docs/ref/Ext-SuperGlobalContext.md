@@ -1,4 +1,4 @@
-# DuckPhp\Component\SuperGlobalContext
+# DuckPhp\Ext\SuperGlobalContext
 [toc]
 ## 简介
  超全局变量包容类

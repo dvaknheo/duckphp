@@ -6,12 +6,11 @@
 namespace DuckPhp\Helper;
 
 use DuckPhp\Core\App;
-use DuckPhp\Helper\HelperTrait;
+use DuckPhp\Core\ExtendableStaticCallTrait;
 
 class ViewHelper
 {
-    use HelperTrait;
-    
+    use ExtendableStaticCallTrait;
     public static function H($str)
     {
         return App::H($str);

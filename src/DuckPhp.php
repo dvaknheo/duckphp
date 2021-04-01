@@ -20,26 +20,14 @@ use DuckPhp\Core\App;
 
 class DuckPhp extends App
 {
-    //@override
-    protected $core_options = [
-        'default_exception_do_log' => true,
-        'default_exception_self_display' => true,
-        'close_resource_at_output' => false,
-        'injected_helper_map' => '',
-        
-        //// error handler ////
-        'error_404' => null,          //'_sys/error-404',
-        'error_500' => null,          //'_sys/error-500',
-        'error_debug' => null,        //'_sys/error-debug',
-
-        'ext' => [
+    public function __construct()
+    {
+        $this->core_options['ext'] = [
             DbManager::class => true,
             RouteHookRouteMap::class => true,
-        ],
-        
-        'database_auto_extend_method' => false,
-        'route_map_auto_extend_method' => false,
-    ];
+        ];
+        parent::__construct();
+    }
     protected function initAfterOverride(array $options, object $context = null)
     {
         if (PHP_SAPI === 'cli') {

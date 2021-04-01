@@ -1,7 +1,7 @@
 <?php
 namespace tests\DuckPhp\Core;
 
-use DuckPhp\Component\SuperGlobalContext;
+use DuckPhp\Ext\SuperGlobalContext;
 use DuckPhp\Core\App;
 
 class SuperGlobalContextTest extends \PHPUnit\Framework\TestCase

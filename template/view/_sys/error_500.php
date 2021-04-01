@@ -3,7 +3,7 @@ use DuckPhp\Helper\ViewHelper as V;
 
 // change this file if you can.
 //var_dump(get_defined_vars());
-$is_debug = V::IsDebug();
+$is_debug = __is_debug();
 if ($is_debug) {
 
     $class = get_class($ex);

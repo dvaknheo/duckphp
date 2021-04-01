@@ -4,7 +4,7 @@ namespace tests\DuckPhp\Core
 
 use DuckPhp\Core\Route;
 use DuckPhp\SingletonEx\SingletonExTrait;
-use DuckPhp\Component\SuperGlobalContext;
+use DuckPhp\Ext\SuperGlobalContext;
 
 class RouteTest extends \PHPUnit\Framework\TestCase
 {

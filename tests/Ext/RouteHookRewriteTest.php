@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Ext;
 
 use DuckPhp\Ext\RouteHookRewrite;
-use DuckPhp\Component\SuperGlobalContext;
+use DuckPhp\Ext\SuperGlobalContext;
 use DuckPhp\Core\Route;
 use DuckPhp\DuckPhp;
 

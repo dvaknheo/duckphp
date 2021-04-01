@@ -60,8 +60,6 @@
         1. [PagerInteface](Component-PagerInteface.md) 分页接口
     9. **[RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)** 无程序路由设计模式组件
     10. **[RouteHookRouteMap](Component-RouteHookRouteMap.md)** 路由映射组件
-    11. [SuperGlobalContext](Component-SuperGlobalContext.md) 超全局上下文组件
-
 5. `Ext` 扩展目录，非默认加载的扩展。按字母排序。
     1. [CallableView](Ext-CallableView.md) 可接受函数调用的视图组件
     2. [EmptyView](Ext-EmptyView.md) 空视图组件
@@ -82,13 +80,13 @@
     15. [SimpleModel](Ext-SimpleModel.md) TODO 简单的模型基类
     16. [StaticReplacer](Ext-StaticReplacer.md) 适配协程的语法替换写法类
     17. [StrictCheck](Ext-StrictCheck.md) 严格检查模式组件
+    18. [SuperGlobalContext](Ext-SuperGlobalContext.md) 超全局上下文组件
 6. `Helper` 目录，各种助手类。
-    1. [HelperTrait](Helper-HelperTrait.md) 助手类公用 Trait
-    2. [ControllerHelper](Helper-ControllerHelper.md) 控制器助手类
-    3. [ModelHelper](Helper-ModelHelper.md) 模型助手类
-    4. [BusinessHelper](Helper-BusinessHelper.md) 服务助手类
+    1. [AppHelper](Helper-AppHelper.md) 工程应用助手类
+    2. [BusinessHelper](Helper-BusinessHelper.md) 业务助手类
+    3. [ControllerHelper](Helper-ControllerHelper.md) 控制器助手类
+    4. [ModelHelper](Helper-ModelHelper.md) 模型助手类
     5. [ViewHelper](Helper-ViewHelper.md) 视图助手类
-    6. *[AppHelper](Helper-AppHelper.md)* 工程应用助手类
 7. `HttpServer` 目录
     1. [HttpServer](HttpServer-HttpServer.md)  Http 服务器
 8. `SingletonEx`目录

@@ -6,12 +6,11 @@
 namespace DuckPhp\Helper;
 
 use DuckPhp\Core\App;
-use DuckPhp\Helper\HelperTrait;
+use DuckPhp\Core\ExtendableStaticCallTrait;
 
 class ControllerHelper
 {
-    use HelperTrait;
-    
+    use ExtendableStaticCallTrait;
     public static function Setting($key)
     {
         return App::Setting($key);

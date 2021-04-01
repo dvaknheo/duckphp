@@ -3,11 +3,13 @@
 
 [toc]
 ## 相关类
-- *[DuckPhp\Helper\HelperTrait](ref/Helper-HelperTrait.md)*  助手类公共 Trait。其他助手类都实现这里的方法。
+
+从简单到复杂，我们列出助手类。
+
 - [DuckPhp\Helper\ViewHelper](ref/Helper-ViewHelper.md) 视图助手类
 - [DuckPhp\Helper\ModelHelper](ref/Helper-ModelHelper.md) 模型助手类
+- [DuckPhp\Helper\BusinessHelper](ref/Helper-BusinessHelper.md) 业务助手类
 - [DuckPhp\Helper\ControllerHelper](ref/Helper-ControllerHelper.md) 控制器助手类
-- [DuckPhp\Helper\BusinessHelper](ref/Helper-BusinessHelper.md) 服务助手类
 - *[DuckPhp\Helper\AppHelper](ref/Helper-AppHelper.md)* 应用助手类，一般不常用。
 
 ## 开始
@@ -42,13 +44,13 @@ Controller --> Business ------------------------------ ---> Model
 * App 类包含助手类的全部内容。但是不推荐使用 App 类的助手类方法代替助手类。
 
 工程的命名空间 LazyToChange 是 可调的。比如调整成 LazyToChangeProject ,TheBigOneProject  等。
-参见 $options['namespace'];
+参见 `$options['namespace']` 选项;
 
 ## 小问答
 
 问：为什么这个方法在助手类的声明里查不到?
 
-答：查看相应助手类方法 GetExtendStaticMethodList() ，因为 \_\_callStatic($name, $arguments) 已经被接管。在里面实现。
+答：查看相应助手类方法 `GetExtendStaticMethodList()` ，因为 `__callStatic($name, $arguments)` 魔术方法已经被接管。在里面实现。
 
 问：为什么我的结果和这里的结果不同？
 
@@ -62,49 +64,36 @@ Controller --> Business ------------------------------ ---> Model
 
 答：`AppHelper` 助手类只由`核心工程师`来调用 。当你要从 App 类里找出复杂的助手类，还不如在 AppHelper 里找。Session 管理就用到了 AppHelper 类。
 
+## 全局函数
+助手类有些通用的方法，用全局函数代替
 
-## 助手类的公用静态方法
+__is_debug()
 
-所有助手类都有的静态方法。
+    对应 App::IsDebug() 判断是否在调试状态, 默认读取选项 is_debug 和设置字段里的 duckphp_is_debug
+__is_real_debug()
 
+    对应 App::IsRealDebug 。 切莫乱用。用于环境设置为其他。比如线上环境，但是还是要特殊调试的场合。 如果没被接管，和 IsDebug() 一致。
+__platform()
 
-GetExtendStaticStaticMethodList()
+    对应 App::Platform 获得当前所在平台,默认读取选项和设置字段里的 duckphp_platform，用于判断当前是哪台机器等
+__logger($object = null)
 
-    用来查看当前类有什么额外的静态方法。
-\_\_callStatic
-
-    静态方法已经被扩展。
-trace_dump()
+    对应 App::Logger() 获得或设置 psr 标准的 Logger 类。默认是 DuckPhp\Core\Logger 类。
+_\_trace_dump()
 
     调试状态下，查看当前堆栈，打印当前堆栈，类似 debug_print_backtrce(2)
-var_dump(...$arg)
+_\_var_dump(...$arg)
 
     调试状态下 Dump 当前变量，替代 var_dump
-IsDebug()
+_\_debug_log(...$arg)
 
-    判断是否在调试状态, 默认读取选项 is_debug 和设置字段里的 duckphp_is_debug
-IsRealDebug()
-
-    IsRealDebug 。 切莫乱用。用于环境设置为其他。比如线上环境，但是还是要特殊调试的场合。 如果没被接管，和 IsDebug() 一致。
-Platform()
-
-    获得当前所在平台,默认读取选项和设置字段里的 duckphp_platform，用于判断当前是哪台机器等
-Logger($object = null)
-
-    获得或设置 psr 标准的 Logger 类。默认是 DuckPhp\Core\Logger 类。
-AssignExtendStaticMethod($key, $value = null)
-
-    高级函数
-CallExtendStaticMethod($name, $arguments)
-
-    高级函数
+    调试状态下Log 当前变量。
 
 ## ViewHelper 视图助手类
 
-ViewHelper 是在视图里使用， 比较简单。一般来说，不需要特殊的用处
+ViewHelper 是在视图里使用， 比较简单。你甚至都不需要使用这个助手类
 
 ViewHelper 默认的方法在 ControllerHelper 里都有。 但是 ViewHelper 不是 ControllerHelper 的子集。
-
 
 H($str)
 
@@ -120,57 +109,20 @@ Url($url)
     __url() 获得相对 url 地址
 Display($view, $data = null)
 
-    __display() 包含下一个 $view ， 如果 $data = null 则带入所有当前作用域的变量。 否则带入 $data 关联数组的内容
+    __display() 包含下一个 $view ， 如果 $data = null 则带入所有当前作用域的变量。 否则带入 $data 关联数组的内容。Display 用于嵌套包含视图。
 
-Display 用于嵌套包含视图。
-
-## BusinessHelper 业务的助手类
-
-BusinessHelper 用于业务层。
-
-Config($key, $file_basename = 'config')
-
-    读取配置，从 config/$file_basename.php 里读取配置
-LoadConfig($file_basename)
-
-    载入 config/$file_basename.php 的配置段
-Setting($key);
-
-    获得设置，默认设置文件是在  config/setting.php 。
-    设置是敏感信息,不存在于版本控制里面。而配置是非敏感。
-LoadConfig($key,$basename="config");
-
-    载入配置，Config($key); 获得配置项目。默认配置文件是在  config/config.php 。
-
-Cache($replace_object)
-
-    获得缓存管理器
-XpCall($callback, ...$args)
-
-    包裹callback输出，如果抛出异常则返回异常，否则返回 $callback();
-Event()
-
-    获得事件管理器
-FireEvent($event, ...$args)
-
-    触发事件
-OnEvent($event, $callback)
-
-    绑定事件
-
-
-## ModelHelper
+## ModelHelper 模型助手类
 
 ModelHelper 用于 Model 层。  ModelHelper 有数据库的三个独特方法。
 
 这几个方法在 ControllerHelper 里没有。 如何使用 Db 对象，看数据库部分的介绍。
 
-此外，还有两个快捷方法，方便分页。
+此外，还有两个快捷方法， SqlForPager  SqlForCountSimply 方便分页。
 
 Db($tag=null)
 
     获得 DB 数据库对象 ,第 $tag 个配置的数据库对象
-    Db() 方法也可以用 __db() 函数代替
+    Db() 方法也可以用 __db() 全局函数代替
 DbForWrite()
 
     获得用于写入的 DB 对象,这是获得第 0 个配置列表里的数据库
@@ -185,13 +137,49 @@ SqlForCountSimply($sql)
 
     简单的把 select ... from 替换成select count(*) as c from 
 
+## BusinessHelper 业务助手类
+
+BusinessHelper 用于业务层。
+### 配置
+
+Config($key, $file_basename = 'config')
+
+    读取配置，从 config/$file_basename.php 里读取配置
+LoadConfig($file_basename)
+
+    载入 config/$file_basename.php 的配置段。
+Setting($key);
+
+    获得设置，需要打开'user_setting_file'默认设置文件是在  config/setting.php 。
+    设置是敏感信息,不存在于版本控制里面。而配置是非敏感。
+LoadConfig($key,$basename="config");
+
+    载入配置，Config($key); 获得配置项目。默认配置文件是在  config/config.php 。
+### 事件
+Event()
+
+    获得事件管理器
+FireEvent($event, ...$args)
+
+    触发事件
+OnEvent($event, $callback)
+
+    绑定事件
+### 其他
+Cache($replace_object)
+
+    获得缓存管理器  // 注意 ControllerHelper  没这个方法
+XpCall($callback, ...$args)
+
+    包裹callback输出，如果抛出异常则返回异常，否则返回 $callback();
+
 ## ControllerHelper 控制器的助手类
 
  ContrlloerHelper 的方法很多很杂，但掌握了 ContrlloerHelper 方法，基本就掌握了使用方法
 
 大致分为 【显示相关】【配置相关】【跳转相关】【路由处理】【异常管理】【跳转】【内容处理】 几块 内容处理和 ViewHelper 基本通用。 ControllerHelper 方法
 
-### 显示相关
+### 显示
 
 包含 ViewHelper 的所有方法。
 
@@ -210,24 +198,8 @@ Url
 Display
 
     【显示相关】见 ViewHelper 的 Display 介绍
-### 内容处理
 
-Show($data = [], $view = null)
-
-    【内容处理】显示视图， 默认为 view/{$view}.php 的文件， 并会带上页眉页脚
-setViewHeadFoot($head_file = null, $foot_file = null)
-
-    【内容处理】设置页眉页脚
-assignViewData($key, $value = null)
-
-    【内容处理】分配视图变量，另一版本为 assignViewData([$key=>$value]);
-Domain()
-
-    【内容处理】 获得带协议的域名
-DbCloseAll()
-
-    【内容处理】 关闭所有数据库
-### 配置相关
+### 配置
 
 Setting
 
@@ -238,8 +210,33 @@ Config
 LoadConfig
 
     【配置相关】见 BusinessHelper 的 LoadConfig 介绍
+###  事件
 
-### 路由相关
+Event()
+
+    【其他】见 BusinessHelper 的 Event 介绍
+FireEvent($event, ...$args)
+
+    【其他】见 BusinessHelper 的 FireEvent 介绍
+OnEvent($event, $callback)
+
+    【其他】见 BusinessHelper 的 OnEvent 介绍
+### 异常处理
+见 异常管理 一节
+
+assignExceptionHandler
+
+    【异常处理】分配异常句柄
+setMultiExceptionHandler
+
+    【异常处理】设置多个异常处理
+setDefaultExceptionHandler
+
+    【异常处理】设置异常的默认处理
+XpCall($callback, ...$args)
+
+    【其他】见 BusinessHelper 的 XpCall 介绍
+### 路由
 
 setRouteCallingMethod
 
@@ -256,7 +253,7 @@ Parameter($key, $default = null)
 dumpAllRouteHooksAsString()
 
     Dump 所有路由钩子
-### 跳转相关
+### 跳转
 
 ExitRedirect($url, $exit = true)
 
@@ -275,39 +272,10 @@ ExitJson($ret, $exit = true)
 
     【跳转】输出 json 结果，$exit 为 true 则附加 exit()
 
-### 异常处理
-见 异常管理 一节
 
-assignExceptionHandler
-
-    【异常处理】分配异常句柄
-setMultiExceptionHandler
-
-    【异常处理】设置多个异常处理
-setDefaultExceptionHandler
-
-    【异常处理】设置异常的默认处理
-XpCall($callback, ...$args)
-
-    【其他】见 BusinessHelper 的 XpCall 介绍
-### 系统替代
-
-系统替代静态方法和系统函数一样的参数。为了兼容不同平台，如 CLI, workerman,swoole 使用这些函数替代。
-
-header()
-
-    【系统替代】 header 函数以兼容命令行模式
-setcookie()
-
-    【系统替代】 setcookie 函数以兼容命令行模式
-exit()
-
-    【系统替代】 退出函数，以便于接管
-### 输入相关
+### 输入变量
 替代同名 GET / POST /REQUEST /COOKIE 。如果没的话返回 后面的默认值。
-注意没有 \_SESSION ，这是故意设计成这样的，不希望 \_SESSION 到处飞， _SESSION 应该集中于 SessionBusiness 或 SessionLib 里。
-
-ENV 也是不希望人用所以没有。 
+注意没有 SESSION（有 App::SESSION） ，这是故意设计成这样的，不希望 \_SESSION 到处飞， _SESSION 应该集中于 SessionBusiness 或 SessionLib 里。
 
 GET($key, $default = null)
 
@@ -324,9 +292,26 @@ COOKIE($key, $default = null)
 SEVER($key, $default = null)
 
     对应 SEVER $_GET[$key] 不存在则返回 $default;
-### 分页
+### 输出内容
 
-分页器类是通过 DuckPhp\\Ext\\Pager 实现的
+Show($data = [], $view = null)
+
+    【内容处理】显示视图， 默认为 view/{$view}.php 的文件， 并会带上页眉页脚
+setViewHeadFoot($head_file = null, $foot_file = null)
+
+    【内容处理】设置页眉页脚
+assignViewData($key, $value = null)
+
+    【内容处理】分配视图变量，另一版本为 assignViewData([$key=>$value]);
+Domain()
+
+    【内容处理】 获得带协议的域名
+DbCloseAll()
+
+    【内容处理】 关闭所有数据库
+### 输出分页
+
+分页器类是通过 DuckPhp\\Component\\Pager 实现的
 
 Pager()
 
@@ -340,18 +325,19 @@ PageSize($new_value = null)
 PageHtml($total, $options=[])
 
     获得分页结果 HTML，这里的 $options 是传递给 Pager 类的选项。
-###  事件
+### 系统替代
 
-Event()
+系统替代静态方法和系统函数一样的参数。为了兼容不同平台，如 CLI, workerman,swoole 使用这些函数替代。
 
-    【其他】见 BusinessHelper 的 Event 介绍
-FireEvent($event, ...$args)
+header()
 
-    【其他】见 BusinessHelper 的 FireEvent 介绍
-OnEvent($event, $callback)
+    【系统替代】 header 函数以兼容命令行模式
+setcookie()
 
-    【其他】见 BusinessHelper 的 OnEvent 介绍
+    【系统替代】 setcookie 函数以兼容命令行模式
+exit()
 
+    【系统替代】 退出函数，以便于接管
 ## AppHelper 高级助手类。
 
 AppHelper 是 `核心工程师` 才使用的高级助手类。特殊的 Business 会用到。
@@ -410,7 +396,8 @@ assignPathNamespace($path, $namespace = null)
 CallException($ex)
 
     调用异常处理，一般也不用，而是看异常处理那章
-
+其他备忘
+```
     public static function extendComponents($method_map, $components = [])
     {
         return App::G()->extendComponents($method_map, $components);
@@ -432,9 +419,25 @@ CallException($ex)
     {
         return App::G()->addDynamicComponentClass($class);
     }
+```
+## 助手类的公用静态方法
+
+所有助手类都有的静态方法。
+GetExtendStaticStaticMethodList()
+
+    用来查看当前类有什么额外的静态方法。
+\_\_callStatic
+
+    静态方法已经被扩展。
+AssignExtendStaticMethod($key, $value = null)
+
+    高级函数
+CallExtendStaticMethod($name, $arguments)
+
+    高级函数
 ## 其他 DuckPhp 类自带的非助手函数静态方法
 
-这些函数都是内部调用。
+这里顺带介绍 DuckPhp 的非助手函数静态方法。 这些函数都是内部调用。
 
 Blank()
 
@@ -468,7 +471,7 @@ system_wrapper_get_providers
 
 ```php
 <?php
-namespace LazyToChange\System\Helper;
+namespace LazyToChange\Helper;
 
 use DuckPhp\Helper\ModelHelper as Helper;
 

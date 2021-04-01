@@ -11,7 +11,7 @@ $options['ext']数组实现的
     $ext_class 为扩展的类名，如果找不到扩展类则不启用。
     $ext_class 满足组件接口。在初始化的时候会被调用。
     $ext_class->init(array $options,$context=null);
-
+    
     如果 $my_options。 为  false 则不启用，
     如果 $my_options。 为 true ，则会把当前 $options 传递进去。
     如果 $my_options。 为 字符串 ，则会映射到 $optioins[$my_options]。
@@ -99,7 +99,6 @@ EmptyView 替换 View ，效果是空，用来收集输出。
 
 ## Ext 下面非扩展组件但有用的类
 
-AppPluginTrait
 HookChain
 
 

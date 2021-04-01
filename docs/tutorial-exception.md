@@ -70,21 +70,23 @@ Business 抛出自己错误的时候，来个同名 exception 类。如 SessionB
 
 DuckPhp 工程几乎不得不引用的类之一就是 ThrowOnTrait 这个 trait
 
+
+
 ThrowOnTrait 提供了三个静态方法:
 
-* public static function ThrowOn($flag, $message, $code)
+* `public static function ThrowOn($flag, $message, $code)`
 
 这个方法用于如果 $flag 成立，则抛出当前异常类
 
 PHP 有个函数 assert ， ThrowOn 和他逻辑相反。ThrowOn的方式会更直接些
 
-* public static function Handle($class)
+* `public static function Handle($class)`
 
 把本来 $class ThrowOn 到本类的异常 ， Throw 到当前异常类。
 
 这个方法的作用是用于提供第三方异常类的时候。让人无缝处理异常类。
 
-* public static function Proxy($ex)
+* `public static function Proxy($ex)`
 
 throw new static($ex->getMessage, $ex->getCode());
 

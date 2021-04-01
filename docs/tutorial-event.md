@@ -28,7 +28,6 @@ DuckPhp 的事件名称规范是：
 
 ```
 static::class .'::'.static::EVNET_CREATE;
-
 ```
 这样以方便找到事件在哪里定义的
 

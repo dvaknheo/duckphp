@@ -6,11 +6,11 @@
 namespace DuckPhp\Helper;
 
 use DuckPhp\Core\App;
-use DuckPhp\Helper\HelperTrait;
+use DuckPhp\Core\ExtendableStaticCallTrait;
 
 class ModelHelper
 {
-    use HelperTrait;
+    use ExtendableStaticCallTrait;
     /**
      *
      * @param mixed $tag

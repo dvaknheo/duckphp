@@ -131,15 +131,28 @@ Controller --> Business ------------------------------ ---> Model
 * Business 按业务逻辑走， Model 按数据库表名走
 * Lib 其实是特殊的 Business 用于其他 Business 调用
 * ExModel 是特殊 Model 表示多个表混合调用。
-
 * 图上没显示特殊的 AppHelper
+
+###  其他
 
 助手类教程在这里 [助手类教程](tutorial-helper.md)，基本上，看完助手类教程，`业务工程师`就可以开干了。
 
-如果你的项目使用内置数据库，或许你还要看  [数据库教程](tutorial-helper.md)
-
 此外有什么不了解的，问`核心工程师`吧。
 比如路由方面，常见是文件路由。 [路由教程](tutorial-route.md)
+
+如果你的项目使用内置数据库，或许你还要看  [数据库教程](tutorial-helper.md)
+
+还有异常处理，和事件处理
+
+命令行怎么处理，需要看
+
+一些额外功能，你要看 扩展
+
+使用第三方插件或把项目变成插件 需要看 扩展教程
+
+
+
+最后，查看 support.md 查看如何加入
 
 ## 入口文件和选项
 
@@ -432,5 +445,73 @@ DuckPhp 扩展的加载是通过选项里添加，$options['ext']数组实现的
     如果 $options 为 false 则不启用，
     如果 $options 为 true ，则会把当前全局 $options 传递进去。
     如果 $options 为 string 则会映射到全局 $options 的键为 $optoins 的值
-    
+
+## 问答
+
++ Helper 类为什么要在 Helper 目录下，
+
+  原因，配合 cloneHelper 用。
+
++ 为什么会有个“我觉得恶心的”G() 单字母静态方法
+
+  你可以把 ::G()-> 看成和 facades 类似的门面方法。
+  可变单例是 DuckPhp 的核心。
+  你如果引入第三方包的时候，不满意默认实现，可以通过可变单例来替换他
+
+  var_dump(MyClass::G()); 使用 Facades 就没法做到这个功能。
+
++ 为什么不直接用 DB 类，而是用 DbManager
+  做日志之类的处理用
+
++ 为什么名字要以 *Model *Business 结尾
+  让单词独一无二，便于搜索
+
++ 为什么是 Db 而不是 DB 。
+  为了统一起来。  缩写都驼峰而非全大写
+
++ 回调 Class::Method Class@Method Class->Method 的区别
+
+  ->  表示 (new Class)->Method
+  @ 表示 Class::G()->Method
+  :: 表示 Class::Method
+  ~ 前缀扩充到当前命名空间
+
++ 门面， DuckPhp 用可变单例代替了门面
+  中间件， DuckPhp 提供了简单的中间件扩展 MyMiddlewareManager，但不建议使用。
+
++ 事件
+
+  见事件这一篇
+
+请求和响应， DuckPhp 没这个概念
+但在 控制器助手类里有很多相同的行为
+
+数据库 ，DuckPhp 的数据库没那么强大
+
+模型 
+
+
+视图 DuckPhp 的视图原则
+
+错误处理
+日志
+验证， duckphp 没验证处理，你需要第三方类
+
+缓存
+
+Session
+
+Cookie
+
+多语言
+
+上传
+
+命令行
+
+见命令行这一篇
+
+扩展库
+
+
 

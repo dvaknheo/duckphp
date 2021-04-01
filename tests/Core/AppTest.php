@@ -8,7 +8,7 @@ use DuckPhp\Core\View;
 use DuckPhp\Core\Route;
 use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckPhp\Component\Pager;
-use DuckPhp\Component\SuperGlobalContext;
+use DuckPhp\Ext\SuperGlobalContext;
 
 class AppTest extends \PHPUnit\Framework\TestCase
 {
@@ -590,13 +590,15 @@ class FakeSessionHandler implements \SessionHandlerInterface
 
 }
 namespace tests\DuckPhp\Core\Helper{
+    use \DuckPhp\Core\ExtendableStaticCallTrait as a;
+
 class ControllerHelper
 {
-    use \DuckPhp\Helper\HelperTrait;
+    use a;
 }
 class ViewHelper
 {
-    use \DuckPhp\Helper\HelperTrait;
+    use a;
 }
 }
 namespace tests\DuckPhp\Core\Controller{

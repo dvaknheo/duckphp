@@ -60,3 +60,24 @@ if (! function_exists('__db')) {
         return App::Db(...$args);
     }
 }
+
+if (! function_exists('__is_debug')) {
+    function __is_debug(...$args)
+    {
+        return App::IsDebug();
+    }
+}
+
+if (! function_exists('__is_real_debug')) {
+    function __is_real_debug(...$args)
+    {
+        return App::IsRealDebug();
+    }
+}
+
+if (! function_exists('__platform')) {
+    function __platform(...$args)
+    {
+        return App::Platform();
+    }
+}

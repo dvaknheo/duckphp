@@ -34,7 +34,7 @@ class SessionBusiness extends BaseService
     }
     public function setCurrentUser($user)
     {
-        App::SuperGloabl()->_SESSION['user'] = $user;
+        $_SESSION['user'] = $user;
     }
 }
 

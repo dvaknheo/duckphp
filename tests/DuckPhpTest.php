@@ -79,6 +79,10 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         \__trace_dump();
         \__var_dump("abc");
         \__debug_log("OK");
+        
+        \__is_debug();
+        \__is_real_debug();
+        \__platform();
 
         try{
         \__db();
