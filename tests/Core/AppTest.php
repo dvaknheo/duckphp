@@ -303,13 +303,13 @@ App::PageHtml(123);
         $flag=App::G()->options['is_debug'];
         
         App::G()->options['is_debug']=true;
-        App::trace_dump();
         App::var_dump("OK");
-        App::debug_log("OK");
+        App::TraceDump();
+        App::DebugLog("OK");
         App::G()->options['is_debug']=false;
-        App::trace_dump();
+        App::TraceDump();
         App::var_dump("OK");
-        App::debug_log("OK");
+        App::DebugLog("OK");
 
         App::G()->options['is_debug']=$flag;
         

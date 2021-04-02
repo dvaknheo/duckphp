@@ -176,16 +176,16 @@ test
 <2019-04-19T22:21:49+08:00>
 ```
 ### 如果没有配置 PATH_INFO
-如果你懒得配置 PATH_INFO，把 `public/index.php` 文件这项打开
+如果你懒得配置 PATH_INFO，把 `app/System/App.php` 文件选项打开
 ```php
-//$options['path_info_compact_enable'] => true;
+'path_info_compact_enable' => false, 
 ```
 同样访问  http://127.0.0.1:8080/index.php?_r=test/done  也是得到想同测试页面的结果
 
 ### 数据库操作
-前提工作，我们加上 `public/index.php` 中跳过设置文件的选项
+前提工作，我们加上 `app/System/App.php` 中跳过设置文件的选项打开
 ```php
-$options['use_setting_file'] = true;
+'use_setting_file' => true,
 ```
 
 

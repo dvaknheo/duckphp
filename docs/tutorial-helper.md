@@ -64,37 +64,31 @@ Controller --> Business ------------------------------ ---> Model
 
 答：`AppHelper` 助手类只由`核心工程师`来调用 。当你要从 App 类里找出复杂的助手类，还不如在 AppHelper 里找。Session 管理就用到了 AppHelper 类。
 
-## 全局函数
+## 全局助手函数
+
 助手类有些通用的方法，用全局函数代替
 
-__is_debug()
+### 调试函数
+
+_\_is_debug()
 
     对应 App::IsDebug() 判断是否在调试状态, 默认读取选项 is_debug 和设置字段里的 duckphp_is_debug
-__is_real_debug()
+_\_is_real_debug()
 
-    对应 App::IsRealDebug 。 切莫乱用。用于环境设置为其他。比如线上环境，但是还是要特殊调试的场合。 如果没被接管，和 IsDebug() 一致。
-__platform()
+    对应 App::IsRealDebug() 。 切莫乱用。用于环境设置为其他。比如线上环境，但是还是要特殊调试的场合。 如果没被接管，和 IsDebug() 一致。
+_\_platform()
 
-    对应 App::Platform 获得当前所在平台,默认读取选项和设置字段里的 duckphp_platform，用于判断当前是哪台机器等
-__logger($object = null)
+    对应 App::Platform() 获得当前所在平台,默认读取选项和设置字段里的 duckphp_platform，用于判断当前是哪台机器等
+_\_trace_dump(...$arg)
 
-    对应 App::Logger() 获得或设置 psr 标准的 Logger 类。默认是 DuckPhp\Core\Logger 类。
-_\_trace_dump()
-
-    调试状态下，查看当前堆栈，打印当前堆栈，类似 debug_print_backtrce(2)
+    对应 App::TraceDump() 调试状态下，查看当前堆栈，打印当前堆栈，类似 debug_print_backtrce(2)
 _\_var_dump(...$arg)
 
-    调试状态下 Dump 当前变量，替代 var_dump
+    对应 App::var_dump()调试状态下 Dump 当前变量，替代 var_dump
 _\_debug_log(...$arg)
 
-    调试状态下Log 当前变量。
-
-## ViewHelper 视图助手类
-
-ViewHelper 是在视图里使用， 比较简单。你甚至都不需要使用这个助手类
-
-ViewHelper 默认的方法在 ControllerHelper 里都有。 但是 ViewHelper 不是 ControllerHelper 的子集。
-
+    对应 App::DebugLog($message, array $context = array()) 对应调试状态下 Log 当前变量。
+### 显示相关函数
 H($str)
 
     __h() HTML 编码
@@ -110,6 +104,12 @@ Url($url)
 Display($view, $data = null)
 
     __display() 包含下一个 $view ， 如果 $data = null 则带入所有当前作用域的变量。 否则带入 $data 关联数组的内容。Display 用于嵌套包含视图。
+### 其他
+
+## ViewHelper 视图助手类
+
+ViewHelper 是在视图里使用，默认没有方法。
+
 
 ## ModelHelper 模型助手类
 
@@ -117,7 +117,7 @@ ModelHelper 用于 Model 层。  ModelHelper 有数据库的三个独特方法�
 
 这几个方法在 ControllerHelper 里没有。 如何使用 Db 对象，看数据库部分的介绍。
 
-此外，还有两个快捷方法， SqlForPager  SqlForCountSimply 方便分页。
+此外，还有两个快捷方法， SqlForPager  和 SqlForCountSimply 方便分页。
 
 Db($tag=null)
 
@@ -132,10 +132,10 @@ DbForRead()
 
 SqlForPager($sql, $pageNo, $pageSize = 10)
 
-    分页 limte 的 sql 
+    分页 limit 的 sql 
 SqlForCountSimply($sql)
 
-    简单的把 select ... from 替换成select count(*) as c from 
+    简单的把 select ... from 替换成 select count(*) as c from 
 
 ## BusinessHelper 业务助手类
 
@@ -179,26 +179,58 @@ XpCall($callback, ...$args)
 
 大致分为 【显示相关】【配置相关】【跳转相关】【路由处理】【异常管理】【跳转】【内容处理】 几块 内容处理和 ViewHelper 基本通用。 ControllerHelper 方法
 
-### 显示
+### 输出相关
 
 包含 ViewHelper 的所有方法。
 
-H
+H($str)
 
-    【显示相关】见 ViewHelper 的 H 介绍
-L
+    __h() HTML 编码
+L($str,$args=[])
 
-    【显示相关】见 ViewHelper 的 L 介绍
-Hrl
+    __l() 语言处理函数，后面的关联数组替换 '{$key}'
+Hl($str, $args=[])
 
-    【显示相关】见 ViewHelper 的 Hl 介绍
-Url
+    __hl() 对语言处理后进行 HTML 编码
+Url($url)
 
-    【显示相关】见 ViewHelper 的 Url 介绍
-Display
+    __url() 获得相对 url 地址
+Display($view, $data = null)
 
-    【显示相关】见 ViewHelper 的 Display 介绍
+    __display() 包含下一个 $view ， 如果 $data = null 则带入所有当前作用域的变量。 否则带入 $data 关联数组的内容。Display 用于嵌套包含视图。
+### 输出内容
 
+Show($data = [], $view = null)
+
+    【内容处理】显示视图， 默认为 view/{$view}.php 的文件， 并会带上页眉页脚
+setViewHeadFoot($head_file = null, $foot_file = null)
+
+    【内容处理】设置页眉页脚
+assignViewData($key, $value = null)
+
+    【内容处理】分配视图变量，另一版本为 assignViewData([$key=>$value]);
+Domain()
+
+    【内容处理】 获得带协议的域名
+DbCloseAll()
+
+    【内容处理】 关闭所有数据库
+### 输出分页
+
+分页器类是通过 DuckPhp\\Component\\Pager 实现的
+
+Pager()
+
+    获得分页器对象, 分页器参考 DuckPhp\Ext\Pager。 DuckPhp 只是做了最小的分页器
+PageNo($new_value = null)
+
+    获得或设置当前页码
+PageSize($new_value = null)
+
+    获得或设置当前每页数据条目
+PageHtml($total, $options=[])
+
+    获得分页结果 HTML，这里的 $options 是传递给 Pager 类的选项。
 ### 配置
 
 Setting
@@ -292,39 +324,7 @@ COOKIE($key, $default = null)
 SEVER($key, $default = null)
 
     对应 SEVER $_GET[$key] 不存在则返回 $default;
-### 输出内容
 
-Show($data = [], $view = null)
-
-    【内容处理】显示视图， 默认为 view/{$view}.php 的文件， 并会带上页眉页脚
-setViewHeadFoot($head_file = null, $foot_file = null)
-
-    【内容处理】设置页眉页脚
-assignViewData($key, $value = null)
-
-    【内容处理】分配视图变量，另一版本为 assignViewData([$key=>$value]);
-Domain()
-
-    【内容处理】 获得带协议的域名
-DbCloseAll()
-
-    【内容处理】 关闭所有数据库
-### 输出分页
-
-分页器类是通过 DuckPhp\\Component\\Pager 实现的
-
-Pager()
-
-    获得分页器对象, 分页器参考 DuckPhp\Ext\Pager。 DuckPhp 只是做了最小的分页器
-PageNo($new_value = null)
-
-    获得或设置当前页码
-PageSize($new_value = null)
-
-    获得或设置当前每页数据条目
-PageHtml($total, $options=[])
-
-    获得分页结果 HTML，这里的 $options 是传递给 Pager 类的选项。
 ### 系统替代
 
 系统替代静态方法和系统函数一样的参数。为了兼容不同平台，如 CLI, workerman,swoole 使用这些函数替代。

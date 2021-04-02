@@ -133,7 +133,7 @@ Controller --> Business ------------------------------ ---> Model
 * ExModel 是特殊 Model 表示多个表混合调用。
 * 图上没显示特殊的 AppHelper
 
-###  其他
+##  教程索引
 
 助手类教程在这里 [助手类教程](tutorial-helper.md)，基本上，看完助手类教程，`业务工程师`就可以开干了。
 
@@ -142,17 +142,15 @@ Controller --> Business ------------------------------ ---> Model
 
 如果你的项目使用内置数据库，或许你还要看  [数据库教程](tutorial-helper.md)
 
-还有异常处理，和事件处理
+还有 [异常处理](tutorial-exception.md) 异常处理，和 [事件处理](tutorial-event.md)
 
-命令行怎么处理，需要看
+命令行怎么处理，需要看  [命令行教程](tutorial-console.md)
 
-一些额外功能，你要看 扩展
+一些额外功能，你要看   [内置扩展介绍](tutorial-extension.md)
 
-使用第三方插件或把项目变成插件 需要看 扩展教程
+使用第三方插件或把项目变成插件 需要看 [插件模式](tutorial-plugin.md)
 
-
-
-最后，查看 support.md 查看如何加入
+最后，查看 [开发相关](tutorial-support.md) 加入开发
 
 ## 入口文件和选项
 

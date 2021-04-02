@@ -26,6 +26,9 @@ class DuckPhp extends App
             DbManager::class => true,
             RouteHookRouteMap::class => true,
         ];
+        $this->core_options['route_map_auto_extend_method'] = false;
+        $this->core_options['database_auto_extend_method'] = false;
+
         parent::__construct();
     }
     protected function initAfterOverride(array $options, object $context = null)

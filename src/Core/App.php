@@ -560,15 +560,15 @@ trait Core_Helper
         return $str;
     }
     // ViewHelper
-    public static function trace_dump()
+    public static function TraceDump()
     {
-        return static::G()->_trace_dump();
+        return static::G()->_TraceDump();
     }
     public static function var_dump(...$args)
     {
         return static::G()->_var_dump(...$args);
     }
-    public function _trace_dump()
+    public function _TraceDump()
     {
         if (!$this->options['is_debug']) {
             return;
@@ -660,11 +660,11 @@ trait Core_Helper
     {
         return Logger::G($object);
     }
-    public static function debug_log($message, array $context = array())
+    public static function DebugLog($message, array $context = array())
     {
-        return static::G()->_debug_log($message, $context);
+        return static::G()->_DebugLog($message, $context);
     }
-    public function _debug_log($message, array $context = array())
+    public function _DebugLog($message, array $context = array())
     {
         if ($this->options['is_debug']) {
             return Logger::G()->debug($message, $context);
