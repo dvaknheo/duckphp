@@ -2,6 +2,7 @@
 [toc]
 ## 简介
 `组件类` 完成命令行功能
+
 ## 选项
 
 'cli_enable' => true,
@@ -26,9 +27,9 @@
 
 
 
-    public function getCliParameters()
-    public function regCommandClass($class, $alias = null)
-    public function getCommandListInfo()
+    public function getCliParameters() // 获得 参数列表
+    public function regCommandClass($class, $alias = null) // 注册一个命令类
+    public function getCommandListInfo() // 获得命令列表信息
     public function app()
     public function run()
 
@@ -55,5 +56,9 @@ abc-d 会转成 $abc_d
 Console::G()->getCliParameters(); 获得参数的值
 
 你的 app 类，还有其他 command_$cmd 会加入或覆盖 默认的 方法。
+
+如果你要注册额外的 类 方法 ，使用 regCommandClass
+
+getCommandListInfo() 会把他们展示出来
 
 

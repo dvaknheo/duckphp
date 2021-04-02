@@ -8,7 +8,7 @@ use SimpleAuth\Base\Helper\ViewHelper as V;
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="<?=V::H($csrf_token)?>">
+    <meta name="csrf-token" content="<?=__h($csrf_token)?>">
     <title>简单博客系统</title>
 </head>
 <body>

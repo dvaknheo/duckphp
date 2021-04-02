@@ -52,6 +52,7 @@ trait AppPluginTrait
             'plugin_component_class_route' => '',
             
             'plugin_enable_readfile' => false,
+            'plugin_use_singletonex_route' => true,
         ];
         $this->plugin_options = array_replace_recursive($plugin_options_default, $this->plugin_options ?? []);
         
@@ -247,9 +248,9 @@ trait AppPluginTrait
         
         $route_options = $this->plugin_options['plugin_route_options'];
         $route_options['namespace'] = $this->plugin_options['plugin_namespace'];
-        $route_options['controller_path_prefix'] = $this->plugin_options['plugin_url_prefix'];
         
-        // path_info . Route Hook 不在这里继承。
+        $route_options['controller_path_prefix'] = $this->plugin_options['plugin_url_prefix'];
+        $route_options['controller_use_singletonex'] = $this->plugin_options['plugin_use_singletonex_route'];
         Route::G()->init($route_options);
     }
     public function pluginModeClear()

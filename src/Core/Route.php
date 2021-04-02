@@ -429,6 +429,7 @@ trait Route_UrlManager
         if (isset($url) && '#' === substr($url, 0, 1)) {
             return $basepath.$path_info.$url;
         }
+        $url = '/'.ltrim($url, '/');
         return $basepath.$url;
     }
     public function setUrlHandler($callback)

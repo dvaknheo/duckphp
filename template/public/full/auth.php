@@ -12,10 +12,19 @@ if (!class_exists(\SimpleAuth\Base\App::class)) {
 
 $options = [
     'path' => $project_root,
-    'path_namespace' => $project_root,
-    'ext'=>[
+    'path_namespace' => $project_root,    'ext'=>[
         \SimpleAuth\Base\App::class => true,
     ],
 ];
-
-\DuckPhp\DuckPhp::RunQuickly($options);
+class X extends SimpleAuth\Controller\Main
+{
+    public function register()
+    {
+        echo "第三方注册页面已被我更改";
+        return parent::register();
+    }
+}
+ SimpleAuth\Controller\Main::G(X::G());
+\DuckPhp\DuckPhp::RunQuickly($options,function(){
+   
+});

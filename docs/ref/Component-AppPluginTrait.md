@@ -6,7 +6,9 @@
 这个Trait 把 App 类变成插件
 
 ## 选项
-*需要注意的是：AppPluginTrait 的选项是在 plugin_options 设置.*
+*需要注意的是：AppPluginTrait 的选项是在 `plugin_options` 属性里设置*
+
+
 
 'plugin_path_namespace' => null,
 
@@ -45,7 +47,11 @@
 'plugin_enable_readfile' => false,
 
     启用用于读取资源的目录
+'plugin_use_singletonex_route' => true,
+
+    启用 SingletonEx, 让客户端可以修改Controller
 ## 公开方法
+
     public function pluginModeInit(array $options, object $context = null)
     public static function PluginModeRouteHook($path_info)
     public function _PluginModeRouteHook($path_info)
@@ -127,10 +133,11 @@ pluginModeDefaultRouteHook 通过 pluginModeCloneHelpers 把自己的 Helper  �
     protected function pluginModeDefaultRouteHook($path_info)
     protected function pluginModeCloneHelpers()
 
+​    protected function pluginModeBeforeRun($callback)   
 
-​    
+事件方法列表：
+
 ​    protected function onPluginModePrepare()
 ​    protected function onPluginModeInit()
 ​    protected function onPluginModeBeforeRun()
 ​    protected function onPluginModeRun()
-​    protected function pluginModeBeforeRun($callback)

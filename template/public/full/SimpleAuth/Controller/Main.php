@@ -12,8 +12,11 @@ use SimpleAuth\Service\SessionServiceException;
 use SimpleAuth\Service\UserService;
 use SimpleAuth\Service\UserServiceException;
 
+use DuckPhp\SingletonEx\SingletonExTrait;
+
 class Main
 {
+    use SingletonExTrait;
     public function __construct()
     {
         $method = C::getRouteCallingMethod();

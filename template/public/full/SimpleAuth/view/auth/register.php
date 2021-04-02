@@ -2,30 +2,30 @@
 use SimpleAuth\Base\Helper\ViewHelper as V;
 
 V::startSection('content'); ?>
-<form method="POST" action="<?= V::H($url_register); ?>">
+<form method="POST" action="<?= __h($url_register); ?>">
     <?= $csrf_field ?>
 <?php if (isset($error)) { ?>
-    <div><b>错误： <?= V::H($error);?></b></div>
+    <div><b>错误： <?= __h($error);?></b></div>
 <?php }?>
-    <label><?= V::HL('用户名'); ?></label>
+    <label><?= __hl('用户名'); ?></label>
     <div>
-        <input name="name" value="<?= V::H($name)?>" autofocus>
+        <input name="name" value="<?= __h($name)?>" autofocus>
     </div>
-    <label><?= V::HL('密码'); ?></label>
+    <label><?= __hl('密码'); ?></label>
     <div>
         <input type="password" name="password">
     </div>
-    <label><?= V::HL('重复密码'); ?></label>
+    <label><?= __hl('重复密码'); ?></label>
     <div>
         <input type="password" name="password_confirm">
     </div>
     <div>
         <button type="submit">
-            <?= V::HL('注册'); ?>
+            <?= __hl('注册'); ?>
         </button>
     </div>
 </form>
 
 </div>
 <?php V::stopSection(); ?>
-<?php V::Display('layouts/app');?>
+<?php __display('layouts/app');?>
