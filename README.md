@@ -1,11 +1,12 @@
 # DuckPhp 介绍
+[toc]
 ***v1.2.10版***
 
 作者QQ: 85811616
 
 官方QQ群: 714610448
 
-##  教程
+##  一、教程
 [**快速入门**](docs/tutorial-quickstart.md) ,快速入门页面。
 
 [**文档索引页**](docs/index.md) ,所有文档索引页面，所有文档的集合入口
@@ -27,7 +28,7 @@ composer require dvaknheo/duckphp # 用 require
 
 DuckPhp 也支持在子目录里使用，同时也支持无 path_info 配置的 web 服务器。
 
-## DuckPhp 是什么
+## 二、DuckPhp 是什么
 
 DuckPhp 的名字来源：
 
@@ -44,7 +45,7 @@ DuckPhp 的版本历程
 + 1.2.\* 系列版本是改名 DuckPhp 后的版本，随着思想的变化，或许会有大的变更
 + 1.3.\* 系列版本将是计划开始有人大规模使用后的稳定版本，将会对历史负责了。
 
-## DuckPhp 的理念
+## 三、DuckPhp 的理念
 **业务层**。通常的 Model，Controller，View 少了一层。而因为这种缺层，导致了很多很糟糕的场景。你会发现很多人在 Contorller 里写一堆代码，或者在 Model 里写一堆代码。
 
 这个层。有人称呼 Service ,有人称呼 Logic 。我最初的时候称呼为 App ，很长时间内我都称为 Service 。现在，我称呼为 Business 业务层。之所以改过来， Business 就是业务的意思啊。不用多想。 而且现在 Service 服务 这个层被用滥了。现在第三方的平台过来的东西才叫 Service ，业务范围之内的，就叫 Business 吧。Service 给人的感觉是业务需要的服务，不能完成一个功能。
@@ -57,15 +58,15 @@ DuckPhp 的最大意义是思想，只要思想在，什么框架你都可以用
 
 组合而非继承。这是 DuckPhp 提倡的另一个观点。
 
-## DuckPhp 的优点
+## 四、DuckPhp 的优点
 
-#### 全组件可替换
+#### 1.  全组件可替换
 
 作为一个现代的 PHP 库， 全组件可替换是必须的。
 
 DuckPhp 用可变单例方式，解决了**系统的调用形式不变，实现形式可变**，不需要魔改来修复系统漏洞。而其他框架用的 IoC,DI 技术则复杂且不方便调试。
 
-#### 高可靠性，无依赖
+#### 2.  高可靠性，无依赖
 
 DuckPhp 无第三方依赖，你不必担心第三方依赖改动而大费周折。**不需要引入101 个第三方包，就能工作**，稳定性完全可控。
 
@@ -73,7 +74,7 @@ DuckPhp 无第三方依赖，你不必担心第三方依赖改动而大费周折
 
 比如 DuckPhp 的数据库类很简洁，而且，你可以轻易方便的替换。如教程就有使用 thinkphp-db 的例子。[链接](docs/tutorial-db.db)
 
-#### 超低耦合
+#### 3.  超低耦合
 
 DuckPhp 耦合松散，扩展灵活方便，魔改容易。
 
@@ -83,7 +84,7 @@ DuckPhp 的 Controller 切换容易，独立，和其他类无关，简单明了
 
 DuckPhp 的路由也可以单独抽出使用。
 
-#### 简洁
+#### 4. 简洁
 
 DuckPhp 以库方式引入，所以 DuckPhp 工程骨架不像其他框架那样一大堆不可删除的文件
 
@@ -99,11 +100,11 @@ DuckPhp 各组件是无直接引用的，所以 var_dump() 能看出来。
 
 DuckPhp/Core/App 是 DuckPhp 的子框架。有时候你用 DuckPhp/Core/App 也行。类似 lumen 之于 Laravel 。
 
-#### 可扩展
+#### 5. 可扩展
 
 DuckPhp 支持扩展。这些扩展可独立，不一定非要仅仅用于 DuckPHP。
 
-#### 灵活自由
+#### 6. 灵活自由
 
 DuckPhp 不限制你的工程的命名空间固定为 app 。你甚至可以把你的工程作为其他项目的插件使用。
 
@@ -113,7 +114,7 @@ DuckPhp 很容易嵌入其他 PHP 框架。根据 DuckPhp 的返回值判断是�
 
 DuckPhp 支持 composer。无 composer 环境也可运。DuckPhp 是 Composer 库，不需要单独的脚手架工程。
 
-#### 最小惊讶原则(Principle of least astonishment)
+#### 7. 最小惊讶原则(Principle of least astonishment)
 
 DuckPhp 遵守最小惊讶原则，尽量避免一下常见问题：
 
@@ -121,12 +122,12 @@ DuckPhp 遵守最小惊讶原则，尽量避免一下常见问题：
 
 避免了注解之类不知道从哪里冒出来的东西。
 
-#### 全覆盖单元测试
+#### 8. 全覆盖单元测试
 
 DuckPhp 因为作者强迫症，每次发布都是通过全代码覆盖的测试，因此有很大健壮性。
 
 
-#### 区分使用角色
+#### 9. 区分使用角色
 
 DuckPhp 的使用者角色分为 `业务工程师`和`核心工程师`。
 
@@ -134,7 +135,7 @@ DuckPhp 的使用者角色分为 `业务工程师`和`核心工程师`。
 
 `核心工程师` 才需要研究做系统核心代码。
 
-#### 其他优点
+#### 10. 其他优点
 
 DuckPhp 无侵入，杜绝全局函数冲突引发的问题
 
@@ -149,7 +150,7 @@ DuckPhp 有扩展能做到禁止你在 Controller 里直接写 sql 。有时候�
 
 DuckPhp 一度通过SwooleHttpd 不需要改代码就支持 swoole 。将来版本将支持 swoole 和 workerman ，和更多其他平台。
 
-### 和其他框架简单对比
+#### 11.和其他框架简单对比
 
 |功能                 | CodeIgniter 4 | ThinkPHP 6 | Laravel 6 | DuckPhp |
 |---------------------|--------------|------------|-----------|---------|
@@ -165,13 +166,13 @@ DuckPhp 一度通过SwooleHttpd 不需要改代码就支持 swoole 。将来版�
 |代码简洁             | V            | V          |           | V       |
 |非固定全站框架                   |            |           |         | V |
 
-## DuckPhp 不做什么
+## 五、DuckPhp 不做什么
 
 * ORM ，和各种屏蔽 sql 的行为，根据日志查 sql 方便多了。 自己简单封装了 pdo 。你也可以使用自己的DB类。 你也可以用第三方ORM（教程就有使用 thinkphp-db 的例子。[链接](docs/tutorial-db.db)）
 * 模板引擎，PHP本身就是模板引擎。
 * Widget ， 和 MVC 分离违背。
 
-## 理解 DuckPhp 的原则
+## 六、理解 DuckPhp 的原则
 
 DuckPhp 工程层级关系图
 
@@ -200,7 +201,7 @@ Controller --> Business ------------------------------ ---> Model
     1. 在主表里附加，其他表估计用不到的情况。
     2. 添加后缀为 ExModel 用于表示这个 Model 是多个表的，如 UserExModel。
     3. 或者单独和数据库不一致如取名 UserAndPlayerRelationModel
-## 常用工程目录结构
+## 七、常用工程目录结构
 
 DuckPhp 代码里的 template 目录就是我们的工程目录示例。也是工程桩代码。
 
@@ -269,7 +270,28 @@ Helper 目录，助手类，如果你一个人偷懒，直接用 APP 类也行
 
 @script 目录结构
 
-## 样例
+##  八、教程索引
+
+助手类教程在这里 [助手类教程](docs/tutorial-helper.md)，基本上，看完助手类教程，`业务工程师`就可以开干了。
+
+此外有什么不了解的，问`核心工程师`吧。
+比如路由方面，常见是文件路由。 [路由教程](docs/tutorial-route.md)
+
+如果你的项目使用内置数据库，或许你还要看  [数据库教程](docs/tutorial-helper.md)
+
+还有 [异常处理](docs/tutorial-exception.md) 异常处理，和 [事件处理](docs/tutorial-event.md)
+
+命令行怎么处理，需要看  [命令行教程](docs/tutorial-console.md)
+
+一些额外功能，你要看   [内置扩展介绍](docs/tutorial-extension.md)
+
+使用第三方插件或把项目变成插件 需要看 [插件模式](docs/tutorial-plugin.md)
+
+最后，查看 [开发相关](docs/tutorial-support.md) 加入开发
+
+
+
+## 九、样例
 ### 1. hello world
 
 @script File: `template/public/helloworld.php`
@@ -501,7 +523,7 @@ namespace
     \MySpace\System\App::RunQuickly($options);
 }
 ```
-## nginx 配置
+## 十、nginx 配置
 这是我的 nginx 配置，如果在安装时候出现什么问题，欢迎反馈。
 毕竟一般配置好后都不会去动。出现什么安装问题会没特别在意
 
@@ -522,7 +544,7 @@ server {
     }
 }
 ```
-## 架构
+## 十一、架构
 ### 系统架构图
 
 ![DuckPhp](docs/duckphp.gv.svg)
@@ -603,7 +625,7 @@ server {
 
 ![DuckPhp](docs/arch_all.gv.svg)
 
-## DuckPhp 还要做什么
+## 十二、DuckPhp 还要做什么
 
 **我真的很需要反馈啊，给我个反馈吧**
 
@@ -611,6 +633,6 @@ server {
 * 范例，例子还太少太简单了。
 * 更多的杀手级应用。
 
-## 还有什么要说的
+## 十三、还有什么要说的
 
 使用它，鼓励我，让我有写下去的动力

@@ -194,8 +194,8 @@ trait AppPluginTrait
         if (!$flag) {
             return false;
         }
-        $this->pluginModeReplaceComponent();
-        $this->pluginModeBeforeRun();
+        $this->pluginModeReplaceDynamicComponent();
+        $this->pluginModeInitDynamicComponent();
         $this->onPluginModeBeforeRun();
         
         $flag = Route::G()->run();
@@ -228,7 +228,7 @@ trait AppPluginTrait
         echo file_get_contents($file);
         return true;
     }
-    protected function pluginModeReplaceComponent()
+    protected function pluginModeReplaceDynamicComponent()
     {
         $this->plugin_view_old = View::G();
         $this->plugin_route_old = Route::G();
@@ -238,7 +238,7 @@ trait AppPluginTrait
         View::G(new $view_class());
         Route::G(new $route_class());
     }
-    protected function pluginModeBeforeRun()
+    protected function pluginModeInitDynamicComponent()
     {
         $view_options = $this->plugin_options['plugin_view_options'];
         $view_options['path'] = $this->plugin_view_path_base;

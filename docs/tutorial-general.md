@@ -278,7 +278,6 @@ class App extends DuckPhp
 
 + // @DUCKPHP_DELETE 模板引入后删除
 + // @DUCKPHP_HEADFILE 头文件调整
-+ // @DUCKPHP_NAMESPACE 调整命名空间
 
 ### 关于选项
 
@@ -495,21 +494,19 @@ DuckPhp 扩展的加载是通过选项里添加，$options['ext']数组实现的
 日志
 验证， duckphp 没验证处理，你需要第三方类
 
-缓存
+缓存 duckphp 默认是空缓存类
 
-Session
+Session // 用 App::SESSION(); 
 
-Cookie
+Cookie // 用 COOKIE
 
-多语言
+多语言 _\_l ,_\_h
 
-上传
+上传 // 没
 
-命令行
+命令行 , 见命令行这一篇
 
-见命令行这一篇
-
-扩展库
+扩展库,见教程
 
 
 

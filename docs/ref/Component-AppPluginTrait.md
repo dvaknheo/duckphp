@@ -141,3 +141,11 @@ pluginModeDefaultRouteHook 通过 pluginModeCloneHelpers 把自己的 Helper  �
 ​    protected function onPluginModeInit()
 ​    protected function onPluginModeBeforeRun()
 ​    protected function onPluginModeRun()
+
+## 原理
+
+pluginModeInit()
+
+onPluginModePrepare
+
+pluginModeInitVars()

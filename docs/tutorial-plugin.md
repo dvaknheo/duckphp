@@ -1,4 +1,4 @@
-# 扩展教程
+# 插件模式
 [toc]
 
 
@@ -7,9 +7,9 @@
 扩展包是一套完整业务组件，用于不影响整个工程底下处理一套完整的功能。比如例子里的用户系统。
 你直接用
 http://127.0.0.1:8080/full/blog.php/login 来访问。 这就是通过在博客 Demo 这个项目里，使用 扩展包的形势访问
-UserSystemDemo 这个扩展包。
+SimpleAuth这个扩展包。
 
-http://127.0.0.1:8080/full/auth.php 来访问。这就是 UserSystemDemo 这个项目。
+http://127.0.0.1:8080/full/auth.php 来访问。这就是 SimpleAuth这个项目。
 
 ## 使用方法
 
@@ -21,13 +21,12 @@ http://127.0.0.1:8080/full/auth.php 来访问。这就是 UserSystemDemo 这个�
 ```php
 $this->options['ext']['SimpleAuth\Base\App'] = true;
 ```
-没错，  扩展包也是Base
-
 然后打开地址。
-
 
 然后你发先 auth 也是个 DuckPhp 独立工程。是的，开发 DuckPhp 扩展包 很容易
 只要入口  App 类使用 AppPluginTrait 就行。
+
+相关类参考见 [AppPluginTrait ](ref/Component-AppPluginTrait.md)
 
 AppPluginTrait 帮你做了什么，如果不满要求应该怎么办
 
@@ -102,12 +101,9 @@ ThroOnTrait ::ThrowTo 就在这里用的
 创建新路由，绑定  $_SERVER, path_info;
 新路由的默认地址
 
-
 依赖关系
 AppPluginTrait  依赖 Route , View , Configer
 ///////////////////////// 
-//TODO 如何通讯？
-
-## 把你的工程变成扩展包
+把你的工程变成扩展包
 
 如题

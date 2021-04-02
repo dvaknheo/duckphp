@@ -419,7 +419,7 @@ trait Route_UrlManager
         }
         $basepath = $this->getBasePath();
         $path_info = $this->getPathInfo();
-        
+
         if ('' === $url) {
             return $basepath;
         }
@@ -429,8 +429,7 @@ trait Route_UrlManager
         if (isset($url) && '#' === substr($url, 0, 1)) {
             return $basepath.$path_info.$url;
         }
-        $url = '/'.ltrim($url, '/');
-        return $basepath.$url;
+        return rtrim($basepath, '/').'/'.ltrim(''.$url, '/');
     }
     public function setUrlHandler($callback)
     {
