@@ -44,7 +44,6 @@ class App extends ComponentBase
     use Core_Glue;
     use Core_NotImplemented;
     use Core_SuperGlobal;
-    use Core_Component;
     
     // for trait
     protected $system_handlers = [
@@ -60,9 +59,6 @@ class App extends ComponentBase
         'session_set_save_handler' => null,
 
     ];
-    
-    // from kernel
-    protected $handler_for_exception_handler;
     
     // for trait
     protected $extDynamicComponentClasses = [];
@@ -88,6 +84,135 @@ class App extends ComponentBase
         unset($this->core_options); // not use again;
         //$this->handler_for_exception_handler = [static::class,'set_exception_handler'];// TODO 这里改用选项
     }
+    public function version()
+    {
+        return static::VERSION;
+    }
+    //////// override KernelTrait ////////
+    //@override
+    public function _On404(): void
+    {
+        $error_view = $this->options['error_404'] ?? null;
+        $error_view = $this->error_view_inited?$error_view:null;
+        
+        static::header('', true, 404);
+        if (!is_string($error_view) && is_callable($error_view)) {
+            ($error_view)();
+            return;
+        }
+        //// no error_404 setting.
+        if (!$error_view) {
+            echo "404 File Not Found\n<!--DuckPhp set options ['error_404'] to override me   -->\n";
+            return;
+        }
+        
+        View::G(new View())->init($this->options);
+        $this->onBeforeOutput();
+        View::G()->_Show([], $error_view);
+    }
+    //@override
+    public function _OnDefaultException($ex): void
+    {
+        if ($this->options['default_exception_do_log']) {
+            try {
+                static::Logger()->error('['.get_class($ex).']('.$ex->getMessage().')'.$ex->getMessage());
+            } catch (\Throwable $ex) { // @codeCoverageIgnore
+                //do nothing
+            } // @codeCoverageIgnore
+        }
+        if ($this->options['default_exception_self_display'] && method_exists($ex, 'display')) {
+            $ex->display($ex);
+            return;
+        }
+        $error_view = $this->options['error_500'] ?? null;
+        $error_view = $this->error_view_inited?$error_view:null;
+        
+        static::header('', true, 500);
+        $data = [];
+        $data['is_debug'] = $this->options['is_debug'];
+        $data['ex'] = $ex;
+        $data['class'] = get_class($ex);
+        $data['message'] = $ex->getMessage();
+        $data['code'] = $ex->getCode();
+        $data['trace'] = $ex->getTraceAsString();
+        $data['file'] = $ex->getFile();
+        $data['line'] = $ex->getLine();
+        
+        if (!is_string($error_view) && is_callable($error_view)) {
+            ($error_view)($ex);
+            return;
+        }
+        ////////default;
+        if (!$error_view) {
+            echo "Internal Error \n<!--DuckPhp set options ['error_500'] to override me  -->\n";
+            
+            if ($data['is_debug']) {
+                echo "<h3>{$data['class']}({$data['code']}):{$data['message']}</h3>";
+                echo "<div>{$data['file']} : {$data['line']}</div>";
+                echo "\n<pre>Debug On\n\n";
+                echo $data['trace'];
+                echo "\n</pre>\n";
+            } else {
+                echo "<!-- DuckPhp set options ['is_debug'] to show debug info>\n";
+            }
+            return;
+        }
+        
+        View::G(new View())->init($this->options);
+        $this->onBeforeOutput();
+        View::G()->_Show($data, $error_view);
+    }
+    //@override
+    public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
+    {
+        if (!$this->_IsDebug()) {
+            return;
+        }
+        $descs = array(
+            E_USER_NOTICE => 'E_USER_NOTICE',
+            E_NOTICE => 'E_NOTICE',
+            E_STRICT => 'E_STRICT',
+            E_DEPRECATED => 'E_DEPRECATED',
+            E_USER_DEPRECATED => 'E_USER_DEPRECATED',
+        );
+        $error_shortfile = $errfile;
+        if (!empty($this->options['path'])) {
+            $path = $this->options['path'];
+            $error_shortfile = (substr($errfile, 0, strlen($path)) == $path)?substr($errfile, strlen($path)):$errfile;
+        }
+        $data = array(
+            'errno' => $errno,
+            'errstr' => $errstr,
+            'errfile' => $errfile,
+            'errline' => $errline,
+            'error_desc' => $descs[$errno],
+            'error_shortfile' => $error_shortfile,
+        );
+        $error_view = $this->options['error_debug'] ?? '';
+        $error_view = $this->error_view_inited?$error_view:null;
+        if (!is_string($error_view) && is_callable($error_view)) {
+            ($error_view)($data);
+            return;
+        }
+        $error_desc = '';
+        if (!$error_view) {
+            extract($data);
+            echo  <<<EOT
+<!--DuckPhp  set options ['error_debug']='_sys/error-debug.php' to override me -->
+<fieldset class="_DuckPhp_DEBUG">
+    <legend>$error_desc($errno)</legend>
+<pre>
+{$error_shortfile}:{$errline}
+{$errstr}
+</pre>
+</fieldset>
+
+EOT;
+            return;
+        }
+        View::G()->_Display($error_view, $data);
+    }
+    //////// features
     protected function extendComponentClassMap($map, $namespace)
     {
         if (empty($map)) {
@@ -159,132 +284,27 @@ class App extends ComponentBase
             return $v != $handler;
         });
     }
-    public function version()
-    {
-        return static::VERSION;
-    }
     
-    /////
-    public function _On404(): void
-    {
-        $error_view = $this->options['error_404'] ?? null;
-        $error_view = $this->error_view_inited?$error_view:null;
-        
-        static::header('', true, 404);
-        if (!is_string($error_view) && is_callable($error_view)) {
-            ($error_view)();
-            return;
-        }
-        //// no error_404 setting.
-        if (!$error_view) {
-            echo "404 File Not Found\n<!--DuckPhp set options ['error_404'] to override me   -->\n";
-            return;
-        }
-        
-        View::G(new View())->init($this->options);
-        $this->onBeforeOutput();
-        View::G()->_Show([], $error_view);
-    }
+    //////// for DuckPhp\HttpServer\AppInterface
     
-    public function _OnDefaultException($ex): void
+    //protected $extDynamicComponentClasses = [];
+    public function getDynamicComponentClasses()
     {
-        if ($this->options['default_exception_do_log']) {
-            try {
-                static::Logger()->error('['.get_class($ex).']('.$ex->getMessage().')'.$ex->getMessage());
-            } catch (\Throwable $ex) { // @codeCoverageIgnore
-                //do nothing
-            } // @codeCoverageIgnore
-        }
-        if ($this->options['default_exception_self_display'] && method_exists($ex, 'display')) {
-            $ex->display($ex);
-            return;
-        }
-        $error_view = $this->options['error_500'] ?? null;
-        $error_view = $this->error_view_inited?$error_view:null;
-        
-        static::header('', true, 500);
-        $data = [];
-        $data['is_debug'] = $this->options['is_debug'];
-        $data['ex'] = $ex;
-        $data['class'] = get_class($ex);
-        $data['message'] = $ex->getMessage();
-        $data['code'] = $ex->getCode();
-        $data['trace'] = $ex->getTraceAsString();
-        $data['file'] = $ex->getFile();
-        $data['line'] = $ex->getLine();
-        
-        if (!is_string($error_view) && is_callable($error_view)) {
-            ($error_view)($ex);
-            return;
-        }
-        ////////default;
-        if (!$error_view) {
-            echo "Internal Error \n<!--DuckPhp set options ['error_500'] to override me  -->\n";
-            
-            if ($data['is_debug']) {
-                echo "<h3>{$data['class']}({$data['code']}):{$data['message']}</h3>";
-                echo "<div>{$data['file']} : {$data['line']}</div>";
-                echo "\n<pre>Debug On\n\n";
-                echo $data['trace'];
-                echo "\n</pre>\n";
-            } else {
-                echo "<!-- DuckPhp set options ['is_debug'] to show debug info>\n";
-            }
-            return;
-        }
-        
-        View::G(new View())->init($this->options);
-        $this->onBeforeOutput();
-        View::G()->_Show($data, $error_view);
+        $ret = [
+            RuntimeState::class,
+            View::class,
+            Route::class,
+        ];
+        $ret = array_merge($ret, $this->extDynamicComponentClasses);
+        return $ret;
     }
-    public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
+    public function addDynamicComponentClass($class)
     {
-        if (!$this->_IsDebug()) {
-            return;
-        }
-        $descs = array(
-            E_USER_NOTICE => 'E_USER_NOTICE',
-            E_NOTICE => 'E_NOTICE',
-            E_STRICT => 'E_STRICT',
-            E_DEPRECATED => 'E_DEPRECATED',
-            E_USER_DEPRECATED => 'E_USER_DEPRECATED',
-        );
-        $error_shortfile = $errfile;
-        if (!empty($this->options['path'])) {
-            $path = $this->options['path'];
-            $error_shortfile = (substr($errfile, 0, strlen($path)) == $path)?substr($errfile, strlen($path)):$errfile;
-        }
-        $data = array(
-            'errno' => $errno,
-            'errstr' => $errstr,
-            'errfile' => $errfile,
-            'errline' => $errline,
-            'error_desc' => $descs[$errno],
-            'error_shortfile' => $error_shortfile,
-        );
-        $error_view = $this->options['error_debug'] ?? '';
-        $error_view = $this->error_view_inited?$error_view:null;
-        if (!is_string($error_view) && is_callable($error_view)) {
-            ($error_view)($data);
-            return;
-        }
-        $error_desc = '';
-        if (!$error_view) {
-            extract($data);
-            echo  <<<EOT
-<!--DuckPhp  set options ['error_debug']='_sys/error-debug.php' to override me -->
-<fieldset class="_DuckPhp_DEBUG">
-    <legend>$error_desc($errno)</legend>
-<pre>
-{$error_shortfile}:{$errline}
-{$errstr}
-</pre>
-</fieldset>
-
-EOT;
-            return;
-        }
-        View::G()->_Display($error_view, $data);
+        $this->extDynamicComponentClasses[] = $class;
+    }
+    public function skip404Handler()
+    {
+        $this->options['skip_404_handler'] = true;
     }
 }
 
@@ -959,28 +979,5 @@ trait Core_SuperGlobal
     public function _FILES($key = null, $default = null)
     {
         return $this->getSuperGlobalData('_FILES', $key, $default);
-    }
-}
-trait Core_Component
-{
-    //protected $extDynamicComponentClasses = [];
-
-    public function getDynamicComponentClasses()
-    {
-        $ret = [
-            RuntimeState::class,
-            View::class,
-            Route::class,
-        ];
-        $ret = array_merge($ret, $this->extDynamicComponentClasses);
-        return $ret;
-    }
-    public function addDynamicComponentClass($class)
-    {
-        $this->extDynamicComponentClasses[] = $class;
-    }
-    public function skip404Handler()
-    {
-        $this->options['skip_404_handler'] = true;
     }
 }
