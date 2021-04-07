@@ -20,7 +20,6 @@ class Configer extends ComponentBase
         'use_env_file' => false,
         'config_ext_files' => [],
     ];
-    protected $base_path;
     protected $path;
     protected $is_setting_inited = false;
     protected $all_config = [];
@@ -28,9 +27,7 @@ class Configer extends ComponentBase
     
     //@override
     protected function initOptions(array $options)
-    {
-        $this->base_path = $this->options['path'] ?? '';
-        
+    {        
         $this->path = parent::getComponenetPathByKey('path_config');
         
         $this->setting = $this->options['setting'] ?? [];
@@ -43,7 +40,7 @@ class Configer extends ComponentBase
             return $this->setting[$key] ?? null;
         }
         if ($this->options['use_env_file']) {
-            $env_setting = parse_ini_file(realpath($this->base_path).'/.env');
+            $env_setting = parse_ini_file(realpath($this->options['path']).'/.env');
             $env_setting = $env_setting?:[];
             $this->setting = array_merge($this->setting, $env_setting);
         }
