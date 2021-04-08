@@ -102,7 +102,7 @@ class App extends ComponentBase
         }
         //// no error_404 setting.
         if (!$error_view) {
-            echo "404 File Not Found\n<!--DuckPhp set options ['error_404'] to override me   -->\n";
+            echo "404 File Not Found\<!--(PATH_INO: {$_SERVER['PATH_INFO']}) DuckPhp set options ['error_404'] to override me. -->\n";
             return;
         }
         
@@ -641,6 +641,7 @@ trait Core_Helper
     }
     public static function ThrowOn($flag, $message, $code = 0, $exception_class = null)
     {
+        // 这里要改
         return static::G()->_ThrowOn($flag, $message, $code, $exception_class);
     }
     public function _ThrowOn($flag, $message, $code = 0, $exception_class = null)

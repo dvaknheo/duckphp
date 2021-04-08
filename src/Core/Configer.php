@@ -27,7 +27,7 @@ class Configer extends ComponentBase
     
     //@override
     protected function initOptions(array $options)
-    {        
+    {
         $this->path = parent::getComponenetPathByKey('path_config');
         
         $this->setting = $this->options['setting'] ?? [];

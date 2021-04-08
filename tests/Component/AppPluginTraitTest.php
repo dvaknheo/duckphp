@@ -34,7 +34,7 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
             'cli_enable'=>false,
         ];
         $plugin_options=[
-            'plugin_path_namespace'=>$path_app.'secondapp/',
+            'plugin_path'=>$path_app.'secondapp/',
             
             'plugin_routehook_position'=>'append-outter',
             
@@ -49,21 +49,21 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
         $options['ext'][AppPluginTraitApp::class]=$plugin_options;
         $options['ext'][AppPluginTraitApp2::class]=$plugin_options;
 
-        AppPluginTraitApp::G()->onPluginModePrepare=[static::class,"onPluginModePrepare"];// function(){ echo "onPrepare!";};
-        AppPluginTraitApp::G()->onPluginModeInit=[static::class,"onPluginModeInit"];// function(){ echo "onPrepare!";};
-        AppPluginTraitApp::G()->onPluginModeBeforeRun=[static::class,"onPluginModeBeforeRun"];// function(){ echo "onPrepare!";};
+        AppPluginTraitApp::G()->onPluginModePrepare=[static::class,"onPluginModePrepare"];
+        AppPluginTraitApp::G()->onPluginModeInit=[static::class,"onPluginModeInit"];
+        AppPluginTraitApp::G()->onPluginModeBeforeRun=[static::class,"onPluginModeBeforeRun"];
         //AppPluginTraitApp::G()->onPluginModeRun=;// function(){ echo "onPrepare!";};
-        AppPluginTraitApp2::G()->onPluginModeRun=[static::class,"onPluginModeRun"];
-
+        
         DuckPhp::G(new DuckPhp())->init($options);
         
         AppPluginTraitApp::G()->onPluginModeBeforeRun=function(){ echo "onBeforeRun!";};
         AppPluginTraitApp::G()->onPluginModeRun=function(){ echo "onPluginModeRun!";};
         
         
-        
         $_SERVER['PATH_INFO']='/Test/second';
         DuckPhp::G()->run();
+        
+
         AppPluginTraitApp2::G()->onPluginModeRun=null;
         DuckPhp::G()->run();
         
@@ -87,10 +87,19 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
         $plugin_options['plugin_path_namespace']=null;
         $plugin_options['plugin_search_config']=false;
         AppPluginTraitApp::G(new AppPluginTraitApp())->init($plugin_options,DuckPhp::G()->init($options));
+        AppPluginTraitApp::G()->testIt();
+        AppPluginTraitApp::G()->testIt2();
+        AppPluginTraitApp::G()->testIt3();
 
-        DuckPhp::G(new DuckPhp());
-        
-        
+        /*
+        $plugin_options=[
+            'plugin_path'=>'~/',
+        ];
+        $options['ext']=[];
+        $options['ext'][AppPluginTraitApp3::class]=$plugin_options;
+        $_SERVER['PATH_INFO']='/second';
+        DuckPhp::G(new DuckPhp())->init($options)->run();
+        */
         \LibCoverage\LibCoverage::End();
     }
 }
@@ -107,13 +116,30 @@ class AppPluginTraitApp extends DuckPhp
         $this->pluginModeGetOldRoute();
         $this->pluginModeGetOldView();
         $this->onPluginModeBeforeRun = function(){
-                // ??? not hit ?
-                var_dump("Before run!",get_class(AppPluginTraitApp::G()->pluginModeGetOldRoute()));
-                $this->onPluginModeRun=function(){ echo "onRun!";};
-                //var_dump($this->onPluginModeRun);
-            };
+            // ??? not hit ?
+            /*
+            var_dump("Before run!",get_class(AppPluginTraitApp::G()->pluginModeGetOldRoute()));
+            $this->onPluginModeRun=function(){ echo "onRun!";};
+            //var_dump($this->onPluginModeRun);
+            */
+        };
             
         
+    }
+    public function testIt()
+    {
+        $this->plugin_options['plugin_path_document']='/test';
+        $this->pluginModeGetPath('plugin_path_document');
+    }
+    public function testIt2()
+    {
+        $this->plugin_options['plugin_path']='~';
+        $this->pluginModeInit([],$this);
+    }
+    public function testIt3()
+    {
+        $this->plugin_options['plugin_path']='';
+        $this->pluginModeInit([],$this);
     }
         
 }
@@ -123,6 +149,7 @@ class AppHelper
     {
         var_dump("AppHelper OK");
     }
+
 }
 class AppPluginTraitApp2 extends DuckPhp
 {
@@ -130,6 +157,15 @@ class AppPluginTraitApp2 extends DuckPhp
     public $plugin_options=[
         'plugin_url_prefix'=>'/Test',
     ];
+    public function __construct()
+    {
+        parent::__construct();
+    }
+}
+class AppPluginTraitApp3 extends DuckPhp
+{
+    use AppPluginTrait;
+
     public function __construct()
     {
         parent::__construct();

@@ -8,8 +8,6 @@
 ## 选项
 *需要注意的是：AppPluginTrait 的选项是在 `plugin_options` 属性里设置*
 
-
-
 'plugin_path_namespace' => null,
 
     插件的命名空间路径
@@ -49,15 +47,24 @@
     启用用于读取资源的目录
 'plugin_use_singletonex_route' => true,
 
-    启用 SingletonEx, 让客户端可以修改Controller
+    启用 SingletonEx, 让客户可以修改Controller
 ## 公开方法
 
-    public function pluginModeInit(array $options, object $context = null)
-    public static function PluginModeRouteHook($path_info)
-    public function _PluginModeRouteHook($path_info)
+pluginModeInit(array $options, object $context = null)
 
+    初始化入口，插件的初始化从这里开始
+static PluginModeRouteHook($path_info)
+\_PluginModeRouteHook($path_info)
 
-​    
+    路由勾子
+pluginModeGetOldView()
+pluginModeGetOldRoute()
+
+    获得旧的 View/Route 实例
+pluginModeClear()
+
+    插件清理，备不时之需
+
 ​    public function pluginModeGetOldRoute()
 
 ## 用于重载的事件方法
@@ -73,7 +80,6 @@ onPluginModeBeforeRun 运行阶段就执行 onPluginModeRun 得到回调之后�
     protected function pluginModeDefaultInit(array $options, object $context = null)
     protected function pluginModeIncludeConfigFile($file)
     protected function pluginModeSearchAllPluginFile($path, $setting_file = '')
-    protected function pluginModeDefaultRouteHook($path_info)
     protected function pluginModeCloneHelpers()
 
 ## 主流程
@@ -144,8 +150,3 @@ pluginModeDefaultRouteHook 通过 pluginModeCloneHelpers 把自己的 Helper  �
 
 ## 原理
 
-pluginModeInit()
-
-onPluginModePrepare
-
-pluginModeInitVars()
