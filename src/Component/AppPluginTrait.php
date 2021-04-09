@@ -5,7 +5,6 @@
  */
 namespace DuckPhp\Component;
 
-use DuckPhp\Core\App;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\View;
@@ -24,73 +23,7 @@ trait AppPluginTrait
     protected $plugin_view_old = null;
     protected $plugin_view_path = null; //TODO remove
     
-    public function pluginModeInit(array $plugin_options, object $context = null)
-    {
-        $plugin_options_default = [
-            'plugin_mode' => true,
-            'plugin_path' => null,
-            'plugin_namespace' => null,
-            
-            'plugin_path_conifg' => 'config',
-            'plugin_path_view' => 'view',
-            'plugin_path_document' => 'public',
-            
-            'plugin_url_prefix' => '',
-            'plugin_routehook_position' => 'append-outter',
-            
-            'plugin_injected_helper_map' => '',
-            'plugin_files_config' => [],
-            'plugin_search_config' => false,
-            
-            'plugin_view_options' => [],
-            'plugin_route_options' => [],
-            'plugin_component_class_view' => '',
-            'plugin_component_class_route' => '',
-            
-            'plugin_enable_readfile' => false,
-            'plugin_use_singletonex_route' => true,
-        ];
-        $this->plugin_options = $this->plugin_options ?? [];
-        $this->plugin_options = array_replace_recursive($plugin_options_default, $this->plugin_options, $plugin_options ?? []);
-        $this->plugin_context_class = get_class($context);
-        
-        $this->onPluginModePrepare();
-        
-        $this->pluginModeInitBasePath();
-        
-        $this->plugin_view_path = View::G()->path . str_replace('\\', DIRECTORY_SEPARATOR, $this->plugin_options['plugin_namespace']).DIRECTORY_SEPARATOR;
-        
-        $setting_file = $context->options['setting_file'] ?? 'setting';
-        $ext_config_files = $this->pluginModeInitConfigFiles($setting_file);
-        if (!empty($ext_config_files)) {
-            Configer::G()->assignExtConfigFile($ext_config_files);
-        }
-        
-        //clone Helper
-        if ($this->plugin_options['plugin_injected_helper_map']) {
-            $this->plugin_context_class::G()->cloneHelpers($this->plugin_options['plugin_namespace'], $this->plugin_options['plugin_injected_helper_map']);
-        }
-        
-        Route::G()->addRouteHook([static::class,'PluginModeRouteHook'], $this->plugin_options['plugin_routehook_position']);
-        
-        $this->onPluginModeInit();
-        
-        return $this;
-    }
-    protected function pluginModeInitConfigFiles($setting_file)
-    {
-        $path_config_override = $this->pluginModeGetPath('plugin_path_conifg');
-        if ($this->plugin_options['plugin_search_config']) {
-            $this->plugin_options['plugin_files_config'] = $this->pluginModeSearchAllPluginFile($path_config_override, $setting_file);
-        }
-        
-        $ret = [];
-        foreach ($this->plugin_options['plugin_files_config'] as $name) {
-            $file = $path_config_override.$name.'.php';
-            $ret[$name] = $file;
-        }
-        return $ret;
-    }
+    /////////
     //for override
     protected function onPluginModePrepare()
     {
@@ -119,11 +52,63 @@ trait AppPluginTrait
             return ($this->onPluginModeRun)();
         }
     }
+    //callback
     public static function PluginModeRouteHook($path_info)
     {
         return static::G()->_PluginModeRouteHook($path_info);
     }
-    /////
+    ////////
+    public function pluginModeInit(array $plugin_options, object $context = null)
+    {
+        $plugin_options_default = [
+            'plugin_path' => null,
+            'plugin_namespace' => null,
+            
+            'plugin_path_conifg' => 'config',
+            'plugin_path_view' => 'view',
+            'plugin_path_document' => 'public',
+            
+            'plugin_url_prefix' => '',
+            'plugin_routehook_position' => 'append-outter',
+            
+            'plugin_injected_helper_map' => '',
+            'plugin_files_config' => [],
+            'plugin_search_config' => false,
+            
+            'plugin_view_options' => [],
+            'plugin_route_options' => [],
+            'plugin_component_class_view' => '',
+            'plugin_component_class_route' => '',
+            
+            'plugin_enable_readfile' => false,
+            'plugin_use_singletonex_route' => true,
+        ];
+        $this->plugin_options = $this->plugin_options ?? [];
+        $this->plugin_options = array_replace_recursive($plugin_options_default, $this->plugin_options, $plugin_options ?? []);
+        $this->plugin_context_class = get_class($context);
+        
+        $this->onPluginModePrepare();
+        $this->pluginModeInitBasePath();
+        
+        //View , Configer;
+        $this->plugin_view_path = View::G()->path . str_replace('\\', DIRECTORY_SEPARATOR, $this->plugin_options['plugin_namespace']).DIRECTORY_SEPARATOR;
+        $setting_file = $context->options['setting_file'] ?? 'setting';
+        $ext_config_files = $this->pluginModeInitConfigFiles($setting_file);
+        if (!empty($ext_config_files)) {
+            Configer::G()->assignExtConfigFile($ext_config_files);
+        }
+        
+        //clone Helper
+        if ($this->plugin_options['plugin_injected_helper_map']) {
+            $this->plugin_context_class::G()->cloneHelpers($this->plugin_options['plugin_namespace'], $this->plugin_options['plugin_injected_helper_map']);
+        }
+        
+        Route::G()->addRouteHook([static::class,'PluginModeRouteHook'], $this->plugin_options['plugin_routehook_position']);
+        
+        $this->onPluginModeInit();
+        
+        return $this;
+    }
     protected function pluginModeInitBasePath()
     {
         if (empty($this->plugin_options['plugin_namespace']) || empty($this->plugin_options['plugin_path'])) {
@@ -146,6 +131,20 @@ trait AppPluginTrait
             $this->plugin_options['plugin_path'] = str_replace('~', $dir, $this->plugin_options['plugin_path']);
         }
     }
+    protected function pluginModeInitConfigFiles($setting_file)
+    {
+        $path_config_override = $this->pluginModeGetPath('plugin_path_conifg');
+        if ($this->plugin_options['plugin_search_config']) {
+            $this->plugin_options['plugin_files_config'] = $this->pluginModeSearchAllPluginFile($path_config_override, $setting_file);
+        }
+        
+        $ret = [];
+        foreach ($this->plugin_options['plugin_files_config'] as $name) {
+            $file = $path_config_override.$name.'.php';
+            $ret[$name] = $file;
+        }
+        return $ret;
+    }
     protected function pluginModeSearchAllPluginFile($path, $setting_file = '')
     {
         $setting_file = !empty($setting_file) ? $path.$setting_file . '.php' : '';
@@ -165,7 +164,8 @@ trait AppPluginTrait
         }
         return $ret;
     }
-    protected function getPluginModePathInfo($path_info)
+    //////////////
+    private function pluginModeCheckPathInfo($path_info)
     {
         $flag = $this->plugin_options['plugin_url_prefix'] ?? false;
         if (!$flag) {
@@ -178,9 +178,10 @@ trait AppPluginTrait
         }
         return true;
     }
+    //callback
     protected function _PluginModeRouteHook($path_info)
     {
-        $flag = $this->getPluginModePathInfo($path_info);
+        $flag = $this->pluginModeCheckPathInfo($path_info);
         if (!$flag) {
             return false;
         }
@@ -192,30 +193,14 @@ trait AppPluginTrait
         if (!$flag && $this->plugin_options['plugin_enable_readfile']) {
             $flag = $this->pluginModeReadFile($path_info);
             if ($flag) {
+                $this->onPluginModeRun();
+                $this->pluginModeClear();
                 return true;
             }
         }
         $this->onPluginModeRun();
         $this->pluginModeClear();
         return $flag;
-    }
-    protected function pluginModeReadFile($path_info)
-    {
-        $path_document = $this->pluginModeGetPath('plugin_path_document');
-        $file = urldecode(substr($path_info, strlen($this->plugin_options['plugin_url_prefix'])));
-        if (false !== strpos($file, '../')) {
-            return false;
-        }
-        if (pathinfo($file, PATHINFO_EXTENSION) === 'php') {
-            return false;
-        }
-        $file = $path_document.$file;
-        if (!is_file($file)) {
-            return false;
-        }
-        App::header('Content-Type: '.mime_content_type($file)); // :(
-        echo file_get_contents($file);
-        return true;
     }
     protected function pluginModeReplaceDynamicComponent()
     {
@@ -239,6 +224,24 @@ trait AppPluginTrait
         $route_options['controller_path_prefix'] = $this->plugin_options['plugin_url_prefix'];
         $route_options['controller_use_singletonex'] = $this->plugin_options['plugin_use_singletonex_route'];
         Route::G()->init($route_options);
+    }
+    protected function pluginModeReadFile($path_info)
+    {
+        $path_document = $this->pluginModeGetPath('plugin_path_document');
+        $file = urldecode(substr($path_info, strlen($this->plugin_options['plugin_url_prefix'])));
+        if (false !== strpos($file, '../')) {
+            return false;
+        }
+        if (pathinfo($file, PATHINFO_EXTENSION) === 'php') {
+            return false;
+        }
+        $file = $path_document.$file;
+        if (!is_file($file)) {
+            return false;
+        }
+        ($this->plugin_context_class)::header('Content-Type: '.mime_content_type($file)); // :(
+        echo file_get_contents($file);
+        return true;
     }
     public function pluginModeClear()
     {

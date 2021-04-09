@@ -8,9 +8,9 @@
 ## 选项
 *需要注意的是：AppPluginTrait 的选项是在 `plugin_options` 属性里设置*
 
-'plugin_path_namespace' => null,
+'plugin_path' => null,
 
-    插件的命名空间路径
+    插件的路径
 'plugin_namespace' => null,
 
     插件的命名空间

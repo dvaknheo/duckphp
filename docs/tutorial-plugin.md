@@ -14,7 +14,6 @@ http://127.0.0.1:8080/full/auth.php 来访问。这就是 SimpleAuth这个项目
 ## 使用方法
 
 
-
 使用扩展包，在主类里加选项里添加扩展包的入口就可以。
 
 正如所示 auth 所示范的那样。在普通 
@@ -69,6 +68,9 @@ AppPluginTrait 的默认选项
 'plugin_enable_readfile' => false,
 
     启用用于读取资源的目录
+'plugin_use_singletonex_route' => true,
+
+    启用 SingletonEx, 让客户可以修改Controller
 
 ```
 [
@@ -86,6 +88,21 @@ AppPluginTrait 的默认选项
 ```
 
 对默认选项不满意的修改 $plugin_options 选项。
+
+## 调整第三方包
+第三方包提供的不一定符合你的要求，所以
+覆盖 view , 你要在  view/{plugin_namespace}/ 下的 view 文件将会覆盖 view 文件
+覆盖 model 在 onPrepare 用 G 函数替换
+controller 同样可以使用 G 函数 如果选项 plugin_use_singletonex_route 启用
+使用自己的 view
+
+## 调整自己的实现
+```php
+    //
+```
+
+## 原理
+
 
 初始化。
  AppPluginTrait 兼容 App ，初始化不从 init() 开始，而是从 pluginModeInit() 开始
