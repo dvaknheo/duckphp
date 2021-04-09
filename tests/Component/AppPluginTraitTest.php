@@ -18,9 +18,9 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
     {
         var_dump("onPluginModeBeforeRun");
     }
-    public static function onPluginModeRun()
+    public static function onPluginModeAfterRun()
     {
-        var_dump("onPluginModeRun");
+        var_dump("onPluginModeAfterRun");
     }
     public function testAll()
     {
@@ -52,19 +52,19 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
         AppPluginTraitApp::G()->onPluginModePrepare=[static::class,"onPluginModePrepare"];
         AppPluginTraitApp::G()->onPluginModeInit=[static::class,"onPluginModeInit"];
         AppPluginTraitApp::G()->onPluginModeBeforeRun=[static::class,"onPluginModeBeforeRun"];
-        //AppPluginTraitApp::G()->onPluginModeRun=;// function(){ echo "onPrepare!";};
+        AppPluginTraitApp::G()->onPluginModeAfterRun= function(){ echo "onPluginModeAfterRun!";};
         
         DuckPhp::G(new DuckPhp())->init($options);
         
         AppPluginTraitApp::G()->onPluginModeBeforeRun=function(){ echo "onBeforeRun!";};
-        AppPluginTraitApp::G()->onPluginModeRun=function(){ echo "onPluginModeRun!";};
+        AppPluginTraitApp::G()->onPluginModeAfterRun=function(){ echo "onPluginModeAfterRun!";};
         
         
         $_SERVER['PATH_INFO']='/Test/second';
         DuckPhp::G()->run();
         
 
-        AppPluginTraitApp2::G()->onPluginModeRun=null;
+        AppPluginTraitApp2::G()->onPluginModeAfterRun=function(){ echo "onPluginModeAfterRun!";};
         DuckPhp::G()->run();
         
         $_SERVER['PATH_INFO']='/Test2/second';
@@ -117,11 +117,11 @@ class AppPluginTraitApp extends DuckPhp
         $this->pluginModeGetOldView();
         $this->onPluginModeBeforeRun = function(){
             // ??? not hit ?
-            /*
+            //*
             var_dump("Before run!",get_class(AppPluginTraitApp::G()->pluginModeGetOldRoute()));
-            $this->onPluginModeRun=function(){ echo "onRun!";};
-            //var_dump($this->onPluginModeRun);
-            */
+            $this->onPluginModeAfterRun=function(){ echo "onRun!";};
+            //var_dump($this->onPluginModeAfterRun);
+            //*/
         };
             
         

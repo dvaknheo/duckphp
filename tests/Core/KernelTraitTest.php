@@ -59,7 +59,7 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             App::G()->options['is_debug']=true;
             App::G()->onPrepare=function(){ echo "onPrepare!";};
             App::G()->onInit=function(){ echo "onInit!";};
-            App::G()->onRun=function(){ echo "onRun!";};
+            App::G()->onBeforeRun=function(){ echo "onRun!";};
             App::G()->onAfterRun=function(){ echo "onAfterRun!";};
 
         });
@@ -97,7 +97,7 @@ echo "-------------------------------------\n";
         }
         
         
-        App::G()->clear();
+        //App::G()->clear();
         ///////////////////////////
         $options=[
             // 'no this path' => $path_app,
@@ -113,8 +113,6 @@ echo "-------------------------------------\n";
         Configer::G(new Configer());
         App::G(new App())->init($options);
 
-        App::G(new App())->init($options);
-        
 
 
         $this->do404();

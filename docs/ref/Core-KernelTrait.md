@@ -78,7 +78,7 @@ onPrepare
     准备阶段，你可以在这里替换默认类
 onInit
     初始化完成
-onRun
+onBeforeRun
     运行阶段。不建议重写 run ，而是在这里添加运行阶段处理
 
 onAfterRun
@@ -114,7 +114,7 @@ protected function onPrepare()
 protected function onInit()
 
     初始化完成
-protected function onRun()
+protected function onBeforeRun()
 
     运行阶段。不建议重写 run ，而是在这里添加运行阶段处理
 
@@ -144,7 +144,7 @@ protected function getDefaultProjectNameSpace($class)
 protected function getDefaultProjectPath()
 
     辅助方法，用于在 init() 中设置 path.
-## 详解
+## 流程详解
 
 Kernel 这个 Trait 一般不直接使用。一般用的是 DuckPhp\Core\App ， 而直接的 DuckPhp\DuckPhp 类，则是把常见扩展加进去形成完善的框架。
 
@@ -157,26 +157,29 @@ init() 初始化阶段，和 run 阶段
     处理是否是插件模式
     处理自动加载  AutoLoader::G()->init($options, $this)->run();
     处理异常管理 ExceptionManager::G()->init($exception_options, $this)->run();
-    checkOverride() 检测如果有覆盖类，切入覆盖类（LazyToChange\System\App）继续 
+    checkOverride() 检测如果有覆盖类，切入覆盖类（`$options['override_class']`）继续 
     接下来是 initAfterOverride;
 
-#### initAfterOverride 初始化阶段
+### initAfterOverride 初始化阶段
 
     调整选项 initOptions()
     调整外界 initContext()
     调用用于重写的 onPrepare(); 
+    
     初始化默认组件 initDefaultComponenents()
+        
     加入扩展 initExtends()
+    
     调用用于重写的  onInit();
 
 ### run 运行阶段
-run 阶段可重复调用
+    run 阶段可重复调用
     处理 setBeforeRunHandler() 引入的 beforeRunHandlers
     异常准备
         beforeRun()；
             重制 RuntimeState 并设置为开始
             绑定路由
-        * onRun ，可 override 处理这里了。
+        * onBeforeRun ，可 override 处理这里了。
         ** 开始路由处理 Route::G()->run();
         如果返回 404 则 On404() 处理 404
     如果发生异常

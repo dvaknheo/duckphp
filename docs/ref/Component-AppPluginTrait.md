@@ -6,32 +6,32 @@
 这个Trait 把 App 类变成插件
 
 ## 选项
-*需要注意的是：AppPluginTrait 的选项是在 `plugin_options` 属性里设置*
+*需要注意的是：AppPluginTrait 的插件选项是在 `plugin_options` 属性里设置* 目的就是子类化的时候可使用父类的选项。
 
 'plugin_path' => null,
 
-    插件的路径
+    插件的路径,使用默认将会调整成普通App路径~ 会替换成插件类的命名空间
 'plugin_namespace' => null,
 
-    插件的命名空间
+    插件的命名空间，使用默认配置将会调整成所在类的命名空间的父命名空间。
 'plugin_routehook_position' => 'append-outter',
 
-    插件路由的插入方法
+    插件路由的插入方法，默认用最后的钩子
 'plugin_path_conifg' => 'config',
 
-    插件的配置文件
+    插件的配置文件，
 'plugin_path_view' => 'view',
 
-    插件的视图文件
-'plugin_search_config' => false,
-
-    插件搜索方法
+    插件的视图文件，
 'plugin_files_config' => [],
 
     插件的配置文件列表
+'plugin_search_config' => false,
+
+    插件搜索配置模式
 'plugin_url_prefix' => '',
 
-    URL 前缀，限定插件的目录。
+    URL 前缀，限定插件的目录
 'plugin_view_options' => [],
 
     传递给 View 的选项
@@ -39,7 +39,7 @@
 
     传递给 Route 的选项
 
-'plugin_path_document' => '../public',
+'plugin_path_document' => 'public',
 
     用于读取资源的目录
 'plugin_enable_readfile' => false,
@@ -48,6 +48,12 @@
 'plugin_use_singletonex_route' => true,
 
     启用 SingletonEx, 让客户可以修改Controller
+'plugin_component_class_view' => '',
+
+    替换默认的View
+'plugin_component_class_route' => '',
+
+    替换默认的Route
 ## 公开方法
 
 pluginModeInit(array $options, object $context = null)
@@ -65,8 +71,6 @@ pluginModeClear()
 
     插件清理，备不时之需
 
-​    public function pluginModeGetOldRoute()
-
 ## 用于重载的事件方法
 
     protected function onPluginModePrepare()
@@ -82,71 +86,121 @@ onPluginModeBeforeRun 运行阶段就执行 onPluginModeRun 得到回调之后�
     protected function pluginModeSearchAllPluginFile($path, $setting_file = '')
     protected function pluginModeCloneHelpers()
 
-## 主流程
-
-## 详解
+## 应用
 例子见于 template/public/full/
 
-## 如何使用 一个应用级插件？
-App 的 ext 选项里加个 插件名称 => 插件配置的类
+### 如何使用 一个应用级插件？
+App 的 ext 选项里加个 插件名称 => 插件配置的类，比如
 
-## 如何把现有应用变成插件
-App 类 use AppPluginTrait
+```php
+$options['ext'][MyPluginApp::class] = true;
+```
+当然，你也可以调整选项
+```php
+$options['ext'][MyPluginApp::class] = [
+    'plugin_namespace'=> 'MyPlugin',
+    // 更多插件选项
+];
+```
 
-## 初始化阶段
+### 如何把现有应用变成插件
+```php
+class MyPluginApp extends DuckPhp
+{
+    use AppPluginTrait;
+    public $plugin_options = [
+        //覆盖的插件选项
+    ];
+}
+```
+### 如何调整使用的插件
 
-插件的初始化， 插件的初始化和 App 的初始化不同。
-你要重写 pluginModeInit() 这个函数。
-因为是 trait 不是父类，所以要在 再调用父类 的 同名方法的地方使用 pluginModeDefaultInit 。
+#### 前提
+默认情况下， `plugin_namespace` 会调整为 插件类的命名空间的父层命名空间。
+默认情况下， `plugin_path` 会调整为插件类的父层的父层的父层目录，
+使得插件和普通 App 的模式共享同样的目录配置
+`plugin_path` 配合 `plugin_path_*` 使用。如果 `plugin_path_*` 为绝对路径，则忽略 `plugin_path` 。
 
-插件的选项是通过  plugin_options 变量而不是 options 变量修改，目的就是子类化的时候可使用父类的选项。
-'plugin_path_namespace' => null, 是指定插件类的基准文件目录，以配合插件的其他类使用。 默认为空的时候，会去搜索插件类的上一级类， 如 UserSystem\\Base\\App => UserSystem 。 这里注意到是，是 UserSystem 而不是 UserSystem\\Base 
+#### 限定于子目录。
 
-'plugin_path_conifg' => 'config', 配置文件的目录，  'plugin_path_view' => 'view',  视图文件的目录。
-这两在默认模式， 会提供默认的视图和配置，如果在你的应用里有同名文件，则会被覆盖。
+调整插件选项 `plugin_url_prefix` 比如 MyPluginApp 仅仅在 `/admin` 下生效。
 
-'plugin_routehook_position' => 'append-outter',
+#### 覆盖视图和配置文件
 
-特殊配置文件会从这里加载 pluginModeIncludeConfigFile
-    protected function pluginModeSearchAllPluginFile($path, $setting_file = '')
-搜索所有配置文件
+视图文件 view/`{plugin_namespace}`/view.php 将会覆盖`{plugin_path}`/`{plugin_path_view}`/view.php 。
+
+如果 plugin_path_view 是绝对路径，则是 `{plugin_path_view}`/view.php
+Config 配置文件,类似 View。 config/{`plugin_namespace`}/config.php 会覆盖 {`plugin_path`}/{`plugin_path_config`}/config.php。
+
+如果 plugin_path_view 是绝对路径，则是 `{plugin_path_view}`/view.php
+
+资源文件，`{plugin_path}`/`{plugin_path_document}`/X.css 。对应的是 public/`{plugin_url_prefix}`/X.css 。
+
+
+
+需要手动设置插件选项 `plugin_enable_readfile` 为 `true`,
+
+#### 调整 View,Route
+
+给 View,Route 加选项请使用插件选项 `plugin_view_options` `plugi_route_options`
+
+替换 View 类，Route 类 , `plugin_component_class_view` `plugin_component_class_route`
+
+Model, Controller， 用 MyMode::G(Model::G()),MyController::G(Controller::G()) 重写。 
+
+如果插件编写者设置了插件选项 `plugin_use_singletonex_route` 为 false. 则无法修改 Controller
+
+Route 将暂时替换成新的无钩子的 Route 类
+
+高级使用：助手函数注入， `plugin_injected_helper_map`
+
+### 插件的事件
+这些都有对应的同名公开属性，默认如果有值得，则执行
+onPluginModePrepare()
+
+    初始化前
+onPluginModeInit()
+
+    初始化后
+onPluginModeBeforeRun()
+
+    运行前
+onPluginModeAfterRun()
+
+    成功运行后
+## 主流程
+
+### 初始化阶段
+
+插件的初始化， 插件的初始化和 App 的初始化不同，并没有通过 init() 方法初始化。而是 pluginModeInit() 
+
+初始化默认变量
+
+执行 `onPluginMOdePrepare`事件处理函数
+
+调整 view 路径，调整 configer
+
+调整 helper
 
 AppPluginTrait 会在现有 View  / [plugin_path_namespace] 下搜索 view ，如果没有则退化 到 plugin_path_view
 
-##  运行阶段
+最后，勾挂路由钩子，PluginModeRouteHook  -> \_PluginModeRouteHook。 执行 `onPluginMOdeInit` 事件处理函数
 
-默认情况下 AppPluginTrait 会有个 RouteHook 附加在最后面，执行运行部分的代码。
+###  运行阶段
 
-PluginModeRouteHook -> _PluginModeRouteHook -> pluginModeDefaultRouteHook 。
+`pluginModeCheckPathInfo` 看是否路径符合
+
+替换默认的动态组件（View 和 Route)并初始化
+
+onBeforeRun
+
+运行 Route
+
+如果 Route::G()->run 失败，处理分支， 清理返回
+
+onAfterRun
+
+清理
 
 
-_PluginModeRouteHook 就是你可以继承修改的方法
-
-pluginModeDefaultRouteHook 默认的路由钩子
-
-pluginModeDefaultRouteHook 通过 pluginModeCloneHelpers 把自己的 Helper  克隆过去调整 View 目录。
-
-然后切入自己的 namespace 执行控制器。
-
-
-    public function pluginModeInit(array $options, object $context = null)
-    public static function PluginModeRouteHook($path_info)
-    public function _PluginModeRouteHook($path_info)
-    protected function pluginModeInitOptions($options)
-    protected function pluginModeDefaultInit(array $options, object $context = null)
-    protected function pluginModeIncludeConfigFile($file)
-    protected function pluginModeSearchAllPluginFile($path, $setting_file = '')
-    protected function pluginModeDefaultRouteHook($path_info)
-    protected function pluginModeCloneHelpers()
-
-​    protected function pluginModeBeforeRun($callback)   
-
-事件方法列表：
-
-​    protected function onPluginModePrepare()
-​    protected function onPluginModeInit()
-​    protected function onPluginModeBeforeRun()
-​    protected function onPluginModeRun()
-
-## 原理
 

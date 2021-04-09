@@ -42,7 +42,7 @@ trait KernelTrait
         ];
     public $onPrepare;
     public $onInit;
-    public $onRun;
+    public $onBeforeRun;
     public $onAfterRun;
     
     protected $default_run_handler = null;
@@ -201,10 +201,10 @@ trait KernelTrait
         }
     }
     //for override
-    protected function onRun()
+    protected function onBeforeRun()
     {
-        if ($this->onRun) {
-            return ($this->onRun)();
+        if ($this->onBeforeRun) {
+            return ($this->onBeforeRun)();
         }
     }
     //for override
@@ -221,7 +221,7 @@ trait KernelTrait
         }
         try {
             $this->beforeRun();
-            $this->onRun();
+            $this->onBeforeRun();
             $ret = Route::G()->run();
             
             if (!$ret && !$this->options['skip_404_handler']) {
@@ -237,7 +237,7 @@ trait KernelTrait
             $ret = true;
         }
         $this->onAfterRun();
-        $this->clear();
+        RuntimeState::G()->clear();
         return $ret;
     }
     public function beforeRun()
@@ -246,12 +246,7 @@ trait KernelTrait
         View::G()->reset();
         Route::G()->reset();
     }
-    public function clear(): void
-    {
-        RuntimeState::G()->clear();
-    }
     //main produce end
-    
     
     public function replaceDefaultRunHandler(callable $handler = null): void
     {

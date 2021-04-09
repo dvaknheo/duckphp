@@ -16,7 +16,7 @@ trait AppPluginTrait
     public $onPluginModePrepare;
     public $onPluginModeInit;
     public $onPluginModeBeforeRun;
-    public $onPluginModeRun;
+    public $onPluginModeAfterRun;
     
     protected $plugin_context_class = '';
     protected $plugin_route_old = null;
@@ -46,10 +46,10 @@ trait AppPluginTrait
         }
     }
     //for override
-    public function onPluginModeRun()
+    public function onPluginModeAfterRun()
     {
-        if ($this->onPluginModeRun) {
-            return ($this->onPluginModeRun)();
+        if ($this->onPluginModeAfterRun) {
+            return ($this->onPluginModeAfterRun)();
         }
     }
     //callback
@@ -64,16 +64,15 @@ trait AppPluginTrait
             'plugin_path' => null,
             'plugin_namespace' => null,
             
+            'plugin_url_prefix' => '',
+            
             'plugin_path_conifg' => 'config',
             'plugin_path_view' => 'view',
             'plugin_path_document' => 'public',
             
-            'plugin_url_prefix' => '',
             'plugin_routehook_position' => 'append-outter',
             
-            'plugin_injected_helper_map' => '',
             'plugin_files_config' => [],
-            'plugin_search_config' => false,
             
             'plugin_view_options' => [],
             'plugin_route_options' => [],
@@ -81,14 +80,16 @@ trait AppPluginTrait
             'plugin_component_class_route' => '',
             
             'plugin_enable_readfile' => false,
+            'plugin_search_config' => true,
             'plugin_use_singletonex_route' => true,
+            'plugin_injected_helper_map' => '',
         ];
         $this->plugin_options = $this->plugin_options ?? [];
         $this->plugin_options = array_replace_recursive($plugin_options_default, $this->plugin_options, $plugin_options ?? []);
         $this->plugin_context_class = get_class($context);
         
-        $this->onPluginModePrepare();
         $this->pluginModeInitBasePath();
+        $this->onPluginModePrepare();
         
         //View , Configer;
         $this->plugin_view_path = View::G()->path . str_replace('\\', DIRECTORY_SEPARATOR, $this->plugin_options['plugin_namespace']).DIRECTORY_SEPARATOR;
@@ -187,20 +188,20 @@ trait AppPluginTrait
         }
         $this->pluginModeReplaceDynamicComponent();
         $this->pluginModeInitDynamicComponent();
+        
         $this->onPluginModeBeforeRun();
         
-        $flag = Route::G()->run();
-        if (!$flag && $this->plugin_options['plugin_enable_readfile']) {
-            $flag = $this->pluginModeReadFile($path_info);
-            if ($flag) {
-                $this->onPluginModeRun();
-                $this->pluginModeClear();
-                return true;
-            }
+        $ret = Route::G()->run();
+        if (!$ret && $this->plugin_options['plugin_enable_readfile']) {
+            $ret = $this->pluginModeReadFile($path_info);
         }
-        $this->onPluginModeRun();
+        if (!$ret) {
+            $this->pluginModeClear();
+            return false;
+        }
+        $this->onPluginModeAfterRun();
         $this->pluginModeClear();
-        return $flag;
+        return $ret;
     }
     protected function pluginModeReplaceDynamicComponent()
     {
