@@ -1,3 +1,20 @@
+v1.2.11 变更
+2021-04-09 20:04:24
+Console 支持 --a-b => $a_b
+DuckPhpCommand 了兼容 workerman 使用 -override-class 切换 httpserver 类
+App handler 放入 kernerl
+为 Route 添加 controller_path_prefix ，前缀
+全部通过 PATH_INFO 传递 用 (__SUPERGLOBAL_CONTEXT)()-> 代替之前的 superglobal
+AppPluginTrait 继续优化，并改为 Component 目录 添加了资源目录
+
+增加了几个全局函数
+HelperTrait 删除
+ViewHelper 函数删除，
+SuperGobal 用宏的形式回归
+HttpServer添加相关 Interface
+
+其他改进
+
 v1.2.10 变更
 目录结构调整
 所有 Trait 都以 Trait 结尾
