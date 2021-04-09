@@ -1,5 +1,4 @@
 <?php declare(strict_types=1);
-use DuckPhp\Helper\ViewHelper as V;
 
 // change this file if you can.
 //var_dump(get_defined_vars());
