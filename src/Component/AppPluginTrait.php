@@ -148,6 +148,7 @@ trait AppPluginTrait
     }
     protected function pluginModeSearchAllPluginFile($path, $setting_file = '')
     {
+        $ret=[];
         $setting_file = !empty($setting_file) ? $path.$setting_file . '.php' : '';
         $flags = \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::UNIX_PATHS | \FilesystemIterator::FOLLOW_SYMLINKS ;
         $directory = new \RecursiveDirectoryIterator($path, $flags);

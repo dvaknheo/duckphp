@@ -30,6 +30,11 @@ class App extends DuckPhp
         ],
     ];
     //
+    public function __construct()
+    {
+        $this->plugin_options['plugin_path']=__DIR__.'/../';
+        parent::__construct();
+    }
     protected function onPluginModePrepare()
     {
         $this->is_plugin = true;

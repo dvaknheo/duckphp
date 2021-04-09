@@ -12,7 +12,9 @@ if (!class_exists(\SimpleAuth\Base\App::class)) {
 
 $options = [
     'path' => $project_root,
-    'path_namespace' => $project_root,    'ext'=>[
+    //'path' => $project_root,
+    'is_debug'=>true,
+    'ext'=>[
         \SimpleAuth\Base\App::class => true,
     ],
 ];
