@@ -29,6 +29,13 @@ if (! function_exists('__url')) {
         return App::Url(...$args);
     }
 }
+if (! function_exists('__json')) {
+    function __json(...$args)
+    {
+        //return App::Url(...$args);
+    }
+}
+
 if (! function_exists('__display')) {
     function __display(...$args)
     {
@@ -57,27 +64,38 @@ if (! function_exists('__debug_log')) {
 }
 
 if (! function_exists('__db')) {
-    function __db(...$args)
+    function __db($tag=null)
     {
-        return App::Db(...$args);
+        return App::Db($tag);
     }
 }
-
+if (! function_exists('__db')) {
+    function __dbw()
+    {
+        return App::DbForWrite();
+    }
+}
+if (! function_exists('__db')) {
+    function __dbr($)
+    {
+        return App::DbForRead();
+    }
+}
 if (! function_exists('__is_debug')) {
-    function __is_debug(...$args)
+    function __is_debug()
     {
         return App::IsDebug();
     }
 }
 if (! function_exists('__is_real_debug')) {
-    function __is_real_debug(...$args)
+    function __is_real_debug()
     {
         return App::IsRealDebug();
     }
 }
 
 if (! function_exists('__platform')) {
-    function __platform(...$args)
+    function __platform()
     {
         return App::Platform();
     }

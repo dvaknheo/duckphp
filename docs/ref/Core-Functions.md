@@ -3,13 +3,19 @@
 
 需要选项 `user_global_functions` kernel ，  （默认开启） 才能用。
 
-主要用于 这里的函数
+都是以 两条下划线开头。
 
-和 Model 里不想引入 helper 的情况
+都是 DuckPhp\Core\App 类的函数的映射，
+
+
+你可以在 onPrepare() 时候 替换相应函数。
+
 
 目前一共有：
 
-显示用的，用于 view 里不想  use ViewHelper 的情况
+### 显示
+
+View 里不想  use ViewHelper 的情况
 
 - __l 对应 App::L();
 
@@ -21,24 +27,33 @@
 
 -  __display 对应 App::Display();
 
-用于调试的
+-  __json 对应 App::Json(); (TODO)
 
-- __trace_dump 对应 App::trace_dump();
+### 调试
+
+调试语句，全局性的
 
 - __var_dump() 对应 App::var_dump();
 
-- __debug_log() 对应 App::debug_log();
+- __trace_dump 对应 App::TraceDump();
 
-* __is_debug() 对应 App::L()， 注意这个函数和调用者名称不一致
+- __debug_log() 对应 App::DebugLog();
 
-用于 Model
+- __is_debug() 对应 App::IsDebug()， 注意这个函数和调用者名称不一致
 
-__db() 对应 App::Db();
+- __is_real_debug() 对应 App::IsRealDebug()， 注意这个函数和调用者名称不一致
+
+## Model 
+
+用于 Model 里不想引入 helper 
+
+- __db() 对应 App::Db();
+
+- __dbr() 对应 App::DbForRead();
+
+- __dbw() 对应 App::DbWrite();
 
 
-为了通用化，这些函数的参数都是 (...$args) 动态参数
 
-都是 DuckPhp\Core\App 类的函数
 
-你可以在 onPrepare() 时候 替换相应函数。
 

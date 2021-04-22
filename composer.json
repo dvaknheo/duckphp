@@ -24,7 +24,9 @@
 	},
     "require-dev": {
         "dvaknheo/libcoverage": ">=1.0.5",
-        "phpunit/php-code-coverage": "8.0.2"
+        "phpunit/php-code-coverage": "8.0.2",
+        "friendsofphp/php-cs-fixer": "^2.18",
+        "phpunit/phpunit": "^9.2"
     },
     "bin": [
         "bin/duckphp"

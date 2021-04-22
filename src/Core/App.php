@@ -25,7 +25,7 @@ use DuckPhp\Core\View;
  */
 class App extends ComponentBase
 {
-    const VERSION = '1.2.11';
+    const VERSION = '1.2.12-dev';
 
     const HOOK_PREPEND_OUTTER = 'prepend-outter';
     const HOOK_PREPEND_INNER = 'prepend-inner';
@@ -82,7 +82,6 @@ class App extends ComponentBase
         parent::__construct();
         $this->options = array_replace_recursive(static::$options_default, $this->core_options, $this->options);
         unset($this->core_options); // not use again;
-        //$this->handler_for_exception_handler = [static::class,'set_exception_handler'];// TODO 这里改用选项
     }
     public function version()
     {
@@ -464,13 +463,8 @@ trait Core_Helper
     ////
     public function _ExitJson($ret, $exit = true)
     {
-        static::header('Content-Type:application/json; charset=utf-8');
-        
-        $flag = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
-        if ($this->_IsDebug()) {
-            $flag = $flag | JSON_PRETTY_PRINT;
-        }
-        echo json_encode($ret, $flag);
+        $this->_header('Content-Type:application/json; charset=utf-8');
+        echo $this->_Json($ret, $flag);
         if ($exit) {
             static::exit();
         }
@@ -536,9 +530,13 @@ trait Core_Helper
     {
         return static::H(static::L($str, $args));
     }
+    public static function Json($data)
+    {
+        return _Json($data);
+    }
     public function _L($str, $args = [])
     {
-        //TODO locale and do
+        //Override for locale and so do
         if (empty($args)) {
             return $str;
         }
@@ -548,6 +546,18 @@ trait Core_Helper
         }
         $ret = str_replace(array_keys($a), array_values($a), $str);
         return $ret;
+    }
+    public function _Hl($str, $args)
+    {
+        return $this->_H($this->_L($str, $args));
+    }
+    public function _Json($data)
+    {
+        $flag = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
+        if ($this->_IsDebug()) {
+            $flag = $flag | JSON_PRETTY_PRINT;
+        }
+        return json_encode($data, $flag);
     }
     ////
     protected function onBeforeOutput()
@@ -639,18 +649,15 @@ trait Core_Helper
         $ret = $scheme.':/'.'/'.$host.$port;
         return $ret;
     }
-    public static function ThrowOn($flag, $message, $code = 0, $exception_class = null)
+    public static function CheckException($exception_class, $message, $code = 0)
     {
-        // 这里要改
-        return static::G()->_ThrowOn($flag, $message, $code, $exception_class);
+        return static::G()->_CheckException($exception_class, $message, $code);
     }
-    public function _ThrowOn($flag, $message, $code = 0, $exception_class = null)
+    public function _CheckException($exception_class, $flag, $message, $code = 0)
     {
-        if (!$flag) {
-            return;
+        if ($flag) {
+            throw new $exception_class($message, $code);
         }
-        $exception_class = $exception_class?:\Exception::class;
-        throw new $exception_class($message, $code);
     }
     ////
     public static function SqlForPager($sql, $pageNo, $pageSize = 10)
@@ -770,21 +777,22 @@ trait Core_NotImplemented
     {
         throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
     }
-    public function _Event()
+
+    public function _DbForWrite()
     {
         throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
     }
-    public function _DbForWrite()
+    public function _Event()
     {
         throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
     }
     public function _FireEvent($event, ...$args)
     {
-        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
+        return; // do nothing. for override
     }
     public function _OnEvent($event, $callback)
     {
-        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
+        return; // do nothing. for override
     }
 }
 
@@ -939,11 +947,15 @@ trait Core_SuperGlobal
     {
         return static::G()->_SESSION($key, $default);
     }
+    public static function _SessionSet($key, $value)
+    {
+        return static::G()->SessionSet($key, $value);
+    }
     public static function FILES($key = null, $default = null)
     {
         return static::G()->_FILES($key, $default);
     }
-    protected function getSuperGlobalData($superglobal_key, $key, $default)
+    private function getSuperGlobalData($superglobal_key, $key, $default)
     {
         $data = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->$superglobal_key : $GLOBALS[$superglobal_key];
         
@@ -980,5 +992,13 @@ trait Core_SuperGlobal
     public function _FILES($key = null, $default = null)
     {
         return $this->getSuperGlobalData('_FILES', $key, $default);
+    }
+    protected function _SessionSet($key, $value)
+    {
+        if (defined('__SUPERGLOBAL_CONTEXT')) {
+            (__SUPERGLOBAL_CONTEXT)()->_SESSION[$key] = $value;
+        }else{
+            $_SESSION[$key] = $value;
+        }
     }
 }
