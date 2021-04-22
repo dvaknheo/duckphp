@@ -44,6 +44,24 @@
 +  'callable_view_skip_replace' => false,   
 
     callableview 可调用视图跳过默认视图替换   // [DuckPhp\Ext\CallableView](Ext-CallableView.md)
++  'cli_command_alias' => array ( ),   
+
+    命令行类别名   // [DuckPhp\Component\Console](Component-Console.md)
++  'cli_command_default' => 'help',   
+
+       // [DuckPhp\Component\Console](Component-Console.md)
++  'cli_command_method_prefix' => 'command_',   
+
+       // [DuckPhp\Component\Console](Component-Console.md)
++  'cli_default_command_class' => '',   
+
+       // [DuckPhp\Component\Console](Component-Console.md)
++  'cli_enable' => true,   
+
+    启用命令行   // [DuckPhp\Component\Console](Component-Console.md)
++  'cli_mode' => 'replace',   
+
+    命令行启用模式   // [DuckPhp\Component\Console](Component-Console.md)
 + ** 'close_resource_at_output' => false,  ** 
 
     在输出前关闭资源（DB,Redis）   // [DuckPhp\Core\App](Core-App.md)
@@ -488,6 +506,19 @@
     - 'skip_view_notice_error' => true,
         跳过 View 视图的 notice
 + DuckPhp\Component\Cache
++ DuckPhp\Component\Console
+    - 'cli_command_alias' => array ( ),
+        命令行类别名
+    - 'cli_command_default' => 'help',
+        
+    - 'cli_command_method_prefix' => 'command_',
+        
+    - 'cli_default_command_class' => '',
+        
+    - 'cli_enable' => true,
+        启用命令行
+    - 'cli_mode' => 'replace',
+        命令行启用模式
 + DuckPhp\Component\DbManager
     - 'database' => NULL,
         单一数据库配置

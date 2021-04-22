@@ -92,7 +92,7 @@ trait AppPluginTrait
         $this->onPluginModePrepare();
         
         //View , Configer;
-        $this->plugin_view_path = View::G()->path . str_replace('\\', DIRECTORY_SEPARATOR, $this->plugin_options['plugin_namespace']).DIRECTORY_SEPARATOR;
+        $this->plugin_view_path = View::G()->getViewPath() . str_replace('\\', DIRECTORY_SEPARATOR, $this->plugin_options['plugin_namespace']).DIRECTORY_SEPARATOR;
         $setting_file = $context->options['setting_file'] ?? 'setting';
         $ext_config_files = $this->pluginModeInitConfigFiles($setting_file);
         if (!empty($ext_config_files)) {
@@ -148,7 +148,7 @@ trait AppPluginTrait
     }
     protected function pluginModeSearchAllPluginFile($path, $setting_file = '')
     {
-        $ret=[];
+        $ret = [];
         $setting_file = !empty($setting_file) ? $path.$setting_file . '.php' : '';
         $flags = \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::UNIX_PATHS | \FilesystemIterator::FOLLOW_SYMLINKS ;
         $directory = new \RecursiveDirectoryIterator($path, $flags);

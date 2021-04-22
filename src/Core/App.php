@@ -549,7 +549,8 @@ trait Core_Helper
     }
     public function _Hl($str, $args)
     {
-        return $this->_H($this->_L($str, $args));
+        $t = $this->_L($str, $args);
+        return $this->_H($t);
     }
     public function _Json($data)
     {
@@ -951,7 +952,7 @@ trait Core_SuperGlobal
     {
         return static::G()->_SessionSet($key, $value);
     }
-    public static function CookieSet($key, $value, $expire=0)
+    public static function CookieSet($key, $value, $expire = 0)
     {
         return static::G()->_CookieSet($key, $value, $expire);
     }
@@ -1001,12 +1002,12 @@ trait Core_SuperGlobal
     {
         if (defined('__SUPERGLOBAL_CONTEXT')) {
             (__SUPERGLOBAL_CONTEXT)()->_SESSION[$key] = $value;
-        }else{
+        } else {
             $_SESSION[$key] = $value;
         }
     }
     protected function _CookieSet($key, $value, $expire)
     {
-        //$this->_set_cookie();
+        $this->_setcookie($key, $value, $expire ? $expire + time():0);
     }
 }

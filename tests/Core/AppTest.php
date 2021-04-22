@@ -15,7 +15,9 @@ class AppTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(App::class);
-        SuperGlobalContext::DefineSuperGlobalContext();
+        
+        $_SESSION=[];
+        
         
         $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(App::class);
         $path_config=\LibCoverage\LibCoverage::G()->getClassTestPath(Configer::class);
@@ -45,7 +47,11 @@ class AppTest extends \PHPUnit\Framework\TestCase
             AppTestObjectA::class=>true,
             AppTestObjectB::class=>['aa'=>'22'],
         ];
+
         App::RunQuickly($options,function(){
+        App::SessionSet('zz','abc');
+                        SuperGlobalContext::DefineSuperGlobalContext();
+
             App::G()->addBeforeShowHandler(function(){ echo "beforeShowHandlers";});
                         App::G()->addBeforeShowHandler("testsssssssssss");
                         App::G()->removeBeforeShowHandler("testsssssssssss");
@@ -171,7 +177,11 @@ App::PageHtml(123);
         
         App::Route();
         
-        
+                App::SessionSet('x',DATE('Y,M,d'));
+                SuperGlobalContext::DefineSuperGlobalContext();
+                                App::SessionSet('x',DATE('Y,M,d'));
+
+            App::CookieSet('x',DATE('Y,M,d'));
 
         
         App::dumpAllRouteHooksAsString();

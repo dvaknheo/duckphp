@@ -16,8 +16,6 @@ class View extends ComponentBase
         'path_view_override' => '',
         'skip_view_notice_error' => true,
     ];
-    /** @var string */
-    public $path;
     /** @var array */
     public $data = [];
     
@@ -30,11 +28,6 @@ class View extends ComponentBase
     /** @var int */
     protected $error_reporting_old;
     
-    //@override
-    protected function initOptions(array $options): void
-    {
-        $this->path = parent::getComponenetPathByKey('path_view');
-    }
     public static function Show(array $data = [], string $view = null): void
     {
         static::G()->_Show($data, $view);
@@ -51,13 +44,14 @@ class View extends ComponentBase
             error_reporting($this->error_reporting_old & ~E_NOTICE);
         }
         
-        $this->view_file = $this->getViewFile($this->path, $view);
-        $this->head_file = $this->getViewFile($this->path, $this->head_file);
-        $this->foot_file = $this->getViewFile($this->path, $this->foot_file);
+        $this->view_file = $this->getViewFile($view);
+        $this->head_file = $this->getViewFile($this->head_file);
+        $this->foot_file = $this->getViewFile($this->foot_file);
         
         $this->data = array_merge($this->data, $data);
-        $data = null;
-        $view = null;
+        
+        unset($data);
+        unset($view);
         extract($this->data);
         
         if ($this->head_file) {
@@ -76,7 +70,7 @@ class View extends ComponentBase
     }
     public function _Display(string $view, ?array $data = null): void
     {
-        $this->view_file = $this->getViewFile($this->path, $view);
+        $this->view_file = $this->getViewFile($view);
         $this->data = isset($data)?$data:$this->data;
         $data = null;
         $view = null;
@@ -89,6 +83,10 @@ class View extends ComponentBase
         $this->head_file = null;
         $this->foot_file = null;
         $this->data = [];
+    }
+    public function getViewPath()
+    {
+        return $this->getComponenetPathByKey('path_view');
     }
     public function getViewData(): array
     {
@@ -113,17 +111,15 @@ class View extends ComponentBase
             $this->data[$key] = $value;
         }
     }
-    public function setOverridePath(string $path): void
-    {
-        $this->options['path_view_override'] = $path;
-    }
-    protected function getViewFile(string $path, ?string $view): string
+    protected function getViewFile(?string $view): string
     {
         if (empty($view)) {
             return '';
         }
         $base_file = preg_replace('/\.php$/', '', $view).'.php';
+        $path = $this->getViewPath();
         $file = $path.$base_file;
+        var_dump("$path | $base_file");
         if (($this->options['path_view_override'] ?? false) && !is_file($file)) {
             $file = $this->options['path_view_override'].$base_file;
         }

@@ -89,17 +89,23 @@ subgraph cluster_Helper {
     ServiceHelper [label="ServiceHelper";shape=Mdiamond;style=filled];
     ViewHelper [label="ViewHelper";shape=Mdiamond;style=filled];
     
-    AppHelper -> App; 
-    ControllerHelper -> App; 
-    ModelHelper -> App; 
-    ServiceHelper -> App; 
-    ViewHelper -> App; 
+    AppHelperTrait -> App; 
+    ControllerHelperTrait -> App; 
+    ModelHelperTrait -> App; 
+    ServiceHelperTrait -> App; 
+    ViewHelperTrait -> App; 
     
     AppHelper -> ExtendableStaticCallTrait; 
     ControllerHelper -> ExtendableStaticCallTrait; 
     ModelHelper -> ExtendableStaticCallTrait; 
     ServiceHelper -> ExtendableStaticCallTrait; 
     ViewHelper -> ExtendableStaticCallTrait; 
+
+    AppHelper -> AppHelperTrait; 
+    ControllerHelper -> ControllerHelperTrait; 
+    ModelHelper -> ModelHelperTrait; 
+    ServiceHelper -> ServiceHelperTrait; 
+    ViewHelper -> ViewHelperTrait; 
 
 }
 

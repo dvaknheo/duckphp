@@ -27,7 +27,7 @@ View 里不想  use ViewHelper 的情况
 
 -  __display 对应 App::Display();
 
--  __json 对应 App::Json(); (TODO)
+-  __json 对应 App::Json(); 
 
 ### 调试
 

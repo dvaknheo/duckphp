@@ -8,7 +8,7 @@ namespace DuckPhp\Helper;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ExtendableStaticCallTrait;
 
-trait ViewHelperTrait 
+trait ViewHelperTrait
 {
     use ExtendableStaticCallTrait;
 }

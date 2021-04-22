@@ -39,18 +39,18 @@ class EmptyView extends View
     public function _Show(array $data, string $view): void
     {
         $this->data = array_merge($this->data, $data);
-        $this->data[$this->options['empty_view_key_view']] = $this->getViewFile($this->path, $view);
-        $this->data[$this->options['empty_view_key_view'].'_head'] = $this->getViewFile($this->path, $this->head_file);
-        $this->data[$this->options['empty_view_key_view'].'_foot'] = $this->getViewFile($this->path, $this->foot_file);
+        $this->data[$this->options['empty_view_key_view']] = $this->getViewFile($view);
+        $this->data[$this->options['empty_view_key_view'].'_head'] = $this->getViewFile($this->head_file);
+        $this->data[$this->options['empty_view_key_view'].'_foot'] = $this->getViewFile($this->foot_file);
     }
     //@override
     public function _Display(string $view, ?array $data = null): void
     {
         $this->data = isset($data)?$data:$this->data;
-        $this->data[$this->options['empty_view_key_view']] = $this->getViewFile($this->path, $view);
+        $this->data[$this->options['empty_view_key_view']] = $this->getViewFile($view);
     }
     //@override
-    protected function getViewFile(string $path, ?string $view): string
+    protected function getViewFile(?string $view): string
     {
         $view = (string)$view;
         if ($this->options['empty_view_trim_view_wellcome'] ?? true) {

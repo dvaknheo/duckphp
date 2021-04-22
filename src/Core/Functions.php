@@ -64,7 +64,7 @@ if (! function_exists('__debug_log')) {
 }
 
 if (! function_exists('__db')) {
-    function __db($tag=null)
+    function __db($tag = null)
     {
         return App::Db($tag);
     }
