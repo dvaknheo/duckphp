@@ -176,8 +176,8 @@ App::PageHtml(123);
         
         App::dumpAllRouteHooksAsString();
         try{
-            App::ThrowOn(false,"HH");
-            App::ThrowOn(true,"HH");
+            App::CheckException(\Exception::class, false,"HH");
+            App::CheckException(\Exception::class, true,"HH");
         }catch(\Exception $ex){
         }
         App::XpCall(function(){return "abc";});
@@ -288,7 +288,8 @@ App::PageHtml(123);
         echo App::H(123);
         echo App::L("a{b}c",[]);
         echo App::L("a{b}c",['b'=>'123']);
-        echo App::HL("&<{b}>",['b'=>'123']);
+        echo App::Hl("&<{b}>",['b'=>'123']);
+        echo App::Json("&<{b}>",['b'=>'123']);
         echo App::Domain();
         App::IsRunning();
         App::IsDebug();

@@ -2,12 +2,13 @@
 namespace tests\DuckPhp\Helper;
 
 use DuckPhp\Helper\BusinessHelper;
+use DuckPhp\Helper\BusinessHelperTrait;
 
 class BusinessHelperTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \LibCoverage\LibCoverage::Begin(BusinessHelper::class);
+        \LibCoverage\LibCoverage::Begin(BusinessHelperTrait::class);
         
         $path_base=realpath(__DIR__.'/../');
         $path_config=$path_base.'/data_for_tests/Helper/BusinessHelper/';

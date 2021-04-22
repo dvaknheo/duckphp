@@ -75,6 +75,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         \__l("test");
         \__hl("test");
         \__url("test");
+        \__json("test");
         \__display("block",[]);
         \__trace_dump();
         \__var_dump("abc");
@@ -86,6 +87,15 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
 
         try{
         \__db();
+        }catch(\Exception $ex){
+        }
+        try{
+        \__dbr();
+        }catch(\Exception $ex){
+        }
+        
+        try{
+        \__dbw();
         }catch(\Exception $ex){
         }
     }

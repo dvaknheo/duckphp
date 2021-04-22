@@ -3,6 +3,7 @@ namespace tests\DuckPhp\Helper;
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Helper\ControllerHelper;
+use DuckPhp\Helper\ControllerHelperTrait;
 use DuckPhp\Component\Pager;
 
 class ControllerHelperTest extends \PHPUnit\Framework\TestCase
@@ -10,7 +11,7 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
     static $x;
     public function testAll()
     {
-        \LibCoverage\LibCoverage::Begin(ControllerHelper::class);
+        \LibCoverage\LibCoverage::Begin(ControllerHelperTrait::class);
         
         //code here
         //*

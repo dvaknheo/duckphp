@@ -8,7 +8,7 @@ namespace DuckPhp\Helper;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ExtendableStaticCallTrait;
 
-class BusinessHelper
+trait BusinessHelperTrait 
 {
     use ExtendableStaticCallTrait;
     public static function Setting($key)

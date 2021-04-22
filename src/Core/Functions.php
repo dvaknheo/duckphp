@@ -69,14 +69,14 @@ if (! function_exists('__db')) {
         return App::Db($tag);
     }
 }
-if (! function_exists('__db')) {
+if (! function_exists('__dbw')) {
     function __dbw()
     {
         return App::DbForWrite();
     }
 }
-if (! function_exists('__db')) {
-    function __dbr($)
+if (! function_exists('__dbr')) {
+    function __dbr()
     {
         return App::DbForRead();
     }

@@ -464,7 +464,7 @@ trait Core_Helper
     public function _ExitJson($ret, $exit = true)
     {
         $this->_header('Content-Type:application/json; charset=utf-8');
-        echo $this->_Json($ret, $flag);
+        echo $this->_Json($ret);
         if ($exit) {
             static::exit();
         }
@@ -528,11 +528,11 @@ trait Core_Helper
     }
     public static function Hl($str, $args = [])
     {
-        return static::H(static::L($str, $args));
+        return static::G()->_Hl($str, $args);
     }
     public static function Json($data)
     {
-        return _Json($data);
+        return static::G()->_Json($data);
     }
     public function _L($str, $args = [])
     {

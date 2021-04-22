@@ -2,12 +2,13 @@
 namespace tests\DuckPhp\Helper;
 
 use DuckPhp\Helper\ModelHelper;
+use DuckPhp\Helper\ModelHelperTrait;
 
 class ModelHelperTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \LibCoverage\LibCoverage::Begin(ModelHelper::class);
+        \LibCoverage\LibCoverage::Begin(ModelHelperTrait::class);
 
         $sql="Select * from users";
         ModelHelper::SqlForPager($sql,1,5);

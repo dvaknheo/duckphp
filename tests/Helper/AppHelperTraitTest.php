@@ -2,14 +2,15 @@
 namespace tests\DuckPhp\Helper;
 
 use DuckPhp\Helper\AppHelper;
+use DuckPhp\Helper\AppHelperTrait;
 use DuckPhp\Core\App;
 use DuckPhp\SingletonEx\SingletonExTrait;
 
-class AppHelperTest extends \PHPUnit\Framework\TestCase
+class AppHelperTraitTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \LibCoverage\LibCoverage::Begin(AppHelper::class);
+        \LibCoverage\LibCoverage::Begin(AppHelperTrait::class);
         
         AppHelper::assignPathNamespace(__DIR__,'NoExistsByAppHelper');
         AppHelper::setUrlHandler(function($url){});
