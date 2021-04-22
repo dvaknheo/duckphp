@@ -947,9 +947,13 @@ trait Core_SuperGlobal
     {
         return static::G()->_SESSION($key, $default);
     }
-    public static function _SessionSet($key, $value)
+    public static function SessionSet($key, $value)
     {
-        return static::G()->SessionSet($key, $value);
+        return static::G()->_SessionSet($key, $value);
+    }
+    public static function CookieSet($key, $value, $expire=0)
+    {
+        return static::G()->_CookieSet($key, $value, $expire);
     }
     public static function FILES($key = null, $default = null)
     {
@@ -1000,5 +1004,9 @@ trait Core_SuperGlobal
         }else{
             $_SESSION[$key] = $value;
         }
+    }
+    protected function _CookieSet($key, $value, $expire)
+    {
+        //$this->_set_cookie();
     }
 }

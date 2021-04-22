@@ -104,8 +104,12 @@ DuckPhp\Core\App 类 可以视为几个类的组合
  + [ModelHelper](Helper-ModelHelper.md)
  + [ViewHelper](Helper-ViewHelper.md)
 
-
-
+或者，按分类
+trait Core_SystemWrapper
+trait Core_Helper
+Core_NotImplemented
+Core_Glue
+Core_SuperGlobal
 
 ### 关于 injected_helper_map
 

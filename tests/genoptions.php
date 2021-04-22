@@ -329,6 +329,7 @@ DuckPhp\\Core\\Route
 DuckPhp\\Core\\RuntimeState
 DuckPhp\\Core\\View
 DuckPhp\\Component\\Cache
+DuckPhp\\Component\\Console
 DuckPhp\\Component\\DbManager
 DuckPhp\\Component\\EventManager
 DuckPhp\\Component\\RouteHookPathInfoCompat
