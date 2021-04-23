@@ -98,7 +98,7 @@ $options['ext'][MyPluginApp::class] = true;
 当然，你也可以调整选项
 ```php
 $options['ext'][MyPluginApp::class] = [
-    'plugin_namespace'=> 'MyPlugin',
+    '`plugin_url_prefix`'=> '/admin',
     // 更多插件选项
 ];
 ```

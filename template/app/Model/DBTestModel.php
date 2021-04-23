@@ -15,7 +15,6 @@ class DBTestModel extends BaseModel
     {
         $sql = "select 1+? as t";
         $ret = M::DB()->fetch($sql, 2);
-        //$ret = __db()->fetch($sql, 2);
         return $ret;
     }
 }

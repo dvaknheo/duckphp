@@ -36,7 +36,7 @@ public function init($options=[], $context=null)
     初始化
 public function isInited(): bool
 
-
+    是否已经初始化
 public function run()
 
     //

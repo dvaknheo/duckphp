@@ -66,7 +66,7 @@ Controller --> Business ------------------------------ ---> Model
 
 ## 全局助手函数
 
-助手类有些通用的方法，用全局函数代替
+助手类有些通用的方法，用全局函数代替，全局助手函数用于 View 视图里
 
 ### 调试函数
 
@@ -89,22 +89,25 @@ _\_debug_log(...$arg)
 
     对应 App::DebugLog($message, array $context = array()) 对应调试状态下 Log 当前变量。
 ### 显示相关函数
-H($str)
+__h()
 
-    __h() HTML 编码
-L($str,$args=[])
+    对应 App::H(); HTML 编码
+__l($str,$args=[])
 
-    __l() 语言处理函数，后面的关联数组替换 '{$key}'
-Hl($str, $args=[])
+    对应 App::L(); 语言处理函数，后面的关联数组替换 '{$key}'
+__hl($str, $args=[])
 
-    __hl() 对语言处理后进行 HTML 编码
-Url($url)
+    对应 App::Hl(); 对语言处理后进行 HTML 编码
+__url($url)
 
-    __url() 获得相对 url 地址
-Display($view, $data = null)
+    对应 App::Url(); 获得相对 url 地址
+__domain()
 
-    __display() 包含下一个 $view ， 如果 $data = null 则带入所有当前作用域的变量。 否则带入 $data 关联数组的内容。Display 用于嵌套包含视图。
-### 其他
+    对应 App::Domain(); 获得带协议头的域名
+__display($view, $data = null)
+
+    对应 App::Display(); 包含下一个 $view ， 如果 $data = null 则带入所有当前作用域的变量。 否则带入 $data 关联数组的内容。用于嵌套包含视图。
+
 
 ## ViewHelper 视图助手类
 
@@ -155,34 +158,29 @@ Setting($key);
 LoadConfig($key,$basename="config");
 
     载入配置，Config($key); 获得配置项目。默认配置文件是在  config/config.php 。
-### 事件
-Event()
+### 其他
 
-    获得事件管理器
+Cache($replace_object)
+
+    获得缓存管理器
 FireEvent($event, ...$args)
 
     触发事件
-OnEvent($event, $callback)
-
-    绑定事件
-### 其他
-Cache($replace_object)
-
-    获得缓存管理器  // 注意 ControllerHelper  没这个方法
 XpCall($callback, ...$args)
 
     包裹callback输出，如果抛出异常则返回异常，否则返回 $callback();
+Loger()
 
+    日志对象
 ## ControllerHelper 控制器的助手类
 
  ContrlloerHelper 的方法很多很杂，但掌握了 ContrlloerHelper 方法，基本就掌握了使用方法
 
 大致分为 【显示相关】【配置相关】【跳转相关】【路由处理】【异常管理】【跳转】【内容处理】 几块 内容处理和 ViewHelper 基本通用。 ControllerHelper 方法
 
-### 输出相关
+### 输出内容
 
-包含 ViewHelper 的所有方法。
-
+显示
 H($str)
 
     __h() HTML 编码
@@ -192,36 +190,36 @@ L($str,$args=[])
 Hl($str, $args=[])
 
     __hl() 对语言处理后进行 HTML 编码
+Json($ret)
+
+    __json() 获得 Json 内容
 Url($url)
 
     __url() 获得相对 url 地址
-Display($view, $data = null)
+Domain()
 
-    __display() 包含下一个 $view ， 如果 $data = null 则带入所有当前作用域的变量。 否则带入 $data 关联数组的内容。Display 用于嵌套包含视图。
-### 输出内容
+    __domain【内容处理】 获得带协议的域名
+### 输出的动作
 
 Show($data = [], $view = null)
 
     【内容处理】显示视图， 默认为 view/{$view}.php 的文件， 并会带上页眉页脚
+Display($view, $data = null)
+
+    __display() 包含下一个 $view ， 如果 $data = null 则带入所有当前作用域的变量。 否则带入 $data 关联数组的内容。Display 用于嵌套包含视图。
 setViewHeadFoot($head_file = null, $foot_file = null)
 
     【内容处理】设置页眉页脚
 assignViewData($key, $value = null)
 
     【内容处理】分配视图变量，另一版本为 assignViewData([$key=>$value]);
-Domain()
-
-    【内容处理】 获得带协议的域名
 DbCloseAll()
 
     【内容处理】 关闭所有数据库
-### 输出分页
+### 分页
 
 分页器类是通过 DuckPhp\\Component\\Pager 实现的
 
-Pager()
-
-    获得分页器对象, 分页器参考 DuckPhp\Ext\Pager。 DuckPhp 只是做了最小的分页器
 PageNo($new_value = null)
 
     获得或设置当前页码
@@ -243,16 +241,13 @@ LoadConfig
 
     【配置相关】见 BusinessHelper 的 LoadConfig 介绍
 ###  事件
-
-Event()
-
-    【其他】见 BusinessHelper 的 Event 介绍
 FireEvent($event, ...$args)
 
     【其他】见 BusinessHelper 的 FireEvent 介绍
-OnEvent($event, $callback)
+    
+Loger()
 
-    【其他】见 BusinessHelper 的 OnEvent 介绍
+    日志对象
 ### 异常处理
 见 异常管理 一节
 
@@ -279,7 +274,7 @@ getRouteCallingMethod
 getPathInfo()
 
     【路由相关】获得当前的 PATH_INFO
-Parameter($key, $default = null)
+getParameters()
 
     【路由相关】获得路由重写相关的数据
 dumpAllRouteHooksAsString()
@@ -321,10 +316,9 @@ REQUEST($key, $default = null)
 COOKIE($key, $default = null)
 
     对应 _COOKIE， $_GET[$key] 不存在则返回 $default;
-SEVER($key, $default = null)
+SERVER($key, $default = null)
 
-    对应 SEVER $_GET[$key] 不存在则返回 $default;
-
+    对应 SERVER $_GET[$key] 不存在则返回 $default;
 ### 系统替代
 
 系统替代静态方法和系统函数一样的参数。为了兼容不同平台，如 CLI, workerman,swoole 使用这些函数替代。
@@ -338,7 +332,8 @@ setcookie()
 exit()
 
     【系统替代】 退出函数，以便于接管
-## AppHelper 高级助手类。
+
+## AppHelper 高级助手类
 
 AppHelper 是 `核心工程师` 才使用的高级助手类。特殊的 Business 会用到。
 
@@ -482,5 +477,5 @@ class ModelHelper extends Helper
 
 ```
 如果你要修改相关实现，了解 DuckPhp 系统架构后后 参考 [DuckPhp\Core\App](ref/Core-App.md)
-如果你自己添加了 Ext 扩展类，那么你需要 extendComponents 方法注入相关 Helper
+如果你自己添加了 Ext 扩展类，那么你需要 `extendComponents` 方法注入相关 Helper
 如果你只是替换系统的实现， 找出那些 Helper 的实现函数，替换之。

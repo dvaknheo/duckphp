@@ -158,10 +158,6 @@ trait ControllerHelperTrait
         return App::DbCloseAll();
     }
     ////
-    public static function Pager($object = null)
-    {
-        return App::Pager($object);
-    }
     public static function PageNo($new_value = null)
     {
         return App::PageNo($new_value);
@@ -179,16 +175,12 @@ trait ControllerHelperTrait
     {
         return App::XpCall($callback, ...$args);
     }
-    public static function Event()
-    {
-        return App::Event();
-    }
     public static function FireEvent($event, ...$args)
     {
         return App::FireEvent($event, ...$args);
     }
-    public static function OnEvent($event, $callback)
+    public static function Logger($object = null)
     {
-        return App::OnEvent($event, $callback);
+        return App::Logger($object);
     }
 }

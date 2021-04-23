@@ -23,4 +23,8 @@ class Main // extends BaseController
     {
         phpinfo();
     }
+    protected  function foo()
+    {
+        var_dump(DATE(DATE_ATOM));
+    }
 }

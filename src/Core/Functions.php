@@ -30,18 +30,25 @@ if (! function_exists('__url')) {
     }
 }
 if (! function_exists('__json')) {
-    function __json(...$args)
+    function __json($data)
     {
-        //return App::Url(...$args);
+        return App::Json($data);
     }
 }
-
+if (! function_exists('__domain')) {
+    function __domain()
+    {
+        return App::Domain();
+    }
+}
+//////////////////////////////////////////////////
 if (! function_exists('__display')) {
     function __display(...$args)
     {
         return App::Display(...$args);
     }
 }
+//////////////////////////////////////////////////
 if (! function_exists('__var_dump')) {
     function __var_dump(...$args)
     {
@@ -63,24 +70,6 @@ if (! function_exists('__debug_log')) {
     }
 }
 
-if (! function_exists('__db')) {
-    function __db($tag = null)
-    {
-        return App::Db($tag);
-    }
-}
-if (! function_exists('__dbw')) {
-    function __dbw()
-    {
-        return App::DbForWrite();
-    }
-}
-if (! function_exists('__dbr')) {
-    function __dbr()
-    {
-        return App::DbForRead();
-    }
-}
 if (! function_exists('__is_debug')) {
     function __is_debug()
     {

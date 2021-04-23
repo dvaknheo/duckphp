@@ -76,6 +76,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         \__hl("test");
         \__url("test");
         \__json("test");
+        \__domain();
         \__display("block",[]);
         \__trace_dump();
         \__var_dump("abc");
@@ -85,19 +86,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         \__is_real_debug();
         \__platform();
 
-        try{
-        \__db();
-        }catch(\Exception $ex){
-        }
-        try{
-        \__dbr();
-        }catch(\Exception $ex){
-        }
-        
-        try{
-        \__dbw();
-        }catch(\Exception $ex){
-        }
+
     }
 }
 class fakeSwooleHttpd

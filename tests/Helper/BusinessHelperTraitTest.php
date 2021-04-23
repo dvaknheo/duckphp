@@ -4,7 +4,7 @@ namespace tests\DuckPhp\Helper;
 use DuckPhp\Helper\BusinessHelper;
 use DuckPhp\Helper\BusinessHelperTrait;
 
-class BusinessHelperTest extends \PHPUnit\Framework\TestCase
+class BusinessHelperTraitTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
@@ -28,14 +28,9 @@ class BusinessHelperTest extends \PHPUnit\Framework\TestCase
         BusinessHelper::XpCall(function(){return "abc";});
         BusinessHelper::XpCall(function(){ throw new \Exception('ex'); });
         
-        try{
-           BusinessHelper::Event();
-        }catch(\Exception $ex){
-        }
-        try{
-            BusinessHelper::OnEvent("test",null);
-        }catch(\Exception $ex){
-        }
+
+        BusinessHelper::Logger();
+
         try{
             BusinessHelper::FireEvent("test",1,2,3);
         }catch(\Exception $ex){

@@ -20,9 +20,11 @@
 
 ## 公开方法
 
+public static function Show($data = [], $view)
 public function _Show($data = [], $view)
 
     显示文件，包括页眉页脚
+public static function Display($view, $data = null)
 public function _Display($view, $data = null)
 
     显示文件，不包括页眉页脚
@@ -32,13 +34,12 @@ public function setViewHeadFoot($head_file, $foot_file)
 public function assignViewData($key, $value = null)
 
     设置要显示的数据，可批量
-public function setOverridePath($path)
+public function getViewPath()
 
-    插件模式下设置视图路径
-
+    获得 view 的目录
 ## 内部方法
 
-protected function getViewFile($path, $view)
+protected function getViewFile($view)
 
     获得 View 文件。
 ## 详解

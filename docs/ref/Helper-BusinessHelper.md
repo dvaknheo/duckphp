@@ -15,39 +15,18 @@ public static function Config($key, $file_basename='config')
 public static function LoadConfig($file_basename)
 
     获得配置数组
+public static function Event()
 
-## 详解
+    获得事件对象
+public static function FireEvent($event, ...$args)
 
-    //
-## 助手类公用方法列表
-- IsDebug()
+    触发事件
+public static function OnEvent($event, $callback)
 
-    判断是否在调试状态，App 的  `is_debug` 选项 ,`duckphp_is_debug` 设置项。
-    
-- IsRealDebug()
-    这个用于调试标识开，但是实际还是调试状态。用于特定用处。
-    
-- Platform()
-    获得平台标志，App 的  `platform` 选项 ,`duckphp_platform` 设置项。
-    
-- Logger($object=null)
-    返回Logger类。
-    $object 是替换入的新的 Logger 类。
+    绑定事件
+public static function Cache($object = null)
 
+    获得缓存对象
+public static function XpCall($callback, ...$args)
 
-- AssignExtendStaticMethod($key, $value = null)   详见 [Core/ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md)
-    分配固定方法。
-
-- GetExtendStaticMethodList() 详见 [Core/ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md)
-    获得
-- \_\_callStatic($name, $arguments) 详见 [Core/ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md)
-    静态方法已经被接管。
-
-- debug_log($message, $context=[])
-    测试状态 Log 数据。
-    
-- trace_dump()
-    显示调用堆栈
-    
-- var_dump(...$args)
-    替代 var_dump ，在非调试状态下不显示
+    调用，如果产生异常则返回异常，否则返回正常数据

@@ -23,24 +23,20 @@ trait BusinessHelperTrait
     {
         return App::LoadConfig($file_basename);
     }
-    public static function Cache($object = null)
-    {
-        return App::Cache($object);
-    }
     public static function XpCall($callback, ...$args)
     {
         return App::XpCall($callback, ...$args);
-    }
-    public static function Event()
-    {
-        return App::Event();
     }
     public static function FireEvent($event, ...$args)
     {
         return App::FireEvent($event, ...$args);
     }
-    public static function OnEvent($event, $callback)
+    public static function Cache($object = null)
     {
-        return App::OnEvent($event, $callback);
+        return App::Cache($object);
+    }
+    public static function Logger($object = null)
+    {
+        return App::Logger($object);
     }
 }

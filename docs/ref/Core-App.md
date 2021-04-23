@@ -83,13 +83,11 @@ Core 目录下的微框架入口
 DuckPhp\Core\App 类 可以视为几个类的组合
 
 ### 作为内核的 App 入口类
-详见 DuckPhp\Core\KernelTrait
+详见 [DuckPhp\Core\KernelTrait](Core-KernelTrait.md)
 
-### 助手类引用的静态方法
+### 助手函数，助手类，和本类的关系
 
 助手类的静态方法都调用本类的静态方法实现。
-
-为了避免重复，请在相关助手类里查看参考
 
 相关代码请参考 
 
@@ -100,22 +98,19 @@ DuckPhp\Core\App 类 可以视为几个类的组合
  + [ModelHelper](Helper-ModelHelper.md)
  + [ViewHelper](Helper-ViewHelper.md)
 
-或者，按分类
-### override 重写的方法
 
 
 ### 主要的动态方法
 ```php
-public function version()
-public function extendComponents($method_map, $components = [])
-public function cloneHelpers($new_namespace, $new_helper_map = [])
-public function addBeforeShowHandler($handler)
-public function removeBeforeShowHandler($handler)
+public function version() //版本
+public function extendComponents($method_map, $components = []) //扩充调用方法
+public function cloneHelpers($new_namespace, $new_helper_map = [])//复制助手函数群
+public function addBeforeShowHandler($handler)  // 高级
+public function removeBeforeShowHandler($handler) // 高级
 
-public function getDynamicComponentClasses()
-public function addDynamicComponentClass($class)
-public function addDynamicComponentClass($class)
-public function skip404Handler()
+public function getDynamicComponentClasses()  // 获得动态类
+public function addDynamicComponentClass($class) //添加动态类
+public function skip404Handler()  // 跳过 404 处理
 ```
 
 ### 内置 trait Core_SystemWrapper
@@ -132,7 +127,8 @@ public function skip404Handler()
     public static function session_destroy()
     public static function session_set_save_handler(\SessionHandlerInterface $handler)
 ```
-system_wrapper_replace() 替换系统默认函数
+SystemWrapperTrait
+system_wrapper_replace($) 替换系统默认函数
 
 system_wrapper_get_providers() 能提供的系统默认函数列表
 
@@ -140,7 +136,7 @@ system_wrapper_get_providers() 能提供的系统默认函数列表
 ### 内置 trait Core_Helper
 内置 trait Core_Helper 用于各种助手方法
 
-#### 退出类：
+#### 跳转
 ```php
     public static function ExitJson($ret, $exit = true)
     public static function ExitRedirect($url, $exit = true)
@@ -163,10 +159,10 @@ system_wrapper_get_providers() 能提供的系统默认函数列表
     public static function IsDebug()
     public static function IsRealDebug()
     public static function TraceDump()
-    public static function XpCall($callback, ...$args)
-    public static function CheckException($exception_class, $message, $code = 0)
     public static function Logger($object = null)
     public static function DebugLog($message, array $context = array())
+    public static function XpCall($callback, ...$args)
+    public static function CheckException($exception_class, $message, $code = 0)
 ```
 #### SQL 相关,
 ```php
@@ -181,6 +177,7 @@ system_wrapper_get_providers() 能提供的系统默认函数列表
     public static function PageSize($new_value = null)
     public static function PageHtml($total, $options = [])
 ```
+#### 其他
 
 ```php
     public static function Cache($object = null)

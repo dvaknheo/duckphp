@@ -101,7 +101,8 @@ class App extends ComponentBase
         }
         //// no error_404 setting.
         if (!$error_view) {
-            echo "404 File Not Found\<!--(PATH_INO: {$_SERVER['PATH_INFO']}) DuckPhp set options ['error_404'] to override me. -->\n";
+            $path_info = $_SERVER['PATH_INFO'] ?? '';
+            echo "404 File Not Found\<!--(PATH_INO: $path_info) DuckPhp set options ['error_404'] to override me. -->\n";
             return;
         }
         

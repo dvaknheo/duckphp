@@ -6,7 +6,7 @@ use DuckPhp\Helper\ControllerHelper;
 use DuckPhp\Helper\ControllerHelperTrait;
 use DuckPhp\Component\Pager;
 
-class ControllerHelperTest extends \PHPUnit\Framework\TestCase
+class ControllerHelperTraitTest extends \PHPUnit\Framework\TestCase
 {
     static $x;
     public function testAll()
@@ -38,11 +38,6 @@ class ControllerHelperTest extends \PHPUnit\Framework\TestCase
         ControllerHelper::Parameter('a','b');
         ControllerHelper::getRouteCallingMethod();
         ControllerHelper::setRouteCallingMethod($method);
-        try{
-        ControllerHelper::Pager();
-        }catch(\Exception $ex){
-            echo $ex->getMessage();
-        }
         ControllerHelper::DbCloseAll();
         //*/
         //*
@@ -114,8 +109,6 @@ echo"zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n\n";
 DuckPhp::G()->init([]);
 DuckPhp::Pager(new Pager);
 var_dump(DuckPhp::Pager());
-$t=ControllerHelper::Pager();
-var_dump($t);
 ControllerHelper::PageNo();
 ControllerHelper::PageSize();
 ControllerHelper::PageHtml(123);
@@ -124,18 +117,11 @@ ControllerHelper::PageHtml(123);
         ControllerHelper::XpCall(function(){ throw new \Exception('ex'); });
         
         try{
-           ControllerHelper::Event();
-        }catch(\Exception $ex){
-        }
-        try{
-            ControllerHelper::OnEvent("test",function(){return "abc";});
-        }catch(\Exception $ex){
-        }
-        try{
             ControllerHelper::FireEvent("test",1,2,3);
         }catch(\Exception $ex){
         }
-        
+        ControllerHelper::Logger();
+
         \LibCoverage\LibCoverage::End();
 
         //*/
