@@ -119,7 +119,6 @@ class View extends ComponentBase
         $base_file = preg_replace('/\.php$/', '', $view).'.php';
         $path = $this->getViewPath();
         $file = $path.$base_file;
-        var_dump("$path | $base_file");
         if (($this->options['path_view_override'] ?? false) && !is_file($file)) {
             $file = $this->options['path_view_override'].$base_file;
         }
