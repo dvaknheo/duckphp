@@ -9,9 +9,7 @@
 
 ## 公开方法
 
-public function init($options = [], $context = null)
-
-    初始化
+### sql 方法
 public function fetchAll($sql, ...$args)
 
     运行SQL并获得所有行
@@ -24,6 +22,27 @@ public function fetchColumn($sql, ...$args)
 public function execute($sql, ...$args)
 
     运行SQL 返回 true false
+public function fetchObjectAll($sql, ...$args)
+
+    运行SQL并获得所有行(对象数组)
+public function fetchObject($sql, ...$args)
+
+    运行SQL并获得单一行(对象形式)
+public function setResultClass($class)
+
+    设置返回的类，配合 fetchObject fetchObjectAll 使用。
+public function doTableNameMacro($sql)
+
+    默认把执行查询 sql 里的 `{TABLE}` 展开成 table($table_name) 里的设置
+public function table($table_name)
+
+    设置 `{TABLE}` 要替换的表名，并返回 Db 类。拼接 sql 的时候要注意第三方数据可能会有 `{TABLE}`
+### 其他方法
+
+public function init($options = [], $context = null)
+
+    初始化
+
 protected function check_connect()
 
     用于 override ，连接的设置。
@@ -47,16 +66,9 @@ public function rowCount()
 public function lastInsertId()
     
     获得插入的ID.
-public function fetchObjectAll($sql, ...$args)
 
-    运行SQL并获得所有行(对象数组)
-public function fetchObject($sql, ...$args)
 
-    运行SQL并获得单一行(对象形式)
-public function setResultClass($class)
-
-    设置返回的类，配合 fetchObject fetchObjectAll 使用。
-### DbAdvance 的方法
+### DbAdvanceTrait 的方法
 
 public function quoteIn($array)
 public function quoteSetArray($array)

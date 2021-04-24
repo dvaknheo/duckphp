@@ -11,8 +11,11 @@ class Db implements DbInterface
     
     public $pdo;
     public $config;
+    protected $tableName;
+    protected $resultClass = 'stdClass';
     protected $rowCount;
     protected $beforeQueryHandler = null;
+    protected $success = false;
     protected $driver_options = [
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
             \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
@@ -81,104 +84,67 @@ class Db implements DbInterface
         $sql = str_replace(array_fill(0, count($args), '?'), $args, $sql, $count);
         return $sql;
     }
-    public function fetchAll($sql, ...$args)
+    /////////////////
+    public function table($table_name)
     {
-        if ($this->beforeQueryHandler) {
-            ($this->beforeQueryHandler)($this, $sql, ...$args);
-        }
-        if (count($args) === 1 && is_array($args[0])) {
-            $args = $args[0];
-        }
-        
-        $sth = $this->pdo->prepare($sql);
-        $sth->execute($args);
-        
-        $ret = $sth->fetchAll(\PDO::FETCH_ASSOC);
-        return $ret;
+        $this->tableName = $table_name;
+        return $this;
     }
-    public function fetch($sql, ...$args)
+    public function doTableNameMacro($sql)
     {
-        if ($this->beforeQueryHandler) {
-            ($this->beforeQueryHandler)($this, $sql, ...$args);
-        }
-        
-        if (count($args) === 1 && is_array($args[0])) {
-            $args = $args[0];
-        }
-        
-        $sth = $this->pdo->prepare($sql);
-        $sth->execute($args);
-        $ret = $sth->fetch(\PDO::FETCH_ASSOC);
-        return $ret;
+        return empty($this->tableName) ? $sql : str_replace('{TABLE}',$this->tableName,$sql);
     }
-    public function fetchColumn($sql, ...$args)
-    {
-        if ($this->beforeQueryHandler) {
-            ($this->beforeQueryHandler)($this, $sql, ...$args);
-        }
-        
-        if (count($args) === 1 && is_array($args[0])) {
-            $args = $args[0];
-        }
-        
-        $sth = $this->pdo->prepare($sql);
-        $sth->execute($args);
-        $ret = $sth->fetchColumn();
-        return $ret;
-    }
-    //*
-    protected $resultClass = 'stdClass';
     public function setObjectResultClass($resultClass)
     {
         $this->resultClass = $resultClass;
         return $this;
     }
-    public function fetchObject($sql, ...$args)
+
+    protected function exec($sql, ...$args)
     {
         if ($this->beforeQueryHandler) {
             ($this->beforeQueryHandler)($this, $sql, ...$args);
         }
-
+        
         if (count($args) === 1 && is_array($args[0])) {
             $args = $args[0];
         }
-
+        $sql = $this->doTableNameMacro($sql);
         $sth = $this->pdo->prepare($sql);
-        $sth->execute($args);
-        $ret = $sth->fetchObject($this->resultClass);
-        return $ret;
+        $success = $sth->execute($args);
+        $this->success = $success;
+        return $sth;
+    }
+    //////////
+    public function fetchAll($sql, ...$args)
+    {
+        return $this->exec($sql, ...$args)->fetchAll(\PDO::FETCH_ASSOC);
+    }
+    public function fetch($sql, ...$args)
+    {
+        return $this->exec($sql, ...$args)->fetch(\PDO::FETCH_ASSOC);
+    }
+    public function fetchColumn($sql, ...$args)
+    {
+        return $this->exec($sql, ...$args)->fetchColumn();
+    }
+    public function fetchObject($sql, ...$args)
+    {
+        return $this->exec($sql, ...$args)->fetchObject($this->resultClass);
     }
     public function fetchObjectAll($sql, ...$args)
     {
-        if ($this->beforeQueryHandler) {
-            ($this->beforeQueryHandler)($this, $sql, ...$args);
-        }
-        if (count($args) === 1 && is_array($args[0])) {
-            $args = $args[0];
-        }
-
-        $sth = $this->pdo->prepare($sql);
-        $sth->execute($args);
-
-        $ret = $sth->fetchAll(\PDO::FETCH_CLASS, $this->resultClass);
-        return $ret;
+        return $this->exec($sql, ...$args)->fetchAll(\PDO::FETCH_CLASS, $this->resultClass);
     }
+
     //*/
     public function execute($sql, ...$args)
     {
-        if ($this->beforeQueryHandler) {
-            ($this->beforeQueryHandler)($this, $sql, ...$args);
+        $sth = $this->exec($sql, ...$args);
+        if(!$this->success){
         }
-        
-        if (count($args) === 1 && is_array($args[0])) {
-            $args = $args[0];
-        }
-        
-        $sth = $this->pdo->prepare($sql);
-        $ret = $sth->execute($args);
-        
-        $this->rowCount = $sth->rowCount();
-        return $ret;
+        $this->rowCount = $this->success ? 0 : $sth->rowCount();
+        return $this->success;
     }
     public function rowCount()
     {

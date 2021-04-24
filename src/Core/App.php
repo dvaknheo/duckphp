@@ -306,6 +306,25 @@ EOT;
     {
         $this->options['skip_404_handler'] = true;
     }
+    protected function onBeforeOutput()
+    {
+        //if (!$this->options['close_resource_at_output']) {
+        //    return;
+        //}
+        foreach ($this->beforeShowHandlers as $v) {
+            ($v)();
+        }
+    }
+    public static function Show($data = [], $view = '')
+    {
+        return static::G()->_Show($data, $view);
+    }
+    public function _Show($data = [], $view = '')
+    {
+        $this->onBeforeOutput();
+        $view = $view === '' ? Route::G()->getRouteCallingPath() : $view;
+        return View::G()->_Show($data, $view);
+    }
 }
 
 trait Core_SystemWrapper
@@ -515,10 +534,6 @@ trait Core_Helper
         //you can override this;
         return $this->options['is_debug'];
     }
-    public static function Show($data = [], $view = '')
-    {
-        return static::G()->_Show($data, $view);
-    }
     public static function H($str)
     {
         return static::G()->_H($str);
@@ -562,21 +577,6 @@ trait Core_Helper
         return json_encode($data, $flag);
     }
     ////
-    protected function onBeforeOutput()
-    {
-        //if (!$this->options['close_resource_at_output']) {
-        //    return;
-        //}
-        foreach ($this->beforeShowHandlers as $v) {
-            ($v)();
-        }
-    }
-    public function _Show($data = [], $view = '')
-    {
-        $this->onBeforeOutput();
-        $view = $view === '' ? Route::G()->getRouteCallingPath() : $view;
-        return View::G()->_Show($data, $view);
-    }
     public function _H(&$str)
     {
         if (is_string($str)) {
