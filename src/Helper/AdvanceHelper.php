@@ -6,10 +6,10 @@
 namespace DuckPhp\Helper;
 
 use DuckPhp\Core\ExtendableStaticCallTrait;
-use DuckPhp\Helper\AppHelperTrait;
+use DuckPhp\Helper\AdvanceHelperTrait;
 
-class AppHelper
+class AdvanceHelper
 {
     use ExtendableStaticCallTrait;
-    use AppHelperTrait;
+    use AdvanceHelperTrait;
 }

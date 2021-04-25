@@ -608,11 +608,16 @@ server {
     17. [StrictCheck](docs/ref/Ext-StrictCheck.md) 严格检查模式组件
     18. [SuperGlobalContext](docs/ref/Ext-SuperGlobalContext.md) 超全局上下文组件
 6. `Helper` 目录，各种助手类。
-    1. [AppHelper](docs/ref/Helper-AppHelper.md) 应用助手类
-    2. [BusinessHelper](docs/ref/Helper-BusinessHelper.md) 业务助手类
-    3. [ControllerHelper](docs/ref/Helper-ControllerHelper.md) 控制器助手类
-    4. [ModelHelper](docs/ref/Helper-ModelHelper.md) 模型助手类
-    5. [ViewHelper](docs/ref/Helper-ViewHelper.md) 视图助手类
+    1. [AdvanceHelper](docs/ref/Helper-AdvanceHelper.md) 应用助手类
+    2. [AdvanceHelperTrait](docs/ref/Helper-AdvanceHelperTrait.md) 应用助手Trait
+    3. [BusinessHelper](docs/ref/Helper-BusinessHelper.md) 业务助手类
+    4. [BusinessHelperTrait](docs/ref/Helper-BusinessHelperTrait.md) 业务助手Trait
+    5. [ControllerHelper](docs/ref/Helper-ControllerHelper.md) 控制器助手类
+    6. [ControllerHelperTrait](docs/ref/Helper-ControllerHelperTrait.md) 控制器助手Trait
+    7. [ModelHelper](docs/ref/Helper-ModelHelper.md) 模型助手类
+    8. [ModelHelperTrait](docs/ref/Helper-ModelHelperTrait.md) 模型助手Trait
+    9. [ViewHelper](docs/ref/Helper-ViewHelper.md) 视图助手类
+    10. [ViewHelperTrait](docs/ref/Helper-ViewHelperTrait.md) 视图助手Trait
 7. `HttpServer` 目录
     1. [HttpServer](docs/ref/HttpServer-HttpServer.md)  Http 服务器
 8. `SingletonEx`目录

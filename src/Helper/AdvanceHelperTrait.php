@@ -6,11 +6,9 @@
 namespace DuckPhp\Helper;
 
 use DuckPhp\Core\App;
-use DuckPhp\Core\ExtendableStaticCallTrait;
 
-trait AppHelperTrait
+trait AdvanceHelperTrait
 {
-    use ExtendableStaticCallTrait;
     public static function CallException($ex)
     {
         return App::CallException($ex);

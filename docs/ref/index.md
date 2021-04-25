@@ -82,11 +82,16 @@
     17. [StrictCheck](Ext-StrictCheck.md) 严格检查模式组件
     18. [SuperGlobalContext](Ext-SuperGlobalContext.md) 超全局上下文组件
 6. `Helper` 目录，各种助手类。
-    1. [AppHelper](Helper-AppHelper.md) 工程应用助手类
-    2. [BusinessHelper](Helper-BusinessHelper.md) 业务助手类
-    3. [ControllerHelper](Helper-ControllerHelper.md) 控制器助手类
-    4. [ModelHelper](Helper-ModelHelper.md) 模型助手类
-    5. [ViewHelper](Helper-ViewHelper.md) 视图助手类
+    1. [AdvanceHelper](Helper-AdvanceHelper.md) 应用助手类
+    2. [AdvanceHelperTrait](Helper-AdvanceHelperTrait.md) 应用助手Trait
+    3. [BusinessHelper](Helper-BusinessHelper.md) 业务助手类
+    4. [BusinessHelperTrait](Helper-BusinessHelperTrait.md) 业务助手Trait
+    5. [ControllerHelper](Helper-ControllerHelper.md) 控制器助手类
+    6. [ControllerHelperTrait](Helper-ControllerHelperTrait.md) 控制器助手Trait
+    7. [ModelHelper](Helper-ModelHelper.md) 模型助手类
+    8. [ModelHelperTrait](Helper-ModelHelperTrait.md) 模型助手Trait
+    9. [ViewHelper](Helper-ViewHelper.md) 视图助手类
+    10. [ViewHelperTrait](Helper-ViewHelperTrait.md) 视图助手Trait
 7. `HttpServer` 目录
     1. [HttpServer](HttpServer-HttpServer.md)  Http 服务器
 8. `SingletonEx`目录
@@ -138,7 +143,6 @@ src
 |   |-- EmptyView.php
 |   |-- ExceptionWrapper.php
 |   |-- HookChain.php
-|   |-- HttpServerPlugin.php.bak
 |   |-- JsonRpcClientBase.php
 |   |-- JsonRpcExt.php
 |   |-- JsonView.php
@@ -152,29 +156,30 @@ src
 |   |-- RouteHookDirectoryMode.php
 |   |-- RouteHookManager.php
 |   |-- RouteHookRewrite.php
-|   |-- SimpleModel.php.bak
 |   |-- StaticReplacer.php
-|   `-- StrictCheck.php
+|   |-- StrictCheck.php
+|   `-- SuperGlobalContext.php
 |-- Helper
-|   |-- AppHelper.php
+|   |-- AdvanceHelper.php
+|   |-- AdvanceHelperTrait.php
 |   |-- BusinessHelper.php
+|   |-- BusinessHelperTrait.php
 |   |-- ControllerHelper.php
-|   |-- HelperTrait.php
+|   |-- ControllerHelperTrait.php
 |   |-- ModelHelper.php
-|   `-- ViewHelper.php
+|   |-- ModelHelperTrait.php
+|   |-- ViewHelper.php
+|   `-- ViewHelperTrait.php
 |-- HttpServer
-|   |-- FileRunnerTrait.php.bak
+|   |-- AppInterface.php
 |   |-- HttpServer.php
-|   |-- HttpServerInterface.php.bak
-|   |-- HttpServerPluginInterface.bak
-|   `-- PluginForSwooleHttpd.php.bak
+|   `-- HttpServerInterface.php
 |-- SingletonEx
 |   |-- SimpleReplacer.php
 |   `-- SingletonExTrait.php
 `-- ThrowOn
     `-- ThrowOnTrait.php
 
-8 directories, 64 files
 ```
 
 ## nginx 配置
