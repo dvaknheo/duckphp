@@ -36,9 +36,9 @@ if (! function_exists('__json')) {
     }
 }
 if (! function_exists('__domain')) {
-    function __domain()
+    function __domain($use_scheme = false)
     {
-        return App::Domain();
+        return App::Domain($use_scheme);
     }
 }
 //////////////////////////////////////////////////

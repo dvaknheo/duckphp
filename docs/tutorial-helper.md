@@ -122,21 +122,21 @@ ModelHelper 用于 Model 层。  ModelHelper 有数据库的三个独特方法�
 
 此外，还有两个快捷方法， SqlForPager  和 SqlForCountSimply 方便分页。
 
-Db($tag=null)
+public static function Db($tag = null)
 
     获得 DB 数据库对象 ,第 $tag 个配置的数据库对象
     Db() 方法也可以用 __db() 全局函数代替
-DbForWrite()
+public static function DbForWrite()
 
     获得用于写入的 DB 对象,这是获得第 0 个配置列表里的数据库
-DbForRead()
+public static function DbForRead()
 
     获得用于读取的 DB 对象，这是获得第 1 个配置列表里的数据库
 
-SqlForPager($sql, $pageNo, $pageSize = 10)
+public static function SqlForPager($sql, $pageNo, $pageSize = 10)
 
     分页 limit 的 sql 
-SqlForCountSimply($sql)
+public static function SqlForCountSimply($sql)
 
     简单的把 select ... from 替换成 select count(*) as c from 
 
@@ -144,32 +144,28 @@ SqlForCountSimply($sql)
 
 BusinessHelper 用于业务层。
 ### 配置
-
-Config($key, $file_basename = 'config')
-
-    读取配置，从 config/$file_basename.php 里读取配置
-LoadConfig($file_basename)
-
-    载入 config/$file_basename.php 的配置段。
-Setting($key);
+public static function Setting($key)
 
     获得设置，需要打开'user_setting_file'默认设置文件是在  config/setting.php 。
     设置是敏感信息,不存在于版本控制里面。而配置是非敏感。
-LoadConfig($key,$basename="config");
+public static function Config($key, $file_basename = 'config')
+
+    读取配置，从 config/$file_basename.php 里读取配置
+public static function LoadConfig($file_basename)
 
     载入配置，Config($key); 获得配置项目。默认配置文件是在  config/config.php 。
 ### 其他
 
-Cache($replace_object)
+public static function Cache($object = null)
 
     获得缓存管理器
-FireEvent($event, ...$args)
+public static function FireEvent($event, ...$args)
 
     触发事件
-XpCall($callback, ...$args)
+ public static function XpCall($callback, ...$args)
 
     包裹callback输出，如果抛出异常则返回异常，否则返回 $callback();
-Loger()
+public static function Logger($object = null)
 
     日志对象
 ## ControllerHelper 控制器的助手类
@@ -181,70 +177,71 @@ Loger()
 ### 输出内容
 
 显示
-H($str)
+public static function H($str)
 
     __h() HTML 编码
-L($str,$args=[])
+public static function L($str, $args = [])
 
     __l() 语言处理函数，后面的关联数组替换 '{$key}'
-Hl($str, $args=[])
+public static function Hl($str, $args = [])
 
     __hl() 对语言处理后进行 HTML 编码
-Json($ret)
+public static function Json($data)
 
     __json() 获得 Json 内容
-Url($url)
+public static function Url($url = null)
 
     __url() 获得相对 url 地址
-Domain()
+public static function Domain()
 
     __domain【内容处理】 获得带协议的域名
 ### 输出的动作
 
-Show($data = [], $view = null)
+public static function Show($data = [], $view = '')
 
     【内容处理】显示视图， 默认为 view/{$view}.php 的文件， 并会带上页眉页脚
-Display($view, $data = null)
+public static function Display($view, $data = null)
 
     __display() 包含下一个 $view ， 如果 $data = null 则带入所有当前作用域的变量。 否则带入 $data 关联数组的内容。Display 用于嵌套包含视图。
-setViewHeadFoot($head_file = null, $foot_file = null)
+public static function setViewHeadFoot($head_file = null, $foot_file = null)
 
     【内容处理】设置页眉页脚
-assignViewData($key, $value = null)
+public static function assignViewData($key, $value = null)
 
     【内容处理】分配视图变量，另一版本为 assignViewData([$key=>$value]);
-DbCloseAll()
+public static function DbCloseAll()
 
     【内容处理】 关闭所有数据库
 ### 分页
 
 分页器类是通过 DuckPhp\\Component\\Pager 实现的
 
-PageNo($new_value = null)
+public static function PageNo($new_value = null)
 
     获得或设置当前页码
-PageSize($new_value = null)
+public static function PageSize($new_value = null)
 
     获得或设置当前每页数据条目
-PageHtml($total, $options=[])
+public static function PageHtml($total, $options = [])
 
     获得分页结果 HTML，这里的 $options 是传递给 Pager 类的选项。
 ### 配置
 
-Setting
+public static function Setting($key)
 
-    【配置相关】见 BusinessHelper 的 Setting 介绍
-Config
+    获得设置，需要打开'user_setting_file'默认设置文件是在  config/setting.php 。
+    设置是敏感信息,不存在于版本控制里面。而配置是非敏感。
+public static function Config($key, $file_basename = 'config')
 
-    【配置相关】见 BusinessHelper 的 Config 介绍
-LoadConfig
+    读取配置，从 config/$file_basename.php 里读取配置
+public static function LoadConfig($file_basename)
 
-    【配置相关】见 BusinessHelper 的 LoadConfig 介绍
+    载入配置，Config($key); 获得配置项目。默认配置文件是在  config/config.php 。
 ###  事件
 FireEvent($event, ...$args)
 
     【其他】见 BusinessHelper 的 FireEvent 介绍
-    
+
 Loger()
 
     日志对象
@@ -300,9 +297,9 @@ ExitJson($ret, $exit = true)
     【跳转】输出 json 结果，$exit 为 true 则附加 exit()
 
 
-### 输入变量
+### 超全局变量
 替代同名 GET / POST /REQUEST /COOKIE 。如果没的话返回 后面的默认值。
-注意没有 SESSION（有 App::SESSION） ，这是故意设计成这样的，不希望 \_SESSION 到处飞， _SESSION 应该集中于 SessionBusiness 或 SessionLib 里。
+注意没有 SESSION（有 AdvanceHelper::SESSION） ，这是故意设计成这样的，不希望 \_SESSION 到处飞， _SESSION 应该集中于 SessionBusiness 或 SessionLib 里。
 
 GET($key, $default = null)
 

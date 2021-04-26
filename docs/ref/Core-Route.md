@@ -13,7 +13,7 @@
 'namespace_controller' => 'Controller',
 
 	默认子命名空间为 Controller
-    如果是 \ 开头的则忽略 namespace, 选项。
+	如果是 \ 开头的则忽略 namespace, 选项。
 'controller_base_class' => null,
 
     限定控制器基类，配合 namespace ,namespace_controller 选项。
@@ -29,8 +29,8 @@
 'controller_methtod_for_miss' => '_missing',
 
 	方法丢失调用的方法
-    如果有这个方法。找不到方法的时候，会进入这个方法
-    如果你使用了这个方法，将不会进入 404 。
+	如果有这个方法。找不到方法的时候，会进入这个方法
+	如果你使用了这个方法，将不会进入 404 。
 
 'controller_prefix_post' => 'do_',
 
@@ -39,7 +39,7 @@
 'controller_path_prefix' => '',
 
     添加路由的前缀
-    
+
 "controller_class_postfix"
 
     控制器类名后缀
@@ -58,6 +58,9 @@ controller_stop_static_method
 ## 公开属性
 
 ## 公开方法
+
+### 主流程方法
+
 public function __construct()
 
     空构造函数
@@ -76,11 +79,11 @@ public function bind($path_info, $request_method = 'GET')
 public function run()
 
     运行
-public function forceFail()
 
-    强制为失败
+### 扩展和钩子
 public function addRouteHook($callback, $position, $once = true)
     
+
     添加钩子
 public function add404RouteHook($callback)
 
@@ -93,41 +96,56 @@ public function defaultRunRouteCallback($path_info = null)
     运行默认的路由回调
 public function defaultGetRouteCallback($path_info)
 
+    运行默认的路由回调
+public function replaceControllerSingelton($old_class,$new_class)
+
+    替换控制器的单例,配合 controller_use_singletonex 使用。不能直接使用 $old_class::G($new_class::G());
+
+public static function Route()
+
+    返回单例，用于 DuckPhp/Route 双兼容 RouteHook;
+public function forceFail()
+
+    强制为失败
 
 
 ### URL 相关
 
 public static function URL($url=null)
-
-    获得 URL
 public function _URL($url = null)
 
-    URL 的实现函数
+    获得 URL
+public static function Domain($use_scheme)
+public function _Domain($use_scheme)
+
+    获得 带协议头的URL
 public function defaultURLHandler($url = null)
     
     默认的 URL 函数，
 public function setURLHandler($callback)
 
     设置 URL 回调函数
-    
+
 public function getURLHandler()
 
     获得 URL 回调函数
-
-### 辅助信息方法
-
 public function getPathInfo()
 
     获得 PATH_INFO
 public function setPathInfo($path_info)
 
     设置 PATH_INFO
+### 辅助信息方法
+
 public function getParameters()
 
-    获得 数组
+    获得 Parameter 数组
 public function setParameters($parameters)
+
+    设置 Parameter 数组
 public function getRouteCallingPath()
 
+    其他
 public function getRouteCallingClass()
 
     获得当前路由调用的类名
@@ -135,24 +153,15 @@ public function getRouteCallingMethod()
 public function setRouteCallingMethod($calling_method)
 
     设置当前路由
-
-    //
 public function dumpAllRouteHooksAsString()
 
     简单 dump 所有钩子
 
-public function replaceControllerSingelton($old_class,$new_class)
-
-    替换控制器的单例,配合 controller_use_singletonex 使用。不能直接使用 $old_class::G($new_class::G());
-    
-public static function Route()
-
-    返回单例，用于 DuckPhp/Route 双兼容 RouteHook;
 
 ## 详解
 
 ## 方法索引
-##  内部方法
+###  内部方法
 
     获得默认的路由回调
 protected function beforeRun()
@@ -165,14 +174,14 @@ protected function createControllerObject($full_class)
 protected function getMethodToCall($object, $method)
 
     获得回调方法
-    
+
 
     protected function beforeRun()
     protected function getRunResult()
     protected function createControllerObject($full_class)
     protected function getMethodToCall($object, $method)
-     
-##### 示例
+
+#### 示例
 
 这是一个单用 Route 组件的例子
 
@@ -203,7 +212,7 @@ if(!$flag){
 
 ```
 
-##### 钩挂路由流程指南
+#### 钩挂路由流程指南
 
     如果你对默认的文件路由不满意，可以安插自己的钩子。
     $route->addRouteHook($callback, $append=true, $outter=true, $once=true);
@@ -215,12 +224,5 @@ if(!$flag){
     如果你在前面的，想禁止默认路由函数，可以用 defaultToggleRouteCallback(false);
     
     add404Handle() 是默认用于后处理的版本。
-
-##### URL 输出地址重写指南
-
-
+#### URL 输出地址重写指南
 ## Tip
-bind() 函数和 bindServerData 区别
-    public function bind($path_info, $request_method = 'GET')
-    会进行 bindServerData 然后设置 提纯后的 path_info 和 request_method:
-

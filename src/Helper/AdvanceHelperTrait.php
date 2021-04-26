@@ -46,7 +46,32 @@ trait AdvanceHelperTrait
     {
         return App::getViewData();
     }
-    //
+    ////////////
+    public static function SESSION($key = null, $default = null)
+    {
+        return App::SESSION($key, $default);
+    }
+    public static function FILES($key = null, $default = null)
+    {
+        return App::FILES($key, $default);
+    }
+    public static function SessionSet($key, $value)
+    {
+        return App::SessionSet($key, $value);
+    }
+    public static function CookieSet($key, $value, $expire = 0)
+    {
+        return App::CookieSet($key, $value, $expire);
+    }
+    public static function Event()
+    {
+        return App::Event();
+    }
+    public static function OnEvent($event, $callback)
+    {
+        return App::OnEvent($event, $callback);
+    }
+    ////////////////////
     public static function header($output, bool $replace = true, int $http_response_code = 0)
     {
         return App::header($output, $replace, $http_response_code);
@@ -83,7 +108,7 @@ trait AdvanceHelperTrait
     {
         return App::session_set_save_handler($handler);
     }
-    ////
+    //////////////////////////////////////
     public static function extendComponents($method_map, $components = [])
     {
         return App::G()->extendComponents($method_map, $components);
@@ -96,7 +121,6 @@ trait AdvanceHelperTrait
     {
         return App::G()->addBeforeShowHandler($handler);
     }
-    ////
     public static function getDynamicComponentClasses()
     {
         return App::G()->getDynamicComponentClasses();

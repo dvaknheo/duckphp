@@ -89,10 +89,9 @@ DuckPhp\Core\App 类 可以视为几个类的组合
 
 助手类的静态方法都调用本类的静态方法实现。
 
-相关代码请参考 
+相关代码请参考相应助手类方法。 
 
- + [HelperTrait](Helper-AppHelper.md)
- + [AppHelper](Helper-AppHelper.md)
+ + [AdvanceHelper](Helper-AdvanceHelper.md)
  + [BusinessHelper](Helper-BusinessHelper.md)
  + [ControllerHelper](Helper-ControllerHelper.md)
  + [ModelHelper](Helper-ModelHelper.md)
@@ -100,7 +99,7 @@ DuckPhp\Core\App 类 可以视为几个类的组合
 
 
 
-### 主要的动态方法
+### 动态方法
 ```php
 public function version() //版本
 public function extendComponents($method_map, $components = []) //扩充调用方法
@@ -127,10 +126,15 @@ public function skip404Handler()  // 跳过 404 处理
     public static function session_destroy()
     public static function session_set_save_handler(\SessionHandlerInterface $handler)
 ```
-SystemWrapperTrait
-system_wrapper_replace($) 替换系统默认函数
+SystemWrapperTrait 还有两个特殊函数
 
-system_wrapper_get_providers() 能提供的系统默认函数列表
+​    public static function system_wrapper_replace(array $funcs)
+
+替换系统默认函数。第三方服务器使用
+
+​    public static function system_wrapper_get_providers():array
+
+能提供的系统默认函数列表
 
 
 ### 内置 trait Core_Helper
@@ -150,7 +154,7 @@ system_wrapper_get_providers() 能提供的系统默认函数列表
     public static function L($str, $args = [])
     public static function Hl($str, $args = [])
     public static function Json($data)
-    public static function Domain()
+    public static function Domain($use_scheme)
 ```
 #### 调试相关
 ```php
@@ -164,7 +168,7 @@ system_wrapper_get_providers() 能提供的系统默认函数列表
     public static function XpCall($callback, ...$args)
     public static function CheckException($exception_class, $message, $code = 0)
 ```
-#### SQL 相关,
+#### SQL 相关
 ```php
     public static function SqlForPager($sql, $pageNo, $pageSize = 10)
     public static function SqlForCountSimply($sql)
@@ -274,6 +278,3 @@ public static function CookieSet($key, $value, $expire=0)
 因为 Cookie 不仅仅读取，还有写入，所以用 CookieSet 。
 ### 关于 injected_helper_map
 
-## 全方法索引
-
-//待脚本

@@ -386,12 +386,34 @@ trait Route_UrlManager
     {
         return static::G()->_Url($url);
     }
+    public static function Domain($use_scheme = false)
+    {
+        return static::G()->_Domain($use_scheme);
+    }
     public function _Url($url = null)
     {
         if ($this->url_handler) {
             return ($this->url_handler)($url);
         }
         return $this->defaultUrlHandler($url);
+    }
+    public function _Domain($use_scheme = false)
+    {
+        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+        $scheme = $_SERVER['REQUEST_SCHEME'] ?? '';
+        $scheme = $use_scheme ? $scheme :'';
+        $host = $_SERVER['HTTP_HOST'] ?? ($_SERVER['SERVER_NAME'] ?? ($_SERVER['SERVER_ADDR'] ?? ''));
+        $host = $host ?? '';
+        
+        $port = $_SERVER['SERVER_PORT'] ?? '';
+        $port = ($port == 443 && $scheme == 'https')?'':$port;
+        $port = ($port == 80 && $scheme == 'http')?'':$port;
+        $port = ($port)?(':'.$port):'';
+
+        $host = (strpos($host, ':'))? strstr($host, ':', true) : $host;
+        
+        $ret = $scheme.':/'.'/'.$host.$port;
+        return $ret;
     }
     protected function getBasePath()
     {

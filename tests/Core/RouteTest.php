@@ -20,7 +20,8 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->setPathInfo('x/z');
         $t= Route::URL('aaa');
         $z=Route::Route();
-        
+        Route::Domain();
+
         $this->hooks();
         //Main
         $options=[
@@ -30,8 +31,6 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         $_SERVER['argv']=[ __FILE__ ,'about/me' ];
         $_SERVER['argc']=count($_SERVER['argv']);
         
-        
-
         //First Run;
         $flag=Route::RunQuickly($options);
         Route::G()->getParameters();
@@ -329,8 +328,6 @@ class MyRoute extends Route
     {
         return $this->getMethodToCall(new $class,$method);
     }
-    
-    
 }
 
 }

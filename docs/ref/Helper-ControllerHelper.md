@@ -31,7 +31,7 @@ LoadConfig($file_basename)
 ### 路由相关
 
 URL($url)
-Domain()
+public static function Domain($use_scheme)
 ExitRedirect($url, $exit = true)
 ExitRedirectOutside($url, $exit = true)
 ExitRouteTo($url, $exit = true)

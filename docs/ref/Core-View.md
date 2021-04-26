@@ -37,6 +37,14 @@ public function assignViewData($key, $value = null)
 public function getViewPath()
 
     获得 view 的目录
+  0 => 'reset',
+  1 => 'getViewPath',
+  2 => 'getViewData',
+  3 => 'setViewHeadFoot',
+  4 => 'assignViewData',
+  5 => 'init',
+  6 => 'isInited',
+
 ## 内部方法
 
 protected function getViewFile($view)

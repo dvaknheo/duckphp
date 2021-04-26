@@ -52,6 +52,22 @@ class AdvanceHelperTraitTest extends \PHPUnit\Framework\TestCase
         AdvanceHelper::session_set_save_handler( $handler);
 
         AdvanceHelper::add404RouteHook( function(){var_dump('404!');});
+        
+        
+        ////[[[[
+        AdvanceHelper::SESSION();
+        AdvanceHelper::FILES();
+        try{
+            AdvanceHelper::Event();
+        }catch(\Exception $ex){
+        }
+        AdvanceHelper::CookieSet ('a','b');
+        AdvanceHelper::SessionSet('c','d');
+        AdvanceHelper::OnEvent('MyEvent',[static::class, 'callit']);
+        App::FireEvent('MyEvent','A','B','C');
+    
+        ////]]]]
+        
         ////[[[[
         $this->do_Core_Component();
         

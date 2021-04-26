@@ -42,9 +42,9 @@ trait ControllerHelperTrait
     {
         return App::Url($url);
     }
-    public static function Domain()
+    public static function Domain($use_scheme = false)
     {
-        return App::Domain();
+        return App::Domain($use_scheme);
     }
     ////
     public static function getParameters()

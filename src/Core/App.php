@@ -630,27 +630,6 @@ trait Core_Helper
             return $ex;
         }
     }
-    public static function Domain()
-    {
-        return static::G()->_Domain();
-    }
-    public function _Domain()
-    {
-        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-        $scheme = $_SERVER['REQUEST_SCHEME'] ?? '';
-        $host = $_SERVER['HTTP_HOST'] ?? ($_SERVER['SERVER_NAME'] ?? ($_SERVER['SERVER_ADDR'] ?? ''));
-        $host = $host ?? '';
-        
-        $port = $_SERVER['SERVER_PORT'] ?? '';
-        $port = ($port == 443 && $scheme == 'https')?'':$port;
-        $port = ($port == 80 && $scheme == 'http')?'':$port;
-        $port = ($port)?(':'.$port):'';
-
-        $host = (strpos($host, ':'))? strstr($host, ':', true) : $host;
-        
-        $ret = $scheme.':/'.'/'.$host.$port;
-        return $ret;
-    }
     public static function CheckException($exception_class, $message, $code = 0)
     {
         return static::G()->_CheckException($exception_class, $message, $code);
@@ -816,6 +795,10 @@ trait Core_Glue
     {
         return Route::G()->_Url($url);
     }
+    public static function Domain($use_scheme = false)
+    {
+        return Route::G()->_Domain($use_scheme);
+    }
     public static function Parameter($key, $default = null)
     {
         return Route::G()->_Parameter($key, $default);
@@ -949,6 +932,10 @@ trait Core_SuperGlobal
     {
         return static::G()->_SESSION($key, $default);
     }
+    public static function FILES($key = null, $default = null)
+    {
+        return static::G()->_FILES($key, $default);
+    }
     public static function SessionSet($key, $value)
     {
         return static::G()->_SessionSet($key, $value);
@@ -957,10 +944,7 @@ trait Core_SuperGlobal
     {
         return static::G()->_CookieSet($key, $value, $expire);
     }
-    public static function FILES($key = null, $default = null)
-    {
-        return static::G()->_FILES($key, $default);
-    }
+
     private function getSuperGlobalData($superglobal_key, $key, $default)
     {
         $data = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->$superglobal_key : $GLOBALS[$superglobal_key];
