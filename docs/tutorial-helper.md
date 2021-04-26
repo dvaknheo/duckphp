@@ -10,7 +10,7 @@
 - [DuckPhp\Helper\ModelHelper](ref/Helper-ModelHelper.md) 模型助手类
 - [DuckPhp\Helper\BusinessHelper](ref/Helper-BusinessHelper.md) 业务助手类
 - [DuckPhp\Helper\ControllerHelper](ref/Helper-ControllerHelper.md) 控制器助手类
-- *[DuckPhp\Helper\AppHelper](ref/Helper-AppHelper.md)* 应用助手类，一般不常用。
+- *[DuckPhp\Helper\AdvanceHelper](ref/Helper-AdvanceHelper.md)* 应用助手类，一般不常用。
 
 ## 开始
 助手类是 `业务工程师` 必须掌握的类。
@@ -60,9 +60,9 @@ Controller --> Business ------------------------------ ---> Model
 
 答：大写开始的方法是常用方法，小写开始的方法是不常用方法。高级来说，大写开始方法对应一个静态函数。小写方法是对应动态函数。但是他们都可以更改实现。
 
-问：上面调用关系图怎么没有 `AppHelper` 类
+问：上面调用关系图怎么没有 `AdvanceHelper` 类
 
-答：`AppHelper` 助手类只由`核心工程师`来调用 。当你要从 App 类里找出复杂的助手类，还不如在 AppHelper 里找。Session 管理就用到了 AppHelper 类。
+答：`AdvanceHelper` 助手类只由`核心工程师`来调用 。当你要从 App 类里找出复杂的助手类，还不如在 AdvanceHelper 里找。Session 管理就用到了 AdvanceHelper 类。
 
 ## 全局助手函数
 
@@ -333,16 +333,16 @@ exit()
 
     【系统替代】 退出函数，以便于接管
 
-## AppHelper 高级助手类
+## AdvanceHelper 高级助手类
 
-AppHelper 是 `核心工程师` 才使用的高级助手类。特殊的 Business 会用到。
+AdvanceHelper 是 `核心工程师` 才使用的高级助手类。特殊的 Business 会用到。
 
 一部分只是展示了 App 类里有的非主要生命周期流程外的方法。
 
 
 ### 系统替代
 
-AppHelper 的系统替代更全面，包括 session 族函数
+AdvanceHelper 的系统替代更全面，包括 session 族函数
 
 header
 
