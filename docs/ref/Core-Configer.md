@@ -40,7 +40,7 @@
     public function _LoadConfig($file_basename='config')
     public function assignExtConfigFile($key, $value = null)
 
-##### 说明
+### 说明
 
 DuckPhp\Core\Configer 的选项共享个 path,带个 path_config
 

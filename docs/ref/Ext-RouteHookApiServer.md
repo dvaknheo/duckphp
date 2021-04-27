@@ -1,7 +1,9 @@
 # DuckPhp\Ext\RouteHookApiServer
+[toc]
 
 ## 简介
 
+本扩展用于实现一个 api 服务器
 ## 选项
     'namespace' => '',
     'api_server_base_class' => '',

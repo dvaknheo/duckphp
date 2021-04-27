@@ -21,8 +21,9 @@
     日志前缀
 'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
 
-   日志文件模板 
+    日志文件模板 
 ## 方法
+```php
     public function __construct()
     public function reset()
     public function init(array $options, object $context = null)
@@ -36,6 +37,7 @@
     public function notice($message, array $context = array())
     public function info($message, array $context = array())
     public function debug($message, array $context = array())
+```
 ## 详解
 
 App::Logger() 函数得到的就是这个类

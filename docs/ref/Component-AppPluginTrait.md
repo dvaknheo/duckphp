@@ -54,6 +54,9 @@
 'plugin_component_class_route' => '',
 
     替换默认的Route
+'plugin_injected_helper_map' => '',
+
+    高级功能
 ## 公开方法
 
 pluginModeInit(array $options, object $context = null)

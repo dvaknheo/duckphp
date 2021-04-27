@@ -21,24 +21,33 @@
 并且做了以下更改
 
 ```
-'ext' => [],
-    
 
-'default_exception_do_log' => true,
-'default_exception_self_display' => true,
-
+[
 'ext' => [
     DbManager::class => true,
-    RouteHookPathInfoCompat::class => true,
+    RouteHookRouteMap::class => true,
 ],
+route_map_auto_extend_method => false,
+database_auto_extend_method => false,
+];
 ```
-cli_default_command_class
-path_info_compact_enable
+Console
+
+Console::G()->options['cli_default_command_class'] = DuckPhpCommand::class;
+
+
+
+DuckPhpCommand
+
+RouteHookPathInfoCompat
+
+
 ## 说明
 也许你想从这个入口类了解 DuckPhp 的所有配置，但这个类只是扩展自
-DuckPhp 类只是弥补了 Core\App 缺失的方法。
-具体的方法在 Core\App 里
-主要流程在 Core\Kernel 里
+DuckPhp 类只是弥补了 DuckPhp\Core\App 缺失的方法。
+具体的方法在 DuckPhp\Core\App 里
+主要流程在 DuckPhp\Core\KernelTrait 里
+
 ## 公开方法
 
 
@@ -50,7 +59,7 @@ DuckPhp 类只是弥补了 Core\App 缺失的方法。
 
 ## 详解
 
-App 类，继承了 Core\App 的功能，在默认配置里，还加载了其他 Ext 扩展的内容。
+App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里，还加载了其他 Ext 扩展的内容。
 
 
 + 如果你要看有什么选项，查看  Kernel 和 App  文档

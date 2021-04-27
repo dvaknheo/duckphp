@@ -41,17 +41,3 @@ View 里不想  use ViewHelper 的情况
 - __trace_dump 对应 App::TraceDump();
 - __debug_log() 对应 App::DebugLog();
 
-## Model 
-
-用于 Model 里不想引入 helper 
-
-- __db() 对应 App::Db();
-
-- __dbr() 对应 App::DbForRead();
-
-- __dbw() 对应 App::DbForWrite();
-
-
-
-
-

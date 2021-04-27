@@ -3,9 +3,9 @@
 
 ## 简介
 
-XHelper 绑定了 XHelperTrait
+ModelHelper 绑定了 ModelHelperTrait
 
-XHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md) ，XHelperTrait
+ModelHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md) ，ModelHelperTrait
 
 
 ModelHelperTrait 的文档参见 [DuckPhp\Helper\ModelHelper](Helper-ModelHelper.md);

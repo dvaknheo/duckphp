@@ -82,7 +82,6 @@ public function run()
 
 ### 扩展和钩子
 public function addRouteHook($callback, $position, $once = true)
-    
 
     添加钩子
 public function add404RouteHook($callback)

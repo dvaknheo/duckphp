@@ -77,13 +77,14 @@ onPrepare
 
     准备阶段，你可以在这里替换默认类
 onInit
+
     初始化完成
 onBeforeRun
-    运行阶段。不建议重写 run ，而是在这里添加运行阶段处理
 
+    运行阶段。不建议重写 run ，而是在这里添加运行阶段处理
 onAfterRun
+
     运行完毕阶段执行的方法
-    
 ## 公开方法
 
 public static function RunQuickly(array $options=[], callable $after_init=null): bool

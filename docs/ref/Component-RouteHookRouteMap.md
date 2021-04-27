@@ -3,22 +3,22 @@
 
 ## 简介
 
-`路由钩子` `组件类` `默认使用` 自定义路由的扩展
+`路由钩子` `组件类 自定义路由的扩展
 
 ## 选项
 
-* 'route_map_important'=>[],
+'route_map_important' => [],
 
     在默认路由前执行的路由映射
-* 'route_map'=>[]
+'route_map' => [],
 
-  在默认路由失败后执行的路由映射
-
+    在默认路由失败后执行的路由映射
 'route_map_by_config_name' => '',
 
     从配置中读取  route_map_important 和 route_map
 'route_map_auto_extend_method' => true,
 
+    扩充方法
 ## 扩充方法
 
 'assignImportantRoute' => [static::class.'::G','assignImportantRoute'],
@@ -30,6 +30,7 @@
 
 
 ## 详解
+key 的规则
 ~  开始的为正则
 @ 开始的为带名字的
 
@@ -42,6 +43,8 @@ route_map key 如果是 ~ 开头的，表示正则
 否则是普通的 path_info 匹配。
 
 支持 'Class->Method' 和 'Class@Method'  表示创建对象，执行动态方法。
+Class@Method => Class::G()->Method
+
 assignRoute($route,$callback=null)
 
     给路由加回调。

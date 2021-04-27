@@ -38,7 +38,7 @@
     public static function DbForRead()
     public static function CloseAll()
     public static function OnQuery($db, $sql, ...$args)
-    
+
 ## 详解
 
 DbManager 类是用来使用数据库的。M::Db() 用到了这个组件。
@@ -52,7 +52,7 @@ DbManager 类是用来使用数据库的。M::Db() 用到了这个组件。
 ]
 ```
 
-`database_list` 是`database` 数组。
+`database_list` 是项目为 `database` 数组。
 
 `database_list_try_single` 选项 用于如果 `database_list` 选项没设置的时候找`database`
 

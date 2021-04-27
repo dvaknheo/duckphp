@@ -16,10 +16,8 @@
     命名空间的相对路径
 'skip_app_autoload' => false,
 
-
-
+    跳过 app 的加载
 'autoload_cache_in_cli' => false,
-    
     在命令行模式下缓存
 'autoload_path_namespace_map' => [],
 

@@ -9,7 +9,7 @@
 public static function system_wrapper_replace(array $funcs)
     
     第三方替换本类提供的系统函数
-    
+
 public static function system_wrapper_get_providers():array
 
     获得本类能替换的系统函数，返回数组    
@@ -17,11 +17,11 @@ public static function system_wrapper_get_providers():array
 
 system_wrapper_replace(array $funcs)
 
-system_wrapper_get_providers():array
-
 _system_wrapper_replace(array $funcs)
 
     动态实现，第三方替换本类提供的系统函数
+system_wrapper_get_providers():array
+
 _system_wrapper_get_providers()
 
     动态实现，获得本类能替换的系统函数

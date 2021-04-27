@@ -1,14 +1,14 @@
-# DuckPhp\Helper\AppHelperTrait
+# DuckPhp\Helper\AdvanceHelperTrait
 [toc]
 
 ## 简介
 
-AppHelperTrait 的文档参见 [DuckPhp\Helper\AppHelper](Helper-AppHelper.md) 类
+AdvanceHelperTrait 的文档参见 [DuckPhp\Helper\AdvanceHelper](Helper-AdvanceHelper.md) 类
 
-`DuckPhp\Helper\AppHelper` 类
+`DuckPhp\Helper\AdvanceHelper` 类
 
  使用 [DuckPhp\Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md) 
 
- 使用 `DuckPhp\Helper\AppHelperTrait`
+ 使用 `DuckPhp\Helper\AdvanceHelperTrait`
 
 

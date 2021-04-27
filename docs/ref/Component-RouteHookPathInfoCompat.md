@@ -3,7 +3,7 @@
 
 
 ## 简介
-`默认` `组件类` 在不配置 PathInfo 下模拟 PathInfo 
+`组件类` 在不配置 PathInfo 下模拟 PathInfo 
 
 ## 选项
 

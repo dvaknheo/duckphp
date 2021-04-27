@@ -221,7 +221,7 @@ EOT;
         if (is_string($map)) {
             // for helper
             $map = [
-                'A' => $map . 'AppHelper',
+                'A' => $map . 'AdvanceHelper',
                 'B' => $map . 'BusinessHelper',
                 'C' => $map . 'ControllerHelper',
                 'M' => $map . 'ModelHelper',

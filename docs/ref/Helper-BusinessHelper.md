@@ -23,4 +23,7 @@ public static function Cache($object = null)
     获得缓存对象
 public static function XpCall($callback, ...$args)
 
-    调用，如果产生异常则返回异常，否则返回正常数据
+    调用，如果产生异常则返回异常，否则返回正常数据    
+public static function Logger($object = null)
+
+    获得日志对象

@@ -22,7 +22,7 @@ CallableView 扩展扩充了默认的 view 类，用于用函数替代文件方�
 'callable_view_skip_replace' => false,
 
     替换默认view; callable_view_skip_replace 打开的时候会在 初始化的时候替换默认的 Core\View
-    
+
 继承 [DuckPhp\Core\View](Core-View.md) 的所有选项，且有
 
 
