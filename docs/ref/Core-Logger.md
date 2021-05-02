@@ -10,24 +10,25 @@
 
 ## 选项
 
-'path' => '',
-    
-    基础路径
-'path_log' => 'logs',
+        'path' => '',
+基础路径
 
-    日志文件目录
-'log_prefix' => 'DuckPhpLog',
+        'path_log' => 'logs',
+日志文件目录
 
-    日志前缀
-'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
+        'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
+日志文件模板 
 
-    日志文件模板 
+        'log_prefix' => 'DuckPhpLog',
+日志前缀
 ## 方法
 ```php
     public function __construct()
     public function reset()
     public function init(array $options, object $context = null)
-    
+```
+在构造中实现
+```php
     public function log($level, $message, array $context = array())
     public function emergency($message, array $context = array())
     public function alert($message, array $context = array())
@@ -38,7 +39,8 @@
     public function info($message, array $context = array())
     public function debug($message, array $context = array())
 ```
-## 详解
+psr-16 标准的方法
+## 说明
 
 App::Logger() 函数得到的就是这个类
 

@@ -83,28 +83,28 @@ subgraph cluster_Helper {
     
     label = "[DuckPhp\\Helper]";
     
-    AppHelper [label="AppHelper";shape=Mdiamond;style=filled];
+    AdvanceHelper [label="AdvanceHelper";shape=Mdiamond;style=filled];
     ControllerHelper [label="ControllerHelper";shape=Mdiamond;style=filled];
     ModelHelper [label="ModelHelper";shape=Mdiamond;style=filled];
-    ServiceHelper [label="ServiceHelper";shape=Mdiamond;style=filled];
+    BusinessHelper [label="BusinessHelper";shape=Mdiamond;style=filled];
     ViewHelper [label="ViewHelper";shape=Mdiamond;style=filled];
     
-    AppHelperTrait -> App; 
+    AdvanceHelperTrait -> App; 
     ControllerHelperTrait -> App; 
     ModelHelperTrait -> App; 
-    ServiceHelperTrait -> App; 
+    BusinessHelperTrait -> App; 
     ViewHelperTrait -> App; 
     
-    AppHelper -> ExtendableStaticCallTrait; 
+    AdvanceHelper -> ExtendableStaticCallTrait; 
     ControllerHelper -> ExtendableStaticCallTrait; 
     ModelHelper -> ExtendableStaticCallTrait; 
-    ServiceHelper -> ExtendableStaticCallTrait; 
+    BusinessHelper -> ExtendableStaticCallTrait; 
     ViewHelper -> ExtendableStaticCallTrait; 
 
-    AppHelper -> AppHelperTrait; 
+    AdvanceHelper -> AdvanceHelperTrait; 
     ControllerHelper -> ControllerHelperTrait; 
     ModelHelper -> ModelHelperTrait; 
-    ServiceHelper -> ServiceHelperTrait; 
+    BusinessHelper -> BusinessHelperTrait; 
     ViewHelper -> ViewHelperTrait; 
 
 }

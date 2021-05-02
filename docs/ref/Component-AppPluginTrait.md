@@ -167,7 +167,7 @@ onPluginModeInit()
     初始化后
 onPluginModeBeforeRun()
 
-    运行前
+     运行前
 onPluginModeAfterRun()
 
     成功运行后

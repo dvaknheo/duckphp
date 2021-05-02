@@ -7,180 +7,159 @@
 很重要的路由类，可以在单独抽出来使用。
 
 ## 选项
-'namespace' => 'LazyToChange',
+所有配置选项如下
 
-	默认命名空间为 LazyToChange
-'namespace_controller' => 'Controller',
+            'namespace' => '',
+默认命名空间为空
 
-	默认子命名空间为 Controller
-	如果是 \ 开头的则忽略 namespace, 选项。
-'controller_base_class' => null,
+            'namespace_controller' => 'Controller',
+默认子命名空间为 Controller
+如果是 \ 开头的则忽略 `namespace` 选项。
 
-    限定控制器基类，配合 namespace ,namespace_controller 选项。
-    如果是 \ 开头的则忽略 namespace, namespace_controller 选项。
-'controller_welcome_class' => 'Main',
+            'controller_base_class' => '',
+控制器基类
 
-    欢迎类
-    默认欢迎类是  Main 。
+            'controller_welcome_class' => 'Main',
+欢迎类，默认欢迎类是  Main 。
 
-'controller_hide_boot_class' => false,
+            'controller_hide_boot_class' => false,
+隐藏启动的类
 
-    隐藏启动的类
-'controller_methtod_for_miss' => '_missing',
+            'controller_methtod_for_miss' => '_missing',
+方法丢失调用的方法。
+如果有这个方法。找不到方法的时候，会进入这个方法。
+如果你使用了这个方法，将不会进入 404 。
 
-	方法丢失调用的方法
-	如果有这个方法。找不到方法的时候，会进入这个方法
-	如果你使用了这个方法，将不会进入 404 。
+            'controller_prefix_post' => 'do_',
+POST 的方法会在方法名前加前缀 do_
+如果找不到方法名，调用默认方法名。
 
-'controller_prefix_post' => 'do_',
+            'controller_class_postfix' => '',
+控制器类名后缀
 
-    POST 的方法会在方法名前加前缀 do_
-    如果找不到方法名，调用默认方法名。
-'controller_path_prefix' => '',
+            'controller_enable_slash' => false,
+允许结尾的 /
 
-    添加路由的前缀
+            'controller_path_prefix' => '',
+添加路由的前缀
 
-"controller_class_postfix"
+            'controller_path_ext' => '',
+后缀,如 .html
 
-    控制器类名后缀
-"controller_enable_slash"
+            'controller_use_singletonex' => false,
+使用单例模式
 
-    允许结尾的 /
-"controller_path_ext"
-
-    后缀如 .html
-"controller_stop_g_method" => false
-
-    路由禁止直接访问G方法
-controller_stop_static_method
-
-    路由禁止直接访问静态方法
-## 公开属性
+            'controller_stop_static_method' => false,
+禁止直接访问控制器静态方法
 
 ## 公开方法
 
 ### 主流程方法
+这里是主要流程的方法
 
-public function __construct()
+    public static function RunQuickly(array $options = [], callable $after_init = null)
+快速方法，等同于 init([])->run();
 
-    空构造函数
-public function init(array $options, object $context = null)
+    public function reset()
 
-    初始化
-public static function RunQuickly(array $options=[], callable $after_init=null)
+重置，初始化之后的重置
 
-    快速方法，等同于 init([])->run();
-public function reset()
-
-    重置，初始化之后的重置
-public function bind($path_info, $request_method = 'GET')
-
-    绑定 PATH_INFO
-public function run()
-
-    运行
+    public function run()
+运行
 
 ### 扩展和钩子
-public function addRouteHook($callback, $position, $once = true)
+////
 
-    添加钩子
-public function add404RouteHook($callback)
+    public function addRouteHook($callback, $position, $once = true)
 
-    添加 404 回调，相当于addRouteHook($callback, 'append-outter', false);
-public function defaulToggleRouteCallback($enable = true)
+添加钩子
 
-    切换默认的路由回调
-public function defaultRunRouteCallback($path_info = null)
+    public function add404RouteHook($callback)
+添加 404 回调，相当于addRouteHook($callback, 'append-outter', false);
 
-    运行默认的路由回调
-public function defaultGetRouteCallback($path_info)
+    public function defaulToggleRouteCallback($enable = true)
+切换默认的路由回调
 
-    运行默认的路由回调
-public function replaceControllerSingelton($old_class,$new_class)
+    public function defaultRunRouteCallback($path_info = null)
+运行默认的路由回调
 
-    替换控制器的单例,配合 controller_use_singletonex 使用。不能直接使用 $old_class::G($new_class::G());
+    public function defaultGetRouteCallback($path_info)
 
-public static function Route()
+运行默认的路由回调
 
-    返回单例，用于 DuckPhp/Route 双兼容 RouteHook;
-public function forceFail()
+    public function replaceControllerSingelton($old_class, $new_class)
+替换控制器的单例,配合 controller_use_singletonex 使用。不能直接使用 $old_class::G($new_class::G());
 
-    强制为失败
+    public static function Route()
+返回单例，用于 DuckPhp/Route 双兼容 RouteHook;
+
+    public function forceFail()
+
+强制为失败，用于路由钩子
 
 
 ### URL 相关
+这里是路由相关的
 
-public static function URL($url=null)
-public function _URL($url = null)
+    public static function URL($url=null)
+    public function _URL($url = null)
+获得 URL
 
-    获得 URL
-public static function Domain($use_scheme)
-public function _Domain($use_scheme)
+    public static function Domain($use_scheme)
+    public function _Domain($use_scheme)
+获得的域名
 
-    获得 带协议头的URL
-public function defaultURLHandler($url = null)
-    
-    默认的 URL 函数，
-public function setURLHandler($callback)
+    public function defaultURLHandler($url = null)
+默认的 URL 函数，
 
-    设置 URL 回调函数
+    public function setURLHandler($callback)
+    public function getURLHandler()
+设置/获得 URL 回调函数
 
-public function getURLHandler()
+### 辅助方法
+其他辅助方法
 
-    获得 URL 回调函数
-public function getPathInfo()
+    public function getParameters()
+    public function setParameters($parameters)
+设置 Parameter 数组
 
-    获得 PATH_INFO
-public function setPathInfo($path_info)
+    public function getRouteCallingPath()
+获取调用中的路径
 
-    设置 PATH_INFO
-### 辅助信息方法
+    public function getRouteCallingClass()
 
-public function getParameters()
+获得当前路由调用的类名
 
-    获得 Parameter 数组
-public function setParameters($parameters)
+    public function getRouteCallingMethod()
+    public function setRouteCallingMethod($calling_method)
+设置当前路由
 
-    设置 Parameter 数组
-public function getRouteCallingPath()
+    public function dumpAllRouteHooksAsString()
 
-    其他
-public function getRouteCallingClass()
+简单 dump 所有钩子
 
-    获得当前路由调用的类名
-public function getRouteCallingMethod()
-public function setRouteCallingMethod($calling_method)
+## 内部方法
+以下是内部方法
 
-    设置当前路由
-public function dumpAllRouteHooksAsString()
-
-    简单 dump 所有钩子
-
-
-## 详解
-
-## 方法索引
-###  内部方法
-
-    获得默认的路由回调
-protected function beforeRun()
-
-    用于重写，在回调前执行
-protected function getRunResult()
-    获得运行结果
-protected function createControllerObject($full_class)
-    创建控制器对象
-protected function getMethodToCall($object, $method)
-
-    获得回调方法
-
-
+    protected function initOptions(array $options)
     protected function beforeRun()
-    protected function getRunResult()
-    protected function createControllerObject($full_class)
-    protected function getMethodToCall($object, $method)
+用于重写，在回调前执行
 
-#### 示例
+    protected function getRunResult()
+获得运行结果
+
+    protected function createControllerObject($full_class)
+创建控制器对象
+
+    protected function getMethodToCall($object, $method)
+获得回调方法
+
+    protected function getBasePath()
+URL 相关用
+
+## 说明
+
+### 示例
 
 这是一个单用 Route 组件的例子
 
@@ -211,7 +190,7 @@ if(!$flag){
 
 ```
 
-#### 钩挂路由流程指南
+### 钩挂路由流程指南
 
     如果你对默认的文件路由不满意，可以安插自己的钩子。
     $route->addRouteHook($callback, $append=true, $outter=true, $once=true);
@@ -223,5 +202,12 @@ if(!$flag){
     如果你在前面的，想禁止默认路由函数，可以用 defaultToggleRouteCallback(false);
     
     add404Handle() 是默认用于后处理的版本。
-#### URL 输出地址重写指南
-## Tip
+
+### URL 输出地址重写指南
+
+
+
+## 文档信息
+修订版本：
+
+修订时间：

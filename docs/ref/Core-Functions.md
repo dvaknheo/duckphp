@@ -1,14 +1,14 @@
 # 全局函数
 [toc]
 
-需要选项 `user_global_functions` kernel ，  （默认开启） 才能用。
+需要选项 `user_global_functions`  [DuckPhp\Core\KernelTrait](Core-KernelTrait.md)   （默认开启） 才能用。
 
 都是以 两条下划线开头。
 
 都是 DuckPhp\Core\App 类的函数的映射，
 
 
-你可以在 onPrepare() 时候 替换相应函数。
+你可以在 App::onPrepare() 时候 替换相应函数。
 
 
 目前一共有：

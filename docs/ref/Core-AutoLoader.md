@@ -60,7 +60,7 @@ public static function DuckPhpSystemAutoLoader(string $class): void
 
 
     仅仅用于autoload.php 加载 DuckPhp 文件
-## 详解
+## 说明
 
 AutoLoader 类用于没 autoloader 的情况下临时用。
 

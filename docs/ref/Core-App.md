@@ -21,29 +21,27 @@ Core 目录下的微框架入口
 ## 选项
 
 ### 专有选项
-'default_exception_do_log' => true,
 
-    发生异常时候记录日志
-'default_exception_self_display' => true,
+        'default_exception_do_log' => true,
+发生异常时候记录日志
 
-    发生异常的时候如有可能，调用异常类的 display() 方法。
-'close_resource_at_output' => false,
-    
-    输出时候关闭资源输出（仅供第三方扩展参考
-"injected_helper_map" =>'', 
+        'default_exception_self_display' => true,
+发生异常的时候如有可能，调用异常类的 display() 方法。
 
-    injected_helper_map 比较复杂待文档。和助手类映射相关。 v1.2.8-dev
+        'close_resource_at_output' => false,
+输出时候关闭资源输出（仅供第三方扩展参考
 
-'error_404' => null,          //'_sys/error-404',
+        'injected_helper_map' => '',
+injected_helper_map 比较复杂待文档。和助手类映射相关。 v1.2.8-dev
 
-    404 错误处理 的View或者回调
-'error_500' => null,          //'_sys/error-500',
+        'error_404' => null,          //'_sys/error-404',
+404 错误处理 的View或者回调
 
-    500 错误处理 View或者回调
-'error_debug' => null,        //'_sys/error-debug',
+        'error_500' => null,          //'_sys/error-500',
+500 错误处理 View或者回调
 
-    调试的View或者回调
-
+        'error_debug' => null,        //'_sys/error-debug',
+调试的View或者回调
 
 ### 扩充 [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) 的默认选项。
 
@@ -128,11 +126,11 @@ public function skip404Handler()  // 跳过 404 处理
 ```
 SystemWrapperTrait 还有两个特殊函数
 
-​    public static function system_wrapper_replace(array $funcs)
+    public static function system_wrapper_replace(array $funcs)
 
 替换系统默认函数。第三方服务器使用
 
-​    public static function system_wrapper_get_providers():array
+    public static function system_wrapper_get_providers():array
 
 能提供的系统默认函数列表
 
