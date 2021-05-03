@@ -2,11 +2,101 @@
 require_once(__DIR__.'/../autoload.php');
 // 自动化文档脚本
 
+DocFixer::G()->init([])->run();
 OptionsGenerator::G()->init([])->run();
 var_dump(DATE(DATE_ATOM));
 
 return;
+class DocFixer
+{
+    use \DuckPhp\SingletonEx\SingletonExTrait;
+    protected $path_base='';
+    public function __construct()
+    {
+        $ref=new ReflectionClass(\DuckPhp\DuckPhp::class);
+        $this->path_base=realpath(dirname($ref->getFileName()) . '/../').'/';
+    }
+    public function init($a,$context=null)
+    {
+        return $this;
+    }
+    public function run()
+    {
+        $files=$this->getSrcFiles($this->path_base.'src/');
+        foreach($files as $file){
+            $this->doDoc($file);
+        }
+        return true;
+    }
+    protected function getSrcFiles($source)
+    {
+        $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
+        $iterator = new \RecursiveIteratorIterator($directory);
+        $it=new \RegexIterator($iterator,'/\.php$/', RegexIterator::MATCH);
+        $ret=\iterator_to_array($it, false);
+        return $ret;
+    }
+    protected function doDoc($file)
+    {
+        $data = $this->drawSrc($file);
+        $doc_file = $this->getMd($file);
+        $docs_lines=file($doc_file);
+        $options_diff=array_diff($data['options'],$docs_lines);
+        $functions_diff=array_diff($data['functions'],$docs_lines);
+        $text ='';
+        if($options_diff){
+            $text.=implode("\n",$options_diff)."\n";
+        }
+        if($functions_diff){
+            $text.=implode("\n",$functions_diff)."\n";
 
+        }
+        if($text){
+            var_dump($file,$text);
+            file_put_contents($doc_file,$text,FILE_APPEND);
+        }
+    }
+    public function drawSrc($file)
+    {
+        $head ='    public $options = ['."\n";
+        $foot ='    ];'."\n";
+        $in=false;
+        
+        $options=[];
+        $functions=[];
+        
+        $lines=file($file);
+        foreach($lines as $l){
+            if($l === $foot){
+                break;
+            }
+            if($in){
+                if(empty(trim($l))){ continue; }
+                if(substr(trim($l),0,2)==='//'){continue;}
+                $options[]=$l;
+            }
+            if($l===$head){
+                $in=true;
+            }
+            
+        }        
+        $functions=array_filter($lines,function($v){return preg_match('/function [a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/',$v);});
+        return ['options'=>$options,'functions'=>$functions];
+    }
+    protected function getMd($file)
+    {
+        $md=substr($file,strlen($this->path_base.'src/'));
+        $md=$this->path_base.'/docs/ref/'.str_replace(['/','.php'],['-','.md'],$md);
+        return $md;
+    }
+    
+    public function checkDoc($file,$data,$doc_lines)
+    {
+        $options_diff=array_diff($data['options'],$docs_lines);
+        $functions_diff=array_diff($data['functions'],$docs_lines);
+    }
+    
+}
 class OptionsGenerator
 {
     public function checkHasDoced()
