@@ -76,7 +76,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->getCallback('tests_Core_Route\\Main','__');
         Route::G()->getCallback('tests_Core_Route\\Main','post');
         Route::G()->getCallback('tests_Core_Route\\Main','post2');
-        Route::G()->getCallback('tests_Core_Route\\Main','_missing');
+        Route::G()->getCallback('tests_Core_Route\\Main','__missing');
         
         //Route::G()->goByPathInfo('tests_Core_Route\\Main','post');
 

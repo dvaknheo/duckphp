@@ -25,7 +25,7 @@
             'controller_hide_boot_class' => false,
 隐藏启动的类
 
-            'controller_methtod_for_miss' => '_missing',
+            'controller_methtod_for_miss' => '__missing',
 方法丢失调用的方法。
 如果有这个方法。找不到方法的时候，会进入这个方法。
 如果你使用了这个方法，将不会进入 404 。
@@ -49,7 +49,7 @@ POST 的方法会在方法名前加前缀 do_
             'controller_use_singletonex' => false,
 使用单例模式
 
-            'controller_stop_static_method' => false,
+            'controller_stop_static_method' => true,
 禁止直接访问控制器静态方法
 
 ## 公开方法

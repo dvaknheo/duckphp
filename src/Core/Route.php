@@ -25,15 +25,14 @@ class Route extends ComponentBase
             'controller_welcome_class' => 'Main',
             
             'controller_hide_boot_class' => false,
-            'controller_methtod_for_miss' => '_missing',
+            'controller_methtod_for_miss' => '__missing',
             'controller_prefix_post' => 'do_',
             'controller_class_postfix' => '',
             'controller_enable_slash' => false,
             'controller_path_prefix' => '',
             'controller_path_ext' => '',
             'controller_use_singletonex' => false,
-            'controller_stop_g_method' => false,
-            'controller_stop_static_method' => false,
+            'controller_stop_static_method' => true,
         ];
 
     public $pre_run_hook_list = [];
@@ -70,10 +69,12 @@ class Route extends ComponentBase
     {
         return static::G();
     }
+    //TODO 删除
     public static function Parameter($key, $default = null)
     {
         return static::G()->_Parameter($key, $default);
     }
+    //TODO 删除
     public function _Parameter($key, $default = null)
     {
         return $this->parameters[$key] ?? $default;
@@ -286,9 +287,8 @@ class Route extends ComponentBase
             $this->route_error = 'can not call hidden method';
             return null;
         }
-        if (($this->options['controller_use_singletonex'] || $this->options['controller_stop_g_method']) && $method === 'G') {
-            $this->route_error = 'can not call G()';
-            return null;
+        if ($this->options['controller_use_singletonex']) {
+            $this->options['controller_use_singletonex'] = true;
         }
         $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         $_SERVER['REQUEST_METHOD'] = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -296,13 +296,13 @@ class Route extends ComponentBase
             $method = $this->options['controller_prefix_post'].$method;
         }
         if ($this->options['controller_methtod_for_miss']) {
-            if ($method === $this->options['controller_methtod_for_miss']) {
-                $this->route_error = 'can not direct call controller_methtod_for_miss ';
-                return null;
-            }
             if (!method_exists($object, $method)) {
                 $method = $this->options['controller_methtod_for_miss'];
             }
+        }
+        if (!is_callable([$object,$method])) {
+            $this->route_error = 'method can not call';
+            return null;
         }
         if ($this->options['controller_stop_static_method']) {
             $ref = new \ReflectionMethod($object, $method);
@@ -310,10 +310,6 @@ class Route extends ComponentBase
                 $this->route_error = 'can not call static function';
                 return null;
             }
-        }
-        if (!is_callable([$object,$method])) {
-            $this->route_error = 'method can not call';
-            return null;
         }
         return [$object,$method];
     }
