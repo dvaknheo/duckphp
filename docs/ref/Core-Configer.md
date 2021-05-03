@@ -6,32 +6,32 @@
 配置组件
 
 ## 选项
+全部选项
 
-'path' => '',
+        'path' => '',
+基本路径
 
-    基本路径
-'path_config' => 'config',
+        'path_config' => 'config',
+配置路径
 
-    配置路径
-'setting' => [],
+        'setting' => [],
+默认自带的设置
 
-    默认自带的设置
-'all_config' => [],
+        'all_config' => [],
+默认自带的所有配置
 
-    默认自带的所有配置
-'setting_file' => 'setting',
+        'setting_file' => 'setting',
+设置文件名。
 
-    设置文件名。
-'use_setting_file' => false,
+        'use_setting_file' => false,
+使用设置文件: $path/$path_config/$setting_file.php
 
-    使用设置文件: $path/$path_config/$setting_file.php
-'use_env_file' => false,
+        'use_env_file' => false,
+打开这项，可以读取 path 选项下的 env 文件
 
-    打开这项，可以读取 path 选项下的 env 文件
+        'config_ext_files' =>[]
+用于 AppPluginTrait
 
-'config_ext_files' =>[]
-
-    用于 AppPluginTrait
 ## 公开方法
 
     public function init($options=[], $context=null)

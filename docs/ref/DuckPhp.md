@@ -20,15 +20,14 @@
 
 并且做了以下更改
 
-```
-
+```php
 [
-'ext' => [
-    DbManager::class => true,
-    RouteHookRouteMap::class => true,
-],
-route_map_auto_extend_method => false,
-database_auto_extend_method => false,
+    'ext' => [
+        DbManager::class => true,
+        RouteHookRouteMap::class => true,
+    ],
+    'route_map_auto_extend_method' => false,
+    'database_auto_extend_method' => false,
 ];
 ```
 Console

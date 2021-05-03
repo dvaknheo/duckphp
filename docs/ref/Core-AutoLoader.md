@@ -5,23 +5,26 @@
 伪`组件类` DuckPhp\AutoLoader 类是 psr-4 自动加载类，一般用 Composer 加载而不使用他
 
 ## 选项
-'path' => null,
+全部选项
 
-    路径
-'namespace' => '',
+        'path' => null,
+路径
 
-    命名空间
-'path_namespace' => 'app',
+        'namespace' => '',
+命名空间
 
-    命名空间的相对路径
-'skip_app_autoload' => false,
+        'path_namespace' => 'app',
+命名空间的相对路径
 
-    跳过 app 的加载
-'autoload_cache_in_cli' => false,
-    在命令行模式下缓存
-'autoload_path_namespace_map' => [],
+        'skip_app_autoload' => false,
+跳过 app 的加载
 
-    psr4 风格列表
+        'autoload_cache_in_cli' => false,
+在命令行模式下缓存
+
+        'autoload_path_namespace_map' => [],
+psr4 风格自动加载列表
+
 ## 公开方法
 public $is_inited = false;
 

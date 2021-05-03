@@ -6,17 +6,17 @@
 `组件类` 在不配置 PathInfo 下模拟 PathInfo 
 
 ## 选项
+全部选项
 
-'path_info_compact_enable' => false,
+        'path_info_compact_enable' => false,
+注意，这项开启扩展才启用。
 
-    注意，这项开启扩展才启用。
+        'path_info_compact_action_key' => '_r',
+替代的 action
 
-'path_info_compact_action_key' => '_r',
+        'path_info_compact_class_key' => '',
+替代的 class
 
-    替代的 action
-'path_info_compact_class_key' => '',
-
-    替代的 class
 ## 公开方法
 public function __construct()
 public function init(array $options, object $context = null)

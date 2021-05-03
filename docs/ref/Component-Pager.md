@@ -4,22 +4,22 @@
 `组件类` 分页类 符合接口  DuckPhp\Component\PagerInterface
 
 ## 选项
+全部选项
 
-'url' => null,
+        'url' => null,
+url
+        'current' => null,
 
-    url
-'current' => null,
+当前页码
 
-    当前页码
-'page_size' => 30,
+        'page_size' => 30,
+每页长度
 
-    每页长度
-'page_key' => 'page',
+        'page_key' => 'page',
+默认分页的key
 
-    默认分页的key
-'rewrite' => null,
-
-    重写函数，替代 defaultGetUrl
+        'rewrite' => null,
+重写函数，替代 defaultGetUrl
 
 ## 公开方法
 

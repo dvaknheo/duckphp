@@ -5,25 +5,25 @@
 安装器组件
 
 ## 选项
+全部选项
 
-'path' => '',
+        'path' => '',
+安装路径
 
-    安装路径
-'namespace' => '',
+        'namespace' => '',
+安装的命名空间
 
-    安装的命名空间
-'force' => false,
+        'force' => false,
+强制模式，强制安装，覆盖现有文件
 
-    强制模式，强制安装，覆盖现有文件
-'autoloader' => 'vendor/autoload.php',
+        'autoloader' => 'vendor/autoload.php',
+自动加载器指向位置
 
-    自动加载器指向位置
-'verbose' => false,
+        'verbose' => false,
+显示详情
 
-    显示详情
-'help' => false,
-
-    显示帮助
+        'help' => false,
+显示帮助
 
 ## 说明
 

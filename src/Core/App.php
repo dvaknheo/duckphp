@@ -855,9 +855,9 @@ trait Core_Glue
     {
         return Route::G()->getParameters();
     }
-    public static function addRouteHook($hook, $position, $once = true)
+    public static function addRouteHook($callback, $position, $once = true)
     {
-        return Route::G()->addRouteHook($hook, $position, $once);
+        return Route::G()->addRouteHook($callback, $position, $once);
     }
     public static function add404RouteHook($callback)
     {
@@ -867,9 +867,9 @@ trait Core_Glue
     {
         return Route::G()->getRouteCallingMethod();
     }
-    public static function setRouteCallingMethod(string $method)
+    public static function setRouteCallingMethod($calling_method)
     {
-        return Route::G()->setRouteCallingMethod($method);
+        return Route::G()->setRouteCallingMethod($calling_method);
     }
     public static function setUrlHandler($callback)
     {

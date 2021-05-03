@@ -5,32 +5,33 @@
 [DuckPhp\Db\Db](Db-Db.md) 的管理组件
 
 ## 选项
+全部选项
 
-'database' => null,
+        'database' => null,
+单一数据库配置
 
-    单一数据库配置
-'database_list' => null,
+        'database_list' => null,
+数据库列表
 
-    数据库列表
-'database_list_reload_by_setting' => true,
+        'database_list_reload_by_setting' => true,
+是否从设置里读取数据库列表
 
-    是否从设置里读取数据库列表
-'database_list_try_single' => true,
+        'database_list_try_single' => true,
+尝试使用单一数据库配置
 
-    尝试使用单一数据库配置
-'database_log_sql_level' => 'debug',
+        'database_log_sql_level' => 'debug',
+记录sql 错误等级
 
-    记录sql 错误等级
-'database_log_sql_query' => false,
+        'database_log_sql_query' => false,
+记录sql 查询
 
-    记录sql 查询
+        'database_auto_extend_method' => true,
+是否扩充 setBeforeGetDbHandler 入助手类。
 
-'database_auto_extend_method' => true,
+        'database_class' => '',
+默认为 DB::class 如果你扩展了 DB 类，可以调用这个。更高级的可以调整 getDb 方法
 
-    是否扩充 setBeforeGetDbHandler 入助手类。
-'database_class' => '',
 
-    默认为 DB::class 如果你扩展了 DB 类，可以调用这个。更高级的可以调整 getDb 方法
 ## 公开方法
 
     public static function Db($tag = null)

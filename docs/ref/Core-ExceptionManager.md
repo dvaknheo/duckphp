@@ -5,15 +5,22 @@
 异常管理组件
 
 ## 选项
-'handle_all_dev_error' => true,
+全部选项
 
-'handle_all_exception' => true,
+        'handle_all_dev_error' => true,
+抓取调试错误
 
-'system_exception_handler' => null,
+        'handle_all_exception' => true,
+抓取全部异常
 
-'default_exception_handler' => null,
+    'system_exception_handler' => null,
+系统的异常调试回调
 
-'dev_error_handler' => null,
+        'default_exception_handler' => null,
+默认的异常处理回调
+
+        'dev_error_handler' => null,
+调试错误的回调
 
 ## 公开方法
 

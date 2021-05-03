@@ -6,19 +6,20 @@
 `路由钩子` `组件类 自定义路由的扩展
 
 ## 选项
+全部选项
 
-'route_map_important' => [],
+        'route_map_important' => [],
+在默认路由前执行的路由映射
 
-    在默认路由前执行的路由映射
-'route_map' => [],
+        'route_map' => [],
+在默认路由失败后执行的路由映射
 
-    在默认路由失败后执行的路由映射
-'route_map_by_config_name' => '',
+        'route_map_by_config_name' => '',
+从配置中读取  route_map_important 和 route_map
 
-    从配置中读取  route_map_important 和 route_map
-'route_map_auto_extend_method' => true,
+        'route_map_auto_extend_method' => true,
+扩充方法
 
-    扩充方法
 ## 扩充方法
 
 'assignImportantRoute' => [static::class.'::G','assignImportantRoute'],

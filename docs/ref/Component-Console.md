@@ -4,25 +4,26 @@
 `组件类` 完成命令行功能
 
 ## 选项
+全部选项
 
-'cli_enable' => true,
+        'cli_enable' => true,
+开启本扩展
 
-    开启本扩展
-'cli_mode' => 'replace',
+        'cli_mode' => 'replace',
+替换模式或者是路由钩子的模式
 
-    替换模式或者是路由钩子的模式
-'cli_command_alias' => [],
+        'cli_command_alias' => [],
+命令别名列表
 
-    命令别名列表
-'cli_default_command_class' => '',
+        'cli_default_command_class' => '',
+默认类
 
-    默认类
-'cli_command_method_prefix' => 'command_',
+        'cli_command_method_prefix' => 'command_',
+默认方法前缀
 
-    默认方法前缀
-'cli_command_default' => 'help',
+        'cli_command_default' => 'help',
+默认调用指令
 
-    默认调用指令
 ## 公开方法
 
 

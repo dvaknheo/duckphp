@@ -6,10 +6,10 @@
 运行时组件，保存运行状态信息
 
 ## 选项
+只有一个选项
+        'use_output_buffer' => false,
 
-'use_output_buffer' => false,
-
-    启用 ob 函数
+启用 ob 函数缓冲
 
 ## 公开方法
 
