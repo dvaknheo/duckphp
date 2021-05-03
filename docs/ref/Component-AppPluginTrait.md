@@ -59,36 +59,43 @@ URL 前缀，限定插件的目录
 高级功能
 
 ## 公开方法
+全部方法：
 
-pluginModeInit(array $options, object $context = null)
+    public function pluginModeInit(array $plugin_options, object $context = null)
+初始化入口，插件的初始化从这里开始
 
-    初始化入口，插件的初始化从这里开始
-static PluginModeRouteHook($path_info)
-\_PluginModeRouteHook($path_info)
+    public static function PluginModeRouteHook($path_info)
+    protected function _PluginModeRouteHook($path_info)
+路由勾子
 
-    路由勾子
-pluginModeGetOldView()
-pluginModeGetOldRoute()
+    public function pluginModeGetOldRoute()
+    public function pluginModeGetOldView()
+获得旧的 View/Route 实例
 
-    获得旧的 View/Route 实例
-pluginModeClear()
-
-    插件清理，备不时之需
+    public function pluginModeClear()
+插件清理，备不时之需
 
 ## 用于重载的事件方法
 
     protected function onPluginModePrepare()
     protected function onPluginModeInit()
     protected function onPluginModeBeforeRun()
-    protected function onPluginModeRun()
-onPluginModeBeforeRun 运行阶段就执行 onPluginModeRun 得到回调之后才执行。
+    public function onPluginModeAfterRun()
+
+onPluginModeBeforeRun 运行阶段就执行 onPluginModeRun 得到回调之后才执行。 
+onPluginModeAfterRun 是 public 的？
 
 ## 内部方法
-    protected function pluginModeInitOptions($options)
-    protected function pluginModeDefaultInit(array $options, object $context = null)
-    protected function pluginModeIncludeConfigFile($file)
+全部内部方法
+
+    protected function pluginModeInitBasePath()
+    protected function pluginModeInitConfigFiles($setting_file)
+    private function pluginModeCheckPathInfo($path_info)
+    protected function pluginModeReplaceDynamicComponent()
+    protected function pluginModeInitDynamicComponent()
+    protected function pluginModeReadFile($path_info)
+    private function pluginModeGetPath($path_key, $path_key_parent = 'plugin_path'): string
     protected function pluginModeSearchAllPluginFile($path, $setting_file = '')
-    protected function pluginModeCloneHelpers()
 
 ## 应用
 例子见于 template/public/full/
@@ -205,6 +212,4 @@ onBeforeRun
 onAfterRun
 
 清理
-
-
 

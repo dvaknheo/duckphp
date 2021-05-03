@@ -619,7 +619,9 @@ server {
     9. [ViewHelper](docs/ref/Helper-ViewHelper.md) 视图助手类
     10. [ViewHelperTrait](docs/ref/Helper-ViewHelperTrait.md) 视图助手Trait
 7. `HttpServer` 目录
-    1. [HttpServer](docs/ref/HttpServer-HttpServer.md)  Http 服务器
+    1. [AppInterface](docs/ref/HttpServer-AppInterface.md)  Http 服务的应用接口
+    2. [HttpServer](docs/ref/HttpServer-HttpServer.md)  Http 服务器
+    3. [HttpServerInterface](docs/ref/HttpServer-HttpServerInterface.md)  Http 服务接口
 8. `SingletonEx`目录
     1. **[SingletonExTrait](docs/ref/SingletonEx-SingletonExTrait.md)**  可变单例 trait
     1. [SimpleReplacer](docs/ref/SingletonEx-SimpleReplacer.md)  可选可变单例容器

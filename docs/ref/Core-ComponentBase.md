@@ -9,30 +9,34 @@
 
 `ComponentBase` 也内嵌实现了可变单例方法
 
-## 公开方法
+## 方法
 
-//public $options; /* array() */;
+    public $options; /* array() */;
+选项
 
-    //选项
-public static function G($new_object = null);
+    public function __construct()
+用于重写的空构造函数
 
-    可变单例函数
-public function init(array $options, $contetxt = null);/*return this */
+    public static function G($object = null)
+可变单例函数
 
-    初始化
-public function isInited():bool;
+    public function isInited(): bool
+是否已经初始化,DuckPhp 系统中没使用到
 
-    是否已经初始化,DuckPhp 系统中没使用到
-## 内部方法
-protected function initOptions(array $options);
+    public function init(array $options, ?object $context = null)
+初始化
 
-    空函数，你可以 override 做额外选项处理。
-protected function initContext(object $contetxt);
+    protected function initOptions(array $options)
+空函数，你可以 override 做额外选项处理。
 
-    空函数，你可以 override 做 context 处理。
-protected function getComponenetPathByKey($path_key,$path): string
+    protected function initContext(object $context)
+空函数，你可以 override 做 context 处理。
 
-    便于获得 path - path_key 组合的 路径
+    protected function getComponenetPathByKey($path_key, $path_key_parent = 'path'): string
+便于获得 path - path_key 组合的 路径
+
+    public function checkInstall($context)
+检查是否安装初始化
 
 ## 说明
 
@@ -47,4 +51,3 @@ ComponentBase 裁剪你只需要的选项。
 getComponenetPathByKey 这个方法，用于辅助  'path' ,'path' 这样的联合 path 选项
 
 如果 'path_x' 是绝对路径，则返回 'path_x' ，否则返回 'path'.'path_x'
-

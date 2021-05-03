@@ -5,16 +5,15 @@
 MyFacadesAutoLoader 子类 的基类
 ## 选项
 
+无选项
 ## 方法
 
+    public function __construct()
+构造方法
+    public static function __callStatic($name, $arguments)
+静态调用方法
 
-public function __construct()
-public function init(array $options, object $context = null)
 
-public function _autoload($class)
-
-public function getFacadesCallback($input_class, $name)
-public function clear()
 
 ## 详解
 
@@ -26,3 +25,4 @@ use Facades\LazyToChange\Model\TestModel;
 TestModel::foo(); // <=> \LazyToChange\Model\TestModel::G()->foo();
 ```
 注意， ComponentBase 的方法无法这么来。
+

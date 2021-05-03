@@ -7,15 +7,15 @@
 
 ## 公开方法
 
-public function &_GLOBALS($k, $v=null)
+    public function &_GLOBALS($k, $v = null)
+global 语句的替代方式
 
-    global 语句的替代方式
-public function &_STATICS($name, $value=null, $parent=0)
+    public function &_STATICS($name, $value = null, $parent = 0)
+static 语句的替代方式
 
-    static 语句的替代方式
-public function &_CLASS_STATICS($class_name, $var_name)
+    public function &_CLASS_STATICS($class_name, $var_name)
+static 类内语句的替代方式
 
-    static 类内语句的替代方式
 ## 详解
 
 常规的操作
@@ -37,3 +37,7 @@ $x=static::$abc; => $x=App::CLASS_STATICS(static::class,'abc');
 
 ```
 注意到 _STATICS 最后一个参数，每加一级调用，这个数字要加一。
+
+
+
+

@@ -25,46 +25,49 @@
 
 ## 方法
 
-public function init(array $options, object $context = null)
+    public function init(array $options, object $context = null)
+初始化
 
-    初始化
-public function __construct()
+    public function __construct()
+空构造函数
 
-    空构造函数
-public function init(array $options, object $context = null)
+    public function init(array $options, object $context = null)
+初始化
 
-    初始化
-public static function Import($file)
+    public static function Import($file)
+导入文件
 
-    导入文件
-public static function RecordsetUrl($data, $cols_map = [])
+    public static function RecordsetUrl($data, $cols_map = [])
+转换 Recordset 的 URL
 
-    转换 Recordset 的 URL
-public static function RecordsetH($data, $cols = [])
+    public static function RecordsetH($data, $cols = [])
+转换 Recordset 的 HTML 编码
 
-    转换 Recordset 的 HTML 编码
-public static function DI($name, $object = null)
+    public static function DI($name, $object = null)
+DI 函数
 
-    DI 函数
-public function CallAPI($class, $method, $input, $interface = '')
+    public function CallAPI($class, $method, $input, $interface = '')
+调用一个 API
 
-    调用一个 API
-public function _DI($name, $object = null)
+    public function _DI($name, $object = null)
+相应静态函数的实现
 
-    相应静态函数的实现
-public function _Import($file)
+    public function _Import($file)
+相应静态函数的实现
 
-    相应静态函数的实现
-public function _RecordsetUrl($data, $cols_map = [])
+    public function _RecordsetUrl($data, $cols_map = [])
+相应静态函数的实现
 
-    相应静态函数的实现
-public function _RecordsetH($data, $cols = [])
+    public function _RecordsetH($data, $cols = [])
+相应静态函数的实现
 
-    相应静态函数的实现
-public function _CallAPI($class, $method, $input, $interface = '')
+    public function _CallAPI($class, $method, $input, $interface = '')
+相应静态函数的实现
 
-    相应静态函数的实现
-    
+    protected function initOptions(array $options)
+相应函数重写
+    protected function initContext(object $context)
+相应函数重写
 ## 详解
 
 Import [DuckPhp\Ext\Misc::Import](Ext-Misc.md#Import)
@@ -82,3 +85,7 @@ RecordsetH
 CallAPI
     
     DuckPhp\Ext\Misc::CallAPI
+
+
+
+

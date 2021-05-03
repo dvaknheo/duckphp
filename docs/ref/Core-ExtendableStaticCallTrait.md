@@ -24,7 +24,7 @@
 获得已经扩展的静态方法列表。
 如果一个类 use ExtendableStaticCallTrait . 你可以用 GetExtendStaticMethodList() 得到这个类有什么额外的静态方法。
 
-    public static function __callStatic($name, $arguments) 
+    public static function __callStatic($name, $arguments)
 接管默认的魔术方法
 
     protected static function CallExtendStaticMethod($name, $arguments)
@@ -36,6 +36,8 @@
 修订版本：
 
 修订时间：
+
+
 
 
 

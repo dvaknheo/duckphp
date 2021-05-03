@@ -22,13 +22,34 @@ view 为这个的时候跳过显示
         'empty_view_skip_replace' => false,
 替换默认的 view
 
+### DuckPhp\Core\View的选项
+
+        'path' => '',
+路径
+
+        'path_view' => 'view',
+视图路径
+
+        'path_view_override' => '',
+用于覆盖的路径——用于插件模式
+
+        'skip_view_notice_error' => true,
+关闭 notice 警告，以避免麻烦的处理。
 
 
-    
 ## 方法
 
-继承 Core\\View 的所有方法。
+继承 [DuckPhp\Core\View](Core-View.md) 的所有方法。没有额外的方法。
 
+    public function __construct()
+    
+    public function init(array $options, object $context = null)
+    
+    public function _Show(array $data, string $view): void
+    
+    public function _Display(string $view, ?array $data = null): void
+    
+    protected function getViewFile(?string $view): string
 
 ## 详解
 
@@ -48,4 +69,9 @@ empty_view_skip_replace  = true 则不替换默认的 View 类。
 'empty_view_view_wellcome'=> 'Main/', // view 为这个的时候跳过显示
 'empty_view_trim_view_wellcome'=> true,     // 剪掉 view。 
 
-这两项用于 Main/index 之类的时候把 $view 前缀去掉。
+这两项用于 Main/index 之类的时候把 $view 前缀去掉。    
+
+
+
+
+

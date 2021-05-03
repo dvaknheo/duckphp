@@ -27,6 +27,29 @@ api 404 抛异常
 
 ## 公开方法
 
+    protected function initContext(object $context)
+    
+    public static function Hook($path_info)
+    
+    public function _Hook($path_info)
+    
+    protected function onMissing()
+    
+    public static function OnJsonError($e)
+    
+    public function _OnJsonError($e)
+    
+    protected function getComponenetNamespace($namespace_key)
+    
+    protected function getObjectAndMethod($path_info)
+    
+    protected function getInputs($path_info)
+    
+    protected function exitJson($ret, $exit = true)
+    
+    protected function callAPI($object, $method, $input)
+
+
+
 ## 详解
 
-​    

@@ -17,38 +17,33 @@
         'skip_view_notice_error' => true,
 关闭 notice 警告，以避免麻烦的处理。
 
-## 公开方法
+## 方法
 
-public static function Show($data = [], $view)
-public function _Show($data = [], $view)
+    public static function Show(array $data = [], string $view = null): void
+    public function _Show(array $data, string $view): void
+显示文件，包括页眉页脚
 
-    显示文件，包括页眉页脚
-public static function Display($view, $data = null)
-public function _Display($view, $data = null)
+    public static function Display(string $view, ?array $data = null): void
+    public function _Display(string $view, ?array $data = null): void
+显示文件，不包括页眉页脚
 
-    显示文件，不包括页眉页脚
-public function setViewHeadFoot($head_file, $foot_file)
+    public function setViewHeadFoot(?string $head_file, ?string $foot_file): void
+设置页眉页脚
 
-    设置页眉页脚
-public function assignViewData($key, $value = null)
+    public function assignViewData($key, $value = null): void
+设置要显示的数据，可批量
 
-    设置要显示的数据，可批量
-public function getViewPath()
+    public function reset(): void
+重置
 
-    获得 view 的目录
-  0 => 'reset',
-  1 => 'getViewPath',
-  2 => 'getViewData',
-  3 => 'setViewHeadFoot',
-  4 => 'assignViewData',
-  5 => 'init',
-  6 => 'isInited',
+    public function getViewPath()
+获取View目录
 
-## 内部方法
+    public function getViewData(): array
+获取View 的数据
 
-protected function getViewFile($view)
-
-    获得 View 文件。
+    protected function getViewFile(?string $view): string
+获取View的文件
 ## 详解
 
 DuckPhp\Core\View 的选项共享一个 path,带一个 path_view.
@@ -56,4 +51,3 @@ DuckPhp\Core\View 的选项共享一个 path,带一个 path_view.
 path_view 如果是 / 开始的，会忽略 path 选项
 
 当你想把视图目录 放入 app 目录的时候，请自行调整 path_view
-

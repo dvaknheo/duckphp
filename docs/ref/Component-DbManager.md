@@ -32,13 +32,38 @@
 默认为 DB::class 如果你扩展了 DB 类，可以调用这个。更高级的可以调整 getDb 方法
 
 
-## 公开方法
+## 方法
+### 公开方法
 
     public static function Db($tag = null)
+    public function _Db($tag = null)
+获得数据库
+
     public static function DbForWrite()
+    public function _DbForWrite()
+获取写入的数据库
+
     public static function DbForRead()
+    public function _DbForRead()
+获取读入数据库
+
     public static function CloseAll()
+    public function _CloseAll()
+关闭数据库连接
+
     public static function OnQuery($db, $sql, ...$args)
+    public function _OnQuery($db, $sql, ...$args)
+查询事件
+
+    public function setBeforeGetDbHandler($db_before_get_object_handler)
+获取得到数据库之前的Handle
+
+### 内部方法
+
+    protected function initOptions(array $options)
+    protected function initContext(object $context)
+    protected function getDatabase($tag)
+    protected function getDb($db_config)
 
 ## 详解
 

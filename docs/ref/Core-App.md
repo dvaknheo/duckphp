@@ -152,7 +152,7 @@ SystemWrapperTrait 还有两个特殊函数
     public static function L($str, $args = [])
     public static function Hl($str, $args = [])
     public static function Json($data)
-    public static function Domain($use_scheme)
+    public static function Domain($use_scheme = false)
 ```
 #### 调试相关
 ```php
@@ -189,13 +189,13 @@ SystemWrapperTrait 还有两个特殊函数
 ### 内置 trait  Core_NotImplemented
 内置 trait Core_NotImplemented DuckPhp\Core\App 没实现，但 DuckPhp\DuckPhp 类实现的的方法。数据库和事件系统
 ```php
-public static function Db($tag = null)
-public static function DbCloseAll()
-public static function DbForWrite()
-public static function DbForRead()
-public static function Event()
-public static function FireEvent($event, ...$args)
-public static function OnEvent($event, $callback)
+    public static function Db($tag = null)
+    public static function DbCloseAll()
+    public static function DbForWrite()
+    public static function DbForRead()
+    public static function Event()
+    public static function FireEvent($event, ...$args)
+    public static function OnEvent($event, $callback)
 ```
 
 ### 内置 trait Core_Glue
@@ -206,73 +206,174 @@ public static function OnEvent($event, $callback)
 
 #### 来自RuntimeState
 ```php
-public static function isInException()
-public static function isRunning()
+    public static function isInException()
+    public static function isRunning()
 ```
 #### 来自 Configer
 ```php
-public static function Setting($key)
-public static function Config($key, $file_basename = 'config')
-public static function LoadConfig($file_basename)
+    public static function Setting($key)
+    public static function Config($key, $file_basename = 'config')
+    public static function LoadConfig($file_basename)
 ```
 #### 来自 AutoLoader
 来自 AutoLoader 的两个方法，主要用于没把 composer 作为加载器使用的情况
 ```php 
-public static function assignPathNamespace($path, $namespace = null)
-public static function runAutoLoader()
+    public static function assignPathNamespace($path, $namespace = null)
+    public static function runAutoLoader()
 ```
 #### 来自 Route
 来自Route 的方法比较多。重点掌握
 ```php
-public static function Route($replacement_object = null)
-public static function Url($url = null)
-public static function Parameter($key, $default = null)
-public static function replaceControllerSingelton($old_class, $new_class)
-public static function getPathInfo()
-public static function getParameters()
-public static function addRouteHook($hook, $position, $once = true)
-public static function add404RouteHook($callback)
-public static function getRouteCallingMethod()
-public static function setRouteCallingMethod(string $method)
-public static function setUrlHandler($callback)
-public static function dumpAllRouteHooksAsString()
+    public static function Route($replacement_object = null)
+    public static function Url($url = null)
+    public static function Parameter($key, $default = null)
+    public static function replaceControllerSingelton($old_class, $new_class)
+    public static function getPathInfo()
+    public static function getParameters()
+    public static function addRouteHook($callback, $position, $once = true)
+    public static function add404RouteHook($callback)
+    public static function getRouteCallingMethod()
+    public static function setRouteCallingMethod($calling_method)
+    public static function setUrlHandler($callback)
+    public static function dumpAllRouteHooksAsString()
 ```
 #### 来自 View
 需要指出的是 App::Show 是对 View::G()->\_Show() 多了处理。所以不在这里
 ```php
-public static function Display($view, $data = null)
-public static function getViewData()
-public static function setViewHeadFoot($head_file = null, $foot_file = null)
-public static function assignViewData($key, $value = null)
+    public static function Display($view, $data = null)
+    public static function getViewData()
+    public static function setViewHeadFoot($head_file = null, $foot_file = null)
+    public static function assignViewData($key, $value = null)
 ```
 #### 来自 ExceptionManager
 ```php
-public static function CallException($ex)
-public static function assignExceptionHandler($classes, $callback = null)
-public static function setMultiExceptionHandler(array $classes, callable $callback)
-public static function setDefaultExceptionHandler(callable $callback)
+    public static function CallException($ex)
+    public static function assignExceptionHandler($classes, $callback = null)
+    public static function setMultiExceptionHandler(array $classes, callable $callback)
+    public static function setDefaultExceptionHandler(callable $callback)
 ```
 
 ### 内置 trait Core_SuperGlobal
 
 内置 trait Core_SuperGlobal 主要用于超全局变量处理
 ```php
-public static function GET($key = null, $default = null)
-public static function POST($key = null, $default = null)
-public static function REQUEST($key = null, $default = null)
-public static function COOKIE($key = null, $default = null)
-public static function SERVER($key = null, $default = null)
-public static function SESSION($key = null, $default = null)
-public static function FILES($key = null, $default = null)
+    public static function GET($key = null, $default = null)
+    public static function POST($key = null, $default = null)
+    public static function REQUEST($key = null, $default = null)
+    public static function COOKIE($key = null, $default = null)
+    public static function SERVER($key = null, $default = null)
+    public static function SESSION($key = null, $default = null)
+    public static function FILES($key = null, $default = null)
 ```
 这些对应于超全局变量 $_GET[$key]??$value; 类推。如果宏 \_\_SUPERGLOBAL_CONTEXT 被定义，那么将 获得 (\_\_SUPERGLOBAL_CONTEXT)()->\_GET 等
 ```php
-public static function SessionSet($key, $value)
+    public static function SessionSet($key, $value)
 ```
 因为 Session 不仅仅读取，还有写入，所以用 SessionSet 。
 ```php
-public static function CookieSet($key, $value, $expire=0)
+    public static function CookieSet($key, $value, $expire = 0)
 ```
 因为 Cookie 不仅仅读取，还有写入，所以用 CookieSet 。
+
+
+### 内部实现函数
+
+```php
+
+    public function _Show($data = [], $view = '')
+    public function _header($output, bool $replace = true, int $http_response_code = 0)
+    public function _setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
+    public function _exit($code = 0)
+    public function _set_exception_handler(callable $exception_handler)
+    public function _register_shutdown_function(callable $callback, ...$args)
+    public function _session_start(array $options = [])
+    public function _session_id($session_id = null)
+    public function _session_destroy()
+    public function _session_set_save_handler(\SessionHandlerInterface $handler)
+    public function _ExitJson($ret, $exit = true)
+    public function _ExitRedirect($url, $exit = true)
+    public function _ExitRedirectOutside($url, $exit = true)
+    public function _Platform()
+    public function _IsDebug()
+    public function _IsRealDebug()
+    public function _L($str, $args = [])
+    public function _Hl($str, $args)
+    public function _Json($data)
+    public function _H(&$str)
+    public function _TraceDump()
+    public function _var_dump(...$args)
+    public function _XpCall($callback, ...$args)
+    public function _CheckException($exception_class, $flag, $message, $code = 0)
+    public function _SqlForPager($sql, $pageNo, $pageSize = 10)
+    public function _SqlForCountSimply($sql)
+    public function _DebugLog($message, array $context = array())
+    public function _Cache($object = null)
+    public function _Pager($object = null)
+    public function _DbCloseAll()
+    public function _Db($tag)
+    public function _DbForRead()
+    public function _DbForWrite()
+    public function _Event()
+    public function _FireEvent($event, ...$args)
+
+    public function _OnEvent($event, $callback)
+    public function _GET($key = null, $default = null)
+    public function _POST($key = null, $default = null)
+    public function _REQUEST($key = null, $default = null)
+    public function _COOKIE($key = null, $default = null)
+    public function _SERVER($key = null, $default = null)
+    public function _SESSION($key = null, $default = null)
+    public function _FILES($key = null, $default = null)
+    protected function _SessionSet($key, $value)
+    protected function _CookieSet($key, $value, $expire)
+    
+```
+### 接管流程的函数
+
+    public function _On404(): void
+
+    public function _OnDefaultException($ex): void
+
+    public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
+
+
+### 其他函数
+
+    public function __construct()
+
+    public function version()
+
+
+    protected function extendComponentClassMap($map, $namespace)
+
+    protected function fixNamespace($class, $namespace)
+
+    public function extendComponents($method_map, $components = [])
+
+    public function cloneHelpers($new_namespace, $new_helper_map = [])
+
+    public function addBeforeShowHandler($handler)
+
+    public function removeBeforeShowHandler($handler)
+
+    public function getDynamicComponentClasses()
+
+    public function addDynamicComponentClass($class)
+
+    public function skip404Handler()
+
+    protected function onBeforeOutput()
+
+
+    private function getSuperGlobalData($superglobal_key, $key, $default)
+
+## 说明
 ### 关于 injected_helper_map
+
+
+
+
+
+
+
 

@@ -80,7 +80,7 @@
 + ** 'controller_hide_boot_class' => false,  ** 
 
     控制器标记，隐藏特别的入口   // [DuckPhp\Core\Route](Core-Route.md)
-+ ** 'controller_methtod_for_miss' => '_missing',  ** 
++ ** 'controller_methtod_for_miss' => '__missing',  ** 
 
     控制器，缺失方法的调用方法   // [DuckPhp\Core\Route](Core-Route.md)
 + ** 'controller_path_ext' => '',  ** 
@@ -92,10 +92,7 @@
 + ** 'controller_prefix_post' => 'do_',  ** 
 
     控制器，POST 方法前缀   // [DuckPhp\Core\Route](Core-Route.md)
-+ ** 'controller_stop_g_method' => false,  ** 
-
-    控制器禁止直接访问G方法，基本不用   // [DuckPhp\Core\Route](Core-Route.md)
-+ ** 'controller_stop_static_method' => false,  ** 
++ ** 'controller_stop_static_method' => true,  ** 
 
     控制器禁止直接访问静态方法   // [DuckPhp\Core\Route](Core-Route.md)
 + ** 'controller_use_singletonex' => false,  ** 
@@ -473,7 +470,7 @@
         激活兼容后缀的 / 
     - 'controller_hide_boot_class' => false,
         控制器标记，隐藏特别的入口
-    - 'controller_methtod_for_miss' => '_missing',
+    - 'controller_methtod_for_miss' => '__missing',
         控制器，缺失方法的调用方法
     - 'controller_path_ext' => '',
         扩展名，比如你要 .html
@@ -481,9 +478,7 @@
         路由前缀，特殊情况用，限定前缀的 Path_info
     - 'controller_prefix_post' => 'do_',
         控制器，POST 方法前缀
-    - 'controller_stop_g_method' => false,
-        控制器禁止直接访问G方法，基本不用
-    - 'controller_stop_static_method' => false,
+    - 'controller_stop_static_method' => true,
         控制器禁止直接访问静态方法
     - 'controller_use_singletonex' => false,
         控制器使用单例模式

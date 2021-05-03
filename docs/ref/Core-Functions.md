@@ -35,3 +35,28 @@ View 里不想  use ViewHelper 的情况
 - __trace_dump 对应 App::TraceDump();
 - __debug_log() 对应 App::DebugLog();
 
+    function __h(...$args)
+
+    function __l(...$args)
+
+    function __hl(...$args)
+
+    function __url(...$args)
+
+    function __json($data)
+
+    function __domain($use_scheme = false)
+
+    function __display(...$args)
+
+    function __var_dump(...$args)
+
+    function __trace_dump(...$args)
+
+    function __debug_log(...$args)
+
+    function __is_debug()
+
+    function __is_real_debug()
+
+    function __platform()

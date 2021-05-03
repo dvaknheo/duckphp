@@ -9,25 +9,24 @@
 
 ## 方法
 
-public static function OnEvent($event, $callback)
+    public static function OnEvent($event, $callback)
+    public function on($event, $callback)
+绑定事件
 
-    绑定事件
-public static function FireEvent($event, ...$args)
+    public static function FireEvent($event, ...$args)
+    public function fire($event, ...$args)
+触发事件
 
-    触发事件
+    public static function AllEvents()
+    public function all()
 
-public function on($event, $callback)
+获取所有事件
 
-    实际执行函数
-public function fire($event, ...$args)
+    public static function RemoveEvent($event, $callback = null)
+    public function remove($event, $callback = null)
 
-    实际执行函数
-public static function AllEvents()
+移除事件， 如果指定 $callback 则移除 $event 中等于callback的事件处理
 
-    获取所有事件
-public static function RemoveEvent($event, $callback = null)
-
-    移除事件， 如果指定 $callback 则移除 $event 中等于callback的事件处理
 ## 例子
 
 ```php
@@ -48,3 +47,5 @@ App::FireEvent 触发事件
 用 App::RemoveEvent 移除事件
 
 DuckPhp 的事件系统是 一对多的
+
+

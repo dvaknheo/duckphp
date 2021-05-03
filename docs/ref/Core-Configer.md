@@ -34,12 +34,25 @@
 
 ## 公开方法
 
-    public function init($options=[], $context=null)
-    public function _Setting($key)
-    public function _Config($key, $file_basename='config')
-    public function _LoadConfig($file_basename='config')
-    public function assignExtConfigFile($key, $value = null)
+    protected function initOptions(array $options)
+初始化选项
 
+    public function _Config($key, $file_basename = 'config')
+读取一个配置
+
+    public function _LoadConfig($file_basename = 'config')
+载入一个配置文件
+    public function _Setting($key)
+读取设置
+
+    public function assignExtConfigFile($key, $value = null)
+//TODO 此函数即将取消
+
+    protected function exitWhenNoSettingFile($full_setting_file, $setting_file)
+用于重写，没设置文件则退出
+
+    protected function loadFile($file)
+用于重写，载入文件
 ### 说明
 
 DuckPhp\Core\Configer 的选项共享个 path,带个 path_config
@@ -51,3 +64,8 @@ path_config 如果是 / 开始的，会忽略 path 选项
     当我们需要额外的配置文件的时候  use_setting_file 设置为 true
 
 基于  AppPluginTrait  需要， Configer 类比普通类多了 config_ext_files 选项
+
+
+
+
+

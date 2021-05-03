@@ -19,13 +19,14 @@
 ## 方法
 
 
-public function __construct()
-public function init(array $options, object $context = null)
+    protected function initOptions(array $options)
 
-public function _autoload($class)
+    public function _autoload($class): void
 
-public function getFacadesCallback($input_class, $name)
-public function clear()
+    public function getFacadesCallback($input_class, $name)
+
+    public function clear()
+
 
 ## 详解
 
@@ -36,4 +37,5 @@ public function clear()
 use MyFacades\LazyToChange\Model\TestModel;
 TestModel::foo(); // <=> \LazyToChange\Model\TestModel::G()->foo();
 ```
-注意， ComponentBase 的方法无法这么来。
+注意， ComponentBase 的方法无法覆盖
+    

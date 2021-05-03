@@ -101,19 +101,19 @@ POST 的方法会在方法名前加前缀 do_
 ### URL 相关
 这里是路由相关的
 
-    public static function URL($url=null)
-    public function _URL($url = null)
+    public static function Url($url = null)
+    public function _Url($url = null)
 获得 URL
 
-    public static function Domain($use_scheme)
-    public function _Domain($use_scheme)
+    public static function Domain($use_scheme = false)
+    public function _Domain($use_scheme = false)
 获得的域名
 
-    public function defaultURLHandler($url = null)
-默认的 URL 函数，
+    public function defaultUrlHandler($url = null)
+默认的 URL 函数
 
-    public function setURLHandler($callback)
-    public function getURLHandler()
+    public function setUrlHandler($callback)
+    public function getUrlHandler()
 设置/获得 URL 回调函数
 
 ### 辅助方法
@@ -122,6 +122,10 @@ POST 的方法会在方法名前加前缀 do_
     public function getParameters()
     public function setParameters($parameters)
 设置 Parameter 数组
+
+    public static function Parameter($key, $default = null)
+    public function _Parameter($key, $default = null)
+读取 Parameter ， Parameter 用于 Url 重构之类
 
     public function getRouteCallingPath()
 获取调用中的路径
@@ -138,7 +142,20 @@ POST 的方法会在方法名前加前缀 do_
 
 简单 dump 所有钩子
 
-## 内部方法
+### 其他方法
+
+    public function bind($path_info, $request_method = 'GET')
+    
+    public function getPathInfo()
+    
+    public function setPathInfo($path_info)
+    
+    public function getRouteError()
+    
+    public function getNamespacePrefix()
+// 这个函数要改名
+
+### 内部方法
 以下是内部方法
 
     protected function initOptions(array $options)
@@ -211,3 +228,7 @@ if(!$flag){
 修订版本：
 
 修订时间：
+
+
+
+​    

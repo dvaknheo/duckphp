@@ -17,14 +17,21 @@
         'path_info_compact_class_key' => '',
 替代的 class
 
-## 公开方法
-public function __construct()
-public function init(array $options, object $context = null)
-public static function URL($url = null)
-public function onURL($url = null)
-public static function Hook($path_info)
-public function _Hook($path_info)
-protected function filteRewrite($url, &$ret = false)
+## 方法
+
+    protected function initContext(object $context)
+    
+    public static function Url($url = null)
+    
+    public function onUrl($url = null)
+    
+    protected function filteRewrite($url, &$ret = false)
+    
+    public static function Hook($path_info)
+    
+    public function _Hook($path_info)
+
+
 
 ## 详解
 
@@ -43,4 +50,7 @@ $options['path_info_compact_enable'] = true;
 
 `URL ($url) `函数也被接管。 自动替换成相应的实现。
 
-​    
+
+
+
+

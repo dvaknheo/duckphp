@@ -9,12 +9,11 @@
 
 ## 方法
 
-public static function G($object=null)
+    public static function G($object = null)
 
-    如果传入 $object,把当前类设置为 $object。
-    如果默认传入空，则创建使用者类。
+如果传入 $object,把当前类设置为 $object。
+如果默认传入空，则创建使用者类。
     
-    如果
 ## 详解
 
 例一
@@ -58,3 +57,7 @@ SwooleHttpd 通过这个方法，实现了 协程单例。
 
 2. DuckPhp\Core\ComponentBase
 3. DuckPhp\Component\Console
+
+
+
+

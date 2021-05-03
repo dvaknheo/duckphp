@@ -13,6 +13,7 @@
 
         'jsonrpc_is_debug' => false,
 是否调试
+
         'jsonrpc_enable_autoload' => true,
 
 是否要自动加载
@@ -28,6 +29,28 @@ Token 处理
 
         'jsonrpc_service_namespace' => '',
 服务命名空间
+## 方法
+
+    public function __construct()
+    public function init(array $options, object $context = null)
+    public function clear()
+    public function getRealClass($object)
+    public static function Wrap($class)
+    public static function _Wrap($class)
+    public function _autoload($class)
+    public function callRpc($classname, $method, $arguments)
+    public function onRpcCall(array $input)
+    protected function curl_file_get_contents($url, $post)
+    protected function prepare_token($ch)    protected function initOptions(array $options)
+    
+    public function _autoload($class): void
+    
+    protected function adjustService($service)
+    
+    protected function prepare_token($ch)
+
+    protected function initOptions(array $options)
+
 
 ## 示例
 ```php
@@ -107,17 +130,6 @@ DuckPhp::RunQuickly($options,function(){
 
 这里的 json_rpc 是服务端的实现
 
-如果你要 做自己的权限处理，则重写 protected function prepare_token($ch)。
+如果你要 做自己的权限处理，则重写
 
 
-    public function __construct()
-    public function init(array $options, object $context = null)
-    public function clear()
-    public function getRealClass($object)
-    public static function Wrap($class)
-    public static function _Wrap($class)
-    public function _autoload($class)
-    public function callRpc($classname, $method, $arguments)
-    public function onRpcCall(array $input)
-    protected function curl_file_get_contents($url, $post)
-    protected function prepare_token($ch)

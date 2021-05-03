@@ -7,9 +7,31 @@
 
 无选项
 
-## 公开方法
+## 方法
 
+    public function command_new()
+内置命令，新建工程
 
+    public function command_run()
+内置命令，运行
+
+    public function command_help()
+
+    public function command_version()
+
+    public function command_list()
+
+    public function command_call()
+
+    public function command_fetch($uri = '', $post = false)
+
+    public function command_routes()
+
+    public function command_depoly()
+
+    public function command_test()
+    
+    protected function initContext(object $context)
 
 ## 详解
 

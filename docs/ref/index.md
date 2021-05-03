@@ -93,10 +93,12 @@
     9. [ViewHelper](Helper-ViewHelper.md) 视图助手类
     10. [ViewHelperTrait](Helper-ViewHelperTrait.md) 视图助手Trait
 7. `HttpServer` 目录
-    1. [HttpServer](HttpServer-HttpServer.md)  Http 服务器
+    1. [AppInterface](HttpServer-AppInterface.md)  Http 服务的应用接口
+    2. [HttpServer](HttpServer-HttpServer.md)  Http 服务器
+    3. [HttpServerInterface](HttpServer-HttpServerInterface.md)  Http 服务接口
 8. `SingletonEx`目录
     1. **[SingletonExTrait](SingletonEx-SingletonExTrait.md)**  可变单例 trait
-    1. [SimpleReplacer](SingletonEx-SimpleReplacer.md)  可选可变单例容器
+    2. [SimpleReplacer](SingletonEx-SimpleReplacer.md)  可选可变单例容器
 9. `ThrowOn`目录
     1. [ThrowOnTrait](ThrowOn-ThrowOnTrait.md) 可抛 trait，应用工程引用它方便异常处理
 

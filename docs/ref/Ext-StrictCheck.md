@@ -41,21 +41,9 @@
 
         'postfix_model' => 'Model',
 模型后缀
-## 扩充方法
+## 方法
 
 ### 方法
-
-public function init($options=[], $context=null)
-public function checkStrictComponent($component_name, $trace_level, $parent_classes_to_skip=[])
-public function checkStrictModel($trace_level)
-public function checkStrictService($service_class, $trace_level)
-protected function getCallerByLevel($level, $parent_classes_to_skip=[])
-protected function checkEnv(): bool
-
-## 详解
-
-没文档，先看单元覆盖测试吧。
-
 
     public function __construct()
     public function init(array $options, object $context = null)
@@ -66,12 +54,37 @@ protected function checkEnv(): bool
     public function checkStrictComponent($component_name, $trace_level, $parent_classes_to_skip = [])
     public function checkStrictModel($trace_level)
     public function checkStrictService($service_class, $trace_level)
+    protected function initOptions(array $options)
     
+    protected function initContext(object $context)
+    
+    public static function CheckStrictDb()
+    
+    public static function SingletonExReplacer($class, $object)
+    
+    protected function hit_class($caller_class, $parent_classes_to_skip)
+    
+    public function check_strict_class($class)
+    
+    protected static function StartWith($str, $prefix)
+    
+    protected static function EndWith($str, $postfix)
+
+
+    protected function initOptions(array $options)
+
+
+
+## 详解
+
+没文档，先看单元覆盖测试吧。
+
+
 
 这个例子禁止了Controller 里调用 DB ，禁止调用 Model
 
 
-```
+```php
 class StrictCheckTestMain extends BaseController
 {
     public function index()
@@ -141,3 +154,4 @@ class StrictCheckTestMain extends BaseController
     }
 }
 ```
+

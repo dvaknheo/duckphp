@@ -14,16 +14,26 @@
 
     选项
 ## 方法
-public function __construct()
-public static function Hook($path_info)
-public function init(array $options, object $context = null)
-public function assignRewrite($key, $value = null)
-public function getRewrites()
-public function replaceRegexUrl($input_url, $template_url, $new_url)
-public function replaceNormalUrl($input_url, $template_url, $new_url)
-public function filteRewrite($input_url)
-protected function changeRouteUrl($url)
-protected function doHook($path_info)
+    public static function Hook($path_info)
+    
+    protected function initOptions(array $options)
+    
+    protected function initContext(object $context)
+    
+    public function assignRewrite($key, $value = null)
+    
+    public function getRewrites()
+    
+    public function replaceRegexUrl($input_url, $template_url, $new_url)
+    
+    public function replaceNormalUrl($input_url, $template_url, $new_url)
+    
+    public function filteRewrite($input_url)
+    
+    protected function changeRouteUrl($url)
+    
+    protected function doHook($path_info)
+
 
 ## 详解
 
@@ -41,3 +51,5 @@ assignRewrite($old_url,$new_url=null)
     不区分 request method , 重写后可以用 ? query 参数
     ~ 开始表示是正则 ,为了简单用 / 代替普通正则的 \/
     替换的url ，用 $1 $2 表示参数
+
+

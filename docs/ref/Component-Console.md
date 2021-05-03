@@ -24,16 +24,37 @@
         'cli_command_default' => 'help',
 默认调用指令
 
-## 公开方法
+## 方法
 
-
-
-    public function getCliParameters() // 获得 参数列表
-    public function regCommandClass($class, $alias = null) // 注册一个命令类
-    public function getCommandListInfo() // 获得命令列表信息
-    public function app()
     public function run()
 
+    public function app()
+
+    public static function G($object = null)
+    
+    public function __construct()
+    
+    public function isInited(): bool
+    
+    public function init(array $options, ?object $context = null)
+    
+    public function getCliParameters()
+    
+    public function regCommandClass($class, $alias = null)
+    
+    public static function DoRun($path_info = '')
+    
+    protected function parseCliArgs($argv)
+    
+    public function callObject($class, $method, $args, $input)
+    
+    protected function getClassAndMethod($cmd)
+    
+    protected function getCommandsByClass($class)
+    
+    protected function getCommandGroupInfo()
+    
+    public function getCommandListInfo()
 ## 详解
 
 Console 类是 DuckPhp 的 命令行支持类。
@@ -61,5 +82,10 @@ Console::G()->getCliParameters(); 获得参数的值
 如果你要注册额外的 类 方法 ，使用 regCommandClass
 
 getCommandListInfo() 会把他们展示出来
+
+
+
+
+
 
 

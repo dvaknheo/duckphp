@@ -38,7 +38,7 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
         'override_class'=>'',
 **重要选项** 如果这个选项的类存在，则在init()的时候会切换到这个类完成后续初始化，并返回这个类的实例。
 
-### 属性
+### 属性配置
 
         'is_debug' => false,
 调试模式， 用于 IsDebug() 方法。
@@ -66,82 +66,106 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
         'skip_plugin_mode_check' => false,
 如果 初始化的时候 context 有对象，则进入 plugin 模式 pluginModeInit()，打开以避免进入 plugin 模式.
 
-## 公开属性
+## 属性
 
 和方法同名，便于不修改类实现的情况。
 
-onPrepare
 
-    准备阶段，你可以在这里替换默认类
-onInit
+    public $onPrepare;
+准备阶段，你可以在这里替换默认类
 
-    初始化完成
-onBeforeRun
+    public $onInit;
+初始化完成
 
-    运行阶段。不建议重写 run ，而是在这里添加运行阶段处理
-onAfterRun
+    public $onBeforeRun;
+运行阶段。不建议重写 run ，而是在这里添加运行阶段处理
 
-    运行完毕阶段执行的方法
-## 公开方法
+    public $onAfterRun;
+运行完毕阶段执行的方法
 
-public static function RunQuickly(array $options=[], callable $after_init=null): bool
+## 方法
+### 主流程
 
-    快速开始，init() 后接 $after_init() 然后 run();
-public function init(array $options=[], object $context=null)
+    public static function RunQuickly(array $options = [], callable $after_init = null): bool
+快速开始，init() 后接 $after_init() 然后 run();
 
-    初始化
-public function run(): bool
+    public function init(array $options, object $context = null)
+初始化
+    public function run(): bool
+运行，如果404，返回false。
 
-    运行，如果404，返回false。
-public function clear(): void
+    public function clear(): void
+不建议主动使用，用于清理现场。
 
-    不建议主动使用，用于清理现场。
-public function beforeRun()
+    public function beforeRun()
+不建议主动使用，加载运行状态数据，比如当前 URL 等。
 
-    不建议主动使用，加载运行状态数据，比如当前 URL 等。
-public function replaceDefaultRunHandler(callable $handler = null): void
+    public function replaceDefaultRunHandler(callable $handler = null): void
+不通过继承而是外挂替换默认的 Run 函数， 用于第三方接管。
 
-    不通过继承而是外挂替换默认的 Run 函数， 用于第三方接管。
-## 重写方法
+### 事件方法
 
 用于重写的方法默认都是空方法，预留用户功能。用于重写的方法都带有同名属性，可以用同名属性方式赋值
 
-protected function onPrepare()
+    protected function onPrepare()
+准备阶段，你可以在这里替换默认类
 
-    准备阶段，你可以在这里替换默认类
-protected function onInit()
+    protected function onInit()
+初始化完成
 
-    初始化完成
-protected function onBeforeRun()
+    protected function onBeforeRun()
+运行阶段。不建议重写 run ，而是在这里添加运行阶段处理
 
-    运行阶段。不建议重写 run ，而是在这里添加运行阶段处理
-
-protected function onAfterRun()
-
-    运行完毕阶段执行的方法
+    protected function onAfterRun()
+运行完毕阶段执行的方法
 
 ### 流程相关方法
-protected function checkOverride($options)
+    protected function checkOverride($override_class)
+在 init() 里检测再入类。
 
-    在 init() 里检测再入类。
-protected function initAfterOverride($options)
+    protected function initAfterOverride(array $options, object $context = null)
+真正的 init 。依次执行 initOptions, onPrepare,initDefaultComponents，initExtentions,onInit
 
-    真正的 init 。依次执行 initOptions, onPrepare,initDefaultComponents，initExtentions,onInit
-protected function initOptions($options = [])
+    protected function initOptions(array $options)
+init() 中初始化选项
 
-    init() 中初始化选项
-protected function reloadFlags(): void
+    protected function reloadFlags(): void
+init() 中 DefaultComponents() 中从设置读取调试标志和平台标志
 
-    init() 中 DefaultComponents() 中从设置读取调试标志和平台标志
-protected function initExtentions(array $exts): void
+    protected function initExtentions(array $exts): void
+初始化中，初始化扩展
 
-    初始化中，初始化扩展
-protected function getDefaultProjectNameSpace($class)
+    protected function getDefaultProjectNameSpace($class)
+辅助方法，用于在 init() 中设置 namespace.
 
-    辅助方法，用于在 init() 中设置 namespace.
-protected function getDefaultProjectPath()
+    protected function getDefaultProjectPath()
+辅助方法，用于在 init() 中设置 path.
 
-    辅助方法，用于在 init() 中设置 path.
+    public static function Blank()
+空函数备用
+
+    protected function saveInstance($object)
+用于重写 override 的时候，保存根对象 示例
+
+    protected function pluginModeInit(array $options, object $context = null)
+插件模式初始化
+
+    protected function initDefaultComponents()
+初始化默认组件
+
+### 默认行为
+    public static function On404(): void
+    public function _On404(): void
+处理 404
+
+    public static function OnDefaultException($ex): void
+    public function _OnDefaultException($ex): void
+处理异常
+
+    public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
+    public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
+处理开发模式错误
+
 ## 流程详解
 
 Kernel 这个 Trait 一般不直接使用。一般用的是 DuckPhp\Core\App ， 而直接的 DuckPhp\DuckPhp 类，则是把常见扩展加进去形成完善的框架。
@@ -185,4 +209,8 @@ init() 初始化阶段，和 run 阶段
     清理流程
 ### clear 清理
 只有一个动作： 设置 RuntimeState 为结束
+
+
+
+
 

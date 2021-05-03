@@ -313,29 +313,29 @@
 <path fill="none" stroke="black" d="M1131.91,-1680C1151.05,-1680 1173.51,-1680 1194.24,-1680"/>
 <polygon fill="black" stroke="black" points="1194.25,-1683.5 1204.25,-1680 1194.25,-1676.5 1194.25,-1683.5"/>
 </g>
-<!-- AppHelper -->
-<g id="node21" class="node"><title>AppHelper</title>
-<polygon fill="lightgrey" stroke="black" points="101.316,-1890 40.4359,-1872 101.316,-1854 162.196,-1872 101.316,-1890"/>
-<polyline fill="none" stroke="black" points="51.9435,-1875.4 51.9435,-1868.6 "/>
-<polyline fill="none" stroke="black" points="89.8084,-1857.4 112.824,-1857.4 "/>
-<polyline fill="none" stroke="black" points="150.689,-1868.6 150.689,-1875.4 "/>
-<polyline fill="none" stroke="black" points="112.824,-1886.6 89.8084,-1886.6 "/>
-<text text-anchor="middle" x="101.316" y="-1868.9" font-family="Times,serif" font-size="12.00">AppHelper</text>
+<!-- AdvanceHelper -->
+<g id="node21" class="node"><title>AdvanceHelper</title>
+<polygon fill="lightgrey" stroke="black" points="101.316,-1890 21.1307,-1872 101.316,-1854 181.501,-1872 101.316,-1890"/>
+<polyline fill="none" stroke="black" points="32.8394,-1874.63 32.8394,-1869.37 "/>
+<polyline fill="none" stroke="black" points="89.6074,-1856.63 113.025,-1856.63 "/>
+<polyline fill="none" stroke="black" points="169.793,-1869.37 169.793,-1874.63 "/>
+<polyline fill="none" stroke="black" points="113.025,-1887.37 89.6074,-1887.37 "/>
+<text text-anchor="middle" x="101.316" y="-1868.9" font-family="Times,serif" font-size="12.00">AdvanceHelper</text>
 </g>
-<!-- AppHelper&#45;&gt;ExtendableStaticCallTrait -->
-<g id="edge31" class="edge"><title>AppHelper&#45;&gt;ExtendableStaticCallTrait</title>
-<path fill="none" stroke="black" d="M150.038,-1875.76C166.339,-1879.42 183.297,-1886.29 194.632,-1899 243.551,-1953.86 166.428,-2014.63 222.632,-2062 272.952,-2104.41 466.295,-2075.02 566.079,-2056.27"/>
+<!-- AdvanceHelper&#45;&gt;ExtendableStaticCallTrait -->
+<g id="edge31" class="edge"><title>AdvanceHelper&#45;&gt;ExtendableStaticCallTrait</title>
+<path fill="none" stroke="black" d="M157.252,-1877.59C171.205,-1881.57 184.964,-1888.16 194.632,-1899 243.551,-1953.86 166.428,-2014.63 222.632,-2062 272.952,-2104.41 466.295,-2075.02 566.079,-2056.27"/>
 <polygon fill="black" stroke="black" points="566.849,-2059.68 576.019,-2054.38 565.541,-2052.81 566.849,-2059.68"/>
 </g>
-<!-- AppHelperTrait -->
-<g id="node26" class="node"><title>AppHelperTrait</title>
-<ellipse fill="none" stroke="black" cx="295.887" cy="-1872" rx="56.7683" ry="18"/>
-<text text-anchor="middle" x="295.887" y="-1868.9" font-family="Times,serif" font-size="12.00">AppHelperTrait</text>
+<!-- AdvanceHelperTrait -->
+<g id="node26" class="node"><title>AdvanceHelperTrait</title>
+<ellipse fill="none" stroke="black" cx="295.887" cy="-1872" rx="70.3543" ry="18"/>
+<text text-anchor="middle" x="295.887" y="-1868.9" font-family="Times,serif" font-size="12.00">AdvanceHelperTrait</text>
 </g>
-<!-- AppHelper&#45;&gt;AppHelperTrait -->
-<g id="edge36" class="edge"><title>AppHelper&#45;&gt;AppHelperTrait</title>
-<path fill="none" stroke="black" d="M162.455,-1872C183.604,-1872 207.476,-1872 229.068,-1872"/>
-<polygon fill="black" stroke="black" points="229.136,-1875.5 239.136,-1872 229.136,-1868.5 229.136,-1875.5"/>
+<!-- AdvanceHelper&#45;&gt;AdvanceHelperTrait -->
+<g id="edge36" class="edge"><title>AdvanceHelper&#45;&gt;AdvanceHelperTrait</title>
+<path fill="none" stroke="black" d="M181.476,-1872C192.674,-1872 204.193,-1872 215.398,-1872"/>
+<polygon fill="black" stroke="black" points="215.582,-1875.5 225.582,-1872 215.582,-1868.5 215.582,-1875.5"/>
 </g>
 <!-- ControllerHelper -->
 <g id="node22" class="node"><title>ControllerHelper</title>
@@ -385,29 +385,29 @@
 <path fill="none" stroke="black" d="M171.023,-1926C187.75,-1926 205.69,-1926 222.579,-1926"/>
 <polygon fill="black" stroke="black" points="222.938,-1929.5 232.938,-1926 222.938,-1922.5 222.938,-1929.5"/>
 </g>
-<!-- ServiceHelper -->
-<g id="node24" class="node"><title>ServiceHelper</title>
-<polygon fill="lightgrey" stroke="black" points="101.316,-1836 28.0598,-1818 101.316,-1800 174.572,-1818 101.316,-1836"/>
-<polyline fill="none" stroke="black" points="39.7131,-1820.86 39.7131,-1815.14 "/>
-<polyline fill="none" stroke="black" points="89.6626,-1802.86 112.969,-1802.86 "/>
-<polyline fill="none" stroke="black" points="162.919,-1815.14 162.919,-1820.86 "/>
-<polyline fill="none" stroke="black" points="112.969,-1833.14 89.6626,-1833.14 "/>
-<text text-anchor="middle" x="101.316" y="-1814.9" font-family="Times,serif" font-size="12.00">ServiceHelper</text>
+<!-- BusinessHelper -->
+<g id="node24" class="node"><title>BusinessHelper</title>
+<polygon fill="lightgrey" stroke="black" points="101.316,-1836 21.8714,-1818 101.316,-1800 180.761,-1818 101.316,-1836"/>
+<polyline fill="none" stroke="black" points="33.5747,-1820.65 33.5747,-1815.35 "/>
+<polyline fill="none" stroke="black" points="89.6126,-1802.65 113.019,-1802.65 "/>
+<polyline fill="none" stroke="black" points="169.057,-1815.35 169.057,-1820.65 "/>
+<polyline fill="none" stroke="black" points="113.019,-1833.35 89.6126,-1833.35 "/>
+<text text-anchor="middle" x="101.316" y="-1814.9" font-family="Times,serif" font-size="12.00">BusinessHelper</text>
 </g>
-<!-- ServiceHelper&#45;&gt;ExtendableStaticCallTrait -->
-<g id="edge34" class="edge"><title>ServiceHelper&#45;&gt;ExtendableStaticCallTrait</title>
-<path fill="none" stroke="black" d="M154.951,-1822.83C169.72,-1826.72 184.494,-1833.46 194.632,-1845 247.771,-1905.5 162.766,-1970.15 222.632,-2024 268.085,-2064.89 438.658,-2059.39 543.025,-2051.7"/>
+<!-- BusinessHelper&#45;&gt;ExtendableStaticCallTrait -->
+<g id="edge34" class="edge"><title>BusinessHelper&#45;&gt;ExtendableStaticCallTrait</title>
+<path fill="none" stroke="black" d="M157.359,-1823.49C171.312,-1827.47 185.045,-1834.08 194.632,-1845 247.771,-1905.5 162.766,-1970.15 222.632,-2024 268.085,-2064.89 438.658,-2059.39 543.025,-2051.7"/>
 <polygon fill="black" stroke="black" points="543.518,-2055.18 553.224,-2050.93 542.988,-2048.2 543.518,-2055.18"/>
 </g>
-<!-- ServiceHelperTrait -->
-<g id="node29" class="node"><title>ServiceHelperTrait</title>
-<ellipse fill="none" stroke="black" cx="295.887" cy="-1818" rx="65.7359" ry="18"/>
-<text text-anchor="middle" x="295.887" y="-1814.9" font-family="Times,serif" font-size="12.00">ServiceHelperTrait</text>
+<!-- BusinessHelperTrait -->
+<g id="node29" class="node"><title>BusinessHelperTrait</title>
+<ellipse fill="none" stroke="black" cx="295.887" cy="-1818" rx="69.6227" ry="18"/>
+<text text-anchor="middle" x="295.887" y="-1814.9" font-family="Times,serif" font-size="12.00">BusinessHelperTrait</text>
 </g>
-<!-- ServiceHelper&#45;&gt;ServiceHelperTrait -->
-<g id="edge39" class="edge"><title>ServiceHelper&#45;&gt;ServiceHelperTrait</title>
-<path fill="none" stroke="black" d="M174.57,-1818C189.311,-1818 204.856,-1818 219.696,-1818"/>
-<polygon fill="black" stroke="black" points="219.84,-1821.5 229.84,-1818 219.84,-1814.5 219.84,-1821.5"/>
+<!-- BusinessHelper&#45;&gt;BusinessHelperTrait -->
+<g id="edge39" class="edge"><title>BusinessHelper&#45;&gt;BusinessHelperTrait</title>
+<path fill="none" stroke="black" d="M180.642,-1818C192.32,-1818 204.363,-1818 216.052,-1818"/>
+<polygon fill="black" stroke="black" points="216.214,-1821.5 226.214,-1818 216.214,-1814.5 216.214,-1821.5"/>
 </g>
 <!-- ViewHelper -->
 <g id="node25" class="node"><title>ViewHelper</title>
@@ -433,9 +433,9 @@
 <path fill="none" stroke="black" d="M166.439,-1710C185.266,-1710 205.947,-1710 225.108,-1710"/>
 <polygon fill="black" stroke="black" points="225.273,-1713.5 235.273,-1710 225.273,-1706.5 225.273,-1713.5"/>
 </g>
-<!-- AppHelperTrait&#45;&gt;App -->
-<g id="edge26" class="edge"><title>AppHelperTrait&#45;&gt;App</title>
-<path fill="none" stroke="black" d="M336.718,-1859.33C349.69,-1855.01 364.104,-1850 377.142,-1845 388.158,-1840.77 400.121,-1835.7 410.45,-1831.16"/>
+<!-- AdvanceHelperTrait&#45;&gt;App -->
+<g id="edge26" class="edge"><title>AdvanceHelperTrait&#45;&gt;App</title>
+<path fill="none" stroke="black" d="M340.441,-1858.09C352.409,-1854.06 365.339,-1849.53 377.142,-1845 388.158,-1840.77 400.121,-1835.7 410.45,-1831.16"/>
 <polygon fill="black" stroke="black" points="412.053,-1834.28 419.769,-1827.01 409.21,-1827.88 412.053,-1834.28"/>
 </g>
 <!-- ControllerHelperTrait&#45;&gt;App -->
@@ -448,10 +448,10 @@
 <path fill="none" stroke="black" d="M345.43,-1914.88C356.481,-1910.98 367.728,-1905.8 377.142,-1899 397.813,-1884.07 414.535,-1859.95 425.039,-1842.1"/>
 <polygon fill="black" stroke="black" points="428.352,-1843.35 430.22,-1832.92 422.256,-1839.91 428.352,-1843.35"/>
 </g>
-<!-- ServiceHelperTrait&#45;&gt;App -->
-<g id="edge29" class="edge"><title>ServiceHelperTrait&#45;&gt;App</title>
-<path fill="none" stroke="black" d="M362.125,-1818.46C373.399,-1818.55 384.843,-1818.63 395.286,-1818.7"/>
-<polygon fill="black" stroke="black" points="395.327,-1822.2 405.351,-1818.77 395.377,-1815.2 395.327,-1822.2"/>
+<!-- BusinessHelperTrait&#45;&gt;App -->
+<g id="edge29" class="edge"><title>BusinessHelperTrait&#45;&gt;App</title>
+<path fill="none" stroke="black" d="M365.822,-1818.49C375.894,-1818.56 386.001,-1818.64 395.311,-1818.7"/>
+<polygon fill="black" stroke="black" points="395.414,-1822.2 405.439,-1818.77 395.464,-1815.2 395.414,-1822.2"/>
 </g>
 <!-- ViewHelperTrait&#45;&gt;App -->
 <g id="edge30" class="edge"><title>ViewHelperTrait&#45;&gt;App</title>

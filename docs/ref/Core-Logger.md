@@ -22,12 +22,14 @@
         'log_prefix' => 'DuckPhpLog',
 日志前缀
 ## 方法
+### 主流程方法
 ```php
     public function __construct()
     public function reset()
     public function init(array $options, object $context = null)
+    protected function initOptions(array $options)
 ```
-在构造中实现
+### psr-16 标准方法
 ```php
     public function log($level, $message, array $context = array())
     public function emergency($message, array $context = array())
@@ -39,7 +41,7 @@
     public function info($message, array $context = array())
     public function debug($message, array $context = array())
 ```
-psr-16 标准的方法
+
 ## 说明
 
 App::Logger() 函数得到的就是这个类
@@ -49,5 +51,3 @@ Logger 类初始化的时候就直接调用 init() ，你可调用 reset() 重�
 其他方法都遵循 PSR 标准 **但是这个类没实现 PSR 接口。**
 
 放在 Core 下是因为 处理默认异常会记录
-
-

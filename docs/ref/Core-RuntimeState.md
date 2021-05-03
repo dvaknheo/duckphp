@@ -11,32 +11,32 @@
 
 启用 ob 函数缓冲
 
-## 公开方法
+## 方法
 
-public function reset()
+    public function reset()
+重置，新创建实例，避免旧实例的状态干扰。
 
-    重新创建实例，避免旧实例的状态干扰。
-public function run()
+    public function run()
+运行
 
-    运行
-public function clear()
+    public function clear()
+清理
 
-    清理
-public function isRunning()
+    public function isRunning()
+是否运行。
 
-    是否运行。
-public function toggleInException($flag = true)
+    public function toggleInException($flag = true)
+设置在异常状态
 
-    设置在异常状态
-public function isInException()
-    
-    是否已经异常
-public function isOutputed()
+    public function isInException()
+是否已经异常
 
-    是否已经输出
-public function toggleOutputed($flag = true)
+    public function isOutputed()
+是否已经输出
 
-    设置已经输出
+    public function toggleOutputed($flag = true)
+设置已经输出
+
 ## 详解
 
 运行时组件，保存运行状态信息。

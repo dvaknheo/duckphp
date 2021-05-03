@@ -17,8 +17,8 @@ class RouteHookApiServer extends ComponentBase
         'api_server_use_singletonex' => false,
         'api_server_404_as_exception' => false,
     ];
-        //'api_server_config_cache_file' => '',
-        //'api_server_on_missing' => '',
+    //'api_server_config_cache_file' => '',
+    //'api_server_on_missing' => '',
     protected $context_class;
     protected $headers = [
         'Access-Control-Allow-Origin' => '*',

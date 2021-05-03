@@ -139,4 +139,47 @@ public function fetch($sql, ...$args)
 public function fetchColumn($sql, ...$args)
 public function execute($sql, ...$args)
 public function rowCount()
-public function lastInsertId()
+public function lastInsertId()    public function init($options = [], $context = null)
+
+    protected function check_connect()
+
+    public function close()
+
+    public function PDO($pdo = null)
+
+    public function setBeforeQueryHandler($handler)
+
+    public function quote($string)
+
+                function (&$v, $k) {
+
+    public function buildQueryString($sql, ...$args)
+
+    public function table($table_name)
+
+    public function doTableNameMacro($sql)
+
+    public function setObjectResultClass($resultClass)
+
+    protected function exec($sql, ...$args)
+
+    public function fetchAll($sql, ...$args)
+
+    public function fetch($sql, ...$args)
+
+    public function fetchColumn($sql, ...$args)
+
+    public function fetchObject($sql, ...$args)
+
+    public function fetchObjectAll($sql, ...$args)
+
+    public function execute($sql, ...$args)
+
+    public function rowCount()
+
+    public function lastInsertId()
+
+
+    public function init($options = [], $context = null)
+
+

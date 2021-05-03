@@ -48,6 +48,9 @@ DuckPhp 类只是弥补了 DuckPhp\Core\App 缺失的方法。
 主要流程在 DuckPhp\Core\KernelTrait 里
 
 ## 公开方法
+    public function __construct()
+
+    protected function initAfterOverride(array $options, object $context = null)
 
 
 
@@ -111,4 +114,6 @@ App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里，还加载�
     {
         return EventManager::G()->on($event, $callback);
     }
+
+
 

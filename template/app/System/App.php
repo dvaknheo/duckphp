@@ -77,7 +77,7 @@ class App extends DuckPhp
         // $options['controller_hide_boot_class'] = false;
 
         // 控制器，缺失方法的调用方法 (DuckPhp\Core\Route)
-        // $options['controller_methtod_for_miss'] = '_missing';
+        // $options['controller_methtod_for_miss'] = '__missing';
 
         // 扩展名，比如你要 .html (DuckPhp\Core\Route)
         // $options['controller_path_ext'] = '';
@@ -88,11 +88,8 @@ class App extends DuckPhp
         // 控制器，POST 方法前缀 (DuckPhp\Core\Route)
         // $options['controller_prefix_post'] = 'do_';
 
-        // 控制器禁止直接访问G方法，基本不用 (DuckPhp\Core\Route)
-        // $options['controller_stop_g_method'] = false;
-
         // 控制器禁止直接访问静态方法 (DuckPhp\Core\Route)
-        // $options['controller_stop_static_method'] = false;
+        // $options['controller_stop_static_method'] = true;
 
         // 控制器使用单例模式 (DuckPhp\Core\Route)
         // $options['controller_use_singletonex'] = false;

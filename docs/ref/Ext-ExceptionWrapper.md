@@ -10,5 +10,10 @@
     public static function Wrap($object)
     public static function Release()
     public function __call($method, $args)
+    public function doWrap($object)
+
+    public function doRelease()
 
 ## 详解
+
+

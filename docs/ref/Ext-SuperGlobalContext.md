@@ -13,11 +13,27 @@
 ## 公开方法
 
 
-public static function DefineSuperGlobalContext()
-public static function LoadSuperGlobalAll() //读入所有 超全局变量
-public static function SaveSuperGlobalAll() //保存所有 超全局变量
-public static function LoadSuperGlobal($name) //读入超全局变量
-public static function SaveSuperGlobal($name) //保存超全局变量
+    public function __construct()
+    protected function initOptions(array $options)
+    protected function initContext(object $context)
+重写入口
+
+    public static function DefineSuperGlobalContext()
+定义超级变量宏
+
+    public static function LoadSuperGlobalAll()
+    public static function SaveSuperGlobalAll()
+读入/保存所有超全局变量
+
+    public static function LoadSuperGlobal($key)
+    public static function SaveSuperGlobal($key)
+读入/保存超全局变量
+
+    public function _LoadSuperGlobalAll()
+    public function _SaveSuperGlobalAll()
+    public function _LoadSuperGlobal($key)
+    public function _SaveSuperGlobal($key)
+相应内部实现函数
 
 ## 详解
 
@@ -31,4 +47,7 @@ DuckPhp 添加协程支持，
 `SuperGlobalContext` 是对 超全局变量的包裹
 `SuperGlobalContext::DefineSuperGlobalContext()`  则定义这么个指向 SuperGlobalContext::G 的宏。
 `superglobal_auto_extend_method` 把 LoadSuperGlobalAll ， SaveSuperGlobalAll 添加到 App 类的 静态方法
-`superglobal_auto_define` 在 init 的时候 SuperGlobalContext::DefineSuperGlobalContext
+`superglobal_auto_define` 在 init 的时候 SuperGlobalContext::DefineSuperGlobalContext   
+
+
+

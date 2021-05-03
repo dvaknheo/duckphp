@@ -25,44 +25,49 @@
         'autoload_path_namespace_map' => [],
 psr4 风格自动加载列表
 
-## 公开方法
+## 方法
 public $is_inited = false;
 
     //是否已初始化
 public $namespace_paths = [];
 
     // 路径 => 命名空间的映射表
-public function init($options=[], $context=null)
+    public function init(array $options, object $context = null)
 
     初始化
-public function isInited(): bool
+    public function isInited(): bool
 
     是否已经初始化
-public function run()
+    public function run()
 
     //
-public function runAutoLoader()
+    public function runAutoLoader()
 
     // run() 的 别名，方便调用
-public function _autoload($class)
+    public static function AutoLoad(string $class): void
+    public function _Autoload(string $class):void
 
     //
-public function assignPathNamespace($input_path, $namespace=null)
+    public function assignPathNamespace($input_path, $namespace = null)
 
     //
-public function cacheClasses()
+    public function cacheClasses()
 
     //
-public function cacheNamespacePath($path)
+    public function cacheNamespacePath($path)
 
     //
-public function clear()
+    public function clear()
 
     //
-public static function DuckPhpSystemAutoLoader(string $class): void
+    public static function DuckPhpSystemAutoLoader(string $class): void //@codeCoverageIgnoreStart
+仅仅用于autoload.php 加载 DuckPhp 文件
+    
+    public static function G($object = null)
+
+    public function __construct()
 
 
-    仅仅用于autoload.php 加载 DuckPhp 文件
 ## 说明
 
 AutoLoader 类用于没 autoloader 的情况下临时用。
