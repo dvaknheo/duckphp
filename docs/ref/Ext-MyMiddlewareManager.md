@@ -5,9 +5,10 @@
 简单的中间件组件
 
 ## 选项
-middleware => []
+全部选项
 
-    middelware 放的是回调列表
+        'middleware' => [],
+middelware 放的是回调列表
 
 ## 公开属性
 

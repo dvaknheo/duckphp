@@ -8,14 +8,14 @@ namespace DuckPhp\Core;
 class AutoLoader
 {
     public $options = [
-            'path' => '',
-            'namespace' => '',
-            'path_namespace' => 'app',
-            'skip_app_autoload' => false,
-            
-            'autoload_cache_in_cli' => false,
-            'autoload_path_namespace_map' => [],
-        ];
+        'path' => '',
+        'namespace' => '',
+        'path_namespace' => 'app',
+        'skip_app_autoload' => false,
+        
+        'autoload_cache_in_cli' => false,
+        'autoload_path_namespace_map' => [],
+    ];
     protected $namespace;
     protected $path_namespace;
 

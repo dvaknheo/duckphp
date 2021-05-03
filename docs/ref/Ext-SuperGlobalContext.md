@@ -3,10 +3,13 @@
 ## 简介
  超全局变量包容类
 ## 选项
+全部选项
 
-'superglobal_auto_extend_method' => false,
-'superglobal_auto_define' = false,
+        'superglobal_auto_extend_method' => false,
+自动扩充方法
 
+        'superglobal_auto_define' => false,
+自动定义  `__SUPERGLOBAL_CONTEXT`
 ## 公开方法
 
 

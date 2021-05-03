@@ -9,47 +9,47 @@
 ## 选项
 所有配置选项如下
 
-            'namespace' => '',
+        'namespace' => '',
 默认命名空间为空
 
-            'namespace_controller' => 'Controller',
+        'namespace_controller' => 'Controller',
 默认子命名空间为 Controller
 如果是 \ 开头的则忽略 `namespace` 选项。
 
-            'controller_base_class' => '',
+        'controller_base_class' => '',
 控制器基类
 
-            'controller_welcome_class' => 'Main',
+        'controller_welcome_class' => 'Main',
 欢迎类，默认欢迎类是  Main 。
 
-            'controller_hide_boot_class' => false,
+        'controller_hide_boot_class' => false,
 隐藏启动的类
 
-            'controller_methtod_for_miss' => '__missing',
+        'controller_methtod_for_miss' => '__missing',
 方法丢失调用的方法。
 如果有这个方法。找不到方法的时候，会进入这个方法。
 如果你使用了这个方法，将不会进入 404 。
 
-            'controller_prefix_post' => 'do_',
+        'controller_prefix_post' => 'do_',
 POST 的方法会在方法名前加前缀 do_
 如果找不到方法名，调用默认方法名。
 
-            'controller_class_postfix' => '',
+        'controller_class_postfix' => '',
 控制器类名后缀
 
-            'controller_enable_slash' => false,
+        'controller_enable_slash' => false,
 允许结尾的 /
 
-            'controller_path_prefix' => '',
+        'controller_path_prefix' => '',
 添加路由的前缀
 
-            'controller_path_ext' => '',
+        'controller_path_ext' => '',
 后缀,如 .html
 
-            'controller_use_singletonex' => false,
+        'controller_use_singletonex' => false,
 使用单例模式
 
-            'controller_stop_static_method' => true,
+        'controller_stop_static_method' => true,
 禁止直接访问控制器静态方法
 
 ## 公开方法

@@ -18,22 +18,22 @@ class Route extends ComponentBase
     const HOOK_APPPEND_OUTTER = 'append-outter';
     
     public $options = [
-            'namespace' => '',
-            'namespace_controller' => 'Controller',
-            
-            'controller_base_class' => '',
-            'controller_welcome_class' => 'Main',
-            
-            'controller_hide_boot_class' => false,
-            'controller_methtod_for_miss' => '__missing',
-            'controller_prefix_post' => 'do_',
-            'controller_class_postfix' => '',
-            'controller_enable_slash' => false,
-            'controller_path_prefix' => '',
-            'controller_path_ext' => '',
-            'controller_use_singletonex' => false,
-            'controller_stop_static_method' => true,
-        ];
+        'namespace' => '',
+        'namespace_controller' => 'Controller',
+        
+        'controller_base_class' => '',
+        'controller_welcome_class' => 'Main',
+        
+        'controller_hide_boot_class' => false,
+        'controller_methtod_for_miss' => '__missing',
+        'controller_prefix_post' => 'do_',
+        'controller_class_postfix' => '',
+        'controller_enable_slash' => false,
+        'controller_path_prefix' => '',
+        'controller_path_ext' => '',
+        'controller_use_singletonex' => false,
+        'controller_stop_static_method' => true,
+    ];
 
     public $pre_run_hook_list = [];
     public $post_run_hook_list = [];

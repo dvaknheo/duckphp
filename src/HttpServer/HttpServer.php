@@ -8,42 +8,42 @@ namespace DuckPhp\HttpServer;
 class HttpServer
 {
     public $options = [
-            'host' => '127.0.0.1',
-            'port' => '8080',
-            'path' => '',
-            'path_document' => 'public',
-            // 'docroot'
-            // 'dry'
-            //'background' =>true,
-        ];
+        'host' => '127.0.0.1',
+        'port' => '8080',
+        'path' => '',
+        'path_document' => 'public',
+        // 'docroot'
+        // 'dry'
+        //'background' =>true,
+    ];
     protected $cli_options = [
-            'help' => [
-                'short' => 'h',
-                'desc' => 'show this help;',
-            ],
-            'host' => [
-                'short' => 'H',
-                'desc' => 'set server host,default is 127.0.0.1',
-                'required' => true,
-            ],
-            'port' => [
-                'short' => 'P',
-                'desc' => 'set server port,default is 8080',
-                'required' => true,
-            ],
-            'docroot' => [
-                'short' => 't',
-                'desc' => 'document root',
-                'required' => true,
-            ],
-            'dry' => [
-                'desc' => 'dry mode, just show cmd',
-            ],
-            'background' => [
-                'short' => 'b',
-                'desc' => 'run background',
-            ],
-        ];
+        'help' => [
+            'short' => 'h',
+            'desc' => 'show this help;',
+        ],
+        'host' => [
+            'short' => 'H',
+            'desc' => 'set server host,default is 127.0.0.1',
+            'required' => true,
+        ],
+        'port' => [
+            'short' => 'P',
+            'desc' => 'set server port,default is 8080',
+            'required' => true,
+        ],
+        'docroot' => [
+            'short' => 't',
+            'desc' => 'document root',
+            'required' => true,
+        ],
+        'dry' => [
+            'desc' => 'dry mode, just show cmd',
+        ],
+        'background' => [
+            'short' => 'b',
+            'desc' => 'run background',
+        ],
+    ];
     public $pid = 0;
     
     protected $cli_options_ex = [];

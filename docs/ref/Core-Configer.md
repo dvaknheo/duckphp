@@ -29,7 +29,7 @@
         'use_env_file' => false,
 打开这项，可以读取 path 选项下的 env 文件
 
-        'config_ext_files' =>[]
+        'config_ext_files' => [],
 用于 AppPluginTrait
 
 ## 公开方法

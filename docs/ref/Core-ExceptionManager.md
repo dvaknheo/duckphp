@@ -13,7 +13,7 @@
         'handle_all_exception' => true,
 抓取全部异常
 
-    'system_exception_handler' => null,
+        'system_exception_handler' => null,
 系统的异常调试回调
 
         'default_exception_handler' => null,

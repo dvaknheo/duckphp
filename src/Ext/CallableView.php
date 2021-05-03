@@ -10,12 +10,12 @@ use DuckPhp\Core\View;
 class CallableView extends View
 {
     public $options = [
-            'callable_view_head' => null,
-            'callable_view_foot' => null,
-            'callable_view_class' => null,
-            'callable_view_prefix' => null,
-            'callable_view_skip_replace' => false,
-        ];
+        'callable_view_head' => null,
+        'callable_view_foot' => null,
+        'callable_view_class' => null,
+        'callable_view_prefix' => null,
+        'callable_view_skip_replace' => false,
+    ];
     public function __construct()
     {
         $this->options = array_replace_recursive($this->options, (new parent())->options); //merge parent's options;

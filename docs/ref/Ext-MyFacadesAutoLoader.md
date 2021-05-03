@@ -5,15 +5,17 @@
 你们要的 Facades 伪静态方法
 
 ## 选项
-'facades_namespace' => 'MyFacades',
+全部选项
 
-    前缀
-'facades_map' => [],
-    
-    门面映射
-'facades_enable_autoload' => true,
+        'facades_namespace' => 'MyFacades',
+前缀
 
-    启用自动加载
+        'facades_map' => [],
+门面映射
+
+        'facades_enable_autoload' => true,
+启用自动加载
+
 ## 方法
 
 

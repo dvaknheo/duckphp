@@ -5,19 +5,42 @@
 不能在 service 里调用 service
 
 ## 选项
-    'namespace' => '',
-    'namespace_controller' => '',
-    'namespace_model' => '',
-    'controller_base_class' => '',
-    'is_debug' => true,
-            'namespace_business' => '',
-            'strict_check_context_class' => null,
-            
-            'strict_check_enable' => true,
-    'postfix_batch_business' => 'BatchBusiness',
-    'postfix_business_lib' => 'Lib',
-    'postfix_ex_model' => 'ExModel',
-    'postfix_model' => 'Model',
+全部选项
+        'namespace' => '',
+命名空间
+
+        'namespace_controller' => 'Controller',
+控制器命名空间
+
+        'namespace_model' => '',
+模型命名空间
+
+        'controller_base_class' => null,
+控制器基类
+
+        'is_debug' => false,
+是否调试模式
+
+        'namespace_business' => '',
+业务类命名空间
+
+        'strict_check_context_class' => null,
+上下文类
+
+        'strict_check_enable' => true,
+严格检查模式开启（本类是否生效
+
+        'postfix_batch_business' => 'BatchBusiness',
+跳过批量业务的类
+
+        'postfix_business_lib' => 'Lib',
+跳过非业务类
+
+        'postfix_ex_model' => 'ExModel',
+混合模型后缀
+
+        'postfix_model' => 'Model',
+模型后缀
 ## 扩充方法
 
 ### 方法

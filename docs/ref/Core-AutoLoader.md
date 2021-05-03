@@ -7,7 +7,7 @@
 ## 选项
 全部选项
 
-        'path' => null,
+        'path' => '',
 路径
 
         'namespace' => '',

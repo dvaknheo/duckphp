@@ -3,12 +3,14 @@
 ## 简介
 Redis 的 SimpleCache  类
 ## 选项
-'redis_cache_skip_replace' => false,
+全部选项
 
-    跳过默认 cache 替换
-'redis_cache_prefix' => '',
+        'redis_cache_skip_replace' => false,
+跳过默认 cache 替换
 
-    cache 前缀
+        'redis_cache_prefix' => '',
+
+cache 前缀
 ## 公开方法
 
 

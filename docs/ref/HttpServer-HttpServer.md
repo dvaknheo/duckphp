@@ -5,18 +5,20 @@
 Http 独立组件，实现一个简单的 Http 服务
 
 ## 选项
-'host' => '127.0.0.1',
+全部选项
 
-    Host
-'port' => '8080',
+        'host' => '127.0.0.1',
+Host
 
-    端口
-'path' => '',
+        'port' => '8080',
+端口
 
-    工程路径
-'path_document' => 'public',
+        'path' => '',
+工程路径
 
-    文档路径
+        'path_document' => 'public',
+文档路径
+
 ## 公开方法
 public static function RunQuickly($options)
 

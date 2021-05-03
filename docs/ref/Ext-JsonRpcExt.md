@@ -5,14 +5,29 @@
  `组件类` json-rpc 扩展
 ## 选项
 
-'jsonrpc_namespace' => 'JsonRpc',
-'jsonrpc_backend' => 'https://127.0.0.1',
-'jsonrpc_is_debug' => false,
-'jsonrpc_enable_autoload' => true,
-'jsonrpc_check_token_handler' => null,
-'jsonrpc_wrap_auto_adjust' => true,
-'jsonrpc_service_interface' => '',
-'jsonrpc_service_namespace' => '',
+        'jsonrpc_namespace' => 'JsonRpc',
+默认jsonrpc 的命名空间
+
+        'jsonrpc_backend' => 'https://127.0.0.1',
+后端地址
+
+        'jsonrpc_is_debug' => false,
+是否调试
+        'jsonrpc_enable_autoload' => true,
+
+是否要自动加载
+
+        'jsonrpc_check_token_handler' => null,
+Token 处理
+
+        'jsonrpc_wrap_auto_adjust' => true,
+封装调整
+
+        'jsonrpc_service_interface' => '',
+限制指定接口
+
+        'jsonrpc_service_namespace' => '',
+服务命名空间
 
 ## 示例
 ```php
