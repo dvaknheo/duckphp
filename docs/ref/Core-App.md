@@ -98,17 +98,32 @@ DuckPhp\Core\App 类 可以视为几个类的组合
 
 
 ### 动态方法
-```php
-public function version() //版本
-public function extendComponents($method_map, $components = []) //扩充调用方法
-public function cloneHelpers($new_namespace, $new_helper_map = [])//复制助手函数群
-public function addBeforeShowHandler($handler)  // 高级
-public function removeBeforeShowHandler($handler) // 高级
 
-public function getDynamicComponentClasses()  // 获得动态类
-public function addDynamicComponentClass($class) //添加动态类
-public function skip404Handler()  // 跳过 404 处理
-```
+
+    public function version()
+版本
+
+    public function extendComponents($method_map, $components = [])
+扩充调用方法
+
+    public function cloneHelpers($new_namespace, $new_helper_map = [])
+复制助手函数群
+
+    public function addBeforeShowHandler($handler)
+高级
+
+    public function removeBeforeShowHandler($handler)
+高级
+
+    public function getDynamicComponentClasses()
+获得动态类
+
+    public function addDynamicComponentClass($class)
+添加动态类
+
+    public function skip404Handler()
+跳过 404 处理
+
 
 ### 内置 trait Core_SystemWrapper
 内置 trait Core_SystemWrapper 用于替换同名函数。这些方法，和手册里的一致，只是为了兼容不同平台
@@ -331,47 +346,22 @@ SystemWrapperTrait 还有两个特殊函数
 ### 接管流程的函数
 
     public function _On404(): void
-
+    
     public function _OnDefaultException($ex): void
-
+    
     public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
 
 
 ### 其他函数
 
     public function __construct()
-
-    public function version()
-
-
     protected function extendComponentClassMap($map, $namespace)
-
     protected function fixNamespace($class, $namespace)
-
-    public function extendComponents($method_map, $components = [])
-
-    public function cloneHelpers($new_namespace, $new_helper_map = [])
-
-    public function addBeforeShowHandler($handler)
-
-    public function removeBeforeShowHandler($handler)
-
-    public function getDynamicComponentClasses()
-
-    public function addDynamicComponentClass($class)
-
-    public function skip404Handler()
-
     protected function onBeforeOutput()
-
-
     private function getSuperGlobalData($superglobal_key, $key, $default)
 
 ## 说明
 ### 关于 injected_helper_map
-
-
-
 
 
 
