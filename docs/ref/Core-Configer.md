@@ -29,13 +29,11 @@
         'use_env_file' => false,
 打开这项，可以读取 path 选项下的 env 文件
 
-        'config_ext_files' => [],
+        'config_ext_file_map' => [],
 用于 AppPluginTrait
 
-## 公开方法
-
-    protected function initOptions(array $options)
-初始化选项
+## 方法
+### 公开方法
 
     public function _Config($key, $file_basename = 'config')
 读取一个配置
@@ -45,8 +43,10 @@
     public function _Setting($key)
 读取设置
 
-    public function assignExtConfigFile($key, $value = null)
-//TODO 此函数即将取消
+### 内部方法
+
+    protected function initOptions(array $options)
+重写了初始化选项函数
 
     protected function exitWhenNoSettingFile($full_setting_file, $setting_file)
 用于重写，没设置文件则退出
@@ -59,9 +59,11 @@ DuckPhp\Core\Configer 的选项共享个 path,带个 path_config
 
 path_config 如果是 / 开始的，会忽略 path 选项
 
-    当你想把配置目录 放入 app 目录的时候，调整 path_config
-    当我们要额外设置，配置的时候，把 setting , all_config 的值 带入
-    当我们需要额外的配置文件的时候  use_setting_file 设置为 true
+当你想把配置目录 放入 app 目录的时候，调整 path_config
+
+当我们要额外设置，配置的时候，把 setting , all_config 的值 带入
+
+当我们需要额外的配置文件的时候  use_setting_file 设置为 true
 
 基于  AppPluginTrait  需要， Configer 类比普通类多了 config_ext_files 选项
 

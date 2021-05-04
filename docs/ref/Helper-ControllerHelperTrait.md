@@ -24,6 +24,9 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
 
     public static function H($str)
     
+    public static function Json($data)
+
+    
     public static function L($str, $args = [])
     
     public static function Hl($str, $args = [])
@@ -61,9 +64,6 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
     
     public static function Parameter($key, $default = null)
     
-    public static function getParameters()
-//TODO 即将删除
-
     public static function getRouteCallingMethod()
     
     public static function setRouteCallingMethod($method)
@@ -109,6 +109,3 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
     public static function Logger($object = null)
 
 ### 结束
-
-
-

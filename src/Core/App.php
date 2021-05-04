@@ -799,7 +799,7 @@ trait Core_Glue
     {
         return Route::G()->_Domain($use_scheme);
     }
-    public static function Parameter($key, $default = null)
+    public static function Parameter($key = null, $default = null)
     {
         return Route::G()->_Parameter($key, $default);
     }
@@ -850,10 +850,6 @@ trait Core_Glue
     public static function getPathInfo()
     {
         return Route::G()->getPathInfo();
-    }
-    public static function getParameters()
-    {
-        return Route::G()->getParameters();
     }
     public static function addRouteHook($callback, $position, $once = true)
     {

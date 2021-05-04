@@ -36,6 +36,10 @@ class View extends ComponentBase
     {
         static::G()->_Display($view, $data);
     }
+    public static function Render(string $view, ?array $data = null): string
+    {
+        return static::G()->_Render($view, $data);
+    }
     
     public function _Show(array $data, string $view): void
     {
@@ -77,6 +81,15 @@ class View extends ComponentBase
         extract($this->data);
         
         include $this->view_file;
+    }
+    public function _Render(string $view, ?array $data = null): string
+    {
+        ob_implicit_flush(0);
+        ob_start();
+        $this->_Display($view, $data);
+        $ret = ob_get_contents();
+        ob_end_clean();
+        return (string)$ret;
     }
     public function reset(): void
     {

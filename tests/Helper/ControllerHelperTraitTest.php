@@ -32,9 +32,9 @@ class ControllerHelperTraitTest extends \PHPUnit\Framework\TestCase
         $url="";
         $method="method";
         ControllerHelper::H($str);
+        ControllerHelper::Json(["a"=>"b"]);
         ControllerHelper::URL($url=null);
         ControllerHelper::Domain();
-        ControllerHelper::getParameters();
         ControllerHelper::Parameter('a','b');
         ControllerHelper::getRouteCallingMethod();
         ControllerHelper::setRouteCallingMethod($method);

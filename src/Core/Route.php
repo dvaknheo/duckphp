@@ -69,15 +69,17 @@ class Route extends ComponentBase
     {
         return static::G();
     }
-    //TODO 删除
-    public static function Parameter($key, $default = null)
+    public static function Parameter($key = null, $default = null)
     {
         return static::G()->_Parameter($key, $default);
     }
-    //TODO 删除
-    public function _Parameter($key, $default = null)
+    public function _Parameter($key=null , $default = null)
     {
-        return $this->parameters[$key] ?? $default;
+        if (isset($key)) {
+            return $this->parameters[$key] ?? $default;
+        } else {
+            return  $this->parameters;
+        }
     }
     //@override
     protected function initOptions(array $options)
@@ -329,10 +331,6 @@ trait Route_Helper
             (__SUPERGLOBAL_CONTEXT)()->_SERVER = $_SERVER;
         }
     }
-    public function getParameters()
-    {
-        return $this->parameters;
-    }
     public function setParameters($parameters)
     {
         $this->parameters = $parameters;
@@ -357,7 +355,7 @@ trait Route_Helper
     {
         $this->calling_method = $calling_method;
     }
-    public function getNamespacePrefix()
+    public function getControllerNamespacePrefix()
     {
         return $this->namespace_prefix;
     }
@@ -411,7 +409,7 @@ trait Route_UrlManager
         $ret = $scheme.':/'.'/'.$host.$port;
         return $ret;
     }
-    protected function getBasePath()
+    protected function getUrlBasePath()
     {
         $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         //get basepath.
@@ -435,7 +433,7 @@ trait Route_UrlManager
         if (isset($url) && strlen($url) > 0 && substr($url, 0, 1) === '/') {
             return $url;
         }
-        $basepath = $this->getBasePath();
+        $basepath = $this->getUrlBasePath();
         $path_info = $this->getPathInfo();
 
         if ('' === $url) {

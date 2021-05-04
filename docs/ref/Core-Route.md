@@ -117,15 +117,23 @@ POST 的方法会在方法名前加前缀 do_
 设置/获得 URL 回调函数
 
 ### 辅助方法
+
+
 其他辅助方法
 
-    public function getParameters()
+    public function getRouteError()
+获取路由错误信息
+
     public function setParameters($parameters)
 设置 Parameter 数组
 
     public static function Parameter($key, $default = null)
     public function _Parameter($key, $default = null)
 读取 Parameter ， Parameter 用于 Url 重构之类
+
+    public function getPathInfo()
+    public function setPathInfo($path_info)
+获取和设置 PathInfo
 
     public function getRouteCallingPath()
 获取调用中的路径
@@ -145,20 +153,17 @@ POST 的方法会在方法名前加前缀 do_
 ### 其他方法
 
     public function bind($path_info, $request_method = 'GET')
+        
     
-    public function getPathInfo()
-    
-    public function setPathInfo($path_info)
-    
-    public function getRouteError()
-    
-    public function getNamespacePrefix()
-// 这个函数要改名
+    public function getControllerNamespacePrefix()
+// RouteHookRouteMap 用到 获取控制器命名空间
 
 ### 内部方法
 以下是内部方法
 
     protected function initOptions(array $options)
+重写了初始化选项
+
     protected function beforeRun()
 用于重写，在回调前执行
 
@@ -171,8 +176,8 @@ POST 的方法会在方法名前加前缀 do_
     protected function getMethodToCall($object, $method)
 获得回调方法
 
-    protected function getBasePath()
-URL 相关用
+    protected function getUrlBasePath()
+获得 URL 基本地址
 
 ## 说明
 

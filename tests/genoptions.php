@@ -4,22 +4,29 @@ require_once(__DIR__.'/../autoload.php');
 
 DocFixer::G()->init([])->run();
 OptionsGenerator::G()->init([])->run();
+
 var_dump(DATE(DATE_ATOM));
 
 return;
 class DocFixer
 {
-    use \DuckPhp\SingletonEx\SingletonExTrait;
+    public static function G($object=null)
+    {
+        static $_instance;
+        $_instance=$object?:($_instance??new static);
+        return $_instance;
+    }
+    public function init(array $options, ?object $context = null)
+    {
+        return $this;
+    }
     protected $path_base='';
     public function __construct()
     {
         $ref=new ReflectionClass(\DuckPhp\DuckPhp::class);
         $this->path_base=realpath(dirname($ref->getFileName()) . '/../').'/';
     }
-    public function init($a,$context=null)
-    {
-        return $this;
-    }
+
     public function run()
     {
         $files=$this->getSrcFiles($this->path_base.'src/');

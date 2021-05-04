@@ -88,29 +88,29 @@ class RouteHookRouteMapTest_FakeObject
     }
     function second()
     {
-        var_dump(Route::G()->getParameters());
+        var_dump(Route::G()->_Parameter());
     }
     public static function fifth()
     {
-        var_dump(Route::G()->getParameters());
+        var_dump(Route::G()->_Parameter());
     }
     public static function sixth()
     {
-        var_dump(Route::G()->getParameters());
+        var_dump(Route::G()->_Parameter());
     }
     public static function seventh()
     {
         var_dump("seventh!");
-        var_dump(Route::G()->getParameters());
+        var_dump(Route::G()->_Parameter());
     }
     function eighth()
     {
         var_dump("eight!");
-        var_dump(Route::G()->getParameters());
+        var_dump(Route::G()->_Parameter());
     }
     function foo()
     {
-        var_dump(Route::G()->getParameters());
+        var_dump(Route::G()->_Parameter());
     }
     function adjustCallbackArrow()
     {

@@ -96,7 +96,8 @@ trait AppPluginTrait
         $setting_file = $context->options['setting_file'] ?? 'setting';
         $ext_config_files = $this->pluginModeInitConfigFiles($setting_file);
         if (!empty($ext_config_files)) {
-            Configer::G()->assignExtConfigFile($ext_config_files);
+            $old_data = Configer::G()->$options['config_ext_file_map'] ?? [];
+            Configer::G()->$options['config_ext_file_map'] = array_merge($old_data, $ext_config_files);
         }
         
         //clone Helper

@@ -26,6 +26,10 @@ trait ControllerHelperTrait
     {
         return App::H($str);
     }
+    public static function Json($data)
+    {
+        return App::Json($data);
+    }
     public static function L($str, $args = [])
     {
         return App::L($str, $args);
@@ -47,10 +51,6 @@ trait ControllerHelperTrait
         return App::Domain($use_scheme);
     }
     ////
-    public static function getParameters()
-    {
-        return App::getParameters();
-    }
     public static function getRouteCallingMethod()
     {
         return App::getRouteCallingMethod();

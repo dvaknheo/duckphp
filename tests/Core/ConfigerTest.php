@@ -30,18 +30,11 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
         ];
         Configer::G(new Configer)->init($options);
         
-        Configer::G()->assignExtConfigFile(['X/a'=>$path_config.'/for_assign.php']);
-        Configer::G()->assignExtConfigFile('b',$path_config.'/c.php');
+        Configer::G()->options['config_ext_file_map']=['X/a'=>$path_config.'/for_assign.php'];
         Configer::G()->_LoadConfig('X/a');
         
         Configer::G()->isInited();
         
         \LibCoverage\LibCoverage::End();
-        /*
-        Configer::G()->init($options=[], $context=null);
-        Configer::G()->_Setting($key);
-        Configer::G()->_Config($key, $file_basename='config');
-        Configer::G()->_LoadConfig($file_basename='config');
-        //*/
     }
 }

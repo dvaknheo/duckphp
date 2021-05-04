@@ -348,7 +348,6 @@ App::PageHtml(123);
         $method="method";
         App::URL($url=null);
         
-        App::getParameters();
         App::Parameter('x','y');
         App::getRouteCallingMethod();
         App::setRouteCallingMethod($method);

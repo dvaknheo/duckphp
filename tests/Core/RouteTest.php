@@ -33,7 +33,6 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         
         //First Run;
         $flag=Route::RunQuickly($options);
-        Route::G()->getParameters();
         Route::G()->setParameters([]);
         Route::Parameter('a','b');
 
@@ -114,7 +113,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->bind('Missed','POST');
         Route::G()->run();
         Route::G()->bind("again",null)->run();
-        Route::G()->getNamespacePrefix();
+        Route::G()->getControllerNamespacePrefix();
         
         $this->foo2();
         Route::G()->dumpAllRouteHooksAsString();
