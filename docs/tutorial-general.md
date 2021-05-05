@@ -302,18 +302,6 @@ DuckPhp 只要更改选项就能实现很多强大的功能变化。
 
 DuckPhp 的示例文件，注释的都是默认选项，没使用默认注释选项的，这里说明一下。
 
-'path'=>$path,
-
-    基本路径，其他配置会用到这个基本路径。
-'namespace' =>$namespace，
-
-    工程的 autoload 的命名空间，和很多框架限定只能用 App 作为命名空间不同，DuckPHP 允许你用不同的命名空间
-
-'path_namespace'=>'app',
-
-    默认的 psr-4 的工程路径。可使用绝对路径
-
-
 'is_debug'=>false,
 
     配置是否在调试状态。

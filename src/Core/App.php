@@ -809,6 +809,10 @@ trait Core_Glue
     {
         return View::G()->_Display($view, $data);
     }
+    public static function Render($view, $data = null)
+    {
+        return View::G()->_Render($view, $data);
+    }
     public static function getViewData()
     {
         return View::G()->getViewData();

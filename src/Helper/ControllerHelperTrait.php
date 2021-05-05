@@ -38,10 +38,8 @@ trait ControllerHelperTrait
     {
         return App::Hl($str, $args);
     }
-    public static function Display($view, $data = null)
-    {
-        return App::Display($view, $data);
-    }
+
+    ////
     public static function Url($url)
     {
         return App::Url($url);
@@ -50,7 +48,6 @@ trait ControllerHelperTrait
     {
         return App::Domain($use_scheme);
     }
-    ////
     public static function getRouteCallingMethod()
     {
         return App::getRouteCallingMethod();
@@ -68,6 +65,10 @@ trait ControllerHelperTrait
         return App::dumpAllRouteHooksAsString();
     }
     ///////////////
+    public static function Render($view, $data = null)
+    {
+        return App::Render($view, $data);
+    }
     public static function Show($data = [], $view = '')
     {
         return App::Show($data, $view);

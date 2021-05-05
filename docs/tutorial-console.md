@@ -1,7 +1,11 @@
 # 命令行模式
+[toc]
 ## 相关类
+[DuckPhp\Component\Console](ref/Component-Console.md) 命令行类
 
-DuckPhp\Ext\Console
+[DuckPhp\Component\DuckPhpCommand](ref/Component-DuckPhpCommand.md) 默认的命令行类
+
+
 ## 相关选项
 'cli_enable' => true,
     启用命令行模式
@@ -13,7 +17,7 @@ DuckPhp\Ext\Console
     命令和类的别名 ， 键为类名， 值为别名。
 ## 说明
 
-DuckPhp 的命令行模式是通过 DuckPhp\\Ext\\Console 这个扩展实现的
+DuckPhp 的命令行模式是通过 [DuckPhp\Component\Console](ref/Component-Console.md) 这个扩展实现的
 
 ## 入口差异
 ```
@@ -49,7 +53,7 @@ test    启动测试
 version 显示版本
 
 
-添加自定义命令。
+### 添加自定义命令。
 
 你的类里加 command_$cmd 。 即可
 该方法的 doc 第一行就是简介

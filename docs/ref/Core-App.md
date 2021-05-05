@@ -101,7 +101,7 @@ DuckPhp\Core\App 类 可以视为几个类的组合
 
 
     public function version()
-版本
+版本，目前在 命令行中用到
 
     public function extendComponents($method_map, $components = [])
 扩充调用方法
@@ -123,6 +123,18 @@ DuckPhp\Core\App 类 可以视为几个类的组合
 
     public function skip404Handler()
 跳过 404 处理
+### 接管流程的函数
+    public function __construct()
+构造函数
+
+    public function _On404(): void
+处理 404
+
+    public function _OnDefaultException($ex): void
+处理异常
+
+    public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
+处理开发期错误
 
 
 ### 内置 trait Core_SystemWrapper
@@ -167,7 +179,6 @@ SystemWrapperTrait 还有两个特殊函数
     public static function L($str, $args = [])
     public static function Hl($str, $args = [])
     public static function Json($data)
-    public static function Domain($use_scheme = false)
 ```
 #### 调试相关
 ```php
@@ -196,10 +207,11 @@ SystemWrapperTrait 还有两个特殊函数
 ```
 #### 其他
 
-```php
     public static function Cache($object = null)
+缓存对象
+
     public static function Show($data = [], $view = '')
-```
+Show 方法对 View::Show() 加了好些补充
 
 ### 内置 trait  Core_NotImplemented
 内置 trait Core_NotImplemented DuckPhp\Core\App 没实现，但 DuckPhp\DuckPhp 类实现的的方法。数据库和事件系统
@@ -238,18 +250,30 @@ SystemWrapperTrait 还有两个特殊函数
 ```
 #### 来自 Route
 来自Route 的方法比较多。重点掌握
-```php
+
     public static function Route($replacement_object = null)
+获得 Route 对象
+
     public static function Url($url = null)
-    public static function Parameter($key, $default = null)
-    public static function replaceControllerSingelton($old_class, $new_class)
+获得 Url
+
+    public static function Domain($use_scheme = false)
+获得域名
+
+    public static function Parameter($key = null, $default = null)    
+获取存储的 paramters 。rewrite 之后会保存在这。
+
     public static function getPathInfo()
-    public static function getParameters()
+获取 PathInfo
+
+    public static function replaceControllerSingelton($old_class, $new_class)
+单例模式，替换控制器类， 控制器类的 单例模式不能简单的 $old_class::G($new_class) 替换。
+
+```php
     public static function addRouteHook($callback, $position, $once = true)
     public static function add404RouteHook($callback)
     public static function getRouteCallingMethod()
     public static function setRouteCallingMethod($calling_method)
-    public static function setUrlHandler($callback)
     public static function dumpAllRouteHooksAsString()
 ```
 #### 来自 View
@@ -290,11 +314,11 @@ SystemWrapperTrait 还有两个特殊函数
 ```
 因为 Cookie 不仅仅读取，还有写入，所以用 CookieSet 。
 
-
 ### 内部实现函数
 
-```php
+这些二都是内部的实现函数
 
+```php
     public function _Show($data = [], $view = '')
     public function _header($output, bool $replace = true, int $http_response_code = 0)
     public function _setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
@@ -343,27 +367,15 @@ SystemWrapperTrait 还有两个特殊函数
     protected function _CookieSet($key, $value, $expire)
     
 ```
-### 接管流程的函数
 
-    public function _On404(): void
-    
-    public function _OnDefaultException($ex): void
-    
-    public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
+### 内部函数
 
-
-### 其他函数
-
-    public function __construct()
     protected function extendComponentClassMap($map, $namespace)
     protected function fixNamespace($class, $namespace)
     protected function onBeforeOutput()
     private function getSuperGlobalData($superglobal_key, $key, $default)
 
 ## 说明
+
 ### 关于 injected_helper_map
-
-
-
-
 

@@ -2,8 +2,12 @@
 [toc]
 ## 相关类
 App
-ThrowOnTrait
-ExceptionManager
+
+[DuckPhp\ThrowOn\ThrowOnTrait](ref/ThrowOn-ThrowOnTrait.md) 可抛类
+[DuckPhp\Core\ExceptionManager](ref/Core-ExceptionManager.md) 异常管理类
+
+
+
 
 ## 相关配置
 'error_404' => null,          //'_sys/error-404',

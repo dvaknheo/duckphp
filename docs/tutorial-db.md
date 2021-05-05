@@ -3,7 +3,7 @@
 ## 相关类和配置。
 
 - [DuckPhp\Component\DbManager](ref/Component-DbManager.md) 管理数据库
-- [DuckPhp\Db\Db](ref/Db-Db.md)
+- [DuckPhp\Db\Db](ref/Db-Db.md) 数据库类
     - 使用 [DuckPhp\Db\DbAdvanceTrait](ref/Db-DbAdvanceTrait.md)
     - 实现 [DuckPhp\Db\DbInterface](ref/Db-DbInterface.md)
 

@@ -42,11 +42,10 @@ AdvanceHelperTrait 的文档参见 [DuckPhp\Helper\AdvanceHelper](Helper-Advance
     
     public static function CookieSet($key, $value, $expire = 0)
     
-    public static function Event()
     
     public static function OnEvent($event, $callback)
 
-### 系统替代 函数
+### 系统替代函数
 
 这些函数，和系统函数同名，目的是兼容 swoole/workerman 等平台。
 
@@ -67,9 +66,9 @@ AdvanceHelperTrait 的文档参见 [DuckPhp\Helper\AdvanceHelper](Helper-Advance
     public static function session_destroy()
     
     public static function session_set_save_handler(\SessionHandlerInterface $handler)
-    
 
-### 其他函数
+
+### App类的动态方法
 
     public static function extendComponents($method_map, $components = [])
     
@@ -86,8 +85,8 @@ AdvanceHelperTrait 的文档参见 [DuckPhp\Helper\AdvanceHelper](Helper-Advance
 ### 结束
 
 
-    
+​    
 
-    
+​    
 
 

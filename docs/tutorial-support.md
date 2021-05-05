@@ -96,7 +96,6 @@ Class::Method Class@Method Class->Method 的区别
 
 :: 表示 Class::Method
 
-
 ~ => 扩充到当前命名空间
 
 门面， DuckPhp 用可变单例代替了门面
@@ -114,22 +113,21 @@ Class::Method Class@Method Class->Method 的区别
 
 视图 DuckPhp 的视图原则
 
-
 错误处理
-日志
+日志  App::Logger() 得到 psr 日志类， Logger 类
 验证， duckphp 没验证处理，你需要第三方类
 
-缓存
+缓存  Cache()
 
-Session
+Session  集中化管理， 放在 System/WebSession 下
 
-Cookie
+Cookie  集中化管理，放在 System/WebCookie 下
 
-多语言
+多语言 重写 App::L 函数
 
-上传
+上传 无特殊的上传
 
-命令行
+命令行  见命令行的教程，和 DuckPhp\Component\Console 参考类
 
 扩展库
 

@@ -127,8 +127,8 @@ POST 的方法会在方法名前加前缀 do_
     public function setParameters($parameters)
 设置 Parameter 数组
 
-    public static function Parameter($key, $default = null)
-    public function _Parameter($key, $default = null)
+    public static function Parameter($key = null, $default = null)
+    public function _Parameter($key=null , $default = null)
 读取 Parameter ， Parameter 用于 Url 重构之类
 
     public function getPathInfo()
@@ -147,7 +147,6 @@ POST 的方法会在方法名前加前缀 do_
 设置当前路由
 
     public function dumpAllRouteHooksAsString()
-
 简单 dump 所有钩子
 
 ### 其他方法
@@ -234,6 +233,3 @@ if(!$flag){
 
 修订时间：
 
-
-
-​    

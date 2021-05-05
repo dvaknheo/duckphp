@@ -10,7 +10,7 @@ BusinessHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extendabl
     public static function Setting($key)
 获得设置信息
 
-    public static function Config($key, $file_basename='config')
+    public static function Config($key, $file_basename = 'config')
 获得配置
 
     public static function LoadConfig($file_basename)
@@ -28,6 +28,5 @@ BusinessHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extendabl
     public static function Logger($object = null)
 获得日志对象
 
-    public static function Config($key, $file_basename = 'config')
 
 

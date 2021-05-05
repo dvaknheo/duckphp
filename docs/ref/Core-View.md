@@ -25,7 +25,11 @@
 
     public static function Display(string $view, ?array $data = null): void
     public function _Display(string $view, ?array $data = null): void
-显示文件，不包括页眉页脚
+显示文件，不包括页眉页脚。
+
+    public static function Render(string $view, ?array $data = null): string
+    public function _Render(string $view, ?array $data = null): string
+渲染文件，不包括页眉页脚。得到输出的字符串。
 
     public function setViewHeadFoot(?string $head_file, ?string $foot_file): void
 设置页眉页脚
@@ -51,3 +55,4 @@ DuckPhp\Core\View 的选项共享一个 path,带一个 path_view.
 path_view 如果是 / 开始的，会忽略 path 选项
 
 当你想把视图目录 放入 app 目录的时候，请自行调整 path_view
+

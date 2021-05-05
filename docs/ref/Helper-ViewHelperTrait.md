@@ -3,10 +3,11 @@
 
 ## 简介
 
-ViewHelper 绑定了 ViewHelperTrait
+ViewHelper 
 
-ViewHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md) ，XHelperTrait
+使用 [DuckPhp\Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md) 
 
+使用 [DuckPhp\Helper\ViewHelper](Helper-ViewHelper.md)
 
 ViewHelperTrait 的文档参见 [DuckPhp\Helper\ViewHelper](Helper-ViewHelper.md);
 
