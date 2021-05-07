@@ -13,22 +13,23 @@
 内置命令，新建工程
 
     public function command_run()
-内置命令，运行
+内置命令，运行内置 Http 服务器
+--server-class =  替换新的 httpserver class
 
     public function command_help()
-
+    
     public function command_version()
-
+    
     public function command_list()
-
+    
     public function command_call()
-
+    
     public function command_fetch($uri = '', $post = false)
-
+    
     public function command_routes()
-
+    
     public function command_depoly()
-
+    
     public function command_test()
     
     protected function initContext(object $context)

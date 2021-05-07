@@ -102,7 +102,7 @@ class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
         App::G(new App());
         DuckPhpCommand_App::G()->options['error_404']=function(){debug_print_backtrace(2);};
         $_SERVER['argv']=[
-            '-','run', '--override-class=tests/DuckPhp/Component/DuckPhpCommand_HttpServer',
+            '-','run', '--http-server=tests/DuckPhp/Component/DuckPhpCommand_HttpServer',
         ];
         try{
         DuckPhpCommand_App::G()->init([])->run();

@@ -43,7 +43,7 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
     public static function assignViewData($key, $value = null)
 分配视图变量。 特殊场合使用。
 
-### 配置相关
+### 配置
     public static function Setting($key)
 设置是敏感信息,不存在于版本控制里面。而配置是非敏感。
 
@@ -124,7 +124,7 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
 常用的一个操作：
 ```php
 <?php
-    //旧
+    //旧：
     public function login_old()
     {
         $error = '';
@@ -170,6 +170,5 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
     public static function FireEvent($event, ...$args)
 触发事件
 
-    public static function Logger($object = null)
-tod 日志统一用 __logger
+
 ### 结束

@@ -65,9 +65,9 @@
 + ** 'close_resource_at_output' => false,  ** 
 
     在输出前关闭资源（DB,Redis）   // [DuckPhp\Core\App](Core-App.md)
-+ ** 'config_ext_files' => array ( ),  ** 
++ ** 'config_ext_file_map' => array ( ),  ** 
 
-    额外的配置文件数组   // [DuckPhp\Core\Configer](Core-Configer.md)
+       // [DuckPhp\Core\Configer](Core-Configer.md)
 + ** 'controller_base_class' => NULL,  ** 
 
     控制器基类   // [DuckPhp\Core\Route](Core-Route.md), [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
@@ -427,8 +427,8 @@
 + DuckPhp\Core\Configer
     - 'all_config' => array ( ),
         所有配置
-    - 'config_ext_files' => array ( ),
-        额外的配置文件数组
+    - 'config_ext_file_map' => array ( ),
+        
     - 'path' => '',
         基础目录
     - 'path_config' => 'config',

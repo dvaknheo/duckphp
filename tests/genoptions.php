@@ -66,7 +66,9 @@ class DocFixer
     public function drawSrc($file)
     {
         $head ='    public $options = ['."\n";
+        $head2 = '        $plugin_options_default = ['."\n";
         $foot ='    ];'."\n";
+        $foot2 = '        ];'."\n";
         $in=false;
         
         $options=[];
@@ -74,7 +76,7 @@ class DocFixer
         
         $lines=file($file);
         foreach($lines as $l){
-            if($l === $foot){
+            if($l === $foot || $l === $foot2){
                 break;
             }
             if($in){
@@ -82,7 +84,7 @@ class DocFixer
                 if(substr(trim($l),0,2)==='//'){continue;}
                 $options[]=$l;
             }
-            if($l===$head){
+            if($l===$head || $l === $head2){
                 $in=true;
             }
             

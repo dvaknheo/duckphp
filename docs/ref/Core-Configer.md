@@ -40,6 +40,7 @@
 
     public function _LoadConfig($file_basename = 'config')
 载入一个配置文件
+
     public function _Setting($key)
 读取设置
 

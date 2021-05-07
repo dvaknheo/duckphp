@@ -9,53 +9,53 @@
 *需要注意的是：AppPluginTrait 的插件选项是在 `plugin_options` 属性里设置* 目的就是子类化的时候可使用父类的选项。
 所有选项
 
-        'plugin_path' => null,
+            'plugin_path' => null,
 插件的路径,使用默认将会调整成普通App路径~ 会替换成插件类的命名空间
 
-        'plugin_namespace' => null,
+            'plugin_namespace' => null,
 插件的命名空间，使用默认配置将会调整成所在类的命名空间的父命名空间
 
-        'plugin_routehook_position' => 'append-outter',
+            'plugin_routehook_position' => 'append-outter',
 插件路由的插入方法，默认用最后的钩子
 
-        'plugin_path_conifg' => 'config',
+            'plugin_path_conifg' => 'config',
 
 插件的配置文件，
 
-        'plugin_path_view' => 'view',
+            'plugin_path_view' => 'view',
 插件的视图文件，
 
-        'plugin_files_config' => [],
+            'plugin_files_config' => [],
 插件的配置文件列表
 
-        'plugin_search_config' => false,
+            'plugin_search_config' => true,
 插件搜索配置模式
 
-        'plugin_url_prefix' => '',
+            'plugin_url_prefix' => '',
 URL 前缀，限定插件的目录
 
-        'plugin_view_options' => [],
+            'plugin_view_options' => [],
 传递给 View 的选项
 
-        'plugin_route_options' => [],
+            'plugin_route_options' => [],
 传递给 Route 的选项
 
-        'plugin_path_document' => 'public',
+            'plugin_path_document' => 'public',
 用于读取资源的目录
 
-        'plugin_enable_readfile' => false,
+            'plugin_enable_readfile' => false,
 启用用于读取资源的目录
 
-        'plugin_use_singletonex_route' => true,
+            'plugin_use_singletonex_route' => true,
 启用 SingletonEx, 让客户可以修改Controller
 
-        'plugin_component_class_view' => '',
+            'plugin_component_class_view' => '',
 替换默认的View
 
-        'plugin_component_class_route' => '',
+            'plugin_component_class_route' => '',
 替换默认的Route
 
-        'plugin_injected_helper_map' => '',
+            'plugin_injected_helper_map' => '',
 高级功能
 
 ## 公开方法

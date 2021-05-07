@@ -61,8 +61,8 @@ class App extends DuckPhp
         // 在输出前关闭资源（DB,Redis） (DuckPhp\Core\App)
         // $options['close_resource_at_output'] = false;
 
-        // 额外的配置文件数组 (DuckPhp\Core\Configer)
-        // $options['config_ext_files'] = array ( );
+        //  (DuckPhp\Core\Configer)
+        // $options['config_ext_file_map'] = array ( );
 
         // 控制器基类 (DuckPhp\Core\Route, DuckPhp\Ext\StrictCheck)
         // $options['controller_base_class'] = NULL;

@@ -179,6 +179,9 @@ SystemWrapperTrait 还有两个特殊函数
     public static function L($str, $args = [])
     public static function Hl($str, $args = [])
     public static function Json($data)
+    
+    public static function Render($view, $data = null)
+
 ```
 #### 调试相关
 ```php
@@ -260,7 +263,7 @@ Show 方法对 View::Show() 加了好些补充
     public static function Domain($use_scheme = false)
 获得域名
 
-    public static function Parameter($key = null, $default = null)    
+    public static function Parameter($key = null, $default = null)
 获取存储的 paramters 。rewrite 之后会保存在这。
 
     public static function getPathInfo()
@@ -378,4 +381,8 @@ Show 方法对 View::Show() 加了好些补充
 ## 说明
 
 ### 关于 injected_helper_map
+
+
+
+    public static function setUrlHandler($callback)
 

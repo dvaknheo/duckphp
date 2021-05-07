@@ -365,6 +365,7 @@ App::PageHtml(123);
         App::G()->addBeforeShowHandler(function(){ echo "addBeforeShowHandler";});
         App::G()->options['skip_view_notice_error']=true;
         App::Show(['A'=>'b'],"view");
+        App::Render("view",['A'=>'b']);
         App::Display("view",['A'=>'b']);
         App::getViewData();
         

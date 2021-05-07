@@ -85,6 +85,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         \__is_debug();
         \__is_real_debug();
         \__platform();
+        \__logger();
 
 
     }

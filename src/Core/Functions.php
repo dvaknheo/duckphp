@@ -6,27 +6,27 @@
 use DuckPhp\Core\App;
 
 if (! function_exists('__h')) {
-    function __h(...$args)
+    function __h($str)
     {
-        return App::H(...$args);
+        return App::H($str);
     }
 }
 if (! function_exists('__l')) {
-    function __l(...$args)
+    function __l($str, $args = [])
     {
-        return App::L(...$args);
+        return App::L($str, $args);
     }
 }
 if (! function_exists('__hl')) {
-    function __hl(...$args)
+    function __hl($str, $args = [])
     {
-        return App::Hl(...$args);
+        return App::Hl($str, $args);
     }
 }
 if (! function_exists('__url')) {
-    function __url(...$args)
+    function __url($url)
     {
-        return App::Url(...$args);
+        return App::Url($url);
     }
 }
 if (! function_exists('__json')) {
@@ -57,16 +57,21 @@ if (! function_exists('__var_dump')) {
 }
 
 if (! function_exists('__trace_dump')) {
-    function __trace_dump(...$args)
+    function __trace_dump()
     {
-        return App::TraceDump(...$args);
+        return App::TraceDump();
     }
 }
-
-if (! function_exists('__debug_log')) {
-    function __debug_log(...$args)
+if (! function_exists('__logger')) {
+    function __logger()
     {
-        return App::DebugLog(...$args);
+        return App::Logger();
+    }
+}
+if (! function_exists('__debug_log')) {
+    function __debug_log($str, $args = [])
+    {
+        return App::DebugLog($str, ...$args);
     }
 }
 
