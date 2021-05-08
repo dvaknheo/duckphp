@@ -181,7 +181,6 @@ SystemWrapperTrait 还有两个特殊函数
     public static function Json($data)
     
     public static function Render($view, $data = null)
-
 ```
 #### 调试相关
 ```php

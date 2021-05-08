@@ -6,11 +6,15 @@
 
 从简单到复杂，我们列出助手类。
 
-- [DuckPhp\Helper\ViewHelper](ref/Helper-ViewHelper.md) 视图助手类
-- [DuckPhp\Helper\ModelHelper](ref/Helper-ModelHelper.md) 模型助手类
+- [DuckPhp\Helper\ViewHelper](ref/Helper-ViewHelper.md)  视图助手类 [DuckPhp\Helper\ViewHelperTrait](ref/Helper-ViewHelperTrait.md) 
+- [DuckPhp\Helper\ModelHelper](ref/Helper-ModelHelper.md) 模型助手类   [DuckPhp\Helper\ModelHelperTrait](ref/Helper-ModelHelperTrait.md) 
 - [DuckPhp\Helper\BusinessHelper](ref/Helper-BusinessHelper.md) 业务助手类
+[DuckPhp\Helper\BusinessHelperTrait](ref/Helper-BusinessHelperTrait.md) 
 - [DuckPhp\Helper\ControllerHelper](ref/Helper-ControllerHelper.md) 控制器助手类
-- *[DuckPhp\Helper\AdvanceHelper](ref/Helper-AdvanceHelper.md)* 应用助手类，一般不常用。
+[DuckPhp\Helper\ContorllerHelperTrait](ref/Helper-ControllerHelperTrait.md) 
+
+- *[DuckPhp\Helper\AdvanceHelper](ref/Helper-AdvanceHelper.md)* 高级助手类，一般不常用。
+[DuckPhp\Helper\AdvanceHelperTrait](ref/Helper-AdvanceHelperTrait.md)
 
 ## 开始
 助手类是 `业务工程师` 必须掌握的类。
@@ -34,6 +38,8 @@ Controller --> Business ------------------------------ ---> Model
 
 作为 `业务工程师` ， 你不能引入 DuckPhp 的任何东西，就当 DuckPhp 命名空间不存在。
 核心工程师才去研究 DuckPhp 类的东西。
+
+假设你的工程的命名空间是 LazyToChange 。
 
 * 写 Model 你可能要引入 LazyToChange\Helper\ModelHelper 助手类别名为 M 。
 * 写 Business 你可能要引入 LazyToChange\Helper\BusinessHelper 助手类别名为 B 。
@@ -66,7 +72,7 @@ Controller --> Business ------------------------------ ---> Model
 
 ## 全局助手函数
 
-助手类有些通用的方法，用全局函数代替，全局助手函数用于 View 视图里
+助手类有些通用的方法，用全局函数代替，
 
 ### 调试函数
 
@@ -89,6 +95,9 @@ _\_debug_log(...$arg)
 
     对应 App::DebugLog($message, array $context = array()) 对应调试状态下 Log 当前变量。
 ### 显示相关函数
+
+全局助手函数用于 View 视图里
+
 __h()
 
     对应 App::H(); HTML 编码

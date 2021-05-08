@@ -26,35 +26,41 @@
 
 ## 方法
 
+    public static function G($object = null)
+    public function __construct()
+    public function isInited(): bool
+    public function init(array $options, ?object $context = null)
+常规流程方法
+
     public function run()
+运行
 
     public function app()
+获得调用的 $context 
 
-    public static function G($object = null)
-    
-    public function __construct()
-    
-    public function isInited(): bool
-    
-    public function init(array $options, ?object $context = null)
     
     public function getCliParameters()
-    
+重要，获得 命令行参数
+
     public function regCommandClass($class, $alias = null)
     
     public static function DoRun($path_info = '')
     
-    protected function parseCliArgs($argv)
     
     public function callObject($class, $method, $args, $input)
+    
+    public function getCommandListInfo()
+得到可用命令列表
+
+
+    protected function parseCliArgs($argv)
     
     protected function getClassAndMethod($cmd)
     
     protected function getCommandsByClass($class)
     
     protected function getCommandGroupInfo()
-    
-    public function getCommandListInfo()
+
 ## 详解
 
 Console 类是 DuckPhp 的 命令行支持类。
@@ -64,7 +70,7 @@ Console 类是 DuckPhp 的 命令行支持类。
 添加自定义命令。
 
 你的类里加 command_$cmd 。 即可
-该方法的 doc 第一行就是简介
+该方法的 phpdoc 第一行就是简介
 
 使用参数
 命令行中的 --XX 会成为方法中的 $XX 参数
