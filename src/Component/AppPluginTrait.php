@@ -193,6 +193,7 @@ trait AppPluginTrait
         
         $this->onPluginModeBeforeRun();
         
+        try{
         $ret = Route::G()->run();
         if (!$ret && $this->plugin_options['plugin_enable_readfile']) {
             $ret = $this->pluginModeReadFile($path_info);
@@ -200,6 +201,11 @@ trait AppPluginTrait
         if (!$ret) {
             $this->pluginModeClear();
             return false;
+        }
+        }catch(\Throwable $ex){
+            // 清理。
+            
+            throw $ex;
         }
         $this->onPluginModeAfterRun();
         $this->pluginModeClear();

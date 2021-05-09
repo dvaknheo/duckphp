@@ -285,23 +285,11 @@ EOT;
         });
     }
     
-    //////// for DuckPhp\HttpServer\AppInterface
-    
-    //protected $extDynamicComponentClasses = [];
-    public function getDynamicComponentClasses()
-    {
-        $ret = [
-            RuntimeState::class,
-            View::class,
-            Route::class,
-        ];
-        $ret = array_merge($ret, $this->extDynamicComponentClasses);
-        return $ret;
-    }
     public function addDynamicComponentClass($class)
     {
         $this->extDynamicComponentClasses[] = $class;
-    }
+    }    //////// for DuckPhp\HttpServer\AppInterface
+
     public function skip404Handler()
     {
         $this->options['skip_404_handler'] = true;

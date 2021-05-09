@@ -19,6 +19,9 @@ use DuckPhp\Core\View;
 trait KernelTrait
 {
     public $options = [];
+
+    //protected $extDynamicComponentClasses = [];
+
     protected static $options_default = [
             //// not override options ////
             'use_autoloader' => false,
@@ -242,10 +245,23 @@ trait KernelTrait
     }
     public function beforeRun()
     {
-        RuntimeState::G()->reset();
-        View::G()->reset();
-        Route::G()->reset();
+        $classes = $this->getDynamicComponentClasses();
+        foreach($classes as $v){
+            $v::G()->reset();
+        }
     }
+    public function getDynamicComponentClasses()
+    {
+        $ret = [
+            RuntimeState::class,
+            ExceptionManager::class,
+            View::class,
+            Route::class,
+        ];
+        $ret = array_merge($ret, $this->extDynamicComponentClasses ?? []);
+        return $ret;
+    }
+    
     //main produce end
     
     public function replaceDefaultRunHandler(callable $handler = null): void
