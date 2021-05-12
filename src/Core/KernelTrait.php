@@ -236,6 +236,7 @@ trait KernelTrait
                 RuntimeState::G()->clear();
                 throw $ex;
             }
+            //$this->onException();
             ExceptionManager::CallException($ex);
             $ret = true;
         }
@@ -246,7 +247,7 @@ trait KernelTrait
     public function beforeRun()
     {
         $classes = $this->getDynamicComponentClasses();
-        foreach($classes as $v){
+        foreach ($classes as $v) {
             $v::G()->reset();
         }
     }

@@ -172,3 +172,7 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
 
 
 ### 结束
+    public static function dumpAllRouteHooksAsString()
+
+    public static function Logger($object = null)
+

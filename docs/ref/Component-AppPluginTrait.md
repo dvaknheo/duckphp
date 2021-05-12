@@ -68,9 +68,8 @@ URL 前缀，限定插件的目录
     protected function _PluginModeRouteHook($path_info)
 路由勾子
 
-    public function pluginModeGetOldRoute()
-    public function pluginModeGetOldView()
-获得旧的 View/Route 实例
+    public function pluginModeGetOldComponent($class)
+获得旧的 $class::G() 实例
 
     public function pluginModeClear()
 插件清理，备不时之需
@@ -81,9 +80,11 @@ URL 前缀，限定插件的目录
     protected function onPluginModeInit()
     protected function onPluginModeBeforeRun()
     public function onPluginModeAfterRun()
+    public function onPluginModeException()
 
 onPluginModeBeforeRun 运行阶段就执行 onPluginModeRun 得到回调之后才执行。 
 onPluginModeAfterRun 是 public 的？
+onPluginModeException 出异常后调用
 
 ## 内部方法
 全部内部方法
@@ -212,4 +213,6 @@ onBeforeRun
 onAfterRun
 
 清理
+
+
 

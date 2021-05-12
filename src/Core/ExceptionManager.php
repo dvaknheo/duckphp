@@ -70,7 +70,7 @@ class ExceptionManager extends ComponentBase
     public function _CallException($ex)
     {
         $t = $this->exceptionHandlers;
-        array_reverse($t);
+        $t = array_reverse($t);
         foreach ($t as $class => $callback) {
             if (is_a($ex, $class)) {
                 ($callback)($ex);

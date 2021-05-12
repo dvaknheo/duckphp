@@ -166,6 +166,9 @@ init() 中 DefaultComponents() 中从设置读取调试标志和平台标志
     public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
 处理开发模式错误
 
+    public function getDynamicComponentClasses()
+获得动态组件，在多次 run 的时候，这些组件都会 reset
+
 ## 流程详解
 
 Kernel 这个 Trait 一般不直接使用。一般用的是 DuckPhp\Core\App ， 而直接的 DuckPhp\DuckPhp 类，则是把常见扩展加进去形成完善的框架。
@@ -209,8 +212,4 @@ init() 初始化阶段，和 run 阶段
     清理流程
 ### clear 清理
 只有一个动作： 设置 RuntimeState 为结束
-
-
-
-
 

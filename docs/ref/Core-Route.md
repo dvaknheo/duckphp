@@ -128,7 +128,7 @@ POST 的方法会在方法名前加前缀 do_
 设置 Parameter 数组
 
     public static function Parameter($key = null, $default = null)
-    public function _Parameter($key=null , $default = null)
+    public function _Parameter($key = null, $default = null)
 读取 Parameter ， Parameter 用于 Url 重构之类
 
     public function getPathInfo()
@@ -232,4 +232,5 @@ if(!$flag){
 修订版本：
 
 修订时间：
+
 

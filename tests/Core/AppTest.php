@@ -276,6 +276,11 @@ App::PageHtml(123);
         App::G()->options['error_500']=null;
         App::CallException(new \Exception("EXxxxxxxxxxxxxxx",-1));
         
+                App::G()->options['error_500']=null;
+                App::G()->options['is_debug']=false;
+        App::CallException(new \Exception("EXxxxxxxxxxxxxxx",-1));
+        App::G()->options['is_debug']=true;
+        
         App::G()->options['error_500']=function($ex){ echo $ex;};
         App::CallException(new \Exception("22222222222222",-1));
         

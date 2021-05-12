@@ -402,7 +402,7 @@ namespace MySpace\Helper
     {
         // 添加你想要的助手函数。 ViewHelper 一般来说是不使用的
     }
-    class AppHelper extends \DuckPhp\Helper\AppHelper
+    class AppHelper extends \DuckPhp\Helper\AdvanceHelper
     {
         // 添加你想要的助手函数。 AppHelper 一般来说是不使用的
     }

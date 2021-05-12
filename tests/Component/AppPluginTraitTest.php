@@ -3,6 +3,8 @@ namespace tests\DuckPhp\Core
 {
 use DuckPhp\Component\AppPluginTrait;
 use DuckPhp\DuckPhp;
+use DuckPhp\Core\View;
+
 
 class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
 {
@@ -53,6 +55,7 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
         AppPluginTraitApp::G()->onPluginModeInit=[static::class,"onPluginModeInit"];
         AppPluginTraitApp::G()->onPluginModeBeforeRun=[static::class,"onPluginModeBeforeRun"];
         AppPluginTraitApp::G()->onPluginModeAfterRun= function(){ echo "onPluginModeAfterRun!";};
+        AppPluginTraitApp::G()->onPluginModeException= function(){ echo "onPluginModeException!";};
         
         DuckPhp::G(new DuckPhp())->init($options);
         
@@ -70,6 +73,18 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
         $_SERVER['PATH_INFO']='/Test2/second';
         DuckPhp::G()->run();
         
+        
+        
+            $_SERVER['PATH_INFO']='/Test/exception';
+            DuckPhp::G()->run();
+        
+            $_SERVER['PATH_INFO']='/Test/exception';
+            AppPluginTraitApp2::G()->onPluginModeException= function(){ echo "onPluginModeException!";};
+
+            DuckPhp::G()->run();
+      
+        
+        
         ////[[[[
         AppPluginTraitApp2::G()->plugin_options['plugin_enable_readfile']=true;
         AppPluginTraitApp2::G()->plugin_options['plugin_path_document']='../public';
@@ -82,6 +97,8 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
         DuckPhp::G()->run();
         $_SERVER['PATH_INFO']='/Test/x.html';
         DuckPhp::G()->run();
+
+        
         ////]]]]
         ////
         $plugin_options['plugin_path_namespace']=null;
@@ -113,12 +130,11 @@ class AppPluginTraitApp extends DuckPhp
     {
         parent::__construct();
         $this->plugin_options['plugin_files_conifg']='config';
-        $this->pluginModeGetOldRoute();
-        $this->pluginModeGetOldView();
+        $this->pluginModeGetOldComponent(View::class);
         $this->onPluginModeBeforeRun = function(){
             // ??? not hit ?
             //*
-            var_dump("Before run!",get_class(AppPluginTraitApp::G()->pluginModeGetOldRoute()));
+            var_dump("Before run!",get_class(AppPluginTraitApp::G()->pluginModeGetOldComponent(View::class)));
             $this->onPluginModeAfterRun=function(){ echo "onRun!";};
             //var_dump($this->onPluginModeAfterRun);
             //*/
@@ -186,6 +202,10 @@ class Main
         //\DuckPhp\Helper\AppHelper::Foo();
         $x=__url("z");
         DuckPhp::Show(['date'=>DATE(DATE_ATOM)],'main');
+    }
+    public function exception()
+    {
+        throw new \Exception("zzzzzzzzzzzzz");
     }
 }
 ////]]]]

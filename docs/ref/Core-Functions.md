@@ -20,7 +20,7 @@ View 里不想  use ViewHelper 的情况
     function __h(...$args)
 \_\_h 对应 App::H(); Html 编码
 
-    function __l($str, $args =[])
+    function __l($str, $args = [])
 \_\_l 对应 App::L();
 
     function __hl($str, $args = [])
@@ -48,7 +48,7 @@ View 里不想  use ViewHelper 的情况
     function __trace_dump()
 \_\_debug_log() 对应 App::TraceDump();
 
-    function __debug_log($str, $args)
+    function __debug_log($str, $args = [])
 \_\_debug_log() 对应 App::DebugLog();
 
     function __is_debug()
@@ -63,5 +63,3 @@ View 里不想  use ViewHelper 的情况
 
     function __logger()
 \_\__logger() 对应 App::Logger();
-
-

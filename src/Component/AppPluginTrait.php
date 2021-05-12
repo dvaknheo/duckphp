@@ -17,11 +17,13 @@ trait AppPluginTrait
     public $onPluginModeInit;
     public $onPluginModeBeforeRun;
     public $onPluginModeAfterRun;
+    public $onPluginModeException;
     
     protected $plugin_context_class = '';
     protected $plugin_route_old = null;
     protected $plugin_view_old = null;
     protected $plugin_view_path = null; //TODO remove
+    protected $plugin_old_component_map = [];
     
     /////////
     //for override
@@ -50,6 +52,12 @@ trait AppPluginTrait
     {
         if ($this->onPluginModeAfterRun) {
             return ($this->onPluginModeAfterRun)();
+        }
+    }
+    public function onPluginModeException()
+    {
+        if ($this->onPluginModeException) {
+            return ($this->onPluginModeException)();
         }
     }
     //callback
@@ -96,8 +104,8 @@ trait AppPluginTrait
         $setting_file = $context->options['setting_file'] ?? 'setting';
         $ext_config_files = $this->pluginModeInitConfigFiles($setting_file);
         if (!empty($ext_config_files)) {
-            $old_data = Configer::G()->$options['config_ext_file_map'] ?? [];
-            Configer::G()->$options['config_ext_file_map'] = array_merge($old_data, $ext_config_files);
+            $old_data = Configer::G()->options['config_ext_file_map'] ?? [];
+            Configer::G()->options['config_ext_file_map'] = array_merge($old_data, $ext_config_files);
         }
         
         //clone Helper
@@ -188,23 +196,20 @@ trait AppPluginTrait
         if (!$flag) {
             return false;
         }
+        //
         $this->pluginModeReplaceDynamicComponent();
         $this->pluginModeInitDynamicComponent();
         
         $this->onPluginModeBeforeRun();
         
-        try{
-        $ret = Route::G()->run();
-        if (!$ret && $this->plugin_options['plugin_enable_readfile']) {
-            $ret = $this->pluginModeReadFile($path_info);
-        }
-        if (!$ret) {
+        try {
+            $ret = Route::G()->run();
+            if (!$ret && $this->plugin_options['plugin_enable_readfile']) {
+                $ret = $this->pluginModeReadFile($path_info);
+            }
+        } catch (\Throwable $ex) {
+            $this->onPluginModeException();
             $this->pluginModeClear();
-            return false;
-        }
-        }catch(\Throwable $ex){
-            // 清理。
-            
             throw $ex;
         }
         $this->onPluginModeAfterRun();
@@ -213,16 +218,20 @@ trait AppPluginTrait
     }
     protected function pluginModeReplaceDynamicComponent()
     {
-        $this->plugin_view_old = View::G();
-        $this->plugin_route_old = Route::G();
-        
+        $classes = $this->plugin_context_class::G()->getDynamicComponentClasses();
+        foreach ($classes as $class) {
+            $object = $class::G();
+            $this->plugin_old_component_map[$class] = $object;
+            $class::G(clone $object);
+        }
+    }
+    protected function pluginModeInitDynamicComponent()
+    {
         $view_class = $this->plugin_options['plugin_component_class_view'] ? : View::class;
         $route_class = $this->plugin_options['plugin_component_class_route'] ? : Route::class;
         View::G(new $view_class());
         Route::G(new $route_class());
-    }
-    protected function pluginModeInitDynamicComponent()
-    {
+        
         $view_options = $this->plugin_options['plugin_view_options'];
         $view_options['path_view'] = $this->plugin_view_path;
         $view_options['path_view_override'] = $this->pluginModeGetPath('plugin_path_view');
@@ -254,19 +263,15 @@ trait AppPluginTrait
     }
     public function pluginModeClear()
     {
-        View::G($this->plugin_view_old);
-        Route::G($this->plugin_route_old);
-        $this->plugin_view_old = null;
-        $this->plugin_route_old = null;
+        foreach ($this->plugin_old_component_map as $class => $object) {
+            $class::G($object);
+        }
+        $this->plugin_old_component_map = [];
     }
     /////////////////////////////
-    public function pluginModeGetOldRoute()
+    public function pluginModeGetOldComponent($class)
     {
-        return $this->plugin_route_old;
-    }
-    public function pluginModeGetOldView()
-    {
-        return $this->plugin_route_old;
+        return $this->plugin_old_component_map[$class] ?? null;
     }
     private function pluginModeGetPath($path_key, $path_key_parent = 'plugin_path'): string
     {

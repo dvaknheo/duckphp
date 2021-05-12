@@ -36,6 +36,9 @@
     public function clear()
 清理
 
+    public function reset()
+和 clear 不同的是没重设 handler,AppPluginTrait 用到
+
     public function assignExceptionHandler($class, $callback = null)
     public function setMultiExceptionHandler(array $classes, $callback)
     public function setDefaultExceptionHandler($default_exception_handler)
@@ -53,3 +56,4 @@
 
 
 ## 说明
+

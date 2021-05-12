@@ -67,7 +67,7 @@
     在输出前关闭资源（DB,Redis）   // [DuckPhp\Core\App](Core-App.md)
 + ** 'config_ext_file_map' => array ( ),  ** 
 
-       // [DuckPhp\Core\Configer](Core-Configer.md)
+    额外的配置文件数组   // [DuckPhp\Core\Configer](Core-Configer.md)
 + ** 'controller_base_class' => NULL,  ** 
 
     控制器基类   // [DuckPhp\Core\Route](Core-Route.md), [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
@@ -428,7 +428,7 @@
     - 'all_config' => array ( ),
         所有配置
     - 'config_ext_file_map' => array ( ),
-        
+        额外的配置文件数组
     - 'path' => '',
         基础目录
     - 'path_config' => 'config',

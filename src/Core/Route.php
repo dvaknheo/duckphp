@@ -73,7 +73,7 @@ class Route extends ComponentBase
     {
         return static::G()->_Parameter($key, $default);
     }
-    public function _Parameter($key=null , $default = null)
+    public function _Parameter($key = null, $default = null)
     {
         if (isset($key)) {
             return $this->parameters[$key] ?? $default;

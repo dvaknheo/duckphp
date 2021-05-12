@@ -3,7 +3,7 @@
     "autoload_cache_in_cli": "在 cli 下开启缓存模式",
     "autoload_path_namespace_map": "自动加载的目录和命名空间映射",
     "close_resource_at_output": "在输出前关闭资源（DB,Redis）",
-    "config_ext_files": "额外的配置文件数组",
+    "config_ext_file_map": "额外的配置文件数组",
     "controller_class_postfix": "控制器类名后缀",
     "controller_enable_slash": "激活兼容后缀的 \/ ",
     "controller_path_ext": "扩展名，比如你要 .html",
