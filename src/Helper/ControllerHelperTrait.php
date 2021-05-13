@@ -178,8 +178,8 @@ trait ControllerHelperTrait
     {
         return App::FireEvent($event, ...$args);
     }
-    public static function Logger($object = null)
+    public static function OnEvent($event, $callback)
     {
-        return App::Logger($object);
+        return App::OnEvent($event, $callback);
     }
 }

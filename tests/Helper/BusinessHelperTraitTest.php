@@ -28,10 +28,9 @@ class BusinessHelperTraitTest extends \PHPUnit\Framework\TestCase
         BusinessHelper::XpCall(function(){return "abc";});
         BusinessHelper::XpCall(function(){ throw new \Exception('ex'); });
         
-
-        BusinessHelper::Logger();
-
         try{
+        
+            BusinessHelper::OnEvent("test",function(){});
             BusinessHelper::FireEvent("test",1,2,3);
         }catch(\Exception $ex){
         }

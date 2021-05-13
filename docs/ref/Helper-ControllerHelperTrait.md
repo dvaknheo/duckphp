@@ -176,3 +176,5 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
 
     public static function Logger($object = null)
 
+    public static function OnEvent($event, $callback)
+

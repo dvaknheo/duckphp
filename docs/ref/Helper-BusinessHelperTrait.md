@@ -30,3 +30,5 @@ BusinessHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extendabl
 
 
 
+    public static function OnEvent($event, $callback)
+

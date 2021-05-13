@@ -33,8 +33,8 @@ trait BusinessHelperTrait
     {
         return App::Cache($object);
     }
-    public static function Logger($object = null)
+    public static function OnEvent($event, $callback)
     {
-        return App::Logger($object);
+        return App::OnEvent($event, $callback);
     }
 }
