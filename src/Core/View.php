@@ -27,6 +27,7 @@ class View extends ComponentBase
     protected $view_file;
     /** @var int */
     protected $error_reporting_old;
+    protected $temp_view_file;
     
     public static function Show(array $data = [], string $view = null): void
     {
@@ -74,13 +75,13 @@ class View extends ComponentBase
     }
     public function _Display(string $view, ?array $data = null): void
     {
-        $this->view_file = $this->getViewFile($view);
-        $this->data = isset($data)?$data:$this->data;
-        $data = null;
-        $view = null;
-        extract($this->data);
+        $this->temp_view_file = $this->getViewFile($view);
+        $data = isset($data)?$data:$this->data;
+        unset($data['this']);
+        //unset($data['GLOBALS']);
+        extract($data);
         
-        include $this->view_file;
+        include $this->temp_view_file;
     }
     public function _Render(string $view, ?array $data = null): string
     {
