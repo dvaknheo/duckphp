@@ -23,6 +23,7 @@ class DbAdvanceTraitTest extends \PHPUnit\Framework\TestCase
         $array=[1,2,3];
         $db->quoteIn($array);
         $db->quoteSetArray($array);
+        $db->quoteAndArray($array);
         $db->qouteInsertArray($array);
         $me=$db->findData('Users', 'aa', 'username');
                 

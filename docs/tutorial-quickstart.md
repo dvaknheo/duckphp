@@ -9,7 +9,8 @@
 到所在目录之下运行
 
 ```bash
-php template/duckphp-project
+cd template
+php ./duckphp-project run
 ```
 浏览器中打开 http://127.0.0.1:8080/ 得到下面欢迎页就表明 OK 了
 ```text
@@ -211,7 +212,7 @@ return [
 然后，我们写 `app/Controller/dbtest.php` 如下
 ```php
 namespace LazyToChange\Controller;
-use LazyToChange\Base\App as M;
+use LazyToChange\System\App as M;
 
 class dbtest
 {
@@ -222,12 +223,12 @@ class dbtest
     }
     public function foo()
     {
-        if (M::DB()===null) {
+        if (M::Db()===null) {
             var_dump("No database setting!");
             return;
         }
         $sql = "select 1+? as t";
-        $ret = M::DB()->fetch($sql,2);
+        $ret = M::Db()->fetch($sql,2);
         return $ret;
     }
 }

@@ -28,6 +28,14 @@ trait DbAdvanceTrait
         }
         return implode(',', $a);
     }
+    public function quoteAndArray($array)
+    {
+        $a = array();
+        foreach ($array as $k => $v) {
+            $a[] = $k.'='.$this->pdo->quote((string)$v);
+        }
+        return implode('and ', $a);
+    }
     public function qouteInsertArray($array)
     {
         if (empty($array)) {

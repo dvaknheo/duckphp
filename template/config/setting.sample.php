@@ -4,6 +4,7 @@
  * From this time, you never be alone~
  */
 
+// this is sample setting file , rename to 'setting.php' to work
 return [
     //'duckphp_is_debug' => false,
     //'duckphp_platform' => 'default',

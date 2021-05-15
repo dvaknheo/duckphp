@@ -22,8 +22,9 @@ class App extends DuckPhp
     /**
      * console command sample
      */
-    public function command_routes()
+    public function command_hello()
     {
+        // 多一个 hello 的命令
         echo "override you the routes\n";
     }
     //@override

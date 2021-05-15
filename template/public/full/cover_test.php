@@ -16,6 +16,10 @@ function cover($src)
         $writer->process($coverage, __DIR__ .'/cover_report/');
     });
 }
+if (!class_exists(\SebastianBergmann\CodeCoverage\CodeCoverage::class)) {
+    echo "开发人员专用";
+    return;
+}
 cover(realpath(__DIR__.'/../../../src'));
 
 
