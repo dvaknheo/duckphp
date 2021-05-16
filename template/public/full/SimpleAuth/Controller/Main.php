@@ -37,7 +37,7 @@ class Main
         });
         if (!empty(C::POST())) {
             $referer = C::SERVER('HTTP_REFERER','');
-            $domain = C::Domain().'/';
+            $domain = C::Domain(true).'/';
             if (substr($referer, 0, strlen($domain)) !== $domain) {
                 SessionServiceException::ThrowOn(true, "CRSF", 419);
                 //防止 csrf 攻击，用于站内无跳板的简单情况
@@ -119,11 +119,14 @@ class Main
     public function do_login()
     {
         $post = C::POST();
+            \DuckPhp\Core\App::G()->options['is_debug']=true;
         try {
             $user = UserService::G()->login($post);
+
             SessionService::G()->setCurrentUser($user);
-        } catch (UserServiceException $ex) {
+        } catch (\Exception $ex) {
             $error = $ex->getMessage();
+            var_dump(\DuckPhp\Core\Configer::G());
             $name = $post['name'] ?? '';
             C::Show(get_defined_vars(), 'auth/login');
             return;

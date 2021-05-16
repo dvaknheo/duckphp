@@ -14,6 +14,8 @@ $options = [
     'path' => $project_root,
     //'path' => $project_root,
     'is_debug'=>true,
+    'use_setting_file'=>true,
+
     'ext'=>[
         \SimpleAuth\Base\App::class => true,
     ],

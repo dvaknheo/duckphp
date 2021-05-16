@@ -395,7 +395,7 @@ trait Route_UrlManager
     {
         $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         $scheme = $_SERVER['REQUEST_SCHEME'] ?? '';
-        $scheme = $use_scheme ? $scheme :'';
+        //$scheme = $use_scheme ? $scheme :'';
         $host = $_SERVER['HTTP_HOST'] ?? ($_SERVER['SERVER_NAME'] ?? ($_SERVER['SERVER_ADDR'] ?? ''));
         $host = $host ?? '';
         
@@ -407,6 +407,9 @@ trait Route_UrlManager
         $host = (strpos($host, ':'))? strstr($host, ':', true) : $host;
         
         $ret = $scheme.':/'.'/'.$host.$port;
+        if(!$use_scheme){
+            $ret=substr($ret,strlen($scheme)+1);
+        }
         return $ret;
     }
     protected function getUrlBasePath()

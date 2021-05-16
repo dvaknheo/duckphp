@@ -92,7 +92,7 @@ class Db implements DbInterface
     }
     public function doTableNameMacro($sql)
     {
-        return empty($this->tableName) ? $sql : str_replace('{TABLE}', $this->tableName, $sql);
+        return empty($this->tableName) ? $sql : str_replace($this->quote('TABLE'), $this->tableName, $sql);
     }
     public function setObjectResultClass($resultClass)
     {

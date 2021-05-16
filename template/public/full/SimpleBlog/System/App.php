@@ -38,6 +38,8 @@ class App extends DuckPhp
     
     protected function onPrepare()
     {
+        // 我们要检测设置文件。
+        
         // 我们要引入第三方包,这里我们没采用 composer。
         $path = realpath($this->options['path'].'../SimpleAuth/');
         $this->assignPathNamespace($path, 'SimpleAuth');
