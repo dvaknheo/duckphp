@@ -48,7 +48,7 @@ class Configer extends ComponentBase
             $setting_file = $this->options['setting_file'];
             $full_setting_file = $this->path.$setting_file.'.php';
             if (!is_file($full_setting_file)) {
-                $this->exitWhenNoSettingFile($full_setting_file, $setting_file); // @codeCoverageIgnore
+                $this->exitWhenNoSettingFile($full_setting_file, $setting_file);
             }
             $setting = $this->loadFile($full_setting_file);
             $this->setting = array_merge($this->setting, $setting);
@@ -56,12 +56,9 @@ class Configer extends ComponentBase
         $this->is_setting_inited = true;
         return $this->setting[$key] ?? null;
     }
-    protected function exitWhenNoSettingFile($full_setting_file, $setting_file)
+    private function exitWhenNoSettingFile($full_setting_file, $setting_file)
     {
-        echo "<h1> Class '". static::class."' Fatal: No setting file[ ".$full_setting_file.' ]!</h1>'; // @codeCoverageIgnoreStart
-        echo '<h2>change '.$setting_file.'.sample.php to '. $setting_file.".php !</h2>";
-        echo "<h2> Or turn off options ['use_setting_file']</h2>"; //
-        exit; // @codeCoverageIgnoreEnd
+        throw new \ErrorException('DuckPhp: no Setting File');
     }
     
     public function _Config($key, $file_basename = 'config')

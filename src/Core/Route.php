@@ -407,8 +407,8 @@ trait Route_UrlManager
         $host = (strpos($host, ':'))? strstr($host, ':', true) : $host;
         
         $ret = $scheme.':/'.'/'.$host.$port;
-        if(!$use_scheme){
-            $ret=substr($ret,strlen($scheme)+1);
+        if (!$use_scheme) {
+            $ret = substr($ret, strlen($scheme) + 1);
         }
         return $ret;
     }

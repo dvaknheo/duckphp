@@ -20,7 +20,8 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->setPathInfo('x/z');
         $t= Route::URL('aaa');
         $z=Route::Route();
-        Route::Domain();
+        Route::Domain(true);
+        Route::Domain(false);
 
         $this->hooks();
         //Main

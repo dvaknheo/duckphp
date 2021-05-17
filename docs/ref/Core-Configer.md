@@ -72,3 +72,5 @@ path_config 如果是 / 开始的，会忽略 path 选项
 
 
 
+    private function exitWhenNoSettingFile($full_setting_file, $setting_file)
+

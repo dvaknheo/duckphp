@@ -59,7 +59,7 @@ class DbTest extends \PHPUnit\Framework\TestCase
         $x=$db->fetchObjectAll($sql,['username'=>'aa']);
 
 
-        $sql="select * from {TABLE} limit 1";
+        $sql="select * from 'TABLE' limit 1";
         $x=$db->table('Users')->fetchObject($sql);
         $sql="select * from Users where username=:username";
         $x=$db->fetchObject($sql,['username'=>'aa']);

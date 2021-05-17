@@ -29,7 +29,10 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
             'path_config'=>basename($path_config),
         ];
         Configer::G(new Configer)->init($options);
-        
+        try{
+         Configer::G()->_Setting($key);
+        }catch(\Throwable $ex){
+        }
         Configer::G()->options['config_ext_file_map']=['X/a'=>$path_config.'/for_assign.php'];
         Configer::G()->_LoadConfig('X/a');
         
