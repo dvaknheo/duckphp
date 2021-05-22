@@ -16,7 +16,7 @@ class install
         $database =[
             'host' => '127.0.0.1',
             'port' => '3306',
-            'dbname' => 't1',
+            'dbname' => 't2',
             'username' => 'admin',
             'password' => '123456',
         ];
@@ -25,17 +25,17 @@ class install
     public function do_index()
     {
         $database = C::POST();
+
         $done = false;
         try{
             InstallBusiness::G()->install($database);
             $done = true;
-        }catch(BusinessException $ex){
+        }catch(\Exception $ex){
             $error_message = $ex->getMessage();
             $error_no = $ex->getCode();
             $is_db_error = $error_no === -1;
             $is_write_error = $error_no === -2;
         }
-        
         C::Show(get_defined_vars(),'install');
     }
     /*

@@ -56,6 +56,18 @@ class Configer extends ComponentBase
         $this->is_setting_inited = true;
         return $this->setting[$key] ?? null;
     }
+    public function foo()
+    {
+        if ($this->options['use_setting_file']) {
+            $setting_file = $this->options['setting_file'];
+            $full_setting_file = $this->path.$setting_file.'.php';
+            if (!is_file($full_setting_file)) {
+                $this->exitWhenNoSettingFile($full_setting_file, $setting_file);
+            }
+            $setting = $this->loadFile($full_setting_file);
+            $this->setting = array_merge($this->setting, $setting);
+        }
+    }
     private function exitWhenNoSettingFile($full_setting_file, $setting_file)
     {
         throw new \ErrorException('DuckPhp: no Setting File');
