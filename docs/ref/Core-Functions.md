@@ -3,6 +3,8 @@
 
 需要选项 `user_global_functions`  [DuckPhp\Core\KernelTrait](Core-KernelTrait.md)   （默认开启） 才能用。
 
+DuckPhp 尽量避免污染全局环境，这些函数
+
 都是以 两条下划线开头。
 
 都是  [DuckPhp\Core\App](Core-App.md) 类的函数的映射，
@@ -15,7 +17,7 @@
 
 ### 显示
 
-View 里不想  use ViewHelper 的情况
+用于 View 里不想  use ViewHelper 的情况
 
     function __h(...$args)
 \_\_h 对应 App::H(); Html 编码
@@ -59,7 +61,8 @@ View 里不想  use ViewHelper 的情况
 
     function __is_real_debug()
 \_\_is_real_debug() 对应 App::IsRealDebug();
-    function __h($str)
 
+    function __h($str)
+    
     function __logger()
 \_\__logger() 对应 App::Logger();

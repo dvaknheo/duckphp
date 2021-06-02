@@ -38,17 +38,19 @@
     public function app()
 获得调用的 $context 
 
-    
+
     public function getCliParameters()
-重要，获得 命令行参数
+**重要**，获得 命令行参数
 
     public function regCommandClass($class, $alias = null)
-    
+注册某类为命令
+
     public static function DoRun($path_info = '')
-    
-    
+*过时，传入path_info 运行*
+
     public function callObject($class, $method, $args, $input)
-    
+调用类方法
+
     public function getCommandListInfo()
 得到可用命令列表
 
@@ -85,7 +87,7 @@ Console::G()->getCliParameters(); 获得参数的值
 
 你的 app 类，还有其他 command_$cmd 会加入或覆盖 默认的 方法。
 
-如果你要注册额外的 类 方法 ，使用 regCommandClass
+如果你要注册额外的 类 方法 ，使用 regCommandClass()
 
 getCommandListInfo() 会把他们展示出来
 

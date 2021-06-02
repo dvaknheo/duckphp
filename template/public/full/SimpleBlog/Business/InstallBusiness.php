@@ -47,10 +47,10 @@ class InstallBusiness extends BaseBusiness
     //
     protected function getSqlForStruct()
     {
-        return include App::G()->options['path'].'config/'.'database_struct.php';
+        return include App::G()->options['path'].'data/'.'database_struct.php';
     }
     protected function getSqlForData()
     {
-        return include App::G()->options['path'].'config/'.'database_data.php';
+        return include App::G()->options['path'].'data/'.'database_data.php';
     }
 }

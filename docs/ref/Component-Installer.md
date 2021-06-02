@@ -27,25 +27,24 @@
 ##  方法
 
     public static function RunQuickly($options)
-
     public function init(array $options, $context = null)
-
     public function run()
+通用运行方法
 
     protected function dumpDir($source, $dest, $force = false)
-
+    
     protected function checkFilesExist($source, $dest, $files)
-
+    
     protected function createDirectories($dest, $files)
-
+    
     protected function filteText($data, $is_in_full, $short_file_name)
-
+    
     protected function filteMacro($data)
-
+    
     protected function filteNamespace($data, $namespace)
-
+    
     protected function changeHeadFile($data, $short_file_name, $autoload_file)
-
+    
     protected function showHelp()
 
 ## 说明
@@ -59,5 +58,5 @@ Installer 是辅助安装类。
 ```
 vendor/bin/duckphp new  --help
 ```
-    
+
 

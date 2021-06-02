@@ -13,7 +13,7 @@ class AdminBusiness extends BaseBusiness
     {
         $password = mt_rand(100000, 999999);
         $init_password = $password;
-        $password = password_hash($password);
+        $password = password_hash(''.$password,PASSWORD_DEFAULT);
         
         M\SettingModel::G()->set('admin_password', $password);
         return $init_password;

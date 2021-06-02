@@ -16,8 +16,9 @@ class App extends DuckPhp
 {
     //@override
     public $options = [
+        'is_debug' => true,
         'use_setting_file' => true, // 启用设置文件
-        'setting_file' => 'setting_bak', // 启用设置文件
+        'setting_file_ignore_exists' => true, // 忽略设置文件
         
         'error_404' =>'_sys/error-404',
         'error_500' => '_sys/error-exception',
@@ -40,29 +41,23 @@ class App extends DuckPhp
     
     protected function onPrepare()
     {
-        // 我们要检测设置文件。
-        $this->options['is_debug'] = true;
         // 我们要引入第三方包,这里我们没采用 composer。
         if (!class_exists(SimpleAuthApp::class)) {
             $path = realpath($this->options['path'].'../SimpleAuth/');
             $this->assignPathNamespace($path, 'SimpleAuth');
         }
-        $flag = $this->checkSettingFile();
-                $this->options['is_debug'] = true;
 
     }
-    private function checkSettingFile()
+    protected function onInit()
     {
-        try{
-            Configer::G()->init($this->options, $this);
-             Configer::G()->_Setting('duckphp_is_debug');
-        }catch(\ErrorException $ex){
-            $this->options['use_setting_file'] = false;
-            Configer::G()->options['use_setting_file'] = false;
-            return false;
-        }
-        return true;
+        //$this->options['is_debug'] = true;
     }
+    public function command_reset_password()
+    {
+        $new_pass = AdminBusiness::G()->reset();
+        echo 'new password: '.$new_pass;
+    }
+
     // 这两个流程之外的要放其他地方
     public function CheckDb($setting)
     {
@@ -74,7 +69,7 @@ class App extends DuckPhp
     {
         $this->options['path_config'] = $this->options['path_config'] ?? 'config';
         $path = $this->getComponenetPathByKey('path_config');
-        $setting_file = $this->options['setting_file'] ?? 'setting_file';
+        $setting_file = $this->options['setting_file'] ?? 'setting';
         $file = $path.$setting_file.'.php';
         
         $data = '<'.'?php ';

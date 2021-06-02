@@ -5,9 +5,6 @@
  */
 namespace SimpleAuth\Service;
 
-use SimpleAuth\Base\BaseService;
-use SimpleAuth\Base\Helper\ServiceHelper as S;
-
 use SimpleAuth\Model\UserModel;
 
 class UserService extends BaseService
@@ -17,6 +14,7 @@ class UserService extends BaseService
         $username = $form['name'];
         $password = $form['password'] ?? '';
         UserServiceException::ThrowOn($password === '', "密码为空");
+        
         $flag = UserModel::G()->exsits($username);
         UserServiceException::ThrowOn($flag, "用户已经存在");
         
@@ -35,6 +33,7 @@ class UserService extends BaseService
         $user = UserModel::G()->getUserByUsername($username);
         UserServiceException::ThrowOn(empty($user), "用户不存在");
         UserServiceException::ThrowOn(!empty($user['delete_at']), "用户已被禁用");
+        
         $flag = UserModel::G()->verifyPassword($user, $password);
         UserServiceException::ThrowOn(!$flag, "密码错误");
         
@@ -46,8 +45,11 @@ class UserService extends BaseService
     {
         UserServiceException::ThrowOn($new_password === '', "空密码");
         $user = UserModel::G()->getUserById($uid);
+        
         UserServiceException::ThrowOn(!empty($user['delete_at']), "用户已被禁用");
+        
         $flag = UserModel::G()->verifyPassword($user, $password);
+        
         UserServiceException::ThrowOn(!$flag, "旧密码错误");
         
         UserModel::G()->updatePassword($uid, $new_password);
