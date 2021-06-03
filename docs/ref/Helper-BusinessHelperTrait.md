@@ -19,16 +19,13 @@ BusinessHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extendabl
     public static function FireEvent($event, ...$args)
 触发事件
 
+    public static function OnEvent($event, $callback)
+绑定事件
+
     public static function Cache($object = null)
 获得缓存对象
 
     public static function XpCall($callback, ...$args)
 调用，如果产生异常则返回异常，否则返回正常数据
 
-    public static function Logger($object = null)
-获得日志对象
-
-
-
-    public static function OnEvent($event, $callback)
-
+ControllerHelperTrait 比 BusinessHelperTrait 少了 Cache()

@@ -72,7 +72,7 @@ Controller --> Business ------------------------------ ---> Model
 
 ## 全局助手函数
 
-助手类有些通用的方法，用全局函数代替，
+全局助手函数主要有两部分，一部分是调试用的函数，另一部分是视图调用的函数。 DuckPhp 的全局助手类都是以两条下划线爱是，并且尽量减少对全局空间的污染。
 
 ### 调试函数
 
@@ -131,213 +131,189 @@ ModelHelper 用于 Model 层。  ModelHelper 有数据库的三个独特方法�
 
 此外，还有两个快捷方法， SqlForPager  和 SqlForCountSimply 方便分页。
 
-public static function Db($tag = null)
 
-    获得 DB 数据库对象 ,第 $tag 个配置的数据库对象
-    Db() 方法也可以用 __db() 全局函数代替
-public static function DbForWrite()
 
-    获得用于写入的 DB 对象,这是获得第 0 个配置列表里的数据库
-public static function DbForRead()
+    public static function Db($tag = null)
+获得 Db 对象
+参见  [DuckPhp\Component\DbManager::Db](Component-DbManager.md#Db)
 
-    获得用于读取的 DB 对象，这是获得第 1 个配置列表里的数据库
+    public static function DbForRead()
+获得只读用的 Db 对象 public static function DbForRead() 
+参见 [DuckPhp\Component\DbManager::DbForRead](Component-DbManager.md#DbForRead)
 
-public static function SqlForPager($sql, $pageNo, $pageSize = 10)
+    public static function DbForWrite()
+获得读写用的 Db 对象
+参见 [DuckPhp\Component\DbManager::DbForWrite](Component-DbManager.md#DbForWrite)
 
-    分页 limit 的 sql 
-public static function SqlForCountSimply($sql)
+    public static function SqlForPager(string $sql, int $pageNo, int $pageSize = 10): string
+分页 limit 的 sql,补齐 sql用
 
-    简单的把 select ... from 替换成 select count(*) as c from 
+    public static function SqlForCountSimply(string $sql): string
+简单的把 `select ... from ` 替换成 `select count(*)as c from `
+用于分页处理。
 
 ## BusinessHelper 业务助手类
 
-BusinessHelper 用于业务层。
-### 配置
-public static function Setting($key)
+BusinessHelper 用于业务层。三个配置相关方法，两个事件方法，和两个其他方法。
 
-    获得设置，需要打开'user_setting_file'默认设置文件是在  config/setting.php 。
-    设置是敏感信息,不存在于版本控制里面。而配置是非敏感。
-public static function Config($key, $file_basename = 'config')
+    public static function Setting($key)
+获得设置信息
 
-    读取配置，从 config/$file_basename.php 里读取配置
-public static function LoadConfig($file_basename)
+    public static function Config($key, $file_basename = 'config')
+获得配置
 
-    载入配置，Config($key); 获得配置项目。默认配置文件是在  config/config.php 。
-### 其他
+    public static function LoadConfig($file_basename)
+获得配置数组
 
-public static function Cache($object = null)
+    public static function FireEvent($event, ...$args)
+触发事件
 
-    获得缓存管理器
-public static function FireEvent($event, ...$args)
+    public static function OnEvent($event, $callback)
+绑定事件
 
-    触发事件
- public static function XpCall($callback, ...$args)
+    public static function Cache($object = null)
+获得缓存对象
 
-    包裹callback输出，如果抛出异常则返回异常，否则返回 $callback();
-public static function Logger($object = null)
+    public static function XpCall($callback, ...$args)
+调用，如果产生异常则返回异常，否则返回正常数据
 
-    日志对象
 ## ControllerHelper 控制器的助手类
 
  ContrlloerHelper 的方法很多很杂，但掌握了 ContrlloerHelper 方法，基本就掌握了使用方法
 
 大致分为 【显示相关】【配置相关】【跳转相关】【路由处理】【异常管理】【跳转】【内容处理】 几块 内容处理和 ViewHelper 基本通用。 ControllerHelper 方法
 
-### 输出内容
+### 超全局变量
+替代同名 $\_GET / $\_POST /$\_REQUEST /$\_COOKIE/$\_SERVER 。如果没的话返回后面的默认值。如果 $key 为 null 返回整个数组。
+```php
+    public static function GET($key = null, $default = null)
+    public static function POST($key = null, $default = null)
+    public static function REQUEST($key = null, $default = null)
+    public static function COOKIE($key = null, $default = null)
+    public static function SERVER($key, $default = null)
+```
+### 字符串处理
 
-显示
-public static function H($str)
+    public static function H($str)
+\_\_h()； HTML 编码
 
-    __h() HTML 编码
-public static function L($str, $args = [])
+    public static function Json($data)
+\_\_json()； Json 编码
 
-    __l() 语言处理函数，后面的关联数组替换 '{$key}'
-public static function Hl($str, $args = [])
+    public static function L($str, $args = [])
+\_\_l() 语言处理函数，后面的关联数组替换 '{$key}'
+    
+    public static function Hl($str, $args = [])
+\_\_hl() 对语言处理后进行 HTML 编码
+### 显示处理
+    public static function Render($view, $data = null)
+渲染
 
-    __hl() 对语言处理后进行 HTML 编码
-public static function Json($data)
+    public static function Show($data = [], $view = '')
+显示视图
 
-    __json() 获得 Json 内容
-public static function Url($url = null)
+    public static function setViewHeadFoot($head_file = null, $foot_file = null)
+设置页眉页脚
 
-    __url() 获得相对 url 地址
-public static function Domain()
+    public static function assignViewData($key, $value = null)
+分配视图变量。 特殊场合使用。
 
-    __domain【内容处理】 获得带协议的域名
-### 输出的动作
-
-public static function Show($data = [], $view = '')
-
-    【内容处理】显示视图， 默认为 view/{$view}.php 的文件， 并会带上页眉页脚
-public static function Display($view, $data = null)
-
-    __display() 包含下一个 $view ， 如果 $data = null 则带入所有当前作用域的变量。 否则带入 $data 关联数组的内容。Display 用于嵌套包含视图。
-public static function setViewHeadFoot($head_file = null, $foot_file = null)
-
-    【内容处理】设置页眉页脚
-public static function assignViewData($key, $value = null)
-
-    【内容处理】分配视图变量，另一版本为 assignViewData([$key=>$value]);
-public static function DbCloseAll()
-
-    【内容处理】 关闭所有数据库
-### 分页
-
-分页器类是通过 DuckPhp\\Component\\Pager 实现的
-
-public static function PageNo($new_value = null)
-
-    获得或设置当前页码
-public static function PageSize($new_value = null)
-
-    获得或设置当前每页数据条目
-public static function PageHtml($total, $options = [])
-
-    获得分页结果 HTML，这里的 $options 是传递给 Pager 类的选项。
 ### 配置
+    public static function Setting($key)
+设置是敏感信息,不存在于版本控制里面。而配置是非敏感。
 
-public static function Setting($key)
+    public static function Config($key, $file_basename = 'config')
+读取配置，从 config/$file_basename.php 里读取配置
 
-    获得设置，需要打开'user_setting_file'默认设置文件是在  config/setting.php 。
-    设置是敏感信息,不存在于版本控制里面。而配置是非敏感。
-public static function Config($key, $file_basename = 'config')
+    public static function LoadConfig($file_basename)
+载入配置,获得配置项目。
 
-    读取配置，从 config/$file_basename.php 里读取配置
-public static function LoadConfig($file_basename)
-
-    载入配置，Config($key); 获得配置项目。默认配置文件是在  config/config.php 。
-###  事件
-FireEvent($event, ...$args)
-
-    【其他】见 BusinessHelper 的 FireEvent 介绍
-
-Loger()
-
-    日志对象
-### 异常处理
-见 异常管理 一节
-
-assignExceptionHandler
-
-    【异常处理】分配异常句柄
-setMultiExceptionHandler
-
-    【异常处理】设置多个异常处理
-setDefaultExceptionHandler
-
-    【异常处理】设置异常的默认处理
-XpCall($callback, ...$args)
-
-    【其他】见 BusinessHelper 的 XpCall 介绍
-### 路由
-
-setRouteCallingMethod
-
-    【路由相关】设置当前的路由调用方法，用于跨方法调用时候 view 修正
-getRouteCallingMethod
-
-    【路由相关】获得当前的路由调用方法，用于权限判断等
-getPathInfo()
-
-    【路由相关】获得当前的 PATH_INFO
-getParameters()
-
-    【路由相关】获得路由重写相关的数据
-dumpAllRouteHooksAsString()
-
-    Dump 所有路由钩子
 ### 跳转
 
-ExitRedirect($url, $exit = true)
+跳转方法的 $exit 为 true 则附加 exit()
 
-    【跳转】跳转到站内URL ，$exit 为 true 则附加 exit()
-    ExitRedirect 不能跳转到外站，要用 ExitRedirectOutside
-ExitRedirectOutside($url, $exit = true)
+    public static function ExitRedirect($url, $exit = true)
+跳转到站内 Url
 
-    【跳转】跳转到站外URL, $exit 为 true 则附加 exit()
-ExitRouteTo($url, $exit = true)
+    public static function ExitRedirectOutside($url, $exit = true)
+跳转到站外 Url 。这两个函数分开是为了安全起见
 
-    【跳转】跳转到相对 url , $exit 为 true 则附加 exit()
-Exit404($exit = true)
+    public static function ExitRouteTo($url, $exit = true)
+跳转到相对 url 
 
-    【跳转】报 404，显示后续页面，$exit 为 true 则附加 exit()
-ExitJson($ret, $exit = true)
+    public static function Exit404($exit = true)
+报 404，显示后续页面
 
-    【跳转】输出 json 结果，$exit 为 true 则附加 exit()
+    public static function ExitJson($ret, $exit = true)
+输出 json 结果。
 
+### 路由相关
 
-### 超全局变量
-替代同名 GET / POST /REQUEST /COOKIE 。如果没的话返回 后面的默认值。
-注意没有 SESSION（有 AdvanceHelper::SESSION） ，这是故意设计成这样的，不希望 \_SESSION 到处飞， _SESSION 应该集中于 SessionBusiness 或 SessionLib 里。
+    public static function Url($url)
+获得相对 url 地址
 
-GET($key, $default = null)
+    public static function Domain($use_scheme = false)
+获得带协议的域名
 
-    对应 _GET， $_GET[$key] 不存在则返回 $default;
-POST($key, $default = null)
+    public static function Parameter($key, $default = null)
+和超全局变量类似，获得存储的数据
 
-    对应 _POST， $_POST[$key] 不存在则返回 $default;
-REQUEST($key, $default = null)
+    public static function getPathInfo()
+获取当前 PathInfo
+    public static function getRouteCallingMethod()
+获取正在调用的路由方法，构造函数里使用。
 
-    对应 _REQUEST， $_REQUEST[$key] 不存在则返回 $default;
-COOKIE($key, $default = null)
+    public static function setRouteCallingMethod($method)
+设置调用的路由方法， 强行改变 view 的默认行为时候用。
 
-    对应 _COOKIE， $_GET[$key] 不存在则返回 $default;
-SERVER($key, $default = null)
+### 系统兼容替换
+和系统同名函数(header/setcookie/exit)功能一致，目的是为了兼容性
+```php
+    public static function header($output, bool $replace = true, int $http_response_code = 0)
+    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
+    public static function exit($code = 0)
+```
 
-    对应 SERVER $_GET[$key] 不存在则返回 $default;
-### 系统替代
+### 分页相关
+分页器类是通过 DuckPhp\\Component\\Pager 实现的
 
-系统替代静态方法和系统函数一样的参数。为了兼容不同平台，如 CLI, workerman,swoole 使用这些函数替代。
+    public static function PageNo($new_value = null)
+获得或设置当前页码
 
-header()
+    public static function PageSize($new_value = null)
+获得或设置当前每页数据条目
+    
+    public static function PageHtml($total, $options = [])
+获得分页结果 HTML，这里的 $options 是传递给 Pager 类的选项。
 
-    【系统替代】 header 函数以兼容命令行模式
-setcookie()
+### 异常处理
 
-    【系统替代】 setcookie 函数以兼容命令行模式
-exit()
+    public static function assignExceptionHandler($classes, $callback = null)
+分配异常类回调
 
-    【系统替代】 退出函数，以便于接管
+    public static function setMultiExceptionHandler(array $classes, $callback)
+给多个异常类都帮定到一个回调处理
+
+    public static function setDefaultExceptionHandler($callback)
+设置默认的异常处理
+
+### 其他控制器助手方法
+
+    public static function DbCloseAll()
+手动关闭数据库
+
+    public static function XpCall($callback, ...$args)
+调用 callback, 如果有异常则返回异常对象
+
+    public static function FireEvent($event, ...$args)
+触发事件
+
+    public static function OnEvent($event, $callback)
+给事件绑定回调
+
+    public static function dumpAllRouteHooksAsString()
+打印所有路由钩子，调试用
+
 
 ## AdvanceHelper 高级助手类
 
@@ -397,30 +373,7 @@ assignPathNamespace($path, $namespace = null)
 CallException($ex)
 
     调用异常处理，一般也不用，而是看异常处理那章
-其他备忘
-```
-    public static function extendComponents($method_map, $components = [])
-    {
-        return App::G()->extendComponents($method_map, $components);
-    }
-    public static function cloneHelpers($new_namespace, $componentClassMap = [])
-    {
-        return App::G()->cloneHelpers($new_namespace, $componentClassMap);
-    }
-    public static function addBeforeShowHandler($handler)
-    {
-        return App::G()->addBeforeShowHandler($handler);
-    }
-    ////
-    public static function getDynamicComponentClasses()
-    {
-        return App::G()->getDynamicComponentClasses();
-    }
-    public static function addDynamicComponentClass($class)
-    {
-        return App::G()->addDynamicComponentClass($class);
-    }
-```
+
 ## 助手类的公用静态方法
 
 所有助手类都有的静态方法。

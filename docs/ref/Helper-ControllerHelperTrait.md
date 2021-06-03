@@ -160,21 +160,21 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
     }
 ```
 
-### 其他
+### 其他控制器助手方法
+
     public static function DbCloseAll()
 手动关闭数据库
 
     public static function XpCall($callback, ...$args)
-
+调用 callback, 如果有异常则返回异常对象
 
     public static function FireEvent($event, ...$args)
 触发事件
 
-
-### 结束
-    public static function dumpAllRouteHooksAsString()
-
-    public static function Logger($object = null)
-
     public static function OnEvent($event, $callback)
+给事件绑定回调
 
+    public static function dumpAllRouteHooksAsString()
+打印所有路由钩子，调试用
+
+以上就是所有控制器助手方法

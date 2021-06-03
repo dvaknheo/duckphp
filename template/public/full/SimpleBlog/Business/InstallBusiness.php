@@ -38,7 +38,7 @@ class InstallBusiness extends BaseBusiness
         $setting['database'] = $database;
         $setting['simple_blog_installed'] = DATE(DATE_ATOM);
         
-        $flag = App::G()->writeSettingFile($setting);
+        $flag = $this->writeSettingFile($setting);
         BusinessException::ThrowOn(!$flag,'写入文件失败',-2);
         
         return true;
@@ -52,5 +52,25 @@ class InstallBusiness extends BaseBusiness
     protected function getSqlForData()
     {
         return include App::G()->options['path'].'data/'.'database_data.php';
+    }
+    protected function writeSettingFile($setting)
+    {
+        $this->options['path_config'] = App::G()->options['path_config'] ?? 'config';
+        $path = $this->getComponenetPathByKey('path_config');
+        $setting_file = $this->options['setting_file'] ?? 'setting';
+        $file = $path.$setting_file.'.php';
+        
+        $data = '<'.'?php ';
+        $data .="\n // gen by ".static::class.' '.date(DATE_ATOM) ." \n";
+        $data .= ' return ';
+        $data .= var_export($setting,true);
+        $data .=';';
+        return @file_put_contents($file,$data);
+    }
+    protected function CheckDb($setting)
+    {
+        $options = DbManager::G()->options;
+        $options['database']=$setting;
+        DbManager::G()->init($options);
     }
 }

@@ -316,6 +316,15 @@ Show 方法对 View::Show() 加了好些补充
 ```
 因为 Cookie 不仅仅读取，还有写入，所以用 CookieSet 。
 
+    public static function SessionGet($key, $default = null)
+对称，SessionGet / SessionSet
+
+    public static function CookieGet($key, $default = null)
+对称， CookieGet / CookieSet
+
+
+
+
 ### 内部实现函数
 
 这些二都是内部的实现函数
@@ -367,6 +376,9 @@ Show 方法对 View::Show() 加了好些补充
     public function _FILES($key = null, $default = null)
     protected function _SessionSet($key, $value)
     protected function _CookieSet($key, $value, $expire)
+    protected function _SessionGet($key, $default)
+    protected function _CookieGet($key, $default)
+
     
 ```
 
@@ -376,12 +388,11 @@ Show 方法对 View::Show() 加了好些补充
     protected function fixNamespace($class, $namespace)
     protected function onBeforeOutput()
     private function getSuperGlobalData($superglobal_key, $key, $default)
+    public static function setUrlHandler($callback)
+即将废弃
 
 ## 说明
 
 ### 关于 injected_helper_map
 
-
-
-    public static function setUrlHandler($callback)
-
+以上

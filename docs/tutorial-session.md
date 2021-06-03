@@ -2,7 +2,6 @@
 [toc]
 ## 相关类
 
-`Helper/AppHelper`
 
 ## 开始
 
@@ -13,13 +12,12 @@
 
 例子:
 ```php
-namespace UserSystemDemo\Service;
+namespace UserSystemDemo\Business;
 
-use UserSystemDemo\Base\BaseService;
-use UserSystemDemo\Base\Helper\ServiceHelper as S;
-use UserSystemDemo\Base\App;
+use UserSystemDemo\Business\BaseService;
+use UserSystemDemo\System\App;
 
-class SessionBusiness extends BaseService
+class SessionBusiness extends BaseBusiness
 {
     public function __construct()
     {
@@ -27,14 +25,14 @@ class SessionBusiness extends BaseService
     }
     public function getCurrentUser()
     {
-        $ret = $_SESSION['user'] ?? [];
-        SessionBusinessException::ThrowOn(empty($ret), '请重新登录');
+        App::SessionGet('user', []);
+        SessionException::ThrowOn(empty($ret), '请重新登录');
         
         return $ret;
     }
     public function setCurrentUser($user)
     {
-        $_SESSION['user'] = $user;
+        App::SessionSet('user', $user);
     }
 }
 
@@ -44,15 +42,14 @@ namespace UserSystemDemo\Service;
 
 use UserSystemDemo\Base\BaseException;
 
-class SessionBusinessException extends BaseException
+class SessionException extends BaseException
 {
-    //
 }
 ```
 
 这个例子，在 controller 里调用 SessionBusiness::G()->getCurrentUser() 得到当前用户数据。
 
-如果得不到，就抛出 SessionBusinessException 。
+如果得不到，就抛出 SessionException 。
 
 如果还有什么需要 Session 数据的地方，继续填充这个 Session 类，而不是到处直接使用 session 。
 

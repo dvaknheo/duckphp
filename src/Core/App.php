@@ -928,9 +928,17 @@ trait Core_SuperGlobal
     {
         return static::G()->_SessionSet($key, $value);
     }
+    public static function SessionGet($key, $default = null)
+    {
+        return static::G()->_SessionGet($key, $default);
+    }
     public static function CookieSet($key, $value, $expire = 0)
     {
         return static::G()->_CookieSet($key, $value, $expire);
+    }
+    public static function CookieGet($key, $default = null)
+    {
+        return static::G()->_CookieGet($key, $default);
     }
 
     private function getSuperGlobalData($superglobal_key, $key, $default)
@@ -982,5 +990,13 @@ trait Core_SuperGlobal
     protected function _CookieSet($key, $value, $expire)
     {
         $this->_setcookie($key, $value, $expire ? $expire + time():0);
+    }
+    protected function _SessionGet($key, $default)
+    {
+        return $this->getSuperGlobalData('_SESSION', $key, $default);
+    }
+    protected function _CookieGet($key, $default)
+    {
+        return $this->getSuperGlobalData('_COOKIE', $key, $default);
     }
 }

@@ -60,7 +60,7 @@ DuckPhp 的路由类比较复杂，也是重点
 - 'controller_welcome_class' => 'Main', 控制器默认欢迎类
 - 'namespace' => '',命名空间
 - 'namespace_controller' => 'Controller', 控制器的命名空间 如果以 \\ 开始，则忽略 namespace 选项的配置
--  'controller_path_prefix' => '', 有时候，你只处理特定开头的 路由
+- 'controller_path_prefix' => '', 有时候，你只处理特定开头的 路由
 
 
 ## 路由钩子 `核心工程师`

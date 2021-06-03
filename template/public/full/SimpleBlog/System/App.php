@@ -28,15 +28,17 @@ class App extends DuckPhp
             SimpleAuthApp::class => true,       // 使用第三方的验证登录包
         ],
         
-        //注入处理
-        'injected_helper_map' =>  self::DEFAULT_INJECTED_HELPER_MAP, //'~\\Helper\\',  // 打开助手类注入模式
-        'misc_auto_method_extend'=>true,
-        'route_map_auto_extend_method'=>true,
+
         
         //url 重写
         'rewrite_map' => [
             '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
         ],
+        
+        //注入处理
+        'injected_helper_map' =>  self::DEFAULT_INJECTED_HELPER_MAP, //'~\\Helper\\',  // 打开助手类注入模式
+        'misc_auto_method_extend'=>true,
+        'route_map_auto_extend_method'=>true,
     ];
     
     protected function onPrepare()
@@ -58,25 +60,11 @@ class App extends DuckPhp
         echo 'new password: '.$new_pass;
     }
 
-    // 这两个流程之外的要放其他地方
     public function CheckDb($setting)
     {
+        // 检查数据库是否安装
         $options = DbManager::G()->options;
         $options['database']=$setting;
         DbManager::G()->init($options);
-    }
-    public function writeSettingFile($setting)
-    {
-        $this->options['path_config'] = $this->options['path_config'] ?? 'config';
-        $path = $this->getComponenetPathByKey('path_config');
-        $setting_file = $this->options['setting_file'] ?? 'setting';
-        $file = $path.$setting_file.'.php';
-        
-        $data = '<'.'?php ';
-        $data .="\n // gen by ".static::class.' '.date(DATE_ATOM) ." \n";
-        $data .= ' return ';
-        $data .= var_export($setting,true);
-        $data .=';';
-        return @file_put_contents($file,$data);
     }
 }

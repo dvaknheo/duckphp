@@ -11,11 +11,11 @@
     traditional.php 传统模式,一个文件解决，不折腾那么多
 
 
-完整模式下的其他例子
+完整模式下的其他例子，完整模式用于
     auth.php 简单的用户验证系统
     blog.php 简单的博客
     dbtest.php 数据库演示
-    一个远程调用 json rpc 的例子
-    doc.php 简单的 md 文档查看
+    rpc.php 一个远程调用 json rpc 的例子
+    doc.php 简单的 md 文档查看器
 
 施工中

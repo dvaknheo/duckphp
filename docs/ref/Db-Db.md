@@ -10,73 +10,75 @@
 ## 公开方法
 
 ### sql 方法
-public function fetchAll($sql, ...$args)
+    public function fetchAll($sql, ...$args)
+运行SQL并获得所有行
 
-    运行SQL并获得所有行
-public function fetch($sql, ...$args)
+    public function fetch($sql, ...$args)
+运行SQL并获得单一行
 
-    运行SQL并获得单一行
-public function fetchColumn($sql, ...$args)
+    public function fetchColumn($sql, ...$args)
+运行SQL并获得单个数据
 
-    运行SQL并获得单个数据
-public function execute($sql, ...$args)
+    public function execute($sql, ...$args)
+运行SQL 返回 true false
 
-    运行SQL 返回 true false
-public function fetchObjectAll($sql, ...$args)
+    protected function exec($sql, ...$args)
+内部执行 sql
 
-    运行SQL并获得所有行(对象数组)
-public function fetchObject($sql, ...$args)
+    public function fetchObjectAll($sql, ...$args)
+运行SQL并获得所有行(对象数组)
 
-    运行SQL并获得单一行(对象形式)
-public function setResultClass($class)
+    public function fetchObject($sql, ...$args)
+运行SQL并获得单一行(对象形式)
 
-    设置返回的类，配合 fetchObject fetchObjectAll 使用。
-public function doTableNameMacro($sql)
+    public function setObjectResultClass($resultClass)
+设置返回的类，配合 fetchObject fetchObjectAll 使用。
 
-    默认把执行查询 sql 里的 `{TABLE}` 展开成 table($table_name) 里的设置
-public function table($table_name)
+    public function doTableNameMacro($sql)
+默认把执行查询 sql 里的 `{TABLE}` 展开成 table($table_name) 里的设置
 
-    设置 `{TABLE}` 要替换的表名，并返回 Db 类。拼接 sql 的时候要注意第三方数据可能会有 `{TABLE}`
+    public function table($table_name)
+设置 `'TABLE'` 要替换的表名，并返回 Db 类。拼接 sql 的时候要注意第三方数据可能会有 `'TABLE'` 其实是对 qoute('TABLE');
+
 ### 其他方法
 
-public function init($options = [], $context = null)
+    public function init($options = [], $context = null)
+初始化
 
-    初始化
+    protected function check_connect()
+用于 override ，连接的设置。
 
-protected function check_connect()
+    public function close()
+关闭数据库
 
-    用于 override ，连接的设置。
-public function close()
+    public function PDO($pdo = null)
+获得/设置 相关 PDO 对象。
 
-public function PDO($new=null)
+    public function setBeforeQueryHandler($handler)
+在 query 前执行。($handler)($this,$sql, ...$args)
 
-    获得/设置 相关 PDO 对象。
-public function setBeforeQueryHandler($handler)
+    public function quote($string)
+编码
 
-    在 query 前执行。($handler)($this,$sql, ...$args)
-public function quote($string)
+    public function buildQueryString($sql, ...$args)
+合并带参数的sql.
 
-    编码
-public function buildQueryString($sql, ...$args)
+    public function rowCount()
+获得行数
 
-    合并带参数的sql.
-public function rowCount()
-
-    获得行数
-public function lastInsertId()
-    
-    获得插入的ID.
+    public function lastInsertId()
+获得插入的ID.
 
 
 ### DbAdvanceTrait 的方法
 
-public function quoteIn($array)
-public function quoteSetArray($array)
-public function qouteInsertArray($array)
-public function findData($table_name, $id, $key = 'id')
-public function insertData($table_name, $data, $return_last_id = true)
-public function deleteData($table_name, $id, $key = 'id', $key_delete = 'is_deleted')
-public function updateData($table_name, $id, $data, $key = 'id')
+    public function quoteIn($array)
+    public function quoteSetArray($array)
+    public function qouteInsertArray($array)
+    public function findData($table_name, $id, $key = 'id')
+    public function insertData($table_name, $data, $return_last_id = true)
+    public function deleteData($table_name, $id, $key = 'id', $key_delete = 'is_deleted')
+    public function updateData($table_name, $id, $data, $key = 'id')
 
 ## 详解
 
@@ -90,7 +92,6 @@ Db
     fetchAll($sql, ...$args);
     fetch($sql, ...$args);
     fetchColumn($sql, ...$args);
-    execute($sql, ...$args); //   执行某条sql ，不用 exec , execute 是为了兼容其他类。
 #### 示例
 使用数据库，在 设置里正确设置 database_list 这个数组，包含多个数据库配置
 然后在用到的地方调用 DuckPhp::Db($tag=null) 得到的就是 Db 对象，用来做各种数据库操作。
@@ -128,46 +129,10 @@ DuckPhp::RunQuickly($options,function(){
 ## 方法索引
 
 
-### 结束
-    public function init($options = [], $context = null)
-
-    protected function check_connect()
-    
-    public function close()
-    
-    public function PDO($pdo = null)
-    
-    public function setBeforeQueryHandler($handler)
-    
-    public function quote($string)
-    
-    public function buildQueryString($sql, ...$args)
-    
-    public function table($table_name)
-    
-    public function doTableNameMacro($sql)
-    
-    public function setObjectResultClass($resultClass)
-    
-    protected function exec($sql, ...$args)
-    
-    public function fetchAll($sql, ...$args)
-    
-    public function fetch($sql, ...$args)
-    
-    public function fetchColumn($sql, ...$args)
-    
-    public function fetchObject($sql, ...$args)
-    
-    public function fetchObjectAll($sql, ...$args)
-    
-    public function execute($sql, ...$args)
-    
-    public function rowCount()
-    
-    public function lastInsertId()
+完毕。
 
 
-    public function init($options = [], $context = null)
+
+
 
 

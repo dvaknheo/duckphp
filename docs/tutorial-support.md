@@ -91,7 +91,7 @@ var_dump(MyClass::G()); 使用 Facades 就没法做到这个功能。
 回调
 Class::Method Class@Method Class->Method 的区别
 
--> => 表示 new 一个实例
+-> 表示 new 一个实例
 @ 表示 $class::G()->
 
 :: 表示 Class::Method
@@ -102,7 +102,7 @@ Class::Method Class@Method Class->Method 的区别
 中间件， DuckPhp 提供了简单的中间件扩展 MyMiddlewareManager，但不建议使用。
 
 事件，见事件这一篇
-
+ 
 请求和响应， DuckPhp 没这个概念
 但在 控制器助手类里有很多相同的行为
 

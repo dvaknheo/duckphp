@@ -50,6 +50,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
 
         App::RunQuickly($options,function(){
         App::SessionSet('zz','abc');
+        App::SessionGet('zz');
                         SuperGlobalContext::DefineSuperGlobalContext();
 
             App::G()->addBeforeShowHandler(function(){ echo "beforeShowHandlers";});
@@ -182,7 +183,7 @@ App::PageHtml(123);
                                 App::SessionSet('x',DATE('Y,M,d'));
 
             App::CookieSet('x',DATE('Y,M,d'));
-
+            App::CookieGet('x');
         
         App::dumpAllRouteHooksAsString();
         try{
