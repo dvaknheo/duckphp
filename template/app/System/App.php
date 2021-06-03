@@ -209,6 +209,9 @@ class App extends DuckPhp
         // 设置文件 (DuckPhp\Core\Configer)
         // $options['setting_file'] = 'setting';
 
+        // 配置文件不存在的时候忽略 (DuckPhp\Core\Configer)
+        // $options['setting_file_ignore_exists'] = false;
+
         // 跳过404处理 (DuckPhp\Core\App)
         // $options['skip_404_handler'] = false;
 

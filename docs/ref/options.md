@@ -323,6 +323,9 @@
 + ** 'setting_file' => 'setting',  ** 
 
     设置文件   // [DuckPhp\Core\Configer](Core-Configer.md)
++ ** 'setting_file_ignore_exists' => false,  ** 
+
+    配置文件不存在的时候忽略   // [DuckPhp\Core\Configer](Core-Configer.md)
 + ** 'skip_404_handler' => false,  ** 
 
     跳过404处理   // [DuckPhp\Core\App](Core-App.md)
@@ -437,6 +440,8 @@
         设置，预先载入的设置
     - 'setting_file' => 'setting',
         设置文件
+    - 'setting_file_ignore_exists' => false,
+        配置文件不存在的时候忽略
     - 'use_env_file' => false,
         使用 .env 文件
     - 'use_setting_file' => false,

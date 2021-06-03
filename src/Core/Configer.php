@@ -23,7 +23,6 @@ class Configer extends ComponentBase
         'config_ext_file_map' => [],
     ];
     protected $path;
-    protected $is_setting_inited = false;
     protected $all_config = [];
     protected $setting = [];
     
@@ -34,13 +33,7 @@ class Configer extends ComponentBase
         
         $this->setting = $this->options['setting'] ?? [];
         $this->all_config = $this->options['all_config'] ?? [];
-    }
-    
-    public function _Setting($key)
-    {
-        if ($this->is_setting_inited) {
-            return $this->setting[$key] ?? null;
-        }
+        
         if ($this->options['use_env_file']) {
             $env_setting = parse_ini_file(realpath($this->options['path']).'/.env');
             $env_setting = $env_setting?:[];
@@ -51,15 +44,16 @@ class Configer extends ComponentBase
             $full_setting_file = $this->path.$setting_file.'.php';
             if (!is_file($full_setting_file)) {
                 $this->exitWhenNoSettingFile($full_setting_file, $setting_file);
-                return $this->setting[$key] ?? null;
+            } else {
+                $setting = $this->loadFile($full_setting_file);
+                $this->setting = array_merge($this->setting, $setting);
             }
-            $setting = $this->loadFile($full_setting_file);
-            $this->setting = array_merge($this->setting, $setting);
         }
-        $this->is_setting_inited = true;
+    }
+    public function _Setting($key)
+    {
         return $this->setting[$key] ?? null;
     }
-
     private function exitWhenNoSettingFile($full_setting_file, $setting_file)
     {
         if ($this->options['setting_file_ignore_exists']) {

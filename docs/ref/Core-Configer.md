@@ -32,6 +32,9 @@
         'config_ext_file_map' => [],
 用于 AppPluginTrait
 
+        'setting_file_ignore_exists' => false,
+如果设置文件不存在也不报错
+
 ## 方法
 ### 公开方法
 
@@ -54,6 +57,10 @@
 
     protected function loadFile($file)
 用于重写，载入文件
+
+    private function exitWhenNoSettingFile($full_setting_file, $setting_file)
+用于重写，如果没设置文件的时候报错
+
 ### 说明
 
 DuckPhp\Core\Configer 的选项共享个 path,带个 path_config
@@ -68,9 +75,4 @@ path_config 如果是 / 开始的，会忽略 path 选项
 
 基于  AppPluginTrait  需要， Configer 类比普通类多了 config_ext_files 选项
 
-
-
-
-
-    private function exitWhenNoSettingFile($full_setting_file, $setting_file)
-
+`setting_file_ignore_exists` 为了方便安装程序
