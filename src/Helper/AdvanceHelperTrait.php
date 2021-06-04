@@ -34,10 +34,6 @@ trait AdvanceHelperTrait
     {
         return App::add404RouteHook($callback);
     }
-    public static function setUrlHandler($callback)
-    {
-        return App::setUrlHandler($callback);
-    }
     public static function replaceControllerSingelton($old_class, $new_class)
     {
         return App::replaceControllerSingelton($old_class, $new_class);

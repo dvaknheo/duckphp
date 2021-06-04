@@ -855,14 +855,6 @@ trait Core_Glue
     {
         return Route::G()->getRouteCallingMethod();
     }
-    public static function setRouteCallingMethod($calling_method)
-    {
-        return Route::G()->setRouteCallingMethod($calling_method);
-    }
-    public static function setUrlHandler($callback)
-    {
-        return Route::G()->setUrlHandler($callback);
-    }
     public static function dumpAllRouteHooksAsString()
     {
         return Route::G()->dumpAllRouteHooksAsString();

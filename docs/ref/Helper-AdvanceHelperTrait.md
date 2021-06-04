@@ -25,9 +25,7 @@ AdvanceHelperTrait 的文档参见 [DuckPhp\Helper\AdvanceHelper](Helper-Advance
     public static function addRouteHook($hook, $position, $once = true)
     
     public static function add404RouteHook($callback)
-    
-    public static function setUrlHandler($callback)
-    
+        
     public static function replaceControllerSingelton($old_class, $new_class)
     
     public static function getViewData()

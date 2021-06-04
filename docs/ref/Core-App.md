@@ -275,7 +275,6 @@ Show 方法对 View::Show() 加了好些补充
     public static function addRouteHook($callback, $position, $once = true)
     public static function add404RouteHook($callback)
     public static function getRouteCallingMethod()
-    public static function setRouteCallingMethod($calling_method)
     public static function dumpAllRouteHooksAsString()
 ```
 #### 来自 View
@@ -388,8 +387,7 @@ Show 方法对 View::Show() 加了好些补充
     protected function fixNamespace($class, $namespace)
     protected function onBeforeOutput()
     private function getSuperGlobalData($superglobal_key, $key, $default)
-    public static function setUrlHandler($callback)
-即将废弃
+
 
 ## 说明
 

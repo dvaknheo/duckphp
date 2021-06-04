@@ -356,8 +356,6 @@ App::PageHtml(123);
         
         App::Parameter('x','y');
         App::getRouteCallingMethod();
-        App::setRouteCallingMethod($method);
-        App::setURLHandler(function($url){return $url;});
         App::URL('abc');
         //*/
         //*

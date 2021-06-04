@@ -52,10 +52,6 @@ trait ControllerHelperTrait
     {
         return App::getRouteCallingMethod();
     }
-    public static function setRouteCallingMethod($method)
-    {
-        return App::setRouteCallingMethod($method);
-    }
     public static function getPathInfo()
     {
         return App::getPathInfo();
