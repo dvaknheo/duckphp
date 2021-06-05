@@ -54,3 +54,11 @@ $options['path_info_compact_enable'] = true;
 
 
 
+        'path_info_compact_func_mode' => false,
+
+        'path_info_compact_func_mode_method_prefix' => 'action_',
+
+        'path_info_compact_func_mode_404_to_index' => false,
+
+    protected function functionMode()
+

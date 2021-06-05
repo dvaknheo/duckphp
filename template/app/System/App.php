@@ -92,6 +92,9 @@ class App extends DuckPhp
         // 控制器禁止直接访问静态方法 (DuckPhp\Core\Route)
         // $options['controller_stop_static_method'] = true;
 
+        // 待文档 (DuckPhp\Core\Route)
+        // $options['controller_strict_mode'] = true;
+
         // 控制器使用单例模式 (DuckPhp\Core\Route)
         // $options['controller_use_singletonex'] = false;
 
@@ -175,6 +178,15 @@ class App extends DuckPhp
 
         // 使用 _GET 模拟无 PathInfo 配置 (DuckPhp\Component\RouteHookPathInfoCompat)
         // $options['path_info_compact_enable'] = false;
+
+        // 待文档 (DuckPhp\Component\RouteHookPathInfoCompat)
+        // $options['path_info_compact_func_mode'] = false;
+
+        // 待文档 (DuckPhp\Component\RouteHookPathInfoCompat)
+        // $options['path_info_compact_func_mode_404_to_index'] = false;
+
+        // 待文档 (DuckPhp\Component\RouteHookPathInfoCompat)
+        // $options['path_info_compact_func_mode_method_prefix'] = 'action_';
 
         // 日志目录 (DuckPhp\Core\Logger)
         // $options['path_log'] = 'logs';

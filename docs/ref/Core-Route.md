@@ -235,3 +235,5 @@ if(!$flag){
 修订时间：
 
 
+        'controller_strict_mode' => true,
+

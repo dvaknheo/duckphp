@@ -130,6 +130,10 @@
     
     "superglobal_auto_extend_method": "自动扩充 SuperGlobalContext 的静态方法",
     "superglobal_auto_define": "自动启用 SuperGlobalContext 定义",
-    "setting_file_ignore_exists":"配置文件不存在的时候忽略"
+    "setting_file_ignore_exists":"配置文件不存在的时候忽略",
+    "controller_strict_mode":"待文档",
+    "path_info_compact_func_mode":"待文档",
+    "path_info_compact_func_mode_404_to_index":"待文档",
+    "path_info_compact_func_mode_method_prefix":"待文档"
 
 }
