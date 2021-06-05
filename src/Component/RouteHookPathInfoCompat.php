@@ -13,6 +13,10 @@ class RouteHookPathInfoCompat extends ComponentBase
         'path_info_compact_enable' => false,
         'path_info_compact_action_key' => '_r',
         'path_info_compact_class_key' => '',
+        
+        'path_info_compact_func_mode' => false,
+        'path_info_compact_func_mode_method_prefix' => 'action_',
+        'path_info_compact_func_mode_404_to_index' => false,
     ];
     protected $context_class;
     //@override
@@ -121,6 +125,35 @@ class RouteHookPathInfoCompat extends ComponentBase
         
         ($this->context_class)::Route()->setPathInfo($path_info);
         
+        if ($this->options['path_info_compact_func_mode_method']) {
+            return $this->functionMode();
+        }
+        return false;
+    }
+    protected function functionMode()
+    {
+        $path_info = ($this->context_class)::Route()->getPathInfo();
+        $path_info = ltrim($path_info, '/');
+        $path_info = empty($path_info) ? 'index' : $path_info;
+        $path_info = str_replace('/', '_', $path_info);
+        
+        $_POST = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_POST : $_POST;
+        $post_prefix = !empty($_POST)? ($this->context_class)::Route()->options['controller_prefix_post'] :'';
+        $prefix = $this->options['path_info_compact_func_mode_method_prefix'] ?? '';
+        $callback = $prefix.$post_prefix.$path_info;
+            
+        if (is_callable($callback)) {
+            ($callback)();
+            return true;
+        }
+        if (!$this->options['path_info_compact_func_mode_404_to_index']) {
+            return false;
+        }
+        $callback = $prefix.'index';
+        if (is_callable($callback)) {
+            ($callback)();
+            return true;
+        }
         return false;
     }
 }

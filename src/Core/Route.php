@@ -33,6 +33,7 @@ class Route extends ComponentBase
         'controller_path_ext' => '',
         'controller_use_singletonex' => false,
         'controller_stop_static_method' => true,
+        'controller_strict_mode' => true,
     ];
 
     public $pre_run_hook_list = [];
@@ -250,6 +251,13 @@ class Route extends ComponentBase
             $this->route_error = "can't find class($full_class) by $path_class ";
             return null;
         }
+        if ($this->options['controller_strict_mode']) {
+            if ($full_class !== (new \ReflectionClass($full_class))->getName()) {
+                $this->route_error = "can't find class($full_class) by $path_class 2";
+                return null;
+            }
+        }
+        
         
         $this->calling_class = $full_class;
         $this->calling_method = !empty($method)?$method:'index';
@@ -300,6 +308,15 @@ class Route extends ComponentBase
         if ($this->options['controller_methtod_for_miss']) {
             if (!method_exists($object, $method)) {
                 $method = $this->options['controller_methtod_for_miss'];
+            }
+            if ($this->options['controller_strict_mode']) {
+                try {
+                    if ($method !== (new \ReflectionMethod($object, $method))->getName()) {
+                        return null;
+                    }
+                } catch (\ReflectionException $ex) {
+                    return null;
+                }
             }
         }
         if (!is_callable([$object,$method])) {
