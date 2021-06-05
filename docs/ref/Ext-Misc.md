@@ -9,10 +9,10 @@
         'path' => '',
         'path_lib' => 'lib',
         'misc_auto_method_extend' => true,
-
+    
     ];
 ##  扩充方法。
-### AppHelper 扩充
+### AdvanceHelper 扩充
 
 - Import
 - DI
@@ -69,23 +69,5 @@ DI 函数
     protected function initContext(object $context)
 相应函数重写
 ## 详解
-
-Import [DuckPhp\Ext\Misc::Import](Ext-Misc.md#Import)
-
-    // 导入文件
-DI
-
-    DuckPhp\Ext\Misc::DI
-RecordsetUrl
-    
-    DuckPhp\Ext\Misc::RecordsetUrl
-RecordsetH
-    
-    DuckPhp\Ext\Misc::RecordsetH
-CallAPI
-    
-    DuckPhp\Ext\Misc::CallAPI
-
-
 
 

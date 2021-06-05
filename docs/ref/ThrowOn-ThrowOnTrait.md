@@ -47,7 +47,7 @@ SystemException::ThrowOn(true,"something exception",142857);
 
 ThrowOnTrait 的弊病是多了一层堆栈。调试的时候要注意。
 
-
+ThrowOnTrait 非协程安全
 
 
 

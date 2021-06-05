@@ -30,7 +30,7 @@
     public function __construct()
     public function isInited(): bool
     public function init(array $options, ?object $context = null)
-常规流程方法
+以上是常规流程方法
 
     public function run()
 运行
@@ -46,7 +46,7 @@
 注册某类为命令
 
     public static function DoRun($path_info = '')
-*过时，传入path_info 运行*
+传入path_info 运行，作为路由钩子的回调
 
     public function callObject($class, $method, $args, $input)
 调用类方法

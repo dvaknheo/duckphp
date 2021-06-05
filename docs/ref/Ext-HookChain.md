@@ -17,4 +17,4 @@
     public function offsetGet($offset)
 ## 详解
 
-
+这个类是把单个回调变成回调链的

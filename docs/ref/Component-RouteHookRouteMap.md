@@ -30,31 +30,31 @@
 ## 方法
 
     public static function PrependHook($path_info)
-
+    
     public static function AppendHook($path_info)
-
+    
     protected function initOptions(array $options)
-
+    
     protected function initContext(object $context)
-
+    
     public function compile($pattern_url, $rules = [])
-
+    
     protected function compileMap($map, $namespace_controller)
-
+    
     public function assignRoute($key, $value = null)
-
+    
     public function assignImportantRoute($key, $value = null)
-
+    
     public function getRoutes()
-
+    
     protected function matchRoute($pattern_url, $path_info, &$parameters)
-
+    
     protected function getRouteHandelByMap($routeMap, $path_info)
-
+    
     protected function adjustCallback($callback, $parameters)
-
+    
     public function doHook($path_info, $is_append)
-
+    
     protected function doHookByMap($path_info, $route_map)
 
 
@@ -63,8 +63,9 @@
 
 ## 详解
 key 的规则
-~  开始的为正则
-@ 开始的为带名字的
+~  开始的为正则  ~abc
+
+@ 开始的为带名字的会编译成 正则表达式  如  @artcle/{id:w?} => ~<? （compile 方法
 
 ### RouteHookRouteMap
 

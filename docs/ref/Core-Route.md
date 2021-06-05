@@ -152,10 +152,11 @@ POST 的方法会在方法名前加前缀 do_
 ### 其他方法
 
     public function bind($path_info, $request_method = 'GET')
-        
-    
+
+
+ 绑定一个path_info和方法   
     public function getControllerNamespacePrefix()
-// RouteHookRouteMap 用到 获取控制器命名空间
+RouteHookRouteMap 用到 获取控制器命名空间
 
 ### 内部方法
 以下是内部方法

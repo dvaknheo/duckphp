@@ -42,21 +42,15 @@ RouteHookPathInfoCompat
 
 
 ## 说明
-也许你想从这个入口类了解 DuckPhp 的所有配置，但这个类只是扩展自
-DuckPhp 类只是弥补了 DuckPhp\Core\App 缺失的方法。
-具体的方法在 DuckPhp\Core\App 里
-主要流程在 DuckPhp\Core\KernelTrait 里
+
+也许你想从这个入口类了解 DuckPhp 的所有配置，但这个类只是扩展自 DuckPhp 类只是弥补了 [DuckPhp\Core\App](Core-App.md) 缺失的方法。
+具体的方法在 DuckPhp\Core\App 里。主要流程在 [DuckPhp\Core\KernelTrait](Core-KernelTrait.md)  里
 
 ## 公开方法
     public function __construct()
-
+    
     protected function initAfterOverride(array $options, object $context = null)
 
-
-
-## 重载保护方法
-
-* 下划线开始的公开方法被视为内部方法 *
 
 
 ## 详解

@@ -19,24 +19,24 @@ url
 默认分页的key
 
         'rewrite' => null,
-重写函数，替代 defaultGetUrl
+重写函数，替代 本类的 defaultGetUrl
 
 ## 方法
 
 ### 组件方法
 
     public function __construct()
-
+    
     public function init(array $options, object $context = null)
-
+    
     public function isInited():bool
 
 ### PagerInterface 方法
 
     public function current($new_value = null): int
-
+    
     public function pageSize($new_value = null): int
-
+    
     public function render($total, $options = []): string
 
 
@@ -55,11 +55,11 @@ url
 
 
     protected function initOptions(array $options)
-
+    
     protected function initContext(object $context)
-
+    
     protected function getDefaultUrl()
-
+    
     protected function getDefaultPageNo()
 
 

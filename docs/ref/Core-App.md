@@ -115,14 +115,13 @@ DuckPhp\Core\App 类 可以视为几个类的组合
     public function removeBeforeShowHandler($handler)
 高级
 
-    public function getDynamicComponentClasses()
-获得动态类
 
     public function addDynamicComponentClass($class)
-添加动态类
+添加动态组件，补完 KernelTrait
 
     public function skip404Handler()
-跳过 404 处理
+跳过 404 处理，用于协程类
+
 ### 接管流程的函数
     public function __construct()
 构造函数
@@ -215,6 +214,16 @@ SystemWrapperTrait 还有两个特殊函数
     public static function Show($data = [], $view = '')
 Show 方法对 View::Show() 加了好些补充
 
+    public static function IsAjax()
+检查是否是 Ajax 请求
+
+    public static function CheckRunningController($self, $static)
+检查是否是当前控制器类是否运行
+
+例子，比如你放一个父类在 控制器目录底下，不希望直接被执行的时候。 在构造方法里调用这个方法，
+`C::CheckRunningController(self::class, static::class)`
+如果是被调用，则 404。 如果是两者相等，则返回 true ，否则返回 false;
+
 ### 内置 trait  Core_NotImplemented
 内置 trait Core_NotImplemented DuckPhp\Core\App 没实现，但 DuckPhp\DuckPhp 类实现的的方法。数据库和事件系统
 ```php
@@ -271,6 +280,7 @@ Show 方法对 View::Show() 加了好些补充
     public static function replaceControllerSingelton($old_class, $new_class)
 单例模式，替换控制器类， 控制器类的 单例模式不能简单的 $old_class::G($new_class) 替换。
 
+
 ```php
     public static function addRouteHook($callback, $position, $once = true)
     public static function add404RouteHook($callback)
@@ -323,10 +333,9 @@ Show 方法对 View::Show() 加了好些补充
 
 
 
-
 ### 内部实现函数
 
-这些二都是内部的实现函数
+这些都是内部没下划线前缀的静态方法的动态实现。 不用 protected 是因为想让非继承的类也能修改实现。
 
 ```php
     public function _Show($data = [], $view = '')
@@ -373,10 +382,13 @@ Show 方法对 View::Show() 加了好些补充
     public function _SERVER($key = null, $default = null)
     public function _SESSION($key = null, $default = null)
     public function _FILES($key = null, $default = null)
-    protected function _SessionSet($key, $value)
-    protected function _CookieSet($key, $value, $expire)
-    protected function _SessionGet($key, $default)
-    protected function _CookieGet($key, $default)
+    public function _SessionSet($key, $value)
+    public function _CookieSet($key, $value, $expire)
+    public function _SessionGet($key, $default)
+    public function _CookieGet($key, $default)
+
+    public function _IsAjax()
+    public function _CheckRunningController($self, $static)
 
     
 ```
@@ -391,6 +403,9 @@ Show 方法对 View::Show() 加了好些补充
 
 ## 说明
 
-### 关于 injected_helper_map
+### 关于 injected_helper_map 。 有时间再详细文档。
 
 以上
+
+
+
