@@ -13,7 +13,6 @@ class AdvanceHelperTraitTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(AdvanceHelperTrait::class);
         
         AdvanceHelper::assignPathNamespace(__DIR__,'NoExistsByAdvanceHelper');
-        AdvanceHelper::setUrlHandler(function($url){});
         AdvanceHelper::addRouteHook(function(){},'append-outter',true);
         
         AdvanceHelper::CallException(new \Exception("333333",-1));

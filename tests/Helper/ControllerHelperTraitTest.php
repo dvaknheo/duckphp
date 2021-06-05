@@ -37,7 +37,6 @@ class ControllerHelperTraitTest extends \PHPUnit\Framework\TestCase
         ControllerHelper::Domain();
         ControllerHelper::Parameter('a','b');
         ControllerHelper::getRouteCallingMethod();
-        ControllerHelper::setRouteCallingMethod($method);
         ControllerHelper::DbCloseAll();
         //*/
         //*
@@ -121,6 +120,9 @@ ControllerHelper::PageHtml(123);
             ControllerHelper::FireEvent("test",1,2,3);
         }catch(\Exception $ex){
         }
+        ControllerHelper::IsAjax();
+        ControllerHelper::CheckRunningController('self','static');
+
 
         \LibCoverage\LibCoverage::End();
 

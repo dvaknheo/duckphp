@@ -313,6 +313,29 @@ EOT;
         $view = $view === '' ? Route::G()->getRouteCallingPath() : $view;
         return View::G()->_Show($data, $view);
     }
+    public static function IsAjax()
+    {
+        return static::G()->_IsAjax();
+    }
+    public function _IsAjax()
+    {
+        $ref = $this->_SERVER('HTTP_X_REQUESTED_WITH');
+        return $ref && 'xmlhttprequest' == strtolower($ref) ? true : false;
+    }
+    public static function CheckRunningController($self, $static)
+    {
+        return static::G()->_CheckRunningController($self, $static);
+    }
+    public function _CheckRunningController($self, $static)
+    {
+        if ($self === $static) {
+            if ($self === Route::G()->getRouteCallingClass()) {
+                static::Exit404();
+            }
+            return true;
+        }
+        return false;
+    }
 }
 
 trait Core_SystemWrapper
@@ -971,7 +994,7 @@ trait Core_SuperGlobal
     {
         return $this->getSuperGlobalData('_FILES', $key, $default);
     }
-    protected function _SessionSet($key, $value)
+    public function _SessionSet($key, $value)
     {
         if (defined('__SUPERGLOBAL_CONTEXT')) {
             (__SUPERGLOBAL_CONTEXT)()->_SESSION[$key] = $value;
@@ -979,15 +1002,15 @@ trait Core_SuperGlobal
             $_SESSION[$key] = $value;
         }
     }
-    protected function _CookieSet($key, $value, $expire)
+    public function _CookieSet($key, $value, $expire)
     {
         $this->_setcookie($key, $value, $expire ? $expire + time():0);
     }
-    protected function _SessionGet($key, $default)
+    public function _SessionGet($key, $default)
     {
         return $this->getSuperGlobalData('_SESSION', $key, $default);
     }
-    protected function _CookieGet($key, $default)
+    public function _CookieGet($key, $default)
     {
         return $this->getSuperGlobalData('_COOKIE', $key, $default);
     }

@@ -43,9 +43,9 @@ class MiscTest extends \PHPUnit\Framework\TestCase
         DuckPhp::G()->init($options)->run();
         
         
-        DuckPhp::G()->setRouteCallingMethod('m1');
+        DuckPhp::Route()->setRouteCallingMethod('m1');
 
-        DuckPhp::G()->setRouteCallingMethod('m1');
+        DuckPhp::Route()->setRouteCallingMethod('m1');
         
         $object=new \stdClass();
         Misc::DI('a',$object);

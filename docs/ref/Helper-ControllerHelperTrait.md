@@ -177,4 +177,10 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
     public static function dumpAllRouteHooksAsString()
 打印所有路由钩子，调试用
 
+    public static function IsAjax()
+判断是否是Ajax 请求
+
+    public static function CheckRunningController($self, $static)
+用于基类里判断是否被直接调用。参见 App 里相关文档
+
 以上就是所有控制器助手方法

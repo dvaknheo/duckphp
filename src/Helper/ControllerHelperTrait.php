@@ -60,6 +60,7 @@ trait ControllerHelperTrait
     {
         return App::dumpAllRouteHooksAsString();
     }
+    
     ///////////////
     public static function Render($view, $data = null)
     {
@@ -68,6 +69,14 @@ trait ControllerHelperTrait
     public static function Show($data = [], $view = '')
     {
         return App::Show($data, $view);
+    }
+    public static function IsAjax()
+    {
+        return App::IsAjax();
+    }
+    public static function CheckRunningController($self, $static)
+    {
+        return App::CheckRunningController($self, $static);
     }
     public static function setViewHeadFoot($head_file = null, $foot_file = null)
     {

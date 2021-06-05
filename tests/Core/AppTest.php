@@ -54,8 +54,8 @@ class AppTest extends \PHPUnit\Framework\TestCase
                         SuperGlobalContext::DefineSuperGlobalContext();
 
             App::G()->addBeforeShowHandler(function(){ echo "beforeShowHandlers";});
-                        App::G()->addBeforeShowHandler("testsssssssssss");
-                        App::G()->removeBeforeShowHandler("testsssssssssss");
+            App::G()->addBeforeShowHandler("testsssssssssss");
+            App::G()->removeBeforeShowHandler("testsssssssssss");
 
             $value = $cache[$key]; // trigger notice
             App::G()->options['error_debug']='_sys/error-debug';
@@ -70,18 +70,30 @@ class AppTest extends \PHPUnit\Framework\TestCase
 
         });
         
-        Route::G()->bind('/NOOOOOOOOOOOOOOO');  // 这两句居然有区别 ,TODO ，分析之
+        App::Route()->bind('/NOOOOOOOOOOOOOOO');  // 这两句居然有区别 ,TODO ，分析之
         
         App::G()->options['error_404']=function(){
             echo "noooo 404  ooooooooo\n";
-            
         };
         
         App::G()->run();
 echo "-------------------------------------\n";
-        Route::G()->bind('/exception');
+        App::Route()->bind('/exception');
         App::G()->run();
-
+        
+        App::G()->options['error_404']=function(){
+            echo "zzzzzo 404  zzzzzzzzzzzz\n";
+        };
+        App::Route()->bind('/Base/index');
+        try{
+                App::G()->system_wrapper_replace(['exit'=>function($code){
+            var_dump(DATE(DATE_ATOM));
+        }]);
+        
+        App::G()->run();
+        }catch(\Throwable $ex){
+            echo "failed".$ex;
+        }
         try{
             App::G()->options['skip_exception_check']=true;
             Route::G()->bind('/exception');
@@ -207,6 +219,8 @@ App::PageHtml(123);
         $new_class = AppTestObjectB::class;
         App::replaceControllerSingelton($old_class, $new_class);
         App::G()->version();
+        
+        App::IsAjax();
         
         App::G()->runAutoLoader();
         \LibCoverage\LibCoverage::End();
@@ -617,10 +631,22 @@ class ViewHelper
 }
 }
 namespace tests\DuckPhp\Core\Controller{
-class AppMain
+class Base
+{
+    public function __construct()
+    {
+        \DuckPhp\Core\App::CheckRunningController(self::class, static::class);
+    }
+    public function index()
+    {
+        echo "OK";
+    }
+}
+class AppMain extends Base
 {
     public function index()
     {
+        new Base();
         var_dump("OK");
     }
     public function exception()
