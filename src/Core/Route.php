@@ -54,7 +54,6 @@ class Route extends ComponentBase
     protected $calling_method = '';
     
     //flags
-    protected $has_bind_server_data = false;
     protected $enable_default_callback = true;
     protected $is_failed = false;
 
@@ -95,19 +94,15 @@ class Route extends ComponentBase
     }
     public function reset()
     {
-        $this->has_bind_server_data = true;
         $this->is_failed = false;
-
+        $this->enable_default_callback = true;
         return $this;
     }
     public function bind($path_info, $request_method = 'GET')
     {
-        //TODO  Remove
+        $this->reset();
+
         $path_info = parse_url($path_info, PHP_URL_PATH);
-        
-        if (!$this->has_bind_server_data) {
-            $this->reset();
-        }
         $this->setPathInfo($path_info);
         if (isset($request_method)) {
             $_SERVER['REQUEST_METHOD'] = $request_method;
@@ -117,16 +112,10 @@ class Route extends ComponentBase
         }
         return $this;
     }
-    protected function beforeRun()
-    {
-        $this->is_failed = false;
-        if (!$this->has_bind_server_data) {
-            $this->reset();
-        }
-    }
     public function run()
     {
-        $this->beforeRun();
+        $this->reset();
+        
         foreach ($this->pre_run_hook_list as $callback) {
             $flag = ($callback)($this->getPathInfo());
             if ($flag) {
@@ -252,9 +241,10 @@ class Route extends ComponentBase
             return null;
         }
         if ($this->options['controller_strict_mode']) {
-            $full_class =ltrim($full_class,'\\');
+            /** @var object */ $t = ''.ltrim($full_class, '\\');
+            $full_class = $t; // phpstan ,I hate you.
             if ($full_class !== (new \ReflectionClass($full_class))->getName()) {
-                $this->route_error = "can't find class($full_class) by $path_class .";
+                $this->route_error = "can't find class($full_class) by $path_class (strict_mode miss case).";
                 return null;
             }
         }
@@ -313,17 +303,21 @@ class Route extends ComponentBase
             if ($this->options['controller_strict_mode']) {
                 try {
                     if ($method !== (new \ReflectionMethod($object, $method))->getName()) {
+                        $this->route_error = 'method can not call(strict_mode miss case)';
                         return null;
                     }
                 } catch (\ReflectionException $ex) {
+                    $this->route_error = 'method can not call';
+                    return null;
+                }
+            } else {
+                if (!is_callable([$object,$method])) {
+                    $this->route_error = 'method can not call';
                     return null;
                 }
             }
         }
-        if (!is_callable([$object,$method])) {
-            $this->route_error = 'method can not call';
-            return null;
-        }
+        
         if ($this->options['controller_stop_static_method']) {
             $ref = new \ReflectionMethod($object, $method);
             if ($ref->isStatic()) {

@@ -106,8 +106,8 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G(new Route())->init($options);
 
         
-        Route::G()->bind('Main/index','POST');
-        Route::G()->run();
+        Route::G()->bind('Main/index','POST')->run();
+        Route::G()->bind('main/index','POST')->run();
         
         Route::G(new Route())->init($options);
         Route::G()->bind("good")->run();
@@ -133,13 +133,13 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         ];
         Route::G(new Route())->init($options);
         Route::G()->defaultGetRouteCallback('/about/me');
-        Route::G()->defaultGetRouteCallback('/about/me');
+        Route::G()->defaultGetRouteCallback('/about/Me');
 
         Route::G()->replaceControllerSingelton(\tests_Core_Route\about::class, \tests_Core_Route\about2::class);
         
         Route::G()->defaultGetRouteCallback('/about/me');
         Route::G()->defaultGetRouteCallback('/about/me');
-        Route::G()->defaultGetRouteCallback('/about/G');
+        Route::G()->defaultGetRouteCallback('/about/NoExists');
         
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
@@ -161,19 +161,20 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
-            'controller_stop_g_method' => true,
             'controller_stop_static_method' => true,
         ];
         Route::G(new Route())->init($options);
         Route::G()->defaultGetRouteCallback('/Main/G');
         Route::G()->defaultGetRouteCallback('/Main/MyStatic');
-        
-        
-        SuperGlobalContext::DefineSuperGlobalContext();
-        Route::G()->bind('Main/index','POST');
-        Route::G()->run();
-        Route::G()->setPathInfo('xx');
 
+        SuperGlobalContext::DefineSuperGlobalContext();
+        
+        Route::G()->bind('Main/index','POST')->run();
+
+        Route::G()->options['controller_methtod_for_miss']='_ttt';
+        Route::G()->options['controller_strict_mode']=false;
+        Route::G()->bind('Main/NO','POST')->run();
+        
         \LibCoverage\LibCoverage::End();
         return;
     }
@@ -358,6 +359,10 @@ class about2 extends baseController
     {
         echo "about2about2about2about2about2about2about2meeeeeeeeeeee";
         var_dump(DATE(DATE_ATOM));
+    }
+    public function __Missing()
+    {
+        var_dump("NOController");
     }
 }
 class Main  extends baseController

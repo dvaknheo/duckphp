@@ -26,7 +26,7 @@ class RouteHookFunctionRoute extends ComponentBase
     {
         return static::G()->_Hook($path_info);
     }
-    public function _Hook($path_info='/')
+    public function _Hook($path_info = '/')
     {
         $path_info = ($this->context_class)::Route()->getPathInfo();
         $path_info = ltrim($path_info, '/');
@@ -40,13 +40,13 @@ class RouteHookFunctionRoute extends ComponentBase
         $callback = $prefix.$post_prefix.$path_info;
         
         $flag = $this->runCallback($callback);
-        if($flag){
+        if ($flag) {
             return true;
         }
-        if(!empty($_POST) && !empty($post_prefix)){
+        if (!empty($_POST) && !empty($post_prefix)) {
             $callback = $prefix.$path_info;
             $flag = $this->runCallback($callback);
-            if($flag){
+            if ($flag) {
                 return true;
             }
         }

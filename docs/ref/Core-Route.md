@@ -164,17 +164,15 @@ RouteHookRouteMap 用到 获取控制器命名空间
     protected function initOptions(array $options)
 重写了初始化选项
 
-    protected function beforeRun()
-用于重写，在回调前执行
 
     protected function getRunResult()
 获得运行结果
 
     protected function createControllerObject($full_class)
-创建控制器对象
+重写用，创建控制器对象
 
     protected function getMethodToCall($object, $method)
-获得回调方法
+重写用，获得回调方法
 
     protected function getUrlBasePath()
 获得 URL 基本地址
