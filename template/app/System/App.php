@@ -92,7 +92,7 @@ class App extends DuckPhp
         // 控制器禁止直接访问静态方法 (DuckPhp\Core\Route)
         // $options['controller_stop_static_method'] = true;
 
-        // 待文档 (DuckPhp\Core\Route)
+        // 路由严格区分大消息 (DuckPhp\Core\Route)
         // $options['controller_strict_mode'] = true;
 
         // 控制器使用单例模式 (DuckPhp\Core\Route)
@@ -178,15 +178,6 @@ class App extends DuckPhp
 
         // 使用 _GET 模拟无 PathInfo 配置 (DuckPhp\Component\RouteHookPathInfoCompat)
         // $options['path_info_compact_enable'] = false;
-
-        // 待文档 (DuckPhp\Component\RouteHookPathInfoCompat)
-        // $options['path_info_compact_func_mode'] = false;
-
-        // 待文档 (DuckPhp\Component\RouteHookPathInfoCompat)
-        // $options['path_info_compact_func_mode_404_to_index'] = false;
-
-        // 待文档 (DuckPhp\Component\RouteHookPathInfoCompat)
-        // $options['path_info_compact_func_mode_method_prefix'] = 'action_';
 
         // 日志目录 (DuckPhp\Core\Logger)
         // $options['path_log'] = 'logs';
@@ -419,6 +410,18 @@ class App extends DuckPhp
         $options['ext']['DuckPhp\\Ext\\RouteHookDirectoryMode'] = true;
             // 目录模式的基类
             $options['mode_dir_basepath'] = '';
+
+        //*/
+        /*
+        $options['ext']['DuckPhp\\Ext\\RouteHookFunctionRoute'] = true;
+            // 启用函数模式路由
+            $options['function_route'] = false;
+
+            // 函数模式路由扩展404
+            $options['function_route_404_to_index'] = false;
+
+            // 函数模式路由扩展函数前缀
+            $options['function_route_method_prefix'] = 'action_';
 
         //*/
         /*

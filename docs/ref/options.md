@@ -97,7 +97,7 @@
     控制器禁止直接访问静态方法   // [DuckPhp\Core\Route](Core-Route.md)
 + ** 'controller_strict_mode' => true,  ** 
 
-    待文档   // [DuckPhp\Core\Route](Core-Route.md)
+    路由严格区分大消息   // [DuckPhp\Core\Route](Core-Route.md)
 + ** 'controller_use_singletonex' => false,  ** 
 
     控制器使用单例模式   // [DuckPhp\Core\Route](Core-Route.md)
@@ -173,6 +173,15 @@
 +  'facades_namespace' => 'MyFacades',   
 
     facades 开始的namespace   // [DuckPhp\Ext\MyFacadesAutoLoader](Ext-MyFacadesAutoLoader.md)
++  'function_route' => false,   
+
+    启用函数模式路由   // [DuckPhp\Ext\RouteHookFunctionRoute](Ext-RouteHookFunctionRoute.md)
++  'function_route_404_to_index' => false,   
+
+    函数模式路由扩展404   // [DuckPhp\Ext\RouteHookFunctionRoute](Ext-RouteHookFunctionRoute.md)
++  'function_route_method_prefix' => 'action_',   
+
+    函数模式路由扩展函数前缀   // [DuckPhp\Ext\RouteHookFunctionRoute](Ext-RouteHookFunctionRoute.md)
 +  'handle_all_dev_error' => true,   
 
     接管一切开发错误   // [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
@@ -251,15 +260,6 @@
 + ** 'path_info_compact_enable' => false,  ** 
 
     使用 _GET 模拟无 PathInfo 配置   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
-+ ** 'path_info_compact_func_mode' => false,  ** 
-
-    待文档   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
-+ ** 'path_info_compact_func_mode_404_to_index' => false,  ** 
-
-    待文档   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
-+ ** 'path_info_compact_func_mode_method_prefix' => 'action_',  ** 
-
-    待文档   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
 +  'path_lib' => 'lib',   
 
     库目录   // [DuckPhp\Ext\Misc](Ext-Misc.md)
@@ -498,7 +498,7 @@
     - 'controller_stop_static_method' => true,
         控制器禁止直接访问静态方法
     - 'controller_strict_mode' => true,
-        待文档
+        路由严格区分大消息
     - 'controller_use_singletonex' => false,
         控制器使用单例模式
     - 'controller_welcome_class' => 'Main',
@@ -558,12 +558,6 @@
         GET 模式类名的 key
     - 'path_info_compact_enable' => false,
         使用 _GET 模拟无 PathInfo 配置
-    - 'path_info_compact_func_mode' => false,
-        待文档
-    - 'path_info_compact_func_mode_404_to_index' => false,
-        待文档
-    - 'path_info_compact_func_mode_method_prefix' => 'action_',
-        待文档
 + DuckPhp\Component\RouteHookRouteMap
     - 'route_map' => array ( ),
         路由映射
@@ -672,6 +666,13 @@
 + DuckPhp\Ext\RouteHookDirectoryMode
     - 'mode_dir_basepath' => '',
         目录模式的基类
++ DuckPhp\Ext\RouteHookFunctionRoute
+    - 'function_route' => false,
+        启用函数模式路由
+    - 'function_route_404_to_index' => false,
+        函数模式路由扩展404
+    - 'function_route_method_prefix' => 'action_',
+        函数模式路由扩展函数前缀
 + DuckPhp\Ext\RouteHookRewrite
     - 'rewrite_auto_extend_method' => true,
         是否扩充方法至助手类

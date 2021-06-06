@@ -442,6 +442,7 @@ DuckPhp\\Ext\\RedisCache
 DuckPhp\\Ext\\RedisManager
 DuckPhp\\Ext\\RouteHookApiServer
 DuckPhp\\Ext\\RouteHookDirectoryMode
+DuckPhp\\Ext\\RouteHookFunctionRoute
 DuckPhp\\Ext\\RouteHookRewrite
 DuckPhp\\Ext\\StrictCheck";
         $classes=explode("\n",$classes);
