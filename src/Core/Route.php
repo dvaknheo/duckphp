@@ -252,8 +252,9 @@ class Route extends ComponentBase
             return null;
         }
         if ($this->options['controller_strict_mode']) {
+            $full_class =ltrim($full_class,'\\');
             if ($full_class !== (new \ReflectionClass($full_class))->getName()) {
-                $this->route_error = "can't find class($full_class) by $path_class 2";
+                $this->route_error = "can't find class($full_class) by $path_class .";
                 return null;
             }
         }
