@@ -1,5 +1,5 @@
 <?php
-namespace tests\DuckPhp\Component
+namespace tests\DuckPhp\Ext
 {
 
 use DuckPhp\Ext\RouteHookFunctionRoute;

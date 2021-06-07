@@ -23,11 +23,11 @@ class SqlDumper extends ComponentBase
     {
         $this->context_class = get_class($context);
     }
-    public function fetch()
+    public function run()
     {
         $data = $this->getData();
         $this->save($data);
-        return $data;
+        return true;
     }
     public function install($force = false)
     {
@@ -75,13 +75,12 @@ class SqlDumper extends ComponentBase
         $sql = preg_replace('/AUTO_INCREMENT=\d+/', 'AUTO_INCREMENT=1', $sql);
         return $sql;
     }
-    protected function save($setting)
+    protected function save($data)
     {
         $path = parent::getComponenetPathByKey('path_sql_dumper_data');
         $file = $path.$this->options['sql_dumper_data_file'].'.php';
-        $data = '<'.'?php   return ';
+        $data = '<'.'?php return ';
         $data .= var_export($setting, true);
-        $data .= ';';
         return @file_put_contents($file, $data);
     }
 }

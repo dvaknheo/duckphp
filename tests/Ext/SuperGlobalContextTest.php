@@ -1,5 +1,5 @@
 <?php
-namespace tests\DuckPhp\Core;
+namespace tests\DuckPhp\Ext;
 
 use DuckPhp\Ext\SuperGlobalContext;
 use DuckPhp\Core\App;

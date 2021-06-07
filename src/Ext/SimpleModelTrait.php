@@ -40,7 +40,7 @@ trait SimpleModelTrait
         return $this->table_name;
     }
     
-    private function prepare($sql)
+    protected function prepare($sql)
     {
         return str_replace("'TABLE'", $this->table(), $sql);
     }
