@@ -128,6 +128,17 @@ return [
 ];
 
 ```
+还支持 thinkphp 模式的路由重写
+```PHP
+<?php declare(strict_types=1);
+return [
+    '@user(/page-(?<page>\d+))?'      => '~user->index',
+    '@user/{login}'             => '~user->profile',
+
+
+];
+
+```
 
 如果开启 `route_map_auto_extend_method` 你可以用以下方法得到相应方法
 

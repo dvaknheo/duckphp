@@ -8,11 +8,11 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
 
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(SqlDumper::class);
+        \LibCoverage\LibCoverage::Begin(SqlDumper::class);
         
-        SqlDumper::G()->run();
-        SqlDumper::G()->install();
+        //SqlDumper::G()->run();
+        //SqlDumper::G()->install();
         
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
     }
 }

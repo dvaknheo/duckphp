@@ -8,11 +8,11 @@ class SimpleModelTraitTest extends \PHPUnit\Framework\TestCase
 
     public function testAll()
     {
-        \MyCodeCoverage::G()->begin(SimpleModelTrait::class);
+        \LibCoverage\LibCoverage::Begin(SimpleModelTrait::class);
         
         //SimpleModel::G()->find();
         
-        \MyCodeCoverage::G()->end();
+        \LibCoverage\LibCoverage::End();
     }
 }
 class SimpleModel

@@ -11,11 +11,14 @@ class SqlDumper extends ComponentBase
 {
     public $options = [
         'path' =>'',
-        'path_sql_dumper_data' => 'config',
+        'path_sql_dumper' => 'config',
         'sql_dumper_ignore_tables' => [],
+        'sql_dumper_inlucde_tables' => '*',
+        'sql_dumper_data_tables' => [],
+        //
         'sql_dumper_prefix' => '',
-        'sql_dumper_data_file' => 'sql_struct',
-        
+        'sql_dumper_struct_file' => 'sql_struct',
+        'sql_dumper_data_file' => 'sql_data',
     ];
     protected $context_class = null;
     //@override
@@ -54,7 +57,7 @@ class SqlDumper extends ComponentBase
         $ret =[];
         $tables = $this->getTables();
         foreach ($tables as $table) {
-            $ret[$table] = $this->getCreate($table);
+            $ret[$table] = $this->getCreateTableSql($table);
         }
         return $ret;
     }
@@ -68,7 +71,7 @@ class SqlDumper extends ComponentBase
         }
         return $a;
     }
-    protected function getCreate($table)
+    protected function getCreateTableSql($table)
     {
         $record = ($this->context_class)::Db()->fetch('show create table '.$table);
         $sql = $record['Create Table']??null;
@@ -78,7 +81,7 @@ class SqlDumper extends ComponentBase
     protected function save($data)
     {
         $path = parent::getComponenetPathByKey('path_sql_dumper_data');
-        $file = $path.$this->options['sql_dumper_data_file'].'.php';
+        $file = $path.$this->options['sql_dumper_struct_file'].'.php';
         $data = '<'.'?php return ';
         $data .= var_export($setting, true);
         return @file_put_contents($file, $data);
