@@ -9,18 +9,22 @@
 ## 选项
 
         'path' =>'',
-路径
-        'path_sql_dumper_data' => 'config',
+基础路径
+        'path_sql_dump_data' => 'config',
 导出数据的路径
 
-        'sql_dumper_data_file' => 'sql_struct',
+        'sql_dump_struct_file' => 'sql_struct',
 导出的文件名
-
-        'sql_dumper_prefix' => '',
+        'sql_dump_data_file' => 'sql_data',
+导出的文件名
+        'sql_dump_prefix' => '',
 表名前缀
-        'sql_dumper_ignore_tables' => [],
+
+        'sql_dump_ignore_tables' => [],
 忽略表
 
+        'sql_dump_inlucde_tables' => '*',
+包括的表，如果为 * 则表示包括 sql_dump_prefix 开始的所有表
 
 ## 方法
 

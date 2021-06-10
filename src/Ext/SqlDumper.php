@@ -10,15 +10,15 @@ use DuckPhp\Core\ComponentBase;
 class SqlDumper extends ComponentBase
 {
     public $options = [
-        'path' =>'',
-        'path_sql_dumper' => 'config',
-        'sql_dumper_ignore_tables' => [],
-        'sql_dumper_inlucde_tables' => '*',
-        'sql_dumper_data_tables' => [],
-        //
-        'sql_dumper_prefix' => '',
-        'sql_dumper_struct_file' => 'sql_struct',
-        'sql_dumper_data_file' => 'sql_data',
+        'path' => '',
+        'path_sql_dump' => 'config',
+        'sql_dump_inlucde_tables' => '*',
+        'sql_dump_ignore_tables' => [],
+        'sql_dump_data_tables' => [],
+        
+        'sql_dump_prefix' => '',
+        'sql_dump_struct_file' => 'sql_struct',
+        'sql_dump_data_file' => 'sql_data',
     ];
     protected $context_class = null;
     //@override
@@ -34,56 +34,121 @@ class SqlDumper extends ComponentBase
     }
     public function install($force = false)
     {
-        $ret ='';
+        $ret = '';
         $data = $this->load();
-        foreach($data as $table =>$sql){
-            try{
+        foreach ($data['scheme'] as $table => $sql) {
+            try {
                 ($this->context_class)::Db()->execute($sql);
-            }catch(\PDOException $ex){
-                $ret.= $ex->getMessage() . "\n"; 
+            } catch (\PDOException $ex) {
+                $ret .= $ex->getMessage() . "\n";
+            }
+        }
+        foreach ($data['data'] as $table => $sql) {
+            try {
+                ($this->context_class)::Db()->execute($sql);
+            } catch (\PDOException $ex) {
+                $ret .= $ex->getMessage() . "\n";
             }
         }
         return $ret;
     }
     protected function load()
     {
-        $path = parent::getComponenetPathByKey('path_sql_dumper_data');
-        $file = $path.$this->options['sql_dumper_data_file'].'.php';
-        $t = include $file;
-        return $t;
+        $ret = [];
+        $path = parent::getComponenetPathByKey('path_sql_dump');
+        
+        // .
+        $file = $path.$this->options['sql_dump_struct_file'].'.php';
+        $ret['scheme'] = @include $file;
+        
+        // .
+        $file = $path.$this->options['sql_dump_data_file'].'.php';
+        $ret['data'] = @include $file;
+        
+        return $ret;
     }
     protected function getData()
     {
-        $ret =[];
-        $tables = $this->getTables();
-        foreach ($tables as $table) {
-            $ret[$table] = $this->getCreateTableSql($table);
-        }
+        $ret = [];
+        $scheme = [];
+        
+        $ret['scheme'] = $this->getSchemes();
+        $ret['data'] = $this->getInsertTableSql();
+        
         return $ret;
     }
-    protected function getTables()
+    protected function getSchemes()
     {
-        $a = [];
+        $include_tables = $this->options['sql_dump_inlucde_tables'];
+        $ignore_tables = $this->options['sql_dump_inlucde_tables'];
+        $prefix = $this->options['sql_dump_inlucde_tables'];
+        $ret = [];
         $data = ($this->context_class)::Db()->fetchAll('show tables');
         foreach ($data as $v) {
             $t = array_values($v);
-            $a[] = $t[0];
+            $table = $t[0];
+            if ((!empty($prefix)) && (substr($table, 0, strlen($prefix)) !== $prefix)) {
+                continue;
+            }
+            if ($include_tables != '*' && !in_array($include_tables, $table)) {
+                continue;
+            }
+            if (in_array($ignore_tables, $table)) {
+                continue;
+            }
+            $ret[$table] = $this->getSchemeByTable($table);
         }
-        return $a;
+        return $ret;
     }
-    protected function getCreateTableSql($table)
+    
+    protected function getSchemeByTable($table)
     {
         $record = ($this->context_class)::Db()->fetch('show create table '.$table);
-        $sql = $record['Create Table']??null;
+        $sql = $record['Create Table'] ?? null;
         $sql = preg_replace('/AUTO_INCREMENT=\d+/', 'AUTO_INCREMENT=1', $sql);
         return $sql;
     }
+    protected function getInsertTableSql()
+    {
+        $ret = [];
+        $include_tables = $this->options['sql_dump_data_tables'];
+        
+        foreach ($include_tables as $table) {
+            $str = $this->getDataSql($table);
+            if (empty($str)) {
+                continue;
+            }
+            $ret[$table] = $str;
+        }
+        return $ret;
+    }
+    protected function getDataSql($table)
+    {
+        $ret = '';
+        $sql = "SELECT * FROM ".$table;
+        $data = ($this->context_class)::Db()->fetchAll();
+        if (empty($data)) {
+            return '';
+        }
+        foreach ($data as $line) {
+            $ret .= "INSERT INTO $table ".($this->context_class)::Db()->fqouteInsertArray($line) .";\n";
+        }
+        return $ret;
+    }
     protected function save($data)
     {
-        $path = parent::getComponenetPathByKey('path_sql_dumper_data');
-        $file = $path.$this->options['sql_dumper_struct_file'].'.php';
-        $data = '<'.'?php return ';
-        $data .= var_export($setting, true);
-        return @file_put_contents($file, $data);
+        $path = parent::getComponenetPathByKey('path_sql_dump');
+        $header = '<'.'?php return ';
+        $file = $path.$this->options['sql_dump_struct_file'].'.php';
+        $str = $header . var_export($data['scheme'], true);
+        @file_put_contents($file, $str);
+        
+        if (empty($data['data'])) {
+            return;
+        }
+        $file = $path.$this->options['sql_dump_data_file'].'.php';
+        $str = $header . var_export($data['data'], true);
+        file_put_contents($file, $str);
+        return;
     }
 }

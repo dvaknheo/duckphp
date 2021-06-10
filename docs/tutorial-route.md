@@ -128,13 +128,15 @@ return [
 ];
 
 ```
-还支持 thinkphp 模式的路由重写
+@ 开始的为带名字的会编译成 正则表达式  如  @artcle/{id:w?} => ~(<?id>\w+?)
+（compile 方法
+
 ```PHP
 <?php declare(strict_types=1);
 return [
     '@user(/page-(?<page>\d+))?'      => '~user->index',
     '@user/{login}'             => '~user->profile',
-
+    '@item-{name}-{id:w?} =>'~user->profile',
 
 ];
 
@@ -164,7 +166,6 @@ return [
 在选项里取消注释的代码加载以下代码
 
 ```php
-$options['ext']['DuckPhp\\Ext\\RouteHookPathInfoCompat']=true;
 $options['path_info_compact_action_key' = "_r";
 $options['path_info_compact_class_key'] = "";
 ```
