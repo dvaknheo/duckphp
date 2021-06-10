@@ -43,6 +43,7 @@ class SqlDumper extends ComponentBase
                 $ret .= $ex->getMessage() . "\n";
             }
         }
+        $data['data']= $data['data'] ?: [];
         foreach ($data['data'] as $table => $sql) {
             try {
                 ($this->context_class)::Db()->execute($sql);
@@ -57,13 +58,12 @@ class SqlDumper extends ComponentBase
         $ret = [];
         $path = parent::getComponenetPathByKey('path_sql_dump');
         
-        // .
+        // 
         $file = $path.$this->options['sql_dump_struct_file'].'.php';
-        $ret['scheme'] = @include $file;
+        $ret['scheme'] = (function()use($file){ return @include $file;})();
         
-        // .
         $file = $path.$this->options['sql_dump_data_file'].'.php';
-        $ret['data'] = @include $file;
+        $ret['data'] = (function()use($file){ return @include $file;})();
         
         return $ret;
     }
@@ -80,8 +80,8 @@ class SqlDumper extends ComponentBase
     protected function getSchemes()
     {
         $include_tables = $this->options['sql_dump_inlucde_tables'];
-        $ignore_tables = $this->options['sql_dump_inlucde_tables'];
-        $prefix = $this->options['sql_dump_inlucde_tables'];
+        $ignore_tables = $this->options['sql_dump_ignore_tables'];
+        $prefix = $this->options['sql_dump_prefix'];
         $ret = [];
         $data = ($this->context_class)::Db()->fetchAll('show tables');
         foreach ($data as $v) {
@@ -93,7 +93,7 @@ class SqlDumper extends ComponentBase
             if ($include_tables != '*' && !in_array($include_tables, $table)) {
                 continue;
             }
-            if (in_array($ignore_tables, $table)) {
+            if (in_array($table, $ignore_tables)) {
                 continue;
             }
             $ret[$table] = $this->getSchemeByTable($table);
@@ -111,9 +111,9 @@ class SqlDumper extends ComponentBase
     protected function getInsertTableSql()
     {
         $ret = [];
-        $include_tables = $this->options['sql_dump_data_tables'];
+        $tables = $this->options['sql_dump_data_tables'];
         
-        foreach ($include_tables as $table) {
+        foreach ($tables as $table) {
             $str = $this->getDataSql($table);
             if (empty($str)) {
                 continue;
@@ -126,12 +126,12 @@ class SqlDumper extends ComponentBase
     {
         $ret = '';
         $sql = "SELECT * FROM ".$table;
-        $data = ($this->context_class)::Db()->fetchAll();
+        $data = ($this->context_class)::Db()->fetchAll($sql);
         if (empty($data)) {
             return '';
         }
         foreach ($data as $line) {
-            $ret .= "INSERT INTO $table ".($this->context_class)::Db()->fqouteInsertArray($line) .";\n";
+            $ret .= "INSERT INTO $table ".($this->context_class)::Db()->qouteInsertArray($line) .";\n";
         }
         return $ret;
     }
@@ -140,14 +140,14 @@ class SqlDumper extends ComponentBase
         $path = parent::getComponenetPathByKey('path_sql_dump');
         $header = '<'.'?php return ';
         $file = $path.$this->options['sql_dump_struct_file'].'.php';
-        $str = $header . var_export($data['scheme'], true);
+        $str = $header . var_export($data['scheme'], true) . ";\n";
         @file_put_contents($file, $str);
         
         if (empty($data['data'])) {
             return;
         }
         $file = $path.$this->options['sql_dump_data_file'].'.php';
-        $str = $header . var_export($data['data'], true);
+        $str = $header . var_export($data['data'], true) . ";\n";
         file_put_contents($file, $str);
         return;
     }

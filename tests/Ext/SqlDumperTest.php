@@ -11,17 +11,25 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(SqlDumper::class);
         
-        $path_app = \LibCoverage\LibCoverage::G()->getClassTestPath(Db::class);
+        $path_app = \LibCoverage\LibCoverage::G()->getClassTestPath(SqlDumper::class);
 
         $setting = include $path_app . 'setting.php';
+        @unlink(include $path_app . 'sql_struct.php');
+        @unlink(include $path_app . 'sql_data.php');
+        $database_list = $setting['database_list'];
         
+        $database_list = $setting['database_list'][0];
         $options=[
             'setting'=>$setting,
-            'path_sql_dumper' =>$path_app;
+            'path_sql_dump' =>$path_app,
         ];
-        DuckPhp(new DuckPhp())->init([]);
-        SqlDumper::G($options,DuckPhp::G());
+        DuckPhp::G(new DuckPhp())->init($options);
+        SqlDumper::G()->init(DuckPhp::G()->options,DuckPhp::G());
+        SqlDumper::G()->run();
+        SqlDumper::G()->install();
         
+        SqlDumper::G()->options['sql_dump_data_tables']=['Settings'];
+        SqlDumper::G()->run();
         SqlDumper::G()->install();
         
         
