@@ -15,9 +15,14 @@ class SimpleModelTraitTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::End();
     }
 }
-class SimpleModel
+class Base
 {
     use \DuckPhp\SingletonEx\SingletonExTrait;
 
     //static $class_var;
+}
+class MyModel extends Base
+{
+    protected $table_name='test';
+    //pr
 }

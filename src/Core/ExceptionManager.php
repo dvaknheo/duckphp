@@ -115,8 +115,8 @@ class ExceptionManager extends ComponentBase
     }
     public function reset()
     {
-        $this->exceptionHandlers = [];
-        $this->default_exception_handler = null;
+        // $this->exceptionHandlers = [];
+        // $this->default_exception_handler = null;
         return $this;
     }
     public function clear()

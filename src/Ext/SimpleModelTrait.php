@@ -11,6 +11,7 @@ trait SimpleModelTrait
 {
     protected $table_name = null;
     protected $table_prefix = null;
+    protected $table_pk = 'id';
 
     private function getTableByClass($class)
     {
@@ -53,24 +54,21 @@ trait SimpleModelTrait
         $data = App::DbForRead()->fetchAll(App::SqlForPager($sql, $page, $page_size));
         return ['data' => $data,"total" => $total];
     }
-    public function get($id)
-    {
-        $sql = "SELECT * FROM 'TABLE' where id =?";
-        $sql = $this->prepare($sql);
-        $ret = App::DbForRead()->fetch($sql, $id);
-        return $ret;
-    }
+
     public function find($a)
     {
+        if (is_scalar($a)){
+            $a = [$this->table_pk => $a];
+        }
         $f = [];
         foreach ($a as $k => $v) {
             $f[] = $k . ' = ' . App::DbForRead()->quote($v);
         }
         $frag = implode('and ', $f);
         
-        $sql = "select * from 'TABLE' where ".$frag;
+        $sql = "SELECT * FROM 'TABLE' WHERE ".$frag;
         $sql = $this->prepare($sql);
-        $ret = App::DbForRead()->fetch($sql, $id);
+        $ret = App::DbForRead()->fetch($sql);
         return $ret;
     }
     public function add($data)
@@ -80,12 +78,12 @@ trait SimpleModelTrait
     }
     public function update($id, $data)
     {
-        $ret = App::DbForWrite()->updateData($this->table(), $id, $data);
+        $ret = App::DbForWrite()->updateData($this->table(), $id, $data,$this->table_pk);
         
         return $ret;
     }
     public function delete($id)
     {
-        //throw new \ErrorException('R')
+        throw new \ErrorException('Impelement It.');
     }
 }
