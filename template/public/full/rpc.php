@@ -44,7 +44,7 @@ EOT;
 }
 
 $options = [
-    //'is_debug'=>true,
+    'is_debug'=>true,
     'namespace_controller' => '\\',
     'ext' => [
         JsonRpcExt::class => [
@@ -57,7 +57,7 @@ $options = [
 ];
 
 DuckPhp::RunQuickly($options, function () {
-    $url = DuckPhp::Domain().$_SERVER['SCRIPT_NAME'].'/json_rpc';
+    $url = DuckPhp::Domain(true).$_SERVER['SCRIPT_NAME'].'/json_rpc';
     $ip = ($_SERVER['SERVER_ADDR'] ?? '127.0.0.1').':'.$_SERVER['SERVER_PORT'];
     JsonRpcExt::G()->options['jsonrpc_backend'] = [$url,$ip];
 });
