@@ -603,10 +603,11 @@ server {
     12. [RouteHookDirectoryMode](docs/ref/Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件
     13. [RouteHookManager](docs/ref/Ext-RouteHookManager.md) 路由钩子管理器
     14. [RouteHookRewrite](docs/ref/Ext-RouteHookRewrite.md) 路由重写组件
-    15. [SimpleModel](docs/ref/Ext-SimpleModel.md) TODO 简单的模型基类
-    16. [StaticReplacer](docs/ref/Ext-StaticReplacer.md) 适配协程的语法替换写法类
-    17. [StrictCheck](docs/ref/Ext-StrictCheck.md) 严格检查模式组件
-    18. [SuperGlobalContext](docs/ref/Ext-SuperGlobalContext.md) 超全局上下文组件
+    15. [SimpleModelTrait](docs/ref/Ext-SimpleModel.md) 简单的模型Trait
+    16. [SqlDumper](docs/ref/Ext-SqlDumper.md) Sql 迁移类
+    17. [StaticReplacer](docs/ref/Ext-StaticReplacer.md) 适配协程的语法替换写法类
+    18. [StrictCheck](docs/ref/Ext-StrictCheck.md) 严格检查模式组件
+    19. [SuperGlobalContext](docs/ref/Ext-SuperGlobalContext.md) 超全局上下文组件
 6. `Helper` 目录，各种助手类。
     1. [AdvanceHelper](docs/ref/Helper-AdvanceHelper.md) 应用助手类
     2. [AdvanceHelperTrait](docs/ref/Helper-AdvanceHelperTrait.md) 应用助手Trait

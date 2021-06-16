@@ -137,6 +137,7 @@ subgraph cluster_Component {
     RouteHookRouteMap[shape="component"];
     
     X_HttpServer[label="DuckPhp\\HttpServer\\HttpServer",shape="rarrow"];
+    X_Db_Db[label="DuckPhp\\Db\\Db",shape="rarrow"];
     
     AppPluginTrait -> Configer [style="dashed"]; 
     AppPluginTrait -> View [style="dashed"]; 
@@ -154,7 +155,7 @@ subgraph cluster_Component {
     DuckPhpCommand -> Console; 
     DuckPhpCommand -> Installer; 
     DuckPhpCommand -> X_HttpServer [style="dashed"];
-    DbManager -> Db_Db [style="dashed"]; 
+    DbManager -> X_Db_Db [style="dashed"]; 
 
     Pager -> PagerInterface; 
 }
@@ -202,11 +203,14 @@ subgraph cluster_Ext {
     RouteHookDirectoryMode[shape="component"];
     RouteHookManager[shape="component"];
     RouteHookRewrite[shape="component"];
-    SimpleModel [label="SimpleModel(todo)";shape="component"];
+    SimpleModelTrait [shape=diamond];
+    SqlDumper [shape="component"];
+    
     StaticReplacer [shape="component"];
     StrictCheck[shape="component"];
     SuperGlobalContext[shape="component"];
 
+    X_Core_App[label="DuckPhp\\Core\\App",shape="rarrow"];
     X_Core_Route[label="DuckPhp\\Core\\Route",shape="rarrow"];
     X_Core_View[label="DuckPhp\\Core\\View",shape="rarrow"];
     X_DbManager[label="DuckPhp\\Component\\DbManager",shape="rarrow"];
@@ -224,7 +228,8 @@ subgraph cluster_Ext {
     RouteHookDirectoryMode -> ComponentBase [style="dotted"];
     RouteHookManager -> ComponentBase [style="dotted"];
     RouteHookRewrite -> ComponentBase [style="dotted"];
-    SimpleModel -> ComponentBase [style="dotted"];
+    SimpleModelTrait -> ComponentBase [style="dotted"];
+    SqlDumper -> ComponentBase [style="dotted"];
     StaticReplacer -> ComponentBase [style="dotted"];
     StrictCheck -> ComponentBase [style="dotted"];
     SuperGlobalContext -> ComponentBase [style="dotted"];
@@ -240,7 +245,7 @@ subgraph cluster_Ext {
     JsonRpcClientBase -> ComponentBase [style="dotted"];
     JsonView -> X_Core_View [style="dashed"];
 
-    SimpleModel ->Db_Db [style="dashed"];
+    SimpleModelTrait ->X_Core_App [style="dashed"];
     StrictCheck -> X_DbManager [style="dashed"];
     
 
