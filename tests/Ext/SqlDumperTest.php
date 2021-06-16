@@ -32,7 +32,33 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
         SqlDumper::G()->run();
         SqlDumper::G()->install();
         
-        
+        $this->more();
         \LibCoverage\LibCoverage::End();
+    }
+    protected function more()
+    {
+        SqlDumper::G(new SqlDumper())->init(DuckPhp::G()->options,DuckPhp::G());
+        SqlDumper::G()->options['sql_dump_prefix'] = 'NoExists';
+        SqlDumper::G()->run();
+        SqlDumper::G()->options['sql_dump_prefix'] = '';
+        SqlDumper::G()->options['sql_dump_inlucde_tables'] = ['NoExists'];
+        SqlDumper::G()->run();
+        SqlDumper::G()->options['sql_dump_prefix'] = '';
+        SqlDumper::G()->options['sql_dump_inlucde_tables'] = ['NoExists'];
+        SqlDumper::G()->options['sql_dump_exclude_tables'] = ['test'];
+        
+        SqlDumper::G()->run();
+        
+        SqlDumper::G()->options['sql_dump_prefix'] = '';
+        SqlDumper::G()->options['sql_dump_inlucde_tables'] = ['test'];
+        SqlDumper::G()->options['sql_dump_exclude_tables'] = ['test'];
+        SqlDumper::G()->run();
+        
+        SqlDumper::G()->options['sql_dump_prefix'] = '';
+        SqlDumper::G()->options['sql_dump_inlucde_tables'] = ['empty'];
+        SqlDumper::G()->options['sql_dump_data_tables'] = ['empty'];
+        
+        SqlDumper::G()->run();
+        
     }
 }

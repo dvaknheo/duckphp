@@ -13,7 +13,7 @@ class SqlDumper extends ComponentBase
         'path' => '',
         'path_sql_dump' => 'config',
         'sql_dump_inlucde_tables' => '*',
-        'sql_dump_ignore_tables' => [],
+        'sql_dump_exclude_tables' => [],
         'sql_dump_data_tables' => [],
         
         'sql_dump_prefix' => '',
@@ -43,7 +43,7 @@ class SqlDumper extends ComponentBase
                 $ret .= $ex->getMessage() . "\n";
             }
         }
-        $data['data']= $data['data'] ?: [];
+        $data['data'] = $data['data'] ?: [];
         foreach ($data['data'] as $table => $sql) {
             try {
                 ($this->context_class)::Db()->execute($sql);
@@ -58,12 +58,16 @@ class SqlDumper extends ComponentBase
         $ret = [];
         $path = parent::getComponenetPathByKey('path_sql_dump');
         
-        // 
+        //
         $file = $path.$this->options['sql_dump_struct_file'].'.php';
-        $ret['scheme'] = (function()use($file){ return @include $file;})();
+        $ret['scheme'] = (function () use ($file) {
+            return @include $file;
+        })();
         
         $file = $path.$this->options['sql_dump_data_file'].'.php';
-        $ret['data'] = (function()use($file){ return @include $file;})();
+        $ret['data'] = (function () use ($file) {
+            return @include $file;
+        })();
         
         return $ret;
     }
@@ -80,7 +84,7 @@ class SqlDumper extends ComponentBase
     protected function getSchemes()
     {
         $include_tables = $this->options['sql_dump_inlucde_tables'];
-        $ignore_tables = $this->options['sql_dump_ignore_tables'];
+        $ignore_tables = $this->options['sql_dump_exclude_tables'];
         $prefix = $this->options['sql_dump_prefix'];
         $ret = [];
         $data = ($this->context_class)::Db()->fetchAll('show tables');
@@ -90,7 +94,7 @@ class SqlDumper extends ComponentBase
             if ((!empty($prefix)) && (substr($table, 0, strlen($prefix)) !== $prefix)) {
                 continue;
             }
-            if ($include_tables != '*' && !in_array($include_tables, $table)) {
+            if ($include_tables != '*' && !in_array($table, $include_tables)) {
                 continue;
             }
             if (in_array($table, $ignore_tables)) {

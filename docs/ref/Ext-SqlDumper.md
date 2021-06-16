@@ -25,7 +25,7 @@
         'sql_dump_data_tables' => [],
 只用到的表
 
-        'sql_dump_ignore_tables' => [],
+        'sql_dump_exclude_tables' => [],
 忽略表
 
         'sql_dump_inlucde_tables' => '*',
@@ -37,7 +37,7 @@
 
 
     public function run()
-运行导出
+导出 返回的是错误语句字符串
 
     public function install($force = false)
 安装
@@ -49,6 +49,9 @@
 
     protected function load()
 载入数据文件
+
+    protected function getData()
+获取sql 数据
 
     protected function getDataSql($table)
 获取数据
@@ -70,10 +73,12 @@
 简单的便于数据库迁移。
 
 ```php
-SqlDumper::G()->run(); // 导出到配置文件，默认是 config/sql_struct.php
+SqlDumper::G()->export(); // 导出到配置文件，默认是 config/sql_struct.php
 SqlDumper::G()->install(); // 从配置文件安装 sql
 
 ```
+
+
 
 
 

@@ -22,7 +22,7 @@ trait SimpleModelTrait
         $t = explode('\\', $class);
         $class = array_pop($t);
         
-        $table_name = strtolower(substr($class,0, -strlen('Model')));
+        $table_name = strtolower(substr($class, 0, -strlen('Model')));
         $table_name = $this->table_prefix.$table_name;
         
         return $table_name;
@@ -57,7 +57,7 @@ trait SimpleModelTrait
 
     public function find($a)
     {
-        if (is_scalar($a)){
+        if (is_scalar($a)) {
             $a = [$this->table_pk => $a];
         }
         $f = [];
@@ -78,7 +78,7 @@ trait SimpleModelTrait
     }
     public function update($id, $data)
     {
-        $ret = App::DbForWrite()->updateData($this->table(), $id, $data,$this->table_pk);
+        $ret = App::DbForWrite()->updateData($this->table(), $id, $data, $this->table_pk);
         
         return $ret;
     }
