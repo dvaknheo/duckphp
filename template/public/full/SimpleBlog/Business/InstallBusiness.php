@@ -19,6 +19,7 @@ class InstallBusiness extends BaseBusiness
     }
     public function install($database)
     {
+        
         //extract($database);
         $setting = B::LoadConfig('setting');
         $database = [

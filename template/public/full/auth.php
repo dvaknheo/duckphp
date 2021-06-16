@@ -15,20 +15,22 @@ $options = [
     //'path' => $project_root,
     'is_debug'=>true,
     'use_setting_file'=>true,
+    'setting_file_ignore_exists'=>true,
 
     'ext'=>[
         \SimpleAuth\Base\App::class => true,
     ],
 ];
-class X extends SimpleAuth\Controller\Main
+class MainOverrider extends SimpleAuth\Controller\Main
 {
     public function register()
     {
-        echo "第三方注册页面已被我更改";
+        echo "第三方注册页面已被类 ".static::class." 更改";
         return parent::register();
     }
 }
- SimpleAuth\Controller\Main::G(X::G());
+
+SimpleAuth\Controller\Main::G(MainOverrider::G());
 \DuckPhp\DuckPhp::RunQuickly($options,function(){
    
 });

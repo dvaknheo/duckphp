@@ -14,9 +14,11 @@
 导出数据的路径
 
         'sql_dump_struct_file' => 'sql_struct',
-导出的文件名
+导出的结构的文件名
+
         'sql_dump_data_file' => 'sql_data',
-导出的文件名
+导出的数据文件名
+
         'sql_dump_prefix' => '',
 表名前缀
 

@@ -29,8 +29,7 @@ class Main
             if ($code == 419) {
                 C::var_dump(419);
                 C::DumpTrace();
-                
-                exit;
+                C::exit(0);
             }
             C::Logger()->warning(''.(get_class($ex)).'('.$ex->getCode().'): '.$ex->getMessage());
             C::ExitRouteTo('login');
@@ -46,13 +45,7 @@ class Main
         }
         $this->setLayoutData();
     }
-    public function index()
-    {
-        //TODO  首页，如果不是直接运行模式，则 404
-        $url_reg = C::URL('register');
-        $url_login = C::URL('login');
-        C::Show(get_defined_vars(), 'main');
-    }
+
     protected function setLayoutData()
     {
         $csrf_token = SessionService::G()->csrf_token();
@@ -67,6 +60,13 @@ class Main
         }
         
         C::assignViewData(get_defined_vars());
+    }
+    public function index()
+    {
+        //TODO  首页，如果不是直接运行模式，则 404
+        $url_reg = C::URL('register');
+        $url_login = C::URL('login');
+        C::Show(get_defined_vars(), 'main');
     }
     public function home()
     {
@@ -119,14 +119,11 @@ class Main
     public function do_login()
     {
         $post = C::POST();
-            \DuckPhp\Core\App::G()->options['is_debug']=true;
         try {
             $user = UserService::G()->login($post);
-
             SessionService::G()->setCurrentUser($user);
         } catch (\Exception $ex) {
             $error = $ex->getMessage();
-            var_dump(\DuckPhp\Core\Configer::G());
             $name = $post['name'] ?? '';
             C::Show(get_defined_vars(), 'auth/login');
             return;

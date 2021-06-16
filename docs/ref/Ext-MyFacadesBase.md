@@ -10,6 +10,7 @@ MyFacadesAutoLoader 子类 的基类
 
     public function __construct()
 构造方法
+
     public static function __callStatic($name, $arguments)
 静态调用方法
 

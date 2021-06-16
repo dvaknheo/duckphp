@@ -20,10 +20,10 @@ namespace Api {
 
         public function index()
         {
-            $domain=\DuckPhp\DuckPhp::Domain();
-        $url=$domain . \DuckPhp\DuckPhp::Url('test.foo');
-        $url2=$domain .\DuckPhp\DuckPhp::Url('test.foo2?a=1&b=2');
-        $message = <<<EOT
+            $domain=\DuckPhp\DuckPhp::Domain(true);
+            $url=$domain . \DuckPhp\DuckPhp::Url('test.foo');
+            $url2=$domain .\DuckPhp\DuckPhp::Url('test.foo2?a=1&b=2');
+            $message = <<<EOT
     不带参数访问： {$url}
     带参数访问：{$url2} 将会反射到 相应参数
     如果需要修改 uid ，则继承本扩展 RouteHookApiServer 覆盖 getObjectAndMethod() 和 getInputs()
