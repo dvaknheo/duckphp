@@ -8,9 +8,9 @@
 
 ## 选项
 
-        'path' =>'',
+        'path' => '',
 基础路径
-        'path_sql_dump_data' => 'config',
+        'path_sql_dump' => 'config',
 导出数据的路径
 
         'sql_dump_struct_file' => 'sql_struct',
@@ -21,6 +21,9 @@
 
         'sql_dump_prefix' => '',
 表名前缀
+
+        'sql_dump_data_tables' => [],
+只用到的表
 
         'sql_dump_ignore_tables' => [],
 忽略表
@@ -47,14 +50,17 @@
     protected function load()
 载入数据文件
 
-    protected function getData()
+    protected function getDataSql($table)
 获取数据
 
-    protected function getTables()
-获取表名
+    protected function getInsertTableSql()
+获得所有插入 sql 语句
 
-    protected function getCreate($table)
+    protected function getSchemes()
 获得数据库表信息
+
+    protected function getSchemeByTable($table)
+获得单个数据库表信息
 
     protected function save($data)
 保存数据到文件
@@ -68,4 +74,17 @@ SqlDumper::G()->run(); // 导出到配置文件，默认是 config/sql_struct.ph
 SqlDumper::G()->install(); // 从配置文件安装 sql
 
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -29,7 +29,7 @@
 删除没被实现
 
 ### 内部方法
-    protected function prepare($sql)
+    public function prepare($sql)
 把  `'table'` 转成 表名
 
     protected function getTablePrefix()
@@ -38,7 +38,7 @@
     protected function table()
 表名，
 
-    private function getTableByClass($class)
+    protected function getTableByClass($class)
 getTablePrefix 的实现
 
 ## 详解
@@ -51,3 +51,5 @@ SimpleModelTrait 是帮助你少写代码的，而不是作为 orm 模型用的�
 SimpleModelTrait  find 的返回结果是 数组，而不是当前类。
 
 留有 delete 接口，但只是报异常，因为删除操作要谨慎，各地都不同。
+    
+

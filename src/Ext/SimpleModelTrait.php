@@ -13,7 +13,7 @@ trait SimpleModelTrait
     protected $table_prefix = null;
     protected $table_pk = 'id';
 
-    private function getTableByClass($class)
+    protected function getTableByClass($class)
     {
         if (!isset($this->table_prefix)) {
             $this->table_prefix = $this->getTablePrefix(static::class);
@@ -22,7 +22,7 @@ trait SimpleModelTrait
         $t = explode('\\', $class);
         $class = array_pop($t);
         
-        $table_name = strtolower(substr($class, 0, strlen('Model')));
+        $table_name = strtolower(substr($class,0, -strlen('Model')));
         $table_name = $this->table_prefix.$table_name;
         
         return $table_name;
@@ -41,9 +41,9 @@ trait SimpleModelTrait
         return $this->table_name;
     }
     
-    protected function prepare($sql)
+    public function prepare($sql)
     {
-        return str_replace("'TABLE'", $this->table(), $sql);
+        return str_replace(App::DbForRead()->quote('TABLE'), $this->table(), $sql);
     }
     public function getList(int $page = 1, int $page_size = 10)
     {
