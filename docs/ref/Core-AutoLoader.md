@@ -14,7 +14,7 @@
 命名空间
 
         'path_namespace' => 'app',
-命名空间的相对路径
+自动加载，命名空间的相对路径
 
         'skip_app_autoload' => false,
 跳过 app 的加载

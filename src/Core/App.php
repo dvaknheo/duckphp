@@ -45,6 +45,18 @@ class App extends ComponentBase
     use Core_NotImplemented;
     use Core_SuperGlobal;
     
+    protected $core_options = [
+        'default_exception_do_log' => true,
+        'default_exception_self_display' => true,
+        'close_resource_at_output' => false,
+        'injected_helper_map' => '',
+        
+        //// error handler ////
+        'error_404' => null,          //'_sys/error-404',
+        'error_500' => null,          //'_sys/error-500',
+        'error_debug' => null,        //'_sys/error-debug',
+    ];
+    
     // for trait
     protected $system_handlers = [
         'header' => null,
@@ -66,17 +78,6 @@ class App extends ComponentBase
     protected $pager;
     protected $cache;
     
-    protected $core_options = [
-        'default_exception_do_log' => true,
-        'default_exception_self_display' => true,
-        'close_resource_at_output' => false,
-        'injected_helper_map' => '',
-        
-        //// error handler ////
-        'error_404' => null,          //'_sys/error-404',
-        'error_500' => null,          //'_sys/error-500',
-        'error_debug' => null,        //'_sys/error-debug',
-    ];
     public function __construct()
     {
         parent::__construct();

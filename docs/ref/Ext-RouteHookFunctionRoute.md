@@ -7,13 +7,13 @@
 全部选项:
 
         'function_route' => false,
-开启函数模式路由
+函数模式路由，开关
 
         'function_route_method_prefix' => 'action_',
-函数模式路由前缀
+函数模式路由，函数前缀
 
         'function_route_404_to_index' => false,
-404 是否由 index 来执行
+函数模式路由，404 是否由 index 来执行
 
 ## 方法
 

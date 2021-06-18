@@ -6,29 +6,28 @@
 ## 选项
 
         'jsonrpc_namespace' => 'JsonRpc',
-默认jsonrpc 的命名空间
+jsonrpc 默认jsonrpc 的命名空间
 
         'jsonrpc_backend' => 'https://127.0.0.1',
-后端地址
+jsonrpc 后端地址
 
         'jsonrpc_is_debug' => false,
-是否调试
+jsonrpc 是否调试
 
         'jsonrpc_enable_autoload' => true,
-
-是否要自动加载
+jsonrpc 是否要自动加载
 
         'jsonrpc_check_token_handler' => null,
-Token 处理
+jsonrpc Token 处理
 
         'jsonrpc_wrap_auto_adjust' => true,
-封装调整
+jsonrpc 封装调整
 
         'jsonrpc_service_interface' => '',
-限制指定接口
+jsonrpc 限制指定接口或者基类——todo 调整名字
 
         'jsonrpc_service_namespace' => '',
-服务命名空间
+jsonrpc 限定服务命名空间
 ## 方法
 
     public function __construct()

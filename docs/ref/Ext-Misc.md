@@ -10,7 +10,7 @@
 基本路径
 
         'path_lib' => 'lib',
-Import 库目录
+导入的 Import 库目录路径
 
         'misc_auto_method_extend' => true,
 是否扩充 Misc 类方法至助手类

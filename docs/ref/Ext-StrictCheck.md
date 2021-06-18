@@ -13,7 +13,7 @@
 控制器命名空间
 
         'namespace_model' => '',
-模型命名空间
+严格检查扩展，模型命名空间
 
         'controller_base_class' => null,
 控制器基类
@@ -22,25 +22,26 @@
 是否调试模式
 
         'namespace_business' => '',
-业务类命名空间
+严格检查扩展，业务类命名空间
 
         'strict_check_context_class' => null,
-上下文类
+严格检查扩展，不用传输过来的 app类，而是特别指定类
 
         'strict_check_enable' => true,
-严格检查模式开启（本类是否生效
+严格检查模式开启
+（本类是否生效
 
         'postfix_batch_business' => 'BatchBusiness',
-跳过批量业务的类
+严格检查扩展，跳过批量业务的类
 
         'postfix_business_lib' => 'Lib',
-跳过非业务类
+严格检查扩展，跳过非业务类
 
         'postfix_ex_model' => 'ExModel',
-混合模型后缀
+严格检查扩展，混合模型后缀
 
         'postfix_model' => 'Model',
-模型后缀
+严格检查扩展，模型后缀
 ## 方法
 
 ### 方法

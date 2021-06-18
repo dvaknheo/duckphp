@@ -19,52 +19,54 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 
 ### 子类无法更改的选项
 
-        'use_autoloader' => true,
+            'use_autoloader' => false,
 使用系统自带自动加载器
 
-        'skip_plugin_mode_check' => false,
-跳过插件模式
+            'skip_plugin_mode_check' => false,
+跳过插件模式检查
 
 ### 基本配置
 
-        'path' => null,
-基准目录，如果没设置，将设置为 $_SERVER['SCRIPT_FILENAME']的父级目录。
+            'path' => null,
+基准目录，
+如果没设置，将设置为 $_SERVER['SCRIPT_FILENAME']的父级目录。
 
-        'namespace' => null,
+            'namespace' => null,
 基准命名空间，如果没设置，将设置为当前类的命名空间的上级命名空间，如MyProject\\System\\App => MyProject
 
-        'path_namespace' => null,
+            'path_namespace' => null,
 命名空间路径,如果设置了本值，将会使用自动加载， 基准目录是 path。
 
-        'override_class'=>'',
+            'override_class' => '',
 **重要选项** 如果这个选项的类存在，则在init()的时候会切换到这个类完成后续初始化，并返回这个类的实例。
 
 ### 属性配置
 
-        'is_debug' => false,
+            'is_debug' => false,
 调试模式， 用于 IsDebug() 方法。
 
-        'platform' => '',
+            'platform' => '',
 平台， 自定义字符，用于 Platform() 方法。
 
-        'ext' => [],
+            'ext' => [],
 **重要选项** 扩展
 
 ### 开关配置
 
-        'use_flag_by_setting' => true,
-从设置文件中再次重载 is_debug 和 platform ,对应的设置选项是 duckphp_is_debug ，和 duckphp_platform
+            'use_flag_by_setting' => true,
+从设置文件里再入 is_debug,platform。
+对应的设置选项是 duckphp_is_debug ，和 duckphp_platform
 
-        'use_short_functions' => true,
-允许使用短函数，__h,__url, 等。
-
-        'skip_404_handler' => false,
+            'use_short_functions' => true,
+使用短函数， \\_\\_url, \\_\\_h 等。
+详见 Core\\Functions.php
+            'skip_404_handler' => false,
 不处理 404 ，用于配合其他框架使用。
 
-        'skip_exception_check' => false,
+            'skip_exception_check' => false,
 不在 Run 流程检查异常，把异常抛出外面。用于配合其他框架使用
 
-        'skip_plugin_mode_check' => false,
+            'skip_plugin_mode_check' => false,
 如果 初始化的时候 context 有对象，则进入 plugin 模式 pluginModeInit()，打开以避免进入 plugin 模式.
 
 ## 属性

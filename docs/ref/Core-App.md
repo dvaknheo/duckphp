@@ -58,7 +58,7 @@ injected_helper_map 比较复杂待文档。和助手类映射相关。 v1.2.8-d
             'path' => null,
             'namespace' => null,
             'override_class' => '',
-            
+            //
             //// properties ////
             'is_debug' => false,
             'platform' => '',

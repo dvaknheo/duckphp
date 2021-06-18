@@ -8,13 +8,13 @@
 全部选项
 
         'facades_namespace' => 'MyFacades',
-前缀
+门面扩展，门面类前缀
 
         'facades_map' => [],
-门面映射
+门面扩展，门面类门面映射
 
         'facades_enable_autoload' => true,
-启用自动加载
+门面扩展，门面类启用自动加载
 
 ## 方法
 

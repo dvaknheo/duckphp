@@ -8,28 +8,30 @@
 全部选项
 
         'database' => null,
-单一数据库配置
+数据库，单一数据库配置
 
         'database_list' => null,
-数据库列表
+数据库，多数据库配置
 
         'database_list_reload_by_setting' => true,
-是否从设置里读取数据库列表
+数据库，从设置里再入数据库配置
 
         'database_list_try_single' => true,
-尝试使用单一数据库配置
+数据库，尝试使用单一数据库配置
 
         'database_log_sql_level' => 'debug',
-记录sql 错误等级
+数据库，记录sql 错误等级
 
         'database_log_sql_query' => false,
-记录sql 查询
+数据库，记录sql 查询
 
         'database_auto_extend_method' => true,
-是否扩充 setBeforeGetDbHandler 入助手类。
+数据库，是否扩充方法至助手类
+扩充 setBeforeGetDbHandler 入助手类。
 
         'database_class' => '',
-默认为 DB::class 如果你扩展了 DB 类，可以调用这个。更高级的可以调整 getDb 方法
+数据库，默认为 Db::class。
+如果你扩展了 DB 类，可以调用这个。更高级的可以调整 getDb 方法
 
 
 ## 方法

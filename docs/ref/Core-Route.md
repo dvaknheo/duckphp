@@ -17,40 +17,43 @@
 如果是 \ 开头的则忽略 `namespace` 选项。
 
         'controller_base_class' => '',
-控制器基类
+控制器，基类
 
         'controller_welcome_class' => 'Main',
-欢迎类，默认欢迎类是  Main 。
+控制器，欢迎类，默认欢迎类是  Main 。
 
         'controller_hide_boot_class' => false,
-隐藏启动的类
+控制器，隐藏启动的类
 
         'controller_methtod_for_miss' => '__missing',
-方法丢失调用的方法。
+控制器，方法丢失调用的方法。
 如果有这个方法。找不到方法的时候，会进入这个方法。
 如果你使用了这个方法，将不会进入 404 。
 
         'controller_prefix_post' => 'do_',
-POST 的方法会在方法名前加前缀 do_
+控制器，POST 的方法会在方法名前加前缀 do_
 如果找不到方法名，调用默认方法名。
 
         'controller_class_postfix' => '',
-控制器类名后缀
+控制器，控制器类名后缀
 
         'controller_enable_slash' => false,
-允许结尾的 /
+控制器，允许结尾的 /
 
         'controller_path_prefix' => '',
-添加路由的前缀
+控制器，路由的前缀，只处理限定前缀的 PATH_INFO
 
         'controller_path_ext' => '',
-后缀,如 .html
+控制器，后缀,如 .html
 
         'controller_use_singletonex' => false,
-使用单例模式
+控制器，使用可变单例模式
 
         'controller_stop_static_method' => true,
-禁止直接访问控制器静态方法
+控制器，禁止直接访问控制器静态方法
+
+        'controller_strict_mode' => true,
+控制器，严格模式，区分大小写
 
 ## 公开方法
 
@@ -233,5 +236,4 @@ if(!$flag){
 修订时间：
 
 
-        'controller_strict_mode' => true,
 

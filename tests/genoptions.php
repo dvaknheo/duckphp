@@ -10,6 +10,7 @@ var_dump(DATE(DATE_ATOM));
 return;
 class DocFixer
 {
+// 这里补完 .md 里的选项。 我们应该提取选项出来。变成 json 语句
     public static function G($object=null)
     {
         static $_instance;

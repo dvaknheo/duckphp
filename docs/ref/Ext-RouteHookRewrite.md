@@ -7,10 +7,10 @@
 全部选项
 
         'rewrite_map' => [],
-映射表
+路由重写，重写映射表
 
         'rewrite_auto_extend_method' => true,
-重写自动扩展方法
+路由重写，自动扩展方法
 
     选项
 ## 方法

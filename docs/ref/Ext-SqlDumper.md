@@ -11,25 +11,25 @@
         'path' => '',
 基础路径
         'path_sql_dump' => 'config',
-导出数据的路径
+SqlDump, 导出数据的路径
 
         'sql_dump_struct_file' => 'sql_struct',
-导出的结构的文件名
+SqlDump, 导出的结构的文件名
 
         'sql_dump_data_file' => 'sql_data',
-导出的数据文件名
+SqlDump, 导出的数据文件名
 
         'sql_dump_prefix' => '',
-表名前缀
+SqlDump, 表名前缀
 
         'sql_dump_data_tables' => [],
-只用到的表
+SqlDump, 只用到的表
 
         'sql_dump_exclude_tables' => [],
-忽略表
+SqlDump, 忽略表
 
         'sql_dump_inlucde_tables' => '*',
-包括的表，如果为 * 则表示包括 sql_dump_prefix 开始的所有表
+SqlDump, 包括的表，如果为 * 则表示包括 sql_dump_prefix 开始的所有表
 
 ## 方法
 

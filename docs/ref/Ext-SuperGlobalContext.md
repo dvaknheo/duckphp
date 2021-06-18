@@ -6,10 +6,11 @@
 全部选项
 
         'superglobal_auto_extend_method' => false,
-自动扩充方法
+自动扩充 SuperGlobalContext 的静态方法
 
         'superglobal_auto_define' => false,
-自动定义  `__SUPERGLOBAL_CONTEXT`
+初始化时定义  `__SUPERGLOBAL_CONTEXT`宏
+
 ## 公开方法
 
 
