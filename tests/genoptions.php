@@ -10,7 +10,6 @@ var_dump(DATE(DATE_ATOM));
 return;
 class DocFixer
 {
-// 这里补完 .md 里的选项。 我们应该提取选项出来。变成 json 语句
     public static function G($object=null)
     {
         static $_instance;
@@ -22,6 +21,7 @@ class DocFixer
         return $this;
     }
     protected $path_base='';
+    public $option_descs=[];
     public function __construct()
     {
         $ref=new ReflectionClass(\DuckPhp\DuckPhp::class);
@@ -34,7 +34,21 @@ class DocFixer
         foreach($files as $file){
             $this->doDoc($file);
         }
+        $this->doOptionsDescs($files);
         return true;
+    }
+    public function doOptionsDescs($files)
+    {
+        $all =[];
+        foreach($files as $file){
+            $data=$this->doDoc2($file);
+            $all=array_merge($all,$data);
+        }
+        ksort($all);
+        
+        //$flag = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT;;
+        //file_put_contents(__DIR__.'/../docs/out.json',json_encode($all,$flag));
+        $this->options_descs=$all;
     }
     protected function getSrcFiles($source)
     {
@@ -64,12 +78,39 @@ class DocFixer
             file_put_contents($doc_file,$text,FILE_APPEND);
         }
     }
+    
+    protected function doDoc2($file)
+    {
+        $data = $this->drawSrc($file);  // 这里又读了一次文件，优化就不需要了
+        $doc_file = $this->getMd($file);
+        $doc = file_get_contents($doc_file);
+        $ret=[];
+        foreach($data['options'] as $v){
+            $pos=strpos($doc,$v);
+            if(false===$pos){continue;}
+            $str=substr($doc,$pos,255);
+            $t=explode("\n",$str);
+            array_shift($t);
+            $z=array_shift($t);
+            preg_match("/'([^']+)/",$str,$m);
+            $k=$m[1];
+            $ret[$k]=$z;
+        }
+        return $ret;
+    }
     public function drawSrc($file)
     {
-        $head ='    public $options = ['."\n";
+        $head  = '    public $options = ['."\n";
         $head2 = '        $plugin_options_default = ['."\n";
-        $foot ='    ];'."\n";
+        $head3 = '    protected static $options_default = ['."\n";
+        $head4 = '    protected $core_options = ['."\n";
+
+        $foot  = '    ];'."\n";
         $foot2 = '        ];'."\n";
+        $foot3 = '        ];'."\n";
+        $foot4 = '    ];'."\n";
+        
+        
         $in=false;
         
         $options=[];
@@ -77,7 +118,7 @@ class DocFixer
         
         $lines=file($file);
         foreach($lines as $l){
-            if($l === $foot || $l === $foot2){
+            if($l === $foot || $l === $foot2 || $l === $foot3 || $l === $foot4){
                 break;
             }
             if($in){
@@ -85,11 +126,11 @@ class DocFixer
                 if(substr(trim($l),0,2)==='//'){continue;}
                 $options[]=$l;
             }
-            if($l===$head || $l === $head2){
+            if($l===$head || $l === $head2 || $l === $head3 || $l === $head4){
                 $in=true;
             }
             
-        }        
+        }
         $functions=array_filter($lines,function($v){return preg_match('/function [a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/',$v);});
         return ['options'=>$options,'functions'=>$functions];
     }
@@ -196,7 +237,7 @@ class OptionsGenerator
             array_walk($classes,function(&$v, $key){$v="[$v](".str_replace(['DuckPhp\\','\\'],['','-'],$v).".md)";});
             $x="  // ".implode(", ",$classes) ."";
             $str.=<<<EOT
-+ {$b} $var_option => $s,  {$b} 
++ {$b}$var_option => $s,{$b} 
 
     $comment $x
 
@@ -378,7 +419,7 @@ class DataProvider
     {
         static $cache;
         if(!isset($cache)){
-            $cache=json_decode(file_get_contents(__DIR__ . '/../docs/options-desc.json'),true);
+            $cache =  DocFixer::G()->options_descs; //json_decode(file_get_contents(__DIR__ . '/../docs/options-desc.json'),true);
         }
         return $cache;
     }
