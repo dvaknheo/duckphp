@@ -14,16 +14,16 @@
 安装的命名空间
 
         'force' => false,
-强制模式，强制安装，覆盖现有文件
+安装器，强制安装，覆盖现有文件
 
         'autoloader' => 'vendor/autoload.php',
-自动加载器指向位置
+安装器，自动加载器指向位置
 
         'verbose' => false,
-显示详情
+安装器，显示详情
 
         'help' => false,
-显示帮助
+安装器，显示帮助
 ##  方法
 
     public static function RunQuickly($options)

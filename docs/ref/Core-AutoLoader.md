@@ -20,10 +20,10 @@
 跳过 app 的加载
 
         'autoload_cache_in_cli' => false,
-在命令行模式下缓存
+在命令行模式下开启 opcache 缓存
 
         'autoload_path_namespace_map' => [],
-psr4 风格自动加载列表
+psr4 风格自动加载路径和命名空间映射
 
 ## 方法
 public $is_inited = false;

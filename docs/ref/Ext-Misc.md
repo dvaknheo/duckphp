@@ -5,13 +5,18 @@
 `组件类` 杂项扩展， 提供了一批函数。
 
 ## 选项
-    public $options = [
+
         'path' => '',
+基本路径
+
         'path_lib' => 'lib',
+Import 库目录
+
         'misc_auto_method_extend' => true,
-    
-    ];
+是否扩充 Misc 类方法至助手类
+
 ##  扩充方法。
+
 ### AdvanceHelper 扩充
 
 - Import

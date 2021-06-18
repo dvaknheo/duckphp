@@ -7,19 +7,19 @@
 全部选项
 
         'url' => null,
-url
-        'current' => null,
+分页，给定 url
 
-当前页码
+        'current' => null,
+分页，当前页码
 
         'page_size' => 30,
-每页长度
+分页，每页长度
 
         'page_key' => 'page',
-默认分页的key
+分页，默认分页的key
 
         'rewrite' => null,
-重写函数，替代 本类的 defaultGetUrl
+分页，重写函数，替代 本类的 defaultGetUrl
 
 ## 方法
 

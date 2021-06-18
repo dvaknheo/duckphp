@@ -7,22 +7,22 @@
 全部选项
 
         'cli_enable' => true,
-开启本扩展
+命令行,启用命令行扩展
 
         'cli_mode' => 'replace',
-替换模式或者是路由钩子的模式
+命令行,模式，替换模式或者是路由钩子的模式
 
         'cli_command_alias' => [],
-命令别名列表
+命令行,类别名列表
 
         'cli_default_command_class' => '',
-默认类
+命令行,默认类
 
         'cli_command_method_prefix' => 'command_',
-默认方法前缀
+命令行,默认方法前缀
 
         'cli_command_default' => 'help',
-默认调用指令
+命令行,默认调用指令
 
 ## 方法
 

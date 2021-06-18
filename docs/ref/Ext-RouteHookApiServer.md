@@ -9,21 +9,22 @@
 
         'namespace' => '',
 命名空间
+        'api_server_namespace' => 'Api',
+API服务器， 命名空间，配合 namespace选项使用
 
         'api_server_base_class' => '',
-限定于基本类或接口
-
-        'api_server_namespace' => 'Api',
-api服务器的命名空间
+API服务器，限定的接口或基类，  ~ 开始的表示是当前命名空间
 
         'api_server_class_postfix' => '',
-类后缀
+API服务器， 限定类名后缀
 
         'api_server_use_singletonex' => false,
-api 使用单例模式
+API服务器， 使用可变单例模式，方便替换实现
 
         'api_server_404_as_exception' => false,
-api 404 抛异常
+API服务器， 404 引发异常的模式
+如果设置为 true ，则 404 的时候抛出异常
+
 
 ## 公开方法
 

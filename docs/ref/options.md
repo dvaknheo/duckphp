@@ -275,7 +275,7 @@
 + ** 'path_view_override' => '',  ** 
 
     覆盖视图目录   // [DuckPhp\Core\View](Core-View.md), [DuckPhp\Ext\CallableView](Ext-CallableView.md), [DuckPhp\Ext\EmptyView](Ext-EmptyView.md)
-+ ** 'platform' => '',  ** 
++**  'platform' => '', **
 
     平台   // [DuckPhp\Core\App](Core-App.md)
 +  'postfix_batch_business' => 'BatchBusiness',   
@@ -524,11 +524,11 @@
     - 'cli_command_alias' => array ( ),
         命令行类别名
     - 'cli_command_default' => 'help',
-        
+      
     - 'cli_command_method_prefix' => 'command_',
-        
+      
     - 'cli_default_command_class' => '',
-        
+      
     - 'cli_enable' => true,
         启用命令行
     - 'cli_mode' => 'replace',

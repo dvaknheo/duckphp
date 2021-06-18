@@ -9,8 +9,8 @@ Redis 的 SimpleCache  类
 跳过默认 cache 替换
 
         'redis_cache_prefix' => '',
+Redis Cache 的 key 前缀
 
-cache 前缀
 ## 公开方法
 
 

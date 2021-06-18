@@ -17,7 +17,7 @@
 日志文件目录
 
         'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
-日志文件模板 
+日志文件名模板 
 
         'log_prefix' => 'DuckPhpLog',
 日志前缀

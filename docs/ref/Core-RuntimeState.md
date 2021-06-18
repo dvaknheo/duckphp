@@ -7,9 +7,9 @@
 
 ## 选项
 只有一个选项
-        'use_output_buffer' => false,
 
-启用 ob 函数缓冲
+        'use_output_buffer' => false,
+使用 OB 函数缓冲数据
 
 ## 方法
 

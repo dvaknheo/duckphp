@@ -20,7 +20,8 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 ### 子类无法更改的选项
 
         'use_autoloader' => true,
-使用自动加载
+使用系统自带自动加载器
+
         'skip_plugin_mode_check' => false,
 跳过插件模式
 
