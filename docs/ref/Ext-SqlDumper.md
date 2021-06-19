@@ -13,10 +13,7 @@
         'path_sql_dump' => 'config',
 SqlDump, 导出数据的路径
 
-        'sql_dump_struct_file' => 'sql_struct',
-SqlDump, 导出的结构的文件名
-
-        'sql_dump_data_file' => 'sql_data',
+        'sql_dump_file' => 'sql',
 SqlDump, 导出的数据文件名
 
         'sql_dump_prefix' => '',
@@ -30,6 +27,13 @@ SqlDump, 忽略表
 
         'sql_dump_inlucde_tables' => '*',
 SqlDump, 包括的表，如果为 * 则表示包括 sql_dump_prefix 开始的所有表
+
+        'sql_dump_install_replace_prefix' => false,
+SqlDump,  安装的时候是否要替换 sql_dump_prefix
+        'sql_dump_install_new_prefix' => '',
+SqlDump,  安装时候的新表前缀
+        'sql_dump_install_drop_old_table' => false,
+SqlDump， 安装时删除旧表
 
 ## 方法
 
@@ -68,6 +72,8 @@ SqlDump, 包括的表，如果为 * 则表示包括 sql_dump_prefix 开始的所
     protected function save($data)
 保存数据到文件
 
+    protected function installScheme($sql, $table)
+安装单个数据表
 ## 详解
 
 简单的便于数据库迁移。
@@ -77,18 +83,6 @@ SqlDumper::G()->export(); // 导出到配置文件，默认是 config/sql_struct
 SqlDumper::G()->install(); // 从配置文件安装 sql
 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

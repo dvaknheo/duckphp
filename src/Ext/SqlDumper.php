@@ -17,8 +17,11 @@ class SqlDumper extends ComponentBase
         'sql_dump_data_tables' => [],
         
         'sql_dump_prefix' => '',
-        'sql_dump_struct_file' => 'sql_struct',
-        'sql_dump_data_file' => 'sql_data',
+        'sql_dump_file' => 'sql',
+        'sql_dump_install_replace_prefix' => false,
+        'sql_dump_install_new_prefix' => '',
+        'sql_dump_install_drop_old_table' => false,
+        
     ];
     protected $context_class = null;
     //@override
@@ -38,7 +41,7 @@ class SqlDumper extends ComponentBase
         $data = $this->load();
         foreach ($data['scheme'] as $table => $sql) {
             try {
-                ($this->context_class)::Db()->execute($sql);
+                $this->installScheme($sql, $table);
             } catch (\PDOException $ex) {
                 $ret .= $ex->getMessage() . "\n";
             }
@@ -53,24 +56,19 @@ class SqlDumper extends ComponentBase
         }
         return $ret;
     }
-    protected function load()
+    protected function installScheme($sql, $table)
     {
-        $ret = [];
-        $path = parent::getComponenetPathByKey('path_sql_dump');
-        
-        //
-        $file = $path.$this->options['sql_dump_struct_file'].'.php';
-        $ret['scheme'] = (function () use ($file) {
-            return @include $file;
-        })();
-        
-        $file = $path.$this->options['sql_dump_data_file'].'.php';
-        $ret['data'] = (function () use ($file) {
-            return @include $file;
-        })();
-        
-        return $ret;
+        if ($this->options['sql_dump_install_replace_prefix']) {
+            $table = $this->options['sql_dump_install_new_prefix'] .substr($table, strlen($this->options['sql_dump_prefix']));
+        }
+        if ($this->options['sql_dump_install_drop_old_table']) {
+            $sql_delete = "DROP TABLE IF EXISTS `$table`";
+            ($this->context_class)::Db()->execute($sql_delete);
+        }
+        $sql = preg_replace('/`[^`]+`/', "`$table`", $sql, 1);
+        ($this->context_class)::Db()->execute($sql);
     }
+
     protected function getData()
     {
         $ret = [];
@@ -139,20 +137,23 @@ class SqlDumper extends ComponentBase
         }
         return $ret;
     }
+    protected function load()
+    {
+        $ret = [];
+        $path = parent::getComponenetPathByKey('path_sql_dump');
+        
+        $file = $path.$this->options['sql_dump_file'].'.php';
+        $ret = (function () use ($file) {
+            return @include $file;
+        })();
+        return $ret;
+    }
     protected function save($data)
     {
         $path = parent::getComponenetPathByKey('path_sql_dump');
         $header = '<'.'?php return ';
-        $file = $path.$this->options['sql_dump_struct_file'].'.php';
-        $str = $header . var_export($data['scheme'], true) . ";\n";
+        $file = $path.$this->options['sql_dump_file'].'.php';
+        $str = $header . var_export($data, true) . ";\n";
         @file_put_contents($file, $str);
-        
-        if (empty($data['data'])) {
-            return;
-        }
-        $file = $path.$this->options['sql_dump_data_file'].'.php';
-        $str = $header . var_export($data['data'], true) . ";\n";
-        file_put_contents($file, $str);
-        return;
     }
 }
