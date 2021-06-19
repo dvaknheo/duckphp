@@ -9,8 +9,10 @@ JsonView 扩展扩充了默认的 view 类，用于用函数替代文件方式�
 继承 [DuckPhp\Core\View](Core-View.md) 的所有选项。
 
         'json_view_skip_replace' => false,
-跳过替换默认的View
+jsonview, 跳过替换默认的View
 
+        'json_view_skip_vars' => [],
+jsonview, 排除变量
 ### DuckPhp\Core\View的选项
 
         'path' => '',

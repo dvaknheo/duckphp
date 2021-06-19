@@ -11,6 +11,7 @@ class JsonView extends View
 {
     public $options = [
         'json_view_skip_replace' => false,
+        'json_view_skip_vars' => [],
     ];
     protected $context_class = null;
     public function __construct()
@@ -40,11 +41,17 @@ class JsonView extends View
     //@override
     public function _Show(array $data, string $view): void
     {
+        foreach ($this->options['json_view_skip_vars'] as $v) {
+            unset($data[$v]);
+        }
         $this->context_class::ExitJson($data);
     }
     //@override
     public function _Display(string $view, ?array $data = null): void
     {
+        foreach ($this->options['json_view_skip_vars'] as $v) {
+            unset($data[$v]);
+        }
         $this->context_class::ExitJson($data);
     }
 }

@@ -46,6 +46,9 @@ URL 前缀，限定插件的目录
             'plugin_enable_readfile' => false,
 启用用于读取资源的目录
 
+            'plugin_readfile_prefix' => '',
+启用用于读取资源的目录的前缀，如 /res
+
             'plugin_use_singletonex_route' => true,
 启用 SingletonEx, 让客户可以修改Controller
 
@@ -218,6 +221,7 @@ onBeforeRun
 onAfterRun
 
 清理
+
 
 
 

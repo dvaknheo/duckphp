@@ -97,8 +97,13 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
         DuckPhp::G()->run();
         $_SERVER['PATH_INFO']='/Test/x.html';
         DuckPhp::G()->run();
-
         
+        AppPluginTraitApp2::G()->plugin_options['plugin_readfile_prefix']='/res';
+        $_SERVER['PATH_INFO']='/Test/res/x.html';
+        DuckPhp::G()->run();
+        AppPluginTraitApp2::G()->plugin_options['plugin_readfile_prefix']='/rez';
+            $_SERVER['PATH_INFO']='/Test/res/x.html';
+        DuckPhp::G()->run();
         ////]]]]
         ////
         $plugin_options['plugin_path_namespace']=null;

@@ -89,6 +89,7 @@ trait AppPluginTrait
             'plugin_component_class_route' => '',
             
             'plugin_enable_readfile' => false,
+            'plugin_readfile_prefix' => '',
             'plugin_search_config' => true,
             'plugin_use_singletonex_route' => true,
             'plugin_injected_helper_map' => '',
@@ -247,6 +248,14 @@ trait AppPluginTrait
     {
         $path_document = $this->pluginModeGetPath('plugin_path_document');
         $file = urldecode(substr($path_info, strlen($this->plugin_options['plugin_url_prefix'])));
+        
+        $prefix = $this->plugin_options['plugin_readfile_prefix'];
+        if (!empty($prefix) && (substr($file, 0, strlen($prefix)) !== $prefix)) {
+            return false;
+        }
+        if (!empty($prefix)) {
+            $file = substr($file, strlen($prefix));
+        }
         if (false !== strpos($file, '../')) {
             return false;
         }
@@ -292,14 +301,14 @@ trait AppPluginTrait
     
     protected function mime_content_type($file)
     {
-        static $mimes =[];
+        static $mimes = [];
         if (empty($mimes)) {
             $mime_string = $this->getMimeData();
             $items = explode("\n", $mime_string);
             foreach ($items as $content) {
                 if (\preg_match("/\s*(\S+)\s+(\S.+)/", $content, $match)) {
-                    $mime_type       = $match[1];
-                    $extension_var   = $match[2];
+                    $mime_type = $match[1];
+                    $extension_var = $match[2];
                     $extension_array = \explode(' ', \substr($extension_var, 0, -1));
                     foreach ($extension_array as $file_extension) {
                         $mimes[$file_extension] = $mime_type;
@@ -307,7 +316,7 @@ trait AppPluginTrait
                 }
             }
         }
-        return $mimes[pathinfo($file, PATHINFO_EXTENSION )]?? 'text/plain';
+        return $mimes[pathinfo($file, PATHINFO_EXTENSION)] ?? 'text/plain';
     }
     protected function getMimeData()
     {

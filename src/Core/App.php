@@ -959,7 +959,7 @@ trait Core_SuperGlobal
 
     private function getSuperGlobalData($superglobal_key, $key, $default)
     {
-        $data = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->$superglobal_key : ($GLOBALS[$superglobal_key] ??[]);
+        $data = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->$superglobal_key : ($GLOBALS[$superglobal_key] ?? []);
         
         if (isset($key)) {
             return $data[$key] ?? $default;

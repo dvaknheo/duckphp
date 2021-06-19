@@ -12,6 +12,7 @@ class JsonViewTest extends \PHPUnit\Framework\TestCase
 
         $options=[
             'json_view_skip_replace'=> false,
+            'json_view_skip_vars'=> ['head'],
         ];
         DuckPhp::G()->system_wrapper_replace([
             'exit' =>function(){ echo "change!\n";},

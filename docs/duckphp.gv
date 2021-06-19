@@ -139,6 +139,7 @@ subgraph cluster_Component {
     X_HttpServer[label="DuckPhp\\HttpServer\\HttpServer",shape="rarrow"];
     X_Db_Db[label="DuckPhp\\Db\\Db",shape="rarrow"];
     
+    AppPluginTrait -> ExceptionManager [style="dashed"]; 
     AppPluginTrait -> Configer [style="dashed"]; 
     AppPluginTrait -> View [style="dashed"]; 
     AppPluginTrait -> Route [style="dashed"]; 
