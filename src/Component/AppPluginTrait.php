@@ -6,6 +6,7 @@
 namespace DuckPhp\Component;
 
 use DuckPhp\Core\Configer;
+use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\View;
 
@@ -209,8 +210,7 @@ trait AppPluginTrait
             }
         } catch (\Throwable $ex) {
             $this->onPluginModeException();
-            $this->pluginModeClear();
-            throw $ex;
+            ExceptionManager::CallException($ex);
         }
         $this->onPluginModeAfterRun();
         $this->pluginModeClear();
