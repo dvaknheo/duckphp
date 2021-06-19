@@ -97,6 +97,11 @@ onPluginModeException 出异常后调用
     protected function pluginModeReadFile($path_info)
     private function pluginModeGetPath($path_key, $path_key_parent = 'plugin_path'): string
     protected function pluginModeSearchAllPluginFile($path, $setting_file = '')
+内部的方法
+
+    protected function mime_content_type($file)
+    protected function getMimeData()
+修复 mime_content_type() 的替代方法。
 
 ## 应用
 例子见于 template/public/full/

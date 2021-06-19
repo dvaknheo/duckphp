@@ -95,7 +95,7 @@ class App extends ComponentBase
         $error_view = $this->options['error_404'] ?? null;
         $error_view = $this->error_view_inited?$error_view:null;
         
-        static::header('', true, 404);
+        static::header('404 Not Found', true, 404);
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)();
             return;
@@ -128,7 +128,7 @@ class App extends ComponentBase
         $error_view = $this->options['error_500'] ?? null;
         $error_view = $this->error_view_inited?$error_view:null;
         
-        static::header('', true, 500);
+        static::header('Server Error', true, 500);
         $data = [];
         $data['is_debug'] = $this->options['is_debug'];
         $data['ex'] = $ex;
