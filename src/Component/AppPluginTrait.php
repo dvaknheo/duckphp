@@ -204,6 +204,7 @@ trait AppPluginTrait
         
         $this->onPluginModeBeforeRun();
         
+        $ret = false;
         try {
             $ret = Route::G()->run();
             if (!$ret && $this->plugin_options['plugin_enable_readfile']) {
@@ -213,7 +214,9 @@ trait AppPluginTrait
             $this->onPluginModeException();
             ExceptionManager::CallException($ex);
         }
-        $this->onPluginModeAfterRun();
+        if ($ret) {
+            $this->onPluginModeAfterRun();
+        }
         $this->pluginModeClear();
         return $ret;
     }
