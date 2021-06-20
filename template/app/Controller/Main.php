@@ -18,7 +18,10 @@ class Main // extends BaseController
         $var = C::H(DemoBusiness::G()->foo());
         C::Show(get_defined_vars(), 'main');
     }
-    // change it  if  you can
+    public function files()
+    {
+        C::Show(get_defined_vars(), 'files');
+    }
     public function i()
     {
         phpinfo();

@@ -21,6 +21,7 @@ Now is [<?=$var?>]
 <div>
 常用例子，不需要单独配置
 <ul>
+    <li><a href="/files"> /files 查看示例堆栈和包含文件</a>
     <li><a href="/demo.php"> demo.php 单一文件演示所有操作</a>
     <li><a href="/helloworld.php"> helloworld.php 常见的 helloworld</a>
     <li><a href="/just-route.php">just-route.php 只要路由</a>
