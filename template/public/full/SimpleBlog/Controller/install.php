@@ -38,23 +38,4 @@ class install
         }
         C::Show(get_defined_vars(),'install');
     }
-    /*
-    public function dump()
-    {
-        $ret = [];
-        $tables = ['Articles'];
-        foreach ($tables as $table) {
-            try {
-                $sql = "SHOW CREATE TABLE $table";
-                $data = DN::DB()->fetch($sql);
-                $str = $data['Create Table'];
-                $str = preg_replace('/AUTO_INCREMENT=\d+/', 'AUTO_INCREMENT=1', $str);
-                $ret[$table] = $str;
-            } catch (\PDOException $ex) {
-            }
-        }
-        var_dump($ret);
-        return $ret;
-    }
-    */
 }

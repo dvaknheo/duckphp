@@ -7,21 +7,22 @@ namespace SimpleBlog\Business;
 
 use SimpleBlog\Helper\BusinessHelper as B;
 use SimpleBlog\System\App;
+use DuckPhp\Component\DbManager;
 
 class InstallBusiness extends BaseBusiness
 {
+    //
     public function checkInstall()
     {
-        if(B::Setting('simple_blog_installed')){
+        if(App::Setting('simple_blog_installed')){
             return true;
         }
         return false;
     }
+    //
     public function install($database)
     {
-        
-        //extract($database);
-        $setting = B::LoadConfig('setting');
+        $setting = App::LoadConfig('setting');
         $database = [
             'dsn' => "mysql:host={$database['host']};port={$database['port']};dbname={$database['dbname']};charset=utf8mb4;",
             'username' => $database['username'],
@@ -30,9 +31,11 @@ class InstallBusiness extends BaseBusiness
         ];
         //接下来连接数据库
         try{
-            App::G()->checkDb($database);
-            App::Db()->execute($this->getSqlForStruct());
-            App::Db()->execute($this->getSqlForData());
+            $this->checkDb($database);
+            $sqldumper_options = [
+                //
+            ];
+            SqlDumper::G()->init($sqldumper_options,App::G())->install();
         }catch(\Exception $ex){
             BusinessException::ThrowOn(true, "安装数据库失败" . $ex->getMessage(),-1);
         }
@@ -44,20 +47,11 @@ class InstallBusiness extends BaseBusiness
         
         return true;
     }
-    
-    //
-    protected function getSqlForStruct()
-    {
-        return include App::G()->options['path'].'data/'.'database_struct.php';
-    }
-    protected function getSqlForData()
-    {
-        return include App::G()->options['path'].'data/'.'database_data.php';
-    }
     protected function writeSettingFile($setting)
     {
-        $this->options['path_config'] = App::G()->options['path_config'] ?? 'config';
-        $path = $this->getComponenetPathByKey('path_config');
+        $setting = App::LoadConfig(App::G()->options['setting_file']?? 'setting');
+        
+        $path = $this->getComponenetPathByKey('path_config'); // TODO;
         $setting_file = $this->options['setting_file'] ?? 'setting';
         $file = $path.$setting_file.'.php';
         
@@ -68,10 +62,10 @@ class InstallBusiness extends BaseBusiness
         $data .=';';
         return @file_put_contents($file,$data);
     }
-    protected function CheckDb($setting)
+    protected function CheckDb($database)
     {
         $options = DbManager::G()->options;
-        $options['database']=$setting;
-        DbManager::G()->init($options);
+        $options['database']=$database;
+        DbManager::G()->init($options,App::G());
     }
 }

@@ -16,19 +16,17 @@ class App extends DuckPhp
 {
     //@override
     public $options = [
-        'is_debug' => true,
         'use_setting_file' => true, // 启用设置文件
         'setting_file_ignore_exists' => true, // 忽略设置文件
         
         'error_404' =>'_sys/error-404',
         'error_500' => '_sys/error-exception',
+        
         'ext' => [
             RouteHookRewrite::class => true,    // 我们需要 重写 url
             Misc::class => true,                // 我们需要两个助手函数
             SimpleAuthApp::class => true,       // 使用第三方的验证登录包
         ],
-        
-
         
         //url 重写
         'rewrite_map' => [
@@ -52,19 +50,21 @@ class App extends DuckPhp
     }
     protected function onInit()
     {
-        //$this->options['is_debug'] = true;
+        // 我们加个检查安装的钩子？
+    }
+    protected function onBeforeRun()
+    {
+        
+        // 如果不是命令行模式
+        // 我们在这里检查有没有安装。
     }
     public function command_reset_password()
     {
         $new_pass = AdminBusiness::G()->reset();
         echo 'new password: '.$new_pass;
     }
-
-    public function CheckDb($setting)
+    public function command_install()
     {
-        // 检查数据库是否安装
-        $options = DbManager::G()->options;
-        $options['database']=$setting;
-        DbManager::G()->init($options);
+        echo "install";
     }
 }
