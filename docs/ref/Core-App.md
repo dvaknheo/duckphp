@@ -331,6 +331,9 @@ Show 方法对 View::Show() 加了好些补充
     public static function CookieGet($key, $default = null)
 对称， CookieGet / CookieSet
 
+    public static function Path($key = '')
+    public function _Path($key = '')
+获取组件路径
 
 
 ### 内部实现函数
