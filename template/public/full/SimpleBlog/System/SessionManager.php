@@ -3,22 +3,23 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleBlog\Business;
+namespace SimpleBlog\System;
 
 use SimpleBlog\Helper\ServiceHelper;
 use SimpleBlog\System\App;
 
-class SessionBusiness extends BaseBusiness
+class SessionManager
 {
+    use SingletonEx;
+    
     protected $prefix = '';
-    // 注意这里是有状态的，和其他 Service 不同。
     public function __construct()
     {
         App::session_start();
     }
     public function logout()
     {
-        App::session_destroy();
+        return App::SessionSet($this->prefix.'user', []);
     }
     public function getCurrentUser()
     {

@@ -8,7 +8,6 @@ namespace SimpleBlog\Controller;
 use SimpleBlog\Helper\ControllerHelper  as C;
 use SimpleBlog\Business\AdminBusiness;
 use SimpleBlog\Business\ArticleBusiness;
-use SimpleBlog\Business\SessionBusiness;
 
 class admin
 {
@@ -20,7 +19,7 @@ class admin
         if (in_array($method, ['login'])) {
             return;
         }
-        $flag = SessionBusiness::G()->checkAdminLogin();
+        $flag = C::SessionManager()->checkAdminLogin();
         if (!$flag) {
             C::ExitRouteTo('admin/login?r=admin/'.$method);
             return;
@@ -61,12 +60,12 @@ class admin
         }
         $r = ($r !== 'admin/login')?$r:'admin/index';
 
-        SessionBusiness::G()->adminLogin();
+        C::SessionManager()->adminLogin();
         C::ExitRouteTo($r);
     }
     public function logout()
     {
-        SessionBusiness::G()->adminLogout();
+        C::SessionManager()->adminLogout();
         C::ExitRouteTo('');
     }
     public function reset_password()

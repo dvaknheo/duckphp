@@ -7,16 +7,21 @@
 namespace SimpleBlog\Helper;
 
 use DuckPhp\Helper\ControllerHelper as Helper;
-use SimpleBlog\Business\InstallBusiness;
+use SimpleBlog\System\Installer;
+use SimpleBlog\System\SessionManager;
 
 class ControllerHelper extends Helper
 {
     // override or add your code here
     public static function CheckInstall()
     {
-        $flag = InstallBusiness::G()->checkInstall();
+        $flag = Installer::G()->isInstalled();
         if (!$flag) {
             static::ExitRouteTo('install/index');
         }
+    }
+    public static function SessionManager()
+    {
+        return SessionManager::G();
     }
 }

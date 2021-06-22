@@ -5,7 +5,6 @@
  */
 namespace SimpleBlog\System;
 
-use DuckPhp\DuckPhp;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Core\Configer;
 use DuckPhp\Ext\SqlDumper;
@@ -14,7 +13,13 @@ use DuckPhp\Ext\SqlDumper;
 class Installer
 {
     use SingletonEx;
-    
+    public function isInstalled()
+    {
+        if(App::Setting('simple_blog_installed')){
+            return true;
+        }
+        return false;
+    }
     protected function checkDb($database)
     {
         $options = DbManager::G()->options; //我实在不想暴露  DbManager.
