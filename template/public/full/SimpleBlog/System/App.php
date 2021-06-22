@@ -8,8 +8,10 @@ namespace SimpleBlog\System;
 use DuckPhp\DuckPhp;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Core\Configer;
+use DuckPhp\Ext\SqlDumper;
 use DuckPhp\Ext\Misc;
 use DuckPhp\Ext\RouteHookRewrite;
+
 use SimpleAuth\Base\App as SimpleAuthApp;
 
 class App extends DuckPhp
@@ -25,7 +27,7 @@ class App extends DuckPhp
         'ext' => [
             RouteHookRewrite::class => true,    // 我们需要 重写 url
             Misc::class => true,                // 我们需要两个助手函数
-            SimpleAuthApp::class => true,       // 使用第三方的验证登录包
+            //SimpleAuthApp::class => true,       // 使用第三方的验证登录包
         ],
         
         //url 重写
@@ -51,6 +53,8 @@ class App extends DuckPhp
     protected function onInit()
     {
         // 我们加个检查安装的钩子？
+        // 我们从设置里再入第三方验证包吧
+        // 我们在每次执行的时候检查 权限，如果没有，那就跳到 安装页面。 $this::Route()->addRouteHook()
     }
     protected function onBeforeRun()
     {
@@ -67,4 +71,9 @@ class App extends DuckPhp
     {
         echo "install";
     }
+    public function install($database)
+    {
+        return Installer::G()->install($database);
+    }
+
 }

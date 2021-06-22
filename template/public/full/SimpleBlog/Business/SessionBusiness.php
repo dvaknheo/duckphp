@@ -10,6 +10,7 @@ use SimpleBlog\System\App;
 
 class SessionBusiness extends BaseBusiness
 {
+    protected $prefix = '';
     // 注意这里是有状态的，和其他 Service 不同。
     public function __construct()
     {
@@ -21,40 +22,38 @@ class SessionBusiness extends BaseBusiness
     }
     public function getCurrentUser()
     {
-        $user = isset($_SESSION['user'])?$_SESSION['user']:[];
-        
-        return $user;
+        return App::SessionGet($this->prefix.'user', []);
     }
     public function getCurrentUid()
     {
-        $user = isset($_SESSION['user'])?$_SESSION['user']:[];
-        
-        return $user['id'];
+        return $this->getCurrentUser()['id'] ?? null;
     }
     public function setCurrentUser($user)
     {
-        $_SESSION['user'] = $user;
+        App::SessionSet($this->prefix.'user', $user);
     }
     //////////////////////
     public function adminLogin()
     {
-        $_SESSION['admin_logined'] = true;
+        App::SessionSet($this->prefix.'admin_logined', true);
     }
     public function checkAdminLogin()
     {
-        return isset($_SESSION['admin_logined'])?true:false;
+        return App::SessionGet($this->prefix.'admin_logined', false);
     }
     public function adminLogout()
     {
+        App::SessionSet($this->prefix.'admin_logined', false);
         unset($_SESSION['admin_logined']);
     }
     public function csrf_token()
     {
-        $_SESSION['_CSRF'] = uniqid();
-        return $_SESSION['_CSRF'];
+        $ret = uniqid();
+        App::SessionSet($this->prefix.'_CSRF',$ret);
+        return $ret;
     }
     public function csrf_check($token)
     {
-        return isset($_SESSION['_CSRF']) && $_SESSION['_CSRF'] === $token?true:false;
+        return  App::SessionGet($this->prefix.'_CSRF', '') === $token?true:false;
     }
 }

@@ -7,7 +7,6 @@ namespace SimpleBlog\Controller;
 
 use SimpleBlog\Helper\ControllerHelper  as C;
 use SimpleBlog\Business\InstallBusiness;
-use SimpleBlog\Business\InstallException;
 
 class install
 {
@@ -16,7 +15,7 @@ class install
         $database =[
             'host' => '127.0.0.1',
             'port' => '3306',
-            'dbname' => 't2',
+            'dbname' => 't1',
             'username' => 'admin',
             'password' => '123456',
         ];
