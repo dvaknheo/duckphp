@@ -3,10 +3,11 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleAuth\Service;
+namespace SimpleAuth\Business;
 
 use SimpleAuth\System\BaseException;
 
-class SessionServiceException extends BaseException
+class UserBusinessException extends BaseException
 {
+    //
 }

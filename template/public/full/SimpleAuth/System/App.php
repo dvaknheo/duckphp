@@ -40,7 +40,10 @@ class App extends DuckPhp
         $this->is_plugin = true;
     }
 //////////////////////
-    
+    public static function SessionManager()
+    {
+        return SessionManager::G();
+    }
     public static $Sections = [];
     public static function startSection($name)
     {

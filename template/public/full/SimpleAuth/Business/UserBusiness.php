@@ -3,26 +3,26 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleAuth\Service;
+namespace SimpleAuth\Business;
 
 use SimpleAuth\Model\UserModel;
 use SimpleAuth\System\BaseService;
 
-class UserService extends BaseService
+class UserBusiness extends BaseService
 {
     public function register($form)
     {
-        UserServiceException::ThrowOn($form['password'] != $form['password_confirm'], '重复密码不一致');
+        UserBusinessException::ThrowOn($form['password'] != $form['password_confirm'], '重复密码不一致');
 
         $username = $form['name'];
         $password = $form['password'] ?? '';
-        UserServiceException::ThrowOn($password === '', "密码为空");
+        UserBusinessException::ThrowOn($password === '', "密码为空");
         
         $flag = UserModel::G()->exsits($username);
-        UserServiceException::ThrowOn($flag, "用户已经存在");
+        UserBusinessException::ThrowOn($flag, "用户已经存在");
         
         $uid = UserModel::G()->addUser($username, $password);
-        UserServiceException::ThrowOn(!$uid, "注册新用户失败");
+        UserBusinessException::ThrowOn(!$uid, "注册新用户失败");
         
         $user = UserModel::G()->getUserById($uid);
         $user = UserModel::G()->unloadPassword($user);
@@ -34,11 +34,11 @@ class UserService extends BaseService
         $username = $form['name'];
         $password = $form['password'];
         $user = UserModel::G()->getUserByUsername($username);
-        UserServiceException::ThrowOn(empty($user), "用户不存在");
-        UserServiceException::ThrowOn(!empty($user['delete_at']), "用户已被禁用");
+        UserBusinessException::ThrowOn(empty($user), "用户不存在");
+        UserBusinessException::ThrowOn(!empty($user['delete_at']), "用户已被禁用");
         
         $flag = UserModel::G()->verifyPassword($user, $password);
-        UserServiceException::ThrowOn(!$flag, "密码错误");
+        UserBusinessException::ThrowOn(!$flag, "密码错误");
         
         $user = UserModel::G()->unloadPassword($user);
         
@@ -46,14 +46,14 @@ class UserService extends BaseService
     }
     public function changePassword($uid, $password, $new_password)
     {
-        UserServiceException::ThrowOn($new_password === '', "空密码");
+        UserBusinessException::ThrowOn($new_password === '', "空密码");
         $user = UserModel::G()->getUserById($uid);
         
-        UserServiceException::ThrowOn(!empty($user['delete_at']), "用户已被禁用");
+        UserBusinessException::ThrowOn(!empty($user['delete_at']), "用户已被禁用");
         
         $flag = UserModel::G()->verifyPassword($user, $password);
         
-        UserServiceException::ThrowOn(!$flag, "旧密码错误");
+        UserBusinessException::ThrowOn(!$flag, "旧密码错误");
         
         UserModel::G()->updatePassword($uid, $new_password);
     }

@@ -6,16 +6,17 @@
 namespace SimpleAuth\Controller;
 
 use SimpleAuth\System\Helper\ControllerHelper as C;
-use SimpleAuth\Service\SessionService;
-use SimpleAuth\Service\SessionServiceException;
-use SimpleAuth\Service\UserService;
-use SimpleAuth\Service\UserServiceException;
+use SimpleAuth\Business\SessionBusiness;
+use SimpleAuth\Business\SessionException;
+use SimpleAuth\Business\UserBusiness;
+use SimpleAuth\Business\UserBusinessException;
 
 use DuckPhp\SingletonEx\SingletonExTrait;
 
 class Main
 {
     use SingletonExTrait;
+    
     public function __construct()
     {
         $method = C::getRouteCallingMethod();
@@ -23,33 +24,31 @@ class Main
         if (in_array($method, ['index','register','login','logout','test'])) {
             return;
         }
-        C::assignExceptionHandler(SessionServiceException::class, function ($ex) {
+        C::assignExceptionHandler(C::SessionManager()->getExceptionClass(), function ($ex) {
             $code = $ex->getCode();
-            if ($code == 419 && C::IsDebug()) {
+            C::Logger()->warning(''.(get_class($ex)).'('.$ex->getCode().'): '.$ex->getMessage());
+            if (C::SessionManager()->isCsrfException($ex) && C::IsDebug()) {
                 C::exit(0);
             }
-            C::Logger()->warning(''.(get_class($ex)).'('.$ex->getCode().'): '.$ex->getMessage());
             C::ExitRouteTo('login');
         });
         if (!empty(C::POST())) {
             $referer = C::SERVER('HTTP_REFERER','');
             $domain = C::Domain(true).'/';
-            if (substr($referer, 0, strlen($domain)) !== $domain) {
-                SessionServiceException::ThrowOn(true, "CRSF", 419);
-                //防止 csrf 攻击，用于站内无跳板的简单情况
-            }
-            //$flag=SessionService::G()->checkCsrf($_POST['_token']??null);
+            C::SessionManager()->checkDomain($referer, $domain);
+
+            //$flag=C::SessionManager()->checkCsrf($_POST['_token']??null);
         }
         $this->setLayoutData();
     }
 
     protected function setLayoutData()
     {
-        $csrf_token = SessionService::G()->csrf_token();
-        $csrf_field = SessionService::G()->csrf_field();
+        $csrf_token = C::SessionManager()->csrf_token();
+        $csrf_field = C::SessionManager()->csrf_field();
         
         try{
-            $current_user = SessionService::G()->getCurrentUser();
+            $current_user = C::SessionManager()->getCurrentUser();
             $user_name = $current_user? $current_user['username']:'';
             unset($current_user);
         }catch(\Throwable $ex){
@@ -67,31 +66,31 @@ class Main
     }
     public function home()
     {
-        $token = SessionService::G()->csrf_token();
+        $token = C::SessionManager()->csrf_token();
         $url_logout = C::URL('logout'.'?_token='.$token);
         C::Show(get_defined_vars(), 'home');
     }
     public function register()
     {
-        $csrf_field = SessionService::G()->csrf_field();
+        $csrf_field = C::SessionManager()->csrf_field();
         $url_register = C::URL('register');
         C::Show(get_defined_vars(), 'auth/register');
     }
     public function login()
     {
-        $csrf_field = SessionService::G()->csrf_field();
+        $csrf_field = C::SessionManager()->csrf_field();
         $url_login = C::URL('login');
         C::Show(get_defined_vars(), 'auth/login');
     }
     public function password()
     {
-        $user = SessionService::G()->getCurrentUser();
+        $user = C::SessionManager()->getCurrentUser();
 
         C::Show(get_defined_vars(), 'auth/password');
     }
     public function logout()
     {
-        SessionService::G()->logout();
+        C::SessionManager()->logout();
         C::ExitRouteTo('index');
     }
     ////////////////////////////////////////////
@@ -102,9 +101,9 @@ class Main
             $post['password'] = $post['password'] ?? '';
             $post['password_confirm'] = $post['password_confirm'] ?? '';
             
-            $user = UserService::G()->register($post);
-            SessionService::G()->setCurrentUser($user);
-        } catch (UserServiceException $ex) {
+            $user = UserBusiness::G()->register($post);
+            C::SessionManager()->setCurrentUser($user);
+        } catch (UserBusinessException $ex) {
             $error = $ex->getMessage();
             $name = C::POST('name', '');
             C::Show(get_defined_vars(), 'auth/register');
@@ -116,8 +115,8 @@ class Main
     {
         $post = C::POST();
         try {
-            $user = UserService::G()->login($post);
-            SessionService::G()->setCurrentUser($user);
+            $user = UserBusiness::G()->login($post);
+            C::SessionManager()->setCurrentUser($user);
         } catch (\Exception $ex) {
             $error = $ex->getMessage();
             $name = $post['name'] ?? '';
@@ -134,15 +133,15 @@ class Main
         $new_pass = $post['newpassword'] ?? '';
         $confirm_pass = $post['newpassword_confirm'] ?? '';
         
-        $uid = SessionService::G()->getCurrentUid();
-        $user = SessionService::G()->getCurrentUser();
+        $user = C::SessionManager()->getCurrentUser();
+        $uid = C::SessionManager()->getCurrentUid();
         
         try {
-            UserServiceException::ThrowOn($new_pass !== $confirm_pass, '重复密码不一致');
-            UserService::G()->changePassword($uid, $old_pass, $new_pass);
+            UserBusinessException::ThrowOn($new_pass !== $confirm_pass, '重复密码不一致');
+            UserBusiness::G()->changePassword($uid, $old_pass, $new_pass);
             
             $error = "密码修改完毕";
-        } catch (UserServiceException $ex) {
+        } catch (UserBusinessException $ex) {
             $error = $ex->getMessage();
         }
         C::Show(get_defined_vars(), 'auth/password');
