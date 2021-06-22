@@ -5,8 +5,8 @@
  */
 namespace SimpleAuth\Model;
 
-use SimpleAuth\Base\BaseModel;
-use SimpleAuth\Base\Helper\ModelHelper as M;
+use SimpleAuth\System\BaseModel;
+use SimpleAuth\System\Helper\ModelHelper as M;
 
 class UserModel extends BaseModel
 {

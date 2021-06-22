@@ -3,7 +3,7 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleAuth\Base;
+namespace SimpleAuth\System;
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Component\AppPluginTrait;

@@ -5,7 +5,7 @@
  */
 namespace SimpleAuth\Service;
 
-use SimpleAuth\Base\BaseException;
+use SimpleAuth\System\BaseException;
 
 class SessionServiceException extends BaseException
 {

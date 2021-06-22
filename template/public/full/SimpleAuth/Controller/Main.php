@@ -5,8 +5,7 @@
  */
 namespace SimpleAuth\Controller;
 
-use SimpleAuth\Base\App;
-use SimpleAuth\Base\Helper\ControllerHelper as C;
+use SimpleAuth\System\Helper\ControllerHelper as C;
 use SimpleAuth\Service\SessionService;
 use SimpleAuth\Service\SessionServiceException;
 use SimpleAuth\Service\UserService;

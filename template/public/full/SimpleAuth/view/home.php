@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-use SimpleAuth\Base\Helper\ViewHelper as V;
+use SimpleAuth\System\Helper\ViewHelper as V;
 
 V::startSection('content'); ?>
 登录成功，这里是主页<br>

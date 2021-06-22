@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-use SimpleAuth\Base\Helper\ViewHelper as V;
+use SimpleAuth\System\Helper\ViewHelper as V;
 
 V::startSection('content'); ?>
 <form method="POST" action="<?= __h($url_register); ?>">

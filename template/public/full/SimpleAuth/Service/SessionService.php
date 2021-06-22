@@ -5,9 +5,9 @@
  */
 namespace SimpleAuth\Service;
 
-use SimpleAuth\Base\BaseService;
-use SimpleAuth\Base\Helper\ServiceHelper as S;
-use SimpleAuth\Base\App;
+use SimpleAuth\System\BaseService;
+use SimpleAuth\System\Helper\ServiceHelper as S;
+use SimpleAuth\System\App;
 
 class SessionService extends BaseService
 {
