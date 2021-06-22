@@ -221,7 +221,7 @@ App::PageHtml(123);
         App::G()->version();
         
         App::IsAjax();
-        App::Path('path_config');
+        
         App::G()->runAutoLoader();
         \LibCoverage\LibCoverage::End();
     return;

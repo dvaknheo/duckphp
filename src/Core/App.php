@@ -337,14 +337,6 @@ EOT;
         }
         return false;
     }
-    public static function Path($key = '')
-    {
-        return static::G()->_Path($key);
-    }
-    public function _Path($key = '')
-    {
-        return $key ? $this->getComponenetPathByKey($key) : $this->options['path'];
-    }
 }
 
 trait Core_SystemWrapper

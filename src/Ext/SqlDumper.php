@@ -154,6 +154,6 @@ class SqlDumper extends ComponentBase
         $header = '<'.'?php return ';
         $file = $path.$this->options['sql_dump_file'].'.php';
         $str = $header . var_export($data, true) . ";\n";
-        @file_put_contents($file, $str);
+        file_put_contents($file, $str);
     }
 }
