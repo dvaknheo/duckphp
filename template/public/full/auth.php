@@ -5,20 +5,19 @@
  */
 require_once __DIR__.'/../../../autoload.php';  // @DUCKPHP_HEADFILE
 $project_root = realpath(__DIR__).'/SimpleAuth/';
-if (!class_exists(\SimpleAuth\Base\App::class)) {
+if (!class_exists(\System\Base\App::class)) {
     \DuckPhp\DuckPhp::assignPathNamespace($project_root , "SimpleAuth\\"); 
     \DuckPhp\DuckPhp::runAutoLoader();
 }
 
 $options = [
     'path' => $project_root,
-    //'path' => $project_root,
     'is_debug'=>true,
     'use_setting_file'=>true,
     'setting_file_ignore_exists'=>true,
 
     'ext'=>[
-        \SimpleAuth\Base\App::class => true,
+        \SimpleAuth\System\App::class => true,
     ],
 ];
 class MainOverrider extends SimpleAuth\Controller\Main

@@ -6,11 +6,14 @@
 namespace SimpleAuth\Service;
 
 use SimpleAuth\Model\UserModel;
+use SimpleAuth\System\BaseService;
 
 class UserService extends BaseService
 {
     public function register($form)
     {
+        UserServiceException::ThrowOn($form['password'] != $form['password_confirm'], '重复密码不一致');
+
         $username = $form['name'];
         $password = $form['password'] ?? '';
         UserServiceException::ThrowOn($password === '', "密码为空");

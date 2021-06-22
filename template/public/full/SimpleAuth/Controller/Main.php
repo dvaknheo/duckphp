@@ -25,9 +25,7 @@ class Main
         }
         C::assignExceptionHandler(SessionServiceException::class, function ($ex) {
             $code = $ex->getCode();
-            if ($code == 419) {
-                C::var_dump(419);
-                C::DumpTrace();
+            if ($code == 419 && C::IsDebug()) {
                 C::exit(0);
             }
             C::Logger()->warning(''.(get_class($ex)).'('.$ex->getCode().'): '.$ex->getMessage());
@@ -93,7 +91,6 @@ class Main
     }
     public function logout()
     {
-        //$flag = SessionService::G()->checkCsrf(C::GET('_token'));
         SessionService::G()->logout();
         C::ExitRouteTo('index');
     }
@@ -104,12 +101,12 @@ class Main
         try {
             $post['password'] = $post['password'] ?? '';
             $post['password_confirm'] = $post['password_confirm'] ?? '';
-            UserServiceException::ThrowOn($post['password'] != $post['password_confirm'], '重复密码不一致');
+            
             $user = UserService::G()->register($post);
             SessionService::G()->setCurrentUser($user);
         } catch (UserServiceException $ex) {
             $error = $ex->getMessage();
-            $name = $post['name'] ?? '';
+            $name = C::POST('name', '');
             C::Show(get_defined_vars(), 'auth/register');
             return;
         }

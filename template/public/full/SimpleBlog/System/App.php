@@ -12,7 +12,7 @@ use DuckPhp\Ext\SqlDumper;
 use DuckPhp\Ext\Misc;
 use DuckPhp\Ext\RouteHookRewrite;
 
-use SimpleAuth\Base\App as SimpleAuthApp;
+use SimpleAuth\System\App as SimpleAuthApp;
 
 class App extends DuckPhp
 {
@@ -48,7 +48,6 @@ class App extends DuckPhp
             $path = realpath($this->options['path'].'../SimpleAuth/');
             $this->assignPathNamespace($path, 'SimpleAuth');
         }
-
     }
     protected function onInit()
     {
