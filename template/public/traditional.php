@@ -15,25 +15,8 @@ function RunByDuckPhp()
     $options['path_info_compact_enable'] = true;    // 不用配置路由
 
     $options['ext'][\DuckPhp\Ext\EmptyView::class] = true; // for AllViewData();
-
-    $flag = DuckPhp::RunQuickly($options, function () {
-        //404 处理
-        DuckPhp::G()->add404RouteHook(function () {
-            $path_info = DuckPhp::getPathInfo();
-            $path_info = ltrim($path_info, '/');
-            $path_info = empty($path_info)?'index':$path_info;
-                
-            $post_prefix = !empty($_POST)?'do_':'';
-            $callback = "action_{$post_prefix}{$path_info}";
-                
-            if (is_callable($callback)) {
-                ($callback)();
-                return true;
-            }
-            action_index();
-            return true;
-        });
-    });
+    $options['ext'][\DuckPhp\Ext\RouteHookFunctionRoute::class] = true; // 我们用这个扩展
+    $flag = DuckPhp::RunQuickly($options);
     return $flag;
 }
 function GetRunResult()

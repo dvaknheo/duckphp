@@ -13,7 +13,8 @@ if($is_installed){
 <?php
 }else if($done){
 ?>
-安装完成
+<meta http-equiv="refresh" content="5; url=<?= __domain(true).__url('');?>">
+安装完成，5秒后跳转回首页
 <?php
 }else if($is_file_error){
 ?>
