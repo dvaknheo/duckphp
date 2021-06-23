@@ -119,9 +119,9 @@ Class::Method Class@Method Class->Method 的区别
 
 缓存  Cache()
 
-Session  集中化管理， 放在 System/WebSession 下
+Session  集中化管理， 放在 System/SessionManager 下
 
-Cookie  集中化管理，放在 System/WebCookie 下
+Cookie  集中化管理，放在 System/CookieManager 下
 
 多语言 重写 App::L 函数
 

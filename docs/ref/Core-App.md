@@ -318,20 +318,21 @@ Show 方法对 View::Show() 加了好些补充
 这些对应于超全局变量 $_GET[$key]??$value; 类推。如果宏 \_\_SUPERGLOBAL_CONTEXT 被定义，那么将 获得 (\_\_SUPERGLOBAL_CONTEXT)()->\_GET 等
 ```php
     public static function SessionSet($key, $value)
+    public static function SessionUnset($key)
+    public static function SessionGet($key, $default = null)
+
 ```
-因为 Session 不仅仅读取，还有写入，所以用 SessionSet 。
+因为 Session 不仅仅读取，还有写入，所以用 SessionGet  /SessionSet 对称方法 。因为 \_\_SUPERGLOBAL_CONTEXT ，还有了 SessionUnset
+
+
 ```php
     public static function CookieSet($key, $value, $expire = 0)
 ```
 因为 Cookie 不仅仅读取，还有写入，所以用 CookieSet 。
 
-    public static function SessionGet($key, $default = null)
-对称，SessionGet / SessionSet
 
     public static function CookieGet($key, $default = null)
 对称， CookieGet / CookieSet
-
-
 
 ### 内部实现函数
 
@@ -383,6 +384,7 @@ Show 方法对 View::Show() 加了好些补充
     public function _SESSION($key = null, $default = null)
     public function _FILES($key = null, $default = null)
     public function _SessionSet($key, $value)
+    public function _SessionUnset($key)
     public function _CookieSet($key, $value, $expire)
     public function _SessionGet($key, $default)
     public function _CookieGet($key, $default)

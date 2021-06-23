@@ -6,7 +6,6 @@
 namespace SimpleBlog\Controller;
 
 use SimpleBlog\Helper\ControllerHelper  as C;
-use SimpleBlog\Business\InstallBusiness;
 
 class install
 {
@@ -27,7 +26,7 @@ class install
 
         $done = false;
         try{
-            InstallBusiness::G()->install($database);
+            C::Installer()->install($database);
             $done = true;
         }catch(\Exception $ex){
             $error_message = $ex->getMessage();

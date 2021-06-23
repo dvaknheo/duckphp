@@ -944,6 +944,10 @@ trait Core_SuperGlobal
     {
         return static::G()->_SessionSet($key, $value);
     }
+    public static function SessionUnset($key)
+    {
+        return static::G()->_SessionUnset($key);
+    }
     public static function SessionGet($key, $default = null)
     {
         return static::G()->_SessionGet($key, $default);
@@ -1003,6 +1007,13 @@ trait Core_SuperGlobal
             $_SESSION[$key] = $value;
         }
     }
+    public function _SessionUnset($key)
+    {
+        if (defined('__SUPERGLOBAL_CONTEXT')) {
+            unset( (__SUPERGLOBAL_CONTEXT)()->_SESSION[$key]);
+        }
+        unset($_SESSION[$key]);
+    }
     public function _CookieSet($key, $value, $expire)
     {
         $this->_setcookie($key, $value, $expire ? $expire + time():0);
@@ -1011,6 +1022,7 @@ trait Core_SuperGlobal
     {
         return $this->getSuperGlobalData('_SESSION', $key, $default);
     }
+
     public function _CookieGet($key, $default)
     {
         return $this->getSuperGlobalData('_COOKIE', $key, $default);

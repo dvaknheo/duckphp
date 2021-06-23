@@ -8,7 +8,7 @@ namespace SimpleBlog\System;
 
 use DuckPhp\ThrowOn\ThrowOnTrait;
 use Exception;
-use SimpleBlog\System\App;
+// use SimpleBlog\System\App;
 
 class BaseException extends Exception
 {

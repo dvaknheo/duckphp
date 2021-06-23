@@ -51,7 +51,9 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::RunQuickly($options,function(){
         App::SessionSet('zz','abc');
         App::SessionGet('zz');
+        
                         SuperGlobalContext::DefineSuperGlobalContext();
+        App::SessionUnset('zz',);
 
             App::G()->addBeforeShowHandler(function(){ echo "beforeShowHandlers";});
             App::G()->addBeforeShowHandler("testsssssssssss");

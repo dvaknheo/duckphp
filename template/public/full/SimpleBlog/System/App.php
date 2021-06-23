@@ -6,9 +6,6 @@
 namespace SimpleBlog\System;
 
 use DuckPhp\DuckPhp;
-use DuckPhp\Component\DbManager;
-use DuckPhp\Core\Configer;
-use DuckPhp\Ext\SqlDumper;
 use DuckPhp\Ext\Misc;
 use DuckPhp\Ext\RouteHookRewrite;
 
