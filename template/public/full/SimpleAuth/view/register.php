@@ -1,7 +1,4 @@
-<?php declare(strict_types=1);
-use SimpleAuth\System\Helper\ViewHelper as V;
 
-V::startSection('content'); ?>
 <form method="POST" action="<?= __h($url_register); ?>">
     <?= $csrf_field ?>
 <?php if (isset($error)) { ?>
@@ -27,5 +24,3 @@ V::startSection('content'); ?>
 </form>
 
 </div>
-<?php V::stopSection(); ?>
-<?php __display('layouts/app');?>

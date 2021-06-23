@@ -11,28 +11,31 @@ use SimpleAuth\Business\SessionException;
 use SimpleAuth\Business\UserBusiness;
 use SimpleAuth\Business\UserBusinessException;
 
-use DuckPhp\SingletonEx\SingletonExTrait;
-
 class Main
-{
-    use SingletonExTrait;
-    
+{    
     public function __construct()
+    {
+        $this->init();
+    }
+    protected function init()
     {
         $method = C::getRouteCallingMethod();
         
-        if (in_array($method, ['index','register','login','logout','test'])) {
+        if (in_array($method, ['index','register','login','logout'])) {
             return;
         }
         C::assignExceptionHandler(C::SessionManager()->getExceptionClass(), [static::class, 'OnSessionException']);
         C::SessionManager()->checkCsrf();
         $this->setLayoutData();
+        if ($method==='index') {
+            C::setViewHeadFoot(null,null);
+        }
     }
     public function __destruct()
     {
         C::assignExceptionHandler(C::SessionManager()->getExceptionClass(), null);
     }
-    public static function OnSessionException($ex=null)
+    public static function OnSessionException($ex = null)
     {
         if(!isset($ex)){
             C::Exit404();
@@ -56,7 +59,7 @@ class Main
         }catch(\Throwable $ex){
             $user_name='';
         }
-        
+        C::setViewHeadFoot('inc-head','inc-foot');
         C::assignViewData(get_defined_vars());
     }
     public function index()
@@ -75,19 +78,19 @@ class Main
     {
         $csrf_field = C::SessionManager()->csrf_field();
         $url_register = C::Url('register');
-        C::Show(get_defined_vars(), 'auth/register');
+        C::Show(get_defined_vars(), 'register');
     }
     public function login()
     {
         $csrf_field = C::SessionManager()->csrf_field();
         $url_login = C::Url('login');
-        C::Show(get_defined_vars(), 'auth/login');
+        C::Show(get_defined_vars(), 'login');
     }
     public function password()
     {
         $user = C::SessionManager()->getCurrentUser();
 
-        C::Show(get_defined_vars(), 'auth/password');
+        C::Show(get_defined_vars(), 'password');
     }
     public function logout()
     {
@@ -108,7 +111,7 @@ class Main
         } catch (UserBusinessException $ex) {
             $error = $ex->getMessage();
             $name = C::POST('name', '');
-            C::Show(get_defined_vars(), 'auth/register');
+            C::Show(get_defined_vars(), 'register');
             return;
         }
         ;
@@ -123,7 +126,7 @@ class Main
         } catch (\Exception $ex) {
             $error = $ex->getMessage();
             $name = $post['name'] ?? '';
-            C::Show(get_defined_vars(), 'auth/login');
+            C::Show(get_defined_vars(), 'login');
             return;
         }
         
@@ -131,22 +134,20 @@ class Main
     public function do_password()
     {
         $post = C::POST();
-        
-        $old_pass = $post['oldpassword'] ?? '';
-        $new_pass = $post['newpassword'] ?? '';
-        $confirm_pass = $post['newpassword_confirm'] ?? '';
-        
-        $uid = C::SessionManager()->getCurrentUid();
-        
         try {
+        
+            $uid = C::SessionManager()->getCurrentUid();
+            $old_pass = $post['oldpassword'] ?? '';
+            $new_pass = $post['newpassword'] ?? '';
+            $confirm_pass = $post['newpassword_confirm'] ?? '';
+            
             UserBusinessException::ThrowOn($new_pass !== $confirm_pass, '重复密码不一致');
             UserBusiness::G()->changePassword($uid, $old_pass, $new_pass);
-            C::Show(get_defined_vars(), 'auth/password');
-            
-            $error = "密码修改完毕";
+            $error = "密码修改完毕";            
         } catch (UserBusinessException $ex) {
             $error = $ex->getMessage();
         }
+        C::Show(get_defined_vars(), 'password');
         
     }
 }

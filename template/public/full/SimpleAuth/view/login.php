@@ -1,7 +1,3 @@
-<?php declare(strict_types=1);
-use SimpleAuth\System\Helper\ViewHelper as V;
-
-V::startSection('content'); ?>
 <div class="container">
 <a href="<?=__url('register')?>">注册</a>
 <form method="post" action="<?= __h($url_login); ?>"
@@ -23,6 +19,3 @@ V::startSection('content'); ?>
         </button>
     </div>
 </form>
-
-<?php V::stopSection(); ?>
-<?php __display('layouts/app');?>

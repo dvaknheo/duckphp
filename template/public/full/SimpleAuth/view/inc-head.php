@@ -14,10 +14,4 @@ use SimpleAuth\System\Helper\ViewHelper as V;
 页眉
 <hr>
         <main class="py-4">
-            <?= V::yieldContent('content'); ?>
-        </main>
-<hr>
-页脚
-    </div>
-</body>
-</html>
+
