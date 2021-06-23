@@ -3,11 +3,11 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleAuth\System\Helper;
+namespace SimpleAuth\Helper;
 
 use DuckPhp\Helper\BusinessHelper as Helper;
 
-class ServiceHelper extends Helper
+class BusinessHelper extends Helper
 {
     //
 }

@@ -3,7 +3,7 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleAuth\System\Helper;
+namespace SimpleAuth\Helper;
 
 use DuckPhp\Helper\ModelHelper as Helper;
 

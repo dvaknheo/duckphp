@@ -7,7 +7,7 @@ namespace SimpleAuth\System;
 
 use DuckPhp\SingletonEx\SingletonExTrait;
 
-class BaseService
+class BaseBusiness
 {
     use SingletonExTrait;
 }

@@ -59,7 +59,7 @@ class SessionManager
     
     public function checkCsrf()
     {
-        if( empty(C::POST) ){ reutrn ;}
+        if( empty(App::POST()) ){ return ;}
         $referer = App::SERVER('HTTP_REFERER','');
         $domain = App::Domain(true).'/';
             

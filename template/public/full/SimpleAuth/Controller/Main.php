@@ -5,9 +5,7 @@
  */
 namespace SimpleAuth\Controller;
 
-use SimpleAuth\System\Helper\ControllerHelper as C;
-use SimpleAuth\Business\SessionBusiness;
-use SimpleAuth\Business\SessionException;
+use SimpleAuth\Helper\ControllerHelper as C;
 use SimpleAuth\Business\UserBusiness;
 use SimpleAuth\Business\UserBusinessException;
 
