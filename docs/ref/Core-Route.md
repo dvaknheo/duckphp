@@ -55,6 +55,9 @@
         'controller_strict_mode' => true,
 控制器，严格模式，区分大小写
 
+        'controller_class_map' => [],
+控制器，类映射，用于替换
+
 ## 公开方法
 
 ### 主流程方法
@@ -234,6 +237,3 @@ if(!$flag){
 修订版本：
 
 修订时间：
-
-
-

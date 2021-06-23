@@ -71,6 +71,9 @@
 + **'controller_base_class' => NULL,** 
 
     控制器基类   // [DuckPhp\Core\Route](Core-Route.md), [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
++ **'controller_class_map' => array ( ),** 
+
+    控制器，类映射，用于替换   // [DuckPhp\Core\Route](Core-Route.md)
 + **'controller_class_postfix' => '',** 
 
     控制器，控制器类名后缀   // [DuckPhp\Core\Route](Core-Route.md)
@@ -481,6 +484,8 @@
 + DuckPhp\Core\Route
     - 'controller_base_class' => '',
         控制器基类
+    - 'controller_class_map' => array ( ),
+        控制器，类映射，用于替换
     - 'controller_class_postfix' => '',
         控制器，控制器类名后缀
     - 'controller_enable_slash' => false,

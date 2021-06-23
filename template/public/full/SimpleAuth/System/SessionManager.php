@@ -40,12 +40,7 @@ class SessionManager
         App::SessionSet($this->prefix.'user',[]);
 
     }
-    public function checkCsrf($token)
-    {
-        $session_token =  App::SessionGet($this->prefix.'_token');
-        SessionException::ThrowOn($token !== $session_token, 'csrf_token 失败', 419);
-    }
-    
+
     public function getExceptionClass()
     {
         return SessionException::class;
@@ -62,8 +57,9 @@ class SessionManager
         return $token;
     }
     
-    public function checkDomain()
+    public function checkCsrf()
     {
+        if( empty(C::POST) ){ reutrn ;}
         $referer = App::SERVER('HTTP_REFERER','');
         $domain = App::Domain(true).'/';
             
@@ -71,6 +67,9 @@ class SessionManager
             SessionException::ThrowOn(true, "CRSF", 419);
             //防止 csrf 攻击，用于站内无跳板的简单情况
         }
+        $token = App::Post('_token');
+        $session_token =  App::SessionGet($this->prefix.'_token');
+        SessionException::ThrowOn($token !== $session_token, 'csrf_token 失败', 419);
     }
     public function isCsrfException($ex)
     {

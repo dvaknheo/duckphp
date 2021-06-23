@@ -1,8 +1,5 @@
 <?php declare(strict_types=1);
 use SimpleAuth\Base\Helper\ViewHelper as V;
-// use SimpleBlog\Helper\ViewHelper as V; TODO ，让这也可行
-// TODO 第三方 View 单独在一个目录？ 免得找不到？
-
 ?><!doctype html>
 <html>
 <head>

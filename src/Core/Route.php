@@ -34,6 +34,7 @@ class Route extends ComponentBase
         'controller_use_singletonex' => false,
         'controller_stop_static_method' => true,
         'controller_strict_mode' => true,
+        'controller_class_map' => [],
     ];
 
     public $pre_run_hook_list = [];
@@ -266,20 +267,8 @@ class Route extends ComponentBase
 
     protected function createControllerObject($full_class)
     {
-        if (!$this->options['controller_use_singletonex'] || !is_callable([$full_class,'G'])) {
-            return new $full_class();
-        }
-        $object = $full_class::G();
-        $class_name = get_class($object);
-        if ($class_name == $full_class) {
-            $full_class::G(new \stdClass);
-            return $object;
-        }
-        if ($class_name === 'stdClass') {
-            return new $full_class();
-        }
-        $object = new $class_name();
-        return $object;
+        $full_class = $this->options['controller_class_map'][$full_class]?? $full_class;
+        return new $full_class();
     }
     protected function getMethodToCall($object, $method)
     {
@@ -287,9 +276,6 @@ class Route extends ComponentBase
         if (substr($method, 0, 2) == '__') {
             $this->route_error = 'can not call hidden method';
             return null;
-        }
-        if ($this->options['controller_use_singletonex']) {
-            $this->options['controller_use_singletonex'] = true;
         }
         $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         $_SERVER['REQUEST_METHOD'] = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -382,7 +368,8 @@ trait Route_Helper
     }
     public function replaceControllerSingelton($old_class, $new_class)
     {
-        $old_class::G((new \ReflectionClass($new_class))->newInstanceWithoutConstructor());
+        //$old_class::G((new \ReflectionClass($new_class))->newInstanceWithoutConstructor());
+        $this->options['controller_class_map'][$old_class]=$new_class;
     }
 }
 trait Route_UrlManager

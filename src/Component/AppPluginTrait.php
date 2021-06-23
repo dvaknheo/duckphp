@@ -25,7 +25,7 @@ trait AppPluginTrait
     protected $plugin_view_old = null;
     protected $plugin_view_path = null; //TODO remove
     protected $plugin_old_component_map = [];
-    
+    private $old_controller_map = [];
     /////////
     //for override
     protected function onPluginModePrepare()
@@ -116,7 +116,6 @@ trait AppPluginTrait
         }
         
         Route::G()->addRouteHook([static::class,'PluginModeRouteHook'], $this->plugin_options['plugin_routehook_position']);
-        
         $this->onPluginModeInit();
         
         return $this;
@@ -222,12 +221,14 @@ trait AppPluginTrait
     }
     protected function pluginModeReplaceDynamicComponent()
     {
+        $this->old_controller_map=Route::G()->options['controller_class_map'];
         $classes = $this->plugin_context_class::G()->getDynamicComponentClasses();
         foreach ($classes as $class) {
             $object = $class::G();
             $this->plugin_old_component_map[$class] = $object;
             $class::G(clone $object);
         }
+        
     }
     protected function pluginModeInitDynamicComponent()
     {
@@ -244,7 +245,7 @@ trait AppPluginTrait
         $route_options = $this->plugin_options['plugin_route_options'];
         $route_options['namespace'] = $this->plugin_options['plugin_namespace'];
         $route_options['controller_path_prefix'] = $this->plugin_options['plugin_url_prefix'];
-        $route_options['controller_use_singletonex'] = $this->plugin_options['plugin_use_singletonex_route'];
+        $route_options['controller_class_map'] = $this->old_controller_map;
         Route::G()->init($route_options);
     }
     protected function pluginModeReadFile($path_info)

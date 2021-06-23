@@ -28,8 +28,7 @@ class MainOverrider extends SimpleAuth\Controller\Main
         return parent::register();
     }
 }
-
-SimpleAuth\Controller\Main::G(MainOverrider::G());
 \DuckPhp\DuckPhp::RunQuickly($options,function(){
-   
+   \DuckPhp\DuckPhp::replaceControllerSingelton(SimpleAuth\Controller\Main::class,MainOverrider::class);
+
 });

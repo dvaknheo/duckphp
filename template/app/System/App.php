@@ -68,6 +68,9 @@ class App extends DuckPhp
         // 控制器基类 (DuckPhp\Core\Route, DuckPhp\Ext\StrictCheck)
         // $options['controller_base_class'] = NULL;
 
+        // 控制器，类映射，用于替换 (DuckPhp\Core\Route)
+        // $options['controller_class_map'] = array ( );
+
         // 控制器，控制器类名后缀 (DuckPhp\Core\Route)
         // $options['controller_class_postfix'] = '';
 
