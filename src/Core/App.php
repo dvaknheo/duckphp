@@ -1010,7 +1010,7 @@ trait Core_SuperGlobal
     public function _SessionUnset($key)
     {
         if (defined('__SUPERGLOBAL_CONTEXT')) {
-            unset( (__SUPERGLOBAL_CONTEXT)()->_SESSION[$key]);
+            unset((__SUPERGLOBAL_CONTEXT)()->_SESSION[$key]);
         }
         unset($_SESSION[$key]);
     }

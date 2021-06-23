@@ -221,14 +221,13 @@ trait AppPluginTrait
     }
     protected function pluginModeReplaceDynamicComponent()
     {
-        $this->old_controller_map=Route::G()->options['controller_class_map'];
+        $this->old_controller_map = Route::G()->options['controller_class_map'];
         $classes = $this->plugin_context_class::G()->getDynamicComponentClasses();
         foreach ($classes as $class) {
             $object = $class::G();
             $this->plugin_old_component_map[$class] = $object;
             $class::G(clone $object);
         }
-        
     }
     protected function pluginModeInitDynamicComponent()
     {

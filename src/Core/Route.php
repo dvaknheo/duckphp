@@ -267,7 +267,7 @@ class Route extends ComponentBase
 
     protected function createControllerObject($full_class)
     {
-        $full_class = $this->options['controller_class_map'][$full_class]?? $full_class;
+        $full_class = $this->options['controller_class_map'][$full_class] ?? $full_class;
         return new $full_class();
     }
     protected function getMethodToCall($object, $method)
@@ -369,7 +369,7 @@ trait Route_Helper
     public function replaceControllerSingelton($old_class, $new_class)
     {
         //$old_class::G((new \ReflectionClass($new_class))->newInstanceWithoutConstructor());
-        $this->options['controller_class_map'][$old_class]=$new_class;
+        $this->options['controller_class_map'][$old_class] = $new_class;
     }
 }
 trait Route_UrlManager
