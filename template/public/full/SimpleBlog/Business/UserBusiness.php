@@ -5,7 +5,6 @@
  */
 namespace SimpleBlog\Business;
 
-use SimpleBlog\Helper\ServiceHelper as S;
 use SimpleBlog\Model\ActionLogModel;
 use SimpleBlog\Model\CommentModel;
 use SimpleBlog\Model\UserModel;

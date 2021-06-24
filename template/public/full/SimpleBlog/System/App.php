@@ -8,7 +8,6 @@ namespace SimpleBlog\System;
 use DuckPhp\DuckPhp;
 use DuckPhp\Ext\Misc;
 use DuckPhp\Ext\RouteHookRewrite;
-
 use SimpleAuth\System\App as SimpleAuthApp;
 
 class App extends DuckPhp
