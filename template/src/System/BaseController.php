@@ -14,13 +14,12 @@ class BaseController
     use SingletonExTrait;
     use ControllerHelperTrait;
     
-    protected $self_class = '';
     protected $is_helper =false;
 
 
-    public function doCheckRunningController($helper,$self, $static)
+    public function doCheckRunningController($helper,$self)
     {
-        if ($self === $static) {
+        if ($self === static::class) {
             if ($self === static::getRouteCallingClass()) {
                 static::Exit404();
             }
@@ -34,7 +33,7 @@ class BaseController
     
     public function __construct($base='')
     {
-        $this->is_helper = $this->doCheckRunningController(self::class, $this->base , static::class);
+        $this->is_helper = $this->doCheckRunningController(self::class, $base);
         if($this->is_helper){
             return;
         }
