@@ -10,5 +10,5 @@
     array (
     ),
   ),
-  'simple_blog_installed' => '2021-06-02T17:20:29+08:00',
+  'simple_auth_installed' => '2021-06-02T17:20:29+08:00',
 );
