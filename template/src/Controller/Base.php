@@ -12,6 +12,10 @@ class Base extends BaseController
 {
     public function __construct()
     {
-        parent:: __construct(self::class);
+        if(self::getRouteCallingClass() === self::class){
+            self::Exit404();
+            return;
+        }
+        parent::__construct();
     }
 }

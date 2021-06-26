@@ -11,44 +11,50 @@ use Duckphp\SingletonEx\SingletonExTrait;
 
 class BaseController
 {
-    use SingletonExTrait;
     use ControllerHelperTrait;
     
-    protected $is_helper =false;
-
-
-    public function doCheckRunningController($helper,$self)
+    use SingletonExTrait{ G  as _G; };
+    protected static $singleton_lock = false;
+    public function G($object =null)
     {
-        if ($self === static::class) {
-            if ($self === static::getRouteCallingClass()) {
-                static::Exit404();
-            }
-            return true;
-        }
-        if (method_exists($helper, static::getRouteCallingMethod()){
-            static::Exit404();
-        }
-        return false;
+        static::$singleton_lock = true;
+        $ret = SingletonExTrait::_G($object);
+        static::$singleton_lock = false;
+        return $ret;
     }
+    protected $is_controller = false;
     
     public function __construct($base='')
     {
-        $this->is_helper = $this->doCheckRunningController(self::class, $base);
-        if($this->is_helper){
+        //作为助手类
+        if(static::$singleton_lock){
+            static::$singleton_lock = false;
             return;
         }
-        $this->initController();
+        //作为助手类，禁止访问这里的方法。
+        if (method_exists(self::class, static::getRouteCallingMethod()){
+            static::Exit404();
+            return;
+        }
+        $this->is_controller = true;
+        $this->onInitController();
     }
-    protected function initController()
+
+    public function __destroy()
+    {
+        if (!$this->is_controller){
+            return;
+        }
+        $this->onDestroyController();
+    }
+    protected function onInitController()
     {
         // real constructor();
         // do you work
     }
-    public function __destroy()
+    protected function onDestroyController()
     {
-        if($this->is_helper){
-            return;
-        }
+        // real constructor();
         // do you work
     }
     //////////////////////

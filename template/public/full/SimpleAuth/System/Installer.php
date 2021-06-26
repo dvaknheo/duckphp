@@ -67,7 +67,7 @@ class Installer
     public function install($database)
     {
         $sqldumper_options = [
-            'path'=>App::G()->options['path'],
+            'path'=>App::G()->options['path'], // 我们要从工程配置，而不是插件配置。
         ];
         SqlDumper::G()->init($sqldumper_options, App::G());
         $database = [
@@ -96,7 +96,7 @@ class Installer
     public function dumpSql()
     {
         $sqldumper_options = [
-            'path'=>App::G()->options['path'],
+            'path' => App::G()->options['path'],
             'sql_dump_inlucde_tables' =>['Users'],
         ];
         SqlDumper::G()->init($sqldumper_options,App::G());
