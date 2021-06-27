@@ -131,7 +131,7 @@ Controller --> Business ------------------------------ ---> Model
 * Business 按业务逻辑走， Model 按数据库表名走
 * Lib 其实是特殊的 Business 用于其他 Business 调用
 * ExModel 是特殊 Model 表示多个表混合调用。
-* 图上没显示特殊的 AppHelper
+* 
 
 ##  教程索引
 
@@ -275,9 +275,8 @@ class App extends DuckPhp
 
 ### // @DUCKPHP 开始的注解
  我们是看 template 文件夹看到一些  // @DUCKPHP 开始的注解。在安装脚本运行之后，实际这些注解的行会有特殊变动。
-共有4个注解
+// @DUCKPHP_DELETE 模板引入后删除
 
-+ // @DUCKPHP_DELETE 模板引入后删除
 + // @DUCKPHP_HEADFILE 头文件调整
 
 ### 关于选项

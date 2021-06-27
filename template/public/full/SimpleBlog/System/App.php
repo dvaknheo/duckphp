@@ -23,7 +23,9 @@ class App extends DuckPhp
         'ext' => [
             RouteHookRewrite::class => true,    // 我们需要 重写 url
             Misc::class => true,                // 我们需要两个助手函数
-            //SimpleAuthApp::class => true,       // 使用第三方的验证登录包
+            SimpleAuthApp::class => [
+                'simple_auth_installed' => true,
+            ],       // 使用第三方的验证登录包
         ],
         
         //url 重写

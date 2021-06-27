@@ -25,7 +25,7 @@ class App extends DuckPhp
     ];
     public function __construct()
     {
-        $this->plugin_options['plugin_path']=realpath(__DIR__.'/../');
+        $this->plugin_options['plugin_path']=realpath(__DIR__.'/../').'/';
         parent::__construct();
     }
     
@@ -57,9 +57,25 @@ class App extends DuckPhp
             echo "Usage: --host=? --port=? --dbname=? --username=? --password=? \n ";
             return;
         }
-        $options['path'] = static::IsPluginMode() ? $this->plugin_options['plugin_path']:$this->options['path']
+        $tips = [
+            'host' =>'input houst',
+            'host' =>'input port',
+        ];
+        $options['path'] = static::IsPluginMode() ? $this->plugin_options['plugin_path']:$this->options['path'];
         Installer::G()->install($options);
     }
+    
+    function ReadLines($tips,$defaults=[],$validators=[])
+    {
+        foreach($tips as $k => $v){
+            //$str =  // 替换默认
+            fputs(STDOUT,$v);
+            $input = fgets(STDIN);
+            $ret[$k] = $input;
+        }
+        return $ret;
+    }
+
     ////////
     public static function IsPluginMode()
     {

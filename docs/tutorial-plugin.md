@@ -68,9 +68,7 @@ AppPluginTrait 的默认选项
 'plugin_enable_readfile' => false,
 
     启用用于读取资源的目录
-'plugin_use_singletonex_route' => true,
-
-    启用 SingletonEx, 让客户可以修改Controller
+    
 
 ```
 [
@@ -92,9 +90,9 @@ AppPluginTrait 的默认选项
 ## 调整第三方包
 第三方包提供的不一定符合你的要求，所以
 覆盖 view , 你要在  view/{plugin_namespace}/ 下的 view 文件将会覆盖 view 文件
-覆盖 model 在 onPrepare 用 G 函数替换
-controller 同样可以使用 G 函数 如果选项 plugin_use_singletonex_route 启用
-使用自己的 view
+覆盖 business 和 model 在 onPrepare 用 G 函数替换
+
+controller 则需要 DuckPhp::replaceControllerSingleton($new_class, $old_class)
 
 ## 调整自己的实现
 ```php

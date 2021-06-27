@@ -13,11 +13,7 @@ DuckPhp 的路由类比较复杂，也是重点
 
 `DuckPhp` 支持很多种 路由方式，默认最常见最基本的就是文件型路由方式了。
 
-以 `PATH_INFO 的` / 为切分，最后一个是方法，前面是命名空间和类名， 当然，还有控制器前缀。
-
-如果只有一个 / 如 `/test` ，那么就对应到 `Main/test`。
-
-注意的是， `DuckPhp` 不支持 /test/  这样的 url ，最后的 / 需要自己处理。
+以 `PATH_INFO 的` / 为切分，最后一个是方法，前面是命名空间和类名.
 
 假定 我们的工程命名空间是 ，即 `$options['namespace'] = 'MyProject'`;
 默认选项 `$options['namespace_controller'] => 'Controller`';
@@ -34,30 +30,32 @@ DuckPhp 的路由类比较复杂，也是重点
 
 和流行框架不同，`Duckphp` 的控制器方法是不用返回任何东西的
 
-你要输出用其他类来输出
-
+你要输出用其他类来输出 ，比如 Duckphp\Helper\Controller::Show(get_defined_vars());
 
 路由的流程在 [DuckPhp\Core\Route](ref/Core-Route.md) 类里 `run()` 方法。
+
+Route 类有很多选项，不同工程会有不同设置，这里挑出一些重要的在这里说明。
 
 
 根目录的路由会使用 Main（`controller_welcome_class` 选项） 来代替。
 
-为了把 `POST` 和 `GET` 区分， 我们有了 `controller_prefix_post`  选项。如果没有 相关方法存在也是没问题的。 这个技巧用于很多需要的情况
+为了把 `POST` 和 `GET` 区分， 我们有了 `controller_prefix_post`  选项。如果没有 相关方法存在也是没问题的。 这个技巧用于很多需要的情况 . 默认是 `do_`
+
+'controller_path_prefix' => '', 有时候，你只处理特定开头的 路由.
+
+严格模式
+
+
+
+'controller_hide_boot_class' => false, 控制器标记，隐藏特别的入口，比如你不想人也从 /Main/index 访问 / MyProejct\Controller\Main->index
 
 
 选项介绍
 ```
 'controller_base_class' => '', 限定控制器必须继承基类或实现接口
-'controller_class_postfix' => '', 控制器类名后缀，或许你会加上 Action  ，于是就变成了 MyProejct\Controller\MainAction ....
-'controller_enable_slash' => false, 激活兼容 URL / 后缀 
-'controller_hide_boot_class' => false, 控制器标记，隐藏特别的入口，比如你不想人也从 /Main/index 访问 / MyProejct\Controller\Main->index
-'controller_methtod_for_miss' => '_missing', // 如果有这个方法，则定位到的类后，缺失方法的时候调用这个方法
+'controller_methtod_for_miss' => '__missing', // 如果有这个方法，则定位到的类后，缺失方法的时候调用这个方法
 'controller_path_ext' => '', 扩展名，比如你要 .html
 'controller_prefix_post' => 'do_', 控制器，POST 方法前缀，用来方便把 POST 方法和其他方法分开，如果没相应类方法则忽略
-'controller_stop_g_method' => false, 控制器禁止直接访问 G()方法 ，用于一些技巧
-'controller_stop_static_method' => false, 控制器禁止直接访问静态方法 严格禁止访问静态方法，一般不打开
-'controller_use_singletonex' => false, 控制器使用单例模式，打开的话全用 G() 方法来访问类
-'controller_welcome_class' => 'Main', 控制器默认欢迎类
 'namespace' => '',命名空间
 'namespace_controller' => 'Controller', 控制器的命名空间 如果以 \\ 开始，则忽略 namespace 选项的配置
 'controller_path_prefix' => '', 有时候，你只处理特定开头的 路由
@@ -162,7 +160,7 @@ return [
 在选项里取消注释的代码加载以下代码
 
 ```php
-$options['path_info_compact_action_key' = "_r";
+$options['path_info_compact_action_key'] = "_r";
 $options['path_info_compact_class_key'] = "";
 ```
 选项说明： `path_info_compact_action_key` 就是 用于路由的 `$_GET` 参数

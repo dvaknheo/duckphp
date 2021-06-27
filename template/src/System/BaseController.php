@@ -11,26 +11,22 @@ use Duckphp\SingletonEx\SingletonExTrait;
 
 class BaseController
 {
+    //////// [[[[ ////////
     use ControllerHelperTrait;
-    
     use SingletonExTrait{ G  as _G; };
-    protected static $singleton_lock = false;
     public function G($object =null)
     {
-        static::$singleton_lock = true;
-        $ret = SingletonExTrait::_G($object);
-        static::$singleton_lock = false;
-        return $ret;
+        if($object === null) {
+            $object = (new ReflectionClass(static::class))->newInstanceWithoutConstructor();
+            return SingletonExTrait::_G($object);
+        }
+        return SingletonExTrait::_G($object);
     }
     protected $is_controller = false;
     
     public function __construct($base='')
     {
-        //作为助手类
-        if(static::$singleton_lock){
-            static::$singleton_lock = false;
-            return;
-        }
+        $this->is_controller = true;
         //作为助手类，禁止访问这里的方法。
         if (method_exists(self::class, static::getRouteCallingMethod()){
             static::Exit404();
@@ -57,6 +53,7 @@ class BaseController
         // real constructor();
         // do you work
     }
+    //////// ]]]] ////////
     //////////////////////
     public static function SessionManager()
     {

@@ -8,7 +8,6 @@ require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
 use DuckPhp\DuckPhp;
 use DuckPhp\DuckPhp as C;  // Helper 都给我们省掉了
 use DuckPhp\DuckPhp as M;  // Helper 都给我们省掉了
-use DuckPhp\DuckPhp as V;  // Helper 都给我们省掉了
 use DuckPhp\Ext\EmptyView;
 use DuckPhp\SingletonEx\SingletonExTrait; // 可变单例模式
 
@@ -118,6 +117,7 @@ CREATE TABLE `test` (
             // 开启调试模式
         'namespace_controller' => "\\",
             // 设置控制器的命名空间为根 使得 Main 类为入口
+            //TODO 安全
         'ext' => [
             EmptyView::class => true,
             // 我们用自带扩展 EmptyView 代替系统的 View
