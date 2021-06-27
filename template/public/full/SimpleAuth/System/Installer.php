@@ -14,16 +14,8 @@ use DuckPhp\SingletonEx\SingletonExTrait;
 class Installer
 {
     use SingletonExTrait;
-    
     protected $key_installed_flag ='simple_auth_installed';
     
-    public function isInstalled()
-    {
-        if(App::Setting($key_installed_flag)){
-            return true;
-        }
-        return false;
-    }
     protected function checkDb($database)
     {
         $options = DbManager::G()->options;
@@ -64,21 +56,24 @@ class Installer
         
         return @file_put_contents($file,$data);
     }
-    public function install($database)
+    public function install($options)
     {
         $sqldumper_options = [
-            'path'=>App::G()->options['path'], // 我们要从工程配置，而不是插件配置。
+            'path'=>$options['path'], // 我们要从工程配置，而不是插件配置。
         ];
         SqlDumper::G()->init($sqldumper_options, App::G());
+        
+        $databaset = $options;
         $database = [
             'dsn' => "mysql:host={$database['host']};port={$database['port']};dbname={$database['dbname']};charset=utf8mb4;",
             'username' => $database['username'],
             'password' => $database['password'],
             'driver_options' => [],
-        ];        
+        ];
+        $ret = false;
         try{
             $this->checkDb($database);
-            SqlDumper::G()->install();
+            $ret = SqlDumper::G()->install();
         }catch(\Exception $ex){
             BaseException::ThrowOn(true, "安装数据库失败" . $ex->getMessage(),-1);
         }
@@ -86,12 +81,12 @@ class Installer
         $ext_setting = [];
         $ext_setting['database'] = $database;
         
-        $ext_setting[$key_installed_flag] = DATE(DATE_ATOM);
+        $ext_setting[$this->key_installed_flag] = DATE(DATE_ATOM);
         
         $flag = $this->writeSettingFile($ext_setting);
         BaseException::ThrowOn(!$flag,'写入文件失败',-2);
         
-        return true;
+        return $ret;
     }
     public function dumpSql()
     {

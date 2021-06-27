@@ -5,33 +5,26 @@
  */
 namespace SimpleAuth\Controller;
 
-use SimpleAuth\Helper\ControllerHelper as C;
 use SimpleAuth\Business\UserBusiness;
 use SimpleAuth\Business\UserBusinessException;
+use SimpleAuth\Helper\ControllerHelper as C;
 
 class Main
 {    
     public function __construct()
     {
-        $this->init();
+        $this->initController();
     }
-    protected function init()
+    protected function initController()
     {
         $method = C::getRouteCallingMethod();
         
+        C::SessionManager()->checkCsrf();
         if (in_array($method, ['index','register','login','logout'])) {
             return;
         }
         C::assignExceptionHandler(C::SessionManager()->getExceptionClass(), [static::class, 'OnSessionException']);
-        C::SessionManager()->checkCsrf();
         $this->setLayoutData();
-        if ($method==='index') {
-            C::setViewHeadFoot(null,null);
-        }
-    }
-    public function __destruct()
-    {
-        C::assignExceptionHandler(C::SessionManager()->getExceptionClass(), null);
     }
     public static function OnSessionException($ex = null)
     {
@@ -62,7 +55,7 @@ class Main
     }
     public function index()
     {
-        //TODO  首页，如果不是直接运行模式，则 404
+        C::setViewHeadFoot(null,null);
         $url_reg = C::Url('register');
         $url_login = C::Url('login');
         C::Show(get_defined_vars(), 'main');
@@ -139,7 +132,7 @@ class Main
             $new_pass = $post['newpassword'] ?? '';
             $confirm_pass = $post['newpassword_confirm'] ?? '';
             
-            UserBusinessException::ThrowOn($new_pass !== $confirm_pass, '重复密码不一致');
+            UserBusinessException::ThrowOn($new_pass !== $confirm_pass, '重复密码不一致'); // 放到 Business 里？
             UserBusiness::G()->changePassword($uid, $old_pass, $new_pass);
             $error = "密码修改完毕";            
         } catch (UserBusinessException $ex) {

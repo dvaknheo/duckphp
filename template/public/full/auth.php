@@ -15,10 +15,11 @@ $options = [
     'is_debug'=>true,
     'use_setting_file'=>true,
     'setting_file_ignore_exists'=>true,
-
     'ext'=>[
-        \SimpleAuth\System\App::class => true,
     ],
+];
+$options['ext'][\SimpleAuth\System\App::class] = [
+    // simple_auth_installed = false
 ];
 class MainOverrider extends SimpleAuth\Controller\Main
 {
