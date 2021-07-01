@@ -14,6 +14,11 @@ use DuckPhp\SingletonEx\SingletonExTrait;
 class Installer
 {
     use SingletonExTrait;
+    
+    public function init($options ,$context = null)
+    {
+        return $this;
+    }
     protected $key_installed_flag ='simple_auth_installed';
     
     protected function checkDb($database)

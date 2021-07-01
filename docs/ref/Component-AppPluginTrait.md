@@ -51,6 +51,7 @@ URL 前缀，限定插件的目录
 
             'plugin_use_singletonex_route' => true,
 启用 SingletonEx, 让客户可以修改Controller
+已废弃，待删除
 
             'plugin_component_class_view' => '',
 替换默认的View

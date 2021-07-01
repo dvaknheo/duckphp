@@ -5,8 +5,8 @@
  */
 namespace SimpleAuth\System;
 
-use SimpleAuth\System\BaseException;
+use SimpleAuth\System\ProjectException;
 
-class SessionException extends BaseException
+class SessionException extends ProjectException
 {
 }

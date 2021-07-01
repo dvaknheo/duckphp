@@ -18,9 +18,9 @@ $options = [
     'ext'=>[
     ],
 ];
-$options['ext'][\SimpleAuth\System\App::class] = [
+//$options['ext'][\SimpleAuth\System\App::class] = [
     // simple_auth_installed = false
-];
+//];
 class MainOverrider extends SimpleAuth\Controller\Main
 {
     public function register()
@@ -29,7 +29,7 @@ class MainOverrider extends SimpleAuth\Controller\Main
         return parent::register();
     }
 }
-\DuckPhp\DuckPhp::RunQuickly($options,function(){
-   \DuckPhp\DuckPhp::replaceControllerSingelton(SimpleAuth\Controller\Main::class,MainOverrider::class);
+\SimpleAuth\System\App::RunQuickly($options,function(){
+   \SimpleAuth\System\App::replaceControllerSingelton(SimpleAuth\Controller\Main::class,MainOverrider::class);
 
 });

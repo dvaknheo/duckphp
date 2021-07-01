@@ -275,9 +275,12 @@ Helper 目录，助手类，如果你一个人偷懒，直接用 APP 类也行
 助手类教程在这里 [助手类教程](docs/tutorial-helper.md)，基本上，看完助手类教程，`业务工程师`就可以开干了。
 
 此外有什么不了解的，问`核心工程师`吧。
+
+
+快速教程完成后，或许你还需要看看 [通用教程](docs/tutorial-general.md)
 比如路由方面，常见是文件路由。 [路由教程](docs/tutorial-route.md)
 
-如果你的项目使用内置数据库，或许你还要看  [数据库教程](docs/tutorial-helper.md)
+如果你的项目使用内置数据库，或许你还要看  [数据库教程](docs/tutorial-db.md)
 
 还有 [异常处理](docs/tutorial-exception.md) 异常处理，和 [事件处理](docs/tutorial-event.md)
 

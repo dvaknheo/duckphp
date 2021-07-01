@@ -7,7 +7,7 @@ namespace SimpleAuth\System;
 
 use DuckPhp\ThrowOn\ThrowOnTrait;
 
-class BaseException extends \Exception
+class ProjectException extends \Exception
 {
     use ThrowOnTrait;
 }

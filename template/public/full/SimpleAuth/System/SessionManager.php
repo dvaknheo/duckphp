@@ -52,7 +52,7 @@ class SessionManager
         $token = App::SessionGet($this->prefix.'_token');
         if (!isset($token)) {
             $token = $this->randomString(40);
-           App::SessionGet($this->prefix.'_token', $token);
+            App::SessionSet($this->prefix.'_token', $token);
         }
         return $token;
     }

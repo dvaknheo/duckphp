@@ -31,8 +31,8 @@ Now is [<?=$var?>]
 </ul>
 需要配置的其他例子，在 full 目录下
 <ul>
-    <li><a href="/full/auth.php">auth.php 简单的用户验证系统</a>
-    <li><a href="/full/blog.php">blog.php 简单的博客</a>
+    <li><a href="/full/blog.php">blog.php 简单的博客(使用 简单用户验证系统 做登录)</a>
+    <li><a href="/full/auth.php">auth.php 简单用户验证系统</a>
     <li><a href="/full/dbtest.php">dbtest.php 数据库演示</a>
     <li><a href="/full/cover_test.php">cover_test.php 覆盖率测试</a>
 </ul>

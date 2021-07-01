@@ -6,9 +6,8 @@
 namespace SimpleAuth\Business;
 
 use SimpleAuth\Model\UserModel;
-use SimpleAuth\System\BaseBusiness;
 
-class UserBusiness extends BaseBusiness
+class UserBusiness extends Base
 {
     public function register($form)
     {

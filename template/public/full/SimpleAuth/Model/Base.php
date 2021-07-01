@@ -6,11 +6,9 @@
 
 namespace LazyToChange\Business;
 
-use LazyToChange\System\ProjectBusiness;
+use LazyToChange\System\ProjectModel;
 
-class Base extends ProjectBusiness
+class Base extends ProjectModel
 {
     //
-    
-    // var_dump("OK");
 }

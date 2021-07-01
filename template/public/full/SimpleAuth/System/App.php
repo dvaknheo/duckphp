@@ -32,8 +32,8 @@ class App extends DuckPhp
     protected function onPluginModeInit()
     {
         $this->is_plugin = true;
-        self::G(static::G());
-        Console::G()->regCommandClass(static::class,  'SimpleAuth');
+        self::G(static::G());  //TODO 
+        Console::G()->regCommandClass(static::class,  'SimpleAuth'); // //TODO 
     }
     protected function onBeforeRun()
     {
@@ -67,6 +67,7 @@ class App extends DuckPhp
     
     function ReadLines($tips,$defaults=[],$validators=[])
     {
+            //  这个要抽出来
         foreach($tips as $k => $v){
             //$str =  // 替换默认
             fputs(STDOUT,$v);
@@ -79,6 +80,7 @@ class App extends DuckPhp
     ////////
     public static function IsPluginMode()
     {
+        // 这个要放到 AppPluginTrait 里
         return static::G()->is_plugin;
     }
     public static function SessionManager()

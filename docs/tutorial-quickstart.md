@@ -104,7 +104,7 @@ BaseController  这个基类，如果不强制要求也可以不用。
 
 LazyToChange 这个命名空间前缀是工程命名前缀，怎么修改先略过。
 
-C::H 用来做 html编码。
+use LazyToChange\Helper\ControllerHelper as C; C 是助手类
 
 C::Show($data); 是 C::Show($data,'test/done'); 的缩写， 调用 test/done 这个视图。
 
@@ -135,7 +135,7 @@ class DemoBusiness extends BaseBusiness
 }
 
 ```
-BaseBusiness也是不强求的，我们 extends BaseBusiness 是为了能用 DemoBusiness::G() 可变单例。
+BaseBusiness 也是不强求的，我们 extends BaseBusiness 是为了能用 DemoBusiness::G() 可变单例。
 
 这里调用了 MiscModel 。
 

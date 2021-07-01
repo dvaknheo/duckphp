@@ -7,7 +7,8 @@ namespace SimpleAuth\System;
 
 use DuckPhp\SingletonEx\SingletonExTrait;
 
-class BaseBusiness
+class ProjectModel
 {
     use SingletonExTrait;
+    // use StrictModelTrait;
 }

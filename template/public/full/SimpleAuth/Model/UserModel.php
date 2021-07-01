@@ -5,15 +5,14 @@
  */
 namespace SimpleAuth\Model;
 
-use SimpleAuth\System\BaseModel;
-use SimpleAuth\Helper\ModelHelper as M;
-
-class UserModel extends BaseModel
+class UserModel extends Base
 {
     public function exsits($name)
     {
-        $sql = "select count(*) as c from Users where username=?";
-        $count = M::DB()->fetchColumn($sql, $name);
+        $sql = "select count(*) as c from 'TABLE' where username=?";
+        $sql = $this->prepare($sql);
+        
+        $count = Base::Db()->fetchColumn($sql, $name);
         return !empty($count)?true:false;
     }
     public function addUser($username, $password)
@@ -22,20 +21,20 @@ class UserModel extends BaseModel
         $data['username'] = $username;
         $data['password'] = $this->hash($password);
         
-        $id = M::DB()->insertData('Users', $data);
+        $id = Base::DB()->insertData($this->table(), $data);
         return $id;
     }
     public function getUserById($id)
     {
         $sql = "select * from Users where id=?";
-        $user = M::DB()->fetch($sql, $id);
+        $user = Base::DB()->fetch($sql, $id);
         
         return $user;
     }
     public function getUserByUsername($username)
     {
         $sql = "select * from Users where username=?";
-        $user = M::DB()->fetch($sql, $username);
+        $user = Base::DB()->fetch($sql, $username);
         
         return $user;
     }
@@ -52,7 +51,7 @@ class UserModel extends BaseModel
     {
         $password = $this->hash($password);
         $sql = "update Users set password=? where id=? limit 1";
-        $ret = M::DB()->execute($sql, $password, $uid);
+        $ret = Base::DB()->execute($sql, $password, $uid);
         return $ret;
     }
     ////
