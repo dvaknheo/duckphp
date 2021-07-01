@@ -9,8 +9,7 @@ class UserModel extends Base
 {
     public function exsits($name)
     {
-        $sql = "select count(*) as c from 'TABLE' where username=?";
-        $sql = $this->prepare($sql);
+        $sql = "select count(*) as c from Users where username=?";
         
         $count = Base::Db()->fetchColumn($sql, $name);
         return !empty($count)?true:false;
@@ -21,7 +20,7 @@ class UserModel extends Base
         $data['username'] = $username;
         $data['password'] = $this->hash($password);
         
-        $id = Base::DB()->insertData($this->table(), $data);
+        $id = Base::DB()->insertData('Users', $data);
         return $id;
     }
     public function getUserById($id)

@@ -6,9 +6,11 @@
 namespace SimpleAuth\System;
 
 use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Helper\ModelHelperTrait;
 
 class ProjectModel
 {
     use SingletonExTrait;
+    use ModelHelperTrait;
     // use StrictModelTrait;
 }

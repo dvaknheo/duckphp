@@ -4,13 +4,11 @@
  * From this time, you never be alone~
  */
 
-namespace LazyToChange\Business;
+namespace SimpleAuth\Business;
 
-use LazyToChange\System\ProjectBusiness;
+use SimpleAuth\System\ProjectBusiness;
 
 class Base extends ProjectBusiness
 {
-    //
-    
-    // var_dump("OK");
+
 }

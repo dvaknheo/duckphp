@@ -4,11 +4,9 @@
  * From this time, you never be alone~
  */
 
-namespace LazyToChange\Business;
+namespace SimpleAuth\Model;
 
-use LazyToChange\System\ProjectModel;
-
+use SimpleAuth\System\ProjectModel;
 class Base extends ProjectModel
 {
-    //
 }

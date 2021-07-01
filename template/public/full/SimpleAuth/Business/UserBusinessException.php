@@ -5,9 +5,9 @@
  */
 namespace SimpleAuth\Business;
 
-use SimpleAuth\System\BaseException;
+use SimpleAuth\System\ProjectException;
 
-class UserBusinessException extends BaseException
+class UserBusinessException extends ProjectException
 {
     //
 }
