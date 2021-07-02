@@ -8,21 +8,23 @@ namespace SimpleBlog\System;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Core\App;
 use DuckPhp\Core\Configer;
+use DuckPhp\Core\ComponentBase;
 use DuckPhp\Ext\SqlDumper;
-use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Core\ComponentBase;
 
-class Installer
+class Installer extends ComponentBase
 {
-    use SingletonExTrait;
-    
-    public function init($options ,$context = null)
-    {
-        return $this;
-    }
+
     protected $key_installed_flag ='simple_auth_installed';
     
-    protected function checkDb($database)
+    protected function checkDb($config)
     {
+        $database = [
+            'dsn' => "mysql:host={$config['host']};port={$config['port']};dbname={$config['dbname']};charset=utf8mb4;",
+            'username' => $config['username'],
+            'password' => $config['password'],
+            'driver_options' => [],
+        ];
         $options = DbManager::G()->options;
         $options['database'] = $database;
         DbManager::G()->init($options,App::G());
@@ -63,24 +65,18 @@ class Installer
     }
     public function install($options)
     {
+        $ret = false;
         $sqldumper_options = [
-            'path'=>$options['path'], // 我们要从工程配置，而不是插件配置。
+            'path' => $options['path'],
         ];
         SqlDumper::G()->init($sqldumper_options, App::G());
         
-        $databaset = $options;
-        $database = [
-            'dsn' => "mysql:host={$database['host']};port={$database['port']};dbname={$database['dbname']};charset=utf8mb4;",
-            'username' => $database['username'],
-            'password' => $database['password'],
-            'driver_options' => [],
-        ];
-        $ret = false;
+
         try{
-            $this->checkDb($database);
+            $this->checkDb($options);
             $ret = SqlDumper::G()->install();
         }catch(\Exception $ex){
-            BaseException::ThrowOn(true, "安装数据库失败" . $ex->getMessage(),-1);
+            static::ThrowOn(true, "安装数据库失败" . $ex->getMessage(),-1);
         }
         
         $ext_setting = [];
@@ -89,7 +85,7 @@ class Installer
         $ext_setting[$this->key_installed_flag] = DATE(DATE_ATOM);
         
         $flag = $this->writeSettingFile($ext_setting);
-        BaseException::ThrowOn(!$flag,'写入文件失败',-2);
+        static::ThrowOn(!$flag,'写入文件失败',-2);
         
         return $ret;
     }
@@ -101,5 +97,11 @@ class Installer
         ];
         SqlDumper::G()->init($sqldumper_options,App::G());
         SqlDumper::G()->run();
+    }
+    protected function ThrowOn($flag, $message, $code = 0)
+    {
+        if ($flag) {
+            throw new BaseException($message, $code);
+        }
     }
 }
