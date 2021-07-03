@@ -14,11 +14,9 @@ class RouteHookPathInfoCompat extends ComponentBase
         'path_info_compact_action_key' => '_r',
         'path_info_compact_class_key' => '',
     ];
-    protected $context_class;
     //@override
     protected function initContext(object $context)
     {
-        $this->context_class = get_class($context);
         if (!$this->options['path_info_compact_enable']) {
             return;
         }
@@ -105,6 +103,7 @@ class RouteHookPathInfoCompat extends ComponentBase
     }
     public function _Hook($path_info)
     {
+        // $path_info = ($this->context_class)::Route()->getPathInfo();
         $k = $this->options['path_info_compact_action_key'];
         $m = $this->options['path_info_compact_class_key'];
         

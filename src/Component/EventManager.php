@@ -28,6 +28,7 @@ class EventManager extends ComponentBase
     }
     public function on($event, $callback)
     {
+        $event = $this->eventName($event);
         if (isset($this->events[$event]) && in_array($callback, $this->events[$event])) {
             return;
         }
@@ -35,6 +36,7 @@ class EventManager extends ComponentBase
     }
     public function fire($event, ...$args)
     {
+        $event = $this->eventName($event);
         if (!isset($this->events[$event])) {
             return;
         }
@@ -49,6 +51,7 @@ class EventManager extends ComponentBase
     }
     public function remove($event, $callback = null)
     {
+        $event = $this->eventName($event);
         if (!isset($callback)) {
             unset($this->events[$event]);
         }
@@ -58,5 +61,12 @@ class EventManager extends ComponentBase
         $this->events[$event] = array_filter($this->events[$event], function ($v) use ($callback) {
             return $v != $callback;
         });
+    }
+    protected function eventName($event)
+    {
+        if(is_array($event)){
+            $event = implode('::',$event);
+        }
+        return $event;
     }
 }

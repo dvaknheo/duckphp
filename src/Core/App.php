@@ -337,6 +337,10 @@ EOT;
         }
         return false;
     }
+    public static function IsCurrentApp()
+    {
+        return static::G() === self::G();
+    }
 }
 
 trait Core_SystemWrapper

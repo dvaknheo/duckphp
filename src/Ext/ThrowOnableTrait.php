@@ -16,12 +16,11 @@ trait ThrowOnableTrait
         $exception_class = static::G()->exception_class;
         throw new $exception_class($message, $code);
     }
-    public static function ExceptionClass()
+    public static function ExceptionClass($new_class = null)
     {
+        if($new_class) {
+            static::G()->exception_class = $new_class;
+        }
         return static::G()->exception_class;
-    }
-    public function setExceptionClass($exception_class)
-    {
-        $this->exception_class = $exception_class;
     }
 }

@@ -18,29 +18,25 @@ class RouteHookRouteMap extends ComponentBase
     protected $route_map = [];
     protected $route_map_important = [];
     protected $is_compiled = false;
-    protected $context_class;
     
     public static function PrependHook($path_info)
     {
+        // $path_info = ($this->context_class)::Route()->getPathInfo();
         return static::G()->doHook($path_info, false);
     }
     public static function AppendHook($path_info)
     {
+        // $path_info = ($this->context_class)::Route()->getPathInfo();
         return static::G()->doHook($path_info, true);
-    }
-    //@override
-    protected function initOptions(array $options)
-    {
     }
     //@override
     protected function initContext(object $context)
     {
-        $this->context_class = get_class($context);
         ($this->context_class)::Route()->addRouteHook([static::class,'PrependHook'], 'prepend-inner');
         ($this->context_class)::Route()->addRouteHook([static::class,'AppendHook'], 'append-outter');
         
         if ($this->options['route_map_by_config_name']) {
-            $config = get_class($context)::LoadConfig($this->options['route_map_by_config_name']);
+            $config = ($this->context_class)::LoadConfig($this->options['route_map_by_config_name']);
             $this->assignRoute($config['route_map'] ?? []);
             $this->assignImportantRoute($config['route_map_important'] ?? []);
         }

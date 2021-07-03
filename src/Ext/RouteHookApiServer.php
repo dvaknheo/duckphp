@@ -36,6 +36,7 @@ class RouteHookApiServer extends ComponentBase
     }
     public function _Hook($path_info)
     {
+        // $path_info = ($this->context_class)::Route()->getPathInfo();
         ($this->context_class)::setDefaultExceptionHandler([static::class,'OnJsonError']);
         
         list($object, $method) = $this->getObjectAndMethod($path_info);

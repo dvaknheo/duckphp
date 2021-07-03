@@ -17,6 +17,7 @@ class EventManagerTest extends \PHPUnit\Framework\TestCase
         EventManager::RemoveEvent('MyEvent',[static::class, 'callit']);
         EventManager::RemoveEvent('NoExist');
         EventManager::RemoveEvent('MyEvent');
+         EventManager::FireEvent([static::class, 'callit']);
         \LibCoverage\LibCoverage::End();
     }
     public static function callit()

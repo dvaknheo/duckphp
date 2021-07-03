@@ -122,6 +122,9 @@ DuckPhp\Core\App 类 可以视为几个类的组合
     public function skip404Handler()
 跳过 404 处理，用于协程类
 
+    public static function IsCurrentApp()
+判断当前对象是不是执行类的对象 ,用于插件模式的判断
+
 ### 接管流程的函数
     public function __construct()
 构造函数
@@ -408,6 +411,7 @@ Show 方法对 View::Show() 加了好些补充
 ### 关于 injected_helper_map 。 有时间再详细文档。
 
 以上
+
 
 
 

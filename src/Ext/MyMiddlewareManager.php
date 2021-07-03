@@ -6,7 +6,6 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Core\Route;
 use DuckPhp\Ext\RouteHookManager;
 
 class MyMiddlewareManager extends ComponentBase
@@ -64,7 +63,7 @@ class MyMiddlewareManager extends ComponentBase
     }
     protected function runSelfMiddleware()
     {
-        $this->defaultResult = Route::G()->defaultRunRouteCallback();
+        $this->defaultResult = ($this->context_class)::Route()->defaultRunRouteCallback();
         return $this->getResponse();
     }
     protected function onPostMiddleware()

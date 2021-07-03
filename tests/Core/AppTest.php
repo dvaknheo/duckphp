@@ -150,6 +150,7 @@ echo "-------------------------------------\n";
         App::G()->replaceDefaultRunHandler($xfunc);
         App::G()->run();
         
+        
         $this->do_Core_Component();
         
         
@@ -223,7 +224,7 @@ App::PageHtml(123);
         App::G()->version();
         
         App::IsAjax();
-        
+        App::IsCurrentApp();
         App::G()->runAutoLoader();
         \LibCoverage\LibCoverage::End();
     return;

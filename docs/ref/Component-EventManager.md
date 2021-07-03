@@ -19,14 +19,14 @@
 
     public static function AllEvents()
     public function all()
-
 获取所有事件
 
     public static function RemoveEvent($event, $callback = null)
     public function remove($event, $callback = null)
-
 移除事件， 如果指定 $callback 则移除 $event 中等于callback的事件处理
 
+    protected function eventName($event)
+处理事件名称，把 [class,event] 转成 class::event;
 ## 例子
 
 ```php
@@ -47,5 +47,6 @@ App::FireEvent 触发事件
 用 App::RemoveEvent 移除事件
 
 DuckPhp 的事件系统是 一对多的
+
 
 

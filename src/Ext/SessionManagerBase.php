@@ -23,17 +23,17 @@ class SessionManagerBase extends ComponentBase
         App::session_start();
         $this->session_started = true;
     }
-    public function get($key, $default = null)
+    protected function get($key, $default = null)
     {
         $this->checkSessionStart();
         App::SessionGet($this->options['session_prefix'] . $key, $default);
     }
-    public function set($key, $value)
+    protected function set($key, $value)
     {
         $this->checkSessionStart();
         App::SessionSet($this->options['session_prefix'] . $key, $value);
     }
-    public function unset($key)
+    protected function unset($key)
     {
         $this->checkSessionStart();
         App::SessionUnset($this->options['session_prefix'] . $key);
