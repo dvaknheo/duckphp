@@ -31,8 +31,6 @@ class StrictCheck extends ComponentBase
 
     ];
     
-    protected $context_class = null;
-    
     //@override
     protected function initOptions(array $options)
     {
@@ -44,7 +42,6 @@ class StrictCheck extends ComponentBase
     //@override
     protected function initContext(object $context)
     {
-        $this->context_class = get_class($context);
         try {
             DbManager::G()->setBeforeGetDbHandler([static::class, 'CheckStrictDb']);
         } catch (\BadMethodCallException $ex) { // @codeCoverageIgnore

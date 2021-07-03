@@ -19,7 +19,6 @@ class RouteHookApiServer extends ComponentBase
     ];
     //'api_server_config_cache_file' => '',
     //'api_server_on_missing' => '',
-    protected $context_class;
     protected $headers = [
         'Access-Control-Allow-Origin' => '*',
         'Access-Control-Allow-Methods' => 'POST,PUT,GET,DELETE',
@@ -29,8 +28,7 @@ class RouteHookApiServer extends ComponentBase
     //@override
     protected function initContext(object $context)
     {
-        $this->context_class = get_class($context);
-        ($this->context_class)::addRouteHook([static::class,'Hook'], 'prepend-inner');
+        ($this->context_class)::Route()->addRouteHook([static::class,'Hook'], 'prepend-inner');
     }
     public static function Hook($path_info)
     {

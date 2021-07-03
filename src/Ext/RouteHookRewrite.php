@@ -14,7 +14,6 @@ class RouteHookRewrite extends ComponentBase
         'rewrite_auto_extend_method' => true,
     ];
     protected $rewrite_map = [];
-    protected $context_class;
     
     public static function Hook($path_info)
     {
@@ -28,7 +27,6 @@ class RouteHookRewrite extends ComponentBase
     //@override
     protected function initContext(object $context)
     {
-        $this->context_class = get_class($context);
         ($this->context_class)::Route()->addRouteHook([static::class,'Hook'], 'prepend-outter');
         if ($this->options['rewrite_auto_extend_method'] && \method_exists($context, 'extendComponents')) {
             $context->extendComponents(

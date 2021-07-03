@@ -16,7 +16,6 @@ class RouteHookDirectoryMode extends ComponentBase
         //'mode_dir_key_for_action'=>true,
     ];
     protected $basepath;
-    protected $context_class;
     
     protected function initOptions(array $options)
     {
@@ -25,7 +24,6 @@ class RouteHookDirectoryMode extends ComponentBase
     //@override
     protected function initContext(object $context)
     {
-        $this->context_class = get_class($context);
         ($this->context_class)::Route()->addRouteHook([static::class,'Hook'], 'prepend-outter');
         ($this->context_class)::Route()->setUrlHandler([static::class,'Url']);
     }

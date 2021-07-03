@@ -15,11 +15,9 @@ class RouteHookFunctionRoute extends ComponentBase
         'function_route_404_to_index' => false,
     ];
 
-    protected $context_class;
     //@override
     protected function initContext(object $context)
     {
-        $this->context_class = get_class($context);
         ($this->context_class)::addRouteHook([static::class,'Hook'], 'append-inner');
     }
     public static function Hook($path_info)

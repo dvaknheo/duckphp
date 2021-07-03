@@ -23,12 +23,6 @@ class SqlDumper extends ComponentBase
         'sql_dump_install_drop_old_table' => false,
         
     ];
-    protected $context_class = null;
-    //@override
-    protected function initContext(object $context)
-    {
-        $this->context_class = get_class($context);
-    }
     public function run()
     {
         $data = $this->getData();

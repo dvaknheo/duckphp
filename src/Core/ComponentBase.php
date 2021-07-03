@@ -9,6 +9,7 @@ class ComponentBase implements ComponentInterface
 {
     public $options = [];
     protected $is_inited = false;
+    protected $context_class = '';
     public function __construct()
     {
     }
@@ -36,6 +37,7 @@ class ComponentBase implements ComponentInterface
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         $this->initOptions($options);
         if ($context !== null) {
+            $this->context_class = get_class($context);
             $this->initContext($context);
         }
         $this->is_inited = true;

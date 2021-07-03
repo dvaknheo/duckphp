@@ -18,7 +18,6 @@ class MyMiddlewareManager extends ComponentBase
     public $request;
     public $response;
     
-    protected $context_class;
     protected $defaultResult = false;
     
     public function __construct()
@@ -30,7 +29,6 @@ class MyMiddlewareManager extends ComponentBase
     //@override
     protected function initContext(object $context)
     {
-        $this->context_class = get_class($context);
         //($this->context_class)::Route()->addRouteHook([static::class,'Hook'], 'prepend-inner');
         RouteHookManager::G()->attachPreRun()->append([static::class,'Hook']);
     }

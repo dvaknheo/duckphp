@@ -34,7 +34,6 @@ class SuperGlobalContext extends ComponentBase
     }
     protected function initContext(object $context)
     {
-        //$this->context_class = get_class($context);
         //////////////////////////
         if ($this->options['superglobal_auto_extend_method'] && \method_exists($context, 'extendComponents')) {
             $context->extendComponents(

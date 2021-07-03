@@ -17,7 +17,6 @@ class Misc extends ComponentBase
         'misc_auto_method_extend' => true,
     ];
     protected $path = null;
-    protected $context_class;
     protected $_di_container;
 
     //@override ComponentBase
@@ -32,8 +31,6 @@ class Misc extends ComponentBase
     //@override ComponentBase
     protected function initContext(object $context)
     {
-        $this->context_class = get_class($context);
-        
         if ($this->options['misc_auto_method_extend'] && \method_exists($context, 'extendComponents')) {
             $context->extendComponents(
                 [

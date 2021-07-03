@@ -13,15 +13,10 @@ class JsonView extends View
         'json_view_skip_replace' => false,
         'json_view_skip_vars' => [],
     ];
-    protected $context_class = null;
     public function __construct()
     {
         $this->options = array_replace_recursive($this->options, (new parent())->options); //merge parent's options;
         parent::__construct();
-    }
-    protected function initContext(object $context)
-    {
-        $this->context_class = get_class($context);
     }
     //@override
     /**
