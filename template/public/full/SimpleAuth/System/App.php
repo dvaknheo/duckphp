@@ -5,44 +5,20 @@
  */
 namespace SimpleAuth\System;
 
-use DuckPhp\DuckPhp;
-use DuckPhp\Component\AppPluginTrait;
 use DuckPhp\Component\Console;
+use DuckPhp\DuckPhp;
 use DuckPhp\Ext\SqlDumper;
 
 class App extends DuckPhp
 {
-    use AppPluginTrait;
-    public $is_plugin = false;
-
-    //@override
-    public $plugin_options = [
-        // simple_auth_installed = false,
-    ];
     //@override
     public $options = [
         // simple_auth_installed = false,
     ];
-    public function __construct()
-    {
-        $this->plugin_options['plugin_path']=realpath(__DIR__.'/../').'/';
-        parent::__construct();
-    }
-    
-    protected function onPluginModeInit()
-    {
-        $this->is_plugin = true;
-        self::G(static::G());  //TODO 
-        Console::G()->regCommandClass(static::class,  'SimpleAuth'); // //TODO 
-    }
     protected function onBeforeRun()
     {
         $this->checkInstall($this->options['simple_auth_installed'] ?? false);
-    }
-    protected function onPluginModeBeforeRun()
-    {
-        $this->checkInstall($this->plugin_options['simple_auth_installed'] ?? false);
-    }
+    
     protected function checkInstall($flag)
     {
         if(!$flag  && !static::Setting('simple_auth_installed')){
@@ -61,28 +37,51 @@ class App extends DuckPhp
             'host' =>'input houst',
             'host' =>'input port',
         ];
-        $options['path'] = static::IsPluginMode() ? $this->plugin_options['plugin_path']:$this->options['path'];
+        $options['path'] = $this->getPath();
         Installer::G()->install($options);
     }
-    
-    function ReadLines($tips,$defaults=[],$validators=[])
+    protected function getPath()
     {
-            //  这个要抽出来
-        foreach($tips as $k => $v){
-            //$str =  // 替换默认
-            fputs(STDOUT,$v);
-            $input = fgets(STDIN);
-            $ret[$k] = $input;
+        return $this->options['path'];
+    }
+    
+    function ReadLines($options,$desc,$validators=[])
+    {
+    /*
+$options =[
+    'host' => '127.0.0.1'
+];
+
+$tips = <<<'EOT'
+host[{host}]
+port[{port}]
+
+EOT;
+'EOT';
+$ret = ReadLines($options,$tips);
+var_dump($ret);
+    */
+        $lines= explode("\n",trim($desc));
+        foreach($lines as $line){
+            $line = trim($line);
+            $flag = preg_match('/\{(.*?)\}/',$line, $m);
+            fputs(STDOUT,$line);
+            if(!$flag){
+                continue;
+            }
+            $key = $m[1];
+            $line = str_replace('{'.$key.'}',$options[$key]??'',$line);
+            
+            
+            $input = trim(fgets(STDIN));
+            if($input ===''){
+                $input = $options[$key]??'';
+            }
+            $ret[$key] = $input;
         }
         return $ret;
     }
 
-    ////////
-    public static function IsPluginMode()
-    {
-        // 这个要放到 AppPluginTrait 里
-        return static::G()->is_plugin;
-    }
     public static function SessionManager()
     {
         return SessionManager::G();

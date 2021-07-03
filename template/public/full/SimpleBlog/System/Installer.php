@@ -63,7 +63,7 @@ class Installer
     public function install($database)
     {
         $sqldumper_options = [
-            'path'=>App::G()->options['path'],
+            'path' => App::G()->options['path'],
         ];
         SqlDumper::G()->init($sqldumper_options,App::G());
         $database = [

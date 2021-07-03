@@ -5,23 +5,41 @@
  */
 namespace SimpleAuth\System;
 
-use DuckPhp\SingletonEx\SingletonExTrait;
-use SimpleAuth\System\App;
 
-class SessionManager
+use DuckPhp\Core\App;
+use DuckPhp\Core\ComponentBase;
+
+class SessionManager extends ComponentBase
 {
-    use SingletonExTrait;
-    
-    public $prefix ='';
+    public $options = [
+        'session_prefix' => '',
+    ];
     public function __construct()
     {
         App::session_start();
     }
+    public function get($key, $defuault)
+    {
+        App::SessionGet($this->options['session_prefix'] . $key, $default);
+    }
+    public function set($key, $value)
+    {
+        App::SessionSet($this->options['session_prefix'] . $key, $value);
+    }
+    public function unset($key)
+    {
+        App::SessionUnset($this->options['session_prefix'] . $key);
+    }
+    /////////////////////////////////////
+    public function getExceptionClass()
+    {
+        return SessionException::class;
+    }
+    /////////////////////////////////////
     public function getCurrentUser()
     {
-        $ret = App::SessionGet($this->prefix.'user',[]);;
+        $ret = $this->get('user',[]);;
         SessionException::ThrowOn(empty($ret), '请重新登录');
-        
         return $ret;
     }
     
@@ -33,26 +51,20 @@ class SessionManager
     
     public function setCurrentUser($user)
     {
-        App::SessionSet($this->prefix.'user',$user);
+        $this->set('user',$user);
     }
     public function logout()
     {
-        App::SessionSet($this->prefix.'user',[]);
-
+        $this->set('user',[]);
     }
 
-    public function getExceptionClass()
-    {
-        return SessionException::class;
-    }
-    
     ////////////////////////////////////////////////////////////////////////
     public function csrf_token()
     {
-        $token = App::SessionGet($this->prefix.'_token');
+        $token = $this->get('_token');
         if (true || !isset($token)) {
             $token = $this->randomString(40);
-            App::SessionSet($this->prefix.'_token', $token);
+            $this->set('_token', $token);
         }
         return $token;
     }
@@ -67,15 +79,13 @@ class SessionManager
             SessionException::ThrowOn(true, "CRSF", 419);
         }
         $token = App::Post('_token');
-        $session_token =  App::SessionGet($this->prefix.'_token');
+        $session_token =  $this->get('_token');
         //SessionException::ThrowOn($token !== $session_token, "csrf_token 失败[$token !== $session_token]", 419);
     }
     public function isCsrfException($ex)
     {
         return is_a($ex,SessionException::class) && $ex->getCode=419;
     }
-    
-
     public function csrf_field()
     {
         return '<input type="hidden" name="_token" value="'.$this->csrf_token().'">';
@@ -88,7 +98,6 @@ class SessionManager
             $bytes = random_bytes($size);
             $string .= substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), 0, $size);
         }
-
         return $string;
     }
 }

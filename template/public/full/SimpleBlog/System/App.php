@@ -8,7 +8,7 @@ namespace SimpleBlog\System;
 use DuckPhp\DuckPhp;
 use DuckPhp\Ext\Misc;
 use DuckPhp\Ext\RouteHookRewrite;
-use SimpleAuth\System\App as SimpleAuthApp;
+use SimpleAuth\Api\SimpleAuthPlugin;
 
 class App extends DuckPhp
 {
@@ -22,10 +22,10 @@ class App extends DuckPhp
         
         'ext' => [
             RouteHookRewrite::class => true,    // 我们需要 重写 url
-            Misc::class => true,                // 我们需要两个助手函数
-            SimpleAuthApp::class => [
-                'simple_auth_installed' => true,
-            ],       // 使用第三方的验证登录包
+            Misc::class => true,                // 我们需要两个助手函数  // TODO 删除
+            SimpleAuthPlugin::class => [
+                'simple_auth_installed' => true,  //       // 使用第三方的验证登录包
+            ], 
         ],
         
         //url 重写
@@ -33,7 +33,7 @@ class App extends DuckPhp
             '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
         ],
         
-        //注入处理
+        //注入处理， TODO 删除
         'injected_helper_map' =>  self::DEFAULT_INJECTED_HELPER_MAP, //'~\\Helper\\',  // 打开助手类注入模式
         'misc_auto_method_extend'=>true,
         'route_map_auto_extend_method'=>true,

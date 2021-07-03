@@ -5,25 +5,38 @@
  */
 namespace SimpleBlog\System;
 
-use SimpleBlog\Helper\ServiceHelper;
-use SimpleBlog\System\App;
+use DuckPhp\Core\App;
+use DuckPhp\Core\ComponentBase;
 
-class SessionManager
+class SessionManager extends ComponentBase
 {
-    use SingletonEx;
-    
-    protected $prefix = '';
+    public $options = [
+        'session_prefix' => '',
+    ];
     public function __construct()
     {
         App::session_start();
     }
+    public function get($key, $defuault)
+    {
+        App::SessionGet($this->options['session_prefix'] . $key, $default);
+    }
+    public function set($key, $value)
+    {
+        App::SessionSet($this->options['session_prefix'] . $key, $value);
+    }
+    public function unset($key)
+    {
+        App::SessionUnset($this->options['session_prefix'] . $key);
+    }
+    /////////////////////////////////////
     public function logout()
     {
-        return App::SessionSet($this->prefix.'user', []);
+        return $this->set('user', []);
     }
     public function getCurrentUser()
     {
-        return App::SessionGet($this->prefix.'user', []);
+        return $this->get('user', []);
     }
     public function getCurrentUid()
     {
@@ -31,30 +44,29 @@ class SessionManager
     }
     public function setCurrentUser($user)
     {
-        App::SessionSet($this->prefix.'user', $user);
+        $this->set('user', $user);
     }
     //////////////////////
     public function adminLogin()
     {
-        App::SessionSet($this->prefix.'admin_logined', true);
+        $this->set('admin_logined', true);
     }
     public function checkAdminLogin()
     {
-        return App::SessionGet($this->prefix.'admin_logined', false);
+        return $this->get('admin_logined', false);
     }
     public function adminLogout()
     {
-        App::SessionSet($this->prefix.'admin_logined', false);
-        unset($_SESSION['admin_logined']);
+        $this->unset('admin_logined');
     }
     public function csrf_token()
     {
         $ret = uniqid();
-        App::SessionSet($this->prefix.'_CSRF',$ret);
+        $this->set('_CSRF',$ret);
         return $ret;
     }
     public function csrf_check($token)
     {
-        return  App::SessionGet($this->prefix.'_CSRF', '') === $token?true:false;
+        return  $this->get('_CSRF', '') === $token?true:false;
     }
 }

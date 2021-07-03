@@ -14,7 +14,12 @@ use DuckPhp\Core\ComponentBase;
 
 class Installer extends ComponentBase
 {
-
+    protected function ThrowOn($flag, $message, $code = 0)
+    {
+        if ($flag) {
+            throw new BaseException($message, $code);
+        }
+    }
     protected $key_installed_flag ='simple_auth_installed';
     
     protected function checkDb($config)
@@ -71,7 +76,6 @@ class Installer extends ComponentBase
         ];
         SqlDumper::G()->init($sqldumper_options, App::G());
         
-
         try{
             $this->checkDb($options);
             $ret = SqlDumper::G()->install();
@@ -96,12 +100,7 @@ class Installer extends ComponentBase
             'sql_dump_inlucde_tables' =>['Users'],
         ];
         SqlDumper::G()->init($sqldumper_options,App::G());
-        SqlDumper::G()->run();
+        return SqlDumper::G()->run();
     }
-    protected function ThrowOn($flag, $message, $code = 0)
-    {
-        if ($flag) {
-            throw new BaseException($message, $code);
-        }
-    }
+
 }
