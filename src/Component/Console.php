@@ -96,6 +96,32 @@ class Console
     {
         return $this->context_class::G();
     }
+    ////[[[[
+    /*
+    function ReadLines($options,$desc, $validators=[])
+    {
+        $lines= explode("\n",trim($desc));
+        foreach($lines as $line){
+            $line = trim($line);
+            $flag = preg_match('/\{(.*?)\}/',$line, $m);
+            fputs(STDOUT,$line);
+            if(!$flag){
+                continue;
+            }
+            $key = $m[1];
+            $line = str_replace('{'.$key.'}',$options[$key]??'',$line);
+            
+            
+            $input = trim(fgets(STDIN));
+            if($input ===''){
+                $input = $options[$key]??'';
+            }
+            $ret[$key] = $input;
+        }
+        return $ret;
+    }
+    */
+    ////]]]]
 
     protected function parseCliArgs($argv)
     {
