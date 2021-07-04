@@ -5,12 +5,21 @@
  */
 namespace SimpleAuth\System;
 
-use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Ext\SimpleModelTrait;
 use DuckPhp\Helper\ModelHelperTrait;
+use DuckPhp\SingletonEx\SingletonExTrait;
+
+use SimpleAuth\System\App;
 
 class ProjectModel
 {
     use SingletonExTrait;
+    use SimpleModelTrait
     use ModelHelperTrait;
-    // use StrictModelTrait;
+    
+    public function __construct()
+    {
+        // $this->table_prefix = App::G()->getTablePrefix();
+        // App::G()->getTablePrefix();
+    }
 }

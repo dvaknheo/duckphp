@@ -3,11 +3,10 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-
 namespace Duckphp\Ext;
 
-use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckPhp\Core\App;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
 trait SingletonControllerTrait
 {
@@ -16,7 +15,7 @@ trait SingletonControllerTrait
     protected static $_instance_created_flags = [];
     public static function G($object = null)
     {
-        if($object === null && !isset(static::$_instance_created_flags[static::class])) {
+        if ($object === null && !isset(static::$_instance_created_flags[static::class])) {
             $object = (new \ReflectionClass(static::class))->newInstanceWithoutConstructor();
             static::$_instance_created_flags[static::class] = true;
             return SingletonExTrait::G($object);
@@ -29,7 +28,7 @@ trait SingletonControllerTrait
     {
         $this->is_controller = true;
         //作为助手类，禁止访问这里的方法。
-        if (method_exists(self::class, App::getRouteCallingMethod())){
+        if (method_exists(self::class, App::getRouteCallingMethod())) {
             App::Exit404();
             return;
         }
@@ -39,7 +38,7 @@ trait SingletonControllerTrait
 
     public function __destruct()
     {
-        if (!$this->is_controller){
+        if (!$this->is_controller) {
             return;
         }
         $this->destroyController();

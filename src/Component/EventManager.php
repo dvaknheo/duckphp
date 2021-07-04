@@ -64,8 +64,8 @@ class EventManager extends ComponentBase
     }
     protected function eventName($event)
     {
-        if(is_array($event)){
-            $event = implode('::',$event);
+        if (is_array($event)) {
+            $event = implode('::', $event);
         }
         return $event;
     }

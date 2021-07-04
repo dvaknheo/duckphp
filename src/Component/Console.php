@@ -15,7 +15,6 @@ class Console
         'cli_command_method_prefix' => 'command_',
         'cli_command_default' => 'help',
     ];
-    protected $context_class = null;
     protected $parameters = [];
     protected $is_inited = false;
     
@@ -55,7 +54,6 @@ class Console
             return;
         }
         if ($context !== null) {
-            $this->context_class = get_class($context);
             if ($this->options['cli_mode'] === 'replace') {
                 if (method_exists($context, 'replaceDefaultRunHandler')) {
                     $context->replaceDefaultRunHandler([static::class,'DoRun']);
@@ -89,6 +87,10 @@ class Console
         $func_args = $this->parameters['--'];
         $cmd = array_shift($func_args);
         list($class, $method) = $this->getClassAndMethod($cmd);
+        
+        if ($this->context_class) {
+            ($this->context_class)::Route()->setParameters($this->parameters);
+        }
         $this->callObject($class, $method, $func_args, $this->parameters);
         return true;
     }
@@ -110,8 +112,8 @@ class Console
             }
             $key = $m[1];
             $line = str_replace('{'.$key.'}',$options[$key]??'',$line);
-            
-            
+
+
             $input = trim(fgets(STDIN));
             if($input ===''){
                 $input = $options[$key]??'';

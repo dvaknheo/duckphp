@@ -18,7 +18,7 @@ trait ThrowOnableTrait
     }
     public static function ExceptionClass($new_class = null)
     {
-        if($new_class) {
+        if ($new_class) {
             static::G()->exception_class = $new_class;
         }
         return static::G()->exception_class;
