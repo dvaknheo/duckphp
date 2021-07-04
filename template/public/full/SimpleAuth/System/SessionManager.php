@@ -6,39 +6,20 @@
 namespace SimpleAuth\System;
 
 
-use DuckPhp\Core\App;
-use DuckPhp\Core\ComponentBase;
+use DuckPhp\Ext\SessionManagerBase;
+use DuckPhp\Ext\ThrowOnableTrait;
 
-class SessionManager extends ComponentBase
+class SessionManager extends SessionManagerBase
 {
-    public $options = [
-        'session_prefix' => '',
-    ];
+    use ThrowOnableTrait;
     public function __construct()
     {
-        App::session_start();
-    }
-    public function get($key, $defuault)
-    {
-        App::SessionGet($this->options['session_prefix'] . $key, $default);
-    }
-    public function set($key, $value)
-    {
-        App::SessionSet($this->options['session_prefix'] . $key, $value);
-    }
-    public function unset($key)
-    {
-        App::SessionUnset($this->options['session_prefix'] . $key);
-    }
-    /////////////////////////////////////
-    public function getExceptionClass()
-    {
-        return SessionException::class;
+        $this->exception_class = ProjectException::class;
     }
     /////////////////////////////////////
     public function getCurrentUser()
     {
-        $ret = $this->get('user',[]);;
+        $ret = $this->get('user',[]);
         SessionException::ThrowOn(empty($ret), '请重新登录');
         return $ret;
     }

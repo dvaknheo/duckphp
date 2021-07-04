@@ -18,7 +18,7 @@ class App extends DuckPhp
     protected function onBeforeRun()
     {
         $this->checkInstall($this->options['simple_auth_installed'] ?? false);
-    
+    }
     protected function checkInstall($flag)
     {
         if(!$flag  && !static::Setting('simple_auth_installed')){

@@ -33,7 +33,7 @@ class Main
             return;
         }
         $code = $ex->getCode();
-        C::Logger()->warning(''.(get_class($ex)).'('.$ex->getCode().'): '.$ex->getMessage());
+        __logger()->warning(''.(get_class($ex)).'('.$ex->getCode().'): '.$ex->getMessage());
         if (C::SessionManager()->isCsrfException($ex) && C::IsDebug()) {
             C::exit(0);
         }
@@ -127,8 +127,8 @@ class Main
         $post = C::POST();
         try {
         
+            $old_pass = C::POST('oldpassword','');
             $uid = C::SessionManager()->getCurrentUid();
-            $old_pass = $post['oldpassword'] ?? '';
             $new_pass = $post['newpassword'] ?? '';
             $confirm_pass = $post['newpassword_confirm'] ?? '';
             
