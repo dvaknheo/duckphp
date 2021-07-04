@@ -58,11 +58,11 @@ class SessionManager extends SessionManagerBase
         $domain = App::Domain(true).'/';
             
         if (substr($referer, 0, strlen($domain)) !== $domain) {
-            SessionException::ThrowOn(true, "CRSF", 419);
+            static::ThrowOn(true, "CRSF", 419);
         }
         $token = App::Post('_token');
         $session_token =  $this->get('_token');
-        //SessionException::ThrowOn($token !== $session_token, "csrf_token 失败[$token !== $session_token]", 419);
+        //static::ThrowOn($token !== $session_token, "csrf_token 失败[$token !== $session_token]", 419);
     }
     public function isCsrfException($ex)
     {

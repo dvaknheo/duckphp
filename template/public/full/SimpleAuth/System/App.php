@@ -5,9 +5,7 @@
  */
 namespace SimpleAuth\System;
 
-use DuckPhp\Component\Console;
 use DuckPhp\DuckPhp;
-use DuckPhp\Ext\SqlDumper;
 
 class App extends DuckPhp
 {
@@ -28,7 +26,7 @@ class App extends DuckPhp
     //////////////////////
     public function command_install()
     {
-        $options = Console::G()->getCliParameters();
+        $options = static::Parameters();
         if(count($options)==1 || $options['help']??null){
             echo "Usage: --host=? --port=? --dbname=? --username=? --password=? \n ";
             return;

@@ -6,8 +6,10 @@
 namespace SimpleAuth\System;
 
 use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Helper\BusinessHelperTrait;
 
 class ProjectBusiness
 {
     use SingletonExTrait;
+    use BusinessHelperTrait;
 }

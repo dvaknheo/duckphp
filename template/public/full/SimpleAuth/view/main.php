@@ -9,7 +9,7 @@
 <a href="<?=$url_login?>">登录</a></br>
 <fieldset>
 <legend>架构图</legend>
-<img src ="/full/SimpleAuth/t.gv.svg">
+<img src ="/full/SimpleAuth/SimpleAuth.gv.svg">
 </fieldset>
 </body>
 </html>
