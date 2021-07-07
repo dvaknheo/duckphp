@@ -98,7 +98,7 @@ class Main
             
             $user = UserBusiness::G()->register($post);
             C::SessionManager()->setCurrentUser($user);
-            C::ExitRouteTo('home');
+            C::ExitRouteTo('home');  // TO change.
         } catch (UserBusinessException $ex) {
             $error = $ex->getMessage();
             $name = C::POST('name', '');
@@ -113,10 +113,10 @@ class Main
         try {
             $user = UserBusiness::G()->login($post);
             C::SessionManager()->setCurrentUser($user);
-            C::ExitRouteTo('home');
+            C::ExitRouteTo('home'); // TO change.
         } catch (\Exception $ex) {
             $error = $ex->getMessage();
-            $name = $post['name'] ?? '';
+            $name =  __h( C::POST('name', ''));
             C::Show(get_defined_vars(), 'login');
             return;
         }
@@ -124,15 +124,14 @@ class Main
     }
     public function do_password()
     {
-        $post = C::POST();
+        $error = '';
         try {
-        
-            $old_pass = C::POST('oldpassword','');
             $uid = C::SessionManager()->getCurrentUid();
-            $new_pass = $post['newpassword'] ?? '';
-            $confirm_pass = $post['newpassword_confirm'] ?? '';
+            $old_pass = C::POST('oldpassword','');
+            $new_pass = C::POST('newpassword','');
+            $confirm_pass = C::POST('newpassword_confirm','');
             
-            UserBusinessException::ThrowOn($new_pass !== $confirm_pass, '重复密码不一致'); // 放到 Business 里？
+            UserBusinessException::ThrowOn($new_pass !== $confirm_pass, '重复密码不一致');
             UserBusiness::G()->changePassword($uid, $old_pass, $new_pass);
             $error = "密码修改完毕";            
         } catch (UserBusinessException $ex) {

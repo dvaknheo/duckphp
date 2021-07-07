@@ -5,8 +5,12 @@
  */
 namespace SimpleAuth\Api;
 
+use DuckPhp\SingletonEx\SingletonExTrait;
+
 class SimpleAuthService
 {
+    use SingletonExTrait;
+    
     public function register($form)
     {
         return UserBusiness::G()->register($form);

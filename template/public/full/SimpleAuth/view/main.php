@@ -8,8 +8,10 @@
 <a href="<?=$url_reg?>">注册</a><br>
 <a href="<?=$url_login?>">登录</a></br>
 <fieldset>
-<legend>架构图</legend>
+<legend>应用架构图</legend>
 <img src ="/full/SimpleAuth/SimpleAuth.gv.svg">
 </fieldset>
+
+世界是复杂的。。。
 </body>
 </html>

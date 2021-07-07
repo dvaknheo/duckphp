@@ -1,0 +1,28 @@
+@startuml
+' This is a plantuml file
+set namespaceSeparator ::
+
+
+class SimpleAuth::Api::SimpleAuthAction
+class SimpleAuth::Api::SimpleAuthPlugin
+class SimpleAuth::Api::SimpleAuthService
+class SimpleAuth::Business::BaseBusiness
+class SimpleAuth::Business::UserBusiness
+class SimpleAuth::Business::UserBusinessException
+class SimpleAuth::Controller::Base
+class SimpleAuth::Controller::Home
+class SimpleAuth::Controller::Main
+class SimpleAuth::ControllerHelper::UserAction
+class SimpleAuth::Helper::ControllerHelper
+class SimpleAuth::Model::BaseBusiness
+class SimpleAuth::Model::UserModel
+class SimpleAuth::System::App
+class SimpleAuth::System::Installer
+class SimpleAuth::System::ProjectBusiness
+class SimpleAuth::System::ProjectException
+class SimpleAuth::System::ProjectModel
+class SimpleAuth::System::SessionException
+class SimpleAuth::System::SessionManager
+
+
+@enduml

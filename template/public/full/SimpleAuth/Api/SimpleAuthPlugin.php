@@ -21,6 +21,8 @@ class SimpleAuthPlugin extends App
     public function __construct()
     {
         $this->plugin_options['plugin_path'] = realpath(__DIR__.'/../').'/';
+        $this->plugin_options['plugin_search_config'] = false;
+        
         parent::__construct();
     }
     protected function onPluginModeInit()
