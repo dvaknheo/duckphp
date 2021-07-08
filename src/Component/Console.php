@@ -15,6 +15,7 @@ class Console
         'cli_command_method_prefix' => 'command_',
         'cli_command_default' => 'help',
     ];
+    protected $context_class = null;
     protected $parameters = [];
     protected $is_inited = false;
     
@@ -54,6 +55,7 @@ class Console
             return;
         }
         if ($context !== null) {
+            $this->context_class = get_class($context);
             if ($this->options['cli_mode'] === 'replace') {
                 if (method_exists($context, 'replaceDefaultRunHandler')) {
                     $context->replaceDefaultRunHandler([static::class,'DoRun']);
@@ -99,31 +101,33 @@ class Console
         return $this->context_class::G();
     }
     ////[[[[
-    /*
-    function ReadLines($options,$desc, $validators=[])
+    public function readLines($options, $desc, $validators = [], $fp_in = null, $fp_out = null)
     {
-        $lines= explode("\n",trim($desc));
-        foreach($lines as $line){
+        $ret = [];
+        $fp_in = $fp_in ?? \STDIN;
+        $fp_out = $fp_out ?? \STDOUT;
+        
+        $lines = explode("\n", trim($desc));
+        foreach ($lines as $line) {
             $line = trim($line);
-            $flag = preg_match('/\{(.*?)\}/',$line, $m);
-            fputs(STDOUT,$line);
-            if(!$flag){
+            $flag = preg_match('/\{(.*?)\}/', $line, $m);
+            if (!$flag) {
+                fputs($fp_out, $line);
                 continue;
             }
             $key = $m[1];
-            $line = str_replace('{'.$key.'}',$options[$key]??'',$line);
-
-
-            $input = trim(fgets(STDIN));
-            if($input ===''){
-                $input = $options[$key]??'';
+            $line = str_replace('{'.$key.'}', $options[$key] ?? '', $line);
+            fputs($fp_out, $line);
+            $input = trim((string)fgets($fp_in));
+            if ($input === '') {
+                $input = $options[$key] ?? '';
             }
             $ret[$key] = $input;
         }
+        $ret = !empty($validators)? filter_var_array($ret, $validators) :$ret;
         return $ret;
     }
-    */
-    ////]]]]
+
 
     protected function parseCliArgs($argv)
     {

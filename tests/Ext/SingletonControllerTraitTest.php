@@ -24,7 +24,7 @@ class SingletonControllerTraitTest extends \PHPUnit\Framework\TestCase
 
         App::Route()->setPathInfo('/MyController/foo');
         App::G()->run();
-        Base::G(MyBase::G());
+        ProjectControllerBase::G(MyBase::G());
         App::Route()->setPathInfo('/MyController/foo');
         App::G()->run();
         \LibCoverage\LibCoverage::End();
@@ -43,17 +43,17 @@ class ProjectController
         return static::G()->helper();
     }
 }
-class Base extends ProjectController
+class ProjectControllerBase extends ProjectController
 {
 }
-class MyBase extends Base
+class MyBase extends ProjectControllerBase
 {
 }
-class MyController extends Base
+class MyController extends ProjectControllerBase
 {
     public function foo()
     {
-        Base::H();
+        ProjectControllerBase::H();
     }
     public function __construct()
     {

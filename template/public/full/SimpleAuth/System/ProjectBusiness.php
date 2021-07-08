@@ -5,9 +5,9 @@
  */
 namespace SimpleAuth\System;
 
+use DuckPhp\Ext\ThrowOnableTrait;
 use DuckPhp\Helper\BusinessHelperTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
-use DuckPhp\ThrowOn\ThrowOnableTrait;
 
 class ProjectBusiness
 {

@@ -46,7 +46,7 @@ class App extends DuckPhp
     {
         return static::Config('table_prefix','SimpleAuth')??'';
     }
-    public function getTablePrefix()
+    public function getSessionPrefix()
     {
         return static::Config('session_prefix','SimpleAuth')??'';
     }

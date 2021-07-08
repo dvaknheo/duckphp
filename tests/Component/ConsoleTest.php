@@ -111,6 +111,26 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         ConsoleParent::G()->isInited();
         echo "zzzzzzzzzzzzzzzzzzzzzzzz";
         
+        $desc = <<<EOT
+input host and port
+host[{host}]
+port[{port}]
+areyousure[{ok}]
+
+done;
+
+EOT;
+        $options=[
+            //'host'=>'127.0.0.1',
+            'port'=>'80',
+        ];
+        $path = \LibCoverage\LibCoverage::G()->getClassTestPath(Console::class);
+        $input = fopen($path.'input.txt','r');
+        $output = fopen($path.'output.txt','w');
+        
+        $ret=ConsoleParent::G()->readLines($options,$desc,[],$input,$output);
+        fclose($input);
+        fclose($output);
         \LibCoverage\LibCoverage::End();
     }
 }

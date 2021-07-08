@@ -97,3 +97,5 @@ getCommandListInfo() 会把他们展示出来
 
 
 
+    public function readLines($options, $desc, $validators = [], $fp_in = null, $fp_out = null)
+
