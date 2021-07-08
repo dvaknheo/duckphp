@@ -11,6 +11,9 @@ class UserBusiness extends Base
 {
     public function register($form)
     {
+        $form['password'] = $form['password'] ?? '';
+        $form['password_confirm'] = $form['password_confirm'] ?? '';
+        
         UserBusinessException::ThrowOn($form['password'] != $form['password_confirm'], '重复密码不一致');
 
         $username = $form['name'];

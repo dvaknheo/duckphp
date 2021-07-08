@@ -10,7 +10,7 @@ use SimpleAuth\Business\UserBusinessException;
 use SimpleAuth\Helper\ControllerHelper as C;
 
 class Main
-{    
+{
     public function __construct()
     {
         $this->initController();
@@ -93,12 +93,9 @@ class Main
     {
         $post = C::POST();
         try {
-            $post['password'] = $post['password'] ?? '';
-            $post['password_confirm'] = $post['password_confirm'] ?? '';
-            
             $user = UserBusiness::G()->register($post);
             C::SessionManager()->setCurrentUser($user);
-            C::ExitRouteTo('home');  // TO change.
+            C::ExitRouteTo('home');
         } catch (UserBusinessException $ex) {
             $error = $ex->getMessage();
             $name = C::POST('name', '');
@@ -134,7 +131,7 @@ class Main
             UserBusinessException::ThrowOn($new_pass !== $confirm_pass, '重复密码不一致');
             UserBusiness::G()->changePassword($uid, $old_pass, $new_pass);
             $error = "密码修改完毕";            
-        } catch (UserBusinessException $ex) {
+        } catch (\Exception $ex) {
             $error = $ex->getMessage();
         }
         C::Show(get_defined_vars(), 'password');

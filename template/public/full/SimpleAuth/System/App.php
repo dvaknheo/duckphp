@@ -42,7 +42,14 @@ class App extends DuckPhp
     {
         return $this->options['path'];
     }
-    
+    public function getTablePrefix()
+    {
+        return static::Config('table_prefix','SimpleAuth')??'';
+    }
+    public function getTablePrefix()
+    {
+        return static::Config('session_prefix','SimpleAuth')??'';
+    }
     function ReadLines($options,$desc,$validators=[])
     {
     /*

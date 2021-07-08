@@ -19,7 +19,6 @@ class ProjectModel
     
     public function __construct()
     {
-        // $this->table_prefix = App::G()->getTablePrefix();
-        // App::G()->getTablePrefix();
+        $this->table_prefix = App::G()->getTablePrefix();
     }
 }
