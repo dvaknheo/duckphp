@@ -1,5 +1,4 @@
 <?php declare(strict_types=1);
-use SimpleAuth\System\Helper\ViewHelper as V;
 
 ?><!doctype html>
 <html>

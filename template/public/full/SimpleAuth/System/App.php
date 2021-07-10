@@ -33,7 +33,7 @@ class App extends DuckPhp
         }
         $tips = [
             'host' =>'input houst',
-            'host' =>'input port',
+            'port' =>'port',
         ];
         $options['path'] = $this->getPath();
         Installer::G()->install($options);
@@ -50,43 +50,7 @@ class App extends DuckPhp
     {
         return static::Config('session_prefix','SimpleAuth')??'';
     }
-    function ReadLines($options,$desc,$validators=[])
-    {
-    /*
-$options =[
-    'host' => '127.0.0.1'
-];
-
-$tips = <<<'EOT'
-host[{host}]
-port[{port}]
-
-EOT;
-'EOT';
-$ret = ReadLines($options,$tips);
-var_dump($ret);
-    */
-        $lines= explode("\n",trim($desc));
-        foreach($lines as $line){
-            $line = trim($line);
-            $flag = preg_match('/\{(.*?)\}/',$line, $m);
-            fputs(STDOUT,$line);
-            if(!$flag){
-                continue;
-            }
-            $key = $m[1];
-            $line = str_replace('{'.$key.'}',$options[$key]??'',$line);
-            
-            
-            $input = trim(fgets(STDIN));
-            if($input ===''){
-                $input = $options[$key]??'';
-            }
-            $ret[$key] = $input;
-        }
-        return $ret;
-    }
-
+    
     public static function SessionManager()
     {
         return SessionManager::G();

@@ -10,16 +10,12 @@ use DuckPhp\Core\App;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Ext\SqlDumper;
-use DuckPhp\Core\ComponentBase;
+use DuckPhp\Ext\ThrowOnableTrait;
 
 class Installer extends ComponentBase
 {
-    protected function ThrowOn($flag, $message, $code = 0)
-    {
-        if ($flag) {
-            throw new BaseException($message, $code);
-        }
-    }
+    use ThrowOnableTrait;
+    
     protected $key_installed_flag ='simple_auth_installed';
     
     protected function checkDb($config)
@@ -70,6 +66,9 @@ class Installer extends ComponentBase
     }
     public function install($options)
     {
+        // 我们检查 数据库是否安装，如果安装，填写 config 文件。
+        // 然后我们导入数据库
+        // 然后写 SimpleAuth.php 而不是 setting.php
         $ret = false;
         $sqldumper_options = [
             'path' => $options['path'],

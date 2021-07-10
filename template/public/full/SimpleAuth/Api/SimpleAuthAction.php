@@ -10,12 +10,16 @@ use DuckPhp\SingletonEx\SingletonExTrait;
 class SimpleAuthAction
 {
     use SingletonExTrait;
-    public static function GetCurrentUser()
+    public  function getCurrentUser()
+    {
+        return SessionManager::G()->getCurrentUser();
+    }
+    public function login($form)
+    {
+        //return 
+    }
+    public function logout()
     {
         //
-    }
-    public static function Login($form)
-    {
-        return 
     }
 }

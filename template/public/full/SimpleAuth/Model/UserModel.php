@@ -5,13 +5,18 @@
  */
 namespace SimpleAuth\Model;
 
-class UserModel extends Base
+class UserModel extends BaseModel
 {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->table_name = $this->table_prefix.'Users';
+    }
     public function exsits($name)
     {
-        $sql = "select count(*) as c from Users where username=?";
+        $sql = "select count(*) as c from 'TABLE' where username=?";
         
-        $count = Base::Db()->fetchColumn($sql, $name);
+        $count = BaseModel::Db()->fetchColumn($this->prepare($sql), $name);
         return !empty($count)?true:false;
     }
     public function addUser($username, $password)
@@ -20,20 +25,20 @@ class UserModel extends Base
         $data['username'] = $username;
         $data['password'] = $this->hash($password);
         
-        $id = Base::DB()->insertData('Users', $data);
+        $id = BaseModel::Db()->insertData($this->table(), $data);
         return $id;
     }
     public function getUserById($id)
     {
-        $sql = "select * from Users where id=?";
-        $user = Base::DB()->fetch($sql, $id);
+        $sql = "select * from 'TABLE' where id=?";
+        $user = BaseModel::Db()->fetch($this->prepare($sql), $id);
         
         return $user;
     }
     public function getUserByUsername($username)
     {
-        $sql = "select * from Users where username=?";
-        $user = Base::DB()->fetch($sql, $username);
+        $sql = "select * from 'TABLE' where username=?";
+        $user = BaseModel::Db()->fetch($this->prepare($sql), $username);
         
         return $user;
     }
@@ -49,8 +54,8 @@ class UserModel extends Base
     public function updatePassword($uid, $password)
     {
         $password = $this->hash($password);
-        $sql = "update Users set password=? where id=? limit 1";
-        $ret = Base::DB()->execute($sql, $password, $uid);
+        $sql = "update 'TABLE' set password=? where id=? limit 1";
+        $ret = BaseModel::Db()->execute($this->prepare($sql), $password, $uid);
         return $ret;
     }
     ////

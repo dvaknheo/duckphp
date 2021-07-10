@@ -54,6 +54,8 @@
     public function getCommandListInfo()
 得到可用命令列表
 
+    public function readLines($options, $desc, $validators = [], $fp_in = null, $fp_out = null)
+读入输入输出
 
     protected function parseCliArgs($argv)
     
@@ -85,6 +87,8 @@ abc-d 会转成 $abc_d
 你可以用
 Console::G()->getCliParameters(); 获得参数的值
 
+此外 App::Parameter() 也获得参数的值
+
 你的 app 类，还有其他 command_$cmd 会加入或覆盖 默认的 方法。
 
 如果你要注册额外的 类 方法 ，使用 regCommandClass()
@@ -92,10 +96,24 @@ Console::G()->getCliParameters(); 获得参数的值
 getCommandListInfo() 会把他们展示出来
 
 
+readLines 的例子
+```
+        $desc = <<<EOT
+input host and port
+host[{host}]
+port[{port}]
+areyousure[{ok}]
+
+done;
+
+EOT;
+        $options=[
+            //'host'=>'127.0.0.1',
+            'port'=>'80',
+        ];
+        $ret=ConsoleParent::G()->readLines($options,$desc,[],$input,$output);
+```
 
 
 
-
-
-    public function readLines($options, $desc, $validators = [], $fp_in = null, $fp_out = null)
 
