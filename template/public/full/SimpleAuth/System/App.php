@@ -15,28 +15,37 @@ class App extends DuckPhp
     ];
     protected function onBeforeRun()
     {
-        $this->checkInstall($this->options['simple_auth_installed'] ?? false);
+        $this->checkInstall();
     }
-    protected function checkInstall($flag)
+    protected function checkInstall()
     {
-        if(!$flag  && !static::Setting('simple_auth_installed')){
-            throw new \ErrorException("SimpleAuth` need install, run install command first. e.g. :`php auth.php SimpleAuth:install`\n");
+        if(!Installer::G()->isInstalled()){
+            throw new \ErrorException("`SimpleAuth` need install. run install command first. e.g. :`php auth.php SimpleAuth:install`\n");
         }
     }
     //////////////////////
     public function command_install()
     {
-        $options = static::Parameters();
-        if(count($options)==1 || $options['help']??null){
-            echo "Usage: --host=? --port=? --dbname=? --username=? --password=? \n ";
-            return;
+        echo "welcome to Use SimplAuth installer  --force  to force install\n";
+        $parameters =  static::Parameter();
+        if(count($parameters)==1 || ($parameters['help'] ?? null)){
+            // echo "--force  to force install ;";
+            //return;
         }
-        $tips = [
-            'host' =>'input houst',
-            'port' =>'port',
+        $options = [
+            'sql_dump_inlucde_tables' =>['Users'],
+            'force' => $parameters['force']?? false,
+            'path' => $this->getPath(),
+            'path_sql_dump' => 'config',
         ];
-        $options['path'] = $this->getPath();
-        Installer::G()->install($options);
+        Installer::G()->init($options,$this);
+        
+        if(Installer::G()->isInstalled()){
+           echo "You had been installed ";
+           return; 
+        }
+        echo Installer::G()->run();        
+        echo "Done \n";
     }
     protected function getPath()
     {

@@ -3,7 +3,7 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleBlog\System;
+namespace SimpleAuth\System;
 
 use DuckPhp\Component\DbManager;
 use DuckPhp\Core\App;
@@ -16,23 +16,28 @@ class Installer extends ComponentBase
 {
     use ThrowOnableTrait;
     
-    protected $key_installed_flag ='simple_auth_installed';
-    
-    protected function checkDb($config)
+    public $options = [
+        'install_lock_file' => 'SimpleAuth.lock',
+        'path' =>'',
+        //'path_config' =>'',
+    ];
+    public function isInstalled()
     {
-        $database = [
-            'dsn' => "mysql:host={$config['host']};port={$config['port']};dbname={$config['dbname']};charset=utf8mb4;",
-            'username' => $config['username'],
-            'password' => $config['password'],
-            'driver_options' => [],
-        ];
-        $options = DbManager::G()->options;
-        $options['database'] = $database;
-        DbManager::G()->init($options,App::G());
-        DbManager::G()->_Db()->fetch('select 1+1 as t');
+        $path = $this->getComponenetPath(Configer::G()->options['path_config'],Configer::G()->options['path']);
+        $file = $path.$this->options['install_lock_file'];
+        return is_file($file);
     }
+    protected function writeLock()
+    {
+        $path = $this->getComponenetPath(Configer::G()->options['path_config'],Configer::G()->options['path']);
+        $file = $path.$this->options['install_lock_file'];
+        $data = DATE(DATE_ATOM);
+        return @file_put_contents($file,$data);
+    }
+
     protected function getComponenetPath($path, $basepath = ''): string
     {
+        // 考虑放到
         if (DIRECTORY_SEPARATOR === '/') {
             if (substr($path, 0, 1) === '/') {
                 return rtrim($path, '/').'/';
@@ -47,59 +52,39 @@ class Installer extends ComponentBase
             } // @codeCoverageIgnoreEnd
         }
     }
-    protected function writeSettingFile($ext_setting)
-    {
-        $path = $this->getComponenetPath(Configer::G()->options['path_config'],Configer::G()->options['path']);
-        $setting_file = $this->options['setting_file'] ?? 'setting';
-        $file = $path.$setting_file.'.php';
 
-        $setting = file_exists($file) ?  App::LoadConfig($setting_file) : [];
-        $setting = array_merge($setting,$ext_setting);
-        
-        $data = '<'.'?php ';
-        $data .="\n // gen by ".static::class.' '.date(DATE_ATOM) ." \n";
-        $data .= ' return ';
-        $data .= var_export($setting,true);
-        $data .=';';
-        
-        return @file_put_contents($file,$data);
-    }
-    public function install($options)
+    public function run()
     {
-        // 我们检查 数据库是否安装，如果安装，填写 config 文件。
-        // 然后我们导入数据库
-        // 然后写 SimpleAuth.php 而不是 setting.php
         $ret = false;
-        $sqldumper_options = [
-            'path' => $options['path'],
-        ];
-        SqlDumper::G()->init($sqldumper_options, App::G());
+        $path = $this->getComponenetPath(Configer::G()->options['path_config'],Configer::G()->options['path']);
+        $sqldumper_options = $this->options;
+        
+        var_dump($this->options);
+        
+        //$sqldumper_options ['path'] = ($this->context_class)::G()->options['path'];
+        
+        SqlDumper::G()->init($sqldumper_options, ($this->context_class)::G());
         
         try{
-            $this->checkDb($options);
-            $ret = SqlDumper::G()->install();
+            $ret = SqlDumper::G()->install($this->options['force']??false);
+            $flag = $this->writeLock();
+            static::ThrowOn(!$flag,'写入文件失败',-2);
+        
         }catch(\Exception $ex){
-            static::ThrowOn(true, "安装数据库失败" . $ex->getMessage(),-1);
+            var_dump($ex);
+            //static::ThrowOn(true, "写入数据库失败" . $ex->getMessage(),-1);
         }
         
-        $ext_setting = [];
-        $ext_setting['database'] = $database;
         
-        $ext_setting[$this->key_installed_flag] = DATE(DATE_ATOM);
-        
-        $flag = $this->writeSettingFile($ext_setting);
-        static::ThrowOn(!$flag,'写入文件失败',-2);
         
         return $ret;
     }
-    public function dumpSql()
+    public function dumpSql($path)
     {
         $sqldumper_options = [
-            'path' => App::G()->options['path'],
             'sql_dump_inlucde_tables' =>['Users'],
         ];
-        SqlDumper::G()->init($sqldumper_options,App::G());
+        SqlDumper::G()->init($sqldumper_options,($this->context_class)::G());
         return SqlDumper::G()->run();
     }
-
 }

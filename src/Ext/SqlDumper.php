@@ -137,6 +137,7 @@ class SqlDumper extends ComponentBase
         $path = parent::getComponenetPathByKey('path_sql_dump');
         
         $file = $path.$this->options['sql_dump_file'].'.php';
+        var_dump($file);
         $ret = (function () use ($file) {
             return @include $file;
         })();
