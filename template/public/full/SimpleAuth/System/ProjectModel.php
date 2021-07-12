@@ -14,7 +14,7 @@ use SimpleAuth\System\App;
 class ProjectModel
 {
     use SingletonExTrait;
-    use SimpleModelTrait
+    use SimpleModelTrait;
     use ModelHelperTrait;
     
     public function __construct()

@@ -11,6 +11,7 @@ use SimpleAuth\Helper\ControllerHelper as C;
 
 class Main
 {
+    protected $url_home = 'Home/index';
     public function __construct()
     {
         $this->initController();
@@ -20,12 +21,8 @@ class Main
         $method = C::getRouteCallingMethod();
         
         C::SessionManager()->checkCsrf();
-        if (in_array($method, ['index','register','login','logout'])) {
-                $this->setLayoutData();
-            return;
-        }
-        C::assignExceptionHandler(C::SessionManager()->getExceptionClass(), [static::class, 'OnSessionException']);
-        $this->setLayoutData();
+
+        C::assignExceptionHandler(C::SessionManager()::ExceptionClass(), [static::class, 'OnSessionException']);
     }
     public static function OnSessionException($ex = null)
     {
@@ -35,7 +32,7 @@ class Main
         }
         $code = $ex->getCode();
         __logger()->warning(''.(get_class($ex)).'('.$ex->getCode().'): '.$ex->getMessage());
-        if (C::SessionManager()->isCsrfException($ex) && C::IsDebug()) {
+        if (C::SessionManager()->isCsrfException($ex) && __is_debug()) {
             C::exit(0);
         }
         C::ExitRouteTo('login');
@@ -50,13 +47,13 @@ class Main
     {
         $csrf_field = C::SessionManager()->csrf_field();
         $url_register = C::Url('register');
-        C::Show(get_defined_vars(), 'register');
+        C::Show(get_defined_vars());
     }
     public function login()
     {
         $csrf_field = C::SessionManager()->csrf_field();
         $url_login = C::Url('login');
-        C::Show(get_defined_vars(), 'login');
+        C::Show(get_defined_vars());
     }
     public function logout()
     {
@@ -70,11 +67,11 @@ class Main
         try {
             $user = UserBusiness::G()->register($post);
             C::SessionManager()->setCurrentUser($user);
-            C::ExitRouteTo('home');
+            C::ExitRouteTo($this->url_home);
         } catch (\Exception $ex) {
             $error = $ex->getMessage();
             $name = C::POST('name', '');
-            C::Show(get_defined_vars(), 'register');
+            C::Show(get_defined_vars());
             return;
         }
         ;
@@ -85,11 +82,11 @@ class Main
         try {
             $user = UserBusiness::G()->login($post);
             C::SessionManager()->setCurrentUser($user);
-            C::ExitRouteTo('home'); // TO change.
+            C::ExitRouteTo($this->url_home);
         } catch (\Exception $ex) {
             $error = $ex->getMessage();
             $name =  __h( C::POST('name', ''));
-            C::Show(get_defined_vars(), 'login');
+            C::Show(get_defined_vars());
             return;
         }
         

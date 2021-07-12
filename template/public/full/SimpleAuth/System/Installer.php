@@ -59,20 +59,14 @@ class Installer extends ComponentBase
         $path = $this->getComponenetPath(Configer::G()->options['path_config'],Configer::G()->options['path']);
         $sqldumper_options = $this->options;
         
-        var_dump($this->options);
-        
-        //$sqldumper_options ['path'] = ($this->context_class)::G()->options['path'];
-        
         SqlDumper::G()->init($sqldumper_options, ($this->context_class)::G());
         
         try{
             $ret = SqlDumper::G()->install($this->options['force']??false);
             $flag = $this->writeLock();
-            static::ThrowOn(!$flag,'写入文件失败',-2);
-        
+            static::ThrowOn(!$flag,'写入文件失败',-2);        
         }catch(\Exception $ex){
-            var_dump($ex);
-            //static::ThrowOn(true, "写入数据库失败" . $ex->getMessage(),-1);
+            static::ThrowOn(true, "写入数据库失败" . $ex->getMessage(),-1);
         }
         
         

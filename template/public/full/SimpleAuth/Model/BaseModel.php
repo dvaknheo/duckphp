@@ -7,6 +7,6 @@
 namespace SimpleAuth\Model;
 
 use SimpleAuth\System\ProjectModel;
-class Base extends ProjectModel
+class BaseModel extends ProjectModel
 {
 }

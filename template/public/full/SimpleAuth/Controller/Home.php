@@ -17,20 +17,31 @@ class Home
     }
     protected function initController()
     {
+
+       
         $method = C::getRouteCallingMethod();
-        
-        C::SessionManager()->checkCsrf();
-        if (in_array($method, ['index','register','login','logout'])) {
+        //C::SessionManager()->checkCsrf();
+        //C::assignExceptionHandler(C::SessionManager()::ExceptionClass(), [static::class, 'OnSessionException']);
+        $this->setLayoutData();
+    }
+    public static function OnSessionException($ex = null)
+    {
+        if(!isset($ex)){
+            C::Exit404();
             return;
         }
-        C::assignExceptionHandler(C::SessionManager()->getExceptionClass(), [static::class, 'OnSessionException']);
-        $this->setLayoutData();
+        $code = $ex->getCode();
+        __logger()->warning(''.(get_class($ex)).'('.$ex->getCode().'): '.$ex->getMessage());
+        if (C::SessionManager()->isCsrfException($ex) && __is_debug()) {
+            C::exit(0);
+        }
+        C::ExitRouteTo('login');
     }
     protected function setLayoutData()
     {
         $csrf_token = C::SessionManager()->csrf_token();
         $csrf_field = C::SessionManager()->csrf_field();
-        
+         
         $user = C::SessionManager()->getCurrentUser();
         $user_name = $user['username'] ?? '';
 
@@ -40,11 +51,11 @@ class Home
     public function index()
     {
         $url_logout = C::Url('logout');
-        C::Show(get_defined_vars(), 'home');
+        C::Show(get_defined_vars());
     }
     public function password()
     {
-        C::Show(get_defined_vars(), 'password');
+        C::Show(get_defined_vars());
     }
     //////////////////////////
     public function do_password()
@@ -65,6 +76,6 @@ class Home
         } catch (\Exception $ex) {
             $error = $ex->getMessage();
         }
-        C::Show(get_defined_vars(), 'password');
+        C::Show(get_defined_vars());
     }
 }

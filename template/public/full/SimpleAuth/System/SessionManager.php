@@ -14,6 +14,7 @@ class SessionManager extends SessionManagerBase
     use ThrowOnableTrait;
     public function __construct()
     {
+        parent::__construct();
         $this->options['session_prefix'] = App::G()->getSessionPrefix();
         $this->exception_class = SessionException::class;
     }
