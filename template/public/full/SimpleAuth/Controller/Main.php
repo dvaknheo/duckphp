@@ -47,13 +47,13 @@ class Main
     {
         $csrf_field = C::SessionManager()->csrf_field();
         $url_register = C::Url('register');
-        C::Show(get_defined_vars());
+        C::Show(get_defined_vars(), 'register');
     }
     public function login()
     {
         $csrf_field = C::SessionManager()->csrf_field();
         $url_login = C::Url('login');
-        C::Show(get_defined_vars());
+        C::Show(get_defined_vars(),'login');
     }
     public function logout()
     {
@@ -71,7 +71,7 @@ class Main
         } catch (\Exception $ex) {
             $error = $ex->getMessage();
             $name = C::POST('name', '');
-            C::Show(get_defined_vars());
+            C::Show(get_defined_vars(), 'register');
             return;
         }
         ;
@@ -86,7 +86,7 @@ class Main
         } catch (\Exception $ex) {
             $error = $ex->getMessage();
             $name =  __h( C::POST('name', ''));
-            C::Show(get_defined_vars());
+            C::Show(get_defined_vars(), 'login');
             return;
         }
         
