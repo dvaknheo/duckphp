@@ -6,9 +6,8 @@
 
 namespace SimpleBlog\Business;
 
-use SimpleBlog\System\SingletonEx;
+use SimpleBlog\System\ProjectBusiness;
 
-class BaseBusiness
+class BaseBusiness extends ProjectBusiness
 {
-    use SingletonEx;
 }

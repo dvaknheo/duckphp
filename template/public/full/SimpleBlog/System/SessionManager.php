@@ -6,29 +6,10 @@
 namespace SimpleBlog\System;
 
 use DuckPhp\Core\App;
-use DuckPhp\Core\ComponentBase;
+use DuckPhp\Ext\SessionManagerBase;
 
-class SessionManager extends ComponentBase
+class SessionManager extends SessionManagerBase
 {
-    public $options = [
-        'session_prefix' => '',
-    ];
-    public function __construct()
-    {
-        App::session_start();
-    }
-    public function get($key, $defuault)
-    {
-        App::SessionGet($this->options['session_prefix'] . $key, $default);
-    }
-    public function set($key, $value)
-    {
-        App::SessionSet($this->options['session_prefix'] . $key, $value);
-    }
-    public function unset($key)
-    {
-        App::SessionUnset($this->options['session_prefix'] . $key);
-    }
     /////////////////////////////////////
     public function logout()
     {

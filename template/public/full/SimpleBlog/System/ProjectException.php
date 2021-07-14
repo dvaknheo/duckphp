@@ -1,12 +1,13 @@
 <?php declare(strict_types=1);
 /**
- * DuckPhp
+ * DuckPHP
  * From this time, you never be alone~
  */
-
 namespace SimpleBlog\System;
 
-trait SingletonEx
+use DuckPhp\ThrowOn\ThrowOnTrait;
+
+class ProjectException extends \Exception
 {
-    use \DuckPhp\SingletonEx\SingletonExTrait;
+    use ThrowOnTrait;
 }

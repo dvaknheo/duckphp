@@ -17,10 +17,10 @@ class Main
     }
     public function index()
     {
-        $url_reg = C::URL('register');
-        $url_login = C::URL('login');
-        $url_logout = C::URL('logout');
-        $url_admin = C::URL('admin/index');
+        $url_reg = __url('register');
+        $url_login = __url('login');
+        $url_logout = __url('logout');
+        $url_admin = __url('admin/index');
 
         $user = C::SessionManager()->getCurrentUser();
         list($articles, $total) = ArticleBusiness::G()->getRecentArticle(C::PageNo());
@@ -41,7 +41,7 @@ class Main
         }
         $article['comments'] = C::RecordsetH($article['comments'], ['content','username']);
         $html_pager = C::PageHtml($article['comments_total']);
-        $url_add_comment = C::URL('addcomment');
+        $url_add_comment = __url('addcomment');
         C::Show(get_defined_vars(), 'article');
     }
     public function _old_reg()

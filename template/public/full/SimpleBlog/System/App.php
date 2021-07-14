@@ -33,10 +33,8 @@ class App extends DuckPhp
             '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
         ],
         
-        //注入处理， TODO 删除
-        'injected_helper_map' =>  self::DEFAULT_INJECTED_HELPER_MAP, //'~\\Helper\\',  // 打开助手类注入模式
-        'misc_auto_method_extend'=>true,
-        'route_map_auto_extend_method'=>true,
+        'misc_auto_method_extend'=>true,  // 准备删除
+        'route_map_auto_extend_method'=>true,  //// 准备删除
     ];
     
     protected function onPrepare()
@@ -59,6 +57,8 @@ class App extends DuckPhp
         // 如果不是命令行模式
         // 我们在这里检查有没有安装。
     }
+    ////////////////////////////
+    
     public function command_reset_password()
     {
         $new_pass = AdminBusiness::G()->reset();
@@ -72,5 +72,17 @@ class App extends DuckPhp
     {
         return Installer::G()->install($database);
     }
-
+    ///////////////////////
+    protected function getPath()
+    {
+        return $this->options['path'];
+    }
+    public function getTablePrefix()
+    {
+        return static::Config('table_prefix','SimpleAuth')??'';
+    }
+    public function getSessionPrefix()
+    {
+        return static::Config('session_prefix','SimpleAuth')??'';
+    }
 }

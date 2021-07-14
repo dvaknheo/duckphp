@@ -6,9 +6,9 @@
 
 namespace SimpleBlog\Business;
 
-use SimpleBlog\System\BaseException;
+use SimpleBlog\System\BusinessException;
 
-class UserException extends BaseException
+class UserException extends BusinessException
 {
 
 }

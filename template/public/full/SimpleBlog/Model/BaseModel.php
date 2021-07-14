@@ -6,11 +6,10 @@
 namespace SimpleBlog\Model;
 
 use SimpleBlog\Helper\ModelHelper as M;
-use SimpleBlog\System\SingletonEx;
+use SimpleBlog\System\ProjectModel;
 
-class BaseModel
+class BaseModel extends ProjectModel
 {
-    use SingletonEx;
 
     public $table_name = null;
     public function getList(int $page = 1, int $page_size = 10)

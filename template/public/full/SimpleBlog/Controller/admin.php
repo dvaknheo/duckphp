@@ -34,7 +34,7 @@ class admin
             'url_changepass' => 'admin/reset_password',
         ];
         array_walk($data, function (&$v) {
-            $v = C::URL($v);
+            $v = __url($v);
         });
         C::setViewHeadFoot('admin/inc_head', 'admin/inc_foot');
         C::assignViewData($data);
@@ -70,8 +70,7 @@ class admin
     }
     public function reset_password()
     {
-        $data = [];
-        C::Show($data);
+        C::Show([]);
     }
     public function do_reset_password()
     {
@@ -80,7 +79,7 @@ class admin
     }
     public function articles()
     {
-        $url_add = C::URL('admin/article_add');
+        $url_add = __url('admin/article_add');
         list($list, $total) = ArticleBusiness::G()->getArticleList(C::PageNo());
         $list = C::RecordsetUrl($list, [
             'url_edit' => 'admin/article_edit?id={id}',
@@ -101,8 +100,8 @@ class admin
     {
         $article = AdminBusiness::G()->getArticle(C::GET('id',0));
         //C::ThrowOn(!$article, "找不到文章"); => TODO
-        $article['title'] = C::H($article['title']);
-        $article['content'] = C::H($article['content']);
+        $article['title'] = __h($article['title']);
+        $article['content'] = __h($article['content']);
         C::Show(get_defined_vars(), 'admin/article_update');
     }
     public function do_article_edit()
@@ -120,7 +119,7 @@ class admin
         list($list, $total) = AdminBusiness::G()->getUserList(C::PageNo());
         $csrf_token = '';
         foreach ($list as  &$v) {
-            $v['url_delete'] = C::URL("admin/delete_user?id={$v['id']}&_token={$csrf_token}");
+            $v['url_delete'] = __url("admin/delete_user?id={$v['id']}&_token={$csrf_token}");
         }
         C::Show(get_defined_vars());
     }

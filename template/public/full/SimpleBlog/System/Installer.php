@@ -76,7 +76,7 @@ class Installer
             $this->checkDb($database);
             SqlDumper::G()->install();
         }catch(\Exception $ex){
-            BaseException::ThrowOn(true, "安装数据库失败" . $ex->getMessage(),-1);
+            ProjectException::ThrowOn(true, "安装数据库失败" . $ex->getMessage(),-1);
         }
         
         $ext_setting = [];
@@ -84,7 +84,7 @@ class Installer
         $ext_setting['simple_blog_installed'] = DATE(DATE_ATOM);
         
         $flag = $this->writeSettingFile($ext_setting);
-        BaseException::ThrowOn(!$flag,'写入文件失败',-2);
+        ProjectException::ThrowOn(!$flag,'写入文件失败',-2);
         
         return true;
     }
