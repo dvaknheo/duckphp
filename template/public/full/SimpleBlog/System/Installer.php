@@ -6,15 +6,18 @@
 namespace SimpleBlog\System;
 
 use DuckPhp\Component\DbManager;
+use DuckPhp\Core\App;
 use DuckPhp\Core\Configer;
+use DuckPhp\Core\ComponentBase;
 use DuckPhp\Ext\SqlDumper;
+use DuckPhp\Ext\ThrowOnableTrait;
 
-
-class Installer
+class Installer extends ComponentBase
 {
-    use SingletonEx;
+    use ThrowOnableTrait;
     public function isInstalled()
     {
+        return true;
         if(App::Setting('simple_blog_installed')){
             return true;
         }
@@ -27,19 +30,20 @@ class Installer
         DbManager::G()->init($options,App::G());
         DbManager::G()->_Db()->fetch('select 1+1 as t');
     }
-    protected function getComponenetPathByKey($options,$path_key, $path_key_parent = 'path'): string
+    protected function getComponenetPath($path, $basepath = ''): string
     {
+        // 考虑放到系统里
         if (DIRECTORY_SEPARATOR === '/') {
-            if (substr($options[$path_key], 0, 1) === '/') {
-                return rtrim($options[$path_key], '/').'/';
+            if (substr($path, 0, 1) === '/') {
+                return rtrim($path, '/').'/';
             } else {
-                return $options[$path_key_parent].rtrim($options[$path_key], '/').'/';
+                return $basepath.rtrim($path, '/').'/';
             }
         } else { // @codeCoverageIgnoreStart
-            if (substr($options[$path_key], 1, 1) === ':') {
-                return rtrim($options[$path_key], '\\').'\\';
+            if (substr($path, 1, 1) === ':') {
+                return rtrim($path, '\\').'\\';
             } else {
-                return $options[$path_key_parent].rtrim($options[$path_key], '\\').'\\';
+                return $basepath.rtrim($path, '\\').'\\';
             } // @codeCoverageIgnoreEnd
         }
     }

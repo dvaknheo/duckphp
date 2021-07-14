@@ -37,7 +37,7 @@ class Installer extends ComponentBase
 
     protected function getComponenetPath($path, $basepath = ''): string
     {
-        // 考虑放到
+        // 考虑放到系统里
         if (DIRECTORY_SEPARATOR === '/') {
             if (substr($path, 0, 1) === '/') {
                 return rtrim($path, '/').'/';

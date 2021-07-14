@@ -5,5 +5,6 @@ exceptiont! 发生了异常.
 <pre>
 --
 <?php echo($trace);?>
+<?php var_dump($ex);?>
 </pre>
 </fieldset>

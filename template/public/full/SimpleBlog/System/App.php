@@ -6,7 +6,6 @@
 namespace SimpleBlog\System;
 
 use DuckPhp\DuckPhp;
-use DuckPhp\Ext\Misc;
 use DuckPhp\Ext\RouteHookRewrite;
 use SimpleAuth\Api\SimpleAuthPlugin;
 
@@ -22,7 +21,6 @@ class App extends DuckPhp
         
         'ext' => [
             RouteHookRewrite::class => true,    // 我们需要 重写 url
-            Misc::class => true,                // 我们需要两个助手函数  // TODO 删除
             SimpleAuthPlugin::class => [
                 'simple_auth_installed' => true,  //       // 使用第三方的验证登录包
             ], 
@@ -33,7 +31,6 @@ class App extends DuckPhp
             '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
         ],
         
-        'misc_auto_method_extend'=>true,  // 准备删除
         'route_map_auto_extend_method'=>true,  //// 准备删除
     ];
     
@@ -79,10 +76,10 @@ class App extends DuckPhp
     }
     public function getTablePrefix()
     {
-        return static::Config('table_prefix','SimpleAuth')??'';
+        return static::Config('table_prefix','SimpleBlog')??'';
     }
     public function getSessionPrefix()
     {
-        return static::Config('session_prefix','SimpleAuth')??'';
+        return static::Config('session_prefix','SimpleBlog')??'';
     }
 }
