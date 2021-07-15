@@ -15,21 +15,28 @@ use DuckPhp\Ext\ThrowOnableTrait;
 class Installer extends ComponentBase
 {
     use ThrowOnableTrait;
+    
+    public $options = [
+        'path' =>'',
+        'path_sql_dump' => 'config',
+        
+        'install_lock_file' => 'SimpleBlog.lock',
+        'sql_dump_inlucde_tables' =>['ActionLogs','Articles','Comments','Settings'],        
+    ];
     public function isInstalled()
     {
-        return true;
-        if(App::Setting('simple_blog_installed')){
-            return true;
-        }
-        return false;
+        $path = $this->getComponenetPath(Configer::G()->options['path_config'],Configer::G()->options['path']);
+        $file = $path.$this->options['install_lock_file'];
+        return is_file($file);
     }
-    protected function checkDb($database)
+    protected function writeLock()
     {
-        $options = DbManager::G()->options; //我实在不想暴露  DbManager.
-        $options['database'] = $database;
-        DbManager::G()->init($options,App::G());
-        DbManager::G()->_Db()->fetch('select 1+1 as t');
+        $path = $this->getComponenetPath(Configer::G()->options['path_config'],Configer::G()->options['path']);
+        $file = $path.$this->options['install_lock_file'];
+        $data = DATE(DATE_ATOM);
+        return @file_put_contents($file,$data);
     }
+
     protected function getComponenetPath($path, $basepath = ''): string
     {
         // 考虑放到系统里
@@ -47,49 +54,35 @@ class Installer extends ComponentBase
             } // @codeCoverageIgnoreEnd
         }
     }
-    protected function writeSettingFile($ext_setting)
-    {
-        $path = $this->getComponenetPathByKey(Configer::G()->options, 'path_config');
-        $setting_file = $this->options['setting_file'] ?? 'setting';
-        $file = $path.$setting_file.'.php';
 
-        $setting = file_exists($file) ?  App::LoadConfig($setting_file) : [];
-        $setting = array_merge($setting,$ext_setting);
-        
-        $data = '<'.'?php ';
-        $data .="\n // gen by ".static::class.' '.date(DATE_ATOM) ." \n";
-        $data .= ' return ';
-        $data .= var_export($setting,true);
-        $data .=';';
-        
-        return @file_put_contents($file,$data);
-    }
-    public function install($database)
+    public function run()
     {
-        $sqldumper_options = [
-            'path' => App::G()->options['path'],
-        ];
-        SqlDumper::G()->init($sqldumper_options,App::G());
-        $database = [
-            'dsn' => "mysql:host={$database['host']};port={$database['port']};dbname={$database['dbname']};charset=utf8mb4;",
-            'username' => $database['username'],
-            'password' => $database['password'],
-            'driver_options' => [],
-        ];        
+        $ret = false;
+        
+        
+        $path = $this->getComponenetPath(Configer::G()->options['path_config'],Configer::G()->options['path']);
+        $sqldumper_options = $this->options;
+        // 这里要调整一下，路径的问题。
+        $sqldumper_options['path_sql_dump'] = $path;
+        SqlDumper::G()->init($sqldumper_options, ($this->context_class)::G());
+        
         try{
-            $this->checkDb($database);
-            SqlDumper::G()->install();
+            $ret = SqlDumper::G()->install($this->options['force']??false);
+            $flag = $this->writeLock();
+            static::ThrowOn(!$flag,'写入文件失败',-2);        
         }catch(\Exception $ex){
-            ProjectException::ThrowOn(true, "安装数据库失败" . $ex->getMessage(),-1);
+            static::ThrowOn(true, "写入数据库失败" . $ex->getMessage(),-1);
         }
         
-        $ext_setting = [];
-        $ext_setting['database'] = $database;
-        $ext_setting['simple_blog_installed'] = DATE(DATE_ATOM);
-        
-        $flag = $this->writeSettingFile($ext_setting);
-        ProjectException::ThrowOn(!$flag,'写入文件失败',-2);
-        
-        return true;
+        return $ret;
+    }
+    public function dumpSql($path)
+    {
+        return; 
+        $sqldumper_options = [
+            'sql_dump_inlucde_tables' =>['Users'],
+        ];
+        SqlDumper::G()->init($sqldumper_options,($this->context_class)::G());
+        return SqlDumper::G()->run();
     }
 }

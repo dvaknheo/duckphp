@@ -11,15 +11,21 @@ class App extends DuckPhp
 {
     //@override
     public $options = [
-        // simple_auth_installed = false,
+        'simple_auth_check_installed' => true,
+        'simple_auth_table_prefix' => '',
+        'simple_auth_session_prefix' => '',
     ];
+    public function __construct()
+    {
+        parent::__construct();
+    }
     protected function onBeforeRun()
     {
         $this->checkInstall();
     }
     protected function checkInstall()
     {
-        if(!Installer::G()->isInstalled()){
+        if($this->options['simple_auth_check_installed'] && !Installer::G()->isInstalled()){
             throw new \ErrorException("`SimpleAuth` need install. run install command first. e.g. :`php auth.php SimpleAuth:install`\n");
         }
     }
@@ -32,20 +38,23 @@ class App extends DuckPhp
             // echo "--force  to force install ;";
             //return;
         }
+        echo $this->install($parameters);
+        echo "Done \n";
+    }
+    public function install($parameters)
+    {
         $options = [
-            'sql_dump_inlucde_tables' =>['Users'],
             'force' => $parameters['force']?? false,
             'path' => $this->getPath(),
-            'path_sql_dump' => 'config',
+
         ];
         Installer::G()->init($options,$this);
         
         if(Installer::G()->isInstalled()){
-           echo "You had been installed ";
-           return; 
+           return "You had been installed ";
+            
         }
-        echo Installer::G()->run();        
-        echo "Done \n";
+        echo Installer::G()->run();
     }
     protected function getPath()
     {
@@ -53,11 +62,11 @@ class App extends DuckPhp
     }
     public function getTablePrefix()
     {
-        return static::Config('table_prefix','SimpleAuth')??'';
+        return $this->options['simple_auth_table_prefix'];
     }
     public function getSessionPrefix()
     {
-        return static::Config('session_prefix','SimpleAuth')??'';
+        return $this->options['simple_auth_session_prefix'];
     }
     
     public static function SessionManager()

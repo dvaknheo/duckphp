@@ -5,7 +5,6 @@
  */
 namespace SimpleAuth\System;
 
-use DuckPhp\Component\DbManager;
 use DuckPhp\Core\App;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\ComponentBase;
@@ -19,7 +18,8 @@ class Installer extends ComponentBase
     public $options = [
         'install_lock_file' => 'SimpleAuth.lock',
         'path' =>'',
-        //'path_config' =>'',
+        'path_sql_dump' => 'config',
+        'sql_dump_inlucde_tables' =>['Users'],        
     ];
     public function isInstalled()
     {
@@ -58,7 +58,8 @@ class Installer extends ComponentBase
         $ret = false;
         $path = $this->getComponenetPath(Configer::G()->options['path_config'],Configer::G()->options['path']);
         $sqldumper_options = $this->options;
-        
+        // 这里要调整一下，路径的问题。
+        $sqldumper_options['path_sql_dump'] = $path;
         SqlDumper::G()->init($sqldumper_options, ($this->context_class)::G());
         
         try{
@@ -69,12 +70,11 @@ class Installer extends ComponentBase
             static::ThrowOn(true, "写入数据库失败" . $ex->getMessage(),-1);
         }
         
-        
-        
         return $ret;
     }
     public function dumpSql($path)
     {
+        return; 
         $sqldumper_options = [
             'sql_dump_inlucde_tables' =>['Users'],
         ];

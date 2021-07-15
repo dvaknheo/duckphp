@@ -19,10 +19,16 @@ class App extends DuckPhp
         'error_404' =>'_sys/error-404',
         'error_500' => '_sys/error-exception',
         
+        'simple_blog_check_installed' => true,
+        'simple_blog_table_prefix' => '',
+        'simple_blog_session_prefix' => '',
+        
         'ext' => [
             RouteHookRewrite::class => true,    // 我们需要 重写 url
             SimpleAuthPlugin::class => [
-                'simple_auth_installed' => true,  //       // 使用第三方的验证登录包
+                'simple_auth_check_installed' => true,  //       // 使用第三方的验证登录包
+                'simple_auth_table_prefix' => 'SimpleAuth',
+                'simple_auth_session_prefix' => '',
             ], 
         ],
         
@@ -30,10 +36,7 @@ class App extends DuckPhp
         'rewrite_map' => [
             '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
         ],
-        
-        'route_map_auto_extend_method'=>true,  //// 准备删除
-    ];
-    
+    ];    
     protected function onPrepare()
     {
         // 我们要引入第三方包,这里我们没采用 composer。
@@ -60,13 +63,35 @@ class App extends DuckPhp
     {
         $new_pass = AdminBusiness::G()->reset();
         echo 'new password: '.$new_pass;
+        echo PHP_EOL;
     }
     public function command_install()
     {
-        echo "install";
+        echo "Welcome to Use SimpleBlog installer  --force  to force install\n";
+        $parameters =  static::Parameter();
+        if(count($parameters)==1 || ($parameters['help'] ?? null)){
+            // echo "--force  to force install ;";
+            //return;
+        }
+
+        Installer::G()->init($options,$this);
+        
+        if(Installer::G()->isInstalled()){
+           echo "You had been installed ";
+           return; 
+        }
+        echo Installer::G()->run();        
+        echo "Done \n";
     }
     public function install($database)
     {
+        //TODO 我们先检查子系统安装。
+        
+        $options = [
+            'force' => $parameters['force']?? false,
+            'path' => $this->getPath(),
+            'path_sql_dump' => 'config',
+        ];
         return Installer::G()->install($database);
     }
     ///////////////////////
@@ -76,10 +101,10 @@ class App extends DuckPhp
     }
     public function getTablePrefix()
     {
-        return static::Config('table_prefix','SimpleBlog')??'';
+        return $this->options['simple_blog_table_prefix'];
     }
     public function getSessionPrefix()
     {
-        return static::Config('session_prefix','SimpleBlog')??'';
+        return $this->options['simple_blog_session_prefix'];
     }
 }

@@ -16,7 +16,9 @@ class SimpleAuthPlugin extends App
 
     //@override
     public $plugin_options = [
-        // simple_auth_installed = false,
+            'simple_auth_check_installed' => true,
+            'simple_auth_table_prefix' => '',
+            'simple_auth_session_prefix' => '',
     ];
     public function __construct()
     {
@@ -29,6 +31,13 @@ class SimpleAuthPlugin extends App
     {
         $this->is_plugin = true;
         App::G(static::G());
+        
+        //copy options
+        foreach($this->options as $k => $v){
+            if(isset($this->plugin_options[$k])){
+                $this->options[$k]= $this->plugin_options[$k];
+            }
+        }
         Console::G()->regCommandClass(static::class,  'SimpleAuth');
     }
     protected function onPluginModeBeforeRun()
