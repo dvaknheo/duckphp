@@ -5,8 +5,6 @@
  */
 namespace SimpleBlog\System;
 
-use DuckPhp\Component\DbManager;
-use DuckPhp\Core\App;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Ext\SqlDumper;
@@ -17,26 +15,62 @@ class Installer extends ComponentBase
     use ThrowOnableTrait;
     
     public $options = [
-        'path' =>'',
-        'path_sql_dump' => 'config',
-        
+        /////
         'install_lock_file' => 'SimpleBlog.lock',
-        'sql_dump_inlucde_tables' =>['ActionLogs','Articles','Comments','Settings'],        
+        'force' => false,
+
     ];
+    protected $path_lock;
+    public function __construct()
+    {
+        parent::__construct();
+        $this->exception_class = NeedInstallException::class;
+        //static::ExceptionClass(NeedInstallException::class);
+    }
+    //@override
+    public function init(array $options, ?object $context = NULL)
+    {
+        parent::init($options, $context);
+        
+        $this->path_lock = $this->getComponenetPath(Configer::G()->options['path_config'],Configer::G()->options['path']);
+        $this->options['path_sql_dump'] = ($this->context_class)::G()->getPath().'config/'; // 这里再灵活一点？
+        SqlDumper::G()->init($options, ($this->context_class)::G());
+        return $this;
+    }
     public function isInstalled()
     {
-        $path = $this->getComponenetPath(Configer::G()->options['path_config'],Configer::G()->options['path']);
-        $file = $path.$this->options['install_lock_file'];
+        $file = $this->path_lock.$this->options['install_lock_file'];
         return is_file($file);
     }
     protected function writeLock()
     {
-        $path = $this->getComponenetPath(Configer::G()->options['path_config'],Configer::G()->options['path']);
-        $file = $path.$this->options['install_lock_file'];
-        $data = DATE(DATE_ATOM);
-        return @file_put_contents($file,$data);
+        $file = $this->path_lock.$this->options['install_lock_file'];
+        return @file_put_contents($file,DATE(DATE_ATOM));
     }
-
+    public function run()
+    {
+        $ret = false;
+        if(!$this->options['force'] && $this->isInstalled()){
+           static::ThrowOn(!$flag,'你已经安装 SimpleBlog',-1);     
+        }
+        try{
+            $ret = SqlDumper::G()->install($this->options['force']??false);
+        }catch(\Exception $ex){
+            static::ThrowOn(true, "写入数据库失败:" . $ex->getMessage(),-2);
+        }
+        if($ret){
+            return $ret;
+        }
+        $flag = $this->writeLock();
+        static::ThrowOn(!$flag,'写入锁文件失败',-3);
+            
+        return $ret;
+    }
+    public function dumpSql()
+    {
+        return SqlDumper::G()->run();
+    }
+    /////////////////////
     protected function getComponenetPath($path, $basepath = ''): string
     {
         // 考虑放到系统里
@@ -53,36 +87,5 @@ class Installer extends ComponentBase
                 return $basepath.rtrim($path, '\\').'\\';
             } // @codeCoverageIgnoreEnd
         }
-    }
-
-    public function run()
-    {
-        $ret = false;
-        
-        
-        $path = $this->getComponenetPath(Configer::G()->options['path_config'],Configer::G()->options['path']);
-        $sqldumper_options = $this->options;
-        // 这里要调整一下，路径的问题。
-        $sqldumper_options['path_sql_dump'] = $path;
-        SqlDumper::G()->init($sqldumper_options, ($this->context_class)::G());
-        
-        try{
-            $ret = SqlDumper::G()->install($this->options['force']??false);
-            $flag = $this->writeLock();
-            static::ThrowOn(!$flag,'写入文件失败',-2);        
-        }catch(\Exception $ex){
-            static::ThrowOn(true, "写入数据库失败" . $ex->getMessage(),-1);
-        }
-        
-        return $ret;
-    }
-    public function dumpSql($path)
-    {
-        return; 
-        $sqldumper_options = [
-            'sql_dump_inlucde_tables' =>['Users'],
-        ];
-        SqlDumper::G()->init($sqldumper_options,($this->context_class)::G());
-        return SqlDumper::G()->run();
     }
 }

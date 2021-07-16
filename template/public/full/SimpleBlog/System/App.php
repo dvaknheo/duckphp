@@ -8,6 +8,7 @@ namespace SimpleBlog\System;
 use DuckPhp\DuckPhp;
 use DuckPhp\Ext\RouteHookRewrite;
 use SimpleAuth\Api\SimpleAuthPlugin;
+use SimpleBlog\Business\AdminBusiness;
 
 class App extends DuckPhp
 {
@@ -19,15 +20,11 @@ class App extends DuckPhp
         'error_404' =>'_sys/error-404',
         'error_500' => '_sys/error-exception',
         
-        'simple_blog_check_installed' => true,
-        'simple_blog_table_prefix' => '',
-        'simple_blog_session_prefix' => '',
-        
         'ext' => [
             RouteHookRewrite::class => true,    // 我们需要 重写 url
             SimpleAuthPlugin::class => [
                 'simple_auth_check_installed' => true,  //       // 使用第三方的验证登录包
-                'simple_auth_table_prefix' => 'SimpleAuth',
+                'simple_auth_table_prefix' => 'sa_',
                 'simple_auth_session_prefix' => '',
             ], 
         ],
@@ -36,7 +33,12 @@ class App extends DuckPhp
         'rewrite_map' => [
             '~article/(\d+)/?(\d+)?' => 'article?id=$1&page=$2',
         ],
-    ];    
+        
+        //
+        'simple_blog_check_installed' => true,  //       // 使用第三方的验证登录包
+        'simple_blog_table_prefix' => '',
+        'simple_auth_session_prefix' => '',
+    ];
     protected function onPrepare()
     {
         // 我们要引入第三方包,这里我们没采用 composer。
@@ -53,18 +55,20 @@ class App extends DuckPhp
     }
     protected function onBeforeRun()
     {
-        
-        // 如果不是命令行模式
-        // 我们在这里检查有没有安装。
+        if($this->options['simple_blog_check_installed'] && !Installer::G()->init([],$this)->isInstalled()){
+            throw new NeedInstallException("`SimpleBlog` need install. run install command first. e.g. :`php blog.php install`\n");
+        }
     }
     ////////////////////////////
     
+    /** reset SimpleBlog password */
     public function command_reset_password()
     {
         $new_pass = AdminBusiness::G()->reset();
         echo 'new password: '.$new_pass;
         echo PHP_EOL;
     }
+    /** Install SimpleBlog */
     public function command_install()
     {
         echo "Welcome to Use SimpleBlog installer  --force  to force install\n";
@@ -74,28 +78,32 @@ class App extends DuckPhp
             //return;
         }
 
-        Installer::G()->init($options,$this);
-        
-        if(Installer::G()->isInstalled()){
-           echo "You had been installed ";
-           return; 
-        }
-        echo Installer::G()->run();        
+        $this->install($parameters);
+        $this->command_reset_password();
         echo "Done \n";
     }
-    public function install($database)
+    public function install($parameters)
     {
-        //TODO 我们先检查子系统安装。
-        
+        $str=SimpleAuthPlugin::G()->install($parameters); // 检查子系统安装
+        if($str){
+            echo $str;
+            return;
+        }
         $options = [
             'force' => $parameters['force']?? false,
             'path' => $this->getPath(),
-            'path_sql_dump' => 'config',
+            //'sql_dump_prefix' => $this->options['simple_blog_table_prefix'],
+            'sql_dump_inlucde_tables' =>['ActionLogs','Articles','Comments','Settings'], // 这里我们也要来个从 Model 里读取。
+            'sql_dump_install_replace_prefix' => true,
+            'sql_dump_install_new_prefix' => $this->options['simple_blog_table_prefix'],
+            'sql_dump_install_drop_old_table' => $parameters['force']?? false,
         ];
-        return Installer::G()->install($database);
+        
+        Installer::G()->init($options,$this);
+        echo Installer::G()->run();
     }
     ///////////////////////
-    protected function getPath()
+    public function getPath()
     {
         return $this->options['path'];
     }

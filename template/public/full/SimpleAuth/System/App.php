@@ -25,7 +25,7 @@ class App extends DuckPhp
     }
     protected function checkInstall()
     {
-        if($this->options['simple_auth_check_installed'] && !Installer::G()->isInstalled()){
+        if($this->options['simple_auth_check_installed'] && !Installer::G()->init([],$this)->isInstalled()){
             throw new \ErrorException("`SimpleAuth` need install. run install command first. e.g. :`php auth.php SimpleAuth:install`\n");
         }
     }
@@ -46,17 +46,18 @@ class App extends DuckPhp
         $options = [
             'force' => $parameters['force']?? false,
             'path' => $this->getPath(),
-
+            
+            'sql_dump_prefix' => '',
+            'sql_dump_inlucde_tables' => [ 'Users'],        
+            'sql_dump_install_replace_prefix' => true,
+            'sql_dump_install_new_prefix' => $this->options['simple_auth_table_prefix'],
+            'sql_dump_install_drop_old_table' => $parameters['force']?? false,
         ];
         Installer::G()->init($options,$this);
         
-        if(Installer::G()->isInstalled()){
-           return "You had been installed ";
-            
-        }
         echo Installer::G()->run();
     }
-    protected function getPath()
+    public function getPath()
     {
         return $this->options['path'];
     }
