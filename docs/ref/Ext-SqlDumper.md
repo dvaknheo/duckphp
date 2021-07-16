@@ -25,7 +25,7 @@ SqlDump, 只用到的表
         'sql_dump_exclude_tables' => [],
 SqlDump, 忽略表
 
-        'sql_dump_inlucde_tables' => '*',
+        'sql_dump_include_tables' => '*',
 SqlDump, 包括的表，如果为 * 则表示包括 sql_dump_prefix 开始的所有表
 
         'sql_dump_install_replace_prefix' => false,
@@ -83,6 +83,7 @@ SqlDumper::G()->export(); // 导出到配置文件，默认是 config/sql_struct
 SqlDumper::G()->install(); // 从配置文件安装 sql
 
 ```
+
 
 
 

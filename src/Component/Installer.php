@@ -164,24 +164,24 @@ Well Come to use DuckPhp Installer ;
 EOT;
         //--full                    Use The demo template
     }
-/*
-    function detectedClass($path)
-    {
-        $composer_file = $path.'/composer.json';
-        $data = json_decode(file_get_contents($composer_file),true);
-        $psrs = $data['autoload']['psr-4'] ?? [];
-        foreach($psrs as $k => $v){
-            $ns = $k;
-            break;
+    /*
+        function detectedClass($path)
+        {
+            $composer_file = $path.'/composer.json';
+            $data = json_decode(file_get_contents($composer_file),true);
+            $psrs = $data['autoload']['psr-4'] ?? [];
+            foreach($psrs as $k => $v){
+                $ns = $k;
+                break;
+            }
+            if(empty($ns)){
+                return '';
+            }
+            $class = $ns . 'System\App';
+            if(!class_exists($class)){
+                return '';
+            }
+            return $class;
         }
-        if(empty($ns)){
-            return '';
-        }
-        $class = $ns . 'System\App';
-        if(!class_exists($class)){
-            return '';
-        }
-        return $class;
-    }
-*/
+    */
 }

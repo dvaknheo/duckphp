@@ -12,7 +12,7 @@ class SqlDumper extends ComponentBase
     public $options = [
         'path' => '',
         'path_sql_dump' => 'config',
-        'sql_dump_inlucde_tables' => '*',
+        'sql_dump_include_tables' => '*',
         'sql_dump_exclude_tables' => [],
         'sql_dump_data_tables' => [],
         
@@ -75,7 +75,7 @@ class SqlDumper extends ComponentBase
     }
     protected function getSchemes()
     {
-        $include_tables = $this->options['sql_dump_inlucde_tables'];
+        $include_tables = $this->options['sql_dump_include_tables'];
         $ignore_tables = $this->options['sql_dump_exclude_tables'];
         $prefix = $this->options['sql_dump_prefix'];
         $ret = [];
@@ -137,7 +137,6 @@ class SqlDumper extends ComponentBase
         $path = parent::getComponenetPathByKey('path_sql_dump');
         
         $file = $path.$this->options['sql_dump_file'].'.php';
-        var_dump($file);
         $ret = (function () use ($file) {
             return @include $file;
         })();

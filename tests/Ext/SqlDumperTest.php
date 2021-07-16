@@ -35,16 +35,16 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
         SqlDumper::G()->options['sql_dump_prefix'] = 'NoExists';
         SqlDumper::G()->run();
         SqlDumper::G()->options['sql_dump_prefix'] = '';
-        SqlDumper::G()->options['sql_dump_inlucde_tables'] = ['NoExists'];
+        SqlDumper::G()->options['sql_dump_include_tables'] = ['NoExists'];
         SqlDumper::G()->run();
         SqlDumper::G()->options['sql_dump_prefix'] = '';
-        SqlDumper::G()->options['sql_dump_inlucde_tables'] = ['NoExists'];
+        SqlDumper::G()->options['sql_dump_include_tables'] = ['NoExists'];
         SqlDumper::G()->options['sql_dump_exclude_tables'] = ['test'];
         
         SqlDumper::G()->run();
         
         SqlDumper::G()->options['sql_dump_prefix'] = '';
-        SqlDumper::G()->options['sql_dump_inlucde_tables'] = ['test'];
+        SqlDumper::G()->options['sql_dump_include_tables'] = ['test'];
         SqlDumper::G()->options['sql_dump_exclude_tables'] = ['test'];
         SqlDumper::G()->run();
         
@@ -58,7 +58,7 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='keep me empty'";
         DuckPhp::Db()->execute($sql);
         SqlDumper::G()->options['sql_dump_prefix'] = '';
-        SqlDumper::G()->options['sql_dump_inlucde_tables'] = ['empty'];
+        SqlDumper::G()->options['sql_dump_include_tables'] = ['empty'];
         SqlDumper::G()->options['sql_dump_data_tables'] = ['empty'];
         
         
@@ -68,7 +68,7 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
         $path_app = \LibCoverage\LibCoverage::G()->getClassTestPath(SqlDumper::class);
         $options = [
             'path_sql_dump' => $path_app,
-            'sql_dump_inlucde_tables' => 'empty',
+            'sql_dump_include_tables' => 'empty',
             'sql_dump_prefix' => 'em',
             'sql_dump_install_replace_prefix' => true,
             'sql_dump_install_new_prefix' => 'newprefix',
