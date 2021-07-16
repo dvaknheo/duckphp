@@ -74,8 +74,8 @@ class admin
     }
     public function do_reset_password()
     {
-        AdminBusiness::G()->changePassword(POST('password'));
-        C::ExitRouteTo('admin');
+        AdminBusiness::G()->changePassword(C::POST('password'));
+        C::ExitRouteTo('admin/index');
     }
     public function articles()
     {

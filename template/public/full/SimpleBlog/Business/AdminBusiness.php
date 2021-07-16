@@ -25,7 +25,7 @@ class AdminBusiness extends BaseBusiness
     
     public function changePassword($password)
     {
-        $password = password_hash($password);
+        $password = password_hash($password, PASSWORD_DEFAULT );
         SettingModel::G()->set('admin_password', $password);
         return $flag;
     }
