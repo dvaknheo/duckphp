@@ -13,9 +13,12 @@ use SimpleBlog\Model\CommentModel;
 
 class AdminBusiness extends BaseBusiness
 {
-    public function reset()
+    public function reset($new_password = null)
     {
-        $password = mt_rand(100000, 999999);
+        $password = $new_password;
+        if(!isset($new_password)){
+            $password = mt_rand(100000, 999999);
+        }
         $init_password = $password;
         $password = password_hash(''.$password,PASSWORD_DEFAULT);
         

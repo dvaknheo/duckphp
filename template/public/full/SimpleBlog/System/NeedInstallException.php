@@ -3,15 +3,24 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleBlog\System;
+namespace SimpleAuth\System;
 
-use SimpleBlog\System\ProjectException;
+use SimpleAuth\System\ProjectException;
+
 
 class NeedInstallException extends ProjectException
 {
-    public function displayx($ex)
+    const NEED_DATABASE = 1;
+    const NEED_INSTALL = 2;
+    const NEED_OTHER = 3;
+    public function display($ex)
     {
-        
-        //App::OnDefaultExetion($ex);        
+        $code = $ex->getCode();
+        if($code == self::NEED_DATABASE){
+            App::Show([],'Exception/NeedDatabase');
+        }
+        if($code == self::NEED_INSTALL){
+            App::Show([],'Exception/NeedInstall');
+        }
     }
 }

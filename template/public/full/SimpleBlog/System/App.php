@@ -55,8 +55,18 @@ class App extends DuckPhp
     }
     protected function onBeforeRun()
     {
-        if($this->options['simple_blog_check_installed'] && !Installer::G()->init([],$this)->isInstalled()){
-            throw new NeedInstallException("`SimpleBlog` need install. run install command first. e.g. :`php blog.php install`\n");
+        $this->checkInstall();
+    }
+    protected function checkInstall()
+    {
+        if (!$this->options['simple_blog_check_installed']){
+            return;
+        }
+        if (!(DbManager::G()->options['database'] || DbManager::G()->options['database_list'])){ //这里应该改成组件里的
+            throw new NeedInstallException('Need Database',NeedInstallException::NEED_DATABASE);
+        }
+        if (!Installer::G()->init([],$this)->isInstalled()){
+            throw new NeedInstallException("",NeedInstallException::NEED_INSTALL);
         }
     }
     ////////////////////////////
@@ -79,7 +89,10 @@ class App extends DuckPhp
         }
 
         $this->install($parameters);
-        $this->command_reset_password();
+        $new_pass = AdminBusiness::G()->reset('123456');
+        echo 'new password: '.$new_pass;
+        echo PHP_EOL;
+        
         echo "Done \n";
     }
     public function install($parameters)
