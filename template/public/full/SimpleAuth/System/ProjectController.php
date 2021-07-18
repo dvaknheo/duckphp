@@ -6,7 +6,8 @@
 
 namespace SimpleAuth\System;
 
-use Duckphp\Ext\SingletonControllerTrait;
+use DuckPhp\Ext\SingletonControllerTrait;
+use DuckPhp\Helper\ControllerHelperTrait;
 
 class ProjectController
 {

@@ -6,6 +6,7 @@
 namespace SimpleBlog\System;
 
 use DuckPhp\DuckPhp;
+use DuckPhp\Component\DbManager;
 use DuckPhp\Ext\RouteHookRewrite;
 use SimpleAuth\Api\SimpleAuthPlugin;
 use SimpleBlog\Business\AdminBusiness;
@@ -15,7 +16,7 @@ class App extends DuckPhp
     //@override
     public $options = [
         'use_setting_file' => true, // 启用设置文件
-        'setting_file_ignore_exists' => true, // 忽略设置文件
+        'setting_file_ignore_exists' => false, // 忽略设置文件
         
         'error_404' =>'_sys/error-404',
         'error_500' => '_sys/error-exception',
@@ -47,12 +48,6 @@ class App extends DuckPhp
             $this->assignPathNamespace($path, 'SimpleAuth');
         }
     }
-    protected function onInit()
-    {
-        // 我们加个检查安装的钩子？
-        // 我们从设置里再入第三方验证包吧
-        // 我们在每次执行的时候检查 权限，如果没有，那就跳到 安装页面。 $this::Route()->addRouteHook()
-    }
     protected function onBeforeRun()
     {
         $this->checkInstall();
@@ -62,7 +57,7 @@ class App extends DuckPhp
         if (!$this->options['simple_blog_check_installed']){
             return;
         }
-        if (!(DbManager::G()->options['database'] || DbManager::G()->options['database_list'])){ //这里应该改成组件里的
+        if (!(static::Setting('database') ||  static::Setting('database_list'))){
             throw new NeedInstallException('Need Database',NeedInstallException::NEED_DATABASE);
         }
         if (!Installer::G()->init([],$this)->isInstalled()){

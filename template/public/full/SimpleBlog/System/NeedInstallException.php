@@ -3,9 +3,9 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleAuth\System;
+namespace SimpleBlog\System;
 
-use SimpleAuth\System\ProjectException;
+use SimpleBlog\System\ProjectException;
 
 
 class NeedInstallException extends ProjectException

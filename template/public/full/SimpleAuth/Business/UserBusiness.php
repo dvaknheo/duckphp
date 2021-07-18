@@ -28,7 +28,7 @@ class UserBusiness extends BaseBusiness
         
         $user = UserModel::G()->getUserById($uid);
         $user = UserModel::G()->unloadPassword($user);
-        Base::FireEvent([self::class, __METHOD__],$user);
+        BaseBusiness::FireEvent([self::class, __METHOD__],$user);
         return $user;
     }
     public function login($form)
@@ -43,7 +43,7 @@ class UserBusiness extends BaseBusiness
         UserBusinessException::ThrowOn(!$flag, "密码错误");
         
         $user = UserModel::G()->unloadPassword($user);
-        Base::FireEvent([self::class, __METHOD__],$user);
+        BaseBusiness::FireEvent([self::class, __METHOD__],$user);
         return $user;
     }
     public function changePassword($uid, $password, $new_password)

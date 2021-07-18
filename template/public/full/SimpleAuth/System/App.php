@@ -6,7 +6,6 @@
 namespace SimpleAuth\System;
 
 use DuckPhp\DuckPhp;
-use DuckPhp\Component\DbManager;
 
 class App extends DuckPhp
 {
@@ -29,7 +28,7 @@ class App extends DuckPhp
         if (!$this->options['simple_auth_check_installed']){
             return;
         }
-        if (!(DbManager::G()->options['database'] || DbManager::G()->options['database_list'])){ //这里应该改成组件里的
+        if (!(static::Setting('database') ||  static::Setting('database_list'))){
             throw new NeedInstallException('Need Database',NeedInstallException::NEED_DATABASE);
         }
         if (!Installer::G()->init([],$this)->isInstalled()){
