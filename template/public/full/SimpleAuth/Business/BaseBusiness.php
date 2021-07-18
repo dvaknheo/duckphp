@@ -8,7 +8,7 @@ namespace SimpleAuth\Business;
 
 use SimpleAuth\System\ProjectBusiness;
 
-class Base extends ProjectBusiness
+class BaseBusinesss extends ProjectBusiness
 {
 
 }

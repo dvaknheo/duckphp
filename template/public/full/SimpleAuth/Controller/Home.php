@@ -9,7 +9,7 @@ use SimpleAuth\Business\UserBusiness;
 use SimpleAuth\Business\UserBusinessException;
 use SimpleAuth\Helper\ControllerHelper as C;
 
-class Home
+class Home extends Base
 {
     public function __construct()
     {
@@ -17,8 +17,6 @@ class Home
     }
     protected function initController()
     {
-
-       
         $method = C::getRouteCallingMethod();
         //C::SessionManager()->checkCsrf();
         //C::assignExceptionHandler(C::SessionManager()::ExceptionClass(), [static::class, 'OnSessionException']);

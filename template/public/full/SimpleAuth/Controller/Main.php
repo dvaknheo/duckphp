@@ -21,7 +21,6 @@ class Main
         $method = C::getRouteCallingMethod();
         
         C::SessionManager()->checkCsrf();
-
         C::assignExceptionHandler(C::SessionManager()::ExceptionClass(), [static::class, 'OnSessionException']);
     }
     public static function OnSessionException($ex = null)

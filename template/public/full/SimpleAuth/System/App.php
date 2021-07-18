@@ -6,14 +6,15 @@
 namespace SimpleAuth\System;
 
 use DuckPhp\DuckPhp;
+use DuckPhp\Component\DbManager;
 
 class App extends DuckPhp
 {
     //@override
     public $options = [
-        'simple_auth_check_installed' => true,
-        'simple_auth_table_prefix' => '',
-        'simple_auth_session_prefix' => '',
+        'simple_auth_check_installed' => true,  // 检查安装
+        'simple_auth_table_prefix' => '',   // 表前缀
+        'simple_auth_session_prefix' => '',  // Session 前缀
     ];
     public function __construct()
     {
@@ -25,8 +26,14 @@ class App extends DuckPhp
     }
     protected function checkInstall()
     {
-        if($this->options['simple_auth_check_installed'] && !Installer::G()->init([],$this)->isInstalled()){
-            throw new \ErrorException("`SimpleAuth` need install. run install command first. e.g. :`php auth.php SimpleAuth:install`\n");
+        if (!$this->options['simple_auth_check_installed']){
+            return;
+        }
+        if (!(DbManager::G()->options['database'] || DbManager::G()->options['database_list'])){ //这里应该改成组件里的
+            throw new NeedInstallException('Need Database',NeedInstallException::NEED_DATABASE);
+        }
+        if (!Installer::G()->init([],$this)->isInstalled()){
+            throw new NeedInstallException("",NeedInstallException::NEED_INSTALL);
         }
     }
     //////////////////////

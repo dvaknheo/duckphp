@@ -5,8 +5,8 @@
  */
 namespace SimpleAuth\Controller;
 
-use SimpleAuth\Helper\ControllerHelper as C;
+use SimpleAuth\System\ProjectController
 
-class Base
+class Base extends ProjectController
 {
 }

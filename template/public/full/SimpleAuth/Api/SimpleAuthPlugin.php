@@ -42,7 +42,7 @@ class SimpleAuthPlugin extends App
     }
     protected function onPluginModeBeforeRun()
     {
-        $this->checkInstall($this->plugin_options['simple_auth_installed'] ?? false);
+        $this->checkInstall();
     }
     public function getPath()
     {

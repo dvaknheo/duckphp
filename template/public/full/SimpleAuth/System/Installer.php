@@ -24,7 +24,6 @@ class Installer extends ComponentBase
     {
         parent::__construct();
         $this->exception_class = NeedInstallException::class;
-        //static::ExceptionClass(NeedInstallException::class);
     }
     //@override
     public function init(array $options, ?object $context = NULL)
