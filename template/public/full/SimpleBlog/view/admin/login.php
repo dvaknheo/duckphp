@@ -7,6 +7,6 @@
 </form>
 忘记密码？ 运行 重置命令吧。 
 index.php - reset_password
-(初始密码探索中)
+(初始密码 123456)
 </body>
 </html>
