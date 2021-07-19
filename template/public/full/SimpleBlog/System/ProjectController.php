@@ -6,11 +6,11 @@
 
 namespace SimpleBlog\System;
 
-use DuckPhp\Ext\SingletonControllerTrait;
+use DuckPhp\Foundation\SimpleControllerTrait;
 use DuckPhp\Helper\ControllerHelperTrait;
 
 class ProjectController
 {
-    use SingletonControllerTrait;
+    use SimpleControllerTrait;
     use ControllerHelperTrait;
 }

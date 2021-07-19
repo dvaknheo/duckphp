@@ -8,8 +8,8 @@ namespace SimpleAuth\System;
 use DuckPhp\Core\App;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Ext\SqlDumper;
-use DuckPhp\Ext\ThrowOnableTrait;
+use DuckPhp\Foundation\SqlDumper;
+use DuckPhp\Foundation\ThrowOnableTrait;
 
 class Installer extends ComponentBase
 {

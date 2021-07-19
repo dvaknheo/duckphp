@@ -5,7 +5,7 @@
  */
 namespace SimpleBlog\System;
 
-use DuckPhp\Ext\SessionManagerBase;
+use DuckPhp\Foundation\SessionManagerBase;
 
 class SessionManager extends SessionManagerBase
 {

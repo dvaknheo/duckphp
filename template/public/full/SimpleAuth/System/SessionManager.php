@@ -6,8 +6,8 @@
 namespace SimpleAuth\System;
 
 
-use DuckPhp\Ext\SessionManagerBase;
-use DuckPhp\Ext\ThrowOnableTrait;
+use DuckPhp\Foundation\SessionManagerBase;
+use DuckPhp\Foundation\ThrowOnableTrait;
 
 class SessionManager extends SessionManagerBase
 {

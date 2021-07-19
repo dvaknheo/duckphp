@@ -5,7 +5,7 @@
  */
 namespace SimpleAuth\System;
 
-use DuckPhp\Ext\ThrowOnableTrait;
+use DuckPhp\Foundation\ThrowOnableTrait;
 use DuckPhp\Helper\BusinessHelperTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
 
