@@ -15,7 +15,7 @@ class App extends DuckPhp
 {
     //@override
     public $options = [
-        'use_setting_file' => true, // 启用设置文件
+        'setting_file_enable' => true, // 启用设置文件
         'setting_file_ignore_exists' => false, // 忽略设置文件
         
         'error_404' =>'_sys/error-404',

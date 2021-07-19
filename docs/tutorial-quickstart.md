@@ -186,7 +186,7 @@ test
 ### 数据库操作
 前提工作，我们加上 `app/System/App.php` 中跳过设置文件的选项打开
 ```php
-'use_setting_file' => true,
+'setting_file_enable' => true,
 ```
 
 

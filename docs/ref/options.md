@@ -338,9 +338,12 @@
 + **'setting_file' => 'setting',** 
 
     设置文件名。   // [DuckPhp\Core\Configer](Core-Configer.md)
-+ **'setting_file_ignore_exists' => false,** 
++ **'setting_file_enable' => true,** 
 
-    如果设置文件不存在也不报错   // [DuckPhp\Core\Configer](Core-Configer.md)
+       // [DuckPhp\Core\Configer](Core-Configer.md)
++ **'setting_file_ignore_exists' => true,** 
+
+       // [DuckPhp\Core\Configer](Core-Configer.md)
 + **'skip_404_handler' => false,** 
 
     不处理 404 ，用于配合其他框架使用。   // [DuckPhp\Core\App](Core-App.md)
@@ -377,9 +380,6 @@
 + **'use_output_buffer' => false,** 
 
     使用 OB 函数缓冲数据   // [DuckPhp\Core\RuntimeState](Core-RuntimeState.md)
-+ **'use_setting_file' => false,** 
-
-    使用设置文件: $path/$path_config/$setting_file.php   // [DuckPhp\Core\Configer](Core-Configer.md)
 + **'use_short_functions' => true,** 
 
     使用短函数， \\_\\_url, \\_\\_h 等。   // [DuckPhp\Core\App](Core-App.md)
@@ -455,12 +455,12 @@
         默认自带的设置
     - 'setting_file' => 'setting',
         设置文件名。
-    - 'setting_file_ignore_exists' => false,
-        如果设置文件不存在也不报错
+    - 'setting_file_enable' => true,
+        
+    - 'setting_file_ignore_exists' => true,
+        
     - 'use_env_file' => false,
         使用 .env 文件
-    - 'use_setting_file' => false,
-        使用设置文件: $path/$path_config/$setting_file.php
 + DuckPhp\Core\ExceptionManager
     - 'default_exception_handler' => NULL,
         默认的异常处理回调

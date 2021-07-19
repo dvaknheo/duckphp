@@ -13,7 +13,7 @@ if (!class_exists(\System\System\App::class)) {
 $options = [
     'path' => $project_root,
     'is_debug'=>true,
-    'use_setting_file'=>true,
+    'setting_file_enable'=>true,
     'setting_file_ignore_exists'=>true,
     'ext'=>[
     ],

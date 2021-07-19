@@ -23,7 +23,7 @@
         'setting_file' => 'setting',
 设置文件名。
 
-        'use_setting_file' => false,
+        'setting_file_enable' => true,
 使用设置文件: $path/$path_config/$setting_file.php
 
         'use_env_file' => false,
@@ -33,7 +33,7 @@
         'config_ext_file_map' => [],
 额外的配置文件数组，用于 AppPluginTrait
 
-        'setting_file_ignore_exists' => false,
+        'setting_file_ignore_exists' => true,
 如果设置文件不存在也不报错
 
 ## 方法
@@ -72,8 +72,10 @@ path_config 如果是 / 开始的，会忽略 path 选项
 
 当我们要额外设置，配置的时候，把 setting , all_config 的值 带入
 
-当我们需要额外的配置文件的时候  use_setting_file 设置为 true
+当我们需要额外的配置文件的时候  setting_file_enable 设置为 true
 
 基于  AppPluginTrait  需要， Configer 类比普通类多了 config_ext_files 选项
 
 `setting_file_ignore_exists` 为了方便安装程序
+
+

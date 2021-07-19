@@ -13,7 +13,7 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
         $options=[
             'path'=>$path_config,
             'path_config'=>$path_config,
-            'use_setting_file'=>true,
+            'setting_file_enable'=>true,
             'use_env_file'=>true,
         ];
         Configer::G()->init($options);
@@ -35,7 +35,7 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
         
         Configer::G()->isInited();
         
-        $options['use_setting_file'] =true;
+        $options['setting_file_enable'] =true;
         $options['setting_file_ignore_exists'] =true;
         Configer::G(new Configer)->init($options);
         Configer::G()->_Setting($key);

@@ -17,8 +17,8 @@ class Configer extends ComponentBase
         'all_config' => [],
         
         'setting_file' => 'setting',
-        'setting_file_ignore_exists' => false,
-        'use_setting_file' => false,
+        'setting_file_ignore_exists' => true,
+        'setting_file_enable' => true,
         'use_env_file' => false,
         'config_ext_file_map' => [],
     ];
@@ -39,7 +39,7 @@ class Configer extends ComponentBase
             $env_setting = $env_setting?:[];
             $this->setting = array_merge($this->setting, $env_setting);
         }
-        if ($this->options['use_setting_file']) {
+        if ($this->options['setting_file_enable']) {
             $setting_file = $this->options['setting_file'];
             $full_setting_file = $this->path.$setting_file.'.php';
             if (!is_file($full_setting_file)) {

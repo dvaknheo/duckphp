@@ -13,7 +13,7 @@ class App extends DuckPhp
     //@override
     public $options = [
         'is_debug' => true,        
-        // 'use_setting_file' => true,
+        // 'setting_file_enable' => true,
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
         
@@ -215,8 +215,11 @@ class App extends DuckPhp
         // 设置文件名。 (DuckPhp\Core\Configer)
         // $options['setting_file'] = 'setting';
 
-        // 如果设置文件不存在也不报错 (DuckPhp\Core\Configer)
-        // $options['setting_file_ignore_exists'] = false;
+        //  (DuckPhp\Core\Configer)
+        // $options['setting_file_enable'] = true;
+
+        //  (DuckPhp\Core\Configer)
+        // $options['setting_file_ignore_exists'] = true;
 
         // 不处理 404 ，用于配合其他框架使用。 (DuckPhp\Core\App)
         // $options['skip_404_handler'] = false;
@@ -244,9 +247,6 @@ class App extends DuckPhp
 
         // 使用 OB 函数缓冲数据 (DuckPhp\Core\RuntimeState)
         // $options['use_output_buffer'] = false;
-
-        // 使用设置文件: $path/$path_config/$setting_file.php (DuckPhp\Core\Configer)
-        // $options['use_setting_file'] = false;
 
         // 使用短函数， \\_\\_url, \\_\\_h 等。 (DuckPhp\Core\App)
         // $options['use_short_functions'] = true;
