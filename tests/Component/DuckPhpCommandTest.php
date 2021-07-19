@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Component;
 use DuckPhp\Component\Console;
 use DuckPhp\Component\DuckPhpCommand;
 use DuckPhp\HttpServer\HttpServer;
-use DuckPhp\Component\Installer;
+use DuckPhp\Component\DuckPhpInstaller;
 use DuckPhp\DuckPhp as App;
 use DuckPhp\Core\ComponentBase;
 
@@ -63,7 +63,7 @@ class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
         }catch(\Exception $ex){
             var_dump("Hit!");
         }
-        Installer::G(new Console_Installer());
+        DuckPhpInstaller::G(new Console_Installer());
         HttpServer::G(new Console_HttpServer());
         DuckPhpCommand::G()->command_new();
         DuckPhpCommand::G()->command_run();
@@ -114,7 +114,7 @@ class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
     }
 }
 
-class Console_Installer extends Installer
+class Console_Installer extends DuckPhpInstaller
 {
     public function run()
     {

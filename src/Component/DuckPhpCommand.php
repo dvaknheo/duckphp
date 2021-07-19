@@ -6,7 +6,7 @@
 namespace DuckPhp\Component;
 
 use DuckPhp\Component\Console;
-use DuckPhp\Component\Installer;
+use DuckPhp\Component\DuckPhpInstaller;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\HttpServer\HttpServer;
 
@@ -23,7 +23,7 @@ class DuckPhpCommand extends ComponentBase
      */
     public function command_new()
     {
-        Installer::G()->init(Console::G()->getCliParameters())->run();
+        DuckPhpInstaller::G()->init(Console::G()->getCliParameters())->run();
     }
     /**
      * run inner server.

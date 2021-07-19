@@ -1,4 +1,4 @@
-# DuckPhp\Component\Installer
+# DuckPhp\Component\DuckPhpInstaller
 [toc]
 ## 简介
 
@@ -49,7 +49,7 @@
 
 ## 说明
 
-Installer 是辅助安装类。
+DuckPhpInstaller 是辅助安装类。
 
 `选项`同时作为`命令行参数`使用
 

@@ -7,7 +7,7 @@ namespace DuckPhp\Component;
 
 use DuckPhp\Core\ComponentBase;
 
-class Installer extends ComponentBase
+class DuckPhpInstaller extends ComponentBase
 {
     public $options = [
         'path' => '',
