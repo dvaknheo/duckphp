@@ -3,12 +3,12 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace Duckphp\Ext;
+namespace Duckphp\Foundation;
 
 use DuckPhp\Core\App;
 use DuckPhp\SingletonEx\SingletonExTrait;
 
-trait SingletonControllerTrait
+trait SimpleControllerTrait
 {
     //////// [[[[ ////////
     use SingletonExTrait { G  as _G ; }

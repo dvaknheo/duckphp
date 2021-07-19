@@ -1,4 +1,4 @@
-# DuckPhp\Ext\SessionMangerBase
+# DuckPhp\Foundation\SessionMangerBase
 [toc]
 
 ## 简介

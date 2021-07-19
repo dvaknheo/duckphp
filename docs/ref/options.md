@@ -340,10 +340,10 @@
     设置文件名。   // [DuckPhp\Core\Configer](Core-Configer.md)
 + **'setting_file_enable' => true,** 
 
-       // [DuckPhp\Core\Configer](Core-Configer.md)
+    使用设置文件: $path/$path_config/$setting_file.php   // [DuckPhp\Core\Configer](Core-Configer.md)
 + **'setting_file_ignore_exists' => true,** 
 
-       // [DuckPhp\Core\Configer](Core-Configer.md)
+    如果设置文件不存在也不报错   // [DuckPhp\Core\Configer](Core-Configer.md)
 + **'skip_404_handler' => false,** 
 
     不处理 404 ，用于配合其他框架使用。   // [DuckPhp\Core\App](Core-App.md)
@@ -456,9 +456,9 @@
     - 'setting_file' => 'setting',
         设置文件名。
     - 'setting_file_enable' => true,
-        
+        使用设置文件: $path/$path_config/$setting_file.php
     - 'setting_file_ignore_exists' => true,
-        
+        如果设置文件不存在也不报错
     - 'use_env_file' => false,
         使用 .env 文件
 + DuckPhp\Core\ExceptionManager

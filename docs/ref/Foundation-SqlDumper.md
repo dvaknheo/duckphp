@@ -1,4 +1,4 @@
-# DuckPhp\Ext\SqlDumper
+# DuckPhp\Foundation\SqlDumper
 [toc]
 
 ## 简介

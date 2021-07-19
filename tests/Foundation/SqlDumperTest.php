@@ -1,8 +1,8 @@
 <?php
-namespace tests\DuckPhp\Ext;
+namespace tests\DuckPhp\Foundation;
 
 use DuckPhp\DuckPhp;
-use DuckPhp\Ext\SqlDumper;
+use DuckPhp\Foundation\SqlDumper;
 
 class SqlDumperTest extends \PHPUnit\Framework\TestCase
 {

@@ -1,18 +1,18 @@
 <?php
-namespace tests\DuckPhp\Ext;
+namespace tests\DuckPhp\Foundation;
 
-use DuckPhp\Ext\SingletonControllerTrait;
+use DuckPhp\Foundation\SimpleControllerTrait;
 use DuckPhp\Core\App;
 
-class SingletonControllerTraitTest extends \PHPUnit\Framework\TestCase
+class SimpleControllerTraitTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \LibCoverage\LibCoverage::Begin(SingletonControllerTrait::class);
+        \LibCoverage\LibCoverage::Begin(SimpleControllerTrait::class);
         
         $options=[
             'is_debug' => true,
-            'namespace_controller'=>'\tests\DuckPhp\Ext',
+            'namespace_controller'=>'\tests\DuckPhp\Foundation',
         ];
         App::G()->init($options);
             App::G()->system_wrapper_replace(['exit'=>function($code=0){
@@ -32,7 +32,7 @@ class SingletonControllerTraitTest extends \PHPUnit\Framework\TestCase
 }
 class ProjectController
 {
-    use SingletonControllerTrait;
+    use SimpleControllerTrait;
     
     public function helper()
     {

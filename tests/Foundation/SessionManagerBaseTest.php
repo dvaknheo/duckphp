@@ -1,7 +1,7 @@
 <?php
-namespace tests\DuckPhp\Ext;
+namespace tests\DuckPhp\Foundation;
 
-use DuckPhp\Ext\SessionManagerBase;
+use DuckPhp\Foundation\SessionManagerBase;
 
 class SessionManagerBaseTest extends \PHPUnit\Framework\TestCase
 {

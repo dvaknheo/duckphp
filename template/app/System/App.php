@@ -215,10 +215,10 @@ class App extends DuckPhp
         // 设置文件名。 (DuckPhp\Core\Configer)
         // $options['setting_file'] = 'setting';
 
-        //  (DuckPhp\Core\Configer)
+        // 使用设置文件: $path/$path_config/$setting_file.php (DuckPhp\Core\Configer)
         // $options['setting_file_enable'] = true;
 
-        //  (DuckPhp\Core\Configer)
+        // 如果设置文件不存在也不报错 (DuckPhp\Core\Configer)
         // $options['setting_file_ignore_exists'] = true;
 
         // 不处理 404 ，用于配合其他框架使用。 (DuckPhp\Core\App)

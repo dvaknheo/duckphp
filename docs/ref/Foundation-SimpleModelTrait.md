@@ -1,4 +1,4 @@
-# DuckPhp\Ext\SimpleModelTrait
+# DuckPhp\Foundation\SimpleModelTrait
 
 ## 简介
 

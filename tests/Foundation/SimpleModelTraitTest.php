@@ -1,7 +1,7 @@
 <?php
-namespace tests\DuckPhp\Ext;
+namespace tests\DuckPhp\Foundation;
 
-use DuckPhp\Ext\SimpleModelTrait;
+use DuckPhp\Foundation\SimpleModelTrait;
 use DuckPhp\DuckPhp;
 
 class SimpleModelTraitTest extends \PHPUnit\Framework\TestCase

@@ -1,4 +1,4 @@
-# DuckPhp\Ext\LazyControllerTrait
+# DuckPhp\Foundation\LazyControllerTrait
 
 ## 简介
 这是个用于偷懒的 Trait.
