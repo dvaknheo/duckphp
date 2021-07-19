@@ -556,7 +556,8 @@ server {
 
  (粗体部分是启动的时候引用的文件)
 
-1. `Core` 目录是核心目录，核心框架。基本功能都在 Core 里实现
+1. **[DuckPhp](docs/ref/DuckPhp.md)** 入口类，加载了默认扩展的 DuckPhp 入口 ，扩展自 [DuckPhp\\Core\\App](docs/ref/Core-App.md)
+2. `Core` 目录是核心目录，核心框架。基本功能都在 Core 里实现
     1. **[ComponentBase](docs/ref/Core-ComponentBase.md)** 组件基类
          1. **[ComponentInterface](docs/ref/Core-ComponentInterface.md)** 组件接口
     2. **[App](docs/ref/Core-App.md)** 核心应用类。引用以下类
@@ -572,12 +573,7 @@ server {
         3. [SystemWrapperTrait](docs/ref/Core-SystemWrapperTrait.md) 替换系统同名函数的 trait
         4. [Logger](docs/ref/Core-Logger.md) 日志组件
     3. [AppPluginTrait](docs/ref/Core-AppPluginTrait.md)   这个Trait用于把独立工程 App 转成插件 
-2. `Db` 目录，数据库目录
-   1. [DbAdvanceTrait](docs/ref/Db-DbAdvanceTrait.md)  这个 trait 增加了 Db类的高级功能
-   2. [DbInterface](docs/ref/Db-DbInterface.md) Db 类满足 DbInterface 接口
-   3. [Db](docs/ref/Db-Db.md) Db类
-3. **[DuckPhp](docs/ref/DuckPhp.md)** 入口类，加载了默认扩展的 DuckPhp 入口 ，扩展自 [DuckPhp\\Core\\App](docs/ref/Core-App.md)
-4. `Component` 目录，自带组件扩展。
+3. `Component` 目录，自带组件扩展。
     1. [AppPluginTrait](docs/ref/Component-AppPluginTrait.md)   这个Trait用于把独立工程 App 转成插件 
     2. [Cache](docs/ref/Component-Cache.md) 缓存组件
     3. **[Console](docs/ref/Component-Cache.md)** 命令行模式扩展组件
@@ -589,29 +585,40 @@ server {
         1. [PagerInteface](docs/ref/Component-PagerInteface.md) 分页接口
     9. **[RouteHookPathInfoCompat](docs/ref/Component-RouteHookPathInfoCompat.md)** 无程序路由设计模式组件
     10. **[RouteHookRouteMap](docs/ref/Component-RouteHookRouteMap.md)** 路由映射组件
-5. `Ext` 扩展目录，非默认加载的扩展。按字母排序。
+4. `Db` 目录，数据库目录
+    1. [DbAdvanceTrait](docs/ref/Db-DbAdvanceTrait.md)  这个 trait 增加了 Db类的高级功能
+    2. [DbInterface](docs/ref/Db-DbInterface.md) Db 类满足 DbInterface 接口
+    3. [Db](docs/ref/Db-Db.md) Db类
+5. `Foundation` 目录。存放高级功能的目录
+    1. [InstallerBase](docs/ref/Foundation-InstallerBase.md) 通用安装器
+    2. [SessionManagerBase](docs/ref/Foundation-SessionManagerBase.md) 简单的模型Trait
+    3. [SimpleControllerTrait](docs/ref/Foundation-SimpleControllerTrait.md) 简单的模型Trait
+    4. [SimpleModelTrait](docs/ref/Foundation-SimpleModel.md) 简单的模型Trait
+    5. [SqlDumper](docs/ref/Foundation-SqlDumper.md) Sql 迁移类
+    6. [ThrowOnableTrait](docs/ref/Foundation-ThrowOnableTrait.md) 让类有ThrowOn功能
+6. `Ext` 扩展目录，非默认加载的扩展。按字母排序。
     1. [CallableView](docs/ref/Ext-CallableView.md) 可接受函数调用的视图组件
     2. [EmptyView](docs/ref/Ext-EmptyView.md) 空视图组件
-    3. [HookChain](docs/ref/Ext-HookChain.md) 把回调扩展成链的类
-    4. [HttpServerPlugin](docs/ref/Ext-HttpServerPlugin.md) TODO http 扩展插件
-    5. [JsonRpcExt](docs/ref/Ext-JsonRpcExt.md) Json 远程调用组件，把本地调用改为远程调用
+    3. [ExceptionWrapper](docs/ref/Ext-ExceptionWrapper.md) 异常包裹
+    4. [HookChain](docs/ref/Ext-HookChain.md) 把回调扩展成链的类
+    5. [HttpServerPlugin](docs/ref/Ext-HttpServerPlugin.md) TODO http 扩展插件
+    6. [JsonRpcExt](docs/ref/Ext-JsonRpcExt.md) Json 远程调用组件，把本地调用改为远程调用
         1. [JsonRpcClientBase](docs/ref/Ext-JsonRpcClientBase.md)
-    6. [JsonView](docs/ref/Ext-JsonView.md) Json 视图组件
-    7. [Misc](docs/ref/Ext-Misc.md) 杂项功能组件
-    8. [MyFacadesAutoLoader](docs/ref/Ext-MyFacadesAutoLoader.md) 门面组件，不推荐
+    7. [JsonView](docs/ref/Ext-JsonView.md) Json 视图组件
+    8. [Misc](docs/ref/Ext-Misc.md) 杂项功能组件
+    9. [MyFacadesAutoLoader](docs/ref/Ext-MyFacadesAutoLoader.md) 门面组件，不推荐
         1. [MyFacadesBase](docs/ref/Ext-MyFacadesBase.md) 门面类的基类，不推荐
-    9. [MyMiddleware](docs/ref/Ext-MyMiddleware.md) 中间件，不推荐
-    10. [RedisCache](docs/ref/Ext-RedisSimpleCache.md) redis 缓存组件
-    11. [RedisManager](docs/ref/Ext-RedisManager.md) Redis管理器组件
-    12. [RouteHookDirectoryMode](docs/ref/Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件
-    13. [RouteHookManager](docs/ref/Ext-RouteHookManager.md) 路由钩子管理器
-    14. [RouteHookRewrite](docs/ref/Ext-RouteHookRewrite.md) 路由重写组件
-    15. [SimpleModelTrait](docs/ref/Ext-SimpleModel.md) 简单的模型Trait
-    16. [SqlDumper](docs/ref/Ext-SqlDumper.md) Sql 迁移类
+    10. [MyMiddleware](docs/ref/Ext-MyMiddleware.md) 中间件，不推荐
+    11. [RedisCache](docs/ref/Ext-RedisSimpleCache.md) redis 缓存组件
+    12. [RedisManager](docs/ref/Ext-RedisManager.md) Redis管理器组件
+    13. [RouteHookApiServer](docs/ref/Ext-RouteHookApiServer.md) 简单的 API 服务器插件
+    14. [RouteHookDirectoryMode](docs/ref/Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件
+    15. [RouteHookManager](docs/ref/Ext-RouteHookManager.md) 路由钩子管理器
+    16. [RouteHookRewrite](docs/ref/Ext-RouteHookRewrite.md) 路由重写组件
     17. [StaticReplacer](docs/ref/Ext-StaticReplacer.md) 适配协程的语法替换写法类
     18. [StrictCheck](docs/ref/Ext-StrictCheck.md) 严格检查模式组件
     19. [SuperGlobalContext](docs/ref/Ext-SuperGlobalContext.md) 超全局上下文组件
-6. `Helper` 目录，各种助手类。
+7. `Helper` 目录，各种助手类。
     1. [AdvanceHelper](docs/ref/Helper-AdvanceHelper.md) 应用助手类
     2. [AdvanceHelperTrait](docs/ref/Helper-AdvanceHelperTrait.md) 应用助手Trait
     3. [BusinessHelper](docs/ref/Helper-BusinessHelper.md) 业务助手类
@@ -622,14 +629,14 @@ server {
     8. [ModelHelperTrait](docs/ref/Helper-ModelHelperTrait.md) 模型助手Trait
     9. [ViewHelper](docs/ref/Helper-ViewHelper.md) 视图助手类
     10. [ViewHelperTrait](docs/ref/Helper-ViewHelperTrait.md) 视图助手Trait
-7. `HttpServer` 目录
+8. `HttpServer` 目录
     1. [AppInterface](docs/ref/HttpServer-AppInterface.md)  Http 服务的应用接口
     2. [HttpServer](docs/ref/HttpServer-HttpServer.md)  Http 服务器
     3. [HttpServerInterface](docs/ref/HttpServer-HttpServerInterface.md)  Http 服务接口
-8. `SingletonEx`目录
+9. `SingletonEx`目录
     1. **[SingletonExTrait](docs/ref/SingletonEx-SingletonExTrait.md)**  可变单例 trait
     1. [SimpleReplacer](docs/ref/SingletonEx-SimpleReplacer.md)  可选可变单例容器
-9. `ThrowOn`目录
+10. `ThrowOn`目录
     1. [ThrowOnTrait](docs/ref/ThrowOn-ThrowOnTrait.md) 可抛 trait，应用工程引用它方便异常处理
 
 ### 应用架构图（缺事件和异常处理部分）
