@@ -13,7 +13,6 @@ class Main
 {
     public function __construct()
     {
-        C::CheckInstall();
     }
     public function index()
     {
@@ -49,7 +48,7 @@ class Main
         C::setViewHeadFoot('user/inc_head.php', 'user/inc_foot.php');
         C::Show(get_defined_vars(), 'user/reg');
     }
-    public function do_changepass()
+    public function _old_do_changepass()
     {
         $uid = C::SessionManager()->getCurrentUid();
         //TODO 

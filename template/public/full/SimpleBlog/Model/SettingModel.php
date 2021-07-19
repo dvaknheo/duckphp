@@ -5,19 +5,20 @@
  */
 namespace SimpleBlog\Model;
 
-use SimpleBlog\Helper\ModelHelper as M;
-
 class SettingModel extends BaseModel
 {
+    protected $table_name = 'Settings';
     public function get($key)
     {
-        $sql = "SELECT v FROM Settings WHERE k=?";
-        $ret = M::DB()->fetchColumn($sql, $key);
+        $sql = "SELECT v FROM 'TABLE' WHERE k=?";
+        $sql = $this->prepare($sql);
+        $ret = BaseModel::Db()->fetchColumn($sql, $key);
         return $ret;
     }
     public function set($key, $value)
     {
-        $sql = "INSERT INTO Settings (k,v) VALUES(?,?) ON DUPLICATE KEY UPDATE  v=?";
-        $ret = M::DB()->execute($sql, $key, $value, $value);
+        $sql = "INSERT INTO 'TABLE' (k,v) VALUES(?,?) ON DUPLICATE KEY UPDATE  v=?";
+        $sql = $this->prepare($sql);
+        $ret = BaseModel::Db()->execute($sql, $key, $value, $value);
     }
 }

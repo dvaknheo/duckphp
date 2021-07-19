@@ -38,8 +38,4 @@ class ArticleBusiness extends BaseBusiness
         $art['comments_total'] = $total;
         return $art;
     }
-    public function addArctile()
-    {
-        //TODO
-    }
 }

@@ -20,7 +20,7 @@ class AdminBusiness extends BaseBusiness
             $password = mt_rand(100000, 999999);
         }
         $init_password = $password;
-        $password = password_hash(''.$password,PASSWORD_DEFAULT);
+        $password = password_hash(''.$password,PASSWORD_BCRYPT);
         
         SettingModel::G()->set('admin_password', $password);
         return $init_password;
@@ -28,7 +28,7 @@ class AdminBusiness extends BaseBusiness
     
     public function changePassword($password)
     {
-        $password = password_hash($password, PASSWORD_DEFAULT );
+        $password = password_hash($password, PASSWORD_BCRYPT );
         SettingModel::G()->set('admin_password', $password);
         return $flag;
     }

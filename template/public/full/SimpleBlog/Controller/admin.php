@@ -13,8 +13,6 @@ class admin
 {
     public function __construct()
     {
-        C::CheckInstall();
-        
         $method = C::getRouteCallingMethod();
         if (in_array($method, ['login'])) {
             return;
