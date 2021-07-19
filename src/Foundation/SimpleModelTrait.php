@@ -13,32 +13,29 @@ trait SimpleModelTrait
     protected $table_prefix = null;
     protected $table_pk = 'id';
 
-    protected function getTableByClass($class)
+    protected function getTableNameByClass($class)
     {
-        if (!isset($this->table_prefix)) {
-            $this->table_prefix = $this->getTablePrefix(static::class);
-        }
-        
         $t = explode('\\', $class);
         $class = array_pop($t);
         
         $table_name = strtolower(substr($class, 0, -strlen('Model')));
-        $table_name = $this->table_prefix.$table_name;
-        
         return $table_name;
     }
     
-    protected function getTablePrefix()
+    protected function getTablePrefixByClass($class)
     {
         return '';
     }
     
     protected function table()
     {
-        if (!isset($this->table_name)) {
-            $this->table_name = $this->getTableByClass(static::class);
+        if (!isset($this->table_prefix)) {
+            $this->table_prefix = $this->getTablePrefixByClass(static::class);
         }
-        return $this->table_name;
+        if (!isset($this->table_name)) {
+            $this->table_name = $this->getTableNameByClass(static::class);
+        }
+        return $this->table_prefix .  $this->table_name;
     }
     
     public function prepare($sql)
@@ -86,4 +83,7 @@ trait SimpleModelTrait
     {
         throw new \ErrorException('Impelement It.');
     }
+    /*
+    fetch, fetchAll,fetchClumn,fetchClass
+    */
 }

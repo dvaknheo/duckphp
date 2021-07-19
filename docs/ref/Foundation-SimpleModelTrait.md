@@ -53,3 +53,7 @@ SimpleModelTrait  find 的返回结果是 数组，而不是当前类。
 留有 delete 接口，但只是报异常，因为删除操作要谨慎，各地都不同。
     
 
+    protected function getTableNameByClass($class)
+
+    protected function getTablePrefixByClass($class)
+
