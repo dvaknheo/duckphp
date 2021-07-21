@@ -14,12 +14,6 @@ trait AppPluginTrait
 {
     // public $plugin_options = [] => in parent
     
-    public $onPluginModePrepare;
-    public $onPluginModeInit;
-    public $onPluginModeBeforeRun;
-    public $onPluginModeAfterRun;
-    public $onPluginModeException;
-    
     protected $plugin_context_class = '';
     protected $plugin_route_old = null;
     protected $plugin_view_old = null;
@@ -30,36 +24,26 @@ trait AppPluginTrait
     //for override
     protected function onPluginModePrepare()
     {
-        if ($this->onPluginModePrepare) {
-            return ($this->onPluginModePrepare)();
-        }
+        ($this->plugin_context_class)::FireEvent([static::class, __FUNCTION__]);
     }
     //for override
     protected function onPluginModeInit()
     {
-        if ($this->onPluginModeInit) {
-            return ($this->onPluginModeInit)();
-        }
+        ($this->plugin_context_class)::FireEvent([static::class, __FUNCTION__]);
     }
     //for override
     protected function onPluginModeBeforeRun()
     {
-        if ($this->onPluginModeBeforeRun) {
-            return ($this->onPluginModeBeforeRun)();
-        }
+        ($this->plugin_context_class)::FireEvent([static::class, __FUNCTION__]);
     }
     //for override
     public function onPluginModeAfterRun()
     {
-        if ($this->onPluginModeAfterRun) {
-            return ($this->onPluginModeAfterRun)();
-        }
+        ($this->plugin_context_class)::FireEvent([static::class, __FUNCTION__]);
     }
     public function onPluginModeException()
     {
-        if ($this->onPluginModeException) {
-            return ($this->onPluginModeException)();
-        }
+        ($this->plugin_context_class)::FireEvent([static::class, __FUNCTION__]);
     }
     //callback
     public static function PluginModeRouteHook($path_info)

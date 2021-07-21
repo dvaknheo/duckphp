@@ -504,6 +504,7 @@ App::PageHtml(123);
             'is_debug' => true,
             'namespace'=> __NAMESPACE__,
             'override_class'=>'\\'.AppTestApp::class,
+            'injected_helper_enable' => true,
         ];
         App::G()->init($options);
 
@@ -516,6 +517,9 @@ App::PageHtml(123);
         //cloneHelpers
         App::G()->cloneHelpers($new_namespace);
         App::G()->cloneHelpers($new_namespace.'\\Helper\\', ['M'=>'no_exits_class','C'=>'~\\ControllerHelper']);
+        
+        App::G()->options['injected_helper_enable']=false;
+        App::G()->extendComponents(['Foo'=>[AppTest::class,'Foo']],['V',"ZZZ"]);
     }
     public static function Foo()
     {

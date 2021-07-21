@@ -1,7 +1,6 @@
 digraph DuckPhp{
 /* This is a graphviz file */
 graph [rankdir = "LR";fontsize="12";];
-node [fontsize="12";];
 
 subgraph cluster_HttpServer {
     label = "[DuckPhp\\HttpServer]";
@@ -129,7 +128,7 @@ subgraph cluster_Component {
     DbManager[shape="component"];
     DuckPhpCommand[shape="component"];
     EventManager[shape="component"];
-    Installer [shape="component"];
+    DuckPhpInstaller [shape="component"];
     Pager[shape="component"];
     PagerInterface [shape=note];
     RouteHookPathInfoCompat[shape="component"];
@@ -138,7 +137,7 @@ subgraph cluster_Component {
     X_HttpServer[label="DuckPhp\\HttpServer\\HttpServer",shape="rarrow"];
     X_Db_Db[label="DuckPhp\\Db\\Db",shape="rarrow"];
     
-    AppPluginTrait -> EventManager [style="dashed"]; 
+    AppPluginTrait -> EventManager; 
     AppPluginTrait -> ExceptionManager [style="dashed"]; 
     AppPluginTrait -> Configer [style="dashed"]; 
     AppPluginTrait -> View [style="dashed"]; 
@@ -148,13 +147,13 @@ subgraph cluster_Component {
     DuckPhpCommand -> ComponentBase [style="dotted"];
     DbManager -> ComponentBase [style="dotted"];
     EventManager -> ComponentBase [style="dotted"];
-    Installer -> ComponentBase [style="dotted"];
+    DuckPhpInstaller -> ComponentBase [style="dotted"];
     Pager -> ComponentBase [style="dotted"];
     RouteHookPathInfoCompat -> ComponentBase [style="dotted"];
     RouteHookRouteMap -> ComponentBase [style="dotted"];
     
     DuckPhpCommand -> Console; 
-    DuckPhpCommand -> Installer; 
+    DuckPhpCommand -> DuckPhpInstaller; 
     DuckPhpCommand -> X_HttpServer [style="dashed"];
     DbManager -> X_Db_Db [style="dashed"]; 
 
@@ -181,15 +180,29 @@ subgraph cluster_DuckPhp {
 
 subgraph cluster_Foundation {
     label = "[DuckPhp\\Foundation]";
-
-    InstallerBase -> ComponentBase [style="dotted"];
-    SessionBase -> ComponentBase [style="dotted"];
-    SimpleControllerTrait -> ComponentBase [style="dotted"];
-    SimpleModelTrait -> ComponentBase [style="dotted"];
-    SqlDumper -> ComponentBase [style="dotted"];
-    ThrowOnableTrait -> ComponentBase [style="dotted"];
     
+    Installer [shape="component"];
+    SessionBase [shape="component"];
+    SimpleControllerTrait  [shape="diamond"];
+    SimpleModelTrait  [shape="diamond"];
+    SqlDumper [shape="component"];
+    ThrowOnableTrait  [shape="diamond"];
+
     X_Core_App[label="DuckPhp\\Core\\App",shape="rarrow"];
+    X_Core_Configer[label="DuckPhp\\Core\\Configer",shape="rarrow"];
+    
+    Installer -> ComponentBase [style="dotted"];
+    SessionBase -> ComponentBase [style="dotted"];
+    SqlDumper -> ComponentBase [style="dotted"];
+    
+    
+    Installer -> X_Core_App [style="dashed"];
+    Installer -> X_Core_Configer [style="dashed"];
+    Installer -> SqlDumper [style="dashed"];
+    Installer -> ThrowOnableTrait [style="dashed"];
+    
+    SessionBase -> X_Core_App [style="dashed"];
+    SimpleControllerTrait -> X_Core_App [style="dashed"];
     SimpleModelTrait ->X_Core_App [style="dashed"];
 }
 

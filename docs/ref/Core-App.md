@@ -415,3 +415,7 @@ Show 方法对 View::Show() 加了好些补充
 
 
 
+        'injected_helper_enable' => false,
+
+    protected function extendComponentClassMap($map)
+

@@ -146,6 +146,9 @@ class App extends DuckPhp
         // **重要选项** 扩展 (DuckPhp\Core\App)
         // $options['ext'] = array ( );
 
+        //  (DuckPhp\Core\App)
+        // $options['injected_helper_enable'] = false;
+
         // injected_helper_map 比较复杂待文档。和助手类映射相关。 v1.2.8-dev (DuckPhp\Core\App)
         // $options['injected_helper_map'] = '';
 

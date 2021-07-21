@@ -23,7 +23,7 @@ class RedisCache extends ComponentBase //implements Psr\SimpleCache\CacheInterfa
     //////////////////////////////
     protected function redis()
     {
-        return $this->context_class::Redis();
+        return RedisManager::Redis();
     }
     public function get($key, $default = null)
     {

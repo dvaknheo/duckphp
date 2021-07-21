@@ -9,7 +9,6 @@ use DuckPhp\Core\AutoLoader;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\ExceptionManager;
-use DuckPhp\Core\ExtendableStaticCallTrait;
 use DuckPhp\Core\KernelTrait;
 use DuckPhp\Core\Logger;
 use DuckPhp\Core\Route;
@@ -49,6 +48,7 @@ class App extends ComponentBase
         'default_exception_do_log' => true,
         'default_exception_self_display' => true,
         'close_resource_at_output' => false,
+        'injected_helper_enable' => false,
         'injected_helper_map' => '',
         
         //// error handler ////
@@ -214,7 +214,7 @@ EOT;
         View::G()->_Display($error_view, $data);
     }
     //////// features
-    protected function extendComponentClassMap($map, $namespace)
+    protected function extendComponentClassMap($map)
     {
         if (empty($map)) {
             return [];
@@ -239,10 +239,13 @@ EOT;
     }
     public function extendComponents($method_map, $components = [])
     {
+        if (!$this->options['injected_helper_enable']) {
+            return;
+        }
         static::AssignExtendStaticMethod($method_map);
         self::AssignExtendStaticMethod($method_map);
         
-        $this->options['injected_helper_map'] = $this->extendComponentClassMap($this->options['injected_helper_map'], $this->options['namespace']);
+        $this->options['injected_helper_map'] = $this->extendComponentClassMap($this->options['injected_helper_map']);
         foreach ($components as $component) {
             $class = $this->options['injected_helper_map'][strtoupper($component)] ?? null;
             $class = ($class === null) ? $component : $class;
@@ -259,7 +262,7 @@ EOT;
         if (empty($new_helper_map)) {
             return;
         }
-        $helperMap = $this->extendComponentClassMap($this->options['injected_helper_map'], $this->options['namespace']);
+        $helperMap = $this->extendComponentClassMap($this->options['injected_helper_map']);
 
         foreach ($helperMap as $name => $old_class) {
             $new_class = $new_helper_map[$name] ?? null;
