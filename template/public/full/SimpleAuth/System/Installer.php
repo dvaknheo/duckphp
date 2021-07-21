@@ -49,7 +49,7 @@ class Installer extends ComponentBase
     {
         $ret = false;
         if(!$this->options['force'] && $this->isInstalled()){
-           static::ThrowOn(!$flag,'你已经安装 SimpleAuth',-1);     
+           static::ThrowOn(true,'你已经安装 SimpleAuth',-1);     
         }
         try{
             $ret = SqlDumper::G()->install($this->options['force']??false);

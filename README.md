@@ -590,7 +590,7 @@ server {
     2. [DbInterface](docs/ref/Db-DbInterface.md) Db 类满足 DbInterface 接口
     3. [Db](docs/ref/Db-Db.md) Db类
 5. `Foundation` 目录。存放高级功能的目录
-    1. [InstallerBase](docs/ref/Foundation-InstallerBase.md) 通用安装器
+    1. [Installer](docs/ref/Foundation-Installer.md) 通用安装器
     2. [SessionManagerBase](docs/ref/Foundation-SessionManagerBase.md) 简单的模型Trait
     3. [SimpleControllerTrait](docs/ref/Foundation-SimpleControllerTrait.md) 简单的模型Trait
     4. [SimpleModelTrait](docs/ref/Foundation-SimpleModel.md) 简单的模型Trait

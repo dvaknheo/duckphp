@@ -62,7 +62,7 @@
     2. [DbInterface](Db-DbInterface.md) Db 类满足 DbInterface 接口
     3. [Db](Db-Db.md) Db类
 5. `Foundation` 目录。存放高级功能的目录
-    1. [InstallerBase](Foundation-InstallerBase.md) 通用安装器
+    1. [Installer](Foundation-Installer.md) 通用安装器
     2. [SessionManagerBase](Foundation-SessionManagerBase.md) 简单的模型Trait
     3. [SimpleControllerTrait](Foundation-SimpleControllerTrait.md) 简单的模型Trait
     4. [SimpleModelTrait](Foundation-SimpleModel.md) 简单的模型Trait

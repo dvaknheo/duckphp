@@ -56,7 +56,6 @@ subgraph cluster_Core {
     KernelTrait -> Functions;
 
     App -> KernelTrait;
-    App -> ExtendableStaticCallTrait;
     App -> SystemWrapperTrait;
     App -> AutoLoader;
     App -> Configer;
@@ -139,6 +138,7 @@ subgraph cluster_Component {
     X_HttpServer[label="DuckPhp\\HttpServer\\HttpServer",shape="rarrow"];
     X_Db_Db[label="DuckPhp\\Db\\Db",shape="rarrow"];
     
+    AppPluginTrait -> EventManager [style="dashed"]; 
     AppPluginTrait -> ExceptionManager [style="dashed"]; 
     AppPluginTrait -> Configer [style="dashed"]; 
     AppPluginTrait -> View [style="dashed"]; 
@@ -179,6 +179,19 @@ subgraph cluster_DuckPhp {
     DuckPhp [shape=Mdiamond];
 }
 
+subgraph cluster_Foundation {
+    label = "[DuckPhp\\Foundation]";
+
+    InstallerBase -> ComponentBase [style="dotted"];
+    SessionBase -> ComponentBase [style="dotted"];
+    SimpleControllerTrait -> ComponentBase [style="dotted"];
+    SimpleModelTrait -> ComponentBase [style="dotted"];
+    SqlDumper -> ComponentBase [style="dotted"];
+    ThrowOnableTrait -> ComponentBase [style="dotted"];
+    
+    X_Core_App[label="DuckPhp\\Core\\App",shape="rarrow"];
+    SimpleModelTrait ->X_Core_App [style="dashed"];
+}
 
 
 
@@ -187,7 +200,6 @@ subgraph cluster_Ext {
 
     CallableView[shape="component"];
     EmptyView[shape="component"];
-    ExceptionWrapper [shape="component"];
     ExceptionWrapper [shape="component"];
     HookChain;
     JsonRpcClientBase [shape="component"];
@@ -204,14 +216,11 @@ subgraph cluster_Ext {
     RouteHookDirectoryMode[shape="component"];
     RouteHookManager[shape="component"];
     RouteHookRewrite[shape="component"];
-    SimpleModelTrait [shape=diamond];
-    SqlDumper [shape="component"];
     
     StaticReplacer [shape="component"];
     StrictCheck[shape="component"];
     SuperGlobalContext[shape="component"];
 
-    X_Core_App[label="DuckPhp\\Core\\App",shape="rarrow"];
     X_Core_Route[label="DuckPhp\\Core\\Route",shape="rarrow"];
     X_Core_View[label="DuckPhp\\Core\\View",shape="rarrow"];
     X_DbManager[label="DuckPhp\\Component\\DbManager",shape="rarrow"];
@@ -229,8 +238,7 @@ subgraph cluster_Ext {
     RouteHookDirectoryMode -> ComponentBase [style="dotted"];
     RouteHookManager -> ComponentBase [style="dotted"];
     RouteHookRewrite -> ComponentBase [style="dotted"];
-    SimpleModelTrait -> ComponentBase [style="dotted"];
-    SqlDumper -> ComponentBase [style="dotted"];
+
     StaticReplacer -> ComponentBase [style="dotted"];
     StrictCheck -> ComponentBase [style="dotted"];
     SuperGlobalContext -> ComponentBase [style="dotted"];
@@ -246,11 +254,7 @@ subgraph cluster_Ext {
     JsonRpcClientBase -> ComponentBase [style="dotted"];
     JsonView -> X_Core_View [style="dashed"];
 
-    SimpleModelTrait ->X_Core_App [style="dashed"];
     StrictCheck -> X_DbManager [style="dashed"];
-    
-
-
 
 }
 
