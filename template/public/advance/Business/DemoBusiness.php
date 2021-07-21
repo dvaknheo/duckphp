@@ -6,10 +6,9 @@
 
 namespace LazyToChange\Business;
 
-use LazyToChange\Model\Base as B;
 use LazyToChange\Model\DemoModel;
 
-class DemoBusiness extends Base
+class DemoBusiness extends BaseBusiness
 {
     public function foo()
     {

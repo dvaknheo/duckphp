@@ -6,9 +6,9 @@
 
 namespace LazyToChange\Model;
 
-use LazyToChange\System\BaseModel;
+use LazyToChange\System\ProjectModel;
 
-class Base extends BaseModel
+class BaseModel extends ProjectModel
 {
     //keep it empty
 }

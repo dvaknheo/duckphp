@@ -6,9 +6,7 @@
 
 namespace LazyToChange\Model;
 
-use LazyToChange\Model\Base as M;
-
-class DemoModel extends Base
+class DemoModel extends BaseModel
 {
     public function foo()
     {

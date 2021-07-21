@@ -8,7 +8,7 @@ namespace LazyToChange\Controller;
 
 use LazyToChange\System\BaseController;
 
-class Base extends BaseController
+class Base extends ProjectController
 {
     public function __construct()
     {

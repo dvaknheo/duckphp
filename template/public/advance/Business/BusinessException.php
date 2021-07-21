@@ -6,8 +6,8 @@
 
 namespace LazyToChange\Business;
 
-use LazyToChange\System\BaseException;
+use LazyToChange\System\ProjectException;
 
-class BusinessException extends BaseException
+class BusinessException extends ProjectException
 {
 }

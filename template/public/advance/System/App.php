@@ -15,10 +15,6 @@ class App extends DuckPhp
 
     //@override
     public $options = [
-        'setting_file_enable' => true,
-        //'error_404' => '_sys/error_404',
-        //'error_500' => '_sys/error_500',
-        
         //'path_info_compact_enable' => false,        
     ];
     /**
@@ -26,8 +22,7 @@ class App extends DuckPhp
      */
     public function command_hello()
     {
-        // 多一个 hello 的命令
-        echo "override you the routes\n";
+        echo "hello\n";
     }
     //@override
     protected function onPrepare()
@@ -40,7 +35,7 @@ class App extends DuckPhp
         // your code here
     }
     //@override
-    protected function onRun()
+    protected function onBeforeRun()
     {
         // your code here
     }

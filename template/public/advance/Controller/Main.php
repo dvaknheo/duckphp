@@ -14,7 +14,7 @@ class Main extends Base
     public function index()
     {
         //change it if  you can
-        $var = C::H(DemoBusiness::G()->foo());
+        $var = __h(DemoBusiness::G()->foo());
         C::Show(get_defined_vars(), 'main');
     }
     public function files()
