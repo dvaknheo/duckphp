@@ -3,11 +3,11 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleBlog\System;
+namespace SimpleBlog\ControllerEx;
 
-use DuckPhp\Foundation\SessionManagerBase;
+use SimpleBlog\System\ProjectSession;
 
-class SessionManager extends SessionManagerBase
+class SessionManager extends ProjectSession
 {
     /////////////////////////////////////
     public function logout()

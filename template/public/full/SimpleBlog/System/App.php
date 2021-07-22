@@ -27,6 +27,7 @@ class App extends DuckPhp
                 'simple_auth_check_installed' => true,  //       // 使用第三方的验证登录包
                 'simple_auth_table_prefix' => 'sa_',
                 'simple_auth_session_prefix' => '',
+                'simple_auth_login_redirect' =>'',
             ], 
         ],
         

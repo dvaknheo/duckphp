@@ -7,9 +7,10 @@ namespace SimpleBlog\Controller;
 
 use SimpleBlog\Business\ArticleBusiness;
 use SimpleBlog\Business\UserBusiness;
-use SimpleBlog\Helper\ControllerHelper as C;
+use SimpleBlog\ControllerEx\SessionManager;
+use SimpleBlog\System\ProjectController  as C;
 
-class Main
+class Main 
 {
     public function __construct()
     {
@@ -21,7 +22,7 @@ class Main
         $url_logout = __url('logout');
         $url_admin = __url('admin/index');
 
-        $user = C::SessionManager()->getCurrentUser();
+        $user = SessionManager::G()->getCurrentUser();
         list($articles, $total) = ArticleBusiness::G()->getRecentArticle(C::PageNo());
         
         $articles = C::RecordsetH($articles, ['title']);
@@ -50,18 +51,18 @@ class Main
     }
     public function _old_do_changepass()
     {
-        $uid = C::SessionManager()->getCurrentUid();
+        $uid = SessionManager::G()->getCurrentUid();
         //TODO 
     }
     public function do_addcomment()
     {
-        $uid = C::SessionManager()->getCurrentUid();
+        $uid = SessionManager::G()->getCurrentUid();
         UserBusiness::G()->addComment($uid, C::POST('article_id'), C::POST('content'));
         C::ExitRouteTo('article/'.C::POST('article_id'));
     }
     public function do_delcomment()
     {
-        $uid = C::SessionManager()->getCurrentUid();
+        $uid = SessionManager::G()->getCurrentUid();
         UserBusiness::G()->deleteCommentByUser($uid, C::POST('id'));
         C::ExitRouteTo('');
     }
