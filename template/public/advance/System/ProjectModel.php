@@ -1,16 +1,22 @@
 <?php declare(strict_types=1);
 /**
- * DuckPhp
+ * DuckPHP
  * From this time, you never be alone~
  */
-
 namespace LazyToChange\System;
 
-use Duckphp\SingletonEx\SingletonExTrait;
-use Duckphp\Helper\ModelHelperTrait;
+use DuckPhp\Foundation\SimpleModelTrait;
+use DuckPhp\Helper\ModelHelperTrait;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
-class BaseController
+class ProjectModel
 {
     use SingletonExTrait;
+    use SimpleModelTrait;
     use ModelHelperTrait;
+    
+    public function __construct()
+    {
+        //$this->table_prefix = App::G()->getTablePrefix();
+    }
 }

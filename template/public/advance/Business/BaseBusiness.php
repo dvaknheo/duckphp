@@ -6,9 +6,9 @@
 
 namespace LazyToChange\Business;
 
-use LazyToChange\System\BaseBusiness;
+use LazyToChange\System\ProjectBusiness;
 
-class Base extends BaseBusiness
+class BaseBusiness extends ProjectBusiness
 {
     //
 }

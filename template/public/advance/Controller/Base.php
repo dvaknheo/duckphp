@@ -6,16 +6,15 @@
 
 namespace LazyToChange\Controller;
 
-use LazyToChange\System\BaseController;
+use LazyToChange\System\ProjectController;
+use LazyToChange\System\App;
 
 class Base extends ProjectController
 {
     public function __construct()
     {
-        if(self::getRouteCallingClass() === self::class){
-            self::Exit404();
-            return;
-        }
+        self::CheckRunningController(self::class,static::class);
+
         parent::__construct();
     }
 }
