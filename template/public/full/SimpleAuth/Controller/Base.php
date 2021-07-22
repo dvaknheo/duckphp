@@ -9,4 +9,11 @@ use SimpleAuth\System\ProjectController;
 
 class Base extends ProjectController
 {
+    public function __construct()
+    {
+        parent::__construct();
+        if(method_exists(self::class, self::getRouteCallingMethod())){
+            self::Exit404();
+        }
+    }
 }

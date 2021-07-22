@@ -6,8 +6,8 @@
 namespace SimpleAuth\Controller;
 
 use SimpleAuth\Business\UserBusiness;
-use SimpleAuth\Business\UserBusinessException;
-use SimpleAuth\Helper\ControllerHelper as C;
+use SimpleAuth\Controller\Base as C;
+use SimpleAuth\ControllerEx\SessionManager;
 
 class Main
 {
@@ -20,8 +20,8 @@ class Main
     {
         $method = C::getRouteCallingMethod();
         
-        C::SessionManager()->checkCsrf();
-        C::assignExceptionHandler(C::SessionManager()::ExceptionClass(), [static::class, 'OnSessionException']);
+        SessionManager::G()->checkCsrf();
+        C::assignExceptionHandler(SessionManager::G()::ExceptionClass(), [static::class, 'OnSessionException']);
     }
     public static function OnSessionException($ex = null)
     {
@@ -31,7 +31,7 @@ class Main
         }
         $code = $ex->getCode();
         __logger()->warning(''.(get_class($ex)).'('.$ex->getCode().'): '.$ex->getMessage());
-        if (C::SessionManager()->isCsrfException($ex) && __is_debug()) {
+        if (SessionManager::G()->isCsrfException($ex) && __is_debug()) {
             C::exit(0);
         }
         C::ExitRouteTo('login');
@@ -44,19 +44,19 @@ class Main
     }
     public function register()
     {
-        $csrf_field = C::SessionManager()->csrf_field();
+        $csrf_field = SessionManager::G()->csrf_field();
         $url_register = C::Url('register');
         C::Show(get_defined_vars(), 'register');
     }
     public function login()
     {
-        $csrf_field = C::SessionManager()->csrf_field();
+        $csrf_field = SessionManager::G()->csrf_field();
         $url_login = C::Url('login');
         C::Show(get_defined_vars(),'login');
     }
     public function logout()
     {
-        C::SessionManager()->logout();
+        SessionManager::G()->logout();
         C::ExitRouteTo('index');
     }
     ////////////////////////////////////////////
@@ -65,8 +65,8 @@ class Main
         $post = C::POST();
         try {
             $user = UserBusiness::G()->register($post);
-            C::SessionManager()->setCurrentUser($user);
-            C::ExitRouteTo($this->url_home);
+            SessionManager::G()->setCurrentUser($user);
+            C::ExitRouteTo($this->url_home);  // 我们要把这 url_home 搞成可配置化
         } catch (\Exception $ex) {
             $error = $ex->getMessage();
             $name = C::POST('name', '');
@@ -80,7 +80,7 @@ class Main
         $post = C::POST();
         try {
             $user = UserBusiness::G()->login($post);
-            C::SessionManager()->setCurrentUser($user);
+            SessionManager::G()->setCurrentUser($user);
             C::ExitRouteTo($this->url_home);
         } catch (\Exception $ex) {
             $error = $ex->getMessage();

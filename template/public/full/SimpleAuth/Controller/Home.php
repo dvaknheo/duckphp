@@ -7,7 +7,8 @@ namespace SimpleAuth\Controller;
 
 use SimpleAuth\Business\UserBusiness;
 use SimpleAuth\Business\UserBusinessException;
-use SimpleAuth\Helper\ControllerHelper as C;
+use SimpleAuth\Controller\Base as C;
+use SimpleAuth\ControllerEx\SessionManager;
 
 class Home extends Base
 {
@@ -18,8 +19,8 @@ class Home extends Base
     protected function initController()
     {
         $method = C::getRouteCallingMethod();
-        //C::SessionManager()->checkCsrf();
-        //C::assignExceptionHandler(C::SessionManager()::ExceptionClass(), [static::class, 'OnSessionException']);
+        //SessionManager::G()->checkCsrf();
+        //C::assignExceptionHandler(SessionManager::G()::ExceptionClass(), [static::class, 'OnSessionException']);
         $this->setLayoutData();
     }
     public static function OnSessionException($ex = null)
@@ -30,17 +31,17 @@ class Home extends Base
         }
         $code = $ex->getCode();
         __logger()->warning(''.(get_class($ex)).'('.$ex->getCode().'): '.$ex->getMessage());
-        if (C::SessionManager()->isCsrfException($ex) && __is_debug()) {
+        if (SessionManager::G()->isCsrfException($ex) && __is_debug()) {
             C::exit(0);
         }
         C::ExitRouteTo('login');
     }
     protected function setLayoutData()
     {
-        $csrf_token = C::SessionManager()->csrf_token();
-        $csrf_field = C::SessionManager()->csrf_field();
+        $csrf_token = SessionManager::G()->csrf_token();
+        $csrf_field = SessionManager::G()->csrf_field();
          
-        $user = C::SessionManager()->getCurrentUser();
+        $user = SessionManager::G()->getCurrentUser();
         $user_name = $user['username'] ?? '';
 
         C::setViewHeadFoot('home/inc-head','home/inc-foot');
@@ -60,7 +61,7 @@ class Home extends Base
     {
         $error = '';
         try {
-            $uid = C::SessionManager()->getCurrentUid();
+            $uid = SessionManager::G()->getCurrentUid();
 
             $old_pass = C::POST('oldpassword','');
             $new_pass = C::POST('newpassword','');
