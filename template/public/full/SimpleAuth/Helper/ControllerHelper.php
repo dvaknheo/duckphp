@@ -6,12 +6,12 @@
 namespace SimpleAuth\Helper;
 
 use DuckPhp\Helper\ControllerHelper as Helper;
-use SimpleAuth\System\App;
+use SimpleAuth\ControllerEx\SessionManager;
 
 class ControllerHelper extends Helper
 {
     public static function SessionManager()
     {
-        return App::SessionManager();
+        return SessionManager::G();
     }
 }

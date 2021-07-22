@@ -3,26 +3,18 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace SimpleAuth\System;
+namespace SimpleAuth\ControllerEx;
 
+use SimpleAuth\System\App;
+use SimpleAuth\System\ProjectSession;
 
-use DuckPhp\Foundation\SessionManagerBase;
-use DuckPhp\Foundation\ThrowOnableTrait;
-
-class SessionManager extends SessionManagerBase
+class SessionManager extends ProjectSession
 {
-    use ThrowOnableTrait;
-    public function __construct()
-    {
-        parent::__construct();
-        $this->options['session_prefix'] = App::G()->getSessionPrefix();
-        $this->exception_class = SessionException::class;
-    }
     /////////////////////////////////////
     public function getCurrentUser()
     {
         $ret = $this->get('user',[]);
-        SessionException::ThrowOn(empty($ret), '请重新登录');
+        static::ThrowOn(empty($ret), '请重新登录');
         return $ret;
     }
     
