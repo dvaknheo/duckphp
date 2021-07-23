@@ -31,6 +31,9 @@ Core 目录下的微框架入口
         'close_resource_at_output' => false,
 输出时候关闭资源输出（仅供第三方扩展参考
 
+        'injected_helper_enable' => false,
+启用 injected_helper_map
+
         'injected_helper_map' => '',
 injected_helper_map 比较复杂待文档。和助手类映射相关。 v1.2.8-dev
 
@@ -400,7 +403,7 @@ Show 方法对 View::Show() 加了好些补充
 
 ### 内部函数
 
-    protected function extendComponentClassMap($map, $namespace)
+    protected function extendComponentClassMap($map)
     protected function fixNamespace($class, $namespace)
     protected function onBeforeOutput()
     private function getSuperGlobalData($superglobal_key, $key, $default)
@@ -415,7 +418,5 @@ Show 方法对 View::Show() 加了好些补充
 
 
 
-        'injected_helper_enable' => false,
 
-    protected function extendComponentClassMap($map)
 

@@ -1,3 +1,36 @@
+v1.2.12 变更
+2021-07-23 10:07:57
+添加了新的开发范式。
+增加了 Foundation 目录，可以作为系统工程常用基本类和 trait
+包括
+SessionManagerBase
+SimpleControllerTrait
+SimpleModelTrait
+SqlDumper
+ThrowOnableTrait
+
+自带例子 SimpleAuth 基本完美, SimpleBlog 系统完善
+
+2021-06-20 09:06:27
+对上一版本有积累了几个月的大改动
+文档方面：
+文档自动化增强，现在所有 选项和函数都会跑脚本导出到 reference 里
+代码方面：
+AppPluginTrait 增加读取资源文件功能，修复 mime_content_type 的 bug 统一动态组件
+AppPluginTrait 为做插件做了不少优化
+
+命令行，覆盖的 httpserver 改为 --http-server 参数
+App : getDynamicComponentClasses 归入 KernelTrait
+添加 IsAjax() ,Json() Render() SessionSet CookieSet
+setting_file_ignore_exists
+controller_strict_mode 严格大小写路由
+Db 添加 table(); quoteAndArray
+添加 RouteHookFunctionRoute
+添加 SimpleModelTrait
+添加 SqlDumper
+Helper 改成 HelperTrait 来实现
+
+
 v1.2.11 变更
 2021-04-09 20:04:24
 Console 支持 --a-b => $a_b

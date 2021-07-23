@@ -15,6 +15,7 @@
 - [命令行](tutorial-console.md)
 - [扩展](tutorial-extension.md)
 - [插件包](tutorial-plugin.md)
+- [新的开发范式](tutorial-foundation.md)
 - [参与开发相关](tutorial-support.md)
 - [系统自带例子分析](tutorial-sample.md) 施工中
 - [系统内部架构](ref/index.md) 参考页面 这还是看参考页面更清晰吧
