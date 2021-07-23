@@ -10,7 +10,7 @@ class UserModel extends BaseModel
     public function __construct()
     {
         parent::__construct();
-        $this->table_name = $this->table_prefix.'Users';
+        $this->table_name = 'Users';
     }
     public function exsits($name)
     {
@@ -24,7 +24,6 @@ class UserModel extends BaseModel
         $data = [];
         $data['username'] = $username;
         $data['password'] = $this->hash($password);
-        
         $id = BaseModel::Db()->insertData($this->table(), $data);
         return $id;
     }
