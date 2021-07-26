@@ -8,6 +8,9 @@
 
 官方QQ群: 714610448
 
+Gitee 仓库地址：https://gitee.com/dvaknheo/duckphp
+Github 仓库地址：https://github.com/dvaknheo/duckphp
+
 ##  一、教程
 [**快速入门**](docs/tutorial-quickstart.md) ,快速入门页面。
 
@@ -94,7 +97,7 @@ DuckPhp 框架的设计原则：这东西非得框架自带么，不自带行么
 
 DuckPhp 的配置基本都是使用默认方式。 不需要一大堆的配置文件。
 
-DuckPhp 代码简洁，不做多余事情。最新版本默认 demo 运行根据 CodeCoverage 覆盖统计， 只需要行数 358 / 3811 (v1.2.11-dev)  执行行数/总可执行行数  。
+DuckPhp 代码简洁，不做多余事情。最新版本默认 demo 运行根据 CodeCoverage 覆盖统计， 只需要行数 369 / 4289 (v1.2.12)  执行行数/总可执行行数  。
 
 DuckPhp 的应用调试非常方便，堆栈清晰，调用 debug_print_backtrace(2) 很容易发现。那些用了中间件的框架的堆栈很不清晰。
 
@@ -104,7 +107,7 @@ DuckPhp/Core/App 是 DuckPhp 的子框架。有时候你用 DuckPhp/Core/App 也
 
 #### 5. 可扩展
 
-DuckPhp 支持扩展。这些扩展可独立，不一定非要仅仅用于 DuckPHP。
+DuckPhp 支持扩展。这些扩展可独立，不一定非要仅仅用于 DuckPhp
 
 #### 6. 灵活自由
 
