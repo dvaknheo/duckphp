@@ -107,17 +107,19 @@ DuckPhp/Core/App 是 DuckPhp 的子框架。有时候你用 DuckPhp/Core/App 也
 
 #### 5. 可扩展
 
-DuckPhp 支持扩展。这些扩展可独立，不一定非要仅仅用于 DuckPhp
+DuckPhp 支持扩展。这些扩展可独立，不一定非要仅仅用于 DuckPhp 。
+
+DuckPhp 可以把你的工程作为其他项目的插件使用！ 自带例子就有。
 
 #### 6. 灵活自由
 
-DuckPhp 不限制你的工程的命名空间固定为 app 。你甚至可以把你的工程作为其他项目的插件使用。
-
 DuckPhp 支持全站路由，还支持局部路径路由和无 PATH_INFO 路由，不需要配服务器也能用。 可以在不修改 Web 服务器设置（如设置 PATH_INFO）的情况下使用，也可以在子目录里使用。
+
+DuckPhp 不限制你的工程的命名空间固定为 `app` 。
 
 DuckPhp 很容易嵌入其他 PHP 框架。根据 DuckPhp 的返回值判断是否继续后面其他框架。
 
-DuckPhp 支持 composer。无 composer 环境也可运。DuckPhp 是 Composer 库，不需要单独的脚手架工程。
+DuckPhp 支持 composer。无 composer 环境也可运行。DuckPhp 是 Composer 库，不需要单独的脚手架工程。
 
 #### 7. 最小惊讶原则(Principle of least astonishment)
 
@@ -130,7 +132,6 @@ DuckPhp 遵守最小惊讶原则，尽量避免一下常见问题：
 #### 8. 全覆盖单元测试
 
 DuckPhp 因为作者强迫症，每次发布都是通过全代码覆盖的测试，因此有很大健壮性。
-
 
 #### 9. 区分使用角色
 
@@ -153,23 +154,7 @@ DuckPhp 的类尽量无状态。
 
 DuckPhp 有扩展能做到禁止你在 Controller 里直接写 sql 。有时候，框架必须为了防止人犯蠢，而牺牲了性能。但 DuckPhp 这么做几乎不影响性能。
 
-DuckPhp 一度通过SwooleHttpd 不需要改代码就支持 swoole 。将来版本将支持 swoole 和 workerman ，和更多其他平台。
-
-#### 11.和其他框架简单对比
-
-|功能                 | CodeIgniter 4 | ThinkPHP 6 | Laravel 6 | DuckPhp |
-|---------------------|--------------|------------|-----------|---------|
-|仅一行关联           |              |            |           | V       |
-|堆栈清晰             | V            | V          |           | V       |
-|可热修复，不改源码解决所有问题 |              |            |           | V       |
-|可把工程转成插件给第三方用 |              |            |           | V       |
-|全覆盖测试           |              |            |           | V       |
-|以库引用             |              |            |           | V       |
-|单一 composer 框架   |              |            |           | V       |
-|无第三方依赖         |              |            |           | V       |
-|高性能               | V            | V          |           | V       |
-|代码简洁             | V            | V          |           | V       |
-|非固定全站框架                   |            |           |         | V |
+DuckPhp 通过 SwooleHttpd 和 WorkermanHttpd 支持 支持 swoole 和 workerman 。不需要改代码，将来也支持 更多其他平台
 
 ## 五、DuckPhp 不做什么
 
