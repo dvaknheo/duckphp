@@ -101,6 +101,22 @@ trait AppPluginTrait
         
         Route::G()->addRouteHook([static::class,'PluginModeRouteHook'], $this->plugin_options['plugin_routehook_position']);
         $this->onPluginModeInit();
+        ////[[[[
+        /*
+        $this->is_plugin = true;
+        App::G(static::G());
+        
+        //copy options
+        foreach($this->options as $k => $v){
+            if(isset($this->plugin_options[$k])){
+                $this->options[$k]= $this->plugin_options[$k];
+            }
+        }
+        Console::G()->regCommandClass(static::class,  'SimpleAuth');
+        
+        //*/
+        ////]]]]
+        
         
         return $this;
     }

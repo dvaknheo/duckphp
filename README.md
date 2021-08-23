@@ -61,8 +61,6 @@ DuckPhp 的最大意义是思想，只要思想在，什么框架你都可以用
 你可以不用 DuckPhp 实现 Controller-Business-Model 架构。
 只要有这个思想就是理念成功了。
 
-组合而非继承。这是 DuckPhp 提倡的另一个观点。
-
 ## 四、DuckPhp 的优点
 
 #### 1.  全组件可替换
