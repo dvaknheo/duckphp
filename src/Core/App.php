@@ -814,6 +814,10 @@ trait Core_Glue
     {
         return Route::G()->_Url($url);
     }
+    public static function Res($url = null)
+    {
+        return Route::G()->_Res($url);
+    }
     public static function Domain($use_scheme = false)
     {
         return Route::G()->_Domain($use_scheme);
@@ -885,10 +889,6 @@ trait Core_Glue
     public static function getRouteCallingMethod()
     {
         return Route::G()->getRouteCallingMethod();
-    }
-    public static function dumpAllRouteHooksAsString()
-    {
-        return Route::G()->dumpAllRouteHooksAsString();
     }
     //view
     public static function setViewHeadFoot($head_file = null, $foot_file = null)

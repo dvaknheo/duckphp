@@ -31,10 +31,10 @@ class Route extends ComponentBase
         'controller_enable_slash' => false,
         'controller_path_prefix' => '',
         'controller_path_ext' => '',
-        'controller_use_singletonex' => false,
         'controller_stop_static_method' => true,
         'controller_strict_mode' => true,
         'controller_class_map' => [],
+        'controller_resource_prefix' => '',
     ];
 
     public $pre_run_hook_list = [];
@@ -379,6 +379,10 @@ trait Route_UrlManager
     {
         return static::G()->_Url($url);
     }
+    public static function Res($url = null)
+    {
+        return static::G()->_Res($url);
+    }
     public static function Domain($use_scheme = false)
     {
         return static::G()->_Domain($use_scheme);
@@ -389,6 +393,14 @@ trait Route_UrlManager
             return ($this->url_handler)($url);
         }
         return $this->defaultUrlHandler($url);
+    }
+    public function _Res($url = null)
+    {
+        if ($this->options['controller_resource_prefix']) {
+            return $this->options['controller_resource_prefix'].$url;
+        }
+        $basepath = $this->getUrlBasePath();
+        return dirname($basepath).$url;
     }
     public function _Domain($use_scheme = false)
     {

@@ -29,6 +29,12 @@ if (! function_exists('__url')) {
         return App::Url($url);
     }
 }
+if (! function_exists('__res')) {
+    function __res($url)
+    {
+        return App::Res($url);
+    }
+}
 if (! function_exists('__json')) {
     function __json($data)
     {

@@ -75,7 +75,6 @@ trait AppPluginTrait
             'plugin_enable_readfile' => false,
             'plugin_readfile_prefix' => '',
             'plugin_search_config' => true,
-            'plugin_use_singletonex_route' => true,
             'plugin_injected_helper_map' => '',
         ];
         $this->plugin_options = $this->plugin_options ?? [];
