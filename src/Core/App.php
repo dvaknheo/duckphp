@@ -69,6 +69,7 @@ class App extends ComponentBase
         'session_id' => null,
         'session_destroy' => null,
         'session_set_save_handler' => null,
+        'mime_content_type' => null,
 
     ];
     
@@ -384,93 +385,11 @@ trait Core_SystemWrapper
     {
         return static::G()->_session_set_save_handler($handler);
     }
-    public function _header($output, bool $replace = true, int $http_response_code = 0)
+    public static function mime_content_type($file)
     {
-        if ($this->system_wrapper_call_check(__FUNCTION__)) {
-            $this->system_wrapper_call(__FUNCTION__, func_get_args());
-            return;
-        }
-        ////
-        if (PHP_SAPI === 'cli') {
-            return;
-        }
-        // @codeCoverageIgnoreStart
-        if (headers_sent()) {
-            return;
-        }
-        header($output, $replace, $http_response_code);
-        return;
-        // @codeCoverageIgnoreEnd
+        return static::G()->_mime_content_type($file);
+        
     }
-    public function _setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
-    {
-        if ($this->system_wrapper_call_check(__FUNCTION__)) {
-            return $this->system_wrapper_call(__FUNCTION__, func_get_args());
-        }
-        return setcookie($key, $value, $expire, $path, $domain, $secure, $httponly);
-    }
-
-    public function _exit($code = 0)
-    {
-        if ($this->system_wrapper_call_check(__FUNCTION__)) {
-            return $this->system_wrapper_call(__FUNCTION__, func_get_args());
-        }
-        exit($code);        // @codeCoverageIgnore
-    }
-    public function _set_exception_handler(callable $exception_handler)
-    {
-        if ($this->system_wrapper_call_check(__FUNCTION__)) {
-            return $this->system_wrapper_call(__FUNCTION__, func_get_args());
-        }
-        /** @var mixed */
-        $handler = $exception_handler; //for phpstan
-        return set_exception_handler($handler);
-    }
-    public function _register_shutdown_function(callable $callback, ...$args)
-    {
-        if ($this->system_wrapper_call_check(__FUNCTION__)) {
-            $this->system_wrapper_call(__FUNCTION__, func_get_args());
-            return;
-        }
-        register_shutdown_function($callback, ...$args);
-    }
-    ////[[[[
-    public function _session_start(array $options = [])
-    {
-        if ($this->system_wrapper_call_check(__FUNCTION__)) {
-            $this->system_wrapper_call(__FUNCTION__, func_get_args());
-            return;
-        }
-        return @session_start($options);
-    }
-    public function _session_id($session_id = null)
-    {
-        if ($this->system_wrapper_call_check(__FUNCTION__)) {
-            $this->system_wrapper_call(__FUNCTION__, func_get_args());
-            return;
-        }
-        if (!isset($session_id)) {
-            return session_id();
-        }
-        return session_id($session_id);
-    }
-    public function _session_destroy()
-    {
-        if ($this->system_wrapper_call_check(__FUNCTION__)) {
-            $this->system_wrapper_call(__FUNCTION__, func_get_args());
-            return;
-        }
-        return session_destroy();
-    }
-    public function _session_set_save_handler(\SessionHandlerInterface $handler)
-    {
-        if ($this->system_wrapper_call_check(__FUNCTION__)) {
-            $this->system_wrapper_call(__FUNCTION__, func_get_args());
-            return;
-        }
-        return session_set_save_handler($handler);
-    }
-    ////]]]]
 }
 trait Core_Helper
 {
@@ -595,7 +514,6 @@ trait Core_Helper
         }
         return json_encode($data, $flag);
     }
-    ////
     public function _H(&$str)
     {
         if (is_string($str)) {
@@ -610,7 +528,6 @@ trait Core_Helper
         }
         return $str;
     }
-    // ViewHelper
     public static function TraceDump()
     {
         return static::G()->_TraceDump();

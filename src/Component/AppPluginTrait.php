@@ -63,8 +63,6 @@ trait AppPluginTrait
             'plugin_path_view' => 'view',
             'plugin_path_document' => 'public',
             
-            'plugin_routehook_position' => 'append-outter',
-            
             'plugin_files_config' => [],
             
             'plugin_view_options' => [],
@@ -72,10 +70,18 @@ trait AppPluginTrait
             'plugin_component_class_view' => '',
             'plugin_component_class_route' => '',
             
-            'plugin_enable_readfile' => false,
-            'plugin_readfile_prefix' => '',
+            'plugin_routehook_position' => 'append-outter',
+
             'plugin_search_config' => true,
             'plugin_injected_helper_map' => '',
+            
+            
+            'plugin_enable_readfile' => false,
+            'plugin_readfile_prefix' => '',
+            
+            'plugin_init_override_parent' => true,
+            'plugin_init_override_to_options' => true,
+            'plugin_init_regist_console' => true,
         ];
         $this->plugin_options = $this->plugin_options ?? [];
         $this->plugin_options = array_replace_recursive($plugin_options_default, $this->plugin_options, $plugin_options ?? []);
@@ -93,30 +99,29 @@ trait AppPluginTrait
             Configer::G()->options['config_ext_file_map'] = array_merge($old_data, $ext_config_files);
         }
         
+        Route::G()->addRouteHook([static::class,'PluginModeRouteHook'], $this->plugin_options['plugin_routehook_position']);
+        
+        if ($this != $context && $this->plugin_options['plugin_init_override_to_options']) {
+            foreach($this->options as $k => $v){
+                if(isset($this->plugin_options[$k])){
+                    $this->options[$k]= $this->plugin_options[$k];
+                }
+            }
+            $this->options['path'] = $this->plugin_options['plugin_path'];
+            $this->options['namespace']= $this->plugin_options['plugin_namespace'];
+        }
+        if ($this->plugin_options['plugin_override_parent']) {
+            parent::G($this);
+        }
+        if ($this->plugin_options['plugin_regist_console']) {
+            Console::G()->regCommandClass(static::class,  $this->plugin_options['plugin_namespace']);
+        }
         //clone Helper
         if ($this->plugin_options['plugin_injected_helper_map']) {
-            $this->plugin_context_class::G()->cloneHelpers($this->plugin_options['plugin_namespace'], $this->plugin_options['plugin_injected_helper_map']);
+            $context->cloneHelpers($this->plugin_options['plugin_namespace'], $this->plugin_options['plugin_injected_helper_map']);
         }
         
-        Route::G()->addRouteHook([static::class,'PluginModeRouteHook'], $this->plugin_options['plugin_routehook_position']);
         $this->onPluginModeInit();
-        ////[[[[
-        /*
-        $this->is_plugin = true;
-        App::G(static::G());
-        
-        //copy options
-        foreach($this->options as $k => $v){
-            if(isset($this->plugin_options[$k])){
-                $this->options[$k]= $this->plugin_options[$k];
-            }
-        }
-        Console::G()->regCommandClass(static::class,  'SimpleAuth');
-        
-        //*/
-        ////]]]]
-        
-        
         return $this;
     }
     protected function pluginModeInitBasePath()
@@ -205,9 +210,6 @@ trait AppPluginTrait
         $ret = false;
         try {
             $ret = Route::G()->run();
-            if (!$ret && $this->plugin_options['plugin_enable_readfile']) {
-                $ret = $this->pluginModeReadFile($path_info);
-            }
         } catch (\Throwable $ex) {
             $this->onPluginModeException();
             ExceptionManager::CallException($ex);
@@ -245,6 +247,12 @@ trait AppPluginTrait
         $route_options['controller_path_prefix'] = $this->plugin_options['plugin_url_prefix'];
         $route_options['controller_class_map'] = $this->old_controller_map;
         Route::G()->init($route_options);
+        
+        ////
+            if($this->plugin_options) {
+                //
+            }
+        ////
     }
     protected function pluginModeReadFile($path_info)
     {
@@ -284,7 +292,7 @@ trait AppPluginTrait
     {
         return $this->plugin_old_component_map[$class] ?? null;
     }
-    private function pluginModeGetPath($path_key, $path_key_parent = 'plugin_path'): string
+    protected function pluginModeGetPath($path_key, $path_key_parent = 'plugin_path'): string
     {
         if (DIRECTORY_SEPARATOR === '/') {
             if (substr($this->plugin_options[$path_key], 0, 1) === '/') {
@@ -301,118 +309,5 @@ trait AppPluginTrait
         }
     }
     
-    protected function mime_content_type($file)
-    {
-        static $mimes = [];
-        if (empty($mimes)) {
-            $mime_string = $this->getMimeData();
-            $items = explode("\n", $mime_string);
-            foreach ($items as $content) {
-                if (\preg_match("/\s*(\S+)\s+(\S.+)/", $content, $match)) {
-                    $mime_type = $match[1];
-                    $extension_var = $match[2];
-                    $extension_array = \explode(' ', \substr($extension_var, 0, -1));
-                    foreach ($extension_array as $file_extension) {
-                        $mimes[$file_extension] = $mime_type;
-                    }
-                }
-            }
-        }
-        return $mimes[pathinfo($file, PATHINFO_EXTENSION)] ?? 'text/plain';
-    }
-    protected function getMimeData()
-    {
-        return <<<EOT
-types {
-    text/html                             html htm shtml;
-    text/css                              css;
-    text/xml                              xml;
-    image/gif                             gif;
-    image/jpeg                            jpeg jpg;
-    application/javascript                js;
-    application/atom+xml                  atom;
-    application/rss+xml                   rss;
 
-    text/mathml                           mml;
-    text/plain                            txt;
-    text/vnd.sun.j2me.app-descriptor      jad;
-    text/vnd.wap.wml                      wml;
-    text/x-component                      htc;
-
-    image/png                             png;
-    image/tiff                            tif tiff;
-    image/vnd.wap.wbmp                    wbmp;
-    image/x-icon                          ico;
-    image/x-jng                           jng;
-    image/x-ms-bmp                        bmp;
-    image/svg+xml                         svg svgz;
-    image/webp                            webp;
-
-    application/font-woff                 woff;
-    application/java-archive              jar war ear;
-    application/json                      json;
-    application/mac-binhex40              hqx;
-    application/msword                    doc;
-    application/pdf                       pdf;
-    application/postscript                ps eps ai;
-    application/rtf                       rtf;
-    application/vnd.apple.mpegurl         m3u8;
-    application/vnd.ms-excel              xls;
-    application/vnd.ms-fontobject         eot;
-    application/vnd.ms-powerpoint         ppt;
-    application/vnd.wap.wmlc              wmlc;
-    application/vnd.google-earth.kml+xml  kml;
-    application/vnd.google-earth.kmz      kmz;
-    application/x-7z-compressed           7z;
-    application/x-cocoa                   cco;
-    application/x-java-archive-diff       jardiff;
-    application/x-java-jnlp-file          jnlp;
-    application/x-makeself                run;
-    application/x-perl                    pl pm;
-    application/x-pilot                   prc pdb;
-    application/x-rar-compressed          rar;
-    application/x-redhat-package-manager  rpm;
-    application/x-sea                     sea;
-    application/x-shockwave-flash         swf;
-    application/x-stuffit                 sit;
-    application/x-tcl                     tcl tk;
-    application/x-x509-ca-cert            der pem crt;
-    application/x-xpinstall               xpi;
-    application/xhtml+xml                 xhtml;
-    application/xspf+xml                  xspf;
-    application/zip                       zip;
-
-    application/octet-stream              bin exe dll;
-    application/octet-stream              deb;
-    application/octet-stream              dmg;
-    application/octet-stream              iso img;
-    application/octet-stream              msi msp msm;
-
-    application/vnd.openxmlformats-officedocument.wordprocessingml.document    docx;
-    application/vnd.openxmlformats-officedocument.spreadsheetml.sheet          xlsx;
-    application/vnd.openxmlformats-officedocument.presentationml.presentation  pptx;
-
-    audio/midi                            mid midi kar;
-    audio/mpeg                            mp3;
-    audio/ogg                             ogg;
-    audio/x-m4a                           m4a;
-    audio/x-realaudio                     ra;
-
-    video/3gpp                            3gpp 3gp;
-    video/mp2t                            ts;
-    video/mp4                             mp4;
-    video/mpeg                            mpeg mpg;
-    video/quicktime                       mov;
-    video/webm                            webm;
-    video/x-flv                           flv;
-    video/x-m4v                           m4v;
-    video/x-mng                           mng;
-    video/x-ms-asf                        asx asf;
-    video/x-ms-wmv                        wmv;
-    video/x-msvideo                       avi;
-    font/ttf                              ttf;
-}
-
-EOT;
-    }
 }
