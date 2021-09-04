@@ -1,122 +1,143 @@
 <?php declare(strict_types=1);
 /**
- * DuckPhp
+ * DuckPHP
  * From this time, you never be alone~
  */
 namespace DuckPhp\Foundation;
 
 use DuckPhp\Core\App;
-use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Configer;
+use DuckPhp\Core\ComponentBase;
 use DuckPhp\Foundation\SqlDumper;
 use DuckPhp\Foundation\ThrowOnableTrait;
 
-class Installer extends ComponentBase // @codeCoverageIgnoreStart
+class Installer extends ComponentBase
 {
-    use ThrowOnableTrait;
-    const INSTALLER_EXCEPTION_NEED_DATABASE = -1;
-    const INSTALLER_EXCEPTION_NEED_INSTALL = -2;
-    const INSTALLER_EXCEPTION_INSTALLED = -3;
-    const INSTALLER_EXCEPTION_DATEBASE_ERROR = -4;
-    const INSTALLER_EXCEPTION_LOCK_FAILED = -5;
-    public $options = [
-        'install_lock_file' => '???',
-        'force' => false,
-    ];
-    protected $path_lock;
+    const NEED_DATABASE = -1;
+    const NEED_INSTALL = -2;
+    const NEED_OTHER = -3;
+    const INSTALLLED = -4;
     
+    use ThrowOnableTrait;
+    
+    public $options = [
+        'install_force' => false,
+        
+        'install_search_table' => '',
+        'install_table_prefix' => '',
+        'install_tablle_replace_prefix' => true,
+        'install_tables' =>[],
+    ];
     public function __construct()
     {
         parent::__construct();
-        $this->exception_class = \ErrorException::class;
-        static::ThrowOn(true, "No Work!");
+        $this->exception_class = InstallException::class;
     }
-    /*
-    protected function checkInstall()
-    {
-        if (!(App::Setting('database') ||  App::Setting('database_list'))){
-            throw new NeedInstallException('Need Database',NeedInstallException::NEED_DATABASE);
-        }
-        if (!Installer::G()->init([],$this)->isInstalled()){
-            throw new NeedInstallException("", NeedInstallException::NEED_INSTALL);
-        }
-    }
-    public function install($parameters)
-    {
-        $options = [
-            'force' => $parameters['force']?? false,
-            'path' => $this->getPath(),
-
-            'sql_dump_prefix' => '',
-            'sql_dump_inlucde_tables' => [ 'Users'],
-            'sql_dump_install_replace_prefix' => true,
-            'sql_dump_install_new_prefix' => $this->options['simple_auth_table_prefix'],
-            'sql_dump_install_drop_old_table' => $parameters['force']?? false,
-        ];
-        Installer::G()->init($options,$this);
-
-        echo Installer::G()->run();
-    }
-    */
-    
-    //@override
-    public function init(array $options, ?object $context = null)
-    {
-        parent::init($options, $context);
-        
-        $this->path_lock = $this->getComponenetPath(Configer::G()->options['path_config'], Configer::G()->options['path']);
-        //$this->options['path_sql_dump'] = ($this->context_class)::G()->getPath().'config/'; // 这里再灵活一点？// 判断和 app ，是否是插件，如果是插件，我们用另外的来搞
-        SqlDumper::G()->init($options, ($this->context_class)::G());
-        return $this;
-    }
+    //
     public function isInstalled()
     {
-        $file = $this->path_lock.$this->options['install_lock_file'];
+        $path_lock = $this->getComponentPath(Configer::G()->options['path_config'],Configer::G()->options['path']);
+        $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? 'unkown');
+        $file = $path_lock . $namespace. '.installed';
         return is_file($file);
     }
-    protected function writeLock()
+    ////////////////
+    public function checkInstall($context, $options,$has_database)
     {
-        $file = $this->path_lock.$this->options['install_lock_file'];
-        return @file_put_contents($file, DATE(DATE_ATOM));
+        static::ThrowOn(!$has_database, '你需要外部配置，如数据库等', static::NEED_DATABASE);
+        $flag = $this->init($options,$context)->isInstalled();
+        static::ThrowOn(!$flag,"你需要安装",static::NEED_INSTALL);
     }
-    public function run()
+    //////////////////
+
+    public function install()
     {
-        $ret = false;
-        if (!$this->options['force'] && $this->isInstalled()) {
-            static::ThrowOn(true, '你已经安装', -1);
+        $info = '';
+        if(!$this->options['force'] && $this->isInstalled()){
+           static::ThrowOn(true,'你已经安装 !', '');     
         }
-        try {
-            $ret = SqlDumper::G()->install($this->options['force'] ?? false);
-        } catch (\Exception $ex) {
-            static::ThrowOn(true, "写入数据库失败:" . $ex->getMessage(), -2);
+        
+        $this->initSqlDumper();
+        
+        try{
+            $info = SqlDumper::G()->install($this->options['install_force']??false);
+        }catch(\Exception $ex){
+            static::ThrowOn(true, "写入数据库失败:" . $ex->getMessage(),-2);
         }
-        if ($ret) {
-            return $ret;
+        if($info){
+            return $info;
         }
         $flag = $this->writeLock();
-        static::ThrowOn(!$flag, '写入锁文件失败', -3);
-            
+        static::ThrowOn(!$flag,'写入锁文件失败', -3);
+        
+        return $info;
+    }
+    public function dumpSql()
+    {
+        return $this->initSqlDumper()->run();
+    }
+    /////////////////////////////
+    protected function writeLock()
+    {
+        $path_lock = $this->getComponenetPath(Configer::G()->options['path_config'],Configer::G()->options['path']);
+        $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? 'unkown');
+        $file = $path_lock . $namespace . '.installed';
+        return @file_put_contents($file,DATE(DATE_ATOM));
+    }
+    protected function initSqlDumper()
+    {
+        
+        $options['sql_dump_include_tables'] = $this->searchTables();
+        $option  = $this->options['install_table_prefix'] ? true : false;
+        $option  = install_table_prefix? $install_table_prefix;
+        
+         $options = [
+        
+        'sql_dump_include_tables' => $this->searchTables(),
+        // 'sql_dump_data_tables' => [],
+        
+            'sql_dump_prefix' => '',
+            'sql_dump_file' => 'sql',
+            'sql_dump_install_replace_prefix' => false,
+            'sql_dump_install_new_prefix' => '',
+            'sql_dump_install_drop_old_table' => $this->options['install_force'],
+        ];
+        
+        return SqlDumper::G()->init($options, ($this->context_class));
+    }
+    protected function searchTables()
+    {
+        $ref = new \ReflectionClass ($this->context_class);
+        $file = $ref->getFileName();
+        $path = dirname($file)).'/'.'Model';
+        
+        $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? 'unkown');
+        $namespace = $namespace.'\\'.'Model';
+        
+        $models = $this->searchModelClasses($path,$namespace);
+        
+        $ret=[];
+        foreach($models as $k){
+            try{
+                $ret[]=$k::G()->table();
+            }catch (\Exception $ex){
+            }
+        }
+        array_filte($ret);
+        array_uniq($ret);
         return $ret;
     }
-    public function export()
+    protected function searchModelClasses($path,$namespace)
     {
-        return SqlDumper::G()->run();
-    }
-    /////////////////////
-    protected function getComponenetPath($path, $basepath = ''): string
-    {
-        if (DIRECTORY_SEPARATOR === '/') {
-            if (substr($path, 0, 1) === '/') {
-                return rtrim($path, '/').'/';
-            } else {
-                return $basepath.rtrim($path, '/').'/';
-            }
-        } else { // @ codeCoverageIgnoreStart
-            if (substr($path, 1, 1) === ':') {
-                return rtrim($path, '\\').'\\';
-            } else {
-                return $basepath.rtrim($path, '\\').'\\';
-            } // @ codeCoverageIgnoreEnd
+        $ret = [];
+        $flags = \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::UNIX_PATHS | \FilesystemIterator::FOLLOW_SYMLINKS ;
+        $directory = new \RecursiveDirectoryIterator($path, $flags);
+        $it = new \RecursiveIteratorIterator($directory);
+        $regex = new \RegexIterator($it, '/^.+\.php$/i', \RecursiveRegexIterator::MATCH);
+        foreach ($regex as $k => $_) {
+            $k = substr($regex->getSubPathName(), 0, -4);
+            $ret[] = $namespace.'\\'.str_replace('/','\\',$k);
         }
+        return $ret;
     }
-} //@codeCoverageIgnoreEnd
+}

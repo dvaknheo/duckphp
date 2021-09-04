@@ -65,20 +65,30 @@ class ComponentBase implements ComponentInterface
     {
     }
     //helper
-    protected function getComponenetPathByKey($path_key, $path_key_parent = 'path'): string
+    protected function getComponentPathByKey($path_key, $path_key_parent = 'path'): string
     {
+        $main_path = $this->options[$path_key_parent];
+        $sub_path = $this->options[$path_key];
+        return $this->getComponentPath($main_path, $sub_path);
+    }
+    protected function getComponentPath($main_path, $sub_path): string
+    {
+        $is_abs_path = false;
         if (DIRECTORY_SEPARATOR === '/') {
-            if (substr($this->options[$path_key], 0, 1) === '/') {
-                return rtrim($this->options[$path_key], '/').'/';
-            } else {
-                return $this->options[$path_key_parent].rtrim($this->options[$path_key], '/').'/';
+            //Linux
+            if (substr($sub_path, 0, 1) === '/') {
+                $is_abs_path = true;
             }
         } else { // @codeCoverageIgnoreStart
-            if (substr($this->options[$path_key], 1, 1) === ':') {
-                return rtrim($this->options[$path_key], '\\').'\\';
-            } else {
-                return $this->options[$path_key_parent].rtrim($this->options[$path_key], '\\').'\\';
-            } // @codeCoverageIgnoreEnd
+            // Windows
+            if (preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/',$sub_path)) {
+                $is_abs_path = true;
+            } 
+        }   // @codeCoverageIgnoreEnd
+        if ($is_abs_path) {
+            return rtrim($sub_path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        } else {
+            return $main_path.rtrim($sub_path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
         }
     }
 }

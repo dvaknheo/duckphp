@@ -27,7 +27,7 @@ trait SimpleModelTrait
         return '';
     }
     
-    protected function table()
+    public function table()
     {
         if (!isset($this->table_prefix)) {
             $this->table_prefix = $this->getTablePrefixByClass(static::class);
@@ -86,4 +86,29 @@ trait SimpleModelTrait
     /*
     fetch, fetchAll,fetchClumn,fetchClass
     */
+    protected function exec($sql, ...$args)
+    {
+        return App::DbForWrite()->table($this->table)->exec($sql, ...$args);
+    }
+    //////////
+    protected function fetchAll($sql, ...$args)
+    {
+        return App::DbForRead()->table($this->table)->DbForRead($sql, ...$args);
+    }
+    protected function fetch($sql, ...$args)
+    {
+        return App::DbForRead()->table($this->table)->fetch($sql, ...$args);
+    }
+    protected function fetchColumn($sql, ...$args)
+    {
+        return App::DbForRead()->table($this->table)->fetchColumn($sql, ...$args);
+    }
+    protected function fetchObject($sql, ...$args)
+    {
+        return App::DbForRead()->setObjectResultClass(static::class)->table($this->table)->fetchObject($sql, ...$args);
+    }
+    protected function fetchObjectAll($sql, ...$args)
+    {
+        return App::DbForRead()->setObjectResultClass(static::class)->table($this->table)->fetchObjectAll($sql, ...$args);
+    }
 }

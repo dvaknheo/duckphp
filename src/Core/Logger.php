@@ -40,7 +40,7 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
     //@override
     protected function initOptions(array $options)
     {
-        $this->path = parent::getComponenetPathByKey('path_log');
+        $this->path = parent::getComponentPathByKey('path_log');
     }
     public function log($level, $message, array $context = array())
     {

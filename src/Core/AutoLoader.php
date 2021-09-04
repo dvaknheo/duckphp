@@ -61,20 +61,7 @@ class AutoLoader
         $path = rtrim($this->options['path'], '/').'/';
         
         $this->namespace = $this->options['namespace'];
-
-        if (DIRECTORY_SEPARATOR === '/') {
-            if (substr($this->options['path_namespace'], 0, 1) === '/') {
-                $this->path_namespace = rtrim($this->options['path_namespace'], '/').'/';
-            } else {
-                $this->path_namespace = $path.rtrim($this->options['path_namespace'], '/').'/';
-            }
-        } else { // @codeCoverageIgnoreStart
-            if (substr($this->options['path_namespace'], 1, 1) === ':') {
-                $this->path_namespace = rtrim($this->options['path_namespace'], '\\').'\\';
-            } else {
-                $this->path_namespace = $path.rtrim($this->options['path_namespace'], '\\').'\\';
-            } // @codeCoverageIgnoreEnd
-        }
+        $this->path_namespace = $this->getComponenetPath($this->options['path'], $this->options['path_namespace']);
         if (!$this->options['skip_app_autoload'] && !empty($this->namespace)) {
             $this->assignPathNamespace($this->path_namespace, $this->namespace);
         }
@@ -82,6 +69,26 @@ class AutoLoader
         $this->assignPathNamespace($this->options['autoload_path_namespace_map']);
         
         return $this;
+    }
+    protected function getComponenetPath($main_path, $sub_path): string
+    {
+        $is_abs_path = false;
+        if (DIRECTORY_SEPARATOR === '/') {
+            //Linux
+            if (substr($sub_path, 0, 1) === '/') {
+                $is_abs_path = true;
+            }
+        } else { // @codeCoverageIgnoreStart
+            // Windows
+            if (preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/',$sub_path)) {
+                $is_abs_path = true;
+            } 
+        }   // @codeCoverageIgnoreEnd
+        if ($is_abs_path) {
+            return rtrim($sub_path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        } else {
+            return $main_path.rtrim($sub_path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        }
     }
     public function isInited(): bool
     {

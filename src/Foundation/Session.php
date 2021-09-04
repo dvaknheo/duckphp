@@ -8,7 +8,7 @@ namespace DuckPhp\Foundation;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 
-class SessionManagerBase extends ComponentBase
+class Session extends ComponentBase
 {
     public $options = [
         'session_prefix' => '',

@@ -35,7 +35,7 @@ class RouteHookResource extends ComponentBase
         if (pathinfo($file, PATHINFO_EXTENSION) === 'php') {
             return false;
         }
-        $path_document = $this->getComponenetPathByKey('path_resource');
+        $path_document = $this->getComponentPathByKey('path_resource');
         $file = $path_document.$file;
         if (!is_file($file)) {
             return false;

@@ -100,7 +100,7 @@ class View extends ComponentBase
     }
     public function getViewPath()
     {
-        return $this->getComponenetPathByKey('path_view');
+        return $this->getComponentPathByKey('path_view');
     }
     public function getViewData(): array
     {

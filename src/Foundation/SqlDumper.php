@@ -134,7 +134,7 @@ class SqlDumper extends ComponentBase
     protected function load()
     {
         $ret = [];
-        $path = parent::getComponenetPathByKey('path_sql_dump');
+        $path = parent::getComponentPathByKey('path_sql_dump');
         
         $file = $path.$this->options['sql_dump_file'].'.php';
         $ret = (function () use ($file) {
@@ -144,7 +144,7 @@ class SqlDumper extends ComponentBase
     }
     protected function save($data)
     {
-        $path = parent::getComponenetPathByKey('path_sql_dump');
+        $path = parent::getComponentPathByKey('path_sql_dump');
         $header = '<'.'?php return ';
         $file = $path.$this->options['sql_dump_file'].'.php';
         $str = $header . var_export($data, true) . ";\n";

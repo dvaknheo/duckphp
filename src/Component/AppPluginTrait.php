@@ -110,10 +110,10 @@ trait AppPluginTrait
             $this->options['path'] = $this->plugin_options['plugin_path'];
             $this->options['namespace']= $this->plugin_options['plugin_namespace'];
         }
-        if ($this->plugin_options['plugin_override_parent']) {
+        if ($this->plugin_options['plugin_init_override_parent']) {
             parent::G($this);
         }
-        if ($this->plugin_options['plugin_regist_console']) {
+        if ($this->plugin_options['plugin_init_regist_console']) {
             Console::G()->regCommandClass(static::class,  $this->plugin_options['plugin_namespace']);
         }
         //clone Helper
@@ -249,9 +249,9 @@ trait AppPluginTrait
         Route::G()->init($route_options);
         
         ////
-            if($this->plugin_options) {
-                //
-            }
+        if($this->plugin_options) {
+            //
+        }
         ////
     }
     protected function pluginModeReadFile($path_info)
@@ -276,7 +276,7 @@ trait AppPluginTrait
         if (!is_file($file)) {
             return false;
         }
-        ($this->plugin_context_class)::header('Content-Type: '.$this->mime_content_type($file));
+        ($this->plugin_context_class)::header('Content-Type: ' . ($this->plugin_context_class)::mime_content_type($file));
         echo file_get_contents($file);
         return true;
     }
@@ -294,20 +294,25 @@ trait AppPluginTrait
     }
     protected function pluginModeGetPath($path_key, $path_key_parent = 'plugin_path'): string
     {
+        $main_path = $this->plugin_options[$path_key_parent];
+        $sub_path = $this->plugin_options[$path_key];
+        $is_abs_path = false;
+        
         if (DIRECTORY_SEPARATOR === '/') {
-            if (substr($this->plugin_options[$path_key], 0, 1) === '/') {
-                return rtrim($this->plugin_options[$path_key], '/').'/';
-            } else {
-                return $this->plugin_options[$path_key_parent].rtrim($this->plugin_options[$path_key], '/').'/';
+            //Linux
+            if (substr($sub_path, 0, 1) === '/') {
+                $is_abs_path = true;
             }
         } else { // @codeCoverageIgnoreStart
-            if (substr($this->plugin_options[$path_key], 1, 1) === ':') {
-                return rtrim($this->plugin_options[$path_key], '\\').'\\';
-            } else {
-                return $this->plugin_options[$path_key_parent].rtrim($this->plugin_options[$path_key], '\\').'\\';
-            } // @codeCoverageIgnoreEnd
+            // Windows
+            if (preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/',$sub_path) {
+                $is_abs_path = true;
+            } 
+        }   // @codeCoverageIgnoreEnd
+        if ($is_abs_path) {
+            return rtrim($sub_path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        } else {
+            return $main_path.rtrim($sub_path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
         }
     }
-    
-
 }
