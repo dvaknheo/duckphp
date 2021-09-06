@@ -13,16 +13,15 @@ class ProjectController
 {
     use SimpleControllerTrait;
     use ControllerHelperTrait;
-    /////
+    ////
     
-        public static function CheckInstall()
+    public static function CheckInstall()
     {
-        $flag = Installer::G()->isInstalled();
+        $flag = App::G()->isInstalled();
         if (!$flag) {
             static::ExitRouteTo('install/index');
         }
     }
-    
     
     public static function RecordsetUrl($data, $cols_map = [])
     {

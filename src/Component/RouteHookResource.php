@@ -11,17 +11,26 @@ class RouteHookResource extends ComponentBase
 {
     public $options = [
         'path' => '',
-        'path_resource' => '',
+        'path_resource' => 'res',
+        'controller_path_prefix' => '',
         'controller_resource_prefix' => '',
     ];
     public static function Hook($path_info)
     {
         return static::G()->_Hook($path_info);
     }
+    protected function initContext(object $context)
+    {
+        ($this->context_class)::Route()->addRouteHook([static::class,'Hook'], 'append-outter');
+        return $this;
+    }
     public function _Hook($path_info)
     {
-        $file = urldecode(substr($path_info, strlen($this->options['controller_resource_prefix'])));
-        
+        /*
+            'controller_resource_prefix'=>'/res/',
+            'controller_path_prefix'=>'abcdefg/',
+        */
+        $file = urldecode(''.substr($path_info, strlen($this->options['controller_path_prefix'])));
         $prefix = $this->options['controller_resource_prefix'];
         if (!empty($prefix) && (substr($file, 0, strlen($prefix)) !== $prefix)) {
             return false;

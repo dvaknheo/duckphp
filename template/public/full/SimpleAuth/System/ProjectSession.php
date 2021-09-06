@@ -8,6 +8,7 @@ namespace SimpleAuth\System;
 
 use DuckPhp\Foundation\Session;
 use DuckPhp\Foundation\ThrowOnableTrait;
+use SimpleAuth\System\App;
 
 class ProjectSession extends Session
 {

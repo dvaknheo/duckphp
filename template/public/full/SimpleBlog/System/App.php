@@ -14,10 +14,7 @@ use SimpleBlog\Business\AdminBusiness;
 class App extends DuckPhp
 {
     //@override
-    public $options = [
-        'setting_file_enable' => true, // 启用设置文件
-        'setting_file_ignore_exists' => false, // 忽略设置文件
-        
+    public $options = [       
         'error_404' =>'_sys/error-404',
         'error_500' => '_sys/error-exception',
         
@@ -37,10 +34,18 @@ class App extends DuckPhp
         ],
         
         //
-        'simple_blog_check_installed' => true,  //       // 使用第三方的验证登录包
+        'simple_blog_check_installed' => true,
         'simple_blog_table_prefix' => '',
-        'simple_auth_session_prefix' => '',
+        'simple_blog_session_prefix' => '',
     ];
+    public function getTablePrefix()
+    {
+        return $this->options['simple_blog_table_prefix'];
+    }
+    public function getSessionPrefix()
+    {
+        return $this->options['simple_blog_session_prefix'];
+    }
     protected function onPrepare()
     {
         // 我们要引入第三方包,这里我们没采用 composer。
@@ -51,20 +56,36 @@ class App extends DuckPhp
     }
     protected function onBeforeRun()
     {
-        $this->checkInstall();
+        //$this->checkInstall();
     }
+    ////[[[[
     protected function checkInstall()
     {
-        if (!$this->options['simple_blog_check_installed']){
-            return;
-        }
-        if (!(static::Setting('database') ||  static::Setting('database_list'))){
-            throw new NeedInstallException('Need Database',NeedInstallException::NEED_DATABASE);
-        }
-        if (!Installer::G()->init([],$this)->isInstalled()){
-            throw new NeedInstallException("",NeedInstallException::NEED_INSTALL);
-        }
+        $this->getInstaller()->checkInstall();
     }
+    public function isInstalled()
+    {
+        return ($this->options['duckadmin_installed'] ||  static::Setting('duckadmin_installed')) ? true : false;
+    }
+    public function install($parameters)
+    {
+        return $this->getInstaller()->install($parameters);
+    }
+    ////////////////////////
+    protected function getInstaller($options=[])
+    {
+        $options = [
+            'installer_table_prefix' => $this->options[ 'duckadmin_table_prefix'],
+        ];
+        
+        $installed = $this->isInstalled();
+        
+        $has_database = (static::Setting('database') ||  static::Setting('database_list')) ? true : false;
+        $options['installer_has_database'] = $has_database;
+        
+        return Installer::G()->init($options,$this);
+    }
+    ////]]]]
     ////////////////////////////
     
     /** reset SimpleBlog password */
@@ -90,38 +111,5 @@ class App extends DuckPhp
         echo PHP_EOL;
         
         echo "Done \n";
-    }
-    public function install($parameters)
-    {
-        $str=SimpleAuthPlugin::G()->install($parameters); // 检查子系统安装
-        if($str){
-            echo $str;
-            return;
-        }
-        $options = [
-            'force' => $parameters['force']?? false,
-            'path' => $this->getPath(),
-            //'sql_dump_prefix' => $this->options['simple_blog_table_prefix'],
-            'sql_dump_inlucde_tables' =>['ActionLogs','Articles','Comments','Settings'], // 这里我们也要来个从 Model 里读取。
-            'sql_dump_install_replace_prefix' => true,
-            'sql_dump_install_new_prefix' => $this->options['simple_blog_table_prefix'],
-            'sql_dump_install_drop_old_table' => $parameters['force']?? false,
-        ];
-        
-        Installer::G()->init($options,$this);
-        echo Installer::G()->run();
-    }
-    ///////////////////////
-    public function getPath()
-    {
-        return $this->options['path'];
-    }
-    public function getTablePrefix()
-    {
-        return $this->options['simple_blog_table_prefix'];
-    }
-    public function getSessionPrefix()
-    {
-        return $this->options['simple_blog_session_prefix'];
     }
 }

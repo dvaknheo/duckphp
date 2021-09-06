@@ -7,13 +7,10 @@ namespace SimpleAuth\System;
 
 use DuckPhp\Foundation\SimpleModelTrait;
 use DuckPhp\Helper\ModelHelperTrait;
-use DuckPhp\SingletonEx\SingletonExTrait;
-
 use SimpleAuth\System\App;
 
 class ProjectModel
 {
-    use SingletonExTrait;
     use SimpleModelTrait;
     use ModelHelperTrait;
     

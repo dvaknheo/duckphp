@@ -207,7 +207,7 @@ class Route extends ComponentBase
             $l = strlen($prefix);
             if (substr($path_info, 0, $l) !== $prefix) {
                 $this->route_error = "path_prefix error";
-                return false;
+                return null;
             }
             $path_info = substr($path_info, $l - 1);
             $path_info = ltrim((string)$path_info, '/');
@@ -219,7 +219,7 @@ class Route extends ComponentBase
             $l = strlen($this->options['controller_path_ext']);
             if (substr($path_info, -$l) !== $this->options['controller_path_ext']) {
                 $this->route_error = "path_extention error";
-                return false;
+                return null;
             }
             $path_info = substr($path_info, 0, -$l);
         }
@@ -396,11 +396,10 @@ trait Route_UrlManager
     }
     public function _Res($url = null)
     {
-        if ($this->options['controller_resource_prefix']) {
-            return $this->options['controller_resource_prefix'].$url;
+        if (!$this->options['controller_resource_prefix']) {
+            return $this->_Url($url);
         }
-        $basepath = $this->getUrlBasePath();
-        return $this->options['controller_path_prefix'] . dirname($basepath).$url;
+        return $this->options['controller_resource_prefix'].$url;
     }
     public function _Domain($use_scheme = false)
     {

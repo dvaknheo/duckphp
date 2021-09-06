@@ -36,7 +36,7 @@ class Installer extends ComponentBase
     //
     public function isInstalled()
     {
-        $path_lock = $this->getComponentPath(Configer::G()->options['path_config'],Configer::G()->options['path']);
+        $path_lock = $this->getComponentPath(Configer::G()->options['path_config'], Configer::G()->options['path']);
         $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? 'unkown');
         $file = $path_lock . $namespace. '.installed';
         return is_file($file);
