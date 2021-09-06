@@ -53,7 +53,7 @@ public function doSystemWrapper()
     $handler=new FakeSessionHandler2();
     SystemWrapperObject::session_set_save_handler( $handler);
     
-    
+    SystemWrapperObject::mime_content_type('x.jpg');
     SystemWrapperObject::G()->system_wrapper_replace([
         'mime_content_type' =>function(){ echo "change!\n";},
         'header' =>function(){ echo "change!\n";},

@@ -39,7 +39,6 @@ class App extends ComponentBase
     
     //inner trait
     use Core_Helper;
-    use Core_SystemWrapper;
     use Core_Glue;
     use Core_NotImplemented;
     use Core_SuperGlobal;
@@ -346,11 +345,6 @@ EOT;
     {
         return static::G() === self::G();
     }
-}
-
-trait Core_SystemWrapper
-{
-
 }
 trait Core_Helper
 {

@@ -369,11 +369,12 @@ App::PageHtml(123);
         
         $url="";
         $method="method";
-        App::URL($url=null);
+        App::Url($url=null);
         
         App::Parameter('x','y');
         App::getRouteCallingMethod();
-        App::URL('abc');
+        App::Url('abc');
+        App::Res('abc');
         //*/
         //*
         $path_view=\LibCoverage\LibCoverage::G()->getClassTestPath(App::class).'view/';

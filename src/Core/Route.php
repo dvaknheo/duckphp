@@ -400,7 +400,7 @@ trait Route_UrlManager
             return $this->options['controller_resource_prefix'].$url;
         }
         $basepath = $this->getUrlBasePath();
-        return dirname($basepath).$url;
+        return $this->options['controller_path_prefix'] . dirname($basepath).$url;
     }
     public function _Domain($use_scheme = false)
     {

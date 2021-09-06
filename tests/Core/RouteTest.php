@@ -18,7 +18,8 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         ];
         Route::G()->reset();
         Route::G()->setPathInfo('x/z');
-        $t= Route::URL('aaa');
+        $t= Route::Url('aaa');
+        $t= Route::Res('aaa');
         $z=Route::Route();
         Route::Domain(true);
         Route::Domain(false);
@@ -173,8 +174,9 @@ class RouteTest extends \PHPUnit\Framework\TestCase
 
         Route::G()->options['controller_methtod_for_miss']='_ttt';
         Route::G()->options['controller_strict_mode']=false;
+        Route::G()->options['controller_resource_prefix']='http://duckphp.github.com/';
         Route::G()->bind('Main/NO','POST')->run();
-        
+        echo Route::Res('x.jpg');
         \LibCoverage\LibCoverage::End();
         return;
     }

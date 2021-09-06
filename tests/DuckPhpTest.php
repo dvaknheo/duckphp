@@ -75,6 +75,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         \__l("test");
         \__hl("test");
         \__url("test");
+        \__res("test");
         \__json("test");
         \__domain();
         \__display("block",[]);
