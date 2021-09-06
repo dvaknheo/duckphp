@@ -210,6 +210,9 @@ trait AppPluginTrait
         $ret = false;
         try {
             $ret = Route::G()->run();
+            if (!$ret && $this->plugin_options['plugin_enable_readfile']) {
+                $ret = $this->pluginModeReadFile($path_info);
+            }
         } catch (\Throwable $ex) {
             $this->onPluginModeException();
             ExceptionManager::CallException($ex);

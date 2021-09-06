@@ -58,7 +58,6 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
         AppPluginTraitApp::G()->onPluginModeException= function(){ echo "onPluginModeException!";};
         
         DuckPhp::G(new DuckPhp())->init($options);
-        
         AppPluginTraitApp::G()->onPluginModeBeforeRun=function(){ echo "onBeforeRun!";};
         AppPluginTraitApp::G()->onPluginModeAfterRun=function(){ echo "onPluginModeAfterRun!";};
         
@@ -131,6 +130,13 @@ class AppPluginTraitApp extends DuckPhp
     public $componentClassMap = [
         'A' => 'AppHelper',
     ];
+    public $options=[
+        'x-options'=>'changed',
+    ];
+    public $plugin_options=[
+        'x-options'=>'changed',
+
+    ];
     public function __construct()
     {
         parent::__construct();
@@ -177,7 +183,10 @@ class AppPluginTraitApp2 extends DuckPhp
     use AppPluginTrait;
     public $plugin_options=[
         'plugin_url_prefix'=>'/Test',
+        'x-options'=>'changed',
+
     ];
+
     public function __construct()
     {
         parent::__construct();
@@ -186,7 +195,8 @@ class AppPluginTraitApp2 extends DuckPhp
 class AppPluginTraitApp3 extends DuckPhp
 {
     use AppPluginTrait;
-
+    public $plugin_options =[
+    ];
     public function __construct()
     {
         parent::__construct();
