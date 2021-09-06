@@ -32,6 +32,10 @@ class SimpleModelTraitTest extends \PHPUnit\Framework\TestCase
         try{
             TestModel::G()->delete($id);
         }catch(\Exception $ex){}
+        
+        TestModel::G()->test($id);
+
+        
         \LibCoverage\LibCoverage::End();
     }
 }
@@ -45,6 +49,14 @@ class TestModel extends Base
 {
     protected $table_name=null;
     protected $table_pk='id';
-
+    public function test($id)
+    {
+        TestModel::G()->fetchAll("select * from 'TABLE' where id =? ", $id);
+        TestModel::G()->fetch("select * from 'TABLE' where id =? ", $id);
+        TestModel::G()->fetchColumn("select * from 'TABLE' where id =? ", $id);
+        TestModel::G()->fetchObject("select * from 'TABLE' where id =? ", $id);
+        TestModel::G()->fetchObjectAll("select * from 'TABLE' where id =? ", $id);
+        TestModel::G()->execute("update 'TABLE' set content = ?  where id =? ",  DATE(DATE_ATOM),$id);
+    }
 }
 
