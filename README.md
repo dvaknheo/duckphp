@@ -579,7 +579,7 @@ server {
     3. [Db](docs/ref/Db-Db.md) Db类
 5. `Foundation` 目录。存放高级功能的目录
     1. [Installer](docs/ref/Foundation-Installer.md) 通用安装器
-    2. [SessionManagerBase](docs/ref/Foundation-SessionManagerBase.md) 简单的模型Trait
+    2. [Session](docs/ref/Foundation-Session.md) 会话类
     3. [SimpleControllerTrait](docs/ref/Foundation-SimpleControllerTrait.md) 简单的模型Trait
     4. [SimpleModelTrait](docs/ref/Foundation-SimpleModel.md) 简单的模型Trait
     5. [SqlDumper](docs/ref/Foundation-SqlDumper.md) Sql 迁移类

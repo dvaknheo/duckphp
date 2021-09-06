@@ -31,7 +31,7 @@ class Installer extends ComponentBase
     public function __construct()
     {
         parent::__construct();
-        $this->exception_class = InstallException::class;
+        $this->exception_class = InstallerException::class;
     }
     //
     public function isInstalled()
@@ -79,23 +79,19 @@ class Installer extends ComponentBase
     /////////////////////////////
     protected function writeLock()
     {
-        $path_lock = $this->getComponenetPath(Configer::G()->options['path_config'],Configer::G()->options['path']);
+        $path_lock = $this->getComponentPath(Configer::G()->options['path_config'],Configer::G()->options['path']);
         $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? 'unkown');
         $file = $path_lock . $namespace . '.installed';
         return @file_put_contents($file,DATE(DATE_ATOM));
     }
     protected function initSqlDumper()
     {
-        
-        $options['sql_dump_include_tables'] = $this->searchTables();
-        $option  = $this->options['install_table_prefix'] ? true : false;
-        $option  = install_table_prefix? $install_table_prefix;
+        //$option  = $this->options['install_table_prefix'] ? true : false;
+        //$option  = $ install_table_prefix? $install_table_prefix;
         
          $options = [
-        
-        'sql_dump_include_tables' => $this->searchTables(),
-        // 'sql_dump_data_tables' => [],
-        
+            'sql_dump_include_tables' => $this->searchTables(),
+            // 'sql_dump_data_tables' => [],        
             'sql_dump_prefix' => '',
             'sql_dump_file' => 'sql',
             'sql_dump_install_replace_prefix' => false,
@@ -109,34 +105,36 @@ class Installer extends ComponentBase
     {
         $ref = new \ReflectionClass ($this->context_class);
         $file = $ref->getFileName();
-        $path = dirname($file)).'/'.'Model';
+        $path = dirname(dirname(''.$file)).'/'.'Model';
         
         $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? 'unkown');
         $namespace = $namespace.'\\'.'Model';
         
-        $models = $this->searchModelClasses($path,$namespace);
+        $models = $this->searchModelClasses($path);
         
         $ret=[];
         foreach($models as $k){
             try{
-                $ret[]=$k::G()->table();
+                $class = $namespace.'\\'.'Model\\'.$k;
+                $ret[] = $k::G()->table();
             }catch (\Exception $ex){
             }
         }
-        array_filte($ret);
-        array_uniq($ret);
+        //
+        $ret = array_values(array_unique(array_filter($ret)));
         return $ret;
     }
-    protected function searchModelClasses($path,$namespace)
+    protected function searchModelClasses($path)
     {
         $ret = [];
+        $setting_file = !empty($setting_file) ? $path.$setting_file . '.php' : '';
         $flags = \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::UNIX_PATHS | \FilesystemIterator::FOLLOW_SYMLINKS ;
         $directory = new \RecursiveDirectoryIterator($path, $flags);
         $it = new \RecursiveIteratorIterator($directory);
         $regex = new \RegexIterator($it, '/^.+\.php$/i', \RecursiveRegexIterator::MATCH);
-        foreach ($regex as $k => $_) {
-            $k = substr($regex->getSubPathName(), 0, -4);
-            $ret[] = $namespace.'\\'.str_replace('/','\\',$k);
+        foreach ($regex as $k => $v) {
+            $k = substr($v->getSubPathName(), 0, -4);
+            $ret[] = $k;
         }
         return $ret;
     }

@@ -200,7 +200,6 @@ App::PageHtml(123);
             App::CookieSet('x',DATE('Y,M,d'));
             App::CookieGet('x');
         
-        App::dumpAllRouteHooksAsString();
         try{
             App::CheckException(\Exception::class, false,"HH");
             App::CheckException(\Exception::class, true,"HH");

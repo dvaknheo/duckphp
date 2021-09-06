@@ -36,14 +36,14 @@ class ComponentBaseObject extends ComponentBase  implements ComponentInterface
     {
         parent::initOptions($options);
 
-        $this->path = parent::getComponenetPathByKey('path_test');
+        $this->path = parent::getComponentPathByKey('path_test');
         $this->options['path_test']='/tmp';
-        $this->path = parent::getComponenetPathByKey('path_test');
+        $this->path = parent::getComponentPathByKey('path_test');
         
         /*
-        $this->namespace = parent::getComponenetNameSpace('namespace_test');
+        $this->namespace = parent::getComponentNameSpace('namespace_test');
         $this->options['namespace_test']='\\mynamespace';
-        $this->namespace = parent::getComponenetNameSpace('namespace_test');
+        $this->namespace = parent::getComponentNameSpace('namespace_test');
         */
     }
     public static function CreateObject($class, $object)

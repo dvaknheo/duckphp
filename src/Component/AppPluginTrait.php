@@ -102,19 +102,19 @@ trait AppPluginTrait
         Route::G()->addRouteHook([static::class,'PluginModeRouteHook'], $this->plugin_options['plugin_routehook_position']);
         
         if ($this != $context && $this->plugin_options['plugin_init_override_to_options']) {
-            foreach($this->options as $k => $v){
-                if(isset($this->plugin_options[$k])){
-                    $this->options[$k]= $this->plugin_options[$k];
+            foreach ($this->options as $k => $v) {
+                if (isset($this->plugin_options[$k])) {
+                    $this->options[$k] = $this->plugin_options[$k];
                 }
             }
             $this->options['path'] = $this->plugin_options['plugin_path'];
-            $this->options['namespace']= $this->plugin_options['plugin_namespace'];
+            $this->options['namespace'] = $this->plugin_options['plugin_namespace'];
         }
         if ($this->plugin_options['plugin_init_override_parent']) {
             parent::G($this);
         }
         if ($this->plugin_options['plugin_init_regist_console']) {
-            Console::G()->regCommandClass(static::class,  $this->plugin_options['plugin_namespace']);
+            Console::G()->regCommandClass(static::class, $this->plugin_options['plugin_namespace']);
         }
         //clone Helper
         if ($this->plugin_options['plugin_injected_helper_map']) {
@@ -249,7 +249,7 @@ trait AppPluginTrait
         Route::G()->init($route_options);
         
         ////
-        if($this->plugin_options) {
+        if ($this->plugin_options) {
             //
         }
         ////
@@ -305,9 +305,9 @@ trait AppPluginTrait
             }
         } else { // @codeCoverageIgnoreStart
             // Windows
-            if (preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/',$sub_path) {
+            if (preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $sub_path)) {
                 $is_abs_path = true;
-            } 
+            }
         }   // @codeCoverageIgnoreEnd
         if ($is_abs_path) {
             return rtrim($sub_path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;

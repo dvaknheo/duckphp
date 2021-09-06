@@ -81,9 +81,9 @@ class ComponentBase implements ComponentInterface
             }
         } else { // @codeCoverageIgnoreStart
             // Windows
-            if (preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/',$sub_path)) {
+            if (preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $sub_path)) {
                 $is_abs_path = true;
-            } 
+            }
         }   // @codeCoverageIgnoreEnd
         if ($is_abs_path) {
             return rtrim($sub_path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;

@@ -1,9 +1,9 @@
-# DuckPhp\Foundation\SessionMangerBase
+# DuckPhp\Foundation\Session
 [toc]
 
 ## 简介
 
-SessionMangerBase 提供了一个 Session 数据管理的基类，你可以在这上面扩充。
+Session 提供了一个 Session 数据管理的基类，你可以在这上面扩充。
 ## 选项
 
         'session_prefix' => '',

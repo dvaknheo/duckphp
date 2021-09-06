@@ -63,7 +63,7 @@
     3. [Db](Db-Db.md) Db类
 5. `Foundation` 目录。存放高级功能的目录
     1. [Installer](Foundation-Installer.md) 通用安装器
-    2. [SessionManagerBase](Foundation-SessionManagerBase.md) 简单的模型Trait
+    2. [Session](Foundation-Session.md) 会话类
     3. [SimpleControllerTrait](Foundation-SimpleControllerTrait.md) 简单的模型Trait
     4. [SimpleModelTrait](Foundation-SimpleModel.md) 简单的模型Trait
     5. [SqlDumper](Foundation-SqlDumper.md) Sql 迁移类

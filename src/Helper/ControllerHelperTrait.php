@@ -56,11 +56,6 @@ trait ControllerHelperTrait
     {
         return App::getPathInfo();
     }
-    public static function dumpAllRouteHooksAsString()
-    {
-        return App::dumpAllRouteHooksAsString();
-    }
-    
     ///////////////
     public static function Render($view, $data = null)
     {

@@ -108,6 +108,7 @@ class App extends ComponentBase
             return;
         }
         
+        //TODO   recreateobject
         View::G(new View())->init($this->options);
         $this->onBeforeOutput();
         View::G()->_Show([], $error_view);
@@ -123,7 +124,7 @@ class App extends ComponentBase
             } // @codeCoverageIgnore
         }
         if ($this->options['default_exception_self_display'] && method_exists($ex, 'display')) {
-            $ex->display($ex);
+            $ex->display($ex); // 这里要改
             return;
         }
         $error_view = $this->options['error_500'] ?? null;
@@ -388,7 +389,6 @@ trait Core_SystemWrapper
     public static function mime_content_type($file)
     {
         return static::G()->_mime_content_type($file);
-        
     }
 }
 trait Core_Helper
