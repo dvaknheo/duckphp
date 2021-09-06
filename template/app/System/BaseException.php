@@ -13,8 +13,8 @@ class BaseException extends \Exception
 {
     use ThrowOnTrait;
     
-    public function display($ex)
-    {
-        App::OnDefaultException($ex);
-    }
+    //public function display($ex)
+    //{
+        //App::OnDefaultException($ex);
+    //}
 }

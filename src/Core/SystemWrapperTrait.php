@@ -48,8 +48,48 @@ trait SystemWrapperTrait
         return ($func)(...$input_args);
     }
     ///////////////////////////////////////////
-
-
+///////////
+    public static function header($output, bool $replace = true, int $http_response_code = 0)
+    {
+        return static::G()->_header($output, $replace, $http_response_code);
+    }
+    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
+    {
+        return static::G()->_setcookie($key, $value, $expire, $path, $domain, $secure, $httponly);
+    }
+    public static function exit($code = 0)
+    {
+        return static::G()->_exit($code);
+    }
+    public static function set_exception_handler(callable $exception_handler)
+    {
+        return static::G()->_set_exception_handler($exception_handler);
+    }
+    public static function register_shutdown_function(callable $callback, ...$args)
+    {
+        return static::G()->_register_shutdown_function($callback, ...$args);
+    }
+    public static function session_start(array $options = [])
+    {
+        return static::G()->_session_start($options);
+    }
+    public static function session_id($session_id = null)
+    {
+        return static::G()->_session_id($session_id);
+    }
+    public static function session_destroy()
+    {
+        return static::G()->_session_destroy();
+    }
+    public static function session_set_save_handler(\SessionHandlerInterface $handler)
+    {
+        return static::G()->_session_set_save_handler($handler);
+    }
+    public static function mime_content_type($file)
+    {
+        return static::G()->_mime_content_type($file);
+    }
+    //////////////
     public function _header($output, bool $replace = true, int $http_response_code = 0)
     {
         if ($this->system_wrapper_call_check(__FUNCTION__)) {
@@ -118,7 +158,7 @@ trait SystemWrapperTrait
         if (!isset($session_id)) {
             return session_id();
         }
-        return session_id($session_id);
+        return @session_id($session_id);  // ???
     }
     public function _session_destroy()
     {

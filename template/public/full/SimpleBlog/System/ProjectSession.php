@@ -5,9 +5,9 @@
  */
 namespace SimpleBlog\System;
 
-use DuckPhp\Foundation\SessionManagerBase;
+use DuckPhp\Foundation\Session;
 
-class ProjectSession extends SessionManagerBase
+class ProjectSession extends Session
 {
     //
 }

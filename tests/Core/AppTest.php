@@ -255,6 +255,7 @@ App::PageHtml(123);
         
         
         App::G()->system_wrapper_replace([
+            'mime_content_type' =>function(){ echo "change!\n";},
             'header' =>function(){ echo "change!\n";},
             'setcookie' =>function(){ echo "change!\n";},
             'exit' =>function(){ echo "change!\n";},
@@ -265,7 +266,7 @@ App::PageHtml(123);
             'session_destroy' => function(){ echo "change!\n";},
             'session_set_save_handler' => function(){ echo "change!\n";},
         ]);
-        
+        App::mime_content_type('test');
         App::header($output,$replace = true, $http_response_code=0);
         App::setcookie( $key="123",  $value = '', $expire = 0,  $path = '/',  $domain  = '', $secure = false,  $httponly = false);
         App::exit($code=0);

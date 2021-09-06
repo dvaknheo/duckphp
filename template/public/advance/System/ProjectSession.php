@@ -6,9 +6,9 @@
 namespace LazyToChange\System;
 
 use DuckPhp\Foundation\ThrowOnableTrait;
-use DuckPhp\Foundation\SessionManagerBase;
+use DuckPhp\Foundation\Session;
 
-class ProjectSession extends SessionManagerBase
+class ProjectSession extends Session
 {
     use ThrowOnableTrait;
     
