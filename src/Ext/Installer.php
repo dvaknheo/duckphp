@@ -3,12 +3,12 @@
  * DuckPHP
  * From this time, you never be alone~
  */
-namespace DuckPhp\Foundation;
+namespace DuckPhp\Ext;
 
 use DuckPhp\Core\App;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Foundation\SqlDumper;
+use DuckPhp\Ext\SqlDumper;
 use DuckPhp\Foundation\ThrowOnableTrait;
 
 class Installer extends ComponentBase

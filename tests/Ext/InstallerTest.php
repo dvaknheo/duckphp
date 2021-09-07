@@ -1,7 +1,7 @@
 <?php
 namespace tests\DuckPhp\Foundation;
 
-use DuckPhp\Foundation\Installer;
+use DuckPhp\Ext\Installer;
 
 class InstallerTest extends \PHPUnit\Framework\TestCase
 {

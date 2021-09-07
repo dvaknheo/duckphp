@@ -1,7 +1,7 @@
 <?php
 namespace tests\DuckPhp\Foundation;
 
-use DuckPhp\Foundation\InstallerException;
+use DuckPhp\Ext\InstallerException;
 
 class InstallerExceptionTest extends \PHPUnit\Framework\TestCase
 {
