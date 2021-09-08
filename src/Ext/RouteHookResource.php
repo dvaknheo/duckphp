@@ -12,7 +12,6 @@ class RouteHookResource extends ComponentBase
     public $options = [
         'path' => '',
         'path_resource' => 'res',
-        'controller_path_prefix' => '',
         'controller_resource_prefix' => '',
     ];
     public static function Hook($path_info)
@@ -26,11 +25,7 @@ class RouteHookResource extends ComponentBase
     }
     public function _Hook($path_info)
     {
-        /*
-            'controller_resource_prefix'=>'/res/',
-            'controller_path_prefix'=>'abcdefg/',
-        */
-        $file = urldecode(''.substr($path_info, strlen($this->options['controller_path_prefix'])));
+        $file = urldecode(''.$path_info);
         $prefix = $this->options['controller_resource_prefix'];
         if (!empty($prefix) && (substr($file, 0, strlen($prefix)) !== $prefix)) {
             return false;

@@ -251,11 +251,14 @@ trait AppPluginTrait
         $route_options['controller_class_map'] = $this->old_controller_map;
         Route::G()->init($route_options);
         
-        ////
-        if ($this->plugin_options) {
-            //
+        
+        if(!empty($this->plugin_options['plugin_url_prefix'])){
+            $prefix = '/'.trim($this->plugin_options['plugin_url_prefix'], '/').'/';
+            $path_info = Route::G()->getPathInfo():
+            $path_info = substr($path_info,strlen($prefix));
+            Route::G()->setPathInfo($path_info);
         }
-        ////
+        
     }
     protected function pluginModeReadFile($path_info)
     {
@@ -285,6 +288,7 @@ trait AppPluginTrait
     }
     public function pluginModeClear()
     {
+        //TODO 恢复path_info
         foreach ($this->plugin_old_component_map as $class => $object) {
             $class::G($object);
         }

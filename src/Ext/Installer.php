@@ -22,10 +22,8 @@ class Installer extends ComponentBase
     
     public $options = [
         'install_force' => false,
-        
-        'install_search_table' => '',
+        'install_search_table' => true,
         'install_table_prefix' => '',
-        'install_tablle_replace_prefix' => true,
         'install_tables' =>[],
     ];
     public function __construct()
@@ -38,23 +36,25 @@ class Installer extends ComponentBase
     {
         $path_lock = $this->getComponentPath(Configer::G()->options['path_config'], Configer::G()->options['path']);
         $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? 'unkown');
+        $namespace = str_replace('\\', '__', $namespace);
         $file = $path_lock . $namespace. '.installed';
         return is_file($file);
     }
     ////////////////
-    public function checkInstall($context, $options,$has_database)
+    public function checkInstall()
     {
+        $has_database = (($this->context_class)::Setting('database') ||  ($this->context_class)::Setting('database_list')) ? true : false;
         static::ThrowOn(!$has_database, '你需要外部配置，如数据库等', static::NEED_DATABASE);
-        $flag = $this->init($options,$context)->isInstalled();
+        $flag = $this->isInstalled();
         static::ThrowOn(!$flag,"你需要安装",static::NEED_INSTALL);
     }
     //////////////////
 
-    public function install()
+    public function install($options=[])
     {
         $info = '';
-        if(!$this->options['force'] && $this->isInstalled()){
-           static::ThrowOn(true,'你已经安装 !', '');     
+        if(!$this->options['install_force'] && $this->isInstalled()){
+           static::ThrowOn(true,'你已经安装 !', -1);
         }
         
         $this->initSqlDumper();
@@ -81,25 +81,35 @@ class Installer extends ComponentBase
     {
         $path_lock = $this->getComponentPath(Configer::G()->options['path_config'],Configer::G()->options['path']);
         $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? 'unkown');
+        $namespace = str_replace('\\', '__', $namespace);
         $file = $path_lock . $namespace . '.installed';
         return @file_put_contents($file,DATE(DATE_ATOM));
     }
     protected function initSqlDumper()
     {
-        //$option  = $this->options['install_table_prefix'] ? true : false;
-        //$option  = $ install_table_prefix? $install_table_prefix;
+        $path = ($this->context_class)::G()->plugin_options['plugin_path'] ?? (($this->context_class)::G()->options['path'] ?? '');
+        $tables  = $this->options['install_tables'];
+        if ($this->optioins['install_search_table']) {
+            $tables = array_merge($tables,$this->searchTables());
+        }
         
-         $options = [
-            'sql_dump_include_tables' => $this->searchTables(),
-            // 'sql_dump_data_tables' => [],        
-            'sql_dump_prefix' => '',
-            'sql_dump_file' => 'sql',
-            'sql_dump_install_replace_prefix' => false,
-            'sql_dump_install_new_prefix' => '',
+        $options = [
+            'path' => $path,
+            //'path_sql_dump' => 'config',
+            'sql_dump_include_tables' => $tables,
+            //'sql_dump_exclude_tables' => [],
+            //'sql_dump_data_tables' => [],
+            
+            //'sql_dump_prefix' => '',
+            //'sql_dump_file' => 'sql',
+            'sql_dump_install_replace_prefix' => $this->options['install_table_prefix']?true:false,
+            'sql_dump_install_new_prefix' => $this->options['install_table_prefix'],
             'sql_dump_install_drop_old_table' => $this->options['install_force'],
         ];
-        
-        return SqlDumper::G()->init($options, ($this->context_class));
+        var_dump($this->options,$options);
+        $class = get_class(SqlDumper::G());
+        SqlDumper::G(new $class);
+        return SqlDumper::G()->init($options, ($this->context_class)::G());
     }
     protected function searchTables()
     {

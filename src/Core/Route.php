@@ -202,6 +202,7 @@ class Route extends ComponentBase
     {
         $path_info = ltrim((string)$path_info, '/');
         
+        /*
         if ($this->options['controller_path_prefix'] ?? false) {
             $prefix = trim($this->options['controller_path_prefix'], '/').'/';
             $l = strlen($prefix);
@@ -212,6 +213,7 @@ class Route extends ComponentBase
             $path_info = substr($path_info, $l - 1);
             $path_info = ltrim((string)$path_info, '/');
         }
+        //*/
         if ($this->options['controller_enable_slash']) {
             $path_info = rtrim($path_info, '/');
         }
