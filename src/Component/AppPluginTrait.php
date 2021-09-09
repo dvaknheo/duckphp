@@ -254,7 +254,7 @@ trait AppPluginTrait
         
         if(!empty($this->plugin_options['plugin_url_prefix'])){
             $prefix = '/'.trim($this->plugin_options['plugin_url_prefix'], '/').'/';
-            $path_info = Route::G()->getPathInfo():
+            $path_info = Route::G()->getPathInfo();
             $path_info = substr($path_info,strlen($prefix));
             Route::G()->setPathInfo($path_info);
         }

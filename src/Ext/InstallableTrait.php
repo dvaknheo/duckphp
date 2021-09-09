@@ -14,20 +14,21 @@ trait InstallableTrait
         //CamelCase to Underscore
         $string = preg_replace('/(?<=\\w)(?=[A-Z])/',"_$1", $string);
         $string = strtolower($string);
-        return $string.'_';
+        $string = str_replace('\\','-',$string).'_';
+        return $string;
     }
     public function isInstalled()
     {
         $prefix = $this->getOptionsKeyPrefixForNamespace();
-        if ($this->options[$prefix.'installed'] || static::Setting($prefix.'installed') ){
+        if ($this->options[$prefix.'installed'] ?? false || static::Setting($prefix.'installed')?? false ){
             return true;
         }
-        return $this->getInstaller()->isInstall();
+        return $this->getInstaller()->isInstalled();
     }
     ////
-    protected function checkInstall()
+    public function checkInstall()
     {
-        $this->getInstaller()->checkInstall();
+        return $this->getInstaller()->checkInstall();
     }
     public function install($parameters)
     {

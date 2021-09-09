@@ -36,6 +36,7 @@ class Installer extends ComponentBase
         $path_lock = $this->getComponentPath(Configer::G()->options['path_config'], Configer::G()->options['path']);
         $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? '');
         if(!$namespace){
+var_dump("?????");exit;
             return false;
         }
         $namespace = str_replace('\\', '__', $namespace);
@@ -85,7 +86,8 @@ class Installer extends ComponentBase
         $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? 'unkown');
         $namespace = str_replace('\\', '__', $namespace);
         $file = $path_lock . $namespace . '.installed';
-        return @file_put_contents($file,DATE(DATE_ATOM));
+         var_dump("!!!!!!!!!!!!!!!!!!".$file); exit;
+        return file_put_contents($file,DATE(DATE_ATOM));
     }
     protected function initSqlDumper()
     {
