@@ -81,7 +81,7 @@ class SqlDumper extends ComponentBase
         $prefix = $this->options['sql_dump_prefix'];
         $ret = [];
         $tables = [];
-        if ($this->options['sql_dump_include_tables_by_model']) {
+        if ($this->options['sql_dump_include_tables_all']) {
             $data = ($this->context_class)::Db()->fetchAll('show tables');
             foreach ($data as $v) {
                 $tables[] = array_values($v)[0];
@@ -93,13 +93,12 @@ class SqlDumper extends ComponentBase
             $tables = array_values(array_unique(array_merge($this->options['sql_dump_include_tables'])));
         }
         $tables = array_diff($tables, $this->options['sql_dump_exclude_tables']);
-        
-        foreach($tables as $table){
+        foreach ($tables as $table) {
             if ((!empty($prefix)) && (substr($table, 0, strlen($prefix)) !== $prefix)) {
                 continue;
             }
             $sql = $this->getSchemeByTable($table);
-            if(!$sql){
+            if (!$sql) {
                 continue;
             }
             $ret[$table] = $sql;
@@ -110,8 +109,8 @@ class SqlDumper extends ComponentBase
     protected function getSchemeByTable($table)
     {
         try {
-            $record = ($this->context_class)::Db()->fetch('show create table '.$table);
-        } catch(\PDOException $ex) {
+            $record = ($this->context_class)::Db()->fetch("show create table `$table`");
+        } catch (\PDOException $ex) {
             return '';
         }
         $sql = $record['Create Table'] ?? null;
@@ -168,24 +167,23 @@ class SqlDumper extends ComponentBase
     protected function searchTables()
     {
         // sqldumper 的内容。
-        $ref = new \ReflectionClass ($this->context_class);
+        $ref = new \ReflectionClass($this->context_class);
         $file = $ref->getFileName();
-        $path = dirname(dirname(''.$file)).'/'.'Model';
+        $path = dirname(dirname(''.$file)).'/Model/';
         
         $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? 'unkown');
-        $namespace = $namespace.'\\'.'Model';
+        $namespace = $namespace.'\\Model\\';
         
         $models = $this->searchModelClasses($path);
         
-        $ret=[];
-        foreach($models as $k){
-            try{
-                $class = $namespace.'\\'.'Model\\'.$k;
-                $ret[] = $k::G()->table();
-            }catch (\Exception $ex){
+        $ret = [];
+        foreach ($models as $k) {
+            try {
+                $class = $namespace.$k;
+                $ret[] = $class::G()->table();
+            } catch (\Throwable $ex) {
             }
         }
-        
         $ret = array_values(array_unique(array_filter($ret)));
         return $ret;
     }
@@ -199,7 +197,7 @@ class SqlDumper extends ComponentBase
         $it = new \RecursiveIteratorIterator($directory);
         $regex = new \RegexIterator($it, '/^.+\.php$/i', \RecursiveRegexIterator::MATCH);
         foreach ($regex as $k => $v) {
-            $k = substr($v->getSubPathName(), 0, -4);
+            $k = substr($path, 0, -4);  //getSubPathName 这里
             $ret[] = $k;
         }
         return $ret;

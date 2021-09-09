@@ -3,7 +3,8 @@ namespace tests\DuckPhp\Foundation;
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Ext\SqlDumper;
-
+use tests_Data_SqlDumper\System\SqlDumperApp;
+use tests_Data_SqlDumper\Model\EmptyModel;
 class SqlDumperTest extends \PHPUnit\Framework\TestCase
 {
 
@@ -12,7 +13,7 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(SqlDumper::class);
         
         $path_app = \LibCoverage\LibCoverage::G()->getClassTestPath(SqlDumper::class);
-        $setting = include $path_app . 'setting.php';
+        $setting = include $path_app . 'config/setting.php';
         $options=[
             'setting'=>$setting,
             'path_sql_dump' =>$path_app,
@@ -27,10 +28,28 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
         SqlDumper::G()->install();
         
         $this->more();
+        ////[[[[
+        include_once $path_app . 'System/SqlDumperApp.php';
+        include_once $path_app . 'Model/EmptyModel.php';
+        include_once $path_app . 'Model/NoTableModel.php';
+        include_once $path_app . 'Model/ErrorModel.php';
+        
+        SqlDumperApp::G(new SqlDumperApp())->init($options);
+        SqlDumper::G(new SqlDumper())->init(SqlDumperApp::G()->options,SqlDumperApp::G());
+        SqlDumper::G()->options['sql_dump_include_tables_all'] = false;
+        SqlDumper::G()->options['sql_dump_include_tables_by_model'] = true;
+        SqlDumper::G()->options['sql_dump_include_tables'] = ['notable'];
+        
+        
+        SqlDumper::G()->run();
+        ////]]]]
         \LibCoverage\LibCoverage::End();
     }
     protected function more()
     {
+        SqlDumper::G()->options['sql_dump_include_tables_all'] = false;
+    SqlDumper::G()->options['sql_dump_include_tables_by_model'] = false;
+    
         SqlDumper::G(new SqlDumper())->init(DuckPhp::G()->options,DuckPhp::G());
         SqlDumper::G()->options['sql_dump_prefix'] = 'NoExists';
         SqlDumper::G()->run();
@@ -61,14 +80,17 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
         SqlDumper::G()->options['sql_dump_include_tables'] = ['empty'];
         SqlDumper::G()->options['sql_dump_data_tables'] = ['empty'];
         
-        
+        SqlDumper::G()->options['sql_dump_include_tables_all'] = false;
+        SqlDumper::G()->options['sql_dump_include_tables_by_model'] = false;
         SqlDumper::G()->run();
         ///////////////////////
-        
+        echo "<<<<<<<<<<<<<<<<<<<<<<<<\n";
         $path_app = \LibCoverage\LibCoverage::G()->getClassTestPath(SqlDumper::class);
         $options = [
             'path_sql_dump' => $path_app,
-            'sql_dump_include_tables' => 'empty',
+            'sql_dump_include_tables_all' => false,
+            'sql_dump_include_tables_by_model' => false,
+            'sql_dump_include_tables' => ['empty'],
             'sql_dump_prefix' => 'em',
             'sql_dump_install_replace_prefix' => true,
             'sql_dump_install_new_prefix' => 'newprefix',
@@ -79,5 +101,8 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
         SqlDumper::G()->install();
         $sql = "DROP TABLE IF EXISTS `newprefixpty`;";
         DuckPhp::Db()->execute($sql);
+        SqlDumper::G(new SqlDumper());
+                echo ">>>>>>>>>>>>>>>>>>>>>>>>>\n";
+
     }
 }

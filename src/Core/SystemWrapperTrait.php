@@ -48,7 +48,7 @@ trait SystemWrapperTrait
         return ($func)(...$input_args);
     }
     ///////////////////////////////////////////
-///////////
+    ///////////
     public static function header($output, bool $replace = true, int $http_response_code = 0)
     {
         return static::G()->_header($output, $replace, $http_response_code);

@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 /**
- * DuckPHP
+ * DuckPhp
  * From this time, you never be alone~
  */
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\App;
-use DuckPhp\Core\Configer;
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\Configer;
 use DuckPhp\Ext\SqlDumper;
 use DuckPhp\Foundation\ThrowOnableTrait;
 
@@ -23,7 +23,7 @@ class Installer extends ComponentBase
     public $options = [
         'install_force' => false,
         'install_table_prefix' => '',
-        'install_sql_dump_options'=>[],
+        'install_sql_dump_options' => [],
     ];
     public function __construct()
     {
@@ -35,7 +35,7 @@ class Installer extends ComponentBase
     {
         $path_lock = $this->getComponentPath(Configer::G()->options['path_config'], Configer::G()->options['path']);
         $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? '');
-        if(!$namespace){
+        if (!$namespace) {
             return false;
         }
         $namespace = str_replace('\\', '__', $namespace);
@@ -45,31 +45,31 @@ class Installer extends ComponentBase
     ////////////////
     public function checkInstall()
     {
-        $has_database = (($this->context_class)::Setting('database') ||  ($this->context_class)::Setting('database_list')) ? true : false;
+        $has_database = (($this->context_class)::Setting('database') || ($this->context_class)::Setting('database_list')) ? true : false;
         static::ThrowOn(!$has_database, '你需要外部配置，如数据库等', static::NEED_DATABASE);
         $flag = $this->isInstalled();
-        static::ThrowOn(!$flag,"你需要安装",static::NEED_INSTALL);
+        static::ThrowOn(!$flag, "你需要安装", static::NEED_INSTALL);
     }
     //////////////////
 
-    public function install($options=[])
+    public function install($options = [])
     {
         $info = '';
-        static::ThrowOn(!$this->options['install_force'] && $this->isInstalled(),'你已经安装 !', -1);
+        static::ThrowOn(!$this->options['install_force'] && $this->isInstalled(), '你已经安装 !', -1);
         
         //  ext 里的还要安装
         
-        try{
+        try {
             $this->initSqlDumper();
             $info = SqlDumper::G()->install();
-        }catch(\Exception $ex){
-            static::ThrowOn(true, "写入数据库失败:" . $ex->getMessage(),-2);
+        } catch (\Exception $ex) {
+            static::ThrowOn(true, "写入数据库失败:" . $ex->getMessage(), -2);
         }
-        if($info){
+        if ($info) {
             return $info;
         }
         $flag = $this->writeLock();
-        static::ThrowOn(!$flag,'写入锁文件失败', -3);
+        static::ThrowOn(!$flag, '写入锁文件失败', -3);
         
         return $info;
     }
@@ -80,12 +80,12 @@ class Installer extends ComponentBase
     /////////////////////////////
     protected function writeLock()
     {
-        $path_lock = $this->getComponentPath(Configer::G()->options['path_config'],Configer::G()->options['path']);
+        $path_lock = $this->getComponentPath(Configer::G()->options['path_config'], Configer::G()->options['path']);
         $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? 'unkown');
         $namespace = str_replace('\\', '__', $namespace);
         $file = $path_lock . $namespace . '.installed';
 
-        return file_put_contents($file,DATE(DATE_ATOM));
+        return file_put_contents($file, DATE(DATE_ATOM));
     }
     protected function initSqlDumper()
     {
