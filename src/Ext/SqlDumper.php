@@ -12,10 +12,13 @@ class SqlDumper extends ComponentBase
     public $options = [
         'path' => '',
         'path_sql_dump' => 'config',
-        'sql_dump_include_tables' => '*',
+        'sql_dump_include_tables' => [],
         'sql_dump_exclude_tables' => [],
         'sql_dump_data_tables' => [],
         
+        'sql_dump_include_tables_all' => true,
+        'sql_dump_include_tables_by_model' => false,
+
         'sql_dump_prefix' => '',
         'sql_dump_file' => 'sql',
         'sql_dump_install_replace_prefix' => false,
@@ -29,7 +32,7 @@ class SqlDumper extends ComponentBase
         $this->save($data);
         return true;
     }
-    public function install($force = false)
+    public function install()
     {
         $ret = '';
         $data = $this->load();
@@ -75,31 +78,42 @@ class SqlDumper extends ComponentBase
     }
     protected function getSchemes()
     {
-        $include_tables = $this->options['sql_dump_include_tables'];
-        $ignore_tables = $this->options['sql_dump_exclude_tables'];
         $prefix = $this->options['sql_dump_prefix'];
         $ret = [];
-        $data = ($this->context_class)::Db()->fetchAll('show tables');
-        foreach ($data as $v) {
-            $t = array_values($v);
-            $table = $t[0];
+        $tables = [];
+        if ($this->options['sql_dump_include_tables_by_model']) {
+            $data = ($this->context_class)::Db()->fetchAll('show tables');
+            foreach ($data as $v) {
+                $tables[] = array_values($v)[0];
+            }
+        } else {
+            if ($this->options['sql_dump_include_tables_by_model']) {
+                $tables = $this->searchTables();
+            }
+            $tables = array_values(array_unique(array_merge($this->options['sql_dump_include_tables'])));
+        }
+        $tables = array_diff($tables, $this->options['sql_dump_exclude_tables']);
+        
+        foreach($tables as $table){
             if ((!empty($prefix)) && (substr($table, 0, strlen($prefix)) !== $prefix)) {
                 continue;
             }
-            if ($include_tables != '*' && !in_array($table, $include_tables)) {
+            $sql = $this->getSchemeByTable($table);
+            if(!$sql){
                 continue;
             }
-            if (in_array($table, $ignore_tables)) {
-                continue;
-            }
-            $ret[$table] = $this->getSchemeByTable($table);
+            $ret[$table] = $sql;
         }
         return $ret;
     }
     
     protected function getSchemeByTable($table)
     {
-        $record = ($this->context_class)::Db()->fetch('show create table '.$table);
+        try {
+            $record = ($this->context_class)::Db()->fetch('show create table '.$table);
+        } catch(\PDOException $ex) {
+            return '';
+        }
         $sql = $record['Create Table'] ?? null;
         $sql = preg_replace('/AUTO_INCREMENT=\d+/', 'AUTO_INCREMENT=1', $sql);
         return $sql;
@@ -135,8 +149,8 @@ class SqlDumper extends ComponentBase
     {
         $ret = [];
         $path = parent::getComponentPathByKey('path_sql_dump');
-        
         $file = $path.$this->options['sql_dump_file'].'.php';
+        
         $ret = (function () use ($file) {
             return @include $file;
         })();
@@ -149,5 +163,45 @@ class SqlDumper extends ComponentBase
         $file = $path.$this->options['sql_dump_file'].'.php';
         $str = $header . var_export($data, true) . ";\n";
         file_put_contents($file, $str);
+    }
+    /////////////////////
+    protected function searchTables()
+    {
+        // sqldumper 的内容。
+        $ref = new \ReflectionClass ($this->context_class);
+        $file = $ref->getFileName();
+        $path = dirname(dirname(''.$file)).'/'.'Model';
+        
+        $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? 'unkown');
+        $namespace = $namespace.'\\'.'Model';
+        
+        $models = $this->searchModelClasses($path);
+        
+        $ret=[];
+        foreach($models as $k){
+            try{
+                $class = $namespace.'\\'.'Model\\'.$k;
+                $ret[] = $k::G()->table();
+            }catch (\Exception $ex){
+            }
+        }
+        
+        $ret = array_values(array_unique(array_filter($ret)));
+        return $ret;
+    }
+    protected function searchModelClasses($path)
+    {
+        $ret = [];
+        
+        $setting_file = !empty($setting_file) ? $path.$setting_file . '.php' : '';
+        $flags = \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::UNIX_PATHS | \FilesystemIterator::FOLLOW_SYMLINKS ;
+        $directory = new \RecursiveDirectoryIterator($path, $flags);
+        $it = new \RecursiveIteratorIterator($directory);
+        $regex = new \RegexIterator($it, '/^.+\.php$/i', \RecursiveRegexIterator::MATCH);
+        foreach ($regex as $k => $v) {
+            $k = substr($v->getSubPathName(), 0, -4);
+            $ret[] = $k;
+        }
+        return $ret;
     }
 }

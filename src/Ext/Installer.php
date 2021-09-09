@@ -22,9 +22,8 @@ class Installer extends ComponentBase
     
     public $options = [
         'install_force' => false,
-        'install_search_table' => true,
         'install_table_prefix' => '',
-        'install_tables' =>[],
+        'install_sql_dump_options'=>[],
     ];
     public function __construct()
     {
@@ -35,7 +34,10 @@ class Installer extends ComponentBase
     public function isInstalled()
     {
         $path_lock = $this->getComponentPath(Configer::G()->options['path_config'], Configer::G()->options['path']);
-        $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? 'unkown');
+        $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? '');
+        if(!$namespace){
+            return false;
+        }
         $namespace = str_replace('\\', '__', $namespace);
         $file = $path_lock . $namespace. '.installed';
         return is_file($file);
@@ -56,11 +58,11 @@ class Installer extends ComponentBase
         if(!$this->options['install_force'] && $this->isInstalled()){
            static::ThrowOn(true,'你已经安装 !', -1);
         }
-        
-        $this->initSqlDumper();
+        //  ext 里的还要安装
         
         try{
-            $info = SqlDumper::G()->install($this->options['install_force']??false);
+            $this->initSqlDumper();
+            $info = SqlDumper::G()->install();
         }catch(\Exception $ex){
             static::ThrowOn(true, "写入数据库失败:" . $ex->getMessage(),-2);
         }
@@ -88,15 +90,10 @@ class Installer extends ComponentBase
     protected function initSqlDumper()
     {
         $path = ($this->context_class)::G()->plugin_options['plugin_path'] ?? (($this->context_class)::G()->options['path'] ?? '');
-        $tables  = $this->options['install_tables'];
-        if ($this->optioins['install_search_table']) {
-            $tables = array_merge($tables,$this->searchTables());
-        }
         
         $options = [
             'path' => $path,
             //'path_sql_dump' => 'config',
-            'sql_dump_include_tables' => $tables,
             //'sql_dump_exclude_tables' => [],
             //'sql_dump_data_tables' => [],
             
@@ -106,46 +103,9 @@ class Installer extends ComponentBase
             'sql_dump_install_new_prefix' => $this->options['install_table_prefix'],
             'sql_dump_install_drop_old_table' => $this->options['install_force'],
         ];
-        var_dump($this->options,$options);
+        $options = array_merge($this->options['install_sql_dump_options'], $options);
         $class = get_class(SqlDumper::G());
         SqlDumper::G(new $class);
         return SqlDumper::G()->init($options, ($this->context_class)::G());
-    }
-    protected function searchTables()
-    {
-        $ref = new \ReflectionClass ($this->context_class);
-        $file = $ref->getFileName();
-        $path = dirname(dirname(''.$file)).'/'.'Model';
-        
-        $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? 'unkown');
-        $namespace = $namespace.'\\'.'Model';
-        
-        $models = $this->searchModelClasses($path);
-        
-        $ret=[];
-        foreach($models as $k){
-            try{
-                $class = $namespace.'\\'.'Model\\'.$k;
-                $ret[] = $k::G()->table();
-            }catch (\Exception $ex){
-            }
-        }
-        //
-        $ret = array_values(array_unique(array_filter($ret)));
-        return $ret;
-    }
-    protected function searchModelClasses($path)
-    {
-        $ret = [];
-        $setting_file = !empty($setting_file) ? $path.$setting_file . '.php' : '';
-        $flags = \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::UNIX_PATHS | \FilesystemIterator::FOLLOW_SYMLINKS ;
-        $directory = new \RecursiveDirectoryIterator($path, $flags);
-        $it = new \RecursiveIteratorIterator($directory);
-        $regex = new \RegexIterator($it, '/^.+\.php$/i', \RecursiveRegexIterator::MATCH);
-        foreach ($regex as $k => $v) {
-            $k = substr($v->getSubPathName(), 0, -4);
-            $ret[] = $k;
-        }
-        return $ret;
     }
 }
