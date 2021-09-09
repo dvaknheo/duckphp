@@ -61,7 +61,7 @@ class AutoLoader
         $path = rtrim($this->options['path'], '/').'/';
         
         $this->namespace = $this->options['namespace'];
-        $this->path_namespace = $this->getComponenetPath($this->options['path'], $this->options['path_namespace']);
+        $this->path_namespace = $this->getComponentPath($this->options['path_namespace'],$this->options['path']);
         if (!$this->options['skip_app_autoload'] && !empty($this->namespace)) {
             $this->assignPathNamespace($this->path_namespace, $this->namespace);
         }
@@ -70,7 +70,7 @@ class AutoLoader
         
         return $this;
     }
-    protected function getComponenetPath($main_path, $sub_path): string
+    protected function getComponentPath($sub_path, $main_path): string
     {
         $is_abs_path = false;
         if (DIRECTORY_SEPARATOR === '/') {

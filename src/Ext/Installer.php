@@ -36,7 +36,6 @@ class Installer extends ComponentBase
         $path_lock = $this->getComponentPath(Configer::G()->options['path_config'], Configer::G()->options['path']);
         $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? '');
         if(!$namespace){
-var_dump("?????");exit;
             return false;
         }
         $namespace = str_replace('\\', '__', $namespace);
@@ -56,9 +55,8 @@ var_dump("?????");exit;
     public function install($options=[])
     {
         $info = '';
-        if(!$this->options['install_force'] && $this->isInstalled()){
-           static::ThrowOn(true,'你已经安装 !', -1);
-        }
+        static::ThrowOn(!$this->options['install_force'] && $this->isInstalled(),'你已经安装 !', -1);
+        
         //  ext 里的还要安装
         
         try{
@@ -86,7 +84,7 @@ var_dump("?????");exit;
         $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? 'unkown');
         $namespace = str_replace('\\', '__', $namespace);
         $file = $path_lock . $namespace . '.installed';
-         var_dump("!!!!!!!!!!!!!!!!!!".$file); exit;
+
         return file_put_contents($file,DATE(DATE_ATOM));
     }
     protected function initSqlDumper()

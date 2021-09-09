@@ -69,9 +69,9 @@ class ComponentBase implements ComponentInterface
     {
         $main_path = $this->options[$path_key_parent];
         $sub_path = $this->options[$path_key];
-        return $this->getComponentPath($main_path, $sub_path);
+        return $this->getComponentPath($sub_path, $main_path);
     }
-    protected function getComponentPath($main_path, $sub_path): string
+    protected function getComponentPath($sub_path, $main_path): string
     {
         $is_abs_path = false;
         if (DIRECTORY_SEPARATOR === '/') {
