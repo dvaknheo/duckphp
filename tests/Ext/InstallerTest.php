@@ -28,7 +28,7 @@ class InstallerTest extends \PHPUnit\Framework\TestCase
         try{
             InstallerApp::G()->checkInstall();
         }catch(\Exception $ex){}
-        InstallerApp::G()->install([]);
+        var_dump( InstallerApp::G()->install([]));
         InstallerApp::G()->checkInstall();
         @unlink($path_app.'config/tests__DuckPhp.installed');
         
@@ -38,7 +38,8 @@ class InstallerTest extends \PHPUnit\Framework\TestCase
         InstallerApp::G()->options['namespace'] ='';
         InstallerApp::G()->isInstalled();
         InstallerApp::G()->options['namespace'] = $namespace;
-        Installer::G()->dumpSql();
+        
+        
         
         //InstallerApp::G()->checkInstall();
         ////]]
@@ -51,7 +52,7 @@ class InstallerTest extends \PHPUnit\Framework\TestCase
         Installer::G()->install();
         }catch(\Exception $ex){}
         @unlink($path_app.'config/tests__DuckPhp.installed');
-        
+        Installer::G()->dumpSql();
         \LibCoverage\LibCoverage::End();
     }
 }
@@ -68,6 +69,10 @@ class FakeSqlDumper extends SqlDumper
             throw new \Exception("...");
         }
         return "???";
+    }
+    public function run()
+    {
+        return;
     }
 }
 

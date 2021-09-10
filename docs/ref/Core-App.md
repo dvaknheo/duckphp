@@ -274,6 +274,9 @@ Show 方法对 View::Show() 加了好些补充
     public static function Url($url = null)
 获得 Url
 
+    public static function Res($url = null)
+获得资源 url
+
     public static function Domain($use_scheme = false)
 获得域名
 
@@ -414,9 +417,3 @@ Show 方法对 View::Show() 加了好些补充
 ### 关于 injected_helper_map 。 有时间再详细文档。
 
 以上
-
-
-
-
-
-

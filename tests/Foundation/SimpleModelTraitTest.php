@@ -21,18 +21,10 @@ class SimpleModelTraitTest extends \PHPUnit\Framework\TestCase
         ];
         DuckPhp::G(new DuckPhp())->init($options);
         
-        TestModel::G()->find('1');
-        TestModel::G()->getList();
-        $id=TestModel::G()->add(['content' =>DATE(DATE_ATOM)]);
-        TestModel::G()->update($id,['content' =>DATE(DATE_ATOM)]);
-        $sql="delete from 'TABLE' where id =?";
-        $sql=TestModel::G()->prepare($sql);
-        DuckPhp::Db()->execute($sql,$id);
+        echo TestModel::G()->table();
+
         
-        try{
-            TestModel::G()->delete($id);
-        }catch(\Exception $ex){}
-        
+
         TestModel::G()->test($id);
 
         
@@ -51,6 +43,16 @@ class TestModel extends Base
     protected $table_pk='id';
     public function test($id)
     {
+        TestModel::G()->find('1');
+        TestModel::G()->getList();
+        $id=TestModel::G()->add(['content' =>DATE(DATE_ATOM)]);
+        TestModel::G()->update($id,['content' =>DATE(DATE_ATOM)]);
+        $sql="delete from 'TABLE' where id =?";
+        $sql=TestModel::G()->prepare($sql);
+        
+        
+        DuckPhp::Db()->execute($sql,$id);
+
         TestModel::G()->fetchAll("select * from 'TABLE' where id =? ", $id);
         TestModel::G()->fetch("select * from 'TABLE' where id =? ", $id);
         TestModel::G()->fetchColumn("select * from 'TABLE' where id =? ", $id);

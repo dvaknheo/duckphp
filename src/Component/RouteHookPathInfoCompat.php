@@ -107,7 +107,7 @@ class RouteHookPathInfoCompat extends ComponentBase
         $k = $this->options['path_info_compact_action_key'];
         $m = $this->options['path_info_compact_class_key'];
         
-        $_SERVER['PATH_INFO_OLD'] = $_SERVER['PATH_INFO'];
+        $_SERVER['PATH_INFO_OLD'] = $_SERVER['PATH_INFO'] ?? '';
         if (defined('__SUPERGLOBAL_CONTEXT')) {
             (__SUPERGLOBAL_CONTEXT)()->_SERVER = $_SERVER;
         }

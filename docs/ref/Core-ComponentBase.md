@@ -32,11 +32,11 @@
     protected function initContext(object $context)
 空函数，你可以 override 做 context 处理。
 
-    protected function getComponenetPathByKey($path_key, $path_key_parent = 'path'): string
+    protected function getComponentPathByKey($path_key, $path_key_parent = 'path'): string
 便于获得 path - path_key 组合的 路径
 
-    public function checkInstall($context)
-检查是否安装初始化
+    protected function getComponentPath($sub_path, $main_path): string
+获得组件的绝对路径
 
 ## 说明
 
@@ -51,3 +51,7 @@ ComponentBase 裁剪你只需要的选项。
 getComponenetPathByKey 这个方法，用于辅助  'path' ,'path' 这样的联合 path 选项
 
 如果 'path_x' 是绝对路径，则返回 'path_x' ，否则返回 'path'.'path_x'
+
+
+    public function checkInstall($context)
+

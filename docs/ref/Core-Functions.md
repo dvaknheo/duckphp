@@ -34,6 +34,9 @@ DuckPhp 尽量避免污染全局环境，这些函数
     function __url($url)
 \_\_url 对应 App::URL($url);
 
+    function __res($url)
+\_\__res 对应 ，获取 外部资源地址
+
     function __domain($use_scheme = false)
 \_\_domain 对应 App::domain();
 
@@ -66,3 +69,5 @@ DuckPhp 尽量避免污染全局环境，这些函数
     
     function __logger()
 \_\__logger() 对应 App::Logger();
+
+

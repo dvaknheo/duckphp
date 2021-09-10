@@ -44,7 +44,7 @@ trait SimpleModelTrait
     {
         return str_replace(App::DbForRead()->quote('TABLE'), $this->table(), $sql);
     }
-    public function getList(int $page = 1, int $page_size = 10)
+    protected function getList(int $page = 1, int $page_size = 10)
     {
         $sql = "SELECT * from 'TABLE' where true order by id desc";
         $sql = $this->prepare($sql);
@@ -54,7 +54,7 @@ trait SimpleModelTrait
         return ['data' => $data,"total" => $total];
     }
 
-    public function find($a)
+    protected function find($a)
     {
         if (is_scalar($a)) {
             $a = [$this->table_pk => $a];
@@ -70,20 +70,16 @@ trait SimpleModelTrait
         $ret = App::DbForRead()->fetch($sql);
         return $ret;
     }
-    public function add($data)
+    protected function add($data)
     {
         $ret = App::DbForWrite()->insertData($this->table(), $data);
         return $ret;
     }
-    public function update($id, $data)
+    protected function update($id, $data)
     {
         $ret = App::DbForWrite()->updateData($this->table(), $id, $data, $this->table_pk);
         
         return $ret;
-    }
-    public function delete($id)
-    {
-        throw new \ErrorException('Impelement It.');
     }
     /*
     fetch, fetchAll,fetchClumn,fetchClass

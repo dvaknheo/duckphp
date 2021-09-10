@@ -67,6 +67,8 @@ public $namespace_paths = [];
 
     public function __construct()
 
+    protected function getComponentPath($sub_path, $main_path): string
+
 
 ## 说明
 
@@ -81,3 +83,4 @@ if (!class_exists(\LazyToChange\System\App::class)) {
     \DuckPhp\DuckPhp::runAutoLoader();
 }
 ```
+

@@ -5,9 +5,8 @@
  */
 namespace DuckPhp\Ext;
 
-use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Core\Configer;
+use DuckPhp\Ext\InstallerException;
 use DuckPhp\Ext\SqlDumper;
 use DuckPhp\Foundation\ThrowOnableTrait;
 
@@ -21,6 +20,7 @@ class Installer extends ComponentBase
     use ThrowOnableTrait;
     
     public $options = [
+        'path_install' => 'config',
         'install_force' => false,
         'install_table_prefix' => '',
         'install_sql_dump_options' => [],
@@ -33,7 +33,7 @@ class Installer extends ComponentBase
     //
     public function isInstalled()
     {
-        $path_lock = $this->getComponentPath(Configer::G()->options['path_config'], Configer::G()->options['path']);
+        $path_lock = $this->getComponentPath($this->options['path_install'], ($this->context_class)::G()->options['path']);
         $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? '');
         if (!$namespace) {
             return false;
@@ -80,7 +80,7 @@ class Installer extends ComponentBase
     /////////////////////////////
     protected function writeLock()
     {
-        $path_lock = $this->getComponentPath(Configer::G()->options['path_config'], Configer::G()->options['path']);
+        $path_lock = $this->getComponentPath($this->options['path_install'], ($this->context_class)::G()->options['path']);
         $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? 'unkown');
         $namespace = str_replace('\\', '__', $namespace);
         $file = $path_lock . $namespace . '.installed';

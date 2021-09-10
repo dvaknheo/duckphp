@@ -5,6 +5,8 @@
  */
 namespace DuckPhp\Ext;
 
+use DuckPhp\Ext\Installer;
+
 trait InstallableTrait
 {
     protected function getOptionsKeyPrefixForNamespace()

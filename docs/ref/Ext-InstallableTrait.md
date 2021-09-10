@@ -11,3 +11,13 @@ InstallableTrait 让你的 App 不需要重复写安装器
 
 
 ## 说明
+    protected function getOptionsKeyPrefixForNamespace()
+
+    public function isInstalled()
+
+    public function checkInstall()
+
+    public function install($parameters)
+
+    protected function getInstaller()
+

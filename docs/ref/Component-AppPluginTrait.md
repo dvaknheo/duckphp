@@ -49,10 +49,6 @@ URL 前缀，限定插件的目录
             'plugin_readfile_prefix' => '',
 启用用于读取资源的目录的前缀，如 /res
 
-            'plugin_use_singletonex_route' => true,
-启用 SingletonEx, 让客户可以修改Controller
-已废弃，待删除
-
             'plugin_component_class_view' => '',
 替换默认的View
 
@@ -62,6 +58,12 @@ URL 前缀，限定插件的目录
             'plugin_injected_helper_map' => '',
 高级功能
 
+            'plugin_init_override_parent' => true,
+
+            'plugin_init_override_to_options' => true,
+
+            'plugin_init_regist_console' => true,
+            
 ## 公开方法
 全部方法：
 
@@ -99,8 +101,12 @@ onPluginModeException 出异常后调用
     protected function pluginModeReplaceDynamicComponent()
     protected function pluginModeInitDynamicComponent()
     protected function pluginModeReadFile($path_info)
-    private function pluginModeGetPath($path_key, $path_key_parent = 'plugin_path'): string
+    protected function pluginModeGetPath($path_key, $path_key_parent = 'plugin_path'): string
     protected function pluginModeSearchAllPluginFile($path, $setting_file = '')
+
+
+
+
 内部的方法
 
     protected function mime_content_type($file)
@@ -222,7 +228,3 @@ onBeforeRun
 onAfterRun
 
 清理
-
-
-
-

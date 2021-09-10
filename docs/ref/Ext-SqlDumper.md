@@ -88,3 +88,15 @@ SqlDumper::G()->install(); // 从配置文件安装 sql
 
 
 
+        'sql_dump_include_tables' => [],
+
+        'sql_dump_include_tables_all' => true,
+
+        'sql_dump_include_tables_by_model' => false,
+
+    public function install()
+
+    protected function searchTables()
+
+    protected function searchModelClasses($path)
+

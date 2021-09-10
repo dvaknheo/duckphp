@@ -46,9 +46,6 @@
         'controller_path_ext' => '',
 控制器，后缀,如 .html
 
-        'controller_use_singletonex' => false,
-控制器，使用可变单例模式
-
         'controller_stop_static_method' => true,
 控制器，禁止直接访问控制器静态方法
 
@@ -58,6 +55,12 @@
         'controller_class_map' => [],
 控制器，类映射，用于替换
 
+
+        'controller_resource_prefix' => '',
+资源文件前缀
+
+    
+    
 ## 公开方法
 
 ### 主流程方法
@@ -110,6 +113,10 @@
     public static function Url($url = null)
     public function _Url($url = null)
 获得 URL
+
+    public static function Res($url = null)
+    public function _Res($url = null)
+获得资源地址
 
     public static function Domain($use_scheme = false)
     public function _Domain($use_scheme = false)
@@ -237,3 +244,5 @@ if(!$flag){
 修订版本：
 
 修订时间：
+
+

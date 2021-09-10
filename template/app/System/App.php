@@ -92,14 +92,14 @@ class App extends DuckPhp
         // 控制器，POST 的方法会在方法名前加前缀 do_ (DuckPhp\Core\Route)
         // $options['controller_prefix_post'] = 'do_';
 
+        // 资源前缀 (DuckPhp\Core\Route)
+        // $options['controller_resource_prefix'] = '';
+
         // 控制器，禁止直接访问控制器静态方法 (DuckPhp\Core\Route)
         // $options['controller_stop_static_method'] = true;
 
         // 控制器，严格模式，区分大小写 (DuckPhp\Core\Route)
         // $options['controller_strict_mode'] = true;
-
-        // 控制器，使用可变单例模式 (DuckPhp\Core\Route)
-        // $options['controller_use_singletonex'] = false;
 
         // 控制器，欢迎类，默认欢迎类是  Main 。 (DuckPhp\Core\Route)
         // $options['controller_welcome_class'] = 'Main';

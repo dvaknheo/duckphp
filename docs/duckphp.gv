@@ -181,29 +181,21 @@ subgraph cluster_DuckPhp {
 subgraph cluster_Foundation {
     label = "[DuckPhp\\Foundation]";
     
-    Installer [shape="component"];
-    SessionBase [shape="component"];
+    Session [shape="component"];
     SimpleControllerTrait  [shape="diamond"];
     SimpleModelTrait  [shape="diamond"];
-    SqlDumper [shape="component"];
     ThrowOnableTrait  [shape="diamond"];
 
-    X_Core_App[label="DuckPhp\\Core\\App",shape="rarrow"];
-    X_Core_Configer[label="DuckPhp\\Core\\Configer",shape="rarrow"];
-    
-    Installer -> ComponentBase [style="dotted"];
-    SessionBase -> ComponentBase [style="dotted"];
-    SqlDumper -> ComponentBase [style="dotted"];
-    
-    
-    Installer -> X_Core_App [style="dashed"];
-    Installer -> X_Core_Configer [style="dashed"];
-    Installer -> SqlDumper [style="dashed"];
-    Installer -> ThrowOnableTrait [style="dashed"];
-    
-    SessionBase -> X_Core_App [style="dashed"];
-    SimpleControllerTrait -> X_Core_App [style="dashed"];
-    SimpleModelTrait ->X_Core_App [style="dashed"];
+    F_Core_App[label="DuckPhp\\Core\\App",shape="rarrow"];
+    F_SingletonExTrait[label="DuckPhp\\SingletonEx\\SingletonExTrait",shape="rarrow"];
+
+
+    Session -> ComponentBase [style="dotted"];
+    Session -> F_Core_App [style="dashed"];
+    SimpleControllerTrait -> F_Core_App [style="dashed"];
+    SimpleControllerTrait -> F_SingletonExTrait [style="dashed"];
+    SimpleModelTrait -> F_Core_App [style="dashed"];
+    SimpleModelTrait -> F_SingletonExTrait [style="dashed"];    
 }
 
 
@@ -215,6 +207,9 @@ subgraph cluster_Ext {
     EmptyView[shape="component"];
     ExceptionWrapper [shape="component"];
     HookChain;
+    InstallableTrait [shape="diamond"];
+    Installer [shape="component"];
+    InstallerException;
     JsonRpcClientBase [shape="component"];
     JsonRpcExt [shape="component"];
     JsonView [shape="component"];
@@ -229,18 +224,22 @@ subgraph cluster_Ext {
     RouteHookDirectoryMode[shape="component"];
     RouteHookManager[shape="component"];
     RouteHookRewrite[shape="component"];
+    RouteHookResource[shape="component"];
     
     StaticReplacer [shape="component"];
     StrictCheck[shape="component"];
+    SqlDumper [shape="component"];
     SuperGlobalContext[shape="component"];
 
-    X_Core_Route[label="DuckPhp\\Core\\Route",shape="rarrow"];
     X_Core_View[label="DuckPhp\\Core\\View",shape="rarrow"];
     X_DbManager[label="DuckPhp\\Component\\DbManager",shape="rarrow"];
 
+    
+    
 
     ExceptionWrapper -> ComponentBase [style="dotted"];
     JsonRpcExt -> ComponentBase [style="dotted"];
+    Installer -> ComponentBase [style="dotted"];
     Misc -> ComponentBase [style="dotted"];
     MyFacadesBase -> ComponentBase [style="dotted"];
     MyFacadesAutoLoader -> ComponentBase [style="dotted"];
@@ -254,14 +253,23 @@ subgraph cluster_Ext {
 
     StaticReplacer -> ComponentBase [style="dotted"];
     StrictCheck -> ComponentBase [style="dotted"];
+    SqlDumper -> ComponentBase [style="dotted"];
     SuperGlobalContext -> ComponentBase [style="dotted"];
+
+
 
     CallableView ->X_Core_View[style="dashed"];
     EmptyView -> X_Core_View[style="dashed"];
+    
+    InstallableTrait -> Installer;
+    Installer -> SqlDumper ;
+    Installer -> InstallerException ;
+    Installer -> ThrowOnableTrait ;
+
+    
     MyFacadesBase -> MyFacadesAutoLoader [style="dashed"];
     MyFacadesAutoLoader -> MyFacadesBase;
     MyMiddlewareManager -> RouteHookManager;
-    MyMiddlewareManager -> X_Core_Route [style="dashed"];
     JsonRpcExt ->JsonRpcClientBase;
     JsonRpcClientBase ->JsonRpcExt[style="dashed"];
     JsonRpcClientBase -> ComponentBase [style="dotted"];
