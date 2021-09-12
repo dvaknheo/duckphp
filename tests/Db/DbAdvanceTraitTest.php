@@ -16,7 +16,21 @@ class DbAdvanceTraitTest extends \PHPUnit\Framework\TestCase
         
         $db=new Db();
         $db->init($options);
-        
+$sql= 'DROP TABLE IF EXISTS `Users`';
+$db->execute($sql);
+
+$sql =  'CREATE TABLE `Users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(32) COLLATE utf8_bin NOT NULL,
+  `password` varchar(64) COLLATE utf8_bin NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT=\'用户表\'';
+$db->execute($sql);
+
         $array=[];
         $db->quoteIn($array);
         $db->qouteInsertArray($array);
@@ -40,11 +54,13 @@ class DbAdvanceTraitTest extends \PHPUnit\Framework\TestCase
 
         
         var_dump($db->fetchAll("select * from Users"));
-        
-        
+
+$sql= 'DROP TABLE IF EXISTS `Users`';
+$db->execute($sql);
         $db->pdo=null;
         $db->qouteInsertArray($array);
         
+
         \LibCoverage\LibCoverage::End();
         /*
         $db->quoteIn($array);

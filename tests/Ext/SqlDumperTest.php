@@ -20,10 +20,27 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
         ];
         DuckPhp::G(new DuckPhp())->init($options);
         SqlDumper::G()->init(DuckPhp::G()->options,DuckPhp::G());
+
+$sql= 'DROP TABLE IF EXISTS `Users`';
+DuckPhp::Db()->execute($sql);
+
+$sql =  'CREATE TABLE `Users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(32) COLLATE utf8_bin NOT NULL,
+  `password` varchar(64) COLLATE utf8_bin NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT=\'用户表\'';
+DuckPhp::Db()->execute($sql);
+
+
         SqlDumper::G()->run();
         SqlDumper::G()->install();
         
-        SqlDumper::G()->options['sql_dump_data_tables']=['Settings'];
+        SqlDumper::G()->options['sql_dump_data_tables']=['Users'];
         SqlDumper::G()->run();
         SqlDumper::G()->install();
         
@@ -42,6 +59,10 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
         
         
         SqlDumper::G()->run();
+        
+
+$sql= 'DROP TABLE IF EXISTS `Users`';
+DuckPhp::Db()->execute($sql);
         ////]]]]
         \LibCoverage\LibCoverage::End();
     }

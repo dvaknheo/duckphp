@@ -13,10 +13,11 @@ class InstallableTraitTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(InstallableTrait::class);
         
         $path_app = \LibCoverage\LibCoverage::G()->getClassTestPath(InstallableTrait::class);
+        @unlink($path_app.'config/tests__DuckPhp.installed');
         InstallableApp::G()->init([
             'path' => $path_app,
         ]);
-        @unlink($path_app.'config/tests-duck_php.lock');
+        
         InstallableApp::G()->isInstalled();
         try{
             InstallableApp::G()->checkInstall();
@@ -35,7 +36,7 @@ class InstallableTraitTest extends \PHPUnit\Framework\TestCase
         InstallableApp::G()->options["tests-duck_php_installed"] = true;
         InstallableApp::G()->isInstalled();
         
-        @unlink($path_app.'config/tests-duck_php.lock');
+        @unlink($path_app.'config/tests__DuckPhp.installed');
         
         \LibCoverage\LibCoverage::End();
     }

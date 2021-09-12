@@ -21,12 +21,21 @@ class SimpleModelTraitTest extends \PHPUnit\Framework\TestCase
         ];
         DuckPhp::G(new DuckPhp())->init($options);
         
-        echo TestModel::G()->table();
+        echo EmptyModel::G()->table();
+$sql = "DROP TABLE IF EXISTS `empty`;";
+        DuckPhp::Db()->execute($sql);
 
+        $sql="CREATE TABLE `empty` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `data` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='keep me empty'";
+        DuckPhp::Db()->execute($sql);
+
+        EmptyModel::G()->test($id);
         
-
-        TestModel::G()->test($id);
-
+$sql= 'DROP TABLE IF EXISTS `empty`';
+DuckPhp::Db()->execute($sql);
         
         \LibCoverage\LibCoverage::End();
     }
@@ -37,28 +46,26 @@ class Base
     use SimpleModelTrait;
     //static $class_var;
 }
-class TestModel extends Base
+class EmptyModel extends Base
 {
     protected $table_name=null;
     protected $table_pk='id';
     public function test($id)
     {
-        TestModel::G()->find('1');
-        TestModel::G()->getList();
-        $id=TestModel::G()->add(['content' =>DATE(DATE_ATOM)]);
-        TestModel::G()->update($id,['content' =>DATE(DATE_ATOM)]);
+        EmptyModel::G()->find('1');
+        EmptyModel::G()->getList();
+        $id=EmptyModel::G()->add(['data' =>DATE(DATE_ATOM)]);
+        EmptyModel::G()->update($id,['data' =>DATE(DATE_ATOM)]);
         $sql="delete from 'TABLE' where id =?";
-        $sql=TestModel::G()->prepare($sql);
-        
-        
+        $sql=EmptyModel::G()->prepare($sql);
         DuckPhp::Db()->execute($sql,$id);
 
-        TestModel::G()->fetchAll("select * from 'TABLE' where id =? ", $id);
-        TestModel::G()->fetch("select * from 'TABLE' where id =? ", $id);
-        TestModel::G()->fetchColumn("select * from 'TABLE' where id =? ", $id);
-        TestModel::G()->fetchObject("select * from 'TABLE' where id =? ", $id);
-        TestModel::G()->fetchObjectAll("select * from 'TABLE' where id =? ", $id);
-        TestModel::G()->execute("update 'TABLE' set content = ?  where id =? ",  DATE(DATE_ATOM),$id);
+        EmptyModel::G()->fetchAll("select * from 'TABLE' where id =? ", $id);
+        EmptyModel::G()->fetch("select * from 'TABLE' where id =? ", $id);
+        EmptyModel::G()->fetchColumn("select * from 'TABLE' where id =? ", $id);
+        EmptyModel::G()->fetchObject("select * from 'TABLE' where id =? ", $id);
+        EmptyModel::G()->fetchObjectAll("select * from 'TABLE' where id =? ", $id);
+        EmptyModel::G()->execute("update 'TABLE' set data = ?  where id =? ",  DATE(DATE_ATOM),$id);
     }
 }
 
