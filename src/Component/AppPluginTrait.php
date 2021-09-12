@@ -249,6 +249,8 @@ trait AppPluginTrait
         $route_options['namespace'] = $this->plugin_options['plugin_namespace'];
         $route_options['controller_path_prefix'] = $this->plugin_options['plugin_url_prefix'];
         $route_options['controller_class_map'] = $this->old_controller_map;
+        $route_options['controller_resource_prefix'] = $this->plugin_options['plugin_readfile_prefix'];
+        
         Route::G()->init($route_options);
         
         
@@ -264,7 +266,8 @@ trait AppPluginTrait
         $path_document = $this->pluginModeGetPath('plugin_path_document');
         $file = urldecode(substr($path_info, strlen($this->plugin_options['plugin_url_prefix'])));
         
-        $prefix = $this->plugin_options['plugin_readfile_prefix'];
+        $prefix = '/'.$this->plugin_options['plugin_readfile_prefix'];
+        
         if (!empty($prefix) && (substr($file, 0, strlen($prefix)) !== $prefix)) {
             return false;
         }

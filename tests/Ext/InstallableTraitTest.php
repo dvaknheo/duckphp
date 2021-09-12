@@ -1,5 +1,5 @@
 <?php
-namespace tests\DuckPhp\Foundation;
+namespace tests\DuckPhp\Ext;
 
 use DuckPhp\Ext\InstallableTrait;
 

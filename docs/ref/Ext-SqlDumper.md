@@ -25,15 +25,23 @@ SqlDump, 只用到的表
         'sql_dump_exclude_tables' => [],
 SqlDump, 忽略表
 
-        'sql_dump_include_tables' => '*',
-SqlDump, 包括的表，如果为 * 则表示包括 sql_dump_prefix 开始的所有表
+        'sql_dump_include_tables' => [],
+SqlDump, 包括的表
 
         'sql_dump_install_replace_prefix' => false,
 SqlDump,  安装的时候是否要替换 sql_dump_prefix
+
         'sql_dump_install_new_prefix' => '',
 SqlDump,  安装时候的新表前缀
+
         'sql_dump_install_drop_old_table' => false,
 SqlDump， 安装时删除旧表
+
+        'sql_dump_include_tables_all' => true,
+SqlDump， 包含所有表
+
+        'sql_dump_include_tables_by_model' => false,
+SqlDump， 高级选项， 搜索 Model 类 table() 下的所有表
 
 ## 方法
 
@@ -43,7 +51,7 @@ SqlDump， 安装时删除旧表
     public function run()
 导出 返回的是错误语句字符串
 
-    public function install($force = false)
+    public function install()
 安装
 
 ### 内部方法
@@ -74,29 +82,19 @@ SqlDump， 安装时删除旧表
 
     protected function installScheme($sql, $table)
 安装单个数据表
-## 详解
 
-简单的便于数据库迁移。
-
-```php
-SqlDumper::G()->export(); // 导出到配置文件，默认是 config/sql_struct.php
-SqlDumper::G()->install(); // 从配置文件安装 sql
-
-```
-
-
-
-
-
-        'sql_dump_include_tables' => [],
-
-        'sql_dump_include_tables_all' => true,
-
-        'sql_dump_include_tables_by_model' => false,
-
-    public function install()
 
     protected function searchTables()
 
     protected function searchModelClasses($path)
 
+## 详解
+
+简单的便于数据库迁移。
+
+```php
+SqlDumper::G()->run(); // 导出到配置文件，默认是 config/sql.php
+SqlDumper::G()->install(); // 从配置文件安装 sql
+
+
+SqlDumper 一般不直接用，而是让 [DuckPhp\Ext\Installer](Ext-Installer.md) 使用

@@ -20,20 +20,16 @@ class Installer extends ComponentBase
     use ThrowOnableTrait;
     
     public $options = [
-        'path_install' => 'config',
+        'path_install_lock' => 'config',
         'install_force' => false,
         'install_table_prefix' => '',
         'install_sql_dump_options' => [],
+        'install_exception_class' => InstallerException::class,
     ];
-    public function __construct()
-    {
-        parent::__construct();
-        $this->exception_class = InstallerException::class;
-    }
     //
     public function isInstalled()
     {
-        $path_lock = $this->getComponentPath($this->options['path_install'], ($this->context_class)::G()->options['path']);
+        $path_lock = $this->getComponentPath($this->options['path_install_lock'], ($this->context_class)::G()->options['path']);
         $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? '');
         if (!$namespace) {
             return false;
@@ -45,6 +41,7 @@ class Installer extends ComponentBase
     ////////////////
     public function checkInstall()
     {
+        $this->exception_class = $this->options['install_exception_class'];
         $has_database = (($this->context_class)::Setting('database') || ($this->context_class)::Setting('database_list')) ? true : false;
         static::ThrowOn(!$has_database, '你需要外部配置，如数据库等', static::NEED_DATABASE);
         $flag = $this->isInstalled();
@@ -54,6 +51,8 @@ class Installer extends ComponentBase
 
     public function install($options = [])
     {
+        $this->exception_class = $this->options['install_exception_class'];
+        
         $info = '';
         static::ThrowOn(!$this->options['install_force'] && $this->isInstalled(), '你已经安装 !', -1);
         
@@ -80,7 +79,7 @@ class Installer extends ComponentBase
     /////////////////////////////
     protected function writeLock()
     {
-        $path_lock = $this->getComponentPath($this->options['path_install'], ($this->context_class)::G()->options['path']);
+        $path_lock = $this->getComponentPath($this->options['path_install_lock'], ($this->context_class)::G()->options['path']);
         $namespace = ($this->context_class)::G()->plugin_options['plugin_namespace'] ?? (($this->context_class)::G()->options['namespace'] ?? 'unkown');
         $namespace = str_replace('\\', '__', $namespace);
         $file = $path_lock . $namespace . '.installed';
@@ -103,7 +102,7 @@ class Installer extends ComponentBase
             'sql_dump_install_new_prefix' => $this->options['install_table_prefix'],
             'sql_dump_install_drop_old_table' => $this->options['install_force'],
         ];
-        $options = array_merge($this->options['install_sql_dump_options'], $options);
+        $options = array_merge($this->options, $options);
         $class = get_class(SqlDumper::G());
         SqlDumper::G(new $class);
         return SqlDumper::G()->init($options, ($this->context_class)::G());
