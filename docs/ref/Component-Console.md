@@ -97,7 +97,7 @@ getCommandListInfo() 会把他们展示出来
 
 
 readLines 的例子
-```
+```php
         $desc = <<<EOT
 input host and port
 host[{host}]

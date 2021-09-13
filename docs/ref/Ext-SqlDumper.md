@@ -1,4 +1,4 @@
-# DuckPhp\Foundation\SqlDumper
+# DuckPhp\Ext\SqlDumper
 [toc]
 
 ## 简介
@@ -6,6 +6,7 @@
 数据库迁移类，只支持 MySQL，但你可以做自己的其他语言实现。
 目前比较简陋，后续会加更多功能。
 
+一般不直接使用，而是通过 Installer 来使用。
 ## 选项
 
         'path' => '',
