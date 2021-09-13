@@ -102,7 +102,7 @@ class Installer extends ComponentBase
             'sql_dump_install_new_prefix' => $this->options['install_table_prefix'],
             'sql_dump_install_drop_old_table' => $this->options['install_force'],
         ];
-        $options = array_merge($this->options, $options);
+        $options = array_merge($this->options['install_sql_dump_options'], $options);
         $class = get_class(SqlDumper::G());
         SqlDumper::G(new $class);
         return SqlDumper::G()->init($options, ($this->context_class)::G());
