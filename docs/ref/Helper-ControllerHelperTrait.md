@@ -47,11 +47,9 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
     public static function Setting($key)
 设置是敏感信息,不存在于版本控制里面。而配置是非敏感。
 
-    public static function Config($key, $file_basename = 'config')
+    public static function Config($key, $default = null, $file_basename = 'config')
 读取配置，从 config/$file_basename.php 里读取配置
 
-    public static function LoadConfig($file_basename)
-载入配置,获得配置项目。
 
 ### 跳转
 
@@ -76,6 +74,9 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
 
     public static function Url($url)
 获得相对 url 地址
+
+    public static function Res($url)
+获得资源 url 地址
 
     public static function Domain($use_scheme = false)
 获得带协议的域名
@@ -184,3 +185,5 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
 用于基类里判断是否被直接调用。参见 App 里相关文档
 
 以上就是所有控制器助手方法
+    public static function Config($key, $file_basename = 'config')
+

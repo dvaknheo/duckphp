@@ -31,12 +31,19 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='keep me empty'";
         DuckPhp::Db()->execute($sql);
 
-$sql = "INSERT INTO `empty` (`id`, `data`) VALUES (NULL, '11');";
+$sql = "INSERT INTO `empty` (`id`, `data`) VALUES (1, '11');";
 DuckPhp::Db()->execute($sql);
 
 
         SqlDumper::G()->run();
         SqlDumper::G()->install();
+        
+        SqlDumper::G()->options['sql_dump_data_tables']=['empty'];
+        SqlDumper::G()->run();
+        SqlDumper::G()->install();
+
+$sql = "delete from `empty` where id =1";
+DuckPhp::Db()->execute($sql);
         
         SqlDumper::G()->options['sql_dump_data_tables']=['empty'];
         SqlDumper::G()->run();
