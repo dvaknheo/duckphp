@@ -20,8 +20,7 @@ class BusinessHelperTraitTest extends \PHPUnit\Framework\TestCase
         $file_basename='config';
         
         BusinessHelper::Setting($key);
-        BusinessHelper::Config($key, $file_basename);
-        BusinessHelper::LoadConfig($file_basename);
+        BusinessHelper::Config($key, null, $file_basename);
 
         BusinessHelper::Cache(new \stdClass);
         
@@ -36,10 +35,5 @@ class BusinessHelperTraitTest extends \PHPUnit\Framework\TestCase
         }
 
         \LibCoverage\LibCoverage::End();
-        /*
-        BusinessHelper::G()->Setting($key);
-        BusinessHelper::G()->Config($key, $file_basename='config');
-        BusinessHelper::G()->LoadConfig($file_basename);
-        //*/
     }
 }

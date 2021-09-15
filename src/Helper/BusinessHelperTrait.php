@@ -17,10 +17,6 @@ trait BusinessHelperTrait
     {
         return App::Config($key, $file_basename);
     }
-    public static function LoadConfig($file_basename)
-    {
-        return App::LoadConfig($file_basename);
-    }
     public static function XpCall($callback, ...$args)
     {
         return App::XpCall($callback, ...$args);

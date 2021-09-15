@@ -25,8 +25,7 @@ class ControllerHelperTraitTest extends \PHPUnit\Framework\TestCase
         $file_basename='config';
         
         ControllerHelper::Setting($key);
-        ControllerHelper::Config($key, $file_basename);
-        ControllerHelper::LoadConfig($file_basename);
+        ControllerHelper::Config($key, null, $file_basename);
         
         $str='<>';
         $url="";

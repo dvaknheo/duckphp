@@ -36,7 +36,7 @@ class RouteHookRouteMap extends ComponentBase
         ($this->context_class)::Route()->addRouteHook([static::class,'AppendHook'], 'append-outter');
         
         if ($this->options['route_map_by_config_name']) {
-            $config = ($this->context_class)::LoadConfig($this->options['route_map_by_config_name']);
+            $config = ($this->context_class)::Config(null, [], $this->options['route_map_by_config_name']);
             $this->assignRoute($config['route_map'] ?? []);
             $this->assignImportantRoute($config['route_map_important'] ?? []);
         }

@@ -10,11 +10,9 @@ BusinessHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extendabl
     public static function Setting($key)
 获得设置信息
 
-    public static function Config($key, $file_basename = 'config')
+    public static function Config($key, $default = null, $file_basename = 'config')
 获得配置
 
-    public static function LoadConfig($file_basename)
-获得配置数组
 
     public static function FireEvent($event, ...$args)
 触发事件

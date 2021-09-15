@@ -17,10 +17,6 @@ trait ControllerHelperTrait
     {
         return App::Config($key, $file_basename);
     }
-    public static function LoadConfig($file_basename)
-    {
-        return App::LoadConfig($file_basename);
-    }
     ////
     public static function H($str)
     {

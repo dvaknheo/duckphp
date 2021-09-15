@@ -21,26 +21,24 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
         DuckPhp::G(new DuckPhp())->init($options);
         SqlDumper::G()->init(DuckPhp::G()->options,DuckPhp::G());
 
-$sql= 'DROP TABLE IF EXISTS `Users`';
-DuckPhp::Db()->execute($sql);
+        $sql = "DROP TABLE IF EXISTS `empty`;";
+        DuckPhp::Db()->execute($sql);
 
-$sql =  'CREATE TABLE `Users` (
+        $sql="CREATE TABLE `empty` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(32) COLLATE utf8_bin NOT NULL,
-  `password` varchar(64) COLLATE utf8_bin NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT=\'用户表\'';
+  `data` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='keep me empty'";
+        DuckPhp::Db()->execute($sql);
+
+$sql = "INSERT INTO `empty` (`id`, `data`) VALUES (NULL, '11');";
 DuckPhp::Db()->execute($sql);
 
 
         SqlDumper::G()->run();
         SqlDumper::G()->install();
         
-        SqlDumper::G()->options['sql_dump_data_tables']=['Users'];
+        SqlDumper::G()->options['sql_dump_data_tables']=['empty'];
         SqlDumper::G()->run();
         SqlDumper::G()->install();
         
@@ -61,7 +59,7 @@ DuckPhp::Db()->execute($sql);
         SqlDumper::G()->run();
         
 
-$sql= 'DROP TABLE IF EXISTS `Users`';
+$sql= 'DROP TABLE IF EXISTS `empty`';
 DuckPhp::Db()->execute($sql);
         ////]]]]
         \LibCoverage\LibCoverage::End();
@@ -88,15 +86,6 @@ DuckPhp::Db()->execute($sql);
         SqlDumper::G()->options['sql_dump_exclude_tables'] = ['test'];
         SqlDumper::G()->run();
         
-        $sql = "DROP TABLE IF EXISTS `empty`;";
-        DuckPhp::Db()->execute($sql);
-
-        $sql="CREATE TABLE `empty` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `data` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='keep me empty'";
-        DuckPhp::Db()->execute($sql);
         SqlDumper::G()->options['sql_dump_prefix'] = '';
         SqlDumper::G()->options['sql_dump_include_tables'] = ['empty'];
         SqlDumper::G()->options['sql_dump_data_tables'] = ['empty'];
@@ -120,8 +109,7 @@ DuckPhp::Db()->execute($sql);
         ];
         SqlDumper::G(new SqlDumper())->init($options,DuckPhp::G());
         SqlDumper::G()->install();
-        $sql = "DROP TABLE IF EXISTS `newprefixpty`;";
-        DuckPhp::Db()->execute($sql);
+
         SqlDumper::G(new SqlDumper());
                 echo ">>>>>>>>>>>>>>>>>>>>>>>>>\n";
 

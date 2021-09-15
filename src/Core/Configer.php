@@ -54,7 +54,7 @@ class Configer extends ComponentBase
     {
         return $this->setting[$key] ?? null;
     }
-    private function exitWhenNoSettingFile($full_setting_file, $setting_file)
+    protected function exitWhenNoSettingFile($full_setting_file, $setting_file)
     {
         if ($this->options['setting_file_ignore_exists']) {
             return;
@@ -62,12 +62,16 @@ class Configer extends ComponentBase
         throw new \ErrorException('DuckPhp: no Setting File');
     }
     
-    public function _Config($key, $file_basename = 'config')
+    public function _Config($key = null, $default = null, $file_basename = 'config')
     {
+        //TODO $filename_basename = '';
         $config = $this->_LoadConfig($file_basename);
-        return isset($config[$key])?$config[$key]:null;
+        if (!isset($key)) {
+            return $config ?? $default;
+        }
+        return isset($config[$key])?$config[$key]:$default;
     }
-    public function _LoadConfig($file_basename = 'config')
+    protected function _LoadConfig($file_basename = 'config')
     {
         if (isset($this->all_config[$file_basename])) {
             return $this->all_config[$file_basename];

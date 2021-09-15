@@ -363,8 +363,7 @@ App::PageHtml(123);
         $file_basename='config';
         
         App::Setting($key);
-        App::Config($key, $file_basename);
-        App::LoadConfig($file_basename);
+        App::Config($key, null,$file_basename);
         
         
         $url="";

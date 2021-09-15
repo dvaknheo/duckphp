@@ -717,13 +717,9 @@ trait Core_Glue
     {
         return Configer::G()->_Setting($key);
     }
-    public static function Config($key, $file_basename = 'config')
+    public static function Config($key, $default = null, $file_basename = 'config')
     {
-        return Configer::G()->_Config($key, $file_basename);
-    }
-    public static function LoadConfig($file_basename)
-    {
-        return Configer::G()->_LoadConfig($file_basename);
+        return Configer::G()->_Config($key, $default, $file_basename);
     }
     
     //// the next is dynamic ////

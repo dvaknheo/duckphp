@@ -110,6 +110,10 @@ __hl($str, $args=[])
 __url($url)
 
     对应 App::Url(); 获得相对 url 地址
+
+__res($url)
+
+    对应 App::Res(); 获得资源相对 url 地址
 __domain()
 
     对应 App::Domain(); 获得带协议头的域名
@@ -159,11 +163,9 @@ BusinessHelper 用于业务层。三个配置相关方法，两个事件方法�
     public static function Setting($key)
 获得设置信息
 
-    public static function Config($key, $file_basename = 'config')
-获得配置
+    public static function Config($key =null , $default = null $file_basename = 'config')
+获得配置,如果没有则为 default ，如果key 也没有，则是配置文件（默认为 config）所有配置
 
-    public static function LoadConfig($file_basename)
-获得配置数组
 
     public static function FireEvent($event, ...$args)
 触发事件
@@ -192,19 +194,7 @@ BusinessHelper 用于业务层。三个配置相关方法，两个事件方法�
     public static function COOKIE($key = null, $default = null)
     public static function SERVER($key, $default = null)
 ```
-### 字符串处理
 
-    public static function H($str)
-\_\_h()； HTML 编码
-
-    public static function Json($data)
-\_\_json()； Json 编码
-
-    public static function L($str, $args = [])
-\_\_l() 语言处理函数，后面的关联数组替换 '{$key}'
-    
-    public static function Hl($str, $args = [])
-\_\_hl() 对语言处理后进行 HTML 编码
 ### 显示处理
     public static function Render($view, $data = null)
 渲染
@@ -225,8 +215,7 @@ BusinessHelper 用于业务层。三个配置相关方法，两个事件方法�
     public static function Config($key, $file_basename = 'config')
 读取配置，从 config/$file_basename.php 里读取配置
 
-    public static function LoadConfig($file_basename)
-载入配置,获得配置项目。
+
 
 ### 跳转
 

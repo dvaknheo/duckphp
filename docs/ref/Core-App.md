@@ -256,8 +256,7 @@ Show 方法对 View::Show() 加了好些补充
 #### 来自 Configer
 ```php
     public static function Setting($key)
-    public static function Config($key, $file_basename = 'config')
-    public static function LoadConfig($file_basename)
+    public static function Config($key, $default = null, $file_basename = 'config')
 ```
 #### 来自 AutoLoader
 来自 AutoLoader 的两个方法，主要用于没把 composer 作为加载器使用的情况

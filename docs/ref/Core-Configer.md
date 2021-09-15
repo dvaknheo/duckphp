@@ -39,10 +39,10 @@
 ## 方法
 ### 公开方法
 
-    public function _Config($key, $file_basename = 'config')
+    public function _Config($key = null, $default = null, $file_basename = 'config')
 读取一个配置
 
-    public function _LoadConfig($file_basename = 'config')
+    protected function _LoadConfig($file_basename = 'config')
 载入一个配置文件
 
     public function _Setting($key)
@@ -77,5 +77,7 @@ path_config 如果是 / 开始的，会忽略 path 选项
 基于  AppPluginTrait  需要， Configer 类比普通类多了 config_ext_files 选项
 
 `setting_file_ignore_exists` 为了方便安装程序
+
+
 
 
