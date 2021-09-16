@@ -112,7 +112,7 @@ class Console
             $line = trim($line);
             $flag = preg_match('/\{(.*?)\}/', $line, $m);
             if (!$flag) {
-                fputs($fp_out, $line);
+                fputs($fp_out, $line."\n");
                 continue;
             }
             $key = $m[1];
