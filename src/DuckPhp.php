@@ -16,6 +16,7 @@ use DuckPhp\Component\EventManager;
 use DuckPhp\Component\Pager;
 use DuckPhp\Component\RouteHookPathInfoCompat;
 use DuckPhp\Component\RouteHookRouteMap;
+use DuckPhp\Component\RouteEx;
 use DuckPhp\Core\App;
 
 class DuckPhp extends App
@@ -88,9 +89,21 @@ class DuckPhp extends App
     {
         return EventManager::G()->on($event, $callback);
     }
-    // setBeforeGetDbHandler
-    //'assignImportantRoute' => [static::class.'::G','assignImportantRoute'],
-    //'assignRoute' => [static::class.'::G','assignRoute'],
-    //'routeMapNameToRegex' => [static::class.'::G','routeMapNameToRegex'],
-    //'getRoutes' => [static::class.'::G','getRoutes'],
+
+    public static function setBeforeGetDbHandler($db_before_get_object_handler)
+    {
+         return DbManager::G()->setBeforeGetDbHandler($db_before_get_object_handler);
+    }
+    public static function getRoutes()
+    {
+        return RouteHookRouteMap::G()->getRoutes();
+    }
+    public static function assignRoute($key, $value = null)
+    {
+        return RouteHookRouteMap::G()->assignRoute($key, $value);
+    }
+    public static function assignImportantRoute($key, $value = null)
+    {
+        return RouteHookRouteMap::G()->assignImportantRoute($key, $value);
+    }
 }

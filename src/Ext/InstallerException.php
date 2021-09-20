@@ -9,5 +9,11 @@ use Exception;
 
 class InstallerException extends Exception
 {
-    //
+    const NEED_DATABASE = -1;
+    const NEED_INSTALL = -2;
+    const NEED_OTHER = -3;
+    const INSTALLLED = -4;
+    const INSTALLL_LOCK_FAILED = -5;
+    const INSTALLL_DATABASE_FAILED = -6;
+    
 }

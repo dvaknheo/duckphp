@@ -12,10 +12,7 @@ use DuckPhp\Foundation\ThrowOnableTrait;
 
 class Installer extends ComponentBase
 {
-    const NEED_DATABASE = -1;
-    const NEED_INSTALL = -2;
-    const NEED_OTHER = -3;
-    const INSTALLLED = -4;
+
     
     use ThrowOnableTrait;
     
@@ -43,9 +40,9 @@ class Installer extends ComponentBase
     {
         $this->exception_class = $this->options['install_exception_class'];
         $has_database = (($this->context_class)::Setting('database') || ($this->context_class)::Setting('database_list')) ? true : false;
-        static::ThrowOn(!$has_database, '你需要外部配置，如数据库等', static::NEED_DATABASE);
+        static::ThrowOn(!$has_database, '你需要外部配置，如数据库等', InstallerException::NEED_DATABASE);
         $flag = $this->isInstalled();
-        static::ThrowOn(!$flag, "你需要安装", static::NEED_INSTALL);
+        static::ThrowOn(!$flag, "你需要安装", InstallerException::NEED_INSTALL);
     }
     //////////////////
 
@@ -54,7 +51,7 @@ class Installer extends ComponentBase
         $this->exception_class = $this->options['install_exception_class'];
         
         $info = '';
-        static::ThrowOn(!$this->options['install_force'] && $this->isInstalled(), '你已经安装 !', -1);
+        static::ThrowOn(!$this->options['install_force'] && $this->isInstalled(), '你已经安装 !', InstallerException::INSTALLLED);
         
         //  ext 里的还要安装
         
@@ -62,13 +59,13 @@ class Installer extends ComponentBase
             $this->initSqlDumper();
             $info = SqlDumper::G()->install();
         } catch (\Exception $ex) {
-            static::ThrowOn(true, "写入数据库失败:" . $ex->getMessage(), -2);
+            static::ThrowOn(true, "写入数据库失败:" . $ex->getMessage(), InstallerException::INSTALLL_DATABASE_FAILED));
         }
         if ($info) {
             return $info;
         }
         $flag = $this->writeLock();
-        static::ThrowOn(!$flag, '写入锁文件失败', -3);
+        static::ThrowOn(!$flag, '写入锁文件失败', InstallerException::INSTALLL_LOCK_FAILED);
         
         return $info;
     }

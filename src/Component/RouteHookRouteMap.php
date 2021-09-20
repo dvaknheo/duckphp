@@ -45,7 +45,6 @@ class RouteHookRouteMap extends ComponentBase
                 [
                     'assignImportantRoute' => static::class . '@assignImportantRoute',
                     'assignRoute' => static::class . '@assignRoute',
-                    'routeMapNameToRegex' => static::class . '@routeMapNameToRegex',
                 ],
                 ['A']
             );

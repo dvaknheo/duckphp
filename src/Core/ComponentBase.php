@@ -5,7 +5,7 @@
  */
 namespace DuckPhp\Core;
 
-class ComponentBase implements ComponentInterface
+class ComponentBase // implements ComponentInterface
 {
     public $options = [];
     protected $is_inited = false;

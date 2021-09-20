@@ -66,6 +66,9 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
 
         $t=new \stdClass();
         DuckPhp::Cache($t);
+        
+        //DuckPhp::G()->xx
+
         \LibCoverage\LibCoverage::End(DuckPhp::class);
 
     }
