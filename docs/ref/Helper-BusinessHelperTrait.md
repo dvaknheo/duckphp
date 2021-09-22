@@ -26,5 +26,6 @@ BusinessHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extendabl
     public static function XpCall($callback, ...$args)
 调用，如果产生异常则返回异常，否则返回正常数据
 
-ControllerHelperTrait 比 BusinessHelperTrait 少了 Cache()    public static function Config($key, $file_basename = 'config')
+ControllerHelperTrait 相比比 BusinessHelperTrait 少了 Cache()
+
 

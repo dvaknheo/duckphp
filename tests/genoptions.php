@@ -35,7 +35,17 @@ class DocFixer
             $this->doDoc($file);
         }
         $this->doOptionsDescs($files);
+        $this->doIndex($files);
         return true;
+    }
+    public function doIndex($files)
+    {
+        $md_files =[];
+        foreach($files as $file){
+            $md_files[] =  substr($this->getMd($file),strlen($this->path_base.'/docs/ref/'));
+        }
+        // 我们把 ref的东西复制出来，然后 复制到 readme 里
+        
     }
     public function doOptionsDescs($files)
     {
@@ -419,7 +429,7 @@ class DataProvider
     {
         static $cache;
         if(!isset($cache)){
-            $cache =  DocFixer::G()->options_descs; //json_decode(file_get_contents(__DIR__ . '/../docs/options-desc.json'),true);
+            $cache =  DocFixer::G()->options_descs;
         }
         return $cache;
     }
@@ -435,7 +445,9 @@ class DataProvider
     {
         $classes="DuckPhp\\HttpServer\\HttpServer
 DuckPhp\\Component\\Pager
-DuckPhp\\Component\\Installer";
+DuckPhp\\Component\\Console
+DuckPhp\\Component\\DuckPhpInstaller
+";
         $classes=explode("\n",$classes);
         return $classes;
     }
@@ -443,7 +455,6 @@ DuckPhp\\Component\\Installer";
     {
         $classes="DuckPhp\\DuckPhp
 DuckPhp\\Core\\App
-DuckPhp\\Core\\AutoLoader
 DuckPhp\\Core\\Configer
 DuckPhp\\Core\\Logger
 DuckPhp\\Core\\Route

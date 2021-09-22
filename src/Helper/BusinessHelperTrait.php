@@ -13,9 +13,9 @@ trait BusinessHelperTrait
     {
         return App::Setting($key);
     }
-    public static function Config($key, $file_basename = 'config')
+    public static function Config($key, $default = null, $file_basename = 'config')
     {
-        return App::Config($key, $file_basename);
+        return App::Config($key, $default, $file_basename);
     }
     public static function XpCall($callback, ...$args)
     {

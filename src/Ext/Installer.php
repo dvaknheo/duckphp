@@ -12,8 +12,6 @@ use DuckPhp\Foundation\ThrowOnableTrait;
 
 class Installer extends ComponentBase
 {
-
-    
     use ThrowOnableTrait;
     
     public $options = [
@@ -59,7 +57,7 @@ class Installer extends ComponentBase
             $this->initSqlDumper();
             $info = SqlDumper::G()->install();
         } catch (\Exception $ex) {
-            static::ThrowOn(true, "写入数据库失败:" . $ex->getMessage(), InstallerException::INSTALLL_DATABASE_FAILED));
+            static::ThrowOn(true, "写入数据库失败:" . $ex->getMessage(), InstallerException::INSTALLL_DATABASE_FAILED);
         }
         if ($info) {
             return $info;

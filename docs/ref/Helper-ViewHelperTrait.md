@@ -3,14 +3,6 @@
 
 ## 简介
 
-ViewHelper 
-
-使用 [DuckPhp\Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md) 
-
-使用 [DuckPhp\Helper\ViewHelper](Helper-ViewHelper.md)
-
-ViewHelperTrait 的文档参见 [DuckPhp\Helper\ViewHelper](Helper-ViewHelper.md);
-
-默认情况下( ViewHelper ，ViewHelperTrait）没自定方法。 因为在视图里一般直接调用方法。
+默认情况下( ViewHelper ，ViewHelperTrait）没自定方法。 因为在视图里一般直接调用全局方法。
 
 

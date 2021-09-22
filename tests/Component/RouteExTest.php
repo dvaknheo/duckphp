@@ -1,8 +1,8 @@
 <?php
-namespace tests\DuckPhp\Core
+namespace tests\DuckPhp\Component
 {
 
-use DuckPhp\Core\RouteEx;
+use DuckPhp\Component\RouteEx;
 use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckPhp\Ext\SuperGlobalContext;
 

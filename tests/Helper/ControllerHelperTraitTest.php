@@ -27,13 +27,6 @@ class ControllerHelperTraitTest extends \PHPUnit\Framework\TestCase
         ControllerHelper::Setting($key);
         ControllerHelper::Config($key, null, $file_basename);
         
-        $str='<>';
-        $url="";
-        $method="method";
-        ControllerHelper::H($str);
-        ControllerHelper::Json(["a"=>"b"]);
-        ControllerHelper::URL($url=null);
-        ControllerHelper::Domain();
         ControllerHelper::Parameter('a','b');
         ControllerHelper::getRouteCallingMethod();
         ControllerHelper::DbCloseAll();
@@ -48,11 +41,6 @@ class ControllerHelperTraitTest extends \PHPUnit\Framework\TestCase
         ControllerHelper::Show(['A'=>'b'],"view");
         ControllerHelper::Render("view",['A'=>'b']);
         
-        
-        echo ControllerHelper::L("a{b}c",['b'=>'123']);
-        echo "---------------\n";
-        echo ControllerHelper::HL("&<{b}>",['b'=>'123']);
-        echo ControllerHelper::URL('xxxx');
         
         $key="key";
         ControllerHelper::setViewHeadFoot($head_file=null, $foot_file=null);

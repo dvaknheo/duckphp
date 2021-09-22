@@ -53,12 +53,6 @@ class App extends DuckPhp
         // 默认自带的所有配置 (DuckPhp\Core\Configer)
         // $options['all_config'] = array ( );
 
-        // 在命令行模式下开启 opcache 缓存 (DuckPhp\Core\AutoLoader)
-        // $options['autoload_cache_in_cli'] = false;
-
-        // psr4 风格自动加载路径和命名空间映射 (DuckPhp\Core\AutoLoader)
-        // $options['autoload_path_namespace_map'] = array ( );
-
         // 输出时候关闭资源输出（仅供第三方扩展参考 (DuckPhp\Core\App)
         // $options['close_resource_at_output'] = false;
 
@@ -188,9 +182,6 @@ class App extends DuckPhp
         // 日志目录路径 (DuckPhp\Core\Logger)
         // $options['path_log'] = 'logs';
 
-        // 自动加载，命名空间的相对路径 (DuckPhp\Core\AutoLoader)
-        // $options['path_namespace'] = 'app';
-
         // 视图路径 (DuckPhp\Core\View, DuckPhp\Ext\CallableView, DuckPhp\Ext\EmptyView)
         // $options['path_view'] = 'view';
 
@@ -226,9 +217,6 @@ class App extends DuckPhp
 
         // 不处理 404 ，用于配合其他框架使用。 (DuckPhp\Core\App)
         // $options['skip_404_handler'] = false;
-
-        // 跳过 app 的加载 (DuckPhp\Core\AutoLoader)
-        // $options['skip_app_autoload'] = false;
 
         // 不在 Run 流程检查异常，把异常抛出外面。用于配合其他框架使用 (DuckPhp\Core\App)
         // $options['skip_exception_check'] = false;

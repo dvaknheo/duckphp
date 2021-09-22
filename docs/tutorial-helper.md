@@ -238,11 +238,6 @@ BusinessHelper 用于业务层。三个配置相关方法，两个事件方法�
 
 ### 路由相关
 
-    public static function Url($url)
-获得相对 url 地址
-
-    public static function Domain($use_scheme = false)
-获得带协议的域名
 
     public static function Parameter($key, $default = null)
 和超全局变量类似，获得存储的数据

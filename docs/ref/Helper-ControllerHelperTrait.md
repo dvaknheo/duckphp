@@ -9,7 +9,7 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
 
 
 ### 超全局变量
-替代同名 $\_GET / $\_POST /$\_REQUEST /$\_COOKIE/$\_SERVER 。如果没的话返回后面的默认值。如果 $key 为 null 返回整个数组。
+替代同名 $\_GET / $\_POST /$\_REQUEST /$\_COOKIE/$\_SERVER 。如果没的话返回后面的 $default 默认值。如果 $key 为 null 返回整个数组。
 ```php
     public static function GET($key = null, $default = null)
     public static function POST($key = null, $default = null)
@@ -17,19 +17,7 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
     public static function COOKIE($key = null, $default = null)
     public static function SERVER($key, $default = null)
 ```
-### 字符串处理
 
-    public static function H($str)
-\_\_h()； HTML 编码
-
-    public static function Json($data)
-\_\_json()； Json 编码
-
-    public static function L($str, $args = [])
-\_\_l() 语言处理函数，后面的关联数组替换 '{$key}'
-    
-    public static function Hl($str, $args = [])
-\_\_hl() 对语言处理后进行 HTML 编码
 ### 显示处理
     public static function Render($view, $data = null)
 渲染
@@ -72,20 +60,12 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
 
 ### 路由相关
 
-    public static function Url($url)
-获得相对 url 地址
-
-    public static function Res($url)
-获得资源 url 地址
-
-    public static function Domain($use_scheme = false)
-获得带协议的域名
-
     public static function Parameter($key, $default = null)
 和超全局变量类似，获得存储的数据
 
     public static function getPathInfo()
 获取当前 PathInfo
+
     public static function getRouteCallingMethod()
 获取正在调用的路由方法，构造函数里使用。
 
@@ -93,7 +73,7 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
 设置调用的路由方法， 强行改变 view 的默认行为时候用。
 
 ### 系统兼容替换
-和系统同名函数(header/setcookie/exit)功能一致，目的是为了兼容性
+和系统同名函数(header/setcookie/exit)功能一致，目的是为了兼容不同平台
 ```php
     public static function header($output, bool $replace = true, int $http_response_code = 0)
     public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
@@ -108,7 +88,6 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
 
     public static function PageSize($new_value = null)
 获得或设置当前每页数据条目
-    
     public static function PageHtml($total, $options = [])
 获得分页结果 HTML，这里的 $options 是传递给 Pager 类的选项。
 
@@ -175,9 +154,6 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
     public static function OnEvent($event, $callback)
 给事件绑定回调
 
-    public static function dumpAllRouteHooksAsString()
-打印所有路由钩子，调试用
-
     public static function IsAjax()
 判断是否是Ajax 请求
 
@@ -185,5 +161,3 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
 用于基类里判断是否被直接调用。参见 App 里相关文档
 
 以上就是所有控制器助手方法
-    public static function Config($key, $file_basename = 'config')
-

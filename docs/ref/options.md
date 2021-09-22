@@ -23,10 +23,10 @@
 + 'api_server_use_singletonex' => false, 
 
     API服务器， 使用可变单例模式，方便替换实现   // [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md)
-+ **'autoload_cache_in_cli' => false,** 
++ 'autoload_cache_in_cli' => false, 
 
     在命令行模式下开启 opcache 缓存   // [DuckPhp\Core\AutoLoader](Core-AutoLoader.md)
-+ **'autoload_path_namespace_map' => array ( ),** 
++ 'autoload_path_namespace_map' => array ( ), 
 
     psr4 风格自动加载路径和命名空间映射   // [DuckPhp\Core\AutoLoader](Core-AutoLoader.md)
 + 'callable_view_class' => NULL, 
@@ -272,7 +272,7 @@
 + **'path_log' => 'logs',** 
 
     日志目录路径   // [DuckPhp\Core\Logger](Core-Logger.md)
-+ **'path_namespace' => 'app',** 
++ 'path_namespace' => 'app', 
 
     自动加载，命名空间的相对路径   // [DuckPhp\Core\AutoLoader](Core-AutoLoader.md)
 + **'path_view' => 'view',** 
@@ -350,7 +350,7 @@
 + **'skip_404_handler' => false,** 
 
     不处理 404 ，用于配合其他框架使用。   // [DuckPhp\Core\App](Core-App.md)
-+ **'skip_app_autoload' => false,** 
++ 'skip_app_autoload' => false, 
 
     跳过 app 的加载   // [DuckPhp\Core\AutoLoader](Core-AutoLoader.md)
 + **'skip_exception_check' => false,** 

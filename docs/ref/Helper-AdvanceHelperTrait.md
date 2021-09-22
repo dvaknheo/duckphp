@@ -3,8 +3,6 @@
 
 ## 简介
 
-AdvanceHelperTrait 的文档参见 [DuckPhp\Helper\AdvanceHelper](Helper-AdvanceHelper.md) 类
-
 `DuckPhp\Helper\AdvanceHelper` 类
 
  使用 [DuckPhp\Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md) 
@@ -41,7 +39,7 @@ AdvanceHelperTrait 的文档参见 [DuckPhp\Helper\AdvanceHelper](Helper-Advance
     public static function CookieSet($key, $value, $expire = 0)
     
     public static function Event()
-
+    
     public static function OnEvent($event, $callback)
 
 ### 系统替代函数

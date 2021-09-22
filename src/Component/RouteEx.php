@@ -3,14 +3,16 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckPhp\Core;
+namespace DuckPhp\Component;
 
 use DuckPhp\Core\Route;
 
 class RouteEx extends Route
 {
     public $options = [
-        /*
+       
+    ];
+    /*
         'controller_welcome_class' => 'Main',
         'controller_class_postfix' => '',
         'controller_enable_slash' => false,
@@ -18,11 +20,9 @@ class RouteEx extends Route
         'controller_stop_static_method' => true,
         'controller_strict_mode' => true,
         */
-    ];
     public function __construct()
     {
         $this->options = array_replace_recursive($this->options, (new parent())->options); //merge parent's options;
         parent::__construct();
     }
-
 }

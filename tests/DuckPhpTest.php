@@ -68,7 +68,11 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::Cache($t);
         
         //DuckPhp::G()->xx
-
+        DuckPhp::G()->setBeforeGetDbHandler(null);
+        DuckPhp::G()->getRoutes();
+        DuckPhp::G()->assignRoute('ab/c',['z']);
+        
+        DuckPhp::G()->assignImportantRoute('ab/c',['z']);
         \LibCoverage\LibCoverage::End(DuckPhp::class);
 
     }

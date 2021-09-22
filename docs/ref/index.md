@@ -111,6 +111,7 @@
     1. [SimpleReplacer](SingletonEx-SimpleReplacer.md)  可选可变单例容器
 10. `ThrowOn`目录
     1. [ThrowOnTrait](ThrowOn-ThrowOnTrait.md) 可抛 trait，应用工程引用它方便异常处理
+
 @script filedesc
 
 在本参考中，所有的类的方法都已经用脚本检查，不存在有类的方法无文档的情况
@@ -129,10 +130,11 @@ src
 |   |-- Console.php
 |   |-- DbManager.php
 |   |-- DuckPhpCommand.php
+|   |-- DuckPhpInstaller.php
 |   |-- EventManager.php
-|   |-- Installer.php
 |   |-- Pager.php
 |   |-- PagerInterface.php
+|   |-- RouteEx.php
 |   |-- RouteHookPathInfoCompat.php
 |   `-- RouteHookRouteMap.php
 |-- Core
@@ -160,6 +162,9 @@ src
 |   |-- EmptyView.php
 |   |-- ExceptionWrapper.php
 |   |-- HookChain.php
+|   |-- InstallableTrait.php
+|   |-- Installer.php
+|   |-- InstallerException.php
 |   |-- JsonRpcClientBase.php
 |   |-- JsonRpcExt.php
 |   |-- JsonView.php
@@ -171,11 +176,19 @@ src
 |   |-- RedisManager.php
 |   |-- RouteHookApiServer.php
 |   |-- RouteHookDirectoryMode.php
+|   |-- RouteHookFunctionRoute.php
 |   |-- RouteHookManager.php
+|   |-- RouteHookResource.php
 |   |-- RouteHookRewrite.php
+|   |-- SqlDumper.php
 |   |-- StaticReplacer.php
 |   |-- StrictCheck.php
 |   `-- SuperGlobalContext.php
+|-- Foundation
+|   |-- Session.php
+|   |-- SimpleControllerTrait.php
+|   |-- SimpleModelTrait.php
+|   `-- ThrowOnableTrait.php
 |-- Helper
 |   |-- AdvanceHelper.php
 |   |-- AdvanceHelperTrait.php
@@ -197,6 +210,7 @@ src
 `-- ThrowOn
     `-- ThrowOnTrait.php
 
+9 directories, 76 files
 ```
 
 ## nginx 配置

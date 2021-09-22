@@ -13,36 +13,9 @@ trait ControllerHelperTrait
     {
         return App::Setting($key);
     }
-    public static function Config($key, $file_basename = 'config')
+    public static function Config($key, $default = null, $file_basename = 'config')
     {
-        return App::Config($key, $file_basename);
-    }
-    ////
-    public static function H($str)
-    {
-        return App::H($str);
-    }
-    public static function Json($data)
-    {
-        return App::Json($data);
-    }
-    public static function L($str, $args = [])
-    {
-        return App::L($str, $args);
-    }
-    public static function Hl($str, $args = [])
-    {
-        return App::Hl($str, $args);
-    }
-
-    ////
-    public static function Url($url)
-    {
-        return App::Url($url);
-    }
-    public static function Domain($use_scheme = false)
-    {
-        return App::Domain($use_scheme);
+        return App::Config($key, $default, $file_basename);
     }
     public static function getRouteCallingMethod()
     {

@@ -543,7 +543,8 @@ server {
 ### DuckPhp 类/文件结构参考
 
  (粗体部分是启动的时候引用的文件)
-
+ 
+@script reference index end
 1. **[DuckPhp](docs/ref/DuckPhp.md)** 入口类，加载了默认扩展的 DuckPhp 入口 ，扩展自 [DuckPhp\\Core\\App](docs/ref/Core-App.md)
 2. `Core` 目录是核心目录，核心框架。基本功能都在 Core 里实现
     1. **[ComponentBase](docs/ref/Core-ComponentBase.md)** 组件基类
@@ -565,7 +566,7 @@ server {
     1. [AppPluginTrait](docs/ref/Component-AppPluginTrait.md)   这个Trait用于把独立工程 App 转成插件 
     2. [Cache](docs/ref/Component-Cache.md) 缓存组件
     3. **[Console](docs/ref/Component-Cache.md)** 命令行模式扩展组件
-    4. [Installer](docs/ref/Component-Installer.md) 安装器
+    4. [DuckPhpInstaller](docs/ref/Component-DuckPhpInstaller.md) 安装器
     5. [DuckPhpCommand](docs/ref/Component-DuckPhpCommand.md) DuckPhp 的默认指令组件
     6. [DbManager](docs/ref/Component-DbManager.md) 数据库管理组件
     7. [EventManager](docs/ref/Component-EventManager.md) 事件管理组件
@@ -626,6 +627,8 @@ server {
     1. [SimpleReplacer](docs/ref/SingletonEx-SimpleReplacer.md)  可选可变单例容器
 10. `ThrowOn`目录
     1. [ThrowOnTrait](docs/ref/ThrowOn-ThrowOnTrait.md) 可抛 trait，应用工程引用它方便异常处理
+
+@script reference index end
 
 ### 应用架构图（缺事件和异常处理部分）
 

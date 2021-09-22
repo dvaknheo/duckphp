@@ -15,5 +15,4 @@ class InstallerException extends Exception
     const INSTALLLED = -4;
     const INSTALLL_LOCK_FAILED = -5;
     const INSTALLL_DATABASE_FAILED = -6;
-    
 }

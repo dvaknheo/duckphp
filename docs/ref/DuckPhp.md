@@ -111,3 +111,14 @@ App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里，还加载�
 
 
 
+    public static function setBeforeGetDbHandler($db_before_get_object_handler)
+
+    public static function getRoutes()
+
+    public static function assignRoute($key, $value = null)
+
+    public static function assignImportantRoute($key, $value = null)
+    
+//
+
+
