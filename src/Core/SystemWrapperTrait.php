@@ -34,11 +34,17 @@ trait SystemWrapperTrait
     protected function system_wrapper_call_check($func)
     {
         $func = ltrim($func, '_');
+        if(defined(__SYSTEM_WRAPPER)){
+            return is_callable([__SYSTEM_WRAPPER, $func]) ?true:false;
+        }
         return isset($this->system_handlers[$func])?true:false;
     }
     protected function system_wrapper_call($func, $input_args)
     {
         $func = ltrim($func, '_');
+        if(defined(__SYSTEM_WRAPPER)){
+            return [__SYSTEM_WRAPPER, $func](...$input_args);
+        }
         if (is_callable($this->system_handlers[$func] ?? null)) {
             return ($this->system_handlers[$func])(...$input_args);
         }

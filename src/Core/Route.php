@@ -22,19 +22,15 @@ class Route extends ComponentBase
         'namespace_controller' => 'Controller',
         
         'controller_base_class' => '',
-        'controller_welcome_class' => 'Main',
-        
-        'controller_hide_boot_class' => false,
-        'controller_methtod_for_miss' => '__missing',
+        'controller_hide_boot_class' => true,
         'controller_prefix_post' => 'do_',
         'controller_class_postfix' => '',
-        'controller_enable_slash' => false,
-        'controller_path_prefix' => '',
         'controller_path_ext' => '',
-        'controller_stop_static_method' => true,
-        'controller_strict_mode' => true,
+        
         'controller_class_map' => [],
+        
         'controller_resource_prefix' => '',
+        'controller_path_prefix' => '',
     ];
 
     public $pre_run_hook_list = [];
@@ -47,6 +43,7 @@ class Route extends ComponentBase
     //calculated options;
     protected $namespace_prefix = '';
     protected $index_method = 'index'; //const
+    protected $welcome_class = 'Main'; //const
 
     //properties
     protected $route_error = '';
@@ -110,6 +107,13 @@ class Route extends ComponentBase
             if (defined('__SUPERGLOBAL_CONTEXT')) {
                 (__SUPERGLOBAL_CONTEXT)()->_SERVER = $_SERVER;
             }
+        }
+        return $this;
+    }
+    public function runtime()
+    {
+        if($this->options['controller_runtime']){
+            return ($this->options['controller_runtime'])();
         }
         return $this;
     }
@@ -202,21 +206,6 @@ class Route extends ComponentBase
     {
         $path_info = ltrim((string)$path_info, '/');
         
-        /*
-        if ($this->options['controller_path_prefix'] ?? false) {
-            $prefix = trim($this->options['controller_path_prefix'], '/').'/';
-            $l = strlen($prefix);
-            if (substr($path_info, 0, $l) !== $prefix) {
-                $this->route_error = "path_prefix error";
-                return null;
-            }
-            $path_info = substr($path_info, $l - 1);
-            $path_info = ltrim((string)$path_info, '/');
-        }
-        //*/
-        if ($this->options['controller_enable_slash']) {
-            $path_info = rtrim($path_info, '/');
-        }
         if (!empty($this->options['controller_path_ext']) && !empty($path_info)) {
             $l = strlen($this->options['controller_path_ext']);
             if (substr($path_info, -$l) !== $this->options['controller_path_ext']) {
@@ -230,36 +219,33 @@ class Route extends ComponentBase
         $method = array_pop($t);
         $path_class = implode('/', $t);
         
-        $this->calling_path = $path_class?$path_info:$this->options['controller_welcome_class'].'/'.$method;
+        $this->calling_path = $path_class?$path_info:$this->welcome_class.'/'.$method;
         $this->route_error = '';
         
-        if ($this->options['controller_hide_boot_class'] && $path_class === $this->options['controller_welcome_class']) {
-            $this->route_error = "controller_hide_boot_class! {$this->options['controller_welcome_class']} ";
+        if ($this->options['controller_hide_boot_class'] && $path_class === $this->welcome_class) {
+            $this->route_error = "controller_hide_boot_class! {$this->welcome_class} ";
             return null;
         }
-        $path_class = $path_class ?: $this->options['controller_welcome_class'];
+        $path_class = $path_class ?: $this->welcome_class;
         $full_class = $this->namespace_prefix.str_replace('/', '\\', $path_class).$this->options['controller_class_postfix'];
+        $full_class = ''.ltrim($full_class, '\\');
+        $this->calling_class = $full_class;
+        $this->calling_method = !empty($method)?$method:'index';
+        
+        ////////////////////////
+        
         if (!class_exists($full_class)) {
             $this->route_error = "can't find class($full_class) by $path_class ";
             return null;
         }
-        if ($this->options['controller_strict_mode']) {
-            /** @var object */ $t = ''.ltrim($full_class, '\\');
-            $full_class = $t; // phpstan ,I hate you.
-            if ($full_class !== (new \ReflectionClass($full_class))->getName()) {
-                $this->route_error = "can't find class($full_class) by $path_class (strict_mode miss case).";
-                return null;
-            }
+        
+        if ($full_class !== (new \ReflectionClass($full_class))->getName()) {
+            $this->route_error = "can't find class($full_class) by $path_class (strict_mode miss case).";
+            return null;
         }
         
-        
-        $this->calling_class = $full_class;
-        $this->calling_method = !empty($method)?$method:'index';
-        
-        /** @var string */
-        $base_class = str_replace('~', $this->namespace_prefix, $this->options['controller_base_class']);
-        /** @var mixed */ $class = $full_class; // phpstan
-        if (!empty($base_class) && !is_subclass_of($class, $base_class)) {
+        /** @var string */ $base_class = str_replace('~', $this->namespace_prefix, $this->options['controller_base_class']);
+        if (!empty($base_class) && !is_subclass_of($full_class, $base_class)) {
             $this->route_error = "no the controller_base_class! {$base_class} ";
             return null;
         }
@@ -279,42 +265,21 @@ class Route extends ComponentBase
             $this->route_error = 'can not call hidden method';
             return null;
         }
-        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-        $_SERVER['REQUEST_METHOD'] = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-        if ($this->options['controller_prefix_post'] && $_SERVER['REQUEST_METHOD'] === 'POST' && method_exists($object, $this->options['controller_prefix_post'].$method)) {
-            $method = $this->options['controller_prefix_post'].$method;
-        }
-        if ($this->options['controller_methtod_for_miss']) {
-            if (!method_exists($object, $method)) {
-                $method = $this->options['controller_methtod_for_miss'];
-            }
-            if ($this->options['controller_strict_mode']) {
-                try {
-                    if ($method !== (new \ReflectionMethod($object, $method))->getName()) {
-                        $this->route_error = 'method can not call(strict_mode miss case)';
-                        return null;
-                    }
-                } catch (\ReflectionException $ex) {
-                    $this->route_error = 'method can not call';
-                    return null;
-                }
-            } else {
-                if (!is_callable([$object,$method])) {
-                    $this->route_error = 'method can not call';
-                    return null;
-                }
+        if ($this->options['controller_prefix_post']) {
+            $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+            $_SERVER['REQUEST_METHOD'] = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && method_exists($object, $this->options['controller_prefix_post'].$method)) {
+                $method = $this->options['controller_prefix_post'].$method;
             }
         }
-        
-        if ($this->options['controller_stop_static_method']) {
-            $ref = new \ReflectionMethod($object, $method);
-            if ($ref->isStatic()) {
-                $this->route_error = 'can not call static function';
-                return null;
-            }
+        $ref = new \ReflectionMethod($object, $method);
+        if ($ref->isStatic()) {
+            $this->route_error = 'can not call static function';
+            return null;
         }
         return [$object,$method];
     }
+
 }
 trait Route_Helper
 {
