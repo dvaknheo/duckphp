@@ -21,14 +21,12 @@ class SystemWrapperTraitTest extends \PHPUnit\Framework\TestCase
         
         $this->doSystemWrapper();
 
-
+        /////[[[[
+        define('__SYSTEM_WRAPPER_REPLACER', SystemWrapperObject2::class);
+        SystemWrapperObject::var_dump("zz");
+        /////]]]]
         \LibCoverage\LibCoverage::End();
-        /*
-        SystemWrapper::G()->system_wrapper_replace(array $funcs);
-        SystemWrapper::G()->system_wrapper_get_providers();
-        SystemWrapper::G()->system_wrapper_call_check($func);
-        SystemWrapper::G()->system_wrapper_call($func, $input_args);
-        //*/
+
     }
 public function doSystemWrapper()
 {
@@ -136,6 +134,13 @@ class SystemWrapperObject
         }catch(\ErrorException $ex){
             var_dump($ex);
         }
+    }
+}
+class SystemWrapperObject2
+{
+    public static function var_dump(...$args)
+    {
+        echo "Hit";
     }
 }
 class FakeSessionHandler2 implements \SessionHandlerInterface
