@@ -257,7 +257,6 @@ trait KernelTrait
             RuntimeState::class,
             ExceptionManager::class,
             View::class,
-            Route::class,
         ];
         $ret = array_merge($ret, $this->extDynamicComponentClasses ?? []);
         return $ret;

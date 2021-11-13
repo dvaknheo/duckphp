@@ -10,9 +10,6 @@ use DuckPhp\Core\Route;
 class RouteEx extends Route
 {
     public $options = [
-       
-    ];
-    /*
         'controllerex_welcome_class' => 'Main',
         'controllerex_class_postfix' => '',
         'controllerex_enable_slash' => false,
@@ -20,6 +17,9 @@ class RouteEx extends Route
         'controller_stop_static_method' => true,
         'controllerex_strict_mode' => true,
         'controllerex_methtod_for_miss' => '',
+    ];
+    /*
+
         */
     public function __construct()
     {
@@ -58,14 +58,14 @@ class RouteEx extends Route
         $method = array_pop($t);
         $path_class = implode('/', $t);
         
-        $this->calling_path = $path_class?$path_info:$this->options['controllerex_welcome_class'].'/'.$method;
+        $this->calling_path = $path_class?$path_info:$this->welcome_class.'/'.$method;
         $this->route_error = '';
         
-        if ($this->options['controller_hide_boot_class'] && $path_class === $this->options['controllerex_welcome_class']) {
-            $this->route_error = "controller_hide_boot_class! {$this->options['controllerex_welcome_class']} ";
+        if ($this->options['controller_hide_boot_class'] && $path_class === $this->welcome_class) {
+            $this->route_error = "controller_hide_boot_class! {$this->welcome_class} ";
             return null;
         }
-        $path_class = $path_class ?: $this->options['controllerex_welcome_class'];
+        $path_class = $path_class ?: $this->welcome_class;
         $full_class = $this->namespace_prefix.str_replace('/', '\\', $path_class).$this->options['controllerex_class_postfix'];
         if (!class_exists($full_class)) {
             $this->route_error = "can't find class($full_class) by $path_class ";

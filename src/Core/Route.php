@@ -30,16 +30,14 @@ class Route extends ComponentBase
         'controller_class_map' => [],
         
         'controller_resource_prefix' => '',
-        'controller_path_prefix' => '',
+        'controller_url_prefix' => '',
     ];
 
     public $pre_run_hook_list = [];
     public $post_run_hook_list = [];
     
-    //input
-    protected $path_info = '';
     protected $parameters = [];
-
+    
     //calculated options;
     protected $namespace_prefix = '';
     protected $index_method = 'index'; //const
@@ -50,8 +48,6 @@ class Route extends ComponentBase
     protected $calling_path = '';
     protected $calling_class = '';
     protected $calling_method = '';
-    
-    //flags
     protected $enable_default_callback = true;
     protected $is_failed = false;
 
@@ -92,8 +88,14 @@ class Route extends ComponentBase
     }
     public function reset()
     {
-        $this->is_failed = false;
-        $this->enable_default_callback = true;
+        $runtime = $this->runtime();
+        $runtime->is_failed = false;
+        $runtime->enable_default_callback = true;
+        
+        $runtime->route_error = '';
+        $runtime->calling_path = '';
+        $runtime->calling_class = '';
+        $runtime->calling_method = '';
         return $this;
     }
     public function bind($path_info, $request_method = 'GET')
@@ -128,13 +130,13 @@ class Route extends ComponentBase
             }
         }
         
-        if ($this->enable_default_callback) {
+        if ($this->runtime()->enable_default_callback) {
             $flag = $this->defaultRunRouteCallback($this->getPathInfo());
-            if ($flag && (!$this->is_failed)) {
+            if ($flag && (!$this->runtime()->is_failed)) {
                 return $this->getRunResult();
             }
         } else {
-            $this->enable_default_callback = true;
+            $this->runtime()->enable_default_callback = true;
         }
         
         foreach ($this->post_run_hook_list as $callback) {
@@ -147,7 +149,7 @@ class Route extends ComponentBase
     }
     protected function getRunResult()
     {
-        if ($this->is_failed) {
+        if ($this->runtime()->is_failed) {
             return false;
         }
         return true;
@@ -155,7 +157,7 @@ class Route extends ComponentBase
     public function forceFail()
     {
         // TODO . force result ?
-        $this->is_failed = true;
+        $this->runtime()->is_failed = true;
     }
     public function addRouteHook($callback, $position, $once = true)
     {
@@ -191,7 +193,7 @@ class Route extends ComponentBase
     }
     public function defaulToggleRouteCallback($enable = true)
     {
-        $this->enable_default_callback = $enable;
+        $this->runtime()->enable_default_callback = $enable;
     }
     public function defaultRunRouteCallback($path_info = null)
     {
@@ -204,12 +206,24 @@ class Route extends ComponentBase
     }
     public function defaultGetRouteCallback($path_info)
     {
+        /*
+        if ($this->options['controller_url_prefix'] ?? false) {
+            $prefix = trim($this->options['controller_url_prefix'], '/').'/';
+            $l = strlen($prefix);
+            if (substr($path_info, 0, $l) !== $prefix) {
+                $this->runtime()->route_error = "path_prefix error";
+                return null;
+            }
+            $path_info = substr($path_info, $l - 1);
+            $path_info = ltrim((string)$path_info, '/');
+        }
+        //*/
         $path_info = ltrim((string)$path_info, '/');
-        
+        $this->runtime()->route_error = '';
         if (!empty($this->options['controller_path_ext']) && !empty($path_info)) {
             $l = strlen($this->options['controller_path_ext']);
             if (substr($path_info, -$l) !== $this->options['controller_path_ext']) {
-                $this->route_error = "path_extention error";
+                $this->runtime()->route_error = "path_extention error";
                 return null;
             }
             $path_info = substr($path_info, 0, -$l);
@@ -219,62 +233,78 @@ class Route extends ComponentBase
         $method = array_pop($t);
         $path_class = implode('/', $t);
         
-        $this->calling_path = $path_class?$path_info:$this->welcome_class.'/'.$method;
-        $this->route_error = '';
+        $this->runtime()->calling_path = $path_class?$path_info:$this->welcome_class.'/'.$method;
+
         
         if ($this->options['controller_hide_boot_class'] && $path_class === $this->welcome_class) {
-            $this->route_error = "controller_hide_boot_class! {$this->welcome_class} ";
+            $this->runtime()->route_error = "controller_hide_boot_class! {$this->welcome_class} ";
             return null;
         }
         $path_class = $path_class ?: $this->welcome_class;
         $full_class = $this->namespace_prefix.str_replace('/', '\\', $path_class).$this->options['controller_class_postfix'];
         $full_class = ''.ltrim($full_class, '\\');
-        $this->calling_class = $full_class;
-        $this->calling_method = !empty($method)?$method:'index';
+        $this->runtime()->calling_class = $full_class;
+        $this->runtime()->calling_method = !empty($method)?$method:'index';
         
         ////////////////////////
         
         if (!class_exists($full_class)) {
-            $this->route_error = "can't find class($full_class) by $path_class ";
+            $this->runtime()->route_error = "can't find class($full_class) by $path_class ";
             return null;
         }
         
         if ($full_class !== (new \ReflectionClass($full_class))->getName()) {
-            $this->route_error = "can't find class($full_class) by $path_class (strict_mode miss case).";
+            $this->runtime()->route_error = "can't find class($full_class) by $path_class (strict_mode miss case).";
             return null;
         }
         
         /** @var string */ $base_class = str_replace('~', $this->namespace_prefix, $this->options['controller_base_class']);
-        if (!empty($base_class) && !is_subclass_of($full_class, $base_class)) {
-            $this->route_error = "no the controller_base_class! {$base_class} ";
+        if (!empty($base_class)) {
+            if (!is_subclass_of($full_class, $base_class)) {
+                $this->runtime()->route_error = "no the controller_base_class! {$base_class} ";
+                return null;
+            }
+        }
+        
+        $object = $this->createControllerObject($full_class);
+        if ($this->runtime()->route_error) {
             return null;
         }
-        $object = $this->createControllerObject($full_class);
         return $this->getMethodToCall($object, $method);
     }
 
     protected function createControllerObject($full_class)
     {
         $full_class = $this->options['controller_class_map'][$full_class] ?? $full_class;
+        
+        if ($this->options['controller_strict_mode'] &&  $full_class !== (new \ReflectionClass($full_class))->getName()) {
+            $this->runtime()->route_error = "can't find class($full_class) (strict_mode miss case).";
+            return null;
+        }
         return new $full_class();
     }
     protected function getMethodToCall($object, $method)
     {
         $method = ($method === '') ? $this->index_method : $method;
         if (substr($method, 0, 2) == '__') {
-            $this->route_error = 'can not call hidden method';
+            $this->runtime()->route_error = 'can not call hidden method';
             return null;
         }
         if ($this->options['controller_prefix_post']) {
             $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-            $_SERVER['REQUEST_METHOD'] = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-            if ($_SERVER['REQUEST_METHOD'] === 'POST' && method_exists($object, $this->options['controller_prefix_post'].$method)) {
+            $request_method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+            if ($request_method === 'POST' && method_exists($object, $this->options['controller_prefix_post'].$method)) {
                 $method = $this->options['controller_prefix_post'].$method;
             }
         }
-        $ref = new \ReflectionMethod($object, $method);
-        if ($ref->isStatic()) {
-            $this->route_error = 'can not call static function';
+        try {
+            $ref = new \ReflectionMethod($object, $method);
+            if ($ref->isStatic()) {
+                $this->runtime()->route_error = 'can not call static function';
+                return null;
+            }
+        } catch (\ReflectionException $ex) {
+            $this->runtime()->route_error = 'method can not call';
             return null;
         }
         return [$object,$method];
@@ -284,6 +314,10 @@ class Route extends ComponentBase
 trait Route_Helper
 {
     ////
+    public static function PathInfo($path_info = null)
+    {
+        return isset($path_info)?$this->setPathInfo($path_info):$this->getPathInfo();
+    }
     public function getPathInfo()
     {
         $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
@@ -302,23 +336,23 @@ trait Route_Helper
     }
     public function getRouteError()
     {
-        return $this->route_error;
+        return $this->runtime()->route_error;
     }
     public function getRouteCallingPath()
     {
-        return $this->calling_path;
+        return $this->runtime()->calling_path;
     }
     public function getRouteCallingClass()
     {
-        return $this->calling_class;
+        return $this->runtime()->calling_class;
     }
     public function getRouteCallingMethod()
     {
-        return $this->calling_method;
+        return $this->runtime()->calling_method;
     }
     public function setRouteCallingMethod($calling_method)
     {
-        $this->calling_method = $calling_method;
+        $this->runtime()->calling_method = $calling_method;
     }
     public function getControllerNamespacePrefix()
     {
@@ -333,7 +367,7 @@ trait Route_Helper
         $ret .= "\n-- post run --\n";
         return $ret;
     }
-    public function replaceControllerSingelton($old_class, $new_class)
+    public function replaceController($old_class, $new_class)
     {
         //$old_class::G((new \ReflectionClass($new_class))->newInstanceWithoutConstructor());
         $this->options['controller_class_map'][$old_class] = $new_class;
@@ -404,7 +438,7 @@ trait Route_UrlManager
         if ($basepath === '/index.php') {
             $basepath = '/';
         }
-        $prefix = $this->options['controller_path_prefix']? trim('/'.$this->options['controller_path_prefix'], '/') : '';
+        $prefix = $this->options['controller_url_prefix']? trim('/'.$this->options['controller_url_prefix'], '/') : '';
         $basepath .= $prefix;
         return $basepath;
     }
