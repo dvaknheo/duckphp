@@ -34,7 +34,7 @@ trait SystemWrapperTrait
     protected function system_wrapper_call_check($func)
     {
         $func = ltrim($func, '_');
-        if(defined('__SYSTEM_WRAPPER_REPLACER')){
+        if (defined('__SYSTEM_WRAPPER_REPLACER')) {
             return is_callable([__SYSTEM_WRAPPER_REPLACER, $func]) ?true:false;
         }
         return isset($this->system_handlers[$func])?true:false;
@@ -42,7 +42,8 @@ trait SystemWrapperTrait
     protected function system_wrapper_call($func, $input_args)
     {
         $func = ltrim($func, '_');
-        if(defined('__SYSTEM_WRAPPER_REPLACER')){
+        if (defined('__SYSTEM_WRAPPER_REPLACER')) {
+            // @phpstan-ignore-next-line
             return [__SYSTEM_WRAPPER_REPLACER, $func](...$input_args);
         }
         if (is_callable($this->system_handlers[$func] ?? null)) {

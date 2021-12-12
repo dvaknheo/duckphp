@@ -738,9 +738,9 @@ trait Core_Glue
     {
         return Route::G($replacement_object);
     }
-    public static function replaceControllerSingelton($old_class, $new_class)
+    public static function replaceController($old_class, $new_class)
     {
-        return Route::G()->replaceControllerSingelton($old_class, $new_class);
+        return Route::G()->replaceController($old_class, $new_class);
     }
     public static function getPathInfo()
     {

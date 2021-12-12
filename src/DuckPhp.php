@@ -14,7 +14,6 @@ use DuckPhp\Component\DbManager;
 use DuckPhp\Component\DuckPhpCommand;
 use DuckPhp\Component\EventManager;
 use DuckPhp\Component\Pager;
-use DuckPhp\Component\RouteEx;
 use DuckPhp\Component\RouteHookPathInfoCompat;
 use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Core\App;

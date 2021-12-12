@@ -197,7 +197,7 @@ class SqlDumper extends ComponentBase
         $it = new \RecursiveIteratorIterator($directory);
         $regex = new \RegexIterator($it, '/^.+\.php$/i', \RecursiveRegexIterator::MATCH);
         foreach ($regex as $k => $v) {
-            $k = substr($path, 0, -4);  //getSubPathName 这里
+            $k = substr($path, 0, -4);  // = getSubPathName()
             $ret[] = $k;
         }
         return $ret;

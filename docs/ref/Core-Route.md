@@ -56,7 +56,7 @@
 控制器，类映射，用于替换
 
 
-        'controller_resource_prefix' => '',
+        'controller_url_prefix' => '',
 资源文件前缀
 
     

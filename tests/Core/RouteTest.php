@@ -136,7 +136,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->defaultGetRouteCallback('/about/me');
         Route::G()->defaultGetRouteCallback('/about/Me');
 
-        Route::G()->replaceControllerSingelton(\tests_Core_Route\about::class, \tests_Core_Route\about2::class);
+        Route::G()->replaceController(\tests_Core_Route\about::class, \tests_Core_Route\about2::class);
         
         Route::G()->defaultGetRouteCallback('/about/me');
         Route::G()->defaultGetRouteCallback('/about/me');

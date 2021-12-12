@@ -31,6 +31,7 @@ class Route extends ComponentBase
         
         'controller_resource_prefix' => '',
         'controller_url_prefix' => '',
+        'controller_runtime' => '',
     ];
 
     public $pre_run_hook_list = [];
@@ -114,7 +115,7 @@ class Route extends ComponentBase
     }
     public function runtime()
     {
-        if($this->options['controller_runtime']){
+        if ($this->options['controller_runtime']) {
             return ($this->options['controller_runtime'])();
         }
         return $this;
@@ -267,7 +268,9 @@ class Route extends ComponentBase
         }
         
         $object = $this->createControllerObject($full_class);
-        if ($this->runtime()->route_error) {
+        $route_error = $this->runtime()->route_error;
+        // @phpstan-ignore-next-line
+        if ($route_error) {
             return null;
         }
         return $this->getMethodToCall($object, $method);
@@ -277,7 +280,7 @@ class Route extends ComponentBase
     {
         $full_class = $this->options['controller_class_map'][$full_class] ?? $full_class;
         
-        if ($this->options['controller_strict_mode'] &&  $full_class !== (new \ReflectionClass($full_class))->getName()) {
+        if ($full_class !== (new \ReflectionClass($full_class))->getName()) {
             $this->runtime()->route_error = "can't find class($full_class) (strict_mode miss case).";
             return null;
         }
@@ -309,14 +312,13 @@ class Route extends ComponentBase
         }
         return [$object,$method];
     }
-
 }
 trait Route_Helper
 {
     ////
     public static function PathInfo($path_info = null)
     {
-        return isset($path_info)?$this->setPathInfo($path_info):$this->getPathInfo();
+        return isset($path_info)?static::G()->setPathInfo($path_info):static::G()->getPathInfo();
     }
     public function getPathInfo()
     {

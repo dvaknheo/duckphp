@@ -74,7 +74,7 @@ class AdvanceHelperTraitTest extends \PHPUnit\Framework\TestCase
         
         $old_class = AdvanceHelperTestObject::class;
         $new_class = AdvanceHelperTestObject::class;
-        AdvanceHelper::replaceControllerSingelton($old_class, $new_class);
+        AdvanceHelper::replaceController($old_class, $new_class);
         ////]]]]
         \LibCoverage\LibCoverage::End();
 
