@@ -38,20 +38,20 @@ class Main
     }
     public function index()
     {
-        $url_reg = C::Url('register');
-        $url_login = C::Url('login');
+        $url_reg = __url('register');
+        $url_login = __url('login');
         C::Show(get_defined_vars(), 'main');
     }
     public function register()
     {
         $csrf_field = SessionManager::G()->csrf_field();
-        $url_register = C::Url('register');
+        $url_register = __url('register');
         C::Show(get_defined_vars(), 'register');
     }
     public function login()
     {
         $csrf_field = SessionManager::G()->csrf_field();
-        $url_login = C::Url('login');
+        $url_login = __url('login');
         C::Show(get_defined_vars(),'login');
     }
     public function logout()

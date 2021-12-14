@@ -30,6 +30,6 @@ class MainOverrider extends SimpleAuth\Controller\Main
     }
 }
 \SimpleAuth\System\App::RunQuickly($options,function(){
-   \SimpleAuth\System\App::replaceControllerSingelton(SimpleAuth\Controller\Main::class,MainOverrider::class);
+   \SimpleAuth\System\App::replaceController(SimpleAuth\Controller\Main::class,MainOverrider::class);
 
 });
