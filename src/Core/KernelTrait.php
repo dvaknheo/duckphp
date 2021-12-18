@@ -257,6 +257,7 @@ trait KernelTrait
             RuntimeState::class,
             ExceptionManager::class,
             View::class,
+            Route::class,     //  TODO ，目前删除这个会引发  AppPluginTrait 问题
         ];
         $ret = array_merge($ret, $this->extDynamicComponentClasses ?? []);
         return $ret;
