@@ -253,12 +253,12 @@ class Route extends ComponentBase
             $this->runtime()->route_error = "can't find class($full_class) by $path_class ";
             return null;
         }
-        
+        //try{
         if ($full_class !== (new \ReflectionClass($full_class))->getName()) {
             $this->runtime()->route_error = "can't find class($full_class) by $path_class (strict_mode miss case).";
             return null;
         }
-        
+        //catch ReflectionException
         /** @var string */ $base_class = str_replace('~', $this->namespace_prefix, $this->options['controller_base_class']);
         if (!empty($base_class)) {
             if (!is_subclass_of($full_class, $base_class)) {
@@ -279,11 +279,6 @@ class Route extends ComponentBase
     protected function createControllerObject($full_class)
     {
         $full_class = $this->options['controller_class_map'][$full_class] ?? $full_class;
-        
-        if ($full_class !== (new \ReflectionClass($full_class))->getName()) {
-            $this->runtime()->route_error = "can't find class($full_class) (strict_mode miss case).";
-            return null;
-        }
         return new $full_class();
     }
     protected function getMethodToCall($object, $method)
@@ -322,11 +317,13 @@ trait Route_Helper
     }
     public function getPathInfo()
     {
+        // TODO protected
         $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         return $_SERVER['PATH_INFO'] ?? '';
     }
     public function setPathInfo($path_info)
     {
+        // TODO protected
         $_SERVER['PATH_INFO'] = $path_info;
         if (defined('__SUPERGLOBAL_CONTEXT')) {
             (__SUPERGLOBAL_CONTEXT)()->_SERVER = $_SERVER;

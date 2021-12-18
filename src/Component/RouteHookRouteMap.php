@@ -21,12 +21,12 @@ class RouteHookRouteMap extends ComponentBase
     
     public static function PrependHook($path_info)
     {
-        // $path_info = ($this->context_class)::Route()->getPathInfo();
+        // $path_info = ($this->context_class)::Route()::PathInfo();
         return static::G()->doHook($path_info, false);
     }
     public static function AppendHook($path_info)
     {
-        // $path_info = ($this->context_class)::Route()->getPathInfo();
+        // $path_info = ($this->context_class)::Route()::PathInfo();
         return static::G()->doHook($path_info, true);
     }
     //@override

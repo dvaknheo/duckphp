@@ -17,7 +17,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'SCRIPT_FILENAME'=>__DIR__.'/aa/index.php',
         ];
         Route::G()->reset();
-        Route::G()->setPathInfo('x/z');
+        Route::PathInfo('x/z');
         $t= Route::Url('aaa');
         $t= Route::Res('aaa');
         $z=Route::Route();
@@ -172,13 +172,41 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         
         Route::G()->bind('Main/index','POST')->run();
 
+        Route::G()->options['controller_runtime']=[MyRuntime::class,'G'];
         Route::G()->options['controller_methtod_for_miss']='_ttt';
         Route::G()->options['controller_strict_mode']=false;
         Route::G()->options['controller_resource_prefix']='http://duckphp.github.com/';
         Route::G()->bind('Main/NO','POST')->run();
         echo Route::Res('x.jpg');
+        
+        $this->doFixedRouteEx();
+        
         \LibCoverage\LibCoverage::End();
         return;
+    }
+    protected function doFixedRouteEx()
+    {
+        echo "\nFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\n";
+        
+        $options=[
+            'namespace_controller'=>'\\tests_Core_Route',
+            'controller_hide_boot_class'=>false,
+        ];
+
+        Route::G(new MyRoute())->init($options);
+        Route::G()->bind('/Main/MyStatic')->run();
+        
+        
+        //echo Route::G()->getRouteError();
+
+        Route::G()->bind('/Main/index')->run();
+        Route::G()->route_error_flag=true;
+        Route::G()->bind('/Main/index')->run();
+        Route::G()->route_error_flag=false;
+        
+        Route::G()->bind('/main/index')->run();
+        echo "\nfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\n";
+        
     }
     protected function doFixPathinfo()
     {
@@ -321,17 +349,31 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->getRouteCallingMethod();
         Route::G()->setRouteCallingMethod('_');
 
-        Route::G()->getPathInfo();
-        Route::G()->setPathInfo('xx');
+        Route::PathInfo();
+        Route::PathInfo('xx');
 
     }
 }
 class MyRoute extends Route
 {
+    public $route_error_flag=false;
     public function getCallback($class,$method)
     {
         return $this->getMethodToCall(new $class,$method);
     }
+    protected function createControllerObject($full_class)
+    {
+        $ret = parent::createControllerObject($full_class);
+        if($this->route_error_flag){
+            $this->runtime()->route_error="By MyRoute";
+        }
+        return $ret;
+    }
+}
+class MyRuntime
+{
+    use \DuckPhp\SingletonEx\SingletonExTrait;
+    
 }
 
 }
@@ -379,7 +421,7 @@ class Main  extends baseController
     }
     public static function MyStatic()
     {
-        
+        echo "MyStatic";
     }
 }
 

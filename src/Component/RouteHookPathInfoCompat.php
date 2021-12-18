@@ -103,7 +103,7 @@ class RouteHookPathInfoCompat extends ComponentBase
     }
     public function _Hook($path_info)
     {
-        // $path_info = ($this->context_class)::Route()->getPathInfo();
+        // $path_info = ($this->context_class)::Route()::PathInfo();
         $k = $this->options['path_info_compact_action_key'];
         $m = $this->options['path_info_compact_class_key'];
         

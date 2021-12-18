@@ -147,7 +147,7 @@ class RouteHookRewrite extends ComponentBase
     }
     protected function doHook($path_info)
     {
-        // $path_info = ($this->context_class)::Route()->getPathInfo();
+        // $path_info = ($this->context_class)::Route()::PathInfo();
         $path_info = ltrim($path_info, '/');
         $_GET = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_GET : $_GET;
         $query = $_GET;

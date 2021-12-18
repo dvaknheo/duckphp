@@ -26,7 +26,7 @@ class RouteHookFunctionRoute extends ComponentBase
     }
     public function _Hook($path_info = '/')
     {
-        $path_info = ($this->context_class)::Route()->getPathInfo();
+        $path_info = ($this->context_class)::Route()::PathInfo();
         $path_info = ltrim($path_info, '/');
         $path_info = empty($path_info) ? 'index' : $path_info;
         $path_info = str_replace('/', '_', $path_info);
