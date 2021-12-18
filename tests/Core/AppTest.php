@@ -10,12 +10,16 @@ use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckPhp\Component\Pager;
 use DuckPhp\Ext\SuperGlobalContext;
 
+class AppRoute extends Route
+{
+    protected $welcome_class='AppMain';
+}
 class AppTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(App::class);
-        
+        Route::G(AppRoute::G());
         $_SESSION=[];
         
         
@@ -37,7 +41,6 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'skip_view_notice_error' => true,
             'use_super_global' => true,
             'override_class'=>'\\'.AppTestApp::class,
-            'controller_welcome_class'=>'AppMain',
 
         ];
 
