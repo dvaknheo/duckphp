@@ -92,8 +92,8 @@ namespace MySpace\Controller
         public function index()
         {
             //获取数据
-            $output = "Hello, now time is " . C::H(MyBusiness::G()->getTimeDesc());
-            $url_about = C::URL('about/me');
+            $output = "Hello, now time is " . __h(MyBusiness::G()->getTimeDesc()); // html编码
+            $url_about = __url('about/me'); // url 编码
             C::Show(get_defined_vars(), 'main_view'); //显示数据
         }
     }
@@ -101,7 +101,7 @@ namespace MySpace\Controller
     {
         public function me()
         {
-            $url_main = C::URL(''); //默认URL
+            $url_main = __url(''); //默认URL
             C::setViewHeadFoot('header', 'footer');
             C::Show(get_defined_vars()); // 默认视图 about/me ，可省略
         }

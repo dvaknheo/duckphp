@@ -49,7 +49,7 @@ class Home extends Base
     }
     public function index()
     {
-        $url_logout = C::Url('logout');
+        $url_logout = __url('logout');
         C::Show(get_defined_vars());
     }
     public function password()

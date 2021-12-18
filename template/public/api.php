@@ -21,8 +21,8 @@ namespace Api {
         public function index()
         {
             $domain=\DuckPhp\DuckPhp::Domain(true);
-            $url=$domain . \DuckPhp\DuckPhp::Url('test.foo');
-            $url2=$domain .\DuckPhp\DuckPhp::Url('test.foo2?a=1&b=2');
+            $url=$domain . __url('test.foo');
+            $url2=$domain .__url('test.foo2?a=1&b=2');
             $message = <<<EOT
     不带参数访问： {$url}
     带参数访问：{$url2} 将会反射到 相应参数
