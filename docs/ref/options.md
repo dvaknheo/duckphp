@@ -73,40 +73,28 @@
     控制器基类   // [DuckPhp\Core\Route](Core-Route.md), [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
 + **'controller_class_map' => array ( ),** 
 
-    控制器，类映射，用于替换   // [DuckPhp\Core\Route](Core-Route.md)
+    控制器，类映射，用于替换控制器，类   // [DuckPhp\Core\Route](Core-Route.md)
 + **'controller_class_postfix' => '',** 
 
     控制器，控制器类名后缀   // [DuckPhp\Core\Route](Core-Route.md)
-+ **'controller_enable_slash' => false,** 
-
-    控制器，允许结尾的 /   // [DuckPhp\Core\Route](Core-Route.md)
-+ **'controller_hide_boot_class' => false,** 
++ **'controller_hide_boot_class' => true,** 
 
     控制器，隐藏启动的类   // [DuckPhp\Core\Route](Core-Route.md)
-+ **'controller_methtod_for_miss' => '__missing',** 
-
-    控制器，方法丢失调用的方法。   // [DuckPhp\Core\Route](Core-Route.md)
 + **'controller_path_ext' => '',** 
 
     控制器，后缀,如 .html   // [DuckPhp\Core\Route](Core-Route.md)
-+ **'controller_path_prefix' => '',** 
-
-    控制器，路由的前缀，只处理限定前缀的 PATH_INFO   // [DuckPhp\Core\Route](Core-Route.md)
 + **'controller_prefix_post' => 'do_',** 
 
     控制器，POST 的方法会在方法名前加前缀 do_   // [DuckPhp\Core\Route](Core-Route.md)
 + **'controller_resource_prefix' => '',** 
 
     资源前缀   // [DuckPhp\Core\Route](Core-Route.md)
-+ **'controller_stop_static_method' => true,** 
++ **'controller_runtime' => '',** 
 
-    控制器，禁止直接访问控制器静态方法   // [DuckPhp\Core\Route](Core-Route.md)
-+ **'controller_strict_mode' => true,** 
+    控制器，运行时，保存数据的类   // [DuckPhp\Core\Route](Core-Route.md)
++ **'controller_url_prefix' => '',** 
 
-    控制器，严格模式，区分大小写   // [DuckPhp\Core\Route](Core-Route.md)
-+ **'controller_welcome_class' => 'Main',** 
-
-    控制器，欢迎类，默认欢迎类是  Main 。   // [DuckPhp\Core\Route](Core-Route.md)
+    控制器，资源文件   // [DuckPhp\Core\Route](Core-Route.md)
 + **'database' => NULL,** 
 
     数据库，单一数据库配置   // [DuckPhp\Component\DbManager](Component-DbManager.md)
@@ -490,29 +478,21 @@
     - 'controller_base_class' => '',
         控制器基类
     - 'controller_class_map' => array ( ),
-        控制器，类映射，用于替换
+        控制器，类映射，用于替换控制器，类
     - 'controller_class_postfix' => '',
         控制器，控制器类名后缀
-    - 'controller_enable_slash' => false,
-        控制器，允许结尾的 /
-    - 'controller_hide_boot_class' => false,
+    - 'controller_hide_boot_class' => true,
         控制器，隐藏启动的类
-    - 'controller_methtod_for_miss' => '__missing',
-        控制器，方法丢失调用的方法。
     - 'controller_path_ext' => '',
         控制器，后缀,如 .html
-    - 'controller_path_prefix' => '',
-        控制器，路由的前缀，只处理限定前缀的 PATH_INFO
     - 'controller_prefix_post' => 'do_',
         控制器，POST 的方法会在方法名前加前缀 do_
     - 'controller_resource_prefix' => '',
         资源前缀
-    - 'controller_stop_static_method' => true,
-        控制器，禁止直接访问控制器静态方法
-    - 'controller_strict_mode' => true,
-        控制器，严格模式，区分大小写
-    - 'controller_welcome_class' => 'Main',
-        控制器，欢迎类，默认欢迎类是  Main 。
+    - 'controller_runtime' => '',
+        控制器，运行时，保存数据的类
+    - 'controller_url_prefix' => '',
+        控制器，资源文件
     - 'namespace' => '',
         命名空间
     - 'namespace_controller' => 'Controller',

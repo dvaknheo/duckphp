@@ -19,16 +19,8 @@
         'controller_base_class' => '',
 控制器，基类
 
-        'controller_welcome_class' => 'Main',
-控制器，欢迎类，默认欢迎类是  Main 。
-
-        'controller_hide_boot_class' => false,
+        'controller_hide_boot_class' => true,
 控制器，隐藏启动的类
-
-        'controller_methtod_for_miss' => '__missing',
-控制器，方法丢失调用的方法。
-如果有这个方法。找不到方法的时候，会进入这个方法。
-如果你使用了这个方法，将不会进入 404 。
 
         'controller_prefix_post' => 'do_',
 控制器，POST 的方法会在方法名前加前缀 do_
@@ -53,13 +45,18 @@
 控制器，严格模式，区分大小写
 
         'controller_class_map' => [],
-控制器，类映射，用于替换
+控制器，类映射，用于替换控制器，类
 
 
         'controller_url_prefix' => '',
-资源文件前缀
+控制器，资源文件
 
-    
+        'controller_resource_prefix' => '',
+控制器，资源文件前缀
+
+        'controller_runtime' => '',
+控制器，运行时，保存数据的类
+
 ## 公开方法
 
 ### 主流程方法
@@ -95,15 +92,18 @@
 
 运行默认的路由回调
 
-    public function replaceControllerSingelton($old_class, $new_class)
-替换控制器的单例,配合 controller_use_singletonex 使用。不能直接使用 $old_class::G($new_class::G());
+    public function replaceController($old_class, $new_class)
+替换控制器
 
     public static function Route()
-返回单例，用于 DuckPhp/Route 双兼容 RouteHook;
+返回单例，用于 DuckPhp/Route 双兼容给路由钩子使用
 
     public function forceFail()
 
 强制为失败，用于路由钩子
+
+    public function runtime()
+返回保存运行期数据的类
 
 
 ### URL 相关
@@ -143,6 +143,7 @@
     public function _Parameter($key = null, $default = null)
 读取 Parameter ， Parameter 用于 Url 重构之类
 
+    public static function PathInfo($path_info = null)
     public function getPathInfo()
     public function setPathInfo($path_info)
 获取和设置 PathInfo
@@ -243,5 +244,3 @@ if(!$flag){
 修订版本：
 
 修订时间：
-
-

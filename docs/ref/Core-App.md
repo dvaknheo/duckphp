@@ -285,8 +285,8 @@ Show 方法对 View::Show() 加了好些补充
     public static function getPathInfo()
 获取 PathInfo
 
-    public static function replaceControllerSingelton($old_class, $new_class)
-单例模式，替换控制器类， 控制器类的 单例模式不能简单的 $old_class::G($new_class) 替换。
+    public static function replaceController($old_class, $new_class)
+单例模式，替换控制器类
 
 
 ```php
@@ -416,3 +416,4 @@ Show 方法对 View::Show() 加了好些补充
 ### 关于 injected_helper_map 。 有时间再详细文档。
 
 以上
+

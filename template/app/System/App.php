@@ -62,26 +62,17 @@ class App extends DuckPhp
         // 控制器基类 (DuckPhp\Core\Route, DuckPhp\Ext\StrictCheck)
         // $options['controller_base_class'] = NULL;
 
-        // 控制器，类映射，用于替换 (DuckPhp\Core\Route)
+        // 控制器，类映射，用于替换控制器，类 (DuckPhp\Core\Route)
         // $options['controller_class_map'] = array ( );
 
         // 控制器，控制器类名后缀 (DuckPhp\Core\Route)
         // $options['controller_class_postfix'] = '';
 
-        // 控制器，允许结尾的 / (DuckPhp\Core\Route)
-        // $options['controller_enable_slash'] = false;
-
         // 控制器，隐藏启动的类 (DuckPhp\Core\Route)
-        // $options['controller_hide_boot_class'] = false;
-
-        // 控制器，方法丢失调用的方法。 (DuckPhp\Core\Route)
-        // $options['controller_methtod_for_miss'] = '__missing';
+        // $options['controller_hide_boot_class'] = true;
 
         // 控制器，后缀,如 .html (DuckPhp\Core\Route)
         // $options['controller_path_ext'] = '';
-
-        // 控制器，路由的前缀，只处理限定前缀的 PATH_INFO (DuckPhp\Core\Route)
-        // $options['controller_path_prefix'] = '';
 
         // 控制器，POST 的方法会在方法名前加前缀 do_ (DuckPhp\Core\Route)
         // $options['controller_prefix_post'] = 'do_';
@@ -89,14 +80,11 @@ class App extends DuckPhp
         // 资源前缀 (DuckPhp\Core\Route)
         // $options['controller_resource_prefix'] = '';
 
-        // 控制器，禁止直接访问控制器静态方法 (DuckPhp\Core\Route)
-        // $options['controller_stop_static_method'] = true;
+        // 控制器，运行时，保存数据的类 (DuckPhp\Core\Route)
+        // $options['controller_runtime'] = '';
 
-        // 控制器，严格模式，区分大小写 (DuckPhp\Core\Route)
-        // $options['controller_strict_mode'] = true;
-
-        // 控制器，欢迎类，默认欢迎类是  Main 。 (DuckPhp\Core\Route)
-        // $options['controller_welcome_class'] = 'Main';
+        // 控制器，资源文件 (DuckPhp\Core\Route)
+        // $options['controller_url_prefix'] = '';
 
         // 数据库，单一数据库配置 (DuckPhp\Component\DbManager)
         // $options['database'] = NULL;

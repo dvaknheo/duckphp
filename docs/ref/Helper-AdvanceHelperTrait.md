@@ -24,7 +24,7 @@
     
     public static function add404RouteHook($callback)
         
-    public static function replaceControllerSingelton($old_class, $new_class)
+    public static function replaceController($old_class, $new_class)
     
     public static function getViewData()
 
@@ -80,11 +80,5 @@
 
 
 ### 结束
-
-
-​    
-
-​    
-
 
 
