@@ -198,6 +198,7 @@ trait AppPluginTrait
     protected function _PluginModeRouteHook($path_info)
     {
         $flag = $this->pluginModeCheckPathInfo($path_info);
+
         if (!$flag) {
             return false;
         }
@@ -247,13 +248,13 @@ trait AppPluginTrait
         
         $route_options = $this->plugin_options['plugin_route_options'];
         $route_options['namespace'] = $this->plugin_options['plugin_namespace'];
-        $route_options['controller_path_prefix'] = $this->plugin_options['plugin_url_prefix'];
+        $route_options['controller_url_prefix'] = $this->plugin_options['plugin_url_prefix'];
         $route_options['controller_class_map'] = $this->old_controller_map;
         $route_options['controller_resource_prefix'] = $this->plugin_options['plugin_readfile_prefix'];
         
         Route::G()->init($route_options);
         
-        
+
         if (!empty($this->plugin_options['plugin_url_prefix'])) {
             $prefix = '/'.trim($this->plugin_options['plugin_url_prefix'], '/').'/';
             $path_info = Route::PathInfo();
