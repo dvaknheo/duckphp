@@ -698,6 +698,10 @@ trait Core_Glue
     {
         return Route::G()->_Parameter($key, $default);
     }
+    public static function PathInfo()
+    {
+        return Route::G()->_PathInfo();
+    }
     // view static
 
     public static function Display($view, $data = null)
@@ -741,10 +745,6 @@ trait Core_Glue
     public static function replaceController($old_class, $new_class)
     {
         return Route::G()->replaceController($old_class, $new_class);
-    }
-    public static function getPathInfo()
-    {
-        return Route::G()->getPathInfo();
     }
     public static function addRouteHook($callback, $position, $once = true)
     {

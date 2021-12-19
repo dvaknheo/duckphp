@@ -144,7 +144,8 @@
 读取 Parameter ， Parameter 用于 Url 重构之类
 
     public static function PathInfo($path_info = null)
-    public function getPathInfo()
+    public function _PathInfo($path_info = null)
+    protected function getPathInfo()
     public function setPathInfo($path_info)
 获取和设置 PathInfo
 
@@ -244,3 +245,4 @@ if(!$flag){
 修订版本：
 
 修订时间：
+

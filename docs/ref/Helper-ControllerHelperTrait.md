@@ -61,9 +61,9 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
 ### 路由相关
 
     public static function Parameter($key, $default = null)
-和超全局变量类似，获得存储的数据
+和超全局变量类似，获得存储的路由切片数据
 
-    public static function getPathInfo()
+    public static function PathInfo()
 获取当前 PathInfo
 
     public static function getRouteCallingMethod()
@@ -161,3 +161,5 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
 用于基类里判断是否被直接调用。参见 App 里相关文档
 
 以上就是所有控制器助手方法
+    public static function PathInfo()
+

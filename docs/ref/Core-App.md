@@ -271,10 +271,10 @@ Show 方法对 View::Show() 加了好些补充
 获得 Route 对象
 
     public static function Url($url = null)
-获得 Url
+获得 url
 
     public static function Res($url = null)
-获得资源 url
+获得资源 url 。默认下资源 url 等同于 url
 
     public static function Domain($use_scheme = false)
 获得域名
@@ -282,7 +282,7 @@ Show 方法对 View::Show() 加了好些补充
     public static function Parameter($key = null, $default = null)
 获取存储的 paramters 。rewrite 之后会保存在这。
 
-    public static function getPathInfo()
+    public static function PathInfo()
 获取 PathInfo
 
     public static function replaceController($old_class, $new_class)
@@ -416,4 +416,3 @@ Show 方法对 View::Show() 加了好些补充
 ### 关于 injected_helper_map 。 有时间再详细文档。
 
 以上
-

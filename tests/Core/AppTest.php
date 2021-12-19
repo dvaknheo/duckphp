@@ -432,7 +432,7 @@ App::PageHtml(123);
         
         
         App::isInException();
-        App::getPathInfo();
+        App::PathInfo();
         
         
         App::CallException(new \Exception("something"));

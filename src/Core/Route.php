@@ -313,11 +313,14 @@ trait Route_Helper
     ////
     public static function PathInfo($path_info = null)
     {
+        return static::G()->_PathInfo($path_info);
+    }
+    public function _PathInfo($path_info = null)
+    {
         return isset($path_info)?static::G()->setPathInfo($path_info):static::G()->getPathInfo();
     }
-    public function getPathInfo()
+    protected function getPathInfo()
     {
-        // TODO protected
         $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         return $_SERVER['PATH_INFO'] ?? '';
     }

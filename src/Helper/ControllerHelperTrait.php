@@ -21,9 +21,9 @@ trait ControllerHelperTrait
     {
         return App::getRouteCallingMethod();
     }
-    public static function getPathInfo()
+    public static function PathInfo()
     {
-        return App::getPathInfo();
+        return App::PathInfo();
     }
     ///////////////
     public static function Render($view, $data = null)

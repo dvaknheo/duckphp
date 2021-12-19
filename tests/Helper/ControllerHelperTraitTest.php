@@ -45,7 +45,7 @@ class ControllerHelperTraitTest extends \PHPUnit\Framework\TestCase
         $key="key";
         ControllerHelper::setViewHeadFoot($head_file=null, $foot_file=null);
         ControllerHelper::assignViewData($key, $value=null);
-        ControllerHelper::getPathInfo();
+        ControllerHelper::PathInfo();
         
         //*/
         $url="/abc";
