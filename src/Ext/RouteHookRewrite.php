@@ -159,7 +159,7 @@ class RouteHookRewrite extends ComponentBase
         if ($url !== null) {
             $this->changeRouteUrl($url);
             $path_info = parse_url($url, PHP_URL_PATH);
-            ($this->context_class)::Route()->setPathInfo($path_info);
+            ($this->context_class)::Route()::PathInfo($path_info);
         }
         return  false;
     }

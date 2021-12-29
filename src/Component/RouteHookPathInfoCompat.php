@@ -118,7 +118,7 @@ class RouteHookPathInfoCompat extends ComponentBase
 
         $path_info = $module.'/'.$path_info;
         
-        ($this->context_class)::Route()->setPathInfo($path_info);
+        ($this->context_class)::Route()::PathInfo($path_info);
         
         return false;
     }

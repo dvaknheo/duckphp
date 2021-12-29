@@ -110,7 +110,7 @@ class RouteHookDirectoryMode extends ComponentBase
     {
         // $path_info = ($this->context_class)::Route()::PathInfo();
         $path_info = $this->adjustPathinfo($this->basepath, $path_info);
-        ($this->context_class)::Route()->setPathInfo($path_info);
+        ($this->context_class)::Route()::PathInfo($path_info);
         return false;
     }
 }

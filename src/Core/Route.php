@@ -324,7 +324,7 @@ trait Route_Helper
         $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         return $_SERVER['PATH_INFO'] ?? '';
     }
-    public function setPathInfo($path_info)
+    protected function setPathInfo($path_info)
     {
         // TODO protected
         $_SERVER['PATH_INFO'] = $path_info;
@@ -402,7 +402,9 @@ trait Route_UrlManager
         if (!$this->options['controller_resource_prefix']) {
             return $this->_Url($url);
         }
-        return $this->options['controller_resource_prefix'].$url;
+        //  
+        //   'https://cdn.site/','http://cdn.site','//cdn.site/','res/'
+        return $this->_Url('').'/'.$this->options['controller_resource_prefix'].$url; 
     }
     public function _Domain($use_scheme = false)
     {
@@ -461,6 +463,7 @@ trait Route_UrlManager
         if (isset($url) && '#' === substr($url, 0, 1)) {
             return $basepath.$path_info.$url;
         }
+        
         return rtrim($basepath, '/').'/'.ltrim(''.$url, '/');
     }
     public function setUrlHandler($callback)

@@ -259,7 +259,7 @@ trait AppPluginTrait
             $prefix = '/'.trim($this->plugin_options['plugin_url_prefix'], '/').'/';
             $path_info = Route::PathInfo();
             $path_info = substr($path_info, strlen($prefix));
-            Route::G()->setPathInfo($path_info);
+            Route::PathInfo($path_info);
         }
     }
     protected function pluginModeReadFile($path_info)
