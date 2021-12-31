@@ -217,6 +217,8 @@ trait AppPluginTrait
         } catch (\Throwable $ex) {
             $this->onPluginModeException();
             ExceptionManager::CallException($ex);
+            $this->onPluginModeAfterRun();
+            return true;
         }
         if ($ret) {
             $this->onPluginModeAfterRun();
