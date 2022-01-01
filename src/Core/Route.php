@@ -245,20 +245,19 @@ class Route extends ComponentBase
         $full_class = $this->namespace_prefix.str_replace('/', '\\', $path_class).$this->options['controller_class_postfix'];
         $full_class = ''.ltrim($full_class, '\\');
         $this->runtime()->calling_class = $full_class;
-        $this->runtime()->calling_method = !empty($method)?$method:'index';
+        $this->runtime()->calling_method = !empty($method)?$method:$this->index_method;
         
         ////////////////////////
         
-        if (!class_exists($full_class)) {
-            $this->runtime()->route_error = "can't find class($full_class) by $path_class ";
+        try{
+            if ($full_class !== (new \ReflectionClass($full_class))->getName()) {
+                $this->runtime()->route_error = "can't find class($full_class) by $path_class .";
+                return null;
+            }
+        } catch (\ReflectionException $ex) {
+            $this->runtime()->route_error = "can't Reflection class($full_class) by $path_class .";
             return null;
         }
-        //try{
-        if ($full_class !== (new \ReflectionClass($full_class))->getName()) {
-            $this->runtime()->route_error = "can't find class($full_class) by $path_class (strict_mode miss case).";
-            return null;
-        }
-        //catch ReflectionException
         /** @var string */ $base_class = str_replace('~', $this->namespace_prefix, $this->options['controller_base_class']);
         if (!empty($base_class)) {
             if (!is_subclass_of($full_class, $base_class)) {
@@ -404,6 +403,10 @@ trait Route_UrlManager
         }
         //  
         //   'https://cdn.site/','http://cdn.site','//cdn.site/','res/'
+        $flag = preg_match('/^(https?:\/)\/',$url??'');
+        if($flag){
+            return $url;
+        }
         return $this->_Url('').'/'.$this->options['controller_resource_prefix'].$url; 
     }
     public function _Domain($use_scheme = false)
