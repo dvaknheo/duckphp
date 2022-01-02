@@ -403,7 +403,7 @@ trait Route_UrlManager
         }
         //  
         //   'https://cdn.site/','http://cdn.site','//cdn.site/','res/'
-        $flag = preg_match('/^(https?:\/)\/',$url??'');
+        $flag = preg_match('/^(https?:\/)\//',$url??'');
         if($flag){
             return $url;
         }
