@@ -87,7 +87,7 @@ class AppPluginTraitTest extends \PHPUnit\Framework\TestCase
         ////[[[[
         AppPluginTraitApp2::G()->plugin_options['plugin_enable_readfile']=true;
         AppPluginTraitApp2::G()->plugin_options['plugin_path_document']='../public';
-        
+        echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz";
         $_SERVER['PATH_INFO']='/Test/../x.html';
         DuckPhp::G()->run();
         $_SERVER['PATH_INFO']='/Test/x.php';

@@ -178,6 +178,10 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->options['controller_resource_prefix']='http://duckphp.github.com/';
         Route::G()->bind('Main/NO','POST')->run();
         echo Route::Res('x.jpg');
+        echo Route::Res('http://dvaknheo.git/x.jpg');
+        echo Route::Res('https://dvaknheo.git/x.jpg');
+        echo Route::Res('//x.jpg');
+        echo Route::Res('/x.jpg');
         
         $this->doFixedRouteEx();
         

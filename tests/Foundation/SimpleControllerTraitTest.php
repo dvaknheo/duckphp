@@ -19,13 +19,13 @@ class SimpleControllerTraitTest extends \PHPUnit\Framework\TestCase
             echo 'Exit';
             return ;
         }]);
-        App::Route()->setPathInfo('/MyController/helper');
+        App::Route()::PathInfo('/MyController/helper');
         App::G()->run();
 
-        App::Route()->setPathInfo('/MyController/foo');
+        App::Route()::PathInfo('/MyController/foo');
         App::G()->run();
         ProjectControllerBase::G(MyBase::G());
-        App::Route()->setPathInfo('/MyController/foo');
+        App::Route()::PathInfo('/MyController/foo');
         App::G()->run();
         \LibCoverage\LibCoverage::End();
     }

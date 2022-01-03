@@ -21,18 +21,18 @@ class RouteHookResourceTest extends \PHPUnit\Framework\TestCase
             ],
         ]);
         
-        App::Route()->setPathInfo('/RES/test.txt');
+        App::Route()::PathInfo('/RES/test.txt');
         App::G()->run();
         
-        App::Route()->setPathInfo('/RES/no_exist.txt');
+        App::Route()::PathInfo('/RES/no_exist.txt');
         App::G()->run();
         
-        App::Route()->setPathInfo('/RES/no_exist.php');
+        App::Route()::PathInfo('/RES/no_exist.php');
         App::G()->run();
         
-        App::Route()->setPathInfo('/RES/../../../no_exist.php');
+        App::Route()::PathInfo('/RES/../../../no_exist.php');
         App::G()->run();
-        App::Route()->setPathInfo('/not_hit.php');
+        App::Route()::PathInfo('/not_hit.php');
         App::G()->run();
         \LibCoverage\LibCoverage::End();
     }

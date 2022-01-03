@@ -215,9 +215,9 @@ trait AppPluginTrait
                 $ret = $this->pluginModeReadFile($path_info);
             }
         } catch (\Throwable $ex) {
-            $this->onPluginModeException();
             ExceptionManager::CallException($ex);
-            $this->onPluginModeAfterRun();
+            $this->onPluginModeException();
+            $this->pluginModeClear();
             return true;
         }
         if ($ret) {
