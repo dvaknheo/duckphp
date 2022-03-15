@@ -249,8 +249,9 @@ class Route extends ComponentBase
         
         ////////////////////////
         
-        try{
-            if ($full_class !== (new \ReflectionClass($full_class))->getName()) {
+        try {
+            /** @var class-string */ $class = $full_class;
+            if ($full_class !== (new \ReflectionClass($class))->getName()) {
                 $this->runtime()->route_error = "can't find class($full_class) by $path_class .";
                 return null;
             }
@@ -401,13 +402,13 @@ trait Route_UrlManager
         if (!$this->options['controller_resource_prefix']) {
             return $this->_Url($url);
         }
-        //  
+        //
         //   'https://cdn.site/','http://cdn.site','//cdn.site/','res/'
-        $flag = preg_match('/^(https?:\/)\//',$url??'');
-        if($flag){
+        $flag = preg_match('/^(https?:\/)\//', $url ?? '');
+        if ($flag) {
             return $url;
         }
-        return $this->_Url('').'/'.$this->options['controller_resource_prefix'].$url; 
+        return $this->_Url('').'/'.$this->options['controller_resource_prefix'].$url;
     }
     public function _Domain($use_scheme = false)
     {

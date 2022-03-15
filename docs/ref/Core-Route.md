@@ -246,3 +246,5 @@ if(!$flag){
 
 修订时间：
 
+    protected function setPathInfo($path_info)
+
