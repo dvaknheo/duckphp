@@ -347,9 +347,6 @@
 + **'skip_plugin_mode_check' => false,** 
 
     跳过插件模式检查   // [DuckPhp\Core\App](Core-App.md)
-+ **'skip_view_notice_error' => true,** 
-
-    关闭  View 视图的 notice 警告，以避免麻烦的处理。   // [DuckPhp\Core\View](Core-View.md), [DuckPhp\Ext\CallableView](Ext-CallableView.md), [DuckPhp\Ext\EmptyView](Ext-EmptyView.md)
 + 'strict_check_context_class' => NULL, 
 
     严格检查扩展，不用传输过来的 app类，而是特别指定类   // [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
@@ -374,6 +371,12 @@
 + **'use_short_functions' => true,** 
 
     使用短函数， \\_\\_url, \\_\\_h 等。   // [DuckPhp\Core\App](Core-App.md)
++ **'view_runtime' => '',** 
+
+       // [DuckPhp\Core\View](Core-View.md), [DuckPhp\Ext\CallableView](Ext-CallableView.md), [DuckPhp\Ext\EmptyView](Ext-EmptyView.md)
++ **'view_skip_notice_error' => true,** 
+
+    关闭  View 视图的 notice 警告，以避免麻烦的处理。   // [DuckPhp\Core\View](Core-View.md), [DuckPhp\Ext\CallableView](Ext-CallableView.md), [DuckPhp\Ext\EmptyView](Ext-EmptyView.md)
 
 @forscript end
 
@@ -507,7 +510,9 @@
         视图路径
     - 'path_view_override' => '',
         用于覆盖的路径——用于插件模式
-    - 'skip_view_notice_error' => true,
+    - 'view_runtime' => '',
+        
+    - 'view_skip_notice_error' => true,
         关闭  View 视图的 notice 警告，以避免麻烦的处理。
 + DuckPhp\Component\Cache
 + DuckPhp\Component\Console
@@ -574,7 +579,9 @@
         视图路径
     - 'path_view_override' => '',
         用于覆盖的路径——用于插件模式
-    - 'skip_view_notice_error' => true,
+    - 'view_runtime' => '',
+        
+    - 'view_skip_notice_error' => true,
         关闭  View 视图的 notice 警告，以避免麻烦的处理。
 + DuckPhp\Ext\EmptyView
     - 'empty_view_key_view' => 'view',
@@ -591,7 +598,9 @@
         视图路径
     - 'path_view_override' => '',
         用于覆盖的路径——用于插件模式
-    - 'skip_view_notice_error' => true,
+    - 'view_runtime' => '',
+        
+    - 'view_skip_notice_error' => true,
         关闭  View 视图的 notice 警告，以避免麻烦的处理。
 + DuckPhp\Ext\MyFacadesAutoLoader
     - 'facades_enable_autoload' => true,

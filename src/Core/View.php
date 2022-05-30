@@ -14,7 +14,8 @@ class View extends ComponentBase
         'path' => '',
         'path_view' => 'view',
         'path_view_override' => '',
-        'skip_view_notice_error' => true,
+        'view_skip_notice_error' => true,
+        'view_runtime' => '',
     ];
     /** @var array */
     public $data = [];
@@ -44,44 +45,44 @@ class View extends ComponentBase
     
     public function _Show(array $data, string $view): void
     {
-        if ($this->options['skip_view_notice_error'] ?? false) {
-            $this->error_reporting_old = error_reporting();
-            error_reporting($this->error_reporting_old & ~E_NOTICE);
+        if ($this->options['view_skip_notice_error'] ?? false) {
+            $this->runtime()->error_reporting_old = error_reporting();
+            error_reporting($this->runtime()->error_reporting_old & ~E_NOTICE);
         }
         
-        $this->view_file = $this->getViewFile($view);
-        $this->head_file = $this->getViewFile($this->head_file);
-        $this->foot_file = $this->getViewFile($this->foot_file);
+        $this->runtime()->view_file = $this->getViewFile($view);
+        $this->runtime()->head_file = $this->getViewFile($this->runtime()->head_file);
+        $this->runtime()->foot_file = $this->getViewFile($this->runtime()->foot_file);
         
-        $this->data = array_merge($this->data, $data);
+        $this->runtime()->data = array_merge($this->runtime()->data, $data);
         
         unset($data);
         unset($view);
-        extract($this->data);
+        extract($this->runtime()->data);
         
-        if ($this->head_file) {
-            include $this->head_file;
+        if ($this->runtime()->head_file) {
+            include $this->runtime()->head_file;
         }
         
-        include $this->view_file;
+        include $this->runtime()->view_file;
         
-        if ($this->foot_file) {
-            include $this->foot_file;
+        if ($this->runtime()->foot_file) {
+            include $this->runtime()->foot_file;
         }
-        if ($this->options['skip_view_notice_error'] ?? false) {
-            $this->error_reporting_old = error_reporting();
-            error_reporting($this->error_reporting_old & ~E_NOTICE);
+        if ($this->options['view_skip_notice_error'] ?? false) {
+            $this->runtime()->error_reporting_old = error_reporting();
+            error_reporting($this->runtime()->error_reporting_old & ~E_NOTICE);
         }
     }
     public function _Display(string $view, ?array $data = null): void
     {
-        $this->temp_view_file = $this->getViewFile($view);
-        $data = isset($data)?$data:$this->data;
+        $this->runtime()->temp_view_file = $this->getViewFile($view);
+        $data = isset($data)?$data:$this->runtime()->data;
         unset($data['this']);
         //unset($data['GLOBALS']);
         extract($data);
         
-        include $this->temp_view_file;
+        include $this->runtime()->temp_view_file;
     }
     public function _Render(string $view, ?array $data = null): string
     {
@@ -92,11 +93,23 @@ class View extends ComponentBase
         ob_end_clean();
         return (string)$ret;
     }
+    public function runtime()
+    {
+        if ($this->options['view_runtime']) {
+            return ($this->options['view_runtime'])();
+        }
+        return $this;
+    }
     public function reset(): void
     {
-        $this->head_file = null;
-        $this->foot_file = null;
-        $this->data = [];
+        $runtime = $this->runtime();
+        
+        $runtime->head_file = null;
+        $runtime->foot_file = null;
+        $runtime->data = [];
+        $runtime->view_file = null;
+        $runtime->temp_view_file = null;
+        $runtime->error_reporting_old = null;
     }
     public function getViewPath()
     {
@@ -104,12 +117,12 @@ class View extends ComponentBase
     }
     public function getViewData(): array
     {
-        return $this->data;
+        return $this->runtime()->data;
     }
     public function setViewHeadFoot(?string $head_file, ?string $foot_file): void
     {
-        $this->head_file = $head_file;
-        $this->foot_file = $foot_file;
+        $this->runtime()->head_file = $head_file;
+        $this->runtime()->foot_file = $foot_file;
     }
     /**
      *
@@ -120,9 +133,9 @@ class View extends ComponentBase
     public function assignViewData($key, $value = null): void
     {
         if (is_array($key) && $value === null) {
-            $this->data = array_merge($this->data, $key);
+            $this->runtime()->data = array_merge($this->runtime()->data, $key);
         } else {
-            $this->data[$key] = $value;
+            $this->runtime()->data[$key] = $value;
         }
     }
     protected function getViewFile(?string $view): string

@@ -34,9 +34,16 @@ class ViewTest extends \PHPUnit\Framework\TestCase
             'path'=>$path_view,
             'path_view'=>'',
         ];
+        View::G()->options['view_runtime']=[MyViewRuntime::class,'G'];
+
         View::G()->init($options);
         View::G()->reset();
         
         \LibCoverage\LibCoverage::End();
     }
+}
+class MyViewRuntime
+{
+    use \DuckPhp\SingletonEx\SingletonExTrait;
+    
 }

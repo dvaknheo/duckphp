@@ -33,7 +33,7 @@ EmptyView 组件 扩展扩充了默认的 View 类，用于用函数替代文件
         'path_view_override' => '',
 用于覆盖的路径——用于插件模式
 
-        'skip_view_notice_error' => true,
+        'view_skip_notice_error' => true,
 关闭 notice 警告，以避免麻烦的处理。
 
 

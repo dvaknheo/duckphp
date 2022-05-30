@@ -14,7 +14,7 @@
         'path_view_override' => '',
 用于覆盖的路径——用于插件模式
 
-        'skip_view_notice_error' => true,
+        'view_skip_notice_error' => true,
 关闭  View 视图的 notice 警告，以避免麻烦的处理。
 
 ## 方法
@@ -55,4 +55,8 @@ DuckPhp\Core\View 的选项共享一个 path,带一个 path_view.
 path_view 如果是 / 开始的，会忽略 path 选项
 
 当你想把视图目录 放入 app 目录的时候，请自行调整 path_view
+
+        'view_runtime' => '',
+
+    public function runtime()
 

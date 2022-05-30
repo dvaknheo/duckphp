@@ -212,9 +212,6 @@ class App extends DuckPhp
         // 跳过插件模式检查 (DuckPhp\Core\App)
         // $options['skip_plugin_mode_check'] = false;
 
-        // 关闭  View 视图的 notice 警告，以避免麻烦的处理。 (DuckPhp\Core\View, DuckPhp\Ext\CallableView, DuckPhp\Ext\EmptyView)
-        // $options['skip_view_notice_error'] = true;
-
         // 使用系统自带自动加载器 (DuckPhp\Core\App)
         // $options['use_autoloader'] = false;
 
@@ -229,6 +226,12 @@ class App extends DuckPhp
 
         // 使用短函数， \\_\\_url, \\_\\_h 等。 (DuckPhp\Core\App)
         // $options['use_short_functions'] = true;
+
+        //  (DuckPhp\Core\View, DuckPhp\Ext\CallableView, DuckPhp\Ext\EmptyView)
+        // $options['view_runtime'] = '';
+
+        // 关闭  View 视图的 notice 警告，以避免麻烦的处理。 (DuckPhp\Core\View, DuckPhp\Ext\CallableView, DuckPhp\Ext\EmptyView)
+        // $options['view_skip_notice_error'] = true;
 
         // ---- 下面是默认未使用的扩展 ----
 
@@ -258,8 +261,11 @@ class App extends DuckPhp
             // 【共享】用于覆盖的路径——用于插件模式
             // $options['path_view_override'] = '';
 
+            // 【共享】
+            // $options['view_runtime'] = '';
+
             // 【共享】关闭  View 视图的 notice 警告，以避免麻烦的处理。
-            // $options['skip_view_notice_error'] = true;
+            // $options['view_skip_notice_error'] = true;
 
         //*/
         /*
@@ -285,8 +291,11 @@ class App extends DuckPhp
             // 【共享】用于覆盖的路径——用于插件模式
             // $options['path_view_override'] = '';
 
+            // 【共享】
+            // $options['view_runtime'] = '';
+
             // 【共享】关闭  View 视图的 notice 警告，以避免麻烦的处理。
-            // $options['skip_view_notice_error'] = true;
+            // $options['view_skip_notice_error'] = true;
 
         //*/
         /*

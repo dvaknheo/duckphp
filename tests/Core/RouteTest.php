@@ -172,7 +172,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         
         Route::G()->bind('Main/index','POST')->run();
 
-        Route::G()->options['controller_runtime']=[MyRuntime::class,'G'];
+        Route::G()->options['controller_runtime']=[MyRouteRuntime::class,'G'];
         Route::G()->options['controller_methtod_for_miss']='_ttt';
         Route::G()->options['controller_strict_mode']=false;
         Route::G()->options['controller_resource_prefix']='http://duckphp.github.com/';
@@ -374,7 +374,7 @@ class MyRoute extends Route
         return $ret;
     }
 }
-class MyRuntime
+class MyRouteRuntime
 {
     use \DuckPhp\SingletonEx\SingletonExTrait;
     
