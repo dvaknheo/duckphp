@@ -46,16 +46,16 @@ EOT;
 }
 namespace {
     $options = [
-        'is_debug' => true,
-        'skip_setting_file' => true,
         'namespace'=>'',
-        'override_class' => '',
+        'setting_file_enable' => false,
         'ext' => [
-            'DuckPhp\\Ext\\RouteHookApiServer' => true,
+            'DuckPhp\\Ext\\RouteHookApiServer' => [
+				'api_server_namespace' => '\\Api',
+				'api_server_interface' => '~BaseApi',
+				'api_server_404_as_exception' => true,
+			],
         ],
-        'api_server_namespace' => '\\Api',
-        'api_server_interface' => '~BaseApi',
-        'api_server_404_as_exception' => true,
+        'is_debug' => true,
     ];
     \DuckPhp\DuckPhp::RunQuickly($options);
 }

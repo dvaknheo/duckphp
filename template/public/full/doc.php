@@ -31,7 +31,7 @@ getfile($f);
 <head>
   <meta charset="utf-8"/>
   <title>文档</title>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
 <div>
