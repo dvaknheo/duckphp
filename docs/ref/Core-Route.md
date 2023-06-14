@@ -146,7 +146,7 @@
     public static function PathInfo($path_info = null)
     public function _PathInfo($path_info = null)
     protected function getPathInfo()
-    public function setPathInfo($path_info)
+    protected function setPathInfo($path_info)
 获取和设置 PathInfo
 
     public function getRouteCallingPath()
@@ -184,6 +184,9 @@ RouteHookRouteMap 用到 获取控制器命名空间
 
     protected function createControllerObject($full_class)
 重写用，创建控制器对象
+
+    protected function pathToClassAndMethod($path_info)
+重写用，createControllerObject 会调用这个
 
     protected function getMethodToCall($object, $method)
 重写用，获得回调方法
@@ -246,5 +249,5 @@ if(!$flag){
 
 修订时间：
 
-    protected function setPathInfo($path_info)
+
 

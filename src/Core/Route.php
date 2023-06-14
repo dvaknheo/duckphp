@@ -205,6 +205,35 @@ class Route extends ComponentBase
         ($callback)();
         return true;
     }
+    protected function pathToClassAndMethod($path_info)
+    {
+        $path_info = ltrim((string)$path_info, '/');
+        if (!empty($this->options['controller_path_ext']) && !empty($path_info)) {
+            $l = strlen($this->options['controller_path_ext']);
+            if (substr($path_info, -$l) !== $this->options['controller_path_ext']) {
+                $this->runtime()->route_error = "path_extention error";
+                return [null, null];
+            }
+            $path_info = substr($path_info, 0, -$l);
+        }
+        
+        $t = explode('/', $path_info);
+        $method = array_pop($t);
+        $path_class = implode('/', $t);
+        
+        $this->runtime()->calling_path = $path_class?$path_info:$this->welcome_class.'/'.$method;
+        
+        if ($this->options['controller_hide_boot_class'] && $path_class === $this->welcome_class) {
+            $this->runtime()->route_error = "controller_hide_boot_class! {$this->welcome_class} ";
+            return [null, null];
+        }
+        $path_class = $path_class ?: $this->welcome_class;
+
+        $full_class = $this->namespace_prefix.str_replace('/', '\\', $path_class).$this->options['controller_class_postfix'];
+        $full_class = ''.ltrim($full_class, '\\');
+        
+        return [$full_class,$method];
+    }
     public function defaultGetRouteCallback($path_info)
     {
         /*
@@ -219,44 +248,23 @@ class Route extends ComponentBase
             $path_info = ltrim((string)$path_info, '/');
         }
         //*/
-        $path_info = ltrim((string)$path_info, '/');
         $this->runtime()->route_error = '';
-        if (!empty($this->options['controller_path_ext']) && !empty($path_info)) {
-            $l = strlen($this->options['controller_path_ext']);
-            if (substr($path_info, -$l) !== $this->options['controller_path_ext']) {
-                $this->runtime()->route_error = "path_extention error";
-                return null;
-            }
-            $path_info = substr($path_info, 0, -$l);
-        }
-        
-        $t = explode('/', $path_info);
-        $method = array_pop($t);
-        $path_class = implode('/', $t);
-        
-        $this->runtime()->calling_path = $path_class?$path_info:$this->welcome_class.'/'.$method;
-
-        
-        if ($this->options['controller_hide_boot_class'] && $path_class === $this->welcome_class) {
-            $this->runtime()->route_error = "controller_hide_boot_class! {$this->welcome_class} ";
+        list($full_class, $method) = $this->pathToClassAndMethod($path_info);
+        if ($full_class === null) {
             return null;
         }
-        $path_class = $path_class ?: $this->welcome_class;
-        $full_class = $this->namespace_prefix.str_replace('/', '\\', $path_class).$this->options['controller_class_postfix'];
-        $full_class = ''.ltrim($full_class, '\\');
         $this->runtime()->calling_class = $full_class;
         $this->runtime()->calling_method = !empty($method)?$method:$this->index_method;
         
         ////////////////////////
-        
         try {
             /** @var class-string */ $class = $full_class;
             if ($full_class !== (new \ReflectionClass($class))->getName()) {
-                $this->runtime()->route_error = "can't find class($full_class) by $path_class .";
+                $this->runtime()->route_error = "can't find class($full_class) by $path_info .";
                 return null;
             }
         } catch (\ReflectionException $ex) {
-            $this->runtime()->route_error = "can't Reflection class($full_class) by $path_class .";
+            $this->runtime()->route_error = "can't Reflection class($full_class) by $path_info .";
             return null;
         }
         /** @var string */ $base_class = str_replace('~', $this->namespace_prefix, $this->options['controller_base_class']);
@@ -275,7 +283,6 @@ class Route extends ComponentBase
         }
         return $this->getMethodToCall($object, $method);
     }
-
     protected function createControllerObject($full_class)
     {
         $full_class = $this->options['controller_class_map'][$full_class] ?? $full_class;
