@@ -205,12 +205,6 @@ class AutoLoader
         if (strncmp($prefix, $class, strlen($prefix)) !== 0) {
             return;
         }
-        if (strncmp("DuckPhp\\Core\\Helper\\", $class, strlen("DuckPhp\\Core\\Helper\\")) === 0) {
-            return;
-        }
-        if (strncmp("DuckPhp\\Core\\Core_", $class, strlen("DuckPhp\\Core\\Core_")) === 0) {
-            return;
-        }
         $base_dir = dirname(__DIR__).'/';
         $relative_class = substr($class, strlen($prefix));
         $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
