@@ -30,7 +30,6 @@ trait KernelTrait
             //// basic config ////
             'path' => null,
             'namespace' => null,
-            'override_class' => '',
             
             //// properties ////
             'is_debug' => false,
@@ -43,14 +42,12 @@ trait KernelTrait
             'skip_404_handler' => false,
             'skip_exception_check' => false,
         ];
-    public $onPrepare;
-    public $onInit;
-    public $onBeforeRun;
-    public $onAfterRun;
     
     protected $default_run_handler = null;
     protected $error_view_inited = false;
 
+    protected $isPluginMode = false;
+    protected $isRoot = false;
     // for app
     protected $handler_for_exception_handler;
 
@@ -62,28 +59,9 @@ trait KernelTrait
         }
         return $instance->run();
     }
-    public static function Blank()
-    {
-        // keep me for callback
-    }
     protected function initOptions(array $options)
     {
         $this->options = array_replace_recursive($this->options, $options);
-    }
-    protected function checkOverride($override_class)
-    {
-        if (empty($override_class)) {
-            return $this;
-        }
-        if (!class_exists($override_class)) {
-            return $this;
-        }
-        if (static::class === $override_class) {
-            return $this;
-        }
-        
-        $object = $override_class::G();
-        return $object;
     }
     protected function getDefaultProjectNameSpace($class)
     {
@@ -105,55 +83,43 @@ trait KernelTrait
     public function init(array $options, object $context = null)
     {
         if (isset($context) && !($options['skip_plugin_mode_check'] ?? self::$options_default['skip_plugin_mode_check'])) {
-            return $this->pluginModeInit($options, $context);
+            $this->isPluginMode = true;
+        }else{
+            $this->isRoot =true;
+            self::G($this);
         }
         
         $options['path'] = $options['path'] ?? $this->getDefaultProjectPath();
         $options['namespace'] = $options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
         
-        if (($options['use_autoloader'] ?? self::$options_default['use_autoloader']) || ($options['path_namespace'] ?? false)) {
-            AutoLoader::G()->init($options, $this)->run();
-        }
-        $object = $this->checkOverride($options['override_class'] ?? null);
-        $this->saveInstance($object);
-        
-        return $object->initAfterOverride($options, $context);
-    }
-    protected function saveInstance($object)
-    {
-        (self::class)::G($object);
-        static::G($object);
-    }
-    //for override
-    protected function pluginModeInit(array $options, object $context = null)
-    {
-        return $this;
-    }
-    protected function initAfterOverride(array $options, object $context = null)
-    {
         $this->initOptions($options);
-        $exception_options = [
-            'system_exception_handler' => $this->handler_for_exception_handler, //////TODO
-            'default_exception_handler' => [static::class,'OnDefaultException'],
-            'dev_error_handler' => [static::class,'OnDevErrorHandler'],
-        ];
-        ExceptionManager::G()->init($exception_options, $this)->run();
+        if ($this->options['use_short_functions']) {
+            require_once __DIR__.'/Functions.php';
+        }
+        if($this->isRoot){
+            if (($options['use_autoloader'] ?? self::$options_default['use_autoloader']) || ($options['path_namespace'] ?? false)) {
+                AutoLoader::G()->init($options, $this)->run();
+            }
+        }
         
         $this->onPrepare();
-        
-        $this->initDefaultComponents();
+        $this->initDefaultComponents($this->$options, $context);
         $this->initExtentions($this->options['ext']);
+        
         $this->onInit();
         
         $this->is_inited = true;
         return $this;
     }
-    //for override
-    protected function initDefaultComponents()
+    protected function initComponents(array $options, object $context = null)
     {
-        if ($this->options['use_short_functions']) {
-            require_once __DIR__.'/Functions.php';
-        }
+        $exception_options = [
+            'system_exception_handler' => $this->handler_for_exception_handler,
+            'default_exception_handler' => [static::class,'OnDefaultException'],
+            'dev_error_handler' => [static::class,'OnDevErrorHandler'],
+        ];
+        ExceptionManager::G()->init($exception_options, $this)->run();
+            
         Configer::G()->init($this->options, $this);
         $this->reloadFlags();
         
@@ -162,6 +128,15 @@ trait KernelTrait
         
         Route::G()->init($this->options, $this);
         RuntimeState::G()->init($this->options, $this);
+        
+        /*
+        $this->com([ExceptionManager::class,
+                Configer::class,
+                View::class,
+                Route::class,
+                RuntimeState::class,
+        ]);
+        */
     }
     protected function reloadFlags(): void
     {
@@ -192,23 +167,15 @@ trait KernelTrait
     //for override
     protected function onPrepare()
     {
-        if ($this->onPrepare) {
-            return ($this->onPrepare)();
-        }
+        //
     }
     //for override
     protected function onInit()
     {
-        if ($this->onInit) {
-            return ($this->onInit)();
-        }
     }
     //for override
     protected function onBeforeRun()
     {
-        if ($this->onBeforeRun) {
-            return ($this->onBeforeRun)();
-        }
     }
     //for override
     protected function onAfterRun()
@@ -244,25 +211,19 @@ trait KernelTrait
         RuntimeState::G()->clear();
         return $ret;
     }
-    public function beforeRun()
+    protected function beforeRun()
     {
-        $classes = $this->getDynamicComponentClasses();
-        foreach ($classes as $v) {
-            $v::G()->reset();
+        //TODO route 搞了一下，发现不对，于是后面调回去。
+        foreach ($this->com as $class =>$object) {
+            $class::G(clone $object)->reset();
         }
     }
-    public function getDynamicComponentClasses()
+    public function Com($class,$object)
     {
-        $ret = [
-            RuntimeState::class,
-            ExceptionManager::class,
-            View::class,
-            Route::class,     //  TODO ，目前删除这个会引发  AppPluginTrait 问题
-        ];
-        $ret = array_merge($ret, $this->extDynamicComponentClasses ?? []);
-        return $ret;
-    }
-    
+        foreach ($this->com as $class =>$object) {
+            //$this->com[$class]=$object;
+        }
+    }  
     //main produce end
     
     public function replaceDefaultRunHandler(callable $handler = null): void
@@ -270,6 +231,8 @@ trait KernelTrait
         $this->default_run_handler = $handler;
     }
     ////////////////////////
+    
+    
     public static function On404(): void
     {
         static::G()->_On404();

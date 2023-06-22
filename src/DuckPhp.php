@@ -31,7 +31,7 @@ class DuckPhp extends App
 
         parent::__construct();
     }
-    protected function initAfterOverride(array $options, object $context = null)
+    protected function initComponents(array $options, object $context = null)
     {
         if (PHP_SAPI === 'cli') {
             Console::G()->options['cli_default_command_class'] = DuckPhpCommand::class;
@@ -41,7 +41,7 @@ class DuckPhp extends App
         if (($options['path_info_compact_enable'] ?? false) || ($this->options['path_info_compact_enable'] ?? false)) {
             $this->options['ext'][RouteHookPathInfoCompat::class] = $this->options['ext'][RouteHookPathInfoCompat::class] ?? true;
         }
-        return parent::initAfterOverride($options, $context);
+        return parent::initComponents($options, $context);
     }
     //@override
     public function _Cache($object = null)
