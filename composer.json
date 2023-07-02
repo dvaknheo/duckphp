@@ -4,7 +4,7 @@
     "type": "library",
     "keywords": [
         "framework",
-		"service"
+        "service"
     ],
     "homepage": "https://www.github.com/dvaknheo/duckphp",
     "license": "MIT",
@@ -14,14 +14,14 @@
             "email": "85811616@qq.com"
         }
     ],
-	"autoload": {
+    "autoload": {
         "psr-4": {
             "DuckPhp\\": "src"
         }
     },
     "require": {
         "php": ">=7.2.0"
-	},
+    },
     "require-dev": {
         "dvaknheo/libcoverage": ">=1.0.5",
         "phpunit/php-code-coverage": "8.0.2",
@@ -35,17 +35,17 @@
     "post-install-cmd": [
         "echo 'Welcome to use DuckPHP ,run bin/duckphp form more.'"
     ],
-	"scripts": {
-	  "fulltest": [
-	    "php-cs-fixer fix",
-		"phpstan analyse",
-		"phpunit",
-		"@php tests/genoptions.php"
-	  ],
-	  "singletest": [
-		"phpunit",
-		"phpunit tests/support.php"
-	  ],
-	  "genoptions":"@php tests/genoptions.php"
-	}
+    "scripts": {
+      "fulltest": [
+        "php-cs-fixer fix",
+        "phpstan analyse",
+        "phpunit",
+        "@php tests/genoptions.php"
+      ],
+      "singletest": [
+        "phpunit",
+        "phpunit tests/support.php"
+      ],
+      "genoptions":"@php tests/genoptions.php"
+    }
 }
