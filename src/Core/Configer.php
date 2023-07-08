@@ -7,6 +7,7 @@ namespace DuckPhp\Core;
 
 use DuckPhp\Core\ComponentBase;
 
+// settting 忽略 path_override,其他要加上 path override
 class Configer extends ComponentBase
 {
     public $options = [

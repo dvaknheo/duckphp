@@ -31,7 +31,6 @@ class Route extends ComponentBase
         
         'controller_resource_prefix' => '',
         'controller_url_prefix' => '',
-        'controller_runtime' => '',
     ];
 
     public $pre_run_hook_list = [];
@@ -89,14 +88,13 @@ class Route extends ComponentBase
     }
     public function reset()
     {
-        $runtime = $this->runtime();
-        $runtime->is_failed = false;
-        $runtime->enable_default_callback = true;
+        $this->is_failed = false;
+        $this->enable_default_callback = true;
         
-        $runtime->route_error = '';
-        $runtime->calling_path = '';
-        $runtime->calling_class = '';
-        $runtime->calling_method = '';
+        $this->route_error = '';
+        $this->calling_path = '';
+        $this->calling_class = '';
+        $this->calling_method = '';
         return $this;
     }
     public function bind($path_info, $request_method = 'GET')
@@ -113,13 +111,6 @@ class Route extends ComponentBase
         }
         return $this;
     }
-    public function runtime()
-    {
-        if ($this->options['controller_runtime']) {
-            return ($this->options['controller_runtime'])();
-        }
-        return $this;
-    }
     public function run()
     {
         $this->reset();
@@ -131,13 +122,13 @@ class Route extends ComponentBase
             }
         }
         
-        if ($this->runtime()->enable_default_callback) {
+        if ($this->enable_default_callback) {
             $flag = $this->defaultRunRouteCallback($this->getPathInfo());
-            if ($flag && (!$this->runtime()->is_failed)) {
+            if ($flag && (!$this->is_failed)) {
                 return $this->getRunResult();
             }
         } else {
-            $this->runtime()->enable_default_callback = true;
+            $this->enable_default_callback = true;
         }
         
         foreach ($this->post_run_hook_list as $callback) {
@@ -150,7 +141,7 @@ class Route extends ComponentBase
     }
     protected function getRunResult()
     {
-        if ($this->runtime()->is_failed) {
+        if ($this->is_failed) {
             return false;
         }
         return true;
@@ -158,7 +149,7 @@ class Route extends ComponentBase
     public function forceFail()
     {
         // TODO . force result ?
-        $this->runtime()->is_failed = true;
+        $this->is_failed = true;
     }
     public function addRouteHook($callback, $position, $once = true)
     {
@@ -194,7 +185,7 @@ class Route extends ComponentBase
     }
     public function defaulToggleRouteCallback($enable = true)
     {
-        $this->runtime()->enable_default_callback = $enable;
+        $this->enable_default_callback = $enable;
     }
     public function defaultRunRouteCallback($path_info = null)
     {
@@ -211,7 +202,7 @@ class Route extends ComponentBase
         if (!empty($this->options['controller_path_ext']) && !empty($path_info)) {
             $l = strlen($this->options['controller_path_ext']);
             if (substr($path_info, -$l) !== $this->options['controller_path_ext']) {
-                $this->runtime()->route_error = "path_extention error";
+                $this->route_error = "path_extention error";
                 return [null, null];
             }
             $path_info = substr($path_info, 0, -$l);
@@ -221,10 +212,10 @@ class Route extends ComponentBase
         $method = array_pop($t);
         $path_class = implode('/', $t);
         
-        $this->runtime()->calling_path = $path_class?$path_info:$this->welcome_class.'/'.$method;
+        $this->calling_path = $path_class?$path_info:$this->welcome_class.'/'.$method;
         
         if ($this->options['controller_hide_boot_class'] && $path_class === $this->welcome_class) {
-            $this->runtime()->route_error = "controller_hide_boot_class! {$this->welcome_class} ";
+            $this->route_error = "controller_hide_boot_class! {$this->welcome_class} ";
             return [null, null];
         }
         $path_class = $path_class ?: $this->welcome_class;
@@ -241,42 +232,42 @@ class Route extends ComponentBase
             $prefix = trim($this->options['controller_url_prefix'], '/').'/';
             $l = strlen($prefix);
             if (substr($path_info, 0, $l) !== $prefix) {
-                $this->runtime()->route_error = "path_prefix error";
+                $this->route_error = "path_prefix error";
                 return null;
             }
             $path_info = substr($path_info, $l - 1);
             $path_info = ltrim((string)$path_info, '/');
         }
         //*/
-        $this->runtime()->route_error = '';
+        $this->route_error = '';
         list($full_class, $method) = $this->pathToClassAndMethod($path_info);
         if ($full_class === null) {
             return null;
         }
-        $this->runtime()->calling_class = $full_class;
-        $this->runtime()->calling_method = !empty($method)?$method:$this->index_method;
+        $this->calling_class = $full_class;
+        $this->calling_method = !empty($method)?$method:$this->index_method;
         
         ////////////////////////
         try {
             /** @var class-string */ $class = $full_class;
             if ($full_class !== (new \ReflectionClass($class))->getName()) {
-                $this->runtime()->route_error = "can't find class($full_class) by $path_info .";
+                $this->route_error = "can't find class($full_class) by $path_info .";
                 return null;
             }
         } catch (\ReflectionException $ex) {
-            $this->runtime()->route_error = "can't Reflection class($full_class) by $path_info .";
+            $this->route_error = "can't Reflection class($full_class) by $path_info .";
             return null;
         }
         /** @var string */ $base_class = str_replace('~', $this->namespace_prefix, $this->options['controller_base_class']);
         if (!empty($base_class)) {
             if (!is_subclass_of($full_class, $base_class)) {
-                $this->runtime()->route_error = "no the controller_base_class! {$base_class} ";
+                $this->route_error = "no the controller_base_class! {$base_class} ";
                 return null;
             }
         }
         
         $object = $this->createControllerObject($full_class);
-        $route_error = $this->runtime()->route_error;
+        $route_error = $this->route_error;
         // @phpstan-ignore-next-line
         if ($route_error) {
             return null;
@@ -292,7 +283,7 @@ class Route extends ComponentBase
     {
         $method = ($method === '') ? $this->index_method : $method;
         if (substr($method, 0, 2) == '__') {
-            $this->runtime()->route_error = 'can not call hidden method';
+            $this->route_error = 'can not call hidden method';
             return null;
         }
         if ($this->options['controller_prefix_post']) {
@@ -305,11 +296,11 @@ class Route extends ComponentBase
         try {
             $ref = new \ReflectionMethod($object, $method);
             if ($ref->isStatic()) {
-                $this->runtime()->route_error = 'can not call static function';
+                $this->route_error = 'can not call static function';
                 return null;
             }
         } catch (\ReflectionException $ex) {
-            $this->runtime()->route_error = 'method can not call';
+            $this->route_error = 'method can not call';
             return null;
         }
         return [$object,$method];
@@ -345,23 +336,23 @@ trait Route_Helper
     }
     public function getRouteError()
     {
-        return $this->runtime()->route_error;
+        return $this->route_error;
     }
     public function getRouteCallingPath()
     {
-        return $this->runtime()->calling_path;
+        return $this->calling_path;
     }
     public function getRouteCallingClass()
     {
-        return $this->runtime()->calling_class;
+        return $this->calling_class;
     }
     public function getRouteCallingMethod()
     {
-        return $this->runtime()->calling_method;
+        return $this->calling_method;
     }
     public function setRouteCallingMethod($calling_method)
     {
-        $this->runtime()->calling_method = $calling_method;
+        $this->calling_method = $calling_method;
     }
     public function getControllerNamespacePrefix()
     {

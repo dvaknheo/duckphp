@@ -20,28 +20,39 @@ use DuckPhp\Core\App;
 
 class DuckPhp extends App
 {
-    public function __construct()
-    {
-        $this->core_options['ext'] = [
-            DbManager::class => true,
-            RouteHookRouteMap::class => true,
-        ];
-        $this->core_options['route_map_auto_extend_method'] = false;
-        $this->core_options['database_auto_extend_method'] = false;
-
-        parent::__construct();
-    }
     protected function initComponents(array $options, object $context = null)
     {
+        parent::initComponents($options, $context);
+        
+        $this->options['database_auto_extend_method'] = $this->options['database_auto_extend_method'] ?? false;
+        DbManager::G()->init($this->options, $this);
+        
         if (PHP_SAPI === 'cli') {
+            DuckPhpCommand::G()->init($this->options, $this);
+            Console::G()->init($this->options, $this);
             Console::G()->options['cli_default_command_class'] = DuckPhpCommand::class;
-            $this->options['ext'][Console::class] = $this->options['ext'][Console::class] ?? true;
-            $this->options['ext'][DuckPhpCommand::class] = $this->options['ext'][DuckPhpCommand::class] ?? true;
         }
         if (($options['path_info_compact_enable'] ?? false) || ($this->options['path_info_compact_enable'] ?? false)) {
-            $this->options['ext'][RouteHookPathInfoCompat::class] = $this->options['ext'][RouteHookPathInfoCompat::class] ?? true;
+            $this->options['route_map_auto_extend_method'] = $this->options['route_map_auto_extend_method'] ?? false;
+            RouteHookPathInfoCompat::G()->init($this->options, $this);
         }
-        return parent::initComponents($options, $context);
+        // redis的初始化要加上，这里要把 dbmanager 和 redis manager 给加入共享模式
+        return $this;
+    }
+    //
+    public static function Admin()
+    {
+    }
+    public static function AdminId()
+    {
+        return static::Admin()->id();
+    }
+    public static function User()
+    {
+    }
+    public static function UserId()
+    {
+        return static::User()->id();
     }
     //@override
     public function _Cache($object = null)

@@ -34,7 +34,8 @@ class App extends ComponentBase
     const DEFAULT_INJECTED_HELPER_MAP = '~\\Helper\\';
     
     use KernelTrait;
-    use ExtendableStaticCallTrait;
+    use ContainerTrait;
+    # use ExtendableStaticCallTrait;
     use SystemWrapperTrait;
     
     //inner trait
@@ -73,7 +74,6 @@ class App extends ComponentBase
     ];
     
     // for trait
-    protected $extDynamicComponentClasses = [];
     protected $beforeShowHandlers = [];
     protected $pager;
     protected $cache;
@@ -215,6 +215,7 @@ EOT;
         View::G()->_Display($error_view, $data);
     }
     //////// features
+    ////[[[[
     protected function extendComponentClassMap($map)
     {
         if (empty($map)) {
@@ -278,7 +279,7 @@ EOT;
             $new_class::AssignExtendStaticMethod($old_class::GetExtendStaticMethodList());
         }
     }
-    
+    ////]]]]
     public function addBeforeShowHandler($handler)
     {
         $this->beforeShowHandlers[] = $handler;
@@ -289,12 +290,6 @@ EOT;
             return $v != $handler;
         });
     }
-    
-    public function addDynamicComponentClass($class)
-    {
-        $this->extDynamicComponentClasses[] = $class;
-    }    //////// for DuckPhp\HttpServer\AppInterface
-
     public function skip404Handler()
     {
         $this->options['skip_404_handler'] = true;
@@ -318,6 +313,14 @@ EOT;
         $view = $view === '' ? Route::G()->getRouteCallingPath() : $view;
         return View::G()->_Show($data, $view);
     }
+    public static function IsCurrentApp()
+    {
+        return static::G() === self::G();
+    }
+}
+trait Core_Helper
+{
+//    protected $pager;
     public static function IsAjax()
     {
         return static::G()->_IsAjax();
@@ -341,15 +344,6 @@ EOT;
         }
         return false;
     }
-    public static function IsCurrentApp()
-    {
-        return static::G() === self::G();
-    }
-}
-trait Core_Helper
-{
-//    protected $pager;
-
     public static function ExitJson($ret, $exit = true)
     {
         return static::G()->_ExitJson($ret, $exit);

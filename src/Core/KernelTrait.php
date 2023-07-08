@@ -82,13 +82,6 @@ trait KernelTrait
     //init
     public function init(array $options, object $context = null)
     {
-        if (isset($context) && !($options['skip_plugin_mode_check'] ?? self::$options_default['skip_plugin_mode_check'])) {
-            $this->isPluginMode = true;
-        }else{
-            $this->isRoot =true;
-            self::G($this);
-        }
-        
         $options['path'] = $options['path'] ?? $this->getDefaultProjectPath();
         $options['namespace'] = $options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
         
@@ -96,14 +89,18 @@ trait KernelTrait
         if ($this->options['use_short_functions']) {
             require_once __DIR__.'/Functions.php';
         }
-        if($this->isRoot){
-            if (($options['use_autoloader'] ?? self::$options_default['use_autoloader']) || ($options['path_namespace'] ?? false)) {
-                AutoLoader::G()->init($options, $this)->run();
-            }
-        }
+        //如果 ext 是空，那么我们就不用 switch 过去了，否则还要 switch 过去
+        // 这里要检测一下 self::class, 设置为共享模式，
+        // 要加个 设置为共享类的入口
+        // 如果 contentxt 是父类，那么我们要加上 404 ,
+        //  404 由父类来处理还是子类来处理？
+        static::SwitchContainer(static::class);
         
+        if (($options['use_autoloader'] ?? self::$options_default['use_autoloader']) || ($options['path_namespace'] ?? false)) {
+            AutoLoader::G()->init($options, $this)->run();
+        }
         $this->onPrepare();
-        $this->initDefaultComponents($this->$options, $context);
+        $this->initComponents($this->options, $context);
         $this->initExtentions($this->options['ext']);
         
         $this->onInit();
@@ -113,13 +110,18 @@ trait KernelTrait
     }
     protected function initComponents(array $options, object $context = null)
     {
+        // 如果是 context ，要 skip 404handle;
+        // configer 和 view 的 path_override 处理
+        // path_override
+    
         $exception_options = [
             'system_exception_handler' => $this->handler_for_exception_handler,
             'default_exception_handler' => [static::class,'OnDefaultException'],
             'dev_error_handler' => [static::class,'OnDevErrorHandler'],
         ];
         ExceptionManager::G()->init($exception_options, $this)->run();
-            
+        
+        
         Configer::G()->init($this->options, $this);
         $this->reloadFlags();
         
@@ -128,15 +130,6 @@ trait KernelTrait
         
         Route::G()->init($this->options, $this);
         RuntimeState::G()->init($this->options, $this);
-        
-        /*
-        $this->com([ExceptionManager::class,
-                Configer::class,
-                View::class,
-                Route::class,
-                RuntimeState::class,
-        ]);
-        */
     }
     protected function reloadFlags(): void
     {
@@ -161,6 +154,7 @@ trait KernelTrait
                 continue;
             }
             $class::G()->init($options, $this);
+            $this->switchContainer(static::class);
         }
         return;
     }
@@ -186,6 +180,7 @@ trait KernelTrait
     }
     public function run(): bool
     {
+        static::SwitchContainer(static::class);
         if ($this->default_run_handler) {
             return ($this->default_run_handler)();
         }
@@ -195,7 +190,9 @@ trait KernelTrait
             $ret = Route::G()->run();
             
             if (!$ret && !$this->options['skip_404_handler']) {
+                //$this->runExtentsion
                 $this->_On404();
+                
             }
         } catch (\Throwable $ex) {
             RuntimeState::G()->toggleInException();
@@ -211,19 +208,20 @@ trait KernelTrait
         RuntimeState::G()->clear();
         return $ret;
     }
-    protected function beforeRun()
+    protected function runExtentions()
     {
-        //TODO route 搞了一下，发现不对，于是后面调回去。
-        foreach ($this->com as $class =>$object) {
-            $class::G(clone $object)->reset();
+        $flag = false;
+        foreach ($this->options['ext'] as $class => $options) {
+            if(!($class::G()->options['skip_404hanlder'])){
+                continue;
+            }
+            $flag = $class::G()->run();
+            if($flag){
+                break;
+            }
         }
+        return $flag;
     }
-    public function Com($class,$object)
-    {
-        foreach ($this->com as $class =>$object) {
-            //$this->com[$class]=$object;
-        }
-    }  
     //main produce end
     
     public function replaceDefaultRunHandler(callable $handler = null): void
