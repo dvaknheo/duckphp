@@ -47,7 +47,6 @@ trait KernelTrait
     protected $error_view_inited = false;
 
     protected $isPluginMode = false;
-    protected $isRoot = false;
     // for app
     protected $handler_for_exception_handler;
 
@@ -79,6 +78,14 @@ trait KernelTrait
         
         return $path;
     }
+    protected function switchContextContainer()
+    {
+        if($this->isSimpleMode){
+            return false;
+        }
+        
+        
+    }
     //init
     public function init(array $options, object $context = null)
     {
@@ -89,16 +96,20 @@ trait KernelTrait
         if ($this->options['use_short_functions']) {
             require_once __DIR__.'/Functions.php';
         }
-        //如果 ext 是空，那么我们就不用 switch 过去了，否则还要 switch 过去
-        // 这里要检测一下 self::class, 设置为共享模式，
-        // 要加个 设置为共享类的入口
-        // 如果 contentxt 是父类，那么我们要加上 404 ,
-        //  404 由父类来处理还是子类来处理？
-        static::SwitchContainer(static::class);
-        
         if (($options['use_autoloader'] ?? self::$options_default['use_autoloader']) || ($options['path_namespace'] ?? false)) {
             AutoLoader::G()->init($options, $this)->run();
+            // 切换 context 之后，要
         }
+        
+        if (empty($context) && empty($this->options['ext'])) {
+            $this->isSimpleMode = true;
+        }
+        
+        // 这里要检测一下 self::class, 设置为共享模式，
+        // 要加个 设置为共享类的入口
+        $this->switchContainerContext(static::class);
+
+        
         $this->onPrepare();
         $this->initComponents($this->options, $context);
         $this->initExtentions($this->options['ext']);
@@ -110,16 +121,22 @@ trait KernelTrait
     }
     protected function initComponents(array $options, object $context = null)
     {
-        // 如果是 context ，要 skip 404handle;
-        // configer 和 view 的 path_override 处理
-        // path_override
-    
+        
         $exception_options = [
             'system_exception_handler' => $this->handler_for_exception_handler,
             'default_exception_handler' => [static::class,'OnDefaultException'],
             'dev_error_handler' => [static::class,'OnDevErrorHandler'],
         ];
+        // 错误报告方面，只处理自己的，不接管
+        if (is_a($this, self::class)) {
+            $this->options['skip_404_handler'] = true;
+            $exception_option['handle_all_dev_error'] = false;
+            $exception_option['handle_all_exception'] = false;
+        }
         ExceptionManager::G()->init($exception_options, $this)->run();
+        
+        // configer 和 view 的 path_override 处理
+        // path_override
         
         
         Configer::G()->init($this->options, $this);
@@ -154,7 +171,7 @@ trait KernelTrait
                 continue;
             }
             $class::G()->init($options, $this);
-            $this->switchContainer(static::class);
+            $this->switchContextContainer();
         }
         return;
     }
@@ -180,7 +197,8 @@ trait KernelTrait
     }
     public function run(): bool
     {
-        static::SwitchContainer(static::class);
+        //TODO 命令行模式，和扩展的命令行处理
+        $this->switchContextContainer();
         if ($this->default_run_handler) {
             return ($this->default_run_handler)();
         }
@@ -189,12 +207,15 @@ trait KernelTrait
             $this->onBeforeRun();
             $ret = Route::G()->run();
             
-            if (!$ret && !$this->options['skip_404_handler']) {
-                //$this->runExtentsion
-                $this->_On404();
+            if (!$ret) {
+                $this->runExtentsion();
+                if(!$this->options['skip_404_handler']){
+                    $this->_On404();
+                }
                 
             }
         } catch (\Throwable $ex) {
+            $this->switchContextContainer();
             RuntimeState::G()->toggleInException();
             if ($this->options['skip_exception_check']) {
                 RuntimeState::G()->clear();
@@ -212,12 +233,11 @@ trait KernelTrait
     {
         $flag = false;
         foreach ($this->options['ext'] as $class => $options) {
-            if(!($class::G()->options['skip_404hanlder'])){
-                continue;
-            }
-            $flag = $class::G()->run();
-            if($flag){
-                break;
+            if (is_a($class, self::class)) {
+                $flag = $class::G()->run();
+                if($flag){
+                    break;
+                }
             }
         }
         return $flag;
