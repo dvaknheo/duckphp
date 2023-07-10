@@ -18,6 +18,7 @@ use DuckPhp\Core\View;
 
 trait KernelTrait
 {
+    use ContainerTrait;
     public $options = [];
 
     //protected $extDynamicComponentClasses = [];
@@ -78,13 +79,18 @@ trait KernelTrait
         
         return $path;
     }
-    protected function switchContextContainer()
+    protected function switchContainerContext()
     {
         if($this->isSimpleMode){
             return false;
         }
-        
-        
+        $class = __SINGLETONEX_REPALACER_CLASS;
+        $class::SwitchContainer(static::class);
+    }
+    protected function addSharedInstance($class)
+    {
+        $class = __SINGLETONEX_REPALACER_CLASS;
+        $class::SetSharedClass($class);
     }
     //init
     public function init(array $options, object $context = null)
@@ -98,18 +104,15 @@ trait KernelTrait
         }
         if (($options['use_autoloader'] ?? self::$options_default['use_autoloader']) || ($options['path_namespace'] ?? false)) {
             AutoLoader::G()->init($options, $this)->run();
-            // 切换 context 之后，要
         }
         
         if (empty($context) && empty($this->options['ext'])) {
             $this->isSimpleMode = true;
+            self::G($this);
+        }else{
+            $this->switchContainerContext();
+            self::G($this);
         }
-        
-        // 这里要检测一下 self::class, 设置为共享模式，
-        // 要加个 设置为共享类的入口
-        $this->switchContainerContext(static::class);
-
-        
         $this->onPrepare();
         $this->initComponents($this->options, $context);
         $this->initExtentions($this->options['ext']);
@@ -119,24 +122,38 @@ trait KernelTrait
         $this->is_inited = true;
         return $this;
     }
+    protected function getProjectPathFromClass($class)
+    {
+        //reflection_get_class//
+        // sub path
+    }
     protected function initComponents(array $options, object $context = null)
     {
-        
         $exception_options = [
             'system_exception_handler' => $this->handler_for_exception_handler,
             'default_exception_handler' => [static::class,'OnDefaultException'],
             'dev_error_handler' => [static::class,'OnDevErrorHandler'],
         ];
         // 错误报告方面，只处理自己的，不接管
-        if (is_a($this, self::class)) {
+        if (is_a($context, self::class)) {
             $this->options['skip_404_handler'] = true;
+            
             $exception_option['handle_all_dev_error'] = false;
             $exception_option['handle_all_exception'] = false;
+            
+            // 我们还要做一些处理
+            // path 的处理// path_override
+            // $options['namespace'] 
+            // class my extends your class.
+            // on initComponents .$this->options['ex_class']=parent::class;
+            // $this->options['path']  =$this->getProjectPathFromClass($this->options['class_from']);
+            // 如果子类
+            // configer 和 view 的 path_override 处理
+            //$this->options['path_config_override'] = getComponentPathByKey $contentxt->path.'path_config' . $indentify
         }
+        
         ExceptionManager::G()->init($exception_options, $this)->run();
         
-        // configer 和 view 的 path_override 处理
-        // path_override
         
         
         Configer::G()->init($this->options, $this);
@@ -171,7 +188,7 @@ trait KernelTrait
                 continue;
             }
             $class::G()->init($options, $this);
-            $this->switchContextContainer();
+            $this->switchContainerContext();
         }
         return;
     }
@@ -191,14 +208,14 @@ trait KernelTrait
     //for override
     protected function onAfterRun()
     {
-        if ($this->onAfterRun) {
-            return ($this->onAfterRun)();
-        }
+    }
+    protected function beforeRun()
+    {
     }
     public function run(): bool
     {
         //TODO 命令行模式，和扩展的命令行处理
-        $this->switchContextContainer();
+        $this->switchContainerContext();
         if ($this->default_run_handler) {
             return ($this->default_run_handler)();
         }
@@ -212,10 +229,9 @@ trait KernelTrait
                 if(!$this->options['skip_404_handler']){
                     $this->_On404();
                 }
-                
             }
         } catch (\Throwable $ex) {
-            $this->switchContextContainer();
+            $this->switchContainerContext();
             RuntimeState::G()->toggleInException();
             if ($this->options['skip_exception_check']) {
                 RuntimeState::G()->clear();
@@ -234,6 +250,7 @@ trait KernelTrait
         $flag = false;
         foreach ($this->options['ext'] as $class => $options) {
             if (is_a($class, self::class)) {
+                //$this->options['skip_404_handler'] = true;
                 $flag = $class::G()->run();
                 if($flag){
                     break;

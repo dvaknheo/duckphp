@@ -20,8 +20,9 @@ class Configer extends ComponentBase
         'setting_file' => 'setting',
         'setting_file_ignore_exists' => true,
         'setting_file_enable' => true,
+        'path_config_override' => '',
+
         'use_env_file' => false,
-        'config_ext_file_map' => [],
     ];
     protected $path;
     protected $all_config = [];
@@ -78,12 +79,14 @@ class Configer extends ComponentBase
             return $this->all_config[$file_basename];
         }
         $full_file = $this->path.$file_basename.'.php';
-        if (isset($this->options['config_ext_file_map'][$file_basename]) && !is_file($full_file)) {
-            $full_file = $this->options['config_ext_file_map'][$file_basename];
-            $config = $this->loadFile($full_file);
-        } else {
-            $config = $this->loadFile($full_file);
+        if (isset($this->options['path_config_override'])) {
+            $file = $this->options['path_config_override'].$file_basename.'.php';
+            if( is_file($file)){
+                $full_file = $file;
+            }
         }
+        $config = $this->loadFile($full_file);
+        
         $this->all_config[$file_basename] = $config;
         return $config;
     }

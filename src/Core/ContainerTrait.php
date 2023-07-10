@@ -15,51 +15,58 @@ trait ContainerTrait
     {
         if (!defined('__SINGLETONEX_REPALACER')) {
             define('__SINGLETONEX_REPALACER', static::class . '::GetObject');
-            self::$default = static::class;
-            self::$current = self::$default;
-            self::$shared[static::class]=true;
+            define('__SINGLETONEX_REPALACER_CLASS', static::class );
+            static::$default = static::class;
+            static::$current = static::$default;
+            static::$shared[static::class]=true;
             return true;
         }
         return false;
     }
+    
     public static function GetObject($class, $object = null)
     {
-        if(isset($containers[self::$current][$class])){
+        if(isset($containers[static::$current][$class])){
             if($object){
-                $containers[self::$current][$class] = $object;
+                $containers[static::$current][$class] = $object;
             }
-            return $containers[self::$current][$class];
+            return $containers[static::$current][$class];
         }
-        if(isset(self::$shared[$class])){
-          if(isset(self::$containers[self::$default][$class])){
+        if(isset(static::$shared[$class])){
+          if(isset(static::$containers[static::$default][$class])){
             if($object){
-                self::$containers[self::$default][$class] = $object;
+                static::$containers[static::$default][$class] = $object;
             }
-            return self::$containers[self::$default][$class];
+            return static::$containers[static::$default][$class];
           }
           $result =  $object ?? new $class;
-          self::$containers[self::$default][$class] =  $result;
+          static::$containers[static::$default][$class] =  $result;
           return $result;
         }
         $result =  $object ?? new $class;
-        self::$containers[self::$current][$class] =  $result;
+        static::$containers[static::$current][$class] =  $result;
         return $result;
         
     }
-    public static function SetShareClass($class)
+    public static function GetObjectContainerClass()
     {
-        self::$shared[$class] = true;
+        return static::class;
+    }
+    public static function SetSharedClass($class)
+    {
+        static::$shared[$class] = true;
     }
     public static function SwitchContainer($container)
     {
         static::ReplaceSingletonImplement();
-        self::$current = $container;
+        static::$current = $container;
     }
-    public static function DumpContainers()
+    public static function Dump()
     {
-        var_dump(self::$containers);
-        var_dump(self::$containers);
-        var_dump(self::$containers);
+        var_dump(static::$default);
+        var_dump(static::$current);
+        var_dump(static::$shared);
+        var_dump(static::$containers);
     }
 
 }
