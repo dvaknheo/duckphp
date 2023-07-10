@@ -87,10 +87,49 @@ trait KernelTrait
         $class = __SINGLETONEX_REPALACER_CLASS;
         $class::SwitchContainer(static::class);
     }
-    protected function addSharedInstance($class)
+    protected function addSharedInstance($classes)
     {
         $class = __SINGLETONEX_REPALACER_CLASS;
-        $class::SetSharedClass($class);
+        $class::SetSharedClass($classes);
+    }
+    public static function Root()
+    {
+        $class = self::class;
+        return $class::G();
+    }
+    protected function CheckSimpleMode($context)
+    {
+        //quick judgement
+        $isChild = is_a($context, self::class);
+        if (!$isChild && empty($this->options['ext'])){
+            $this->isSimpleMode = true;
+            static::G($this);
+            self::G($this);
+            return;
+        }
+        $extApps = [];
+        foreach ($this->options['ext'] as $class => $options) {
+            if (is_a($class, self::class)) {
+                $isSimpleMode = false;
+                $extApps[]=$class;
+            }
+        }
+        $this->isSimpleMode = false;
+        if (!$isChild){
+            $this->initContainerContext(static::class);
+        }
+        $this->switchContainerContext();
+        
+        $extApps[]=static::class;
+        if (!$isChild){
+            $extApps[]=self::class;
+        }
+        $this->addSharedInstance($extApps);
+        /////////////
+        static::G($this);
+        if (!$isChild){
+            self::G($this);
+        }
     }
     //init
     public function init(array $options, object $context = null)
@@ -106,13 +145,7 @@ trait KernelTrait
             AutoLoader::G()->init($options, $this)->run();
         }
         
-        if (empty($context) && empty($this->options['ext'])) {
-            $this->isSimpleMode = true;
-            self::G($this);
-        }else{
-            $this->switchContainerContext();
-            self::G($this);
-        }
+        $this->checkSimpleMode($context);
         $this->onPrepare();
         $this->initComponents($this->options, $context);
         $this->initExtentions($this->options['ext']);
@@ -142,12 +175,11 @@ trait KernelTrait
             $exception_option['handle_all_exception'] = false;
             
             // 我们还要做一些处理
-            // path 的处理// path_override
-            // $options['namespace'] 
-            // class my extends your class.
-            // on initComponents .$this->options['ex_class']=parent::class;
+            
             // $this->options['path']  =$this->getProjectPathFromClass($this->options['class_from']);
             // 如果子类
+            //
+            
             // configer 和 view 的 path_override 处理
             //$this->options['path_config_override'] = getComponentPathByKey $contentxt->path.'path_config' . $indentify
         }
