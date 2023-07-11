@@ -3,7 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckPhp\Ext;
+namespace DuckPhp\Component;
 
 use DuckPhp\Core\ComponentBase;
 use Redis;
@@ -31,9 +31,17 @@ class RedisManager extends ComponentBase
     const TAG_READ = 1;
     protected $pool = [];
     protected $redis_config_list = [];
+    public function init(array $options, ?object $context = null)
+    {
+        if($this->is_inited || $options['redis_force_reinit']??false){
+            return $this;
+        }
+        return parent::init($options, $context);
+    }
     //@override
     protected function initOptions(array $options)
     {
+        //TODO $this->is_inited,
         $redis_list = $this->options['redis_list'];
         if (!isset($redis_list) && $this->options['redis_list_try_single']) {
             $redis = $this->options['redis'];

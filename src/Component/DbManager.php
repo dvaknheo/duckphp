@@ -35,9 +35,18 @@ class DbManager extends ComponentBase
     protected $databases = [];
     protected $context_class = null;
     protected $db_before_get_object_handler = null;
+    public function init(array $options, ?object $context = null)
+    {
+        if($this->is_inited || $options['database_force_reinit']??false){
+            return $this;
+        }
+        return parent::init($options, $context);
+    }
     //@override
     protected function initOptions(array $options)
     {
+        //TODO $this->is_inited,
+        //TODO ，拼合式的 dsn
         $database_list = $this->options['database_list'];
         if (!isset($database_list) && $this->options['database_list_try_single']) {
             $database = $this->options['database'];

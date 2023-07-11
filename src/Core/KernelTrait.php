@@ -42,6 +42,7 @@ trait KernelTrait
             
             'skip_404_handler' => false,
             'skip_exception_check' => false,
+            //'after_init_handler' => null,
         ];
     
     protected $default_run_handler = null;
@@ -87,10 +88,17 @@ trait KernelTrait
         $class = __SINGLETONEX_REPALACER_CLASS;
         $class::SwitchContainer(static::class);
     }
+    protected function initContainerContext()
+    {
+        if($this->isSimpleMode){
+            return false;
+        }
+        static::ReplaceSingletonImplement();
+    }
     protected function addSharedInstance($classes)
     {
         $class = __SINGLETONEX_REPALACER_CLASS;
-        $class::SetSharedClass($classes);
+        $class::AddSharedClasses($classes);
     }
     public static function Root()
     {
@@ -99,22 +107,22 @@ trait KernelTrait
     }
     protected function CheckSimpleMode($context)
     {
-        //quick judgement
+        $extApps = [];
+        foreach ($this->options['ext'] as $class => $options) {
+            if (is_a($class, self::class)) {
+                $this->isSimpleMode = false;
+                $extApps[]=$class;
+            }
+        }
         $isChild = is_a($context, self::class);
-        if (!$isChild && empty($this->options['ext'])){
+        
+        if (!$isChild && empty($extApps)){
             $this->isSimpleMode = true;
             static::G($this);
             self::G($this);
             return;
         }
-        $extApps = [];
-        foreach ($this->options['ext'] as $class => $options) {
-            if (is_a($class, self::class)) {
-                $isSimpleMode = false;
-                $extApps[]=$class;
-            }
-        }
-        $this->isSimpleMode = false;
+        
         if (!$isChild){
             $this->initContainerContext(static::class);
         }
@@ -125,7 +133,6 @@ trait KernelTrait
             $extApps[]=self::class;
         }
         $this->addSharedInstance($extApps);
-        /////////////
         static::G($this);
         if (!$isChild){
             self::G($this);
@@ -174,6 +181,7 @@ trait KernelTrait
             $exception_option['handle_all_dev_error'] = false;
             $exception_option['handle_all_exception'] = false;
             
+            // path的处理
             // 我们还要做一些处理
             
             // $this->options['path']  =$this->getProjectPathFromClass($this->options['class_from']);

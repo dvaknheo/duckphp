@@ -52,16 +52,18 @@ trait ContainerTrait
     {
         return static::class;
     }
-    public static function SetSharedClass($class)
+    public static function AddSharedClasses($classes)
     {
-        static::$shared[$class] = true;
+        foreach($classes as $class){
+            static::$shared[$class] = true;
+        }
     }
     public static function SwitchContainer($container)
     {
         static::ReplaceSingletonImplement();
         static::$current = $container;
     }
-    public static function Dump()
+    public static function DumpSingleton()
     {
         var_dump(static::$default);
         var_dump(static::$current);
