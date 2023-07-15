@@ -21,8 +21,6 @@ trait KernelTrait
     use ContainerTrait;
     public $options = [];
 
-    //protected $extDynamicComponentClasses = [];
-
     protected static $options_default = [
             //// not override options ////
             'use_autoloader' => false,
@@ -94,6 +92,10 @@ trait KernelTrait
             return false;
         }
         static::ReplaceSingletonImplement();
+        
+        $class = __SINGLETONEX_REPALACER_CLASS;
+        $class::SetDefaultContainer(static::class);
+        $class::SwitchContainer(static::class);
     }
     protected function addSharedInstance($classes)
     {

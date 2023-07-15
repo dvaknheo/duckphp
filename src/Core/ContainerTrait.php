@@ -23,7 +23,6 @@ trait ContainerTrait
         }
         return false;
     }
-    
     public static function GetObject($class, $object = null)
     {
         if(isset($containers[static::$current][$class])){
@@ -48,9 +47,9 @@ trait ContainerTrait
         return $result;
         
     }
-    public static function GetObjectContainerClass()
+    public function setDefaultContainer($class)
     {
-        return static::class;
+        static::$default = $class;
     }
     public static function AddSharedClasses($classes)
     {
