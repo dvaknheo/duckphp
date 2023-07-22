@@ -10,6 +10,7 @@ class ComponentBase // implements ComponentInterface
     public $options = [];
     protected $is_inited = false;
     protected $context_class = '';
+    protected $init_once = false;
     public function __construct()
     {
     }
@@ -34,6 +35,9 @@ class ComponentBase // implements ComponentInterface
     }
     public function init(array $options, ?object $context = null)
     {
+        if($this->init_once && $is_iinted && !$options['force']??false){
+            return $this;
+        }
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         $this->initOptions($options);
         if ($context !== null) {

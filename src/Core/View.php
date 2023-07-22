@@ -15,6 +15,7 @@ class View extends ComponentBase
         'path_view' => 'view',
         'path_view_override' => '',
         'view_skip_notice_error' => true,
+        'path_view_override_from' => null,
     ];
     /** @var array */
     public $data = [];
@@ -136,10 +137,13 @@ class View extends ComponentBase
         }
         $base_file = preg_replace('/\.php$/', '', $view).'.php';
         $path = $this->getViewPath();
-        $file = $path.$base_file;
-        if (($this->options['path_view_override'] ?? false) && !is_file($file)) {
-            $file = $this->options['path_view_override'].$base_file;
+        $full_file = $this->path.$base_file.'.php';
+        if (isset($this->options['path_view_override_from']) && !is_file($full_file)) {
+            $file = $this->options['path_view_override_from'].$file_basename.'.php';
+            if(is_file($file)){
+                $full_file = $file;
+            }
         }
-        return $file;
+        return $full_file;
     }
 }

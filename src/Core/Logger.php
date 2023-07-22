@@ -25,7 +25,7 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
         'log_prefix' => 'DuckPhpLog',
     ];
     protected $path;
-    
+    protected $init_once = true;
     public function __construct()
     {
         parent::__construct();

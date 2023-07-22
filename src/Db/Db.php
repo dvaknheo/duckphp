@@ -12,7 +12,7 @@ class Db implements DbInterface
     public $pdo;
     public $config;
     protected $tableName;
-    protected $resultClass = 'stdClass';
+    protected $resultClass = \stdClass::class;
     protected $rowCount;
     protected $beforeQueryHandler = null;
     protected $success = false;

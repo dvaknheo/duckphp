@@ -23,6 +23,7 @@ class Configer extends ComponentBase
         'path_config_override' => '',
 
         'use_env_file' => false,
+        'path_config_override_from' => null,
     ];
     protected $path;
     protected $all_config = [];
@@ -43,7 +44,7 @@ class Configer extends ComponentBase
         }
         if ($this->options['setting_file_enable']) {
             $setting_file = $this->options['setting_file'];
-            $full_setting_file = $this->path.$setting_file.'.php';
+            $full_setting_file = $this->getAbsPath($this->path,$setting_file.'.php');
             if (!is_file($full_setting_file)) {
                 $this->exitWhenNoSettingFile($full_setting_file, $setting_file);
             } else {
@@ -79,9 +80,9 @@ class Configer extends ComponentBase
             return $this->all_config[$file_basename];
         }
         $full_file = $this->path.$file_basename.'.php';
-        if (isset($this->options['path_config_override'])) {
-            $file = $this->options['path_config_override'].$file_basename.'.php';
-            if( is_file($file)){
+        if (isset($this->options['path_config_override_from']) && !is_file($full_file)) {
+            $file = $this->options['path_config_override_from'].$file_basename.'.php';
+            if(is_file($file)){
                 $full_file = $file;
             }
         }
@@ -93,5 +94,25 @@ class Configer extends ComponentBase
     protected function loadFile($file)
     {
         return require $file;
+    }
+    protected function getAbsPath($path, $file)
+    {
+        $is_abs_path = false;
+        if (DIRECTORY_SEPARATOR === '/') {
+            //Linux
+            if (substr($path, 0, 1) === '/') {
+                $is_abs_path = true;
+            }
+        } else { // @codeCoverageIgnoreStart
+            // Windows
+            if (preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $path)) {
+                $is_abs_path = true;
+            }
+        }   // @codeCoverageIgnoreEnd
+        if ($is_abs_path) {
+            return $file;
+        } else {
+            return $path.$file;
+        }
     }
 }

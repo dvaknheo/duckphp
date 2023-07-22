@@ -83,6 +83,7 @@ trait KernelTrait
         if($this->isSimpleMode){
             return false;
         }
+        
         $class = __SINGLETONEX_REPALACER_CLASS;
         $class::SwitchContainer(static::class);
     }
@@ -91,14 +92,18 @@ trait KernelTrait
         if($this->isSimpleMode){
             return false;
         }
-        static::ReplaceSingletonImplement();
         
+        static::ReplaceSingletonImplement();
         $class = __SINGLETONEX_REPALACER_CLASS;
         $class::SetDefaultContainer(static::class);
         $class::SwitchContainer(static::class);
     }
-    protected function addSharedInstance($classes)
+    protected function addSharedInstances($classes)
     {
+        if($this->isSimpleMode){
+            return false;
+        }
+        
         $class = __SINGLETONEX_REPALACER_CLASS;
         $class::AddSharedClasses($classes);
     }
@@ -107,7 +112,7 @@ trait KernelTrait
         $class = self::class;
         return $class::G();
     }
-    protected function CheckSimpleMode($context)
+    protected function checkSimpleMode($context)
     {
         $extApps = [];
         foreach ($this->options['ext'] as $class => $options) {
@@ -134,7 +139,7 @@ trait KernelTrait
         if (!$isChild){
             $extApps[]=self::class;
         }
-        $this->addSharedInstance($extApps);
+        $this->addSharedInstances($extApps);
         static::G($this);
         if (!$isChild){
             self::G($this);
@@ -144,13 +149,14 @@ trait KernelTrait
     public function init(array $options, object $context = null)
     {
         $options['path'] = $options['path'] ?? $this->getDefaultProjectPath();
-        $options['namespace'] = $options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
-        
+        $options['namespace'] = $options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null); 
         $this->initOptions($options);
         if ($this->options['use_short_functions']) {
             require_once __DIR__.'/Functions.php';
         }
         if (($options['use_autoloader'] ?? self::$options_default['use_autoloader']) || ($options['path_namespace'] ?? false)) {
+            $options['path'] = $options['path'] ?? $this->getDefaultProjectPath();
+            $options['namespace'] = $options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
             AutoLoader::G()->init($options, $this)->run();
         }
         
@@ -164,10 +170,15 @@ trait KernelTrait
         $this->is_inited = true;
         return $this;
     }
-    protected function getProjectPathFromClass($class)
+    protected function getProjectPathFromClass($class, $use_parent_namespace = true)
     {
-        //reflection_get_class//
-        // sub path
+        $ref = \ReflectionClass(static::class);
+        $file = $ref->getFileName();
+        $dir = dirname(dirname($file));
+        if($use_parent_namespace){
+            $dir = dirname($dir);
+        }
+        return $dir .'/';
     }
     protected function initComponents(array $options, object $context = null)
     {
@@ -184,14 +195,17 @@ trait KernelTrait
             $exception_option['handle_all_exception'] = false;
             
             // path的处理
-            // 我们还要做一些处理
+            $this->options['path']  = $context->options['path'];
             
-            // $this->options['path']  =$this->getProjectPathFromClass($this->options['class_from']);
-            // 如果子类
-            //
-            
-            // configer 和 view 的 path_override 处理
-            //$this->options['path_config_override'] = getComponentPathByKey $contentxt->path.'path_config' . $indentify
+            $this->options['namespace'] = $this->options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
+            $postfix = str_replace("\\",'/',$this->options['namespace']);
+            $this->options['path_config'] = $this->options['path_config']??  ($context->options['path_config'] ?? 'config' ) . $postifx;
+            $this->options['path_view'] = $this->options['path_view']?? ($context->options['path_view'] ?? 'view' ) . $postifx;
+            if(!isset($this->options['path_override_from'])){
+                $this->options['path_override_from']  = $this->getProjectPathFromClass(static::class);
+            }
+            $this->options['path_config_override_from'] =  $this->options['path_override_from']. 'config/';
+            $this->options['path_view_override_from'] = $this->options['path_override_from']. 'view/';
         }
         
         ExceptionManager::G()->init($exception_options, $this)->run();
