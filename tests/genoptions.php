@@ -8,6 +8,101 @@ OptionsGenerator::G()->init([])->run();
 var_dump(DATE(DATE_ATOM));
 
 return;
+class DataProvider
+{
+    public $independs = "DuckPhp\\HttpServer\\HttpServer
+DuckPhp\\Component\\Pager
+DuckPhp\\Component\\Console
+DuckPhp\\Component\\DuckPhpInstaller
+";
+    public $components = "DuckPhp\\DuckPhp
+DuckPhp\\Core\\App
+DuckPhp\\Core\\Configer
+DuckPhp\\Core\\Logger
+DuckPhp\\Core\\Route
+DuckPhp\\Core\\RuntimeState
+DuckPhp\\Core\\View
+DuckPhp\\Component\\Cache
+DuckPhp\\Component\\DbManager
+DuckPhp\\Component\\EventManager
+DuckPhp\\Component\\RouteHookPathInfoCompat
+DuckPhp\\Component\\RouteHookRouteMap
+";
+    public $all="DuckPhp\\DuckPhp
+DuckPhp\\Core\\App
+DuckPhp\\Core\\AutoLoader
+DuckPhp\\Core\\Configer
+DuckPhp\\Core\\ExceptionManager
+DuckPhp\\Core\\Logger
+DuckPhp\\Core\\Route
+DuckPhp\\Core\\RuntimeState
+DuckPhp\\Core\\View
+DuckPhp\\Component\\Cache
+DuckPhp\\Component\\Console
+DuckPhp\\Component\\DbManager
+DuckPhp\\Component\\EventManager
+DuckPhp\\Component\\RouteHookPathInfoCompat
+DuckPhp\\Component\\RouteHookRouteMap
+DuckPhp\\Ext\\CallableView
+DuckPhp\\Ext\\EmptyView
+DuckPhp\\Ext\\MyFacadesAutoLoader
+DuckPhp\\Ext\\JsonRpcExt
+DuckPhp\\Ext\\Misc
+DuckPhp\\Ext\\RedisCache
+DuckPhp\\Ext\\RedisManager
+DuckPhp\\Ext\\RouteHookApiServer
+DuckPhp\\Ext\\RouteHookDirectoryMode
+DuckPhp\\Ext\\RouteHookFunctionRoute
+DuckPhp\\Ext\\RouteHookRewrite
+DuckPhp\\Ext\\StrictCheck";
+    public static function G($object=null)
+    {
+        static $_instance;
+        $_instance=$object?:($_instance??new static);
+        return $_instance;
+    }
+    public function getKernelOptions()
+    {
+        return [
+            //'use_autoloader',
+            //'skip_plugin_mode_check',
+            //'override_class',
+        ];
+    }
+    public function getDescs()
+    {
+        static $cache;
+        if(!isset($cache)){
+            $cache =  DocFixer::G()->options_descs;
+        }
+        return $cache;
+    }
+    public function getAviableExtClasses()
+    {
+        $default=$this->getDefaultComponentClasses();
+        $all=$this->getAllComponentClasses();
+        $ext=array_diff($all,$default);
+        $ext=array_filter($ext,function($v){if(substr($v,0,strlen("DuckPhp\\Ext\\"))==="DuckPhp\\Ext\\"){return true;}else{return false;}});
+        return $ext;
+    }
+    function getInDependComponentClasses()
+    {
+        // 这里要移动到配置里
+        $classes=explode("\n",$this->independs);
+        return $classes;
+    }
+    function getDefaultComponentClasses()
+    {
+        // 这里要移动到配置里
+        $classes=explode("\n",$this->components);
+        return $classes;
+    }
+    function getAllComponentClasses()
+    {
+        $classes=explode("\n",$this->all);
+        return $classes;
+    }
+}
 class DocFixer
 {
     public static function G($object=null)
@@ -409,99 +504,7 @@ EOT;
 }
 
 /////////////////////
-class DataProvider
-{
-    public static function G($object=null)
-    {
-        static $_instance;
-        $_instance=$object?:($_instance??new static);
-        return $_instance;
-    }
-    public function getKernelOptions()
-    {
-        return [
-            //'use_autoloader',
-            //'skip_plugin_mode_check',
-            //'override_class',
-        ];
-    }
-    public function getDescs()
-    {
-        static $cache;
-        if(!isset($cache)){
-            $cache =  DocFixer::G()->options_descs;
-        }
-        return $cache;
-    }
-    public function getAviableExtClasses()
-    {
-        $default=$this->getDefaultComponentClasses();
-        $all=$this->getAllComponentClasses();
-        $ext=array_diff($all,$default);
-        $ext=array_filter($ext,function($v){if(substr($v,0,strlen("DuckPhp\\Ext\\"))==="DuckPhp\\Ext\\"){return true;}else{return false;}});
-        return $ext;
-    }
-    function getInDependComponentClasses()
-    {
-        $classes="DuckPhp\\HttpServer\\HttpServer
-DuckPhp\\Component\\Pager
-DuckPhp\\Component\\Console
-DuckPhp\\Component\\DuckPhpInstaller
-";
-        $classes=explode("\n",$classes);
-        return $classes;
-    }
-    function getDefaultComponentClasses()
-    {
-        $classes="DuckPhp\\DuckPhp
-DuckPhp\\Core\\App
-DuckPhp\\Core\\Configer
-DuckPhp\\Core\\Logger
-DuckPhp\\Core\\Route
-DuckPhp\\Core\\RuntimeState
-DuckPhp\\Core\\View
-DuckPhp\\Component\\Cache
-DuckPhp\\Component\\DbManager
-DuckPhp\\Component\\EventManager
-DuckPhp\\Component\\RouteHookPathInfoCompat
-DuckPhp\\Component\\RouteHookRouteMap
-";
-        $classes=explode("\n",$classes);
-        return $classes;
-    }
-    function getAllComponentClasses()
-    {
-        $classes="DuckPhp\\DuckPhp
-DuckPhp\\Core\\App
-DuckPhp\\Core\\AutoLoader
-DuckPhp\\Core\\Configer
-DuckPhp\\Core\\ExceptionManager
-DuckPhp\\Core\\Logger
-DuckPhp\\Core\\Route
-DuckPhp\\Core\\RuntimeState
-DuckPhp\\Core\\View
-DuckPhp\\Component\\Cache
-DuckPhp\\Component\\Console
-DuckPhp\\Component\\DbManager
-DuckPhp\\Component\\EventManager
-DuckPhp\\Component\\RouteHookPathInfoCompat
-DuckPhp\\Component\\RouteHookRouteMap
-DuckPhp\\Ext\\CallableView
-DuckPhp\\Ext\\EmptyView
-DuckPhp\\Ext\\MyFacadesAutoLoader
-DuckPhp\\Ext\\JsonRpcExt
-DuckPhp\\Ext\\Misc
-DuckPhp\\Ext\\RedisCache
-DuckPhp\\Ext\\RedisManager
-DuckPhp\\Ext\\RouteHookApiServer
-DuckPhp\\Ext\\RouteHookDirectoryMode
-DuckPhp\\Ext\\RouteHookFunctionRoute
-DuckPhp\\Ext\\RouteHookRewrite
-DuckPhp\\Ext\\StrictCheck";
-        $classes=explode("\n",$classes);
-        return $classes;
-    }
-}
+
 
 
 ///////////////////////////////////////////
