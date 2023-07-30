@@ -139,7 +139,7 @@ class Console
                 if (!isset($ret[$lastkey])) {
                     $ret[$lastkey] = true;
                 }
-                $lastkey = str_replace('-', '_', substr($v, 2));
+                $lastkey = str_replace('-', '_', substr($v, 2)); //这里还要有个驼峰扩展
                 $pos = strpos($lastkey, '=');
                 if ($pos !== false) {
                     $a = substr($lastkey, 0, $pos);

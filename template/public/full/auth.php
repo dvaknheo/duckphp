@@ -5,7 +5,7 @@
  */
 require_once __DIR__.'/../../../autoload.php';  // @DUCKPHP_HEADFILE
 $project_root = realpath(__DIR__).'/SimpleAuth/';
-if (!class_exists(\System\System\App::class)) {
+if (!class_exists(\SimpleAuth\System\App::class)) {
     \DuckPhp\DuckPhp::assignPathNamespace($project_root , "SimpleAuth\\"); 
     \DuckPhp\DuckPhp::runAutoLoader();
 }

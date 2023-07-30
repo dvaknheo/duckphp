@@ -30,8 +30,6 @@ if (!class_exists(\LazyToChange\System\App::class)) {
 
 $options = [
     'path' => realpath(__DIR__.'/../../').'/',
-    'override_class' => LazyToChange\System\App::class,
-
 ];
 LazyToChange\System\App::RunQuickly($options);
 

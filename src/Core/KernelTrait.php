@@ -148,6 +148,8 @@ trait KernelTrait
     //init
     public function init(array $options, object $context = null)
     {
+        //我们要弄回 override_class
+        
         $options['path'] = $options['path'] ?? $this->getDefaultProjectPath();
         $options['namespace'] = $options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null); 
         $this->initOptions($options);

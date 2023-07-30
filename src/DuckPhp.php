@@ -30,7 +30,7 @@ class DuckPhp extends App
         if (PHP_SAPI === 'cli') {
             DuckPhpCommand::G()->init($this->options, $this);
             Console::G()->init($this->options, $this);
-            Console::G()->options['cli_default_command_class'] = DuckPhpCommand::class;
+            Console::G()->options['cli_default_command_class'] = DuckPhpCommand::class;  // 这里还覆盖了自己的， ext 里的还要处理
         }
         if (($options['path_info_compact_enable'] ?? false) || ($this->options['path_info_compact_enable'] ?? false)) {
             $this->options['route_map_auto_extend_method'] = $this->options['route_map_auto_extend_method'] ?? false;
