@@ -115,7 +115,6 @@ class App extends ComponentBase
     //@override
     public function _OnDefaultException($ex): void
     {
-var_dump($ex);exit;
         if ($this->options['default_exception_do_log']) {
             try {
                 static::Logger()->error('['.get_class($ex).']('.$ex->getMessage().')'.$ex->getMessage());

@@ -78,14 +78,14 @@ trait KernelTrait
         
         return $path;
     }
-    protected function switchContainerContext()
+    protected function switchContainerContext($class)
     {
         if($this->isSimpleMode){
             return false;
         }
         
         $class = __SINGLETONEX_REPALACER_CLASS;
-        $class::SwitchContainer(static::class);
+        $class::SwitchContainer($class);
     }
     protected function initContainerContext()
     {
@@ -133,7 +133,7 @@ trait KernelTrait
         if (!$isChild){
             $this->initContainerContext(static::class);
         }
-        $this->switchContainerContext();
+        $this->switchContainerContext(static::class);
         
         $extApps[]=static::class;
         if (!$isChild){
@@ -149,7 +149,7 @@ trait KernelTrait
     public function init(array $options, object $context = null)
     {
         //我们要弄回 override_class
-        
+        // AutoLoader 要切换
         $options['path'] = $options['path'] ?? $this->getDefaultProjectPath();
         $options['namespace'] = $options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null); 
         $this->initOptions($options);
@@ -246,7 +246,7 @@ trait KernelTrait
                 continue;
             }
             $class::G()->init($options, $this);
-            $this->switchContainerContext();
+            $this->switchContainerContext(static::class);
         }
         return;
     }
@@ -273,23 +273,24 @@ trait KernelTrait
     public function run(): bool
     {
         //TODO 命令行模式，和扩展的命令行处理
-        $this->switchContainerContext();
-        if ($this->default_run_handler) {
-            return ($this->default_run_handler)();
-        }
+        $this->switchContainerContext(static::class);
+        
         try {
             $this->beforeRun();
             $this->onBeforeRun();
-            $ret = Route::G()->run();
-            
-            if (!$ret) {
-                $this->runExtentsion();
-                if(!$this->options['skip_404_handler']){
-                    $this->_On404();
+            if (!$this->default_run_handler) {
+                $ret = Route::G()->run();
+                if (!$ret) {
+                    $this->runExtentsion();
+                    if(!$this->options['skip_404_handler']){
+                        $this->_On404();
+                    }
                 }
+            } else {
+                return ($this->default_run_handler)();
             }
         } catch (\Throwable $ex) {
-            $this->switchContainerContext();
+            $this->switchContainerContext(static::class);
             RuntimeState::G()->toggleInException();
             if ($this->options['skip_exception_check']) {
                 RuntimeState::G()->clear();
