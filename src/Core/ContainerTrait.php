@@ -7,67 +7,98 @@ namespace DuckPhp\Core;
 
 trait ContainerTrait
 {
-    public static $containers=[];
-    public static $current;
-    public static $default;
-    public static $shared;
+    public static $instance;
+    
+    public $containers=[];
+    public $current;
+    public $default;
+    public $publics;
+    
     public static function ReplaceSingletonImplement()
     {
         if (!defined('__SINGLETONEX_REPALACER')) {
             define('__SINGLETONEX_REPALACER', static::class . '::GetObject');
             define('__SINGLETONEX_REPALACER_CLASS', static::class );
-            static::$default = static::class;
-            static::$current = static::$default;
-            static::$shared[static::class]=true;
+            static::ContainerInstance()->default = static::class;
+            static::ContainerInstance()->current = static::class;
+            static::ContainerInstance()->shared[static::class]=true;
             return true;
         }
         return false;
     }
     public static function GetObject($class, $object = null)
     {
-        if(isset($containers[static::$current][$class])){
-            if($object){
-                $containers[static::$current][$class] = $object;
-            }
-            return $containers[static::$current][$class];
+        return static::ContainerInstance()->GetObject($class, $object);
+    }
+    public static function ContainerInstance()
+    {
+        if (!static::$instance) {
+            static::$instance = new static;
         }
-        if(isset(static::$shared[$class])){
-          if(isset(static::$containers[static::$default][$class])){
-            if($object){
-                static::$containers[static::$default][$class] = $object;
-            }
-            return static::$containers[static::$default][$class];
-          }
-          $result =  $object ?? new $class;
-          static::$containers[static::$default][$class] =  $result;
-          return $result;
-        }
-        $result =  $object ?? new $class;
-        static::$containers[static::$current][$class] =  $result;
-        return $result;
-        
+        return static::$instance;
     }
     public static function SetDefaultContainer($class)
     {
-        static::$default = $class;
+        return static::ContainerInstance()->_SetDefaultContainer($class);
     }
     public static function AddPublicClasses($classes)
     {
-        foreach($classes as $class){
-            static::$shared[$class] = true;
-        }
+        return static::ContainerInstance()->_AddPublicClasses($classes);
     }
     public static function SwitchContainer($container)
     {
-        static::ReplaceSingletonImplement();
-        static::$current = $container;
+        return static::ContainerInstance()->_SwitchContainer($container);
     }
-    public static function DumpSingletons()
+    public static function DumpAllObject()
     {
-        var_dump(static::$default);
-        var_dump(static::$current);
-        var_dump(static::$shared);
-        var_dump(static::$containers);
+        return static::ContainerInstance()->_DumpAllObject();
+    }
+    ////////////////////////////////
+    public function _GetObject($class, $object = null)
+    {
+        if(isset($containers[$this->current][$class])){
+            if($object){
+                $containers[$this->current][$class] = $object;
+            }
+            return $containers[$this->current][$class];
+        }
+        if(isset($this->publics[$class])){
+          if(isset($this->containers[$this->default][$class])){
+            if($object){
+                $this->containers[$this->default][$class] = $object;
+            }
+            return $this->containers[$this->default][$class];
+          }
+          $result =  $object ?? new $class;
+          $this->containers[$this->default][$class] =  $result;
+          return $result;
+        }
+        $result =  $object ?? new $class;
+        $this->containers[$this->current][$class] =  $result;
+        return $result;
+        
+    }
+    public function _SetDefaultContainer($class)
+    {
+        $this->default = $class;
+    }
+    public static function _AddPublicClasses($classes)
+    {
+        foreach($classes as $class){
+            $this->publics[$class] = true;
+        }
+    }
+    public static function _SwitchContainer($container)
+    {
+        static::ReplaceSingletonImplement();
+        $this->current = $container;
+    }
+    public function _DumpAllObject()
+    {
+        var_dump($this->default);
+        var_dump($this->current);
+        var_dump($this->publics);
+        var_dump($this->containers);
     }
 
 }
