@@ -93,7 +93,18 @@ trait KernelTrait
             return false;
         }
         
-        static::ReplaceSingletonImplement();
+        //$old_static=static::G();
+        //$old_self=self::G();
+        //$old_autoloader=AutoLoader::G();
+        //如果是 override的，还要切过来
+        
+        $flag = static::ReplaceSingletonImplement();
+        if ($flag) {
+            //self::G($old_self);
+            //static::G($old_static);
+            //AutoLoader::G($old_autoloader);
+        }
+        
         $class = __SINGLETONEX_REPALACER_CLASS;
         $class::SetDefaultContainer(static::class);
         $class::SwitchContainer(static::class);
