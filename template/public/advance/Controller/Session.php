@@ -6,7 +6,7 @@
 
 namespace LazyToChange\Controller;
 
-use LazyToChange\Business\DemoBusiness;
+use DuckPhp\Component\SessionBase;
 class Session extends SessionBase
 {
     //

@@ -6,11 +6,15 @@
 
 namespace LazyToChange\Model;
 
-use LazyToChange\System\ProjectModel;
 use DuckPhp\Component\SimpleModelTrait;
+use DuckPhp\Helper\ModelHelper;
+use DuckPhp\Singletonex\Singletonex;
+
+use LazyToChange\System\ProjectModel;
 
 class BaseModel
 {
     use SimpleModelTrait;
-    //keep it empty
+    use ModelHelper;
+    use Singletonex;
 }

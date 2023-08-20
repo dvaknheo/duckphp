@@ -6,8 +6,8 @@
 
 namespace LazyToChange\Controller;
 
-use LazyToChange\Business\DemoBusiness;
-use LazyToChange\Controller\DefaultAction as C;
+use DuckPhp\Helper\ControllerHelper;
+use DuckPhp\Singletonex\Singletonex;
 
 class DefaultAction
 {
