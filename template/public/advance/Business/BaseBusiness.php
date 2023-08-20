@@ -8,7 +8,9 @@ namespace LazyToChange\Business;
 
 use LazyToChange\System\ProjectBusiness;
 
-class BaseBusiness extends ProjectBusiness
+class BaseBusiness
 {
-    //
+    use Singletonex;
+    use BusinessHelper;
+    use ThrowOnableTrait;
 }

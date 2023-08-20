@@ -6,9 +6,8 @@
 
 namespace LazyToChange\Controller;
 
-class Base
+use LazyToChange\Business\DemoBusiness;
+class Session extends SessionBase
 {
-    public function __construct()
-    {
-    }
+    //
 }

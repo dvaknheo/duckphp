@@ -15,7 +15,8 @@ class App extends DuckPhp
 
     //@override
     public $options = [
-        //'path_info_compact_enable' => false,        
+        //'path_info_compact_enable' => false,
+        'controller_class_postfix' => 'Conntroller',
     ];
     /**
      * console command sample

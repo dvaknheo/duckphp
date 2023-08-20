@@ -7,9 +7,9 @@
 namespace LazyToChange\Controller;
 
 use LazyToChange\Business\DemoBusiness;
-use LazyToChange\Controller\Base as C;
+use LazyToChange\Controller\DefaultAction as C;
 
-class Main extends Base
+class MainController extends Base
 {
     public function index()
     {

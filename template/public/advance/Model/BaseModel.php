@@ -7,8 +7,10 @@
 namespace LazyToChange\Model;
 
 use LazyToChange\System\ProjectModel;
+use DuckPhp\Component\SimpleModelTrait;
 
-class BaseModel extends ProjectModel
+class BaseModel
 {
+    use SimpleModelTrait;
     //keep it empty
 }
