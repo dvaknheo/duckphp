@@ -46,7 +46,8 @@ trait KernelTrait
     protected $default_run_handler = null;
     protected $error_view_inited = false;
 
-    protected $isPluginMode = false;
+    protected $isSimpleMode = true;
+    protected $isChild = false;
     // for app
     protected $handler_for_exception_handler;
 
@@ -92,19 +93,7 @@ trait KernelTrait
         if($this->isSimpleMode){
             return false;
         }
-        
-        //$old_static=static::G();
-        //$old_self=self::G();
-        //$old_autoloader=AutoLoader::G();
-        //如果是 override的，还要切过来
-        
         $flag = static::ReplaceSingletonImplement();
-        if ($flag) {
-            //self::G($old_self);
-            //static::G($old_static);
-            //AutoLoader::G($old_autoloader);
-        }
-        
         $class = __SINGLETONEX_REPALACER_CLASS;
         $class::SetDefaultContainer(static::class);
         $class::SwitchContainer(static::class);
@@ -116,7 +105,7 @@ trait KernelTrait
         }
         
         $class = __SINGLETONEX_REPALACER_CLASS;
-        $class::AddSharedClasses($classes);
+        $class::AddPublicClasses($classes);
     }
     public static function Root()
     {
@@ -129,38 +118,52 @@ trait KernelTrait
         foreach ($this->options['ext'] as $class => $options) {
             if (is_a($class, self::class)) {
                 $this->isSimpleMode = false;
-                $extApps[]=$class;
+                $extApps[$class] = $class;
             }
         }
-        $isChild = is_a($context, self::class);
+        $this->isChild = is_a($context, self::class);
         
-        if (!$isChild && empty($extApps)){
+        if (!$this->isChild && empty($extApps)){
             $this->isSimpleMode = true;
-            static::G($this);
             self::G($this);
-            return;
-        }
+            static::G($this);
+            if($this->options['override_class_from']){
+                $class = $this->options['override_class_from'];
+                $class::G($this);
+            }
+            return true;
+
         
         if (!$isChild){
             $this->initContainerContext(static::class);
         }
+        
+        /////////////////
+        
+        $apps = [];
+        $apps[AutoLoader::class] = AutoLoader::G();
+        $apps[static::class] = $this;
+        if (!$this->isChild){
+            $apps[self::class] = $this;
+        }
+        if($this->options['override_class_from']){
+            $class = $this->options['override_class_from'];
+            $apps[$class] = $this;
+        }
+        
         $this->switchContainerContext(static::class);
         
-        $extApps[]=static::class;
-        if (!$isChild){
-            $extApps[]=self::class;
+        $this->addSharedInstances(array_keys($apps));
+        foreach($apps as $class => $object) {
+            $appps::G($object);
         }
-        $this->addSharedInstances($extApps);
-        static::G($this);
-        if (!$isChild){
-            self::G($this);
-        }
+        $this->addSharedInstances(array_keys($extApps));
+        return false;
     }
     //init
     public function init(array $options, object $context = null)
     {
-        //我们要弄回 override_class
-        // AutoLoader 要切换
+
         $options['path'] = $options['path'] ?? $this->getDefaultProjectPath();
         $options['namespace'] = $options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null); 
         $this->initOptions($options);
@@ -172,8 +175,16 @@ trait KernelTrait
             $options['namespace'] = $options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
             AutoLoader::G()->init($options, $this)->run();
         }
+        if ($options['override_class']) {
+            $class = $options['override_class'];
+            unset($options['override_class']);
+            $options['override_class_from']=static::class;
+            return $class::G(new $class)->init($options);
+        }
         
         $this->checkSimpleMode($context);
+        $this->dealWithOverride();
+        
         $this->onPrepare();
         $this->initComponents($this->options, $context);
         $this->initExtentions($this->options['ext']);
@@ -200,14 +211,15 @@ trait KernelTrait
             'default_exception_handler' => [static::class,'OnDefaultException'],
             'dev_error_handler' => [static::class,'OnDevErrorHandler'],
         ];
-        // 错误报告方面，只处理自己的，不接管
+        
+        //
         if (is_a($context, self::class)) {
             $this->options['skip_404_handler'] = true;
             
             $exception_option['handle_all_dev_error'] = false;
             $exception_option['handle_all_exception'] = false;
             
-            // path的处理
+            // deal with path
             $this->options['path']  = $context->options['path'];
             
             $this->options['namespace'] = $this->options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);

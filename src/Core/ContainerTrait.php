@@ -47,11 +47,11 @@ trait ContainerTrait
         return $result;
         
     }
-    public function setDefaultContainer($class)
+    public static function SetDefaultContainer($class)
     {
         static::$default = $class;
     }
-    public static function AddSharedClasses($classes)
+    public static function AddPublicClasses($classes)
     {
         foreach($classes as $class){
             static::$shared[$class] = true;
@@ -62,7 +62,7 @@ trait ContainerTrait
         static::ReplaceSingletonImplement();
         static::$current = $container;
     }
-    public static function DumpSingleton()
+    public static function DumpSingletons()
     {
         var_dump(static::$default);
         var_dump(static::$current);
