@@ -44,7 +44,7 @@ class Configer extends ComponentBase
         }
         if ($this->options['setting_file_enable']) {
             $setting_file = $this->options['setting_file'];
-            $full_setting_file = $this->getAbsPath($this->path,$setting_file.'.php');
+            $full_setting_file = $this->getAbsPath($this->path, $setting_file.'.php');
             if (!is_file($full_setting_file)) {
                 $this->exitWhenNoSettingFile($full_setting_file, $setting_file);
             } else {
@@ -82,7 +82,7 @@ class Configer extends ComponentBase
         $full_file = $this->path.$file_basename.'.php';
         if (isset($this->options['path_config_override_from']) && !is_file($full_file)) {
             $file = $this->options['path_config_override_from'].$file_basename.'.php';
-            if(is_file($file)){
+            if (is_file($file)) {
                 $full_file = $file;
             }
         }

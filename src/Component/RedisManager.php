@@ -33,7 +33,7 @@ class RedisManager extends ComponentBase
     protected $redis_config_list = [];
     public function init(array $options, ?object $context = null)
     {
-        if($this->is_inited || $options['redis_force_reinit']??false){
+        if ($this->is_inited || $options['redis_force_reinit'] ?? false) {
             return $this;
         }
         return parent::init($options, $context);

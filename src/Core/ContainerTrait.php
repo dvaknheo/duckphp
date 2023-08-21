@@ -9,7 +9,7 @@ trait ContainerTrait
 {
     public static $instance;
     
-    public $containers=[];
+    public $containers = [];
     public $current;
     public $default;
     public $publics;
@@ -18,10 +18,10 @@ trait ContainerTrait
     {
         if (!defined('__SINGLETONEX_REPALACER')) {
             define('__SINGLETONEX_REPALACER', static::class . '::GetObject');
-            define('__SINGLETONEX_REPALACER_CLASS', static::class );
+            define('__SINGLETONEX_REPALACER_CLASS', static::class);
             static::ContainerInstance()->default = static::class;
             static::ContainerInstance()->current = static::class;
-            static::ContainerInstance()->shared[static::class]=true;
+            static::ContainerInstance()->shared[static::class] = true;
             return true;
         }
         return false;
@@ -56,27 +56,26 @@ trait ContainerTrait
     ////////////////////////////////
     public function _GetObject($class, $object = null)
     {
-        if(isset($containers[$this->current][$class])){
-            if($object){
+        if (isset($containers[$this->current][$class])) {
+            if ($object) {
                 $containers[$this->current][$class] = $object;
             }
             return $containers[$this->current][$class];
         }
-        if(isset($this->publics[$class])){
-          if(isset($this->containers[$this->default][$class])){
-            if($object){
-                $this->containers[$this->default][$class] = $object;
+        if (isset($this->publics[$class])) {
+            if (isset($this->containers[$this->default][$class])) {
+                if ($object) {
+                    $this->containers[$this->default][$class] = $object;
+                }
+                return $this->containers[$this->default][$class];
             }
-            return $this->containers[$this->default][$class];
-          }
-          $result =  $object ?? new $class;
-          $this->containers[$this->default][$class] =  $result;
-          return $result;
+            $result = $object ?? new $class;
+            $this->containers[$this->default][$class] = $result;
+            return $result;
         }
-        $result =  $object ?? new $class;
-        $this->containers[$this->current][$class] =  $result;
+        $result = $object ?? new $class;
+        $this->containers[$this->current][$class] = $result;
         return $result;
-        
     }
     public function _SetDefaultContainer($class)
     {
@@ -84,7 +83,7 @@ trait ContainerTrait
     }
     public static function _AddPublicClasses($classes)
     {
-        foreach($classes as $class){
+        foreach ($classes as $class) {
             $this->publics[$class] = true;
         }
     }
@@ -100,5 +99,4 @@ trait ContainerTrait
         var_dump($this->publics);
         var_dump($this->containers);
     }
-
 }

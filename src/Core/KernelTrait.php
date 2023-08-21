@@ -57,7 +57,9 @@ trait KernelTrait
         if ($after_init) {
             ($after_init)();
         }
-if(!$instance){return false;}
+        if (!$instance) {
+            return false;
+        }
         return $instance->run();
     }
     protected function initOptions(array $options)
@@ -82,7 +84,7 @@ if(!$instance){return false;}
     }
     protected function switchContainerContext($class)
     {
-        if($this->isSimpleMode){
+        if ($this->isSimpleMode) {
             return false;
         }
         
@@ -91,7 +93,7 @@ if(!$instance){return false;}
     }
     protected function initContainerContext()
     {
-        if($this->isSimpleMode){
+        if ($this->isSimpleMode) {
             return false;
         }
         $flag = static::ReplaceSingletonImplement();
@@ -101,7 +103,7 @@ if(!$instance){return false;}
     }
     protected function addSharedInstances($classes)
     {
-        if($this->isSimpleMode){
+        if ($this->isSimpleMode) {
             return false;
         }
         
@@ -124,27 +126,27 @@ if(!$instance){return false;}
         }
         $this->isChild = is_a($context, self::class);
         
-        if (!$this->isChild && empty($extApps)){
+        if (!$this->isChild && empty($extApps)) {
             $this->isSimpleMode = true;
             self::G($this);
             static::G($this);
-            if($this->options['override_class_from']??false){
+            if ($this->options['override_class_from'] ?? false) {
                 $class = $this->options['override_class_from'];
                 $class::G($this);
             }
             return true;
         }
-        if (!$this->isChild){
+        if (!$this->isChild) {
             $this->initContainerContext(static::class);
         }
         
         $apps = [];
         $apps[AutoLoader::class] = AutoLoader::G();
         $apps[static::class] = $this;
-        if (!$this->isChild){
+        if (!$this->isChild) {
             $apps[self::class] = $this;
         }
-        if($this->options['override_class_from']??null){
+        if ($this->options['override_class_from'] ?? null) {
             $class = $this->options['override_class_from'];
             $apps[$class] = $this;
         }
@@ -161,9 +163,8 @@ if(!$instance){return false;}
     //init
     public function init(array $options, object $context = null)
     {
-
         $options['path'] = $options['path'] ?? $this->getDefaultProjectPath();
-        $options['namespace'] = $options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null); 
+        $options['namespace'] = $options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
         $this->initOptions($options);
         if ($this->options['use_short_functions']) {
             require_once __DIR__.'/Functions.php';
@@ -173,11 +174,13 @@ if(!$instance){return false;}
             $options['namespace'] = $options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
             AutoLoader::G()->init($options, $this)->run();
         }
-        if ($options['override_class']??false) {
+        if ($options['override_class'] ?? false) {
             $class = $options['override_class'];
             unset($options['override_class']);
-            $options['override_class_from']=static::class;
-if(\class_exists ($class)){return null;}
+            $options['override_class_from'] = static::class;
+            if (\class_exists($class)) {
+                return null;
+            }
             return $class::G(new $class)->init($options);
         }
         
@@ -197,7 +200,7 @@ if(\class_exists ($class)){return null;}
         $ref = new \ReflectionClass(static::class);
         $file = $ref->getFileName();
         $dir = dirname(dirname($file));
-        if($use_parent_namespace){
+        if ($use_parent_namespace) {
             $dir = dirname($dir);
         }
         return $dir .'/';
@@ -218,16 +221,16 @@ if(\class_exists ($class)){return null;}
             $exception_option['handle_all_exception'] = false;
             
             // deal with path
-            $this->options['path']  = $context->options['path'];
+            $this->options['path'] = $context->options['path'];
             
             $this->options['namespace'] = $this->options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
-            $postfix = str_replace("\\",'/',$this->options['namespace']);
-            $this->options['path_config'] = $this->options['path_config']??  ($context->options['path_config'] ?? 'config' ) . $postifx;
-            $this->options['path_view'] = $this->options['path_view']?? ($context->options['path_view'] ?? 'view' ) . $postifx;
-            if(!isset($this->options['path_override_from'])){
-                $this->options['path_override_from']  = $this->getProjectPathFromClass(static::class);
+            $postfix = str_replace("\\", '/', $this->options['namespace']);
+            $this->options['path_config'] = $this->options['path_config'] ?? ($context->options['path_config'] ?? 'config') . $postifx;
+            $this->options['path_view'] = $this->options['path_view'] ?? ($context->options['path_view'] ?? 'view') . $postifx;
+            if (!isset($this->options['path_override_from'])) {
+                $this->options['path_override_from'] = $this->getProjectPathFromClass(static::class);
             }
-            $this->options['path_config_override_from'] =  $this->options['path_override_from']. 'config/';
+            $this->options['path_config_override_from'] = $this->options['path_override_from']. 'config/';
             $this->options['path_view_override_from'] = $this->options['path_override_from']. 'view/';
         }
         
@@ -303,7 +306,7 @@ if(\class_exists ($class)){return null;}
                 $ret = Route::G()->run();
                 if (!$ret) {
                     $this->runExtentions();
-                    if(!$this->options['skip_404_handler']){
+                    if (!$this->options['skip_404_handler']) {
                         $this->_On404();
                     }
                 }
@@ -332,7 +335,7 @@ if(\class_exists ($class)){return null;}
             if (is_a($class, self::class)) {
                 //$this->options['skip_404_handler'] = true;
                 $flag = $class::G()->run();
-                if($flag){
+                if ($flag) {
                     break;
                 }
             }

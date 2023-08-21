@@ -95,7 +95,6 @@ class View extends ComponentBase
     }
     public function reset()
     {
-        
         $this->head_file = null;
         $this->foot_file = null;
         $this->data = [];
@@ -141,7 +140,7 @@ class View extends ComponentBase
         
         if (isset($this->options['path_view_override_from']) && !is_file($full_file)) {
             $file = $this->options['path_view_override_from'].$base_file;
-            if(is_file($file)){
+            if (is_file($file)) {
                 $full_file = $file;
             }
         }
