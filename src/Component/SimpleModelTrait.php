@@ -3,7 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckPhp\Foundation;
+namespace DuckPhp\Component;
 
 use DuckPhp\Core\App;
 use DuckPhp\SingletonEx\SingletonExTrait;

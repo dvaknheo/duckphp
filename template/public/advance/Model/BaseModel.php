@@ -7,14 +7,14 @@
 namespace LazyToChange\Model;
 
 use DuckPhp\Component\SimpleModelTrait;
-use DuckPhp\Helper\ModelHelper;
-use DuckPhp\Singletonex\Singletonex;
+use DuckPhp\Helper\ModelHelperTrait;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
 use LazyToChange\System\ProjectModel;
 
 class BaseModel
 {
     use SimpleModelTrait;
-    use ModelHelper;
-    use Singletonex;
+    use ModelHelperTrait;
+    use SingletonexTrait;
 }

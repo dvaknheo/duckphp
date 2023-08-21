@@ -127,18 +127,15 @@ trait KernelTrait
             $this->isSimpleMode = true;
             self::G($this);
             static::G($this);
-            if($this->options['override_class_from']){
+            if($this->options['override_class_from']??false){
                 $class = $this->options['override_class_from'];
                 $class::G($this);
             }
             return true;
-
-        
+        }
         if (!$isChild){
             $this->initContainerContext(static::class);
         }
-        
-        /////////////////
         
         $apps = [];
         $apps[AutoLoader::class] = AutoLoader::G();
@@ -154,7 +151,7 @@ trait KernelTrait
         $this->switchContainerContext(static::class);
         
         $this->addSharedInstances(array_keys($apps));
-        foreach($apps as $class => $object) {
+        foreach ($apps as $class => $object) {
             $appps::G($object);
         }
         $this->addSharedInstances(array_keys($extApps));
@@ -175,7 +172,7 @@ trait KernelTrait
             $options['namespace'] = $options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
             AutoLoader::G()->init($options, $this)->run();
         }
-        if ($options['override_class']) {
+        if ($options['override_class']??false) {
             $class = $options['override_class'];
             unset($options['override_class']);
             $options['override_class_from']=static::class;
@@ -183,7 +180,6 @@ trait KernelTrait
         }
         
         $this->checkSimpleMode($context);
-        $this->dealWithOverride();
         
         $this->onPrepare();
         $this->initComponents($this->options, $context);
@@ -304,7 +300,7 @@ trait KernelTrait
             if (!$this->default_run_handler) {
                 $ret = Route::G()->run();
                 if (!$ret) {
-                    $this->runExtentsion();
+                    $this->runExtentions();
                     if(!$this->options['skip_404_handler']){
                         $this->_On404();
                     }

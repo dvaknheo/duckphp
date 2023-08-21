@@ -6,11 +6,11 @@
 
 namespace LazyToChange\Controller;
 
-use DuckPhp\Helper\ControllerHelper;
-use DuckPhp\Singletonex\Singletonex;
+use DuckPhp\Helper\ControllerHelperTrait;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
 class DefaultAction
 {
-    use SingletonEx;
-    use ControllerHelper;
+    use SingletonExTrait;
+    use ControllerHelperTrait;
 }

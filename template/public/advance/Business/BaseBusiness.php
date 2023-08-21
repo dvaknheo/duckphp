@@ -6,13 +6,13 @@
 
 namespace LazyToChange\Business;
 
-use DuckPhp\Helper\BusinessHelper;
-use DuckPhp\Singletonex\Singletonex;
+use DuckPhp\Helper\BusinessHelperTrait;
+use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckPhp\ThrowOn\ThrowOnableTrait;
 
 class BaseBusiness
 {
-    use Singletonex;
-    use BusinessHelper;
+    use SingletonExTrait;
+    use BusinessHelperTrait;
     use ThrowOnableTrait;
 }
