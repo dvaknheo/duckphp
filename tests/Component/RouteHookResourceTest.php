@@ -1,7 +1,7 @@
 <?php
 namespace tests\DuckPhp\Component;
 
-use DuckPhp\Ext\RouteHookResource;
+use DuckPhp\Component\RouteHookResource;
 use DuckPhp\Core\App;
 
 class RouteHookResourceTest extends \PHPUnit\Framework\TestCase

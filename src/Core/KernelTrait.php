@@ -134,7 +134,7 @@ if(!$instance){return false;}
             }
             return true;
         }
-        if (!$isChild){
+        if (!$this->isChild){
             $this->initContainerContext(static::class);
         }
         
@@ -144,7 +144,7 @@ if(!$instance){return false;}
         if (!$this->isChild){
             $apps[self::class] = $this;
         }
-        if($this->options['override_class_from']){
+        if($this->options['override_class_from']??null){
             $class = $this->options['override_class_from'];
             $apps[$class] = $this;
         }
