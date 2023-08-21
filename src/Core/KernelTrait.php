@@ -57,6 +57,7 @@ trait KernelTrait
         if ($after_init) {
             ($after_init)();
         }
+if(!$instance){return false;}
         return $instance->run();
     }
     protected function initOptions(array $options)
@@ -152,7 +153,7 @@ trait KernelTrait
         
         $this->addSharedInstances(array_keys($apps));
         foreach ($apps as $class => $object) {
-            $appps::G($object);
+            $class::G($object);
         }
         $this->addSharedInstances(array_keys($extApps));
         return false;
@@ -176,6 +177,7 @@ trait KernelTrait
             $class = $options['override_class'];
             unset($options['override_class']);
             $options['override_class_from']=static::class;
+if(\class_exists ($class)){return null;}
             return $class::G(new $class)->init($options);
         }
         
@@ -192,7 +194,7 @@ trait KernelTrait
     }
     protected function getProjectPathFromClass($class, $use_parent_namespace = true)
     {
-        $ref = \ReflectionClass(static::class);
+        $ref = new \ReflectionClass(static::class);
         $file = $ref->getFileName();
         $dir = dirname(dirname($file));
         if($use_parent_namespace){

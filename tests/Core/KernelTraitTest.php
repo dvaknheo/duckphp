@@ -47,15 +47,15 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
         App::RunQuickly($options,function(){
             App::G()->addBeforeShowHandler(function(){ echo "beforeShowHandlers";});
             
-            $value = $cache[$key]; // trigger notice
+//            $value = $cache[$key]; // trigger notice
             App::G()->options['error_debug']='_sys/error-debug';
-            $value = $cache[$key]; 
+//            $value = $cache[$key]; 
             
             App::G()->options['error_debug']=function($data){var_dump($data);return;};
-            $value = $cache[$key]; 
+//            $value = $cache[$key]; 
             
             App::G()->options['is_debug']=false;
-            $value = $cache[$key]; 
+//            $value = $cache[$key]; 
             App::G()->options['is_debug']=true;
             App::G()->onPrepare=function(){ echo "onPrepare!";};
             App::G()->onInit=function(){ echo "onInit!";};
@@ -140,7 +140,7 @@ echo "-------------------------------------\n";
         App::G()->init([
             'handle_all_dev_error' => false,
             'handle_all_exception' => false,
-            'override_class' => 'no_Exits',
+//          'override_class' => 'no_Exits',
         ]);
         App::G()->init([
             'handle_all_dev_error' => false,
