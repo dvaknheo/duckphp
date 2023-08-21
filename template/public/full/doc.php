@@ -56,7 +56,7 @@ function fetchMarkdown(url){
     .then(function(data){
     
         var txt=data.s;
-        document.getElementById('content').innerHTML = marked(txt,{ },function(err,res){
+        document.getElementById('content').innerHTML = marked.parse(txt,{ },function(err,res){
             res=res.replace(/href="/g,'href="##'+baseUrl);
             return res;
         });
