@@ -1,7 +1,7 @@
 <?php
 namespace tests\DuckPhp\Foundation;
 
-use DuckPhp\Foundation\ThrowOnableTrait;
+use DuckPhp\ThrowOn\ThrowOnableTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
 
 class ThrowOnableTraitTest extends \PHPUnit\Framework\TestCase

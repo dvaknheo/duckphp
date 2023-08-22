@@ -55,11 +55,11 @@ class ComponentBase // implements ComponentInterface
     {
         ////for override
     }
+    /*
     public function install(array $options, ?object $context = null)
     {
         //for override
     }
-    /*
     public function checkInstall($context)
     {
         if($this->isInited){

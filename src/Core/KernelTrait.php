@@ -87,8 +87,7 @@ trait KernelTrait
         if ($this->isSimpleMode) {
             return false;
         }
-        
-        $class = __SINGLETONEX_REPALACER_CLASS;
+        $class = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
         $class::SwitchContainer($class);
     }
     protected function initContainerContext()
@@ -97,7 +96,8 @@ trait KernelTrait
             return false;
         }
         $flag = static::ReplaceSingletonImplement();
-        $class = __SINGLETONEX_REPALACER_CLASS;
+        // if false ,do something?
+        $class = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
         $class::SetDefaultContainer(static::class);
         $class::SwitchContainer(static::class);
     }
@@ -107,7 +107,7 @@ trait KernelTrait
             return false;
         }
         
-        $class = __SINGLETONEX_REPALACER_CLASS;
+        $class = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
         $class::AddPublicClasses($classes);
     }
     public static function Root()
@@ -119,8 +119,10 @@ trait KernelTrait
     {
         $extApps = [];
         foreach ($this->options['ext'] as $class => $options) {
-            if (is_a($class, self::class)) {
+            $t = $class;
+            if (is_a($t, self::class)) {
                 $this->isSimpleMode = false;
+                //$class = is_string($class)?$class:get_class($class);
                 $extApps[$class] = $class;
             }
         }
@@ -137,9 +139,9 @@ trait KernelTrait
             return true;
         }
         if (!$this->isChild) {
-            $this->initContainerContext(static::class);
+            $this->initContainerContext();
         }
-        
+        ///////////// 这里测试的时候有问题
         $apps = [];
         $apps[AutoLoader::class] = AutoLoader::G();
         $apps[static::class] = $this;
@@ -155,6 +157,7 @@ trait KernelTrait
         
         $this->addSharedInstances(array_keys($apps));
         foreach ($apps as $class => $object) {
+            $class = (string)$class;
             $class::G($object);
         }
         $this->addSharedInstances(array_keys($extApps));
@@ -199,7 +202,7 @@ trait KernelTrait
     {
         $ref = new \ReflectionClass(static::class);
         $file = $ref->getFileName();
-        $dir = dirname(dirname($file));
+        $dir = dirname(dirname(''.$file));
         if ($use_parent_namespace) {
             $dir = dirname($dir);
         }
@@ -214,7 +217,7 @@ trait KernelTrait
         ];
         
         //
-        if (is_a($context, self::class)) {
+        if ($context && is_a($context, self::class)) {
             $this->options['skip_404_handler'] = true;
             
             $exception_option['handle_all_dev_error'] = false;
@@ -225,8 +228,8 @@ trait KernelTrait
             
             $this->options['namespace'] = $this->options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
             $postfix = str_replace("\\", '/', $this->options['namespace']);
-            $this->options['path_config'] = $this->options['path_config'] ?? ($context->options['path_config'] ?? 'config') . $postifx;
-            $this->options['path_view'] = $this->options['path_view'] ?? ($context->options['path_view'] ?? 'view') . $postifx;
+            $this->options['path_config'] = $this->options['path_config'] ?? ($context->options['path_config'] ?? 'config') . $postfix;
+            $this->options['path_view'] = $this->options['path_view'] ?? ($context->options['path_view'] ?? 'view') . $postfix;
             if (!isset($this->options['path_override_from'])) {
                 $this->options['path_override_from'] = $this->getProjectPathFromClass(static::class);
             }
@@ -291,16 +294,12 @@ trait KernelTrait
     protected function onAfterRun()
     {
     }
-    protected function beforeRun()
-    {
-    }
     public function run(): bool
     {
         //TODO 命令行模式，和扩展的命令行处理
         $this->switchContainerContext(static::class);
         
         try {
-            $this->beforeRun();
             $this->onBeforeRun();
             if (!$this->default_run_handler) {
                 $ret = Route::G()->run();
@@ -333,7 +332,6 @@ trait KernelTrait
         $flag = false;
         foreach ($this->options['ext'] as $class => $options) {
             if (is_a($class, self::class)) {
-                //$this->options['skip_404_handler'] = true;
                 $flag = $class::G()->run();
                 if ($flag) {
                     break;

@@ -8,7 +8,7 @@ namespace DuckPhp\Ext;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Ext\InstallerException;
 use DuckPhp\Ext\SqlDumper;
-use DuckPhp\Foundation\ThrowOnableTrait;
+use DuckPhp\ThrowOn\ThrowOnableTrait;
 
 class Installer extends ComponentBase
 {

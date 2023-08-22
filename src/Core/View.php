@@ -26,8 +26,8 @@ class View extends ComponentBase
     protected $foot_file;
     /** @var ?string */
     protected $view_file;
-    /** @var int */
-    protected $error_reporting_old;
+    /** @var ?int */
+    protected $error_reporting_old = 0;
     protected $temp_view_file;
     
     public static function Show(array $data = [], string $view = null): void

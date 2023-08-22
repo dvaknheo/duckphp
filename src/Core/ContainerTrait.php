@@ -21,7 +21,7 @@ trait ContainerTrait
             define('__SINGLETONEX_REPALACER_CLASS', static::class);
             static::ContainerInstance()->default = static::class;
             static::ContainerInstance()->current = static::class;
-            static::ContainerInstance()->shared[static::class] = true;
+            static::ContainerInstance()->publics[static::class] = true;
             return true;
         }
         return false;
@@ -30,8 +30,12 @@ trait ContainerTrait
     {
         return static::ContainerInstance()->GetObject($class, $object);
     }
-    public static function ContainerInstance()
+    public static function ContainerInstance($object = null)
     {
+        if ($object) {
+            static::$instance = $object;
+            return $object;
+        }
         if (!static::$instance) {
             static::$instance = new static;
         }
@@ -45,6 +49,10 @@ trait ContainerTrait
     {
         return static::ContainerInstance()->_AddPublicClasses($classes);
     }
+    public static function RemovePublicClasses($classes)
+    {
+        return static::ContainerInstance()->_RemovePublicClasses($classes);
+    }
     public static function SwitchContainer($container)
     {
         return static::ContainerInstance()->_SwitchContainer($container);
@@ -56,11 +64,11 @@ trait ContainerTrait
     ////////////////////////////////
     public function _GetObject($class, $object = null)
     {
-        if (isset($containers[$this->current][$class])) {
+        if (isset($this->containers[$this->current][$class])) {
             if ($object) {
-                $containers[$this->current][$class] = $object;
+                $this->containers[$this->current][$class] = $object;
             }
-            return $containers[$this->current][$class];
+            return $this->containers[$this->current][$class];
         }
         if (isset($this->publics[$class])) {
             if (isset($this->containers[$this->default][$class])) {
@@ -81,13 +89,20 @@ trait ContainerTrait
     {
         $this->default = $class;
     }
-    public static function _AddPublicClasses($classes)
+    public function _AddPublicClasses($classes)
     {
         foreach ($classes as $class) {
             $this->publics[$class] = true;
         }
     }
-    public static function _SwitchContainer($container)
+    public static function _RemovePublicClasses($classes)
+    {
+        foreach ($classes as $class) {
+            unset($this->publics[$class]);
+        }
+    }
+
+    public function _SwitchContainer($container)
     {
         static::ReplaceSingletonImplement();
         $this->current = $container;

@@ -13,6 +13,7 @@ class SimpleReplacer
     {
         if (!defined('__SINGLETONEX_REPALACER')) {
             define('__SINGLETONEX_REPALACER', static::class . '::GetObject');
+            define('__SINGLETONEX_REPALACER_CLASS', static::class);
             self::$EnableCompactable = $enableCompactable;
             return true;
         }

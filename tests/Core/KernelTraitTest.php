@@ -13,6 +13,9 @@ use DuckPhp\Ext\Pager;
 
 class KernelTraitTest extends \PHPUnit\Framework\TestCase
 {
+    public static function Blank()
+    {
+    }
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(KernelTrait::class);
@@ -32,7 +35,7 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             'error_exception' => NULL,
             'error_500' => NULL,
             'error_404' => NULL,
-            'error_debug' => [APP::class,'Blank'],
+            'error_debug' => [static::class,'Blank'],
             'skip_view_notice_error' => true,
             'use_super_global' => true,
             'override_class'=>'\\'.KernelTestApp::class,

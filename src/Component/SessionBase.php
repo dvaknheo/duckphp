@@ -3,12 +3,12 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckPhp\Foundation;
+namespace DuckPhp\Component;
 
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 
-class Session extends ComponentBase
+class SessionBase extends ComponentBase
 {
     public $options = [
         'session_prefix' => '',
