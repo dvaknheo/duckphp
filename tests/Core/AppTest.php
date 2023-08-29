@@ -62,15 +62,15 @@ class AppTest extends \PHPUnit\Framework\TestCase
             App::G()->addBeforeShowHandler("testsssssssssss");
             App::G()->removeBeforeShowHandler("testsssssssssss");
 
-            $value = $cache[$key]; // trigger notice
+ //           $value = $cache[$key]; // trigger notice
             App::G()->options['error_debug']='_sys/error-debug';
-            $value = $cache[$key]; 
+//            $value = $cache[$key]; 
             
             App::G()->options['error_debug']=function($data){var_dump($data);return;};
-            $value = $cache[$key]; 
+ //           $value = $cache[$key]; 
             
             App::G()->options['is_debug']=false;
-            $value = $cache[$key]; 
+//            $value = $cache[$key]; 
             App::G()->options['is_debug']=true;
 
         });

@@ -1,9 +1,9 @@
 <?php 
-namespace tests\DuckPhp\Ext;
+namespace tests\DuckPhp\Component;
 
 use DuckPhp\DuckPhp;
-use DuckPhp\Ext\RedisCache;
-use DuckPhp\Ext\RedisManager;
+use DuckPhp\Component\RedisCache;
+use DuckPhp\Component\RedisManager;
 
 class RedisCacheTest extends \PHPUnit\Framework\TestCase
 {

@@ -369,7 +369,7 @@ class MyRoute extends Route
     {
         $ret = parent::createControllerObject($full_class);
         if($this->route_error_flag){
-            $this->runtime()->route_error="By MyRoute";
+            $this->route_error="By MyRoute";
         }
         return $ret;
     }

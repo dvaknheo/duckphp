@@ -1,6 +1,6 @@
 <?php 
-namespace tests\DuckPhp\Ext;
-use DuckPhp\Ext\RedisManager;
+namespace tests\DuckPhp\Component;
+use DuckPhp\Component\RedisManager;
 use DuckPhp\Core\App;
 
 class RedisManagerTest extends \PHPUnit\Framework\TestCase

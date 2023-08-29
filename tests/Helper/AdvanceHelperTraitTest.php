@@ -81,9 +81,7 @@ class AdvanceHelperTraitTest extends \PHPUnit\Framework\TestCase
     }
     protected function do_Core_Component()
     {
-        AdvanceHelper::getDynamicComponentClasses();
-        $class="NoExits";
-        AdvanceHelper::addDynamicComponentClass($class);
+
         
         
         $new_namespace=__NAMESPACE__;

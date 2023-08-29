@@ -77,13 +77,17 @@ trait ContainerTrait
                 }
                 return $this->containers[$this->default][$class];
             }
-            $result = $object ?? new $class;
+            $result = $object ?? $this->createObject($class);
             $this->containers[$this->default][$class] = $result;
             return $result;
         }
         $result = $object ?? new $class;
         $this->containers[$this->current][$class] = $result;
         return $result;
+    }
+    protected function createObject($class)
+    {
+        return new $class;
     }
     public function _SetDefaultContainer($class)
     {

@@ -130,7 +130,7 @@ trait KernelTrait
         
         if (!$this->isChild && empty($extApps)) {
             $this->isSimpleMode = true;
-            self::G($this);
+            (self::class)::G($this); // remark ,don't use self::G()!
             static::G($this);
             if ($this->options['override_class_from'] ?? false) {
                 $class = $this->options['override_class_from'];
