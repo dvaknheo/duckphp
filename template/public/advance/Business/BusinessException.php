@@ -4,9 +4,9 @@
  * From this time, you never be alone~
  */
 
-namespace LazyToChange\Business;
+namespace AdvanceDemo\Business;
 
-use LazyToChange\System\ProjectException;
+use AdvanceDemo\System\ProjectException;
 
 class BusinessException extends ProjectException
 {

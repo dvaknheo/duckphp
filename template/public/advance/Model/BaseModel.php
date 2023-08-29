@@ -4,13 +4,13 @@
  * From this time, you never be alone~
  */
 
-namespace LazyToChange\Model;
+namespace AdvanceDemo\Model;
 
 use DuckPhp\Component\SimpleModelTrait;
 use DuckPhp\Helper\ModelHelperTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
 
-use LazyToChange\System\ProjectModel;
+use AdvanceDemo\System\ProjectModel;
 
 class BaseModel
 {

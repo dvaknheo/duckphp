@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace LazyToChange\Model;
+namespace AdvanceDemo\Model;
 
 class DemoModel extends BaseModel
 {

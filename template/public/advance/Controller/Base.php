@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace LazyToChange\Controller;
+namespace AdvanceDemo\Controller;
 
 class Base
 {

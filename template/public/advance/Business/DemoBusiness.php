@@ -4,9 +4,9 @@
  * From this time, you never be alone~
  */
 
-namespace LazyToChange\Business;
+namespace AdvanceDemo\Business;
 
-use LazyToChange\Model\DemoModel;
+use AdvanceDemo\Model\DemoModel;
 
 class DemoBusiness extends BaseBusiness
 {

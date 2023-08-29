@@ -4,10 +4,10 @@
  * From this time, you never be alone~
  */
 
-namespace LazyToChange\Controller;
+namespace AdvanceDemo\Controller;
 
-use LazyToChange\Business\DemoBusiness;
-use LazyToChange\Controller\DefaultAction as C;
+use AdvanceDemo\Business\DemoBusiness;
+use AdvanceDemo\Controller\DefaultAction as C;
 
 class MainController extends Base
 {

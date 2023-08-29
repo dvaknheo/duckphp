@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace LazyToChange\Business;
+namespace AdvanceDemo\Business;
 
 use DuckPhp\Helper\BusinessHelperTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
