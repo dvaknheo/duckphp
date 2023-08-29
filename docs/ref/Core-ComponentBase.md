@@ -55,3 +55,7 @@ getComponenetPathByKey 这个方法，用于辅助  'path' ,'path' 这样的联�
 
     public function checkInstall($context)
 
+    public function reset()
+
+    public function install(array $options, ?object $context = null)
+

@@ -81,3 +81,9 @@ path_config 如果是 / 开始的，会忽略 path 选项
 
 
 
+        'path_config_override' => '',
+
+        'path_config_override_from' => null,
+
+    protected function getAbsPath($parent_path, $path)
+

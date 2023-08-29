@@ -216,3 +216,19 @@ init() 初始化阶段，和 run 阶段
 ### clear 清理
 只有一个动作： 设置 RuntimeState 为结束
 
+    protected function switchContainerContext($class)
+
+    protected function initContainerContext()
+
+    protected function addSharedInstances($classes)
+
+    public static function Root()
+
+    protected function checkSimpleMode($context)
+
+    protected function getProjectPathFromClass($class, $use_parent_namespace = true)
+
+    protected function initComponents(array $options, object $context = null)
+
+    protected function runExtentions()
+

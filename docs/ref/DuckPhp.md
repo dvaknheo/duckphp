@@ -122,3 +122,13 @@ App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里，还加载�
 //
 
 
+    protected function initComponents(array $options, object $context = null)
+
+    public static function Admin()
+
+    public static function AdminId()
+
+    public static function User()
+
+    public static function UserId()
+

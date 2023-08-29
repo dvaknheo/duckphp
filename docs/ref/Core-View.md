@@ -60,3 +60,7 @@ path_view 如果是 / 开始的，会忽略 path 选项
 
     public function runtime()
 
+        'path_view_override_from' => null,
+
+    public function reset()
+
