@@ -73,6 +73,13 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::G()->assignRoute('ab/c',['z']);
         
         DuckPhp::G()->assignImportantRoute('ab/c',['z']);
+        
+        DuckPhp::G()->Admin(FakeAdmin::G());
+        DuckPhp::G()->User(FakeUser::G());
+        DuckPhp::G()->AdminId();
+        DuckPhp::G()->UserId();
+        
+        
         \LibCoverage\LibCoverage::End(DuckPhp::class);
 
     }
@@ -128,6 +135,20 @@ class FakeService
 class FakeObject 
 {
     use SingletonExTrait;
-    
 }
-
+class FakeAdmin
+{
+    use SingletonExTrait;
+    public function id()
+    {
+        return 1;
+    }
+}
+class FakeUser
+{
+    use SingletonExTrait;
+    public function id()
+    {
+        return 1;
+    }
+}

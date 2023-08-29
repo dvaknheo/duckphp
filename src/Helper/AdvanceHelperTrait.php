@@ -117,12 +117,4 @@ trait AdvanceHelperTrait
     {
         return App::G()->addBeforeShowHandler($handler);
     }
-    public static function getDynamicComponentClasses()
-    {
-        return App::G()->getDynamicComponentClasses();
-    }
-    public static function addDynamicComponentClass($class)
-    {
-        return App::G()->addDynamicComponentClass($class);
-    }
 }

@@ -38,10 +38,6 @@ trait ControllerHelperTrait
     {
         return App::IsAjax();
     }
-    public static function CheckRunningController($self, $static)
-    {
-        return App::CheckRunningController($self, $static);
-    }
     public static function setViewHeadFoot($head_file = null, $foot_file = null)
     {
         return App::setViewHeadFoot($head_file, $foot_file);

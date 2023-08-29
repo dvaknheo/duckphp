@@ -107,8 +107,6 @@ ControllerHelper::PageHtml(123);
         }catch(\Exception $ex){
         }
         ControllerHelper::IsAjax();
-        ControllerHelper::CheckRunningController('self','static');
-
 
         \LibCoverage\LibCoverage::End();
 

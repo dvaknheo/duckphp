@@ -20,6 +20,8 @@ use DuckPhp\Core\App;
 
 class DuckPhp extends App
 {
+    protected $admin;
+    protected $user;
     protected function initComponents(array $options, object $context = null)
     {
         parent::initComponents($options, $context);
@@ -39,16 +41,31 @@ class DuckPhp extends App
         // redis的初始化要加上，这里要把 dbmanager 和 redis manager 给加入共享模式
         return $this;
     }
-    //
-    public static function Admin()
+    public static function Admin($admin = null)
     {
+        return static::G()->_Admin($admin);
+    }
+    public function _Admin($admin = null)
+    {
+        if ($admin) {
+            $this->admin = $admin;
+        }
+        return $this->admin;
     }
     public static function AdminId()
     {
         return static::Admin()->id();
     }
-    public static function User()
+    public static function User($user = null)
     {
+        return static::G()->_User($user);
+    }
+    public function _User($user = null)
+    {
+        if ($user) {
+            $this->user = $user;
+        }
+        return $this->user;
     }
     public static function UserId()
     {
