@@ -330,20 +330,6 @@ trait Core_Helper
         $ref = $this->_SERVER('HTTP_X_REQUESTED_WITH');
         return $ref && 'xmlhttprequest' == strtolower($ref) ? true : false;
     }
-    public static function CheckRunningController($self, $static)
-    {
-        return static::G()->_CheckRunningController($self, $static);
-    }
-    public function _CheckRunningController($self, $static)
-    {
-        if ($self === $static) {
-            if ($self === Route::G()->getRouteCallingClass()) {
-                static::Exit404();
-            }
-            return true;
-        }
-        return false;
-    }
     public static function ExitJson($ret, $exit = true)
     {
         return static::G()->_ExitJson($ret, $exit);

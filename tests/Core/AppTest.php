@@ -645,7 +645,6 @@ class Base
 {
     public function __construct()
     {
-        \DuckPhp\Core\App::CheckRunningController(self::class, static::class);
     }
     public function index()
     {
