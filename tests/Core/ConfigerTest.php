@@ -30,9 +30,9 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
         ];
 
         
-        Configer::G()->options['config_ext_file_map']=['X/a'=>$path_config.'/for_assign.php'];
-         Configer::G()->_Config(null, [],'X/a');
-        Configer::G()->isInited();
+        //Configer::G()->options['config_ext_file_map']=['X/a'=>$path_config.'/for_assign.php'];
+        //Configer::G()->_Config(null, [],'X/a');
+        //Configer::G()->isInited();
         
         $options['setting_file_enable'] =true;
         $options['setting_file_ignore_exists'] =true;

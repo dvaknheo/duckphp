@@ -1,5 +1,5 @@
 <?php
-namespace tests\DuckPhp\Foundation;
+namespace tests\DuckPhp\Component;
 
 use DuckPhp\Component\SimpleModelTrait;
 use DuckPhp\DuckPhp;
