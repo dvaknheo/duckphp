@@ -1,6 +1,6 @@
 <?php
 namespace tests_Data_Installer\Model;
-use DuckPhp\Foundation\SimpleModelTrait;
+use DuckPhp\Component\SimpleModelTrait;
 
 class EmptyModel
 {
