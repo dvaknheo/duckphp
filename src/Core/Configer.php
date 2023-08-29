@@ -95,7 +95,7 @@ class Configer extends ComponentBase
     {
         return require $file;
     }
-    protected function getAbsPath($path, $file)
+    protected function getAbsPath($parent_path, $path)
     {
         $is_abs_path = false;
         if (DIRECTORY_SEPARATOR === '/') {
@@ -112,7 +112,7 @@ class Configer extends ComponentBase
         if ($is_abs_path) {
             return $file;
         } else {
-            return $path.$file;
+            return $parent_path.$path;
         }
     }
 }
