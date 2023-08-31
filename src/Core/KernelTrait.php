@@ -24,7 +24,6 @@ trait KernelTrait
     protected static $options_default = [
             //// not override options ////
             'use_autoloader' => false,
-            'skip_plugin_mode_check' => false,
             
             //// basic config ////
             'path' => null,
@@ -48,7 +47,6 @@ trait KernelTrait
 
     protected $isSimpleMode = true;
     protected $isChild = false;
-    // for app
     protected $handler_for_exception_handler;
 
     public static function RunQuickly(array $options = [], callable $after_init = null): bool
@@ -61,6 +59,20 @@ trait KernelTrait
             return false;
         }
         return $instance->run();
+    }
+    public static function Current()
+    {
+        if ($this->isSimpleMode) {
+            return $this;
+        }
+        $class = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
+        $class::GetCurrentContainer();
+        return $class::G();
+    }
+    public static function Root()
+    {
+        $class = self::class;
+        return $class::G();
     }
     protected function initOptions(array $options)
     {
@@ -95,11 +107,11 @@ trait KernelTrait
         if ($this->isSimpleMode) {
             return false;
         }
-        $flag = static::ReplaceSingletonImplement();
+        $flag = static::ReplaceSingletonImplement(); // as ContainerTrait
         // if false ,do something?
         $class = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
         $class::SetDefaultContainer(static::class);
-        $class::SwitchContainer(static::class);
+        $class::SetCurrentContainer(static::class);
     }
     protected function addSharedInstances($classes)
     {
@@ -110,11 +122,7 @@ trait KernelTrait
         $class = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
         $class::AddPublicClasses($classes);
     }
-    public static function Root()
-    {
-        $class = self::class;
-        return $class::G();
-    }
+
     protected function checkSimpleMode($context)
     {
         $extApps = [];
@@ -215,40 +223,35 @@ trait KernelTrait
             'default_exception_handler' => [static::class,'OnDefaultException'],
             'dev_error_handler' => [static::class,'OnDevErrorHandler'],
         ];
-        
-        //
         if ($context && is_a($context, self::class)) {
-            $this->options['skip_404_handler'] = true;
-            
             $exception_option['handle_all_dev_error'] = false;
             $exception_option['handle_all_exception'] = false;
-            
-            // deal with path
-            $this->options['path'] = $context->options['path'];
-            
-            $this->options['namespace'] = $this->options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
-            $postfix = str_replace("\\", '/', $this->options['namespace']);
-            $this->options['path_config'] = $this->options['path_config'] ?? ($context->options['path_config'] ?? 'config') . $postfix;
-            $this->options['path_view'] = $this->options['path_view'] ?? ($context->options['path_view'] ?? 'view') . $postfix;
-            if (!isset($this->options['path_override_from'])) {
-                $this->options['path_override_from'] = $this->getProjectPathFromClass(static::class);
-            }
-            $this->options['path_config_override_from'] = $this->options['path_override_from']. 'config/';
-            $this->options['path_view_override_from'] = $this->options['path_override_from']. 'view/';
+            $this->dealAsChild($context);
         }
         
         ExceptionManager::G()->init($exception_options, $this)->run();
-        
-        
-        
         Configer::G()->init($this->options, $this);
         $this->reloadFlags();
+        // 然后我们处理 外部的installable 的
         
         View::G()->init($this->options, $this);
         $this->error_view_inited = true;
         
         Route::G()->init($this->options, $this);
         RuntimeState::G()->init($this->options, $this);
+    }
+    protected function dealAsChild()
+    {
+            $this->options['skip_404_handler'] = true;
+            $this->options['path'] = $context->options['path'];
+            $this->options['namespace'] = $this->options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
+            $postfix = str_replace("\\", '/', $this->options['namespace']);
+            $this->options['path_config'] = $this->options['path_config'] ?? ($context->options['path_config'] ?? 'config') . $postfix;
+            $this->options['path_view'] = $this->options['path_view'] ?? ($context->options['path_view'] ?? 'view') . $postfix;
+            
+            $this->options['path_override_from'] = $this->options['path_override_from'] ?? $this->getProjectPathFromClass(static::class);
+            $this->options['path_config_override_from'] = $this->options['path_override_from']. 'config/';
+            $this->options['path_view_override_from'] = $this->options['path_override_from']. 'view/';
     }
     protected function reloadFlags(): void
     {

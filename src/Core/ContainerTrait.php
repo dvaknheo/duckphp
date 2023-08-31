@@ -28,7 +28,7 @@ trait ContainerTrait
     }
     public static function GetObject($class, $object = null)
     {
-        return static::ContainerInstance()->GetObject($class, $object);
+        return static::ContainerInstance()->_GetObject($class, $object);
     }
     public static function ContainerInstance($object = null)
     {
@@ -41,6 +41,14 @@ trait ContainerTrait
         }
         return static::$instance;
     }
+    public static function GetCurrentContainer()
+    {
+        return static::ContainerInstance()->_GetCurrentContainer();
+    }
+    public static function SetCurrentContainer($container)
+    {
+        return static::ContainerInstance()->_SetCurrentContainer($container);
+    }
     public static function SetDefaultContainer($class)
     {
         return static::ContainerInstance()->_SetDefaultContainer($class);
@@ -52,10 +60,6 @@ trait ContainerTrait
     public static function RemovePublicClasses($classes)
     {
         return static::ContainerInstance()->_RemovePublicClasses($classes);
-    }
-    public static function SwitchContainer($container)
-    {
-        return static::ContainerInstance()->_SwitchContainer($container);
     }
     public static function DumpAllObject()
     {
@@ -99,16 +103,14 @@ trait ContainerTrait
             $this->publics[$class] = true;
         }
     }
-    public static function _RemovePublicClasses($classes)
+    public function _RemovePublicClasses($classes)
     {
         foreach ($classes as $class) {
             unset($this->publics[$class]);
         }
     }
-
-    public function _SwitchContainer($container)
+    public function _SetCurrentContainer($container)
     {
-        static::ReplaceSingletonImplement();
         $this->current = $container;
     }
     public function _DumpAllObject()

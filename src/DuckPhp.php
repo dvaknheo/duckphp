@@ -14,6 +14,7 @@ use DuckPhp\Component\DbManager;
 use DuckPhp\Component\DuckPhpCommand;
 use DuckPhp\Component\EventManager;
 use DuckPhp\Component\Pager;
+use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookPathInfoCompat;
 use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Core\App;
@@ -32,13 +33,16 @@ class DuckPhp extends App
         if (PHP_SAPI === 'cli') {
             DuckPhpCommand::G()->init($this->options, $this);
             Console::G()->init($this->options, $this);
-            Console::G()->options['cli_default_command_class'] = DuckPhpCommand::class;  // 这里还覆盖了自己的， ext 里的还要处理
+            Console::G()->options['cli_default_command_class'] = DuckPhpCommand::class;
         }
         if (($options['path_info_compact_enable'] ?? false) || ($this->options['path_info_compact_enable'] ?? false)) {
             $this->options['route_map_auto_extend_method'] = $this->options['route_map_auto_extend_method'] ?? false;
             RouteHookPathInfoCompat::G()->init($this->options, $this);
         }
-        // redis的初始化要加上，这里要把 dbmanager 和 redis manager 给加入共享模式
+        //static::AddPublicClasses([Console::class, DbManager::class, RedisManager::class]);
+        //我们要加个可以InstallableTrait;
+        // 。 读取 
+        
         return $this;
     }
     public static function Admin($admin = null)

@@ -26,11 +26,13 @@ class Route extends ComponentBase
         'controller_prefix_post' => 'do_',
         'controller_class_postfix' => '',
         'controller_path_ext' => '',
+        'controller_controller_' => 'Main',
         
         'controller_class_map' => [],
         
         'controller_resource_prefix' => '',
         'controller_url_prefix' => '',
+        
     ];
 
     public $pre_run_hook_list = [];
@@ -41,7 +43,6 @@ class Route extends ComponentBase
     //calculated options;
     protected $namespace_prefix = '';
     protected $index_method = 'index'; //const
-    protected $welcome_class = 'Main'; //const
 
     //properties
     protected $route_error = '';
@@ -212,10 +213,11 @@ class Route extends ComponentBase
         $method = array_pop($t);
         $path_class = implode('/', $t);
         
-        $this->calling_path = $path_class?$path_info:$this->welcome_class.'/'.$method;
+        $welcome_class = $this->options['controller_welcome_class']
+        $this->calling_path = $path_class?$path_info:$welcome_class.'/'.$method;
         
-        if ($this->options['controller_hide_boot_class'] && $path_class === $this->welcome_class) {
-            $this->route_error = "controller_hide_boot_class! {$this->welcome_class} ";
+        if ($this->options['controller_hide_boot_class'] && $path_class === $welcome_class) {
+            $this->route_error = "controller_hide_boot_class! {$welcome_class}; ";
             return [null, null];
         }
         $path_class = $path_class ?: $this->welcome_class;

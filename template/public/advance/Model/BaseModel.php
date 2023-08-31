@@ -16,5 +16,5 @@ class BaseModel
 {
     use SimpleModelTrait;
     use ModelHelperTrait;
-    use SingletonexTrait;
+    use SingletonExTrait;
 }
