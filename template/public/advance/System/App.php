@@ -12,6 +12,7 @@ class App extends DuckPhp
 {
     //@override
     public $options = [
+        'is_debug' => true,
         //'path_info_compact_enable' => false,
         'controller_class_postfix' => 'Controller',
     ];

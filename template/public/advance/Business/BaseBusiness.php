@@ -15,4 +15,9 @@ class BaseBusiness
     use SingletonExTrait;
     use BusinessHelperTrait;
     use ThrowOnableTrait;
+    
+	public function __construct()
+	{
+		$this->exception_class = BusinessException::class;
+	}
 }

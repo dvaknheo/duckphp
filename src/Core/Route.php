@@ -26,7 +26,7 @@ class Route extends ComponentBase
         'controller_prefix_post' => 'do_',
         'controller_class_postfix' => '',
         'controller_path_ext' => '',
-        'controller_controller_' => 'Main',
+        'controller_welcome_class' => 'Main',
         
         'controller_class_map' => [],
         
@@ -213,14 +213,14 @@ class Route extends ComponentBase
         $method = array_pop($t);
         $path_class = implode('/', $t);
         
-        $welcome_class = $this->options['controller_welcome_class']
+        $welcome_class = $this->options['controller_welcome_class'];
         $this->calling_path = $path_class?$path_info:$welcome_class.'/'.$method;
         
         if ($this->options['controller_hide_boot_class'] && $path_class === $welcome_class) {
             $this->route_error = "controller_hide_boot_class! {$welcome_class}; ";
             return [null, null];
         }
-        $path_class = $path_class ?: $this->welcome_class;
+        $path_class = $path_class ?: $welcome_class;
 
         $full_class = $this->namespace_prefix.str_replace('/', '\\', $path_class).$this->options['controller_class_postfix'];
         $full_class = ''.ltrim($full_class, '\\');

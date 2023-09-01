@@ -16,13 +16,13 @@ if (!class_exists(\LazyToChange\System\App::class)) {
 
 $options = [
     // 这里可以添加更多选项
-    'is_debug' => true,
+    //'is_debug' => true,
 ];
 //*/
 \AdvanceDemo\System\App::RunQuickly($options);
 //*/
 
 /* //等价于
-$options['override_class'] = LazyToChange\System\App::class,
+$options['override_class'] = AdvanceDemo\System\App::class,
 \DuckPhp\DuckPhp::RunQuickly($options);
 //*/
