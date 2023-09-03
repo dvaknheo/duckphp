@@ -41,7 +41,7 @@ class DuckPhp extends App
         }
         //static::AddPublicClasses([Console::class, DbManager::class, RedisManager::class]);
         //我们要加个可以InstallableTrait;
-        // 。 读取 
+        // 。 读取
         
         return $this;
     }

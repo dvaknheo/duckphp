@@ -4,6 +4,7 @@ namespace tests\DuckPhp\Ext;
 use DuckPhp\DuckPhp;
 use DuckPhp\Core\Route;
 use DuckPhp\Ext\RouteHookManager;
+use DuckPhp\Component\RouteHookRouteMap;
 
 class RouteHookManagerTest extends \PHPUnit\Framework\TestCase
 {
@@ -17,7 +18,7 @@ $options = [];
 $options['is_debug'] = true;
 $options['override_class'] = '';
 $options['path_info_compact_enable'] = true;
-
+$options['ext'][RouteHookRouteMap::class] =true;
 DuckPhp::G()->init($options);
 
 var_dump(DuckPhp::G()->options);

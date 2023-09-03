@@ -242,16 +242,16 @@ trait KernelTrait
     }
     protected function dealAsChild()
     {
-            $this->options['skip_404_handler'] = true;
-            $this->options['path'] = $context->options['path'];
-            $this->options['namespace'] = $this->options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
-            $postfix = str_replace("\\", '/', $this->options['namespace']);
-            $this->options['path_config'] = $this->options['path_config'] ?? ($context->options['path_config'] ?? 'config') . $postfix;
-            $this->options['path_view'] = $this->options['path_view'] ?? ($context->options['path_view'] ?? 'view') . $postfix;
+        $this->options['skip_404_handler'] = true;
+        $this->options['path'] = $context->options['path'];
+        $this->options['namespace'] = $this->options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
+        $postfix = str_replace("\\", '/', $this->options['namespace']);
+        $this->options['path_config'] = $this->options['path_config'] ?? ($context->options['path_config'] ?? 'config') . $postfix;
+        $this->options['path_view'] = $this->options['path_view'] ?? ($context->options['path_view'] ?? 'view') . $postfix;
             
-            $this->options['path_override_from'] = $this->options['path_override_from'] ?? $this->getProjectPathFromClass(static::class);
-            $this->options['path_config_override_from'] = $this->options['path_override_from']. 'config/';
-            $this->options['path_view_override_from'] = $this->options['path_override_from']. 'view/';
+        $this->options['path_override_from'] = $this->options['path_override_from'] ?? $this->getProjectPathFromClass(static::class);
+        $this->options['path_config_override_from'] = $this->options['path_override_from']. 'config/';
+        $this->options['path_view_override_from'] = $this->options['path_override_from']. 'view/';
     }
     protected function reloadFlags(): void
     {

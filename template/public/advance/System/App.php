@@ -12,9 +12,12 @@ class App extends DuckPhp
 {
     //@override
     public $options = [
-        'is_debug' => true,
+        'is_debug' => true, // debug switch
+        // 'setting_file_enable' => true,
         //'path_info_compact_enable' => false,
-        'controller_class_postfix' => 'Controller',
+        'error_404' => '_sys/error_404',
+        'error_500' => '_sys/error_500',
+        'controller_class_postfix' => 'Controller', // in common, use this
     ];
     /**
      * console command sample
@@ -23,4 +26,13 @@ class App extends DuckPhp
     {
         echo "hello\n";
     }
+    public function action()
+    {
+        //
+    }
+    public function service()
+    {
+        //
+    }
+    
 }

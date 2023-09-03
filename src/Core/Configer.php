@@ -110,7 +110,7 @@ class Configer extends ComponentBase
             }
         }   // @codeCoverageIgnoreEnd
         if ($is_abs_path) {
-            return $file;
+            return $path));
         } else {
             return $parent_path.$path;
         }
