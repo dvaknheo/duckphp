@@ -40,7 +40,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'error_debug' => NULL,
             'skip_view_notice_error' => true,
             'use_super_global' => true,
-            'override_class'=>'\\'.AppTestApp::class,
+            'override_class'=>AppTestApp::class,
 
         ];
 
@@ -51,6 +51,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             AppTestObjectB::class=>['aa'=>'22'],
         ];
 
+        App::G(new App());
         App::RunQuickly($options,function(){
         App::SessionSet('zz','abc');
         App::SessionGet('zz');
@@ -62,15 +63,15 @@ class AppTest extends \PHPUnit\Framework\TestCase
             App::G()->addBeforeShowHandler("testsssssssssss");
             App::G()->removeBeforeShowHandler("testsssssssssss");
 
- //           $value = $cache[$key]; // trigger notice
+            $value = $cache[$key]; // trigger notice
             App::G()->options['error_debug']='_sys/error-debug';
-//            $value = $cache[$key]; 
+            $value = $cache[$key]; 
             
             App::G()->options['error_debug']=function($data){var_dump($data);return;};
- //           $value = $cache[$key]; 
+            $value = $cache[$key]; 
             
             App::G()->options['is_debug']=false;
-//            $value = $cache[$key]; 
+            $value = $cache[$key]; 
             App::G()->options['is_debug']=true;
 
         });
@@ -455,7 +456,7 @@ App::PageHtml(123);
             
             'skip_view_notice_error' => true,
             'use_super_global' => true,
-            'override_class'=>'\\'.AppTestApp::class,
+            'override_class'=>AppTestApp::class,
         ];
         DuckPhp::G(new DuckPhp())->init($options);
 
@@ -544,6 +545,7 @@ class E2 extends \Exception
 }
 class AppTestApp extends App
 {
+    public static function Blank(){}
     public function __construcct()
     {
         parent::__construct();

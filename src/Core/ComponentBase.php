@@ -51,11 +51,11 @@ class ComponentBase // implements ComponentInterface
     {
         return $this->is_inited;
     }
+    /*
     public function reset()
     {
         ////for override
     }
-    /*
     public function install(array $options, ?object $context = null)
     {
         //for override

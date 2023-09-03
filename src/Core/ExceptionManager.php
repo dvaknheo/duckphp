@@ -98,7 +98,6 @@ class ExceptionManager extends ComponentBase
             return;
         }
         $this->is_running = true;
-        
         if ($this->options['handle_all_dev_error']) {
             $this->last_error_handler = set_error_handler([$this,'on_error_handler']);
         }

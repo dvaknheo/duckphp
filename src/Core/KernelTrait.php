@@ -55,9 +55,6 @@ trait KernelTrait
         if ($after_init) {
             ($after_init)();
         }
-        if (!$instance) {
-            return false;
-        }
         return $instance->run();
     }
     public static function Current()
@@ -189,9 +186,6 @@ trait KernelTrait
             $class = $options['override_class'];
             unset($options['override_class']);
             $options['override_class_from'] = static::class;
-            if (\class_exists($class)) {
-                return null;
-            }
             return $class::G(new $class)->init($options);
         }
         
