@@ -26,7 +26,6 @@ $options = [
         AdvanceDemo\System\App::class =>
         [
             'controller_url_prefix' => '/advance',
-            //''
         ],
         ],
 

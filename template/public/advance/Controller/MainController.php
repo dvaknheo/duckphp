@@ -13,10 +13,9 @@ class MainController extends Base
 {
     public function index()
     {
-        var_dump(DATE(DATE_ATOM));
         //change it if  you can
         $var = __h(DemoBusiness::G()->foo());
-        //C::Show(get_defined_vars(), 'main');
+        C::Show(get_defined_vars(), 'main');
     }
     public function files()
     {
