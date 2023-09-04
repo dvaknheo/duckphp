@@ -90,19 +90,35 @@ trait ContainerTrait
     {
         $this->current = $container;
     }
+    public function getCurrentContainer()
+    {
+        return $this->current;
+    }
     public function dumpAllObject()
     {
-        echo "-- begin dump---</br > \n";
-        echo "default:{$this->default};\n";
+    
+        echo "-- begin dump---<pre> \n";
         echo "current:{$this->current};\n";
+        echo "default:{$this->default};\n";
         echo "publics:\n";
-        foreach ($this->publics as $v) {
-            echo "$v;\n";
+        foreach ($this->publics as $k =>$null) {
+            echo "    $k;\n";
         }
-        echo "contain:\n";
-        foreach($this->containers as $k => $v) {
-            echo $k .':'. ($v?get_class($v):'NULL').";\n";
+        echo "contains:\n";
+        foreach($this->containers as $name => $container){
+            echo "    $name: \n";
+            foreach($container as $k => $v) {
+                echo "        ";
+                if(isset($this->publics[$k])){ echo "*";}
+                $c = $v?get_class($v):null;
+                echo ($v?md5(spl_object_hash($v)) :'NULL');
+                echo ' '.$k;
+                if($c!==$k){
+                    echo " ($c)";
+                }
+                echo " ;\n";
+            }
         }
-        echo "\n --end--- </br > \n";
+        echo "\n --end--- </pre> \n";
     }
 }

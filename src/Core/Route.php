@@ -229,9 +229,8 @@ class Route extends ComponentBase
     }
     public function defaultGetRouteCallback($path_info)
     {
-        /*
         if ($this->options['controller_url_prefix'] ?? false) {
-            $prefix = trim($this->options['controller_url_prefix'], '/').'/';
+            $prefix = '/'.trim($this->options['controller_url_prefix'], '/').'/';
             $l = strlen($prefix);
             if (substr($path_info, 0, $l) !== $prefix) {
                 $this->route_error = "path_prefix error";
@@ -240,7 +239,6 @@ class Route extends ComponentBase
             $path_info = substr($path_info, $l - 1);
             $path_info = ltrim((string)$path_info, '/');
         }
-        //*/
         $this->route_error = '';
         list($full_class, $method) = $this->pathToClassAndMethod($path_info);
         if ($full_class === null) {

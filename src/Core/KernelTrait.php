@@ -59,7 +59,7 @@ trait KernelTrait
     }
     public static function Current()
     {
-        if ($this->isSimpleMode) {
+        if (!defined('__SINGLETONEX_REPALACER_CLASS')) {
             return $this;
         }
         $class = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
@@ -92,18 +92,18 @@ trait KernelTrait
         return $path;
     }
     ////////
-    public function switchContainerContext($class)
+    public function switchContainerContext($child)
     {
-        if ($this->isSimpleMode) {
+        if (!defined('__SINGLETONEX_REPALACER_CLASS')) {
             return false;
         }
         $class = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
-        $class::GetContainerInstanceEx()->setCurrentContainer($class);
+        $class::GetContainerInstanceEx()->setCurrentContainer($child);
     }
 
     public function addSharedInstances($classes)
     {
-        if ($this->isSimpleMode) {
+        if (!defined('__SINGLETONEX_REPALACER_CLASS')) {
             return false;
         }
         
@@ -115,16 +115,15 @@ trait KernelTrait
     {
         $extApps = [];
         foreach ($this->options['ext'] as $class => $options) {
-            $t = $class;
-            if (is_a($t, self::class)) {
+            if (\is_subclass_of($class,self::class)) {
                 $this->isSimpleMode = false;
-                //$class = is_string($class)?$class:get_class($class);
                 $extApps[$class] = $class;
             }
         }
         $this->isChild = is_a($context, self::class);
-        
+
         if (!$this->isChild && empty($extApps)) {
+
             $this->isSimpleMode = true;
             (self::class)::G($this); // remark ,don't use self::G()!
             static::G($this);
@@ -135,16 +134,21 @@ trait KernelTrait
             return true;
         }
         //////////////////////////////
+        $apps = [];
         if (!$this->isChild) {
+            $autoloader = AutoLoader::G();
             $flag = static::ReplaceSingletonImplement(); // as ContainerTrait
             // if false ,do something?
-            $class = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
-            $class::GetContainerInstanceEx()->setDefaultContainer(static::class);
-            $class::GetContainerInstanceEx()->setCurrentContainer(static::class);
+            $container = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
+            $container::GetContainerInstanceEx()->setDefaultContainer(static::class);
+            
+            $container::GetContainerInstanceEx()->setCurrentContainer(static::class);
+            $apps[AutoLoader::class] = $autoloader;
         }
-        ///////////// 这里测试的时候有问题
-        $apps = [];
-        $apps[AutoLoader::class] = AutoLoader::G();
+        $container = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
+        $container::GetContainerInstanceEx()->setCurrentContainer(static::class);
+        
+        /////////////
         $apps[static::class] = $this;
         if (!$this->isChild) {
             $apps[self::class] = $this;
@@ -154,7 +158,6 @@ trait KernelTrait
             $apps[$class] = $this;
         }
         
-        $this->switchContainerContext(static::class);
         $this->addSharedInstances(array_keys($apps));
         foreach ($apps as $class => $object) {
             $class = (string)$class;
@@ -229,7 +232,7 @@ trait KernelTrait
         Route::G()->init($this->options, $this);
         RuntimeState::G()->init($this->options, $this);
     }
-    protected function dealAsChild()
+    protected function dealAsChild($context)
     {
         $this->options['skip_404_handler'] = true;
         $this->options['path'] = $context->options['path'];
@@ -296,13 +299,13 @@ trait KernelTrait
             if (!$this->default_run_handler) {
                 $ret = Route::G()->run();
                 if (!$ret) {
-                    $this->runExtentions();
-                    if (!$this->options['skip_404_handler']) {
+                    $ret = $this->runExtentions();
+                    if (!$ret && !$this->options['skip_404_handler']) {
                         $this->_On404();
                     }
                 }
             } else {
-                return ($this->default_run_handler)();
+                $ret = ($this->default_run_handler)();
             }
         } catch (\Throwable $ex) {
             $this->switchContainerContext(static::class);
@@ -323,7 +326,8 @@ trait KernelTrait
     {
         $flag = false;
         foreach ($this->options['ext'] as $class => $options) {
-            if (is_a($class, self::class)) {
+            if (\is_subclass_of($class, self::class)) {
+                
                 $flag = $class::G()->run();
                 if ($flag) {
                     break;
