@@ -19,18 +19,18 @@ trait ContainerTrait
         if (!defined('__SINGLETONEX_REPALACER')) {
             define('__SINGLETONEX_REPALACER', static::class . '::GetObject');
             define('__SINGLETONEX_REPALACER_CLASS', static::class);
-            static::ContainerInstance()->default = static::class;
-            static::ContainerInstance()->current = static::class;
-            static::ContainerInstance()->publics[static::class] = true;
+            static::GetContainerInstanceEx()->default = static::class;
+            static::GetContainerInstanceEx()->current = static::class;
+            static::GetContainerInstanceEx()->publics[static::class] = true;
             return true;
         }
         return false;
     }
     public static function GetObject($class, $object = null)
     {
-        return static::ContainerInstance()->_GetObject($class, $object);
+        return static::GetContainerInstanceEx()->_GetObject($class, $object);
     }
-    public static function ContainerInstance($object = null)
+    public static function GetContainerInstanceEx($object = null)
     {
         if ($object) {
             static::$instance = $object;
@@ -41,30 +41,7 @@ trait ContainerTrait
         }
         return static::$instance;
     }
-    public static function GetCurrentContainer()
-    {
-        return static::ContainerInstance()->_GetCurrentContainer();
-    }
-    public static function SetCurrentContainer($container)
-    {
-        return static::ContainerInstance()->_SetCurrentContainer($container);
-    }
-    public static function SetDefaultContainer($class)
-    {
-        return static::ContainerInstance()->_SetDefaultContainer($class);
-    }
-    public static function AddPublicClasses($classes)
-    {
-        return static::ContainerInstance()->_AddPublicClasses($classes);
-    }
-    public static function RemovePublicClasses($classes)
-    {
-        return static::ContainerInstance()->_RemovePublicClasses($classes);
-    }
-    public static function DumpAllObject()
-    {
-        return static::ContainerInstance()->_DumpAllObject();
-    }
+
     ////////////////////////////////
     public function _GetObject($class, $object = null)
     {
@@ -93,31 +70,39 @@ trait ContainerTrait
     {
         return new $class;
     }
-    public function _SetDefaultContainer($class)
+    public function setDefaultContainer($class)
     {
         $this->default = $class;
     }
-    public function _AddPublicClasses($classes)
+    public function addPublicClasses($classes)
     {
         foreach ($classes as $class) {
             $this->publics[$class] = true;
         }
     }
-    public function _RemovePublicClasses($classes)
+    public function removePublicClasses($classes)
     {
         foreach ($classes as $class) {
             unset($this->publics[$class]);
         }
     }
-    public function _SetCurrentContainer($container)
+    public function setCurrentContainer($container)
     {
         $this->current = $container;
     }
-    public function _DumpAllObject()
+    public function dumpAllObject()
     {
-        var_dump($this->default);
-        var_dump($this->current);
-        var_dump($this->publics);
-        var_dump($this->containers);
+        echo "-- begin dump---</br > \n";
+        echo "default:{$this->default};\n";
+        echo "current:{$this->current};\n";
+        echo "publics:\n";
+        foreach ($this->publics as $v) {
+            echo "$v;\n";
+        }
+        echo "contain:\n";
+        foreach($this->containers as $k => $v) {
+            echo $k .':'. ($v?get_class($v):'NULL').";\n";
+        }
+        echo "\n --end--- </br > \n";
     }
 }

@@ -63,7 +63,7 @@ trait KernelTrait
             return $this;
         }
         $class = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
-        $class::GetCurrentContainer();
+        $class::GetContainerInstanceEx()->getCurrentContainer();
         return $class::G();
     }
     public static function Root()
@@ -91,33 +91,24 @@ trait KernelTrait
         
         return $path;
     }
-    protected function switchContainerContext($class)
+    ////////
+    public function switchContainerContext($class)
     {
         if ($this->isSimpleMode) {
             return false;
         }
         $class = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
-        $class::SwitchContainer($class);
+        $class::GetContainerInstanceEx()->setCurrentContainer($class);
     }
-    protected function initContainerContext()
-    {
-        if ($this->isSimpleMode) {
-            return false;
-        }
-        $flag = static::ReplaceSingletonImplement(); // as ContainerTrait
-        // if false ,do something?
-        $class = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
-        $class::SetDefaultContainer(static::class);
-        $class::SetCurrentContainer(static::class);
-    }
-    protected function addSharedInstances($classes)
+
+    public function addSharedInstances($classes)
     {
         if ($this->isSimpleMode) {
             return false;
         }
         
         $class = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
-        $class::AddPublicClasses($classes);
+        $class::GetContainerInstanceEx()->addPublicClasses($classes);
     }
 
     protected function checkSimpleMode($context)
@@ -143,8 +134,13 @@ trait KernelTrait
             }
             return true;
         }
+        //////////////////////////////
         if (!$this->isChild) {
-            $this->initContainerContext();
+            $flag = static::ReplaceSingletonImplement(); // as ContainerTrait
+            // if false ,do something?
+            $class = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
+            $class::GetContainerInstanceEx()->setDefaultContainer(static::class);
+            $class::GetContainerInstanceEx()->setCurrentContainer(static::class);
         }
         ///////////// 这里测试的时候有问题
         $apps = [];
@@ -159,7 +155,6 @@ trait KernelTrait
         }
         
         $this->switchContainerContext(static::class);
-        
         $this->addSharedInstances(array_keys($apps));
         foreach ($apps as $class => $object) {
             $class = (string)$class;
