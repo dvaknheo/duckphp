@@ -184,7 +184,14 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         echo Route::Res('/x.jpg');
         
         $this->doFixedRouteEx();
-        
+        //////////////////////////////
+        $options=[
+            'namespace_controller'=>'\\tests_Core_Route',
+        ];
+        $options['controller_url_prefix'] = 'child/';
+        Route::G(new Route())->init($options);
+        Route::G()->bind('/date')->run();
+        Route::G()->bind('/child/date')->run();
         \LibCoverage\LibCoverage::End();
         return;
     }
@@ -418,6 +425,10 @@ class Main  extends baseController
     public function index()
     {
         //var_dump(DATE(DATE_ATOM));
+    }
+    public function date()
+    {
+        var_dump(DATE(DATE_ATOM));
     }
     public function do_post()
     {

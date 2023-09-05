@@ -104,6 +104,9 @@ class App extends ComponentBase
         if (!$error_view) {
             $path_info = $_SERVER['PATH_INFO'] ?? '';
             echo "404 File Not Found<!--PATH_INFO: ($path_info) DuckPhp set options ['error_404'] to override me. -->\n";
+            if ($this->options['is_debug']) {
+                echo "<!-- Route Error Info: ".Route::G()->getRouteError()."-->\n";
+            }
             return;
         }
         

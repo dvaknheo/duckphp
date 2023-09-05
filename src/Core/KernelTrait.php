@@ -105,17 +105,6 @@ trait KernelTrait
         $class = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
         $class::GetContainerInstanceEx()->setCurrentContainer($child);
     }
-
-    public function addSharedInstances($classes)
-    {
-        if (!defined('__SINGLETONEX_REPALACER_CLASS')) {
-            return false;
-        }
-        
-        $class = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
-        $class::GetContainerInstanceEx()->addPublicClasses($classes);
-    }
-
     protected function checkSimpleMode($context)
     {
         $extApps = [];
@@ -163,12 +152,12 @@ trait KernelTrait
             $apps[$class] = $this;
         }
         
-        $this->addSharedInstances(array_keys($apps));
+        $container::GetContainerInstanceEx()->addPublicClasses(array_keys($apps));
+        $container::GetContainerInstanceEx()->addPublicClasses(array_keys($extApps));
         foreach ($apps as $class => $object) {
             $class = (string)$class;
             $class::G($object);
         }
-        $this->addSharedInstances(array_keys($extApps));
         return false;
     }
     //init
@@ -203,9 +192,9 @@ trait KernelTrait
         $this->is_inited = true;
         return $this;
     }
-    protected function getProjectPathFromClass($class, $use_parent_namespace = true)
+    public function getProjectPathFromClass($class, $use_parent_namespace = true)
     {
-        $ref = new \ReflectionClass(static::class);
+        $ref = new \ReflectionClass($class);
         $file = $ref->getFileName();
         $dir = dirname(dirname(''.$file));
         if ($use_parent_namespace) {

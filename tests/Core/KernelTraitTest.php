@@ -78,13 +78,7 @@ echo "-------------------------------------\n";
         //////////////////////////////////////////////////
         
         $app=new App();
-        $options=['plugin_mode'=>true];
-        try{
-            $app->init($options,$app);
-        }catch(\Exception $ex){
-            echo $ex->getMessage();
-        }
-        
+
         
         //App::G()->clear();
         ///////////////////////////
@@ -101,9 +95,7 @@ echo "-------------------------------------\n";
         View::G(new View());
         Configer::G(new Configer());
         App::G(new App())->init($options);
-
-
-
+        App::G()->getProjectPathFromClass(App::class,true);
         $this->do404();
         
 
@@ -147,7 +139,9 @@ MyKernelTrait::OnDevErrorHandler("", "", "", "");
 MyKernelTrait::On404();
 
         $options['ext'][KernelTestApp2::class]=[
-            //'controller_x'=>
+            'path'=>null,
+            'namespace' => __NAMESPACE__,
+            'controller_url_prefix'=>'/child/',
         ];
         App::Root();
         App::Current();
@@ -156,6 +150,10 @@ MyKernelTrait::On404();
         
         App::Root();
         App::Current();
+        
+        $_SERVER['PATH_INFO'] = '/child/date';
+        //Route::G()->bind();
+        App::G()->run();
         
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
@@ -273,6 +271,10 @@ class Main
     public function index()
     {
         var_dump("OK");
+    }
+    public function date()
+    {
+        var_dump(DATE(DATE_ATOM));
     }
     public function exception()
     {
