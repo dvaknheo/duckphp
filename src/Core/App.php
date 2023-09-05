@@ -315,10 +315,6 @@ EOT;
         $view = $view === '' ? Route::G()->getRouteCallingPath() : $view;
         return View::G()->_Show($data, $view);
     }
-    public static function IsCurrentApp()
-    {
-        return static::G() === self::G();
-    }
 }
 trait Core_Helper
 {

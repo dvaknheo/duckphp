@@ -21,9 +21,22 @@ class AppTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(App::class);
         $this->LibCoverage = \LibCoverage\LibCoverage::G();
+
+
+/*
+        $path_app=$this->LibCoverage->getClassTestPath(App::class);
+        $options=[
+            'path' => $path_app,
+            'is_debug'=>false,
+        ];
+        AppTestApp::RunQuickly($options);
+        
+        AppTestApp::G()->options['error_404']='_sys/error-404';
+        AppTestApp::On404();
+//\LibCoverage\LibCoverage::G($this->LibCoverage);     \LibCoverage\LibCoverage::End();       return;    
+//*/
         Route::G(AppRoute::G());
         $_SESSION=[];
-        
         
         $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(App::class);
         $path_config=\LibCoverage\LibCoverage::G()->getClassTestPath(Configer::class);
@@ -144,7 +157,6 @@ echo "-------------------------------------\n";
 
         $this->do404();
         $this->doHelper();
-\LibCoverage\LibCoverage::G($this->LibCoverage);\LibCoverage\LibCoverage::End();return;
         $this->doGlue();
         $this->do_Core_Redirect();
         $this->doSystemWrapper();
@@ -229,11 +241,19 @@ App::PageHtml(123);
         App::G()->version();
         
         App::IsAjax();
+        $path_app=$this->LibCoverage->getClassTestPath(App::class);
+        $options=[
+            'path' => $path_app,
+            'is_debug'=>false,
+        ];
+        AppTestApp::RunQuickly($options);
         
+        AppTestApp::G()->options['error_404']='_sys/error-404';
+        AppTestApp::On404();
         App::G()->runAutoLoader();
         \LibCoverage\LibCoverage::G($this->LibCoverage);
         \LibCoverage\LibCoverage::End();
-    return;
+        return;
 
     }
 
@@ -383,7 +403,7 @@ App::PageHtml(123);
         App::Res('abc');
         //*/
         //*
-        $path_view=\LibCoverage\LibCoverage::G()->getClassTestPath(App::class).'view/';
+        $path_view=$this->LibCoverage->getClassTestPath(App::class).'view/';
 
         $options=[
             'path_view'=>$path_view,
@@ -447,8 +467,8 @@ App::PageHtml(123);
         
         
         echo "-----------------------\n";
-        $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(App::class);
-        $path_config=\LibCoverage\LibCoverage::G()->getClassTestPath(Configer::class);
+        $path_app=$this->LibCoverage->getClassTestPath(App::class);
+        $path_config=$this->LibCoverage->getClassTestPath(Configer::class);
         $options=[
             'path' => $path_app,
             'path_config' => $path_config,
@@ -468,8 +488,9 @@ App::PageHtml(123);
             'path' => $path_app,
             'is_debug'=>false,
         ];
+        AppTestApp::On404();
         AppTestApp::RunQuickly($options);
-        
+
         AppTestApp::G()->options['error_404']='_sys/error-404';
         AppTestApp::On404();
         AppTestApp::G()->options['error_404']=function(){};
@@ -478,20 +499,22 @@ App::PageHtml(123);
     }
     protected function do_Core_Redirect()
     {
-        App::G()->system_wrapper_replace(['exit'=>function($code){
+        // 这里不能直接用 DuckPhp\Core\App ;奇怪；
+        AppTestApp::G()->init(App::G()->options);
+        AppTestApp::G()->system_wrapper_replace(['exit'=>function($code){
             var_dump(DATE(DATE_ATOM));
         }]);
-        
+
         $url="/test";
         
-        App::ExitRedirect($url);
-        App::ExitRedirect('http://www.github.com');
+        AppTestApp::ExitRedirect($url);
+        AppTestApp::ExitRedirect('http://www.github.com');
 
-        App::ExitRedirectOutside("http://www.github.com",true);
-        App::ExitRouteTo($url);
-        App::Exit404();
-        App::G()->options['is_debug']=true;
-        App::ExitJson($ret);
+        AppTestApp::ExitRedirectOutside("http://www.github.com",true);
+        AppTestApp::ExitRouteTo($url);
+        AppTestApp::Exit404();
+        AppTestApp::G()->options['is_debug']=true;
+        AppTestApp::ExitJson($ret);
     }
     protected function do_Core_Component()
     {
