@@ -36,8 +36,8 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         View::G()->init($options);
         View::G()->reset();
         ////
-        ////View::G()->options['path_view_override_from']=$path_view.'overrided/';
-        
+        View::G()->options['path_view_override_from']=$path_view.'overrided/';
+        View::G()->Show([],'override');
         \LibCoverage\LibCoverage::End();
     }
 }

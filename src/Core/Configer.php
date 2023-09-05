@@ -17,7 +17,7 @@ class Configer extends ComponentBase
         'setting' => [],
         'all_config' => [],
         
-        'setting_file' => 'setting',
+        'setting_file' => 'setting.php',
         'setting_file_ignore_exists' => true,
         'setting_file_enable' => true,
         'path_config_override' => '',
@@ -44,7 +44,7 @@ class Configer extends ComponentBase
         }
         if ($this->options['setting_file_enable']) {
             $setting_file = $this->options['setting_file'];
-            $full_setting_file = $this->getAbsPath($this->path, $setting_file.'.php');
+            $full_setting_file = $this->getAbsPath($this->path, $setting_file);
             if (!is_file($full_setting_file)) {
                 $this->exitWhenNoSettingFile($full_setting_file, $setting_file);
             } else {

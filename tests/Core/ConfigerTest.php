@@ -44,8 +44,12 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
         }catch(\Throwable $ex){
             //
         }
-        
-        
+        $options['setting_file_ignore_exists'] = true;
+        $options['path_config_override_from'] = $path_config.'overrided/';;
+        $options['setting_file_enable'] = true;
+        $options['setting_file'] = $path_config.'setting.php';
+        Configer::G(new Configer)->init($options);
+        Configer::G()->_Config(null, [],'override');
         \LibCoverage\LibCoverage::End();
     }
 }
