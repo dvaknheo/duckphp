@@ -19,7 +19,8 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(KernelTrait::class);
-    
+        $LibCoverage = \LibCoverage\LibCoverage::G();
+        
         $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(App::class);
         $path_config=\LibCoverage\LibCoverage::G()->getClassTestPath(Configer::class);
         
@@ -48,22 +49,7 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             KernelTestObjectB::class=>['aa'=>'22'],
         ];
         App::RunQuickly($options,function(){
-            App::G()->addBeforeShowHandler(function(){ echo "beforeShowHandlers";});
-            
-//            $value = $cache[$key]; // trigger notice
-            App::G()->options['error_debug']='_sys/error-debug';
-//            $value = $cache[$key]; 
-            
-            App::G()->options['error_debug']=function($data){var_dump($data);return;};
-//            $value = $cache[$key]; 
-            
-            App::G()->options['is_debug']=false;
-//            $value = $cache[$key]; 
-            App::G()->options['is_debug']=true;
-            App::G()->onPrepare=function(){ echo "onPrepare!";};
-            App::G()->onInit=function(){ echo "onInit!";};
-            App::G()->onBeforeRun=function(){ echo "onRun!";};
-            App::G()->onAfterRun=function(){ echo "onAfterRun!";};
+
 
         });
         
@@ -160,6 +146,18 @@ MyKernelTrait::OnDefaultException(new \Exception("error"));
 MyKernelTrait::OnDevErrorHandler("", "", "", "");
 MyKernelTrait::On404();
 
+        $options['ext'][KernelTestApp2::class]=[
+            //'controller_x'=>
+        ];
+        App::Root();
+        App::Current();
+        
+        App::G(new App())->init($options)->run();
+        
+        App::Root();
+        App::Current();
+        
+        \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
     return;
 

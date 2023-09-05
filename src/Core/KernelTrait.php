@@ -39,6 +39,11 @@ trait KernelTrait
             
             'skip_404_handler' => false,
             'skip_exception_check' => false,
+            
+            //override_class
+            //override_class_from
+            //path_override_from
+            
             //'after_init_handler' => null,
         ];
     
@@ -60,7 +65,7 @@ trait KernelTrait
     public static function Current()
     {
         if (!defined('__SINGLETONEX_REPALACER_CLASS')) {
-            return $this;
+            return static::Root();
         }
         $class = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
         $class::GetContainerInstanceEx()->getCurrentContainer();

@@ -24,26 +24,21 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         View::Display("block",['A'=>'b']);
         View::Render("block",['A'=>'b']);
         View::G()->getViewData();
-
         View::G()->getViewPath();
         View::G()->setViewHeadFoot(null,null);
-                View::G()->options['path_view_override']=$path_view.'overrided/';
-        //View::G()->_Show(['A'=>'b'],"override");
+        
         View::G()->isInited();
         $options=[
             'path'=>$path_view,
             'path_view'=>'',
         ];
-        View::G()->options['view_runtime']=[MyViewRuntime::class,'G'];
 
         View::G()->init($options);
         View::G()->reset();
+        ////
+        ////View::G()->options['path_view_override_from']=$path_view.'overrided/';
         
         \LibCoverage\LibCoverage::End();
     }
 }
-class MyViewRuntime
-{
-    use \DuckPhp\SingletonEx\SingletonExTrait;
-    
-}
+

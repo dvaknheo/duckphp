@@ -8,6 +8,7 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(ComponentBase::class);
+        $LibCoverage=\LibCoverage\LibCoverage::G();
 
         ComponentBaseObject::G()->init(['a'=>'b'],new \stdClass());
         ComponentBaseObject::G()->isInited();
@@ -15,11 +16,12 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
 
         ComponentBaseObject::G();
         ComponentBaseObject::G(new ComponentBaseObject());
-        $t=\LibCoverage\LibCoverage::G();
         define('__SINGLETONEX_REPALACER',ComponentBaseObject::class.'::CreateObject');
-        \LibCoverage\LibCoverage::G($t);
         ComponentBaseObject::G();
+        ComponentBaseObject2::G()->init([]);
+        ComponentBaseObject2::G()->init([]);
         
+        \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
     }
 }
@@ -53,4 +55,9 @@ class ComponentBaseObject extends ComponentBase  implements ComponentInterface
         $_instance[$class]=$object?:($_instance[$class]??($_instance[$class]??new $class));
         return $_instance[$class];
     }
+}
+
+class ComponentBaseObject2 extends ComponentBase  implements ComponentInterface
+{
+     protected $init_once = true;
 }
