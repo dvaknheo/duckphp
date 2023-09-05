@@ -5,7 +5,7 @@
  */
 namespace DuckPhp\Core;
 
-trait ContainerTrait
+class PhaseContainer
 {
     public static $instance;
     
@@ -62,7 +62,7 @@ trait ContainerTrait
             $this->containers[$this->default][$class] = $result;
             return $result;
         }
-        $result = $object ?? new $class;
+        $result = $object ?? $this->createObject($class);
         $this->containers[$this->current][$class] = $result;
         return $result;
     }

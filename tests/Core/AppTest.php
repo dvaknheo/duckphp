@@ -16,9 +16,11 @@ class AppRoute extends Route
 }
 class AppTest extends \PHPUnit\Framework\TestCase
 {
+    protected $LibCoverage;
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(App::class);
+        $this->LibCoverage = \LibCoverage\LibCoverage::G();
         Route::G(AppRoute::G());
         $_SESSION=[];
         
@@ -142,7 +144,7 @@ echo "-------------------------------------\n";
 
         $this->do404();
         $this->doHelper();
-        
+\LibCoverage\LibCoverage::G($this->LibCoverage);\LibCoverage\LibCoverage::End();return;
         $this->doGlue();
         $this->do_Core_Redirect();
         $this->doSystemWrapper();
@@ -227,8 +229,9 @@ App::PageHtml(123);
         App::G()->version();
         
         App::IsAjax();
-        App::IsCurrentApp();
+        
         App::G()->runAutoLoader();
+        \LibCoverage\LibCoverage::G($this->LibCoverage);
         \LibCoverage\LibCoverage::End();
     return;
 

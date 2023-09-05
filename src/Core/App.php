@@ -34,7 +34,6 @@ class App extends ComponentBase
     const DEFAULT_INJECTED_HELPER_MAP = '~\\Helper\\';
     
     use KernelTrait;
-    use ContainerTrait;
     use ExtendableStaticCallTrait;
     use SystemWrapperTrait;
     

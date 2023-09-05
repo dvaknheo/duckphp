@@ -12,13 +12,13 @@ namespace DuckPhp\Core;
 use DuckPhp\Core\AutoLoader;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\ExceptionManager;
+use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\RuntimeState;
 use DuckPhp\Core\View;
 
 trait KernelTrait
 {
-    use ContainerTrait;
     public $options = [];
 
     protected static $options_default = [
@@ -64,17 +64,13 @@ trait KernelTrait
     }
     public static function Current()
     {
-        if (!defined('__SINGLETONEX_REPALACER_CLASS')) {
-            return static::Root();
-        }
-        $class = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
-        $class::GetContainerInstanceEx()->getCurrentContainer();
+        $container = static::G()->getContainer();
+        $class = $container ? $container->getCurrentContainer($child) : static::class;
         return $class::G();
     }
     public static function Root()
     {
-        $class = self::class;
-        return $class::G();
+        return (self::class)::G(); // remark ,don't use self::G()!
     }
     protected function initOptions(array $options)
     {
@@ -96,14 +92,29 @@ trait KernelTrait
         
         return $path;
     }
+    public function getProjectPathFromClass($class, $use_parent_namespace = true)
+    {
+        $ref = new \ReflectionClass($class);
+        $file = $ref->getFileName();
+        $dir = dirname(dirname(''.$file));
+        if ($use_parent_namespace) {
+            $dir = dirname($dir);
+        }
+        return $dir .'/';
+    }
     ////////
-    public function switchContainerContext($child)
+    public function getContainer()
     {
         if (!defined('__SINGLETONEX_REPALACER_CLASS')) {
-            return false;
+            return null;
         }
         $class = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
-        $class::GetContainerInstanceEx()->setCurrentContainer($child);
+        return $class::GetContainerInstanceEx();
+    }
+    public function switchPhase($child)
+    {
+        $container = $this->getContainer();
+        return $container?$container->setCurrentContainer($child):false;
     }
     protected function checkSimpleMode($context)
     {
@@ -131,17 +142,17 @@ trait KernelTrait
         $apps = [];
         if (!$this->isChild) {
             $autoloader = AutoLoader::G();
-            $flag = static::ReplaceSingletonImplement(); // as ContainerTrait
+            $flag = PhaseContainer::ReplaceSingletonImplement();
             // if false ,do something?
-            $container = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
-            $container::GetContainerInstanceEx()->setDefaultContainer(static::class);
             
-            $container::GetContainerInstanceEx()->setCurrentContainer(static::class);
             $apps[AutoLoader::class] = $autoloader;
+            $container = $this->getContainer();
+            $container->setDefaultContainer(static::class);
+        }else{
+            $flag = PhaseContainer::ReplaceSingletonImplement(); // as ContainerTrait
+            $container = $this->getContainer();
         }
-        $container = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
-        $container::GetContainerInstanceEx()->setCurrentContainer(static::class);
-        
+        $container->setCurrentContainer(static::class);
         /////////////
         $apps[static::class] = $this;
         if (!$this->isChild) {
@@ -152,8 +163,8 @@ trait KernelTrait
             $apps[$class] = $this;
         }
         
-        $container::GetContainerInstanceEx()->addPublicClasses(array_keys($apps));
-        $container::GetContainerInstanceEx()->addPublicClasses(array_keys($extApps));
+        $container->addPublicClasses(array_keys($apps));
+        $container->addPublicClasses(array_keys($extApps));
         foreach ($apps as $class => $object) {
             $class = (string)$class;
             $class::G($object);
@@ -192,16 +203,6 @@ trait KernelTrait
         $this->is_inited = true;
         return $this;
     }
-    public function getProjectPathFromClass($class, $use_parent_namespace = true)
-    {
-        $ref = new \ReflectionClass($class);
-        $file = $ref->getFileName();
-        $dir = dirname(dirname(''.$file));
-        if ($use_parent_namespace) {
-            $dir = dirname($dir);
-        }
-        return $dir .'/';
-    }
     protected function initComponents(array $options, object $context = null)
     {
         $exception_options = [
@@ -218,7 +219,6 @@ trait KernelTrait
         ExceptionManager::G()->init($exception_options, $this)->run();
         Configer::G()->init($this->options, $this);
         $this->reloadFlags();
-        // 然后我们处理 外部的installable 的
         
         View::G()->init($this->options, $this);
         $this->error_view_inited = true;
@@ -264,7 +264,7 @@ trait KernelTrait
                 continue;
             }
             $class::G()->init($options, $this);
-            $this->switchContainerContext(static::class);
+            $this->switchPhase(static::class);
         }
         return;
     }
@@ -287,8 +287,7 @@ trait KernelTrait
     }
     public function run(): bool
     {
-        //TODO 命令行模式，和扩展的命令行处理
-        $this->switchContainerContext(static::class);
+        $this->switchPhase(static::class);
         
         try {
             $this->onBeforeRun();
@@ -304,7 +303,7 @@ trait KernelTrait
                 $ret = ($this->default_run_handler)();
             }
         } catch (\Throwable $ex) {
-            $this->switchContainerContext(static::class);
+            $this->switchPhase(static::class);
             RuntimeState::G()->toggleInException();
             if ($this->options['skip_exception_check']) {
                 RuntimeState::G()->clear();
