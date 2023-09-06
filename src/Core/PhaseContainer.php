@@ -96,24 +96,25 @@ class PhaseContainer
     }
     public function dumpAllObject()
     {
-    
         echo "-- begin dump---<pre> \n";
         echo "current:{$this->current};\n";
         echo "default:{$this->default};\n";
         echo "publics:\n";
-        foreach ($this->publics as $k =>$null) {
+        foreach ($this->publics as $k => $null) {
             echo "    $k;\n";
         }
         echo "contains:\n";
-        foreach($this->containers as $name => $container){
+        foreach ($this->containers as $name => $container) {
             echo "    $name: \n";
-            foreach($container as $k => $v) {
+            foreach ($container as $k => $v) {
                 echo "        ";
-                if(isset($this->publics[$k])){ echo "*";}
+                if (isset($this->publics[$k])) {
+                    echo "*";
+                }
                 $c = $v?get_class($v):null;
-                echo ($v?md5(spl_object_hash($v)) :'NULL');
+                echo($v?md5(spl_object_hash($v)) :'NULL');
                 echo ' '.$k;
-                if($c!==$k){
+                if ($c !== $k) {
                     echo " ($c)";
                 }
                 echo " ;\n";

@@ -120,7 +120,7 @@ trait KernelTrait
     {
         $extApps = [];
         foreach ($this->options['ext'] as $class => $options) {
-            if (\is_subclass_of($class,self::class)) {
+            if (\is_subclass_of($class, self::class)) {
                 $this->isSimpleMode = false;
                 $extApps[$class] = $class;
             }
@@ -128,7 +128,6 @@ trait KernelTrait
         $this->isChild = is_a($context, self::class);
 
         if (!$this->isChild && empty($extApps)) {
-
             $this->isSimpleMode = true;
             (self::class)::G($this); // remark ,don't use self::G()!
             static::G($this);
@@ -148,7 +147,7 @@ trait KernelTrait
             $apps[AutoLoader::class] = $autoloader;
             $container = $this->getContainer();
             $container->setDefaultContainer(static::class);
-        }else{
+        } else {
             $flag = PhaseContainer::ReplaceSingletonImplement(); // as ContainerTrait
             $container = $this->getContainer();
         }
@@ -229,11 +228,11 @@ trait KernelTrait
     protected function dealAsChild($context)
     {
         $this->options['skip_404_handler'] = true;
-        $old_path =$this->options['path'];
+        $old_path = $this->options['path'];
         $this->options['path'] = $context->options['path'];
         $this->options['namespace'] = $this->options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
         $postfix = str_replace("\\", '/', $this->options['namespace']);
-        $postfix= '/'.$postfix;
+        $postfix = '/'.$postfix;
         $this->options['path_config'] = $this->options['path_config'] ?? ($context->options['path_config'] ?? 'config') . $postfix;
         $this->options['path_view'] = $this->options['path_view'] ?? ($context->options['path_view'] ?? 'view') . $postfix;
         
@@ -288,7 +287,9 @@ trait KernelTrait
     public function run(): bool
     {
         $this->switchPhase(static::class);
-        
+        if (!$this->isChild) {
+            (self::class)::G($this);
+        }
         try {
             $this->onBeforeRun();
             if (!$this->default_run_handler) {
@@ -322,7 +323,6 @@ trait KernelTrait
         $flag = false;
         foreach ($this->options['ext'] as $class => $options) {
             if (\is_subclass_of($class, self::class)) {
-                
                 $flag = $class::G()->run();
                 if ($flag) {
                     break;
