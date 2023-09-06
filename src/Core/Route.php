@@ -402,9 +402,13 @@ trait Route_UrlManager
         }
         //
         //   'https://cdn.site/','http://cdn.site','//cdn.site/','res/'
-        $flag = preg_match('/^(https?:\/)\//', $url ?? '');
+        $flag = preg_match('/^(https?:\/)?\//', $url ?? '');
         if ($flag) {
             return $url;
+        }
+        $flag = preg_match('/^(https?:\/)?\//',$this->options['controller_resource_prefix'] ?? '');
+        if ($flag) {
+            return $this->options['controller_resource_prefix'].$url;
         }
         return $this->_Url('').'/'.$this->options['controller_resource_prefix'].$url;
     }
