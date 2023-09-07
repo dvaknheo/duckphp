@@ -183,6 +183,10 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         echo Route::Res('//x.jpg');
         echo Route::Res('/x.jpg');
         
+        Route::G()->options['controller_resource_prefix']='controller_resource_prefix/';
+        Route::G()->bind('Main/NO','POST')->run();
+        echo Route::Res('abc.jpg');
+        
         $this->doFixedRouteEx();
         //////////////////////////////
         $options=[

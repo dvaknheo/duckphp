@@ -150,11 +150,13 @@ MyKernelTrait::On404();
         
         App::Root();
         App::Current();
+        App::IsCurrent();
         
         $_SERVER['PATH_INFO'] = '/child/date';
         //Route::G()->bind();
         App::G()->run();
-        
+        $phase=App::Phase();
+        App::Phase($phase);
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
     return;

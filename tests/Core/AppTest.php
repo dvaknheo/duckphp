@@ -251,6 +251,10 @@ App::PageHtml(123);
         AppTestApp::G()->options['error_404']='_sys/error-404';
         AppTestApp::On404();
         App::G()->runAutoLoader();
+        
+        AppTestApp::PhaseCall('z',[AppTestApp::class,'CallIt'],123);
+        AppTestApp::PhaseCall('',[AppTestApp::class,'CallIt'],123);
+        
         \LibCoverage\LibCoverage::G($this->LibCoverage);
         \LibCoverage\LibCoverage::End();
         return;
@@ -571,7 +575,13 @@ class E2 extends \Exception
 }
 class AppTestApp extends App
 {
-    public static function Blank(){}
+    public static function Blank()
+    {
+    }
+    public static function CallIt($arg)
+    {
+        var_dump($arg);
+    }
     public function __construcct()
     {
         parent::__construct();

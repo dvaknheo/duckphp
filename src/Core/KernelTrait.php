@@ -64,8 +64,8 @@ trait KernelTrait
     }
     public static function Current()
     {
-        $container = static::G()->getContainer();
-        $class = $container ? $container->getCurrentContainer() : static::class;
+        $phase = static::Phase();
+        $class = $phase ? $phase : static::class;
         return $class::G();
     }
     public static function Root()
@@ -74,6 +74,7 @@ trait KernelTrait
     }
     public static function IsCurrent()
     {
+        return static::Root() === static::Current();
     }
     protected function initOptions(array $options)
     {
