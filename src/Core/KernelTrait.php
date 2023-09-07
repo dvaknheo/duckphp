@@ -111,7 +111,7 @@ trait KernelTrait
         if (!defined('__SINGLETONEX_REPALACER_CLASS')) {
             return null;
         }
-        $class = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
+        $class = __SINGLETONEX_REPALACER_CLASS;
         return $class::GetContainerInstanceEx();
     }
     public static function Phase($new = null)
@@ -136,7 +136,7 @@ trait KernelTrait
         foreach ($this->options['ext'] as $class => $options) {
             if (\is_subclass_of($class, self::class)) {
                 $this->isSimpleMode = false;
-                $extApps[$class] = $class;
+                $extApps[$class] = $class; /** @phpstan-ignore-line */
             }
         }
         $this->isChild = is_a($context, self::class);

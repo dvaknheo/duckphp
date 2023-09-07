@@ -104,7 +104,7 @@ class AutoLoader
         if ($this->options['autoload_cache_in_cli']) {
             $this->cacheClasses();
         }
-        spl_autoload_register(self::class.'::AutoLoad'); // phpstan can't use static::class :( /** @ phpstan-ignore-line */
+        spl_autoload_register(static::class.'::AutoLoad'); /** @phpstan-ignore-line */
     }
     public function runAutoLoader()
     {
@@ -196,7 +196,7 @@ class AutoLoader
     }
     public function clear()
     {
-        spl_autoload_unregister(self::class.'::AutoLoad'); // phpstan can't use static::class :(  /** @ phpstan-ignore-line */
+        spl_autoload_unregister(static::class.'::AutoLoad');
     }
     public static function DuckPhpSystemAutoLoader(string $class): void //@codeCoverageIgnoreStart
     {

@@ -41,11 +41,11 @@ class PhaseProxy
         }
         if ($flag) {
             $callback = [($this->overriding_class)::G(),$method];
-            return ($callback)(...$args);
+            return ($callback)(...$args); /** @phpstan-ignore-line */
         }
         App::Phase($this->container_class);
         $callback = [($this->overriding_class)::G(),$method];
-        $ret = ($callback)(...$args);
+        $ret = ($callback)(...$args); /** @phpstan-ignore-line */
         App::Phase($current);
         return $ret;
     }
