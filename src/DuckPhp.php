@@ -39,9 +39,15 @@ class DuckPhp extends App
             $this->options['route_map_auto_extend_method'] = $this->options['route_map_auto_extend_method'] ?? false;
             RouteHookPathInfoCompat::G()->init($this->options, $this);
         }
-        //static::AddPublicClasses([Console::class, DbManager::class, RedisManager::class]);
+        $phase = $this->_Phase();
+        if ($phase) {
+            $this->getContainer()->addPublicClasses([
+                Console::class,
+                DbManager::class,
+                RedisManager::class
+                ]);
+        }
         //我们要加个可以InstallableTrait;
-        // 。 读取
         
         return $this;
     }

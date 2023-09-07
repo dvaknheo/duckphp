@@ -499,6 +499,22 @@ trait Core_Helper
             return $ex;
         }
     }
+    public static function PhaseCall($phase, $callback, ...$args)
+    {
+        return static::G()->_PhaseCall($phase, $callback, ...$args);
+    }
+    public function _PhaseCall($phase, $callback, ...$args)
+    {
+        $current = $this->_Phase();
+        if (!$phase) {
+            return ($callback)(...$args);
+        }
+        
+        $this->_Phase($phase);
+        $ret = ($callback)(...$args);
+        $this->_Phase($current);
+        return $ret;
+    }
     public static function CheckException($exception_class, $message, $code = 0)
     {
         return static::G()->_CheckException($exception_class, $message, $code);

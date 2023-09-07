@@ -65,12 +65,16 @@ trait KernelTrait
     public static function Current()
     {
         $container = static::G()->getContainer();
-        $class = $container ? $container->getCurrentContainer($child) : static::class;
+        $class = $container ? $container->getCurrentContainer() : static::class;
         return $class::G();
     }
     public static function Root()
     {
         return (self::class)::G(); // remark ,don't use self::G()!
+    }
+    public static function IsCurrent()
+    {
+        
     }
     protected function initOptions(array $options)
     {
@@ -111,10 +115,21 @@ trait KernelTrait
         $class = __SINGLETONEX_REPALACER_CLASS; /** @phpstan-ignore-line */
         return $class::GetContainerInstanceEx();
     }
-    public function switchPhase($child)
+    public static function Phase($new = null)
+    {
+        return static::G()->_Phase($new);
+    }
+    public function _Phase($new = null)
     {
         $container = $this->getContainer();
-        return $container?$container->setCurrentContainer($child):false;
+        if (!$container) {
+            return '';
+        }
+        if (!$new){
+            return $container->getCurrentContainer();
+        }
+        $container->setCurrentContainer($new);
+        return $new;
     }
     protected function checkSimpleMode($context)
     {
@@ -263,7 +278,7 @@ trait KernelTrait
                 continue;
             }
             $class::G()->init($options, $this);
-            $this->switchPhase(static::class);
+            $this->_Phase(static::class);
         }
         return;
     }
@@ -286,10 +301,11 @@ trait KernelTrait
     }
     public function run(): bool
     {
-        $this->switchPhase(static::class);
+        $this->_Phase(static::class);
         if (!$this->isChild) {
             (self::class)::G($this);
         }
+        
         try {
             $this->onBeforeRun();
             if (!$this->default_run_handler) {
@@ -304,7 +320,8 @@ trait KernelTrait
                 $ret = ($this->default_run_handler)();
             }
         } catch (\Throwable $ex) {
-            $this->switchPhase(static::class);
+            $phase = $this->_Phase(static::class);
+            RuntimeState::G()->lastPhase = $phase;
             RuntimeState::G()->toggleInException();
             if ($this->options['skip_exception_check']) {
                 RuntimeState::G()->clear();
