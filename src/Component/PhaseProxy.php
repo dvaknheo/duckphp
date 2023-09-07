@@ -12,25 +12,29 @@ class PhaseProxy
     protected $container_class;
     protected $overriding_class;
     protected $strict = false;
-    public function __construct($overriding_class,$container_class,$strict=false)
+    public function __construct($container_class, $overriding_class, $strict = false)
     {
         $this->overriding_class = $overriding_class;
         $this->container_class = $container_class;
         $this->strict = $strict;
     }
+    public static function CreatePhaseProxy($container_class, $overriding_class, $strict = false)
+    {
+        return new static($container_class, $overriding_class, $strict);
+    }
     public function __call($method, $args)
     {
         $current = App::Phase();
         $flag = false;
-        if(!$current){
+        if (!$current) {
             $flag = true;
-        }else {
-            if($this->strict){
-                if($current === $this->container_class){
+        } else {
+            if ($this->strict) {
+                if ($current === $this->container_class) {
                     $flag = true;
                 }
-            }else{
-                if(is_a($current,$this->container_class)){ //is_subclass_of ?
+            } else {
+                if (is_a($current, $this->container_class)) { //is_subclass_of ?
                     $flag = true;
                 }
             }

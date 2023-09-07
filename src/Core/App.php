@@ -506,7 +506,7 @@ trait Core_Helper
     public function _PhaseCall($phase, $callback, ...$args)
     {
         $current = $this->_Phase();
-        if (!$phase) {
+        if (!$phase || !$current) {
             return ($callback)(...$args);
         }
         

@@ -74,7 +74,6 @@ trait KernelTrait
     }
     public static function IsCurrent()
     {
-        
     }
     protected function initOptions(array $options)
     {
@@ -125,7 +124,7 @@ trait KernelTrait
         if (!$container) {
             return '';
         }
-        if (!$new){
+        if (!$new) {
             return $container->getCurrentContainer();
         }
         $container->setCurrentContainer($new);
@@ -188,7 +187,7 @@ trait KernelTrait
     //init
     public function init(array $options, object $context = null)
     {
-        $options['path'] = $options['path'] ?? ($this->options['path']??$this->getDefaultProjectPath());
+        $options['path'] = $options['path'] ?? ($this->options['path'] ?? $this->getDefaultProjectPath());
         $options['namespace'] = $options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
         $this->initOptions($options);
         if ($this->options['use_short_functions']) {

@@ -406,7 +406,7 @@ trait Route_UrlManager
         if ($flag) {
             return $url;
         }
-        $flag = preg_match('/^(https?:\/)?\//',$this->options['controller_resource_prefix'] ?? '');
+        $flag = preg_match('/^(https?:\/)?\//', $this->options['controller_resource_prefix'] ?? '');
         if ($flag) {
             return $this->options['controller_resource_prefix'].$url;
         }
