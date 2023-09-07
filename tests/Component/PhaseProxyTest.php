@@ -11,20 +11,32 @@ class PhaseProxyTest extends \PHPUnit\Framework\TestCase
     {
         $LibCoverage = \LibCoverage\LibCoverage::G();
         \LibCoverage\LibCoverage::Begin(PhaseProxy::class);
+        $options =[
+            'notEmpty' => true,
+        ];
+        PhaseProxyMainApp::RunQuickly($options);
+        
+        
+        $object = PhaseProxy::CreatePhaseProxy(PhaseProxyMainApp::class, PhaseProxyAdminAction::class, true);
+        $object->id();
         
         $options = [
-            'ext' =>[SubApp::class =>[
+            'ext' =>[PhaseProxySubApp::class =>[
+                    'notEmpty' => true,
+                ],PhaseProxySubApp2::class =>[
                     'notEmpty' => true,
                 ],
             ],
         ];
-        MainApp::G()->RunQuickly($options);
-        
+        PhaseProxyMainApp::RunQuickly($options);
+        $phase =PhaseProxyMainApp::Root()::Phase();
+        var_dump(PhaseProxyMainApp::Admin()->id());
+        var_dump(PhaseProxyMainApp::User()->id());
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
     }
 }
-class MainApp extends DuckPhp
+class PhaseProxyMainApp extends DuckPhp
 {
     public function run(): bool
     {
@@ -33,34 +45,47 @@ class MainApp extends DuckPhp
             (self::class)::G($this);
         }
         
-        var_dump( static::Admin()->id());
+        var_dump( date(DATE_ATOM));
         return true;
     }
 }
-class SubApp extends DuckPhp
+class PhaseProxySubApp extends DuckPhp
 {
+    protected function proxySingletonExToRoot($class)
+    {
+        $phase = static::Phase();
+        static::Phase(get_class(static::Root()));
+        $object = $class::G(PhaseProxy::CreatePhaseProxy(static::class,$class));
+        static::Phase($phase);
+        return $object;
+    }
+
     public function onInit()
     {
-        static::Root()::Admin(PhaseProxy::CreatePhaseProxy(static::class, AdminAction::class, true));
-        static::Root()::User(PhaseProxy::CreatePhaseProxy(static::class, UserAction::class, false));
+        $object = $this->proxySingletonExToRoot(PhaseProxyAdminAction::class);
+        static::Root()::Admin($object);
+        static::Root()::User(PhaseProxy::CreatePhaseProxy(static::class, PhaseProxyUserAction::class, false));
     }
 }
-class AdminAction
+class PhaseProxySubApp2 extends PhaseProxySubApp
+{
+}
+class PhaseProxyAdminAction
 {
     public static $AppClass = SubApp::class;
-    use ApiSingletonExTrait;
+    use SingletonExTrait;
     public function id()
     {
-        return DATE(DATE_ATOM);
+        return '>>'. PhaseProxyMainApp::Phase().DATE(DATE_ATOM);
     }
 }
-class UserAction
+class PhaseProxyUserAction
 {
-    public static $AppClass = SubApp::class;
+    public static $AppClass = PhaseProxySubApp::class;
 
-    use ApiSingletonExTrait;
+    use SingletonExTrait;
     public function id()
     {
-        return DATE(DATE_ATOM);
+        return '>>'. PhaseProxyMainApp::Phase().DATE(DATE_ATOM);
     }
 }

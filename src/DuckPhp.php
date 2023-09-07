@@ -52,11 +52,16 @@ class DuckPhp extends App
         }
         return $this;
     }
-    public function getPath($sub_path)
+    public function getPath($sub_path = '')
     {
+        if (!$sub_path) {
+            return $this->options['path'];
+        }
         $key = "path_".$sub_path;
         if (isset($this->options[$key])) {
             return parent::getComponentPathByKey($key);
+        } elseif (in_array($sub_path, ['config','view','log'])) {
+            return $this->options['path']. $sub_path .'/';
         }
         return $this->options['path'].$sub_path .'/';
     }
@@ -107,6 +112,17 @@ class DuckPhp extends App
         $string .= "return ".var_export($all_options, true) .';';
         file_put_contents($full_file, $string);
     }
+    /*
+    public function proxySingletonExToRoot($class)
+    {
+        $phase = static::Phase();
+        static::Phase(get_class(static::Root()));
+        $object = $class::G(PhaseProxy::CreatePhaseProxy(static::class,$class));
+        static::Phase($phase);
+        return $object;
+    }
+    //*/
+    
     /////////////////
     public static function Admin($admin = null)
     {

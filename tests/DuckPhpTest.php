@@ -10,11 +10,15 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         $ref = new \ReflectionClass(DuckPhp::class);
-        $path = $ref->getFileName();
-        
-        $extFile=dirname($path).'/Core/Functions.php';
+        $extpath = $ref->getFileName();
+        $extFile=dirname($extpath).'/Core/Functions.php';
         \LibCoverage\LibCoverage::G()->addExtFile($extFile);
+        
         \LibCoverage\LibCoverage::Begin(DuckPhp::class);
+        $LibCoverage = \LibCoverage\LibCoverage::G();
+        $path = \LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
+        
+       
         
         //code here
         //$handler=null;
@@ -24,7 +28,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         //DuckPhp::G()->onSwooleHttpdInit($SwooleHttpd, false,function(){var_dump("OK");});
         //DuckPhp::G()->onSwooleHttpdInit($SwooleHttpd,true,null);
 
-        $path_view=\LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class).'views/';
+        $path_view= $path.'views/';
 
         $options=[
             'log_sql_query'=>true,
@@ -79,7 +83,24 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::G()->AdminId();
         DuckPhp::G()->UserId();
         
+        $options['path'] = $path;
+        $options['path_test'] = 'abc';
+        $options['ext_options_from_config']=true;
         
+        @unlink($path.'config/'.'DuckPhpOptions.php');
+        DuckPhp::G(new DuckPhp())->init($options);
+        DuckPhp::G()->install(['test'=>DATE(DATE_ATOM)]);
+         
+        $options['ext'][DuckPhp_Sub::class]=['test'=>DATE(DATE_ATOM)];
+        DuckPhp::G(new DuckPhp())->init($options);
+        echo "\n". DuckPhp::G()->getPath();
+        echo "\n". DuckPhp::G()->getPath('test');
+        echo "\n". DuckPhp::G()->getPath('config');
+        echo "\n". DuckPhp::G()->getPath('zz');
+       
+        DuckPhp::G()->isInstalled();
+        @unlink($path.'config/'.'DuckPhpOptions.php');
+        \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End(DuckPhp::class);
 
     }
@@ -104,6 +125,10 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
 
 
     }
+}
+class DuckPhp_Sub extends DuckPhp
+{
+    //
 }
 class fakeSwooleHttpd
 {

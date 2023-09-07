@@ -43,7 +43,7 @@ class PhaseContainer
     }
 
     ////////////////////////////////
-    public function _GetObject($class, $object = null)
+    public function _GetObject(string $class, $object = null)
     {
         if (isset($this->containers[$this->current][$class])) {
             if ($object) {

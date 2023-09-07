@@ -24,29 +24,14 @@ class PhaseProxy
     }
     public function __call($method, $args)
     {
-        $current = App::Phase();
-        $flag = false;
-        if (!$current) {
-            $flag = true;
-        } else {
-            if ($this->strict) {
-                if ($current === $this->container_class) {
-                    $flag = true;
-                }
-            } else {
-                if (is_a($current, $this->container_class)) { //is_subclass_of ?
-                    $flag = true;
-                }
-            }
-        }
-        if ($flag) {
-            $callback = [($this->overriding_class)::G(),$method];
-            return ($callback)(...$args); /** @phpstan-ignore-line */
-        }
+        $phase = App::Phase();
+        
         App::Phase($this->container_class);
-        $callback = [($this->overriding_class)::G(),$method];
+        $object = ($this->overriding_class)::G();
+        $callback = [$object,$method];
+        
         $ret = ($callback)(...$args); /** @phpstan-ignore-line */
-        App::Phase($current);
+        App::Phase($phase);
         return $ret;
     }
 }
