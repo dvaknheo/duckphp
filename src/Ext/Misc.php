@@ -135,7 +135,7 @@ class Misc extends ComponentBase
             'float' => FILTER_VALIDATE_FLOAT,
             'string' => FILTER_SANITIZE_STRING,
         ];
-        if ($interface && !is_a($class, $interface)) {
+        if ($interface && !\is_a($class, $interface)) {
             throw new ReflectionException("Bad interface", -3);
         }
         $reflect = new ReflectionMethod($class, $method);

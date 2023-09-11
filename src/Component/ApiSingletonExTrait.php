@@ -12,26 +12,36 @@ trait ApiSingletonExTrait
 {
     use SingletonExTrait { G as _G; }
     //public static $AppClass;
+    protected function GetAppClass()
+    {
+        if (isset(static::$AppClass)) {
+            return  \get_class(static::$AppClass::G());
+        } else {
+            return '';
+        }
+    }
     public static function G($object = null)
     {
-        if ($object) {
-            return static::_G($object);
-        }
-        
         $phase = App::Phase();
         if (!$phase) {
             return static::_G($object);
         }
-        
-        $base = get_class(App::G());
-        if ($phase === $base) {
-            //in root.
-            return new PhaseProxy(static::$AppClass, $base, false);
+        if (App::InRootPhase()) {
+            $container = static::GetAppClass();
+            if ($container && ($container === $phase || \is_subclass_of($phase, $container))) {
+                $ret = static::_G($object);
+                $ret->phase_fore_debug = $phase;
+                return $ret;
+            }
+            return new PhaseProxy($container, static::class, false);
         } else {
-            // in parent
-            $ret = static::_G();
-            static::$AppClass = $phase;
+            $ret = static::_G($object);
+            $ret->phase_fore_debug = $phase;
             return $ret;
         }
+    }
+    public static function CallInPhase($phase)
+    {
+        return new PhaseProxy($phase, static::class);
     }
 }

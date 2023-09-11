@@ -17,7 +17,7 @@ class PhaseProxyTest extends \PHPUnit\Framework\TestCase
         PhaseProxyMainApp::RunQuickly($options);
         
         
-        $object = PhaseProxy::CreatePhaseProxy(PhaseProxyMainApp::class, PhaseProxyAdminAction::class, true);
+        $object = PhaseProxy::CreatePhaseProxy(PhaseProxyMainApp::class, PhaseProxyAdminAction::class);
         $object->id();
         
         $options = [

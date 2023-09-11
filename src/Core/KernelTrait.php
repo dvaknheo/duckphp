@@ -72,9 +72,13 @@ trait KernelTrait
     {
         return (self::class)::G(); // remark ,don't use self::G()!
     }
-    public static function IsCurrent()
+    public static function InRootPhase()
     {
-        return static::Root() === static::Current();
+        $phase = static::Phase();
+        if (!$phase) {
+            return true;
+        }
+        return $phase === get_class(static::Root()) ? true:false;
     }
     protected function initOptions(array $options)
     {
@@ -140,7 +144,7 @@ trait KernelTrait
                 $extApps[$class] = $class; /** @phpstan-ignore-line */
             }
         }
-        $this->isChild = is_a($context, self::class);
+        $this->isChild = \is_a($context, self::class);
 
         if (!$this->isChild && empty($extApps)) {
             $this->isSimpleMode = true;
@@ -224,7 +228,7 @@ trait KernelTrait
             'default_exception_handler' => [static::class,'OnDefaultException'],
             'dev_error_handler' => [static::class,'OnDevErrorHandler'],
         ];
-        if ($context && is_a($context, self::class)) {
+        if ($context && \is_a($context, self::class)) {
             $exception_option['handle_all_dev_error'] = false;
             $exception_option['handle_all_exception'] = false;
             $this->dealAsChild($context);
