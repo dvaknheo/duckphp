@@ -7,7 +7,6 @@ namespace DuckPhp\Core;
 
 use DuckPhp\Core\ComponentBase;
 
-// settting 忽略 path_override,其他要加上 path override
 class Configer extends ComponentBase
 {
     public $options = [
@@ -25,15 +24,12 @@ class Configer extends ComponentBase
         'use_env_file' => false,
         'path_config_override_from' => null,
     ];
-    protected $path;
     protected $all_config = [];
     protected $setting = [];
     
     //@override
     protected function initOptions(array $options)
     {
-        $this->path = parent::getComponentPathByKey('path_config');
-        
         $this->setting = $this->options['setting'] ?? [];
         $this->all_config = $this->options['all_config'] ?? [];
         
@@ -44,7 +40,8 @@ class Configer extends ComponentBase
         }
         if ($this->options['setting_file_enable']) {
             $setting_file = $this->options['setting_file'];
-            $full_setting_file = $this->getAbsPath($this->path, $setting_file);
+            $path = parent::getComponentPathByKey('path_config');
+            $full_setting_file = $this->getAbsPath($path, $setting_file);
             if (!is_file($full_setting_file)) {
                 $this->exitWhenNoSettingFile($full_setting_file, $setting_file);
             } else {
@@ -79,7 +76,8 @@ class Configer extends ComponentBase
         if (isset($this->all_config[$file_basename])) {
             return $this->all_config[$file_basename];
         }
-        $full_file = $this->path.$file_basename.'.php';
+        $path = parent::getComponentPathByKey('path_config');
+        $full_file = $path.$file_basename.'.php';
         if (isset($this->options['path_config_override_from']) && !is_file($full_file)) {
             $file = $this->options['path_config_override_from'].$file_basename.'.php';
             if (is_file($file)) {

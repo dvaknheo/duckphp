@@ -69,7 +69,7 @@ class DuckPhp extends App
     protected $file_for_ext_options_from_config = 'DuckPhpOptions';
     public function isInstalled()
     {
-        return $this->options['install']? true : false;
+        return $this->options['install'] ?? false;
     }
     public function install($options)
     {
