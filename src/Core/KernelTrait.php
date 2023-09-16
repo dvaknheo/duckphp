@@ -40,7 +40,7 @@ trait KernelTrait
             'skip_404_handler' => false,
             'skip_exception_check' => false,
             
-            'inited_handler' => null,
+            'on_inited' => null,
             //override_class
             //override_class_from
             //path_override_from
@@ -217,8 +217,8 @@ trait KernelTrait
         $this->initExtentions($this->options['ext']);
         
         $this->onInit();
-        if ($this->options['inited_handler']) {
-            ($this->options['inited_handler'])($ex);
+        if ($this->options['on_inited']) {
+            ($this->options['on_inited'])();
         }
         $this->is_inited = true;
         return $this;

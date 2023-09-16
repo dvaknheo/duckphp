@@ -8,7 +8,7 @@
 
 namespace DuckPhp;
 
-use DuckPhp\Component\AdminBase;
+use DuckPhp\Component\AdminObject;
 use DuckPhp\Component\Cache;
 use DuckPhp\Component\Console;
 use DuckPhp\Component\DbManager;
@@ -18,7 +18,7 @@ use DuckPhp\Component\Pager;
 use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookPathInfoCompat;
 use DuckPhp\Component\RouteHookRouteMap;
-use DuckPhp\Component\UserBase;
+use DuckPhp\Component\UserObject;
 use DuckPhp\Core\App;
 
 class DuckPhp extends App
@@ -118,9 +118,13 @@ class DuckPhp extends App
     ////]]]] // extOptionsMode
     
     /////////////////
+    protected function createPhaseProxy($class)
+    {
+        return new PhaseProxy(static::class, $$class);
+    }
     public static function Admin($admin = null)
     {
-        return AdminBase::G($admin);
+        return AdminObject::G($admin);
     }
     public static function AdminId()
     {
@@ -128,7 +132,7 @@ class DuckPhp extends App
     }
     public static function User($user = null)
     {
-        return UserBase::G($user);
+        return UserObject::G($user);
     }
     public static function UserId()
     {
