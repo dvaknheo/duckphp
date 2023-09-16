@@ -83,20 +83,24 @@ class ComponentBase // implements ComponentInterface
         $sub_path = $this->options[$path_key];
         return $this->getComponentPath($sub_path, $main_path);
     }
-    protected function getComponentPath($sub_path, $main_path): string
+    protected function isAbsPath( $path)
     {
-        $is_abs_path = false;
         if (DIRECTORY_SEPARATOR === '/') {
             //Linux
-            if (substr($sub_path, 0, 1) === '/') {
-                $is_abs_path = true;
+            if (substr($path, 0, 1) === '/') {
+                return true;
             }
         } else { // @codeCoverageIgnoreStart
             // Windows
-            if (preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $sub_path)) {
-                $is_abs_path = true;
+            if (preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $path)) {
+                return true;
             }
         }   // @codeCoverageIgnoreEnd
+        return false;
+    }
+    protected function getComponentPath($sub_path, $main_path): string
+    {
+        $is_abs_path = $this->isAbsPath($sub_path);
         if ($is_abs_path) {
             return rtrim($sub_path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
         } else {

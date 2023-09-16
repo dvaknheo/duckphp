@@ -41,7 +41,9 @@ class Configer extends ComponentBase
         if ($this->options['setting_file_enable']) {
             $setting_file = $this->options['setting_file'];
             $path = parent::getComponentPathByKey('path_config');
-            $full_setting_file = $this->getAbsPath($path, $setting_file);
+            
+            $full_setting_file = $this->getAbsDir($path, $setting_file);
+            
             if (!is_file($full_setting_file)) {
                 $this->exitWhenNoSettingFile($full_setting_file, $setting_file);
             } else {
@@ -93,7 +95,7 @@ class Configer extends ComponentBase
     {
         return require $file;
     }
-    protected function getAbsPath($parent_path, $path)
+    protected function getAbsDir($parent_path, $path)
     {
         $is_abs_path = false;
         if (DIRECTORY_SEPARATOR === '/') {
