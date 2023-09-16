@@ -8,6 +8,7 @@
 
 namespace DuckPhp;
 
+use DuckPhp\Component\AdminBase;
 use DuckPhp\Component\Cache;
 use DuckPhp\Component\Console;
 use DuckPhp\Component\DbManager;
@@ -17,12 +18,11 @@ use DuckPhp\Component\Pager;
 use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookPathInfoCompat;
 use DuckPhp\Component\RouteHookRouteMap;
+use DuckPhp\Component\UserBase;
 use DuckPhp\Core\App;
 
 class DuckPhp extends App
 {
-    protected $admin;
-    protected $user;
     protected function initComponents(array $options, object $context = null)
     {
         parent::initComponents($options, $context);
@@ -66,12 +66,15 @@ class DuckPhp extends App
         return $this->options['path'].$sub_path .'/';
     }
     //////////////////////
-    protected $file_for_ext_options_from_config = 'DuckPhpOptions';
+    
     public function isInstalled()
     {
         return $this->options['install'] ?? false;
     }
-    public function install($options)
+    //////////////
+    ////[[[[
+    protected $file_for_ext_options_from_config = 'DuckPhpOptions';
+    protected function installWithExtOptions($options)
     {
         $options['install'] = DATE(DATE_ATOM);
         $this->saveExtOptions(static::class, $options);
@@ -112,28 +115,12 @@ class DuckPhp extends App
         $string .= "return ".var_export($all_options, true) .';';
         file_put_contents($full_file, $string);
     }
-    /*
-    public function proxySingletonExToRoot($class)
-    {
-        $phase = static::Phase();
-        static::Phase(get_class(static::Root()));
-        $object = $class::G(PhaseProxy::CreatePhaseProxy(static::class,$class));
-        static::Phase($phase);
-        return $object;
-    }
-    //*/
+    ////]]]] // extOptionsMode
     
     /////////////////
     public static function Admin($admin = null)
     {
-        return static::G()->_Admin($admin);
-    }
-    public function _Admin($admin = null)
-    {
-        if ($admin) {
-            $this->admin = $admin;
-        }
-        return $this->admin;
+        return AdminBase::G($admin);
     }
     public static function AdminId()
     {
@@ -141,14 +128,7 @@ class DuckPhp extends App
     }
     public static function User($user = null)
     {
-        return static::G()->_User($user);
-    }
-    public function _User($user = null)
-    {
-        if ($user) {
-            $this->user = $user;
-        }
-        return $this->user;
+        return UserBase::G($user);
     }
     public static function UserId()
     {

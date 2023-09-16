@@ -16,8 +16,6 @@ if (!class_exists(\LazyToChange\System\App::class)) {
     \DuckPhp\DuckPhp::runAutoLoader();
 
 }
-//echo "<pre>\n";var_dump(md5(spl_object_hash(\DuckPhp\Core\AutoLoader::G())));echo "</pre>\n";
-
 $options = [
     // 这里可以添加更多选项
     'controller_resource_prefix' => '//res/',

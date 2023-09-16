@@ -102,9 +102,9 @@ class View extends ComponentBase
         $this->temp_view_file = null;
         $this->error_reporting_old = null;
     }
-    public function getViewPath()
+    protected function getViewPath()
     {
-        return $this->getComponentPathByKey('path_view');
+        return parent::getComponentPathByKey('path_view');
     }
     public function getViewData(): array
     {
@@ -129,7 +129,7 @@ class View extends ComponentBase
             $this->data[$key] = $value;
         }
     }
-    protected function getViewFile(?string $view): string
+    public function getViewFile(?string $view): string
     {
         if (empty($view)) {
             return '';

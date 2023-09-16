@@ -40,11 +40,11 @@ trait KernelTrait
             'skip_404_handler' => false,
             'skip_exception_check' => false,
             
+            'inited_handler' => null,
             //override_class
             //override_class_from
             //path_override_from
             
-            //'after_init_handler' => null,
         ];
     
     protected $default_run_handler = null;
@@ -217,7 +217,9 @@ trait KernelTrait
         $this->initExtentions($this->options['ext']);
         
         $this->onInit();
-        
+        if ($this->options['inited_handler']) {
+            ($this->options['inited_handler'])($ex);
+        }
         $this->is_inited = true;
         return $this;
     }
@@ -325,7 +327,7 @@ trait KernelTrait
             }
         } catch (\Throwable $ex) {
             $phase = $this->_Phase(static::class);
-            RuntimeState::G()->lastPhase = $phase;
+            RuntimeState::G()->lastPhase = $phase; //todo functionable
             RuntimeState::G()->toggleInException();
             if ($this->options['skip_exception_check']) {
                 RuntimeState::G()->clear();
