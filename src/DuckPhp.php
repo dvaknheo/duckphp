@@ -15,6 +15,7 @@ use DuckPhp\Component\DbManager;
 use DuckPhp\Component\DuckPhpCommand;
 use DuckPhp\Component\EventManager;
 use DuckPhp\Component\Pager;
+use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookPathInfoCompat;
 use DuckPhp\Component\RouteHookRouteMap;
@@ -120,7 +121,7 @@ class DuckPhp extends App
     /////////////////
     protected function createPhaseProxy($class)
     {
-        return new PhaseProxy(static::class, $$class);
+        return new PhaseProxy(static::class, $class);
     }
     public static function Admin($admin = null)
     {
