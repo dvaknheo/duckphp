@@ -233,7 +233,7 @@ class Route extends ComponentBase
             $prefix = '/'.trim($this->options['controller_url_prefix'], '/').'/';
             $l = strlen($prefix);
             if (substr($path_info, 0, $l) !== $prefix) {
-                $this->route_error = "path_prefix error";
+                $this->route_error = "url: $path_info controller_url_prefix($prefix) error";
                 return null;
             }
             $path_info = substr($path_info, $l - 1);
@@ -403,6 +403,7 @@ trait Route_UrlManager
         //
         //   'https://cdn.site/','http://cdn.site','//cdn.site/','res/'
         $flag = preg_match('/^(https?:\/)?\//', $url ?? '');
+        //TODO './' => '',
         if ($flag) {
             return $url;
         }
@@ -438,8 +439,9 @@ trait Route_UrlManager
         $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         //get basepath.
         $document_root = rtrim($_SERVER['DOCUMENT_ROOT'], '/');
+        //$document_root =  !empty($document_root)?$document_root:'/';
         $basepath = substr(rtrim($_SERVER['SCRIPT_FILENAME'], '/'), strlen($document_root));
-
+        $basepath = ($basepath === '') ? '/' : $basepath;
         /* something wrong ?
         if (substr($basepath, -strlen('/index.php'))==='/index.php') {
             $basepath=substr($basepath, 0, -strlen('/index.php'));

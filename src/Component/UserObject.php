@@ -5,10 +5,15 @@
  */
 namespace DuckPhp\Component;
 
-use DuckPhp\Core\ComponentBase;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
-class UserObject extends ComponentBase
+class UserObject
 {
+    use SingletonExTrait;
+    public function __construct()
+    {
+        throw new Exception('No Impelement');
+    }
     public function id()
     {
         return 0;
