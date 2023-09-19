@@ -20,33 +20,25 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
 
     public $options = [
         'path' => '',
-        'path_log' => 'logs',
+        'path_log' => 'runtime/logs',
         'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
         'log_prefix' => 'DuckPhpLog',
     ];
     protected $path;
     protected $init_once = true;
-    public function __construct()
-    {
-        parent::__construct();
-        $this->init([]);
-    }
     public function reset()
     {
         $this->is_inited = false;
         return $this;
     }
-    
-    //@override
-    protected function initOptions(array $options)
-    {
-        $this->path = parent::getComponentPathByKey('path_log');
-    }
+
     public function log($level, $message, array $context = array())
     {
         $file = preg_replace_callback('/%(.)/', function ($m) {
             return date($m[1]);
         }, $this->options['log_file_template']);
+        
+        $this->path = parent::getComponentPathByKey('path_log');
         $path = $this->path.$file;
         $type = !empty($path)?3:0;
         $prefix = $this->options['log_prefix'];

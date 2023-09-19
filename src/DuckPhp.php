@@ -21,6 +21,7 @@ use DuckPhp\Component\RouteHookPathInfoCompat;
 use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Component\UserObject;
 use DuckPhp\Core\App;
+use DuckPhp\Core\Logger;
 
 class DuckPhp extends App
 {
@@ -29,6 +30,7 @@ class DuckPhp extends App
         parent::initComponents($options, $context);
         
         $this->options['database_auto_extend_method'] = $this->options['database_auto_extend_method'] ?? false;
+        Logger::G()->init($this->options, $this);
         DbManager::G()->init($this->options, $this);
         
         if (PHP_SAPI === 'cli') {
@@ -43,6 +45,7 @@ class DuckPhp extends App
         $phase = $this->_Phase();
         if ($phase) {
             $this->getContainer()->addPublicClasses([
+                Logger::class,
                 Console::class,
                 DbManager::class,
                 RedisManager::class
