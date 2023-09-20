@@ -41,6 +41,7 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             'use_super_global' => true,
             'override_class'=>'\\'.KernelTestApp::class,
             'skip_fix_path_info'=>true,
+            'on_inited' =>function (){ echo 'Inited!';}
         ];
         $options['ext']=[
             'noclass'=>true,

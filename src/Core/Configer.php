@@ -47,11 +47,10 @@ class Configer extends ComponentBase
         if (static::IsAbsPath($this->options['setting_file'])) {
             $full_file = $this->options['setting_file'];
         } elseif (static::IsAbsPath($this->options['path_config'])) {
-            $full_file = static::SlashPath($this->options['path_config']) . $this->options['setting_file'];
+            $full_file = static::SlashDir($this->options['path_config']) . $this->options['setting_file'];
         } else {
-            $full_file = static::SlashPath($this->options['path']) . static::SlashPath($this->options['path_config']) . $this->options['setting_file'];
+            $full_file = static::SlashDir($this->options['path']) . static::SlashDir($this->options['path_config']) . $this->options['setting_file'];
         }
-        
         if (!is_file($full_file)) {
             $this->exitWhenNoSettingFile($full_file, $this->options['setting_file']);
         } else {

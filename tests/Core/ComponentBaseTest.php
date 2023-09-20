@@ -9,6 +9,7 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(ComponentBase::class);
         $LibCoverage=\LibCoverage\LibCoverage::G();
+        $path_data=\LibCoverage\LibCoverage::G()->getClassTestPath(ComponentBase::class);
 
         ComponentBaseObject::G()->init(['a'=>'b'],new \stdClass());
         ComponentBaseObject::G()->isInited();
@@ -20,6 +21,25 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
         ComponentBaseObject::G();
         ComponentBaseObject2::G()->init([]);
         ComponentBaseObject2::G()->init([]);
+        
+        
+        var_dump(ComponentBase::SlashDir(''));
+        var_dump(ComponentBase::IsAbsPath(''));
+        $options=[
+            'path'=> $path_data,
+            'path_data'=> '',
+            'path_data_override_from'=> $path_data.'overrided',
+        ];
+        ComponentBase::GetFileFromSubComponent($options, 'data', $path_data.'data.php');
+        ComponentBase::GetFileFromSubComponent($options, 'data', 'data.php');
+        ComponentBase::GetFileFromSubComponent($options, 'data', 'data2.php');
+        ComponentBase::GetFileFromSubComponent($options, 'data', 'datanotexist.php');
+        $options=[
+            'path'=> $path_data,
+            'path_data'=> '',
+            'path_data_override_from'=> null,
+        ];
+        ComponentBase::GetFileFromSubComponent($options, 'data', 'data2.php');
         
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();

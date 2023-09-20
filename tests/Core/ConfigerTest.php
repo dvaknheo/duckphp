@@ -28,28 +28,26 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
             'path'=>dirname($path_config),
             'path_config'=>basename($path_config),
         ];
-
         
-        //Configer::G()->options['config_ext_file_map']=['X/a'=>$path_config.'/for_assign.php'];
-        //Configer::G()->_Config(null, [],'X/a');
-        //Configer::G()->isInited();
-        
+        $options['setting_file']='noooooooo.php';
         $options['setting_file_enable'] =true;
         $options['setting_file_ignore_exists'] =true;
         Configer::G(new Configer)->init($options);
         Configer::G()->_Setting($key);
-                $options['setting_file_ignore_exists'] =false;
+            $options['setting_file_ignore_exists'] = false;
         try{
             Configer::G(new Configer)->init($options);
         }catch(\Throwable $ex){
             //
         }
+        $options['setting_file']='setting.php';
         $options['setting_file_ignore_exists'] = true;
         $options['path_config_override_from'] = $path_config.'overrided/';;
         $options['setting_file_enable'] = true;
         $options['setting_file'] = $path_config.'setting.php';
         Configer::G(new Configer)->init($options);
         Configer::G()->_Config(null, [],'override');
+        Configer::G()->_Config(null, [],'NotExits');
         \LibCoverage\LibCoverage::End();
     }
 }

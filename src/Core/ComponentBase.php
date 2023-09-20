@@ -92,7 +92,7 @@ class ComponentBase // implements ComponentInterface
         }   // @codeCoverageIgnoreEnd
         return false;
     }
-    public static function SlashPath($path)
+    public static function SlashDir($path)
     {
         $path = ($path !== '') ? rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR : '';
         return $path;
@@ -105,9 +105,9 @@ class ComponentBase // implements ComponentInterface
         
         clearstatcache();
         
-        $path = static::SlashPath($options['path_'.$subkey]);
+        $path = static::SlashDir($options['path_'.$subkey]);
         if (!static::IsAbsPath($path)) {
-            $path = static::SlashPath($options['path']) . $path;
+            $path = static::SlashDir($options['path']) . $path;
         }
         
         $full_file = $path.$file;
@@ -119,7 +119,7 @@ class ComponentBase // implements ComponentInterface
         if (!isset($path)) {
             return null;
         }
-        $full_file = static::SlashPath($path) . $file;
+        $full_file = static::SlashDir($path) . $file;
         
         if (is_file($full_file)) {
             return $full_file;
