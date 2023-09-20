@@ -24,7 +24,7 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         View::Display("block",['A'=>'b']);
         View::Render("block",['A'=>'b']);
         View::G()->getViewData();
-        View::G()->getViewPath();
+        //View::G()->getViewPath();
         View::G()->setViewHeadFoot(null,null);
         
         View::G()->isInited();

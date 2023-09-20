@@ -30,8 +30,8 @@ class PhaseProxyTest extends \PHPUnit\Framework\TestCase
         ];
         PhaseProxyMainApp::RunQuickly($options);
         $phase =PhaseProxyMainApp::Root()::Phase();
-        var_dump(PhaseProxyMainApp::Admin()->id());
-        var_dump(PhaseProxyMainApp::User()->id());
+        //var_dump(PhaseProxyMainApp::Admin()->id());
+        //var_dump(PhaseProxyMainApp::User()->id());
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
     }

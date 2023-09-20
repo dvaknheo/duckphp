@@ -27,8 +27,8 @@ class ApiSingletonExTraitTest extends \PHPUnit\Framework\TestCase
         });
         ASEAdminAction::G();
         $phase =ASEMainApp::Root()::Phase();
-        var_dump(ASEMainApp::Admin()->id());
-        var_dump(ASEMainApp::User()->id());
+        //var_dump(ASEMainApp::Admin()->id());
+        //var_dump(ASEMainApp::User()->id());
         
         ASEAdminAction::CallInPhase(ASESubApp2::class);
         

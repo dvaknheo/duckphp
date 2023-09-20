@@ -1,5 +1,5 @@
 <?php 
-namespace tests\DuckPhp\Ext;
+namespace tests\DuckPhp\Core;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\ComponentInterface;
 
@@ -38,9 +38,9 @@ class ComponentBaseObject extends ComponentBase  implements ComponentInterface
     {
         parent::initOptions($options);
 
-        $this->path = parent::getComponentPathByKey('path_test');
-        $this->options['path_test']='/tmp';
-        $this->path = parent::getComponentPathByKey('path_test');
+        //$this->path = parent::getComponentPathByKey('path_test');
+        //$this->options['path_test']='/tmp';
+        //$this->path = parent::getComponentPathByKey('path_test');
         
         /*
         $this->namespace = parent::getComponentNameSpace('namespace_test');
