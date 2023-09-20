@@ -39,17 +39,25 @@ class Configer extends ComponentBase
             $this->setting = array_merge($this->setting, $env_setting);
         }
         if ($this->options['setting_file_enable']) {
-            $setting_file = $this->options['setting_file'];
-            $path = parent::getComponentPathByKey('path_config');
+            $this->dealWithSettingFile();
             
-            $full_setting_file = $this->getAbsDir($path, $setting_file);
-            
-            if (!is_file($full_setting_file)) {
-                $this->exitWhenNoSettingFile($full_setting_file, $setting_file);
-            } else {
-                $setting = $this->loadFile($full_setting_file);
-                $this->setting = array_merge($this->setting, $setting);
-            }
+        }
+    }
+    protected function dealWithSettingFile()
+    {
+        if (static::IsAbsPath($this->options['setting_file'])) {
+            $full_file = $this->options['setting_file'];
+        } else if (static::IsAbsPath($this->options['path_config'])) {
+            $full_file =  static::SlashPath($this->options['path_config']) . $this->options['setting_file'];
+        } else {
+            $full_file = static::SlashPath($this->options['path']) . static::SlashPath($this->options['path_config']) . $this->options['setting_file'];
+        }
+        
+        if (!is_file($full_file)) {
+            $this->exitWhenNoSettingFile($full_file, $this->options['setting_file']);
+        } else {
+            $setting = $this->loadFile($full_file);
+            $this->setting = array_merge($this->setting, $setting);
         }
     }
     public function _Setting($key)
@@ -78,13 +86,12 @@ class Configer extends ComponentBase
         if (isset($this->all_config[$file_basename])) {
             return $this->all_config[$file_basename];
         }
-        $path = parent::getComponentPathByKey('path_config');
-        $full_file = $path.$file_basename.'.php';
-        if (isset($this->options['path_config_override_from']) && !is_file($full_file)) {
-            $file = $this->options['path_config_override_from'].$file_basename.'.php';
-            if (is_file($file)) {
-                $full_file = $file;
-            }
+        
+        $file = $file_basename.'.php';
+        $full_file = ComponentBase::GetFileFromSubComponent($this->options, 'config', $file);
+        if (!$full_file) {
+            $this->all_config[$file_basename] = [];
+            return [];
         }
         $config = $this->loadFile($full_file);
         
@@ -94,25 +101,5 @@ class Configer extends ComponentBase
     protected function loadFile($file)
     {
         return require $file;
-    }
-    protected function getAbsDir($parent_path, $path)
-    {
-        $is_abs_path = false;
-        if (DIRECTORY_SEPARATOR === '/') {
-            //Linux
-            if (substr($path, 0, 1) === '/') {
-                $is_abs_path = true;
-            }
-        } else { // @codeCoverageIgnoreStart
-            // Windows
-            if (preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $path)) {
-                $is_abs_path = true;
-            }
-        }   // @codeCoverageIgnoreEnd
-        if ($is_abs_path) {
-            return $path;
-        } else {
-            return $parent_path.$path;
-        }
     }
 }

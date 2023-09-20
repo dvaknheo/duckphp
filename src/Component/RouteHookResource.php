@@ -39,9 +39,8 @@ class RouteHookResource extends ComponentBase
         if (pathinfo($file, PATHINFO_EXTENSION) === 'php') {
             return false;
         }
-        $path_document = parent::getComponentPathByKey('path_resource');
-        $file = $path_document.$file;
-        if (!is_file($file)) {
+        $file = ComponentBase::GetFileFromSubComponent($this->options, 'resource', $file);
+        if (!$file) {
             return false;
         }
         ($this->context_class)::header('Content-Type: '.($this->context_class)::mime_content_type($file));

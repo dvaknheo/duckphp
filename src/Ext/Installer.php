@@ -102,4 +102,28 @@ class Installer extends ComponentBase
         SqlDumper::G(new $class);
         return SqlDumper::G()->init($options, ($this->context_class)::G());
     }
+    private static function IsAbsPath( $path)
+    {
+        if (DIRECTORY_SEPARATOR === '/') {
+            //Linux
+            if (substr($path, 0, 1) === '/') {
+                return true;
+            }
+        } else { // @codeCoverageIgnoreStart
+            // Windows
+            if (preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $path)) {
+                return true;
+            }
+        }   // @codeCoverageIgnoreEnd
+        return false;
+    }
+    protected function getComponentPath($sub_path, $main_path): string
+    {
+        $is_abs_path = static::IsAbsPath($sub_path);
+        if ($is_abs_path) {
+            return rtrim($sub_path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        } else {
+            return $main_path.rtrim($sub_path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        }
+    }
 }

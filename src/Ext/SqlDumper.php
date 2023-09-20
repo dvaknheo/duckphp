@@ -147,7 +147,7 @@ class SqlDumper extends ComponentBase
     protected function load()
     {
         $ret = [];
-        $path = parent::getComponentPathByKey('path_sql_dump');
+        $path = static::getComponentPathByKey('path_sql_dump');
         $file = $path.$this->options['sql_dump_file'].'.php';
         
         $ret = (function () use ($file) {
@@ -202,4 +202,28 @@ class SqlDumper extends ComponentBase
         }
         return $ret;
     }
+        private static function IsAbsPath( $path)
+    {
+        if (DIRECTORY_SEPARATOR === '/') {
+            //Linux
+            if (substr($path, 0, 1) === '/') {
+                return true;
+            }
+        } else { // @codeCoverageIgnoreStart
+            // Windows
+            if (preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $path)) {
+                return true;
+            }
+        }   // @codeCoverageIgnoreEnd
+        return false;
+    }
+    protected function getComponentPath($sub_path, $main_path): string
+    {
+        $is_abs_path = static::IsAbsPath($sub_path);
+        if ($is_abs_path) {
+            return rtrim($sub_path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        } else {
+            return $main_path.rtrim($sub_path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        }
+    }    
 }

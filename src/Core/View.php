@@ -102,10 +102,6 @@ class View extends ComponentBase
         $this->temp_view_file = null;
         $this->error_reporting_old = null;
     }
-    protected function getViewPath()
-    {
-        return parent::getComponentPathByKey('path_view');
-    }
     public function getViewData(): array
     {
         return $this->data;
@@ -134,16 +130,9 @@ class View extends ComponentBase
         if (empty($view)) {
             return '';
         }
-        $base_file = preg_replace('/\.php$/', '', $view).'.php';
-        $path = $this->getViewPath();
-        $full_file = $path.$base_file;
+        $file = preg_replace('/\.php$/', '', $view).'.php';
+        $full_file = ComponentBase::GetFileFromSubComponent($this->options, 'view', $file);
         
-        if (isset($this->options['path_view_override_from']) && !is_file($full_file)) {
-            $file = $this->options['path_view_override_from'].$base_file;
-            if (is_file($file)) {
-                $full_file = $file;
-            }
-        }
         return $full_file;
     }
 }

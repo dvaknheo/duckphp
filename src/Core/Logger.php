@@ -38,9 +38,8 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
             return date($m[1]);
         }, $this->options['log_file_template']);
         
-        $this->path = parent::getComponentPathByKey('path_log');
-        $path = $this->path.$file;
-        $type = !empty($path)?3:0;
+        $full_file = ComponentBase::GetFileFromSubComponent($this->options, 'log', $file);
+        $type = !$full_file?3:0;
         $prefix = $this->options['log_prefix'];
         
         $a = [];
@@ -51,7 +50,7 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
         $date = date('Y-m-d H:i:s');
         $message = "[{$level}][{$prefix}][$date]: ".$message."\n";
         try {
-            $ret = error_log($message, $type, $path);
+            $ret = error_log($message, $type, $full_file);
         } catch (\Throwable $ex) { // @codeCoverageIgnore
             return false;  // @codeCoverageIgnore
         }  // @codeCoverageIgnore
