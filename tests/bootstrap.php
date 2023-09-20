@@ -7,10 +7,6 @@ foreach ([__DIR__ . '/../vendor/autoload.php', __DIR__ . '/../autoload.php'] as 
     }
 }
 
-if(!class_exists('LibCoverage\LibCoverage')){
-    include __DIR__ . '/LibCoverage.php'; //use LibCoverage outside
-}
-
 $setting = require __DIR__.'/data_for_tests/setting.php';
 $options = $setting['options_test'];
 \LibCoverage\LibCoverage::G()->init($options);
