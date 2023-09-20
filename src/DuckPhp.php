@@ -63,7 +63,7 @@ class DuckPhp extends App
         }
         $key = "path_".$sub_path;
         if (isset($this->options[$key])) {
-            return parent::getComponentPathByKey($key);
+            return $this->options[$key]; //这里要调整
         } elseif (in_array($sub_path, ['config','view','log'])) {
             return $this->options['path']. $sub_path .'/';
         }

@@ -77,13 +77,7 @@ class ComponentBase // implements ComponentInterface
     {
     }
     //helper
-    protected function getComponentPathByKey($path_key, $path_key_parent = 'path'): string
-    {
-        $main_path = $this->options[$path_key_parent];
-        $sub_path = $this->options[$path_key];
-        return $this->getComponentPath($sub_path, $main_path);
-    }
-    public static function IsAbsPath( $path)
+    public static function IsAbsPath($path)
     {
         if (DIRECTORY_SEPARATOR === '/') {
             //Linux
@@ -100,25 +94,25 @@ class ComponentBase // implements ComponentInterface
     }
     public static function SlashPath($path)
     {
-        $path = ($path!=='') ? rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR : '';
+        $path = ($path !== '') ? rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR : '';
         return $path;
     }
     public static function GetFileFromSubComponent($options, $subkey, $file)
     {
-        if(static::IsAbsPath($file)){
+        if (static::IsAbsPath($file)) {
             return $file;
         }
         
         clearstatcache();
         
         $path = static::SlashPath($options['path_'.$subkey]);
-        if ( !static::IsAbsPath($path)) {
+        if (!static::IsAbsPath($path)) {
             $path = static::SlashPath($options['path']) . $path;
         }
         
         $full_file = $path.$file;
         
-        if(is_file($full_file)){
+        if (is_file($full_file)) {
             return $full_file;
         }
         $path = $options['path_'.$subkey.'_override_from'] ?? null;
@@ -127,7 +121,7 @@ class ComponentBase // implements ComponentInterface
         }
         $full_file = static::SlashPath($path) . $file;
         
-        if(is_file($full_file)){
+        if (is_file($full_file)) {
             return $full_file;
         }
         return null;

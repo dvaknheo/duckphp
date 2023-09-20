@@ -12,7 +12,7 @@ class UserObject
     use SingletonExTrait;
     public function __construct()
     {
-        throw new Exception('No Impelement');
+        throw new \Exception('No Impelement');
     }
     public function id()
     {

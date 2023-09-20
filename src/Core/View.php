@@ -125,7 +125,7 @@ class View extends ComponentBase
             $this->data[$key] = $value;
         }
     }
-    public function getViewFile(?string $view): string
+    protected function getViewFile(?string $view): string
     {
         if (empty($view)) {
             return '';
