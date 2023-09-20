@@ -88,9 +88,10 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         $options['ext_options_from_config']=true;
         
         @unlink($path.'config/'.'DuckPhpOptions.php');
-        DuckPhp::G(new DuckPhp())->init($options);
-        //DuckPhp::G()->install(['test'=>DATE(DATE_ATOM)]);
-         
+        DuckPhp_Sub::G(new DuckPhp_Sub())->init($options);
+        DuckPhp_Sub::G()->install(['test'=>DATE(DATE_ATOM)]);
+        DuckPhp_Sub::G()->isInstalled();
+        
         $options['ext'][DuckPhp_Sub::class]=['test'=>DATE(DATE_ATOM)];
         DuckPhp::G(new DuckPhp())->init($options);
         echo "\n". DuckPhp::G()->getPath();
@@ -128,14 +129,15 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
 }
 class DuckPhp_Sub extends DuckPhp
 {
-    //
+    public function install($options)
+    {
+        $this->createPhaseProxy(fakeSwooleHttpd::class);
+        return $this->installWithExtOptions($options);
+    }
+    
 }
 class fakeSwooleHttpd
 {
-    public static function SG()
-    {
-        return null;
-    }
     public static function system_wrapper_get_providers()
     {
         return [];

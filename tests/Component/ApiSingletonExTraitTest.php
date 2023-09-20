@@ -22,12 +22,11 @@ class ApiSingletonExTraitTest extends \PHPUnit\Framework\TestCase
         ];
         ASEMainApp::RunQuickly($options,function(){
             ApiSingletonExTraitObject::G();
-           // ASEMainAdminAction::G();
-            
+
         });
         ASEAdminAction::G();
-        $phase =ASEMainApp::Root()::Phase();
-        //var_dump(ASEMainApp::Admin()->id());
+        //ASEMainApp::Root()->getContainer()->dumpAllObject();
+        var_dump(ASEMainApp::Admin()->id());
         //var_dump(ASEMainApp::User()->id());
         
         ASEAdminAction::CallInPhase(ASESubApp2::class);
@@ -66,6 +65,7 @@ class ASEMainAdminAction
 {
     public static $AppClass = ASEMainApp::class;
     use ApiSingletonExTrait;
+    public function __construct(){}
     public function id()
     {
         return '>>'. ASEMainApp::Phase().DATE(DATE_ATOM);
@@ -76,8 +76,20 @@ class ASESubApp extends DuckPhp
 {
     public function onInit()
     {
-        static::Root()::Admin(PhaseProxy::CreatePhaseProxy(static::class, ASEAdminAction::class, true));
-        static::Root()::User(PhaseProxy::CreatePhaseProxy(static::class, ASEUserAction::class, false));
+        $object = $this->createPhaseProxy(ASEAdminAction::class);
+        static::PhaseCall(get_class(static::Root()),function()use($object){
+            static::Root()::Admin($object);
+        });
+       
+        static::Admin(ASEAdminAction::G());
+        /*
+        static::Phase(static::Root()::Phase());
+        static::Root()::User($this->createPhaseProxy(ASEUserAction::class, false));
+        static::Phase(static::class);
+        static::User(ASEUserAction::G());
+        */
+        var_dump("Installed");
+
     }
 }
 class ASESubApp2 extends ASESubApp
@@ -97,6 +109,7 @@ class ASEUserAction
     public static $AppClass = ASESubApp::class;
 
     use ApiSingletonExTrait;
+    public function __construct(){}
     public function id()
     {
         return '>>'. ASEMainApp::Phase().DATE(DATE_ATOM);
