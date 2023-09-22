@@ -748,6 +748,10 @@ trait Core_Glue
     {
         return Route::G()->add404RouteHook($callback);
     }
+    public static function getRouteCallingClass()
+    {
+        return Route::G()->getRouteCallingClass();
+    }
     public static function getRouteCallingMethod()
     {
         return Route::G()->getRouteCallingMethod();

@@ -12,6 +12,7 @@ class RouteHookResource extends ComponentBase
     public $options = [
         'path' => '',
         'path_resource' => 'res',
+        //TODO 'controller_url_prefix'
         'controller_resource_prefix' => '',
     ];
     public static function Hook($path_info)

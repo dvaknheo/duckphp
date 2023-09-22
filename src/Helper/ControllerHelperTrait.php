@@ -17,6 +17,10 @@ trait ControllerHelperTrait
     {
         return App::Config($key, $default, $file_basename);
     }
+    public static function getRouteCallingClass()
+    {
+        return App::getRouteCallingClass();
+    }
     public static function getRouteCallingMethod()
     {
         return App::getRouteCallingMethod();

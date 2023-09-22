@@ -75,6 +75,21 @@ class DuckPhp extends App
     {
         return $this->options['install'] ?? false;
     }
+    protected function bumpSingletonToRoot($oldClass, $newClass)
+    {
+        $self = static::class;
+        $this->_PhaseCall(get_class(App::G()), function()use($self, $oldClass, $newClass) {
+            $newClass::G(new PhaseProxy($self, $oldClass));
+        });
+    }
+    protected function bumpAdmin($class)
+    {
+        return $this->bumpSingletonToRoot($class, AdminObject::class);
+    }
+    protected function bumpUser($class)
+    {
+        return $this->bumpSingletonExToRoot($class, UserObject::class);
+    }
     //////////////
     ////[[[[
     protected $file_for_ext_options_from_config = 'DuckPhpOptions';
@@ -121,11 +136,6 @@ class DuckPhp extends App
     }
     ////]]]] // extOptionsMode
     
-    /////////////////
-    protected function createPhaseProxy($class)
-    {
-        return new PhaseProxy(static::class, $class);
-    }
     public static function Admin($admin = null)
     {
         return AdminObject::G($admin);
