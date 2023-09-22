@@ -25,6 +25,7 @@ class Route extends ComponentBase
         'controller_hide_boot_class' => true,
         'controller_prefix_post' => 'do_',
         'controller_class_postfix' => '',
+        'controller_method_prefix' => '',
         'controller_path_ext' => '',
         'controller_welcome_class' => 'Main',
         
@@ -225,6 +226,7 @@ class Route extends ComponentBase
         $full_class = $this->namespace_prefix.str_replace('/', '\\', $path_class).$this->options['controller_class_postfix'];
         $full_class = ''.ltrim($full_class, '\\');
         
+        $method = $this->options['controller_method_prefix'].$method;
         return [$full_class,$method];
     }
     public function defaultGetRouteCallback($path_info)
