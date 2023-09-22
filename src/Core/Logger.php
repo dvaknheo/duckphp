@@ -38,8 +38,15 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
             return date($m[1]);
         }, $this->options['log_file_template']);
         
-        $full_file = ComponentBase::GetFileFromSubComponent($this->options, 'log', $file);
-        $type = !$full_file?3:0;
+        if (static::IsAbsPath($file)) {
+            $full_file = $file;
+        } elseif (static::IsAbsPath($this->options['path_log'])) {
+            $full_file = static::SlashDir($this->options['path_log']) . $file;
+        } else {
+            $full_file = static::SlashDir($this->options['path']) . static::SlashDir($this->options['path_log']) . $file;
+        }
+        
+        
         $prefix = $this->options['log_prefix'];
         
         $a = [];
@@ -48,9 +55,12 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
         }
         $message = str_replace(array_keys($a), array_values($a), $message);
         $date = date('Y-m-d H:i:s');
+        $message = ($_SERVER['PATH_INFO'] ?? '') .' : '.$message;
         $message = "[{$level}][{$prefix}][$date]: ".$message."\n";
         try {
-            $ret = error_log($message, $type, $full_file);
+            $type = !$full_file?3:0;
+            $ret = file_put_contents($full_file,$message,FILE_APPEND);
+            //$ret = error_log($message, $type, $full_file.'.elog');
         } catch (\Throwable $ex) { // @codeCoverageIgnore
             return false;  // @codeCoverageIgnore
         }  // @codeCoverageIgnore
