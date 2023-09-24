@@ -34,6 +34,9 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
 
     public function log($level, $message, array $context = array())
     {
+        if (!$this->is_inited) {
+            $this->init([], null);
+        }
         $file = preg_replace_callback('/%(.)/', function ($m) {
             return date($m[1]);
         }, $this->options['log_file_template']);
@@ -45,7 +48,7 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
         } else {
             $full_file = static::SlashDir($this->options['path']) . static::SlashDir($this->options['path_log']) . $file;
         }
-        
+        $full_file = '' . $full_file;
         
         $prefix = $this->options['log_prefix'];
         
@@ -59,8 +62,8 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
         $message = "[{$level}][{$prefix}][$date]: ".$message."\n";
         try {
             $type = !$full_file?3:0;
-            $ret = file_put_contents($full_file,$message,FILE_APPEND);
-            //$ret = error_log($message, $type, $full_file.'.elog');
+            //$ret = file_put_contents($full_file, $message, FILE_APPEND);
+            $ret = error_log($message, $type, $full_file);
         } catch (\Throwable $ex) { // @codeCoverageIgnore
             return false;  // @codeCoverageIgnore
         }  // @codeCoverageIgnore

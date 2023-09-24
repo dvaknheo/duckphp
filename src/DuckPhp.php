@@ -78,7 +78,7 @@ class DuckPhp extends App
     protected function bumpSingletonToRoot($oldClass, $newClass)
     {
         $self = static::class;
-        $this->_PhaseCall(get_class(App::G()), function()use($self, $oldClass, $newClass) {
+        $this->_PhaseCall(get_class(App::G()), function () use ($self, $oldClass, $newClass) {
             $newClass::G(new PhaseProxy($self, $oldClass));
         });
     }
@@ -88,7 +88,7 @@ class DuckPhp extends App
     }
     protected function bumpUser($class)
     {
-        return $this->bumpSingletonExToRoot($class, UserObject::class);
+        return $this->bumpSingletonToRoot($class, UserObject::class);
     }
     //////////////
     ////[[[[

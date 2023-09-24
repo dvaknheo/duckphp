@@ -76,7 +76,7 @@ class ASESubApp extends DuckPhp
 {
     public function onInit()
     {
-        $object = $this->createPhaseProxy(ASEAdminAction::class);
+        $object = new PhaseProxy(static::class, ASEAdminAction::class);
         static::PhaseCall(get_class(static::Root()),function()use($object){
             static::Root()::Admin($object);
         });

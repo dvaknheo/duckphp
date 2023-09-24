@@ -131,7 +131,6 @@ class DuckPhp_Sub extends DuckPhp
 {
     public function install($options)
     {
-        $this->createPhaseProxy(fakeSwooleHttpd::class);
         return $this->installWithExtOptions($options);
     }
     
