@@ -21,8 +21,8 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
         $key="key";
         Configer::G()->_Setting($key);
         Configer::G()->_Setting($key);
-        Configer::G()->_Config($key, null,$file_basename='config');
-        Configer::G()->_Config(null, [],$file_basename='config');
+        Configer::G()->_Config('config', $key, null,);
+        Configer::G()->_Config('config', null, []);
 
         $options=[
             'path'=>dirname($path_config),
@@ -46,8 +46,8 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
         $options['setting_file_enable'] = true;
         $options['setting_file'] = $path_config.'setting.php';
         Configer::G(new Configer)->init($options);
-        Configer::G()->_Config(null, [],'override');
-        Configer::G()->_Config(null, [],'NotExits');
+        Configer::G()->_Config('override',null, []);
+        Configer::G()->_Config('NotExits',null, []);
         \LibCoverage\LibCoverage::End();
     }
 }

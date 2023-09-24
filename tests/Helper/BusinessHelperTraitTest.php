@@ -20,7 +20,7 @@ class BusinessHelperTraitTest extends \PHPUnit\Framework\TestCase
         $file_basename='config';
         
         BusinessHelper::Setting($key);
-        BusinessHelper::Config($key, null, $file_basename);
+        BusinessHelper::Config($file_basename, $key, null);
 
         BusinessHelper::Cache(new \stdClass);
         

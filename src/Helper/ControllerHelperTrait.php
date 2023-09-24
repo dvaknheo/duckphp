@@ -13,9 +13,9 @@ trait ControllerHelperTrait
     {
         return App::Setting($key);
     }
-    public static function Config($key, $default = null, $file_basename = 'config')
+    public static function Config($file_basename, $key = null, $default = null)
     {
-        return App::Config($key, $default, $file_basename);
+        return App::Config($file_basename, $key, $default);
     }
     public static function getRouteCallingClass()
     {

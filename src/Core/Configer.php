@@ -70,7 +70,7 @@ class Configer extends ComponentBase
         throw new \ErrorException('DuckPhp: no Setting File');
     }
     
-    public function _Config($key = null, $default = null, $file_basename = 'config')
+    public function _Config($file_basename = 'config', $key = null, $default = null)
     {
         //TODO $filename_basename = '';
         $config = $this->_LoadConfig($file_basename);
@@ -79,7 +79,7 @@ class Configer extends ComponentBase
         }
         return isset($config[$key])?$config[$key]:$default;
     }
-    protected function _LoadConfig($file_basename = 'config')
+    protected function _LoadConfig($file_basename)
     {
         if (isset($this->all_config[$file_basename])) {
             return $this->all_config[$file_basename];
