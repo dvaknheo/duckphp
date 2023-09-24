@@ -9,7 +9,7 @@ use DuckPhp\Core\Route;
 
 trait ControllerFakeSingletonTrait
 {
-    public static function G($class)
+    public static function G($class = null)
     {
         if ($class) {
             Route::G()->replaceController(static::class, $class);

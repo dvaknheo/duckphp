@@ -94,6 +94,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         
         $options['ext'][DuckPhp_Sub::class]=['test'=>DATE(DATE_ATOM)];
         DuckPhp::G(new DuckPhp())->init($options);
+        echo "\n". DuckPhp::AdminId();
         echo "\n". DuckPhp::G()->getPath();
         echo "\n". DuckPhp::G()->getPath('test');
         echo "\n". DuckPhp::G()->getPath('config');
@@ -101,6 +102,13 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
        
         //DuckPhp::G()->isInstalled();
         @unlink($path.'config/'.'DuckPhpOptions.php');
+        
+        /////////////
+        
+        ///////////
+        
+        
+        
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End(DuckPhp::class);
 
@@ -129,6 +137,11 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
 }
 class DuckPhp_Sub extends DuckPhp
 {
+    public function onInit()
+    {
+        $this->bumpAdmin(FakeAdmin::class);
+        $this->bumpUser(FakeUser::class);
+    }
     public function install($options)
     {
         return $this->installWithExtOptions($options);

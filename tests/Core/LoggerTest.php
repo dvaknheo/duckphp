@@ -10,6 +10,7 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
         
         $path_log=\LibCoverage\LibCoverage::G()->getClassTestPath(Logger::class);
         \LibCoverage\LibCoverage::G()->cleanDirectory($path_log);
+        
 
         $options=[
             'path_log' => $path_log,
@@ -21,7 +22,10 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
         $dn_options=[
         ];
         DuckPhp::G()->init($dn_options);
-        Logger::G()->reset()->init($options,DuckPhp::G());
+        
+
+        Logger::G()->init($options,DuckPhp::G());
+        
         Logger::G()->emergency($message,  $context);
         $options=[
             'path'=>$path_log,
@@ -38,9 +42,17 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
         
         Logger::G()->debug($message,  $context);
         DuckPhp::Logger()->info("zzzzz");
-        file_put_contents($path_log.'log.log','');// clear
-        Logger::G()->isInited();
-
+        //////////
+        
+        $options=[];
+        $options['log_file_template']=$path_log.'x.log';
+        Logger::G(new Logger())->init($options)->info($message,  $context);
+        
+        $options=[];
+        $options['path']=$path_log;
+        $options['path_log']='./';
+        Logger::G(new Logger())->init($options)->info($message,  $context);
+        
         \LibCoverage\LibCoverage::End();
     }
 }

@@ -402,6 +402,7 @@ App::PageHtml(123);
         App::Url($url=null);
         
         App::Parameter('x','y');
+        App::getRouteCallingClass();
         App::getRouteCallingMethod();
         App::Url('abc');
         App::Res('abc');

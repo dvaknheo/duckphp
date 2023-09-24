@@ -25,18 +25,12 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
         'log_prefix' => 'DuckPhpLog',
     ];
     protected $path;
-    protected $init_once = true;
-    public function reset()
-    {
-        $this->is_inited = false;
-        return $this;
-    }
 
     public function log($level, $message, array $context = array())
     {
-        if (!$this->is_inited) {
-            $this->init([], null);
-        }
+        //if (!$this->is_inited) {
+        //    $this->init([], null);
+        //}
         $file = preg_replace_callback('/%(.)/', function ($m) {
             return date($m[1]);
         }, $this->options['log_file_template']);
@@ -60,9 +54,9 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
         $date = date('Y-m-d H:i:s');
         $message = ($_SERVER['PATH_INFO'] ?? '') .' : '.$message;
         $message = "[{$level}][{$prefix}][$date]: ".$message."\n";
+        
         try {
-            $type = !$full_file?3:0;
-            //$ret = file_put_contents($full_file, $message, FILE_APPEND);
+            $type = $full_file ? 3:0;
             $ret = error_log($message, $type, $full_file);
         } catch (\Throwable $ex) { // @codeCoverageIgnore
             return false;  // @codeCoverageIgnore
