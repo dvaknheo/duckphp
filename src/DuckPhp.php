@@ -96,6 +96,7 @@ class DuckPhp extends App
     protected function installWithExtOptions($options)
     {
         $options['install'] = DATE(DATE_ATOM);
+        $this->options = array_replace_recursive($this->options,$options);
         $this->saveExtOptions(static::class, $options);
     }
     
@@ -109,6 +110,7 @@ class DuckPhp extends App
     }
     protected function get_all_ext_config($full_file = null)
     {
+        //todo use GetFileFromSubComponent($options, $subkey, $file, false);
         $full_file = $full_file ?? $this->get_file_for_ext_config();
         clearstatcache();
         if (!is_file($full_file)) {

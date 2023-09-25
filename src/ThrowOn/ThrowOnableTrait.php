@@ -8,12 +8,12 @@ namespace DuckPhp\ThrowOn;
 trait ThrowOnableTrait
 {
     protected $exception_class;
-    public static function ThrowOn($flag, $message, $code = 0)
+    public static function ThrowOn($flag, $message, $code = 0, $exception_class=null)
     {
         if (!$flag) {
             return;
         }
-        $exception_class = static::G()->exception_class;
+        $exception_class = $exception_class?:static::G()->exception_class;
         $exception_class = $exception_class ?? \Exception::class;
         throw new $exception_class($message, $code);
     }
