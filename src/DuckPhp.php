@@ -28,6 +28,9 @@ class DuckPhp extends App
     protected function initComponents(array $options, object $context = null)
     {
         parent::initComponents($options, $context);
+        if ($this->options['ext_options_from_config'] ?? false) {
+            $this->mergeExtOptions();
+        }
         
         $this->options['database_auto_extend_method'] = $this->options['database_auto_extend_method'] ?? false;
         Logger::G()->init($this->options, $this);
@@ -51,9 +54,24 @@ class DuckPhp extends App
                 RedisManager::class
                 ]);
         }
-        if ($this->options['ext_options_from_config'] ?? false) {
-            $this->mergeExtOptions();
+
+        ////////////////
+        if ($this->options['class_session'] ?? null) {
+            ($this->options['class_session'])::G()->init($this->options, $this);
         }
+        if ($this->options['class_user'] ?? null) {
+            if ($this->isChild) {
+                $this->bumpSingletonToRoot($this->options['class_user'], UserObject::class);
+            }
+            static::User(($this->options['class_user'])::G());
+        }
+        if ($this->options['class_admin'] ?? null) {
+            if ($this->isChild) {
+                $this->bumpSingletonToRoot($this->options['class_admin'], AdminObject::class);
+            }
+            static::Admin(($this->options['class_admin'])::G());
+        }
+        ///////
         return $this;
     }
     public function getPath($sub_path = '')
@@ -63,7 +81,7 @@ class DuckPhp extends App
         }
         $key = "path_".$sub_path;
         if (isset($this->options[$key])) {
-            return $this->options[$key]; //这里要调整
+            return $this->options[$key]; //这里要调整 我们要获得绝对路径
         } elseif (in_array($sub_path, ['config','view','log'])) {
             return $this->options['path']. $sub_path .'/';
         }
@@ -82,21 +100,13 @@ class DuckPhp extends App
             $newClass::G(new PhaseProxy($self, $oldClass));
         });
     }
-    protected function bumpAdmin($class)
-    {
-        return $this->bumpSingletonToRoot($class, AdminObject::class);
-    }
-    protected function bumpUser($class)
-    {
-        return $this->bumpSingletonToRoot($class, UserObject::class);
-    }
     //////////////
     ////[[[[
     protected $file_for_ext_options_from_config = 'DuckPhpOptions';
     protected function installWithExtOptions($options)
     {
         $options['install'] = DATE(DATE_ATOM);
-        $this->options = array_replace_recursive($this->options,$options);
+        $this->options = array_replace_recursive($this->options, $options);
         $this->saveExtOptions(static::class, $options);
     }
     

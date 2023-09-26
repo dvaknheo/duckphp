@@ -18,6 +18,10 @@ class AdminObject
     {
         return 0;
     }
+    public function data()
+    {
+        return [];
+    }
     public function isSuper()
     {
         return false;

@@ -33,4 +33,8 @@ trait BusinessHelperTrait
     {
         return App::OnEvent($event, $callback);
     }
+    public static function ThrowOn($flag, $message, $code = 0, $exception_class = null)
+    {
+        return App::ThrowOn($flag, $message, $code, $exception_class, 'exception_business');
+    }
 }

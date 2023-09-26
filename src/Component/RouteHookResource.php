@@ -46,7 +46,7 @@ class RouteHookResource extends ComponentBase
         }
         
         $options = $this->options;
-        $options['path']=$options['path_override_from']?$options['path_override_from']:$options['path'];
+        $options['path'] = $options['path_override_from']?$options['path_override_from']:$options['path'];
         
         $file = ComponentBase::GetFileFromSubComponent($options, 'resource', $file);
         if (!$file) {

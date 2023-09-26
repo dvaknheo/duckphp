@@ -18,4 +18,8 @@ class UserObject
     {
         return 0;
     }
+    public function data()
+    {
+        return [];
+    }
 }

@@ -315,6 +315,28 @@ EOT;
         $view = $view === '' ? Route::G()->getRouteCallingPath() : $view;
         return View::G()->_Show($data, $view);
     }
+    public static function ThrowOn($flag, $message, $code = 0, $exception_class = null, $module = null)
+    {
+        return static::G()->_ThrowOn($flag, $message, $code, $exception_class, $module);
+    }
+    public function _ThrowOn($flag, $message, $code = 0, $exception_class = null, $module = null)
+    {
+        if (!$flag) {
+            return;
+        }
+        $exception_class = $exception_class?:static::Current()->getExceptionClass($module);
+        throw new $exception_class($message, $code);
+    }
+    public function getExceptionClass($module)
+    {
+        if (!isset($module)) {
+            return ($this->options['exception_project'] ?? null)?:\Exception::class;
+        }
+        if (!in_array($module, ['exception_controller','exception_business','exception_project'])) {
+            return ($this->options['exception_project'] ?? null)?:\Exception::class;
+        }
+        return $this->options[$module]?:(($this->options['exception_project'] ?? null)?:\Exception::class);
+    }
 }
 trait Core_Helper
 {
@@ -717,7 +739,7 @@ trait Core_Glue
     }
     public static function Config($file_basename, $key = null, $default = null)
     {
-        return Configer::G()->_Config( $file_basename, $key, $default);
+        return Configer::G()->_Config($file_basename, $key, $default);
     }
     
     //// the next is dynamic ////

@@ -7,7 +7,7 @@ namespace DuckPhp\Component;
 
 use DuckPhp\Core\Route;
 
-trait ControllerFakeSingletonTrait
+trait SimpleControllerTrait
 {
     public static function G($class = null)
     {
