@@ -255,6 +255,24 @@ App::PageHtml(123);
         AppTestApp::PhaseCall('z',[AppTestApp::class,'CallIt'],123);
         AppTestApp::PhaseCall('',[AppTestApp::class,'CallIt'],123);
         
+        AppTestApp::ThrowOn(false,'ee',0, null, null);
+        try{
+            AppTestApp::ThrowOn(true,'ee',0, null, null);
+        }catch(\Exception $ex){}
+        try{
+            AppTestApp::ThrowOn(true,'ee', 0,null, 'exception_project');
+        }catch(\Exception $ex){}
+        try{
+            AppTestApp::ThrowOn(true,'ee',0,null, 'exception_controller');
+        }catch(\Exception $ex){}
+        try{
+            AppTestApp::ThrowOn(true,'ee',0,null, 'exception_business');
+        }catch(\Exception $ex){}
+        try{
+            AppTestApp::ThrowOn(true,'ee',0,null, 'bad');
+        }catch(\Exception $ex){}
+
+        
         \LibCoverage\LibCoverage::G($this->LibCoverage);
         \LibCoverage\LibCoverage::End();
         return;

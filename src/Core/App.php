@@ -315,17 +315,17 @@ EOT;
         $view = $view === '' ? Route::G()->getRouteCallingPath() : $view;
         return View::G()->_Show($data, $view);
     }
-    public static function ThrowOn($flag, $message, $code = 0, $exception_class = null, $module = null)
+    public static function ThrowOn(bool $flag, string $message, int $code = 0, ?string $exception_class = null, ?string $module = null)
     {
         return static::G()->_ThrowOn($flag, $message, $code, $exception_class, $module);
     }
-    public function _ThrowOn($flag, $message, $code = 0, $exception_class = null, $module = null)
+    public function _ThrowOn(bool $flag, string $message, int $code = 0, ?string $exception_class = null, ?string $module = null)
     {
         if (!$flag) {
             return;
         }
         $exception_class = $exception_class?:static::Current()->getExceptionClass($module);
-        throw new $exception_class($message, $code);
+        throw new \Exception($message, $code);
     }
     public function getExceptionClass($module)
     {

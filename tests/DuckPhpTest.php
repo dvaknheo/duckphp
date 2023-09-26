@@ -137,6 +137,11 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
 }
 class DuckPhp_Sub extends DuckPhp
 {
+    public $options =[
+        'class_session' => FakeSession::class,
+        'class_admin' => FakeAdmin::class,
+        'class_user' => FakeUser::class,
+    ];
     public function onInit()
     {
         $this->bumpSingletonToRoot(FakeAdmin::class,\DuckPhp\Component\AdminObject::class);
@@ -165,6 +170,14 @@ class fakeSwooleHttpd
     public function set_http_404_handler(callable $callback)
     {
         return;
+    }
+}
+class FakeSession
+{
+    use SingletonExTrait;
+    public function init($options = [], $context = null)
+    {
+        
     }
 }
 class FakeService
