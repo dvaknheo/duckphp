@@ -1,13 +1,13 @@
 <?php 
 namespace tests\DuckPhp\Component;
-use DuckPhp\Component\ControllerFakeSingletonTrait;
+use DuckPhp\Component\SimpleControllerTrait;
 
 class ControllerFakeSingletonTraitTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
         $LibCoverage = \LibCoverage\LibCoverage::G();
-        \LibCoverage\LibCoverage::Begin(ControllerFakeSingletonTrait::class);
+        \LibCoverage\LibCoverage::Begin(SimpleControllerTrait::class);
         
         ControllerFakeSingletonTraitObject::G(ControllerFakeSingletonTraitObject2::G());
         
@@ -17,7 +17,7 @@ class ControllerFakeSingletonTraitTest extends \PHPUnit\Framework\TestCase
 }
 class ControllerFakeSingletonTraitObject
 {
-    use ControllerFakeSingletonTrait;
+    use SimpleControllerTrait;
 }
 class ControllerFakeSingletonTraitObject2 extends ControllerFakeSingletonTraitObject
 {

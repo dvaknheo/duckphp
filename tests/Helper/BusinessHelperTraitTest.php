@@ -33,7 +33,10 @@ class BusinessHelperTraitTest extends \PHPUnit\Framework\TestCase
             BusinessHelper::FireEvent("test",1,2,3);
         }catch(\Exception $ex){
         }
-
+        try{
+            BusinessHelper::ThrowOn(true,"just a exception");
+        }catch(\Exception $ex){
+        }
         \LibCoverage\LibCoverage::End();
     }
 }

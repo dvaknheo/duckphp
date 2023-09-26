@@ -10,7 +10,6 @@ class RouteHookResourceTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(RouteHookResource::class);
         $path = \LibCoverage\LibCoverage::G()->getClassTestPath(RouteHookResource::class);
-        
         App::G()->init([
             'path' => $path,
             'ext'=>[
@@ -23,6 +22,7 @@ class RouteHookResourceTest extends \PHPUnit\Framework\TestCase
         
         App::Route()::PathInfo('/RES/test.txt');
         App::G()->run();
+
         
         App::Route()::PathInfo('/RES/no_exist.txt');
         App::G()->run();
@@ -34,6 +34,7 @@ class RouteHookResourceTest extends \PHPUnit\Framework\TestCase
         App::G()->run();
         App::Route()::PathInfo('/not_hit.php');
         App::G()->run();
+       //*/
         \LibCoverage\LibCoverage::End();
     }
 }

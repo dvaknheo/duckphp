@@ -13,6 +13,7 @@ class AdminObjectTest extends \PHPUnit\Framework\TestCase
         } catch(\Throwable $ex){}
         AdminObject::G(MyAdminObject::G())->id();
         AdminObject::G()->isSuper();
+        AdminObject::G()->data();
         \LibCoverage\LibCoverage::End();
     }
 }

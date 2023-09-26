@@ -109,6 +109,10 @@ ControllerHelper::PageHtml(123);
         }
         ControllerHelper::IsAjax();
 
+        try{
+            ControllerHelper::ThrowOn(true,"just a exception");
+        }catch(\Exception $ex){
+        }
         \LibCoverage\LibCoverage::End();
 
         //*/

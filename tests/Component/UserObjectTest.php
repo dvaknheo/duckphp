@@ -12,6 +12,7 @@ class UserObjectTest extends \PHPUnit\Framework\TestCase
             UserObject::G();
         } catch(\Throwable $ex){}
         UserObject::G(MyUserObject::G())->id();
+        UserObject::G(MyUserObject::G())->data();
         \LibCoverage\LibCoverage::End();
     }
 }

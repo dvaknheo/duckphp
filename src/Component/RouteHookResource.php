@@ -54,7 +54,7 @@ class RouteHookResource extends ComponentBase
         }
         ($this->context_class)::header('Content-Type: '.($this->context_class)::mime_content_type($file));
         echo file_get_contents($file);
-        ($this->context_class)::exit();
+        //($this->context_class)::exit();
         return true;
     }
 }
