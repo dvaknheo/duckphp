@@ -112,11 +112,7 @@ trait KernelTrait
     ////////
     public function getContainer()
     {
-        if (!defined('__SINGLETONEX_REPALACER_CLASS')) {
-            return null;
-        }
-        $class = __SINGLETONEX_REPALACER_CLASS;
-        return $class::GetContainerInstanceEx();
+        return PhaseContainer::GetContainer();
     }
     public static function Phase($new = null)
     {
@@ -214,7 +210,6 @@ trait KernelTrait
         $this->onPrepare();
         $this->initComponents($this->options, $context);
         $this->initExtentions($this->options['ext']);
-        
         $this->onInit();
         if ($this->options['on_inited']) {
             ($this->options['on_inited'])();
@@ -238,10 +233,11 @@ trait KernelTrait
         ExceptionManager::G()->init($exception_options, $this)->run();
         Configer::G()->init($this->options, $this);
         $this->reloadFlags();
-        
+
         View::G()->init($this->options, $this);
         
         Route::G()->init($this->options, $this);
+
         RuntimeState::G()->init($this->options, $this);
     }
     protected function dealAsChild($context)
@@ -271,6 +267,7 @@ trait KernelTrait
     }
     protected function initExtentions(array $exts): void
     {
+    try{
         foreach ($exts as $class => $options) {
             $options = ($options === true)?$this->options:$options;
             $options = is_string($options)?$this->options[$options]:$options;
@@ -284,6 +281,7 @@ trait KernelTrait
             $class::G()->init($options, $this);
             $this->_Phase(static::class);
         }
+}catch(\Throwable $ex){var_dump($ex);}
         return;
     }
     //for override

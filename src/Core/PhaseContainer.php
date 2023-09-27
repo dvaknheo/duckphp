@@ -41,7 +41,14 @@ class PhaseContainer
         }
         return static::$instance;
     }
-
+    public static function GetContainer()
+    {
+        if (!defined('__SINGLETONEX_REPALACER_CLASS')) {
+            return null;
+        }
+        $class = __SINGLETONEX_REPALACER_CLASS;
+        return $class::GetContainerInstanceEx();
+    }
     ////////////////////////////////
     public function _GetObject(string $class, $object = null)
     {

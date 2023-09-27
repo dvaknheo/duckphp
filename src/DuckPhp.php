@@ -56,9 +56,6 @@ class DuckPhp extends App
         }
 
         ////////////////
-        if ($this->options['class_session'] ?? null) {
-            ($this->options['class_session'])::G()->init($this->options, $this);
-        }
         if ($this->options['class_user'] ?? null) {
             if ($this->is_child) {
                 $this->bumpSingletonToRoot($this->options['class_user'], UserObject::class);

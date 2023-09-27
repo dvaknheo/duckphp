@@ -202,6 +202,7 @@ class App extends ComponentBase
             return;
         }
         $error_desc = '';
+        $ext =($this->is_inited)? '':"<div>error trigger before init, options['error_debug'] ignore.";
         if (!$error_view) {
             extract($data);
             echo  <<<EOT
@@ -211,13 +212,11 @@ class App extends ComponentBase
 <pre>
 {$error_shortfile}:{$errline}
 {$errstr}
+{$ext}
 </pre>
 </fieldset>
 
 EOT;
-            if (!$this->is_inited) {
-                echo "<div>error trigger before init, options['error_debug'] ignore. </div>\n";
-            }
             return;
         }
         View::G()->_Display($error_view, $data);

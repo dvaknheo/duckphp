@@ -10,6 +10,7 @@ use DuckPhp\Core\ComponentBase;
 class RouteHookRouteMap extends ComponentBase
 {
     public $options = [
+        'controller_url_prefix' => '',
         'route_map_important' => [],
         'route_map' => [],
         'route_map_by_config_name' => '',
@@ -136,6 +137,11 @@ class RouteHookRouteMap extends ComponentBase
     {
         $parameters = [];
         $path_info = ltrim($path_info, '/');
+        $prefix = $this->options['controller_url_prefix'];
+        if ($prefix && substr($path_info,0,strlen($prefix)!==$prefix)) {
+            return null;
+        }
+        
         foreach ($routeMap as $pattern => $callback) {
             if (!$this->matchRoute($pattern, $path_info, $parameters)) {
                 continue;

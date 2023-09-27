@@ -21,6 +21,7 @@ class SessionBase extends ComponentBase
             return;
         }
         App::session_start();
+        $this->options['session_prefix'] = App::Current()->options['table_prefix'] ?? '';
         $this->session_started = true;
     }
     protected function get($key, $default = null)
