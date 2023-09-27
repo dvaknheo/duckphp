@@ -1,7 +1,7 @@
 <?php
 namespace tests\DuckPhp\Foundation;
 
-use DuckPhp\Component\SimpleBusinessTrait;
+use DuckPhp\Foundation\SimpleBusinessTrait;
 use DuckPhp\DuckPhp;
 
 class SimpleBusinessTraitTest extends \PHPUnit\Framework\TestCase

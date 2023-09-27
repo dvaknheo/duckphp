@@ -1,6 +1,6 @@
 <?php 
-namespace tests\DuckPhp\Component;
-use DuckPhp\Component\SimpleControllerTrait;
+namespace tests\DuckPhp\Foundation;
+use DuckPhp\Foundation\SimpleControllerTrait;
 
 class ControllerFakeSingletonTraitTest extends \PHPUnit\Framework\TestCase
 {
