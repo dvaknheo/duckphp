@@ -3,12 +3,13 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckPhp\Component;
+namespace DuckPhp\Foundation;
 
+use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Core\App;
 use DuckPhp\SingletonEx\SingletonExTrait;
 
-trait ApiSingletonExTrait
+trait SimpleApiTrait
 {
     use SingletonExTrait { G as _G; }
     //public static $AppClass;

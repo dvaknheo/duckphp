@@ -1,17 +1,17 @@
 <?php 
-namespace tests\DuckPhp\Component;
-use DuckPhp\Component\ApiSingletonExTrait;
+namespace tests\DuckPhp\Foundation;
+use DuckPhp\Foundation\SimpleApiTrait;
 use DuckPhp\Component\PhaseProxy;
 use DuckPhp\DuckPhp;
 use DuckPhp\SingletonEx\SingletonExTrait;
 
-class ApiSingletonExTraitTest extends \PHPUnit\Framework\TestCase
+class SimpleApiTraitTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
         $LibCoverage = \LibCoverage\LibCoverage::G();
-        \LibCoverage\LibCoverage::Begin(ApiSingletonExTrait::class);
-        ApiSingletonExTraitObject::G();
+        \LibCoverage\LibCoverage::Begin(SimpleApiTrait::class);
+        SimpleApiTraitObject::G();
         $options = [
             'ext' =>[ASESubApp::class =>[
                     'notEmpty' => true,
@@ -21,7 +21,7 @@ class ApiSingletonExTraitTest extends \PHPUnit\Framework\TestCase
             ],
         ];
         ASEMainApp::RunQuickly($options,function(){
-            ApiSingletonExTraitObject::G();
+            SimpleApiTraitObject::G();
 
         });
         ASEAdminAction::G();
@@ -41,9 +41,9 @@ class ApiSingletonExTraitTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::End();
     }
 }
-class ApiSingletonExTraitObject
+class SimpleApiTraitObject
 {
-    use ApiSingletonExTrait;
+    use SimpleApiTrait;
 }
 class ASEMainApp extends DuckPhp
 {
@@ -64,7 +64,7 @@ class ASEMainApp2 extends ASEMainApp
 class ASEMainAdminAction
 {
     public static $AppClass = ASEMainApp::class;
-    use ApiSingletonExTrait;
+    use SimpleApiTrait;
     public function __construct(){}
     public function id()
     {
@@ -98,7 +98,7 @@ class ASESubApp2 extends ASESubApp
 class ASEAdminAction
 {
     public static $AppClass = ASESubApp::class;
-    use ApiSingletonExTrait;
+    use SimpleApiTrait;
     public function id()
     {
         return '>>'. ASEMainApp::Phase().DATE(DATE_ATOM);
@@ -108,7 +108,7 @@ class ASEUserAction
 {
     public static $AppClass = ASESubApp::class;
 
-    use ApiSingletonExTrait;
+    use SimpleApiTrait;
     public function __construct(){}
     public function id()
     {
