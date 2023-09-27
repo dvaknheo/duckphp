@@ -92,7 +92,7 @@ class App extends ComponentBase
     public function _On404(): void
     {
         $error_view = $this->options['error_404'] ?? null;
-        $error_view = $this->error_view_inited?$error_view:null;
+        $error_view = $this->is_inited?$error_view:null;
         
         static::header('404 Not Found', true, 404);
         if (!is_string($error_view) && is_callable($error_view)) {
@@ -129,11 +129,16 @@ class App extends ComponentBase
             return;
         }
         $error_view = $this->options['error_500'] ?? null;
-        $error_view = $this->error_view_inited?$error_view:null;
+        $error_view = $this->is_inited?$error_view:null;
         
         static::header('Server Error', true, 500);
+        if (!is_string($error_view) && is_callable($error_view)) {
+            ($error_view)($ex);
+            return;
+        }
+        
         $data = [];
-        $data['is_debug'] = $this->options['is_debug'];
+        $data['is_debug'] = $this->_IsDebug();
         $data['ex'] = $ex;
         $data['class'] = get_class($ex);
         $data['message'] = $ex->getMessage();
@@ -142,14 +147,12 @@ class App extends ComponentBase
         $data['file'] = $ex->getFile();
         $data['line'] = $ex->getLine();
         
-        if (!is_string($error_view) && is_callable($error_view)) {
-            ($error_view)($ex);
-            return;
-        }
         ////////default;
         if (!$error_view) {
-            echo "Internal Error \n<!--DuckPhp set options ['error_500'] to override me  -->\n";
-            
+            echo "Internal Error \n<!--DuckPhp set options['error_500'] to override me  -->\n";
+            if (!$this->is_inited) {
+                echo "<div>error trigger before init, options['error_500'] ignore. </div>";
+            }
             if ($data['is_debug']) {
                 echo "<h3>{$data['class']}({$data['code']}):{$data['message']}</h3>";
                 echo "<div>{$data['file']} : {$data['line']}</div>";
@@ -193,7 +196,7 @@ class App extends ComponentBase
             'error_shortfile' => $error_shortfile,
         );
         $error_view = $this->options['error_debug'] ?? '';
-        $error_view = $this->error_view_inited?$error_view:null;
+        $error_view = $this->is_inited?$error_view:null;
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)($data);
             return;
@@ -212,6 +215,9 @@ class App extends ComponentBase
 </fieldset>
 
 EOT;
+            if (!$this->is_inited) {
+                echo "<div>error trigger before init, options['error_debug'] ignore. </div>\n";
+            }
             return;
         }
         View::G()->_Display($error_view, $data);

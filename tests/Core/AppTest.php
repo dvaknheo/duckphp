@@ -72,7 +72,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::SessionGet('zz');
         
                         SuperGlobalContext::DefineSuperGlobalContext();
-        App::SessionUnset('zz',);
+        App::SessionUnset('zz');
 
             App::G()->addBeforeShowHandler(function(){ echo "beforeShowHandlers";});
             App::G()->addBeforeShowHandler("testsssssssssss");
@@ -273,6 +273,10 @@ App::PageHtml(123);
         }catch(\Exception $ex){}
 
         
+
+
+
+        
         \LibCoverage\LibCoverage::G($this->LibCoverage);
         \LibCoverage\LibCoverage::End();
         return;
@@ -358,6 +362,19 @@ App::PageHtml(123);
         App::CallException(new \Exception("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",-1));
         App::CallException(new E("EXxxxxxxxxxxxxxx",-1));
         App::CallException(new E2("EXxxxxxxxxxxxxxx",-1));
+        
+        
+        
+        $options=[
+            'path' => $path_app,
+            'is_debug'=>true,
+            'on_inited'=> function(){ 
+            
+            AppTestApp::G()->_OnDevErrorHandler(0, '', '', 0);
+            AppTestApp::G()->_OnDefaultException(new \Exception('--'));
+            },
+        ];
+        AppTestApp::RunQuickly($options);
     }
     public function doHelper()
     {

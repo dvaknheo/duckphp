@@ -48,10 +48,9 @@ trait KernelTrait
         ];
     
     protected $default_run_handler = null;
-    protected $error_view_inited = false;
 
-    protected $isSimpleMode = true;
-    protected $isChild = false;
+    protected $is_simple_mode = true;
+    protected $is_child = false;
     protected $handler_for_exception_handler;
 
     public static function RunQuickly(array $options = [], callable $after_init = null): bool
@@ -140,14 +139,14 @@ trait KernelTrait
         $extApps = [];
         foreach ($this->options['ext'] as $class => $options) {
             if (\is_subclass_of($class, self::class)) {
-                $this->isSimpleMode = false;
+                $this->is_simple_mode = false;
                 $extApps[$class] = $class; /** @phpstan-ignore-line */
             }
         }
-        $this->isChild = \is_a($context, self::class);
+        $this->is_child = \is_a($context, self::class);
 
-        if (!$this->isChild && empty($extApps)) {
-            $this->isSimpleMode = true;
+        if (!$this->is_child && empty($extApps)) {
+            $this->is_simple_mode = true;
             (self::class)::G($this); // remark ,don't use self::G()!
             static::G($this);
             if ($this->options['override_class_from'] ?? false) {
@@ -158,7 +157,7 @@ trait KernelTrait
         }
         //////////////////////////////
         $apps = [];
-        if (!$this->isChild) {
+        if (!$this->is_child) {
             $autoloader = AutoLoader::G();
             $flag = PhaseContainer::ReplaceSingletonImplement();
             // if false ,do something?
@@ -173,7 +172,7 @@ trait KernelTrait
         $container->setCurrentContainer(static::class);
         /////////////
         $apps[static::class] = $this;
-        if (!$this->isChild) {
+        if (!$this->is_child) {
             $apps[self::class] = $this;
         }
         if ($this->options['override_class_from'] ?? null) {
@@ -241,7 +240,6 @@ trait KernelTrait
         $this->reloadFlags();
         
         View::G()->init($this->options, $this);
-        $this->error_view_inited = true;
         
         Route::G()->init($this->options, $this);
         RuntimeState::G()->init($this->options, $this);
@@ -308,7 +306,7 @@ trait KernelTrait
     public function run(): bool
     {
         $this->_Phase(static::class);
-        if (!$this->isChild) {
+        if (!$this->is_child) {
             (self::class)::G($this);
         }
         

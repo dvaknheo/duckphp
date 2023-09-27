@@ -60,13 +60,13 @@ class DuckPhp extends App
             ($this->options['class_session'])::G()->init($this->options, $this);
         }
         if ($this->options['class_user'] ?? null) {
-            if ($this->isChild) {
+            if ($this->is_child) {
                 $this->bumpSingletonToRoot($this->options['class_user'], UserObject::class);
             }
             static::User(($this->options['class_user'])::G());
         }
         if ($this->options['class_admin'] ?? null) {
-            if ($this->isChild) {
+            if ($this->is_child) {
                 $this->bumpSingletonToRoot($this->options['class_admin'], AdminObject::class);
             }
             static::Admin(($this->options['class_admin'])::G());
