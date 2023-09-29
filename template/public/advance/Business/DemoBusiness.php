@@ -6,9 +6,10 @@
 
 namespace AdvanceDemo\Business;
 
+use AdvanceDemo\Business\Base as Helper;
 use AdvanceDemo\Model\DemoModel;
 
-class DemoBusiness extends BaseBusiness
+class DemoBusiness extends Base
 {
     public function foo()
     {

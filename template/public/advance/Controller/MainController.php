@@ -7,7 +7,7 @@
 namespace AdvanceDemo\Controller;
 
 use AdvanceDemo\Business\DemoBusiness;
-use AdvanceDemo\Controller\DefaultAction as C;
+use AdvanceDemo\Controller\Base as Helper;
 
 class MainController extends Base
 {
@@ -15,11 +15,11 @@ class MainController extends Base
     {
         //change it if  you can
         $var = __h(DemoBusiness::G()->foo());
-        C::Show(get_defined_vars(), 'main');
+        Helper::Show(get_defined_vars(), 'main');
     }
     public function files()
     {
-        C::Show(get_defined_vars(), 'files');
+        Helper::Show(get_defined_vars(), 'files');
     }
     public function i()
     {

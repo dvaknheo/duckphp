@@ -5,8 +5,9 @@
  */
 
 namespace AdvanceDemo\Model;
-
-class DemoModel extends BaseModel
+use AdvanceDemo\Model\Base;
+use AdvanceDemo\Model\Base as Helper;
+class DemoModel extends Base
 {
     public function foo()
     {
