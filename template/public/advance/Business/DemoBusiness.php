@@ -6,6 +6,7 @@
 
 namespace AdvanceDemo\Business;
 
+use AdvanceDemo\Business\Base;
 use AdvanceDemo\Business\Base as Helper;
 use AdvanceDemo\Model\DemoModel;
 

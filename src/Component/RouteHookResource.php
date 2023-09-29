@@ -61,27 +61,31 @@ class RouteHookResource extends ComponentBase
     public function replaceResource()
     {
         $flag = preg_match('/^(https?:\/)?\//', $this->options['controller_resource_prefix'] ?? '');
-        if($flag){ return; }
+        if ($flag) {
+            return;
+        }
         $source = realpath(dirname(__DIR__).'/res/') .'/';
         $path = $this->options['controller_resource_prefix'];
-        $path = (substr($path,0,1)==='/')? substr($path,1) : $this->options['controller_url_prefix'].$path;
-        $this->copy_dir($source,($this->context_class)::G()->SERVER('DOCUMENT_ROOT',''), $path,true,$info);
+        $path = (substr($path, 0, 1) === '/')? substr($path, 1) : $this->options['controller_url_prefix'].$path;
+        $this->copy_dir($source, ($this->context_class)::G()->SERVER('DOCUMENT_ROOT', ''), $path, true, $info);
     }
-    protected function get_dest_dir($path_parent,$path )
+    protected function get_dest_dir($path_parent, $path)
     {
         $new_dir = $path_parent;
-        $b = explode('/',$path);
+        $b = explode('/', $path);
         
-        foreach($b as $v){
+        foreach ($b as $v) {
             $new_dir .= '/'.$v;
-            if(is_dir($new_dir)){ continue;}
+            if (is_dir($new_dir)) {
+                continue;
+            }
             mkdir($new_dir);
         }
         return $new_dir;
     }
-    public function copy_dir($source, $path_parent,$path, $force = false, &$info ='')
+    public function copy_dir($source, $path_parent, $path, $force = false, &$info = '')
     {
-        $dest = $this->get_dest_dir($path_parent,$path);
+        $dest = $this->get_dest_dir($path_parent, $path);
         
         $source = rtrim(''.realpath($source), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
         $dest = rtrim(''.realpath($dest), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
@@ -101,7 +105,7 @@ class RouteHookResource extends ComponentBase
                 return; // @codeCoverageIgnore
             }
         }
-        $info.= "Copying file...\n";
+        $info .= "Copying file...\n";
         
         $flag = $this->create_directories($dest, $files, $info);
         if (!$flag) {
@@ -114,7 +118,7 @@ class RouteHookResource extends ComponentBase
             $data = file_get_contents(''.$file);
             $flag = file_put_contents($dest_file, $data);
             
-            $info.= $dest_file."\n";
+            $info .= $dest_file."\n";
             //decoct(fileperms($file) & 0777);
         }
         //echo  "\nDone.\n";
@@ -124,7 +128,7 @@ class RouteHookResource extends ComponentBase
         foreach ($files as $file => $short_file_name) {
             $dest_file = $dest.$short_file_name;
             if (is_file($dest_file)) {
-                $info.= "file exists: $dest_file \n";
+                $info .= "file exists: $dest_file \n";
                 return false;
             }
         }
@@ -140,9 +144,9 @@ class RouteHookResource extends ComponentBase
             foreach ($blocks as $t) {
                 $full_dir .= DIRECTORY_SEPARATOR.$t;
                 if (!is_dir($full_dir)) {
-                    try{
+                    try {
                         $flag = mkdir($full_dir);
-                    }catch(\Throwable $ex) {                               // @codeCoverageIgnore
+                    } catch (\Throwable $ex) {                               // @codeCoverageIgnore
                         $info .= "create file failed: $full_dir \n";// @codeCoverageIgnore
                         return false;   // @codeCoverageIgnore
                     }

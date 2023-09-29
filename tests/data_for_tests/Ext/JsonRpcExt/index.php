@@ -24,7 +24,8 @@ class Main
     public function json_rpc()
     {
         $post=DuckPhp::POST(null);
-        if($post['method']==='TestService.the500'){
+        $method =  $post['method']??null;
+        if($method==='TestService.the500'){
             var_dump(DATE(DATE_ATOM));
             return;
         }

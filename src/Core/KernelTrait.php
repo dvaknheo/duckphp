@@ -154,18 +154,20 @@ trait KernelTrait
         //////////////////////////////
         $apps = [];
         if (!$this->is_child) {
-            $autoloader = AutoLoader::G();
+            //$autoloader = AutoLoader::G();
             $flag = PhaseContainer::ReplaceSingletonImplement();
             // if false ,do something?
+            //$apps[AutoLoader::class] = $autoloader;
             
-            $apps[AutoLoader::class] = $autoloader;
             $container = $this->getContainer();
             $container->setDefaultContainer(static::class);
+            $container->setCurrentContainer(static::class);
         } else {
             $flag = PhaseContainer::ReplaceSingletonImplement(); // as ContainerTrait
             $container = $this->getContainer();
+            $container->setCurrentContainer(static::class);
         }
-        $container->setCurrentContainer(static::class);
+
         /////////////
         $apps[static::class] = $this;
         if (!$this->is_child) {
@@ -230,6 +232,7 @@ trait KernelTrait
             $this->dealAsChild($context);
         }
         
+        Logger::G()->init($this->options, $this);
         ExceptionManager::G()->init($exception_options, $this)->run();
         Configer::G()->init($this->options, $this);
         $this->reloadFlags();
@@ -267,21 +270,23 @@ trait KernelTrait
     }
     protected function initExtentions(array $exts): void
     {
-    try{
-        foreach ($exts as $class => $options) {
-            $options = ($options === true)?$this->options:$options;
-            $options = is_string($options)?$this->options[$options]:$options;
-            if ($options === false) {
-                continue;
+        try {
+            foreach ($exts as $class => $options) {
+                $options = ($options === true)?$this->options:$options;
+                $options = is_string($options)?$this->options[$options]:$options;
+                if ($options === false) {
+                    continue;
+                }
+                $class = (string)$class;
+                if (!class_exists($class)) {
+                    continue;
+                }
+                $class::G()->init($options, $this);
+                $this->_Phase(static::class);
             }
-            $class = (string)$class;
-            if (!class_exists($class)) {
-                continue;
-            }
-            $class::G()->init($options, $this);
-            $this->_Phase(static::class);
+        } catch (\Throwable $ex) {
+            var_dump($ex);
         }
-}catch(\Throwable $ex){var_dump($ex);}
         return;
     }
     //for override

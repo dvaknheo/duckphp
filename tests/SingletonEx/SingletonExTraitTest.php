@@ -3,7 +3,7 @@ namespace tests\DuckPhp\SingletonEx;
 
 use DuckPhp\SingletonEx\SingletonExTrait;
 
-class SingletonExTest extends \PHPUnit\Framework\TestCase
+class SingletonExTraitTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
@@ -15,6 +15,7 @@ class SingletonExTest extends \PHPUnit\Framework\TestCase
         define('__SINGLETONEX_REPALACER',SingletonExObject::class.'::CreateObject');
         \LibCoverage\LibCoverage::G($t);
         SingletonExObject::G();
+        SingletonExObject::_();
         
         \LibCoverage\LibCoverage::End();
         /*

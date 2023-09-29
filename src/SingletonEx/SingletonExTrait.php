@@ -26,4 +26,8 @@ trait SingletonExTrait
         
         return $me;
     }
+    public static function _($object = null)
+    {
+        return static::G($object);
+    }
 }

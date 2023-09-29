@@ -138,7 +138,7 @@ class RouteHookRouteMap extends ComponentBase
         $parameters = [];
         $path_info = ltrim($path_info, '/');
         $prefix = $this->options['controller_url_prefix'];
-        if ($prefix && substr($path_info,0,strlen($prefix)!==$prefix)) {
+        if ($prefix && substr($path_info, 0, strlen($prefix)) !== $prefix) {
             return null;
         }
         

@@ -24,8 +24,7 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
         'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
         'log_prefix' => 'DuckPhpLog',
     ];
-    protected $path;
-
+    protected $init_once = true;
     public function log($level, $message, array $context = array())
     {
         //if (!$this->is_inited) {

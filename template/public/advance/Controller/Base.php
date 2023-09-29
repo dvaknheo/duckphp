@@ -5,9 +5,11 @@
  */
 
 namespace AdvanceDemo\Controller;
+use DuckPhp\Foundation\SimpleControllerTrait;
 
 class Base
 {
+    use SimpleControllerTrait;
     public function __construct()
     {
     }

@@ -14,6 +14,10 @@ class ComponentBase // implements ComponentInterface
     public function __construct()
     {
     }
+    public static function _($object = null)
+    {
+        return static::G($object);
+    }
     protected static $_instances = [];
     //embed
     public static function G($object = null)
@@ -51,23 +55,6 @@ class ComponentBase // implements ComponentInterface
     {
         return $this->is_inited;
     }
-    /*
-    public function reset()
-    {
-        ////for override
-    }
-    public function install(array $options, ?object $context = null)
-    {
-        //for override
-    }
-    public function checkInstall($context)
-    {
-        if($this->isInited){
-            return;
-        }
-        $this->init($context->options,$context);
-    }
-    */
     //for override
     protected function initOptions(array $options)
     {

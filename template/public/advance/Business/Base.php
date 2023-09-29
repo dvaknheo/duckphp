@@ -7,17 +7,14 @@
 namespace AdvanceDemo\Business;
 
 use DuckPhp\Helper\BusinessHelperTrait;
-use DuckPhp\SingletonEx\SingletonExTrait;
-use DuckPhp\ThrowOn\ThrowOnableTrait;
+use DuckPhp\Foundation\SimpleBusinessTrait;
 
-class BaseBusiness
+class Base
 {
-    use SingletonExTrait;
+    use SimpleBusinessTrait;
     use BusinessHelperTrait;
-    use ThrowOnableTrait;
-    
 	public function __construct()
 	{
-		$this->exception_class = BusinessException::class;
+		//$this->exception_class = BusinessException::class;
 	}
 }

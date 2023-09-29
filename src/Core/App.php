@@ -202,7 +202,7 @@ class App extends ComponentBase
             return;
         }
         $error_desc = '';
-        $ext =($this->is_inited)? '':"<div>error trigger before init, options['error_debug'] ignore.";
+        $ext = ($this->is_inited)? '':"<div>error trigger before init, options['error_debug'] ignore.";
         if (!$error_view) {
             extract($data);
             echo  <<<EOT

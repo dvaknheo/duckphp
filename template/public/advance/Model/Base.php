@@ -6,15 +6,14 @@
 
 namespace AdvanceDemo\Model;
 
-use DuckPhp\Component\SimpleModelTrait;
+use DuckPhp\Foundation\SimpleModelTrait;
 use DuckPhp\Helper\ModelHelperTrait;
-use DuckPhp\SingletonEx\SingletonExTrait;
+
 
 use AdvanceDemo\System\ProjectModel;
 
-class BaseModel
+class Base
 {
     use SimpleModelTrait;
     use ModelHelperTrait;
-    use SingletonExTrait;
 }

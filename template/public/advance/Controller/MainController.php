@@ -7,7 +7,8 @@
 namespace AdvanceDemo\Controller;
 
 use AdvanceDemo\Business\DemoBusiness;
-use AdvanceDemo\Controller\Base as Helper;
+use AdvanceDemo\Controller\Base;
+use AdvanceDemo\Controller\Helper;
 
 class MainController extends Base
 {
