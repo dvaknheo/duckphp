@@ -21,6 +21,11 @@ trait SimpleApiTrait
             return '';
         }
     }
+    public static function ServiceWith($class)
+    {
+        static::$AppClass = $class;
+        return static::G();
+    }
     public static function G($object = null)
     {
         $phase = App::Phase();

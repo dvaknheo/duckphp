@@ -63,6 +63,20 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
         RouteHookRouteMap::G()->options['route_map_important']=[];
         Route::G()->bind('/posts/aa/comments/33')->run();
         //Route::G()->bind('/eighth')->run();
+        
+        
+        App::G(new App())->init([
+            'path'=>$path,
+            'path_config'=>'',            
+        ]);
+        $options['route_map_by_config_name']=null;
+
+        $options['controller_url_prefix']='admin/';
+        RouteHookRouteMap::G(new RouteHookRouteMap())->init($options, App::G());
+        RouteHookRouteMap::G()->assignRoute('/night','~RouteHookRouteMapTest_FakeObject::night');
+        Route::G()->bind('/admin/night')->run();
+        Route::G()->bind('/night')->run();
+        
 
         RouteHookRouteMap::G()->isInited();
         \LibCoverage\LibCoverage::End();
@@ -106,6 +120,11 @@ class RouteHookRouteMapTest_FakeObject
     function eighth()
     {
         var_dump("eight!");
+        var_dump(Route::G()->_Parameter());
+    }
+    function night()
+    {
+        var_dump("night!");
         var_dump(Route::G()->_Parameter());
     }
     function foo()

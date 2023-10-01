@@ -9,7 +9,8 @@ class DuckPhpInstallerTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(DuckPhpInstaller::class);
         $path = \LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhpInstaller::class);
-        \LibCoverage\LibCoverage::G()->cleanDirectory($path);
+        $path_init = $path;
+        \LibCoverage\LibCoverage::G()->cleanDirectory($path_init);
         
         $time = date('Y-m-d_H_i_s');
         $path = $path . $time . 'test';
@@ -29,7 +30,7 @@ class DuckPhpInstallerTest extends \PHPUnit\Framework\TestCase
         $options['verbose']=false;
         DuckPhpInstaller::G(new DuckPhpInstaller());
         DuckPhpInstaller::RunQuickly($options);
-        
+        \LibCoverage\LibCoverage::G()->cleanDirectory($path_init);
         \LibCoverage\LibCoverage::End();
     }
 

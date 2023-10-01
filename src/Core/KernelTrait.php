@@ -285,7 +285,7 @@ trait KernelTrait
                 $this->_Phase(static::class);
             }
         } catch (\Throwable $ex) {
-            var_dump($ex);
+            $this->_OnDefaultException($ex);
         }
         return;
     }

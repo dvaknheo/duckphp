@@ -34,6 +34,7 @@ class SimpleApiTraitTest extends \PHPUnit\Framework\TestCase
         /////////////
         ASEMainApp2::RunQuickly($options,function(){
             ASEMainAdminAction::G();
+            ASEMainAdminAction::ServiceWith(ASEMainApp2::class);
             // remark  static::$AppClass must be same Class
         });
         

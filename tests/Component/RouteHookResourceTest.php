@@ -10,6 +10,8 @@ class RouteHookResourceTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(RouteHookResource::class);
         $path = \LibCoverage\LibCoverage::G()->getClassTestPath(RouteHookResource::class);
+       
+        
         App::G()->init([
             'path' => $path,
             'ext'=>[
@@ -34,6 +36,35 @@ class RouteHookResourceTest extends \PHPUnit\Framework\TestCase
         App::G()->run();
         App::Route()::PathInfo('/not_hit.php');
         App::G()->run();
+        
+        /////////////////////////////
+        $options =[
+            'path' => $path,
+            'path_resource' => 'res/',
+            'controller_resource_prefix' =>'DATA/',
+        ];
+        $path_init = $path.'public/';
+        \LibCoverage\LibCoverage::G()->cleanDirectory($path_init);
+        
+        $_SERVER['DOCUMENT_ROOT']=$path.'public';
+        
+        $options['controller_resource_prefix']= 'http://github.com/';
+        RouteHookResource::G(new RouteHookResource())->init($options,App::G())->cloneResource();
+        $options['controller_resource_prefix']= 'DATA/';
+        RouteHookResource::G(new RouteHookResource())->init($options,App::G())->cloneResource();
+        RouteHookResource::G()->cloneResource();
+        $options['path_resource'] = $path.'res';
+        RouteHookResource::G(new RouteHookResource())->init($options,App::G())->cloneResource();
+
+        RouteHookResource::G()->cloneResource(true);
+        
+        $options['controller_url_prefix']= 'admin/';
+        $options['controller_resource_prefix']= 'DATA/';
+        RouteHookResource::G(new RouteHookResource())->init($options,App::G())->cloneResource(true);
+        
+        
+        \LibCoverage\LibCoverage::G()->cleanDirectory($path_init);
+        ////////////////////////////
        //*/
         \LibCoverage\LibCoverage::End();
     }

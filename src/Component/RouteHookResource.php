@@ -58,16 +58,26 @@ class RouteHookResource extends ComponentBase
         return true;
     }
     /////////////////////////////////////////////////////
-    public function replaceResource()
+    public function cloneResource($force = false, &$info = '')
     {
-        $flag = preg_match('/^(https?:\/)?\//', $this->options['controller_resource_prefix'] ?? '');
+        $flag = preg_match('/^(https?:)?\/\//', $this->options['controller_resource_prefix'] ?? '');
         if ($flag) {
             return;
         }
         $source = realpath(dirname(__DIR__).'/res/') .'/';
-        $path = $this->options['controller_resource_prefix'];
-        $path = (substr($path, 0, 1) === '/')? substr($path, 1) : $this->options['controller_url_prefix'].$path;
-        $this->copy_dir($source, ($this->context_class)::G()->SERVER('DOCUMENT_ROOT', ''), $path, true, $info);
+        if (static::IsAbsPath($this->options['path_resource'])) {
+            $source = static::SlashDir($this->options['path_resource']);
+        } else {
+            $source = static::SlashDir($this->options['path']).static::SlashDir($this->options['path_resource']);
+        }
+        
+        
+        $path_dest = $this->options['controller_resource_prefix'];
+        $path_dest = static::IsAbsPath($path_dest) ? $path_dest : $this->options['controller_url_prefix'].$path_dest;
+        $path_dest = ltrim($path_dest, '/');
+        $document_root = ($this->context_class)::SERVER('DOCUMENT_ROOT', '');
+        
+        $this->copy_dir($source, $document_root, $path_dest, $force, $info);
     }
     protected function get_dest_dir($path_parent, $path)
     {
@@ -86,7 +96,6 @@ class RouteHookResource extends ComponentBase
     public function copy_dir($source, $path_parent, $path, $force = false, &$info = '')
     {
         $dest = $this->get_dest_dir($path_parent, $path);
-        
         $source = rtrim(''.realpath($source), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
         $dest = rtrim(''.realpath($dest), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
         $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
@@ -101,8 +110,8 @@ class RouteHookResource extends ComponentBase
         
         if (!$force) {
             $flag = $this->check_files_exist($source, $dest, $files, $info);
-            if (!$flag) {
-                return; // @codeCoverageIgnore
+            if ($flag) {
+                return;
             }
         }
         $info .= "Copying file...\n";
@@ -129,10 +138,10 @@ class RouteHookResource extends ComponentBase
             $dest_file = $dest.$short_file_name;
             if (is_file($dest_file)) {
                 $info .= "file exists: $dest_file \n";
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
     protected function create_directories($dest, $files, &$info)
     {

@@ -52,6 +52,10 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
         $options['path']=$path_log;
         $options['path_log']='./';
         Logger::G(new Logger())->init($options)->info($message,  $context);
+         $options=[];
+        $options['path']=$path_log;
+        $options['path_log']=$path_log;
+        Logger::G(new Logger())->init($options)->info($message,  $context);
         
         \LibCoverage\LibCoverage::End();
     }

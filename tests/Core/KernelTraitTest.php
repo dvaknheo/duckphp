@@ -159,6 +159,17 @@ MyKernelTrait::On404();
         App::G()->run();
         $phase=App::Phase();
         App::Phase($phase);
+        
+        /////////////////////
+        $options['ext'][KernelTestApp2::class]=[
+            'path'=>null,
+            'namespace' => __NAMESPACE__,
+            'ext' =>[ KernelTestObjectError::class=>true,]
+        ];
+        
+        App::G(new App())->init($options)->run();
+        
+        
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
     return;
@@ -263,8 +274,15 @@ class KernelTestObjectB
     {
     }
 }
+class KernelTestObjectError
+{
+    use SingletonExTrait;
+    public function init($options,$context)
+    {
+        throw new \Exception("test");
+    }
 
-
+}
 
 }
 

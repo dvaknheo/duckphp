@@ -10,7 +10,7 @@ class PhaseContainerTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(PhaseContainer::class);
         $LibCoverage = \LibCoverage\LibCoverage::G();
-        
+        PhaseContainer::GetContainer();
         PhaseContainer::ReplaceSingletonImplement();
         PhaseContainer::ReplaceSingletonImplement();
         //PhaseContainer::GetObject();
@@ -35,7 +35,7 @@ class PhaseContainerTest extends \PHPUnit\Framework\TestCase
         
         PhaseContainer::GetContainerInstanceEx()->dumpAllObject();
         PhaseContainer::GetContainerInstanceEx()->removePublicClasses([MyObject::class]);
-        
+        PhaseContainer::GetContainer();
         
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
