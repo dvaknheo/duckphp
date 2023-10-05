@@ -42,7 +42,6 @@ class Route extends ComponentBase
     protected $parameters = [];
     
     //calculated options;
-    protected $namespace_prefix = '';
     protected $index_method = 'index'; //const
 
     //properties
@@ -76,17 +75,6 @@ class Route extends ComponentBase
         } else {
             return  $this->parameters;
         }
-    }
-    //@override
-    protected function initOptions(array $options)
-    {
-        $namespace = $this->options['namespace'];
-        $namespace_controller = $this->options['namespace_controller'];
-        if (substr($namespace_controller, 0, 1) !== '\\') {
-            $namespace_controller = rtrim($namespace, '\\').'\\'.$namespace_controller;
-        }
-        $namespace_controller = trim($namespace_controller, '\\');
-        $this->namespace_prefix = $namespace_controller.'\\';
     }
     public function reset()
     {
@@ -223,7 +211,7 @@ class Route extends ComponentBase
         }
         $path_class = $path_class ?: $welcome_class;
 
-        $full_class = $this->namespace_prefix.str_replace('/', '\\', $path_class).$this->options['controller_class_postfix'];
+        $full_class = $this->getControllerNamespacePrefix().str_replace('/', '\\', $path_class).$this->options['controller_class_postfix'];
         $full_class = ''.ltrim($full_class, '\\');
         
         $method = $this->options['controller_method_prefix'].$method;
@@ -260,7 +248,10 @@ class Route extends ComponentBase
             $this->route_error = "can't Reflection class($full_class) by $path_info .";
             return null;
         }
-        /** @var string */ $base_class = str_replace('~', $this->namespace_prefix, $this->options['controller_base_class']);
+        $base_class = $this->options['controller_base_class'];
+        if (false !== strpos($base_class, '~')) {
+        /** @var string */ $base_class = str_replace('~', $this->getControllerNamespacePrefix(), $this->options['controller_base_class']);
+        }
         if (!empty($base_class)) {
             if (!is_subclass_of($full_class, $base_class)) {
                 $this->route_error = "no the controller_base_class! {$base_class} ";
@@ -358,7 +349,13 @@ trait Route_Helper
     }
     public function getControllerNamespacePrefix()
     {
-        return $this->namespace_prefix;
+        $namespace_controller = $this->options['namespace_controller'];
+        if (substr($namespace_controller, 0, 1) !== '\\') {
+            $namespace_controller = rtrim($this->options['namespace'], '\\').'\\'.$namespace_controller;
+        }
+        $namespace_controller = trim($namespace_controller, '\\').'\\';
+        
+        return $namespace_controller;
     }
     public function dumpAllRouteHooksAsString()
     {
