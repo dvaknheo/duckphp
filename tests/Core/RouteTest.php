@@ -56,7 +56,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
                 'REQUEST_METHOD'=>'POST',
                 'PATH_INFO'=>'/',
             ];
-            Route::G()->reset();
+            //Route::G()->reset();
             
             $callback=function () {
                 var_dump(DATE(DATE_ATOM));
@@ -116,6 +116,13 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->bind('Missed','POST');
         Route::G()->run();
         Route::G()->bind("again",null)->run();
+        ////////////
+        $options2= $options;
+        $options2['controller_method_prefix'] ='action_';
+        Route::G(new Route())->init($options2);
+        Route::G()->bind("post",'POST')->run();
+        
+        ////////////
         Route::G()->getControllerNamespacePrefix();
         
         $this->foo2();
@@ -139,7 +146,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->replaceController(\tests_Core_Route\about::class, \tests_Core_Route\about2::class);
         
         Route::G()->defaultGetRouteCallback('/about/me');
-        Route::G()->defaultGetRouteCallback('/about/me');
+        Route::G()->defaultGetRouteCallback('/about/_start');
         Route::G()->defaultGetRouteCallback('/about/NoExists');
         
         $options=[
@@ -159,6 +166,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G(new Route())->init($options);        
         Route::G()->defaultGetRouteCallback('/prefix/about/me');
         Route::G()->defaultGetRouteCallback('/about/me');
+        Route::G()->defaultGetRouteCallback('/about/_');
         
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
@@ -231,21 +239,21 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         ];
         $_SERVER=[];
 
-        MyRoute::G()->reset();
+        //MyRoute::G()->reset();
         
         $serverData=[
             'PATH_INFO'=>'abc',
         ];
         $_SERVER=$serverData;
 
-        MyRoute::G()->reset();
+        //MyRoute::G()->reset();
         $serverData=[
             'REQUEST_URI'=>'/',
             'SCRIPT_FILENAME'=>__DIR__ . '/index.php',
             'DOCUMENT_ROOT'=>__DIR__,
         ];
         $_SERVER=$serverData;
-        MyRoute::G()->reset();
+        //MyRoute::G()->reset();
         
         $serverData=[
             'REQUEST_URI'=>'/abc/d',
@@ -254,11 +262,11 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         ];
         
         $_SERVER=$serverData;
-        MyRoute::G()->reset();
+        //MyRoute::G()->reset();
 
         MyRoute::G(new MyRoute())->init(['skip_fix_path_info'=>true]);
         $_SERVER=$serverData;
-        MyRoute::G()->reset();
+        //MyRoute::G()->reset();
 
     }
     protected function foo2()
@@ -328,7 +336,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'SCRIPT_FILENAME'=> 'x/z/index.php',
             'DOCUMENT_ROOT'=>'x',
         ];
-        Route::G()->reset();
+        //Route::G()->reset();
         echo Route::URL("/aaaaaaaa");
         echo PHP_EOL;
         echo Route::URL("A");
@@ -345,7 +353,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'SCRIPT_FILENAME'=> 'x/index.php',
             'DOCUMENT_ROOT'=>'x',
         ];
-        Route::G()->reset();
+        //Route::G()->reset();
         echo "--";
         $_SERVER['SCRIPT_FILENAME']='x/index.php';
         $_SERVER['DOCUMENT_ROOT']='x';
@@ -374,7 +382,8 @@ class MyRoute extends Route
     public $route_error_flag=false;
     public function getCallback($class,$method)
     {
-        return $this->getMethodToCall(new $class,$method);
+        return null;
+        //return $this->getMethodToCall(new $class,$method);
     }
     protected function createControllerObject($full_class)
     {
@@ -441,6 +450,10 @@ class Main  extends baseController
     public static function MyStatic()
     {
         echo "MyStatic";
+    }
+    public function action_do_post()
+    {
+        echo "action_do_post";
     }
 }
 

@@ -21,34 +21,32 @@ class Route extends ComponentBase
         'namespace' => '',
         'namespace_controller' => 'Controller',
         
-        'controller_base_class' => '',
         'controller_hide_boot_class' => true,
-        'controller_prefix_post' => 'do_',
-        'controller_class_postfix' => '',
-        'controller_method_prefix' => '',
         'controller_path_ext' => '',
         'controller_welcome_class' => 'Main',
+        'controller_welcome_method' => 'index',
+        
+        'controller_base_class' => '',
+        'controller_class_postfix' => '',
+        'controller_method_prefix' => '',
+        'controller_prefix_post' => 'do_',
         
         'controller_class_map' => [],
         
         'controller_resource_prefix' => '',
         'controller_url_prefix' => '',
-        
     ];
 
     public $pre_run_hook_list = [];
     public $post_run_hook_list = [];
     
-    protected $parameters = [];
-    
-    //calculated options;
-    protected $index_method = 'index'; //const
-
     //properties
+    protected $parameters = [];
     protected $route_error = '';
     protected $calling_path = '';
     protected $calling_class = '';
     protected $calling_method = '';
+    
     protected $enable_default_callback = true;
     protected $is_failed = false;
 
@@ -80,17 +78,10 @@ class Route extends ComponentBase
     {
         $this->is_failed = false;
         $this->enable_default_callback = true;
-        
-        $this->route_error = '';
-        $this->calling_path = '';
-        $this->calling_class = '';
-        $this->calling_method = '';
         return $this;
     }
     public function bind($path_info, $request_method = 'GET')
     {
-        $this->reset();
-
         $path_info = parse_url($path_info, PHP_URL_PATH);
         $this->setPathInfo($path_info);
         if (isset($request_method)) {
@@ -103,7 +94,8 @@ class Route extends ComponentBase
     }
     public function run()
     {
-        $this->reset();
+        $this->is_failed = false;
+        $this->enable_default_callback = true;
         
         foreach ($this->pre_run_hook_list as $callback) {
             $flag = ($callback)($this->getPathInfo());
@@ -111,9 +103,10 @@ class Route extends ComponentBase
                 return $this->getRunResult();
             }
         }
-        
+        // @phpstan-ignore-next-line
         if ($this->enable_default_callback) {
             $flag = $this->defaultRunRouteCallback($this->getPathInfo());
+            // @phpstan-ignore-next-line
             if ($flag && (!$this->is_failed)) {
                 return $this->getRunResult();
             }
@@ -214,6 +207,7 @@ class Route extends ComponentBase
         $full_class = $this->getControllerNamespacePrefix().str_replace('/', '\\', $path_class).$this->options['controller_class_postfix'];
         $full_class = ''.ltrim($full_class, '\\');
         
+        $method = ($method === '') ? $this->options['controller_welcome_method'] : $method;
         $method = $this->options['controller_method_prefix'].$method;
         return [$full_class,$method];
     }
@@ -235,64 +229,58 @@ class Route extends ComponentBase
             return null;
         }
         $this->calling_class = $full_class;
-        $this->calling_method = !empty($method)?$method:$this->index_method;
+        $this->calling_method = $method;
+        
+        //TODO map 的 '~'
+        $full_class = $this->options['controller_class_map'][$full_class] ?? $full_class;
         
         ////////////////////////
         try {
-            /** @var class-string */ $class = $full_class;
-            if ($full_class !== (new \ReflectionClass($class))->getName()) {
+            $ref = new \ReflectionClass($full_class);
+            if ($full_class !== $ref->getName()) {
                 $this->route_error = "E002: can't find class($full_class) by $path_info .";
+                return null;
+            }
+            if (!empty($this->options['controller_base_class'])) {
+                $base_class = $this->options['controller_base_class'];
+                if (false !== strpos($base_class, '~')) {
+                    $base_class = str_replace('~', $this->getControllerNamespacePrefix(), $base_class);
+                }
+                if (!is_subclass_of($full_class, $base_class)) {
+                    $this->route_error = "E004: no the controller_base_class! {$base_class} ";
+                    return null;
+                }
+            }
+            // my_class_action__x ?
+            if (substr($method, 0, 1) === '_') {
+                $this->route_error = 'E005: can not call hidden method';
+                return null;
+            }
+            if ($this->options['controller_prefix_post']) {
+                $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+                $request_method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+                
+                if ($request_method === 'POST') {
+                    // action_$method => action_do_$method
+                    $ref_method = $this->options['controller_method_prefix'].$this->options['controller_prefix_post'].substr($method, strlen($this->options['controller_method_prefix']));
+                    if ($ref->hasMethod($ref_method)) {
+                        $method = $ref_method;
+                    }
+                }
+            }
+            try {
+                $object = $ref->newInstance();
+                $ref = new \ReflectionMethod($object, $method);
+                if ($ref->isStatic()) {
+                    $this->route_error = "E006: can not call static method({$method})";
+                    return null;
+                }
+            } catch (\ReflectionException $ex) {
+                $this->route_error = "E007: method can not call({$method})";
                 return null;
             }
         } catch (\ReflectionException $ex) {
             $this->route_error = "E003: can't Reflection class($full_class) by $path_info .";
-            return null;
-        }
-        $base_class = $this->options['controller_base_class'];
-        if (false !== strpos($base_class, '~')) {
-        /** @var string */ $base_class = str_replace('~', $this->getControllerNamespacePrefix(), $this->options['controller_base_class']);
-        }
-        if (!empty($base_class)) {
-            if (!is_subclass_of($full_class, $base_class)) {
-                $this->route_error = "E004: no the controller_base_class! {$base_class} ";
-                return null;
-            }
-        }
-        
-        $object = $this->createControllerObject($full_class);
-        // @ phpstan-ignore-next-line
-        if ($this->route_error) {
-            return null;
-        }
-        return $this->getMethodToCall($object, $method);
-    }
-    protected function createControllerObject($full_class)
-    {
-        $full_class = $this->options['controller_class_map'][$full_class] ?? $full_class;
-        return new $full_class();
-    }
-    protected function getMethodToCall($object, $method)
-    {
-        $method = ($method === '') ? $this->index_method : $method;
-        if (substr($method, 0, 2) == '__') {
-            $this->route_error = 'E005: can not call hidden method';
-            return null;
-        }
-        if ($this->options['controller_prefix_post']) {
-            $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-            $request_method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-            if ($request_method === 'POST' && method_exists($object, $this->options['controller_prefix_post'].$method)) {
-                $method = $this->options['controller_prefix_post'].$method;
-            }
-        }
-        try {
-            $ref = new \ReflectionMethod($object, $method);
-            if ($ref->isStatic()) {
-                $this->route_error = 'E006: can not call static function';
-                return null;
-            }
-        } catch (\ReflectionException $ex) {
-            $this->route_error = 'E007: method can not call';
             return null;
         }
         return [$object,$method];
