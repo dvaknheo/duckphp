@@ -192,7 +192,7 @@ class Route extends ComponentBase
         if (!empty($this->options['controller_path_ext']) && !empty($path_info)) {
             $l = strlen($this->options['controller_path_ext']);
             if (substr($path_info, -$l) !== $this->options['controller_path_ext']) {
-                $this->route_error = "path_extention error";
+                $this->route_error = "E008: path_extention error";
                 return [null, null];
             }
             $path_info = substr($path_info, 0, -$l);
@@ -206,7 +206,7 @@ class Route extends ComponentBase
         $this->calling_path = $path_class?$path_info:$welcome_class.'/'.$method;
         
         if ($this->options['controller_hide_boot_class'] && $path_class === $welcome_class) {
-            $this->route_error = "controller_hide_boot_class! {$welcome_class}; ";
+            $this->route_error = "E009: controller_hide_boot_class! {$welcome_class}; ";
             return [null, null];
         }
         $path_class = $path_class ?: $welcome_class;
@@ -219,17 +219,17 @@ class Route extends ComponentBase
     }
     public function defaultGetRouteCallback($path_info)
     {
+        $this->route_error = '';
         if ($this->options['controller_url_prefix'] ?? false) {
             $prefix = '/'.trim($this->options['controller_url_prefix'], '/').'/';
             $l = strlen($prefix);
             if (substr($path_info, 0, $l) !== $prefix) {
-                $this->route_error = "url: $path_info controller_url_prefix($prefix) error";
+                $this->route_error = "E001: url: $path_info controller_url_prefix($prefix) error";
                 return null;
             }
             $path_info = substr($path_info, $l - 1);
             $path_info = ltrim((string)$path_info, '/');
         }
-        $this->route_error = '';
         list($full_class, $method) = $this->pathToClassAndMethod($path_info);
         if ($full_class === null) {
             return null;
@@ -241,11 +241,11 @@ class Route extends ComponentBase
         try {
             /** @var class-string */ $class = $full_class;
             if ($full_class !== (new \ReflectionClass($class))->getName()) {
-                $this->route_error = "can't find class($full_class) by $path_info .";
+                $this->route_error = "E002: can't find class($full_class) by $path_info .";
                 return null;
             }
         } catch (\ReflectionException $ex) {
-            $this->route_error = "can't Reflection class($full_class) by $path_info .";
+            $this->route_error = "E003: can't Reflection class($full_class) by $path_info .";
             return null;
         }
         $base_class = $this->options['controller_base_class'];
@@ -254,15 +254,14 @@ class Route extends ComponentBase
         }
         if (!empty($base_class)) {
             if (!is_subclass_of($full_class, $base_class)) {
-                $this->route_error = "no the controller_base_class! {$base_class} ";
+                $this->route_error = "E004: no the controller_base_class! {$base_class} ";
                 return null;
             }
         }
         
         $object = $this->createControllerObject($full_class);
-        $route_error = $this->route_error;
-        // @phpstan-ignore-next-line
-        if ($route_error) {
+        // @ phpstan-ignore-next-line
+        if ($this->route_error) {
             return null;
         }
         return $this->getMethodToCall($object, $method);
@@ -276,7 +275,7 @@ class Route extends ComponentBase
     {
         $method = ($method === '') ? $this->index_method : $method;
         if (substr($method, 0, 2) == '__') {
-            $this->route_error = 'can not call hidden method';
+            $this->route_error = 'E005: can not call hidden method';
             return null;
         }
         if ($this->options['controller_prefix_post']) {
@@ -289,11 +288,11 @@ class Route extends ComponentBase
         try {
             $ref = new \ReflectionMethod($object, $method);
             if ($ref->isStatic()) {
-                $this->route_error = 'can not call static function';
+                $this->route_error = 'E006: can not call static function';
                 return null;
             }
         } catch (\ReflectionException $ex) {
-            $this->route_error = 'method can not call';
+            $this->route_error = 'E007: method can not call';
             return null;
         }
         return [$object,$method];
