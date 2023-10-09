@@ -11,8 +11,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
     {
         $ref = new \ReflectionClass(DuckPhp::class);
         $extpath = $ref->getFileName();
-        $extFile=dirname($extpath).'/Core/Functions.php';
-        \LibCoverage\LibCoverage::G()->addExtFile($extFile);
+
         
         \LibCoverage\LibCoverage::Begin(DuckPhp::class);
         $LibCoverage = \LibCoverage\LibCoverage::G();
@@ -56,7 +55,6 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::DbCloseAll();
 
         ////
-        $this->doFunctions();
         
         DuckPhp::Event();
         DuckPhp::OnEvent('MyEvent',function(...$args){ var_dump($args);});
@@ -113,27 +111,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::End(DuckPhp::class);
 
     }
-    protected function doFunctions()
-    {
-        \__h("test");
-        \__l("test");
-        \__hl("test");
-        \__url("test");
-        \__res("test");
-        \__json("test");
-        \__domain();
-        \__display("block",[]);
-        \__trace_dump();
-        \__var_dump("abc");
-        \__debug_log("OK");
-        
-        \__is_debug();
-        \__is_real_debug();
-        \__platform();
-        \__logger();
 
-
-    }
 }
 class DuckPhp_Sub extends DuckPhp
 {

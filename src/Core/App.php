@@ -492,6 +492,10 @@ trait Core_Helper
     {
         return static::G()->_TraceDump();
     }
+    public static function VarLog($var)
+    {
+        return static::G()->_VarLog($var);
+    }
     public static function var_dump(...$args)
     {
         return static::G()->_var_dump(...$args);
@@ -504,6 +508,10 @@ trait Core_Helper
         echo "<pre>\n";
         echo (new \Exception('', 0))->getTraceAsString();
         echo "</pre>\n";
+    }
+    public function _VarLog($var)
+    {
+        return Logger::G()->debug(var_export($var,true));
     }
     public function _var_dump(...$args)
     {
@@ -532,6 +540,7 @@ trait Core_Helper
     }
     public function _PhaseCall($phase, $callback, ...$args)
     {
+        $phase = is_object($phase) ? get_class($phase) : $phase;
         $current = $this->_Phase();
         if (!$phase || !$current) {
             return ($callback)(...$args);

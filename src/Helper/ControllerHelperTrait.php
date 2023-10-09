@@ -155,4 +155,8 @@ trait ControllerHelperTrait
     {
         return App::ThrowOn($flag, $message, $code, $exception_class, 'exception_controller');
     }
+    public static function Domain($use_scheme = false)
+    {
+        return App::Domain($use_scheme);
+    }
 }

@@ -21,7 +21,10 @@ class AppTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(App::class);
         $this->LibCoverage = \LibCoverage\LibCoverage::G();
-
+        
+        $ref = new \ReflectionClass(App::class);
+        $extFile=dirname($extpath).'/Functions.php';
+        \LibCoverage\LibCoverage::G()->addExtFile($extFile);
 
 /*
         $path_app=$this->LibCoverage->getClassTestPath(App::class);
@@ -58,6 +61,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'override_class'=>AppTestApp::class,
 
         ];
+        $this->doFunctions();
 
         $options['ext']=[
             'noclass'=>true,
@@ -282,7 +286,26 @@ App::PageHtml(123);
         return;
 
     }
-
+    protected function doFunctions()
+    {
+        \__h("test");
+        \__l("test");
+        \__hl("test");
+        \__url("test");
+        \__res("test");
+        \__json("test");
+        \__domain();
+        \__display("block",[]);
+        \__trace_dump();
+        \__var_dump("abc");
+        \__var_log($this);
+        \__debug_log("OK");
+        
+        \__is_debug();
+        \__is_real_debug();
+        \__platform();
+        \__logger();
+    }
     public function doSystemWrapper()
     {
         App::system_wrapper_get_providers();

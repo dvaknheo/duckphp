@@ -134,7 +134,7 @@ class Route extends ComponentBase
         // TODO . force result ?
         $this->is_failed = true;
     }
-    public function addRouteHook($callback, $position, $once = true)
+    public function addRouteHook($callback, $position = 'append-outter', $once = true)
     {
         if ($once) {
             if (($position === 'prepend-outter' || $position === 'prepend-inner') && in_array($callback, $this->pre_run_hook_list)) {
@@ -280,7 +280,7 @@ class Route extends ComponentBase
                 return null;
             }
         } catch (\ReflectionException $ex) {
-            $this->route_error = "E003: can't Reflection class($full_class) by $path_info .";
+            $this->route_error = "E003: can't Reflection class($full_class) by $path_info .". $ex->getMessage();
             return null;
         }
         return [$object,$method];

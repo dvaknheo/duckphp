@@ -9,7 +9,7 @@ use DuckPhp\Core\Route;
 
 trait SimpleControllerTrait
 {
-    public static function G($class = null)
+    public static function ReplaceTo($class = null)
     {
         if ($class) {
             Route::G()->replaceController(static::class, $class);

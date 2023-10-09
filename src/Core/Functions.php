@@ -61,7 +61,12 @@ if (! function_exists('__var_dump')) {
         return App::var_dump(...$args);
     }
 }
-
+if (! function_exists('__var_log')) {
+    function __var_log($var)
+    {
+        return App::VarLog($var);
+    }
+}
 if (! function_exists('__trace_dump')) {
     function __trace_dump()
     {
