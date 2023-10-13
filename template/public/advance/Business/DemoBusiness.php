@@ -7,7 +7,7 @@
 namespace AdvanceDemo\Business;
 
 use AdvanceDemo\Business\Base;
-use AdvanceDemo\Business\Base as Helper;
+use AdvanceDemo\Business\Helper;
 use AdvanceDemo\Model\DemoModel;
 
 class DemoBusiness extends Base

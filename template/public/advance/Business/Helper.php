@@ -6,9 +6,9 @@
 
 namespace AdvanceDemo\Business;
 
-use DuckPhp\Foundation\SimpleBusinessTrait;
+use DuckPhp\Helper\BusinessHelperTrait;
 
-class Base
+class Helper
 {
-    use SimpleBusinessTrait;
+    use BusinessHelperTrait;
 }

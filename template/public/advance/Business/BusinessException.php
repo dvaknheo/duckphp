@@ -6,9 +6,11 @@
 
 namespace AdvanceDemo\Business;
 
+use AdvanceDemo\System\ProjectException;
+
 use DuckPhp\ThrowOn\ThrowOnTrait;
 
-class BusinessException
+class BusinessException extends ProjectException
 {
     use ThrowOnTrait;
 }

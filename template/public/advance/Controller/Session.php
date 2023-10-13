@@ -4,9 +4,10 @@
  * From this time, you never be alone~
  */
 
-namespace AdvanceDemo\System;
+namespace AdvanceDemo\Controller;
 
 use DuckPhp\Component\SessionBase;
+
 class Session extends SessionBase
 {
     //

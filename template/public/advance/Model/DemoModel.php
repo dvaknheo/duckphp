@@ -5,8 +5,10 @@
  */
 
 namespace AdvanceDemo\Model;
+
 use AdvanceDemo\Model\Base;
-use AdvanceDemo\Model\Base as Helper;
+use AdvanceDemo\Model\Helper;
+
 class DemoModel extends Base
 {
     public function foo()
