@@ -776,13 +776,9 @@ trait Core_Glue
     {
         return Route::G()->replaceController($old_class, $new_class);
     }
-    public static function addRouteHook($callback, $position, $once = true)
+    public function addRouteHook($callback, $position = 'append-outter', $once = true)
     {
         return Route::G()->addRouteHook($callback, $position, $once);
-    }
-    public static function add404RouteHook($callback)
-    {
-        return Route::G()->add404RouteHook($callback);
     }
     public static function getRouteCallingClass()
     {

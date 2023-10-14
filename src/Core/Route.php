@@ -21,15 +21,15 @@ class Route extends ComponentBase
         'namespace' => '',
         'namespace_controller' => 'Controller',
         
-        'controller_hide_boot_class' => true,
         'controller_path_ext' => '',
         'controller_welcome_class' => 'Main',
+        'controller_welcome_class_visible' => false,
         'controller_welcome_method' => 'index',
         
-        'controller_base_class' => '',
+        'controller_class_base' => '',
         'controller_class_postfix' => '',
         'controller_method_prefix' => '',
-        'controller_prefix_post' => 'do_',
+        'controller_prefix_post' => 'do_', //TODO remove it
         
         'controller_class_map' => [],
         
@@ -162,10 +162,7 @@ class Route extends ComponentBase
         }
         return true;
     }
-    public function add404RouteHook($callback)
-    {
-        return $this->addRouteHook($callback, 'append-outter', false);
-    }
+
     public function defaulToggleRouteCallback($enable = true)
     {
         $this->enable_default_callback = $enable;
@@ -181,6 +178,17 @@ class Route extends ComponentBase
     }
     protected function pathToClassAndMethod($path_info)
     {
+        if ($this->options['controller_url_prefix'] ?? false) {
+            $prefix = '/'.trim($this->options['controller_url_prefix'], '/').'/';
+            $l = strlen($prefix);
+            if (substr($path_info, 0, $l) !== $prefix) {
+                $this->route_error = "E001: url: $path_info controller_url_prefix($prefix) error";
+                return null;
+            }
+            $path_info = substr($path_info, $l - 1);
+            $path_info = ltrim((string)$path_info, '/');
+        }
+        
         $path_info = ltrim((string)$path_info, '/');
         if (!empty($this->options['controller_path_ext']) && !empty($path_info)) {
             $l = strlen($this->options['controller_path_ext']);
@@ -198,8 +206,8 @@ class Route extends ComponentBase
         $welcome_class = $this->options['controller_welcome_class'];
         $this->calling_path = $path_class?$path_info:$welcome_class.'/'.$method;
         
-        if ($this->options['controller_hide_boot_class'] && $path_class === $welcome_class) {
-            $this->route_error = "E009: controller_hide_boot_class! {$welcome_class}; ";
+        if (!$this->options['controller_welcome_class_visible'] && $path_class === $welcome_class) {
+            $this->route_error = "E009: controller_welcome_class default hide controller_welcome_class_visible is false";
             return [null, null];
         }
         $path_class = $path_class ?: $welcome_class;
@@ -214,16 +222,7 @@ class Route extends ComponentBase
     public function defaultGetRouteCallback($path_info)
     {
         $this->route_error = '';
-        if ($this->options['controller_url_prefix'] ?? false) {
-            $prefix = '/'.trim($this->options['controller_url_prefix'], '/').'/';
-            $l = strlen($prefix);
-            if (substr($path_info, 0, $l) !== $prefix) {
-                $this->route_error = "E001: url: $path_info controller_url_prefix($prefix) error";
-                return null;
-            }
-            $path_info = substr($path_info, $l - 1);
-            $path_info = ltrim((string)$path_info, '/');
-        }
+        
         list($full_class, $method) = $this->pathToClassAndMethod($path_info);
         if ($full_class === null) {
             return null;
@@ -241,13 +240,13 @@ class Route extends ComponentBase
                 $this->route_error = "E002: can't find class($full_class) by $path_info .";
                 return null;
             }
-            if (!empty($this->options['controller_base_class'])) {
-                $base_class = $this->options['controller_base_class'];
+            if (!empty($this->options['controller_class_base'])) {
+                $base_class = $this->options['controller_class_base'];
                 if (false !== strpos($base_class, '~')) {
                     $base_class = str_replace('~', $this->getControllerNamespacePrefix(), $base_class);
                 }
                 if (!is_subclass_of($full_class, $base_class)) {
-                    $this->route_error = "E004: no the controller_base_class! {$base_class} ";
+                    $this->route_error = "E004: no the controller_class_base! {$base_class} ";
                     return null;
                 }
             }

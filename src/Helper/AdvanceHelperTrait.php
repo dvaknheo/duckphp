@@ -26,13 +26,9 @@ trait AdvanceHelperTrait
     {
         return App::assignPathNamespace($path, $namespace);
     }
-    public static function addRouteHook($hook, $position, $once = true)
+    public function addRouteHook($callback, $position = 'append-outter', $once = true)
     {
         return App::addRouteHook($hook, $position, $once);
-    }
-    public static function add404RouteHook($callback)
-    {
-        return App::add404RouteHook($callback);
     }
     public static function replaceController($old_class, $new_class)
     {
