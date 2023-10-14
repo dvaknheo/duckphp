@@ -51,7 +51,8 @@ class DuckPhp extends App
                 Logger::class,
                 Console::class,
                 DbManager::class,
-                RedisManager::class
+                RedisManager::class,
+                EventManager::class,
                 ]);
         }
 

@@ -124,11 +124,11 @@ trait KernelTrait
         if (!$container) {
             return '';
         }
-        if (!$new) {
-            return $container->getCurrentContainer();
+        $old = $container->getCurrentContainer();
+        if ($new) {
+            $container->setCurrentContainer($new);
         }
-        $container->setCurrentContainer($new);
-        return $new;
+        return $old;
     }
     protected function checkSimpleMode($context)
     {

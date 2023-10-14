@@ -27,8 +27,7 @@ class PhaseProxy
 
     public function __call($method, $args)
     {
-        $phase = App::Phase();
-        App::Phase($this->container_class);
+        $phase = App::Phase($this->container_class);
         
         $object = $this->createObjectForPhaseProxy();
 
