@@ -154,6 +154,7 @@ trait KernelTrait
         //////////////////////////////
         $apps = [];
         if (!$this->is_child) {
+            //TODO $this->onCreatePhases();
             //$autoloader = AutoLoader::G();
             $flag = PhaseContainer::ReplaceSingletonImplement();
             // if false ,do something?
@@ -163,7 +164,7 @@ trait KernelTrait
             $container->setDefaultContainer(static::class);
             $container->setCurrentContainer(static::class);
         } else {
-            $flag = PhaseContainer::ReplaceSingletonImplement(); // as ContainerTrait
+            $flag = PhaseContainer::ReplaceSingletonImplement();
             $container = $this->getContainer();
             $container->setCurrentContainer(static::class);
         }
@@ -316,7 +317,20 @@ trait KernelTrait
         try {
             $this->onBeforeRun();
             if (!$this->default_run_handler) {
-                $ret = Route::G()->run();
+                if(!($this->options['container_mode']??false)){
+                    $ret = Route::G()->run();
+                }else{
+                    if($this->options['container_mode_welcome_handle']??false){
+                        $path_info = static::PathInfo(); //  :(
+                        if($path_info === '' || $path_info ==='/'){
+                            ($this->options['container_mode_welcome_handle'])();
+                            $ret = true;
+                        }
+                        $ret = false;
+                    }else{
+                        $ret = false;
+                    }
+                }
                 if (!$ret) {
                     $ret = $this->runExtentions();
                     if (!$ret && !$this->options['skip_404_handler']) {
@@ -328,7 +342,7 @@ trait KernelTrait
             }
         } catch (\Throwable $ex) {
             $phase = $this->_Phase(static::class);
-            RuntimeState::G()->lastPhase = $phase; //todo functionable
+            RuntimeState::G()->lastPhase = $phase; //todo function
             RuntimeState::G()->toggleInException();
             if ($this->options['skip_exception_check']) {
                 RuntimeState::G()->clear();

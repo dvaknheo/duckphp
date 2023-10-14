@@ -18,6 +18,10 @@ class App extends DuckPhp
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
         'controller_class_postfix' => 'Controller', // in common, use this
+        
+        'exception_project' => ProjectException::class,
+        'exception_business' => ProjectException::class,
+        'exception_controller' => ProjectException::class,
     ];
     /**
      * console command sample

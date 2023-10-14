@@ -6,11 +6,11 @@
 
 namespace AdvanceDemo\Controller;
 
+use DuckPhp\Foundation\SimpleHelperTrait;
 use DuckPhp\Helper\ControllerHelperTrait;
-use DuckPhp\Foundation\SimpleActionTrait;
 
 class Helper
 {
-    use SimpleActionTrait;
+    use SimpleHelperTrait;
     use ControllerHelperTrait;
 }

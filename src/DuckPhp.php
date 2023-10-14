@@ -25,6 +25,13 @@ use DuckPhp\Core\Logger;
 
 class DuckPhp extends App
 {
+    public static function RunAsContainerQuickly($options)
+    {
+        $options['skip_404_handler'] = $options['skip_404_handler'] ??true;
+        $options['container_mode'] = true;
+        //$options['container_mode_handler'] = null,
+        return DuckPhp::G()->init($options)->run(); // remark , not static::class 
+    }
     protected function initComponents(array $options, object $context = null)
     {
         parent::initComponents($options, $context);

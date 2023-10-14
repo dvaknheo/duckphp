@@ -6,9 +6,11 @@
 
 namespace AdvanceDemo\Model;
 
+use DuckPhp\Foundation\SimpleHelperTrait;
 use DuckPhp\Helper\ModelHelperTrait;
 
 class Helper
 {
+    use SimpleHelperTrait;
     use ModelHelperTrait;
 }
