@@ -16,4 +16,8 @@ trait SimpleControllerTrait
         }
         return static::class;
     }
+    //public function __construct()
+    //{
+    //    if(self::class == static::class){ return;}
+    //}
 }

@@ -182,7 +182,7 @@ class Route extends ComponentBase
             $prefix = '/'.trim($this->options['controller_url_prefix'], '/').'/';
             $l = strlen($prefix);
             if (substr($path_info, 0, $l) !== $prefix) {
-                $this->route_error = "E001: url: $path_info controller_url_prefix($prefix) error";
+                $this->route_error = "E001: controller_url_prefix($prefix) no match ($path_info)";
                 return null;
             }
             $path_info = substr($path_info, $l - 1);
@@ -207,13 +207,14 @@ class Route extends ComponentBase
         $this->calling_path = $path_class?$path_info:$welcome_class.'/'.$method;
         
         if (!$this->options['controller_welcome_class_visible'] && $path_class === $welcome_class) {
-            $this->route_error = "E009: controller_welcome_class default hide controller_welcome_class_visible is false";
+            $this->route_error = "E009: default hide welcome class";
             return [null, null];
         }
         $path_class = $path_class ?: $welcome_class;
 
         $full_class = $this->getControllerNamespacePrefix().str_replace('/', '\\', $path_class).$this->options['controller_class_postfix'];
         $full_class = ''.ltrim($full_class, '\\');
+        $full_class = $this->options['controller_class_map'][$full_class] ?? $full_class;
         
         $method = ($method === '') ? $this->options['controller_welcome_method'] : $method;
         $method = $this->options['controller_method_prefix'].$method;
@@ -229,11 +230,11 @@ class Route extends ComponentBase
         }
         $this->calling_class = $full_class;
         $this->calling_method = $method;
-        
-        //TODO map 的 '~'
-        $full_class = $this->options['controller_class_map'][$full_class] ?? $full_class;
-        
-        ////////////////////////
+        $callback = $this->getCallbackFromClassAndMethod($full_class, $method,$path_info);
+        return $callback;
+    }
+    protected function getCallbackFromClassAndMethod($full_class, $method, $path_info)
+    {
         try {
             $ref = new \ReflectionClass($full_class);
             if ($full_class !== $ref->getName()) {

@@ -317,18 +317,16 @@ trait KernelTrait
         try {
             $this->onBeforeRun();
             if (!$this->default_run_handler) {
+                $ret = false;
                 if (!($this->options['container_mode'] ?? false)) {
                     $ret = Route::G()->run();
                 } else {
                     if ($this->options['container_mode_welcome_handle'] ?? false) {
-                        $path_info = static::PathInfo(); //  :(
+                        $path_info = $this->getPathInfo();
                         if ($path_info === '' || $path_info === '/') {
                             ($this->options['container_mode_welcome_handle'])();
                             $ret = true;
                         }
-                        $ret = false;
-                    } else {
-                        $ret = false;
                     }
                 }
                 if (!$ret) {
@@ -402,8 +400,9 @@ trait KernelTrait
     {
         echo "_OnDevErrorHandler";
     }
-    public static function xPathInfo()
+    protected function getPathInfo()
     {
-        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
+        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+        return $_SERVER['PATH_INFO'] ?? '';
     }
 }

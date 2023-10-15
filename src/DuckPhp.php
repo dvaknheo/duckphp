@@ -25,11 +25,33 @@ use DuckPhp\Core\Logger;
 
 class DuckPhp extends App
 {
-    public static function RunAsContainerQuickly($options)
+    protected $duckphp_default_options = [
+        'ext_options_from_config'       => null,
+        'database_auto_extend_method'   => null,
+        'path_info_compact_enable'      => null,
+        'class_user'                    => null,
+        'class_admin'                   => null,
+        'table_prefix' => null,
+        'session_prefix' => null,
+    ];
+    public function __construct()
     {
-        $options['skip_404_handler'] = $options['skip_404_handler'] ?? true;
+        /*
+        $this->core_options['ext'] = [
+            DbManager::class => true,
+            RouteHookRouteMap::class => true,
+        ];
+        $this->core_options['route_map_auto_extend_method'] = false;
+        $this->core_options['database_auto_extend_method'] = false;
+        //*/
+
+        parent::__construct();
+    }
+    public static function RunAsContainerQuickly($options,$skip_404 = false, $welcome_handler = null)
+    {
+        $options['skip_404_handler'] = $skip_404;
         $options['container_mode'] = true;
-        //$options['container_mode_handler'] = null,
+        $options['container_mode_welcome_handle'] = $welcome_handler;
         return DuckPhp::G()->init($options)->run(); // remark , not static::class
     }
     protected function initComponents(array $options, object $context = null)
@@ -40,7 +62,6 @@ class DuckPhp extends App
         }
         
         $this->options['database_auto_extend_method'] = $this->options['database_auto_extend_method'] ?? false;
-        Logger::G()->init($this->options, $this);
         DbManager::G()->init($this->options, $this);
         
         if (PHP_SAPI === 'cli') {
