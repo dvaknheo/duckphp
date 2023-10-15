@@ -80,7 +80,7 @@ class App extends ComponentBase
     public function __construct()
     {
         parent::__construct();
-        $this->options = array_replace_recursive($this->core_options, $this->options);
+        $this->options = array_replace_recursive(static::$options_default, $this->core_options, $this->options);
         unset($this->core_options); // not use again;
     }
     public function version()
@@ -88,11 +88,6 @@ class App extends ComponentBase
         return static::VERSION;
     }
     //////// override KernelTrait ////////
-    //@override
-    public function getPathInfo()
-    {
-        return static::PathInfo();
-    }
     //@override
     public function _On404(): void
     {

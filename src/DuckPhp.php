@@ -26,11 +26,11 @@ use DuckPhp\Core\Logger;
 class DuckPhp extends App
 {
     protected $duckphp_default_options = [
-        'ext_options_from_config'       => null,
-        'database_auto_extend_method'   => null,
-        'path_info_compact_enable'      => null,
-        'class_user'                    => null,
-        'class_admin'                   => null,
+        'ext_options_from_config' => null,
+        'database_auto_extend_method' => null,
+        'path_info_compact_enable' => null,
+        'class_user' => null,
+        'class_admin' => null,
         'table_prefix' => null,
         'session_prefix' => null,
     ];
@@ -47,12 +47,27 @@ class DuckPhp extends App
 
         parent::__construct();
     }
-    public static function RunAsContainerQuickly($options,$skip_404 = false, $welcome_handler = null)
+    public static function RunAsContainerQuickly($options, $skip_404 = false, $welcome_handle = null)
     {
         $options['skip_404_handler'] = $skip_404;
+        if ($welcome_handle) {
+            $options['skip_404_handler'] = true;
+        }
+        
         $options['container_mode'] = true;
-        $options['container_mode_welcome_handle'] = $welcome_handler;
-        return DuckPhp::G()->init($options)->run(); // remark , not static::class
+        $options['handel_all_exception'] = false;
+        
+        $ret = DuckPhp::G()->init($options)->run(); // remark , not static::class
+        if (!$ret && $welcome_handle) {
+            $path_info = DuckPhp::G()->getPathInfo();
+            if ($path_info === '' || $path_info === '/') {
+                ($welcome_handle)();
+                return true;
+            } else {
+                DuckPhp::G()->_On404();
+            }
+        }
+        return $ret;
     }
     protected function initComponents(array $options, object $context = null)
     {
@@ -107,7 +122,7 @@ class DuckPhp extends App
         }
         $key = "path_".$sub_path;
         if (isset($this->options[$key])) {
-            return $this->options[$key]; //这里要调整 我们要获得绝对路径
+            return $this->options[$key]; //TODO 这里要调整 我们要获得绝对路径
         } elseif (in_array($sub_path, ['config','view','log'])) {
             return $this->options['path']. $sub_path .'/';
         }

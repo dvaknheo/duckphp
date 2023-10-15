@@ -320,14 +320,6 @@ trait KernelTrait
                 $ret = false;
                 if (!($this->options['container_mode'] ?? false)) {
                     $ret = Route::G()->run();
-                } else {
-                    if ($this->options['container_mode_welcome_handle'] ?? false) {
-                        $path_info = $this->getPathInfo();
-                        if ($path_info === '' || $path_info === '/') {
-                            ($this->options['container_mode_welcome_handle'])();
-                            $ret = true;
-                        }
-                    }
                 }
                 if (!$ret) {
                     $ret = $this->runExtentions();
@@ -399,10 +391,5 @@ trait KernelTrait
     public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
     {
         echo "_OnDevErrorHandler";
-    }
-    protected function getPathInfo()
-    {
-        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-        return $_SERVER['PATH_INFO'] ?? '';
     }
 }

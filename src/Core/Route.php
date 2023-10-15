@@ -230,7 +230,7 @@ class Route extends ComponentBase
         }
         $this->calling_class = $full_class;
         $this->calling_method = $method;
-        $callback = $this->getCallbackFromClassAndMethod($full_class, $method,$path_info);
+        $callback = $this->getCallbackFromClassAndMethod($full_class, $method, $path_info);
         return $callback;
     }
     protected function getCallbackFromClassAndMethod($full_class, $method, $path_info)
