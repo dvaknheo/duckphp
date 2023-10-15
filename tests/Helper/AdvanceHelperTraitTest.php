@@ -50,7 +50,6 @@ class AdvanceHelperTraitTest extends \PHPUnit\Framework\TestCase
         $handler=new HelperFakeSessionHandler();
         AdvanceHelper::session_set_save_handler( $handler);
 
-        AdvanceHelper::add404RouteHook( function(){var_dump('404!');});
         
         
         ////[[[[

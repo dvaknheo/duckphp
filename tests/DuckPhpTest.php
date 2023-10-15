@@ -9,16 +9,9 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        $ref = new \ReflectionClass(DuckPhp::class);
-        $extpath = $ref->getFileName();
-
-        
         \LibCoverage\LibCoverage::Begin(DuckPhp::class);
         $LibCoverage = \LibCoverage\LibCoverage::G();
         $path = \LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
-        
-       
-        
         //code here
         //$handler=null;
         //DuckPhp::G()->addBeforeRunHandler($handler);
@@ -31,7 +24,6 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
 
         $options=[
             'log_sql_query'=>true,
-            'use_short_functions'=>true,
             'mode_no_path_info'=>true,
             'path_view'=>$path_view,
             'path_info_compact_enable'=>true,

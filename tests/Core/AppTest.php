@@ -19,13 +19,15 @@ class AppTest extends \PHPUnit\Framework\TestCase
     protected $LibCoverage;
     public function testAll()
     {
+        $ref = new \ReflectionClass(App::class);
+        $path = $ref->getFileName();
+        
+        $extFile=dirname($path).'/Functions.php';
+        \LibCoverage\LibCoverage::G()->addExtFile($extFile);
+        
         \LibCoverage\LibCoverage::Begin(App::class);
         $this->LibCoverage = \LibCoverage\LibCoverage::G();
         
-        $ref = new \ReflectionClass(App::class);
-        $extFile=dirname($extpath).'/Functions.php';
-        \LibCoverage\LibCoverage::G()->addExtFile($extFile);
-
 /*
         $path_app=$this->LibCoverage->getClassTestPath(App::class);
         $options=[
@@ -61,7 +63,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'override_class'=>AppTestApp::class,
 
         ];
-        $this->doFunctions();
+       
 
         $options['ext']=[
             'noclass'=>true,
@@ -279,7 +281,7 @@ App::PageHtml(123);
         
 
 
-
+$this->doFunctions();
         
         \LibCoverage\LibCoverage::G($this->LibCoverage);
         \LibCoverage\LibCoverage::End();
@@ -295,7 +297,7 @@ App::PageHtml(123);
         \__res("test");
         \__json("test");
         \__domain();
-        \__display("block",[]);
+        //\__display("block",[]);
         \__trace_dump();
         \__var_dump("abc");
         \__var_log($this);
@@ -515,7 +517,6 @@ App::PageHtml(123);
         
         App::assignPathNamespace("NoPath","NoName");
         App::addRouteHook(function(){},'append-outter',true);
-        App::add404RouteHook(function(){});
         
         
         App::isInException();

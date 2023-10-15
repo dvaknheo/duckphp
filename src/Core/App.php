@@ -511,7 +511,7 @@ trait Core_Helper
     }
     public function _VarLog($var)
     {
-        return Logger::G()->debug(var_export($var,true));
+        return Logger::G()->debug(var_export($var, true));
     }
     public function _var_dump(...$args)
     {
@@ -776,7 +776,7 @@ trait Core_Glue
     {
         return Route::G()->replaceController($old_class, $new_class);
     }
-    public function addRouteHook($callback, $position = 'append-outter', $once = true)
+    public static function addRouteHook($callback, $position = 'append-outter', $once = true)
     {
         return Route::G()->addRouteHook($callback, $position, $once);
     }

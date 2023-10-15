@@ -317,17 +317,17 @@ trait KernelTrait
         try {
             $this->onBeforeRun();
             if (!$this->default_run_handler) {
-                if(!($this->options['container_mode']??false)){
+                if (!($this->options['container_mode'] ?? false)) {
                     $ret = Route::G()->run();
-                }else{
-                    if($this->options['container_mode_welcome_handle']??false){
+                } else {
+                    if ($this->options['container_mode_welcome_handle'] ?? false) {
                         $path_info = static::PathInfo(); //  :(
-                        if($path_info === '' || $path_info ==='/'){
+                        if ($path_info === '' || $path_info === '/') {
                             ($this->options['container_mode_welcome_handle'])();
                             $ret = true;
                         }
                         $ret = false;
-                    }else{
+                    } else {
                         $ret = false;
                     }
                 }
@@ -401,5 +401,9 @@ trait KernelTrait
     public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
     {
         echo "_OnDevErrorHandler";
+    }
+    public static function xPathInfo()
+    {
+        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
     }
 }

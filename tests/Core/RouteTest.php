@@ -28,7 +28,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         //Main
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
-            'controller_base_class'=>\tests_Core_Route\baseController::class,
+            'controller_class_base'=>\tests_Core_Route\baseController::class,
         ];
         $_SERVER['argv']=[ __FILE__ ,'about/me' ];
         $_SERVER['argc']=count($_SERVER['argv']);
@@ -86,7 +86,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
 
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
-            'controller_base_class'=>'~baseController',
+            'controller_class_base'=>'~baseController',
         ];
         $_SERVER['argv']=[ __FILE__ ,'about/me' ];
         $_SERVER['argc']=count($_SERVER['argv']);
@@ -151,7 +151,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
-            'controller_base_class'=>'~baseController',
+            'controller_class_base'=>'~baseController',
             'controller_class_postfix'=>'Controller',
         ];
         Route::G(new Route())->init($options);
@@ -159,7 +159,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
-            'controller_base_class'=>'~baseController',
+            'controller_class_base'=>'~baseController',
             'controller_class_postfix'=>'Controller',
             'controller_path_prefix'=>'/prefix/',
         ];
@@ -273,7 +273,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
     {
        $options=[
             'namespace_controller'=>'\\tests_Core_Route',
-            'controller_base_class'=>\tests_Core_Route\baseController::class,
+            'controller_class_base'=>\tests_Core_Route\baseController::class,
         ];
         Route::G(new Route());
         $flag=Route::RunQuickly([],function(){
@@ -323,7 +323,6 @@ class RouteTest extends \PHPUnit\Framework\TestCase
                 var_dump(DATE(DATE_ATOM));
                 return true;
             };
-            Route::G()->add404RouteHook($my404);
             Route::G()->addRouteHook($appended, 'append-inner', true);
             Route::G()->addRouteHook($appended, 'append-outter', true);
         });

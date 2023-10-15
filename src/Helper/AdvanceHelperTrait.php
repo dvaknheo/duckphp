@@ -28,7 +28,7 @@ trait AdvanceHelperTrait
     }
     public function addRouteHook($callback, $position = 'append-outter', $once = true)
     {
-        return App::addRouteHook($hook, $position, $once);
+        return App::addRouteHook($callback, $position, $once);
     }
     public static function replaceController($old_class, $new_class)
     {
