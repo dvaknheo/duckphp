@@ -74,12 +74,6 @@ class Route extends ComponentBase
             return  $this->parameters;
         }
     }
-    public function reset()
-    {
-        $this->is_failed = false;
-        $this->enable_default_callback = true;
-        return $this;
-    }
     public function bind($path_info, $request_method = 'GET')
     {
         $path_info = parse_url($path_info, PHP_URL_PATH);

@@ -13,5 +13,10 @@
 <?php $t=get_included_files();sort($t); var_dump($t);?>
 </pre>
 </fieldset>
-
+<fieldset>
+<legend>应用的选项</legend>
+<pre>
+<?php var_dump(array_diff_assoc(\DuckPhp\Core\App::G()->options,(new \DuckPhp\DuckPhp())->options));?>
+</pre>
+</fieldset>
 </body></html>

@@ -49,17 +49,16 @@ class DuckPhp extends App
     }
     public static function RunAsContainerQuickly($options, $skip_404 = false, $welcome_handle = null)
     {
+        $options['container_mode'] = true;
+        $options['handel_all_exception'] = false;
         $options['skip_404_handler'] = $skip_404;
+        
         if ($welcome_handle) {
             $options['skip_404_handler'] = true;
         }
-        
-        $options['container_mode'] = true;
-        $options['handel_all_exception'] = false;
-        
-        $ret = DuckPhp::G()->init($options)->run(); // remark , not static::class
+        $ret = DuckPhp::G(new DuckPhp())->init($options)->run(); // remark , not static::class
         if (!$ret && $welcome_handle) {
-            $path_info = DuckPhp::G()->getPathInfo();
+            $path_info = DuckPhp::PathInfo();
             if ($path_info === '' || $path_info === '/') {
                 ($welcome_handle)();
                 return true;

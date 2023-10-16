@@ -95,9 +95,30 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         
         /////////////
         
-        ///////////
+        $options=[
+            'is_debug' => true,
+            'cli_enable'=>false,
+            'path' =>$path,
+            
+            'cli_mode' => 'hook',
+            'ext'=>[
+                DuckPhp_Sub::class =>[
+                    'cli_enable'=>false,
+                    'cli_mode' => 'hook',
+                    'controller_url_prefix'=>'advance/',
+                ],
+            ],
+        ];
+        DuckPhp::G(new DuckPhp());
+        DuckPhp_Sub::G(new DuckPhp_Sub());
+        $_SERVER['PATH_INFO'] = '/zzzzzzzzzzzz';
+        $flag =DuckPhp_Sub::RunAsContainerQuickly($options,false,function(){echo "welcome";});
         
-        
+        DuckPhp::G(new DuckPhp());
+        DuckPhp_Sub::G(new DuckPhp_Sub());
+        $_SERVER['PATH_INFO'] = '/zzzzzzzzzzzz';
+        $_SERVER['PATH_INFO'] = '/';
+        $flag =DuckPhp_Sub::RunAsContainerQuickly($options,false,function(){echo "welcome";});
         
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End(DuckPhp::class);
@@ -111,6 +132,8 @@ class DuckPhp_Sub extends DuckPhp
         'class_session' => FakeSession::class,
         'class_admin' => FakeAdmin::class,
         'class_user' => FakeUser::class,
+        
+        'namespace_controller' => 'zz',
     ];
     public function onInit()
     {

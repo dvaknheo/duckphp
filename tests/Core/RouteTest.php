@@ -16,7 +16,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'DOCUMENT_ROOT'=> __DIR__,
             'SCRIPT_FILENAME'=>__DIR__.'/aa/index.php',
         ];
-        Route::G()->reset();
+        //Route::G()->reset();
         Route::PathInfo('x/z');
         $t= Route::Url('aaa');
         $t= Route::Res('aaa');
@@ -66,7 +66,8 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         
         Route::G()->bind('about/me');
         Route::G()->run();
-        
+        Route::G()->bind('about/static');
+        Route::G()->run();
         var_dump("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
         
         Route::G()->bind('Main/index','POST');
@@ -148,6 +149,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->defaultGetRouteCallback('/about/me');
         Route::G()->defaultGetRouteCallback('/about/_start');
         Route::G()->defaultGetRouteCallback('/about/NoExists');
+        Route::G()->defaultGetRouteCallback('/about/static');
         
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
@@ -209,7 +211,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
     }
     protected function doFixedRouteEx()
     {
-        echo "\nFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\n";
+        echo "\nFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\n";
         
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
@@ -418,6 +420,10 @@ class about extends baseController
     public function me()
     {
         //var_dump(DATE(DATE_ATOM));
+    }
+    public static function static()
+    {
+        //
     }
 }
 class about2 extends baseController
