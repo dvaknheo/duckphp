@@ -106,6 +106,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
                     'cli_enable'=>false,
                     'cli_mode' => 'hook',
                     'controller_url_prefix'=>'advance/',
+                    'exception_reporter' => FakeReporter::class,
                 ],
             ],
         ];
@@ -197,3 +198,8 @@ class FakeUser
         return 1;
     }
 }
+class FakeReporter
+{
+
+}
+

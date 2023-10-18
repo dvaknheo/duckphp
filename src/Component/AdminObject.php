@@ -26,8 +26,9 @@ class AdminObject
     {
         return false;
     }
-    public function logoutUrl()
+    public function logoutUrl($ext)
     {
+        return '';
     }
     public function nick()
     {

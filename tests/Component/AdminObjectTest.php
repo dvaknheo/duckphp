@@ -14,6 +14,9 @@ class AdminObjectTest extends \PHPUnit\Framework\TestCase
         AdminObject::G(MyAdminObject::G())->id();
         AdminObject::G()->isSuper();
         AdminObject::G()->data();
+        AdminObject::G()->logoutUrl('');
+        AdminObject::G()->nick();
+        AdminObject::G()->username();
         \LibCoverage\LibCoverage::End();
     }
 }

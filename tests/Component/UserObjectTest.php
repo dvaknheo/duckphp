@@ -9,10 +9,13 @@ class UserObjectTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(UserObject::class);
         try{
-            UserObject::G();
+            UserObject::_();
         } catch(\Throwable $ex){}
-        UserObject::G(MyUserObject::G())->id();
-        UserObject::G(MyUserObject::G())->data();
+        UserObject::_(MyUserObject::_())->id();
+        UserObject::_(MyUserObject::_())->data();
+        UserObject::_()->logoutUrl('');
+        UserObject::_()->nick();
+        UserObject::_()->username();
         \LibCoverage\LibCoverage::End();
     }
 }

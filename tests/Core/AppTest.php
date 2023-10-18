@@ -297,7 +297,7 @@ $this->doFunctions();
         \__res("test");
         \__json("test");
         \__domain();
-        //\__display("block",[]);
+        \__display("_sys/error-404",[]);
         \__trace_dump();
         \__var_dump("abc");
         \__var_log($this);

@@ -22,12 +22,9 @@ class UserObject
     {
         return [];
     }
-    public function isSuper()
+    public function logoutUrl($ext)
     {
-        return false;
-    }
-    public function logoutUrl()
-    {
+        return '';
     }
     public function nick()
     {
