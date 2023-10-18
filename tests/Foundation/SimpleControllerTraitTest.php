@@ -9,7 +9,7 @@ class ControllerFakeSingletonTraitTest extends \PHPUnit\Framework\TestCase
         $LibCoverage = \LibCoverage\LibCoverage::G();
         \LibCoverage\LibCoverage::Begin(SimpleControllerTrait::class);
         
-        ControllerFakeSingletonTraitObject::ReplaceTo(ControllerFakeSingletonTraitObject2::ReplaceTo());
+        ControllerFakeSingletonTraitObject::_(ControllerFakeSingletonTraitObject2::_());
         
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();

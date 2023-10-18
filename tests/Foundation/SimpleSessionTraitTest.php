@@ -1,13 +1,13 @@
 <?php
-namespace tests\DuckPhp\Component;
+namespace tests\DuckPhp\Foundation;
 
-use DuckPhp\Component\SessionBase;
+use DuckPhp\Foundation\SimpleSessionTrait;
 
-class SessionTest extends \PHPUnit\Framework\TestCase
+class SimpleSessionTraitTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \LibCoverage\LibCoverage::Begin(SessionBase::class);
+        \LibCoverage\LibCoverage::Begin(SimpleSessionTrait::class);
         SessionManager::G()->setCurrentUser(['id'=>'1','name'=>'dx']);
         SessionManager::G()->getCurrentUser();
         SessionManager::G()->logoutUser();
@@ -15,8 +15,9 @@ class SessionTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::End();
     }
 }
-class SessionManager extends SessionBase
+class SessionManager
 {
+    use SimpleSessionTrait;
     public function setCurrentUser($user)
     {
         $this->set('user',$user);

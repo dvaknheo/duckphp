@@ -24,7 +24,7 @@ DuckPhp::G()->init($options);
 var_dump(DuckPhp::G()->options);
 ///////////////////////////
 
-Route::G()->reset()->run();
+Route::G()->run();
 //Route::G()->addRouteHook(function(){},'prepend-inner');
 echo "<pre>\n";
 echo RouteHookManager::G()->dump();

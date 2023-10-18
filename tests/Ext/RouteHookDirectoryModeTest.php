@@ -38,7 +38,6 @@ class RouteHookDirectoryModeTest extends \PHPUnit\Framework\TestCase
             'PATH_INFO'=>'Missed',
             'REQUEST_METHOD'=>'POST',
         ];
-        Route::G()->reset();
         Route::G()->run();
         
         $_SERVER['REQUEST_URI']='';
@@ -74,7 +73,6 @@ echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n";
         var_dump($_SERVER['REQUEST_URI']);
 
         $_SERVER=$_SERVER;
-        Route::G()->reset();
         Route::G()->run();
         RouteHookDirectoryMode::G()->isInited();
 

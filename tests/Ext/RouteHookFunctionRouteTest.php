@@ -42,9 +42,9 @@ class RouteHookFunctionRouteTest extends \PHPUnit\Framework\TestCase
         $_POST['PATH_INFO'] = "path_info";
 
         echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n";
-        App::Route()->reset()->bind('/normal');
+        App::Route()->bind('/normal');
         Route::G()->run();
-        App::Route()->reset()->bind('/');
+        App::Route()->bind('/');
         Route::G()->run();
         App::Route()->bind('/post');
         Route::G()->run();

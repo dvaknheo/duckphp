@@ -3,16 +3,15 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckPhp\Component;
+namespace DuckPhp\Foundation;
 
 use DuckPhp\Core\App;
-use DuckPhp\Core\ComponentBase;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
-class SessionBase extends ComponentBase
+trait SimpleSessionTrait
 {
-    public $options = [
-        'session_prefix' => '',
-    ];
+    use SingletonExTrait;
+
     protected $session_started = false;
     
     protected function checkSessionStart()
@@ -21,7 +20,7 @@ class SessionBase extends ComponentBase
             return;
         }
         App::session_start();
-        $this->options['session_prefix'] = App::Current()->options['table_prefix'] ?? '';
+        $this->options['session_prefix'] = App::Current()->options['session_prefix'] ?? '';
         $this->session_started = true;
     }
     protected function get($key, $default = null)
