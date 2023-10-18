@@ -22,4 +22,19 @@ class UserObject
     {
         return [];
     }
+    public function isSuper()
+    {
+        return false;
+    }
+    public function logoutUrl()
+    {
+    }
+    public function nick()
+    {
+        return $this->username();
+    }
+    public function username()
+    {
+        return '';
+    }
 }

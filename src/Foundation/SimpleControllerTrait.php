@@ -9,15 +9,15 @@ use DuckPhp\Core\Route;
 
 trait SimpleControllerTrait
 {
-    public static function ReplaceTo($class = null)
+    public static function _($object = null)
     {
-        if ($class) {
-            Route::G()->replaceController(static::class, $class);
+        if ($object) {
+            Route::G()->replaceController(static::class, get_class($object));
+            return $object;
+        } else {
+            $class = Route::G()->options[static::class] ?? static::class;
+            $object = (new \ReflectionClass($class))->newInstanceWithoutConstructor();
+            return $object;
         }
-        return static::class;
     }
-    //public function __construct()
-    //{
-    //    if(self::class == static::class){ return;}
-    //}
 }

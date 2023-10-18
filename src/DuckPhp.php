@@ -111,6 +111,9 @@ class DuckPhp extends App
             }
             static::Admin(($this->options['class_admin'])::G());
         }
+        if ($this->options['exception_reporter'] ?? null) {
+            static::assignExceptionHandler(\Exception::class, [$this->options['exception_reporter'], 'OnException']);
+        }
         ///////
         return $this;
     }
