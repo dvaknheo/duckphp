@@ -55,7 +55,7 @@ class App extends ComponentBase
         'error_500' => null,          //'_sys/error-500',
         'error_debug' => null,        //'_sys/error-debug',
     ];
-    
+    protected $common_options = [];
     // for trait
     protected $system_handlers = [
         'header' => null,
@@ -80,8 +80,10 @@ class App extends ComponentBase
     public function __construct()
     {
         parent::__construct();
-        $this->options = array_replace_recursive(static::$options_default, $this->core_options, $this->options);
+        $this->options = array_replace_recursive($this->kernel_options, $this->core_options, $this->common_options, $this->options);
+        unset($this->kernel_options); // not use again;
         unset($this->core_options); // not use again;
+        unset($this->common_options); // not use again;
     }
     public function version()
     {

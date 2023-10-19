@@ -21,7 +21,7 @@ trait KernelTrait
 {
     public $options = [];
 
-    protected static $options_default = [
+    protected $kernel_options = [
             //// not override options ////
             'use_autoloader' => false,
             
@@ -41,16 +41,18 @@ trait KernelTrait
             'skip_exception_check' => false,
             
             'on_inited' => null,
-            //override_class
-            //override_class_from
-            //path_override_from
-            
+            'container_mode' => false,
+            'override_class' => null,
+            'override_class_from' => null,
+            'path_override_from' => null,
+            'path_config_override_from' => null,
+            'path_view_override_from' => null,
         ];
     
     protected $default_run_handler = null;
 
     protected $is_simple_mode = true;
-    protected $is_child = false;
+    protected $is_root = true;
     protected $handler_for_exception_handler;
 
     public static function RunQuickly(array $options = [], callable $after_init = null): bool
@@ -139,9 +141,9 @@ trait KernelTrait
                 $extApps[$class] = $class; /** @phpstan-ignore-line */
             }
         }
-        $this->is_child = \is_a($context, self::class);
+        $this->is_root = !(\is_a($context, self::class));
 
-        if (!$this->is_child && empty($extApps)) {
+        if ($this->is_root && empty($extApps)) {
             $this->is_simple_mode = true;
             (self::class)::G($this); // remark ,don't use self::G()!
             static::G($this);
@@ -149,16 +151,17 @@ trait KernelTrait
                 $class = $this->options['override_class_from'];
                 $class::G($this);
             }
+            //if (true) {
             return true;
+            //}
         }
         //////////////////////////////
         $apps = [];
-        if (!$this->is_child) {
-            //TODO $this->onCreatePhases();
+        if ($this->is_root || ) {
             //$autoloader = AutoLoader::G();
+            $this->onBeforeCreatePhases();
             $flag = PhaseContainer::ReplaceSingletonImplement();
-            // if false ,do something?
-            //$apps[AutoLoader::class] = $autoloader;
+            $this->onAfterCreatePhases();
             
             $container = $this->getContainer();
             $container->setDefaultContainer(static::class);
@@ -171,7 +174,7 @@ trait KernelTrait
 
         /////////////
         $apps[static::class] = $this;
-        if (!$this->is_child) {
+        if ($this->is_root) {
             $apps[self::class] = $this;
         }
         if ($this->options['override_class_from'] ?? null) {
@@ -196,7 +199,7 @@ trait KernelTrait
         if ($this->options['use_short_functions']) {
             require_once __DIR__.'/Functions.php';
         }
-        if (($options['use_autoloader'] ?? self::$options_default['use_autoloader']) || ($options['path_namespace'] ?? false)) {
+        if (($options['use_autoloader'] ?? $this->options['use_autoloader']) || ($options['path_namespace'] ?? false)) {
             $options['path'] = $options['path'] ?? $this->getDefaultProjectPath();
             $options['namespace'] = $options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
             AutoLoader::G()->init($options, $this)->run();
@@ -234,14 +237,12 @@ trait KernelTrait
         }
         
         Logger::G()->init($this->options, $this);
-        ExceptionManager::G()->init($exception_options, $this)->run();
+        ExceptionManager::G()->init($exception_options, $this);
         Configer::G()->init($this->options, $this);
-        $this->reloadFlags();
+        $this->reloadFlags(); //TODO
 
         View::G()->init($this->options, $this);
-        
         Route::G()->init($this->options, $this);
-
         RuntimeState::G()->init($this->options, $this);
     }
     protected function dealAsChild($context)
@@ -307,10 +308,18 @@ trait KernelTrait
     protected function onAfterRun()
     {
     }
+    //for override
+    protected function onBeforeCreatePhases()
+    {
+    }
+    //for override
+    protected function onAfterCreatePhases()
+    {
+    }
     public function run(): bool
     {
         $this->_Phase(static::class);
-        if (!$this->is_child) {
+        if ($this->is_root) {
             (self::class)::G($this);
         }
         
@@ -331,8 +340,8 @@ trait KernelTrait
                 $ret = ($this->default_run_handler)();
             }
         } catch (\Throwable $ex) {
-            $phase = $this->_Phase(static::class);
-            RuntimeState::G()->lastPhase = $phase; //todo function
+            $last_phase = $this->_Phase(static::class);
+            RuntimeState::G()->lastPhase = $last_phase; //todo function
             RuntimeState::G()->toggleInException();
             if ($this->options['skip_exception_check']) {
                 RuntimeState::G()->clear();

@@ -25,32 +25,29 @@ use DuckPhp\Core\Logger;
 
 class DuckPhp extends App
 {
-    protected $duckphp_default_options = [
-        'ext_options_from_config' => null,
+    protected $common_options = [
+        'ext_options_enable' => false,
+        'ext_options_file' => 'DuckPhpOptions.php',
+        
+        'cli_enable' => true,
+        
         'database_auto_extend_method' => null,
         'path_info_compact_enable' => null,
+        'cli_default_command_class' =>null,
+        'route_map_auto_extend_method'=> false,
+        
         'class_user' => null,
         'class_admin' => null,
-        'table_prefix' => null,
+        
         'session_prefix' => null,
+        'table_prefix' => null,
     ];
-    public function __construct()
-    {
-        /*
-        $this->core_options['ext'] = [
-            DbManager::class => true,
-            RouteHookRouteMap::class => true,
-        ];
-        $this->core_options['route_map_auto_extend_method'] = false;
-        $this->core_options['database_auto_extend_method'] = false;
-        //*/
-
-        parent::__construct();
-    }
     public static function RunAsContainerQuickly($options, $skip_404 = false, $welcome_handle = null)
     {
         $options['container_mode'] = true;
-        $options['handel_all_exception'] = false;
+        $options['handle_all_exception'] = false;
+        $options['handle_all_dev_error'] = false;
+
         $options['skip_404_handler'] = $skip_404;
         
         if ($welcome_handle) {
@@ -71,8 +68,8 @@ class DuckPhp extends App
     protected function initComponents(array $options, object $context = null)
     {
         parent::initComponents($options, $context);
-        if ($this->options['ext_options_from_config'] ?? false) {
-            $this->mergeExtOptions();
+        if ($this->options['ext_options_enable']) {
+            $this->loadExtOptions();
         }
         
         $this->options['database_auto_extend_method'] = $this->options['database_auto_extend_method'] ?? false;
@@ -100,13 +97,13 @@ class DuckPhp extends App
 
         ////////////////
         if ($this->options['class_user'] ?? null) {
-            if ($this->is_child) {
+            if (!$this->is_root) {
                 $this->bumpSingletonToRoot($this->options['class_user'], UserObject::class);
             }
             static::User(($this->options['class_user'])::G());
         }
         if ($this->options['class_admin'] ?? null) {
-            if ($this->is_child) {
+            if (!$this->is_root) {
                 $this->bumpSingletonToRoot($this->options['class_admin'], AdminObject::class);
             }
             static::Admin(($this->options['class_admin'])::G());
@@ -124,7 +121,7 @@ class DuckPhp extends App
         }
         $key = "path_".$sub_path;
         if (isset($this->options[$key])) {
-            return $this->options[$key]; //TODO 这里要调整 我们要获得绝对路径
+            return static::IsAbsPath($this->options[$key]) ? $this->options[$key] : $this->options['path'].$this->options[$key];
         } elseif (in_array($sub_path, ['config','view','log'])) {
             return $this->options['path']. $sub_path .'/';
         }
@@ -145,7 +142,6 @@ class DuckPhp extends App
     }
     //////////////
     ////[[[[
-    protected $file_for_ext_options_from_config = 'DuckPhpOptions';
     protected function installWithExtOptions($options)
     {
         $options['install'] = DATE(DATE_ATOM);
@@ -158,7 +154,7 @@ class DuckPhp extends App
         $path = $this->_PhaseCall(get_class(App::G()), function () {
             return App::G()->getPath('config');
         });
-        $full_file = $path.$this->file_for_ext_options_from_config .'.php';
+        $full_file = static::IsAbsPath($ext_options_file) ? $ext_options_file : $path.$ext_options_file;
         return $full_file;
     }
     protected function get_all_ext_config($full_file = null)
@@ -172,7 +168,7 @@ class DuckPhp extends App
         $all_options = include($full_file); //TODO seprate
         return $all_options;
     }
-    protected function mergeExtOptions()
+    protected function loadExtOptions()
     {
         $all_options = $this->get_all_ext_config();
         $options = $all_options[static::class] ?? [];

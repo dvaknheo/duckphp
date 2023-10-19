@@ -176,13 +176,12 @@ class Route extends ComponentBase
             $prefix = '/'.trim($this->options['controller_url_prefix'], '/').'/';
             $l = strlen($prefix);
             if (substr($path_info, 0, $l) !== $prefix) {
-                $this->route_error = "E001: controller_url_prefix($prefix) no match ($path_info)";
+                $this->route_error = "E001: url: $path_info controller_url_prefix($prefix) error";
                 return null;
             }
             $path_info = substr($path_info, $l - 1);
             $path_info = ltrim((string)$path_info, '/');
         }
-        
         $path_info = ltrim((string)$path_info, '/');
         if (!empty($this->options['controller_path_ext']) && !empty($path_info)) {
             $l = strlen($this->options['controller_path_ext']);
@@ -200,15 +199,14 @@ class Route extends ComponentBase
         $welcome_class = $this->options['controller_welcome_class'];
         $this->calling_path = $path_class?$path_info:$welcome_class.'/'.$method;
         
-        if (!$this->options['controller_welcome_class_visible'] && $path_class === $welcome_class) {
-            $this->route_error = "E009: default hide welcome class";
+        if ($this->options['controller_hide_boot_class'] && $path_class === $welcome_class) {
+            $this->route_error = "E009: controller_hide_boot_class! {$welcome_class}; ";
             return [null, null];
         }
         $path_class = $path_class ?: $welcome_class;
 
         $full_class = $this->getControllerNamespacePrefix().str_replace('/', '\\', $path_class).$this->options['controller_class_postfix'];
         $full_class = ''.ltrim($full_class, '\\');
-        $full_class = $this->options['controller_class_map'][$full_class] ?? $full_class;
         
         $method = ($method === '') ? $this->options['controller_welcome_method'] : $method;
         $method = $this->options['controller_method_prefix'].$method;

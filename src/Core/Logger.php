@@ -20,7 +20,7 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
 
     public $options = [
         'path' => '',
-        'path_log' => 'runtime/logs',
+        'path_log' => 'runtime',
         'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
         'log_prefix' => 'DuckPhpLog',
     ];
