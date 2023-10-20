@@ -46,7 +46,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         $options=[
             'namespace'=>'tests_Core_Route',
             'namespace_controller'=>'',
-            'controller_hide_boot_class'=>true,
+            'controller_welcome_class_visible'=>false,
         ];
         Route::G(new Route());
         Route::RunQuickly($options,function(){
@@ -215,7 +215,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
-            'controller_hide_boot_class'=>false,
+            'controller_welcome_class_visible'=>true,
         ];
 
         Route::G(new MyRoute())->init($options);

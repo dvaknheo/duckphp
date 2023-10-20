@@ -33,8 +33,8 @@ class DuckPhp extends App
         
         'database_auto_extend_method' => null,
         'path_info_compact_enable' => null,
-        'cli_default_command_class' =>null,
-        'route_map_auto_extend_method'=> false,
+        'cli_default_command_class' => null,
+        'route_map_auto_extend_method' => false,
         
         'class_user' => null,
         'class_admin' => null,
@@ -44,7 +44,7 @@ class DuckPhp extends App
     ];
     public static function RunAsContainerQuickly($options, $skip_404 = false, $welcome_handle = null)
     {
-        $options['container_mode'] = true;
+        $options['container_only'] = true;
         $options['handle_all_exception'] = false;
         $options['handle_all_dev_error'] = false;
 
@@ -154,6 +154,7 @@ class DuckPhp extends App
         $path = $this->_PhaseCall(get_class(App::G()), function () {
             return App::G()->getPath('config');
         });
+        $ext_options_file = $this->options['ext_options_file'];
         $full_file = static::IsAbsPath($ext_options_file) ? $ext_options_file : $path.$ext_options_file;
         return $full_file;
     }

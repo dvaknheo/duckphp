@@ -41,7 +41,7 @@ trait KernelTrait
             'skip_exception_check' => false,
             
             'on_inited' => null,
-            'container_mode' => false,
+            'container_only' => false,
             'override_class' => null,
             'override_class_from' => null,
             'path_override_from' => null,
@@ -157,7 +157,7 @@ trait KernelTrait
         }
         //////////////////////////////
         $apps = [];
-        if ($this->is_root || ) {
+        if ($this->is_root || $this->options['container_only']) {
             //$autoloader = AutoLoader::G();
             $this->onBeforeCreatePhases();
             $flag = PhaseContainer::ReplaceSingletonImplement();
@@ -327,7 +327,7 @@ trait KernelTrait
             $this->onBeforeRun();
             if (!$this->default_run_handler) {
                 $ret = false;
-                if (!($this->options['container_mode'] ?? false)) {
+                if (!($this->options['container_only'] ?? false)) {
                     $ret = Route::G()->run();
                 }
                 if (!$ret) {

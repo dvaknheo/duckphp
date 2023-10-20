@@ -13,7 +13,7 @@ class ExceptionManager extends ComponentBase
         'handle_all_dev_error' => true,
         'handle_all_exception' => true,
         'system_exception_handler' => null,
-        'handle_exception_on_init'=> true,
+        'handle_exception_on_init' => true,
         
         'default_exception_handler' => null,
         'dev_error_handler' => null,
@@ -31,9 +31,10 @@ class ExceptionManager extends ComponentBase
     public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
-        if ($this->options['handle_exception_now']) {
+        if ($this->options['handle_exception_on_init']) {
             $this->run();
         }
+        return $this;
     }
     public static function CallException($ex)
     {

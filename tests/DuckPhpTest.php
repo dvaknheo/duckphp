@@ -75,7 +75,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         
         $options['path'] = $path;
         $options['path_test'] = 'abc';
-        $options['ext_options_from_config']=true;
+        $options['ext_options_enable']=true;
         
         @unlink($path.'config/'.'DuckPhpOptions.php');
         DuckPhp_Sub::G(new DuckPhp_Sub())->init($options);
