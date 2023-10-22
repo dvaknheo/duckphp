@@ -7,7 +7,7 @@ namespace DuckPhp\Core;
 
 use DuckPhp\Core\ComponentBase;
 
-class RuntimeState extends ComponentBase
+class Runtime extends ComponentBase
 {
     public $options = [
         'use_output_buffer' => false,

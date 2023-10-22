@@ -707,11 +707,11 @@ trait Core_Glue
     //runtime state
     public static function isInException()
     {
-        return RuntimeState::G()->isInException();
+        return Runtime::G()->isInException();
     }
     public static function isRunning()
     {
-        return RuntimeState::G()->isRunning();
+        return Runtime::G()->isRunning();
     }
     // route static
     public static function Url($url = null)

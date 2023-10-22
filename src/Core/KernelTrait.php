@@ -243,7 +243,7 @@ trait KernelTrait
 
         View::G()->init($this->options, $this);
         Route::G()->init($this->options, $this);
-        RuntimeState::G()->init($this->options, $this);
+        Runtime::G()->init($this->options, $this);
     }
     protected function dealAsChild($context)
     {
@@ -341,10 +341,10 @@ trait KernelTrait
             }
         } catch (\Throwable $ex) {
             $last_phase = $this->_Phase(static::class);
-            RuntimeState::G()->lastPhase = $last_phase; //todo function
-            RuntimeState::G()->toggleInException();
+            Runtime::G()->lastPhase = $last_phase; //todo function
+            Runtime::G()->toggleInException();
             if ($this->options['skip_exception_check']) {
-                RuntimeState::G()->clear();
+                Runtime::G()->clear();
                 throw $ex;
             }
             //$this->onException();
@@ -352,7 +352,7 @@ trait KernelTrait
             $ret = true;
         }
         $this->onAfterRun();
-        RuntimeState::G()->clear();
+        Runtime::G()->clear();
         return $ret;
     }
     protected function runExtentions()
