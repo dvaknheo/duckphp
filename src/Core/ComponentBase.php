@@ -89,16 +89,15 @@ class ComponentBase // implements ComponentInterface
         if (static::IsAbsPath($file)) {
             return $file;
         }
-        
+
         clearstatcache();
         
         $path = static::SlashDir($options['path_'.$subkey]);
         if (!static::IsAbsPath($path)) {
             $path = static::SlashDir($options['path']) . $path;
         }
-        
         $full_file = $path.$file;
-        
+
         if (is_file($full_file)) {
             return $full_file;
         }

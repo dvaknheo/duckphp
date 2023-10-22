@@ -12,7 +12,7 @@ use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\KernelTrait;
 use DuckPhp\Core\Logger;
 use DuckPhp\Core\Route;
-use DuckPhp\Core\RuntimeState;
+use DuckPhp\Core\Runtime;
 use DuckPhp\Core\SystemWrapperTrait;
 use DuckPhp\Core\View;
 

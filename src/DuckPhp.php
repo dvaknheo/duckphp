@@ -54,6 +54,7 @@ class DuckPhp extends App
             $options['skip_404_handler'] = true;
         }
         $ret = DuckPhp::G(new DuckPhp())->init($options)->run(); // remark , not static::class
+        
         if (!$ret && $welcome_handle) {
             $path_info = DuckPhp::PathInfo();
             if ($path_info === '' || $path_info === '/') {

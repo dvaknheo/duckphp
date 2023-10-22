@@ -14,7 +14,7 @@ use DuckPhp\Core\Configer;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Core\Route;
-use DuckPhp\Core\RuntimeState;
+use DuckPhp\Core\Runtime;
 use DuckPhp\Core\View;
 
 trait KernelTrait
@@ -353,6 +353,7 @@ trait KernelTrait
         }
         $this->onAfterRun();
         Runtime::G()->clear();
+        $this->_Phase(static::class);
         return $ret;
     }
     protected function runExtentions()

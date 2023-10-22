@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Core{
 
 use DuckPhp\Core\App;
 use DuckPhp\Core\KernelTrait;
-use DuckPhp\Core\RuntimeState;
+use DuckPhp\Core\Runtime;
 use DuckPhp\DuckPhp;
 use DuckPhp\Core\Configer;
 use DuckPhp\Core\View;
@@ -111,9 +111,9 @@ echo "-------------------------------------\n";
         
 
         ////
-        RuntimeState::G()->toggleOutputed(false);
+        Runtime::G()->toggleOutputed(false);
         //App::OnOutputBuffering('abc');
-        RuntimeState::G()->toggleOutputed(true);
+        Runtime::G()->toggleOutputed(true);
         //App::OnOutputBuffering('def');
         ////
         
