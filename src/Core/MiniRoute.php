@@ -7,16 +7,8 @@ namespace DuckPhp\Core;
 
 use DuckPhp\Core\ComponentBase;
 
-class Route extends ComponentBase
+class MiniRoute extends ComponentBase
 {
-    use Route_UrlManager;
-    use Route_Helper;
-    
-    const HOOK_PREPEND_OUTTER = 'prepend-outter';
-    const HOOK_PREPEND_INNER = 'prepend-inner';
-    const HOOK_APPPEND_INNER = 'append-inner';
-    const HOOK_APPPEND_OUTTER = 'append-outter';
-    
     public $options = [
         'namespace' => '',
         'namespace_controller' => 'Controller',
@@ -26,10 +18,8 @@ class Route extends ComponentBase
         'controller_welcome_class_visible' => false,
         'controller_welcome_method' => 'index',
         
-        'controller_class_base' => '',
         'controller_class_postfix' => '',
         'controller_method_prefix' => '',
-        'controller_prefix_post' => 'do_', //TODO remove it
         
         'controller_class_map' => [],
         
@@ -37,133 +27,18 @@ class Route extends ComponentBase
         'controller_url_prefix' => '',
     ];
 
-    public $pre_run_hook_list = [];
-    public $post_run_hook_list = [];
-    
-    //properties
-    protected $parameters = [];
     protected $route_error = '';
     protected $calling_path = '';
     protected $calling_class = '';
     protected $calling_method = '';
     
-    protected $enable_default_callback = true;
-    protected $is_failed = false;
-
-    public static function RunQuickly(array $options = [], callable $after_init = null)
-    {
-        $instance = static::G()->init($options);
-        if ($after_init) {
-            ($after_init)();
-        }
-        return $instance->run();
-    }
     public static function Route()
     {
         return static::G();
     }
-    public static function Parameter($key = null, $default = null)
-    {
-        return static::G()->_Parameter($key, $default);
-    }
-    public function _Parameter($key = null, $default = null)
-    {
-        if (isset($key)) {
-            return $this->parameters[$key] ?? $default;
-        } else {
-            return  $this->parameters;
-        }
-    }
-    public function bind($path_info, $request_method = 'GET')
-    {
-        $path_info = parse_url($path_info, PHP_URL_PATH);
-        $this->setPathInfo($path_info);
-        if (isset($request_method)) {
-            $_SERVER['REQUEST_METHOD'] = $request_method;
-            if (defined('__SUPERGLOBAL_CONTEXT')) {
-                (__SUPERGLOBAL_CONTEXT)()->_SERVER = $_SERVER;
-            }
-        }
-        return $this;
-    }
     public function run()
     {
         $path_info = $this->getPathInfo();
-        $this->is_failed = false;
-        $this->enable_default_callback = true;
-        
-        foreach ($this->pre_run_hook_list as $callback) {
-            $flag = ($callback)($path_info);
-            if ($flag) {
-                return $this->getRunResult();
-            }
-        }
-        // @phpstan-ignore-next-line
-        if ($this->enable_default_callback) {
-            $flag = $this->defaultRunRouteCallback($this->getPathInfo());
-            // @phpstan-ignore-next-line
-            if ($flag && (!$this->is_failed)) {
-                return $this->getRunResult();
-            }
-        } else {
-            $this->enable_default_callback = true;
-        }
-        
-        foreach ($this->post_run_hook_list as $callback) {
-            $flag = ($callback)($this->getPathInfo());
-            if ($flag) {
-                return $this->getRunResult();
-            }
-        }
-        return false;
-    }
-    protected function getRunResult()
-    {
-        if ($this->is_failed) {
-            return false;
-        }
-        return true;
-    }
-    public function forceFail()
-    {
-        // TODO . force result ?
-        $this->is_failed = true;
-    }
-    public function addRouteHook($callback, $position = 'append-outter', $once = true)
-    {
-        if ($once) {
-            if (($position === 'prepend-outter' || $position === 'prepend-inner') && in_array($callback, $this->pre_run_hook_list)) {
-                return false;
-            }
-            if (($position === 'append-inner' || $position === 'append-outter') && in_array($callback, $this->post_run_hook_list)) {
-                return false;
-            }
-        }
-        switch ($position) {
-            case 'prepend-outter':
-                array_unshift($this->pre_run_hook_list, $callback);
-                break;
-            case 'prepend-inner':
-                array_push($this->pre_run_hook_list, $callback);
-                break;
-            case 'append-inner':
-                array_unshift($this->post_run_hook_list, $callback);
-                break;
-            case 'append-outter':
-                array_push($this->post_run_hook_list, $callback);
-                break;
-            default:
-                return false;
-        }
-        return true;
-    }
-
-    public function defaulToggleRouteCallback($enable = true)
-    {
-        $this->enable_default_callback = $enable;
-    }
-    public function defaultRunRouteCallback($path_info = null)
-    {
         $callback = $this->defaultGetRouteCallback($path_info);
         if (null === $callback) {
             return false;
@@ -225,43 +100,16 @@ class Route extends ComponentBase
         $this->calling_class = $full_class;
         $this->calling_method = $method;
         ////////
-        $callback = $this->getCallbackFromClassAndMethod($full_class, $method, $path_info);
-        return $callback;
-    }
-    protected function getCallbackFromClassAndMethod($full_class, $method, $path_info)
-    {
         try {
             $ref = new \ReflectionClass($full_class);
             if ($full_class !== $ref->getName()) {
                 $this->route_error = "E002: can't find class($full_class) by $path_info .";
                 return null;
             }
-            if (!empty($this->options['controller_class_base'])) {
-                $base_class = $this->options['controller_class_base'];
-                if (false !== strpos($base_class, '~')) {
-                    $base_class = str_replace('~', $this->getControllerNamespacePrefix(), $base_class);
-                }
-                if (!is_subclass_of($full_class, $base_class)) {
-                    $this->route_error = "E004: no the controller_class_base! {$base_class} ";
-                    return null;
-                }
-            }
             // my_class_action__x ?
             if (substr($method, 0, 1) === '_') {
                 $this->route_error = 'E005: can not call hidden method';
                 return null;
-            }
-            if ($this->options['controller_prefix_post']) {
-                $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-                $request_method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-                
-                if ($request_method === 'POST') {
-                    // action_$method => action_do_$method
-                    $ref_method = $this->options['controller_method_prefix'].$this->options['controller_prefix_post'].substr($method, strlen($this->options['controller_method_prefix']));
-                    if ($ref->hasMethod($ref_method)) {
-                        $method = $ref_method;
-                    }
-                }
             }
             try {
                 $object = $ref->newInstance();
@@ -294,10 +142,6 @@ class Route extends ComponentBase
     {
         $this->options['controller_class_map'][$old_class] = $new_class;
     }
-}
-trait Route_Helper
-{
-    ////
     public static function PathInfo($path_info = null)
     {
         return static::G()->_PathInfo($path_info);
@@ -319,10 +163,6 @@ trait Route_Helper
             (__SUPERGLOBAL_CONTEXT)()->_SERVER = $_SERVER;
         }
     }
-    public function setParameters($parameters)
-    {
-        $this->parameters = $parameters;
-    }
     public function getRouteError()
     {
         return $this->route_error;
@@ -343,19 +183,6 @@ trait Route_Helper
     {
         $this->calling_method = $calling_method;
     }
-    public function dumpAllRouteHooksAsString()
-    {
-        $ret = "-- pre run --\n";
-        $ret .= var_export($this->pre_run_hook_list, true);
-        $ret .= "\n-- run --\n";
-        $ret .= var_export($this->post_run_hook_list, true);
-        $ret .= "\n-- post run --\n";
-        return $ret;
-    }
-}
-trait Route_UrlManager
-{
-    protected $url_handler = null;
     public static function Url($url = null)
     {
         return static::G()->_Url($url);
@@ -369,13 +196,6 @@ trait Route_UrlManager
         return static::G()->_Domain($use_scheme);
     }
     public function _Url($url = null)
-    {
-        if ($this->url_handler) {
-            return ($this->url_handler)($url);
-        }
-        return $this->defaultUrlHandler($url);
-    }
-    public function defaultUrlHandler($url = null)
     {
         if (isset($url) && strlen($url) > 0 && substr($url, 0, 1) === '/') {
             return $url;
@@ -453,13 +273,5 @@ trait Route_UrlManager
         $prefix = $this->options['controller_url_prefix']? trim('/'.$this->options['controller_url_prefix'], '/') : '';
         $basepath .= $prefix;
         return $basepath;
-    }
-    public function setUrlHandler($callback)
-    {
-        $this->url_handler = $callback;
-    }
-    public function getUrlHandler()
-    {
-        return $this->url_handler;
     }
 }
