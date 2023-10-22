@@ -373,6 +373,26 @@ trait Route_UrlManager
         }
         return $this->defaultUrlHandler($url);
     }
+    public function defaultUrlHandler($url = null)
+    {
+        if (isset($url) && strlen($url) > 0 && substr($url, 0, 1) === '/') {
+            return $url;
+        }
+        $basepath = $this->getUrlBasePath();
+        $path_info = $this->getPathInfo();
+
+        if ('' === $url) {
+            return $basepath;
+        }
+        if (isset($url) && '?' === substr($url, 0, 1)) {
+            return $basepath.$path_info.$url;
+        }
+        if (isset($url) && '#' === substr($url, 0, 1)) {
+            return $basepath.$path_info.$url;
+        }
+        
+        return rtrim($basepath, '/').'/'.ltrim(''.$url, '/');
+    }
     public function _Res($url = null)
     {
         if (!$this->options['controller_resource_prefix']) {
@@ -431,26 +451,6 @@ trait Route_UrlManager
         $prefix = $this->options['controller_url_prefix']? trim('/'.$this->options['controller_url_prefix'], '/') : '';
         $basepath .= $prefix;
         return $basepath;
-    }
-    public function defaultUrlHandler($url = null)
-    {
-        if (isset($url) && strlen($url) > 0 && substr($url, 0, 1) === '/') {
-            return $url;
-        }
-        $basepath = $this->getUrlBasePath();
-        $path_info = $this->getPathInfo();
-
-        if ('' === $url) {
-            return $basepath;
-        }
-        if (isset($url) && '?' === substr($url, 0, 1)) {
-            return $basepath.$path_info.$url;
-        }
-        if (isset($url) && '#' === substr($url, 0, 1)) {
-            return $basepath.$path_info.$url;
-        }
-        
-        return rtrim($basepath, '/').'/'.ltrim(''.$url, '/');
     }
     public function setUrlHandler($callback)
     {
