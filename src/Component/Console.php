@@ -82,6 +82,7 @@ class Console
     }
     public function run()
     {
+        // 不需要这么复杂。精简到一种模式
         if ($this->options['cli_mode'] === 'replace' && method_exists($this->context_class, 'replaceDefaultRunHandler') && method_exists($this->context_class, 'G')) {
             $this->context_class::G()->replaceDefaultRunHandler(null);
         }

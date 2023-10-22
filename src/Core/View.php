@@ -130,7 +130,8 @@ class View extends ComponentBase
         if (empty($view)) {
             return '';
         }
-        $file = preg_replace('/\.php$/', '', $view).'.php';
+        $file = (substr($view, -strlen('.php'))==='.php') ? $view : $view.'.php';
+        //TODO ($this->context)::G()->getProjectDataFile($this->options['path_view'], $file);
         $full_file = ComponentBase::GetFileFromSubComponent($this->options, 'view', $file);
         
         return $full_file;
