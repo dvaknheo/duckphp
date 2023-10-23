@@ -53,7 +53,6 @@ trait KernelTrait
 
     protected $is_simple_mode = true;
     protected $is_root = true;
-    protected $handler_for_exception_handler;
 
     public static function RunQuickly(array $options = [], callable $after_init = null): bool
     {
@@ -226,7 +225,6 @@ trait KernelTrait
     protected function initComponents(array $options, object $context = null)
     {
         $exception_options = [
-            'system_exception_handler' => $this->handler_for_exception_handler,
             'default_exception_handler' => [static::class,'OnDefaultException'],
             'dev_error_handler' => [static::class,'OnDevErrorHandler'],
         ];
@@ -239,7 +237,7 @@ trait KernelTrait
         Logger::G()->init($this->options, $this);
         ExceptionManager::G()->init($exception_options, $this);
         Configer::G()->init($this->options, $this);
-        $this->reloadFlags(); //TODO
+        $this->reloadFlags($context); //TODO
 
         View::G()->init($this->options, $this);
         Route::G()->init($this->options, $this);
@@ -260,7 +258,7 @@ trait KernelTrait
         $this->options['path_config_override_from'] = $this->options['path_override_from']. 'config/';
         $this->options['path_view_override_from'] = $this->options['path_override_from']. 'view/';
     }
-    protected function reloadFlags(): void
+    protected function reloadFlags($context): void
     {
         if (!$this->options['use_flag_by_setting']) {
             return;
@@ -291,69 +289,50 @@ trait KernelTrait
         }
         return;
     }
-    //for override
-    protected function onPrepare()
-    {
-        //
-    }
-    //for override
-    protected function onInit()
-    {
-    }
-    //for override
-    protected function onBeforeRun()
-    {
-    }
-    //for override
-    protected function onAfterRun()
-    {
-    }
-    //for override
-    protected function onBeforeCreatePhases()
-    {
-    }
-    //for override
-    protected function onAfterCreatePhases()
-    {
-    }
     public function run(): bool
     {
+        $ret = false;
+        $is_exceptioned = false;
         $this->_Phase(static::class);
         if ($this->is_root) {
-            (self::class)::G($this);
+            (self::class)::G($this); // remark ,don't use self::G()!
         }
         
         try {
             $this->onBeforeRun();
             if (!$this->default_run_handler) {
-                $ret = false;
+                Runtime::G()->run();
                 if (!($this->options['container_only'] ?? false)) {
                     $ret = Route::G()->run();
                 }
                 if (!$ret) {
                     $ret = $this->runExtentions();
+                    $this->_Phase(static::class);
                     if (!$ret && !$this->options['skip_404_handler']) {
                         $this->_On404();
                     }
                 }
             } else {
+                // is_root => $ret = Console::G()->run();
                 $ret = ($this->default_run_handler)();
             }
         } catch (\Throwable $ex) {
-            $last_phase = $this->_Phase(static::class);
-            Runtime::G()->lastPhase = $last_phase; //todo function
-            Runtime::G()->toggleInException();
+            Runtime::G()->onException($this->options['skip_exception_check']);
             if ($this->options['skip_exception_check']) {
-                Runtime::G()->clear();
                 throw $ex;
             }
-            //$this->onException();
+            $last_phase = $this->_Phase(static::class);
+            Runtime::G()->lastPhase = $last_phase;
             ExceptionManager::CallException($ex);
+            
+            Runtime::G()->clear();
             $ret = true;
+            $is_exceptioned = true;
+        }
+        if( !$is_exceptioned){
+            Runtime::G()->clear();
         }
         $this->onAfterRun();
-        Runtime::G()->clear();
-        $this->_Phase(static::class);
         return $ret;
     }
     protected function runExtentions()
@@ -376,8 +355,7 @@ trait KernelTrait
         $this->default_run_handler = $handler;
     }
     ////////////////////////
-    
-    
+    //for override
     public static function On404(): void
     {
         static::G()->_On404();
@@ -401,5 +379,23 @@ trait KernelTrait
     public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
     {
         echo "_OnDevErrorHandler";
+    }
+    protected function onBeforeCreatePhases()
+    {
+    }
+    protected function onAfterCreatePhases()
+    {
+    }
+    protected function onPrepare()
+    {
+    }
+    protected function onInit()
+    {
+    }
+    protected function onBeforeRun()
+    {
+    }
+    protected function onAfterRun()
+    {
     }
 }
