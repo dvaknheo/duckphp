@@ -50,7 +50,7 @@ class View extends ComponentBase
             error_reporting($this->error_reporting_old & ~E_NOTICE);
         }
         
-        $this->view_file = $this->getViewFile($view);
+        $this->view_file = $this->getViewFile($view); //TODO 如果是 $view === null ,那么，我们从context 的 getDefaultViewFile();
         $this->head_file = $this->getViewFile($this->head_file);
         $this->foot_file = $this->getViewFile($this->foot_file);
         
@@ -132,6 +132,7 @@ class View extends ComponentBase
         }
         $file = (substr($view, -strlen('.php')) === '.php') ? $view : $view.'.php';
         //TODO ($this->context)::G()->getProjectDataFile($this->options['path_view'], $file);
+        // $path, $path_view,$file
         $full_file = ComponentBase::GetFileFromSubComponent($this->options, 'view', $file);
         return $full_file;
     }

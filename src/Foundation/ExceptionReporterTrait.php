@@ -27,4 +27,8 @@ trait ExceptionReporterTrait
         }
         return $object->$method($ex);
     }
+    public function defaultException()
+    {
+        App::Current()->_OnException($ex);
+    }
 }
