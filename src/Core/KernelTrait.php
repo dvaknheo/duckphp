@@ -44,10 +44,13 @@ trait KernelTrait
             'container_only' => false,
             'override_class' => null,
             'override_class_from' => null,
-            'path_override_from' => null,
-            'path_config_override_from' => null,
-            'path_view_override_from' => null,
+            
+            'setting_file' => 'config/setting.php',
+            'setting_file_ignore_exists' => true,
+            'setting_file_enable' => true,
+            'use_env_file' => false,
         ];
+    protected $setting = [];
     
     protected $default_run_handler = null;
 
@@ -233,12 +236,11 @@ trait KernelTrait
             $exception_option['handle_all_exception'] = false;
             $this->dealAsChild($context);
         }
+        ///
+        $this->reloadFlags($context);
         
         Logger::G()->init($this->options, $this);
         ExceptionManager::G()->init($exception_options, $this);
-        Configer::G()->init($this->options, $this);
-        $this->reloadFlags($context); //TODO
-
         View::G()->init($this->options, $this);
         Route::G()->init($this->options, $this);
         Runtime::G()->init($this->options, $this);
@@ -263,10 +265,50 @@ trait KernelTrait
         if (!$this->options['use_flag_by_setting']) {
             return;
         }
-        $is_debug = Configer::G()->_Setting('duckphp_is_debug');
-        $platform = Configer::G()->_Setting('duckphp_platform');
-        $this->options['is_debug'] = $is_debug ?? $this->options['is_debug'];
-        $this->options['platform'] = $platform ?? $this->options['platform'];
+        if ($this->is_root) {
+            $this->loadSetting();
+            $setting = $this->setting;
+        }else{
+            $setting = static::Root()->_Setting(null);
+        }        
+        $this->options['is_debug'] = $setting['duckphp_is_debug'] ?? $this->options['is_debug'];
+        $this->options['platform'] = $setting['duckphp_platform'] ?? $this->options['platform'];
+    }
+    protected function loadSetting()
+    {
+        $this->setting = $this->options['setting'] ?? [];
+        
+        if ($this->options['use_env_file']) {
+            $env_setting = parse_ini_file(realpath($this->options['path']).'/.env');
+            $env_setting = $env_setting?:[];
+            $this->setting = array_merge($this->setting, $env_setting);
+        }
+        if ($this->options['setting_file_enable']) {
+            $this->dealWithSettingFile();
+        }
+        return;
+    }
+    protected function dealWithSettingFile()
+    {
+        $path = $this->options['setting_file'];
+        $is_abs = (DIRECTORY_SEPARATOR === '/') ? (substr($path, 0, 1) === '/') : preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $path);
+        if ($is_abs) {
+            $full_file = $this->options['setting_file'];
+        } else {
+            $full_file = realpath($this->options['path']).'/'.$this->options['setting_file'];
+        }
+        if (!is_file($full_file)) {
+            if(!$this->options['setting_file_ignore_exists']) {
+                throw new \ErrorException('DuckPhp: no Setting File');
+            }
+            return;
+        }
+        $setting = (function($file){return require $file;})($full_file);
+        $this->setting = array_merge($this->setting, $setting);
+    }
+    public function _Setting($key)
+    {
+        return $key ? (static::Root()->setting[$key] ?? null) : $this->setting;
     }
     protected function initExtentions(array $exts): void
     {

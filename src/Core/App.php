@@ -751,7 +751,7 @@ trait Core_Glue
     // config static
     public static function Setting($key)
     {
-        return Configer::G()->_Setting($key);
+        return static::G()->_Setting($key);
     }
     public static function Config($file_basename, $key = null, $default = null)
     {
