@@ -36,7 +36,7 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
 
         Configer::G(new Configer)->init($options);
        // Configer::G()->_Config('override',null, []);
-        //Configer::G()->_Config('NotExits',null, []);
+        Configer::G()->_Config('NotExits',null, []);
         \LibCoverage\LibCoverage::End();
     }
 }

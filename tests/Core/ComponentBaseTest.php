@@ -1,5 +1,6 @@
 <?php 
 namespace tests\DuckPhp\Core;
+use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\ComponentInterface;
 
@@ -29,8 +30,14 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
         $options=[
             'path'=> $path_data,
             'path_data'=> '',
-            'path_data_override_from'=> $path_data.'overrided',
         ];
+        ComponentBaseObject::G()->extendFullFile($options['path'],$options['path_data'],$options['path'].'data.php');
+
+        ComponentBaseObject::G()->extendFullFile($options['path'],$options['path_data'], 'data.php');
+        ComponentBaseObject::G()->extendFullFile($options['path'],$options['path'], 'data.php');
+        ComponentBaseObject::G()->init($options, App::G());
+        ComponentBaseObject::G()->extendFullFile($options['path'],$options['path_data'],$options['path'].'data.php');
+
         /*
         ComponentBase::GetFileFromSubComponent($options, 'data', $path_data.'data.php');
         ComponentBase::GetFileFromSubComponent($options, 'data', 'data.php');

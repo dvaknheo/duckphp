@@ -2,6 +2,7 @@
 namespace tests\DuckPhp\Core;
 
 use DuckPhp\Core\View;
+use DuckPhp\Core\App;
 
 class ViewTest extends \PHPUnit\Framework\TestCase
 {
@@ -14,7 +15,7 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         $options=[
             'path_view'=>$path_view,
         ];
-        \DuckPhp\Core\View::G()->init($options);
+        \DuckPhp\Core\View::G()->init($options,new App());
         View::G()->setViewHeadFoot('head', 'foot');
         View::G()->assignViewData('A','aa');
         View::G()->assignViewData(['B'=>'bb','C'=>'cc']);

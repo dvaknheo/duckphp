@@ -13,6 +13,7 @@ class RouteHookResourceTest extends \PHPUnit\Framework\TestCase
        
         
         App::G()->init([
+            'is_debug'=>true,
             'path' => $path,
             'ext'=>[
                 RouteHookResource::class => [
@@ -39,6 +40,7 @@ class RouteHookResourceTest extends \PHPUnit\Framework\TestCase
         
         /////////////////////////////
         $options =[
+            'is_debug'=>true,
             'path' => $path,
             'path_resource' => 'res/',
             'controller_resource_prefix' =>'DATA/',

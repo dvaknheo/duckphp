@@ -119,8 +119,14 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp_Sub::G(new DuckPhp_Sub());
         $_SERVER['PATH_INFO'] = '/zzzzzzzzzzzz';
         $_SERVER['PATH_INFO'] = '/';
+        
         $flag =DuckPhp_Sub::RunAsContainerQuickly($options,false,function(){echo "welcome";});
         
+        $options = [
+            'ext_options_enable'=>true,
+            'ext_options_file'=>'NoExits.php',
+        ];
+        DuckPhp::G(new DuckPhp())->init($options);
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End(DuckPhp::class);
 

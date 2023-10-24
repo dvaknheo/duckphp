@@ -45,11 +45,11 @@ class RouteHookResource extends ComponentBase
         }
         
         $full_file = $this->extendFullFile($this->options['path'], $this->options['path_resource'], $file);
-        if (!$file) {
+        if (!is_file($full_file)) {
             return false;
         }
-        ($this->context_class)::header('Content-Type: '.($this->context_class)::mime_content_type($file));
-        echo file_get_contents($file);
+        ($this->context_class)::header('Content-Type: '.($this->context_class)::mime_content_type($full_file));
+        echo file_get_contents($full_file);
         //($this->context_class)::exit();
         return true;
     }

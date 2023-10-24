@@ -13,9 +13,7 @@ class View extends ComponentBase
     public $options = [
         'path' => '',
         'path_view' => 'view',
-        'path_view_override' => '',
         'view_skip_notice_error' => true,
-        'path_view_override_from' => null,
     ];
     /** @var array */
     public $data = [];
@@ -29,7 +27,8 @@ class View extends ComponentBase
     /** @var ?int */
     protected $error_reporting_old = 0;
     protected $temp_view_file;
-    
+    protected $context_class = '';
+
     public static function Show(array $data = [], string $view = null): void
     {
         static::G()->_Show($data, $view);
@@ -131,9 +130,6 @@ class View extends ComponentBase
     }
     protected function getViewFile(?string $view): string
     {
-        if (empty($view)) {
-            return '';
-        }
         $file = (substr($view, -strlen('.php')) === '.php') ? $view : $view.'.php';
         $full_file = $this->extendFullFile($this->options['path'], $this->options['path_view'], $file);
         
