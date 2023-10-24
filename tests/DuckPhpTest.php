@@ -85,10 +85,6 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         $options['ext'][DuckPhp_Sub::class]=['test'=>DATE(DATE_ATOM)];
         DuckPhp::G(new DuckPhp())->init($options);
         echo "\n". DuckPhp::AdminId();
-        echo "\n". DuckPhp::G()->getPath();
-        echo "\n". DuckPhp::G()->getPath('test');
-        echo "\n". DuckPhp::G()->getPath('config');
-        echo "\n". DuckPhp::G()->getPath('zz');
        
         //DuckPhp::G()->isInstalled();
         @unlink($path.'config/'.'DuckPhpOptions.php');

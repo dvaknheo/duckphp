@@ -130,6 +130,9 @@ class View extends ComponentBase
     }
     protected function getViewFile(?string $view): string
     {
+        if (empty($view)) {
+            return '';
+        }
         $file = (substr($view, -strlen('.php')) === '.php') ? $view : $view.'.php';
         $full_file = $this->extendFullFile($this->options['path'], $this->options['path_view'], $file);
         

@@ -28,6 +28,7 @@ trait KernelTrait
             //// basic config ////
             'path' => null,
             'namespace' => null,
+            'name' => null,
             
             //// properties ////
             'is_debug' => false,
@@ -296,7 +297,7 @@ trait KernelTrait
     }
     public function _Setting($key)
     {
-        return $key ? (static::Root()->setting[$key] ?? null) : $this->setting;
+        return $key ? (static::Root()->setting[$key] ?? null) : static::Root()->setting;
     }
     protected function initExtentions(array $exts): void
     {

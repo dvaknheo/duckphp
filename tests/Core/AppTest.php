@@ -96,7 +96,8 @@ class AppTest extends \PHPUnit\Framework\TestCase
             App::G()->options['is_debug']=true;
 
         });
-        
+        App::G()->getProjectPath();
+        App::G()->getRuntimePath();
         App::Route()->bind('/NOOOOOOOOOOOOOOO');  // 这两句居然有区别 ,TODO ，分析之
         
         App::G()->options['error_404']=function(){
@@ -282,6 +283,28 @@ App::PageHtml(123);
 
 
 $this->doFunctions();
+
+        ////
+        $path_view=$this->LibCoverage->getClassTestPath(App::class).'view/';
+
+        $options=[
+            'path' => $path_app,
+            'path_view'=>$path_view,
+            'ext' => [AppTestApp::class => [
+                'path_view'=>$path_view,
+                'name'=>'MyAppTestApp',
+            ]],
+        ];
+        AppTestApp::G(new AppTestApp());
+        App::G(new App())->init($options);
+        App::G()->addBeforeShowHandler(function(){ echo "addBeforeShowHandler";});
+        App::Show(['A'=>'b'],"view");
+        
+        ////
+        ////[[[[
+        AppTestApp::G()->getOverrideableFile('view', $path_view."view.php");
+        AppTestApp::G()->getOverrideableFile('view', 'view.php');
+        ////]]]]
         
         \LibCoverage\LibCoverage::G($this->LibCoverage);
         \LibCoverage\LibCoverage::End();

@@ -50,6 +50,7 @@ class App extends ComponentBase
         'injected_helper_enable' => false,
         'injected_helper_map' => '',
         
+        'path_runtime' => 'runtime',
         //// error handler ////
         'error_404' => null,          //'_sys/error-404',
         'error_500' => null,          //'_sys/error-500',
@@ -221,20 +222,17 @@ EOT;
         }
         View::G()->_Display($error_view, $data);
     }
-    
-    public function getPath($sub_path = '')
+    public function getProjectPath()
     {
-        if (!$sub_path) {
-            return $this->options['path'];
-        }
-        $key = "path_".$sub_path;
-        if (isset($this->options[$key])) {
-            return static::IsAbsPath($this->options[$key]) ? $this->options[$key] : $this->options['path'].$this->options[$key];
-        } elseif (in_array($sub_path, ['config','view','log'])) { // log => runtime :(
-            return $this->options['path']. $sub_path .'/';
-        }
-        return $this->options['path'].$sub_path .'/';
+        return static::Root()->options['path'];
     }
+    public function getRuntimePath()
+    {
+        $path = static::SlashDir(static::Root()->options['path']);
+        $path_runtime = static::SlashDir(static::Root()->options['path_runtime']);
+        return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
+    }
+    
     public function getOverrideableFile($path_sub, $file)
     {
         if (static::IsAbsPath($file)) {
@@ -245,13 +243,12 @@ EOT;
         }
         if (!$this->is_root) {
             $path_main = static::Root()->options['path'];
-            $name = $this->options['name'] ?? $postfix = str_replace("\\", '/', $this->options['namespace']);
+            $name = $this->options['name'] ?? str_replace("\\", '/', $this->options['namespace']);
             
             $full_file = static::SlashDir($path_main) . static::SlashDir($path_sub). static::SlashDir($name) . $file;
             if (!file_exists($full_file)) {
                 $path_main = $this->options['path'];
                 $full_file = static::SlashDir($path_main) . static::SlashDir($path_sub).$file;
-            } else {
             }
         } else {
             $path_main = $this->options['path'];

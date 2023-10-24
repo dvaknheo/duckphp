@@ -19,7 +19,8 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         View::G()->setViewHeadFoot('head', 'foot');
         View::G()->assignViewData('A','aa');
         View::G()->assignViewData(['B'=>'bb','C'=>'cc']);
-
+        View::Show(['D'=>'ddddddd'],"view");
+        View::G()->setViewHeadFoot(null, null);
         View::Show(['D'=>'ddddddd'],"view");
         
         View::Display("block",['A'=>'b']);
