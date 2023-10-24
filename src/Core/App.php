@@ -112,8 +112,7 @@ class App extends ComponentBase
         }
         
         //TODO   recreateobject
-        View::G(new View())->init($this->options);
-        $this->onBeforeOutput();
+        View::G(new View())->init($this->options, $this);
         View::G()->_Show([], $error_view);
     }
     //@override
@@ -167,8 +166,7 @@ class App extends ComponentBase
             return;
         }
         
-        View::G(new View())->init($this->options);
-        $this->onBeforeOutput();
+        View::G(new View())->init($this->options, $this);
         View::G()->_Show($data, $error_view);
     }
     //@override
@@ -222,6 +220,43 @@ EOT;
             return;
         }
         View::G()->_Display($error_view, $data);
+    }
+    
+    public function getPath($sub_path = '')
+    {
+        if (!$sub_path) {
+            return $this->options['path'];
+        }
+        $key = "path_".$sub_path;
+        if (isset($this->options[$key])) {
+            return static::IsAbsPath($this->options[$key]) ? $this->options[$key] : $this->options['path'].$this->options[$key];
+        } elseif (in_array($sub_path, ['config','view','log'])) { // log => runtime :(
+            return $this->options['path']. $sub_path .'/';
+        }
+        return $this->options['path'].$sub_path .'/';
+    }
+    public function getOverrideableFile($path_sub, $file)
+    {
+        if (static::IsAbsPath($file)) {
+            return $file;
+        }
+        if (static::IsAbsPath($path_sub)) {
+            return static::SlashDir($path_sub) . $file;
+        }
+        if(!$this->is_root){
+            $path_main = static::Root()->option['path'];
+            $name = $this->options['name'] ?? $postfix = str_replace("\\", '/', $this->options['namespace']);
+            
+            $full_file = static::SlashDir($path_sub) . static::SlashDir($path_sub). static::SlashDir($name) . $file;
+            if (!file_exists($full_file)) {
+                $path_main = $this->options['path'];
+                $full_file = static::SlashDir($path_main) . static::SlashDir($path_sub).  $file;
+            }
+        }else{
+            $path_main = $this->options['path'];
+            $full_file = static::SlashDir($path_main) . static::SlashDir($path_sub) . $file;
+        }
+        return $full_file;
     }
     //////// features
     ////[[[[
@@ -303,7 +338,7 @@ EOT;
     {
         $this->options['skip_404_handler'] = true;
     }
-    protected function onBeforeOutput()
+    public function onBeforeOutput()
     {
         //if (!$this->options['close_resource_at_output']) {
         //    return;
@@ -318,9 +353,11 @@ EOT;
     }
     public function _Show($data = [], $view = '')
     {
-        $this->onBeforeOutput();
-        $view = $view === '' ? Route::G()->getRouteCallingPath() : $view;
         return View::G()->_Show($data, $view);
+    }
+    public function adjustViewFile($view)
+    {
+        return $view === '' ? Route::G()->getRouteCallingPath() : $view;
     }
     public static function ThrowOn(bool $flag, string $message, int $code = 0, ?string $exception_class = null, ?string $module = null)
     {

@@ -46,8 +46,8 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
 
         //Main
         $options=[
-            'namespace_controller'=>'\\tests_Core_Route',
-            'controller_class_base'=>\tests_Core_Route\baseController::class,
+            'namespace_controller'=>'\\tests_Core_Route2',
+            'controller_class_base'=>\tests_Core_Route2\baseController::class,
         ];
         $_SERVER['argv']=[ __FILE__ ,'about/me' ];
         $_SERVER['argc']=count($_SERVER['argv']);
@@ -63,7 +63,7 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
         //Get,Set
         $this->doGetterSetter();
         $options=[
-            'namespace'=>'tests_Core_Route',
+            'namespace'=>'tests_Core_Route2',
             'namespace_controller'=>'',
             'controller_welcome_class_visible'=>false,
         ];
@@ -89,17 +89,17 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
         MiniRoute::G(MyRoute::G()->init(MiniRoute::G()->options));
         $this->bind('Main/index','POST');
         //MiniRoute::G()->getCallback(null,'');
-        MiniRoute::G()->getCallback('tests_Core_Route\\Main','__');
-        MiniRoute::G()->getCallback('tests_Core_Route\\Main','post');
-        MiniRoute::G()->getCallback('tests_Core_Route\\Main','post2');
-        MiniRoute::G()->getCallback('tests_Core_Route\\Main','__missing');
+        MiniRoute::G()->getCallback('tests_Core_Route2\\Main','__');
+        MiniRoute::G()->getCallback('tests_Core_Route2\\Main','post');
+        MiniRoute::G()->getCallback('tests_Core_Route2\\Main','post2');
+        MiniRoute::G()->getCallback('tests_Core_Route2\\Main','__missing');
         
         //MiniRoute::G()->goByPathInfo('tests_Core_Route\\Main','post');
 
         echo PHP_EOL;
 
         $options=[
-            'namespace_controller'=>'\\tests_Core_Route',
+            'namespace_controller'=>'\\tests_Core_Route2',
             'controller_class_base'=>'~baseController',
         ];
         $_SERVER['argv']=[ __FILE__ ,'about/me' ];
@@ -145,14 +145,14 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
         
         
         $options=[
-            'namespace_controller'=>'\\tests_Core_Route',
+            'namespace_controller'=>'\\tests_Core_Route2',
             'controller_use_singletonex' => true,
         ];
         MiniRoute::G(new MiniRoute())->init($options);
         MiniRoute::G()->defaultGetRouteCallback('/about/me');
         MiniRoute::G()->defaultGetRouteCallback('/about/Me');
 
-        MiniRoute::G()->replaceController(\tests_Core_Route\about::class, \tests_Core_Route\about2::class);
+        MiniRoute::G()->replaceController(\tests_Core_Route2\about::class, \tests_Core_Route2\about2::class);
         
         MiniRoute::G()->defaultGetRouteCallback('/about/me');
         MiniRoute::G()->defaultGetRouteCallback('/about/_start');
@@ -160,7 +160,7 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
         MiniRoute::G()->defaultGetRouteCallback('/about/static');
         
         $options=[
-            'namespace_controller'=>'\\tests_Core_Route',
+            'namespace_controller'=>'\\tests_Core_Route2',
             'controller_class_base'=>'~baseController',
             'controller_class_postfix'=>'Controller',
         ];
@@ -168,7 +168,7 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
         MiniRoute::G()->defaultGetRouteCallback('/noBase/me');
         
         $options=[
-            'namespace_controller'=>'\\tests_Core_Route',
+            'namespace_controller'=>'\\tests_Core_Route2',
             'controller_class_base'=>'~baseController',
             'controller_class_postfix'=>'Controller',
             'controller_path_prefix'=>'/prefix/',
@@ -179,7 +179,7 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
         MiniRoute::G()->defaultGetRouteCallback('/about/_');
         
         $options=[
-            'namespace_controller'=>'\\tests_Core_Route',
+            'namespace_controller'=>'\\tests_Core_Route2',
             'controller_stop_static_method' => true,
         ];
         MiniRoute::G(new MiniRoute())->init($options);
@@ -211,7 +211,7 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
         $this->doFixedRouteEx();
         //////////////////////////////
         $options=[
-            'namespace_controller'=>'\\tests_Core_Route',
+            'namespace_controller'=>'\\tests_Core_Route2',
         ];
         $options['controller_url_prefix'] = 'child/';
         MiniRoute::G(new MiniRoute())->init($options);
@@ -227,7 +227,7 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
     {
         
         $options=[
-            'namespace_controller'=>'\\tests_Core_Route',
+            'namespace_controller'=>'\\tests_Core_Route2',
             'controller_welcome_class_visible'=>true,
         ];
 
@@ -362,7 +362,7 @@ class MyRouteRuntime
 }
 
 }
-namespace tests_Core_Route
+namespace tests_Core_Route2
 {
 class baseController
 {

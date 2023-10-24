@@ -86,7 +86,7 @@ class DuckPhp extends App
             RouteHookPathInfoCompat::G()->init($this->options, $this);
         }
         $phase = $this->_Phase();
-        if ($phase) {
+        if ($this->is_root && $phase) {
             $this->getContainer()->addPublicClasses([
                 Logger::class,
                 Console::class,

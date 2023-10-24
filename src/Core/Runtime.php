@@ -58,8 +58,8 @@ class Runtime extends ComponentBase
     {
         if ($skip_exception_check) {
             $this->clear();
-            
         }
-        $this->is_in_exception = true;;
+        $this->is_in_exception = true;
+        ;
     }
 }

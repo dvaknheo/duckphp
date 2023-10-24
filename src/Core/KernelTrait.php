@@ -268,9 +268,9 @@ trait KernelTrait
         if ($this->is_root) {
             $this->loadSetting();
             $setting = $this->setting;
-        }else{
+        } else {
             $setting = static::Root()->_Setting(null);
-        }        
+        }
         $this->options['is_debug'] = $setting['duckphp_is_debug'] ?? $this->options['is_debug'];
         $this->options['platform'] = $setting['duckphp_platform'] ?? $this->options['platform'];
     }
@@ -298,12 +298,14 @@ trait KernelTrait
             $full_file = realpath($this->options['path']).'/'.$this->options['setting_file'];
         }
         if (!is_file($full_file)) {
-            if(!$this->options['setting_file_ignore_exists']) {
+            if (!$this->options['setting_file_ignore_exists']) {
                 throw new \ErrorException('DuckPhp: no Setting File');
             }
             return;
         }
-        $setting = (function($file){return require $file;})($full_file);
+        $setting = (function ($file) {
+            return require $file;
+        })($full_file);
         $this->setting = array_merge($this->setting, $setting);
     }
     public function _Setting($key)
@@ -371,7 +373,7 @@ trait KernelTrait
             $ret = true;
             $is_exceptioned = true;
         }
-        if( !$is_exceptioned){
+        if (!$is_exceptioned) {
             Runtime::G()->clear();
         }
         $this->onAfterRun();

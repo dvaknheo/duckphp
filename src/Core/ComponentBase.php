@@ -84,6 +84,21 @@ class ComponentBase // implements ComponentInterface
         $path = ($path !== '') ? rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR : '';
         return $path;
     }
+    public function extendFullFile($path_main, $path_sub, $file)
+    {
+        if ($this->context_class) {
+            $full_file = ($this->context_class)::G()->getOverrideableFile($path_sub, $file);
+        }
+        
+        if (static::IsAbsPath($file)) {
+            $full_file = $file;
+        } elseif (static::IsAbsPath($path_sub)) {
+            $full_file = static::SlashDir($path_sub) . $file;
+        } else {
+            $full_file = static::SlashDir($path_main) . static::SlashDir($path_sub) . $file;
+        }
+        return $full_file;
+    }
     public static function GetFileFromSubComponent($options, $subkey, $file)
     {
         if (static::IsAbsPath($file)) {

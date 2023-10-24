@@ -54,7 +54,7 @@ class MyExceptionReporter
     {
         //
     }
-    public function defaultException($ex)
+    public function defaultExceptionX($ex)
     {
         var_dump(get_class($ex));
     }

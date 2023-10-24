@@ -45,12 +45,16 @@ class View extends ComponentBase
     
     public function _Show(array $data, string $view): void
     {
+        if ($this->context_class) {
+            $this->context_class::G()->onBeforeOutput();
+        }
         if ($this->options['view_skip_notice_error'] ?? false) {
             $this->error_reporting_old = error_reporting();
             error_reporting($this->error_reporting_old & ~E_NOTICE);
         }
         
-        $this->view_file = $this->getViewFile($view); //TODO 如果是 $view === null ,那么，我们从context 的 getDefaultViewFile();
+        $view = $this->context_class ? $this->context_class::G()->adjustViewFile($view) : $view ;
+        $this->view_file = $this->getViewFile($view);
         $this->head_file = $this->getViewFile($this->head_file);
         $this->foot_file = $this->getViewFile($this->foot_file);
         
@@ -131,9 +135,12 @@ class View extends ComponentBase
             return '';
         }
         $file = (substr($view, -strlen('.php')) === '.php') ? $view : $view.'.php';
-        //TODO ($this->context)::G()->getProjectDataFile($this->options['path_view'], $file);
-        // $path, $path_view,$file
-        $full_file = ComponentBase::GetFileFromSubComponent($this->options, 'view', $file);
+        if ($this->context_class) {
+            $full_file = ($this->context_class)::G()->getOverrideableFile($this->options['path_view'], $file);
+        } else {
+            $full_file = $this->extendFullFile($this->options['path'], $this->options['path_view'], $file);
+        }
+        
         return $full_file;
     }
 }
