@@ -244,13 +244,14 @@ EOT;
             return static::SlashDir($path_sub) . $file;
         }
         if(!$this->is_root){
-            $path_main = static::Root()->option['path'];
+            $path_main = static::Root()->options['path'];
             $name = $this->options['name'] ?? $postfix = str_replace("\\", '/', $this->options['namespace']);
             
-            $full_file = static::SlashDir($path_sub) . static::SlashDir($path_sub). static::SlashDir($name) . $file;
+            $full_file = static::SlashDir($path_main) . static::SlashDir($path_sub). static::SlashDir($name) . $file;
             if (!file_exists($full_file)) {
                 $path_main = $this->options['path'];
-                $full_file = static::SlashDir($path_main) . static::SlashDir($path_sub).  $file;
+                $full_file = static::SlashDir($path_main) . static::SlashDir($path_sub).$file;
+            }else{
             }
         }else{
             $path_main = $this->options['path'];

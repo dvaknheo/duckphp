@@ -234,7 +234,6 @@ trait KernelTrait
         if ($context && \is_a($context, self::class)) {
             $exception_option['handle_all_dev_error'] = false;
             $exception_option['handle_all_exception'] = false;
-            $this->dealAsChild($context);
         }
         ///
         $this->reloadFlags($context);
@@ -244,21 +243,6 @@ trait KernelTrait
         View::G()->init($this->options, $this);
         Route::G()->init($this->options, $this);
         Runtime::G()->init($this->options, $this);
-    }
-    protected function dealAsChild($context)
-    {
-        $this->options['skip_404_handler'] = true;
-        $old_path = $this->options['path'];
-        $this->options['path'] = $context->options['path'];
-        $this->options['namespace'] = $this->options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
-        $postfix = str_replace("\\", '/', $this->options['namespace']);
-        $postfix = '/'.$postfix;
-        $this->options['path_config'] = $this->options['path_config'] ?? ($context->options['path_config'] ?? 'config') . $postfix;
-        $this->options['path_view'] = $this->options['path_view'] ?? ($context->options['path_view'] ?? 'view') . $postfix;
-        
-        $this->options['path_override_from'] = $this->options['path_override_from'] ?? $old_path;
-        $this->options['path_config_override_from'] = $this->options['path_override_from']. 'config/';
-        $this->options['path_view_override_from'] = $this->options['path_override_from']. 'view/';
     }
     protected function reloadFlags($context): void
     {
@@ -352,7 +336,8 @@ trait KernelTrait
                 if (!$ret) {
                     $ret = $this->runExtentions();
                     $this->_Phase(static::class);
-                    if (!$ret && !$this->options['skip_404_handler']) {
+                    $skip_404 = ($this->is_root)? ($this->options['skip_404_handler']?? false) : ($this->options['skip_404_handler']?? true);
+                    if (!$ret && !$skip_404) {
                         $this->_On404();
                     }
                 }
