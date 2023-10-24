@@ -27,7 +27,7 @@ class DuckPhp extends App
 {
     protected $common_options = [
         'ext_options_enable' => false,
-        'ext_options_file' => 'DuckPhpOptions.php',
+        'ext_options_file' => 'config/DuckPhpApps.config.php',
         
         'cli_enable' => true,
         
@@ -73,23 +73,22 @@ class DuckPhp extends App
             $this->loadExtOptions();
         }
         
-        $this->options['database_auto_extend_method'] = $this->options['database_auto_extend_method'] ?? false;
         DbManager::G()->init($this->options, $this);
+        RouteHookRouteMap::G()->init($this->options, $this);
         
         if (PHP_SAPI === 'cli') {
             DuckPhpCommand::G()->init($this->options, $this);
             Console::G()->init($this->options, $this);
             Console::G()->options['cli_default_command_class'] = DuckPhpCommand::class;
         }
-        if (($options['path_info_compact_enable'] ?? false) || ($this->options['path_info_compact_enable'] ?? false)) {
-            $this->options['route_map_auto_extend_method'] = $this->options['route_map_auto_extend_method'] ?? false;
+        if ($this->options['path_info_compact_enable'] ?? false) {
             RouteHookPathInfoCompat::G()->init($this->options, $this);
         }
         $phase = $this->_Phase();
         if ($this->is_root && $phase) {
             $this->getContainer()->addPublicClasses([
-                Logger::class,
-                Console::class,
+                Logger::class, // TODO
+                Console::class, // TODO
                 DbManager::class,
                 RedisManager::class,
                 EventManager::class,
@@ -149,38 +148,31 @@ class DuckPhp extends App
         $this->options = array_replace_recursive($this->options, $options);
         $this->saveExtOptions(static::class, $options);
     }
-    
-    protected function get_file_for_ext_config()
+    protected function get_all_ext_options()
     {
-        $path = $this->_PhaseCall(get_class(App::G()), function () {
-            return App::G()->getPath('config');
-        });
-        $ext_options_file = $this->options['ext_options_file'];
-        $full_file = static::IsAbsPath($ext_options_file) ? $ext_options_file : $path.$ext_options_file;
-        return $full_file;
-    }
-    protected function get_all_ext_config($full_file = null)
-    {
-        //todo use GetFileFromSubComponent($options, $subkey, $file, false);
-        $full_file = $full_file ?? $this->get_file_for_ext_config();
+        $full_file = $this->options['ext_options_file'];
+        $full_file = static::IsAbsPath($full_file) ? $full_file : realpath($this->options['path']).'/'.$full_file;
         clearstatcache();
         if (!is_file($full_file)) {
             return [];
         }
-        $all_options = include($full_file); //TODO seprate
+        $all_options = (function ($file) {
+            return require $file;
+        })($full_file);
         return $all_options;
     }
     protected function loadExtOptions()
     {
-        $all_options = $this->get_all_ext_config();
+        $all_options = $this->get_all_ext_options();
         $options = $all_options[static::class] ?? [];
         $this->options = array_replace_recursive($this->options, $options);
     }
     protected function saveExtOptions($class, $options)
     {
-        $full_file = $this->get_file_for_ext_config();
-        $all_options = $this->get_all_ext_config($full_file);
+        $full_file = $this->options['ext_options_file'];
+        $full_file = static::IsAbsPath($full_file) ? $full_file : realpath($this->options['path']).'/'.$full_file;
         
+        $all_options = $this->get_all_ext_options();
         $all_options[$class] = $options;
         
         $string = "<"."?php //". "regenerate by " . __CLASS__ . '->'.__METHOD__ ." at ". DATE(DATE_ATOM) . "\n";

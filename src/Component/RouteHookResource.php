@@ -11,7 +11,6 @@ class RouteHookResource extends ComponentBase
 {
     public $options = [
         'path' => '',
-        'path_override_from' => '',
         'path_resource' => 'res',
         'controller_url_prefix' => '',
         'controller_resource_prefix' => '',
@@ -45,10 +44,7 @@ class RouteHookResource extends ComponentBase
             return false;
         }
         
-        $options = $this->options;
-        $options['path'] = $options['path_override_from']?$options['path_override_from']:$options['path'];
-        
-        $file = ComponentBase::GetFileFromSubComponent($options, 'resource', $file);
+        $full_file = $this->extendFullFile($this->options['path'], $this->options['path_resource'], $file);
         if (!$file) {
             return false;
         }

@@ -135,11 +135,7 @@ class View extends ComponentBase
             return '';
         }
         $file = (substr($view, -strlen('.php')) === '.php') ? $view : $view.'.php';
-        if ($this->context_class) {
-            $full_file = ($this->context_class)::G()->getOverrideableFile($this->options['path_view'], $file);
-        } else {
-            $full_file = $this->extendFullFile($this->options['path'], $this->options['path_view'], $file);
-        }
+        $full_file = $this->extendFullFile($this->options['path'], $this->options['path_view'], $file);
         
         return $full_file;
     }

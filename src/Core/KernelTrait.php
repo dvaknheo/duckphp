@@ -231,18 +231,20 @@ trait KernelTrait
             'default_exception_handler' => [static::class,'OnDefaultException'],
             'dev_error_handler' => [static::class,'OnDevErrorHandler'],
         ];
-        if ($context && \is_a($context, self::class)) {
+        if (!$this->is_root) {
             $exception_option['handle_all_dev_error'] = false;
             $exception_option['handle_all_exception'] = false;
         }
         ///
         $this->reloadFlags($context);
         
-        Logger::G()->init($this->options, $this);
         ExceptionManager::G()->init($exception_options, $this);
+        
+        Logger::G()->init($this->options, $this);
         View::G()->init($this->options, $this);
         Route::G()->init($this->options, $this);
         Runtime::G()->init($this->options, $this);
+        Configer::G()->init($this->options, $this); //TODO  RouteMap 移除才移除这里
     }
     protected function reloadFlags($context): void
     {
@@ -336,8 +338,7 @@ trait KernelTrait
                 if (!$ret) {
                     $ret = $this->runExtentions();
                     $this->_Phase(static::class);
-                    $skip_404 = ($this->is_root)? ($this->options['skip_404_handler']?? false) : ($this->options['skip_404_handler']?? true);
-                    if (!$ret && !$skip_404) {
+                    if (!$ret && $this->is_root && !($this->options['skip_404_handler'] ?? false)) {
                         $this->_On404();
                     }
                 }

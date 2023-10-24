@@ -27,7 +27,6 @@ class DbManager extends ComponentBase
         'database_list_try_single' => true,
         'database_log_sql_query' => false,
         'database_log_sql_level' => 'debug',
-        'database_auto_extend_method' => true,
         'database_class' => '',
     ];
     
@@ -61,16 +60,6 @@ class DbManager extends ComponentBase
                 $database_list = $database ? array($database) : null;
             }
             $this->database_config_list = $database_list ?? $this->database_config_list;
-        }
-        
-        //////////////////////////
-        if ($this->options['database_auto_extend_method'] && \method_exists($context, 'extendComponents')) {
-            $context->extendComponents(
-                [
-                    'setBeforeGetDbHandler' => static::class . '@setBeforeGetDbHandler',
-                ],
-                ['A']
-            );
         }
     }
     public static function Db($tag = null)

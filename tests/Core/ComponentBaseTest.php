@@ -31,6 +31,7 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
             'path_data'=> '',
             'path_data_override_from'=> $path_data.'overrided',
         ];
+        /*
         ComponentBase::GetFileFromSubComponent($options, 'data', $path_data.'data.php');
         ComponentBase::GetFileFromSubComponent($options, 'data', 'data.php');
         ComponentBase::GetFileFromSubComponent($options, 'data', 'data2.php');
@@ -41,7 +42,7 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
             'path_data_override_from'=> null,
         ];
         ComponentBase::GetFileFromSubComponent($options, 'data', 'data2.php');
-        
+        */
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
     }

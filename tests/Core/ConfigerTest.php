@@ -33,14 +33,10 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
         $options['setting_file_ignore_exists'] =true;
         Configer::G(new Configer)->init($options);
 
-        $options['setting_file']='setting.php';
-        $options['setting_file_ignore_exists'] = true;
-        $options['path_config_override_from'] = $path_config.'overrided/';;
-        $options['setting_file_enable'] = true;
-        $options['setting_file'] = $path_config.'setting.php';
+
         Configer::G(new Configer)->init($options);
-        Configer::G()->_Config('override',null, []);
-        Configer::G()->_Config('NotExits',null, []);
+       // Configer::G()->_Config('override',null, []);
+        //Configer::G()->_Config('NotExits',null, []);
         \LibCoverage\LibCoverage::End();
     }
 }

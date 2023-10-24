@@ -243,7 +243,7 @@ EOT;
         if (static::IsAbsPath($path_sub)) {
             return static::SlashDir($path_sub) . $file;
         }
-        if(!$this->is_root){
+        if (!$this->is_root) {
             $path_main = static::Root()->options['path'];
             $name = $this->options['name'] ?? $postfix = str_replace("\\", '/', $this->options['namespace']);
             
@@ -251,12 +251,13 @@ EOT;
             if (!file_exists($full_file)) {
                 $path_main = $this->options['path'];
                 $full_file = static::SlashDir($path_main) . static::SlashDir($path_sub).$file;
-            }else{
+            } else {
             }
-        }else{
+        } else {
             $path_main = $this->options['path'];
             $full_file = static::SlashDir($path_main) . static::SlashDir($path_sub) . $file;
         }
+        
         return $full_file;
     }
     //////// features
