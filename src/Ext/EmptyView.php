@@ -39,7 +39,14 @@ class EmptyView extends View
     public function _Show(array $data, string $view): void
     {
         $this->data = array_merge($this->data, $data);
-        $this->data[$this->options['empty_view_key_view']] = $this->getViewFile($view);
+        $view = $this->context_class ? $this->context_class::G()->adjustViewFile($view) : $view;
+        if ($this->options['empty_view_trim_view_wellcome'] ?? true) {
+            $prefix = $this->options['empty_view_key_wellcome_class'] ?? 'Main/';
+            if (substr($view, 0, strlen($prefix)) === $prefix) {
+                $view = substr($view, strlen($prefix));
+            }
+        }
+        $this->data[$this->options['empty_view_key_view']] = $view; //$this->getViewFile($view);
         $this->data[$this->options['empty_view_key_view'].'_head'] = $this->getViewFile($this->head_file);
         $this->data[$this->options['empty_view_key_view'].'_foot'] = $this->getViewFile($this->foot_file);
     }
@@ -48,17 +55,5 @@ class EmptyView extends View
     {
         $this->data = isset($data)?$data:$this->data;
         $this->data[$this->options['empty_view_key_view']] = $this->getViewFile($view);
-    }
-    //@override
-    protected function getViewFile(?string $view): string
-    {
-        $view = (string)$view;
-        if ($this->options['empty_view_trim_view_wellcome'] ?? true) {
-            $prefix = $this->options['empty_view_key_wellcome_class'] ?? 'Main/';
-            if (substr($view, 0, strlen($prefix)) === $prefix) {
-                $view = substr($view, strlen($prefix));
-            }
-        }
-        return $view;
     }
 }

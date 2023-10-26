@@ -1,5 +1,4 @@
 <?php declare(strict_types=1);
-use DuckPhp\Core\View;
 use DuckPhp\DuckPhp;
 
 require(__DIR__.'/../../autoload.php');  // @DUCKPHP_HEADFILE
@@ -14,16 +13,17 @@ function RunByDuckPhp()
     $options['namespace'] = '\\';               // 不要替换成同级别的控制器类
     $options['path_info_compact_enable'] = true;    // 不用配置路由
 
-    $options['ext'][\DuckPhp\Ext\EmptyView::class] = true; // for AllViewData();
+    $options['ext'][\DuckPhp\Ext\EmptyView::class] = true; // for GetRunResult();
     $options['ext'][\DuckPhp\Ext\RouteHookFunctionRoute::class] = true; // 我们用这个扩展
     $flag = DuckPhp::RunQuickly($options);
     return $flag;
 }
 function GetRunResult()
 {
-    return DuckPhp::getViewData();
+    $ret = DuckPhp::getViewData();
+    return $ret;
 }
-function POST($k, $v = null)
+function POST($k =null , $v = null)
 {
     return DuckPhp::POST($k, $v);
 }
@@ -67,12 +67,18 @@ function action_index()
 }
 function action_add()
 {
+    if(POST()){
+        return action_do_add();
+    }
     $data = ['x' => 'add'];
     
     __show($data);
 }
 function action_edit()
 {
+    if(POST()){
+        return action_do_edit();
+    }
     $data = ['x' => 'edit'];
     $data['content'] = __h(get_data());
 
