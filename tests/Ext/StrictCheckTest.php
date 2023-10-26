@@ -76,7 +76,7 @@ class StrictCheck_FakeObject
     }
     public function forModel()
     {
-        FakeModel::G()->foo();
+        FakeModel::_()->foo();
     }
     public function forcheckStrictParentCaller()
     {
@@ -120,7 +120,7 @@ class FakeModel
         var_dump(DATE(DATE_ATOM));
     }
     public function callService(){
-        FakeService::G()->foo();
+        FakeService::_()->foo();
     }
     public function callDb(){
         M::Db()->fetch("select 1+1 as t");
@@ -130,7 +130,7 @@ class FakeExModel
 {
     use SingletonExTrait;
     public function foo(){
-        FakeModel::G()->foo();
+        FakeModel::_()->foo();
     }
 }
 }  // end tests\DuckPhp\Ext\Model
@@ -147,13 +147,13 @@ class FakeService
 {
     use SingletonExTrait;
     public function foo(){
-        FakeLib::G()->foo();
+        FakeLib::_()->foo();
     }
     public function callService(){
         FakeService::G()->foo();
     }
     public function modelCallService(){
-        FakeModel::G()->callService();
+        FakeModel::_()->callService();
     }
     public function callDb(){
         DuckPhp::Db()->fetch("select 1+1 as t");
@@ -161,14 +161,14 @@ class FakeService
     }
     public function normal()
     {
-        FakeModel::G()->callDb();
+        FakeModel::_()->callDb();
     }
 }
 class FakeBatchBusiness
 {
     use SingletonExTrait;
     public function foo(){
-        FakeService::G()->foo();
+        FakeService::_()->foo();
     }
 }
 
@@ -176,7 +176,7 @@ class FakeLib
 {
     use SingletonExTrait;
     public function foo(){
-        FakeExModel::G()->foo();
+        FakeExModel::_()->foo();
     }
 }
 
@@ -219,24 +219,24 @@ class Main extends BaseController
         
         try{
         
-            FakeModel::G()->foo();
+            FakeModel::_()->foo();
         }catch(\Throwable $ex){
             echo "4444444444444444444444444".$ex->getMessage().PHP_EOL;
         }
     
         try{
             
-            FakeService::G()->callService();
+            FakeService::_()->callService();
         }catch(\Throwable $ex){
             echo "55555555555555555555555555555FakeService::G()->callService()".$ex->getMessage().PHP_EOL;
         }
         try{
-            FakeService::G()->modelCallService();
+            FakeService::_()->modelCallService();
         }catch(\Throwable $ex){
             echo "6666666666666 modelCallService ".$ex->getMessage().PHP_EOL;
         }
         try{
-            FakeService::G()->callDb();
+            FakeService::_()->callDb();
         }catch(\Throwable $ex){
             echo "7777777777777777 modelCallService ".$ex->getMessage().PHP_EOL;
         }
@@ -259,12 +259,12 @@ class Main extends BaseController
             echo "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ".$ex->getMessage().PHP_EOL;
         }
         echo "===========================111111111=\n";
-        FakeService::G()->normal();
+        FakeService::_()->normal();
         
         echo "============================\n";
         
          
-        FakeBatchBusiness::G()->foo();
+        FakeBatchBusiness::_()->foo();
 //exit;
     }
 }

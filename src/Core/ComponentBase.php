@@ -14,13 +14,13 @@ class ComponentBase // implements ComponentInterface
     public function __construct()
     {
     }
-    public static function _($object = null)
+    public static function G($object = null)
     {
-        return static::G($object);
+        return static::_($object);
     }
     protected static $_instances = [];
     //embed
-    public static function G($object = null)
+    public static function _($object = null)
     {
         if (defined('__SINGLETONEX_REPALACER')) {
             return (__SINGLETONEX_REPALACER)(static::class, $object);
