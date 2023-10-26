@@ -7,7 +7,6 @@ namespace DuckPhp\Core;
 
 use DuckPhp\Core\AutoLoader;
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Core\Configer;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\KernelTrait;
 use DuckPhp\Core\Logger;
@@ -800,7 +799,7 @@ trait Core_Glue
     }
     public static function Config($file_basename, $key = null, $default = null)
     {
-        return Configer::G()->_Config($file_basename, $key, $default);
+        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
     }
     
     //// the next is dynamic ////

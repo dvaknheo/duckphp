@@ -15,17 +15,14 @@ class ControllerHelperTraitTest extends \PHPUnit\Framework\TestCase
         
         //code here
         //*
-        $path_base=realpath(__DIR__.'/../');
-        $path_config=$path_base.'/data_for_tests/Helper/ControllerHelper/';
-        $options=[
-            'path_config'=>$path_config,
-        ];
-        \DuckPhp\Core\Configer::G()->init($options);
+        
         $key='key';
         $file_basename='config';
-        
         ControllerHelper::Setting($key);
+        try{
+
         ControllerHelper::Config($file_basename, $key, null);
+        }catch(\Exception $ex){}
         
         ControllerHelper::Parameter('a','b');
         ControllerHelper::getRouteCallingMethod();

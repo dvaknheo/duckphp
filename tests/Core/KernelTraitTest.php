@@ -5,7 +5,7 @@ use DuckPhp\Core\App;
 use DuckPhp\Core\KernelTrait;
 use DuckPhp\Core\Runtime;
 use DuckPhp\DuckPhp;
-use DuckPhp\Core\Configer;
+use DuckPhp\Component\Configer;
 use DuckPhp\Core\View;
 use DuckPhp\Core\Route;
 use DuckPhp\SingletonEx\SingletonExTrait;
@@ -196,6 +196,7 @@ MyKernelTrait::On404();
         App::G(new App())->init($options);
         //setting.php
         
+        MyKernelTrait::G()->init($options);
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
     return;

@@ -10,7 +10,6 @@
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\AutoLoader;
-use DuckPhp\Core\Configer;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Core\Route;
@@ -138,7 +137,8 @@ trait KernelTrait
     protected function checkSimpleMode($context)
     {
         $extApps = [];
-        foreach ($this->options['ext'] as $class => $options) {
+        $exts = $this->options['ext'] ?? [];
+        foreach ($exts as $class => $options) {
             if (\is_subclass_of($class, self::class)) {
                 $this->is_simple_mode = false;
                 $extApps[$class] = $class; /** @phpstan-ignore-line */
@@ -235,7 +235,7 @@ trait KernelTrait
 
         $this->initComponents($this->options, $context);
         
-        $this->initExtentions($this->options['ext']);
+        $this->initExtentions($this->options['ext'] ?? []);
         $this->onInit();
         if ($this->options['on_inited']) {
             ($this->options['on_inited'])();
@@ -247,7 +247,6 @@ trait KernelTrait
     {
         Route::G()->init($this->options, $this);
         Runtime::G()->init($this->options, $this);
-        Configer::G()->init($this->options, $this); //TODO  RouteMap 移除才移除这里
         $this->doInitComponents();
     }
     protected function doInitComponents()

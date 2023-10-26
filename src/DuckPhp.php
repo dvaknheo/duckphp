@@ -10,6 +10,7 @@ namespace DuckPhp;
 
 use DuckPhp\Component\AdminObject;
 use DuckPhp\Component\Cache;
+use DuckPhp\Component\Configer;
 use DuckPhp\Component\Console;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Component\DuckPhpCommand;
@@ -73,6 +74,7 @@ class DuckPhp extends App
             $this->loadExtOptions();
         }
         
+        Configer::G()->init($this->options, $this);
         DbManager::G()->init($this->options, $this);
         RouteHookRouteMap::G()->init($this->options, $this);
         
@@ -87,7 +89,6 @@ class DuckPhp extends App
         $phase = $this->_Phase();
         if ($this->is_root && $phase) {
             $this->getContainer()->addPublicClasses([
-                Logger::class, // TODO
                 Console::class, // TODO
                 DbManager::class,
                 RedisManager::class,
@@ -194,6 +195,12 @@ class DuckPhp extends App
     {
         return Pager::G($object);
     }
+    /////////////////////////
+    public static function Config($file_basename, $key = null, $default = null)
+    {
+        return Configer::G()->_Config($file_basename, $key, $default);
+    }
+    
     //@override
     public function _Db($tag)
     {

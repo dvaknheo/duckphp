@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Component;
 
 use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Core\Route;
-use DuckPhp\Core\App;
+use DuckPhp\DuckPhp as App;
 
 class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
 {

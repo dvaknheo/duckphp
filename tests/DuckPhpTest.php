@@ -4,6 +4,7 @@ namespace tests\DuckPhp;
 use DuckPhp\DuckPhp;
 use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckPhp\Ext\Misc;
+use DuckPhp\Component\Configer;
 
 class DuckPhpTest extends \PHPUnit\Framework\TestCase
 {
@@ -123,6 +124,25 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
             'ext_options_file'=>'NoExits.php',
         ];
         DuckPhp::G(new DuckPhp())->init($options);
+        
+        
+        
+        
+        
+        $path_base=realpath(__DIR__.'/');
+        $path_config=$path_base.'/data_for_tests/Helper/ControllerHelper/';
+        $options=[
+            'path_config'=>$path_config,
+        ];
+        Configer::G()->init($options);
+        $key='key';
+        $file_basename='config';
+        
+        DuckPhp::Config($file_basename,$key, null);
+        
+        
+        
+        
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End(DuckPhp::class);
 

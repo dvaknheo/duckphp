@@ -1,7 +1,7 @@
 <?php
 namespace tests\DuckPhp\Core;
 
-use DuckPhp\Core\Configer;
+use DuckPhp\Component\Configer;
 
 class ConfigerTest extends \PHPUnit\Framework\TestCase
 {

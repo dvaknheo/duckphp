@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Core{
 
 use DuckPhp\Core\App;
 use DuckPhp\DuckPhp;
-use DuckPhp\Core\Configer;
+use DuckPhp\Component\Configer;
 use DuckPhp\Core\View;
 use DuckPhp\Core\Route;
 use DuckPhp\SingletonEx\SingletonExTrait;
@@ -477,7 +477,10 @@ $this->doFunctions();
         $file_basename='config';
         
         App::Setting($key);
+        try{
         App::Config($file_basename,$key, null);
+        }catch(\Exception $ex){
+        }
         
         
         $url="";
