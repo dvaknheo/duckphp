@@ -90,6 +90,15 @@ class App extends ComponentBase
     {
         return static::VERSION;
     }
+    protected function doInitComponents()
+    {
+        Logger::G()->init($this->options, $this);
+        View::G()->init($this->options, $this);
+        
+        if ($this->is_root && $this->_Phase()) {
+            $this->getContainer()->addPublicClasses([ Logger::class,]);
+        }
+    }
     //////// override KernelTrait ////////
     //@override
     public function _On404(): void

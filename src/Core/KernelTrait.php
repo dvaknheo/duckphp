@@ -202,6 +202,8 @@ trait KernelTrait
         if ($this->options['use_short_functions']) {
             require_once __DIR__.'/Functions.php';
         }
+        
+        //TODO use_autoloader 不再需要。
         if (($options['use_autoloader'] ?? $this->options['use_autoloader']) || ($options['path_namespace'] ?? false)) {
             $options['path'] = $options['path'] ?? $this->getDefaultProjectPath();
             $options['namespace'] = $options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
@@ -217,7 +219,22 @@ trait KernelTrait
         $this->checkSimpleMode($context);
         
         $this->onPrepare();
+        
+        $this->reloadFlags($context);
+        
+        $exception_options = [
+            'default_exception_handler' => [static::class,'OnDefaultException'],
+            'dev_error_handler' => [static::class,'OnDevErrorHandler'],
+        ];
+        if (!$this->is_root) {
+            $exception_option['handle_all_dev_error'] = false;
+            $exception_option['handle_all_exception'] = false;
+        }
+        ExceptionManager::G()->init($exception_options, $this);
+
+
         $this->initComponents($this->options, $context);
+        
         $this->initExtentions($this->options['ext']);
         $this->onInit();
         if ($this->options['on_inited']) {
@@ -228,24 +245,14 @@ trait KernelTrait
     }
     protected function initComponents(array $options, object $context = null)
     {
-        $exception_options = [
-            'default_exception_handler' => [static::class,'OnDefaultException'],
-            'dev_error_handler' => [static::class,'OnDevErrorHandler'],
-        ];
-        if (!$this->is_root) {
-            $exception_option['handle_all_dev_error'] = false;
-            $exception_option['handle_all_exception'] = false;
-        }
-        ///
-        $this->reloadFlags($context);
-        
-        ExceptionManager::G()->init($exception_options, $this);
-        
-        Logger::G()->init($this->options, $this);
-        View::G()->init($this->options, $this);
         Route::G()->init($this->options, $this);
         Runtime::G()->init($this->options, $this);
         Configer::G()->init($this->options, $this); //TODO  RouteMap 移除才移除这里
+        $this->doInitComponents();
+    }
+    protected function doInitComponents()
+    {
+        //for override
     }
     protected function reloadFlags($context): void
     {
