@@ -25,7 +25,6 @@ class RedisManager extends ComponentBase
         'redis_list' => null,
         'redis_list_reload_by_setting' => true,
         'redis_list_try_single' => true,
-        'redis_auto_extend_method' => true,
     ];
     const TAG_WRITE = 0;
     const TAG_READ = 1;
@@ -60,10 +59,6 @@ class RedisManager extends ComponentBase
                 $redis_list = $redis ? array($redis) : null;
             }
             $this->redis_config_list = $redis_list ?? $this->redis_config_list;
-        }
-        
-        if ($this->options['redis_auto_extend_method'] && method_exists($context, 'extendComponents')) {
-            $context->extendComponents(['Redis' => [static::class, 'Redis']], ['B','A']);
         }
     }
     public static function Redis($tag = 0)

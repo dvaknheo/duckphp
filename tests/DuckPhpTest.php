@@ -160,7 +160,11 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         
         DuckPhp::Config($file_basename,$key, null);
         
-        
+        try{
+        DuckPhp::Redis(0);
+        }catch(\TypeError $ex){}
+        DuckPhp::assignRewrite('11','22');
+        DuckPhp::getRewrites();
         
         
         \LibCoverage\LibCoverage::G($LibCoverage);

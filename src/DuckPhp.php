@@ -19,6 +19,7 @@ use DuckPhp\Component\Pager;
 use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookPathInfoCompat;
+use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Component\UserObject;
 use DuckPhp\Core\App;
@@ -238,10 +239,13 @@ class DuckPhp extends App
     {
         return EventManager::G()->on($event, $callback);
     }
-
     public static function setBeforeGetDbHandler($db_before_get_object_handler)
     {
         return DbManager::G()->setBeforeGetDbHandler($db_before_get_object_handler);
+    }
+    public static function Redis($tag = 0)
+    {
+        return RedisManager::Redis($tag);
     }
     public static function getRoutes()
     {
@@ -254,5 +258,13 @@ class DuckPhp extends App
     public static function assignImportantRoute($key, $value = null)
     {
         return RouteHookRouteMap::G()->assignImportantRoute($key, $value);
+    }
+    public static function assignRewrite($key, $value = null)
+    {
+        return RouteHookRewrite::G()->assignRewrite($key, $value);
+    }
+    public static function getRewrites()
+    {
+        return RouteHookRewrite::G()->getRewrites($key, $value);
     }
 }

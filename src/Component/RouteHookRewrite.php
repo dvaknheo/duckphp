@@ -3,7 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckPhp\Ext;
+namespace DuckPhp\Component;
 
 use DuckPhp\Core\ComponentBase;
 
@@ -11,7 +11,6 @@ class RouteHookRewrite extends ComponentBase
 {
     public $options = [
         'rewrite_map' => [],
-        'rewrite_auto_extend_method' => true,
     ];
     protected $rewrite_map = [];
     
@@ -28,15 +27,6 @@ class RouteHookRewrite extends ComponentBase
     protected function initContext(object $context)
     {
         ($this->context_class)::Route()->addRouteHook([static::class,'Hook'], 'prepend-outter');
-        if ($this->options['rewrite_auto_extend_method'] && \method_exists($context, 'extendComponents')) {
-            $context->extendComponents(
-                [
-                    'assignRewrite' => static::class . '@assignRewrite',
-                    'getRewrites' => static::class . '@getRewrites',
-                ],
-                ['C','A']
-            );
-        }
     }
     public function assignRewrite($key, $value = null)
     {
