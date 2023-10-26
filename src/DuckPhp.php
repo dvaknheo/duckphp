@@ -27,7 +27,7 @@ use DuckPhp\Core\Logger;
 class DuckPhp extends App
 {
     protected $common_options = [
-        'ext_options_enable' => false,
+        'ext_options_file_enable' => false,
         'ext_options_file' => 'config/DuckPhpApps.config.php',
         
         'cli_enable' => true,
@@ -35,7 +35,6 @@ class DuckPhp extends App
         'database_auto_extend_method' => null,
         'path_info_compact_enable' => null,
         'cli_default_command_class' => null,
-        'route_map_auto_extend_method' => false,
         
         'class_user' => null,
         'class_admin' => null,
@@ -43,34 +42,37 @@ class DuckPhp extends App
         'session_prefix' => null,
         'table_prefix' => null,
     ];
-    public static function RunAsContainerQuickly($options, $skip_404 = false, $welcome_handle = null)
+    public static function InitAsContainer($options)
     {
         $options['container_only'] = true;
         $options['handle_all_exception'] = false;
         $options['handle_all_dev_error'] = false;
-
-        $options['skip_404_handler'] = $skip_404;
+        $options['skip_404_handler'] = true;
         
-        if ($welcome_handle) {
-            $options['skip_404_handler'] = true;
+        return DuckPhp::G(new DuckPhp())->init($options);
+    }
+    public function thenRunAsContainer($skip_404 = false, $welcome_handle = null)
+    {
+        $ret = $this->run();
+        if ($ret) {
+            return $ret;
         }
-        $ret = DuckPhp::G(new DuckPhp())->init($options)->run(); // remark , not static::class
-        
-        if (!$ret && $welcome_handle) {
-            $path_info = DuckPhp::PathInfo();
+        if ($welcome_handle) {
+            $path_info = static::PathInfo();
             if ($path_info === '' || $path_info === '/') {
                 ($welcome_handle)();
                 return true;
-            } else {
-                DuckPhp::G()->_On404();
             }
         }
-        return $ret;
+        if (!$skip_404) {
+            $this->_On404();
+        }
+        return false;
     }
     protected function initComponents(array $options, object $context = null)
     {
         parent::initComponents($options, $context);
-        if ($this->options['ext_options_enable']) {
+        if ($this->options['ext_options_file_enable']) {
             $this->loadExtOptions();
         }
         
@@ -140,7 +142,6 @@ class DuckPhp extends App
     {
         $full_file = $this->options['ext_options_file'];
         $full_file = static::IsAbsPath($full_file) ? $full_file : realpath($this->options['path']).'/'.$full_file;
-        clearstatcache();
         if (!is_file($full_file)) {
             return [];
         }
@@ -166,6 +167,7 @@ class DuckPhp extends App
         $string = "<"."?php //". "regenerate by " . __CLASS__ . '->'.__METHOD__ ." at ". DATE(DATE_ATOM) . "\n";
         $string .= "return ".var_export($all_options, true) .';';
         file_put_contents($full_file, $string);
+        clearstatcache();
     }
     ////]]]] // extOptionsMode
     

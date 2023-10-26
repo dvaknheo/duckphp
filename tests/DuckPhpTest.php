@@ -62,7 +62,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         $t=new \stdClass();
         DuckPhp::Cache($t);
         
-        //DuckPhp::G()->xx
+        
         DuckPhp::G()->setBeforeGetDbHandler(null);
         DuckPhp::G()->getRoutes();
         DuckPhp::G()->assignRoute('ab/c',['z']);
@@ -76,9 +76,9 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         
         $options['path'] = $path;
         $options['path_test'] = 'abc';
-        $options['ext_options_enable']=true;
+        $options['ext_options_file_enable']=true;
         
-        @unlink($path.'config/'.'DuckPhpOptions.php');
+        @unlink($path.'config/DuckPhpApps.config.php');
         DuckPhp_Sub::G(new DuckPhp_Sub())->init($options);
         DuckPhp_Sub::G()->install(['test'=>DATE(DATE_ATOM)]);
         DuckPhp_Sub::G()->isInstalled();
@@ -110,24 +110,44 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::G(new DuckPhp());
         DuckPhp_Sub::G(new DuckPhp_Sub());
         $_SERVER['PATH_INFO'] = '/zzzzzzzzzzzz';
-        $flag =DuckPhp_Sub::RunAsContainerQuickly($options,false,function(){echo "welcome";});
+        $flag = DuckPhp_Sub::InitAsContainer($options)->thenRunAsContainer(false,function(){echo "welcome";});
         
         DuckPhp::G(new DuckPhp());
         DuckPhp_Sub::G(new DuckPhp_Sub());
+        
         $_SERVER['PATH_INFO'] = '/zzzzzzzzzzzz';
         $_SERVER['PATH_INFO'] = '/';
+        $flag =DuckPhp_Sub::InitAsContainer($options)->thenRunAsContainer(true,function(){echo "welcome";});
         
-        $flag =DuckPhp_Sub::RunAsContainerQuickly($options,false,function(){echo "welcome";});
         
+        echo "<<<<<<<<<<<<<<<<<";
+        $_SERVER['PATH_INFO'] = '/advance/hitme';
+        $options['ext']=[
+                DuckPhp_Sub::class =>[
+                    'is_debug'=>true,
+                    'cli_enable'=>false,
+                    'cli_mode' => 'hook',
+                    'controller_url_prefix'=>'advance/',
+                    'exception_reporter' => FakeReporter::class,
+                    'controller_class_postfix'=>'Controller',
+                    'controller_method_prefix'=>'action_',
+                    'controller_welcome_class'=>'Fake',
+                    'namespace_controller'=>'\tests\DuckPhp',
+                    
+                ],
+            ];
+
+        $flag =DuckPhp_Sub::InitAsContainer($options)->thenRunAsContainer(false,function(){echo "welcome";});
+        echo ">>>>>>>>>>>>>>>>>>>>>>>";
         $options = [
-            'ext_options_enable'=>true,
+            'ext_options_file_enable'=>true,
             'ext_options_file'=>'NoExits.php',
         ];
         DuckPhp::G(new DuckPhp())->init($options);
         
         
         
-        
+        //////////////////////
         
         $path_base=realpath(__DIR__.'/');
         $path_config=$path_base.'/data_for_tests/Helper/ControllerHelper/';
@@ -148,6 +168,13 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
 
     }
 
+}
+class FakeController
+{
+    public function action_hitme()
+    {
+        var_dump("gut");
+    }
 }
 class DuckPhp_Sub extends DuckPhp
 {

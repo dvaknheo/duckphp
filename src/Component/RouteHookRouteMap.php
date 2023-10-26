@@ -14,7 +14,6 @@ class RouteHookRouteMap extends ComponentBase
         'route_map_important' => [],
         'route_map' => [],
         'route_map_by_config_name' => '',
-        'route_map_auto_extend_method' => true,
     ];
     protected $route_map = [];
     protected $route_map_important = [];
@@ -40,21 +39,6 @@ class RouteHookRouteMap extends ComponentBase
             $config = ($this->context_class)::Config($this->options['route_map_by_config_name'], null, []);
             $this->assignRoute($config['route_map'] ?? []);
             $this->assignImportantRoute($config['route_map_important'] ?? []);
-        }
-        if ($this->options['route_map_auto_extend_method'] && \method_exists($context, 'extendComponents')) {
-            $context->extendComponents(
-                [
-                    'assignImportantRoute' => static::class . '@assignImportantRoute',
-                    'assignRoute' => static::class . '@assignRoute',
-                ],
-                ['A']
-            );
-            $context->extendComponents(
-                [
-                    'getRoutes' => static::class . '@getRoutes',
-                ],
-                ['C','A']
-            );
         }
     }
     public function compile($pattern_url, $rules = [])
