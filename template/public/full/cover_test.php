@@ -24,8 +24,8 @@ cover(realpath(__DIR__.'/../../../src'));
 
 
 if (!class_exists(\LazyToChange\System\App::class)) {
-    \DuckPhp\DuckPhp::assignPathNamespace(__DIR__ . '/../../app', "LazyToChange\\"); 
-    \DuckPhp\DuckPhp::runAutoLoader();
+    \DuckPhp\Core\AutoLoader::G()->runAutoLoader();
+    \DuckPhp\Core\AutoLoader::G()->assignPathNamespace(__DIR__ . '/../../app', "LazyToChange\\"); 
 }
 
 $options = [

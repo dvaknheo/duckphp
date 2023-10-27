@@ -4,12 +4,13 @@
 <fieldset>
 <legend>应用的选项</legend>
 <pre>
-<?php var_dump(array_diff_assoc(\DuckPhp\Core\App::G()->options,(new \DuckPhp\DuckPhp())->options));?>
+<?php var_export(array_diff_assoc(\DuckPhp\Core\App::G()->options,(new \DuckPhp\DuckPhp())->options));?>
 </pre>
 </fieldset>
-全部选项</legend>
+<fieldset>
+<legend>全部选项</legend>
 <pre>
-<?php var_dump(\DuckPhp\Core\App::G()->options);?>
+<?php var_export(\DuckPhp\Core\App::G()->options);?>
 </pre>
 </fieldset>
 <fieldset>
@@ -21,7 +22,7 @@
 <fieldset>
 <legend>到 View 层级的包含文件</legend>
 <pre>
-<?php $t=get_included_files();sort($t); var_dump($t);?>
+<?php $t=get_included_files();sort($t); var_export($t);?>
 </pre>
 </fieldset>
 
