@@ -27,7 +27,6 @@ trait KernelTrait
             //// basic config ////
             'path' => null,
             'namespace' => null,
-            'name' => null,
             
             //// properties ////
             'is_debug' => false,

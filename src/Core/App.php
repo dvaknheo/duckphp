@@ -43,6 +43,7 @@ class App extends ComponentBase
     use Core_SuperGlobal;
     
     protected $core_options = [
+        'alias' => null,
         'default_exception_do_log' => true,
         'default_exception_self_display' => true,
         'close_resource_at_output' => false,
@@ -251,7 +252,7 @@ EOT;
         }
         if (!$this->is_root) {
             $path_main = static::Root()->options['path'];
-            $name = $this->options['name'] ?? str_replace("\\", '/', $this->options['namespace']);
+            $name = $this->options['alias'] ?? str_replace("\\", '/', $this->options['namespace']);
             
             $full_file = static::SlashDir($path_main) . static::SlashDir($path_sub). static::SlashDir($name) . $file;
             if (!file_exists($full_file)) {
@@ -391,31 +392,21 @@ EOT;
 }
 trait Core_Helper
 {
-//    protected $pager;
-    public static function IsAjax()
-    {
-        return static::G()->_IsAjax();
-    }
-    public function _IsAjax()
-    {
-        $ref = $this->_SERVER('HTTP_X_REQUESTED_WITH');
-        return $ref && 'xmlhttprequest' == strtolower($ref) ? true : false;
-    }
     public static function ExitJson($ret, $exit = true)
     {
-        return static::G()->_ExitJson($ret, $exit);
+        return static::_()->_ExitJson($ret, $exit);
     }
     public static function ExitRedirect($url, $exit = true)
     {
-        return static::G()->_ExitRedirect($url, $exit);
+        return static::_()->_ExitRedirect($url, $exit);
     }
     public static function ExitRedirectOutside($url, $exit = true)
     {
-        return static::G()->_ExitRedirectOutside($url, $exit);
+        return static::_()->_ExitRedirectOutside($url, $exit);
     }
     public static function ExitRouteTo($url, $exit = true)
     {
-        return static::G()->_ExitRedirect(static::Url($url), $exit);
+        return static::_()->_ExitRedirect(static::Url($url), $exit);
     }
     public static function Exit404($exit = true)
     {
@@ -424,7 +415,7 @@ trait Core_Helper
             static::exit();
         }
     }
-    ////
+    
     public function _ExitJson($ret, $exit = true)
     {
         $this->_header('Content-Type:application/json; charset=utf-8');
@@ -451,11 +442,10 @@ trait Core_Helper
             static::exit();
         }
     }
-
-    // system static
+    
     public static function Platform()
     {
-        return static::G()->_Platform();
+        return static::_()->_Platform();
     }
     public function _Platform()
     {
@@ -463,110 +453,20 @@ trait Core_Helper
     }
     public static function IsDebug()
     {
-        return static::G()->_IsDebug();
+        return static::_()->_IsDebug();
     }
     public function _IsDebug()
     {
-        return static::G()->options['is_debug'];
+        return static::_()->options['is_debug'];
     }
     public static function IsRealDebug()
     {
-        return static::G()->_IsRealDebug();
+        return static::_()->_IsRealDebug();
     }
     public function _IsRealDebug()
     {
         //you can override this;
         return $this->options['is_debug'];
-    }
-    public static function H($str)
-    {
-        return static::G()->_H($str);
-    }
-    public static function L($str, $args = [])
-    {
-        return static::G()->_L($str, $args);
-    }
-    public static function Hl($str, $args = [])
-    {
-        return static::G()->_Hl($str, $args);
-    }
-    public static function Json($data)
-    {
-        return static::G()->_Json($data);
-    }
-    public function _L($str, $args = [])
-    {
-        //Override for locale and so do
-        if (empty($args)) {
-            return $str;
-        }
-        $a = [];
-        foreach ($args as $k => $v) {
-            $a["{$k}"] = $v;
-        }
-        $ret = str_replace(array_keys($a), array_values($a), $str);
-        return $ret;
-    }
-    public function _Hl($str, $args)
-    {
-        $t = $this->_L($str, $args);
-        return $this->_H($t);
-    }
-    public function _Json($data)
-    {
-        $flag = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
-        if ($this->_IsDebug()) {
-            $flag = $flag | JSON_PRETTY_PRINT;
-        }
-        return json_encode($data, $flag);
-    }
-    public function _H(&$str)
-    {
-        if (is_string($str)) {
-            $str = htmlspecialchars($str, ENT_QUOTES);
-            return $str;
-        }
-        if (is_array($str)) {
-            foreach ($str as $k => &$v) {
-                static::_H($v);
-            }
-            return $str;
-        }
-        return $str;
-    }
-    public static function TraceDump()
-    {
-        return static::G()->_TraceDump();
-    }
-    public static function VarLog($var)
-    {
-        return static::G()->_VarLog($var);
-    }
-    public static function var_dump(...$args)
-    {
-        return static::G()->_var_dump(...$args);
-    }
-    public function _TraceDump()
-    {
-        if (!$this->options['is_debug']) {
-            return;
-        }
-        echo "<pre>\n";
-        echo (new \Exception('', 0))->getTraceAsString();
-        echo "</pre>\n";
-    }
-    public function _VarLog($var)
-    {
-        return Logger::G()->debug(var_export($var, true));
-    }
-    public function _var_dump(...$args)
-    {
-        if (!$this->options['is_debug']) {
-            return;
-        }
-        echo "<pre>\n";
-        var_dump(...$args);
-        echo "</pre>\n";
     }
     public static function XpCall($callback, ...$args)
     {
@@ -597,60 +497,8 @@ trait Core_Helper
         $this->_Phase($current);
         return $ret;
     }
-    public static function CheckException($exception_class, $message, $code = 0)
-    {
-        return static::G()->_CheckException($exception_class, $message, $code);
-    }
-    public function _CheckException($exception_class, $flag, $message, $code = 0)
-    {
-        if ($flag) {
-            throw new $exception_class($message, $code);
-        }
-    }
-    ////
-    public static function SqlForPager($sql, $pageNo, $pageSize = 10)
-    {
-        return static::G()->_SqlForPager($sql, $pageNo, $pageSize);
-    }
-    public static function SqlForCountSimply($sql)
-    {
-        return static::G()->_SqlForCountSimply($sql);
-    }
-    public function _SqlForPager($sql, $pageNo, $pageSize = 10)
-    {
-        $pageSize = (int)$pageSize;
-        $start = ((int)$pageNo - 1) * $pageSize;
-        $start = (int)$start;
-        $sql .= " LIMIT $start,$pageSize";
-        return $sql;
-    }
-    public function _SqlForCountSimply($sql)
-    {
-        $sql = preg_replace_callback('/^\s*select\s(.*?)\sfrom\s/is', function ($m) {
-            return 'SELECT COUNT(*) as c FROM ';
-        }, $sql);
-        return $sql;
-    }
     
-    public static function Logger($object = null)
-    {
-        return Logger::G($object);
-    }
-    public static function DebugLog($message, array $context = array())
-    {
-        return static::G()->_DebugLog($message, $context);
-    }
-    public function _DebugLog($message, array $context = array())
-    {
-        if ($this->options['is_debug']) {
-            return Logger::G()->debug($message, $context);
-        }
-        return false;
-    }
-    public static function Cache($object = null)
-    {
-        return static::G()->_Cache($object);
-    }
+    ///////////////
     public function _Cache($object = null)
     {
         if ($object) {
@@ -660,7 +508,7 @@ trait Core_Helper
     }
     public static function Pager($object = null)
     {
-        return static::G()->_Pager($object);
+        return static::_()->_Pager($object);
     }
     public function _Pager($object = null)
     {
@@ -681,6 +529,51 @@ trait Core_Helper
     {
         return static::Pager()->render($total, $options);
     }
+    
+    public static function IsAjax()
+    {
+        return Runtime::_()->_IsAjax();
+    }
+
+    // system static
+    
+    public static function H($str)
+    {
+        return Runtime::_()->_H($str);
+    }
+    public static function L($str, $args = [])
+    {
+        return Runtime::_()->_L($str, $args);
+    }
+    public static function Hl($str, $args = [])
+    {
+        return Runtime::_()->_Hl($str, $args);
+    }
+    public static function Json($data)
+    {
+        return Runtime::_()->_Json($data);
+    }
+    public static function TraceDump()
+    {
+        return Runtime::_()->_TraceDump();
+    }
+    public static function VarLog($var)
+    {
+        return Runtime::_()->_VarLog($var);
+    }
+    public static function SqlForPager($sql, $pageNo, $pageSize = 10)
+    {
+        return Runtime::_()->_SqlForPager($sql, $pageNo, $pageSize);
+    }
+    public static function SqlForCountSimply($sql)
+    {
+        return Runtime::_()->_SqlForCountSimply($sql);
+    }
+    public static function Cache($object = null)
+    {
+        return Runtime::_()->_Cache($object);
+    }
+
 }
 trait Core_NotImplemented
 {
