@@ -9,7 +9,6 @@
 
 namespace DuckPhp\Core;
 
-use DuckPhp\Core\AutoLoader;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Core\Route;
@@ -21,12 +20,11 @@ trait KernelTrait
     public $options = [];
 
     protected $kernel_options = [
-            //// not override options ////
-            'use_autoloader' => false,
             
             //// basic config ////
             'path' => null,
             'namespace' => null,
+            'override_class' => null,
             
             //// properties ////
             'is_debug' => false,
@@ -41,7 +39,6 @@ trait KernelTrait
             
             'on_inited' => null,
             'container_only' => false,
-            'override_class' => null,
             'override_class_from' => null,
             
             'setting_file' => 'config/setting.php',
@@ -160,14 +157,12 @@ trait KernelTrait
         //////////////////////////////
         $apps = [];
         if ($this->is_root || $this->options['container_only']) {
-            //$autoloader = AutoLoader::G();
             $this->onBeforeCreatePhases();
             $flag = PhaseContainer::ReplaceSingletonImplement();
-            $this->onAfterCreatePhases();
-            
             $container = $this->getContainer();
             $container->setDefaultContainer(static::class);
             $container->setCurrentContainer(static::class);
+            $this->onAfterCreatePhases();
         } else {
             $flag = PhaseContainer::ReplaceSingletonImplement();
             $container = $this->getContainer();
@@ -201,13 +196,7 @@ trait KernelTrait
         if ($this->options['use_short_functions']) {
             require_once __DIR__.'/Functions.php';
         }
-        
-        //TODO use_autoloader 不再需要。
-        if (($options['use_autoloader'] ?? $this->options['use_autoloader']) || ($options['path_namespace'] ?? false)) {
-            $options['path'] = $options['path'] ?? $this->getDefaultProjectPath();
-            $options['namespace'] = $options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
-            AutoLoader::G()->init($options, $this)->run();
-        }
+
         if ($options['override_class'] ?? false) {
             $class = $options['override_class'];
             unset($options['override_class']);

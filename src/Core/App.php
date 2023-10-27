@@ -5,7 +5,6 @@
  */
 namespace DuckPhp\Core;
 
-use DuckPhp\Core\AutoLoader;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\KernelTrait;
@@ -641,16 +640,6 @@ trait Core_Glue
     }
     
     //// the next is dynamic ////
-    //autoloader
-    public static function assignPathNamespace($path, $namespace = null)
-    {
-        return AutoLoader::G()->assignPathNamespace($path, $namespace);
-    }
-    //
-    public static function runAutoLoader()
-    {
-        return AutoLoader::G()->runAutoLoader();
-    }
     // route
     public static function Route($replacement_object = null)
     {

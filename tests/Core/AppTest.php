@@ -252,7 +252,6 @@ App::PageHtml(123);
         
         AppTestApp::G()->options['error_404']='_sys/error-404';
         AppTestApp::On404();
-        App::G()->runAutoLoader();
         
         AppTestApp::PhaseCall('z',[AppTestApp::class,'CallIt'],123);
         AppTestApp::PhaseCall('',[AppTestApp::class,'CallIt'],123);
@@ -536,7 +535,6 @@ $this->doFunctions();
         
 
         
-        App::assignPathNamespace("NoPath","NoName");
         App::addRouteHook(function(){},'append-outter',true);
         
         

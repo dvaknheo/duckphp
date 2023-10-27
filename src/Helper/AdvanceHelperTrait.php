@@ -21,11 +21,6 @@ trait AdvanceHelperTrait
     {
         return App::isInException();
     }
-    
-    public static function assignPathNamespace($path, $namespace = null)
-    {
-        return App::assignPathNamespace($path, $namespace);
-    }
     public function addRouteHook($callback, $position = 'append-outter', $once = true)
     {
         return App::addRouteHook($callback, $position, $once);
