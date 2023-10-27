@@ -6,50 +6,15 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
-use ReflectionException;
-use ReflectionMethod;
 
 class Misc extends ComponentBase
 {
     public $options = [
         'path' => '',
         'path_lib' => 'lib',
-        'misc_auto_method_extend' => true,
     ];
-    protected $path = null;
     protected $_di_container;
-
-    //@override ComponentBase
-    protected function initOptions(array $options)
-    {
-        if (substr($this->options['path_lib'], 0, 1) === '/') {
-            $this->path = rtrim($this->options['path_lib'], '/').'/';
-        } else {
-            $this->path = $this->options['path'].rtrim($this->options['path_lib'], '/').'/';
-        }
-    }
-    //@override ComponentBase
-    protected function initContext(object $context)
-    {
-        if ($this->options['misc_auto_method_extend'] && \method_exists($context, 'extendComponents')) {
-            $context->extendComponents(
-                [
-                    'Import' => [static::class,'Import'],
-                    'DI' => [static::class,'DI'],
-                ],
-                ['A']
-            );
-            $context->extendComponents(
-                [
-                    'RecordsetUrl' => [static::class,'RecordsetUrl'],
-                    'RecordsetH' => [static::class,'RecordsetH'],
-                    'CallAPI' => [static::class,'CallAPI'],
-                ],
-                ['C','A']
-            );
-        }
-    }
-
+    
     public static function Import($file)
     {
         return static::G()->_Import($file);
@@ -81,8 +46,13 @@ class Misc extends ComponentBase
     }
     public function _Import($file)
     {
+        if (substr($this->options['path_lib'], 0, 1) === '/') {
+            $path = rtrim($this->options['path_lib'], '/').'/';
+        } else {
+            $path = $this->options['path'].rtrim($this->options['path_lib'], '/').'/';
+        }
         $file = preg_replace('/\.php$/', '', $file).'.php';
-        include_once $this->path.$file;
+        include_once $path.$file;
     }
     
     public function _RecordsetUrl($data, $cols_map = [])
@@ -136,9 +106,9 @@ class Misc extends ComponentBase
             'string' => FILTER_SANITIZE_STRING,
         ];
         if ($interface && !\is_a($class, $interface)) {
-            throw new ReflectionException("Bad interface", -3);
+            throw new \ReflectionException("Bad interface", -3);
         }
-        $reflect = new ReflectionMethod($class, $method);
+        $reflect = new \ReflectionMethod($class, $method);
         
         $params = $reflect->getParameters();
         $args = array();
@@ -151,7 +121,7 @@ class Misc extends ComponentBase
                     if (in_array($type, array_keys($f))) {
                         $flag = filter_var($input[$name], $f[$type], FILTER_NULL_ON_FAILURE);
                         if ($flag === null) {
-                            throw new ReflectionException("Type Unmatch: {$name}", -1); //throw
+                            throw new \ReflectionException("Type Unmatch: {$name}", -1); //throw
                         }
                     }
                 }
@@ -160,7 +130,7 @@ class Misc extends ComponentBase
             } elseif ($param->isDefaultValueAvailable()) {
                 $args[] = $param->getDefaultValue();
             } else {
-                throw new ReflectionException("Need Parameter: {$name}", -2);
+                throw new \ReflectionException("Need Parameter: {$name}", -2);
             }
         }
         

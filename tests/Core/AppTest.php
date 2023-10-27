@@ -610,31 +610,9 @@ $this->doFunctions();
 //        App::G()->addDynamicComponentClass($class);
         App::G()->skip404Handler();
         
-        
-        $new_namespace=__NAMESPACE__;
-        $new_namespace.='\\';
+
     
-        $options=[
-            //'path' => $path_app,
-            'is_debug' => true,
-            'namespace'=> __NAMESPACE__,
-            'override_class'=>'\\'.AppTestApp::class,
-            'injected_helper_enable' => true,
-        ];
-        App::G()->init($options);
-
-        App::G()->extendComponents(['Foo'=>[AppTest::class,'Foo']],['V',"ZZZ"]);
         
-        App::G()->options['injected_helper_map']='~\Helper\\';
-        App::G()->extendComponents(['Foo'=>[AppTest::class,'Foo']],['V',"ZZZ"]);
-
-
-        //cloneHelpers
-        App::G()->cloneHelpers($new_namespace);
-        App::G()->cloneHelpers($new_namespace.'\\Helper\\', ['M'=>'no_exits_class','C'=>'~\\ControllerHelper']);
-        
-        App::G()->options['injected_helper_enable']=false;
-        App::G()->extendComponents(['Foo'=>[AppTest::class,'Foo']],['V',"ZZZ"]);
     }
     public static function Foo()
     {

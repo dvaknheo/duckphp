@@ -36,7 +36,7 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         ];
         
 
-        App::G()->extendComponents(static::class,['beforeGet'],[]);
+        //App::G()->extendComponents(static::class,['beforeGet'],[]);
         DbManager::G()->init($options,App::G());
         $options['database_list']=$database_list;
         DbManager::G()->init($options,null);

@@ -10,7 +10,6 @@ use DuckPhp\Core\ComponentBase;
 class SuperGlobalContext extends ComponentBase
 {
     public $options = [
-        'superglobal_auto_extend_method' => false,
         'superglobal_auto_define' => false,
     ];
     
@@ -30,19 +29,6 @@ class SuperGlobalContext extends ComponentBase
     {
         if ($this->options['superglobal_auto_define']) {
             static::DefineSuperGlobalContext();
-        }
-    }
-    protected function initContext(object $context)
-    {
-        //////////////////////////
-        if ($this->options['superglobal_auto_extend_method'] && \method_exists($context, 'extendComponents')) {
-            $context->extendComponents(
-                [
-                    'LoadSuperGlobalAll' => static::class . '::LoadSuperGlobalAll',
-                    'SaveSuperGlobalAll' => static::class . '::SaveSuperGlobalAll',
-                ],
-                ['A']
-            );
         }
     }
     

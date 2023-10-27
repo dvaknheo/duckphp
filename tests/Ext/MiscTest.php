@@ -16,6 +16,7 @@ class MiscTest extends \PHPUnit\Framework\TestCase
             'path_lib'=>'',
         ];
         Misc::G()->init($options,DuckPhp::G());
+        Misc::Import('file');
         $options=[
             'path_lib'=>$path_lib,
             'use_super_global'=>false,
@@ -63,7 +64,7 @@ class MiscTest extends \PHPUnit\Framework\TestCase
             Misc::CallAPI(FakeService::class,'m1',[]);
         }catch(\Exception $ex){
         }
-                    Misc::CallAPI(FakeService::class,'m1',['id'=>'1']);
+        Misc::CallAPI(FakeService::class,'m1',['id'=>'1']);
         Misc::G()->isInited();
 
         \LibCoverage\LibCoverage::End();

@@ -30,7 +30,6 @@ class App extends ComponentBase
     const HOOK_APPPEND_INNER = 'append-inner';
     const HOOK_APPPEND_OUTTER = 'append-outter';
     
-    const DEFAULT_INJECTED_HELPER_MAP = '~\\Helper\\';
     
     use KernelTrait;
     use ExtendableStaticCallTrait;
@@ -43,14 +42,13 @@ class App extends ComponentBase
     use Core_SuperGlobal;
     
     protected $core_options = [
+        'path_runtime' => 'runtime',
         'alias' => null,
+        
         'default_exception_do_log' => true,
         'default_exception_self_display' => true,
         'close_resource_at_output' => false,
-        'injected_helper_enable' => false,
-        'injected_helper_map' => '',
         
-        'path_runtime' => 'runtime',
         //// error handler ////
         'error_404' => null,          //'_sys/error-404',
         'error_500' => null,          //'_sys/error-500',
@@ -267,71 +265,7 @@ EOT;
         return $full_file;
     }
     //////// features
-    ////[[[[
-    protected function extendComponentClassMap($map)
-    {
-        if (empty($map)) {
-            return [];
-        }
-        if (is_string($map)) {
-            // for helper
-            $map = [
-                'A' => $map . 'AdvanceHelper',
-                'B' => $map . 'BusinessHelper',
-                'C' => $map . 'ControllerHelper',
-                'M' => $map . 'ModelHelper',
-                'V' => $map . 'ViewHelper',
-            ];
-        }
-        return $map;
-    }
-    protected function fixNamespace($class, $namespace)
-    {
-        $class = str_replace('~', $namespace, $class);
-        $class = str_replace("\\\\", "\\", $class);
-        return $class;
-    }
-    public function extendComponents($method_map, $components = [])
-    {
-        if (!$this->options['injected_helper_enable']) {
-            return;
-        }
-        static::AssignExtendStaticMethod($method_map);
-        self::AssignExtendStaticMethod($method_map);
-        
-        $this->options['injected_helper_map'] = $this->extendComponentClassMap($this->options['injected_helper_map']);
-        foreach ($components as $component) {
-            $class = $this->options['injected_helper_map'][strtoupper($component)] ?? null;
-            $class = ($class === null) ? $component : $class;
-            $class = $this->fixNamespace($class, $this->options['namespace']);
-            
-            if (!class_exists($class)) {
-                continue;
-            }
-            $class::AssignExtendStaticMethod($method_map);
-        }
-    }
-    public function cloneHelpers($new_namespace, $new_helper_map = [])
-    {
-        if (empty($new_helper_map)) {
-            return;
-        }
-        $helperMap = $this->extendComponentClassMap($this->options['injected_helper_map']);
 
-        foreach ($helperMap as $name => $old_class) {
-            $new_class = $new_helper_map[$name] ?? null;
-            if (!$new_class) {
-                continue;
-            }
-            $old_class = $this->fixNamespace($old_class, $this->options['namespace']);
-            $new_class = $this->fixNamespace($new_class, $new_namespace);
-            if (!class_exists($old_class) || !class_exists($new_class)) {
-                continue;
-            }
-            $new_class::AssignExtendStaticMethod($old_class::GetExtendStaticMethodList());
-        }
-    }
-    ////]]]]
     public function addBeforeShowHandler($handler)
     {
         $this->beforeShowHandlers[] = $handler;

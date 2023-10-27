@@ -101,14 +101,6 @@ trait AdvanceHelperTrait
         return App::session_set_save_handler($handler);
     }
     //////////////////////////////////////
-    public static function extendComponents($method_map, $components = [])
-    {
-        return App::G()->extendComponents($method_map, $components);
-    }
-    public static function cloneHelpers($new_namespace, $componentClassMap = [])
-    {
-        return App::G()->cloneHelpers($new_namespace, $componentClassMap);
-    }
     public static function addBeforeShowHandler($handler)
     {
         return App::G()->addBeforeShowHandler($handler);

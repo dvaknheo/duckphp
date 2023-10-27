@@ -94,9 +94,7 @@ class AdvanceHelperTraitTest extends \PHPUnit\Framework\TestCase
         App::G()->init($options);
         AdvanceHelper::addBeforeShowHandler(function(){});
 
-        AdvanceHelper::extendComponents(['Foo'=>[static::class,'Foo']],['V',"ZZZ"]);
-        AdvanceHelper::cloneHelpers($new_namespace);
-        AdvanceHelper::cloneHelpers($new_namespace, ['M'=>'no_exits_class']);
+
     }
 }
 class HelperFakeSessionHandler implements \SessionHandlerInterface
