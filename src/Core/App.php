@@ -32,7 +32,6 @@ class App extends ComponentBase
     
     
     use KernelTrait;
-    use ExtendableStaticCallTrait;
     use SystemWrapperTrait;
     
     //inner trait
