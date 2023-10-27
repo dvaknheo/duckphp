@@ -392,6 +392,7 @@ EOT;
 }
 trait Core_Helper
 {
+    ////Exit;
     public static function ExitJson($ret, $exit = true)
     {
         return static::_()->_ExitJson($ret, $exit);
@@ -419,7 +420,7 @@ trait Core_Helper
     public function _ExitJson($ret, $exit = true)
     {
         $this->_header('Content-Type:application/json; charset=utf-8');
-        echo $this->_Json($ret);
+        echo Runtime::G()->_Json($ret);
         if ($exit) {
             static::exit();
         }
@@ -442,7 +443,7 @@ trait Core_Helper
             static::exit();
         }
     }
-    
+    ///////
     public static function Platform()
     {
         return static::_()->_Platform();
@@ -499,16 +500,21 @@ trait Core_Helper
     }
     
     ///////////////
+    
+    public static function Pager($object = null)
+    {
+        return static::_()->_Pager($object);
+    }
+    public static function Cache($object = null)
+    {
+        return static::_()->_Cache($object);
+    }
     public function _Cache($object = null)
     {
         if ($object) {
             $this->cache = $object;
         }
         return $this->cache;
-    }
-    public static function Pager($object = null)
-    {
-        return static::_()->_Pager($object);
     }
     public function _Pager($object = null)
     {
@@ -534,7 +540,18 @@ trait Core_Helper
     {
         return Runtime::_()->_IsAjax();
     }
-
+    public static function var_dump(...$args)
+    {
+        return Runtime::_()->_var_dump(...$args);
+    }
+    public static function Logger($object = null)
+    {
+        return Logger::G($object);
+    }
+    public static function DebugLog($message, array $context = array())
+    {
+        return Runtime::_()->_DebugLog($message, $context);
+    }
     // system static
     
     public static function H($str)
@@ -569,11 +586,6 @@ trait Core_Helper
     {
         return Runtime::_()->_SqlForCountSimply($sql);
     }
-    public static function Cache($object = null)
-    {
-        return Runtime::_()->_Cache($object);
-    }
-
 }
 trait Core_NotImplemented
 {

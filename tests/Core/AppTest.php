@@ -218,18 +218,13 @@ App::PageHtml(123);
         
         App::Route();
         
-                App::SessionSet('x',DATE('Y,M,d'));
-                SuperGlobalContext::DefineSuperGlobalContext();
-                                App::SessionSet('x',DATE('Y,M,d'));
+        App::SessionSet('x',DATE('Y,M,d'));
+        SuperGlobalContext::DefineSuperGlobalContext();
+        App::SessionSet('x',DATE('Y,M,d'));
 
-            App::CookieSet('x',DATE('Y,M,d'));
-            App::CookieGet('x');
-        
-        try{
-            App::CheckException(\Exception::class, false,"HH");
-            App::CheckException(\Exception::class, true,"HH");
-        }catch(\Exception $ex){
-        }
+        App::CookieSet('x',DATE('Y,M,d'));
+        App::CookieGet('x');
+
         App::XpCall(function(){return "abc";});
         App::XpCall(function(){ throw new \Exception('ex'); });
         App::Cache(new \stdClass);

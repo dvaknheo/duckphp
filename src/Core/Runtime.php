@@ -64,47 +64,20 @@ class Runtime extends ComponentBase
         ;
     }
     //////////////////////
-//    protected $pager;
-
-    public function _IsAjax()
+    public function _H(&$str)
     {
-        $ref = $this->_SERVER('HTTP_X_REQUESTED_WITH');
-        return $ref && 'xmlhttprequest' == strtolower($ref) ? true : false;
-    }
-
-
-
-    ////
-    public function _ExitJson($ret, $exit = true)
-    {
-        $this->_header('Content-Type:application/json; charset=utf-8');
-        echo $this->_Json($ret);
-        if ($exit) {
-            static::exit();
+        if (is_string($str)) {
+            $str = htmlspecialchars($str, ENT_QUOTES);
+            return $str;
         }
-    }
-    public function _ExitRedirect($url, $exit = true)
-    {
-        if (parse_url($url, PHP_URL_HOST)) {
-            static::exit();
-            return;
+        if (is_array($str)) {
+            foreach ($str as $k => &$v) {
+                static::_H($v);
+            }
+            return $str;
         }
-        static::header('location: '.$url, true, 302);
-        if ($exit) {
-            static::exit();
-        }
+        return $str;
     }
-    public function _ExitRedirectOutside($url, $exit = true)
-    {
-        static::header('location: '.$url, true, 302);
-        if ($exit) {
-            static::exit();
-        }
-    }
-
-
-
-
     public function _L($str, $args = [])
     {
         //Override for locale and so do
@@ -126,34 +99,20 @@ class Runtime extends ComponentBase
     public function _Json($data)
     {
         $flag = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
-        if ($this->_IsDebug()) {
+        if (App::IsDebug()) {
             $flag = $flag | JSON_PRETTY_PRINT;
         }
         return json_encode($data, $flag);
     }
-    public function _H(&$str)
+    public function _IsAjax()
     {
-        if (is_string($str)) {
-            $str = htmlspecialchars($str, ENT_QUOTES);
-            return $str;
-        }
-        if (is_array($str)) {
-            foreach ($str as $k => &$v) {
-                static::_H($v);
-            }
-            return $str;
-        }
-        return $str;
+        $ref = App::G()->_SERVER('HTTP_X_REQUESTED_WITH');
+        return $ref && 'xmlhttprequest' == strtolower($ref) ? true : false;
     }
-
-
-    public static function var_dump(...$args)
-    {
-        return static::G()->_var_dump(...$args);
-    }
+    ///////////////
     public function _TraceDump()
     {
-        if (!$this->options['is_debug']) {
+        if (!App::IsDebug()) {
             return;
         }
         echo "<pre>\n";
@@ -162,27 +121,26 @@ class Runtime extends ComponentBase
     }
     public function _VarLog($var)
     {
+        if (!App::IsDebug()) {
+            return;
+        }
         return Logger::G()->debug(var_export($var, true));
     }
     public function _var_dump(...$args)
     {
-        if (!$this->options['is_debug']) {
+        if (!App::IsDebug()) {
             return;
         }
         echo "<pre>\n";
         var_dump(...$args);
         echo "</pre>\n";
     }
-
-    public static function CheckException($exception_class, $message, $code = 0)
+    public function _DebugLog($message, array $context = array())
     {
-        return static::G()->_CheckException($exception_class, $message, $code);
-    }
-    public function _CheckException($exception_class, $flag, $message, $code = 0)
-    {
-        if ($flag) {
-            throw new $exception_class($message, $code);
+        if (!App::IsDebug()) {
+            return false;
         }
+        return Logger::G()->debug($message, $context);
     }
     ////
     public function _SqlForPager($sql, $pageNo, $pageSize = 10)
@@ -200,22 +158,4 @@ class Runtime extends ComponentBase
         }, $sql);
         return $sql;
     }
-    
-    public static function Logger($object = null)
-    {
-        return Logger::G($object);
-    }
-    public static function DebugLog($message, array $context = array())
-    {
-        return static::G()->_DebugLog($message, $context);
-    }
-    public function _DebugLog($message, array $context = array())
-    {
-        if ($this->options['is_debug']) {
-            return Logger::G()->debug($message, $context);
-        }
-        return false;
-    }
-    
-    
 }

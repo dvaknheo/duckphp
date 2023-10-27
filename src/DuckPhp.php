@@ -265,6 +265,6 @@ class DuckPhp extends App
     }
     public static function getRewrites()
     {
-        return RouteHookRewrite::G()->getRewrites($key, $value);
+        return RouteHookRewrite::G()->getRewrites();
     }
 }

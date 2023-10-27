@@ -8,9 +8,6 @@
 
 namespace DuckPhp;
 
-
-
 class DuckPhpAllInOne extends DuckPhp
 {
-
 }
