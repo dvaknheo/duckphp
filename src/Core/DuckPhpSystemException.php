@@ -5,15 +5,9 @@
  */
 namespace DuckPhp\Core;
 
-class SystemException extends \Exception
+use Exception;
+
+class DuckPhpSystemException extends Exception
 {
-    /*
-    public static function ThrowOn($flag, $message, $code = 0)
-    {
-        if (!$flag) {
-            return;
-        }
-        throw new $exception_class($message, $code);
-    }
-    //*/
+    //
 }

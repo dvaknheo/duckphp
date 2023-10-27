@@ -13,7 +13,6 @@ class RouteHookRouteMap extends ComponentBase
         'controller_url_prefix' => '',
         'route_map_important' => [],
         'route_map' => [],
-        'route_map_by_config_name' => '',
     ];
     protected $route_map = [];
     protected $route_map_important = [];
@@ -34,12 +33,6 @@ class RouteHookRouteMap extends ComponentBase
     {
         ($this->context_class)::Route()->addRouteHook([static::class,'PrependHook'], 'prepend-inner');
         ($this->context_class)::Route()->addRouteHook([static::class,'AppendHook'], 'append-outter');
-        
-        if ($this->options['route_map_by_config_name']) {
-            $config = ($this->context_class)::Config($this->options['route_map_by_config_name'], null, []);
-            $this->assignRoute($config['route_map'] ?? []);
-            $this->assignImportantRoute($config['route_map_important'] ?? []);
-        }
     }
     public function compile($pattern_url, $rules = [])
     {
