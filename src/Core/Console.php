@@ -5,11 +5,9 @@
  */
 namespace DuckPhp\Core;
 
-class Console
+class Console extends ComponentBase
 {
     public $options = [
-        'cli_enable' => true,
-        'cli_mode' => 'replace',
         'cli_command_alias' => [],
         'cli_default_command_class' => '',
         'cli_command_method_prefix' => 'command_',
@@ -19,50 +17,12 @@ class Console
     protected $parameters = [];
     protected $is_inited = false;
     
-    protected static $_instances = [];
-    //embed
-    public static function G($object = null)
-    {
-        if (defined('__SINGLETONEX_REPALACER')) {
-            return (__SINGLETONEX_REPALACER)(static::class, $object);
-        }
-        if ($object) {
-            self::$_instances[static::class] = $object;
-            return $object;
-        }
-        $me = self::$_instances[static::class] ?? null;
-        if (null === $me) {
-            $me = new static();
-            self::$_instances[static::class] = $me;
-        }
-        
-        return $me;
-    }
-    public function __construct()
-    {
-    }
-    public function isInited(): bool
-    {
-        return $this->is_inited;
-    }
+
     public function init(array $options, ?object $context = null)
     {
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
-        if (PHP_SAPI !== 'cli') {
-            return $this; // @codeCoverageIgnore
-        }
-        if (!$this->options['cli_enable']) {
-            return;
-        }
         if ($context !== null) {
             $this->context_class = get_class($context);
-            if ($this->options['cli_mode'] === 'replace') {
-                if (method_exists($context, 'replaceDefaultRunHandler')) {
-                    $context->replaceDefaultRunHandler([static::class,'DoRun']);
-                }
-            } elseif ($this->options['cli_mode'] === 'hook') {
-                ($this->context_class)::Route()->addRouteHook([static::class,'DoRun'], 'prepend-outter');
-            }
         }
         $this->is_inited = true;
         return $this;
@@ -71,6 +31,11 @@ class Console
     {
         return $this->parameters;
     }
+    public function app()
+    {
+        return $this->context_class::G();
+    }
+    
     public function regCommandClass($class, $alias = null)
     {
         $alias = $alias ?? $class;
@@ -82,10 +47,6 @@ class Console
     }
     public function run()
     {
-        // 不需要这么复杂。精简到一种模式
-        if ($this->options['cli_mode'] === 'replace' && method_exists($this->context_class, 'replaceDefaultRunHandler') && method_exists($this->context_class, 'G')) {
-            $this->context_class::G()->replaceDefaultRunHandler(null);
-        }
         $this->parameters = $this->parseCliArgs($_SERVER['argv']);
         $func_args = $this->parameters['--'];
         $cmd = array_shift($func_args);
@@ -96,10 +57,6 @@ class Console
         }
         $this->callObject($class, $method, $func_args, $this->parameters);
         return true;
-    }
-    public function app()
-    {
-        return $this->context_class::G();
     }
     ////[[[[
     public function readLines($options, $desc, $validators = [], $fp_in = null, $fp_out = null)
@@ -170,9 +127,13 @@ class Console
         }
         return $ret;
     }
+    protected function getObject($class)
+    {
+        return is_callable([$class,'_']) ? $class::_() : new $class;
+    }
     public function callObject($class, $method, $args, $input)
     {
-        $object = is_callable([$class,'G']) ? $class::G() : new $class;
+        $object = $this->getObject($class);
         $reflect = new \ReflectionMethod($object, $method);
         $params = $reflect->getParameters();
         foreach ($params as $i => $param) {
@@ -270,6 +231,7 @@ class Console
     }
     public function getCommandListInfo()
     {
+        // 这里要移出去
         $info = $this->getCommandGroupInfo();
         $str = '';
         foreach ($info['commands'] as $class => $v) {

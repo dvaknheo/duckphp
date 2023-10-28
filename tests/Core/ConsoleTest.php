@@ -14,22 +14,11 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(Console::class);
         
         $_SERVER['argv']=[];
-        Console::G()->init(['cli_enable'=>false],App::G());
-        
-        Console::G(new Console());
-        App::G()->init([]);
-        Console::G()->init(['cli_enable'=>true],App::G());
+        App::G()->init(['console_enable'=>true, 'is_debug'=>true])->run();
+        Console::DoRun();
         Console::G()->app();
-        App::G()->run();
-        
-        Console::G()->init(['cli_enable'=>true,'cli_mode' => 'hook',],App::G());
-        
-        Console::G(new Console())->init(['cli_enable'=>true], App::G());
-        App::G()->init([]);
-        App::G()->run();
-        
-        Console::G()->init(['cli_enable'=>true],App::G());
         Console::G()->getCliParameters();
+        
         
         Console::G()->regCommandClass(Console_Command::class,"test");
         $_SERVER['argv']=[
@@ -57,31 +46,37 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
             $_SERVER['argv']=[
                 '-','test:foo3',
             ];
+            App::G()->options['skip_exception_check']=true;
             App::G()->run();
         }catch(\Exception $ex){
             var_dump("Hit!");
+            App::G()->options['skip_exception_check']=false;
         }
         try{
             $_SERVER['argv']=[
                 '-','foo',
             ];
+            App::G()->options['skip_exception_check']=true;
             App::G()->run();
         }catch(\Exception $ex){
             var_dump("Hit!");
+            App::G()->options['skip_exception_check']=false;
         }
         try{
             $_SERVER['argv']=[
                 '-','foo:foo',
             ];
+            App::G()->options['skip_exception_check']=true;
             App::G()->run();
         }catch(\Exception $ex){
             var_dump("Hit!");
+            App::G()->options['skip_exception_check']=false;
         }
         
         
         //*/
         Console::G(new Console())->init([],Console_App::G());
-        Console_App::G()->init([]);
+        Console_App::G()->init(['console_enable'=>true]);
         $_SERVER['argv']=[
             '-','list',
         ];
@@ -144,10 +139,11 @@ class Console_App extends App
 }
 
 
-class Console_Command extends ComponentBase
+class Console_Command extends App
 {
     public function command_foo()
     {
+        var_dump("foo!");
     }
     /**
      * desc1

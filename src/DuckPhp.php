@@ -34,7 +34,6 @@ class DuckPhp extends App
         
         'database_auto_extend_method' => null,
         'path_info_compact_enable' => null,
-        'cli_default_command_class' => null,
         
         'class_user' => null,
         'class_admin' => null,
@@ -81,11 +80,11 @@ class DuckPhp extends App
         RouteHookRouteMap::G()->init($this->options, $this);
         
         if (PHP_SAPI === 'cli') {
-            if($this->is_root){
+            if ($this->is_root) {
                 DuckPhpCommand::G()->init($this->options, $this);
                 Console::G()->options['cli_default_command_class'] = DuckPhpCommand::class;
-            }else{
-                Console::G()->regCommandClass(static::class,$this->options['namespace']);
+            } else {
+                Console::G()->regCommandClass(static::class, $this->options['namespace']);
             }
         }
         if ($this->options['path_info_compact_enable'] ?? false) {

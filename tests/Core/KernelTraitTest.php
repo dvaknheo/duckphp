@@ -41,7 +41,8 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             'use_super_global' => true,
             'override_class'=>'\\'.KernelTestApp::class,
             'skip_fix_path_info'=>true,
-            'on_inited' =>function (){ echo 'Inited!';}
+            'on_inited' =>function (){ echo 'Inited!';},
+            'console_enable' => true,
         ];
         $options['ext']=[
             'noclass'=>true,
@@ -49,10 +50,8 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             KernelTestObjectA::class=>true,
             KernelTestObjectB::class=>['aa'=>'22'],
         ];
-        App::RunQuickly($options,function(){
-
-
-        });
+        App::RunQuickly($options,function(){});
+        App::G()->options['console_enable'] =false;
         App::InRootPhase();
         
         //App::SG()->_SERVER['PATH_INFO']='/NOOOOOOOOOOOOOOO';

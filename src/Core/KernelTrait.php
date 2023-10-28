@@ -23,7 +23,7 @@ trait KernelTrait
     protected $kernel_options = [
             'path' => null,
             'namespace' => null,
-            'cli_enable' => false,
+            'console_enable' => false,
             
             'is_debug' => false,
             'platform' => '',
@@ -221,8 +221,9 @@ trait KernelTrait
         }
         ExceptionManager::G()->init($exception_options, $this);
 
-
+        
         $this->initComponents($this->options, $context);
+        
         
         $this->initExtentions($this->options['ext'] ?? []);
         $this->onInit();
@@ -237,7 +238,12 @@ trait KernelTrait
         Route::G()->init($this->options, $this);
         Runtime::G()->init($this->options, $this);
 
-        Console::G()->init($this->options, $this);
+        if ($this->is_root) {
+            Console::G()->init($this->options, $this);
+            $container = $this->getContainer();
+            $t = $container ? $container->addPublicClasses([Console::class]) :null;
+        }
+        
         $this->doInitComponents();
     }
     protected function doInitComponents()
@@ -328,9 +334,10 @@ trait KernelTrait
         
         $this->onBeforeRun();
         try {
-            if (!$this->default_run_handler) {
-                Runtime::G()->run();
-                //TODO Console
+            Runtime::G()->run();
+            if ($this->is_root && $this->options['console_enable']) {
+                $ret = Console::G()->run();
+            } else {
                 if (!($this->options['container_only'] ?? false)) {
                     $ret = Route::G()->run();
                 }
@@ -341,9 +348,6 @@ trait KernelTrait
                         $this->_On404();
                     }
                 }
-            } else {
-                // is_root => $ret = Console::G()->run();
-                $ret = ($this->default_run_handler)();
             }
         } catch (\Throwable $ex) {
             Runtime::G()->onException($this->options['skip_exception_check']);

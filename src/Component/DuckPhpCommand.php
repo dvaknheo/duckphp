@@ -5,9 +5,9 @@
  */
 namespace DuckPhp\Component;
 
+use DuckPhp\Component\DuckPhpInstaller;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Console;
-use DuckPhp\Component\DuckPhpInstaller;
 use DuckPhp\HttpServer\HttpServer;
 
 class DuckPhpCommand extends ComponentBase
@@ -95,7 +95,7 @@ EOT;
         $_SERVER['REQUEST_URI'] = $uri;
         $_SERVER['PATH_INFO'] = parse_url($uri, PHP_URL_PATH);
         $_SERVER['HTTP_METHOD'] = $post ? $post :'GET';
-        $this->context_class::G()->replaceDefaultRunHandler(null);
+        $this->context_class::G()->options['console_enable'] = false;
         $this->context_class::G()->run();
     }
     ///////////////////////////////////

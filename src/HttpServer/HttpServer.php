@@ -56,7 +56,7 @@ class HttpServer
     
     protected static $_instances = [];
     //embed
-    public static function G($object = null)
+    public static function _($object = null)
     {
         if (defined('__SINGLETONEX_REPALACER')) {
             return (__SINGLETONEX_REPALACER)(static::class, $object);
@@ -72,6 +72,10 @@ class HttpServer
         }
         
         return $me;
+    }
+    public static function G($object = null)
+    {
+        return static::_($object);
     }
     public function __construct()
     {
