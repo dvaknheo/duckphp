@@ -37,7 +37,6 @@ class App extends ComponentBase
     use Core_Helper;
     use Core_Glue;
     use Core_NotImplemented;
-    use Core_SuperGlobal;
     
     protected $core_options = [
         'path_runtime' => 'runtime',
@@ -666,122 +665,52 @@ trait Core_Glue
     {
         return ExceptionManager::G()->_CallException($ex);
     }
-}
-trait Core_SuperGlobal
-{
     public static function GET($key = null, $default = null)
     {
-        return static::G()->_Get($key, $default);
+        return SuperGlobal::_()->_Get($key, $default);
     }
     public static function POST($key = null, $default = null)
     {
-        return static::G()->_POST($key, $default);
+        return SuperGlobal::_()->_POST($key, $default);
     }
     public static function REQUEST($key = null, $default = null)
     {
-        return static::G()->_REQUEST($key, $default);
+        return SuperGlobal::_()->_REQUEST($key, $default);
     }
     public static function COOKIE($key = null, $default = null)
     {
-        return static::G()->_COOKIE($key, $default);
+        return SuperGlobal::_()->_COOKIE($key, $default);
     }
     public static function SERVER($key = null, $default = null)
     {
-        return static::G()->_SERVER($key, $default);
+        return SuperGlobal::_()->_SERVER($key, $default);
     }
     public static function SESSION($key = null, $default = null)
     {
-        return static::G()->_SESSION($key, $default);
+        return SuperGlobal::_()->_SESSION($key, $default);
     }
     public static function FILES($key = null, $default = null)
     {
-        return static::G()->_FILES($key, $default);
+        return SuperGlobal::_()->_FILES($key, $default);
     }
     public static function SessionSet($key, $value)
     {
-        return static::G()->_SessionSet($key, $value);
+        return SuperGlobal::_()->_SessionSet($key, $value);
     }
     public static function SessionUnset($key)
     {
-        return static::G()->_SessionUnset($key);
+        return SuperGlobal::_()->_SessionUnset($key);
     }
     public static function SessionGet($key, $default = null)
     {
-        return static::G()->_SessionGet($key, $default);
+        return SuperGlobal::_()->_SessionGet($key, $default);
     }
     public static function CookieSet($key, $value, $expire = 0)
     {
-        return static::G()->_CookieSet($key, $value, $expire);
+        return SuperGlobal::_()->_CookieSet($key, $value, $expire);
     }
     public static function CookieGet($key, $default = null)
     {
-        return static::G()->_CookieGet($key, $default);
-    }
-
-    private function getSuperGlobalData($superglobal_key, $key, $default)
-    {
-        $data = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->$superglobal_key : ($GLOBALS[$superglobal_key] ?? []);
-        
-        if (isset($key)) {
-            return $data[$key] ?? $default;
-        } else {
-            return $data ?? $default;
-        }
-    }
-    public function _GET($key = null, $default = null)
-    {
-        return $this->getSuperGlobalData('_GET', $key, $default);
-    }
-    public function _POST($key = null, $default = null)
-    {
-        return $this->getSuperGlobalData('_POST', $key, $default);
-    }
-    public function _REQUEST($key = null, $default = null)
-    {
-        return $this->getSuperGlobalData('_REQUEST', $key, $default);
-    }
-    public function _COOKIE($key = null, $default = null)
-    {
-        return $this->getSuperGlobalData('_COOKIE', $key, $default);
-    }
-    public function _SERVER($key = null, $default = null)
-    {
-        return $this->getSuperGlobalData('_SERVER', $key, $default);
-    }
-    public function _SESSION($key = null, $default = null)
-    {
-        return $this->getSuperGlobalData('_SESSION', $key, $default);
-    }
-    public function _FILES($key = null, $default = null)
-    {
-        return $this->getSuperGlobalData('_FILES', $key, $default);
-    }
-    public function _SessionSet($key, $value)
-    {
-        if (defined('__SUPERGLOBAL_CONTEXT')) {
-            (__SUPERGLOBAL_CONTEXT)()->_SESSION[$key] = $value;
-        } else {
-            $_SESSION[$key] = $value;
-        }
-    }
-    public function _SessionUnset($key)
-    {
-        if (defined('__SUPERGLOBAL_CONTEXT')) {
-            unset((__SUPERGLOBAL_CONTEXT)()->_SESSION[$key]);
-        }
-        unset($_SESSION[$key]);
-    }
-    public function _CookieSet($key, $value, $expire)
-    {
-        $this->_setcookie($key, $value, $expire ? $expire + time():0);
-    }
-    public function _SessionGet($key, $default)
-    {
-        return $this->getSuperGlobalData('_SESSION', $key, $default);
-    }
-
-    public function _CookieGet($key, $default)
-    {
-        return $this->getSuperGlobalData('_COOKIE', $key, $default);
+        return SuperGlobal::_()->_CookieGet($key, $default);
     }
 }

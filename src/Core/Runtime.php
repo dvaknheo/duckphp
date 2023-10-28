@@ -106,7 +106,7 @@ class Runtime extends ComponentBase
     }
     public function _IsAjax()
     {
-        $ref = App::G()->_SERVER('HTTP_X_REQUESTED_WITH');
+        $ref = App::SERVER('HTTP_X_REQUESTED_WITH');
         return $ref && 'xmlhttprequest' == strtolower($ref) ? true : false;
     }
     ///////////////

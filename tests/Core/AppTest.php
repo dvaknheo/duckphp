@@ -6,6 +6,7 @@ use DuckPhp\DuckPhp;
 use DuckPhp\Component\Configer;
 use DuckPhp\Core\View;
 use DuckPhp\Core\Route;
+use DuckPhp\Core\SuperGlobal;
 use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckPhp\Component\Pager;
 use DuckPhp\Ext\SuperGlobalContext;
@@ -201,7 +202,7 @@ App::PageHtml(123);
         }catch(\Throwable $ex){
         }
         App::DbCloseAll();
-
+//*
         App::GET('a');
         App::POST('a');
         App::REQUEST('a');
@@ -219,12 +220,12 @@ App::PageHtml(123);
         App::Route();
         
         App::SessionSet('x',DATE('Y,M,d'));
-        SuperGlobalContext::DefineSuperGlobalContext();
+        SuperGlobal::DefineSuperGlobalContext();
         App::SessionSet('x',DATE('Y,M,d'));
 
         App::CookieSet('x',DATE('Y,M,d'));
         App::CookieGet('x');
-
+//*/
         App::XpCall(function(){return "abc";});
         App::XpCall(function(){ throw new \Exception('ex'); });
         App::Cache(new \stdClass);
