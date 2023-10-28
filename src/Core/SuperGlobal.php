@@ -193,7 +193,7 @@ class SuperGlobal extends ComponentBase
     }
     public function _CookieSet($key, $value, $expire)
     {
-        App::_()->_setcookie($key, $value, $expire ? $expire + time():0);
+        App::setcookie($key, $value, $expire ? $expire + time():0);
     }
     public function _SessionGet($key, $default)
     {

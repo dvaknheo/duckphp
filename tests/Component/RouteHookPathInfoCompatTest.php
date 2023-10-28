@@ -79,7 +79,7 @@ if(true){
         
                         RouteHookPathInfoCompat::G()->isInited();
 
-SuperGlobalContext::DefineSuperGlobalContext();
+        \DuckPhp\Core\SuperGlobal::DefineSuperGlobalContext();
 Route::G()->bind('Missed','POST');
         Route::G()->run();
         

@@ -5,9 +5,23 @@
  */
 namespace DuckPhp\Core;
 
-trait SystemWrapperTrait
+class SystemWrapper extends ComponentBase
 {
     // protected $system_handlers=[];
+    protected $system_handlers = [
+        'header' => null,
+        'setcookie' => null,
+        'exit' => null,
+        'set_exception_handler' => null,
+        'register_shutdown_function' => null,
+        
+        'session_start' => null,
+        'session_id' => null,
+        'session_destroy' => null,
+        'session_set_save_handler' => null,
+        'mime_content_type' => null,
+
+    ];
     public static function system_wrapper_replace(array $funcs)
     {
         return static::G()->_system_wrapper_replace($funcs);

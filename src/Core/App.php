@@ -11,7 +11,7 @@ use DuckPhp\Core\KernelTrait;
 use DuckPhp\Core\Logger;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\Runtime;
-use DuckPhp\Core\SystemWrapperTrait;
+use DuckPhp\Core\SystemWrapper;
 use DuckPhp\Core\View;
 
 /**
@@ -22,6 +22,7 @@ use DuckPhp\Core\View;
  */
 class App extends ComponentBase
 {
+    use KernelTrait;
     const VERSION = '1.2.13-dev';
 
     const HOOK_PREPEND_OUTTER = 'prepend-outter';
@@ -30,13 +31,11 @@ class App extends ComponentBase
     const HOOK_APPPEND_OUTTER = 'append-outter';
     
     
-    use KernelTrait;
-    use SystemWrapperTrait;
     
     //inner trait
-    use Core_Helper;
-    use Core_Glue;
-    use Core_NotImplemented;
+    //use Core_Helper;
+    //use Core_Glue;
+    //use Core_NotImplemented;
     
     protected $core_options = [
         'path_runtime' => 'runtime',
@@ -53,20 +52,7 @@ class App extends ComponentBase
     ];
     protected $common_options = [];
     // for trait
-    protected $system_handlers = [
-        'header' => null,
-        'setcookie' => null,
-        'exit' => null,
-        'set_exception_handler' => null,
-        'register_shutdown_function' => null,
-        
-        'session_start' => null,
-        'session_id' => null,
-        'session_destroy' => null,
-        'session_set_save_handler' => null,
-        'mime_content_type' => null,
 
-    ];
     
     // for trait
     protected $beforeShowHandlers = [];
@@ -299,9 +285,9 @@ EOT;
     {
         return $view === '' ? Route::G()->getRouteCallingPath() : $view;
     }
-}
-trait Core_Helper
-{
+    //}
+    //trait Core_Helper
+    //{
     ////Exit;
     public static function ExitJson($ret, $exit = true)
     {
@@ -329,7 +315,7 @@ trait Core_Helper
     
     public function _ExitJson($ret, $exit = true)
     {
-        $this->_header('Content-Type:application/json; charset=utf-8');
+        SystemWrapper::G()->_header('Content-Type:application/json; charset=utf-8');
         echo Runtime::G()->_Json($ret);
         if ($exit) {
             static::exit();
@@ -496,9 +482,9 @@ trait Core_Helper
     {
         return Runtime::_()->_SqlForCountSimply($sql);
     }
-}
-trait Core_NotImplemented
-{
+    //}
+    //trait Core_NotImplemented
+    //{
     public static function Db($tag = null)
     {
         return static::G()->_Db($tag);
@@ -557,11 +543,9 @@ trait Core_NotImplemented
     {
         return; // do nothing. for override
     }
-}
-
-
-trait Core_Glue
-{
+    //}
+    //trait Core_Glue
+    //{
     //// source is static ////
     //runtime state
     public static function isInException()
@@ -712,5 +696,54 @@ trait Core_Glue
     public static function CookieGet($key, $default = null)
     {
         return SuperGlobal::_()->_CookieGet($key, $default);
+    }
+    ////////////////////////////
+    public static function header($output, bool $replace = true, int $http_response_code = 0)
+    {
+        return SystemWrapper::_()->_header($output, $replace, $http_response_code);
+    }
+    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
+    {
+        return SystemWrapper::_()->_setcookie($key, $value, $expire, $path, $domain, $secure, $httponly);
+    }
+    public static function exit($code = 0)
+    {
+        return SystemWrapper::_()->_exit($code);
+    }
+    public static function set_exception_handler(callable $exception_handler)
+    {
+        return SystemWrapper::_()->_set_exception_handler($exception_handler);
+    }
+    public static function register_shutdown_function(callable $callback, ...$args)
+    {
+        return SystemWrapper::_()->_register_shutdown_function($callback, ...$args);
+    }
+    public static function session_start(array $options = [])
+    {
+        return SystemWrapper::_()->_session_start($options);
+    }
+    public static function session_id($session_id = null)
+    {
+        return SystemWrapper::_()->_session_id($session_id);
+    }
+    public static function session_destroy()
+    {
+        return SystemWrapper::_()->_session_destroy();
+    }
+    public static function session_set_save_handler(\SessionHandlerInterface $handler)
+    {
+        return SystemWrapper::_()->_session_set_save_handler($handler);
+    }
+    public static function mime_content_type($file)
+    {
+        return SystemWrapper::_()->_mime_content_type($file);
+    }
+    public static function system_wrapper_replace(array $funcs)
+    {
+        return SystemWrapper::_()->_system_wrapper_replace($funcs);
+    }
+    public static function system_wrapper_get_providers():array
+    {
+        return SystemWrapper::_()->_system_wrapper_get_providers();
     }
 }

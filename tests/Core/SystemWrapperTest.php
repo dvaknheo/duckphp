@@ -1,13 +1,13 @@
 <?php 
 namespace tests\DuckPhp\Core;
 use DuckPhp\SingletonEx\SingletonExTrait;
-use DuckPhp\Core\SystemWrapperTrait;
+use DuckPhp\Core\SystemWrapper;
 
-class SystemWrapperTraitTest extends \PHPUnit\Framework\TestCase
+class SystemWrapperTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \LibCoverage\LibCoverage::Begin(SystemWrapperTrait::class);
+        \LibCoverage\LibCoverage::Begin(SystemWrapper::class);
         
         //SystemWrapper::G()->system_wrapper_replace(array $funcs);
         $data=SystemWrapperObject::system_wrapper_get_providers();
@@ -87,11 +87,8 @@ public function doSystemWrapper()
 }
 
 
-class SystemWrapperObject
+class SystemWrapperObject extends SystemWrapper
 {
-    
-    use SingletonExTrait;
-    use SystemWrapperTrait;
     protected $system_handlers = [
         'header' => null,
         'setcookie' => null,

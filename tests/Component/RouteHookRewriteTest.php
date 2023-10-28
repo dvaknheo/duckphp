@@ -42,7 +42,7 @@ class RouteHookRewriteTest extends \PHPUnit\Framework\TestCase
 
         RouteHookRewrite::G()->isInited();
         
-        SuperGlobalContext::DefineSuperGlobalContext();
+        \DuckPhp\Core\SuperGlobal::DefineSuperGlobalContext();
         
         Route::G()->bind('/article/3/4')->run();
 

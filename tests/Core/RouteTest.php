@@ -178,7 +178,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::G()->defaultGetRouteCallback('/Main/G');
         Route::G()->defaultGetRouteCallback('/Main/MyStatic');
 
-        SuperGlobalContext::DefineSuperGlobalContext();
+        \DuckPhp\Core\SuperGlobal::DefineSuperGlobalContext();
         
         Route::G()->bind('Main/index','POST')->run();
 

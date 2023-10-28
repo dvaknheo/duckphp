@@ -7,6 +7,7 @@ use DuckPhp\Component\Configer;
 use DuckPhp\Core\View;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\SuperGlobal;
+use DuckPhp\Core\SystemWrapper;
 use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckPhp\Component\Pager;
 use DuckPhp\Ext\SuperGlobalContext;
@@ -78,7 +79,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::SessionSet('zz','abc');
         App::SessionGet('zz');
         
-                        SuperGlobalContext::DefineSuperGlobalContext();
+        \DuckPhp\Core\SuperGlobal::DefineSuperGlobalContext();
         App::SessionUnset('zz');
 
             App::G()->addBeforeShowHandler(function(){ echo "beforeShowHandlers";});
@@ -351,7 +352,7 @@ $this->doFunctions();
         App::session_set_save_handler( $handler);
         
         
-        App::G()->system_wrapper_replace([
+        SystemWrapper::G()->system_wrapper_replace([
             'mime_content_type' =>function(){ echo "change!\n";},
             'header' =>function(){ echo "change!\n";},
             'setcookie' =>function(){ echo "change!\n";},

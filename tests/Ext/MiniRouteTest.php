@@ -186,7 +186,7 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
         MiniRoute::G()->defaultGetRouteCallback('/Main/G');
         MiniRoute::G()->defaultGetRouteCallback('/Main/MyStatic');
 
-        SuperGlobalContext::DefineSuperGlobalContext();
+        \DuckPhp\Core\SuperGlobal::DefineSuperGlobalContext();
         
         $this->bind('Main/index','POST');
         MiniRoute::G()->run();
