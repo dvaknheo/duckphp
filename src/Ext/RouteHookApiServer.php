@@ -127,7 +127,7 @@ class RouteHookApiServer extends ComponentBase
         }
         ($this->context_class)::header('Content-Type: text/plain; charset=utf-8');
         $flag = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
-        if ($this->context_class::IsDebug()) {
+        if (($this->context_class)::IsDebug()) {
             $flag = $flag | JSON_PRETTY_PRINT;
         }
         echo json_encode($ret, $flag);

@@ -75,7 +75,7 @@ class Misc extends ComponentBase
             foreach ($cols_map as $k => $r) {
                 $values = array_values($v);
                 $changed_value = str_replace($keys, $values, $r);
-                $v[$k] = $this->context_class::Url($changed_value);
+                $v[$k] = ($this->context_class)::Url($changed_value);
             }
         }
         unset($v);
@@ -92,7 +92,7 @@ class Misc extends ComponentBase
         }
         foreach ($data as &$v) {
             foreach ($cols as $k) {
-                $v[$k] = $this->context_class::H($v[$k], ENT_QUOTES);
+                $v[$k] = ($this->context_class)::H($v[$k], ENT_QUOTES);
             }
         }
         return $data;
