@@ -16,7 +16,6 @@ class Pager extends ComponentBase implements PagerInterface
         'page_key' => 'page',
         'rewrite' => null,
     ];
-    protected $context_class = null;
     protected $url;
     
     protected function getDefaultUrl()
@@ -41,11 +40,6 @@ class Pager extends ComponentBase implements PagerInterface
     protected function initOptions(array $options)
     {
         $this->url = $this->options['url'] ?? $this->getDefaultUrl();
-    }
-    //@override
-    protected function initContext(object $context)
-    {
-        $this->context_class = get_class($context);
     }
     
     public function current($new_value = null): int

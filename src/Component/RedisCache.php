@@ -17,7 +17,7 @@ class RedisCache extends ComponentBase //implements Psr\SimpleCache\CacheInterfa
     protected function initContext(object $context)
     {
         if (!$this->options['redis_cache_skip_replace']) {
-            ($this->context_class)::Cache($this);
+            Cache::_($this);
         }
     }
     //////////////////////////////
