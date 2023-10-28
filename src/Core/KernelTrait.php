@@ -299,7 +299,7 @@ trait KernelTrait
         })($full_file);
         $this->setting = array_merge($this->setting, $setting);
     }
-    public function _Setting($key)
+    public function _Setting($key = null)
     {
         return $key ? (static::Root()->setting[$key] ?? null) : static::Root()->setting;
     }

@@ -51,11 +51,14 @@ class RedisManager extends ComponentBase
     //@override
     protected function initContext(object $context)
     {
+        //$this->context_class = $context
+        //($this->context_class)::G()->_Setting();
         if ($this->options['redis_list_reload_by_setting']) {
             /** @var mixed */
-            $redis_list = get_class($context)::Setting('redis_list');
+            $setting = $context->_Setting(); /** @phpstan-ignore-line */
+            $redis_list = $setting['redis_list'] ?? null;
             if (!isset($redis_list) && $this->options['redis_list_try_single']) {
-                $redis = get_class($context)::Setting('redis');
+                $redis = $setting['redis'] ?? null;
                 $redis_list = $redis ? array($redis) : null;
             }
             $this->redis_config_list = $redis_list ?? $this->redis_config_list;

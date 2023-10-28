@@ -6,6 +6,7 @@
 namespace DuckPhp\Component;
 
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\Logger;
 use DuckPhp\Db\Db;
 
 class DbManager extends ComponentBase
@@ -32,7 +33,6 @@ class DbManager extends ComponentBase
     
     protected $database_config_list = [];
     protected $databases = [];
-    protected $context_class = null;
     protected $init_once = true;
     protected $db_before_get_object_handler = null;
     //@override
@@ -50,13 +50,15 @@ class DbManager extends ComponentBase
     //@override
     protected function initContext(object $context)
     {
-        $this->context_class = get_class($context);
+        //$this->context_class = $context
+        //($this->context_class)::G()->_Setting();
+        $setting = $context->_Setting(); /** @phpstan-ignore-line */
         
         if ($this->options['database_list_reload_by_setting']) {
             /** @var mixed */
-            $database_list = ($this->context_class)::Setting('database_list');
+            $database_list = $setting['database_list'] ?? null;
             if (!isset($database_list) && $this->options['database_list_try_single']) {
-                $database = ($this->context_class)::Setting('database');
+                $database = $setting['database'] ?? null;
                 $database_list = $database ? array($database) : null;
             }
             $this->database_config_list = $database_list ?? $this->database_config_list;
@@ -155,6 +157,6 @@ class DbManager extends ComponentBase
         if (!$this->options['database_log_sql_query']) {
             return;
         }
-        ($this->context_class)::Logger()->log($this->options['database_log_sql_level'], '[sql]: ' . $sql, $args);
+        Logger::G()->log($this->options['database_log_sql_level'], '[sql]: ' . $sql, $args);
     }
 }

@@ -6,6 +6,7 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\SystemWrapper;
 
@@ -39,7 +40,7 @@ class RouteHookApiServer extends ComponentBase
     public function _Hook($path_info)
     {
         // $path_info = Route::_()::PathInfo();
-        ($this->context_class)::setDefaultExceptionHandler([static::class,'OnJsonError']);
+        ExceptionManager::G()->setDefaultExceptionHandler([static::class,'OnJsonError']);
         
         list($object, $method) = $this->getObjectAndMethod($path_info);
         if ($object === null && $method === null) {
@@ -113,7 +114,7 @@ class RouteHookApiServer extends ComponentBase
     
     protected function getInputs($path_info)
     {
-        if (($this->context_class)::IsDebug()) {
+        if (($this->context_class)::G()->_IsDebug()) {
             $_REQUEST = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_REQUEST : $_REQUEST;
             $inputs = $_REQUEST;
         } else {
@@ -131,7 +132,7 @@ class RouteHookApiServer extends ComponentBase
         
         //这里应该加个强制参数
         $flag = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
-        if (($this->context_class)::IsDebug()) {
+        if (($this->context_class)::G()->_IsDebug()) {
             $flag = $flag | JSON_PRETTY_PRINT;
         }
         echo json_encode($ret, $flag);

@@ -106,13 +106,18 @@ class Runtime extends ComponentBase
     }
     public function _IsAjax()
     {
-        $ref = App::SERVER('HTTP_X_REQUESTED_WITH');
+        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+        $ref = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? null;
         return $ref && 'xmlhttprequest' == strtolower($ref) ? true : false;
     }
     ///////////////
+    protected function is_debug()
+    {
+        return App::Current()->_IsDebug();
+    }
     public function _TraceDump()
     {
-        if (!App::IsDebug()) {
+        if (!$this->is_debug()) {
             return;
         }
         echo "<pre>\n";
@@ -121,14 +126,14 @@ class Runtime extends ComponentBase
     }
     public function _VarLog($var)
     {
-        if (!App::IsDebug()) {
+        if (!$this->is_debug()) {
             return;
         }
-        return Logger::G()->debug(var_export($var, true));
+        return ($this->context_class)::Logger()->debug(var_export($var, true));
     }
     public function _var_dump(...$args)
     {
-        if (!App::IsDebug()) {
+        if (!$this->is_debug()) {
             return;
         }
         echo "<pre>\n";
@@ -137,10 +142,10 @@ class Runtime extends ComponentBase
     }
     public function _DebugLog($message, array $context = array())
     {
-        if (!App::IsDebug()) {
+        if (!$this->is_debug()) {
             return false;
         }
-        return Logger::G()->debug($message, $context);
+        return ($this->context_class)::Logger()->debug($message, $context);
     }
     ////
     public function _SqlForPager($sql, $pageNo, $pageSize = 10)

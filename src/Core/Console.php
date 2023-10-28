@@ -35,7 +35,7 @@ class Console extends ComponentBase
     }
     public function app()
     {
-        return ($this->context_class)::_();
+        return ($this->context_class)::G();
     }
     
     public function regCommandClass($class, $alias = null)
