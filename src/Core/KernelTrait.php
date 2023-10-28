@@ -336,7 +336,7 @@ trait KernelTrait
         $this->onBeforeRun();
         try {
             Runtime::G()->run();
-            if ($this->is_root && $this->options['console_enable']) {
+            if (PHP_SAPI === 'cli' && $this->is_root && $this->options['console_enable']) {
                 $ret = Console::G()->run();
             } else {
                 if (!($this->options['container_only'] ?? false)) {

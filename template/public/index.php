@@ -19,7 +19,7 @@ if (!class_exists(\LazyToChange\System\App::class)) {
 /////////
 $options = [
     // 这里可以添加更多选项
-    //'console_enable' => true,
+    'console_enable' => true,
     'controller_resource_prefix' => '//res/',
     //'ext_options_from_config' =>true,
     'ext' => [
