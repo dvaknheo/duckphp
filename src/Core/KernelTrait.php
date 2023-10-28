@@ -9,6 +9,7 @@
 
 namespace DuckPhp\Core;
 
+use DuckPhp\Core\Console;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Core\Route;
@@ -20,16 +21,16 @@ trait KernelTrait
     public $options = [];
 
     protected $kernel_options = [
-            
-            //// basic config ////
             'path' => null,
             'namespace' => null,
-            'override_class' => null,
+            'cli_enable' => false,
             
-            //// properties ////
             'is_debug' => false,
             'platform' => '',
             'ext' => [],
+            
+            'override_class' => null,
+            'override_class_from' => null,
             
             'use_flag_by_setting' => true,
             'use_short_functions' => true,
@@ -39,9 +40,9 @@ trait KernelTrait
             
             'on_inited' => null,
             'container_only' => false,
-            'override_class_from' => null,
             
-            'setting_file' => 'config/setting.php',
+            
+            'setting_file' => 'config/setting.php', //TODO
             'setting_file_ignore_exists' => true,
             'setting_file_enable' => true,
             'use_env_file' => false,
@@ -235,6 +236,8 @@ trait KernelTrait
     {
         Route::G()->init($this->options, $this);
         Runtime::G()->init($this->options, $this);
+
+        Console::G()->init($this->options, $this);
         $this->doInitComponents();
     }
     protected function doInitComponents()
@@ -323,10 +326,11 @@ trait KernelTrait
             (self::class)::G($this); // remark ,don't use self::G()!
         }
         
+        $this->onBeforeRun();
         try {
-            $this->onBeforeRun();
             if (!$this->default_run_handler) {
                 Runtime::G()->run();
+                //TODO Console
                 if (!($this->options['container_only'] ?? false)) {
                     $ret = Route::G()->run();
                 }

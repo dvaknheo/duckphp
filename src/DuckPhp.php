@@ -11,7 +11,6 @@ namespace DuckPhp;
 use DuckPhp\Component\AdminObject;
 use DuckPhp\Component\Cache;
 use DuckPhp\Component\Configer;
-use DuckPhp\Component\Console;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Component\DuckPhpCommand;
 use DuckPhp\Component\EventManager;
@@ -23,7 +22,7 @@ use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Component\UserObject;
 use DuckPhp\Core\App;
-use DuckPhp\Core\Logger;
+use DuckPhp\Core\Console;
 
 class DuckPhp extends App
 {
@@ -82,9 +81,12 @@ class DuckPhp extends App
         RouteHookRouteMap::G()->init($this->options, $this);
         
         if (PHP_SAPI === 'cli') {
-            DuckPhpCommand::G()->init($this->options, $this);
-            Console::G()->init($this->options, $this);
-            Console::G()->options['cli_default_command_class'] = DuckPhpCommand::class;
+            if($this->is_root){
+                DuckPhpCommand::G()->init($this->options, $this);
+                Console::G()->options['cli_default_command_class'] = DuckPhpCommand::class;
+            }else{
+                Console::G()->regCommandClass(static::class,$this->options['namespace']);
+            }
         }
         if ($this->options['path_info_compact_enable'] ?? false) {
             RouteHookPathInfoCompat::G()->init($this->options, $this);
