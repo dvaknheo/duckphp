@@ -13,6 +13,7 @@ if (!class_exists(\LazyToChange\System\App::class)) {
     \DuckPhp\Core\AutoLoader::G()->runAutoLoader();
     \DuckPhp\Core\AutoLoader::G()->assignPathNamespace(__DIR__ . '/../app', "LazyToChange\\"); 
     \DuckPhp\Core\AutoLoader::G()->assignPathNamespace(__DIR__ . '/advance', "AdvanceDemo\\");    
+}
 
 /////////
 $options = [

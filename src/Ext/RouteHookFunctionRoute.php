@@ -18,7 +18,7 @@ class RouteHookFunctionRoute extends ComponentBase
     //@override
     protected function initContext(object $context)
     {
-        ($this->context_class)::addRouteHook([static::class,'Hook'], 'append-inner');
+        ($this->context_class)::Route()->addRouteHook([static::class,'Hook'], 'append-inner');
     }
     public static function Hook($path_info)
     {
