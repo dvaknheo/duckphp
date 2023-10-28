@@ -6,6 +6,7 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\Route;
 use DuckPhp\Ext\RouteHookManager;
 
 class MyMiddlewareManager extends ComponentBase
@@ -28,7 +29,7 @@ class MyMiddlewareManager extends ComponentBase
     //@override
     protected function initContext(object $context)
     {
-        //($this->context_class)::Route()->addRouteHook([static::class,'Hook'], 'prepend-inner');
+        //Route::_()->addRouteHook([static::class,'Hook'], 'prepend-inner');
         RouteHookManager::G()->attachPreRun()->append([static::class,'Hook']);
     }
     public static function Hook($path_info)
@@ -63,7 +64,7 @@ class MyMiddlewareManager extends ComponentBase
     }
     protected function runSelfMiddleware()
     {
-        $this->defaultResult = ($this->context_class)::Route()->defaultRunRouteCallback();
+        $this->defaultResult = Route::_()->defaultRunRouteCallback();
         return $this->getResponse();
     }
     protected function onPostMiddleware()

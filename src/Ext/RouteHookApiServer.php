@@ -6,6 +6,7 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\Route;
 
 class RouteHookApiServer extends ComponentBase
 {
@@ -28,7 +29,7 @@ class RouteHookApiServer extends ComponentBase
     //@override
     protected function initContext(object $context)
     {
-        ($this->context_class)::Route()->addRouteHook([static::class,'Hook'], 'prepend-inner');
+        Route::_()->addRouteHook([static::class,'Hook'], 'prepend-inner');
     }
     public static function Hook($path_info)
     {
@@ -36,7 +37,7 @@ class RouteHookApiServer extends ComponentBase
     }
     public function _Hook($path_info)
     {
-        // $path_info = ($this->context_class)::Route()::PathInfo();
+        // $path_info = Route::_()::PathInfo();
         ($this->context_class)::setDefaultExceptionHandler([static::class,'OnJsonError']);
         
         list($object, $method) = $this->getObjectAndMethod($path_info);

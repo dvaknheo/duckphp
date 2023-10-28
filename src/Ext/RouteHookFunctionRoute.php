@@ -6,6 +6,7 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\Route;
 
 class RouteHookFunctionRoute extends ComponentBase
 {
@@ -18,7 +19,7 @@ class RouteHookFunctionRoute extends ComponentBase
     //@override
     protected function initContext(object $context)
     {
-        ($this->context_class)::Route()->addRouteHook([static::class,'Hook'], 'append-inner');
+        Route::_()->addRouteHook([static::class,'Hook'], 'append-inner');
     }
     public static function Hook($path_info)
     {
@@ -26,13 +27,13 @@ class RouteHookFunctionRoute extends ComponentBase
     }
     public function _Hook($path_info = '/')
     {
-        $path_info = ($this->context_class)::Route()::PathInfo();
+        $path_info = Route::_()::PathInfo();
         $path_info = ltrim($path_info, '/');
         $path_info = empty($path_info) ? 'index' : $path_info;
         $path_info = str_replace('/', '_', $path_info);
         
         $_POST = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_POST : $_POST;
-        $post_prefix = !empty($_POST)? ($this->context_class)::Route()->options['controller_prefix_post'] :'';
+        $post_prefix = !empty($_POST)? Route::_()->options['controller_prefix_post'] :'';
         $prefix = $this->options['function_route_method_prefix'] ?? '';
         
         $callback = $prefix.$post_prefix.$path_info;

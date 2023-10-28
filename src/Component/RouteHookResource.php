@@ -6,6 +6,7 @@
 namespace DuckPhp\Component;
 
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\Route;
 
 class RouteHookResource extends ComponentBase
 {
@@ -21,7 +22,7 @@ class RouteHookResource extends ComponentBase
     }
     protected function initContext(object $context)
     {
-        ($this->context_class)::Route()->addRouteHook([static::class,'Hook'], 'append-outter');
+        Route::_()->addRouteHook([static::class,'Hook'], 'append-outter');
         return $this;
     }
     public function _Hook($path_info)

@@ -6,6 +6,7 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\Route;
 
 class RouteHookDirectoryMode extends ComponentBase
 {
@@ -24,8 +25,8 @@ class RouteHookDirectoryMode extends ComponentBase
     //@override
     protected function initContext(object $context)
     {
-        ($this->context_class)::Route()->addRouteHook([static::class,'Hook'], 'prepend-outter');
-        ($this->context_class)::Route()->setUrlHandler([static::class,'Url']);
+        Route::_()->addRouteHook([static::class,'Hook'], 'prepend-outter');
+        Route::_()->setUrlHandler([static::class,'Url']);
     }
     
     protected function adjustPathinfo($basepath, $path_info)
@@ -108,9 +109,9 @@ class RouteHookDirectoryMode extends ComponentBase
     }
     public function _Hook($path_info)
     {
-        // $path_info = ($this->context_class)::Route()::PathInfo();
+        // $path_info = Route::_()::PathInfo();
         $path_info = $this->adjustPathinfo($this->basepath, $path_info);
-        ($this->context_class)::Route()::PathInfo($path_info);
+        Route::_()::PathInfo($path_info);
         return false;
     }
 }

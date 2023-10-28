@@ -6,6 +6,7 @@
 namespace DuckPhp\Component;
 
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\Route;
 
 class RouteHookRewrite extends ComponentBase
 {
@@ -26,7 +27,7 @@ class RouteHookRewrite extends ComponentBase
     //@override
     protected function initContext(object $context)
     {
-        ($this->context_class)::Route()->addRouteHook([static::class,'Hook'], 'prepend-outter');
+        Route::_()->addRouteHook([static::class,'Hook'], 'prepend-outter');
     }
     public function assignRewrite($key, $value = null)
     {
@@ -137,7 +138,7 @@ class RouteHookRewrite extends ComponentBase
     }
     protected function doHook($path_info)
     {
-        // $path_info = ($this->context_class)::Route()::PathInfo();
+        // $path_info = Route::_()::PathInfo();
         $path_info = ltrim($path_info, '/');
         $_GET = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_GET : $_GET;
         $query = $_GET;
@@ -149,7 +150,7 @@ class RouteHookRewrite extends ComponentBase
         if ($url !== null) {
             $this->changeRouteUrl($url);
             $path_info = parse_url($url, PHP_URL_PATH);
-            ($this->context_class)::Route()::PathInfo($path_info);
+            Route::_()::PathInfo($path_info);
         }
         return  false;
     }

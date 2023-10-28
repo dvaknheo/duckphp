@@ -6,6 +6,7 @@
 namespace DuckPhp\Component;
 
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\Route;
 
 class RouteHookPathInfoCompat extends ComponentBase
 {
@@ -20,8 +21,8 @@ class RouteHookPathInfoCompat extends ComponentBase
         if (!$this->options['path_info_compact_enable']) {
             return;
         }
-        ($this->context_class)::Route()->addRouteHook([static::class,'Hook'], 'prepend-outter');
-        ($this->context_class)::Route()->setUrlHandler([static::class,'Url']);
+        Route::_()->addRouteHook([static::class,'Hook'], 'prepend-outter');
+        Route::_()->setUrlHandler([static::class,'Url']);
     }
     
     public static function Url($url = null)
@@ -103,7 +104,7 @@ class RouteHookPathInfoCompat extends ComponentBase
     }
     public function _Hook($path_info)
     {
-        // $path_info = ($this->context_class)::Route()::PathInfo();
+        // $path_info = Route::_()::PathInfo();
         $k = $this->options['path_info_compact_action_key'];
         $m = $this->options['path_info_compact_class_key'];
         
@@ -118,7 +119,7 @@ class RouteHookPathInfoCompat extends ComponentBase
 
         $path_info = $module.'/'.$path_info;
         
-        ($this->context_class)::Route()::PathInfo($path_info);
+        Route::_()::PathInfo($path_info);
         
         return false;
     }

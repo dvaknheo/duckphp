@@ -6,6 +6,7 @@
 namespace DuckPhp\Component;
 
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\Route;
 
 class RouteHookRouteMap extends ComponentBase
 {
@@ -20,19 +21,19 @@ class RouteHookRouteMap extends ComponentBase
     
     public static function PrependHook($path_info)
     {
-        // $path_info = ($this->context_class)::Route()::PathInfo();
+        // $path_info = Route::_()::PathInfo();
         return static::G()->doHook($path_info, false);
     }
     public static function AppendHook($path_info)
     {
-        // $path_info = ($this->context_class)::Route()::PathInfo();
+        // $path_info = Route::_()::PathInfo();
         return static::G()->doHook($path_info, true);
     }
     //@override
     protected function initContext(object $context)
     {
-        ($this->context_class)::Route()->addRouteHook([static::class,'PrependHook'], 'prepend-inner');
-        ($this->context_class)::Route()->addRouteHook([static::class,'AppendHook'], 'append-outter');
+        Route::_()->addRouteHook([static::class,'PrependHook'], 'prepend-inner');
+        Route::_()->addRouteHook([static::class,'AppendHook'], 'append-outter');
     }
     public function compile($pattern_url, $rules = [])
     {
@@ -129,29 +130,29 @@ class RouteHookRouteMap extends ComponentBase
     }
     protected function adjustCallback($callback, $parameters)
     {
-        ($this->context_class)::Route()->setParameters($parameters);
+        Route::_()->setParameters($parameters);
         if (is_string($callback) && !\is_callable($callback)) {
             if (false !== strpos($callback, '@')) {
                 list($class, $method) = explode('@', $callback);
-                ($this->context_class)::Route()->setRouteCallingMethod($method);
+                Route::_()->setRouteCallingMethod($method);
                 return [$class::G(),$method];
             } elseif (false !== strpos($callback, '->')) {
                 list($class, $method) = explode('->', $callback);
-                ($this->context_class)::Route()->setRouteCallingMethod($method);
+                Route::_()->setRouteCallingMethod($method);
                 return [new $class(),$method];
             }
             /*
             // ???
             elseif (false !== strpos($callback, '::')) {
                 list($class, $method) = explode('::', $callback);
-                ($this->context_class)::Route()->setRouteCallingMethod($method);
+                Route::_()->setRouteCallingMethod($method);
                 return [$class,$method];
             }
             //*/
         }
         if (is_array($callback) && isset($callback[1])) {
             $method = $callback[1];
-            ($this->context_class)::Route()->setRouteCallingMethod($method);
+            Route::_()->setRouteCallingMethod($method);
         }
         return $callback;
     }
@@ -161,7 +162,7 @@ class RouteHookRouteMap extends ComponentBase
             return false;
         }
         if (!$this->is_compiled) {
-            $namespace_controller = ($this->context_class)::Route()->getControllerNamespacePrefix();
+            $namespace_controller = Route::_()->getControllerNamespacePrefix();
             $this->route_map = $this->compileMap($this->options['route_map'], $namespace_controller);
             $this->route_map_important = $this->compileMap($this->options['route_map_important'], $namespace_controller);
             $this->is_compiled = true;
