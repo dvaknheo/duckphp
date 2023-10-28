@@ -87,7 +87,7 @@ class ComponentBase // implements ComponentInterface
     public function extendFullFile($path_main, $path_sub, $file)
     {
         if ($this->context_class) {
-            $full_file = ($this->context_class)::G()->getOverrideableFile($path_sub, $file);
+            return ($this->context_class)::G()->getOverrideableFile($path_sub, $file);
         }
         
         if (static::IsAbsPath($file)) {

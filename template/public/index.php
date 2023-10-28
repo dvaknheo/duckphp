@@ -12,13 +12,13 @@ echo "<div>不建议直接运行模板文件，建议用安装模式 </div>\n"; 
 if (!class_exists(\LazyToChange\System\App::class)) {
     \DuckPhp\Core\AutoLoader::G()->runAutoLoader();
     \DuckPhp\Core\AutoLoader::G()->assignPathNamespace(__DIR__ . '/../app', "LazyToChange\\"); 
-    \DuckPhp\Core\AutoLoader::G()->assignPathNamespace(__DIR__ . '/advance', "AdvanceDemo\\");    
+    \DuckPhp\Core\AutoLoader::G()->assignPathNamespace(__DIR__ . '/advance/src', "AdvanceDemo\\");    
 }
 
 /////////
 $options = [
     // 这里可以添加更多选项
-    'console_enable' => true,
+    //'console_enable' => true,
     'controller_resource_prefix' => '//res/',
     //'ext_options_from_config' =>true,
     'ext' => [

@@ -10,7 +10,7 @@ echo "<div>不建议直接运行模板文件，建议用安装模式 </div>\n"; 
 
 // 设置工程命名空间对应的目录，但强烈推荐修改 composer.json 使用 composer 加载 
 if (!class_exists(\LazyToChange\System\App::class)) {
-    \DuckPhp\DuckPhp::G()->assignPathNamespace(__DIR__ . '/advance', "AdvanceDemo\\"); 
+    \DuckPhp\DuckPhp::G()->assignPathNamespace(__DIR__ . '/advance/src', "AdvanceDemo\\"); 
     \DuckPhp\DuckPhp::G()->runAutoLoader();
 }
 
