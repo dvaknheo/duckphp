@@ -7,6 +7,7 @@ namespace DuckPhp\Component;
 
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Route;
+use DuckPhp\Core\SystemWrapper;
 
 class RouteHookResource extends ComponentBase
 {
@@ -49,9 +50,8 @@ class RouteHookResource extends ComponentBase
         if (!is_file($full_file)) {
             return false;
         }
-        ($this->context_class)::header('Content-Type: '.($this->context_class)::mime_content_type($full_file));
+        SystemWrapper::header('Content-Type: '. SystemWrapper::mime_content_type($full_file));
         echo file_get_contents($full_file);
-        //($this->context_class)::exit();
         return true;
     }
     /////////////////////////////////////////////////////
@@ -72,7 +72,9 @@ class RouteHookResource extends ComponentBase
         $path_dest = $this->options['controller_resource_prefix'];
         $path_dest = static::IsAbsPath($path_dest) ? $path_dest : $this->options['controller_url_prefix'].$path_dest;
         $path_dest = ltrim($path_dest, '/');
-        $document_root = ($this->context_class)::SERVER('DOCUMENT_ROOT', '');
+        
+        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+        $document_root = $_SERVER['DOCUMENT_ROOT'] ?? '';
         
         $this->copy_dir($source, $document_root, $path_dest, $force, $info);
     }

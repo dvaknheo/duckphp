@@ -51,13 +51,9 @@ class App extends ComponentBase
         'error_debug' => null,        //'_sys/error-debug',
     ];
     protected $common_options = [];
-    // for trait
 
-    
     // for trait
     protected $beforeShowHandlers = [];
-    protected $pager;
-    protected $cache;
     
     public function __construct()
     {
@@ -407,17 +403,11 @@ EOT;
     }
     public function _Cache($object = null)
     {
-        if ($object) {
-            $this->cache = $object;
-        }
-        return $this->cache;
+        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
     }
     public function _Pager($object = null)
     {
-        if ($object) {
-            $this->pager = $object;
-        }
-        return $this->pager;
+        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
     }
     public static function PageNo($new_value = null)
     {

@@ -18,7 +18,9 @@ class BusinessHelperTraitTest extends \PHPUnit\Framework\TestCase
         try{
         BusinessHelper::Config($file_basename, $key, null);
         }catch(\Exception $ex){}
+        try{
         BusinessHelper::Cache(new \stdClass);
+        }catch(\Exception $ex){}
         
         BusinessHelper::XpCall(function(){return "abc";});
         BusinessHelper::XpCall(function(){ throw new \Exception('ex'); });

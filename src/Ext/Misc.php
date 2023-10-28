@@ -6,6 +6,8 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\Route;
+use DuckPhp\Core\Runtime;
 
 class Misc extends ComponentBase
 {
@@ -75,7 +77,7 @@ class Misc extends ComponentBase
             foreach ($cols_map as $k => $r) {
                 $values = array_values($v);
                 $changed_value = str_replace($keys, $values, $r);
-                $v[$k] = ($this->context_class)::Url($changed_value);
+                $v[$k] = Route::Url($changed_value);
             }
         }
         unset($v);
@@ -92,7 +94,7 @@ class Misc extends ComponentBase
         }
         foreach ($data as &$v) {
             foreach ($cols as $k) {
-                $v[$k] = ($this->context_class)::H($v[$k], ENT_QUOTES);
+                $v[$k] = Runtime::_()->_H($v[$k], ENT_QUOTES);
             }
         }
         return $data;

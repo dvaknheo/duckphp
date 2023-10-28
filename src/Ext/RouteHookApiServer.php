@@ -7,6 +7,7 @@ namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Route;
+use DuckPhp\Core\SystemWrapper;
 
 class RouteHookApiServer extends ComponentBase
 {
@@ -124,9 +125,11 @@ class RouteHookApiServer extends ComponentBase
     protected function exitJson($ret, $exit = true)
     {
         foreach ($this->headers as $k => $v) {
-            ($this->context_class)::header("$k: $v");
+            SystemWrapper::header("$k: $v");
         }
-        ($this->context_class)::header('Content-Type: text/plain; charset=utf-8');
+        SystemWrapper::header('Content-Type: text/plain; charset=utf-8');
+        
+        //这里应该加个强制参数
         $flag = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
         if (($this->context_class)::IsDebug()) {
             $flag = $flag | JSON_PRETTY_PRINT;

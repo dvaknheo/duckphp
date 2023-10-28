@@ -180,11 +180,18 @@ echo "-------------------------------------\n";
         
         $this->do_Core_Component();
         
-        
+try{
 App::Pager(Pager::G());
+}catch(\Exception $ex){}
+try{
 App::PageNo();
+}catch(\Exception $ex){}
+try{
 App::PageSize();
+}catch(\Exception $ex){}
+try{
 App::PageHtml(123);
+}catch(\Exception $ex){}
 
         try{
             App::Db();
@@ -229,7 +236,10 @@ App::PageHtml(123);
 //*/
         App::XpCall(function(){return "abc";});
         App::XpCall(function(){ throw new \Exception('ex'); });
-        App::Cache(new \stdClass);
+        try{
+            App::Cache(new \stdClass);
+        }catch(\Exception $ex){
+        }
         try{
             App::OnEvent("test",null);
         }catch(\Exception $ex){
