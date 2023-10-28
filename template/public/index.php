@@ -14,7 +14,8 @@ if (!class_exists(\LazyToChange\System\App::class)) {
     \DuckPhp\Core\AutoLoader::G()->assignPathNamespace(__DIR__ . '/../app', "LazyToChange\\"); 
     \DuckPhp\Core\AutoLoader::G()->assignPathNamespace(__DIR__ . '/advance/src', "AdvanceDemo\\");    
 }
-
+//\DuckPhp\Core\AutoLoader::AutoLoad($options);
+//\DuckPhp\Core\AutoLoader::Psr();
 /////////
 $options = [
     // 这里可以添加更多选项

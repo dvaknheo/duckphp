@@ -30,7 +30,7 @@ class BusinessHelperTraitTest extends \PHPUnit\Framework\TestCase
         }catch(\Exception $ex){
         }
         try{
-            BusinessHelper::ThrowOn(true,"just a exception");
+            //BusinessHelper::ThrowOn(true,"just a exception");
         }catch(\Exception $ex){
         }
         \LibCoverage\LibCoverage::End();

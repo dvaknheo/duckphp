@@ -97,7 +97,7 @@ trait ControllerHelperTrait
     {
         return App::setDefaultExceptionHandler($callback);
     }
-    public static function Parameter($key, $default = null)
+    public static function Parameter($key = null, $default = null)
     {
         return App::Parameter($key, $default);
     }
@@ -117,7 +117,7 @@ trait ControllerHelperTrait
     {
         return App::COOKIE($key, $default);
     }
-    public static function SERVER($key, $default = null)
+    public static function SERVER($key = null, $default = null)
     {
         return App::SERVER($key, $default);
     }
@@ -150,10 +150,6 @@ trait ControllerHelperTrait
     public static function OnEvent($event, $callback)
     {
         return App::OnEvent($event, $callback);
-    }
-    public static function ThrowOn($flag, $message, $code = 0, $exception_class = null)
-    {
-        return App::ThrowOn($flag, $message, $code, $exception_class, 'exception_controller');
     }
     public static function Domain($use_scheme = false)
     {

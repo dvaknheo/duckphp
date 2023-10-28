@@ -21,7 +21,7 @@ trait AdvanceHelperTrait
     {
         return App::isInException();
     }
-    public function addRouteHook($callback, $position = 'append-outter', $once = true)
+    public static function addRouteHook($callback, $position = 'append-outter', $once = true)
     {
         return App::addRouteHook($callback, $position, $once);
     }
@@ -96,8 +96,10 @@ trait AdvanceHelperTrait
         return App::session_set_save_handler($handler);
     }
     //////////////////////////////////////
+    /*
     public static function addBeforeShowHandler($handler)
     {
         return App::G()->addBeforeShowHandler($handler);
     }
+    //*/
 }

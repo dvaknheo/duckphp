@@ -300,28 +300,6 @@ EOT;
     {
         return $view === '' ? Route::G()->getRouteCallingPath() : $view;
     }
-    public static function ThrowOn(bool $flag, string $message, int $code = 0, ?string $exception_class = null, ?string $module = null)
-    {
-        return static::G()->_ThrowOn($flag, $message, $code, $exception_class, $module);
-    }
-    public function _ThrowOn(bool $flag, string $message, int $code = 0, ?string $exception_class = null, ?string $module = null)
-    {
-        if (!$flag) {
-            return;
-        }
-        $exception_class = $exception_class?:static::Current()->getExceptionClass($module);
-        throw new \Exception($message, $code);
-    }
-    public function getExceptionClass($module)
-    {
-        if (!isset($module)) {
-            return ($this->options['exception_project'] ?? null)?:\Exception::class;
-        }
-        if (!in_array($module, ['exception_controller','exception_business','exception_project'])) {
-            return ($this->options['exception_project'] ?? null)?:\Exception::class;
-        }
-        return $this->options[$module]?:(($this->options['exception_project'] ?? null)?:\Exception::class);
-    }
 }
 trait Core_Helper
 {
@@ -511,11 +489,11 @@ trait Core_Helper
     {
         return Runtime::_()->_VarLog($var);
     }
-    public static function SqlForPager($sql, $pageNo, $pageSize = 10)
+    public static function SqlForPager(string $sql, int $pageNo, int $pageSize = 10): string
     {
         return Runtime::_()->_SqlForPager($sql, $pageNo, $pageSize);
     }
-    public static function SqlForCountSimply($sql)
+    public static function SqlForCountSimply(string $sql): string
     {
         return Runtime::_()->_SqlForCountSimply($sql);
     }

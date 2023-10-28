@@ -15,9 +15,16 @@ use DuckPhp\Helper\ModelHelperTrait;
 
 class DuckPhpAllInOne extends DuckPhp
 {
-    
-    //use ModelHelperTrait;
-    //use BusinessHelperTrait;
-    //use ControllerHelperTrait;
-    //use AdvanceHelperTrait;
+    use ModelHelperTrait;
+    use BusinessHelperTrait, ControllerHelperTrait, AdvanceHelperTrait{
+        BusinessHelperTrait::Setting insteadof ControllerHelperTrait;
+        BusinessHelperTrait::Config insteadof ControllerHelperTrait;
+        BusinessHelperTrait::XpCall insteadof ControllerHelperTrait;
+        BusinessHelperTrait::FireEvent  insteadof ControllerHelperTrait;
+        BusinessHelperTrait::OnEvent  insteadof ControllerHelperTrait;
+        BusinessHelperTrait::OnEvent  insteadof AdvanceHelperTrait;
+        ControllerHelperTrait::header insteadof AdvanceHelperTrait;
+        ControllerHelperTrait::setcookie  insteadof AdvanceHelperTrait;
+        ControllerHelperTrait::exit  insteadof AdvanceHelperTrait;
+    }
 }

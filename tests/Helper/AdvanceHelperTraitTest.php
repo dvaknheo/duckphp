@@ -91,7 +91,7 @@ class AdvanceHelperTraitTest extends \PHPUnit\Framework\TestCase
             'namespace'=> __NAMESPACE__,
         ];
         App::G()->init($options);
-        AdvanceHelper::addBeforeShowHandler(function(){});
+        //AdvanceHelper::addBeforeShowHandler(function(){});
 
 
     }
