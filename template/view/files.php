@@ -25,5 +25,15 @@
 <?php $t=get_included_files();sort($t); var_export($t);?>
 </pre>
 </fieldset>
-
+<legend>DuckPhp 类的方法列表</legend>
+<pre>
+<?php 
+$ref = new ReflectionClass(\DuckPhp\DuckPhp::class);
+//$t =get_class_methods(\DuckPhp\DuckPhp::class);
+$m = $ref->getMethods();
+$t=[];
+foreach($m as $v){$t[]=$v->name;}
+var_export($t);?>
+</pre>
+</fieldset>
 </body></html>

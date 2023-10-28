@@ -23,11 +23,12 @@
         "php": ">=7.2.0"
     },
     "require-dev": {
-        "dvaknheo/libcoverage": ">=1.0.5",
+        "dvaknheo/libcoverage": "1.0.5",
         "phpunit/php-code-coverage": "8.0.2",
-        "friendsofphp/php-cs-fixer": "^2.18",
-        "phpunit/phpunit": "^9.2",
-        "phpstan/phpstan": "0.12.35"
+        "friendsofphp/php-cs-fixer": "2.18.6",
+        "phpunit/phpunit": "9.2.6",
+        "phpstan/phpstan": "0.12.35",
+        "codeception/codeception": "4.2.2"
     },
     "bin": [
         "bin/duckphp"
