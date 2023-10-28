@@ -11,7 +11,7 @@ echo "<div>不建议直接运行模板文件，建议用安装模式 </div>\n"; 
 
 ////[[[[
 $config = require_once(__DIR__.'/../config/DuckPhpSettings.config.php');
-$class = $config['duckphp_app'];
+$class = $config['duckphp_app'] ?? null;
 
 $t = explode("\\",$class);
 array_pop($t);

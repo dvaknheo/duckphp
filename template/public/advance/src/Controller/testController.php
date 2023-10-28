@@ -6,7 +6,6 @@
 
 namespace AdvanceDemo\Controller;
 
-use AdvanceDemo\Controller\DefaultAction as C;
 use AdvanceDemo\Business\DemoBusiness;
 
 class testController
@@ -14,6 +13,6 @@ class testController
     public function done()
     {
         $var = DemoBusiness::G()->foo();
-        C::Show(get_defined_vars());
+        Helper::Show(get_defined_vars());
     }
 }

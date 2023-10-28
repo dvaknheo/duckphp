@@ -6,9 +6,9 @@
 
 namespace AdvanceDemo\Controller;
 
-use DuckPhp\Component\SessionBase;
+use DuckPhp\Foundation\SimpleSessionTrait;
 
-class Session extends SessionBase
+class Session
 {
-    //
+    use SimpleSessionTrait;
 }
