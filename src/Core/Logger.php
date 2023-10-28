@@ -51,6 +51,7 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
         }
         $message = str_replace(array_keys($a), array_values($a), $message);
         $date = date('Y-m-d H:i:s');
+        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         $message = ($_SERVER['PATH_INFO'] ?? '') .' : '.$message;
         $message = "[{$level}][{$prefix}][$date]: ".$message."\n";
         

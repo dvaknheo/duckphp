@@ -47,6 +47,7 @@ class Console extends ComponentBase
     }
     public function run()
     {
+        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         $this->parameters = $this->parseCliArgs($_SERVER['argv']);
         $func_args = $this->parameters['--'];
         $cmd = array_shift($func_args);

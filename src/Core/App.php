@@ -109,6 +109,7 @@ class App extends ComponentBase
         }
         //// no error_404 setting.
         if (!$error_view) {
+            $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
             $path_info = $_SERVER['PATH_INFO'] ?? '';
             echo "404 File Not Found<!--PATH_INFO: ($path_info) DuckPhp set options ['error_404'] to override me. -->\n";
             if ($this->options['is_debug']) {
