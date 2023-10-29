@@ -152,7 +152,7 @@ class RouteHookRouteMap extends ComponentBase
         }
         if (is_array($callback) && isset($callback[1])) {
             $method = $callback[1];
-            Route::_()->setRouteCallingMethod($method);
+            Route::_()->calling_method = $method;
         }
         return $callback;
     }

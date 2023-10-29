@@ -42,22 +42,22 @@ class RouteHookFunctionRouteTest extends \PHPUnit\Framework\TestCase
         $_POST['PATH_INFO'] = "path_info";
 
         echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n";
-        App::Route()->bind('/normal');
+        Route::_()->bind('/normal');
         Route::G()->run();
-        App::Route()->bind('/');
+        Route::_()->bind('/');
         Route::G()->run();
-        App::Route()->bind('/post');
+        Route::_()->bind('/post');
         Route::G()->run();
-        App::Route()->bind('/post','POST');
+        Route::_()->bind('/post','POST');
         Route::G()->run();
-        App::Route()->bind('/post2','POST');
+        Route::_()->bind('/post2','POST');
         Route::G()->run();
         echo "===------\n";
-        App::Route()->bind('/404')->run();
+        Route::_()->bind('/404')->run();
         RouteHookFunctionRoute::G()->options['function_route_404_to_index'] = true;
-        App::Route()->bind('/404')->run();
+        Route::_()->bind('/404')->run();
         RouteHookFunctionRoute::G()->options['function_route_method_prefix'] = 'null_';
-        App::Route()->bind('/404')->run();
+        Route::_()->bind('/404')->run();
         
     }
 }

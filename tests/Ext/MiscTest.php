@@ -3,6 +3,7 @@ namespace tests\DuckPhp\Ext;
 
 use DuckPhp\Ext\Misc;
 use DuckPhp\DuckPhp;
+use DuckPhp\Core\Route;
 use DuckPhp\SingletonEx\SingletonExTrait;
 
 class MiscTest extends \PHPUnit\Framework\TestCase
@@ -44,9 +45,9 @@ class MiscTest extends \PHPUnit\Framework\TestCase
         DuckPhp::G()->init($options)->run();
         
         
-        DuckPhp::Route()->setRouteCallingMethod('m1');
+        Route::_()->setRouteCallingMethod('m1');
 
-        DuckPhp::Route()->setRouteCallingMethod('m1');
+        Route::_()->setRouteCallingMethod('m1');
         
         $object=new \stdClass();
         Misc::DI('a',$object);

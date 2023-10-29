@@ -3,6 +3,7 @@ namespace tests\DuckPhp\Component;
 
 use DuckPhp\Component\RouteHookResource;
 use DuckPhp\Core\App;
+use DuckPhp\Core\Route;
 
 class RouteHookResourceTest extends \PHPUnit\Framework\TestCase
 {
@@ -23,19 +24,19 @@ class RouteHookResourceTest extends \PHPUnit\Framework\TestCase
             ],
         ]);
         
-        App::Route()::PathInfo('/RES/test.txt');
+        Route::PathInfo('/RES/test.txt');
         App::G()->run();
 
         
-        App::Route()::PathInfo('/RES/no_exist.txt');
+        Route::PathInfo('/RES/no_exist.txt');
         App::G()->run();
         
-        App::Route()::PathInfo('/RES/no_exist.php');
+        Route::PathInfo('/RES/no_exist.php');
         App::G()->run();
         
-        App::Route()::PathInfo('/RES/../../../no_exist.php');
+        Route::PathInfo('/RES/../../../no_exist.php');
         App::G()->run();
-        App::Route()::PathInfo('/not_hit.php');
+        Route::PathInfo('/not_hit.php');
         App::G()->run();
         
         /////////////////////////////

@@ -11,6 +11,7 @@ use DuckPhp\Core\KernelTrait;
 use DuckPhp\Core\Logger;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\Runtime;
+use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapper;
 use DuckPhp\Core\View;
 
@@ -30,13 +31,6 @@ class App extends ComponentBase
     const HOOK_APPPEND_INNER = 'append-inner';
     const HOOK_APPPEND_OUTTER = 'append-outter';
     
-    
-    
-    //inner trait
-    //use Core_Helper;
-    //use Core_Glue;
-    //use Core_NotImplemented;
-    
     protected $core_options = [
         'path_runtime' => 'runtime',
         'alias' => null,
@@ -51,8 +45,6 @@ class App extends ComponentBase
         'error_debug' => null,        //'_sys/error-debug',
     ];
     protected $common_options = [];
-
-    // for trait
     protected $beforeShowHandlers = [];
     
     public function __construct()
@@ -71,9 +63,10 @@ class App extends ComponentBase
     {
         Logger::G()->init($this->options, $this);
         View::G()->init($this->options, $this);
+        //SuperGlobal::G()->init($this->options, $this);
         
         if ($this->is_root && $this->_Phase()) {
-            $this->getContainer()->addPublicClasses([ Logger::class,]);
+            $this->getContainer()->addPublicClasses([Logger::class, SuperGlobal::class]);
         }
     }
     //////// override KernelTrait ////////
@@ -83,7 +76,7 @@ class App extends ComponentBase
         $error_view = $this->options['error_404'] ?? null;
         $error_view = $this->is_inited?$error_view:null;
         
-        static::header('404 Not Found', true, 404);
+        SystemWrapper::_()->_header('404 Not Found', true, 404);
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)();
             return;
@@ -99,7 +92,6 @@ class App extends ComponentBase
             return;
         }
         
-        //TODO   recreateobject
         View::G(new View())->init($this->options, $this);
         View::G()->_Show([], $error_view);
     }
@@ -113,14 +105,10 @@ class App extends ComponentBase
                 //do nothing
             } // @codeCoverageIgnore
         }
-        //if ($this->options['default_exception_self_display'] && method_exists($ex, 'display')) {
-        //    $ex->display($ex); // 这里要改
-        //    return;
-        //}
         $error_view = $this->options['error_500'] ?? null;
         $error_view = $this->is_inited?$error_view:null;
         
-        static::header('Server Error', true, 500);
+        SystemWrapper::_()->_header('Server Error', true, 500);
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)($ex);
             return;
@@ -136,7 +124,7 @@ class App extends ComponentBase
         $data['file'] = $ex->getFile();
         $data['line'] = $ex->getLine();
         
-        ////////default;
+        //// no error_500 setting.
         if (!$error_view) {
             echo "Internal Error \n<!--DuckPhp set options['error_500'] to override me  -->\n";
             if (!$this->is_inited) {
@@ -297,7 +285,7 @@ EOT;
     {
         static::On404();
         if ($exit) {
-            static::exit();
+            SystemWrapper::_()->_exit();
         }
     }
     
@@ -306,25 +294,25 @@ EOT;
         SystemWrapper::G()->_header('Content-Type:application/json; charset=utf-8');
         echo Runtime::G()->_Json($ret);
         if ($exit) {
-            static::exit();
+            SystemWrapper::_()->_exit();
         }
     }
     public function _ExitRedirect($url, $exit = true)
     {
         if (parse_url($url, PHP_URL_HOST)) {
-            static::exit();
+            SystemWrapper::_()->_exit();
             return;
         }
         static::header('location: '.$url, true, 302);
         if ($exit) {
-            static::exit();
+            SystemWrapper::_()->_exit();
         }
     }
     public function _ExitRedirectOutside($url, $exit = true)
     {
-        static::header('location: '.$url, true, 302);
+        SystemWrapper::_()->_header('location: '.$url, true, 302);
         if ($exit) {
-            static::exit();
+            SystemWrapper::_()->_exit();
         }
     }
     ///////
@@ -351,7 +339,8 @@ EOT;
     public function _IsRealDebug()
     {
         //you can override this;
-        return $this->options['is_debug'];
+        return $this->_IsDebug();
+        ;
     }
 
     public static function PhaseCall($phase, $callback, ...$args)
@@ -371,9 +360,11 @@ EOT;
         $this->_Phase($current);
         return $ret;
     }
-    
-    ///////////////
-    
+    // config static
+    public static function Setting($key)
+    {
+        return static::G()->_Setting($key);
+    }
     public static function Pager($object = null)
     {
         return static::_()->_Pager($object);
@@ -382,8 +373,32 @@ EOT;
     {
         throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
     }
-
-    
+    public static function Event()
+    {
+        return static::G()->_Event();
+    }
+    public function _Event()
+    {
+        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
+    }
+    public static function Logger($object = null)
+    {
+        return Logger::G($object);
+    }
+    ///////////////
+    //exception manager
+    public static function CallException($ex)
+    {
+        return ExceptionManager::G()->_CallException($ex);
+    }
+    public static function Display($view, $data = null)
+    {
+        return View::G()->_Display($view, $data);
+    }
+    public static function getViewData()
+    {
+        return View::G()->getViewData();
+    }
     public static function IsAjax()
     {
         return Runtime::_()->_IsAjax();
@@ -391,10 +406,6 @@ EOT;
     public static function var_dump(...$args)
     {
         return Runtime::_()->_var_dump(...$args);
-    }
-    public static function Logger($object = null)
-    {
-        return Logger::G($object);
     }
     public static function DebugLog($message, array $context = array())
     {
@@ -426,22 +437,6 @@ EOT;
     {
         return Runtime::_()->_VarLog($var);
     }
-    //}
-    //trait Core_NotImplemented
-    //{
-    public static function Event()
-    {
-        return static::G()->_Event();
-    }
-    public function _Event()
-    {
-        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
-    }
-    //}
-    //trait Core_Glue
-    //{
-    //// source is static ////
-    //runtime state
     public static function isInException()
     {
         return Runtime::G()->isInException();
@@ -463,28 +458,6 @@ EOT;
     {
         return Route::G()->_Domain($use_scheme);
     }
-    // view static
-
-    public static function Display($view, $data = null)
-    {
-        return View::G()->_Display($view, $data);
-    }
-    public static function getViewData()
-    {
-        return View::G()->getViewData();
-    }
-    // config static
-    public static function Setting($key)
-    {
-        return static::G()->_Setting($key);
-    }
-    
-    //// the next is dynamic ////
-    // route
-    public static function Route($replacement_object = null)
-    {
-        return Route::G($replacement_object);
-    }
     public static function replaceController($old_class, $new_class)
     {
         return Route::G()->replaceController($old_class, $new_class);
@@ -493,13 +466,6 @@ EOT;
     {
         return Route::G()->addRouteHook($callback, $position, $once);
     }
-
-    //exception manager
-    public static function CallException($ex)
-    {
-        return ExceptionManager::G()->_CallException($ex);
-    }
-
     public static function SESSION($key = null, $default = null)
     {
         return SuperGlobal::_()->_SESSION($key, $default);

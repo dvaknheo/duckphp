@@ -100,7 +100,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         });
         App::G()->getProjectPath();
         App::G()->getRuntimePath();
-        App::Route()->bind('/NOOOOOOOOOOOOOOO');  // 这两句居然有区别 ,TODO ，分析之
+        \DuckPhp\Core\Route::_()->bind('/NOOOOOOOOOOOOOOO');  // 这两句居然有区别 ,TODO ，分析之
         
         App::G()->options['error_404']=function(){
             echo "noooo 404  ooooooooo\n";
@@ -108,13 +108,13 @@ class AppTest extends \PHPUnit\Framework\TestCase
         
         App::G()->run();
 echo "-------------------------------------\n";
-        App::Route()->bind('/exception');
+         \DuckPhp\Core\Route::_()->bind('/exception');
         App::G()->run();
         
         App::G()->options['error_404']=function(){
             echo "zzzzzo 404  zzzzzzzzzzzz\n";
         };
-        App::Route()->bind('/Base/index');
+         \DuckPhp\Core\Route::_()->bind('/Base/index');
         try{
                 App::G()->system_wrapper_replace(['exit'=>function($code){
             var_dump(DATE(DATE_ATOM));
@@ -188,7 +188,6 @@ App::Pager(Pager::G());
         App::SESSION();
         App::FILES();
         
-        App::Route();
         
         App::SessionSet('x',DATE('Y,M,d'));
         SuperGlobal::DefineSuperGlobalContext();
@@ -517,7 +516,7 @@ $this->doFunctions();
     {
         // 这里不能直接用 DuckPhp\Core\App ;奇怪；
         AppTestApp::G()->init(App::G()->options);
-        AppTestApp::G()->system_wrapper_replace(['exit'=>function($code){
+        AppTestApp::G()->system_wrapper_replace(['exit'=>function($code=0){
             var_dump(DATE(DATE_ATOM));
         }]);
 
