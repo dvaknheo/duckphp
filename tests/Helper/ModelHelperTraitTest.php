@@ -1,7 +1,6 @@
 <?php
 namespace tests\DuckPhp\Helper;
 
-use DuckPhp\Helper\ModelHelper;
 use DuckPhp\Helper\ModelHelperTrait;
 
 class ModelHelperTraitTest extends \PHPUnit\Framework\TestCase
@@ -27,4 +26,8 @@ class ModelHelperTraitTest extends \PHPUnit\Framework\TestCase
         /*
         //*/
     }
+}
+class ModelHelper
+{
+    use ModelHelperTrait;
 }

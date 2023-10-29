@@ -2,7 +2,6 @@
 namespace tests\DuckPhp\Helper;
 
 use DuckPhp\DuckPhp;
-use DuckPhp\Helper\ControllerHelper;
 use DuckPhp\Helper\ControllerHelperTrait;
 use DuckPhp\Component\Pager;
 
@@ -115,4 +114,8 @@ ControllerHelper::PageHtml(123);
 
         //*/
     }
+}
+class ControllerHelper
+{
+    use ControllerHelperTrait;
 }

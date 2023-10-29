@@ -5,8 +5,8 @@
  */
 namespace DuckPhp\Foundation;
 
-use DuckPhp\Foundation\CallInPhaseTrait;
 use DuckPhp\Core\SingletonTrait;
+use DuckPhp\Foundation\CallInPhaseTrait;
 
 trait SimpleActionTrait
 {

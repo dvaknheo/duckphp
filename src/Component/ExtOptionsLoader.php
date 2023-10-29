@@ -8,7 +8,7 @@ namespace DuckPhp\Component;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 
-class ExtOptionsLoader extends ComponentBase 
+class ExtOptionsLoader extends ComponentBase
 {
     public static $all_ext_options;
 
@@ -26,7 +26,7 @@ class ExtOptionsLoader extends ComponentBase
     }
     protected function get_all_ext_options($force = false)
     {
-        if (!$force && isset(self::$all_ext_options)){
+        if (!$force && isset(self::$all_ext_options)) {
             return self::$all_ext_options;
         }
         $full_file = $this->get_ext_options_file();

@@ -5,9 +5,9 @@
  */
 namespace DuckPhp\Helper;
 
-use DuckPhp\Core\App;
 use DuckPhp\Component\Cache;
 use DuckPhp\Component\EventManager;
+use DuckPhp\Core\App;
 
 trait BusinessHelperTrait
 {

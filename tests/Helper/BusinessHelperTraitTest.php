@@ -1,7 +1,6 @@
 <?php
 namespace tests\DuckPhp\Helper;
 
-use DuckPhp\Helper\BusinessHelper;
 use DuckPhp\Helper\BusinessHelperTrait;
 
 class BusinessHelperTraitTest extends \PHPUnit\Framework\TestCase
@@ -37,4 +36,8 @@ class BusinessHelperTraitTest extends \PHPUnit\Framework\TestCase
         }
         \LibCoverage\LibCoverage::End();
     }
+}
+class BusinessHelper
+{
+    use BusinessHelperTrait;
 }

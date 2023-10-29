@@ -1,7 +1,6 @@
 <?php
 namespace tests\DuckPhp\Helper;
 
-use DuckPhp\Helper\AdvanceHelper;
 use DuckPhp\Helper\AdvanceHelperTrait;
 use DuckPhp\Core\App;
 use DuckPhp\SingletonEx\SingletonExTrait;
@@ -95,6 +94,10 @@ class AdvanceHelperTraitTest extends \PHPUnit\Framework\TestCase
 
 
     }
+}
+class AdvanceHelper
+{
+    use AdvanceHelperTrait;
 }
 class HelperFakeSessionHandler implements \SessionHandlerInterface
 {

@@ -5,6 +5,10 @@
  */
 namespace DuckPhp\Helper;
 
+use DuckPhp\Component\Configer;
+use DuckPhp\Component\DbManager;
+use DuckPhp\Component\EventManager;
+use DuckPhp\Component\Pager;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Route;
@@ -12,10 +16,6 @@ use DuckPhp\Core\Runtime;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapper;
 use DuckPhp\Core\View;
-use DuckPhp\Component\Configer;
-use DuckPhp\Component\DbManager;
-use DuckPhp\Component\EventManager;
-use DuckPhp\Component\Pager;
 
 trait ControllerHelperTrait
 {
@@ -169,5 +169,4 @@ trait ControllerHelperTrait
     {
         return EventManager::OnEvent($event, $callback);
     }
-
 }

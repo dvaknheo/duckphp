@@ -128,11 +128,11 @@ class StrictCheck extends ComponentBase
         if (self::StartWith($caller_class, $this->options['namespace_business'])) {
             throw new ErrorException("$component_name Can not Call By Business");
         }
-        
+        //@codeCoverageIgnoreStart
         if ($controller_base_class && (is_subclass_of($caller_class, $controller_base_class) || $caller_class === $controller_base_class)) {
             throw new ErrorException("$component_name Can not Call By Controller");
         }
-    }
+    }//@codeCoverageIgnoreEnd
     public function check_strict_class($class)
     {
         if (!$this->checkEnv()) {

@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Foundation;
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Foundation\ExceptionReporterTrait;
-use DuckPhp\ThrowOn\ThrowOnTrait;
+use DuckPhp\Core\ThrowOnTrait;
 
 class ExceptionReporterTraitTest extends \PHPUnit\Framework\TestCase
 {

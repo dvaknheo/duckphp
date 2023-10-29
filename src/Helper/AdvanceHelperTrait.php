@@ -6,12 +6,12 @@
 namespace DuckPhp\Helper;
 
 use DuckPhp\Core\App;
+use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\Runtime;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapper;
 use DuckPhp\Core\View;
-use DuckPhp\Core\ExceptionManager;
 
 trait AdvanceHelperTrait
 {
@@ -105,5 +105,4 @@ trait AdvanceHelperTrait
     {
         return SystemWrapper::_()->_session_set_save_handler($handler);
     }
-
 }
