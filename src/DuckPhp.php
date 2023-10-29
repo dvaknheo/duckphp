@@ -137,13 +137,13 @@ class DuckPhp extends App
     {
         $self = static::class;
         $this->_PhaseCall(get_class(App::_()), function () use ($self, $oldClass, $newClass) {
-            $newClass::G(new PhaseProxy($self, $oldClass));
+            $newClass::_(new PhaseProxy($self, $oldClass));
         });
     }
     //////////////
     public static function Admin($admin = null)
     {
-        return AdminObject::G($admin);
+        return AdminObject::_($admin);
     }
     public static function AdminId()
     {
@@ -151,7 +151,7 @@ class DuckPhp extends App
     }
     public static function User($user = null)
     {
-        return UserObject::G($user);
+        return UserObject::_($user);
     }
     public static function UserId()
     {

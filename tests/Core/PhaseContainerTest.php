@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Core;
 
 use DuckPhp\Core\PhaseContainer;
-use DuckPhp\Core\SingletonExTrait;
+use DuckPhp\Core\SingletonTrait;
 
 class PhaseContainerTest extends \PHPUnit\Framework\TestCase
 {
@@ -49,7 +49,7 @@ class MyPhaseContainer extends PhaseContainer
 }
 class MyObject
 {
-    use SingletonExTrait;
+    use SingletonTrait;
     public function foo()
     {
         echo "foo!";

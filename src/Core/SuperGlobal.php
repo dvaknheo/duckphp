@@ -33,7 +33,7 @@ class SuperGlobal extends ComponentBase
     public static function DefineSuperGlobalContext()
     {
         if (!defined('__SUPERGLOBAL_CONTEXT')) {
-            define('__SUPERGLOBAL_CONTEXT', static::class .'::G');
+            define('__SUPERGLOBAL_CONTEXT', static::class .'::_');
             return true;
         }
         return false;

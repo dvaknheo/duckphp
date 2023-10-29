@@ -5,11 +5,11 @@
  */
 namespace DuckPhp\Component;
 
-use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Core\SingletonTrait;
 
 class AdminObject
 {
-    use SingletonExTrait;
+    use SingletonTrait;
     public function __construct()
     {
         throw new \Exception('No Impelement');

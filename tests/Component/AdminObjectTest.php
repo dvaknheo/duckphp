@@ -9,14 +9,14 @@ class AdminObjectTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(AdminObject::class);
         try{
-            AdminObject::G();
+            AdminObject::_();
         } catch(\Throwable $ex){}
-        AdminObject::G(MyAdminObject::G())->id();
-        AdminObject::G()->isSuper();
-        AdminObject::G()->data();
-        AdminObject::G()->logoutUrl('');
-        AdminObject::G()->nick();
-        AdminObject::G()->username();
+        AdminObject::_(MyAdminObject::_())->id();
+        AdminObject::_()->isSuper();
+        AdminObject::_()->data();
+        AdminObject::_()->logoutUrl('');
+        AdminObject::_()->nick();
+        AdminObject::_()->username();
         \LibCoverage\LibCoverage::End();
     }
 }

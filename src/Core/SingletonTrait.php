@@ -7,11 +7,10 @@ namespace DuckPhp\Core;
 
 use DuckPhp\Core\PhaseContainer;
 
-trait SingletonExTrait
+trait SingletonTrait
 {
     public static function _($object = null)
     {
         return PhaseContainer::GetObject(static::class, $object);
-        ;
     }
 }

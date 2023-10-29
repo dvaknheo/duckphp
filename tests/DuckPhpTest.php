@@ -80,7 +80,11 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         
         @unlink($path.'config/DuckPhpApps.config.php');
         DuckPhp_Sub::G(new DuckPhp_Sub())->init($options);
+        echo "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
         DuckPhp_Sub::G()->install(['test'=>DATE(DATE_ATOM)]);
+        DuckPhp_Sub::G()->options['ext_options_file_enable'] = false;
+        DuckPhp_Sub::G()->install(['test'=>DATE(DATE_ATOM)]);
+        //die("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
         DuckPhp_Sub::G()->isInstalled();
         
         $options['ext'][DuckPhp_Sub::class]=['test'=>DATE(DATE_ATOM)];
@@ -88,7 +92,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         echo "\n". DuckPhp::AdminId();
        
         //DuckPhp::G()->isInstalled();
-        @unlink($path.'config/'.'DuckPhpOptions.php');
+        @unlink($path.'config/DuckPhpApps.config.php');
         
         /////////////
         
@@ -199,10 +203,7 @@ class DuckPhp_Sub extends DuckPhp
         $this->bumpSingletonToRoot(FakeAdmin::class,\DuckPhp\Component\AdminObject::class);
         $this->bumpSingletonToRoot(FakeUser::class,\DuckPhp\Component\UserObject::class);
     }
-    public function install($options)
-    {
-        return $this->installWithExtOptions($options);
-    }
+
     
 }
 class fakeSwooleHttpd

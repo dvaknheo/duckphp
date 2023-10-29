@@ -6,11 +6,11 @@
 namespace DuckPhp\Foundation;
 
 use DuckPhp\Core\App;
-use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Core\SingletonTrait;
 
 trait SimpleModelTrait
 {
-    use SingletonExTrait;
+    use SingletonTrait;
     
     protected $table_name = null;
     protected $table_prefix = null;

@@ -5,11 +5,11 @@
  */
 namespace DuckPhp\Core;
 
-use DuckPhp\Core\SingletonExTrait;
+use DuckPhp\Core\SingletonTrait;
 
 class ComponentBase // implements ComponentInterface
 {
-    use SingletonExTrait;
+    use SingletonTrait;
     
     public $options = [];
     protected $is_inited = false;

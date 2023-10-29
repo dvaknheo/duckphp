@@ -8,9 +8,9 @@ class SimpleSessionTraitTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(SimpleSessionTrait::class);
-        SessionManager::G()->setCurrentUser(['id'=>'1','name'=>'dx']);
-        SessionManager::G()->getCurrentUser();
-        SessionManager::G()->logoutUser();
+        SessionManager::_()->setCurrentUser(['id'=>'1','name'=>'dx']);
+        SessionManager::_()->getCurrentUser();
+        SessionManager::_()->logoutUser();
         
         \LibCoverage\LibCoverage::End();
     }

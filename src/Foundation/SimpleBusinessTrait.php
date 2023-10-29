@@ -6,10 +6,10 @@
 namespace DuckPhp\Foundation;
 
 use DuckPhp\Foundation\CallInPhaseTrait;
-use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Core\SingletonTrait;
 
 trait SimpleBusinessTrait
 {
-    use SingletonExTrait;
+    use SingletonTrait;
     use CallInPhaseTrait;
 }

@@ -6,11 +6,11 @@
 namespace DuckPhp\Foundation;
 
 use DuckPhp\Core\App;
-use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Core\SingletonTrait;
 
 trait SimpleSessionTrait
 {
-    use SingletonExTrait;
+    use SingletonTrait;
 
     protected $session_started = false;
     

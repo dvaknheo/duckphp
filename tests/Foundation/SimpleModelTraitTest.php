@@ -21,7 +21,7 @@ class SimpleModelTraitTest extends \PHPUnit\Framework\TestCase
         ];
         DuckPhp::G(new DuckPhp())->init($options);
         
-        echo EmptyModel::G()->table();
+        echo EmptyModel::_()->table();
 $sql = "DROP TABLE IF EXISTS `empty`;";
         DuckPhp::Db()->execute($sql);
 
@@ -32,7 +32,7 @@ $sql = "DROP TABLE IF EXISTS `empty`;";
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='keep me empty'";
         DuckPhp::Db()->execute($sql);
 
-        EmptyModel::G()->test($id);
+        EmptyModel::_()->test($id);
         
 $sql= 'DROP TABLE IF EXISTS `empty`';
 DuckPhp::Db()->execute($sql);
@@ -42,7 +42,7 @@ DuckPhp::Db()->execute($sql);
 }
 class Base
 {
-    use \DuckPhp\SingletonEx\SingletonExTrait;
+    //use \DuckPhp\SingletonEx\SingletonExTrait;
     use SimpleModelTrait;
     //static $class_var;
 }
@@ -52,20 +52,20 @@ class EmptyModel extends Base
     protected $table_pk='id';
     public function test($id)
     {
-        EmptyModel::G()->find('1');
-        EmptyModel::G()->getList();
-        $id=EmptyModel::G()->add(['data' =>DATE(DATE_ATOM)]);
-        EmptyModel::G()->update($id,['data' =>DATE(DATE_ATOM)]);
+        EmptyModel::_()->find('1');
+        EmptyModel::_()->getList();
+        $id=EmptyModel::_()->add(['data' =>DATE(DATE_ATOM)]);
+        EmptyModel::_()->update($id,['data' =>DATE(DATE_ATOM)]);
         $sql="delete from 'TABLE' where id =?";
-        $sql=EmptyModel::G()->prepare($sql);
+        $sql=EmptyModel::_()->prepare($sql);
         DuckPhp::Db()->execute($sql,$id);
 
-        EmptyModel::G()->fetchAll("select * from 'TABLE' where id =? ", $id);
-        EmptyModel::G()->fetch("select * from 'TABLE' where id =? ", $id);
-        EmptyModel::G()->fetchColumn("select * from 'TABLE' where id =? ", $id);
-        EmptyModel::G()->fetchObject("select * from 'TABLE' where id =? ", $id);
-        EmptyModel::G()->fetchObjectAll("select * from 'TABLE' where id =? ", $id);
-        EmptyModel::G()->execute("update 'TABLE' set data = ?  where id =? ",  DATE(DATE_ATOM),$id);
+        EmptyModel::_()->fetchAll("select * from 'TABLE' where id =? ", $id);
+        EmptyModel::_()->fetch("select * from 'TABLE' where id =? ", $id);
+        EmptyModel::_()->fetchColumn("select * from 'TABLE' where id =? ", $id);
+        EmptyModel::_()->fetchObject("select * from 'TABLE' where id =? ", $id);
+        EmptyModel::_()->fetchObjectAll("select * from 'TABLE' where id =? ", $id);
+        EmptyModel::_()->execute("update 'TABLE' set data = ?  where id =? ",  DATE(DATE_ATOM),$id);
     }
 }
 
