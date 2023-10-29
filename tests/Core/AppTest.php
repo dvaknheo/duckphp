@@ -187,22 +187,9 @@ App::PageHtml(123);
 }catch(\Exception $ex){}
 
         try{
-            App::Db();
-        }catch(\Throwable $ex){
-        }
-        try{
-            App::DbForWrite();
-        }catch(\Throwable $ex){
-        }
-        try{
-            App::DbForRead();
-        }catch(\Throwable $ex){
-        }
-        try{
             App::Event();
         }catch(\Throwable $ex){
         }
-        App::DbCloseAll();
 //*
         App::GET('a');
         App::POST('a');
@@ -461,9 +448,7 @@ $this->doFunctions();
 
         App::G()->options['is_debug']=$flag;
         
-        $sql="Select * from users";
-        App::SqlForPager($sql,1,5);
-        App::SqlForCountSimply($sql);        
+   
     }
     public function doGlue()
     {

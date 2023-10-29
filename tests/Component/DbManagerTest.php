@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Component;
 
 use DuckPhp\Component\DbManager;
 use DuckPhp\Db\Db;
-use DuckPhp\DuckPhp as App;
+use DuckPhp\DuckPhpAllInOne as App;
 
 class DbManagerTest extends \PHPUnit\Framework\TestCase
 {

@@ -5,7 +5,9 @@
  */
 namespace DuckPhp\Foundation;
 
+use DuckPhp\Component\DbManager;
 use DuckPhp\Core\App;
+use DuckPhp\Core\Runtime;
 use DuckPhp\Core\SingletonTrait;
 
 trait SimpleModelTrait
@@ -43,15 +45,15 @@ trait SimpleModelTrait
     
     public function prepare($sql)
     {
-        return str_replace(App::DbForRead()->quote('TABLE'), $this->table(), $sql);
+        return str_replace(DbManager::_()->_DbForRead()->quote('TABLE'), $this->table(), $sql);
     }
     protected function getList(int $page = 1, int $page_size = 10)
     {
         $sql = "SELECT * from 'TABLE' where true order by id desc";
         $sql = $this->prepare($sql);
         
-        $total = App::DbForRead()->fetchColumn(App::SqlForCountSimply($sql));
-        $data = App::DbForRead()->fetchAll(App::SqlForPager($sql, $page, $page_size));
+        $total = DbManager::_()->_DbForRead()->fetchColumn(Runtime::_()->_SqlForCountSimply($sql));
+        $data = DbManager::_()->_DbForRead()->fetchAll(Runtime::_()->_SqlForPager($sql, $page, $page_size));
         return ['data' => $data,"total" => $total];
     }
 
@@ -62,23 +64,23 @@ trait SimpleModelTrait
         }
         $f = [];
         foreach ($a as $k => $v) {
-            $f[] = $k . ' = ' . App::DbForRead()->quote($v);
+            $f[] = $k . ' = ' . DbManager::_()->_DbForRead()->quote($v);
         }
         $frag = implode('and ', $f);
         
         $sql = "SELECT * FROM 'TABLE' WHERE ".$frag;
         $sql = $this->prepare($sql);
-        $ret = App::DbForRead()->fetch($sql);
+        $ret = DbManager::_()->_DbForRead()->fetch($sql);
         return $ret;
     }
     protected function add($data)
     {
-        $ret = App::DbForWrite()->insertData($this->table(), $data);
+        $ret = DbManager::_()->_DbForWrite()->insertData($this->table(), $data);
         return $ret;
     }
     protected function update($id, $data)
     {
-        $ret = App::DbForWrite()->updateData($this->table(), $id, $data, $this->table_pk);
+        $ret = DbManager::_()->_DbForWrite()->updateData($this->table(), $id, $data, $this->table_pk);
         
         return $ret;
     }
@@ -87,27 +89,27 @@ trait SimpleModelTrait
     */
     protected function execute($sql, ...$args)
     {
-        return App::DbForWrite()->table($this->table())->execute($sql, ...$args);
+        return DbManager::_()->_DbForWrite()->table($this->table())->execute($sql, ...$args);
     }
     //////////
     protected function fetchAll($sql, ...$args)
     {
-        return App::DbForRead()->table($this->table())->fetchAll($sql, ...$args);
+        return DbManager::_()->_DbForRead()->table($this->table())->fetchAll($sql, ...$args);
     }
     protected function fetch($sql, ...$args)
     {
-        return App::DbForRead()->table($this->table())->fetch($sql, ...$args);
+        return DbManager::_()->_DbForRead()->table($this->table())->fetch($sql, ...$args);
     }
     protected function fetchColumn($sql, ...$args)
     {
-        return App::DbForRead()->table($this->table())->fetchColumn($sql, ...$args);
+        return DbManager::_()->_DbForRead()->table($this->table())->fetchColumn($sql, ...$args);
     }
     protected function fetchObject($sql, ...$args)
     {
-        return App::DbForRead()->setObjectResultClass(static::class)->table($this->table())->fetchObject($sql, ...$args);
+        return DbManager::_()->_DbForRead()->setObjectResultClass(static::class)->table($this->table())->fetchObject($sql, ...$args);
     }
     protected function fetchObjectAll($sql, ...$args)
     {
-        return App::DbForRead()->setObjectResultClass(static::class)->table($this->table())->fetchObjectAll($sql, ...$args);
+        return DbManager::_()->_DbForRead()->setObjectResultClass(static::class)->table($this->table())->fetchObjectAll($sql, ...$args);
     }
 }

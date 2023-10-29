@@ -50,8 +50,8 @@ class StrictCheck extends ComponentBase
     }
     public static function CheckStrictDb()
     {
-        $magic_number = 5;
-        return static::G()->checkStrictComponent('Db', $magic_number, ['DuckPhp\\Core\\App',"DuckPhp\\Helper\\ModelHelper"]);
+        $magic_number = 5; //@codeCoverageIgnore
+        return static::G()->checkStrictComponent('Db', $magic_number, ['DuckPhp\\Core\\App',"DuckPhp\\Helper\\ModelHelper"]); //@codeCoverageIgnore
     }
     //////
     //*
@@ -84,7 +84,7 @@ class StrictCheck extends ComponentBase
     //*/
     
     ///////////////////////////////////////////////////////////
-
+    //@codeCoverageIgnoreStart
     protected function hit_class($caller_class, $parent_classes_to_skip)
     {
         foreach ($parent_classes_to_skip as $parent_class_to_skip) {
@@ -104,7 +104,7 @@ class StrictCheck extends ComponentBase
                 return $caller_class;
             }
         }
-        return ''; // @codeCoverageIgnore
+        return '';
     }
     public function checkEnv(): bool
     {
@@ -113,8 +113,10 @@ class StrictCheck extends ComponentBase
         }
         return true;
     }
+    //@codeCoverageIgnoreEnd
     public function checkStrictComponent($component_name, $trace_level, $parent_classes_to_skip = [])
     {
+        //@codeCoverageIgnoreStart
         if (!$this->checkEnv()) {
             return;
         }
@@ -128,7 +130,6 @@ class StrictCheck extends ComponentBase
         if (self::StartWith($caller_class, $this->options['namespace_business'])) {
             throw new ErrorException("$component_name Can not Call By Business");
         }
-        //@codeCoverageIgnoreStart
         if ($controller_base_class && (is_subclass_of($caller_class, $controller_base_class) || $caller_class === $controller_base_class)) {
             throw new ErrorException("$component_name Can not Call By Controller");
         }
@@ -172,7 +173,7 @@ class StrictCheck extends ComponentBase
 
     protected static function StartWith($str, $prefix)
     {
-        return substr($str, 0, strlen($prefix)) === $prefix;
+        return substr($str, 0, strlen($prefix)) === $prefix; //@codeCoverageIgnore
     }
     protected static function EndWith($str, $postfix)
     {

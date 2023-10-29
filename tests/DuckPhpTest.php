@@ -35,15 +35,6 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         ]);
         DuckPhp::Pager();
         
-        try{
-        DuckPhp::Db();
-        }catch(\Exception $ex){}
-        try{
-        DuckPhp::DbForRead();
-        }catch(\Exception $ex){}
-        try{
-        DuckPhp::DbForWrite();
-        }catch(\Exception $ex){}
         ////
         DuckPhp::DbCloseAll();
 

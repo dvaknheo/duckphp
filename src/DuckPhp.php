@@ -172,26 +172,10 @@ class DuckPhp extends App
     {
         return Configer::G()->_Config($file_basename, $key, $default);
     }
-    
-    //@override
-    public function _Db($tag)
-    {
-        return DbManager::G()->_Db($tag);
-    }
     //@override
     public function _DbCloseAll()
     {
         return DbManager::G()->_DbCloseAll();
-    }
-    //@override
-    public function _DbForRead()
-    {
-        return DbManager::G()->_DbForRead();
-    }
-    //@override
-    public function _DbForWrite()
-    {
-        return DbManager::G()->_DbForWrite();
     }
     //@override
     public function _Event()

@@ -464,33 +464,9 @@ EOT;
     {
         return Runtime::_()->_VarLog($var);
     }
-    public static function SqlForPager(string $sql, int $pageNo, int $pageSize = 10): string
-    {
-        return Runtime::_()->_SqlForPager($sql, $pageNo, $pageSize);
-    }
-    public static function SqlForCountSimply(string $sql): string
-    {
-        return Runtime::_()->_SqlForCountSimply($sql);
-    }
     //}
     //trait Core_NotImplemented
     //{
-    public static function Db($tag = null)
-    {
-        return static::G()->_Db($tag);
-    }
-    public static function DbCloseAll()
-    {
-        return static::G()->_DbCloseAll();
-    }
-    public static function DbForWrite()
-    {
-        return static::G()->_DbForWrite();
-    }
-    public static function DbForRead()
-    {
-        return static::G()->_DbForRead();
-    }
     public static function Event()
     {
         return static::G()->_Event();
@@ -502,24 +478,6 @@ EOT;
     public static function OnEvent($event, $callback)
     {
         return static::G()->_OnEvent($event, $callback);
-    }
-    
-    public function _DbCloseAll()
-    {
-        return; // do nothing. for override
-    }
-    public function _Db($tag)
-    {
-        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
-    }
-    public function _DbForRead()
-    {
-        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
-    }
-
-    public function _DbForWrite()
-    {
-        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
     }
     public function _Event()
     {

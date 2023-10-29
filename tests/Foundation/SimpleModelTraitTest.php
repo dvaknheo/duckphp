@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Foundation;
 
 use DuckPhp\Foundation\SimpleModelTrait;
-use DuckPhp\DuckPhp;
+use DuckPhp\DuckPhpAllInOne;
 
 class SimpleModelTraitTest extends \PHPUnit\Framework\TestCase
 {
@@ -19,23 +19,23 @@ class SimpleModelTraitTest extends \PHPUnit\Framework\TestCase
             'setting'=>$setting,
             'path_sql_dump' =>$path_app,
         ];
-        DuckPhp::G(new DuckPhp())->init($options);
+        DuckPhpAllInOne::G(new DuckPhpAllInOne())->init($options);
         
         echo EmptyModel::_()->table();
 $sql = "DROP TABLE IF EXISTS `empty`;";
-        DuckPhp::Db()->execute($sql);
+        DuckPhpAllInOne::Db()->execute($sql);
 
         $sql="CREATE TABLE `empty` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `data` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='keep me empty'";
-        DuckPhp::Db()->execute($sql);
+        DuckPhpAllInOne::Db()->execute($sql);
 
         EmptyModel::_()->test($id);
         
 $sql= 'DROP TABLE IF EXISTS `empty`';
-DuckPhp::Db()->execute($sql);
+DuckPhpAllInOne::Db()->execute($sql);
         
         \LibCoverage\LibCoverage::End();
     }
@@ -58,7 +58,7 @@ class EmptyModel extends Base
         EmptyModel::_()->update($id,['data' =>DATE(DATE_ATOM)]);
         $sql="delete from 'TABLE' where id =?";
         $sql=EmptyModel::_()->prepare($sql);
-        DuckPhp::Db()->execute($sql,$id);
+        DuckPhpAllInOne::Db()->execute($sql,$id);
 
         EmptyModel::_()->fetchAll("select * from 'TABLE' where id =? ", $id);
         EmptyModel::_()->fetch("select * from 'TABLE' where id =? ", $id);
