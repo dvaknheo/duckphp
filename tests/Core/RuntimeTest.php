@@ -35,6 +35,11 @@ class RuntimeTest extends \PHPUnit\Framework\TestCase
     echo Runtime::G()->_Hl($str, $args);
     echo Runtime::G()->_Json($data);
     echo Runtime::G()->_H($str);
+    
+
+    Runtime::XpCall(function(){return "abc";});
+    Runtime::XpCall(function(){ throw new \Exception('ex'); });
+    
     $t = [$str,"zz"];
     echo Runtime::G()->_H($t);
     $t = 123;

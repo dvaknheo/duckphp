@@ -361,18 +361,7 @@ EOT;
         //you can override this;
         return $this->options['is_debug'];
     }
-    public static function XpCall($callback, ...$args)
-    {
-        return static::G()->_XpCall($callback, ...$args);
-    }
-    public function _XpCall($callback, ...$args)
-    {
-        try {
-            return ($callback)(...$args);
-        } catch (\Exception $ex) {
-            return $ex;
-        }
-    }
+
     public static function PhaseCall($phase, $callback, ...$args)
     {
         return static::G()->_PhaseCall($phase, $callback, ...$args);
@@ -396,14 +385,6 @@ EOT;
     public static function Pager($object = null)
     {
         return static::_()->_Pager($object);
-    }
-    public static function Cache($object = null)
-    {
-        return static::_()->_Cache($object);
-    }
-    public function _Cache($object = null)
-    {
-        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
     }
     public function _Pager($object = null)
     {
@@ -471,25 +452,9 @@ EOT;
     {
         return static::G()->_Event();
     }
-    public static function FireEvent($event, ...$args)
-    {
-        return static::G()->_FireEvent($event, ...$args);
-    }
-    public static function OnEvent($event, $callback)
-    {
-        return static::G()->_OnEvent($event, $callback);
-    }
     public function _Event()
     {
         throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
-    }
-    public function _FireEvent($event, ...$args)
-    {
-        return; // do nothing. for override
-    }
-    public function _OnEvent($event, $callback)
-    {
-        return; // do nothing. for override
     }
     //}
     //trait Core_Glue
@@ -543,10 +508,6 @@ EOT;
     public static function Setting($key)
     {
         return static::G()->_Setting($key);
-    }
-    public static function Config($file_basename, $key = null, $default = null)
-    {
-        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
     }
     
     //// the next is dynamic ////

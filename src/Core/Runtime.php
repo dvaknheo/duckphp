@@ -164,4 +164,16 @@ class Runtime extends ComponentBase
         }, $sql);
         return $sql;
     }
+    public static function XpCall($callback, ...$args)
+    {
+        return static::G()->_XpCall($callback, ...$args);
+    }
+    public function _XpCall($callback, ...$args)
+    {
+        try {
+            return ($callback)(...$args);
+        } catch (\Exception $ex) {
+            return $ex;
+        }
+    }
 }

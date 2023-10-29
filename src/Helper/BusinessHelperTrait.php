@@ -6,22 +6,24 @@
 namespace DuckPhp\Helper;
 
 use DuckPhp\Component\Cache;
+use DuckPhp\Component\Configer;
 use DuckPhp\Component\EventManager;
 use DuckPhp\Core\App;
+use DuckPhp\Core\Runtime;
 
 trait BusinessHelperTrait
 {
     public static function Setting($key)
     {
-        return App::Setting($key);
+        return App::_()->_Setting($key);
     }
     public static function Config($file_basename, $key = null, $default = null)
     {
-        return App::Config($file_basename, $key, $default);
+        return Configer::_()->_Config($file_basename, $key, $default);
     }
     public static function XpCall($callback, ...$args)
     {
-        return App::XpCall($callback, ...$args);
+        return Runtime::_()->_XpCall($callback, ...$args);
     }
     public static function Cache($object = null)
     {

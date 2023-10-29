@@ -25,7 +25,7 @@ trait ControllerHelperTrait
     }
     public static function XpCall($callback, ...$args)
     {
-        return App::XpCall($callback, ...$args);
+        return Runtime::_()->_XpCall($callback, ...$args);
     }
     public static function Config($file_basename, $key = null, $default = null)
     {

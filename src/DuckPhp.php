@@ -158,39 +158,15 @@ class DuckPhp extends App
         return static::User()->id();
     }
     //@override
-    public function _Cache($object = null)
-    {
-        return Cache::G($object);
-    }
-    //@override
     public function _Pager($object = null)
     {
         return Pager::G($object);
     }
     /////////////////////////
-    public static function Config($file_basename, $key = null, $default = null)
-    {
-        return Configer::G()->_Config($file_basename, $key, $default);
-    }
-    //@override
-    public function _DbCloseAll()
-    {
-        return DbManager::G()->_DbCloseAll();
-    }
     //@override
     public function _Event()
     {
         return EventManager::G();
-    }
-    //@override
-    public function _FireEvent($event, ...$args)
-    {
-        return EventManager::G()->fire($event, ...$args);
-    }
-    //@override
-    public function _OnEvent($event, $callback)
-    {
-        return EventManager::G()->on($event, $callback);
     }
     public static function setBeforeGetDbHandler($db_before_get_object_handler)
     {

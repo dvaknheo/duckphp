@@ -36,22 +36,16 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::Pager();
         
         ////
-        DuckPhp::DbCloseAll();
-
         ////
         
         DuckPhp::Event();
-        DuckPhp::OnEvent('MyEvent',function(...$args){ var_dump($args);});
-        DuckPhp::FireEvent('MyEvent','A','B','C');
-        DuckPhp::FireEvent('NoExist','A','B','C');
+
         
         
         DuckPhp::Show([],'block');
         DuckPhp::G()->options['close_resource_at_output']=false;
         DuckPhp::Show([],'block');
 
-        $t=new \stdClass();
-        DuckPhp::Cache($t);
         
         
         DuckPhp::G()->setBeforeGetDbHandler(null);
@@ -148,17 +142,6 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         
         
         //////////////////////
-        
-        $path_base=realpath(__DIR__.'/');
-        $path_config=$path_base.'/data_for_tests/Helper/ControllerHelper/';
-        $options=[
-            'path_config'=>$path_config,
-        ];
-        Configer::G()->init($options);
-        $key='key';
-        $file_basename='config';
-        
-        DuckPhp::Config($file_basename,$key, null);
         
         try{
         DuckPhp::Redis(0);

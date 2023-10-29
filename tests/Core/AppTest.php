@@ -214,20 +214,8 @@ App::PageHtml(123);
         App::CookieSet('x',DATE('Y,M,d'));
         App::CookieGet('x');
 //*/
-        App::XpCall(function(){return "abc";});
-        App::XpCall(function(){ throw new \Exception('ex'); });
-        try{
-            App::Cache(new \stdClass);
-        }catch(\Exception $ex){
-        }
-        try{
-            App::OnEvent("test",null);
-        }catch(\Exception $ex){
-        }
-        try{
-            App::FireEvent("test",1,2,3);
-        }catch(\Exception $ex){
-        }
+
+
         
         $old_class = AppTestObjectA::class;
         $new_class = AppTestObjectB::class;
@@ -462,10 +450,6 @@ $this->doFunctions();
         $file_basename='config';
         
         App::Setting($key);
-        try{
-        App::Config($file_basename,$key, null);
-        }catch(\Exception $ex){
-        }
         
         
         $url="";

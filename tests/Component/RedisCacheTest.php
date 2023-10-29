@@ -1,7 +1,7 @@
 <?php 
 namespace tests\DuckPhp\Component;
 
-use DuckPhp\DuckPhp;
+use DuckPhp\DuckPhpAllInOne as DuckPhp;
 use DuckPhp\Component\RedisCache;
 use DuckPhp\Component\RedisManager;
 
