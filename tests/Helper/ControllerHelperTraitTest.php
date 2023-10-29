@@ -94,7 +94,7 @@ DuckPhp::G()->init([]);
 DuckPhp::Pager(new Pager);
 var_dump(DuckPhp::Pager());
 ControllerHelper::PageNo();
-ControllerHelper::PageSize();
+ControllerHelper::PageWindow();
 ControllerHelper::PageHtml(123);
 
         ControllerHelper::XpCall(function(){return "abc";});

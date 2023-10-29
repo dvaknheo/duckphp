@@ -40,6 +40,11 @@ class PagerTest extends \PHPUnit\Framework\TestCase
         Pager::G()->current(1);
         Pager::G()->pageSize();
         Pager::G()->isInited();
+        
+        Pager::PageNo();
+        Pager::PageWindow();
+        Pager::PageHtml(26,$options);
+
         \LibCoverage\LibCoverage::End();
     }
 }

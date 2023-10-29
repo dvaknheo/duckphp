@@ -18,6 +18,19 @@ class Pager extends ComponentBase implements PagerInterface
     ];
     protected $url;
     
+    public static function PageNo($new_value = null)
+    {
+        return static::_()->current($new_value);
+    }
+    public static function PageWindow($new_value = null)
+    {
+        return static::_()->pageSize($new_value);
+    }
+    public static function PageHtml($total, $options = [])
+    {
+        return static::_()->render($total, $options);
+    }
+    
     protected function getDefaultUrl()
     {
         $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;

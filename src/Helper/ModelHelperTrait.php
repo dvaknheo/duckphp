@@ -5,7 +5,8 @@
  */
 namespace DuckPhp\Helper;
 
-use DuckPhp\Core\App;
+use DuckPhp\Component\DbManager;
+use DuckPhp\Core\Runtime;
 
 trait ModelHelperTrait
 {
@@ -16,7 +17,7 @@ trait ModelHelperTrait
      */
     public static function Db($tag = null)
     {
-        return App::Db($tag);
+        return DbManager::_()->_Db($tag);
     }
     /**
      *
@@ -24,7 +25,7 @@ trait ModelHelperTrait
      */
     public static function DbForRead()
     {
-        return App::DbForRead();
+        return DbManager::_()->_DbForRead();
     }
     /**
      *
@@ -32,14 +33,14 @@ trait ModelHelperTrait
      */
     public static function DbForWrite()
     {
-        return App::DbForWrite();
+        return DbManager::_()->_DbForWrite();
     }
     public static function SqlForPager(string $sql, int $pageNo, int $pageSize = 10): string
     {
-        return App::SqlForPager($sql, $pageNo, $pageSize);
+        return Runtime::_()->_SqlForPager($sql, $pageNo, $pageSize);
     }
     public static function SqlForCountSimply(string $sql): string
     {
-        return App::SqlForCountSimply($sql);
+        return Runtime::_()->_SqlForCountSimply($sql);
     }
 }

@@ -6,6 +6,8 @@
 namespace DuckPhp\Helper;
 
 use DuckPhp\Core\App;
+use DuckPhp\Component\Cache;
+use DuckPhp\Component\EventManager;
 
 trait BusinessHelperTrait
 {
@@ -21,16 +23,16 @@ trait BusinessHelperTrait
     {
         return App::XpCall($callback, ...$args);
     }
-    public static function FireEvent($event, ...$args)
-    {
-        return App::FireEvent($event, ...$args);
-    }
     public static function Cache($object = null)
     {
-        return App::Cache($object);
+        return Cache::_($object);
+    }
+    public static function FireEvent($event, ...$args)
+    {
+        return EventManager::FireEvent($event, ...$args);
     }
     public static function OnEvent($event, $callback)
     {
-        return App::OnEvent($event, $callback);
+        return EventManager::OnEvent($event, $callback);
     }
 }

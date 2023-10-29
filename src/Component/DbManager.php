@@ -76,9 +76,9 @@ class DbManager extends ComponentBase
     {
         return static::G()->_DbForRead();
     }
-    public static function CloseAll()
+    public static function DbCloseAll()
     {
-        return static::G()->_CloseAll();
+        return static::G()->_DbCloseAll();
     }
     public static function OnQuery($db, $sql, ...$args)
     {
@@ -145,7 +145,7 @@ class DbManager extends ComponentBase
         return $this->_Db(static::TAG_READ);
     }
     
-    public function _CloseAll()
+    public function _DbCloseAll()
     {
         foreach ($this->databases as $tag => $db) {
             $db->close();

@@ -213,7 +213,7 @@ class DuckPhp extends App
     //@override
     public function _DbCloseAll()
     {
-        return DbManager::G()->_CloseAll();
+        return DbManager::G()->_DbCloseAll();
     }
     //@override
     public function _DbForRead()

@@ -46,7 +46,7 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         DbManager::G()->_Db();
         DbManager::G()->_DbForWrite();
         DbManager::G()->_DbForRead();
-        DbManager::CloseAll();
+        DbManager::DbCloseAll();
                 
         //----------------
         $database_sinlge=[$database_list[0]];
@@ -62,12 +62,8 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         DbManager::DbForWrite();
         DbManager::DbForRead();
         DbManager::G()->init($options,null);
-
-
-                DbManager::CloseAll();
-
+        DbManager::DbCloseAll();
         $options=[
-
             'db_before_get_object_handler'=>null,
             ];
     
