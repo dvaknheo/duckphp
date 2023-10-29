@@ -14,6 +14,7 @@ use DuckPhp\Component\Configer;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Component\DuckPhpCommand;
 use DuckPhp\Component\EventManager;
+use DuckPhp\Component\ExtOptionsLoader;
 use DuckPhp\Component\Pager;
 use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Component\RedisManager;
@@ -71,13 +72,23 @@ class DuckPhp extends App
     protected function initComponents(array $options, object $context = null)
     {
         parent::initComponents($options, $context);
+        if ($this->is_root) {
+            $this->getContainer()->addPublicClasses([
+                DbManager::class,
+                RedisManager::class,
+                EventManager::class,
+                ]);
+        }
+        
         if ($this->options['ext_options_file_enable']) {
-            $this->loadExtOptions();
+            ExtOptionsLoader::_()->loadExtOptions(static::class);
         }
         
         Configer::G()->init($this->options, $this);
         DbManager::G()->init($this->options, $this);
+        
         RouteHookRouteMap::G()->init($this->options, $this);
+        RouteHookRewrite::G()->init($this->options, $this);
         
         if (PHP_SAPI === 'cli') {
             if ($this->is_root) {
@@ -91,15 +102,6 @@ class DuckPhp extends App
             RouteHookPathInfoCompat::G()->init($this->options, $this);
         }
         $phase = $this->_Phase();
-        if ($this->is_root && $phase) {
-            $this->getContainer()->addPublicClasses([
-                Console::class, // TODO
-                DbManager::class,
-                RedisManager::class,
-                EventManager::class,
-                ]);
-        }
-
         ////////////////
         if ($this->options['class_user'] ?? null) {
             if (!$this->is_root) {
@@ -125,6 +127,12 @@ class DuckPhp extends App
     {
         return $this->options['install'] ?? false;
     }
+    public function install($options)
+    {
+        if ($this->options['ext_options_file_enable']) {
+            return ExtOptionsLoader::_()->installWithExtOptions(static::class, $options);
+        }
+    }
     protected function bumpSingletonToRoot($oldClass, $newClass)
     {
         $self = static::class;
@@ -133,46 +141,6 @@ class DuckPhp extends App
         });
     }
     //////////////
-    ////[[[[
-    protected function installWithExtOptions($options)
-    {
-        $options['install'] = DATE(DATE_ATOM);
-        $this->options = array_replace_recursive($this->options, $options);
-        $this->saveExtOptions(static::class, $options);
-    }
-    protected function get_all_ext_options()
-    {
-        $full_file = $this->options['ext_options_file'];
-        $full_file = static::IsAbsPath($full_file) ? $full_file : realpath($this->options['path']).'/'.$full_file;
-        if (!is_file($full_file)) {
-            return [];
-        }
-        $all_options = (function ($file) {
-            return require $file;
-        })($full_file);
-        return $all_options;
-    }
-    protected function loadExtOptions()
-    {
-        $all_options = $this->get_all_ext_options();
-        $options = $all_options[static::class] ?? [];
-        $this->options = array_replace_recursive($this->options, $options);
-    }
-    protected function saveExtOptions($class, $options)
-    {
-        $full_file = $this->options['ext_options_file'];
-        $full_file = static::IsAbsPath($full_file) ? $full_file : realpath($this->options['path']).'/'.$full_file;
-        
-        $all_options = $this->get_all_ext_options();
-        $all_options[$class] = $options;
-        
-        $string = "<"."?php //". "regenerate by " . __CLASS__ . '->'.__METHOD__ ." at ". DATE(DATE_ATOM) . "\n";
-        $string .= "return ".var_export($all_options, true) .';';
-        file_put_contents($full_file, $string);
-        clearstatcache();
-    }
-    ////]]]] // extOptionsMode
-    
     public static function Admin($admin = null)
     {
         return AdminObject::G($admin);
