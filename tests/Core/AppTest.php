@@ -416,7 +416,7 @@ $this->doFunctions();
         $options=[
             'path' => $path_app,
             'is_debug'=>true,
-            'on_inited'=> function(){ 
+            'on_init'=> function(){ 
             
             AppTestApp::G()->_OnDevErrorHandler(0, '', '', 0);
             AppTestApp::G()->_OnDefaultException(new \Exception('--'));

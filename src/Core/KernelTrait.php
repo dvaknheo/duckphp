@@ -38,7 +38,7 @@ trait KernelTrait
             'skip_404_handler' => false,
             'skip_exception_check' => false,
             
-            'on_inited' => null,
+            'on_init' => null,
             'container_only' => false,
             
             
@@ -218,8 +218,8 @@ trait KernelTrait
         
         $this->initExtentions($this->options['ext'] ?? []);
         $this->onInit();
-        if ($this->options['on_inited']) {
-            ($this->options['on_inited'])();
+        if ($this->options['on_init']) {
+            ($this->options['on_init'])();
         }
         $this->is_inited = true;
         return $this;
