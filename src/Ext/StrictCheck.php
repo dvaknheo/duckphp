@@ -138,8 +138,8 @@ class StrictCheck extends ComponentBase
         if (!$this->checkEnv()) {
             return;
         }
-//@codeCoverageIgnoreStart
-//TODO worse code ,can not test, fix me!
+        //@codeCoverageIgnoreStart
+        //TODO worse code ,can not test, fix me!
         if (!empty($this->options['namespace_model']) && self::StartWith($class, $this->options['namespace_model'])) {
             $caller_class = $this->getCallerByLevel(3);
             if (self::EndWith($class, $this->options['postfix_model'])) {
@@ -177,6 +177,5 @@ class StrictCheck extends ComponentBase
     protected static function EndWith($str, $postfix)
     {
         return substr($str, -strlen($postfix)) === $postfix; //@codeCoverageIgnore
-
     }
 }

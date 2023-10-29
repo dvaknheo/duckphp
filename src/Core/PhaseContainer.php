@@ -17,12 +17,12 @@ class PhaseContainer
     public static function ReplaceSingletonImplement()
     {
         //if (!defined('__SINGLETONEX_REPALACER')) {
-            //define('__SINGLETONEX_REPALACER', static::class . '::GetObject');
-            //define('__SINGLETONEX_REPALACER_CLASS', static::class);
-            static::GetContainerInstanceEx()->default = static::class;
-            static::GetContainerInstanceEx()->current = static::class;
-            static::GetContainerInstanceEx()->publics[static::class] = true;
-            return true;
+        //define('__SINGLETONEX_REPALACER', static::class . '::GetObject');
+        //define('__SINGLETONEX_REPALACER_CLASS', static::class);
+        //static::GetContainerInstanceEx()->default = static::class;
+        //static::GetContainerInstanceEx()->current = static::class;
+        //static::GetContainerInstanceEx()->publics[static::class] = true;
+        return true;
         //}
         //return false;
     }
@@ -44,7 +44,7 @@ class PhaseContainer
     public static function GetContainer()
     {
         //if (!defined('__SINGLETONEX_REPALACER_CLASS')) {
-            //return null;
+        //return null;
         //}
         //$class = __SINGLETONEX_REPALACER_CLASS;
         return static::GetContainerInstanceEx();
