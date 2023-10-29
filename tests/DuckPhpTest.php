@@ -109,12 +109,14 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         ];
         DuckPhp::G(new DuckPhp());
         DuckPhp_Sub::G(new DuckPhp_Sub());
+        \DuckPhp\Core\PhaseContainer::GetContainerInstanceEx(new \DuckPhp\Core\PhaseContainer());
+
         $_SERVER['PATH_INFO'] = '/zzzzzzzzzzzz';
         $flag = DuckPhp_Sub::InitAsContainer($options)->thenRunAsContainer(false,function(){echo "welcome";});
         
         DuckPhp::G(new DuckPhp());
         DuckPhp_Sub::G(new DuckPhp_Sub());
-        
+        \DuckPhp\Core\PhaseContainer::GetContainerInstanceEx(new \DuckPhp\Core\PhaseContainer());
         $_SERVER['PATH_INFO'] = '/zzzzzzzzzzzz';
         $_SERVER['PATH_INFO'] = '/';
         $flag =DuckPhp_Sub::InitAsContainer($options)->thenRunAsContainer(true,function(){echo "welcome";});
@@ -125,7 +127,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         $options['ext']=[
                 DuckPhp_Sub::class =>[
                     'is_debug'=>true,
-                    'cli_enable'=>false,
+                    'console_enable'=>false,
                     'cli_mode' => 'hook',
                     'controller_url_prefix'=>'advance/',
                     'exception_reporter' => FakeReporter::class,
@@ -137,6 +139,9 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
                 ],
             ];
 
+        DuckPhp::G(new DuckPhp());
+        DuckPhp_Sub::G(new DuckPhp_Sub());
+        \DuckPhp\Core\PhaseContainer::GetContainerInstanceEx(new \DuckPhp\Core\PhaseContainer());
         $flag =DuckPhp_Sub::InitAsContainer($options)->thenRunAsContainer(false,function(){echo "welcome";});
         echo ">>>>>>>>>>>>>>>>>>>>>>>";
         $options = [
@@ -177,7 +182,7 @@ class FakeController
 {
     public function action_hitme()
     {
-        var_dump("gut");
+        var_dump("hit!!!!!!!!!!!!!!");
     }
 }
 class DuckPhp_Sub extends DuckPhp

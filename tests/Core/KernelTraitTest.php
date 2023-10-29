@@ -52,7 +52,6 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
         ];
         App::RunQuickly($options,function(){});
         App::G()->options['console_enable'] =false;
-        App::InRootPhase();
         
         //App::SG()->_SERVER['PATH_INFO']='/NOOOOOOOOOOOOOOO';
         Route::G()->bind('/NOOOOOOOOOOOOOOO');  // 这两句居然有区别 ,TODO ，分析之
@@ -142,7 +141,6 @@ MyKernelTrait::On404();
         
         App::Root();
         App::Current();
-        App::InRootPhase();
         
         $_SERVER['PATH_INFO'] = '/child/date';
         //Route::G()->bind();

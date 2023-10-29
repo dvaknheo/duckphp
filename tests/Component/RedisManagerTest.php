@@ -16,6 +16,7 @@ class RedisManagerTest extends \PHPUnit\Framework\TestCase
         //code here
         $options=[
             'redis'=>$redis_list[0],
+            'force' =>true,
             //'redis_list'=>$redis_list,
         ];
         RedisManager::G()->init($options,App::G()->init(['redis_list'=>$redis_list,]));
@@ -23,7 +24,7 @@ class RedisManagerTest extends \PHPUnit\Framework\TestCase
         RedisManager::G()->init($options,App::G()->init(['redis_list'=>$redis_list,]));
         //*
         RedisManager::G()->init($options = [], $context = null);
-//        RedisManager::G()->Redis();
+        RedisManager::G()->Redis();
         //*/
         \LibCoverage\LibCoverage::End();
     }

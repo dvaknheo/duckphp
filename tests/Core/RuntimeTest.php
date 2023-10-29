@@ -55,7 +55,8 @@ class RuntimeTest extends \PHPUnit\Framework\TestCase
     Runtime::G()->_VarLog($var);
     Runtime::G()->_DebugLog($message, $context);
     Runtime::G()->_var_dump($args);
-
+Runtime::G()->run();
+        Runtime::G()->clear();
 ////////////////
         \LibCoverage\LibCoverage::End();
 

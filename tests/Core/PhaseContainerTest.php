@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Core;
 
 use DuckPhp\Core\PhaseContainer;
-use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Core\SingletonExTrait;
 
 class PhaseContainerTest extends \PHPUnit\Framework\TestCase
 {
@@ -17,6 +17,8 @@ class PhaseContainerTest extends \PHPUnit\Framework\TestCase
         
         PhaseContainer::GetContainerInstanceEx();
         PhaseContainer::GetContainerInstanceEx(new MyPhaseContainer());
+               PhaseContainer::ReplaceSingletonImplement();
+
        
         PhaseContainer::GetContainerInstanceEx()->setDefaultContainer('DEFAULT');
         PhaseContainer::GetContainerInstanceEx()->addPublicClasses([]);
@@ -24,18 +26,18 @@ class PhaseContainerTest extends \PHPUnit\Framework\TestCase
         PhaseContainer::GetContainerInstanceEx()->setCurrentContainer('CURRENT');
         PhaseContainer::GetContainerInstanceEx()->getCurrentContainer();
         
-        MyObject::G()->foo();
-        MyObject::G(new MyObject2())->foo();
+        MyObject::_()->foo();
+        MyObject::_(new MyObject2())->foo();
         
         PhaseContainer::GetContainerInstanceEx()->setCurrentContainer('NEW');
 
         PhaseContainer::GetContainerInstanceEx()->addPublicClasses([MyObject::class]);
-        MyObject::G()->foo();
-        MyObject::G(new MyObject2())->foo();
-        
+        MyObject::_()->foo();
+        MyObject::_(new MyObject2())->foo();
+        MyObject2::_();
         PhaseContainer::GetContainerInstanceEx()->dumpAllObject();
+        PhaseContainer::GetObject(MyObject::class);
         PhaseContainer::GetContainerInstanceEx()->removePublicClasses([MyObject::class]);
-        PhaseContainer::GetContainer();
         
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();

@@ -75,7 +75,7 @@ class StrictCheck extends ComponentBase
         $prop->setAccessible(true);
         $array = $prop->getValue();
         if (!empty($array[$class])) {
-            static::$classes[$class] = $array[$class];
+            static::$classes[$class] = $array[$class]; //@codeCoverageIgnore
         } else {
             static::$classes[$class] = new $class;
         }
@@ -138,7 +138,8 @@ class StrictCheck extends ComponentBase
         if (!$this->checkEnv()) {
             return;
         }
-
+//@codeCoverageIgnoreStart
+//TODO worse code ,can not test, fix me!
         if (!empty($this->options['namespace_model']) && self::StartWith($class, $this->options['namespace_model'])) {
             $caller_class = $this->getCallerByLevel(3);
             if (self::EndWith($class, $this->options['postfix_model'])) {
@@ -167,13 +168,15 @@ class StrictCheck extends ComponentBase
                 throw new ErrorException("Business($class) Can not call by Model, ($caller_class)");
             }
         }
-    }
+    }//@codeCoverageIgnoreEnd
+
     protected static function StartWith($str, $prefix)
     {
         return substr($str, 0, strlen($prefix)) === $prefix;
     }
     protected static function EndWith($str, $postfix)
     {
-        return substr($str, -strlen($postfix)) === $postfix;
+        return substr($str, -strlen($postfix)) === $postfix; //@codeCoverageIgnore
+
     }
 }

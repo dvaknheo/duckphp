@@ -69,14 +69,6 @@ trait KernelTrait
     {
         return (self::class)::G(); // remark ,don't use self::G()!
     }
-    public static function InRootPhase()
-    {
-        $phase = static::Phase();
-        if (!$phase) {
-            return true;
-        }
-        return $phase === get_class(static::Root()) ? true:false;
-    }
     protected function initOptions(array $options)
     {
         $this->options = array_replace_recursive($this->options, $options);
@@ -120,9 +112,7 @@ trait KernelTrait
     public function _Phase($new = null)
     {
         $container = $this->getContainer();
-        if (!$container) {
-            return '';
-        }
+        //if (!$container) {return ''; }
         $old = $container->getCurrentContainer();
         if ($new) {
             $container->setCurrentContainer($new);

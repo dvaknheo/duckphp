@@ -21,8 +21,9 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
         ComponentBaseObject::G(new ComponentBaseObject());
         define('__SINGLETONEX_REPALACER',ComponentBaseObject::class.'::CreateObject');
         ComponentBaseObject::G();
-        //ComponentBaseObject2::G()->init([]);
+        ComponentBaseObject2::G()->init([]);
         ComponentBaseObject2::G()->init([],App::_());
+        ComponentBaseObject2::G()->init(['force'=>true],App::_());
         
         ComponentBaseObject2::G()->context();
         var_dump(ComponentBase::SlashDir(''));
@@ -38,18 +39,6 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
         ComponentBaseObject::G()->init($options, App::G());
         ComponentBaseObject::G()->extendFullFile($options['path'],$options['path_data'],$options['path'].'data.php');
 
-        /*
-        ComponentBase::GetFileFromSubComponent($options, 'data', $path_data.'data.php');
-        ComponentBase::GetFileFromSubComponent($options, 'data', 'data.php');
-        ComponentBase::GetFileFromSubComponent($options, 'data', 'data2.php');
-        ComponentBase::GetFileFromSubComponent($options, 'data', 'datanotexist.php');
-        $options=[
-            'path'=> $path_data,
-            'path_data'=> '',
-            'path_data_override_from'=> null,
-        ];
-        ComponentBase::GetFileFromSubComponent($options, 'data', 'data2.php');
-        */
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
     }
