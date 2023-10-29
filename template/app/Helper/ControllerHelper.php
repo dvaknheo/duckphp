@@ -6,9 +6,10 @@
 
 namespace LazyToChange\Helper;
 
-use DuckPhp\Helper\ControllerHelper as Helper;
+use DuckPhp\Helper\ControllerHelperTrait;
 
-class ControllerHelper extends Helper
+class ControllerHelper
 {
+    use ControllerHelperTrait;
     // override or add your code here
 }

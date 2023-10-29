@@ -6,9 +6,10 @@
 
 namespace LazyToChange\Helper;
 
-use DuckPhp\Helper\ModelHelper as Helper;
+use DuckPhp\Helper\ModelHelperTrait;
 
-class ModelHelper extends Helper
+class ModelHelper
 {
+    use ModelHelperTrait;
     // override or add your code here
 }

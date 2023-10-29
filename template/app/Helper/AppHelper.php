@@ -6,9 +6,10 @@
 
 namespace LazyToChange\Helper;
 
-use DuckPhp\Helper\AppHelper as Helper;
+use DuckPhp\Helper\AdvanceHelperTrait;
 
 class AppHelper extends Helper
 {
+    use AdvanceHelperTrait;
     // override or add your code here
 }
