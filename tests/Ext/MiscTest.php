@@ -4,6 +4,7 @@ namespace tests\DuckPhp\Ext;
 use DuckPhp\Ext\Misc;
 use DuckPhp\DuckPhp;
 use DuckPhp\Core\Route;
+use DuckPhp\Core\SystemWrapper;
 use DuckPhp\SingletonEx\SingletonExTrait;
 
 class MiscTest extends \PHPUnit\Framework\TestCase
@@ -39,7 +40,7 @@ class MiscTest extends \PHPUnit\Framework\TestCase
         
         
         
-        DuckPhp::G()->system_wrapper_replace([
+        SystemWrapper::_()->_system_wrapper_replace([
             'exit' =>function(){ echo "change!\n";},
         ]);
         DuckPhp::G()->init($options)->run();

@@ -31,12 +31,13 @@ class AdvanceHelperTraitTest extends \PHPUnit\Framework\TestCase
         $output="";
 
         
-        App::G()->system_wrapper_replace([
+        AdvanceHelper::system_wrapper_replace([
             'header' =>function(){ echo "change!\n";},
             'setcookie' =>function(){ echo "change!\n";},
             'exit' =>function(){ echo "change!\n";},
         ]);
-        
+        AdvanceHelper::system_wrapper_get_providers();
+
         AdvanceHelper::header($output,$replace = true, $http_response_code=0);
         AdvanceHelper::setcookie( $key="123",  $value = '', $expire = 0,  $path = '/',  $domain  = '', $secure = false,  $httponly = false);
         AdvanceHelper::exit($code=0);
@@ -45,7 +46,7 @@ class AdvanceHelperTraitTest extends \PHPUnit\Framework\TestCase
         AdvanceHelper::session_start($options=[]);
         AdvanceHelper::session_id(null);
         AdvanceHelper::session_destroy();
-        $handler=new HelperFakeSessionHandler();
+        $handler = new HelperFakeSessionHandler();
         AdvanceHelper::session_set_save_handler( $handler);
 
         
@@ -58,10 +59,14 @@ class AdvanceHelperTraitTest extends \PHPUnit\Framework\TestCase
         }catch(\Exception $ex){
         }
         AdvanceHelper::CookieSet ('a','b');
+        AdvanceHelper::CookieGet ('a','b');
         AdvanceHelper::SessionSet('c','d');
+        AdvanceHelper::SessionGet('c');
+        AdvanceHelper::SessionUnset('c');
         //AdvanceHelper::OnEvent('MyEvent',[static::class, 'callit']);
         //App::FireEvent('MyEvent','A','B','C');
-    
+        AdvanceHelper::mime_content_type('x.jpg');
+
         ////]]]]
         
         ////[[[[
@@ -79,8 +84,6 @@ class AdvanceHelperTraitTest extends \PHPUnit\Framework\TestCase
     protected function do_Core_Component()
     {
 
-        
-        
         $new_namespace=__NAMESPACE__;
         $new_namespace.='\\';
     

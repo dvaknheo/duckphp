@@ -19,14 +19,13 @@ class SuperGlobal extends ComponentBase
     public $_SESSION;
     public $_FILES;
     
-    public function __construct()
-    {
-        $this->_LoadSuperGlobalAll();
-    }
+    protected $init_once = true;
+
     protected function initOptions(array $options)
     {
         if ($this->options['superglobal_auto_define']) {
             static::DefineSuperGlobalContext();
+            $this->_LoadSuperGlobalAll();
         }
     }
     
@@ -193,9 +192,9 @@ class SuperGlobal extends ComponentBase
     }
     public function _CookieSet($key, $value, $expire = 0)
     {
-        App::setcookie($key, $value, $expire ? $expire + time():0);
+        SystemWrapper::_()->_setcookie($key, $value, $expire ? $expire + time():0);
     }
-    public function _SessionGet($key, $default)
+    public function _SessionGet($key, $default = null)
     {
         return $this->getSuperGlobalData('_SESSION', $key, $default);
     }

@@ -88,7 +88,7 @@ class DuckPhp extends App
         
         Configer::G()->init($this->options, $this);
         DbManager::G()->init($this->options, $this);
-        
+        RedisManager::G()->init($this->options, $this);
         RouteHookRouteMap::G()->init($this->options, $this);
         RouteHookRewrite::G()->init($this->options, $this);
         

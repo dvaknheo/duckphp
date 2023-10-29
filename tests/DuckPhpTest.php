@@ -31,7 +31,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
             'path_info_compact_enable'=>true,
         ];
         DuckPhp::G()->init($options);
-        DuckPhp::G()->system_wrapper_replace([
+        \DuckPhp\Core\SystemWrapper::_()->_system_wrapper_replace([
             'exit' =>function(){ echo "change!\n";},
         ]);
         DuckPhp::Pager();

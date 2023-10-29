@@ -30,18 +30,8 @@ class AppTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(App::class);
         $this->LibCoverage = \LibCoverage\LibCoverage::G();
         
-/*
-        $path_app=$this->LibCoverage->getClassTestPath(App::class);
-        $options=[
-            'path' => $path_app,
-            'is_debug'=>false,
-        ];
-        AppTestApp::RunQuickly($options);
-        
-        AppTestApp::G()->options['error_404']='_sys/error-404';
-        AppTestApp::On404();
-//\LibCoverage\LibCoverage::G($this->LibCoverage);     \LibCoverage\LibCoverage::End();       return;    
-//*/
+var_dump("zzzzzzzzzzzzzzzzzzz[[".($_SERVER['SCRIPT_FILENAME'] ?? null)."]] [[". __LINE__ ."]]zzzzzzzzzzzzzzz");
+
         Route::G(AppRoute::G());
         $_SESSION=[];
         
@@ -75,12 +65,13 @@ class AppTest extends \PHPUnit\Framework\TestCase
         ];
 
         App::G(new App());
+
         App::RunQuickly($options,function(){
-        App::SessionSet('zz','abc');
-        App::SessionGet('zz');
-        
-        \DuckPhp\Core\SuperGlobal::DefineSuperGlobalContext();
-        App::SessionUnset('zz');
+        //App::SessionSet('zz','abc');
+        //App::SessionGet('zz');
+
+        //\DuckPhp\Core\SuperGlobal::DefineSuperGlobalContext();
+        //App::SessionUnset('zz');
 
             App::G()->addBeforeShowHandler(function(){ echo "beforeShowHandlers";});
             App::G()->addBeforeShowHandler("testsssssssssss");
@@ -119,7 +110,7 @@ echo "-------------------------------------\n";
                 App::G()->system_wrapper_replace(['exit'=>function($code){
             var_dump(DATE(DATE_ATOM));
         }]);
-        
+
         App::G()->run();
         }catch(\Throwable $ex){
             echo "failed".$ex;
@@ -184,7 +175,7 @@ App::Pager(Pager::G());
         }
 //*
 
-        
+        /*
         App::SESSION();
         App::FILES();
         
@@ -290,7 +281,8 @@ $this->doFunctions();
     }
     public function doSystemWrapper()
     {
-        App::system_wrapper_get_providers();
+        return;
+        \DuckPhp\Core\SystemWrapper::_()->_system_wrapper_get_providers();
         $output="";
 
         App::header($output,$replace = true, $http_response_code=0);
@@ -516,7 +508,7 @@ $this->doFunctions();
     {
         // 这里不能直接用 DuckPhp\Core\App ;奇怪；
         AppTestApp::G()->init(App::G()->options);
-        AppTestApp::G()->system_wrapper_replace(['exit'=>function($code=0){
+        \DuckPhp\Core\SystemWrapper::_()->_system_wrapper_replace(['exit'=>function($code=0){
             var_dump(DATE(DATE_ATOM));
         }]);
 

@@ -47,8 +47,7 @@ trait KernelTrait
             'setting_file_enable' => true,
             'use_env_file' => false,
         ];
-    protected $setting = [];
-    //protected $is_simple_mode = true;
+    public $setting = [];
     protected $is_root = true;
 
     public static function RunQuickly(array $options = [], callable $after_init = null): bool

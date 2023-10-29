@@ -42,8 +42,7 @@
 $ref = new ReflectionClass(\DuckPhp\DuckPhp::class);
 //$t =get_class_methods(\DuckPhp\DuckPhp::class);
 $m = $ref->getMethods();
-$t=[];
-foreach($m as $v){$t[]=$v->name;}
+$t=[];foreach($m as $v){$t[]=$v->name;}
 var_export($t);?>
 </pre>
 </fieldset>

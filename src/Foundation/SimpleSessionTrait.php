@@ -7,6 +7,8 @@ namespace DuckPhp\Foundation;
 
 use DuckPhp\Core\App;
 use DuckPhp\Core\SingletonTrait;
+use DuckPhp\Core\SuperGlobal;
+use DuckPhp\Core\SystemWrapper;
 
 trait SimpleSessionTrait
 {
@@ -19,24 +21,24 @@ trait SimpleSessionTrait
         if ($this->session_started) {
             return;
         }
-        App::session_start();
+        SystemWrapper::_()->_session_start();
         $this->options['session_prefix'] = App::Current()->options['session_prefix'] ?? '';
         $this->session_started = true;
     }
     protected function get($key, $default = null)
     {
         $this->checkSessionStart();
-        return App::SessionGet($this->options['session_prefix'] . $key, $default);
+        return SuperGlobal::_()->_SessionGet($this->options['session_prefix'] . $key, $default);
     }
     protected function set($key, $value)
     {
         $this->checkSessionStart();
-        return App::SessionSet($this->options['session_prefix'] . $key, $value);
+        return SuperGlobal::_()->_SessionSet($this->options['session_prefix'] . $key, $value);
     }
     protected function unset($key)
     {
         $this->checkSessionStart();
-        return App::SessionUnset($this->options['session_prefix'] . $key);
+        return SuperGlobal::_()->_SessionUnset($this->options['session_prefix'] . $key);
     }
     /////////////////////////////////////
 }

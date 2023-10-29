@@ -36,7 +36,6 @@ class App extends ComponentBase
         'alias' => null,
         
         'default_exception_do_log' => true,
-        'default_exception_self_display' => true,
         'close_resource_at_output' => false,
         
         //// error handler ////
@@ -61,13 +60,13 @@ class App extends ComponentBase
     }
     protected function doInitComponents()
     {
-        Logger::G()->init($this->options, $this);
-        View::G()->init($this->options, $this);
-        //SuperGlobal::G()->init($this->options, $this);
-        
-        if ($this->is_root && $this->_Phase()) {
+        if ($this->is_root) {
             $this->getContainer()->addPublicClasses([Logger::class, SuperGlobal::class]);
         }
+        
+        Logger::G()->init($this->options, $this);
+        View::G()->init($this->options, $this);
+        SuperGlobal::G()->init($this->options, $this);
     }
     //////// override KernelTrait ////////
     //@override
@@ -303,7 +302,7 @@ EOT;
             SystemWrapper::_()->_exit();
             return;
         }
-        static::header('location: '.$url, true, 302);
+        SystemWrapper::_()->_header('location: '.$url, true, 302);
         if ($exit) {
             SystemWrapper::_()->_exit();
         }
@@ -465,82 +464,5 @@ EOT;
     public static function addRouteHook($callback, $position = 'append-outter', $once = true)
     {
         return Route::G()->addRouteHook($callback, $position, $once);
-    }
-    public static function SESSION($key = null, $default = null)
-    {
-        return SuperGlobal::_()->_SESSION($key, $default);
-    }
-    public static function FILES($key = null, $default = null)
-    {
-        return SuperGlobal::_()->_FILES($key, $default);
-    }
-    public static function SessionSet($key, $value)
-    {
-        return SuperGlobal::_()->_SessionSet($key, $value);
-    }
-    public static function SessionUnset($key)
-    {
-        return SuperGlobal::_()->_SessionUnset($key);
-    }
-    public static function SessionGet($key, $default = null)
-    {
-        return SuperGlobal::_()->_SessionGet($key, $default);
-    }
-    public static function CookieSet($key, $value, $expire = 0)
-    {
-        return SuperGlobal::_()->_CookieSet($key, $value, $expire);
-    }
-    public static function CookieGet($key, $default = null)
-    {
-        return SuperGlobal::_()->_CookieGet($key, $default);
-    }
-    ////////////////////////////
-    public static function header($output, bool $replace = true, int $http_response_code = 0)
-    {
-        return SystemWrapper::_()->_header($output, $replace, $http_response_code);
-    }
-    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
-    {
-        return SystemWrapper::_()->_setcookie($key, $value, $expire, $path, $domain, $secure, $httponly);
-    }
-    public static function exit($code = 0)
-    {
-        return SystemWrapper::_()->_exit($code);
-    }
-    public static function set_exception_handler(callable $exception_handler)
-    {
-        return SystemWrapper::_()->_set_exception_handler($exception_handler);
-    }
-    public static function register_shutdown_function(callable $callback, ...$args)
-    {
-        return SystemWrapper::_()->_register_shutdown_function($callback, ...$args);
-    }
-    public static function session_start(array $options = [])
-    {
-        return SystemWrapper::_()->_session_start($options);
-    }
-    public static function session_id($session_id = null)
-    {
-        return SystemWrapper::_()->_session_id($session_id);
-    }
-    public static function session_destroy()
-    {
-        return SystemWrapper::_()->_session_destroy();
-    }
-    public static function session_set_save_handler(\SessionHandlerInterface $handler)
-    {
-        return SystemWrapper::_()->_session_set_save_handler($handler);
-    }
-    public static function mime_content_type($file)
-    {
-        return SystemWrapper::_()->_mime_content_type($file);
-    }
-    public static function system_wrapper_replace(array $funcs)
-    {
-        return SystemWrapper::_()->_system_wrapper_replace($funcs);
-    }
-    public static function system_wrapper_get_providers():array
-    {
-        return SystemWrapper::_()->_system_wrapper_get_providers();
     }
 }

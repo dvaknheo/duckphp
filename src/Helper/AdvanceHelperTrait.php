@@ -69,12 +69,31 @@ trait AdvanceHelperTrait
     {
         return SuperGlobal::_()->_SessionSet($key, $value);
     }
+    public static function SessionUnset($key)
+    {
+        return SuperGlobal::_()->_SessionUnset($key);
+    }
+    public static function SessionGet($key, $default = null)
+    {
+        return SuperGlobal::_()->_SessionGet($key, $default);
+    }
     public static function CookieSet($key, $value, $expire = 0)
     {
         return SuperGlobal::_()->_CookieSet($key, $value, $expire);
     }
-
+    public static function CookieGet($key, $default = null)
+    {
+        return SuperGlobal::_()->_CookieGet($key, $default);
+    }
     ////////////////////
+    public static function system_wrapper_replace(array $funcs)
+    {
+        return SystemWrapper::_()->_system_wrapper_replace($funcs);
+    }
+    public static function system_wrapper_get_providers():array
+    {
+        return SystemWrapper::_()->_system_wrapper_get_providers();
+    }
     public static function header($output, bool $replace = true, int $http_response_code = 0)
     {
         return SystemWrapper::_()->_header($output, $replace, $http_response_code);
@@ -110,5 +129,9 @@ trait AdvanceHelperTrait
     public static function session_set_save_handler(\SessionHandlerInterface $handler)
     {
         return SystemWrapper::_()->_session_set_save_handler($handler);
+    }
+    public static function mime_content_type($file)
+    {
+        return SystemWrapper::_()->_mime_content_type($file);
     }
 }

@@ -11,9 +11,9 @@ class SuperGlobalTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(SuperGlobal::class);
         
-        App::SessionSet('x',DATE('Y,M,d'));
-        App::SessionGet('x');
-        App::SessionUnset('x');
+        SuperGlobal::_()->_SessionSet('x',DATE('Y,M,d'));
+        SuperGlobal::_()->_SessionGet('x');
+        SuperGlobal::_()->_SessionUnset('x');
 
         SuperGlobal::DefineSuperGlobalContext();
         SuperGlobal::DefineSuperGlobalContext();

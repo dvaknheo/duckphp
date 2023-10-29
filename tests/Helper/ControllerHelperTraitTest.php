@@ -51,7 +51,7 @@ class ControllerHelperTraitTest extends \PHPUnit\Framework\TestCase
         
         $output="";
 
-        \DuckPhp\Core\App::system_wrapper_replace(['exit'=>function($code){
+        \DuckPhp\Core\SystemWrapper::system_wrapper_replace(['exit'=>function($code){
             var_dump(DATE(DATE_ATOM));
         }]);
         ControllerHelper::exit($code=0);
