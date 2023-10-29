@@ -28,9 +28,7 @@ class AutoLoader
     //embed
     public static function G($object = null)
     {
-        //if (defined('__SINGLETONEX_REPALACER')) {
-        //    return (__SINGLETONEX_REPALACER)(static::class, $object);
-        //}
+
         if ($object) {
             self::$_instances[static::class] = $object;
             return $object;

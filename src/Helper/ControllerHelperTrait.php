@@ -11,8 +11,8 @@ use DuckPhp\Component\EventManager;
 use DuckPhp\Component\Pager;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ExceptionManager;
+use DuckPhp\Core\Helper;
 use DuckPhp\Core\Route;
-use DuckPhp\Core\Runtime;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapper;
 use DuckPhp\Core\View;
@@ -25,7 +25,7 @@ trait ControllerHelperTrait
     }
     public static function XpCall($callback, ...$args)
     {
-        return Runtime::_()->_XpCall($callback, ...$args);
+        return Helper::_()->_XpCall($callback, ...$args);
     }
     public static function Config($file_basename, $key = null, $default = null)
     {

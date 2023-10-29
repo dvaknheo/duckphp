@@ -9,7 +9,7 @@ use DuckPhp\Component\Cache;
 use DuckPhp\Component\Configer;
 use DuckPhp\Component\EventManager;
 use DuckPhp\Core\App;
-use DuckPhp\Core\Runtime;
+use DuckPhp\Core\Helper;
 
 trait BusinessHelperTrait
 {
@@ -23,7 +23,7 @@ trait BusinessHelperTrait
     }
     public static function XpCall($callback, ...$args)
     {
-        return Runtime::_()->_XpCall($callback, ...$args);
+        return Helper::_()->_XpCall($callback, ...$args);
     }
     public static function Cache($object = null)
     {

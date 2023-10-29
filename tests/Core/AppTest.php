@@ -372,13 +372,7 @@ $this->doFunctions();
         
         ////
         $str='<>';
-        echo  App::H($str);
-        echo App::H(['a'=>'b']);
-        echo App::H(123);
-        echo App::L("a{b}c",[]);
-        echo App::L("a{b}c",['b'=>'123']);
-        echo App::Hl("&<{b}>",['b'=>'123']);
-        echo App::Json("&<{b}>",['b'=>'123']);
+
         App::IsRunning();
         App::IsDebug();
         App::IsRealDebug();
@@ -391,16 +385,7 @@ $this->doFunctions();
         App::Logger();
         $flag=App::G()->options['is_debug'];
         
-        App::G()->options['is_debug']=true;
-        App::var_dump("OK");
-        App::TraceDump();
-        App::DebugLog("OK");
-        App::G()->options['is_debug']=false;
-        App::TraceDump();
-        App::var_dump("OK");
-        App::DebugLog("OK");
 
-        App::G()->options['is_debug']=$flag;
         
    
     }

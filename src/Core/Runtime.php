@@ -44,7 +44,6 @@ class Runtime extends ComponentBase
         }
         $this->is_running = true;
     }
-
     public function clear()
     {
         if ($this->options['use_output_buffer']) {
@@ -62,118 +61,5 @@ class Runtime extends ComponentBase
             $this->clear();
         }
         $this->is_in_exception = true;
-        ;
-    }
-    //////////////////////
-    public function _H(&$str)
-    {
-        if (is_string($str)) {
-            $str = htmlspecialchars($str, ENT_QUOTES);
-            return $str;
-        }
-        if (is_array($str)) {
-            foreach ($str as $k => &$v) {
-                static::_H($v);
-            }
-            return $str;
-        }
-        return $str;
-    }
-    public function _L($str, $args = [])
-    {
-        //Override for locale and so do
-        if (empty($args)) {
-            return $str;
-        }
-        $a = [];
-        foreach ($args as $k => $v) {
-            $a["{$k}"] = $v;
-        }
-        $ret = str_replace(array_keys($a), array_values($a), $str);
-        return $ret;
-    }
-    public function _Hl($str, $args)
-    {
-        $t = $this->_L($str, $args);
-        return $this->_H($t);
-    }
-    public function _Json($data)
-    {
-        $flag = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
-        if (App::IsDebug()) {
-            $flag = $flag | JSON_PRETTY_PRINT;
-        }
-        return json_encode($data, $flag);
-    }
-    public function _IsAjax()
-    {
-        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-        $ref = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? null;
-        return $ref && 'xmlhttprequest' == strtolower($ref) ? true : false;
-    }
-    ///////////////
-    protected function is_debug()
-    {
-        return $this->context()->_IsDebug();
-    }
-    public function _TraceDump()
-    {
-        if (!$this->is_debug()) {
-            return;
-        }
-        echo "<pre>\n";
-        echo (new \Exception('', 0))->getTraceAsString();
-        echo "</pre>\n";
-    }
-    public function _VarLog($var)
-    {
-        if (!$this->is_debug()) {
-            return;
-        }
-        return Logger::_()->debug(var_export($var, true));
-    }
-    public function _var_dump(...$args)
-    {
-        if (!$this->is_debug()) {
-            return;
-        }
-        echo "<pre>\n";
-        var_dump(...$args);
-        echo "</pre>\n";
-    }
-    public function _DebugLog($message, array $context = array())
-    {
-        if (!$this->is_debug()) {
-            return false;
-        }
-        return Logger::_()->debug($message, $context);
-    }
-    ////
-    public function _SqlForPager($sql, $pageNo, $pageSize = 10)
-    {
-        $pageSize = (int)$pageSize;
-        $start = ((int)$pageNo - 1) * $pageSize;
-        $start = (int)$start;
-        $sql .= " LIMIT $start,$pageSize";
-        return $sql;
-    }
-    public function _SqlForCountSimply($sql)
-    {
-        $sql = preg_replace_callback('/^\s*select\s(.*?)\sfrom\s/is', function ($m) {
-            return 'SELECT COUNT(*) as c FROM ';
-        }, $sql);
-        return $sql;
-    }
-    public static function XpCall($callback, ...$args)
-    {
-        return static::G()->_XpCall($callback, ...$args);
-    }
-    public function _XpCall($callback, ...$args)
-    {
-        try {
-            return ($callback)(...$args);
-        } catch (\Exception $ex) {
-            return $ex;
-        }
     }
 }

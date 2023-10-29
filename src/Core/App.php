@@ -291,7 +291,7 @@ EOT;
     public function _ExitJson($ret, $exit = true)
     {
         SystemWrapper::G()->_header('Content-Type:application/json; charset=utf-8');
-        echo Runtime::G()->_Json($ret);
+        echo Helper::G()->_Json($ret);
         if ($exit) {
             SystemWrapper::_()->_exit();
         }
@@ -398,44 +398,6 @@ EOT;
     {
         return View::G()->getViewData();
     }
-    public static function IsAjax()
-    {
-        return Runtime::_()->_IsAjax();
-    }
-    public static function var_dump(...$args)
-    {
-        return Runtime::_()->_var_dump(...$args);
-    }
-    public static function DebugLog($message, array $context = array())
-    {
-        return Runtime::_()->_DebugLog($message, $context);
-    }
-    // system static
-    
-    public static function H($str)
-    {
-        return Runtime::_()->_H($str);
-    }
-    public static function L($str, $args = [])
-    {
-        return Runtime::_()->_L($str, $args);
-    }
-    public static function Hl($str, $args = [])
-    {
-        return Runtime::_()->_Hl($str, $args);
-    }
-    public static function Json($data)
-    {
-        return Runtime::_()->_Json($data);
-    }
-    public static function TraceDump()
-    {
-        return Runtime::_()->_TraceDump();
-    }
-    public static function VarLog($var)
-    {
-        return Runtime::_()->_VarLog($var);
-    }
     public static function isInException()
     {
         return Runtime::G()->isInException();
@@ -444,6 +406,14 @@ EOT;
     {
         return Runtime::G()->isRunning();
     }
+    
+    public static function IsAjax()
+    {
+        return Helper::_()->_IsAjax();
+    }
+
+    /////////////////
+    
     // route static
     public static function Url($url = null)
     {
@@ -457,6 +427,7 @@ EOT;
     {
         return Route::G()->_Domain($use_scheme);
     }
+    ///////
     public static function replaceController($old_class, $new_class)
     {
         return Route::G()->replaceController($old_class, $new_class);

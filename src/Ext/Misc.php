@@ -6,8 +6,8 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\Helper;
 use DuckPhp\Core\Route;
-use DuckPhp\Core\Runtime;
 
 class Misc extends ComponentBase
 {
@@ -94,7 +94,7 @@ class Misc extends ComponentBase
         }
         foreach ($data as &$v) {
             foreach ($cols as $k) {
-                $v[$k] = Runtime::_()->_H($v[$k], ENT_QUOTES);
+                $v[$k] = Helper::H($v[$k]);
             }
         }
         return $data;
