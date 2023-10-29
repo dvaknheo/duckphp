@@ -1,7 +1,7 @@
 <?php
-namespace tests\DuckPhp\Foundation;
+namespace tests\DuckPhp\Component;
 
-use DuckPhp\Foundation\CallInPhaseTrait;
+use DuckPhp\Component\CallInPhaseTrait;
 use DuckPhp\SingletonEx\SingletonExTrait;
 
 class CallInPhaseTraitTest extends \PHPUnit\Framework\TestCase

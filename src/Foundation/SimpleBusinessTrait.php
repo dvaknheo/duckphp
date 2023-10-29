@@ -5,8 +5,8 @@
  */
 namespace DuckPhp\Foundation;
 
+use DuckPhp\Component\CallInPhaseTrait;
 use DuckPhp\Core\SingletonTrait;
-use DuckPhp\Foundation\CallInPhaseTrait;
 
 trait SimpleBusinessTrait
 {
