@@ -113,10 +113,10 @@ class App extends ComponentBase
                 //do nothing
             } // @codeCoverageIgnore
         }
-        if ($this->options['default_exception_self_display'] && method_exists($ex, 'display')) {
-            $ex->display($ex); // 这里要改
-            return;
-        }
+        //if ($this->options['default_exception_self_display'] && method_exists($ex, 'display')) {
+        //    $ex->display($ex); // 这里要改
+        //    return;
+        //}
         $error_view = $this->options['error_500'] ?? null;
         $error_view = $this->is_inited?$error_view:null;
         
@@ -269,14 +269,6 @@ EOT;
             ($v)();
         }
     }
-    public static function Show($data = [], $view = '')
-    {
-        return static::G()->_Show($data, $view);
-    }
-    public function _Show($data = [], $view = '')
-    {
-        return View::G()->_Show($data, $view);
-    }
     public function adjustViewFile($view)
     {
         return $view === '' ? Route::G()->getRouteCallingPath() : $view;
@@ -390,18 +382,7 @@ EOT;
     {
         throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
     }
-    public static function PageNo($new_value = null)
-    {
-        return static::Pager()->current($new_value);
-    }
-    public static function PageSize($new_value = null)
-    {
-        return static::Pager()->pageSize($new_value);
-    }
-    public static function PageHtml($total, $options = [])
-    {
-        return static::Pager()->render($total, $options);
-    }
+
     
     public static function IsAjax()
     {
@@ -482,23 +463,11 @@ EOT;
     {
         return Route::G()->_Domain($use_scheme);
     }
-    public static function Parameter($key = null, $default = null)
-    {
-        return Route::G()->_Parameter($key, $default);
-    }
-    public static function PathInfo()
-    {
-        return Route::G()->_PathInfo();
-    }
     // view static
 
     public static function Display($view, $data = null)
     {
         return View::G()->_Display($view, $data);
-    }
-    public static function Render($view, $data = null)
-    {
-        return View::G()->_Render($view, $data);
     }
     public static function getViewData()
     {
@@ -524,60 +493,13 @@ EOT;
     {
         return Route::G()->addRouteHook($callback, $position, $once);
     }
-    public static function getRouteCallingClass()
-    {
-        return Route::G()->getRouteCallingClass();
-    }
-    public static function getRouteCallingMethod()
-    {
-        return Route::G()->getRouteCallingMethod();
-    }
-    //view
-    public static function setViewHeadFoot($head_file = null, $foot_file = null)
-    {
-        return View::G()->setViewHeadFoot($head_file, $foot_file);
-    }
-    public static function assignViewData($key, $value = null)
-    {
-        return View::G()->assignViewData($key, $value);
-    }
+
     //exception manager
-    public static function assignExceptionHandler($classes, $callback = null)
-    {
-        return ExceptionManager::G()->assignExceptionHandler($classes, $callback);
-    }
-    public static function setMultiExceptionHandler(array $classes, callable $callback)
-    {
-        return ExceptionManager::G()->setMultiExceptionHandler($classes, $callback);
-    }
-    public static function setDefaultExceptionHandler(callable $callback)
-    {
-        return ExceptionManager::G()->setDefaultExceptionHandler($callback);
-    }
     public static function CallException($ex)
     {
         return ExceptionManager::G()->_CallException($ex);
     }
-    public static function GET($key = null, $default = null)
-    {
-        return SuperGlobal::_()->_Get($key, $default);
-    }
-    public static function POST($key = null, $default = null)
-    {
-        return SuperGlobal::_()->_POST($key, $default);
-    }
-    public static function REQUEST($key = null, $default = null)
-    {
-        return SuperGlobal::_()->_REQUEST($key, $default);
-    }
-    public static function COOKIE($key = null, $default = null)
-    {
-        return SuperGlobal::_()->_COOKIE($key, $default);
-    }
-    public static function SERVER($key = null, $default = null)
-    {
-        return SuperGlobal::_()->_SERVER($key, $default);
-    }
+
     public static function SESSION($key = null, $default = null)
     {
         return SuperGlobal::_()->_SESSION($key, $default);

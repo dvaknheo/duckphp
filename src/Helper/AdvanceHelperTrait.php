@@ -5,6 +5,7 @@
  */
 namespace DuckPhp\Helper;
 
+use DuckPhp\Component\DbManager;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Route;
@@ -42,6 +43,11 @@ trait AdvanceHelperTrait
     public static function getViewData()
     {
         return View::_()->getViewData();
+    }
+    //////////////
+    public static function DbCloseAll()
+    {
+        return DbManager::G()->_DbCloseAll(); //TODO;
     }
     //////////////////////////////////////
     /*

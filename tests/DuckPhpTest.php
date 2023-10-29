@@ -5,6 +5,7 @@ use DuckPhp\DuckPhp;
 use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckPhp\Ext\Misc;
 use DuckPhp\Component\Configer;
+use DuckPhp\Core\View;
 
 class DuckPhpTest extends \PHPUnit\Framework\TestCase
 {
@@ -42,9 +43,9 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
 
         
         
-        DuckPhp::Show([],'block');
+        View::_()->_Show([],'block');
         DuckPhp::G()->options['close_resource_at_output']=false;
-        DuckPhp::Show([],'block');
+        View::_()->_Show([],'block');
 
         
         

@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Foundation;
 use DuckPhp\Foundation\SimpleControllerTrait;
 
-class ControllerFakeSingletonTraitTest extends \PHPUnit\Framework\TestCase
+class SimpleControllerTraitTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {

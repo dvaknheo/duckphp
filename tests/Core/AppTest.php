@@ -176,32 +176,15 @@ echo "-------------------------------------\n";
 try{
 App::Pager(Pager::G());
 }catch(\Exception $ex){}
-try{
-App::PageNo();
-}catch(\Exception $ex){}
-try{
-App::PageSize();
-}catch(\Exception $ex){}
-try{
-App::PageHtml(123);
-}catch(\Exception $ex){}
+
 
         try{
             App::Event();
         }catch(\Throwable $ex){
         }
 //*
-        App::GET('a');
-        App::POST('a');
-        App::REQUEST('a');
-        App::COOKIE('a');
-        App::SERVER('SCRIPT_FILENAME');
+
         
-        App::GET();
-        App::POST();
-        App::REQUEST();
-        App::COOKIE();
-        App::SERVER();
         App::SESSION();
         App::FILES();
         
@@ -273,7 +256,7 @@ $this->doFunctions();
         AppTestApp::G(new AppTestApp());
         App::G(new App())->init($options);
         App::G()->addBeforeShowHandler(function(){ echo "addBeforeShowHandler";});
-        App::Show(['A'=>'b'],"view");
+        \DuckPhp\Core\View::Show(['A'=>'b'],"view");
         
         ////
         ////[[[[
@@ -378,14 +361,7 @@ $this->doFunctions();
         App::G()->options['error_500']=function($ex){ echo $ex;};
         App::CallException(new \Exception("22222222222222",-1));
         
-        App::assignExceptionHandler(\Exception::class,function($ex){
-            App::OnDefaultException($ex);
-            echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-        });
-        App::CallException(new \Exception("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",-1));
-        App::CallException(new E("EXxxxxxxxxxxxxxx",-1));
-        App::CallException(new E2("EXxxxxxxxxxxxxxx",-1));
-        
+
         
         
         $options=[
@@ -412,7 +388,6 @@ $this->doFunctions();
         echo App::L("a{b}c",['b'=>'123']);
         echo App::Hl("&<{b}>",['b'=>'123']);
         echo App::Json("&<{b}>",['b'=>'123']);
-        echo App::Domain();
         App::IsRunning();
         App::IsDebug();
         App::IsRealDebug();
@@ -456,9 +431,6 @@ $this->doFunctions();
         $method="method";
         App::Url($url=null);
         
-        App::Parameter('x','y');
-        App::getRouteCallingClass();
-        App::getRouteCallingMethod();
         App::Url('abc');
         App::Res('abc');
         //*/
@@ -472,15 +444,9 @@ $this->doFunctions();
         
         App::G()->addBeforeShowHandler(function(){ echo "addBeforeShowHandler";});
         App::G()->options['skip_view_notice_error']=true;
-        App::Show(['A'=>'b'],"view");
-        App::Render("view",['A'=>'b']);
-        App::Display("view",['A'=>'b']);
         App::getViewData();
         
         
-        $key="key";
-        App::setViewHeadFoot($head_file=null, $foot_file=null);
-        App::assignViewData($key, $value=null);
         
         //*/
         $url="/abc";
@@ -496,13 +462,6 @@ $this->doFunctions();
         
         
         $classes=[];
-        $callback=function($code){
-            var_dump(DATE(DATE_ATOM));
-        };
-        App::assignExceptionHandler($classes, $callback);
-        App::setMultiExceptionHandler($classes, $callback);
-        App::setDefaultExceptionHandler($callback);
-        
         $k="k";$v="v";
         $class_name=AppTestObject::class;
         $var_name="x";
@@ -514,7 +473,6 @@ $this->doFunctions();
         
         
         App::isInException();
-        App::PathInfo();
         
         
         App::CallException(new \Exception("something"));

@@ -68,7 +68,7 @@ class AdvanceHelperTraitTest extends \PHPUnit\Framework\TestCase
         $this->do_Core_Component();
         
         AdvanceHelper::getViewData();
-        
+        AdvanceHelper::DbCloseAll();
         $old_class = AdvanceHelperTestObject::class;
         $new_class = AdvanceHelperTestObject::class;
         AdvanceHelper::replaceController($old_class, $new_class);
@@ -91,7 +91,7 @@ class AdvanceHelperTraitTest extends \PHPUnit\Framework\TestCase
         ];
         App::G()->init($options);
         //AdvanceHelper::addBeforeShowHandler(function(){});
-
+        
 
     }
 }

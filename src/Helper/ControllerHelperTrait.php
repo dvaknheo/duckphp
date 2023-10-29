@@ -143,10 +143,7 @@ trait ControllerHelperTrait
         return SuperGlobal::_()->_SERVER($key, $default);
     }
     ////////////
-    public static function DbCloseAll()
-    {
-        return DbManager::G()->_DbCloseAll(); //TODO;
-    }
+
     ////
     public static function PageNo($new_value = null)
     {

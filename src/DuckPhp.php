@@ -24,6 +24,8 @@ use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Component\UserObject;
 use DuckPhp\Core\App;
 use DuckPhp\Core\Console;
+use DuckPhp\Core\ExceptionManager;
+use DuckPhp\Core\Route;
 
 class DuckPhp extends App
 {
@@ -58,7 +60,7 @@ class DuckPhp extends App
             return $ret;
         }
         if ($welcome_handle) {
-            $path_info = static::PathInfo();
+            $path_info = Route::PathInfo();
             if ($path_info === '' || $path_info === '/') {
                 ($welcome_handle)();
                 return true;
@@ -116,7 +118,7 @@ class DuckPhp extends App
             static::Admin(($this->options['class_admin'])::G());
         }
         if ($this->options['exception_reporter'] ?? null) {
-            static::assignExceptionHandler(\Exception::class, [$this->options['exception_reporter'], 'OnException']);
+            ExceptionManager::_()->assignExceptionHandler(\Exception::class, [$this->options['exception_reporter'], 'OnException']);
         }
         ///////
         return $this;

@@ -11,7 +11,7 @@ class SuperGlobalTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(SuperGlobal::class);
         
-                App::SessionSet('x',DATE('Y,M,d'));
+        App::SessionSet('x',DATE('Y,M,d'));
         App::SessionGet('x');
         App::SessionUnset('x');
 
@@ -28,28 +28,28 @@ class SuperGlobalTest extends \PHPUnit\Framework\TestCase
             'superglobal_auto_define' => true,
         ],App::G());
         
-        App::GET('a');
-        App::POST('a');
-        App::REQUEST('a');
-        App::COOKIE('a');
-        App::SERVER('SCRIPT_FILENAME');
+        SuperGlobal::_()->_GET('a');
+        SuperGlobal::_()->_POST('a');
+        SuperGlobal::_()->_REQUEST('a');
+        SuperGlobal::_()->_COOKIE('a');
+        SuperGlobal::_()->_SERVER('SCRIPT_FILENAME');
         
-        App::GET();
-        App::POST();
-        App::REQUEST();
-        App::COOKIE();
-        App::SERVER();
-        App::SESSION();
-        App::FILES();
+        SuperGlobal::_()->_GET();
+        SuperGlobal::_()->_POST();
+        SuperGlobal::_()->_REQUEST();
+        SuperGlobal::_()->_COOKIE();
+        SuperGlobal::_()->_SERVER();
+        SuperGlobal::_()->_SESSION();
+        SuperGlobal::_()->_FILES();
         
-        App::Route();
+        //App::Route();
         
         SuperGlobal::DefineSuperGlobalContext();
-        App::SessionSet('x',DATE('Y,M,d'));
-        App::SessionUnset('x');
+        SuperGlobal::_()->_SessionSet('x',DATE('Y,M,d'));
+        SuperGlobal::_()->_SessionUnset('x');
 
-        App::CookieSet('x',DATE('Y,M,d'));
-        App::CookieGet('x');
+        SuperGlobal::_()->_CookieSet('x',DATE('Y,M,d'));
+        SuperGlobal::_()->_CookieGet('x');
         
         
         

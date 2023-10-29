@@ -26,7 +26,6 @@ class ControllerHelperTraitTest extends \PHPUnit\Framework\TestCase
         ControllerHelper::Parameter('a','b');
         ControllerHelper::getRouteCallingMethod();
         ControllerHelper::getRouteCallingClass();
-        ControllerHelper::DbCloseAll();
         //*/
         //*
         $path_base=realpath(__DIR__.'/../');
