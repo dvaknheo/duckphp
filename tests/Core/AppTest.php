@@ -730,7 +730,7 @@ class FakeSessionHandler implements \SessionHandlerInterface
 
 }
 namespace tests\DuckPhp\Core\Helper{
-    use \DuckPhp\Core\ExtendableStaticCallTrait as a;
+    use \DuckPhp\Ext\ExtendableStaticCallTrait as a;
 
 class ControllerHelper
 {

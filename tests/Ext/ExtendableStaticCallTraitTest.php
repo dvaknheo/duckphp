@@ -1,7 +1,7 @@
 <?php
-namespace tests\DuckPhp\Core;
+namespace tests\DuckPhp\Ext;
 
-use DuckPhp\Core\ExtendableStaticCallTrait;
+use DuckPhp\Ext\ExtendableStaticCallTrait;
 
 class ExtendableStaticCallTraitTest extends \PHPUnit\Framework\TestCase
 {

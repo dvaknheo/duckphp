@@ -5,7 +5,7 @@
  */
 namespace DuckPhp\Helper;
 
-use DuckPhp\Core\ExtendableStaticCallTrait;
+use DuckPhp\Ext\ExtendableStaticCallTrait;
 use DuckPhp\Helper\BusinessHelperTrait;
 
 class BusinessHelper
