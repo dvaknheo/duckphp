@@ -52,7 +52,7 @@ class RedisManager extends ComponentBase
     protected function initContext(object $context)
     {
         //$this->context_class = $context
-        //($this->context_class)::G()->_Setting();
+        //$this->context()->_Setting();
         if ($this->options['redis_list_reload_by_setting']) {
             /** @var mixed */
             $setting = $context->_Setting(); /** @phpstan-ignore-line */

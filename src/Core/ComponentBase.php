@@ -25,17 +25,11 @@ class ComponentBase // implements ComponentInterface
         if (defined('__SINGLETONEX_REPALACER')) {
             return (__SINGLETONEX_REPALACER)(static::class, $object);
         }
-        if ($object) {
-            self::$_instances[static::class] = $object;
-            return $object;
-        }
-        $me = self::$_instances[static::class] ?? null;
-        if (null === $me) {
-            $me = new static();
-            self::$_instances[static::class] = $me;
-        }
-        
-        return $me;
+    }
+    public function context()
+    {
+        //return App::Current();
+        return ($this->context_class)::G();
     }
     public function init(array $options, ?object $context = null)
     {
@@ -87,7 +81,7 @@ class ComponentBase // implements ComponentInterface
     public function extendFullFile($path_main, $path_sub, $file)
     {
         if ($this->context_class) {
-            return ($this->context_class)::G()->getOverrideableFile($path_sub, $file);
+            return $this->context()->getOverrideableFile($path_sub, $file);
         }
         
         if (static::IsAbsPath($file)) {

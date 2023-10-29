@@ -32,7 +32,7 @@ class DuckPhpCommand extends ComponentBase
     {
         $options = Console::G()->getCliParameters();
         $options['http_app_class'] = $this->context_class;
-        $options['path'] = ($this->context_class)::G()->options['path'];
+        $options['path'] = $this->context()->options['path'];
         if (!empty($options['http_server'])) {
             /** @var string */
             $class = str_replace('/', '\\', $options['http_server']);
@@ -62,7 +62,7 @@ EOT;
      */
     public function command_version()
     {
-        echo($this->context_class)::G()->version();
+        echo$this->context()->version();
         echo "\n";
     }
     /**
@@ -95,8 +95,8 @@ EOT;
         $_SERVER['REQUEST_URI'] = $uri;
         $_SERVER['PATH_INFO'] = parse_url($uri, PHP_URL_PATH);
         $_SERVER['HTTP_METHOD'] = $post ? $post :'GET';
-        ($this->context_class)::G()->options['console_enable'] = false;
-        ($this->context_class)::G()->run();
+        $this->context()->options['console_enable'] = false;
+        $this->context()->run();
     }
     ///////////////////////////////////
     /**

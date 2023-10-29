@@ -6,6 +6,7 @@
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\Logger;
 
 class Runtime extends ComponentBase
 {
@@ -113,7 +114,7 @@ class Runtime extends ComponentBase
     ///////////////
     protected function is_debug()
     {
-        return App::Current()->_IsDebug();
+        return $this->context()->_IsDebug();
     }
     public function _TraceDump()
     {
@@ -129,7 +130,7 @@ class Runtime extends ComponentBase
         if (!$this->is_debug()) {
             return;
         }
-        return ($this->context_class)::Logger()->debug(var_export($var, true));
+        return Logger::_()->debug(var_export($var, true));
     }
     public function _var_dump(...$args)
     {
@@ -145,7 +146,7 @@ class Runtime extends ComponentBase
         if (!$this->is_debug()) {
             return false;
         }
-        return ($this->context_class)::Logger()->debug($message, $context);
+        return Logger::_()->debug($message, $context);
     }
     ////
     public function _SqlForPager($sql, $pageNo, $pageSize = 10)

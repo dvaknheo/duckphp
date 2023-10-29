@@ -45,14 +45,14 @@ class View extends ComponentBase
     public function _Show(array $data, string $view): void
     {
         if ($this->context_class) {
-            ($this->context_class)::G()->onBeforeOutput();
+            $this->context()->onBeforeOutput();
         }
         if ($this->options['view_skip_notice_error'] ?? false) {
             $this->error_reporting_old = error_reporting();
             error_reporting($this->error_reporting_old & ~E_NOTICE);
         }
         
-        $view = $this->context_class ? ($this->context_class)::G()->adjustViewFile($view) : $view ;
+        $view = $this->context_class ? $this->context()->adjustViewFile($view) : $view ;
         $this->view_file = $this->getViewFile($view);
         $this->head_file = $this->getViewFile($this->head_file);
         $this->foot_file = $this->getViewFile($this->foot_file);
