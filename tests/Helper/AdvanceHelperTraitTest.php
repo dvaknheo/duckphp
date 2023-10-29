@@ -60,8 +60,8 @@ class AdvanceHelperTraitTest extends \PHPUnit\Framework\TestCase
         }
         AdvanceHelper::CookieSet ('a','b');
         AdvanceHelper::SessionSet('c','d');
-        AdvanceHelper::OnEvent('MyEvent',[static::class, 'callit']);
-        App::FireEvent('MyEvent','A','B','C');
+        //AdvanceHelper::OnEvent('MyEvent',[static::class, 'callit']);
+        //App::FireEvent('MyEvent','A','B','C');
     
         ////]]]]
         

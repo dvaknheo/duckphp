@@ -6,100 +6,104 @@
 namespace DuckPhp\Helper;
 
 use DuckPhp\Core\App;
+use DuckPhp\Core\Route;
+use DuckPhp\Core\Runtime;
+use DuckPhp\Core\SuperGlobal;
+use DuckPhp\Core\SystemWrapper;
+use DuckPhp\Core\View;
+use DuckPhp\Core\ExceptionManager;
 
 trait AdvanceHelperTrait
 {
-    public static function CallException($ex)
-    {
-        return App::CallException($ex);
-    }
-    public static function isRunning()
-    {
-        return App::isRunning();
-    }
-    public static function isInException()
-    {
-        return App::isInException();
-    }
-    public static function addRouteHook($callback, $position = 'append-outter', $once = true)
-    {
-        return App::addRouteHook($callback, $position, $once);
-    }
-    public static function replaceController($old_class, $new_class)
-    {
-        return App::replaceController($old_class, $new_class);
-    }
-    public static function getViewData()
-    {
-        return App::getViewData();
-    }
-    ////////////
-    public static function SESSION($key = null, $default = null)
-    {
-        return App::SESSION($key, $default);
-    }
-    public static function FILES($key = null, $default = null)
-    {
-        return App::FILES($key, $default);
-    }
-    public static function SessionSet($key, $value)
-    {
-        return App::SessionSet($key, $value);
-    }
-    public static function CookieSet($key, $value, $expire = 0)
-    {
-        return App::CookieSet($key, $value, $expire);
-    }
     public static function Event()
     {
         return App::Event();
     }
-    public static function OnEvent($event, $callback)
+    public static function CallException($ex)
     {
-        return App::OnEvent($event, $callback);
+        return ExceptionManager::CallException($ex);
     }
-    ////////////////////
-    public static function header($output, bool $replace = true, int $http_response_code = 0)
+    public static function isRunning()
     {
-        return App::header($output, $replace, $http_response_code);
+        return Runtime::_()->isRunning();
     }
-    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
+    public static function isInException()
     {
-        return App::setcookie($key, $value, $expire, $path, $domain, $secure, $httponly);
+        return Runtime::_()->isInException();
     }
-    public static function exit($code = 0)
+    public static function addRouteHook($callback, $position = 'append-outter', $once = true)
     {
-        return App::exit($code);
+        return Route::_()->addRouteHook($callback, $position, $once);
     }
-    public static function set_exception_handler(callable $exception_handler)
+    public static function replaceController($old_class, $new_class)
     {
-        return App::set_exception_handler($exception_handler);
+        return Route::_()->replaceController($old_class, $new_class);
     }
-    public static function register_shutdown_function(callable $callback, ...$args)
+    public static function getViewData()
     {
-        return App::register_shutdown_function($callback, ...$args);
-    }
-    public static function session_start(array $options = [])
-    {
-        return App::session_start($options);
-    }
-    public static function session_id($session_id = null)
-    {
-        return App::session_id($session_id);
-    }
-    public static function session_destroy()
-    {
-        return App::session_destroy();
-    }
-    public static function session_set_save_handler(\SessionHandlerInterface $handler)
-    {
-        return App::session_set_save_handler($handler);
+        return View::_()->getViewData();
     }
     //////////////////////////////////////
     /*
     public static function addBeforeShowHandler($handler)
     {
-        return App::G()->addBeforeShowHandler($handler);
+        return App::_()->addBeforeShowHandler($handler);
     }
     //*/
+    ////////////
+    public static function SESSION($key = null, $default = null)
+    {
+        return SuperGlobal::_()->_SESSION($key, $default);
+    }
+    public static function FILES($key = null, $default = null)
+    {
+        return SuperGlobal::_()->_FILES($key, $default);
+    }
+    public static function SessionSet($key, $value)
+    {
+        return SuperGlobal::_()->_SessionSet($key, $value);
+    }
+    public static function CookieSet($key, $value, $expire = 0)
+    {
+        return SuperGlobal::_()->_CookieSet($key, $value, $expire);
+    }
+
+    ////////////////////
+    public static function header($output, bool $replace = true, int $http_response_code = 0)
+    {
+        return SystemWrapper::_()->_header($output, $replace, $http_response_code);
+    }
+    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
+    {
+        return SystemWrapper::_()->_setcookie($key, $value, $expire, $path, $domain, $secure, $httponly);
+    }
+    public static function exit($code = 0)
+    {
+        return SystemWrapper::_()->_exit($code);
+    }
+    public static function set_exception_handler(callable $exception_handler)
+    {
+        return SystemWrapper::_()->_set_exception_handler($exception_handler);
+    }
+    public static function register_shutdown_function(callable $callback, ...$args)
+    {
+        return SystemWrapper::_()->_register_shutdown_function($callback, ...$args);
+    }
+    public static function session_start(array $options = [])
+    {
+        return SystemWrapper::_()->_session_start($options);
+    }
+    public static function session_id($session_id = null)
+    {
+        return SystemWrapper::_()->_session_id($session_id);
+    }
+    public static function session_destroy()
+    {
+        return SystemWrapper::_()->_session_destroy();
+    }
+    public static function session_set_save_handler(\SessionHandlerInterface $handler)
+    {
+        return SystemWrapper::_()->_session_set_save_handler($handler);
+    }
+
 }

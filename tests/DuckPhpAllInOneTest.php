@@ -9,7 +9,7 @@ class DuckPhpAllInOneTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(DuckPhpAllInOne::class);
         $LibCoverage = \LibCoverage\LibCoverage::G();
-        
+        new DuckPhpAllInOne();
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End(DuckPhpAllInOne::class);
 

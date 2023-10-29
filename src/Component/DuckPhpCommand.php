@@ -62,7 +62,7 @@ EOT;
      */
     public function command_version()
     {
-        echo$this->context()->version();
+        echo $this->context()->version();
         echo "\n";
     }
     /**

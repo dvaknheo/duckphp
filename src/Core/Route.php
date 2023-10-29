@@ -42,10 +42,10 @@ class Route extends ComponentBase
     
     //properties
     protected $parameters = [];
-    protected $route_error = '';
-    protected $calling_path = '';
-    protected $calling_class = '';
-    protected $calling_method = '';
+    public $route_error = '';
+    public $calling_path = '';
+    public $calling_class = '';
+    public $calling_method = '';
     
     protected $enable_default_callback = true;
     protected $is_failed = false;

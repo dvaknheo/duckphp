@@ -30,9 +30,6 @@ class DuckPhp extends App
         'ext_options_file_enable' => false,
         'ext_options_file' => 'config/DuckPhpApps.config.php',
         
-        'cli_enable' => true,
-        
-        'database_auto_extend_method' => null,
         'path_info_compact_enable' => null,
         
         'class_user' => null,
@@ -40,6 +37,9 @@ class DuckPhp extends App
         
         'session_prefix' => null,
         'table_prefix' => null,
+        
+        'exception_reporter' => null,
+        //'install'
     ];
     public static function InitAsContainer($options)
     {
