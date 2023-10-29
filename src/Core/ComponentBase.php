@@ -5,8 +5,12 @@
  */
 namespace DuckPhp\Core;
 
+use DuckPhp\Core\SingletonExTrait;
+
 class ComponentBase // implements ComponentInterface
 {
+    use SingletonExTrait;
+    
     public $options = [];
     protected $is_inited = false;
     protected $context_class = '';
@@ -19,17 +23,11 @@ class ComponentBase // implements ComponentInterface
         return static::_($object);
     }
     protected static $_instances = [];
-    //embed
-    public static function _($object = null)
-    {
-        if (defined('__SINGLETONEX_REPALACER')) {
-            return (__SINGLETONEX_REPALACER)(static::class, $object);
-        }
-    }
+
     public function context()
     {
-        //return App::Current();
-        return ($this->context_class)::G();
+        return App::Current();
+        //return ($this->context_class)::G();
     }
     public function init(array $options, ?object $context = null)
     {

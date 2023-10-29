@@ -16,15 +16,15 @@ class PhaseContainer
     
     public static function ReplaceSingletonImplement()
     {
-        if (!defined('__SINGLETONEX_REPALACER')) {
-            define('__SINGLETONEX_REPALACER', static::class . '::GetObject');
-            define('__SINGLETONEX_REPALACER_CLASS', static::class);
+        //if (!defined('__SINGLETONEX_REPALACER')) {
+            //define('__SINGLETONEX_REPALACER', static::class . '::GetObject');
+            //define('__SINGLETONEX_REPALACER_CLASS', static::class);
             static::GetContainerInstanceEx()->default = static::class;
             static::GetContainerInstanceEx()->current = static::class;
             static::GetContainerInstanceEx()->publics[static::class] = true;
             return true;
-        }
-        return false;
+        //}
+        //return false;
     }
     public static function GetObject($class, $object = null)
     {
@@ -43,11 +43,11 @@ class PhaseContainer
     }
     public static function GetContainer()
     {
-        if (!defined('__SINGLETONEX_REPALACER_CLASS')) {
-            return null;
-        }
-        $class = __SINGLETONEX_REPALACER_CLASS;
-        return $class::GetContainerInstanceEx();
+        //if (!defined('__SINGLETONEX_REPALACER_CLASS')) {
+            //return null;
+        //}
+        //$class = __SINGLETONEX_REPALACER_CLASS;
+        return static::GetContainerInstanceEx();
     }
     ////////////////////////////////
     public function _GetObject(string $class, $object = null)
@@ -117,6 +117,8 @@ class PhaseContainer
                 echo "        ";
                 if (isset($this->publics[$k])) {
                     echo "*";
+                } else {
+                    echo " ";
                 }
                 $c = $v?get_class($v):null;
                 echo($v?md5(spl_object_hash($v)) :'NULL');
@@ -127,6 +129,7 @@ class PhaseContainer
                 echo " ;\n";
             }
         }
-        echo "\n --end--- </pre> \n";
+        echo "\n        * is public";
+        echo "\n--end--- </pre> \n";
     }
 }

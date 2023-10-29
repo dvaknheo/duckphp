@@ -170,13 +170,6 @@ echo "-------------------------------------\n";
         $this->do_Core_Redirect();
         $this->doSystemWrapper();
         
-        $xfunc=function () {
-            var_dump("changed");
-            return true;
-        };
-        App::G()->replaceDefaultRunHandler($xfunc);
-        App::G()->run();
-        
         
         $this->do_Core_Component();
         

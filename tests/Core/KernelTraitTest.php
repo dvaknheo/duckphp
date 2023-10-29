@@ -100,15 +100,6 @@ echo "-------------------------------------\n";
         $this->do404();
         
 
-        
-        $xfunc=function () {
-            var_dump("changed");
-            return true;
-        };
-        App::G()->replaceDefaultRunHandler($xfunc);
-        App::G()->run();
-        
-
         ////
         //Runtime::G()->toggleOutputed(false);
         //App::OnOutputBuffering('abc');

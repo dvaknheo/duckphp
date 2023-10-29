@@ -4,7 +4,7 @@ namespace tests\DuckPhp\Component;
 use DuckPhp\Component\RouteHookPathInfoCompat;
 use DuckPhp\Core\App;
 use DuckPhp\Core\Route;
-use DuckPhp\Ext\SuperGlobalContext;
+use DuckPhp\Core\SuperGlobal;
 
 class RouteHookPathInfoCompatTest extends \PHPUnit\Framework\TestCase
 {

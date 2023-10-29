@@ -2,6 +2,16 @@
 // view/test/done.php?>
 <!doctype html><html><body>
 <fieldset>
+<legend>全部单例</legend>
+<pre>
+<?php 
+\Duckphp\Core\PhaseContainer::GetContainerInstanceEx()->dumpAllObject();
+?>
+</pre>
+</fieldset>
+
+
+<fieldset>
 <legend>应用的选项</legend>
 <pre>
 <?php var_export(array_diff_assoc(\DuckPhp\Core\App::G()->options,(new \DuckPhp\DuckPhp())->options));?>
@@ -25,6 +35,7 @@
 <?php $t=get_included_files();sort($t); var_export($t);?>
 </pre>
 </fieldset>
+<fieldset>
 <legend>DuckPhp 类的方法列表</legend>
 <pre>
 <?php 

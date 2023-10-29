@@ -21,10 +21,10 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
         ComponentBaseObject::G(new ComponentBaseObject());
         define('__SINGLETONEX_REPALACER',ComponentBaseObject::class.'::CreateObject');
         ComponentBaseObject::G();
-        ComponentBaseObject2::G()->init([]);
-        ComponentBaseObject2::G()->init([]);
+        //ComponentBaseObject2::G()->init([]);
+        ComponentBaseObject2::G()->init([],App::_());
         
-        
+        ComponentBaseObject2::G()->context();
         var_dump(ComponentBase::SlashDir(''));
         var_dump(ComponentBase::IsAbsPath(''));
         $options=[
@@ -57,6 +57,7 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
 
 class ComponentBaseObject extends ComponentBase  implements ComponentInterface
 {
+    public $context_class;
     public $options=[
         'path'=>'',
         'namespace'=>'zzz',
@@ -67,15 +68,6 @@ class ComponentBaseObject extends ComponentBase  implements ComponentInterface
     {
         parent::initOptions($options);
 
-        //$this->path = parent::getComponentPathByKey('path_test');
-        //$this->options['path_test']='/tmp';
-        //$this->path = parent::getComponentPathByKey('path_test');
-        
-        /*
-        $this->namespace = parent::getComponentNameSpace('namespace_test');
-        $this->options['namespace_test']='\\mynamespace';
-        $this->namespace = parent::getComponentNameSpace('namespace_test');
-        */
     }
     public static function CreateObject($class, $object)
     {

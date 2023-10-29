@@ -1,8 +1,8 @@
 <?php
-namespace tests\DuckPhp\Ext;
+namespace tests\DuckPhp\Component;
 
 use DuckPhp\Component\RouteHookRewrite;
-use DuckPhp\Ext\SuperGlobalContext;
+use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\Route;
 use DuckPhp\DuckPhp;
 

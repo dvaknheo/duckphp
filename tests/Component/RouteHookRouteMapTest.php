@@ -30,7 +30,7 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
         
         RouteHookRouteMap::G()->init($options, App::G());
         RouteHookRouteMap::G()->assignRoute('/first',RouteHookRouteMapTest_FakeObject::class.'::'.'fifth');
-        RouteHookRouteMap::G()->assignRoute('/sixth','~RouteHookRouteMapTest_FakeObject::sixth');
+//        RouteHookRouteMap::G()->assignRoute('/sixth','~RouteHookRouteMapTest_FakeObject::sixth');
         RouteHookRouteMap::G()->assignRoute('/seventh',[RouteHookRouteMapTest_FakeObject::class,'seventh']);
         RouteHookRouteMap::G()->assignRoute('^second(/(?<id>\d+))?',RouteHookRouteMapTest_FakeObject::class.'@'.'second');
         RouteHookRouteMap::G()->assignRoute(['/third*'=>RouteHookRouteMapTest_FakeObject::class.'->'.'adjustCallbackArrow']);

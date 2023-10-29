@@ -48,10 +48,7 @@ trait KernelTrait
             'use_env_file' => false,
         ];
     protected $setting = [];
-    
-    protected $default_run_handler = null;
-
-    protected $is_simple_mode = true;
+    //protected $is_simple_mode = true;
     protected $is_root = true;
 
     public static function RunQuickly(array $options = [], callable $after_init = null): bool
@@ -138,12 +135,14 @@ trait KernelTrait
         $exts = $this->options['ext'] ?? [];
         foreach ($exts as $class => $options) {
             if (\is_subclass_of($class, self::class)) {
-                $this->is_simple_mode = false;
+                //$this->is_simple_mode = false;
                 $extApps[$class] = $class; /** @phpstan-ignore-line */
             }
         }
         $this->is_root = !(\is_a($context, self::class));
-
+        
+        
+        /*
         if ($this->is_root && empty($extApps)) {
             $this->is_simple_mode = true;
             (self::class)::G($this); // remark ,don't use self::G()!
@@ -156,9 +155,10 @@ trait KernelTrait
             return true;
             //}
         }
+        //*/
         //////////////////////////////
         $apps = [];
-        if ($this->is_root || $this->options['container_only']) {
+        if ($this->is_root) { // || $this->options['container_only']
             $this->onBeforeCreatePhases();
             $flag = PhaseContainer::ReplaceSingletonImplement();
             $container = $this->getContainer();
@@ -166,7 +166,7 @@ trait KernelTrait
             $container->setCurrentContainer(static::class);
             $this->onAfterCreatePhases();
         } else {
-            $flag = PhaseContainer::ReplaceSingletonImplement();
+            //$flag = PhaseContainer::ReplaceSingletonImplement();
             $container = $this->getContainer();
             $container->setCurrentContainer(static::class);
         }
@@ -383,11 +383,6 @@ trait KernelTrait
         return $flag;
     }
     //main produce end
-    
-    public function replaceDefaultRunHandler(callable $handler = null): void
-    {
-        $this->default_run_handler = $handler;
-    }
     ////////////////////////
     //for override
     public static function On404(): void
