@@ -263,57 +263,9 @@ EOT;
     //}
     //trait Core_Helper
     //{
-    ////Exit;
-    public static function ExitJson($ret, $exit = true)
-    {
-        return static::_()->_ExitJson($ret, $exit);
-    }
-    public static function ExitRedirect($url, $exit = true)
-    {
-        return static::_()->_ExitRedirect($url, $exit);
-    }
-    public static function ExitRedirectOutside($url, $exit = true)
-    {
-        return static::_()->_ExitRedirectOutside($url, $exit);
-    }
-    public static function ExitRouteTo($url, $exit = true)
-    {
-        return static::_()->_ExitRedirect(static::Url($url), $exit);
-    }
-    public static function Exit404($exit = true)
-    {
-        static::On404();
-        if ($exit) {
-            SystemWrapper::_()->_exit();
-        }
-    }
+
     
-    public function _ExitJson($ret, $exit = true)
-    {
-        SystemWrapper::G()->_header('Content-Type:application/json; charset=utf-8');
-        echo Helper::G()->_Json($ret);
-        if ($exit) {
-            SystemWrapper::_()->_exit();
-        }
-    }
-    public function _ExitRedirect($url, $exit = true)
-    {
-        if (parse_url($url, PHP_URL_HOST)) {
-            SystemWrapper::_()->_exit();
-            return;
-        }
-        SystemWrapper::_()->_header('location: '.$url, true, 302);
-        if ($exit) {
-            SystemWrapper::_()->_exit();
-        }
-    }
-    public function _ExitRedirectOutside($url, $exit = true)
-    {
-        SystemWrapper::_()->_header('location: '.$url, true, 302);
-        if ($exit) {
-            SystemWrapper::_()->_exit();
-        }
-    }
+
     ///////
     public static function Platform()
     {
@@ -339,7 +291,6 @@ EOT;
     {
         //you can override this;
         return $this->_IsDebug();
-        ;
     }
 
     public static function PhaseCall($phase, $callback, ...$args)
@@ -406,19 +357,14 @@ EOT;
     {
         return Runtime::G()->isRunning();
     }
-    
     public static function IsAjax()
     {
         return Helper::_()->_IsAjax();
     }
-
     /////////////////
     
     // route static
-    public static function Url($url = null)
-    {
-        return Route::G()->_Url($url);
-    }
+
     public static function Res($url = null)
     {
         return Route::G()->_Res($url);

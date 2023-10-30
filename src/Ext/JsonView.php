@@ -5,6 +5,7 @@
  */
 namespace DuckPhp\Ext;
 
+use DuckPhp\Core\Helper;
 use DuckPhp\Core\View;
 
 class JsonView extends View
@@ -39,7 +40,7 @@ class JsonView extends View
         foreach ($this->options['json_view_skip_vars'] as $v) {
             unset($data[$v]);
         }
-        $this->context()->_ExitJson($data);
+        Helper::ExitJson($data);
     }
     //@override
     public function _Display(string $view, ?array $data = null): void
@@ -47,6 +48,6 @@ class JsonView extends View
         foreach ($this->options['json_view_skip_vars'] as $v) {
             unset($data[$v]);
         }
-        $this->context()->_ExitJson($data);
+        Helper::ExitJson($data);
     }
 }

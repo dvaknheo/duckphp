@@ -38,7 +38,6 @@ class Helper extends ComponentBase
     {
         return static::_()->_VarLog($var);
     }
-
     public static function Logger($object = null)
     {
         return Logger::G($object);
@@ -47,7 +46,24 @@ class Helper extends ComponentBase
     {
         return static::_()->_DebugLog($message, $context);
     }
+    public static function ExitJson($ret, $exit = true)
+    {
+        return static::_()->_ExitJson($ret, $exit);
+    }
+    public static function ExitRedirect($url, $exit = true)
+    {
+        return static::_()->_ExitRedirect($url, $exit);
+    }
+    public static function ExitRedirectOutside($url, $exit = true)
+    {
+        return static::_()->_ExitRedirectOutside($url, $exit);
+    }
+    public static function ExitRouteTo($url, $exit = true)
+    {
+        return static::_()->_ExitRedirect(static::Url($url), $exit);
+    }
     
+    /////////////////////////////////////////
     public function _H(&$str)
     {
         if (is_string($str)) {
@@ -159,4 +175,44 @@ class Helper extends ComponentBase
             return $ex;
         }
     }
+    public static function Url($url = null)
+    {
+        return Route::G()->_Url($url);
+    }
+    ////////[[[[
+
+    public static function Exit404($exit = true)
+    {
+        App::On404();
+        if ($exit) {
+            SystemWrapper::_()->_exit();
+        }
+    }
+    public function _ExitJson($ret, $exit = true)
+    {
+        SystemWrapper::G()->_header('Content-Type:application/json; charset=utf-8');
+        echo Helper::G()->_Json($ret);
+        if ($exit) {
+            SystemWrapper::_()->_exit();
+        }
+    }
+    public function _ExitRedirect($url, $exit = true)
+    {
+        if (parse_url($url, PHP_URL_HOST)) {
+            SystemWrapper::_()->_exit();
+            return;
+        }
+        SystemWrapper::_()->_header('location: '.$url, true, 302);
+        if ($exit) {
+            SystemWrapper::_()->_exit();
+        }
+    }
+    public function _ExitRedirectOutside($url, $exit = true)
+    {
+        SystemWrapper::_()->_header('location: '.$url, true, 302);
+        if ($exit) {
+            SystemWrapper::_()->_exit();
+        }
+    }
+    ///////]]]]
 }

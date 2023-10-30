@@ -77,23 +77,23 @@ trait ControllerHelperTrait
     }
     public static function ExitRedirect($url, $exit = true)
     {
-        return App::ExitRedirect($url, $exit);
+        return Helper::ExitRedirect($url, $exit);
     }
     public static function ExitRedirectOutside($url, $exit = true)
     {
-        return App::ExitRedirectOutside($url, $exit);
+        return Helper::ExitRedirectOutside($url, $exit);
     }
     public static function ExitRouteTo($url, $exit = true)
     {
-        return App::ExitRouteTo($url, $exit);
+        return Helper::ExitRouteTo($url, $exit);
     }
     public static function Exit404($exit = true)
     {
-        return App::Exit404($exit);
+        return Helper::Exit404($exit);
     }
     public static function ExitJson($ret, $exit = true)
     {
-        return App::ExitJson($ret, $exit);
+        return Helper::ExitJson($ret, $exit);
     }
     /////////////////
     public static function header($output, bool $replace = true, int $http_response_code = 0)

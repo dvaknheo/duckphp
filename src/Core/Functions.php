@@ -27,7 +27,7 @@ if (! function_exists('__hl')) {
 if (! function_exists('__url')) {
     function __url($url)
     {
-        return App::Url($url);
+        return Helper::Url($url);
     }
 }
 if (! function_exists('__res')) {

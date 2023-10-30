@@ -405,9 +405,7 @@ $this->doFunctions();
         
         $url="";
         $method="method";
-        App::Url($url=null);
-        
-        App::Url('abc');
+
         App::Res('abc');
         //*/
         //*
@@ -491,22 +489,7 @@ $this->doFunctions();
     }
     protected function do_Core_Redirect()
     {
-        // 这里不能直接用 DuckPhp\Core\App ;奇怪；
-        AppTestApp::G()->init(App::G()->options);
-        \DuckPhp\Core\SystemWrapper::_()->_system_wrapper_replace(['exit'=>function($code=0){
-            var_dump(DATE(DATE_ATOM));
-        }]);
 
-        $url="/test";
-        
-        AppTestApp::ExitRedirect($url);
-        AppTestApp::ExitRedirect('http://www.github.com');
-
-        AppTestApp::ExitRedirectOutside("http://www.github.com",true);
-        AppTestApp::ExitRouteTo($url);
-        AppTestApp::Exit404();
-        AppTestApp::G()->options['is_debug']=true;
-        AppTestApp::ExitJson($ret);
     }
     protected function do_Core_Component()
     {

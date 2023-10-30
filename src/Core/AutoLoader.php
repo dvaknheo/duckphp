@@ -28,7 +28,6 @@ class AutoLoader
     //embed
     public static function G($object = null)
     {
-
         if ($object) {
             self::$_instances[static::class] = $object;
             return $object;

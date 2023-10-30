@@ -47,6 +47,23 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         Helper::_()->_VarLog($var);
         Helper::_()->_DebugLog($message, $context);
         Helper::_()->_var_dump($args);
+        
+        
+        \DuckPhp\Core\SystemWrapper::_()->_system_wrapper_replace(['exit'=>function($code=0){
+            var_dump(DATE(DATE_ATOM));
+        }]);
+
+        $url="/test";
+        
+        Helper::ExitRedirect($url);
+        Helper::ExitRedirect('http://www.github.com');
+
+        Helper::ExitRedirectOutside("http://www.github.com",true);
+        Helper::ExitRouteTo($url);
+        Helper::Exit404();
+        Helper::G()->options['is_debug']=true;
+        Helper::ExitJson($ret);
+        
          echo Helper::Json($data);
 ////////////////
         \LibCoverage\LibCoverage::End();
