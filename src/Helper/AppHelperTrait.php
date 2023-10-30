@@ -17,7 +17,7 @@ use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapper;
 use DuckPhp\Core\View;
 
-trait AdvanceHelperTrait
+trait AppHelperTrait
 {
     public static function Event()
     {
