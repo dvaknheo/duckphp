@@ -77,6 +77,20 @@ class AdvanceHelperTraitTest extends \PHPUnit\Framework\TestCase
         $old_class = AdvanceHelperTestObject::class;
         $new_class = AdvanceHelperTestObject::class;
         AdvanceHelper::replaceController($old_class, $new_class);
+        
+        ////
+        AdvanceHelper::setBeforeGetDbHandler(null);
+        AdvanceHelper::getRoutes();
+        AdvanceHelper::assignRoute('ab/c',['z']);
+        AdvanceHelper::assignImportantRoute('ab/c',['z']);
+        try{
+            AdvanceHelper::Redis();
+        }catch(\TypeError $ex){}
+        
+        AdvanceHelper::assignRewrite('zxvf', 'zz');
+        AdvanceHelper::getRewrites();
+
+
         ////]]]]
         \LibCoverage\LibCoverage::End();
 

@@ -49,11 +49,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
 
         
         
-        DuckPhp::G()->setBeforeGetDbHandler(null);
-        DuckPhp::G()->getRoutes();
-        DuckPhp::G()->assignRoute('ab/c',['z']);
-        
-        DuckPhp::G()->assignImportantRoute('ab/c',['z']);
+
         
         DuckPhp::G()->Admin(FakeAdmin::G());
         DuckPhp::G()->User(FakeUser::G());
@@ -144,12 +140,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         
         //////////////////////
         
-        try{
-        DuckPhp::Redis(0);
-        }catch(\TypeError $ex){}
-        DuckPhp::assignRewrite('11','22');
-        DuckPhp::getRewrites();
-        
+
         
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End(DuckPhp::class);

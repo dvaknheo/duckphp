@@ -6,6 +6,9 @@
 namespace DuckPhp\Helper;
 
 use DuckPhp\Component\DbManager;
+use DuckPhp\Component\RedisManager;
+use DuckPhp\Component\RouteHookRewrite;
+use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Route;
@@ -47,16 +50,8 @@ trait AdvanceHelperTrait
     //////////////
     public static function DbCloseAll()
     {
-        return DbManager::G()->_DbCloseAll(); //TODO;
+        return DbManager::_()->_DbCloseAll(); //TODO;
     }
-    //////////////////////////////////////
-    /*
-    public static function addBeforeShowHandler($handler)
-    {
-        return App::_()->addBeforeShowHandler($handler);
-    }
-    //*/
-    ////////////
     public static function SESSION($key = null, $default = null)
     {
         return SuperGlobal::_()->_SESSION($key, $default);
@@ -133,5 +128,34 @@ trait AdvanceHelperTrait
     public static function mime_content_type($file)
     {
         return SystemWrapper::_()->_mime_content_type($file);
+    }
+    ////////////////////////////////////////////
+    public static function setBeforeGetDbHandler($db_before_get_object_handler)
+    {
+        return DbManager::_()->setBeforeGetDbHandler($db_before_get_object_handler);
+    }
+    public static function Redis($tag = 0)
+    {
+        return RedisManager::Redis($tag);
+    }
+    public static function getRoutes()
+    {
+        return RouteHookRouteMap::_()->getRoutes();
+    }
+    public static function assignRoute($key, $value = null)
+    {
+        return RouteHookRouteMap::_()->assignRoute($key, $value);
+    }
+    public static function assignImportantRoute($key, $value = null)
+    {
+        return RouteHookRouteMap::_()->assignImportantRoute($key, $value);
+    }
+    public static function assignRewrite($key, $value = null)
+    {
+        return RouteHookRewrite::_()->assignRewrite($key, $value);
+    }
+    public static function getRewrites()
+    {
+        return RouteHookRewrite::_()->getRewrites();
     }
 }
