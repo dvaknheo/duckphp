@@ -15,10 +15,10 @@ trait SimpleControllerTrait
     public static function _($object = null)
     {
         if ($object) {
-            Route::G()->replaceController(static::class, get_class($object));
+            Route::_()->replaceController(static::class, get_class($object));
             return $object;
         } else {
-            $class = Route::G()->options['controller_class_map'][static::class] ?? static::class;
+            $class = Route::_()->options['controller_class_map'][static::class] ?? static::class;
             $object = (new \ReflectionClass($class))->newInstanceWithoutConstructor();
             return $object;
         }

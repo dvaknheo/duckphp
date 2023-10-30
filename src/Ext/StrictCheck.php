@@ -43,7 +43,7 @@ class StrictCheck extends ComponentBase
     protected function initContext(object $context)
     {
         try {
-            DbManager::G()->setBeforeGetDbHandler([static::class, 'CheckStrictDb']);
+            DbManager::_()->setBeforeGetDbHandler([static::class, 'CheckStrictDb']);
         } catch (\BadMethodCallException $ex) { // @codeCoverageIgnore
             //do nothing;
         }
@@ -51,7 +51,7 @@ class StrictCheck extends ComponentBase
     public static function CheckStrictDb()
     {
         $magic_number = 5; //@codeCoverageIgnore
-        return static::G()->checkStrictComponent('Db', $magic_number, ['DuckPhp\\Core\\App',"DuckPhp\\Helper\\ModelHelper"]); //@codeCoverageIgnore
+        return static::_()->checkStrictComponent('Db', $magic_number, ['DuckPhp\\Core\\App',"DuckPhp\\Helper\\ModelHelper"]); //@codeCoverageIgnore
     }
     //////
     //*

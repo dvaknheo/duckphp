@@ -49,7 +49,7 @@ class JsonRpcExt extends ComponentBase
     }
     public static function Wrap($class)
     {
-        return static::G()->_Wrap($class);
+        return static::_()->_Wrap($class);
     }
     public static function _Wrap($class)
     {
@@ -110,7 +110,7 @@ class JsonRpcExt extends ComponentBase
         try {
             $service = $this->adjustService($service);
             $args = $input['params'] ?? [];
-            $ret['result'] = $service::G()->$method(...$args);
+            $ret['result'] = $service::_()->$method(...$args);
         } catch (\Throwable $ex) {
             $ret['error'] = [
                 'code' => $ex->getCode(),

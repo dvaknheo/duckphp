@@ -30,11 +30,11 @@ class MyMiddlewareManager extends ComponentBase
     protected function initContext(object $context)
     {
         //Route::_()->addRouteHook([static::class,'Hook'], 'prepend-inner');
-        RouteHookManager::G()->attachPreRun()->append([static::class,'Hook']);
+        RouteHookManager::_()->attachPreRun()->append([static::class,'Hook']);
     }
     public static function Hook($path_info)
     {
-        return static::G()->doHook($path_info);
+        return static::_()->doHook($path_info);
     }
     public function doHook($path_info = '')
     {

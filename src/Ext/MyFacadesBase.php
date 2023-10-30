@@ -15,7 +15,7 @@ class MyFacadesBase extends ComponentBase
     }
     public static function __callStatic($name, $arguments)
     {
-        $callback = MyFacadesAutoLoader::G()->getFacadesCallback(static::class, $name);
+        $callback = MyFacadesAutoLoader::_()->getFacadesCallback(static::class, $name);
         if (!$callback) {
             throw new \ErrorException("BadCall");
         }

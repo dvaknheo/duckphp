@@ -23,7 +23,7 @@ class RouteHookFunctionRoute extends ComponentBase
     }
     public static function Hook($path_info)
     {
-        return static::G()->_Hook($path_info);
+        return static::_()->_Hook($path_info);
     }
     public function _Hook($path_info = '/')
     {

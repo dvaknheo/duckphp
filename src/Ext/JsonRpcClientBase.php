@@ -22,21 +22,21 @@ class JsonRpcClientBase extends ComponentBase
     }
     public function __call($method, $arguments)
     {
-        $this->_base_class = $this->_base_class?$this->_base_class:JsonRpcExt::G()->getRealClass($this);
-        $ret = JsonRpcExt::G()->callRPC($this->_base_class, $method, $arguments);
+        $this->_base_class = $this->_base_class?$this->_base_class:JsonRpcExt::_()->getRealClass($this);
+        $ret = JsonRpcExt::_()->callRPC($this->_base_class, $method, $arguments);
         return $ret;
     }
     public function init(array $options, ?object $context = null)
     {
         if ($this->_base_class) {
-            JsonRpcExt::G()->callRPC($this->_base_class, __FUNCTION__, func_get_args());
+            JsonRpcExt::_()->callRPC($this->_base_class, __FUNCTION__, func_get_args());
         }
         return parent::init($options, $context);
     }
     public function isInited(): bool
     {
         if ($this->_base_class) {
-            JsonRpcExt::G()->callRPC($this->_base_class, __FUNCTION__, func_get_args());
+            JsonRpcExt::_()->callRPC($this->_base_class, __FUNCTION__, func_get_args());
         }
         return parent::isInited();
     }

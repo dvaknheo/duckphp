@@ -86,22 +86,22 @@ class DuckPhp extends App
             ExtOptionsLoader::_()->loadExtOptions(static::class);
         }
         
-        Configer::G()->init($this->options, $this);
-        DbManager::G()->init($this->options, $this);
-        RedisManager::G()->init($this->options, $this);
-        RouteHookRouteMap::G()->init($this->options, $this);
-        RouteHookRewrite::G()->init($this->options, $this);
+        Configer::_()->init($this->options, $this);
+        DbManager::_()->init($this->options, $this);
+        RedisManager::_()->init($this->options, $this);
+        RouteHookRouteMap::_()->init($this->options, $this);
+        RouteHookRewrite::_()->init($this->options, $this);
         
         if (PHP_SAPI === 'cli') {
             if ($this->is_root) {
-                DuckPhpCommand::G()->init($this->options, $this);
-                Console::G()->options['cli_default_command_class'] = DuckPhpCommand::class;
+                DuckPhpCommand::_()->init($this->options, $this);
+                Console::_()->options['cli_default_command_class'] = DuckPhpCommand::class;
             } else {
-                Console::G()->regCommandClass(static::class, $this->options['namespace']);
+                Console::_()->regCommandClass(static::class, $this->options['namespace']);
             }
         }
         if ($this->options['path_info_compact_enable'] ?? false) {
-            RouteHookPathInfoCompat::G()->init($this->options, $this);
+            RouteHookPathInfoCompat::_()->init($this->options, $this);
         }
         $phase = $this->_Phase();
         ////////////////

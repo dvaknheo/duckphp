@@ -35,12 +35,12 @@ class RouteHookApiServer extends ComponentBase
     }
     public static function Hook($path_info)
     {
-        return static::G()->_Hook($path_info);
+        return static::_()->_Hook($path_info);
     }
     public function _Hook($path_info)
     {
         // $path_info = Route::_()::PathInfo();
-        ExceptionManager::G()->setDefaultExceptionHandler([static::class,'OnJsonError']);
+        ExceptionManager::_()->setDefaultExceptionHandler([static::class,'OnJsonError']);
         
         list($object, $method) = $this->getObjectAndMethod($path_info);
         if ($object === null && $method === null) {
@@ -62,7 +62,7 @@ class RouteHookApiServer extends ComponentBase
     }
     public static function OnJsonError($e)
     {
-        return static::G()->_OnJsonError($e);
+        return static::_()->_OnJsonError($e);
     }
     public function _OnJsonError($e)
     {

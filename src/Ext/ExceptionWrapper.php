@@ -13,11 +13,11 @@ class ExceptionWrapper extends ComponentBase
     
     public static function Wrap($object)
     {
-        return static::G()->doWrap($object);
+        return static::_()->doWrap($object);
     }
     public static function Release()
     {
-        return static::G()->doRelease();
+        return static::_()->doRelease();
     }
     public function doWrap($object)
     {

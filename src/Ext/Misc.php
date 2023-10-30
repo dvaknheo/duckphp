@@ -19,24 +19,24 @@ class Misc extends ComponentBase
     
     public static function Import($file)
     {
-        return static::G()->_Import($file);
+        return static::_()->_Import($file);
     }
     public static function RecordsetUrl($data, $cols_map = [])
     {
-        return static::G()->_RecordsetUrl($data, $cols_map);
+        return static::_()->_RecordsetUrl($data, $cols_map);
     }
     
     public static function RecordsetH($data, $cols = [])
     {
-        return static::G()->_RecordsetH($data, $cols);
+        return static::_()->_RecordsetH($data, $cols);
     }
     public static function DI($name, $object = null)
     {
-        return static::G()->_DI($name, $object);
+        return static::_()->_DI($name, $object);
     }
     public function CallAPI($class, $method, $input, $interface = '')
     {
-        return static::G()->_CallAPI($class, $method, $input, $interface);
+        return static::_()->_CallAPI($class, $method, $input, $interface);
     }
     public function _DI($name, $object = null)
     {

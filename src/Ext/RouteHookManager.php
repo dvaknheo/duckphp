@@ -15,13 +15,13 @@ class RouteHookManager extends ComponentBase
     
     public function attachPreRun()
     {
-        $this->hook_list = & Route::G()->pre_run_hook_list;
+        $this->hook_list = & Route::_()->pre_run_hook_list;
         
         return $this;
     }
     public function attachPostRun()
     {
-        $this->hook_list = & Route::G()->post_run_hook_list;
+        $this->hook_list = & Route::_()->post_run_hook_list;
         return $this;
     }
     public function detach()
@@ -72,7 +72,7 @@ class RouteHookManager extends ComponentBase
     }
     public function dump()
     {
-        $ret = Route::G()->dumpAllRouteHooksAsString();
+        $ret = Route::_()->dumpAllRouteHooksAsString();
         return $ret;
     }
 }

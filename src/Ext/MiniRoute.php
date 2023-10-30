@@ -144,11 +144,11 @@ class MiniRoute extends ComponentBase
     }
     public static function PathInfo($path_info = null)
     {
-        return static::G()->_PathInfo($path_info);
+        return static::_()->_PathInfo($path_info);
     }
     public function _PathInfo($path_info = null)
     {
-        return isset($path_info)?static::G()->setPathInfo($path_info):static::G()->getPathInfo();
+        return isset($path_info)?static::_()->setPathInfo($path_info):static::_()->getPathInfo();
     }
     protected function getPathInfo()
     {
@@ -185,15 +185,15 @@ class MiniRoute extends ComponentBase
     }
     public static function Url($url = null)
     {
-        return static::G()->_Url($url);
+        return static::_()->_Url($url);
     }
     public static function Res($url = null)
     {
-        return static::G()->_Res($url);
+        return static::_()->_Res($url);
     }
     public static function Domain($use_scheme = false)
     {
-        return static::G()->_Domain($use_scheme);
+        return static::_()->_Domain($use_scheme);
     }
     public function _Url($url = null)
     {
