@@ -22,7 +22,7 @@ class PhaseProxy
     }
     protected function createObjectForPhaseProxy()
     {
-        return ($this->overriding_class)::G();
+        return ($this->overriding_class)::_();
     }
 
     public function __call($method, $args)

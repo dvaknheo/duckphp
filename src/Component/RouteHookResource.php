@@ -19,7 +19,7 @@ class RouteHookResource extends ComponentBase
     ];
     public static function Hook($path_info)
     {
-        return static::G()->_Hook($path_info);
+        return static::_()->_Hook($path_info);
     }
     protected function initContext(object $context)
     {

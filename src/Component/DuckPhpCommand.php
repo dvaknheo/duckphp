@@ -23,20 +23,20 @@ class DuckPhpCommand extends ComponentBase
      */
     public function command_new()
     {
-        DuckPhpInstaller::G()->init(Console::G()->getCliParameters())->run();
+        DuckPhpInstaller::_()->init(Console::_()->getCliParameters())->run();
     }
     /**
      * run inner server.
      */
     public function command_run()
     {
-        $options = Console::G()->getCliParameters();
+        $options = Console::_()->getCliParameters();
         $options['http_app_class'] = $this->context_class;
         $options['path'] = $this->context()->options['path'];
         if (!empty($options['http_server'])) {
             /** @var string */
             $class = str_replace('/', '\\', $options['http_server']);
-            HttpServer::G($class::G());
+            HttpServer::G($class::_());
         }
         HttpServer::RunQuickly($options);
     }
@@ -70,7 +70,7 @@ EOT;
      */
     public function command_list()
     {
-        echo Console::G()->getCommandListInfo();
+        echo Console::_()->getCommandListInfo();
     }
     /**
      * call a function. e.g. namespace/class@method arg1 --parameter arg2
@@ -81,8 +81,8 @@ EOT;
         $cmd = array_shift($args);
         list($class, $method) = explode('@', $cmd);
         $class = str_replace('/', '\\', $class);
-        echo "calling $class::G()->$method\n";
-        $ret = Console::G()->callObject($class, $method, $args, Console::G()->getCliParameters());
+        echo "calling $class::_()->$method\n";
+        $ret = Console::_()->callObject($class, $method, $args, Console::_()->getCliParameters());
         echo "--result--\n";
         echo json_encode($ret);
     }

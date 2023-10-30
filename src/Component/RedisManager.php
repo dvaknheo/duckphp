@@ -62,7 +62,7 @@ class RedisManager extends ComponentBase
     }
     public static function Redis($tag = 0)
     {
-        return static::G()->getServer($tag);
+        return static::_()->getServer($tag);
     }
     public function getServer($tag = 0)
     {

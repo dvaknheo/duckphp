@@ -27,7 +27,7 @@ class RouteHookPathInfoCompat extends ComponentBase
     
     public static function Url($url = null)
     {
-        return static::G()->onURL($url);
+        return static::_()->onURL($url);
     }
     public function onUrl($url = null)
     {
@@ -88,7 +88,7 @@ class RouteHookPathInfoCompat extends ComponentBase
     protected function filteRewrite($url, &$ret = false)
     {
         /* you may turn this on
-        $new_url=RouteHookRewrite::G()->filteRewrite($url);
+        $new_url=RouteHookRewrite::_()->filteRewrite($url);
         if ($new_url) {
             $url=$new_url;
             if (strlen($url)>0 && '/'==substr($url,0,1)) {
@@ -100,7 +100,7 @@ class RouteHookPathInfoCompat extends ComponentBase
     }
     public static function Hook($path_info)
     {
-        return static::G()->_Hook($path_info);
+        return static::_()->_Hook($path_info);
     }
     public function _Hook($path_info)
     {

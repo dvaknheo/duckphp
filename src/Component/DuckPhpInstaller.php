@@ -21,7 +21,7 @@ class DuckPhpInstaller extends ComponentBase
     ];
     public static function RunQuickly($options)
     {
-        return static::G()->init($options)->run();
+        return static::_()->init($options)->run();
     }
     public function init(array $options, $context = null)
     {

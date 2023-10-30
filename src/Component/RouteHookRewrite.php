@@ -17,7 +17,7 @@ class RouteHookRewrite extends ComponentBase
     
     public static function Hook($path_info)
     {
-        return static::G()->doHook($path_info);
+        return static::_()->doHook($path_info);
     }
     //@override
     protected function initOptions(array $options)

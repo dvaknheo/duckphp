@@ -12,19 +12,19 @@ class EventManager extends ComponentBase
     protected $events = [];
     public static function OnEvent($event, $callback)
     {
-        return static::G()->on($event, $callback);
+        return static::_()->on($event, $callback);
     }
     public static function FireEvent($event, ...$args)
     {
-        return static::G()->fire($event, ...$args);
+        return static::_()->fire($event, ...$args);
     }
     public static function AllEvents()
     {
-        return static::G()->all();
+        return static::_()->all();
     }
     public static function RemoveEvent($event, $callback = null)
     {
-        return static::G()->remove($event, $callback);
+        return static::_()->remove($event, $callback);
     }
     public function on($event, $callback)
     {

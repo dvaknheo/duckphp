@@ -66,23 +66,23 @@ class DbManager extends ComponentBase
     }
     public static function Db($tag = null)
     {
-        return static::G()->_Db($tag);
+        return static::_()->_Db($tag);
     }
     public static function DbForWrite()
     {
-        return static::G()->_DbForWrite();
+        return static::_()->_DbForWrite();
     }
     public static function DbForRead()
     {
-        return static::G()->_DbForRead();
+        return static::_()->_DbForRead();
     }
     public static function DbCloseAll()
     {
-        return static::G()->_DbCloseAll();
+        return static::_()->_DbCloseAll();
     }
     public static function OnQuery($db, $sql, ...$args)
     {
-        return static::G()->_OnQuery($db, $sql, ...$args);
+        return static::_()->_OnQuery($db, $sql, ...$args);
     }
 
     ///////////////////////
@@ -120,7 +120,7 @@ class DbManager extends ComponentBase
     }
     protected function getDb($db_config)
     {
-        // todo $db = (clone Db::G())->init([...$db_config 'log_func'=>static::class.'::OnQuery']);
+        // todo $db = (clone Db::_())->init([...$db_config 'log_func'=>static::class.'::OnQuery']);
         if (empty($this->options['database_class'])) {
             $db = new Db();
         } else {
@@ -157,6 +157,6 @@ class DbManager extends ComponentBase
         if (!$this->options['database_log_sql_query']) {
             return;
         }
-        Logger::G()->log($this->options['database_log_sql_level'], '[sql]: ' . $sql, $args);
+        Logger::_()->log($this->options['database_log_sql_level'], '[sql]: ' . $sql, $args);
     }
 }
