@@ -8,20 +8,20 @@
 
 namespace DuckPhp;
 
-use DuckPhp\Component\AdminObject;
 use DuckPhp\Component\Cache;
 use DuckPhp\Component\Configer;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Component\DuckPhpCommand;
 use DuckPhp\Component\EventManager;
 use DuckPhp\Component\ExtOptionsLoader;
+use DuckPhp\Component\GlobalAdmin;
+use DuckPhp\Component\GlobalUser;
 use DuckPhp\Component\Pager;
 use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookPathInfoCompat;
 use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Component\RouteHookRouteMap;
-use DuckPhp\Component\UserObject;
 use DuckPhp\Core\App;
 use DuckPhp\Core\Console;
 use DuckPhp\Core\ExceptionManager;
@@ -107,13 +107,13 @@ class DuckPhp extends App
         ////////////////
         if ($this->options['class_user'] ?? null) {
             if (!$this->is_root) {
-                $this->bumpSingletonToRoot($this->options['class_user'], UserObject::class);
+                $this->bumpSingletonToRoot($this->options['class_user'], GlobalUser::class);
             }
             static::User(($this->options['class_user'])::G());
         }
         if ($this->options['class_admin'] ?? null) {
             if (!$this->is_root) {
-                $this->bumpSingletonToRoot($this->options['class_admin'], AdminObject::class);
+                $this->bumpSingletonToRoot($this->options['class_admin'], GlobalAdmin::class);
             }
             static::Admin(($this->options['class_admin'])::G());
         }
@@ -145,7 +145,7 @@ class DuckPhp extends App
     //////////////
     public static function Admin($admin = null)
     {
-        return AdminObject::_($admin);
+        return GlobalAdmin::_($admin);
     }
     public static function AdminId()
     {
@@ -153,7 +153,7 @@ class DuckPhp extends App
     }
     public static function User($user = null)
     {
-        return UserObject::_($user);
+        return GlobalUser::_($user);
     }
     public static function UserId()
     {

@@ -7,7 +7,7 @@ namespace DuckPhp\Component;
 
 use DuckPhp\Core\SingletonTrait;
 
-class UserObject
+class GlobalUser
 {
     use SingletonTrait;
     public function __construct()

@@ -7,7 +7,7 @@ namespace DuckPhp\Component;
 
 use DuckPhp\Core\SingletonTrait;
 
-class AdminObject
+class GlobalAdmin
 {
     use SingletonTrait;
     public function __construct()

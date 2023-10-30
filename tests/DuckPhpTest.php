@@ -175,8 +175,8 @@ class DuckPhp_Sub extends DuckPhp
     ];
     public function onInit()
     {
-        $this->bumpSingletonToRoot(FakeAdmin::class,\DuckPhp\Component\AdminObject::class);
-        $this->bumpSingletonToRoot(FakeUser::class,\DuckPhp\Component\UserObject::class);
+        $this->bumpSingletonToRoot(FakeAdmin::class,\DuckPhp\Component\GlobalAdmin::class);
+        $this->bumpSingletonToRoot(FakeUser::class,\DuckPhp\Component\GlobalUser::class);
     }
 
     
