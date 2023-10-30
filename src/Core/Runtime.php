@@ -6,7 +6,6 @@
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Core\Logger;
 
 class Runtime extends ComponentBase
 {

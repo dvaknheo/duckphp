@@ -127,7 +127,7 @@ class App extends ComponentBase
         if (!$error_view) {
             echo "Internal Error \n<!--DuckPhp set options['error_500'] to override me  -->\n";
             if (!$this->is_inited) {
-                echo "<div>error trigger before init, options['error_500'] ignore. </div>";
+                echo "<div>error trigger before inited, options['error_500'] ignore. </div>";
             }
             if ($data['is_debug']) {
                 echo "<h3>{$data['class']}({$data['code']}):{$data['message']}</h3>";
@@ -177,7 +177,7 @@ class App extends ComponentBase
             return;
         }
         $error_desc = '';
-        $ext = ($this->is_inited)? '':"<div>error trigger before init, options['error_debug'] ignore.";
+        $ext = ($this->is_inited)? '':"<div>error trigger before inited, options['error_debug'] ignore.";
         if (!$error_view) {
             extract($data);
             echo  <<<EOT
@@ -260,12 +260,6 @@ EOT;
     {
         return $view === '' ? Route::G()->getRouteCallingPath() : $view;
     }
-    //}
-    //trait Core_Helper
-    //{
-
-    
-
     ///////
     public static function Platform()
     {
@@ -292,7 +286,6 @@ EOT;
         //you can override this;
         return $this->_IsDebug();
     }
-
     public static function PhaseCall($phase, $callback, ...$args)
     {
         return static::G()->_PhaseCall($phase, $callback, ...$args);
@@ -315,6 +308,7 @@ EOT;
     {
         return static::G()->_Setting($key);
     }
+    ////////////////////////////////////////////
     public static function Pager($object = null)
     {
         return static::_()->_Pager($object);
@@ -334,52 +328,5 @@ EOT;
     public static function Logger($object = null)
     {
         return Logger::G($object);
-    }
-    ///////////////
-    //exception manager
-    public static function CallException($ex)
-    {
-        return ExceptionManager::G()->_CallException($ex);
-    }
-    public static function Display($view, $data = null)
-    {
-        return View::G()->_Display($view, $data);
-    }
-    public static function getViewData()
-    {
-        return View::G()->getViewData();
-    }
-    public static function isInException()
-    {
-        return Runtime::G()->isInException();
-    }
-    public static function isRunning()
-    {
-        return Runtime::G()->isRunning();
-    }
-    public static function IsAjax()
-    {
-        return Helper::_()->_IsAjax();
-    }
-    /////////////////
-    
-    // route static
-
-    public static function Res($url = null)
-    {
-        return Route::G()->_Res($url);
-    }
-    public static function Domain($use_scheme = false)
-    {
-        return Route::G()->_Domain($use_scheme);
-    }
-    ///////
-    public static function replaceController($old_class, $new_class)
-    {
-        return Route::G()->replaceController($old_class, $new_class);
-    }
-    public static function addRouteHook($callback, $position = 'append-outter', $once = true)
-    {
-        return Route::G()->addRouteHook($callback, $position, $once);
     }
 }

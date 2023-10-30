@@ -26,25 +26,58 @@ class Helper extends ComponentBase
     {
         return static::_()->_Json($data);
     }
+    public static function Url($url = null)
+    {
+        return Route::_()->_Url($url);
+    }
+    public static function Domain($use_scheme = false)
+    {
+        return Route::_()->_Domain($use_scheme);
+    }
+    public static function Res($url = null)
+    {
+        return Route::_()->_Res($url);
+    }
+    public static function Display($view, $data = null)
+    {
+        return View::_()->_Display($view, $data);
+    }
     public static function var_dump(...$args)
     {
         return static::_()->_var_dump(...$args);
-    }
-    public static function TraceDump()
-    {
-        return static::_()->_TraceDump();
     }
     public static function VarLog($var)
     {
         return static::_()->_VarLog($var);
     }
-    public static function Logger($object = null)
+    public static function TraceDump()
     {
-        return Logger::G($object);
+        return static::_()->_TraceDump();
     }
     public static function DebugLog($message, array $context = array())
     {
         return static::_()->_DebugLog($message, $context);
+    }
+    public static function Logger($object = null)
+    {
+        return Logger::_($object);
+    }
+    public static function IsDebug()
+    {
+        return static::_()->_IsDebug();
+    }
+    public static function IsRealDebug()
+    {
+        return static::_()->_IsRealDebug();
+    }
+    public static function Platform()
+    {
+        return static::_()->_Platform();
+    }
+    //////////////////////
+    public static function IsAjax()
+    {
+        return static::_()->_IsAjax();
     }
     public static function ExitJson($ret, $exit = true)
     {
@@ -62,8 +95,19 @@ class Helper extends ComponentBase
     {
         return static::_()->_ExitRedirect(static::Url($url), $exit);
     }
-    
-    /////////////////////////////////////////
+    public static function XpCall($callback, ...$args)
+    {
+        return static::_()->_XpCall($callback, ...$args);
+    }
+    public function SqlForPager($sql, $page_no, $page_size = 10)
+    {
+        return static::_()->_SqlForPager($sql, $page_no, $page_size);
+    }
+    public function SqlForCountSimply($sql)
+    {
+        return static::_()->_SqlForCountSimply($sql);
+    }
+    ////////////////////////////////////////////
     public function _H(&$str)
     {
         if (is_string($str)) {
@@ -99,88 +143,62 @@ class Helper extends ComponentBase
     public function _Json($data)
     {
         $flag = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
-        if (App::IsDebug()) {
+        if (App::_()->_IsDebug()) {
             $flag = $flag | JSON_PRETTY_PRINT;
         }
         return json_encode($data, $flag);
     }
-    public function _IsAjax()
-    {
-        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-        $ref = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? null;
-        return $ref && 'xmlhttprequest' == strtolower($ref) ? true : false;
-    }
-    ///////////////
-    protected function is_debug()
-    {
-        return App::_()->_IsDebug();
-    }
-    public function _TraceDump()
-    {
-        if (!$this->is_debug()) {
-            return;
-        }
-        echo "<pre>\n";
-        echo (new \Exception('', 0))->getTraceAsString();
-        echo "</pre>\n";
-    }
     public function _VarLog($var)
     {
-        if (!$this->is_debug()) {
+        if (!App::_()->_IsDebug()) {
             return;
         }
         return Logger::_()->debug(var_export($var, true));
     }
     public function _var_dump(...$args)
     {
-        if (!$this->is_debug()) {
+        if (!App::_()->_IsDebug()) {
             return;
         }
         echo "<pre>\n";
         var_dump(...$args);
         echo "</pre>\n";
     }
+    public function _TraceDump()
+    {
+        if (!App::_()->_IsDebug()) {
+            return;
+        }
+        echo "<pre>\n";
+        echo (new \Exception('', 0))->getTraceAsString();
+        echo "</pre>\n";
+    }
     public function _DebugLog($message, array $context = array())
     {
-        if (!$this->is_debug()) {
+        if (!App::_()->_IsDebug()) {
             return false;
         }
         return Logger::_()->debug($message, $context);
     }
-    ////
-    public function _SqlForPager($sql, $pageNo, $pageSize = 10)
+    public function _IsDebug()
     {
-        $pageSize = (int)$pageSize;
-        $start = ((int)$pageNo - 1) * $pageSize;
-        $start = (int)$start;
-        $sql .= " LIMIT $start,$pageSize";
-        return $sql;
+        return App::_()->_IsDebug();
     }
-    public function _SqlForCountSimply($sql)
+    public function _IsRealDebug()
     {
-        $sql = preg_replace_callback('/^\s*select\s(.*?)\sfrom\s/is', function ($m) {
-            return 'SELECT COUNT(*) as c FROM ';
-        }, $sql);
-        return $sql;
+        return App::_()->_IsRealDebug();
     }
-    public static function XpCall($callback, ...$args)
+    public function _Platform()
     {
-        return static::G()->_XpCall($callback, ...$args);
+        return App::_()->_Platform();
     }
-    public function _XpCall($callback, ...$args)
+    ////////////////////////////////////////////
+    public function _IsAjax()
     {
-        try {
-            return ($callback)(...$args);
-        } catch (\Exception $ex) {
-            return $ex;
-        }
+        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+        $ref = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? null;
+        return $ref && 'xmlhttprequest' == strtolower($ref) ? true : false;
     }
-    public static function Url($url = null)
-    {
-        return Route::G()->_Url($url);
-    }
-    ////////[[[[
-
     public static function Exit404($exit = true)
     {
         App::On404();
@@ -190,8 +208,8 @@ class Helper extends ComponentBase
     }
     public function _ExitJson($ret, $exit = true)
     {
-        SystemWrapper::G()->_header('Content-Type:application/json; charset=utf-8');
-        echo Helper::G()->_Json($ret);
+        SystemWrapper::_()->_header('Content-Type:application/json; charset=utf-8');
+        echo static::_()->_Json($ret);
         if ($exit) {
             SystemWrapper::_()->_exit();
         }
@@ -214,5 +232,28 @@ class Helper extends ComponentBase
             SystemWrapper::_()->_exit();
         }
     }
-    ///////]]]]
+    ////////////////////////////////////////////
+    public function _XpCall($callback, ...$args)
+    {
+        try {
+            return ($callback)(...$args);
+        } catch (\Exception $ex) {
+            return $ex;
+        }
+    }
+    public function _SqlForPager($sql, $page_no, $page_size = 10)
+    {
+        $page_size = (int)$page_size;
+        $start = ((int)$page_no - 1) * $page_size;
+        $start = (int)$start;
+        $sql .= " LIMIT $start,$page_size";
+        return $sql;
+    }
+    public function _SqlForCountSimply($sql)
+    {
+        $sql = preg_replace_callback('/^\s*select\s(.*?)\sfrom\s/is', function ($m) {
+            return 'SELECT COUNT(*) as c FROM ';
+        }, $sql);
+        return $sql;
+    }
 }

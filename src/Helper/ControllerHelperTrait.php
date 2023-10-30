@@ -73,7 +73,7 @@ trait ControllerHelperTrait
     ////////////////////
     public static function IsAjax()
     {
-        return App::IsAjax();
+        return Helper::IsAjax();
     }
     public static function ExitRedirect($url, $exit = true)
     {

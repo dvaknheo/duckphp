@@ -15,15 +15,16 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         $data = ["abc"=>"def"];
         $var = $data;
         $message = $str; $context =$data;
-        Helper::_()->_IsAjax();
+        
         echo Helper::L($str, $args);
         echo Helper::L($str);
         echo Helper::Hl($str, $args);
         echo Helper::Json($data);
         echo Helper::H($str);
         
-        Helper::XpCall(function(){return "abc";});
-        Helper::XpCall(function(){ throw new \Exception('ex'); });
+        echo Helper::H($str);
+        echo Helper::H($str);
+        
         
         $t = [$str,"zz"];
         Helper::H($t);
@@ -48,13 +49,16 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         Helper::_()->_DebugLog($message, $context);
         Helper::_()->_var_dump($args);
         
+        Helper::IsDebug();
+        Helper::IsRealDebug();
+        Helper::Platform();
         
         \DuckPhp\Core\SystemWrapper::_()->_system_wrapper_replace(['exit'=>function($code=0){
             var_dump(DATE(DATE_ATOM));
         }]);
 
         $url="/test";
-        
+        Helper::IsAjax();
         Helper::ExitRedirect($url);
         Helper::ExitRedirect('http://www.github.com');
 
@@ -64,8 +68,20 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         Helper::G()->options['is_debug']=true;
         Helper::ExitJson($ret);
         
-         echo Helper::Json($data);
-////////////////
+        Helper::XpCall(function(){return "abc";});
+        Helper::XpCall(function(){ throw new \Exception('ex'); });
+        
+        echo Helper::Res();
+        echo Helper::Domain();
+        try{
+        echo Helper::Display('no_exits',[]);
+        }catch(\Throwable $ex){}
+        echo Helper::Json($data);
+         
+        $sql="Select * from users";
+        Helper::SqlForPager($sql,1,5);
+        Helper::SqlForCountSimply($sql);   
+        
         \LibCoverage\LibCoverage::End();
 
     }
