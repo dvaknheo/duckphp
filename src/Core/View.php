@@ -31,15 +31,15 @@ class View extends ComponentBase
 
     public static function Show(array $data = [], string $view = null): void
     {
-        static::G()->_Show($data, $view);
+        static::_()->_Show($data, $view);
     }
     public static function Display(string $view, ?array $data = null): void
     {
-        static::G()->_Display($view, $data);
+        static::_()->_Display($view, $data);
     }
     public static function Render(string $view, ?array $data = null): string
     {
-        return static::G()->_Render($view, $data);
+        return static::_()->_Render($view, $data);
     }
     
     public function _Show(array $data, string $view): void

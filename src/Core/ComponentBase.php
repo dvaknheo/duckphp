@@ -27,7 +27,7 @@ class ComponentBase // implements ComponentInterface
     public function context()
     {
         return App::Current();
-        //return ($this->context_class)::G();
+        //return ($this->context_class)::_();
     }
     public function init(array $options, ?object $context = null)
     {

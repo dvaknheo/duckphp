@@ -45,7 +45,7 @@ class Console extends ComponentBase
     }
     public static function DoRun($path_info = '')
     {
-        return static::G()->run();
+        return static::_()->run();
     }
     public function run()
     {

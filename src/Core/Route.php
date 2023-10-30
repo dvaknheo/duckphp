@@ -52,7 +52,7 @@ class Route extends ComponentBase
 
     public static function RunQuickly(array $options = [], callable $after_init = null)
     {
-        $instance = static::G()->init($options);
+        $instance = static::_()->init($options);
         if ($after_init) {
             ($after_init)();
         }
@@ -60,11 +60,11 @@ class Route extends ComponentBase
     }
     public static function Route()
     {
-        return static::G();
+        return static::_();
     }
     public static function Parameter($key = null, $default = null)
     {
-        return static::G()->_Parameter($key, $default);
+        return static::_()->_Parameter($key, $default);
     }
     public function _Parameter($key = null, $default = null)
     {
@@ -300,11 +300,11 @@ trait Route_Helper
     ////
     public static function PathInfo($path_info = null)
     {
-        return static::G()->_PathInfo($path_info);
+        return static::_()->_PathInfo($path_info);
     }
     public function _PathInfo($path_info = null)
     {
-        return isset($path_info)?static::G()->setPathInfo($path_info):static::G()->getPathInfo();
+        return isset($path_info)?static::_()->setPathInfo($path_info):static::_()->getPathInfo();
     }
     protected function getPathInfo()
     {
@@ -358,15 +358,15 @@ trait Route_UrlManager
     protected $url_handler = null;
     public static function Url($url = null)
     {
-        return static::G()->_Url($url);
+        return static::_()->_Url($url);
     }
     public static function Res($url = null)
     {
-        return static::G()->_Res($url);
+        return static::_()->_Res($url);
     }
     public static function Domain($use_scheme = false)
     {
-        return static::G()->_Domain($use_scheme);
+        return static::_()->_Domain($use_scheme);
     }
     public function _Url($url = null)
     {

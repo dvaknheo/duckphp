@@ -39,11 +39,11 @@ class SuperGlobal extends ComponentBase
     }
     public static function LoadSuperGlobalAll()
     {
-        return static::G()->_LoadSuperGlobalAll();
+        return static::_()->_LoadSuperGlobalAll();
     }
     public static function SaveSuperGlobalAll()
     {
-        return static::G()->_SaveSuperGlobalAll();
+        return static::_()->_SaveSuperGlobalAll();
     }
     public function _LoadSuperGlobalAll()
     {
@@ -70,11 +70,11 @@ class SuperGlobal extends ComponentBase
     //////////////////////
     public static function LoadSuperGlobal($key)
     {
-        return static::G()->_LoadSuperGlobal($key);
+        return static::_()->_LoadSuperGlobal($key);
     }
     public static function SaveSuperGlobal($key)
     {
-        return static::G()->_SaveSuperGlobal($key);
+        return static::_()->_SaveSuperGlobal($key);
     }
     public function _LoadSuperGlobal($key)
     {
@@ -88,51 +88,51 @@ class SuperGlobal extends ComponentBase
     /*
     public static function GET($key = null, $default = null)
     {
-        return static::G()->_Get($key, $default);
+        return static::_()->_Get($key, $default);
     }
     public static function POST($key = null, $default = null)
     {
-        return static::G()->_POST($key, $default);
+        return static::_()->_POST($key, $default);
     }
     public static function REQUEST($key = null, $default = null)
     {
-        return static::G()->_REQUEST($key, $default);
+        return static::_()->_REQUEST($key, $default);
     }
     public static function COOKIE($key = null, $default = null)
     {
-        return static::G()->_COOKIE($key, $default);
+        return static::_()->_COOKIE($key, $default);
     }
     public static function SERVER($key = null, $default = null)
     {
-        return static::G()->_SERVER($key, $default);
+        return static::_()->_SERVER($key, $default);
     }
     public static function SESSION($key = null, $default = null)
     {
-        return static::G()->_SESSION($key, $default);
+        return static::_()->_SESSION($key, $default);
     }
     public static function FILES($key = null, $default = null)
     {
-        return static::G()->_FILES($key, $default);
+        return static::_()->_FILES($key, $default);
     }
     public static function SessionSet($key, $value)
     {
-        return static::G()->_SessionSet($key, $value);
+        return static::_()->_SessionSet($key, $value);
     }
     public static function SessionUnset($key)
     {
-        return static::G()->_SessionUnset($key);
+        return static::_()->_SessionUnset($key);
     }
     public static function SessionGet($key, $default = null)
     {
-        return static::G()->_SessionGet($key, $default);
+        return static::_()->_SessionGet($key, $default);
     }
     public static function CookieSet($key, $value, $expire = 0)
     {
-        return static::G()->_CookieSet($key, $value, $expire);
+        return static::_()->_CookieSet($key, $value, $expire);
     }
     public static function CookieGet($key, $default = null)
     {
-        return static::G()->_CookieGet($key, $default);
+        return static::_()->_CookieGet($key, $default);
     }
     //*/
     ///////////////////////////////////////

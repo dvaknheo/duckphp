@@ -64,9 +64,9 @@ class App extends ComponentBase
             $this->getContainer()->addPublicClasses([Logger::class, SuperGlobal::class]);
         }
         
-        Logger::G()->init($this->options, $this);
-        View::G()->init($this->options, $this);
-        SuperGlobal::G()->init($this->options, $this);
+        Logger::_()->init($this->options, $this);
+        View::_()->init($this->options, $this);
+        SuperGlobal::_()->init($this->options, $this);
     }
     //////// override KernelTrait ////////
     //@override
@@ -86,13 +86,13 @@ class App extends ComponentBase
             $path_info = $_SERVER['PATH_INFO'] ?? '';
             echo "404 File Not Found<!--PATH_INFO: ($path_info) DuckPhp set options ['error_404'] to override me. -->\n";
             if ($this->options['is_debug']) {
-                echo "<!-- Route Error Info: ".Route::G()->getRouteError()."-->\n";
+                echo "<!-- Route Error Info: ".Route::_()->getRouteError()."-->\n";
             }
             return;
         }
         
         View::G(new View())->init($this->options, $this);
-        View::G()->_Show([], $error_view);
+        View::_()->_Show([], $error_view);
     }
     //@override
     public function _OnDefaultException($ex): void
@@ -142,7 +142,7 @@ class App extends ComponentBase
         }
         
         View::G(new View())->init($this->options, $this);
-        View::G()->_Show($data, $error_view);
+        View::_()->_Show($data, $error_view);
     }
     //@override
     public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
@@ -194,7 +194,7 @@ class App extends ComponentBase
 EOT;
             return;
         }
-        View::G()->_Display($error_view, $data);
+        View::_()->_Display($error_view, $data);
     }
     public function getProjectPath()
     {
@@ -258,7 +258,7 @@ EOT;
     }
     public function adjustViewFile($view)
     {
-        return $view === '' ? Route::G()->getRouteCallingPath() : $view;
+        return $view === '' ? Route::_()->getRouteCallingPath() : $view;
     }
     ///////
     public static function Platform()
@@ -288,7 +288,7 @@ EOT;
     }
     public static function PhaseCall($phase, $callback, ...$args)
     {
-        return static::G()->_PhaseCall($phase, $callback, ...$args);
+        return static::_()->_PhaseCall($phase, $callback, ...$args);
     }
     public function _PhaseCall($phase, $callback, ...$args)
     {
@@ -306,7 +306,7 @@ EOT;
     // config static
     public static function Setting($key)
     {
-        return static::G()->_Setting($key);
+        return static::_()->_Setting($key);
     }
     ////////////////////////////////////////////
     public static function Pager($object = null)
@@ -319,7 +319,7 @@ EOT;
     }
     public static function Event()
     {
-        return static::G()->_Event();
+        return static::_()->_Event();
     }
     public function _Event()
     {

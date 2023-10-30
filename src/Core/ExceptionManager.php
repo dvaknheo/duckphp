@@ -38,7 +38,7 @@ class ExceptionManager extends ComponentBase
     }
     public static function CallException($ex)
     {
-        return static::G()->_CallException($ex);
+        return static::_()->_CallException($ex);
     }
     public function setDefaultExceptionHandler($default_exception_handler)
     {

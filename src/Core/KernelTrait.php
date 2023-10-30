@@ -52,7 +52,7 @@ trait KernelTrait
 
     public static function RunQuickly(array $options = [], callable $after_init = null): bool
     {
-        $instance = static::G()->init($options);
+        $instance = static::_()->init($options);
         if ($after_init) {
             ($after_init)();
         }
@@ -62,11 +62,11 @@ trait KernelTrait
     {
         $phase = static::Phase();
         $class = $phase ? $phase : static::class;
-        return $class::G();
+        return $class::_();
     }
     public static function Root()
     {
-        return (self::class)::G(); // remark ,don't use self::G()!
+        return (self::class)::_(); // remark ,don't use self::_()!
     }
     protected function initOptions(array $options)
     {
@@ -106,7 +106,7 @@ trait KernelTrait
     }
     public static function Phase($new = null)
     {
-        return static::G()->_Phase($new);
+        return static::_()->_Phase($new);
     }
     public function _Phase($new = null)
     {
@@ -134,7 +134,7 @@ trait KernelTrait
         /*
         if ($this->is_root && empty($extApps)) {
             $this->is_simple_mode = true;
-            (self::class)::G($this); // remark ,don't use self::G()!
+            (self::class)::_($this); // remark ,don't use self::_()!
             static::G($this);
             if ($this->options['override_class_from'] ?? false) {
                 $class = $this->options['override_class_from'];
@@ -209,7 +209,7 @@ trait KernelTrait
             $exception_option['handle_all_dev_error'] = false;
             $exception_option['handle_all_exception'] = false;
         }
-        ExceptionManager::G()->init($exception_options, $this);
+        ExceptionManager::_()->init($exception_options, $this);
 
         
         $this->initComponents($this->options, $context);
@@ -225,11 +225,11 @@ trait KernelTrait
     }
     protected function initComponents(array $options, object $context = null)
     {
-        Route::G()->init($this->options, $this);
-        Runtime::G()->init($this->options, $this);
+        Route::_()->init($this->options, $this);
+        Runtime::_()->init($this->options, $this);
 
         if ($this->is_root) {
-            Console::G()->init($this->options, $this);
+            Console::_()->init($this->options, $this);
             $container = $this->getContainer();
             $t = $container ? $container->addPublicClasses([Console::class]) :null;
         }
@@ -305,7 +305,7 @@ trait KernelTrait
                 if (!class_exists($class)) {
                     continue;
                 }
-                $class::G()->init($options, $this);
+                $class::_()->init($options, $this);
                 $this->_Phase(static::class);
             }
         } catch (\Throwable $ex) {
@@ -319,17 +319,17 @@ trait KernelTrait
         $is_exceptioned = false;
         $this->_Phase(static::class);
         if ($this->is_root) {
-            (self::class)::G($this); // remark ,don't use self::G()!
+            (self::class)::_($this); // remark ,don't use self::_()!
         }
         
         $this->onBeforeRun();
         try {
-            Runtime::G()->run();
+            Runtime::_()->run();
             if (PHP_SAPI === 'cli' && $this->is_root && $this->options['console_enable']) {
-                $ret = Console::G()->run();
+                $ret = Console::_()->run();
             } else {
                 if (!($this->options['container_only'] ?? false)) {
-                    $ret = Route::G()->run();
+                    $ret = Route::_()->run();
                 }
                 if (!$ret) {
                     $ret = $this->runExtentions();
@@ -340,20 +340,20 @@ trait KernelTrait
                 }
             }
         } catch (\Throwable $ex) {
-            Runtime::G()->onException($this->options['skip_exception_check']);
+            Runtime::_()->onException($this->options['skip_exception_check']);
             if ($this->options['skip_exception_check']) {
                 throw $ex;
             }
             $last_phase = $this->_Phase(static::class);
-            Runtime::G()->lastPhase = $last_phase;
+            Runtime::_()->lastPhase = $last_phase;
             ExceptionManager::CallException($ex);
             
-            Runtime::G()->clear();
+            Runtime::_()->clear();
             $ret = true;
             $is_exceptioned = true;
         }
         if (!$is_exceptioned) {
-            Runtime::G()->clear();
+            Runtime::_()->clear();
         }
         $this->onAfterRun();
         return $ret;
@@ -363,7 +363,7 @@ trait KernelTrait
         $flag = false;
         foreach ($this->options['ext'] as $class => $options) {
             if (\is_subclass_of($class, self::class)) {
-                $flag = $class::G()->run();
+                $flag = $class::_()->run();
                 if ($flag) {
                     break;
                 }
@@ -376,15 +376,15 @@ trait KernelTrait
     //for override
     public static function On404(): void
     {
-        static::G()->_On404();
+        static::_()->_On404();
     }
     public static function OnDefaultException($ex): void
     {
-        static::G()->_OnDefaultException($ex);
+        static::_()->_OnDefaultException($ex);
     }
     public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
     {
-        static::G()->_OnDevErrorHandler($errno, $errstr, $errfile, $errline);
+        static::_()->_OnDevErrorHandler($errno, $errstr, $errfile, $errline);
     }
     public function _On404(): void
     {
