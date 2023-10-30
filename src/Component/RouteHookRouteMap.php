@@ -135,7 +135,7 @@ class RouteHookRouteMap extends ComponentBase
             if (false !== strpos($callback, '@')) {
                 list($class, $method) = explode('@', $callback);
                 Route::_()->setRouteCallingMethod($method);
-                return [$class::G(),$method];
+                return [$class::_(),$method];
             } elseif (false !== strpos($callback, '->')) {
                 list($class, $method) = explode('->', $callback);
                 Route::_()->setRouteCallingMethod($method);

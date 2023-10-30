@@ -8,7 +8,7 @@ namespace DuckPhp\Core;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Logger;
 
-class Helper extends ComponentBase
+class CoreHelper extends ComponentBase
 {
     public static function H($str)
     {

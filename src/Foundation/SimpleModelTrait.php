@@ -7,7 +7,7 @@ namespace DuckPhp\Foundation;
 
 use DuckPhp\Component\DbManager;
 use DuckPhp\Core\App;
-use DuckPhp\Core\Helper;
+use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\SingletonTrait;
 
 trait SimpleModelTrait
@@ -52,8 +52,8 @@ trait SimpleModelTrait
         $sql = "SELECT * from 'TABLE' where true order by id desc";
         $sql = $this->prepare($sql);
         
-        $total = DbManager::_()->_DbForRead()->fetchColumn(Helper::_()->_SqlForCountSimply($sql));
-        $data = DbManager::_()->_DbForRead()->fetchAll(Helper::_()->_SqlForPager($sql, $page, $page_size));
+        $total = DbManager::_()->_DbForRead()->fetchColumn(CoreHelper::_()->_SqlForCountSimply($sql));
+        $data = DbManager::_()->_DbForRead()->fetchAll(CoreHelper::_()->_SqlForPager($sql, $page, $page_size));
         return ['data' => $data,"total" => $total];
     }
 

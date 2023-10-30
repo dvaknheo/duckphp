@@ -96,6 +96,10 @@ class RouteHookRouteMapTest_FakeObject
     {
         return new static();
     }
+    public static function _()
+    {
+        return new static();
+    }
     public function __construct()
     {
         echo "Main Class Start...";

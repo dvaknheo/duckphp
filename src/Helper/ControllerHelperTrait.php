@@ -10,8 +10,8 @@ use DuckPhp\Component\DbManager;
 use DuckPhp\Component\EventManager;
 use DuckPhp\Component\Pager;
 use DuckPhp\Core\App;
+use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\ExceptionManager;
-use DuckPhp\Core\Helper;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapper;
@@ -25,7 +25,7 @@ trait ControllerHelperTrait
     }
     public static function XpCall($callback, ...$args)
     {
-        return Helper::_()->_XpCall($callback, ...$args);
+        return CoreHelper::_()->_XpCall($callback, ...$args);
     }
     public static function Config($file_basename, $key = null, $default = null)
     {
@@ -73,27 +73,27 @@ trait ControllerHelperTrait
     ////////////////////
     public static function IsAjax()
     {
-        return Helper::IsAjax();
+        return CoreHelper::IsAjax();
     }
     public static function ExitRedirect($url, $exit = true)
     {
-        return Helper::ExitRedirect($url, $exit);
+        return CoreHelper::ExitRedirect($url, $exit);
     }
     public static function ExitRedirectOutside($url, $exit = true)
     {
-        return Helper::ExitRedirectOutside($url, $exit);
+        return CoreHelper::ExitRedirectOutside($url, $exit);
     }
     public static function ExitRouteTo($url, $exit = true)
     {
-        return Helper::ExitRouteTo($url, $exit);
+        return CoreHelper::ExitRouteTo($url, $exit);
     }
     public static function Exit404($exit = true)
     {
-        return Helper::Exit404($exit);
+        return CoreHelper::Exit404($exit);
     }
     public static function ExitJson($ret, $exit = true)
     {
-        return Helper::ExitJson($ret, $exit);
+        return CoreHelper::ExitJson($ret, $exit);
     }
     /////////////////
     public static function header($output, bool $replace = true, int $http_response_code = 0)

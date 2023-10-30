@@ -6,7 +6,7 @@
 namespace DuckPhp\Helper;
 
 use DuckPhp\Component\DbManager;
-use DuckPhp\Core\Helper;
+use DuckPhp\Core\CoreHelper;
 
 trait ModelHelperTrait
 {
@@ -37,10 +37,10 @@ trait ModelHelperTrait
     }
     public static function SqlForPager(string $sql, int $pageNo, int $pageSize = 10): string
     {
-        return Helper::_()->_SqlForPager($sql, $pageNo, $pageSize);
+        return CoreHelper::_()->_SqlForPager($sql, $pageNo, $pageSize);
     }
     public static function SqlForCountSimply(string $sql): string
     {
-        return Helper::_()->_SqlForCountSimply($sql);
+        return CoreHelper::_()->_SqlForCountSimply($sql);
     }
 }

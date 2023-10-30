@@ -12,7 +12,7 @@ class testController
 {
     public function done()
     {
-        $var = DemoBusiness::G()->foo();
+        $var = DemoBusiness::_()->foo();
         Helper::Show(get_defined_vars());
     }
 }

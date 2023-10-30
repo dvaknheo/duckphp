@@ -14,6 +14,6 @@ class DemoBusiness extends Base
 {
     public function foo()
     {
-        return "<" . DemoModel::G()->foo().">";
+        return "<" . DemoModel::_()->foo().">";
     }
 }
