@@ -9,7 +9,7 @@ class SystemWrapperTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(SystemWrapper::class);
         
-        //SystemWrapper::G()->system_wrapper_replace(array $funcs);
+        //SystemWrapper::_()->system_wrapper_replace(array $funcs);
         $data=SystemWrapperObject::system_wrapper_get_providers();
         
         SystemWrapperObject::var_dump(DATE(DATE_ATOM));
@@ -52,7 +52,7 @@ public function doSystemWrapper()
     SystemWrapperObject::session_set_save_handler( $handler);
     
     SystemWrapperObject::mime_content_type('x.jpg');
-    SystemWrapperObject::G()->system_wrapper_replace([
+    SystemWrapperObject::_()->system_wrapper_replace([
         'mime_content_type' =>function(){ echo "change!\n";},
         'header' =>function(){ echo "change!\n";},
         'setcookie' =>function(){ echo "change!\n";},
@@ -108,7 +108,7 @@ class SystemWrapperObject extends SystemWrapper
     
     public static function var_dump(...$args)
     {
-        return static::G()->_var_dump(...$args);
+        return static::_()->_var_dump(...$args);
     }
     public function _var_dump(...$args)
     {
@@ -121,7 +121,7 @@ class SystemWrapperObject extends SystemWrapper
     }
     public static function var_dump2(...$args)
     {
-        return static::G()->_var_dump2(...$args);
+        return static::_()->_var_dump2(...$args);
     }
     public function _var_dump2(...$args)
     {

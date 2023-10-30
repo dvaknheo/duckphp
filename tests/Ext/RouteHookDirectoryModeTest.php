@@ -18,7 +18,7 @@ class RouteHookDirectoryModeTest extends \PHPUnit\Framework\TestCase
             'controller_welcome_class'=> 'RouteHookDirectoryModeTesttMain',
 
         ];
-        Route::G(new Route())->init($route_options);
+        Route::_(new Route())->init($route_options);
         
         $options=[
                 'mode_dir_basepath'=>$base_path,
@@ -27,8 +27,8 @@ class RouteHookDirectoryModeTest extends \PHPUnit\Framework\TestCase
                 'mode_dir_key_for_module'=>true,
                 'mode_dir_key_for_action'=>true,
         ];
-        RouteHookDirectoryMode::G()->init($options, $context=null);
-        RouteHookDirectoryMode::G()->init($options, App::G());
+        RouteHookDirectoryMode::_()->init($options, $context=null);
+        RouteHookDirectoryMode::_()->init($options, App::_());
         
         $_SERVER['REQUEST_URI']='';
         $_SERVER['PATH_INFO']='';
@@ -38,26 +38,26 @@ class RouteHookDirectoryModeTest extends \PHPUnit\Framework\TestCase
             'PATH_INFO'=>'Missed',
             'REQUEST_METHOD'=>'POST',
         ];
-        Route::G()->run();
+        Route::_()->run();
         
         $_SERVER['REQUEST_URI']='';
         $_SERVER['PATH_INFO']='';
 echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n";
         $_SERVER['DOCUMENT_ROOT']=rtrim($base_path,'/');
         echo RouteHookDirectoryMode::URL("/izx");
-        echo RouteHookDirectoryMode::G()->onURL("/izx");
+        echo RouteHookDirectoryMode::_()->onURL("/izx");
         echo PHP_EOL;
-        echo RouteHookDirectoryMode::G()->onURL("BUG");
+        echo RouteHookDirectoryMode::_()->onURL("BUG");
         echo PHP_EOL;
-        echo RouteHookDirectoryMode::G()->onURL("m");
+        echo RouteHookDirectoryMode::_()->onURL("m");
         echo PHP_EOL;
-        echo RouteHookDirectoryMode::G()->onURL("m/index");
+        echo RouteHookDirectoryMode::_()->onURL("m/index");
         echo PHP_EOL;
-        echo RouteHookDirectoryMode::G()->onURL("m/foo");
+        echo RouteHookDirectoryMode::_()->onURL("m/foo");
         echo PHP_EOL;
-        echo RouteHookDirectoryMode::G()->onURL("a/b/c");
+        echo RouteHookDirectoryMode::_()->onURL("a/b/c");
         echo PHP_EOL;
-        echo RouteHookDirectoryMode::G()->onURL("a/b/index");
+        echo RouteHookDirectoryMode::_()->onURL("a/b/index");
         echo PHP_EOL;
 
 echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n";
@@ -73,8 +73,8 @@ echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n";
         var_dump($_SERVER['REQUEST_URI']);
 
         $_SERVER=$_SERVER;
-        Route::G()->run();
-        RouteHookDirectoryMode::G()->isInited();
+        Route::_()->run();
+        RouteHookDirectoryMode::_()->isInited();
 
         \LibCoverage\LibCoverage::End();
     }

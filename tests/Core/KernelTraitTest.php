@@ -51,36 +51,36 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             KernelTestObjectB::class=>['aa'=>'22'],
         ];
         App::RunQuickly($options,function(){});
-        App::G()->options['console_enable'] =false;
+        App::_()->options['console_enable'] =false;
         
         //App::SG()->_SERVER['PATH_INFO']='/NOOOOOOOOOOOOOOO';
-        Route::G()->bind('/NOOOOOOOOOOOOOOO');  // 这两句居然有区别 ,TODO ，分析之
+        Route::_()->bind('/NOOOOOOOOOOOOOOO');  // 这两句居然有区别 ,TODO ，分析之
         
-        App::G()->options['error_404']=function(){
+        App::_()->options['error_404']=function(){
             echo "noooo 404  ooooooooo\n";
             
         };
         
-        App::G()->run();
+        App::_()->run();
 echo "-------------------------------------\n";
-        Route::G()->bind('/exception');
-        App::G()->run();
+        Route::_()->bind('/exception');
+        App::_()->run();
 
         try{
-            App::G()->options['skip_exception_check']=true;
-            Route::G()->bind('/exception');
-            App::G()->run();
+            App::_()->options['skip_exception_check']=true;
+            Route::_()->bind('/exception');
+            App::_()->run();
         }catch(\Throwable $ex){
             echo $ex->getMessage();
         }
-        App::G()->options['skip_exception_check']=false;
+        App::_()->options['skip_exception_check']=false;
         
         //////////////////////////////////////////////////
         
         $app=new App();
 
         
-        //App::G()->clear();
+        //App::_()->clear();
         ///////////////////////////
         $options=[
             // 'no this path' => $path_app,
@@ -92,34 +92,34 @@ echo "-------------------------------------\n";
             'setting_file_enable' => true,
 
         ];
-        View::G(new View());
-        Configer::G(new Configer());
-        App::G(new App())->init($options);
-        App::G()->getProjectPathFromClass(App::class,true);
+        View::_(new View());
+        Configer::_(new Configer());
+        App::_(new App())->init($options);
+        App::_()->getProjectPathFromClass(App::class,true);
         $this->do404();
         
 
         ////
-        //Runtime::G()->toggleOutputed(false);
+        //Runtime::_()->toggleOutputed(false);
         //App::OnOutputBuffering('abc');
-        //Runtime::G()->toggleOutputed(true);
+        //Runtime::_()->toggleOutputed(true);
         //App::OnOutputBuffering('def');
         ////
         
-            App::G()->isInited();
+            App::_()->isInited();
 //////////////////
-        App::G(new App());
-        App::G()->init([
+        App::_(new App());
+        App::_()->init([
             'handle_all_dev_error' => false,
             'handle_all_exception' => false,
 //          'override_class' => 'no_Exits',
         ]);
-        App::G()->init([
+        App::_()->init([
             'handle_all_dev_error' => false,
             'handle_all_exception' => false,
             'override_class' => App::class,
         ]);
-        App::G()->init([
+        App::_()->init([
             'handle_all_dev_error' => false,
             'handle_all_exception' => false,
             'use_autoloader' => true,
@@ -137,14 +137,14 @@ MyKernelTrait::On404();
         App::Root();
         App::Current();
         
-        App::G(new App())->init($options)->run();
+        App::_(new App())->init($options)->run();
         
         App::Root();
         App::Current();
         
         $_SERVER['PATH_INFO'] = '/child/date';
-        //Route::G()->bind();
-        App::G()->run();
+        //Route::_()->bind();
+        App::_()->run();
         $phase=App::Phase();
         App::Phase($phase);
         
@@ -155,14 +155,14 @@ MyKernelTrait::On404();
             'ext' =>[ KernelTestObjectError::class=>true,]
         ];
         
-        App::G(new App())->init($options)->run();
+        App::_(new App())->init($options)->run();
         /////////////////////
         $options =[
             'path' => $path_app,
             'use_flag_by_setting' => true,
             'use_env_file' => true,
         ];
-        App::G(new App())->init($options);
+        App::_(new App())->init($options);
         
         try{
         $options =[
@@ -172,7 +172,7 @@ MyKernelTrait::On404();
             'setting_file' =>$path_app.'no_exists.php',
             'setting_file_ignore_exists' =>false,
         ];
-        App::G(new App())->init($options);
+        App::_(new App())->init($options);
         }catch(\Exception $ex){}
         $options =[
             'path' => $path_app,
@@ -181,10 +181,10 @@ MyKernelTrait::On404();
             'setting_file' =>$path_app.'setting.php',
             'setting_file_ignore_exists' =>false,
         ];
-        App::G(new App())->init($options);
+        App::_(new App())->init($options);
         //setting.php
         
-        MyKernelTrait::G()->init($options);
+        MyKernelTrait::_()->init($options);
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
     return;
@@ -208,7 +208,7 @@ MyKernelTrait::On404();
             'use_super_global' => true,
             'override_class'=>'\\'.KernelTestApp::class,
         ];
-        DuckPhp::G(new DuckPhp())->init($options);
+        DuckPhp::_(new DuckPhp())->init($options);
 
         
         $options=[
@@ -217,7 +217,7 @@ MyKernelTrait::On404();
         ];
         KernelTestApp::RunQuickly($options);
         
-        KernelTestApp::G()->options['error_404']='_sys/error-404';
+        KernelTestApp::_()->options['error_404']='_sys/error-404';
         KernelTestApp::On404();        
         KernelTestApp2::RunQuickly([]);
     }

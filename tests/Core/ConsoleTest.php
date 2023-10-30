@@ -14,86 +14,86 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(Console::class);
         
         $_SERVER['argv']=[];
-        App::G()->init(['console_enable'=>true, 'is_debug'=>true])->run();
+        App::_()->init(['console_enable'=>true, 'is_debug'=>true])->run();
         Console::DoRun();
-        Console::G()->app();
-        Console::G()->getCliParameters();
+        Console::_()->app();
+        Console::_()->getCliParameters();
         
         
-        Console::G()->regCommandClass(Console_Command::class,"test");
+        Console::_()->regCommandClass(Console_Command::class,"test");
         $_SERVER['argv']=[
             '-','test:foo',
         ];
-        App::G()->run();
+        App::_()->run();
         $_SERVER['argv']=[
             '-','test:foo','arg1','--pa',"--l","a","--az","a","b"
         ];
-        App::G()->run();
+        App::_()->run();
         $_SERVER['argv']=[
             '-','test:foo','arg1','arg2','--pa',"--l","a","--az","a","b"
         ];
-        App::G()->run();
+        App::_()->run();
         $_SERVER['argv']=[
             '-','test:foo2','arg1','arg2','--a1',"--a2","a","--a3","a","b"
         ];
-        App::G()->run();
+        App::_()->run();
 
         $_SERVER['argv']=[
             '-','test:foo2','--a1=aaa',"--a2","a","--a3","a","b"
         ];
-        App::G()->run();
+        App::_()->run();
         try{
             $_SERVER['argv']=[
                 '-','test:foo3',
             ];
-            App::G()->options['skip_exception_check']=true;
-            App::G()->run();
+            App::_()->options['skip_exception_check']=true;
+            App::_()->run();
         }catch(\Exception $ex){
             var_dump("Hit!");
-            App::G()->options['skip_exception_check']=false;
+            App::_()->options['skip_exception_check']=false;
         }
         try{
             $_SERVER['argv']=[
                 '-','foo',
             ];
-            App::G()->options['skip_exception_check']=true;
-            App::G()->run();
+            App::_()->options['skip_exception_check']=true;
+            App::_()->run();
         }catch(\Exception $ex){
             var_dump("Hit!");
-            App::G()->options['skip_exception_check']=false;
+            App::_()->options['skip_exception_check']=false;
         }
         try{
             $_SERVER['argv']=[
                 '-','foo:foo',
             ];
-            App::G()->options['skip_exception_check']=true;
-            App::G()->run();
+            App::_()->options['skip_exception_check']=true;
+            App::_()->run();
         }catch(\Exception $ex){
             var_dump("Hit!");
-            App::G()->options['skip_exception_check']=false;
+            App::_()->options['skip_exception_check']=false;
         }
         
         
         //*/
-        Console::G(new Console())->init([],Console_App::G());
-        Console_App::G()->init(['console_enable'=>true]);
+        Console::_(new Console())->init([],Console_App::_());
+        Console_App::_()->init(['console_enable'=>true]);
         $_SERVER['argv']=[
             '-','list',
         ];
-        Console::G()->regCommandClass(Console_Command::class,"aa");
-        Console::G()->regCommandClass(Console_Command2::class,"aa");
-        Console_App::G()->run();
+        Console::_()->regCommandClass(Console_Command::class,"aa");
+        Console::_()->regCommandClass(Console_Command2::class,"aa");
+        Console_App::_()->run();
         $_SERVER['argv']=[
             '-','call',str_replace('\\','/',Console_Command2::class).'@command_foo4','A1'
         ];
-        Console_App::G()->run();
+        Console_App::_()->run();
         
         
         try{
             $_SERVER['argv']=[
                 '-','test',
             ];
-           Console::G(new Console())->init(['cli_default_command_class'=>''])->run();
+           Console::_(new Console())->init(['cli_default_command_class'=>''])->run();
         }catch(\Exception $ex){
             var_dump("Hit!");
         }
@@ -103,7 +103,7 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         $t=\LibCoverage\LibCoverage::G();
         define('__SINGLETONEX_REPALACER',ConsoleParent::class.'::CreateObject');
         \LibCoverage\LibCoverage::G($t);
-        ConsoleParent::G()->isInited();
+        ConsoleParent::_()->isInited();
         echo "zzzzzzzzzzzzzzzzzzzzzzzz";
         
         $desc = <<<EOT
@@ -123,7 +123,7 @@ EOT;
         $input = fopen($path.'input.txt','r');
         $output = fopen($path.'output.txt','w');
         
-        $ret=ConsoleParent::G()->readLines($options,$desc,[],$input,$output);
+        $ret=ConsoleParent::_()->readLines($options,$desc,[],$input,$output);
         fclose($input);
         fclose($output);
         \LibCoverage\LibCoverage::End();

@@ -33,7 +33,7 @@ class ControllerHelperTraitTest extends \PHPUnit\Framework\TestCase
         $options=[
             'path_view'=>$path_view,
         ];
-        \DuckPhp\Core\View::G()->init($options);
+        \DuckPhp\Core\View::_()->init($options);
         ControllerHelper::Show(['A'=>'b'],"view");
         ControllerHelper::Render("view",['A'=>'b']);
         
@@ -88,7 +88,7 @@ class ControllerHelperTraitTest extends \PHPUnit\Framework\TestCase
         ControllerHelper::SERVER('SCRIPT_FILENAME');
 /////
 echo"zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n\n";
-DuckPhp::G()->init([]);
+DuckPhp::_()->init([]);
 DuckPhp::Pager(new Pager);
 var_dump(DuckPhp::Pager());
 ControllerHelper::PageNo();

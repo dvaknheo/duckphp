@@ -19,27 +19,27 @@ $options['is_debug'] = true;
 $options['override_class'] = '';
 $options['path_info_compact_enable'] = true;
 $options['ext'][RouteHookRouteMap::class] =true;
-DuckPhp::G()->init($options);
+DuckPhp::_()->init($options);
 
-var_dump(DuckPhp::G()->options);
+var_dump(DuckPhp::_()->options);
 ///////////////////////////
 
-Route::G()->run();
-//Route::G()->addRouteHook(function(){},'prepend-inner');
+Route::_()->run();
+//Route::_()->addRouteHook(function(){},'prepend-inner');
 echo "<pre>\n";
-echo RouteHookManager::G()->dump();
+echo RouteHookManager::_()->dump();
 
-RouteHookManager::G()->attachPostRun()->removeAll(['DuckPhp\\Component\\RouteHookRouteMap','AppendHook'])->detach();
-RouteHookManager::G()->attachPreRun()->moveBefore(['DuckPhp\\Component\\RouteHookRouteMap','PrependHook'],['DuckPhp\\Component\\RouteHookPathInfoCompat','Hook'])->detach();
-$list=RouteHookManager::G()->attachPostRun()->getHookList();
+RouteHookManager::_()->attachPostRun()->removeAll(['DuckPhp\\Component\\RouteHookRouteMap','AppendHook'])->detach();
+RouteHookManager::_()->attachPreRun()->moveBefore(['DuckPhp\\Component\\RouteHookRouteMap','PrependHook'],['DuckPhp\\Component\\RouteHookPathInfoCompat','Hook'])->detach();
+$list=RouteHookManager::_()->attachPostRun()->getHookList();
 $list[]="abc";
-RouteHookManager::G()->attachPostRun()->setHookList($list);
+RouteHookManager::_()->attachPostRun()->setHookList($list);
 
-RouteHookManager::G()->attachPostRun()->append(['DuckPhp\\Component\\RouteHookRouteMap','AppendHook']);
+RouteHookManager::_()->attachPostRun()->append(['DuckPhp\\Component\\RouteHookRouteMap','AppendHook']);
 
 
 echo "\n------------------------------------\n";
-echo RouteHookManager::G()->dump();
+echo RouteHookManager::_()->dump();
 echo "\n<pre>\n";
 ////]]]]
         

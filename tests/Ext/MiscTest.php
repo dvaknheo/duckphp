@@ -17,14 +17,14 @@ class MiscTest extends \PHPUnit\Framework\TestCase
             'path'=>$path_lib,
             'path_lib'=>'',
         ];
-        Misc::G()->init($options,DuckPhp::G());
+        Misc::_()->init($options,DuckPhp::_());
         Misc::Import('file');
         $options=[
             'path_lib'=>$path_lib,
             'use_super_global'=>false,
             'error_404'=>null,
         ];
-        Misc::G()->init($options,DuckPhp::G());
+        Misc::_()->init($options,DuckPhp::_());
         
         Misc::Import('file');
         
@@ -43,7 +43,7 @@ class MiscTest extends \PHPUnit\Framework\TestCase
         SystemWrapper::_()->_system_wrapper_replace([
             'exit' =>function(){ echo "change!\n";},
         ]);
-        DuckPhp::G()->init($options)->run();
+        DuckPhp::_()->init($options)->run();
         
         
         Route::_()->setRouteCallingMethod('m1');
@@ -67,17 +67,17 @@ class MiscTest extends \PHPUnit\Framework\TestCase
         }catch(\Exception $ex){
         }
         Misc::CallAPI(FakeService::class,'m1',['id'=>'1']);
-        Misc::G()->isInited();
+        Misc::_()->isInited();
 
         \LibCoverage\LibCoverage::End();
         /*
-        Misc::G()->init($options=[], $context=null);
-        Misc::G()->_Import($file);
-        Misc::G()->_RecordsetUrl($data, $cols_map=[]);
-        Misc::G()->_RecordsetH($data, $cols=[]);
-        Misc::G()->callAPI($class, $method, $input);
-        Misc::G()->mapToService($serviceClass, $input);
-        Misc::G()->explodeService($object, $namespace=null);
+        Misc::_()->init($options=[], $context=null);
+        Misc::_()->_Import($file);
+        Misc::_()->_RecordsetUrl($data, $cols_map=[]);
+        Misc::_()->_RecordsetH($data, $cols=[]);
+        Misc::_()->callAPI($class, $method, $input);
+        Misc::_()->mapToService($serviceClass, $input);
+        Misc::_()->explodeService($object, $namespace=null);
         //*/
     }
     

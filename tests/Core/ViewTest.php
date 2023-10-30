@@ -15,31 +15,31 @@ class ViewTest extends \PHPUnit\Framework\TestCase
         $options=[
             'path_view'=>$path_view,
         ];
-        \DuckPhp\Core\View::G()->init($options,new App());
-        View::G()->setViewHeadFoot('head', 'foot');
-        View::G()->assignViewData('A','aa');
-        View::G()->assignViewData(['B'=>'bb','C'=>'cc']);
+        \DuckPhp\Core\View::_()->init($options,new App());
+        View::_()->setViewHeadFoot('head', 'foot');
+        View::_()->assignViewData('A','aa');
+        View::_()->assignViewData(['B'=>'bb','C'=>'cc']);
         View::Show(['D'=>'ddddddd'],"view");
-        View::G()->setViewHeadFoot(null, null);
+        View::_()->setViewHeadFoot(null, null);
         View::Show(['D'=>'ddddddd'],"view");
         
         View::Display("block",['A'=>'b']);
         View::Render("block",['A'=>'b']);
-        View::G()->getViewData();
-        //View::G()->getViewPath();
-        View::G()->setViewHeadFoot(null,null);
+        View::_()->getViewData();
+        //View::_()->getViewPath();
+        View::_()->setViewHeadFoot(null,null);
         
-        View::G()->isInited();
+        View::_()->isInited();
         $options=[
             'path'=>$path_view,
             'path_view'=>'',
         ];
 
-        View::G()->init($options);
-        View::G()->reset();
+        View::_()->init($options);
+        View::_()->reset();
         ////
-        //View::G()->options['path_view_override_from']=$path_view.'overrided/';
-        //View::G()->Show([],'override');
+        //View::_()->options['path_view_override_from']=$path_view.'overrided/';
+        //View::_()->Show([],'override');
         \LibCoverage\LibCoverage::End();
     }
 }

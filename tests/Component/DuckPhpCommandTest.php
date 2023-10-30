@@ -14,36 +14,36 @@ class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(DuckPhpCommand::class);
         
         $_SERVER['argv']=[];
-        App::G()->init(['console_enable'=>true])->run();
+        App::_()->init(['console_enable'=>true])->run();
         
         
-        Console::G()->regCommandClass(DuckPhpCommand_Command::class,"test");
+        Console::_()->regCommandClass(DuckPhpCommand_Command::class,"test");
         $_SERVER['argv']=[
             '-','test:foo',
         ];
-        App::G()->run();
+        App::_()->run();
         $_SERVER['argv']=[
             '-','test:foo','arg1','--pa',"--l","a","--az","a","b"
         ];
-        App::G()->run();
+        App::_()->run();
         $_SERVER['argv']=[
             '-','test:foo','arg1','arg2','--pa',"--l","a","--az","a","b"
         ];
-        App::G()->run();
+        App::_()->run();
         $_SERVER['argv']=[
             '-','test:foo2','arg1','arg2','--a1',"--a2","a","--a3","a","b"
         ];
-        App::G()->run();
+        App::_()->run();
 
         $_SERVER['argv']=[
             '-','test:foo2','--a1=aaa',"--a2","a","--a3","a","b"
         ];
-        App::G()->run();
+        App::_()->run();
         try{
             $_SERVER['argv']=[
                 '-','test:foo3',
             ];
-            App::G()->run();
+            App::_()->run();
         }catch(\Exception $ex){
             var_dump("Hit!");
         }
@@ -51,7 +51,7 @@ class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
             $_SERVER['argv']=[
                 '-','foo',
             ];
-            App::G()->run();
+            App::_()->run();
         }catch(\Exception $ex){
             var_dump("Hit!");
         }
@@ -59,53 +59,53 @@ class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
             $_SERVER['argv']=[
                 '-','foo:foo',
             ];
-            App::G()->run();
+            App::_()->run();
         }catch(\Exception $ex){
             var_dump("Hit!");
         }
-        DuckPhpInstaller::G(new Console_Installer());
-        HttpServer::G(new Console_HttpServer());
-        DuckPhpCommand::G()->command_new();
-        DuckPhpCommand::G()->command_run();
-        DuckPhpCommand::G()->command_help();
-        DuckPhpCommand::G()->command_version();
+        DuckPhpInstaller::_(new Console_Installer());
+        HttpServer::_(new Console_HttpServer());
+        DuckPhpCommand::_()->command_new();
+        DuckPhpCommand::_()->command_run();
+        DuckPhpCommand::_()->command_help();
+        DuckPhpCommand::_()->command_version();
         
 
         
-        DuckPhpCommand::G()->command_list();
+        DuckPhpCommand::_()->command_list();
         
-        DuckPhpCommand::G()->command_fetch();
-        DuckPhpCommand::G()->command_routes();
-        DuckPhpCommand::G()->command_depoly();
-        DuckPhpCommand::G()->command_test();
-        DuckPhpCommand::G(new DuckPhpCommand());
+        DuckPhpCommand::_()->command_fetch();
+        DuckPhpCommand::_()->command_routes();
+        DuckPhpCommand::_()->command_depoly();
+        DuckPhpCommand::_()->command_test();
+        DuckPhpCommand::_(new DuckPhpCommand());
         //*/
-        DuckPhpCommand_App::G()->init([]);
-        //Console::G(new Console())->init([],DuckPhpCommand_App::G());
+        DuckPhpCommand_App::_()->init([]);
+        //Console::_(new Console())->init([],DuckPhpCommand_App::_());
         $_SERVER['argv']=[
             '-','list',
         ];
-        Console::G()->regCommandClass(DuckPhpCommand_Command::class,"aa");
-        Console::G()->regCommandClass(DuckPhpCommand_Command2::class,"aa");
-        DuckPhpCommand_App::G()->run();
+        Console::_()->regCommandClass(DuckPhpCommand_Command::class,"aa");
+        Console::_()->regCommandClass(DuckPhpCommand_Command2::class,"aa");
+        DuckPhpCommand_App::_()->run();
 
-        DuckPhpCommand_App::G(new DuckPhpCommand_App());
-        DuckPhpCommand_App::G()->options['error_404']=function(){debug_print_backtrace(2);};
+        DuckPhpCommand_App::_(new DuckPhpCommand_App());
+        DuckPhpCommand_App::_()->options['error_404']=function(){debug_print_backtrace(2);};
                 $_SERVER['argv']=[
             '-','call',str_replace('\\','/',DuckPhpCommand_Command2::class).'@command_foo4','A1'
         ];
-        DuckPhpCommand_App::G()->init(['console_enable'=>true])->run();
+        DuckPhpCommand_App::_()->init(['console_enable'=>true])->run();
         //////////////////
         
-        DuckPhpCommand_App::G(new DuckPhpCommand_App());
-        DuckPhpCommand_HttpServer::G(new DuckPhpCommand_HttpServer());
-        App::G(new App());
-        DuckPhpCommand_App::G()->options['error_404']=function(){debug_print_backtrace(2);};
+        DuckPhpCommand_App::_(new DuckPhpCommand_App());
+        DuckPhpCommand_HttpServer::_(new DuckPhpCommand_HttpServer());
+        App::_(new App());
+        DuckPhpCommand_App::_()->options['error_404']=function(){debug_print_backtrace(2);};
         $_SERVER['argv']=[
             '-','run', '--http-server=tests/DuckPhp/Component/DuckPhpCommand_HttpServer',
         ];
         try{
-        DuckPhpCommand_App::G()->init(['console_enable'=>true])->run();
+        DuckPhpCommand_App::_()->init(['console_enable'=>true])->run();
         }catch(\Throwable $ex){
             debug_print_backtrace(2);
         }

@@ -106,7 +106,7 @@ class AppHelperTraitTest extends \PHPUnit\Framework\TestCase
             'is_debug' => true,
             'namespace'=> __NAMESPACE__,
         ];
-        App::G()->init($options);
+        App::_()->init($options);
         //AppHelper::addBeforeShowHandler(function(){});
         
 

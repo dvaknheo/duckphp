@@ -42,7 +42,7 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         echo CoreHelper::_()->_SqlForCountSimply($sql);
         
         $options = ['is_debug'=>true];
-        App::G(new App())->init($options);
+        App::_(new App())->init($options);
         
         CoreHelper::_()->_TraceDump();
         CoreHelper::_()->_VarLog($var);
@@ -65,7 +65,7 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         CoreHelper::ExitRedirectOutside("http://www.github.com",true);
         CoreHelper::ExitRouteTo($url);
         CoreHelper::Exit404();
-        CoreHelper::G()->options['is_debug']=true;
+        CoreHelper::_()->options['is_debug']=true;
         CoreHelper::ExitJson($ret);
         
         CoreHelper::XpCall(function(){return "abc";});

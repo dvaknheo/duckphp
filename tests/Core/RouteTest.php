@@ -16,7 +16,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'DOCUMENT_ROOT'=> __DIR__,
             'SCRIPT_FILENAME'=>__DIR__.'/aa/index.php',
         ];
-        //Route::G()->reset();
+        //Route::_()->reset();
         Route::PathInfo('x/z');
         $t= Route::Url('aaa');
         $t= Route::Res('aaa');
@@ -35,7 +35,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         
         //First Run;
         $flag=Route::RunQuickly($options);
-        Route::G()->setParameters([]);
+        Route::_()->setParameters([]);
         Route::Parameter('a','b');
         Route::Parameter();
 
@@ -48,7 +48,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'namespace_controller'=>'',
             'controller_welcome_class_visible'=>false,
         ];
-        Route::G(new Route());
+        Route::_(new Route());
         Route::RunQuickly($options,function(){
             $_SERVER=[
                 'SCRIPT_FILENAME'=> 'script_filename',
@@ -56,7 +56,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
                 'REQUEST_METHOD'=>'POST',
                 'PATH_INFO'=>'/',
             ];
-            //Route::G()->reset();
+            //Route::_()->reset();
             
             $callback=function () {
                 var_dump(DATE(DATE_ATOM));
@@ -64,24 +64,24 @@ class RouteTest extends \PHPUnit\Framework\TestCase
 
         });
         
-        Route::G()->bind('about/me');
-        Route::G()->run();
-        Route::G()->bind('about/static');
-        Route::G()->run();
+        Route::_()->bind('about/me');
+        Route::_()->run();
+        Route::_()->bind('about/static');
+        Route::_()->run();
         var_dump("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
         
-        Route::G()->bind('Main/index','POST');
-        Route::G()->run();
+        Route::_()->bind('Main/index','POST');
+        Route::_()->run();
         
-        Route::G(MyRoute::G()->init(Route::G()->options));
-        Route::G()->bind('Main/index','POST');
-        //Route::G()->getCallback(null,'');
-        Route::G()->getCallback('tests_Core_Route\\Main','__');
-        Route::G()->getCallback('tests_Core_Route\\Main','post');
-        Route::G()->getCallback('tests_Core_Route\\Main','post2');
-        Route::G()->getCallback('tests_Core_Route\\Main','__missing');
+        Route::_(MyRoute::_()->init(Route::_()->options));
+        Route::_()->bind('Main/index','POST');
+        //Route::_()->getCallback(null,'');
+        Route::_()->getCallback('tests_Core_Route\\Main','__');
+        Route::_()->getCallback('tests_Core_Route\\Main','post');
+        Route::_()->getCallback('tests_Core_Route\\Main','post2');
+        Route::_()->getCallback('tests_Core_Route\\Main','__missing');
         
-        //Route::G()->goByPathInfo('tests_Core_Route\\Main','post');
+        //Route::_()->goByPathInfo('tests_Core_Route\\Main','post');
 
         echo PHP_EOL;
 
@@ -92,46 +92,46 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         $_SERVER['argv']=[ __FILE__ ,'about/me' ];
         $_SERVER['argc']=count($_SERVER['argv']);
         
-        Route::G(new Route())->init($options);
-        Route::G()->bind('NoExists/Mazndex','POST');
-        Route::G()->defaultGetRouteCallback('/');
+        Route::_(new Route())->init($options);
+        Route::_()->bind('NoExists/Mazndex','POST');
+        Route::_()->defaultGetRouteCallback('/');
         
-        Route::G(new Route())->init($options);
+        Route::_(new Route())->init($options);
         
         $callback=function () {
             echo "stttttttttttttttttttttttttttttttttttttttttttttttoped";
         };
-        Route::G()->addRouteHook($callback, 'outter-inner', true);
+        Route::_()->addRouteHook($callback, 'outter-inner', true);
         echo "3333333333333333333333333333333333333333333333";
-        Route::G()->run();
+        Route::_()->run();
         
-        Route::G(new Route())->init($options);
+        Route::_(new Route())->init($options);
 
         
-        Route::G()->bind('Main/index','POST')->run();
-        Route::G()->bind('main/index','POST')->run();
+        Route::_()->bind('Main/index','POST')->run();
+        Route::_()->bind('main/index','POST')->run();
         
-        Route::G(new Route())->init($options);
-        Route::G()->bind("good")->run();
+        Route::_(new Route())->init($options);
+        Route::_()->bind("good")->run();
 
-        Route::G()->bind('Missed','POST');
-        Route::G()->run();
-        Route::G()->bind("again",null)->run();
+        Route::_()->bind('Missed','POST');
+        Route::_()->run();
+        Route::_()->bind("again",null)->run();
         ////////////
         $options2= $options;
         $options2['controller_method_prefix'] ='action_';
-        Route::G(new Route())->init($options2);
-        Route::G()->bind("post",'POST')->run();
+        Route::_(new Route())->init($options2);
+        Route::_()->bind("post",'POST')->run();
         
         ////////////
-        Route::G()->getControllerNamespacePrefix();
+        Route::_()->getControllerNamespacePrefix();
         
         $this->foo2();
-        Route::G()->dumpAllRouteHooksAsString();
+        Route::_()->dumpAllRouteHooksAsString();
         
-        Route::G(new Route())->init(['controller_enable_slash'=>true,'controller_path_ext'=>'.html']);
-        Route::G()->defaultGetRouteCallback('/a.html');
-        Route::G()->defaultGetRouteCallback('/a/b/');
+        Route::_(new Route())->init(['controller_enable_slash'=>true,'controller_path_ext'=>'.html']);
+        Route::_()->defaultGetRouteCallback('/a.html');
+        Route::_()->defaultGetRouteCallback('/a/b/');
         
         $this->doFixPathinfo();
         
@@ -140,24 +140,24 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'namespace_controller'=>'\\tests_Core_Route',
             'controller_use_singletonex' => true,
         ];
-        Route::G(new Route())->init($options);
-        Route::G()->defaultGetRouteCallback('/about/me');
-        Route::G()->defaultGetRouteCallback('/about/Me');
+        Route::_(new Route())->init($options);
+        Route::_()->defaultGetRouteCallback('/about/me');
+        Route::_()->defaultGetRouteCallback('/about/Me');
 
-        Route::G()->replaceController(\tests_Core_Route\about::class, \tests_Core_Route\about2::class);
+        Route::_()->replaceController(\tests_Core_Route\about::class, \tests_Core_Route\about2::class);
         
-        Route::G()->defaultGetRouteCallback('/about/me');
-        Route::G()->defaultGetRouteCallback('/about/_start');
-        Route::G()->defaultGetRouteCallback('/about/NoExists');
-        Route::G()->defaultGetRouteCallback('/about/static');
+        Route::_()->defaultGetRouteCallback('/about/me');
+        Route::_()->defaultGetRouteCallback('/about/_start');
+        Route::_()->defaultGetRouteCallback('/about/NoExists');
+        Route::_()->defaultGetRouteCallback('/about/static');
         
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
             'controller_class_base'=>'~baseController',
             'controller_class_postfix'=>'Controller',
         ];
-        Route::G(new Route())->init($options);
-        Route::G()->defaultGetRouteCallback('/noBase/me');
+        Route::_(new Route())->init($options);
+        Route::_()->defaultGetRouteCallback('/noBase/me');
         
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
@@ -165,36 +165,36 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'controller_class_postfix'=>'Controller',
             'controller_path_prefix'=>'/prefix/',
         ];
-        Route::G(new Route())->init($options);        
-        Route::G()->defaultGetRouteCallback('/prefix/about/me');
-        Route::G()->defaultGetRouteCallback('/about/me');
-        Route::G()->defaultGetRouteCallback('/about/_');
+        Route::_(new Route())->init($options);        
+        Route::_()->defaultGetRouteCallback('/prefix/about/me');
+        Route::_()->defaultGetRouteCallback('/about/me');
+        Route::_()->defaultGetRouteCallback('/about/_');
         
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
             'controller_stop_static_method' => true,
         ];
-        Route::G(new Route())->init($options);
-        Route::G()->defaultGetRouteCallback('/Main/G');
-        Route::G()->defaultGetRouteCallback('/Main/MyStatic');
+        Route::_(new Route())->init($options);
+        Route::_()->defaultGetRouteCallback('/Main/G');
+        Route::_()->defaultGetRouteCallback('/Main/MyStatic');
 
         \DuckPhp\Core\SuperGlobal::DefineSuperGlobalContext();
         
-        Route::G()->bind('Main/index','POST')->run();
+        Route::_()->bind('Main/index','POST')->run();
 
-        Route::G()->options['controller_runtime']=[MyRouteRuntime::class,'G'];
-        Route::G()->options['controller_methtod_for_miss']='_ttt';
-        Route::G()->options['controller_strict_mode']=false;
-        Route::G()->options['controller_resource_prefix']='http://duckphp.github.com/';
-        Route::G()->bind('Main/NO','POST')->run();
+        Route::_()->options['controller_runtime']=[MyRouteRuntime::class,'G'];
+        Route::_()->options['controller_methtod_for_miss']='_ttt';
+        Route::_()->options['controller_strict_mode']=false;
+        Route::_()->options['controller_resource_prefix']='http://duckphp.github.com/';
+        Route::_()->bind('Main/NO','POST')->run();
         echo Route::Res('x.jpg');
         echo Route::Res('http://dvaknheo.git/x.jpg');
         echo Route::Res('https://dvaknheo.git/x.jpg');
         echo Route::Res('//x.jpg');
         echo Route::Res('/x.jpg');
         
-        Route::G()->options['controller_resource_prefix']='controller_resource_prefix/';
-        Route::G()->bind('Main/NO','POST')->run();
+        Route::_()->options['controller_resource_prefix']='controller_resource_prefix/';
+        Route::_()->bind('Main/NO','POST')->run();
         echo Route::Res('abc.jpg');
         
         $this->doFixedRouteEx();
@@ -203,9 +203,9 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'namespace_controller'=>'\\tests_Core_Route',
         ];
         $options['controller_url_prefix'] = 'child/';
-        Route::G(new Route())->init($options);
-        Route::G()->bind('/date')->run();
-        Route::G()->bind('/child/date')->run();
+        Route::_(new Route())->init($options);
+        Route::_()->bind('/date')->run();
+        Route::_()->bind('/child/date')->run();
         \LibCoverage\LibCoverage::End();
         return;
     }
@@ -218,44 +218,44 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'controller_welcome_class_visible'=>true,
         ];
 
-        Route::G(new MyRoute())->init($options);
-        Route::G()->bind('/Main/MyStatic')->run();
+        Route::_(new MyRoute())->init($options);
+        Route::_()->bind('/Main/MyStatic')->run();
         
         
-        //echo Route::G()->getRouteError();
+        //echo Route::_()->getRouteError();
 
-        Route::G()->bind('/Main/index')->run();
-        Route::G()->route_error_flag=true;
-        Route::G()->bind('/Main/index')->run();
-        Route::G()->route_error_flag=false;
+        Route::_()->bind('/Main/index')->run();
+        Route::_()->route_error_flag=true;
+        Route::_()->bind('/Main/index')->run();
+        Route::_()->route_error_flag=false;
         
-        Route::G()->bind('/main/index')->run();
+        Route::_()->bind('/main/index')->run();
         echo "\nfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\n";
         
     }
     protected function doFixPathinfo()
     {
         // 这里要扩展个 Route 类。
-        MyRoute::G(new MyRoute())->init([]);
+        MyRoute::_(new MyRoute())->init([]);
         $serverData=[
         ];
         $_SERVER=[];
 
-        //MyRoute::G()->reset();
+        //MyRoute::_()->reset();
         
         $serverData=[
             'PATH_INFO'=>'abc',
         ];
         $_SERVER=$serverData;
 
-        //MyRoute::G()->reset();
+        //MyRoute::_()->reset();
         $serverData=[
             'REQUEST_URI'=>'/',
             'SCRIPT_FILENAME'=>__DIR__ . '/index.php',
             'DOCUMENT_ROOT'=>__DIR__,
         ];
         $_SERVER=$serverData;
-        //MyRoute::G()->reset();
+        //MyRoute::_()->reset();
         
         $serverData=[
             'REQUEST_URI'=>'/abc/d',
@@ -264,11 +264,11 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         ];
         
         $_SERVER=$serverData;
-        //MyRoute::G()->reset();
+        //MyRoute::_()->reset();
 
-        MyRoute::G(new MyRoute())->init(['skip_fix_path_info'=>true]);
+        MyRoute::_(new MyRoute())->init(['skip_fix_path_info'=>true]);
         $_SERVER=$serverData;
-        //MyRoute::G()->reset();
+        //MyRoute::_()->reset();
 
     }
     protected function foo2()
@@ -277,14 +277,14 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'namespace_controller'=>'\\tests_Core_Route',
             'controller_class_base'=>\tests_Core_Route\baseController::class,
         ];
-        Route::G(new Route());
+        Route::_(new Route());
         $flag=Route::RunQuickly([],function(){
             $my404=function(){ return false;};
             $appended=function () {
-                Route::G()->forceFail();
+                Route::_()->forceFail();
                 return true;
             };
-            Route::G()->addRouteHook($appended, 'append-outter', true);
+            Route::_()->addRouteHook($appended, 'append-outter', true);
         });
 
         var_dump("zzzzzzzzzzzzzzzzzzzzzzzzzzz",$flag);
@@ -295,38 +295,38 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::RunQuickly([]);
         
         //Prepend, true
-        Route::G(new Route());
+        Route::_(new Route());
         Route::RunQuickly([],function(){
             $prepended=function () {
                 var_dump(DATE(DATE_ATOM));
                 return true;
             };
-            Route::G()->addRouteHook($prepended, 'prepend-outter', true);
-            Route::G()->addRouteHook($prepended, 'prepend-outter', true);
+            Route::_()->addRouteHook($prepended, 'prepend-outter', true);
+            Route::_()->addRouteHook($prepended, 'prepend-outter', true);
         });
         //prepend,false
-        Route::G(new Route());
+        Route::_(new Route());
         Route::RunQuickly([],function(){
             $prepended=function () {
                 var_dump(DATE(DATE_ATOM));
-                Route::G()->defaulToggleRouteCallback(false);
+                Route::_()->defaulToggleRouteCallback(false);
                 return false;
             };
             $prepended2=function () { var_dump('prepended2!');};
-            Route::G()->addRouteHook($prepended, 'prepend-inner', true);
-            Route::G()->addRouteHook($prepended, 'prepend-outter', false);
+            Route::_()->addRouteHook($prepended, 'prepend-inner', true);
+            Route::_()->addRouteHook($prepended, 'prepend-outter', false);
         });
         // append true.
         
-        Route::G(new Route());
+        Route::_(new Route());
         Route::RunQuickly([],function(){
             $my404=function(){ return false;};
             $appended=function () {
                 var_dump(DATE(DATE_ATOM));
                 return true;
             };
-            Route::G()->addRouteHook($appended, 'append-inner', true);
-            Route::G()->addRouteHook($appended, 'append-outter', true);
+            Route::_()->addRouteHook($appended, 'append-inner', true);
+            Route::_()->addRouteHook($appended, 'append-outter', true);
         });
     }
     protected function doUrl()
@@ -337,24 +337,24 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'SCRIPT_FILENAME'=> 'x/z/index.php',
             'DOCUMENT_ROOT'=>'x',
         ];
-        //Route::G()->reset();
+        //Route::_()->reset();
         echo Route::URL("/aaaaaaaa");
         echo PHP_EOL;
         echo Route::URL("A");
         echo PHP_EOL;
-        Route::G()->setURLHandler(function($str){ return "[$str]";});
+        Route::_()->setURLHandler(function($str){ return "[$str]";});
         echo Route::URL("BB");
         echo PHP_EOL;
         
         //
-        Route::G()->getURLHandler();
-        Route::G(new Route());
-        Route::G()->setURLHandler(null);
+        Route::_()->getURLHandler();
+        Route::_(new Route());
+        Route::_()->setURLHandler(null);
         $_SERVER = [
             'SCRIPT_FILENAME'=> 'x/index.php',
             'DOCUMENT_ROOT'=>'x',
         ];
-        //Route::G()->reset();
+        //Route::_()->reset();
         echo "--";
         $_SERVER['SCRIPT_FILENAME']='x/index.php';
         $_SERVER['DOCUMENT_ROOT']='x';
@@ -367,11 +367,11 @@ class RouteTest extends \PHPUnit\Framework\TestCase
     }
     protected function doGetterSetter()
     {
-        Route::G()->getRouteError();
-        Route::G()->getRouteCallingPath();
-        Route::G()->getRouteCallingClass();
-        Route::G()->getRouteCallingMethod();
-        Route::G()->setRouteCallingMethod('_');
+        Route::_()->getRouteError();
+        Route::_()->getRouteCallingPath();
+        Route::_()->getRouteCallingClass();
+        Route::_()->getRouteCallingMethod();
+        Route::_()->setRouteCallingMethod('_');
 
         Route::PathInfo();
         Route::PathInfo('xx');

@@ -1,5 +1,5 @@
 <?php
-$info = \DuckPhp\Core\Route::G()->getRouteError();
+$info = \DuckPhp\Core\Route::_()->getRouteError();
 ?>
 404 info:<?php echo $info; ?>;
 <?php if (true) {

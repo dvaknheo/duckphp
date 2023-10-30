@@ -58,58 +58,58 @@ class AppTest extends \PHPUnit\Framework\TestCase
             AppTestObjectB::class=>['aa'=>'22'],
         ];
 
-        App::G(new App());
+        App::_(new App());
         App::RunQuickly($options,function(){
-            App::G()->addBeforeShowHandler(function(){ echo "beforeShowHandlers";});
-            App::G()->addBeforeShowHandler("testsssssssssss");
-            App::G()->removeBeforeShowHandler("testsssssssssss");
+            App::_()->addBeforeShowHandler(function(){ echo "beforeShowHandlers";});
+            App::_()->addBeforeShowHandler("testsssssssssss");
+            App::_()->removeBeforeShowHandler("testsssssssssss");
 
             $value = $cache[$key]; // trigger notice
-            App::G()->options['error_debug']='_sys/error-debug';
+            App::_()->options['error_debug']='_sys/error-debug';
             $value = $cache[$key]; 
             
-            App::G()->options['error_debug']=function($data){var_dump($data);return;};
+            App::_()->options['error_debug']=function($data){var_dump($data);return;};
             $value = $cache[$key]; 
             
-            App::G()->options['is_debug']=false;
+            App::_()->options['is_debug']=false;
             $value = $cache[$key]; 
-            App::G()->options['is_debug']=true;
+            App::_()->options['is_debug']=true;
 
         });
-        App::G()->getProjectPath();
-        App::G()->getRuntimePath();
+        App::_()->getProjectPath();
+        App::_()->getRuntimePath();
         \DuckPhp\Core\Route::_()->bind('/NOOOOOOOOOOOOOOO'); 
         
-        App::G()->options['error_404']=function(){
+        App::_()->options['error_404']=function(){
             echo "noooo 404  ooooooooo\n";
         };
         
-        App::G()->run();
+        App::_()->run();
         \DuckPhp\Core\Route::_()->bind('/exception');
-        App::G()->run();
+        App::_()->run();
         
-        App::G()->options['error_404']=function(){
+        App::_()->options['error_404']=function(){
             echo "zzzzzo 404  zzzzzzzzzzzz\n";
         };
          \DuckPhp\Core\Route::_()->bind('/Base/index');
         try{
-                App::G()->system_wrapper_replace(['exit'=>function($code){
+                App::_()->system_wrapper_replace(['exit'=>function($code){
             var_dump(DATE(DATE_ATOM));
         }]);
 
-        App::G()->run();
+        App::_()->run();
         }catch(\Throwable $ex){
             echo "failed".$ex;
         }
         try{
-            App::G()->options['skip_exception_check']=true;
-            Route::G()->bind('/exception');
+            App::_()->options['skip_exception_check']=true;
+            Route::_()->bind('/exception');
             
-            App::G()->run();
+            App::_()->run();
         }catch(\Throwable $ex){
             echo $ex->getMessage();
         }
-        App::G()->options['skip_exception_check']=false;
+        App::_()->options['skip_exception_check']=false;
         //////////////////////////////////////////////////
         
         $app=new App();
@@ -121,7 +121,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         }
         
         
-        //App::G()->clear();
+        //App::_()->clear();
         ///////////////////////////
         $options=[
             // 'no this path' => $path_app,
@@ -130,9 +130,9 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'path_view' => $path_app.'view/',
             'is_debug' => true,
         ];
-        View::G(new View());
-        Configer::G(new Configer());
-        App::G(new App())->init($options);
+        View::_(new View());
+        Configer::_(new Configer());
+        App::_(new App())->init($options);
         
 
         $this->doException();
@@ -147,7 +147,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         $this->do_Core_Component();
         
         try{
-        App::Pager(Pager::G());
+        App::Pager(Pager::_());
         }catch(\Exception $ex){}
         try{
             App::Event();
@@ -156,7 +156,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
 
         $old_class = AppTestObjectA::class;
         $new_class = AppTestObjectB::class;
-        App::G()->version();
+        App::_()->version();
         
         $path_app=$this->LibCoverage->getClassTestPath(App::class);
         $options=[
@@ -165,7 +165,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         ];
         AppTestApp::RunQuickly($options);
         
-        AppTestApp::G()->options['error_404']='_sys/error-404';
+        AppTestApp::_()->options['error_404']='_sys/error-404';
         AppTestApp::On404();
         
         AppTestApp::PhaseCall('z',[AppTestApp::class,'CallIt'],123);
@@ -184,15 +184,15 @@ class AppTest extends \PHPUnit\Framework\TestCase
                 'name'=>'MyAppTestApp',
             ]],
         ];
-        AppTestApp::G(new AppTestApp());
-        App::G(new App())->init($options);
-        App::G()->addBeforeShowHandler(function(){ echo "addBeforeShowHandler";});
+        AppTestApp::_(new AppTestApp());
+        App::_(new App())->init($options);
+        App::_()->addBeforeShowHandler(function(){ echo "addBeforeShowHandler";});
         \DuckPhp\Core\View::Show(['A'=>'b'],"view");
         
         ////
         ////[[[[
-        AppTestApp::G()->getOverrideableFile('view', $path_view."view.php");
-        AppTestApp::G()->getOverrideableFile('view', 'view.php');
+        AppTestApp::_()->getOverrideableFile('view', $path_view."view.php");
+        AppTestApp::_()->getOverrideableFile('view', 'view.php');
         ////]]]]
         
         \LibCoverage\LibCoverage::G($this->LibCoverage);
@@ -226,18 +226,18 @@ class AppTest extends \PHPUnit\Framework\TestCase
     }
     public function doException()
     {
-        App::G()->options['is_debug']=true;
-        App::G()->options['error_500']="_sys/error-exception";
+        App::_()->options['is_debug']=true;
+        App::_()->options['error_500']="_sys/error-exception";
         ExceptionManager::CallException(new \Exception("333333",-1));
-        App::G()->options['error_500']=null;
+        App::_()->options['error_500']=null;
         ExceptionManager::CallException(new \Exception("EXxxxxxxxxxxxxxx",-1));
         
-        App::G()->options['error_500']=null;
-        App::G()->options['is_debug']=false;
+        App::_()->options['error_500']=null;
+        App::_()->options['is_debug']=false;
         ExceptionManager::CallException(new \Exception("EXxxxxxxxxxxxxxx",-1));
-        App::G()->options['is_debug']=true;
+        App::_()->options['is_debug']=true;
         
-        App::G()->options['error_500']=function($ex){ echo $ex;};
+        App::_()->options['error_500']=function($ex){ echo $ex;};
         ExceptionManager::CallException(new \Exception("22222222222222",-1));
         
         ExceptionManager::_()->assignExceptionHandler(\Exception::class,function($ex){
@@ -254,8 +254,8 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'is_debug'=>true,
             'on_init'=> function(){ 
             
-            AppTestApp::G()->_OnDevErrorHandler(0, '', '', 0);
-            AppTestApp::G()->_OnDefaultException(new \Exception('--'));
+            AppTestApp::_()->_OnDevErrorHandler(0, '', '', 0);
+            AppTestApp::_()->_OnDefaultException(new \Exception('--'));
             },
         ];
         AppTestApp::_(new AppTestApp);
@@ -285,7 +285,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         $options=[
             'path_config'=>$path_config,
         ];
-        Configer::G()->init($options);
+        Configer::_()->init($options);
         $key='key';
         $file_basename='config';
         
@@ -302,10 +302,10 @@ class AppTest extends \PHPUnit\Framework\TestCase
         $options=[
             'path_view'=>$path_view,
         ];
-        View::G()->init($options);
+        View::_()->init($options);
         
-        App::G()->addBeforeShowHandler(function(){ echo "addBeforeShowHandler";});
-        View::G()->options['skip_view_notice_error']=true;
+        App::_()->addBeforeShowHandler(function(){ echo "addBeforeShowHandler";});
+        View::_()->options['skip_view_notice_error']=true;
         //App::getViewData();
 
     }
@@ -328,7 +328,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'use_super_global' => true,
             'override_class'=>AppTestApp::class,
         ];
-        DuckPhp::G(new DuckPhp())->init($options);
+        DuckPhp::_(new DuckPhp())->init($options);
 
         
         $options=[
@@ -338,9 +338,9 @@ class AppTest extends \PHPUnit\Framework\TestCase
         AppTestApp::On404();
         AppTestApp::RunQuickly($options);
 
-        AppTestApp::G()->options['error_404']='_sys/error-404';
+        AppTestApp::_()->options['error_404']='_sys/error-404';
         AppTestApp::On404();
-        AppTestApp::G()->options['error_404']=function(){};
+        AppTestApp::_()->options['error_404']=function(){};
         AppTestApp::On404();                
         AppTestApp2::RunQuickly([]);
     }
@@ -350,12 +350,12 @@ class AppTest extends \PHPUnit\Framework\TestCase
     }
     protected function do_Core_Component()
     {
-        App::G()->options['ext']['Xclass']=true;
-        //App::G()->getStaticComponentClasses();
-//        App::G()->getDynamicComponentClasses();
+        App::_()->options['ext']['Xclass']=true;
+        //App::_()->getStaticComponentClasses();
+//        App::_()->getDynamicComponentClasses();
         $class="NoExits";
-//        App::G()->addDynamicComponentClass($class);
-        App::G()->skip404Handler();
+//        App::_()->addDynamicComponentClass($class);
+        App::_()->skip404Handler();
         
 
     

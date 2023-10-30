@@ -36,7 +36,7 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
             'DOCUMENT_ROOT'=> __DIR__,
             'SCRIPT_FILENAME'=>__DIR__.'/aa/index.php',
         ];
-        //MiniRoute::G()->reset();
+        //MiniRoute::_()->reset();
         MiniRoute::PathInfo('x/z');
         $t= MiniRoute::Url('aaa');
         $t= MiniRoute::Res('aaa');
@@ -54,7 +54,7 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
         
         //First Run;
         //$flag=MiniRoute::RunQuickly($options);
-        //MiniRoute::G()->setParameters([]);
+        //MiniRoute::_()->setParameters([]);
         //MiniRoute::Parameter('a','b');
         //MiniRoute::Parameter();
 
@@ -67,7 +67,7 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
             'namespace_controller'=>'',
             'controller_welcome_class_visible'=>false,
         ];
-        MiniRoute::G(new MiniRoute());
+        MiniRoute::_(new MiniRoute());
         
         $_SERVER=[
                 'SCRIPT_FILENAME'=> 'script_filename',
@@ -75,26 +75,26 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
                 'REQUEST_METHOD'=>'POST',
                 'PATH_INFO'=>'/',
             ];
-        MiniRoute::G()->init($options)->run();
+        MiniRoute::_()->init($options)->run();
         
         $this->bind('about/me');
-        MiniRoute::G()->run();
+        MiniRoute::_()->run();
         $this->bind('about/static');
-        MiniRoute::G()->run();
+        MiniRoute::_()->run();
         var_dump("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
         
         $this->bind('Main/index','POST');
-        MiniRoute::G()->run();
+        MiniRoute::_()->run();
         
-        MiniRoute::G(MyRoute::G()->init(MiniRoute::G()->options));
+        MiniRoute::_(MyRoute::_()->init(MiniRoute::_()->options));
         $this->bind('Main/index','POST');
-        //MiniRoute::G()->getCallback(null,'');
-        MiniRoute::G()->getCallback('tests_Core_Route2\\Main','__');
-        MiniRoute::G()->getCallback('tests_Core_Route2\\Main','post');
-        MiniRoute::G()->getCallback('tests_Core_Route2\\Main','post2');
-        MiniRoute::G()->getCallback('tests_Core_Route2\\Main','__missing');
+        //MiniRoute::_()->getCallback(null,'');
+        MiniRoute::_()->getCallback('tests_Core_Route2\\Main','__');
+        MiniRoute::_()->getCallback('tests_Core_Route2\\Main','post');
+        MiniRoute::_()->getCallback('tests_Core_Route2\\Main','post2');
+        MiniRoute::_()->getCallback('tests_Core_Route2\\Main','__missing');
         
-        //MiniRoute::G()->goByPathInfo('tests_Core_Route\\Main','post');
+        //MiniRoute::_()->goByPathInfo('tests_Core_Route\\Main','post');
 
         echo PHP_EOL;
 
@@ -105,41 +105,41 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
         $_SERVER['argv']=[ __FILE__ ,'about/me' ];
         $_SERVER['argc']=count($_SERVER['argv']);
         
-        MiniRoute::G(new MiniRoute())->init($options);
+        MiniRoute::_(new MiniRoute())->init($options);
         $this->bind('NoExists/Mazndex','POST');
-        MiniRoute::G()->defaultGetRouteCallback('/');
+        MiniRoute::_()->defaultGetRouteCallback('/');
         
 
         
-        MiniRoute::G(new MiniRoute())->init($options);
+        MiniRoute::_(new MiniRoute())->init($options);
 
         $this->bind('Main/index','POST');
-        MiniRoute::G()->run();
+        MiniRoute::_()->run();
         $this->bind('main/index','POST');
-        MiniRoute::G()->run();
-        MiniRoute::G(new MiniRoute())->init($options);
+        MiniRoute::_()->run();
+        MiniRoute::_(new MiniRoute())->init($options);
         $this->bind("good");
-        MiniRoute::G()->run();
+        MiniRoute::_()->run();
         
         $this->bind('Missed','POST');
-        MiniRoute::G()->run();
+        MiniRoute::_()->run();
         $this->bind("again",null);
-        MiniRoute::G()->run();
+        MiniRoute::_()->run();
 
         ////////////
         $options2= $options;
         $options2['controller_method_prefix'] ='action_';
-        MiniRoute::G(new MiniRoute())->init($options2);
+        MiniRoute::_(new MiniRoute())->init($options2);
         $this->bind("post",'POST');
-        MiniRoute::G()->run();
+        MiniRoute::_()->run();
 
         ////////////
-        MiniRoute::G()->getControllerNamespacePrefix();
+        MiniRoute::_()->getControllerNamespacePrefix();
         
         
-        MiniRoute::G(new MiniRoute())->init(['controller_enable_slash'=>true,'controller_path_ext'=>'.html']);
-        MiniRoute::G()->defaultGetRouteCallback('/a.html');
-        MiniRoute::G()->defaultGetRouteCallback('/a/b/');
+        MiniRoute::_(new MiniRoute())->init(['controller_enable_slash'=>true,'controller_path_ext'=>'.html']);
+        MiniRoute::_()->defaultGetRouteCallback('/a.html');
+        MiniRoute::_()->defaultGetRouteCallback('/a/b/');
         
         $this->doFixPathinfo();
         
@@ -148,24 +148,24 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
             'namespace_controller'=>'\\tests_Core_Route2',
             'controller_use_singletonex' => true,
         ];
-        MiniRoute::G(new MiniRoute())->init($options);
-        MiniRoute::G()->defaultGetRouteCallback('/about/me');
-        MiniRoute::G()->defaultGetRouteCallback('/about/Me');
+        MiniRoute::_(new MiniRoute())->init($options);
+        MiniRoute::_()->defaultGetRouteCallback('/about/me');
+        MiniRoute::_()->defaultGetRouteCallback('/about/Me');
 
-        MiniRoute::G()->replaceController(\tests_Core_Route2\about::class, \tests_Core_Route2\about2::class);
+        MiniRoute::_()->replaceController(\tests_Core_Route2\about::class, \tests_Core_Route2\about2::class);
         
-        MiniRoute::G()->defaultGetRouteCallback('/about/me');
-        MiniRoute::G()->defaultGetRouteCallback('/about/_start');
-        MiniRoute::G()->defaultGetRouteCallback('/about/NoExists');
-        MiniRoute::G()->defaultGetRouteCallback('/about/static');
+        MiniRoute::_()->defaultGetRouteCallback('/about/me');
+        MiniRoute::_()->defaultGetRouteCallback('/about/_start');
+        MiniRoute::_()->defaultGetRouteCallback('/about/NoExists');
+        MiniRoute::_()->defaultGetRouteCallback('/about/static');
         
         $options=[
             'namespace_controller'=>'\\tests_Core_Route2',
             'controller_class_base'=>'~baseController',
             'controller_class_postfix'=>'Controller',
         ];
-        MiniRoute::G(new MiniRoute())->init($options);
-        MiniRoute::G()->defaultGetRouteCallback('/noBase/me');
+        MiniRoute::_(new MiniRoute())->init($options);
+        MiniRoute::_()->defaultGetRouteCallback('/noBase/me');
         
         $options=[
             'namespace_controller'=>'\\tests_Core_Route2',
@@ -173,39 +173,39 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
             'controller_class_postfix'=>'Controller',
             'controller_path_prefix'=>'/prefix/',
         ];
-        MiniRoute::G(new MiniRoute())->init($options);        
-        MiniRoute::G()->defaultGetRouteCallback('/prefix/about/me');
-        MiniRoute::G()->defaultGetRouteCallback('/about/me');
-        MiniRoute::G()->defaultGetRouteCallback('/about/_');
+        MiniRoute::_(new MiniRoute())->init($options);        
+        MiniRoute::_()->defaultGetRouteCallback('/prefix/about/me');
+        MiniRoute::_()->defaultGetRouteCallback('/about/me');
+        MiniRoute::_()->defaultGetRouteCallback('/about/_');
         
         $options=[
             'namespace_controller'=>'\\tests_Core_Route2',
             'controller_stop_static_method' => true,
         ];
-        MiniRoute::G(new MiniRoute())->init($options);
-        MiniRoute::G()->defaultGetRouteCallback('/Main/G');
-        MiniRoute::G()->defaultGetRouteCallback('/Main/MyStatic');
+        MiniRoute::_(new MiniRoute())->init($options);
+        MiniRoute::_()->defaultGetRouteCallback('/Main/G');
+        MiniRoute::_()->defaultGetRouteCallback('/Main/MyStatic');
 
         \DuckPhp\Core\SuperGlobal::DefineSuperGlobalContext();
         
         $this->bind('Main/index','POST');
-        MiniRoute::G()->run();
+        MiniRoute::_()->run();
 
-        MiniRoute::G()->options['controller_runtime']=[MyRouteRuntime::class,'G'];
-        MiniRoute::G()->options['controller_methtod_for_miss']='_ttt';
-        MiniRoute::G()->options['controller_strict_mode']=false;
-        MiniRoute::G()->options['controller_resource_prefix']='http://duckphp.github.com/';
+        MiniRoute::_()->options['controller_runtime']=[MyRouteRuntime::class,'G'];
+        MiniRoute::_()->options['controller_methtod_for_miss']='_ttt';
+        MiniRoute::_()->options['controller_strict_mode']=false;
+        MiniRoute::_()->options['controller_resource_prefix']='http://duckphp.github.com/';
         $this->bind('Main/NO','POST');
-        MiniRoute::G()->run();
+        MiniRoute::_()->run();
         echo MiniRoute::Res('x.jpg');
         echo MiniRoute::Res('http://dvaknheo.git/x.jpg');
         echo MiniRoute::Res('https://dvaknheo.git/x.jpg');
         echo MiniRoute::Res('//x.jpg');
         echo MiniRoute::Res('/x.jpg');
         
-        MiniRoute::G()->options['controller_resource_prefix']='controller_resource_prefix/';
+        MiniRoute::_()->options['controller_resource_prefix']='controller_resource_prefix/';
         $this->bind('Main/NO','POST');
-        MiniRoute::G()->run();
+        MiniRoute::_()->run();
         echo MiniRoute::Res('abc.jpg');
         
         $this->doFixedRouteEx();
@@ -214,11 +214,11 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
             'namespace_controller'=>'\\tests_Core_Route2',
         ];
         $options['controller_url_prefix'] = 'child/';
-        MiniRoute::G(new MiniRoute())->init($options);
+        MiniRoute::_(new MiniRoute())->init($options);
         $this->bind('/date');
-        MiniRoute::G()->run();
+        MiniRoute::_()->run();
         $this->bind('/child/date');
-        MiniRoute::G()->run();
+        MiniRoute::_()->run();
         MiniRoute::PathInfo('/z');
         \LibCoverage\LibCoverage::End();
         return;
@@ -231,47 +231,47 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
             'controller_welcome_class_visible'=>true,
         ];
 
-        MiniRoute::G(new MyRoute())->init($options);
+        MiniRoute::_(new MyRoute())->init($options);
         $this->bind('/Main/MyStatic');
-        MiniRoute::G()->run();
+        MiniRoute::_()->run();
         
         
-        //echo MiniRoute::G()->getRouteError();
+        //echo MiniRoute::_()->getRouteError();
 
         $this->bind('/Main/index');
-        MiniRoute::G()->run();
-        MiniRoute::G()->route_error_flag=true;
+        MiniRoute::_()->run();
+        MiniRoute::_()->route_error_flag=true;
         $this->bind('/Main/index');
-        MiniRoute::G()->run();
-        MiniRoute::G()->route_error_flag=false;
+        MiniRoute::_()->run();
+        MiniRoute::_()->route_error_flag=false;
         
         $this->bind('/main/index');
-        MiniRoute::G()->run();
+        MiniRoute::_()->run();
         
     }
     protected function doFixPathinfo()
     {
         // 这里要扩展个 MiniRoute 类。
-        MyRoute::G(new MyRoute())->init([]);
+        MyRoute::_(new MyRoute())->init([]);
         $serverData=[
         ];
         $_SERVER=[];
 
-        //MyRoute::G()->reset();
+        //MyRoute::_()->reset();
         
         $serverData=[
             'PATH_INFO'=>'abc',
         ];
         $_SERVER=$serverData;
 
-        //MyRoute::G()->reset();
+        //MyRoute::_()->reset();
         $serverData=[
             'REQUEST_URI'=>'/',
             'SCRIPT_FILENAME'=>__DIR__ . '/index.php',
             'DOCUMENT_ROOT'=>__DIR__,
         ];
         $_SERVER=$serverData;
-        //MyRoute::G()->reset();
+        //MyRoute::_()->reset();
         
         $serverData=[
             'REQUEST_URI'=>'/abc/d',
@@ -280,11 +280,11 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
         ];
         
         $_SERVER=$serverData;
-        //MyRoute::G()->reset();
+        //MyRoute::_()->reset();
 
-        MyRoute::G(new MyRoute())->init(['skip_fix_path_info'=>true]);
+        MyRoute::_(new MyRoute())->init(['skip_fix_path_info'=>true]);
         $_SERVER=$serverData;
-        //MyRoute::G()->reset();
+        //MyRoute::_()->reset();
 
     }
 
@@ -300,7 +300,7 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
             'SCRIPT_FILENAME'=> 'x/z/index.php',
             'DOCUMENT_ROOT'=>'x',
         ];
-        //MiniRoute::G()->reset();
+        //MiniRoute::_()->reset();
         echo MiniRoute::URL("/aaaaaaaa");
         echo PHP_EOL;
         echo MiniRoute::URL("A");
@@ -309,12 +309,12 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
         echo PHP_EOL;
         
         //
-        MiniRoute::G(new MiniRoute());
+        MiniRoute::_(new MiniRoute());
         $_SERVER = [
             'SCRIPT_FILENAME'=> 'x/index.php',
             'DOCUMENT_ROOT'=>'x',
         ];
-        //MiniRoute::G()->reset();
+        //MiniRoute::_()->reset();
         echo "--";
         $_SERVER['SCRIPT_FILENAME']='x/index.php';
         $_SERVER['DOCUMENT_ROOT']='x';
@@ -327,11 +327,11 @@ class MiniRouteTest extends \PHPUnit\Framework\TestCase
     }
     protected function doGetterSetter()
     {
-        MiniRoute::G()->getRouteError();
-        MiniRoute::G()->getRouteCallingPath();
-        MiniRoute::G()->getRouteCallingClass();
-        MiniRoute::G()->getRouteCallingMethod();
-        MiniRoute::G()->setRouteCallingMethod('_');
+        MiniRoute::_()->getRouteError();
+        MiniRoute::_()->getRouteCallingPath();
+        MiniRoute::_()->getRouteCallingClass();
+        MiniRoute::_()->getRouteCallingMethod();
+        MiniRoute::_()->setRouteCallingMethod('_');
 
         MiniRoute::PathInfo();
         MiniRoute::PathInfo('xx');

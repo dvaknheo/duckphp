@@ -21,41 +21,41 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
         
         $dn_options=[
         ];
-        DuckPhp::G()->init($dn_options);
+        DuckPhp::_()->init($dn_options);
         
 
-        Logger::G()->init($options,DuckPhp::G());
+        Logger::_()->init($options,DuckPhp::_());
         
-        Logger::G()->emergency($message,  $context);
+        Logger::_()->emergency($message,  $context);
         $options=[
             'path'=>$path_log,
             'log_file'=>'log2.log',
             'log_prefix'=>'DuckPhpLog',
         ];
-        Logger::G()->init($options);
-        Logger::G()->alert($message,  $context);
-        Logger::G()->critical($message,  $context);
-        Logger::G()->error($message,  $context);
-        Logger::G()->warning($message,  $context);
-        Logger::G()->notice($message,  $context);
-        Logger::G()->info($message,  $context);
+        Logger::_()->init($options);
+        Logger::_()->alert($message,  $context);
+        Logger::_()->critical($message,  $context);
+        Logger::_()->error($message,  $context);
+        Logger::_()->warning($message,  $context);
+        Logger::_()->notice($message,  $context);
+        Logger::_()->info($message,  $context);
         
-        Logger::G()->debug($message,  $context);
+        Logger::_()->debug($message,  $context);
         DuckPhp::Logger()->info("zzzzz");
         //////////
         
         $options=[];
         $options['log_file_template']=$path_log.'x.log';
-        Logger::G(new Logger())->init($options)->info($message,  $context);
+        Logger::_(new Logger())->init($options)->info($message,  $context);
         
         $options=[];
         $options['path']=$path_log;
         $options['path_log']='./';
-        Logger::G(new Logger())->init($options)->info($message,  $context);
+        Logger::_(new Logger())->init($options)->info($message,  $context);
          $options=[];
         $options['path']=$path_log;
         $options['path_log']=$path_log;
-        Logger::G(new Logger())->init($options)->info($message,  $context);
+        Logger::_(new Logger())->init($options)->info($message,  $context);
         
         \LibCoverage\LibCoverage::End();
     }

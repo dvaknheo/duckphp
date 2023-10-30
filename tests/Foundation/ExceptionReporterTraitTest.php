@@ -21,14 +21,14 @@ class ExceptionReporterTraitTest extends \PHPUnit\Framework\TestCase
             'cli_mode'=>false,
             'is_debug'=>true,
         ];
-        DuckPhp::G()->init($options);
+        DuckPhp::_()->init($options);
 
         $_SERVER['PATH_INFO']='/first';
-        DuckPhp::G()->run();
+        DuckPhp::_()->run();
         $_SERVER['PATH_INFO']='/second';
-        DuckPhp::G()->run();
+        DuckPhp::_()->run();
         $_SERVER['PATH_INFO']='/third';
-        DuckPhp::G()->run();
+        DuckPhp::_()->run();
         \LibCoverage\LibCoverage::End();
     }
 }

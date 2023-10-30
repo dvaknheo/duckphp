@@ -19,14 +19,14 @@ class JsonViewTest extends \PHPUnit\Framework\TestCase
         SystemWrapper::_()->_system_wrapper_replace([
             'exit' =>function(){ echo "change!\n";},
         ]);
-        JsonView::G()->init($options, DuckPhp::G());
+        JsonView::_()->init($options, DuckPhp::_());
         
         $view="main";
         $data=["abc"=>"d"];
         
-        JsonView::G()->_Display($view, $data);
+        JsonView::_()->_Display($view, $data);
         
-        JsonView::G()->_Show($data , $view);
+        JsonView::_()->_Show($data , $view);
         
         \LibCoverage\LibCoverage::End();
        

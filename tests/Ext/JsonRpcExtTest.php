@@ -13,19 +13,19 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(JsonRpcExt::class);
         $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(JsonRpcExt::class);
         
-        $ret=JsonRpcExt::G()->onRpcCall([
+        $ret=JsonRpcExt::_()->onRpcCall([
             'method'=>TestService::class.'.foo',
             'params'=>[
                 'OK'
             ],
         ]);
-        $ret=JsonRpcExt::G()->onRpcCall([
+        $ret=JsonRpcExt::_()->onRpcCall([
             'method'=>'NoClass',
             'params'=>[
                 'OK'
             ],
         ]);
-        $ret=JsonRpcExt::G(new JsonRpcExt())->init([
+        $ret=JsonRpcExt::_(new JsonRpcExt())->init([
             'jsonrpc_service_interface' => testInterface::class,
             'jsonrpc_service_namespace' => __NAMESPACE__,
         ])->onRpcCall([
@@ -34,7 +34,7 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
                 'OK'
             ],
         ]);
-        $ret=JsonRpcExt::G(new JsonRpcExt())->init([
+        $ret=JsonRpcExt::_(new JsonRpcExt())->init([
             'jsonrpc_service_interface' => 'noexites'
         ])->onRpcCall([
             'method'=>'TestService2.foo',
@@ -51,7 +51,7 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
             'jsonrpc_check_token_handler'=>function($ch){ var_dump('OOK');}
         ];
         
-        JsonRpcExt::G(new JsonRpcExt())->init($options,null);
+        JsonRpcExt::_(new JsonRpcExt())->init($options,null);
         
         $flag=class_exists('do_not_exoits');
         
@@ -63,48 +63,48 @@ class JsonRpcExtTest extends \PHPUnit\Framework\TestCase
             
         ];
         HttpServer::RunQuickly($server_options);
-        echo HttpServer::G()->getPid();
+        echo HttpServer::_()->getPid();
         sleep(1);// ugly
         
-        $data=TestService::G(JsonRpcExt::Wrap(TestService::class))->foo();
-        JsonRpcExt::G()->getRealClass(TestService::G());
-        JS::G()->foo();
+        $data=TestService::_(JsonRpcExt::Wrap(TestService::class))->foo();
+        JsonRpcExt::_()->getRealClass(TestService::_());
+        JS::_()->foo();
         
-        JsonRpcExt::G()->clear();
+        JsonRpcExt::_()->clear();
         $options['jsonrpc_backend']=['http://localdomain.dev/json_rpc','127.0.0.1:9528'];
-        JsonRpcExt::G()->init($options,null);
-        JS::G()->foo();
+        JsonRpcExt::_()->init($options,null);
+        JS::_()->foo();
 
         try{
-            JS::G()->the500();
+            JS::_()->the500();
         }catch(\Exception $ex){
             echo $ex;
         }
         try{
-            JS::G()->throwException();
+            JS::_()->throwException();
         }catch(\Exception $ex){
             echo $ex;
         }
         
         $options['jsonrpc_check_token_handler']=null;
-        JsonRpcExt::G()->init($options,null);
-        JS::G()->foo();
-        //JS::G()->foo();
+        JsonRpcExt::_()->init($options,null);
+        JS::_()->foo();
+        //JS::_()->foo();
         
         var_dump($data);
-        HttpServer::G()->close();
-        JsonRpcExt::G()->isInited();
+        HttpServer::_()->close();
+        JsonRpcExt::_()->isInited();
         \LibCoverage\LibCoverage::End();
         /*
-        JsonRpcExt::G()->init($options=[], $context);
-        JsonRpcExt::G()->getRealClass($object);
-        JsonRpcExt::G()->Wrap($class);
-        JsonRpcExt::G()->_Wrap($class);
-        JsonRpcExt::G()->_autoload($class);
-        JsonRpcExt::G()->onRpcCall(array $input);
-        JsonRpcExt::G()->curl_file_get_contents($url, $post);
-        JsonRpcExt::G()->prepare_token($ch);
-        JsonRpcExt::G()->__call($method, $arguments);
+        JsonRpcExt::_()->init($options=[], $context);
+        JsonRpcExt::_()->getRealClass($object);
+        JsonRpcExt::_()->Wrap($class);
+        JsonRpcExt::_()->_Wrap($class);
+        JsonRpcExt::_()->_autoload($class);
+        JsonRpcExt::_()->onRpcCall(array $input);
+        JsonRpcExt::_()->curl_file_get_contents($url, $post);
+        JsonRpcExt::_()->prepare_token($ch);
+        JsonRpcExt::_()->__call($method, $arguments);
         //*/
     }
 }

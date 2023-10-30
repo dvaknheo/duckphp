@@ -22,15 +22,15 @@ class RedisCacheTest extends \PHPUnit\Framework\TestCase
                 RedisCache::class => true,
             ],
         ];
-        DuckPhp::G()->init($options);
+        DuckPhp::_()->init($options);
         
         /*
         $options=[
             'redis_cache_skip_replace' => false,
             'redis_cache_prefix' => '',
         ];
-        RedisCache::G()->init($options,DuckPhp::G());
-        DuckPhp::Cache(RedisCache::G());
+        RedisCache::_()->init($options,DuckPhp::_());
+        DuckPhp::Cache(RedisCache::_());
         */
         
         $key="ABC";

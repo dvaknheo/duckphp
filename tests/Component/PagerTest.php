@@ -13,33 +13,33 @@ class PagerTest extends \PHPUnit\Framework\TestCase
         $options=[
             //'url'=>'/user',
         ];
-        Pager::G()->init($options, DuckPhp::G());
-        Pager::G()->render(123,$options);
+        Pager::_()->init($options, DuckPhp::_());
+        Pager::_()->render(123,$options);
         ///////////////
-        Pager::G()->current();
+        Pager::_()->current();
         
         $options['url']='/a{page}';
-        Pager::G()->render(123,$options);
+        Pager::_()->render(123,$options);
         //
         $options['page_size']=1000000;
-        Pager::G()->render(1,$options);
+        Pager::_()->render(1,$options);
         
         $options['page_size']=3;
-        $options['rewrite']=function($page){ return Pager::G()->defaultGetUrl($page);};
+        $options['rewrite']=function($page){ return Pager::_()->defaultGetUrl($page);};
 
         for($i=1;$i<=9;$i++){
             $options['current']=$i;
-            Pager::G()->render(26,$options);
+            Pager::_()->render(26,$options);
         }
         
-        Pager::G(new Pager());
-        Pager::G()->current();
-        Pager::G()->init(['url'=>'/user',],DuckPhp::G());
-        Pager::G()->getUrl(3);
-        Pager::G()->pageSize(3);
-        Pager::G()->current(1);
-        Pager::G()->pageSize();
-        Pager::G()->isInited();
+        Pager::_(new Pager());
+        Pager::_()->current();
+        Pager::_()->init(['url'=>'/user',],DuckPhp::_());
+        Pager::_()->getUrl(3);
+        Pager::_()->pageSize(3);
+        Pager::_()->current(1);
+        Pager::_()->pageSize();
+        Pager::_()->isInited();
         
         Pager::PageNo();
         Pager::PageWindow();

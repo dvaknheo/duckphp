@@ -18,13 +18,13 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         $dn_options=[
             'database_list'=>['zzz'],
         ];
-        App::G()->init($dn_options);
+        App::_()->init($dn_options);
         
         $options=[
             'database_list'=>$database_list,
         ];
-        DbManager::G()->init($options,App::G());
-        DbManager::G(new DbManager());
+        DbManager::_()->init($options,App::_());
+        DbManager::_(new DbManager());
         
         $options=[
 
@@ -36,16 +36,16 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         ];
         
 
-        //App::G()->extendComponents(static::class,['beforeGet'],[]);
-        DbManager::G()->init($options,App::G());
+        //App::_()->extendComponents(static::class,['beforeGet'],[]);
+        DbManager::_()->init($options,App::_());
         $options['database_list']=$database_list;
-        DbManager::G()->init($options,null);
+        DbManager::_()->init($options,null);
         
-        DbManager::G()->setBeforeGetDbHandler(function(){var_dump("OK");});
+        DbManager::_()->setBeforeGetDbHandler(function(){var_dump("OK");});
 
-        DbManager::G()->_Db();
-        DbManager::G()->_DbForWrite();
-        DbManager::G()->_DbForRead();
+        DbManager::_()->_Db();
+        DbManager::_()->_DbForWrite();
+        DbManager::_()->_DbForRead();
         DbManager::DbCloseAll();
                 
         //----------------
@@ -53,15 +53,15 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         $options=[
             'database_list'=>$database_sinlge,
         ];
-        DbManager::G(new DbManager())->init($options);
+        DbManager::_(new DbManager())->init($options);
         $options['database_list']=[
         ];
-        DbManager::G()->init($options,null);
+        DbManager::_()->init($options,null);
 
         DbManager::Db();
         DbManager::DbForWrite();
         DbManager::DbForRead();
-        DbManager::G()->init($options,null);
+        DbManager::_()->init($options,null);
         DbManager::DbCloseAll();
         $options=[
             'db_before_get_object_handler'=>null,
@@ -69,22 +69,22 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
     
         $options['database_list']=$database_list;
         
-        DbManager::G()->init($options,null);
-        DbManager::G()->_Db();
+        DbManager::_()->init($options,null);
+        DbManager::_()->_Db();
         
         ////
         $dn_options=[
             'log_sql'=>true,
         ];
-        App::G(new App())->init($dn_options);
+        App::_(new App())->init($dn_options);
         $options=[
             'database_list'=>$database_list,
             'database_log_sql_query'=>true,
         ];
         
-        DbManager::G(new DbManager())->init($options,App::G());
+        DbManager::_(new DbManager())->init($options,App::_());
         $data=App::Db()->fetchColumn('select ?+? as t',1,2);
-        DbManager::G()->options['database_log_sql_query']=false;
+        DbManager::_()->options['database_log_sql_query']=false;
         $data=App::Db()->fetchColumn('select ?+? as t',1,2);
 
         
@@ -94,8 +94,8 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         echo "zzzzzzzzzzzzzzzzzzzzzzzzzz";
         $dn_options=[
         ];
-        DbManager::G(new DbManager());
-        App::G(new App())->init($dn_options);
+        DbManager::_(new DbManager());
+        App::_(new App())->init($dn_options);
 
         try{
             App::Db();
@@ -116,7 +116,7 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
             App::Db();
         }catch(\Exception $ex){
         }
-        DbManager::G(new DbManager())->init($options,App::G());
+        DbManager::_(new DbManager())->init($options,App::_());
 
         \LibCoverage\LibCoverage::End();
 

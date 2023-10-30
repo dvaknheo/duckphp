@@ -22,13 +22,13 @@ class DuckPhpInstallerTest extends \PHPUnit\Framework\TestCase
             'verbose'=>true,
         ];
         DuckPhpInstaller::RunQuickly(['help'=>true,]);
-        DuckPhpInstaller::G(new DuckPhpInstaller());
+        DuckPhpInstaller::_(new DuckPhpInstaller());
         DuckPhpInstaller::RunQuickly($options);
         DuckPhpInstaller::RunQuickly($options);
         $options['force']=true;
         $options['namespace']='zz';
         $options['verbose']=false;
-        DuckPhpInstaller::G(new DuckPhpInstaller());
+        DuckPhpInstaller::_(new DuckPhpInstaller());
         DuckPhpInstaller::RunQuickly($options);
         \LibCoverage\LibCoverage::G()->cleanDirectory($path_init);
         \LibCoverage\LibCoverage::End();

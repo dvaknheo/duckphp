@@ -29,7 +29,7 @@ class Main
             var_dump(DATE(DATE_ATOM));
             return;
         }
-        $ret= JsonRpcExt::G()->onRpcCall(DuckPhp::POST(null));
+        $ret= JsonRpcExt::_()->onRpcCall(DuckPhp::POST(null));
         
         DuckPhp::ExitJson($ret);
     }

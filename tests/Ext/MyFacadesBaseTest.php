@@ -11,7 +11,7 @@ class MyFacadesBaseTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(MyFacadesBase::class);
         
         //code here
-        MyFacadesAutoLoader::G()->init(['facades_map'=>[
+        MyFacadesAutoLoader::_()->init(['facades_map'=>[
             F::class=>B::class
         ]]);
             F::Z();
@@ -23,7 +23,7 @@ class MyFacadesBaseTest extends \PHPUnit\Framework\TestCase
         new MyFacadesBase();
         \LibCoverage\LibCoverage::End();
         /*
-        MyFacadesBase::G()->__callStatic($name, $arguments);
+        MyFacadesBase::_()->__callStatic($name, $arguments);
         //*/
     }
 }

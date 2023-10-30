@@ -12,32 +12,32 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
         $LibCoverage=\LibCoverage\LibCoverage::G();
         $path_data=\LibCoverage\LibCoverage::G()->getClassTestPath(ComponentBase::class);
 
-        ComponentBaseObject::G()->init(['a'=>'b'],new \stdClass());
-        ComponentBaseObject::G()->isInited();
+        ComponentBaseObject::_()->init(['a'=>'b'],new \stdClass());
+        ComponentBaseObject::_()->isInited();
 
 
-        ComponentBaseObject::G();
         ComponentBaseObject::_();
-        ComponentBaseObject::G(new ComponentBaseObject());
+        ComponentBaseObject::_();
+        ComponentBaseObject::_(new ComponentBaseObject());
         define('__SINGLETONEX_REPALACER',ComponentBaseObject::class.'::CreateObject');
-        ComponentBaseObject::G();
-        ComponentBaseObject2::G()->init([]);
-        ComponentBaseObject2::G()->init([],App::_());
-        ComponentBaseObject2::G()->init(['force'=>true],App::_());
+        ComponentBaseObject::_();
+        ComponentBaseObject2::_()->init([]);
+        ComponentBaseObject2::_()->init([],App::_());
+        ComponentBaseObject2::_()->init(['force'=>true],App::_());
         
-        ComponentBaseObject2::G()->context();
+        ComponentBaseObject2::_()->context();
         var_dump(ComponentBase::SlashDir(''));
         var_dump(ComponentBase::IsAbsPath(''));
         $options=[
             'path'=> $path_data,
             'path_data'=> '',
         ];
-        ComponentBaseObject::G()->extendFullFile($options['path'],$options['path_data'],$options['path'].'data.php');
+        ComponentBaseObject::_()->extendFullFile($options['path'],$options['path_data'],$options['path'].'data.php');
 
-        ComponentBaseObject::G()->extendFullFile($options['path'],$options['path_data'], 'data.php');
-        ComponentBaseObject::G()->extendFullFile($options['path'],$options['path'], 'data.php');
-        ComponentBaseObject::G()->init($options, App::G());
-        ComponentBaseObject::G()->extendFullFile($options['path'],$options['path_data'],$options['path'].'data.php');
+        ComponentBaseObject::_()->extendFullFile($options['path'],$options['path_data'], 'data.php');
+        ComponentBaseObject::_()->extendFullFile($options['path'],$options['path'], 'data.php');
+        ComponentBaseObject::_()->init($options, App::_());
+        ComponentBaseObject::_()->extendFullFile($options['path'],$options['path_data'],$options['path'].'data.php');
 
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();

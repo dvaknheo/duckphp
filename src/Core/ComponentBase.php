@@ -18,10 +18,12 @@ class ComponentBase // implements ComponentInterface
     public function __construct()
     {
     }
+/*
     public static function G($object = null)
     {
         return static::_($object);
     }
+//*/
     protected static $_instances = [];
 
     public function context()

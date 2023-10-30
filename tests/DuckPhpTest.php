@@ -16,11 +16,11 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         $path = \LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
         //code here
         //$handler=null;
-        //DuckPhp::G()->addBeforeRunHandler($handler);
+        //DuckPhp::_()->addBeforeRunHandler($handler);
         
         //$SwooleHttpd=new fakeSwooleHttpd;
-        //DuckPhp::G()->onSwooleHttpdInit($SwooleHttpd, false,function(){var_dump("OK");});
-        //DuckPhp::G()->onSwooleHttpdInit($SwooleHttpd,true,null);
+        //DuckPhp::_()->onSwooleHttpdInit($SwooleHttpd, false,function(){var_dump("OK");});
+        //DuckPhp::_()->onSwooleHttpdInit($SwooleHttpd,true,null);
 
         $path_view= $path.'views/';
 
@@ -30,7 +30,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
             'path_view'=>$path_view,
             'path_info_compact_enable'=>true,
         ];
-        DuckPhp::G()->init($options);
+        DuckPhp::_()->init($options);
         \DuckPhp\Core\SystemWrapper::_()->_system_wrapper_replace([
             'exit' =>function(){ echo "change!\n";},
         ]);
@@ -44,36 +44,36 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         
         
         View::_()->_Show([],'block');
-        DuckPhp::G()->options['close_resource_at_output']=false;
+        DuckPhp::_()->options['close_resource_at_output']=false;
         View::_()->_Show([],'block');
 
         
         
 
         
-        DuckPhp::G()->Admin(FakeAdmin::G());
-        DuckPhp::G()->User(FakeUser::G());
-        DuckPhp::G()->AdminId();
-        DuckPhp::G()->UserId();
+        DuckPhp::_()->Admin(FakeAdmin::_());
+        DuckPhp::_()->User(FakeUser::_());
+        DuckPhp::_()->AdminId();
+        DuckPhp::_()->UserId();
         
         $options['path'] = $path;
         $options['path_test'] = 'abc';
         $options['ext_options_file_enable']=true;
         
         @unlink($path.'config/DuckPhpApps.config.php');
-        DuckPhp_Sub::G(new DuckPhp_Sub())->init($options);
+        DuckPhp_Sub::_(new DuckPhp_Sub())->init($options);
         echo "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-        DuckPhp_Sub::G()->install(['test'=>DATE(DATE_ATOM)]);
-        DuckPhp_Sub::G()->options['ext_options_file_enable'] = false;
-        DuckPhp_Sub::G()->install(['test'=>DATE(DATE_ATOM)]);
+        DuckPhp_Sub::_()->install(['test'=>DATE(DATE_ATOM)]);
+        DuckPhp_Sub::_()->options['ext_options_file_enable'] = false;
+        DuckPhp_Sub::_()->install(['test'=>DATE(DATE_ATOM)]);
         //die("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
-        DuckPhp_Sub::G()->isInstalled();
+        DuckPhp_Sub::_()->isInstalled();
         
         $options['ext'][DuckPhp_Sub::class]=['test'=>DATE(DATE_ATOM)];
-        DuckPhp::G(new DuckPhp())->init($options);
+        DuckPhp::_(new DuckPhp())->init($options);
         echo "\n". DuckPhp::AdminId();
        
-        //DuckPhp::G()->isInstalled();
+        //DuckPhp::_()->isInstalled();
         @unlink($path.'config/DuckPhpApps.config.php');
         
         /////////////
@@ -93,15 +93,15 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
-        DuckPhp::G(new DuckPhp());
-        DuckPhp_Sub::G(new DuckPhp_Sub());
+        DuckPhp::_(new DuckPhp());
+        DuckPhp_Sub::_(new DuckPhp_Sub());
         \DuckPhp\Core\PhaseContainer::GetContainerInstanceEx(new \DuckPhp\Core\PhaseContainer());
 
         $_SERVER['PATH_INFO'] = '/zzzzzzzzzzzz';
         $flag = DuckPhp_Sub::InitAsContainer($options)->thenRunAsContainer(false,function(){echo "welcome";});
         
-        DuckPhp::G(new DuckPhp());
-        DuckPhp_Sub::G(new DuckPhp_Sub());
+        DuckPhp::_(new DuckPhp());
+        DuckPhp_Sub::_(new DuckPhp_Sub());
         \DuckPhp\Core\PhaseContainer::GetContainerInstanceEx(new \DuckPhp\Core\PhaseContainer());
         $_SERVER['PATH_INFO'] = '/zzzzzzzzzzzz';
         $_SERVER['PATH_INFO'] = '/';
@@ -125,8 +125,8 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
                 ],
             ];
 
-        DuckPhp::G(new DuckPhp());
-        DuckPhp_Sub::G(new DuckPhp_Sub());
+        DuckPhp::_(new DuckPhp());
+        DuckPhp_Sub::_(new DuckPhp_Sub());
         \DuckPhp\Core\PhaseContainer::GetContainerInstanceEx(new \DuckPhp\Core\PhaseContainer());
         $flag =DuckPhp_Sub::InitAsContainer($options)->thenRunAsContainer(false,function(){echo "welcome";});
         echo ">>>>>>>>>>>>>>>>>>>>>>>";
@@ -134,7 +134,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
             'ext_options_file_enable'=>true,
             'ext_options_file'=>'NoExits.php',
         ];
-        DuckPhp::G(new DuckPhp())->init($options);
+        DuckPhp::_(new DuckPhp())->init($options);
         
         
         

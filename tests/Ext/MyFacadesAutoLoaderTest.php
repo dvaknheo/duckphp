@@ -17,7 +17,7 @@ class MyFacadesAutoLoaderTest extends \PHPUnit\Framework\TestCase
                 'MyMyFacades\\NoG' =>NoG::class,
             ],
         ];
-        MyFacadesAutoLoader::G()->init($options,null);
+        MyFacadesAutoLoader::_()->init($options,null);
         TestObject::Foo();
         
         
@@ -32,16 +32,16 @@ class MyFacadesAutoLoaderTest extends \PHPUnit\Framework\TestCase
         }
         $flag=class_exists('Class_not_exists');
         
-        MyFacadesAutoLoader::G()->clear();
+        MyFacadesAutoLoader::_()->clear();
         
         
-        MyFacadesAutoLoader::G()->isInited();
+        MyFacadesAutoLoader::_()->isInited();
         \LibCoverage\LibCoverage::End();
         /*
-        MyFacadesAutoLoader::G()->init($options=[], $context);
-        MyFacadesAutoLoader::G()->_autoload($class);
-        MyFacadesAutoLoader::G()->getMyFacadesCallback($class, $name);
-        MyFacadesAutoLoader::G()->__callStatic($name, $arguments);
+        MyFacadesAutoLoader::_()->init($options=[], $context);
+        MyFacadesAutoLoader::_()->_autoload($class);
+        MyFacadesAutoLoader::_()->getMyFacadesCallback($class, $name);
+        MyFacadesAutoLoader::_()->__callStatic($name, $arguments);
         //*/
     }
 }

@@ -16,18 +16,18 @@ class EmptyViewTest extends \PHPUnit\Framework\TestCase
             'empty_view_trim_view_wellcome'=> true,
             'empty_view_skip_replace'=> false,
         ];
-        EmptyView::G()->init($options, $context=null);
+        EmptyView::_()->init($options, $context=null);
         
         $view="main";
         $data=["abc"=>"d"];
         
-        EmptyView::G()->_Display($view, $data);
+        EmptyView::_()->_Display($view, $data);
         
-        EmptyView::G()->_Show($data , $view);
-        EmptyView::G()->_Display( 'block',$data);
+        EmptyView::_()->_Show($data , $view);
+        EmptyView::_()->_Display( 'block',$data);
         
-        EmptyView::G()->_Show( $data, 'view');
-        EmptyView::G()->_Show( $data, 'Main/');
+        EmptyView::_()->_Show( $data, 'view');
+        EmptyView::_()->_Show( $data, 'Main/');
         
         \LibCoverage\LibCoverage::End();
        

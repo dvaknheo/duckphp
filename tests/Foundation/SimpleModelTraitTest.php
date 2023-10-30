@@ -19,7 +19,7 @@ class SimpleModelTraitTest extends \PHPUnit\Framework\TestCase
             'setting'=>$setting,
             'path_sql_dump' =>$path_app,
         ];
-        DuckPhpAllInOne::G(new DuckPhpAllInOne())->init($options);
+        DuckPhpAllInOne::_(new DuckPhpAllInOne())->init($options);
         
         echo EmptyModel::_()->table();
 $sql = "DROP TABLE IF EXISTS `empty`;";

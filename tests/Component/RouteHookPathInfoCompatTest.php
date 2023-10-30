@@ -19,29 +19,29 @@ class RouteHookPathInfoCompatTest extends \PHPUnit\Framework\TestCase
 
         ];
         
-        Route::G(new Route())->init($route_options);
-        App::G()->init([]);
+        Route::_(new Route())->init($route_options);
+        App::_()->init([]);
         $options=[
             'path_info_compact_enable'=>false,
             'path_info_compact_action_key'=>'',
             'path_info_compact_class_key'=>'',
 
         ];
-        RouteHookPathInfoCompat::G(new RouteHookPathInfoCompat())->init($options, App::G());
+        RouteHookPathInfoCompat::_(new RouteHookPathInfoCompat())->init($options, App::_());
         
         $options=[
             'path_info_compact_enable'=>true,
             'path_info_compact_action_key'=>'',
             'path_info_compact_class_key'=>'',
         ];
-        RouteHookPathInfoCompat::G(new RouteHookPathInfoCompat())->init($options);
+        RouteHookPathInfoCompat::_(new RouteHookPathInfoCompat())->init($options);
         $options=[
             'path_info_compact_enable'=>true,
 
             'path_info_compact_action_key'=>'_r',
             'path_info_compact_class_key'=>'',
         ];
-        RouteHookPathInfoCompat::G()->init($options, App::G());
+        RouteHookPathInfoCompat::_()->init($options, App::_());
         
         
 
@@ -49,12 +49,12 @@ class RouteHookPathInfoCompatTest extends \PHPUnit\Framework\TestCase
         $_SERVER['PATH_INFO']='';
 
 
-        Route::G()->bind('Missed','POST');
-        Route::G()->run();
+        Route::_()->bind('Missed','POST');
+        Route::_()->run();
         
         echo "------------------------------------------------\n";
 if(true){
-        RouteHookPathInfoCompat::G()->onURL("zzz");
+        RouteHookPathInfoCompat::_()->onURL("zzz");
         echo "------------------------------------------------\n";
 }
         //x/index.php/init
@@ -67,7 +67,7 @@ if(true){
         ];
         var_dump(Route::URL('/Test'));
 
-        RouteHookPathInfoCompat::G()->init($options);
+        RouteHookPathInfoCompat::_()->init($options);
         
         var_dump(Route::URL(''));
 
@@ -77,11 +77,11 @@ if(true){
 
         //------------
         
-                        RouteHookPathInfoCompat::G()->isInited();
+                        RouteHookPathInfoCompat::_()->isInited();
 
         \DuckPhp\Core\SuperGlobal::DefineSuperGlobalContext();
-Route::G()->bind('Missed','POST');
-        Route::G()->run();
+Route::_()->bind('Missed','POST');
+        Route::_()->run();
         
         var_dump(RouteHookPathInfoCompat::URL('index.php/bb?cc=dd&m=abc'));
         var_dump(RouteHookPathInfoCompat::URL('aa/bb?cc=dd&m=abc'));
@@ -90,9 +90,9 @@ Route::G()->bind('Missed','POST');
         
         \LibCoverage\LibCoverage::End();
         /*
-        RouteHookPathInfoCompat::G()->init($options=[], $context=null);
-        RouteHookPathInfoCompat::G()->onURL($url=null);
-        RouteHookPathInfoCompat::G()->hook($route);
+        RouteHookPathInfoCompat::_()->init($options=[], $context=null);
+        RouteHookPathInfoCompat::_()->onURL($url=null);
+        RouteHookPathInfoCompat::_()->hook($route);
         //*/
     }
 }

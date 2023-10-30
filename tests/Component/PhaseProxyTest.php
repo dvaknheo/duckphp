@@ -42,7 +42,7 @@ class PhaseProxyMainApp extends DuckPhp
     {
         $this->_Phase(static::class);
         if (!$this->isChild) {
-            (self::class)::G($this);
+            (self::class)::_($this);
         }
         
         var_dump( date(DATE_ATOM));
@@ -55,7 +55,7 @@ class PhaseProxySubApp extends DuckPhp
     {
         $phase = static::Phase();
         static::Phase(get_class(static::Root()));
-        $object = $class::G(PhaseProxy::CreatePhaseProxy(static::class,$class));
+        $object = $class::_(PhaseProxy::CreatePhaseProxy(static::class,$class));
         static::Phase($phase);
         return $object;
     }

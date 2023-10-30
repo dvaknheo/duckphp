@@ -12,9 +12,9 @@ class StaticReplacerTest extends \PHPUnit\Framework\TestCase
         
         //code here        
         $k="k";$v="v";
-        StaticReplacer::G()->_GLOBALS($k, $v=null);
-        StaticReplacer::G()->_STATICS($k, $v=null);
-        StaticReplacer::G()->_CLASS_STATICS(StaticReplacer_SimpleObject::class, 'class_var');        
+        StaticReplacer::_()->_GLOBALS($k, $v=null);
+        StaticReplacer::_()->_STATICS($k, $v=null);
+        StaticReplacer::_()->_CLASS_STATICS(StaticReplacer_SimpleObject::class, 'class_var');        
 
         
         \LibCoverage\LibCoverage::End();

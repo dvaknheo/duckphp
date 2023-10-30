@@ -18,17 +18,17 @@ class CallableViewTest extends \PHPUnit\Framework\TestCase
             'callable_view_skip_replace'=>false,
             'path_view'=>$path_view,
         ];
-        CallableView::G()->init($options, $context=null);
+        CallableView::_()->init($options, $context=null);
         
         $view="main";
         $data=["abc"=>"d"];
         
-        CallableView::G()->_Display($view, $data);
+        CallableView::_()->_Display($view, $data);
         
-        CallableView::G()->_Show($data , $view);
-        CallableView::G()->_Display( 'block',$data);
+        CallableView::_()->_Show($data , $view);
+        CallableView::_()->_Display( 'block',$data);
         
-        CallableView::G()->_Show( $data, 'view');
+        CallableView::_()->_Show( $data, 'view');
         
         \LibCoverage\LibCoverage::End();
        

@@ -1,5 +1,5 @@
 <?php
-namespace tests\DuckPhp\Core;
+namespace tests\DuckPhp\Component;
 
 use DuckPhp\Component\Configer;
 
@@ -16,12 +16,12 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
             'setting_file_enable'=>true,
             'use_env_file'=>true,
         ];
-        Configer::G()->init($options);
-        Configer::G()->init($options);
+        Configer::_()->init($options);
+        Configer::_()->init($options);
         $key="key";
 
-        Configer::G()->_Config('config', $key, null,);
-        Configer::G()->_Config('config', null, []);
+        Configer::_()->_Config('config', $key, null,);
+        Configer::_()->_Config('config', null, []);
 
         $options=[
             'path'=>dirname($path_config),
@@ -31,12 +31,12 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
         $options['setting_file']='noooooooo.php';
         $options['setting_file_enable'] =true;
         $options['setting_file_ignore_exists'] =true;
-        Configer::G(new Configer)->init($options);
+        Configer::_(new Configer)->init($options);
 
 
-        Configer::G(new Configer)->init($options);
-       // Configer::G()->_Config('override',null, []);
-        Configer::G()->_Config('NotExits',null, []);
+        Configer::_(new Configer)->init($options);
+       // Configer::_()->_Config('override',null, []);
+        Configer::_()->_Config('NotExits',null, []);
         \LibCoverage\LibCoverage::End();
     }
 }

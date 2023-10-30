@@ -18,7 +18,7 @@ class RouteHookRewriteTest extends \PHPUnit\Framework\TestCase
             'controller_welcome_class'=> 'RouteHookRewriteTestMain',
 
         ];
-        DuckPhp::G(new DuckPhp())->init($route_options);
+        DuckPhp::_(new DuckPhp())->init($route_options);
         
         $options=[
             'rewrite_map'=>[
@@ -26,25 +26,25 @@ class RouteHookRewriteTest extends \PHPUnit\Framework\TestCase
             ]
         ];
     
-        RouteHookRewrite::G()->init($options,DuckPhp::G());
-        RouteHookRewrite::G()->assignRewrite(['/k/v'=>'c/d?e=f',]);
-        RouteHookRewrite::G()->assignRewrite('second','zz');
-        RouteHookRewrite::G()->assignRewrite('/k/v?a=b','zz');
-        RouteHookRewrite::G()->getRewrites();
+        RouteHookRewrite::_()->init($options,DuckPhp::_());
+        RouteHookRewrite::_()->assignRewrite(['/k/v'=>'c/d?e=f',]);
+        RouteHookRewrite::_()->assignRewrite('second','zz');
+        RouteHookRewrite::_()->assignRewrite('/k/v?a=b','zz');
+        RouteHookRewrite::_()->getRewrites();
         
-        RouteHookRewrite::G()->filteRewrite('zdfafd');
-        RouteHookRewrite::G()->filteRewrite('k/v');
+        RouteHookRewrite::_()->filteRewrite('zdfafd');
+        RouteHookRewrite::_()->filteRewrite('k/v');
 
-        Route::G()->bind('/article/3/4')->run();
-        Route::G()->bind('/k/v')->run();
+        Route::_()->bind('/article/3/4')->run();
+        Route::_()->bind('/k/v')->run();
         echo "-----------xxxxxxxxxxxxxxxxxxxxx-----\n";
-        RouteHookRewrite::G()->filteRewrite('k/v?a=b&g=h');
+        RouteHookRewrite::_()->filteRewrite('k/v?a=b&g=h');
 
-        RouteHookRewrite::G()->isInited();
+        RouteHookRewrite::_()->isInited();
         
         \DuckPhp\Core\SuperGlobal::DefineSuperGlobalContext();
         
-        Route::G()->bind('/article/3/4')->run();
+        Route::_()->bind('/article/3/4')->run();
 
 
         \LibCoverage\LibCoverage::End();

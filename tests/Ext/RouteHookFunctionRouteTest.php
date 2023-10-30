@@ -27,8 +27,8 @@ class RouteHookFunctionRouteTest extends \PHPUnit\Framework\TestCase
             'controller_prefix_post'=>'do_',
 
         ];
-        Route::G(new Route());
-        App::G(new App())->init([$route_options]);
+        Route::_(new Route());
+        App::_(new App())->init([$route_options]);
         $options=[
             'path_info_compact_enable' => true,
             
@@ -37,26 +37,26 @@ class RouteHookFunctionRouteTest extends \PHPUnit\Framework\TestCase
             'function_route_404_to_index' => false,
 
         ];
-        RouteHookFunctionRoute::G(new RouteHookFunctionRoute())->init($options, App::G());
+        RouteHookFunctionRoute::_(new RouteHookFunctionRoute())->init($options, App::_());
         
         $_POST['PATH_INFO'] = "path_info";
 
         echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n";
         Route::_()->bind('/normal');
-        Route::G()->run();
+        Route::_()->run();
         Route::_()->bind('/');
-        Route::G()->run();
+        Route::_()->run();
         Route::_()->bind('/post');
-        Route::G()->run();
+        Route::_()->run();
         Route::_()->bind('/post','POST');
-        Route::G()->run();
+        Route::_()->run();
         Route::_()->bind('/post2','POST');
-        Route::G()->run();
+        Route::_()->run();
         echo "===------\n";
         Route::_()->bind('/404')->run();
-        RouteHookFunctionRoute::G()->options['function_route_404_to_index'] = true;
+        RouteHookFunctionRoute::_()->options['function_route_404_to_index'] = true;
         Route::_()->bind('/404')->run();
-        RouteHookFunctionRoute::G()->options['function_route_method_prefix'] = 'null_';
+        RouteHookFunctionRoute::_()->options['function_route_method_prefix'] = 'null_';
         Route::_()->bind('/404')->run();
         
     }

@@ -10,12 +10,12 @@ class ExceptionWrapperTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(ExceptionWrapper::class);
         //
-        ExceptionWrapperObject::G(ExceptionWrapper::Wrap(ExceptionWrapperObject::G()));
-        $x=ExceptionWrapperObject::G()->foo();
+        ExceptionWrapperObject::_(ExceptionWrapper::Wrap(ExceptionWrapperObject::_()));
+        $x=ExceptionWrapperObject::_()->foo();
         var_dump($x);
-        ExceptionWrapperObject::G(ExceptionWrapper::Release());
+        ExceptionWrapperObject::_(ExceptionWrapper::Release());
         try{
-            ExceptionWrapperObject::G()->foo();
+            ExceptionWrapperObject::_()->foo();
         }catch(\Exception $ex){
             var_dump($ex->getMessage());
         }

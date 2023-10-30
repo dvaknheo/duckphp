@@ -28,41 +28,41 @@ class RouteHookApiServerTest extends \PHPUnit\Framework\TestCase
             'cli_enable'=>false,
         ];
         
-        DuckPhp::G()->init($options);
-        Route::G()->bind('/test.foo2');
+        DuckPhp::_()->init($options);
+        Route::_()->bind('/test.foo2');
         $_REQUEST=['a'=>'1','b'=>3];
-        Route::G()->run();
+        Route::_()->run();
         
-        Route::G()->bind('/test.mustexception');
-        DuckPhp::G()->run();
+        Route::_()->bind('/test.mustexception');
+        DuckPhp::_()->run();
         
-        Route::G()->bind('/testbad.foo');
-        DuckPhp::G()->run();
+        Route::_()->bind('/testbad.foo');
+        DuckPhp::_()->run();
         
-        Route::G()->bind('/test.foo3');
+        Route::_()->bind('/test.foo3');
         $_REQUEST=['name'=>'a','id'=>[]];
-        DuckPhp::G()->run();
+        DuckPhp::_()->run();
         
-        Route::G()->bind('/test.mustarg');
-        DuckPhp::G()->run();
-                Route::G()->bind('/test.mustarg2');
-        DuckPhp::G()->run();
+        Route::_()->bind('/test.mustarg');
+        DuckPhp::_()->run();
+                Route::_()->bind('/test.mustarg2');
+        DuckPhp::_()->run();
         
-        DuckPhp::G()->options['is_debug']=false;
-        Route::G()->bind('/test.foo2');
+        DuckPhp::_()->options['is_debug']=false;
+        Route::_()->bind('/test.foo2');
         $_POST = ['a'=>'1','b'=>3];
-        DuckPhp::G()->run();
+        DuckPhp::_()->run();
         
         
-        RouteHookApiServer::G()->options['api_server_404_as_exception']=true;
-        Route::G()->bind('/');
-        DuckPhp::G()->run();
+        RouteHookApiServer::_()->options['api_server_404_as_exception']=true;
+        Route::_()->bind('/');
+        DuckPhp::_()->run();
         
-        RouteHookApiServer::G()->options['api_server_use_singletonex']=true;
-        Route::G()->bind('/test.G');
-        DuckPhp::G()->run();
-        Route::G()->bind('/test.foo');
-        DuckPhp::G()->run();
+        RouteHookApiServer::_()->options['api_server_use_singletonex']=true;
+        Route::_()->bind('/test.G');
+        DuckPhp::_()->run();
+        Route::_()->bind('/test.foo');
+        DuckPhp::_()->run();
         
         
         $options = [
@@ -80,10 +80,10 @@ class RouteHookApiServerTest extends \PHPUnit\Framework\TestCase
             'cli_enable'=>false,
         ];
         
-        DuckPhp::G()->init($options);
-        Route::G()->bind('/test.foo2');
+        DuckPhp::_()->init($options);
+        Route::_()->bind('/test.foo2');
         $_REQUEST=['a'=>'1','b'=>3];
-        Route::G()->run();
+        Route::_()->run();
 ////
         \LibCoverage\LibCoverage::End();
 

@@ -15,20 +15,20 @@ class CacheTest extends \PHPUnit\Framework\TestCase
         $values=['1',"2"];
         $ttl=3600;
         $default="111111";
-        Cache::G()->set($key, $value, $ttl );
-        $t=Cache::G()->get($key, $default);
+        Cache::_()->set($key, $value, $ttl );
+        $t=Cache::_()->get($key, $default);
         var_dump($t);
-        Cache::G()->delete($key);
-        Cache::G()->has($key);
-        Cache::G()->clear();
-        Cache::G()->getMultiple($keys, $default);
-        Cache::G()->setMultiple($values, $ttl);
-        Cache::G()->deleteMultiple($keys);
-        Cache::G()->redis=null;
-        Cache::G()->get($key, $default);
-        Cache::G()->set($key, $value, $ttl );
-        Cache::G()->delete($key);
-        Cache::G()->has($key);
+        Cache::_()->delete($key);
+        Cache::_()->has($key);
+        Cache::_()->clear();
+        Cache::_()->getMultiple($keys, $default);
+        Cache::_()->setMultiple($values, $ttl);
+        Cache::_()->deleteMultiple($keys);
+        Cache::_()->redis=null;
+        Cache::_()->get($key, $default);
+        Cache::_()->set($key, $value, $ttl );
+        Cache::_()->delete($key);
+        Cache::_()->has($key);
         
 
         \LibCoverage\LibCoverage::End();

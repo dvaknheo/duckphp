@@ -11,21 +11,21 @@ class RuntimeTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(Runtime::class);
         
         $options = ['is_debug'=>true];
-        Runtime::G()->init(['use_output_buffer'=>true],App::G(new App())->init($options));
-        Runtime::G()->isRunning();
-        Runtime::G()->isInException();
-        Runtime::G()->isOutputed();
+        Runtime::_()->init(['use_output_buffer'=>true],App::_(new App())->init($options));
+        Runtime::_()->isRunning();
+        Runtime::_()->isInException();
+        Runtime::_()->isOutputed();
         
         
-        Runtime::G()->run();
-        Runtime::G()->clear();
+        Runtime::_()->run();
+        Runtime::_()->clear();
 
-        Runtime::G()->onException(true);
-        Runtime::G()->onException(false);
+        Runtime::_()->onException(true);
+        Runtime::_()->onException(false);
     $options = ['is_debug'=>false];
-    Runtime::G()->init(['use_output_buffer'=>true],App::G(new App())->init($options));
-Runtime::G()->run();
-        Runtime::G()->clear();
+    Runtime::_()->init(['use_output_buffer'=>true],App::_(new App())->init($options));
+Runtime::_()->run();
+        Runtime::_()->clear();
         \LibCoverage\LibCoverage::End();
 
     }

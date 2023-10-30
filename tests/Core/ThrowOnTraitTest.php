@@ -19,7 +19,7 @@ class ThrowOnTraitTest extends \PHPUnit\Framework\TestCase
 
         \LibCoverage\LibCoverage::End();
         /*
-        ThrowOn::G()->ThrowOn($flag, $message, $code=0, $exception_class=null);
+        ThrowOn::_()->ThrowOn($flag, $message, $code=0, $exception_class=null);
         //*/
     }
 }

@@ -13,7 +13,7 @@ class RouteHookResourceTest extends \PHPUnit\Framework\TestCase
         $path = \LibCoverage\LibCoverage::G()->getClassTestPath(RouteHookResource::class);
        
         
-        App::G()->init([
+        App::_()->init([
             'is_debug'=>true,
             'path' => $path,
             'ext'=>[
@@ -25,19 +25,19 @@ class RouteHookResourceTest extends \PHPUnit\Framework\TestCase
         ]);
         
         Route::PathInfo('/RES/test.txt');
-        App::G()->run();
+        App::_()->run();
 
         
         Route::PathInfo('/RES/no_exist.txt');
-        App::G()->run();
+        App::_()->run();
         
         Route::PathInfo('/RES/no_exist.php');
-        App::G()->run();
+        App::_()->run();
         
         Route::PathInfo('/RES/../../../no_exist.php');
-        App::G()->run();
+        App::_()->run();
         Route::PathInfo('/not_hit.php');
-        App::G()->run();
+        App::_()->run();
         
         /////////////////////////////
         $options =[
@@ -52,18 +52,18 @@ class RouteHookResourceTest extends \PHPUnit\Framework\TestCase
         $_SERVER['DOCUMENT_ROOT']=$path.'public';
         
         $options['controller_resource_prefix']= 'http://github.com/';
-        RouteHookResource::G(new RouteHookResource())->init($options,App::G())->cloneResource();
+        RouteHookResource::_(new RouteHookResource())->init($options,App::_())->cloneResource();
         $options['controller_resource_prefix']= 'DATA/';
-        RouteHookResource::G(new RouteHookResource())->init($options,App::G())->cloneResource();
-        RouteHookResource::G()->cloneResource();
+        RouteHookResource::_(new RouteHookResource())->init($options,App::_())->cloneResource();
+        RouteHookResource::_()->cloneResource();
         $options['path_resource'] = $path.'res';
-        RouteHookResource::G(new RouteHookResource())->init($options,App::G())->cloneResource();
+        RouteHookResource::_(new RouteHookResource())->init($options,App::_())->cloneResource();
 
-        RouteHookResource::G()->cloneResource(true);
+        RouteHookResource::_()->cloneResource(true);
         
         $options['controller_url_prefix']= 'admin/';
         $options['controller_resource_prefix']= 'DATA/';
-        RouteHookResource::G(new RouteHookResource())->init($options,App::G())->cloneResource(true);
+        RouteHookResource::_(new RouteHookResource())->init($options,App::_())->cloneResource(true);
         
         
         \LibCoverage\LibCoverage::G()->cleanDirectory($path_init);

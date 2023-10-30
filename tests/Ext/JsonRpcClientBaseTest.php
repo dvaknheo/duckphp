@@ -11,16 +11,16 @@ class JsonRpcClientBaseTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(JsonRpcClientBase::class);
         
-        JsonRpcExt::G(JsonRpcClientBaseJsonRpcExt::G());
+        JsonRpcExt::_(JsonRpcClientBaseJsonRpcExt::_());
         
         JsonRpcExt::Wrap(JsonRpcClientBaseObject::class);
         
-        JsonRpcClientBaseObject::G()->init([])->isInited();
-        JsonRpcClientBaseObject::G()->foo();
+        JsonRpcClientBaseObject::_()->init([])->isInited();
+        JsonRpcClientBaseObject::_()->foo();
         
         \LibCoverage\LibCoverage::End();
         /*
-        JsonRpcClientBase::G()->__call($method, $arguments);
+        JsonRpcClientBase::_()->__call($method, $arguments);
         //*/
     }
 }

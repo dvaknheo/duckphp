@@ -37,16 +37,16 @@ class HookChainTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::End(HookChain::class);
         $this->assertTrue(true);
         /*
-        HookChain::G()->__invoke();
-        HookChain::G()->Hook($var, $callable, $append = true, $once = true);
-        HookChain::G()->add($callable, $append, $once);
-        HookChain::G()->remove($callable);
-        HookChain::G()->has($callable);
-        HookChain::G()->all();
-        HookChain::G()->offsetSet($offset, $value);
-        HookChain::G()->offsetExists($offset);
-        HookChain::G()->offsetUnset($offset);
-        HookChain::G()->offsetGet($offset);
+        HookChain::_()->__invoke();
+        HookChain::_()->Hook($var, $callable, $append = true, $once = true);
+        HookChain::_()->add($callable, $append, $once);
+        HookChain::_()->remove($callable);
+        HookChain::_()->has($callable);
+        HookChain::_()->all();
+        HookChain::_()->offsetSet($offset, $value);
+        HookChain::_()->offsetExists($offset);
+        HookChain::_()->offsetUnset($offset);
+        HookChain::_()->offsetGet($offset);
         //*/
     }
 }

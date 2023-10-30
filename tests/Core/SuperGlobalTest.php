@@ -21,12 +21,12 @@ class SuperGlobalTest extends \PHPUnit\Framework\TestCase
         SuperGlobal::SaveSuperGlobalAll();
         SuperGlobal::LoadSuperGlobal('_SERVER');
         SuperGlobal::SaveSuperGlobal('_SERVER');
-        SuperGlobal::G()->_SERVER;
+        SuperGlobal::_()->_SERVER;
         
-        SuperGlobal::G()->init([
+        SuperGlobal::_()->init([
             'superglobal_auto_extend_method' => true,
             'superglobal_auto_define' => true,
-        ],App::G());
+        ],App::_());
         
         SuperGlobal::_()->_GET('a');
         SuperGlobal::_()->_POST('a');

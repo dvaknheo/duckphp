@@ -32,9 +32,9 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
             'cli_enable'=>false,
 
         ];
-        StrictCheck::G(new StrictCheck_FakeObject);
+        StrictCheck::_(new StrictCheck_FakeObject);
         
-        DuckPhp::G()->init($dn_options);
+        DuckPhp::_()->init($dn_options);
 
         $options=[
             'namespace'=> __NAMESPACE__,
@@ -50,18 +50,18 @@ class StrictCheckTest extends \PHPUnit\Framework\TestCase
         ];
         
         $t=\LibCoverage\LibCoverage::G();
-        StrictCheck::G(new StrictCheck)->init($options, DuckPhp::G());
+        StrictCheck::_(new StrictCheck)->init($options, DuckPhp::_());
         \LibCoverage\LibCoverage::G($t);
-        Route::G()->bind('foo');
+        Route::_()->bind('foo');
 
-        DuckPhp::G()->run();
+        DuckPhp::_()->run();
 
-        StrictCheck::G()->options['is_debug']=false;
-        DuckPhp::G()->run();
+        StrictCheck::_()->options['is_debug']=false;
+        DuckPhp::_()->run();
 
         $options['is_debug']=true;
         $options['namespace_business']='';
-        //StrictCheck::G(new StrictCheck())->init($options)->checkStrictClass('NoExt',0);
+        //StrictCheck::_(new StrictCheck())->init($options)->checkStrictClass('NoExt',0);
         
 
         \LibCoverage\LibCoverage::End();
@@ -85,8 +85,8 @@ class StrictCheck_FakeObject
     public function foo()
     {
         // no use $parent_class=StrictCheckTest::class;
-        // no use StrictCheck::G()->checkStrictParentCaller($parent_class,1);
-        // no use StrictCheck::G()->checkStrictParentCaller($parent_class,1);
+        // no use StrictCheck::_()->checkStrictParentCaller($parent_class,1);
+        // no use StrictCheck::_()->checkStrictParentCaller($parent_class,1);
     }
 }
 
@@ -150,7 +150,7 @@ class FakeService
         FakeLib::_()->foo();
     }
     public function callService(){
-        FakeService::G()->foo();
+        FakeService::_()->foo();
     }
     public function modelCallService(){
         FakeModel::_()->callService();
@@ -228,7 +228,7 @@ class Main extends BaseController
             
             FakeService::_()->callService();
         }catch(\Throwable $ex){
-            echo "55555555555555555555555555555FakeService::G()->callService()".$ex->getMessage().PHP_EOL;
+            echo "55555555555555555555555555555FakeService::_()->callService()".$ex->getMessage().PHP_EOL;
         }
         try{
             FakeService::_()->modelCallService();
