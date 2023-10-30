@@ -32,7 +32,7 @@ trait ExtendableStaticCallTrait
         if (is_string($callback) && !\is_callable($callback)) {
             if (false !== strpos($callback, '@')) {
                 list($class, $method) = explode('@', $callback);
-                /** @var callable */ $callback = [$class::G(), $method];
+                /** @var callable */ $callback = [$class::_(), $method];
             } elseif (false !== strpos($callback, '->')) {
                 list($class, $method) = explode('->', $callback);
                 /** @var callable */ $callback = [ new $class(), $method];

@@ -43,7 +43,7 @@ class ExtendableStaticCallTraitTest extends \PHPUnit\Framework\TestCase
 }
 class ExtendableStaticCallTraitObject
 {
-    public static function G($object=null)
+    public static function _($object=null)
     {
         $class=static::class;
         static $_instance;

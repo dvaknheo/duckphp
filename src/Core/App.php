@@ -91,7 +91,7 @@ class App extends ComponentBase
             return;
         }
         
-        View::G(new View())->init($this->options, $this);
+        View::_(new View())->init($this->options, $this);
         View::_()->_Show([], $error_view);
     }
     //@override
@@ -141,7 +141,7 @@ class App extends ComponentBase
             return;
         }
         
-        View::G(new View())->init($this->options, $this);
+        View::_(new View())->init($this->options, $this);
         View::_()->_Show($data, $error_view);
     }
     //@override
@@ -327,6 +327,6 @@ EOT;
     }
     public static function Logger($object = null)
     {
-        return Logger::G($object);
+        return Logger::_($object);
     }
 }

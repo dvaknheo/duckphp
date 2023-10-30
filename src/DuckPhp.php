@@ -51,7 +51,7 @@ class DuckPhp extends App
         $options['handle_all_dev_error'] = false;
         $options['skip_404_handler'] = true;
         
-        return DuckPhp::G(new DuckPhp())->init($options);
+        return DuckPhp::_(new DuckPhp())->init($options);
     }
     public function thenRunAsContainer($skip_404 = false, $welcome_handle = null)
     {
@@ -109,13 +109,13 @@ class DuckPhp extends App
             if (!$this->is_root) {
                 $this->bumpSingletonToRoot($this->options['class_user'], GlobalUser::class);
             }
-            static::User(($this->options['class_user'])::G());
+            static::User(($this->options['class_user'])::_());
         }
         if ($this->options['class_admin'] ?? null) {
             if (!$this->is_root) {
                 $this->bumpSingletonToRoot($this->options['class_admin'], GlobalAdmin::class);
             }
-            static::Admin(($this->options['class_admin'])::G());
+            static::Admin(($this->options['class_admin'])::_());
         }
         if ($this->options['exception_reporter'] ?? null) {
             ExceptionManager::_()->assignExceptionHandler(\Exception::class, [$this->options['exception_reporter'], 'OnException']);
@@ -162,12 +162,12 @@ class DuckPhp extends App
     //@override
     public function _Pager($object = null)
     {
-        return Pager::G($object);
+        return Pager::_($object);
     }
     /////////////////////////
     //@override
     public function _Event()
     {
-        return EventManager::G();
+        return EventManager::_();
     }
 }

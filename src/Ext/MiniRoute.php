@@ -34,7 +34,7 @@ class MiniRoute extends ComponentBase
     
     public static function Route()
     {
-        return static::G();
+        return static::_();
     }
     public function run()
     {

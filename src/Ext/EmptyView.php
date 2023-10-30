@@ -31,7 +31,7 @@ class EmptyView extends View
     {
         parent::init($options, $context);
         if (!$this->options['empty_view_skip_replace']) {
-            View::G(static::G());
+            View::_(static::_());
         }
         return $this;
     }

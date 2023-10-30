@@ -45,7 +45,7 @@ class MyMiddlewareManager extends ComponentBase
                 if (is_string($pipe) && !\is_callable($pipe)) {
                     if (false !== strpos($pipe, '@')) {
                         list($class, $method) = explode('@', $pipe);
-                        /** @var callable */ $pipe = [$class::G(), $method];
+                        /** @var callable */ $pipe = [$class::_(), $method];
                     } elseif (false !== strpos($pipe, '->')) {
                         list($class, $method) = explode('->', $pipe);
                         /** @var callable */ $pipe = [ new $class(), $method];

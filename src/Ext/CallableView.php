@@ -32,7 +32,7 @@ class CallableView extends View
     {
         parent::init($options, $context);
         if (!$this->options['callable_view_skip_replace']) {
-            View::G(static::G());
+            View::_(static::_());
         }
         return $this;
     }

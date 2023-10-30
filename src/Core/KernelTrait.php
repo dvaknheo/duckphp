@@ -135,10 +135,10 @@ trait KernelTrait
         if ($this->is_root && empty($extApps)) {
             $this->is_simple_mode = true;
             (self::class)::_($this); // remark ,don't use self::_()!
-            static::G($this);
+            static::_($this);
             if ($this->options['override_class_from'] ?? false) {
                 $class = $this->options['override_class_from'];
-                $class::G($this);
+                $class::_($this);
             }
             //if (true) {
             return true;
@@ -174,7 +174,7 @@ trait KernelTrait
         $container->addPublicClasses(array_keys($extApps));
         foreach ($apps as $class => $object) {
             $class = (string)$class;
-            $class::G($object);
+            $class::_($object);
         }
         return false;
     }
@@ -192,7 +192,7 @@ trait KernelTrait
             $class = $options['override_class'];
             unset($options['override_class']);
             $options['override_class_from'] = static::class;
-            return $class::G(new $class)->init($options);
+            return $class::_(new $class)->init($options);
         }
         
         $this->checkSimpleMode($context);

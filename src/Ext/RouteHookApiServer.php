@@ -106,7 +106,7 @@ class RouteHookApiServer extends ComponentBase
             if ($method === 'G') {
                 return [null, null];
             }
-            return [$class::G(), $method];
+            return [$class::_(), $method];
         }
         $object = new $class;
         return [$object,$method];

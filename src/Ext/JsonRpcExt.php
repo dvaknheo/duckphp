@@ -55,7 +55,7 @@ class JsonRpcExt extends ComponentBase
     {
         $class = is_object($class)?get_class($class):$class;
         $base = (new JsonRpcClientBase())->setJsonRpcClientBase($class);
-        return $class::G($base);
+        return $class::_($base);
     }
     
     public function _autoload($class): void
