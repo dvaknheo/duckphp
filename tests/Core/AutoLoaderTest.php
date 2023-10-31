@@ -11,7 +11,6 @@ class AutoLoaderTest extends \PHPUnit\Framework\TestCase
         //$this->assertTrue(ini_get('opcache.enable_cli'));
         \LibCoverage\LibCoverage::Begin(AutoLoader::class);
         $path_autoload=\LibCoverage\LibCoverage::G()->getClassTestPath(AutoLoader::class);
-        var_dump($path_autoload);
         $options=[
             'path'=>$path_autoload,
             'path_namespace'=>'AutoApp',
@@ -20,6 +19,9 @@ class AutoLoaderTest extends \PHPUnit\Framework\TestCase
             'skip_app_autoload'=>false,
             
             'autoload_cache_in_cli'=>true,
+            'autoload_path_namespace_map' =>[
+                'AutoApp3' => 'for_psr4\\'
+            ],
         ];
         
         $G=AutoLoader::G();
@@ -32,9 +34,11 @@ class AutoLoaderTest extends \PHPUnit\Framework\TestCase
         ]);
         $G->run();
         $G->runAutoLoader(); //re-test
+        AutoLoader::RunQuickly($options);
         
-        
-
+        echo "\n";
+        $t=new \for_psr4\LoadMe(); //_autoload
+$t->foo();
         $t=new \for_autoloadertest\LoadMe(); //_autoload
         $t->foo();
     try{
@@ -42,7 +46,7 @@ class AutoLoaderTest extends \PHPUnit\Framework\TestCase
         $tt->foo();
     }catch(\Throwable $ex){
     }
-    
+        
      try{
         $tt=new \for_autoloadertest2\ThisClassNotExsits(); //_autoload
         $tt->foo();

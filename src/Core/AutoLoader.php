@@ -15,6 +15,7 @@ class AutoLoader
         
         'autoload_cache_in_cli' => false,
         'autoload_path_namespace_map' => [],
+        'psr-4' => [],
     ];
     protected $namespace;
     protected $path_namespace;
@@ -40,6 +41,10 @@ class AutoLoader
         
         return $me;
     }
+    public static function RunQuickly(array $options = [])
+    {
+        return static::G()->init($options)->run();
+    }
     public function __construct()
     {
     }
@@ -62,8 +67,8 @@ class AutoLoader
         if (!$this->options['skip_app_autoload'] && !empty($this->namespace)) {
             $this->assignPathNamespace($this->path_namespace, $this->namespace);
         }
-        
-        $this->assignPathNamespace($this->options['autoload_path_namespace_map']);
+        $t = array_flip($this->options['psr-4']);
+        $this->assignPathNamespace(array_merge($this->options['autoload_path_namespace_map'], $t));
         
         return $this;
     }
@@ -121,13 +126,19 @@ class AutoLoader
             
             $relative_class = substr($class, strlen($prefix));
             $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-            if (!file_exists($file)) {
+            
+            $is_abs = (DIRECTORY_SEPARATOR === '/') ? (substr($file, 0, 1) === '/') : preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $file);
+            if (!$is_abs) {
+                $file = rtrim($this->options['path'], DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$file;
+            }
+            if (!is_file($file)) {
                 continue;
             }
             include_once $file;
             return;
         }
-
+        //var_dump($this->namespace_paths);
+        //var_dump($class);
         return;
     }
     public function assignPathNamespace($input_path, $namespace = null)
