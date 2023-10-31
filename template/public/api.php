@@ -20,7 +20,7 @@ namespace Api {
 
         public function index()
         {
-            $domain=\DuckPhp\DuckPhp::Domain(true);
+            $domain=\DuckPhp\DuckPhpAllInOne::Domain(true);
             $url=$domain . __url('test.foo');
             $url2=$domain .__url('test.foo2?a=1&b=2');
             $message = <<<EOT

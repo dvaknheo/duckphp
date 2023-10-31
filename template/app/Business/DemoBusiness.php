@@ -13,6 +13,6 @@ class DemoBusiness extends BaseBusiness
 {
     public function foo()
     {
-        return "<" . DemoModel::G()->foo().">";
+        return "<" . DemoModel::_()->foo().">";
     }
 }

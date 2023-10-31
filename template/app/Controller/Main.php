@@ -15,7 +15,7 @@ class Main // extends BaseController
     public function index()
     {
         //change it if  you can
-        $var = __h(DemoBusiness::G()->foo());
+        $var = __h(DemoBusiness::_()->foo());
         C::Show(get_defined_vars(), 'main');
     }
     public function files()

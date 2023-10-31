@@ -5,16 +5,16 @@
  */
 require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
 
-use DuckPhp\DuckPhp;
-use DuckPhp\DuckPhp as C;  // Helper 都给我们省掉了
-use DuckPhp\DuckPhp as M;  // Helper 都给我们省掉了
+use DuckPhp\DuckPhpAllInOne as DuckPhp;
+use DuckPhp\DuckPhpAllInOne as C;  // Helper 都给我们省掉了
+use DuckPhp\DuckPhpAllInOne as M;  // Helper 都给我们省掉了
 use DuckPhp\Ext\EmptyView;
-use DuckPhp\SingletonEx\SingletonExTrait; // 可变单例模式
+use DuckPhp\Core\SingletonTrait; // 可变单例模式
 
 //业务类， 还是带上吧。
 class MyBusiness
 {
-    use SingletonExTrait; // 单例模式。
+    use SingletonTrait; // 单例模式。
     
     public function getDataList($page, $pagesize)
     {
@@ -77,28 +77,28 @@ class Main
 {
     public function index()
     {
-        list($total, $list) = MyBusiness::G()->getDataList(C::PageNo(), C::PageSize(3));
+        list($total, $list) = MyBusiness::_()->getDataList(C::PageNo(), C::PageWindow(3));
         $pager = C::PageHtml($total);
         C::Show(get_defined_vars(), 'main_view');
     }
     public function do_index()
     {
-        MyBusiness::G()->addData($_POST);
+        MyBusiness::_()->addData($_POST);
         $this->index();
     }
     public function show()
     {
-        $data = MyBusiness::G()->getData(C::GET('id', 0));
+        $data = MyBusiness::_()->getData(C::GET('id', 0));
         C::Show(get_defined_vars(), 'show');
     }
     public function do_show()
     {
-        MyBusiness::G()->updateData(C::POST('id', 0), $_POST);
+        MyBusiness::_()->updateData(C::POST('id', 0), $_POST);
         $this->show();
     }
     public function delete()
     {
-        MyBusiness::G()->deleteData(C::GET('id', 0));
+        MyBusiness::_()->deleteData(C::GET('id', 0));
         C::ExitRouteTo('');
     }
 }

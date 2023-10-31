@@ -8,5 +8,5 @@ namespace LazyToChange\System;
 
 trait SingletonEx
 {
-    use \DuckPhp\SingletonEx\SingletonExTrait;
+    use \DuckPhp\Core\SingletonTrait;
 }
