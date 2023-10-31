@@ -14,13 +14,13 @@
 <fieldset>
 <legend>应用的选项</legend>
 <pre>
-<?php var_export(array_diff_assoc(\DuckPhp\Core\App::G()->options,(new \DuckPhp\DuckPhp())->options));?>
+<?php var_export(array_diff_assoc(\DuckPhp\Core\App::_()->options,(new \DuckPhp\DuckPhp())->options));?>
 </pre>
 </fieldset>
 <fieldset>
 <legend>全部选项</legend>
 <pre>
-<?php var_export(\DuckPhp\Core\App::G()->options);?>
+<?php var_export(\DuckPhp\Core\App::_()->options);?>
 </pre>
 </fieldset>
 <fieldset>

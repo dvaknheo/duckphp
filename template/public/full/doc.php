@@ -31,7 +31,8 @@ getfile($f);
 <head>
   <meta charset="utf-8"/>
   <title>文档</title>
-  <script src="//cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/marked/lib/marked.min.js"></script>
+  <link rel="stylesheet" media="all" href="Highlighter.css" />
 </head>
 <body>
 <div>
@@ -39,7 +40,7 @@ getfile($f);
 <a href="#">返回文档主页</a>
 <a href="/">返回主页</a>
 </div>
-  <div id="content" style="border:1px solid gray;">
+  <div id="content" style="border:1px solid gray;padding:0.5em;">
   正在打开文档。请保证 cdn.jsdelivr.net ，外接 js 能访问
   </div>
 <script>
