@@ -23,7 +23,7 @@ trait KernelTrait
     protected $kernel_options = [
             'path' => null,
             'namespace' => null,
-            'console_enable' => false,
+            'cli_enable' => true,
             
             'is_debug' => false,
             'ext' => [],
@@ -323,7 +323,7 @@ trait KernelTrait
         $this->onBeforeRun();
         try {
             Runtime::_()->run();
-            if (PHP_SAPI === 'cli' && $this->is_root && $this->options['console_enable']) {
+            if (PHP_SAPI === 'cli' && $this->is_root && $this->options['cli_enable']) {
                 $ret = Console::_()->run();
             } else {
                 if (!($this->options['container_only'] ?? false)) {

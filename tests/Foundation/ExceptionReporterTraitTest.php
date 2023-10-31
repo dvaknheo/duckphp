@@ -18,7 +18,7 @@ class ExceptionReporterTraitTest extends \PHPUnit\Framework\TestCase
             'handle_all_exception'=>false,
             'controller_class_postfix'=>'Controller',
             'controller_method_prefix'=>'action_',
-            'cli_mode'=>false,
+            'cli_enable'=>false,
             'is_debug'=>true,
         ];
         DuckPhp::_()->init($options);

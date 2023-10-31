@@ -95,7 +95,7 @@ EOT;
         $_SERVER['REQUEST_URI'] = $uri;
         $_SERVER['PATH_INFO'] = parse_url($uri, PHP_URL_PATH);
         $_SERVER['HTTP_METHOD'] = $post ? $post :'GET';
-        $this->context()->options['console_enable'] = false;
+        $this->context()->options['cli_enable'] = false;
         $this->context()->run();
     }
     ///////////////////////////////////

@@ -14,6 +14,7 @@ class RouteHookResourceTest extends \PHPUnit\Framework\TestCase
        
         
         App::_()->init([
+            'cli_enable' =>false,
             'is_debug'=>true,
             'path' => $path,
             'ext'=>[
@@ -41,6 +42,7 @@ class RouteHookResourceTest extends \PHPUnit\Framework\TestCase
         
         /////////////////////////////
         $options =[
+            'cli_enable' =>false,
             'is_debug'=>true,
             'path' => $path,
             'path_resource' => 'res/',

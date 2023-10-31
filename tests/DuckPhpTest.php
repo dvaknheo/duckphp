@@ -83,7 +83,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
             'cli_enable'=>false,
             'path' =>$path,
             
-            'cli_mode' => 'hook',
+            
             'ext'=>[
                 DuckPhp_Sub::class =>[
                     'cli_enable'=>false,
@@ -113,7 +113,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         $options['ext']=[
                 DuckPhp_Sub::class =>[
                     'is_debug'=>true,
-                    'console_enable'=>false,
+                    'cli_enable'=>false,
                     'cli_mode' => 'hook',
                     'controller_url_prefix'=>'advance/',
                     'exception_reporter' => FakeReporter::class,

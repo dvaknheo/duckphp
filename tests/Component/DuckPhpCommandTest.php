@@ -14,7 +14,7 @@ class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(DuckPhpCommand::class);
         
         $_SERVER['argv']=[];
-        App::_()->init(['console_enable'=>true])->run();
+        App::_()->init(['cli_enable'=>true])->run();
         
         
         Console::_()->regCommandClass(DuckPhpCommand_Command::class,"test");
@@ -94,7 +94,7 @@ class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
                 $_SERVER['argv']=[
             '-','call',str_replace('\\','/',DuckPhpCommand_Command2::class).'@command_foo4','A1'
         ];
-        DuckPhpCommand_App::_()->init(['console_enable'=>true])->run();
+        DuckPhpCommand_App::_()->init(['cli_enable'=>true])->run();
         //////////////////
         
         DuckPhpCommand_App::_(new DuckPhpCommand_App());
@@ -105,7 +105,7 @@ class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
             '-','run', '--http-server=tests/DuckPhp/Component/DuckPhpCommand_HttpServer',
         ];
         try{
-        DuckPhpCommand_App::_()->init(['console_enable'=>true])->run();
+        DuckPhpCommand_App::_()->init(['cli_enable'=>true])->run();
         }catch(\Throwable $ex){
             debug_print_backtrace(2);
         }

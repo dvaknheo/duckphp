@@ -42,7 +42,7 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             'override_class'=>'\\'.KernelTestApp::class,
             'skip_fix_path_info'=>true,
             'on_init' =>function (){ echo 'Inited!';},
-            'console_enable' => true,
+            'cli_enable' => true,
             
             'controller_class_postfix' => 'Controller',
             'controller_method_prefix' => 'action_',
@@ -54,7 +54,7 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             KernelTestObjectB::class=>['aa'=>'22'],
         ];
         App::RunQuickly($options,function(){});
-        App::_()->options['console_enable'] =false;
+        App::_()->options['cli_enable'] =false;
         
         //App::SG()->_SERVER['PATH_INFO']='/NOOOOOOOOOOOOOOO';
         Route::_()->bind('/NOOOOOOOOOOOOOOO');  // 这两句居然有区别 ,TODO ，分析之
@@ -138,6 +138,7 @@ echo "-------------------------------------\n";
         MyKernelTrait::OnDevErrorHandler("", "", "", "");
         MyKernelTrait::On404();
 
+        $options['cli_enable']=false;
         $options['ext'][KernelTestApp2::class]=[
             'path'=>null,
             'namespace' => __NAMESPACE__,

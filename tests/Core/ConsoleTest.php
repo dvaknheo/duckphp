@@ -14,7 +14,7 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(Console::class);
         
         $_SERVER['argv']=[];
-        App::_()->init(['console_enable'=>true, 'is_debug'=>true])->run();
+        App::_()->init(['cli_enable'=>true, 'is_debug'=>true])->run();
         Console::DoRun();
         Console::_()->app();
         Console::_()->getCliParameters();
@@ -76,7 +76,7 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         
         //*/
         Console::_(new Console())->init([],Console_App::_());
-        Console_App::_()->init(['console_enable'=>true]);
+        Console_App::_()->init(['cli_enable'=>true]);
         $_SERVER['argv']=[
             '-','list',
         ];

@@ -13,6 +13,7 @@ class MyMiddlewareManagerTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(MyMiddlewareManager::class);
         
         App::RunQuickly([
+            'cli_enable'=>false,
             'namespace'=>'tests\DuckPhp\Ext',
             'namespcae_controller'=>'',
             'is_debug'=>true,
