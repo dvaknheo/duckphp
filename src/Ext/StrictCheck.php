@@ -35,10 +35,12 @@ class StrictCheck extends ComponentBase
     protected function initOptions(array $options)
     {
         throw new \Exception("It's not work , TODO fix me to work in new version.");
+        /*
         $this->context_class = $this->options['strict_check_context_class'];
         if (!defined('__SINGLETONEX_REPALACER')) {
             define('__SINGLETONEX_REPALACER', static::class . '::SingletonExReplacer');//$callback = __SINGLETONEX_REPALACER;
         }
+        //*/
     }
     //@override
     protected function initContext(object $context)

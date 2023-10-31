@@ -33,9 +33,14 @@ class ComponentBase // implements ComponentInterface
     }
     public function init(array $options, ?object $context = null)
     {
-        if ($this->init_once && $this->is_inited && !($options['force'] ?? false)) {
+        //if ($this->is_inited && ($this->options['init_once'] ?? ($options['init_once'] ?? false))) {
+        //    return $this;
+        //}
+
+        if ($this->init_once && $this->is_inited && !($options['force_new_init'] ?? false)) {
             return $this;
         }
+        
         $this->options = array_intersect_key(array_replace_recursive($this->options, $options) ?? [], $this->options);
         $this->initOptions($options);
         if ($context !== null) {

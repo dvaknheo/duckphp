@@ -49,11 +49,6 @@ class Pager extends ComponentBase implements PagerInterface
         $this->options['current'] = $this->current();
         return $this;
     }
-    //@override
-    protected function initOptions(array $options)
-    {
-        $this->url = $this->options['url'] ?? $this->getDefaultUrl();
-    }
     
     public function current($new_value = null): int
     {
@@ -94,7 +89,8 @@ class Pager extends ComponentBase implements PagerInterface
     public function defaultGetUrl($page)
     {
         $page_key = $this->options['page_key'];
-        $url = $this->url ?? '';
+        $current_url = $this->options['url'] ?? $this->getDefaultUrl();
+        $url = $current_url ?? '';
         $flag = strpos($url, '{'.$page_key.'}');
         if ($flag !== false) {
             $page = $page != 1?$page:'';

@@ -23,7 +23,7 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
         ComponentBaseObject::_();
         ComponentBaseObject2::_()->init([]);
         ComponentBaseObject2::_()->init([],App::_());
-        ComponentBaseObject2::_()->init(['force'=>true],App::_());
+        ComponentBaseObject2::_()->init(['force_new_init'=>true],App::_());
         
         ComponentBaseObject2::_()->context();
         var_dump(ComponentBase::SlashDir(''));
