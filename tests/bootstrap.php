@@ -11,6 +11,16 @@ class MyLibCoverage extends \LibCoverage\LibCoverage
     // 我们接下来修一下，一个函数只能 assert一次的问题。
     // 思路是开始的时候 没设置文件的时候 设置为0. 第一次跑完，填充全为0 的数组，报告达到100% 的时候，更新次数
     //
+    public function doBegin($class)
+    {
+        // echo "[[[[[[[[[[[\n";
+        parent::doBegin($class);
+    }
+    public function doEnd()
+    {
+        // echo "]]]]]]]]]]]\n";
+        parent::doEnd();
+    }
 }
 $setting = require __DIR__.'/data_for_tests/setting.php';
 $options = $setting['options_test'];

@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-use DuckPhp\DuckPhp;
+use DuckPhp\DuckPhpAllInOne;
 
 require(__DIR__.'/../../autoload.php');  // @DUCKPHP_HEADFILE
 //// 这个例子极端点，没用任何类，全函数模式。
@@ -15,22 +15,22 @@ function RunByDuckPhp()
 
     $options['ext'][\DuckPhp\Ext\EmptyView::class] = true; // for GetRunResult();
     $options['ext'][\DuckPhp\Ext\RouteHookFunctionRoute::class] = true; // 我们用这个扩展
-    $flag = DuckPhp::RunQuickly($options);
+    $flag = DuckPhpAllInOne::RunQuickly($options);
     return $flag;
 }
 function GetRunResult()
 {
-    $ret = DuckPhp::getViewData();
+    $ret = DuckPhpAllInOne::getViewData();
     return $ret;
 }
 function POST($k =null , $v = null)
 {
-    return DuckPhp::POST($k, $v);
+    return DuckPhpAllInOne::POST($k, $v);
 }
 if (!function_exists('__show')) {
     function __show(...$args)
     {
-        return DuckPhp::Show(...$args);
+        return DuckPhpAllInOne::Show(...$args);
     }
 }
 

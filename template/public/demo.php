@@ -12,7 +12,7 @@ namespace MySpace\System
     
     use DuckPhp\DuckPhp;
     use DuckPhp\Ext\CallableView;
-    use DuckPhp\SingletonEx\SingletonExTrait;
+    use DuckPhp\Core\SingletonTrait;
     use MySpace\View\Views;
 
     class App extends DuckPhp
@@ -29,6 +29,9 @@ namespace MySpace\System
             ],
             'callable_view_class' => Views::class,
                 // 替换的 View 类。
+                
+            'controller_class_postfix' => 'Controller',
+            'controller_method_prefix' => 'action_',
         ];
         // @override 重写
         protected function onInit()
@@ -36,42 +39,33 @@ namespace MySpace\System
             //初始化之后在这里运行。
             //var_dump($this->options);//查看总共多少选项
         }
-        // @override 重写
-        protected function onRun()
-        {
-            //运行期代码在这里，你可以在这里 static::session_start();
-        }
     }
-    //服务基类, 为了 Business::G() 可变单例。
+    //服务基类, 为了 Business::_() 可变单例。
     class BaseBusiness
     {
-        use SingletonExTrait;
+        use SingletonTrait;
     }
 } // end namespace
 // 助手类
 
 namespace MySpace\Helper
 {
-    class ControllerHelper extends \DuckPhp\Helper\ControllerHelper
+    class ControllerHelper
     {
+        use \DuckPhp\Helper\ControllerHelperTrait;
         // 添加你想要的助手函数
     }
-    class BusinessHelper extends \DuckPhp\Helper\BusinessHelper
+    class BusinessHelper
     {
+        use  \DuckPhp\Helper\BusinessHelperTrait;
         // 添加你想要的助手函数
     }
-    class ModelHelper extends \DuckPhp\Helper\ModelHelper
+    class ModelHelper
     {
+        use \DuckPhp\Helper\ModelHelperTrait;
         // 添加你想要的助手函数
     }
-    class ViewHelper extends \DuckPhp\Helper\ViewHelper
-    {
-        // 添加你想要的助手函数。 ViewHelper 一般来说是不使用的
-    }
-    class AppHelper extends \DuckPhp\Helper\AdvanceHelper
-    {
-        // 添加你想要的助手函数。 AppHelper 一般来说是不使用的
-    }
+
 } // end namespace
 
 //------------------------------
@@ -82,24 +76,24 @@ namespace MySpace\Controller
     use MySpace\Business\MyBusiness;  // 引用助手类
     use MySpace\Helper\ControllerHelper as C; // 引用相关服务类
 
-    class Main
+    class MainController
     {
         public function __construct()
         {
             // 在构造函数设置页眉页脚。
             C::setViewHeadFoot('header', 'footer');
         }
-        public function index()
+        public function action_index()
         {
             //获取数据
-            $output = "Hello, now time is " . __h(MyBusiness::G()->getTimeDesc()); // html编码
+            $output = "Hello, now time is " . __h(MyBusiness::_()->getTimeDesc()); // html编码
             $url_about = __url('about/me'); // url 编码
             C::Show(get_defined_vars(), 'main_view'); //显示数据
         }
     }
-    class about
+    class aboutController
     {
-        public function me()
+        public function action_me()
         {
             $url_main = __url(''); //默认URL
             C::setViewHeadFoot('header', 'footer');

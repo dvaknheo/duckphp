@@ -54,7 +54,9 @@ class CallableView extends View
     //@override
     public function _Show(array $data, string $view): void
     {
+        $view = $this->context_class ? $this->context()->adjustViewFile($view) : $view ;
         $callback = $this->viewToCallback($view);
+
         if (null === $callback) {
             parent::_Show($data, $view);
             return;
