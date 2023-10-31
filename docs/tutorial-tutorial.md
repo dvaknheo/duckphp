@@ -1,4 +1,4 @@
-# 施工种，请用文本文件打开，markdown 格式混乱
+# 施工中，请用文本文件打开，markdown 格式混乱
 
 DuckPhp 1.3.1 发布箴言。
 DuckPhp 1.3.1 现在发布。经过2年多没动之后，我花了几个月，做了现在的 DuckPhp 的新版本，做了很多改动。
@@ -166,8 +166,8 @@ function onInit(){
 
 ### 工程文件夹
 * config 配置文件夹。不需要这个文件夹也看可以.
-    config/DuckPhpSettings.conf.php 这个文件是存在的 ，只有根应用会有用，作用是保存设置的。
-    config/DuckPhpApps.conf.php 这个是选项文件子应用的额外选项都在这里。安装的时候，会改写这个文件。
+    config/DuckPhpSettings.config.php 这个文件是存在的 ，只有根应用会有用，作用是保存设置的。
+    config/DuckPhpApps.config.php 这个是选项文件子应用的额外选项都在这里。安装的时候，会改写这个文件。
 * public web入口
 * runtime 文件夹是唯一需要可写的文件夹。默认工程没有写入东西。
 * src 类文件夹。工程代码文件。

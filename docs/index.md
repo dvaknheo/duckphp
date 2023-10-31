@@ -4,6 +4,7 @@
 所有参考文档可以在 [参考索引页面](ref/index.md) 查看。
 本文档希望能做到不需要看参考页面也能覆盖所有参考页面的内容。
 
+- [【施工中新版快速教程】](tutorial-tutorial.md)
 - [快速教程](tutorial-quickstart.md)
 - [架构和通用流程](tutorial-general.md)
 - [助手类](tutorial-helper.md)

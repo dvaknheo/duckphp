@@ -3,7 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
+require(__DIR__.'/../../autoload.php');  // @DUCKPHP_HEADFILE
 
 use DuckPhp\DuckPhpAllInOne as DuckPhp;
 use DuckPhp\DuckPhpAllInOne as C;  // Helper 都给我们省掉了

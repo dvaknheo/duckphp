@@ -3,7 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-require_once(__DIR__.'/../../../vendor/autoload.php');
+require_once(__DIR__.'/../../vendor/autoload.php');
 
 function cover($src)
 {
@@ -20,16 +20,16 @@ if (!class_exists(\SebastianBergmann\CodeCoverage\CodeCoverage::class)) {
     echo "开发人员专用";
     return;
 }
-cover(realpath(__DIR__.'/../../../src'));
+cover(realpath(__DIR__.'/../../src'));
 
 
 if (!class_exists(\LazyToChange\System\App::class)) {
     \DuckPhp\Core\AutoLoader::G()->runAutoLoader();
-    \DuckPhp\Core\AutoLoader::G()->assignPathNamespace(__DIR__ . '/../../app', "LazyToChange\\"); 
+    \DuckPhp\Core\AutoLoader::G()->assignPathNamespace(__DIR__ . '/../app', "LazyToChange\\"); 
 }
 
 $options = [
-    'path' => realpath(__DIR__.'/../../').'/',
+    'path' => realpath(__DIR__.'/../').'/',
 ];
 LazyToChange\System\App::RunQuickly($options);
 

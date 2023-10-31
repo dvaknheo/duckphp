@@ -1,5 +1,5 @@
 <?php
-require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
+require(__DIR__.'/../../autoload.php');  // @DUCKPHP_HEADFILE
 
 function getfile($f)
 {
@@ -32,7 +32,7 @@ getfile($f);
   <meta charset="utf-8"/>
   <title>文档</title>
   <script src="//cdn.jsdelivr.net/npm/marked/lib/marked.min.js"></script>
-  <link rel="stylesheet" media="all" href="Highlighter.css" />
+  <link rel="stylesheet" media="all" href="doc.css" /><!-- Highlighter.css -->
 </head>
 <body>
 <div>

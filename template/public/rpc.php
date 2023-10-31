@@ -3,7 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-require(__DIR__.'/../../../autoload.php');  // @DUCKPHP_HEADFILE
+require(__DIR__.'/../../autoload.php');  // @DUCKPHP_HEADFILE
 
 use DuckPhp\DuckPhp;
 use DuckPhp\Ext\JsonRpcExt;
