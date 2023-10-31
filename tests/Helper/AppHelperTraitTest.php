@@ -54,10 +54,6 @@ class AppHelperTraitTest extends \PHPUnit\Framework\TestCase
         ////[[[[
         AppHelper::SESSION();
         AppHelper::FILES();
-        try{
-            AppHelper::Event();
-        }catch(\Exception $ex){
-        }
         AppHelper::CookieSet ('a','b');
         AppHelper::CookieGet ('a','b');
         AppHelper::SessionSet('c','d');

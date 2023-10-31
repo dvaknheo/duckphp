@@ -9,7 +9,6 @@ use DuckPhp\Component\DbManager;
 use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Component\RouteHookRouteMap;
-use DuckPhp\Core\App;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\Runtime;
@@ -19,10 +18,6 @@ use DuckPhp\Core\View;
 
 trait AppHelperTrait
 {
-    public static function Event()
-    {
-        return App::Event();
-    }
     public static function CallException($ex)
     {
         return ExceptionManager::CallException($ex);

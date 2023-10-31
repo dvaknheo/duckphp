@@ -33,6 +33,9 @@ getfile($f);
   <title>文档</title>
   <script src="//cdn.jsdelivr.net/npm/marked/lib/marked.min.js"></script>
   <link rel="stylesheet" media="all" href="doc.css" /><!-- Highlighter.css -->
+  <style>
+  pre {background-color:#eeeeee;}
+  </style>
 </head>
 <body>
 <div>
@@ -40,7 +43,7 @@ getfile($f);
 <a href="#">返回文档主页</a>
 <a href="/">返回主页</a>
 </div>
-  <div id="content" style="border:1px solid gray;padding:0.5em;">
+  <div id="wrapper" style="border:1px solid gray;padding:0.5em;">
   正在打开文档。请保证 cdn.jsdelivr.net ，外接 js 能访问
   </div>
 <script>
@@ -57,7 +60,7 @@ function fetchMarkdown(url){
     .then(function(data){
     
         var txt=data.s;
-        document.getElementById('content').innerHTML = marked.parse(txt,{ },function(err,res){
+        document.getElementById('wrapper').innerHTML = marked.parse(txt,{ },function(err,res){
             res=res.replace(/href="/g,'href="##'+baseUrl);
             return res;
         });
