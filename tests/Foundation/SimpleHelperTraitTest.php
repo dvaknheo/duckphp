@@ -2,7 +2,6 @@
 namespace tests\DuckPhp\Foundation;
 
 use DuckPhp\Foundation\SimpleHelperTrait;
-use DuckPhp\DuckPhp;
 
 class SimpleHelperTraitTest extends \PHPUnit\Framework\TestCase
 {

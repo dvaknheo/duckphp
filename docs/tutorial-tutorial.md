@@ -304,9 +304,72 @@ MyApp::User()->data();
 DuckAdmin::PhaseCall(DuckAdmin::class,function(){AdminUser::_(MyAdminUser::_());});
 
 /////////////////////////////////////////////////////////////////////////
+```
+带 *的为重复项
+AutoLoader
+DuckPhpAllInOne
+  --
+  |\
+DuckPhp
+    GlobalAdmin
+        * SingletonTrait
+    Cache
+    CallInPhaseTrait
+        * PhaseProxy
+    Configer
+    DbManager
+        * Logger;
+        * Db;
+    DuckPhpCommand
+        * Console
+    DuckPhpInstaller
+    EventManager
+    ExtOptionsLoader
+        * App
+    Pager
+        * PagerInterface
+    PhaseProxy
+    RedisCache
+    RedisManager
+    RouteHookPathInfoCompat
+        * Route
+    RouteHookResource
+        * Route
+    RouteHookRewrite
+        * App
+    RouteHookRouteMap
+        * Route
+    GlobalUser
+        * SingletonTrait
+    App
+        ComponentBase
+            ComponentInterface
+            SingletonTrait
+                * PhaseContainer
+        DuckPhpSystemException
+            ThrowOnTrait
+        KernelTrait
+            Console
+            * Route
+            ExceptionManager
+            Functions
+            PhaseContainer
+            Route
+            Runtime
+            View
+        Logger
+        * Route
+        * Runtime
+        SuperGlobal
+        SystemWrapper
+Helper
+    * App
+    * Logger
+    * Route
+    * SystemWrapper
+```
 
 
-事件系统
 其他隐藏要素
 
 

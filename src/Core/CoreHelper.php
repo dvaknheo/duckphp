@@ -107,6 +107,10 @@ class CoreHelper extends ComponentBase
     {
         return static::_()->_SqlForCountSimply($sql);
     }
+    public static function ThrowByFlag($exception, $flag, $message, $code = 0)
+    {
+        return static::_()->_ThrowByFlag($exception, $flag, $message, $code);
+    }
     ////////////////////////////////////////////
     public function _H(&$str)
     {
@@ -255,5 +259,11 @@ class CoreHelper extends ComponentBase
             return 'SELECT COUNT(*) as c FROM ';
         }, $sql);
         return $sql;
+    }
+    public function _ThrowByFlag($exception, $flag, $message, $code = 0)
+    {
+        if ($flag) {
+            throw new $exception($message, $code);
+        }
     }
 }

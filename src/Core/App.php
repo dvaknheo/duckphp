@@ -267,7 +267,7 @@ EOT;
     }
     public function _Platform()
     {
-        return $this->options['platform'];
+        return static::_()->_Setting('duckphp_platform', '');
     }
     public static function IsDebug()
     {
@@ -275,7 +275,9 @@ EOT;
     }
     public function _IsDebug()
     {
-        return static::_()->options['is_debug'];
+        $root_debug = static::_()->_Setting('duckphp_is_debug', false);
+        $this_debug = $this->options['is_debug'] ?? false;
+        return $root_debug || $this_debug;
     }
     public static function IsRealDebug()
     {

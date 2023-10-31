@@ -23,6 +23,7 @@ class DuckPhpAllInOne extends DuckPhp
         BusinessHelperTrait::FireEvent  insteadof ControllerHelperTrait;
         BusinessHelperTrait::OnEvent  insteadof ControllerHelperTrait;
         BusinessHelperTrait::OnEvent  insteadof AppHelperTrait;
+        BusinessHelperTrait::ThrowByFlag  insteadof ControllerHelperTrait;
         ControllerHelperTrait::header insteadof AppHelperTrait;
         ControllerHelperTrait::setcookie  insteadof AppHelperTrait;
         ControllerHelperTrait::exit  insteadof AppHelperTrait;

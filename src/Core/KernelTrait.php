@@ -26,7 +26,6 @@ trait KernelTrait
             'console_enable' => false,
             
             'is_debug' => false,
-            'platform' => '',
             'ext' => [],
             
             'override_class' => null,
@@ -252,7 +251,6 @@ trait KernelTrait
             $setting = static::Root()->_Setting(null);
         }
         $this->options['is_debug'] = $setting['duckphp_is_debug'] ?? $this->options['is_debug'];
-        $this->options['platform'] = $setting['duckphp_platform'] ?? $this->options['platform'];
     }
     protected function loadSetting()
     {

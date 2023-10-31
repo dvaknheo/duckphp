@@ -95,6 +95,10 @@ trait ControllerHelperTrait
     {
         return CoreHelper::ExitJson($ret, $exit);
     }
+    public static function ThrowByFlag($exception, $flag, $message, $code = 0)
+    {
+        return CoreHelper::_()->_ThrowByFlag($exception, $flag, $message, $code);
+    }
     /////////////////
     public static function header($output, bool $replace = true, int $http_response_code = 0)
     {
