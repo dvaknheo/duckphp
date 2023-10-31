@@ -27,8 +27,8 @@ class Route extends ComponentBase
         'controller_welcome_method' => 'index',
         
         'controller_class_base' => '',
-        'controller_class_postfix' => '',
-        'controller_method_prefix' => '',
+        'controller_class_postfix' => 'Controller',
+        'controller_method_prefix' => 'action_',
         'controller_prefix_post' => 'do_', //TODO remove it
         
         'controller_class_map' => [],

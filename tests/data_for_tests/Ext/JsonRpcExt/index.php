@@ -15,13 +15,13 @@ class TestService
         throw new  \Exception ("serverException",1024);
     }
 }
-class Main
+class MainController
 {
-    public function index()
+    public function action_index()
     {
         var_dump(DATE(DATE_ATOM));
     }
-    public function json_rpc()
+    public function action_json_rpc()
     {
         $post=DuckPhp::POST(null);
         $method =  $post['method']??null;
@@ -39,6 +39,10 @@ class Main
 $options=[
     'is_debug'=>true,
     'namespace_controller'=>'\\',
+//'controller_class_postfix' => 'Controller',
+//'controller_method_prefix' => 'action_',
 ];
 
 $flag=DuckPhp::RunQuickly($options);
+
+var_dump(\DuckPhp\Core\Route::_()->options);

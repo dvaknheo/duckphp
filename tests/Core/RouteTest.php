@@ -29,6 +29,8 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
             'controller_class_base'=>\tests_Core_Route\baseController::class,
+            'controller_class_postfix' => '',
+            'controller_method_prefix' => '',
         ];
         $_SERVER['argv']=[ __FILE__ ,'about/me' ];
         $_SERVER['argc']=count($_SERVER['argv']);
@@ -47,6 +49,8 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'namespace'=>'tests_Core_Route',
             'namespace_controller'=>'',
             'controller_welcome_class_visible'=>false,
+            'controller_class_postfix' => '',
+            'controller_method_prefix' => '',
         ];
         Route::_(new Route());
         Route::RunQuickly($options,function(){
@@ -55,6 +59,8 @@ class RouteTest extends \PHPUnit\Framework\TestCase
                 'DOCUMENT_ROOT'=>'document_root',
                 'REQUEST_METHOD'=>'POST',
                 'PATH_INFO'=>'/',
+                    'controller_class_postfix' => '',
+                    'controller_method_prefix' => '',
             ];
             //Route::_()->reset();
             
@@ -88,6 +94,8 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
             'controller_class_base'=>'~baseController',
+            'controller_class_postfix' => '',
+            'controller_method_prefix' => '',
         ];
         $_SERVER['argv']=[ __FILE__ ,'about/me' ];
         $_SERVER['argc']=count($_SERVER['argv']);
@@ -138,7 +146,10 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
-            'controller_use_singletonex' => true,
+            
+            'controller_class_postfix' => '',
+            'controller_method_prefix' => '',
+            
         ];
         Route::_(new Route())->init($options);
         Route::_()->defaultGetRouteCallback('/about/me');
@@ -155,6 +166,8 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'namespace_controller'=>'\\tests_Core_Route',
             'controller_class_base'=>'~baseController',
             'controller_class_postfix'=>'Controller',
+            'controller_method_prefix' => '',
+
         ];
         Route::_(new Route())->init($options);
         Route::_()->defaultGetRouteCallback('/noBase/me');
@@ -163,6 +176,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
             'namespace_controller'=>'\\tests_Core_Route',
             'controller_class_base'=>'~baseController',
             'controller_class_postfix'=>'Controller',
+            'controller_method_prefix' => '',
             'controller_path_prefix'=>'/prefix/',
         ];
         Route::_(new Route())->init($options);        
@@ -172,7 +186,10 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
-            'controller_stop_static_method' => true,
+            
+            'controller_class_postfix' => '',
+            'controller_method_prefix' => '',
+            
         ];
         Route::_(new Route())->init($options);
         Route::_()->defaultGetRouteCallback('/Main/G');
@@ -201,6 +218,9 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         //////////////////////////////
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
+            
+            'controller_class_postfix' => '',
+            'controller_method_prefix' => '',
         ];
         $options['controller_url_prefix'] = 'child/';
         Route::_(new Route())->init($options);

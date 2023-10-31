@@ -43,6 +43,9 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             'skip_fix_path_info'=>true,
             'on_init' =>function (){ echo 'Inited!';},
             'console_enable' => true,
+            
+            'controller_class_postfix' => 'Controller',
+            'controller_method_prefix' => 'action_',
         ];
         $options['ext']=[
             'noclass'=>true,
@@ -61,13 +64,19 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             
         };
         
+        App::_()->options['controller_class_postfix']='';
+            App::_()->options['controller_method_prefix']='';
         App::_()->run();
 echo "-------------------------------------\n";
+            
         Route::_()->bind('/exception');
         App::_()->run();
 
         try{
             App::_()->options['skip_exception_check']=true;
+            App::_()->options['controller_class_postfix']='';
+            App::_()->options['controller_method_prefix']='';
+            
             Route::_()->bind('/exception');
             App::_()->run();
         }catch(\Throwable $ex){
@@ -124,10 +133,10 @@ echo "-------------------------------------\n";
             'handle_all_exception' => false,
             'use_autoloader' => true,
         ]);
-////////////////////////
-MyKernelTrait::OnDefaultException(new \Exception("error"));
-MyKernelTrait::OnDevErrorHandler("", "", "", "");
-MyKernelTrait::On404();
+        ////////////////////////
+        MyKernelTrait::OnDefaultException(new \Exception("error"));
+        MyKernelTrait::OnDevErrorHandler("", "", "", "");
+        MyKernelTrait::On404();
 
         $options['ext'][KernelTestApp2::class]=[
             'path'=>null,
@@ -303,17 +312,17 @@ class KernelTestObjectError
 
 
 namespace tests\DuckPhp\Core\Controller{
-class Main
+class MainController
 {
-    public function index()
+    public function action_index()
     {
         var_dump("OK");
     }
-    public function date()
+    public function action_date()
     {
         var_dump(DATE(DATE_ATOM));
     }
-    public function exception()
+    public function action_exception()
     {
         throw new \Exception("HAHA");
     }
