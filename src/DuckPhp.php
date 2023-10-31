@@ -104,7 +104,7 @@ class DuckPhp extends App
             RouteHookPathInfoCompat::_()->init($this->options, $this);
         }
         $phase = $this->_Phase();
-        ////////////////
+        ////////////////////////////////////////
         if ($this->options['class_user'] ?? null) {
             if (!$this->is_root) {
                 $this->bumpSingletonToRoot($this->options['class_user'], GlobalUser::class);
@@ -123,8 +123,7 @@ class DuckPhp extends App
         ///////
         return $this;
     }
-    //////////////////////
-    
+    ////////////////////////////////////////////
     public function isInstalled()
     {
         return $this->options['install'] ?? false;
@@ -142,32 +141,29 @@ class DuckPhp extends App
             $newClass::_(new PhaseProxy($self, $oldClass));
         });
     }
-    //////////////
-    public static function Admin($admin = null)
+    ////////////////////////////////////////////
+    public function _Event()
     {
-        return GlobalAdmin::_($admin);
+        return EventManager::_();
     }
-    public static function AdminId()
-    {
-        return static::Admin()->id();
-    }
-    public static function User($user = null)
-    {
-        return GlobalUser::_($user);
-    }
-    public static function UserId()
-    {
-        return static::User()->id();
-    }
-    //@override
     public function _Pager($object = null)
     {
         return Pager::_($object);
     }
-    /////////////////////////
-    //@override
-    public function _Event()
+    public  function _Admin($admin = null)
     {
-        return EventManager::_();
+        return GlobalAdmin::_($admin);
+    }
+    public function _User($user = null)
+    {
+        return GlobalUser::_($user);
+    }
+    public  function _AdminId()
+    {
+        return GlobalAdmin::_()->id();
+    }
+    public  function _UserId()
+    {
+        return GlobalUser::_()->id();
     }
 }

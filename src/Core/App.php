@@ -311,24 +311,58 @@ EOT;
         return static::_()->_Setting($key);
     }
     ////////////////////////////////////////////
-    public static function Pager($object = null)
+    public static function Logger($object = null)
     {
-        return static::_()->_Pager($object);
-    }
-    public function _Pager($object = null)
-    {
-        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
+        return Logger::_($object);
     }
     public static function Event()
     {
         return static::_()->_Event();
     }
+    
+    public static function Pager($object = null)
+    {
+        return static::_()->_Pager($object);
+    }
+    public static function Admin($object = null)
+    {
+        return static::_()->_Admin($object);
+    }
+    public static function User($object = null)
+    {
+        return static::_()->_User($object);
+    }
+    public static function AdminId()
+    {
+        return static::_()->_AdminId();
+    }
+    public static function UserId()
+    {
+        return static::_()->_UserId();
+    }
     public function _Event()
     {
-        throw new \ErrorException("DuckPhp No Impelement " . __FUNCTION__);
+        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
     }
-    public static function Logger($object = null)
+    public function _Pager($object = null)
     {
-        return Logger::_($object);
+        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
+    }
+
+    public function _Admin($object = null)
+    {
+        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
+    }
+    public function _User($object = null)
+    {
+        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
+    }
+    public function _AdminId()
+    {
+        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
+    }
+    public function _UserId()
+    {
+        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
     }
 }

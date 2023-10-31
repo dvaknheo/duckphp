@@ -153,7 +153,23 @@ class AppTest extends \PHPUnit\Framework\TestCase
             App::Event();
         }catch(\Throwable $ex){
         }
-
+        try{
+        App::Admin();
+        }catch(\Exception $ex){}
+        try{
+        App::User();
+        }catch(\Exception $ex){}
+        try{
+        App::AdminId();
+        }catch(\Exception $ex){}
+        try{
+        App::UserId();
+        }catch(\Exception $ex){}
+        
+        try{
+            App::Event();
+        }catch(\Throwable $ex){
+        }
         $old_class = AppTestObjectA::class;
         $new_class = AppTestObjectB::class;
         App::_()->version();

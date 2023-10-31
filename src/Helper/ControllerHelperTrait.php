@@ -8,6 +8,8 @@ namespace DuckPhp\Helper;
 use DuckPhp\Component\Configer;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Component\EventManager;
+use DuckPhp\Component\GlobalAdmin;
+use DuckPhp\Component\GlobalUser;
 use DuckPhp\Component\Pager;
 use DuckPhp\Core\App;
 use DuckPhp\Core\CoreHelper;
@@ -169,5 +171,22 @@ trait ControllerHelperTrait
     public static function OnEvent($event, $callback)
     {
         return EventManager::OnEvent($event, $callback);
+    }
+    //////////////////////
+    public static function Admin($admin = null)
+    {
+        return GlobalAdmin::_($admin);
+    }
+    public static function AdminId()
+    {
+        return App::_()->_AdminId();
+    }
+    public static function User($user = null)
+    {
+        return GlobalUser::_($user);
+    }
+    public static function UserId()
+    {
+        return App::_()->_UserId();
     }
 }

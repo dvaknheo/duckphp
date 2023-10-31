@@ -106,13 +106,27 @@ ControllerHelper::PageHtml(123);
         ControllerHelper::IsAjax();
 
         try{
-        ControllerHelper::ThrowByFlag(\Exception::class, false, "haha",1);
-        ControllerHelper::ThrowByFlag(\Exception::class, true, "haha",2);
+            ControllerHelper::ThrowByFlag(\Exception::class, false, "haha",1);
+            ControllerHelper::ThrowByFlag(\Exception::class, true, "haha",2);
         }catch(\Throwable $ex){}
+        try{
+            ControllerHelper::Admin();
+        }catch(\Exception $ex){
+        }
+        try{
+            ControllerHelper::AdminId();
+        }catch(\Exception $ex){
+        }
+        try{
+            ControllerHelper::User();
+        }catch(\Exception $ex){
+        }
+        try{
+            ControllerHelper::UserId();
+        }catch(\Exception $ex){
+        }
         
         \LibCoverage\LibCoverage::End();
-
-        //*/
     }
 }
 class ControllerHelper
