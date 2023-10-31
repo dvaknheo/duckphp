@@ -12,7 +12,9 @@ class App extends DuckPhp
 {
     //@override
     public $options = [
-        'is_debug' => true,        
+        'is_debug' => true, 
+        'controller_class_postfix' => '',
+        'controller_method_prefix' => '',
         // 'setting_file_enable' => true,
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',

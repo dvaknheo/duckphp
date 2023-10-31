@@ -7,15 +7,15 @@ require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
 
 use DuckPhp\Core\Route;
 
-class Main
+class MainController
 {
-    public function index()
+    public function action_index()
     {
         var_dump("这演示只用路由类，其他类都不要的情况");
         var_dump("Just route test done");
         var_dump(DATE(DATE_ATOM));
     }
-    public function i()
+    public function action_i()
     {
         phpinfo();
     }
@@ -25,6 +25,6 @@ $options = [
 ];
 $flag = Route::RunQuickly($options);
 if (!$flag) {
-    header(404);
+    header(404,'no');
     echo "404!";
 }

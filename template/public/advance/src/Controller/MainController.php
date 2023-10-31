@@ -12,21 +12,21 @@ use AdvanceDemo\Controller\Helper;
 
 class MainController extends Base
 {
-    public function index()
+    public function action_index()
     {
         //change it if  you can
         $var = __h(DemoBusiness::_()->foo());
         Helper::Show(get_defined_vars(), 'main');
     }
-    public function files()
+    public function action_files()
     {
         Helper::Show(get_defined_vars(), 'files');
     }
-    public function i()
+    public function action_i()
     {
         phpinfo();
     }
-    protected  function foo()
+    protected  function action_foo()
     {
         var_dump(DATE(DATE_ATOM));
     }
