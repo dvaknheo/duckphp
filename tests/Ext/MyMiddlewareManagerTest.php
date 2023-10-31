@@ -3,6 +3,7 @@ namespace tests\DuckPhp\Ext;
 
 use DuckPhp\Ext\MyMiddlewareManager;
 use DuckPhp\Core\App;
+use DuckPhp\Core\SingletonTrait as SingletonExTrait;
 
 class MyMiddlewareManagerTest extends \PHPUnit\Framework\TestCase
 {
@@ -29,7 +30,7 @@ class MyMiddlewareManagerTest extends \PHPUnit\Framework\TestCase
 }
 class X
 {
-    use \DuckPhp\SingletonEx\SingletonExTrait;
+    use SingletonExTrait;
     public function handle($request, \Closure $next)
     {
         var_dump('[[XXXX[['); 

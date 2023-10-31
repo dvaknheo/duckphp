@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Component;
 use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Component\ApiSingletonExTrait;
 use DuckPhp\DuckPhp;
-use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Core\SingletonTrait as SingletonExTrait;
 
 class PhaseProxyTest extends \PHPUnit\Framework\TestCase
 {

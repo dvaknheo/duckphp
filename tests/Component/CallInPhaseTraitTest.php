@@ -2,8 +2,7 @@
 namespace tests\DuckPhp\Component;
 
 use DuckPhp\Component\CallInPhaseTrait;
-use DuckPhp\SingletonEx\SingletonExTrait;
-
+use DuckPhp\Core\SingletonTrait as SingletonExTrait;
 class CallInPhaseTraitTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()

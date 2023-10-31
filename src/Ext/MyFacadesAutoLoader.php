@@ -62,10 +62,10 @@ class MyFacadesAutoLoader extends ComponentBase
                 $class = substr($input_class, strlen($this->prefix));
             }
         }
-        if (!is_callable([$class,'G'])) {
+        if (!is_callable([$class,'_'])) {
             return null;
         }
-        $object = call_user_func([$class,'G']);
+        $object = call_user_func([$class,'_']);
         return [$object,$name];
     }
     public function clear()

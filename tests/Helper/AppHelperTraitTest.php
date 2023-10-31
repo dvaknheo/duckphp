@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Helper;
 
 use DuckPhp\Helper\AppHelperTrait;
 use DuckPhp\Core\App;
-use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Core\SingletonTrait as SingletonExTrait;
 
 class AppHelperTraitTest extends \PHPUnit\Framework\TestCase
 {

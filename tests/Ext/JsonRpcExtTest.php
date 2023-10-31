@@ -1,6 +1,6 @@
 <?php
 namespace tests\DuckPhp\Ext{
-use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Core\SingletonTrait as SingletonExTrait;
 
 use DuckPhp\Ext\JsonRpcExt;
 use DuckPhp\HttpServer\HttpServer;
@@ -127,7 +127,7 @@ class TestService2 implements testInterface
 namespace
 {
 
-use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Core\SingletonTrait as SingletonExTrait;
 class TestService
 {
     use SingletonExTrait;

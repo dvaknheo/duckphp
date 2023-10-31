@@ -8,7 +8,7 @@ use DuckPhp\DuckPhp;
 use DuckPhp\Component\Configer;
 use DuckPhp\Core\View;
 use DuckPhp\Core\Route;
-use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Core\SingletonTrait as SingletonExTrait;
 use DuckPhp\Ext\Pager;
 
 class KernelTraitTest extends \PHPUnit\Framework\TestCase

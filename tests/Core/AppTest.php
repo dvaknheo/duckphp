@@ -10,7 +10,7 @@ use DuckPhp\Core\View;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapper;
-use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Core\SingletonTrait as SingletonExTrait;
 use DuckPhp\Component\Pager;
 use DuckPhp\Ext\SuperGlobalContext;
 

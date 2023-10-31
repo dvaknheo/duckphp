@@ -3,7 +3,7 @@ namespace tests\DuckPhp\Core
 {
 
 use DuckPhp\Core\Route;
-use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Core\SingletonTrait as SingletonExTrait;
 use DuckPhp\Ext\SuperGlobalContext;
 
 class RouteTest extends \PHPUnit\Framework\TestCase
@@ -397,16 +397,18 @@ class MyRoute extends Route
 }
 class MyRouteRuntime
 {
-    use \DuckPhp\SingletonEx\SingletonExTrait;
+use  SingletonExTrait;
     
 }
 
 }
 namespace tests_Core_Route
 {
+use DuckPhp\Core\SingletonTrait as SingletonExTrait;
+
 class baseController
 {
-    use \DuckPhp\SingletonEx\SingletonExTrait;
+    use SingletonExTrait;
 }
 class noBaseController
 {

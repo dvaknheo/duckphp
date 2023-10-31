@@ -2,7 +2,7 @@
 namespace tests\DuckPhp;
 
 use DuckPhp\DuckPhp;
-use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Core\SingletonTrait as SingletonExTrait;
 use DuckPhp\Ext\Misc;
 use DuckPhp\Component\Configer;
 use DuckPhp\Core\View;

@@ -5,7 +5,7 @@ use DuckPhp\Ext\Misc;
 use DuckPhp\DuckPhp;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\SystemWrapper;
-use DuckPhp\SingletonEx\SingletonExTrait;
+use DuckPhp\Core\SingletonTrait as SingletonExTrait;
 
 class MiscTest extends \PHPUnit\Framework\TestCase
 {

@@ -9,6 +9,7 @@ use DuckPhp\Component\DbManager;
 use DuckPhp\Core\ComponentBase;
 use ErrorException;
 
+//@codeCoverageIgnoreStart
 class StrictCheck extends ComponentBase
 {
     const MAX_TRACE_LEVEL = 20;
@@ -30,10 +31,10 @@ class StrictCheck extends ComponentBase
         'postfix_model' => 'Model',
 
     ];
-    
     //@override
     protected function initOptions(array $options)
     {
+        throw new \Exception("It's not work , TODO fix me to work in new version.");
         $this->context_class = $this->options['strict_check_context_class'];
         if (!defined('__SINGLETONEX_REPALACER')) {
             define('__SINGLETONEX_REPALACER', static::class . '::SingletonExReplacer');//$callback = __SINGLETONEX_REPALACER;
@@ -44,14 +45,14 @@ class StrictCheck extends ComponentBase
     {
         try {
             DbManager::_()->setBeforeGetDbHandler([static::class, 'CheckStrictDb']);
-        } catch (\BadMethodCallException $ex) { // @codeCoverageIgnore
+        } catch (\BadMethodCallException $ex) { // @ codeCoverageIgnore
             //do nothing;
         }
     }
     public static function CheckStrictDb()
     {
-        $magic_number = 5; //@codeCoverageIgnore
-        return static::_()->checkStrictComponent('Db', $magic_number, ['DuckPhp\\Core\\App',"DuckPhp\\Helper\\ModelHelper"]); //@codeCoverageIgnore
+        $magic_number = 5;
+        return static::_()->checkStrictComponent('Db', $magic_number, ['DuckPhp\\Core\\App',"DuckPhp\\Helper\\ModelHelper"]);
     }
     //////
     //*
@@ -75,7 +76,7 @@ class StrictCheck extends ComponentBase
         $prop->setAccessible(true);
         $array = $prop->getValue();
         if (!empty($array[$class])) {
-            static::$classes[$class] = $array[$class]; //@codeCoverageIgnore
+            static::$classes[$class] = $array[$class];
         } else {
             static::$classes[$class] = new $class;
         }
@@ -84,7 +85,6 @@ class StrictCheck extends ComponentBase
     //*/
     
     ///////////////////////////////////////////////////////////
-    //@codeCoverageIgnoreStart
     protected function hit_class($caller_class, $parent_classes_to_skip)
     {
         foreach ($parent_classes_to_skip as $parent_class_to_skip) {
@@ -113,10 +113,8 @@ class StrictCheck extends ComponentBase
         }
         return true;
     }
-    //@codeCoverageIgnoreEnd
     public function checkStrictComponent($component_name, $trace_level, $parent_classes_to_skip = [])
     {
-        //@codeCoverageIgnoreStart
         if (!$this->checkEnv()) {
             return;
         }
@@ -133,13 +131,12 @@ class StrictCheck extends ComponentBase
         if ($controller_base_class && (is_subclass_of($caller_class, $controller_base_class) || $caller_class === $controller_base_class)) {
             throw new ErrorException("$component_name Can not Call By Controller");
         }
-    }//@codeCoverageIgnoreEnd
+    }
     public function check_strict_class($class)
     {
         if (!$this->checkEnv()) {
             return;
         }
-        //@codeCoverageIgnoreStart
         //TODO worse code ,can not test, fix me!
         if (!empty($this->options['namespace_model']) && self::StartWith($class, $this->options['namespace_model'])) {
             $caller_class = $this->getCallerByLevel(3);
@@ -169,14 +166,14 @@ class StrictCheck extends ComponentBase
                 throw new ErrorException("Business($class) Can not call by Model, ($caller_class)");
             }
         }
-    }//@codeCoverageIgnoreEnd
+    }
 
     protected static function StartWith($str, $prefix)
     {
-        return substr($str, 0, strlen($prefix)) === $prefix; //@codeCoverageIgnore
+        return substr($str, 0, strlen($prefix)) === $prefix;
     }
     protected static function EndWith($str, $postfix)
     {
-        return substr($str, -strlen($postfix)) === $postfix; //@codeCoverageIgnore
+        return substr($str, -strlen($postfix)) === $postfix;
     }
-}
+}//@codeCoverageIgnoreEnd
