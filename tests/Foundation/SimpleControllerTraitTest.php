@@ -10,7 +10,6 @@ class SimpleControllerTraitTest extends \PHPUnit\Framework\TestCase
     {
         $LibCoverage = \LibCoverage\LibCoverage::G();
         \LibCoverage\LibCoverage::Begin(SimpleControllerTrait::class);
-        
         //ControllerFakeSingletonTraitObject::_(ControllerFakeSingletonTraitObject2::_());
         $options = [
             'namespace_controller' => __NAMESPACE__,
@@ -80,7 +79,8 @@ class SimpleControllerTraitTest extends \PHPUnit\Framework\TestCase
         Route::_()->run();
         
         MyAction::_(MyAction2::_())->foo();
-        
+        MyAction::CallInPhase(DuckPhpAllInOne::class)->foo();
+
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
     }

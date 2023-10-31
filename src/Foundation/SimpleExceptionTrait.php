@@ -5,9 +5,9 @@
  */
 namespace DuckPhp\Foundation;
 
-use DuckPhp\Core\SingletonTrait;
+use DuckPhp\Core\ThrowOnTrait;
 
-trait ChangeableSingletonTrait
+trait SimpleExceptionTrait
 {
-    use SingletonTrait;
+    use ThrowOnTrait;
 }

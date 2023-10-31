@@ -6,11 +6,11 @@
 
 namespace AdvanceDemo\Controller;
 
-use DuckPhp\Foundation\SimpleHelperTrait;
+use DuckPhp\Foundation\SimpleSingletonTrait;
 use DuckPhp\Helper\AppHelperTrait;
 
 class Helper
 {
-    use SimpleHelperTrait;
+    use SimpleSingletonTrait;
     use AppHelperTrait;
 }

@@ -10,6 +10,10 @@ use DuckPhp\Foundation\ExceptionReportTrait;
 class ExceptionReport
 {
     use ExceptionReportTrait;
+    //public function defaultException($ex)
+    //{
+        //return parent::defaultException($ex);
+    //}
     public function onBusinessException($ex)
     {
         var_dump(__METHOD__);

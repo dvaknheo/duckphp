@@ -22,11 +22,10 @@ $options = [
     'controller_resource_prefix' => '//res/',
     //'ext_options_from_config' =>true,
     'ext' => [
-        AdvanceDemo\System\App::class =>
-        [
+        AdvanceDemo\System\App::class => [
             'controller_url_prefix' => '/advance',
         ],
-        ],
+    ],
 
 ];
 //*/

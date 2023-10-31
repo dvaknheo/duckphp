@@ -6,11 +6,11 @@
 
 namespace AdvanceDemo\Business;
 
-use DuckPhp\Foundation\SimpleHelperTrait;
+use DuckPhp\Foundation\SimpleSingletonTrait;
 use DuckPhp\Helper\BusinessHelperTrait;
 
 class Helper
 {
-    use SimpleHelperTrait;
+    use SimpleSingletonTrait;
     use BusinessHelperTrait;
 }

@@ -10,7 +10,7 @@ class SimpleModelTraitTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(SimpleModelTrait::class);
-        
+       
         $path_app = \LibCoverage\LibCoverage::G()->getClassTestPath(SimpleModelTrait::class);
 
         $setting = include $path_app . 'setting.php';
@@ -36,7 +36,7 @@ $sql = "DROP TABLE IF EXISTS `empty`;";
         
 $sql= 'DROP TABLE IF EXISTS `empty`';
 DuckPhpAllInOne::Db()->execute($sql);
-        
+        EmptyModel::CallInPhase(DuckPhpAllInOne::class)->foo();
         \LibCoverage\LibCoverage::End();
     }
 }
@@ -66,6 +66,10 @@ class EmptyModel extends Base
         EmptyModel::_()->fetchObject("select * from 'TABLE' where id =? ", $id);
         EmptyModel::_()->fetchObjectAll("select * from 'TABLE' where id =? ", $id);
         EmptyModel::_()->execute("update 'TABLE' set data = ?  where id =? ",  DATE(DATE_ATOM),$id);
+    }
+    public function foo()
+    {
+        //
     }
 }
 

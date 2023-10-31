@@ -6,6 +6,7 @@
 namespace DuckPhp\Foundation;
 
 use DuckPhp\Component\DbManager;
+use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Core\App;
 use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\SingletonTrait;
@@ -14,10 +15,15 @@ trait SimpleModelTrait
 {
     use SingletonTrait;
     
+    public static function CallInPhase($phase)
+    {
+        return new PhaseProxy($phase, static::class);
+    }
+    
     protected $table_name = null;
     protected $table_prefix = null;
     protected $table_pk = 'id';
-
+    
     protected function getTableNameByClass($class)
     {
         $t = explode('\\', $class);

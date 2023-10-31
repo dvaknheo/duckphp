@@ -5,14 +5,16 @@
  */
 namespace DuckPhp\Foundation;
 
-use DuckPhp\Component\CallInPhaseTrait;
+use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Core\Route;
 
 trait SimpleControllerTrait
 {
-    use CallInPhaseTrait;
-    
+    public static function CallInPhase($phase)
+    {
+        return new PhaseProxy($phase, static::class);
+    }
     public static function _($object = null)
     {
         $route = Route::_();
