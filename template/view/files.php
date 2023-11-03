@@ -44,9 +44,11 @@ $ref = new ReflectionClass(\DuckPhp\DuckPhp::class);
 $m = $ref->getMethods();
 $t=[];foreach($m as $v){
     if(!$v->isPublic()){continue;}
-    if(substr($name,0,1) === '_'){ continue; }
+    if(substr($v->name,0,1) === '_'){ continue; }
     $t[]=$v->name;
 }
+sort($t);
+
 var_export($t);?>
 </pre>
 </fieldset>

@@ -42,6 +42,17 @@ class App extends ComponentBase
         'error_404' => null,          //'_sys/error-404',
         'error_500' => null,          //'_sys/error-500',
         'error_debug' => null,        //'_sys/error-debug',
+        
+        //*
+        'path_log' => 'runtime',
+        'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
+        'log_prefix' => 'DuckPhpLog',
+        
+        'path_view' => 'view',
+        'view_skip_notice_error' => true,
+        
+        'superglobal_auto_define' => false,
+        //*/
     ];
     protected $common_options = [];
     protected $beforeShowHandlers = [];
