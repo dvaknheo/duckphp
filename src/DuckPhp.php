@@ -150,7 +150,7 @@ class DuckPhp extends App
     {
         return Pager::_($object);
     }
-    public  function _Admin($admin = null)
+    public function _Admin($admin = null)
     {
         return GlobalAdmin::_($admin);
     }
@@ -158,11 +158,11 @@ class DuckPhp extends App
     {
         return GlobalUser::_($user);
     }
-    public  function _AdminId()
+    public function _AdminId()
     {
         return GlobalAdmin::_()->id();
     }
-    public  function _UserId()
+    public function _UserId()
     {
         return GlobalUser::_()->id();
     }

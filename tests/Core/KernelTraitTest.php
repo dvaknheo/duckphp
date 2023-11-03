@@ -188,7 +188,7 @@ echo "-------------------------------------\n";
             'path' => $path_app,
             'use_flag_by_setting' => true,
             'use_env_file' => true,
-            'setting_file' =>$path_app.'setting.php',
+            'setting_file' =>$path_app.'DuckPhpSettings.config.php',
             'setting_file_ignore_exists' =>false,
         ];
         App::_(new App())->init($options);

@@ -9,8 +9,8 @@ class RedisManagerTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(RedisManager::class);
         
-        $path_setting = \LibCoverage\LibCoverage::G()->getClassTestPath(RedisManager::class);
-        $setting = include $path_setting . 'setting.php';
+        $path_setting = \LibCoverage\LibCoverage::G()->getClassTestPath(App::class);
+        $setting = include $path_setting . 'DuckPhpSettings.config.php';
         $redis_list = $setting['redis_list'];
         
         //code here

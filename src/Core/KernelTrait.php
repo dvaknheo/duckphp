@@ -41,7 +41,7 @@ trait KernelTrait
             'container_only' => false,
             
             
-            'setting_file' => 'config/setting.php', //TODO
+            'setting_file' => 'config/DuckPhpSettings.config.php', //TODO
             'setting_file_ignore_exists' => true,
             'setting_file_enable' => true,
             'use_env_file' => false,

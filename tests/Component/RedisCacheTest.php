@@ -4,6 +4,7 @@ namespace tests\DuckPhp\Component;
 use DuckPhp\DuckPhpAllInOne as DuckPhp;
 use DuckPhp\Component\RedisCache;
 use DuckPhp\Component\RedisManager;
+use DuckPhp\Core\App;
 
 class RedisCacheTest extends \PHPUnit\Framework\TestCase
 {
@@ -11,8 +12,8 @@ class RedisCacheTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(RedisCache::class);
         
-        $path_setting = \LibCoverage\LibCoverage::G()->getClassTestPath(RedisCache::class);
-        $setting = include $path_setting . 'setting.php';
+        $path_setting = \LibCoverage\LibCoverage::G()->getClassTestPath(App::class);
+        $setting = include $path_setting . 'DuckPhpSettings.config.php';
         $redis_list = $setting['redis_list'];
 
         $options=[
