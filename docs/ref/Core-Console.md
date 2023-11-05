@@ -115,5 +115,8 @@ EOT;
 ```
 
 
+    protected function getObject($class)
+
+
 
 

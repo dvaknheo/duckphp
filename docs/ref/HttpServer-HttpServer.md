@@ -40,7 +40,7 @@ HTTP服务器，端口
 
 初始化
 
-    public static function G($object = null)
+    public static function _($object = null)
     public function __construct()
     public function isInited(): bool
 

@@ -25,17 +25,11 @@ Core 目录下的微框架入口
         'default_exception_do_log' => true,
 发生异常时候记录日志
 
-        'default_exception_self_display' => true,
+        'default_exception_self_display' => true,（废弃）
 发生异常的时候如有可能，调用异常类的 display() 方法。
 
         'close_resource_at_output' => false,
 输出时候关闭资源输出（仅供第三方扩展参考
-
-        'injected_helper_enable' => false,
-启用 injected_helper_map
-
-        'injected_helper_map' => '',
-injected_helper_map 比较复杂待文档。和助手类映射相关。 v1.2.8-dev
 
         'error_404' => null,          //'_sys/error-404',
 404 错误处理 的View或者回调
@@ -413,6 +407,56 @@ Show 方法对 View::Show() 加了好些补充
 
 ## 说明
 
-### 关于 injected_helper_map 。 有时间再详细文档。
 
 以上
+
+
+
+
+        'path_runtime' => 'runtime',
+
+        'alias' => null,
+
+        'path_log' => 'runtime',
+
+        'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
+
+        'log_prefix' => 'DuckPhpLog',
+
+        'path_view' => 'view',
+
+        'view_skip_notice_error' => true,
+
+        'superglobal_auto_define' => false,
+
+    protected function doInitComponents()
+
+    public function getProjectPath()
+
+    public function getRuntimePath()
+
+    public function getOverrideableFile($path_sub, $file)
+
+    public function onBeforeOutput()
+
+    public function adjustViewFile($view)
+
+    public static function PhaseCall($phase, $callback, ...$args)
+
+    public function _PhaseCall($phase, $callback, ...$args)
+
+    public static function Admin($object = null)
+
+    public static function User($object = null)
+
+    public static function AdminId()
+
+    public static function UserId()
+
+    public function _Admin($object = null)
+
+    public function _User($object = null)
+
+    public function _AdminId()
+
+    public function _UserId()

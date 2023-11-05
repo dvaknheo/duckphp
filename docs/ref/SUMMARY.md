@@ -16,12 +16,10 @@
         2. [ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md) 扩展静态调用的 trait
         3. [SystemWrapperTrait](Core-SystemWrapperTrait.md) 替换系统同名函数的 trait
         4. [Logger](Core-Logger.md) 日志组件
-    3. [AppPluginTrait](Core-AppPluginTrait.md)   这个Trait用于把独立工程 App 转成插件 
+    3. **[Console](Component-Cache.md)** 命令行模式扩展组件
 3. `Component` 目录，自带组件扩展。
     1. [AppPluginTrait](Component-AppPluginTrait.md)   这个Trait用于把独立工程 App 转成插件 
     2. [Cache](Component-Cache.md) 缓存组件
-    3. **[Console](Component-Cache.md)** 命令行模式扩展组件
-    4. [Installer](Component-Installer.md) 安装器
     5. [DuckPhpCommand](Component-DuckPhpCommand.md) DuckPhp 的默认指令组件
     6. [DbManager](Component-DbManager.md) 数据库管理组件
     7. [EventManager](Component-EventManager.md) 事件管理组件
@@ -34,11 +32,9 @@
     2. [DbInterface](Db-DbInterface.md) Db 类满足 DbInterface 接口
     3. [Db](Db-Db.md) Db类
 5. `Foundation` 目录。存放高级功能的目录
-    1. [Installer](Foundation-Installer.md) 通用安装器
-    2. [SessionManagerBase](Foundation-SessionManagerBase.md) 简单的模型Trait
+    2. [SimpleSessionTrait](Foundation-SimpleSessionTrait.md) 简单的会话Trait
     3. [SimpleControllerTrait](Foundation-SimpleControllerTrait.md) 简单的模型Trait
     4. [SimpleModelTrait](Foundation-SimpleModel.md) 简单的模型Trait
-    5. [SqlDumper](Foundation-SqlDumper.md) Sql 迁移类
     6. [ThrowOnableTrait](Foundation-ThrowOnableTrait.md) 让类有ThrowOn功能
 6. `Ext` 扩展目录，非默认加载的扩展。按字母排序。
     1. [CallableView](Ext-CallableView.md) 可接受函数调用的视图组件
@@ -63,22 +59,12 @@
     18. [StrictCheck](Ext-StrictCheck.md) 严格检查模式组件
     19. [SuperGlobalContext](Ext-SuperGlobalContext.md) 超全局上下文组件
 7. `Helper` 目录，各种助手类。
-    1. [AdvanceHelper](Helper-AdvanceHelper.md) 应用助手类
-    2. [AdvanceHelperTrait](Helper-AdvanceHelperTrait.md) 应用助手Trait
-    3. [BusinessHelper](Helper-BusinessHelper.md) 业务助手类
-    4. [BusinessHelperTrait](Helper-BusinessHelperTrait.md) 业务助手Trait
-    5. [ControllerHelper](Helper-ControllerHelper.md) 控制器助手类
-    6. [ControllerHelperTrait](Helper-ControllerHelperTrait.md) 控制器助手Trait
-    7. [ModelHelper](Helper-ModelHelper.md) 模型助手类
-    8. [ModelHelperTrait](Helper-ModelHelperTrait.md) 模型助手Trait
-    9. [ViewHelper](Helper-ViewHelper.md) 视图助手类
-    10. [ViewHelperTrait](Helper-ViewHelperTrait.md) 视图助手Trait
+    + [AdvanceHelperTrait](Helper-AdvanceHelperTrait.md) 应用助手Trait
+    + [BusinessHelperTrait](Helper-BusinessHelperTrait.md) 业务助手Trait
+    + [ControllerHelper](Helper-ControllerHelper.md) 控制器助手类
+    + [ControllerHelperTrait](Helper-ControllerHelperTrait.md) 控制器助手Trait
+    + [ModelHelperTrait](Helper-ModelHelperTrait.md) 模型助手Trait
 8. `HttpServer` 目录
     1. [AppInterface](HttpServer-AppInterface.md)  Http 服务的应用接口
     2. [HttpServer](HttpServer-HttpServer.md)  Http 服务器
     3. [HttpServerInterface](HttpServer-HttpServerInterface.md)  Http 服务接口
-9. `SingletonEx`目录
-    1. **[SingletonExTrait](SingletonEx-SingletonExTrait.md)**  可变单例 trait
-    1. [SimpleReplacer](SingletonEx-SimpleReplacer.md)  可选可变单例容器
-10. `ThrowOn`目录
-    1. [ThrowOnTrait](ThrowOn-ThrowOnTrait.md) 可抛 trait，应用工程引用它方便异常处理

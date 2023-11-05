@@ -29,3 +29,7 @@ BusinessHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extendabl
 ControllerHelperTrait 相比比 BusinessHelperTrait 少了 Cache()
 
 
+    public static function Config($file_basename, $key = null, $default = null)
+
+    public static function ThrowByFlag($exception, $flag, $message, $code = 0)
+

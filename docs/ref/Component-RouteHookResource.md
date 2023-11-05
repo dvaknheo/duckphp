@@ -25,3 +25,15 @@
 比如
 
 res/ 目录，对应 admin/res/ 之类等
+
+        'controller_url_prefix' => '',
+
+    public function cloneResource($force = false, &$info = '')
+
+    protected function get_dest_dir($path_parent, $path)
+
+    public function copy_dir($source, $path_parent, $path, $force = false, &$info = '')
+
+    protected function check_files_exist($source, $dest, $files, &$info)
+
+    protected function create_directories($dest, $files, &$info)

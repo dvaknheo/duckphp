@@ -17,6 +17,21 @@
 ## 选项
 
 继承 [DuckPhp\Core\KernelTrait](Core-Trait.md) 的默认选项。详细查看 [DuckPhp\Core\KernelTrait](Core-Trait.md)的文档。
+        'setting_file' => 'setting',
+设置文件名。
+
+        'setting_file_enable' => true,
+使用设置文件: $path/$path_config/$setting_file.php
+
+        'use_env_file' => false,
+使用 .env 文件
+打开这项，可以读取 path 选项下的 env 文件
+
+        'config_ext_file_map' => [],
+额外的配置文件数组，用于 AppPluginTrait
+
+        'setting_file_ignore_exists' => true,
+如果设置文件不存在也不报错
 
 并且做了以下更改
 
@@ -63,52 +78,6 @@ App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里，还加载�
 + 如果你要看有什么方法，查看 App 文档。
 
 ## 备忘
-    //@override
-    public function _Cache($object = null)
-    {
-        return Cache::G($object);
-    }
-    //@override
-    public function _Pager($object = null)
-    {
-        return Pager::G($object);
-    }
-    //@override
-    public function _Db($tag)
-    {
-        return DbManager::G()->_Db($tag);
-    }
-    //@override
-    public function _DbCloseAll()
-    {
-        return DbManager::G()->_CloseAll();
-    }
-    //@override
-    public function _DbForRead()
-    {
-        return DbManager::G()->_DbForRead();
-    }
-    //@override
-    public function _DbForWrite()
-    {
-        return DbManager::G()->_DbForWrite();
-    }
-    //@override
-    public function _Event()
-    {
-        return EventManager::G();
-    }
-    //@override
-    public function _FireEvent($event, ...$args)
-    {
-        return EventManager::G()->fire($event, ...$args);
-    }
-    //@override
-    public function _OnEvent($event, $callback)
-    {
-        return EventManager::G()->on($event, $callback);
-    }
-
 
 
     public static function setBeforeGetDbHandler($db_before_get_object_handler)
@@ -118,17 +87,48 @@ App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里，还加载�
     public static function assignRoute($key, $value = null)
 
     public static function assignImportantRoute($key, $value = null)
-    
 //
 
 
     protected function initComponents(array $options, object $context = null)
 
-    public static function Admin()
 
-    public static function AdminId()
+    public static function InitAsContainer($options)
 
-    public static function User()
+    public function thenRunAsContainer($skip_404 = false, $welcome_handle = null)
 
-    public static function UserId()
+    public function isInstalled()
+
+    public function install($options)
+
+    protected function bumpSingletonToRoot($oldClass, $newClass)
+
+    public function _Admin($admin = null)
+
+    public function _User($user = null)
+
+    public function _AdminId()
+
+    public function _UserId()
+
+
+
+
+    public static function InitAsContainer($options)
+
+    public function thenRunAsContainer($skip_404 = false, $welcome_handle = null)
+
+    public function isInstalled()
+
+    public function install($options)
+
+    protected function bumpSingletonToRoot($oldClass, $newClass)
+
+    public function _Admin($admin = null)
+
+    public function _User($user = null)
+
+    public function _AdminId()
+
+    public function _UserId()
 

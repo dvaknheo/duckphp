@@ -14,11 +14,11 @@
         'route_map' => [],
 路由映射，在默认路由失败后执行的路由映射
 
-        'route_map_by_config_name' => '',
-路由映射，从配置中读取  route_map_important 和 route_map
-
         'route_map_auto_extend_method' => true,
 路由映射，扩充方法至助手类
+
+        'controller_url_prefix' => '',
+
 
 ## 扩充方法
 

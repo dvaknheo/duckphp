@@ -1,4 +1,4 @@
-# DuckPhp\Foundation\LazyControllerTrait
+# DuckPhp\Foundation\SimpleControllerTrait
 
 ## 简介
 这是个用于偷懒的 Trait.
@@ -6,17 +6,18 @@
 ## 选项
 //
 ## 公开方法
-    public static function G($object = null)
 
-    public function __construct()
+    public static function CallInPhase($phase)
+跨相位调用
 
-    public function __destruct()
+    public static function _($object = null)
 
-    protected function initController()
-
-    protected function destroyController()
-
+单例方法
 ## 详解
 //
 
+
+    public static function CallInPhase($phase)
+
+    public static function _($object = null)
 

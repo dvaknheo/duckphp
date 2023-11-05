@@ -71,3 +71,5 @@ DuckPhp 尽量避免污染全局环境，这些函数
 \_\__logger() 对应 App::Logger();
 
 
+    function __var_log($var)
+

@@ -22,3 +22,5 @@
 
     public function dumpAllObject()
 
+    public function __construct()
+

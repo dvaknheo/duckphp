@@ -82,3 +82,33 @@
 ### 结束
 
 
+    public static function addRouteHook($callback, $position = 'append-outter', $once = true)
+
+    public static function DbCloseAll()
+
+    public static function SessionUnset($key)
+
+    public static function SessionGet($key, $default = null)
+
+    public static function CookieGet($key, $default = null)
+
+    public static function system_wrapper_replace(array $funcs)
+
+    public static function system_wrapper_get_providers():array
+
+    public static function mime_content_type($file)
+
+    public static function setBeforeGetDbHandler($db_before_get_object_handler)
+
+    public static function Redis($tag = 0)
+
+    public static function getRoutes()
+
+    public static function assignRoute($key, $value = null)
+
+    public static function assignImportantRoute($key, $value = null)
+
+    public static function assignRewrite($key, $value = null)
+
+    public static function getRewrites()
+

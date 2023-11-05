@@ -251,3 +251,22 @@ if(!$flag){
 
 
 
+
+        'controller_welcome_class' => 'Main',
+
+        'controller_welcome_class_visible' => false,
+
+        'controller_welcome_method' => 'index',
+
+        'controller_class_base' => '',
+
+        'controller_class_postfix' => 'Controller',
+
+        'controller_method_prefix' => 'action_',
+
+        'controller_prefix_post' => 'do_', //TODO remove it
+
+    public function addRouteHook($callback, $position = 'append-outter', $once = true)
+
+    protected function getCallbackFromClassAndMethod($full_class, $method, $path_info)
+

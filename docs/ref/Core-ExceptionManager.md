@@ -57,3 +57,7 @@
 
 ## 说明
 
+        'handle_exception_on_init' => true,
+
+    public function init(array $options, ?object $context = null)
+

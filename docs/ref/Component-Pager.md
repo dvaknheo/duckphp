@@ -24,6 +24,11 @@
 ## 方法
 
 ### 组件方法
+    public static function PageNo($new_value = null)
+
+    public static function PageWindow($new_value = null)
+
+    public static function PageHtml($total, $options = [])
 
     public function __construct()
     

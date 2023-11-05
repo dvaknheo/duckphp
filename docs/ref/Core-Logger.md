@@ -13,7 +13,7 @@
         'path' => '',
 基础路径
 
-        'path_log' => 'logs',
+        'path_log' => 'runtime',
 日志目录路径
 
         'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',

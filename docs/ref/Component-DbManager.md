@@ -49,8 +49,8 @@
     public function _DbForRead()
 获取读入数据库
 
-    public static function CloseAll()
-    public function _CloseAll()
+    public static function DbCloseAll()
+    public function _DbCloseAll()
 关闭数据库连接
 
     public static function OnQuery($db, $sql, ...$args)

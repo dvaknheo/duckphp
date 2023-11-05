@@ -59,3 +59,14 @@ getComponenetPathByKey 这个方法，用于辅助  'path' ,'path' 这样的联�
 
     public function install(array $options, ?object $context = null)
 
+
+
+
+    public function context()
+
+    public static function IsAbsPath($path)
+
+    public static function SlashDir($path)
+
+    public function extendFullFile($path_main, $path_sub, $file)
+

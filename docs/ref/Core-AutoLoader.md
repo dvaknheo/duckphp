@@ -84,3 +84,10 @@ if (!class_exists(\LazyToChange\System\App::class)) {
 }
 ```
 
+
+        'psr-4' => [],
+
+    public static function RunQuickly(array $options = [])
+
+    protected function getNamespacePath($sub_path, $main_path): string
+

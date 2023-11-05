@@ -232,3 +232,29 @@ init() 初始化阶段，和 run 阶段
 
     protected function runExtentions()
 
+
+
+    public static function Current()
+
+    public function getProjectPathFromClass($class, $use_parent_namespace = true)
+
+    public function getContainer()
+
+    public static function Phase($new = null)
+
+    public function _Phase($new = null)
+
+    protected function doInitComponents()
+
+    protected function reloadFlags($context): void
+
+    protected function loadSetting()
+
+    protected function dealWithSettingFile()
+
+    public function _Setting($key = null)
+
+    protected function onBeforeCreatePhases()
+
+    protected function onAfterCreatePhases()
+
