@@ -1,26 +1,29 @@
-# 施工中，请用文本文件打开，markdown 格式混乱
+# 施工中，markdown 格式混乱
 
 DuckPhp 1.3.1 发布箴言。
+
 DuckPhp 1.3.1 现在发布。经过2年多没动之后，我花了几个月，做了现在的 DuckPhp 的新版本，做了很多改动。
+
 最大的改动的以前插件模式要用专门的模式，现在就不需要。无缝使用第三方DuckPhp Project 作为 library。
+
 解决了 框架不能套框架的问。
+
 添加了容器化， 解决了自己发明的不能重复插入的功能
+
 副作用是同时也引入了 相位 Phase 概念以隔离不同应用，使得简单的变复杂了 :(
+
 因为改动巨大，所以原定的 1.2.13 升级到了 1.3.1 。 1.3 系列。
 
 根据 webman admin 做了另外的  管理后台 duckadmin 在另一个工程里。
 
-和其他 管理后台不同的是， duckadmin 后台是 library ，其他工程可以调用。
-而且，所有实现都能自由替换。
+和其他 管理后台不同的是， duckadmin 后台是 library ，其他工程可以调用。而且，所有实现都能自由替换。
+
 而 webman admin 以及种种框架的 后台系统，都是要你在后台系统上做二次开发。
 
 
+## 从使用 DuckAdmin  的 Composer Libaray 开始的 DuckPhp 教程
 
 
-# 从使用 DuckPhp  的 Composer Libaray 开始的 DuckPhp 教程
-
-
-## 使用 DuckAdmin
 一般的后台系统都是在上面做二次开发。
 我们这回的代码缺一个 后台系统，我们要使用 DuckAdmin 作为我们的后台。
 所以，我们在我们的项目里引入了 DuckAdmin
@@ -78,9 +81,12 @@ function onDuckAdminInit()
 ## 二次开发
 1. 修改配置实现
     正如演示看到的，每个子应用和主应用都有自己的配置选项。
-1. 修改页面， 默认的 view 太难看，我们要覆盖 override改成自己的
-    'path'  /view/DuckAdmin/【同名文件】,
-    页面里可以用到 全局函数,这些全局函数都是两个下划线开始的。
+2. 修改页面， 默认的 view 太难看，我们要覆盖 override 改成自己的：
+    `[工程文件夹]/view/DuckAdmin/【同名文件】` 
+    
+3.页面里可以用到 全局函数,这些全局函数都是两个下划线开始的。
+
+这是助手函数
 
     function __h(...$args) html 编码
     function __l($str, $args = []) 多语言编码
@@ -90,7 +96,6 @@ function onDuckAdminInit()
     function __res($url)   资源文件
     function __domain($use_scheme = false)  域名，带头
     function __display($view, $data)  实现包含的 View 块用于视图种
-
 还有一批调试用的全局函数
 
     function __platform()  用于多服务器配置的时候看处于什么服务器
@@ -101,11 +106,9 @@ function onDuckAdminInit()
     function __trace_dump()  打印堆栈
     function __debug_log($str, $args = []) 增加日志
     function __logger() 获得 日志对象，便于不同级别的调试
+所有 DuckPhp 的全局函数就这么讲完了 ^_^
 
-所有DuckPhp 的全局函数就这么讲完了 ^_^
-
-
-2. 获取提供对象
+3. 获取提供对象
 你可以在代码里得到管理员对象和 用户对象。 用于你的业务系统
 如果得不到，将会抛出异常，你可以作后续处理。
 
@@ -116,8 +119,8 @@ var_dump($admin);
 
 ```
 
-// 这里
 4. 热修复，修改实现
+
 假设我们对他哪个实现不满意。
 ```php
 function onInit(){
@@ -127,9 +130,16 @@ function onInit(){
 ```
 致此，二次开发基本讲完了。要深入了解，那么我们就从自己搞个工程开始了
 
-###############
-先看工程目录
-在这里，我们先列一下模板工程的文件结构
+## 新建工程的目录结构
+我们建立工程文件夹，然后用 composer 建立新的 DuckPhp 工程
+```
+composer require dvaknheo/duckphp # 用 require 
+./vendor/bin/duckphp new --help   # 查看有什么指令
+./vendor/bin/duckphp new    # 创建工程
+```
+
+
+在这里，我们用 `tree`  列一下工程的文件结构
 ```
 .
 ├── config
@@ -199,8 +209,7 @@ function onInit(){
 ----
 ### src 源代码目录
 
-一共4个目录 我们不以字母顺序 Business Controller， Model System 来介绍，
-而是调用顺序 System -> Controrller -> Business -> Model 
+一共4个目录 我们以字母顺序 调用顺序 System -> Controrller -> Business -> Model 来介绍
 
 
 #### Base.php & Helper.php
@@ -258,31 +267,37 @@ class Helper
 
 ```
 Model/Helper 方法只有 Db() DbForRead() DbForWrite() SqlForPager() SqlForCountSimply()
+
 其实，偷懒的时候，这几个都可以合并在一起。
 
 DuckPhp 的 Model 层是很传统的跟着数据库表名走的模式。
+
 XX-Model.php 这是示例 Demo ，你可以删除他根据你的数据库表重建
+
 YY-ModelEx.php 这是示例 跨表 Demo ，你可以删除他重建
 
 #### Business 
 
 作为程序员专家，大家达成的意见是 业务逻辑层要抽出来，业务逻辑 英文是什么 Business Logic 嘛。
+
 有人用Logic ，这里我用的是 Business 命名 还有人用 Service。
 
-需要注意的是，虽然有人把这层独立出来，但是代码里却是和 web相关， Business 要求是什么，和Controller 无关，无状态。
-可测。
+需要注意的是，虽然有人把这层独立出来，但是代码里却是和 web相关， Business 要求是什么，和Controller 无关，无状态。可测。
 
 当然，有些人会带上用户 ID ，这种一两个的例外。
 
 相比 Model 目录，这里多了 BusinessException 。 因为规范要求 model 类不得抛异常
 
 BusinessException.php 默认异常类
+
 Helper.php 方法有 Setting() Config() XpCall() FireEvent() Cache() OnEvent()
+
 Business 按规范，也有个 Base 公用基类
 
 xx-Service.php  
 
 Business 之间相互调用的业务半成品，那么就抽出成 Service。
+
 Business 相互调用，则放到 Service 里，这就是 Business 层不用 Service 来命名的原因
 
 xx-Business.php  你可以删除
@@ -292,15 +307,22 @@ xx-Business.php  你可以删除
 Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口。 业务层由 Business 层处理。
 
 Base.php 控制器类
+
 Helper.php 控制器助手类
+
 ControllerException.php 控制器层的异常类
+
 ExceptionReporter.php 则是处理各种错误。
+
 Session.php Session 处理相关
+
 
 xx-Action.php
 
 Controller 调用 Controller 怎么办。 DuckPhp 的规范是 Controller 不要调用 Controller
+
 把 部分逻辑 放为 Action。 用 Controller 调用 Action.
+
 其他业务相关 xx-Controller.php
 
 
@@ -399,34 +421,6 @@ $options 是就是各种选项了。
 
 
 
-
-
-
-
-
-
-
-
-## 最复杂是 Controller 目录，
-
-
-
-
-
-## VCBM 之外的东西
-日志处理
-
-## 单例
-
-V C B M 缺陷
-C => A ,B =>S  业务无关，放入 Helper
-DAO, Model
-
-那么，做为同一工程，还要共享个基类吧
-
-
-
-##  更高级内容，调用 API 和热修复
 
 ## 理解相位
 1.2.13 版本，我们为每个子应用做了相位隔离。不同子应用
