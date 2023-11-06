@@ -3,6 +3,8 @@ require_once(__DIR__.'/../autoload.php');
 // 自动化文档脚本
 
 DocFixer::G()->init([])->run();
+
+// 从上面运行的结果要数据， 然后 生成在 options.md 里 // 还影响到 template/app/System/App.php
 OptionsGenerator::G()->init([])->run();
 
 var_dump(DATE(DATE_ATOM));
@@ -10,51 +12,18 @@ var_dump(DATE(DATE_ATOM));
 return;
 class DataProvider
 {
+    // 独立的组件
     public $independs = "DuckPhp\\HttpServer\\HttpServer
 DuckPhp\\Component\\Pager
 DuckPhp\\Component\\Console
 DuckPhp\\Component\\DuckPhpInstaller
 ";
+    //默认组件
     public $components = "DuckPhp\\DuckPhp
-DuckPhp\\Core\\App
-DuckPhp\\Core\\Configer
-DuckPhp\\Core\\Logger
-DuckPhp\\Core\\Route
 DuckPhp\\Core\\RuntimeState
-DuckPhp\\Core\\View
-DuckPhp\\Component\\Cache
-DuckPhp\\Component\\DbManager
-DuckPhp\\Component\\EventManager
-DuckPhp\\Component\\RouteHookPathInfoCompat
-DuckPhp\\Component\\RouteHookRouteMap
 ";
-    public $all="DuckPhp\\DuckPhp
-DuckPhp\\Core\\App
-DuckPhp\\Core\\AutoLoader
-DuckPhp\\Core\\Configer
-DuckPhp\\Core\\ExceptionManager
-DuckPhp\\Core\\Logger
-DuckPhp\\Core\\Route
-DuckPhp\\Core\\RuntimeState
-DuckPhp\\Core\\View
-DuckPhp\\Component\\Cache
-DuckPhp\\Component\\Console
-DuckPhp\\Component\\DbManager
-DuckPhp\\Component\\EventManager
-DuckPhp\\Component\\RouteHookPathInfoCompat
-DuckPhp\\Component\\RouteHookRouteMap
-DuckPhp\\Ext\\CallableView
-DuckPhp\\Ext\\EmptyView
-DuckPhp\\Ext\\MyFacadesAutoLoader
-DuckPhp\\Ext\\JsonRpcExt
-DuckPhp\\Ext\\Misc
-DuckPhp\\Ext\\RedisCache
-DuckPhp\\Ext\\RedisManager
-DuckPhp\\Ext\\RouteHookApiServer
-DuckPhp\\Ext\\RouteHookDirectoryMode
-DuckPhp\\Ext\\RouteHookFunctionRoute
-DuckPhp\\Ext\\RouteHookRewrite
-DuckPhp\\Ext\\StrictCheck";
+    // 所有可配组件
+    public $all="DuckPhp\\DuckPhp";
     public static function G($object=null)
     {
         static $_instance;
@@ -93,6 +62,7 @@ DuckPhp\\Ext\\StrictCheck";
     }
     function getDefaultComponentClasses()
     {
+        // 我们override  phasecontainer ,然后把所有 comoont dump 出来
         // 这里要移动到配置里
         $classes=explode("\n",$this->components);
         return $classes;
@@ -167,7 +137,7 @@ class DocFixer
     {
         $data = $this->drawSrc($file);
         $doc_file = $this->getMd($file);
-        $docs_lines=file($doc_file);
+        $docs_lines=is_file($doc_file)?file($doc_file):[];
         $options_diff=array_diff($data['options'],$docs_lines);
         $functions_diff=array_diff($data['functions'],$docs_lines);
         $text ='';
@@ -180,7 +150,7 @@ class DocFixer
         }
         if($text){
             var_dump($file,$text);
-            file_put_contents($doc_file,$text,FILE_APPEND);
+            file_put_contents($doc_file.'.ext',$text,FILE_APPEND);
         }
     }
     
@@ -188,7 +158,7 @@ class DocFixer
     {
         $data = $this->drawSrc($file);  // 这里又读了一次文件，优化就不需要了
         $doc_file = $this->getMd($file);
-        $doc = file_get_contents($doc_file);
+        $doc =  is_file($doc_file) ?  file_get_contents($doc_file) : '';
         $ret=[];
         foreach($data['options'] as $v){
             $pos=strpos($doc,$v);
@@ -294,9 +264,26 @@ class OptionsGenerator
     {
         return $this;
     }
+    protected static function GetAllDocFile()
+    {
+        $source=realpath(__DIR__.'/../docs/');
+        $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
+        $iterator = new \RecursiveIteratorIterator($directory);
+        $it=new \RegexIterator($iterator,'/\.md$/', RegexIterator::MATCH);
+        $ret=\iterator_to_array($it, false);
+        array_unshift($ret,realpath(__DIR__.'/../README.md'));
+        return $ret;
+    }
+    function WrapFileAction($file,$callback)
+{
+    $data=file_get_contents($file);
+    $data=$callback($data,$file);
+    file_put_contents($file,$data);
+}
     public function run()
     {
-        WrapFileAction(__DIR__ . '/../template/app/System/App.php',function($content){
+return;
+        static::WrapFileAction(__DIR__ . '/../template/app/System/App.php',function($content){
             $data=$this->getOptionStringForApp();
             
             $str1="        // @autogen by tests/genoptions.php\n";
@@ -304,9 +291,9 @@ class OptionsGenerator
             $content=SliceReplace($content, $data, $str1, $str2);
             return $content;
         });
-        $docs=GetAllDocFile();
+        $docs=static::GetAllDocFile();
         foreach($docs as $file){
-            WrapFileAction($file,'replaceData');
+            static::WrapFileAction($file,'replaceData');
         }
         $this->checkHasDoced();
         
@@ -439,7 +426,7 @@ EOT;
         // \$options['$option'] = $s;
 
 
-EOT;            
+EOT;
             $data[$option]=$str; 
             
             if(empty($attrs['desc'])){
@@ -529,6 +516,7 @@ function SliceReplace($data, $replacement, $str1, $str2, $is_outside = false, $w
     
     return substr_replace($data, $replacement, $pos_begin, $pos_end - $pos_begin);
 }
+
 function replaceData($content)
 {
     $dir=__DIR__.'/../';
@@ -566,23 +554,9 @@ function replaceData($content)
     
     return $content;
 }
-function WrapFileAction($file,$callback)
-{
-    $data=file_get_contents($file);
-    $data=$callback($data,$file);
-    file_put_contents($file,$data);
-}
-function GetAllDocFile()
-{
-    $source=realpath(__DIR__.'/../docs/');
-    $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
-    $iterator = new \RecursiveIteratorIterator($directory);
-    $it=new \RegexIterator($iterator,'/\.md$/', RegexIterator::MATCH);
-    $ret=\iterator_to_array($it, false);
-    array_unshift($ret,realpath(__DIR__.'/../README.md'));
-    return $ret;
-}
 
+
+/*
 function getClassStaticMethods($class)
 {
     $ref=new ReflectionClass($class);
@@ -594,7 +568,7 @@ function getClassStaticMethods($class)
     return $ret;
 }
 
-/*
+
 $m=getClassStaticMethods(DuckPhp::class);
 $m_a=getClassStaticMethods(\DuckPhp\Helper\AppHelper::class);
 $m_b=getClassStaticMethods(\DuckPhp\Helper\BusinessHelper::class);
