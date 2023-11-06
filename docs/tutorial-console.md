@@ -1,7 +1,7 @@
 # 命令行模式
 [toc]
 ## 相关类
-[DuckPhp\Component\Console](ref/Component-Console.md) 命令行类
+[DuckPhp\Component\Console](ref/Core-Console.md) 命令行类
 
 [DuckPhp\Component\DuckPhpCommand](ref/Component-DuckPhpCommand.md) 默认的命令行类
 
@@ -17,7 +17,7 @@
     命令和类的别名 ， 键为类名， 值为别名。
 ## 说明
 
-DuckPhp 的命令行模式是通过 [DuckPhp\Component\Console](ref/Component-Console.md) 这个扩展实现的
+DuckPhp 的命令行模式是通过 [DuckPhp\Core\Console](ref/Core-Console.md) 这个扩展实现的
 
 ## 入口差异
 ```

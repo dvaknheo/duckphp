@@ -1,16 +1,10 @@
-# DuckPhp\Core\ExtendableStaticCallTrait
+# DuckPhp\Ext\ExtendableStaticCallTrait
 [toc]
 
 ## 简介
 
 能扩展静态方法的 Trait 。作用是动态扩展类的静态方法，你写自己的扩展的时候会用到。
-## 使用于
-核心类和全部助手类
-- [DucPhp\Core\App](Core-App.md)
-- [DucPhp\Helper\AdvanceHelper](Helper-AdvanceHelper.md)
-- [DucPhp\Helper\BusinessHelper](Helper-BusinessHelper.md)
-- [DucPhp\Helper\ModelHelper](Helper-ModelHelper.md)
-- [DucPhp\Helper\ViewHelper](Helper-ViewHelper.md)
+
 
 ## 方法
 全部方法如下

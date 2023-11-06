@@ -5,12 +5,9 @@
 Core 目录下的微框架入口
 ## 依赖关系
 * 组件基类 [DuckPhp\Core\ComponentBase](Core-ComponentBase.md)
-* 可扩展静态Trait [DuckPhp\Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md)
 * 系统同名函数替代Trait [DuckPhp\Core\SystemWrapperTrait](Core-SystemWrapperTrait.md)
 * 核心Trait [DuckPhp\Core\KernelTrait](Core-KernelTrait.md)
 * 日志类 [DuckPhp\Core\Logger](Core-Logger.md)
-* 自动加载类 [DuckPhp\Core\AutoLoader](Core-AutoLoader.md)
-* 配置类 [DuckPhp\Core\Configer](Core-Configer.md)
 * 异常管理类 [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
 * 路由类 [DuckPhp\Core\Route](Core-Route.md)
 * 运行时数据类 [DuckPhp\Core\RuntimeState](Core-RuntimeState.md)
@@ -21,6 +18,7 @@ Core 目录下的微框架入口
 ## 选项
 
 ### 专有选项
+
 
         'default_exception_do_log' => true,
 发生异常时候记录日志
@@ -40,6 +38,21 @@ Core 目录下的微框架入口
         'error_debug' => null,        //'_sys/error-debug',
 调试的View或者回调
 
+        'path_runtime' => 'runtime',
+
+        'alias' => null,
+
+        'path_log' => 'runtime',
+
+        'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
+
+        'log_prefix' => 'DuckPhpLog',
+
+        'path_view' => 'view',
+
+        'view_skip_notice_error' => true,
+
+        'superglobal_auto_define' => false,
 ### 扩充 [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) 的默认选项。
 
 
@@ -289,23 +302,7 @@ Show 方法对 View::Show() 加了好些补充
     public static function getRouteCallingMethod()
     public static function dumpAllRouteHooksAsString()
 ```
-#### 来自 View
-需要指出的是 App::Show 是对 View::G()->\_Show() 多了处理。所以不在这里
-```php
-    public static function Display($view, $data = null)
-    public static function getViewData()
-    public static function setViewHeadFoot($head_file = null, $foot_file = null)
-    public static function assignViewData($key, $value = null)
-```
-#### 来自 ExceptionManager
-```php
-    public static function CallException($ex)
-    public static function assignExceptionHandler($classes, $callback = null)
-    public static function setMultiExceptionHandler(array $classes, callable $callback)
-    public static function setDefaultExceptionHandler(callable $callback)
-```
 
-### 内置 trait Core_SuperGlobal
 
 内置 trait Core_SuperGlobal 主要用于超全局变量处理
 ```php
@@ -341,56 +338,6 @@ Show 方法对 View::Show() 加了好些补充
 这些都是内部没下划线前缀的静态方法的动态实现。 不用 protected 是因为想让非继承的类也能修改实现。
 
 ```php
-    public function _Show($data = [], $view = '')
-    public function _header($output, bool $replace = true, int $http_response_code = 0)
-    public function _setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
-    public function _exit($code = 0)
-    public function _set_exception_handler(callable $exception_handler)
-    public function _register_shutdown_function(callable $callback, ...$args)
-    public function _session_start(array $options = [])
-    public function _session_id($session_id = null)
-    public function _session_destroy()
-    public function _session_set_save_handler(\SessionHandlerInterface $handler)
-    public function _ExitJson($ret, $exit = true)
-    public function _ExitRedirect($url, $exit = true)
-    public function _ExitRedirectOutside($url, $exit = true)
-    public function _Platform()
-    public function _IsDebug()
-    public function _IsRealDebug()
-    public function _L($str, $args = [])
-    public function _Hl($str, $args)
-    public function _Json($data)
-    public function _H(&$str)
-    public function _TraceDump()
-    public function _var_dump(...$args)
-    public function _XpCall($callback, ...$args)
-    public function _CheckException($exception_class, $flag, $message, $code = 0)
-    public function _SqlForPager($sql, $pageNo, $pageSize = 10)
-    public function _SqlForCountSimply($sql)
-    public function _DebugLog($message, array $context = array())
-    public function _Cache($object = null)
-    public function _Pager($object = null)
-    public function _DbCloseAll()
-    public function _Db($tag)
-    public function _DbForRead()
-    public function _DbForWrite()
-    public function _Event()
-    public function _FireEvent($event, ...$args)
-
-    public function _OnEvent($event, $callback)
-    public function _GET($key = null, $default = null)
-    public function _POST($key = null, $default = null)
-    public function _REQUEST($key = null, $default = null)
-    public function _COOKIE($key = null, $default = null)
-    public function _SERVER($key = null, $default = null)
-    public function _SESSION($key = null, $default = null)
-    public function _FILES($key = null, $default = null)
-    public function _SessionSet($key, $value)
-    public function _SessionUnset($key)
-    public function _CookieSet($key, $value, $expire)
-    public function _SessionGet($key, $default)
-    public function _CookieGet($key, $default)
-
     public function _IsAjax()
     public function _CheckRunningController($self, $static)
 
@@ -408,26 +355,11 @@ Show 方法对 View::Show() 加了好些补充
 ## 说明
 
 
-以上
 
 
 
 
-        'path_runtime' => 'runtime',
 
-        'alias' => null,
-
-        'path_log' => 'runtime',
-
-        'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
-
-        'log_prefix' => 'DuckPhpLog',
-
-        'path_view' => 'view',
-
-        'view_skip_notice_error' => true,
-
-        'superglobal_auto_define' => false,
 
     protected function doInitComponents()
 

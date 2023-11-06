@@ -1,3 +1,9 @@
+# DuckPhp\Core\CoreHelper
+[toc]
+## 简介
+这个组件是常用函数集合 两个下划线开始的方法，都是调用这里的实现
+##
+
     public static function H($str)
 
     public static function L($str, $args = [])
@@ -42,9 +48,9 @@
 
     public static function XpCall($callback, ...$args)
 
-    public function SqlForPager($sql, $page_no, $page_size = 10)
+    public static function SqlForPager($sql, $page_no, $page_size = 10)
 
-    public function SqlForCountSimply($sql)
+    public static function SqlForCountSimply($sql)
 
     public static function ThrowByFlag($exception, $flag, $message, $code = 0)
 

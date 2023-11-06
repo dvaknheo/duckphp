@@ -26,7 +26,7 @@
 
 ## 方法
 
-    public static function G($object = null)
+    public static function _($object = null)
     public function __construct()
     public function isInited(): bool
     public function init(array $options, ?object $context = null)
@@ -38,6 +38,7 @@
     public function app()
 获得调用的 $context 
 
+    protected function getObject($class)
 
     public function getCliParameters()
 **重要**，获得 命令行参数
@@ -115,7 +116,6 @@ EOT;
 ```
 
 
-    protected function getObject($class)
 
 
 

@@ -5,25 +5,17 @@
 最核心的 Trait，仅完成基本流程。你通过 DuckPhp\DuckPhp 或 DuckPhp\Core\App 类来使用他。
 
 ## 引用
-[DuckPhp\\Core\\AutoLoader](Core-AutoLoader.md)   自动加载
-[DuckPhp\\Core\\Configer](Core-Configer.md) 配置
-[DuckPhp\\Core\\ExceptionManager](Core-ExceptionManager.md) 异常处理
-[DuckPhp\\Core\\Route](Core-Route.md) 路由
-[DuckPhp\\Core\\RuntimeState](Core-RuntimeState.md) 运行时状态
-[DuckPhp\\Core\\View](Core-View.md) 视图
-[Functions](Core-Functions.md) 全局函数
+
+    [DuckPhp\\Core\\Console](Core-Console.md) 控制台
+    [DuckPhp\\Core\\ExceptionManager](Core-ExceptionManager.md) 异常处理
+    [Functions](Core-Functions.md) 全局函数
+    [DuckPhp\\Core\\PhaseContainer](Core-PhaseContainer.md) 容器
+    [DuckPhp\\Core\\Route](Core-Route.md) 路由
+    [DuckPhp\\Core\\Runtime](Core-Runtime.md) 运行时状态
+    [DuckPhp\\Core\\View](Core-View.md) 视图
+
 
 ## 选项
-
-use 开始的选项都是默认 true ，skip 开头的都是 false;
-
-### 子类无法更改的选项
-
-            'use_autoloader' => false,
-使用系统自带自动加载器
-
-            'skip_plugin_mode_check' => false,
-跳过插件模式检查
 
 ### 基本配置
 
@@ -51,6 +43,22 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
             'ext' => [],
 **重要选项** 扩展
 
+        'setting_file' => 'setting',
+设置文件名。
+
+        'setting_file_enable' => true,
+使用设置文件: $path/$path_config/$setting_file.php
+
+        'use_env_file' => false,
+使用 .env 文件
+打开这项，可以读取 path 选项下的 env 文件
+
+        'config_ext_file_map' => [],
+额外的配置文件数组，用于 AppPluginTrait
+
+        'setting_file_ignore_exists' => true,
+如果设置文件不存在也不报错
+
 ### 开关配置
 
             'use_flag_by_setting' => true,
@@ -66,25 +74,9 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
             'skip_exception_check' => false,
 不在 Run 流程检查异常，把异常抛出外面。用于配合其他框架使用
 
-            'skip_plugin_mode_check' => false,
-如果 初始化的时候 context 有对象，则进入 plugin 模式 pluginModeInit()，打开以避免进入 plugin 模式.
 
 ## 属性
 
-和方法同名，便于不修改类实现的情况。
-
-
-    public $onPrepare;
-准备阶段，你可以在这里替换默认类
-
-    public $onInit;
-初始化完成
-
-    public $onBeforeRun;
-运行阶段。不建议重写 run ，而是在这里添加运行阶段处理
-
-    public $onAfterRun;
-运行完毕阶段执行的方法
 
 ## 方法
 ### 主流程
@@ -97,14 +89,9 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
     public function run(): bool
 运行，如果404，返回false。
 
-    public function clear(): void
-不建议主动使用，用于清理现场。
-
     public function beforeRun()
 不建议主动使用，加载运行状态数据，比如当前 URL 等。
 
-    public function replaceDefaultRunHandler(callable $handler = null): void
-不通过继承而是外挂替换默认的 Run 函数， 用于第三方接管。
 
 ### 事件方法
 
@@ -121,6 +108,10 @@ use 开始的选项都是默认 true ，skip 开头的都是 false;
 
     protected function onAfterRun()
 运行完毕阶段执行的方法
+
+    protected function onBeforeCreatePhases()
+
+    protected function onAfterCreatePhases()
 
 ### 流程相关方法
     protected function checkOverride($override_class)
@@ -143,18 +134,6 @@ init() 中 DefaultComponents() 中从设置读取调试标志和平台标志
 
     protected function getDefaultProjectPath()
 辅助方法，用于在 init() 中设置 path.
-
-    public static function Blank()
-空函数备用
-
-    protected function saveInstance($object)
-用于重写 override 的时候，保存根对象 示例
-
-    protected function pluginModeInit(array $options, object $context = null)
-插件模式初始化
-
-    protected function initDefaultComponents()
-初始化默认组件
 
 ### 默认行为
     public static function On404(): void
@@ -194,7 +173,7 @@ init() 初始化阶段，和 run 阶段
     调整外界 initContext()
     调用用于重写的 onPrepare(); 
     
-    初始化默认组件 initDefaultComponenents()
+    
         
     加入扩展 initExtends()
     
@@ -213,14 +192,9 @@ init() 初始化阶段，和 run 阶段
     如果发生异常
         进入异常流程
     清理流程
-### clear 清理
-只有一个动作： 设置 RuntimeState 为结束
 
-    protected function switchContainerContext($class)
+-------------
 
-    protected function initContainerContext()
-
-    protected function addSharedInstances($classes)
 
     public static function Root()
 
@@ -231,8 +205,6 @@ init() 初始化阶段，和 run 阶段
     protected function initComponents(array $options, object $context = null)
 
     protected function runExtentions()
-
-
 
     public static function Current()
 
@@ -254,7 +226,4 @@ init() 初始化阶段，和 run 阶段
 
     public function _Setting($key = null)
 
-    protected function onBeforeCreatePhases()
-
-    protected function onAfterCreatePhases()
 

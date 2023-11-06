@@ -17,21 +17,22 @@
 ## 选项
 
 继承 [DuckPhp\Core\KernelTrait](Core-Trait.md) 的默认选项。详细查看 [DuckPhp\Core\KernelTrait](Core-Trait.md)的文档。
-        'setting_file' => 'setting',
-设置文件名。
 
-        'setting_file_enable' => true,
-使用设置文件: $path/$path_config/$setting_file.php
 
-        'use_env_file' => false,
-使用 .env 文件
-打开这项，可以读取 path 选项下的 env 文件
+        'ext_options_file_enable' => false,
+        'ext_options_file' => 'config/DuckPhpApps.config.php',
+        
+        'path_info_compact_enable' => null,
+        
+        'class_user' => null,
+        'class_admin' => null,
+        
+        'session_prefix' => null,
+        'table_prefix' => null,
+        
+        'exception_reporter' => null,
+        
 
-        'config_ext_file_map' => [],
-额外的配置文件数组，用于 AppPluginTrait
-
-        'setting_file_ignore_exists' => true,
-如果设置文件不存在也不报错
 
 并且做了以下更改
 
