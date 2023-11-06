@@ -9,12 +9,12 @@ use DuckPhp\DuckPhpAllInOne as DuckPhp;
 use DuckPhp\DuckPhpAllInOne as C;  // Helper 都给我们省掉了
 use DuckPhp\DuckPhpAllInOne as M;  // Helper 都给我们省掉了
 use DuckPhp\Ext\EmptyView;
-use DuckPhp\Core\SingletonTrait; // 可变单例模式
+use DuckPhp\Foundation\SimpleBusinessTrait; // 可变单例模式
 
 //业务类， 还是带上吧。
 class MyBusiness
 {
-    use SingletonTrait; // 单例模式。
+    use SimpleBusinessTrait; // 单例模式。
     
     public function getDataList($page, $pagesize)
     {
@@ -73,30 +73,26 @@ class TestModel
     }
 }
 /////////////////////////////////////////
-class Main
+class MainController
 {
-    public function index()
+    public function action_index()
     {
+        if(C::POST()){
+            MyBusiness::_()->addData($_POST);
+        }
         list($total, $list) = MyBusiness::_()->getDataList(C::PageNo(), C::PageWindow(3));
         $pager = C::PageHtml($total);
         C::Show(get_defined_vars(), 'main_view');
     }
-    public function do_index()
+    public function action_show()
     {
-        MyBusiness::_()->addData($_POST);
-        $this->index();
-    }
-    public function show()
-    {
-        $data = MyBusiness::_()->getData(C::GET('id', 0));
+        if(C::POST()){
+            MyBusiness::_()->updateData(C::POST('id', 0), $_POST);
+        }
+        $data = MyBusiness::_()->getData(C::REQUEST('id', 0));
         C::Show(get_defined_vars(), 'show');
     }
-    public function do_show()
-    {
-        MyBusiness::_()->updateData(C::POST('id', 0), $_POST);
-        $this->show();
-    }
-    public function delete()
+    public function action_delete()
     {
         MyBusiness::_()->deleteData(C::GET('id', 0));
         C::ExitRouteTo('');
@@ -109,7 +105,7 @@ CREATE TABLE `test` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `content` varchar(250) NOT NULL COMMENT '内容',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDb AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4
+) ENGINE=InnoDb AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4
 */
     // 开始了
     $options = [
@@ -126,8 +122,8 @@ CREATE TABLE `test` (
             //数据库设置，根据你的需要修改
             'database_list' => [
                 [
-                    'dsn' => 'mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8mb4;',
-                    'username' => 'admin',
+                    'dsn' => 'mysql:host=127.0.0.1;port=3306;dbname=duckphptest;charset=utf8mb4;',
+                    'username' => 'user1',
                     'password' => '123456',
                     'driver_options' => [],
                 ],
@@ -135,12 +131,13 @@ CREATE TABLE `test` (
         ],
     ];
     $options['error_404'] = function () {
-        (new Main)->index(); //404 都给我跳转到首页
+        (new Main)->index(); //404 to homepage
     }; 
     $flag = DuckPhp::RunQuickly($options);
-    $data = DuckPhp::GetViewData();
+    $data = DuckPhp::getViewData();
     
     extract($data);
+    $view = $view ?? null;
     if (isset($view_head)) {
         ?>
         <html>

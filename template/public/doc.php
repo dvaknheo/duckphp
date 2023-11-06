@@ -47,9 +47,11 @@ if (!defined('VIEW')) {
 <a href="#">返回文档主页</a>
 <a href="/">返回主页</a>
 </div>
+<div>
   <div id="wrapper" style="border:1px solid gray;padding:0.5em;">
   正在打开文档。请保证 cdn.jsdelivr.net ，外接 js 能访问
   </div>
+</div>
 <script>
 
 function fetchMarkdown(url){

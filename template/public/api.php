@@ -15,8 +15,8 @@ namespace Api {
     }
     class test implements BaseApi
     {
-// 访问方式 http://duckphp.demo.dev/api.php/test.foo2?a=1&b=2
-// 访问方式 http://duckphp.demo.dev/api.php/test.foo
+// 访问方式 http://duckphp.demo.local/api.php/test.foo2?a=1&b=2
+// 访问方式 http://duckphp.demo.local/api.php/test.foo
 
         public function index()
         {

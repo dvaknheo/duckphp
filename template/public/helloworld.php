@@ -5,9 +5,9 @@
  */
 require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
 
-class Main
+class MainController
 {
-    public function index()
+    public function action_index()
     {
         echo "hello world";
     }
