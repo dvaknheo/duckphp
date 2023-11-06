@@ -333,19 +333,6 @@ Controller 调用 Controller 怎么办。 DuckPhp 的规范是 Controller 不要
  * ProjectException.php
 
 
-
-
-
-<?php declare(strict_types=1);
-/**
- * DuckPhp
- * From this time, you never be alone~
- */
-
-namespace AdvanceDemo\System;
-
-use DuckPhp\DuckPhp;
-
 ```php
 class App extends DuckPhp
 {
