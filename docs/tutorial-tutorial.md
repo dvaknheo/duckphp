@@ -202,11 +202,9 @@ composer require dvaknheo/duckphp # 用 require
    * view/_sys/error404.php 404 错误展示页面
    * view/_sys/error404.php 500 错误展示页面
    * view/files.php 对应访问 file 的页面文件
-   * view/main.php 对应 访问 默认 的页面文件
+   * view/main.php 对应 访问主页的页面文件
    *view/test/done.php 对应访问 test/done 的页面文件
-   
-   V 所以 DuckPhp 保持 PHP 就是模板的简洁性（本人曾经有个没人用的TagFeather 模板，说不定某年复活。
-----
+   ----
 ### src 源代码目录
 
 一共4个目录 我们以字母顺序 调用顺序 System -> Controrller -> Business -> Model 来介绍
@@ -385,7 +383,7 @@ $options = [
     // ...
 ];
 
-\AdvanDemo\SysemApp::RunQuickly($options);
+\AdvanDemo\System\App::RunQuickly($options);
 
 ```
 $options 是就是各种选项了。

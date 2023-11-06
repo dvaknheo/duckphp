@@ -47,7 +47,7 @@ trait KernelTrait
             'use_env_file' => false,
             
             //*/
-            'namespace' => '',
+            //'namespace' => '',
             'namespace_controller' => 'Controller',
             
             'controller_path_ext' => '',

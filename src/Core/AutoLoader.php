@@ -27,7 +27,7 @@ class AutoLoader
     
     protected static $_instances = [];
     //embed
-    public static function G($object = null)
+    public static function _($object = null)
     {
         if ($object) {
             self::$_instances[static::class] = $object;
@@ -43,7 +43,11 @@ class AutoLoader
     }
     public static function RunQuickly(array $options = [])
     {
-        return static::G()->init($options)->run();
+        return static::_()->init($options)->run();
+    }
+    public static function addPsr4($namespace, $input_path)
+    {
+        return static::_()->assignPathNamespace($input_path, $namespace);
     }
     public function __construct()
     {
@@ -115,7 +119,7 @@ class AutoLoader
     }
     public static function AutoLoad(string $class): void
     {
-        static::G()->_Autoload($class);
+        static::_()->_Autoload($class);
     }
     public function _Autoload(string $class):void
     {

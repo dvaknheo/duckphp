@@ -64,7 +64,7 @@ class DuckPhp extends App
         
         'rewrite_map' => [],
 
-        'path_info_compact_enable' => false,
+        //'path_info_compact_enable' => false,
         'path_info_compact_action_key' => '_r',
         'path_info_compact_class_key' => '',
         

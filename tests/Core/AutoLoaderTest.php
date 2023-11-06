@@ -24,7 +24,7 @@ class AutoLoaderTest extends \PHPUnit\Framework\TestCase
             ],
         ];
         
-        $G=AutoLoader::G();
+        $G=AutoLoader::_();
         $G->init($options);
         $G->init($options); // retest
         
@@ -32,6 +32,7 @@ class AutoLoaderTest extends \PHPUnit\Framework\TestCase
             'ThisPathNotExsits'=>'NoNameSpace',
             $path_autoload.'AutoApp2'=> 'for_autoloadertest2',
         ]);
+        AutoLoader::addPsr4('ThisPathNotExsits3','NoNameSpace3');
         $G->run();
         $G->runAutoLoader(); //re-test
         AutoLoader::RunQuickly($options);
@@ -53,13 +54,13 @@ $t->foo();
     }catch(\Throwable $ex){
     }
     
-        AutoLoader::G()->cacheClasses();
-        AutoLoader::G()->cacheClasses();
+        AutoLoader::_()->cacheClasses();
+        AutoLoader::_()->cacheClasses();
         //opcache_invalidate($file,true);
          
-        AutoLoader::G()->cacheNamespacePath($path_autoload);
-        AutoLoader::G()->cacheNamespacePath($path_autoload.'AutoApp/');
-        AutoLoader::G()->cacheNamespacePath('ThisPastNotExsits');
+        AutoLoader::_()->cacheNamespacePath($path_autoload);
+        AutoLoader::_()->cacheNamespacePath($path_autoload.'AutoApp/');
+        AutoLoader::_()->cacheNamespacePath('ThisPastNotExsits');
         //$G->cacheNamespacePath(path_autoload);
         $G->clear();
         
@@ -70,22 +71,22 @@ $t->foo();
             'path_namespace'=>'/path_autoload',
         ]);
 
-        AutoLoader::G()->isInited();
+        AutoLoader::_()->isInited();
 
-        AutoLoader::G();
-        AutoLoader::G(new AutoLoader());
+        AutoLoader::_();
+        AutoLoader::_(new AutoLoader());
         $t = \LibCoverage\LibCoverage::G();
         define('__SINGLETONEX_REPALACER',AutoLoaderObject::class.'::CreateObject');
         \LibCoverage\LibCoverage::G($t);
-        AutoLoader::G();
+        AutoLoader::_();
         
         \LibCoverage\LibCoverage::End();
         /*
-        AutoLoader::G()->_autoload($class);
-        AutoLoader::G()->assignPathNamespace($path, $namespace=null);
-        AutoLoader::G()->cacheClasses();
-        AutoLoader::G()->cacheNamespacePath($path);
-        AutoLoader::G()->cleanUp();
+        AutoLoader::_()->_autoload($class);
+        AutoLoader::_()->assignPathNamespace($path, $namespace=null);
+        AutoLoader::_()->cacheClasses();
+        AutoLoader::_()->cacheNamespacePath($path);
+        AutoLoader::_()->cleanUp();
         //*/
     }
 }
