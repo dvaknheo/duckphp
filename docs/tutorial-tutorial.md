@@ -90,18 +90,19 @@ function __trace_dump()  打印堆栈
 function __debug_log($str, $args = []) 增加日志
 function __logger() 获得 日志对象，便于不同级别的调试
 
-所有DuckPhp 的全局函数就这么讲完了 :)
-    
+所有DuckPhp 的全局函数就这么讲完了 ^_^
+
+
 2. 获取提供对象
 你可以在代码里得到管理员对象和 用户对象。 用于你的业务系统
 如果得不到，将会抛出异常，你可以作后续处理。
 
 ```
 $id = DuckAdminApp::AdminId();
-$admin = DuckAdminApp::Admin(); // 获取当前 admin 对象，如果得不到 admin 对象
+$admin = DuckAdminApp::Admin()->current(); // 获取当前 admin 对象，如果得不到 admin 对象，则会跳转登录
 var_dump($admin);
 DuckAdminApp::DefaultAction()->foo();
-UserAction::CallInPhase(DuckAdminApp::class)->foo();
+
 ```
 
 // 这里
@@ -114,8 +115,6 @@ function onInit(){
 }
 ```
 致此，二次开发基本讲完了。要深入了解，那么我们就从自己搞个工程开始了
-
-
 
 ###############
 先看工程目录
@@ -162,62 +161,74 @@ function onInit(){
 
 ## 目录结构解说
 小写的是资源文件夹，资源文件夹可以由 $options['path']设置为其他目录。
-
-
 ### 工程文件夹
 * config 配置文件夹。不需要这个文件夹也看可以.
-    config/DuckPhpSettings.config.php 这个文件是存在的 ，只有根应用会有用，作用是保存设置的。
-    config/DuckPhpApps.config.php 这个是选项文件子应用的额外选项都在这里。安装的时候，会改写这个文件。
+    * `config/DuckPhpSettings.config.php` 这个文件是存在的 ，只有根应用会有用，作用是保存设置的。
+    * `config/DuckPhpApps.config.php` 这个是选项文件子应用的额外选项都在这里。安装的时候，会改写这个文件。
 * public web入口
 * runtime 文件夹是唯一需要可写的文件夹。默认工程没有写入东西。
 * src 类文件夹。工程代码文件。
    后面详解
-* view 视图文件夹。   
+* view 视图文件夹
    view/_sys/error404.php 404 错误展示页面
    view/_sys/error404.php 500 错误展示页面
    view/files.php 对应访问 file 的页面文件
    view/main.php 对应 访问 默认 的页面文件
    view/test/done.php 对应访问 test/done 的页面文件
+   
+   V 所以 DuckPhp 保持 PHP 就是模板的简洁性（本人曾经有个没人用的TagFeather 模板，说不定某年复活。
+
 ----
-首先，还是问写过几年php web开发的，MVC 架构有什么缺陷？
-答案是缺层，controller 一股脑包的代码太多太恶心了。
-所以我们改成 VCBM 结构
+### src 源代码文件夹
 
-但是，这只是理想中的  VCBM
-实践起来， vcbm 结构会碰到什么问题下面详细说吧
+#### Business 
 
-我们从简单到到复杂
-
-
-V View 这很容易理解。当年 Smarty 引领了一个时代，但是到最后， php 程序员发现还得自己写 smarty 代码
-所以 DuckPhp 保持 PHP 就是模板的简洁性（本人曾经有个没人用的TagFeather 模板，说不定某年复活。
-
-B Business 。作为程序员专家，大家达成的意见是 业务逻辑层要抽出来，业务逻辑 英文是什么 Business Logic 嘛。
+作为程序员专家，大家达成的意见是 业务逻辑层要抽出来，业务逻辑 英文是什么 Business Logic 嘛。
 有人用Logic ，这里我用的是 Business 命名 还有人用 Service，为什么不用 Service 我后面解释
 需要注意的是，虽然有人把这层独立出来，但是代码里却是和 web相关， Business 要求是什么，和Controller 无关，无状态。
 可测。
+
 当然，有些人会带上用户 ID ，这种一两个的例外。
 
-C Controller Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口。 业务层由 Business 层处理。
-M Model 。 DuckPhp 的 Model 层是很传统的跟着数据库表走的模式。
-所有和 DuckPhp 相关的东西都在 Base 里。
+#### Controller
+
+Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口。 业务层由 Business 层处理。
 那么问题来了，duckphp 标榜的和 duck php 尽可能联系在哪里。
 
 
-System
+#### Model
+DuckPhp 的 Model 层是很传统的跟着数据库表名走的模式。
+所有和 DuckPhp 相关的东西都在 Base 里。
+
+Model 的问题
+
+基类耦合不算耦合？
+所以，我们还有另外的范式 ，把 helper 的东西抽出来。
+
+
+#### System
 然后，我们就到了 System 目录 这个目录只有 App.php入口文件
 
-Base 基类， 不带 Model 后缀是基类的规范。你的其他 model 也继承 Base 类，虽然不强求。
-Helper 助手类，不同文件夹的 Helper 类稍后再讲
-DemoModel ，这个
-其实，偷懒的时候，这几个都可以合并在一起。
+#### Base.php & Helper.php
+Base 基类， 不带，后缀是基类的规范。
+基本实现
 
+Helper 类都是和业务无关的类。通过这些Helper类的静态方法来调用 DuckPhp 系统的功能。 
+默认都只有静态方法
+你填充他们的时候，请用动态方法 ，以示区分。
 
+一共4个Helper 类,前两个比较简单。
 
-### 横向比较 Helper 类
-Helper 类都是和业务无关的类。默认都只有静态方法
 Model/Helper Db DbForRead DbForWrite SqlForPager SqlForCountSimply
 Business/Helper Setting Config XpCall FireEvent Cache OnEvent
+Controller/Helper 和 System/Helper 就很复杂需要单独说明了。
+
+你的其他 model 也继承 Base 类，虽然不强求。
+Helper 助手类，不同文件夹的 Helper 类稍后再讲
+DemoModel ，这个
+
+其实，偷懒的时候，这几个都可以合并在一起。
+### 横向比较 Helper 类
 
 
 
@@ -230,13 +241,7 @@ index.php
 这是默认选项的设置下的，你可以设置
 为什么不放 runtime 下？ 因为 runtime 目录可以使用 web用户来写入，不安全。
 
-// 然后，我们就到简单点说法的 Model 目录
 
-Model 的问题
-
-
-基类耦合不算耦合？
-所以，我们还有另外的范式 ，把 helper 的东西抽出来。
 
 
 // 接下来是 Business 业务目录
@@ -373,3 +378,44 @@ Helper
 其他隐藏要素
 
 
+
+
+### MVC 缺层
+
+
+首先，还是问写过几年php web开发的，MVC 架构有什么缺陷？
+答案是缺层，controller 一股脑包的代码太多太恶心了。
+所以我们改成 VCBM 结构
+
+但是，这只是理想中的  VCBM
+实践起来， vcbm 结构会碰到什么问题下面详细说吧
+
+我们从简单到到复杂
+
+首先，我们上理论课——MVC 缺层...MVC 结构，大家都滚瓜烂熟了。
+
+如果我们做一个 PHP 项目，MVC结构
+最简单的
+```
+ /-M
+C
+ \-V
+```
+M 对应的数据库。 C 对应的和 URL。 V 对应的是视图，给前端用的。嗯。
+好，那么业务逻辑写在哪里？
+
+所以就引发了很多灾难。
+充血模型， 写在 C 端。 等等。
+
+所以用 DuckPhp 的，就把这模型改了一下，加上缺失的业务层，变成了：
+
+```
+ /-B-M
+C
+ \-V
+```
+
+复杂一点 复杂一点 再加上事件和异常
+
+V View 这很容易理解。当年 Smarty 引领了一个时代，但是到最后， php 程序员发现还得自己写 smarty 代码
+所以 DuckPhp 保持 PHP 就是模板的简洁性（本人曾经有个没人用的TagFeather 模板，说不定某年复活。

@@ -61,9 +61,10 @@ version 显示版本
 使用参数
 命令行中的 --XX 会成为方法中的 $XX 参数
 
-duckphp-project a b --x c d --y z =>
+duckphp-project a b --x c d --y z
+=>
 
-App::G()->command_a('a','b',$x=['c','d']);
+App::_()->command_a('a','b',$x=['c','d']);
 方法名的 doc 文档将作为提示显示
 
 
@@ -73,7 +74,3 @@ App 的同名 command_*() 会覆盖 DuckPhp\\Ext\\Console 的 command_*() 被调
 
 用 getCliParameters() 获得 Parameters
 
-regCliCommandGroup($class, $alias) 则可以注册别名
-
- 用 / 代替 \ 表示类名。 如命令  NS/Class:Method 
-对应 \NS\Class::G()->command_Method();

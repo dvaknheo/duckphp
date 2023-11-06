@@ -172,12 +172,24 @@ echo "<div>不建议直接运行模板文件，建议用安装模式 </div>\n"; 
 
 // 设置工程命名空间对应的目录，但强烈推荐修改 composer.json 使用 composer 加载 
 if (!class_exists(\LazyToChange\System\App::class)) {
-    \DuckPhp\DuckPhp::assignPathNamespace(__DIR__ . '/../app', "LazyToChange\\"); 
-    \DuckPhp\DuckPhp::runAutoLoader();
+    \DuckPhp\Core\AutoLoader::RunQuickly([
+        "psr-4" => [
+            "LazyToChange\\" => "app",
+            "AdvanceDemo\\" => "public/advance/src",
+        ]
+    ]);
 }
-
+/////////
 $options = [
     // 这里可以添加更多选项
+    'controller_resource_prefix' => '//res/',
+    //'ext_options_from_config' =>true,
+    'ext' => [
+        AdvanceDemo\System\App::class => [
+            'controller_url_prefix' => '/advance',
+        ],
+    ],
+
 ];
 //*/
 \LazyToChange\System\App::RunQuickly($options);
@@ -221,7 +233,9 @@ class App extends DuckPhp
 {
     //@override
     public $options = [
-        'is_debug' => true,        
+        'is_debug' => true, 
+        'controller_class_postfix' => '',
+        'controller_method_prefix' => '',
         // 'setting_file_enable' => true,
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',

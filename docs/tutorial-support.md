@@ -67,11 +67,6 @@ php-cs-fixer fix && phpstan analyse && phpunit && php tests/genoptions.php && do
 
 ```
 
-Helper 类为什么要在 Helper 目录下，
-
-原因，配合 cloneHelper 用。
-
-为什么会有个“我觉得恶心的”G() 单字母静态方法
 
 你可以把 ::G()-> 看成和 facades 类似的门面方法。
 可变单例是 DuckPhp 的核心。
@@ -92,7 +87,7 @@ var_dump(MyClass::G()); 使用 Facades 就没法做到这个功能。
 Class::Method Class@Method Class->Method 的区别
 
 -> 表示 new 一个实例
-@ 表示 $class::G()->
+@ 表示 $class::_()->
 
 :: 表示 Class::Method
 
@@ -119,15 +114,15 @@ Class::Method Class@Method Class->Method 的区别
 
 缓存  Cache()
 
-Session  集中化管理， 放在 System/SessionManager 下
+Session  集中化管理
 
-Cookie  集中化管理，放在 System/CookieManager 下
+Cookie  集中化管理
 
-多语言 重写 App::L 函数
+多语言 重写 __l 函数
 
 上传 无特殊的上传
 
-命令行  见命令行的教程，和 DuckPhp\Component\Console 参考类
+命令行  见命令行的教程，和 DuckPhp\Core\Console 参考类
 
 扩展库
 

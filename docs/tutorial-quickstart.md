@@ -92,7 +92,7 @@ class test
 {
     public function done()
     {
-        $var = DemoBusiness::G()->foo();
+        $var = DemoBusiness::_()->foo();
         C::Show(get_defined_vars());
     }
 }
@@ -130,7 +130,7 @@ class DemoBusiness extends BaseBusiness
 {
     public function foo()
     {
-        return "<" . DemoModel::G()->foo().">";
+        return "<" . DemoModel::_()->foo().">";
     }
 }
 
