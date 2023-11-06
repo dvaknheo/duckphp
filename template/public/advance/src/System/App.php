@@ -12,16 +12,13 @@ class App extends DuckPhp
 {
     //@override
     public $options = [
-        'is_debug' => true, // debug switch
+        //'is_debug' => true, // debug switch
         // 'setting_file_enable' => true,
         //'path_info_compact_enable' => false,
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
         'controller_class_postfix' => 'Controller', // in common, use this
         
-        'exception_project' => ProjectException::class,
-        'exception_business' => ProjectException::class,
-        'exception_controller' => ProjectException::class,
     ];
     /**
      * console command sample

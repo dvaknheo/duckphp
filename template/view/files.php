@@ -2,6 +2,10 @@
 // view/test/done.php?>
 <!doctype html><html><body>
 <fieldset>
+<legend>执行时间</legend>
+<div>DuckPhp的执行时间到此，约为??? 秒， 内存消耗 ??? </div>
+</fieldset>
+<fieldset>
 <legend>全部单例</legend>
 <pre>
 <?php 
@@ -22,6 +26,7 @@
 <pre>
 <?php var_export(\DuckPhp\Core\App::_()->options);?>
 </pre>
+合计 <?=count(\DuckPhp\Core\App::_()->options);?>个
 </fieldset>
 <fieldset>
     <legend>到 View 层级的调用堆栈</legend>

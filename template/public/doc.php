@@ -10,6 +10,10 @@ function getfile($f)
     if(substr($file,0,strlen($path))!=$path){ return;} // 安全处理
     
     $str=file_get_contents($file);
+    
+    
+    /////////////// show
+    //TODO 缓存处理
     if(substr($file,-4)==='.svg'){
         header('content-type:image/svg+xml');
         echo $str;
@@ -22,10 +26,10 @@ function getfile($f)
     
     exit;
 }
-
-$f=$_GET['f']??null;
-getfile($f);
-
+if (!defined('VIEW')) {
+    $f=$_GET['f']??null;
+    getfile($f);
+}
 ?><!doctype html>
 <html>
 <head>
