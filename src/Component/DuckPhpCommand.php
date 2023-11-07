@@ -36,7 +36,7 @@ class DuckPhpCommand extends ComponentBase
         if (!empty($options['http_server'])) {
             /** @var string */
             $class = str_replace('/', '\\', $options['http_server']);
-            HttpServer::G($class::_());
+            HttpServer::_($class::_());
         }
         HttpServer::RunQuickly($options);
     }
