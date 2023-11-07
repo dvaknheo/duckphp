@@ -87,25 +87,60 @@ function onDuckAdminInit()
 3.页面里可以用到 全局函数,这些全局函数都是两个下划线开始的。
 
 这是助手函数
+__h()
 
-    function __h(...$args) html 编码
-    function __l($str, $args = []) 多语言编码
-    function __hl($str, $args = []) Html加多语言编码
-    function __json($data)   json 编码，用于向 javascript  传送数据
-    function __url($url)   相对pathinfo 的路径
-    function __res($url)   资源文件
-    function __domain($use_scheme = false)  域名，带头
-    function __display($view, $data)  实现包含的 View 块用于视图种
+    对应 CoreHelper::H(); HTML 编码
+__l($str,$args=[])
+
+    对应 CoreHelper::L(); 语言处理函数，后面的关联数组替换 '{$key}'
+__hl($str, $args=[])
+
+    对应 CoreHelper::Hl(); 对语言处理后进行 HTML 编码
+__json($data) 
+
+    对应 CoreHelper::Hl(); json 编码，用于向 javascript  传送数据
+__url($url)
+
+    对应 CoreHelper::Url(); 获得相对 url 地址
+
+__res($url)
+
+    对应 CoreHelper::Res(); 获得资源相对 url 地址
+__domain()
+
+    对应 CoreHelper::Domain(); 获得带协议头的域名
+__display($view, $data = null)
+
+    对应 CoreHelper::Display(); 包含下一个 $view ， 如果 $data = null 则带入所有当前作用域的变量。 否则带入 $data 关联数组的内容。用于嵌套包含视图。
+
+
+
 还有一批调试用的全局函数
+_\_is_debug()
 
-    function __platform()  用于多服务器配置的时候看处于什么服务器
-    function __is_debug()  调试状态是否开启
-    function __is_real_debug() 调试状态关闭，但一些东西需要调试的时候用
-    function __var_log($var)  在日志打印当前变量
-    function __var_dump(...$args) 接管var_dump
-    function __trace_dump()  打印堆栈
-    function __debug_log($str, $args = []) 增加日志
-    function __logger() 获得 日志对象，便于不同级别的调试
+    对应 App::IsDebug() 判断是否在调试状态, 默认读取选项 is_debug 和设置字段里的 duckphp_is_debug
+_\_is_real_debug()
+
+    对应 App::IsRealDebug() 。 切莫乱用。用于环境设置为其他。比如线上环境，但是还是要特殊调试的场合。 如果没被接管，和 IsDebug() 一致。
+_\_platform()
+
+    对应 App::Platform() 获得当前所在平台,默认读取选项和设置字段里的 duckphp_platform，用于判断当前是哪台机器等
+_\_trace_dump(...$arg)
+
+    对应 App::TraceDump() 调试状态下，查看当前堆栈，打印当前堆栈，类似 debug_print_backtrce(2)
+_\_var_dump(...$arg)
+
+    对应 App::var_dump()调试状态下 Dump 当前变量，替代 var_dump
+_\_debug_log(...$arg)
+
+    对应 App::DebugLog($message, array $context = array()) 对应调试状态下 Log 当前变量。
+
+
+
+function __var_log($var)  在日志打印当前变量
+function __logger() 获得 日志对象，便于不同级别的调试
+    
+    
 所有 DuckPhp 的全局函数就这么讲完了 ^_^
 
 3. 获取提供对象
@@ -264,9 +299,29 @@ class Helper
 }
 
 ```
-Model/Helper 方法只有 Db() DbForRead() DbForWrite() SqlForPager() SqlForCountSimply()
+Model/Helper 方法只有下面五个
 
-其实，偷懒的时候，这几个都可以合并在一起。
+
+    public static function Db($tag = null)
+获得 Db 对象
+参见  [DuckPhp\Component\DbManager::Db](Component-DbManager.md#Db)
+
+    public static function DbForRead()
+获得只读用的 Db 对象 public static function DbForRead() 
+参见 [DuckPhp\Component\DbManager::DbForRead](Component-DbManager.md#DbForRead)
+
+    public static function DbForWrite()
+获得读写用的 Db 对象
+参见 [DuckPhp\Component\DbManager::DbForWrite](Component-DbManager.md#DbForWrite)
+
+    public static function SqlForPager(string $sql, int $pageNo, int $pageSize = 10): string
+分页 limit 的 sql,补齐 sql用
+
+    public static function SqlForCountSimply(string $sql): string
+简单的把 `select ... from ` 替换成 `select count(*)as c from ` 用于分页处理。
+
+
+偷懒的时候，Helper 和 Base 合并在一起。
 
 DuckPhp 的 Model 层是很传统的跟着数据库表名走的模式。
 
@@ -288,7 +343,31 @@ YY-ModelEx.php 这是示例 跨表 Demo ，你可以删除他重建
 
 BusinessException.php 默认异常类
 
-Helper.php 方法有 Setting() Config() XpCall() FireEvent() Cache() OnEvent()
+Helper.php 方法一共有七个方法。
+
+BusinessHelper 用于业务层。三个配置相关方法，两个事件方法，和两个其他方法。
+
+    public static function Setting($key)
+获得设置信息
+
+    public static function Config($key =null , $default = null $file_basename = 'config')
+获得配置,如果没有则为 default ，如果key 也没有，则是配置文件（默认为 config）所有配置
+
+
+    public static function FireEvent($event, ...$args)
+触发事件
+
+    public static function OnEvent($event, $callback)
+绑定事件
+
+    public static function Cache($object = null)
+获得缓存对象
+
+    public static function XpCall($callback, ...$args)
+调用，如果产生异常则返回异常，否则返回正常数据
+
+ThrowByFlag
+
 
 Business 按规范，也有个 Base 公用基类
 
@@ -323,7 +402,7 @@ Controller 调用 Controller 怎么办。 DuckPhp 的规范是 Controller 不要
 
 其他业务相关 xx-Controller.php
 
-
+action_ 前缀的公开方法，是对应的路由调用方法
 
 #### System
  * App.php 入口位置
@@ -534,3 +613,68 @@ C
 
 V View 这很容易理解。当年 Smarty 引领了一个时代，但是到最后， php 程序员发现还得自己写 smarty 代码
 所以 DuckPhp 保持 PHP 就是模板的简洁性（本人曾经有个没人用的TagFeather 模板，说不定某年复活。
+
+#### 概念速读
+
+门面， DuckPhp 用可变单例代替了门面
+中间件， DuckPhp 提供了简单的中间件扩展 MyMiddlewareManager，但不建议使用。
+
+事件，见事件这一篇
+ 
+请求和响应， DuckPhp 没这个概念 但在 控制器助手类里有很多相同的行为
+
+数据库 ，DuckPhp 的数据库没那么强大
+
+模型 
+
+视图 DuckPhp 的视图原则
+
+错误处理
+日志  __logger() 得到 psr 日志类， Logger 类
+
+验证， DuckPhp 没验证处理，你需要第三方类
+
+缓存  Cache()
+
+Session  集中化管理
+
+Cookie  集中化管理
+
+多语言 重写 __l 函数
+
+上传 无特殊的上传
+
+命令行  见命令行的教程，和 DuckPhp\Core\Console 参考类
+
+扩展库
+
+#### FAQ
+
+Q _()方法是不是糟糕了
+
+你可以把 ::_()-> 看成和 facades 类似的门面方法。
+可变单例是 DuckPhp 的核心。
+你如果引入第三方包的时候，不满意默认实现，可以通过可变单例来替换他
+
+var_dump(MyClass::——()); 使用 Facades 就没法做到这个功能。
+
+Q 为什么不直接用 DB 类，而是用 DbManager
+
+A 做日志之类的处理用
+
+Q 为什么名字要以 *Model *Business *Controller 结尾
+让单词独一无二，便于搜索
+
+Q 为什么是 Db 而不是 DB 。
+A 为了统一起来。  缩写都驼峰而非全大写
+
+Q 回调 Class::Method Class@Method Class->Method 的区别
+
+A
+-> 表示 new 一个实例
+@ 表示 $class::_()->
+
+:: 表示 Class::Method
+
+~ => 扩充到当前命名空间
+

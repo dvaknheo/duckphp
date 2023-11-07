@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-// view/test/done.php?>
+// view/files.php?>
 <!doctype html><html><body>
 <fieldset>
 <legend>执行时间</legend>
