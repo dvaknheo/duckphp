@@ -133,3 +133,56 @@ App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里，还加载�
 
     public function _UserId()
 
+    public function _Event()
+
+    public function _Pager($object = null)
+
+        'path_config' => 'config',
+
+        'database' => null,
+数据库，单一数据库配置
+
+        'database_list' => null,
+数据库，多数据库配置
+
+        'database_list_reload_by_setting' => true,
+数据库，从设置里再入数据库配置
+
+        'database_list_try_single' => true,
+数据库，尝试使用单一数据库配置
+
+        'database_log_sql_level' => 'debug',
+数据库，记录sql 错误等级
+
+        'database_log_sql_query' => false,
+数据库，记录sql 查询
+
+        'database_auto_extend_method' => true,
+数据库，是否扩充方法至助手类
+扩充 setBeforeGetDbHandler 入助手类。
+
+        'database_class' => '',
+数据库，默认为 Db::class。
+如果你扩展了 DB 类，可以调用这个。更高级的可以调整 getDb 方法
+
+        'redis' => null,
+
+        'redis_list' => null,
+
+        'redis_list_reload_by_setting' => true,
+
+        'redis_list_try_single' => true,
+
+        'controller_url_prefix' => '',
+
+        'route_map_important' => [],
+
+        'route_map' => [],
+
+        'rewrite_map' => [],
+
+        'path_info_compact_action_key' => '_r',
+
+        'path_info_compact_class_key' => '',
+
+

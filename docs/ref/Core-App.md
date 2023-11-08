@@ -392,3 +392,15 @@ Show 方法对 View::Show() 加了好些补充
     public function _AdminId()
 
     public function _UserId()
+
+    public function _Platform()
+
+    public function _IsDebug()
+
+    public function _IsRealDebug()
+
+    public function _Event()
+
+    public function _Pager($object = null)
+
+

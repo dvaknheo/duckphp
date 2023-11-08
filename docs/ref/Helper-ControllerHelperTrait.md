@@ -163,3 +163,25 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
 以上就是所有控制器助手方法
     public static function PathInfo()
 
+    public static function Config($file_basename, $key = null, $default = null)
+
+    public static function getRouteCallingClass()
+
+    public static function Domain($use_scheme = false)
+
+    public static function Parameter($key = null, $default = null)
+
+    public static function ThrowByFlag($exception, $flag, $message, $code = 0)
+
+    public static function SERVER($key = null, $default = null)
+
+    public static function PageWindow($new_value = null)
+
+    public static function Admin($admin = null)
+
+    public static function AdminId()
+
+    public static function User($user = null)
+
+    public static function UserId()
+

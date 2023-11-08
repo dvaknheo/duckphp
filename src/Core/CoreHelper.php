@@ -99,11 +99,11 @@ class CoreHelper extends ComponentBase
     {
         return static::_()->_XpCall($callback, ...$args);
     }
-    public function SqlForPager($sql, $page_no, $page_size = 10)
+    public static function SqlForPager($sql, $page_no, $page_size = 10)
     {
         return static::_()->_SqlForPager($sql, $page_no, $page_size);
     }
-    public function SqlForCountSimply($sql)
+    public static function SqlForCountSimply($sql)
     {
         return static::_()->_SqlForCountSimply($sql);
     }

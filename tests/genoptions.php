@@ -1,9 +1,24 @@
 <?php
+use DuckPhp\Core\PhaseContainer;
+use DuckPhp\DuckPhp;
+
 require_once(__DIR__.'/../autoload.php');
+
+class MyContainer extends PhaseContainer
+{
+    public function getComponents()
+    {
+        $classes= array_keys($this->containers[DuckPhp::class]);
+        return $classes;
+    }
+}
+//////////////////////
 // 自动化文档脚本
 
-DocFixer::G()->init([])->run();
-
+//DataProvider::G()->getAviableExtClasses();return;
+DocFixer::G()->init([])->run(); //填充缺失的
+var_dump(DocFixer::G()->options_descs);
+echo "-----------------\n";
 // 从上面运行的结果要数据， 然后 生成在 options.md 里 // 还影响到 template/app/System/App.php
 OptionsGenerator::G()->init([])->run();
 
@@ -15,12 +30,6 @@ class DataProvider
     // 独立的组件
     public $independs = "DuckPhp\\HttpServer\\HttpServer
 DuckPhp\\Component\\Pager
-DuckPhp\\Component\\Console
-DuckPhp\\Component\\DuckPhpInstaller
-";
-    //默认组件
-    public $components = "DuckPhp\\DuckPhp
-DuckPhp\\Core\\RuntimeState
 ";
     // 所有可配组件
     public $all="DuckPhp\\DuckPhp";
@@ -48,14 +57,23 @@ DuckPhp\\Core\\RuntimeState
     }
     public function getAviableExtClasses()
     {
-        $default=$this->getDefaultComponentClasses();
-        $all=$this->getAllComponentClasses();
-        $ext=array_diff($all,$default);
-        $ext=array_filter($ext,function($v){if(substr($v,0,strlen("DuckPhp\\Ext\\"))==="DuckPhp\\Ext\\"){return true;}else{return false;}});
-        return $ext;
+        $source=realpath(__DIR__.'/../src/ext');
+        $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
+        $iterator = new \RecursiveIteratorIterator($directory);
+        $it=new \RegexIterator($iterator,'/\.php$/', RegexIterator::MATCH);
+        $ret=\iterator_to_array($it, false);
+        $classes =[];
+        foreach($ret as $file){
+            if('Trait.php' === substr($file,-strlen('Trait.php'))){ continue; }
+            if('HookChain.php' === substr($file,-strlen('HookChain.php'))){ continue; }
+            //其他忽略的也放进这里
+            $classes[] = 'DuckPhp\\Ext\\'.basename($file,'.php');
+        }
+        return $classes;
     }
     function getInDependComponentClasses()
     {
+        
         // 这里要移动到配置里
         $classes=explode("\n",$this->independs);
         return $classes;
@@ -63,14 +81,18 @@ DuckPhp\\Core\\RuntimeState
     function getDefaultComponentClasses()
     {
         // 我们override  phasecontainer ,然后把所有 comoont dump 出来
-        // 这里要移动到配置里
-        $classes=explode("\n",$this->components);
+        $container = new MyContainer();
+        PhaseContainer::GetContainerInstanceEx($container);
+        DuckPhp::_(new DuckPhp())->init([
+            'is_debug' => true,
+            'path_info_compact_enable' => true,
+        ]);
+        $classes = $container->getComponents();
         return $classes;
     }
     function getAllComponentClasses()
     {
-        $classes=explode("\n",$this->all);
-        return $classes;
+        return array_merge($this->getDefaultComponentClasses(), $this->getAviableExtClasses());
     }
 }
 class DocFixer
@@ -86,7 +108,7 @@ class DocFixer
         return $this;
     }
     protected $path_base='';
-    public $option_descs=[];
+    public $options_descs=[];
     public function __construct()
     {
         $ref=new ReflectionClass(\DuckPhp\DuckPhp::class);
@@ -95,36 +117,24 @@ class DocFixer
 
     public function run()
     {
+        $options_descs =[];
         $files=$this->getSrcFiles($this->path_base.'src/');
         foreach($files as $file){
-            $this->doDoc($file);
+            $data = $this->drawSrc($file);  //从代码中抽取选项和函数
+            $this->doFixDoc($file, $data);
+            $options_desc =$this->getOptionsDesc($file,$data);
+            $options_descs=array_merge($options_descs,$options_desc);
         }
-        $this->doOptionsDescs($files);
-        $this->doIndex($files);
-        return true;
-    }
-    public function doIndex($files)
-    {
-        $md_files =[];
-        foreach($files as $file){
-            $md_files[] =  substr($this->getMd($file),strlen($this->path_base.'/docs/ref/'));
-        }
-        // 我们把 ref的东西复制出来，然后 复制到 readme 里
+        ksort($options_descs);
         
-    }
-    public function doOptionsDescs($files)
-    {
-        $all =[];
-        foreach($files as $file){
-            $data=$this->doDoc2($file);
-            $all=array_merge($all,$data);
-        }
-        ksort($all);
         
         //$flag = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT;;
         //file_put_contents(__DIR__.'/../docs/out.json',json_encode($all,$flag));
-        $this->options_descs=$all;
+        $this->options_descs = $options_descs;
+        ///TODO 我们把 ref的东西复制出来，然后 复制到 readme 里
+        return true;
     }
+    
     protected function getSrcFiles($source)
     {
         $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
@@ -133,13 +143,13 @@ class DocFixer
         $ret=\iterator_to_array($it, false);
         return $ret;
     }
-    protected function doDoc($file)
+    protected function doFixDoc($file,$data)
     {
-        $data = $this->drawSrc($file);
-        $doc_file = $this->getMd($file);
+        $doc_file = $this->getDocFilename($file);
         $docs_lines=is_file($doc_file)?file($doc_file):[];
-        $options_diff=array_diff($data['options'],$docs_lines);
-        $functions_diff=array_diff($data['functions'],$docs_lines);
+        
+        $options_diff=array_diff($data['options'],$docs_lines); // 简单的看有没有相同的 options
+        $functions_diff=array_diff($data['functions'],$docs_lines); // 简单的看文档行有没有相同的 function
         $text ='';
         if($options_diff){
             $text.=implode("\n",$options_diff)."\n";
@@ -150,15 +160,16 @@ class DocFixer
         }
         if($text){
             var_dump($file,$text);
-            file_put_contents($doc_file.'.ext',$text,FILE_APPEND);
+            file_put_contents($doc_file.'',$text,FILE_APPEND);
         }
     }
     
-    protected function doDoc2($file)
+    protected function getOptionsDesc($file,$data)
     {
-        $data = $this->drawSrc($file);  // 这里又读了一次文件，优化就不需要了
-        $doc_file = $this->getMd($file);
+        $doc_file = $this->getDocFilename($file);
         $doc =  is_file($doc_file) ?  file_get_contents($doc_file) : '';
+        
+        // 从 md 文件抽取  options第二行 key => 第二行注释数组
         $ret=[];
         foreach($data['options'] as $v){
             $pos=strpos($doc,$v);
@@ -175,14 +186,16 @@ class DocFixer
     }
     public function drawSrc($file)
     {
+        //从文件中抽取参数和函数
+        
         $head  = '    public $options = ['."\n";
-        $head2 = '        $plugin_options_default = ['."\n";
-        $head3 = '    protected static $options_default = ['."\n";
-        $head4 = '    protected $core_options = ['."\n";
+        $head2 = '    protected $kernel_options = ['."\n";
+        $head3 = '    protected $core_options = ['."\n";
+        $head4 = '    protected $common_options = ['."\n";
 
         $foot  = '    ];'."\n";
-        $foot2 = '        ];'."\n";
-        $foot3 = '        ];'."\n";
+        $foot2 = '    ];'."\n";
+        $foot3 = '    ];'."\n";
         $foot4 = '    ];'."\n";
         
         
@@ -209,19 +222,12 @@ class DocFixer
         $functions=array_filter($lines,function($v){return preg_match('/function [a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/',$v);});
         return ['options'=>$options,'functions'=>$functions];
     }
-    protected function getMd($file)
+    protected function getDocFilename($file)
     {
         $md=substr($file,strlen($this->path_base.'src/'));
         $md=$this->path_base.'/docs/ref/'.str_replace(['/','.php'],['-','.md'],$md);
         return $md;
     }
-    
-    public function checkDoc($file,$data,$doc_lines)
-    {
-        $options_diff=array_diff($data['options'],$docs_lines);
-        $functions_diff=array_diff($data['functions'],$docs_lines);
-    }
-    
 }
 class OptionsGenerator
 {
@@ -230,6 +236,7 @@ class OptionsGenerator
         $ret=[];
         $input=$this->getAllOptions();
 
+        //重新调整，我们按文件来。 如果是 options, 那么
         $classes=DataProvider::G()->getAllComponentClasses();
         array_shift($classes);
         foreach($classes as $class){
@@ -238,7 +245,10 @@ class OptionsGenerator
             $str=str_replace(['DuckPhp\\','\\'],['/ref/','-'],$class);
             $file=$file.$str.'.md';
             $data=file_get_contents($file);
+            
+            //  
             $options=(new $class())->options;
+            
             $row=[];
             foreach($options as $k =>$v){
                 if(false ===strpos($data,$k)){
@@ -249,6 +259,7 @@ class OptionsGenerator
                 $ret[$class]=$row;
             }
         }
+        // 这里是显示没有 注释的 $options;
         if(!empty($ret)){
             var_dump($ret);
         }
@@ -275,28 +286,29 @@ class OptionsGenerator
         return $ret;
     }
     function WrapFileAction($file,$callback)
-{
-    $data=file_get_contents($file);
-    $data=$callback($data,$file);
-    file_put_contents($file,$data);
-}
+    {
+        $data=file_get_contents($file);
+        $data=$callback($data,$file);
+        file_put_contents($file,$data);
+    }
     public function run()
     {
-return;
-        static::WrapFileAction(__DIR__ . '/../template/app/System/App.php',function($content){
+
+        static::WrapFileAction(__DIR__ . '/../template/src/System/Options.php',function($content){
             $data=$this->getOptionStringForApp();
-            
             $str1="        // @autogen by tests/genoptions.php\n";
             $str2="        // @autogen end\n";
             $content=SliceReplace($content, $data, $str1, $str2);
             return $content;
         });
+        return;
         $docs=static::GetAllDocFile();
         foreach($docs as $file){
             static::WrapFileAction($file,'replaceData');
         }
-        $this->checkHasDoced();
         
+        $this->checkHasDoced();
+        return;        
     }
     public function diff()
     {
@@ -383,13 +395,17 @@ EOT;
         $desc=DataProvider::G()->getDescs();
         $ret=[];
         foreach($classes as $class){
-            $options=(new $class())->options;
+            try{
+                $options=(new $class())->options;
+            }catch(\Throwable $ex){
+                continue;
+            }
             $in_ext=in_array($class,$ext_classes)?true:false;
             foreach($options as $option => $value){
                 $ret[$option]=$ret[$option]??[];
                 $v= &$ret[$option];
-                $v['solid']=in_array($option, DataProvider::G()->getKernelOptions());
-                $v['is_default']=$v['is_default']??false;
+                $v['solid']= false;
+                $v['is_default']=$v['is_default'] ?? false;
                 $v['is_default']=$v['is_default'] || in_array($class,$default_classes);
                 $v['in_ext']=$in_ext;
                 $v['defaut_value']=$value;
@@ -404,6 +420,7 @@ EOT;
         ksort($ret);
         return $ret;
     }
+    
     protected function getDefaultOptionsString($input)
     {
         $desc=DataProvider::G()->getDescs();
@@ -418,7 +435,7 @@ EOT;
             }
             //$data[$option]=$s;
             $desc = ($attrs['desc']??'');
-                        $classes=$attrs['class'];
+            $classes=$attrs['class'];
             $classes=array_filter($classes,function($v){return $v!='DuckPhp\\DuckPhp';});
             $classes_desc =implode(", ",$classes);
             $str=<<<EOT
@@ -459,7 +476,6 @@ EOT;
                 $flag2 = ($input[$k]['is_default'])? '【共享】': '';
                 $var_option=var_export($k,true);
                 $comment=$input[$k]['desc']??'';
-                
                 if(!$comment){
                     var_export($k);echo "=>'',\n";
                 }
@@ -480,7 +496,6 @@ EOT;
         return implode("",$ret);
     }
 
-    
     protected function classToLink($class)
     {
         $name=$class;
@@ -489,10 +504,6 @@ EOT;
         return "[$class]({$name}.md)";
     }
 }
-
-/////////////////////
-
-
 
 ///////////////////////////////////////////
 function SliceReplace($data, $replacement, $str1, $str2, $is_outside = false, $wrap = false)
@@ -540,7 +551,7 @@ function replaceData($content)
     $files=$flag ? $m[1]:[];
     foreach($files as $file){
         $replacement=file_get_contents($dir.$file);
-        if($file==='template/app/System/App.php'){
+        if($file==='template/app/System/App.phpx'){
             $str1="        // @autogen by tests/genoptions.php\n";
             $str2="        // @autogen end\n";
             $replacement=SliceReplace($replacement, "// 【省略选项注释】\n", $str1, $str2);

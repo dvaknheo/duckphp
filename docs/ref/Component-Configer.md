@@ -32,3 +32,5 @@ path_config 如果是 / 开始的，会忽略 path 选项
 
 覆盖默配置。。。
 
+    protected function loadFile($file)
+

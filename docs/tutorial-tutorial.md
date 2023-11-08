@@ -1,5 +1,7 @@
 # 施工中，markdown 格式混乱
 
+## 前言
+
 DuckPhp 1.3.1 发布箴言。
 
 DuckPhp 1.3.1 现在发布。经过2年多没动之后，我花了几个月，做了现在的 DuckPhp 的新版本，做了很多改动。
@@ -73,16 +75,17 @@ function onInit()
 }
 function onDuckAdminInit()
 {
+    //在 amdin 开始的时候搞很多事
 }
 
 ```
 接下来我们就可以访问
-`/admin/` 得到duckadmin 的页面了。
+`/admin/` 得到 duckadmin 的页面了。
 ## 二次开发
 1. 修改配置实现
     正如演示看到的，每个子应用和主应用都有自己的配置选项。
 2. 修改页面， 默认的 view 太难看，我们要覆盖 override 改成自己的：
-    `[工程文件夹]/view/DuckAdmin/【同名文件】` 
+    `[工程文件夹]/view/DuckAdmin/[同名文件]` 
     
 3.页面里可以用到 全局函数,这些全局函数都是两个下划线开始的。
 
@@ -159,8 +162,9 @@ var_dump($admin);
 假设我们对他哪个实现不满意。
 ```php
 function onInit(){
-  DuckPhp::Phase(DuckAdminApp::class); //切入要修改的子应用的相位。
+  $phase = DuckPhp::Phase(DuckAdminApp::class); //切入要修改的子应用的相位。
   UserAction::_(MyUserAction::_());   //修改单例。这里是你的 UserAction 由你实现。
+  DuckPhp::Phase($phase);
 }
 ```
 致此，二次开发基本讲完了。要深入了解，那么我们就从自己搞个工程开始了
@@ -170,12 +174,13 @@ function onInit(){
 ```
 composer require dvaknheo/duckphp # 用 require 
 ./vendor/bin/duckphp new --help   # 查看有什么指令
-./vendor/bin/duckphp new    # 创建工程
+./vendor/bin/duckphp new          # 创建工程
 ```
 
 
 在这里，我们用 `tree`  列一下工程的文件结构
 ```
+tree -I 'public'
 .
 ├── config
 │   ├── DuckPhpApps.config.php
@@ -218,7 +223,6 @@ composer require dvaknheo/duckphp # 用 require
     └── test
         └── done.php
 
-
 ```
 
 ## 目录结构解说
@@ -227,8 +231,6 @@ composer require dvaknheo/duckphp # 用 require
 * config 配置文件夹。通过修改选项，也可以不需要这个文件夹
     * `config/DuckPhpSettings.config.php` 这个文件是存在的 ，只有根应用会有用，作用是保存设置的。
     * `config/DuckPhpApps.config.php` 这个是选项文件子应用的额外选项都在这里。安装的时候，会改写这个文件。
-* public web入口
-    * `index.php` 传统的web入口
 * runtime 文件夹是唯一需要可写的文件夹。默认工程没有写入东西。
     * keepme.txt 只是 git 作用
 * src 类文件夹。工程代码文件。
@@ -239,10 +241,101 @@ composer require dvaknheo/duckphp # 用 require
    * view/files.php 对应访问 file 的页面文件
    * view/main.php 对应 访问主页的页面文件
    *view/test/done.php 对应访问 test/done 的页面文件
-   ----
+----
+注意到我们排除了 public 目录,因为默认下带了很多示例文件
+我们主要关心入口文件 index.php 他长的是这样子：
+
+
+```
+<?php declare(strict_types=1);
+/**
+ * DuckPhp
+ * From this time, you never be alone~
+ */
+require_once(__DIR__.'/../../autoload.php');    //@DUCKPHP_HEADFILE
+echo "<div>You should not run the template file directly, Install it! </div>\n"; //@DUCKPHP_DELETE
+echo "<div>不建议直接运行模板文件，建议用安装模式 </div>\n";              //@DUCKPHP_DELETE
+
+// 设置工程命名空间对应的目录，但强烈推荐修改 composer.json 使用 composer 加载 
+if (!class_exists(\AdvanceDemo\System\App::class)) {
+    \DuckPhp\Core\AutoLoader::RunQuickly([]);
+    \DuckPhp\Core\AutoLoader::addPsr4("AdvanceDemo\\", 'src'); 
+}
+
+$options = [
+    // 这里可以添加更多选项
+    //'is_debug' => true,
+];
+\AdvanceDemo\System\App::RunQuickly($options);
+```
+入口很简单，就是 Runqucikly ,把 选项数组带进去就是
+选项数组可以填什么，看配置
+然后，我们入口是 `\AdvanceDemo\System\App` 类，就是后面的内容
+   
 ### src 源代码目录
 
 一共4个目录 我们以字母顺序 调用顺序 System -> Controrller -> Business -> Model 来介绍
+
+#### System
+ * App.php 入口位置
+ * Helper.php
+ * ProjectException.php
+
+
+```php
+class App extends DuckPhp
+{
+    //@override
+    public $options = [
+        //'is_debug' => true, // debug switch
+        // 'setting_file_enable' => true,
+        //'path_info_compact_enable' => false,
+        'error_404' => '_sys/error_404',
+        'error_500' => '_sys/error_500',
+    ];
+    /**
+     * console command sample
+     */
+    public function command_hello()
+    {
+        echo "hello\n";
+    }
+    public function action()
+    {
+        //
+    }
+    public function service()
+    {
+        //
+    }
+    
+}
+```
+你可以看到这里也有个 $options ，这里的 $options 和RunQuickly 的 options 合并一起， App->$option 会覆盖
+
+```php
+namespace AdvanceDemo\Controller;
+
+use DuckPhp\Foundation\SimpleSingletonTrait;
+use DuckPhp\Helper\AppHelperTrait;
+
+class Helper
+{
+    use SimpleSingletonTrait;
+    use AppHelperTrait;
+}
+```
+```php
+<?php declare(strict_types=1);
+namespace AdvanceDemo\System;
+
+use DuckPhp\Foundation\ExceptionTrait;
+
+class ProjectException
+{
+    use SimpleExceptionTrait;
+}
+```
 
 
 #### Base.php & Helper.php
@@ -404,68 +497,9 @@ Controller 调用 Controller 怎么办。 DuckPhp 的规范是 Controller 不要
 
 action_ 前缀的公开方法，是对应的路由调用方法
 
-#### System
- * App.php 入口位置
- * Helper.php
- * ProjectException.php
 
-
-```php
-class App extends DuckPhp
-{
-    //@override
-    public $options = [
-        //'is_debug' => true, // debug switch
-        // 'setting_file_enable' => true,
-        //'path_info_compact_enable' => false,
-        'error_404' => '_sys/error_404',
-        'error_500' => '_sys/error_500',
-        'controller_class_postfix' => 'Controller', // in common, use this
-        
-    ];
-    /**
-     * console command sample
-     */
-    public function command_hello()
-    {
-        echo "hello\n";
-    }
-    public function action()
-    {
-        //
-    }
-    public function service()
-    {
-        //
-    }
-    
-}
-```
 ## 代码分析
-首先我们从入口文件 public/index.php 开始，这个文件内容很简单：
 
-```php
-<?php declare(strict_types=1);
-/**
- * DuckPhp
- * From this time, you never be alone~
- */
-require_once(__DIR__.'/../../../../autoload.php');    //@DUCKPHP_HEADFILE
-
-echo "<div>You should not run the template file directly, Install it! </div>\n"; //@DUCKPHP_DELETE
-echo "<div>不建议直接运行模板文件，建议用安装模式 </div>\n";              //@DUCKPHP_DELETE
-
-\DuckPhp\Core\AutoLoader::RunQuickly([]);
-\DuckPhp\Core\AutoLoader::addPrs('../src', 'AdvanDemo\\');    
-
-$options = [
-    // ...
-];
-
-\AdvanDemo\System\App::RunQuickly($options);
-
-```
-$options 是就是各种选项了。
 
 
 

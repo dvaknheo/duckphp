@@ -91,3 +91,7 @@ if (!class_exists(\LazyToChange\System\App::class)) {
 
     protected function getNamespacePath($sub_path, $main_path): string
 
+    public static function _($object = null)
+
+    public static function addPsr4($namespace, $input_path)
+

@@ -66,3 +66,5 @@ HTTP服务器，端口
 虽然是个组件类，但是在流程中没用到，在 start_server.php 的时候用
 
 命令行的参数会合并进来
+    public static function G($object = null)
+

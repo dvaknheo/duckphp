@@ -94,3 +94,7 @@
 
     public function _ThrowByFlag($exception, $flag, $message, $code = 0)
 
+    public static function SqlForPager($sql, $page_no, $page_size = 10)
+
+    public static function SqlForCountSimply($sql)
+

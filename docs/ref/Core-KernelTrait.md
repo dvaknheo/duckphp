@@ -227,3 +227,67 @@ init() 初始化阶段，和 run 阶段
     public function _Setting($key = null)
 
 
+        'path' => null,
+
+        'namespace' => null,
+
+        'cli_enable' => true,
+
+        'is_debug' => false,
+
+        'ext' => [],
+
+        'override_class' => null,
+
+        'override_class_from' => null,
+
+        'use_flag_by_setting' => true,
+
+        'use_short_functions' => true,
+
+        'skip_404_handler' => false,
+
+        'skip_exception_check' => false,
+
+        'on_init' => null,
+
+        'container_only' => false,
+
+        'setting_file' => 'config/DuckPhpSettings.config.php', //TODO
+
+        'namespace_controller' => 'Controller',
+
+        'controller_path_ext' => '',
+
+        'controller_welcome_class' => 'Main',
+
+        'controller_welcome_class_visible' => false,
+
+        'controller_welcome_method' => 'index',
+
+        'controller_class_base' => '',
+
+        'controller_class_postfix' => 'Controller',
+
+        'controller_method_prefix' => 'action_',
+
+        'controller_prefix_post' => 'do_', //TODO remove it
+
+        'controller_class_map' => [],
+
+        'controller_resource_prefix' => '',
+
+        'controller_url_prefix' => '',
+
+        'use_output_buffer' => false,
+
+        'path_runtime' => 'runtime',
+
+        'cli_command_alias' => [],
+
+        'cli_default_command_class' => '',
+
+        'cli_command_method_prefix' => 'command_',
+
+        'cli_command_default' => 'help',
+
