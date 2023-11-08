@@ -4,7 +4,7 @@
  * From this time, you never be alone~
  */
 
-namespace AdvanceDemo\Controller;
+namespace AdvanceDemo\System;
 
 use DuckPhp\Foundation\SimpleSingletonTrait;
 use DuckPhp\Helper\AppHelperTrait;
