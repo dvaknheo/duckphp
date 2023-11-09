@@ -245,7 +245,7 @@ tree -I 'public'
 注意到我们排除了 public 目录,因为默认下带了很多示例文件
 我们主要关心入口文件 index.php 他长的是这样子：
 
-
+@script File: `template/public/index.php`
 ```
 <?php declare(strict_types=1);
 /**
@@ -272,6 +272,10 @@ $options = [
 选项数组可以填什么，看配置
 然后，我们入口是 `\AdvanceDemo\System\App` 类，就是后面的内容
    
+\AdvanceDemo\System\App::RunQuickly($options); 等价于
+\AdvanceDemo\System\App::_()->init($options)->run();
+
+
 ### src 源代码目录
 
 一共4个目录 我们以字母顺序 调用顺序 System -> Controrller -> Business -> Model 来介绍
@@ -282,6 +286,7 @@ $options = [
  * ProjectException.php
 
 
+@script File: `template/System/App.php`
 ```php
 class App extends DuckPhp
 {
@@ -292,7 +297,13 @@ class App extends DuckPhp
         //'path_info_compact_enable' => false,
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
+        
+        'exception_reporter' => ExceptionReporter::class,
     ];
+    protected function onInit()
+    {
+        //
+    }
     /**
      * console command sample
      */
@@ -300,19 +311,14 @@ class App extends DuckPhp
     {
         echo "hello\n";
     }
-    public function action()
-    {
-        //
-    }
-    public function service()
-    {
-        //
-    }
+    
     
 }
 ```
 你可以看到这里也有个 $options ，这里的 $options 和RunQuickly 的 options 合并一起， App->$option 会覆盖
+有一向 特殊配置 `'exception_reporter' => ExceptionReporter::class`, 这是把错误处理重定向到控制器的 `ExceptionReporter`类处理
 
+@script File: `template/System/Helper.php`
 ```php
 namespace AdvanceDemo\Controller;
 
@@ -325,33 +331,151 @@ class Helper
     use AppHelperTrait;
 }
 ```
+`Helper` 是各种助手方法, 
+Helper 类都是和业务无关的类。通过这些Helper类的静态方法来调用 DuckPhp 系统的功能。 
+所有 Helper 默认都只有静态方法
+你自己的 Helper请用动态方法以表示区别。
+如果你的系统足够小，你也可以把这些 HelperTrait 内嵌入相应的基类或类里。
+
+一共4个Helper 类
+
+
+AppHelperTrait 是各种核心修改用到的类，
+SimpleSingletonTrait 则是单例函数
+
+
+@script File: `template/System/ProjectException.php`
 ```php
 <?php declare(strict_types=1);
 namespace AdvanceDemo\System;
 
 use DuckPhp\Foundation\ExceptionTrait;
-
-class ProjectException
+use Exception;
+class ProjectException extends Exception
 {
     use SimpleExceptionTrait;
 }
 ```
+工程异常类 ，SimpleExceptionTrait 提供了个 ThrowOn 方法的实现。
+这样
+ProjectException::ThrowOn($flag,$message,$code = 0);
+如果 $flag 为真则触发异常。
+
+--
+System 目录是 业务工程师 不需要修改的，修改这的东西，都是核心工程师来修改
+在 App 类运行的
+App 的 run 方法，就根据路由，执行 Controller 目录下相关的类
+
+#### Controller
+
+Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口。 业务层由 Business 层处理。
+
+--
+
+Helper.php 控制器助手类
+
+@script File: `template/Controller/Helper.php`
+```php
+
+```
+偷懒的时候，你可以把这个 ControllerHelperTrait 放入 Controller 里
+
+Base.php 控制器基类，
+@script File: `template/Controller/Base.php`
+```php
+
+```
+ControllerException.php 控制器层的异常类
+
+@script File: `template/Controller/ControllerException.php`
+```php
+
+```
+
+ExceptionReporter.php 则是处理各种错误。
+
+@script File: `template/Controller/ControllerException.php`
+```php
+
+```
+
+Session.php Session 处理相关
+@script File: `template/Controller/Session.php`
+```php
+
+```
 
 
-#### Base.php & Helper.php
-每个目录下都有 Base.php & Helper.php
-Base 基类， 不带，后缀是基类的规范。
+
+其他业务相关 x
+MainController.php
+
+action_ 前缀的公开方法，是对应的路由调用方法
 
 
-Helper 类都是和业务无关的类。通过这些Helper类的静态方法来调用 DuckPhp 系统的功能。 
-所有 Helper 默认都只有静态方法
-你自己的 Helper请用动态方法以表示区别。
+testController.php
 
-一共4个Helper 类,前两个比较简单。
+CommonAction
 
-Controller/Helper 方法比较复杂 你需要查相关文档，做的都是和 web相关的一堆东西
-System/Helper 也很需要单独说明了。
+控制器里不要写业务，做的是输入和输出的处理
+控制器层调用 业务层，而不是 Model 层
 
+--
+
+#### Business 
+
+作为程序员专家，大家达成的意见是 业务逻辑层要抽出来，业务逻辑 英文是什么 Business Logic 嘛。
+
+有人用Logic ，这里我用的是 Business 命名 还有人用 Service。
+
+需要注意的是，虽然有人把这层独立出来，但是代码里却是和 web相关， Business 要求是什么，和Controller 无关，无状态。可测。
+
+当然，有些人会带上用户 ID ，这种一两个的例外。
+
+相比 Model 目录，这里多了 BusinessException 。 因为规范要求 model 类不得抛异常
+
+--
+Helper.php 方法一共有七个方法。
+
+Business 按规范，也有个 Base 公用基类
+
+
+BusinessException.php 默认异常类
+
+
+
+BusinessHelper 用于业务层。三个配置相关方法，两个事件方法，和两个其他方法。
+
+    public static function Setting($key)
+获得设置信息
+
+    public static function Config($key =null , $default = null $file_basename = 'config')
+获得配置,如果没有则为 default ，如果key 也没有，则是配置文件（默认为 config）所有配置
+
+
+    public static function FireEvent($event, ...$args)
+触发事件
+
+    public static function OnEvent($event, $callback)
+绑定事件
+
+    public static function Cache($object = null)
+获得缓存对象
+
+    public static function XpCall($callback, ...$args)
+调用，如果产生异常则返回异常，否则返回正常数据
+
+ThrowByFlag
+
+
+
+Business 相互调用，则放到 Service 里，这就是 Business 层不用 Service 来命名的原因
+
+xx-Business.php  你可以删除
+
+xx-Service.php  
+
+Business 之间相互调用的业务半成品，那么就抽出成 Service。
 
 #### Model
 
@@ -372,6 +496,12 @@ class Base
 }
 
 ```
+xx-Action.php
+
+Controller 调用 Controller 怎么办。 DuckPhp 的规范是 Controller 不要调用 Controller
+
+把 部分逻辑 放为 Action。 用 Controller 调用 Action.
+
 
 ```php
 <?php declare(strict_types=1);
@@ -422,80 +552,8 @@ XX-Model.php 这是示例 Demo ，你可以删除他根据你的数据库表重�
 
 YY-ModelEx.php 这是示例 跨表 Demo ，你可以删除他重建
 
-#### Business 
-
-作为程序员专家，大家达成的意见是 业务逻辑层要抽出来，业务逻辑 英文是什么 Business Logic 嘛。
-
-有人用Logic ，这里我用的是 Business 命名 还有人用 Service。
-
-需要注意的是，虽然有人把这层独立出来，但是代码里却是和 web相关， Business 要求是什么，和Controller 无关，无状态。可测。
-
-当然，有些人会带上用户 ID ，这种一两个的例外。
-
-相比 Model 目录，这里多了 BusinessException 。 因为规范要求 model 类不得抛异常
-
-BusinessException.php 默认异常类
-
-Helper.php 方法一共有七个方法。
-
-BusinessHelper 用于业务层。三个配置相关方法，两个事件方法，和两个其他方法。
-
-    public static function Setting($key)
-获得设置信息
-
-    public static function Config($key =null , $default = null $file_basename = 'config')
-获得配置,如果没有则为 default ，如果key 也没有，则是配置文件（默认为 config）所有配置
 
 
-    public static function FireEvent($event, ...$args)
-触发事件
-
-    public static function OnEvent($event, $callback)
-绑定事件
-
-    public static function Cache($object = null)
-获得缓存对象
-
-    public static function XpCall($callback, ...$args)
-调用，如果产生异常则返回异常，否则返回正常数据
-
-ThrowByFlag
-
-
-Business 按规范，也有个 Base 公用基类
-
-xx-Service.php  
-
-Business 之间相互调用的业务半成品，那么就抽出成 Service。
-
-Business 相互调用，则放到 Service 里，这就是 Business 层不用 Service 来命名的原因
-
-xx-Business.php  你可以删除
-
-#### Controller
-
-Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口。 业务层由 Business 层处理。
-
-Base.php 控制器类
-
-Helper.php 控制器助手类
-
-ControllerException.php 控制器层的异常类
-
-ExceptionReporter.php 则是处理各种错误。
-
-Session.php Session 处理相关
-
-
-xx-Action.php
-
-Controller 调用 Controller 怎么办。 DuckPhp 的规范是 Controller 不要调用 Controller
-
-把 部分逻辑 放为 Action。 用 Controller 调用 Action.
-
-其他业务相关 xx-Controller.php
-
-action_ 前缀的公开方法，是对应的路由调用方法
 
 
 ## 代码分析

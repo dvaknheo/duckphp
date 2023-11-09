@@ -7,6 +7,7 @@
 namespace AdvanceDemo\System;
 
 use DuckPhp\DuckPhp;
+use AdvanceDemo\Controller\ExceptionReporter;
 
 class App extends DuckPhp
 {
@@ -16,8 +17,7 @@ class App extends DuckPhp
         //'path_info_compact_enable' => false,
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
-        'controller_class_postfix' => 'Controller', // in common, use this
-        
+        'exception_reporter' => ExceptionReporter::class,
     ];
     //@override
     protected function onInit()
@@ -29,6 +29,6 @@ class App extends DuckPhp
      */
     public function command_hello()
     {
-        echo "hello\n";
+        echo "hello ". static::class ."\n";
     }
 }
