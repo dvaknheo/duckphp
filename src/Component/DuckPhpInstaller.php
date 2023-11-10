@@ -79,7 +79,7 @@ class DuckPhpInstaller extends ComponentBase
             }
             //decoct(fileperms($file) & 0777);
         }
-        copy($source.'config/setting.sample.php', $dest.'config/setting.php');
+        //copy($source.'config/setting.sample.php', $dest.'config/setting.php');
         echo  "\nDone.\n";
     }
     protected function checkFilesExist($source, $dest, $files)
@@ -133,12 +133,12 @@ class DuckPhpInstaller extends ComponentBase
     }
     protected function filteNamespace($data, $namespace)
     {
-        if ($namespace === 'LazyToChange' || $namespace === '') {
+        if ($namespace === 'AdvanceDemo' || $namespace === '') {
             return $data;
         }
         $str_header = "\$namespace = '$namespace';";
         $data = preg_replace('/^.*?@DUCKPHP_NAMESPACE.*?$/m', $str_header, $data);
-        $data = str_replace("LazyToChange\\", "{$namespace}\\", $data);
+        $data = str_replace("AdvanceDemo\\", "{$namespace}\\", $data);
         
         return $data;
     }

@@ -12,7 +12,7 @@ class ExceptionReport
     use ExceptionReportTrait;
     //public function defaultException($ex)
     //{
-        //return parent::defaultException($ex);
+        //return App::Current()->_OnDefaultException($ex);
     //}
     public function onBusinessException($ex)
     {

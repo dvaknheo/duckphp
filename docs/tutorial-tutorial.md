@@ -138,10 +138,12 @@ _\_debug_log(...$arg)
 
     对应 App::DebugLog($message, array $context = array()) 对应调试状态下 Log 当前变量。
 
+__var_log($var) 
 
+    在日志打印当前变量
+__logger()
 
-function __var_log($var)  在日志打印当前变量
-function __logger() 获得 日志对象，便于不同级别的调试
+    获得`Psr\Log\LoggerInterface`日志对象，便于不同级别的调试
     
     
 所有 DuckPhp 的全局函数就这么讲完了 ^_^
@@ -158,13 +160,13 @@ var_dump($admin);
 ```
 
 4. 热修复，修改实现
-
 假设我们对他哪个实现不满意。
 ```php
-function onInit(){
+function onInit()
+{
   $phase = DuckPhp::Phase(DuckAdminApp::class); //切入要修改的子应用的相位。
   UserAction::_(MyUserAction::_());   //修改单例。这里是你的 UserAction 由你实现。
-  DuckPhp::Phase($phase);
+  DuckPhp::Phase($phase);   //回到原相位
 }
 ```
 致此，二次开发基本讲完了。要深入了解，那么我们就从自己搞个工程开始了
@@ -174,7 +176,7 @@ function onInit(){
 ```
 composer require dvaknheo/duckphp # 用 require 
 ./vendor/bin/duckphp new --help   # 查看有什么指令
-./vendor/bin/duckphp new          # 创建工程
+./vendor/bin/duckphp new --namespace MyProject # 创建工程命名空间为MyProject
 ```
 
 
@@ -227,7 +229,7 @@ tree -I 'public'
 
 ## 目录结构解说
 小写的是资源文件夹，资源文件夹可以由 $options['path']设置为其他目录。
-### 工程文件夹
+### 工程目录
 * config 配置文件夹。通过修改选项，也可以不需要这个文件夹
     * `config/DuckPhpSettings.config.php` 这个文件是存在的 ，只有根应用会有用，作用是保存设置的。
     * `config/DuckPhpApps.config.php` 这个是选项文件子应用的额外选项都在这里。安装的时候，会改写这个文件。
@@ -272,18 +274,19 @@ $options = [
 选项数组可以填什么，看配置
 然后，我们入口是 `\AdvanceDemo\System\App` 类，就是后面的内容
    
-\AdvanceDemo\System\App::RunQuickly($options); 等价于
-\AdvanceDemo\System\App::_()->init($options)->run();
+`\AdvanceDemo\System\App::RunQuickly($options); `
+等价于
+`\AdvanceDemo\System\App::_()->init($options)->run();`
 
+`init()`初始化，然后 `run()` 运行
+入口类只会被初始化，除非强制初始化。
+
+`$options` 选项很复杂， 你的工程因为他们而不同。 有40多个，可以在 查看文档 []()
 
 ### src 源代码目录
 
-一共4个目录 我们以字母顺序 调用顺序 System -> Controrller -> Business -> Model 来介绍
 
 #### System
- * App.php 入口位置
- * Helper.php
- * ProjectException.php
 
 
 @script File: `template/System/App.php`
@@ -293,7 +296,6 @@ class App extends DuckPhp
     //@override
     public $options = [
         //'is_debug' => true, // debug switch
-        // 'setting_file_enable' => true,
         //'path_info_compact_enable' => false,
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
@@ -315,8 +317,24 @@ class App extends DuckPhp
     
 }
 ```
-你可以看到这里也有个 $options ，这里的 $options 和RunQuickly 的 options 合并一起， App->$option 会覆盖
-有一向 特殊配置 `'exception_reporter' => ExceptionReporter::class`, 这是把错误处理重定向到控制器的 `ExceptionReporter`类处理
+ * App.php 是重载 DuckPhp 类的 入口位置
+
+你可以看到这里也有个 `$options` ，这里的 `$options` 和 `RunQuickly` 的 `options` 合并一起。以后者优先。
+
+被注释的 `is_debug`选项，是调试选项，你可以开启这个选项以开启调试模式
+
+被注释的 `path_info_compact_enable` 用于没开启 nginx 配置的时候，兼容无 `path_info` 模式
+
+'error_404' => '_sys/error_404',  404错误页面
+
+'error_500' => '_sys/error_500',  500错误页面
+
+有一项 特殊选项 `'exception_reporter' => ExceptionReporter::class`, 这是把错误处理重定向到控制器的 `ExceptionReporter`类处理
+
+`protected function onInit()` 在 `init()` 最后阶段会调用，你可以再次调整你的工程代码
+
+`command_hello()` 这是命令行下  php `duckphp-project hello` 的入口。具体详见   [Console](ref/Core-Console.md) 的文档
+
 
 @script File: `template/System/Helper.php`
 ```php
@@ -331,17 +349,16 @@ class Helper
     use AppHelperTrait;
 }
 ```
-`Helper` 是各种助手方法, 
-Helper 类都是和业务无关的类。通过这些Helper类的静态方法来调用 DuckPhp 系统的功能。 
-所有 Helper 默认都只有静态方法
-你自己的 Helper请用动态方法以表示区别。
+`Helper` 是各种助手方法,  `Helper`类都是和业务无关的类。通过这些Helper类的静态方法来调用 DuckPhp 系统的功能。 
+
+所有 `Helper` 默认都只有静态方法,你自己的 Helper请用动态方法以表示区别。
+
 如果你的系统足够小，你也可以把这些 HelperTrait 内嵌入相应的基类或类里。
 
-一共4个Helper 类
 
+`AppHelperTrait` 是各种核心修改用到的类， 相关文档看这里 [AppHelperTrait 文档](ref/Helper-AppHelperTrait.md) 
 
-AppHelperTrait 是各种核心修改用到的类，
-SimpleSingletonTrait 则是单例函数
+`SimpleSingletonTrait` 则是单例函数。 实现 `_()`方法
 
 
 @script File: `template/System/ProjectException.php`
@@ -356,21 +373,18 @@ class ProjectException extends Exception
     use SimpleExceptionTrait;
 }
 ```
-工程异常类 ，SimpleExceptionTrait 提供了个 ThrowOn 方法的实现。
-这样
-ProjectException::ThrowOn($flag,$message,$code = 0);
+工程异常基类 ，`SimpleExceptionTrait` 提供了个 ThrowOn 方法的实现。
+`ProjectException::ThrowOn($flag,$message,$code = 0);`
 如果 $flag 为真则触发异常。
 
---
+----
+
 System 目录是 业务工程师 不需要修改的，修改这的东西，都是核心工程师来修改
-在 App 类运行的
 App 的 run 方法，就根据路由，执行 Controller 目录下相关的类
 
 #### Controller
 
 Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口。 业务层由 Business 层处理。
-
---
 
 Helper.php 控制器助手类
 
@@ -378,47 +392,55 @@ Helper.php 控制器助手类
 ```php
 
 ```
-偷懒的时候，你可以把这个 ControllerHelperTrait 放入 Controller 里
 
-Base.php 控制器基类，
+偷懒的时候，你可以把这个 ControllerHelperTrait 放入 Controller 里 [ControllerHelperTrait 文档](ref/Helper-ControllerHelperTrait.md)。
+ControllerHelperTrait 方法比较多。这也是由 Controller 复杂环境导致的.
+
 @script File: `template/Controller/Base.php`
 ```php
 
 ```
-ControllerException.php 控制器层的异常类
+控制器层的基本类，提供了  `_()` 单例方法的实现。
+
 
 @script File: `template/Controller/ControllerException.php`
 ```php
 
 ```
+ControllerException ，控制器层的异常，简单的引入 `ThrowOn()` 方便抛异常
 
-ExceptionReporter.php 则是处理各种错误。
 
-@script File: `template/Controller/ControllerException.php`
-```php
-
-```
-
-Session.php Session 处理相关
 @script File: `template/Controller/Session.php`
 ```php
 
 ```
+Session.php Session 处理相关
 
 
+@script File: `template/Controller/ExceptionReporter.php`
+```php
 
-其他业务相关 x
+```
+ExceptionReporter.php 则是处理各种错误。
+
+@script File: `template/Controller/CommonAction.php`
+```php
+```
+
+Controller 不要相互调用， 我们把完成部分逻辑的控制器，可以放到 `Action` 结尾的类里
+
+
+其他业务相关 
 MainController.php
-
+testController.php
 action_ 前缀的公开方法，是对应的路由调用方法
 
 
-testController.php
 
-CommonAction
+
 
 控制器里不要写业务，做的是输入和输出的处理
-控制器层调用 业务层，而不是 Model 层
+控制器层调用 业务层，而不是模型层
 
 --
 
@@ -465,17 +487,22 @@ BusinessHelper 用于业务层。三个配置相关方法，两个事件方法�
     public static function XpCall($callback, ...$args)
 调用，如果产生异常则返回异常，否则返回正常数据
 
-ThrowByFlag
+    ThrowByFlag
+给那些没实现 `ThrowOn`的异常类多个类似的
 
 
 
-Business 相互调用，则放到 Service 里，这就是 Business 层不用 Service 来命名的原因
 
-xx-Business.php  你可以删除
 
-xx-Service.php  
+
+
+CommonService.php
 
 Business 之间相互调用的业务半成品，那么就抽出成 Service。
+Business 相互调用，则放到 Service 里，这就是 Business 层不用 Service 来命名的原因 
+
+
+DemoBusiness.php 示例业务类，你可以删除，并加上多个类似符合你的工程的业务类
 
 #### Model
 
@@ -496,12 +523,6 @@ class Base
 }
 
 ```
-xx-Action.php
-
-Controller 调用 Controller 怎么办。 DuckPhp 的规范是 Controller 不要调用 Controller
-
-把 部分逻辑 放为 Action。 用 Controller 调用 Action.
-
 
 ```php
 <?php declare(strict_types=1);
@@ -552,6 +573,9 @@ XX-Model.php 这是示例 Demo ，你可以删除他根据你的数据库表重�
 
 YY-ModelEx.php 这是示例 跨表 Demo ，你可以删除他重建
 
+不推荐 Model 层里抛异常，所以 Model 层没有 ModelException
+
+`SimpleModelTrait` 的方法，也是
 
 
 

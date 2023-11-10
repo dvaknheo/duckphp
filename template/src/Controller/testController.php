@@ -10,7 +10,7 @@ use AdvanceDemo\Business\DemoBusiness;
 
 class testController
 {
-    public function done()
+    public function action_done()
     {
         $var = DemoBusiness::_()->foo();
         Helper::Show(get_defined_vars());
