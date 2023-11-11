@@ -707,21 +707,6 @@
 
 ## 其他选项
 这几个选项，不是放在 $options 的，所以特地在这里参考
-### DuckPhp\Core\AppPluginTrait
-
-    'plugin_path_namespace' => null,
-    'plugin_namespace' => null,
-    
-    'plugin_routehook_position' => 'append-outter',
-    
-    'plugin_path_conifg' => 'config',
-    'plugin_path_view' => 'view',
-    
-    'plugin_search_config' => false,
-    'plugin_use_helper' => true,
-    'plugin_files_config' => [],
-    'plugin_url_prefix' => '',
-    'plugin_injected_helper_map' => '',
 ###  DuckPhp\HttpServer\HttpServer
     'host' => '127.0.0.1',
     'port' => '8080',

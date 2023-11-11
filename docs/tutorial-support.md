@@ -64,35 +64,8 @@ php-cs-fixer fix && phpstan analyse && phpunit && php tests/genoptions.php && do
 
 ```
 
-Q _()方法是不是糟糕了
 
-你可以把 ::_()-> 看成和 facades 类似的门面方法。
-可变单例是 DuckPhp 的核心。
-你如果引入第三方包的时候，不满意默认实现，可以通过可变单例来替换他
-
-var_dump(MyClass::——()); 使用 Facades 就没法做到这个功能。
-
-Q 为什么不直接用 DB 类，而是用 DbManager
-
-A 做日志之类的处理用
-
-Q 为什么名字要以 *Model *Business *Controller 结尾
-让单词独一无二，便于搜索
-
-Q 为什么是 Db 而不是 DB 。
-A 为了统一起来。  缩写都驼峰而非全大写
-
-Q 回调 Class::Method Class@Method Class->Method 的区别
-
-A
--> 表示 new 一个实例
-@ 表示 $class::_()->
-
-:: 表示 Class::Method
-
-~ => 扩充到当前命名空间
-
-/////////////////
+//////////
 
 #### 概念速读
 
@@ -110,6 +83,7 @@ A
 视图 DuckPhp 的视图原则
 
 错误处理
+
 日志  __logger() 得到 psr 日志类， Logger 类
 
 验证， DuckPhp 没验证处理，你需要第三方类

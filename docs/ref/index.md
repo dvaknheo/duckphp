@@ -107,96 +107,93 @@
 ##  全部文件一览
 
 ```
-export LC_ALL='C';tree src
-
+tree src
 src
-|-- Component
-|   |-- AppPluginTrait.php
-|   |-- Cache.php
-|   |-- Console.php
-|   |-- DbManager.php
-|   |-- DuckPhpCommand.php
-|   |-- DuckPhpInstaller.php
-|   |-- EventManager.php
-|   |-- Pager.php
-|   |-- PagerInterface.php
-|   |-- RouteEx.php
-|   |-- RouteHookPathInfoCompat.php
-|   `-- RouteHookRouteMap.php
-|-- Core
-|   |-- App.php
-|   |-- AutoLoader.php
-|   |-- ComponentBase.php
-|   |-- ComponentInterface.php
-|   |-- Configer.php
-|   |-- ExceptionManager.php
-|   |-- ExtendableStaticCallTrait.php
-|   |-- Functions.php
-|   |-- KernelTrait.php
-|   |-- Logger.php
-|   |-- Route.php
-|   |-- RuntimeState.php
-|   |-- SystemWrapperTrait.php
-|   `-- View.php
-|-- Db
-|   |-- Db.php
-|   |-- DbAdvanceTrait.php
-|   `-- DbInterface.php
-|-- DuckPhp.php
-|-- Ext
-|   |-- CallableView.php
-|   |-- EmptyView.php
-|   |-- ExceptionWrapper.php
-|   |-- HookChain.php
-|   |-- InstallableTrait.php
-|   |-- Installer.php
-|   |-- InstallerException.php
-|   |-- JsonRpcClientBase.php
-|   |-- JsonRpcExt.php
-|   |-- JsonView.php
-|   |-- Misc.php
-|   |-- MyFacadesAutoLoader.php
-|   |-- MyFacadesBase.php
-|   |-- MyMiddlewareManager.php
-|   |-- RedisCache.php
-|   |-- RedisManager.php
-|   |-- RouteHookApiServer.php
-|   |-- RouteHookDirectoryMode.php
-|   |-- RouteHookFunctionRoute.php
-|   |-- RouteHookManager.php
-|   |-- RouteHookResource.php
-|   |-- RouteHookRewrite.php
-|   |-- SqlDumper.php
-|   |-- StaticReplacer.php
-|   |-- StrictCheck.php
-|   `-- SuperGlobalContext.php
-|-- Foundation
-|   |-- Session.php
-|   |-- SimpleControllerTrait.php
-|   |-- SimpleModelTrait.php
-|   `-- ThrowOnableTrait.php
-|-- Helper
-|   |-- AdvanceHelper.php
-|   |-- AdvanceHelperTrait.php
-|   |-- BusinessHelper.php
-|   |-- BusinessHelperTrait.php
-|   |-- ControllerHelper.php
-|   |-- ControllerHelperTrait.php
-|   |-- ModelHelper.php
-|   |-- ModelHelperTrait.php
-|   |-- ViewHelper.php
-|   `-- ViewHelperTrait.php
-|-- HttpServer
-|   |-- AppInterface.php
-|   |-- HttpServer.php
-|   `-- HttpServerInterface.php
-|-- SingletonEx
-|   |-- SimpleReplacer.php
-|   `-- SingletonExTrait.php
-`-- ThrowOn
-    `-- ThrowOnTrait.php
+├── Component
+│   ├── Cache.php
+│   ├── Configer.php
+│   ├── DbManager.php
+│   ├── DuckPhpCommand.php
+│   ├── DuckPhpInstaller.php
+│   ├── EventManager.php
+│   ├── ExtOptionsLoader.php
+│   ├── GlobalAdmin.php
+│   ├── GlobalUser.php
+│   ├── Pager.php
+│   ├── PagerInterface.php
+│   ├── PhaseProxy.php
+│   ├── RedisCache.php
+│   ├── RedisManager.php
+│   ├── RouteHookPathInfoCompat.php
+│   ├── RouteHookResource.php
+│   ├── RouteHookRewrite.php
+│   └── RouteHookRouteMap.php
+├── Core
+│   ├── App.php
+│   ├── AutoLoader.php
+│   ├── ComponentBase.php
+│   ├── ComponentInterface.php
+│   ├── Console.php
+│   ├── CoreHelper.php
+│   ├── DuckPhpSystemException.php
+│   ├── ExceptionManager.php
+│   ├── ExitException.php.bak
+│   ├── Functions.php
+│   ├── KernelTrait.php
+│   ├── Logger.php
+│   ├── PhaseContainer.php
+│   ├── Route.php
+│   ├── Runtime.php
+│   ├── SingletonTrait.php
+│   ├── SuperGlobal.php
+│   ├── SystemWrapper.php
+│   ├── ThrowOnTrait.php
+│   └── View.php
+├── Db
+│   ├── Db.php
+│   ├── DbAdvanceTrait.php
+│   └── DbInterface.php
+├── DuckPhp.php
+├── DuckPhpAllInOne.php
+├── Ext
+│   ├── CallableView.php
+│   ├── EmptyView.php
+│   ├── ExceptionWrapper.php
+│   ├── ExtendableStaticCallTrait.php
+│   ├── HookChain.php
+│   ├── JsonRpcClientBase.php
+│   ├── JsonRpcExt.php
+│   ├── JsonView.php
+│   ├── MiniRoute.php
+│   ├── Misc.php
+│   ├── MyFacadesAutoLoader.php
+│   ├── MyFacadesBase.php
+│   ├── MyMiddlewareManager.php
+│   ├── RouteHookApiServer.php
+│   ├── RouteHookDirectoryMode.php
+│   ├── RouteHookFunctionRoute.php
+│   ├── RouteHookManager.php
+│   ├── SqlDumper.bak
+│   ├── StaticReplacer.php
+│   └── StrictCheck.php
+├── Foundation
+│   ├── ExceptionReporterTrait.php
+│   ├── SimpleBusinessTrait.php
+│   ├── SimpleControllerTrait.php
+│   ├── SimpleExceptionTrait.php
+│   ├── SimpleModelTrait.php
+│   ├── SimpleSessionTrait.php
+│   └── SimpleSingletonTrait.php
+├── Helper
+│   ├── AppHelperTrait.php
+│   ├── BusinessHelperTrait.php
+│   ├── ControllerHelperTrait.php
+│   └── ModelHelperTrait.php
+└── HttpServer
+    ├── AppInterface.php
+    ├── HttpServer.php
+    └── HttpServerInterface.php
 
-9 directories, 76 files
 ```
 
 ## nginx 配置
