@@ -11,6 +11,8 @@
         'controller_resource_prefix' => '',
 资源前缀
 
+        'controller_url_prefix' => '',
+
 ## 方法
     public static function Hook($path_info)
 
@@ -26,7 +28,6 @@
 
 res/ 目录，对应 admin/res/ 之类等
 
-        'controller_url_prefix' => '',
 
     public function cloneResource($force = false, &$info = '')
 

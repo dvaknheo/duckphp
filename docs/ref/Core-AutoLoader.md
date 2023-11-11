@@ -25,6 +25,8 @@
         'autoload_path_namespace_map' => [],
 psr4 风格自动加载路径和命名空间映射
 
+        'psr-4' => [],
+
 ## 方法
 public $is_inited = false;
 
@@ -85,7 +87,6 @@ if (!class_exists(\LazyToChange\System\App::class)) {
 ```
 
 
-        'psr-4' => [],
 
     public static function RunQuickly(array $options = [])
 

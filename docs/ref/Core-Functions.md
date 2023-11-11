@@ -7,7 +7,7 @@ DuckPhp 尽量避免污染全局环境，这些函数
 
 都是以 两条下划线开头。
 
-都是  [DuckPhp\Core\App](Core-App.md) 类的函数的映射，
+都是  [DuckPhp\Core\CoreHelper](Core-CoreHelper.md) 类的函数的映射，
 
 
 你可以在 App::onPrepare() 时候 替换相应函数的实现。

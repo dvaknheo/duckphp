@@ -47,6 +47,9 @@
     
     protected function showHelp()
 
+        function detectedClass($path)
+
+
 ## 说明
 
 DuckPhpInstaller 是辅助安装类。
@@ -60,5 +63,4 @@ vendor/bin/duckphp new  --help
 ```
 
 
-        function detectedClass($path)
 

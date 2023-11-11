@@ -10,7 +10,7 @@ BusinessHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extendabl
     public static function Setting($key)
 获得设置信息
 
-    public static function Config($key, $default = null, $file_basename = 'config')
+    public static function Config($file_basename, $key = null, $default = null)
 获得配置
 
 
@@ -26,10 +26,10 @@ BusinessHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extendabl
     public static function XpCall($callback, ...$args)
 调用，如果产生异常则返回异常，否则返回正常数据
 
+    public static function ThrowByFlag($exception, $flag, $message, $code = 0)
+
 ControllerHelperTrait 相比比 BusinessHelperTrait 少了 Cache()
 
 
-    public static function Config($file_basename, $key = null, $default = null)
 
-    public static function ThrowByFlag($exception, $flag, $message, $code = 0)
 

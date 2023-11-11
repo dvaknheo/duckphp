@@ -277,7 +277,6 @@ Helper 目录，助手类，如果你一个人偷懒，直接用 APP 类也行
 
 一些额外功能，你要看   [内置扩展介绍](docs/tutorial-extension.md)
 
-使用第三方插件或把项目变成插件 需要看 [插件模式](docs/tutorial-plugin.md)
 
 最后，查看 [开发相关](docs/tutorial-support.md) 加入开发
 

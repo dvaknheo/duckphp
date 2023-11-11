@@ -1,13 +1,10 @@
-# DuckPhp\Helper\AdvanceHelperTrait
+# DuckPhp\Helper\AppHelperTraitTrait
 [toc]
 
 ## 简介
 
-`DuckPhp\Helper\AdvanceHelper` 类
+`DuckPhp\Helper\AppHelperTrait` 类
 
- 使用 [DuckPhp\Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md) 
-
- 使用 `DuckPhp\Helper\AdvanceHelperTrait`
 ## 公开方法
 
 ### 一般方法

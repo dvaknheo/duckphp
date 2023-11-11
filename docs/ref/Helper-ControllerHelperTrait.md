@@ -3,10 +3,9 @@
 
 ## 简介
 
-ControllerHelper 绑定了 ControllerHelperTrait
+控制器助手Trait
 
-ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md) ，ControllerHelperTrait
-
+## 方法说明
 
 ### 超全局变量
 替代同名 $\_GET / $\_POST /$\_REQUEST /$\_COOKIE/$\_SERVER 。如果没的话返回后面的 $default 默认值。如果 $key 为 null 返回整个数组。
@@ -101,44 +100,7 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
 
     public static function setDefaultExceptionHandler($callback)
 设置默认的异常处理
-常用的一个操作：
-```php
-<?php
-    //旧：
-    public function login_old()
-    {
-        $error = '';
-        $post = C::POST();
-        if($post){
-            try{
-                $admin = AdminService::G()->login($post);
-                SessionService::G()->setCurrentAdmin($admin,$post['remember']);
-                C::ExitRouteTo('profile/index');
-                return;
-            }catch(\Throwable $ex){
-                $error = $ex->getMessage();
-            }
-        }
-        C::Show(get_defined_vars(), 'login');
-    }
-    //新：
-    public function login()
-    {
-        C::Show(get_defined_vars(), 'login');
-    }
-    public function do_login()
-    {
-        C::setDefaultExceptionHandler(function($ex){
-            $error = $ex->getMessage();
-            C::assignViewData(['error'=>$error]);
-            $this->login();
-        });
-        $post = C::POST();
-        $admin = AdminService::G()->login($post);
-        SessionService::G()->setCurrentAdmin($admin,$post['remember']);
-        C::ExitRouteTo('profile/index');
-    }
-```
+
 
 ### 其他控制器助手方法
 
@@ -157,10 +119,8 @@ ControllerHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extenda
     public static function IsAjax()
 判断是否是Ajax 请求
 
-    public static function CheckRunningController($self, $static)
-用于基类里判断是否被直接调用。参见 App 里相关文档
-
 以上就是所有控制器助手方法
+
     public static function PathInfo()
 
     public static function Config($file_basename, $key = null, $default = null)

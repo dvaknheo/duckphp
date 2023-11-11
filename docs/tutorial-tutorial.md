@@ -258,10 +258,10 @@ tree -I 'public'
 
 小写的是资源文件夹，资源文件夹可以由 $options['path']设置为其他目录。
 ### 工程目录
-* config 配置文件夹。通过修改选项，也可以不需要这个文件夹
+* config 配置目录。通过修改应用的选项，也可以不需要这个目录
     * `config/DuckPhpSettings.config.php` 这个文件是存在的 ，只有根应用会有用，作用是保存设置的。
     * `config/DuckPhpApps.config.php` 这个是选项文件子应用的额外选项都在这里。安装的时候，会改写这个文件。
-* runtime 文件夹是唯一需要可写的文件夹。默认工程没有写入东西。
+* runtime 目录是唯一需要可写的文件夹。默认工程没有写入东西。
     * keepme.txt 只是 git 作用
 * src 类文件夹。工程代码文件。后面详解
 * view 视图文件夹
@@ -309,13 +309,11 @@ $options = [
 `init()`初始化，然后 `run()` 运行
 入口类只会被初始化，除非强制初始化。
 
-`$options` 选项很复杂， 你的工程因为他们而不同。 有40多个，可以在 查看文档 []()
+`$options` 选项很复杂， 你的工程因为他们而不同。 有40多个，可以在 查看 [参考索引页面](ref/index.md)
 
 ### src 源代码目录
 
-
 #### System
-
 
 @script File: `template/System/App.php`
 ```php
@@ -353,36 +351,18 @@ class App extends DuckPhp
 
 被注释的 `path_info_compact_enable` 用于没开启 nginx 配置的时候，兼容无 `path_info` 模式
 
-'error_404' => '_sys/error_404',  404错误页面
+`'error_404' => '_sys/error_404',`  404错误页面
 
-'error_500' => '_sys/error_500',  500错误页面
-
+`'error_500' => '_sys/error_500',`  500错误页面
 
 有一项 特殊选项 `'exception_reporter' => ExceptionReporter::class`, 这是把错误处理重定向到控制器的 `ExceptionReporter`类处理
 
-当然了，你也可以把其他放在这里
-```php
-'ext'=>[
-        DuckAdminApp::class => [
-            'controller_url_prefix'=>'admin/',
-            //其他配置
-            ''on_inited' => 'onDuckAdminInit', //这里演示初始化插一个东西
-        ],
-        DuckUserApp::class => [
-            'controller_url_prefix'=>'user/',
-            //其他配置
-        ],
-        SimpleBlogApp::class => [
-            'controller_url_prefix'=>'blog/',
-            //其他配置
-        ],
-    ],
-```
+
+`'ext'=> [] ,`  默认没加载其他扩展，你可以把其他应用作为子应用加在这里，就像前面示例中那样。
 
 `protected function onInit()` 在 `init()` 最后阶段会调用，你可以再次调整你的工程代码
 
 `command_hello()` 这是命令行下 `duckphp-project hello` 的入口。具体详见   [Console](ref/Core-Console.md) 的文档
-
 
 @script File: `template/System/Helper.php`
 ```php
@@ -427,9 +407,9 @@ class ProjectException extends Exception
 
 ----
 
-System 目录是 业务工程师 不需要修改的，修改这的东西，都是核心工程师来修改
-App 的 run 方法，就根据路由，执行 Controller 目录下相关的类
+System 目录是`业务工程师`不需要修改的，修改这的东西，都是`核心工程师`来修改
 
+App 的 run 方法，就根据路由，执行 Controller 目录下相关的类
 #### Controller
 
 Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口。 业务层由 Business 层处理。
@@ -448,8 +428,7 @@ ControllerHelperTrait 方法比较多。这也是由 Controller 复杂环境导�
 ```php
 
 ```
-控制器层的基本类，提供了  `_()` 单例方法的实现。
-
+控制器层的基类，提供了  `_()` 单例方法的实现。
 
 @script File: `template/Controller/ControllerException.php`
 ```php
@@ -482,6 +461,7 @@ MainController.php
 
 testController.php
 
+`Controller` 结尾的类是控制器
 `action_` 前缀的公开方法，是对应的路由调用方法
 
 
@@ -506,12 +486,9 @@ testController.php
 --
 Helper.php 方法一共有七个方法。
 
-Business 按规范，也有个 Base 公用基类
-
+Business.php 按规范，也有个 Base 公用基类
 
 BusinessException.php 默认异常类
-
-
 
 BusinessHelper 用于业务层。三个配置相关方法，两个事件方法，和两个其他方法。
 
@@ -608,13 +585,13 @@ Model/Helper 方法只有下面五个
 
 偷懒的时候，Helper 和 Base 合并在一起。
 
+不推荐 Model 层里抛异常，所以 Model 层没有 ModelException
+
+
 DuckPhp 的 Model 层是很传统的跟着数据库表名走的模式。
 
-DemoModel.php 这是示例 Demo ，你可以删除他根据你的数据库表重建
 
-CrossModelEx.php 这是示例 跨表 Demo ，你可以删除他重建
 
-不推荐 Model 层里抛异常，所以 Model 层没有 ModelException
 
 `SimpleModelTrait` 的方法，也是
 
@@ -641,8 +618,11 @@ CrossModelEx.php 这是示例 跨表 Demo ，你可以删除他重建
     protected function add($data)
     protected function find($a)
     protected function getList(int $page = 1, int $page_size = 10)
-
 内置快速方法。
+
+DemoModel.php 这是示例 Demo ，你可以删除他根据你的数据库表重建
+
+CrossModelEx.php 这是示例 跨表 Demo ，你可以删除他重建
 ## 代码分析
 
 -------------
@@ -650,11 +630,28 @@ CrossModelEx.php 这是示例 跨表 Demo ，你可以删除他重建
 
 
 
+### 重要参考文档
+
+这些文档是`业务工程师`需要熟读的内容，列举如下：
+
+4 个助手 Trait
+
+- [DuckPhp\Helper\AppHelperTrait](ref/Helper-AppHelperTrait.md)
+- [DuckPhp\Helper\BusinessHelperTrait](ref/Helper-BusinessHelperTrait.md)
+- [DuckPhp\Helper\ControllerHelperTrait](ref/Helper-ControllerHelperTrait.md)
+- [DuckPhp\Helper\ModelHelperTrait](ref/Helper-ModelHelperTrait.md)
 
 
 
+7 个基础 Trait
 
-
+- [DuckPhp\Foundation\ExceptionReporterTrait](ref/Foundation-ExceptionReporterTrait.md)
+- [DuckPhp\Foundation\SimpleBusinessTrait](ref/Foundation-SimpleBusinessTrait.md)
+- [DuckPhp\Foundation\SimpleControllerTrait](ref/Foundation-SimpleControllerTrait.md)
+- [DuckPhp\Foundation\SimpleExceptionTrait](ref/Foundation-SimpleExceptionTrait.md)
+- [DuckPhp\Foundation\SimpleModelTrait](ref/Foundation-SimpleModelTrait.md)
+- [DuckPhp\Foundation\SimpleSessionTrait](ref/Foundation-SimpleSessionTrait.md)
+- [DuckPhp\Foundation\SimpleSingletonTrait](ref/Foundation-SimpleSingletonTrait.md)
 
 
 
@@ -744,7 +741,6 @@ Helper
 ```
 
 
-其他隐藏要素
 
 
 -------------
@@ -853,39 +849,3 @@ A
 :: 表示 Class::Method
 
 ~ => 扩充到当前命名空间
-
-
-#### 概念速读
-
-门面， DuckPhp 用可变单例代替了门面
-中间件， DuckPhp 提供了简单的中间件扩展 MyMiddlewareManager，但不建议使用。
-
-事件，见事件这一篇
- 
-请求和响应， DuckPhp 没这个概念 但在 控制器助手类里有很多相同的行为
-
-数据库 ，DuckPhp 的数据库没那么强大
-
-模型 
-
-视图 DuckPhp 的视图原则
-
-错误处理
-
-日志  __logger() 得到 psr 日志类， Logger 类
-
-验证， DuckPhp 没验证处理，你需要第三方类
-
-缓存  Cache()
-
-Session  集中化管理
-
-Cookie  集中化管理
-
-多语言 重写 __l 函数
-
-上传 无特殊的上传
-
-命令行  见命令行的教程，和 DuckPhp\Core\Console 参考类
-
-扩展库

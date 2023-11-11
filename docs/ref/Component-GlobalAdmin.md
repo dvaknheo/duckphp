@@ -1,3 +1,14 @@
+# DuckPhp\Component\GlobalAdmin
+[toc]
+## 简介
+
+全局管理员
+
+## 选项
+
+无
+
+## 方法
     public function __construct()
 
     public function id()

@@ -18,6 +18,11 @@
         'path_info_compact_class_key' => '',
 无PATH_INFO兼容，替代的 class
 
+        'path_info_compact_func_mode' => false,
+
+        'path_info_compact_func_mode_method_prefix' => 'action_',
+
+        'path_info_compact_func_mode_404_to_index' => false,
 ## 方法
 
     protected function initContext(object $context)
@@ -51,15 +56,6 @@ $options['path_info_compact_enable'] = true;
 
 `URL ($url) `函数也被接管。 自动替换成相应的实现。
 
-
-
-
-
-        'path_info_compact_func_mode' => false,
-
-        'path_info_compact_func_mode_method_prefix' => 'action_',
-
-        'path_info_compact_func_mode_404_to_index' => false,
 
     protected function functionMode()
 

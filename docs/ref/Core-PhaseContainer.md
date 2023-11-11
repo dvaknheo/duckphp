@@ -1,3 +1,16 @@
+# DuckPhp\Core\PhaseContainer
+[toc]
+## 简介
+
+**核心容器容器**
+
+DuckPhp 的单例模类都放这里
+
+## 选项
+
+无
+
+## 方法
     public static function ReplaceSingletonImplement()
 
     public static function GetObject($class, $object = null)
@@ -24,3 +37,4 @@
 
     public function __construct()
 
+说明

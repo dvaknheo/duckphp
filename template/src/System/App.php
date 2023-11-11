@@ -18,6 +18,7 @@ class App extends DuckPhp
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
         'exception_reporter' => ExceptionReporter::class,
+        //'ext' => [],
     ];
     //@override
     protected function onInit()

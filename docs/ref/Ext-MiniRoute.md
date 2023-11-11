@@ -1,3 +1,5 @@
+#
+对 route 的精简版本
         'namespace' => '',
 
         'namespace_controller' => 'Controller',

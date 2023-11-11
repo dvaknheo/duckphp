@@ -1,3 +1,15 @@
+# DuckPhp\Component\GlobalUser
+[toc]
+## 简介
+
+全局用户
+
+## 选项
+
+无
+
+## 方法
+
     public function __construct()
 
     public function id()

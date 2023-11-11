@@ -2,7 +2,12 @@
 [toc]
 
 ## 简介
+
+模型助手Trait
+
 ModelHelperTrait 只有 5 个全静态方法
+
+## 方法
 
     public static function Db($tag = null)
 获得 Db 对象
