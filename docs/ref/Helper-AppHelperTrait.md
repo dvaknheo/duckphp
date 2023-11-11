@@ -15,12 +15,8 @@
     
     public static function isInException()
     
-    public static function assignPathNamespace($path, $namespace = null)
+    public static function addRouteHook($callback, $position = 'append-outter', $once = true)
     
-    public static function addRouteHook($hook, $position, $once = true)
-    
-    public static function add404RouteHook($callback)
-        
     public static function replaceController($old_class, $new_class)
     
     public static function getViewData()
@@ -35,9 +31,13 @@
     
     public static function CookieSet($key, $value, $expire = 0)
     
-    public static function Event()
+    public static function SessionGet($key, $default = null)
+
+    public static function CookieGet($key, $default = null)
     
-    public static function OnEvent($event, $callback)
+    public static function SessionUnset($key)
+
+
 
 ### 系统替代函数
 
@@ -61,39 +61,18 @@
     
     public static function session_set_save_handler(\SessionHandlerInterface $handler)
 
-
-### App类的动态方法
-
-    public static function extendComponents($method_map, $components = [])
-    
-    public static function cloneHelpers($new_namespace, $componentClassMap = [])
-    
-    public static function addBeforeShowHandler($handler)
-    
-    public static function getDynamicComponentClasses()
-    
-    public static function addDynamicComponentClass($class)
-
-
-
-### 结束
-
-
-    public static function addRouteHook($callback, $position = 'append-outter', $once = true)
-
-    public static function DbCloseAll()
-
-    public static function SessionUnset($key)
-
-    public static function SessionGet($key, $default = null)
-
-    public static function CookieGet($key, $default = null)
+    public static function mime_content_type($file)
 
     public static function system_wrapper_replace(array $funcs)
 
     public static function system_wrapper_get_providers():array
+### 结束
 
-    public static function mime_content_type($file)
+    public static function DbCloseAll()
+
+    public static function Event()
+    
+    public static function OnEvent($event, $callback)
 
     public static function setBeforeGetDbHandler($db_before_get_object_handler)
 

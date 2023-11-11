@@ -15,12 +15,14 @@ use DuckPhp\Core\App;
 use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Route;
+use DuckPhp\Core\SingletonTrait;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapper;
 use DuckPhp\Core\View;
 
 trait ControllerHelperTrait
 {
+    use SingletonTrait;
     public static function Setting($key)
     {
         return App::Setting($key);

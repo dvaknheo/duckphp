@@ -7,9 +7,11 @@ namespace DuckPhp\Helper;
 
 use DuckPhp\Component\DbManager;
 use DuckPhp\Core\CoreHelper;
+use DuckPhp\Core\SingletonTrait;
 
 trait ModelHelperTrait
 {
+    use SingletonTrait;
     /**
      *
      * @param mixed $tag

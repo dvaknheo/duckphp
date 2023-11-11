@@ -10,9 +10,11 @@ use DuckPhp\Component\Configer;
 use DuckPhp\Component\EventManager;
 use DuckPhp\Core\App;
 use DuckPhp\Core\CoreHelper;
+use DuckPhp\Core\SingletonTrait;
 
 trait BusinessHelperTrait
 {
+    use SingletonTrait;
     public static function Setting($key)
     {
         return App::_()->_Setting($key);

@@ -12,12 +12,14 @@ use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\Runtime;
+use DuckPhp\Core\SingletonTrait;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapper;
 use DuckPhp\Core\View;
 
 trait AppHelperTrait
 {
+    use SingletonTrait;
     public static function CallException($ex)
     {
         return ExceptionManager::CallException($ex);
