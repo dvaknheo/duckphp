@@ -24,7 +24,6 @@ DuckPhp 使用phpunit 做单元覆盖测试
 ```
 代码风格检查加代码检查加单元测试
 
-
 ```
 ./vendor/bin/php-cs-fixer fix && ./vendor/bin/phpstan analyse && ./vendor/bin/phpunit
 
@@ -55,52 +54,11 @@ php tests/genoptions.php && dot docs/duckphp.gv -T svg -O
 --
 三连
 ```
-php-cs-fixer fix && phpstan analyse && phpunit
+./vendor/bin/php-cs-fixer fix && ./vendor/bin/phpstan analyse && ./vendor/bin/phpunit
 
 ```
 五连
 ```
-php-cs-fixer fix && phpstan analyse && phpunit && php tests/genoptions.php && dot docs/duckphp.gv -T svg -O
+./vendor/bin/php-cs-fixer fix && ./vendor/bin/phpstan analyse && ./vendor/bin/phpunit && php tests/genoptions.php && dot docs/duckphp.gv -T svg -O
 
 ```
-
-
-//////////
-
-#### 概念速读
-
-门面， DuckPhp 用可变单例代替了门面
-中间件， DuckPhp 提供了简单的中间件扩展 MyMiddlewareManager，但不建议使用。
-
-事件，见事件这一篇
- 
-请求和响应， DuckPhp 没这个概念 但在 控制器助手类里有很多相同的行为
-
-数据库 ，DuckPhp 的数据库没那么强大
-
-模型 
-
-视图 DuckPhp 的视图原则
-
-错误处理
-
-日志  __logger() 得到 psr 日志类， Logger 类
-
-验证， DuckPhp 没验证处理，你需要第三方类
-
-缓存  Cache()
-
-Session  集中化管理
-
-Cookie  集中化管理
-
-多语言 重写 __l 函数
-
-上传 无特殊的上传
-
-命令行  见命令行的教程，和 DuckPhp\Core\Console 参考类
-
-扩展库
-
-
-
