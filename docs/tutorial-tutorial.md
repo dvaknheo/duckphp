@@ -142,32 +142,32 @@ __display($view, $data = null)
 
 _\_is_debug()
 
-    对应 App::IsDebug() 判断是否在调试状态, 默认读取选项 is_debug 和设置字段里的 duckphp_is_debug
+    对应 CoreHelper::IsDebug() 判断是否在调试状态, 默认读取选项 is_debug 和设置字段里的 duckphp_is_debug
 _\_is_real_debug()
 
-    对应 App::IsRealDebug() 。 切莫乱用。用于环境设置为其他。比如线上环境，但是还是要特殊调试的场合。 如果没被接管，和 IsDebug() 一致。
+    对应 CoreHelper::IsRealDebug() 。 切莫乱用。用于环境设置为其他。比如线上环境，但是还是要特殊调试的场合。 如果没被接管，和 IsDebug() 一致。
 _\_platform()
 
-    对应 App::Platform() 获得当前所在平台,默认读取选项和设置字段里的 duckphp_platform，用于判断当前是哪台机器等
+    对应 CoreHelper::Platform() 获得当前所在平台,默认读取选项和设置字段里的 duckphp_platform，用于判断当前是哪台机器等
 _\_trace_dump(...$arg)
 
-    对应 App::TraceDump() 调试状态下，查看当前堆栈，打印当前堆栈，类似 debug_print_backtrce(2)
+    对应 CoreHelper::TraceDump() 调试状态下，查看当前堆栈，打印当前堆栈，类似 debug_print_backtrce(2)
 _\_var_dump(...$arg)
 
-    对应 App::var_dump()调试状态下 Dump 当前变量，替代 var_dump
+    对应 CoreHelper::var_dump()调试状态下 Dump 当前变量，替代 var_dump
 _\_debug_log(...$arg)
 
-    对应 App::DebugLog($message, array $context = array()) 对应调试状态下 Log 当前变量。
+    对应 CoreHelper::DebugLog($message, array $context = array()) 对应调试状态下 Log 当前变量。
 
 __var_log($var) 
 
-    在日志打印当前变量
+    对应 CoreHelper::VarLog 在日志打印当前变量
 __logger()
 
-    获得`Psr\Log\LoggerInterface`日志对象，便于不同级别的调试
+    对应 CoreHelper::Logger 获得`Psr\Log\LoggerInterface`日志对象，便于不同级别的调试
     
     
-所有 DuckPhp 的全局函数就这么讲完了 ^_^ 。 这些所有的全局函数，也都有可接管的实现方法
+所有 DuckPhp 的全局函数就这么讲完了 ^_^ 。 这些所有的全局函数，都有可接管的实现方法
 
 
 致此，二次开发基本讲完了。要深入了解，那么我们就从自己搞个工程开始了
@@ -313,6 +313,45 @@ $options = [
 
 ### src 源代码目录
 
+#### 引用到 DuckPhp 类
+
+除开这些类，你应该只在 System 里引用 DuckPhp 的类
+
+4 个助手类对应 4 个 Trait
+
+- MyProject\System\Helper => [DuckPhp\Helper\AppHelperTrait](ref/Helper-AppHelperTrait.md)
+- MyProject\Controller\Helper =>  [DuckPhp\Helper\ControllerHelperTrait](ref/Helper-ControllerHelperTrait.md)
+- MyProject\Business\Helper =>  [DuckPhp\Helper\BusinessHelperTrait](ref/Helper-BusinessHelperTrait.md)
+- MyProject\Model\Helper => [DuckPhp\Helper\ModelHelperTrait](ref/Helper-ModelHelperTrait.md)
+
+
+`Helper` 是各种助手方法,  `Helper`类都是和业务无关的类。通过这些Helper类的静态方法来调用 DuckPhp 系统的功能。 
+
+所有 `Helper` 默认都只有静态方法,你自己的 Helper请用动态方法以表示区别。
+
+这些助手类都实现了 `_()` 可变方法
+
+如果你的系统足够小，你也可以把这些 HelperTrait 内嵌入相应的基类或类里。
+
+3 个基类 Trait
+
+- MyProject\Controller\Base => [DuckPhp\Foundation\SimpleControllerTrait](ref/Foundation-SimpleControllerTrait.md)
+- MyProject\Business\Base => [DuckPhp\Foundation\SimpleBusinessTrait](ref/Foundation-SimpleBusinessTrait.md)
+- MyProject\Model\Base => [DuckPhp\Foundation\SimpleModelTrait](ref/Foundation-SimpleModelTrait.md)
+
+这些基类都实现了 `_()` 可变方法而且每层都有不同
+`CallInPhase($phase)`
+切换其他相位
+
+3 个功能性Trait
+
+- Project\System\ProjectExcepiton => [DuckPhp\Foundation\SimpleExceptionTrait](ref/Foundation-SimpleExceptionTrait.md)
+- Project\Controller\Session [DuckPhp\Foundation\SimpleSessionTrait](ref/Foundation-SimpleSessionTrait.md)
+- Project\Controller\ExceptionReporter => [DuckPhp\Foundation\ExceptionReporterTrait](ref/Foundation-ExceptionReporterTrait.md)
+
+`ProjectException::ThrowOn($flag,$message,$code = 0);` 如果`$flag` 为真则抛奔异常。
+Session ， session 容器，bean, 扩展规范 `get` `set` 方法
+
 #### System
 
 @script File: `template/System/App.php`
@@ -340,7 +379,6 @@ class App extends DuckPhp
         echo "hello\n";
     }
     
-    
 }
 ```
  * App.php 是重载 DuckPhp 类的 入口位置
@@ -364,46 +402,7 @@ class App extends DuckPhp
 
 `command_hello()` 这是命令行下 `duckphp-project hello` 的入口。具体详见   [Console](ref/Core-Console.md) 的文档
 
-@script File: `template/System/Helper.php`
-```php
-namespace AdvanceDemo\Controller;
 
-use DuckPhp\Foundation\SimpleSingletonTrait;
-use DuckPhp\Helper\AppHelperTrait;
-
-class Helper
-{
-    use SimpleSingletonTrait;
-    use AppHelperTrait;
-}
-```
-`Helper` 是各种助手方法,  `Helper`类都是和业务无关的类。通过这些Helper类的静态方法来调用 DuckPhp 系统的功能。 
-
-所有 `Helper` 默认都只有静态方法,你自己的 Helper请用动态方法以表示区别。
-
-如果你的系统足够小，你也可以把这些 HelperTrait 内嵌入相应的基类或类里。
-
-
-`AppHelperTrait` 是各种核心修改用到的类， 相关文档看这里 [AppHelperTrait 文档](ref/Helper-AppHelperTrait.md) 
-
-`SimpleSingletonTrait` 则是单例函数。 实现 `_()`方法
-
-
-@script File: `template/System/ProjectException.php`
-```php
-<?php declare(strict_types=1);
-namespace AdvanceDemo\System;
-
-use DuckPhp\Foundation\ExceptionTrait;
-use Exception;
-class ProjectException extends Exception
-{
-    use SimpleExceptionTrait;
-}
-```
-工程异常基类 ，`SimpleExceptionTrait` 提供了个 ThrowOn 方法的实现。
-`ProjectException::ThrowOn($flag,$message,$code = 0);`
-如果`$flag` 为真则触发异常。
 
 ----
 
@@ -414,27 +413,10 @@ App 的 run 方法，就根据路由，执行 Controller 目录下相关的类
 
 Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口。 业务层由 Business 层处理。
 
-Helper.php 控制器助手类
+偷懒的时候，你可以把这个 Helper 内置到 控制器基类里
 
-@script File: `template/Controller/Helper.php`
-```php
 
-```
-
-偷懒的时候，你可以把这个 ControllerHelperTrait 放入 Controller 里 [ControllerHelperTrait 文档](ref/Helper-ControllerHelperTrait.md)。
-ControllerHelperTrait 方法比较多。这也是由 Controller 复杂环境导致的.
-
-@script File: `template/Controller/Base.php`
-```php
-
-```
-控制器层的基类，提供了  `_()` 单例方法的实现。
-
-@script File: `template/Controller/ControllerException.php`
-```php
-
-```
-ControllerException ，控制器层的异常，简单的引入 `ThrowOn()` 方便抛异常
+ControllerException ，控制器层的异常，继承 ProjectException 
 
 
 @script File: `template/Controller/Session.php`
@@ -453,9 +435,7 @@ ExceptionReporter.php 则是处理各种错误。
 @script File: `template/Controller/CommonAction.php`
 ```php
 ```
-
 Controller 不要相互调用， 我们把完成部分逻辑的控制器，可以放到 `Action` 结尾的类里
-
 
 MainController.php
 
@@ -465,9 +445,7 @@ testController.php
 `action_` 前缀的公开方法，是对应的路由调用方法
 
 
-控制器里不要写业务，做的是输入和输出的处理
-
-控制器层调用 业务层，而不是模型层
+控制器里不要写业务，做的是输入和输出的处理。 业务层负责功能。调用业务层，而不是模型层
 
 --
 
@@ -477,18 +455,23 @@ testController.php
 
 有人用Logic ，这里我用的是 Business 命名 还有人用 Service。
 
-需要注意的是，虽然有人把这层独立出来，但是代码里却是和 web相关， Business 要求是什么，和Controller 无关，无状态。可测。
+需要注意的是，虽然有人把这层独立出来，但是代码里却是和 web 相关， Business 要求是什么，和Controller 无关，无状态。可测。
 
 当然，有些人会带上用户 ID ，这种一两个的例外。
 
 相比 Model 目录，这里多了 BusinessException 。 因为规范要求 model 类不得抛异常
 
 --
-Helper.php 方法一共有七个方法。
 
-Business.php 按规范，也有个 Base 公用基类
+BusinessException.php 默认异常类，继承 ProjectException。
 
-BusinessException.php 默认异常类
+DemoBusiness.php 示例业务类，你可以删除，并加上多个类似符合你的工程的业务类
+
+CommonService.php
+
+Business 之间相互调用的业务半成品，那么就抽出成 Service。
+
+Business 相互调用，则放到 Service 里，这就是 Business 层不用 Service 来命名的原因 
 
 BusinessHelper 用于业务层。三个配置相关方法，两个事件方法，和两个其他方法。
 
@@ -497,7 +480,6 @@ BusinessHelper 用于业务层。三个配置相关方法，两个事件方法�
 
     public static function Config($key =null , $default = null $file_basename = 'config')
 获得配置,如果没有则为 default ，如果key 也没有，则是配置文件（默认为 config）所有配置
-
 
     public static function FireEvent($event, ...$args)
 触发事件
@@ -515,53 +497,15 @@ BusinessHelper 用于业务层。三个配置相关方法，两个事件方法�
 给那些没实现 `ThrowOn`的异常类多个类似的
 
 
-CommonService.php
-
-Business 之间相互调用的业务半成品，那么就抽出成 Service。
-Business 相互调用，则放到 Service 里，这就是 Business 层不用 Service 来命名的原因 
-
-
-DemoBusiness.php 示例业务类，你可以删除，并加上多个类似符合你的工程的业务类
-
 #### Model
 
-```php
-<?php declare(strict_types=1);
-/**
- * DuckPhp
- * From this time, you never be alone~
- */
+DemoModel.php 这是示例 Demo ，你可以删除他根据你的数据库表重建
 
-namespace AdvanceDemo\Model;
+CrossModelEx.php 这是示例 跨表 Demo ，你可以删除他重建
 
-use DuckPhp\Foundation\SimpleModelTrait;
 
-class Base
-{
-    use SimpleModelTrait;
-}
+Helper.php
 
-```
-
-```php
-<?php declare(strict_types=1);
-/**
- * DuckPhp
- * From this time, you never be alone~
- */
-
-namespace AdvanceDemo\Model;
-
-use DuckPhp\Foundation\SimpleSingletonTrait;
-use DuckPhp\Helper\ModelHelperTrait;
-
-class Helper
-{
-    use SimpleSingletonTrait;
-    use ModelHelperTrait;
-}
-
-```
 Model/Helper 方法只有下面五个
 
     public static function Db($tag = null)
@@ -587,16 +531,7 @@ Model/Helper 方法只有下面五个
 
 不推荐 Model 层里抛异常，所以 Model 层没有 ModelException
 
-
 DuckPhp 的 Model 层是很传统的跟着数据库表名走的模式。
-
-
-
-
-`SimpleModelTrait` 的方法，也是
-
-    public static function CallInPhase($phase)
-切换其他相位
 
     public function table()
 获取表名
@@ -620,43 +555,13 @@ DuckPhp 的 Model 层是很传统的跟着数据库表名走的模式。
     protected function getList(int $page = 1, int $page_size = 10)
 内置快速方法。
 
-DemoModel.php 这是示例 Demo ，你可以删除他根据你的数据库表重建
 
-CrossModelEx.php 这是示例 跨表 Demo ，你可以删除他重建
-## 代码分析
 
 -------------
 
-
-
-
-### 重要参考文档
+## 其他参考文档
 
 这些文档是`业务工程师`需要熟读的内容，列举如下：
-
-4 个助手 Trait
-
-- [DuckPhp\Helper\AppHelperTrait](ref/Helper-AppHelperTrait.md)
-- [DuckPhp\Helper\BusinessHelperTrait](ref/Helper-BusinessHelperTrait.md)
-- [DuckPhp\Helper\ControllerHelperTrait](ref/Helper-ControllerHelperTrait.md)
-- [DuckPhp\Helper\ModelHelperTrait](ref/Helper-ModelHelperTrait.md)
-
-
-
-7 个基础 Trait
-
-- [DuckPhp\Foundation\ExceptionReporterTrait](ref/Foundation-ExceptionReporterTrait.md)
-- [DuckPhp\Foundation\SimpleBusinessTrait](ref/Foundation-SimpleBusinessTrait.md)
-- [DuckPhp\Foundation\SimpleControllerTrait](ref/Foundation-SimpleControllerTrait.md)
-- [DuckPhp\Foundation\SimpleExceptionTrait](ref/Foundation-SimpleExceptionTrait.md)
-- [DuckPhp\Foundation\SimpleModelTrait](ref/Foundation-SimpleModelTrait.md)
-- [DuckPhp\Foundation\SimpleSessionTrait](ref/Foundation-SimpleSessionTrait.md)
-- [DuckPhp\Foundation\SimpleSingletonTrait](ref/Foundation-SimpleSingletonTrait.md)
-
-
-
-
-
 
 
 ### 理解相位
@@ -830,7 +735,7 @@ Q _()方法是不是糟糕了
 
 var_dump(MyClass::——()); 使用 Facades 就没法做到这个功能。
 
-Q 为什么不直接用 DB 类，而是用 DbManager
+Q 为什么不直接用 Db 类，而是用 DbManager
 
 A 做日志之类的处理用
 
