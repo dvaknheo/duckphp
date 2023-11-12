@@ -86,7 +86,7 @@ class AppHelperTraitTest extends \PHPUnit\Framework\TestCase
         AppHelper::assignRewrite('zxvf', 'zz');
         AppHelper::getRewrites();
         AppHelper::RemoveEvent('nullEnvent');
-
+        AppHelper::getCliParameters();
         ////]]]]
         \LibCoverage\LibCoverage::End();
 

@@ -131,6 +131,16 @@ class DuckPhpInstaller extends ComponentBase
         $data = preg_replace('/^.*?@DUCKPHP_DELETE.*?$/m', '', $data);
         return $data;
     }
+    /*
+    protected function genProjectName()
+    {
+        $str = "abcdefghijklmnopqrstuvwxyz";
+        $l = strlen($str)-1;
+        $x = mt_rand(0,$l);
+        $ret = 'Project'.DATE("ymd").'_'.$str[mt_rand(0,$l)].$str[mt_rand(0,$l)].$str[mt_rand(0,$l)].$str[mt_rand(0,$l)];
+        return $ret;
+    }
+    */
     protected function filteNamespace($data, $namespace)
     {
         if ($namespace === 'ProjectNameTemplate' || $namespace === '') {
@@ -138,7 +148,7 @@ class DuckPhpInstaller extends ComponentBase
         }
         $str_header = "\$namespace = '$namespace';";
         $data = preg_replace('/^.*?@DUCKPHP_NAMESPACE.*?$/m', $str_header, $data);
-        $data = str_replace("AdvanceDemo\\", "{$namespace}\\", $data);
+        $data = str_replace("ProjectNameTemplate\\", "{$namespace}\\", $data);
         
         return $data;
     }

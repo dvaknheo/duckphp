@@ -5,8 +5,6 @@
  */
 namespace DuckPhp\Core;
 
-use DuckPhp\Core\Route;
-
 class Console extends ComponentBase
 {
     public $options = [
@@ -55,9 +53,6 @@ class Console extends ComponentBase
         $cmd = array_shift($func_args);
         list($class, $method) = $this->getClassAndMethod($cmd);
         
-        if ($this->context_class) {
-            Route::_()->setParameters($this->parameters);
-        }
         $this->callObject($class, $method, $func_args, $this->parameters);
         return true;
     }
