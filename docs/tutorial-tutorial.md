@@ -253,7 +253,7 @@ tree -I 'public'
 
 ```
 
-## 目录结构解说
+## 文件结构和类结构说明
 
 小写的是资源文件夹，资源文件夹可以由 `$options['path']`设置为其他目录。
 ### 工程目录
@@ -262,7 +262,7 @@ tree -I 'public'
     * `config/DuckPhpApps.config.php` 这个是选项文件子应用的额外选项都在这里。安装的时候，会改写这个文件。
 * runtime 目录是唯一需要可写的目录。默认情况下，日志会保存在这里
     * keepme.txt 只是 git 作用
-* src 类文件夹。工程代码文件。后面详解
+* src 类文件夹。 根据  `psr-4` 规范， MyProject 命名空间的类就存在这里
 * view 视图目录
    * view/_sys/error404.php 404 错误展示页面
    * view/_sys/error404.php 500 错误展示页面
@@ -309,9 +309,7 @@ $options = [
 
 `init()`初始化，然后 `run()` 运行。入口类只会被初始化一次，除非强制初始化。
 
-### src 源代码目录
-
-#### 引用到 `DuckPhp`系统的类
+### 引用到 `DuckPhp`系统类的类的类
 ----
 
 以下10个引用到 `DuckPhp`系统的类 除开这些类，你应该只在 System 里引用 DuckPhp 系统的类
@@ -350,7 +348,7 @@ $options = [
 
 `Session` ， session 容器，bean, 扩展规范 `get` `set` 方法
 
-#### System
+### System
 ----
 @script File: `template/System/App.php`
 ```php
@@ -404,15 +402,10 @@ System 目录是 **业务工程师** 不需要修改的，修改这的东西，�
 
 App 的 run 方法，就根据路由，执行 Controller 目录下相关的类
 
-#### Controller
+### Controller
 
-----
 
 Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口。 业务层由 Business 层处理。
-
-
-
-----
 
 `MyProject\Controller\MainController`  主入口类
 
@@ -445,6 +438,7 @@ Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口
 分类有：
 
 1. 超全局变量
+
 用于多环境统一处理数据
 
     public static function GET/POST/REQUEST/COOKIE/SERVER($key, $default = null)
@@ -459,11 +453,14 @@ Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口
 `Render` 渲染得出字符串， 注意的是，调用参数正好和 `Show` 相反，因为 `Show`() 数据在前面更方便。 
 
 3. 配置
+
 读取配置设置
+
     public static function Setting($key)
     public static function Config($file_basename, $key = null, $default = null)
 
 4. 跳转
+
 各种跳转
 
     public static function  ExitRedirect/ExitRedirectOutside/ExitRouteTo/Exit404/ExitJson($url, $exit = true)
@@ -511,7 +508,8 @@ DuckPhp 的异常处理 可以参见 待定文档说明。
 触发一个事件， 设置事件回调， DuckPhp 的事件系统是一对多，后到先得得。
 
 10. 相关对象
-其他要用到的对象
+
+其他要用到的对象：
 
     public static function Admin()
     public static function AdminId()
@@ -520,8 +518,8 @@ DuckPhp 的异常处理 可以参见 待定文档说明。
 这段代码将会调整, 得到管理员对象或者用户对象
 
 
-#### Business 
-----
+### Business 
+
 作为程序员专家，大家达成的意见是 业务逻辑层要抽出来，业务逻辑 英文是什么 Business Logic 嘛。
 
 有人用Logic ，这里我用的是 Business 命名 还有人用 Service。
@@ -562,7 +560,7 @@ DuckPhp 的异常处理 可以参见 待定文档说明。
     public static function Cache($object = null)
 获得缓存对象 `BusinessHelperTrait` 仅 `ControllerHelperTrait` 多了 `Cache()`方法
 
-#### Model
+### Model
 
 
 `DemoModel.php` 这是示例 Demo ，命名是按数据库表名来
@@ -710,6 +708,38 @@ Helper
 
 
 -------------
+
+
+## FAQ
+
+Q: _()方法是不是糟糕了
+
+你可以把 ::_()-> 看成和 facades 类似的门面方法。
+可变单例是 DuckPhp 的核心。
+你如果引入第三方包的时候，不满意默认实现，可以通过可变单例来替换他
+
+var_dump(MyClass::_()); 使用 Facades 就没法做到这个功能。
+
+Q: 为什么不直接用 Db 类，而是用 DbManager
+
+A: 做日志之类的处理用
+
+Q: 为什么名字要以 *Model *Business *Controller 结尾
+让单词独一无二，便于搜索
+
+Q: 为什么是 Db 而不是 DB 。
+A: 为了统一起来。  缩写都驼峰而非全大写
+
+Q: 回调 Class::Method Class@Method Class->Method 的区别
+
+A:
+-> 表示 new 一个实例
+@ 表示 $class::_()->
+
+:: 表示 Class::Method
+
+~ => 扩充到当前命名空间
+
 备用
 
 ### MVC 缺层
@@ -786,32 +816,4 @@ Cookie  集中化管理
 
 扩展库
 
-## FAQ
 
-Q: _()方法是不是糟糕了
-
-你可以把 ::_()-> 看成和 facades 类似的门面方法。
-可变单例是 DuckPhp 的核心。
-你如果引入第三方包的时候，不满意默认实现，可以通过可变单例来替换他
-
-var_dump(MyClass::__()); 使用 Facades 就没法做到这个功能。
-
-Q: 为什么不直接用 Db 类，而是用 DbManager
-
-A: 做日志之类的处理用
-
-Q: 为什么名字要以 *Model *Business *Controller 结尾
-让单词独一无二，便于搜索
-
-Q: 为什么是 Db 而不是 DB 。
-A: 为了统一起来。  缩写都驼峰而非全大写
-
-Q: 回调 Class::Method Class@Method Class->Method 的区别
-
-A:
--> 表示 new 一个实例
-@ 表示 $class::_()->
-
-:: 表示 Class::Method
-
-~ => 扩充到当前命名空间
