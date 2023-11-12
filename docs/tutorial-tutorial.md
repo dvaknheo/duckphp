@@ -43,7 +43,7 @@ $options=[
         DuckAdminApp::class => [
             'controller_url_prefix'=>'admin/',
             //其他配置
-            ''on_inited' => 'onDuckAdminInit', //这里演示初始化插一个东西
+            'on_inited' => 'onDuckAdminInit', //这里演示初始化插一个东西
         ],
         DuckUserApp::class => [
             'controller_url_prefix'=>'user/',
@@ -74,7 +74,7 @@ function onInit()
 }
 function onDuckAdminInit()
 {
-    //在 amdin 开始的时候搞很多事
+    //在 amdin 开始的时候做很多事
 }
 
 ```
@@ -82,7 +82,7 @@ function onDuckAdminInit()
 `/admin/` 得到 duckadmin 的页面了。
 ## 对 DuckAdmin 二次开发
 1. 修改配置选项实现
-    正如演示看到的，每个子应用和主应用都有自己的配置选项。
+    正如演示看到的，每个子应用和主应用都有自己的配置选项。 [参考文档](ref/options.md)
 2. 修改页面， 默认的 view 太难看，我们要覆盖 override 改成自己的：
     `[工程文件夹]/view/DuckAdmin/[同名文件]` 
 3. 获取提供对象
@@ -91,7 +91,7 @@ function onDuckAdminInit()
 
 ```
 $id = DuckAdminApp::AdminId();
-$admin = DuckAdminApp::Admin()->current(); // 获取当前 admin 对象，如果得不到 admin 对象，则会跳转登录
+$admin = DuckAdminApp::Admin(); // 获取当前 admin 对象，如果得不到 admin 对象，则会跳转登录
 var_dump($admin);
 
 ```
@@ -107,67 +107,64 @@ function onInit()
 }
 ```
 
-5.使用全局函数,一般都在页面里使用。这些全局函数都是两个下划线开始的。
+5. 使用全局函数,一般都在页面里使用。这些全局函数都是两个下划线开始的。
 
 这是助手函数：
 
-__h()
+\_\_h 对应 CoreHelper::H(); HTML 编码
 
-    对应 CoreHelper::H(); HTML 编码
-__l($str,$args=[])
+    function __l($str, $args = [])
+\_\_l 对应 CoreHelper::L(); 语言处理函数，后面的关联数组替换 '{$key}'
 
-    对应 CoreHelper::L(); 语言处理函数，后面的关联数组替换 '{$key}'
-__hl($str, $args=[])
+    function __hl($str, $args = [])
+\_\_hl 对应 CoreHelper::Hl(); 对语言处理后进行 HTML 编码
 
-    对应 CoreHelper::Hl(); 对语言处理后进行 HTML 编码
-__json($data) 
+    function __json($data)
+\_\_json 对应 CoreHelper::Json(); json 编码，用于向 javascript  传送数据
 
-    对应 CoreHelper::Hl(); json 编码，用于向 javascript  传送数据
-__url($url)
+    function __url($url)
+\_\_url 对应 CoreHelper::URL($url); 获得资源相对 url 地址
 
-    对应 CoreHelper::Url(); 获得相对 url 地址
+    function __res($url)
+\_\__res 对应 CoreHelper::__res($url); 获取 外部资源地址
 
-__res($url)
+    function __domain($use_scheme = false)
+\_\_domain 对应 CoreHelper::domain();  获得带协议头的域名
 
-    对应 CoreHelper::Res(); 获得资源相对 url 地址
-__domain()
+    function __display(...$args)
+\_\_display 对应 `CoreHelper::Display()` 包含下一个 `$view` ， 如果 `$data = null` 则带入所有当前作用域的变量。 否则带入 `$data` 关联数组的内容。用于嵌套包含视图。
 
-    对应 CoreHelper::Domain(); 获得带协议头的域名
-__display($view, $data = null)
-
-    对应 CoreHelper::Display(); 包含下一个 $view ， 如果 $data = null 则带入所有当前作用域的变量。 否则带入 $data 关联数组的内容。用于嵌套包含视图。
 
 
 还有一批调试用的全局函数
 
-_\_is_debug()
+    function __var_dump(...$args)
+\_\_var_dump() 对应 CoreHelper::var_dump();  var_dump() 调试状态下 Dump 当前变量，替代 var_dump，和 var_dump 类似，实现可以修改
 
-    对应 CoreHelper::IsDebug() 判断是否在调试状态, 默认读取选项 is_debug 和设置字段里的 duckphp_is_debug
-_\_is_real_debug()
+    function __trace_dump()
+\_\_trace_dump() 对应 CoreHelper::TraceDump(); 调试状态下，查看当前堆栈，打印当前堆栈，类似 debug_print_backtrce(2)
 
-    对应 CoreHelper::IsRealDebug() 。 切莫乱用。用于环境设置为其他。比如线上环境，但是还是要特殊调试的场合。 如果没被接管，和 IsDebug() 一致。
-_\_platform()
+    function __debug_log($str, $args = [])
+\_\_debug_log() 对应 CoreHelper::DebugLog($message, array $context = array()) 对应调试状态下 Log 当前变量。
 
-    对应 CoreHelper::Platform() 获得当前所在平台,默认读取选项和设置字段里的 duckphp_platform，用于判断当前是哪台机器等
-_\_trace_dump(...$arg)
+    function __is_debug()
+\_\_is_debug() 对应 CoreHelper::IsDebug(); 判断是否在调试状态, 默认读取选项 is_debug 和设置字段里的 duckphp_is_debug
 
-    对应 CoreHelper::TraceDump() 调试状态下，查看当前堆栈，打印当前堆栈，类似 debug_print_backtrce(2)
-_\_var_dump(...$arg)
+    function __platform()
+\_\_platform() 对应 CoreHelper::Platform(); 获得当前所在平台,默认读取选项和设置字段里的 duckphp_platform，用于判断当前是哪台机器等
 
-    对应 CoreHelper::var_dump()调试状态下 Dump 当前变量，替代 var_dump
-_\_debug_log(...$arg)
+    function __is_real_debug()
+\_\_is_real_debug() 对应 CoreHelper::IsRealDebug(); 切莫乱用。用于环境设置为其他。比如线上环境，但是还是要特殊调试的场合。 如果没被接管，和 IsDebug() 一致。
+    
+    function __logger()
+\_\_logger() 对应 CoreHelper::Logger();  获得`Psr\Log\LoggerInterface`日志对象，便于不同级别的调试
 
-    对应 CoreHelper::DebugLog($message, array $context = array()) 对应调试状态下 Log 当前变量。
-
-__var_log($var) 
-
-    对应 CoreHelper::VarLog 在日志打印当前变量
-__logger()
-
-    对应 CoreHelper::Logger 获得`Psr\Log\LoggerInterface`日志对象，便于不同级别的调试
+    function __var_log($var)
+\_\_var_log() 对应 CoreHelper::VarLog();  在日志打印当前变量 
     
     
 所有 DuckPhp 的全局函数就这么讲完了 ^_^ 。 这些所有的全局函数，都有可接管的实现方法
+这段内容和[全局函数参考](ref/Core-Functions.md) 差不多
 
 
 致此，二次开发基本讲完了。要深入了解，那么我们就从自己搞个工程开始了
@@ -194,6 +191,7 @@ class mytestController
     public function action_i()
     {
         phpinfo();
+        // Helper::Show(get_defined_vars(),null);
     }
 }
 ```
@@ -207,7 +205,7 @@ php duckphp-project run --port 8082
 ### 文件结构
 
 
-在这里，我们用 `tree`  列一下 新建应用的文件结构
+在这里，我们用 `tree -I 'public'`  列一下 新应用的文件结构。我们排除 public 目录的原因是还有好些不需要的例子
 ```
 tree -I 'public'
 .
@@ -287,24 +285,24 @@ echo "<div>You should not run the template file directly, Install it! </div>\n";
 echo "<div>不建议直接运行模板文件，建议用安装模式 </div>\n";              //@DUCKPHP_DELETE
 
 // 设置工程命名空间对应的目录，但强烈推荐修改 composer.json 使用 composer 加载 
-if (!class_exists(\AdvanceDemo\System\App::class)) {
+if (!class_exists(\MyProject\System\App::class)) {
     \DuckPhp\Core\AutoLoader::RunQuickly([]);
-    \DuckPhp\Core\AutoLoader::addPsr4("AdvanceDemo\\", 'src'); 
+    \DuckPhp\Core\AutoLoader::addPsr4("MyProject\\", 'src'); 
 }
 
 $options = [
     // 这里可以添加更多选项
     //'is_debug' => true,
 ];
-\AdvanceDemo\System\App::RunQuickly($options);
+\MyProject\System\App::RunQuickly($options);
 ```
 入口很简单，就是 Runqucikly ,把 选项数组带进去就是
 选项数组可以填什么，看配置
-然后，我们入口是 `\AdvanceDemo\System\App` 类，就是后面的内容
+然后，我们入口是 `\MyProject\System\App` 类，就是后面的内容
    
-`\AdvanceDemo\System\App::RunQuickly($options); `
+`\MyProject\System\App::RunQuickly($options); `
 等价于
-`\AdvanceDemo\System\App::_()->init($options)->run();`
+`\MyProject\System\App::_()->init($options)->run();`
 
 `init()`初始化，然后 `run()` 运行
 入口类只会被初始化，除非强制初始化。
@@ -402,13 +400,10 @@ class App extends DuckPhp
 
 `command_hello()` 这是命令行下 `duckphp-project hello` 的入口。具体详见   [Console](ref/Core-Console.md) 的文档
 
-
-
-----
-
 System 目录是`业务工程师`不需要修改的，修改这的东西，都是`核心工程师`来修改
 
 App 的 run 方法，就根据路由，执行 Controller 目录下相关的类
+
 #### Controller
 
 Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口。 业务层由 Business 层处理。
@@ -419,22 +414,11 @@ Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口
 ControllerException ，控制器层的异常，继承 ProjectException 
 
 
-@script File: `template/Controller/Session.php`
-```php
 
-```
-Session.php Session 处理相关
-
-
-@script File: `template/Controller/ExceptionReporter.php`
-```php
-
-```
+Session.php Session 处理相关。
 ExceptionReporter.php 则是处理各种错误。
 
-@script File: `template/Controller/CommonAction.php`
-```php
-```
+
 Controller 不要相互调用， 我们把完成部分逻辑的控制器，可以放到 `Action` 结尾的类里
 
 MainController.php
@@ -447,7 +431,7 @@ testController.php
 
 控制器里不要写业务，做的是输入和输出的处理。 业务层负责功能。调用业务层，而不是模型层
 
---
+----
 
 #### Business 
 
@@ -727,27 +711,27 @@ Cookie  集中化管理
 
 ## FAQ
 
-Q _()方法是不是糟糕了
+Q: _()方法是不是糟糕了
 
 你可以把 ::_()-> 看成和 facades 类似的门面方法。
 可变单例是 DuckPhp 的核心。
 你如果引入第三方包的时候，不满意默认实现，可以通过可变单例来替换他
 
-var_dump(MyClass::——()); 使用 Facades 就没法做到这个功能。
+var_dump(MyClass::__()); 使用 Facades 就没法做到这个功能。
 
-Q 为什么不直接用 Db 类，而是用 DbManager
+Q: 为什么不直接用 Db 类，而是用 DbManager
 
-A 做日志之类的处理用
+A: 做日志之类的处理用
 
-Q 为什么名字要以 *Model *Business *Controller 结尾
+Q: 为什么名字要以 *Model *Business *Controller 结尾
 让单词独一无二，便于搜索
 
-Q 为什么是 Db 而不是 DB 。
-A 为了统一起来。  缩写都驼峰而非全大写
+Q: 为什么是 Db 而不是 DB 。
+A: 为了统一起来。  缩写都驼峰而非全大写
 
-Q 回调 Class::Method Class@Method Class->Method 的区别
+Q: 回调 Class::Method Class@Method Class->Method 的区别
 
-A
+A:
 -> 表示 new 一个实例
 @ 表示 $class::_()->
 
