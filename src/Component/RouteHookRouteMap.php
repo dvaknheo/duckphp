@@ -78,9 +78,13 @@ class RouteHookRouteMap extends ComponentBase
             $this->options['route_map_important'][$key] = $value;
         }
     }
-    public function getRoutes()
+    public function getRouteMaps()
     {
-        return $this->options;
+        $ret = [
+            'route_map_important' => $this->options['route_map_important'],
+            'route_map' => $this->options['route_map'],
+        ];
+        return $ret;
     }
     protected function matchRoute($pattern_url, $path_info, &$parameters)
     {

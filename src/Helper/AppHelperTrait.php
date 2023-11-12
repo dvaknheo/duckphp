@@ -6,6 +6,7 @@
 namespace DuckPhp\Helper;
 
 use DuckPhp\Component\DbManager;
+use DuckPhp\Component\EventManager;
 use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Component\RouteHookRouteMap;
@@ -23,6 +24,10 @@ trait AppHelperTrait
     public static function CallException($ex)
     {
         return ExceptionManager::CallException($ex);
+    }
+    public static function RemoveEvent($event, $callback = null)
+    {
+        return EventManager::RemoveEvent($event, $callback);
     }
     public static function isRunning()
     {
@@ -47,7 +52,7 @@ trait AppHelperTrait
     //////////////
     public static function DbCloseAll()
     {
-        return DbManager::_()->_DbCloseAll(); //TODO;
+        return DbManager::_()->_DbCloseAll();
     }
     public static function SESSION($key = null, $default = null)
     {
@@ -135,9 +140,9 @@ trait AppHelperTrait
     {
         return RedisManager::Redis($tag);
     }
-    public static function getRoutes()
+    public static function getRouteMaps()
     {
-        return RouteHookRouteMap::_()->getRoutes();
+        return RouteHookRouteMap::_()->getRouteMaps();
     }
     public static function assignRoute($key, $value = null)
     {

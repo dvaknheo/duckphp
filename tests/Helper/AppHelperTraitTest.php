@@ -76,7 +76,7 @@ class AppHelperTraitTest extends \PHPUnit\Framework\TestCase
         
         ////
         AppHelper::setBeforeGetDbHandler(null);
-        AppHelper::getRoutes();
+        AppHelper::getRouteMaps();
         AppHelper::assignRoute('ab/c',['z']);
         AppHelper::assignImportantRoute('ab/c',['z']);
         try{
@@ -85,7 +85,7 @@ class AppHelperTraitTest extends \PHPUnit\Framework\TestCase
         
         AppHelper::assignRewrite('zxvf', 'zz');
         AppHelper::getRewrites();
-
+        AppHelper::RemoveEvent('nullEnvent');
 
         ////]]]]
         \LibCoverage\LibCoverage::End();

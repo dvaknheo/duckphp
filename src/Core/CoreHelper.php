@@ -114,6 +114,10 @@ class CoreHelper extends ComponentBase
     ////////////////////////////////////////////
     public function _H(&$str)
     {
+        $handler = App::_()->options['html_handler'] ?? null;
+        if ($handler) {
+            return $handler($str);
+        }
         if (is_string($str)) {
             $str = htmlspecialchars($str, ENT_QUOTES);
             return $str;
@@ -128,6 +132,10 @@ class CoreHelper extends ComponentBase
     }
     public function _L($str, $args = [])
     {
+        $handler = App::_()->options['lang_handler'] ?? null;
+        if ($handler) {
+            return $handler($str, $args);
+        }
         //Override for locale and so do
         if (empty($args)) {
             return $str;

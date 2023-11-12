@@ -22,26 +22,22 @@ trait KernelTrait
 
     protected $kernel_options = [
         'path' => null,
-        'namespace' => null,
+        'override_class' => null,
+        'override_class_from' => null,
         'cli_enable' => true,
-        
         'is_debug' => false,
         'ext' => [],
         
-        'override_class' => null,
-        'override_class_from' => null,
-        
-        'use_flag_by_setting' => true,
-        'use_short_functions' => true,
+
         
         'skip_404_handler' => false,
         'skip_exception_check' => false,
         
         'on_init' => null,
         'container_only' => false,
+        'namespace' => null,
         
-        
-        'setting_file' => 'config/DuckPhpSettings.config.php', //TODO
+        'setting_file' => 'config/DuckPhpSettings.config.php',
         'setting_file_ignore_exists' => true,
         'setting_file_enable' => true,
         'use_env_file' => false,
@@ -94,6 +90,10 @@ trait KernelTrait
     public static function Root()
     {
         return (self::class)::_(); // remark ,don't use self::_()!
+    }
+    public function isRoot()
+    {
+        return $this->is_root;
     }
     protected function initOptions(array $options)
     {
@@ -210,11 +210,10 @@ trait KernelTrait
     {
         $options['path'] = $options['path'] ?? ($this->options['path'] ?? $this->getDefaultProjectPath());
         $options['namespace'] = $options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
+        
+        require_once __DIR__.'/Functions.php';
         $this->initOptions($options);
-        if ($this->options['use_short_functions']) {
-            require_once __DIR__.'/Functions.php';
-        }
-
+        
         if ($options['override_class'] ?? false) {
             $class = $options['override_class'];
             unset($options['override_class']);
@@ -228,16 +227,15 @@ trait KernelTrait
         
         $this->reloadFlags($context);
         
-        $exception_options = [
-            'default_exception_handler' => [static::class,'OnDefaultException'],
-            'dev_error_handler' => [static::class,'OnDevErrorHandler'],
-        ];
+        $exception_options = $options;
+        $exception_options ['default_exception_handler' ] = [static::class,'OnDefaultException'];
+        $exception_options ['dev_error_handler'] = [static::class,'OnDevErrorHandler'];
         if (!$this->is_root) {
             $exception_option['handle_all_dev_error'] = false;
             $exception_option['handle_all_exception'] = false;
         }
         ExceptionManager::_()->init($exception_options, $this);
-
+        unset($exception_options); // ...
         
         $this->initComponents($this->options, $context);
         
@@ -269,16 +267,12 @@ trait KernelTrait
     }
     protected function reloadFlags($context): void
     {
-        if (!$this->options['use_flag_by_setting']) {
-            return;
-        }
         if ($this->is_root) {
             $this->loadSetting();
             $setting = $this->setting;
         } else {
             $setting = static::Root()->_Setting(null);
         }
-        $this->options['is_debug'] = $setting['duckphp_is_debug'] ?? $this->options['is_debug'];
     }
     protected function loadSetting()
     {
@@ -314,9 +308,9 @@ trait KernelTrait
         })($full_file);
         $this->setting = array_merge($this->setting, $setting);
     }
-    public function _Setting($key = null)
+    public function _Setting($key = null, $default = null)
     {
-        return $key ? (static::Root()->setting[$key] ?? null) : static::Root()->setting;
+        return $key ? (static::Root()->setting[$key] ?? $default) : static::Root()->setting;
     }
     protected function initExtentions(array $exts): void
     {

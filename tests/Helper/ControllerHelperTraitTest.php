@@ -43,6 +43,8 @@ class ControllerHelperTraitTest extends \PHPUnit\Framework\TestCase
         ControllerHelper::assignViewData($key, $value=null);
         ControllerHelper::PathInfo();
         ControllerHelper::Domain();
+        ControllerHelper::Url('def/g');
+        ControllerHelper::Res('ab/c');
         
         //*/
         $url="/abc";
@@ -125,6 +127,8 @@ ControllerHelper::PageHtml(123);
             ControllerHelper::UserId();
         }catch(\Exception $ex){
         }
+        ControllerHelper::AdminSystem();
+        ControllerHelper::UserSystem();
         
         \LibCoverage\LibCoverage::End();
     }

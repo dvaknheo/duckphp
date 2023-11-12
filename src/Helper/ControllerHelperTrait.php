@@ -23,9 +23,9 @@ use DuckPhp\Core\View;
 trait ControllerHelperTrait
 {
     use SingletonTrait;
-    public static function Setting($key)
+    public static function Setting($key = null, $default = null)
     {
-        return App::Setting($key);
+        return App::Setting($key, $default);
     }
     public static function XpCall($callback, ...$args)
     {
@@ -48,9 +48,17 @@ trait ControllerHelperTrait
     {
         return Route::PathInfo();
     }
+    public static function Url($url = null)
+    {
+        return Route::_()->_Url($url);
+    }
     public static function Domain($use_scheme = false)
     {
-        return Route::Domain($use_scheme);
+        return Route::_()->_Domain($use_scheme);
+    }
+    public static function Res($url = null)
+    {
+        return Route::_()->_Res($url);
     }
     public static function Parameter($key = null, $default = null)
     {
@@ -99,10 +107,7 @@ trait ControllerHelperTrait
     {
         return CoreHelper::ExitJson($ret, $exit);
     }
-    public static function ThrowByFlag($exception, $flag, $message, $code = 0)
-    {
-        return CoreHelper::_()->_ThrowByFlag($exception, $flag, $message, $code);
-    }
+
     /////////////////
     public static function header($output, bool $replace = true, int $http_response_code = 0)
     {
@@ -129,7 +134,11 @@ trait ControllerHelperTrait
     {
         return ExceptionManager::_()->setDefaultExceptionHandler($callback);
     }
-
+    public static function ThrowByFlag($exception, $flag, $message, $code = 0)
+    {
+        return CoreHelper::_()->_ThrowByFlag($exception, $flag, $message, $code);
+    }
+    /////////////
     public static function GET($key = null, $default = null)
     {
         return SuperGlobal::_()->_GET($key, $default);
@@ -150,9 +159,7 @@ trait ControllerHelperTrait
     {
         return SuperGlobal::_()->_SERVER($key, $default);
     }
-    ////////////
-
-    ////
+    /////////////
     public static function PageNo($new_value = null)
     {
         return Pager::PageNo($new_value);
@@ -175,17 +182,25 @@ trait ControllerHelperTrait
         return EventManager::OnEvent($event, $callback);
     }
     //////////////////////
-    public static function Admin($admin = null)
+    public static function AdminSystem($admin_system = null)
     {
-        return GlobalAdmin::_($admin);
+        //return App::_()->_AdminSystem($admin_system);
+    }
+    public static function Admin()
+    {
+        return App::_()->_Admin();
     }
     public static function AdminId()
     {
         return App::_()->_AdminId();
     }
-    public static function User($user = null)
+    public static function UserSystem($user_system = null)
     {
-        return GlobalUser::_($user);
+        //return App::_()->_UserSystem($user_system);
+    }
+    public static function User()
+    {
+        return App::_()->_User();
     }
     public static function UserId()
     {

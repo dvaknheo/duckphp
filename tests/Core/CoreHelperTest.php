@@ -88,6 +88,16 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         }catch(\Throwable $ex){}
         
         echo CoreHelper::Json($data);
+        
+        $options = ['is_debug'=>true, 
+            'html_handler'=>function(&$str){return "<".$str.">";},
+            'lang_handler'=> function($str,$args=[]){ return "lang:".$str.";";}
+        ];
+        App::_(new App())->init($options);
+
+        echo CoreHelper::Hl("abc", []);
+
+
         \LibCoverage\LibCoverage::End();
 
     }

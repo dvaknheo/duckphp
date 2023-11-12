@@ -37,11 +37,12 @@ class App extends ComponentBase
         
         'default_exception_do_log' => true,
         'close_resource_at_output' => false,
+        'html_handler' => null,
+        'lang_handler' => null,
         
         //// error handler ////
         'error_404' => null,          //'_sys/error-404',
         'error_500' => null,          //'_sys/error-500',
-        'error_debug' => null,        //'_sys/error-debug',
         
         //*
         'path_log' => 'runtime',
@@ -317,9 +318,26 @@ EOT;
         return $ret;
     }
     // config static
-    public static function Setting($key)
+    public static function Setting($key = null, $default = null)
     {
-        return static::_()->_Setting($key);
+        return static::_()->_Setting($key, $default);
+    }
+    public function isInstalled()
+    {
+        return true;
+    }
+    public function install($options, $parent_options = [])
+    {
+        /*
+        foreach ($exts as $class => $options) {
+            if (\is_subclass_of($class, self::class)) {
+                if ($class::_()->isInstalled()) {
+                    $class::_()->install([], $options);
+                }
+            }
+        }
+        */
+        return true;
     }
     ////////////////////////////////////////////
     public static function Logger($object = null)
@@ -335,13 +353,13 @@ EOT;
     {
         return static::_()->_Pager($object);
     }
-    public static function Admin($object = null)
+    public static function Admin()
     {
-        return static::_()->_Admin($object);
+        return static::_()->_Admin();
     }
-    public static function User($object = null)
+    public static function User()
     {
-        return static::_()->_User($object);
+        return static::_()->_User();
     }
     public static function AdminId()
     {
@@ -360,11 +378,11 @@ EOT;
         throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
     }
 
-    public function _Admin($object = null)
+    public function _Admin()
     {
         throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
     }
-    public function _User($object = null)
+    public function _User()
     {
         throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
     }

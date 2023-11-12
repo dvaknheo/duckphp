@@ -88,6 +88,9 @@ class AppTest extends \PHPUnit\Framework\TestCase
         \DuckPhp\Core\Route::_()->bind('/exception');
         App::_()->run();
         
+        App::_()->isInstalled();
+        App::_()->install([]);
+        
         App::_()->options['error_404']=function(){
             echo "zzzzzo 404  zzzzzzzzzzzz\n";
         };

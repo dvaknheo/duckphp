@@ -195,6 +195,7 @@ echo "-------------------------------------\n";
         //setting.php
         
         MyKernelTrait::_()->init($options);
+        MyKernelTrait::_()->isRoot();
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
     return;

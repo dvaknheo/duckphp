@@ -39,7 +39,7 @@ class RouteHookRouteMapTest extends \PHPUnit\Framework\TestCase
         
 
 
-        RouteHookRouteMap::_()->getRoutes();
+        RouteHookRouteMap::_()->getRouteMaps();
         
         Route::_()->bind('/')->run();
         Route::_()->bind('/first')->run();

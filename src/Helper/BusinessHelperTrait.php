@@ -15,9 +15,9 @@ use DuckPhp\Core\SingletonTrait;
 trait BusinessHelperTrait
 {
     use SingletonTrait;
-    public static function Setting($key)
+    public static function Setting($key = null, $default = null)
     {
-        return App::_()->_Setting($key);
+        return App::_()->_Setting($key, $default);
     }
     public static function Config($file_basename, $key = null, $default = null)
     {

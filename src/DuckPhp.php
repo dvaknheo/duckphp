@@ -135,13 +135,13 @@ class DuckPhp extends App
             if (!$this->is_root) {
                 $this->bumpSingletonToRoot($this->options['class_user'], GlobalUser::class);
             }
-            static::User(($this->options['class_user'])::_());
+            static::User();//($this->options['class_user'])::_()
         }
         if ($this->options['class_admin'] ?? null) {
             if (!$this->is_root) {
                 $this->bumpSingletonToRoot($this->options['class_admin'], GlobalAdmin::class);
             }
-            static::Admin(($this->options['class_admin'])::_());
+            static::Admin();//($this->options['class_admin'])::_()
         }
         if ($this->options['exception_reporter'] ?? null) {
             ExceptionManager::_()->assignExceptionHandler(\Exception::class, [$this->options['exception_reporter'], 'OnException']);
@@ -154,11 +154,15 @@ class DuckPhp extends App
     {
         return $this->options['install'] ?? false;
     }
-    public function install($options)
+    public function install($options, $parent_options = [])
     {
         if ($this->options['ext_options_file_enable']) {
             return ExtOptionsLoader::_()->installWithExtOptions(static::class, $options);
         }
+        // TODO
+        // check preinstall data,
+        // then ext install. and then root install.
+        // then install me;
     }
     protected function bumpSingletonToRoot($oldClass, $newClass)
     {
@@ -176,13 +180,13 @@ class DuckPhp extends App
     {
         return Pager::_($object);
     }
-    public function _Admin($admin = null)
+    public function _Admin()
     {
-        return GlobalAdmin::_($admin);
+        return GlobalAdmin::_();
     }
-    public function _User($user = null)
+    public function _User()
     {
-        return GlobalUser::_($user);
+        return GlobalUser::_();
     }
     public function _AdminId()
     {
