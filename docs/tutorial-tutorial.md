@@ -446,40 +446,44 @@ Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口
 
 1. 超全局变量
 
-`GET/POST/REQUEST/COOKIE/SERVER($key, $default = null)`
-
-替代同名 `$_GET / $_POST / $_REQUEST / $_COOKIE/ $_SERVER` 。如果没值返回后面的 $default 默认值。如果 $key 为 null 返回整个数组。
+    public static function GET/POST/REQUEST/COOKIE/SERVER($key, $default = null)
+替代同名 `$_GET / $_POST / $_REQUEST / $_COOKIE/ $_SERVER` 。如果没值返回后面的 `$default` 默认值。如果 `$key` 为 null 返回整个数组。
 
 2. 显示处理
 
-`Show($data = [], $view = '')` `Render($view, $data = null)`  `setViewHeadFoot($head_file = null, $foot_file = null)` `assignViewData($key, $value = null)`
+    `Show($data = [], $view = '')`,`Render($view, $data = null)`,`setViewHeadFoot($head_file = null, $foot_file = null)`,`assignViewData($key, $value = null)`
 
 `Show` 是经常用的函数，用于显示页面，`setViewHeadFoot` 设置页眉页脚。 `assignViewData用`于向页面填充数据。
 
 `Render` 渲染得出字符串， 注意的是，调用参数正好和 `Show` 相反，因为 `Show`() 数据在前面更方便。 
 
 3. 配置
+
     public static function Setting($key)
     public static function Config($file_basename, $key = null, $default = null)
 
-4. 跳转`
-`ExitRedirect/ExitRedirectOutside/ExitRouteTo/Exit404/ExitJson($url, $exit = true)`
+4. 跳转
+
+
+    public static function  ExitRedirect/ExitRedirectOutside/ExitRouteTo/Exit404/ExitJson($url, $exit = true)
 
 跳转方法的 $exit 为 true 则附加 exit()
 
 相应的是站内跳转，站外跳转，应用内跳转，404跳转， json跳转
 
 5. 路由相关
-`getRouteCallingClass() getRouteCallingMethod()` 获得正在调用的类 和获得正在调用的方法。
 
-`PathInfo() Domain() Parameter()` ,额外信息
+`getRouteCallingClass()`,`getRouteCallingMethod()` 获得正在调用的类 和获得正在调用的方法。
+
+`PathInfo()Domain() Parameter($key = null, $default = null)` ,PathInfo ,域名， 参数
     
 6. 系统兼容替换
 
-和系统同名函数(header/setcookie/exit)功能一致，目的是为了兼容不同平台比如 php-fpm 和 php-cli 下
+和系统同名函数(header/setcookie/exit)功能一致，目的是为了兼容不同平台比如 php-fpm 和 php-cli 
 
 7. 分页相关
-`PageNo($new_value = null) PageWindow($new_value = null) PageHtml($total, $options = [])`
+
+    `PageNo($new_value = null) PageWindow($new_value = null) PageHtml($total, $options = [])`
 设置分页当前页码，设置当前分页页面宽度，（不用 PageSize 是有点小原因） 获得 分页字符串，后面选项见 [分页类参考](ref/Component-Pager.md)
 
 8. 异常处理
@@ -507,6 +511,7 @@ DuckPhp 的异常处理 可以参见 待定文档说明。
 
 10. 相关对象
 
+
     public static function Admin()
     public static function AdminId()
     public static function User()
@@ -526,9 +531,6 @@ DuckPhp 的异常处理 可以参见 待定文档说明。
 
 相比 Model 目录，这里多了 BusinessException 。 因为规范要求 model 类不得抛异常
 
-`MyProject\Business\BusinessException` 默认异常类，继承 ProjectException。
-----
-
 
 `MyProject\Business\DemoBusiness` 示例业务类
 
@@ -536,11 +538,13 @@ DuckPhp 的异常处理 可以参见 待定文档说明。
 
 `-Business` 的之间不要相互调用， 我们把完成部分逻辑的控制器，可以放到 `-Service` 结尾的类里
 
-
 这就是 Business 层不用 Service 来命名的原因 
 
 ----
+
 以下是固定的类
+
+`MyProject\Business\BusinessException` 默认异常类，继承 ProjectException。
 
 `MyProject\Business\Base`  业务基类很简单，就实现了 `_()` 可变单例方法。 以及 `CallInPhase()`方法
 
