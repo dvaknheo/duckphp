@@ -414,11 +414,11 @@ Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口
 
 ----
 
-`MyProject\Controller\MainController  主入口类
+`MyProject\Controller\MainController`  主入口类
 
 `action_`  对应选项 `$options['controller_method_prefix']='action_'` 。 
 
-//PathInfo
+//
 
 `MyProject\Controller\testController`
 
@@ -433,7 +433,7 @@ Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口
 
 以下深入固定类的讲解
 
-`MyProject\Controller\Base` 控制器基类，实现了 'CallInPhase()'固定方法，以及修改了`_()`可变单例的实现，使得可以方便的替换控制器类。
+`MyProject\Controller\Base` 控制器基类，修改了`_()`可变单例的实现，使得可以方便的替换控制器类。
 
 `MyProject\Controller\ControllerException`，控制器层的异常类，继承 `ProjectException` 拥有 `ThrowOn` 固定方法，用法见前面。
 
@@ -445,25 +445,26 @@ Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口
 分类有：
 
 1. 超全局变量
+用于多环境统一处理数据
 
     public static function GET/POST/REQUEST/COOKIE/SERVER($key, $default = null)
 替代同名 `$_GET / $_POST / $_REQUEST / $_COOKIE/ $_SERVER` 。如果没值返回后面的 `$default` 默认值。如果 `$key` 为 null 返回整个数组。
 
 2. 显示处理
 
-    `Show($data = [], $view = '')`,`Render($view, $data = null)`,`setViewHeadFoot($head_file = null, $foot_file = null)`,`assignViewData($key, $value = null)`
+`Show($data = [], $view = '')`,`Render($view, $data = null)`,`setViewHeadFoot($head_file = null, $foot_file = null)`,`assignViewData($key, $value = null)`
 
 `Show` 是经常用的函数，用于显示页面，`setViewHeadFoot` 设置页眉页脚。 `assignViewData用`于向页面填充数据。
 
 `Render` 渲染得出字符串， 注意的是，调用参数正好和 `Show` 相反，因为 `Show`() 数据在前面更方便。 
 
 3. 配置
-
+读取配置设置
     public static function Setting($key)
     public static function Config($file_basename, $key = null, $default = null)
 
 4. 跳转
-
+各种跳转
 
     public static function  ExitRedirect/ExitRedirectOutside/ExitRouteTo/Exit404/ExitJson($url, $exit = true)
 
@@ -479,12 +480,12 @@ Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口
     
 6. 系统兼容替换
 
-和系统同名函数(header/setcookie/exit)功能一致，目的是为了兼容不同平台比如 php-fpm 和 php-cli 
+和系统同名函数(`header`,`setcookie`,`exit`)功能一致，目的是为了兼容不同平台比如 php-fpm 和 php-cli 
 
 7. 分页相关
 
     `PageNo($new_value = null) PageWindow($new_value = null) PageHtml($total, $options = [])`
-设置分页当前页码，设置当前分页页面宽度，（不用 PageSize 是有点小原因） 获得 分页字符串，后面选项见 [分页类参考](ref/Component-Pager.md)
+设置分页当前页码，设置当前分页页面宽度，（不用 PageSize 是有点小原因） 获得分页字符串，后面选项见 [分页类参考](ref/Component-Pager.md)
 
 8. 异常处理
 
@@ -506,11 +507,11 @@ DuckPhp 的异常处理 可以参见 待定文档说明。
 回调，如果正常返回没事，如果抛异常则返回异常。
 
 9. 事件处理
-`FireEvent($event, ...$args)` `OnEvent($event, $callback)`
+`FireEvent($event, ...$args)`,`OnEvent($event, $callback)`
 触发一个事件， 设置事件回调， DuckPhp 的事件系统是一对多，后到先得得。
 
 10. 相关对象
-
+其他要用到的对象
 
     public static function Admin()
     public static function AdminId()
