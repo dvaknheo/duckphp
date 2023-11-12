@@ -8,13 +8,13 @@
 ## 方法说明
 
 ### 超全局变量
-替代同名 $\_GET / $\_POST /$\_REQUEST /$\_COOKIE/$\_SERVER 。如果没的话返回后面的 $default 默认值。如果 $key 为 null 返回整个数组。
+替代同名 `$_GET / $_POST / $_REQUEST / $_COOKIE/ $_SERVER` 。如果没的话返回后面的 $default 默认值。如果 $key 为 null 返回整个数组。
 ```php
     public static function GET($key = null, $default = null)
     public static function POST($key = null, $default = null)
     public static function REQUEST($key = null, $default = null)
     public static function COOKIE($key = null, $default = null)
-    public static function SERVER($key, $default = null)
+    public static function SERVER($key = null, $default = null)
 ```
 
 ### 显示处理
@@ -34,7 +34,7 @@
     public static function Setting($key)
 设置是敏感信息,不存在于版本控制里面。而配置是非敏感。
 
-    public static function Config($key, $default = null, $file_basename = 'config')
+    public static function Config($file_basename, $key = null, $default = null)
 读取配置，从 config/$file_basename.php 里读取配置
 
 
@@ -59,17 +59,18 @@
 
 ### 路由相关
 
-    public static function Parameter($key, $default = null)
+    public static function Parameter($key = null, $default = null)
 和超全局变量类似，获得存储的路由切片数据
 
     public static function PathInfo()
 获取当前 PathInfo
 
     public static function getRouteCallingMethod()
-获取正在调用的路由方法，构造函数里使用。
+获取正在调用的路由方法
 
-    public static function setRouteCallingMethod($method)
-设置调用的路由方法， 强行改变 view 的默认行为时候用。
+    public static function getRouteCallingClass()
+获取正在调用的路由类
+
 
 ### 系统兼容替换
 和系统同名函数(header/setcookie/exit)功能一致，目的是为了兼容不同平台
@@ -85,7 +86,7 @@
     public static function PageNo($new_value = null)
 获得或设置当前页码
 
-    public static function PageSize($new_value = null)
+    public static function PageWindow($new_value = null)
 获得或设置当前每页数据条目
     public static function PageHtml($total, $options = [])
 获得分页结果 HTML，这里的 $options 是传递给 Pager 类的选项。
@@ -121,21 +122,15 @@
 
 以上就是所有控制器助手方法
 
-    public static function PathInfo()
 
-    public static function Config($file_basename, $key = null, $default = null)
 
-    public static function getRouteCallingClass()
 
     public static function Domain($use_scheme = false)
 
-    public static function Parameter($key = null, $default = null)
 
     public static function ThrowByFlag($exception, $flag, $message, $code = 0)
 
-    public static function SERVER($key = null, $default = null)
 
-    public static function PageWindow($new_value = null)
 
     public static function Admin($admin = null)
 

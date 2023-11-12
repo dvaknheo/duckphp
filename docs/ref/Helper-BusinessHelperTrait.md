@@ -27,6 +27,7 @@ BusinessHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extendabl
 调用，如果产生异常则返回异常，否则返回正常数据
 
     public static function ThrowByFlag($exception, $flag, $message, $code = 0)
+给那些没实现 `ThrowOn`的异常增加快速抛出的方法
 
 ControllerHelperTrait 相比比 BusinessHelperTrait 少了 Cache()
 

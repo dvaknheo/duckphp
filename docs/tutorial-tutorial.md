@@ -20,7 +20,7 @@ DuckPhp 1.3.1 现在发布。经过2年多没动之后，我花了几个月，�
 
 和其他 管理后台不同的是， duckadmin 后台是 library ，其他工程可以调用。而且，所有实现都能自由替换。
 
-而 webman admin 以及种种框架的 后台系统，都是要你在后台系统上做二次开发。
+而 webman admin 以及各种框架的 后台系统，都是要你在后台系统上做二次开发。
 
 
 ## 从 DuckAdmin 开始的 DuckPhp 教程
@@ -170,7 +170,9 @@ function onInit()
 致此，二次开发基本讲完了。要深入了解，那么我们就从自己搞个工程开始了
 
 ## 新工程
-我们建立工程文件夹，然后用 composer 建立新的 DuckPhp 应用工程
+#### 建立新工程
+
+我们进入新工程目录，然后用 composer 建立新的 DuckPhp 应用工程
 ```
 composer require dvaknheo/duckphp # 用 require 
 ./vendor/bin/duckphp --help   # 查看有什么指令
@@ -199,13 +201,12 @@ class mytestController
 ```
 php duckphp-project run --port 8082
 ```
-访问 `http://127.0.0.1:8082/mytest/i`
+访问 `http://127.0.0.1:8082/mytest/i` （注意区分大小写）
 看到 phpinfo 页面就说明成功了。后面 Business, Model 等的概念再说
 
 ### 文件结构
 
-
-在这里，我们用 `tree -I 'public'`  列一下 新应用的文件结构。我们排除 public 目录的原因是还有好些不需要的例子
+在这里，我们用 `tree -I 'public'`  列一下 新应用的文件结构。这里的参数是用于排除 `public` 目录上那些繁杂的例子。
 ```
 tree -I 'public'
 .
@@ -254,20 +255,20 @@ tree -I 'public'
 
 ## 目录结构解说
 
-小写的是资源文件夹，资源文件夹可以由 $options['path']设置为其他目录。
+小写的是资源文件夹，资源文件夹可以由 `$options['path']`设置为其他目录。
 ### 工程目录
 * config 配置目录。通过修改应用的选项，也可以不需要这个目录
     * `config/DuckPhpSettings.config.php` 这个文件是存在的 ，只有根应用会有用，作用是保存设置的。
     * `config/DuckPhpApps.config.php` 这个是选项文件子应用的额外选项都在这里。安装的时候，会改写这个文件。
-* runtime 目录是唯一需要可写的文件夹。默认工程没有写入东西。
+* runtime 目录是唯一需要可写的目录。默认情况下，日志会保存在这里
     * keepme.txt 只是 git 作用
 * src 类文件夹。工程代码文件。后面详解
-* view 视图文件夹
+* view 视图目录
    * view/_sys/error404.php 404 错误展示页面
    * view/_sys/error404.php 500 错误展示页面
-   * view/files.php 对应访问 file 的页面文件
-   * view/main.php 对应 访问主页的页面文件
-   *view/test/done.php 对应访问 test/done 的页面文件
+   * view/files.php 对应访问 `file` 的页面
+   * view/main.php 对应访问 `` 的页面
+   *view/test/done.php 对应访问 `test/done` 的页面
 ----
 
 注意到我们排除了 public 目录,因为默认下带了很多示例文件
@@ -296,24 +297,24 @@ $options = [
 ];
 \MyProject\System\App::RunQuickly($options);
 ```
-入口很简单，就是 Runqucikly ,把 选项数组带进去就是
-选项数组可以填什么，看配置
+入口很简单，就是 Runqucikly ,把 选项数组带进去就是 。
+
+`$options` 选项很复杂， 你的工程因为他们而不同。 有40多个。选项数组可以填什么，看配置[参考文档](ref/options.md)
+
 然后，我们入口是 `\MyProject\System\App` 类，就是后面的内容
    
 `\MyProject\System\App::RunQuickly($options); `
 等价于
 `\MyProject\System\App::_()->init($options)->run();`
 
-`init()`初始化，然后 `run()` 运行
-入口类只会被初始化，除非强制初始化。
-
-`$options` 选项很复杂， 你的工程因为他们而不同。 有40多个，可以在 查看 [参考索引页面](ref/index.md)
+`init()`初始化，然后 `run()` 运行。入口类只会被初始化一次，除非强制初始化。
 
 ### src 源代码目录
 
-#### 引用到 DuckPhp 类
+#### 引用到 `DuckPhp`系统的类
+----
 
-除开这些类，你应该只在 System 里引用 DuckPhp 的类
+以下10个引用到 `DuckPhp`系统的类 除开这些类，你应该只在 System 里引用 DuckPhp 系统的类
 
 4 个助手类对应 4 个 Trait
 
@@ -327,7 +328,7 @@ $options = [
 
 所有 `Helper` 默认都只有静态方法,你自己的 Helper请用动态方法以表示区别。
 
-这些助手类都实现了 `_()` 可变方法
+这些助手类都实现了 `_()` 可变单例方法
 
 如果你的系统足够小，你也可以把这些 HelperTrait 内嵌入相应的基类或类里。
 
@@ -337,9 +338,7 @@ $options = [
 - MyProject\Business\Base => [DuckPhp\Foundation\SimpleBusinessTrait](ref/Foundation-SimpleBusinessTrait.md)
 - MyProject\Model\Base => [DuckPhp\Foundation\SimpleModelTrait](ref/Foundation-SimpleModelTrait.md)
 
-这些基类都实现了 `_()` 可变方法而且每层都有不同
-`CallInPhase($phase)`
-切换其他相位
+这些基类都实现了 `_()` 可变单例方法。 而且都有 `CallInPhase($phase)`静态方法以便跨相位调用
 
 3 个功能性Trait
 
@@ -348,10 +347,11 @@ $options = [
 - Project\Controller\ExceptionReporter => [DuckPhp\Foundation\ExceptionReporterTrait](ref/Foundation-ExceptionReporterTrait.md)
 
 `ProjectException::ThrowOn($flag,$message,$code = 0);` 如果`$flag` 为真则抛奔异常。
-Session ， session 容器，bean, 扩展规范 `get` `set` 方法
+
+`Session` ， session 容器，bean, 扩展规范 `get` `set` 方法
 
 #### System
-
+----
 @script File: `template/System/App.php`
 ```php
 class App extends DuckPhp
@@ -400,41 +400,122 @@ class App extends DuckPhp
 
 `command_hello()` 这是命令行下 `duckphp-project hello` 的入口。具体详见   [Console](ref/Core-Console.md) 的文档
 
-System 目录是`业务工程师`不需要修改的，修改这的东西，都是`核心工程师`来修改
+System 目录是 **业务工程师** 不需要修改的，修改这的东西，都是 **核心工程师** 来修改
 
 App 的 run 方法，就根据路由，执行 Controller 目录下相关的类
 
 #### Controller
 
+----
+
 Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口。 业务层由 Business 层处理。
 
-偷懒的时候，你可以把这个 Helper 内置到 控制器基类里
 
 
-ControllerException ，控制器层的异常，继承 ProjectException 
+----
 
+`MyProject\Controller\MainController  主入口类
 
+`action_`  对应选项 `$options['controller_method_prefix']='action_'` 。 
 
-Session.php Session 处理相关。
-ExceptionReporter.php 则是处理各种错误。
+//PathInfo
 
+`MyProject\Controller\testController`
 
-Controller 不要相互调用， 我们把完成部分逻辑的控制器，可以放到 `Action` 结尾的类里
-
-MainController.php
-
-testController.php
-
-`Controller` 结尾的类是控制器
-`action_` 前缀的公开方法，是对应的路由调用方法
+`-Controller` 的之间不要相互调用， 我们把完成部分逻辑的控制器，可以放到 `-Action` 结尾的类里
 
 
 控制器里不要写业务，做的是输入和输出的处理。 业务层负责功能。调用业务层，而不是模型层
 
+用`Helper::Show()` 来显示数据
+
 ----
 
-#### Business 
+以下深入固定类的讲解
 
+`MyProject\Controller\Base` 控制器基类，实现了 'CallInPhase()'固定方法，以及修改了`_()`可变单例的实现，使得可以方便的替换控制器类。
+
+`MyProject\Controller\ControllerException`，控制器层的异常类，继承 `ProjectException` 拥有 `ThrowOn` 固定方法，用法见前面。
+
+`MyProject\Controller\Session`， 处理会话。
+
+`MyProject\Controller\ExceptionReporter` 则是处理各种异常的入口。
+
+`MyProject\Controller\Helper` 有很多静态方法。也是 **业务工程师** 需要熟练掌握的 具体参见 [DuckPhp\Helper\ControllerHelperTrait](ref/Helper/ControllerHelperTrait) 文档。
+分类有：
+
+1. 超全局变量
+
+`GET/POST/REQUEST/COOKIE/SERVER($key, $default = null)`
+
+替代同名 `$_GET / $_POST / $_REQUEST / $_COOKIE/ $_SERVER` 。如果没值返回后面的 $default 默认值。如果 $key 为 null 返回整个数组。
+
+2. 显示处理
+
+`Show($data = [], $view = '')` `Render($view, $data = null)`  `setViewHeadFoot($head_file = null, $foot_file = null)` `assignViewData($key, $value = null)`
+
+`Show` 是经常用的函数，用于显示页面，`setViewHeadFoot` 设置页眉页脚。 `assignViewData用`于向页面填充数据。
+
+`Render` 渲染得出字符串， 注意的是，调用参数正好和 `Show` 相反，因为 `Show`() 数据在前面更方便。 
+
+3. 配置
+    public static function Setting($key)
+    public static function Config($file_basename, $key = null, $default = null)
+
+4. 跳转`
+`ExitRedirect/ExitRedirectOutside/ExitRouteTo/Exit404/ExitJson($url, $exit = true)`
+
+跳转方法的 $exit 为 true 则附加 exit()
+
+相应的是站内跳转，站外跳转，应用内跳转，404跳转， json跳转
+
+5. 路由相关
+`getRouteCallingClass() getRouteCallingMethod()` 获得正在调用的类 和获得正在调用的方法。
+
+`PathInfo() Domain() Parameter()` ,额外信息
+    
+6. 系统兼容替换
+
+和系统同名函数(header/setcookie/exit)功能一致，目的是为了兼容不同平台比如 php-fpm 和 php-cli 下
+
+7. 分页相关
+`PageNo($new_value = null) PageWindow($new_value = null) PageHtml($total, $options = [])`
+设置分页当前页码，设置当前分页页面宽度，（不用 PageSize 是有点小原因） 获得 分页字符串，后面选项见 [分页类参考](ref/Component-Pager.md)
+
+8. 异常处理
+
+DuckPhp 的异常处理 可以参见 待定文档说明。
+
+    public static function assignExceptionHandler($classes, $callback = null)
+分配异常类回调
+
+    public static function setMultiExceptionHandler(array $classes, $callback)
+给多个异常类都帮定到一个回调处理
+
+    public static function setDefaultExceptionHandler($callback)
+设置默认的异常处理
+
+    public static function ThrowByFlag($exception, $flag, $message, $code = 0)
+给没`ThrowOn`的异常，添加一个快捷
+
+    public static function XpCall($callback, ...$args)
+回调，如果正常返回没事，如果抛异常则返回异常。
+
+9. 事件处理
+`FireEvent($event, ...$args)` `OnEvent($event, $callback)`
+触发一个事件， 设置事件回调， DuckPhp 的事件系统是一对多，后到先得得。
+
+10. 相关对象
+
+    public static function Admin()
+    public static function AdminId()
+    public static function User()
+    public static function UserId()
+这段代码将会调整, 得到管理员对象或者用户对象
+
+
+#### Business 
+----
 作为程序员专家，大家达成的意见是 业务逻辑层要抽出来，业务逻辑 英文是什么 Business Logic 嘛。
 
 有人用Logic ，这里我用的是 Business 命名 还有人用 Service。
@@ -445,63 +526,58 @@ testController.php
 
 相比 Model 目录，这里多了 BusinessException 。 因为规范要求 model 类不得抛异常
 
---
+`MyProject\Business\BusinessException` 默认异常类，继承 ProjectException。
+----
 
-BusinessException.php 默认异常类，继承 ProjectException。
 
-DemoBusiness.php 示例业务类，你可以删除，并加上多个类似符合你的工程的业务类
+`MyProject\Business\DemoBusiness` 示例业务类
 
-CommonService.php
+`MyProject\Business\CommonService`
 
-Business 之间相互调用的业务半成品，那么就抽出成 Service。
+`-Business` 的之间不要相互调用， 我们把完成部分逻辑的控制器，可以放到 `-Service` 结尾的类里
 
-Business 相互调用，则放到 Service 里，这就是 Business 层不用 Service 来命名的原因 
 
-BusinessHelper 用于业务层。三个配置相关方法，两个事件方法，和两个其他方法。
+这就是 Business 层不用 Service 来命名的原因 
+
+----
+以下是固定的类
+
+`MyProject\Business\Base`  业务基类很简单，就实现了 `_()` 可变单例方法。 以及 `CallInPhase()`方法
+
+`MyProject\Business\Helper` 。三个配置相关方法，两个事件方法，和两个其他方法。
 
     public static function Setting($key)
-获得设置信息
-
     public static function Config($key =null , $default = null $file_basename = 'config')
-获得配置,如果没有则为 default ，如果key 也没有，则是配置文件（默认为 config）所有配置
-
     public static function FireEvent($event, ...$args)
-触发事件
-
     public static function OnEvent($event, $callback)
-绑定事件
+    public static function XpCall($callback, ...$args)
+    public static function ThrowByFlag($exception, $flag, $message, $code = 0)
+以上见 `MyProject\Controller\Helper` 的说明。
 
     public static function Cache($object = null)
-获得缓存对象
-
-    public static function XpCall($callback, ...$args)
-调用，如果产生异常则返回异常，否则返回正常数据
-
-    ThrowByFlag
-给那些没实现 `ThrowOn`的异常类多个类似的
-
+获得缓存对象 `BusinessHelperTrait` 仅 `ControllerHelperTrait` 多了 `Cache()`方法
 
 #### Model
 
-DemoModel.php 这是示例 Demo ，你可以删除他根据你的数据库表重建
 
-CrossModelEx.php 这是示例 跨表 Demo ，你可以删除他重建
+`DemoModel.php` 这是示例 Demo ，命名是按数据库表名来
 
+`CrossModelEx.php` 这是示例 跨表 Demo ，你可以删除他重建
 
-Helper.php
+不推荐 Model 层里抛异常，所以 Model 层没有 ModelException
 
-Model/Helper 方法只有下面五个
+----
+
+固定的类
+
+`MyProject\Model\Helper`
+
+方法只有下面五个
 
     public static function Db($tag = null)
-获得 Db 对象
-参见  [DuckPhp\Component\DbManager::Db](Component-DbManager.md#Db)
-
     public static function DbForRead()
-获得只读用的 Db 对象 public static function DbForRead() 
-参见 [DuckPhp\Component\DbManager::DbForRead](Component-DbManager.md#DbForRead)
-
     public static function DbForWrite()
-获得读写用的 Db 对象
+
 参见 [DuckPhp\Component\DbManager::DbForWrite](Component-DbManager.md#DbForWrite)
 
     public static function SqlForPager(string $sql, int $pageNo, int $pageSize = 10): string
@@ -511,14 +587,12 @@ Model/Helper 方法只有下面五个
 简单的把 `select ... from ` 替换成 `select count(*)as c from ` 用于分页处理。
 
 
-偷懒的时候，Helper 和 Base 合并在一起。
-
-不推荐 Model 层里抛异常，所以 Model 层没有 ModelException
+`MyProject\Modl\Base` 
 
 DuckPhp 的 Model 层是很传统的跟着数据库表名走的模式。
 
     public function table()
-获取表名
+获取表名，你的 Model 类可以重写这个方法
 
     public function prepare($sql)
 预处理sql 语句，把 `'TABLE'`改为表名
@@ -539,13 +613,11 @@ DuckPhp 的 Model 层是很传统的跟着数据库表名走的模式。
     protected function getList(int $page = 1, int $page_size = 10)
 内置快速方法。
 
-
-
--------------
+----
 
 ## 其他参考文档
 
-这些文档是`业务工程师`需要熟读的内容，列举如下：
+这些文档是 **核心工程师** 才需要熟读的内容，列举如下：
 
 
 ### 理解相位
