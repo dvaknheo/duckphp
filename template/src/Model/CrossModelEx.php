@@ -3,11 +3,10 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+namespace ProjectNameTemplate\Model;
 
-namespace AdvanceDemo\Model;
-
-use AdvanceDemo\Model\Base;
-use AdvanceDemo\Model\Helper;
+use ProjectNameTemplate\Model\Base;
+use ProjectNameTemplate\Model\Helper;
 
 class CrossModelEx extends Base
 {

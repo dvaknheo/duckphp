@@ -25,6 +25,6 @@ $options = [
 ];
 $flag = Route::RunQuickly($options);
 if (!$flag) {
-    header(404,'no');
+    header(404, 'no');
     echo "404!";
 }

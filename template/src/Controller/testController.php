@@ -3,10 +3,9 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+namespace ProjectNameTemplate\Controller;
 
-namespace AdvanceDemo\Controller;
-
-use AdvanceDemo\Business\DemoBusiness;
+use ProjectNameTemplate\Business\DemoBusiness;
 
 class testController
 {

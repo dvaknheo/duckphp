@@ -3,11 +3,10 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+namespace ProjectNameTemplate\Business;
 
-namespace AdvanceDemo\Business;
-
-use AdvanceDemo\Business\Base;
-use AdvanceDemo\Business\Helper;
+use ProjectNameTemplate\Business\Base;
+use ProjectNameTemplate\Business\Helper;
 
 class CommonService extends Base
 {

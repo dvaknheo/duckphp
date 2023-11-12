@@ -44,7 +44,7 @@ EOT;
 }
 
 $options = [
-    'is_debug'=>true,
+    'is_debug' => true,
     'namespace_controller' => '\\',
     'ext' => [
         JsonRpcExt::class => [

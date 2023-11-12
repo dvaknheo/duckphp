@@ -3,12 +3,11 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-
-namespace AdvanceDemo\Business;
-
-use AdvanceDemo\System\ProjectException;
+namespace ProjectNameTemplate\Business;
 
 use DuckPhp\ThrowOn\ThrowOnTrait;
+
+use ProjectNameTemplate\System\ProjectException;
 
 class BusinessException extends ProjectException
 {

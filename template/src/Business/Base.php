@@ -3,8 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-
-namespace AdvanceDemo\Business;
+namespace ProjectNameTemplate\Business;
 
 use DuckPhp\Foundation\SimpleBusinessTrait;
 

@@ -5,14 +5,15 @@
  */
 
 // 以下部分是核心工程师写。
+
 namespace MySpace\System
 {
     //自动加载文件
     require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
     
+    use DuckPhp\Core\SingletonTrait;
     use DuckPhp\DuckPhp;
     use DuckPhp\Ext\CallableView;
-    use DuckPhp\Core\SingletonTrait;
     use MySpace\View\Views;
 
     class App extends DuckPhp
@@ -104,9 +105,9 @@ namespace MySpace\Controller
 
 namespace MySpace\Business
 {
+    use MySpace\Helper\BusinessHelper as B;
     use MySpace\Model\MyModel;
     use MySpace\System\BaseBusiness;
-    use MySpace\Helper\BusinessHelper as B;
 
     class MyBusiness extends BaseBusiness
     {
@@ -177,7 +178,7 @@ namespace MySpace\View {
 namespace
 {
     $options = [
-        // 'override_class' => 'MySpace\System\App', 
+        // 'override_class' => 'MySpace\System\App',
         // 你也可以在这里调整选项。覆盖类内选项
     ];
     \MySpace\System\App::RunQuickly($options);

@@ -3,8 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-
-namespace AdvanceDemo\Controller;
+namespace ProjectNameTemplate\Controller;
 
 use DuckPhp\Helper\ControllerHelperTrait;
 

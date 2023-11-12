@@ -1,33 +1,37 @@
-<?php
+<?php declare(strict_types=1);
 require(__DIR__.'/../../autoload.php');  // @DUCKPHP_HEADFILE
 
 function getfile($f)
 {
-    if(!$f)return;
-    $ref=new ReflectionClass(\DuckPhp\DuckPhp::class);
-    $path=realpath(dirname($ref->getFileName()) . '/../docs').'/';
-    $file=realpath($path.$f);
-    if(substr($file,0,strlen($path))!=$path){ return;} // 安全处理
+    if (!$f) {
+        return;
+    }
+    $ref = new ReflectionClass(\DuckPhp\DuckPhp::class);
+    $path = realpath(dirname($ref->getFileName()) . '/../docs').'/';
+    $file = realpath($path.$f);
+    if (substr($file, 0, strlen($path)) != $path) {
+        return;
+    } // 安全处理
     
-    $str=file_get_contents($file);
+    $str = file_get_contents($file);
     
     
     /////////////// show
     //TODO 缓存处理
-    if(substr($file,-4)==='.svg'){
+    if (substr($file, -4) === '.svg') {
         header('content-type:image/svg+xml');
         echo $str;
-    }else if(substr($file,-3)==='.md'){
-        $str=preg_replace('/([a-z_]+\.gv\.svg)/',"?f=$1",$str);
+    } elseif (substr($file, -3) === '.md') {
+        $str = preg_replace('/([a-z_]+\.gv\.svg)/', "?f=$1", $str);
         header('content-type:application/json');
-        $json=['s'=>$str];
+        $json = ['s' => $str];
         echo json_encode($json, JSON_UNESCAPED_UNICODE); // 纯文本太折腾，用json
     }
     
     exit;
 }
 if (!defined('VIEW')) {
-    $f=$_GET['f']??null;
+    $f = $_GET['f'] ?? null;
     getfile($f);
 }
 ?><!doctype html>

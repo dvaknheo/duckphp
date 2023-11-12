@@ -3,8 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-
-namespace AdvanceDemo\Model;
+namespace ProjectNameTemplate\Model;
 
 use DuckPhp\Helper\ModelHelperTrait;
 

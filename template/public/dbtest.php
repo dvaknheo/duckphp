@@ -5,8 +5,8 @@
  */
 require(__DIR__.'/../../autoload.php');  // @DUCKPHP_HEADFILE
 
-use DuckPhp\DuckPhpAllInOne as DuckPhp;
-use DuckPhp\DuckPhpAllInOne as C;  // Helper 都给我们省掉了
+use DuckPhp\DuckPhpAllInOne as C;
+use DuckPhp\DuckPhpAllInOne as DuckPhp;  // Helper 都给我们省掉了
 use DuckPhp\DuckPhpAllInOne as M;  // Helper 都给我们省掉了
 use DuckPhp\Ext\EmptyView;
 use DuckPhp\Foundation\SimpleBusinessTrait; // 可变单例模式
@@ -77,7 +77,7 @@ class MainController
 {
     public function action_index()
     {
-        if(C::POST()){
+        if (C::POST()) {
             MyBusiness::_()->addData($_POST);
         }
         list($total, $list) = MyBusiness::_()->getDataList(C::PageNo(), C::PageWindow(3));
@@ -86,7 +86,7 @@ class MainController
     }
     public function action_show()
     {
-        if(C::POST()){
+        if (C::POST()) {
             MyBusiness::_()->updateData(C::POST('id', 0), $_POST);
         }
         $data = MyBusiness::_()->getData(C::REQUEST('id', 0));
@@ -132,7 +132,7 @@ CREATE TABLE `test` (
     ];
     $options['error_404'] = function () {
         (new Main)->index(); //404 to homepage
-    }; 
+    };
     $flag = DuckPhp::RunQuickly($options);
     $data = DuckPhp::getViewData();
     

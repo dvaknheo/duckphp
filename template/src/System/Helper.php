@@ -3,8 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-
-namespace AdvanceDemo\System;
+namespace ProjectNameTemplate\System;
 
 use DuckPhp\Helper\AppHelperTrait;
 

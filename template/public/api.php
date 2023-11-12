@@ -6,6 +6,7 @@
 namespace {
     require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
 }
+
 namespace Api {
 // 后面是业务代码
 // 这里自己加 api
@@ -15,22 +16,22 @@ namespace Api {
     }
     class test implements BaseApi
     {
-// 访问方式 http://duckphp.demo.local/api.php/test.foo2?a=1&b=2
-// 访问方式 http://duckphp.demo.local/api.php/test.foo
+        // 访问方式 http://duckphp.demo.local/api.php/test.foo2?a=1&b=2
+        // 访问方式 http://duckphp.demo.local/api.php/test.foo
 
         public function index()
         {
-            $domain=\DuckPhp\DuckPhpAllInOne::Domain(true);
-            $url=$domain . __url('test.foo');
-            $url2=$domain .__url('test.foo2?a=1&b=2');
+            $domain = \DuckPhp\DuckPhpAllInOne::Domain(true);
+            $url = $domain . __url('test.foo');
+            $url2 = $domain .__url('test.foo2?a=1&b=2');
             $message = <<<EOT
     不带参数访问： {$url}
     带参数访问：{$url2} 将会反射到 相应参数
     如果需要修改 uid ，则继承本扩展 RouteHookApiServer 覆盖 getObjectAndMethod() 和 getInputs()
 EOT;
             
-            $ret['message']=$message;
-            $ret['date']=DATE(DATE_ATOM);
+            $ret['message'] = $message;
+            $ret['date'] = DATE(DATE_ATOM);
             return $ret;
         }
         public function foo()
@@ -44,16 +45,17 @@ EOT;
     }
 
 }
+
 namespace {
     $options = [
-        'namespace'=>'',
+        'namespace' => '',
         'setting_file_enable' => false,
         'ext' => [
             'DuckPhp\\Ext\\RouteHookApiServer' => [
-				'api_server_namespace' => '\\Api',
-				'api_server_interface' => '~BaseApi',
-				'api_server_404_as_exception' => true,
-			],
+                'api_server_namespace' => '\\Api',
+                'api_server_interface' => '~BaseApi',
+                'api_server_404_as_exception' => true,
+            ],
         ],
         'is_debug' => true,
     ];

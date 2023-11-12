@@ -23,7 +23,7 @@ function GetRunResult()
     $ret = DuckPhpAllInOne::getViewData();
     return $ret;
 }
-function POST($k =null , $v = null)
+function POST($k = null, $v = null)
 {
     return DuckPhpAllInOne::POST($k, $v);
 }
@@ -67,7 +67,7 @@ function action_index()
 }
 function action_add()
 {
-    if(POST()){
+    if (POST()) {
         return action_do_add();
     }
     $data = ['x' => 'add'];
@@ -76,7 +76,7 @@ function action_add()
 }
 function action_edit()
 {
-    if(POST()){
+    if (POST()) {
         return action_do_edit();
     }
     $data = ['x' => 'edit'];

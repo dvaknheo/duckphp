@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 /**
- * DuckPHP
+ * DuckPhp
  * From this time, you never be alone~
  */
-namespace AdvanceDemo\Controller;
+namespace ProjectNameTemplate\Controller;
 
 use DuckPhp\Foundation\ExceptionReportTrait;
 
@@ -12,7 +12,7 @@ class ExceptionReport
     use ExceptionReportTrait;
     //public function defaultException($ex)
     //{
-        //return App::Current()->_OnDefaultException($ex);
+    //return App::Current()->_OnDefaultException($ex);
     //}
     public function onBusinessException($ex)
     {

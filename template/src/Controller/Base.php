@@ -3,8 +3,8 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+namespace ProjectNameTemplate\Controller;
 
-namespace AdvanceDemo\Controller;
 use DuckPhp\Foundation\SimpleControllerTrait;
 
 class Base

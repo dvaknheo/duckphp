@@ -3,11 +3,10 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-
-namespace AdvanceDemo\System;
+namespace ProjectNameTemplate\System;
 
 use DuckPhp\DuckPhp;
-use AdvanceDemo\Controller\ExceptionReporter;
+use ProjectNameTemplate\Controller\ExceptionReporter;
 
 class App extends DuckPhp
 {

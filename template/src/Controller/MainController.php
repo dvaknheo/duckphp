@@ -3,12 +3,11 @@
  * DuckPhp
  * From this time, you never be alone~
  */
+namespace ProjectNameTemplate\Controller;
 
-namespace AdvanceDemo\Controller;
-
-use AdvanceDemo\Business\DemoBusiness;
-use AdvanceDemo\Controller\Base;
-use AdvanceDemo\Controller\Helper;
+use ProjectNameTemplate\Business\DemoBusiness;
+use ProjectNameTemplate\Controller\Base;
+use ProjectNameTemplate\Controller\Helper;
 
 class MainController extends Base
 {
@@ -26,7 +25,7 @@ class MainController extends Base
     {
         phpinfo();
     }
-    protected  function action_foo()
+    protected function action_foo()
     {
         var_dump(DATE(DATE_ATOM));
     }

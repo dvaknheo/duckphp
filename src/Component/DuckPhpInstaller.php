@@ -133,7 +133,7 @@ class DuckPhpInstaller extends ComponentBase
     }
     protected function filteNamespace($data, $namespace)
     {
-        if ($namespace === 'AdvanceDemo' || $namespace === '') {
+        if ($namespace === 'ProjectNameTemplate' || $namespace === '') {
             return $data;
         }
         $str_header = "\$namespace = '$namespace';";
