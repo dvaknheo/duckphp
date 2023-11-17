@@ -327,7 +327,8 @@ trait KernelTrait
                 $this->_Phase(static::class);
             }
         } catch (\Throwable $ex) {
-            $this->_OnDefaultException($ex); //TODO Exit All;,not return;
+            $phase = $this->_Phase($class);
+            throw $ex;
         }
         return;
     }

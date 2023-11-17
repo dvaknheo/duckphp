@@ -109,6 +109,7 @@ class App extends ComponentBase
     //@override
     public function _OnDefaultException($ex): void
     {
+        //TODO if ($ex instancesof ExitException::class){ SystemWrapper::_()->_exit($ex->getCode);}
         if ($this->options['default_exception_do_log']) {
             try {
                 static::Logger()->error('['.get_class($ex).']('.$ex->getMessage().')'.$ex->getMessage());
@@ -393,7 +394,10 @@ EOT;
     {
         throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
     }
-
+    public function _AdminSystem($new = null)
+    {
+        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
+    }
     public function _Admin()
     {
         throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
@@ -406,7 +410,7 @@ EOT;
     {
         throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
     }
-    public function _AdminSystem($new = null)
+    public function _UserSystem($new = null)
     {
         throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
     }
@@ -419,10 +423,6 @@ EOT;
         throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
     }
     public function _UserData()
-    {
-        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
-    }
-    public function _UserSystem($new = null)
     {
         throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
     }

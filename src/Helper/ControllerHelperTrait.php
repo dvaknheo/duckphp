@@ -182,10 +182,6 @@ trait ControllerHelperTrait
         return EventManager::OnEvent($event, $callback);
     }
     //////////////////////
-    public static function AdminSystem($admin_system = null)
-    {
-        //return App::_()->_AdminSystem($admin_system);
-    }
     public static function Admin()
     {
         return App::_()->_Admin();
@@ -194,9 +190,9 @@ trait ControllerHelperTrait
     {
         return App::_()->_AdminId();
     }
-    public static function UserSystem($user_system = null)
+    public static function AdminData()
     {
-        //return App::_()->_UserSystem($user_system);
+        return App::_()->_AdminData();
     }
     public static function User()
     {
@@ -205,5 +201,9 @@ trait ControllerHelperTrait
     public static function UserId()
     {
         return App::_()->_UserId();
+    }
+    public static function UserData()
+    {
+        return App::_()->_UserData();
     }
 }
