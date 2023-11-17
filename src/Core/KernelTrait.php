@@ -28,8 +28,6 @@ trait KernelTrait
         'is_debug' => false,
         'ext' => [],
         
-
-        
         'skip_404_handler' => false,
         'skip_exception_check' => false,
         
@@ -329,7 +327,7 @@ trait KernelTrait
                 $this->_Phase(static::class);
             }
         } catch (\Throwable $ex) {
-            $this->_OnDefaultException($ex);
+            $this->_OnDefaultException($ex); //TODO Exit All;,not return;
         }
         return;
     }
@@ -360,15 +358,7 @@ trait KernelTrait
                 }
             }
         } catch (\Throwable $ex) {
-            Runtime::_()->onException($this->options['skip_exception_check']);
-            if ($this->options['skip_exception_check']) {
-                throw $ex;
-            }
-            $last_phase = $this->_Phase(static::class);
-            Runtime::_()->lastPhase = $last_phase;
-            ExceptionManager::CallException($ex);
-            
-            Runtime::_()->clear();
+            $this->runException($ex);
             $ret = true;
             $is_exceptioned = true;
         }
@@ -377,6 +367,21 @@ trait KernelTrait
         }
         $this->onAfterRun();
         return $ret;
+    }
+    protected function runException(doException)
+    {
+        $phase = $this->_Phase();
+        Runtime::_()->onException($this->options['skip_exception_check']);
+        if ($this->options['skip_exception_check']) {
+            throw $ex;
+        }
+        ExceptionManager::CallException($ex);
+        if ($phase !== static::class) {
+            Runtime::_()->clear();
+            $this->_Phase(static::class);
+        }
+        Runtime::_()->lastPhase = $phase;
+        Runtime::_()->clear();
     }
     protected function runExtentions()
     {
