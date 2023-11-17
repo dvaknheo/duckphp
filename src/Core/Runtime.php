@@ -45,6 +45,9 @@ class Runtime extends ComponentBase
     }
     public function clear()
     {
+        if (!$this->is_running) {
+            return false; 
+        }
         if ($this->options['use_output_buffer']) {
             for ($i = ob_get_level();$i > $this->init_ob_level;$i--) {
                 ob_end_flush();
