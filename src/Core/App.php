@@ -357,17 +357,33 @@ EOT;
     {
         return static::_()->_Admin();
     }
-    public static function User()
-    {
-        return static::_()->_User();
-    }
     public static function AdminId()
     {
         return static::_()->_AdminId();
     }
+    public static function AdminData()
+    {
+        return static::_()->_AdminData();
+    }
+    public static function AdminSystem($new = null)
+    {
+        return static::_()->_AdminSystem($new);
+    }
+    public static function User()
+    {
+        return static::_()->_User();
+    }
     public static function UserId()
     {
         return static::_()->_UserId();
+    }
+    public static function UserData()
+    {
+        return static::_()->_UserData();
+    }
+    public static function UserSystem($new = null)
+    {
+        return static::_()->_UserSystem($new);
     }
     public function _Event()
     {
@@ -382,15 +398,31 @@ EOT;
     {
         throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
     }
-    public function _User()
-    {
-        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
-    }
     public function _AdminId()
     {
         throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
     }
+    public function _AdminData()
+    {
+        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
+    }
+    public function _AdminSystem($new = null)
+    {
+        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
+    }
+    public function _User()
+    {
+        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
+    }
     public function _UserId()
+    {
+        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
+    }
+    public function _UserData()
+    {
+        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
+    }
+    public function _UserSystem($new = null)
     {
         throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
     }
