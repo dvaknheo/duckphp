@@ -15,20 +15,40 @@ class AdminSystem
         return new PhaseProxy($phase, static::class);
     }
     
+    protected $data;
+
     public function current()
     {
-        throw new \ErrorException('DuckPhp: No Impelement');
+        //GlobalAdmin::(MyUser::CallInPhase(Stxx));
+        //Admin($new) , AdminId(),AdminData(),
+        // $this->data = $foo;
+        //return $this;
     }
     public function id()
     {
-        return $this->current()->id();
+        $this->checkLogin();
+        return $this->data['id'];
     }
     public function data()
     {
-        return $this->current()->data();
+        $this->checkLogin();
+        return $this->data;
     }
-    
-    /////////////////////
+    public function isSuper()
+    {
+        $this->checkLogin();
+        
+    }
+    public function canAccess()
+    {
+        //$this->checkLogin();
+    }
+    protected function checkLogin()
+    {
+        throw new \ErrorException('DuckPhp: No Impelement');
+        //$this->data =[];
+    }
+    //////////////////////
     public function urlForRegist($url_back = null, $ext = null)
     {
         throw new \ErrorException('DuckPhp: No Impelement');
@@ -41,6 +61,11 @@ class AdminSystem
     {
         throw new \ErrorException('DuckPhp: No Impelement');
     }
+    public function urlForHome($url_back = null, $ext = null)
+    {
+        throw new \ErrorException('DuckPhp: No Impelement');
+    }
+    //////////////////////
     public function regist($post)
     {
         throw new \ErrorException('DuckPhp: No Impelement');
@@ -49,7 +74,6 @@ class AdminSystem
     {
         throw new \ErrorException('DuckPhp: No Impelement');
     }
-    
     public function logout()
     {
         throw new \ErrorException('DuckPhp: No Impelement');
