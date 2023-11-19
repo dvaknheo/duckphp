@@ -27,8 +27,12 @@ trait ExceptionReporterTrait
         }
         return $object->$method($ex);
     }
-    public function defaultException($ex)
+    protected function defaultSystemException($ex)
     {
         App::Current()->_OnDefaultException($ex);
+    }
+    public function defaultException($ex)
+    {
+        return $this->defaultSystemException($ex);
     }
 }
