@@ -354,9 +354,9 @@ EOT;
     {
         return static::_()->_Pager($object);
     }
-    public static function Admin()
+    public static function Admin($new = null)
     {
-        return static::_()->_Admin();
+        return static::_()->_Admin($new);
     }
     public static function AdminId()
     {
@@ -366,13 +366,9 @@ EOT;
     {
         return static::_()->_AdminData();
     }
-    public static function AdminSystem($new = null)
+    public static function User($new = null)
     {
-        return static::_()->_AdminSystem($new);
-    }
-    public static function User()
-    {
-        return static::_()->_User();
+        return static::_()->_User($new);
     }
     public static function UserId()
     {
@@ -382,10 +378,7 @@ EOT;
     {
         return static::_()->_UserData();
     }
-    public static function UserSystem($new = null)
-    {
-        return static::_()->_UserSystem($new);
-    }
+
     public function _Event()
     {
         throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
@@ -394,11 +387,7 @@ EOT;
     {
         throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
     }
-    public function _AdminSystem($new = null)
-    {
-        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
-    }
-    public function _Admin()
+    public function _Admin($new = null)
     {
         throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
     }
@@ -410,11 +399,7 @@ EOT;
     {
         throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
     }
-    public function _UserSystem($new = null)
-    {
-        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
-    }
-    public function _User()
+    public function _User($new = null)
     {
         throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
     }

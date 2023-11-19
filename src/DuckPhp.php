@@ -8,20 +8,20 @@
 
 namespace DuckPhp;
 
-use DuckPhp\Component\AdminSystem;
 use DuckPhp\Component\Cache;
 use DuckPhp\Component\Configer;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Component\DuckPhpCommand;
 use DuckPhp\Component\EventManager;
 use DuckPhp\Component\ExtOptionsLoader;
+use DuckPhp\Component\GlobalAdmin;
+use DuckPhp\Component\GlobalUser;
 use DuckPhp\Component\Pager;
 use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookPathInfoCompat;
 use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Component\RouteHookRouteMap;
-use DuckPhp\Component\UserSystem;
 use DuckPhp\Core\App;
 use DuckPhp\Core\Console;
 use DuckPhp\Core\ExceptionManager;
@@ -103,8 +103,8 @@ class DuckPhp extends App
                 DbManager::class,
                 RedisManager::class,
                 EventManager::class,
-                AdminSystem::class,
-                UserSystem::class,
+                GlobalAdmin::class,
+                GlobalUser::class,
                 ]);
         }
         
@@ -167,29 +167,21 @@ class DuckPhp extends App
     {
         return Pager::_($object);
     }
-    public function _AdminSystem($new = null)
+    public function _Admin($new = null)
     {
-        return AdminSystem::_();
-    }
-    public function _Admin()
-    {
-        return AdminSystem::_()->current();
+        return GlobalAdmin::_($new);
     }
     public function _AdminId()
     {
-        return AdminSystem::_()->id();
+        return GlobalAdmin::_()->id();
     }
     public function _AdminData()
     {
-        return AdminSystem::_()->data();
+        return GlobalAdmin::_()->data();
     }
-    public function _UserSystem($new = null)
+    public function _User($new = null)
     {
-        return UserSystem::_();
-    }
-    public function _User()
-    {
-        return UserSystem::_()->current();
+        return GlobalUser::_($new);
     }
     public function _UserId()
     {

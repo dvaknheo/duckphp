@@ -120,6 +120,10 @@ ControllerHelper::PageHtml(123);
         }catch(\Exception $ex){
         }
         try{
+            ControllerHelper::AdminData();
+        }catch(\Exception $ex){
+        }
+        try{
             ControllerHelper::User();
         }catch(\Exception $ex){
         }
@@ -127,8 +131,11 @@ ControllerHelper::PageHtml(123);
             ControllerHelper::UserId();
         }catch(\Exception $ex){
         }
-        ControllerHelper::AdminSystem();
-        ControllerHelper::UserSystem();
+        try{
+            ControllerHelper::UserData();
+        }catch(\Exception $ex){
+            
+        }
         
         \LibCoverage\LibCoverage::End();
     }
