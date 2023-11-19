@@ -84,6 +84,11 @@ class App extends ComponentBase
     //@override
     public function _On404(): void
     {
+        if($this->is_root){
+            $this->_Phase(App::Root()->_Phase());
+            App::Root()->_On404();
+            return;
+        }
         $error_view = $this->options['error_404'] ?? null;
         $error_view = $this->is_inited?$error_view:null;
         
@@ -109,7 +114,15 @@ class App extends ComponentBase
     //@override
     public function _OnDefaultException($ex): void
     {
-        //TODO if ($ex instancesof ExitException::class){ SystemWrapper::_()->_exit($ex->getCode);}
+        if($this->is_root){
+            $this->_Phase(App::Root()->_Phase());
+            App::Root()->_On404();
+            return;
+        }
+        if ($ex instanceof ExitException::class) {
+            return SystemWrapper::_()->_exit($ex->getCode);
+        }
+        
         if ($this->options['default_exception_do_log']) {
             try {
                 static::Logger()->error('['.get_class($ex).']('.$ex->getMessage().')'.$ex->getMessage());
