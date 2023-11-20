@@ -45,14 +45,14 @@ class App extends ComponentBase
         'error_500' => null,          //'_sys/error-500',
         
         //*
-        'path_log' => 'runtime',
-        'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
-        'log_prefix' => 'DuckPhpLog',
+        // 'path_log' => 'runtime',
+        // 'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
+        // 'log_prefix' => 'DuckPhpLog',
         
-        'path_view' => 'view',
-        'view_skip_notice_error' => true,
+        // 'path_view' => 'view',
+        // 'view_skip_notice_error' => true,
         
-        'superglobal_auto_define' => false,
+        // 'superglobal_auto_define' => false,
         //*/
     ];
     protected $common_options = [];

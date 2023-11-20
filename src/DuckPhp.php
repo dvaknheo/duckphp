@@ -42,29 +42,29 @@ class DuckPhp extends App
         
         
         //*
-        'path_config' => 'config',
-        'database' => null,
-        'database_list' => null,
-        'database_list_reload_by_setting' => true,
-        'database_list_try_single' => true,
-        'database_log_sql_query' => false,
-        'database_log_sql_level' => 'debug',
-        'database_class' => '',
+        // 'path_config' => 'config',
+        // 'database' => null,
+        // 'database_list' => null,
+        // 'database_list_reload_by_setting' => true,
+        // 'database_list_try_single' => true,
+        // 'database_log_sql_query' => false,
+        // 'database_log_sql_level' => 'debug',
+        // 'database_class' => '',
 
-        'redis' => null,
-        'redis_list' => null,
-        'redis_list_reload_by_setting' => true,
-        'redis_list_try_single' => true,
+        // 'redis' => null,
+        // 'redis_list' => null,
+        // 'redis_list_reload_by_setting' => true,
+        // 'redis_list_try_single' => true,
         
-        'controller_url_prefix' => '',
-        'route_map_important' => [],
-        'route_map' => [],
+        // 'controller_url_prefix' => '',
+        // 'route_map_important' => [],
+        // 'route_map' => [],
         
-        'rewrite_map' => [],
+        // 'rewrite_map' => [],
 
-        //'path_info_compact_enable' => false,
-        'path_info_compact_action_key' => '_r',
-        'path_info_compact_class_key' => '',
+        // 'path_info_compact_enable' => false,
+        // 'path_info_compact_action_key' => '_r',
+        // 'path_info_compact_class_key' => '',
         
         //*/
     ];
