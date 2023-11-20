@@ -14,6 +14,9 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         $url_back ='';
         $ext = null;
         try{
+        GlobalAdmin::_()->checkLogin();
+        }catch(\Exception $ex){}
+        try{
         GlobalAdmin::_()->urlForRegist($url_back, $ext);
         }catch(\Exception $ex){}
         try{
@@ -36,10 +39,24 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         }catch(\Exception $ex){}
         
         
+        GlobalAdmin::_(MyGlobalAdmin::_());
+        GlobalAdmin::_()->current();
+        GlobalAdmin::_()->id();
+        GlobalAdmin::_()->data();
+        GlobalAdmin::_()->isSuper();
+        GlobalAdmin::_()->canAccessCurrent();
+        GlobalAdmin::_()->canAccessUrl('/a_path');
+        GlobalAdmin::_()->canAccessCall('Class','method');
+        
+        GlobalAdmin::CallInPhase(GlobalAdmin::class);
+        
         \LibCoverage\LibCoverage::End();
     }
 }
 class MyGlobalAdmin extends GlobalAdmin
 {
-    public function __construct(){}
+    public function checkLogin()
+    {
+        return true;
+    }
 }

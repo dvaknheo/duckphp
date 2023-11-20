@@ -55,7 +55,8 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::_()->User(FakeUser::_());
         DuckPhp::_()->AdminId();
         DuckPhp::_()->UserId();
-        
+        DuckPhp::_()->AdminData();
+        DuckPhp::_()->UserData();
         $options['path'] = $path;
         $options['path_test'] = 'abc';
         $options['ext_options_file_enable']=true;
@@ -214,11 +215,19 @@ class FakeAdmin
     {
         return 1;
     }
+    public function data()
+    {
+        return 1;
+    }
 }
 class FakeUser
 {
     use SingletonExTrait;
     public function id()
+    {
+        return 1;
+    }
+    public function data()
     {
         return 1;
     }

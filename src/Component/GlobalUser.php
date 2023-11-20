@@ -14,18 +14,26 @@ class GlobalUser
     {
         return new PhaseProxy($phase, static::class);
     }
-    public function current()
+    public function checkLogin()
     {
         throw new \ErrorException('DuckPhp: No Impelement');
     }
+    public function current()
+    {
+        $this->checkLogin();
+        return new \stdClass();
+    }
     public function id()
     {
-        return $this->current()->id();
+        $this->checkLogin();
+        return $this->data['id'] ?? 0;
     }
     public function data()
     {
-        return $this->current()->data();
+        $this->checkLogin();
+        return $this->data ?? [];
     }
+    
     public function urlForRegist($url_back = null, $ext = null)
     {
         throw new \ErrorException('DuckPhp: No Impelement');

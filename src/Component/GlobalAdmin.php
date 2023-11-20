@@ -14,38 +14,44 @@ class GlobalAdmin
     {
         return new PhaseProxy($phase, static::class);
     }
-    
-    protected $data;
-
+    public function checkLogin()
+    {
+        throw new \ErrorException('DuckPhp: No Impelement');
+    }
     public function current()
     {
-        //GlobalAdmin::(MyUser::CallInPhase(Stxx));
-        //Admin($new) , AdminId(),AdminData(),
-        // $this->data = $foo;
-        //return $this;
+        $this->checkLogin();
+        return new \stdClass();
     }
     public function id()
     {
         $this->checkLogin();
-        return $this->data['id'];
+        return $this->data['id'] ?? 0;
     }
     public function data()
     {
         $this->checkLogin();
-        return $this->data;
+        return $this->data ?? [];
     }
     public function isSuper()
     {
         $this->checkLogin();
+        return true;
     }
-    public function canAccess()
+    public function canAccessCurrent()
     {
-        //$this->checkLogin();
+        $this->checkLogin();
+        return true;
     }
-    protected function checkLogin()
+    public function canAccessUrl($url)
     {
-        throw new \ErrorException('DuckPhp: No Impelement');
-        //$this->data =[];
+        $this->checkLogin();
+        return true;
+    }
+    public function canAccessCall($class, $method)
+    {
+        $this->checkLogin();
+        return true;
     }
     //////////////////////
     public function urlForRegist($url_back = null, $ext = null)

@@ -14,6 +14,9 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         $url_back ='';
         $ext = null;
         try{
+        GlobalUser::_()->current();
+        }catch(\Exception $ex){}
+        try{
         GlobalUser::_()->urlForRegist($url_back, $ext);
         }catch(\Exception $ex){}
         try{
@@ -35,10 +38,21 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         GlobalUser::_()->logout($post);
         }catch(\Exception $ex){}
         
+        
+        GlobalUser::_(MyGlobalUser::_());
+        GlobalUser::_()->current();
+        GlobalUser::_()->id();
+        GlobalUser::_()->data();
+        
+        GlobalUser::CallInPhase(GlobalUser::class);
+        
         \LibCoverage\LibCoverage::End();
     }
 }
 class MyGlobalUser extends GlobalUser
 {
-    public function __construct(){}
+    public function checkLogin()
+    {
+        return true;
+    }
 }
