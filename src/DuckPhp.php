@@ -185,11 +185,10 @@ class DuckPhp extends App
     }
     public function _UserId()
     {
-        return UserSystem::_()->id();
+        return GlobalUser::_()->id();
     }
     public function _UserData()
     {
-        return UserSystem::_()->data();
+        return GlobalUser::_()->data();
     }
-
 }

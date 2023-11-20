@@ -37,7 +37,6 @@ class GlobalAdmin
     public function isSuper()
     {
         $this->checkLogin();
-        
     }
     public function canAccess()
     {

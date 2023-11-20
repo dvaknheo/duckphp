@@ -312,8 +312,8 @@ trait KernelTrait
     }
     protected function initExtentions(array $exts): void
     {
-        try {
-            foreach ($exts as $class => $options) {
+        foreach ($exts as $class => $options) {
+            try {
                 $options = ($options === true)?$this->options:$options;
                 $options = is_string($options)?$this->options[$options]:$options;
                 if ($options === false) {
@@ -325,11 +325,12 @@ trait KernelTrait
                 }
                 $class::_()->init($options, $this);
                 $this->_Phase(static::class);
+            } catch (\Throwable $ex) {
+                $phase = $this->_Phase($class);
+                throw $ex;
             }
-        } catch (\Throwable $ex) {
-            $phase = $this->_Phase($class);
-            throw $ex;
         }
+
         return;
     }
     public function run(): bool
@@ -369,7 +370,7 @@ trait KernelTrait
         $this->onAfterRun();
         return $ret;
     }
-    protected function runException(doException)
+    protected function runException($ex)
     {
         $phase = $this->_Phase();
         Runtime::_()->onException($this->options['skip_exception_check']);

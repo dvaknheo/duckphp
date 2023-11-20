@@ -1,25 +1,25 @@
 <?php
 namespace tests\DuckPhp\Component;
 
-use DuckPhp\Component\UserSystem;
+use DuckPhp\Component\GlobalUser;
 
-class UserSystemTest extends \PHPUnit\Framework\TestCase
+class GlobalUserTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \LibCoverage\LibCoverage::Begin(UserSystem::class);
+        \LibCoverage\LibCoverage::Begin(GlobalUser::class);
         try{
-            UserSystem::_();
+            GlobalUser::_();
         } catch(\Throwable $ex){}
-        UserSystem::_(MyUserSystem::_())->id();
-        UserSystem::_(MyUserSystem::_())->data();
-        UserSystem::_()->logoutUrl('');
-        UserSystem::_()->nick();
-        UserSystem::_()->username();
+        GlobalUser::_(MyGlobalUser::_())->id();
+        GlobalUser::_(MyGlobalUser::_())->data();
+        GlobalUser::_()->logoutUrl('');
+        GlobalUser::_()->nick();
+        GlobalUser::_()->username();
         \LibCoverage\LibCoverage::End();
     }
 }
-class MyUserSystem extends UserSystem
+class MyGlobalUser extends GlobalUser
 {
     public function __construct(){}
 }
