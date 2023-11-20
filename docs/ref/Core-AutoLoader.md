@@ -96,3 +96,5 @@ if (!class_exists(\LazyToChange\System\App::class)) {
 
     public static function addPsr4($namespace, $input_path)
 
+    public static function addPsr4($namespace, $input_path = null)
+

@@ -186,3 +186,13 @@ App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里，还加载�
         'path_info_compact_class_key' => '',
 
 
+    public function install($options, $parent_options = [])
+
+    public function _Admin($new = null)
+
+    public function _AdminData()
+
+    public function _User($new = null)
+
+    public function _UserData()
+

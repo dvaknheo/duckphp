@@ -270,3 +270,7 @@ if(!$flag){
 
     protected function getCallbackFromClassAndMethod($full_class, $method, $path_info)
 
+    protected function adjustClassBaseName($path_class)
+
+    protected function adjustMethod($method, $ref)
+

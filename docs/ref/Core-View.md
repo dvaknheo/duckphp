@@ -37,7 +37,7 @@
     public function assignViewData($key, $value = null): void
 设置要显示的数据，可批量
 
-    public function reset(): void
+    public function reset()
 重置
 
     public function getViewPath()
@@ -55,5 +55,6 @@ DuckPhp\Core\View 的选项共享一个 path,带一个 path_view.
 path_view 如果是 / 开始的，会忽略 path 选项
 
 当你想把视图目录 放入 app 目录的时候，请自行调整 path_view
+
 
 

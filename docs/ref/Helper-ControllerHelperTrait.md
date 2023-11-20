@@ -140,3 +140,17 @@
 
     public static function UserId()
 
+    public static function Setting($key = null, $default = null)
+
+    public static function Url($url = null)
+
+    public static function Res($url = null)
+
+    public static function Admin($new = null)
+
+    public static function AdminData()
+
+    public static function User($new = null)
+
+    public static function UserData()
+

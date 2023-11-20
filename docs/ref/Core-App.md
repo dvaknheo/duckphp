@@ -404,3 +404,29 @@ Show 方法对 View::Show() 加了好些补充
     public function _Pager($object = null)
 
 
+        'html_handler' => null,
+
+        'lang_handler' => null,
+
+    public static function Setting($key = null, $default = null)
+
+    public function isInstalled()
+
+    public function install($options, $parent_options = [])
+
+    public static function Admin($new = null)
+
+    public static function AdminData()
+
+    public static function User($new = null)
+
+    public static function UserData()
+
+    public function _Admin($new = null)
+
+    public function _AdminData()
+
+    public function _User($new = null)
+
+    public function _UserData()
+

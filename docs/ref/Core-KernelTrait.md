@@ -291,3 +291,11 @@ init() 初始化阶段，和 run 阶段
 
         'cli_command_default' => 'help',
 
+        'setting_file' => 'config/DuckPhpSettings.config.php',
+
+    public function isRoot()
+
+    public function _Setting($key = null, $default = null)
+
+    protected function runException($ex)
+

@@ -88,3 +88,9 @@
 
     public static function getRewrites()
 
+    public static function RemoveEvent($event, $callback = null)
+
+    public static function getRouteMaps()
+
+    public static function getCliParameters()
+

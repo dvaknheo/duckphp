@@ -64,3 +64,5 @@ vendor/bin/duckphp new  --help
 
 
 
+    protected function genProjectName()
+

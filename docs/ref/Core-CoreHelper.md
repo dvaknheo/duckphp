@@ -98,3 +98,7 @@
 
     public static function SqlForCountSimply($sql)
 
+    public static function PhaseCall($phase, $callback, ...$args)
+
+    public function _PhaseCall($phase, $callback, ...$args)
+

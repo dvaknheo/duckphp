@@ -17,3 +17,7 @@
 
     public function __call($method, $args)
 
+    public function __construct($container_class, $overriding)
+
+    public static function CreatePhaseProxy($container_class, $overriding)
+
