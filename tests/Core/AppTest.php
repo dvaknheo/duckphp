@@ -96,7 +96,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         };
          \DuckPhp\Core\Route::_()->bind('/Base/index');
         try{
-                App::_()->system_wrapper_replace(['exit'=>function($code){
+        App::_()->system_wrapper_replace(['exit'=>function($code){
             var_dump(DATE(DATE_ATOM));
         }]);
 
@@ -168,6 +168,12 @@ class AppTest extends \PHPUnit\Framework\TestCase
         try{
         App::UserId();
         }catch(\Exception $ex){}
+        try{
+        App::AdminData();
+        }catch(\Exception $ex){}
+        try{
+        App::UserData();
+        }catch(\Exception $ex){}
         
         try{
             App::Event();
@@ -212,6 +218,46 @@ class AppTest extends \PHPUnit\Framework\TestCase
         ////[[[[
         AppTestApp::_()->getOverrideableFile('view', $path_view."view.php");
         AppTestApp::_()->getOverrideableFile('view', 'view.php');
+        ////]]]]
+        
+        ////[[[[
+        $options=[
+            'is_debug'=>true,
+            'cli_enable'=>false,
+            'path' => $path_app,
+            'path_view'=>$path_view,
+            'ext' => [AppTestApp::class => [
+                'is_debug'=>true,
+                'cli_enable'=>false,
+                'namespace' => 'tests\\DuckPhp\\Core',
+                'controller_url_prefix'=>'abc/',
+                'controller_class_postfix'=>'',
+                'controller_method_prefix'=>'',
+                'path_view'=>$path_view,
+                'name'=>'MyAppTestApp',
+                'error_404'=> function(){ echo "inner404\n";},
+                'error_500'=> function(){ echo "inner500\n";},
+            ]],
+            'error_404'=> function(){ echo "out404\n";},
+            'error_500'=> function(){ echo "out500\n";},
+        ];
+        echo "---------------------------------------\n";
+        PhaseContainer::GetContainerInstanceEx(new PhaseContainer());
+        AppTestApp::_(new AppTestApp());
+        App::_(new App())->init($options);
+        var_dump(md5(spl_object_hash(App::_())));
+        SystemWrapper::system_wrapper_replace(['exit'=>function($code){
+            var_dump(DATE(DATE_ATOM));
+        }]);
+        //Route::_()->bind('/abc/Base/date');
+        //App::_()->run();
+        Route::_()->bind('/abc/Base/do404');
+        App::_()->run();
+        Route::_()->bind('/abc/Base/do500');
+        App::_()->run();
+        
+        Route::_()->bind('/abc/Base/doexit');
+        App::_()->run();
         ////]]]]
         
         \LibCoverage\LibCoverage::G($this->LibCoverage);
@@ -512,6 +558,22 @@ class Base
     public function index()
     {
         echo "OK";
+    }
+    public function do404()
+    {
+        \DuckPhp\Core\CoreHelper::Exit404(false);
+    }
+    public function do500()
+    {
+        throw new \Exception('500000');
+    }
+    public function doexit()
+    {
+        throw new \DuckPhp\Core\ExitException('500000');
+    }
+    public function date()
+    {
+        var_dump(DATE(DATE_ATOM));
     }
 }
 class AppMain extends Base

@@ -226,8 +226,8 @@ trait KernelTrait
         $this->reloadFlags($context);
         
         $exception_options = $options;
-        $exception_options ['default_exception_handler' ] = [static::class,'OnDefaultException'];
-        $exception_options ['dev_error_handler'] = [static::class,'OnDevErrorHandler'];
+        $exception_options ['default_exception_handler' ] = [self::class,'OnDefaultException']; // must be self,be root
+        $exception_options ['dev_error_handler'] = [self::class,'OnDevErrorHandler'];        //be self, be root
         if (!$this->is_root) {
             $exception_option['handle_all_dev_error'] = false;
             $exception_option['handle_all_exception'] = false;
