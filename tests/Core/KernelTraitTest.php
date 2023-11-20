@@ -84,6 +84,8 @@ echo "-------------------------------------\n";
         }
         App::_()->options['skip_exception_check']=false;
         
+        Route::_()->bind('/exception2');
+        App::_()->run();
         //////////////////////////////////////////////////
         
         $app=new App();
@@ -197,6 +199,21 @@ echo "-------------------------------------\n";
         
         MyKernelTrait::_()->init($options);
         MyKernelTrait::_()->isRoot();
+        
+        ////[[[[
+        
+        $options =[
+            'path' => $path_app,
+            'use_flag_by_setting' => true,
+            'use_env_file' => true,
+            'setting_file' =>$path_app.'DuckPhpSettings.config.php',
+            'setting_file_ignore_exists' =>false,
+        ];
+        App::_(new App())->init($options);
+        
+        ////]]]]
+        
+        
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
     return;
@@ -327,6 +344,11 @@ class MainController
     }
     public function action_exception()
     {
+        throw new \Exception("HAHA");
+    }
+    public function action_exception2()
+    {
+        \DuckPhp\Core\App::Phase("MyPhase");
         throw new \Exception("HAHA");
     }
 }
