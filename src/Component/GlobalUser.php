@@ -26,12 +26,12 @@ class GlobalUser
     public function id()
     {
         $this->checkLogin();
-        return $this->data['id'] ?? 0;
+        return $this->data['id'] ?? 0; /** @phpstan-ignore-line */
     }
     public function data()
     {
         $this->checkLogin();
-        return $this->data ?? [];
+        return $this->data ?? []; /** @phpstan-ignore-line */
     }
     
     public function urlForRegist($url_back = null, $ext = null)

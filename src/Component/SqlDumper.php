@@ -12,15 +12,16 @@ class SqlDumper extends ComponentBase
     public $options = [
         'path' => '',
         'path_sql_dump' => 'config',
+        'sql_dump_file' => 'sql.php',
+        
         'sql_dump_include_tables' => [],
         'sql_dump_exclude_tables' => [],
         'sql_dump_data_tables' => [],
         
         'sql_dump_include_tables_all' => true,
         'sql_dump_include_tables_by_model' => false,
-
         'sql_dump_prefix' => '',
-        'sql_dump_file' => 'sql',
+        
         'sql_dump_install_replace_prefix' => false,
         'sql_dump_install_new_prefix' => '',
         'sql_dump_install_drop_old_table' => false,
@@ -40,7 +41,7 @@ class SqlDumper extends ComponentBase
             try {
                 $this->installScheme($sql, $table);
             } catch (\PDOException $ex) {
-                $ret .= $ex->getMessage() . "\n";
+                $ret .= "scheme failed [$table][$sql]".$ex->getMessage() . "\n";
             }
         }
         $data['data'] = $data['data'] ?: [];
@@ -48,7 +49,7 @@ class SqlDumper extends ComponentBase
             try {
                 $this->installData($sql, $table);
             } catch (\PDOException $ex) {
-                $ret .= $ex->getMessage() . "\n";
+                $ret .= "data failed [$table][$sql]".$ex->getMessage() . "\n";
             }
         }
         return $ret;
@@ -139,13 +140,14 @@ class SqlDumper extends ComponentBase
     protected function getDataSql($table)
     {
         $ret = '';
-        $sql = "SELECT * FROM ".$table;
+        $sql = "SELECT * FROM `$table`";
         $data = DbManager::DbForRead()->fetchAll($sql);
+        
         if (empty($data)) {
             return '';
         }
         foreach ($data as $line) {
-            $ret .= "INSERT INTO $table ".DbManager::DbForRead()->qouteInsertArray($line) .";\n";
+            $ret .= "INSERT INTO `$table` ".DbManager::DbForRead()->qouteInsertArray($line) .";\n";
         }
         return $ret;
     }
@@ -153,7 +155,7 @@ class SqlDumper extends ComponentBase
     {
         $ret = [];
         
-        $file = $this->options['sql_dump_file'].'.php';
+        $file = $this->options['sql_dump_file'];
         $full_file = $this->extendFullFile($this->options['path'], $this->options['path_sql_dump'], $file);
 
         $ret = (function () use ($full_file) {
@@ -163,7 +165,7 @@ class SqlDumper extends ComponentBase
     }
     protected function save($data)
     {
-        $file = $this->options['sql_dump_file'].'.php';
+        $file = $this->options['sql_dump_file'];
         if (static::IsAbsPath($file)) {
             $full_file = $file;
         } elseif (static::IsAbsPath($this->options['path_sql_dump'])) {
@@ -180,12 +182,12 @@ class SqlDumper extends ComponentBase
     /////////////////////
     protected function searchTables()
     {
-        $ref = new \ReflectionClass($this->context());
-        $file = $ref->getFileName();
-        $path = dirname(dirname(''.$file)).'/Model/';
-        
+        //TODO be a method
         $namespace = $this->context()->options['namespace'];
-        $namespace = $namespace.'\\Model\\';
+        $class = $namespace. '\\Model\\Base';
+        $ref = new \ReflectionClass($class); /** @phpstan-ignore-line */
+        
+        $path = dirname((string)$ref->getFileName());
         
         $models = $this->searchModelClasses($path);
         

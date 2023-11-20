@@ -46,7 +46,7 @@ trait DbAdvanceTrait
             return '';
         }
         $array = array_map($callback, $array);
-        $str_keys = implode(',', array_values($array));
+        $str_keys = implode(',', array_keys($array));
         $str_values = implode(',', array_values($array));
         $ret = "($str_keys)VALUES($str_values)";
         return $ret;

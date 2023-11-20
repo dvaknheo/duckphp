@@ -1,9 +1,8 @@
 <?php
-namespace tests\DuckPhp\Foundation;
+namespace tests\DuckPhp\Component;
 
 use DuckPhp\DuckPhpAllInOne as DuckPhp;
 use DuckPhp\Component\SqlDumper;
-use tests_Data_SqlDumper\System\SqlDumperApp;
 use tests_Data_SqlDumper\Model\EmptyModel;
 class SqlDumperTest extends \PHPUnit\Framework\TestCase
 {
@@ -13,10 +12,15 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(SqlDumper::class);
         
         $path_app = \LibCoverage\LibCoverage::G()->getClassTestPath(SqlDumper::class);
-        $setting = include $path_app . 'config/setting.php';  //
+        include_once $path_app . 'Model/Base.php';
+        
+        $setting = include $path_app . 'config/setting.php';
         $options=[
             'setting'=>$setting,
-            'path_sql_dump' =>$path_app,
+            'path' => $path_app,
+            'path_sql_dump' => 'config',
+            'sql_dump_file' => 'sql.php',
+            'namespace' =>'tests_Data_SqlDumper',
         ];
         DuckPhp::_(new DuckPhp())->init($options);
         SqlDumper::_()->init(DuckPhp::_()->options,DuckPhp::_());
@@ -39,19 +43,24 @@ DuckPhp::Db()->execute($sql);
         SqlDumper::_()->install();
         
         SqlDumper::_()->options['sql_dump_data_tables']=['empty'];
+        SqlDumper::_()->options['path_sql_dump']=$path_app.'/'. SqlDumper::_()->options['path_sql_dump'];
+
         SqlDumper::_()->run();
         SqlDumper::_()->install();
 
-$sql = "delete from `empty` where id =1";
-DuckPhp::Db()->execute($sql);
+        $sql = "delete from `empty` where id =1";
+        DuckPhp::Db()->execute($sql);
         
         SqlDumper::_()->options['sql_dump_data_tables']=['empty'];
+        
+        $sql_file = SqlDumper::_()->options['path_sql_dump'].'/'. SqlDumper::_()->options['sql_dump_file'];
+        SqlDumper::_()->options['sql_dump_file']=SqlDumper::_()->options['path_sql_dump'].'/'. SqlDumper::_()->options['sql_dump_file'];
+
         SqlDumper::_()->run();
         SqlDumper::_()->install();
         
         $this->more();
         ////[[[[
-        include_once $path_app . 'System/SqlDumperApp.php';
         include_once $path_app . 'Model/EmptyModel.php';
         include_once $path_app . 'Model/NoTableModel.php';
         include_once $path_app . 'Model/ErrorModel.php';
@@ -66,8 +75,13 @@ DuckPhp::Db()->execute($sql);
         SqlDumper::_()->run();
         
 
+
 $sql= 'DROP TABLE IF EXISTS `empty`';
 DuckPhp::Db()->execute($sql);
+$sql= 'DROP TABLE IF EXISTS `newprefixpty`';
+DuckPhp::Db()->execute($sql);
+
+@unlink($sql_file);
         ////]]]]
         \LibCoverage\LibCoverage::End();
     }
@@ -104,7 +118,8 @@ DuckPhp::Db()->execute($sql);
         echo "<<<<<<<<<<<<<<<<<<<<<<<<\n";
         $path_app = \LibCoverage\LibCoverage::G()->getClassTestPath(SqlDumper::class);
         $options = [
-            'path_sql_dump' => $path_app,
+            //'path_sql_dump' => $path_app,
+            'sql_dump_file' => $path_app .'config/sql.php',
             'sql_dump_include_tables_all' => false,
             'sql_dump_include_tables_by_model' => false,
             'sql_dump_include_tables' => ['empty'],
@@ -121,4 +136,10 @@ DuckPhp::Db()->execute($sql);
                 echo ">>>>>>>>>>>>>>>>>>>>>>>>>\n";
 
     }
+}
+class SqlDumperApp extends DuckPhp
+{
+    public $options =[
+        'namespace' => 'tests_Data_SqlDumper',
+    ];
 }
