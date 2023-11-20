@@ -171,6 +171,20 @@ class Route extends ComponentBase
         ($callback)();
         return true;
     }
+    public function defaultGetRouteCallback($path_info)
+    {
+        $this->route_error = '';
+        
+        list($full_class, $method) = $this->pathToClassAndMethod($path_info);
+        if ($full_class === null) {
+            return null;
+        }
+        $this->calling_class = $full_class;
+        $this->calling_method = $method;
+        ////////
+        $callback = $this->getCallbackFromClassAndMethod($full_class, $method, $path_info);
+        return $callback;
+    }
     protected function pathToClassAndMethod($path_info)
     {
         if ($this->options['controller_url_prefix'] ?? false) {
@@ -205,8 +219,8 @@ class Route extends ComponentBase
             return [null, null];
         }
         $path_class = $path_class ?: $welcome_class;
-
-        $full_class = $this->getControllerNamespacePrefix().str_replace('/', '\\', $path_class).$this->options['controller_class_postfix'];
+        
+        $full_class = $this->getControllerNamespacePrefix().$this->adjustClassBaseName($path_class).$this->options['controller_class_postfix'];
         $full_class = ''.ltrim($full_class, '\\');
         $full_class = $this->options['controller_class_map'][$full_class] ?? $full_class;
         
@@ -214,19 +228,13 @@ class Route extends ComponentBase
         $method = $this->options['controller_method_prefix'].$method;
         return [$full_class,$method];
     }
-    public function defaultGetRouteCallback($path_info)
+    protected function adjustPath($path_class)
     {
-        $this->route_error = '';
+        $path_class = str_replace('/', '\\', $path_class);
+        // abc/method => AbcController/method,
+        // Abc/z
         
-        list($full_class, $method) = $this->pathToClassAndMethod($path_info);
-        if ($full_class === null) {
-            return null;
-        }
-        $this->calling_class = $full_class;
-        $this->calling_method = $method;
-        ////////
-        $callback = $this->getCallbackFromClassAndMethod($full_class, $method, $path_info);
-        return $callback;
+        return $path_class;
     }
     protected function getCallbackFromClassAndMethod($full_class, $method, $path_info)
     {
@@ -251,21 +259,11 @@ class Route extends ComponentBase
                 $this->route_error = 'E005: can not call hidden method';
                 return null;
             }
-            if ($this->options['controller_prefix_post']) {
-                $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-                $request_method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-                
-                if ($request_method === 'POST') {
-                    // action_$method => action_do_$method
-                    $ref_method = $this->options['controller_method_prefix'].$this->options['controller_prefix_post'].substr($method, strlen($this->options['controller_method_prefix']));
-                    if ($ref->hasMethod($ref_method)) {
-                        $method = $ref_method;
-                    }
-                }
-            }
+            $method = $this->adjustMethod($method, $ref);
             try {
                 $object = $ref->newInstance();
                 $ref = new \ReflectionMethod($object, $method);
+                //TODO Lowcase And Upcase
                 if ($ref->isStatic()) {
                     $this->route_error = "E006: can not call static method({$method})";
                     return null;
@@ -279,6 +277,22 @@ class Route extends ComponentBase
             return null;
         }
         return [$object,$method];
+    }
+    protected function adjustMethod($method, $ref)
+    {
+        if ($this->options['controller_prefix_post']) {
+            $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+            $request_method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+            
+            if ($request_method === 'POST') {
+                // action_$method => action_do_$method
+                $ref_method = $this->options['controller_method_prefix'].$this->options['controller_prefix_post'].substr($method, strlen($this->options['controller_method_prefix']));
+                if ($ref->hasMethod($ref_method)) {
+                    $method = $ref_method;
+                }
+            }
+        }
+        return $method;
     }
     public function getControllerNamespacePrefix()
     {
