@@ -1,7 +1,7 @@
 <?php
 namespace tests\DuckPhp\Foundation;
 
-use DuckPhp\DuckPhp;
+use DuckPhp\DuckPhpAllInOne as DuckPhp;
 use DuckPhp\Component\SqlDumper;
 use tests_Data_SqlDumper\System\SqlDumperApp;
 use tests_Data_SqlDumper\Model\EmptyModel;
@@ -18,8 +18,8 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
             'setting'=>$setting,
             'path_sql_dump' =>$path_app,
         ];
-        DuckPhp::G(new DuckPhp())->init($options);
-        SqlDumper::_()->init(DuckPhp::G()->options,DuckPhp::G());
+        DuckPhp::_(new DuckPhp())->init($options);
+        SqlDumper::_()->init(DuckPhp::_()->options,DuckPhp::_());
 
         $sql = "DROP TABLE IF EXISTS `empty`;";
         DuckPhp::Db()->execute($sql);
@@ -56,8 +56,8 @@ DuckPhp::Db()->execute($sql);
         include_once $path_app . 'Model/NoTableModel.php';
         include_once $path_app . 'Model/ErrorModel.php';
         
-        SqlDumperApp::G(new SqlDumperApp())->init($options);
-        SqlDumper::_(new SqlDumper())->init(SqlDumperApp::G()->options,SqlDumperApp::G());
+        SqlDumperApp::_(new SqlDumperApp())->init($options);
+        SqlDumper::_(new SqlDumper())->init(SqlDumperApp::_()->options,SqlDumperApp::_());
         SqlDumper::_()->options['sql_dump_include_tables_all'] = false;
         SqlDumper::_()->options['sql_dump_include_tables_by_model'] = true;
         SqlDumper::_()->options['sql_dump_include_tables'] = ['notable'];
@@ -76,7 +76,7 @@ DuckPhp::Db()->execute($sql);
         SqlDumper::_()->options['sql_dump_include_tables_all'] = false;
     SqlDumper::_()->options['sql_dump_include_tables_by_model'] = false;
     
-        SqlDumper::_(new SqlDumper())->init(DuckPhp::G()->options,DuckPhp::G());
+        SqlDumper::_(new SqlDumper())->init(DuckPhp::_()->options,DuckPhp::_());
         SqlDumper::_()->options['sql_dump_prefix'] = 'NoExists';
         SqlDumper::_()->run();
         SqlDumper::_()->options['sql_dump_prefix'] = '';
@@ -114,7 +114,7 @@ DuckPhp::Db()->execute($sql);
             'sql_dump_install_drop_old_table' => true,
         
         ];
-        SqlDumper::_(new SqlDumper())->init($options,DuckPhp::G());
+        SqlDumper::_(new SqlDumper())->init($options,DuckPhp::_());
         SqlDumper::_()->install();
 
         SqlDumper::_(new SqlDumper());

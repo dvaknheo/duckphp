@@ -8,14 +8,33 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(GlobalUser::class);
+        
+        GlobalUser::_();
+        $post = array();
+        $url_back ='';
+        $ext = null;
         try{
-            GlobalUser::_();
-        } catch(\Throwable $ex){}
-        GlobalUser::_(MyGlobalUser::_())->id();
-        GlobalUser::_(MyGlobalUser::_())->data();
-        GlobalUser::_()->logoutUrl('');
-        GlobalUser::_()->nick();
-        GlobalUser::_()->username();
+        GlobalUser::_()->urlForRegist($url_back, $ext);
+        }catch(\Exception $ex){}
+        try{
+        GlobalUser::_()->urlForLogin($url_back, $ext);
+        }catch(\Exception $ex){}
+        try{
+        GlobalUser::_()->urlForLogout($url_back, $ext);
+        }catch(\Exception $ex){}
+        try{
+        GlobalUser::_()->urlForHome($url_back, $ext);
+        }catch(\Exception $ex){}   
+        try{
+        GlobalUser::_()->regist($post);
+        }catch(\Exception $ex){}
+        try{
+        GlobalUser::_()->login($post);
+        }catch(\Exception $ex){}
+        try{
+        GlobalUser::_()->logout($post);
+        }catch(\Exception $ex){}
+        
         \LibCoverage\LibCoverage::End();
     }
 }

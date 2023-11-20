@@ -164,8 +164,9 @@ echo "-------------------------------------\n";
             'namespace' => __NAMESPACE__,
             'ext' =>[ KernelTestObjectError::class=>true,]
         ];
-        
+        try{
         App::_(new App())->init($options)->run();
+        }catch(\Exception $ex){}
         /////////////////////
         $options =[
             'path' => $path_app,

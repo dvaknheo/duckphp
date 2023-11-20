@@ -38,6 +38,10 @@ class GlobalUser
     {
         throw new \ErrorException('DuckPhp: No Impelement');
     }
+    public function urlForHome($url_back = null, $ext = null)
+    {
+        throw new \ErrorException('DuckPhp: No Impelement');
+    }
     public function regist($post)
     {
         throw new \ErrorException('DuckPhp: No Impelement');
@@ -46,7 +50,7 @@ class GlobalUser
     {
         throw new \ErrorException('DuckPhp: No Impelement');
     }
-    public function logout()
+    public function logout($post)
     {
         throw new \ErrorException('DuckPhp: No Impelement');
     }

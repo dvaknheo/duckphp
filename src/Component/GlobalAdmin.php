@@ -73,7 +73,7 @@ class GlobalAdmin
     {
         throw new \ErrorException('DuckPhp: No Impelement');
     }
-    public function logout()
+    public function logout($post)
     {
         throw new \ErrorException('DuckPhp: No Impelement');
     }
