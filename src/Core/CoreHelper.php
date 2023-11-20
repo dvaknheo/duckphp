@@ -95,10 +95,6 @@ class CoreHelper extends ComponentBase
     {
         return static::_()->_ExitRedirect(static::Url($url), $exit);
     }
-    public static function XpCall($callback, ...$args)
-    {
-        return static::_()->_XpCall($callback, ...$args);
-    }
     public static function SqlForPager($sql, $page_no, $page_size = 10)
     {
         return static::_()->_SqlForPager($sql, $page_no, $page_size);
@@ -107,6 +103,14 @@ class CoreHelper extends ComponentBase
     {
         return static::_()->_SqlForCountSimply($sql);
     }
+    public static function XpCall($callback, ...$args)
+    {
+        return static::_()->_XpCall($callback, ...$args);
+    }
+    public static function PhaseCall($phase, $callback, ...$args)
+    {
+        return static::_()->_PhaseCall($phase, $callback, ...$args);
+    }   
     public static function ThrowByFlag($exception, $flag, $message, $code = 0)
     {
         return static::_()->_ThrowByFlag($exception, $flag, $message, $code);
@@ -252,6 +256,19 @@ class CoreHelper extends ComponentBase
         } catch (\Exception $ex) {
             return $ex;
         }
+    }
+    public function _PhaseCall($phase, $callback, ...$args)
+    {
+        $phase = is_object($phase) ? get_class($phase) : $phase;
+        $current = App::Phase();
+        if (!$phase || !$current) {
+            return ($callback)(...$args);
+        }
+        
+        App::Phase($phase);
+        $ret = ($callback)(...$args);
+        App::Phase($current);
+        return $ret;
     }
     public function _SqlForPager($sql, $page_no, $page_size = 10)
     {

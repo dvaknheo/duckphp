@@ -105,7 +105,7 @@ class DuckPhp extends App
                 EventManager::class,
                 GlobalAdmin::class,
                 GlobalUser::class,
-                ]);
+            ]);
         }
         
         if ($this->options['ext_options_file_enable']) {
@@ -150,13 +150,6 @@ class DuckPhp extends App
         // check preinstall data,
         // then ext install. and then root install.
         // then install me;
-    }
-    protected function bumpSingletonToRoot($oldClass, $newClass)
-    {
-        $self = static::class;
-        $this->_PhaseCall(get_class(App::_()), function () use ($self, $oldClass, $newClass) {
-            $newClass::_(new PhaseProxy($self, $oldClass));
-        });
     }
     ////////////////////////////////////////////
     public function _Event()

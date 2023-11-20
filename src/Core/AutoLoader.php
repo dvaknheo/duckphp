@@ -45,9 +45,10 @@ class AutoLoader
     {
         return static::_()->init($options)->run();
     }
-    public static function addPsr4($namespace, $input_path)
+    public static function addPsr4($namespace, $input_path = null)
     {
-        return static::_()->assignPathNamespace($input_path, $namespace);
+        $namespace_map=is_array($namespace)?$namespace:[$namespace =>$input_path];
+        return static::_()->assignPathNamespace(array_flip($namespace_map));
     }
     public function __construct()
     {

@@ -10,19 +10,19 @@ use DuckPhp\Core\App;
 class PhaseProxy
 {
     protected $container_class;
-    protected $overriding_class;
-    public function __construct($container_class, $overriding_class)
+    protected $overriding;
+    public function __construct($container_class, $overriding)
     {
-        $this->overriding_class = $overriding_class;
+        $this->overriding = $overriding;
         $this->container_class = $container_class;
     }
-    public static function CreatePhaseProxy($container_class, $overriding_class)
+    public static function CreatePhaseProxy($container_class, $overriding)
     {
-        return new static($container_class, $overriding_class);
+        return new static($container_class, $overriding);
     }
     protected function createObjectForPhaseProxy()
     {
-        return ($this->overriding_class)::_();
+        return is_object($this->overriding) ? $this->overriding : $this->overriding::_();
     }
 
     public function __call($method, $args)
@@ -33,7 +33,6 @@ class PhaseProxy
 
         $callback = [$object,$method];
         $ret = ($callback)(...$args); /** @phpstan-ignore-line */
-        // if exception ?
         App::Phase($phase);
         return $ret;
     }

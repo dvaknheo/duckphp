@@ -228,7 +228,7 @@ class Route extends ComponentBase
         $method = $this->options['controller_method_prefix'].$method;
         return [$full_class,$method];
     }
-    protected function adjustPath($path_class)
+    protected function adjustClassBaseName($path_class)
     {
         $path_class = str_replace('/', '\\', $path_class);
         // abc/method => AbcController/method,

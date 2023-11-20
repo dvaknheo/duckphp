@@ -304,23 +304,6 @@ EOT;
         //you can override this;
         return $this->_IsDebug();
     }
-    public static function PhaseCall($phase, $callback, ...$args)
-    {
-        return static::_()->_PhaseCall($phase, $callback, ...$args);
-    }
-    public function _PhaseCall($phase, $callback, ...$args)
-    {
-        $phase = is_object($phase) ? get_class($phase) : $phase;
-        $current = $this->_Phase();
-        if (!$phase || !$current) {
-            return ($callback)(...$args);
-        }
-        
-        $this->_Phase($phase);
-        $ret = ($callback)(...$args);
-        $this->_Phase($current);
-        return $ret;
-    }
     // config static
     public static function Setting($key = null, $default = null)
     {
