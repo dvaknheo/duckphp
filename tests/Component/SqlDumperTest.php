@@ -74,6 +74,13 @@ DuckPhp::Db()->execute($sql);
         
         SqlDumper::_()->run();
         
+        echo "--------1111111111111-----------\n";
+        SqlDumper::_()->options['sql_dump_data_tables']=['empty'];
+        $sql = "INSERT INTO `empty` (`id`, `data`) VALUES (2, '22');";DuckPhp::Db()->execute($sql);
+        SqlDumper::_()->run();
+        $sql= 'delete from `empty`';DuckPhp::Db()->execute($sql);
+        $string = SqlDumper::_()->install();
+        
 
 
 $sql= 'DROP TABLE IF EXISTS `empty`';
