@@ -110,7 +110,7 @@ class CoreHelper extends ComponentBase
     public static function PhaseCall($phase, $callback, ...$args)
     {
         return static::_()->_PhaseCall($phase, $callback, ...$args);
-    }   
+    }
     public static function ThrowByFlag($exception, $flag, $message, $code = 0)
     {
         return static::_()->_ThrowByFlag($exception, $flag, $message, $code);

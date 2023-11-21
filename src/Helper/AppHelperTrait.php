@@ -6,11 +6,11 @@
 namespace DuckPhp\Helper;
 
 use DuckPhp\Component\DbManager;
-use DuckPhp\Component\EventManager;
 use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Core\Console;
+use DuckPhp\Core\EventManager;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\Runtime;

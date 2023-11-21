@@ -6,7 +6,6 @@
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\KernelTrait;
 use DuckPhp\Core\Logger;
 use DuckPhp\Core\Route;
@@ -305,10 +304,6 @@ EOT;
         return $this->_IsDebug();
     }
     // config static
-    public static function Setting($key = null, $default = null)
-    {
-        return static::_()->_Setting($key, $default);
-    }
     public function isInstalled()
     {
         return true;

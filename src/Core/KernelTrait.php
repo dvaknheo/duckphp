@@ -89,6 +89,14 @@ trait KernelTrait
     {
         return (self::class)::_(); // remark ,don't use self::_()!
     }
+    public static function Phase($new = null)
+    {
+        return static::_()->_Phase($new);
+    }
+    public static function Setting($key = null, $default = null)
+    {
+        return static::_()->_Setting($key, $default);
+    }
     public function isRoot()
     {
         return $this->is_root;
@@ -128,10 +136,6 @@ trait KernelTrait
     public function getContainer()
     {
         return PhaseContainer::GetContainer();
-    }
-    public static function Phase($new = null)
-    {
-        return static::_()->_Phase($new);
     }
     public function _Phase($new = null)
     {

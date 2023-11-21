@@ -12,7 +12,6 @@ use DuckPhp\Component\Cache;
 use DuckPhp\Component\Configer;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Component\DuckPhpCommand;
-use DuckPhp\Component\EventManager;
 use DuckPhp\Component\ExtOptionsLoader;
 use DuckPhp\Component\GlobalAdmin;
 use DuckPhp\Component\GlobalUser;
@@ -24,6 +23,7 @@ use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Core\App;
 use DuckPhp\Core\Console;
+use DuckPhp\Core\EventManager;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Route;
 
@@ -34,7 +34,7 @@ class DuckPhp extends App
         'ext_options_file' => 'config/DuckPhpApps.config.php',
         'exception_reporter' => null,
         
-        'path_info_compact_enable' =>false,
+        'path_info_compact_enable' => false,
         
         'session_prefix' => null,
         'table_prefix' => null,

@@ -7,9 +7,9 @@ namespace DuckPhp\Helper;
 
 use DuckPhp\Component\Cache;
 use DuckPhp\Component\Configer;
-use DuckPhp\Component\EventManager;
 use DuckPhp\Core\App;
 use DuckPhp\Core\CoreHelper;
+use DuckPhp\Core\EventManager;
 use DuckPhp\Core\SingletonTrait;
 
 trait BusinessHelperTrait

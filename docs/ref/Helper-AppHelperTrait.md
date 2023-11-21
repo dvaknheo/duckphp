@@ -93,4 +93,20 @@
     public static function getRouteMaps()
 
     public static function getCliParameters()
+## 详解
+DuckPhp\Core\App 类 可以视为几个类的组合
 
+### 作为内核的 App 入口类
+详见 [DuckPhp\Core\KernelTrait](Core-KernelTrait.md)
+
+### 助手函数，助手类，和本类的关系
+
+助手类的静态方法都调用本类的静态方法实现。
+
+相关代码请参考相应助手类方法。 
+
+ + [AdvanceHelper](Helper-AdvanceHelper.md)
+ + [BusinessHelper](Helper-BusinessHelper.md)
+ + [ControllerHelper](Helper-ControllerHelper.md)
+ + [ModelHelper](Helper-ModelHelper.md)
+ + [ViewHelper](Helper-ViewHelper.md)

@@ -5,12 +5,12 @@
 Core 目录下的微框架入口
 ## 依赖关系
 * 组件基类 [DuckPhp\Core\ComponentBase](Core-ComponentBase.md)
-* 系统同名函数替代Trait [DuckPhp\Core\SystemWrapperTrait](Core-SystemWrapperTrait.md)
 * 核心Trait [DuckPhp\Core\KernelTrait](Core-KernelTrait.md)
 * 日志类 [DuckPhp\Core\Logger](Core-Logger.md)
 * 异常管理类 [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
 * 路由类 [DuckPhp\Core\Route](Core-Route.md)
-* 运行时数据类 [DuckPhp\Core\RuntimeState](Core-RuntimeState.md)
+* 运行时数据类 [DuckPhp\Core\Runtime](Core-Runtime.md)
+* 系统同名函数替代 [DuckPhp\Core\SystemWrapper](Core-SystemWrapper.md)
 * 视图类 [DuckPhp\Core\View](Core-View.md)
 
 
@@ -18,9 +18,12 @@ Core 目录下的微框架入口
 ## 选项
 
 ### 专有选项
-        'html_handler' => null,
 
-        'lang_handler' => null,
+        'path_runtime' => 'runtime',
+可写目录
+
+        'alias' => null,
+
 
         'default_exception_do_log' => true,
 发生异常时候记录日志
@@ -31,18 +34,18 @@ Core 目录下的微框架入口
         'close_resource_at_output' => false,
 输出时候关闭资源输出（仅供第三方扩展参考
 
+        'html_handler' => null,
+
+        'lang_handler' => null,
+
         'error_404' => null,          //'_sys/error-404',
 404 错误处理 的View或者回调
 
         'error_500' => null,          //'_sys/error-500',
 500 错误处理 View或者回调
 
-        'error_debug' => null,        //'_sys/error-debug',
-调试的View或者回调
 
-        'path_runtime' => 'runtime',
-
-        'alias' => null,
+### 其他自带组件选项
 
         'path_log' => 'runtime',
 
@@ -55,59 +58,119 @@ Core 目录下的微框架入口
         'view_skip_notice_error' => true,
 
         'superglobal_auto_define' => false,
+
 ### 扩充 [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) 的默认选项。
 
 
 详情见 [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) 参考文档
 
 ```php
-    protected static $options_default = [
-            //// not override options ////
-            'use_autoloader' => false,
-            'skip_plugin_mode_check' => false,
-            
-            //// basic config ////
-            'path' => null,
-            'namespace' => null,
-            'override_class' => '',
-            //
-            //// properties ////
-            'is_debug' => false,
-            'platform' => '',
-            'ext' => [],
-            
-            'use_flag_by_setting' => true,
-            'use_short_functions' => true,
-            
-            'skip_404_handler' => false,
-            'skip_exception_check' => false,
-        ];
+protected $kernel_options = [
+        'path' => null,
+        'override_class' => null,
+        'override_class_from' => null,
+        'cli_enable' => true,
+        'is_debug' => false,
+        'ext' => [],
+        
+        'skip_404' => false,
+        'skip_exception_check' => false,
+        
+        'on_init' => null,
+        'container_only' => false,
+        'namespace' => null,
+        
+        'setting_file' => 'config/DuckPhpSettings.config.php',
+        'setting_file_ignore_exists' => true,
+        'setting_file_enable' => true,
+        'use_env_file' => false,
+        
+        //*/
+        // 'namespace' => '',
+        // 'namespace_controller' => 'Controller',
+        
+        // 'controller_path_ext' => '',
+        // 'controller_welcome_class' => 'Main',
+        // 'controller_welcome_class_visible' => false,
+        // 'controller_welcome_method' => 'index',
+        
+        // 'controller_class_base' => '',
+        // 'controller_class_postfix' => 'Controller',
+        // 'controller_method_prefix' => 'action_',
+        // 'controller_prefix_post' => 'do_', //TODO remove it
+        
+        // 'controller_class_map' => [],
+        
+        // 'controller_resource_prefix' => '',
+        // 'controller_url_prefix' => '',
+        
+        // 'use_output_buffer' => false,
+        // 'path_runtime' => 'runtime',
+        
+        // 'cli_command_alias' => [],
+        // 'cli_default_command_class' => '',
+        // 'cli_command_method_prefix' => 'command_',
+        // 'cli_command_default' => 'help',
+         //*/
+    ];
 ```
 
 ## 方法
 
 
 ### 独有的静态方法
-
-## 详解
-DuckPhp\Core\App 类 可以视为几个类的组合
-
-### 作为内核的 App 入口类
-详见 [DuckPhp\Core\KernelTrait](Core-KernelTrait.md)
-
-### 助手函数，助手类，和本类的关系
-
-助手类的静态方法都调用本类的静态方法实现。
-
-相关代码请参考相应助手类方法。 
-
- + [AdvanceHelper](Helper-AdvanceHelper.md)
- + [BusinessHelper](Helper-BusinessHelper.md)
- + [ControllerHelper](Helper-ControllerHelper.md)
- + [ModelHelper](Helper-ModelHelper.md)
- + [ViewHelper](Helper-ViewHelper.md)
+    public static function Setting($key = null, $default = null)
+获取设置
+内核里的 _Setting
 
 
+    public static function Logger($object = null)
+
+    public static function Event()
+
+    public static function Pager($object = null)
+    
+    public static function Admin($new = null)
+获取管理员对象
+仅供 override
+
+    public static function AdminData()
+
+    public static function User($new = null)
+
+    public static function UserData()
+
+    public static function AdminId()
+
+    public static function UserId()
+
+    public function adjustViewFile($view)
+
+    public function isInstalled()
+
+    public function install($options, $parent_options = [])
+
+    public function _Platform()
+
+    public function _IsDebug()
+
+    public function _IsRealDebug()
+
+    public function _Event()
+
+    public function _Pager($object = null)
+
+    public function _Admin($new = null)
+
+    public function _AdminData()
+
+    public function _AdminId()
+    
+    public function _User($new = null)
+
+    public function _UserData()
+
+    public function _UserId()
 
 ### 动态方法
 
@@ -122,13 +185,23 @@ DuckPhp\Core\App 类 可以视为几个类的组合
 高级
 
     public function skip404Handler()
-跳过 404 处理，用于协程类
+跳过 404 处理
 
+
+    public function getProjectPath()
+
+    public function getRuntimePath()
+
+    public function getOverrideableFile($path_sub, $file)
+
+    public function onBeforeOutput()
 
 
 ### 接管流程的函数
     public function __construct()
 构造函数
+
+    protected function doInitComponents()
 
     public function _On404(): void
 处理 404
@@ -141,71 +214,6 @@ DuckPhp\Core\App 类 可以视为几个类的组合
 
 
 
-
-### 内部实现函数
-
-这些都是内部没下划线前缀的静态方法的动态实现。 不用 protected 是因为想让非继承的类也能修改实现。
-
-### 内部函数
-
-
-    protected function onBeforeOutput()
-
-    protected function doInitComponents()
-
-    public function getProjectPath()
-
-    public function getRuntimePath()
-
-    public function getOverrideableFile($path_sub, $file)
-
-    public function onBeforeOutput()
-
-    public function adjustViewFile($view)
-
+    
 ## 说明
-
-
-
-    public static function AdminId()
-
-    public static function UserId()
-
-    public function _Platform()
-
-    public function _IsDebug()
-
-    public function _IsRealDebug()
-
-    public function _Event()
-
-    public function _Pager($object = null)
-
-
-
-    public static function Setting($key = null, $default = null)
-
-
-    public function isInstalled()
-
-    public function install($options, $parent_options = [])
-
-    public static function Admin($new = null)
-
-    public static function AdminData()
-
-    public static function User($new = null)
-
-    public static function UserData()
-
-    public function _Admin($new = null)
-
-    public function _AdminData()
-
-    public function _User($new = null)
-
-    public function _UserData()
-
-    public function _AdminId()
-
-    public function _UserId()
+    

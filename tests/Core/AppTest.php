@@ -193,8 +193,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         AppTestApp::_()->options['error_404']='_sys/error-404';
         AppTestApp::On404();
         
-        AppTestApp::PhaseCall('z',[AppTestApp::class,'CallIt'],123);
-        AppTestApp::PhaseCall('',[AppTestApp::class,'CallIt'],123);
+
 
         $this->doFunctions();
 

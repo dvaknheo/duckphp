@@ -7,12 +7,12 @@ namespace DuckPhp\Helper;
 
 use DuckPhp\Component\Configer;
 use DuckPhp\Component\DbManager;
-use DuckPhp\Component\EventManager;
 use DuckPhp\Component\GlobalAdmin;
 use DuckPhp\Component\GlobalUser;
 use DuckPhp\Component\Pager;
 use DuckPhp\Core\App;
 use DuckPhp\Core\CoreHelper;
+use DuckPhp\Core\EventManager;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\SingletonTrait;

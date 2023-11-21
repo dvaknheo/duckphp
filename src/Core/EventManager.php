@@ -3,7 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckPhp\Component;
+namespace DuckPhp\Core;
 
 use DuckPhp\Core\ComponentBase;
 
