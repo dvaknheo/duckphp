@@ -195,6 +195,7 @@ echo "-------------------------------------\n";
             'setting_file_ignore_exists' =>false,
         ];
         App::_(new App())->init($options);
+        App::Setting("duckphp_is_debug");
         //setting.php
         
         MyKernelTrait::_()->init($options);

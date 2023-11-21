@@ -97,9 +97,9 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
 
         echo CoreHelper::Hl("abc", []);
 
-        //AppTestApp::PhaseCall('z',[AppTestApp::class,'CallIt'],123);
-        //AppTestApp::PhaseCall('',[AppTestApp::class,'CallIt'],123);
-
+        CoreHelper::PhaseCall('z',function(){echo App::Phase();},123);
+        CoreHelper::PhaseCall('',function(){echo App::Phase();},123);
+        
         \LibCoverage\LibCoverage::End();
 
     }
