@@ -28,6 +28,30 @@
 
 v1.2.13 添加了默认实现
 
+### 内置 trait Core_SystemWrapper
+内置 trait Core_SystemWrapper 用于替换同名函数。这些方法，和手册里的一致，只是为了兼容不同平台
+
+```php
+    public static function header($output, bool $replace = true, int $http_response_code = 0)
+    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
+    public static function exit($code = 0)
+    public static function set_exception_handler(callable $exception_handler)
+    public static function register_shutdown_function(callable $callback, ...$args)
+    public static function session_start(array $options = [])
+    public static function session_id($session_id = null)
+    public static function session_destroy()
+    public static function session_set_save_handler(\SessionHandlerInterface $handler)
+```
+SystemWrapperTrait 还有两个特殊函数
+
+    public static function system_wrapper_replace(array $funcs)
+
+替换系统默认函数。第三方服务器使用
+
+    public static function system_wrapper_get_providers():array
+
+能提供的系统默认函数列表
+
 
 
 

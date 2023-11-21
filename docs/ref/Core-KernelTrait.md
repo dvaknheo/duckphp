@@ -19,61 +19,104 @@
 
 ### 基本配置
 
-            'path' => null,
+        'path' => null,
 基准目录，
 如果没设置，将设置为 $_SERVER['SCRIPT_FILENAME']的父级目录。
 
-            'namespace' => null,
+        'namespace' => null,
 基准命名空间，如果没设置，将设置为当前类的命名空间的上级命名空间，如MyProject\\System\\App => MyProject
 
-            'path_namespace' => null,
+        'path_namespace' => null,
 命名空间路径,如果设置了本值，将会使用自动加载， 基准目录是 path。
 
-            'override_class' => '',
+        'override_class' => '',
 **重要选项** 如果这个选项的类存在，则在init()的时候会切换到这个类完成后续初始化，并返回这个类的实例。
 
 ### 属性配置
 
-            'is_debug' => false,
+        'is_debug' => false,
 调试模式， 用于 IsDebug() 方法。
 
-            'platform' => '',
+        'platform' => '',
 平台， 自定义字符，用于 Platform() 方法。
 
-            'ext' => [],
+        'ext' => [],
 **重要选项** 扩展
 
-        'setting_file' => 'setting',
+        'setting_file' => 'config/DuckPhpSettings.config.php',
 设置文件名。
 
-        'setting_file_enable' => true,
+    'setting_file_enable' => true,
 使用设置文件: $path/$path_config/$setting_file.php
 
-        'use_env_file' => false,
+    'use_env_file' => false,
 使用 .env 文件
 打开这项，可以读取 path 选项下的 env 文件
 
-        'config_ext_file_map' => [],
+    'config_ext_file_map' => [],
 额外的配置文件数组，用于 AppPluginTrait
 
-        'setting_file_ignore_exists' => true,
+    'setting_file_ignore_exists' => true,
 如果设置文件不存在也不报错
 
 ### 开关配置
 
-            'use_flag_by_setting' => true,
+        'use_flag_by_setting' => true,
 从设置文件里再入 is_debug,platform。
 对应的设置选项是 duckphp_is_debug ，和 duckphp_platform
 
-            'use_short_functions' => true,
+        'use_short_functions' => true,
 使用短函数， \\_\\_url, \\_\\_h 等。
 详见 Core\\Functions.php
-            'skip_404_handler' => false,
+        'skip_404_handler' => false,
 不处理 404 ，用于配合其他框架使用。
 
-            'skip_exception_check' => false,
+        'skip_exception_check' => false,
 不在 Run 流程检查异常，把异常抛出外面。用于配合其他框架使用
 
+
+        'on_init' => null,
+
+        'container_only' => false,
+
+
+###
+
+        'namespace_controller' => 'Controller',
+
+        'controller_path_ext' => '',
+
+        'controller_welcome_class' => 'Main',
+
+        'controller_welcome_class_visible' => false,
+
+        'controller_welcome_method' => 'index',
+
+        'controller_class_base' => '',
+
+        'controller_class_postfix' => 'Controller',
+
+        'controller_method_prefix' => 'action_',
+
+        'controller_prefix_post' => 'do_', //TODO remove it
+
+        'controller_class_map' => [],
+
+        'controller_resource_prefix' => '',
+
+        'controller_url_prefix' => '',
+
+        'use_output_buffer' => false,
+
+        'path_runtime' => 'runtime',
+
+        'cli_command_alias' => [],
+
+        'cli_default_command_class' => '',
+
+        'cli_command_method_prefix' => 'command_',
+
+        'cli_command_default' => 'help',
 
 ## 属性
 
@@ -198,6 +241,25 @@ init() 初始化阶段，和 run 阶段
 
     public static function Root()
 
+    public static function Current()
+
+    public static function Phase($new = null)
+
+    public function _Phase($new = null)
+
+
+    public function getProjectPathFromClass($class, $use_parent_namespace = true)
+
+    public function getContainer()
+
+
+    public function _Setting($key = null)
+
+
+    public function isRoot()
+
+    public function _Setting($key = null, $default = null)
+
     protected function checkSimpleMode($context)
 
     protected function getProjectPathFromClass($class, $use_parent_namespace = true)
@@ -206,17 +268,7 @@ init() 初始化阶段，和 run 阶段
 
     protected function runExtentions()
 
-    public static function Current()
-
-    public function getProjectPathFromClass($class, $use_parent_namespace = true)
-
-    public function getContainer()
-
-    public static function Phase($new = null)
-
-    public function _Phase($new = null)
-
-    protected function doInitComponents()
+    protected function runException($ex)
 
     protected function reloadFlags($context): void
 
@@ -224,78 +276,5 @@ init() 初始化阶段，和 run 阶段
 
     protected function dealWithSettingFile()
 
-    public function _Setting($key = null)
-
-
-        'path' => null,
-
-        'namespace' => null,
-
-        'cli_enable' => true,
-
-        'is_debug' => false,
-
-        'ext' => [],
-
-        'override_class' => null,
-
-        'override_class_from' => null,
-
-        'use_flag_by_setting' => true,
-
-        'use_short_functions' => true,
-
-        'skip_404_handler' => false,
-
-        'skip_exception_check' => false,
-
-        'on_init' => null,
-
-        'container_only' => false,
-
-        'setting_file' => 'config/DuckPhpSettings.config.php', //TODO
-
-        'namespace_controller' => 'Controller',
-
-        'controller_path_ext' => '',
-
-        'controller_welcome_class' => 'Main',
-
-        'controller_welcome_class_visible' => false,
-
-        'controller_welcome_method' => 'index',
-
-        'controller_class_base' => '',
-
-        'controller_class_postfix' => 'Controller',
-
-        'controller_method_prefix' => 'action_',
-
-        'controller_prefix_post' => 'do_', //TODO remove it
-
-        'controller_class_map' => [],
-
-        'controller_resource_prefix' => '',
-
-        'controller_url_prefix' => '',
-
-        'use_output_buffer' => false,
-
-        'path_runtime' => 'runtime',
-
-        'cli_command_alias' => [],
-
-        'cli_default_command_class' => '',
-
-        'cli_command_method_prefix' => 'command_',
-
-        'cli_command_default' => 'help',
-
-        'setting_file' => 'config/DuckPhpSettings.config.php',
-
-    public function isRoot()
-
-    public function _Setting($key = null, $default = null)
-
-    protected function runException($ex)
+    protected function doInitComponents()
 

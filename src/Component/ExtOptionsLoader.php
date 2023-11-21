@@ -53,7 +53,7 @@ class ExtOptionsLoader extends ComponentBase
         $all_options = $this->get_all_ext_options(true);
         $all_options[$class] = $options;
         
-        $string = "<"."?php //". "regenerate by " . __CLASS__ . '->'.__METHOD__ ." at ". DATE(DATE_ATOM) . "\n";
+        $string = "<"."?php //". "regenerate by " . __CLASS__ . '->'.__FUNCTION__ ." at ". DATE(DATE_ATOM) . "\n";
         $string .= "return ".var_export($all_options, true) .';';
         file_put_contents($full_file, $string);
         clearstatcache();

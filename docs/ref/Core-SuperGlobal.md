@@ -38,6 +38,35 @@
 
 ## 详解
 
+内置 trait Core_SuperGlobal 主要用于超全局变量处理
+```php
+    public static function GET($key = null, $default = null)
+    public static function POST($key = null, $default = null)
+    public static function REQUEST($key = null, $default = null)
+    public static function COOKIE($key = null, $default = null)
+    public static function SERVER($key = null, $default = null)
+    public static function SESSION($key = null, $default = null)
+    public static function FILES($key = null, $default = null)
+```
+这些对应于超全局变量 $_GET[$key]??$value; 类推。如果宏 \_\_SUPERGLOBAL_CONTEXT 被定义，那么将 获得 (\_\_SUPERGLOBAL_CONTEXT)()->\_GET 等
+```php
+    public static function SessionSet($key, $value)
+    public static function SessionUnset($key)
+    public static function SessionGet($key, $default = null)
+
+```
+因为 Session 不仅仅读取，还有写入，所以用 SessionGet  /SessionSet 对称方法 。因为 \_\_SUPERGLOBAL_CONTEXT ，还有了 SessionUnset
+
+
+```php
+    public static function CookieSet($key, $value, $expire = 0)
+```
+因为 Cookie 不仅仅读取，还有写入，所以用 CookieSet 。
+
+
+    public static function CookieGet($key, $default = null)
+对称， CookieGet / CookieSet
+
 
 DuckPhp 添加协程支持，
 

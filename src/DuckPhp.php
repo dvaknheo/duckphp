@@ -34,7 +34,7 @@ class DuckPhp extends App
         'ext_options_file' => 'config/DuckPhpApps.config.php',
         'exception_reporter' => null,
         
-        'path_info_compact_enable' => null,
+        'path_info_compact_enable' =>false,
         
         'session_prefix' => null,
         'table_prefix' => null,

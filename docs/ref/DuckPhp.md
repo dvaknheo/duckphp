@@ -5,139 +5,58 @@
 总入口类。
 ## 依赖关系
 `DuckPhp\DuckPhp` 继承 微框架入口类 [DuckPhp\Core\App](Core-App.md)，并且引用这些组件类用于增强功能
-- 使用 [DuckPhp\Component\Cache](Component-Cache.md)
-- 使用 [DuckPhp\Component\Console](Component-Console.md)
-- 使用 [DuckPhp\Component\DbManager](Component-DbManager.md)
-- 使用 [DuckPhp\Component\DuckPhpCommand](Component-DuckPhpCommand.md)
-- 使用 [DuckPhp\Component\EventManager](Component-EventManager.md)
-- 使用 [DuckPhp\Component\Pager](Component-Pager.md)
-- 使用 [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
-- 使用 [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md)
+- 使用 [DuckPhp\Component\Cache](Component-Cache.md);
+- 使用 [DuckPhp\Component\Configer](Component-Configer.md);
+- 使用 [DuckPhp\Component\DbManager](Component-DbManager.md);
+- 使用 [DuckPhp\Component\DuckPhpCommand](Component-DuckPhpCommand.md);
+- 使用 [DuckPhp\Component\EventManager](Component-EventManager.md);
+- 使用 [DuckPhp\Component\ExtOptionsLoader](Component-ExtOptionsLoader.md);
+- 使用 [DuckPhp\Component\GlobalAdmin](Component-GlobalAdmin.md);
+- 使用 [DuckPhp\Component\GlobalUser](Component-GlobalUser.md);
+- 使用 [DuckPhp\Component\Pager](Component-Pager.md);
+- 使用 [DuckPhp\Component\PhaseProxy](Component-PhaseProxy.md);
+- 使用 [DuckPhp\Component\RedisManager](Component-RedisManager.md);
+- 使用 [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md);
+- 使用 [DuckPhp\Component\RouteHookRewrite](Component-RouteHookRewrite.md);
+- 使用 [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md);
+- 使用 [DuckPhp\Core\App](Core-App.md);
+- 使用 [DuckPhp\Core\Console](Core-Console.md);
+- 使用 [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md);
+- 使用 [DuckPhp\Core\Route](Core-Route.md);
+
 
 ## 选项
 
 继承 [DuckPhp\Core\KernelTrait](Core-Trait.md) 的默认选项。详细查看 [DuckPhp\Core\KernelTrait](Core-Trait.md)的文档。
 
-
         'ext_options_file_enable' => false,
+额外配置文件
+
         'ext_options_file' => 'config/DuckPhpApps.config.php',
+配置文件名字
         
-        'path_info_compact_enable' => null,
+        'path_info_compact_enable' => false,
+PATH_INFO 兼容模式
         
         'class_user' => null,
+用户类名
+
         'class_admin' => null,
+管理员类名
         
         'session_prefix' => null,
+Session 前缀
+
         'table_prefix' => null,
+数据库表前缀
         
         'exception_reporter' => null,
-        
+错误报告类名
 
-
-并且做了以下更改
-
-```php
-[
-    'ext' => [
-        DbManager::class => true,
-        RouteHookRouteMap::class => true,
-    ],
-    'route_map_auto_extend_method' => false,
-    'database_auto_extend_method' => false,
-];
-```
-Console
-
-Console::G()->options['cli_default_command_class'] = DuckPhpCommand::class;
-
-
-
-DuckPhpCommand
-
-RouteHookPathInfoCompat
-
-
-## 说明
-
-也许你想从这个入口类了解 DuckPhp 的所有配置，但这个类只是扩展自 DuckPhp 类只是弥补了 [DuckPhp\Core\App](Core-App.md) 缺失的方法。
-具体的方法在 DuckPhp\Core\App 里。主要流程在 [DuckPhp\Core\KernelTrait](Core-KernelTrait.md)  里
-
-## 公开方法
-    public function __construct()
-    
-    protected function initAfterOverride(array $options, object $context = null)
-
-
-
-## 详解
-
-App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里，还加载了其他 Ext 扩展的内容。
-
-
-+ 如果你要看有什么选项，查看  Kernel 和 App  文档
-+ 如果你要看核心流程，查看  Kernel  文档
-+ 如果你要看有什么方法，查看 App 文档。
-
-## 备忘
-
-
-    public static function setBeforeGetDbHandler($db_before_get_object_handler)
-
-    public static function getRoutes()
-
-    public static function assignRoute($key, $value = null)
-
-    public static function assignImportantRoute($key, $value = null)
-//
-
-
-    protected function initComponents(array $options, object $context = null)
-
-
-    public static function InitAsContainer($options)
-
-    public function thenRunAsContainer($skip_404 = false, $welcome_handle = null)
-
-    public function isInstalled()
-
-    public function install($options)
-
-    protected function bumpSingletonToRoot($oldClass, $newClass)
-
-    public function _Admin($admin = null)
-
-    public function _User($user = null)
-
-    public function _AdminId()
-
-    public function _UserId()
-
-
-
-
-    public static function InitAsContainer($options)
-
-    public function thenRunAsContainer($skip_404 = false, $welcome_handle = null)
-
-    public function isInstalled()
-
-    public function install($options)
-
-    protected function bumpSingletonToRoot($oldClass, $newClass)
-
-    public function _Admin($admin = null)
-
-    public function _User($user = null)
-
-    public function _AdminId()
-
-    public function _UserId()
-
-    public function _Event()
-
-    public function _Pager($object = null)
+## 隐含扩展选项
 
         'path_config' => 'config',
+配置类路径
 
         'database' => null,
 数据库，单一数据库配置
@@ -186,13 +105,76 @@ App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里，还加载�
         'path_info_compact_class_key' => '',
 
 
+并且做了以下更改
+
+```php
+        'path_info_compact_enable' =>false,
+
+```
+
+
+## 说明
+
+也许你想从这个入口类了解 DuckPhp 的所有配置，但这个类只是扩展自 DuckPhp 类只是弥补了 [DuckPhp\Core\App](Core-App.md) 缺失的方法。
+具体的方法在 DuckPhp\Core\App 里。主要流程在 [DuckPhp\Core\KernelTrait](Core-KernelTrait.md)  里
+
+## 公开方法
+    public function __construct()
+    
+    public static function InitAsContainer($options)
+
+    public function thenRunAsContainer($skip_404 = false, $welcome_handle = null)
+
+    protected function initComponents(array $options, object $context = null)
+
+    public function isInstalled()
+
     public function install($options, $parent_options = [])
 
+
+## 详解
+
+App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里，还加载了其他 Ext 扩展的内容。
+
+
++ 如果你要看有什么选项，查看  Kernel 和 App  文档
++ 如果你要看核心流程，查看  Kernel  文档
++ 如果你要看有什么方法，查看 App 文档。
+
+## 备忘
+
+
+    public static function setBeforeGetDbHandler($db_before_get_object_handler)
+
+    public static function getRoutes()
+
+    public static function assignRoute($key, $value = null)
+
+    public static function assignImportantRoute($key, $value = null)
+
+
+##  实现内置方法
+以下实现
+
+    public function _Event()
+
+    public function _Pager($object = null)
+    
+
     public function _Admin($new = null)
+获得管理员对象
+
+    public function _User($new = null)
+获取
+    public function _AdminId()
+
+    public function _UserId()
 
     public function _AdminData()
 
-    public function _User($new = null)
-
     public function _UserData()
 
+## 继承自 DuckPhp\Core\App 的方法
+
+
+## 完毕

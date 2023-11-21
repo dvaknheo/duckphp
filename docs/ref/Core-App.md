@@ -18,7 +18,9 @@ Core 目录下的微框架入口
 ## 选项
 
 ### 专有选项
+        'html_handler' => null,
 
+        'lang_handler' => null,
 
         'default_exception_do_log' => true,
 发生异常时候记录日志
@@ -113,27 +115,16 @@ DuckPhp\Core\App 类 可以视为几个类的组合
     public function version()
 版本，目前在 命令行中用到
 
-    public function extendComponents($method_map, $components = [])
-扩充调用方法
-
-    public function cloneHelpers($new_namespace, $new_helper_map = [])
-复制助手函数群
-
     public function addBeforeShowHandler($handler)
 高级
 
     public function removeBeforeShowHandler($handler)
 高级
 
-
-    public function addDynamicComponentClass($class)
-添加动态组件，补完 KernelTrait
-
     public function skip404Handler()
 跳过 404 处理，用于协程类
 
-    public static function IsCurrentApp()
-判断当前对象是不是执行类的对象 ,用于插件模式的判断
+
 
 ### 接管流程的函数
     public function __construct()
@@ -149,217 +140,16 @@ DuckPhp\Core\App 类 可以视为几个类的组合
 处理开发期错误
 
 
-### 内置 trait Core_SystemWrapper
-内置 trait Core_SystemWrapper 用于替换同名函数。这些方法，和手册里的一致，只是为了兼容不同平台
 
-```php
-    public static function header($output, bool $replace = true, int $http_response_code = 0)
-    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
-    public static function exit($code = 0)
-    public static function set_exception_handler(callable $exception_handler)
-    public static function register_shutdown_function(callable $callback, ...$args)
-    public static function session_start(array $options = [])
-    public static function session_id($session_id = null)
-    public static function session_destroy()
-    public static function session_set_save_handler(\SessionHandlerInterface $handler)
-```
-SystemWrapperTrait 还有两个特殊函数
-
-    public static function system_wrapper_replace(array $funcs)
-
-替换系统默认函数。第三方服务器使用
-
-    public static function system_wrapper_get_providers():array
-
-能提供的系统默认函数列表
-
-
-### 内置 trait Core_Helper
-内置 trait Core_Helper 用于各种助手方法
-
-#### 跳转
-```php
-    public static function ExitJson($ret, $exit = true)
-    public static function ExitRedirect($url, $exit = true)
-    public static function ExitRedirectOutside($url, $exit = true)
-    public static function ExitRouteTo($url, $exit = true)
-    public static function Exit404($exit = true)
-```
-#### 字符串处理
-```php
-    public static function H($str)
-    public static function L($str, $args = [])
-    public static function Hl($str, $args = [])
-    public static function Json($data)
-    
-    public static function Render($view, $data = null)
-```
-#### 调试相关
-```php
-    public static function var_dump(...$args)
-    public static function Platform()
-    public static function IsDebug()
-    public static function IsRealDebug()
-    public static function TraceDump()
-    public static function Logger($object = null)
-    public static function DebugLog($message, array $context = array())
-    public static function XpCall($callback, ...$args)
-    public static function CheckException($exception_class, $message, $code = 0)
-```
-#### SQL 相关
-```php
-    public static function SqlForPager($sql, $pageNo, $pageSize = 10)
-    public static function SqlForCountSimply($sql)
-```
-#### 分页
-分页器默认没加载
-```php
-    public static function Pager($object = null)
-    public static function PageNo($new_value = null)
-    public static function PageSize($new_value = null)
-    public static function PageHtml($total, $options = [])
-```
-#### 其他
-
-    public static function Cache($object = null)
-缓存对象
-
-    public static function Show($data = [], $view = '')
-Show 方法对 View::Show() 加了好些补充
-
-    public static function IsAjax()
-检查是否是 Ajax 请求
-
-    public static function CheckRunningController($self, $static)
-检查是否是当前控制器类是否运行
-
-例子，比如你放一个父类在 控制器目录底下，不希望直接被执行的时候。 在构造方法里调用这个方法，
-`C::CheckRunningController(self::class, static::class)`
-如果是被调用，则 404。 如果是两者相等，则返回 true ，否则返回 false;
-
-### 内置 trait  Core_NotImplemented
-内置 trait Core_NotImplemented DuckPhp\Core\App 没实现，但 DuckPhp\DuckPhp 类实现的的方法。数据库和事件系统
-```php
-    public static function Db($tag = null)
-    public static function DbCloseAll()
-    public static function DbForWrite()
-    public static function DbForRead()
-    public static function Event()
-    public static function FireEvent($event, ...$args)
-    public static function OnEvent($event, $callback)
-```
-
-### 内置 trait Core_Glue
-
-内置 trait Core_Glue 用于粘合其他类
-大写的方法是复制相关类的静态方法。小写是动态方法
-以下按粘合的类区分：
-
-#### 来自RuntimeState
-```php
-    public static function isInException()
-    public static function isRunning()
-```
-#### 来自 Configer
-```php
-    public static function Setting($key)
-    public static function Config($key, $default = null, $file_basename = 'config')
-```
-#### 来自 AutoLoader
-来自 AutoLoader 的两个方法，主要用于没把 composer 作为加载器使用的情况
-```php 
-    public static function assignPathNamespace($path, $namespace = null)
-    public static function runAutoLoader()
-```
-#### 来自 Route
-来自Route 的方法比较多。重点掌握
-
-    public static function Route($replacement_object = null)
-获得 Route 对象
-
-    public static function Url($url = null)
-获得 url
-
-    public static function Res($url = null)
-获得资源 url 。默认下资源 url 等同于 url
-
-    public static function Domain($use_scheme = false)
-获得域名
-
-    public static function Parameter($key = null, $default = null)
-获取存储的 paramters 。rewrite 之后会保存在这。
-
-    public static function PathInfo()
-获取 PathInfo
-
-    public static function replaceController($old_class, $new_class)
-单例模式，替换控制器类
-
-
-```php
-    public static function addRouteHook($callback, $position, $once = true)
-    public static function add404RouteHook($callback)
-    public static function getRouteCallingMethod()
-    public static function dumpAllRouteHooksAsString()
-```
-
-
-内置 trait Core_SuperGlobal 主要用于超全局变量处理
-```php
-    public static function GET($key = null, $default = null)
-    public static function POST($key = null, $default = null)
-    public static function REQUEST($key = null, $default = null)
-    public static function COOKIE($key = null, $default = null)
-    public static function SERVER($key = null, $default = null)
-    public static function SESSION($key = null, $default = null)
-    public static function FILES($key = null, $default = null)
-```
-这些对应于超全局变量 $_GET[$key]??$value; 类推。如果宏 \_\_SUPERGLOBAL_CONTEXT 被定义，那么将 获得 (\_\_SUPERGLOBAL_CONTEXT)()->\_GET 等
-```php
-    public static function SessionSet($key, $value)
-    public static function SessionUnset($key)
-    public static function SessionGet($key, $default = null)
-
-```
-因为 Session 不仅仅读取，还有写入，所以用 SessionGet  /SessionSet 对称方法 。因为 \_\_SUPERGLOBAL_CONTEXT ，还有了 SessionUnset
-
-
-```php
-    public static function CookieSet($key, $value, $expire = 0)
-```
-因为 Cookie 不仅仅读取，还有写入，所以用 CookieSet 。
-
-
-    public static function CookieGet($key, $default = null)
-对称， CookieGet / CookieSet
 
 ### 内部实现函数
 
 这些都是内部没下划线前缀的静态方法的动态实现。 不用 protected 是因为想让非继承的类也能修改实现。
 
-```php
-    public function _IsAjax()
-    public function _CheckRunningController($self, $static)
-
-    
-```
-
 ### 内部函数
 
-    protected function extendComponentClassMap($map)
-    protected function fixNamespace($class, $namespace)
+
     protected function onBeforeOutput()
-    private function getSuperGlobalData($superglobal_key, $key, $default)
-
-
-## 说明
-
-
-
-
-
-
-
 
     protected function doInitComponents()
 
@@ -373,25 +163,13 @@ Show 方法对 View::Show() 加了好些补充
 
     public function adjustViewFile($view)
 
-    public static function PhaseCall($phase, $callback, ...$args)
+## 说明
 
-    public function _PhaseCall($phase, $callback, ...$args)
 
-    public static function Admin($object = null)
-
-    public static function User($object = null)
 
     public static function AdminId()
 
     public static function UserId()
-
-    public function _Admin($object = null)
-
-    public function _User($object = null)
-
-    public function _AdminId()
-
-    public function _UserId()
 
     public function _Platform()
 
@@ -404,11 +182,9 @@ Show 方法对 View::Show() 加了好些补充
     public function _Pager($object = null)
 
 
-        'html_handler' => null,
-
-        'lang_handler' => null,
 
     public static function Setting($key = null, $default = null)
+
 
     public function isInstalled()
 
@@ -430,3 +206,6 @@ Show 方法对 View::Show() 加了好些补充
 
     public function _UserData()
 
+    public function _AdminId()
+
+    public function _UserId()
