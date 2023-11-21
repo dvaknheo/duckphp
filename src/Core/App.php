@@ -261,7 +261,7 @@ EOT;
     }
     public function skip404Handler()
     {
-        $this->options['skip_404_handler'] = true;
+        $this->options['skip_404'] = true;
     }
     public function onBeforeOutput()
     {

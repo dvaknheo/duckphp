@@ -73,7 +73,7 @@ class DuckPhp extends App
         $options['container_only'] = true;
         $options['handle_all_exception'] = false;
         $options['handle_all_dev_error'] = false;
-        $options['skip_404_handler'] = true;
+        $options['skip_404'] = true;
         
         return DuckPhp::_(new DuckPhp())->init($options);
     }

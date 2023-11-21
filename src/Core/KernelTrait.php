@@ -28,7 +28,7 @@ trait KernelTrait
         'is_debug' => false,
         'ext' => [],
         
-        'skip_404_handler' => false,
+        'skip_404' => false,
         'skip_exception_check' => false,
         
         'on_init' => null,
@@ -354,7 +354,7 @@ trait KernelTrait
                 if (!$ret) {
                     $ret = $this->runExtentions();
                     $this->_Phase(static::class);
-                    if (!$ret && $this->is_root && !($this->options['skip_404_handler'] ?? false)) {
+                    if (!$ret && $this->is_root && !($this->options['skip_404'] ?? false)) {
                         $this->_On404();
                     }
                 }
