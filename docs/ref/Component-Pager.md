@@ -34,7 +34,6 @@
     
     public function init(array $options, object $context = null)
     
-    public function isInited():bool
 
 ### PagerInterface 方法
 

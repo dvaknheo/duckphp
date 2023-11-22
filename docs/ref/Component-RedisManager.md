@@ -31,16 +31,23 @@ redis 设置是否同时支持单个和多个
 
 ## 详解
 
-    public function __construct()
-    public function init(array $options, object $context = null)
+    public static function Redis($tag = 0)
+获得Redis
+
+
+    public function getServer($tag = 0)
+Redis() 静态方法的实现方法
+
+    public function createServer($config)
+创建 Redis 对象
+
     protected function initContext(object $context)
     protected function initOptions(array $options)
-    public static function Redis($tag = 0)
-    public function getServer($tag = 0)
-    public function createServer($config)
-
-
+初始化
 ​    
 ### RedisManager
 
 redis 管理器。 redis 入口
+
+#完毕
+

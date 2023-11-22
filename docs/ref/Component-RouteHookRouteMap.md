@@ -14,51 +14,41 @@
         'route_map' => [],
 路由映射，在默认路由失败后执行的路由映射
 
-        'route_map_auto_extend_method' => true,
-路由映射，扩充方法至助手类
 
         'controller_url_prefix' => '',
+路由生效浅醉
 
-
-## 扩充方法
-
-'assignImportantRoute' => [static::class.'::G','assignImportantRoute'],
-'assignRoute' => [static::class.'::G','assignRoute'],
-'getRoutes' => [static::class.'::G','getRoutes']
-'routeMapNameToRegex'
 
 ## 方法
 
     public static function PrependHook($path_info)
-    
     public static function AppendHook($path_info)
-    
-    protected function initOptions(array $options)
-    
+    public function doHook($path_info, $is_append)
+路由钩子处理
+
+    protected function initOptions(array $options)    
     protected function initContext(object $context)
-    
-    public function compile($pattern_url, $rules = [])
-    
-    protected function compileMap($map, $namespace_controller)
+初始化
+
     
     public function assignRoute($key, $value = null)
     
     public function assignImportantRoute($key, $value = null)
     
-    public function getRoutes()
+    public function getRouteMaps()
     
+    public function compile($pattern_url, $rules = [])
+
+
     protected function matchRoute($pattern_url, $path_info, &$parameters)
     
     protected function getRouteHandelByMap($routeMap, $path_info)
     
     protected function adjustCallback($callback, $parameters)
     
-    public function doHook($path_info, $is_append)
+    protected function compileMap($map, $namespace_controller)
     
     protected function doHookByMap($path_info, $route_map)
-
-
-
 
 
 ## 详解
@@ -94,5 +84,4 @@ getRoutes()
 
 
 
-    public function getRouteMaps()
 

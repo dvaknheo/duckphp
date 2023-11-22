@@ -92,7 +92,7 @@ class RouteHookResource extends ComponentBase
         }
         return $new_dir;
     }
-    public function copy_dir($source, $path_parent, $path, $force = false, &$info = '')
+    protected function copy_dir($source, $path_parent, $path, $force = false, &$info = '')
     {
         $dest = $this->get_dest_dir($path_parent, $path);
         $source = rtrim(''.realpath($source), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;

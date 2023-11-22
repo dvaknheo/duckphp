@@ -9,19 +9,19 @@
         'rewrite_map' => [],
 路由重写，重写映射表
 
-        'rewrite_auto_extend_method' => true,
-路由重写，自动扩展方法
-
-    选项
 ## 方法
+
     public static function Hook($path_info)
-    
+    protected function doHook($path_info)
+路由钩子处理
+
     protected function initOptions(array $options)
-    
     protected function initContext(object $context)
-    
+初始化处理
+
     public function assignRewrite($key, $value = null)
-    
+分配
+
     public function getRewrites()
     
     public function replaceRegexUrl($input_url, $template_url, $new_url)
@@ -29,10 +29,9 @@
     public function replaceNormalUrl($input_url, $template_url, $new_url)
     
     public function filteRewrite($input_url)
-    
+
     protected function changeRouteUrl($url)
-    
-    protected function doHook($path_info)
+调整路由
 
 
 ## 详解

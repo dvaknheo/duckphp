@@ -47,8 +47,10 @@
     
     protected function showHelp()
 
+###
         function detectedClass($path)
-
+        protected function genProjectName()
+以上是未使用的方法
 
 ## 说明
 
@@ -62,7 +64,4 @@ DuckPhpInstaller 是辅助安装类。
 vendor/bin/duckphp new  --help
 ```
 
-
-
-    protected function genProjectName()
-
+## 完毕

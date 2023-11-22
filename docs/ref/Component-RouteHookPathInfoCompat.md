@@ -18,26 +18,21 @@
         'path_info_compact_class_key' => '',
 无PATH_INFO兼容，替代的 class
 
-        'path_info_compact_func_mode' => false,
-
-        'path_info_compact_func_mode_method_prefix' => 'action_',
-
-        'path_info_compact_func_mode_404_to_index' => false,
 ## 方法
 
-    protected function initContext(object $context)
-    
     public static function Url($url = null)
-    
     public function onUrl($url = null)
-    
-    protected function filteRewrite($url, &$ret = false)
+Url方法替换
     
     public static function Hook($path_info)
-    
     public function _Hook($path_info)
+路由钩子
 
+    protected function initContext(object $context)
+初始化
 
+    protected function filteRewrite($url, &$ret = false)
+过滤rewrite 模式，（未使用
 
 ## 详解
 
@@ -56,6 +51,8 @@ $options['path_info_compact_enable'] = true;
 
 `URL ($url) `函数也被接管。 自动替换成相应的实现。
 
+函数模式，见另一扩展
+[DuckPhp\Ext\RouteHookFunctionMode](Ext-RouteHookFunctionMode.md)
 
-    protected function functionMode()
+##完毕
 

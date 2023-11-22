@@ -310,15 +310,6 @@ EOT;
     }
     public function install($options, $parent_options = [])
     {
-        /*
-        foreach ($exts as $class => $options) {
-            if (\is_subclass_of($class, self::class)) {
-                if ($class::_()->isInstalled()) {
-                    $class::_()->install([], $options);
-                }
-            }
-        }
-        */
         return true;
     }
     ////////////////////////////////////////////

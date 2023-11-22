@@ -26,7 +26,7 @@ Redis Cache 的 key 前缀
     public function getMultiple($keys, $default = null)
     public function setMultiple($values, $ttl = null)
     public function deleteMultiple($keys)
-//
+PSR-16接口方法
 
     protected function initContext(object $context)
 继承 ComponentBase 的initContext 保存对象
@@ -34,7 +34,10 @@ Redis Cache 的 key 前缀
     protected function redis()
 获取redis 对象的方法，用于重写
 
-### RedisCache
+### 说明
+
 适配 redis 的 psr-16 (注意没实现 psr-16接口)
 
 要和 RedisManager 扩展一起用。。。
+
+## 完毕

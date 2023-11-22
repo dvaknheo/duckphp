@@ -14,12 +14,22 @@
         'controller_url_prefix' => '',
 
 ## 方法
+
     public static function Hook($path_info)
+    public function _Hook($path_info)
+钩子回调
+
+    public function cloneResource($force = false, &$info = '')
+复制资源
 
     protected function initContext(object $context)
+初始化
 
-    public function _Hook($path_info)
-
+    protected function copy_dir($source, $path_parent, $path, $force = false, &$info = '')
+    protected function get_dest_dir($path_parent, $path)
+    protected function check_files_exist($source, $dest, $files, &$info)
+    protected function create_directories($dest, $files, &$info)
+为克隆文件准备
 
 ## 说明
 
@@ -29,12 +39,3 @@
 res/ 目录，对应 admin/res/ 之类等
 
 
-    public function cloneResource($force = false, &$info = '')
-
-    protected function get_dest_dir($path_parent, $path)
-
-    public function copy_dir($source, $path_parent, $path, $force = false, &$info = '')
-
-    protected function check_files_exist($source, $dest, $files, &$info)
-
-    protected function create_directories($dest, $files, &$info)

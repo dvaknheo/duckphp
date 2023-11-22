@@ -143,12 +143,19 @@ class DuckPhp extends App
     }
     public function install($options, $parent_options = [])
     {
+        /*
+        foreach ($exts as $class => $options) {
+            if (\is_subclass_of($class, self::class)) {
+                if ($class::_()->isInstalled()) {
+                    $class::_()->install([], $options);
+                }
+            }
+        }
+        //*/
+        // force install ?
         if ($this->options['ext_options_file_enable']) {
             return ExtOptionsLoader::_()->installWithExtOptions(static::class, $options);
         }
-        // TODO
-        // check preinstall data,
-        // then ext install. and then root install.
         // then install me;
     }
     ////////////////////////////////////////////
