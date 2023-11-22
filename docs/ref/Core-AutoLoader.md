@@ -65,12 +65,17 @@ public $namespace_paths = [];
     public static function DuckPhpSystemAutoLoader(string $class): void //@codeCoverageIgnoreStart
 仅仅用于autoload.php 加载 DuckPhp 文件
     
-    public static function G($object = null)
 
     public function __construct()
 
-    protected function getComponentPath($sub_path, $main_path): string
 
+    public static function RunQuickly(array $options = [])
+
+    protected function getNamespacePath($sub_path, $main_path): string
+
+    public static function _($object = null)
+
+    public static function addPsr4($namespace, $input_path = null)
 
 ## 说明
 
@@ -88,13 +93,6 @@ if (!class_exists(\LazyToChange\System\App::class)) {
 
 
 
-    public static function RunQuickly(array $options = [])
 
-    protected function getNamespacePath($sub_path, $main_path): string
 
-    public static function _($object = null)
-
-    public static function addPsr4($namespace, $input_path)
-
-    public static function addPsr4($namespace, $input_path = null)
-
+## 结束

@@ -51,9 +51,6 @@
 使用 .env 文件
 打开这项，可以读取 path 选项下的 env 文件
 
-    'config_ext_file_map' => [],
-额外的配置文件数组，用于 AppPluginTrait
-
     'setting_file_ignore_exists' => true,
 如果设置文件不存在也不报错
 

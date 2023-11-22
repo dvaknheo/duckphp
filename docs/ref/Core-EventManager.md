@@ -48,5 +48,5 @@ App::FireEvent 触发事件
 
 DuckPhp 的事件系统是 一对多的
 
-
+## 完毕
 
