@@ -91,8 +91,7 @@ class ControllerHelperTraitTest extends \PHPUnit\Framework\TestCase
 /////
 echo"zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n\n";
 DuckPhp::_()->init([]);
-DuckPhp::Pager(new Pager);
-var_dump(DuckPhp::Pager());
+ControllerHelper::Pager(new Pager());
 ControllerHelper::PageNo();
 ControllerHelper::PageWindow();
 ControllerHelper::PageHtml(123);

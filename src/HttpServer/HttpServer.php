@@ -73,10 +73,6 @@ class HttpServer
         
         return $me;
     }
-    public static function G($object = null)
-    {
-        return static::_($object);
-    }
     public function __construct()
     {
     }

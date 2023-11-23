@@ -83,6 +83,9 @@
 ### 分页相关
 分页器类是通过 DuckPhp\\Component\\Pager 实现的
 
+    public static function Pager($new)
+获得或设置当前分页器
+
     public static function PageNo($new_value = null)
 获得或设置当前页码
 
@@ -154,3 +157,5 @@
     
 
 ## 完毕
+
+

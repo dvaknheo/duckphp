@@ -154,13 +154,4 @@ class DuckPhp extends App
         }
         // then install me;
     }
-    ////////////////////////////////////////////
-    public function _Event()
-    {
-        return EventManager::_();
-    }
-    public function _Pager($object = null)
-    {
-        return Pager::_($object);
-    }
 }

@@ -160,6 +160,10 @@ trait ControllerHelperTrait
         return SuperGlobal::_()->_SERVER($key, $default);
     }
     /////////////
+    public static function Pager($new)
+    {
+        return Pager::_($new);
+    }
     public static function PageNo($new_value = null)
     {
         return Pager::PageNo($new_value);

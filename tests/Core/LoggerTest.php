@@ -41,7 +41,6 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
         Logger::_()->info($message,  $context);
         
         Logger::_()->debug($message,  $context);
-        DuckPhp::Logger()->info("zzzzz");
         //////////
         
         $options=[];

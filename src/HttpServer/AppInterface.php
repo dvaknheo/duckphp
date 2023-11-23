@@ -7,7 +7,6 @@ namespace DuckPhp\HttpServer;
 
 interface AppInterface
 {
-    public static function G();
     public static function assignExceptionHandler();
     public static function system_wrapper_replace();
     public static function On404();

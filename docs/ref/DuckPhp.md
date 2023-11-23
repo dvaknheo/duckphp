@@ -39,10 +39,10 @@
 PATH_INFO 兼容模式
         
         'class_user' => null,
-用户类名
+用户类名，设置这个类以实现默认的用户类
 
         'class_admin' => null,
-管理员类名
+管理员类名，设置这个类以实现默认的管理员类
         
         'session_prefix' => null,
 Session 前缀
@@ -137,15 +137,6 @@ App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里，还加载�
 + 如果你要看核心流程，查看  Kernel  文档
 + 如果你要看有什么方法，查看 App 文档。
 
-## 备忘
-
-
-##  实现内置方法
-以下实现
-
-    public function _Event()
-
-    public function _Pager($object = null)
     
 ## 继承自 DuckPhp\Core\App 的方法
 

@@ -35,8 +35,6 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         \DuckPhp\Core\SystemWrapper::_()->_system_wrapper_replace([
             'exit' =>function(){ echo "change!\n";},
         ]);
-        DuckPhp::Pager();
-        DuckPhp::Event();
         
         View::_()->_Show([],'block');
         DuckPhp::_()->options['close_resource_at_output']=false;
@@ -62,6 +60,8 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         //DuckPhp::_()->isInstalled();
         @unlink($path.'config/DuckPhpApps.config.php');
         
+        
+        
         /////////////
         
         $options=[
@@ -79,6 +79,8 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
+        
+        
         DuckPhp::_(new DuckPhp());
         DuckPhp_Sub::_(new DuckPhp_Sub());
         \DuckPhp\Core\PhaseContainer::GetContainerInstanceEx(new \DuckPhp\Core\PhaseContainer());
@@ -86,6 +88,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         $_SERVER['PATH_INFO'] = '/zzzzzzzzzzzz';
         $flag = DuckPhp_Sub::InitAsContainer($options)->run();
         
+
         DuckPhp::_(new DuckPhp());
         DuckPhp_Sub::_(new DuckPhp_Sub());
         \DuckPhp\Core\PhaseContainer::GetContainerInstanceEx(new \DuckPhp\Core\PhaseContainer());

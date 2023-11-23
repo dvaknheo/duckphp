@@ -145,13 +145,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         
         $this->do_Core_Component();
         
-        try{
-        App::Pager(Pager::_());
-        }catch(\Exception $ex){}
-        try{
-            App::Event();
-        }catch(\Throwable $ex){
-        }
+
         $old_class = AppTestObjectA::class;
         $new_class = AppTestObjectB::class;
         App::_()->version();
@@ -301,15 +295,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::IsDebug();
         App::IsRealDebug();
         App::Platform();
-        try{
-            App::Pager();
-        }catch(\Throwable $ex){
-            //
-        }
-        App::Logger();
-        
 
-        
    
     }
     public function doGlue()

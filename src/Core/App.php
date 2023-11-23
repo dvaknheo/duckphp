@@ -119,7 +119,7 @@ class App extends ComponentBase
         
         if ($this->options['default_exception_do_log']) {
             try {
-                static::Logger()->error('['.get_class($ex).']('.$ex->getMessage().')'.$ex->getMessage());
+                Logger::_()->error('['.get_class($ex).']('.$ex->getMessage().')'.$ex->getMessage());
             } catch (\Throwable $ex) { // @codeCoverageIgnore
                 //do nothing
             } // @codeCoverageIgnore
@@ -300,27 +300,5 @@ EOT;
     public function install($options, $parent_options = [])
     {
         return true;
-    }
-    ////////////////////////////////////////////
-    public static function Logger($object = null)
-    {
-        return Logger::_($object);
-    }
-    public static function Event()
-    {
-        return static::_()->_Event();
-    }
-    
-    public static function Pager($object = null)
-    {
-        return static::_()->_Pager($object);
-    }
-    public function _Event()
-    {
-        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
-    }
-    public function _Pager($object = null)
-    {
-        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
     }
 }

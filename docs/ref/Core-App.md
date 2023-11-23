@@ -129,50 +129,12 @@ protected $kernel_options = [
     public static function IsRealDebug()
     public function _IsRealDebug()
 
-    public static function Logger($object = null)
-
-    public static function Event()
-
-    public static function Pager($object = null)
-    
-    public static function Admin($new = null)
-获取管理员对象
-仅供 override
-
-    public static function AdminData()
-
-    public static function User($new = null)
-
-    public static function UserData()
-
-    public static function AdminId()
-
-    public static function UserId()
-
-    public function adjustViewFile($view)
-
-    public function isInstalled()
-
-    public function install($options, $parent_options = [])
-
-    public function _Event()
-
-    public function _Pager($object = null)
-
-    public function _Admin($new = null)
-
-    public function _AdminData()
-
-    public function _AdminId()
-    
-    public function _User($new = null)
-
-    public function _UserData()
-
-    public function _UserId()
-
 ### 动态方法
 
+    public function isInstalled()
+是否已经安装
+
+    public function install($options, $parent_options = [])
     public function version()
 版本，目前在 命令行中用到
 
@@ -188,6 +150,7 @@ protected $kernel_options = [
     public function getOverrideableFile($path_sub, $file)
 获得子应用的覆盖文件
 
+    public function adjustViewFile($view)
     public function onBeforeOutput()
 提供Show 的回调
 
@@ -209,5 +172,4 @@ protected $kernel_options = [
 
     
 ## 说明
-    
 

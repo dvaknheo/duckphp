@@ -12,12 +12,12 @@ class HttpServerTest extends \PHPUnit\Framework\TestCase
         $options=[
             'path_document'=>__DIR__,
         ];
-        HttpServerParent::G();
-        HttpServerParent::G(new HttpServerParent())->RunQuickly($options);
-        HttpServerParent::G()->close();
-        HttpServerParent::G()->test_showHelp();
-        HttpServerParent::G()->test_run2();
-HttpServerParent::G()->isInited();
+        HttpServerParent::_();
+        HttpServerParent::_(new HttpServerParent())->RunQuickly($options);
+        HttpServerParent::_()->close();
+        HttpServerParent::_()->test_showHelp();
+        HttpServerParent::_()->test_run2();
+HttpServerParent::_()->isInited();
         
         $options=[
             'path_document'=>__DIR__,
@@ -25,12 +25,12 @@ HttpServerParent::G()->isInited();
         ];
         HttpServerParent::RunQuickly($options);
 
-        echo HttpServerParent::G()->getPid();
-        HttpServerParent::G()->close();
+        echo HttpServerParent::_()->getPid();
+        HttpServerParent::_()->close();
         $t=\LibCoverage\LibCoverage::G();
         define('__SINGLETONEX_REPALACER',HttpServerParent::class.'::CreateObject');
         \LibCoverage\LibCoverage::G($t);
-        HttpServerParent::G();
+        HttpServerParent::_();
         echo "zzzzzzzzzzzzzzzzzzzzzzzz";
         \LibCoverage\LibCoverage::End();
     }
