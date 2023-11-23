@@ -79,8 +79,10 @@ class App extends ComponentBase
         }
         
         Logger::_()->init($this->options, $this);
-        View::_()->init($this->options, $this);
         SuperGlobal::_()->init($this->options, $this);
+        View::_()->init($this->options, $this);
+        
+        //
     }
     //////// override KernelTrait ////////
     //@override
@@ -289,13 +291,11 @@ EOT;
     }
     public function _IsRealDebug()
     {
-        //you can override this;
         return $this->_IsDebug();
     }
-    // config static
     public function isInstalled()
     {
-        return true;
+        return $this->options['install'] ?? false;
     }
     public function install($options, $parent_options = [])
     {
@@ -315,60 +315,11 @@ EOT;
     {
         return static::_()->_Pager($object);
     }
-    public static function Admin($new = null)
-    {
-        return static::_()->_Admin($new);
-    }
-    public static function AdminId()
-    {
-        return static::_()->_AdminId();
-    }
-    public static function AdminData()
-    {
-        return static::_()->_AdminData();
-    }
-    public static function User($new = null)
-    {
-        return static::_()->_User($new);
-    }
-    public static function UserId()
-    {
-        return static::_()->_UserId();
-    }
-    public static function UserData()
-    {
-        return static::_()->_UserData();
-    }
-
     public function _Event()
     {
         throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
     }
     public function _Pager($object = null)
-    {
-        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
-    }
-    public function _Admin($new = null)
-    {
-        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
-    }
-    public function _AdminId()
-    {
-        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
-    }
-    public function _AdminData()
-    {
-        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
-    }
-    public function _User($new = null)
-    {
-        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
-    }
-    public function _UserId()
-    {
-        throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
-    }
-    public function _UserData()
     {
         throw new DuckPhpSystemException("DuckPhp No Impelement " . __FUNCTION__);
     }

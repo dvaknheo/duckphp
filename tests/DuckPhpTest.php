@@ -29,34 +29,20 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
             'mode_no_path_info'=>true,
             'path_view'=>$path_view,
             'path_info_compact_enable'=>true,
+            'sql_dump_enable'=>true,
         ];
         DuckPhp::_()->init($options);
         \DuckPhp\Core\SystemWrapper::_()->_system_wrapper_replace([
             'exit' =>function(){ echo "change!\n";},
         ]);
         DuckPhp::Pager();
-        
-        ////
-        ////
-        
         DuckPhp::Event();
-
-        
         
         View::_()->_Show([],'block');
         DuckPhp::_()->options['close_resource_at_output']=false;
         View::_()->_Show([],'block');
 
-        
-        
 
-        
-        DuckPhp::_()->Admin(FakeAdmin::_());
-        DuckPhp::_()->User(FakeUser::_());
-        DuckPhp::_()->AdminId();
-        DuckPhp::_()->UserId();
-        DuckPhp::_()->AdminData();
-        DuckPhp::_()->UserData();
         $options['path'] = $path;
         $options['path_test'] = 'abc';
         $options['ext_options_file_enable']=true;
@@ -72,7 +58,6 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         
         $options['ext'][DuckPhp_Sub::class]=['test'=>DATE(DATE_ATOM)];
         DuckPhp::_(new DuckPhp())->init($options);
-        echo "\n". DuckPhp::AdminId();
        
         //DuckPhp::_()->isInstalled();
         @unlink($path.'config/DuckPhpApps.config.php');

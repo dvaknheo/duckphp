@@ -63,8 +63,7 @@ class PhaseProxySubApp extends DuckPhp
     public function onInit()
     {
         $object = $this->proxySingletonExToRoot(PhaseProxyAdminAction::class);
-        static::Root()::Admin($object);
-        static::Root()::User(PhaseProxy::CreatePhaseProxy(static::class, PhaseProxyUserAction::class, false));
+        PhaseProxy::CreatePhaseProxy(static::class, PhaseProxyUserAction::class);
     }
 }
 class PhaseProxySubApp2 extends PhaseProxySubApp

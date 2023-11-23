@@ -119,15 +119,11 @@ Session 前缀
 具体的方法在 DuckPhp\Core\App 里。主要流程在 [DuckPhp\Core\KernelTrait](Core-KernelTrait.md)  里
 
 ## 公开方法
-    public function __construct()
-    
-    public static function InitAsContainer($options)
 
-    public function thenRunAsContainer($skip_404 = false, $welcome_handle = null)
+### 方法
+    public static function InitAsContainer($options, $welcome_handle = null)
 
     protected function initComponents(array $options, object $context = null)
-
-    public function isInstalled()
 
     public function install($options, $parent_options = [])
 
@@ -144,15 +140,6 @@ App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里，还加载�
 ## 备忘
 
 
-    public static function setBeforeGetDbHandler($db_before_get_object_handler)
-
-    public static function getRoutes()
-
-    public static function assignRoute($key, $value = null)
-
-    public static function assignImportantRoute($key, $value = null)
-
-
 ##  实现内置方法
 以下实现
 
@@ -160,20 +147,6 @@ App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里，还加载�
 
     public function _Pager($object = null)
     
-
-    public function _Admin($new = null)
-获得管理员对象
-
-    public function _User($new = null)
-获取
-    public function _AdminId()
-
-    public function _UserId()
-
-    public function _AdminData()
-
-    public function _UserData()
-
 ## 继承自 DuckPhp\Core\App 的方法
 
 

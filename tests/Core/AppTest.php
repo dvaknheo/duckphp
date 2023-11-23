@@ -152,29 +152,6 @@ class AppTest extends \PHPUnit\Framework\TestCase
             App::Event();
         }catch(\Throwable $ex){
         }
-        try{
-        App::Admin();
-        }catch(\Exception $ex){}
-        try{
-        App::User();
-        }catch(\Exception $ex){}
-        try{
-        App::AdminId();
-        }catch(\Exception $ex){}
-        try{
-        App::UserId();
-        }catch(\Exception $ex){}
-        try{
-        App::AdminData();
-        }catch(\Exception $ex){}
-        try{
-        App::UserData();
-        }catch(\Exception $ex){}
-        
-        try{
-            App::Event();
-        }catch(\Throwable $ex){
-        }
         $old_class = AppTestObjectA::class;
         $new_class = AppTestObjectB::class;
         App::_()->version();
@@ -189,8 +166,6 @@ class AppTest extends \PHPUnit\Framework\TestCase
         AppTestApp::_()->options['error_404']='_sys/error-404';
         AppTestApp::On404();
         
-
-
         $this->doFunctions();
 
         ////

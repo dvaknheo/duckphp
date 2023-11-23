@@ -21,6 +21,7 @@ use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookPathInfoCompat;
 use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Component\RouteHookRouteMap;
+use DuckPhp\Component\SqlDumper;
 use DuckPhp\Core\App;
 use DuckPhp\Core\Console;
 use DuckPhp\Core\EventManager;
@@ -38,8 +39,6 @@ class DuckPhp extends App
         
         'session_prefix' => null,
         'table_prefix' => null,
-        
-        
         
         //*
         // 'path_config' => 'config',
@@ -105,6 +104,7 @@ class DuckPhp extends App
             ]);
         }
         
+        //must be first
         if ($this->options['ext_options_file_enable']) {
             ExtOptionsLoader::_()->loadExtOptions(static::class);
         }
@@ -126,6 +126,9 @@ class DuckPhp extends App
         if ($this->options['path_info_compact_enable'] ?? false) {
             RouteHookPathInfoCompat::_()->init($this->options, $this);
         }
+        if ($this->options['sql_dump_enable'] ?? false) {
+            SqlDumper::_()->init($this->options, $this);
+        }
         ////////////////////////////////////////
         if ($this->options['exception_reporter'] ?? null) {
             ExceptionManager::_()->assignExceptionHandler(\Exception::class, [$this->options['exception_reporter'], 'OnException']);
@@ -134,10 +137,6 @@ class DuckPhp extends App
         return $this;
     }
     ////////////////////////////////////////////
-    public function isInstalled()
-    {
-        return $this->options['install'] ?? false;
-    }
     public function install($options, $parent_options = [])
     {
         /*
@@ -163,29 +162,5 @@ class DuckPhp extends App
     public function _Pager($object = null)
     {
         return Pager::_($object);
-    }
-    public function _Admin($new = null)
-    {
-        return GlobalAdmin::_($new);
-    }
-    public function _AdminId()
-    {
-        return GlobalAdmin::_()->id();
-    }
-    public function _AdminData()
-    {
-        return GlobalAdmin::_()->data();
-    }
-    public function _User($new = null)
-    {
-        return GlobalUser::_($new);
-    }
-    public function _UserId()
-    {
-        return GlobalUser::_()->id();
-    }
-    public function _UserData()
-    {
-        return GlobalUser::_()->data();
     }
 }

@@ -184,26 +184,26 @@ trait ControllerHelperTrait
     //////////////////////
     public static function Admin($new = null)
     {
-        return App::_()->_Admin($new);
+        return GlobalAdmin::_($new);
     }
     public static function AdminId()
     {
-        return App::_()->_AdminId();
+        return GlobalAdmin::_()->id();
     }
     public static function AdminData()
     {
-        return App::_()->_AdminData();
+        return GlobalAdmin::_()->data();
     }
     public static function User($new = null)
     {
-        return App::_()->_User($new);
+        return GlobalUser::_($new);
     }
     public static function UserId()
     {
-        return App::_()->_UserId();
+        return GlobalUser::_()->id();
     }
     public static function UserData()
     {
-        return App::_()->_UserData();
+        return GlobalUser::_()->data();
     }
 }
