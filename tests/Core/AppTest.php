@@ -60,10 +60,6 @@ class AppTest extends \PHPUnit\Framework\TestCase
 
         App::_(new App());
         App::RunQuickly($options,function(){
-            App::_()->addBeforeShowHandler(function(){ echo "beforeShowHandlers";});
-            App::_()->addBeforeShowHandler("testsssssssssss");
-            App::_()->removeBeforeShowHandler("testsssssssssss");
-
             $value = $cache[$key]; // trigger notice
             App::_()->options['error_debug']='_sys/error-debug';
             $value = $cache[$key]; 
@@ -210,7 +206,6 @@ class AppTest extends \PHPUnit\Framework\TestCase
         ];
         AppTestApp::_(new AppTestApp());
         App::_(new App())->init($options);
-        App::_()->addBeforeShowHandler(function(){ echo "addBeforeShowHandler";});
         \DuckPhp\Core\View::Show(['A'=>'b'],"view");
         
         ////
@@ -368,7 +363,6 @@ class AppTest extends \PHPUnit\Framework\TestCase
         ];
         View::_()->init($options);
         
-        App::_()->addBeforeShowHandler(function(){ echo "addBeforeShowHandler";});
         View::_()->options['skip_view_notice_error']=true;
         //App::getViewData();
 

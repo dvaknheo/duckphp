@@ -119,16 +119,15 @@ protected $kernel_options = [
 
 
 ### 独有的静态方法
-    public static function Setting($key = null, $default = null)
-获取设置
-内核里的 _Setting
 
     public static function Platform()
+    public function _Platform()
 
     public static function IsDebug()
+    public function _IsDebug()
 
     public static function IsRealDebug()
-
+    public function _IsRealDebug()
 
     public static function Logger($object = null)
 
@@ -156,12 +155,6 @@ protected $kernel_options = [
 
     public function install($options, $parent_options = [])
 
-    public function _Platform()
-
-    public function _IsDebug()
-
-    public function _IsRealDebug()
-
     public function _Event()
 
     public function _Pager($object = null)
@@ -180,34 +173,30 @@ protected $kernel_options = [
 
 ### 动态方法
 
-
     public function version()
 版本，目前在 命令行中用到
-
-    public function addBeforeShowHandler($handler)
-高级
-
-    public function removeBeforeShowHandler($handler)
-高级
 
     public function skip404Handler()
 跳过 404 处理
 
-
     public function getProjectPath()
+获得工程路径
 
     public function getRuntimePath()
+获得可写的运行路径
 
     public function getOverrideableFile($path_sub, $file)
+获得子应用的覆盖文件
 
     public function onBeforeOutput()
-
+提供Show 的回调
 
 ### 接管流程的函数
     public function __construct()
 构造函数
 
     protected function doInitComponents()
+额外初始化
 
     public function _On404(): void
 处理 404
@@ -217,8 +206,6 @@ protected $kernel_options = [
 
     public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
 处理开发期错误
-
-
 
     
 ## 说明

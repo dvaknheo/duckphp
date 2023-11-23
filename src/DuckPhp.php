@@ -75,14 +75,14 @@ class DuckPhp extends App
         $options['skip_404'] = $welcome_handle ? true : false;
         
         $self = DuckPhp::_(new DuckPhp())->init($options);
-        Route::_()->addRouteHook(function(){
-                Route::_()->forceFail();
-                return true;
-            }, 'prepend-outter',false);
-        EventManager::OnEvent([DuckPhp::class,'On404'],function()use($welcome_handle) {
-            if (!$welcome_handle){
+        Route::_()->addRouteHook(function () {
+            Route::_()->forceFail();
+            return true;
+        }, 'prepend-outter', false);
+        EventManager::OnEvent([DuckPhp::class,'On404'], function () use ($welcome_handle) {
+            if (!$welcome_handle) {
                 return;
-            }            
+            }
             DuckPhp::_()->options['skip_404'] = true;
             if ($welcome_handle) {
                 $path_info = Route::PathInfo();

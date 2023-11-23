@@ -99,14 +99,14 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         \DuckPhp\Core\PhaseContainer::GetContainerInstanceEx(new \DuckPhp\Core\PhaseContainer());
 
         $_SERVER['PATH_INFO'] = '/zzzzzzzzzzzz';
-        $flag = DuckPhp_Sub::InitAsContainer($options)->thenRunAsContainer(false,function(){echo "welcome";});
+        $flag = DuckPhp_Sub::InitAsContainer($options)->run();
         
         DuckPhp::_(new DuckPhp());
         DuckPhp_Sub::_(new DuckPhp_Sub());
         \DuckPhp\Core\PhaseContainer::GetContainerInstanceEx(new \DuckPhp\Core\PhaseContainer());
         $_SERVER['PATH_INFO'] = '/zzzzzzzzzzzz';
         $_SERVER['PATH_INFO'] = '/';
-        $flag =DuckPhp_Sub::InitAsContainer($options)->thenRunAsContainer(true,function(){echo "welcome";});
+        $flag =DuckPhp_Sub::InitAsContainer($options,function(){echo "welcome";})->run();
         
         
         echo "<<<<<<<<<<<<<<<<<";
@@ -129,7 +129,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::_(new DuckPhp());
         DuckPhp_Sub::_(new DuckPhp_Sub());
         \DuckPhp\Core\PhaseContainer::GetContainerInstanceEx(new \DuckPhp\Core\PhaseContainer());
-        $flag =DuckPhp_Sub::InitAsContainer($options)->thenRunAsContainer(false,function(){echo "welcome";});
+        $flag =DuckPhp_Sub::InitAsContainer($options,false,function(){echo "welcome";})->run();
         echo ">>>>>>>>>>>>>>>>>>>>>>>";
         $options = [
             'ext_options_file_enable'=>true,

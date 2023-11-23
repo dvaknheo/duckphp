@@ -160,24 +160,9 @@ trait KernelTrait
         }
         $this->is_root = !(\is_a($context, self::class));
         
-        
-        /*
-        if ($this->is_root && empty($extApps)) {
-            $this->is_simple_mode = true;
-            (self::class)::_($this); // remark ,don't use self::_()!
-            static::_($this);
-            if ($this->options['override_class_from'] ?? false) {
-                $class = $this->options['override_class_from'];
-                $class::_($this);
-            }
-            //if (true) {
-            return true;
-            //}
-        }
-        //*/
         //////////////////////////////
         $apps = [];
-        if ($this->is_root) { // || $this->options['container_only']
+        if ($this->is_root) {
             $this->onBeforeCreatePhases();
             $flag = PhaseContainer::ReplaceSingletonImplement();
             $container = $this->getContainer();
@@ -185,11 +170,9 @@ trait KernelTrait
             $container->setCurrentContainer(static::class);
             $this->onAfterCreatePhases();
         } else {
-            //$flag = PhaseContainer::ReplaceSingletonImplement();
             $container = $this->getContainer();
             $container->setCurrentContainer(static::class);
         }
-
         /////////////
         $apps[static::class] = $this;
         if ($this->is_root) {
@@ -358,7 +341,7 @@ trait KernelTrait
                 if (!$ret) {
                     $ret = $this->runExtentions();
                     $this->_Phase(static::class);
-                    if (!$ret){
+                    if (!$ret) {
                         EventManager::FireEvent([static::class,'On404']);
                     }
                     if (!$ret && $this->is_root && !($this->options['skip_404'] ?? false)) {
@@ -374,7 +357,7 @@ trait KernelTrait
         if (!$is_exceptioned) {
             Runtime::_()->clear();
         }
-        $this->onAfterRun($ret);
+        $this->onAfterRun();
         return $ret;
     }
     protected function runException($ex)
@@ -434,20 +417,26 @@ trait KernelTrait
     }
     protected function onBeforeCreatePhases()
     {
+        EventManager::FireEvent([static::class,__FUNCTION__]);
     }
     protected function onAfterCreatePhases()
     {
+        EventManager::FireEvent([static::class,__FUNCTION__]);
     }
     protected function onPrepare()
     {
+        EventManager::FireEvent([static::class,__FUNCTION__]);
     }
     protected function onInit()
     {
+        EventManager::FireEvent([static::class,__FUNCTION__]);
     }
     protected function onBeforeRun()
     {
+        EventManager::FireEvent([static::class,__FUNCTION__]);
     }
     protected function onAfterRun()
     {
+        EventManager::FireEvent([static::class,__FUNCTION__]);
     }
 }
