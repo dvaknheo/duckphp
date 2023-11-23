@@ -23,7 +23,7 @@ Core 目录下的微框架入口
 可写目录
 
         'alias' => null,
-
+别名，目前只用于目录
 
         'default_exception_do_log' => true,
 发生异常时候记录日志
@@ -123,6 +123,12 @@ protected $kernel_options = [
 获取设置
 内核里的 _Setting
 
+    public static function Platform()
+
+    public static function IsDebug()
+
+    public static function IsRealDebug()
+
 
     public static function Logger($object = null)
 
@@ -217,3 +223,4 @@ protected $kernel_options = [
     
 ## 说明
     
+

@@ -65,3 +65,5 @@ vendor/bin/duckphp new  --help
 ```
 
 ## 完毕
+    protected function genProjectName()
+

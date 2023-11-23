@@ -13,7 +13,6 @@
             5. **[ExceptionManager](Core-ExceptionManager.md)**   异常管理组件
             6. **[RuntimeState](Core-RuntimeState.md)** 运行期数据保存组件
             7. **[Functions](Core-Functions.md)** 全局函数列表
-        2. [ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md) 扩展静态调用的 trait
         3. [SystemWrapperTrait](Core-SystemWrapperTrait.md) 替换系统同名函数的 trait
         4. [Logger](Core-Logger.md) 日志组件
     3. **[Console](Component-Cache.md)** 命令行模式扩展组件

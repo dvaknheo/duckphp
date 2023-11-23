@@ -23,6 +23,8 @@
 
     protected function get_all_ext_options($force = false)
 
+    protected function saveExtOptions($class, $options)
+
 ## 说明
 
 DuckPhp ，根据 'ext_options_file_enable' 是否要加载 ExtOptionsLoader ，加载后 loadExtOptions()
@@ -30,3 +32,4 @@ install 的时候，调用 installWithExtOptions（static::class, $options) 保�
 
 
 ## 完毕
+

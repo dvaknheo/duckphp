@@ -30,67 +30,83 @@
 @script filedesc
 
 1. **[DuckPhp](DuckPhp.md)** 入口类，加载了默认扩展的 DuckPhp 入口 ，扩展自 [DuckPhp\\Core\\App](Core-App.md)
+2. **[DuckPhpAllInOne](DuckPhpAllInOne.md)** 入口类，绑定所有助手Trait的入口类;
+3. [AutoLoad\AutoLoader](Core-AutoLoader.md) 自动加载类
 2. `Core` 目录是核心目录，核心框架。基本功能都在 Core 里实现
     1. **[ComponentBase](Core-ComponentBase.md)** 组件基类
-         1. **[ComponentInterface](Core-ComponentInterface.md)** 组件接口
+        1. **[ComponentInterface](Core-ComponentInterface.md)** 组件接口
+        2. **[SingletonTrait](Core-SingletonTrait.md)** 单例模式 
     2. **[App](Core-App.md)** 核心应用类。引用以下类
-        1. **[KernelTrait](Core-KernelTrait.md)** 核心Trait 以下是 `核心必备组件`
-            1. [AutoLoader](Core-AutoLoader.md) 自动加载类
-            2. **[Configer](Core-Configer.md)** 配置组件
-            3. **[View](Core-View.md)** 视图组件
-            4. **[Route](Core-Route.md)** 路由组件
-            5. **[ExceptionManager](Core-ExceptionManager.md)**   异常管理组件
-            6. **[RuntimeState](Core-RuntimeState.md)** 运行期数据保存组件
-            7. **[Functions](Core-Functions.md)** 全局函数列表
-        2. [ExtendableStaticCallTrait](Core-ExtendableStaticCallTrait.md) 扩展静态调用的 trait
-        3. [SystemWrapperTrait](Core-SystemWrapperTrait.md) 替换系统同名函数的 trait
-        4. [Logger](Core-Logger.md) 日志组件
-    3. **[Console](Component-Cache.md)** 命令行模式扩展组件
+        -  **[KernelTrait](Core-KernelTrait.md)** 核心Trait 以下是 `核心必备组件`
+        -  **[Console](Core-Console.md)** 命令行模式扩展组件
+        -  **[CoreHelp](Core-CoreHelp.md)** 核心助手类
+        -  **[DuckPhpSystemException](Core-DuckPhpSystemException.md)** 核心助手类
+        -  [EventManager](Core-EventManager.md) 事件管理组件
+        -  **[ExceptionManager](Core-ExceptionManager.md)**   异常管理组件
+        -  **[ExitException](Core-ExitException.md)** 退出异常
+        -  **[Functions](Core-Functions.md)** 全局函数列表
+        -  [Logger](Core-Logger.md) 日志组件
+        -  [PhaseContainer](Core-PhaseContainer.md) 容器类，相位容器类
+        -  **[Route](Core-Route.md)** 路由组件
+        -  **[Runtime](Core-Runtime.md)** 运行期数据保存组件
+        -  [SuperGlobal](Ext-SuperGlobal.md) 超全局上下文组件
+        -  [SystemWrapper](Core-SystemWrapper.md) 替换系统同名函数的 trait
+        -  **[ThrownOnTrait](Core-ThrownOnTrait.md)** 可抛方法
+        -  **[View](Core-View.md)** 视图组件
 3. `Component` 目录，自带组件扩展。
-    1. [AppPluginTrait](Component-AppPluginTrait.md)   这个Trait用于把独立工程 App 转成插件 
-    2. [Cache](Component-Cache.md) 缓存组件
-    5. [DuckPhpCommand](Component-DuckPhpCommand.md) DuckPhp 的默认指令组件
-    6. [DbManager](Component-DbManager.md) 数据库管理组件
-    7. [EventManager](Component-EventManager.md) 事件管理组件
-    8. [Pager](Component-Pager.md) 分页类
+    -  [Cache](Component-Cache.md) 缓存组件
+    -  **[Configer](Core-Configer.md)** 配置组件
+    -  [DbManager](Component-DbManager.md) 数据库管理组件
+    -  [DuckPhpCommand](Component-DuckPhpCommand.md) DuckPhp 的默认指令组件
+    -  [DuckPhpInstaller](Component-DuckPhpInstaller.md) DuckPhp 的安装组件
+    -  [ExtOptionsLoader](Component-ExtOptionsLoader.md) 额外选项组件
+    -  [GlobalAdmin](Component-GlobalAdmin.md) 全局管理员组件
+    -  [GlobalUser](Component-GlobalUser.md) 全局用户组件
+    -  [Pager](Component-Pager.md) 分页类
         1. [PagerInteface](Component-PagerInteface.md) 分页接口
-    9. **[RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)** 无程序路由设计模式组件
-    10. **[RouteHookRouteMap](Component-RouteHookRouteMap.md)** 路由映射组件
+    -  [PhaseProxy](Component-PhaseProxy.md) 分页类
+    -  [RedisCache](Component-RedisSimpleCache.md) redis 缓存组件
+    -  [RedisManager](Component-RedisManager.md) Redis管理器组件
+    -  **[RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)** 无程序路由设计模式组件
+    -  **[RouteHookResource](Component-RouteHookResource.md)** 资源组件
+    -  **[RouteHookRouteMap](Component-RouteHookRouteMap.md)** 路由映射组件
+    -  [RouteHookRewrite](Component-RouteHookRewrite.md) 路由重写组件
+    -  [SqlDumper](Component-SqlDumper.md) 数据库加载组件
 4. `Db` 目录，数据库目录
     1. [DbAdvanceTrait](Db-DbAdvanceTrait.md)  这个 trait 增加了 Db类的高级功能
     2. [DbInterface](Db-DbInterface.md) Db 类满足 DbInterface 接口
     3. [Db](Db-Db.md) Db类
 5. `Foundation` 目录。存放高级功能的目录
-    - [SimpleSessionTrait](Foundation-SimpleSessionTrait.md) 简单的会话Trait
-    - [SimpleControllerTrait](Foundation-SimpleControllerTrait.md) 简单的模型Trait
-    - [SimpleModelTrait](Foundation-SimpleModel.md) 简单的模型Trait
-    - [ThrowOnableTrait](Foundation-ThrowOnableTrait.md) 让类有ThrowOn功能
+    -  [ExceptionReporterTrait](Foundation-ExceptionReporterTrait.md) 错误报告Trait
+    -  [SimpleBusinessTrait](Foundation-SimpleBusinessTrait.md) 简单的模型Trait
+    -  [SimpleControllerTrait](Foundation-SimpleControllerTrait.md) 简单的模型Trait
+    -  [SimpleExceptionTrait](Foundation-SimpleExceptionTrait.md) 让类有ThrowOn功能
+    -  [SimpleModelTrait](Foundation-SimpleModel.md) 简单的模型Trait
+    -  [SimpleSessionTrait](Foundation-SimpleSessionTrait.md) 简单的会话Trait
+    -  [SimpleSingletonTrait](Foundation-SimpleSingletonTrait.md) 单例Trait
 6. `Ext` 扩展目录，非默认加载的扩展。按字母排序。
-    1. [CallableView](Ext-CallableView.md) 可接受函数调用的视图组件
-    2. [EmptyView](Ext-EmptyView.md) 空视图组件
-    3. [ExceptionWrapper](Ext-ExceptionWrapper.md) 异常包裹
-    4. [HookChain](Ext-HookChain.md) 把回调扩展成链的类
-    5. [HttpServerPlugin](Ext-HttpServerPlugin.md) TODO http 扩展插件
-    6. [JsonRpcExt](Ext-JsonRpcExt.md) Json 远程调用组件，把本地调用改为远程调用
+    -  [CallableView](Ext-CallableView.md) 可接受函数调用的视图组件
+    +  [EmptyView](Ext-EmptyView.md) 空视图组件
+    +  [ExceptionWrapper](Ext-ExceptionWrapper.md) 异常包裹
+    +  [ExtendableStaticCallTrait](Ext-ExtendableStaticCallTrait.md) 扩展静态调用的 trait
+    +  [HookChain](Ext-HookChain.md) 把回调扩展成链的类
+    +  [JsonRpcExt](Ext-JsonRpcExt.md) Json 远程调用组件，把本地调用改为远程调用
         1. [JsonRpcClientBase](Ext-JsonRpcClientBase.md)
-    7. [JsonView](Ext-JsonView.md) Json 视图组件
-    8. [Misc](Ext-Misc.md) 杂项功能组件
-    9. [MyFacadesAutoLoader](Ext-MyFacadesAutoLoader.md) 门面组件，不推荐
+    +  [JsonView](Ext-JsonView.md) Json 视图组件
+    +  [MiniRoute](Ext-MiniRoute.md) 简化版的路由组件
+    +  [Misc](Ext-Misc.md) 杂项功能组件
+    +  [MyFacadesAutoLoader](Ext-MyFacadesAutoLoader.md) 门面组件，不推荐
         1. [MyFacadesBase](Ext-MyFacadesBase.md) 门面类的基类，不推荐
-    10. [MyMiddleware](Ext-MyMiddleware.md) 中间件，不推荐
-    11. [RedisCache](Ext-RedisSimpleCache.md) redis 缓存组件
-    12. [RedisManager](Ext-RedisManager.md) Redis管理器组件
-    13. [RouteHookApiServer](Ext-RouteHookApiServer.md) 简单的 API 服务器插件
-    14. [RouteHookDirectoryMode](Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件
-    15. [RouteHookManager](Ext-RouteHookManager.md) 路由钩子管理器
-    16. [RouteHookRewrite](Ext-RouteHookRewrite.md) 路由重写组件
-    17. [StaticReplacer](Ext-StaticReplacer.md) 适配协程的语法替换写法类
-    18. [StrictCheck](Ext-StrictCheck.md) 严格检查模式组件
-    19. [SuperGlobalContext](Ext-SuperGlobalContext.md) 超全局上下文组件
+    +  [MyMiddlewareManager](Ext-MyMiddlewareManager.md) 中间件，不推荐
+    +  [RouteHookApiServer](Ext-RouteHookApiServer.md) 简单的 API 服务器插件
+    +  [RouteHookDirectoryMode](Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件
+    +  [RouteHookManager](Ext-RouteHookManager.md) 路由钩子管理器
+    +  [RouteHookFunctionRoute](Ext-RouteHookFunctionRoute.md) 支持函数调用
+    +  [StaticReplacer](Ext-StaticReplacer.md) 适配协程的语法替换写法类
+    +  [StrictCheck](Ext-StrictCheck.md) 严格检查模式组件
 7. `Helper` 目录，各种助手类。
     + [AdvanceHelperTrait](Helper-AdvanceHelperTrait.md) 应用助手Trait
     + [BusinessHelperTrait](Helper-BusinessHelperTrait.md) 业务助手Trait
-    + [ControllerHelper](Helper-ControllerHelper.md) 控制器助手类
     + [ControllerHelperTrait](Helper-ControllerHelperTrait.md) 控制器助手Trait
     + [ModelHelperTrait](Helper-ModelHelperTrait.md) 模型助手Trait
 8. `HttpServer` 目录
@@ -115,7 +131,6 @@ src
 │   ├── DbManager.php
 │   ├── DuckPhpCommand.php
 │   ├── DuckPhpInstaller.php
-│   ├── EventManager.php
 │   ├── ExtOptionsLoader.php
 │   ├── GlobalAdmin.php
 │   ├── GlobalUser.php
@@ -127,7 +142,8 @@ src
 │   ├── RouteHookPathInfoCompat.php
 │   ├── RouteHookResource.php
 │   ├── RouteHookRewrite.php
-│   └── RouteHookRouteMap.php
+│   ├── RouteHookRouteMap.php
+│   └── SqlDumper.php
 ├── Core
 │   ├── App.php
 │   ├── AutoLoader.php
@@ -136,8 +152,9 @@ src
 │   ├── Console.php
 │   ├── CoreHelper.php
 │   ├── DuckPhpSystemException.php
+│   ├── EventManager.php
 │   ├── ExceptionManager.php
-│   ├── ExitException.php.bak
+│   ├── ExitException.php
 │   ├── Functions.php
 │   ├── KernelTrait.php
 │   ├── Logger.php
@@ -173,7 +190,6 @@ src
 │   ├── RouteHookDirectoryMode.php
 │   ├── RouteHookFunctionRoute.php
 │   ├── RouteHookManager.php
-│   ├── SqlDumper.bak
 │   ├── StaticReplacer.php
 │   └── StrictCheck.php
 ├── Foundation
