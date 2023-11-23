@@ -14,6 +14,10 @@ class PhaseContainer
     public $default;
     public $publics;
     
+    public static function ResetContainer()
+    {
+        static::GetContainerInstanceEx(new static());
+    }
     public static function ReplaceSingletonImplement()
     {
         //if (!defined('__SINGLETONEX_REPALACER')) {

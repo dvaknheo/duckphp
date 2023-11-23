@@ -70,7 +70,7 @@ class RouteHookResource extends ComponentBase
         
         
         $path_dest = $this->options['controller_resource_prefix'];
-        $path_dest = static::IsAbsPath($path_dest) ? $path_dest : $this->options['controller_url_prefix'].$path_dest;
+        $path_dest = (substr($path_dest, 0, 1) === '/') ? $path_dest : $this->options['controller_url_prefix'].$path_dest;
         $path_dest = ltrim($path_dest, '/');
         
         $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;

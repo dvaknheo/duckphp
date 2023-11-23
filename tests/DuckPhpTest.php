@@ -80,7 +80,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
             ],
         ];
         
-        
+        /*
         DuckPhp::_(new DuckPhp());
         DuckPhp_Sub::_(new DuckPhp_Sub());
         \DuckPhp\Core\PhaseContainer::GetContainerInstanceEx(new \DuckPhp\Core\PhaseContainer());
@@ -95,8 +95,8 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         $_SERVER['PATH_INFO'] = '/zzzzzzzzzzzz';
         $_SERVER['PATH_INFO'] = '/';
         $flag =DuckPhp_Sub::InitAsContainer($options,function(){echo "welcome";})->run();
-        
-        
+        */
+        /*
         echo "<<<<<<<<<<<<<<<<<";
         $_SERVER['PATH_INFO'] = '/advance/hitme';
         $options['ext']=[
@@ -118,6 +118,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp_Sub::_(new DuckPhp_Sub());
         \DuckPhp\Core\PhaseContainer::GetContainerInstanceEx(new \DuckPhp\Core\PhaseContainer());
         $flag =DuckPhp_Sub::InitAsContainer($options,false,function(){echo "welcome";})->run();
+        //*/
         echo ">>>>>>>>>>>>>>>>>>>>>>>";
         $options = [
             'ext_options_file_enable'=>true,

@@ -166,14 +166,7 @@ class SqlDumper extends ComponentBase
     protected function save($data)
     {
         $file = $this->options['sql_dump_file'];
-        if (static::IsAbsPath($file)) {
-            $full_file = $file;
-        } elseif (static::IsAbsPath($this->options['path_sql_dump'])) {
-            $full_file = static::SlashDir($this->options['path_sql_dump']) . $file;
-        } else {
-            $full_file = static::SlashDir($this->options['path']) . static::SlashDir($this->options['path_sql_dump']) . $file;
-        }
-        $full_file = '' . $full_file;
+        $full_file = $this->extendFullFile($this->options['path'], $this->options['path_sql_dump'], $file);
         
         $string = "<"."?php //". "regenerate by " . __CLASS__ . '->'.__METHOD__ ." at ". DATE(DATE_ATOM) . "\n";
         $string .= "return ".var_export($data, true) . ";\n";

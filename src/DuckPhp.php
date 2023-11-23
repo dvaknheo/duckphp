@@ -24,21 +24,22 @@ use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Component\SqlDumper;
 use DuckPhp\Core\App;
 use DuckPhp\Core\Console;
-use DuckPhp\Core\EventManager;
-use DuckPhp\Core\ExceptionManager;
-use DuckPhp\Core\Route;
 
 class DuckPhp extends App
 {
     protected $common_options = [
         'ext_options_file_enable' => false,
         'ext_options_file' => 'config/DuckPhpApps.config.php',
-        'exception_reporter' => null,
-        
-        'path_info_compact_enable' => false,
         
         'session_prefix' => null,
         'table_prefix' => null,
+        
+        'path_info_compact_enable' => false,
+        'sql_dump_enable' => false,
+        'class_admin' => '',
+        'class_user' => '',
+        'install_need_db' => false,
+        'install_need_redis' => false,
         
         //*
         // 'path_config' => 'config',
@@ -67,33 +68,13 @@ class DuckPhp extends App
         
         //*/
     ];
-    public static function InitAsContainer($options, $welcome_handle = null)
-    {
-        $options['handle_all_exception'] = false;
-        $options['handle_all_dev_error'] = false;
-        $options['skip_404'] = $welcome_handle ? true : false;
-        
-        $self = DuckPhp::_(new DuckPhp())->init($options);
-        Route::_()->addRouteHook(function () {
-            Route::_()->forceFail();
-            return true;
-        }, 'prepend-outter', false);
-        EventManager::OnEvent([DuckPhp::class,'On404'], function () use ($welcome_handle) {
-            if (!$welcome_handle) {
-                return;
-            }
-            DuckPhp::_()->options['skip_404'] = true;
-            if ($welcome_handle) {
-                $path_info = Route::PathInfo();
-                if ($path_info === '/' || $path_info === '') {
-                    ($welcome_handle)();
-                }
-            }
-        });
-        return $self;
-    }
+
     protected function initComponents(array $options, object $context = null)
     {
+        //must be first
+        if ($this->options['ext_options_file_enable']) {
+            ExtOptionsLoader::_()->loadExtOptions(static::class);
+        }
         parent::initComponents($options, $context);
         if ($this->is_root) {
             $this->getContainer()->addPublicClasses([
@@ -102,11 +83,6 @@ class DuckPhp extends App
                 GlobalAdmin::class,
                 GlobalUser::class,
             ]);
-        }
-        
-        //must be first
-        if ($this->options['ext_options_file_enable']) {
-            ExtOptionsLoader::_()->loadExtOptions(static::class);
         }
         
         Configer::_()->init($this->options, $this);
@@ -126,19 +102,19 @@ class DuckPhp extends App
         if ($this->options['path_info_compact_enable'] ?? false) {
             RouteHookPathInfoCompat::_()->init($this->options, $this);
         }
-        if ($this->options['sql_dump_enable'] ?? false) {
-            SqlDumper::_()->init($this->options, $this);
+        if ($this->options['class_admin']) {
+            GlobalAdmin::_(PhaseProxy::CreatePhaseProxy(static::class, $this->options['class_admin']));
         }
-        ////////////////////////////////////////
-        if ($this->options['exception_reporter'] ?? null) {
-            ExceptionManager::_()->assignExceptionHandler(\Exception::class, [$this->options['exception_reporter'], 'OnException']);
+        if ($this->options['class_user']) {
+            GlobalUser::_(PhaseProxy::CreatePhaseProxy(static::class, $this->options['class_user']));
         }
-        ///////
+        
         return $this;
     }
     ////////////////////////////////////////////
     public function install($options, $parent_options = [])
     {
+        // first, if is_root then  tree ,need-database , need-redis,
         /*
         foreach ($exts as $class => $options) {
             if (\is_subclass_of($class, self::class)) {
@@ -147,11 +123,18 @@ class DuckPhp extends App
                 }
             }
         }
-        //*/
-        // force install ?
-        if ($this->options['ext_options_file_enable']) {
-            return ExtOptionsLoader::_()->installWithExtOptions(static::class, $options);
+
+        if ($this->options['sql_dump_enable'] ?? false) {
+            SqlDumper::_()->init($this->options, $this);
+            SqlDumper::_()->install();
         }
-        // then install me;
+        if ($this->options['ext_options_file_enable']) {
+            ExtOptionsLoader::_()->installWithExtOptions(static::class, $options);
+        }
+        if (true) {
+            RouteHookResource::_()->cloneResource($force,$info);
+        }
+        return true;
+        //*/
     }
 }

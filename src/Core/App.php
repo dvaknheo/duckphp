@@ -56,7 +56,34 @@ class App extends ComponentBase
     ];
     protected $common_options = [];
     protected $beforeShowHandlers = [];
-    
+
+    public static function InitAsContainer($options)
+    {
+        $view = $options['welcome_view'] ?? null;
+        
+        $options['handle_all_exception'] = false;
+        $options['handle_all_dev_error'] = false;
+        $options['skip_404'] = $view ? true : false;
+        
+        $self = static::_(new static())->init($options);
+        Route::_()->addRouteHook(function () {
+            Route::_()->forceFail();
+            return true;
+        }, 'prepend-outter', false);
+        
+        EventManager::OnEvent([static::class,'On404'], function () use ($view) {
+            if (!$view) {
+                return;
+            }
+            static::_()->options['skip_404'] = true;
+            $path_info = Route::PathInfo();
+            if ($path_info === '/' || $path_info === '') {
+                static::Phase(static::class);
+                View::Show([], $view);
+            }
+        });
+        return $self;
+    }
     public function __construct()
     {
         parent::__construct();

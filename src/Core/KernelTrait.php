@@ -41,6 +41,8 @@ trait KernelTrait
         'setting_file_enable' => true,
         'use_env_file' => false,
         
+        'exception_reporter' => null,
+        'exception_reporter_for_class' => null,
         //*/
         // 'namespace' => '',
         // 'namespace_controller' => 'Controller',
@@ -224,12 +226,13 @@ trait KernelTrait
         
         $this->initComponents($this->options, $context);
         
-        //$this->onBeforeExtentionInit();
+        $this->onBeforeExtentionInit();
         $this->initExtentions($this->options['ext'] ?? []);
         $this->onInit();
         if ($this->options['on_init']) {
             ($this->options['on_init'])();
         }
+        
         $this->is_inited = true;
         return $this;
     }
@@ -244,7 +247,11 @@ trait KernelTrait
         Route::_()->init($this->options, $this);
         Runtime::_()->init($this->options, $this);
         Console::_()->init($this->options, $this);
-
+        
+        if ($this->options['exception_reporter'] ?? null) {
+            $exception_class = $this->options['exception_reporter_for_class'] ?? \Exception::class;
+            ExceptionManager::_()->assignExceptionHandler($exception_class, [$this->options['exception_reporter'], 'OnException']);
+        }
         $this->doInitComponents();
     }
     protected function doInitComponents()
@@ -416,13 +423,17 @@ trait KernelTrait
     }
     protected function onBeforeCreatePhases()
     {
-        EventManager::FireEvent([static::class,__FUNCTION__]);
+        //EventManager::FireEvent([static::class,__FUNCTION__]);
     }
     protected function onAfterCreatePhases()
     {
         EventManager::FireEvent([static::class,__FUNCTION__]);
     }
     protected function onPrepare()
+    {
+        EventManager::FireEvent([static::class,__FUNCTION__]);
+    }
+    protected function onBeforeExtentionInit()
     {
         EventManager::FireEvent([static::class,__FUNCTION__]);
     }
