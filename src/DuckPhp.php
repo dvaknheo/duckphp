@@ -68,32 +68,30 @@ class DuckPhp extends App
         
         //*/
     ];
-    public static function InitAsContainer($options)
+    public static function InitAsContainer($options, $welcome_handle = null)
     {
-        $options['container_only'] = true;
         $options['handle_all_exception'] = false;
         $options['handle_all_dev_error'] = false;
-        $options['skip_404'] = true;
+        $options['skip_404'] = $welcome_handle ? true : false;
         
-        return DuckPhp::_(new DuckPhp())->init($options);
-    }
-    public function thenRunAsContainer($skip_404 = false, $welcome_handle = null)
-    {
-        $ret = $this->run();
-        if ($ret) {
-            return $ret;
-        }
-        if ($welcome_handle) {
-            $path_info = Route::PathInfo();
-            if ($path_info === '' || $path_info === '/') {
-                ($welcome_handle)();
+        $self = DuckPhp::_(new DuckPhp())->init($options);
+        Route::_()->addRouteHook(function(){
+                Route::_()->forceFail();
                 return true;
+            }, 'prepend-outter',false);
+        EventManager::OnEvent([DuckPhp::class,'On404'],function()use($welcome_handle) {
+            if (!$welcome_handle){
+                return;
+            }            
+            DuckPhp::_()->options['skip_404'] = true;
+            if ($welcome_handle) {
+                $path_info = Route::PathInfo();
+                if ($path_info === '/' || $path_info === '') {
+                    ($welcome_handle)();
+                }
             }
-        }
-        if (!$skip_404) {
-            $this->_On404();
-        }
-        return false;
+        });
+        return $self;
     }
     protected function initComponents(array $options, object $context = null)
     {
@@ -102,7 +100,6 @@ class DuckPhp extends App
             $this->getContainer()->addPublicClasses([
                 DbManager::class,
                 RedisManager::class,
-                EventManager::class,
                 GlobalAdmin::class,
                 GlobalUser::class,
             ]);

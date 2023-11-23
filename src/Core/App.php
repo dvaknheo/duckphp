@@ -72,7 +72,10 @@ class App extends ComponentBase
     protected function doInitComponents()
     {
         if ($this->is_root) {
-            $this->getContainer()->addPublicClasses([Logger::class, SuperGlobal::class]);
+            $this->getContainer()->addPublicClasses([
+                Logger::class,
+                SuperGlobal::class
+                ]);
         }
         
         Logger::_()->init($this->options, $this);
@@ -246,30 +249,16 @@ EOT;
         
         return $full_file;
     }
-    //////// features
-
-    public function addBeforeShowHandler($handler)
-    {
-        $this->beforeShowHandlers[] = $handler;
-    }
-    public function removeBeforeShowHandler($handler)
-    {
-        $this->beforeShowHandlers = array_filter($this->beforeShowHandlers, function ($v) use ($handler) {
-            return $v != $handler;
-        });
-    }
     public function skip404Handler()
     {
         $this->options['skip_404'] = true;
     }
+    
+    //////// features for view
+
     public function onBeforeOutput()
     {
-        //if (!$this->options['close_resource_at_output']) {
-        //    return;
-        //}
-        foreach ($this->beforeShowHandlers as $v) {
-            ($v)();
-        }
+        EventManager::FireEvent([static::class,__FUNCTION__]);
     }
     public function adjustViewFile($view)
     {

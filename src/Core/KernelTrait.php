@@ -10,6 +10,7 @@
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\Console;
+use DuckPhp\Core\EventManager;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Core\Route;
@@ -252,15 +253,16 @@ trait KernelTrait
     }
     protected function initComponents(array $options, object $context = null)
     {
+        if ($this->is_root) {
+            $this->getContainer()->addPublicClasses([
+                Console::class,
+                EventManager::class,
+            ]);
+        }
         Route::_()->init($this->options, $this);
         Runtime::_()->init($this->options, $this);
+        Console::_()->init($this->options, $this);
 
-        if ($this->is_root) {
-            Console::_()->init($this->options, $this);
-            $container = $this->getContainer();
-            $t = $container ? $container->addPublicClasses([Console::class]) :null;
-        }
-        
         $this->doInitComponents();
     }
     protected function doInitComponents()
@@ -352,12 +354,13 @@ trait KernelTrait
             if (PHP_SAPI === 'cli' && $this->is_root && $this->options['cli_enable']) {
                 $ret = Console::_()->run();
             } else {
-                if (!($this->options['container_only'] ?? false)) {
-                    $ret = Route::_()->run();
-                }
+                $ret = Route::_()->run();
                 if (!$ret) {
                     $ret = $this->runExtentions();
                     $this->_Phase(static::class);
+                    if (!$ret){
+                        EventManager::FireEvent([static::class,'On404']);
+                    }
                     if (!$ret && $this->is_root && !($this->options['skip_404'] ?? false)) {
                         $this->_On404();
                     }
@@ -371,7 +374,7 @@ trait KernelTrait
         if (!$is_exceptioned) {
             Runtime::_()->clear();
         }
-        $this->onAfterRun();
+        $this->onAfterRun($ret);
         return $ret;
     }
     protected function runException($ex)
