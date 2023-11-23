@@ -25,5 +25,6 @@ ModelHelperTrait 只有 5 个全静态方法
 分页 limit 的 sql,补齐 sql用
 
     public static function SqlForCountSimply(string $sql): string
+用于分页处理
 简单的把 `select ... from ` 替换成 `select count(*)as c from `
-用于分页处理。
+

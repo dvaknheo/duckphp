@@ -1,53 +1,47 @@
-# DuckPhp\ThrowOn\ThrowOnTrait
-[toc]
+# DuckPhp\Foundation\ThrowOnableTrait
 
 ## 简介
-快速抛出异常的 trait，用于异常类扩充
+
+ThrowOnableTrait 提供 ThrowOn 方法，并且隐藏异常方法
+ThrowOnableTrait 需要配合 G 方法使用
+
+## 选项
 
 ## 方法
-
-trait ThrowOnTrait 是为了写代码更偷懒，提供了三个静态方法:
+### 公开方法
 
     public static function ThrowOn($flag, $message, $code = 0)
+如果 $flag 成立， 则抛出内置异常类
 
-这个方法用于如果 $flag 成立，则抛出当前异常类
+    public static function ExceptionClass($new_class = null)
+获得或者设置内置异常类
 
-PHP 有个函数 assert ， ThrowOn 和他逻辑相反。ThrowOn的方式会更直接些
-
-    public static function Handle($class)
-
-把本来 $class ThrowOn 到本类的异常 ， Throw 到当前异常类。
-
-这个方法的作用是用于提供第三方异常类的时候。让人无缝处理异常类。
-
-    public static function Proxy($ex)
-
-相当于 `throw new static($ex->getMessage, $ex->getCode());`
-
-用于把其他异常转成自己异常
-## 例子
-```php
-class MyException extends \Exception
-{
-}
-class SystemException extends \Exception
-{
-    use \DuckPhp\ThrowOn\ThrowOnTrait;
-}
-
-
-SystemException::ThrowOn(true,"something exception",142857);
-// 丢出异常。
-
-MyException::Handle(SystemException::class);
-// 当你接管 SystemException 的错误的时候，丢出 MyException 异常
-SystemException::ThrowOn(true,"something exception",142857);
-
+## 样例
 ```
+use DuckPhp\Ext\ThrowOnableTrait;
+use DuckPhp\SingletonEx\SingletonExTrait;
 
-ThrowOnTrait 的弊病是多了一层堆栈。调试的时候要注意。
-
-ThrowOnTrait 非协程安全
-
-
+class ThrowOnableTraitTest
+{
+    public function testAll()
+    {
+        ThrowOnObject::ThrowOn(false, "123");
+        ThrowOnObject::ExceptionClass(BaseException::class);
+        try {
+            ThrowOnObject::ThrowOn(true, "Message", 2);
+        } catch (\Throwable $ex) {
+            echo ThrowOnObject::ExceptionClass();
+        }
+        
+    }
+}
+class BaseException extends \Exception
+{
+}
+class ThrowOnObject
+{
+    use SingletonExTrait;
+    use ThrowOnableTrait;
+}
+(new ThrowOnableTraitTest())->testAll();
 

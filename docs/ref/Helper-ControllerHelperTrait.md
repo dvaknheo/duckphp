@@ -122,15 +122,7 @@
 
 以上就是所有控制器助手方法
 
-
-
-
-    public static function Domain($use_scheme = false)
-
-
-    public static function ThrowByFlag($exception, $flag, $message, $code = 0)
-
-
+### 用户系统相关
 
     public static function Admin($admin = null)
 
@@ -154,3 +146,11 @@
 
     public static function UserData()
 
+
+    public static function Domain($use_scheme = false)
+
+
+    public static function ThrowByFlag($exception, $flag, $message, $code = 0)
+    
+
+## 完毕

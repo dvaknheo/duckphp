@@ -75,12 +75,10 @@
 ### 扩展和钩子
 ////
 
-    public function addRouteHook($callback, $position, $once = true)
+    public function addRouteHook($callback, $position = 'append-outter', $once = true)
 
 添加钩子
 
-    public function add404RouteHook($callback)
-添加 404 回调，相当于addRouteHook($callback, 'append-outter', false);
 
     public function defaulToggleRouteCallback($enable = true)
 切换默认的路由回调
@@ -266,7 +264,6 @@ if(!$flag){
 
         'controller_prefix_post' => 'do_', //TODO remove it
 
-    public function addRouteHook($callback, $position = 'append-outter', $once = true)
 
     protected function getCallbackFromClassAndMethod($full_class, $method, $path_info)
 

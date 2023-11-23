@@ -23,12 +23,7 @@
 日志前缀
 ## 方法
 ### 主流程方法
-```php
-    public function __construct()
-    public function reset()
-    public function init(array $options, object $context = null)
-    protected function initOptions(array $options)
-```
+
 ### psr-16 标准方法
 ```php
     public function log($level, $message, array $context = array())

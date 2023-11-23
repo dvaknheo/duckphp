@@ -1,7 +1,8 @@
 # DuckPhp\Foundation\SimpleControllerTrait
 
 ## 简介
-这是个用于偷懒的 Trait.
+
+控制器基Trait
 
 ## 选项
 //
@@ -17,7 +18,5 @@
 //
 
 
-    public static function CallInPhase($phase)
 
-    public static function _($object = null)
 

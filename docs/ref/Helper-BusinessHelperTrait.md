@@ -7,7 +7,7 @@ BusinessHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extendabl
 
 ## 方法
 
-    public static function Setting($key)
+    public static function Setting($key = null, $default = null)
 获得设置信息
 
     public static function Config($file_basename, $key = null, $default = null)
@@ -29,10 +29,11 @@ BusinessHelper 绑定了 [DuckPhp\Core\ExtendableStaticCallTrait](Core-Extendabl
     public static function ThrowByFlag($exception, $flag, $message, $code = 0)
 给那些没实现 `ThrowOn`的异常增加快速抛出的方法
 
+## 说明
+
 ControllerHelperTrait 相比比 BusinessHelperTrait 少了 Cache()
 
 
 
 
-    public static function Setting($key = null, $default = null)
 

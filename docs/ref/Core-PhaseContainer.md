@@ -21,7 +21,6 @@ DuckPhp 的单例模类都放这里
 
     public function _GetObject(string $class, $object = null)
 
-    protected function createObject($class)
 
     public function setDefaultContainer($class)
 
@@ -37,4 +36,5 @@ DuckPhp 的单例模类都放这里
 
     public function __construct()
 
+    protected function createObject($class)
 说明
