@@ -73,13 +73,14 @@ class App extends ComponentBase
         
         EventManager::OnEvent([static::class,'On404'], function () use ($view) {
             if (!$view) {
+                static::Root()->options['skip_404'] = false;
                 return;
             }
-            static::_()->options['skip_404'] = true;
             $path_info = Route::PathInfo();
             if ($path_info === '/' || $path_info === '') {
-                static::Phase(static::class);
                 View::Show([], $view);
+            } else {
+                static::Root()->options['skip_404'] = false;
             }
         });
         return $self;
@@ -141,7 +142,7 @@ class App extends ComponentBase
     public function _OnDefaultException($ex): void
     {
         if (is_a($ex, ExitException::class)) {
-            return;
+            //return;
         }
         
         if ($this->options['default_exception_do_log']) {

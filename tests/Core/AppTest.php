@@ -222,6 +222,23 @@ class AppTest extends \PHPUnit\Framework\TestCase
         Route::_()->bind('/abc/Base/doexit');
         App::_()->run();
         ////]]]]
+        echo "-------111111111111-----------\n";
+        
+        \DuckPhp\Core\PhaseContainer::ResetContainer();
+
+        
+        $options=[
+            'cli_enable' => false,
+            'is_debug'=>true,
+            'path' => $path_app,
+            'welcome_view'=>null,
+        ];
+        $_SERVER['PATH_INFO'] = '/abc';
+        $flag = AppTestApp::InitAsContainer($options)->run();
+        $options['welcome_view'] = 'main';
+        $flag = AppTestApp::InitAsContainer($options)->run();
+        $_SERVER['PATH_INFO'] = '/';
+        $flag = AppTestApp::InitAsContainer($options)->run();
         
         \LibCoverage\LibCoverage::G($this->LibCoverage);
         \LibCoverage\LibCoverage::End();

@@ -209,11 +209,15 @@ echo "-------------------------------------\n";
             'use_env_file' => true,
             'setting_file' =>$path_app.'DuckPhpSettings.config.php',
             'setting_file_ignore_exists' =>false,
+            'exception_reporter' =>  ExceptionReporter::class,
+            'exception_reporter_for_class' =>  \Exception::class,
         ];
         App::_(new App())->init($options);
         
         ////]]]]
         
+        Route::_()->bind('/exception2');
+        App::_()->run();
         
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
@@ -328,7 +332,14 @@ class KernelTestObjectError
     }
 
 }
-
+class ExceptionReporter
+{
+    use \DuckPhp\Foundation\ExceptionReporterTrait;
+    public function defaultException($ex)
+    {
+        var_dump("exception!");
+    }
+}
 }
 
 

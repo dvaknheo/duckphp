@@ -114,27 +114,12 @@ class DuckPhp extends App
     ////////////////////////////////////////////
     public function install($options, $parent_options = [])
     {
-        // first, if is_root then  tree ,need-database , need-redis,
-        /*
-        foreach ($exts as $class => $options) {
-            if (\is_subclass_of($class, self::class)) {
-                if ($class::_()->isInstalled()) {
-                    $class::_()->install([], $options);
-                }
-            }
+        if ($this->options['ext_options_file_enable']) {
+            ExtOptionsLoader::_()->installWithExtOptions(static::class, $options);
         }
-
         if ($this->options['sql_dump_enable'] ?? false) {
             SqlDumper::_()->init($this->options, $this);
             SqlDumper::_()->install();
         }
-        if ($this->options['ext_options_file_enable']) {
-            ExtOptionsLoader::_()->installWithExtOptions(static::class, $options);
-        }
-        if (true) {
-            RouteHookResource::_()->cloneResource($force,$info);
-        }
-        return true;
-        //*/
     }
 }

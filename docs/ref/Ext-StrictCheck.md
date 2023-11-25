@@ -1,6 +1,7 @@
 # DuckPhp\Ext\StrictCheck
 
 ## 简介
+** 此扩展接近废弃仅供参考 **
 用于 严格使用 Db 等情况。使得在调试状态下，不能在 Controller 里 使用 M::Db();等
 不能在 service 里调用 service
 

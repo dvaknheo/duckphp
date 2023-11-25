@@ -38,7 +38,7 @@ class PhaseContainerTest extends \PHPUnit\Framework\TestCase
         PhaseContainer::GetContainerInstanceEx()->dumpAllObject();
         PhaseContainer::GetObject(MyObject::class);
         PhaseContainer::GetContainerInstanceEx()->removePublicClasses([MyObject::class]);
-        
+        PhaseContainer::ResetContainer();
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
     }

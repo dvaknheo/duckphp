@@ -1,7 +1,9 @@
 # DuckPhp\Component\ExtOptionsLoader
 [toc]
 ## 简介
-额外选项加载组件
+
+额外选项加载组件 
+
 ## 选项
 
 无选项，但被 App 的选项影响
@@ -30,6 +32,7 @@
 DuckPhp ，根据 'ext_options_file_enable' 是否要加载 ExtOptionsLoader ，加载后 loadExtOptions()
 install 的时候，调用 installWithExtOptions（static::class, $options) 保存当前选项
 
+Core 组件的初始化在 此之前完成，所以不会被重载。
 
 ## 完毕
 
