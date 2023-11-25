@@ -26,8 +26,8 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
         ComponentBaseObject2::_()->init(['force_new_init'=>true],App::_());
         
         ComponentBaseObject2::_()->context();
-        var_dump(ComponentBase::SlashDir(''));
-        var_dump(ComponentBase::IsAbsPath(''));
+        //var_dump(ComponentBase::SlashDir(''));
+        //var_dump(ComponentBase::IsAbsPath(''));
         $options=[
             'path'=> $path_data,
             'path_data'=> '',
@@ -38,7 +38,13 @@ class ComponentBaseTest extends \PHPUnit\Framework\TestCase
         ComponentBaseObject::_()->extendFullFile($options['path'],$options['path'], 'data.php');
         ComponentBaseObject::_()->init($options, App::_());
         ComponentBaseObject::_()->extendFullFile($options['path'],$options['path_data'],$options['path'].'data.php');
+        
+        ComponentBaseObject3::_()->extendFullFile($options['path'],$options['path_data'],$options['path'].'data.php');
+        ComponentBaseObject3::_()->extendFullFile($options['path'],'/sub','data.php');
+        
+        echo ComponentBaseObject3::_()->extendFullFile($options['path'],'sub','data.php');
 
+    
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
     }
@@ -70,4 +76,11 @@ class ComponentBaseObject extends ComponentBase  implements ComponentInterface
 class ComponentBaseObject2 extends ComponentBase  implements ComponentInterface
 {
      protected $init_once = true;
+}
+class ComponentBaseObject3 extends ComponentBase  implements ComponentInterface
+{
+    public function context()
+    {
+        return null;
+    }
 }

@@ -34,14 +34,7 @@ class Logger extends ComponentBase //implements Psr\Log\LoggerInterface;
             return date($m[1]);
         }, $this->options['log_file_template']);
         
-        if (static::IsAbsPath($file)) {
-            $full_file = $file;
-        } elseif (static::IsAbsPath($this->options['path_log'])) {
-            $full_file = static::SlashDir($this->options['path_log']) . $file;
-        } else {
-            $full_file = static::SlashDir($this->options['path']) . static::SlashDir($this->options['path_log']) . $file;
-        }
-        $full_file = '' . $full_file;
+        $full_file = $this->extendFullFile($this->options['path'], $this->options['path_log'], $file);
         
         $prefix = $this->options['log_prefix'];
         

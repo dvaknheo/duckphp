@@ -61,13 +61,8 @@ class RouteHookResource extends ComponentBase
         if ($flag) {
             return;
         }
-        $source = realpath(dirname(__DIR__).'/res/') .'/';
-        if (static::IsAbsPath($this->options['path_resource'])) {
-            $source = static::SlashDir($this->options['path_resource']);
-        } else {
-            $source = static::SlashDir($this->options['path']).static::SlashDir($this->options['path_resource']);
-        }
-        
+        //$source = realpath(dirname(__DIR__).'/res/') .'/';
+        $source = $this->extendFullFile($this->options['path'], $this->options['path_resource'], '', false);
         
         $path_dest = $this->options['controller_resource_prefix'];
         $path_dest = (substr($path_dest, 0, 1) === '/') ? $path_dest : $this->options['controller_url_prefix'].$path_dest;

@@ -255,7 +255,7 @@ EOT;
         return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
     }
     
-    public function getOverrideableFile($path_sub, $file)
+    public function getOverrideableFile($path_sub, $file, $use_override = true)
     {
         if (static::IsAbsPath($file)) {
             return $file;
@@ -263,7 +263,7 @@ EOT;
         if (static::IsAbsPath($path_sub)) {
             return static::SlashDir($path_sub) . $file;
         }
-        if (!$this->is_root) {
+        if (!$this->is_root && $use_override) {
             $path_main = static::Root()->options['path'];
             $name = $this->options['alias'] ?? str_replace("\\", '/', $this->options['namespace']);
             
@@ -273,7 +273,7 @@ EOT;
                 $full_file = static::SlashDir($path_main) . static::SlashDir($path_sub).$file;
             }
         } else {
-            $path_main = $this->options['path'];
+            $path_main = $this->options['path'] ?? '';
             $full_file = static::SlashDir($path_main) . static::SlashDir($path_sub) . $file;
         }
         

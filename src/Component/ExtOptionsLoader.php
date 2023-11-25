@@ -21,7 +21,12 @@ class ExtOptionsLoader extends ComponentBase
     protected function get_ext_options_file()
     {
         $full_file = App::Root()->options['ext_options_file'];
-        $full_file = static::IsAbsPath($full_file) ? $full_file : static::SlashDir(App::Root()->options['path']).$full_file;
+        
+        $path = App::Root()->options['path'];
+        $path = ($path !== '') ? rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR : '';
+
+        $is_abs = (DIRECTORY_SEPARATOR === '/') ?(substr($full_file, 0, 1) === '/'):(preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $full_file));
+        $full_file = $is_abs ? $full_file : static::SlashDir($path).$full_file;
         return $full_file;
     }
     protected function get_all_ext_options($force = false)

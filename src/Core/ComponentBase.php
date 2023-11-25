@@ -57,7 +57,7 @@ class ComponentBase // implements ComponentInterface
     {
     }
     //helper
-    public static function IsAbsPath($path)
+    protected static function IsAbsPath($path)
     {
         if (DIRECTORY_SEPARATOR === '/') {
             //Linux
@@ -72,15 +72,16 @@ class ComponentBase // implements ComponentInterface
         }   // @codeCoverageIgnoreEnd
         return false;
     }
-    public static function SlashDir($path)
+    protected static function SlashDir($path)
     {
         $path = ($path !== '') ? rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR : '';
         return $path;
     }
-    public function extendFullFile($path_main, $path_sub, $file)
+    public function extendFullFile($path_main, $path_sub, $file, $use_override = true)
     {
-        if ($this->context_class) {
-            return $this->context()->getOverrideableFile($path_sub, $file);
+        $context = $this->context();
+        if ($context) {
+            return $context->getOverrideableFile($path_sub, $file, $use_override);
         }
         
         if (static::IsAbsPath($file)) {
