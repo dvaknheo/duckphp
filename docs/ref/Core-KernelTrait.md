@@ -189,14 +189,18 @@ init() 中 DefaultComponents() 中从设置读取调试标志和平台标志
     protected function doInitComponents()
 初始化默认组件，方便继承用
 
-
-    protected function reloadFlags($context): void
-    protected function loadSetting()
+    protected function loadSetting()    
     protected function dealWithSettingFile()
+    protected function dealWithEnvFile()
 处理设置
 
+    protected function initException($options)
+初始化异常处理
+
     protected function runExtentions()
+运行 扩展
     protected function runException($ex)
+处理异常
 
 
 
@@ -262,6 +266,7 @@ onInit 选项
 
 
 ### run 阶段
+
 
 
 

@@ -38,10 +38,10 @@
         'path_info_compact_enable' => false,
 PATH_INFO 兼容模式
         
-        'class_user' => null,
+        'class_user' => '',
 用户类名，设置这个类以实现默认的用户类
 
-        'class_admin' => null,
+        'class_admin' => '',
 管理员类名，设置这个类以实现默认的管理员类
         
         'session_prefix' => null,
@@ -50,6 +50,11 @@ Session 前缀
         'table_prefix' => null,
 数据库表前缀
         
+        'sql_dump_enable' => false,
+
+        'install_need_db' => false,
+
+        'install_need_redis' => false,
 
 ## 隐含扩展选项
 
@@ -140,3 +145,5 @@ App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里，还加载�
 
 
 ## 完毕
+
+

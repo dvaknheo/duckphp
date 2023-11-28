@@ -70,6 +70,7 @@ HTML编码函数
 
 
 ### 独有的静态方法
+    public static function InitAsContainer($options)
 
     public static function Platform()
     public function _Platform()
@@ -98,7 +99,7 @@ HTML编码函数
     public function getRuntimePath()
 获得可写的运行路径
 
-    public function getOverrideableFile($path_sub, $file)
+    public function getOverrideableFile($path_sub, $file, $use_override = true)
 获得子应用的覆盖文件
 
     public function adjustViewFile($view)
@@ -127,4 +128,6 @@ HTML编码函数
 
     
 ## 说明
+
+
 

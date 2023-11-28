@@ -31,11 +31,11 @@
 
     public function context()
 
-    public static function IsAbsPath($path)
+    protected static function IsAbsPath($path)
 
-    public static function SlashDir($path)
+    protected static function SlashDir($path)
 
-    public function extendFullFile($path_main, $path_sub, $file)
+    public function extendFullFile($path_main, $path_sub, $file, $use_override = true)
 
 ## 说明
 
@@ -45,6 +45,4 @@ ComponentBase 裁剪你只需要的选项。
 
 你只需要 override initOptions 和 initContext 即可,组件类的 选项会被 trim 到只需要的组件
 
-
-    public static function G($object = null)
-
+## 完毕

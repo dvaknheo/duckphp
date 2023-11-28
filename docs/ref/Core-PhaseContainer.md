@@ -11,6 +11,8 @@ DuckPhp 的单例模类都放这里
 无
 
 ## 方法
+    public static function ResetContainer()
+
     public static function ReplaceSingletonImplement()
 
     public static function GetObject($class, $object = null)
@@ -37,4 +39,7 @@ DuckPhp 的单例模类都放这里
     public function __construct()
 
     protected function createObject($class)
-说明
+
+## 说明
+
+
