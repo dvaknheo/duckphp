@@ -9,7 +9,6 @@ use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\KernelTrait;
 use DuckPhp\Core\Logger;
 use DuckPhp\Core\Route;
-use DuckPhp\Core\Runtime;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapper;
 use DuckPhp\Core\View;

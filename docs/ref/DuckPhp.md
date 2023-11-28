@@ -5,13 +5,13 @@
 总入口类。
 ## 依赖关系
 `DuckPhp\DuckPhp` 继承 微框架入口类 [DuckPhp\Core\App](Core-App.md)，并且引用这些组件类用于增强功能
-- 使用 [DuckPhp\Component\Cache](Component-Cache.md);
-- 使用 [DuckPhp\Component\Configer](Component-Configer.md);
-- 使用 [DuckPhp\Component\DbManager](Component-DbManager.md);
-- 使用 [DuckPhp\Component\DuckPhpCommand](Component-DuckPhpCommand.md);
-- 使用 [DuckPhp\Component\EventManager](Component-EventManager.md);
-- 使用 [DuckPhp\Component\ExtOptionsLoader](Component-ExtOptionsLoader.md);
-- 使用 [DuckPhp\Component\GlobalAdmin](Component-GlobalAdmin.md);
+- 缓存组件 [DuckPhp\Component\Cache](Component-Cache.md);
+- 配置器组件 [DuckPhp\Component\Configer](Component-Configer.md);
+- 数据库管理组件 [DuckPhp\Component\DbManager](Component-DbManager.md);
+- DuckPhp命令 [DuckPhp\Component\DuckPhpCommand](Component-DuckPhpCommand.md);
+- 事件管理器组件 [DuckPhp\Component\EventManager](Component-EventManager.md);
+- 额外选项加载器组件 [DuckPhp\Component\ExtOptionsLoader](Component-ExtOptionsLoader.md);
+- 全局管理员组件 [DuckPhp\Component\GlobalAdmin](Component-GlobalAdmin.md);
 - 使用 [DuckPhp\Component\GlobalUser](Component-GlobalUser.md);
 - 使用 [DuckPhp\Component\Pager](Component-Pager.md);
 - 使用 [DuckPhp\Component\PhaseProxy](Component-PhaseProxy.md);

@@ -7,9 +7,8 @@ Core 目录下的微框架入口
 * 组件基类 [DuckPhp\Core\ComponentBase](Core-ComponentBase.md)
 * 核心Trait [DuckPhp\Core\KernelTrait](Core-KernelTrait.md)
 * 日志类 [DuckPhp\Core\Logger](Core-Logger.md)
-* 异常管理类 [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
 * 路由类 [DuckPhp\Core\Route](Core-Route.md)
-* 运行时数据类 [DuckPhp\Core\Runtime](Core-Runtime.md)
+* 超全局变量 [DuckPhp\Core\SuperGlobal](Core-SuperGlobal.md)
 * 系统同名函数替代 [DuckPhp\Core\SystemWrapper](Core-SystemWrapper.md)
 * 视图类 [DuckPhp\Core\View](Core-View.md)
 
@@ -28,24 +27,24 @@ Core 目录下的微框架入口
         'default_exception_do_log' => true,
 发生异常时候记录日志
 
-        'default_exception_self_display' => true,（废弃）
-发生异常的时候如有可能，调用异常类的 display() 方法。
 
         'close_resource_at_output' => false,
 输出时候关闭资源输出（仅供第三方扩展参考
 
         'html_handler' => null,
+HTML编码函数
 
         'lang_handler' => null,
+语言编码回调
 
         'error_404' => null,          //'_sys/error-404',
-404 错误处理 的View或者回调
+404 错误处理 的View或者回调，仅根应用有效
 
         'error_500' => null,          //'_sys/error-500',
-500 错误处理 View或者回调
+500 错误处理 View或者回调，仅根应用有效
 
 
-### 其他自带组件选项
+### 来自日志组件
 
         'path_log' => 'runtime',
 
@@ -53,67 +52,19 @@ Core 目录下的微框架入口
 
         'log_prefix' => 'DuckPhpLog',
 
+### 来自视图组件
+
         'path_view' => 'view',
 
         'view_skip_notice_error' => true,
+### 来自超全局变量组件
 
         'superglobal_auto_define' => false,
 
-### 扩充 [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) 的默认选项。
+### 扩充自 [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) 的默认选项。
 
 
 详情见 [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) 参考文档
-
-```php
-protected $kernel_options = [
-        'path' => null,
-        'override_class' => null,
-        'override_class_from' => null,
-        'cli_enable' => true,
-        'is_debug' => false,
-        'ext' => [],
-        
-        'skip_404' => false,
-        'skip_exception_check' => false,
-        
-        'on_init' => null,
-        'container_only' => false,
-        'namespace' => null,
-        
-        'setting_file' => 'config/DuckPhpSettings.config.php',
-        'setting_file_ignore_exists' => true,
-        'setting_file_enable' => true,
-        'use_env_file' => false,
-        
-        //*/
-        // 'namespace' => '',
-        // 'namespace_controller' => 'Controller',
-        
-        // 'controller_path_ext' => '',
-        // 'controller_welcome_class' => 'Main',
-        // 'controller_welcome_class_visible' => false,
-        // 'controller_welcome_method' => 'index',
-        
-        // 'controller_class_base' => '',
-        // 'controller_class_postfix' => 'Controller',
-        // 'controller_method_prefix' => 'action_',
-        // 'controller_prefix_post' => 'do_', //TODO remove it
-        
-        // 'controller_class_map' => [],
-        
-        // 'controller_resource_prefix' => '',
-        // 'controller_url_prefix' => '',
-        
-        // 'use_output_buffer' => false,
-        // 'path_runtime' => 'runtime',
-        
-        // 'cli_command_alias' => [],
-        // 'cli_default_command_class' => '',
-        // 'cli_command_method_prefix' => 'command_',
-        // 'cli_command_default' => 'help',
-         //*/
-    ];
-```
 
 ## 方法
 
@@ -151,7 +102,11 @@ protected $kernel_options = [
 获得子应用的覆盖文件
 
     public function adjustViewFile($view)
+调整默认 View 的回调
+
     public function onBeforeOutput()
+输出前的回调
+
 提供Show 的回调
 
 ### 接管流程的函数

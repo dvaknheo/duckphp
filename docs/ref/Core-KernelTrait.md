@@ -6,13 +6,12 @@
 
 ## 引用
 
-- [DuckPhp\\Core\\Console](Core-Console.md) 控制台
-- [DuckPhp\\Core\\ExceptionManager](Core-ExceptionManager.md) 异常处理
-- [Functions](Core-Functions.md) 全局函数
-- [DuckPhp\\Core\\PhaseContainer](Core-PhaseContainer.md) 容器
-- [DuckPhp\\Core\\Route](Core-Route.md) 路由
-- [DuckPhp\\Core\\Runtime](Core-Runtime.md) 运行时状态
-- [DuckPhp\\Core\\View](Core-View.md) 视图
+- 控制台 [DuckPhp\\Core\\Console](Core-Console.md)
+- 异常处理器 [DuckPhp\\Core\\ExceptionManager](Core-ExceptionManager.md)
+- 全局函数 [Functions](Core-Functions.md)
+- 相位容器 [DuckPhp\\Core\\PhaseContainer](Core-PhaseContainer.md)
+- 路由 [DuckPhp\\Core\\Route](Core-Route.md)
+- 运行时 [DuckPhp\\Core\\Runtime](Core-Runtime.md)
 
 
 ## 选项
@@ -28,6 +27,8 @@
         'override_class_from' => null,
 `override_class`切过去的时候会在此保存旧的`override_class`
 
+        'cli_enable' => true,
+启用命令行模式
 
         'is_debug' => false,
 调试模式， 用于 `IsDebug()` 方法。
@@ -37,6 +38,12 @@
 
         'skip_404' => false,
 不处理 404 ，用于配合其他框架使用。
+
+        'on_init' => null,
+初始化完成后处理回调
+
+        'namespace' => null,
+基准命名空间，如果没设置，将设置为当前类的命名空间的上级命名空间，如MyProject\\System\\App => MyProject
 
         'skip_exception_check' => false,
 不在 Run 流程检查异常，把异常抛出外面。用于配合其他框架使用
@@ -48,30 +55,19 @@
 使用设置文件: $path/$path_config/$setting_file.php
 
         'use_env_file' => false,
-使用 .env 文件
+使用 .env 文件。
 打开这项，可以读取 path 选项下的 env 文件
 
         'setting_file_ignore_exists' => true,
 如果设置文件不存在也不报错
 
-        'on_init' => null,
-初始化完成后处理回调
+        'exception_reporter' => null,
+异常报告类
 
-        'namespace' => null,
-基准命名空间，如果没设置，将设置为当前类的命名空间的上级命名空间，如MyProject\\System\\App => MyProject
+        'exception_reporter_for_class' => null,
+异常报告仅针对的异常
 
-        'container_only' => false,
-不处理路由，仅仅作为容器使用
-
-### 其他选项
-这些选项来自其他组件
-
-        'cli_enable' => true,
-
-
-
-
-
+### 来自控制器的选项
 
         'namespace_controller' => 'Controller',
 
@@ -96,11 +92,12 @@
         'controller_resource_prefix' => '',
 
         'controller_url_prefix' => '',
-
+### 来自运行时的选项
         'use_output_buffer' => false,
 
         'path_runtime' => 'runtime',
 
+### 来自控制台的选项
         'cli_command_alias' => [],
 
         'cli_default_command_class' => '',
@@ -109,6 +106,7 @@
 
         'cli_command_default' => 'help',
 
+### 来自异常管理器的选项
 
 
 ## 方法
@@ -117,11 +115,15 @@
     public static function RunQuickly(array $options = [], callable $after_init = null): bool
 快速开始，init() 后接 $after_init() 然后 run();
 
+    public static function Current()
+当前App
+
     public static function Root()
 当前根App
 
-    public static function Current()
-当前App
+    public static function Setting($key = null, $default = null)
+    public function _Setting($key = null, $default = null)
+获取设置
 
     public static function Phase($new = null)
     public function _Phase($new = null)
@@ -134,6 +136,21 @@
     public function run(): bool
 运行，如果404，返回false。
 
+
+
+### 默认行为
+    public static function On404(): void
+    public function _On404(): void
+处理 404
+
+    public static function OnDefaultException($ex): void
+    public function _OnDefaultException($ex): void
+处理异常
+
+    public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
+    public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
+处理开发模式错误
+
 ### 公开辅助方法
 
     public function getProjectPathFromClass($class, $use_parent_namespace = true)
@@ -142,13 +159,9 @@
     public function getContainer()
 获得 PhaseContainer 容器
 
-    public static function Setting($key = null, $default = null)
-    public function _Setting($key = null, $default = null)
-获取设置
 
     public function isRoot()
 是否是根App
-
 
 ### 流程相关方法
 
@@ -168,7 +181,7 @@ init() 中 DefaultComponents() 中从设置读取调试标志和平台标志
 辅助方法，用于在 init() 中设置 path.
 
     protected function checkSimpleMode($context)
-相位相关，创建相位（后续版本会改
+相位相关，创建相位（后续版本会改名
 
     protected function initComponents(array $options, object $context = null)
 初始化默认组件
@@ -180,22 +193,12 @@ init() 中 DefaultComponents() 中从设置读取调试标志和平台标志
     protected function reloadFlags($context): void
     protected function loadSetting()
     protected function dealWithSettingFile()
+处理设置
 
     protected function runExtentions()
     protected function runException($ex)
 
-### 默认行为
-    public static function On404(): void
-    public function _On404(): void
-处理 404
 
-    public static function OnDefaultException($ex): void
-    public function _OnDefaultException($ex): void
-处理异常
-
-    public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
-    public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
-处理开发模式错误
 
 
 ### 事件方法
@@ -208,6 +211,8 @@ init() 中 DefaultComponents() 中从设置读取调试标志和平台标志
 
     protected function onPrepare()
 准备阶段，你可以在这里替换默认类
+
+    protected function onBeforeExtentionInit()
 
     protected function onInit()
 初始化完成
@@ -222,29 +227,41 @@ init() 中 DefaultComponents() 中从设置读取调试标志和平台标志
 
 ## 流程详解
 
-Kernel 这个 Trait 一般不直接使用。一般用的是 DuckPhp\Core\App ， 而直接的 DuckPhp\DuckPhp 类，则是把常见扩展加进去形成完善的框架。
+Kernel 这个 Trait 一般不直接使用。一般用的是 DuckPhp\Core\App ， 而更直接的 DuckPhp\DuckPhp 类，则是把常见扩展加进去形成完善的框架。
 
 Kernel 大致分为两个阶段
 
 init() 初始化阶段，和 run 阶段
 
-### init 初始化阶段
+### init 初始化阶段流程
+#### 开始阶段
+init()，一开始填充 path 和 namespace 选项
+载入 全局函数
+初始化选项
+如果有 override_class 选项，切到 override_class 执行
 
-### initAfterOverride 初始化阶段
+检查相位，
+
+#### 检查相位做的工作
+
+检查完相位 调用 onPrepare
+
+#### reloadflags
+
+#### 装载异常管理器
+
+#### initComponets
+
+调用 onBeforeExtentionInit 触发相关事件
+
+#### 加载扩展
+
+onInit
+
+onInit 选项
 
 
-### run 运行阶段
-    run 阶段可重复调用
-    异常准备
-    如果发生异常
-        进入异常流程
-    清理流程
-
--------------
-
-
-
-
+### run 阶段
 
 
 

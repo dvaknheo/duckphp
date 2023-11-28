@@ -15,7 +15,6 @@ use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\Runtime;
-use DuckPhp\Core\View;
 
 trait KernelTrait
 {
@@ -33,7 +32,6 @@ trait KernelTrait
         'skip_exception_check' => false,
         
         'on_init' => null,
-        'container_only' => false,
         'namespace' => null,
         
         'setting_file' => 'config/DuckPhpSettings.config.php',
