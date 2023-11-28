@@ -148,7 +148,7 @@ trait KernelTrait
         }
         return $old;
     }
-    protected function checkSimpleMode($context)
+    protected function initContainer($context)
     {
         $extApps = [];
         $exts = $this->options['ext'] ?? [];
@@ -190,6 +190,22 @@ trait KernelTrait
         }
         return false;
     }
+    protected function initException($options)
+    {
+        //initException();
+        $exception_options = $options;
+        $exception_options ['default_exception_handler' ] = [self::class,'OnDefaultException']; // must be self,be root
+        $exception_options ['dev_error_handler'] = [self::class,'OnDevErrorHandler'];        //be self, be root
+        if (!$this->is_root) {
+            $exception_option['handle_all_dev_error'] = false;
+            $exception_option['handle_all_exception'] = false;
+        }
+        ExceptionManager::_()->init($exception_options, $this);
+        if ($this->options['exception_reporter'] ?? null) {
+            $exception_class = $this->options['exception_reporter_for_class'] ?? \Exception::class;
+            ExceptionManager::_()->assignExceptionHandler($exception_class, [$this->options['exception_reporter'], 'OnException']);
+        }
+    }
     //init
     public function init(array $options, object $context = null)
     {
@@ -206,21 +222,17 @@ trait KernelTrait
             return $class::_(new $class)->init($options);
         }
         
-        $this->checkSimpleMode($context);
-        
-        $this->onPrepare();
-        
-        $this->reloadFlags($context);
-        
-        $exception_options = $options;
-        $exception_options ['default_exception_handler' ] = [self::class,'OnDefaultException']; // must be self,be root
-        $exception_options ['dev_error_handler'] = [self::class,'OnDevErrorHandler'];        //be self, be root
-        if (!$this->is_root) {
-            $exception_option['handle_all_dev_error'] = false;
-            $exception_option['handle_all_exception'] = false;
+        $this->initContainer($context);
+        //initroot
+        if ($this->is_root) {
+            $this->getContainer()->addPublicClasses([
+                Console::class,
+                EventManager::class,
+            ]);
+            $this->loadSetting();
         }
-        ExceptionManager::_()->init($exception_options, $this);
-        unset($exception_options); // ...
+        $this->onPrepare();
+        $this->initException($options);
         
         $this->initComponents($this->options, $context);
         
@@ -236,48 +248,33 @@ trait KernelTrait
     }
     protected function initComponents(array $options, object $context = null)
     {
-        if ($this->is_root) {
-            $this->getContainer()->addPublicClasses([
-                Console::class,
-                EventManager::class,
-            ]);
-        }
         Route::_()->init($this->options, $this);
         Runtime::_()->init($this->options, $this);
         Console::_()->init($this->options, $this);
         
-        if ($this->options['exception_reporter'] ?? null) {
-            $exception_class = $this->options['exception_reporter_for_class'] ?? \Exception::class;
-            ExceptionManager::_()->assignExceptionHandler($exception_class, [$this->options['exception_reporter'], 'OnException']);
-        }
         $this->doInitComponents();
     }
     protected function doInitComponents()
     {
         //for override
     }
-    protected function reloadFlags($context): void
-    {
-        if ($this->is_root) {
-            $this->loadSetting();
-            $setting = $this->setting;
-        } else {
-            $setting = static::Root()->_Setting(null);
-        }
-    }
     protected function loadSetting()
     {
         $this->setting = $this->options['setting'] ?? [];
         
         if ($this->options['use_env_file']) {
-            $env_setting = parse_ini_file(realpath($this->options['path']).'/.env');
-            $env_setting = $env_setting?:[];
-            $this->setting = array_merge($this->setting, $env_setting);
+            $this->dealWithEnvFile();
         }
         if ($this->options['setting_file_enable']) {
             $this->dealWithSettingFile();
         }
         return;
+    }
+    protected function dealWithEnvFile()
+    {
+        $env_setting = parse_ini_file(realpath($this->options['path']).'/.env');
+        $env_setting = $env_setting?:[];
+        $this->setting = array_merge($this->setting, $env_setting);
     }
     protected function dealWithSettingFile()
     {

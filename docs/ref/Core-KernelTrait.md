@@ -49,17 +49,17 @@
 不在 Run 流程检查异常，把异常抛出外面。用于配合其他框架使用
 
         'setting_file' => 'config/DuckPhpSettings.config.php',
-设置文件名。
+设置文件名。仅根应用有效
 
         'setting_file_enable' => true,
-使用设置文件: $path/$path_config/$setting_file.php
+使用设置文件: $path/$path_config/$setting_file.php 仅根应用有效
 
         'use_env_file' => false,
-使用 .env 文件。
+使用 .env 文件。 仅根应用有效
 打开这项，可以读取 path 选项下的 env 文件
 
         'setting_file_ignore_exists' => true,
-如果设置文件不存在也不报错
+如果设置文件不存在也不报错 仅根应用有效
 
         'exception_reporter' => null,
 异常报告类
@@ -180,8 +180,8 @@ init() 中 DefaultComponents() 中从设置读取调试标志和平台标志
     protected function getDefaultProjectPath()
 辅助方法，用于在 init() 中设置 path.
 
-    protected function checkSimpleMode($context)
-相位相关，创建相位（后续版本会改名
+    protected function initContainer($context)
+初始化容器
 
     protected function initComponents(array $options, object $context = null)
 初始化默认组件

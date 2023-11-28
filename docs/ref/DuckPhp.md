@@ -50,8 +50,6 @@ Session 前缀
         'table_prefix' => null,
 数据库表前缀
         
-        'exception_reporter' => null,
-错误报告类名
 
 ## 隐含扩展选项
 
