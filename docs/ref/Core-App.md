@@ -22,7 +22,7 @@ Core 目录下的微框架入口
 可写目录
 
         'alias' => null,
-别名，目前只用于目录
+别名，目前只用于视图目录
 
         'default_exception_do_log' => true,
 发生异常时候记录日志

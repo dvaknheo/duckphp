@@ -262,7 +262,6 @@ init()，一开始填充 path 和 namespace 选项
 
 onInit
 
-onInit 选项
 
 
 ### run 阶段

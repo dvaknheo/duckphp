@@ -299,7 +299,8 @@ $options = [
 ```
 入口很简单，就是 Runqucikly ,把 选项数组带进去就是 。
 
-`$options` 选项很复杂， 你的工程因为他们而不同。 有40多个。选项数组可以填什么，看配置[参考文档](ref/options.md)
+`$options` 选项很复杂， 你的工程因为他们而不同。 有40多个。
+选项数组可以填什么，看配置[参考文档](ref/options.md) [DuckPhp 类参考](ref/DuckPhp.md)
 
 然后，我们入口是 `\MyProject\System\App` 类，就是后面的内容
    
