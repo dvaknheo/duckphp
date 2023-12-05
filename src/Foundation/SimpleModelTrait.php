@@ -53,14 +53,16 @@ trait SimpleModelTrait
     {
         return str_replace(DbManager::_()->_DbForRead()->quote('TABLE'), $this->table(), $sql);
     }
-    protected function getList(int $page = 1, int $page_size = 10)
+    protected function getList($where = [],int $page = 1, int $page_size = 10)
     {
-        $sql = "SELECT * from 'TABLE' where true order by id desc";
+        $sql_where = DbManager::_()->_DbForRead()->quoteAndArray($where);
+        $sql_where = $sql_where?:' TRUE ';
+        $sql = "SELECT * from 'TABLE' where $sql_where order by id desc";
         $sql = $this->prepare($sql);
         
         $total = DbManager::_()->_DbForRead()->fetchColumn(CoreHelper::_()->_SqlForCountSimply($sql));
         $data = DbManager::_()->_DbForRead()->fetchAll(CoreHelper::_()->_SqlForPager($sql, $page, $page_size));
-        return ['data' => $data,"total" => $total];
+        return ["count" => $total,'data' => $data];
     }
 
     protected function find($a)
