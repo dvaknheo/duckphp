@@ -53,7 +53,7 @@ trait SimpleModelTrait
     {
         return str_replace(DbManager::_()->_DbForRead()->quote('TABLE'), $this->table(), $sql);
     }
-    protected function getList($where = [],int $page = 1, int $page_size = 10)
+    protected function getList($where = [], int $page = 1, int $page_size = 10)
     {
         $sql_where = DbManager::_()->_DbForRead()->quoteAndArray($where);
         $sql_where = $sql_where?:' TRUE ';

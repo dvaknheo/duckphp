@@ -19,6 +19,7 @@ use DuckPhp\Component\Pager;
 use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookPathInfoCompat;
+use DuckPhp\Component\RouteHookResource;
 use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Component\SqlDumper;
@@ -90,6 +91,7 @@ class DuckPhp extends App
         RedisManager::_()->init($this->options, $this);
         RouteHookRouteMap::_()->init($this->options, $this);
         RouteHookRewrite::_()->init($this->options, $this);
+        RouteHookResource::_()->init($this->options, $this);
         
         if (PHP_SAPI === 'cli') {
             if ($this->is_root) {

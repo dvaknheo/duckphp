@@ -45,6 +45,8 @@ class RouteHookRewriteTest extends \PHPUnit\Framework\TestCase
         \DuckPhp\Core\SuperGlobal::DefineSuperGlobalContext();
         
         Route::_()->bind('/article/3/4')->run();
+        RouteHookRewrite::_()->options['controller_url_prefix']='noexist';
+        Route::_()->bind('/article/3/4')->run();
 
 
         \LibCoverage\LibCoverage::End();

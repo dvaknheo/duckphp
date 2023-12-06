@@ -11,6 +11,7 @@ use DuckPhp\Core\Route;
 class RouteHookRewrite extends ComponentBase
 {
     public $options = [
+        'controller_url_prefix' => '',
         'rewrite_map' => [],
     ];
     protected $rewrite_map = [];
@@ -140,6 +141,14 @@ class RouteHookRewrite extends ComponentBase
     {
         // $path_info = Route::_()::PathInfo();
         $path_info = ltrim($path_info, '/');
+        
+        $prefix = $this->options['controller_url_prefix'];
+        
+        if ($prefix && substr($path_info, 0, strlen($prefix)) !== $prefix) {
+            return false;
+        }
+        $path_info = substr($path_info, strlen($prefix));
+        
         $_GET = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_GET : $_GET;
         $query = $_GET;
         $query = $query?'?'.http_build_query($query):'';
@@ -148,6 +157,7 @@ class RouteHookRewrite extends ComponentBase
         
         $url = $this->filteRewrite($input_url);
         if ($url !== null) {
+            $url = '/'.$prefix.$url;
             $this->changeRouteUrl($url);
             $path_info = parse_url($url, PHP_URL_PATH);
             Route::_()::PathInfo($path_info);
