@@ -101,7 +101,8 @@ class App extends ComponentBase
         if ($this->is_root) {
             $this->getContainer()->addPublicClasses([
                 Logger::class,
-                SuperGlobal::class
+                SuperGlobal::class,
+                SystemWrapper::class,
                 ]);
         }
         
@@ -129,7 +130,7 @@ class App extends ComponentBase
             $path_info = $_SERVER['PATH_INFO'] ?? '';
             echo "404 File Not Found<!--PATH_INFO: ($path_info) DuckPhp set options ['error_404'] to override me. -->\n";
             if ($this->options['is_debug']) {
-                echo "<!-- Route Error Info: ".Route::_()->getRouteError()."-->\n";
+                echo "<!-- (" . static::class .") Route Error Info: ".Route::_()->getRouteError()."-->\n";
             }
             return;
         }
