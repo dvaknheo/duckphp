@@ -12,6 +12,7 @@
 资源前缀
 
         'controller_url_prefix' => '',
+限于URL前缀
 
 ## 方法
 

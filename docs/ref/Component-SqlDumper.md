@@ -5,6 +5,7 @@
 
 数据库迁移类，目前只支持 MySQL，但你可以做自己的其他语言实现。
 
+
 ## 选项
 
         'path' => '',
@@ -79,7 +80,7 @@ Dump 数据库
 简单的便于数据库迁移。
 
 ```php
-SqlDumper::G()->run(); // 导出到配置文件，默认是 config/sql.php
-SqlDumper::G()->install(); // 从配置文件安装 sql
+SqlDumper::_()->run(); // 导出到配置文件，默认是 config/sql.php
+SqlDumper::_()->install(); // 从配置文件安装 sql
 
 ## 完毕

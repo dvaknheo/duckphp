@@ -82,7 +82,7 @@ const HOOK_APPPEND_OUTTER = 'append-outter';
 
 我们知道，路由重写是经常干的事情，比如  `/res/{id}` 这样的。
 
-`DuckPhp` 默认加了 `DuckPhp\Ext\RouteHookRouteMap` 扩展插件，添加了两个选项
+`DuckPhp` 默认加了 `DuckPhp\Component\RouteHookRouteMap` 扩展插件，添加了两个选项
 
 这些设置在 选项 `route_map` 和 `route_map_important` 里设置个映射表.
 
@@ -140,7 +140,6 @@ return [
 
 ```
 
-如果开启 `route_map_auto_extend_method` 你可以用以下方法得到相应方法
 
 可以用 `C::getRoutes()`  得到路由表
 用 `C::getParameters()` 获取切片，对地址重写有效。
