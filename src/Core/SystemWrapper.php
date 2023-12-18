@@ -22,6 +22,7 @@ class SystemWrapper extends ComponentBase
         'mime_content_type' => null,
 
     ];
+    protected $init_once = true;
     public static function system_wrapper_replace(array $funcs)
     {
         return static::_()->_system_wrapper_replace($funcs);

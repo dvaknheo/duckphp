@@ -141,6 +141,8 @@ class App extends ComponentBase
     //@override
     public function _OnDefaultException($ex): void
     {
+        $this->_Phase(self::class); //Important
+        
         if (is_a($ex, ExitException::class)) {
             //return;
         }
