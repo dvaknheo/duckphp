@@ -1,4 +1,5 @@
-# DuckPhp 介绍
+# DuckPhp
+[English](README.md) | [中文](README-zh-CN.md)
 [toc]
 
 ***v1.2.12版***
@@ -295,9 +296,9 @@ Helper 目录，助手类，如果你一个人偷懒，直接用 APP 类也行
  */
 require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
 
-class Main
+class MainController
 {
-    public function index()
+    public function action_index()
     {
         echo "hello world";
     }
@@ -306,7 +307,7 @@ $options = [
     'namespace_controller' => "\\",   // 本例特殊，设置控制器的命名空间为根，而不是默认的 Controller
     // 还有百来个选项以上可用，详细请查看参考文档
 ];
-\DuckPhp\DuckPhp::RunQuickly($options);
+\DuckPhp\Core\App::RunQuickly($options);
 
 ```
 从这个样例，我们可以简单的知道调整 `$options` 选项可以得到不同的结果。
@@ -330,14 +331,15 @@ DuckPhp 工程有上百个选项调整得到不同的结果。具体参考 [选�
  */
 
 // 以下部分是核心工程师写。
+
 namespace MySpace\System
 {
     //自动加载文件
     require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
     
+    use DuckPhp\Core\SingletonTrait;
     use DuckPhp\DuckPhp;
     use DuckPhp\Ext\CallableView;
-    use DuckPhp\SingletonEx\SingletonExTrait;
     use MySpace\View\Views;
 
     class App extends DuckPhp
@@ -354,6 +356,9 @@ namespace MySpace\System
             ],
             'callable_view_class' => Views::class,
                 // 替换的 View 类。
+                
+            'controller_class_postfix' => 'Controller',
+            'controller_method_prefix' => 'action_',
         ];
         // @override 重写
         protected function onInit()
@@ -361,42 +366,33 @@ namespace MySpace\System
             //初始化之后在这里运行。
             //var_dump($this->options);//查看总共多少选项
         }
-        // @override 重写
-        protected function onRun()
-        {
-            //运行期代码在这里，你可以在这里 static::session_start();
-        }
     }
-    //服务基类, 为了 Business::G() 可变单例。
+    //服务基类, 为了 Business::_() 可变单例。
     class BaseBusiness
     {
-        use SingletonExTrait;
+        use SingletonTrait;
     }
 } // end namespace
 // 助手类
 
 namespace MySpace\Helper
 {
-    class ControllerHelper extends \DuckPhp\Helper\ControllerHelper
+    class ControllerHelper
     {
+        use \DuckPhp\Helper\ControllerHelperTrait;
         // 添加你想要的助手函数
     }
-    class BusinessHelper extends \DuckPhp\Helper\BusinessHelper
+    class BusinessHelper
     {
+        use  \DuckPhp\Helper\BusinessHelperTrait;
         // 添加你想要的助手函数
     }
-    class ModelHelper extends \DuckPhp\Helper\ModelHelper
+    class ModelHelper
     {
+        use \DuckPhp\Helper\ModelHelperTrait;
         // 添加你想要的助手函数
     }
-    class ViewHelper extends \DuckPhp\Helper\ViewHelper
-    {
-        // 添加你想要的助手函数。 ViewHelper 一般来说是不使用的
-    }
-    class AppHelper extends \DuckPhp\Helper\AdvanceHelper
-    {
-        // 添加你想要的助手函数。 AppHelper 一般来说是不使用的
-    }
+
 } // end namespace
 
 //------------------------------
@@ -407,24 +403,24 @@ namespace MySpace\Controller
     use MySpace\Business\MyBusiness;  // 引用助手类
     use MySpace\Helper\ControllerHelper as C; // 引用相关服务类
 
-    class Main
+    class MainController
     {
         public function __construct()
         {
             // 在构造函数设置页眉页脚。
             C::setViewHeadFoot('header', 'footer');
         }
-        public function index()
+        public function action_index()
         {
             //获取数据
-            $output = "Hello, now time is " . __h(MyBusiness::G()->getTimeDesc()); // html编码
+            $output = "Hello, now time is " . __h(MyBusiness::_()->getTimeDesc()); // html编码
             $url_about = __url('about/me'); // url 编码
             C::Show(get_defined_vars(), 'main_view'); //显示数据
         }
     }
-    class about
+    class aboutController
     {
-        public function me()
+        public function action_me()
         {
             $url_main = __url(''); //默认URL
             C::setViewHeadFoot('header', 'footer');
@@ -435,9 +431,9 @@ namespace MySpace\Controller
 
 namespace MySpace\Business
 {
+    use MySpace\Helper\BusinessHelper as B;
     use MySpace\Model\MyModel;
     use MySpace\System\BaseBusiness;
-    use MySpace\Helper\BusinessHelper as B;
 
     class MyBusiness extends BaseBusiness
     {
@@ -508,11 +504,12 @@ namespace MySpace\View {
 namespace
 {
     $options = [
-        // 'override_class' => 'MySpace\System\App', 
+        // 'override_class' => 'MySpace\System\App',
         // 你也可以在这里调整选项。覆盖类内选项
     ];
     \MySpace\System\App::RunQuickly($options);
 }
+
 ```
 ## 十、nginx 配置
 这是我的 nginx 配置，如果在安装时候出现什么问题，欢迎反馈。
@@ -543,92 +540,6 @@ server {
 ### DuckPhp 类/文件结构参考
 
  (粗体部分是启动的时候引用的文件)
- 
-@script reference index end
-1. **[DuckPhp](docs/ref/DuckPhp.md)** 入口类，加载了默认扩展的 DuckPhp 入口 ，扩展自 [DuckPhp\\Core\\App](docs/ref/Core-App.md)
-2. `Core` 目录是核心目录，核心框架。基本功能都在 Core 里实现
-    1. **[ComponentBase](docs/ref/Core-ComponentBase.md)** 组件基类
-         1. **[ComponentInterface](docs/ref/Core-ComponentInterface.md)** 组件接口
-    2. **[App](docs/ref/Core-App.md)** 核心应用类。引用以下类
-        1. **[KernelTrait](docs/ref/Core-KernelTrait.md)** 核心Trait 以下是 `核心必备组件`
-            1. [AutoLoader](docs/ref/Core-AutoLoader.md) 自动加载类
-            2. **[Configer](docs/ref/Core-Configer.md)** 配置组件
-            3. **[View](docs/ref/Core-View.md)** 视图组件
-            4. **[Route](docs/ref/Core-Route.md)** 路由组件
-            5. **[ExceptionManager](docs/ref/Core-ExceptionManager.md)**   异常管理组件
-            6. **[RuntimeState](docs/ref/Core-RuntimeState.md)** 运行期数据保存组件
-            7. **[Functions](docs/ref/Core-Functions.md)** 全局函数列表
-        2. [ExtendableStaticCallTrait](docs/ref/Core-ExtendableStaticCallTrait.md) 扩展静态调用的 trait
-        3. [SystemWrapperTrait](docs/ref/Core-SystemWrapperTrait.md) 替换系统同名函数的 trait
-        4. [Logger](docs/ref/Core-Logger.md) 日志组件
-    3. [AppPluginTrait](docs/ref/Core-AppPluginTrait.md)   这个Trait用于把独立工程 App 转成插件 
-3. `Component` 目录，自带组件扩展。
-    1. [AppPluginTrait](docs/ref/Component-AppPluginTrait.md)   这个Trait用于把独立工程 App 转成插件 
-    2. [Cache](docs/ref/Component-Cache.md) 缓存组件
-    3. **[Console](docs/ref/Component-Cache.md)** 命令行模式扩展组件
-    4. [DuckPhpInstaller](docs/ref/Component-DuckPhpInstaller.md) 安装器
-    5. [DuckPhpCommand](docs/ref/Component-DuckPhpCommand.md) DuckPhp 的默认指令组件
-    6. [DbManager](docs/ref/Component-DbManager.md) 数据库管理组件
-    7. [EventManager](docs/ref/Component-EventManager.md) 事件管理组件
-    8. [Pager](docs/ref/Component-Pager.md) 分页类
-        1. [PagerInteface](docs/ref/Component-PagerInteface.md) 分页接口
-    9. **[RouteHookPathInfoCompat](docs/ref/Component-RouteHookPathInfoCompat.md)** 无程序路由设计模式组件
-    10. **[RouteHookRouteMap](docs/ref/Component-RouteHookRouteMap.md)** 路由映射组件
-4. `Db` 目录，数据库目录
-    1. [DbAdvanceTrait](docs/ref/Db-DbAdvanceTrait.md)  这个 trait 增加了 Db类的高级功能
-    2. [DbInterface](docs/ref/Db-DbInterface.md) Db 类满足 DbInterface 接口
-    3. [Db](docs/ref/Db-Db.md) Db类
-5. `Foundation` 目录。存放高级功能的目录
-    1. [Installer](docs/ref/Foundation-Installer.md) 通用安装器
-    2. [Session](docs/ref/Foundation-Session.md) 会话类
-    3. [SimpleControllerTrait](docs/ref/Foundation-SimpleControllerTrait.md) 简单的模型Trait
-    4. [SimpleModelTrait](docs/ref/Foundation-SimpleModel.md) 简单的模型Trait
-    5. [SqlDumper](docs/ref/Foundation-SqlDumper.md) Sql 迁移类
-    6. [ThrowOnableTrait](docs/ref/Foundation-ThrowOnableTrait.md) 让类有ThrowOn功能
-6. `Ext` 扩展目录，非默认加载的扩展。按字母排序。
-    1. [CallableView](docs/ref/Ext-CallableView.md) 可接受函数调用的视图组件
-    2. [EmptyView](docs/ref/Ext-EmptyView.md) 空视图组件
-    3. [ExceptionWrapper](docs/ref/Ext-ExceptionWrapper.md) 异常包裹
-    4. [HookChain](docs/ref/Ext-HookChain.md) 把回调扩展成链的类
-    5. [HttpServerPlugin](docs/ref/Ext-HttpServerPlugin.md) TODO http 扩展插件
-    6. [JsonRpcExt](docs/ref/Ext-JsonRpcExt.md) Json 远程调用组件，把本地调用改为远程调用
-        1. [JsonRpcClientBase](docs/ref/Ext-JsonRpcClientBase.md)
-    7. [JsonView](docs/ref/Ext-JsonView.md) Json 视图组件
-    8. [Misc](docs/ref/Ext-Misc.md) 杂项功能组件
-    9. [MyFacadesAutoLoader](docs/ref/Ext-MyFacadesAutoLoader.md) 门面组件，不推荐
-        1. [MyFacadesBase](docs/ref/Ext-MyFacadesBase.md) 门面类的基类，不推荐
-    10. [MyMiddleware](docs/ref/Ext-MyMiddleware.md) 中间件，不推荐
-    11. [RedisCache](docs/ref/Ext-RedisSimpleCache.md) redis 缓存组件
-    12. [RedisManager](docs/ref/Ext-RedisManager.md) Redis管理器组件
-    13. [RouteHookApiServer](docs/ref/Ext-RouteHookApiServer.md) 简单的 API 服务器插件
-    14. [RouteHookDirectoryMode](docs/ref/Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件
-    15. [RouteHookManager](docs/ref/Ext-RouteHookManager.md) 路由钩子管理器
-    16. [RouteHookRewrite](docs/ref/Ext-RouteHookRewrite.md) 路由重写组件
-    17. [StaticReplacer](docs/ref/Ext-StaticReplacer.md) 适配协程的语法替换写法类
-    18. [StrictCheck](docs/ref/Ext-StrictCheck.md) 严格检查模式组件
-    19. [SuperGlobalContext](docs/ref/Ext-SuperGlobalContext.md) 超全局上下文组件
-7. `Helper` 目录，各种助手类。
-    1. [AdvanceHelper](docs/ref/Helper-AdvanceHelper.md) 应用助手类
-    2. [AdvanceHelperTrait](docs/ref/Helper-AdvanceHelperTrait.md) 应用助手Trait
-    3. [BusinessHelper](docs/ref/Helper-BusinessHelper.md) 业务助手类
-    4. [BusinessHelperTrait](docs/ref/Helper-BusinessHelperTrait.md) 业务助手Trait
-    5. [ControllerHelper](docs/ref/Helper-ControllerHelper.md) 控制器助手类
-    6. [ControllerHelperTrait](docs/ref/Helper-ControllerHelperTrait.md) 控制器助手Trait
-    7. [ModelHelper](docs/ref/Helper-ModelHelper.md) 模型助手类
-    8. [ModelHelperTrait](docs/ref/Helper-ModelHelperTrait.md) 模型助手Trait
-    9. [ViewHelper](docs/ref/Helper-ViewHelper.md) 视图助手类
-    10. [ViewHelperTrait](docs/ref/Helper-ViewHelperTrait.md) 视图助手Trait
-8. `HttpServer` 目录
-    1. [AppInterface](docs/ref/HttpServer-AppInterface.md)  Http 服务的应用接口
-    2. [HttpServer](docs/ref/HttpServer-HttpServer.md)  Http 服务器
-    3. [HttpServerInterface](docs/ref/HttpServer-HttpServerInterface.md)  Http 服务接口
-9. `SingletonEx`目录
-    1. **[SingletonExTrait](docs/ref/SingletonEx-SingletonExTrait.md)**  可变单例 trait
-    1. [SimpleReplacer](docs/ref/SingletonEx-SimpleReplacer.md)  可选可变单例容器
-10. `ThrowOn`目录
-    1. [ThrowOnTrait](docs/ref/ThrowOn-ThrowOnTrait.md) 可抛 trait，应用工程引用它方便异常处理
-
-@script reference index end
 
 ### 应用架构图（缺事件和异常处理部分）
 

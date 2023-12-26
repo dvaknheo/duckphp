@@ -16,8 +16,7 @@
     public function prepare($sql)
 把  `'TABLE'` 转成 表名
 
-    protected function getList(int $page = 1, int $page_size = 10)
-
+    protected function getList($where = [], int $page = 1, int $page_size = 10)
 返回数据 ['data','total'=>]; 这样的数据结构
 
 
@@ -72,6 +71,7 @@ SimpleModelTrait  find 的返回结果是 数组，而不是当前类。
     
 
     public static function CallInPhase($phase)
+
 
 
 

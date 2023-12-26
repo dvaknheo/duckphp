@@ -202,7 +202,8 @@ init() 中 DefaultComponents() 中从设置读取调试标志和平台标志
     protected function runException($ex)
 处理异常
 
-
+    protected function loadSetting()
+在初始化中加载设置
 
 
 ### 事件方法
@@ -265,10 +266,6 @@ onInit
 
 
 ### run 阶段
-
-
-
-
 
 
 

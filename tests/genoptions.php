@@ -301,6 +301,8 @@ class OptionsGenerator
             $content=SliceReplace($content, $data, $str1, $str2);
             return $content;
         });
+        static::WrapFileAction(__DIR__ . '/../README.md','replaceData');
+        //static::WrapFileAction(__DIR__ . '/../README-zh-CN.md','replaceData');
         return;
         $docs=static::GetAllDocFile();
         foreach($docs as $file){

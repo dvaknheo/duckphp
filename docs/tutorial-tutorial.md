@@ -250,8 +250,8 @@ tree -I 'public'
     ├── main.php
     └── test
         └── done.php
-
 ```
+
 
 ## 文件结构和类结构说明
 
@@ -423,6 +423,7 @@ Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口
 
 用`Helper::Show()` 来显示数据
 
+
 ----
 
 以下深入固定类的讲解
@@ -518,12 +519,15 @@ DuckPhp 的异常处理 可以参见 待定文档说明。
     public static function UserId()
 这段代码将会调整, 得到管理员对象或者用户对象
 
+#### 路由重写和路由映射
+
+#### 异常控制处理
 
 ### Business 
 
 作为程序员专家，大家达成的意见是 业务逻辑层要抽出来，业务逻辑 英文是什么 Business Logic 嘛。
 
-有人用Logic ，这里我用的是 Business 命名 还有人用 Service。
+有人用 Logic ，这里我用的是 Business 命名 还有人用 Service。
 
 需要注意的是，虽然有人把这层独立出来，但是代码里却是和 web 相关， Business 要求是什么，和Controller 无关，无状态。可测。
 
