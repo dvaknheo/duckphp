@@ -303,12 +303,12 @@ class OptionsGenerator
         });
         static::WrapFileAction(__DIR__ . '/../README.md','replaceData');
         //static::WrapFileAction(__DIR__ . '/../README-zh-CN.md','replaceData');
-        return;
+        
         $docs=static::GetAllDocFile();
         foreach($docs as $file){
             static::WrapFileAction($file,'replaceData');
         }
-        
+        return;
         $this->checkHasDoced();
         return;        
     }
@@ -552,6 +552,7 @@ function replaceData($content)
     $flag=preg_match_all('/File: `([^`]+)`/',$content,$m);
     $files=$flag ? $m[1]:[];
     foreach($files as $file){
+        if(!is_file($dir.$file)){ continue;}
         $replacement=file_get_contents($dir.$file);
         if($file==='template/app/System/App.phpx'){
             $str1="        // @autogen by tests/genoptions.php\n";
