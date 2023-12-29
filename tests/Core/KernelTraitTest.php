@@ -244,16 +244,18 @@ echo "-------------------------------------\n";
         ];
         DuckPhp::_(new DuckPhp())->init($options);
 
-        
+        /*
         $options=[
             'path' => $path_app,
             'is_debug'=>false,
         ];
         KernelTestApp::RunQuickly($options);
         
+        
+        //*/
+        //var_dump(KernelTestApp::Current());
         KernelTestApp::_()->options['error_404']='_sys/error-404';
-        KernelTestApp::On404();        
-        KernelTestApp2::RunQuickly([]);
+        KernelTestApp::On404();
     }
     
 }

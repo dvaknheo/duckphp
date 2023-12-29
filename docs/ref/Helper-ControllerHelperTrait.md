@@ -159,3 +159,5 @@
 ## 完毕
 
 
+    public static function ThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+

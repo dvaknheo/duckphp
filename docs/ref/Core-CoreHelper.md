@@ -215,3 +215,9 @@
 
     public function _PhaseCall($phase, $callback, ...$args)
 
+    public static function ThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+
+    public function _ThrowByFlag($exception_class, $flag, $message, $code = 0)
+
+    public function _ThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+

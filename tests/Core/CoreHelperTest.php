@@ -86,7 +86,10 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         CoreHelper::ThrowByFlag(\Exception::class, false, "haha",1);
         CoreHelper::ThrowByFlag(\Exception::class, true, "haha",2);
         }catch(\Throwable $ex){}
-        
+        try{
+            CoreHelper::ThrowOn(false, "haha",1);
+            CoreHelper::ThrowOn(true, "haha",2,\Exception::class);
+        }catch(\Throwable $ex){}
         echo CoreHelper::Json($data);
         
         $options = ['is_debug'=>true, 

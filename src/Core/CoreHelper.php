@@ -115,6 +115,11 @@ class CoreHelper extends ComponentBase
     {
         return static::_()->_ThrowByFlag($exception, $flag, $message, $code);
     }
+    public static function ThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+    {
+        return static::_()->_ThrowOn($flag, $message, $code, $exception_class);
+    }
+
     ////////////////////////////////////////////
     public function _H(&$str)
     {
@@ -285,10 +290,21 @@ class CoreHelper extends ComponentBase
         }, $sql);
         return $sql;
     }
-    public function _ThrowByFlag($exception, $flag, $message, $code = 0)
+    public function _ThrowByFlag($exception_class, $flag, $message, $code = 0)
     {
-        if ($flag) {
-            throw new $exception($message, $code);
+        if (!$flag) {
+            return;
         }
+        
+        throw new $exception_class($message, $code);
+    }
+    public function _ThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+    {
+        if (!$flag) {
+            return;
+        }
+        $exception_class = $exception_class ?? (App::Current()->options['exception_default_class'] ?? \Exception::class);
+        
+        throw new $exception($message, $code);
     }
 }

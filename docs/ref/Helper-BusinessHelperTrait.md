@@ -37,3 +37,5 @@ ControllerHelperTrait 相比比 BusinessHelperTrait 少了 Cache()
 
 
 
+    public static function ThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+

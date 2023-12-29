@@ -31,8 +31,11 @@ class BusinessHelperTraitTest extends \PHPUnit\Framework\TestCase
         }catch(\Exception $ex){
         }
         try{
-        BusinessHelper::ThrowByFlag(\Exception::class, false, "haha",1);
-        BusinessHelper::ThrowByFlag(\Exception::class, true, "haha",2);
+            BusinessHelper::ThrowByFlag(\Exception::class, false, "haha",1);
+            BusinessHelper::ThrowByFlag(\Exception::class, true, "haha",2);
+        }catch(\Throwable $ex){}
+        try{
+            BusinessHelper::ThrowOn(false, "haha",1);
         }catch(\Throwable $ex){}
         
         \LibCoverage\LibCoverage::End();

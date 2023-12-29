@@ -179,9 +179,6 @@ class Route extends ComponentBase
         if ($full_class === null) {
             return null;
         }
-        $this->calling_class = $full_class;
-        $this->calling_method = $method;
-        ////////
         $callback = $this->getCallbackFromClassAndMethod($full_class, $method, $path_info);
         return $callback;
     }
@@ -238,6 +235,8 @@ class Route extends ComponentBase
     }
     protected function getCallbackFromClassAndMethod($full_class, $method, $path_info)
     {
+        $this->calling_class = $full_class;
+        $this->calling_method = $method;
         try {
             $ref = new \ReflectionClass($full_class);
             if ($full_class !== $ref->getName()) {
@@ -308,6 +307,7 @@ class Route extends ComponentBase
     {
         $this->options['controller_class_map'][$old_class] = $new_class;
     }
+
 }
 trait Route_Helper
 {

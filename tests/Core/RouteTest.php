@@ -226,12 +226,13 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::_(new Route())->init($options);
         Route::_()->bind('/date')->run();
         Route::_()->bind('/child/date')->run();
+        
         \LibCoverage\LibCoverage::End();
         return;
     }
     protected function doFixedRouteEx()
     {
-        echo "\nFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\n";
+        echo "\nFFFFFFFFFFFFFFFFFFFFFFFFFFFF\n";
         
         $options=[
             'namespace_controller'=>'\\tests_Core_Route',
@@ -250,7 +251,7 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::_()->route_error_flag=false;
         
         Route::_()->bind('/main/index')->run();
-        echo "\nfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\n";
+        echo "\nffffffffffffffffffffffffffffffffff\n";
         
     }
     protected function doFixPathinfo()
