@@ -28,7 +28,7 @@ Now is [<?=$var?>]
     <li><a href="/api.php/test.index">api.php 作为 api 服务器的例子，不需要控制器了 </a>
     <li><a href="/traditional.php">traditional.php 传统模式,一个文件解决，不折腾那么多 </a>
     <li><a href="/rpc.php">一个远程调用 json rpc 的例子(nginx 限定) </a>
-    <li><a href="/advance.php" target="_blank"> /advance.php 新版通用工程架构 (app 目录移动到 public/advance 里) </a> 当前URL是（<?=__url('')?>）
+    <li>当前URL是（<?=__url('')?>）
 </ul>
 需要配置的其他例子
 <ul>

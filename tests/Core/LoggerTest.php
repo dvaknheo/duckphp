@@ -20,6 +20,7 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
         $context=['a'=>'b'];
         
         $dn_options=[
+            'path' => $path_log,
         ];
         DuckPhp::_()->init($dn_options);
         
@@ -55,7 +56,7 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
         $options['path']=$path_log;
         $options['path_log']=$path_log;
         Logger::_(new Logger())->init($options)->info($message,  $context);
-        
+        \LibCoverage\LibCoverage::G()->cleanDirectory($path_log);
         \LibCoverage\LibCoverage::End();
     }
 }
