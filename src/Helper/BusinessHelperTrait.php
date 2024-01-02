@@ -27,13 +27,9 @@ trait BusinessHelperTrait
     {
         return CoreHelper::_()->_XpCall($callback, ...$args);
     }
-    public static function ThrowByFlag($exception, $flag, $message, $code = 0)
+    public static function BusinessThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
     {
-        return CoreHelper::_()->_ThrowByFlag($exception, $flag, $message, $code);
-    }
-    public static function ThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
-    {
-        return CoreHelper::_()->_ThrowOn($flag, $message, $code, $exception_class);
+        return CoreHelper::_()->_BusinessThrowOn($flag, $message, $code, $exception_class);
     }
     public static function Cache($object = null)
     {

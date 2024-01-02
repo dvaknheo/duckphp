@@ -153,11 +153,13 @@
     public static function Domain($use_scheme = false)
 
 
-    public static function ThrowByFlag($exception, $flag, $message, $code = 0)
+
     
 
 ## 完毕
 
 
-    public static function ThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+
+
+    public static function ControllerThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
 

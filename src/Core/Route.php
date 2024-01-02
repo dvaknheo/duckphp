@@ -307,7 +307,6 @@ class Route extends ComponentBase
     {
         $this->options['controller_class_map'][$old_class] = $new_class;
     }
-
 }
 trait Route_Helper
 {

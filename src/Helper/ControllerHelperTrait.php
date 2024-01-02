@@ -134,13 +134,9 @@ trait ControllerHelperTrait
     {
         return ExceptionManager::_()->setDefaultExceptionHandler($callback);
     }
-    public static function ThrowByFlag($exception, $flag, $message, $code = 0)
+    public static function ControllerThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
     {
-        return CoreHelper::_()->_ThrowByFlag($exception, $flag, $message, $code);
-    }
-    public static function ThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
-    {
-        return CoreHelper::_()->_ThrowOn($flag, $message, $code, $exception_class);
+        return CoreHelper::_()->_ControllerThrowOn($flag, $message, $code, $exception_class);
     }
     /////////////
     public static function GET($key = null, $default = null)

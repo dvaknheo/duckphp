@@ -82,14 +82,16 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         CoreHelper::SqlForPager($sql,1,5);
         CoreHelper::SqlForCountSimply($sql);   
         
+        
         try{
-        CoreHelper::ThrowByFlag(\Exception::class, false, "haha",1);
-        CoreHelper::ThrowByFlag(\Exception::class, true, "haha",2);
+            CoreHelper::BusinessThrowOn(false, "haha",1);
+            CoreHelper::BusinessThrowOn(true, "haha",2,\Exception::class);
         }catch(\Throwable $ex){}
         try{
-            CoreHelper::ThrowOn(false, "haha",1);
-            CoreHelper::ThrowOn(true, "haha",2,\Exception::class);
+            CoreHelper::ControllerThrowOn(false, "haha",1);
+            CoreHelper::ControllerThrowOn(true, "haha",2,\Exception::class);
         }catch(\Throwable $ex){}
+        
         echo CoreHelper::Json($data);
         
         $options = ['is_debug'=>true, 

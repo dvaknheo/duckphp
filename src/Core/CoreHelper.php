@@ -111,13 +111,13 @@ class CoreHelper extends ComponentBase
     {
         return static::_()->_PhaseCall($phase, $callback, ...$args);
     }
-    public static function ThrowByFlag($exception, $flag, $message, $code = 0)
+    public static function BusinessThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
     {
-        return static::_()->_ThrowByFlag($exception, $flag, $message, $code);
+        return static::_()->_BusinessThrowOn($flag, $message, $code, $exception_class);
     }
-    public static function ThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+    public static function ControllerThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
     {
-        return static::_()->_ThrowOn($flag, $message, $code, $exception_class);
+        return static::_()->_ControllerThrowOn($flag, $message, $code, $exception_class);
     }
 
     ////////////////////////////////////////////
@@ -290,21 +290,22 @@ class CoreHelper extends ComponentBase
         }, $sql);
         return $sql;
     }
-    public function _ThrowByFlag($exception_class, $flag, $message, $code = 0)
+    public function _BusinessThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
     {
         if (!$flag) {
             return;
         }
+        $exception_class = $exception_class ?? (App::Current()->options['exception_for_business'] ?? (App::Current()->options['exception_for_project'] ?? \Exception::class));
         
         throw new $exception_class($message, $code);
     }
-    public function _ThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+    public function _ControllerThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
     {
         if (!$flag) {
             return;
         }
-        $exception_class = $exception_class ?? (App::Current()->options['exception_default_class'] ?? \Exception::class);
+        $exception_class = $exception_class ?? (App::Current()->options['exception_for_controller'] ?? (App::Current()->options['exception_for_project'] ?? \Exception::class));
         
-        throw new $exception($message, $code);
+        throw new $exception_class($message, $code);
     }
 }

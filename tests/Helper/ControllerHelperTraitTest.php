@@ -107,11 +107,7 @@ ControllerHelper::PageHtml(123);
         ControllerHelper::IsAjax();
 
         try{
-            ControllerHelper::ThrowByFlag(\Exception::class, false, "haha",1);
-            ControllerHelper::ThrowByFlag(\Exception::class, true, "haha",2);
-        }catch(\Throwable $ex){}
-        try{
-            ControllerHelper::ThrowOn(false, "haha",1);
+            ControllerHelper::ControllerThrowOn(false, "haha",1);
         }catch(\Throwable $ex){}
         
         try{
