@@ -65,21 +65,31 @@ DuckPhp 的最大意义是思想，只要思想在，什么框架你都可以用
 
 ## 四、DuckPhp 的优点
 
-#### 1.  全组件可替换
+#### 1. 可扩展
+
+DuckPhp 可以把你的工程直接插入其他工程，不用修改。 你不需要在 DuckPhp 工程上做二次开发。
+
+DuckPhp 不限制你的工程的命名空间固定为 `app` 。
+
+DuckPhp 很容易嵌入其他 PHP 框架。根据 DuckPhp 的返回值判断是否继续后面其他框架。
+
+DuckPhp 支持扩展。这些扩展可独立，不一定非要仅仅用于 DuckPhp 。
+
+#### 2.  全组件可替换
 
 作为一个现代的 PHP 库， 全组件可替换是必须的。
 
 DuckPhp 用可变单例方式，解决了**系统的调用形式不变，实现形式可变**，不需要魔改来修复系统漏洞。而其他框架用的 IoC,DI 技术则复杂且不方便调试。
 
-#### 2.  高可靠性，无依赖
+#### 3.  高可靠性，无依赖
 
 DuckPhp 无第三方依赖，你不必担心第三方依赖改动而大费周折。**不需要引入101 个第三方包，就能工作**，稳定性完全可控。
 
 如果对默认实现不满，你也可以很容易改用需要第三方依赖的实现。
 
-比如 DuckPhp 的数据库类很简洁，而且，你可以轻易方便的替换。如教程就有使用 thinkphp-db 的例子。[链接](docs/tutorial-db.md)
+比如 DuckPhp 的数据库类很简洁，而且，你可以轻易方便的替换。
 
-#### 3.  超低耦合
+#### 4.  超低耦合
 
 DuckPhp 耦合松散，扩展灵活方便，魔改容易。
 
@@ -89,7 +99,7 @@ DuckPhp 的 Controller 切换容易，独立，和其他类无关，简单明了
 
 DuckPhp 的路由也可以单独抽出使用。
 
-#### 4. 简洁
+#### 5. 简洁
 
 DuckPhp 以库方式引入，所以 DuckPhp 工程骨架不像其他框架那样一大堆不可删除的文件
 
@@ -105,19 +115,10 @@ DuckPhp 各组件是无直接引用的，所以 var_dump() 能看出来。
 
 DuckPhp/Core/App 是 DuckPhp 的子框架。有时候你用 DuckPhp/Core/App 也行。类似 lumen 之于 Laravel 。
 
-#### 5. 可扩展
-
-DuckPhp 支持扩展。这些扩展可独立，不一定非要仅仅用于 DuckPhp 。
-
-DuckPhp 可以把你的工程作为其他项目的插件使用！ 自带例子就有。
-
 #### 6. 灵活自由
 
 DuckPhp 支持全站路由，还支持局部路径路由和无 PATH_INFO 路由，不需要配服务器也能用。 可以在不修改 Web 服务器设置（如设置 PATH_INFO）的情况下使用，也可以在子目录里使用。
 
-DuckPhp 不限制你的工程的命名空间固定为 `app` 。
-
-DuckPhp 很容易嵌入其他 PHP 框架。根据 DuckPhp 的返回值判断是否继续后面其他框架。
 
 DuckPhp 支持 composer。无 composer 环境也可运行。DuckPhp 是 Composer 库，不需要单独的脚手架工程。
 
@@ -151,10 +152,9 @@ DuckPhp 的类尽量无状态。
 
 其他还有更多说到的优点，用到的时候会觉得精妙。
 
-
 DuckPhp 有扩展能做到禁止你在 Controller 里直接写 sql 。有时候，框架必须为了防止人犯蠢，而牺牲了性能。但 DuckPhp 这么做几乎不影响性能。
 
-DuckPhp 通过 SwooleHttpd 和 WorkermanHttpd 支持 支持 swoole 和 workerman 。不需要改代码，将来也支持 更多其他平台
+DuckPhp 通过 WorkermanHttpd 扩展，支持 workerman 。不需要改工程代码，将来也支持 更多其他平台
 
 ## 五、DuckPhp 不做什么
 
@@ -167,13 +167,13 @@ DuckPhp 通过 SwooleHttpd 和 WorkermanHttpd 支持 支持 swoole 和 workerman
 DuckPhp 工程层级关系图
 
 ```text
-           /-> View-->ViewHelper
-Controller --> Business ------------------------------ ---> Model
-         \         \   \               \  /                  \
-          \         \   \-> (Business)Lib ----> ExModel----------->ModelHelper
-           \         \             \                
-            \         ---------------->BusinessHelper
-             \-->ControllerHelper
+           /-> View
+Controller --> Business ---------------> Model
+         \         \   \            /         \
+          \         \   \--> Service --------> ModelEx --> ModelHelper
+           \         \              \                
+            \         ---------------->(Business)Helper
+             \-->(Controller)Helper
 ```
 ![arch_full](docs/arch_full.gv.svg)
 
@@ -182,14 +182,13 @@ Controller --> Business ------------------------------ ---> Model
 * Model 按数据库表走，基本上只实现和当前表相关的操作。
 * View 按页面走
 * 不建议 Model 抛异常
-* ControllerHelper, BusinessHelper, ModelHelper, ViewHelper 都为助手类，通常缩写为 C, B, M, V
 
 1. 如果  Business 业务之间 相互调用怎么办?
-添加后缀为 Lib 用于 Business 共享调用，不对外，如 CacheLib.
+添加后缀为 Service 用于 Business 共享调用，不对外，如 CacheService.
 
 2. 如果跨表怎么办?，三种解决方案
     1. 在主表里附加，其他表估计用不到的情况。
-    2. 添加后缀为 ExModel 用于表示这个 Model 是多个表的，如 UserExModel。
+    2. 添加后缀为 ModelEx 用于表示这个 ModelEx 是多个表的，如 UserModelEx。
     3. 或者单独和数据库不一致如取名 UserAndPlayerRelationModel
 ## 七、常用工程目录结构
 
@@ -246,6 +245,7 @@ DuckPhp 代码里的 template 目录就是我们的工程目录示例。也是�
         └── done.php
 
 ```
+这个模板目录，是大型工程的目录结构，对于小项目来说，可还可以继续精简
 这个目录结构里，`业务工程师`只能写 `src/Controller`,`src/Model`,`src/Business`,`view` 这四个目录。
 其他则是 `核心工程师` 的活。
 
@@ -260,15 +260,12 @@ src 目录，就是放 `ProjectTemplate` 命名空间的东西了。
 
 System/App.php 这个文件的入口类继承 DuckPhp\DuckPhp 类，工程的入口流程会在这里进行，这里是`核心工程师`重点了解的类。
 
-BaseController, BaseModel, BaseBusiness 是你自己要改的基类，基本只实现了单例模式。
+各个目录的 Base 是你自己要改的基类，基本只实现了单例模式。
 
 
 
 ### 如何精简目录
-* 移除 app/System/BaseController.php 如果你的 Controller 和默认的一样不需要基本类。
-* 移除 app/Model/BaseModel.php 如果你的 Model 用的全静态方法。
-* 移除 app/System/BaseBusiness.php 如果你的 Business 不需要 G() 可变单例方法。
-* 移除 config/ 目录,在启动选项里删除 'use_setting_file'=>true
+* 移除 config/ 目录,
 * 移除 view/\_sys/ 目录 你需要设置启动选项里404和500错误 'error\_404','error\_500 。
 * 移除 view 目录如果你不需要 view ，如 API 项目。
 * 移除 duckphp-project 如果你不需要额外的命令行。

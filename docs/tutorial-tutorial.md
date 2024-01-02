@@ -421,7 +421,7 @@ Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口
 
 控制器里不要写业务，做的是输入和输出的处理。 业务层负责功能。调用业务层，而不是模型层
 
-用`Helper::Show()` 来显示数据
+使用`Helper::Show()` 来显示数据
 
 
 ----
@@ -499,14 +499,16 @@ DuckPhp 的异常处理 可以参见 待定文档说明。
     public static function setDefaultExceptionHandler($callback)
 设置默认的异常处理
 
-    public static function ThrowByFlag($exception, $flag, $message, $code = 0)
-给没`ThrowOn`的异常，添加一个快捷
+    public static function ControllerThrowOn($flag, $message, $code = 0,$exception_class = null)
+抛出控制器层级异常法, 如果 $flag 为真
 
     public static function XpCall($callback, ...$args)
 回调，如果正常返回没事，如果抛异常则返回异常。
 
 9. 事件处理
+
 `FireEvent($event, ...$args)`,`OnEvent($event, $callback)`
+
 触发一个事件， 设置事件回调， DuckPhp 的事件系统是一对多，后到先得得。
 
 10. 相关对象
@@ -517,7 +519,8 @@ DuckPhp 的异常处理 可以参见 待定文档说明。
     public static function AdminId()
     public static function User()
     public static function UserId()
-这段代码将会调整, 得到管理员对象或者用户对象
+
+得到管理员对象或者用户对象
 
 #### 路由重写和路由映射
 
@@ -559,11 +562,13 @@ DuckPhp 的异常处理 可以参见 待定文档说明。
     public static function FireEvent($event, ...$args)
     public static function OnEvent($event, $callback)
     public static function XpCall($callback, ...$args)
-    public static function ThrowByFlag($exception, $flag, $message, $code = 0)
 以上见 `MyProject\Controller\Helper` 的说明。
 
     public static function Cache($object = null)
-获得缓存对象 `BusinessHelperTrait` 仅 `ControllerHelperTrait` 多了 `Cache()`方法
+获得缓存对象 
+
+    public static function BuinessThrowOn($flag, $message, $code = 0, $exception_class)
+抛出业务异常
 
 ### Model
 
