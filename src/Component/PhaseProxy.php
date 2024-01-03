@@ -9,7 +9,7 @@ use DuckPhp\Core\App;
 
 class PhaseProxy
 {
-    protected $container_class;
+    public $container_class;
     protected $overriding;
     public function __construct($container_class, $overriding)
     {
