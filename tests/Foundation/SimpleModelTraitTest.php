@@ -56,16 +56,16 @@ class EmptyModel extends Base
         EmptyModel::_()->getList();
         $id=EmptyModel::_()->add(['data' =>DATE(DATE_ATOM)]);
         EmptyModel::_()->update($id,['data' =>DATE(DATE_ATOM)]);
-        $sql="delete from 'TABLE' where id =?";
+        $sql="delete from `'TABLE'` where id =?";
         $sql=EmptyModel::_()->prepare($sql);
         DuckPhpAllInOne::Db()->execute($sql,$id);
 
-        EmptyModel::_()->fetchAll("select * from 'TABLE' where id =? ", $id);
-        EmptyModel::_()->fetch("select * from 'TABLE' where id =? ", $id);
-        EmptyModel::_()->fetchColumn("select * from 'TABLE' where id =? ", $id);
-        EmptyModel::_()->fetchObject("select * from 'TABLE' where id =? ", $id);
-        EmptyModel::_()->fetchObjectAll("select * from 'TABLE' where id =? ", $id);
-        EmptyModel::_()->execute("update 'TABLE' set data = ?  where id =? ",  DATE(DATE_ATOM),$id);
+        EmptyModel::_()->fetchAll("select * from `'TABLE'` where id =? ", $id);
+        EmptyModel::_()->fetch("select * from `'TABLE'` where id =? ", $id);
+        EmptyModel::_()->fetchColumn("select * from `'TABLE'` where id =? ", $id);
+        EmptyModel::_()->fetchObject("select * from `'TABLE'` where id =? ", $id);
+        EmptyModel::_()->fetchObjectAll("select * from `'TABLE'` where id =? ", $id);
+        EmptyModel::_()->execute("update `'TABLE'` set data = ?  where id =? ",  DATE(DATE_ATOM),$id);
     }
     public function foo()
     {

@@ -51,13 +51,13 @@ trait SimpleModelTrait
     
     public function prepare($sql)
     {
-        return str_replace(DbManager::_()->_DbForRead()->quote('TABLE'), $this->table(), $sql);
+        return empty($this->table()) ? $sql : str_replace("`'TABLE'`", '`'.$this->table().'`', $sql);
     }
     protected function getList($where = [], int $page = 1, int $page_size = 10)
     {
         $sql_where = DbManager::_()->_DbForRead()->quoteAndArray($where);
         $sql_where = $sql_where?:' TRUE ';
-        $sql = "SELECT * from 'TABLE' where $sql_where order by id desc";
+        $sql = "SELECT * from `'TABLE'` where $sql_where order by id desc";
         $sql = $this->prepare($sql);
         
         $total = DbManager::_()->_DbForRead()->fetchColumn(CoreHelper::_()->_SqlForCountSimply($sql));
@@ -76,7 +76,7 @@ trait SimpleModelTrait
         }
         $frag = implode('and ', $f);
         
-        $sql = "SELECT * FROM 'TABLE' WHERE ".$frag;
+        $sql = "SELECT * FROM `'TABLE'` WHERE ".$frag;
         $sql = $this->prepare($sql);
         $ret = DbManager::_()->_DbForRead()->fetch($sql);
         return $ret;
