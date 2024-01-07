@@ -211,7 +211,7 @@ class Route extends ComponentBase
             return [null, null];
         }
         $full_class = $this->getControllerNamespacePrefix().$path_class.$this->options['controller_class_postfix'];
-        //$full_class = ''.ltrim($full_class, '\\');
+        $full_class = ''.ltrim($full_class, '\\');
         $full_class = $this->options['controller_class_map'][$full_class] ?? $full_class;
         
         $method = ($method === '') ? $this->options['controller_welcome_method'] : $method;
