@@ -206,8 +206,8 @@ class Route extends ComponentBase
         }
         $this->calling_path = $path_info;
         
-        list($path_class,$method) = $this->adjustClassBaseName($path_info);
-        if(!$path_class){
+        list($path_class, $method) = $this->adjustClassBaseName($path_info);
+        if (!$path_class) {
             return [null, null];
         }
         $full_class = $this->getControllerNamespacePrefix().$path_class.$this->options['controller_class_postfix'];
@@ -246,7 +246,7 @@ class Route extends ComponentBase
         }
         //*/
         $path_class = implode('\\', $blocks);
-         if (empty($blocks)) {
+        if (empty($blocks)) {
             $this->calling_path = $welcome_class.'/'.$method;
             $path_class = $welcome_class;
         }

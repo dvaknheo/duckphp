@@ -65,6 +65,9 @@
 + 'controller_base_class' => NULL, 
 
     控制器基类   // [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
++ **'controller_class_adjust' => '',** 
+
+       // [DuckPhp\Core\Route](Core-Route.md)
 + **'controller_class_base' => '',** 
 
        // [DuckPhp\Core\Route](Core-Route.md)
@@ -513,6 +516,8 @@
     - 'system_exception_handler' => NULL,
         系统的异常调试回调
 + DuckPhp\Core\Route
+    - 'controller_class_adjust' => '',
+        
     - 'controller_class_base' => '',
         
     - 'controller_class_map' => array ( ),

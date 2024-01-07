@@ -461,7 +461,7 @@ class about2 extends baseController
         var_dump("NOController");
     }
 }
-class Main  extends baseController
+class Main extends baseController
 {
     public function index()
     {

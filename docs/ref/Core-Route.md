@@ -26,7 +26,7 @@
 控制器，POST 的方法会在方法名前加前缀 do_
 如果找不到方法名，调用默认方法名。
 
-        'controller_class_postfix' => '',
+        'controller_class_postfix' => 'Controller',
 控制器，控制器类名后缀
 
         'controller_enable_slash' => false,
@@ -54,8 +54,20 @@
         'controller_resource_prefix' => '',
 控制器，资源文件前缀
 
-        'controller_runtime' => '',
-控制器，运行时，保存数据的类
+        'controller_welcome_class' => 'Main',
+
+        'controller_welcome_class_visible' => false,
+
+        'controller_welcome_method' => 'index',
+
+        'controller_class_base' => '',
+
+
+        'controller_method_prefix' => 'action_',
+
+        'controller_prefix_post' => 'do_', //TODO remove it
+
+        'controller_class_adjust' => '',
 
 ## 公开方法
 
@@ -128,6 +140,10 @@
 
 ### 辅助方法
 
+    protected function adjustMethod($method, $ref)
+
+
+    protected function adjustClassBaseName($path_info)
 
 其他辅助方法
 
@@ -250,24 +266,4 @@ if(!$flag){
 
 
 
-        'controller_welcome_class' => 'Main',
-
-        'controller_welcome_class_visible' => false,
-
-        'controller_welcome_method' => 'index',
-
-        'controller_class_base' => '',
-
-        'controller_class_postfix' => 'Controller',
-
-        'controller_method_prefix' => 'action_',
-
-        'controller_prefix_post' => 'do_', //TODO remove it
-
-
-    protected function getCallbackFromClassAndMethod($full_class, $method, $path_info)
-
-    protected function adjustClassBaseName($path_class)
-
-    protected function adjustMethod($method, $ref)
 
