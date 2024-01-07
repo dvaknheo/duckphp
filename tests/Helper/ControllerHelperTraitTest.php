@@ -60,11 +60,9 @@ class ControllerHelperTraitTest extends \PHPUnit\Framework\TestCase
         
         var_dump("??????????");
         //*
-        ControllerHelper::Exit404(false);
-        ControllerHelper::ExitRedirect($url, false);
-        ControllerHelper::ExitRedirectOutside($url, false);
-        ControllerHelper::ExitRouteTo($url, false);
-        ControllerHelper::ExitJson($ret,false);
+        ControllerHelper::Show404();
+        ControllerHelper::Show302($url);
+        ControllerHelper::ShowJson($ret);
         //*/
         
         ControllerHelper::header($output,$replace = true, $http_response_code=0);

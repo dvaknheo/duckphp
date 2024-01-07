@@ -87,25 +87,17 @@ trait ControllerHelperTrait
     {
         return CoreHelper::IsAjax();
     }
-    public static function ExitRedirect($url, $exit = true)
+    public static function Show302($url)
     {
-        return CoreHelper::ExitRedirect($url, $exit);
+        return CoreHelper::Show302($url);
     }
-    public static function ExitRedirectOutside($url, $exit = true)
+    public static function Show404()
     {
-        return CoreHelper::ExitRedirectOutside($url, $exit);
+        return CoreHelper::Show404();
     }
-    public static function ExitRouteTo($url, $exit = true)
+    public static function ShowJson($ret)
     {
-        return CoreHelper::ExitRouteTo($url, $exit);
-    }
-    public static function Exit404($exit = true)
-    {
-        return CoreHelper::Exit404($exit);
-    }
-    public static function ExitJson($ret, $exit = true)
-    {
-        return CoreHelper::ExitJson($ret, $exit);
+        return CoreHelper::ShowJson($ret);
     }
 
     /////////////////

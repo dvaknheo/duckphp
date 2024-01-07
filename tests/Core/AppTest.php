@@ -532,7 +532,7 @@ class Base
     }
     public function do404()
     {
-        \DuckPhp\Core\CoreHelper::Exit404(false);
+        \DuckPhp\Core\CoreHelper::Show404(false);
     }
     public function do500()
     {

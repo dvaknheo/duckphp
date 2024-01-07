@@ -79,21 +79,13 @@ class CoreHelper extends ComponentBase
     {
         return static::_()->_IsAjax();
     }
-    public static function ExitJson($ret, $exit = true)
+    public static function ShowJson($ret)
     {
-        return static::_()->_ExitJson($ret, $exit);
+        return static::_()->_ShowJson($ret);
     }
-    public static function ExitRedirect($url, $exit = true)
+    public static function Show302($url)
     {
-        return static::_()->_ExitRedirect($url, $exit);
-    }
-    public static function ExitRedirectOutside($url, $exit = true)
-    {
-        return static::_()->_ExitRedirectOutside($url, $exit);
-    }
-    public static function ExitRouteTo($url, $exit = true)
-    {
-        return static::_()->_ExitRedirect(static::Url($url), $exit);
+        return static::_()->_Show302($url);
     }
     public static function SqlForPager($sql, $page_no, $page_size = 10)
     {
@@ -220,38 +212,21 @@ class CoreHelper extends ComponentBase
         $ref = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? null;
         return $ref && 'xmlhttprequest' == strtolower($ref) ? true : false;
     }
-    public static function Exit404($exit = true)
+    public static function Show404()
     {
         App::On404();
-        if ($exit) {
-            SystemWrapper::_()->_exit();
-        }
     }
-    public function _ExitJson($ret, $exit = true)
+    public function _ShowJson($ret)
     {
         SystemWrapper::_()->_header('Content-Type:application/json; charset=utf-8');
         echo static::_()->_Json($ret);
-        if ($exit) {
-            SystemWrapper::_()->_exit();
-        }
     }
-    public function _ExitRedirect($url, $exit = true)
+    public function _Show302($url)
     {
         if (parse_url($url, PHP_URL_HOST)) {
-            SystemWrapper::_()->_exit();
             return;
         }
         SystemWrapper::_()->_header('location: '.$url, true, 302);
-        if ($exit) {
-            SystemWrapper::_()->_exit();
-        }
-    }
-    public function _ExitRedirectOutside($url, $exit = true)
-    {
-        SystemWrapper::_()->_header('location: '.$url, true, 302);
-        if ($exit) {
-            SystemWrapper::_()->_exit();
-        }
     }
     ////////////////////////////////////////////
     public function _XpCall($callback, ...$args)

@@ -59,14 +59,11 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
 
         $url="/test";
         CoreHelper::IsAjax();
-        CoreHelper::ExitRedirect($url);
-        CoreHelper::ExitRedirect('http://www.github.com');
-
-        CoreHelper::ExitRedirectOutside("http://www.github.com",true);
-        CoreHelper::ExitRouteTo($url);
-        CoreHelper::Exit404();
+        
+        CoreHelper::Show302($url);
+        CoreHelper::Show404();
         CoreHelper::_()->options['is_debug']=true;
-        CoreHelper::ExitJson($ret);
+        CoreHelper::ShowJson($ret);
         
         CoreHelper::XpCall(function(){return "abc";});
         CoreHelper::XpCall(function(){ throw new \Exception('ex'); });

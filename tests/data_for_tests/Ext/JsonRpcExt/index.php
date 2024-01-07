@@ -31,7 +31,7 @@ class MainController
         }
         $ret= JsonRpcExt::_()->onRpcCall(DuckPhp::POST(null));
         
-        DuckPhp::ExitJson($ret);
+        DuckPhp::ShowJson($ret);
     }
 }
 
@@ -45,4 +45,4 @@ $options=[
 
 $flag=DuckPhp::RunQuickly($options);
 
-var_dump(\DuckPhp\Core\Route::_()->options);
+//var_dump(\DuckPhp\Core\Route::_()->options);

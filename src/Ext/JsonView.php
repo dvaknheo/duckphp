@@ -40,7 +40,7 @@ class JsonView extends View
         foreach ($this->options['json_view_skip_vars'] as $v) {
             unset($data[$v]);
         }
-        CoreHelper::ExitJson($data);
+        CoreHelper::ShowJson($data);
     }
     //@override
     public function _Display(string $view, ?array $data = null): void
@@ -48,6 +48,6 @@ class JsonView extends View
         foreach ($this->options['json_view_skip_vars'] as $v) {
             unset($data[$v]);
         }
-        CoreHelper::ExitJson($data);
+        CoreHelper::ShowJson($data);
     }
 }

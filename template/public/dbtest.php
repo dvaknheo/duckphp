@@ -95,7 +95,7 @@ class MainController
     public function action_delete()
     {
         MyBusiness::_()->deleteData(C::GET('id', 0));
-        C::ExitRouteTo('');
+        C::Show302('');
     }
 }
 ///////////////

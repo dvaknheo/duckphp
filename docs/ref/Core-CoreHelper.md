@@ -8,20 +8,29 @@
 
 #### 跳转
 ```php
-    public static function ExitJson($ret, $exit = true)
-    public static function ExitRedirect($url, $exit = true)
-    public static function ExitRedirectOutside($url, $exit = true)
-    public static function ExitRouteTo($url, $exit = true)
-    public static function Exit404($exit = true)
+    public static function ShowJson($ret)
+
+    public static function Show302($url)
+
+    public static function Show404()
+
+    public function _ShowJson($ret)
+
+    public function _Show302($url)
+
 ```
 #### 字符串处理
 ```php
     public static function H($str)
+
     public static function L($str, $args = [])
+
     public static function Hl($str, $args = [])
+
     public static function Json($data)
     
     public static function Render($view, $data = null)
+
 ```
 #### 调试相关
 ```php
@@ -34,6 +43,8 @@
     public static function DebugLog($message, array $context = array())
     public static function XpCall($callback, ...$args)
     public static function CheckException($exception_class, $message, $code = 0)
+    public static function VarLog($var)
+
 ```
 #### SQL 相关
 ```php
@@ -69,6 +80,11 @@
     public static function OnEvent($event, $callback)
 ```
 
+    public static function BusinessThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+
+    public static function ControllerThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+
+
 ### 内置 trait Core_Glue
 
 内置 trait Core_Glue 用于粘合其他类
@@ -85,12 +101,7 @@
     public static function Setting($key)
     public static function Config($key, $default = null, $file_basename = 'config')
 ```
-#### 来自 AutoLoader
-来自 AutoLoader 的两个方法，主要用于没把 composer 作为加载器使用的情况
-```php 
-    public static function assignPathNamespace($path, $namespace = null)
-    public static function runAutoLoader()
-```
+
 #### 来自 Route
 来自Route 的方法比较多。重点掌握
 
@@ -112,61 +123,25 @@
     public static function PathInfo()
 获取 PathInfo
 
-    public static function replaceController($old_class, $new_class)
 单例模式，替换控制器类
 
 ##
-
-    public static function H($str)
-
-    public static function L($str, $args = [])
-
-    public static function Hl($str, $args = [])
-
-    public static function Json($data)
-
-    public static function Url($url = null)
-
     public static function Domain($use_scheme = false)
 
     public static function Res($url = null)
 
     public static function Display($view, $data = null)
 
-    public static function var_dump(...$args)
-
-    public static function VarLog($var)
-
-    public static function TraceDump()
-
-    public static function DebugLog($message, array $context = array())
-
-    public static function Logger($object = null)
-
-    public static function IsDebug()
-
-    public static function IsRealDebug()
-
-    public static function Platform()
-
-    public static function IsAjax()
-
-    public static function ExitJson($ret, $exit = true)
-
-    public static function ExitRedirect($url, $exit = true)
-
-    public static function ExitRedirectOutside($url, $exit = true)
-
-    public static function ExitRouteTo($url, $exit = true)
-
     public static function XpCall($callback, ...$args)
+
+    public static function SqlForCountSimply($sql)
 
     public static function SqlForPager($sql, $page_no, $page_size = 10)
 
     public static function SqlForCountSimply($sql)
 
-    public static function ThrowByFlag($exception, $flag, $message, $code = 0)
-
+    public static function PhaseCall($phase, $callback, ...$args)
+    
     public function _H(&$str)
 
     public function _L($str, $args = [])
@@ -191,36 +166,17 @@
 
     public function _IsAjax()
 
-    public static function Exit404($exit = true)
-
-    public function _ExitJson($ret, $exit = true)
-
-    public function _ExitRedirect($url, $exit = true)
-
-    public function _ExitRedirectOutside($url, $exit = true)
-
     public function _XpCall($callback, ...$args)
 
     public function _SqlForPager($sql, $page_no, $page_size = 10)
 
     public function _SqlForCountSimply($sql)
 
-    public function _ThrowByFlag($exception, $flag, $message, $code = 0)
-
-    public static function SqlForPager($sql, $page_no, $page_size = 10)
-
-    public static function SqlForCountSimply($sql)
-
-    public static function PhaseCall($phase, $callback, ...$args)
-
     public function _PhaseCall($phase, $callback, ...$args)
-
-
-    public static function BusinessThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
-
-    public static function ControllerThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
 
     public function _BusinessThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
 
     public function _ControllerThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+
+
 

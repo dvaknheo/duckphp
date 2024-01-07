@@ -465,9 +465,8 @@ Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口
 
 各种跳转
 
-    public static function  ExitRedirect/ExitRedirectOutside/ExitRouteTo/Exit404/ExitJson($url, $exit = true)
+    public static function  Show302/Show404/ShowJson()
 
-跳转方法的 $exit 为 true 则附加 exit()
 
 相应的是站内跳转，站外跳转，应用内跳转，404跳转， json跳转
 

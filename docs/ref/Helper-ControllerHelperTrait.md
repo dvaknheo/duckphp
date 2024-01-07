@@ -40,21 +40,13 @@
 
 ### 跳转
 
-跳转方法的 $exit 为 true 则附加 exit()
-
-    public static function ExitRedirect($url, $exit = true)
-跳转到站内 Url
-
-    public static function ExitRedirectOutside($url, $exit = true)
-跳转到站外 Url 。这两个函数分开是为了安全起见
-
-    public static function ExitRouteTo($url, $exit = true)
+    public static function Show302($url)
 跳转到相对 url 
 
-    public static function Exit404($exit = true)
+    public static function Show404()
 报 404，显示后续页面
 
-    public static function ExitJson($ret, $exit = true)
+    public static function ShowJson($ret)
 输出 json 结果。
 
 ### 路由相关
