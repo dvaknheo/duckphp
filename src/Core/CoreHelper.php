@@ -226,7 +226,7 @@ class CoreHelper extends ComponentBase
         if (parse_url($url, PHP_URL_HOST)) {
             return;
         }
-        SystemWrapper::_()->_header('location: '.$url, true, 302);
+        SystemWrapper::_()->_header('location: '.static::Url($url), true, 302);
     }
     ////////////////////////////////////////////
     public function _XpCall($callback, ...$args)
