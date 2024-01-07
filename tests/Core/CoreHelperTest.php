@@ -60,7 +60,8 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         $url="/test";
         CoreHelper::IsAjax();
         
-        CoreHelper::Show302($url);
+        CoreHelper::Show302(CoreHelper::Url($url));
+        CoreHelper::Show302('https://www.baidu.com/');
         CoreHelper::Show404();
         CoreHelper::_()->options['is_debug']=true;
         CoreHelper::ShowJson($ret);

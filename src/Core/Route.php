@@ -26,6 +26,7 @@ class Route extends ComponentBase
         'controller_welcome_class_visible' => false,
         'controller_welcome_method' => 'index',
         
+        'controller_class_adjust' => '',
         'controller_class_base' => '',
         'controller_class_postfix' => 'Controller',
         'controller_method_prefix' => 'action_',
@@ -203,35 +204,58 @@ class Route extends ComponentBase
             }
             $path_info = substr($path_info, 0, -$l);
         }
+        $this->calling_path = $path_info;
         
-        $t = explode('/', $path_info);
-        $method = array_pop($t);
-        $path_class = implode('/', $t);
-        
-        $welcome_class = $this->options['controller_welcome_class'];
-        $this->calling_path = $path_class?$path_info:$welcome_class.'/'.$method;
-        
-        if (!$this->options['controller_welcome_class_visible'] && $path_class === $welcome_class) {
-            $this->route_error = "E009: controller_welcome_class_visible! {$welcome_class}; ";
+        list($path_class,$method) = $this->adjustClassBaseName($path_info);
+        if(!$path_class){
             return [null, null];
         }
-        $path_class = $path_class ?: $welcome_class;
-        
-        $full_class = $this->getControllerNamespacePrefix().$this->adjustClassBaseName($path_class).$this->options['controller_class_postfix'];
-        $full_class = ''.ltrim($full_class, '\\');
+        $full_class = $this->getControllerNamespacePrefix().$path_class.$this->options['controller_class_postfix'];
+        //$full_class = ''.ltrim($full_class, '\\');
         $full_class = $this->options['controller_class_map'][$full_class] ?? $full_class;
         
         $method = ($method === '') ? $this->options['controller_welcome_method'] : $method;
         $method = $this->options['controller_method_prefix'].$method;
         return [$full_class,$method];
     }
-    protected function adjustClassBaseName($path_class)
+    protected function adjustClassBaseName($path_info)
     {
-        $path_class = str_replace('/', '\\', $path_class);
-        // abc/method => AbcController/method,
-        // Abc/z
+        $welcome_class = $this->options['controller_welcome_class'];
+        $blocks = explode('/', $path_info);
+        $method = array_pop($blocks);
         
-        return $path_class;
+        $this->calling_path = $path_info;
+        if (empty($blocks)) {
+            $this->calling_path = $welcome_class.'/'.$method;
+            $path_class = $welcome_class;
+        }
+        
+        /*
+        if ($this->options['controller_class_adjust'] && !empty($blocks)) {
+            if ($this->options['controller_class_adjust'] ==='ucfirst'){
+                $w = array_shift($blocks);
+                $w = ucfirst($a);
+                array_unshift($a,$blocks);
+            }else if ($this->options['controller_class_adjust'] ==='uclast') {
+                $w = array_shift($blocks);
+                $w = ucfirst($w);
+                array_push($blocks,$w);
+            }else if ($this->options['controller_class_adjust'] ==='ucall') {
+                array_map('ucfirst', $blocks);
+            }
+        }
+        //*/
+        $path_class = implode('\\', $blocks);
+         if (empty($blocks)) {
+            $this->calling_path = $welcome_class.'/'.$method;
+            $path_class = $welcome_class;
+        }
+        if (!empty($blocks) && !$this->options['controller_welcome_class_visible'] && $path_class === $welcome_class) {
+            $this->route_error = "E009: controller_welcome_class_visible! {$welcome_class}; ";
+            return [null, null];
+        }
+        
+        return [$path_class, $method];
     }
     protected function getCallbackFromClassAndMethod($full_class, $method, $path_info)
     {
