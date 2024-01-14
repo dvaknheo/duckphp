@@ -6,7 +6,7 @@
 //dvaknheo@github.com
 //OK，Lazy
 
-namespace DuckPhp;
+namespace DuckPhp\Foundation;
 
 use DuckPhp\Helper\AppHelperTrait;
 use DuckPhp\Helper\BusinessHelperTrait;
