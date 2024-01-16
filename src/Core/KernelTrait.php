@@ -373,7 +373,7 @@ trait KernelTrait
             Runtime::_()->clear();
             $this->_Phase(static::class);
         }
-        Runtime::_()->lastPhase = $phase;
+        Runtime::_()->last_phase = $phase;
         Runtime::_()->clear();
     }
     protected function runExtentions()
