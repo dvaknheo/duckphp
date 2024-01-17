@@ -158,7 +158,8 @@ class Console extends ComponentBase
         }
         $method = $this->options['cli_command_method_prefix'].$method;
         if ($name === '') {
-            $class = method_exists($this->context_class ?? '', $method) ? $this->context_class : $this->options['cli_default_command_class'];
+            $context_class = get_class($this->context()); //this to fix
+            $class = method_exists($context_class ?? '', $method) ? $context_class : $this->options['cli_default_command_class'];
         } else {
             $name = str_replace('/', '\\', $name);
             
