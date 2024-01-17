@@ -219,6 +219,7 @@ class CoreHelper extends ComponentBase
     public function _ShowJson($ret)
     {
         SystemWrapper::_()->_header('Content-Type:application/json; charset=utf-8');
+        SystemWrapper::_()->_header('Cache-Control: no-store, no-cache, must-revalidate');
         echo static::_()->_Json($ret);
     }
     public function _Show302($url)

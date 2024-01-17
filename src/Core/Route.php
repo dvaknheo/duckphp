@@ -478,7 +478,7 @@ trait Route_UrlManager
         $document_root = rtrim($_SERVER['DOCUMENT_ROOT'], '/');
         //$document_root =  !empty($document_root)?$document_root:'/';
         $basepath = substr(rtrim($_SERVER['SCRIPT_FILENAME'], '/'), strlen($document_root));
-        $basepath = str_replace('\\','/',$basepath);
+        $basepath = str_replace('\\', '/', $basepath);
         $basepath = ($basepath === '') ? '/' : $basepath;
         /* something wrong ?
         if (substr($basepath, -strlen('/index.php'))==='/index.php') {
