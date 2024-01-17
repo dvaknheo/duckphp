@@ -90,7 +90,6 @@ PHP 有个函数 assert ， ThrowOn 和他逻辑相反。ThrowOn的方式会更�
 
 这个方法的作用是用于提供第三方异常类的时候。让人无缝处理异常类。
 
-* `public static function Proxy($ex)`
 
 throw new static($ex->getMessage, $ex->getCode());
 

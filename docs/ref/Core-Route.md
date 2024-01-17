@@ -142,6 +142,7 @@
 
     protected function adjustMethod($method, $ref)
 
+    protected function getCallbackFromClassAndMethod($full_class, $method, $path_info)
 
     protected function adjustClassBaseName($path_info)
 
@@ -262,6 +263,7 @@ if(!$flag){
 修订版本：
 
 修订时间：
+
 
 
 

@@ -1,4 +1,4 @@
-# DuckPhp\Core\SingletonTrait
+# DuckPhp\Fondation\SimpleSingleton
 [toc]
 
 ## 简介
