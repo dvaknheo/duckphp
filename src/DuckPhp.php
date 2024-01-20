@@ -118,8 +118,9 @@ class DuckPhp extends App
     public function install($options, $parent_options = [])
     {
         if ($this->options['ext_options_file_enable']) {
+            $options = ExtOptionsLoader::_()->loadExtOptions(true, $this);
             $options['install'] = DATE(DATE_ATOM);
-            ExtOptionsLoader::_()->saveExtOptions($options);
+            ExtOptionsLoader::_()->saveExtOptions($options, $this);
         }
         if ($this->options['sql_dump_enable'] ?? false) {
             SqlDumper::_()->init($this->options, $this);
