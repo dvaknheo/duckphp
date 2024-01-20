@@ -73,7 +73,7 @@ class Console extends ComponentBase
             }
             $key = $m[1];
             $line = str_replace('{'.$key.'}', $options[$key] ?? '', $line);
-            fputs($fp_out, $line);
+            fputs($fp_out, $line.' ');
             $input = trim((string)fgets($fp_in));
             if ($input === '') {
                 $input = $options[$key] ?? '';

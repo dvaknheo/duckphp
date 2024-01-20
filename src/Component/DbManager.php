@@ -64,6 +64,10 @@ class DbManager extends ComponentBase
             $this->database_config_list = $database_list ?? $this->database_config_list;
         }
     }
+    public function getDatabaseConfigList()
+    {
+        return $this->database_config_list;
+    }
     public static function Db($tag = null)
     {
         return static::_()->_Db($tag);

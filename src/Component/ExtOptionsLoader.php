@@ -11,13 +11,7 @@ use DuckPhp\Core\ComponentBase;
 class ExtOptionsLoader extends ComponentBase
 {
     public static $all_ext_options;
-
-    public function installWithExtOptions($class, $options)
-    {
-        $options['install'] = DATE(DATE_ATOM);
-        $this->options = array_replace_recursive($this->options, $options);
-        $this->saveExtOptions($class, $options);
-    }
+    
     protected function get_ext_options_file()
     {
         $full_file = App::Root()->options['ext_options_file'];
@@ -44,23 +38,28 @@ class ExtOptionsLoader extends ComponentBase
         self::$all_ext_options = $all_ext_options;
         return self::$all_ext_options;
     }
-    public function loadExtOptions()
+    public function loadExtOptions($force = false, $class = null)
     {
-        $class = App::Phase();
-        $all_options = $this->get_all_ext_options();
+        $class = $class ?? get_class(App::Current());
+        $class = is_string($class)?$class:get_object($class);
+        $all_options = $this->get_all_ext_options($force);
         $options = $all_options[$class] ?? [];
-        App::Current()->options = array_replace_recursive(App::Current()->options, $options);
+        $class::_()->options = array_replace_recursive($class::_()->options, $options);
+        return $options;
     }
-    protected function saveExtOptions($class, $options)
+    public function saveExtOptions($options, $class = null )
     {
-        $full_file = $this->get_ext_options_file();
+        $class = $class ?? get_class(App::Current());
+        $class = is_string($class)?$class:get_object($class);
         
-        $all_options = $this->get_all_ext_options(true);
-        $all_options[$class] = $options;
+        $full_file = $this->get_ext_options_file();
+        static::$all_ext_options = $this->get_all_ext_options(true);
+        static::$all_ext_options[$class] = $options;
         
         $string = "<"."?php //". "regenerate by " . __CLASS__ . '->'.__FUNCTION__ ." at ". DATE(DATE_ATOM) . "\n";
-        $string .= "return ".var_export($all_options, true) .';';
+        $string .= "return ".var_export(static::$all_ext_options, true) .';';
         file_put_contents($full_file, $string);
+        
         clearstatcache();
     }
 }

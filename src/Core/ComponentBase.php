@@ -44,6 +44,12 @@ class ComponentBase // implements ComponentInterface
         $this->is_inited = true;
         return $this;
     }
+    public function reInit(array $options, ?object $context = null)
+    {
+        $options = array_replace_recursive($this->options, $options);
+        $options['force_new_init'] = true;
+        return $this->init($options, $context);
+    }
     public function isInited(): bool
     {
         return $this->is_inited;

@@ -91,8 +91,9 @@ class DuckPhp extends App
         RedisManager::_()->init($this->options, $this);
         RouteHookRouteMap::_()->init($this->options, $this);
         RouteHookRewrite::_()->init($this->options, $this);
+        //
         RouteHookResource::_()->init($this->options, $this);
-        
+        //
         if (PHP_SAPI === 'cli') {
             if ($this->is_root) {
                 DuckPhpCommand::_()->init($this->options, $this);
@@ -117,7 +118,8 @@ class DuckPhp extends App
     public function install($options, $parent_options = [])
     {
         if ($this->options['ext_options_file_enable']) {
-            ExtOptionsLoader::_()->installWithExtOptions(static::class, $options);
+            $options['install'] = DATE(DATE_ATOM);
+            ExtOptionsLoader::_()->saveExtOptions($options);
         }
         if ($this->options['sql_dump_enable'] ?? false) {
             SqlDumper::_()->init($this->options, $this);
