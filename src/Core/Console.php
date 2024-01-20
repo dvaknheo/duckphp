@@ -211,13 +211,13 @@ class Console extends ComponentBase
         foreach ($t as $class => $alias) {
             $data = $this->getCommandsByClass($class);
             $ret['commands'][$class] = $data;
-            if ($class === $this->context_class) {
-            }
         }
+        
+        $context_class =get_class(App::_());
         $default = class_exists($this->options['cli_default_command_class']) ? $this->getCommandsByClass($this->options['cli_default_command_class']) :[];
-        $default2 = $this->context_class ? $this->getCommandsByClass($this->context_class) : [];
+        $default2 = $context_class ? $this->getCommandsByClass($context_class) : [];
         $default2 = array_map(function ($v) {
-            return "\e[32;1m*\e[0m".$v;
+            return "\e[32;1m* \e[0m".$v;
         }, $default2);
         $default = array_merge($default, $default2);
         
@@ -233,6 +233,7 @@ class Console extends ComponentBase
         // 这里要移出去
         $info = $this->getCommandGroupInfo();
         $str = '';
+        $context_class = get_class(App::_());
         foreach ($info['commands'] as $class => $v) {
             $class_alias = $info['alias'][$class] ?? null;
             if ($class === '') {
@@ -250,8 +251,8 @@ class Console extends ComponentBase
                 $cmd = "\e[32;1m".$alias. str_pad($cmd, 7)."\033[0m";
                 $str .= "  $cmd $desc\n";
             }
-            if ($class === '' && $this->context_class) {
-                $str .= "  \e[32;1m*\e[0m is overrided by '{$this->context_class}'.\n";
+            if ($class === '' && $context_class) {
+                $str .= "  \e[32;1m*\e[0m is overrided by '{$context_class}'.\n";
             }
         }
         return $str;
