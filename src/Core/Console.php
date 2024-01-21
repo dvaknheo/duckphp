@@ -65,7 +65,7 @@ class Console extends ComponentBase
         
         $lines = explode("\n", trim($desc));
         foreach ($lines as $line) {
-            $line = trim($line);
+            $line = rtrim($line).' ';
             $flag = preg_match('/\{(.*?)\}/', $line, $m);
             if (!$flag) {
                 fputs($fp_out, $line."\n");
@@ -73,7 +73,7 @@ class Console extends ComponentBase
             }
             $key = $m[1];
             $line = str_replace('{'.$key.'}', $options[$key] ?? '', $line);
-            fputs($fp_out, $line.' ');
+            fputs($fp_out, $line);
             $input = trim((string)fgets($fp_in));
             if ($input === '') {
                 $input = $options[$key] ?? '';
@@ -213,7 +213,7 @@ class Console extends ComponentBase
             $ret['commands'][$class] = $data;
         }
         
-        $context_class =get_class(App::_());
+        $context_class = get_class(App::_());
         $default = class_exists($this->options['cli_default_command_class']) ? $this->getCommandsByClass($this->options['cli_default_command_class']) :[];
         $default2 = $context_class ? $this->getCommandsByClass($context_class) : [];
         $default2 = array_map(function ($v) {
@@ -230,7 +230,7 @@ class Console extends ComponentBase
     }
     public function getCommandListInfo()
     {
-        // 这里要移出去
+        //TODO: Move out
         $info = $this->getCommandGroupInfo();
         $str = '';
         $context_class = get_class(App::_());

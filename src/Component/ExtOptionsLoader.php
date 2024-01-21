@@ -47,7 +47,7 @@ class ExtOptionsLoader extends ComponentBase
         $class::_()->options = array_replace_recursive($class::_()->options, $options);
         return $options;
     }
-    public function saveExtOptions($options, $class = null )
+    public function saveExtOptions($options, $class = null)
     {
         $class = $class ?? get_class(App::Current());
         $class = is_string($class)?$class:get_class($class);

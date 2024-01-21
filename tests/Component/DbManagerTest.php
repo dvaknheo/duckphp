@@ -25,7 +25,7 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         ];
         DbManager::_()->init($options,App::_());
         DbManager::_(new DbManager());
-        
+        DbManager::_()->getDatabaseConfigList();
         $options=[
 
         'db_before_get_object_handler'=>[null,'beforeGet'],

@@ -22,10 +22,11 @@ class ExtOptionsLoaderTest extends \PHPUnit\Framework\TestCase
         ];
         DuckPhpEOL::_()->init($options);
         DuckPhpEOLChild::Phase(DuckPhpEOLChild::class);
-        ExtOptionsLoader::_()->loadExtOptions(DuckPhpEOLChild::class);
+        ExtOptionsLoader::_()->loadExtOptions(false, DuckPhpEOLChild::class);
         DuckPhpEOLChild::_()->install(['d'=>DATE(DATE_ATOM)]);
-        ExtOptionsLoader::_()->loadExtOptions(DuckPhpEOLChild::class);
-        ExtOptionsLoader::_()->loadExtOptions(DuckPhpEOLChild::class);
+        ExtOptionsLoader::_()->loadExtOptions(false, DuckPhpEOLChild::class);
+        ExtOptionsLoader::_()->loadExtOptions(true, DuckPhpEOLChild::class);
+        
         @unlink($path.'config/ExtOptionsLoader.config.php');
         \LibCoverage\LibCoverage::End();
     }

@@ -46,7 +46,6 @@ class ComponentBase // implements ComponentInterface
     }
     public function reInit(array $options, ?object $context = null)
     {
-        $options = array_replace_recursive($this->options, $options);
         $options['force_new_init'] = true;
         return $this->init($options, $context);
     }

@@ -15,9 +15,9 @@
 ## 方法
 
 ### 公开方法
-    public function installWithExtOptions($class, $options)
+    public function saveExtOptions($options, $class = null)
 
-    public function loadExtOptions()
+    public function loadExtOptions($force = false, $class = null)
 
 ### 内部方法
 
@@ -35,4 +35,6 @@ install 的时候，调用 installWithExtOptions（static::class, $options) 保�
 Core 组件的初始化在 此之前完成，所以不会被重载。
 
 ## 完毕
+
+
 

@@ -46,3 +46,5 @@ ComponentBase 裁剪你只需要的选项。
 你只需要 override initOptions 和 initContext 即可,组件类的 选项会被 trim 到只需要的组件
 
 ## 完毕
+    public function reInit(array $options, ?object $context = null)
+
