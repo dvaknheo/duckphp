@@ -27,6 +27,7 @@ trait KernelTrait
         'cli_enable' => true,
         'is_debug' => false,
         'ext' => [],
+        'app' => [],
         
         'skip_404' => false,
         'skip_exception_check' => false,
@@ -150,18 +151,9 @@ trait KernelTrait
     }
     protected function initContainer($context)
     {
-        $extApps = [];
-        $exts = $this->options['ext'] ?? [];
-        foreach ($exts as $class => $options) {
-            if (\is_subclass_of($class, self::class)) {
-                //$this->is_simple_mode = false;
-                $extApps[$class] = $class; /** @phpstan-ignore-line */
-            }
-        }
         $this->is_root = !(\is_a($context, self::class));
-        
         //////////////////////////////
-        $apps = [];
+        
         if ($this->is_root) {
             $this->onBeforeCreatePhases();
             $flag = PhaseContainer::ReplaceSingletonImplement();
@@ -174,6 +166,7 @@ trait KernelTrait
             $container->setCurrentContainer(static::class);
         }
         /////////////
+        $apps = [];
         $apps[static::class] = $this;
         if ($this->is_root) {
             $apps[self::class] = $this;
@@ -183,7 +176,10 @@ trait KernelTrait
             $apps[$class] = $this;
         }
         
-        $container->addPublicClasses(array_merge(array_keys($apps), array_keys($extApps)));
+        $container->addPublicClasses(array_keys($apps));
+        $container->addPublicClasses(array_keys($this->options['app']));
+        
+        /////////////
         foreach ($apps as $class => $object) {
             $class = (string)$class;
             $class::_($object);
@@ -237,7 +233,8 @@ trait KernelTrait
         $this->initComponents($this->options, $context);
         
         $this->onBeforeExtentionInit();
-        $this->initExtentions($this->options['ext'] ?? []);
+        $this->initExtentions($this->options['ext'], true);
+        $this->initExtentions($this->options['app'], false);
         $this->onInit();
         if ($this->options['on_init']) {
             ($this->options['on_init'])();
@@ -300,14 +297,15 @@ trait KernelTrait
     {
         return $key ? (static::Root()->setting[$key] ?? $default) : static::Root()->setting;
     }
-    protected function initExtentions(array $exts): void
+    protected function initExtentions(array $exts, $use_main_options): void
     {
         foreach ($exts as $class => $options) {
             try {
-                $options = ($options === true)?$this->options:$options;
-                $options = is_string($options)?$this->options[$options]:$options;
                 if ($options === false) {
                     continue;
+                }
+                if ($options === true) {
+                    $options = ($use_main_options) ? $this->options : ['ext_options_file_enable' => true]; // :(
                 }
                 $class = (string)$class;
                 if (!class_exists($class)) {

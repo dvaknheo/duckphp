@@ -29,7 +29,7 @@ use DuckPhp\Core\Console;
 class DuckPhp extends App
 {
     protected $common_options = [
-        'ext_options_file_enable' => false,
+        'ext_options_file_enable' => true,
         'ext_options_file' => 'config/DuckPhpApps.config.php',
         
         'session_prefix' => null,
