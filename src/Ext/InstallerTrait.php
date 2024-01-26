@@ -9,84 +9,91 @@
 
 namespace DuckPhp\Ext;
 
+use DuckPhp\Component\ExtOptionsLoader;
+use DuckPhp\Component\SqlDumper;
+use DuckPhp\Core\App;
 use DuckPhp\Core\Console;
 use DuckPhp\Core\EventManager;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\PhaseContainer;
-use DuckPhp\Core\App;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\Runtime;
-use DuckPhp\Component\ExtOptionsLoader;
-use DuckPhp\Component\SqlDumper;
 
 trait InstallerTrait
 {
     /**
      * Install. power by DuckPhp\Ext\InstallerTrait
      */
-    public function command_install($force=false)
+    public function command_install($force = false)
     {
         return $this->do_command_install($force);
     }
     /**
      * Config. power by DuckPhp\Ext\InstallerTrait
      */
-    public function command_config($force=false)
+    public function command_config($force = false)
     {
         return $this->do_commmand_config($force);
     }
-    ///////////////
-    protected function do_command_config($force=false)
+    /**
+     * Dump sql. power by DuckPhp\Ext\InstallerTrait
+     */
+    public function command_dumpsql()
     {
-        $args =['need_database'=>false,'need_redis'=>false];
+        //SqlDumper
+    }
+    ///////////////
+    protected function do_command_config($force = false)
+    {
+        $args = ['install_need_database' => false,'install_need_redis' => false];
         
-        $args = $this->rec_apps(App::Current(), function($app,$args){
-            $need_database = isset($app->options['need_database']) ? $app->options['need_database'] : true;
-            $need_redis = isset($app->options['need_redis']) ? $app->options['need_redis'] : true;
-            $args['need_database'] = $args['need_database'] || $need_database;
-            $args['need_redis'] = $args['need_redis'] || $need_redis;
+        $args = $this->rec_apps(App::Current(), function ($app, $args) {
+            $install_need_database = isset($app->options['install_need_database']) ? $app->options['install_need_database'] : true;
+            $install_need_redis = isset($app->options['install_need_redis']) ? $app->options['install_need_redis'] : true;
+            $args['install_need_database'] = $args['install_need_database'] || $install_need_database;
+            $args['install_need_redis'] = $args['install_need_redis'] || $install_need_redis;
             
             return $args;
         }, $args);
-        if ($args['need_database']){
+        if ($args['install_need_database']) {
             echo "need database, config now: ";
             DatabaseInstaller::_()->callResetDatabase($force);
         }
-        if ($args['need_redis']){
+        if ($args['install_need_redis']) {
             echo "need redis, config now   : ";
             RedisInstaller::_()->callResetRedis($force);
         }
         echo "config database, redis done.";
     }
-    protected function do_command_install($force=false)
+    protected function do_command_install($force = false)
     {
-        $classes =[
+        $classes = [
             ExtOptionsLoader::class,
             DatabaseInstaller::class,
             RedisInstaller::class,
             SqlDumper::class,
         ];
         foreach ($classes as $class) {
-            if(!$class::_()->isInited()){
-                $class::_()->init(App::Current()->options,App::Current());
+            if (!$class::_()->isInited()) {
+                $class::_()->init(App::Current()->options, App::Current());
             }
         }
         //////////////////////////
-        if($this->is_root){
-            $this->do_command_config($force=false);
+        if ($this->is_root) {
+            $this->do_command_config($force = false);
         }
         //////////////////////////
         
         echo "Installing App (".get_class($this)."):\n";
         
         $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, $this);
-        $desc = $this->options['install_input_desc']??'';
-        $desc ="----\n".$desc."\n----\n";
-        $default_options  = $this->options['install_options'] ??[];
-        $default_options = array_replace_recursive($this->options,$ext_options,$default_options);
+        $desc = $this->options['install_input_desc'] ?? '';
+        $desc = "----\n".$desc."\n----\n";
+        $default_options = $this->options['install_options'] ?? [];
+        $default_options = array_replace_recursive($this->options, $ext_options, $default_options);
         $input_options = Console::_()->readLines($default_options, $desc);
         
-        $ext_options = array_replace_recursive($ext_options,$input_options);
+        $ext_options = array_replace_recursive($ext_options, $input_options);
         $this->options = array_replace_recursive($this->options, $ext_options);
         
         //SqlDumper::_()->run();
@@ -101,17 +108,17 @@ trait InstallerTrait
             echo "\nInstall child apps\n----------------\n";
         }
         ///////////////////////////
-        foreach($this->options['app'] as $app => $options){
+        foreach ($this->options['app'] as $app => $options) {
             $last_phase = App::Phase($app);
-            try{
+            try {
                 $app::_()->command_install($force); //configed?,child
-            }catch(\Exception $ex){
+            } catch (\Exception $ex) {
                 $msg = $ex->getErrorMesage();
                 var_dump("Install failed: $msg \n");
             }
             App::Phase($last_phase);
         }
-        if($this->is_root){
+        if ($this->is_root) {
             echo "Install All Done.\n";
         }
         return;
@@ -126,11 +133,11 @@ trait InstallerTrait
         return;
     }
     //////////////////
-    protected function rec_apps($object,$callback, $args)
+    protected function rec_apps($object, $callback, $args)
     {
-        $args = $callback($object,$args);
+        $args = $callback($object, $args);
         foreach ($object->options['app'] as $app => $options) {
-            $args = $this->rec_apps($app::_(),$callback,$args);
+            $args = $this->rec_apps($app::_(), $callback, $args);
         }
         return $args;
     }

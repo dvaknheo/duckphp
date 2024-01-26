@@ -5,8 +5,8 @@
  */
 namespace DuckPhp\Ext;
 
-use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\ExtOptionsLoader;
+use DuckPhp\Component\RedisManager;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Console;
@@ -56,7 +56,7 @@ class RedisInstaller extends ComponentBase
 EOT;
     
             $options = array_merge($ref_database_list[$j] ?? [], $options);
-            $options = array_merge(['host' => '127.0.0.1','port' => '6379','select'=>1], $options);
+            $options = array_merge(['host' => '127.0.0.1','port' => '6379','select' => 1], $options);
             $options = Console::_()->readLines($options, $desc);
             
             list($flag, $error_string) = $this->checkRedis($options);

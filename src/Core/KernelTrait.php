@@ -177,7 +177,7 @@ trait KernelTrait
         }
         
         $container->addPublicClasses(array_keys($apps));
-        $container->addPublicClasses(array_keys($this->options['app']));
+        $container->addPublicClasses(array_keys($this->options['app']??[]));
         
         /////////////
         foreach ($apps as $class => $object) {
@@ -233,8 +233,8 @@ trait KernelTrait
         $this->initComponents($this->options, $context);
         
         $this->onBeforeExtentionInit();
-        $this->initExtentions($this->options['ext'], true);
-        $this->initExtentions($this->options['app'], false);
+        $this->initExtentions($this->options['ext']??[], true);
+        $this->initExtentions($this->options['app']??[], false);
         $this->onInit();
         if ($this->options['on_init']) {
             ($this->options['on_init'])();
