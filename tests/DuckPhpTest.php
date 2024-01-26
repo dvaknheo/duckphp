@@ -29,7 +29,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
             'mode_no_path_info'=>true,
             'path_view'=>$path_view,
             'path_info_compact_enable'=>true,
-            'sql_dump_enable'=>true,
+            'controller_resource_prefix'=>'',
         ];
         DuckPhp::_()->init($options);
         \DuckPhp\Core\SystemWrapper::_()->_system_wrapper_replace([
