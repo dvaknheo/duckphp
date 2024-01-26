@@ -39,8 +39,8 @@ class DuckPhp extends App
         'sql_dump_enable' => false,
         'class_admin' => '',
         'class_user' => '',
-        'install_need_db' => false,
-        'install_need_redis' => false,
+        //'install_need_db' => true,
+        //'install_need_redis' => false,
         
         //*
         // 'path_config' => 'config',
@@ -91,9 +91,9 @@ class DuckPhp extends App
         RedisManager::_()->init($this->options, $this);
         RouteHookRouteMap::_()->init($this->options, $this);
         RouteHookRewrite::_()->init($this->options, $this);
-        //
-        RouteHookResource::_()->init($this->options, $this);
-        //
+        if (isset($this->options['controller_resource_prefix'])) {
+            RouteHookResource::_()->init($this->options, $this);
+        }
         if (PHP_SAPI === 'cli') {
             if ($this->is_root) {
                 DuckPhpCommand::_()->init($this->options, $this);
@@ -113,18 +113,5 @@ class DuckPhp extends App
         }
         
         return $this;
-    }
-    ////////////////////////////////////////////
-    public function install($options, $parent_options = [])
-    {
-        if ($this->options['ext_options_file_enable']) {
-            $options = ExtOptionsLoader::_()->loadExtOptions(true, $this);
-            $options['install'] = DATE(DATE_ATOM);
-            ExtOptionsLoader::_()->saveExtOptions($options, $this);
-        }
-        if ($this->options['sql_dump_enable'] ?? false) {
-            SqlDumper::_()->init($this->options, $this);
-            SqlDumper::_()->install();
-        }
     }
 }

@@ -38,25 +38,6 @@ trait InstallerTrait
     ///////////////
     protected function do_command_config($force=false)
     {
-        DatabaseInstaller::_()->callResetDatabase($force);
-        RedisInstaller::_()->callResetRedis($force);
-        echo "config database, redis done.";
-    }
-    protected function do_command_install($force=false)
-    {
-        $classes =[
-            ExtOptionsLoader::class,
-            DatabaseInstaller::class,
-            RedisInstaller::class,
-            SqlDumper::class,
-        ];
-        foreach ($classes as $class) {
-            if(!$class::_()->isInited()){
-                $class::_()->init(App::Current()->options,App::Current());
-            }
-        }
-        //////////////////////////
-        if($this->is_root){
         $args =['need_database'=>false,'need_redis'=>false];
         
         $args = $this->rec_apps(App::Current(), function($app,$args){
@@ -75,36 +56,49 @@ trait InstallerTrait
             echo "need redis, config now   : ";
             RedisInstaller::_()->callResetRedis($force);
         }
+        echo "config database, redis done.";
+    }
+    protected function do_command_install($force=false)
+    {
+        $classes =[
+            ExtOptionsLoader::class,
+            DatabaseInstaller::class,
+            RedisInstaller::class,
+            SqlDumper::class,
+        ];
+        foreach ($classes as $class) {
+            if(!$class::_()->isInited()){
+                $class::_()->init(App::Current()->options,App::Current());
+            }
+        }
+        //////////////////////////
+        if($this->is_root){
+            $this->do_command_config($force=false);
         }
         //////////////////////////
         
-        echo "Installing App(".get_class($this)."):\n";
+        echo "Installing App (".get_class($this)."):\n";
         
         $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, $this);
-
- $desc = <<<EOT
-----
-aa
-----    
-EOT;
-$default_options  = [
-    //
-];
-        //$default_options =array_replace_resc($this->options);
+        $desc = $this->options['install_input_desc']??'';
+        $desc ="----\n".$desc."\n----\n";
+        $default_options  = $this->options['install_options'] ??[];
+        $default_options = array_replace_recursive($this->options,$ext_options,$default_options);
         $input_options = Console::_()->readLines($default_options, $desc);
         
-        //sqldump
-        //routehookrewrite;
+        $ext_options = array_replace_recursive($ext_options,$input_options);
+        $this->options = array_replace_recursive($this->options, $ext_options);
         
-        //////
+        //SqlDumper::_()->run();
+        //RouteHookrewrite::_()->cloneResource($force,$info);
         
-        $options['install'] = DATE(DATE_ATOM);
-        //ExtOptionsLoader::_()->saveExtOptions($options, $this);
-        SqlDumper::_()->install();
-        
+        $this->do_install($ext_options);
+        $ext_options['install'] = DATE(DATE_ATOM);
+        ExtOptionsLoader::_()->saveExtOptions($ext_options, $this);
+        $this->on_install();
         
         if (!empty($this->options['app'])) {
-            echo "\nApp Version Install Done , install child Apps\n----------------\n";
+            echo "\nInstall child apps\n----------------\n";
         }
         ///////////////////////////
         foreach($this->options['app'] as $app => $options){
@@ -122,8 +116,13 @@ $default_options  = [
         }
         return;
     }
+    protected function do_install($ext_options)
+    {
+        //
+    }
     protected function on_install()
     {
+        var_dump($this->options);
         return;
     }
     //////////////////
