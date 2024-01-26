@@ -144,7 +144,9 @@ class Console extends ComponentBase
                 throw new \ReflectionException("Command Need Parameter: {$name}\n", -2);
             }
         }
-        
+        if ($class!==$this->options['cli_default_command_class']) {
+            App::Phase($class); //-- ugly
+        }
         $ret = $reflect->invokeArgs($object, $args);
         return $ret;
     }

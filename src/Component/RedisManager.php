@@ -64,6 +64,10 @@ class RedisManager extends ComponentBase
     {
         return static::_()->getServer($tag);
     }
+    public function getRedisConfigList()
+    {
+        return $this->redis_config_list;
+    }
     public function getServer($tag = 0)
     {
         if (!isset($this->pool[$tag])) {

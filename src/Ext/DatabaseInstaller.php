@@ -90,7 +90,7 @@ EOT;
             return $options;
         }
         $dsn = $options['dsn'];
-        $data = substr($dsn, strlen($this->options['driver'].':'));
+        $data = substr($dsn, strlen($this->options['database_input_driver'].':'));
         $a = explode(';', trim($data, ';'));
         
         $t = array_map(function ($v) {
