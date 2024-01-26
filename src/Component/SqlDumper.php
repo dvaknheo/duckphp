@@ -27,7 +27,7 @@ class SqlDumper extends ComponentBase
         'sql_dump_install_drop_old_table' => false,
         
     ];
-    public function run()
+    public function dump()
     {
         $data = $this->getData();
         $this->save($data);
@@ -97,7 +97,7 @@ class SqlDumper extends ComponentBase
             if ($this->options['sql_dump_include_tables_by_model']) {
                 $tables = $this->searchTables();
             }
-            $tables = array_values(array_unique(array_merge($this->options['sql_dump_include_tables'])));
+            $tables = array_values(array_unique(array_merge($tables,$this->options['sql_dump_include_tables'])));
         }
         $tables = array_diff($tables, $this->options['sql_dump_exclude_tables']);
         foreach ($tables as $table) {
@@ -188,7 +188,7 @@ class SqlDumper extends ComponentBase
         $ret = [];
         foreach ($models as $k) {
             try {
-                $class = $namespace.$k;
+                $class = str_replace("/","\\",$namespace.'/Model'.substr($k,strlen($path)));
                 $ret[] = $class::_()->table();
             } catch (\Throwable $ex) {
             }
@@ -199,15 +199,13 @@ class SqlDumper extends ComponentBase
     protected function searchModelClasses($path)
     {
         $ret = [];
-        
-        $setting_file = !empty($setting_file) ? $path.$setting_file . '.php' : '';
         $flags = \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::UNIX_PATHS | \FilesystemIterator::FOLLOW_SYMLINKS ;
         $directory = new \RecursiveDirectoryIterator($path, $flags);
         $it = new \RecursiveIteratorIterator($directory);
         $regex = new \RegexIterator($it, '/^.+\.php$/i', \RecursiveRegexIterator::MATCH);
         foreach ($regex as $k => $v) {
-            $k = substr($path, 0, -4);  // = getSubPathName()
-            $ret[] = $k;
+            $v = substr($v, 0, -4);  // = getSubPathName()
+            $ret[] = $v;
         }
         return $ret;
     }
