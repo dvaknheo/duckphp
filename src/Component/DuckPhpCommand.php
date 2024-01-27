@@ -12,12 +12,6 @@ use DuckPhp\HttpServer\HttpServer;
 
 class DuckPhpCommand extends ComponentBase
 {
-    protected $context_class = null;
-    //@override
-    protected function initContext(object $context)
-    {
-        $this->context_class = get_class($context);
-    }
     /**
      * create new project in current diretory. --help for help
      */
@@ -31,7 +25,7 @@ class DuckPhpCommand extends ComponentBase
     public function command_run()
     {
         $options = Console::_()->getCliParameters();
-        $options['http_app_class'] = $this->context_class;
+        $options['http_app_class'] = get_class($this->context());
         $options['path'] = $this->context()->options['path'];
         if (!empty($options['http_server'])) {
             /** @var string */

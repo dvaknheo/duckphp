@@ -3,21 +3,11 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-// MAIN FILE
-//dvaknheo@github.com
-//OK，Lazy
-
 namespace DuckPhp\Ext;
 
 use DuckPhp\Component\ExtOptionsLoader;
 use DuckPhp\Component\SqlDumper;
 use DuckPhp\Core\App;
-use DuckPhp\Core\Console;
-use DuckPhp\Core\EventManager;
-use DuckPhp\Core\ExceptionManager;
-use DuckPhp\Core\PhaseContainer;
-use DuckPhp\Core\Route;
-use DuckPhp\Core\Runtime;
 
 trait InstallerTrait
 {
