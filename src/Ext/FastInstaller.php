@@ -8,32 +8,17 @@ namespace DuckPhp\Ext;
 use DuckPhp\Component\ExtOptionsLoader;
 use DuckPhp\Component\SqlDumper;
 use DuckPhp\Core\App;
+use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\Console;
+use DuckPhp\Ext\DatabaseInstaller;
+use DuckPhp\Ext\RedisInstaller;
 
-trait InstallerTrait
+class FastInstaller extends ComponentBase
 {
-    /**
-     * Install. power by DuckPhp\Ext\InstallerTrait
-     */
-    public function command_install($force = false)
-    {
-        return $this->do_command_install($force);
-    }
-    /**
-     * Config. power by DuckPhp\Ext\InstallerTrait
-     */
-    public function command_config($force = false)
-    {
-        return $this->do_commmand_config($force);
-    }
-    /**
-     * Dump sql. power by DuckPhp\Ext\InstallerTrait
-     */
-    public function command_dumpsql()
-    {
-        //SqlDumper
-    }
+    public $options = [
+    ];
     ///////////////
-    protected function do_command_config($force = false)
+    public function doConfig($force = false)
     {
         $args = ['install_need_database' => false,'install_need_redis' => false];
         
@@ -55,7 +40,7 @@ trait InstallerTrait
         }
         echo "config database, redis done.";
     }
-    protected function do_command_install($force = false)
+    private function initComponents()
     {
         $classes = [
             ExtOptionsLoader::class,
@@ -68,59 +53,77 @@ trait InstallerTrait
                 $class::_()->init(App::Current()->options, App::Current());
             }
         }
+    }
+    public function doDebug()
+    {
+        $args = Console::_()->getCliParameters();
+        $is_off = $args['off'] ?? false;
+        $is_debug = !$is_off;
+        $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, App::Current());
+        $ext_options['is_debug'] = $is_debug;
+        ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
+        App::Current()->options['is_debug'] = $is_debug;
+        if ($is_debug) {
+            echo "Debug mode has turn on. us --off to off\n";
+        } else {
+            echo "Debug mode has turn off.\n";
+        }
+    }
+    public function doInstall($force = false)
+    {
+        $is_root  = App::Current()->isRoot();
+        $app_options = App::Current()->options;
+        $this->initComponents();
+        
         //////////////////////////
-        if ($this->is_root) {
-            $this->do_command_config($force = false);
+        if ($is_root) {
+            $this->doConfig($force = false);
         }
         //////////////////////////
         
-        echo "Installing App (".get_class($this)."):\n";
+        echo "Installing App (".get_class(App::Current())."):\n";
         
-        $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, $this);
-        $desc = $this->options['install_input_desc'] ?? '';
+        $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, App::Current());
+        $desc = $app_options['install_input_desc'] ?? '';
         $desc = "----\n".$desc."\n----\n";
-        $default_options = $this->options['install_options'] ?? [];
-        $default_options = array_replace_recursive($this->options, $ext_options, $default_options);
+        $default_options = $app_options['install_options'] ?? [];
+        $default_options = array_replace_recursive($app_options, $ext_options, $default_options);
         $input_options = Console::_()->readLines($default_options, $desc);
         
         $ext_options = array_replace_recursive($ext_options, $input_options);
-        $this->options = array_replace_recursive($this->options, $ext_options);
+        $app_options = array_replace_recursive($app_options, $ext_options);
         
         //SqlDumper::_()->run();
         //RouteHookrewrite::_()->cloneResource($force,$info);
         
-        $this->do_install($ext_options);
+        //$this->doInstallMore($ext_options);
         $ext_options['install'] = DATE(DATE_ATOM);
-        ExtOptionsLoader::_()->saveExtOptions($ext_options, $this);
-        $this->on_install();
+        ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
         
-        if (!empty($this->options['app'])) {
+        if (!empty($app_options['app'])) {
             echo "\nInstall child apps\n----------------\n";
         }
         ///////////////////////////
-        foreach ($this->options['app'] as $app => $options) {
+        foreach ($app_options['app'] as $app => $options) {
             $last_phase = App::Phase($app);
             try {
-                $app::_()->command_install($force); //configed?,child
+                $app::_()->doInstall($force); //configed?,child
             } catch (\Exception $ex) {
                 $msg = $ex->getErrorMesage();
-                var_dump("Install failed: $msg \n");
+                echo "\Install failed: $msg \n";
             }
             App::Phase($last_phase);
         }
-        if ($this->is_root) {
-            echo "Install All Done.\n";
+        
+        $this->onInstall();
+        if ($is_root) {
+            echo "\---- Install All Done.\n";
         }
         return;
     }
-    protected function do_install($ext_options)
+    protected function onInstall()
     {
-        //
-    }
-    protected function on_install()
-    {
-        var_dump($this->options);
-        return;
+        //for override;
     }
     //////////////////
     protected function rec_apps($object, $callback, $args)
