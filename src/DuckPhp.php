@@ -114,4 +114,19 @@ class DuckPhp extends App
         
         return $this;
     }
+    /*
+    public function command_debug($off = false)
+    {
+        $is_debug = !$is_off;
+        $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, $this);
+        $ext_options['is_debug'] = $is_debug;
+        ExtOptionsLoader::_()->saveExtOptions($ext_options, $this);
+        $this->options['is_debug'] = $is_debug;
+        if ($is_debug) {
+            echo "Debug mode has turn on. us --off to off\n";
+        } else {
+            echo "Debug mode has turn off.\n";
+        }
+    }
+    */
 }

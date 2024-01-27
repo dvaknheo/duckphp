@@ -47,6 +47,7 @@ Usage:
   command [arguments] [options] 
 Options:
   --help            Display this help message
+
 EOT;
         
         $this->command_list();
@@ -81,7 +82,7 @@ EOT;
         echo json_encode($ret);
     }
     /**
-     * fetch a url
+     * fetch a url. --uri=??? ,
      */
     public function command_fetch($uri = '', $post = false)
     {

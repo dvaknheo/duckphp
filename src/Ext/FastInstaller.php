@@ -69,6 +69,20 @@ class FastInstaller extends ComponentBase
             echo "Debug mode has turn off.\n";
         }
     }
+    protected function showHelp()
+    {
+        echo " --help , --config, --force --dump-sql  and more ...\n";
+    }
+    public function doCommandInstall()
+    {
+        $args = Console::_()->getCliParameters();
+        echo "use --help for more info.\n";
+        if($args['help']??false){
+            $this->showHelp();
+        }
+        
+        //$this->doInstall();
+    }
     public function doInstall($force = false)
     {
         $is_root  = App::Current()->isRoot();
