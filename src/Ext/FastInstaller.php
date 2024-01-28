@@ -18,27 +18,35 @@ class FastInstaller extends ComponentBase
     public $options = [
     ];
     ///////////////
-    public function doConfig($force = false)
+    protected function configDatabase($force = false)
     {
-        $args = ['install_need_database' => false,'install_need_redis' => false];
-        
-        $args = $this->rec_apps(App::Current(), function ($app, $args) {
-            $install_need_database = isset($app->options['install_need_database']) ? $app->options['install_need_database'] : true;
-            $install_need_redis = isset($app->options['install_need_redis']) ? $app->options['install_need_redis'] : true;
-            $args['install_need_database'] = $args['install_need_database'] || $install_need_database;
-            $args['install_need_redis'] = $args['install_need_redis'] || $install_need_redis;
-            
-            return $args;
-        }, $args);
-        if ($args['install_need_database']) {
-            echo "need database, config now: ";
-            DatabaseInstaller::_()->callResetDatabase($force);
+        $install_need_database = $this->reduce_apps(App::Current(), function ($app) {
+            return isset($app->options['install_need_database']) ? $app->options['install_need_database'] : true;
+        });
+        if (!$install_need_database) {
+            return;
         }
-        if ($args['install_need_redis']) {
-            echo "need redis, config now   : ";
-            RedisInstaller::_()->callResetRedis($force);
+        if (!$force && App::Root()->options['install_database_configed']??false) {
+            return;
         }
-        echo "config database, redis done.";
+        echo "need database, config now: ";
+        DatabaseInstaller::_()->callResetDatabase($force);
+        App::Root()->options['database_configed'] = true;
+    }
+    protected function configRedis($force = false)
+    {
+        $install_need_redis = $this->reduce_apps(App::Current(), function ($app) {
+            return isset($app->options['install_need_redis']) ? $app->options['install_need_redis'] : false;
+        });
+        if (!$install_need_redis) {
+            return;
+        }
+        if (!$force && App::Root()->options['install_need_redis_configed']??false) {
+            return;
+        }
+        echo "need redis, config now   : ";
+        RedisInstaller::_()->callResetDatabase($force);
+        App::Root()->options['redis_configed'] = true;
     }
     private function initComponents()
     {
@@ -71,7 +79,7 @@ class FastInstaller extends ComponentBase
     }
     protected function showHelp()
     {
-        echo " --help , --config, --force --dump-sql  and more ...\n";
+        echo " --help , --dry  --force --dump-sql  and more ...\n";
     }
     public function doCommandInstall()
     {
@@ -87,33 +95,38 @@ class FastInstaller extends ComponentBase
     {
         $is_root  = App::Current()->isRoot();
         $app_options = App::Current()->options;
-        $this->initComponents();
+        
+        $this->configDatabase();
+        $this->configRedis();
+        
         
         //////////////////////////
-        if ($is_root) {
-            $this->doConfig($force = false);
-        }
-        //////////////////////////
+        $desc = $app_options['install_input_desc'] ?? '';
+        $default_options = $app_options['install_options'] ?? [];
         
         echo "Installing App (".get_class(App::Current())."):\n";
-        
         $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, App::Current());
-        $desc = $app_options['install_input_desc'] ?? '';
+        //validaore
+        
         $desc = "----\n".$desc."\n----\n";
-        $default_options = $app_options['install_options'] ?? [];
         $default_options = array_replace_recursive($app_options, $ext_options, $default_options);
         $input_options = Console::_()->readLines($default_options, $desc);
         
         $ext_options = array_replace_recursive($ext_options, $input_options);
         $app_options = array_replace_recursive($app_options, $ext_options);
         
+        
+        ////[[[[
+        // init_app_options,ext_options, $input_options,$app_options
         //SqlDumper::_()->run();
         //RouteHookrewrite::_()->cloneResource($force,$info);
         
-        //$this->doInstallMore($ext_options);
+        ////]]]]
+        
+        
         $ext_options['install'] = DATE(DATE_ATOM);
         ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
-        
+        App::Current()->options = $app_options;
         if (!empty($app_options['app'])) {
             echo "\nInstall child apps\n----------------\n";
         }
@@ -121,7 +134,7 @@ class FastInstaller extends ComponentBase
         foreach ($app_options['app'] as $app => $options) {
             $last_phase = App::Phase($app);
             try {
-                $app::_()->doInstall($force); //configed?,child
+                $app::_()->command_install();
             } catch (\Exception $ex) {
                 $msg = $ex->getErrorMesage();
                 echo "\Install failed: $msg \n";
@@ -130,9 +143,7 @@ class FastInstaller extends ComponentBase
         }
         
         $this->onInstall();
-        if ($is_root) {
-            echo "\---- Install All Done.\n";
-        }
+        echo "\n---- Install Done.\n";
         return;
     }
     protected function onInstall()
@@ -140,12 +151,18 @@ class FastInstaller extends ComponentBase
         //for override;
     }
     //////////////////
-    protected function rec_apps($object, $callback, $args)
+    protected function reduce_apps($object, $callback)
     {
-        $args = $callback($object, $args);
-        foreach ($object->options['app'] as $app => $options) {
-            $args = $this->rec_apps($app::_(), $callback, $args);
+        $ret = $callback($object);
+        if ($ret) {
+            return true;
         }
-        return $args;
+        foreach ($object->options['app'] as $app => $options) {
+            $args = $this->reduce_apps($app::_(), $callback);
+            if ($ret) {
+                return true;
+            }
+        }
+        return false;
     }
 }

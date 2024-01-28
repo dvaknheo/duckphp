@@ -41,7 +41,8 @@ class DuckPhpCommand extends ComponentBase
     public function command_help()
     {
         echo "Welcome to Use DuckPhp ,version: ";
-        $this->command_version();
+        echo $this->context()->version();
+        echo "\n";
         echo  <<<EOT
 Usage:
   command [arguments] [options] 
@@ -50,39 +51,10 @@ Options:
 
 EOT;
         
-        $this->command_list();
-    }
-    /**
-     * show version
-     */
-    public function command_version()
-    {
-        echo $this->context()->version();
-        echo "\n";
-    }
-    /**
-     * show aviable commands.
-     */
-    public function command_list()
-    {
         echo Console::_()->getCommandListInfo();
     }
     /**
-     * call a function. e.g. namespace/class@method arg1 --parameter arg2
-     */
-    public function command_call()
-    {
-        $args = func_get_args();
-        $cmd = array_shift($args);
-        list($class, $method) = explode('@', $cmd);
-        $class = str_replace('/', '\\', $class);
-        echo "calling $class::_()->$method\n";
-        $ret = Console::_()->callObject($class, $method, $args, Console::_()->getCliParameters());
-        echo "--result--\n";
-        echo json_encode($ret);
-    }
-    /**
-     * fetch a url. --uri=??? ,
+     * fetch a url. --uri=[???] ,--post=[postdata]
      */
     public function command_fetch($uri = '', $post = false)
     {
@@ -95,24 +67,11 @@ EOT;
     }
     ///////////////////////////////////
     /**
-     * show all routes
-     */
-    public function command_routes()
-    {
-        echo "Override this to use to show you project routes .\n";
-    }
-    /**
-     * depoly project.
-     */
-    public function command_depoly()
-    {
-        echo "Override this to use to depoly you project.\n";
-    }
-    /**
-     * run test in you project
+     * override to run test in you project
      */
     public function command_test()
     {
-        echo "Override this to use to test you project.\n";
+        echo "override to run test in you project.\n";
     }
+
 }

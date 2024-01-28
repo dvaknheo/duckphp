@@ -114,7 +114,9 @@ class DuckPhp extends App
         
         return $this;
     }
-    /*
+    /**
+     * switch debug mode
+     */
     public function command_debug($off = false)
     {
         $is_debug = !$is_off;
@@ -128,5 +130,36 @@ class DuckPhp extends App
             echo "Debug mode has turn off.\n";
         }
     }
-    */
+    /**
+     * show version
+     */
+    public function command_version()
+    {
+        echo $this->version();
+        echo "\n";
+    }
+
+    /**
+     * call a function. e.g. namespace/class@method arg1 --parameter arg2
+     */
+    public function command_call()
+    {
+        //call to service
+        // full namespace , service AAService;
+        $args = func_get_args();
+        $cmd = array_shift($args);
+        list($class, $method) = explode('@', $cmd);
+        $class = str_replace('/', '\\', $class);
+        echo "calling $class::_()->$method\n";
+        $ret = Console::_()->callObject($class, $method, $args, Console::_()->getCliParameters());
+        echo "--result--\n";
+        echo json_encode($ret);
+    }
+    /**
+     * show all routes
+     */
+    public function command_routes()
+    {
+        echo "Override this to use to show your project routes .\n";
+    }
 }

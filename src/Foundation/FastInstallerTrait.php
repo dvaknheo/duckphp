@@ -20,13 +20,17 @@ trait FastInstallerTrait
         return FastInstaller::_()->doCommandInstall();
     }
     /**
-     * Debug mode . --on, --off. power by DuckPhp\Foundation\FastInstallerTrait
+     * override me to add a child app.
      */
-    public function command_debug()
+    public function command_require()
     {
-        if (!FastInstaller::_()->isInited()) {
-            FastInstaller::_()->init($this->options, $this);
-        }
-        FastInstaller::_()->doDebug();
+        echo "Todo: to add a child app autoly.\n";
+    }
+    /**
+     * override me to remove a child app.
+     */
+    public function command_remove()
+    {
+        echo "Todo: to remove a child app autoly.\n";
     }
 }
