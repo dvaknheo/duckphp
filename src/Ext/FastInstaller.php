@@ -27,7 +27,7 @@ class FastInstaller extends ComponentBase
         if (!$install_need_database) {
             return;
         }
-        if (!$force && App::Root()->options['install_database_configed']??false) {
+        if (!$force && (App::Root()->options['install_database_configed'] ?? false)) {
             return;
         }
         echo "need database, config now: ";
@@ -112,6 +112,9 @@ and more ...\n";
         $this->configDatabase();
         $this->configRedis();
         
+        if($this->args['dry']){
+            return;
+        }
         //////////////////////////
 
         // inputs
