@@ -6,38 +6,30 @@ use DuckPhp\Db\Db;
 use DuckPhp\DuckPhp;
 use DuckPhp\Ext\DatabaseInstaller;
 
-
-class DbInstallerApp  extends DuckPhp
-{
-    public $options = [
-        'console_enable'=>true,
-        'ext'=> [
-            DatabaseInstaller::class => true,
-        ],
-    ];
-}
-class MyDatabaseInstaller extends DatabaseInstaller
-{
-    
-}
 class DbInstallerConsole extends Console
 {
     public $file_index=99999;
-    
+    public $datas = [];
+    public function setFileContents($datas)
+    {
+        $this->datas =$datas;
+        $this->file_index = 0;
+    }
     public function readLines($options, $desc, $validators = [], $fp_in = null, $fp_out = null)
     {
-        if(!$fp_in){
-            $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(DatabaseInstaller::class);
-            $file = $path_app."input_{$this->file_index}.txt";
-            $fp_in = fopen($file,'r');
-            $file = $path_app."output.txt";
-            $fp_out = fopen($file,'w');
-            $ret = parent::readLines($options, $desc, $validators, $fp_in, $fp_out);
-            $this->file_index++;
-            fclose($fp_in);
-        }else{
-            $ret = parent::readLines($options, $desc, $validators, $fp_in, $fp_out);
+        if($fp_in){
+            return parent::readLines($options, $desc, $validators, $fp_in, $fp_out);
         }
+        $str = $this->datas[$this->file_index];
+        $fp_in = fopen('php://memory','r+');
+        fputs($fp_in, $str);
+        fseek($fp_in,0);
+        $fp_out = fopen('php://temp','w');
+        $ret = parent::readLines($options, $desc, $validators, $fp_in, $fp_out);
+        $this->file_index++;
+        fclose($fp_out);
+        fclose($fp_in);
+        
         return $ret;
     }
     
@@ -66,45 +58,40 @@ class DatabaseInstallerTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(DatabaseInstaller::class);
-        $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(DatabaseInstaller::class);
+        $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
         
         $path_setting = \LibCoverage\LibCoverage::G()->getClassTestPath(Db::class);
         $setting = include $path_setting . 'setting.php';
         $db = $this->makeFromDsn( $setting['database_list'][0], 'mysql');
         
         ////[[[[
-        @unlink($path_app.'DuckPhpApps.config.php');
-        DbInstallerApp::_()->init([
+        @unlink($path_app.'DatabaseInstallerApps.config.php');
+        DuckPhp::_(new DuckPhp())->init([
             'path'=>$path_app,
-            'ext_options_file' => 'DuckPhpApps.config.php',
+            'ext_options_file' => 'DatabaseInstallerApps.config.php',
+            'console_enable'=>true,
+            'ext'=> [
+                DatabaseInstaller::class => true,
+            ],
         ]);
         $options = Console::_()->options;
-        Console::_(DbInstallerConsole::_())->reInit($options,DbInstallerApp::_());
+        Console::_(DbInstallerConsole::_())->reInit($options,DuckPhp::_());
         
         $str= "{$db['host']}\n{$db['port']}\n{$db['dbname']}\n{$db['username']}\n{$db['password']}\n";
-        file_put_contents($path_app."input_0.txt",$str);
-        file_put_contents($path_app."input_1.txt",'N');
-        
-        DbInstallerConsole::_()->file_index=0;
+        DbInstallerConsole::_()->setFileContents([$str,  'N']);
         DatabaseInstaller::_()->callResetDatabase(false);
-        DbInstallerConsole::_()->file_index=0;
+       
+        DbInstallerConsole::_()->setFileContents([$str,  'N']);
         DatabaseInstaller::_()->callResetDatabase(false);
         
-        DbInstallerConsole::_()->file_index=0;
-        
-        $str= "BAD{$db['host']}\n{$db['port']}\n{$db['dbname']}\n{$db['username']}\n{$db['password']}\n";
-        file_put_contents($path_app."input_0.txt",$str);
-        
+        //*
+        $bstr= "BAD{$db['host']}\n{$db['port']}\n{$db['dbname']}\n{$db['username']}\n{$db['password']}\n";
         $str= "{$db['host']}\n{$db['port']}\n{$db['dbname']}\n{$db['username']}\n{$db['password']}\n";
-        file_put_contents($path_app."input_1.txt",$str);
-        file_put_contents($path_app."input_2.txt",'Y');
-        file_put_contents($path_app."input_3.txt",$str);
-        file_put_contents($path_app."input_4.txt",'N');
-
+        
+        DbInstallerConsole::_()->setFileContents([$bstr, $str, 'Y',$str,'N']);
         DatabaseInstaller::_()->callResetDatabase(true);
-        //*/
         ////]]]]
-        //\LibCoverage\LibCoverage::G()->cleanDirectory($path_init);
+        @unlink($path_app.'DatabaseInstallerApps.config.php');
         \LibCoverage\LibCoverage::End(); return;
     }
 }
