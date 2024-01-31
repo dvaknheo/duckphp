@@ -76,9 +76,9 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         
         //*/
         Console::_(new Console())->init([],Console_App::_());
-        Console_App::_()->init(['cli_enable'=>true]);
+        Console_App::_()->init(['cli_enable'=>true,'is_debug'=>true]);
         $_SERVER['argv']=[
-            '-','list',
+            '-','help',  // ------>changed
         ];
         Console::_()->regCommandClass(Console_Command::class,"aa");
         Console::_()->regCommandClass(Console_Command2::class,"aa");
