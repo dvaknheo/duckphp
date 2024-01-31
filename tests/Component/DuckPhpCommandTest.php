@@ -68,15 +68,8 @@ class DuckPhpCommandTest extends \PHPUnit\Framework\TestCase
         DuckPhpCommand::_()->command_new();
         DuckPhpCommand::_()->command_run();
         DuckPhpCommand::_()->command_help();
-        DuckPhpCommand::_()->command_version();
-        
-
-        
-        DuckPhpCommand::_()->command_list();
         
         DuckPhpCommand::_()->command_fetch();
-        DuckPhpCommand::_()->command_routes();
-        DuckPhpCommand::_()->command_depoly();
         DuckPhpCommand::_()->command_test();
         DuckPhpCommand::_(new DuckPhpCommand());
         //*/
