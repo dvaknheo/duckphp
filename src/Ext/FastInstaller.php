@@ -17,6 +17,7 @@ class FastInstaller extends ComponentBase
 {
     public $options = [
     ];
+    protected $args = [];
     ///////////////
     protected function configDatabase($force = false)
     {
@@ -79,54 +80,76 @@ class FastInstaller extends ComponentBase
     }
     protected function showHelp()
     {
-        echo " --help , --dry  --force --dump-sql  and more ...\n";
+        echo "
+--help
+--dry
+--force
+--dump-sql
+and more ...\n";
     }
     public function doCommandInstall()
     {
+        $this->initComponents();
         $args = Console::_()->getCliParameters();
         echo "use --help for more info.\n";
         if($args['help']??false){
             $this->showHelp();
+            return;
         }
-        
-        //$this->doInstall();
+        if($args['dump_sql']??false){
+            //$this->dump_sql;
+            return;
+        }
+        $this->doInstall();
     }
-    public function doInstall($force = false)
+    public function doInstall()
     {
+        $this->args = Console::_()->getCliParameters();
+        $force = $this->args['force']??false;
         $is_root  = App::Current()->isRoot();
         $app_options = App::Current()->options;
         
         $this->configDatabase();
         $this->configRedis();
         
-        
         //////////////////////////
+
+        // inputs
         $desc = $app_options['install_input_desc'] ?? '';
+        $validators = $app_options['install_input_validators'] ?? [];
         $default_options = $app_options['install_options'] ?? [];
         
-        echo "Installing App (".get_class(App::Current())."):\n";
         $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, App::Current());
-        //validaore
-        
-        $desc = "----\n".$desc."\n----\n";
         $default_options = array_replace_recursive($app_options, $ext_options, $default_options);
-        $input_options = Console::_()->readLines($default_options, $desc);
+        
+        
+        $desc = "Installing App (".get_class(App::Current())."):\n";
+        $desc .= "----\n".$desc."\n----\n";
+        if (!$is_root){
+            // 'controller_url_prefix' => 'app/admin/'
+            // 'controller_resource_prefix' => 'res/'
+            //"route prefix: [{x}]" // if parent is solid ,so rolid
+            // resource prefix('./' will change to '') ['{}'];
+        }
+        
+        $input_options = Console::_()->readLines($default_options, $desc, $validators);
         
         $ext_options = array_replace_recursive($ext_options, $input_options);
         $app_options = array_replace_recursive($app_options, $ext_options);
+        App::Current()->options = $app_options;
         
         
-        ////[[[[
-        // init_app_options,ext_options, $input_options,$app_options
-        //SqlDumper::_()->run();
-        //RouteHookrewrite::_()->cloneResource($force,$info);
-        
+        if ($this->args['dry']) {
+            $this->showInfo($input_options,$ext_options);
+            return;
+        }
+        $this->doInstallMore($app_options,$input_options);
+        //FIRE AN event
         ////]]]]
-        
         
         $ext_options['install'] = DATE(DATE_ATOM);
         ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
-        App::Current()->options = $app_options;
+        
         if (!empty($app_options['app'])) {
             echo "\nInstall child apps\n----------------\n";
         }
@@ -145,6 +168,16 @@ class FastInstaller extends ComponentBase
         $this->onInstall();
         echo "\n---- Install Done.\n";
         return;
+    }
+    protected function doInstallMore()
+    {
+        
+        if (!($this->args['skip_sql']??false)) {
+            SqlDumper::_()->install();
+        }
+        if (!($this->args['skip_resource']??false)) {
+            RouteHookrewrite::_()->cloneResource(false,$info);
+        }
     }
     protected function onInstall()
     {
