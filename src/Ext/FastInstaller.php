@@ -22,33 +22,35 @@ class FastInstaller extends ComponentBase
     ///////////////
     protected function configDatabase($force = false)
     {
+        if (!$force && (App::Root()->options['installing_data']['database_configed'] ?? false)) {
+            return;
+        }
         $install_need_database = $this->reduce_apps(App::Current(), function ($app) {
             return isset($app->options['install_need_database']) ? $app->options['install_need_database'] : true;
         });
         if (!$install_need_database) {
             return;
         }
-        if (!$force && (App::Root()->options['install_database_configed'] ?? false)) {
-            return;
-        }
+
         echo "need database, config now: ";
         DatabaseInstaller::_()->callResetDatabase($force);
-        App::Root()->options['database_configed'] = true;
+        App::Root()->options['installing_data']['database_configed'] = true;
     }
     protected function configRedis($force = false)
     {
+        if (!$force && (App::Root()->options['installing_data']['redis_configed'] ?? false)) {
+            return;
+        }
         $install_need_redis = $this->reduce_apps(App::Current(), function ($app) {
             return isset($app->options['install_need_redis']) ? $app->options['install_need_redis'] : false;
         });
         if (!$install_need_redis) {
             return;
         }
-        if (!$force && App::Root()->options['install_need_redis_configed'] ?? false) {
-            return;
-        }
+
         echo "need redis, config now   : ";
-        RedisInstaller::_()->callResetDatabase($force);
-        App::Root()->options['redis_configed'] = true;
+        RedisInstaller::_()->callResetRedis($force);
+        App::Root()->options['installing_data']['redis_configed'] = true;
     }
     private function initComponents()
     {
@@ -70,12 +72,17 @@ class FastInstaller extends ComponentBase
 --help      show this help.
 --configure config such as database, redis only ,--force
 --dry       show options ,do no action. not with childrens.
---force     force install
---dump-sql  dump sql , no with childrens.
+--force     force install.
+--dump-sql  no install. just dump sql for install, no with childrens.
+--skip_sql  skip install sql
+--skip_resource skip copy resource
+
 and more ...\n";
     }
     public function doCommandInstall()
     {
+        App::Root()->options['installing_data'] =  App::Root()->options['installing_data'] ?? [];
+    
         $this->initComponents();
         $args = Console::_()->getCliParameters();
         echo "use --help for more info.\n";
@@ -84,7 +91,7 @@ and more ...\n";
             return;
         }
         if ($args['dump_sql'] ?? false) {
-            //$this->dump_sql;
+            var_dump('dump_sql');
             return;
         }
         $this->doInstall();
@@ -92,17 +99,18 @@ and more ...\n";
     public function doInstall()
     {
         $this->args = Console::_()->getCliParameters();
+        
         $is_root = App::Current()->isRoot();
         $app_options = App::Current()->options;
         
         $this->configDatabase($this->args['force'] ?? false);
         $this->configRedis($this->args['force'] ?? false);
         
-        if ($this->args['--configure']) {
+        if ($this->args['configure']) {
             return;
         }
         //////////////////////////
-
+        
         // inputs
         $desc = $app_options['install_input_desc'] ?? '';
         $validators = $app_options['install_input_validators'] ?? [];
@@ -111,14 +119,12 @@ and more ...\n";
         $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, App::Current());
         $default_options = array_replace_recursive($app_options, $ext_options, $default_options);
         
-        
         $desc = "Installing App (".get_class(App::Current())."):\n";
         $desc .= "----\n".$desc."\n----\n";
+        
         if (!$is_root) {
             // 'controller_url_prefix' => 'app/admin/'
             // 'controller_resource_prefix' => 'res/'
-            //"route prefix: [{controller_url_prefix}]" // if parent is solid ,so rolid
-            // resource prefix('./' will change to '') ['{controller_resource_prefix}'];
         }
         
         $input_options = Console::_()->readLines($default_options, $desc, $validators);
@@ -127,15 +133,15 @@ and more ...\n";
         $app_options = array_replace_recursive($app_options, $ext_options);
         App::Current()->options = $app_options;
         
-        
         if ($this->args['dry']) {
             $this->showHelp($input_options, $ext_options);
             return;
         }
         $this->doInstallMore($app_options, $input_options);
-        //FIRE AN event
+        //TODO  an event
         ////]]]]
         
+        unset($ext_options['install']);
         $ext_options['install'] = DATE(DATE_ATOM);
         ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
         
