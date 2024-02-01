@@ -6,6 +6,7 @@
 namespace DuckPhp\Ext;
 
 use DuckPhp\Component\ExtOptionsLoader;
+use DuckPhp\Component\RouteHookResource;
 use DuckPhp\Component\SqlDumper;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
@@ -42,7 +43,7 @@ class FastInstaller extends ComponentBase
         if (!$install_need_redis) {
             return;
         }
-        if (!$force && App::Root()->options['install_need_redis_configed']??false) {
+        if (!$force && App::Root()->options['install_need_redis_configed'] ?? false) {
             return;
         }
         echo "need redis, config now   : ";
@@ -63,7 +64,7 @@ class FastInstaller extends ComponentBase
             }
         }
     }
-    protected function showHelp()
+    protected function showHelp($app_options = [], $input_options = [])
     {
         echo "
 --help      show this help.
@@ -78,11 +79,11 @@ and more ...\n";
         $this->initComponents();
         $args = Console::_()->getCliParameters();
         echo "use --help for more info.\n";
-        if($args['help']??false){
+        if ($args['help'] ?? false) {
             $this->showHelp();
             return;
         }
-        if($args['dump_sql']??false){
+        if ($args['dump_sql'] ?? false) {
             //$this->dump_sql;
             return;
         }
@@ -91,13 +92,13 @@ and more ...\n";
     public function doInstall()
     {
         $this->args = Console::_()->getCliParameters();
-        $is_root  = App::Current()->isRoot();
+        $is_root = App::Current()->isRoot();
         $app_options = App::Current()->options;
         
-        $this->configDatabase($this->args['force']??false);
-        $this->configRedis($this->args['force']??false);
+        $this->configDatabase($this->args['force'] ?? false);
+        $this->configRedis($this->args['force'] ?? false);
         
-        if($this->args['--configure']){
+        if ($this->args['--configure']) {
             return;
         }
         //////////////////////////
@@ -113,7 +114,7 @@ and more ...\n";
         
         $desc = "Installing App (".get_class(App::Current())."):\n";
         $desc .= "----\n".$desc."\n----\n";
-        if (!$is_root){
+        if (!$is_root) {
             // 'controller_url_prefix' => 'app/admin/'
             // 'controller_resource_prefix' => 'res/'
             //"route prefix: [{controller_url_prefix}]" // if parent is solid ,so rolid
@@ -128,10 +129,10 @@ and more ...\n";
         
         
         if ($this->args['dry']) {
-            $this->showInfo($input_options,$ext_options);
+            $this->showHelp($input_options, $ext_options);
             return;
         }
-        $this->doInstallMore($app_options,$input_options);
+        $this->doInstallMore($app_options, $input_options);
         //FIRE AN event
         ////]]]]
         
@@ -147,7 +148,7 @@ and more ...\n";
             try {
                 $app::_()->command_install();
             } catch (\Exception $ex) {
-                $msg = $ex->getErrorMesage();
+                $msg = $ex->getMessage();
                 echo "\Install failed: $msg \n";
             }
             App::Phase($last_phase);
@@ -157,14 +158,14 @@ and more ...\n";
         echo "\n---- Install Done.\n";
         return;
     }
-    protected function doInstallMore()
+    protected function doInstallMore($app_options = [], $input_options = [])
     {
-        
-        if (!($this->args['skip_sql']??false)) {
+        if (!($this->args['skip_sql'] ?? false)) {
             SqlDumper::_()->install();
         }
-        if (!($this->args['skip_resource']??false)) {
-            RouteHookrewrite::_()->cloneResource(false,$info);
+        if (!($this->args['skip_resource'] ?? false)) {
+            $info = '';
+            RouteHookResource::_()->cloneResource(false, $info);
         }
     }
     protected function onInstall()

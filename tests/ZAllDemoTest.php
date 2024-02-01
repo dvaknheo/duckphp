@@ -1,5 +1,5 @@
 <?php
-namespace tests\DuckPhp;
+namespace tests;
 
 use PHPUnit\Framework\Assert;
 use DuckPhp\HttpServer\HttpServer;
@@ -27,7 +27,7 @@ class ZAllDemoTest extends \PHPUnit\Framework\TestCase
             'test/done'          => 236 ,
             'doc.php'            => 1329 ,
             ''                   => 1385 ,
-            'files'              => 8486 ,
+            'files'              => 8632 ,
             'demo.php'           => 418 ,
             'helloworld.php'     => 11,
             'just-route.php'     => 141,

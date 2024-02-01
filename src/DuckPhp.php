@@ -117,7 +117,7 @@ class DuckPhp extends App
      */
     public function command_debug($off = false)
     {
-        $is_debug = !$is_off;
+        $is_debug = !$off;
         $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, $this);
         $ext_options['is_debug'] = $is_debug;
         ExtOptionsLoader::_()->saveExtOptions($ext_options, $this);

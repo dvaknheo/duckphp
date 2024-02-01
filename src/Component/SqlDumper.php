@@ -97,7 +97,7 @@ class SqlDumper extends ComponentBase
             if ($this->options['sql_dump_include_tables_by_model']) {
                 $tables = $this->searchTables();
             }
-            $tables = array_values(array_unique(array_merge($tables,$this->options['sql_dump_include_tables'])));
+            $tables = array_values(array_unique(array_merge($tables, $this->options['sql_dump_include_tables'])));
         }
         $tables = array_diff($tables, $this->options['sql_dump_exclude_tables']);
         foreach ($tables as $table) {
@@ -188,7 +188,7 @@ class SqlDumper extends ComponentBase
         $ret = [];
         foreach ($models as $k) {
             try {
-                $class = str_replace("/","\\",$namespace.'/Model'.substr($k,strlen($path)));
+                $class = str_replace("/", "\\", $namespace.'/Model'.substr($k, strlen($path)));
                 $ret[] = $class::_()->table();
             } catch (\Throwable $ex) {
             }

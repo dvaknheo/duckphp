@@ -60,8 +60,8 @@ class Console extends ComponentBase
     public function readLines($options, $desc, $validators = [], $fp_in = null, $fp_out = null)
     {
         $ret = [];
-        $fp_in = $fp_in ?? fopen('php://stdin','r'); //\STDIN;//
-        $fp_out = $fp_out ?? fopen('php://stdout','w'); //\STDOUT;//
+        $fp_in = $fp_in ?? fopen('php://stdin', 'r'); //\STDIN;//
+        $fp_out = $fp_out ?? fopen('php://stdout', 'w'); //\STDOUT;//
         
         $lines = explode("\n", trim($desc));
         foreach ($lines as $line) {
