@@ -63,28 +63,14 @@ class FastInstaller extends ComponentBase
             }
         }
     }
-    public function doDebug()
-    {
-        $args = Console::_()->getCliParameters();
-        $is_off = $args['off'] ?? false;
-        $is_debug = !$is_off;
-        $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, App::Current());
-        $ext_options['is_debug'] = $is_debug;
-        ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
-        App::Current()->options['is_debug'] = $is_debug;
-        if ($is_debug) {
-            echo "Debug mode has turn on. us --off to off\n";
-        } else {
-            echo "Debug mode has turn off.\n";
-        }
-    }
     protected function showHelp()
     {
         echo "
---help
---dry
---force
---dump-sql
+--help      show this help.
+--configure config such as database, redis only ,--force
+--dry       show options ,do no action. not with childrens.
+--force     force install
+--dump-sql  dump sql , no with childrens.
 and more ...\n";
     }
     public function doCommandInstall()
@@ -105,14 +91,13 @@ and more ...\n";
     public function doInstall()
     {
         $this->args = Console::_()->getCliParameters();
-        $force = $this->args['force']??false;
         $is_root  = App::Current()->isRoot();
         $app_options = App::Current()->options;
         
-        $this->configDatabase();
-        $this->configRedis();
+        $this->configDatabase($this->args['force']??false);
+        $this->configRedis($this->args['force']??false);
         
-        if($this->args['dry']){
+        if($this->args['--configure']){
             return;
         }
         //////////////////////////
@@ -131,8 +116,8 @@ and more ...\n";
         if (!$is_root){
             // 'controller_url_prefix' => 'app/admin/'
             // 'controller_resource_prefix' => 'res/'
-            //"route prefix: [{x}]" // if parent is solid ,so rolid
-            // resource prefix('./' will change to '') ['{}'];
+            //"route prefix: [{controller_url_prefix}]" // if parent is solid ,so rolid
+            // resource prefix('./' will change to '') ['{controller_resource_prefix}'];
         }
         
         $input_options = Console::_()->readLines($default_options, $desc, $validators);

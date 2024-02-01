@@ -434,7 +434,9 @@ trait Route_UrlManager
     }
     public function _Res($url = null)
     {
-        if (!$this->options['controller_resource_prefix']) {
+        $controller_resource_prefix = $this->options['controller_resource_prefix'];
+        $controller_resource_prefix = ($controller_resource_prefix === './') ? '' : $controller_resource_prefix;
+        if (!$controller_resource_prefix) {
             return $this->_Url($url);
         }
         //
@@ -444,11 +446,11 @@ trait Route_UrlManager
         if ($flag) {
             return $url;
         }
-        $flag = preg_match('/^(https?:\/)?\//', $this->options['controller_resource_prefix'] ?? '');
+        $flag = preg_match('/^(https?:\/)?\//', $controller_resource_prefix ?? '');
         if ($flag) {
-            return $this->options['controller_resource_prefix'].$url;
+            return $controller_resource_prefix.$url;
         }
-        return $this->_Url('').'/'.$this->options['controller_resource_prefix'].$url;
+        return $this->_Url('').'/'.$controller_resource_prefix.$url;
     }
     public function _Domain($use_scheme = false)
     {

@@ -14,6 +14,7 @@ class RouteHookResource extends ComponentBase
     public $options = [
         'path' => '',
         'path_resource' => 'res',
+        'path_document' => 'public',
         'controller_url_prefix' => '',
         'controller_resource_prefix' => '',
     ];
@@ -23,7 +24,9 @@ class RouteHookResource extends ComponentBase
     }
     protected function initContext(object $context)
     {
-        Route::_()->addRouteHook([static::class,'Hook'], 'append-outter');
+        if($this->options['controller_resource_prefix']) {
+            Route::_()->addRouteHook([static::class,'Hook'], 'append-outter');
+        }
         return $this;
     }
     public function _Hook($path_info)
@@ -57,20 +60,27 @@ class RouteHookResource extends ComponentBase
     /////////////////////////////////////////////////////
     public function cloneResource($force = false, &$info = '')
     {
-        $flag = preg_match('/^(https?:)?\/\//', $this->options['controller_resource_prefix'] ?? '');
+        if(!$this->options['controller_resource_prefix']){
+            return;
+        }
+        $controller_resource_prefix = $this->options['controller_resource_prefix'];
+        $controller_resource_prefix = ($controller_resource_prefix === './') ? '' : $controller_resource_prefix;
+        //path_document
+        
+        $flag = preg_match('/^(https?:)?\/\//', $controller_resource_prefix ?? '');
         if ($flag) {
             return;
         }
         //$source = realpath(dirname(__DIR__).'/res/') .'/';
         $source = $this->extendFullFile($this->options['path'], $this->options['path_resource'], '', false);
         
-        $path_dest = $this->options['controller_resource_prefix'];
-        $path_dest = (substr($path_dest, 0, 1) === '/') ? $path_dest : $this->options['controller_url_prefix'].$path_dest;
+        $path_dest = $controller_resource_prefix;
+        $path_dest = (substr($path_dest, 0, 1) === '/') ? $path_dest : $controller_resource_prefix.$path_dest;
         $path_dest = ltrim($path_dest, '/');
         
-        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-        $document_root = $_SERVER['DOCUMENT_ROOT'] ?? '';
-        
+        //$_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+        //$document_root = $_SERVER['DOCUMENT_ROOT'] ?? ''; // TODO
+        $document_root =$this->extendFullFile($this->options['path'], $this->options['path_document'], '', false);
         $this->copy_dir($source, $document_root, $path_dest, $force, $info);
     }
     protected function get_dest_dir($path_parent, $path)

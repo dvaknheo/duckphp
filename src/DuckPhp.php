@@ -39,7 +39,7 @@ class DuckPhp extends App
         'sql_dump_enable' => false,
         'class_admin' => '',
         'class_user' => '',
-        //'install_need_db' => true,
+        //'install_need_database' => true,
         //'install_need_redis' => false,
         
         //*
@@ -84,16 +84,14 @@ class DuckPhp extends App
                 GlobalAdmin::class,
                 GlobalUser::class,
             ]);
+            DbManager::_()->init($this->options, $this);
+            RedisManager::_()->init($this->options, $this);
         }
-        
         Configer::_()->init($this->options, $this);
-        DbManager::_()->init($this->options, $this);
-        RedisManager::_()->init($this->options, $this);
         RouteHookRouteMap::_()->init($this->options, $this);
         RouteHookRewrite::_()->init($this->options, $this);
-        if (isset($this->options['controller_resource_prefix'])) {
-            RouteHookResource::_()->init($this->options, $this);
-        }
+        RouteHookResource::_()->init($this->options, $this);
+        
         if (PHP_SAPI === 'cli') {
             if ($this->is_root) {
                 DuckPhpCommand::_()->init($this->options, $this);
