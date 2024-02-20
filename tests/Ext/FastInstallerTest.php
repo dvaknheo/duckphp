@@ -60,7 +60,6 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(FastInstaller::class);
-        
         $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(FastInstaller::class);
         @mkdir($path_app);
         \LibCoverage\LibCoverage::G()->cleanDirectory($path_app);
@@ -76,6 +75,8 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         
         $_SERVER['argv']=['-','install', "--help", ];
         FiParentApp::_()->run();
+        $_SERVER['argv']=['-','install', "--dump-sql", ];
+        FiParentApp::_()->run();
         
         
         $console_options = Console::_()->options;
@@ -87,9 +88,23 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         
         $_SERVER['argv']=['-','install', "--configure", ];
         FiParentApp::_()->run();
+        FiParentApp::_()->run();
+        //*
+        echo "------------------------";
+        
+        
+        $console_options = Console::_()->options;
+        Console::_(InstallerConsole::_(new InstallerConsole))->reInit($console_options, FiParentApp2::_(new FiParentApp2()));
+        $str= "{$db['host']}\n{$db['port']}\n{$db['dbname']}\n{$db['username']}\n{$db['password']}\n";
+        $str2= "{$rdb['host']}\n{$rdb['port']}\n{$rdb['auth']}\n{$rdb['select']}\n";
+        InstallerConsole::_()->setFileContents([$str,  'N',$str2,'N']);
+        $_SERVER['argv']=['-','install', "--configure", '--force'];
+        FiParentApp2::_()->run();
+        //*/
         //$_SERVER['argv']=['-','install', "--dump-sql", ];
         //FiParentApp::_()->run();
         \LibCoverage\LibCoverage::End();
+        
     }
 }
 class FiParentApp extends DuckPhp
@@ -127,4 +142,27 @@ class FiChildApp extends DuckPhp
         $this->options['path'] = $path_app;
         parent::__construct();
     }
+}
+class FiParentApp2 extends FiParentApp
+{
+    use FastInstallerTrait;
+    
+    public $options = [
+        'is_debug'=>true,
+        'ext_options_file'=>'FiParent2.config.php',
+        'app' => [
+            FiChildApp2::class => [
+                'no_empty'=>true,
+            ]
+        ],
+        'install_need_database'=>false,
+    ];
+}
+class FiChildApp2 extends FiChildApp
+{
+    public $options = [
+        'im child' => true,
+        'install_need_database'=>false,
+        'install_need_redis'=>false,
+    ];
 }

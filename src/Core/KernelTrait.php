@@ -377,12 +377,10 @@ trait KernelTrait
     protected function runExtentions()
     {
         $flag = false;
-        foreach ($this->options['ext'] as $class => $options) {
-            if (\is_subclass_of($class, self::class)) {
-                $flag = $class::_()->run();
-                if ($flag) {
-                    break;
-                }
+        foreach ($this->options['app'] as $class => $options) {
+            $flag = $class::_()->run();
+            if ($flag) {
+                break;
             }
         }
         return $flag;

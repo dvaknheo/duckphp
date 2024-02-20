@@ -69,20 +69,22 @@ class FastInstaller extends ComponentBase
     protected function showHelp($app_options = [], $input_options = [])
     {
         echo "
---help      show this help.
---configure config such as database, redis only ,--force
---dry       show options ,do no action. not with childrens.
---force     force install.
---dump-sql  no install. just dump sql for install, no with childrens.
---skip_sql  skip install sql
---skip_resource skip copy resource
+--help              show this help.
+--configure         config such as database, redis only ,--force
+--dry               show options ,do no action. not with childrens.
+--force             force install.
+--dump-sql          not install, just dump sql for install, no with childrens.
+--skip-sql          skip install sql
+--skip-resource     skip copy resource
+--skip-children     skip child app
 
 and more ...\n";
     }
     public function doCommandInstall()
     {
         App::Root()->options['installing_data'] =  App::Root()->options['installing_data'] ?? [];
-    
+        $this->args = Console::_()->getCliParameters();
+        
         $this->initComponents();
         $args = Console::_()->getCliParameters();
         echo "use --help for more info.\n";
@@ -91,64 +93,74 @@ and more ...\n";
             return;
         }
         if ($args['dump_sql'] ?? false) {
-            var_dump('dump_sql');
+            var_dump('TODO: dump_sql');
             return;
         }
         $this->doInstall();
     }
     public function doInstall()
     {
-        $this->args = Console::_()->getCliParameters();
-        
-        $is_root = App::Current()->isRoot();
-        $app_options = App::Current()->options;
-        
+        ////[[[[
         $this->configDatabase($this->args['force'] ?? false);
         $this->configRedis($this->args['force'] ?? false);
+        ////]]]]
         
         if ($this->args['configure']) {
             return;
         }
         //////////////////////////
+        $desc = "Installing App (".get_class(App::Current())."):\n";
+        echo $desc;
         
-        // inputs
-        $desc = $app_options['install_input_desc'] ?? '';
-        $validators = $app_options['install_input_validators'] ?? [];
-        $default_options = $app_options['install_options'] ?? [];
-        
+        //////[[[[
+        $app_options = App::Current()->options;
         $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, App::Current());
+        
+        $validators = $app_options['install_input_validators'] ?? [];
+        
+        $default_options = $app_options['install_options'] ?? [];
         $default_options = array_replace_recursive($app_options, $ext_options, $default_options);
         
-        $desc = "Installing App (".get_class(App::Current())."):\n";
+        $desc = $app_options['install_input_desc'] ?? '';
         $desc .= "----\n".$desc."\n----\n";
-        
-        if (!$is_root) {
-            // 'controller_url_prefix' => 'app/admin/'
-            // 'controller_resource_prefix' => 'res/'
-        }
+        //$desc = $this->adjustPrompt($desc, $default_options, );
+        // 我们要调整  desc 。固定的， 非固定的， root 的. 非root 的。
         
         $input_options = Console::_()->readLines($default_options, $desc, $validators);
-        
         $ext_options = array_replace_recursive($ext_options, $input_options);
-        $app_options = array_replace_recursive($app_options, $ext_options);
-        App::Current()->options = $app_options;
-        
-        if ($this->args['dry']) {
-            $this->showHelp($input_options, $ext_options);
-            return;
-        }
-        $this->doInstallMore($app_options, $input_options);
-        //TODO  an event
-        ////]]]]
-        
-        unset($ext_options['install']);
         $ext_options['install'] = DATE(DATE_ATOM);
-        ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
         
+        // 接下来我们调整 ext_options;
+        
+        $app_options = array_replace_recursive($app_options, $ext_options);
+        
+        App::Current()->options = $app_options;
+        // 输入完成后，我们可能要调整一些选项。
+        //
+        //if ($this->args['dry']) {
+        //    $this->showHelp($input_options, $ext_options);
+        //    return;
+        //}
+        ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
+        ////]]]]
+        ///////////////
+        $this->doInstallAction($input_options, $ext_options, $app_options);
+        
+        ///////////////////////////
+        if (!$this->args['skip_children']) {
+            $this->installChildren();
+        }
+        
+        //$this->onInstall(); 我们不用为了 override ，而是 回调模式
+        echo "\n---- Install Done.\n";
+        return;
+    }
+    protected function installChildren()
+    {
+        $app_options = App::Current()->options;
         if (!empty($app_options['app'])) {
             echo "\nInstall child apps\n----------------\n";
         }
-        ///////////////////////////
         foreach ($app_options['app'] as $app => $options) {
             $last_phase = App::Phase($app);
             try {
@@ -159,12 +171,8 @@ and more ...\n";
             }
             App::Phase($last_phase);
         }
-        
-        $this->onInstall();
-        echo "\n---- Install Done.\n";
-        return;
     }
-    protected function doInstallMore($app_options = [], $input_options = [])
+    protected function doInstallAction($input_options = [],$ext_options = [], $app_options = [])
     {
         if (!($this->args['skip_sql'] ?? false)) {
             SqlDumper::_()->install();
@@ -173,10 +181,7 @@ and more ...\n";
             $info = '';
             RouteHookResource::_()->cloneResource(false, $info);
         }
-    }
-    protected function onInstall()
-    {
-        //for override;
+        return true;
     }
     //////////////////
     protected function reduce_apps($object, $callback)
@@ -186,7 +191,7 @@ and more ...\n";
             return true;
         }
         foreach ($object->options['app'] as $app => $options) {
-            $args = $this->reduce_apps($app::_(), $callback);
+            $ret = $this->reduce_apps($app::_(), $callback);
             if ($ret) {
                 return true;
             }

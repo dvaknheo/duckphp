@@ -23,22 +23,26 @@ class RedisInstaller extends ComponentBase
             echo "redis is configed ,use --force to force\n";
             return false;
         }
-        $data = $this->configDatabase($ref);
-        $this->changeDatabase($data);
+        $data = $this->configRedis($ref);
+        $this->changeRedis($data);
         return true;
     }
-    protected function changeDatabase($data)
+    protected function changeRedis($data)
     {
         $options = ExtOptionsLoader::_()->loadExtOptions(true, App::Root());
         $options['redis_list'] = $data;
+        
+        $t = App::Root()->options['installing_data'] ?? null;
+        unset(App::Root()->options['installing_data']);
         ExtOptionsLoader::_()->saveExtOptions($options, App::Root());
+        App::Root()->options['installing_data'] = $t;
         
         $options = RedisManager::_()->options;
         $options['redis_list'] = $data;
         RedisManager::_()->reInit($options, App::Root());
     }
     
-    protected function configDatabase($ref_database_list = [])
+    protected function configRedis($ref_database_list = [])
     {
         $ret = [];
         

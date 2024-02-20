@@ -31,7 +31,11 @@ class DatabaseInstaller extends ComponentBase
     {
         $options = ExtOptionsLoader::_()->loadExtOptions(true, App::Root());
         $options['database_list'] = $data;
+        
+        $t = App::Root()->options['installing_data'] ?? null;
+        unset(App::Root()->options['installing_data']);
         ExtOptionsLoader::_()->saveExtOptions($options, App::Root());
+        App::Root()->options['installing_data'] = $t;
         
         $options = DbManager::_()->options;
         $options['database_list'] = $data;
