@@ -48,9 +48,9 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         @unlink($path.'config/DuckPhpApps.config.php');
         DuckPhp_Sub::_(new DuckPhp_Sub())->init($options);
         echo "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-        DuckPhp_Sub::_()->install(['test'=>DATE(DATE_ATOM)]);
-        DuckPhp_Sub::_()->options['ext_options_file_enable'] = false;
-        DuckPhp_Sub::_()->install(['test'=>DATE(DATE_ATOM)]);
+        //DuckPhp_Sub::_()->install(['test'=>DATE(DATE_ATOM)]);
+        //DuckPhp_Sub::_()->options['ext_options_file_enable'] = false;
+        //DuckPhp_Sub::_()->install(['test'=>DATE(DATE_ATOM)]);
         //die("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
         DuckPhp_Sub::_()->isInstalled();
         

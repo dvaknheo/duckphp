@@ -3,8 +3,9 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckPhp\Component;
+namespace DuckPhp\FastInstaller;
 
+use DuckPhp\Component\DbManager;
 use DuckPhp\Core\ComponentBase;
 
 class SqlDumper extends ComponentBase

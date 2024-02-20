@@ -1,10 +1,10 @@
 <?php
-namespace tests\DuckPhp\Ext;
+namespace tests\DuckPhp\FastInstaller;
 
 use DuckPhp\Core\Console;
 use DuckPhp\Db\Db;
 use DuckPhp\DuckPhp;
-use DuckPhp\Ext\RedisInstaller;
+use DuckPhp\FastInstaller\RedisInstaller;
 
 class RInstallerConsole extends Console
 {

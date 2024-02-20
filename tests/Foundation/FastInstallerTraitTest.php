@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Foundation;
 
 use DuckPhp\DuckPhp;
-use DuckPhp\Ext\FastInstaller;
+use DuckPhp\FastInstaller\FastInstaller;
 use DuckPhp\Foundation\FastInstallerTrait;
 class FiApp extends DuckPhp
 {

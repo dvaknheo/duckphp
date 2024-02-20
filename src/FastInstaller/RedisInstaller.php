@@ -3,7 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckPhp\Ext;
+namespace DuckPhp\FastInstaller;
 
 use DuckPhp\Component\ExtOptionsLoader;
 use DuckPhp\Component\RedisManager;

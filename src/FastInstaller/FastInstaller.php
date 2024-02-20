@@ -3,16 +3,16 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckPhp\Ext;
+namespace DuckPhp\FastInstaller;
 
 use DuckPhp\Component\ExtOptionsLoader;
 use DuckPhp\Component\RouteHookResource;
-use DuckPhp\Component\SqlDumper;
+use DuckPhp\FastInstaller\SqlDumper;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Console;
-use DuckPhp\Ext\DatabaseInstaller;
-use DuckPhp\Ext\RedisInstaller;
+use DuckPhp\FastInstaller\DatabaseInstaller;
+use DuckPhp\FastInstaller\RedisInstaller;
 
 class FastInstaller extends ComponentBase
 {

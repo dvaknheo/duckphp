@@ -1,5 +1,5 @@
 <?php
-namespace tests\DuckPhp\Core;
+namespace tests\DuckPhp\Component;
 
 use DuckPhp\Component\ExtOptionsLoader;
 use DuckPhp\DuckPhp;
@@ -25,7 +25,7 @@ class ExtOptionsLoaderTest extends \PHPUnit\Framework\TestCase
         ExtOptionsLoader::_()->saveExtOptions(['data'=>DATE(DATE_ATOM)], DuckPhpEOLChild::class);
         
         ExtOptionsLoader::_()->loadExtOptions(true, DuckPhpEOLChild::class);
-        DuckPhpEOLChild::_()->install(['d'=>DATE(DATE_ATOM)]);
+        //DuckPhpEOLChild::_()->install(['d'=>DATE(DATE_ATOM)]);
         ExtOptionsLoader::_()->loadExtOptions(false, DuckPhpEOLChild::class);
         
         

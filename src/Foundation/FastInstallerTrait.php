@@ -5,7 +5,7 @@
  */
 namespace DuckPhp\Foundation;
 
-use DuckPhp\Ext\FastInstaller;
+use DuckPhp\FastInstaller\FastInstaller;
 
 trait FastInstallerTrait
 {

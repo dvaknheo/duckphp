@@ -1,9 +1,9 @@
 <?php
-namespace tests\DuckPhp\Ext;
+namespace tests\DuckPhp\FastInstaller;
 
 use DuckPhp\Core\Console;
 use DuckPhp\DuckPhp;
-use DuckPhp\Ext\FastInstaller;
+use DuckPhp\FastInstaller\FastInstaller;
 use DuckPhp\Foundation\FastInstallerTrait;
 use DuckPhp\Db\Db;
 
