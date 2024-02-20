@@ -70,7 +70,6 @@ HTML编码函数
 
 
 ### 独有的静态方法
-    public static function InitAsContainer($options)
 
     public static function Platform()
     public function _Platform()

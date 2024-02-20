@@ -807,7 +807,7 @@
     'port' => '8080',
     'path' => '',
     'path_document' => 'public',
-### DuckPhp\Ext\Pager
+### DuckPhp\Component\Pager
 
     'url' => null,
     'current' => null,

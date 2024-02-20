@@ -60,11 +60,12 @@ $options=[
     'on_inited' => 'onInit',
     
 ];
+/*
 $welcom_callback =function(){
   echo "hello",
 };
-
-$flag =\DuckPhp\DuckPhp::InitAsContainer($options)->thenRunAsContainer(false, $welcome_callback);
+//*/
+$flag =\DuckPhp\DuckPhp::init([])->run();
 
 
 function onInit()
