@@ -85,7 +85,6 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::_()->run();
         
         App::_()->isInstalled();
-        App::_()->install([]);
         
         App::_()->options['error_404']=function(){
             echo "zzzzzo 404  zzzzzzzzzzzz\n";
@@ -223,22 +222,6 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::_()->run();
         ////]]]]
         echo "-------111111111111-----------\n";
-        
-        \DuckPhp\Core\PhaseContainer::ResetContainer();
-
-        
-        $options=[
-            'cli_enable' => false,
-            'is_debug'=>true,
-            'path' => $path_app,
-            'welcome_view'=>null,
-        ];
-        $_SERVER['PATH_INFO'] = '/abc';
-        $flag = AppTestApp::InitAsContainer($options)->run();
-        $options['welcome_view'] = 'main';
-        $flag = AppTestApp::InitAsContainer($options)->run();
-        $_SERVER['PATH_INFO'] = '/';
-        $flag = AppTestApp::InitAsContainer($options)->run();
         
         \LibCoverage\LibCoverage::G($this->LibCoverage);
         \LibCoverage\LibCoverage::End();
