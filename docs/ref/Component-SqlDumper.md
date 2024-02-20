@@ -84,3 +84,5 @@ SqlDumper::_()->run(); // 导出到配置文件，默认是 config/sql.php
 SqlDumper::_()->install(); // 从配置文件安装 sql
 
 ## 完毕
+    public function dump()
+

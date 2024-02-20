@@ -269,3 +269,7 @@ onInit
 
 
 
+        'app' => [],
+
+    protected function initExtentions(array $exts, $use_main_options): void
+

@@ -51,3 +51,5 @@ redis 管理器。 redis 入口
 
 #完毕
 
+    public function getRedisConfigList()
+

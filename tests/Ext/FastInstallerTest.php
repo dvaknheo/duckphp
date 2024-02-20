@@ -68,7 +68,7 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         $setting = include $path_setting . 'setting.php';
         $db = $this->makeFromDsn( $setting['database_list'][0], 'mysql');
         $rdb =  $setting['redis_list'][0];
-
+        $__SERVER['argv'] =$_SERVER['argv'];
         
         FiParentApp::_()->init([]);
         
@@ -100,6 +100,24 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         InstallerConsole::_()->setFileContents([$str,  'N',$str2,'N']);
         $_SERVER['argv']=['-','install', "--configure", '--force'];
         FiParentApp2::_()->run();
+        
+        echo "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n";
+        
+        try {
+        $console_options = Console::_()->options;
+        Console::_(InstallerConsole::_(new InstallerConsole))->reInit($console_options, FiParentApp::_(new FiParentApp()));
+        $str= "{$db['host']}\n{$db['port']}\n{$db['dbname']}\n{$db['username']}\n{$db['password']}\n";
+        $str2= "{$rdb['host']}\n{$rdb['port']}\n{$rdb['auth']}\n{$rdb['select']}\n";
+        InstallerConsole::_()->setFileContents([$str,  'N',$str2,'N']);
+        
+        $_SERVER['argv']=['-','install', ];
+        FiParentApp::_()->run();
+        }catch(\Exception $ex){
+            var_dump("???");exit;
+        }
+        
+        $_SERVER['argv'] = $__SERVER['argv'];
+        //----------------------
         //*/
         //$_SERVER['argv']=['-','install', "--dump-sql", ];
         //FiParentApp::_()->run();
@@ -137,7 +155,6 @@ class FiChildApp extends DuckPhp
     ];
     public function __construct()
     {
-    
         $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(FastInstaller::class);
         $this->options['path'] = $path_app;
         parent::__construct();

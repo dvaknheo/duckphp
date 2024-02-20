@@ -141,7 +141,7 @@ echo "-------------------------------------\n";
         MyKernelTrait::On404();
 
         $options['cli_enable']=false;
-        $options['ext'][KernelTestApp2::class]=[
+        $options['app'][KernelTestApp2::class]=[
             'path'=>null,
             'namespace' => __NAMESPACE__,
             'controller_url_prefix'=>'/child/',

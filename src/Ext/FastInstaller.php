@@ -82,7 +82,7 @@ and more ...\n";
     }
     public function doCommandInstall()
     {
-        App::Root()->options['installing_data'] =  App::Root()->options['installing_data'] ?? [];
+        App::Root()->options['installing_data'] = App::Root()->options['installing_data'] ?? [];
         $this->args = Console::_()->getCliParameters();
         
         $this->initComponents();
@@ -98,19 +98,20 @@ and more ...\n";
         }
         $this->doInstall();
     }
-    public function doInstall()
+    protected function doGlobalConfigure()
     {
-        ////[[[[
         $this->configDatabase($this->args['force'] ?? false);
         $this->configRedis($this->args['force'] ?? false);
-        ////]]]]
+    }
+    public function doInstall()
+    {
+        $this->doGlobalConfigure();
         
-        if ($this->args['configure']) {
+        if ($this->args['configure'] ?? false) {
             return;
         }
         //////////////////////////
-        $desc = "Installing App (".get_class(App::Current())."):\n";
-        echo $desc;
+        echo "Installing App (".get_class(App::Current())."):\n";
         
         //////[[[[
         $app_options = App::Current()->options;
@@ -123,7 +124,7 @@ and more ...\n";
         
         $desc = $app_options['install_input_desc'] ?? '';
         $desc .= "----\n".$desc."\n----\n";
-        //$desc = $this->adjustPrompt($desc, $default_options, );
+        $desc = $this->adjustPrompt($desc, $default_options, $ext_options, $app_options);
         // 我们要调整  desc 。固定的， 非固定的， root 的. 非root 的。
         
         $input_options = Console::_()->readLines($default_options, $desc, $validators);
@@ -147,32 +148,39 @@ and more ...\n";
         $this->doInstallAction($input_options, $ext_options, $app_options);
         
         ///////////////////////////
-        if (!$this->args['skip_children']) {
+        if (!($this->args['skip_children'] ?? false)) {
             $this->installChildren();
         }
         
         //$this->onInstall(); 我们不用为了 override ，而是 回调模式
-        echo "\n---- Install Done.\n";
+        echo "Installed App (".get_class(App::Current())."):\n";
         return;
+    }
+    protected function adjustPrompt($desc, $default_options, $ext_options, $app_options)
+    {
+        return  $desc;
     }
     protected function installChildren()
     {
         $app_options = App::Current()->options;
         if (!empty($app_options['app'])) {
-            echo "\nInstall child apps\n----------------\n";
+            echo "\nInstall child apps [[[[[[[[\n\n";
         }
         foreach ($app_options['app'] as $app => $options) {
             $last_phase = App::Phase($app);
-            try {
-                $app::_()->command_install();
-            } catch (\Exception $ex) {
-                $msg = $ex->getMessage();
-                echo "\Install failed: $msg \n";
-            }
+            //try {
+            $app::_()->command_install();
+            //} catch (\Exception $ex) {
+            //    $msg = $ex->getMessage();
+            //    echo "\Install failed: $msg \n";
+            //}
             App::Phase($last_phase);
         }
+        if (!empty($app_options['app'])) {
+            echo "\n]]]]]]]] Installed child apps\n";
+        }
     }
-    protected function doInstallAction($input_options = [],$ext_options = [], $app_options = [])
+    protected function doInstallAction($input_options = [], $ext_options = [], $app_options = [])
     {
         if (!($this->args['skip_sql'] ?? false)) {
             SqlDumper::_()->install();

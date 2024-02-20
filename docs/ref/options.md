@@ -23,6 +23,9 @@
 + 'api_server_use_singletonex' => false, 
 
     API服务器， 使用可变单例模式，方便替换实现   // [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md)
++ **'app' => array ( ),** 
+
+       // [DuckPhp\Core\App](Core-App.md)
 + 'callable_view_class' => NULL, 
 
     CallableView 限定于此类内 callable_view_class 。   // [DuckPhp\Ext\CallableView](Ext-CallableView.md)
@@ -107,6 +110,9 @@
 + **'database_class' => '',** 
 
     数据库，默认为 Db::class。   // [DuckPhp\Component\DbManager](Component-DbManager.md)
++ 'database_input_driver' => 'mysql', 
+
+       // [DuckPhp\Ext\DatabaseInstaller](Ext-DatabaseInstaller.md)
 + **'database_list' => NULL,** 
 
     数据库，多数据库配置   // [DuckPhp\Component\DbManager](Component-DbManager.md)
@@ -161,9 +167,9 @@
 + **'ext_options_file' => 'config/DuckPhpApps.config.php',** 
 
     配置文件名字   // 
-+ **'ext_options_file_enable' => false,** 
++ **'ext_options_file_enable' => true,** 
 
-    额外配置文件   // 
+       // 
 + 'facades_enable_autoload' => true, 
 
     门面扩展，门面类启用自动加载   // [DuckPhp\Ext\MyFacadesAutoLoader](Ext-MyFacadesAutoLoader.md)
@@ -194,12 +200,6 @@
 + **'html_handler' => NULL,** 
 
     HTML编码函数   // [DuckPhp\Core\App](Core-App.md)
-+ **'install_need_db' => false,** 
-
-       // 
-+ **'install_need_redis' => false,** 
-
-       // 
 + **'is_debug' => false,** 
 
     是否调试模式   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
@@ -275,6 +275,9 @@
 + **'path_config' => 'config',** 
 
     配置路径   // [DuckPhp\Component\Configer](Component-Configer.md)
++ **'path_document' => 'public',** 
+
+    文档路径   // [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md)
 + **'path_info_compact_action_key' => '_r',** 
 
     无PATH_INFO兼容，替代的 action   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
@@ -387,6 +390,8 @@
 + DuckPhp\DuckPhp
     - 'alias' => NULL,
         别名，目前只用于视图目录
+    - 'app' => array ( ),
+        
     - 'class_admin' => '',
         管理员类名，设置这个类以实现默认的管理员类
     - 'class_user' => '',
@@ -409,14 +414,10 @@
         扩展，保存 类名=>选项对
     - 'ext_options_file' => 'config/DuckPhpApps.config.php',
         配置文件名字
-    - 'ext_options_file_enable' => false,
-        额外配置文件
+    - 'ext_options_file_enable' => true,
+        
     - 'html_handler' => NULL,
         HTML编码函数
-    - 'install_need_db' => false,
-        
-    - 'install_need_redis' => false,
-        
     - 'is_debug' => false,
         是否调试模式
     - 'lang_handler' => NULL,
@@ -456,6 +457,8 @@
 + DuckPhp\Core\App
     - 'alias' => NULL,
         别名，目前只用于视图目录
+    - 'app' => array ( ),
+        
     - 'cli_enable' => true,
         启用命令行模式
     - 'close_resource_at_output' => false,
@@ -515,6 +518,7 @@
         
     - 'system_exception_handler' => NULL,
         系统的异常调试回调
++ DuckPhp\Component\ExtOptionsLoader
 + DuckPhp\Core\Route
     - 'controller_class_adjust' => '',
         
@@ -577,11 +581,6 @@
         视图路径
     - 'view_skip_notice_error' => true,
         关闭  View 视图的 notice 警告，以避免麻烦的处理。
-+ DuckPhp\Component\Configer
-    - 'path' => '',
-        工程路径
-    - 'path_config' => 'config',
-        配置路径
 + DuckPhp\Component\DbManager
     - 'database' => NULL,
         数据库，单一数据库配置
@@ -606,6 +605,11 @@
         是否从设置里再入 redis 设置
     - 'redis_list_try_single' => true,
         redis 设置是否同时支持单个和多个
++ DuckPhp\Component\Configer
+    - 'path' => '',
+        工程路径
+    - 'path_config' => 'config',
+        配置路径
 + DuckPhp\Component\RouteHookRouteMap
     - 'controller_url_prefix' => '',
         
@@ -625,6 +629,8 @@
         
     - 'path' => '',
         工程路径
+    - 'path_document' => 'public',
+        文档路径
     - 'path_resource' => 'res',
         资源目录
 + DuckPhp\Component\DuckPhpCommand
@@ -652,6 +658,9 @@
         视图路径
     - 'view_skip_notice_error' => true,
         关闭  View 视图的 notice 警告，以避免麻烦的处理。
++ DuckPhp\Ext\DatabaseInstaller
+    - 'database_input_driver' => 'mysql',
+        
 + DuckPhp\Ext\EmptyView
     - 'empty_view_key_view' => 'view',
         空视图扩展，_Show 的时候给的 $data 的key
@@ -668,6 +677,7 @@
     - 'view_skip_notice_error' => true,
         关闭  View 视图的 notice 警告，以避免麻烦的处理。
 + DuckPhp\Ext\ExceptionWrapper
++ DuckPhp\Ext\FastInstaller
 + DuckPhp\Ext\JsonRpcClientBase
 + DuckPhp\Ext\JsonRpcExt
     - 'jsonrpc_backend' => 'https://127.0.0.1',
@@ -736,6 +746,7 @@
 + DuckPhp\Ext\MyMiddlewareManager
     - 'middleware' => array ( ),
         middelware 放的是回调列表
++ DuckPhp\Ext\RedisInstaller
 + DuckPhp\Ext\RouteHookApiServer
     - 'api_server_404_as_exception' => false,
         API服务器， 404 引发异常的模式

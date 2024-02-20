@@ -40,3 +40,5 @@
 res/ 目录，对应 admin/res/ 之类等
 
 
+        'path_document' => 'public',
+

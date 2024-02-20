@@ -275,3 +275,13 @@ App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里
 
 
 ## 完毕
+        'ext_options_file_enable' => true,
+
+    public function command_debug($off = false)
+
+    public function command_version()
+
+    public function command_call()
+
+    public function command_routes()
+

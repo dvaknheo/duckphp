@@ -37,6 +37,7 @@ class SqlDumper extends ComponentBase
     {
         $ret = '';
         $data = $this->load();
+        $data = $data ? $data:['scheme' => [],'data' => []];
         $data['scheme'] = $data['scheme'] ?: [];
         foreach ($data['scheme'] as $table => $sql) {
             try {
