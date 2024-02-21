@@ -7,12 +7,12 @@ namespace DuckPhp\FastInstaller;
 
 use DuckPhp\Component\ExtOptionsLoader;
 use DuckPhp\Component\RouteHookResource;
-use DuckPhp\FastInstaller\SqlDumper;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Console;
 use DuckPhp\FastInstaller\DatabaseInstaller;
 use DuckPhp\FastInstaller\RedisInstaller;
+use DuckPhp\FastInstaller\SqlDumper;
 
 class FastInstaller extends ComponentBase
 {

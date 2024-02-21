@@ -19,8 +19,8 @@ class SqlDumper extends ComponentBase
         'sql_dump_exclude_tables' => [],
         'sql_dump_data_tables' => [],
         
-        'sql_dump_include_tables_all' => true,
-        'sql_dump_include_tables_by_model' => false,
+        'sql_dump_include_tables_all' => false,
+        'sql_dump_include_tables_by_model' => true,
         'sql_dump_prefix' => '',
         
         'sql_dump_install_replace_prefix' => false,

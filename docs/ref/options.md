@@ -110,9 +110,6 @@
 + **'database_class' => '',** 
 
     数据库，默认为 Db::class。   // [DuckPhp\Component\DbManager](Component-DbManager.md)
-+ 'database_input_driver' => 'mysql', 
-
-       // [DuckPhp\Ext\DatabaseInstaller](Ext-DatabaseInstaller.md)
 + **'database_list' => NULL,** 
 
     数据库，多数据库配置   // [DuckPhp\Component\DbManager](Component-DbManager.md)
@@ -658,9 +655,6 @@
         视图路径
     - 'view_skip_notice_error' => true,
         关闭  View 视图的 notice 警告，以避免麻烦的处理。
-+ DuckPhp\Ext\DatabaseInstaller
-    - 'database_input_driver' => 'mysql',
-        
 + DuckPhp\Ext\EmptyView
     - 'empty_view_key_view' => 'view',
         空视图扩展，_Show 的时候给的 $data 的key
@@ -677,7 +671,6 @@
     - 'view_skip_notice_error' => true,
         关闭  View 视图的 notice 警告，以避免麻烦的处理。
 + DuckPhp\Ext\ExceptionWrapper
-+ DuckPhp\Ext\FastInstaller
 + DuckPhp\Ext\JsonRpcClientBase
 + DuckPhp\Ext\JsonRpcExt
     - 'jsonrpc_backend' => 'https://127.0.0.1',
@@ -746,7 +739,6 @@
 + DuckPhp\Ext\MyMiddlewareManager
     - 'middleware' => array ( ),
         middelware 放的是回调列表
-+ DuckPhp\Ext\RedisInstaller
 + DuckPhp\Ext\RouteHookApiServer
     - 'api_server_404_as_exception' => false,
         API服务器， 404 引发异常的模式

@@ -41,3 +41,5 @@
 ## 说明
 
 ## 完毕
+    public function getUsernames($ids)
+

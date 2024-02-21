@@ -30,3 +30,5 @@
     public function login($post)
     public function logout($post)
 
+    public function getUsernames($ids)
+

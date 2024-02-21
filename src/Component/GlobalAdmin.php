@@ -53,6 +53,10 @@ class GlobalAdmin
         $this->checkLogin();
         return true;
     }
+    public function getUsernames($ids)
+    {
+        throw new \ErrorException('DuckPhp: No Impelement');
+    }
     //////////////////////
     public function urlForRegist($url_back = null, $ext = null)
     {

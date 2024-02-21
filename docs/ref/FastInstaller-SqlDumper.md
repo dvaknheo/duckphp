@@ -37,10 +37,10 @@ SqlDump,  安装时候的新表前缀
         'sql_dump_install_drop_old_table' => false,
 SqlDump， 安装时删除旧表
 
-        'sql_dump_include_tables_all' => true,
+        'sql_dump_include_tables_all' => false,
 SqlDump， 包含所有表
 
-        'sql_dump_include_tables_by_model' => false,
+        'sql_dump_include_tables_by_model' => true,
 SqlDump， 高级选项， 搜索 Model 类 table() 下的所有表
 
 ## 方法
@@ -85,4 +85,8 @@ SqlDumper::_()->install(); // 从配置文件安装 sql
 
 ## 完毕
     public function dump()
+
+
+
+
 

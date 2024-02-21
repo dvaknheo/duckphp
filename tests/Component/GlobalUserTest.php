@@ -17,6 +17,10 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         GlobalUser::_()->current();
         }catch(\Exception $ex){}
         try{
+        GlobalUser::_()->getUsernames([]);
+        }catch(\Exception $ex){}
+        
+        try{
         GlobalUser::_()->urlForRegist($url_back, $ext);
         }catch(\Exception $ex){}
         try{

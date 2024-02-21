@@ -17,6 +17,10 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         GlobalAdmin::_()->checkLogin();
         }catch(\Exception $ex){}
         try{
+        GlobalAdmin::_()->getUsernames([]);
+        }catch(\Exception $ex){}
+        
+        try{
         GlobalAdmin::_()->urlForRegist($url_back, $ext);
         }catch(\Exception $ex){}
         try{

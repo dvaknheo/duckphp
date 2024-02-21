@@ -33,7 +33,10 @@ class GlobalUser
         $this->checkLogin();
         return $this->data ?? []; /** @phpstan-ignore-line */
     }
-    
+    public function getUsernames($ids)
+    {
+        throw new \ErrorException('DuckPhp: No Impelement');
+    }
     public function urlForRegist($url_back = null, $ext = null)
     {
         throw new \ErrorException('DuckPhp: No Impelement');

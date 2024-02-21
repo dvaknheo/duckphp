@@ -22,6 +22,7 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
             'sql_dump_file' => 'sql.php',
             'namespace' =>'tests_Data_SqlDumper',
         ];
+
         DuckPhp::_(new DuckPhp())->init($options);
         SqlDumper::_()->init(DuckPhp::_()->options,DuckPhp::_());
 
@@ -39,8 +40,15 @@ $sql = "INSERT INTO `empty` (`id`, `data`) VALUES (1, '11');";
 DuckPhp::Db()->execute($sql);
 
 
+
+        
+        SqlDumper::_()->dump();
+        SqlDumper::_()->options['sql_dump_include_tables_all']=true;
+        SqlDumper::_()->options['sql_dump_include_tables_by_model']=false;
         SqlDumper::_()->dump();
         SqlDumper::_()->install();
+        SqlDumper::_()->options['sql_dump_include_tables_all']=false;
+        SqlDumper::_()->options['sql_dump_include_tables_by_model']=true;
         
         SqlDumper::_()->options['sql_dump_data_tables']=['empty'];
         SqlDumper::_()->options['path_sql_dump']=$path_app.'/'. SqlDumper::_()->options['path_sql_dump'];
@@ -94,12 +102,18 @@ DuckPhp::Db()->execute($sql);
     }
     protected function more()
     {
-        SqlDumper::_()->options['sql_dump_include_tables_all'] = false;
-    SqlDumper::_()->options['sql_dump_include_tables_by_model'] = false;
+
     
         SqlDumper::_(new SqlDumper())->init(DuckPhp::_()->options,DuckPhp::_());
+        SqlDumper::_()->options['sql_dump_include_tables_all'] = true;
+        SqlDumper::_()->options['sql_dump_include_tables_by_model'] = false;
+        
         SqlDumper::_()->options['sql_dump_prefix'] = 'NoExists';
-        SqlDumper::_()->dump();
+        SqlDumper::_()->dump();//
+        
+        
+        
+        
         SqlDumper::_()->options['sql_dump_prefix'] = '';
         SqlDumper::_()->options['sql_dump_include_tables'] = ['NoExists'];
         SqlDumper::_()->dump();
@@ -122,7 +136,6 @@ DuckPhp::Db()->execute($sql);
         SqlDumper::_()->options['sql_dump_include_tables_by_model'] = false;
         SqlDumper::_()->dump();
         ///////////////////////
-        echo "<<<<<<<<<<<<<<<<<<<<<<<<\n";
         $path_app = \LibCoverage\LibCoverage::G()->getClassTestPath(SqlDumper::class);
         $options = [
             //'path_sql_dump' => $path_app,
@@ -140,7 +153,6 @@ DuckPhp::Db()->execute($sql);
         SqlDumper::_()->install();
 
         SqlDumper::_(new SqlDumper());
-            echo ">>>>>>>>>>>>>>>>>>>>>>>>>\n";
 
     }
 }
