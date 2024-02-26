@@ -5,8 +5,10 @@
  */
 namespace DuckPhp\Core;
 
+use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Logger;
+use DuckPhp\Core\SystemWrapper;
 
 class CoreHelper extends ComponentBase
 {

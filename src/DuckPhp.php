@@ -15,14 +15,12 @@ use DuckPhp\Component\DuckPhpCommand;
 use DuckPhp\Component\ExtOptionsLoader;
 use DuckPhp\Component\GlobalAdmin;
 use DuckPhp\Component\GlobalUser;
-use DuckPhp\Component\Pager;
 use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookPathInfoCompat;
 use DuckPhp\Component\RouteHookResource;
 use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Component\RouteHookRouteMap;
-use DuckPhp\Component\SqlDumper;
 use DuckPhp\Core\App;
 use DuckPhp\Core\Console;
 
