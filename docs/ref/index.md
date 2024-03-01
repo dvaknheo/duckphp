@@ -77,13 +77,20 @@
     2. [DbInterface](Db-DbInterface.md) Db 类满足 DbInterface 接口
     3. [Db](Db-Db.md) Db类
 5. `Foundation` 目录。存放高级功能的目录
-    -  [ExceptionReporterTrait](Foundation-ExceptionReporterTrait.md) 错误报告Trait
-    -  [SimpleBusinessTrait](Foundation-SimpleBusinessTrait.md) 简单的模型Trait
-    -  [SimpleControllerTrait](Foundation-SimpleControllerTrait.md) 简单的模型Trait
-    -  [SimpleExceptionTrait](Foundation-SimpleExceptionTrait.md) 让类有ThrowOn功能
-    -  [SimpleModelTrait](Foundation-SimpleModel.md) 简单的模型Trait
-    -  [SimpleSessionTrait](Foundation-SimpleSessionTrait.md) 简单的会话Trait
-    -  [SimpleSingletonTrait](Foundation-SimpleSingletonTrait.md) 单例Trait
+    - [ExceptionReporterTrait](Foundation-ExceptionReporterTrait.md) 错误报告Trait
+    - [SimpleBusinessTrait](Foundation-SimpleBusinessTrait.md) 简单的模型Trait
+    - [SimpleControllerTrait](Foundation-SimpleControllerTrait.md) 简单的模型Trait
+    - [SimpleExceptionTrait](Foundation-SimpleExceptionTrait.md) 让类有ThrowOn功能
+    - [SimpleModelTrait](Foundation-SimpleModel.md) 简单的模型Trait
+    - [SimpleSessionTrait](Foundation-SimpleSessionTrait.md) 简单的会话Trait
+    - [SimpleSingletonTrait](Foundation-SimpleSingletonTrait.md) 单例Trait
+    - [Business/Helper](Foundation-Business-Helper.md) 提供业务助手类
+    - [Controller/Helper](Foundation-Helper.md) 控制器助手类
+    - [Model/Helper](Foundation-Helper.md) 模型助手类
+    - [System/Helper](Foundation-Helper.md) 系统助手类
+    - [Helper](Foundation-Helper.md) 集合所有的助手类
+    - [FastInstallerTrait](Foundation-FastInstallerTrait.md) 快速安装器助手类
+    
 6. `Ext` 扩展目录，非默认加载的扩展。按字母排序。
     -  [CallableView](Ext-CallableView.md) 可接受函数调用的视图组件
     +  [EmptyView](Ext-EmptyView.md) 空视图组件
@@ -110,9 +117,14 @@
     + [ControllerHelperTrait](Helper-ControllerHelperTrait.md) 控制器助手Trait
     + [ModelHelperTrait](Helper-ModelHelperTrait.md) 模型助手Trait
 8. `HttpServer` 目录
-    1. [AppInterface](HttpServer-AppInterface.md)  Http 服务的应用接口
     2. [HttpServer](HttpServer-HttpServer.md)  Http 服务器
     3. [HttpServerInterface](HttpServer-HttpServerInterface.md)  Http 服务接口
+6. `FastInstaller` 目录。 一个安装程序.
+    + [FastInstaller](FastInstaller-FastInstaller.md) 安装程序入口
+        - [DatabaseInstaller](Ext-DatabaseInstaller.md) 数据库安装器
+        - [RedisInstaller](Ext-RedisInstaller.md) Redis数据库安装器
+        - [SqlDumper](Ext-SqlDumper.md) 数据库结构导出器
+
 
 @script filedesc
 
