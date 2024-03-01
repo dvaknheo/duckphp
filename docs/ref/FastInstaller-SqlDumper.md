@@ -1,4 +1,4 @@
-# DuckPhp\Ext\SqlDumper
+# DuckPhp\FastInstaller\SqlDumper
 [toc]
 
 ## 简介
@@ -45,7 +45,7 @@ SqlDump， 高级选项， 搜索 Model 类 table() 下的所有表
 
 ## 方法
 
-    public function run()
+    public function dump()
 Dump 数据库
 
     public function install()
@@ -80,13 +80,7 @@ Dump 数据库
 简单的便于数据库迁移。
 
 ```php
-SqlDumper::_()->run(); // 导出到配置文件，默认是 config/sql.php
+SqlDumper::_()->dump(); // 导出到配置文件，默认是 config/sql.php
 SqlDumper::_()->install(); // 从配置文件安装 sql
 
 ## 完毕
-    public function dump()
-
-
-
-
-

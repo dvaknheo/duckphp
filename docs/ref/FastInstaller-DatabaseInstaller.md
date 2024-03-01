@@ -1,4 +1,10 @@
-        'database_input_driver' => 'mysql',
+# DuckPhp\FastInstaller\DatabaseInstaller
+[toc]
+
+## 简介
+
+## 方法
+    'database_input_driver' => 'mysql',
 
     public function callResetDatabase($force = false)
 

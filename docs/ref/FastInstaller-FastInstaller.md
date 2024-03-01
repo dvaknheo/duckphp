@@ -1,3 +1,11 @@
+# DuckPhp\FastInstaller\RedisInstaller
+
+[toc]
+
+## 简介
+
+## 方法
+
     protected function configDatabase($force = false)
 
     protected function configRedis($force = false)

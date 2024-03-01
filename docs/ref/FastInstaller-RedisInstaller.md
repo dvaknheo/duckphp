@@ -1,3 +1,10 @@
+# DuckPhp\FastInstaller\RedisInstaller
+
+[toc]
+
+## 简介
+
+## 方法
     public function callResetRedis($force = false)
 
     protected function changeRedis($data)
