@@ -78,67 +78,7 @@ const HOOK_APPPEND_OUTTER = 'append-outter';
 
 其他扩展可能还会有更多的钩子。如果发现“为什么会有这个地址”，去问`核心工程师`吧。
 
-## 路由映射
 
-我们知道，路由重写是经常干的事情，比如  `/res/{id}` 这样的。
-
-`DuckPhp` 默认加了 `DuckPhp\Component\RouteHookRouteMap` 扩展插件，添加了两个选项
-
-这些设置在 选项 `route_map` 和 `route_map_important` 里设置个映射表.
-
-`route_map_important`  会在普通路由之前执行， `route_map` 在普通路由之后执行。
-
-映射表的 key 为有以下规则
-
-- / 开始的是普通 url
-
-- ^ 开始的是正则 推荐的方法， PHP 有命名参数，会放入
-
-- @ 的是 {} 替换的表达式
-
-value 对应的规则是
-
-- `class::method` 静态方法
-
-- `class@method` 单例动态方法
-
-- `class->method` 动态方法
-
-- 如果是闭包，直接执行闭包。
-
-例子：
-
-
-
-```PHP
-<?php declare(strict_types=1);
-return [
-    '^user(/page-(?<page>\d+))?'      => '~user->index',
-    '^user/(?<login>\w+)'             => '~user->profile',
-
-    '^api/user/(?<login>\w+)'         => "~api->profile",
-    
-    '^blog/archive/(?<year>\d+)'                                    =>"~blog->archive_yearly",
-    '^blog/archive/(?<year>\d+)-(?<month>\d+)(/page(?<page>\d+))?'  =>"~blog->archive_monthly",
-    '^blog/ tag/(?<label>\w+)(/page(?<page>\d+))?'                  =>"~blog->tag",
-    '^blog/page/(?<slug>\S+)'                                       =>"~blog->post",
-    '^blog(/(?<id>\d+))?'                                           =>"~blog@index",
-];
-
-```
-@ 开始的为带名字的会编译成 正则表达式  如  `@artcle/{id:w?} => ~(<?id>\w+?)`
-（compile 方法
-
-```PHP
-<?php declare(strict_types=1);
-return [
-    '@user(/page-(?<page>\d+))?'      => '~user->index',
-    '@user/{login}'             => '~user->profile',
-    '@item-{name}-{id:w?} =>'~user->profile',
-
-];
-
-```
 
 
 可以用 `C::getRoutes()`  得到路由表

@@ -16,7 +16,7 @@ $options['ext']数组实现的
     如果 $my_options。 为 true ，则会把当前 $options 传递进去。
     如果 $my_options。 为 字符串 ，则会映射到 $optioins[$my_options]。
 
-DuckPhp/Core 的其他组件如 Configer, Route, View, AutoLoader 默认都在这调用
+DuckPhp/Core 的其他组件如  Route, View 默认都在这调用
 
 ## 编写扩展
 

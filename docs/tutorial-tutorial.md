@@ -39,7 +39,7 @@ composer require dvaknheo/duckadmin
 //require_once(__DIR__.'/../../vendor/autoload.php');
 
 $options=[
-    'ext'=>[
+    'app'=>[
         DuckAdminApp::class => [
             'controller_url_prefix'=>'admin/',
             //其他配置
@@ -108,7 +108,7 @@ function onInit()
 }
 ```
 
-5. 使用全局函数,一般都在页面里使用。这些全局函数都是两个下划线开始的。
+5. 使用[全局函数](ref/Core-Functions.md),一般都在页面里使用。这些全局函数都是两个下划线开始的。
 
 这是助手函数：
 
@@ -177,7 +177,7 @@ function onInit()
 ```
 composer require dvaknheo/duckphp # 用 require 
 ./vendor/bin/duckphp --help   # 查看有什么指令
-./vendor/bin/duckphp new --namespace MyProject # 创建应用，命名空间为 MyProject
+./vendor/bin/duckphp new --namespace MyProject # 创建应用，命名空间为 MyProject （TODO没选的时候改为可选模式
 ```
 和大部分框架默认 app 作为应用命名空间不同， duckphp 的应用可以自定义自己命名空间。
 而且你应该定义你自己的命名空间，而不是使用默认的命名空间。
@@ -265,11 +265,11 @@ tree -I 'public'
     * keepme.txt 只是 git 作用
 * src 类文件夹。 根据  `psr-4` 规范， MyProject 命名空间的类就存在这里
 * view 视图目录
-   * view/_sys/error404.php 404 错误展示页面
-   * view/_sys/error404.php 500 错误展示页面
+   * view/_sys/error_404.php 404 错误展示页面
+   * view/_sys/error_500.php 500 错误展示页面
    * view/files.php 对应访问 `file` 的页面
    * view/main.php 对应访问 `` 的页面
-   *view/test/done.php 对应访问 `test/done` 的页面
+   * view/test/done.php 对应访问 `test/done` 的页面
 ----
 
 注意到我们排除了 public 目录,因为默认下带了很多示例文件
@@ -298,7 +298,7 @@ $options = [
 ];
 \MyProject\System\App::RunQuickly($options);
 ```
-入口很简单，就是 Runqucikly ,把 选项数组带进去就是 。
+入口很简单，就是 RunQucikly ,把 选项数组带进去就是 。
 
 `$options` 选项很复杂， 你的工程因为他们而不同。 有40多个。
 选项数组可以填什么，看配置[参考文档](ref/options.md) [DuckPhp 类参考](ref/DuckPhp.md)
@@ -331,6 +331,7 @@ $options = [
 这些助手类都实现了 `_()` 可变单例方法
 
 如果你的系统足够小，你也可以把这些 HelperTrait 内嵌入相应的基类或类里。
+你也可以用 `DuckPhp\Foundation\Business\Helper` ,`DuckPhp\Foundation\Controller\Helper` ,`DuckPhp\Foundation\System\Helper` , 代替，甚至可以用 `Foundation\Helper` 代替
 
 3 个基类 Trait
 
@@ -394,7 +395,8 @@ class App extends DuckPhp
 有一项 特殊选项 `'exception_reporter' => ExceptionReporter::class`, 这是把错误处理重定向到控制器的 `ExceptionReporter`类处理
 
 
-`'ext'=> [] ,`  默认没加载其他扩展，你可以把其他应用作为子应用加在这里，就像前面示例中那样。
+`'ext'=> [] ,`  默认没加载其他扩展，就像前面示例中那样。
+`'app'=> [] ,`  你可以把其他应用作为子应用加在这里，就像前面示例中那样。
 
 `protected function onInit()` 在 `init()` 最后阶段会调用，你可以再次调整你的工程代码
 
@@ -424,14 +426,11 @@ Web的入口就是控制器， DuckPhp 理念里，Controller 只处理web入口
 
 使用`Helper::Show()` 来显示数据
 
-
 ----
 
 以下深入固定类的讲解
 
 `MyProject\Controller\Base` 控制器基类，修改了`_()`可变单例的实现，使得可以方便的替换控制器类。
-
-`MyProject\Controller\ControllerException`，控制器层的异常类，继承 `ProjectException` 拥有 `ThrowOn` 固定方法，用法见前面。
 
 `MyProject\Controller\Session`， 处理会话。
 
@@ -523,6 +522,13 @@ DuckPhp 的异常处理 可以参见 待定文档说明。
 得到管理员对象或者用户对象
 
 #### 路由重写和路由映射
+`options['route']`
+
+[路由重写](ref/Component-RouteHookRewrite.md)
+
+[路由映射](ref/Component-RouteHookRouteMap.md)
+
+高级内容 路由钩子
 
 #### 异常控制处理
 
@@ -626,6 +632,9 @@ DuckPhp 的 Model 层是很传统的跟着数据库表名走的模式。
     protected function getList(int $page = 1, int $page_size = 10)
 内置快速方法。
 
+
+### 数据库速览
+
 ----
 
 ## 其他参考文档
@@ -638,13 +647,14 @@ DuckPhp 的 Model 层是很传统的跟着数据库表名走的模式。
 所以 DuckAdmin 的 Route::_() 就和 DuckUser 的 Route::_() 是不同实例了。
 相位是以主类作为 命名空间隔离的。
 切入相位， 共享相位的单位， 内容的 dump
+全局相位
+
 ### 调用
 
 DuckAdmin\System\UserApi::CallInPhase($phase)->foo();
-Admin 和 User 这两个特殊
 MyApp::AdminId();
-MyApp::Admin()->data();
-MyApp::User()->data();
+MyApp::Admin();
+MyApp::User();
 ### 替换
 DuckAdmin::PhaseCall(DuckAdmin::class,function(){AdminUser::_(MyAdminUser::_());});
 
@@ -808,6 +818,7 @@ V View 这很容易理解。当年 Smarty 引领了一个时代，但是到最�
 视图 DuckPhp 的视图原则
 
 错误处理
+//
 日志  __logger() 得到 psr 日志类， Logger 类
 
 验证， DuckPhp 没验证处理，你需要第三方类

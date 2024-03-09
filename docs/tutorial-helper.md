@@ -120,13 +120,6 @@ __domain()
 __display($view, $data = null)
 
     对应 App::Display(); 包含下一个 $view ， 如果 $data = null 则带入所有当前作用域的变量。 否则带入 $data 关联数组的内容。用于嵌套包含视图。
-
-
-## ViewHelper 视图助手类
-
-ViewHelper 是在视图里使用，默认没有方法。
-
-
 ## ModelHelper 模型助手类
 
 ModelHelper 用于 Model 层。  ModelHelper 有数据库的三个独特方法。

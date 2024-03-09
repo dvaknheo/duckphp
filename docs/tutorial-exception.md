@@ -76,7 +76,7 @@ DuckPhp 工程几乎不得不引用的类之一就是 ThrowOnTrait 这个 trait
 
 
 
-ThrowOnTrait 提供了三个静态方法:
+ThrowOnTrait 提供个静态方法:
 
 * `public static function ThrowOn($flag, $message, $code)`
 
@@ -84,13 +84,4 @@ ThrowOnTrait 提供了三个静态方法:
 
 PHP 有个函数 assert ， ThrowOn 和他逻辑相反。ThrowOn的方式会更直接些
 
-* `public static function Handle($class)`
 
-把本来 $class ThrowOn 到本类的异常 ， Throw 到当前异常类。
-
-这个方法的作用是用于提供第三方异常类的时候。让人无缝处理异常类。
-
-
-throw new static($ex->getMessage, $ex->getCode());
-
-用于把其他异常转成自己异常

@@ -8,10 +8,11 @@ DuckPhp 提供了事件系统给第三方使用
 
 ## 相关类
 
-[DuckPhp\Component\EventManager](ref/Component-EventManager.md)
+[DuckPhp\Core\EventManager](ref/Core-EventManager.md)
 
 ## 说明
 
+事件是全局性的。
 
 一般而言是不需要事件的。作为第三方，如果你想让使用者不改你的代码执行，可以使用事件解除耦合
 
