@@ -6,6 +6,23 @@
 `组件类` `入口类`
 很重要的路由类，可以在单独抽出来使用。
 
+##  默认基础路由
+
+`DuckPhp` 支持很多种 路由方式，默认最常见最基本的就是文件型路由方式了。
+
+以 `PATH_INFO 的` / 为切分，最后一个是方法，前面是命名空间和类名.
+
+假定 我们的工程命名空间是 ，即 `$options['namespace'] = 'MyProject'`;
+默认选项 `$options['namespace_controller'] => 'Controller`';
+对应的 类->方法 如下
+
+
+```
+/       => MyProejct\Controller\MainController->action_index
+/test   => MyProejct\Controller\MainController->action_test
+/a/b    => MyProejct\Controller\aController->action_b
+/x/y/z  => MyProejct\Controller\x\yController->action_z
+
 ## 选项
 所有配置选项如下
 

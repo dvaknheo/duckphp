@@ -21,16 +21,16 @@ DuckPhp 的路由类比较复杂，也是重点
 
 
 ```
-/       => MyProejct\Controller\Main->index
-/test   => MyProejct\Controller\Main->test
-/a/b    => MyProejct\Controller\a->b
-/x/y/z  => MyProejct\Controller\x\y->z
+/       => MyProejct\Controller\MainController->action_index
+/test   => MyProejct\Controller\MainController->action_test
+/a/b    => MyProejct\Controller\aController->action_b
+/x/y/z  => MyProejct\Controller\x\yController->action_z
 
 ```
 
 和流行框架不同，`Duckphp` 的控制器方法是不用返回任何东西的
 
-你要输出用其他类来输出 ，比如 Duckphp\Helper\Controller::Show(get_defined_vars());
+你要输出用其他类来输出 ，比如 Duckphp\Foundation\Helper::Show(get_defined_vars());
 
 路由的流程在 [DuckPhp\Core\Route](ref/Core-Route.md) 类里 `run()` 方法。
 
@@ -45,20 +45,17 @@ Route 类有很多选项，不同工程会有不同设置，这里挑出一些�
 
 严格模式
 
-
-
-'controller_hide_boot_class' => false, 控制器标记，隐藏特别的入口，比如你不想人也从 /Main/index 访问 / MyProejct\Controller\Main->index
+'controller_hide_boot_class' => false, 控制器标记，隐藏特别的入口，比如你不想人也从 /Main/index 访问  MyProejct\Controller\MainController->actionindex
 
 
 选项介绍
 ```
-'controller_base_class' => '', 限定控制器必须继承基类或实现接口
-'controller_methtod_for_miss' => '__missing', // 如果有这个方法，则定位到的类后，缺失方法的时候调用这个方法
-'controller_path_ext' => '', 扩展名，比如你要 .html
+'controller_class_base' => '', 限定控制器必须继承基类或实现接口
 'controller_prefix_post' => 'do_', 控制器，POST 方法前缀，用来方便把 POST 方法和其他方法分开，如果没相应类方法则忽略
+
 'namespace' => '',命名空间
 'namespace_controller' => 'Controller', 控制器的命名空间 如果以 \\ 开始，则忽略 namespace 选项的配置
-'controller_path_prefix' => '', 有时候，你只处理特定开头的 路由
+
 ```
 
 ## 路由钩子 `核心工程师`
@@ -74,11 +71,9 @@ const HOOK_PREPEND_INNER = 'prepend-inner';
 const HOOK_APPPEND_INNER = 'append-inner';
 const HOOK_APPPEND_OUTTER = 'append-outter';
 ````
-`DuckPhp` 默认加载了 `DuckPhp\Ext\RouteHookRouteMap` 插件。 实现了路由映射。
+`DuckPhp` 默认加载了 `DuckPhp\Component\RouteHookRouteMap` 插件。 实现了路由映射。
 
 其他扩展可能还会有更多的钩子。如果发现“为什么会有这个地址”，去问`核心工程师`吧。
-
-
 
 
 可以用 `C::getRoutes()`  得到路由表
@@ -88,8 +83,6 @@ const HOOK_APPPEND_OUTTER = 'append-outter';
 选项
 ```
 'route_map' => array ( ), //路由映射
-'route_map_auto_extend_method' => false, //是否扩充方法至助手类
-'route_map_by_config_name' => '', //路由配置名，使用配置模式用路由
 'route_map_important' => array ( ), //重要路由映射
 ```
 ## 无 `PATH_INFO` 的路由

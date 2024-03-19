@@ -119,7 +119,6 @@ DuckPhp/Core/App 是 DuckPhp 的子框架。有时候你用 DuckPhp/Core/App 也
 
 DuckPhp 支持全站路由，还支持局部路径路由和无 PATH_INFO 路由，不需要配服务器也能用。 可以在不修改 Web 服务器设置（如设置 PATH_INFO）的情况下使用，也可以在子目录里使用。
 
-
 DuckPhp 支持 composer。无 composer 环境也可运行。DuckPhp 是 Composer 库，不需要单独的脚手架工程。
 
 #### 7. 最小惊讶原则(Principle of least astonishment)
@@ -154,7 +153,7 @@ DuckPhp 的类尽量无状态。
 
 DuckPhp 有扩展能做到禁止你在 Controller 里直接写 sql 。有时候，框架必须为了防止人犯蠢，而牺牲了性能。但 DuckPhp 这么做几乎不影响性能。
 
-DuckPhp 通过 WorkermanHttpd 扩展，支持 workerman 。不需要改工程代码，将来也支持 更多其他平台
+DuckPhp 通过 WorkermanHttpd 扩展，支持 workerman 。不需要改工程代码，将来也支持 更多其他平台。
 
 ## 五、DuckPhp 不做什么
 
@@ -553,9 +552,6 @@ server {
 
  (粗体部分是启动的时候引用的文件)
 
-### 应用架构图（缺事件和异常处理部分）
-
-![DuckPhp](docs/arch_all.gv.svg)
 
 ## 十二、DuckPhp 还要做什么
 
