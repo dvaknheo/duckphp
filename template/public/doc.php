@@ -1,34 +1,41 @@
 <?php declare(strict_types=1);
 require(__DIR__.'/../../autoload.php');  // @DUCKPHP_HEADFILE
-
+function GetDocData($f)
+{
+    $ref = new ReflectionClass(\DuckPhp\DuckPhp::class);
+    $path = realpath(dirname($ref->getFileName()) . '/../docs').'/';
+    $file = realpath($path.$f);
+    if (substr($file, 0, strlen($path)) != $path) {
+        return '';
+    }
+    $str = file_get_contents($file);
+    if (substr($file, -3) === '.md') {
+        $str = preg_replace('/([a-z_]+\.gv\.svg)/', "?f=$1", $str); // gv file to md file
+    }
+    return $str;
+}
+function ShowData($file,$str)
+{
+    //TODO cache
+    if (substr($file, -4) === '.svg') {
+        header('content-type:image/svg+xml');
+        echo $str;
+    } elseif (substr($file, -3) === '.md') {
+        header('content-type:application/json');
+        echo json_encode(['s' => $str], JSON_UNESCAPED_UNICODE); // 纯文本太折腾，用json
+    }
+    exit();
+}
 function getfile($f)
 {
     if (!$f) {
         return;
     }
-    $ref = new ReflectionClass(\DuckPhp\DuckPhp::class);
-    $path = realpath(dirname($ref->getFileName()) . '/../docs').'/';
-    $file = realpath($path.$f);
-    if (substr($file, 0, strlen($path)) != $path) {
+    $str = GetDocData($f);
+    if(!$str){
         return;
-    } // 安全处理
-    
-    $str = file_get_contents($file);
-    
-    
-    /////////////// show
-    //TODO 缓存处理
-    if (substr($file, -4) === '.svg') {
-        header('content-type:image/svg+xml');
-        echo $str;
-    } elseif (substr($file, -3) === '.md') {
-        $str = preg_replace('/([a-z_]+\.gv\.svg)/', "?f=$1", $str);
-        header('content-type:application/json');
-        $json = ['s' => $str];
-        echo json_encode($json, JSON_UNESCAPED_UNICODE); // 纯文本太折腾，用json
     }
-    
-    exit;
+    ShowData($f,$str);
 }
 if (!defined('VIEW')) {
     $f = $_GET['f'] ?? null;

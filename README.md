@@ -345,7 +345,7 @@ DuckPhp 工程有上百个选项调整得到不同的结果。具体参考 [选�
 
 namespace MySpace\System
 {
-    //自动加载文件
+    // 自动加载文件
     require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
     
     use DuckPhp\Core\SingletonTrait;
@@ -367,9 +367,6 @@ namespace MySpace\System
             ],
             'callable_view_class' => Views::class,
                 // 替换的 View 类。
-                
-            'controller_class_postfix' => 'Controller',
-            'controller_method_prefix' => 'action_',
         ];
         // @override 重写
         protected function onInit()
@@ -386,47 +383,30 @@ namespace MySpace\System
 } // end namespace
 // 助手类
 
-namespace MySpace\Helper
-{
-    class ControllerHelper
-    {
-        use \DuckPhp\Helper\ControllerHelperTrait;
-        // 添加你想要的助手函数
-    }
-    class BusinessHelper
-    {
-        use  \DuckPhp\Helper\BusinessHelperTrait;
-        // 添加你想要的助手函数
-    }
-    class ModelHelper
-    {
-        use \DuckPhp\Helper\ModelHelperTrait;
-        // 添加你想要的助手函数
-    }
-
-} // end namespace
-
 //------------------------------
 // 以下部分由应用工程师编写，不再和 DuckPhp 的类有任何关系。
 
 namespace MySpace\Controller
 {
     use MySpace\Business\MyBusiness;  // 引用助手类
-    use MySpace\Helper\ControllerHelper as C; // 引用相关服务类
-
+    class Helper
+    {
+        use \DuckPhp\Helper\ControllerHelperTrait;
+        // 添加你想要的助手函数
+    }
     class MainController
     {
         public function __construct()
         {
             // 在构造函数设置页眉页脚。
-            C::setViewHeadFoot('header', 'footer');
+            Helper::setViewHeadFoot('header', 'footer');
         }
         public function action_index()
         {
             //获取数据
             $output = "Hello, now time is " . __h(MyBusiness::_()->getTimeDesc()); // html编码
             $url_about = __url('about/me'); // url 编码
-            C::Show(get_defined_vars(), 'main_view'); //显示数据
+            Helper::Show(get_defined_vars(), 'main_view'); //显示数据
         }
     }
     class aboutController
@@ -434,8 +414,8 @@ namespace MySpace\Controller
         public function action_me()
         {
             $url_main = __url(''); //默认URL
-            C::setViewHeadFoot('header', 'footer');
-            C::Show(get_defined_vars()); // 默认视图 about/me ，可省略
+            Helper::setViewHeadFoot('header', 'footer');
+            Helper::Show(get_defined_vars()); // 默认视图 about/me ，可省略
         }
     }
 } // end namespace
@@ -445,7 +425,11 @@ namespace MySpace\Business
     use MySpace\Helper\BusinessHelper as B;
     use MySpace\Model\MyModel;
     use MySpace\System\BaseBusiness;
-
+    class BusinessHelper
+    {
+        use  \DuckPhp\Helper\BusinessHelperTrait;
+        // 添加你想要的助手函数
+    }
     class MyBusiness extends BaseBusiness
     {
         public function getTimeDesc()
@@ -459,7 +443,11 @@ namespace MySpace\Business
 namespace MySpace\Model
 {
     use MySpace\Helper\ModelHelper as M;
-
+    class ModelHelper
+    {
+        use \DuckPhp\Helper\ModelHelperTrait;
+        // 添加你想要的助手函数
+    }
     class MyModel
     {
         public static function getTimeDesc()

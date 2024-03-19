@@ -2,6 +2,7 @@
 namespace tests\DuckPhp\Component;
 
 use DuckPhp\Component\Configer;
+use DuckPhp\DuckPhp;
 
 class ConfigerTest extends \PHPUnit\Framework\TestCase
 {
@@ -14,15 +15,15 @@ class ConfigerTest extends \PHPUnit\Framework\TestCase
             'path'=>$path_config,
             'path_config'=>$path_config,
             'setting_file_enable'=>true,
-            'use_env_file'=>true,
         ];
-        Configer::_()->init($options);
+        DuckPhp::_()->init($options);
+        Configer::_()->_Config('config', $key, null);
+        Configer::_(new Configer())->init($options);
         Configer::_()->init($options);
         $key="key";
 
         Configer::_()->_Config('config', $key, null,);
         Configer::_()->_Config('config', null, []);
-
         $options=[
             'path'=>dirname($path_config),
             'path_config'=>basename($path_config),

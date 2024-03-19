@@ -268,10 +268,7 @@
     `override_class`切过去的时候会在此保存旧的`override_class`   // [DuckPhp\Core\App](Core-App.md)
 + **'path' => '',** 
 
-    工程路径   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Core\Logger](Core-Logger.md), [DuckPhp\Core\View](Core-View.md), [DuckPhp\Component\Configer](Component-Configer.md), [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md), [DuckPhp\Ext\CallableView](Ext-CallableView.md), [DuckPhp\Ext\EmptyView](Ext-EmptyView.md), [DuckPhp\Ext\JsonView](Ext-JsonView.md), [DuckPhp\Ext\Misc](Ext-Misc.md)
-+ **'path_config' => 'config',** 
-
-    配置路径   // [DuckPhp\Component\Configer](Component-Configer.md)
+    工程路径   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Core\Logger](Core-Logger.md), [DuckPhp\Core\View](Core-View.md), [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md), [DuckPhp\Ext\CallableView](Ext-CallableView.md), [DuckPhp\Ext\EmptyView](Ext-EmptyView.md), [DuckPhp\Ext\JsonView](Ext-JsonView.md), [DuckPhp\Ext\Misc](Ext-Misc.md)
 + **'path_document' => 'public',** 
 
     文档路径   // [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md)
@@ -350,9 +347,6 @@
 + **'skip_exception_check' => false,** 
 
     不在 Run 流程检查异常，把异常抛出外面。用于配合其他框架使用   // [DuckPhp\Core\App](Core-App.md)
-+ **'sql_dump_enable' => false,** 
-
-       // 
 + 'strict_check_context_class' => NULL, 
 
     严格检查扩展，不用传输过来的 app类，而是特别指定类   // [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
@@ -445,8 +439,6 @@
         不处理 404 ，用于配合其他框架使用。
     - 'skip_exception_check' => false,
         不在 Run 流程检查异常，把异常抛出外面。用于配合其他框架使用
-    - 'sql_dump_enable' => false,
-        
     - 'table_prefix' => NULL,
         数据库表前缀
     - 'use_env_file' => false,
@@ -602,11 +594,6 @@
         是否从设置里再入 redis 设置
     - 'redis_list_try_single' => true,
         redis 设置是否同时支持单个和多个
-+ DuckPhp\Component\Configer
-    - 'path' => '',
-        工程路径
-    - 'path_config' => 'config',
-        配置路径
 + DuckPhp\Component\RouteHookRouteMap
     - 'controller_url_prefix' => '',
         

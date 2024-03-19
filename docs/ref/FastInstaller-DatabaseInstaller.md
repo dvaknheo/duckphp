@@ -18,3 +18,5 @@
 
     protected function checkDb($database)
 
+        'database_input_driver' => 'mysql',
+

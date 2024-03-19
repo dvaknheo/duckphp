@@ -34,7 +34,6 @@ class DuckPhp extends App
         'table_prefix' => null,
         
         'path_info_compact_enable' => false,
-        'sql_dump_enable' => false,
         'class_admin' => '',
         'class_user' => '',
         //'install_need_database' => true,
@@ -85,7 +84,7 @@ class DuckPhp extends App
             DbManager::_()->init($this->options, $this);
             RedisManager::_()->init($this->options, $this);
         }
-        Configer::_()->init($this->options, $this);
+        //Configer::_()->init($this->options, $this);
         RouteHookRouteMap::_()->init($this->options, $this);
         RouteHookRewrite::_()->init($this->options, $this);
         RouteHookResource::_()->init($this->options, $this);
