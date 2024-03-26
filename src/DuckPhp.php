@@ -27,11 +27,16 @@ class DuckPhp extends App
     protected $common_options = [
         'ext_options_file_enable' => true,
         'ext_options_file' => 'config/DuckPhpApps.config.php',
+        'ext' => [
+            RouteHookRouteMap::class => true,
+            RouteHookRewrite::class => true,
+            RouteHookResource::class => true,
+            RouteHookPathInfoCompat::class => false,
+        ],
         
         'session_prefix' => null,
         'table_prefix' => null,
         
-        'path_info_compact_enable' => false,
         'class_admin' => '',
         'class_user' => '',
         //'install_need_database' => true,
@@ -73,7 +78,7 @@ class DuckPhp extends App
         }
         parent::initComponents($options, $context);
         if ($this->is_root) {
-            $this->getContainer()->addPublicClasses([
+            $this->addPublicClasses([
                 DbManager::class,
                 RedisManager::class,
                 GlobalAdmin::class,
@@ -82,12 +87,8 @@ class DuckPhp extends App
             DbManager::_()->init($this->options, $this);
             RedisManager::_()->init($this->options, $this);
         }
-        //Configer::_()->init($this->options, $this);
-        RouteHookRouteMap::_()->init($this->options, $this);
-        RouteHookRewrite::_()->init($this->options, $this);
-        RouteHookResource::_()->init($this->options, $this);
-        
         if (PHP_SAPI === 'cli') {
+            //这里先暂时别动
             if ($this->is_root) {
                 DuckPhpCommand::_()->init($this->options, $this);
                 Console::_()->options['cli_default_command_class'] = DuckPhpCommand::class;
@@ -95,8 +96,14 @@ class DuckPhp extends App
                 Console::_()->regCommandClass(static::class, $this->options['namespace']);
             }
         }
-        if ($this->options['path_info_compact_enable'] ?? false) {
-            RouteHookPathInfoCompat::_()->init($this->options, $this);
+        
+        if ($this->options['local_db']??false) {
+            $this->createLocalObject(DbManager::class);
+            DbManager::_()->init($this->options, $this);
+        }
+        if($this->options['local_redis']??false) {
+            $this->createLocalObject(RedisManager::class);
+            RedisManager::_()->init($this->options, $this);
         }
         if ($this->options['class_admin']) {
             GlobalAdmin::_(PhaseProxy::CreatePhaseProxy(static::class, $this->options['class_admin']));

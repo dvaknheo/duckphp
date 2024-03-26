@@ -135,14 +135,9 @@ trait KernelTrait
         return $dir .'/';
     }
     ////////
-    public function getContainer()
-    {
-        return PhaseContainer::GetContainer();
-    }
     public function _Phase($new = null)
     {
-        $container = $this->getContainer();
-        //if (!$container) {return ''; }
+        $container = PhaseContainer::GetContainer();
         $old = $container->getCurrentContainer();
         if ($new) {
             $container->setCurrentContainer($new);
@@ -157,12 +152,12 @@ trait KernelTrait
         if ($this->is_root) {
             $this->onBeforeCreatePhases();
             $flag = PhaseContainer::ReplaceSingletonImplement();
-            $container = $this->getContainer();
+            $container = PhaseContainer::GetContainer();
             $container->setDefaultContainer(static::class);
             $container->setCurrentContainer(static::class);
             $this->onAfterCreatePhases();
         } else {
-            $container = $this->getContainer();
+            $container = PhaseContainer::GetContainer();
             $container->setCurrentContainer(static::class);
         }
         /////////////
@@ -185,6 +180,14 @@ trait KernelTrait
             $class::_($object);
         }
         return false;
+    }
+    protected function addPublicClasses($classes)
+    {
+        return PhaseContainer::GetContainer()->addPublicClasses($classes);
+    }
+    protected function createLocalObject($class, $object = null)
+    {
+        return PhaseContainer::GetContainer()->createLocalObject($class, $object);
     }
     protected function initException($options)
     {
@@ -219,12 +222,16 @@ trait KernelTrait
         }
         
         $this->initContainer($context);
-        //initroot
+        //init root
         if ($this->is_root) {
-            $this->getContainer()->addPublicClasses([
+            $this->addPublicClasses([
                 Console::class,
                 EventManager::class,
             ]);
+            // create objects
+            Console::_();
+            EventManager::_();
+            
             $this->loadSetting();
         }
         $this->onPrepare();

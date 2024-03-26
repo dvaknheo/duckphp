@@ -71,7 +71,7 @@ class App extends ComponentBase
     protected function doInitComponents()
     {
         if ($this->is_root) {
-            $this->getContainer()->addPublicClasses([
+            $this->addPublicClasses([
                 Logger::class,
                 SuperGlobal::class,
                 SystemWrapper::class,

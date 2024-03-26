@@ -11,7 +11,7 @@ use DuckPhp\Core\Route;
 class RouteHookPathInfoCompat extends ComponentBase
 {
     public $options = [
-        'path_info_compact_enable' => false,
+        'path_info_compact_enable' => true,
         'path_info_compact_action_key' => '_r',
         'path_info_compact_class_key' => '',
     ];

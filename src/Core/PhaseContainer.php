@@ -105,6 +105,16 @@ class PhaseContainer
     {
         return $this->current;
     }
+    public function createLocalObject($class, $object = null)
+    {
+        $result = $object ?? $this->createObject($class);
+        $this->containers[$this->current][$class] = $result;
+        return $result;
+    }
+    public function removeLocalObject($class)
+    {
+        unset($this->containers[$this->current][$class]);
+    }
     public function dumpAllObject()
     {
         echo "-- begin dump---<pre> \n";
