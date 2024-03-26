@@ -8,8 +8,6 @@
 
 namespace DuckPhp;
 
-use DuckPhp\Component\Cache;
-use DuckPhp\Component\Configer;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Component\DuckPhpCommand;
 use DuckPhp\Component\ExtOptionsLoader;
