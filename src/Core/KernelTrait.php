@@ -312,14 +312,16 @@ trait KernelTrait
                     continue;
                 }
                 if ($options === true) {
-                    $options = ($use_main_options) ? $this->options : ['ext_options_file_enable' => true]; // :(
+                    $options = ($use_main_options) ? $this->options : [];
                 }
                 $class = (string)$class;
                 if (!class_exists($class)) {
                     continue;
                 }
                 $class::_()->init($options, $this);
-                $this->_Phase(static::class);
+                if (!$use_main_options) {
+                    $this->_Phase(static::class);
+                }
             } catch (\Throwable $ex) {
                 $phase = $this->_Phase($class);
                 throw $ex;
