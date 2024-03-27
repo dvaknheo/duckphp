@@ -181,9 +181,15 @@ trait KernelTrait
         }
         return false;
     }
-    protected function addPublicClasses($classes)
+    protected function addPublicClassesInRoot($classes)
     {
-        return PhaseContainer::GetContainer()->addPublicClasses($classes);
+        if (!$this->is_root) {
+            return;
+        }
+        PhaseContainer::GetContainer()->addPublicClasses($classes);
+        foreach ($classes as $class) {
+            $class::_();
+        }
     }
     protected function createLocalObject($class, $object = null)
     {
@@ -222,16 +228,11 @@ trait KernelTrait
         }
         
         $this->initContainer($context);
-        //init root
+        $this->addPublicClassesInRoot([
+            Console::class,
+            EventManager::class,
+        ]);
         if ($this->is_root) {
-            $this->addPublicClasses([
-                Console::class,
-                EventManager::class,
-            ]);
-            // create objects
-            Console::_();
-            EventManager::_();
-            
             $this->loadSetting();
         }
         $this->onPrepare();

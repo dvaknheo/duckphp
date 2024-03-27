@@ -5,8 +5,8 @@
  */
 namespace DuckPhp\Component;
 
-use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\App;
+use DuckPhp\Core\ComponentBase;
 
 class Configer extends ComponentBase
 {
@@ -19,7 +19,7 @@ class Configer extends ComponentBase
     {
         //TODO $filename_basename = '';
         if (!$this->is_inited) {
-            $this->init( App::Current()->options,App::Current());
+            $this->init(App::Current()->options, App::Current());
         }
         $config = $this->_LoadConfig($file_basename);
         if (!isset($key)) {

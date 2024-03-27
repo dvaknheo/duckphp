@@ -4,6 +4,7 @@ namespace tests\DuckPhp\Core{
 use DuckPhp\Core\App;
 use DuckPhp\Core\KernelTrait;
 use DuckPhp\Core\Runtime;
+use DuckPhp\Core\Logger;
 use DuckPhp\DuckPhp;
 use DuckPhp\Component\Configer;
 use DuckPhp\Core\View;
@@ -219,6 +220,8 @@ echo "-------------------------------------\n";
         Route::_()->bind('/exception2');
         App::_()->run();
         
+        KernelTestApp::_()->createLocalObject2(Logger::class);
+        
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
     return;
@@ -276,11 +279,9 @@ class KernelTestApp extends App
     {
         return parent::onInit();
     }
-    public function fixPathInfo(&$serverData)
+    public function createLocalObject2($class)
     {
-var_dump("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n");
-var_dump($serverData);
-        return parent::fixPathInfo($serverData);
+        return $this->createLocalObject($class);
     }
 }
 class KernelTestApp2 extends App

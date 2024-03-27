@@ -35,10 +35,16 @@ class PhaseContainerTest extends \PHPUnit\Framework\TestCase
         MyObject::_()->foo();
         MyObject::_(new MyObject2())->foo();
         MyObject2::_();
+        PhaseContainer::GetContainerInstanceEx()->createLocalObject(MyObject::class);
+        PhaseContainer::GetContainerInstanceEx()->removeLocalObject(MyObject::class);
+        
         PhaseContainer::GetContainerInstanceEx()->dumpAllObject();
         PhaseContainer::GetObject(MyObject::class);
         PhaseContainer::GetContainerInstanceEx()->removePublicClasses([MyObject::class]);
         PhaseContainer::ResetContainer();
+        
+        
+        
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
     }

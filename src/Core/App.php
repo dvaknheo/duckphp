@@ -70,13 +70,11 @@ class App extends ComponentBase
     }
     protected function doInitComponents()
     {
-        if ($this->is_root) {
-            $this->addPublicClasses([
-                Logger::class,
-                SuperGlobal::class,
-                SystemWrapper::class,
-                ]);
-        }
+        $this->addPublicClassesInRoot([
+            Logger::class,
+            SuperGlobal::class,
+            SystemWrapper::class,
+            ]);
         
         Logger::_()->init($this->options, $this);
         SuperGlobal::_()->init($this->options, $this);

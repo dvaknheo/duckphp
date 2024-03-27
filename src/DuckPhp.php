@@ -77,15 +77,24 @@ class DuckPhp extends App
             ExtOptionsLoader::_()->loadExtOptions(static::class);
         }
         parent::initComponents($options, $context);
+        $this->addPublicClassesInRoot([
+            DbManager::class,
+            RedisManager::class,
+            GlobalAdmin::class,
+            GlobalUser::class,
+        ]);
         if ($this->is_root) {
-            $this->addPublicClasses([
-                DbManager::class,
-                RedisManager::class,
-                GlobalAdmin::class,
-                GlobalUser::class,
-            ]);
             DbManager::_()->init($this->options, $this);
             RedisManager::_()->init($this->options, $this);
+        } else {
+            if ($this->options['local_db'] ?? false) {
+                $this->createLocalObject(DbManager::class);
+                DbManager::_()->init($this->options, $this);
+            }
+            if ($this->options['local_redis'] ?? false) {
+                $this->createLocalObject(RedisManager::class);
+                RedisManager::_()->init($this->options, $this);
+            }
         }
         if (PHP_SAPI === 'cli') {
             //这里先暂时别动
@@ -97,14 +106,6 @@ class DuckPhp extends App
             }
         }
         
-        if ($this->options['local_db']??false) {
-            $this->createLocalObject(DbManager::class);
-            DbManager::_()->init($this->options, $this);
-        }
-        if($this->options['local_redis']??false) {
-            $this->createLocalObject(RedisManager::class);
-            RedisManager::_()->init($this->options, $this);
-        }
         if ($this->options['class_admin']) {
             GlobalAdmin::_(PhaseProxy::CreatePhaseProxy(static::class, $this->options['class_admin']));
         }
