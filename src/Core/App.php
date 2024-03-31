@@ -113,8 +113,8 @@ class App extends ComponentBase
     {
         $this->_Phase(self::class); //Important
         
-        if (is_a($ex, ExitException::class)) {
-            //return;
+        if (defined('DUCKPHP_EXIT_EXCEPTION') && is_a($ex, DUCKPHP_EXIT_EXCEPTION)) {
+            return;
         }
         
         if ($this->options['default_exception_do_log']) {

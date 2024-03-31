@@ -127,7 +127,7 @@ namespace MySpace\View {
         public static function header($data)
         {
             extract($data); ?>
-            <html>
+<html>
                 <head>
                 </head>
                 <body>

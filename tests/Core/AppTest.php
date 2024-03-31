@@ -6,6 +6,7 @@ use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\PhaseContainer;
 use DuckPhp\DuckPhp;
 use DuckPhp\Component\Configer;
+use DuckPhp\Core\ExitException;
 use DuckPhp\Core\View;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\SuperGlobal;
@@ -217,7 +218,8 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::_()->run();
         Route::_()->bind('/abc/Base/do500');
         App::_()->run();
-        
+
+        ExitException::Init();
         Route::_()->bind('/abc/Base/doexit');
         App::_()->run();
         ////]]]]
@@ -281,9 +283,10 @@ class AppTest extends \PHPUnit\Framework\TestCase
             'path' => $path_app,
             'is_debug'=>true,
             'on_init'=> function(){ 
-            
+            ExitException::Init();
             AppTestApp::_()->_OnDevErrorHandler(0, '', '', 0);
             AppTestApp::_()->_OnDefaultException(new \Exception('--'));
+            AppTestApp::_()->_OnDefaultException(new ExitException('--'));
             },
         ];
         AppTestApp::_(new AppTestApp);

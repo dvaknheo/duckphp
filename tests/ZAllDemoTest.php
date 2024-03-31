@@ -27,12 +27,12 @@ class ZAllDemoTest extends \PHPUnit\Framework\TestCase
             'test/done'          => 236 ,
             'doc.php'            => 1329 ,
             ''                   => 1385 ,
-            'files'              => 8510 ,
-            'demo.php'           => 418 ,
+            'files'              => 8907 ,
+            'demo.php'           => 401 ,
             'helloworld.php'     => 11,
             'just-route.php'     => 141,
             'api.php/test.index' => 339 ,
-            'traditional.php'    => 397 ,
+            'traditional.php'    => 394 ,
             'rpc.php'            => 887,
         ];
         $result = true;
