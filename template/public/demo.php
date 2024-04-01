@@ -11,6 +11,7 @@ namespace MySpace\System
     // 自动加载文件
     require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
     
+    use DuckPhp\Component\RouteHookPathInfoCompat;
     use DuckPhp\Core\SingletonTrait;
     use DuckPhp\DuckPhp;
     use DuckPhp\Ext\CallableView;
@@ -22,9 +23,11 @@ namespace MySpace\System
         public $options = [
             'is_debug' => true,
                 // 开启调试模式
-            'path_info_compact_enable' => true,
-                // 开启单一文件模式，服务器不配置也能运行
+                
             'ext' => [
+                RouteHookPathInfoCompat::class => true,
+                // 开启单一文件模式，服务器不配置也能运行
+                
                 CallableView::class => true,
                 // 默认的 View 不支持函数调用，我们开启自带扩展 CallableView 代替系统的 View
             ],
