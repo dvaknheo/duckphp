@@ -52,7 +52,15 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         GlobalAdmin::_()->canAccessUrl('/a_path');
         GlobalAdmin::_()->canAccessCall('Class','method');
         
+        
         GlobalAdmin::CallInPhase(GlobalAdmin::class);
+        
+        try{
+        GlobalAdmin::_()->action();
+        }catch(\Exception $ex){}
+        try{
+        GlobalAdmin::_()->service();
+        }catch(\Exception $ex){}
         
         \LibCoverage\LibCoverage::End();
     }

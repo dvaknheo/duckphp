@@ -7,7 +7,7 @@ namespace DuckPhp\Component;
 
 use DuckPhp\Core\ComponentBase;
 
-class GlobalUser  extends ComponentBase
+class GlobalUser extends ComponentBase
 {
     public static function CallInPhase($phase)
     {
@@ -32,6 +32,16 @@ class GlobalUser  extends ComponentBase
         $this->checkLogin();
         return $this->data ?? []; /** @phpstan-ignore-line */
     }
+    ////////////
+    public function action()
+    {
+        throw new \ErrorException('DuckPhp: No Impelement');
+    }
+    public function service()
+    {
+        throw new \ErrorException('DuckPhp: No Impelement');
+    }
+    ////////////
     public function getUsernames($ids)
     {
         throw new \ErrorException('DuckPhp: No Impelement');

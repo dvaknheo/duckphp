@@ -48,6 +48,13 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         GlobalUser::_()->id();
         GlobalUser::_()->data();
         
+        try{
+        GlobalUser::_()->action();
+        }catch(\Exception $ex){}
+        try{
+        GlobalUser::_()->service();
+        }catch(\Exception $ex){}
+        
         GlobalUser::CallInPhase(GlobalUser::class);
         
         \LibCoverage\LibCoverage::End();

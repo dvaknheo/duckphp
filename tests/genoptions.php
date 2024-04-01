@@ -19,7 +19,7 @@ class MyContainer extends PhaseContainer
 DocFixer::G()->init([])->run(); //填充缺失的
 var_dump(DocFixer::G()->options_descs);
 echo "-----------------\n";
-// 从上面运行的结果要数据， 然后 生成在 options.md 里 // 还影响到 template/app/System/App.php
+// 从上面运行的结果要数据， 然后 生成在 options.md 里 // 还影响到 template/app/System/AppWithAllOptions.php
 OptionsGenerator::G()->init([])->run();
 
 var_dump(DATE(DATE_ATOM));

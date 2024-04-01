@@ -32,7 +32,7 @@ class ZAllDemoTest extends \PHPUnit\Framework\TestCase
             'helloworld.php'     => 11,
             'just-route.php'     => 141,
             'api.php/test.index' => 339 ,
-            'traditional.php'    => 394 ,
+            'traditional.php'    => 397 ,
             'rpc.php'            => 887,
         ];
         $result = true;

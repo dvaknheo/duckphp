@@ -133,6 +133,12 @@ ControllerHelper::PageHtml(123);
         }catch(\Exception $ex){
             
         }
+        try{
+            ControllerHelper::AdminAction();
+        }catch(\Exception $ex){}
+        try{
+            ControllerHelper::UserAction();
+        }catch(\Exception $ex){}
         
         \LibCoverage\LibCoverage::End();
     }

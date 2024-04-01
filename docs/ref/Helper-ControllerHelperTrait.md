@@ -155,3 +155,7 @@
 
     public static function ControllerThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
 
+    public static function AdminAction()
+
+    public static function UserAction()
+

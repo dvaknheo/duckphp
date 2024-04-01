@@ -190,6 +190,10 @@ trait ControllerHelperTrait
     {
         return GlobalAdmin::_()->data();
     }
+    public static function AdminAction()
+    {
+        return GlobalAdmin::_()->action();
+    }
     public static function User($new = null)
     {
         return GlobalUser::_($new);
@@ -201,5 +205,9 @@ trait ControllerHelperTrait
     public static function UserData()
     {
         return GlobalUser::_()->data();
+    }
+    public static function UserAction()
+    {
+        return GlobalUser::_()->action();
     }
 }

@@ -5,11 +5,11 @@
  */
 namespace DuckPhp\Component;
 
-use DuckPhp\Core\SingletonTrait;
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\SingletonTrait;
 
-class GlobalAdmin  extends ComponentBase
-{    
+class GlobalAdmin extends ComponentBase
+{
     public static function CallInPhase($phase)
     {
         return new PhaseProxy($phase, static::class);
@@ -33,6 +33,16 @@ class GlobalAdmin  extends ComponentBase
         $this->checkLogin();
         return $this->data ?? []; /** @phpstan-ignore-line */
     }
+    ///////////////
+    public function action()
+    {
+        throw new \ErrorException('DuckPhp: No Impelement');
+    }
+    public function service()
+    {
+        throw new \ErrorException('DuckPhp: No Impelement');
+    }
+    /////////////
     public function isSuper()
     {
         $this->checkLogin();

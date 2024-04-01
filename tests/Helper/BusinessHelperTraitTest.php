@@ -34,6 +34,12 @@ class BusinessHelperTraitTest extends \PHPUnit\Framework\TestCase
             BusinessHelper::BusinessThrowOn(false, "haha",1);
         }catch(\Throwable $ex){}
         
+        try{
+            BusinessHelper::AdminService();
+        }catch(\Exception $ex){}
+        try{
+            BusinessHelper::UserService();
+        }catch(\Exception $ex){}
         \LibCoverage\LibCoverage::End();
     }
 }

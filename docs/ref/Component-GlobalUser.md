@@ -32,3 +32,7 @@
 
     public function getUsernames($ids)
 
+    public function action()
+
+    public function service()
+

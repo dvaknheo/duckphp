@@ -225,7 +225,7 @@ class Route extends ComponentBase
         $method = array_pop($blocks);
         
         $this->calling_path = $path_info;
-        if (!$this->options['controller_welcome_class_visible'] && !empty($blocks) &&  $blocks[0] === $welcome_class) {
+        if (!$this->options['controller_welcome_class_visible'] && !empty($blocks) && $blocks[0] === $welcome_class) {
             $this->route_error = "E009: controller_welcome_class_visible! {$welcome_class}; ";
             return [null, null];
         }
@@ -242,16 +242,16 @@ class Route extends ComponentBase
     }
     protected function doControllerClassAdjust($blocks, $method)
     {
-        $adj = is_array($this->options['controller_class_adjust']) ? $this->options['controller_class_adjust'] : explode(';',$this->options['controller_class_adjust']);
-        foreach($adj as $v) {
+        $adj = is_array($this->options['controller_class_adjust']) ? $this->options['controller_class_adjust'] : explode(';', $this->options['controller_class_adjust']);
+        foreach ($adj as $v) {
             if ($v === 'uc_method') {
                 $method = ucfirst($method);
-            } else if ($v === 'uc_class') {
+            } elseif ($v === 'uc_class') {
                 $w = array_pop($blocks);
                 $w = ucfirst($w);
-                array_push($blocks,$w);
-            } else if ($v === 'uc_full_class') {
-                array_map('ucfirst',$blocks);
+                array_push($blocks, $w);
+            } elseif ($v === 'uc_full_class') {
+                array_map('ucfirst', $blocks);
             }
         }
         return [$blocks,$method];
