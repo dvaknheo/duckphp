@@ -195,6 +195,18 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         Route::_()->defaultGetRouteCallback('/Main/G');
         Route::_()->defaultGetRouteCallback('/Main/MyStatic');
 
+        ///////////////////
+        $options=[
+            'namespace_controller'=>'\\tests_Core_Route',
+            'controller_class_adjust'=>'uc_method;uc_class;uc_full_class;'
+            
+        ];
+        Route::_(new Route())->init($options);
+        Route::_()->defaultGetRouteCallback('for_class_adjust/b/cd');
+        //Route::_()->defaultGetRouteCallback('a/b/cd');
+        ///////////////////
+
+
         \DuckPhp\Core\SuperGlobal::DefineSuperGlobalContext();
         
         Route::_()->bind('Main/index','POST')->run();

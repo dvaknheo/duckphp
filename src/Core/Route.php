@@ -225,37 +225,36 @@ class Route extends ComponentBase
         $method = array_pop($blocks);
         
         $this->calling_path = $path_info;
-        if (empty($blocks)) {
-            $this->calling_path = $welcome_class.'/'.$method;
-            $path_class = $welcome_class;
-        }
-        
-        /*
-        if ($this->options['controller_class_adjust'] && !empty($blocks)) {
-            if ($this->options['controller_class_adjust'] ==='ucfirst'){
-                $w = array_shift($blocks);
-                $w = ucfirst($a);
-                array_unshift($a,$blocks);
-            }else if ($this->options['controller_class_adjust'] ==='uclast') {
-                $w = array_shift($blocks);
-                $w = ucfirst($w);
-                array_push($blocks,$w);
-            }else if ($this->options['controller_class_adjust'] ==='ucall') {
-                array_map('ucfirst', $blocks);
-            }
-        }
-        //*/
-        $path_class = implode('\\', $blocks);
-        if (empty($blocks)) {
-            $this->calling_path = $welcome_class.'/'.$method;
-            $path_class = $welcome_class;
-        }
-        if (!empty($blocks) && !$this->options['controller_welcome_class_visible'] && $path_class === $welcome_class) {
+        if (!$this->options['controller_welcome_class_visible'] && !empty($blocks) &&  $blocks[0] === $welcome_class) {
             $this->route_error = "E009: controller_welcome_class_visible! {$welcome_class}; ";
             return [null, null];
         }
         
+        if (empty($blocks)) {
+            $this->calling_path = $welcome_class.'/'.$method;
+            $blocks[] = $welcome_class;
+        }
+        if ($this->options['controller_class_adjust']) {
+            [$blocks, $method] = $this->doControllerClassAdjust($blocks, $method);
+        }
+        $path_class = implode('\\', $blocks);
         return [$path_class, $method];
+    }
+    protected function doControllerClassAdjust($blocks, $method)
+    {
+        $adj = is_array($this->options['controller_class_adjust']) ? $this->options['controller_class_adjust'] : explode(';',$this->options['controller_class_adjust']);
+        foreach($adj as $v) {
+            if ($v === 'uc_method') {
+                $method = ucfirst($method);
+            } else if ($v === 'uc_class') {
+                $w = array_pop($blocks);
+                $w = ucfirst($w);
+                array_push($blocks,$w);
+            } else if ($v === 'uc_full_class') {
+                array_map('ucfirst',$blocks);
+            }
+        }
+        return [$blocks,$method];
     }
     protected function getCallbackFromClassAndMethod($full_class, $method, $path_info)
     {

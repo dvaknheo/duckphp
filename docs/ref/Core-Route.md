@@ -86,6 +86,11 @@
 
         'controller_class_adjust' => '',
 
+控制器，可选数组，或者以分号分隔的 uc_method uc_class uc_full_class 用于为了美观或者代码规范的控制器名称。
+uc_method: /x/y/z  => MyProejct\Controller\x\yController->action_Z
+uc_class: /x/y/z  => MyProejct\Controller\x\YController->action_z
+uc_full_class: /x/y/z  => MyProejct\Controller\X\YController->action_z
+
 ## 公开方法
 
 ### 主流程方法
@@ -163,6 +168,8 @@
 
     protected function adjustClassBaseName($path_info)
 
+    protected function doControllerClassAdjust($blocks, $method)
+
 其他辅助方法
 
     public function getRouteError()
@@ -237,9 +244,9 @@ RouteHookRouteMap 用到 获取控制器命名空间
 use DuckPhp\Core\Route;
 require(__DIR__.'/vendor/autoload.php');
 
-class Main
+class MainController
 {
-    public function index()
+    public function action_index()
     {
         var_dump(DATE(DATE_ATOM));
     }
@@ -280,9 +287,3 @@ if(!$flag){
 修订版本：
 
 修订时间：
-
-
-
-
-
-

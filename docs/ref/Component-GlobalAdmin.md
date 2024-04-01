@@ -38,8 +38,15 @@
     public function login($post)
     public function logout($post)
 注册登录登出动作
+
+    public function getUsernames($ids)
+获取一系列用户名
+
+    protected function initOptions(array $options)
+待定，初始化
+
 ## 说明
 
 ## 完毕
-    public function getUsernames($ids)
+
 

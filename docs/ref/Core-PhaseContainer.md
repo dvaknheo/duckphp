@@ -38,12 +38,15 @@ DuckPhp 的单例模类都放这里
 
     public function __construct()
 
+
+    public function createLocalObject($class, $object = null)
+
+    public function removeLocalObject($class)
+
     protected function createObject($class)
 
 ## 说明
 
 
-    public function createLocalObject($class, $object = null)
 
-    public function removeLocalObject($class)
 

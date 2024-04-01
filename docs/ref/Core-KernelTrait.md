@@ -36,6 +36,9 @@
         'ext' => [],
 扩展，保存 类名=>选项对
 
+        'app' => [],
+子应用，保存 类名=>选项对
+
         'skip_404' => false,
 不处理 404 ，用于配合其他框架使用。
 
@@ -194,8 +197,8 @@ init() 中 DefaultComponents() 中从设置读取调试标志和平台标志
     protected function dealWithEnvFile()
 处理设置
 
-    protected function initException($options)
-初始化异常处理
+    protected function initExtentions(array $exts, $use_main_options): void
+初始化异常处理,ext , 和 app 选项都调用，且use_main_options 不一样
 
     protected function runExtentions()
 运行 扩展
@@ -205,6 +208,11 @@ init() 中 DefaultComponents() 中从设置读取调试标志和平台标志
     protected function loadSetting()
 在初始化中加载设置
 
+    protected function addPublicClassesInRoot($classes)
+如果是root ，添加填充默认全局共享对象
+
+    protected function createLocalObject($class, $object = null)
+用于重载全局
 
 ### 事件方法
 
@@ -269,11 +277,9 @@ onInit
 
 
 
-        'app' => [],
 
-    protected function initExtentions(array $exts, $use_main_options): void
 
-    protected function addPublicClassesInRoot($classes)
 
-    protected function createLocalObject($class, $object = null)
+
+    protected function initException($options)
 

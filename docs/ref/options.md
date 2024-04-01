@@ -25,7 +25,7 @@
     API服务器， 使用可变单例模式，方便替换实现   // [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md)
 + **'app' => array ( ),** 
 
-       // [DuckPhp\Core\App](Core-App.md)
+    子应用，保存 类名=>选项对   // [DuckPhp\Core\App](Core-App.md)
 + 'callable_view_class' => NULL, 
 
     CallableView 限定于此类内 callable_view_class 。   // [DuckPhp\Ext\CallableView](Ext-CallableView.md)
@@ -373,7 +373,7 @@
     - 'alias' => NULL,
         别名，目前只用于视图目录
     - 'app' => array ( ),
-        
+        子应用，保存 类名=>选项对
     - 'class_admin' => '',
         管理员类名，设置这个类以实现默认的管理员类
     - 'class_user' => '',
@@ -436,7 +436,7 @@
     - 'alias' => NULL,
         别名，目前只用于视图目录
     - 'app' => array ( ),
-        
+        子应用，保存 类名=>选项对
     - 'cli_enable' => true,
         启用命令行模式
     - 'close_resource_at_output' => false,

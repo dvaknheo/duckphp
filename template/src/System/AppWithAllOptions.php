@@ -28,7 +28,7 @@ class AppWithAllOptions extends DuckPhp
         // 别名，目前只用于视图目录 (DuckPhp\Core\App)
         // $options['alias'] = NULL;
 
-        //  (DuckPhp\Core\App)
+        // 子应用，保存 类名=>选项对 (DuckPhp\Core\App)
         // $options['app'] = array ( );
 
         // 管理员类名，设置这个类以实现默认的管理员类 ()
