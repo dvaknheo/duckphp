@@ -56,3 +56,5 @@ $options['path_info_compact_enable'] = true;
 
 ##完毕
 
+        'path_info_compact_enable' => true,
+

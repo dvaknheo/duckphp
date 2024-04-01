@@ -294,7 +294,7 @@ class OptionsGenerator
     public function run()
     {
 
-        static::WrapFileAction(__DIR__ . '/../template/src/System/Options.php',function($content){
+        static::WrapFileAction(__DIR__ . '/../template/src/System/AppWithAllOptions.php',function($content){
             $data=$this->getOptionStringForApp();
             $str1="        // @autogen by tests/genoptions.php\n";
             $str2="        // @autogen end\n";

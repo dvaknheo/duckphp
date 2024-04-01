@@ -7,6 +7,18 @@ App
 [DuckPhp\Core\ExceptionManager](ref/Core-ExceptionManager.md) 异常管理类
 
 
+##
+DuckPhp 的异常处理，从使用者角度来说，没什么需要的地方
+但是 实现确实十分的复杂
+
+有那么几种情况
+1 init() 接管错误处理前的错误
+2 init() 接管错误处理后的错误。
+
+3 run() 的错误，其中又详细分为：
+5 console 下的运行错误
+4 其他子应用run 处理完了的错误
+5 切换道其他 子应用相位的错误处理 -> 运行时 标记问题， 比如 OB start 了，没合并怎么办。
 
 
 ## 相关配置

@@ -285,3 +285,15 @@ App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里
 
     public function command_routes()
 
+        'ext' => [
+
+            RouteHookRouteMap::class => true,
+
+            RouteHookRewrite::class => true,
+
+            RouteHookResource::class => true,
+
+            RouteHookPathInfoCompat::class => false,
+
+        ],
+

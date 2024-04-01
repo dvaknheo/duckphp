@@ -273,3 +273,7 @@ onInit
 
     protected function initExtentions(array $exts, $use_main_options): void
 
+    protected function addPublicClassesInRoot($classes)
+
+    protected function createLocalObject($class, $object = null)
+

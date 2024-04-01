@@ -11,9 +11,9 @@ function RunByDuckPhp()
     $options = [];
     $options['is_debug'] = true;
     $options['namespace'] = '\\';               // 不要替换成同级别的控制器类
-    $options['path_info_compact_enable'] = true;    // 不用配置路由
 
     $options['ext'][\DuckPhp\Ext\EmptyView::class] = true; // for GetRunResult();
+    $options['ext'][\DuckPhp\Ext\RouteHookPathInfoCompat::class] = true; // 我们用这个扩展
     $options['ext'][\DuckPhp\Ext\RouteHookFunctionRoute::class] = true; // 我们用这个扩展
     $flag = DuckPhpAllInOne::RunQuickly($options);
     return $flag;

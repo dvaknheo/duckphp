@@ -5,11 +5,10 @@
  */
 namespace DuckPhp\Component;
 
-use DuckPhp\Core\SingletonTrait;
+use DuckPhp\Core\ComponentBase;
 
-class GlobalUser
+class GlobalUser  extends ComponentBase
 {
-    use SingletonTrait;
     public static function CallInPhase($phase)
     {
         return new PhaseProxy($phase, static::class);

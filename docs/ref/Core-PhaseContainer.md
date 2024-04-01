@@ -43,3 +43,7 @@ DuckPhp 的单例模类都放这里
 ## 说明
 
 
+    public function createLocalObject($class, $object = null)
+
+    public function removeLocalObject($class)
+

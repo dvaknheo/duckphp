@@ -160,7 +160,7 @@
     异常报告仅针对的异常   // [DuckPhp\Core\App](Core-App.md)
 + **'ext' => array ( ),** 
 
-    扩展，保存 类名=>选项对   // [DuckPhp\Core\App](Core-App.md)
+       // [DuckPhp\Core\App](Core-App.md)
 + **'ext_options_file' => 'config/DuckPhpApps.config.php',** 
 
     配置文件名字   // 
@@ -272,15 +272,6 @@
 + **'path_document' => 'public',** 
 
     文档路径   // [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md)
-+ **'path_info_compact_action_key' => '_r',** 
-
-    无PATH_INFO兼容，替代的 action   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
-+ **'path_info_compact_class_key' => '',** 
-
-    无PATH_INFO兼容，替代的 class   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
-+ **'path_info_compact_enable' => false,** 
-
-    PATH_INFO 兼容模式   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
 + 'path_lib' => 'lib', 
 
     导入的 Import 库目录路径   // [DuckPhp\Ext\Misc](Ext-Misc.md)
@@ -401,8 +392,8 @@
         异常报告类
     - 'exception_reporter_for_class' => NULL,
         异常报告仅针对的异常
-    - 'ext' => array ( ),
-        扩展，保存 类名=>选项对
+    - 'ext' => array (   'DuckPhp\\Component\\RouteHookRouteMap' => true,   'DuckPhp\\Component\\RouteHookRewrite' => true,   'DuckPhp\\Component\\RouteHookResource' => true,   'DuckPhp\\Component\\RouteHookPathInfoCompat' => false, ),
+        
     - 'ext_options_file' => 'config/DuckPhpApps.config.php',
         配置文件名字
     - 'ext_options_file_enable' => true,
@@ -423,8 +414,6 @@
         `override_class`切过去的时候会在此保存旧的`override_class`
     - 'path' => NULL,
         工程路径
-    - 'path_info_compact_enable' => false,
-        PATH_INFO 兼容模式
     - 'path_runtime' => 'runtime',
         
     - 'session_prefix' => NULL,
@@ -463,7 +452,7 @@
     - 'exception_reporter_for_class' => NULL,
         异常报告仅针对的异常
     - 'ext' => array ( ),
-        扩展，保存 类名=>选项对
+        
     - 'html_handler' => NULL,
         HTML编码函数
     - 'is_debug' => false,
@@ -494,6 +483,15 @@
         不在 Run 流程检查异常，把异常抛出外面。用于配合其他框架使用
     - 'use_env_file' => false,
         使用 .env 文件。 仅根应用有效
++ DuckPhp\Core\Console
+    - 'cli_command_alias' => array ( ),
+        命令行,类别名列表
+    - 'cli_command_default' => 'help',
+        命令行,默认调用指令
+    - 'cli_command_method_prefix' => 'command_',
+        命令行,默认方法前缀
+    - 'cli_default_command_class' => '',
+        命令行,默认类
 + DuckPhp\Core\ExceptionManager
     - 'default_exception_handler' => NULL,
         默认的异常处理回调
@@ -542,15 +540,6 @@
         
     - 'use_output_buffer' => false,
         使用 OB 函数缓冲数据
-+ DuckPhp\Core\Console
-    - 'cli_command_alias' => array ( ),
-        命令行,类别名列表
-    - 'cli_command_default' => 'help',
-        命令行,默认调用指令
-    - 'cli_command_method_prefix' => 'command_',
-        命令行,默认方法前缀
-    - 'cli_default_command_class' => '',
-        命令行,默认类
 + DuckPhp\Core\Logger
     - 'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
         日志文件名模板 
@@ -563,6 +552,7 @@
 + DuckPhp\Core\SuperGlobal
     - 'superglobal_auto_define' => false,
         初始化时定义  `__SUPERGLOBAL_CONTEXT`宏
++ DuckPhp\Core\SystemWrapper
 + DuckPhp\Core\View
     - 'path' => '',
         工程路径
@@ -594,6 +584,9 @@
         是否从设置里再入 redis 设置
     - 'redis_list_try_single' => true,
         redis 设置是否同时支持单个和多个
++ DuckPhp\Component\GlobalAdmin
++ DuckPhp\Component\GlobalUser
++ DuckPhp\Component\DuckPhpCommand
 + DuckPhp\Component\RouteHookRouteMap
     - 'controller_url_prefix' => '',
         
@@ -617,14 +610,6 @@
         文档路径
     - 'path_resource' => 'res',
         资源目录
-+ DuckPhp\Component\DuckPhpCommand
-+ DuckPhp\Component\RouteHookPathInfoCompat
-    - 'path_info_compact_action_key' => '_r',
-        无PATH_INFO兼容，替代的 action
-    - 'path_info_compact_class_key' => '',
-        无PATH_INFO兼容，替代的 class
-    - 'path_info_compact_enable' => false,
-        PATH_INFO 兼容模式
 + DuckPhp\Ext\CallableView
     - 'callable_view_class' => NULL,
         CallableView 限定于此类内 callable_view_class 。

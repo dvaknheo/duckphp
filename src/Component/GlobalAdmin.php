@@ -6,10 +6,10 @@
 namespace DuckPhp\Component;
 
 use DuckPhp\Core\SingletonTrait;
+use DuckPhp\Core\ComponentBase;
 
-class GlobalAdmin
-{
-    use SingletonTrait;
+class GlobalAdmin  extends ComponentBase
+{    
     public static function CallInPhase($phase)
     {
         return new PhaseProxy($phase, static::class);
