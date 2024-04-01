@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
+if(!class_exists('DuckPhp\DuckPhp')){
 require(__DIR__.'/../../autoload.php');  // @DUCKPHP_HEADFILE
-function GetDocData($f)
+function Service_GetDocData($f)
 {
     $ref = new ReflectionClass(\DuckPhp\DuckPhp::class);
     $path = realpath(dirname($ref->getFileName()) . '/../docs').'/';
@@ -14,9 +15,12 @@ function GetDocData($f)
     }
     return $str;
 }
-function ShowData($file,$str)
+function ControllerHelper_ShowData($file,$str)
 {
     //TODO cache
+    if(!$str){
+        return;
+    }
     if (substr($file, -4) === '.svg') {
         header('content-type:image/svg+xml');
         echo $str;
@@ -26,20 +30,17 @@ function ShowData($file,$str)
     }
     exit();
 }
-function getfile($f)
+function action_index()
 {
+    $f = $_GET['f'] ?? null;
     if (!$f) {
         return;
     }
-    $str = GetDocData($f);
-    if(!$str){
-        return;
-    }
-    ShowData($f,$str);
+    $str = Service_GetDocData($f);
+    ControllerHelper_ShowData($f,$str);
 }
-if (!defined('VIEW')) {
-    $f = $_GET['f'] ?? null;
-    getfile($f);
+
+action_index();
 }
 ?><!doctype html>
 <html>

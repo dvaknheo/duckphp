@@ -29,4 +29,28 @@ class MainController extends Base
     {
         var_dump(DATE(DATE_ATOM));
     }
+    public function action_doc()
+    {
+        $file = Helper::GET('f');
+        $view_file = dirname($_SERVER['SCRIPT_FILENAME']).'/doc.php';
+        define('IN_VIEW',true);
+        if(!$file){
+            Helper::Show([], $view_file);
+            return;
+        }
+        $str = DemoBusiness::_()->getDocData($file);
+        if(!$str){
+            Helper::Show([],$view_file);
+            return;
+        }
+        
+        if (substr($file, -4) === '.svg') {
+            Helper::header('content-type:image/svg+xml');
+            echo $str;
+        } elseif (substr($file, -3) === '.md') {
+            Helper::header('content-type:application/json');
+            echo json_encode(['s' => $str], JSON_UNESCAPED_UNICODE); // 纯文本太折腾，用json
+        }
+        Helper::exit();
+    }
 }
