@@ -124,16 +124,6 @@ trait KernelTrait
         
         return $path;
     }
-    public function getProjectPathFromClass($class, $use_parent_namespace = true)
-    {
-        $ref = new \ReflectionClass($class);
-        $file = $ref->getFileName();
-        $dir = dirname(dirname(''.$file));
-        if ($use_parent_namespace) {
-            $dir = dirname($dir);
-        }
-        return $dir .'/';
-    }
     ////////
     public function _Phase($new = null)
     {

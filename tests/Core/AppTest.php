@@ -73,8 +73,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             App::_()->options['is_debug']=true;
 
         });
-        App::_()->getProjectPath();
-        App::_()->getRuntimePath();
+
         \DuckPhp\Core\Route::_()->bind('/NOOOOOOOOOOOOOOO'); 
         
         App::_()->options['error_404']=function(){

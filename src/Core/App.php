@@ -216,16 +216,6 @@ EOT;
         }
         View::_()->_Display($error_view, $data);
     }
-    public function getProjectPath()
-    {
-        return static::Root()->options['path'];
-    }
-    public function getRuntimePath()
-    {
-        $path = static::SlashDir(static::Root()->options['path']);
-        $path_runtime = static::SlashDir(static::Root()->options['path_runtime']);
-        return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
-    }
     
     public function getOverrideableFile($path_sub, $file, $use_override = true)
     {

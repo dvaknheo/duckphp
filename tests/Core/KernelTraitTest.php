@@ -107,7 +107,6 @@ echo "-------------------------------------\n";
         View::_(new View());
         Configer::_(new Configer());
         App::_(new App())->init($options);
-        App::_()->getProjectPathFromClass(App::class,true);
         $this->do404();
         
 
