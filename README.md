@@ -345,10 +345,9 @@ DuckPhp 工程有上百个选项调整得到不同的结果。具体参考 [选�
 
 namespace MySpace\System
 {
-    // 自动加载文件
     require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
     
-    use DuckPhp\Core\SingletonTrait;
+    use DuckPhp\Component\RouteHookPathInfoCompat;
     use DuckPhp\DuckPhp;
     use DuckPhp\Ext\CallableView;
     use MySpace\View\Views;
@@ -358,10 +357,11 @@ namespace MySpace\System
         // @override 重写
         public $options = [
             'is_debug' => true,
-                // 开启调试模式
-            'path_info_compact_enable' => true,
-                // 开启单一文件模式，服务器不配置也能运行
+            // 开启调试模式
+            
             'ext' => [
+                RouteHookPathInfoCompat::class => true,
+                // 开启单一文件模式，服务器不配置也能运行
                 CallableView::class => true,
                 // 默认的 View 不支持函数调用，我们开启自带扩展 CallableView 代替系统的 View
             ],
@@ -375,27 +375,22 @@ namespace MySpace\System
             //var_dump($this->options);//查看总共多少选项
         }
     }
-    //服务基类, 为了 Business::_() 可变单例。
-    class BaseBusiness
-    {
-        use SingletonTrait;
-    }
+
 } // end namespace
 // 助手类
 
 //------------------------------
-// 以下部分由应用工程师编写，不再和 DuckPhp 的类有任何关系。
+// 以下部分由应用工程师编写， 和 DuckPhp 的类较弱。如果你有洁癖，还能再缩减。
 
 namespace MySpace\Controller
 {
-    use MySpace\Business\MyBusiness;  // 引用助手类
-    class Helper
-    {
-        use \DuckPhp\Helper\ControllerHelperTrait;
-        // 添加你想要的助手函数
-    }
+    use DuckPhp\Foundation\Controller\Helper;
+    use DuckPhp\Foundation\SimpleControllerTrait;
+    use MySpace\Business\MyBusiness;
+
     class MainController
     {
+        use SimpleControllerTrait;
         public function __construct()
         {
             // 在构造函数设置页眉页脚。
@@ -422,16 +417,14 @@ namespace MySpace\Controller
 
 namespace MySpace\Business
 {
-    use MySpace\Helper\BusinessHelper as B;
     use MySpace\Model\MyModel;
-    use MySpace\System\BaseBusiness;
-    class BusinessHelper
+    use DuckPhp\Foundation\Business\Helper;
+    use DuckPhp\Foundation\SimpleBusinessTrait; //为了 Business::_() 可变单例。
+
+    class MyBusiness
     {
-        use  \DuckPhp\Helper\BusinessHelperTrait;
-        // 添加你想要的助手函数
-    }
-    class MyBusiness extends BaseBusiness
-    {
+        use SimpleBusinessTrait;
+        
         public function getTimeDesc()
         {
             return "<" . MyModel::getTimeDesc() . ">";
@@ -442,14 +435,13 @@ namespace MySpace\Business
 
 namespace MySpace\Model
 {
-    use MySpace\Helper\ModelHelper as M;
-    class ModelHelper
-    {
-        use \DuckPhp\Helper\ModelHelperTrait;
-        // 添加你想要的助手函数
-    }
+    //use DuckPhp\Foundation\Model\Helper;
+    use DuckPhp\Foundation\SimpleModelTrait;
+    
     class MyModel
     {
+        use SimpleModelTrait;
+        
         public static function getTimeDesc()
         {
             return date(DATE_ATOM);
