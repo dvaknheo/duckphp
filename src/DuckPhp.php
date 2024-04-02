@@ -31,12 +31,13 @@ class DuckPhp extends App
             RouteHookRouteMap::class => true,
             RouteHookRewrite::class => true,
             RouteHookResource::class => true,
-            RouteHookPathInfoCompat::class => false,
+            //RouteHookPathInfoCompat::class => false,
         ],
         
         'session_prefix' => null,
         'table_prefix' => null,
         
+        'path_info_compact_enable' => false,
         'class_admin' => '',
         'class_user' => '',
         //'install_need_database' => true,
@@ -105,7 +106,9 @@ class DuckPhp extends App
                 Console::_()->regCommandClass(static::class, $this->options['namespace']);
             }
         }
-        
+        if ($this->options['path_info_compact_enable'] ?? false) {
+            RouteHookPathInfoCompat::_()->init($this->options, $this);
+        }
         if ($this->options['class_admin']) {
             GlobalAdmin::_(PhaseProxy::CreatePhaseProxy(static::class, $this->options['class_admin']));
         }

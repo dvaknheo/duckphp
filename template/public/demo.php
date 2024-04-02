@@ -20,11 +20,10 @@ namespace MySpace\System
         // @override 重写
         public $options = [
             'is_debug' => true,
-            // 开启调试模式
-            
-            'ext' => [
-                RouteHookPathInfoCompat::class => true,
+                // 开启调试模式
+            'path_info_compact_enable' => true,
                 // 开启单一文件模式，服务器不配置也能运行
+            'ext' => [
                 CallableView::class => true,
                 // 默认的 View 不支持函数调用，我们开启自带扩展 CallableView 代替系统的 View
             ],
