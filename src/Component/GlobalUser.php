@@ -5,14 +5,12 @@
  */
 namespace DuckPhp\Component;
 
+use DuckPhp\Component\ZCallTrait;
 use DuckPhp\Core\ComponentBase;
 
 class GlobalUser extends ComponentBase
 {
-    public static function CallInPhase($phase)
-    {
-        return new PhaseProxy($phase, static::class);
-    }
+    use ZCallTrait;
     public function checkLogin()
     {
         throw new \ErrorException('DuckPhp: No Impelement');

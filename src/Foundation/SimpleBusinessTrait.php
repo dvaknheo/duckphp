@@ -5,15 +5,11 @@
  */
 namespace DuckPhp\Foundation;
 
-use DuckPhp\Component\PhaseProxy;
+use DuckPhp\Component\ZCallTrait;
 use DuckPhp\Core\SingletonTrait;
 
 trait SimpleBusinessTrait
 {
     use SingletonTrait;
-    
-    public static function CallInPhase($phase)
-    {
-        return new PhaseProxy($phase, static::class);
-    }
+    use ZCallTrait;
 }

@@ -53,7 +53,7 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
         GlobalAdmin::_()->canAccessCall('Class','method');
         
         
-        GlobalAdmin::CallInPhase(GlobalAdmin::class);
+        GlobalAdmin::ZCall(GlobalAdmin::class);
         
         try{
         GlobalAdmin::_()->action();

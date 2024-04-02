@@ -180,3 +180,9 @@
 
 
 
+    public function getProjectPath()
+
+    public function getRuntimePath()
+
+    public function getProjectPathFromClass($class, $use_parent_namespace = true)
+

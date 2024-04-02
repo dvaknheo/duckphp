@@ -6,7 +6,7 @@
 namespace DuckPhp\Foundation;
 
 use DuckPhp\Component\DbManager;
-use DuckPhp\Component\PhaseProxy;
+use DuckPhp\Component\ZCallTrait;
 use DuckPhp\Core\App;
 use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\SingletonTrait;
@@ -14,11 +14,7 @@ use DuckPhp\Core\SingletonTrait;
 trait SimpleModelTrait
 {
     use SingletonTrait;
-    
-    public static function CallInPhase($phase)
-    {
-        return new PhaseProxy($phase, static::class);
-    }
+    use ZCallTrait;
     
     protected $table_name = null;
     protected $table_prefix = null;

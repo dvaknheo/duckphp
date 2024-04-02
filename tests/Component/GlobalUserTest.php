@@ -55,7 +55,7 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         GlobalUser::_()->service();
         }catch(\Exception $ex){}
         
-        GlobalUser::CallInPhase(GlobalUser::class);
+        GlobalUser::ZCall(GlobalUser::class);
         
         \LibCoverage\LibCoverage::End();
     }
