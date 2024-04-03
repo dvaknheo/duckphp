@@ -10,31 +10,67 @@ use DuckPhp\Ext\CallableView;
 use DuckPhp\Foundation\SimpleBusinessTrait; // 可变单例模式
 use DuckPhp\Foundation\SimpleModelTrait; // 可变单例模式
 use DuckPhp\Foundation\Helper; // Helper
+    
 
 //业务类， 还是带上吧。
+class DbTestApp extends DuckPhp
+{
+    // 开始了
+    public $options = [
+        'is_debug' => true, // 开启调试模式
+        'namespace_controller' => "\\",
+            // 设置控制器的命名空间为根 使得 Main 类为入口
+        'ext' => [
+            CallableView::class => true,
+            // 我们用自带扩展 CallableView 代替系统的 View
+        ],
+        'callable_view_class' => View::class,
+        
+        'local_db' => true,
+        'database' => [
+            'dsn' => 'sqlite:dbtest.sqlite',
+            'username' => null,
+            'password' => null,
+            'driver_options' => [],
+        ],
+    ];
+    public function __construct()
+    {
+        $this->options['error_404'] = function () {
+            MainController::_()->action_index();
+        };
+        $dsn = $this->options['database']['dsn'];
+        //$dsn =str_replace('@runtime@',Helper::getRuntimePath(),$dsn);
+        $this->options['database']['dsn'] = $dsn;
+    }
+}
 class MyBusiness
 {
     use SimpleBusinessTrait; // 单例模式。
     
     public function getDataList($page, $pagesize)
     {
-        return TestModel::getDataList($page, $pagesize);
+        return TestModel::_()->getDataList($page, $pagesize);
     }
     public function getData($id)
     {
-        return TestModel::getData($id);
+        return TestModel::_()->getData($id);
     }
     public function addData($data)
     {
-        return TestModel::addData($data);
+        return TestModel::_()->addData($data);
     }
     public function updateData($id, $data)
     {
-        return TestModel::updateData($id, $data);
+        return TestModel::_()->updateData($id, $data);
     }
     public function deleteData($id)
     {
-        return TestModel::deleteData($id);
+        return TestModel::_()->deleteData($id);
+    }
+    public function install()
+    {
+        return TestModel::_()->init();
     }
 }
 
@@ -42,40 +78,60 @@ class MyBusiness
 class TestModel
 {
     use SimpleModelTrait;
-    public static function getDataList($page, $pagesize)
+    public function __construct()
     {
-        $sql = "select * from test order by id desc";
-        $total = $this->fetchColumn(M::SqlForCountSimply($sql));
-        $list = $this->fetchAll(M::SqlForPager($sql, $page, $pagesize));
+        $this->table_name = 'test';
+    }
+    public function init()
+    {
+        $sql = <<<EOT
+CREATE TABLE IF NOT EXISTS `'TABLE'` (
+	"id"	INTEGER NOT NULL,
+	"content"	TEXT,
+	PRIMARY KEY("id" AUTOINCREMENT)
+);
+EOT;
+        $this->execute($sql);
+    }
+    public  function getDataList($page, $pagesize)
+    {
+        $sql = "select * from `'TABLE'` order by id desc";
+        $total = $this->fetchColumn(Helper::SqlForCountSimply($sql));
+        $list = $this->fetchAll(Helper::SqlForPager($sql, $page, $pagesize));
 
         return [$total,$list];
     }
-    public static function getData($id)
+    public  function getData($id)
     {
-        $sql = "select * from test where id=?";
-        return $this->fetch($sql, $id);
+        $sql = "select * from `'TABLE'` where id=?";
+        return $this->fetch($sql, (int)$id);
     }
-    public static function addData($data)
+    public function addData($data)
     {
-        $sql = "insert test (content) values(?)";
+        $sql = "insert into `'TABLE'` (content) values(?)";
         $this->execute($sql, $data['content']);
         return Helper::Db()->lastInsertId();
     }
-    public static function updateData($id, $data)
+    public function updateData($id, $data)
     {
-        $sql = "update test set content = ? where id=?";
+        $sql = "update `'TABLE'` set content = ? where id=?";
         $flag = $this->execute($sql, $data['content'], $id);
         return $flag;
     }
-    public static function deleteData($id)
+    public function deleteData($id)
     {
-        $sql = "delete from test where id=? limit 1";
+        $sql = "delete from `'TABLE'` where id=? limit 1";
         $this->execute($sql, $id);
     }
 }
 /////////////////////////////////////////
 class MainController
 {
+    public function __construct()
+    {
+        //check installed
+        MyBusiness::_()->install();
+    }
     public function action_index()
     {
         if (Helper::POST()) {
@@ -91,59 +147,17 @@ class MainController
             MyBusiness::_()->updateData(Helper::POST('id', 0), Helper::POST());
         }
         $data = MyBusiness::_()->getData(Helper::REQUEST('id', 0));
+        
         Helper::Show(get_defined_vars(), 'show');
     }
     public function action_delete()
     {
         MyBusiness::_()->deleteData(Helper::GET('id', 0));
-        Helper::Show302();
+        Helper::Show302('');
     }
 }
 ///////////////
     // 数据库表结构
-    
-public function CreateSqliteTempTable($options)
-{
-    $sql = <<<EOT
-CREATE TABLE "test" (
-	"id"	INTEGER NOT NULL,
-	"content"	TEXT,
-	PRIMARY KEY("id" AUTOINCREMENT)
-);
-EOT;
-    $PDO = new PDO($options['dsn'],$options['username'],$options['password'],);
-    $PDO->exec($sql);
-}
-
-    // 开始了
-    $options = [
-        'is_debug' => true,
-            // 开启调试模式
-        'namespace_controller' => "\\",
-            // 设置控制器的命名空间为根 使得 Main 类为入口
-            //TODO 安全
-        'ext' => [
-            CallableView::class => true,
-            // 我们用自带扩展 EmptyView 代替系统的 View
-        ],
-        'callable_view_class' => View::class,
-        
-        //数据库设置，根据你的需要修改
-        'database' => [
-            'dsn' => 'sqlite::memory:',
-            'username' => null,
-            'password' => null,
-            'driver_options' => [],
-        ],
-    ];
-    $options['error_404'] = function () {
-        (new MainController)->action_index();
-    };
-    
-    $flag = DuckPhp::RunQuickly($options,function(){
-        CreateSqliteTempTable(DuckPhp::_()->options);
-    });
-
 class View
 {
     public static function header($data)
@@ -158,6 +172,7 @@ class View
     }
     public static function main_view($data)
     {
+        extract($data);
         ?>
         <h1>数据</h1>
         <table>
@@ -184,6 +199,7 @@ class View
     }
     public static function show($data)
     {
+        extract($data);
         ?>
         <h1>查看/编辑</h1>
         原内容
@@ -206,3 +222,5 @@ class View
 <?php
     }
 }
+
+DbTestApp::RunQuickly([]);
