@@ -9,10 +9,105 @@ use DuckPhp\Core\Console;
 
 trait CommandTrait
 {
-    public function command_help()
+    public function bak_command_help()
     {
         //echo "Override this to use to show your project routes .\n";
         echo $this->getCommandListInfo();
+    }
+    /**
+     * call a function. e.g. namespace/class@method arg1 --parameter arg2
+     */
+    public function command_call()
+    {
+        //call to service
+        // full namespace , service AAService;
+        $args = func_get_args();
+        $cmd = array_shift($args);
+        list($class, $method) = explode('@', $cmd);
+        $class = str_replace('/', '\\', $class);
+        echo "calling $class::_()->$method\n";
+        $ret = Console::_()->callObject($class, $method, $args, Console::_()->getCliParameters());
+        echo "--result--\n";
+        echo json_encode($ret);
+    }
+    /**
+     * show all routes
+     */
+    public function command_routes()
+    {
+        //echo "Override this to use to show your project routes .\n";
+        echo $this->getCommandListInfo();
+    }
+        /**
+     * switch debug mode
+     */
+    public function command_debug($off = false)
+    {
+        $is_debug = !$off;
+        $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, $this);
+        $ext_options['is_debug'] = $is_debug;
+        ExtOptionsLoader::_()->saveExtOptions($ext_options, $this);
+        $this->options['is_debug'] = $is_debug;
+        if ($is_debug) {
+            echo "Debug mode has turn on. us --off to off\n";
+        } else {
+            echo "Debug mode has turn off.\n";
+        }
+    }
+    /**
+     * show version
+     */
+    public function command_version()
+    {
+        echo $this->version();
+        echo "\n";
+    }
+    /**
+     * run inner server.
+     */
+    public function command_run()
+    {
+        $options = Console::_()->getCliParameters();
+        $options['http_app_class'] = get_class($this->context());
+        $options['path'] = $this->context()->options['path'];
+        if (!empty($options['http_server'])) {
+            /** @var string */
+            $class = str_replace('/', '\\', $options['http_server']);
+            HttpServer::_($class::_());
+        }
+        HttpServer::RunQuickly($options);
+    }
+    ///////////////////////////////////////
+    /**
+     * show this help.
+     */
+    public function command_help()
+    {
+        echo "Welcome to Use DuckPhp ,version: ";
+        echo $this->context()->version();
+        echo "\n";
+        echo  <<<EOT
+Usage:
+  command [arguments] [options] 
+Options:
+  --help            Display this help message
+
+EOT;
+        
+        echo $this->getCommandListInfo();
+        //echo Console::_()->getCommandListInfo();
+    }
+    /**
+     * fetch a url. --uri=[???] ,--post=[postdata]
+     */
+    public function command_fetch($uri = '', $post = false)
+    {
+        $uri = !empty($uri) ? $uri : '/';
+        $_SERVER['REQUEST_URI'] = $uri;
+        $_SERVER['PATH_INFO'] = parse_url($uri, PHP_URL_PATH);
+        $_SERVER['HTTP_METHOD'] = $post ? $post :'GET';
+        $this->context()->options['cli_enable'] = false;
+        $this->context()->run();
     }
     ////
     protected function getCommandListInfo()
@@ -21,13 +116,13 @@ trait CommandTrait
         $group = Console::_()->options['cli_command_group'];
         
         foreach ($group as $namespace => $v) {
-            if ($namespace === '') {
-                $str .= "System default commands:\n";
-            } else {
-                $str .= "\e[32;7m{$namespace}\033[0m is in phase '{$v['phase']}' power by '{$v['class']}' :\n";
-            }
+            $tip =($namespace === '')? '*Default commands*':$namespace;
+                
+            $str .= "\e[32;7m{$tip}\033[0m {$v['phase']}::{$v['class']}\n";
+            
             /////////////////
             $descs = $this->getCommandsByClass($v['class'],$v['method_prefix']);
+            ksort($descs);
             foreach ($descs as $method => $desc) {
                 $cmd = !$namespace ? $method : $namespace.':'.$method;
                 $cmd = "\e[32;1m".str_pad($cmd, 20)."\033[0m";

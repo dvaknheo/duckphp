@@ -99,9 +99,7 @@ class DuckPhp extends App
                 RedisManager::_()->init($this->options, $this);
             }
         }
-        if (PHP_SAPI === 'cli') {
-            Console::_()->regCommandClass2($this->is_root? '':$this->options['namespace'], static::class, $this->options['cli_command_class']?? static::class, $this->options['cli_command_method_prefix']??'command_', 'help');
-        }
+
         if ($this->options['path_info_compact_enable'] ?? false) {
             RouteHookPathInfoCompat::_()->init($this->options, $this);
         }
@@ -113,97 +111,5 @@ class DuckPhp extends App
         }
         
         return $this;
-    }
-    /**
-     * switch debug mode
-     */
-    public function command_debug($off = false)
-    {
-        $is_debug = !$off;
-        $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, $this);
-        $ext_options['is_debug'] = $is_debug;
-        ExtOptionsLoader::_()->saveExtOptions($ext_options, $this);
-        $this->options['is_debug'] = $is_debug;
-        if ($is_debug) {
-            echo "Debug mode has turn on. us --off to off\n";
-        } else {
-            echo "Debug mode has turn off.\n";
-        }
-    }
-    /**
-     * show version
-     */
-    public function command_version()
-    {
-        echo $this->version();
-        echo "\n";
-    }
-
-    /**
-     * call a function. e.g. namespace/class@method arg1 --parameter arg2
-     */
-    public function command_call()
-    {
-        //call to service
-        // full namespace , service AAService;
-        $args = func_get_args();
-        $cmd = array_shift($args);
-        list($class, $method) = explode('@', $cmd);
-        $class = str_replace('/', '\\', $class);
-        echo "calling $class::_()->$method\n";
-        $ret = Console::_()->callObject($class, $method, $args, Console::_()->getCliParameters());
-        echo "--result--\n";
-        echo json_encode($ret);
-    }
-    /**
-     * show all routes
-     */
-    public function command_routes()
-    {
-        //echo "Override this to use to show your project routes .\n";
-        echo $this->getCommandListInfo();
-    }
-    public function getCommandListInfo()
-    {
-        $str = '';
-        $group = Console::_()->options['cli_command_group'];
-        
-        foreach ($group as $namespace => $v) {
-            if ($namespace === '') {
-                $str .= "System default commands:\n";
-            } else {
-                $str .= "\e[32;7m{$namespace}\033[0m is in phase '{$v['phase']}' power by '{$v['class']}' :\n";
-            }
-            /////////////////
-            $descs = $this->getCommandsByClass($v['class'],$v['method_prefix']);
-            foreach ($descs as $method => $desc) {
-                $cmd = !$namespace ? $method : $namespace.':'.$method;
-                $cmd = "\e[32;1m".str_pad($cmd, 20)."\033[0m";
-                $str .= "  $cmd\t$desc\n";
-            }
-        }
-        return $str;
-    }
-    protected function getCommandsByClass($class, $method_prefix)
-    {
-        $class = new \ReflectionClass($class);
-        $methods = $class->getMethods();
-        $ret = [];
-        foreach ($methods as $v) {
-            $name = $v->getName();
-            if (substr($name, 0, strlen($method_prefix)) !== $method_prefix) {
-                continue;
-            }
-            $command = substr($name, strlen($method_prefix));
-            $doc = $v->getDocComment();
-            
-            // first line;
-            $desc = ltrim(''.substr(''.$doc, 3));
-            $pos = strpos($desc, "\n");
-            $pos = ($pos !== false)?$pos:255;
-            $desc = trim(substr($desc, 0, $pos), "* \t\n");
-            $ret[$command] = $desc;
-        }
-        return $ret;
     }
 }

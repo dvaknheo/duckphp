@@ -18,7 +18,6 @@ class Console extends ComponentBase
                 'phase'=>'duckphp\duckphp'
                 'class'=>'Command::class',
                 'method_prefix'=>'command_',
-                'default_method'=> 'help',
         ],
     ]
     //*/
@@ -44,13 +43,12 @@ class Console extends ComponentBase
     {
         return $this->context();
     }
-    public function regCommandClass2($command_namespace, $phase, $class, $method_prefix = 'command_', $default_method = 'help')
+    public function regCommandClass($command_namespace, $phase, $class, $method_prefix = 'command_')
     {
         $this->options['cli_command_group'][$command_namespace] = [
             'phase'=>$phase,
             'class'=>$class,
             'method_prefix'=> $method_prefix,
-            'default_method'=> $default_method,
         ];
     }
     public static function DoRun($path_info = '')
