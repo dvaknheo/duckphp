@@ -8,6 +8,7 @@
 
 namespace DuckPhp;
 
+use DuckPhp\Component\Command;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Component\DuckPhpCommand;
 use DuckPhp\Component\ExtOptionsLoader;
@@ -69,6 +70,7 @@ class DuckPhp extends App
         // 'path_info_compact_class_key' => '',
         
         //*/
+        'cli_command_class' => Command::class,
     ];
 
     protected function initComponents(array $options, object $context = null)
@@ -98,13 +100,7 @@ class DuckPhp extends App
             }
         }
         if (PHP_SAPI === 'cli') {
-            //这里先暂时别动
-            if ($this->is_root) {
-                DuckPhpCommand::_()->init($this->options, $this);
-                Console::_()->options['cli_default_command_class'] = DuckPhpCommand::class;
-            } else {
-                Console::_()->regCommandClass(static::class, $this->options['namespace']);
-            }
+            Console::_()->regCommandClass2($this->is_root? '':$this->options['namespace'], static::class, $this->options['cli_command_class']?? static::class, $this->options['cli_command_method_prefix']??'command_', 'help');
         }
         if ($this->options['path_info_compact_enable'] ?? false) {
             RouteHookPathInfoCompat::_()->init($this->options, $this);
@@ -164,6 +160,50 @@ class DuckPhp extends App
      */
     public function command_routes()
     {
-        echo "Override this to use to show your project routes .\n";
+        //echo "Override this to use to show your project routes .\n";
+        echo $this->getCommandListInfo();
+    }
+    public function getCommandListInfo()
+    {
+        $str = '';
+        $group = Console::_()->options['cli_command_group'];
+        
+        foreach ($group as $namespace => $v) {
+            if ($namespace === '') {
+                $str .= "System default commands:\n";
+            } else {
+                $str .= "\e[32;7m{$namespace}\033[0m is in phase '{$v['phase']}' power by '{$v['class']}' :\n";
+            }
+            /////////////////
+            $descs = $this->getCommandsByClass($v['class'],$v['method_prefix']);
+            foreach ($descs as $method => $desc) {
+                $cmd = !$namespace ? $method : $namespace.':'.$method;
+                $cmd = "\e[32;1m".str_pad($cmd, 20)."\033[0m";
+                $str .= "  $cmd\t$desc\n";
+            }
+        }
+        return $str;
+    }
+    protected function getCommandsByClass($class, $method_prefix)
+    {
+        $class = new \ReflectionClass($class);
+        $methods = $class->getMethods();
+        $ret = [];
+        foreach ($methods as $v) {
+            $name = $v->getName();
+            if (substr($name, 0, strlen($method_prefix)) !== $method_prefix) {
+                continue;
+            }
+            $command = substr($name, strlen($method_prefix));
+            $doc = $v->getDocComment();
+            
+            // first line;
+            $desc = ltrim(''.substr(''.$doc, 3));
+            $pos = strpos($desc, "\n");
+            $pos = ($pos !== false)?$pos:255;
+            $desc = trim(substr($desc, 0, $pos), "* \t\n");
+            $ret[$command] = $desc;
+        }
+        return $ret;
     }
 }
