@@ -18,9 +18,8 @@ $options = [];
 
 $options['is_debug'] = true;
 $options['override_class'] = '';
-//$options['path_info_compact_enable'] = true;
+$options['path_info_compact_enable'] = true;
 $options['ext'][RouteHookRouteMap::class] =true;
-$options['ext'][RouteHookPathInfoCompat::class] =true;
 DuckPhp::_()->init($options);
 
 //var_dump(DuckPhp::_()->options);

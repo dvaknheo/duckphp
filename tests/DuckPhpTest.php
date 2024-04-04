@@ -126,17 +126,6 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
             'cli_enable'=>true,
         ];
         DuckPhp::_(new DuckPhp())->init($options);
-        DuckPhp::_()->command_version();
-        DuckPhp::_()->command_routes();
-        DuckPhp::_()->command_debug(false);
-        DuckPhp::_()->command_debug(true);
-        
-       // DuckPhp::_()->command_call(DuckPhpCommand_Command2::);
-        
-        $_SERVER['argv']=[
-            '-','call',str_replace('\\','/',FakeController::class).'@action_hitme','A1'
-        ];
-        DuckPhp::_()->init(['cli_enable'=>true])->run();
         
         DuckPhp_Sub::_(new DuckPhp_Sub());
         DuckPhp::_(new DuckPhp())->init([

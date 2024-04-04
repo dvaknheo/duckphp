@@ -13,10 +13,64 @@ use DuckPhp\HttpServer\HttpServer;
 
 trait CommandTrait
 {
-    public function bak_command_help()
+    /**
+     * show version
+     */
+    public function command_version()
     {
-        //echo "Override this to use to show your project routes .\n";
+        echo App::Current()->version();
+        echo "\n";
+    }
+    /**
+     * show this help.
+     */
+    public function command_help()
+    {
+        echo "Welcome to Use DuckPhp ,version: ";
+        echo App::Current()->version();
+        echo "\n";
+        echo  <<<EOT
+Usage:
+  command [arguments] [options] 
+Options:
+  --help            Display this help message
+
+EOT;
         echo $this->getCommandListInfo();
+    }
+    /**
+     * create new project in current diretory. --help for help
+     */
+    public function command_new()
+    {
+        DuckPhpInstaller::_()->init(Console::_()->getCliParameters())->run();
+    }
+    /**
+     * run inner server.
+     */
+    public function command_run()
+    {
+        $options = Console::_()->getCliParameters();
+        $options['http_app_class'] = get_class($this->context());
+        $options['path'] = $this->context()->options['path'];
+        if (!empty($options['http_server'])) {
+            /** @var string */
+            $class = str_replace('/', '\\', $options['http_server']);
+            HttpServer::_($class::_());
+        }
+        HttpServer::RunQuickly($options);
+    }
+    /**
+     * fetch a url. --uri=[???] ,--post=[postdata]
+     */
+    public function command_fetch($uri = '', $post = false)
+    {
+        $uri = !empty($uri) ? $uri : '/';
+        $_SERVER['REQUEST_URI'] = $uri;
+        $_SERVER['PATH_INFO'] = parse_url($uri, PHP_URL_PATH);
+        $_SERVER['HTTP_METHOD'] = $post ? $post :'GET';
+        App::Current()->options['cli_enable'] = false;
+        App::Current()->run();
     }
     /**
      * call a function. e.g. namespace/class@method arg1 --parameter arg2
@@ -39,8 +93,7 @@ trait CommandTrait
      */
     public function command_routes()
     {
-        //echo "Override this to use to show your project routes .\n";
-        echo $this->getCommandListInfo();
+        echo "Override this to use to show your project routes .\n";
     }
     /**
      * switch debug mode
@@ -58,62 +111,7 @@ trait CommandTrait
             echo "Debug mode has turn off.\n";
         }
     }
-    /**
-     * show version
-     */
-    public function command_version()
-    {
-        echo App::Current()->version();
-        echo "\n";
-    }
-    /**
-     * run inner server.
-     */
-    public function command_run()
-    {
-        $options = Console::_()->getCliParameters();
-        $options['http_app_class'] = get_class(App::Current());
-        $options['path'] = App::Current()->options['path'];
-        if (!empty($options['http_server'])) {
-            /** @var string */
-            $class = str_replace('/', '\\', $options['http_server']);
-            HttpServer::_($class::_());
-        }
-        HttpServer::RunQuickly($options);
-    }
-    ///////////////////////////////////////
-    /**
-     * show this help.
-     */
-    public function command_help()
-    {
-        echo "Welcome to Use DuckPhp ,version: ";
-        echo App::Current()->version();
-        echo "\n";
-        echo  <<<EOT
-Usage:
-  command [arguments] [options] 
-Options:
-  --help            Display this help message
-
-EOT;
-        
-        echo $this->getCommandListInfo();
-        //echo Console::_()->getCommandListInfo();
-    }
-    /**
-     * fetch a url. --uri=[???] ,--post=[postdata]
-     */
-    public function command_fetch($uri = '', $post = false)
-    {
-        $uri = !empty($uri) ? $uri : '/';
-        $_SERVER['REQUEST_URI'] = $uri;
-        $_SERVER['PATH_INFO'] = parse_url($uri, PHP_URL_PATH);
-        $_SERVER['HTTP_METHOD'] = $post ? $post :'GET';
-        App::Current()->options['cli_enable'] = false;
-        App::Current()->run();
-    }
-    ////
+    //////////////////
     protected function getCommandListInfo()
     {
         $str = '';
