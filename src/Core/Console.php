@@ -8,9 +8,8 @@ namespace DuckPhp\Core;
 class Console extends ComponentBase
 {
     public $options = [
-        'cli_command_group'=>[
-        ],
-        'cli_command_default'=>'help',
+        'cli_command_group' => [ ],
+        'cli_command_default' => 'help',
     ];
     /*
     cli_command_group=>
@@ -46,9 +45,9 @@ class Console extends ComponentBase
     public function regCommandClass($command_namespace, $phase, $class, $method_prefix = 'command_')
     {
         $this->options['cli_command_group'][$command_namespace] = [
-            'phase'=>$phase,
-            'class'=>$class,
-            'method_prefix'=> $method_prefix,
+            'phase' => $phase,
+            'class' => $class,
+            'method_prefix' => $method_prefix,
         ];
     }
     public static function DoRun($path_info = '')
@@ -68,7 +67,7 @@ class Console extends ComponentBase
             list($command_namespace, $method) = explode(':', $cmd);
         }
         $group = $this->options['cli_command_group'][$command_namespace] ?? null;
-        if(empty($group)){
+        if (empty($group)) {
             throw new \ReflectionException("Command Not Found: {$cmd}\n", -3);
         }
         
@@ -167,5 +166,4 @@ class Console extends ComponentBase
         $ret = $reflect->invokeArgs($object, $args);
         return $ret;
     }
-
 }

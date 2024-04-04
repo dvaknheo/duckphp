@@ -248,11 +248,11 @@ trait KernelTrait
         Runtime::_()->init($this->options, $this);
         
         if (PHP_SAPI === 'cli') {
-            $cli_namespace = $this->options['cli_command_prefix']?? $this->options['namespace'];
+            $cli_namespace = $this->options['cli_command_prefix'] ?? $this->options['namespace'];
             $cli_namespace = $this->is_root ? '' : $cli_namespace;
             $phase = static::class;
-            $class = $this->options['cli_command_class']?? static::class;
-            $method_prefix = $this->options['cli_command_method_prefix']??'command_';
+            $class = $this->options['cli_command_class'] ?? static::class;
+            $method_prefix = $this->options['cli_command_method_prefix'] ?? 'command_';
             Console::_()->regCommandClass($cli_namespace, $phase, $class, $method_prefix);
         }
         $this->doInitComponents();

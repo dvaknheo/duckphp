@@ -47,18 +47,15 @@
 + **'class_user' => '',** 
 
     用户类名，设置这个类以实现默认的用户类   // 
-+ **'cli_command_alias' => array ( ),** 
++ **'cli_command_class' => 'DuckPhp\\Component\\Command',** 
 
-    命令行,类别名列表   // [DuckPhp\Core\Console](Core-Console.md)
+       // 
 + **'cli_command_default' => 'help',** 
 
     命令行,默认调用指令   // [DuckPhp\Core\Console](Core-Console.md)
-+ **'cli_command_method_prefix' => 'command_',** 
++ **'cli_command_group' => array ( ),** 
 
-    命令行,默认方法前缀   // [DuckPhp\Core\Console](Core-Console.md)
-+ **'cli_default_command_class' => '',** 
-
-    命令行,默认类   // [DuckPhp\Core\Console](Core-Console.md)
+       // [DuckPhp\Core\Console](Core-Console.md)
 + **'cli_enable' => true,** 
 
     启用命令行模式   // [DuckPhp\Core\App](Core-App.md)
@@ -272,6 +269,15 @@
 + **'path_document' => 'public',** 
 
     文档路径   // [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md)
++ **'path_info_compact_action_key' => '_r',** 
+
+    无PATH_INFO兼容，替代的 action   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
++ **'path_info_compact_class_key' => '',** 
+
+    无PATH_INFO兼容，替代的 class   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
++ **'path_info_compact_enable' => true,** 
+
+    PATH_INFO 兼容模式   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
 + 'path_lib' => 'lib', 
 
     导入的 Import 库目录路径   // [DuckPhp\Ext\Misc](Ext-Misc.md)
@@ -378,6 +384,8 @@
         管理员类名，设置这个类以实现默认的管理员类
     - 'class_user' => '',
         用户类名，设置这个类以实现默认的用户类
+    - 'cli_command_class' => 'DuckPhp\\Component\\Command',
+        
     - 'cli_enable' => true,
         启用命令行模式
     - 'close_resource_at_output' => false,
@@ -392,7 +400,7 @@
         异常报告类
     - 'exception_reporter_for_class' => NULL,
         异常报告仅针对的异常
-    - 'ext' => array (   'DuckPhp\\Component\\RouteHookRouteMap' => true,   'DuckPhp\\Component\\RouteHookRewrite' => true,   'DuckPhp\\Component\\RouteHookResource' => true,   'DuckPhp\\Component\\RouteHookPathInfoCompat' => false, ),
+    - 'ext' => array (   'DuckPhp\\Component\\RouteHookRouteMap' => true,   'DuckPhp\\Component\\RouteHookRewrite' => true,   'DuckPhp\\Component\\RouteHookResource' => true, ),
         
     - 'ext_options_file' => 'config/DuckPhpApps.config.php',
         配置文件名字
@@ -414,6 +422,8 @@
         `override_class`切过去的时候会在此保存旧的`override_class`
     - 'path' => NULL,
         工程路径
+    - 'path_info_compact_enable' => false,
+        PATH_INFO 兼容模式
     - 'path_runtime' => 'runtime',
         
     - 'session_prefix' => NULL,
@@ -484,14 +494,10 @@
     - 'use_env_file' => false,
         使用 .env 文件。 仅根应用有效
 + DuckPhp\Core\Console
-    - 'cli_command_alias' => array ( ),
-        命令行,类别名列表
     - 'cli_command_default' => 'help',
         命令行,默认调用指令
-    - 'cli_command_method_prefix' => 'command_',
-        命令行,默认方法前缀
-    - 'cli_default_command_class' => '',
-        命令行,默认类
+    - 'cli_command_group' => array ( ),
+        
 + DuckPhp\Core\ExceptionManager
     - 'default_exception_handler' => NULL,
         默认的异常处理回调
@@ -586,7 +592,13 @@
         redis 设置是否同时支持单个和多个
 + DuckPhp\Component\GlobalAdmin
 + DuckPhp\Component\GlobalUser
-+ DuckPhp\Component\DuckPhpCommand
++ DuckPhp\Component\RouteHookPathInfoCompat
+    - 'path_info_compact_action_key' => '_r',
+        无PATH_INFO兼容，替代的 action
+    - 'path_info_compact_class_key' => '',
+        无PATH_INFO兼容，替代的 class
+    - 'path_info_compact_enable' => true,
+        PATH_INFO 兼容模式
 + DuckPhp\Component\RouteHookRouteMap
     - 'controller_url_prefix' => '',
         

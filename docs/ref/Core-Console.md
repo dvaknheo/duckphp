@@ -116,3 +116,10 @@ EOT;
 ```
 
 ## 完毕
+
+    public function regCommandClass($command_namespace, $phase, $class, $method_prefix = 'command_')
+
+        'cli_command_group' => [
+
+        'cli_command_group' => [ ],
+

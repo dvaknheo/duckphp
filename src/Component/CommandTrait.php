@@ -5,7 +5,11 @@
  */
 namespace DuckPhp\Component;
 
+use DuckPhp\Component\DuckPhpInstaller;
+use DuckPhp\Core\App;
+use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Console;
+use DuckPhp\HttpServer\HttpServer;
 
 trait CommandTrait
 {
@@ -38,7 +42,7 @@ trait CommandTrait
         //echo "Override this to use to show your project routes .\n";
         echo $this->getCommandListInfo();
     }
-        /**
+    /**
      * switch debug mode
      */
     public function command_debug($off = false)
@@ -59,7 +63,7 @@ trait CommandTrait
      */
     public function command_version()
     {
-        echo $this->version();
+        echo App::Current()->version();
         echo "\n";
     }
     /**
@@ -68,8 +72,8 @@ trait CommandTrait
     public function command_run()
     {
         $options = Console::_()->getCliParameters();
-        $options['http_app_class'] = get_class($this->context());
-        $options['path'] = $this->context()->options['path'];
+        $options['http_app_class'] = get_class(App::Current());
+        $options['path'] = App::Current()->options['path'];
         if (!empty($options['http_server'])) {
             /** @var string */
             $class = str_replace('/', '\\', $options['http_server']);
@@ -84,7 +88,7 @@ trait CommandTrait
     public function command_help()
     {
         echo "Welcome to Use DuckPhp ,version: ";
-        echo $this->context()->version();
+        echo App::Current()->version();
         echo "\n";
         echo  <<<EOT
 Usage:
@@ -106,8 +110,8 @@ EOT;
         $_SERVER['REQUEST_URI'] = $uri;
         $_SERVER['PATH_INFO'] = parse_url($uri, PHP_URL_PATH);
         $_SERVER['HTTP_METHOD'] = $post ? $post :'GET';
-        $this->context()->options['cli_enable'] = false;
-        $this->context()->run();
+        App::Current()->options['cli_enable'] = false;
+        App::Current()->run();
     }
     ////
     protected function getCommandListInfo()
@@ -116,12 +120,12 @@ EOT;
         $group = Console::_()->options['cli_command_group'];
         
         foreach ($group as $namespace => $v) {
-            $tip =($namespace === '')? '*Default commands*':$namespace;
+            $tip = ($namespace === '')? '*Default commands*':$namespace;
                 
             $str .= "\e[32;7m{$tip}\033[0m {$v['phase']}::{$v['class']}\n";
             
             /////////////////
-            $descs = $this->getCommandsByClass($v['class'],$v['method_prefix']);
+            $descs = $this->getCommandsByClass($v['class'], $v['method_prefix']);
             ksort($descs);
             foreach ($descs as $method => $desc) {
                 $cmd = !$namespace ? $method : $namespace.':'.$method;
@@ -153,5 +157,4 @@ EOT;
         }
         return $ret;
     }
-
 }

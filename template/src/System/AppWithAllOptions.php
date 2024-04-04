@@ -37,17 +37,14 @@ class AppWithAllOptions extends DuckPhp
         // 用户类名，设置这个类以实现默认的用户类 ()
         // $options['class_user'] = '';
 
-        // 命令行,类别名列表 (DuckPhp\Core\Console)
-        // $options['cli_command_alias'] = array ( );
+        //  ()
+        // $options['cli_command_class'] = 'DuckPhp\\Component\\Command';
 
         // 命令行,默认调用指令 (DuckPhp\Core\Console)
         // $options['cli_command_default'] = 'help';
 
-        // 命令行,默认方法前缀 (DuckPhp\Core\Console)
-        // $options['cli_command_method_prefix'] = 'command_';
-
-        // 命令行,默认类 (DuckPhp\Core\Console)
-        // $options['cli_default_command_class'] = '';
+        //  (DuckPhp\Core\Console)
+        // $options['cli_command_group'] = array ( );
 
         // 启用命令行模式 (DuckPhp\Core\App)
         // $options['cli_enable'] = true;
@@ -186,6 +183,15 @@ class AppWithAllOptions extends DuckPhp
 
         // 文档路径 (DuckPhp\Component\RouteHookResource)
         // $options['path_document'] = 'public';
+
+        // 无PATH_INFO兼容，替代的 action (DuckPhp\Component\RouteHookPathInfoCompat)
+        // $options['path_info_compact_action_key'] = '_r';
+
+        // 无PATH_INFO兼容，替代的 class (DuckPhp\Component\RouteHookPathInfoCompat)
+        // $options['path_info_compact_class_key'] = '';
+
+        // PATH_INFO 兼容模式 (DuckPhp\Component\RouteHookPathInfoCompat)
+        // $options['path_info_compact_enable'] = true;
 
         // 日志目录路径 (DuckPhp\Core\Logger)
         // $options['path_log'] = 'runtime';

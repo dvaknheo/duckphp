@@ -297,3 +297,5 @@ App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里
 
         ],
 
+        'cli_command_class' => Command::class,
+
