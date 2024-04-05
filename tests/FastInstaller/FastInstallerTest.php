@@ -2,6 +2,7 @@
 namespace tests\DuckPhp\FastInstaller;
 
 use DuckPhp\Core\Console;
+use DuckPhp\Component\CommandTrait;
 use DuckPhp\DuckPhp;
 use DuckPhp\FastInstaller\FastInstaller;
 use DuckPhp\Foundation\FastInstallerTrait;
@@ -127,9 +128,11 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
 }
 class FiParentApp extends DuckPhp
 {
+    use CommandTrait;
     use FastInstallerTrait;
     
     public $options = [
+        'cli_command_class'=>null,
         'is_debug'=>true,
         'ext_options_file'=>'FiParent.config.php',
         'app' => [
@@ -147,9 +150,11 @@ class FiParentApp extends DuckPhp
 }
 class FiChildApp extends DuckPhp
 {
+    use CommandTrait;
     use FastInstallerTrait;
     
     public $options = [
+        'cli_command_class'=>null,
         'im child' => true,
         'install_need_redis'=>true,
     ];
@@ -162,9 +167,9 @@ class FiChildApp extends DuckPhp
 }
 class FiParentApp2 extends FiParentApp
 {
-    use FastInstallerTrait;
-    
+
     public $options = [
+        'cli_command_class'=>null,
         'is_debug'=>true,
         'ext_options_file'=>'FiParent2.config.php',
         'app' => [
@@ -178,6 +183,7 @@ class FiParentApp2 extends FiParentApp
 class FiChildApp2 extends FiChildApp
 {
     public $options = [
+        'cli_command_class'=>null,
         'im child' => true,
         'install_need_database'=>false,
         'install_need_redis'=>false,
