@@ -17,3 +17,5 @@
 
     protected function getCommandsByClass($class, $method_prefix)
 
+    public function command_new()
+

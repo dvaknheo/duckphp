@@ -100,8 +100,10 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         $str2= "{$rdb['host']}\n{$rdb['port']}\n{$rdb['auth']}\n{$rdb['select']}\n";
         InstallerConsole::_()->setFileContents([$str,  'N',$str2,'N']);
         $_SERVER['argv']=['-','install', "--configure", '--force'];
-        FiParentApp2::_()->run();
-        
+        //echo "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy\n";
+        //define('TRACE_BEGIN',true);
+        FiParentApp2::_()->init([])->run();
+        //define('TRACE_END',true);
         echo "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n";
         
         try {

@@ -14,9 +14,9 @@ trait FastInstallerTrait
      */
     public function command_install()
     {
-        if (!FastInstaller::_()->isInited()) {
-            FastInstaller::_()->init($this->options, $this);
-        }
+        //if (!FastInstaller::_()->isInited()) {
+        //    FastInstaller::_()->init($this->options, App::Current());
+        //}
         return FastInstaller::_()->doCommandInstall();
     }
     /**
