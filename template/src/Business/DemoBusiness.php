@@ -15,7 +15,7 @@ class DemoBusiness extends Base
     {
         return "<" . DemoModel::_()->foo().">";
     }
-    function getDocData($f)
+    public function getDocData($f)
     {
         $ref = new \ReflectionClass(\DuckPhp\DuckPhp::class);
         $path = realpath(dirname($ref->getFileName()) . '/../docs').'/';
@@ -28,5 +28,9 @@ class DemoBusiness extends Base
             $str = preg_replace('/([a-z_]+\.gv\.svg)/', "?f=$1", $str); // gv file to md file
         }
         return $str;
+    }
+    public function testdb()
+    {
+        return DemoModel::_()->testdb();
     }
 }

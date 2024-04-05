@@ -3,15 +3,14 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-require(__DIR__.'/../../autoload.php');  // @DUCKPHP_HEADFILE
-
+if(!class_exists('DuckPhp\DuckPhp')){
+    require_once (__DIR__.'/../../autoload.php');  // @DUCKPHP_HEADFILE
+}
 use DuckPhp\DuckPhp;
 use DuckPhp\Ext\CallableView;
 use DuckPhp\Foundation\SimpleBusinessTrait; // 可变单例模式
 use DuckPhp\Foundation\SimpleModelTrait; // 可变单例模式
 use DuckPhp\Foundation\Helper; // Helper
-    
-
 //业务类， 还是带上吧。
 class DbTestApp extends DuckPhp
 {
@@ -33,13 +32,14 @@ class DbTestApp extends DuckPhp
             'password' => null,
             'driver_options' => [],
         ],
+        'error_404'=>[MainController::class,'On404'],
+        'cli_command_prefix'=> 'dbtest',
     ];
     public function __construct()
     {
-        $this->options['error_404'] = function () {
-            MainController::_()->action_index();
-        };
+        parent::__construct();
         $dsn = $this->options['database']['dsn'];
+        $dsn = "sqlite:". (__DIR__.'/../config/dbtest.sqlite');
         //$dsn =str_replace('@runtime@',Helper::getRuntimePath(),$dsn);
         $this->options['database']['dsn'] = $dsn;
     }
@@ -47,7 +47,10 @@ class DbTestApp extends DuckPhp
 class MyBusiness
 {
     use SimpleBusinessTrait; // 单例模式。
-    
+    public static function On404()
+    {
+        static::_()->action_index;
+    }
     public function getDataList($page, $pagesize)
     {
         return TestModel::_()->getDataList($page, $pagesize);
@@ -223,4 +226,7 @@ class View
     }
 }
 
-DbTestApp::RunQuickly([]);
+if(get_class(\DuckPhp\Core\App::Root())  === \DuckPhp\Core\App::class){ // ugly
+    DbTestApp::RunQuickly([]);
+}
+

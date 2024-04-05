@@ -14,4 +14,10 @@ class DemoModel extends Base
     {
         return DATE(DATE_ATOM);
     }
+    public function testdb()
+    {
+        $sql = "select 1+? as t";
+        $ret = Helper::Db()->fetch($sql, 2);
+        return $ret;
+    }
 }

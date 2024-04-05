@@ -53,4 +53,9 @@ class MainController extends Base
         }
         Helper::exit();
     }
+    public function action_testdb()
+    {
+        $ret = DemoBusiness::_()->testdb();
+        var_dump($ret);
+    }
 }

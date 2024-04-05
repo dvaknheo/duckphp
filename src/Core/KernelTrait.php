@@ -249,7 +249,7 @@ trait KernelTrait
         
         if (PHP_SAPI === 'cli') {
             $cli_namespace = $this->options['cli_command_prefix'] ?? $this->options['namespace'];
-            $cli_namespace = $this->is_root ? '' : $cli_namespace;
+            $cli_namespace = $this->is_root ? '' : ($cli_namespace ? $cli_namespace : static::class);
             $phase = static::class;
             $class = $this->options['cli_command_class'] ?? static::class;
             $method_prefix = $this->options['cli_command_method_prefix'] ?? 'command_';
@@ -264,7 +264,6 @@ trait KernelTrait
     protected function loadSetting()
     {
         $this->setting = $this->options['setting'] ?? [];
-        
         if ($this->options['use_env_file']) {
             $this->dealWithEnvFile();
         }

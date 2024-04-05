@@ -5,11 +5,11 @@
  */
 namespace ProjectNameTemplate\Controller;
 
-use DuckPhp\Foundation\ExceptionReportTrait;
+use DuckPhp\Foundation\ExceptionReporterTrait;
 
-class ExceptionReport
+class ExceptionReporter
 {
-    use ExceptionReportTrait;
+    use ExceptionReporterTrait;
     //public function defaultException($ex)
     //{
     //return App::Current()->_OnDefaultException($ex);
