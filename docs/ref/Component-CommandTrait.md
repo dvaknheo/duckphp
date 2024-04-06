@@ -1,4 +1,8 @@
-
+# DuckPhp\Component\CommandTrait
+[toc]
+## 说明
+命令行合集 Trait。
+##
     public function command_call()
 
     public function command_routes()

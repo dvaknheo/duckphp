@@ -47,10 +47,8 @@
     
     protected function showHelp()
 
-###
-        function detectedClass($path)
-        protected function genProjectName()
-以上是未使用的方法
+    protected function genProjectName()
+
 
 ## 说明
 
@@ -65,5 +63,4 @@ vendor/bin/duckphp new  --help
 ```
 
 ## 完毕
-    protected function genProjectName()
 

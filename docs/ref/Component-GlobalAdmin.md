@@ -2,7 +2,7 @@
 [toc]
 ## 简介
 
-全局管理员，mf'd
+全局管理员，函
 
 ## 选项
 
@@ -12,6 +12,9 @@
 
     public static function CallInPhase($phase)
 基本方法
+    public function action()
+
+    public function service()
 
     public function id()
     public function data()
@@ -50,7 +53,5 @@
 ## 完毕
 
 
-    public function action()
 
-    public function service()
 

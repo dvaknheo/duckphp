@@ -13,6 +13,7 @@ class CallableView extends View
         'callable_view_head' => null,
         'callable_view_foot' => null,
         'callable_view_class' => null,
+        'callable_view_is_object_call' => true,
         'callable_view_prefix' => null,
         'callable_view_skip_replace' => false,
     ];
@@ -45,7 +46,12 @@ class CallableView extends View
     {
         $ret = null;
         $func = str_replace('/', '_', $this->options['callable_view_prefix'].$func);
-        $ret = ($this->options['callable_view_class'])?[$this->options['callable_view_class'],$func]:$func;
+        $ret = $func;
+        $class = $this->options['callable_view_class'];
+        if ($class) {
+            $class = (!$this->options['callable_view_is_object_call'])? $class : (is_callable([$class,'_']) ? $class::_() : new $class);
+            $ret = [$class, $func];
+        }
         if (!is_callable($ret)) {
             return null;
         }

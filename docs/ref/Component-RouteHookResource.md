@@ -5,11 +5,13 @@
 
 ## 选项
         'path' => '',
+        'path_document' => 'public',
 
         'path_resource' => 'res',
 资源目录
+
         'controller_resource_prefix' => '',
-资源前缀
+资源前缀, 如果是 './' 会切成 空前缀
 
         'controller_url_prefix' => '',
 限于URL前缀
@@ -40,5 +42,4 @@
 res/ 目录，对应 admin/res/ 之类等
 
 
-        'path_document' => 'public',
 

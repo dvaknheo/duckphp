@@ -10,6 +10,12 @@
 
 ## 方法
 
+    public function getUsernames($ids)
+
+    public function action()
+
+    public function service()
+
 
     public function id()
 
@@ -30,9 +36,4 @@
     public function login($post)
     public function logout($post)
 
-    public function getUsernames($ids)
-
-    public function action()
-
-    public function service()
 

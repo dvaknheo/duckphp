@@ -42,6 +42,11 @@ trait KernelTrait
         
         'exception_reporter' => null,
         'exception_reporter_for_class' => null,
+        
+        'cli_command_class' => null,
+        'cli_command_prefix' => null,
+        'cli_command_method_prefix'=>'command_',
+        
         //*/
         // 'namespace' => '',
         // 'namespace_controller' => 'Controller',

@@ -174,6 +174,9 @@ init() 中初始化选项
     protected function reloadFlags($context): void
 init() 中 DefaultComponents() 中从设置读取调试标志和平台标志
 
+    protected function initException($options)
+初始化中，初始化异常
+
     protected function initExtentions(array $exts): void
 初始化中，初始化扩展
 
@@ -281,5 +284,4 @@ onInit
 
 
 
-    protected function initException($options)
 
