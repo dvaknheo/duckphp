@@ -72,11 +72,8 @@ $context->extendComponents(
 * [MyFacadesAutoLoader](ref/Ext-MyFacadesAutoLoader.md) Facade 门面
 * [MyMiddlewareManager](ref/Ext-MyMiddlewareManager.md)
 * [RedisCache](ref/Ext-RedisCache.md)
-* [RedisManager](ref/Ext-RedisManager.md)
 * [RouteHookApiServer](ref/Ext-RouteHookApiServer.md)
-* [RouteHookRewrite](ref/Ext-RouteHookRewrite.md)
 * [RouteHookDirectoryMode](ref/Ext-RouteHookDirectoryMode.md)
-* [StaticReplacer](ref/Ext-StaticReplacer.md)
 * [StrictCheck](ref/Ext-StrictCheck.md) 严格检查
 
 扩展支持的文件

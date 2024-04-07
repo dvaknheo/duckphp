@@ -40,4 +40,4 @@ DuckPhp 的事件系统是 一对多的
 
 如果你想调试
 
-可以 `__var_dump(DuckPhp\Component\EventManager::G()->all());`
+可以 `__var_dump(DuckPhp\Core\EventManager::_()->all());`

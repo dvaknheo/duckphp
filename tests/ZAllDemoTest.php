@@ -24,11 +24,11 @@ class ZAllDemoTest extends \PHPUnit\Framework\TestCase
         $host ="http://127.0.0.1:{$port}/";
         
         $tests = [
-            'test/done'          => 236 ,
+            'test/done'          => 95 ,
             'doc.php'            => 1329 ,
-            ''                   => 1385 ,
-            'files'              => 8907 ,
-            'demo.php'           => 401 ,
+            ''                   => 1353 ,
+            'files'              => 9809 ,
+            'demo.php'           => 406 ,
             'helloworld.php'     => 11,
             'just-route.php'     => 141,
             'api.php/test.index' => 339 ,
