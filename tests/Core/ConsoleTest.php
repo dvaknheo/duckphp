@@ -20,7 +20,7 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         Console::_()->getCliParameters();
         
         
-        Console::_()->regCommandClass(Console_Command::class,"test");
+        Console::_()->regCommandClass(App::class,Console_Command::class,"test");
         $_SERVER['argv']=[
             '-','test:foo',
         ];
@@ -80,8 +80,8 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         $_SERVER['argv']=[
             '-','help',  // ------>changed
         ];
-        Console::_()->regCommandClass(Console_Command::class,"aa");
-        Console::_()->regCommandClass(Console_Command2::class,"aa");
+        Console::_()->regCommandClass(Console_App::class, Console_Command::class,"aa");
+        Console::_()->regCommandClass(Console_App::class, Console_Command2::class,"aa");
         Console_App::_()->run();
         $_SERVER['argv']=[
             '-','call',str_replace('\\','/',Console_Command2::class).'@command_foo4','A1'

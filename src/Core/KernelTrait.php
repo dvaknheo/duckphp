@@ -45,7 +45,7 @@ trait KernelTrait
         
         'cli_command_class' => null,
         'cli_command_prefix' => null,
-        'cli_command_method_prefix'=>'command_',
+        'cli_command_method_prefix' => 'command_',
         
         //*/
         // 'namespace' => '',
