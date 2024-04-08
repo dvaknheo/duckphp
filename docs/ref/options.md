@@ -35,6 +35,9 @@
 + 'callable_view_head' => NULL, 
 
     CallableView 页眉函数   // [DuckPhp\Ext\CallableView](Ext-CallableView.md)
++ 'callable_view_is_object_call' => true, 
+
+       // [DuckPhp\Ext\CallableView](Ext-CallableView.md)
 + 'callable_view_prefix' => NULL, 
 
     CallableView 视图方法前缀   // [DuckPhp\Ext\CallableView](Ext-CallableView.md)
@@ -47,15 +50,21 @@
 + **'class_user' => '',** 
 
     用户类名，设置这个类以实现默认的用户类   // 
-+ **'cli_command_class' => 'DuckPhp\\Component\\Command',** 
++ **'cli_command_class' => NULL,** 
 
-       // 
+       // [DuckPhp\Core\App](Core-App.md)
 + **'cli_command_default' => 'help',** 
 
     命令行,默认调用指令   // [DuckPhp\Core\Console](Core-Console.md)
 + **'cli_command_group' => array ( ),** 
 
        // [DuckPhp\Core\Console](Core-Console.md)
++ **'cli_command_method_prefix' => 'command_',** 
+
+       // [DuckPhp\Core\App](Core-App.md)
++ **'cli_command_prefix' => NULL,** 
+
+       // [DuckPhp\Core\App](Core-App.md)
 + **'cli_enable' => true,** 
 
     启用命令行模式   // [DuckPhp\Core\App](Core-App.md)
@@ -386,6 +395,10 @@
         用户类名，设置这个类以实现默认的用户类
     - 'cli_command_class' => 'DuckPhp\\Component\\Command',
         
+    - 'cli_command_method_prefix' => 'command_',
+        
+    - 'cli_command_prefix' => NULL,
+        
     - 'cli_enable' => true,
         启用命令行模式
     - 'close_resource_at_output' => false,
@@ -447,6 +460,12 @@
         别名，目前只用于视图目录
     - 'app' => array ( ),
         子应用，保存 类名=>选项对
+    - 'cli_command_class' => NULL,
+        
+    - 'cli_command_method_prefix' => 'command_',
+        
+    - 'cli_command_prefix' => NULL,
+        
     - 'cli_enable' => true,
         启用命令行模式
     - 'close_resource_at_output' => false,
@@ -629,6 +648,8 @@
         CallableView 页脚函数
     - 'callable_view_head' => NULL,
         CallableView 页眉函数
+    - 'callable_view_is_object_call' => true,
+        
     - 'callable_view_prefix' => NULL,
         CallableView 视图方法前缀
     - 'callable_view_skip_replace' => false,

@@ -74,7 +74,7 @@ try_files $uri $uri/ /index.php$request_uri;
 ### Controller控制器
 写 /test/done 控制器对应的内容。
 
-@script File: `template/app/Controller/test.php`
+@script File: `template/src/Controller/testController.php`
 
 ```php
 <?php declare(strict_types=1);
@@ -82,18 +82,16 @@ try_files $uri $uri/ /index.php$request_uri;
  * DuckPhp
  * From this time, you never be alone~
  */
+namespace ProjectNameTemplate\Controller;
 
-namespace LazyToChange\Controller;
+use ProjectNameTemplate\Business\DemoBusiness;
 
-use LazyToChange\Helper\ControllerHelper as C;
-use LazyToChange\Business\DemoBusiness;
-
-class test
+class testController
 {
-    public function done()
+    public function action_done()
     {
         $var = DemoBusiness::_()->foo();
-        C::Show(get_defined_vars());
+        Helper::Show(get_defined_vars());
     }
 }
 
@@ -112,7 +110,7 @@ C::Show($data); 是 C::Show($data,'test/done'); 的缩写， 调用 test/done �
 
 业务逻辑层。根据业务逻辑来命名。
 
-@script File: `template/app/Business/DemoBusiness.php`
+@script File: `template/src/Business/DemoBusiness.php`
 
 ```php
 <?php declare(strict_types=1);
@@ -120,17 +118,35 @@ C::Show($data); 是 C::Show($data,'test/done'); 的缩写， 调用 test/done �
  * DuckPhp
  * From this time, you never be alone~
  */
+namespace ProjectNameTemplate\Business;
 
-namespace LazyToChange\Business;
-use LazyToChange\Helper\BusinessHelper as B;
+use ProjectNameTemplate\Business\Base;
+use ProjectNameTemplate\Business\Helper;
+use ProjectNameTemplate\Model\DemoModel;
 
-use LazyToChange\Model\DemoModel;
-
-class DemoBusiness extends BaseBusiness
+class DemoBusiness extends Base
 {
     public function foo()
     {
         return "<" . DemoModel::_()->foo().">";
+    }
+    public function getDocData($f)
+    {
+        $ref = new \ReflectionClass(\DuckPhp\DuckPhp::class);
+        $path = realpath(dirname($ref->getFileName()) . '/../docs').'/';
+        $file = realpath($path.$f);
+        if (substr($file, 0, strlen($path)) != $path) {
+            return '';
+        }
+        $str = file_get_contents($file);
+        if (substr($file, -3) === '.md') {
+            $str = preg_replace('/([a-z_]+\.gv\.svg)/', "?f=$1", $str); // gv file to md file
+        }
+        return $str;
+    }
+    public function testdb()
+    {
+        return DemoModel::_()->testdb();
     }
 }
 
@@ -145,7 +161,7 @@ BaseBusiness 也是不强求的，我们 extends BaseBusiness 是为了能用 De
 
 Model 类是实现基本功能的。一般 Model 类的命名是和数据库表一致的。
 
-@script File: `template/app/Model/DemoModel.php`
+@script File: `template/src/Model/DemoModel.php`
 
 ```php
 <?php declare(strict_types=1);
@@ -153,17 +169,22 @@ Model 类是实现基本功能的。一般 Model 类的命名是和数据库表�
  * DuckPhp
  * From this time, you never be alone~
  */
+namespace ProjectNameTemplate\Model;
 
-namespace LazyToChange\Model;
+use ProjectNameTemplate\Model\Base;
+use ProjectNameTemplate\Model\Helper;
 
-use LazyToChange\Model\BaseModel;
-// use LazyToChange\Helper\ModelHelper as M;
-
-class DemoModel extends BaseModel
+class DemoModel extends Base
 {
     public function foo()
     {
         return DATE(DATE_ATOM);
+    }
+    public function testdb()
+    {
+        $sql = "select 1+? as t";
+        $ret = Helper::Db()->fetch($sql, 2);
+        return $ret;
     }
 }
 

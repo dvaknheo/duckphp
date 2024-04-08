@@ -64,3 +64,5 @@ vendor/bin/duckphp new  --help
 
 ## 完毕
 
+        function detectedClass($path)
+

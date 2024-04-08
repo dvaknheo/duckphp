@@ -1,81 +1,68 @@
-# 新的开发范式（持续施工中
-
-从 1.2.12 版本开始，DuckPhp 添加了新的开发范式
-
-src 多了个 foundation 目录。
-
-模板样例， 多了 template/public/advance  目录
-这就是新版的  开发目录
-
-我们可以看看这个目录结构
-
+# Foundation 基础类
+DuckPhp\Foundation 命名空间底下的，是普通工程师要看的内容
 ```
+.
 ├── Business
-│   ├── BaseBusiness.php
-│   ├── BusinessException.php
-│   └── DemoBusiness.php
+│   └── Helper.php
+├── CommonCommandTrait.php
 ├── Controller
-│   ├── Base.php
-│   └── Main.php
-├── ControllerEx
-│   └── Session.php
+│   └── Helper.php
+├── ExceptionReporterTrait.php
+├── FastInstallerTrait.php
+├── Helper.php
 ├── Model
-│   ├── BaseModel.php
-│   └── DemoModel.php
+│   └── Helper.php
+├── SimpleBusinessTrait.php
+├── SimpleControllerTrait.php
+├── SimpleExceptionTrait.php
+├── SimpleModelTrait.php
+├── SimpleSessionTrait.php
+├── SimpleSingletonTrait.php
 └── System
-    ├── App.php
-    ├── ProjectBusiness.php
-    ├── ProjectController.php
-    ├── ProjectException.php
-    ├── ProjectModel.php
-    └── ProjectSession.php  // session
-```
-可以看到少了 Helper 目录，多了  ControllerEx 目录， System 目录多了好几个 Project 开头的文件
-
-那么 Foundation 的体现在哪里呢？
-在此之前我们看一下 Foundation 有什么文件
+    └── Helper.php
 
 ```
-Installer.php 
-SessionManagerBase.php  // Session 的前缀
-SimpleControllerTrait.php  // 
-SimpleModelTrait.php
-SqlDumper.php
-ThrowOnableTrait.php
+归类如下
 
-```
+### 常规事物
+实现 `_()`可变单例方法和 `ZCall` 跨相位调用方法
 
-新模式要点：
+SimpleBusinessTrait
+业务类，服务类调用。
+SimpleControllerTrait.php
 
-1. 除了 System 目录，其他目录禁止和 DuckPhp 命名空间有联系
-2. 其他目录，尽量少的和 System 目录联系, 一般通过基类联系
-3. 原先 Helper 都缩进 Base/BaseBusiness/BaseModel
+`_()`可变单例方法，为了兼容控制器调用做了调整
+
+SimpleModelTrait
+额外的，还多加了一些常用方法方便使用。
+
+### 高级
+
+SimpleSessionTrait.php
+会话处理，集合在这里。
 
 
-世界是复杂的 
 
-当我们拿到理想状态工程架构的时候，其实现实是复杂的
+Session 类， 给不同 应用 加 session_prefix 
 
-```text
-           /-> View-->ViewHelper
-Controller --> Business ------------------------------ ---> Model
-         \         \   \               \  /                  \
-          \         \   \-> (Business)Lib ----> ExModel----------->ModelHelper
-           \         \             \                
-            \         ---------------->BusinessHelper
-             \-->ControllerHelper
-```
-1. ViewHelper 因为 View 里不引用命名空间，所以改用全局函数
-2. ModelHelper 就几个函数，所以并入. Model 这一层，折腾的是在多模型关联
-3. Business 这一层， Business 也是没几个函数，所以并入。 Business 的问题是在于不同异常。 所以 ThrowOnableTrait 省事了
-4. Controller 这一层，最大的问题是太多东西了，比如引入第三方的东西， 所以 ControllerHelper 类没法解决， 我们抽出 ControllerEx 目录来解决
-5. 所以我们就有了 Session 这个类。 但是 其他动作，我们用 Action 后缀吧。
+SimpleExceptionTrait.php -> ThrowOnTrait
+ThrowOn 静态方法
+ExceptionReporterTrait
+用于接管错误处理
 
-6. 我们要给外部使用的东西，那么就放在Api 里
 
-Api\Plugin 入口
-Api\Action 控制器层各种引用的动作
-Api\Service  用于 业务层
+### 命令行相关
+CommonCommandTrait -> DuckPhp\Component\CommandTrait
+FastInstallerTrait -> DuckPhp\FastInstaller\FastInstallerTrait
+
+### 助手:
+DuckPhp\Foundation\Business\Helper  ->
+DuckPhp\Foundation\Controller\Helper ->
+DuckPhp\Foundation\Model\Helper  ->
+DuckPhp\Foundation\System\Helper ->
+DuckPhp\Foundation\Helper
+
+DuckPhp\Foundation\Helper 是包含所有的Helper.
 
 
 

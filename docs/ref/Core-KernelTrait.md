@@ -285,3 +285,7 @@ onInit
 
 
 
+        'cli_command_class' => null,
+
+        'cli_command_prefix' => null,
+

@@ -353,7 +353,7 @@ $options = [
 
 ### System
 ----
-@script File: `template/System/App.php`
+@script File: `template/src/System/App.php`
 ```php
 class App extends DuckPhp
 {

@@ -6,35 +6,52 @@
 - [DuckPhp\Db\Db](ref/Db-Db.md) 数据库类
     - 使用 [DuckPhp\Db\DbAdvanceTrait](ref/Db-DbAdvanceTrait.md)
     - 实现 [DuckPhp\Db\DbInterface](ref/Db-DbInterface.md)
+## 数据库的配置
+DuckPhp 类默认加载 DbManager。 详细情况可见 [DuckPhp\Component\DbManager](ref/Component-DbManager.md)
+DbManger 默认还加载 设置里的 DbManager 选项。
 
-## 相关选项
-
-
-'database_list'=>[],      //DB 列表
-
-## 相关设置
-setting.php 以下配置，注意的是 DuckPhp 默认是支持多个数据库的，所以是database_list
+一般的选项有
+```
+    'database' => null,
+    'database_list' => null,
+```
+DuckPhp 默认是支持多个数据库的，是database_list 和 database 都能配置。
 ```php
 [
 'database_list' =>[[
         'dsn'=>'mysql:host=???;port=???;dbname=???;charset=utf8;',
         'username'=>'???',
         'password'=>'???',
-    ]],
-],
-```
-## 开始
+],    ]],
 
-### DBManager
-默认开启。DBManager 类是用来使用数据库的
-M::DB() 用到了这个组件。
+```
+DbManager 是共享的穿透相位类
+如果你的 DbManager 不需要共享的类。在 DuckPhp 还有个 local_db 的选项 设置为 true,
+
+## 相关选项
+
+
+`Helper::DB($tag)` 的 $tag 对应 $setting\['database_list'\][$tag]。默认会得到最前面的 tag 的配置。
+
+DbForWrite() 则的对应第0 号数库 ,DbForRead() 对应第 1号数据库。
+
+你不必担心每次框架初始化会连接数据库。只有第一次调用 DuckPhp::Db() 的时候，才进行数据库类的创建。
+
+
+'database_list'=>[],      //DB 列表
+
+
+### DbManager
+默认开启。DbManager 类是用来使用数据库的
+
+Helper::Db() 用到了这个组件。
 
 #### 方法
-DB()
-    是 App::DB 和 M::DB 的实现。
+Db()
+    是 App::Db 和 M::Db 的实现。
 
-#### DB 类的用法
-DB
+#### Db 类的用法
+Db
     close(); //关闭, 你一般不用关闭,系统会自动关闭
     PDO();
     quote($string);
@@ -56,6 +73,12 @@ $tag 对应 $setting\['database_list'\][$tag]。默认会得到最前面的 tag 
 你不必担心每次框架初始化会连接数据库。只有第一次调用 DuckPhp::DB() 的时候，才进行数据库类的创建。
 
 DB 的使用方法，看后面的参考。
+
+
+
+
+
+### 过旧的参考
 示例如下
 
 ```php
@@ -125,18 +148,12 @@ class DBModel extends BaseModel
 1.2.6 版本变更，你可以直接使用 database 配置。
 
 
-`M::DB($tag)` 的 $tag 对应 $setting\['database_list'\][$tag]。默认会得到最前面的 tag 的配置。
-
-DbForWrite() 则的对应第0 号数库 ,DbForRead() 对应第 1号数据库。
-
-你不必担心每次框架初始化会连接数据库。只有第一次调用 DuckPhp::DB() 的时候，才进行数据库类的创建。
-
-## 使用 think-orm 的 DB
+## 使用 think-orm 的 Db参考代码 ，暂时无法使用。
 
 ```php
 <?php
 use think\facade\Db;
-use DuckPhp\Ext\DBManager;
+use DuckPhp\Ext\DbManager;
 use DuckPhp\DuckPhp;
 require_once('../vendor/autoload.php');
 

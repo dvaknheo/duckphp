@@ -161,6 +161,7 @@ Controller --> Business ------------------------------ ---> Model
 
 ```php
 <?php declare(strict_types=1);
+$ret=[];for($i=1;$i<=5;$i++){for($j=1;$j<=5;$j++){$ret[$i*$j]=true;}}var_dump(($ret));
 /**
  * DuckPhp
  * From this time, you never be alone~
@@ -198,7 +199,7 @@ RunQuickly 相当于 `\DuckPhp\DuckPhp::G()->init($options,function(){})->run();
 
 所以我们现在来看 `app/System/App.php` 对应的 LazyToChange\System\App 类就是入口了。
 
-@script File: `template/app/System/App.php`
+@script File: `template/src/System/App.php`
 
 ```php
 <?php declare(strict_types=1);
@@ -206,57 +207,46 @@ RunQuickly 相当于 `\DuckPhp\DuckPhp::G()->init($options,function(){})->run();
  * DuckPhp
  * From this time, you never be alone~
  */
-
-namespace LazyToChange\System;
+namespace ProjectNameTemplate\System;
 
 use DuckPhp\DuckPhp;
+use ProjectNameTemplate\Controller\ExceptionReporter;
+use ProjectNameTemplate\Controller\Commands;
 
 class App extends DuckPhp
 {
     //@override
     public $options = [
-        'is_debug' => true, 
-        'controller_class_postfix' => '',
-        'controller_method_prefix' => '',
-        // 'setting_file_enable' => true,
+        //'is_debug' => true, // debug switch
+        //'path_info_compact_enable' => false,
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
-        
-        //'path_info_compact_enable' => false,        
+        'exception_reporter' => ExceptionReporter::class,
+        //'app' => [],
+        'cli_command_class' => Commands::class,
     ];
+    //@override
+    public function onPrepare()
+    {
+        // your code here
+        require_once __DIR__. '/../../public/dbtest.php';
+        $this->options['app']['DbTestApp']=[
+            'controller_url_prefix'=>'db_test/',
+        ];
+        //*/
+    }
+    //@override
+    protected function onInit()
+    {
+        //
+    }
     /**
      * console command sample
      */
     public function command_hello()
     {
-        // 多一个 hello 的命令
-        echo "override you the routes\n";
-    }
-    //@override
-    protected function onPrepare()
-    {
-        //your code here
-    }
-    //@override
-    protected function onInit()
-    {
-        // your code here
-    }
-    //@override
-    protected function onRun()
-    {
-        // your code here
-    }
-    public function __construct()
-    {
-        parent::__construct();
-        $options = [];
-
-        // @autogen by tests/genoptions.php
-// 【省略选项注释】
-        // @autogen end
-        
-        $this->options = array_replace_recursive($this->options, $options);
+        //TODO Move this
+        echo "hello ". static::class ."\n";
     }
 }
 

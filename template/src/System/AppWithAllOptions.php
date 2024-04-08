@@ -37,14 +37,20 @@ class AppWithAllOptions extends DuckPhp
         // 用户类名，设置这个类以实现默认的用户类 ()
         // $options['class_user'] = '';
 
-        //  ()
-        // $options['cli_command_class'] = 'DuckPhp\\Component\\Command';
+        //  (DuckPhp\Core\App)
+        // $options['cli_command_class'] = NULL;
 
         // 命令行,默认调用指令 (DuckPhp\Core\Console)
         // $options['cli_command_default'] = 'help';
 
         //  (DuckPhp\Core\Console)
         // $options['cli_command_group'] = array ( );
+
+        //  (DuckPhp\Core\App)
+        // $options['cli_command_method_prefix'] = 'command_';
+
+        //  (DuckPhp\Core\App)
+        // $options['cli_command_prefix'] = NULL;
 
         // 启用命令行模式 (DuckPhp\Core\App)
         // $options['cli_enable'] = true;
@@ -274,6 +280,9 @@ class AppWithAllOptions extends DuckPhp
 
             // CallableView 页眉函数
             $options['callable_view_head'] = NULL;
+
+            // 
+            $options['callable_view_is_object_call'] = true;
 
             // CallableView 视图方法前缀
             $options['callable_view_prefix'] = NULL;
