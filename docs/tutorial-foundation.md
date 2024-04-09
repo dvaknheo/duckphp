@@ -43,7 +43,7 @@ SimpleSessionTrait.php
 
 
 
-Session 类， 给不同 应用 加 session_prefix 
+Session 类， 给不同 应用 加 `session_prefix`
 
 SimpleExceptionTrait.php -> ThrowOnTrait
 ThrowOn 静态方法

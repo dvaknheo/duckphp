@@ -67,3 +67,7 @@ App 的同名 command_*() 会覆盖 默认的调用 command_*()
 
 用 getCliParameters() 获得 Parameters
 
+
+CommonCommandTrait
+cli_command_class
+

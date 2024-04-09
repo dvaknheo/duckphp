@@ -30,27 +30,6 @@ MyExtends::G()->init(array $options, $contetxt=null);
 
 ### ComponentBase 基类 和 ComponentInterface 接口
 
-ComponentBase 帮你实现了 这些东西，
-你只要写自己的 $options 和 重写 initOptions()  initContext(object $context) 就行了。 默认父类这两个是空类。
-
-
-### 编写扩展的技巧
-
-extendComponents ，如果你要把你的类给助手类使用。
-
-['A','M','V','C','B'] 都是各助手类的名称缩写。
-
-
-```
-$context->extendComponents(
-    [
-        'assignImportantRoute' => [static::class.'::G','assignImportantRoute'],
-        'assignRoute' => [static::class.'::G','assignRoute'],
-        'routeMapNameToRegex' => [static::class.'::G','routeMapNameToRegex'],
-    ],
-    ['A']
-);
-```
 
 ## 默认扩展
 
@@ -74,7 +53,6 @@ $context->extendComponents(
 * [RedisCache](ref/Ext-RedisCache.md)
 * [RouteHookApiServer](ref/Ext-RouteHookApiServer.md)
 * [RouteHookDirectoryMode](ref/Ext-RouteHookDirectoryMode.md)
-* [StrictCheck](ref/Ext-StrictCheck.md) 严格检查
 
 扩展支持的文件
 

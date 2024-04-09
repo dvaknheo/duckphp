@@ -9,44 +9,47 @@ if(!class_exists('DuckPhp\DuckPhp')){
 use DuckPhp\DuckPhp;
 use DuckPhp\Ext\CallableView;
 use DuckPhp\Foundation\SimpleBusinessTrait; // 可变单例模式
+use DuckPhp\Foundation\SimpleControllerTrait; // 可变单例模式
+use DuckPhp\Foundation\SimpleSingletonTrait; // 可变单例模式
 use DuckPhp\Foundation\SimpleModelTrait; // 可变单例模式
+
 use DuckPhp\Foundation\Helper; // Helper
-//业务类， 还是带上吧。
+
 class DbTestApp extends DuckPhp
 {
-    // 开始了
     public $options = [
-        'is_debug' => true, // 开启调试模式
-        'namespace_controller' => "\\",
-            // 设置控制器的命名空间为根 使得 Main 类为入口
+        //'is_debug' => true, // 开启调试模式
+        'namespace_controller' => "\\", // 设置控制器的命名空间为根 使得 Main 类为入口
+        'cli_command_prefix'=> 'dbtest', // 因为我们没命名空间，命令行要设置一下命名空间。
+        
         'ext' => [
-            CallableView::class => true,
-            // 我们用自带扩展 CallableView 代替系统的 View
+            CallableView::class => true, // 我们用自带扩展 CallableView 代替系统的 View
         ],
         'callable_view_class' => View::class,
+        'callable_view_is_object_call' => true,
         
-        'local_db' => true,
+        'local_db' => true,  // 单独数据库
         'database' => [
             'dsn' => 'sqlite:dbtest.sqlite',
             'username' => null,
             'password' => null,
             'driver_options' => [],
         ],
-        'error_404'=>[MainController::class,'On404'],
-        'cli_command_prefix'=> 'dbtest',
+        'error_404'=>[MainController::class,'On404'], // 404 重新定向
+        
     ];
     public function __construct()
     {
         parent::__construct();
         $dsn = $this->options['database']['dsn'];
-        $dsn = "sqlite:". (__DIR__.'/../config/dbtest.sqlite');
+        $dsn = "sqlite:". (__DIR__.'/../runtime/dbtest.sqlite');
         //$dsn =str_replace('@runtime@',Helper::getRuntimePath(),$dsn);
         $this->options['database']['dsn'] = $dsn;
     }
 }
 class MyBusiness
 {
-    use SimpleBusinessTrait; // 单例模式。
+    use SimpleBusinessTrait;
     public static function On404()
     {
         static::_()->action_index;
@@ -130,6 +133,7 @@ EOT;
 /////////////////////////////////////////
 class MainController
 {
+    use SimpleControllerTrait;
     public function __construct()
     {
         //check installed
@@ -163,7 +167,8 @@ class MainController
     // 数据库表结构
 class View
 {
-    public static function header($data)
+    use SimpleSingletonTrait;
+    public function header($data)
     {
         ?>
 <html>
@@ -173,7 +178,7 @@ class View
             <header style="border:1px gray solid;">I am Header</header>
 <?php
     }
-    public static function main_view($data)
+    public function main_view($data)
     {
         extract($data);
         ?>
@@ -200,7 +205,7 @@ class View
         </form>
 <?php
     }
-    public static function show($data)
+    public function show($data)
     {
         extract($data);
         ?>
@@ -226,7 +231,7 @@ class View
     }
 }
 
-if(get_class(\DuckPhp\Core\App::Root())  === \DuckPhp\Core\App::class){ // ugly
+if(get_class(\DuckPhp\Core\App::Root())  === \DuckPhp\Core\App::class){
     DbTestApp::RunQuickly([]);
 }
 

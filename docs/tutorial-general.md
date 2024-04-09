@@ -38,39 +38,50 @@ DuckPhp 代码里的 template 目录就是我们的工程目录示例。也是�
 @script 目录结构
 
 ```text
-+---app                         // psr-4 标准的自动加载目录。
-|   +---Business                // 业务目录
-|           BaseBusiness.php    // 服务基类
-|   |       TestBusiness.php    // 测试 Business
-|   +---Controller              // 控制器目录
-|           BaseController.php  // 控制器基类
-|   |       Main.php            // 默认控制器
-|   +---Model                   // 模型放在里
-|           BaseModel.php       // 模型基类
-|   |       TestModel.php       // 测试模型
-|   +---Helper                  // 助手类目录
-|   |       BusinessHelper.php  // 服务助手类
-|   |       ControllerHelper.php// 控制器助手类
-|   |       ModelHelper.php     // 模型助手类
-|   \---System                  // 基类放在这里
-|           App.php             // 默认框架入口文件
-|           BaseException.php   // 系统错误基类
-+---config                      // 配置文件放这里
-|       config.php              // 配置，目前是空数组
-|       setting.sample.php      // 设置，去除敏感信息的模板
-+---view                        // 视图文件放这里，可调
-|   |   main.php                // 视图文件
-|   \---_sys                    // 系统错误视图文件放这里
-|           error-404.php       // 404 页面
-|           error-500.php       // 500 页面
-+---public                      // 网站目录
-|       index.php               // 主页，入口页
-\---duckphp-project             // 命令行入口
++-- cli.php                         // 命令行入口
++-- config                          // 配置文件目录
+|   +-- DuckPhpApps.config.php      // 系统配置文件
+|   +-- DuckPhpSettings.config.php  // 设置文件
++-- runtime                         // 可写目录
+|   \-- keepme.txt                  // 占位符，用于git
++-- src                             //
+|   +-- Business                    //
+|   |   +-- Base.php                //
+|   |   +-- BusinessException.php   //
+|   |   +-- CommonService.php       //
+|   |   +-- DemoBusiness.php        //
+|   |   \-- Helper.php              //
+|   +-- Controller                  //
+|   |   +-- Base.php                //
+|   |   +-- Commands.php            //
+|   |   +-- CommonAction.php        //
+|   |   +-- ControllerException.php //
+|   |   +-- ExceptionReporter.php   //
+|   |   +-- Helper.php              //
+|   |   +-- MainController.php      //
+|   |   +-- Session.php             //
+|   |   \-- testController.php      //
+|   +-- Model                       //
+|   |   +-- Base.php                //
+|   |   +-- CrossModelEx.php        //
+|   |   +-- DemoModel.php           //
+|   |   \-- Helper.php              //
+|   \-- System                      //
+|       +-- App.php                 //
+|       +-- AppWithAllOptions.php   //
+|       \-- ProjectException.php    //
+\-- view                            //
+    +-- _sys                        //
+    |   +-- error_404.php           //
+    |   \-- error_500.php           //
+    +-- files.php                   //
+    +-- main.php                    //
+    \-- test                        //
+        \-- done.php                //
 ```
-这个目录结构里，`业务工程师`只能写 `app/Controller`,`app/Model`,`app/Business,`view` 这四个目录。
-有时候需要去读 `app/Helper` 目录下的的类。其他则是`核心工程师`的活。
+这个目录结构里，`业务工程师`只能写 `src/Controller`,`src/Model`,`src/Business,`view` 这四个目录。
+其他则是`核心工程师`的活。
 
-app 目录，就是放 LazyToChange 命名空间的东西了。 app 目录可以在选项里设置成其他名字
 命名空间 LazyToChange 是 可调的。比如调整成 MyProject ,TheBigOneProject  等。
 可以用 `./vendor/bin/duckphp new --namespace TheBigOneProject` 调整。
 
@@ -96,11 +107,6 @@ Helper 目录，助手类，如果你一个人偷懒，直接用 APP 类也行
 * 移除 view/\_sys  目录 你需要设置启动选项里 'error\_404','error\_500,'error_debug‘’。
 * 移除 view 目录如果你不需要 view ，如 API 项目。
 * 移除 TestBusiness.php ， TestModel.php  测试用的东西
-@script 目录结构
-
-----
-
-
 ## 工程完整架构图
 
 
@@ -249,7 +255,7 @@ class App extends DuckPhp
         echo "hello ". static::class ."\n";
     }
 }
-
+?>
 ```
 这里的代码省略了一大堆注释，这些注释选项，都是默认选项。和打开的效果是一样的。
 
