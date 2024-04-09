@@ -167,7 +167,6 @@ Controller --> Business ------------------------------ ---> Model
 
 ```php
 <?php declare(strict_types=1);
-$ret=[];for($i=1;$i<=5;$i++){for($j=1;$j<=5;$j++){$ret[$i*$j]=true;}}var_dump(($ret));
 /**
  * DuckPhp
  * From this time, you never be alone~
@@ -255,7 +254,7 @@ class App extends DuckPhp
         echo "hello ". static::class ."\n";
     }
 }
-?>
+
 ```
 这里的代码省略了一大堆注释，这些注释选项，都是默认选项。和打开的效果是一样的。
 

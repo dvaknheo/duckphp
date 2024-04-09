@@ -4,7 +4,7 @@ use DuckPhp\Core\Console;
 use DuckPhp\Component\DefaultCommand;
 use DuckPhp\HttpServer\HttpServer;
 use DuckPhp\Component\Installer;
-use DuckPhp\DuckPhp as App;
+use DuckPhp\DuckPhp as DuckPhp;
 use DuckPhp\Core\ComponentBase;
 
 class ConsoleTest extends \PHPUnit\Framework\TestCase
@@ -14,63 +14,62 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(Console::class);
         
         $_SERVER['argv']=[];
-        App::_()->init(['cli_enable'=>true, 'is_debug'=>true])->run();
+        DuckPhp::_()->init(['cli_enable'=>true, 'is_debug'=>true])->run();
         Console::DoRun();
         Console::_()->app();
         Console::_()->getCliParameters();
-        
-        
-        Console::_()->regCommandClass(App::class,Console_Command::class,"test");
+        Console::_()->regCommandClass('test',DuckPhp::class,Console_Command::class);
+        //var_dump(Console::_()->options);exit;
         $_SERVER['argv']=[
             '-','test:foo',
         ];
-        App::_()->run();
+        DuckPhp::_()->run();
         $_SERVER['argv']=[
             '-','test:foo','arg1','--pa',"--l","a","--az","a","b"
         ];
-        App::_()->run();
+        DuckPhp::_()->run();
         $_SERVER['argv']=[
             '-','test:foo','arg1','arg2','--pa',"--l","a","--az","a","b"
         ];
-        App::_()->run();
+        DuckPhp::_()->run();
         $_SERVER['argv']=[
             '-','test:foo2','arg1','arg2','--a1',"--a2","a","--a3","a","b"
         ];
-        App::_()->run();
+        DuckPhp::_()->run();
 
         $_SERVER['argv']=[
             '-','test:foo2','--a1=aaa',"--a2","a","--a3","a","b"
         ];
-        App::_()->run();
+        DuckPhp::_()->run();
         try{
             $_SERVER['argv']=[
                 '-','test:foo3',
             ];
-            App::_()->options['skip_exception_check']=true;
-            App::_()->run();
+            DuckPhp::_()->options['skip_exception_check']=true;
+            DuckPhp::_()->run();
         }catch(\Exception $ex){
             var_dump("Hit!");
-            App::_()->options['skip_exception_check']=false;
+            DuckPhp::_()->options['skip_exception_check']=false;
         }
         try{
             $_SERVER['argv']=[
                 '-','foo',
             ];
-            App::_()->options['skip_exception_check']=true;
-            App::_()->run();
+            DuckPhp::_()->options['skip_exception_check']=true;
+            DuckPhp::_()->run();
         }catch(\Exception $ex){
             var_dump("Hit!");
-            App::_()->options['skip_exception_check']=false;
+            DuckPhp::_()->options['skip_exception_check']=false;
         }
         try{
             $_SERVER['argv']=[
                 '-','foo:foo',
             ];
-            App::_()->options['skip_exception_check']=true;
-            App::_()->run();
+            DuckPhp::_()->options['skip_exception_check']=true;
+            DuckPhp::_()->run();
         }catch(\Exception $ex){
             var_dump("Hit!");
-            App::_()->options['skip_exception_check']=false;
+            DuckPhp::_()->options['skip_exception_check']=false;
         }
         
         
@@ -81,7 +80,7 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
             '-','help',  // ------>changed
         ];
         Console::_()->regCommandClass(Console_App::class, Console_Command::class,"aa");
-        Console::_()->regCommandClass(Console_App::class, Console_Command2::class,"aa");
+        Console::_()->regCommandClass(Console_App::class, Console_Command2::class,"bb");
         Console_App::_()->run();
         $_SERVER['argv']=[
             '-','call',str_replace('\\','/',Console_Command2::class).'@command_foo4','A1'
@@ -100,9 +99,6 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         
         //*/
         
-        $t=\LibCoverage\LibCoverage::G();
-        define('__SINGLETONEX_REPALACER',ConsoleParent::class.'::CreateObject');
-        \LibCoverage\LibCoverage::G($t);
         ConsoleParent::_()->isInited();
         echo "zzzzzzzzzzzzzzzzzzzzzzzz";
         
@@ -129,8 +125,11 @@ EOT;
         \LibCoverage\LibCoverage::End();
     }
 }
-class Console_App extends App
+class Console_App extends DuckPhp
 {
+    public $options=[
+        'cli_command_class' => null,
+    ];
     /** overrid test*/
     public function command_test()
     {
@@ -139,8 +138,12 @@ class Console_App extends App
 }
 
 
-class Console_Command extends App
+class Console_Command extends DuckPhp
 {
+    public $options=[
+        'cli_command_namespace' => 'test',
+        'cli_command_class' => null,
+    ];
     public function command_foo()
     {
         var_dump("foo!");
@@ -150,7 +153,7 @@ class Console_Command extends App
     */
     public function command_foo2($a1,$a2,$a3,$a4='aa')
     {
-    
+        var_dump(func_get_args());
     }
     /**
      * desc2
@@ -172,11 +175,5 @@ class Console_Command2 extends Console_Command
 }
 class ConsoleParent extends Console
 {
-    public static function CreateObject($class, $object)
-    {
-        static $_instance;
-        $_instance=$_instance??[];
-        $_instance[$class]=$object?:($_instance[$class]??($_instance[$class]??new $class));
-        return $_instance[$class];
-    }
+
 }

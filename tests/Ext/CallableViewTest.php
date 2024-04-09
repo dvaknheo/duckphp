@@ -2,7 +2,7 @@
 namespace tests\DuckPhp\Ext{
 
 use DuckPhp\Ext\CallableView;
-
+use DuckPhp\Core\SingletonTrait;
 class CallableViewTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
@@ -29,10 +29,26 @@ class CallableViewTest extends \PHPUnit\Framework\TestCase
         CallableView::_()->_Display( 'block',$data);
         
         CallableView::_()->_Show( $data, 'view');
-        
+        $options=[
+            'x'=>'zz',
+            'callable_view_class'=>MyViewClass::class,
+            'callable_view_is_object_call'=>true,
+        ];
+        MyViewClass::_(MyViewClass2::_());
+        CallableView::_(new CallableView())->init($options);
+        CallableView::_()->_Show($data, 'main');
         \LibCoverage\LibCoverage::End();
        
     }
+}
+class MyViewClass
+{
+    use SingletonTrait;
+public function main(){var_dump("hit?");}
+}
+class MyViewClass2 extends MyViewClass
+{
+    public function main(){var_dump("hit!");}
 }
 }
 namespace{
