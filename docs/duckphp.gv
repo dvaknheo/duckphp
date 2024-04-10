@@ -4,109 +4,10 @@ graph [rankdir = "LR";fontsize="12";];
 
 subgraph cluster_HttpServer {
     label = "[DuckPhp\\HttpServer]";
-    
-    AppInterface [shape="note"];
 
     HttpServer [label="HttpServer";shape=Mdiamond;style=filled];
-    ServerInterface [label="ServerInterface";shape="note"];
-    /* FileRunnerTrait [label="FileRunnerTrait(todo)";shape="diamond"];*/
-
-    
+    ServerInterface [label="ServerInterface";shape="note"];   
 }
-subgraph cluster_SingletonEx {
-    label = "[DuckPhp\\SingletonEx]";
-
-    SingletonExTrait [shape=Mdiamond;style=filled];
-    SimpleReplacer [label="SimpleReplacer"];
-}
-subgraph cluster_ThrowOn {
-    label = "[DuckPhp\\ThrowOn]";
-
-    ThrowOnTrait [shape="Mdiamond";style="filled"];
-}
-subgraph cluster_Core {
-    
-    label = "[DuckPhp\\Core]";
-
-    App [label="App";shape=Mdiamond;style=filled]; 
-    KernelTrait [label="KernelTrait";shape="diamond"];
-    AutoLoader [label="AutoLoader";shape=Mdiamond;style=filled];
-    ExceptionManager [label="ExceptionManager";shape="component"];
-    View [label="View";shape="component"];
-    Configer [label="Configer";shape="component"];
-    Logger [label="Logger";shape="component"];
-    Route [label="Route";shape=Mdiamond;style=filled];
-    RuntimeState [label="RuntimeState";shape="component"];
-    SystemWrapperTrait [label="SystemWrapperTrait";shape=diamond];
-
-    ExtendableStaticCallTrait [label="ExtendableStaticCallTrait";shape=diamond];
-    
-    ComponentInterface [label="ComponentInterface";shape=note];
-    ComponentBase [label="ComponentBase";shape=box3d];
-    Functions [label="Functions"];
-
-
-    KernelTrait -> AutoLoader ;
-    KernelTrait -> Configer;
-    KernelTrait -> ExceptionManager;
-    KernelTrait -> Route;
-    KernelTrait -> RuntimeState;
-    KernelTrait -> View;
-    KernelTrait -> Functions;
-
-    App -> KernelTrait;
-    App -> SystemWrapperTrait;
-    App -> AutoLoader;
-    App -> Configer;
-    App -> Logger;
-    App -> ExceptionManager;
-    App -> Route;
-    App -> RuntimeState;
-    App -> View;
-    
-    App -> ComponentBase [style="dotted"];
-
-    
-    ExceptionManager -> ComponentBase [style="dotted"];
-    Configer -> ComponentBase [style="dotted"];
-    Route -> ComponentBase [style="dotted"];
-    RuntimeState -> ComponentBase [style="dotted"];
-    View -> ComponentBase [style="dotted"];
-    Logger -> ComponentBase [style="dotted"];
-    
-    ComponentBase -> ComponentInterface;
-}
-
-subgraph cluster_Helper {
-    
-    label = "[DuckPhp\\Helper]";
-    
-    AdvanceHelper [label="AdvanceHelper";shape=Mdiamond;style=filled];
-    ControllerHelper [label="ControllerHelper";shape=Mdiamond;style=filled];
-    ModelHelper [label="ModelHelper";shape=Mdiamond;style=filled];
-    BusinessHelper [label="BusinessHelper";shape=Mdiamond;style=filled];
-    ViewHelper [label="ViewHelper";shape=Mdiamond;style=filled];
-    
-    AdvanceHelperTrait -> App; 
-    ControllerHelperTrait -> App; 
-    ModelHelperTrait -> App; 
-    BusinessHelperTrait -> App; 
-    ViewHelperTrait -> App; 
-    
-    AdvanceHelper -> ExtendableStaticCallTrait; 
-    ControllerHelper -> ExtendableStaticCallTrait; 
-    ModelHelper -> ExtendableStaticCallTrait; 
-    BusinessHelper -> ExtendableStaticCallTrait; 
-    ViewHelper -> ExtendableStaticCallTrait; 
-
-    AdvanceHelper -> AdvanceHelperTrait; 
-    ControllerHelper -> ControllerHelperTrait; 
-    ModelHelper -> ModelHelperTrait; 
-    BusinessHelper -> BusinessHelperTrait; 
-    ViewHelper -> ViewHelperTrait; 
-
-}
-
 subgraph cluster_Db {
     label = "[DuckPhp\\Db]";
 
@@ -117,88 +18,380 @@ subgraph cluster_Db {
     Db_Db -> Db_DbAdvanceTrait;
     Db_Db -> Db_DbInterface;
 }
+subgraph cluster_Core {
+    
+    label = "[DuckPhp\\Core]";
 
+    App [label="App";shape=Mdiamond;style=filled]; 
+    ComponentBase [label="ComponentBase";shape=box3d];
+    ComponentInterface [label="ComponentInterface";shape=note];
+    Console [label="Console";shape="component"];
+    CoreHelper [label="CoreHelper";shape="component"];
+    DuckPhpSystemException [label="DuckPhpSystemException";shape=box3d];
+    EventManager [label="EventManager";shape="component"];
+    ExceptionManager [label="ExceptionManager";shape="component"];
+    Functions [label="Functions"];
+    KernelTrait [label="KernelTrait";shape="diamond"];
+    Logger [label="Logger";shape="component"];
+    PhaseContainer [label="PhaseContainer";shape="component"];
+    Route [label="Route";shape=Mdiamond;style=filled];
+    Runtime [label="Runtime";shape=Mdiamond;style=filled];
+    
+    SingletonTrait [label="SingletonTrait";shape="component"];
+    SuperGlobal [label="SuperGlobal";shape="component"];
+    SystemWrapper [label="SystemWrapper";shape=diamond];
+    ThrowOnTrait [label="ThrowOnTrait";shape="component"];
+    View [label="View";shape="component"];
+    Core_ComponentBase [label="ComponentBase";shape=box3d];
+    
+    App -> ComponentBase [style="dotted"];
+    App -> Logger;
+    App -> KernelTrait;
+    App -> Route;
+    App -> SuperGlobal;
+    App -> SystemWrapper;
+    App -> View;
+    
+    /* Console -> App */
+    Console -> ComponentBase [style="dotted"];
+    
+    /* CoreHelper -> App */
+    CoreHelper -> ComponentBase [style="dotted"];
+    
+    CoreHelper -> Logger;
+    CoreHelper -> SystemWrapper;
 
+    DuckPhpSystemException ->ThrowOnTrait;
+
+    EventManager -> ComponentBase [style="dotted"];
+    ExceptionManager -> ComponentBase [style="dotted"];
+
+    Functions -> CoreHelper;
+    
+    KernelTrait -> Console;
+    KernelTrait -> EventManager;
+    KernelTrait -> ExceptionManager;
+    KernelTrait -> PhaseContainer;
+    KernelTrait -> Route;
+    KernelTrait -> Runtime;
+
+    Route -> ComponentBase [style="dotted"];
+    RuntimeState -> ComponentBase [style="dotted"];
+    View -> ComponentBase [style="dotted"];
+    Logger -> ComponentBase [style="dotted"];
+    
+    Core_ComponentBase -> ComponentInterface;
+}
 subgraph cluster_Component {
     label = "[DuckPhp\\Component]";
     
-    AppPluginTrait [shape=Mdiamond;style=filled];
     Cache[shape="component"];
-    Console[shape=Mdiamond;style=filled];
+    Configer[shape="component"];
     DbManager[shape="component"];
     DuckPhpCommand[shape="component"];
-    EventManager[shape="component"];
     DuckPhpInstaller [shape="component"];
+    ExtOptionsLoader [shape="component"];
+    
+    GlobalAdmin [shape="component"];
+    GlobalUser [shape="component"];
+    
     Pager[shape="component"];
     PagerInterface [shape=note];
+    PhaseProxy;
+    
+    RedisCache[shape="component"];
+    RedisManager[shape="component"];
+    
+    
+    
     RouteHookPathInfoCompat[shape="component"];
     RouteHookRouteMap[shape="component"];
     
-    X_HttpServer[label="DuckPhp\\HttpServer\\HttpServer",shape="rarrow"];
-    X_Db_Db[label="DuckPhp\\Db\\Db",shape="rarrow"];
-    
-    AppPluginTrait -> EventManager; 
-    AppPluginTrait -> ExceptionManager [style="dashed"]; 
-    AppPluginTrait -> Configer [style="dashed"]; 
-    AppPluginTrait -> View [style="dashed"]; 
-    AppPluginTrait -> Route [style="dashed"]; 
-    
-    Cache -> ComponentBase [style="dotted"];
-    DuckPhpCommand -> ComponentBase [style="dotted"];
-    DbManager -> ComponentBase [style="dotted"];
-    EventManager -> ComponentBase [style="dotted"];
-    DuckPhpInstaller -> ComponentBase [style="dotted"];
-    Pager -> ComponentBase [style="dotted"];
-    RouteHookPathInfoCompat -> ComponentBase [style="dotted"];
-    RouteHookRouteMap -> ComponentBase [style="dotted"];
+    C_HttpServer[label="DuckPhp\\HttpServer\\HttpServer",shape="rarrow"];
+    C_Db_Db[label="DuckPhp\\Db\\Db",shape="rarrow"];
+
+
+    RouteHookRewrite[shape="component"];
+    RouteHookResource[shape="component"];
     
     DuckPhpCommand -> Console; 
     DuckPhpCommand -> DuckPhpInstaller; 
-    DuckPhpCommand -> X_HttpServer [style="dashed"];
-    DbManager -> X_Db_Db [style="dashed"]; 
+    DuckPhpCommand -> C_HttpServer [style="dashed"];
+    DbManager -> C_Db_Db [style="dashed"]; 
 
-    Pager -> PagerInterface; 
+    Pager -> PagerInterface;
+    C_Db_Db -> Db_Db;
+    C_HttpServer -> HttpServer;
 }
+
+subgraph cluster_Helper {
+    
+    label = "[DuckPhp\\Helper]";
+    
+    AppHelperTrait [shape="component"];
+    BusinessHelperTrait [shape="component"];
+    ControllerHelperTrait [shape="component"];
+    ModelHelperTrait [shape="component"];
+
+subgraph cluster_HelperX {
+    
+    label = "[DuckPhp\\HelperX]";
+
+    H_DbManager[label="DuckPhp\\Component\\DbManager",shape="rarrow"];
+    H_RedisManager[label="DuckPhp\\Component\\RedisManager",shape="rarrow"];
+    H_RouteHookRewrite[label="DuckPhp\\Component\\RouteHookRewrite",shape="rarrow"];
+    H_RouteHookRouteMap[label="DuckPhp\\Component\\RouteHookRouteMap",shape="rarrow"];
+    H_Cache[label="DuckPhp\\Component\\Cache",shape="rarrow"];
+    H_Configer[label="DuckPhp\\Component\\Configer",shape="rarrow"];
+    H_GlobalAdmin[label="DuckPhp\\Component\\GlobalAdmin",shape="rarrow"];
+    H_GlobalUser[label="DuckPhp\\Component\\GlobalUser",shape="rarrow"];
+    H_Pager[label="DuckPhp\\Component\\Pager",shape="rarrow"];
+}
+subgraph cluster_HelperY {
+    
+    label = "[DuckPhp\\HelperY]";
+    
+    H_Console[label="DuckPhp\\Core\\Console",shape="rarrow"];
+    H_EventManager[label="DuckPhp\\Core\\EventManager",shape="rarrow"];
+    H_ExceptionManager[label="DuckPhp\\Core\\ExceptionManager",shape="rarrow"];
+    H_Route[label="DuckPhp\\Core\\Route",shape="rarrow"];
+    H_Runtime[label="DuckPhp\\Core\\Runtime",shape="rarrow"];
+    H_SingletonTrait[label="DuckPhp\\Core\\SingletonTrait",shape="rarrow"];
+    H_SuperGlobal[label="DuckPhp\\Core\\SuperGlobal",shape="rarrow"];
+    H_SystemWrapper[label="DuckPhp\\Core\\SystemWrapper",shape="rarrow"];
+    H_View[label="DuckPhp\\Core\\View",shape="rarrow"];
+    
+    H_App[label="DuckPhp\\Core\\App",shape="rarrow"];
+    H_CoreHelper[label="DuckPhp\\Core\\CoreHelper",shape="rarrow"];
+}
+    
+
+    AppHelperTrait -> H_DbManager;
+    AppHelperTrait -> H_RedisManager;
+    AppHelperTrait -> H_RouteHookRewrite;
+    AppHelperTrait -> H_RouteHookRouteMap;
+    AppHelperTrait -> H_Console;
+    AppHelperTrait -> H_EventManager;
+    AppHelperTrait -> H_ExceptionManager;
+    AppHelperTrait -> H_Route;
+    AppHelperTrait -> H_Runtime;
+    AppHelperTrait -> H_SingletonTrait;
+    AppHelperTrait -> H_SuperGlobal;
+    AppHelperTrait -> H_SystemWrapper;
+    AppHelperTrait -> H_View;
+    
+    BusinessHelperTrait -> H_Cache; 
+    BusinessHelperTrait -> H_Configer; 
+    BusinessHelperTrait -> H_GlobalAdmin; 
+    BusinessHelperTrait -> H_GlobalUser; 
+    BusinessHelperTrait -> H_App; 
+    BusinessHelperTrait -> H_CoreHelper; 
+    BusinessHelperTrait -> H_EventManager; 
+    BusinessHelperTrait -> H_SingletonTrait; 
+    
+    ControllerHelperTrait -> H_Configer;
+    ControllerHelperTrait -> H_DbManager;
+    ControllerHelperTrait -> H_GlobalAdmin;
+    ControllerHelperTrait -> H_GlobalUser;
+    ControllerHelperTrait -> H_Pager;
+    ControllerHelperTrait -> H_App;
+    ControllerHelperTrait -> H_CoreHelper;
+    ControllerHelperTrait -> H_EventManager;
+    ControllerHelperTrait -> H_ExceptionManager;
+    ControllerHelperTrait -> H_Route;
+    ControllerHelperTrait -> H_SingletonTrait;
+    ControllerHelperTrait -> H_SuperGlobal;
+    ControllerHelperTrait -> H_SystemWrapper;
+    ControllerHelperTrait -> H_View;
+    
+    ModelHelperTrait -> H_DbManager; 
+    ModelHelperTrait -> H_CoreHelper; 
+    ModelHelperTrait -> H_SingletonTrait;
+    
+    
+    H_DbManager -> DbManager;
+    H_RedisManager -> RedisManager;
+    H_RouteHookRewrite -> RouteHookRewrite;
+    H_RouteHookRouteMap -> RouteHookRouteMap;
+    H_Console -> Console;
+    H_EventManager -> EventManager;
+    H_ExceptionManager -> ExceptionManager;
+    H_Route -> Route;
+    H_Runtime -> Runtime;
+    H_SingletonTrait -> SingletonTrait;
+    H_SuperGlobal -> SuperGlobal;
+    H_SystemWrapper -> SystemWrapper;
+    H_View -> View;
+    
+    H_Cache -> Cache;
+    H_Configer -> Configer;
+    H_GlobalAdmin -> GlobalAdmin;
+    H_GlobalUser -> GlobalUser;
+    H_App -> App;
+    H_CoreHelper -> CoreHelper;
+    
+    H_Pager -> Pager;
+
+}
+
+
+
+
 
 subgraph cluster_DuckPhp {
     label = "[DuckPhp]";
     node [style=filled];
 
     DuckPhp -> App;
-
-    DuckPhp -> RouteHookRouteMap;
-    DuckPhp -> Pager;
-    DuckPhp -> DbManager;
-    DuckPhp -> EventManager;
-    DuckPhp -> RouteHookPathInfoCompat;
-    DuckPhp -> Cache;
     DuckPhp -> Console;
+    
+    DuckPhp -> DbManager;
+    DuckPhp -> ExtOptionsLoader;
+    DuckPhp -> GlobalAdmin;
+    DuckPhp -> GlobalUser;
+    DuckPhp -> PhaseProxy;
+    DuckPhp -> RedisManager;
+
+    DuckPhp -> RouteHookPathInfoCompat;
+    DuckPhp -> RouteHookResource;
+    DuckPhp -> RouteHookRewrite;
+    DuckPhp -> RouteHookRouteMap;
+    
+    
     DuckPhp -> DuckPhpCommand; 
 
     DuckPhp [shape=Mdiamond];
 }
 
-subgraph cluster_Foundation {
-    label = "[DuckPhp\\Foundation]";
+subgraph cluster_FastInstaller {
+    label = "[DuckPhp\\FastInstaller]";
     
-    Session [shape="component"];
-    SimpleControllerTrait  [shape="diamond"];
-    SimpleModelTrait  [shape="diamond"];
-    ThrowOnableTrait  [shape="diamond"];
+    DatabaseInstaller [shape="component"];
+    RedisInstaller [shape="component"];
+    FastInstaller [shape="component"];
+    SqlDumper [shape="component"];
+    
+    FI_App[label="DuckPhp\\Core\\App",shape="rarrow"];
+    FI_Console[label="DuckPhp\\Core\\Console",shape="rarrow"];
+    FI_DbManager[label="DuckPhp\\Component\\DbManager",shape="rarrow"];
+    FI_ExtOptionsLoader[label="DuckPhp\\Component\\ExtOptionsLoader",shape="rarrow"];
+    FI_RouteHookResource[label="DuckPhp\\Component\\RouteHookResource",shape="rarrow"];
+    FI_RedisManager[label="DuckPhp\\Component\\RedisManager",shape="rarrow"];
 
-    F_Core_App[label="DuckPhp\\Core\\App",shape="rarrow"];
-    F_SingletonExTrait[label="DuckPhp\\SingletonEx\\SingletonExTrait",shape="rarrow"];
+    DatabaseInstaller -> FI_DbManager;
+    DatabaseInstaller -> FI_ExtOptionsLoader;
+    DatabaseInstaller -> FI_App;
+    DatabaseInstaller -> FI_Console;
 
 
-    Session -> ComponentBase [style="dotted"];
-    Session -> F_Core_App [style="dashed"];
-    SimpleControllerTrait -> F_Core_App [style="dashed"];
-    SimpleControllerTrait -> F_SingletonExTrait [style="dashed"];
-    SimpleModelTrait -> F_Core_App [style="dashed"];
-    SimpleModelTrait -> F_SingletonExTrait [style="dashed"];    
+    FastInstaller -> FI_ExtOptionsLoader;
+    FastInstaller -> FI_RouteHookResource;
+    FastInstaller -> FI_App;
+    FastInstaller -> FI_Console;
+    FastInstaller -> DatabaseInstaller;
+    FastInstaller -> RedisInstaller;
+    FastInstaller -> SqlDumper;
+
+    RedisInstaller -> FI_RedisManager;
+    RedisInstaller -> FI_ExtOptionsLoader;
+    RedisInstaller -> FI_App;
+    RedisInstaller -> FI_Console;
+    
+    FI_App -> App;
+    FI_Console -> Console;
+    
+    FI_DbManager -> DbManager;
+    FI_ExtOptionsLoader -> ExtOptionsLoader;
+    FI_RouteHookResource -> RouteHookResource;
+    FI_RedisManager -> RedisManager;
+
 }
 
 
+subgraph cluster_Foundation {
+    label = "[DuckPhp\\Foundation]";
+    
+    ExceptionRepoorterTrait [shape="diamond"];
+    
+    FastInstallerTrait  [shape="diamond"];
+
+    SimpleBusinessTrait  [shape="diamond"];
+    SimpleControllerTrait  [shape="diamond"];
+    SimpleExceptionTrait  [shape="diamond"];
+    SimpleModelTrait  [shape="diamond"];
+    SimpleSessionTrait  [shape="diamond"];
+    SimpleSingletonTrait  [shape="diamond"];
+    
+    Foundation_Helper[label="DuckPhp\\Foundation\\Helper"];
+    Foundation_Business_Helper[label="DuckPhp\\Foundation\\Business\\Helper"];
+    Foundation_Controller_Helper[label="DuckPhp\\Foundation\\Controller\\Helper"];
+    Foundation_Model_Helper[label="DuckPhp\\Foundation\\Model\\Helper"];
+    Foundation_System_Helper[label="DuckPhp\\Foundation\\System\\Helper"];
+
+subgraph cluster_FoundationCore {
+    label = "[DuckPhp\\Core]";
+    
+    F_App[label="DuckPhp\\Core\\App",shape="rarrow"];
+    F_PhaseContainer[label="DuckPhp\\Core\\PhaseContainer",shape="rarrow"];
+    F_Route[label="DuckPhp\\Core\\Route",shape="rarrow"];
+    F_ThrowOnTrait[label="DuckPhp\\Core\\ThrowOnTrait",shape="rarrow"];
+    F_CoreHelper[label="DuckPhp\\Core\\CoreHelper",shape="rarrow"];
+    F_SingletonTrait[label="DuckPhp\\Core\\SingletonTrait",shape="rarrow"];
+    F_SuperGlobal[label="DuckPhp\\Core\\SuperGlobal",shape="rarrow"];
+    F_SystemWrapper[label="DuckPhp\\Core\\SystemWrapper",shape="rarrow"];
+}
+subgraph cluster_FoundationComponent {
+    label = "[DuckPhp\\Component]";
+    F_DbManager[label="DuckPhp\\Component\\DbManager",shape="rarrow"];
+    F_PhaseProxy[label="DuckPhp\\Component\\PhaseProxy",shape="rarrow"];
+}
+    F_FastInstaller[label="DuckPhp\\FastInstaller\\FastInstaller",shape="rarrow"];
+
+    ExceptionRepoorterTrait -> F_App;
+    ExceptionRepoorterTrait -> F_SingletonTrait;
+    FastInstallerTrait -> F_FastInstaller;
+    SimpleBusinessTrait -> F_PhaseProxy;
+    SimpleBusinessTrait -> F_SingletonTrait;
+    SimpleControllerTrait -> F_PhaseProxy;
+    SimpleControllerTrait -> F_PhaseContainer;
+    SimpleControllerTrait -> F_Route;
+    SimpleExceptionTrait -> F_ThrowOnTrait;
+    SimpleModelTrait -> F_DbManager;
+    SimpleModelTrait -> F_PhaseProxy;
+    SimpleModelTrait -> F_App;
+    SimpleModelTrait -> F_CoreHelper;
+    SimpleModelTrait -> F_SingletonTrait;
+    SimpleSessionTrait -> F_App;
+    SimpleSessionTrait -> F_SingletonTrait;
+    SimpleSessionTrait -> F_SuperGlobal;
+    SimpleSessionTrait -> F_SystemWrapper;
+    SimpleSingletonTrait -> F_SingletonTrait;
+    
+
+    Foundation_Business_Helper -> BusinessHelperTrait;
+    Foundation_Controller_Helper -> ControllerHelperTrait;
+    Foundation_Model_Helper -> ModelHelperTrait;
+    Foundation_System_Helper -> AppHelperTrait;
+    Foundation_Helper ->AppHelperTrait;
+    Foundation_Helper ->BusinessHelperTrait;
+    Foundation_Helper ->ControllerHelperTrait;
+    Foundation_Helper ->ModelHelperTrait;
+    
+    F_App -> App;
+    F_PhaseContainer -> PhaseContainer;
+    F_Route -> Route;
+    F_ThrowOnTrait -> ThrowOnTrait;
+    F_CoreHelper -> CoreHelper;
+    F_SingletonTrait -> SingletonTrait;
+    F_SuperGlobal -> SuperGlobal;
+    F_SystemWrapper -> SystemWrapper;
+    
+    F_DbManager -> DbManager;
+    F_PhaseProxy -> PhaseProxy;
+    
+    F_FastInstaller -> FastInstaller;
+
+}
 
 subgraph cluster_Ext {
     label = "[DuckPhp\\Ext]";
@@ -207,75 +400,36 @@ subgraph cluster_Ext {
     EmptyView[shape="component"];
     ExceptionWrapper [shape="component"];
     HookChain;
-    InstallableTrait [shape="diamond"];
-    Installer [shape="component"];
-    InstallerException;
     JsonRpcClientBase [shape="component"];
     JsonRpcExt [shape="component"];
     JsonView [shape="component"];
+    MiniRoute[shape="component"];
     Misc[shape="component"];
     MyFacadesAutoLoader[shape="component"];
     MyFacadesBase [shape="component"];
     MyMiddlewareManager [shape="component"];
     
-    RedisManager[shape="component"];
-    RedisCache[shape="component"];
     RouteHookApiServer[shape="component"];
     RouteHookDirectoryMode[shape="component"];
     RouteHookManager[shape="component"];
-    RouteHookRewrite[shape="component"];
-    RouteHookResource[shape="component"];
     
     StaticReplacer [shape="component"];
-    StrictCheck[shape="component"];
-    SqlDumper [shape="component"];
-    SuperGlobalContext[shape="component"];
 
     X_Core_View[label="DuckPhp\\Core\\View",shape="rarrow"];
-    X_DbManager[label="DuckPhp\\Component\\DbManager",shape="rarrow"];
-
-    
-    
-
-    ExceptionWrapper -> ComponentBase [style="dotted"];
-    JsonRpcExt -> ComponentBase [style="dotted"];
-    Installer -> ComponentBase [style="dotted"];
-    Misc -> ComponentBase [style="dotted"];
-    MyFacadesBase -> ComponentBase [style="dotted"];
-    MyFacadesAutoLoader -> ComponentBase [style="dotted"];
-    MyMiddlewareManager -> ComponentBase [style="dotted"];
-    RedisManager -> ComponentBase [style="dotted"];
-    RedisCache -> ComponentBase [style="dotted"];
-    RouteHookApiServer -> ComponentBase [style="dotted"];
-    RouteHookDirectoryMode -> ComponentBase [style="dotted"];
-    RouteHookManager -> ComponentBase [style="dotted"];
-    RouteHookRewrite -> ComponentBase [style="dotted"];
-
-    StaticReplacer -> ComponentBase [style="dotted"];
-    StrictCheck -> ComponentBase [style="dotted"];
-    SqlDumper -> ComponentBase [style="dotted"];
-    SuperGlobalContext -> ComponentBase [style="dotted"];
 
 
 
     CallableView ->X_Core_View[style="dashed"];
     EmptyView -> X_Core_View[style="dashed"];
     
-    InstallableTrait -> Installer;
-    Installer -> SqlDumper ;
-    Installer -> InstallerException ;
-    Installer -> ThrowOnableTrait ;
-
-    
     MyFacadesBase -> MyFacadesAutoLoader [style="dashed"];
     MyFacadesAutoLoader -> MyFacadesBase;
     MyMiddlewareManager -> RouteHookManager;
     JsonRpcExt ->JsonRpcClientBase;
     JsonRpcClientBase ->JsonRpcExt[style="dashed"];
-    JsonRpcClientBase -> ComponentBase [style="dotted"];
     JsonView -> X_Core_View [style="dashed"];
 
-    StrictCheck -> X_DbManager [style="dashed"];
+    X_Core_View-> View;
 
 }
 
