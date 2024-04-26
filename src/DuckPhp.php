@@ -29,8 +29,8 @@ class DuckPhp extends App
         'ext_options_file_enable' => true,
         'ext_options_file' => 'config/DuckPhpApps.config.php',
         'ext' => [
-            RouteHookRouteMap::class => true,
             RouteHookRewrite::class => true,
+            RouteHookRouteMap::class => true,
             RouteHookResource::class => true,
             //RouteHookPathInfoCompat::class => false,
         ],
@@ -41,19 +41,22 @@ class DuckPhp extends App
         'path_info_compact_enable' => false,
         'class_admin' => '',
         'class_user' => '',
+        'database_driver' => '',
+        
         //'install_need_database' => true,
         //'install_need_redis' => false,
         
         //*
         // 'path_config' => 'config',
         // 'database' => null,
+        // 'database_driver' => '',
         // 'database_list' => null,
         // 'database_list_reload_by_setting' => true,
         // 'database_list_try_single' => true,
         // 'database_log_sql_query' => false,
         // 'database_log_sql_level' => 'debug',
         // 'database_class' => '',
-
+        
         // 'redis' => null,
         // 'redis_list' => null,
         // 'redis_list_reload_by_setting' => true,
@@ -90,11 +93,11 @@ class DuckPhp extends App
             DbManager::_()->init($this->options, $this);
             RedisManager::_()->init($this->options, $this);
         } else {
-            if ($this->options['local_db'] ?? false) {
+            if ($this->isLocalDb()) {
                 $this->createLocalObject(DbManager::class);
                 DbManager::_()->init($this->options, $this);
             }
-            if ($this->options['local_redis'] ?? false) {
+            if ($this->isLocalRedis()) {
                 $this->createLocalObject(RedisManager::class);
                 RedisManager::_()->init($this->options, $this);
             }
@@ -111,5 +114,21 @@ class DuckPhp extends App
         }
         
         return $this;
+    }
+    protected function isLocalDb()
+    {
+        $flag = $this->options['local_db'] ?? false;
+        if ($flag){
+            return true;
+        }
+        $driver = DbManager::_()->options['database_driver']?? '';
+        if( $driver != $this->options['database_driver']) {
+            return true;
+        }
+        return false;
+    }
+    protected function isLocalRedis()
+    {
+        return  ($this->options['local_redis'] ?? false) ? true : false;
     }
 }

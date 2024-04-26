@@ -24,13 +24,20 @@ trait FastInstallerTrait
      */
     public function command_require()
     {
-        echo "Todo: to add a child app autoly.\n";
+        return FastInstaller::_()->doCommandRequire();
+    }
+    /**
+     * override me to update
+     */
+    public function command_update()
+    {
+        return FastInstaller::_()->doCommandRequire();
     }
     /**
      * override me to remove a child app.
      */
     public function command_remove()
     {
-        echo "Todo: to remove a child app autoly.\n";
+        return FastInstaller::_()->doCommandRequire();
     }
 }

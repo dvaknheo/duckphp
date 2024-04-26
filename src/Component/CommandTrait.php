@@ -66,6 +66,7 @@ EOT;
     public function command_fetch($uri = '', $post = false)
     {
         $uri = !empty($uri) ? $uri : '/';
+        // TODO no need uri ,  directrer
         $_SERVER['REQUEST_URI'] = $uri;
         $_SERVER['PATH_INFO'] = parse_url($uri, PHP_URL_PATH);
         $_SERVER['HTTP_METHOD'] = $post ? $post :'GET';
@@ -79,6 +80,7 @@ EOT;
     {
         //call to service
         // full namespace , service AAService;
+        // TODO ，no fullnamespace
         $args = func_get_args();
         $cmd = array_shift($args);
         list($class, $method) = explode('@', $cmd);
@@ -101,10 +103,10 @@ EOT;
     public function command_debug($off = false)
     {
         $is_debug = !$off;
-        $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, $this);
+        $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, App::Current());
         $ext_options['is_debug'] = $is_debug;
-        ExtOptionsLoader::_()->saveExtOptions($ext_options, $this);
-        $this->options['is_debug'] = $is_debug;
+        ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
+        App::Current()->options['is_debug'] = $is_debug;
         if ($is_debug) {
             echo "Debug mode has turn on. us --off to off\n";
         } else {

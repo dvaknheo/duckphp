@@ -65,23 +65,20 @@ class RouteHookResource extends ComponentBase
         }
         $controller_resource_prefix = $this->options['controller_resource_prefix'];
         $controller_resource_prefix = ($controller_resource_prefix === './') ? '' : $controller_resource_prefix;
-        //path_document
         
         $flag = preg_match('/^(https?:)?\/\//', $controller_resource_prefix ?? '');
         if ($flag) {
             return;
         }
-        //$source = realpath(dirname(__DIR__).'/res/') .'/';
         $source = $this->extendFullFile($this->options['path'], $this->options['path_resource'], '', false);
         
-        $path_dest = $controller_resource_prefix;
-        $path_dest = (substr($path_dest, 0, 1) === '/') ? $path_dest : $controller_resource_prefix.$path_dest;
-        $path_dest = ltrim($path_dest, '/');
-        
         //$_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-        //$document_root = $_SERVER['DOCUMENT_ROOT'] ?? ''; // TODO
-        $document_root = $this->extendFullFile($this->options['path'], $this->options['path_document'], '', false);
-        $this->copy_dir($source, $document_root, $path_dest, $force, $info);
+        //$document_root = $_SERVER['DOCUMENT_ROOT'] ?? ''; 
+        $document_root = App::Root()->extendFullFile(App::Root()->options['path'], App::Root()->options['path_document'], '', false);
+        
+        $dest = $document_root . Route::_()->_Res($controller_resource_prefix);
+
+        $this->copy_dir($source, $dest, $force, $info);
     }
     protected function get_dest_dir($path_parent, $path)
     {
@@ -97,9 +94,8 @@ class RouteHookResource extends ComponentBase
         }
         return $new_dir;
     }
-    protected function copy_dir($source, $path_parent, $path, $force = false, &$info = '')
+    protected function copy_dir($source, $dest, $force = false, &$info = '')
     {
-        $dest = $this->get_dest_dir($path_parent, $path);
         $source = rtrim(''.realpath($source), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
         $dest = rtrim(''.realpath($dest), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
         $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);

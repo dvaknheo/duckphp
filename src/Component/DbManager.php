@@ -22,6 +22,7 @@ class DbManager extends ComponentBase
     ]]
     */
     public $options = [
+        'database_driver' => '',
         'database' => null,
         'database_list' => null,
         'database_list_reload_by_setting' => true,
