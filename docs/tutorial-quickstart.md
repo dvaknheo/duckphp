@@ -276,3 +276,112 @@ array('t'=>3);
 查看 [**文档索引页**](index.md) ,所有文档索引页面，所有文档的集合入口
 
 --
+array (
+  0 => 'autoload.php',                          // 无composer时的加载文件
+  1 => 'src/Component/DbManager.php',           // Db管理器
+  2 => 'src/Component/ExtOptionsLoader.php',    // 加载额外选项（来自 DuckPhpApps.config.php
+  3 => 'src/Component/GlobalAdmin.php',         // 全局管理员
+  4 => 'src/Component/GlobalUser.php',          // 全局数据库
+  5 => 'src/Component/RedisManager.php',        // Redis管理器
+  6 => 'src/Component/RouteHookResource.php',   // 资源文件钩子
+  7 => 'src/Component/RouteHookRewrite.php',    // URL重写钩子
+  8 => 'src/Component/RouteHookRouteMap.php',   // 路由映射钩子
+  9 => 'src/Component/ZCallTrait.php',          // 跨相位调用
+  10 => 'src/Core/App.php',                     // 核心基类
+  11 => 'src/Core/AutoLoader.php',              // 加载器
+  12 => 'src/Core/ComponentBase.php',           // 组件基类
+  13 => 'src/Core/Console.php',                 // 命令行处理
+  14 => 'src/Core/EventManager.php',            // 事件管理
+  15 => 'src/Core/ExceptionManager.php',        // 异常管理
+  16 => 'src/Core/Functions.php',               // 全局函数
+  17 => 'src/Core/KernelTrait.php',             // 核心 Trait
+  18 => 'src/Core/Logger.php',                  // 日志
+  19 => 'src/Core/PhaseContainer.php',          // 相位管理器
+  20 => 'src/Core/Route.php',                   // 路由
+  21 => 'src/Core/Runtime.php',                 // 运行时
+  22 => 'src/Core/SingletonTrait.php',          // 单例模式
+  23 => 'src/Core/SuperGlobal.php',             // 全局变量
+  24 => 'src/Core/SystemWrapper.php',           // 接管系统函数
+  25 => 'src/Core/View.php',                    // 视图
+  26 => 'src/DuckPhp.php',                      // 入口类
+  27 => 'src/Ext/CallableView.php',             // 扩展，调用模式的视图
+  28 => 'src/Foundation/SimpleBusinessTrait.php',   // 业务类Trait
+  29 => 'src/Foundation/SimpleControllerTrait.php', // 控制器类Trait
+  30 => 'src/Foundation/SimpleModelTrait.php',      // 模型类Trait
+  31 => 'src/Foundation/SimpleSingletonTrait.php',  // 简单的单例 Trait
+  32 => 'src/Helper/ControllerHelperTrait.php',     // 控制器 Trait
+  33 => 'template/config/DuckPhpApps.config.php',   // 业务类Trait
+  34 => 'template/config/DuckPhpSettings.config.php',   // 业务类Trait
+  
+  35 => 'template/public/dbtest.php',               // 我们调用了额外应用的 dbtest 类
+  36 => 'template/public/index.php',                 // 入口类
+  37 => 'template/src/Controller/Base.php',         // 控制器基类
+  38 => 'template/src/Controller/Helper.php',       //
+  39 => 'template/src/Controller/MainController.php',
+  40 => 'template/src/System/App.php',
+  41 => 'template/view/files.php',
+)
+
+--
+
+  0 => 'autoload.php',                          // 无composer时的加载文件
+  11 => 'src/Core/AutoLoader.php',              // 加载器
+
+  17 => 'src/Core/KernelTrait.php',             // 核心 Trait
+  10 => 'src/Core/App.php',                     // 核心基类
+  12 => 'src/Core/ComponentBase.php',           // 组件基类
+  22 => 'src/Core/SingletonTrait.php',          // 单例模式
+  16 => 'src/Core/Functions.php',               // 全局函数
+  19 => 'src/Core/PhaseContainer.php',          // 相位管理器
+  13 => 'src/Core/Console.php',                 // 命令行处理
+
+  14 => 'src/Core/EventManager.php',            // 事件管理
+  15 => 'src/Core/ExceptionManager.php',        // 异常管理
+  20 => 'src/Core/Route.php',                   // 路由
+  21 => 'src/Core/Runtime.php',                 // 运行时
+  25 => 'src/Core/View.php',                    // 视图
+  
+  18 => 'src/Core/Logger.php',                  // 日志
+  23 => 'src/Core/SuperGlobal.php',             // 全局变量
+  24 => 'src/Core/SystemWrapper.php',           // 接管系统函数
+  
+  2 => 'src/Component/ExtOptionsLoader.php',    // 加载额外选项（来自 DuckPhpApps.config.php
+
+
+  26 => 'src/DuckPhp.php',                      // 入口类
+  6 => 'src/Component/RouteHookResource.php',   // 资源文件钩子
+  7 => 'src/Component/RouteHookRewrite.php',    // URL重写钩子
+  8 => 'src/Component/RouteHookRouteMap.php',   // 路由映射钩子
+  9 => 'src/Component/ZCallTrait.php',          // 跨相位调用
+
+  1 => 'src/Component/DbManager.php',           // Db管理器
+  5 => 'src/Component/RedisManager.php',        // Redis管理器
+  
+  3 => 'src/Component/GlobalAdmin.php',         // 全局管理员
+  4 => 'src/Component/GlobalUser.php',          // 全局数据库
+  
+  28 => 'src/Foundation/SimpleBusinessTrait.php',   // 业务类Trait
+  29 => 'src/Foundation/SimpleControllerTrait.php', // 控制器类Trait
+  30 => 'src/Foundation/SimpleModelTrait.php',      // 模型类Trait
+  31 => 'src/Foundation/SimpleSingletonTrait.php',  // 简单的单例 Trait
+  
+  32 => 'src/Helper/ControllerHelperTrait.php',     // 控制器 Trait
+
+  
+  33 => 'template/config/DuckPhpApps.config.php',   // 业务类Trait
+  34 => 'template/config/DuckPhpSettings.config.php',   // 业务类Trait
+  
+  
+  36 => 'template/public/index.php',                 // 入口类
+  
+  37 => 'template/src/Controller/Base.php',         // 控制器基类
+  38 => 'template/src/Controller/Helper.php',       //
+  39 => 'template/src/Controller/MainController.php',
+  
+  40 => 'template/src/System/App.php',
+  41 => 'template/view/files.php',
+
+  27 => 'src/Ext/CallableView.php',             // 扩展，调用模式的视图
+  35 => 'template/public/dbtest.php',               // 我们调用了额外应用的 dbtest 类
+
+为什么安装要用 命令行模式 ，因为命令行模式，可以超越 web 用户的安全权限。 web 用户忽略安全权限可是不好

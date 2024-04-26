@@ -1,10 +1,17 @@
-# DuckPhp\FastInstaller\RedisInstaller
+# DuckPhp\FastInstaller\FastInstaller
 
 [toc]
 
 ## 简介
+FastInstaller 是 DuckPhp 内置的一个安装系统。
+用于在命令行下安装 DuckPhp 应用。
+
 
 ## 方法
+    public function doCommandInstall()
+
+    public function doInstall()
+
 
     protected function configDatabase($force = false)
 
@@ -14,11 +21,7 @@
 
     protected function showHelp($app_options = [], $input_options = [])
 
-    public function doCommandInstall()
-
     protected function doGlobalConfigure()
-
-    public function doInstall()
 
     protected function adjustPrompt($desc, $default_options, $ext_options, $app_options)
 

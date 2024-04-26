@@ -66,60 +66,12 @@ Controller --> Business ------------------------------ ---> Model
 
 答：大写开始的方法是常用方法，小写开始的方法是不常用方法。高级来说，大写开始方法对应一个静态函数。小写方法是对应动态函数。但是他们都可以更改实现。
 
-问：上面调用关系图怎么没有 `AdvanceHelper` 类
-
-答：`AdvanceHelper` 助手类只由`核心工程师`来调用 。当你要从 App 类里找出复杂的助手类，还不如在 AdvanceHelper 里找。Session 管理就用到了 AdvanceHelper 类。
 
 ## 全局助手函数
 
 全局助手函数主要有两部分，一部分是调试用的函数，另一部分是视图调用的函数。 DuckPhp 的全局助手类都是以两条下划线爱是，并且尽量减少对全局空间的污染。
 
-### 调试函数
 
-_\_is_debug()
-
-    对应 App::IsDebug() 判断是否在调试状态, 默认读取选项 is_debug 和设置字段里的 duckphp_is_debug
-_\_is_real_debug()
-
-    对应 App::IsRealDebug() 。 切莫乱用。用于环境设置为其他。比如线上环境，但是还是要特殊调试的场合。 如果没被接管，和 IsDebug() 一致。
-_\_platform()
-
-    对应 App::Platform() 获得当前所在平台,默认读取选项和设置字段里的 duckphp_platform，用于判断当前是哪台机器等
-_\_trace_dump(...$arg)
-
-    对应 App::TraceDump() 调试状态下，查看当前堆栈，打印当前堆栈，类似 debug_print_backtrce(2)
-_\_var_dump(...$arg)
-
-    对应 App::var_dump()调试状态下 Dump 当前变量，替代 var_dump
-_\_debug_log(...$arg)
-
-    对应 App::DebugLog($message, array $context = array()) 对应调试状态下 Log 当前变量。
-### 显示相关函数
-
-全局助手函数用于 View 视图里
-
-__h()
-
-    对应 App::H(); HTML 编码
-__l($str,$args=[])
-
-    对应 App::L(); 语言处理函数，后面的关联数组替换 '{$key}'
-__hl($str, $args=[])
-
-    对应 App::Hl(); 对语言处理后进行 HTML 编码
-__url($url)
-
-    对应 App::Url(); 获得相对 url 地址
-
-__res($url)
-
-    对应 App::Res(); 获得资源相对 url 地址
-__domain()
-
-    对应 App::Domain(); 获得带协议头的域名
-__display($view, $data = null)
-
-    对应 App::Display(); 包含下一个 $view ， 如果 $data = null 则带入所有当前作用域的变量。 否则带入 $data 关联数组的内容。用于嵌套包含视图。
 ## ModelHelper 模型助手类
 
 ModelHelper 用于 Model 层。  ModelHelper 有数据库的三个独特方法。
@@ -405,5 +357,4 @@ class ModelHelper extends Helper
 
 ```
 如果你要修改相关实现，了解 DuckPhp 系统架构后后 参考 [DuckPhp\Core\App](ref/Core-App.md)
-如果你自己添加了 Ext 扩展类，那么你需要 `extendComponents` 方法注入相关 Helper
 如果你只是替换系统的实现， 找出那些 Helper 的实现函数，替换之。
