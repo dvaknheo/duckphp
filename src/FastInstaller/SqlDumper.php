@@ -7,128 +7,92 @@ namespace DuckPhp\FastInstaller;
 
 use DuckPhp\Component\DbManager;
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\App;
 
 class SqlDumper extends ComponentBase
 {
     public $options = [
         'path' => '',
         'path_sql_dump' => 'config',
-        'sql_dump_file' => 'sql.php',
+        'sql_dump_file' => 'install.sql',
         
         'sql_dump_include_tables' => [],
         'sql_dump_exclude_tables' => [],
         'sql_dump_data_tables' => [],
         
-        'sql_dump_include_tables_all' => false,
-        'sql_dump_include_tables_by_model' => true,
-        'sql_dump_prefix' => '',
+        'sql_dump_include_tables_all' => true,
+        'sql_dump_include_tables_by_model' => false,
         
         'sql_dump_install_replace_prefix' => false,
-        'sql_dump_install_new_prefix' => '',
-        'sql_dump_install_drop_old_table' => false,
+        'sql_dump_install_new_prefix' => null,
         
+        'sql_dump_install_drop_old_table' => false,
     ];
+    protected $spliter="\n#### DATA BEGIN ####\n";
     public function dump()
     {
-        $data = $this->getData();
-        $this->save($data);
+        $scheme = $this->getSchemes();
+        $data = $this->getInsertTableSql();        
+        
+        $file = App::Current()->options['database_driver'];
+        $file .= '.sql';
+        $full_file = $this->extendFullFile($this->options['path'], $this->options['path_sql_dump'], $file);
+        $string = $scheme.$this->spliter.$data;
+        file_put_contents($full_file, $string);
+        
         return true;
     }
     public function install()
     {
-        $ret = '';
-        $data = $this->load();
-        $data = $data ? $data:['scheme' => [],'data' => []];
-        $data['scheme'] = $data['scheme'] ?: [];
-        foreach ($data['scheme'] as $table => $sql) {
-            try {
-                $this->installScheme($sql, $table);
-            } catch (\PDOException $ex) {
-                $ret .= "scheme failed [$table][$sql]".$ex->getMessage() . "\n";
-            }
-        }
-        $data['data'] = $data['data'] ?: [];
-        foreach ($data['data'] as $table => $sql) {
-            try {
-                $this->installData($sql, $table);
-            } catch (\PDOException $ex) {
-                $ret .= "data failed [$table][$sql]".$ex->getMessage() . "\n";
-            }
-        }
-        return $ret;
-    }
-    protected function installScheme($sql, $table)
-    {
+        $file = $this->options['sql_dump_file']; // $driver.sql;
+        $full_file = $this->extendFullFile($this->options['path'], $this->options['path_sql_dump'], $file);
+        $sql = file_get_contents($full_file);
+        
         if ($this->options['sql_dump_install_replace_prefix']) {
-            $table = $this->options['sql_dump_install_new_prefix'] .substr($table, strlen($this->options['sql_dump_prefix']));
+            $prefix = App::Current()->options['table_prefix'];
+            $sql = str_replace('`'.$this->options['sql_dump_prefix'], '`'.$prefix, $sql);
         }
         if ($this->options['sql_dump_install_drop_old_table']) {
-            $sql_delete = "DROP TABLE IF EXISTS `$table`";
-            DbManager::DbForRead()->execute($sql_delete);
+            //$sql_delete = "DROP TABLE IF EXISTS `$table`;"; //replace before Create table if not exists
+            //DROP TABLE IF EXISTS `$table`; CREATE TABLE IF NOT EXISTS "wa_admins" (
+
         }
-        $sql = preg_replace('/`[^`]+`/', "`$table`", $sql, 1);
-        DbManager::DbForRead()->execute($sql);
-    }
-    protected function installData($sql, $table)
-    {
-        //todo replace
+        
         DbManager::Db()->execute($sql);
     }
-
-    protected function getData()
-    {
-        $ret = [];
-        $scheme = [];
-        
-        $ret['scheme'] = $this->getSchemes();
-        $ret['data'] = $this->getInsertTableSql();
-        
-        return $ret;
-    }
+    
     protected function getSchemes()
     {
-        $prefix = $this->options['sql_dump_prefix'];
-        $ret = [];
+        $prefix = App::Current()->options['table_prefix'];
+        $ret = '';
         $tables = [];
         if ($this->options['sql_dump_include_tables_all']) {
-            $data = DbManager::DbForRead()->fetchAll('show tables');
-            foreach ($data as $v) {
-                $tables[] = array_values($v)[0];
-            }
+            $tables  = Supporter::Current()->getAllTable();
         } else {
             if ($this->options['sql_dump_include_tables_by_model']) {
                 $tables = $this->searchTables();
             }
-            $tables = array_values(array_unique(array_merge($tables, $this->options['sql_dump_include_tables'])));
+            $tables = array_values(array_unique(array_merge($tables,$this->options['sql_dump_include_tables'])));            
         }
         $tables = array_diff($tables, $this->options['sql_dump_exclude_tables']);
-        foreach ($tables as $table) {
+        $tables = array_filter($tables, function($table)use($prefix) {
             if ((!empty($prefix)) && (substr($table, 0, strlen($prefix)) !== $prefix)) {
-                continue;
+                return false;
             }
-            $sql = $this->getSchemeByTable($table);
+            return true;
+        });
+        foreach ($tables as $table) {
+            $sql = Supporter::Current()->getSchemeByTable($table);
             if (!$sql) {
                 continue;
             }
-            $ret[$table] = $sql;
+            $ret.= $sql . "\n";
         }
         return $ret;
-    }
-    
-    protected function getSchemeByTable($table)
-    {
-        try {
-            $record = DbManager::DbForRead()->fetch("show create table `$table`");
-        } catch (\PDOException $ex) {
-            return '';
-        }
-        $sql = $record['Create Table'] ?? null;
-        $sql = preg_replace('/AUTO_INCREMENT=\d+/', 'AUTO_INCREMENT=1', $sql);
-        return $sql;
-    }
+    }   
     protected function getInsertTableSql()
     {
-        $ret = [];
+        $ret = '';
         $tables = $this->options['sql_dump_data_tables'];
         
         foreach ($tables as $table) {
@@ -136,7 +100,7 @@ class SqlDumper extends ComponentBase
             if (empty($str)) {
                 continue;
             }
-            $ret[$table] = $str;
+            $ret.= $str;
         }
         return $ret;
     }
@@ -154,27 +118,7 @@ class SqlDumper extends ComponentBase
         }
         return $ret;
     }
-    protected function load()
-    {
-        $ret = [];
-        
-        $file = $this->options['sql_dump_file'];
-        $full_file = $this->extendFullFile($this->options['path'], $this->options['path_sql_dump'], $file);
 
-        $ret = (function () use ($full_file) {
-            return @include $full_file;
-        })();
-        return $ret;
-    }
-    protected function save($data)
-    {
-        $file = $this->options['sql_dump_file'];
-        $full_file = $this->extendFullFile($this->options['path'], $this->options['path_sql_dump'], $file);
-        
-        $string = "<"."?php //". "regenerate by " . __CLASS__ . '->'.__METHOD__ ." at ". DATE(DATE_ATOM) . "\n";
-        $string .= "return ".var_export($data, true) . ";\n";
-        file_put_contents($full_file, $string);
-    }
     /////////////////////
     protected function searchTables()
     {

@@ -1,26 +1,46 @@
-<?php 
-class SupporterByMysql extends Supporter
-{
-    protected $driver ='mysql'
+<?php declare(strict_types=1);
+/**
+ * DuckPhp
+ * From this time, you never be alone~
+ */
+namespace DuckPhp\FastInstaller;
 
-    
-    public function foo()
+use DuckPhp\Component\DbManager;
+
+class SupporterByMysql extends Supporter
+{    
+    public function readDsnSetting($options)
     {
-            $desc = <<<EOT
-----
-    host: [{host}] 
-    port: [{port}]
-    dbname: [{dbname}]
-    username: [{username}]
-    password: [{password}]
-EOT;
-            return $desc;
+        $options = parent::readSetting($options);
+        return array_merge(['host' => '127.0.0.1','port' => '3306'],$options);
     }
-    /////////////////////////////////
+    public function writeDsnSetting($options)
+    {
+        $options = array_map('trim', $options);
+        $options = array_map('addslashes', $options);
+        
+        $dsn = "mysql:host={$options['host']};port={$options['port']};dbname={$options['dbname']};charset=utf8mb4;";
+        
+        $options['dsn'] = $dsn;
+        unset($options['host']);
+        unset($options['port']);
+        unset($options['dbname']);
+        
+        return $options;
+    }
+    //////////////////
+    public function getAllTable()
+    {
+        $data = DbManager::Db()->fetchAll('SHOW TABLES');
+        foreach ($data as $v) {
+            $tables[] = array_values($v)[0];
+        }
+        return $tables;
+    }
     public function getSchemeByTable($table)
     {
         try {
-            $record = DbManager::DbForRead()->fetch("show create table `$table`");
+            $record = DbManager::Db()->fetch("SHOW CREATE TABLE `$table`");
         } catch (\PDOException $ex) {
             return '';
         }
@@ -28,33 +48,11 @@ EOT;
         $sql = preg_replace('/AUTO_INCREMENT=\d+/', 'AUTO_INCREMENT=1', $sql);
         return $sql;
     }
-    public function getDataSql($table)
+    
+
+    public function getInstallDescs()
     {
-        $ret = '';
-        $sql = "SELECT * FROM `$table`";
-        $data = DbManager::DbForRead()->fetchAll($sql);
-        
-        if (empty($data)) {
-            return '';
-        }
-        foreach ($data as $line) {
-            $ret .= "INSERT INTO `$table` ".DbManager::DbForRead()->qouteInsertArray($line) .";\n";
-        }
-        return $ret;
-    }
-    protected function getDsnArray()
-    {
-        return ['host'=>true,'port'=>true,'dbname'=>true,'username'=>true,'password'=>true,];
-    }
-protected function configDatabase($ref_database_list = [])
-    {
-        $ret = [];
-        
-        $options = [];
-        while (true) {
-            $j = count($ret);
-            echo "Setting MySQL database[$j]:\n";
-            $desc = <<<EOT
+        $desc = <<<EOT
 ----
     host: [{host}] 
     port: [{port}]
@@ -62,34 +60,6 @@ protected function configDatabase($ref_database_list = [])
     username: [{username}]
     password: [{password}]
 EOT;
-    
-            $options = array_merge($ref_database_list[$j] ?? [], $options);
-            
-            $options = $this->makeFromDsn($options);
-            
-            $options = array_merge(['host' => '127.0.0.1','port' => '3306',], $options);
-            $options = Console::_()->readLines($options, $desc);
-            list($flag, $error_string) = $this->checkDb($options);
-            if ($flag) {
-                $options['dsn'] = $this->dsnFromSetting($options);
-                unset($options['host']);
-                unset($options['port']);
-                unset($options['dbname']);
-                
-                $ret[] = $options;
-            }
-            if (!$flag) {
-                echo "Connect database error: $error_string \n";
-            }
-            if (empty($ret)) {
-                continue;
-            }
-            $sure = Console::_()->readLines(['sure' => 'N'], "Setting More Database(Y/N)[{sure}]?");
-            if (strtoupper($sure['sure']) === 'Y') {
-                continue;
-            }
-            break;
-        }
-        return $ret;
+        return $desc;
     }
 }

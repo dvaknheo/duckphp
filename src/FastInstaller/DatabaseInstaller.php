@@ -14,64 +14,54 @@ use DuckPhp\Core\Console;
 class DatabaseInstaller extends ComponentBase
 {
     public $options = [
-        'database_input_driver' => 'mysql',
+        //
     ];
     public function callResetDatabase($force = false)
     {
         $ref = DbManager::_()->getDatabaseConfigList();
-        if (!$force && $ref) {
-            echo "database configed ,use --force to force\n";
-            return false;
-        }
+        
         $data = $this->configDatabase($ref);
         $this->changeDatabase($data);
         return true;
     }
     protected function changeDatabase($data)
     {
-        $options = ExtOptionsLoader::_()->loadExtOptions(true, App::Root());
-        $options['database_list'] = $data;
+        $is_local = (App::Current()->options['local_db'] ?? false) || App::Root()->options['database_driver'] != App::Current()->options['database_driver'];
         
+        $app = $is_local ? App::Current() : App::Root();
+        
+        $options = ExtOptionsLoader::_()->loadExtOptions(true, $app);
+        $options['database_list'] = $data;
         $t = App::Root()->options['installing_data'] ?? null;
         unset(App::Root()->options['installing_data']);
-        ExtOptionsLoader::_()->saveExtOptions($options, App::Root());
+        ExtOptionsLoader::_()->saveExtOptions($options, $app);
         App::Root()->options['installing_data'] = $t;
         
         $options = DbManager::_()->options;
         $options['database_list'] = $data;
-        DbManager::_()->reInit($options, App::Root());
+        DbManager::_()->reInit($options, $app);
     }
     
     protected function configDatabase($ref_database_list = [])
     {
+        $driver = App::Current()->options['database_driver']??'';
+        $supporter = Supporter::_()->fromDriver(App::Current()->options['database_driver']??'');
         $ret = [];
         
         $options = [];
         while (true) {
             $j = count($ret);
-            echo "Setting MySQL database[$j]:\n";
-            $desc = <<<EOT
-----
-    host: [{host}] 
-    port: [{port}]
-    dbname: [{dbname}]
-    username: [{username}]
-    password: [{password}]
-EOT;
-    
+            echo "Setting $driver database[$j]:\n";
+            $desc = Supporter::Current()->getInstallDesc();
             $options = array_merge($ref_database_list[$j] ?? [], $options);
             
-            $options = $this->makeFromDsn($options);
+            $options = Supporter::Current()->readDsnSetting($options);
             
-            $options = array_merge(['host' => '127.0.0.1','port' => '3306',], $options);
+            /////////////////////////////////////////
             $options = Console::_()->readLines($options, $desc);
             list($flag, $error_string) = $this->checkDb($options);
             if ($flag) {
-                $options['dsn'] = $this->dsnFromSetting($options);
-                unset($options['host']);
-                unset($options['port']);
-                unset($options['dbname']);
-                
+                $options = Supporter::Current()->writeDsnSetting($options);
                 $ret[] = $options;
             }
             if (!$flag) {
@@ -80,39 +70,13 @@ EOT;
             if (empty($ret)) {
                 continue;
             }
-            $sure = Console::_()->readLines(['sure' => 'N'], "Setting More Database(Y/N)[{sure}]?");
+            $sure = Console::_()->readLines(['sure' => 'N'], "Setting more database(Y/N)[{sure}]?");
             if (strtoupper($sure['sure']) === 'Y') {
                 continue;
             }
             break;
         }
         return $ret;
-    }
-    private function makeFromDsn($options)
-    {
-        if (!isset($options['dsn'])) {
-            return $options;
-        }
-        $dsn = $options['dsn'];
-        $data = substr($dsn, strlen($this->options['database_input_driver'].':'));
-        $a = explode(';', trim($data, ';'));
-        
-        $t = array_map(function ($v) {
-            return explode("=", $v);
-        }, $a);
-        $new = array_column($t, 1, 0);
-        $new = array_map('trim', $new);
-        $new = array_map('stripslashes', $new);
-        $options = array_merge($options, $new);
-        return $options;
-    }
-    private function dsnFromSetting($options)
-    {
-        $options = array_map('trim', $options);
-        $options = array_map('addslashes', $options);
-        
-        $dsn = "mysql:host={$options['host']};port={$options['port']};dbname={$options['dbname']};charset=utf8mb4;";
-        return $dsn;
     }
     protected function checkDb($database)
     {

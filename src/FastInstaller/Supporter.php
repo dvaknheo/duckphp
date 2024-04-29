@@ -7,14 +7,38 @@ namespace DuckPhp\FastInstaller;
 
 use DuckPhp\Component\DbManager;
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\App;
 
 
 class Supporter extends ComponentBase
 {
-    protected $driver;
-    public function readSetting($options)
+    public $options = [
+        'database_driver_supporter_map'=>[
+          'mysql' => SupporterByMySql::class,
+          'sqlite' => SupporterBySqlite::class,
+          ],
+          // change.
+    ];
+    
+    public static function Current()
     {
-        //'host' => '127.0.0.1','port' => '3306',
+        return static::_()->getSupporter();
+    }
+    public function getSupporter()
+    {
+        $driver = App::Current()->options['database_driver'];
+        $new_class = $this->options['database_driver_supporter_map'][$driver] ?? static::class;
+        return $new_class::_();
+    }
+    
+    ///////////////
+    public function getInstallDesc()
+    {
+        throw new \Exception('No Impelement');
+    }
+
+    public function readDsnSetting($options)
+    {
         if (!isset($options['dsn'])) {
             return $options;
         }
@@ -31,34 +55,18 @@ class Supporter extends ComponentBase
         $options = array_merge($options, $new);
         return $options;
     }
-    public function writeSetting($options)
+    public function writeDsnSetting($options)
     {
-        $options = array_map('trim', $options);
-        $options = array_map('addslashes', $options);
-        
-        $dsn = "mysql:host={$options['host']};port={$options['port']};dbname={$options['dbname']};charset=utf8mb4;";
-        
-        $options['dsn'] = $dsn;
-        unset($options['host']);
-        unset($options['port']);
-        unset($options['dbname']);
-        
-        return $options;
+        throw new \Exception('No Impelement');
     }
     
-    public function fromDriver($driver)
+    public function getAllTable()
     {
-        $new_class= static::class;
-        $new_class .= 'By'.ucfirst($driver);
-        return new $new_class;
+        throw new \Exception('No Impelement');
     }
     public function getSchemeByTable($table)
     {
+        throw new \Exception('No Impelement');
     }
-    public function getDataSql($table)
-    {
-    }
-    protected function getDsnArray()
-    {
-    }
+    
 }

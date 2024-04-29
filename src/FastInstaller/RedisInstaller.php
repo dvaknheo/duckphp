@@ -29,17 +29,19 @@ class RedisInstaller extends ComponentBase
     }
     protected function changeRedis($data)
     {
-        $options = ExtOptionsLoader::_()->loadExtOptions(true, App::Root());
-        $options['redis_list'] = $data;
+        $is_local = App::Current()->options['local_redis'] ?? false;
+        $app = $is_local ? App::Current() : App::Root();
         
+        $options = ExtOptionsLoader::_()->loadExtOptions(true, $app);
+        $options['redis_list'] = $data;
         $t = App::Root()->options['installing_data'] ?? null;
         unset(App::Root()->options['installing_data']);
-        ExtOptionsLoader::_()->saveExtOptions($options, App::Root());
+        ExtOptionsLoader::_()->saveExtOptions($options, $app);
         App::Root()->options['installing_data'] = $t;
         
         $options = RedisManager::_()->options;
         $options['redis_list'] = $data;
-        RedisManager::_()->reInit($options, App::Root());
+        RedisManager::_()->reInit($options, $app);
     }
     
     protected function configRedis($ref_database_list = [])

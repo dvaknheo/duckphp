@@ -156,7 +156,7 @@ class App extends ComponentBase
                 echo $data['trace'];
                 echo "\n</pre>\n";
             } else {
-                echo "<!-- DuckPhp set options ['is_debug'] to show debug info>\n";
+                echo "<!-- DuckPhp set options ['is_debug'] to show debug info -->\n";
             }
             return;
         }
