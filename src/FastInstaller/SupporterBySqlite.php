@@ -5,20 +5,21 @@
  */
 namespace DuckPhp\FastInstaller;
 
+use DuckPhp\Component\DbManager;
+
 class SupporterBySqlite extends Supporter
 {    
     /////////////////////////////////
     public function readSetting($options)
     {
-        $options = parent::readSetting($options);
-        return array_merge(['host' => '127.0.0.1','port' => '3306'],$options];
+        return parent::readSetting($options);
     }
     public function writeSetting($options)
     {
         $options = array_map('trim', $options);
         $options = array_map('addslashes', $options);
         
-        $dsn = "mysql:host={$options['host']};port={$options['port']};dbname={$options['dbname']};charset=utf8mb4;";
+        $dsn = "sqlite:host={$options['host']};port={$options['port']};dbname={$options['dbname']};charset=utf8mb4;";
         
         $options['dsn'] = $dsn;
         unset($options['host']);
@@ -30,21 +31,23 @@ class SupporterBySqlite extends Supporter
     //////////////////
     public function getAllTable()
     {
-        $data = DbManager::Db()->fetchAll('SHOW TABLES');
+        $data = DbManager::Db()->fetchAll('SELECT tbl_name from sqlite_master where type ="table"');
         foreach ($data as $v) {
-            $tables[] = array_values($v)[0];
+            if(substr($v['tbl_name'],0,strlen('sqlite_')) === 'sqlite_'){ continue;}
+            $tables[] = $v['tbl_name'];
         }
         return $tables;
     }
     public function getSchemeByTable($table)
     {
+        $sql = '';
         try {
-            $record = DbManager::Db()->fetch("SHOW CREATE TABLE `$table`");
+            $sql = DbManager::Db()->fetchColumn("select sql from sqlite_master where tbl_name=? ",$table);
         } catch (\PDOException $ex) {
             return '';
         }
-        $sql = $record['Create Table'] ?? null;
-        $sql = preg_replace('/AUTO_INCREMENT=\d+/', 'AUTO_INCREMENT=1', $sql);
+        $sql =preg_replace('/CREATE TABLE "([^"]+)"/','CREATE TABLE `$1`',$sql);
+        
         return $sql;
     }
     

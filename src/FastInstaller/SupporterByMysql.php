@@ -31,6 +31,7 @@ class SupporterByMysql extends Supporter
     //////////////////
     public function getAllTable()
     {
+        $tables = [];
         $data = DbManager::Db()->fetchAll('SHOW TABLES');
         foreach ($data as $v) {
             $tables[] = array_values($v)[0];
