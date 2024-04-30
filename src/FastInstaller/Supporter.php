@@ -39,11 +39,12 @@ class Supporter extends ComponentBase
 
     public function readDsnSetting($options)
     {
+        $driver = App::Current()->options['database_driver'];
         if (!isset($options['dsn'])) {
             return $options;
         }
         $dsn = $options['dsn'];
-        $data = substr($dsn, strlen($this->driver.':'));
+        $data = substr($dsn, strlen($driver.':'));
         $a = explode(';', trim($data, ';'));
         
         $t = array_map(function ($v) {

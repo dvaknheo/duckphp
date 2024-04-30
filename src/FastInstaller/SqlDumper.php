@@ -20,11 +20,11 @@ class SqlDumper extends ComponentBase
         'sql_dump_exclude_tables' => [],
         'sql_dump_data_tables' => [],
         
-        'sql_dump_include_tables_all' => true,
-        'sql_dump_include_tables_by_model' => false,
+        'sql_dump_include_tables_all' => false,
+        'sql_dump_include_tables_by_model' => true,
         
         'sql_dump_install_replace_prefix' => false,
-        'sql_dump_install_new_prefix' => null,
+        'sql_dump_prefix' => '',
         
         'sql_dump_install_drop_old_table' => false,
     ];
@@ -34,8 +34,7 @@ class SqlDumper extends ComponentBase
         $scheme = $this->getSchemes();
         $data = $this->getInsertTableSql();        
         
-        $file = App::Current()->options['database_driver'];
-        $file .= '.sql';
+        $file = App::Current()->options['database_driver'].'.sql';
         $full_file = $this->extendFullFile($this->options['path'], $this->options['path_sql_dump'], $file);
         $string = $scheme.$this->spliter.$data;
         file_put_contents($full_file, $string);
@@ -44,20 +43,19 @@ class SqlDumper extends ComponentBase
     }
     public function install()
     {
-        $file = $this->options['sql_dump_file']; // $driver.sql;
+        $file = App::Current()->options['database_driver'].'.sql';
         $full_file = $this->extendFullFile($this->options['path'], $this->options['path_sql_dump'], $file);
         $sql = file_get_contents($full_file);
         
-        if ($this->options['sql_dump_install_replace_prefix']) {
-            $prefix = App::Current()->options['table_prefix'];
-            $sql = str_replace('`'.$this->options['sql_dump_prefix'], '`'.$prefix, $sql);
-        }
+        
         if ($this->options['sql_dump_install_drop_old_table']) {
-            //$sql_delete = "DROP TABLE IF EXISTS `$table`;"; //replace before Create table if not exists
-            //DROP TABLE IF EXISTS `$table`; CREATE TABLE IF NOT EXISTS "wa_admins" (
-
+            $sql = preg_replace('/CREATE TABLE `([^`]+)`/','DROP TABLE IF EXISTS `$1`;CREATE TABLE `$1`',$sql);
         }
         
+        if ($this->options['sql_dump_install_replace_prefix']) {
+            $prefix = App::Current()->options['table_prefix'];
+            $sql = str_replace(' `'.$this->options['sql_dump_prefix'], ' `'.$prefix, $sql);
+        }
         DbManager::Db()->execute($sql);
     }
     
@@ -120,15 +118,19 @@ class SqlDumper extends ComponentBase
     }
 
     /////////////////////
-    protected function searchTables()
+    protected function getModelPath()
     {
-        //TODO be a method
-        $namespace = $this->context()->options['namespace'];
+        $namespace = App::Current()->options['namespace'];
         $class = $namespace. '\\Model\\Base';
         $ref = new \ReflectionClass($class); /** @phpstan-ignore-line */
-        
         $path = dirname((string)$ref->getFileName());
-        
+
+        return $path;
+    }
+    protected function searchTables()
+    {
+        $path = $this->getModelPath();
+        $namespace = App::Current()->options['namespace'];
         $models = $this->searchModelClasses($path);
         
         $ret = [];

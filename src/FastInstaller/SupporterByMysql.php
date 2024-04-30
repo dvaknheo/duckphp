@@ -51,7 +51,7 @@ class SupporterByMysql extends Supporter
     }
     
 
-    public function getInstallDescs()
+    public function getInstallDesc()
     {
         $desc = <<<EOT
 ----

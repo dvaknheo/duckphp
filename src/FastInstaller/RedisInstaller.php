@@ -16,13 +16,23 @@ class RedisInstaller extends ComponentBase
     public $options = [
         //
     ];
+    public function install($force = false)
+    {
+        $use_redis = App::Current()->options['use_redis'] ?? false;
+        $use_redis = $use_redis || (App::Current()->options['local_redis'] ?? false);
+        
+        if (!$force && !$use_redis) {
+            return;
+        }
+        return $this->callResetRedis($force);
+    }
     public function callResetRedis($force = false)
     {
         $ref = RedisManager::_()->getRedisConfigList();
         if (!$force && $ref) {
-            echo "redis is configed ,use --force to force\n";
             return false;
         }
+        echo "config redis now \n";
         $data = $this->configRedis($ref);
         $this->changeRedis($data);
         return true;

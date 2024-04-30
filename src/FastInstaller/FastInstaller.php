@@ -25,34 +25,7 @@ class FastInstaller extends ComponentBase
     ];
     protected $args = [];
     ///////////////
-    protected function needDatabase()
-    {
-        $app_options = App::Current()->options;
-        $flag = $app_options['local_db'] ?? false;
-        if ($flag){
-            return true;
-        }
-      
-        $driver = DbManager::_()->options['database_driver']?? '';
-        if( $driver != $app_options['database_driver']) {
-            return true;
-        }
-        return false;
-    }
-    protected function configDatabase($force = false)
-    {
-        if (!$flag && !$this->needDatabase()) {
-            return;
-        }
-        DatabaseInstaller::_()->callResetDatabase($force);
-    }
-    protected function configRedis($force = false)
-    {
-        if (!$force && App::Current()->options['use_redis'] ?? false) {
-            return;
-        }
-        RedisInstaller::_()->callResetRedis($force);
-    }
+
     protected function initComponents()
     {
         $this->args = Console::_()->getCliParameters();
@@ -96,7 +69,6 @@ and more ...\n";
             return;
         }
         if ($args['dump_sql'] ?? false) {
-            
             SqlDumper::_()->dump();
             var_dump('done: dumpsql');
             return;
@@ -105,29 +77,26 @@ and more ...\n";
     }
     public function doCommandRequire()
     {
-        EventManager::FireEvent([App::Phase(), 'OnRequire']);
+        EventManager::FireEvent([App::Phase(), 'OnInstallRequire']);
     }
     public function doCommandRemove()
     {
-        EventManager::FireEvent([App::Phase(), 'OnRemove']);
+        EventManager::FireEvent([App::Phase(), 'OnInstallRemove']);
     }
     protected function doGlobalConfigure()
     {
-        $this->configDatabase($this->args['force'] ?? false);
-        $this->configRedis($this->args['force'] ?? false);
+        
     }
     public function doInstall()
     {
-        $this->doGlobalConfigure();
-        
-        if ($this->args['configure'] ?? false) {
-            return;
-        }
+        $force = $this->args['force'] ?? false;
         //////////////////////////
         $install_level = App::Root()->options['installing_data']['install_level']??0;
         echo ($install_level<=0) ? "use --help for more info.\n" : '';
-        
         echo str_repeat("\t",$install_level)."\e[32;7mInstalling (".get_class(App::Current())."):\033[0m\n";
+    
+        DatabaseInstaller::_()->install($force);
+        RedisInstaller::_()->install($force);
         
         //////[[[[
         $app_options = App::Current()->options;
@@ -142,15 +111,17 @@ and more ...\n";
         
         $desc = $this->adjustPrompt($desc, $default_options, $ext_options, $app_options);
         $input_options = Console::_()->readLines($default_options, $desc, $validators);
+
         $ext_options = array_replace_recursive($ext_options, $input_options);
-        
         $app_options = array_replace_recursive($app_options, $ext_options);
         
         App::Current()->options = $app_options;
         ///////////////
+
         $this->doInstallAction($input_options, $ext_options, $app_options);
         $ext_options['install'] = DATE(DATE_ATOM);
         ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
+        
         //$this->onInstall(); //Oninstall
         ///////////////////////////
         if (!($this->args['skip_children'] ?? false)) {
@@ -163,11 +134,17 @@ and more ...\n";
     protected function adjustPrompt($desc, $default_options, $ext_options, $app_options)
     {
         $prefix ='';
-        if (! (App::Current()->isRoot())) {
-            $prefix = "url prefix: [{controller_url_prefix}]
-            resource prefix: [{controller_resource_prefix}]
-            ";
+        if (!(App::Current()->isRoot())) {
+            $prefix = "
+--
+url prefix: [{controller_url_prefix}]
+resource prefix: [{controller_resource_prefix}]
+
+";
         }
+        $prefix = str_replace('{controller_url_prefix}',$default_options['controller_url_prefix'] ,$prefix);
+        $prefix = str_replace('{controller_resource_prefix}',$default_options['controller_resource_prefix'] ,$prefix);
+        
         $desc = $prefix.$desc;
         return  $desc;
     }
@@ -196,9 +173,11 @@ and more ...\n";
     }
     protected function doInstallAction($input_options = [], $ext_options = [], $app_options = [])
     {
-        var_dump($input_options, $ext_options);
-    
+
+
         if (!($this->args['skip_sql'] ?? false)) {
+            App::Current()->options['is_debug']=true;
+            SqlDumper::_()->options['sql_dump_install_drop_old_table'] = true;
             SqlDumper::_()->install();
         }
         if (!($this->args['skip_resource'] ?? false)) {

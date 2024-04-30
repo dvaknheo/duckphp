@@ -10,21 +10,24 @@ use DuckPhp\Component\DbManager;
 class SupporterBySqlite extends Supporter
 {    
     /////////////////////////////////
-    public function readSetting($options)
+    public function readDsnSetting($options)
     {
-        return parent::readSetting($options);
+        $dsn = $options['dsn'];
+        $options['file'] = substr($dsn,strlen('sqlite:'));
+        return $options;
     }
-    public function writeSetting($options)
+    public function writeDsnSetting($options)
     {
         $options = array_map('trim', $options);
         $options = array_map('addslashes', $options);
         
-        $dsn = "sqlite:host={$options['host']};port={$options['port']};dbname={$options['dbname']};charset=utf8mb4;";
+        $dsn = "sqlite:{$options['file']}";
         
         $options['dsn'] = $dsn;
-        unset($options['host']);
-        unset($options['port']);
-        unset($options['dbname']);
+        unset($options['file']);
+        
+        $options['username'] = '';
+        $options['password'] = '';
         
         return $options;
     }
@@ -42,25 +45,19 @@ class SupporterBySqlite extends Supporter
     {
         $sql = '';
         try {
-            $sql = DbManager::Db()->fetchColumn("select sql from sqlite_master where tbl_name=? ",$table);
+            $sql = DbManager::Db()->fetchColumn("SELECT sql FROM sqlite_master WHERE tbl_name=? ",$table);
         } catch (\PDOException $ex) {
             return '';
         }
-        $sql =preg_replace('/CREATE TABLE "([^"]+)"/','CREATE TABLE `$1`',$sql);
+        $sql = preg_replace('/CREATE TABLE "([^"]+)"/','CREATE TABLE `$1`',$sql);
         
         return $sql;
     }
-    
-
-    public function getInstallDescs()
+    public function getInstallDesc()
     {
         $desc = <<<EOT
 ----
-    host: [{host}] 
-    port: [{port}]
-    dbname: [{dbname}]
-    username: [{username}]
-    password: [{password}]
+    database filename: [{file}] 
 EOT;
         return $desc;
     }

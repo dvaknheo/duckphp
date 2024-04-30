@@ -16,6 +16,26 @@ class DatabaseInstaller extends ComponentBase
     public $options = [
         //
     ];
+    public function install($force = false)
+    {
+
+        $my_driver = App::Current()->options['database_driver'] ?? '';
+        if (!$my_driver){
+            return false;
+        }
+        
+        $system_driver = DbManager::_()->options['database_driver']?? '';
+        if($my_driver === $system_driver){
+            $ref = DbManager::_()->getDatabaseConfigList();
+            if(!$force && !empty($ref)){
+                return false;
+            }
+        }
+        
+        return DatabaseInstaller::_()->callResetDatabase($force);
+    }
+
+
     public function callResetDatabase($force = false)
     {
         $ref = DbManager::_()->getDatabaseConfigList();
@@ -45,7 +65,6 @@ class DatabaseInstaller extends ComponentBase
     protected function configDatabase($ref_database_list = [])
     {
         $driver = App::Current()->options['database_driver']??'';
-        $supporter = Supporter::_()->fromDriver(App::Current()->options['database_driver']??'');
         $ret = [];
         
         $options = [];
@@ -59,9 +78,9 @@ class DatabaseInstaller extends ComponentBase
             
             /////////////////////////////////////////
             $options = Console::_()->readLines($options, $desc);
+            $options = Supporter::Current()->writeDsnSetting($options);
             list($flag, $error_string) = $this->checkDb($options);
             if ($flag) {
-                $options = Supporter::Current()->writeDsnSetting($options);
                 $ret[] = $options;
             }
             if (!$flag) {
@@ -80,11 +99,12 @@ class DatabaseInstaller extends ComponentBase
     }
     protected function checkDb($database)
     {
-        $dsn = $this->dsnFromSetting($database);
+        
+        //$dsn = $this->dsnFromSetting($database);
         try {
             $db = new \DuckPhp\Db\Db();
             $db->init([
-                'dsn' => $dsn,
+                'dsn' => $database['dsn'],
                 'username' => $database['username'],
                 'password' => $database['password'],
             ]);
