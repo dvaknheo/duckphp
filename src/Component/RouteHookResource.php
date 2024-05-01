@@ -5,6 +5,7 @@
  */
 namespace DuckPhp\Component;
 
+use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Route;
 use DuckPhp\Core\SystemWrapper;
@@ -71,19 +72,29 @@ class RouteHookResource extends ComponentBase
             return;
         }
         $source = $this->extendFullFile($this->options['path'], $this->options['path_resource'], '', false);
+        $source = realpath($source);
+        if (!$source) {
+            return;
+        }
         
-        //$_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-        //$document_root = $_SERVER['DOCUMENT_ROOT'] ?? ''; 
-        $document_root = App::Root()->extendFullFile(App::Root()->options['path'], App::Root()->options['path_document'], '', false);
+        //for console.
+        $phase = App::Phase(get_class(App::Root()));
+        $document_root = App::Root()->extendFullFile(App::Root()->options['path'], App::Root()->options['path_document'] ??'public', '', false);
+        App::Phase($phase);
         
-        $dest = $document_root . Route::_()->_Res($controller_resource_prefix);
-
+        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+        $_SERVER['DOCUMENT_ROOT']='';
+        $_SERVER['SCRIPT_FILENAME']='/index.php';
+        $path_dest = Route::_()->_Res('');
+        
+        $dest = $this->get_dest_dir($document_root,$path_dest);
+        
         $this->copy_dir($source, $dest, $force, $info);
     }
     protected function get_dest_dir($path_parent, $path)
     {
-        $new_dir = $path_parent;
-        $b = explode('/', $path);
+        $new_dir = rtrim($path_parent,'/');
+        $b = explode('/', trim($path, '/'));
         
         foreach ($b as $v) {
             $new_dir .= '/'.$v;
@@ -111,6 +122,7 @@ class RouteHookResource extends ComponentBase
         if (!$force) {
             $flag = $this->check_files_exist($source, $dest, $files, $info);
             if ($flag) {
+                $info .= "File Exsits!\n";
                 return;
             }
         }
