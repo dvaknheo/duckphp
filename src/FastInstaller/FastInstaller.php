@@ -85,15 +85,14 @@ and more ...\n";
     }
     protected function doGlobalConfigure()
     {
-        
     }
     public function doInstall()
     {
         $force = $this->args['force'] ?? false;
         //////////////////////////
-        $install_level = App::Root()->options['installing_data']['install_level']??0;
-        echo ($install_level<=0) ? "use --help for more info.\n" : '';
-        echo str_repeat("\t",$install_level)."\e[32;7mInstalling (".get_class(App::Current())."):\033[0m\n";
+        $install_level = App::Root()->options['installing_data']['install_level'] ?? 0;
+        echo ($install_level <= 0) ? "use --help for more info.\n" : '';
+        echo str_repeat("\t", $install_level)."\e[32;7mInstalling (".get_class(App::Current())."):\033[0m\n";
     
         DatabaseInstaller::_()->install($force);
         RedisInstaller::_()->install($force);
@@ -119,7 +118,7 @@ and more ...\n";
         ///////////////
 
         $this->doInstallAction($input_options, $ext_options, $app_options);
-        EventManager::FireEvent([App::Phase(), 'OnInstall'],$input_options, $ext_options, $app_options);
+        EventManager::FireEvent([App::Phase(), 'OnInstall'], $input_options, $ext_options, $app_options);
         
         $ext_options['install'] = DATE(DATE_ATOM);
         ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
@@ -135,7 +134,7 @@ and more ...\n";
     }
     protected function adjustPrompt($desc, $default_options, $ext_options, $app_options)
     {
-        $prefix ='';
+        $prefix = '';
         if (!(App::Current()->isRoot())) {
             $prefix = "
 --
@@ -143,8 +142,8 @@ url prefix: [{controller_url_prefix}]
 resource prefix: [{controller_resource_prefix}]
 ";
         }
-        $prefix = str_replace('{controller_url_prefix}',$default_options['controller_url_prefix'] ,$prefix);
-        $prefix = str_replace('{controller_resource_prefix}',$default_options['controller_resource_prefix'] ,$prefix);
+        $prefix = str_replace('{controller_url_prefix}', $default_options['controller_url_prefix'], $prefix);
+        $prefix = str_replace('{controller_resource_prefix}', $default_options['controller_resource_prefix'], $prefix);
         
         $desc = $prefix.$desc;
         return  $desc;
@@ -153,7 +152,7 @@ resource prefix: [{controller_resource_prefix}]
     {
         $app_options = App::Current()->options;
         if (!empty($app_options['app'])) {
-            App::Root()->options['installing_data']['install_level']=$install_level+1;
+            App::Root()->options['installing_data']['install_level'] = $install_level + 1;
             echo "\nInstall child apps [[[[[[[[\n\n";
         } else {
             return;
@@ -162,7 +161,7 @@ resource prefix: [{controller_resource_prefix}]
             $true_app = get_class($app::_());
             $last_phase = App::Phase($true_app);
             //try {
-            $command_class= $app->options['cli_command_class']??$true_app;
+            $command_class = $app->options['cli_command_class'] ?? $true_app;
             $command_class::_()->command_install();
             //} catch (\Exception $ex) {
             //    $msg = $ex->getMessage();
@@ -177,7 +176,7 @@ resource prefix: [{controller_resource_prefix}]
     protected function doInstallAction($input_options = [], $ext_options = [], $app_options = [])
     {
         if (!($this->args['skip_sql'] ?? false)) {
-            App::Current()->options['is_debug']=true;
+            App::Current()->options['is_debug'] = true;
             SqlDumper::_()->options['sql_dump_install_drop_old_table'] = true;
             SqlDumper::_()->install();
         }

@@ -18,16 +18,15 @@ class DatabaseInstaller extends ComponentBase
     ];
     public function install($force = false)
     {
-
         $my_driver = App::Current()->options['database_driver'] ?? '';
-        if (!$my_driver){
+        if (!$my_driver) {
             return false;
         }
         
-        $system_driver = DbManager::_()->options['database_driver']?? '';
-        if($my_driver === $system_driver){
+        $system_driver = DbManager::_()->options['database_driver'] ?? '';
+        if ($my_driver === $system_driver) {
             $ref = DbManager::_()->getDatabaseConfigList();
-            if(!$force && !empty($ref)){
+            if (!$force && !empty($ref)) {
                 return false;
             }
         }
@@ -64,7 +63,7 @@ class DatabaseInstaller extends ComponentBase
     
     protected function configDatabase($ref_database_list = [])
     {
-        $driver = App::Current()->options['database_driver']??'';
+        $driver = App::Current()->options['database_driver'] ?? '';
         $ret = [];
         
         $options = [];

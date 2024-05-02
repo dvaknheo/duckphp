@@ -6,14 +6,13 @@
 namespace DuckPhp\FastInstaller;
 
 use DuckPhp\Component\DbManager;
-use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\App;
-
+use DuckPhp\Core\ComponentBase;
 
 class Supporter extends ComponentBase
 {
     public $options = [
-        'database_driver_supporter_map'=>[
+        'database_driver_supporter_map' => [
           'mysql' => SupporterByMySql::class,
           'sqlite' => SupporterBySqlite::class,
           ],
@@ -69,5 +68,4 @@ class Supporter extends ComponentBase
     {
         throw new \Exception('No Impelement');
     }
-    
 }

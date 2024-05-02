@@ -6,8 +6,8 @@
 namespace DuckPhp\FastInstaller;
 
 use DuckPhp\Component\DbManager;
-use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\App;
+use DuckPhp\Core\ComponentBase;
 
 class SqlDumper extends ComponentBase
 {
@@ -28,11 +28,11 @@ class SqlDumper extends ComponentBase
         
         'sql_dump_install_drop_old_table' => false,
     ];
-    protected $spliter="\n#### DATA BEGIN ####\n";
+    protected $spliter = "\n#### DATA BEGIN ####\n";
     public function dump()
     {
         $scheme = $this->getSchemes();
-        $data = $this->getInsertTableSql();        
+        $data = $this->getInsertTableSql();
         
         $file = App::Current()->options['database_driver'].'.sql';
         $full_file = $this->extendFullFile($this->options['path'], $this->options['path_sql_dump'], $file);
@@ -49,7 +49,7 @@ class SqlDumper extends ComponentBase
         
         
         if ($this->options['sql_dump_install_drop_old_table']) {
-            $sql = preg_replace('/CREATE TABLE `([^`]+)`/','DROP TABLE IF EXISTS `$1`;CREATE TABLE `$1`',$sql);
+            $sql = preg_replace('/CREATE TABLE `([^`]+)`/', 'DROP TABLE IF EXISTS `$1`;CREATE TABLE `$1`', $sql);
         }
         
         if ($this->options['sql_dump_install_replace_prefix']) {
@@ -65,15 +65,15 @@ class SqlDumper extends ComponentBase
         $ret = '';
         $tables = [];
         if ($this->options['sql_dump_include_tables_all']) {
-            $tables  = Supporter::Current()->getAllTable();
+            $tables = Supporter::Current()->getAllTable();
         } else {
             if ($this->options['sql_dump_include_tables_by_model']) {
                 $tables = $this->searchTables();
             }
-            $tables = array_values(array_unique(array_merge($tables,$this->options['sql_dump_include_tables'])));            
+            $tables = array_values(array_unique(array_merge($tables, $this->options['sql_dump_include_tables'])));
         }
         $tables = array_diff($tables, $this->options['sql_dump_exclude_tables']);
-        $tables = array_filter($tables, function($table)use($prefix) {
+        $tables = array_filter($tables, function ($table) use ($prefix) {
             if ((!empty($prefix)) && (substr($table, 0, strlen($prefix)) !== $prefix)) {
                 return false;
             }
@@ -84,10 +84,10 @@ class SqlDumper extends ComponentBase
             if (!$sql) {
                 continue;
             }
-            $ret.= $sql . "\n";
+            $ret .= $sql . "\n";
         }
         return $ret;
-    }   
+    }
     protected function getInsertTableSql()
     {
         $ret = '';
@@ -98,7 +98,7 @@ class SqlDumper extends ComponentBase
             if (empty($str)) {
                 continue;
             }
-            $ret.= $str;
+            $ret .= $str;
         }
         return $ret;
     }

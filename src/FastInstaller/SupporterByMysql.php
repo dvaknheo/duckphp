@@ -8,11 +8,11 @@ namespace DuckPhp\FastInstaller;
 use DuckPhp\Component\DbManager;
 
 class SupporterByMysql extends Supporter
-{    
+{
     public function readDsnSetting($options)
     {
         $options = parent::readSetting($options);
-        return array_merge(['host' => '127.0.0.1','port' => '3306'],$options);
+        return array_merge(['host' => '127.0.0.1','port' => '3306'], $options);
     }
     public function writeDsnSetting($options)
     {

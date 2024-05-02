@@ -146,7 +146,7 @@ EOT;
     {
         $class = new \ReflectionClass($this);
         $ret = $this->getCommandsByClassReflection($class, $method_prefix);
-        if($phase != App::Phase()){
+        if ($phase != App::Phase()) {
             unset($ret['new']);
             unset($ret['run']);
             unset($ret['help']);

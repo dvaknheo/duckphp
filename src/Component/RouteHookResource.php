@@ -79,21 +79,21 @@ class RouteHookResource extends ComponentBase
         
         //for console.
         $phase = App::Phase(get_class(App::Root()));
-        $document_root = App::Root()->extendFullFile(App::Root()->options['path'], App::Root()->options['path_document'] ??'public', '', false);
+        $document_root = App::Root()->extendFullFile(App::Root()->options['path'], App::Root()->options['path_document'] ?? 'public', '', false);
         App::Phase($phase);
         
         $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-        $_SERVER['DOCUMENT_ROOT']='';
-        $_SERVER['SCRIPT_FILENAME']='/index.php';
+        $_SERVER['DOCUMENT_ROOT'] = '';
+        $_SERVER['SCRIPT_FILENAME'] = '/index.php';
         $path_dest = Route::_()->_Res('');
         
-        $dest = $this->get_dest_dir($document_root,$path_dest);
+        $dest = $this->get_dest_dir($document_root, $path_dest);
         
         $this->copy_dir($source, $dest, $force, $info);
     }
     protected function get_dest_dir($path_parent, $path)
     {
-        $new_dir = rtrim($path_parent,'/');
+        $new_dir = rtrim($path_parent, '/');
         $b = explode('/', trim($path, '/'));
         
         foreach ($b as $v) {
