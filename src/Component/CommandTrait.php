@@ -121,11 +121,10 @@ EOT;
         
         foreach ($group as $namespace => $v) {
             $tip = ($namespace === '')? '*Default commands*':$namespace;
-                
             $str .= "\e[32;7m{$tip}\033[0m {$v['phase']}::{$v['class']}\n";
             
             /////////////////
-            $descs = $this->getCommandsByClass($v['class'], $v['method_prefix']);
+            $descs = $this->getCommandsByClass($v['class'], $v['method_prefix'], $v['phase']);
             ksort($descs);
             foreach ($descs as $method => $desc) {
                 $cmd = !$namespace ? $method : $namespace.':'.$method;
@@ -135,18 +134,24 @@ EOT;
         }
         return $str;
     }
-    protected function getCommandsByClass($class, $method_prefix)
+    protected function getCommandsByClass($class, $method_prefix, $phase)
     {
         $ref = new \ReflectionClass($class);
         if ($ref->hasMethod('getCommandsOfThis')) {
-            return (new $class)->getCommandsOfThis($method_prefix);
+            return (new $class)->getCommandsOfThis($method_prefix, $phase);
         }
         return $this->getCommandsByClassReflection($ref, $method_prefix);
     }
-    public function getCommandsOfThis($method_prefix)
+    public function getCommandsOfThis($method_prefix, $phase)
     {
         $class = new \ReflectionClass($this);
-        return $this->getCommandsByClassReflection($class, $method_prefix);
+        $ret = $this->getCommandsByClassReflection($class, $method_prefix);
+        if($phase != App::Phase()){
+            unset($ret['new']);
+            unset($ret['run']);
+            unset($ret['help']);
+        }
+        return $ret;
     }
     protected function getCommandsByClassReflection($ref, $method_prefix)
     {

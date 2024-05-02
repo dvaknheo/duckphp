@@ -119,10 +119,11 @@ and more ...\n";
         ///////////////
 
         $this->doInstallAction($input_options, $ext_options, $app_options);
+        EventManager::FireEvent([App::Phase(), 'OnInstall'],$input_options, $ext_options, $app_options);
+        
         $ext_options['install'] = DATE(DATE_ATOM);
         ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
         
-        //$this->onInstall(); //Oninstall
         EventManager::FireEvent([App::Phase(), 'OnBeforeChildrenInstall']);
         ///////////////////////////
         if (!($this->args['skip_children'] ?? false)) {
@@ -140,7 +141,6 @@ and more ...\n";
 --
 url prefix: [{controller_url_prefix}]
 resource prefix: [{controller_resource_prefix}]
-
 ";
         }
         $prefix = str_replace('{controller_url_prefix}',$default_options['controller_url_prefix'] ,$prefix);
@@ -155,6 +155,8 @@ resource prefix: [{controller_resource_prefix}]
         if (!empty($app_options['app'])) {
             App::Root()->options['installing_data']['install_level']=$install_level+1;
             echo "\nInstall child apps [[[[[[[[\n\n";
+        } else {
+            return;
         }
         foreach ($app_options['app'] as $app => $options) {
             $true_app = get_class($app::_());
@@ -184,11 +186,6 @@ resource prefix: [{controller_resource_prefix}]
             RouteHookResource::_()->cloneResource(false, $info);
             echo $info;
         }
-        if ($this->options['on_install']){
-            $callback = $this->options['on_install'];
-            ($callback)($input_options, $ext_options, $app_options);
-        }
-        EventManager::FireEvent([App::Phase(), 'OnInstall'],$input_options, $ext_options, $app_options);
         return true;
     }
     //////////////////
