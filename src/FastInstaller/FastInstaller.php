@@ -123,6 +123,7 @@ and more ...\n";
         ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
         
         //$this->onInstall(); //Oninstall
+        EventManager::FireEvent([App::Phase(), 'OnBeforeChildrenInstall']);
         ///////////////////////////
         if (!($this->args['skip_children'] ?? false)) {
             $this->installChildren();
@@ -173,8 +174,6 @@ resource prefix: [{controller_resource_prefix}]
     }
     protected function doInstallAction($input_options = [], $ext_options = [], $app_options = [])
     {
-
-
         if (!($this->args['skip_sql'] ?? false)) {
             App::Current()->options['is_debug']=true;
             SqlDumper::_()->options['sql_dump_install_drop_old_table'] = true;
@@ -185,6 +184,11 @@ resource prefix: [{controller_resource_prefix}]
             RouteHookResource::_()->cloneResource(false, $info);
             echo $info;
         }
+        if ($this->options['on_install']){
+            $callback = $this->options['on_install'];
+            ($callback)($input_options, $ext_options, $app_options);
+        }
+        EventManager::FireEvent([App::Phase(), 'OnInstall'],$input_options, $ext_options, $app_options);
         return true;
     }
     //////////////////

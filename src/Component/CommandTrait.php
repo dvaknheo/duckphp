@@ -137,8 +137,20 @@ EOT;
     }
     protected function getCommandsByClass($class, $method_prefix)
     {
-        $class = new \ReflectionClass($class);
-        $methods = $class->getMethods();
+        $ref = new \ReflectionClass($class);
+        if ($ref->hasMethod('getCommandsOfThis')) {
+            return (new $class)->getCommandsOfThis($method_prefix);
+        }
+        return $this->getCommandsByClassReflection($ref, $method_prefix);
+    }
+    public function getCommandsOfThis($method_prefix)
+    {
+        $class = new \ReflectionClass($this);
+        return $this->getCommandsByClassReflection($class, $method_prefix);
+    }
+    protected function getCommandsByClassReflection($ref, $method_prefix)
+    {
+        $methods = $ref->getMethods();
         $ret = [];
         foreach ($methods as $v) {
             $name = $v->getName();
