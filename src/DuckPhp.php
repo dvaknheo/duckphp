@@ -10,7 +10,6 @@ namespace DuckPhp;
 
 use DuckPhp\Component\Command;
 use DuckPhp\Component\DbManager;
-use DuckPhp\Component\DuckPhpCommand;
 use DuckPhp\Component\ExtOptionsLoader;
 use DuckPhp\Component\GlobalAdmin;
 use DuckPhp\Component\GlobalUser;
@@ -118,11 +117,11 @@ class DuckPhp extends App
     protected function isLocalDb()
     {
         $flag = $this->options['local_db'] ?? false;
-        if ($flag) {
+        if ($flag){
             return true;
         }
-        $driver = DbManager::_()->options['database_driver'] ?? '';
-        if ($driver != $this->options['database_driver']) {
+        $driver = DbManager::_()->options['database_driver']?? '';
+        if( $driver != $this->options['database_driver']) {
             return true;
         }
         return false;

@@ -45,7 +45,7 @@ class SqlDumper extends ComponentBase
     {
         $file = App::Current()->options['database_driver'].'.sql';
         $full_file = $this->extendFullFile($this->options['path'], $this->options['path_sql_dump'], $file);
-        $sql = file_get_contents($full_file);
+        $sql = ''.file_get_contents($full_file);
         
         
         if ($this->options['sql_dump_install_drop_old_table']) {
@@ -54,7 +54,7 @@ class SqlDumper extends ComponentBase
         
         if ($this->options['sql_dump_install_replace_prefix']) {
             $prefix = App::Current()->options['table_prefix'];
-            $sql = str_replace(' `'.$this->options['sql_dump_prefix'], ' `'.$prefix, $sql);
+            $sql = str_replace(' `'.$this->options['sql_dump_prefix'], ' `'.$prefix, ''.$sql);
         }
         DbManager::Db()->execute($sql);
     }

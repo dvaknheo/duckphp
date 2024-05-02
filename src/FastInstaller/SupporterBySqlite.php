@@ -34,6 +34,7 @@ class SupporterBySqlite extends Supporter
     //////////////////
     public function getAllTable()
     {
+        $tables = [];
         $data = DbManager::Db()->fetchAll('SELECT tbl_name from sqlite_master where type ="table"');
         foreach ($data as $v) {
             if (substr($v['tbl_name'], 0, strlen('sqlite_')) === 'sqlite_') {

@@ -13,7 +13,7 @@ class Supporter extends ComponentBase
 {
     public $options = [
         'database_driver_supporter_map' => [
-          'mysql' => SupporterByMySql::class,
+          'mysql' => SupporterByMysql::class,
           'sqlite' => SupporterBySqlite::class,
           ],
           // change.

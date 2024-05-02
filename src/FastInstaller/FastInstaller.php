@@ -152,6 +152,7 @@ resource prefix: [{controller_resource_prefix}]
     {
         $app_options = App::Current()->options;
         if (!empty($app_options['app'])) {
+            $install_level = App::Root()->options['installing_data']['install_level'] ?? 0;
             App::Root()->options['installing_data']['install_level'] = $install_level + 1;
             echo "\nInstall child apps [[[[[[[[\n\n";
         } else {
