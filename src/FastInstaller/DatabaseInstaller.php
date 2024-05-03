@@ -35,7 +35,7 @@ class DatabaseInstaller extends ComponentBase
     }
 
 
-    public function callResetDatabase($force = false)
+    protected function callResetDatabase($force = false)
     {
         $ref = DbManager::_()->getDatabaseConfigList();
         

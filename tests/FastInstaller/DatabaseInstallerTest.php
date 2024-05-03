@@ -73,23 +73,28 @@ class DatabaseInstallerTest extends \PHPUnit\Framework\TestCase
             'ext'=> [
                 DatabaseInstaller::class => true,
             ],
+            'database_driver'=>'mysql',
         ]);
         $options = Console::_()->options;
         Console::_(DbInstallerConsole::_())->reInit($options,DuckPhp::_());
         
         $str= "{$db['host']}\n{$db['port']}\n{$db['dbname']}\n{$db['username']}\n{$db['password']}\n";
         DbInstallerConsole::_()->setFileContents([$str,  'N']);
-        DatabaseInstaller::_()->callResetDatabase(false);
+        DatabaseInstaller::_()->install(false);
        
         DbInstallerConsole::_()->setFileContents([$str,  'N']);
-        DatabaseInstaller::_()->callResetDatabase(false);
+        DatabaseInstaller::_()->install(false);
         
         //*
         $bstr= "BAD{$db['host']}\n{$db['port']}\n{$db['dbname']}\n{$db['username']}\n{$db['password']}\n";
         $str= "{$db['host']}\n{$db['port']}\n{$db['dbname']}\n{$db['username']}\n{$db['password']}\n";
         
         DbInstallerConsole::_()->setFileContents([$bstr, $str, 'Y',$str,'N']);
-        DatabaseInstaller::_()->callResetDatabase(true);
+        DatabaseInstaller::_()->install(true);
+        
+        DuckPhp::_()->options['database_driver']='';
+        DatabaseInstaller::_()->install(true);
+        
         ////]]]]
         @unlink($path_app.'DatabaseInstallerApps.config.php');
         \LibCoverage\LibCoverage::End(); return;
