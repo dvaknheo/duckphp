@@ -117,11 +117,11 @@ class DuckPhp extends App
     protected function isLocalDb()
     {
         $flag = $this->options['local_db'] ?? false;
-        if ($flag){
+        if ($flag) {
             return true;
         }
-        $driver = DbManager::_()->options['database_driver']?? '';
-        if( $driver != $this->options['database_driver']) {
+        $driver = DbManager::_()->options['database_driver'] ?? '';
+        if ($driver != $this->options['database_driver']) {
             return true;
         }
         return false;

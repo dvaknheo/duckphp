@@ -188,5 +188,4 @@ resource prefix: [{controller_resource_prefix}]
         return true;
     }
     //////////////////
-
 }

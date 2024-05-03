@@ -30,7 +30,7 @@ class SqlDumper extends ComponentBase
     protected $spliter = "\n#### DATA BEGIN ####\n";
     public function dump()
     {
-        if ( !(App::Current()->options['database_driver'])) {
+        if (!(App::Current()->options['database_driver'])) {
             return;
         }
         $scheme = $this->getSchemes();
@@ -45,7 +45,7 @@ class SqlDumper extends ComponentBase
     }
     public function install($force = false)
     {
-        if ( !(App::Current()->options['database_driver'])) {
+        if (!(App::Current()->options['database_driver'])) {
             return;
         }
         $file = App::Current()->options['database_driver'].'.sql';
@@ -74,7 +74,9 @@ class SqlDumper extends ComponentBase
             if ($this->options['sql_dump_include_tables_by_model']) {
                 $tables = $this->searchTables();
             }
-            $tables = array_values(array_unique(array_merge($tables, $this->options['sql_dump_include_tables'])));
+            $included_tables = $this->options['sql_dump_include_tables'];
+            $included_tables = str_replace('@', $prefix, $included_tables);
+            $tables = array_values(array_unique(array_merge($tables, $included_tables)));
         }
         $tables = array_diff($tables, $this->options['sql_dump_exclude_tables']);
         $tables = array_filter($tables, function ($table) use ($prefix) {
@@ -84,12 +86,12 @@ class SqlDumper extends ComponentBase
             return true;
         });
         foreach ($tables as $table) {
-            try{
-                $sql = Supporter::Current()->getSchemeByTable($table);
-            }catch(\Exception $ex){
-                continue;
-            }
-            $ret .= $sql . "\n";
+            //try{
+            $sql = Supporter::Current()->getSchemeByTable($table);
+            //}catch(\Exception $ex){
+            //    continue;
+            //}
+            $ret .= $sql . ";\n";
         }
         return $ret;
     }
@@ -109,9 +111,9 @@ class SqlDumper extends ComponentBase
         $ret = '';
         $sql = "SELECT * FROM `$table`";
         $data = DbManager::DbForRead()->fetchAll($sql);
-        if (empty($data)) {
-            return '';
-        }
+        //if (empty($data)) {
+        //    return '';
+        //}
         foreach ($data as $line) {
             $ret .= "INSERT INTO `$table` ".DbManager::DbForRead()->qouteInsertArray($line) .";\n";
         }
