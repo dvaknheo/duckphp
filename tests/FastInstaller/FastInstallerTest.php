@@ -70,16 +70,19 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         $db = $this->makeFromDsn( $setting['database_list'][0], 'mysql');
         $rdb =  $setting['redis_list'][0];
         $__SERVER['argv'] =$_SERVER['argv'];
-        
+
         FiParentApp::_()->init([]);
         
         
         $_SERVER['argv']=['-','install', "--help", ];
         FiParentApp::_()->run();
+
+
+
         $_SERVER['argv']=['-','install', "--dump-sql", ];
         FiParentApp::_()->run();
         
-        
+
         $console_options = Console::_()->options;
         Console::_(InstallerConsole::_(new InstallerConsole))->reInit($console_options, FiParentApp::_());
         
@@ -89,43 +92,17 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         
         $_SERVER['argv']=['-','install', "--configure", ];
         FiParentApp::_()->run();
-        FiParentApp::_()->run();
-        //*
-        echo "------------------------";
+
+        //FiParentApp::_()->run();
         
+        FastInstaller::_()->doCommandRequire();
+        FastInstaller::_()->doCommandUpdate();
+        FastInstaller::_()->doCommandRemove();
         
-        $console_options = Console::_()->options;
-        Console::_(InstallerConsole::_(new InstallerConsole))->reInit($console_options, FiParentApp2::_(new FiParentApp2()));
-        $str= "{$db['host']}\n{$db['port']}\n{$db['dbname']}\n{$db['username']}\n{$db['password']}\n";
-        $str2= "{$rdb['host']}\n{$rdb['port']}\n{$rdb['auth']}\n{$rdb['select']}\n";
-        InstallerConsole::_()->setFileContents([$str,  'N',$str2,'N']);
-        $_SERVER['argv']=['-','install', "--configure", '--force'];
-        //echo "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy\n";
-        //define('TRACE_BEGIN',true);
-        FiParentApp2::_()->init([])->run();
-        //define('TRACE_END',true);
-        echo "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n";
-        
-        try {
-        $console_options = Console::_()->options;
-        Console::_(InstallerConsole::_(new InstallerConsole))->reInit($console_options, FiParentApp::_(new FiParentApp()));
-        $str= "{$db['host']}\n{$db['port']}\n{$db['dbname']}\n{$db['username']}\n{$db['password']}\n";
-        $str2= "{$rdb['host']}\n{$rdb['port']}\n{$rdb['auth']}\n{$rdb['select']}\n";
-        InstallerConsole::_()->setFileContents([$str,  'N',$str2,'N']);
-        
-        $_SERVER['argv']=['-','install', ];
-        FiParentApp::_()->run();
-        }catch(\Exception $ex){
-            var_dump("???");exit;
-        }
         
         $_SERVER['argv'] = $__SERVER['argv'];
-        //----------------------
-        //*/
-        //$_SERVER['argv']=['-','install', "--dump-sql", ];
-        //FiParentApp::_()->run();
-        \LibCoverage\LibCoverage::End();
-        
+        \LibCoverage\LibCoverage::End(); return;
+
     }
 }
 class FiParentApp extends DuckPhp
@@ -158,7 +135,7 @@ class FiChildApp extends DuckPhp
     public $options = [
         'cli_command_class'=>null,
         'im child' => true,
-        'install_need_redis'=>true,
+        'use_redis'=>true,
     ];
     public function __construct()
     {

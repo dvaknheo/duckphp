@@ -26,11 +26,13 @@ class SqlDumper extends ComponentBase
         'sql_dump_install_replace_prefix' => false,
         'sql_dump_prefix' => '',
         
-        'sql_dump_install_drop_old_table' => false,
     ];
     protected $spliter = "\n#### DATA BEGIN ####\n";
     public function dump()
     {
+        if ( !(App::Current()->options['database_driver'])) {
+            return;
+        }
         $scheme = $this->getSchemes();
         $data = $this->getInsertTableSql();
         
@@ -41,14 +43,16 @@ class SqlDumper extends ComponentBase
         
         return true;
     }
-    public function install()
+    public function install($force = false)
     {
+        if ( !(App::Current()->options['database_driver'])) {
+            return;
+        }
         $file = App::Current()->options['database_driver'].'.sql';
         $full_file = $this->extendFullFile($this->options['path'], $this->options['path_sql_dump'], $file);
         $sql = ''.file_get_contents($full_file);
         
-        
-        if ($this->options['sql_dump_install_drop_old_table']) {
+        if ($force) {
             $sql = preg_replace('/CREATE TABLE `([^`]+)`/', 'DROP TABLE IF EXISTS `$1`;CREATE TABLE `$1`', $sql);
         }
         
@@ -80,8 +84,9 @@ class SqlDumper extends ComponentBase
             return true;
         });
         foreach ($tables as $table) {
-            $sql = Supporter::Current()->getSchemeByTable($table);
-            if (!$sql) {
+            try{
+                $sql = Supporter::Current()->getSchemeByTable($table);
+            }catch(\Exception $ex){
                 continue;
             }
             $ret .= $sql . "\n";
@@ -95,9 +100,6 @@ class SqlDumper extends ComponentBase
         
         foreach ($tables as $table) {
             $str = $this->getDataSql($table);
-            if (empty($str)) {
-                continue;
-            }
             $ret .= $str;
         }
         return $ret;
@@ -107,7 +109,6 @@ class SqlDumper extends ComponentBase
         $ret = '';
         $sql = "SELECT * FROM `$table`";
         $data = DbManager::DbForRead()->fetchAll($sql);
-        
         if (empty($data)) {
             return '';
         }

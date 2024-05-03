@@ -87,9 +87,6 @@ and more ...\n";
     {
         EventManager::FireEvent([App::Phase(), 'OnInstallRemove']);
     }
-    protected function doGlobalConfigure()
-    {
-    }
     public function doInstall()
     {
         $force = $this->args['force'] ?? false;
@@ -181,9 +178,7 @@ resource prefix: [{controller_resource_prefix}]
     protected function doInstallAction($input_options = [], $ext_options = [], $app_options = [])
     {
         if (!($this->args['skip_sql'] ?? false)) {
-            App::Current()->options['is_debug'] = true;
-            SqlDumper::_()->options['sql_dump_install_drop_old_table'] = true;
-            SqlDumper::_()->install();
+            SqlDumper::_()->install($this->args['force'] ?? false);
         }
         if (!($this->args['skip_resource'] ?? false)) {
             $info = '';
@@ -193,18 +188,5 @@ resource prefix: [{controller_resource_prefix}]
         return true;
     }
     //////////////////
-    protected function reduce_apps($object, $callback)
-    {
-        $ret = $callback($object);
-        if ($ret) {
-            return true;
-        }
-        foreach ($object->options['app'] as $app => $options) {
-            $ret = $this->reduce_apps($app::_(), $callback);
-            if ($ret) {
-                return true;
-            }
-        }
-        return false;
-    }
+
 }
