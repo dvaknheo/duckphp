@@ -58,6 +58,9 @@ class RouteHookResourceTest extends \PHPUnit\Framework\TestCase
         $options['controller_resource_prefix']= 'DATA/';
         RouteHookResource::_(new RouteHookResource())->init($options,App::_())->cloneResource();
         RouteHookResource::_()->cloneResource();
+        $options['path_resource'] = $path.'no_exists';
+        RouteHookResource::_(new RouteHookResource())->init($options,App::_())->cloneResource();
+        
         $options['path_resource'] = $path.'res';
         RouteHookResource::_(new RouteHookResource())->init($options,App::_())->cloneResource();
 
@@ -65,6 +68,7 @@ class RouteHookResourceTest extends \PHPUnit\Framework\TestCase
         
         $options['controller_url_prefix']= 'admin/';
         $options['controller_resource_prefix']= 'DATA/';
+        Route::_()->options['controller_resource_prefix']= 'DATA/';
         RouteHookResource::_(new RouteHookResource())->init($options,App::_())->cloneResource(true);
         
         $options['controller_resource_prefix']= '';
