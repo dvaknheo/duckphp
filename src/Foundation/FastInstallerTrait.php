@@ -31,13 +31,13 @@ trait FastInstallerTrait
      */
     public function command_update()
     {
-        return FastInstaller::_()->doCommandRequire();
+        return FastInstaller::_()->doCommandUpdate();
     }
     /**
      * override me to remove a child app.
      */
     public function command_remove()
     {
-        return FastInstaller::_()->doCommandRequire();
+        return FastInstaller::_()->doCommandRemove();
     }
 }

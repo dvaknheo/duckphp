@@ -79,6 +79,10 @@ and more ...\n";
     {
         EventManager::FireEvent([App::Phase(), 'OnInstallRequire']);
     }
+    public function doCommandUpdate()
+    {
+        EventManager::FireEvent([App::Phase(), 'OnInstallUpdate']);
+    }
     public function doCommandRemove()
     {
         EventManager::FireEvent([App::Phase(), 'OnInstallRemove']);

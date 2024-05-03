@@ -76,6 +76,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
                     'cli_mode' => 'hook',
                     'controller_url_prefix'=>'advance/',
                     'exception_reporter' => FakeReporter::class,
+                    
                 ],
             ],
         ];
@@ -135,8 +136,17 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
                     ]
                 ]
             ]
-            );
-        
+        );
+        DuckPhp_Sub::_(new DuckPhp_Sub());
+        DuckPhp::_(new DuckPhp())->init([
+                'app' => [ 
+                    DuckPhp_Sub::class => [
+                        'database_driver'=>'x','local_redis'=>true,
+                        
+                    ]
+                ]
+            ]
+        );
         //////////////////////
         
 
@@ -162,6 +172,7 @@ class DuckPhp_Sub extends DuckPhp
         'class_user' => FakeUser::class,
         
         'namespace_controller' => 'zz',
+        'database_driver' =>'unknown',
     ];
 
 }

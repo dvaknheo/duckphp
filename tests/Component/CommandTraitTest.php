@@ -18,8 +18,13 @@ class CommandTraitTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(CommandTrait::class);
         $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
         $_SERVER['argv']=[];
+
         DuckPhp::_()->init(['cli_enable'=>true,'path'=>$path_app,
-             'ext_options_file' => 'CommandTrait.config.php',
+            'ext_options_file' => 'CommandTrait.config.php',
+            'app' =>[
+                CommandTraitApp2::class =>['bc'=>'tre'],
+                CommandTraitApp::class =>['a'=>'tre'],
+            ],
         ])->run();
         
         $_SERVER['argv']=[
@@ -84,6 +89,7 @@ class Console_HttpServer extends HttpServer
         return true;
     }
 }
+
 class Console_Command
 {
     /**
@@ -93,5 +99,23 @@ class Console_Command
     {
     
     }
+    public function command_new(){}
+    public function command_help(){}
+    public function command_run(){}
 }
+class CommandTraitApp extends DuckPhp
+{
+    public $options=[
+        'cli_command_prefix' =>'aa',
+        'cli_command_class'=>Console_Command::class,
+    ];
+}
+class CommandTraitApp2 extends DuckPhp
+{
+    public $options=[
+        //'cli_command_class'=>null,
+    ];
+    
+}
+
 
