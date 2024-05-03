@@ -40,11 +40,11 @@ class SupporterByMysql extends Supporter
     }
     public function getSchemeByTable($table)
     {
-        try {
-            $record = DbManager::Db()->fetch("SHOW CREATE TABLE `$table`");
-        } catch (\PDOException $ex) {
-            return '';
-        }
+        //try {
+        $record = DbManager::Db()->fetch("SHOW CREATE TABLE `$table`");
+        //} catch (\PDOException $ex) {
+        //    return '';
+        //}
         $sql = $record['Create Table'] ?? null;
         $sql = preg_replace('/AUTO_INCREMENT=\d+/', 'AUTO_INCREMENT=1', $sql);
         return $sql;

@@ -47,11 +47,11 @@ class SupporterBySqlite extends Supporter
     public function getSchemeByTable($table)
     {
         $sql = '';
-        try {
-            $sql = DbManager::Db()->fetchColumn("SELECT sql FROM sqlite_master WHERE tbl_name=? ", $table);
-        } catch (\PDOException $ex) {
-            return '';
-        }
+        //try {
+        $sql = DbManager::Db()->fetchColumn("SELECT sql FROM sqlite_master WHERE tbl_name=? ", $table);
+        //} catch (\PDOException $ex) {
+        //    return '';
+        //}
         $sql = preg_replace('/CREATE TABLE "([^"]+)"/', 'CREATE TABLE `$1`', $sql);
         
         return $sql;

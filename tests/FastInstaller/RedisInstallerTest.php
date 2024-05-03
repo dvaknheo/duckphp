@@ -61,17 +61,20 @@ class RedisInstallerTest extends \PHPUnit\Framework\TestCase
 
         $str= "{$db['host']}\n{$db['port']}\n{$db['auth']}\n{$db['select']}\n";
         RInstallerConsole::_()->setFileContents([$str,  'N']);
-        RedisInstaller::_()->callResetRedis(false);
+        RedisInstaller::_()->install(false);
+        RedisInstaller::_()->install(true); 
        
         RInstallerConsole::_()->setFileContents([$str,  'N']);
-        RedisInstaller::_()->callResetRedis(false);
+        RedisInstaller::_()->install(false);
         
-        //*
         $bstr= "BAD{$db['host']}\n{$db['port']}\n{$db['dbname']}\n{$db['username']}\n{$db['password']}\n";
         $str= "{$db['host']}\n{$db['port']}\n{$db['dbname']}\n{$db['username']}\n{$db['password']}\n";
         
         RInstallerConsole::_()->setFileContents([$bstr, $str, 'Y',$str,'N']);
-        RedisInstaller::_()->callResetRedis(true);
+        RedisInstaller::_()->install(true);
+        
+        DuckPhp::Current()->options['use_redis']=true;
+        RedisInstaller::_()->install(false);
         ////]]]]
         @unlink($path_app.'RedisInstallerApps.config.php');
         

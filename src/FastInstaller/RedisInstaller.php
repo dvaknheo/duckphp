@@ -26,7 +26,7 @@ class RedisInstaller extends ComponentBase
         }
         return $this->callResetRedis($force);
     }
-    public function callResetRedis($force = false)
+    protected function callResetRedis($force = false)
     {
         $ref = RedisManager::_()->getRedisConfigList();
         if (!$force && $ref) {
