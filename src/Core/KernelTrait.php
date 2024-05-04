@@ -223,21 +223,12 @@ trait KernelTrait
         }
         
         $this->initContainer($context);
-        $this->addPublicClassesInRoot([
-            Console::class,
-            EventManager::class,
-        ]);
-        if ($this->is_root) {
-            $this->loadSetting();
-            Console::_()->init($this->options, $this);
-        }
-        $this->onPrepare();
         $this->initException($options);
+        $this->onPrepare();
         
         $this->initComponents($this->options, $context);
-        
-        $this->onBeforeExtentionInit();
         $this->initExtentions($this->options['ext'] ?? [], true);
+        $this->onBeforeChildrenInit();
         $this->initExtentions($this->options['app'] ?? [], false);
         $this->onInit();
         if ($this->options['on_init']) {
@@ -249,6 +240,14 @@ trait KernelTrait
     }
     protected function initComponents(array $options, object $context = null)
     {
+        $this->addPublicClassesInRoot([
+            Console::class,
+            EventManager::class,
+        ]);
+        if ($this->is_root) {
+            $this->loadSetting();
+            Console::_()->init($this->options, $this);
+        }
         Route::_()->init($this->options, $this);
         Runtime::_()->init($this->options, $this);
         
@@ -436,7 +435,7 @@ trait KernelTrait
     {
         EventManager::FireEvent([static::class,__FUNCTION__]);
     }
-    protected function onBeforeExtentionInit()
+    protected function onBeforeChildrenInit()
     {
         EventManager::FireEvent([static::class,__FUNCTION__]);
     }

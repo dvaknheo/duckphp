@@ -74,14 +74,18 @@ class DuckPhp extends App
         //*/
         'cli_command_class' => Command::class,
     ];
-
-    protected function initComponents(array $options, object $context = null)
+    protected function onPrepare()
     {
-        //must be first
+        parent::onPrepare();
+        
         if ($this->options['ext_options_file_enable']) {
             ExtOptionsLoader::_()->loadExtOptions(static::class);
         }
+    }
+    protected function initComponents(array $options, object $context = null)
+    {
         parent::initComponents($options, $context);
+        
         $this->addPublicClassesInRoot([
             DbManager::class,
             RedisManager::class,
@@ -92,7 +96,7 @@ class DuckPhp extends App
             DbManager::_()->init($this->options, $this);
             RedisManager::_()->init($this->options, $this);
         } else {
-            if ($this->isLocalDb()) {
+            if ($this->isLocalDatabase()) {
                 $this->createLocalObject(DbManager::class);
                 DbManager::_()->init($this->options, $this);
             }
@@ -114,7 +118,7 @@ class DuckPhp extends App
         
         return $this;
     }
-    protected function isLocalDb()
+    protected function isLocalDatabase()
     {
         $flag = $this->options['local_db'] ?? false;
         if ($flag) {
