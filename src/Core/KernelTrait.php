@@ -257,9 +257,6 @@ trait KernelTrait
             $phase = static::class;
             $classes = $this->options['cli_command_classes'] ?? [];
             $method_prefix = $this->options['cli_command_method_prefix'] ?? 'command_';
-            if ($this->options['cli_command_with_app'] ?? true) {
-                array_unshift($classes, static::class);
-            }
             Console::_()->regCommandClass($cli_namespace, $phase, $classes, $method_prefix);
         }
         $this->doInitComponents();

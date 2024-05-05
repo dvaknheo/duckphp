@@ -72,7 +72,8 @@ class DuckPhp extends App
         // 'path_info_compact_class_key' => '',
         
         //*/
-        'cli_command_class' => Command::class,
+        'cli_command_with_app' => true,
+        'cli_command_with_common' => true,
     ];
     protected function onPrepare()
     {
@@ -115,7 +116,12 @@ class DuckPhp extends App
         if ($this->options['class_user']) {
             GlobalUser::_(PhaseProxy::CreatePhaseProxy(static::class, $this->options['class_user']));
         }
-        
+        if ($this->options['cli_command_with_app'] ?? true) {
+            array_unshift($this->options['cli_command_classes'], static::class);
+        }
+        if ($this->options['cli_command_with_common'] ?? true) {
+            array_push($this->options['cli_command_classes'], Command::class);
+        }
         return $this;
     }
     protected function isLocalDatabase()

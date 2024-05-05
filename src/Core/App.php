@@ -66,7 +66,7 @@ class App extends ComponentBase
     }
     public function version()
     {
-        return static::VERSION;
+        return '('.static::class.')'.static::VERSION;
     }
     protected function doInitComponents()
     {
