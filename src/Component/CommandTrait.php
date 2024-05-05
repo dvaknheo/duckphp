@@ -121,10 +121,10 @@ EOT;
         
         foreach ($group as $namespace => $v) {
             $tip = ($namespace === '')? '*Default commands*':$namespace;
-            $str .= "\e[32;7m{$tip}\033[0m {$v['phase']}::{$v['class']}\n";
+            $str .= "\e[32;7m{$tip}\033[0m {$v['phase']}\n";//::{$v['class']}
             
             /////////////////
-            $descs = $this->getCommandsByClass($v['class'], $v['method_prefix'], $v['phase']);
+            $descs = $this->getCommandsByClasses($v['classes'], $v['method_prefix'], $v['phase']);
             ksort($descs);
             foreach ($descs as $method => $desc) {
                 $cmd = !$namespace ? $method : $namespace.':'.$method;
@@ -133,6 +133,18 @@ EOT;
             }
         }
         return $str;
+    }
+    protected function getCommandsByClasses($classes, $method_prefix, $phase)
+    {
+        $ret = [];
+        foreach ($classes as $class) {
+            if (is_array($class)) {
+                list($class, $method_prefix) = $class;
+            }
+            $desc = $this->getCommandsByClass($class, $method_prefix, $phase);
+            $ret = array_merge($desc, $ret);
+        }
+        return $ret;
     }
     protected function getCommandsByClass($class, $method_prefix, $phase)
     {

@@ -42,11 +42,11 @@ class Console extends ComponentBase
     {
         return $this->context();
     }
-    public function regCommandClass($command_namespace, $phase, $class, $method_prefix = 'command_')
+    public function regCommandClass($command_namespace, $phase, $classes, $method_prefix = 'command_')
     {
         $this->options['cli_command_group'][$command_namespace] = [
             'phase' => $phase,
-            'class' => $class,
+            'classes' => $classes,
             'method_prefix' => $method_prefix,
         ];
     }
@@ -71,10 +71,11 @@ class Console extends ComponentBase
             throw new \ReflectionException("Command Not Found: {$cmd}\n", -3);
         }
         
-        $method = $group['method_prefix'].$method;
-        $class = $group['class'];
+        //$method = $group['method_prefix'].$method;
+        //$class = $group['class'];
         App::Phase($group['phase']);
-        
+        // get class ,and method, then call
+        list($class, $method) = $this->getCallback($group, $method);
         $this->callObject($class, $method, $func_args, $this->parameters);
         return true;
     }
@@ -147,6 +148,23 @@ class Console extends ComponentBase
     protected function getObject($class)
     {
         return is_callable([$class,'_']) ? $class::_() : new $class;
+    }
+    public function getCallback($group, $cmd_method)
+    {
+        //$method = $group['method_prefix'].$method;
+        //$class = $group['class'];
+        foreach ($group['classes'] as $class) {
+            if (is_array($class)) {
+                list($class, $method_prefix) = $class;
+                $method = $method_prefix.$cmd_method;
+            } else {
+                $method = $group['method_prefix'].$cmd_method;
+            }
+            if (method_exists($class, $method)) {
+                return [$class,$method];
+            }
+        }
+        throw new \ReflectionException("Command Not Found In All\n", -4);
     }
     public function callObject($class, $method, $args, $input)
     {

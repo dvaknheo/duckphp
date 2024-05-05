@@ -255,9 +255,12 @@ trait KernelTrait
             $cli_namespace = $this->options['cli_command_prefix'] ?? $this->options['namespace'];
             $cli_namespace = $this->is_root ? '' : ($cli_namespace ? $cli_namespace : static::class);
             $phase = static::class;
-            $class = $this->options['cli_command_class'] ?? static::class;
+            $classes = $this->options['cli_command_classes'] ?? [];
             $method_prefix = $this->options['cli_command_method_prefix'] ?? 'command_';
-            Console::_()->regCommandClass($cli_namespace, $phase, $class, $method_prefix);
+            if ($this->options['cli_command_with_app'] ?? true) {
+                array_unshift($classes, static::class);
+            }
+            Console::_()->regCommandClass($cli_namespace, $phase, $classes, $method_prefix);
         }
         $this->doInitComponents();
     }
