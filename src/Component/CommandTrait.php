@@ -41,8 +41,9 @@ EOT;
     /**
      * create new project in current diretory. --help for help
      */
-    public function command_new()
+    public function command_new($namespace = '')
     {
+        //ifempty(readLines();
         DuckPhpInstaller::_()->init(Console::_()->getCliParameters())->run();
     }
     /**
@@ -65,6 +66,10 @@ EOT;
      */
     public function command_fetch($uri = '', $post = false)
     {
+        $args = Console::_()->getCliParameters();
+        $real_uri = $args['--'][1] ?? null;
+        $uri = $url ?? $real_uri;
+        
         $uri = !empty($uri) ? $uri : '/';
         // TODO no need uri ,  directrer
         $_SERVER['REQUEST_URI'] = $uri;

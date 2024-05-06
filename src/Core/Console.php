@@ -76,6 +76,10 @@ class Console extends ComponentBase
         App::Phase($group['phase']);
         // get class ,and method, then call
         list($class, $method) = $this->getCallback($group, $method);
+        if (!isset($class) && !isset($method)) {
+            throw new \ReflectionException("Command Not Found In All\n", -4);
+        }
+        
         $this->callObject($class, $method, $func_args, $this->parameters);
         return true;
     }
@@ -164,7 +168,7 @@ class Console extends ComponentBase
                 return [$class,$method];
             }
         }
-        throw new \ReflectionException("Command Not Found In All\n", -4);
+        return [null,null];
     }
     public function callObject($class, $method, $args, $input)
     {

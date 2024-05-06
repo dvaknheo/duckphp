@@ -82,6 +82,12 @@ class DuckPhp extends App
         if ($this->options['ext_options_file_enable']) {
             ExtOptionsLoader::_()->loadExtOptions(static::class);
         }
+        if ($this->options['cli_command_with_app'] ?? true) {
+            array_unshift($this->options['cli_command_classes'], static::class);
+        }
+        if ($this->options['cli_command_with_common'] ?? true) {
+            array_push($this->options['cli_command_classes'], Command::class);
+        }
     }
     protected function initComponents(array $options, object $context = null)
     {
@@ -116,12 +122,7 @@ class DuckPhp extends App
         if ($this->options['class_user']) {
             GlobalUser::_(PhaseProxy::CreatePhaseProxy(static::class, $this->options['class_user']));
         }
-        if ($this->options['cli_command_with_app'] ?? true) {
-            array_unshift($this->options['cli_command_classes'], static::class);
-        }
-        if ($this->options['cli_command_with_common'] ?? true) {
-            array_push($this->options['cli_command_classes'], Command::class);
-        }
+        
         return $this;
     }
     protected function isLocalDatabase()
