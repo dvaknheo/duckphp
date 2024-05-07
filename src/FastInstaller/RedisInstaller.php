@@ -21,7 +21,7 @@ class RedisInstaller extends ComponentBase
         $use_redis = App::Current()->options['use_redis'] ?? false;
         $use_redis = $use_redis || (App::Current()->options['local_redis'] ?? false);
         
-        if (!$force && !$use_redis) {
+        if (!$use_redis) {
             return;
         }
         return $this->callResetRedis($force);

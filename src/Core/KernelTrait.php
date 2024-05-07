@@ -225,6 +225,7 @@ trait KernelTrait
         $this->initException($options);
         $this->onPrepare();
         
+        $this->prepareComponents();
         $this->initComponents($this->options, $context);
         $this->initExtentions($this->options['ext'] ?? [], true);
         $this->onBeforeChildrenInit();
@@ -236,6 +237,10 @@ trait KernelTrait
         
         $this->is_inited = true;
         return $this;
+    }
+    protected function prepareComponents()
+    {
+        //return; // for override
     }
     protected function initComponents(array $options, object $context = null)
     {

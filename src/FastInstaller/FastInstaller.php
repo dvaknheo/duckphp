@@ -24,6 +24,8 @@ class FastInstaller extends ComponentBase
         //install_input_desc
     ];
     protected $args = [];
+    protected $is_failed = false;
+    protected $current_input_options = [];
     ///////////////
     /**
      * Install. power by DuckPhp\Foundation\FastInstallerTrait
@@ -115,15 +117,25 @@ and more ...\n";
     {
         EventManager::FireEvent([App::Phase(), 'OnInstallRemove']);
     }
+    public function forceFail()
+    {
+        $this->is_failed = true;
+    }
+    public function getCurrentInput()
+    {
+        return $this->current_input_options;
+    }
     public function doInstall()
     {
         $force = $this->args['force'] ?? false;
         //////////////////////////
         $install_level = App::Root()->options['installing_data']['install_level'] ?? 0;
-        echo ($install_level <= 0) ? "use --help for more info.\n" : '';
+        //echo ($install_level <= 0) ? "use --help for more info.\n" : '';
         echo str_repeat("\t", $install_level)."\e[32;7mInstalling (".get_class(App::Current())."):\033[0m\n";
-    
-        DatabaseInstaller::_()->install($force);
+        
+        if (!$this->args['skip_sql']) {
+            DatabaseInstaller::_()->install($force);
+        }
         RedisInstaller::_()->install($force);
         
         //////[[[[
@@ -135,9 +147,9 @@ and more ...\n";
         $default_options = $app_options['install_options'] ?? [];
         $default_options = array_replace_recursive($app_options, $ext_options, $default_options);
 
-        $desc = $this->adjustPrompt($desc, $default_options, $ext_options, $app_options);
+        $desc = $this->adjustPrompt($app_options['install_input_desc'] ?? '', $default_options, $ext_options, $app_options);
         $input_options = Console::_()->readLines($default_options, $desc, $validators);
-
+        $this->current_input_options = $input_options;
         $flag = $this->doInstallAction($input_options, $ext_options, $app_options);
         if (!$flag) {
             echo "\e[32;3mInstalled App (".get_class(App::Current()).") FAILED!;\033[0m\n";
@@ -149,16 +161,24 @@ and more ...\n";
         App::Current()->options = $app_options;
         ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
         
+        if (method_exists(App::Current(), 'onInstall')) {
+            App::Current()->onInstall();
+        }
         EventManager::FireEvent([App::Phase(), 'OnInstall'], $input_options, $ext_options, $app_options);
-        
+        if ($this->is_failed) {
+            echo "\Install failed: $msg \n";
+            return;
+        }
         ///////////////////////////
         if (!($this->args['skip_children'] ?? false)) {
             EventManager::FireEvent([App::Phase(), 'OnBeforeChildrenInstall']);
             $this->installChildren();
         }
-        EventManager::FireEvent([App::Phase(), 'OnInstalled']);
-
         $this->saveInstalledFlag();
+        EventManager::FireEvent([App::Phase(), 'OnInstalled']);
+        if (method_exists(App::Current(), 'onInstalled')) {
+            App::Current()->onInstalled();
+        }
         echo "\e[32;3mInstalled App (".get_class(App::Current()).");\033[0m\n";
         return;
     }
@@ -173,11 +193,14 @@ url prefix: [{controller_url_prefix}]
 resource prefix: [{controller_resource_prefix}]
 ";
         }
-        
-        foreach ($default_options as $key) {
-            $prefix = str_replace('{'.$key.'}', $default_options[$key], $prefix);
-        }
         $desc = $prefix.$desc;
+        
+        //$desc = str_replace('{controller_url_prefix}', App::Current()->options['controller_url_prefix'], $desc);
+        //$desc = str_replace('{controller_resource_prefix}', App::Current()->options['controller_resource_prefix'], $desc);
+        
+        foreach ($app_options as $key => $value) {
+            $desc = str_replace('{'.$key.'}', is_scalar($app_options[$key])?$app_options[$key]:'', $desc);
+        }
         return  $desc;
     }
     protected function installChildren()
@@ -211,7 +234,7 @@ resource prefix: [{controller_resource_prefix}]
         }
         App::Phase($current_phase);
     }
-    protected function doInstallAction($input_options = [], $ext_options = [], $app_options = [])
+    protected function doInstallAction()
     {
         if (!($this->args['skip_sql'] ?? false)) {
             SqlDumper::_()->install($this->args['force'] ?? false);
@@ -221,11 +244,7 @@ resource prefix: [{controller_resource_prefix}]
             RouteHookResource::_()->cloneResource(false, $info);
             echo $info;
         }
-        if (!method_exists(App::Current(), 'callbackForFastInstallerDoInstall')) {
-            return true;
-        }
-        $flag = App::Current()->callbackForFastInstallerDoInstall($input_options, $ext_options, $app_options);
-        return $flag;
+        return true;
     }
     protected function saveInstalledFlag()
     {

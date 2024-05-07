@@ -75,10 +75,8 @@ class DuckPhp extends App
         'cli_command_with_app' => true,
         'cli_command_with_common' => true,
     ];
-    protected function onPrepare()
+    protected function prepareComponents()
     {
-        parent::onPrepare();
-        
         if ($this->options['ext_options_file_enable']) {
             ExtOptionsLoader::_()->loadExtOptions(static::class);
         }
@@ -99,6 +97,7 @@ class DuckPhp extends App
             GlobalAdmin::class,
             GlobalUser::class,
         ]);
+        
         if ($this->is_root) {
             DbManager::_()->init($this->options, $this);
             RedisManager::_()->init($this->options, $this);
@@ -112,7 +111,6 @@ class DuckPhp extends App
                 RedisManager::_()->init($this->options, $this);
             }
         }
-
         if ($this->options['path_info_compact_enable'] ?? false) {
             RouteHookPathInfoCompat::_()->init($this->options, $this);
         }
@@ -132,7 +130,7 @@ class DuckPhp extends App
             return true;
         }
         $driver = DbManager::_()->options['database_driver'] ?? '';
-        if ($driver != $this->options['database_driver']) {
+        if ($this->options['database_driver'] && ($driver != $this->options['database_driver'])) {
             return true;
         }
         return false;
