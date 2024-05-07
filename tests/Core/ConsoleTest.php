@@ -18,7 +18,7 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         Console::DoRun();
         Console::_()->app();
         Console::_()->getCliParameters();
-        Console::_()->regCommandClass('test',DuckPhp::class,Console_Command::class);
+        Console::_()->regCommandClass('test',DuckPhp::class,[Console_Command::class]);
         //var_dump(Console::_()->options);exit;
         $_SERVER['argv']=[
             '-','test:foo',
@@ -79,14 +79,16 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
         $_SERVER['argv']=[
             '-','help',  // ------>changed
         ];
-        Console::_()->regCommandClass(Console_App::class, Console_Command::class,"aa");
-        Console::_()->regCommandClass(Console_App::class, Console_Command2::class,"bb");
+        Console::_()->regCommandClass('', Console_App::class,[Console_Command2::class,[Console_Command4::class,'prefix_']]);
         Console_App::_()->run();
         $_SERVER['argv']=[
             '-','call',str_replace('\\','/',Console_Command2::class).'@command_foo4','A1'
         ];
         Console_App::_()->run();
-        
+        $_SERVER['argv']=[
+            '-','callprefix'
+        ];
+        Console_App::_()->run();
         
         try{
             $_SERVER['argv']=[
@@ -169,6 +171,16 @@ class Console_Command2 extends Console_Command
      * desc2
     */
     public function command_foo4($a1)
+    {
+    
+    }
+}
+class Console_Command4 extends Console_Command
+{
+    /**
+     * desc2
+    */
+    public function prefix_callprefix()
     {
     
     }

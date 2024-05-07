@@ -90,7 +90,7 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         $str2= "{$rdb['host']}\n{$rdb['port']}\n{$rdb['auth']}\n{$rdb['select']}\n";
         InstallerConsole::_()->setFileContents([$str,  'N',$str2,'N']);
         
-        $_SERVER['argv']=['-','install', "--configure", ];
+        $_SERVER['argv']=['-','install', ];
         FiParentApp::_()->run();
 
         //FiParentApp::_()->run();
@@ -99,7 +99,15 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         FastInstaller::_()->command_update();
         FastInstaller::_()->command_remove();
         
-        
+        FastInstaller::_()->getCurrentInput();
+        FastInstaller::_()->forceFail();
+        FiParentApp::_()->run();
+        FastInstaller::_(new FastInstaller);
+        FiChildApp::_()->force_fail=true;
+        echo "zzzzzzzzzzzzzzzzzzzzz";
+                $_SERVER['argv']=['-','install', '--force','--skip-sql'];
+
+        FiParentApp::_()->run();
         $_SERVER['argv'] = $__SERVER['argv'];
         \LibCoverage\LibCoverage::End(); return;
 
@@ -108,10 +116,10 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
 class FiParentApp extends DuckPhp
 {
     use CommandTrait;
-    use FastInstallerTrait;
+    
     
     public $options = [
-        'cli_command_class'=>null,
+        'cli_command_classes'=>[FastInstaller::class],
         'is_debug'=>true,
         'ext_options_file'=>'FiParent.config.php',
         'app' => [
@@ -125,6 +133,12 @@ class FiParentApp extends DuckPhp
         $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(FastInstaller::class);
         $this->options['path'] = $path_app;
         parent::__construct();
+    }
+    public function onInstall()
+    {
+    }
+    public function onInstalled()
+    {
     }
 }
 class FiChildApp extends DuckPhp
@@ -142,6 +156,15 @@ class FiChildApp extends DuckPhp
         $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(FastInstaller::class);
         $this->options['path'] = $path_app;
         parent::__construct();
+    }
+    public $force_fail=false;
+    public function onInstall()
+    {
+        if ($this->force_fail){
+            
+            FastInstaller::_()->forceFail();
+            throw new \Exception('xx');
+        }
     }
 }
 class FiParentApp2 extends FiParentApp
@@ -167,4 +190,5 @@ class FiChildApp2 extends FiChildApp
         'install_need_database'=>false,
         'install_need_redis'=>false,
     ];
+
 }

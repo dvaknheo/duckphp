@@ -13,3 +13,7 @@
 
     protected function checkRedis($config)
 
+    public function install($force = false)
+
+    protected function callResetRedis($force = false)
+

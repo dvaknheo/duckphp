@@ -38,7 +38,7 @@ class AppWithAllOptions extends DuckPhp
         // $options['class_user'] = '';
 
         //  (DuckPhp\Core\App)
-        // $options['cli_command_class'] = NULL;
+        // $options['cli_command_classes'] = array ( );
 
         // 命令行,默认调用指令 (DuckPhp\Core\Console)
         // $options['cli_command_default'] = 'help';
@@ -51,6 +51,12 @@ class AppWithAllOptions extends DuckPhp
 
         //  (DuckPhp\Core\App)
         // $options['cli_command_prefix'] = NULL;
+
+        //  ()
+        // $options['cli_command_with_app'] = true;
+
+        //  ()
+        // $options['cli_command_with_common'] = true;
 
         // 启用命令行模式 (DuckPhp\Core\App)
         // $options['cli_enable'] = true;
@@ -82,7 +88,7 @@ class AppWithAllOptions extends DuckPhp
         //  (DuckPhp\Core\Route, DuckPhp\Component\RouteHookResource, DuckPhp\Ext\MiniRoute)
         // $options['controller_resource_prefix'] = '';
 
-        //  (DuckPhp\Core\Route, DuckPhp\Component\RouteHookRouteMap, DuckPhp\Component\RouteHookRewrite, DuckPhp\Component\RouteHookResource, DuckPhp\Ext\MiniRoute)
+        //  (DuckPhp\Core\Route, DuckPhp\Component\RouteHookRewrite, DuckPhp\Component\RouteHookRouteMap, DuckPhp\Component\RouteHookResource, DuckPhp\Ext\MiniRoute)
         // $options['controller_url_prefix'] = '';
 
         //  (DuckPhp\Core\Route, DuckPhp\Ext\MiniRoute)
@@ -99,6 +105,9 @@ class AppWithAllOptions extends DuckPhp
 
         // 数据库，默认为 Db::class。 (DuckPhp\Component\DbManager)
         // $options['database_class'] = '';
+
+        //  (DuckPhp\Component\DbManager)
+        // $options['database_driver'] = '';
 
         // 数据库，多数据库配置 (DuckPhp\Component\DbManager)
         // $options['database_list'] = NULL;

@@ -299,3 +299,15 @@ App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里
 
         'cli_command_class' => Command::class,
 
+        'database_driver' => '',
+
+        'cli_command_with_app' => true,
+
+        'cli_command_with_common' => true,
+
+    protected function prepareComponents()
+
+    protected function isLocalDatabase()
+
+    protected function isLocalRedis()
+

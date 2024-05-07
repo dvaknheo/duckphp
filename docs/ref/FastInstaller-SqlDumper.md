@@ -84,3 +84,9 @@ SqlDumper::_()->dump(); // 导出到配置文件，默认是 config/sql.php
 SqlDumper::_()->install(); // 从配置文件安装 sql
 
 ## 完毕
+        'sql_dump_file' => 'install.sql',
+
+    public function install($force = false)
+
+    protected function getModelPath()
+

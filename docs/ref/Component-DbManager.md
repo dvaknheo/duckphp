@@ -94,3 +94,5 @@ DbForWrite 对应 `database_list[0]`  DbForRead 对应 `database_list[1]`
 `database_log_sql_query`, `database_log_sql_level` 用于记录 sql.
     public function getDatabaseConfigList()
 
+        'database_driver' => '',
+

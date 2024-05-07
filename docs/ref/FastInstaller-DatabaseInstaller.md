@@ -20,3 +20,7 @@
 
         'database_input_driver' => 'mysql',
 
+    public function install($force = false)
+
+    protected function callResetDatabase($force = false)
+

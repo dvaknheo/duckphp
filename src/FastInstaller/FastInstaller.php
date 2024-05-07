@@ -79,7 +79,6 @@ class FastInstaller extends ComponentBase
     {
         echo "
 --help              show this help.
---configure         config such as database, redis only ,--force
 --dry               show options ,do no action. not with childrens.
 --force             force install.
 --dump-sql          not install, just dump sql for install, no with childrens.
@@ -133,7 +132,7 @@ and more ...\n";
         //echo ($install_level <= 0) ? "use --help for more info.\n" : '';
         echo str_repeat("\t", $install_level)."\e[32;7mInstalling (".get_class(App::Current())."):\033[0m\n";
         
-        if (!$this->args['skip_sql']) {
+        if (!($this->args['skip_sql'] ?? false)) {
             DatabaseInstaller::_()->install($force);
         }
         RedisInstaller::_()->install($force);
@@ -150,25 +149,22 @@ and more ...\n";
         $desc = $this->adjustPrompt($app_options['install_input_desc'] ?? '', $default_options, $ext_options, $app_options);
         $input_options = Console::_()->readLines($default_options, $desc, $validators);
         $this->current_input_options = $input_options;
+        
         $flag = $this->doInstallAction();
-        if (!$flag) {
-            echo "\e[32;3mInstalled App (".get_class(App::Current()).") FAILED!;\033[0m\n";
-            return;
-        }
-        $ext_options = array_replace_recursive($ext_options, $input_options);
-        $app_options = array_replace_recursive($app_options, $ext_options);
-        
-        App::Current()->options = $app_options;
-        ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
-        
         if (method_exists(App::Current(), 'onInstall')) {
             App::Current()->onInstall();
         }
         EventManager::FireEvent([App::Phase(), 'OnInstall'], $input_options, $ext_options, $app_options);
         if ($this->is_failed) {
-            echo "\Install failed\n";
+            echo "\e[32;3mInstalled App (".get_class(App::Current()).") FAILED!;\033[0m\n";
             return;
         }
+        
+        $ext_options = array_replace_recursive($ext_options, $input_options);
+        $app_options = array_replace_recursive($app_options, $ext_options);
+        App::Current()->options = $app_options;
+        ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
+        
         ///////////////////////////
         if (!($this->args['skip_children'] ?? false)) {
             EventManager::FireEvent([App::Phase(), 'OnBeforeChildrenInstall']);

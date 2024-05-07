@@ -50,7 +50,7 @@
 + **'class_user' => '',** 
 
     用户类名，设置这个类以实现默认的用户类   // 
-+ **'cli_command_class' => NULL,** 
++ **'cli_command_classes' => array ( ),** 
 
        // [DuckPhp\Core\App](Core-App.md)
 + **'cli_command_default' => 'help',** 
@@ -65,6 +65,12 @@
 + **'cli_command_prefix' => NULL,** 
 
        // [DuckPhp\Core\App](Core-App.md)
++ **'cli_command_with_app' => true,** 
+
+       // 
++ **'cli_command_with_common' => true,** 
+
+       // 
 + **'cli_enable' => true,** 
 
     启用命令行模式   // [DuckPhp\Core\App](Core-App.md)
@@ -100,7 +106,7 @@
        // [DuckPhp\Core\Route](Core-Route.md), [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md), [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md)
 + **'controller_url_prefix' => '',** 
 
-       // [DuckPhp\Core\Route](Core-Route.md), [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md), [DuckPhp\Component\RouteHookRewrite](Component-RouteHookRewrite.md), [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md), [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md)
+       // [DuckPhp\Core\Route](Core-Route.md), [DuckPhp\Component\RouteHookRewrite](Component-RouteHookRewrite.md), [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md), [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md), [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md)
 + **'controller_welcome_class' => 'Main',** 
 
        // [DuckPhp\Core\Route](Core-Route.md), [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md)
@@ -116,6 +122,9 @@
 + **'database_class' => '',** 
 
     数据库，默认为 Db::class。   // [DuckPhp\Component\DbManager](Component-DbManager.md)
++ **'database_driver' => '',** 
+
+       // [DuckPhp\Component\DbManager](Component-DbManager.md)
 + **'database_list' => NULL,** 
 
     数据库，多数据库配置   // [DuckPhp\Component\DbManager](Component-DbManager.md)
@@ -393,16 +402,22 @@
         管理员类名，设置这个类以实现默认的管理员类
     - 'class_user' => '',
         用户类名，设置这个类以实现默认的用户类
-    - 'cli_command_class' => 'DuckPhp\\Component\\Command',
+    - 'cli_command_classes' => array ( ),
         
     - 'cli_command_method_prefix' => 'command_',
         
     - 'cli_command_prefix' => NULL,
         
+    - 'cli_command_with_app' => true,
+        
+    - 'cli_command_with_common' => true,
+        
     - 'cli_enable' => true,
         启用命令行模式
     - 'close_resource_at_output' => false,
         输出时候关闭资源输出（仅供第三方扩展参考
+    - 'database_driver' => '',
+        
     - 'default_exception_do_log' => true,
         发生异常时候记录日志
     - 'error_404' => NULL,
@@ -413,7 +428,7 @@
         异常报告类
     - 'exception_reporter_for_class' => NULL,
         异常报告仅针对的异常
-    - 'ext' => array (   'DuckPhp\\Component\\RouteHookRouteMap' => true,   'DuckPhp\\Component\\RouteHookRewrite' => true,   'DuckPhp\\Component\\RouteHookResource' => true, ),
+    - 'ext' => array (   'DuckPhp\\Component\\RouteHookRewrite' => true,   'DuckPhp\\Component\\RouteHookRouteMap' => true,   'DuckPhp\\Component\\RouteHookResource' => true, ),
         
     - 'ext_options_file' => 'config/DuckPhpApps.config.php',
         配置文件名字
@@ -460,7 +475,7 @@
         别名，目前只用于视图目录
     - 'app' => array ( ),
         子应用，保存 类名=>选项对
-    - 'cli_command_class' => NULL,
+    - 'cli_command_classes' => array ( ),
         
     - 'cli_command_method_prefix' => 'command_',
         
@@ -512,11 +527,6 @@
         不在 Run 流程检查异常，把异常抛出外面。用于配合其他框架使用
     - 'use_env_file' => false,
         使用 .env 文件。 仅根应用有效
-+ DuckPhp\Core\Console
-    - 'cli_command_default' => 'help',
-        命令行,默认调用指令
-    - 'cli_command_group' => array ( ),
-        
 + DuckPhp\Core\ExceptionManager
     - 'default_exception_handler' => NULL,
         默认的异常处理回调
@@ -531,6 +541,11 @@
     - 'system_exception_handler' => NULL,
         系统的异常调试回调
 + DuckPhp\Component\ExtOptionsLoader
++ DuckPhp\Core\Console
+    - 'cli_command_default' => 'help',
+        命令行,默认调用指令
+    - 'cli_command_group' => array ( ),
+        
 + DuckPhp\Core\Route
     - 'controller_class_adjust' => '',
         
@@ -590,6 +605,8 @@
         数据库，单一数据库配置
     - 'database_class' => '',
         数据库，默认为 Db::class。
+    - 'database_driver' => '',
+        
     - 'database_list' => NULL,
         数据库，多数据库配置
     - 'database_list_reload_by_setting' => true,
@@ -618,6 +635,11 @@
         无PATH_INFO兼容，替代的 class
     - 'path_info_compact_enable' => true,
         PATH_INFO 兼容模式
++ DuckPhp\Component\RouteHookRewrite
+    - 'controller_url_prefix' => '',
+        
+    - 'rewrite_map' => array ( ),
+        路由重写，重写映射表
 + DuckPhp\Component\RouteHookRouteMap
     - 'controller_url_prefix' => '',
         
@@ -625,11 +647,6 @@
         路由映射，在默认路由失败后执行的路由映射
     - 'route_map_important' => array ( ),
         路由映射，在默认路由前执行的路由映射
-+ DuckPhp\Component\RouteHookRewrite
-    - 'controller_url_prefix' => '',
-        
-    - 'rewrite_map' => array ( ),
-        路由重写，重写映射表
 + DuckPhp\Component\RouteHookResource
     - 'controller_resource_prefix' => '',
         

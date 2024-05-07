@@ -31,3 +31,25 @@ FastInstaller 是 DuckPhp 内置的一个安装系统。
 
     protected function reduce_apps($object, $callback)
 
+    public function command_install()
+
+    public function command_require()
+
+    public function command_update()
+
+    public function command_remove()
+
+    protected function initComponents()
+
+    public function doCommandUpdate()
+
+    public function doCommandRemove()
+
+    public function forceFail()
+
+    public function getCurrentInput()
+
+    protected function doInstallAction()
+
+    protected function saveInstalledFlag()
+

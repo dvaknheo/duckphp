@@ -23,3 +23,13 @@
 
     public function command_new()
 
+    public function command_new($namespace = '')
+
+    protected function getCommandsByClasses($classes, $method_prefix, $phase)
+
+    protected function getCommandsByClass($class, $method_prefix, $phase)
+
+    public function getCommandsOfThis($method_prefix, $phase)
+
+    protected function getCommandsByClassReflection($ref, $method_prefix)
+

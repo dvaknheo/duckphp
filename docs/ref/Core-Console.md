@@ -123,3 +123,7 @@ EOT;
 
         'cli_command_group' => [ ],
 
+    public function regCommandClass($command_namespace, $phase, $classes, $method_prefix = 'command_')
+
+    public function getCallback($group, $cmd_method)
+

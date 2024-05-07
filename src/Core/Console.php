@@ -172,6 +172,7 @@ class Console extends ComponentBase
     }
     public function callObject($class, $method, $args, $input)
     {
+        //TODO $args =[];
         $object = $this->getObject($class);
         $reflect = new \ReflectionMethod($object, $method);
         $params = $reflect->getParameters();

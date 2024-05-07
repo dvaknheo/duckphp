@@ -10,3 +10,5 @@
 
     public function command_remove()
 
+    public function command_update()
+

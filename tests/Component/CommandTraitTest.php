@@ -68,6 +68,15 @@ class CommandTraitTest extends \PHPUnit\Framework\TestCase
         ];
         DuckPhp::_()->run();
         
+        $_SERVER['argv']=[
+            '-','aa:new2',
+        ];
+        DuckPhp::_()->run();
+        
+        //$_SERVER['argv']=[
+        //    '-','debug', '--off'
+        //];
+        //DuckPhp::_()->run();
         
         
         @unlink($path_app.'CommandTrait.config.php');
@@ -103,11 +112,15 @@ class Console_Command
     public function command_help(){}
     public function command_run(){}
 }
+class Console_Command2
+{
+    public function prefix_new2(){}
+}
 class CommandTraitApp extends DuckPhp
 {
     public $options=[
         'cli_command_prefix' =>'aa',
-        'cli_command_class'=>Console_Command::class,
+        'cli_command_classes'=>[Console_Command::class,[Console_Command2::class,'prefix_']],
     ];
 }
 class CommandTraitApp2 extends DuckPhp

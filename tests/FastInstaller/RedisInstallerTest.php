@@ -73,7 +73,7 @@ class RedisInstallerTest extends \PHPUnit\Framework\TestCase
         RInstallerConsole::_()->setFileContents([$bstr, $str, 'Y',$str,'N']);
         RedisInstaller::_()->install(true);
         
-        DuckPhp::Current()->options['use_redis']=true;
+        DuckPhp::Current()->options['use_redis']=false;
         RedisInstaller::_()->install(false);
         ////]]]]
         @unlink($path_app.'RedisInstallerApps.config.php');

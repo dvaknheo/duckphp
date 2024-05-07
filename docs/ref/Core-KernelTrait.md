@@ -285,7 +285,13 @@ onInit
 
 
 
-        'cli_command_class' => null,
+
 
         'cli_command_prefix' => null,
+
+        'cli_command_classes' => [],
+
+    protected function prepareComponents()
+
+    protected function onBeforeChildrenInit()
 
