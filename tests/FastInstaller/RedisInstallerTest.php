@@ -39,7 +39,6 @@ class RedisInstallerTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(RedisInstaller::class);
-        
         $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
         
         $path_setting = \LibCoverage\LibCoverage::G()->getClassTestPath(Db::class);
@@ -55,6 +54,7 @@ class RedisInstallerTest extends \PHPUnit\Framework\TestCase
             'ext'=> [
                 RedisInstaller::class => true,
             ],
+            'use_redis'=>true,
         ]);
         $options = Console::_()->options;
         Console::_(RInstallerConsole::_())->reInit($options,DuckPhp::_());

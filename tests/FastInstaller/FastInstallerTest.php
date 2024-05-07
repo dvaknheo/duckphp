@@ -95,9 +95,9 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
 
         //FiParentApp::_()->run();
         
-        FastInstaller::_()->doCommandRequire();
-        FastInstaller::_()->doCommandUpdate();
-        FastInstaller::_()->doCommandRemove();
+        FastInstaller::_()->command_require();
+        FastInstaller::_()->command_update();
+        FastInstaller::_()->command_remove();
         
         
         $_SERVER['argv'] = $__SERVER['argv'];

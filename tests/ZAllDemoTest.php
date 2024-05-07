@@ -27,7 +27,7 @@ class ZAllDemoTest extends \PHPUnit\Framework\TestCase
             'test/done'          => 95 ,
             'doc.php'            => 1329 ,
             ''                   => 1353 ,
-            'files'              => 9827 ,
+            'files'              => 10105 ,
             'demo.php'           => 406 ,
             'helloworld.php'     => 11,
             'just-route.php'     => 141,

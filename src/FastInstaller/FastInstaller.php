@@ -150,7 +150,7 @@ and more ...\n";
         $desc = $this->adjustPrompt($app_options['install_input_desc'] ?? '', $default_options, $ext_options, $app_options);
         $input_options = Console::_()->readLines($default_options, $desc, $validators);
         $this->current_input_options = $input_options;
-        $flag = $this->doInstallAction($input_options, $ext_options, $app_options);
+        $flag = $this->doInstallAction();
         if (!$flag) {
             echo "\e[32;3mInstalled App (".get_class(App::Current()).") FAILED!;\033[0m\n";
             return;
@@ -166,7 +166,7 @@ and more ...\n";
         }
         EventManager::FireEvent([App::Phase(), 'OnInstall'], $input_options, $ext_options, $app_options);
         if ($this->is_failed) {
-            echo "\Install failed: $msg \n";
+            echo "\Install failed\n";
             return;
         }
         ///////////////////////////
@@ -195,12 +195,12 @@ resource prefix: [{controller_resource_prefix}]
         }
         $desc = $prefix.$desc;
         
-        //$desc = str_replace('{controller_url_prefix}', App::Current()->options['controller_url_prefix'], $desc);
-        //$desc = str_replace('{controller_resource_prefix}', App::Current()->options['controller_resource_prefix'], $desc);
+        $desc = str_replace('{controller_url_prefix}', App::Current()->options['controller_url_prefix'], $desc);
+        $desc = str_replace('{controller_resource_prefix}', App::Current()->options['controller_resource_prefix'], $desc);
         
-        foreach ($app_options as $key => $value) {
-            $desc = str_replace('{'.$key.'}', is_scalar($app_options[$key])?$app_options[$key]:'', $desc);
-        }
+        //foreach ($app_options as $key => $value) {
+        //    $desc = str_replace('{'.$key.'}', is_scalar($app_options[$key])?$app_options[$key]:'', $desc);
+        //}
         return  $desc;
     }
     protected function installChildren()
@@ -222,7 +222,7 @@ resource prefix: [{controller_resource_prefix}]
             $group = Console::_()->options['cli_command_group'][$cli_namespace] ?? [];
             list($class, $method) = Console::_()->getCallback($group, 'install');
             try {
-                $ret = call_user_func([$class,$method]);
+                $ret = call_user_func([$class,$method]); /** @phpstan-ignore-line */
             } catch (\Exception $ex) {
                 $msg = $ex->getMessage();
                 echo "\Install failed: $msg \n";
