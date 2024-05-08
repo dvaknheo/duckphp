@@ -191,8 +191,8 @@ resource prefix: [{controller_resource_prefix}]
         }
         $desc = $prefix.$desc;
         
-        $desc = str_replace('{controller_url_prefix}', App::Current()->options['controller_url_prefix'], $desc);
-        $desc = str_replace('{controller_resource_prefix}', App::Current()->options['controller_resource_prefix'], $desc);
+        $desc = str_replace('{controller_url_prefix}', App::Current()->options['controller_url_prefix'] ?? '', $desc);
+        $desc = str_replace('{controller_resource_prefix}', App::Current()->options['controller_resource_prefix'] ?? '', $desc);
         
         //foreach ($app_options as $key => $value) {
         //    $desc = str_replace('{'.$key.'}', is_scalar($app_options[$key])?$app_options[$key]:'', $desc);
@@ -218,7 +218,9 @@ resource prefix: [{controller_resource_prefix}]
             $group = Console::_()->options['cli_command_group'][$cli_namespace] ?? [];
             list($class, $method) = Console::_()->getCallback($group, 'install');
             try {
-                $ret = call_user_func([$class,$method]); /** @phpstan-ignore-line */
+                if (is_callable([$class,$method])) {
+                    $ret = call_user_func([$class,$method]); /** @phpstan-ignore-line */
+                }
             } catch (\Exception $ex) {
                 $msg = $ex->getMessage();
                 echo "\Install failed: $msg \n";
@@ -238,7 +240,9 @@ resource prefix: [{controller_resource_prefix}]
         if (!($this->args['skip_resource'] ?? false)) {
             $info = '';
             RouteHookResource::_()->cloneResource(false, $info);
-            echo $info;
+            if ($this->args['verbose'] ?? false) {
+                echo $info;
+            }
         }
         return true;
     }
