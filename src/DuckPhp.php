@@ -21,6 +21,7 @@ use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Core\App;
 use DuckPhp\Core\Console;
+use DuckPhp\FastInstaller\FastInstaller;
 
 class DuckPhp extends App
 {
@@ -41,6 +42,10 @@ class DuckPhp extends App
         'class_admin' => '',
         'class_user' => '',
         'database_driver' => '',
+
+        'cli_command_with_app' => true,
+        'cli_command_with_common' => true,
+        'cli_command_with_fast_installer' => false,
         
         //'install_need_database' => true,
         //'install_need_redis' => false,
@@ -72,19 +77,20 @@ class DuckPhp extends App
         // 'path_info_compact_class_key' => '',
         
         //*/
-        'cli_command_with_app' => true,
-        'cli_command_with_common' => true,
     ];
     protected function prepareComponents()
     {
         if ($this->options['ext_options_file_enable']) {
             ExtOptionsLoader::_()->loadExtOptions(static::class);
         }
-        if ($this->options['cli_command_with_app'] ?? true) {
+        if ($this->options['cli_command_with_app']) {
             array_unshift($this->options['cli_command_classes'], static::class);
         }
-        if ($this->options['cli_command_with_common'] ?? true) {
+        if ($this->options['cli_command_with_common']) {
             array_push($this->options['cli_command_classes'], Command::class);
+        }
+        if ($this->options['cli_command_with_fast_installer']) {
+            array_push($this->options['cli_command_classes'], FastInstaller::class);
         }
     }
     protected function initComponents(array $options, object $context = null)

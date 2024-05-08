@@ -50,7 +50,7 @@ class RedisInstallerTest extends \PHPUnit\Framework\TestCase
         DuckPhp::_(new DuckPhp())->init([
             'path'=>$path_app,
             'ext_options_file' => 'RedisInstallerApps.config.php',
-            'console_enable'=>true,
+            'cli_enable'=>true,
             'ext'=> [
                 RedisInstaller::class => true,
             ],

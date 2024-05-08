@@ -57,7 +57,7 @@ $db->execute($sql);
 
 $sql= 'DROP TABLE IF EXISTS `Users`';
 $db->execute($sql);
-        $db->pdo=null;
+        //$db->pdo=null;
         $db->qouteInsertArray($array);
         
 

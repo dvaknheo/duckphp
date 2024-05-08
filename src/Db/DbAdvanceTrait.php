@@ -42,10 +42,14 @@ trait DbAdvanceTrait
             return '';
         }
 
+        $pdo = $this->pdo;
         
-        $keys =array_map(function($v){return '`'.$v.'`';}, array_keys($array));
-        $pdo =$this->pdo;
-        $values =array_map(function($v)use($pdo){return $pdo->quote($v);}, array_values($array));
+        $keys = array_map(function ($v) {
+            return '`'.$v.'`';
+        }, array_keys($array));
+        $values = array_map(function ($v) use ($pdo) {
+            return $pdo->quote(''.$v);
+        }, array_values($array));
         
         
         $str_keys = implode(',', $keys);
