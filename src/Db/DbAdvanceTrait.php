@@ -41,13 +41,15 @@ trait DbAdvanceTrait
         if (empty($array)) {
             return '';
         }
-        $callback = [$this->pdo,'quote'];
-        if (!is_callable($callback)) {
-            return '';
-        }
-        $array = array_map($callback, $array);
-        $str_keys = implode(',', array_keys($array));
-        $str_values = implode(',', array_values($array));
+
+        
+        $keys =array_map(function($v){return '`'.$v.'`';}, array_keys($array));
+        $pdo =$this->pdo;
+        $values =array_map(function($v)use($pdo){return $pdo->quote($v);}, array_values($array));
+        
+        
+        $str_keys = implode(',', $keys);
+        $str_values = implode(',', $values);
         $ret = "($str_keys)VALUES($str_values)";
         return $ret;
     }
@@ -61,7 +63,8 @@ trait DbAdvanceTrait
     
     public function insertData($table_name, $data, $return_last_id = true)
     {
-        $sql = "insert into {$table_name} set ".$this->quoteSetArray($data);
+        $sql = "insert into {$table_name} ".$this->qouteInsertArray($data);
+        
         $ret = $this->execute($sql);
         if (!$return_last_id) {
             return $ret;
