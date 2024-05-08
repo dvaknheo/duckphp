@@ -222,13 +222,13 @@ class App extends DuckPhp
 {
     //@override
     public $options = [
-        //'is_debug' => true, // debug switch
+        'path' => __DIR__ . '/../../',
         //'path_info_compact_enable' => false,
+        
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
         'exception_reporter' => ExceptionReporter::class,
         //'app' => [],
-        'cli_command_class' => Commands::class,
     ];
     //@override
     public function onPrepare()
@@ -243,7 +243,6 @@ class App extends DuckPhp
     //@override
     protected function onInit()
     {
-        //
     }
     /**
      * console command sample

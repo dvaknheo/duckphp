@@ -311,3 +311,7 @@ App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里
 
     protected function isLocalRedis()
 
+            RouteHookCheckStatus::class => true,
+
+        'cli_command_with_fast_installer' => false,
+

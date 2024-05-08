@@ -71,6 +71,9 @@
 + **'cli_command_with_common' => true,** 
 
        // 
++ **'cli_command_with_fast_installer' => false,** 
+
+       // 
 + **'cli_enable' => true,** 
 
     启用命令行模式   // [DuckPhp\Core\App](Core-App.md)
@@ -254,6 +257,9 @@
 + **'log_prefix' => 'DuckPhpLog',** 
 
     日志前缀   // [DuckPhp\Core\Logger](Core-Logger.md)
++ **'maintain_view' => NULL,** 
+
+       // [DuckPhp\Component\RouteHookCheckStatus](Component-RouteHookCheckStatus.md)
 + 'middleware' => array ( ), 
 
     middelware 放的是回调列表   // [DuckPhp\Ext\MyMiddlewareManager](Ext-MyMiddlewareManager.md)
@@ -272,6 +278,9 @@
 + 'namespace_model' => '', 
 
     严格检查扩展，模型命名空间   // [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
++ **'need_install_view' => NULL,** 
+
+       // [DuckPhp\Component\RouteHookCheckStatus](Component-RouteHookCheckStatus.md)
 + **'on_init' => NULL,** 
 
     初始化完成后处理回调   // [DuckPhp\Core\App](Core-App.md)
@@ -412,6 +421,8 @@
         
     - 'cli_command_with_common' => true,
         
+    - 'cli_command_with_fast_installer' => false,
+        
     - 'cli_enable' => true,
         启用命令行模式
     - 'close_resource_at_output' => false,
@@ -428,7 +439,7 @@
         异常报告类
     - 'exception_reporter_for_class' => NULL,
         异常报告仅针对的异常
-    - 'ext' => array (   'DuckPhp\\Component\\RouteHookRewrite' => true,   'DuckPhp\\Component\\RouteHookRouteMap' => true,   'DuckPhp\\Component\\RouteHookResource' => true, ),
+    - 'ext' => array (   'DuckPhp\\Component\\RouteHookCheckStatus' => true,   'DuckPhp\\Component\\RouteHookRewrite' => true,   'DuckPhp\\Component\\RouteHookRouteMap' => true,   'DuckPhp\\Component\\RouteHookResource' => true, ),
         
     - 'ext_options_file' => 'config/DuckPhpApps.config.php',
         配置文件名字
@@ -635,6 +646,11 @@
         无PATH_INFO兼容，替代的 class
     - 'path_info_compact_enable' => true,
         PATH_INFO 兼容模式
++ DuckPhp\Component\RouteHookCheckStatus
+    - 'maintain_view' => NULL,
+        
+    - 'need_install_view' => NULL,
+        
 + DuckPhp\Component\RouteHookRewrite
     - 'controller_url_prefix' => '',
         
