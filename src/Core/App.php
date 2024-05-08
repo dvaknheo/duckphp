@@ -119,7 +119,7 @@ class App extends ComponentBase
         
         if ($this->options['default_exception_do_log']) {
             try {
-                Logger::_()->error('['.get_class($ex).']('.$ex->getMessage().')'.$ex->getMessage());
+                Logger::_()->error('['.get_class($ex).']('.$ex->getMessage().')'.$ex->getMessage()."\n".$ex->getTraceAsString());
             } catch (\Throwable $ex) { // @codeCoverageIgnore
                 //do nothing
             } // @codeCoverageIgnore

@@ -1,7 +1,6 @@
 <?php 
 namespace tests\DuckPhp\Component;
 use DuckPhp\Component\Command;
-use DuckPhp\Component\CommandTrait;
 use DuckPhp\Component\DuckPhpInstaller;
 
 use DuckPhp\Core\Console;
@@ -11,19 +10,22 @@ use DuckPhp\HttpServer\HttpServer;
 use DuckPhp\DuckPhp;
 
 
-class CommandTraitTest extends \PHPUnit\Framework\TestCase
+class CommandTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
-        \LibCoverage\LibCoverage::Begin(CommandTrait::class);
+        \LibCoverage\LibCoverage::Begin(Command::class);
         $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
         $_SERVER['argv']=[];
 
-        DuckPhp::_()->init(['cli_enable'=>true,'path'=>$path_app,
-            'ext_options_file' => 'CommandTrait.config.php',
+        DuckPhp::_()->init([
+            'is_debug'=>true,
+            'cli_enable'=>true,
+            'path'=>$path_app,
+            'ext_options_file' => 'Command.config.php',
             'app' =>[
-                CommandTraitApp2::class =>['bc'=>'tre'],
-                CommandTraitApp::class =>['a'=>'tre'],
+                CommandApp2::class =>['bc'=>'tre'],
+                CommandApp::class =>['a'=>'tre'],
             ],
         ])->run();
         
@@ -79,7 +81,7 @@ class CommandTraitTest extends \PHPUnit\Framework\TestCase
         //DuckPhp::_()->run();
         
         
-        @unlink($path_app.'CommandTrait.config.php');
+        @unlink($path_app.'Command.config.php');
         \LibCoverage\LibCoverage::End();return;
     }
 }
@@ -116,14 +118,14 @@ class Console_Command2
 {
     public function prefix_new2(){}
 }
-class CommandTraitApp extends DuckPhp
+class CommandApp extends DuckPhp
 {
     public $options=[
         'cli_command_prefix' =>'aa',
         'cli_command_classes'=>[Console_Command::class,[Console_Command2::class,'prefix_']],
     ];
 }
-class CommandTraitApp2 extends DuckPhp
+class CommandApp2 extends DuckPhp
 {
     public $options=[
         //'cli_command_class'=>null,

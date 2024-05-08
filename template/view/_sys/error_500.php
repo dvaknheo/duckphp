@@ -20,7 +20,7 @@ if ($is_debug) {
 <fieldset>
     <legend>Exception(<?=$class ?>:<?=$code?>)</legend>
     <?=$message ?>
-    <div><?=$file?> : <?=$line?></div>";
+    <div><?=$file?> : <?=$line?></div>
 
 <pre>
 --

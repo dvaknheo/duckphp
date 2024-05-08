@@ -15,6 +15,7 @@ use DuckPhp\Component\GlobalAdmin;
 use DuckPhp\Component\GlobalUser;
 use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Component\RedisManager;
+use DuckPhp\Component\RouteHookCheckStatus;
 use DuckPhp\Component\RouteHookPathInfoCompat;
 use DuckPhp\Component\RouteHookResource;
 use DuckPhp\Component\RouteHookRewrite;
@@ -29,9 +30,11 @@ class DuckPhp extends App
         'ext_options_file_enable' => true,
         'ext_options_file' => 'config/DuckPhpApps.config.php',
         'ext' => [
+            RouteHookCheckStatus::class => true,
             RouteHookRewrite::class => true,
             RouteHookRouteMap::class => true,
             RouteHookResource::class => true,
+            
             //RouteHookPathInfoCompat::class => false,
         ],
         

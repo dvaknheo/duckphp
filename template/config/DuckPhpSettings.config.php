@@ -5,7 +5,7 @@
  */
 
 return [
-    'duckphp_is_debug' => true,
+    //'duckphp_is_debug' => true,
     //'duckphp_platform' => 'default',
 /*
     'database_list' => [

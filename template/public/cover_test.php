@@ -33,11 +33,29 @@ $ref = new ReflectionClass(\DuckPhp\DuckPhp::class);
 $path_duckphp = realpath(dirname($ref->getFileName())).'/';
 cover($path_duckphp);
 
+/////////////
+class MainController
+{
+    public function action_index()
+    {
+        echo '<meta http-equiv="refresh" content="5;cover_report/index.html" />';
+        echo "用于计算执行行数 ，请确保 cover_report 可写。5秒后跳转到结果页面";
+        var_dump(DATE(DATE_ATOM));
+    }
+}
+
+class DemoApp extends \DuckPhp\DuckPhp
+{
+    public $options = [
+        'is_debug' => true,
+        'path' => __DIR__.'/',
+        'namespace_controller' => '\\',
+    ];
+}
 
 $options = [
     //
 ];
-ProjectNameTemplate\System\App::RunQuickly($options);
-echo '<meta http-equiv="refresh" content="5;cover_report/index.html" />';
-echo "用于计算执行行数 ，请确保 cover_report 可写。5秒后跳转到结果页面";
-var_dump(DATE(DATE_ATOM));
+
+DemoApp::RunQuickly($options);
+
