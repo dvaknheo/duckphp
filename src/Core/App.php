@@ -271,7 +271,8 @@ EOT;
     }
     public function _IsDebug()
     {
-        $root_debug = static::_()->_Setting('duckphp_is_debug', false);
+        $setting_debug = static::_()->_Setting('duckphp_is_debug', false);
+        $root_debug = $setting_debug || static::Root()->options['is_debug']??false;
         $this_debug = $this->options['is_debug'] ?? false;
         return $root_debug || $this_debug;
     }
