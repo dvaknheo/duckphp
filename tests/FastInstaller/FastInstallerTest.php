@@ -115,7 +115,6 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
 }
 class FiParentApp extends DuckPhp
 {
-    use CommandTrait;
     
     
     public $options = [
@@ -143,8 +142,6 @@ class FiParentApp extends DuckPhp
 }
 class FiChildApp extends DuckPhp
 {
-    use CommandTrait;
-    use FastInstallerTrait;
     
     public $options = [
         'cli_command_class'=>null,

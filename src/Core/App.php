@@ -111,7 +111,8 @@ class App extends ComponentBase
     //@override
     public function _OnDefaultException($ex): void
     {
-        $this->_Phase(self::class); //Important
+        // exception to root;
+        $this->_Phase(get_class(App::Root())); //Important
         
         if (defined('DUCKPHP_EXIT_EXCEPTION') && is_a($ex, DUCKPHP_EXIT_EXCEPTION)) {
             return;

@@ -14,9 +14,10 @@ use DuckPhp\Core\View;
 class RouteHookCheckStatus extends ComponentBase
 {
     public $options = [
-        'need_install' => false,
-        'is_maintaining' =>false,
+        //'need_install' => false,
+        //'is_maintain' =>false,
         'maintain_view' => null,
+        'need_install_view' => null,
     ];
     public static function Hook($path_info)
     {
@@ -30,18 +31,21 @@ class RouteHookCheckStatus extends ComponentBase
 
     public function doHook($path_info)
     {
-        $flag = App::Setting('duckphp_is_maintaining',false)  || $this->options['is_maintaining'];
-        if ($flag){
-            if ($this->options['maintain_view']) {
-                View::Show([],$this->options['maintain_view']);
+        if (App::Setting('duckphp_is_maintain', false) || (App::Current()->options['is_maintain'] ?? false)) {
+            if ($this->options['maintain_view'] ?? false) {
+                View::Show([], $this->options['maintain_view']);
                 return true;
-            }else{
+            } else {
                 DuckPhpSystemException::ThrowOn(true, 'Maintainning');
             }
         }
-        
-        $flag = $this->options['need_install'] && !App::Current()->isInstalled();
-        DuckPhpSystemException::ThrowOn($flag, 'Need install');
-        return false;
+        if ((App::Current()->options['need_install'] ?? false) && !App::Current()->isInstalled()) {
+            if ($this->options['need_install_view'] ?? false) {
+                View::Show([], $this->options['need_install_view']);
+                return true;
+            } else {
+                DuckPhpSystemException::ThrowOn(true, 'Need Install');
+            }
+        }
     }
 }
