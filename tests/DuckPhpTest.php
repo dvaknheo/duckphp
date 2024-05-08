@@ -132,7 +132,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         DuckPhp::_(new DuckPhp())->init([
                 'app' => [ 
                     DuckPhp_Sub::class => [
-                        'local_db'=>true,'local_redis'=>true
+                        'local_database'=>true,'local_redis'=>true
                     ]
                 ]
             ]

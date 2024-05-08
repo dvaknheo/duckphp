@@ -125,7 +125,7 @@ class DuckPhp extends App
     }
     protected function isLocalDatabase()
     {
-        $flag = $this->options['local_db'] ?? false;
+        $flag = $this->options['local_database'] ?? false;
         if ($flag) {
             return true;
         }

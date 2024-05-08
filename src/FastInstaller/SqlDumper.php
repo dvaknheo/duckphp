@@ -54,14 +54,14 @@ class SqlDumper extends ComponentBase
         $sql = ''.file_get_contents($full_file);
         
         if ($force) {
-            $sql = preg_replace('/CREATE TABLE `([^`]+)`/', 'DROP TABLE IF EXISTS `$1`;'."\n".'CREATE TABLE `$1`', $sql);
+            $sql = preg_replace('/CREATE TABLE `([^`]+)`/', 'DROP TABLE IF EXISTS `$1`'.";\n".'CREATE TABLE `$1`', $sql);
         }
         
         if ($this->options['sql_dump_install_replace_prefix']) {
             $prefix = App::Current()->options['table_prefix'];
             $sql = str_replace(' `'.$this->options['sql_dump_prefix'], ' `'.$prefix, ''.$sql);
         }
-        $sqls = explode(';\n',$sql);
+        $sqls = explode(";\n",$sql);
         foreach($sqls as $sql){
             $flag = DbManager::Db()->execute($sql);
         }

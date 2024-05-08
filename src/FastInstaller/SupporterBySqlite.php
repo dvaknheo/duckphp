@@ -12,7 +12,7 @@ class SupporterBySqlite extends Supporter
     /////////////////////////////////
     public function readDsnSetting($options)
     {
-        $dsn = $options['dsn'];
+        $dsn = $options['dsn'] ?? '';
         $options['file'] = substr($dsn, strlen('sqlite:'));
         return $options;
     }
