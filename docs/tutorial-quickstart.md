@@ -10,7 +10,7 @@
 
 ```bash
 cd template
-php ./duckphp-project run
+php cli.php run
 ```
 浏览器中打开 http://127.0.0.1:8080/ 得到下面欢迎页就表明 OK 了
 ```text
@@ -98,13 +98,13 @@ class testController
 ```
 控制器里，我们处理外部数据，不做业务逻辑，业务逻辑在 Business 层做。
 
-BaseController  这个基类，如果不强制要求也可以不用。
 
-LazyToChange 这个命名空间前缀是工程命名前缀，怎么修改先略过。
+ProjectNameTemplate 这个命名空间前缀是工程命名前缀，怎么修改先略过。
 
-use LazyToChange\Helper\ControllerHelper as C; C 是助手类
 
-C::Show($data); 是 C::Show($data,'test/done'); 的缩写， 调用 test/done 这个视图。
+Helper.php 内容
+
+Helper::Show($data); 是 Helper::Show($data,'test/done'); 的缩写， 调用 test/done 这个视图。
 
 ### Business 业务层
 
@@ -151,7 +151,7 @@ class DemoBusiness extends Base
 }
 
 ```
-BaseBusiness 也是不强求的，我们 extends BaseBusiness 是为了能用 DemoBusiness::G() 可变单例。
+我们 extends Base 是为了能用 DemoBusiness::G() 可变单例。
 
 这里调用了 MiscModel 。
 
@@ -189,7 +189,7 @@ class DemoModel extends Base
 }
 
 ```
-同样 BaseModel 也是不强求的，我们 extends BaseModel 是为了能用 DemoModel::G() 可变单例。
+同样 Base 是不强求的，我们 extends BaseModel 是为了能用 DemoModel::G() 可变单例。
 
 ### 最后显示结果
 ```text
@@ -205,7 +205,7 @@ test
 同样访问  http://127.0.0.1:8080/index.php?_r=test/done  也是得到想同测试页面的结果
 
 ### 数据库操作
-前提工作，我们加上 `app/System/App.php` 中跳过设置文件的选项打开
+前提工作，我们加上 `src/System/App.php` 中跳过设置文件的选项打开
 ```php
 'setting_file_enable' => true,
 ```

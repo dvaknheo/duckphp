@@ -6,6 +6,7 @@
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\EventManager;
 use DuckPhp\Core\KernelTrait;
 use DuckPhp\Core\Logger;
 use DuckPhp\Core\Route;
@@ -288,5 +289,13 @@ EOT;
     public function isInstalled()
     {
         return $this->options['install'] ?? false;
+    }
+    public function on($event, $callback)
+    {
+        return EventManager::_()->on($event, $callback);
+    }
+    public function fire($event, ...$args)
+    {
+        return EventManager::_()->fire($event, ...$args);
     }
 }

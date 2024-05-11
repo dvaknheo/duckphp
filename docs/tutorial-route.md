@@ -45,7 +45,7 @@ Route 类有很多选项，不同工程会有不同设置，这里挑出一些�
 
 严格模式
 
-'controller_hide_boot_class' => false, 控制器标记，隐藏特别的入口，比如你不想人也从 /Main/index 访问  MyProejct\Controller\MainController->actionindex
+'controller_hide_boot_class' => false, 控制器标记，隐藏特别的入口，比如你不想人也从 /Main/index 访问  MyProejct\Controller\MainController->action_index
 
 
 选项介绍

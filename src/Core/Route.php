@@ -486,11 +486,14 @@ trait Route_UrlManager
             $basepath=substr($basepath, 0, -strlen('/index.php'));
         }
         */
+        $prefix = $this->options['controller_url_prefix']? trim('/'.$this->options['controller_url_prefix'], '/') : '';
         if ($basepath === '/index.php') {
             $basepath = '/';
+        } else {
+            $basepath .= '/';
         }
-        $prefix = $this->options['controller_url_prefix']? trim('/'.$this->options['controller_url_prefix'], '/') : '';
         $basepath .= $prefix;
+        
         return $basepath;
     }
     public function setUrlHandler($callback)

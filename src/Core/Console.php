@@ -38,6 +38,10 @@ class Console extends ComponentBase
     {
         return $this->parameters;
     }
+    public function getArgs()
+    {
+        return $this->parameters['--'];
+    }
     public function app()
     {
         return $this->context();

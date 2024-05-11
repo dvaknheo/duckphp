@@ -286,27 +286,14 @@ class CoreHelper extends ComponentBase
         
         throw new $exception_class($message, $code);
     }
-    public function getProjectPath()
+    public function _PathForProject()
     {
-        //TODO to helper, PathOfProject
         return App::Root()->options['path'];
     }
-    public function getRuntimePath()
+    public function _PathForRuntime()
     {
-        //TODO to helper ,PathOfRuntime
         $path = static::SlashDir(App::Root()->options['path']);
         $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
         return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
-    }
-    public function getProjectPathFromClass($class, $use_parent_namespace = true)
-    {
-        //TODO Not use ，remove
-        $ref = new \ReflectionClass($class);
-        $file = $ref->getFileName();
-        $dir = dirname(dirname(''.$file));
-        if ($use_parent_namespace) {
-            $dir = dirname($dir);
-        }
-        return $dir .'/';
     }
 }

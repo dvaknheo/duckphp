@@ -103,9 +103,9 @@ trait KernelTrait
     {
         return static::_()->_Setting($key, $default);
     }
-    public function isRoot()
+    public static function IsRoot()
     {
-        return $this->is_root;
+        return static::Current()->_IsRoot();
     }
     protected function initOptions(array $options)
     {
@@ -137,6 +137,10 @@ trait KernelTrait
             $container->setCurrentContainer($new);
         }
         return $old;
+    }
+    public function _IsRoot()
+    {
+        return $this->is_root;
     }
     protected function initContainer($context)
     {
@@ -228,13 +232,14 @@ trait KernelTrait
         $this->prepareComponents();
         $this->initComponents($this->options, $context);
         $this->initExtentions($this->options['ext'] ?? [], true);
-        $this->onBeforeChildrenInit();
-        $this->initExtentions($this->options['app'] ?? [], false);
         $this->onInit();
         if ($this->options['on_init']) {
             ($this->options['on_init'])();
         }
+        $this->onBeforeChildrenInit();
+        $this->initExtentions($this->options['app'] ?? [], false);
         
+        $this->onInited();
         $this->is_inited = true;
         return $this;
     }
@@ -444,6 +449,10 @@ trait KernelTrait
         EventManager::FireEvent([static::class,__FUNCTION__]);
     }
     protected function onInit()
+    {
+        EventManager::FireEvent([static::class,__FUNCTION__]);
+    }
+    protected function onInited()
     {
         EventManager::FireEvent([static::class,__FUNCTION__]);
     }

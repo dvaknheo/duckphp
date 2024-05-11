@@ -182,7 +182,7 @@ and more ...\n";
     {
         $desc = $app_options['install_input_desc'] ?? '--';
         $prefix = '';
-        if (!(App::Current()->isRoot())) {
+        if (!(App::IsRoot())) {
             $prefix = "
 --
 url prefix: [{controller_url_prefix}]

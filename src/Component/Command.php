@@ -41,10 +41,16 @@ EOT;
     /**
      * create new project in current diretory. --help for help
      */
-    public function command_new($namespace = '')
+    public function command_new()
     {
         //ifempty(readLines();
-        DuckPhpInstaller::_()->init(Console::_()->getCliParameters())->run();
+        $options = Console::_()->getCliParameters();
+        if (empty($namespace)) {
+            $default = ['namespace' => 'Demo'];
+            $input = Console::_()->readLines($default, "enter your namespace[{namespace}]\n");
+            $options['namespace'] = $input['namespace'];
+        }
+        DuckPhpInstaller::_()->init($options)->run();
     }
     /**
      * run inner server.

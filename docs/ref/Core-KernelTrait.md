@@ -295,3 +295,9 @@ onInit
 
     protected function onBeforeChildrenInit()
 
+    public static function IsRoot()
+
+    public function _IsRoot()
+
+    protected function onInited()
+

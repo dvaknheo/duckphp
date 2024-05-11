@@ -127,3 +127,5 @@ EOT;
 
     public function getCallback($group, $cmd_method)
 
+    public function getArgs()
+

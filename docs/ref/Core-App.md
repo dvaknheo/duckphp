@@ -130,3 +130,7 @@ HTML编码函数
 
 
 
+    public static function OnEvent($event, $callback)
+
+    public static function FireEvent($event, ...$args)
+

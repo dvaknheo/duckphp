@@ -186,3 +186,7 @@
 
     public function getProjectPathFromClass($class, $use_parent_namespace = true)
 
+    public function _PathForProject()
+
+    public function _PathForRuntime()
+

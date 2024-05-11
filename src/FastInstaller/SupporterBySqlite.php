@@ -6,23 +6,41 @@
 namespace DuckPhp\FastInstaller;
 
 use DuckPhp\Component\DbManager;
+use DuckPhp\Core\App;
 
 class SupporterBySqlite extends Supporter
 {
     /////////////////////////////////
+    public function getRuntimePath()
+    {
+        //TODO to helper ,PathOfRuntime
+        $path = static::SlashDir(App::Root()->options['path']);
+        $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
+        return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
+    }
+    
     public function readDsnSetting($options)
     {
         $dsn = $options['dsn'] ?? '';
-        $options['file'] = substr($dsn, strlen('sqlite:'));
+        $file = substr($dsn, strlen('sqlite:'));
+        $file = $file? $file :"database.db" ; //or porject namespace ? // if is local,independent ,else database.db
+        $path = $this->getRuntimePath();
+        if (substr($file, 0, strlen($path)) === $path) {
+            $file = substr($file, strlen($path));
+        }
+        $options['file'] = $file;
         return $options;
     }
     public function writeDsnSetting($options)
     {
         $options = array_map('trim', $options);
         $options = array_map('addslashes', $options);
-        
-        $dsn = "sqlite:{$options['file']}";
-        
+        $file = $options['file'];
+        $path = $this->getRuntimePath();
+        if (!static::IsAbsPath($file)) {
+            $file = $path.$file;
+        }
+        $dsn = "sqlite:$file";
         $options['dsn'] = $dsn;
         unset($options['file']);
         
@@ -58,8 +76,10 @@ class SupporterBySqlite extends Supporter
     }
     public function getInstallDesc()
     {
+        $path = $this->getRuntimePath();
         $desc = <<<EOT
 ----
+    path base [$path]
     database filename: [{file}] 
 EOT;
         return $desc;
