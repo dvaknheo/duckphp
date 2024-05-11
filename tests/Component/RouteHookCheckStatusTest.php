@@ -24,16 +24,16 @@ class RouteHookCheckStatusTest extends \PHPUnit\Framework\TestCase
         DuckPhp::_()->init($options);
         
         $options = [
-            'maintain_view' => null,
-            'need_install_view' => null,
+            'error_maintain' => null,
+            'error_need_install' => null,
         ];
         //RouteHookCheckStatus::_(new RouteHookCheckStatus())->init($options, App::_());
         DuckPhp::_()->run();
-        //RouteHookCheckStatus::_()->options['maintain_view']=true;
+        //RouteHookCheckStatus::_()->options['error_maintain']=true;
         DuckPhp::_()->options['is_maintain']=true;
         DuckPhp::_()->run();
-        RouteHookCheckStatus::_()->options['maintain_view'] = 'view_maintain';
-        DuckPhp::_()->options['maintain_view'] = 'view_maintain';
+        RouteHookCheckStatus::_()->options['error_maintain'] = 'view_maintain';
+        DuckPhp::_()->options['error_maintain'] = 'view_maintain';
         
         DuckPhp::_()->run();
         ///////////////
@@ -41,10 +41,10 @@ class RouteHookCheckStatusTest extends \PHPUnit\Framework\TestCase
         echo "111111111111111111111111111111111111111111111111";
         DuckPhp::_()->options['need_install']=true;
         DuckPhp::_()->options['install']=false;
-        RouteHookCheckStatus::_()->options['need_install_view']='view_need_install';
+        RouteHookCheckStatus::_()->options['error_need_install']='view_need_install';
         DuckPhp::_()->run();
         echo "2222222222222222222222222222222222222222222222";
-        RouteHookCheckStatus::_()->options['need_install_view']=null;
+        RouteHookCheckStatus::_()->options['error_need_install']=null;
         DuckPhp::_()->run();
 
         

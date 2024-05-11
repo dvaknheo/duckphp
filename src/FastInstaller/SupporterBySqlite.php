@@ -23,10 +23,14 @@ class SupporterBySqlite extends Supporter
     {
         $dsn = $options['dsn'] ?? '';
         $file = substr($dsn, strlen('sqlite:'));
-        $file = $file? $file :"database.db" ; //or porject namespace ? // if is local,independent ,else database.db
-        $path = $this->getRuntimePath();
-        if (substr($file, 0, strlen($path)) === $path) {
-            $file = substr($file, strlen($path));
+        
+        if (!$file) {
+            $flag = App::Current()->options['local_database'] ?? false;
+            if ($flag) {
+                $file = str_replace("\\", '-', App::Current()->options['namespace']) . '.db';
+            } else {
+                $file = 'database.db';
+            }
         }
         $options['file'] = $file;
         return $options;
@@ -36,10 +40,7 @@ class SupporterBySqlite extends Supporter
         $options = array_map('trim', $options);
         $options = array_map('addslashes', $options);
         $file = $options['file'];
-        $path = $this->getRuntimePath();
-        if (!static::IsAbsPath($file)) {
-            $file = $path.$file;
-        }
+        
         $dsn = "sqlite:$file";
         $options['dsn'] = $dsn;
         unset($options['file']);
@@ -79,7 +80,7 @@ class SupporterBySqlite extends Supporter
         $path = $this->getRuntimePath();
         $desc = <<<EOT
 ----
-    path base [$path]
+    base dir: [$path]
     database filename: [{file}] 
 EOT;
         return $desc;

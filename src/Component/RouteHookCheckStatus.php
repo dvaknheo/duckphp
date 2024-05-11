@@ -16,8 +16,8 @@ class RouteHookCheckStatus extends ComponentBase
     public $options = [
         //'need_install' => false,
         //'is_maintain' =>false,
-        'maintain_view' => null,
-        'need_install_view' => null,
+        'error_maintain' => null,
+        'error_need_install' => null,
     ];
     public static function Hook($path_info)
     {
@@ -32,20 +32,46 @@ class RouteHookCheckStatus extends ComponentBase
     public function doHook($path_info)
     {
         if (App::Setting('duckphp_is_maintain', false) || (App::Current()->options['is_maintain'] ?? false)) {
-            if ($this->options['maintain_view'] ?? false) {
-                View::Show([], $this->options['maintain_view']);
+            $error_maintain = $this->options['error_maintain'] ?? null;
+            if (!is_string($error_maintain) && is_callable($error_maintain)) {
+                ($error_maintain)();
                 return true;
-            } else {
-                DuckPhpSystemException::ThrowOn(true, 'Maintainning');
             }
+            if (!$error_maintain) {
+                $this->showMaintain();
+                return true;
+            }
+            View::_(new View())->init(App::Current()->options, App::Current());
+            View::Show([], $error_maintain);
+            return true;
         }
         if ((App::Current()->options['need_install'] ?? false) && !App::Current()->isInstalled()) {
-            if ($this->options['need_install_view'] ?? false) {
-                View::Show([], $this->options['need_install_view']);
+            $error_need_install = $this->options['error_need_install'] ?? null;
+            if (!is_string($error_need_install) && is_callable($error_need_install)) {
+                ($error_need_install)();
                 return true;
-            } else {
-                DuckPhpSystemException::ThrowOn(true, 'Need Install');
             }
+            if (!$error_need_install) {
+                $this->showNeedInstall();
+                return true;
+            }
+            View::_(new View())->init(App::Current()->options, App::Current());
+            View::Show([], $error_need_install);
+            return true;
         }
+    }
+    protected function showMaintain()
+    {
+        $str = <<<EOT
+(Todo: a beautiful page ) Maintaining. <!-- set options['error_maintain'] to override -->
+EOT;
+        echo $str;
+    }
+    protected function showNeedInstall()
+    {
+        $str = <<<EOT
+(Todo: a beautiful page ) Need Install. <!-- set options['error_need_install'] to override -->
+EOT;
+        echo $str;
     }
 }

@@ -5,6 +5,7 @@
  */
 namespace DuckPhp\Component;
 
+use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Logger;
 use DuckPhp\Db\Db;
@@ -51,8 +52,6 @@ class DbManager extends ComponentBase
     //@override
     protected function initContext(object $context)
     {
-        //$this->context_class = $context
-        //$this->context()->_Setting();
         $setting = $context->_Setting(); /** @phpstan-ignore-line */
         
         if ($this->options['database_list_reload_by_setting']) {
@@ -117,15 +116,30 @@ class DbManager extends ComponentBase
             if ($db_config === null) {
                 throw new \ErrorException('DuckPhp: setting database_list['.$tag.'] missing');
             }
-            $db = $this->getDb($db_config);
+            $db = $this->createDatabaseObject($db_config);
             
             $this->databases[$tag] = $db;
         }
         return $this->databases[$tag];
     }
-    protected function getDb($db_config)
+    public function getRuntimePath()
     {
-        // todo $db = (clone Db::_())->init([...$db_config 'log_func'=>static::class.'::OnQuery']);
+        //TODO to helper ,PathOfRuntime
+        $path = static::SlashDir(App::Root()->options['path']);
+        $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
+        return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
+    }
+    protected function createDatabaseObject($db_config)
+    {
+        $last_cwd = null;
+        // fix
+        if ($this->options['database_driver'] === 'sqlite') {
+            $last_cwd = getcwd();
+
+            $path_runtime = $this->getRuntimePath();
+            chdir($path_runtime);
+        }
+        
         if (empty($this->options['database_class'])) {
             $db = new Db();
         } else {
@@ -136,6 +150,11 @@ class DbManager extends ComponentBase
         if ($this->options['database_log_sql_query'] && is_callable([$db,'setBeforeQueryHandler'])) {
             $db->setBeforeQueryHandler([static::class, 'OnQuery']);
         }
+        
+        if ($this->options['database_driver'] === 'sqlite') {
+            chdir($last_cwd?$last_cwd:'');
+        }
+        
         return $db;
     }
     public function _DbForWrite()
