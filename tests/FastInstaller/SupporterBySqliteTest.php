@@ -13,12 +13,15 @@ class SupporterBySqliteTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(SupporterBySqlite::class);
         $path_app = \LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
+        
         $file = $path_app.'data.sqlite';
-        @unlink($file);
+        
+        //@unlink($file);
         $options =[
+            'path_runtime' => $path_app,
             'database_driver'=>'sqlite',
             'database_list' =>[
-                ['dsn'=>'sqlite:'.$file]
+                ['dsn'=>'sqlite:'.$file],
             ],
         ];
         DuckPhp::_()->init($options);
@@ -27,6 +30,9 @@ class SupporterBySqliteTest extends \PHPUnit\Framework\TestCase
         Supporter::Current()->getInstallDesc();
         $t = Supporter::Current()->readDsnSetting($options['database_list'][0]);
         Supporter::Current()->writeDsnSetting($t);
+        $t = Supporter::Current()->readDsnSetting([]);
+        Supporter::Current()->writeDsnSetting($t);
+        
         Supporter::Current()->getAllTable();
         Supporter::Current()->getSchemeByTable('table');
         

@@ -69,7 +69,9 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
     DbManager::Db()->execute($sql);
         $sql= 'DROP TABLE IF EXISTS `new_pty`';
     DbManager::Db()->execute($sql);
-        //@unlink($sql_file);
+        
+        $sql_file = $path_app.'config/mysql.sql';
+        @unlink($sql_file);
 
         ////]]]]
         \LibCoverage\LibCoverage::End();

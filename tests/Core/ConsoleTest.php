@@ -124,6 +124,10 @@ EOT;
         $ret=ConsoleParent::_()->readLines($options,$desc,[],$input,$output);
         fclose($input);
         fclose($output);
+        ConsoleParent::_()->getArgs();
+        
+        @unlink($path.'output.txt');
+        
         \LibCoverage\LibCoverage::End();
     }
 }

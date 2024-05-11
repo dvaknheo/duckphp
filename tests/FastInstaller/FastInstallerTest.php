@@ -108,7 +108,8 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         $_SERVER['argv']=['-','install', '--force','--skip-sql'];
 
         FiParentApp::_()->run();
-        
+        @unlink($path_app.'FiParent.config.php');
+        @rmdir($path_app);
         $_SERVER = $__SERVER;
         \LibCoverage\LibCoverage::End(); return;
 

@@ -9,6 +9,34 @@ use DuckPhp\Core\ComponentBase;
 use DuckPhp\HttpServer\HttpServer;
 use DuckPhp\DuckPhp;
 
+class CommandConsole extends Console
+{
+    public $file_index=99999;
+    public $datas = [];
+    public function setFileContents($datas)
+    {
+        $this->datas =$datas;
+        $this->file_index = 0;
+    }
+    public function readLines($options, $desc, $validators = [], $fp_in = null, $fp_out = null)
+    {
+        if($fp_in){
+            return parent::readLines($options, $desc, $validators, $fp_in, $fp_out);
+        }
+        $str = $this->datas[$this->file_index];
+        $fp_in = fopen('php://memory','r+');
+        fputs($fp_in, $str);
+        fseek($fp_in,0);
+        $fp_out = fopen('php://temp','w');
+        $ret = parent::readLines($options, $desc, $validators, $fp_in, $fp_out);
+        $this->file_index++;
+        fclose($fp_out);
+        fclose($fp_in);
+        
+        return $ret;
+    }
+    
+}
 
 class CommandTest extends \PHPUnit\Framework\TestCase
 {
@@ -16,6 +44,7 @@ class CommandTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(Command::class);
         $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
+        $__SERVER = $_SERVER;
         $_SERVER['argv']=[];
 
         DuckPhp::_()->init([
@@ -37,7 +66,13 @@ class CommandTest extends \PHPUnit\Framework\TestCase
         $_SERVER['argv']=[
             '-','new',
         ];
+        $options = Console::_()->options;
+        Console::_(CommandConsole::_())->reInit($options,DuckPhp::_());
+        
         DuckPhpInstaller::_(Console_Installer::_());
+        $str= "Xns\n";
+        CommandConsole::_()->setFileContents([$str]);
+        
         DuckPhp::_()->run();
         
         $_SERVER['argv']=[
@@ -82,6 +117,8 @@ class CommandTest extends \PHPUnit\Framework\TestCase
         
         
         @unlink($path_app.'Command.config.php');
+        
+        $_SERVER = $__SERVER;
         \LibCoverage\LibCoverage::End();return;
     }
 }
@@ -90,6 +127,7 @@ class Console_Installer extends DuckPhpInstaller
 {
     public function run()
     {
+        var_dump($this->options['namespace']);
         return true;
     }
 }

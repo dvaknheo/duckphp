@@ -103,9 +103,8 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         CoreHelper::PhaseCall('z',function(){echo App::Phase();},123);
         CoreHelper::PhaseCall('',function(){echo App::Phase();},123);
         
-        CoreHelper::_()->getProjectPath();
-        CoreHelper::_()->getRuntimePath();
-        CoreHelper::_()->getProjectPathFromClass(App::class,true);
+        CoreHelper::_()->_PathForRuntime();
+        CoreHelper::_()->_PathForProject();
 
         \LibCoverage\LibCoverage::End();
 
