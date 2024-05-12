@@ -23,20 +23,31 @@ class SupporterBySqliteTest extends \PHPUnit\Framework\TestCase
             'database_list' =>[
                 ['dsn'=>'sqlite:'.$file],
             ],
+            
         ];
         DuckPhp::_()->init($options);
         $this->makeData();
      
         Supporter::Current()->getInstallDesc();
+     
         $t = Supporter::Current()->readDsnSetting($options['database_list'][0]);
         Supporter::Current()->writeDsnSetting($t);
-        $t = Supporter::Current()->readDsnSetting([]);
-        Supporter::Current()->writeDsnSetting($t);
+
         
         Supporter::Current()->getAllTable();
         Supporter::Current()->getSchemeByTable('table');
-        
+
         @unlink($file);
+        
+        
+        
+        DuckPhp::Current()->options['local_database']= true;
+        $t = Supporter::Current()->readDsnSetting([]);
+        DuckPhp::Current()->options['local_database']= false;
+        $t = Supporter::Current()->readDsnSetting([]);
+
+        
+        //@unlink($file2);
         
         \LibCoverage\LibCoverage::End();
     }

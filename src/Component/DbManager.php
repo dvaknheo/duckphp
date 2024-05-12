@@ -122,7 +122,7 @@ class DbManager extends ComponentBase
         }
         return $this->databases[$tag];
     }
-    public function getRuntimePath()
+    protected function getRuntimePath()
     {
         //TODO to helper ,PathOfRuntime
         $path = static::SlashDir(App::Root()->options['path']);

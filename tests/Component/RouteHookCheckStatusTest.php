@@ -34,9 +34,13 @@ class RouteHookCheckStatusTest extends \PHPUnit\Framework\TestCase
         DuckPhp::_()->run();
         RouteHookCheckStatus::_()->options['error_maintain'] = 'view_maintain';
         DuckPhp::_()->options['error_maintain'] = 'view_maintain';
-        
         DuckPhp::_()->run();
+        
+        RouteHookCheckStatus::_()->options['error_maintain'] = function(){echo 'hit!';};
+        DuckPhp::_()->run();
+
         ///////////////
+
         DuckPhp::_()->options['is_maintain']=false;
         echo "111111111111111111111111111111111111111111111111";
         DuckPhp::_()->options['need_install']=true;
@@ -45,6 +49,8 @@ class RouteHookCheckStatusTest extends \PHPUnit\Framework\TestCase
         DuckPhp::_()->run();
         echo "2222222222222222222222222222222222222222222222";
         RouteHookCheckStatus::_()->options['error_need_install']=null;
+        DuckPhp::_()->run();
+        RouteHookCheckStatus::_()->options['error_need_install']=function(){echo 'hit!';};
         DuckPhp::_()->run();
 
         

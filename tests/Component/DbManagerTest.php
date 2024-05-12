@@ -31,7 +31,7 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         'db_before_get_object_handler'=>[null,'beforeGet'],
         
         'database_list'=> $database_list,
-            'database_class' => MyDb::class,
+        'database_class' => MyDb::class,
 
         ];
         
@@ -117,7 +117,26 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         }catch(\Exception $ex){
         }
         DbManager::_(new DbManager())->init($options,App::_());
-
+        
+        
+        
+        $options=[
+            'database_log_sql_query'=>true,
+            'database_driver' => 'sqlite',
+            'database' => null,
+            'database_list' => [[
+                'dsn'=>'sqlite:database.db',
+                'username'=>'',
+                'password'=>'',
+            ]],
+            'database_list_reload_by_setting'=>false,
+        ];
+        $path_runtime = \LibCoverage\LibCoverage::G()->getClassTestPath(DbManager::class);
+        App::_()->options['path_runtime'] = $path_runtime;
+        DbManager::_(new DbManager())->init($options,App::_());
+        App::Db();
+        
+        @unlink($path_runtime.'database.db');
         \LibCoverage\LibCoverage::End();
 
     }
