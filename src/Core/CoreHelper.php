@@ -286,14 +286,4 @@ class CoreHelper extends ComponentBase
         
         throw new $exception_class($message, $code);
     }
-    public function _PathForProject()
-    {
-        return App::Root()->options['path'];
-    }
-    public function _PathForRuntime()
-    {
-        $path = static::SlashDir(App::Root()->options['path']);
-        $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
-        return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
-    }
 }

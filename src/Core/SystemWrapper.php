@@ -126,6 +126,7 @@ class SystemWrapper extends ComponentBase
         if (headers_sent()) {
             return;
         }
+        $output = $output? $output: '--'; // fix system error;
         header($output, $replace, $http_response_code);
         return;
         // @codeCoverageIgnoreEnd
