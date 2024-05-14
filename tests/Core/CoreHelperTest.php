@@ -64,7 +64,7 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         CoreHelper::Show302('https://www.baidu.com/');
         CoreHelper::Show404();
         CoreHelper::_()->options['is_debug']=true;
-        CoreHelper::ShowJson($ret);
+        CoreHelper::ShowJson(['date'=>DATE(DATE_ATOM)]);
         
         CoreHelper::XpCall(function(){return "abc";});
         CoreHelper::XpCall(function(){ throw new \Exception('ex'); });
@@ -103,8 +103,7 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         CoreHelper::PhaseCall('z',function(){echo App::Phase();},123);
         CoreHelper::PhaseCall('',function(){echo App::Phase();},123);
         
-        CoreHelper::_()->_PathForRuntime();
-        CoreHelper::_()->_PathForProject();
+
 
         \LibCoverage\LibCoverage::End();
 

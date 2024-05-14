@@ -78,3 +78,5 @@ SimpleModelTrait  find 的返回结果是 数组，而不是当前类。
 
 
 
+    protected function update($id, $data, $key = null)
+

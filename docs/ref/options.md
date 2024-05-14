@@ -170,12 +170,18 @@
 + **'error_500' => NULL,** 
 
     500 错误处理的View或者回调，仅根应用有效   // [DuckPhp\Core\App](Core-App.md)
++ **'error_maintain' => NULL,** 
+
+       // [DuckPhp\Component\RouteHookCheckStatus](Component-RouteHookCheckStatus.md)
++ **'error_need_install' => NULL,** 
+
+       // [DuckPhp\Component\RouteHookCheckStatus](Component-RouteHookCheckStatus.md)
++ **'exception_for_project' => NULL,** 
+
+       // [DuckPhp\Core\App](Core-App.md)
 + **'exception_reporter' => NULL,** 
 
     异常报告类   // [DuckPhp\Core\App](Core-App.md)
-+ **'exception_reporter_for_class' => NULL,** 
-
-    异常报告仅针对的异常   // [DuckPhp\Core\App](Core-App.md)
 + **'ext' => array ( ),** 
 
        // [DuckPhp\Core\App](Core-App.md)
@@ -257,9 +263,6 @@
 + **'log_prefix' => 'DuckPhpLog',** 
 
     日志前缀   // [DuckPhp\Core\Logger](Core-Logger.md)
-+ **'maintain_view' => NULL,** 
-
-       // [DuckPhp\Component\RouteHookCheckStatus](Component-RouteHookCheckStatus.md)
 + 'middleware' => array ( ), 
 
     middelware 放的是回调列表   // [DuckPhp\Ext\MyMiddlewareManager](Ext-MyMiddlewareManager.md)
@@ -278,9 +281,6 @@
 + 'namespace_model' => '', 
 
     严格检查扩展，模型命名空间   // [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
-+ **'need_install_view' => NULL,** 
-
-       // [DuckPhp\Component\RouteHookCheckStatus](Component-RouteHookCheckStatus.md)
 + **'on_init' => NULL,** 
 
     初始化完成后处理回调   // [DuckPhp\Core\App](Core-App.md)
@@ -435,10 +435,10 @@
         404 错误处理的View或者回调，仅根应用有效
     - 'error_500' => NULL,
         500 错误处理的View或者回调，仅根应用有效
+    - 'exception_for_project' => NULL,
+        
     - 'exception_reporter' => NULL,
         异常报告类
-    - 'exception_reporter_for_class' => NULL,
-        异常报告仅针对的异常
     - 'ext' => array (   'DuckPhp\\Component\\RouteHookCheckStatus' => true,   'DuckPhp\\Component\\RouteHookRewrite' => true,   'DuckPhp\\Component\\RouteHookRouteMap' => true,   'DuckPhp\\Component\\RouteHookResource' => true, ),
         
     - 'ext_options_file' => 'config/DuckPhpApps.config.php',
@@ -502,10 +502,10 @@
         404 错误处理的View或者回调，仅根应用有效
     - 'error_500' => NULL,
         500 错误处理的View或者回调，仅根应用有效
+    - 'exception_for_project' => NULL,
+        
     - 'exception_reporter' => NULL,
         异常报告类
-    - 'exception_reporter_for_class' => NULL,
-        异常报告仅针对的异常
     - 'ext' => array ( ),
         
     - 'html_handler' => NULL,
@@ -647,9 +647,9 @@
     - 'path_info_compact_enable' => true,
         PATH_INFO 兼容模式
 + DuckPhp\Component\RouteHookCheckStatus
-    - 'maintain_view' => NULL,
+    - 'error_maintain' => NULL,
         
-    - 'need_install_view' => NULL,
+    - 'error_need_install' => NULL,
         
 + DuckPhp\Component\RouteHookRewrite
     - 'controller_url_prefix' => '',

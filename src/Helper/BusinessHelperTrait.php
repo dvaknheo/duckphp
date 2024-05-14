@@ -37,6 +37,14 @@ trait BusinessHelperTrait
     {
         return Cache::_($object);
     }
+    public static function PathForProject()
+    {
+        return App::_()->_PathForProject();
+    }
+    public static function PathForRuntime()
+    {
+        return App::_()->_PathForProject();
+    }
     public static function FireEvent($event, ...$args)
     {
         return EventManager::FireEvent($event, ...$args);

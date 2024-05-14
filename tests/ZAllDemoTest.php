@@ -27,17 +27,20 @@ class ZAllDemoTest extends \PHPUnit\Framework\TestCase
             'test/done'          => 95 ,
             'doc.php'            => 1329 ,
             ''                   => 1353 ,
-            'files'              => 10343 ,
+            'files'              => 9560 ,
             'demo.php'           => 406 ,
             'helloworld.php'     => 11,
             'just-route.php'     => 141,
             'api.php/test.index' => 339 ,
             'traditional.php'    => 397 ,
-            'rpc.php'            => 887,
+            'rpc.php'            => 743,
         ];
         $result = true;
         foreach($tests as $k => $len){
             $data = $this->curl_file_get_contents($host.$k);
+            
+            $data =str_replace(realpath(__DIR__.'/../'),'',$data);
+            
             $l=strlen($data);
             if($l!==$len){
                 echo "Failed: $k => $len($l) \n";

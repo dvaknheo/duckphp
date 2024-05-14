@@ -301,3 +301,5 @@ onInit
 
     protected function onInited()
 
+        'exception_for_project' => null,
+

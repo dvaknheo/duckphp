@@ -142,11 +142,17 @@ class AppWithAllOptions extends DuckPhp
         // 500 错误处理的View或者回调，仅根应用有效 (DuckPhp\Core\App)
         // $options['error_500'] = NULL;
 
+        //  (DuckPhp\Component\RouteHookCheckStatus)
+        // $options['error_maintain'] = NULL;
+
+        //  (DuckPhp\Component\RouteHookCheckStatus)
+        // $options['error_need_install'] = NULL;
+
+        //  (DuckPhp\Core\App)
+        // $options['exception_for_project'] = NULL;
+
         // 异常报告类 (DuckPhp\Core\App)
         // $options['exception_reporter'] = NULL;
-
-        // 异常报告仅针对的异常 (DuckPhp\Core\App)
-        // $options['exception_reporter_for_class'] = NULL;
 
         //  (DuckPhp\Core\App)
         // $options['ext'] = array ( );
@@ -181,17 +187,11 @@ class AppWithAllOptions extends DuckPhp
         // 日志前缀 (DuckPhp\Core\Logger)
         // $options['log_prefix'] = 'DuckPhpLog';
 
-        //  (DuckPhp\Component\RouteHookCheckStatus)
-        // $options['maintain_view'] = NULL;
-
         // 命名空间 (DuckPhp\Core\App, DuckPhp\Core\Route, DuckPhp\Ext\MiniRoute, DuckPhp\Ext\RouteHookApiServer, DuckPhp\Ext\StrictCheck)
         // $options['namespace'] = '';
 
         // 控制器命名空间 (DuckPhp\Core\Route, DuckPhp\Ext\MiniRoute, DuckPhp\Ext\StrictCheck)
         // $options['namespace_controller'] = 'Controller';
-
-        //  (DuckPhp\Component\RouteHookCheckStatus)
-        // $options['need_install_view'] = NULL;
 
         // 初始化完成后处理回调 (DuckPhp\Core\App)
         // $options['on_init'] = NULL;

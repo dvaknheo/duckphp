@@ -134,3 +134,11 @@ HTML编码函数
 
     public static function FireEvent($event, ...$args)
 
+    public static function PathForProject()
+
+    public function _PathForProject()
+
+    public static function PathForRuntime()
+
+    public function _PathForRuntime()
+

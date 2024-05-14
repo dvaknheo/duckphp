@@ -96,3 +96,7 @@ DbForWrite 对应 `database_list[0]`  DbForRead 对应 `database_list[1]`
 
         'database_driver' => '',
 
+    protected function getRuntimePath()
+
+    protected function createDatabaseObject($db_config)
+

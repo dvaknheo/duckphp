@@ -40,6 +40,11 @@ class BusinessHelperTraitTest extends \PHPUnit\Framework\TestCase
         try{
             BusinessHelper::UserService();
         }catch(\Exception $ex){}
+        
+        BusinessHelper::PathForRuntime();
+        BusinessHelper::PathForProject();
+
+        
         \LibCoverage\LibCoverage::End();
     }
 }

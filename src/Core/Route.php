@@ -492,7 +492,7 @@ trait Route_UrlManager
         } else {
             $basepath .= '/';
         }
-        $basepath  = ($basepath==='//')?'/': $basepath;
+        $basepath = ($basepath === '//')?'/': $basepath;
         $basepath .= $prefix;
         
         return $basepath;
