@@ -41,7 +41,7 @@ trait KernelTrait
         'use_env_file' => false,
         
         'exception_reporter' => null,
-        'exception_reporter_for_class' => null,
+        'exception_for_project' => null,
         
         'cli_command_classes' => [],
         'cli_command_prefix' => null,
@@ -205,7 +205,7 @@ trait KernelTrait
         }
         ExceptionManager::_()->init($exception_options, $this);
         if ($this->options['exception_reporter'] ?? null) {
-            $exception_class = $this->options['exception_reporter_for_class'] ?? \Exception::class;
+            $exception_class = $this->options['exception_for_project'] ?? \Exception::class;
             ExceptionManager::_()->assignExceptionHandler($exception_class, [$this->options['exception_reporter'], 'OnException']);
         }
     }

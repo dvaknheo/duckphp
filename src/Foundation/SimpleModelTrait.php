@@ -82,9 +82,9 @@ trait SimpleModelTrait
         $ret = DbManager::_()->_DbForWrite()->insertData($this->table(), $data);
         return $ret;
     }
-    protected function update($id, $data)
+    protected function update($id, $data, $key = null)
     {
-        $ret = DbManager::_()->_DbForWrite()->updateData($this->table(), $id, $data, $this->table_pk);
+        $ret = DbManager::_()->_DbForWrite()->updateData($this->table(), $id, $data, $key ?? $this->table_pk);
         
         return $ret;
     }
