@@ -70,7 +70,11 @@ EOT;
     protected function showNeedInstall()
     {
         $str = <<<EOT
-(Todo: a beautiful page ) Need Install. <!-- set options['error_need_install'] to override -->
+<pre>
+(Todo: a beautiful page ) Need Install.like this:
+`php cli.php install`
+</pre>
+<!-- set options['error_need_install'] to override -->
 EOT;
         echo $str;
     }

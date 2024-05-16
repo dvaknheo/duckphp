@@ -318,25 +318,25 @@ trait KernelTrait
     protected function initExtentions(array $exts, $use_main_options): void
     {
         foreach ($exts as $class => $options) {
-            try {
-                if ($options === false) {
-                    continue;
-                }
-                if ($options === true) {
-                    $options = ($use_main_options) ? $this->options : [];
-                }
-                $class = (string)$class;
-                if (!class_exists($class)) {
-                    continue;
-                }
-                $class::_()->init($options, $this);
-                if (!$use_main_options) {
-                    $this->_Phase(static::class);
-                }
-            } catch (\Throwable $ex) {
-                $phase = $this->_Phase($class);
-                throw $ex;
+            //try {
+            if ($options === false) {
+                continue;
             }
+            if ($options === true) {
+                $options = ($use_main_options) ? $this->options : [];
+            }
+            $class = (string)$class;
+            if (!class_exists($class)) {
+                continue;
+            }
+            $class::_()->init($options, $this);
+            if (!$use_main_options) {
+                $this->_Phase(static::class);
+            }
+            //} catch (\Throwable $ex) {
+            //    $phase = $this->_Phase($class);
+            //    throw $ex;
+            //}
         }
 
         return;
