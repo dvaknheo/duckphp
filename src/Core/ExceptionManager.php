@@ -78,6 +78,9 @@ class ExceptionManager extends ComponentBase
     }
     public function _CallException($ex)
     {
+        if (defined('__EXIT_EXCEPTION') && is_a($ex, __EXIT_EXCEPTION)) {
+            return;
+        }
         $t = $this->exceptionHandlers;
         $t = array_reverse($t);
         foreach ($t as $class => $callback) {

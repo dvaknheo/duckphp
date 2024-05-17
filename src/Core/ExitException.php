@@ -10,8 +10,8 @@ class ExitException extends DuckPhpSystemException
     //
     public static function Init()
     {
-        if (!defined('DUCKPHP_EXIT_EXCEPTION')) {
-            define('DUCKPHP_EXIT_EXCEPTION', static::class);
+        if (!defined('__EXIT_EXCEPTION')) {
+            define('__EXIT_EXCEPTION', static::class);
         }
     }
 }

@@ -114,10 +114,6 @@ class App extends ComponentBase
         // exception to root;
         $this->_Phase(get_class(App::Root())); //Important
         
-        if (defined('DUCKPHP_EXIT_EXCEPTION') && is_a($ex, DUCKPHP_EXIT_EXCEPTION)) {
-            return;
-        }
-        
         if ($this->options['default_exception_do_log']) {
             try {
                 Logger::_()->error('['.get_class($ex).']('.$ex->getMessage().')'.$ex->getMessage()."\n".$ex->getTraceAsString());

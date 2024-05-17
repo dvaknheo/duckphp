@@ -144,6 +144,10 @@ class SystemWrapper extends ComponentBase
         if ($this->system_wrapper_call_check(__FUNCTION__)) {
             return $this->system_wrapper_call(__FUNCTION__, func_get_args());
         }
+        if(defined('__EXIT_EXCEPTION')){
+            $exit = __EXIT_EXCEPTION;
+            throw new $exit('');
+        }
         exit($code);        // @codeCoverageIgnore
     }
     public function _set_exception_handler(callable $exception_handler)
