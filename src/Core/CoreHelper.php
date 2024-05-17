@@ -145,7 +145,7 @@ class CoreHelper extends ComponentBase
         }
         $a = [];
         foreach ($args as $k => $v) {
-            $a["{$k}"] = $v;
+            $a["{".$k."}"] = $v;
         }
         $ret = str_replace(array_keys($a), array_values($a), $str);
         return $ret;
