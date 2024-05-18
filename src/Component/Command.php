@@ -65,7 +65,9 @@ EOT;
             $class = str_replace('/', '\\', $options['http_server']);
             HttpServer::_($class::_());
         }
+        App::Current()->options['cli_enable'] = false;
         HttpServer::RunQuickly($options);
+        App::Current()->options['cli_enable'] = true;
     }
     /**
      * fetch a url. --uri=[???] ,--post=[postdata]
