@@ -2,6 +2,7 @@
 namespace tests\DuckPhp\Core;
 use DuckPhp\SingletonEx\SingletonExTrait;
 use DuckPhp\Core\SystemWrapper;
+use DuckPhp\Core\ExitException;
 
 class SystemWrapperTest extends \PHPUnit\Framework\TestCase
 {
@@ -52,6 +53,11 @@ public function doSystemWrapper()
     SystemWrapperObject::session_set_save_handler( $handler);
     
     SystemWrapperObject::mime_content_type('x.jpg');
+    
+    ExitException::Init();
+    try{
+    SystemWrapperObject::exit(-5);
+    }catch(\Exception $ex){}
     SystemWrapperObject::_()->system_wrapper_replace([
         'mime_content_type' =>function(){ echo "change!\n";},
         'header' =>function(){ echo "change!\n";},

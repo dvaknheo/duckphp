@@ -40,10 +40,10 @@ class AppWithAllOptions extends DuckPhp
         //  (DuckPhp\Core\App)
         // $options['cli_command_classes'] = array ( );
 
-        // 命令行,默认调用指令 (DuckPhp\Core\Console)
+        // 命令行,默认调用指令 (DuckPhp\Core\Console, DuckPhp\Ext\AutoReadLineConsole)
         // $options['cli_command_default'] = 'help';
 
-        //  (DuckPhp\Core\Console)
+        //  (DuckPhp\Core\Console, DuckPhp\Ext\AutoReadLineConsole)
         // $options['cli_command_group'] = array ( );
 
         //  (DuckPhp\Core\App)
@@ -288,6 +288,15 @@ class AppWithAllOptions extends DuckPhp
 
         // ---- 下面是默认未使用的扩展 ----
 
+        /*
+        $options['ext']['DuckPhp\\Ext\\AutoReadLineConsole'] = true;
+            // 【共享】命令行,默认调用指令
+            // $options['cli_command_default'] = 'help';
+
+            // 【共享】
+            // $options['cli_command_group'] = array ( );
+
+        //*/
         /*
         $options['ext']['DuckPhp\\Ext\\CallableView'] = true;
             // CallableView 限定于此类内 callable_view_class 。

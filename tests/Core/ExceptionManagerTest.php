@@ -2,6 +2,7 @@
 namespace tests\DuckPhp\Core;
 
 use DuckPhp\Core\ExceptionManager;
+use DuckPhp\Core\ExitException;
 
 class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
 {
@@ -31,12 +32,14 @@ class ExceptionManagerTest extends \PHPUnit\Framework\TestCase
         }
         $ex=new ExceptionManagerException("ABC",123);
         $ex2=new \Exception("ABCss",123);
-        
+        ExitException::Init();
+        $ex3=new ExitException("ABCss",123);
         ExceptionManager::_()->assignExceptionHandler(ExceptionManagerException::class, function($ex){
             var_dump("OK");
         });
         ExceptionManager::CallException($ex);
         ExceptionManager::CallException($ex2);
+        ExceptionManager::CallException($ex3);
         
         ExceptionManager::_()->clear();
         

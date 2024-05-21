@@ -55,10 +55,10 @@
        // [DuckPhp\Core\App](Core-App.md)
 + **'cli_command_default' => 'help',** 
 
-    命令行,默认调用指令   // [DuckPhp\Core\Console](Core-Console.md)
+    命令行,默认调用指令   // [DuckPhp\Core\Console](Core-Console.md), [DuckPhp\Ext\AutoReadLineConsole](Ext-AutoReadLineConsole.md)
 + **'cli_command_group' => array ( ),** 
 
-       // [DuckPhp\Core\Console](Core-Console.md)
+       // [DuckPhp\Core\Console](Core-Console.md), [DuckPhp\Ext\AutoReadLineConsole](Ext-AutoReadLineConsole.md)
 + **'cli_command_method_prefix' => 'command_',** 
 
        // [DuckPhp\Core\App](Core-App.md)
@@ -674,6 +674,11 @@
         文档路径
     - 'path_resource' => 'res',
         资源目录
++ DuckPhp\Ext\AutoReadLineConsole
+    - 'cli_command_default' => 'help',
+        命令行,默认调用指令
+    - 'cli_command_group' => array ( ),
+        
 + DuckPhp\Ext\CallableView
     - 'callable_view_class' => NULL,
         CallableView 限定于此类内 callable_view_class 。
