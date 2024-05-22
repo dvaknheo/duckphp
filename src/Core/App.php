@@ -63,7 +63,7 @@ class App extends ComponentBase
         unset($this->kernel_options); // not use again;
         unset($this->core_options); // not use again;
         unset($this->common_options); // not use again;
-        $this->phase = __CLASS__;
+        $this->phase = static::class;
     }
     public function version()
     {

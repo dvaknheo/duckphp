@@ -89,7 +89,7 @@ trait KernelTrait
     public static function Current()
     {
         $phase = static::Phase();
-        $class = $phase ? $phase : $this->phase;
+        $class = $phase ? $phase : static::class;
         return $class::_();
     }
     public static function Root()
@@ -177,7 +177,7 @@ trait KernelTrait
         
         /////////////
         foreach ($apps as $class => $object) {
-            $class = (string)$class;
+            $class = $class ? (string)$class: static::class;
             $class::_($object);
         }
         return false;
