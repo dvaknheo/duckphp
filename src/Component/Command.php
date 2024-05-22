@@ -41,7 +41,7 @@ EOT;
     /**
      * create new project in current diretory. --help for help
      */
-    public function command_new()
+    public function command_new($namespace)
     {
         //ifempty(readLines();
         $options = Console::_()->getCliParameters();
@@ -102,13 +102,6 @@ EOT;
         $ret = Console::_()->callObject($class, $method, $args, Console::_()->getCliParameters());
         echo "--result--\n";
         echo json_encode($ret);
-    }
-    /**
-     * show all routes
-     */
-    public function command_routes()
-    {
-        echo "Override this to use to show your project routes .\n";
     }
     /**
      * switch debug mode
