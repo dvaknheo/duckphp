@@ -75,8 +75,9 @@ trait KernelTrait
          //*/
     ];
     public $setting = [];
+    public $phase = null;
     protected $is_root = true;
-
+    
     public static function RunQuickly(array $options = [], callable $after_init = null): bool
     {
         $instance = static::_()->init($options);
@@ -88,7 +89,7 @@ trait KernelTrait
     public static function Current()
     {
         $phase = static::Phase();
-        $class = $phase ? $phase : static::class;
+        $class = $phase ? $phase : $this->phase;
         return $class::_();
     }
     public static function Root()
@@ -151,16 +152,18 @@ trait KernelTrait
             $this->onBeforeCreatePhases();
             $flag = PhaseContainer::ReplaceSingletonImplement();
             $container = PhaseContainer::GetContainer();
-            $container->setDefaultContainer(static::class);
-            $container->setCurrentContainer(static::class);
+            $container->setDefaultContainer($this->phase);
+            $container->setCurrentContainer($this->phase);
+            //TODO Move public containers to this;
             $this->onAfterCreatePhases();
         } else {
             $container = PhaseContainer::GetContainer();
-            $container->setCurrentContainer(static::class);
+            $container->setCurrentContainer($this->phase);
         }
         /////////////
         $apps = [];
         $apps[static::class] = $this;
+        $apps[$this->phase] = $this;
         if ($this->is_root) {
             $apps[self::class] = $this;
         }
@@ -221,7 +224,9 @@ trait KernelTrait
         if ($options['override_class'] ?? false) {
             $class = $options['override_class'];
             unset($options['override_class']);
-            $options['override_class_from'] = static::class;
+            $options['override_class_from'] = $this->phase;
+            $this->phase = $options['override_class_from'];
+            
             return $class::_(new $class)->init($options);
         }
         
@@ -262,8 +267,8 @@ trait KernelTrait
         
         if (PHP_SAPI === 'cli') {
             $cli_namespace = $this->options['cli_command_prefix'] ?? $this->options['namespace'];
-            $cli_namespace = $this->is_root ? '' : ($cli_namespace ? $cli_namespace : static::class);
-            $phase = static::class;
+            $cli_namespace = $this->is_root ? '' : ($cli_namespace ? $cli_namespace : $this->phase);
+            $phase = $this->phase;
             $classes = $this->options['cli_command_classes'] ?? [];
             $method_prefix = $this->options['cli_command_method_prefix'] ?? 'command_';
             Console::_()->regCommandClass($cli_namespace, $phase, $classes, $method_prefix);
@@ -331,7 +336,7 @@ trait KernelTrait
             }
             $class::_()->init($options, $this);
             if (!$use_main_options) {
-                $this->_Phase(static::class);
+                $this->_Phase($this->phase);
             }
             //} catch (\Throwable $ex) {
             //    $phase = $this->_Phase($class);
@@ -345,7 +350,7 @@ trait KernelTrait
     {
         $ret = false;
         $is_exceptioned = false;
-        $this->_Phase(static::class);
+        $this->_Phase($this->phase);
         if ($this->is_root) {
             (self::class)::_($this); // remark ,don't use self::_()!
         }
@@ -359,9 +364,9 @@ trait KernelTrait
                 $ret = Route::_()->run();
                 if (!$ret) {
                     $ret = $this->runExtentions();
-                    $this->_Phase(static::class);
+                    $this->_Phase($this->phase);
                     if (!$ret) {
-                        EventManager::FireEvent([static::class,'On404']);
+                        EventManager::FireEvent([$this->phase, 'On404']);
                     }
                     if (!$ret && $this->is_root && !($this->options['skip_404'] ?? false)) {
                         $this->_On404();
@@ -387,9 +392,9 @@ trait KernelTrait
             throw $ex;
         }
         ExceptionManager::CallException($ex);
-        if ($phase !== static::class) {
+        if ($phase !== $this->phase) {
             Runtime::_()->clear();
-            $this->_Phase(static::class);
+            $this->_Phase($this->phase);
         }
         Runtime::_()->last_phase = $phase;
         Runtime::_()->clear();
@@ -434,34 +439,34 @@ trait KernelTrait
     }
     protected function onBeforeCreatePhases()
     {
-        //EventManager::FireEvent([static::class,__FUNCTION__]);
+        //EventManager::FireEvent([$this->phase, __FUNCTION__]);
     }
     protected function onAfterCreatePhases()
     {
-        EventManager::FireEvent([static::class,__FUNCTION__]);
+        EventManager::FireEvent([$this->phase, __FUNCTION__]);
     }
     protected function onPrepare()
     {
-        EventManager::FireEvent([static::class,__FUNCTION__]);
+        EventManager::FireEvent([$this->phase, __FUNCTION__]);
     }
     protected function onBeforeChildrenInit()
     {
-        EventManager::FireEvent([static::class,__FUNCTION__]);
+        EventManager::FireEvent([$this->phase, __FUNCTION__]);
     }
     protected function onInit()
     {
-        EventManager::FireEvent([static::class,__FUNCTION__]);
+        EventManager::FireEvent([$this->phase, __FUNCTION__]);
     }
     protected function onInited()
     {
-        EventManager::FireEvent([static::class,__FUNCTION__]);
+        EventManager::FireEvent([$this->phase, __FUNCTION__]);
     }
     protected function onBeforeRun()
     {
-        EventManager::FireEvent([static::class,__FUNCTION__]);
+        EventManager::FireEvent([$this->phase, __FUNCTION__]);
     }
     protected function onAfterRun()
     {
-        EventManager::FireEvent([static::class,__FUNCTION__]);
+        EventManager::FireEvent([$this->phase, __FUNCTION__]);
     }
 }
