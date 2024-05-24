@@ -54,7 +54,15 @@ class RouteHookResource extends ComponentBase
         if (!is_file($full_file)) {
             return false;
         }
+        //$etag = md5(filemtime($full_file));
         SystemWrapper::header('Content-Type: '. SystemWrapper::mime_content_type($full_file));
+        
+        //SystemWrapper::header('Etag: '. $etag);
+        
+        //if (($etag ===($_SERVER['HTTP_IF_NONE_MATCH']?? ''))) {
+        //    SystemWrapper::header('done',true,304);
+        //    return true;
+        //}
         echo file_get_contents($full_file);
         return true;
     }
