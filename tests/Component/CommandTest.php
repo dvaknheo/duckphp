@@ -4,12 +4,13 @@ use DuckPhp\Component\Command;
 use DuckPhp\Component\DuckPhpInstaller;
 
 use DuckPhp\Core\Console;
+use DuckPhp\Ext\AutoReadLineConsole;
 use DuckPhp\Core\ComponentBase;
 
 use DuckPhp\HttpServer\HttpServer;
 use DuckPhp\DuckPhp;
 
-class CommandConsole extends Console
+class tAutoReadLineConsole extends Console
 {
     public $file_index=99999;
     public $datas = [];
@@ -67,11 +68,11 @@ class CommandTest extends \PHPUnit\Framework\TestCase
             '-','new',
         ];
         $options = Console::_()->options;
-        Console::_(CommandConsole::_())->reInit($options,DuckPhp::_());
+        Console::_(AutoReadLineConsole::_())->reInit($options,DuckPhp::_());
         
         DuckPhpInstaller::_(Console_Installer::_());
         $str= "Xns\n";
-        CommandConsole::_()->setFileContents([$str]);
+        AutoReadLineConsole::_()->fill([$str]);
         
         DuckPhp::_()->run();
         
@@ -110,11 +111,14 @@ class CommandTest extends \PHPUnit\Framework\TestCase
         ];
         DuckPhp::_()->run();
         
-        //$_SERVER['argv']=[
-        //    '-','debug', '--off'
-        //];
-        //DuckPhp::_()->run();
-        
+        $_SERVER['argv']=[
+            '-','new', '--namespace'
+        ];
+        DuckPhp::_()->run();
+        $_SERVER['argv']=[
+            '-','new'
+        ];
+        DuckPhp::_()->run();
         
         @unlink($path_app.'Command.config.php');
         

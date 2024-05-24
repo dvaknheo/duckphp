@@ -33,10 +33,12 @@ class AutoReadLineConsole extends Console
     }
     public function readLines($options, $desc, $validators = [], $fp_in = null, $fp_out = null)
     {
-        if ($this->is_logging || $fp_in || $fp_out) {
+        if ($fp_in || $fp_out) {
             $options = parent::readLines($options, $desc, $validators, $fp_in, $fp_out);
-            $input = $this->deCompileOptions($options, $desc);
-            $this->log = $input;
+            if ($this->is_logging) {
+                $input = $this->deCompileOptions($options, $desc);
+                $this->log = $input;
+            }
             return $options;
         }
         $str = $this->datas[$this->index];
@@ -54,7 +56,11 @@ class AutoReadLineConsole extends Console
         $this->index++;
         fclose($fp_out);
         fclose($fp_in);
-        
+        if ($this->is_logging) {
+            $input = $this->deCompileOptions($ret, $desc);
+            $this->log = $input;
+        }
+
         return $ret;
     }
     protected function deCompileOptions($options, $desc)
