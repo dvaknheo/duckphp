@@ -67,14 +67,17 @@ class GlobalAdmin extends ComponentBase
     //////////////////////
     public function urlForRegist($url_back = null, $ext = null)
     {
+        //return $this->service()->urlForLogout();
         throw new \ErrorException('DuckPhp: No Impelement');
     }
     public function urlForLogin($url_back = null, $ext = null)
     {
+        //return $this->service()->urlForLogout();
         throw new \ErrorException('DuckPhp: No Impelement');
     }
     public function urlForLogout($url_back = null, $ext = null)
     {
+        //return $this->service()->urlForLogout();
         throw new \ErrorException('DuckPhp: No Impelement');
     }
     public function urlForHome($url_back = null, $ext = null)

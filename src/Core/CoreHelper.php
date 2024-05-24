@@ -290,7 +290,7 @@ class CoreHelper extends ComponentBase
     {
         $callback($object, $arg);
         foreach ($object->options['app'] as $app => $options) {
-            $flag = $this->recursiveApps($app::_(), $callback, $arg);
+            $this->recursiveApps($app::_(), $callback, $arg);
         }
     }
     public function getAllAppClass()
@@ -298,14 +298,14 @@ class CoreHelper extends ComponentBase
         $ret = [];
         $this->recursiveApps(
             App::Root(),
-            function ($app, $ret) {
+            function ($app, &$ret) {
                 $ret[$app->phase] = get_class($app);
             },
             $ret
         );
         return $ret;
     }
-    public function dectactiveClassPhase(string $class)
+    public function guessPhase(string $class)
     {
         $all_class = $this->getAllAppClass();
         foreach ($all_class as $phase => $app_name) {
