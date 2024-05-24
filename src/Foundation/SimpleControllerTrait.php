@@ -52,7 +52,7 @@ trait SimpleControllerTrait
                 if ($class_base) {
                     if (\is_subclass_of(static::class, $class_base)) {
                         $is_controller = true;
-                    } else {
+                    } else { /** @phpstan-ignore-line */
                         $is_controller = false;
                     }
                 } else {
@@ -65,7 +65,7 @@ trait SimpleControllerTrait
             if ($class_base) {
                 if (\is_subclass_of(static::class, $class_base)) {
                     $is_controller = true;
-                } else {
+                } else { /** @phpstan-ignore-line */
                     $is_controller = false;
                 }
             } else {

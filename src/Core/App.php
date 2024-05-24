@@ -65,6 +65,13 @@ class App extends ComponentBase
         unset($this->common_options); // not use again;
         $this->phase = static::class;
     }
+    public static function _($object = null)
+    {
+        if ($object) {
+            static::_()->phase = $object->phase;
+        }
+        return PhaseContainer::GetObject(static::class, $object);
+    }
     public function version()
     {
         return '('.static::class.')'.static::VERSION;

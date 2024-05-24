@@ -9,7 +9,7 @@ use DuckPhp\Core\Console;
 
 class AutoReadLineConsole extends Console
 {
-    public $file_index = 0;
+    public $index = 0;
     public $datas = [];
     public $is_logging = false;
     public $log = '';
@@ -39,7 +39,7 @@ class AutoReadLineConsole extends Console
             $this->log = $input;
             return $options;
         }
-        $str = $this->datas[$this->file_index];
+        $str = $this->datas[$this->index];
         $fp_in = fopen('php://memory', 'r+');
         if (!$fp_in) {
             return; // @codeCoverageIgnore
@@ -51,7 +51,7 @@ class AutoReadLineConsole extends Console
             return; // @codeCoverageIgnore
         }
         $ret = parent::readLines($options, $desc, $validators, $fp_in, $fp_out);
-        $this->file_index++;
+        $this->index++;
         fclose($fp_out);
         fclose($fp_in);
         
@@ -68,7 +68,7 @@ class AutoReadLineConsole extends Console
                 continue;
             }
             $key = $m[1];
-            $ret.= $options[$key]."\n";
+            $ret .= $options[$key]."\n";
         }
         return $ret;
     }

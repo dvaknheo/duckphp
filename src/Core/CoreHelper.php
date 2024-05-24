@@ -286,4 +286,47 @@ class CoreHelper extends ComponentBase
         
         throw new $exception_class($message, $code);
     }
+    public function recursiveApps($object, $callback, &$arg)
+    {
+        $callback($object, $arg);
+        foreach ($object->options['app'] as $app => $options) {
+            $flag = $this->recursiveApps($app::_(), $callback, $arg);
+        }
+    }
+    public function getAllAppClass()
+    {
+        $ret = [];
+        $this->recursiveApps(
+            App::Root(),
+            function ($app, $ret) {
+                $ret[$app->phase] = get_class($app);
+            },
+            $ret
+        );
+        return $ret;
+    }
+    public function dectactiveClassPhase(string $class)
+    {
+        $all_class = $this->getAllAppClass();
+        foreach ($all_class as $phase => $app_name) {
+            $namespace = $app_name::_()->options['namespace'];
+            $prefix = $namespace .'\\';
+            if (substr($class, 0, strlen($prefix)) === $prefix) {
+                return $phase;
+            }
+        }
+        return App::Root()->phase;
+    }
+    public function formatString($str, $args)
+    {
+        if (empty($args)) {
+            return $str;
+        }
+        $a = [];
+        foreach ($args as $k => $v) {
+            $a["{".$k."}"] = $v;
+        }
+        $ret = str_replace(array_keys($a), array_values($a), $str);
+        return $ret;
+    }
 }
