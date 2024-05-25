@@ -6,7 +6,6 @@
 namespace DuckPhp\Core;
 
 use DuckPhp\Core\ComponentBase;
-use DuckPhp\Core\EventManager;
 use DuckPhp\Core\KernelTrait;
 use DuckPhp\Core\Logger;
 use DuckPhp\Core\Route;
@@ -292,32 +291,5 @@ EOT;
     public function isInstalled()
     {
         return $this->options['install'] ?? false;
-    }
-    public static function OnEvent($event, $callback)
-    {
-        return EventManager::_()->on($event, $callback);
-    }
-    public static function FireEvent($event, ...$args)
-    {
-        return EventManager::_()->fire($event, ...$args);
-    }
-
-    public static function PathForProject()
-    {
-        return static::_()->_PathForProject();
-    }
-    public function _PathForProject()
-    {
-        return App::Root()->options['path'];
-    }
-    public static function PathForRuntime()
-    {
-        return static::_()->_PathForRuntime();
-    }
-    public function _PathForRuntime()
-    {
-        $path = static::SlashDir(App::Root()->options['path']);
-        $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
-        return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
     }
 }

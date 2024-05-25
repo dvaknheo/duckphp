@@ -2,6 +2,7 @@
 namespace tests\DuckPhp\Helper;
 
 use DuckPhp\Helper\BusinessHelperTrait;
+use DuckPhp\Core\App;
 
 class BusinessHelperTraitTest extends \PHPUnit\Framework\TestCase
 {
@@ -41,8 +42,9 @@ class BusinessHelperTraitTest extends \PHPUnit\Framework\TestCase
             BusinessHelper::UserService();
         }catch(\Exception $ex){}
         
-        BusinessHelper::PathForRuntime();
-        BusinessHelper::PathForProject();
+        App::_()->init([]);
+        BusinessHelper::PathOfRuntime();
+        BusinessHelper::PathOfProject();
 
         
         \LibCoverage\LibCoverage::End();

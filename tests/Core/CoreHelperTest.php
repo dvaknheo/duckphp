@@ -90,6 +90,10 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         }catch(\Throwable $ex){}
         
         echo CoreHelper::Json($data);
+        CoreHelper::PathOfProject();
+        CoreHelper::PathOfRuntime();
+        
+        
         $options = ['is_debug'=>true, 
             'html_handler'=>function(&$str){return "<".$str.">";},
             'lang_handler'=> function($str,$args=[]){ return "lang:".$str.";";},

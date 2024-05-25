@@ -37,13 +37,13 @@ trait BusinessHelperTrait
     {
         return Cache::_($object);
     }
-    public static function PathForProject()
+    public static function PathOfProject()
     {
-        return App::_()->_PathForProject();
+        return CoreHelper::_()->_PathOfProject();
     }
-    public static function PathForRuntime()
+    public static function PathOfRuntime()
     {
-        return App::_()->_PathForRuntime();
+        return CoreHelper::_()->_PathOfRuntime();
     }
     public static function FireEvent($event, ...$args)
     {

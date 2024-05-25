@@ -23,6 +23,9 @@ class Helper
         BusinessHelperTrait::FireEvent insteadof ControllerHelperTrait;
         BusinessHelperTrait::OnEvent insteadof ControllerHelperTrait;
         BusinessHelperTrait::OnEvent insteadof AppHelperTrait;
+        BusinessHelperTrait::FireEvent insteadof AppHelperTrait;
+        BusinessHelperTrait::PathOfProject insteadof AppHelperTrait;
+        BusinessHelperTrait::PathOfRuntime insteadof AppHelperTrait;
         ControllerHelperTrait::header insteadof AppHelperTrait;
         ControllerHelperTrait::setcookie  insteadof AppHelperTrait;
         ControllerHelperTrait::exit  insteadof AppHelperTrait;

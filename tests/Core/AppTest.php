@@ -223,11 +223,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::_()->run();
         ////]]]]
         echo "-------111111111111-----------\n";
-        App::OnEvent('abc',function(){var_dump(DATE(DATE_ATOM));});
-        App::FireEvent('abc');
-        
-        App::PathForRuntime();
-        App::PathForProject();
+
         
         \LibCoverage\LibCoverage::G($this->LibCoverage);
         \LibCoverage\LibCoverage::End();

@@ -113,7 +113,14 @@ class CoreHelper extends ComponentBase
     {
         return static::_()->_ControllerThrowOn($flag, $message, $code, $exception_class);
     }
-
+    public static function PathOfProject()
+    {
+        return static::_()->_PathOfProject();
+    }
+    public static function PathOfRuntime()
+    {
+        return static::_()->_PathOfRuntime();
+    }
     ////////////////////////////////////////////
     public function _H(&$str)
     {
@@ -289,6 +296,16 @@ class CoreHelper extends ComponentBase
         $exception_class = $exception_class ?? (App::Current()->options['exception_for_controller'] ?? (App::Current()->options['exception_for_project'] ?? \Exception::class));
         
         throw new $exception_class($message, $code);
+    }
+    public function _PathOfProject()
+    {
+        return App::Root()->options['path'];
+    }
+    public function _PathOfRuntime()
+    {
+        $path = static::SlashDir(App::Root()->options['path']);
+        $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
+        return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
     }
     public function recursiveApps($app_class, $callback, &$arg)
     {

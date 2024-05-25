@@ -10,6 +10,7 @@ use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookRewrite;
 use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Core\Console;
+use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\EventManager;
 use DuckPhp\Core\ExceptionManager;
 use DuckPhp\Core\Route;
@@ -164,5 +165,33 @@ trait AppHelperTrait
     public static function getCliParameters()
     {
         return Console::_()->getCliParameters();
+    }
+    public static function FireEvent($event, ...$args)
+    {
+        return EventManager::FireEvent($event, ...$args);
+    }
+    public static function OnEvent($event, $callback)
+    {
+        return EventManager::OnEvent($event, $callback);
+    }
+    public static function PathOfProject()
+    {
+        return CoreHelper::_()->_PathOfProject();
+    }
+    public static function PathOfRuntime()
+    {
+        return CoreHelper::_()->_PathOfRuntime();
+    }
+    public static function recursiveApps($app_class, $callback, &$arg)
+    {
+        return CoreHelper::_()->recursiveApps($app_class, $callback, $arg);
+    }
+    public static function getAllAppClass()
+    {
+        return CoreHelper::_()->getAllAppClass();
+    }
+    public static function getAppClassByComponent(string $class)
+    {
+        return CoreHelper::_()->getAppClassByComponent($class);
     }
 }

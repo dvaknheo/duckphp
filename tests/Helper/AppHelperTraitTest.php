@@ -88,6 +88,14 @@ class AppHelperTraitTest extends \PHPUnit\Framework\TestCase
         AppHelper::RemoveEvent('nullEnvent');
         AppHelper::getCliParameters();
         ////]]]]
+                
+        AppHelper::OnEvent('MyEvent',function(){});
+        AppHelper::FireEvent('MyEvent',function(){});
+        AppHelper::PathOfProject();
+        AppHelper::PathOfRuntime();
+        AppHelper::getAllAppClass();
+        AppHelper::getAppClassByComponent(static::class);
+        AppHelper::recursiveApps(null,function($class,$ret){},$ret);
         \LibCoverage\LibCoverage::End();
 
     }
