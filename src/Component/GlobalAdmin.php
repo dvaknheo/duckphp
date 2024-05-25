@@ -10,6 +10,10 @@ use DuckPhp\Core\ComponentBase;
 
 class GlobalAdmin extends ComponentBase
 {
+    const EVENT_REGISTED = 'registed';
+    const EVENT_LOGINED = 'logined';
+    const EVENT_LOGOUTED = 'logouted';
+    
     use ZCallTrait;
     public function checkLogin()
     {
@@ -39,7 +43,7 @@ class GlobalAdmin extends ComponentBase
     {
         throw new \ErrorException('DuckPhp: No Impelement');
     }
-    /////////////
+    ///////////////
     public function isSuper()
     {
         $this->checkLogin();
@@ -67,7 +71,7 @@ class GlobalAdmin extends ComponentBase
     //////////////////////
     public function urlForRegist($url_back = null, $ext = null)
     {
-        //return $this->service()->urlForLogout();
+        //return $this->service()->urlForRegist();
         throw new \ErrorException('DuckPhp: No Impelement');
     }
     public function urlForLogin($url_back = null, $ext = null)
@@ -82,19 +86,23 @@ class GlobalAdmin extends ComponentBase
     }
     public function urlForHome($url_back = null, $ext = null)
     {
+        //return $this->service()->urlForLogout();
         throw new \ErrorException('DuckPhp: No Impelement');
     }
     //////////////////////
     public function regist($post)
     {
+        //return $this->service()->urlForLogout();
         throw new \ErrorException('DuckPhp: No Impelement');
     }
     public function login($post)
     {
+        //return $this->service()->urlForLogout();
         throw new \ErrorException('DuckPhp: No Impelement');
     }
     public function logout($post)
     {
+        //return $this->service()->urlForLogout();
         throw new \ErrorException('DuckPhp: No Impelement');
     }
 }

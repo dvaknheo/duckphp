@@ -182,9 +182,9 @@ trait AppHelperTrait
     {
         return CoreHelper::_()->_PathOfRuntime();
     }
-    public static function recursiveApps(&$arg, $callback, ?string $app_class=null)
+    public static function recursiveApps(&$arg, $callback, ?string $app_class = null)
     {
-        return CoreHelper::_()->recursiveApps($arg, $callback,$app_class);
+        return CoreHelper::_()->recursiveApps($arg, $callback, $app_class);
     }
     public static function getAllAppClass()
     {
@@ -193,5 +193,9 @@ trait AppHelperTrait
     public static function getAppClassByComponent(string $class)
     {
         return CoreHelper::_()->getAppClassByComponent($class);
+    }
+    public static function regExtCommandClass(string $class)
+    {
+        return CoreHelper::_()->regExtCommandClass($class);
     }
 }

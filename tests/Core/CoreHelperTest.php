@@ -132,6 +132,8 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         echo "\n";
         echo CoreHelper::_()->getAppClassByComponent('NoExits');
         echo "\n";
+            echo CoreHelper::_()->regExtCommandClass(CoreHelperCommand::class);
+
         //*/
         ////]]]]
         \LibCoverage\LibCoverage::End();
@@ -154,6 +156,11 @@ class SubCoreHelperApp1 extends App
 class SubCoreHelperApp2 extends App
 {
 }
-class CoreHelperComponent{
+class CoreHelperComponent
+{
+    //
+}
+class CoreHelperCommand
+{
     //
 }

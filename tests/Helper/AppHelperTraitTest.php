@@ -97,6 +97,7 @@ class AppHelperTraitTest extends \PHPUnit\Framework\TestCase
         AppHelper::getAppClassByComponent(static::class);
         $ret=[];
         AppHelper::recursiveApps($ret,function($class,&$ret){$ret[]=$class;});
+        AppHelper::regExtCommandClass(static::class);
         \LibCoverage\LibCoverage::End();
 
     }
