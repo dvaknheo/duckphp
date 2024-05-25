@@ -142,3 +142,5 @@ HTML编码函数
 
     public function _PathForRuntime()
 
+    public static function _($object = null)
+

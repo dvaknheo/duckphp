@@ -48,3 +48,7 @@ ControllerHelperTrait 相比比 BusinessHelperTrait 少了 Cache()
 
     public static function PathForRuntime()
 
+    public static function PathOfProject()
+
+    public static function PathOfRuntime()
+

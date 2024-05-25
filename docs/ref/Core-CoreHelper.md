@@ -190,3 +190,21 @@
 
     public function _PathForRuntime()
 
+    public static function PathOfProject()
+
+    public static function PathOfRuntime()
+
+    public function formatString($str, $args)
+
+    public function _PathOfProject()
+
+    public function _PathOfRuntime()
+
+    public function recursiveApps(&$arg, $callback, ?string $app_class = null)
+
+    public function getAllAppClass()
+
+    public function getAppClassByComponent(string $class)
+
+    public function regExtCommandClass(string $class)
+

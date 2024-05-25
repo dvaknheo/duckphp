@@ -95,4 +95,19 @@
 
     public static function getCliParameters()
 
-### 完毕
+### 完毕    public static function FireEvent($event, ...$args)
+
+    public static function PathOfProject()
+
+    public static function PathOfRuntime()
+
+    public static function recursiveApps(&$arg, $callback, ?string $app_class = null)
+
+    public static function getAllAppClass()
+
+    public static function getAppClassByComponent(string $class)
+
+    public static function regExtCommandClass(string $class)
+
+    public static function FireEvent($event, ...$args)
+
