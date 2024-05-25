@@ -41,11 +41,11 @@ EOT;
     /**
      * create new project in current diretory. --help for help
      */
-    public function command_new($namespace='')
+    public function command_new($namespace = '')
     {
         //ifempty(readLines();
         $options = Console::_()->getCliParameters();
-        if (empty($namespace)|| $namespace===true) {
+        if (empty($namespace) || $namespace === true) {
             $default = ['namespace' => 'Demo'];
             $input = Console::_()->readLines($default, "enter your namespace[{namespace}]\n");
             $options['namespace'] = $input['namespace'];

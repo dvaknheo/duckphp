@@ -140,6 +140,10 @@ class CoreHelper extends ComponentBase
             return $handler($str, $args);
         }
         //Override for locale and so do
+        return $this->formatString($str, $args);
+    }
+    public function formatString($str, $args)
+    {
         if (empty($args)) {
             return $str;
         }
@@ -286,47 +290,39 @@ class CoreHelper extends ComponentBase
         
         throw new $exception_class($message, $code);
     }
-    public function recursiveApps($object, $callback, &$arg)
+    public function recursiveApps($app_class, $callback, &$arg)
     {
-        $callback($object, $arg);
+        if (!isset($app_class)) {
+            $app_class = get_class(App::Root());
+        }
+        $callback($app_class, $arg);
+        $object = $app_class::_();
         foreach ($object->options['app'] as $app => $options) {
-            $this->recursiveApps($app::_(), $callback, $arg);
+            $this->recursiveApps($app, $callback, $arg);
         }
     }
     public function getAllAppClass()
     {
         $ret = [];
         $this->recursiveApps(
-            App::Root(),
-            function ($app, &$ret) {
-                $ret[$app->phase] = get_class($app);
+            null,
+            function ($app_class, &$ret) {
+                $ret[$app_class::_()->phase] = $app_class;
             },
             $ret
         );
         return $ret;
     }
-    public function guessPhase(string $class)
+    public function getAppClassByComponent(string $class)
     {
         $all_class = $this->getAllAppClass();
         foreach ($all_class as $phase => $app_name) {
             $namespace = $app_name::_()->options['namespace'];
             $prefix = $namespace .'\\';
             if (substr($class, 0, strlen($prefix)) === $prefix) {
-                return $phase;
+                return $app_name;
             }
         }
-        return App::Root()->phase;
-    }
-    public function formatString($str, $args)
-    {
-        if (empty($args)) {
-            return $str;
-        }
-        $a = [];
-        foreach ($args as $k => $v) {
-            $a["{".$k."}"] = $v;
-        }
-        $ret = str_replace(array_keys($a), array_values($a), $str);
-        return $ret;
+        return get_class(App::Root());
     }
 }

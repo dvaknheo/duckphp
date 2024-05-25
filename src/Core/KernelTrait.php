@@ -216,7 +216,7 @@ trait KernelTrait
     public function init(array $options, object $context = null)
     {
         $options['path'] = $options['path'] ?? ($this->options['path'] ?? $this->getDefaultProjectPath());
-        $options['namespace'] = $options['namespace'] ?? $this->getDefaultProjectNameSpace($options['override_class'] ?? null);
+        $options['namespace'] = $options['namespace'] ?? ($this->options['namespace'] ?? ($this->getDefaultProjectNameSpace($this->phase ?? null)));
         
         require_once __DIR__.'/Functions.php';
         $this->initOptions($options);
