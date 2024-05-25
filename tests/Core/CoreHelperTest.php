@@ -118,8 +118,8 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         echo CoreHelper::_()->_Hl($str, $args);
         echo CoreHelper::_()->formatString($str, $args);
         $ext =[];
-        CoreHelper::_()->recursiveApps(null,function($object,&$ext){return $ext;},$ext);
-        echo ">>>>>>>>>>>>>>>>>>>>>\n";
+        CoreHelper::_()->recursiveApps($ext,function($class,&$ext){return $ext;});
+
 
         $data = CoreHelper::_()->getAllAppClass();
         //*

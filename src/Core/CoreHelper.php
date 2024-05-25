@@ -307,7 +307,7 @@ class CoreHelper extends ComponentBase
         $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
         return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
     }
-    public function recursiveApps($app_class, $callback, &$arg)
+    public function recursiveApps(&$arg, $callback, ?string $app_class = null)
     {
         if (!isset($app_class)) {
             $app_class = get_class(App::Root());
@@ -315,18 +315,17 @@ class CoreHelper extends ComponentBase
         $callback($app_class, $arg);
         $object = $app_class::_();
         foreach ($object->options['app'] as $app => $options) {
-            $this->recursiveApps($app, $callback, $arg);
+            $this->recursiveApps($arg, $callback, $app);
         }
     }
     public function getAllAppClass()
     {
         $ret = [];
         $this->recursiveApps(
-            null,
+            $ret,
             function ($app_class, &$ret) {
                 $ret[$app_class::_()->phase] = $app_class;
-            },
-            $ret
+            }
         );
         return $ret;
     }
