@@ -220,7 +220,7 @@ echo "-------------------------------------\n";
         App::_()->run();
         
         KernelTestApp::_()->createLocalObject2(Logger::class);
-        
+        App::Root()->getOverridingClass();
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();
     return;

@@ -75,7 +75,7 @@ trait KernelTrait
          //*/
     ];
     public $setting = [];
-    public $phase = null;
+    public $overriding_class = null;
     protected $is_root = true;
     
     public static function RunQuickly(array $options = [], callable $after_init = null): bool
@@ -143,6 +143,10 @@ trait KernelTrait
     {
         return $this->is_root;
     }
+    public function getOverridingClass()
+    {
+        return $this->overriding_class;
+    }
     protected function initContainer($context)
     {
         $this->is_root = !(\is_a($context, self::class));
@@ -152,18 +156,18 @@ trait KernelTrait
             $this->onBeforeCreatePhases();
             $flag = PhaseContainer::ReplaceSingletonImplement();
             $container = PhaseContainer::GetContainer();
-            $container->setDefaultContainer($this->phase);
-            $container->setCurrentContainer($this->phase);
+            $container->setDefaultContainer($this->overriding_class);
+            $container->setCurrentContainer($this->overriding_class);
             //TODO Move public containers to this;
             $this->onAfterCreatePhases();
         } else {
             $container = PhaseContainer::GetContainer();
-            $container->setCurrentContainer($this->phase);
+            $container->setCurrentContainer($this->overriding_class);
         }
         /////////////
         $apps = [];
         $apps[static::class] = $this;
-        $apps[$this->phase] = $this;
+        $apps[$this->overriding_class] = $this;
         if ($this->is_root) {
             $apps[self::class] = $this;
         }
@@ -216,7 +220,7 @@ trait KernelTrait
     public function init(array $options, object $context = null)
     {
         $options['path'] = $options['path'] ?? ($this->options['path'] ?? $this->getDefaultProjectPath());
-        $options['namespace'] = $options['namespace'] ?? ($this->options['namespace'] ?? ($this->getDefaultProjectNameSpace($this->phase ?? null)));
+        $options['namespace'] = $options['namespace'] ?? ($this->options['namespace'] ?? ($this->getDefaultProjectNameSpace($this->overriding_class ?? null)));
         
         require_once __DIR__.'/Functions.php';
         $this->initOptions($options);
@@ -224,8 +228,8 @@ trait KernelTrait
         if ($options['override_class'] ?? false) {
             $class = $options['override_class'];
             unset($options['override_class']);
-            $options['override_class_from'] = $this->phase;
-            $this->phase = $options['override_class_from'];
+            $options['override_class_from'] = $this->overriding_class;
+            $this->overriding_class = $options['override_class_from'];
             
             return $class::_(new $class)->init($options);
         }
@@ -267,8 +271,8 @@ trait KernelTrait
         
         if (PHP_SAPI === 'cli') {
             $cli_namespace = $this->options['cli_command_prefix'] ?? $this->options['namespace'];
-            $cli_namespace = $this->is_root ? '' : ($cli_namespace ? $cli_namespace : $this->phase);
-            $phase = $this->phase;
+            $cli_namespace = $this->is_root ? '' : ($cli_namespace ? $cli_namespace : $this->overriding_class);
+            $phase = $this->overriding_class;
             $classes = $this->options['cli_command_classes'] ?? [];
             $method_prefix = $this->options['cli_command_method_prefix'] ?? 'command_';
             Console::_()->regCommandClass($cli_namespace, $phase, $classes, $method_prefix);
@@ -336,7 +340,7 @@ trait KernelTrait
             }
             $class::_()->init($options, $this);
             if (!$use_main_options) {
-                $this->_Phase($this->phase);
+                $this->_Phase($this->overriding_class);
             }
             //} catch (\Throwable $ex) {
             //    $phase = $this->_Phase($class);
@@ -350,7 +354,7 @@ trait KernelTrait
     {
         $ret = false;
         $is_exceptioned = false;
-        $this->_Phase($this->phase);
+        $this->_Phase($this->overriding_class);
         if ($this->is_root) {
             (self::class)::_($this); // remark ,don't use self::_()!
         }
@@ -364,9 +368,9 @@ trait KernelTrait
                 $ret = Route::_()->run();
                 if (!$ret) {
                     $ret = $this->runExtentions();
-                    $this->_Phase($this->phase);
+                    $this->_Phase($this->overriding_class);
                     if (!$ret) {
-                        EventManager::FireEvent([$this->phase, 'On404']);
+                        EventManager::FireEvent([$this->overriding_class, 'On404']);
                     }
                     if (!$ret && $this->is_root && !($this->options['skip_404'] ?? false)) {
                         $this->_On404();
@@ -392,9 +396,9 @@ trait KernelTrait
             throw $ex;
         }
         ExceptionManager::CallException($ex);
-        if ($phase !== $this->phase) {
+        if ($phase !== $this->overriding_class) {
             Runtime::_()->clear();
-            $this->_Phase($this->phase);
+            $this->_Phase($this->overriding_class);
         }
         Runtime::_()->last_phase = $phase;
         Runtime::_()->clear();
@@ -439,34 +443,34 @@ trait KernelTrait
     }
     protected function onBeforeCreatePhases()
     {
-        //EventManager::FireEvent([$this->phase, __FUNCTION__]);
+        //EventManager::FireEvent([$this->overriding_class, __FUNCTION__]);
     }
     protected function onAfterCreatePhases()
     {
-        EventManager::FireEvent([$this->phase, __FUNCTION__]);
+        EventManager::FireEvent([$this->overriding_class, __FUNCTION__]);
     }
     protected function onPrepare()
     {
-        EventManager::FireEvent([$this->phase, __FUNCTION__]);
+        EventManager::FireEvent([$this->overriding_class, __FUNCTION__]);
     }
     protected function onBeforeChildrenInit()
     {
-        EventManager::FireEvent([$this->phase, __FUNCTION__]);
+        EventManager::FireEvent([$this->overriding_class, __FUNCTION__]);
     }
     protected function onInit()
     {
-        EventManager::FireEvent([$this->phase, __FUNCTION__]);
+        EventManager::FireEvent([$this->overriding_class, __FUNCTION__]);
     }
     protected function onInited()
     {
-        EventManager::FireEvent([$this->phase, __FUNCTION__]);
+        EventManager::FireEvent([$this->overriding_class, __FUNCTION__]);
     }
     protected function onBeforeRun()
     {
-        EventManager::FireEvent([$this->phase, __FUNCTION__]);
+        EventManager::FireEvent([$this->overriding_class, __FUNCTION__]);
     }
     protected function onAfterRun()
     {
-        EventManager::FireEvent([$this->phase, __FUNCTION__]);
+        EventManager::FireEvent([$this->overriding_class, __FUNCTION__]);
     }
 }

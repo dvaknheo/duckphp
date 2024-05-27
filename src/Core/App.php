@@ -62,12 +62,12 @@ class App extends ComponentBase
         unset($this->kernel_options); // not use again;
         unset($this->core_options); // not use again;
         unset($this->common_options); // not use again;
-        $this->phase = static::class;
+        $this->overriding_class = static::class;
     }
     public static function _($object = null)
     {
         if ($object) {
-            static::_()->phase = $object->phase;
+            static::_()->overriding_class = $object->overriding_class;
         }
         return PhaseContainer::GetObject(static::class, $object);
     }
@@ -119,7 +119,7 @@ class App extends ComponentBase
     public function _OnDefaultException($ex): void
     {
         // exception to root;
-        $this->_Phase(get_class(App::Root())); //Important
+        $this->_Phase(App::Root()->getOverridingClass()); //Important
         
         if ($this->options['default_exception_do_log']) {
             try {
