@@ -1,7 +1,7 @@
 <?php
 namespace tests\DuckPhp\Component;
 
-use DuckPhp\Component\GlobalAdmin;
+use DuckPhp\GlobalAdmin\GlobalAdmin;
 
 class GlobalAdminTest extends \PHPUnit\Framework\TestCase
 {

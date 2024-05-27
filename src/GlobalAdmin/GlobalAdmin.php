@@ -5,7 +5,9 @@
  */
 namespace DuckPhp\GlobalAdmin;
 
+use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Component\ZCallTrait;
+use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 
 class GlobalAdmin extends ComponentBase
@@ -15,94 +17,62 @@ class GlobalAdmin extends ComponentBase
     const EVENT_LOGOUTED = 'logouted';
     
     use ZCallTrait;
-    public function checkLogin()
-    {
-        throw new \ErrorException('DuckPhp: No Impelement');
-    }
+
     public function current()
     {
-        $this->checkLogin();
-        return new \stdClass();
+        return PhaseProxy::Create(App::Phase(), $this);
     }
+    public function action() : AdminActionInterface
+    {
+        //return $this->proxy(AdminAction::_());
+        throw new \ErrorException('DuckPhp: No Impelement');
+    }
+    public function service() : AdminServiceInterface
+    {
+        //return $this->proxy(AdminService::_());
+        throw new \ErrorException('DuckPhp: No Impelement');
+    }
+    protected function proxy($object)
+    {
+        return PhaseProxy::Create(App::Phase(), $object);
+    }
+    
+    ///////////////
     public function id()
     {
-        $this->checkLogin();
-        return $this->data['id'] ?? 0; /** @phpstan-ignore-line */
+        return $this->action()->id();
     }
-    public function data()
+    public function name()
     {
-        $this->checkLogin();
-        return $this->data ?? []; /** @phpstan-ignore-line */
-    }
-    ///////////////
-    public function action()
-    {
-        throw new \ErrorException('DuckPhp: No Impelement');
-    }
-    public function service()
-    {
-        throw new \ErrorException('DuckPhp: No Impelement');
-    }
-    ///////////////
-    public function isSuper()
-    {
-        $this->checkLogin();
-        return true;
-    }
-    public function canAccessCurrent()
-    {
-        $this->checkLogin();
-        return true;
-    }
-    public function canAccessUrl($url)
-    {
-        $this->checkLogin();
-        return true;
-    }
-    public function canAccessCall($class, $method)
-    {
-        $this->checkLogin();
-        return true;
-    }
-    public function getUsernames($ids)
-    {
-        throw new \ErrorException('DuckPhp: No Impelement');
-    }
-    //////////////////////
-    public function urlForRegist($url_back = null, $ext = null)
-    {
-        //return $this->service()->urlForRegist();
-        throw new \ErrorException('DuckPhp: No Impelement');
-    }
-    public function urlForLogin($url_back = null, $ext = null)
-    {
-        //return $this->service()->urlForLogout();
-        throw new \ErrorException('DuckPhp: No Impelement');
-    }
-    public function urlForLogout($url_back = null, $ext = null)
-    {
-        //return $this->service()->urlForLogout();
-        throw new \ErrorException('DuckPhp: No Impelement');
-    }
-    public function urlForHome($url_back = null, $ext = null)
-    {
-        //return $this->service()->urlForLogout();
-        throw new \ErrorException('DuckPhp: No Impelement');
-    }
-    //////////////////////
-    public function regist($post)
-    {
-        //return $this->service()->urlForLogout();
-        throw new \ErrorException('DuckPhp: No Impelement');
+        return $this->action()->name();
     }
     public function login($post)
     {
-        //return $this->service()->urlForLogout();
-        throw new \ErrorException('DuckPhp: No Impelement');
+        return $this->action()->login($post);
     }
-    public function logout($post)
+    public function logout(array $post)
     {
-        //return $this->service()->urlForLogout();
-        throw new \ErrorException('DuckPhp: No Impelement');
+        return $this->action()->logout($post);
+    }
+    public function checkAccess($class, string $method, ?string $url = null)
+    {
+        return $this->action()->checkAccess($class, $method, $url);
+    }
+    public function isSuper()
+    {
+        return $this->action()->isSuper();
+    }
+    ///////////////
+    public function urlForLogin($url_back = null, $ext = null)
+    {
+        return $this->service()->urlForLogin($url_back, $ext);
+    }
+    public function urlForLogout($url_back = null, $ext = null)
+    {
+        return $this->service()->urlForLogout($url_back, $ext);
+    }
+    public function urlForHome($url_back = null, $ext = null)
+    {
+        return $this->service()->urlForHome($url_back, $ext);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 namespace tests\DuckPhp\Component;
 
-use DuckPhp\Component\GlobalUser;
+use DuckPhp\GlobalUser\GlobalUser;
 
 class GlobalUserTest extends \PHPUnit\Framework\TestCase
 {

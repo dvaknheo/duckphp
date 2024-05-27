@@ -7,4 +7,10 @@ namespace DuckPhp\GlobalAdmin;
 
 interface AdminActionInterface
 {
+    public function id();
+    public function name();
+    public function login($post);
+    public function logout(array $post);
+    public function checkAccess($class, string $method, ?string $url = null);
+    public function isSuper();
 }

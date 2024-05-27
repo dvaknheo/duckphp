@@ -11,8 +11,6 @@ namespace DuckPhp;
 use DuckPhp\Component\Command;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Component\ExtOptionsLoader;
-use DuckPhp\Component\GlobalAdmin;
-use DuckPhp\Component\GlobalUser;
 use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookCheckStatus;
@@ -23,6 +21,8 @@ use DuckPhp\Component\RouteHookRouteMap;
 use DuckPhp\Core\App;
 use DuckPhp\Core\Console;
 use DuckPhp\FastInstaller\FastInstaller;
+use DuckPhp\GlobalAdmin\GlobalAdmin;
+use DuckPhp\GlobalUser\GlobalUser;
 
 class DuckPhp extends App
 {
