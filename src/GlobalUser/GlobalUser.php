@@ -3,7 +3,7 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckPhp\Component;
+namespace DuckPhp\GlobalUser;
 
 use DuckPhp\Component\ZCallTrait;
 use DuckPhp\Core\ComponentBase;
