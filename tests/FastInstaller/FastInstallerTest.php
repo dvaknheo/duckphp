@@ -138,9 +138,15 @@ class FiParentApp extends DuckPhp
     }
     public function onInstall()
     {
+        //
+    }
+    public function onPreInstall()
+    {
+        //
     }
     public function onInstalled()
     {
+        //
     }
 }
 class FiChildApp extends DuckPhp

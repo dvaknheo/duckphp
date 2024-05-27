@@ -132,6 +132,9 @@ and more ...\n";
         //echo ($install_level <= 0) ? "use --help for more info.\n" : '';
         echo str_repeat("\t", $install_level)."\e[32;7mInstalling (".get_class(App::Current())."):\033[0m\n";
         
+        if (method_exists(App::Current(), 'onPreInstall')) {
+            App::Current()->onPreInstall();
+        }
         if (!($this->args['skip_sql'] ?? false)) {
             DatabaseInstaller::_()->install($force);
         }
@@ -154,7 +157,7 @@ and more ...\n";
         if (method_exists(App::Current(), 'onInstall')) {
             App::Current()->onInstall();
         }
-        EventManager::FireEvent([App::Phase(), 'OnInstall'], $input_options, $ext_options, $app_options);
+        EventManager::FireEvent([App::Phase(), 'onInstall'], $input_options, $ext_options, $app_options);
         if ($this->is_failed) {
             echo "\e[32;3mInstalled App (".get_class(App::Current()).") FAILED!;\033[0m\n";
             return;
@@ -167,11 +170,11 @@ and more ...\n";
         
         ///////////////////////////
         if (!($this->args['skip_children'] ?? false)) {
-            EventManager::FireEvent([App::Phase(), 'OnBeforeChildrenInstall']);
+            EventManager::FireEvent([App::Phase(), 'onBeforeChildrenInstall']);
             $this->installChildren();
         }
         $this->saveInstalledFlag();
-        EventManager::FireEvent([App::Phase(), 'OnInstalled']);
+        EventManager::FireEvent([App::Phase(), 'onInstalled']);
         if (method_exists(App::Current(), 'onInstalled')) {
             App::Current()->onInstalled();
         }

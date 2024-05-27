@@ -124,10 +124,10 @@ class DuckPhp extends App
             RouteHookPathInfoCompat::_()->init($this->options, $this);
         }
         if ($this->options['class_admin']) {
-            GlobalAdmin::_(PhaseProxy::CreatePhaseProxy(static::class, $this->options['class_admin']));
+            GlobalAdmin::_(PhaseProxy::CreatePhaseProxy($this->overriding_class, $this->options['class_admin']));
         }
         if ($this->options['class_user']) {
-            GlobalUser::_(PhaseProxy::CreatePhaseProxy(static::class, $this->options['class_user']));
+            GlobalUser::_(PhaseProxy::CreatePhaseProxy($this->overriding_class, $this->options['class_user']));
         }
         
         return $this;
