@@ -186,9 +186,9 @@ trait ControllerHelperTrait
     {
         return GlobalAdmin::_()->id();
     }
-    public static function AdminData()
+    public static function AdminService()
     {
-        return GlobalAdmin::_()->data();
+        return GlobalAdmin::_()->service();
     }
     public static function AdminAction()
     {
@@ -202,9 +202,9 @@ trait ControllerHelperTrait
     {
         return GlobalUser::_()->id();
     }
-    public static function UserData()
+    public static function UserService()
     {
-        return GlobalUser::_()->data();
+        return GlobalUser::_()->service();
     }
     public static function UserAction()
     {
