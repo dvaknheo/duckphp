@@ -7,7 +7,6 @@ namespace ProjectNameTemplate\System;
 
 use DuckPhp\DuckPhp;
 use ProjectNameTemplate\Controller\ExceptionReporter;
-use ProjectNameTemplate\Controller\Commands;
 
 class App extends DuckPhp
 {
@@ -27,7 +26,9 @@ class App extends DuckPhp
     //@override
     public function onPrepare()
     {
+        parent::onPrepare();
         // your code here
+        // this is show use DbTestApp as a child app
         require_once __DIR__. '/../../public/dbtest.php';
         $this->options['app']['DbTestApp']=[
             'controller_url_prefix'=>'db_test/',
@@ -35,15 +36,17 @@ class App extends DuckPhp
         //*/
     }
     //@override
-    protected function onInit()
+    protected function onInited()
     {
+        parent::Inited();
+        // your code here
     }
     /**
      * console command sample
      */
     public function command_hello()
     {
-        //TODO Move this
+        //this is show a command `hello`
         echo "hello ". static::class ."\n";
     }
 }
