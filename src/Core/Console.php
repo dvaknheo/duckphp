@@ -10,6 +10,7 @@ class Console extends ComponentBase
     public $options = [
         'cli_command_group' => [ ],
         'cli_command_default' => 'help',
+        'cli_readlines_logfile' => '',
     ];
     /*
     cli_command_group=>
@@ -24,6 +25,8 @@ class Console extends ComponentBase
     protected $parameters = [];
     protected $is_inited = false;
     
+    public $index = 0;
+    public $datas = [];
 
     public function init(array $options, ?object $context = null)
     {
@@ -87,9 +90,30 @@ class Console extends ComponentBase
         $this->callObject($class, $method, $func_args, $this->parameters);
         return true;
     }
+    public function readLinesFill($datas)
+    {
+        $datas = is_array($datas)?$datas:[$datas];
+        $this->datas += $datas;
+    }
+    public function readLinesCleanFill()
+    {
+        $this->datas = [];
+        $this->index = 0;
+    }
     public function readLines($options, $desc, $validators = [], $fp_in = null, $fp_out = null)
     {
         $ret = [];
+        $mode_fill = !$fp_in && !$fp_out && !empty($this->datas);
+        if($mode_fill){
+            $fp_in = fopen('php://memory', 'r+');
+            if (!$fp_in) {
+                return; // @codeCoverageIgnore
+            }
+            $fp_out = fopen('php://temp', 'w');
+            if (!$fp_out) {
+                return; // @codeCoverageIgnore
+            }
+        }
         $fp_in = $fp_in ?? fopen('php://stdin', 'r'); //\STDIN;//
         $fp_out = $fp_out ?? fopen('php://stdout', 'w'); //\STDOUT;//
         
@@ -104,12 +128,22 @@ class Console extends ComponentBase
             $key = $m[1];
             $line = str_replace('{'.$key.'}', $options[$key] ?? '', $line);
             fputs($fp_out, $line);
-            $input = trim((string)fgets($fp_in));
+            $input = (string)fgets($fp_in);
+            if($this->options['cli_readlines_logfile']){
+                file_put_contents($this->options['cli_readlines_logfile'],$input."\n",FILE_APPEND);
+            }
+            $input = trim($input);
             if ($input === '') {
                 $input = $options[$key] ?? '';
             }
             $ret[$key] = $input;
         }
+        if($mode_fill){
+            $this->index++;
+            fclose($fp_out);
+            fclose($fp_in);
+        }
+        
         $ret = !empty($validators)? filter_var_array($ret, $validators) :$ret;
         return $ret;
     }
