@@ -68,10 +68,7 @@ trait KernelTrait
         // 'use_output_buffer' => false,
         // 'path_runtime' => 'runtime',
         
-        // 'cli_command_alias' => [],
-        // 'cli_default_command_class' => '',
         // 'cli_command_method_prefix' => 'command_',
-        // 'cli_command_default' => 'help',
          //*/
     ];
     public $setting = [];

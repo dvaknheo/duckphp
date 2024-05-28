@@ -95,7 +95,8 @@
 
     public static function getCliParameters()
 
-### 完毕    public static function FireEvent($event, ...$args)
+### 完毕
+    public static function FireEvent($event, ...$args)
 
     public static function PathOfProject()
 
@@ -109,5 +110,4 @@
 
     public static function regExtCommandClass(string $class)
 
-    public static function FireEvent($event, ...$args)
 

@@ -13,8 +13,6 @@
         'path_sql_dump' => 'config',
 SqlDump, 导出数据的路径
 
-        'sql_dump_file' => 'sql.php',
-SqlDump, 导出的数据文件名
 
         'sql_dump_prefix' => '',
 SqlDump, 表名前缀
@@ -48,7 +46,7 @@ SqlDump， 高级选项， 搜索 Model 类 table() 下的所有表
     public function dump()
 Dump 数据库
 
-    public function install()
+    public function install($force = false)
 安装数据
 
     protected function installScheme($sql, $table)
@@ -70,6 +68,7 @@ Dump 数据库
 
     protected function save($data)
 保存数据到文件
+    protected function getModelPath()
 
     protected function searchTables()
 
@@ -84,9 +83,7 @@ SqlDumper::_()->dump(); // 导出到配置文件，默认是 config/sql.php
 SqlDumper::_()->install(); // 从配置文件安装 sql
 
 ## 完毕
-        'sql_dump_file' => 'install.sql',
 
-    public function install($force = false)
 
-    protected function getModelPath()
+SqlDump, 导出的数据文件名 是驱动名称.sql
 

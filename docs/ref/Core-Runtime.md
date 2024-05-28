@@ -11,6 +11,8 @@
         'use_output_buffer' => false,
 使用 OB 函数缓冲数据
 
+        'path_runtime' => 'runtime',
+web 方式下可写的目录
 ## 方法
 
     public function reset()
@@ -44,15 +46,11 @@
 Runtime 类在运行期才重新初始化。
 
 
-    'use_output_buffer' => false,
 
-        'path_runtime' => 'runtime',
 
     public function isRunning()
 
-    public function isInException()
 
-    public function isOutputed()
 
     public function run()
 
@@ -60,3 +58,4 @@ Runtime 类在运行期才重新初始化。
 
     public function onException($skip_exception_check)
 
+##

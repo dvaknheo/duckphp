@@ -8,7 +8,7 @@
 ## 选项
 全部选项
 
-        'path_info_compact_enable' => false,
+        'path_info_compact_enable' => true,
 无PATH_INFO兼容，启用
 这项开启扩展才启用。
 
@@ -56,5 +56,4 @@ $options['path_info_compact_enable'] = true;
 
 ##完毕
 
-        'path_info_compact_enable' => true,
 

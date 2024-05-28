@@ -33,6 +33,8 @@
 数据库，默认为 Db::class。
 如果你扩展了 DB 类，可以调用这个。更高级的可以调整 getDb 方法
 
+        'database_driver' => '',
+
 
 ## 方法
 ### 公开方法
@@ -92,9 +94,9 @@ Db($tag); $tag 对应的是  `database_list[$tag]` 定的数据库
 DbForWrite 对应 `database_list[0]`  DbForRead 对应 `database_list[1]`
 
 `database_log_sql_query`, `database_log_sql_level` 用于记录 sql.
+
     public function getDatabaseConfigList()
 
-        'database_driver' => '',
 
     protected function getRuntimePath()
 

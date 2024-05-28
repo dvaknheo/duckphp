@@ -67,7 +67,7 @@
         'exception_reporter' => null,
 异常报告类
 
-        'exception_reporter_for_class' => null,
+        'exception_for_project' => null,
 异常报告仅针对的异常
 
 ### 来自控制器的选项
@@ -101,9 +101,10 @@
         'path_runtime' => 'runtime',
 
 ### 来自控制台的选项
-        'cli_command_alias' => [],
 
-        'cli_default_command_class' => '',
+        'cli_command_prefix' => null,
+
+        'cli_command_classes' => [],
 
         'cli_command_method_prefix' => 'command_',
 
@@ -131,6 +132,10 @@
     public static function Phase($new = null)
     public function _Phase($new = null)
 当前相位，返回之前相位
+
+    public static function IsRoot()
+
+    public function _IsRoot()
 
 ### 主流程
     public function init(array $options, object $context = null)
@@ -173,6 +178,12 @@ init() 中初始化选项
 
     protected function reloadFlags($context): void
 init() 中 DefaultComponents() 中从设置读取调试标志和平台标志
+
+
+
+    protected function prepareComponents()
+
+    
 
     protected function initException($options)
 初始化中，初始化异常
@@ -230,16 +241,20 @@ init() 中 DefaultComponents() 中从设置读取调试标志和平台标志
 
     protected function onBeforeExtentionInit()
 
+    protected function onBeforeChildrenInit()
+
     protected function onInit()
+初始化完成，加载子应用之前
+
+    protected function onInited()
 初始化完成
+
 
     protected function onBeforeRun()
 运行阶段。不建议重写 run ，而是在这里添加运行阶段处理
 
     protected function onAfterRun()
 运行完毕阶段执行的方法
-
-
 
 ## 流程详解
 
@@ -272,7 +287,6 @@ init()，一开始填充 path 和 namespace 选项
 
 #### 加载扩展
 
-onInit
 
 
 
@@ -282,24 +296,4 @@ onInit
 
 
 
-
-
-
-
-
-        'cli_command_prefix' => null,
-
-        'cli_command_classes' => [],
-
-    protected function prepareComponents()
-
-    protected function onBeforeChildrenInit()
-
-    public static function IsRoot()
-
-    public function _IsRoot()
-
-    protected function onInited()
-
-        'exception_for_project' => null,
 

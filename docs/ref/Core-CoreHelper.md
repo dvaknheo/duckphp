@@ -179,17 +179,6 @@
     public function _ControllerThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
 
 
-
-    public function getProjectPath()
-
-    public function getRuntimePath()
-
-    public function getProjectPathFromClass($class, $use_parent_namespace = true)
-
-    public function _PathForProject()
-
-    public function _PathForRuntime()
-
     public static function PathOfProject()
 
     public static function PathOfRuntime()
@@ -207,4 +196,6 @@
     public function getAppClassByComponent(string $class)
 
     public function regExtCommandClass(string $class)
+##
+
 

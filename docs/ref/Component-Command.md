@@ -16,23 +16,17 @@
 内置命令，运行内置 Http 服务器
 --server-class =  替换新的 httpserver class
 
-    public function command_help()
-    
-    public function command_version()
-    
-    public function command_list()
-    
+    public function command_new($namespace = '')
+
     public function command_call()
-    
+
+    public function command_debug($off = false)
+
+    public function command_version()
+
+    public function command_help()
+
     public function command_fetch($uri = '', $post = false)
-    
-    public function command_routes()
-    
-    public function command_depoly()
-    
-    public function command_test()
-    
-    protected function initContext(object $context)
 
 ## 详解
 
@@ -71,32 +65,14 @@ test    未override前只是提示
 version 显示版本号码
 ```
 
-    public function command_call()
 
-    public function command_routes()
-
-    public function command_debug($off = false)
-
-    public function command_version()
-
-    public function command_run()
-
-    public function command_help()
-
-    public function command_fetch($uri = '', $post = false)
+    public function getCommandsOfThis($method_prefix, $phase)
 
     protected function getCommandListInfo()
-
-    protected function getCommandsByClass($class, $method_prefix)
-
-    public function command_new()
-
-    public function command_new($namespace = '')
 
     protected function getCommandsByClasses($classes, $method_prefix, $phase)
 
     protected function getCommandsByClass($class, $method_prefix, $phase)
 
-    public function getCommandsOfThis($method_prefix, $phase)
 
     protected function getCommandsByClassReflection($ref, $method_prefix)

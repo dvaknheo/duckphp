@@ -26,7 +26,7 @@
     protected function add($data)
 添加数据，返回 LastInsertId
 
-    protected function update($id, $data)
+    protected function update($id, $data, $key = null)
 更新
 
 
@@ -72,11 +72,4 @@ SimpleModelTrait  find 的返回结果是 数组，而不是当前类。
 
     public static function CallInPhase($phase)
 
-
-
-
-
-
-
-    protected function update($id, $data, $key = null)
 

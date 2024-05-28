@@ -28,7 +28,7 @@
     protected function initContext(object $context)
 初始化
 
-    protected function copy_dir($source, $path_parent, $path, $force = false, &$info = '')
+    protected function copy_dir($source, $dest, $force = false, &$info = '')
     protected function get_dest_dir($path_parent, $path)
     protected function check_files_exist($source, $dest, $files, &$info)
     protected function create_directories($dest, $files, &$info)
@@ -43,5 +43,4 @@ res/ 目录，对应 admin/res/ 之类等
 
 
 
-    protected function copy_dir($source, $dest, $force = false, &$info = '')
 

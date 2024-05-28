@@ -74,7 +74,7 @@ Pager 类并没有像其他扩展那样初始化，而是在调用 App::Pager() 
 
 Page 在 render($total, $options = []) 的时候会初始化一遍
 
-App::Pager 得到的就是这个类
+ControllerHelperTrait::Pager 得到的就是这个类
 
 
 

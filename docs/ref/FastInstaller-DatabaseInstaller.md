@@ -4,7 +4,7 @@
 ## 简介
 
 ## 方法
-    'database_input_driver' => 'mysql',
+        'database_input_driver' => 'mysql',
 
     public function callResetDatabase($force = false)
 
@@ -18,7 +18,6 @@
 
     protected function checkDb($database)
 
-        'database_input_driver' => 'mysql',
 
     public function install($force = false)
 

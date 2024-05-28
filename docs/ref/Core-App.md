@@ -80,6 +80,9 @@ HTML编码函数
     public static function IsRealDebug()
     public function _IsRealDebug()
 
+
+    public static function _($object = null)
+
 ### 动态方法
 
     public function isInstalled()
@@ -127,20 +130,4 @@ HTML编码函数
 
     
 ## 说明
-
-
-
-    public static function OnEvent($event, $callback)
-
-    public static function FireEvent($event, ...$args)
-
-    public static function PathForProject()
-
-    public function _PathForProject()
-
-    public static function PathForRuntime()
-
-    public function _PathForRuntime()
-
-    public static function _($object = null)
 

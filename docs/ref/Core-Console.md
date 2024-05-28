@@ -24,6 +24,8 @@
         'cli_command_default' => 'help',
 命令行,默认调用指令
 
+        'cli_command_group' => [ ],
+
 ## 方法
 
     public static function _($object = null)
@@ -65,6 +67,14 @@
     protected function getCommandsByClass($class)
     
     protected function getCommandGroupInfo()
+    
+    public function regCommandClass($command_namespace, $phase, $classes, $method_prefix = 'command_')
+
+    public function getCallback($group, $cmd_method)
+
+    public function getArgs()
+
+
 
 ## 详解
 
@@ -117,15 +127,4 @@ EOT;
 
 ## 完毕
 
-    public function regCommandClass($command_namespace, $phase, $class, $method_prefix = 'command_')
-
-        'cli_command_group' => [
-
-        'cli_command_group' => [ ],
-
-    public function regCommandClass($command_namespace, $phase, $classes, $method_prefix = 'command_')
-
-    public function getCallback($group, $cmd_method)
-
-    public function getArgs()
 

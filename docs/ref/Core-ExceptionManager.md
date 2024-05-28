@@ -21,13 +21,14 @@
 
         'dev_error_handler' => null,
 调试错误的回调
+        'handle_exception_on_init' => true,
 
 'system_exception_handler' ，'default_exception_handler' => null ，'dev_error_handler' => null 这三个选项内部使用一般不会去动
 
 ## 公开方法
 
     public function __construct()
-    public function init($options=[], $context=null)
+    public function init(array $options, ?object $context = null)
     public function run()
     protected function initOptions(array $options)
     public function isInited():bool
@@ -57,7 +58,5 @@
 
 ## 说明
 
-        'handle_exception_on_init' => true,
 
-    public function init(array $options, ?object $context = null)
 

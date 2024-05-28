@@ -28,7 +28,7 @@
 
 ### 
 
-        'ext_options_file_enable' => false,
+        'ext_options_file_enable' => true,
 额外配置文件
 
         'ext_options_file' => 'config/DuckPhpApps.config.php',
@@ -107,12 +107,30 @@ Session 前缀
         'path_info_compact_class_key' => '',
 
 
+
+
 并且做了以下更改
 
 ```php
         'path_info_compact_enable' => false,
 
 ```
+
+
+
+        'ext' => [
+
+            RouteHookRouteMap::class => true,
+
+            RouteHookRewrite::class => true,
+
+            RouteHookResource::class => true,
+
+            RouteHookPathInfoCompat::class => false,
+            RouteHookCheckStatus::class => true,
+
+        ],
+
 ### 继承 [DuckPhp\Core\App](Core-App.md) 的默认选项。
 详细查看 [DuckPhp\Core\App](Core-App.md)的文档。
 
@@ -207,6 +225,16 @@ HTML编码函数
         'exception_reporter_for_class' => null,
 异常报告仅针对的异常
 
+        'database_driver' => '',
+
+        'cli_command_with_app' => true,
+
+        'cli_command_with_common' => true,
+
+        'cli_command_with_fast_installer' => false,
+
+
+
 ### 来自控制器的选项
 
         'namespace_controller' => 'Controller',
@@ -238,13 +266,7 @@ HTML编码函数
         'path_runtime' => 'runtime',
 
 ### 来自控制台的选项
-        'cli_command_alias' => [],
-
-        'cli_default_command_class' => '',
-
-        'cli_command_method_prefix' => 'command_',
-
-        'cli_command_default' => 'help',
+        
 
 ### 来自异常管理器的选项
 
@@ -275,35 +297,9 @@ App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里
 
 
 ## 完毕
-        'ext_options_file_enable' => true,
 
-    public function command_debug($off = false)
 
-    public function command_version()
 
-    public function command_call()
-
-    public function command_routes()
-
-        'ext' => [
-
-            RouteHookRouteMap::class => true,
-
-            RouteHookRewrite::class => true,
-
-            RouteHookResource::class => true,
-
-            RouteHookPathInfoCompat::class => false,
-
-        ],
-
-        'cli_command_class' => Command::class,
-
-        'database_driver' => '',
-
-        'cli_command_with_app' => true,
-
-        'cli_command_with_common' => true,
 
     protected function prepareComponents()
 
@@ -311,7 +307,6 @@ App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里
 
     protected function isLocalRedis()
 
-            RouteHookCheckStatus::class => true,
 
-        'cli_command_with_fast_installer' => false,
 
+## 完毕

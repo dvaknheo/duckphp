@@ -135,21 +135,12 @@
 
     public static function Admin($new = null)
 
-    public static function AdminData()
 
     public static function User($new = null)
 
-    public static function UserData()
 
 
     public static function Domain($use_scheme = false)
-
-
-
-    
-
-## 完毕
-
 
 
 
@@ -158,4 +149,11 @@
     public static function AdminAction()
 
     public static function UserAction()
+    
+
+## 完毕
+
+
+
+
 

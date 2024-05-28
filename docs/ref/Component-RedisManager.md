@@ -52,4 +52,4 @@ redis 管理器。 redis 入口
 #完毕
 
     public function getRedisConfigList()
-
+获得当前的配置列表
