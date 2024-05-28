@@ -3,9 +3,8 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace ProjectNameTemplate\Controller;
+namespace ProjectNameTemplate\System;
 
 class ControllerException extends ProjectException
 {
-    //
 }

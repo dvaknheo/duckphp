@@ -18,7 +18,10 @@ class App extends DuckPhp
         
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
-        'exception_reporter' => ExceptionReporter::class,
+        'exception_for_project'  => ProjectException::class,
+        'exception_for_business'  => BusinessException::class,
+        'exception_for_controller'  => ControllerException::class,
+        'exception_reporter' =>  ExceptionReporter::class,
         //'app' => [],
     ];
     //@override
