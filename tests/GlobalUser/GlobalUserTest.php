@@ -9,7 +9,7 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(GlobalUser::class);
         
-        GlobalUser::_();
+        GlobalUser::ReplaceTo(MyGlobalUser::class);
         $post = array();
         $url_back ='';
         $ext = null;
@@ -44,9 +44,9 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         
         
         GlobalUser::_(MyGlobalUser::_());
-        GlobalUser::_()->current();
+        
         GlobalUser::_()->id();
-        GlobalUser::_()->data();
+        
         
         try{
         GlobalUser::_()->action();
@@ -55,15 +55,25 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         GlobalUser::_()->service();
         }catch(\Exception $ex){}
         
-        GlobalUser::ZCall(GlobalUser::class);
-        
         \LibCoverage\LibCoverage::End();
     }
 }
 class MyGlobalUser extends GlobalUser
 {
-    public function checkLogin()
+    public function action()
     {
-        return true;
+        return $this->proxy(MyGlobalUserAction::_());
     }
+    public function service()
+    {
+        return $this->proxy(MyGlobalUserService::_());
+    }
+}
+class MyGlobalUserAction
+{
+    //
+}
+class MyGlobalUserService
+{
+    //
 }

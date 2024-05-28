@@ -12,32 +12,30 @@ use DuckPhp\Core\ComponentBase;
 
 class GlobalAdmin extends ComponentBase
 {
-    const EVENT_REGISTED = 'registed';
     const EVENT_LOGINED = 'logined';
     const EVENT_LOGOUTED = 'logouted';
+    const EVENT_ACCESSED = 'accessed';
     
-    use ZCallTrait;
-
-    public function current()
+    public static function ReplaceTo($class)
     {
-        return PhaseProxy::Create(App::Phase(), $this);
+        GlobalAdmin::_(PhaseProxy::CreatePhaseProxy(App::Phase(), $class));
     }
-    public function action() : AdminActionInterface
+    public function action()
     {
+        // : AdminActionInterface
         //return $this->proxy(AdminAction::_());
         throw new \ErrorException('DuckPhp: No Impelement');
     }
-    public function service() : AdminServiceInterface
+    public function service()
     {
+        // : AdminServiceInterface
         //return $this->proxy(AdminService::_());
         throw new \ErrorException('DuckPhp: No Impelement');
     }
     protected function proxy($object)
     {
         return PhaseProxy::Create(App::Phase(), $object);
-    }
-    
-    ///////////////
+    }    ///////////////
     public function id()
     {
         return $this->action()->id();

@@ -11,7 +11,6 @@ namespace DuckPhp;
 use DuckPhp\Component\Command;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Component\ExtOptionsLoader;
-use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookCheckStatus;
 use DuckPhp\Component\RouteHookPathInfoCompat;
@@ -124,10 +123,10 @@ class DuckPhp extends App
             RouteHookPathInfoCompat::_()->init($this->options, $this);
         }
         if ($this->options['class_admin']) {
-            GlobalAdmin::_(PhaseProxy::CreatePhaseProxy($this->overriding_class, $this->options['class_admin']));
+            GlobalAdmin::ReplaceTo($this->options['class_admin']));
         }
         if ($this->options['class_user']) {
-            GlobalUser::_(PhaseProxy::CreatePhaseProxy($this->overriding_class, $this->options['class_user']));
+            GlobalUser::ReplaceTo($this->options['class_user']));
         }
         
         return $this;

@@ -5,71 +5,73 @@
  */
 namespace DuckPhp\GlobalUser;
 
-use DuckPhp\Component\ZCallTrait;
 use DuckPhp\Core\ComponentBase;
 
 class GlobalUser extends ComponentBase
 {
-    use ZCallTrait;
-    public function checkLogin()
+    const EVENT_LOGINED = 'logined';
+    const EVENT_LOGOUTED = 'logouted';
+    
+    public static function ReplaceTo($class)
     {
-        throw new \ErrorException('DuckPhp: No Impelement');
+        GlobalUser::_(PhaseProxy::CreatePhaseProxy(App::Phase(), $class));
     }
-    public function current()
-    {
-        $this->checkLogin();
-        return new \stdClass();
-    }
-    public function id()
-    {
-        $this->checkLogin();
-        return $this->data['id'] ?? 0; /** @phpstan-ignore-line */
-    }
-    public function data()
-    {
-        $this->checkLogin();
-        return $this->data ?? []; /** @phpstan-ignore-line */
-    }
-    ////////////
     public function action()
     {
+        //: UserActionInterface
+        //return $this->proxy(AdminAction::_());
         throw new \ErrorException('DuckPhp: No Impelement');
     }
     public function service()
     {
+        // : UserServiceInterface
+        //return $this->proxy(UserService::_());
         throw new \ErrorException('DuckPhp: No Impelement');
     }
-    ////////////
-    public function getUsernames($ids)
+    protected function proxy($object)
     {
-        throw new \ErrorException('DuckPhp: No Impelement');
+        return PhaseProxy::Create(App::Phase(), $object);
     }
-    public function urlForRegist($url_back = null, $ext = null)
+    
+    public function id()
     {
-        throw new \ErrorException('DuckPhp: No Impelement');
+        return $this->action()->id();
     }
-    public function urlForLogin($url_back = null, $ext = null)
+    public function name()
     {
-        throw new \ErrorException('DuckPhp: No Impelement');
-    }
-    public function urlForLogout($url_back = null, $ext = null)
-    {
-        throw new \ErrorException('DuckPhp: No Impelement');
-    }
-    public function urlForHome($url_back = null, $ext = null)
-    {
-        throw new \ErrorException('DuckPhp: No Impelement');
+        return $this->action()->name();
     }
     public function regist($post)
     {
-        throw new \ErrorException('DuckPhp: No Impelement');
+        return $this->action()->login($post);
     }
     public function login($post)
     {
-        throw new \ErrorException('DuckPhp: No Impelement');
+        return $this->action()->login($post);
     }
-    public function logout($post)
+    public function logout(array $post)
     {
-        throw new \ErrorException('DuckPhp: No Impelement');
+        return $this->action()->logout($post);
+    }
+    ///////////////
+    public function urlForRegist($url_back = null, $ext = null)
+    {
+        return $this->service()->urlForRegist($url_back, $ext);
+    }
+    public function urlForLogin($url_back = null, $ext = null)
+    {
+        return $this->service()->urlForLogin($url_back, $ext);
+    }
+    public function urlForLogout($url_back = null, $ext = null)
+    {
+        return $this->service()->urlForLogout($url_back, $ext);
+    }
+    public function urlForHome($url_back = null, $ext = null)
+    {
+        return $this->service()->urlForHome($url_back, $ext);
+    }
+    public function getUsernames($ids)
+    {
+        return $this->service()->getUsernames($ids);
     }
 }

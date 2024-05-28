@@ -20,7 +20,7 @@ class PhaseProxy
     {
         return new static($container_class, $overriding);
     }
-    protected function createObjectForPhaseProxy()
+    protected function getObjectForPhaseProxy()
     {
         return is_object($this->overriding) ? $this->overriding : $this->overriding::_();
     }
@@ -29,11 +29,15 @@ class PhaseProxy
     {
         $phase = App::Phase($this->container_class);
         
-        $object = $this->createObjectForPhaseProxy();
+        $object = $this->getObjectForPhaseProxy();
 
         $callback = [$object,$method];
         $ret = ($callback)(...$args); /** @phpstan-ignore-line */
         App::Phase($phase);
         return $ret;
+    }
+    public function self()
+    {
+        return $this->getObjectForPhaseProxy();
     }
 }
