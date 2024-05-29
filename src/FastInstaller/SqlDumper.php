@@ -51,7 +51,7 @@ class SqlDumper extends ComponentBase
         }
         $file = App::Current()->options['database_driver'].'.sql';
         $full_file = $this->extendFullFile($this->options['path'], $this->options['path_sql_dump'], $file);
-        $sql = ''.file_get_contents($full_file);
+        $sql = ''.@file_get_contents($full_file);
         
         if ($force) {
             $sql = preg_replace('/CREATE TABLE `([^`]+)`/', 'DROP TABLE IF EXISTS `$1`'.";\n".'CREATE TABLE `$1`', $sql);
