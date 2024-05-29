@@ -11,6 +11,6 @@ interface UserActionInterface
     public function name();
     
     public function login(array $post);
-    public function logout(array $post);
+    public function logout();
     public function regist(array $post);
 }

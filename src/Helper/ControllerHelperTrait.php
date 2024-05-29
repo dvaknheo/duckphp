@@ -7,8 +7,8 @@ namespace DuckPhp\Helper;
 
 use DuckPhp\Component\Configer;
 use DuckPhp\Component\DbManager;
-use DuckPhp\Component\GlobalAdmin;
-use DuckPhp\Component\GlobalUser;
+use DuckPhp\GlobalAdmin\GlobalAdmin;
+use DuckPhp\GlobalUser\GlobalUser;
 use DuckPhp\Component\Pager;
 use DuckPhp\Core\App;
 use DuckPhp\Core\CoreHelper;
@@ -186,6 +186,10 @@ trait ControllerHelperTrait
     {
         return GlobalAdmin::_()->id();
     }
+    public static function AdminName()
+    {
+        return GlobalAdmin::_()->name();
+    }
     public static function AdminService()
     {
         return GlobalAdmin::_()->service();
@@ -201,6 +205,10 @@ trait ControllerHelperTrait
     public static function UserId()
     {
         return GlobalUser::_()->id();
+    }
+    public static function UserName()
+    {
+        return GlobalUser::_()->name();
     }
     public static function UserService()
     {

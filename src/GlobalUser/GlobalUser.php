@@ -11,19 +11,19 @@ class GlobalUser extends ComponentBase
 {
     const EVENT_LOGINED = 'logined';
     const EVENT_LOGOUTED = 'logouted';
-    public $action_class = null; // UserAction::class
-    public $service_class = null;// UserService::class
+    public $actionClass = null; // UserAction::class
+    public $serviceClass = null;// UserService::class
     public static function ReplaceTo($class)
     {
         GlobalUser::_(PhaseProxy::CreatePhaseProxy(App::Phase(), $class));
     }
     public function action()
     {
-        return $this->proxy($this->action_class);
+        return $this->proxy($this->actionClass);
     }
     public function service()
     {
-        return $this->proxy($this->service_class);
+        return $this->proxy($this->serviceClass);
     }
     protected function proxy($object)
     {
@@ -38,15 +38,15 @@ class GlobalUser extends ComponentBase
     {
         return $this->action()->name();
     }
-    public function login($post)
+    public function login(array $post)
     {
         return $this->action()->login($post);
     }
-    public function logout(array $post)
+    public function logout()
     {
         return $this->action()->logout($post);
     }
-    public function regist($post)
+    public function regist(array $post)
     {
         return $this->action()->login($post);
     }

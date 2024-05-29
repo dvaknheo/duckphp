@@ -10,7 +10,7 @@ interface AdminActionInterface
     public function id();
     public function name();
     public function login(array $post);
-    public function logout(array $post);
+    public function logout();
     public function checkAccess($class, string $method, ?string $url = null);
     public function isSuper();
 }

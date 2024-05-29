@@ -5,7 +5,7 @@
  */
 namespace DuckPhp\GlobalAdmin;
 
-interface AdminControllerInterface
+interface AdminServiceInterface
 {
     public function urlForLogin($url_back = null, $ext = null);
     public function urlForLogout($url_back = null, $ext = null);

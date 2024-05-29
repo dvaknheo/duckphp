@@ -2,73 +2,52 @@
 namespace tests\DuckPhp\Component;
 
 use DuckPhp\GlobalAdmin\GlobalAdmin;
+use DuckPhp\GlobalAdmin\AdminActionInterface;
+use DuckPhp\GlobalAdmin\AdminServiceInterface;
+use DuckPhp\DuckPhp;
+use DuckPhp\Foundation\Helper;
+use DuckPhp\Foundation\SimpleSingletonTrait;
 
 class GlobalAdminTest extends \PHPUnit\Framework\TestCase
 {
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(GlobalAdmin::class);
+        DuckPhp::_()->init(['class_admin'=>MyAdmin::class]);
+        Helper::Admin();
+
+        var_dump(Helper::AdminId());
+        var_dump(Helper::AdminName());
+        Helper::Admin()->login([]);
+        Helper::Admin()->logout();
+        Helper::Admin()->checkAccess('class','method','url');
+        Helper::Admin()->isSuper();
         
-        GlobalAdmin::_();
-        $post = array();
-        $url_back ='';
-        $ext = null;
-        try{
-        GlobalAdmin::_()->checkLogin();
-        }catch(\Exception $ex){}
-        try{
-        GlobalAdmin::_()->getUsernames([]);
-        }catch(\Exception $ex){}
-        
-        try{
-        GlobalAdmin::_()->urlForRegist($url_back, $ext);
-        }catch(\Exception $ex){}
-        try{
-        GlobalAdmin::_()->urlForLogin($url_back, $ext);
-        }catch(\Exception $ex){}
-        try{
-        GlobalAdmin::_()->urlForLogout($url_back, $ext);
-        }catch(\Exception $ex){}
-        try{
-        GlobalAdmin::_()->urlForHome($url_back, $ext);
-        }catch(\Exception $ex){}   
-        try{
-        GlobalAdmin::_()->regist($post);
-        }catch(\Exception $ex){}
-        try{
-        GlobalAdmin::_()->login($post);
-        }catch(\Exception $ex){}
-        try{
-        GlobalAdmin::_()->logout($post);
-        }catch(\Exception $ex){}
-        
-        
-        GlobalAdmin::_(MyGlobalAdmin::_());
-        GlobalAdmin::_()->current();
-        GlobalAdmin::_()->id();
-        GlobalAdmin::_()->data();
-        GlobalAdmin::_()->isSuper();
-        GlobalAdmin::_()->canAccessCurrent();
-        GlobalAdmin::_()->canAccessUrl('/a_path');
-        GlobalAdmin::_()->canAccessCall('Class','method');
-        
-        
-        GlobalAdmin::ZCall(GlobalAdmin::class);
-        
-        try{
-        GlobalAdmin::_()->action();
-        }catch(\Exception $ex){}
-        try{
-        GlobalAdmin::_()->service();
-        }catch(\Exception $ex){}
-        
+        Helper::Admin()->urlForLogin();
+        Helper::Admin()->urlForLogout();
+        Helper::Admin()->urlForHome();
         \LibCoverage\LibCoverage::End();
     }
 }
-class MyGlobalAdmin extends GlobalAdmin
+class MyAdmin extends GlobalAdmin
 {
-    public function checkLogin()
-    {
-        return true;
-    }
+    public $actionClass = MyAdminAction::class;
+    public $serviceClass = MyAdminService::class;
+}
+class MyAdminAction implements AdminActionInterface
+{
+    use SimpleSingletonTrait;
+    public function id(){ echo 'id';return 'id';}
+    public function name(){ echo  'name';return 'name';}
+    public function login(array $post){ echo  __FUNCTION__;}
+    public function logout(){ echo  __FUNCTION__;}
+    public function checkAccess($class, string $method, ?string $url = null){ echo  __FUNCTION__;}
+    public function isSuper(){ echo  __FUNCTION__;}
+}
+class MyAdminService implements AdminServiceInterface
+{
+    use SimpleSingletonTrait;
+    public function urlForLogin($url_back = null, $ext = null){ echo  __FUNCTION__;}
+    public function urlForLogout($url_back = null, $ext = null){ echo  __FUNCTION__;}
+    public function urlForHome($url_back = null, $ext = null){ echo  __FUNCTION__;}
 }
