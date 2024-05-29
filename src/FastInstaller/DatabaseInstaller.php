@@ -98,17 +98,21 @@ class DatabaseInstaller extends ComponentBase
     }
     protected function checkDb($database)
     {
-        
-        //$dsn = $this->dsnFromSetting($database);
         try {
-            $db = new \DuckPhp\Db\Db();
-            $db->init([
-                'dsn' => $database['dsn'],
-                'username' => $database['username'],
-                'password' => $database['password'],
-            ]);
+            $dbm = new DbManager();
+            $database_driver = App::Current()->options['database_driver'] ?? '';
+            $dbm->init([
+                'database_driver'=>$database_driver,
+                'database_list' => [[
+                    'dsn' => $database['dsn'],
+                    'username' => $database['username'],
+                    'password' => $database['password'],
+                ]],
+            ],App::Current());
+            $dbm->_DbForRead();
+
         } catch (\Exception $ex) {
-            return [false, $ex->getMessage()];
+            return [false, "!".$ex->getMessage()];
         }
         return [true,null];
     }
