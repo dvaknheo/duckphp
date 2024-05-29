@@ -23,8 +23,9 @@ class SqlDumper extends ComponentBase
         'sql_dump_include_tables_all' => false,
         'sql_dump_include_tables_by_model' => true,
         
-        'sql_dump_install_replace_prefix' => false,
+        'sql_dump_install_replace_prefix' => true,
         'sql_dump_prefix' => '',
+        'sql_dump_debug_show_sql' => false,
         
     ];
     //protected $spliter = "\n#### DATA BEGIN ####\n";
@@ -54,7 +55,7 @@ class SqlDumper extends ComponentBase
         $sql = ''.@file_get_contents($full_file);
         
         if ($force) {
-            $sql = preg_replace('/CREATE TABLE `([^`]+)`/', 'DROP TABLE IF EXISTS `$1`'.";\n".'CREATE TABLE `$1`', $sql);
+            $sql = preg_replace('/CREATE TABLE [`"]([^`"]+)[`"]/', 'DROP TABLE IF EXISTS `$1`'.";\n".'CREATE TABLE `$1`', $sql);
         }
 
         if ($this->options['sql_dump_install_replace_prefix']) {
@@ -65,6 +66,10 @@ class SqlDumper extends ComponentBase
         foreach ($sqls as $sql) {
             if (empty($sql)) {
                 continue;
+            }
+            if ($this->options['sql_dump_debug_show_sql']) {
+                echo $sql;
+                echo ";\n";
             }
             $flag = DbManager::Db()->execute($sql);
         }
@@ -92,9 +97,13 @@ class SqlDumper extends ComponentBase
             }
             return true;
         });
+        sort($tables);
         foreach ($tables as $table) {
             //try{
             $sql = Supporter::Current()->getSchemeByTable($table);
+            $prefix = App::Current()->options['table_prefix'];
+            $sql = str_replace(' `'.$prefix, ' `'.'', ''.$sql);
+            
             //}catch(\Exception $ex){
             //    continue;
             //}
@@ -122,7 +131,10 @@ class SqlDumper extends ComponentBase
         //    return '';
         //}
         foreach ($data as $line) {
-            $ret .= "INSERT INTO `$table` ".DbManager::DbForRead()->qouteInsertArray($line) .";\n";
+            $sql = "INSERT INTO `$table` ".DbManager::DbForRead()->qouteInsertArray($line) .";\n";
+            $prefix = App::Current()->options['table_prefix'];
+            $sql = str_replace(' `'.$prefix, ' `'.'', ''.$sql);
+            $ret .= $sql;
         }
         return $ret;
     }

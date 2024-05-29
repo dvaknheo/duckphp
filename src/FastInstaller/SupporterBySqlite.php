@@ -79,9 +79,9 @@ class SupporterBySqlite extends Supporter
     {
         $path = $this->getRuntimePath();
         $desc = <<<EOT
-----
-    base dir: [$path]
-    database filename: [{file}] 
+
+base dir      : [$path]
+database file : [{file}] 
 EOT;
         return $desc;
     }

@@ -34,6 +34,13 @@ class FastInstaller extends ComponentBase
     {
         return $this->doCommandInstall();
     }
+    public function command_dumpsql()
+    {
+        $this->initComponents();
+        SqlDumper::_()->dump();
+        echo "dumpsql done. see the file `config/\$database_driver.sql` .\n";
+        return;
+    }
     /**
      * override me to add a child app.
      */
@@ -99,11 +106,6 @@ and more ...\n";
         echo "use --help for more info.\n";
         if ($args['help'] ?? false) {
             $this->showHelp();
-            return;
-        }
-        if ($args['dump_sql'] ?? false) {
-            SqlDumper::_()->dump();
-            var_dump('done: dumpsql');
             return;
         }
         $this->doInstall();
