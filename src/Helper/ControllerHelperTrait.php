@@ -7,8 +7,6 @@ namespace DuckPhp\Helper;
 
 use DuckPhp\Component\Configer;
 use DuckPhp\Component\DbManager;
-use DuckPhp\GlobalAdmin\GlobalAdmin;
-use DuckPhp\GlobalUser\GlobalUser;
 use DuckPhp\Component\Pager;
 use DuckPhp\Core\App;
 use DuckPhp\Core\CoreHelper;
@@ -19,6 +17,8 @@ use DuckPhp\Core\SingletonTrait;
 use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SystemWrapper;
 use DuckPhp\Core\View;
+use DuckPhp\GlobalAdmin\GlobalAdmin;
+use DuckPhp\GlobalUser\GlobalUser;
 
 trait ControllerHelperTrait
 {

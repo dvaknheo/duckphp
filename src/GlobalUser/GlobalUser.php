@@ -46,7 +46,7 @@ class GlobalUser extends ComponentBase
     }
     public function logout()
     {
-        return $this->action()->logout($post);
+        return $this->action()->logout();
     }
     public function regist(array $post)
     {

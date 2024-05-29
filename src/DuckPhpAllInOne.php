@@ -29,5 +29,8 @@ class DuckPhpAllInOne extends DuckPhp
         ControllerHelperTrait::header insteadof AppHelperTrait;
         ControllerHelperTrait::setcookie  insteadof AppHelperTrait;
         ControllerHelperTrait::exit  insteadof AppHelperTrait;
+        ControllerHelperTrait::AdminService  insteadof AppHelperTrait;
+        ControllerHelperTrait::AdminService  insteadof BusinessHelperTrait;
+        ControllerHelperTrait::UserService  insteadof BusinessHelperTrait;
     }
 }

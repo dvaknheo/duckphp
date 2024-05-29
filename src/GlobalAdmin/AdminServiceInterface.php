@@ -10,5 +10,4 @@ interface AdminServiceInterface
     public function urlForLogin($url_back = null, $ext = null);
     public function urlForLogout($url_back = null, $ext = null);
     public function urlForHome($url_back = null, $ext = null);
-    
 }

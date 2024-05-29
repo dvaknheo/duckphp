@@ -7,12 +7,12 @@ namespace DuckPhp\Helper;
 
 use DuckPhp\Component\Cache;
 use DuckPhp\Component\Configer;
-use DuckPhp\Component\GlobalAdmin;
-use DuckPhp\Component\GlobalUser;
 use DuckPhp\Core\App;
 use DuckPhp\Core\CoreHelper;
 use DuckPhp\Core\EventManager;
 use DuckPhp\Core\SingletonTrait;
+use DuckPhp\GlobalAdmin\GlobalAdmin;
+use DuckPhp\GlobalUser\GlobalUser;
 
 trait BusinessHelperTrait
 {

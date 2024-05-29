@@ -43,7 +43,7 @@ class Console extends ComponentBase
     }
     public function getArgs()
     {
-        return $this->parameters['--']??[];
+        return $this->parameters['--'] ?? [];
     }
     public function app()
     {
@@ -130,7 +130,6 @@ class Console extends ComponentBase
             fputs($fp_out, $line."\n");
             $input = (string)fgets($fp_in);
             if ($this->options['cli_readlines_logfile']) {
-                
                 $path = static::SlashDir(App::Root()->options['path']);
                 $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
                 $file = $this->options['cli_readlines_logfile'];
@@ -208,7 +207,7 @@ class Console extends ComponentBase
             } else {
                 $method = $group['method_prefix'].$cmd_method;
             }
-            $method = str_replace('-','_',$method);
+            $method = str_replace('-', '_', $method);
             if (method_exists($class, $method)) {
                 return [$class,$method];
             }
