@@ -167,13 +167,14 @@ class AppTest extends \PHPUnit\Framework\TestCase
         $options=[
             'path' => $path_app,
             'path_view'=>$path_view,
-            'ext' => [AppTestApp::class => [
+            'app' => [AppTestApp::class => [
                 'path_view'=>$path_view,
                 'name'=>'MyAppTestApp',
             ]],
         ];
         AppTestApp::_(new AppTestApp());
-        App::_(new App())->init($options);
+        App::_(new App())->overriding_class = App::class; //要这么清理状态可不好，最好不要裸用App 类以防处意外
+        App::_()->init($options);
         \DuckPhp\Core\View::Show(['A'=>'b'],"view");
         
         ////

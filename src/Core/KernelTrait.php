@@ -146,7 +146,7 @@ trait KernelTrait
     }
     protected function initContainer($context)
     {
-        $this->is_root = !(\is_a($context, self::class));
+        $this->is_root = !(\is_a($context, self::class) || (static::class === self::class));
         //////////////////////////////
         
         if ($this->is_root) {
