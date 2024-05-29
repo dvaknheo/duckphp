@@ -102,15 +102,14 @@ class DatabaseInstaller extends ComponentBase
             $dbm = new DbManager();
             $database_driver = App::Current()->options['database_driver'] ?? '';
             $dbm->init([
-                'database_driver'=>$database_driver,
+                'database_driver' => $database_driver,
                 'database_list' => [[
                     'dsn' => $database['dsn'],
                     'username' => $database['username'],
                     'password' => $database['password'],
                 ]],
-            ],App::Current());
+            ], App::Current());
             $dbm->_DbForRead();
-
         } catch (\Exception $ex) {
             return [false, "!".$ex->getMessage()];
         }

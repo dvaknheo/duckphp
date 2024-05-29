@@ -43,7 +43,7 @@ class Console extends ComponentBase
     }
     public function getArgs()
     {
-        return $this->parameters['--'];
+        return $this->parameters['--']??[];
     }
     public function app()
     {
@@ -104,7 +104,7 @@ class Console extends ComponentBase
     {
         $ret = [];
         $mode_fill = !$fp_in && !$fp_out && !empty($this->datas);
-        if($mode_fill){
+        if ($mode_fill) {
             $fp_in = fopen('php://memory', 'r+');
             if (!$fp_in) {
                 return; // @codeCoverageIgnore
@@ -127,10 +127,16 @@ class Console extends ComponentBase
             }
             $key = $m[1];
             $line = str_replace('{'.$key.'}', $options[$key] ?? '', $line);
-            fputs($fp_out, $line);
+            fputs($fp_out, $line."\n");
             $input = (string)fgets($fp_in);
-            if($this->options['cli_readlines_logfile']){
-                file_put_contents($this->options['cli_readlines_logfile'],$input."\n",FILE_APPEND);
+            if ($this->options['cli_readlines_logfile']) {
+                
+                $path = static::SlashDir(App::Root()->options['path']);
+                $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
+                $file = $this->options['cli_readlines_logfile'];
+                $file = static::IsAbsPath($file)?$file:$path_runtime.$file;
+                
+                file_put_contents($file, $input."\n", FILE_APPEND);
             }
             $input = trim($input);
             if ($input === '') {
@@ -138,9 +144,9 @@ class Console extends ComponentBase
             }
             $ret[$key] = $input;
         }
-        if($mode_fill){
+        if ($mode_fill) {
             $this->index++;
-            fclose($fp_out);
+            //fclose($fp_out);
             fclose($fp_in);
         }
         
@@ -202,6 +208,7 @@ class Console extends ComponentBase
             } else {
                 $method = $group['method_prefix'].$cmd_method;
             }
+            $method = str_replace('-','_',$method);
             if (method_exists($class, $method)) {
                 return [$class,$method];
             }

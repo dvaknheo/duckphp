@@ -120,13 +120,35 @@ EOT;
         $path = \LibCoverage\LibCoverage::G()->getClassTestPath(Console::class);
         $input = fopen($path.'input.txt','r');
         $output = fopen($path.'output.txt','w');
-        
+        ConsoleParent::_()->options['cli_readlines_logfile']=$path.'input.log';
+
         $ret=ConsoleParent::_()->readLines($options,$desc,[],$input,$output);
         fclose($input);
         fclose($output);
         ConsoleParent::_()->getArgs();
         
         @unlink($path.'output.txt');
+        @unlink($path.'input.log');
+        /////////////[[[[[[[[[[[
+        Console::_(new Console())->readLinesFill(["myname\n"]);
+        //Console::_()->options['cli_readlines_logfile']=$path.'input.log';
+        $desc= <<<EOT
+name:[{name}]
+
+EOT;
+        $options =[
+            'name'=>'default',
+        ];
+        $data = Console::_()->readLines($options, $desc, []);
+        
+        //Console::_()->toggleLog($flag = true);
+        Console::_()->readLinesCleanFill();
+        Console::_()->readLinesFill(["myname\n"]);
+        $data = Console::_()->readLines($options, $desc, []);
+        
+        /////////////]]]]]]]]]]]
+        //@unlink($path.'input.log');
+
         
         \LibCoverage\LibCoverage::End();
     }
