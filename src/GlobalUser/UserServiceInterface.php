@@ -7,4 +7,9 @@ namespace DuckPhp\GlobalUser;
 
 interface UserServiceInterface
 {
+    public function urlForLogin($url_back = null, $ext = null)
+    public function urlForLogout($url_back = null, $ext = null)
+    public function urlForHome($url_back = null, $ext = null)
+    public function urlForRegist($url_back = null, $ext = null)
+    public function getUsernames($ids);
 }

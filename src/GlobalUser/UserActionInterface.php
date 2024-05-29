@@ -7,4 +7,10 @@ namespace DuckPhp\GlobalUser;
 
 interface UserActionInterface
 {
+    public function id();
+    public function name();
+    
+    public function login(array $post);
+    public function logout(array $post);
+    public function regist(array $post);
 }

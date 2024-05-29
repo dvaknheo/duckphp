@@ -15,27 +15,24 @@ class GlobalAdmin extends ComponentBase
     const EVENT_LOGINED = 'logined';
     const EVENT_LOGOUTED = 'logouted';
     const EVENT_ACCESSED = 'accessed';
-    
+    public $action_class = null; // UserAction::class
+    public $service_class = null;// UserService::class
     public static function ReplaceTo($class)
     {
         GlobalAdmin::_(PhaseProxy::CreatePhaseProxy(App::Phase(), $class));
     }
     public function action()
     {
-        // : AdminActionInterface
-        //return $this->proxy(AdminAction::_());
-        throw new \ErrorException('DuckPhp: No Impelement');
+        return $this->proxy($this->action_class);
     }
     public function service()
     {
-        // : AdminServiceInterface
-        //return $this->proxy(AdminService::_());
-        throw new \ErrorException('DuckPhp: No Impelement');
+        return $this->proxy($this->service_class);
     }
     protected function proxy($object)
     {
         return PhaseProxy::Create(App::Phase(), $object);
-    }    ///////////////
+    }
     public function id()
     {
         return $this->action()->id();
@@ -44,7 +41,7 @@ class GlobalAdmin extends ComponentBase
     {
         return $this->action()->name();
     }
-    public function login($post)
+    public function login(array $post)
     {
         return $this->action()->login($post);
     }
