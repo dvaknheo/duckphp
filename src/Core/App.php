@@ -67,7 +67,7 @@ class App extends ComponentBase
     public static function _($object = null)
     {
         if ($object) {
-            static::_()->overriding_class = $object->overriding_class;
+            $object->overriding_class = static::_()->overriding_class;
         }
         return PhaseContainer::GetObject(static::class, $object);
     }

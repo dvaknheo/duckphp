@@ -18,7 +18,7 @@ use DuckPhp\Foundation\Helper; // Helper
 class DbTestApp extends DuckPhp
 {
     public $options = [
-        //'is_debug' => true, // 开启调试模式
+        'is_debug' => true, // 开启调试模式
         'namespace_controller' => "\\", // 设置控制器的命名空间为根 使得 Main 类为入口
         'cli_command_prefix'=> 'dbtest', // 因为我们没命名空间，命令行要设置一下命名空间。
         
@@ -28,7 +28,7 @@ class DbTestApp extends DuckPhp
         'callable_view_class' => View::class,
         'callable_view_is_object_call' => true,
         
-        'local_db' => true,  // 单独数据库
+        'local_database' => true,  // 单独数据库
         'database' => [
             'dsn' => 'sqlite:dbtest.sqlite',
             'username' => null,

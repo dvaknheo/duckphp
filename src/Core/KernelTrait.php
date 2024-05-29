@@ -162,25 +162,28 @@ trait KernelTrait
             $container->setCurrentContainer($this->overriding_class);
         }
         /////////////
+        // something nest
         $apps = [];
         $apps[static::class] = $this;
         $apps[$this->overriding_class] = $this;
         if ($this->is_root) {
             $apps[self::class] = $this;
         }
-        if ($this->options['override_class_from'] ?? null) {
-            $class = $this->options['override_class_from'];
-            $apps[$class] = $this;
-        }
         
         $container->addPublicClasses(array_keys($apps));
-        $container->addPublicClasses(array_keys($this->options['app'] ?? []));
-        
         /////////////
+        $overriding_class = $this->overriding_class;
+        
         foreach ($apps as $class => $object) {
             $class = $class ? (string)$class: static::class;
             $class::_($object);
         }
+        $this->overriding_class = $overriding_class;
+        if ($this->is_root) {
+            (self::class)::_()->overriding_class = $overriding_class;
+        }
+        
+        $container->addPublicClasses(array_keys($this->options['app'] ?? []));
         return false;
     }
     protected function addPublicClassesInRoot($classes)

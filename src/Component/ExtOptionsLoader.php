@@ -41,7 +41,7 @@ class ExtOptionsLoader extends ComponentBase
     public function loadExtOptions($force = false, $class = null)
     {
         $class = $class ?? App::Current()->getOverridingClass();
-        $class = is_string($class)?$class:get_class($class);
+        $class = is_string($class)?$class:$class->getOverridingClass();
         $all_options = $this->get_all_ext_options($force);
         $options = $all_options[$class] ?? [];
         $class::_()->options = array_replace_recursive($class::_()->options, $options);
@@ -50,8 +50,7 @@ class ExtOptionsLoader extends ComponentBase
     public function saveExtOptions($options, $class = null)
     {
         $class = $class ?? App::Current()->getOverridingClass();
-        $class = is_string($class)?$class:get_class($class);
-        
+        $class = is_string($class)?$class:$class->getOverridingClass();
         $full_file = $this->get_ext_options_file();
         static::$all_ext_options = $this->get_all_ext_options(true);
         static::$all_ext_options[$class] = $options;
