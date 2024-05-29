@@ -110,36 +110,41 @@ ControllerHelper::PageHtml(123);
         
         try{
             ControllerHelper::Admin();
-        }catch(\Exception $ex){
+        }catch(\Throwable $ex){
         }
         try{
             ControllerHelper::AdminId();
-        }catch(\Exception $ex){
+        }catch(\Throwable $ex){
         }
         try{
-            ControllerHelper::AdminData();
-        }catch(\Exception $ex){
+            ControllerHelper::AdminName();
+        }catch(\Throwable $ex){
         }
         try{
             ControllerHelper::User();
-        }catch(\Exception $ex){
+        }catch(\Throwable $ex){
         }
         try{
             ControllerHelper::UserId();
-        }catch(\Exception $ex){
+        }catch(\Throwable $ex){
         }
         try{
-            ControllerHelper::UserData();
-        }catch(\Exception $ex){
+            ControllerHelper::UserName();
+        }catch(\Throwable $ex){
             
         }
         try{
             ControllerHelper::AdminAction();
-        }catch(\Exception $ex){}
+        }catch(\Throwable $ex){}
         try{
             ControllerHelper::UserAction();
-        }catch(\Exception $ex){}
-        
+        }catch(\Throwable $ex){}
+        try{
+            ControllerHelper::AdminService();
+        }catch(\Throwable $ex){}
+        try{
+            ControllerHelper::UserService();
+        }catch(\Throwable $ex){}
         \LibCoverage\LibCoverage::End();
     }
 }

@@ -23,6 +23,7 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
             'sql_dump_file' => 'sql.php',
             'namespace' =>'tests_Data_SqlDumper',
             'database_driver'=>'mysql',
+            'sql_dump_debug_show_sql'=>true,
         ];
 
         DuckPhp::_(new DuckPhp())->init($options);

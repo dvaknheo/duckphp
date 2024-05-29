@@ -37,10 +37,10 @@ class BusinessHelperTraitTest extends \PHPUnit\Framework\TestCase
         
         try{
             BusinessHelper::AdminService();
-        }catch(\Exception $ex){}
+        }catch(\Throwable $ex){}
         try{
             BusinessHelper::UserService();
-        }catch(\Exception $ex){}
+        }catch(\Throwable $ex){}
         
         App::_()->init([]);
         BusinessHelper::PathOfRuntime();

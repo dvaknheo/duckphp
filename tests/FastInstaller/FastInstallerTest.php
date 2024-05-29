@@ -74,13 +74,12 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
 
         FiParentApp::_()->init([]);
         
-        
         $_SERVER['argv']=['-','install', "--help", ];
         FiParentApp::_()->run();
 
 
 
-        $_SERVER['argv']=['-','install', "--dump-sql", ];
+        $_SERVER['argv']=['-','dumpsql'];
         FiParentApp::_()->run();
         
 
