@@ -5,6 +5,8 @@
  */
 namespace DuckPhp\GlobalUser;
 
+use DuckPhp\Component\PhaseProxy;
+use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 
 class GlobalUser extends ComponentBase
@@ -25,9 +27,9 @@ class GlobalUser extends ComponentBase
     {
         return $this->proxy($this->serviceClass);
     }
-    protected function proxy($object)
+    protected function proxy($class)
     {
-        return PhaseProxy::Create(App::Phase(), $object);
+        return PhaseProxy::CreatePhaseProxy(App::Phase(), $class::_());
     }
     
     public function id()
