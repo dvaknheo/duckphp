@@ -123,10 +123,13 @@ class DuckPhp extends App
             RouteHookPathInfoCompat::_()->init($this->options, $this);
         }
         if ($this->options['class_admin']) {
-            GlobalAdmin::ReplaceTo($this->options['class_admin']);
+            $class = $this->options['class_admin'];
+            GlobalAdmin::_($class::ZCall(static::Phase()));
         }
         if ($this->options['class_user']) {
-            GlobalUser::ReplaceTo($this->options['class_user']);
+            $class = $this->options['class_user'];
+            GlobalUser::_($class::ZCall(static::Phase()));
+            
         }
         
         return $this;
