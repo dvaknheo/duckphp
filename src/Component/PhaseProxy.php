@@ -18,6 +18,7 @@ class PhaseProxy
     }
     public static function CreatePhaseProxy($container_class, $overriding)
     {
+        $container_class = $container_class ?? App::Phase();
         return new static($container_class, $overriding);
     }
     protected function getObjectForPhaseProxy()

@@ -124,11 +124,11 @@ class DuckPhp extends App
         }
         if ($this->options['class_admin']) {
             $class = $this->options['class_admin'];
-            GlobalAdmin::_($class::ZCall(static::Phase()));
+            GlobalAdmin::_($class::_Z(static::Phase()));
         }
         if ($this->options['class_user']) {
             $class = $this->options['class_user'];
-            GlobalUser::_($class::ZCall(static::Phase()));
+            GlobalUser::_($class::_Z(static::Phase()));
             
         }
         

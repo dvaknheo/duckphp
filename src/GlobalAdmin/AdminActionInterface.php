@@ -13,4 +13,8 @@ interface AdminActionInterface
     public function logout();
     public function checkAccess($class, string $method, ?string $url = null);
     public function isSuper();
+    
+    public function urlForLogin($url_back = null, $ext = null);
+    public function urlForLogout($url_back = null, $ext = null);
+    public function urlForHome($url_back = null, $ext = null);
 }

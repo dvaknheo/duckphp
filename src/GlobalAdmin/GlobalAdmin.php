@@ -9,64 +9,51 @@ use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 
-class GlobalAdmin extends ComponentBase
+class GlobalAdmin extends ComponentBase implements AdminActionInterface
 {
     const EVENT_LOGINED = 'logined';
     const EVENT_LOGOUTED = 'logouted';
     const EVENT_ACCESSED = 'accessed';
-    public $actionClass = null; // UserAction::class
-    public $serviceClass = null;// UserService::class
-    public static function ReplaceTo($class)
-    {
-        GlobalAdmin::_(PhaseProxy::CreatePhaseProxy(App::Phase(), $class));
-    }
-    public function action()
-    {
-        return $this->proxy($this->actionClass);
-    }
+    
     public function service()
     {
-        return $this->proxy($this->serviceClass);
-    }
-    protected function proxy($class)
-    {
-        return PhaseProxy::CreatePhaseProxy(App::Phase(), $class::_());
+        throw new \Exception("No Impelment");
     }
     public function id()
     {
-        return $this->action()->id();
+        throw new \Exception("No Impelment");
     }
     public function name()
     {
-        return $this->action()->name();
+        throw new \Exception("No Impelment");
     }
     public function login(array $post)
     {
-        return $this->action()->login($post);
+        throw new \Exception("No Impelment");
     }
     public function logout()
     {
-        return $this->action()->logout();
+        throw new \Exception("No Impelment");
     }
     public function checkAccess($class, string $method, ?string $url = null)
     {
-        return $this->action()->checkAccess($class, $method, $url);
+        throw new \Exception("No Impelment");
     }
     public function isSuper()
     {
-        return $this->action()->isSuper();
+        throw new \Exception("No Impelment");
     }
     ///////////////
     public function urlForLogin($url_back = null, $ext = null)
     {
-        return $this->service()->urlForLogin($url_back, $ext);
+        throw new \Exception("No Impelment");
     }
     public function urlForLogout($url_back = null, $ext = null)
     {
-        return $this->service()->urlForLogout($url_back, $ext);
+        throw new \Exception("No Impelment");
     }
     public function urlForHome($url_back = null, $ext = null)
     {
-        return $this->service()->urlForHome($url_back, $ext);
+        throw new \Exception("No Impelment");
     }
 }

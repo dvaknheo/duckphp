@@ -12,7 +12,7 @@ trait ZCallTrait
     /**
      * @return self
      */
-    public static function ZCall($phase)
+    public static function _Z($phase)
     {
         return PhaseProxy::CreatePhaseProxy($phase, static::class);
     }
