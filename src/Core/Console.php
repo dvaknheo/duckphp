@@ -199,8 +199,9 @@ class Console extends ComponentBase
     public function getCallback($group, $cmd_method)
     {
         //$method = $group['method_prefix'].$method;
-        //$class = $group['class'];
-        foreach ($group['classes'] as $class) {
+        $classes = $group['classes'];
+        $classes = array_reverse($classes);
+        foreach ($classes as $class) {
             if (is_array($class)) {
                 list($class, $method_prefix) = $class;
                 $method = $method_prefix.$cmd_method;
