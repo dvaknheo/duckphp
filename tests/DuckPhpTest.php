@@ -5,6 +5,7 @@ use DuckPhp\DuckPhp;
 use DuckPhp\Core\SingletonTrait as SingletonExTrait;
 use DuckPhp\Ext\Misc;
 use DuckPhp\Component\Configer;
+use DuckPhp\Component\ZCallTrait;
 use DuckPhp\Core\View;
 
 class DuckPhpTest extends \PHPUnit\Framework\TestCase
@@ -216,6 +217,7 @@ class FakeObject
 class FakeAdmin
 {
     use SingletonExTrait;
+    use ZCallTrait;
     public function id()
     {
         return 1;
@@ -228,6 +230,8 @@ class FakeAdmin
 class FakeUser
 {
     use SingletonExTrait;
+    use ZCallTrait;
+
     public function id()
     {
         return 1;

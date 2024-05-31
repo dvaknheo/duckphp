@@ -1,5 +1,5 @@
 <?php
-namespace tests\DuckPhp\Component;
+namespace tests\DuckPhp\GlobalAdmin;
 
 use DuckPhp\GlobalAdmin\GlobalAdmin;
 use DuckPhp\GlobalAdmin\AdminActionInterface;
@@ -14,40 +14,47 @@ class GlobalAdminTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(GlobalAdmin::class);
         DuckPhp::_()->init(['class_admin'=>MyAdmin::class]);
-        Helper::Admin();
-
+        try{
+            var_dump(Helper::AdminId());
+        }catch(\Exception $ex){}
+        try{
         var_dump(Helper::AdminId());
+        }catch(\Exception $ex){}
+        try{
         var_dump(Helper::AdminName());
+        }catch(\Exception $ex){}
+        try{
+        var_dump(Helper::AdminService());
+        }catch(\Exception $ex){}
+        try{
         Helper::Admin()->login([]);
+        }catch(\Exception $ex){}
+        try{
         Helper::Admin()->logout();
+        }catch(\Exception $ex){}
+        try{
         Helper::Admin()->checkAccess('class','method','url');
+        }catch(\Exception $ex){}
+        try{
         Helper::Admin()->isSuper();
+        }catch(\Exception $ex){}
+        try{
         
         Helper::Admin()->urlForLogin();
+        }catch(\Exception $ex){}
+        try{
         Helper::Admin()->urlForLogout();
+        }catch(\Exception $ex){}
+        try{
         Helper::Admin()->urlForHome();
+        }catch(\Exception $ex){}
+        try{
+        Helper::Admin()->log("abc");
+        }catch(\Exception $ex){}
+        
         \LibCoverage\LibCoverage::End();
     }
 }
 class MyAdmin extends GlobalAdmin
 {
-    public $actionClass = MyAdminAction::class;
-    public $serviceClass = MyAdminService::class;
-}
-class MyAdminAction implements AdminActionInterface
-{
-    use SimpleSingletonTrait;
-    public function id(){ echo 'id';return 'id';}
-    public function name(){ echo  'name';return 'name';}
-    public function login(array $post){ echo  __FUNCTION__;}
-    public function logout(){ echo  __FUNCTION__;}
-    public function checkAccess($class, string $method, ?string $url = null){ echo  __FUNCTION__;}
-    public function isSuper(){ echo  __FUNCTION__;}
-}
-class MyAdminService implements AdminServiceInterface
-{
-    use SimpleSingletonTrait;
-    public function urlForLogin($url_back = null, $ext = null){ echo  __FUNCTION__;}
-    public function urlForLogout($url_back = null, $ext = null){ echo  __FUNCTION__;}
-    public function urlForHome($url_back = null, $ext = null){ echo  __FUNCTION__;}
 }

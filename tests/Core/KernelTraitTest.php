@@ -1,7 +1,8 @@
 <?php
 namespace tests\DuckPhp\Core{
 
-use DuckPhp\Core\App;
+use DuckPhp\DuckPhp as App;
+use DuckPhp\Core\App as OldApp;
 use DuckPhp\Core\KernelTrait;
 use DuckPhp\Core\Runtime;
 use DuckPhp\Core\Logger;
@@ -22,7 +23,7 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(KernelTrait::class);
         $LibCoverage = \LibCoverage\LibCoverage::G();
         
-        $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(App::class);
+        $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(OldApp::class);
         $path_config=\LibCoverage\LibCoverage::G()->getClassTestPath(Configer::class); //???
         
         $options=[
@@ -219,6 +220,7 @@ echo "-------------------------------------\n";
         Route::_()->bind('/exception2');
         App::_()->run();
         
+        KernelTestApp::_(new KernelTestApp())->override_class = KernelTestApp::class;
         KernelTestApp::_()->createLocalObject2(Logger::class);
         App::Root()->getOverridingClass();
         \LibCoverage\LibCoverage::G($LibCoverage);
@@ -231,7 +233,7 @@ echo "-------------------------------------\n";
         
         
         echo "-----------------------\n";
-        $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(App::class);
+        $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(OldApp::class);
         $path_config=\LibCoverage\LibCoverage::G()->getClassTestPath(Configer::class);
         $options=[
             'path' => $path_app,

@@ -178,9 +178,9 @@ trait ControllerHelperTrait
         return EventManager::OnEvent($event, $callback);
     }
     //////////////////////
-    public static function Admin($new = null)
+    public static function Admin()
     {
-        return GlobalAdmin::_($new);
+        return GlobalAdmin::_();
     }
     public static function AdminId()
     {
@@ -194,13 +194,9 @@ trait ControllerHelperTrait
     {
         return GlobalAdmin::_()->service();
     }
-    public static function AdminAction()
+    public static function User()
     {
-        return GlobalAdmin::_()->action();
-    }
-    public static function User($new = null)
-    {
-        return GlobalUser::_($new);
+        return GlobalUser::_();
     }
     public static function UserId()
     {
@@ -213,9 +209,5 @@ trait ControllerHelperTrait
     public static function UserService()
     {
         return GlobalUser::_()->service();
-    }
-    public static function UserAction()
-    {
-        return GlobalUser::_()->action();
     }
 }

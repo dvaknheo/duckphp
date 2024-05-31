@@ -129,7 +129,6 @@ class DuckPhp extends App
         if ($this->options['class_user']) {
             $class = $this->options['class_user'];
             GlobalUser::_($class::_Z(static::Phase()));
-            
         }
         
         return $this;

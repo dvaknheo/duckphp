@@ -6,71 +6,60 @@
 namespace DuckPhp\GlobalUser;
 
 use DuckPhp\Component\PhaseProxy;
+use DuckPhp\Component\ZCallTrait;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 
-class GlobalUser extends ComponentBase
+class GlobalUser extends ComponentBase implements UserActionInterface
 {
     const EVENT_LOGINED = 'logined';
     const EVENT_LOGOUTED = 'logouted';
-    public $actionClass = null; // UserAction::class
-    public $serviceClass = null;// UserService::class
-    public static function ReplaceTo($class)
-    {
-        GlobalUser::_(PhaseProxy::CreatePhaseProxy(App::Phase(), $class));
-    }
-    public function action()
-    {
-        return $this->proxy($this->actionClass);
-    }
+    
+    use ZCallTrait;
     public function service()
     {
-        return $this->proxy($this->serviceClass);
+        //return MyUserService::_Z();
+        throw new \Exception("No Impelment");
     }
-    protected function proxy($class)
+    public function id() : int
     {
-        return PhaseProxy::CreatePhaseProxy(App::Phase(), $class::_());
+        throw new \Exception("No Impelment");
     }
-    
-    public function id()
+    public function name() : string
     {
-        return $this->action()->id();
-    }
-    public function name()
-    {
-        return $this->action()->name();
+        throw new \Exception("No Impelment");
     }
     public function login(array $post)
     {
-        return $this->action()->login($post);
+        throw new \Exception("No Impelment");
     }
     public function logout()
     {
-        return $this->action()->logout();
+        throw new \Exception("No Impelment");
     }
     public function regist(array $post)
     {
-        return $this->action()->login($post);
+        throw new \Exception("No Impelment");
     }
     ///////////////
-    public function urlForLogin($url_back = null, $ext = null)
+    public function urlForLogin($url_back = null, $ext = null) : string
     {
-        return $this->service()->urlForLogin($url_back, $ext);
+        throw new \Exception("No Impelment");
     }
-    public function urlForLogout($url_back = null, $ext = null)
+    public function urlForLogout($url_back = null, $ext = null) : string
     {
-        return $this->service()->urlForLogout($url_back, $ext);
+        throw new \Exception("No Impelment");
     }
-    public function urlForHome($url_back = null, $ext = null)
+    public function urlForHome($url_back = null, $ext = null) : string
     {
-        return $this->service()->urlForHome($url_back, $ext);
+        throw new \Exception("No Impelment");
     }
-    public function urlForRegist($url_back = null, $ext = null)
+    public function urlForRegist($url_back = null, $ext = null) : string
     {
-        return $this->service()->urlForRegist($url_back, $ext);
+        throw new \Exception("No Impelment");
     }
-    public function getUsernames($ids)
+    public function batchGetUsernames($ids)
     {
-        return $this->service()->getUsernames($ids);
+        return $this->service()->batchGetUsernames($ids);
     }
 }

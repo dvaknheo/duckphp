@@ -79,7 +79,7 @@ class SimpleControllerTraitTest extends \PHPUnit\Framework\TestCase
         Route::_()->run();
         
         MyAction::_(MyAction2::_())->foo();
-        MyAction::ZCall(DuckPhpAllInOne::class)->foo();
+        MyAction::_Z(DuckPhpAllInOne::class)->foo();
 
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();

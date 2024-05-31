@@ -11,7 +11,7 @@ class ZCallTraitTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(ZCallTrait::class);
         App::_()->init([]);
-        MyZCallObject::ZCall(App::Phase())->foo();
+        MyZCallObject::_Z(App::Phase())->foo();
         
         \LibCoverage\LibCoverage::End();
     }

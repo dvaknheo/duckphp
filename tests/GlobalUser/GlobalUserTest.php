@@ -1,5 +1,5 @@
 <?php
-namespace tests\DuckPhp\Component;
+namespace tests\DuckPhp\GlobalUser;
 
 use DuckPhp\GlobalUser\GlobalUser;
 use DuckPhp\GlobalUser\UserActionInterface;
@@ -14,20 +14,43 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(GlobalUser::class);
         DuckPhp::_()->init(['class_user'=>MyUser::class]);
+        try{
         Helper::User();
-
+        }catch(\Exception $ex){}
+        try{
         var_dump(Helper::UserId());
+        }catch(\Exception $ex){}
+        try{
         var_dump(Helper::UserName());
+        }catch(\Exception $ex){}
+        try{
+        var_dump(Helper::UserService());
+        }catch(\Exception $ex){}
+        try{
         Helper::User()->login([]);
+        }catch(\Exception $ex){}
+        try{
         Helper::User()->logout();
+        }catch(\Exception $ex){}
+        try{
         Helper::User()->regist([]);
 
-        
+        }catch(\Exception $ex){}
+        try{
         Helper::User()->urlForLogin();
+        }catch(\Exception $ex){}
+        try{
         Helper::User()->urlForLogout();
+        }catch(\Exception $ex){}
+        try{
         Helper::User()->urlForHome();
+        }catch(\Exception $ex){}
+        try{
         Helper::User()->urlForRegist();
-        Helper::User()->getUsernames([]);
+        }catch(\Exception $ex){}
+        try{
+        Helper::User()->batchGetUsernames([]);
+        }catch(\Exception $ex){}
         
         
         \LibCoverage\LibCoverage::End();
@@ -35,25 +58,5 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
 }
 class MyUser extends GlobalUser
 {
-    public $actionClass = MyUserAction::class;
-    public $serviceClass = MyUserService::class;
-}
-class MyUserAction implements UserActionInterface
-{
-    use SimpleSingletonTrait;
-    public function id(){ echo 'id';return 'id';}
-    public function name(){ echo  'name';return 'name';}
-    public function login(array $post){ echo  __FUNCTION__;}
-    public function logout(){ echo  __FUNCTION__;}
-    public function regist(array $post){ echo  __FUNCTION__;}
 
-}
-class MyUserService implements UserServiceInterface
-{
-    use SimpleSingletonTrait;
-    public function urlForLogin($url_back = null, $ext = null){ echo  __FUNCTION__;}
-    public function urlForLogout($url_back = null, $ext = null){ echo  __FUNCTION__;}
-    public function urlForHome($url_back = null, $ext = null){ echo  __FUNCTION__;}
-    public function urlForRegist($url_back = null, $ext = null){ echo  __FUNCTION__;}
-    public function getUsernames(array $ids){ echo  __FUNCTION__;}
 }

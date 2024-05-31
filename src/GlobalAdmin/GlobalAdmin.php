@@ -6,20 +6,24 @@
 namespace DuckPhp\GlobalAdmin;
 
 use DuckPhp\Component\PhaseProxy;
+use DuckPhp\Component\ZCallTrait;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 
 class GlobalAdmin extends ComponentBase implements AdminActionInterface
 {
+    use ZCallTrait;
     const EVENT_LOGINED = 'logined';
     const EVENT_LOGOUTED = 'logouted';
     const EVENT_ACCESSED = 'accessed';
     
+    
     public function service()
     {
+        //return MyAdminService::_Z();
         throw new \Exception("No Impelment");
     }
-    public function id()
+    public function id() : int
     {
         throw new \Exception("No Impelment");
     }
@@ -35,15 +39,6 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     {
         throw new \Exception("No Impelment");
     }
-    public function checkAccess($class, string $method, ?string $url = null)
-    {
-        throw new \Exception("No Impelment");
-    }
-    public function isSuper()
-    {
-        throw new \Exception("No Impelment");
-    }
-    ///////////////
     public function urlForLogin($url_back = null, $ext = null)
     {
         throw new \Exception("No Impelment");
@@ -55,5 +50,18 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     public function urlForHome($url_back = null, $ext = null)
     {
         throw new \Exception("No Impelment");
+    }
+    ///////////////
+    public function checkAccess($class, string $method, ?string $url = null)
+    {
+        return $this->service()->doIsSuper($this->id(), $class, $method, $url);
+    }
+    public function isSuper()
+    {
+        return $this->service()->doIsSuper($this->id());
+    }
+    public function log(string $string, ?string $type = null)
+    {
+        return $this->service()->doIsSuper($this->id(), $string, $type);
     }
 }
