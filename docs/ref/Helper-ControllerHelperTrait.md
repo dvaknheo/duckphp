@@ -146,9 +146,7 @@
 
     public static function ControllerThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
 
-    public static function AdminAction()
 
-    public static function UserAction()
     
 
 ## 完毕
@@ -156,4 +154,16 @@
 
 
 
+
+    public static function Admin()
+
+    public static function AdminName()
+
+    public static function AdminService()
+
+    public static function User()
+
+    public static function UserName()
+
+    public static function UserService()
 

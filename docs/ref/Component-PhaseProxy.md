@@ -29,3 +29,7 @@
 $overring 还可以是 $object ，  这样调用的时候，就不是找单例而是从 $object 了。
 
 ## 完毕
+    protected function getObjectForPhaseProxy()
+
+    public function self()
+

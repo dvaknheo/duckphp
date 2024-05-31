@@ -77,6 +77,9 @@
 + **'cli_enable' => true,** 
 
     启用命令行模式   // [DuckPhp\Core\App](Core-App.md)
++ **'cli_readlines_logfile' => '',** 
+
+       // [DuckPhp\Core\Console](Core-Console.md), [DuckPhp\Ext\AutoReadLineConsole](Ext-AutoReadLineConsole.md)
 + **'close_resource_at_output' => false,** 
 
     输出时候关闭资源输出（仅供第三方扩展参考   // [DuckPhp\Core\App](Core-App.md)
@@ -172,13 +175,13 @@
     500 错误处理的View或者回调，仅根应用有效   // [DuckPhp\Core\App](Core-App.md)
 + **'error_maintain' => NULL,** 
 
-       // [DuckPhp\Component\RouteHookCheckStatus](Component-RouteHookCheckStatus.md)
+    维修页面view ，类似 error_404   // [DuckPhp\Component\RouteHookCheckStatus](Component-RouteHookCheckStatus.md)
 + **'error_need_install' => NULL,** 
 
-       // [DuckPhp\Component\RouteHookCheckStatus](Component-RouteHookCheckStatus.md)
+    需要安装的页面   // [DuckPhp\Component\RouteHookCheckStatus](Component-RouteHookCheckStatus.md)
 + **'exception_for_project' => NULL,** 
 
-       // [DuckPhp\Core\App](Core-App.md)
+    异常报告仅针对的异常   // [DuckPhp\Core\App](Core-App.md)
 + **'exception_reporter' => NULL,** 
 
     异常报告类   // [DuckPhp\Core\App](Core-App.md)
@@ -190,7 +193,7 @@
     配置文件名字   // 
 + **'ext_options_file_enable' => true,** 
 
-       // 
+    额外配置文件   // 
 + 'facades_enable_autoload' => true, 
 
     门面扩展，门面类启用自动加载   // [DuckPhp\Ext\MyFacadesAutoLoader](Ext-MyFacadesAutoLoader.md)
@@ -436,7 +439,7 @@
     - 'error_500' => NULL,
         500 错误处理的View或者回调，仅根应用有效
     - 'exception_for_project' => NULL,
-        
+        异常报告仅针对的异常
     - 'exception_reporter' => NULL,
         异常报告类
     - 'ext' => array (   'DuckPhp\\Component\\RouteHookCheckStatus' => true,   'DuckPhp\\Component\\RouteHookRewrite' => true,   'DuckPhp\\Component\\RouteHookRouteMap' => true,   'DuckPhp\\Component\\RouteHookResource' => true, ),
@@ -444,7 +447,7 @@
     - 'ext_options_file' => 'config/DuckPhpApps.config.php',
         配置文件名字
     - 'ext_options_file_enable' => true,
-        
+        额外配置文件
     - 'html_handler' => NULL,
         HTML编码函数
     - 'is_debug' => false,
@@ -503,7 +506,7 @@
     - 'error_500' => NULL,
         500 错误处理的View或者回调，仅根应用有效
     - 'exception_for_project' => NULL,
-        
+        异常报告仅针对的异常
     - 'exception_reporter' => NULL,
         异常报告类
     - 'ext' => array ( ),
@@ -556,6 +559,8 @@
     - 'cli_command_default' => 'help',
         命令行,默认调用指令
     - 'cli_command_group' => array ( ),
+        
+    - 'cli_readlines_logfile' => '',
         
 + DuckPhp\Core\Route
     - 'controller_class_adjust' => '',
@@ -637,8 +642,8 @@
         是否从设置里再入 redis 设置
     - 'redis_list_try_single' => true,
         redis 设置是否同时支持单个和多个
-+ DuckPhp\Component\GlobalAdmin
-+ DuckPhp\Component\GlobalUser
++ DuckPhp\GlobalAdmin\GlobalAdmin
++ DuckPhp\GlobalUser\GlobalUser
 + DuckPhp\Component\RouteHookPathInfoCompat
     - 'path_info_compact_action_key' => '_r',
         无PATH_INFO兼容，替代的 action
@@ -648,9 +653,9 @@
         PATH_INFO 兼容模式
 + DuckPhp\Component\RouteHookCheckStatus
     - 'error_maintain' => NULL,
-        
+        维修页面view ，类似 error_404
     - 'error_need_install' => NULL,
-        
+        需要安装的页面
 + DuckPhp\Component\RouteHookRewrite
     - 'controller_url_prefix' => '',
         
@@ -678,6 +683,8 @@
     - 'cli_command_default' => 'help',
         命令行,默认调用指令
     - 'cli_command_group' => array ( ),
+        
+    - 'cli_readlines_logfile' => '',
         
 + DuckPhp\Ext\CallableView
     - 'callable_view_class' => NULL,

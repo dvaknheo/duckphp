@@ -64,6 +64,9 @@ class AppWithAllOptions extends DuckPhp
         // 启用命令行模式 (DuckPhp\Core\App)
         // $options['cli_enable'] = true;
 
+        //  (DuckPhp\Core\Console, DuckPhp\Ext\AutoReadLineConsole)
+        // $options['cli_readlines_logfile'] = '';
+
         // 输出时候关闭资源输出（仅供第三方扩展参考 (DuckPhp\Core\App)
         // $options['close_resource_at_output'] = false;
 
@@ -142,13 +145,13 @@ class AppWithAllOptions extends DuckPhp
         // 500 错误处理的View或者回调，仅根应用有效 (DuckPhp\Core\App)
         // $options['error_500'] = NULL;
 
-        //  (DuckPhp\Component\RouteHookCheckStatus)
+        // 维修页面view ，类似 error_404 (DuckPhp\Component\RouteHookCheckStatus)
         // $options['error_maintain'] = NULL;
 
-        //  (DuckPhp\Component\RouteHookCheckStatus)
+        // 需要安装的页面 (DuckPhp\Component\RouteHookCheckStatus)
         // $options['error_need_install'] = NULL;
 
-        //  (DuckPhp\Core\App)
+        // 异常报告仅针对的异常 (DuckPhp\Core\App)
         // $options['exception_for_project'] = NULL;
 
         // 异常报告类 (DuckPhp\Core\App)
@@ -160,7 +163,7 @@ class AppWithAllOptions extends DuckPhp
         // 配置文件名字 ()
         // $options['ext_options_file'] = 'config/DuckPhpApps.config.php';
 
-        //  ()
+        // 额外配置文件 ()
         // $options['ext_options_file_enable'] = true;
 
         // 抓取调试错误 (DuckPhp\Core\ExceptionManager)
@@ -295,6 +298,9 @@ class AppWithAllOptions extends DuckPhp
 
             // 【共享】
             // $options['cli_command_group'] = array ( );
+
+            // 【共享】
+            // $options['cli_readlines_logfile'] = '';
 
         //*/
         /*

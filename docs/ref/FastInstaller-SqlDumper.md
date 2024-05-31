@@ -87,3 +87,9 @@ SqlDumper::_()->install(); // 从配置文件安装 sql
 
 SqlDump, 导出的数据文件名 是驱动名称.sql
 
+        'sql_dump_file' => 'install.sql',
+
+        'sql_dump_install_replace_prefix' => true,
+
+        'sql_dump_debug_show_sql' => false,
+

@@ -128,3 +128,9 @@ EOT;
 ## 完毕
 
 
+        'cli_readlines_logfile' => '',
+
+    public function readLinesFill($datas)
+
+    public function readLinesCleanFill()
+
