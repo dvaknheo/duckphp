@@ -7,8 +7,8 @@ namespace DuckPhp\GlobalAdmin;
 
 interface AdminActionInterface
 {
-    public function id();
-    public function name();
+    public function id($check_login = true);
+    public function name($check_login = true);
     public function service();
     public function login(array $post);
     public function logout();

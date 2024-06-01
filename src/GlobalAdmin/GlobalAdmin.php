@@ -23,11 +23,11 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
         //return MyAdminService::_Z();
         throw new \Exception("No Impelment");
     }
-    public function id() : int
+    public function id($check_login = true) : int
     {
         throw new \Exception("No Impelment");
     }
-    public function name()
+    public function name($check_login = true)
     {
         throw new \Exception("No Impelment");
     }

@@ -21,11 +21,11 @@ class GlobalUser extends ComponentBase implements UserActionInterface
         //return MyUserService::_Z();
         throw new \Exception("No Impelment");
     }
-    public function id() : int
+    public function id($check_login = true) : int
     {
         throw new \Exception("No Impelment");
     }
-    public function name() : string
+    public function name($check_login = true) : string
     {
         throw new \Exception("No Impelment");
     }
