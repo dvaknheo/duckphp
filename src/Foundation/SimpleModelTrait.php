@@ -58,7 +58,7 @@ trait SimpleModelTrait
         
         $total = DbManager::_()->_DbForRead()->fetchColumn(CoreHelper::_()->_SqlForCountSimply($sql));
         $data = DbManager::_()->_DbForRead()->fetchAll(CoreHelper::_()->_SqlForPager($sql, $page, $page_size));
-        return ["count" => $total,'data' => $data];
+        return [$total, $data];
     }
 
     protected function find($a)
