@@ -26,7 +26,7 @@ class Console extends ComponentBase
     protected $is_inited = false;
     
     public $index = 0;
-    public $datas = [];
+    public $data = '';
 
     public function init(array $options, ?object $context = null)
     {
@@ -90,29 +90,27 @@ class Console extends ComponentBase
         $this->callObject($class, $method, $func_args, $this->parameters);
         return true;
     }
-    public function readLinesFill($datas)
+    public function readLinesFill($data)
     {
-        $datas = is_array($datas)?$datas:[$datas];
-        $this->datas += $datas;
+        $this->data .= $data;
     }
     public function readLinesCleanFill()
     {
-        $this->datas = [];
+        $this->data = '';
         $this->index = 0;
     }
     public function readLines($options, $desc, $validators = [], $fp_in = null, $fp_out = null)
     {
         $ret = [];
-        $mode_fill = !$fp_in && !$fp_out && !empty($this->datas);
+        $mode_fill = !$fp_in && !$fp_out && !empty($this->data);
         if ($mode_fill) {
             $fp_in = fopen('php://memory', 'r+');
             if (!$fp_in) {
                 return; // @codeCoverageIgnore
             }
-            $fp_out = fopen('php://temp', 'w');
-            if (!$fp_out) {
-                return; // @codeCoverageIgnore
-            }
+            $str = $this->data;
+            fputs($fp_in, $str);
+            fseek($fp_in, $this->index);
         }
         $fp_in = $fp_in ?? fopen('php://stdin', 'r'); //\STDIN;//
         $fp_out = $fp_out ?? fopen('php://stdout', 'w'); //\STDOUT;//
@@ -127,7 +125,8 @@ class Console extends ComponentBase
             }
             $key = $m[1];
             $line = str_replace('{'.$key.'}', $options[$key] ?? '', $line);
-            fputs($fp_out, $line."\n");
+            fputs($fp_out, $line);
+            
             $input = (string)fgets($fp_in);
             if ($this->options['cli_readlines_logfile']) {
                 $path = static::SlashDir(App::Root()->options['path']);
@@ -135,20 +134,22 @@ class Console extends ComponentBase
                 $file = $this->options['cli_readlines_logfile'];
                 $file = static::IsAbsPath($file)?$file:$path_runtime.$file;
                 
-                file_put_contents($file, $input."\n", FILE_APPEND);
+                file_put_contents($file, $input, FILE_APPEND);
+            }
+            if ($mode_fill) {
+                echo $input;
+                $this->index += strlen($input);
             }
             $input = trim($input);
             if ($input === '') {
                 $input = $options[$key] ?? '';
             }
+
             $ret[$key] = $input;
         }
         if ($mode_fill) {
-            $this->index++;
-            //fclose($fp_out);
             fclose($fp_in);
         }
-        
         $ret = !empty($validators)? filter_var_array($ret, $validators) :$ret;
         return $ret;
     }

@@ -217,8 +217,7 @@ resource prefix: [{controller_resource_prefix}]
             return;
         }
         foreach ($app_options['app'] as $app => $options) {
-            $true_app = get_class($app::_());
-            $last_phase = App::Phase($true_app);
+            $last_phase = App::Phase($app::_()->getOverridingClass());
             $cli_namespace = App::Current()->options['cli_command_prefix'] ?? App::Current()->options['namespace'];
             $group = Console::_()->options['cli_command_group'][$cli_namespace] ?? [];
             list($class, $method) = Console::_()->getCallback($group, 'install');
@@ -254,7 +253,7 @@ resource prefix: [{controller_resource_prefix}]
     protected function saveInstalledFlag()
     {
         $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, App::Current());
-        $ext_options['install'] = DATE(DATE_ATOM);
+        $ext_options['installed'] = DATE(DATE_ATOM);
         ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
     }
     //////////////////

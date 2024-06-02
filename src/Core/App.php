@@ -290,6 +290,6 @@ EOT;
     }
     public function isInstalled()
     {
-        return $this->options['install'] ?? false;
+        return $this->options['installed'] ?? false;
     }
 }
