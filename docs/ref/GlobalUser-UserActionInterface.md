@@ -1,6 +1,6 @@
-    public function id() : int;
+    public function id($check_login = true) : int;
 
-    public function name() : string;
+    public function name($check_login = true) : string;
 
     public function service();
 
@@ -17,4 +17,5 @@
     public function urlForHome($url_back = null, $ext = null) : string;
 
     public function urlForRegist($url_back = null, $ext = null) : string;
+
 

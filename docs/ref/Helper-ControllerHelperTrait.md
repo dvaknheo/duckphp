@@ -31,7 +31,7 @@
 分配视图变量。 特殊场合使用。
 
 ### 配置
-    public static function Setting($key)
+    public static function Setting($key = null, $default = null)
 设置是敏感信息,不存在于版本控制里面。而配置是非敏感。
 
     public static function Config($file_basename, $key = null, $default = null)
@@ -63,6 +63,13 @@
     public static function getRouteCallingClass()
 获取正在调用的路由类
 
+    public static function Url($url = null)
+根据路径，获得 url 等价于 __url
+    public static function Res($url = null)
+等价于 __res(
+
+    public static function Domain($use_scheme = false)
+等价于 __domain()
 
 ### 系统兼容替换
 和系统同名函数(header/setcookie/exit)功能一致，目的是为了兼容不同平台
@@ -87,6 +94,8 @@
 获得分页结果 HTML，这里的 $options 是传递给 Pager 类的选项。
 
 ### 异常处理
+    public static function ControllerThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
+抛出控制器异常
 
     public static function assignExceptionHandler($classes, $callback = null)
 分配异常类回调
@@ -115,39 +124,34 @@
     public static function IsAjax()
 判断是否是Ajax 请求
 
-以上就是所有控制器助手方法
-
-### 用户系统相关
-
-    public static function Admin($admin = null)
-
-    public static function AdminId()
-
-    public static function User($user = null)
-
-    public static function UserId()
-
-    public static function Setting($key = null, $default = null)
-
-    public static function Url($url = null)
-
-    public static function Res($url = null)
-
-    public static function Admin($new = null)
 
 
-    public static function User($new = null)
+### 管理员系统
 
-
-
-    public static function Domain($use_scheme = false)
-
-
-
-    public static function ControllerThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
-
-
+    public static function Admin()
     
+    public static function AdminId($check_login = true)
+    
+    public static function AdminName($check_login = true)
+    
+    public static function AdminService()
+
+
+### 用户系统
+    public static function User()
+
+    public static function UserId($check_login = true)
+    
+    public static function UserName($check_login = true)
+    
+    public static function UserService()
+    
+
+
+
+
+
+以上就是所有控制器助手方法    
 
 ## 完毕
 
@@ -155,15 +159,12 @@
 
 
 
-    public static function Admin()
 
-    public static function AdminName()
 
-    public static function AdminService()
 
-    public static function User()
 
-    public static function UserName()
 
-    public static function UserService()
+
+
+
 

@@ -130,7 +130,9 @@ EOT;
 
         'cli_readlines_logfile' => '',
 
-    public function readLinesFill($datas)
+    public function readLinesFill($data)
 
     public function readLinesCleanFill()
+
+
 

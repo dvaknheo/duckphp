@@ -20,3 +20,7 @@
 
     public function log(string $string, ?string $type = null)
 
+    public function id($check_login = true) : int
+
+    public function name($check_login = true)
+
