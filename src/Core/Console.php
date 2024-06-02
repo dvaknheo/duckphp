@@ -102,7 +102,7 @@ class Console extends ComponentBase
     public function readLines($options, $desc, $validators = [], $fp_in = null, $fp_out = null)
     {
         $ret = [];
-        $mode_fill = !$fp_in && !$fp_out && !empty($this->data);
+        $mode_fill = !$fp_in && !empty($this->data);
         if ($mode_fill) {
             $fp_in = fopen('php://memory', 'r+');
             if (!$fp_in) {

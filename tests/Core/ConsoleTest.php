@@ -12,7 +12,7 @@ class ConsoleTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(Console::class);
-        
+        $__SERVER = $_SERVER;
         $_SERVER['argv']=[];
         DuckPhp::_()->init(['cli_enable'=>true, 'is_debug'=>true])->run();
         Console::DoRun();
@@ -130,8 +130,7 @@ EOT;
         @unlink($path.'output.txt');
         @unlink($path.'input.log');
         /////////////[[[[[[[[[[[
-        Console::_(new Console())->readLinesFill(["myname\n"]);
-        //Console::_()->options['cli_readlines_logfile']=$path.'input.log';
+        Console::_(new Console())->readLinesFill("myname\n");
         $desc= <<<EOT
 name:[{name}]
 
@@ -139,17 +138,14 @@ EOT;
         $options =[
             'name'=>'default',
         ];
-        $data = Console::_()->readLines($options, $desc, []);
-        
-        //Console::_()->toggleLog($flag = true);
-        Console::_()->readLinesCleanFill();
-        Console::_()->readLinesFill(["myname\n"]);
-        $data = Console::_()->readLines($options, $desc, []);
-        
-        /////////////]]]]]]]]]]]
+        $fp_out = fopen('php://temp','w');
+        $data = Console::_()->readLines($options, $desc, [],null,$fp_out);
+        fclose($fp_out);
+        Console::_(new Console())->readLinesCleanFill();
+
         //@unlink($path.'input.log');
 
-        
+        $_SERVER = $__SERVER;
         \LibCoverage\LibCoverage::End();
     }
 }
