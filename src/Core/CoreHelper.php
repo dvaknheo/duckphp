@@ -315,7 +315,9 @@ class CoreHelper extends ComponentBase
         $callback($app_class, $arg);
         $object = $app_class::_();
         foreach ($object->options['app'] as $app => $options) {
+            $last_phase = App::Phase($app);
             $this->recursiveApps($arg, $callback, $app);
+            App::Phase($last_phase);
         }
     }
     public function getAllAppClass()
