@@ -253,7 +253,7 @@ class CoreHelper extends ComponentBase
     }
     public function _PhaseCall($phase, $callback, ...$args)
     {
-        $phase = is_object($phase) ? get_class($phase) : $phase;
+        $phase = is_object($phase) ? $phase->getOverridingClass() : $phase;
         $current = App::Phase();
         if (!$phase || !$current) {
             return ($callback)(...$args);
@@ -307,7 +307,7 @@ class CoreHelper extends ComponentBase
         $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
         return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
     }
-    public function recursiveApps(&$arg, $callback, ?string $app_class = null)
+    public function recursiveApps(&$arg, $callback, ?string $app_class = null, $auto_switch_phase=true)
     {
         if (!isset($app_class)) {
             $app_class = App::Root()->getOverridingClass();
@@ -315,9 +315,13 @@ class CoreHelper extends ComponentBase
         $callback($app_class, $arg);
         $object = $app_class::_();
         foreach ($object->options['app'] as $app => $options) {
-            $last_phase = App::Phase($app);
-            $this->recursiveApps($arg, $callback, $app);
-            App::Phase($last_phase);
+            if($auto_switch_phase){
+                $last_phase = App::Phase($app);
+            }
+            $this->recursiveApps($arg, $callback, $app, $auto_switch_phase);
+            if($auto_switch_phase){
+                App::Phase($last_phase);
+            }
         }
     }
     public function getAllAppClass()

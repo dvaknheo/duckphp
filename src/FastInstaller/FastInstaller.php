@@ -48,8 +48,13 @@ class FastInstaller extends ComponentBase
     {
         $args = Console::_()->getCliParameters();
         $app = $args['--'][1] ?? null;
+        //if((App::Current()->options['allow_require_ext_app']??false) && !isset(App::Current()->options['app'][$app])){
+        //    echo "YouNeed "
+        //    return;
+        //}
+        
         App::Phase($app);
-        return $this->doCommandInstall();
+        return FastInstaller::_()->doCommandInstall();
     }
     /**
      * override me to update
@@ -86,9 +91,8 @@ class FastInstaller extends ComponentBase
     {
         echo "
 --help              show this help.
---dry               show options ,do no action. not with childrens.
+--dry               show options, do no action. not with childrens.
 --force             force install.
---dump-sql          not install, just dump sql for install, no with childrens.
 --skip-sql          skip install sql
 --skip-resource     skip copy resource
 --skip-children     skip child app
@@ -103,7 +107,6 @@ and more ...\n";
        
         $args = $this->args;
         
-        echo "use --help for more info.\n";
         if ($args['help'] ?? false) {
             $this->showHelp();
             return;
@@ -132,7 +135,7 @@ and more ...\n";
         //////////////////////////
         $install_level = App::Root()->options['installing_data']['install_level'] ?? 0;
         //echo ($install_level <= 0) ? "use --help for more info.\n" : '';
-        echo str_repeat("\t", $install_level)."\e[32;7mInstalling (".get_class(App::Current())."):\033[0m\n";
+        echo str_repeat("\t", $install_level)."\e[32;7mInstalling (".get_class(App::Current())."):\033[0m more info by --help .\n";
         
         if (method_exists(App::Current(), 'onPreInstall')) {
             App::Current()->onPreInstall();
