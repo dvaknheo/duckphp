@@ -132,30 +132,48 @@
 
 所有的选项也用脚本检查，不存在有类的选项没遗漏的情况
 
-##  全部文件一览
+## nginx 配置
 
+
+```
+server {
+    root DUCKPHP_ROOT/template/public;
+    index index.php index.html index.htm;
+    
+    try_files $uri $uri/ /index.php$request_uri;
+    location ~ \.php {
+        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_index index.php;
+        fastcgi_split_path_info ^(.*\.php)(/.*)?$;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}
+```
+##  全部文件一览
+### 源代码
 ```
 tree src
 src
 ├── Component
 │   ├── Cache.php
+│   ├── Command.php
 │   ├── Configer.php
 │   ├── DbManager.php
-│   ├── DuckPhpCommand.php
 │   ├── DuckPhpInstaller.php
 │   ├── ExtOptionsLoader.php
-│   ├── GlobalAdmin.php
-│   ├── GlobalUser.php
 │   ├── Pager.php
 │   ├── PagerInterface.php
 │   ├── PhaseProxy.php
 │   ├── RedisCache.php
 │   ├── RedisManager.php
+│   ├── RouteHookCheckStatus.php
 │   ├── RouteHookPathInfoCompat.php
 │   ├── RouteHookResource.php
 │   ├── RouteHookRewrite.php
 │   ├── RouteHookRouteMap.php
-│   └── SqlDumper.php
+│   └── ZCallTrait.php
 ├── Core
 │   ├── App.php
 │   ├── AutoLoader.php
@@ -185,6 +203,7 @@ src
 ├── DuckPhp.php
 ├── DuckPhpAllInOne.php
 ├── Ext
+│   ├── AutoReadLineConsole.php
 │   ├── CallableView.php
 │   ├── EmptyView.php
 │   ├── ExceptionWrapper.php
@@ -195,6 +214,7 @@ src
 │   ├── JsonView.php
 │   ├── MiniRoute.php
 │   ├── Misc.php
+│   ├── Misc.php.bak
 │   ├── MyFacadesAutoLoader.php
 │   ├── MyFacadesBase.php
 │   ├── MyMiddlewareManager.php
@@ -204,42 +224,108 @@ src
 │   ├── RouteHookManager.php
 │   ├── StaticReplacer.php
 │   └── StrictCheck.php
+├── FastInstaller
+│   ├── DatabaseInstaller.php
+│   ├── FastInstaller.php
+│   ├── RedisInstaller.php
+│   ├── SqlDumper.php
+│   ├── Supporter.php
+│   ├── SupporterByMysql.php
+│   └── SupporterBySqlite.php
 ├── Foundation
+│   ├── Business
+│   │   └── Helper.php
+│   ├── Controller
+│   │   └── Helper.php
 │   ├── ExceptionReporterTrait.php
+│   ├── Helper.php
+│   ├── Model
+│   │   └── Helper.php
 │   ├── SimpleBusinessTrait.php
 │   ├── SimpleControllerTrait.php
 │   ├── SimpleExceptionTrait.php
 │   ├── SimpleModelTrait.php
 │   ├── SimpleSessionTrait.php
-│   └── SimpleSingletonTrait.php
+│   ├── SimpleSingletonTrait.php
+│   └── System
+│       └── Helper.php
+├── GlobalAdmin
+│   ├── AdminActionInterface.php
+│   ├── AdminControllerInterface.php
+│   ├── AdminServiceInterface.php
+│   └── GlobalAdmin.php
+├── GlobalUser
+│   ├── GlobalUser.php
+│   ├── UserActionInterface.php
+│   ├── UserControllerInterface.php
+│   └── UserServiceInterface.php
 ├── Helper
 │   ├── AppHelperTrait.php
 │   ├── BusinessHelperTrait.php
 │   ├── ControllerHelperTrait.php
 │   └── ModelHelperTrait.php
 └── HttpServer
-    ├── AppInterface.php
     ├── HttpServer.php
     └── HttpServerInterface.php
+```
+模板工程文件
+```
+template
+├── cli.php
+├── config
+│   ├── DuckPhpApps.config.php
+│   └── DuckPhpSettings.config.php
+├── public
+│   ├── api.php
+│   ├── cover_test.php
+│   ├── dbtest.php
+│   ├── demo.php
+│   ├── doc.css
+│   ├── doc.php
+│   ├── helloworld.php
+│   ├── i.php
+│   ├── index.php
+│   ├── just-route.php
+│   ├── rpc.php
+│   └── traditional.php
+├── runtime
+│   └── keepme.txt
+├── src
+│   ├── Business
+│   │   ├── Base.php
+│   │   ├── CommonService.php
+│   │   ├── DemoBusiness.php
+│   │   └── Helper.php
+│   ├── Controller
+│   │   ├── Base.php
+│   │   ├── Commands.php
+│   │   ├── CommonAction.php
+│   │   ├── ExceptionReporter.php
+│   │   ├── Helper.php
+│   │   ├── MainController.php
+│   │   ├── Session.php
+│   │   └── testController.php
+│   ├── Model
+│   │   ├── Base.php
+│   │   ├── CrossModelEx.php
+│   │   ├── DemoModel.php
+│   │   └── Helper.php
+│   └── System
+│       ├── App.php
+│       ├── AppWithAllOptions.php
+│       ├── BusinessException.php
+│       ├── ControllerException.php
+│       └── ProjectException.php
+└── view
+    ├── _sys
+    │   ├── error_404.php
+    │   ├── error_500.php
+    │   ├── error_maintain.php
+    │   └── error_need_install.php
+    ├── files.php
+    ├── main.php
+    └── test
+        └── done.php
 
 ```
 
-## nginx 配置
-
-
-```
-server {
-    root DUCKPHP_ROOT/template/public;
-    index index.php index.html index.htm;
-    
-    try_files $uri $uri/ /index.php$request_uri;
-    location ~ \.php {
-        fastcgi_pass 127.0.0.1:9000;
-        fastcgi_index index.php;
-        fastcgi_split_path_info ^(.*\.php)(/.*)?$;
-        fastcgi_param PATH_INFO $fastcgi_path_info;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        include fastcgi_params;
-    }
-}
-```

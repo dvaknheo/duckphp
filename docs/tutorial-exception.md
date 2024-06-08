@@ -3,7 +3,6 @@
 ## 相关类
 App
 
-[DuckPhp\ThrowOn\ThrowOnTrait](ref/ThrowOn-ThrowOnTrait.md) 可抛类
 [DuckPhp\Core\ExceptionManager](ref/Core-ExceptionManager.md) 异常管理类
 
 ## 404 的处理，
@@ -29,7 +28,7 @@ Event On404
 
         'exception_reporter' => null,
         
-        'exception_reporter_for_class' => null,
+        'exception_for_project' => null,
 以下是高级的选项。
 
 'skip_exception_check'=>false,
