@@ -449,7 +449,7 @@ trait Route_UrlManager
         if ($flag) {
             return $controller_resource_prefix.$url;
         }
-        return rtrim($this->_Url(''),'/').'/'.$controller_resource_prefix.$url;
+        return rtrim($this->_Url(''), '/').'/'.$controller_resource_prefix.$url;
     }
     public function _Domain($use_scheme = false)
     {

@@ -42,18 +42,38 @@ class FastInstaller extends ComponentBase
         return;
     }
     /**
-     * override me to add a child app.
+     * override me to add a child app. require aa/app --url-prefix= aa-bb
      */
     public function command_require()
     {
         $args = Console::_()->getCliParameters();
         $app = $args['--'][1] ?? null;
-        //if((App::Current()->options['allow_require_ext_app']??false) && !isset(App::Current()->options['app'][$app])){
-        //    echo "YouNeed "
-        //    return;
-        //}
-        
+        /*
+        if (!App::IsRoot()) {
+            echo "only use by root.\n";
+            return;
+        }
+        $app = str_replace('/','\\',$app);
+        if(!is_a($app, App::class){
+            echo "must be an app\n";
+            return;
+        }
+        if(!isset(App::_()->options['app'][$app]) {
+            if(!(App::_()->options['allow_require_ext_app']??false)){
+                echo "You Need  turn on options `allow_require_ext_app`";
+                return;
+            }
+            $name = (new $app)->options['namespace'];
+            $name = str_replace('\\','/',$name);
+            $name = trim(strtolower(preg_replace('/([A-Z])/', "-$1", $name),'-');
+            //Console::_()->readLines('install to url [{url}]',)
+            //ExtOptionsLoader::()-
+            //$ext_options = ExtOptionsLoader::_()->loadExtOptions(true, App::Current());
+        }
+        // extoption::  --[DuckAdmin/] DuckAdmin duck-admin/ ? // save ,do install
+        //*/
         App::Phase($app);
+        
         return FastInstaller::_()->doCommandInstall();
     }
     /**
