@@ -12,5 +12,4 @@ $options = [
     // more options ...
 ];
 
-$options['path'] = __DIR__.'/';
 \ProjectNameTemplate\System\App::RunQuickly($options);
