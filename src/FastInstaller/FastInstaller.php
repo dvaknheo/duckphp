@@ -18,22 +18,25 @@ use DuckPhp\FastInstaller\SqlDumper;
 class FastInstaller extends ComponentBase
 {
     public $options = [
-        //install_input_validators
-        //install_need_redis
-        //install_options
-        //install_input_desc
+        'install_input_validators' => [],
+        'install_options' => [],
+        'install_input_desc' => '',
+        'install_callback' => null,
     ];
     protected $args = [];
     protected $is_failed = false;
     protected $current_input_options = [];
     ///////////////
     /**
-     * Install. power by DuckPhp\Foundation\FastInstallerTrait
+     * Install. power by DuckPhp\FastInstaller\FastInstaller
      */
     public function command_install()
     {
         return $this->doCommandInstall();
     }
+    /**
+     * dump sql power by DuckPhp\FastInstaller\FastInstaller
+     */
     public function command_dumpsql()
     {
         $this->initComponents();
@@ -48,33 +51,44 @@ class FastInstaller extends ComponentBase
     {
         $args = Console::_()->getCliParameters();
         $app = $args['--'][1] ?? null;
-        /*
         if (!App::IsRoot()) {
             echo "only use by root.\n";
             return;
         }
-        $app = str_replace('/','\\',$app);
-        if(!is_a($app, App::class){
-            echo "must be an app\n";
+        $app = str_replace('/', '\\', $app);
+        $object = new $app();
+        if (!is_a($object, App::class)) {
+            echo "must be an app:[$app]\n";
             return;
         }
-        if(!isset(App::_()->options['app'][$app]) {
-            if(!(App::_()->options['allow_require_ext_app']??false)){
+
+        if (!isset(App::_()->options['app'][$app])) {
+            if (!(App::_()->options['allow_require_ext_app'] ?? false)) {
                 echo "You Need  turn on options `allow_require_ext_app`";
                 return;
             }
-            $name = (new $app)->options['namespace'];
-            $name = str_replace('\\','/',$name);
-            $name = trim(strtolower(preg_replace('/([A-Z])/', "-$1", $name),'-');
-            //Console::_()->readLines('install to url [{url}]',)
-            //ExtOptionsLoader::()-
-            //$ext_options = ExtOptionsLoader::_()->loadExtOptions(true, App::Current());
+            $app::_($object)->init([], App::Root());
+            
+            $desc = "Install to Url prefix: [{controller_url_prefix}]\n";
+            $default_options = [];
+            
+            $default_options['controller_url_prefix'] = $this->getDefaultUrlPrefixX($object->options['namespace']);
+            $input_options = Console::_()->readLines($default_options, $desc, []);
+            
+            $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, App::_());
+            $ext_options['app'][$app] = ['controller_url_prefix' => $input_options['controller_url_prefix']];
+            ExtOptionsLoader::_()->saveExtOptions($ext_options, App::_());
+            App::_()->options['app'][$app] = ['controller_url_prefix' => $input_options['controller_url_prefix']];
+            $object->options['controller_url_prefix'] = $input_options['controller_url_prefix'];
         }
-        // extoption::  --[DuckAdmin/] DuckAdmin duck-admin/ ? // save ,do install
-        //*/
         App::Phase($app);
-        
         return FastInstaller::_()->doCommandInstall();
+    }
+    protected function getDefaultUrlPrefixX($ns)
+    {
+        $ns = str_replace('\\', '/', $ns);
+        $ns = strtolower(trim(preg_replace('/([A-Z])/', '-$1', $ns), '-')).'/';
+        return $ns;
     }
     /**
      * override me to update
@@ -149,48 +163,98 @@ and more ...\n";
     {
         return $this->current_input_options;
     }
+    protected function getDefaultUrlPrefix()
+    {
+        $ns = App::Current()->options['namespace'];
+        $ns = str_replace('\\', '/', $ns);
+        $ns = strtolower(trim(preg_replace('/([A-Z])/', '-$1', $ns), '-')).'/';
+        return $ns;
+    }
+    protected function changeResource()
+    {
+        ////[[[[
+        $res_options = RouteHookResource::_()->options;
+        $source = RouteHookResource::_()->extendFullFile($res_options['path'], $res_options['path_resource'], '', false);
+        $source = realpath($source);
+        if (!$source) {
+            return [];
+        }
+        ////]]]]
+        
+        $controller_resource_prefix = App::Current()->options['controller_resource_prefix'] ?? '';
+        
+        $desc = "Current resource url to visit is [$controller_resource_prefix]\n";
+        $desc .= "Change resource url (Y/N)[{sure}]?";
+        $sure = Console::_()->readLines(['sure' => 'Y'], $desc);
+        if (strtoupper($sure['sure']) === 'N') {
+            return [];
+        }
+        
+        $ret = ['is_change_res' => true,];
+        $default = ['new_controller_resource_prefix' => App::Current()->options['controller_resource_prefix'] ?? ''];
+        $desc = "New resource url [{new_controller_resource_prefix}]\n";
+        $input = Console::_()->readLines($default, $desc);
+        $ret['new_controller_resource_prefix'] = $input['new_controller_resource_prefix'];
+        
+        
+        $desc = "Clone Resource File from library to URL file? (Y/N)[{is_clone_resource}]?";
+        $sure = Console::_()->readLines(['is_clone_resource' => 'Y'], $desc);
+        
+        $ret['is_clone_resource'] = (strtoupper($sure['is_clone_resource']) === 'Y') ? true: false;
+        
+        return $ret;
+        
+        App::Current()->options['controller_resource_prefix'] = $input['controller_resource_prefix'];
+        
+        if (strtoupper($sure['is_clone_resource']) === 'Y') {
+            $info = '';
+            
+            RouteHookResource::_()->options['controller_resource_prefix'] = App::Current()->options['controller_resource_prefix'];
+            RouteHookResource::_()->cloneResource(false, $info);
+        }
+    }
     public function doInstall()
     {
         $force = $this->args['force'] ?? false;
         //////////////////////////
         $install_level = App::Root()->options['installing_data']['install_level'] ?? 0;
         //echo ($install_level <= 0) ? "use --help for more info.\n" : '';
-        echo str_repeat("\t", $install_level)."\e[32;7mInstalling (".get_class(App::Current())."):\033[0m more info by --help .\n";
+        $url_prefix = App::Current()->options['controller_url_prefix'];
+        echo str_repeat("\t", $install_level)."\e[32;7mInstalling (".get_class(App::Current()).") to :\033[0m [$url_prefix]\n";
         
-        if (method_exists(App::Current(), 'onPreInstall')) {
-            App::Current()->onPreInstall();
+        if (!$force && App::Current()->isInstalled()) {
+            echo "App as been installed. use --force to force \n";
+            return;
         }
         if (!($this->args['skip_sql'] ?? false)) {
             DatabaseInstaller::_()->install($force);
         }
         RedisInstaller::_()->install($force);
         
-        //////[[[[
-        $app_options = App::Current()->options;
-        $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, App::Current());
+        //////
+        $validators = $this->options['install_input_validators'] ?? [];
+        $default_options = $this->options['install_options'] ?? [];
         
-        $validators = $app_options['install_input_validators'] ?? [];
-        
-        $default_options = $app_options['install_options'] ?? [];
-        $default_options = array_replace_recursive($app_options, $ext_options, $default_options);
-
-        $desc = $this->adjustPrompt($app_options['install_input_desc'] ?? '', $default_options, $ext_options, $app_options);
+        $resource_options = $this->changeResource();
+        $default_options = array_merge($default_options, $resource_options);
+        $desc = $this->options['install_input_desc'] ?? '--';
         $input_options = Console::_()->readLines($default_options, $desc, $validators);
-        $this->current_input_options = $input_options;
-        
-        $flag = $this->doInstallAction();
-        if (method_exists(App::Current(), 'onInstall')) {
-            App::Current()->onInstall();
+        $input_options = array_merge($resource_options, $input_options);
+       
+        if ($this->args['dry'] ?? false) {
+            echo "----\nInstall options dump:\n";
+            return;
         }
-        EventManager::FireEvent([App::Phase(), 'onInstall'], $input_options, $ext_options, $app_options);
+        $flag = $this->doInstallAction($input_options);
+        
         if ($this->is_failed) {
             echo "\e[32;3mInstalled App (".get_class(App::Current()).") FAILED!;\033[0m\n";
             return;
         }
+        EventManager::FireEvent([App::Phase(), 'onInstall'], $input_options);
         
-        $ext_options = array_replace_recursive($ext_options, $input_options);
-        $app_options = array_replace_recursive($app_options, $ext_options);
-        App::Current()->options = $app_options;
+        ////////////////
+        $ext_options = []; // 这里要其他更多的选项
         ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
         
         ///////////////////////////
@@ -205,27 +269,6 @@ and more ...\n";
         }
         echo "\e[32;3mInstalled App (".get_class(App::Current()).");\033[0m\n";
         return;
-    }
-    protected function adjustPrompt($desc, $default_options, $ext_options, $app_options)
-    {
-        $desc = $app_options['install_input_desc'] ?? '--';
-        $prefix = '';
-        if (!(App::IsRoot())) {
-            $prefix = "
---
-url prefix: [{controller_url_prefix}]
-resource prefix: [{controller_resource_prefix}]
-";
-        }
-        $desc = $prefix.$desc;
-        
-        $desc = str_replace('{controller_url_prefix}', App::Current()->options['controller_url_prefix'] ?? '', $desc);
-        $desc = str_replace('{controller_resource_prefix}', App::Current()->options['controller_resource_prefix'] ?? '', $desc);
-        
-        //foreach ($app_options as $key => $value) {
-        //    $desc = str_replace('{'.$key.'}', is_scalar($app_options[$key])?$app_options[$key]:'', $desc);
-        //}
-        return  $desc;
     }
     protected function installChildren()
     {
@@ -259,19 +302,26 @@ resource prefix: [{controller_resource_prefix}]
         }
         App::Phase($current_phase);
     }
-    protected function doInstallAction()
+    protected function doInstallAction($input_options)
     {
         if (!($this->args['skip_sql'] ?? false)) {
             SqlDumper::_()->install($this->args['force'] ?? false);
         }
-        if (!($this->args['skip_resource'] ?? false)) {
-            $info = '';
-            RouteHookResource::_()->cloneResource(false, $info);
-            if ($this->args['verbose'] ?? false) {
-                echo $info;
+        if ($input_options['is_change_res'] ?? false) {
+            App::Current()->options['controller_resource_prefix'] = $input_options['new_controller_resource_prefix'];
+            $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, App::Current());
+            $ext_options['controller_resource_prefix'] = App::Current()->options['controller_resource_prefix'];
+            ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
+            
+            if ($input_options['is_clone_resource']) {
+                $info = '';
+                RouteHookResource::_()->cloneResource(false, $info);
+                if ($this->args['verbose'] ?? false) {
+                    echo $info;
+                }
             }
         }
-        return true;
+        ($this->options['install_callback'])($input_options);
     }
     protected function saveInstalledFlag()
     {
