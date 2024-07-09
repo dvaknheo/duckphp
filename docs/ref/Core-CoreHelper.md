@@ -201,3 +201,5 @@
 
     public function recursiveApps(&$arg, $callback, ?string $app_class = null, $auto_switch_phase=true)
 
+    public function recursiveApps(&$arg, $callback, ?string $app_class = null, $auto_switch_phase = true)
+

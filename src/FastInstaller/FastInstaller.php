@@ -67,12 +67,13 @@ class FastInstaller extends ComponentBase
                 echo "You Need  turn on options `allow_require_ext_app`";
                 return;
             }
+            $app =(string)$app;
             $app::_($object)->init([], App::Root());
             
             $desc = "Install to Url prefix: [{controller_url_prefix}]\n";
             $default_options = [];
             
-            $default_options['controller_url_prefix'] = $this->getDefaultUrlPrefixX($object->options['namespace']);
+            $default_options['controller_url_prefix'] = $this->getDefaultUrlPrefix($object->options['namespace']);
             $input_options = Console::_()->readLines($default_options, $desc, []);
             
             $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, App::_());
@@ -84,10 +85,10 @@ class FastInstaller extends ComponentBase
         App::Phase($app);
         return FastInstaller::_()->doCommandInstall();
     }
-    protected function getDefaultUrlPrefixX($ns)
+    protected function getDefaultUrlPrefix($ns)
     {
-        $ns = str_replace('\\', '/', $ns);
-        $ns = strtolower(trim(preg_replace('/([A-Z])/', '-$1', $ns), '-')).'/';
+        $ns = ''.str_replace('\\', '/', $ns);
+        $ns = strtolower(trim((string)preg_replace('/([A-Z])/', '-$1', $ns), '-')).'/';
         return $ns;
     }
     /**
@@ -163,13 +164,7 @@ and more ...\n";
     {
         return $this->current_input_options;
     }
-    protected function getDefaultUrlPrefix()
-    {
-        $ns = App::Current()->options['namespace'];
-        $ns = str_replace('\\', '/', $ns);
-        $ns = strtolower(trim(preg_replace('/([A-Z])/', '-$1', $ns), '-')).'/';
-        return $ns;
-    }
+
     protected function changeResource()
     {
         ////[[[[
@@ -203,7 +198,7 @@ and more ...\n";
         $ret['is_clone_resource'] = (strtoupper($sure['is_clone_resource']) === 'Y') ? true: false;
         
         return $ret;
-        
+        /*
         App::Current()->options['controller_resource_prefix'] = $input['controller_resource_prefix'];
         
         if (strtoupper($sure['is_clone_resource']) === 'Y') {
@@ -212,6 +207,7 @@ and more ...\n";
             RouteHookResource::_()->options['controller_resource_prefix'] = App::Current()->options['controller_resource_prefix'];
             RouteHookResource::_()->cloneResource(false, $info);
         }
+        */
     }
     public function doInstall()
     {
@@ -253,16 +249,12 @@ and more ...\n";
         }
         EventManager::FireEvent([App::Phase(), 'onInstall'], $input_options);
         
-        ////////////////
-        $ext_options = []; // 这里要其他更多的选项
-        ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
-        
         ///////////////////////////
         if (!($this->args['skip_children'] ?? false)) {
             EventManager::FireEvent([App::Phase(), 'onBeforeChildrenInstall']);
             $this->installChildren();
         }
-        $this->saveInstalledFlag();
+        $this->saveExtOptions(['installed' => DATE(DATE_ATOM)]);
         EventManager::FireEvent([App::Phase(), 'onInstalled']);
         if (method_exists(App::Current(), 'onInstalled')) {
             App::Current()->onInstalled();
@@ -309,9 +301,10 @@ and more ...\n";
         }
         if ($input_options['is_change_res'] ?? false) {
             App::Current()->options['controller_resource_prefix'] = $input_options['new_controller_resource_prefix'];
-            $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, App::Current());
+            
+            $ext_options =[];
             $ext_options['controller_resource_prefix'] = App::Current()->options['controller_resource_prefix'];
-            ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
+            $this->saveExtOptions($ext_options);
             
             if ($input_options['is_clone_resource']) {
                 $info = '';
@@ -323,10 +316,10 @@ and more ...\n";
         }
         ($this->options['install_callback'])($input_options);
     }
-    protected function saveInstalledFlag()
+    protected function saveExtOptions($ext_options)
     {
-        $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, App::Current());
-        $ext_options['installed'] = DATE(DATE_ATOM);
+        $old_options = ExtOptionsLoader::_()->loadExtOptions(true, App::Current());
+        $ext_options = array_merge($old_options, $ext_options);
         ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
     }
     //////////////////

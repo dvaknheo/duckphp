@@ -105,7 +105,8 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         ];
         
         MaiCoreHelperApp::_(new MaiCoreHelperApp())->init($options);
-
+        CoreHelper::_()->recursiveApps($ext,function($class,&$ext){return $ext;});
+        CoreHelper::_()->recursiveApps($ext,function($class,&$ext){return $ext;},null,false);
 
         CoreHelper::PhaseCall('z',function(){echo MaiCoreHelperApp::Phase();},123);
         CoreHelper::PhaseCall('',function(){echo MaiCoreHelperApp::Phase();},123);
@@ -118,8 +119,8 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         echo CoreHelper::_()->_Hl($str, $args);
         echo CoreHelper::_()->formatString($str, $args);
         $ext =[];
-        CoreHelper::_()->recursiveApps($ext,function($class,&$ext){return $ext;});
-
+        
+        
 
         $data = CoreHelper::_()->getAllAppClass();
         //*
