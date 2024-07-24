@@ -68,11 +68,11 @@ class CommandTest extends \PHPUnit\Framework\TestCase
             '-','new',
         ];
         $options = Console::_()->options;
-        Console::_(AutoReadLineConsole::_())->reInit($options,DuckPhp::_());
+        Console::_(tAutoReadLineConsole::_())->reInit($options,DuckPhp::_());
         
         DuckPhpInstaller::_(Console_Installer::_());
         $str= "Xns\n";
-        AutoReadLineConsole::_()->fill([$str]);
+        tAutoReadLineConsole::_()->setFileContents([$str]);
         
         DuckPhp::_()->run();
         

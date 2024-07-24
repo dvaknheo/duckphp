@@ -67,7 +67,7 @@ class FastInstaller extends ComponentBase
                 echo "You Need  turn on options `allow_require_ext_app`";
                 return;
             }
-            $app =(string)$app;
+            $app = (string)$app;
             $app::_($object)->init([], App::Root());
             
             $desc = "Install to Url prefix: [{controller_url_prefix}]\n";
@@ -89,6 +89,7 @@ class FastInstaller extends ComponentBase
     {
         $ns = ''.str_replace('\\', '/', $ns);
         $ns = strtolower(trim((string)preg_replace('/([A-Z])/', '-$1', $ns), '-')).'/';
+        $ns = str_replace('/-', '/', $ns);
         return $ns;
     }
     /**
@@ -200,10 +201,10 @@ and more ...\n";
         return $ret;
         /*
         App::Current()->options['controller_resource_prefix'] = $input['controller_resource_prefix'];
-        
+
         if (strtoupper($sure['is_clone_resource']) === 'Y') {
             $info = '';
-            
+
             RouteHookResource::_()->options['controller_resource_prefix'] = App::Current()->options['controller_resource_prefix'];
             RouteHookResource::_()->cloneResource(false, $info);
         }
@@ -215,11 +216,11 @@ and more ...\n";
         //////////////////////////
         $install_level = App::Root()->options['installing_data']['install_level'] ?? 0;
         //echo ($install_level <= 0) ? "use --help for more info.\n" : '';
-        $url_prefix = App::Current()->options['controller_url_prefix'];
+        $url_prefix = App::Current()->options['controller_url_prefix'] ?? '';
         echo str_repeat("\t", $install_level)."\e[32;7mInstalling (".get_class(App::Current()).") to :\033[0m [$url_prefix]\n";
         
         if (!$force && App::Current()->isInstalled()) {
-            echo "App as been installed. use --force to force \n";
+            echo "App has been installed. use --force to force " .get_class(App::Current()) . "\n";
             return;
         }
         if (!($this->args['skip_sql'] ?? false)) {
@@ -280,8 +281,8 @@ and more ...\n";
             $group = Console::_()->options['cli_command_group'][$cli_namespace] ?? [];
             list($class, $method) = Console::_()->getCallback($group, 'install');
             try {
-                if (is_callable([$class,$method])) {
-                    $ret = call_user_func([$class,$method]); /** @phpstan-ignore-line */
+                if (is_callable([$class::_(),$method])) {
+                    $ret = call_user_func([$class::_(),$method]); /** @phpstan-ignore-line */
                 }
             } catch (\Exception $ex) {
                 $msg = $ex->getMessage();
@@ -302,11 +303,12 @@ and more ...\n";
         if ($input_options['is_change_res'] ?? false) {
             App::Current()->options['controller_resource_prefix'] = $input_options['new_controller_resource_prefix'];
             
-            $ext_options =[];
+            $ext_options = [];
             $ext_options['controller_resource_prefix'] = App::Current()->options['controller_resource_prefix'];
             $this->saveExtOptions($ext_options);
             
             if ($input_options['is_clone_resource']) {
+                RouteHookResource::_()->options['controller_resource_prefix'] = $input_options['new_controller_resource_prefix'];
                 $info = '';
                 RouteHookResource::_()->cloneResource(false, $info);
                 if ($this->args['verbose'] ?? false) {
@@ -314,7 +316,9 @@ and more ...\n";
                 }
             }
         }
-        ($this->options['install_callback'])($input_options);
+        if ($this->options['install_callback']) {
+            ($this->options['install_callback'])($input_options);
+        }
     }
     protected function saveExtOptions($ext_options)
     {

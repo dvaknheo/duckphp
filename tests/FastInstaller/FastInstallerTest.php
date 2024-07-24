@@ -10,32 +10,20 @@ use DuckPhp\Db\Db;
 
 class InstallerConsole extends Console
 {
-    public $file_index=99999;
-    public $datas = [];
-    public function setFileContents($datas)
-    {
-        $this->datas =$datas;
-        $this->file_index = 0;
-    }
+
     public function readLines($options, $desc, $validators = [], $fp_in = null, $fp_out = null)
     {
-        if($fp_in){
-            return parent::readLines($options, $desc, $validators, $fp_in, $fp_out);
+        if(empty($this->data)){
+            $fp_in = fopen('php://temp','r');
         }
-        $str = $this->datas[$this->file_index] ??'';
-       
-        $fp_in = fopen('php://memory','r+');
-        fputs($fp_in, $str);
-        fseek($fp_in,0);
         $fp_out = fopen('php://temp','w');
-        $ret = parent::readLines($options, $desc, $validators, $fp_in, $fp_out);
-        $this->file_index++;
+        $data = parent::readLines($options, $desc, [],$fp_in,$fp_out);
         fclose($fp_out);
-        fclose($fp_in);
-        
-        return $ret;
+        if(empty($this->data)){
+            fclose($fp_in);
+        }
+        return $data;
     }
-    
 }
 class FastInstallerTest extends \PHPUnit\Framework\TestCase
 {
@@ -63,7 +51,8 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(FastInstaller::class);
         $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(FastInstaller::class);
         $__SERVER = $_SERVER;
-        \LibCoverage\LibCoverage::End(); return;
+        
+        var_dump($path_app);
 
         @mkdir($path_app);
         \LibCoverage\LibCoverage::G()->cleanDirectory($path_app);
@@ -74,52 +63,110 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         $rdb =  $setting['redis_list'][0];
 
         FiParentApp::_()->init([]);
-        
+
         $_SERVER['argv']=['-','install', "--help", ];
         FiParentApp::_()->run();
-
+        
 
 
         $_SERVER['argv']=['-','dumpsql'];
         FiParentApp::_()->run();
         
-
+        
+        $_SERVER['argv']=['-','update'];
+        FiParentApp::_()->run();
+        
+        $_SERVER['argv']=['-','remove'];
+        FiParentApp::_()->run();
+        /////////////////////////////////////////
+        
+        $FastInstallerTest = str_replace('\\','/',FastInstallerTest::class);
+        $_SERVER['argv']=['-','require',$FastInstallerTest];
+        FiParentApp::_()->run();
+        
+        $FiChildApp = str_replace('\\','/',FiChildApp::class);
+        $_SERVER['argv']=['-','require',$FiChildApp , '--dry'];
+        
         $console_options = Console::_()->options;
         Console::_(InstallerConsole::_(new InstallerConsole))->reInit($console_options, FiParentApp::_());
-        
-        $str= "{$db['host']}\n{$db['port']}\n{$db['dbname']}\n{$db['username']}\n{$db['password']}\n";
-        $str2= "{$rdb['host']}\n{$rdb['port']}\n{$rdb['auth']}\n{$rdb['select']}\n";
-        InstallerConsole::_()->setFileContents([$str,  'N',$str2,'N']);
-        
-        $_SERVER['argv']=['-','install', '--verbose'];
-        FiParentApp::_()->run();
-
+       
         FiParentApp::_()->run();
         
-        FastInstaller::_()->command_require();
-        FastInstaller::_()->command_update();
-        FastInstaller::_()->command_remove();
+        $_SERVER['argv']=['-','require',$FiChildApp];
+        $console_options = Console::_()->options;
+        Console::_(InstallerConsole::_(new InstallerConsole))->reInit($console_options, FiParentApp::_());
+        FiParentApp::_()->run();
+        
+        $_SERVER['argv']=['-','install','--force'];
+        $console_options = Console::_()->options;
+        Console::_(InstallerConsole::_(new InstallerConsole))->reInit($console_options, FiParentApp::_());
+        FiParentApp::_()->run();
+        
+        $_SERVER['argv']=['-','tests\\DuckPhp:require',$FiChildApp ,'--dry'];
+        FiParentApp::_()->run();
+        
+        $FiChildApp2 = str_replace('\\','/',FiChildApp2::class);
+        $_SERVER['argv']=['-','require',$FiChildApp2,'--dry'];
+        FiParentApp::_()->run();
+        FiParentApp::_()->options['allow_require_ext_app']=true;
+        FiParentApp::_()->run();
+        
+        //////////////////////////////
+        
+        @mkdir($path_app.'/public');
+        @mkdir($path_app.'/res2');
+        file_put_contents($path_app.'/res2/'.'abc.txt',DATE(DATE_ATOM));
+        
+        $FiChildAppRes = str_replace('\\','/',FiChildAppRes::class);
+        $console_options = Console::_()->options;
+        Console::_(InstallerConsole::_(new InstallerConsole))->reInit($console_options, FiParentApp::_());
+        Console::_()->readLinesCleanFill();
+        Console::_()->readLinesFill("y\nt1\ny\n");
+        $_SERVER['argv']=['-','require',$FiChildAppRes, '--force', '--verbose'];
+        FiParentApp::_()->options['allow_require_ext_app']=true;
+        FiParentApp::_()->run();
+        
+        Console::_()->readLinesCleanFill();
+        Console::_()->readLinesFill("n\n");
+        $_SERVER['argv']=['-','require',$FiChildAppRes, '--dry'];
+        FiParentApp::_()->run();
+        
+        echo "--------------------------------\n";
+        define('XXX',true);
+        FiParentApp::_()->options['app']=[
+            FiChildAppFailed::class => [
+                'no_empty'=>true,
+                'controller_url_prefix'=>'ax',
+                'install_input_desc'=>'install_input_desc_FiChildAppFailed',
+            ],
+        ];
+        $_SERVER['argv']=['-','install'];
+        FiParentApp::_()->run();
+        $_SERVER['argv']=['-','install','--force'];
+        FiParentApp::_()->run();
+        
         
         FastInstaller::_()->getCurrentInput();
+        
         FastInstaller::_()->forceFail();
-        FiParentApp::_()->run();
-        FastInstaller::_(new FastInstaller);
-        FiChildApp::_()->force_fail=true;
-        $_SERVER['argv']=['-','install', '--force','--skip-sql'];
-
-        FiParentApp::_()->run();
-        @unlink($path_app.'FiParent.config.php');
-        @rmdir($path_app);
+        FastInstaller::_()->command_install();
+        
         $_SERVER = $__SERVER;
+        \LibCoverage\LibCoverage::G()->cleanDirectory($path_app);
         \LibCoverage\LibCoverage::End(); return;
 
+    }
+    protected function cleanData()
+    {
+        $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(FastInstaller::class);
+        @unlink($path_app.'FiParent.config.php');
+        @rmdir($path_app);
     }
 }
 class FiParentApp extends DuckPhp
 {
     
     public $options = [
-        'cli_command_classes'=>[FastInstaller::class],
         'is_debug'=>true,
         'ext_options_file'=>'FiParent.config.php',
         'app' => [
@@ -129,6 +176,7 @@ class FiParentApp extends DuckPhp
             ]
         ],
         'cli_command_with_fast_installer'=>true,
+        'install_callback' => [__CLASS__, 'OnInstall'],
     ];
     public function __construct()
     {
@@ -136,26 +184,19 @@ class FiParentApp extends DuckPhp
         $this->options['path'] = $path_app;
         parent::__construct();
     }
-    public function onInstall()
+    public static function OnInstall()
     {
-        //
-    }
-    public function onPreInstall()
-    {
-        //
+        //hit
     }
     public function onInstalled()
     {
-        //
+        //hit
     }
 }
 class FiChildApp extends DuckPhp
 {
-    
     public $options = [
-        'cli_command_class'=>null,
         'im child' => true,
-        'use_redis'=>true,
         'cli_command_with_fast_installer'=>true,
     ];
     public function __construct()
@@ -164,37 +205,36 @@ class FiChildApp extends DuckPhp
         $this->options['path'] = $path_app;
         parent::__construct();
     }
-    public $force_fail=false;
-    public function onInstall()
-    {
-        if ($this->force_fail){
-            
-            FastInstaller::_()->forceFail();
-            throw new \Exception('xx');
-        }
-    }
-}
-class FiParentApp2 extends FiParentApp
-{
-    public $options = [
-        'is_debug'=>true,
-        'ext_options_file'=>'FiParent2.config.php',
-        'app' => [
-            FiChildApp2::class => [
-                'no_empty'=>true,
-            ]
-        ],
-        'install_need_database'=>false,
-        'cli_command_with_fast_installer'=>true,
-    ];
 }
 class FiChildApp2 extends FiChildApp
 {
+}
+class FiChildAppRes extends FiChildApp
+{
+    public $options = [
+        'path_resource' => 'res2',
+    ];
+}
+
+
+class FiChildAppFailed extends FiChildApp
+{
     public $options = [
         'im child' => true,
-        'install_need_database'=>false,
-        'install_need_redis'=>false,
-        'cli_command_with_fast_installer'=>true,
+        'install_callback' => [__CLASS__, 'OnInstallX'],
     ];
-
+    
+    public $force_fail = true;
+    public static function OnInstallX()
+    {
+        return static::_()->_OnInstall();
+    }
+    public function _OnInstall()
+    {
+        
+        if ($this->force_fail){
+            FastInstaller::_()->forceFail();
+            throw new \Exception('force_fail');
+        }
+    }
 }

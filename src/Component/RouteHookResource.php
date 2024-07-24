@@ -94,6 +94,8 @@ class RouteHookResource extends ComponentBase
         $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         $_SERVER['DOCUMENT_ROOT'] = '';
         $_SERVER['SCRIPT_FILENAME'] = '/index.php';
+        
+        Route::_()->options['controller_resource_prefix'] = $this->options['controller_resource_prefix'];
         $path_dest = Route::_()->_Res('');
         
         $dest = $this->get_dest_dir($document_root, $path_dest);
@@ -110,7 +112,7 @@ class RouteHookResource extends ComponentBase
             if (is_dir($new_dir)) {
                 continue;
             }
-            mkdir($new_dir);
+            @mkdir($new_dir);
         }
         return $new_dir;
     }
