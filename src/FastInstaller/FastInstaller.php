@@ -19,9 +19,10 @@ class FastInstaller extends ComponentBase
 {
     public $options = [
         'install_input_validators' => [],
-        'install_options' => [],
+        'install_default_options' => [],
         'install_input_desc' => '',
         'install_callback' => null,
+        //'allow_require_ext_app'=>true,
     ];
     protected $args = [];
     protected $is_failed = false;
@@ -230,7 +231,7 @@ and more ...\n";
         
         //////
         $validators = $this->options['install_input_validators'] ?? [];
-        $default_options = $this->options['install_options'] ?? [];
+        $default_options = $this->options['install_default_options'] ?? [];
         
         $resource_options = $this->changeResource();
         $default_options = array_merge($default_options, $resource_options);

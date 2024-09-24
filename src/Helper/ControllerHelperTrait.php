@@ -184,11 +184,11 @@ trait ControllerHelperTrait
     }
     public static function AdminId($check_login = true)
     {
-        return GlobalAdmin::_()->id($check_login = true);
+        return GlobalAdmin::_()->id($check_login);
     }
     public static function AdminName($check_login = true)
     {
-        return GlobalAdmin::_()->name($check_login = true);
+        return GlobalAdmin::_()->name($check_login);
     }
     public static function AdminService()
     {

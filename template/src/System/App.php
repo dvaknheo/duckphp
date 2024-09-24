@@ -21,7 +21,8 @@ class App extends DuckPhp
         'exception_for_business'  => BusinessException::class,
         'exception_for_controller'  => ControllerException::class,
         'exception_reporter' =>  ExceptionReporter::class,
-        //'app' => [],
+        'app' => [],
+        //...
     ];
     //@override
     public function onPrepare()
