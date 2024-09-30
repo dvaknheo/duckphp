@@ -3,9 +3,18 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-if(!class_exists('DuckPhp\DuckPhp')){
-    require_once (__DIR__.'/../../autoload.php');  // @DUCKPHP_HEADFILE
+//autoload file
+$autoload_file = __DIR__.'../vendor/autoload.php';
+if (is_file($autoload_file)) {
+    require_once $autoload_file;
+} else {
+    $autoload_file = __DIR__.'/../../vendor/autoload.php';
+    if (is_file($autoload_file)) {
+        require_once $autoload_file;
+    }
 }
+////////////////////////////////////////
+
 use DuckPhp\DuckPhp;
 use DuckPhp\Ext\CallableView;
 use DuckPhp\Foundation\SimpleBusinessTrait; // 可变单例模式

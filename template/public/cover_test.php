@@ -3,12 +3,21 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-require_once(__DIR__.'/../../autoload.php');    //@DUCKPHP_HEADFILE
+//autoload file
+$autoload_file = __DIR__.'../vendor/autoload.php';
+if (is_file($autoload_file)) {
+    require_once $autoload_file;
+} else {
+    $autoload_file = __DIR__.'/../../vendor/autoload.php';
+    if (is_file($autoload_file)) {
+        require_once $autoload_file;
+    }
+}
+////////////////////////////////////////
 
 if (!class_exists(\SebastianBergmann\CodeCoverage\CodeCoverage::class)) {
-    //echo "开发人员专用";
-    require_once(__DIR__.'/../../vendor/autoload.php');
-    //return;
+    echo "Need CodeCoverage";
+    exit;
 }
 
 // 设置工程命名空间对应的目录，但强烈推荐修改 composer.json 使用 composer 加载

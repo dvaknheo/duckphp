@@ -1,9 +1,24 @@
 <?php declare(strict_types=1);
+/**
+ * DuckPhp
+ * From this time, you never be alone~
+ */
+//autoload file
+$autoload_file = __DIR__.'../vendor/autoload.php';
+if (is_file($autoload_file)) {
+    require_once $autoload_file;
+} else {
+    $autoload_file = __DIR__.'/../../vendor/autoload.php';
+    if (is_file($autoload_file)) {
+        require_once $autoload_file;
+    }
+}
+////////////////////////////////////////
 use DuckPhp\DuckPhpAllInOne;
 
-require(__DIR__.'/../../autoload.php');  // @DUCKPHP_HEADFILE
-//// 这个例子极端点，没用任何类，全函数模式。
 
+
+//// 这个例子极端点，没用任何类，全函数模式。
 ////[[[[
 //// 这部分是核心程序员写的。
 function RunByDuckPhp()

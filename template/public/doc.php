@@ -1,6 +1,22 @@
 <?php declare(strict_types=1);
-if(!class_exists('DuckPhp\DuckPhp')){
-require(__DIR__.'/../../autoload.php');  // @DUCKPHP_HEADFILE
+/**
+ * DuckPhp
+ * From this time, you never be alone~
+ */
+//autoload file
+$autoload_file = __DIR__.'../vendor/autoload.php';
+if (is_file($autoload_file)) {
+    require_once $autoload_file;
+} else {
+    $autoload_file = __DIR__.'/../../vendor/autoload.php';
+    if (is_file($autoload_file)) {
+        require_once $autoload_file;
+    }
+}
+////////////////////////////////////////
+
+if(!function_exists('Service_GetDocData')){
+
 function Service_GetDocData($f)
 {
     $ref = new ReflectionClass(\DuckPhp\DuckPhp::class);
@@ -41,6 +57,7 @@ function action_index()
 }
 
 action_index();
+////]]]]
 }
 ?><!doctype html>
 <html>

@@ -1,15 +1,25 @@
 <?php declare(strict_types=1);
 /**
- * DuckPHP
+ * DuckPhp
  * From this time, you never be alone~
  */
+namespace {
+    //autoload file
+    $autoload_file = __DIR__.'../vendor/autoload.php';
+    if (is_file($autoload_file)) {
+        require_once $autoload_file;
+    } else {
+        $autoload_file = __DIR__.'/../../vendor/autoload.php';
+        if (is_file($autoload_file)) {
+            require_once $autoload_file;
+        }
+    }
+}
+////////////////////////////////////////
 
 // 以下部分是核心工程师写。
-
 namespace MySpace\System
-{
-    require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
-    
+{    
     use DuckPhp\Component\RouteHookPathInfoCompat;
     use DuckPhp\DuckPhp;
     use DuckPhp\Ext\CallableView;

@@ -4,8 +4,18 @@
  * From this time, you never be alone~
  */
 namespace {
-    require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
+    //autoload file
+    $autoload_file = __DIR__.'../vendor/autoload.php';
+    if (is_file($autoload_file)) {
+        require_once $autoload_file;
+    } else {
+        $autoload_file = __DIR__.'/../../vendor/autoload.php';
+        if (is_file($autoload_file)) {
+            require_once $autoload_file;
+        }
+    }
 }
+////////////////////////////////////////
 
 namespace Api {
 // 后面是业务代码

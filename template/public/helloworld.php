@@ -3,8 +3,17 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-require_once(__DIR__.'/../../autoload.php');        // @DUCKPHP_HEADFILE
-
+//autoload file
+$autoload_file = __DIR__.'../vendor/autoload.php';
+if (is_file($autoload_file)) {
+    require_once $autoload_file;
+} else {
+    $autoload_file = __DIR__.'/../../vendor/autoload.php';
+    if (is_file($autoload_file)) {
+        require_once $autoload_file;
+    }
+}
+////////////////////////////////////////
 class MainController
 {
     public function action_index()

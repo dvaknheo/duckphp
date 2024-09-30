@@ -1,6 +1,21 @@
-<?php
-require_once(__DIR__.'/../autoload.php');    //@DUCKPHP_HEADFILE
+<?php declare(strict_types=1);
+/**
+ * DuckPhp
+ * From this time, you never be alone~
+ */
+//autoload file
+$autoload_file = __DIR__.'/vendor/autoload.php';
+if (is_file($autoload_file)) {
+    require_once $autoload_file;
+} else {
+    $autoload_file = __DIR__.'/../vendor/autoload.php';
+    if (is_file($autoload_file)) {
+        require_once $autoload_file;
+    }
+}
+////////////////////////////////////////
 
+//strong suguess use composer
 if (!class_exists(\ProjectNameTemplate\System\App::class)) {
     \DuckPhp\Core\AutoLoader::RunQuickly([
         'path'=>__DIR__.'/',
