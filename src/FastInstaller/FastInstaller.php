@@ -46,7 +46,7 @@ class FastInstaller extends ComponentBase
         return;
     }
     /**
-     * override me to add a child app. require aa/app --url-prefix= aa-bb
+     * add a child app. require aa/app --url-prefix= aa-bb
      */
     public function command_require()
     {
@@ -101,7 +101,7 @@ class FastInstaller extends ComponentBase
         return $this->doCommandUpdate();
     }
     /**
-     * override me to remove a child app.
+     * remove a child app.
      */
     public function command_remove()
     {
