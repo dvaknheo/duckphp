@@ -3,9 +3,11 @@
  * DuckPhp
  * From this time, you never be alone~
  */
-namespace DuckPhp\Component;
+namespace DuckPhp\Ext;
 
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\Console;
+use DuckPhp\HttpServer\HttpServer;
 
 class DuckPhpInstaller extends ComponentBase
 {
@@ -19,25 +21,74 @@ class DuckPhpInstaller extends ComponentBase
         'verbose' => false,
         'help' => false,
     ];
-    public static function RunQuickly($options)
+    /**
+     * create new project in current diretory.
+     */
+    public function command_new()
     {
-        return static::_()->init($options)->run();
+        $this->init([])->newProject();
     }
-    public function init(array $options, $context = null)
+    /**
+     * show this help.
+     */
+    public function command_help()
     {
-        $this->options = array_replace_recursive($this->options, $options);
-        return $this;
+        return $this->init([])->showHelp();
     }
-    public function run()
+    /**
+     * run the demo web server
+     */
+    public function command_show()
     {
-        if ($this->options['help']) {
+        return $this->init([])->runDemo();
+    }
+    
+    public function showHelp()
+    {
+        echo <<<EOT
+Well Come to use DuckPhp Installer ;
+  help                    Show this help.
+  new                     Create a project.
+    --namespace <namespace>   Use another project namespace.
+    --force                   Overwrite exited files.
+    --verbose                 Show Progress
+    --autoloadfile <path>     Use another autoload file.
+    --path <path>             Copy project file to here.
+  show                    Show the code demo
+    --port <port>             Use anothe port
+EOT;
+    }
+    public function newProject($namespace)
+    {
+        $cli_options = Console::_()->getCliParameters();
+        $namespace = $cli_options['namespace'] ??  true;
+        if (empty($namespace) || $namespace === true) {
+            $default = ['namespace' => 'Demo'];
+            $input = Console::_()->readLines($default, "enter your namespace[{namespace}]\n");
+            $this->options['namespace'] = $input['namespace'];
+        }
+        
+        if ($cli_options['help']) {
             $this->showHelp();
             return;
         }
+        
         $source = __DIR__ .'/../../template';
         $dest = $this->options['path'];
-
         $this->dumpDir($source, $dest, $this->options['force']);
+    }
+    public function runDemo()
+    {
+        $source = __DIR__ .'/../../template';
+        $options = [
+            'path' => $source,
+        ];
+        $cli_options = Console::_()->getCliParameters();
+        $port = $cli_options['port'] ??  true;
+        if (empty($port) || $port === true) {
+            $options['port'] = '8080';
+        }
+        HttpServer::_()->init($options)->run();
     }
     protected function dumpDir($source, $dest, $force = false)
     {
@@ -131,16 +182,7 @@ class DuckPhpInstaller extends ComponentBase
         $data = preg_replace('/^.*?@DUCKPHP_DELETE.*?$/m', '', $data);
         return $data;
     }
-    /*
-    protected function genProjectName()
-    {
-        $str = "abcdefghijklmnopqrstuvwxyz";
-        $l = strlen($str)-1;
-        $x = mt_rand(0,$l);
-        $ret = 'Project'.DATE("ymd").'_'.$str[mt_rand(0,$l)].$str[mt_rand(0,$l)].$str[mt_rand(0,$l)].$str[mt_rand(0,$l)];
-        return $ret;
-    }
-    */
+
     protected function filteNamespace($data, $namespace)
     {
         if ($namespace === 'ProjectNameTemplate' || $namespace === '') {
@@ -161,21 +203,17 @@ class DuckPhpInstaller extends ComponentBase
         return $data;
     }
     
-    protected function showHelp()
-    {
-        echo <<<EOT
-Well Come to use DuckPhp Installer ;
-  --help                    Show this help.
-  --namespace <namespace>   Use another project namespace.
-  --force                   Overwrite exited files.
-  --verbose                 Show Progress
-  --autoloadfile <path>     Use another autoload file.
-  --path <path>             Copy project file to here.
-EOT;
-        //--full                    Use The demo template
-    }
+
     /*
-        function detectedClass($path)
+    protected function genProjectName()
+    {
+        $str = "abcdefghijklmnopqrstuvwxyz";
+        $l = strlen($str)-1;
+        $x = mt_rand(0,$l);
+        $ret = 'Project'.DATE("ymd").'_'.$str[mt_rand(0,$l)].$str[mt_rand(0,$l)].$str[mt_rand(0,$l)].$str[mt_rand(0,$l)];
+        return $ret;
+    }
+    protected function detectedClass($path)
         {
             $composer_file = $path.'/composer.json';
             $data = json_decode(file_get_contents($composer_file),true);
