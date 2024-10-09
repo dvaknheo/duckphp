@@ -1,7 +1,6 @@
 <?php 
 namespace tests\DuckPhp\Component;
 use DuckPhp\Component\Command;
-use DuckPhp\Component\DuckPhpInstaller;
 
 use DuckPhp\Core\Console;
 use DuckPhp\Ext\AutoReadLineConsole;
@@ -64,17 +63,17 @@ class CommandTest extends \PHPUnit\Framework\TestCase
         ];
         DuckPhp::_()->run();
         
+        /*
         $_SERVER['argv']=[
             '-','new',
         ];
         $options = Console::_()->options;
         Console::_(tAutoReadLineConsole::_())->reInit($options,DuckPhp::_());
-        
         DuckPhpInstaller::_(Console_Installer::_());
         $str= "Xns\n";
         tAutoReadLineConsole::_()->setFileContents([$str]);
-        
         DuckPhp::_()->run();
+        */
         
         $_SERVER['argv']=[
             '-','run', '--http-server=tests/DuckPhp/Component/Console_HttpServer',
@@ -110,7 +109,7 @@ class CommandTest extends \PHPUnit\Framework\TestCase
             '-','aa:new2',
         ];
         DuckPhp::_()->run();
-        
+        /*
         $_SERVER['argv']=[
             '-','new', '--namespace'
         ];
@@ -119,7 +118,7 @@ class CommandTest extends \PHPUnit\Framework\TestCase
             '-','new'
         ];
         DuckPhp::_()->run();
-        
+        */
         @unlink($path_app.'Command.config.php');
         
         $_SERVER = $__SERVER;
@@ -127,14 +126,6 @@ class CommandTest extends \PHPUnit\Framework\TestCase
     }
 }
 
-class Console_Installer extends DuckPhpInstaller
-{
-    public function run()
-    {
-        var_dump($this->options['namespace']);
-        return true;
-    }
-}
 class Console_HttpServer extends HttpServer
 {
     public function run()

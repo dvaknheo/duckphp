@@ -107,6 +107,7 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         
         $FiChildApp2 = str_replace('\\','/',FiChildApp2::class);
         $_SERVER['argv']=['-','require',$FiChildApp2,'--dry'];
+        FiParentApp::_()->options['allow_require_ext_app']=false;
         FiParentApp::_()->run();
         FiParentApp::_()->options['allow_require_ext_app']=true;
         FiParentApp::_()->run();

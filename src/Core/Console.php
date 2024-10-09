@@ -39,7 +39,8 @@ class Console extends ComponentBase
     }
     public function getCliParameters()
     {
-        return $this->parameters;
+        return !empty($this->parameters)?$this->parameters:$this->parseCliArgs($_SERVER['argv']);
+        ;
     }
     public function getArgs()
     {

@@ -5,7 +5,6 @@
  */
 namespace DuckPhp\Component;
 
-use DuckPhp\Component\DuckPhpInstaller;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Console;
@@ -37,20 +36,6 @@ Options:
 
 EOT;
         echo $this->getCommandListInfo();
-    }
-    /**
-     * create new project in current diretory. --help for help
-     */
-    public function command_new($namespace = '')
-    {
-        //ifempty(readLines();
-        $options = Console::_()->getCliParameters();
-        if (empty($namespace) || $namespace === true) {
-            $default = ['namespace' => 'Demo'];
-            $input = Console::_()->readLines($default, "enter your namespace[{namespace}]\n");
-            $options['namespace'] = $input['namespace'];
-        }
-        DuckPhpInstaller::_()->init($options)->run();
     }
     /**
      * run inner server.

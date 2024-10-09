@@ -59,20 +59,20 @@ Well Come to use DuckPhp Installer ;
 
 EOT;
     }
-    public function newProject($namespace)
+    public function newProject()
     {
-        $cli_options = Console::_()->getCliParameters();
-        $namespace = $cli_options['namespace'] ??  true;
+        $options = Console::_()->getCliParameters();
+        if ($options['help'] ?? false) {
+            $this->showHelp();
+            return;
+        }
+        $namespace = $options['namespace'] ?? true;
         if (empty($namespace) || $namespace === true) {
             $default = ['namespace' => 'Demo'];
             $input = Console::_()->readLines($default, "enter your namespace[{namespace}]\n");
             $this->options['namespace'] = $input['namespace'];
         }
-        
-        if ($cli_options['help']) {
-            $this->showHelp();
-            return;
-        }
+        $this->options = array_merge($this->options, $options);
         
         $source = __DIR__ .'/../../template';
         $dest = $this->options['path'];
@@ -84,17 +84,21 @@ EOT;
         $options = [
             'path' => $source,
         ];
-        $cli_options = Console::_()->getCliParameters();
-        $port = $cli_options['port'] ??  true;
-        $options['port'] = $port;
-        if (empty($port) || $port === true) {
+        $options = Console::_()->getCliParameters();
+        $options['path'] = $source;
+        if (empty($options['port']) || $options['port'] === true) {
             $options['port'] = '8080';
         }
-        
-        HttpServer::_()->init($options)->run();
+        if (!empty($options['http_server'])) {
+            /** @var string */
+            $class = str_replace('/', '\\', $options['http_server']);
+            HttpServer::_($class::_());
+        }
+        HttpServer::RunQuickly($options);
     }
     protected function dumpDir($source, $dest, $force = false)
     {
+        @mkdir($dest);
         $source = rtrim(''.realpath($source), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
         $dest = rtrim(''.realpath($dest), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
         $directory = new \RecursiveDirectoryIterator($source, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS);
@@ -188,9 +192,9 @@ EOT;
 
     protected function filteNamespace($data, $namespace)
     {
-        if ($namespace === 'ProjectNameTemplate' || $namespace === '') {
-            return $data;
-        }
+        //if ($namespace === 'ProjectNameTemplate' || $namespace === '') {
+        //    return $data;
+        //}
         $str_header = "\$namespace = '$namespace';";
         $data = preg_replace('/^.*?@DUCKPHP_NAMESPACE.*?$/m', $str_header, $data);
         $data = str_replace("ProjectNameTemplate\\", "{$namespace}\\", $data);
