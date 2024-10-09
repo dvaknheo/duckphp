@@ -56,6 +56,7 @@ Well Come to use DuckPhp Installer ;
     --path <path>             Copy project file to here.
   show                    Show the code demo
     --port <port>             Use anothe port
+
 EOT;
     }
     public function newProject($namespace)
@@ -85,9 +86,11 @@ EOT;
         ];
         $cli_options = Console::_()->getCliParameters();
         $port = $cli_options['port'] ??  true;
+        $options['port'] = $port;
         if (empty($port) || $port === true) {
             $options['port'] = '8080';
         }
+        
         HttpServer::_()->init($options)->run();
     }
     protected function dumpDir($source, $dest, $force = false)
