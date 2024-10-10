@@ -62,6 +62,6 @@ class GlobalAdmin extends ComponentBase implements AdminActionInterface
     }
     public function log(string $string, ?string $type = null)
     {
-        return $this->service()->doIsSuper($this->id(), $string, $type);
+        return $this->service()->log($string, $type);
     }
 }
