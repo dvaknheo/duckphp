@@ -28,6 +28,9 @@ class AppWithAllOptions extends DuckPhp
         // 别名，目前只用于视图目录 (DuckPhp\Core\App)
         // $options['alias'] = NULL;
 
+        //  ()
+        // $options['allow_require_ext_app'] = true;
+
         // 子应用，保存 类名=>选项对 (DuckPhp\Core\App)
         // $options['app'] = array ( );
 
@@ -40,10 +43,10 @@ class AppWithAllOptions extends DuckPhp
         //  (DuckPhp\Core\App)
         // $options['cli_command_classes'] = array ( );
 
-        // 命令行,默认调用指令 (DuckPhp\Core\Console, DuckPhp\Ext\AutoReadLineConsole)
+        // 命令行,默认调用指令 (DuckPhp\Core\Console)
         // $options['cli_command_default'] = 'help';
 
-        //  (DuckPhp\Core\Console, DuckPhp\Ext\AutoReadLineConsole)
+        //  (DuckPhp\Core\Console)
         // $options['cli_command_group'] = array ( );
 
         //  (DuckPhp\Core\App)
@@ -59,12 +62,12 @@ class AppWithAllOptions extends DuckPhp
         // $options['cli_command_with_common'] = true;
 
         //  ()
-        // $options['cli_command_with_fast_installer'] = false;
+        // $options['cli_command_with_fast_installer'] = true;
 
         // 启用命令行模式 (DuckPhp\Core\App)
         // $options['cli_enable'] = true;
 
-        //  (DuckPhp\Core\Console, DuckPhp\Ext\AutoReadLineConsole)
+        //  (DuckPhp\Core\Console)
         // $options['cli_readlines_logfile'] = '';
 
         // 输出时候关闭资源输出（仅供第三方扩展参考 (DuckPhp\Core\App)
@@ -190,7 +193,7 @@ class AppWithAllOptions extends DuckPhp
         // 日志前缀 (DuckPhp\Core\Logger)
         // $options['log_prefix'] = 'DuckPhpLog';
 
-        // 命名空间 (DuckPhp\Core\App, DuckPhp\Core\Route, DuckPhp\Ext\MiniRoute, DuckPhp\Ext\RouteHookApiServer, DuckPhp\Ext\StrictCheck)
+        // 命名空间 (DuckPhp\Core\App, DuckPhp\Core\Route, DuckPhp\Ext\DuckPhpInstaller, DuckPhp\Ext\MiniRoute, DuckPhp\Ext\RouteHookApiServer, DuckPhp\Ext\StrictCheck)
         // $options['namespace'] = '';
 
         // 控制器命名空间 (DuckPhp\Core\Route, DuckPhp\Ext\MiniRoute, DuckPhp\Ext\StrictCheck)
@@ -205,7 +208,7 @@ class AppWithAllOptions extends DuckPhp
         // `override_class`切过去的时候会在此保存旧的`override_class` (DuckPhp\Core\App)
         // $options['override_class_from'] = NULL;
 
-        // 工程路径 (DuckPhp\Core\App, DuckPhp\Core\Logger, DuckPhp\Core\View, DuckPhp\Component\RouteHookResource, DuckPhp\Ext\CallableView, DuckPhp\Ext\EmptyView, DuckPhp\Ext\JsonView, DuckPhp\Ext\Misc)
+        // 工程路径 (DuckPhp\Core\App, DuckPhp\Core\Logger, DuckPhp\Core\View, DuckPhp\Component\RouteHookResource, DuckPhp\Ext\CallableView, DuckPhp\Ext\DuckPhpInstaller, DuckPhp\Ext\EmptyView, DuckPhp\Ext\JsonView, DuckPhp\Ext\Misc)
         // $options['path'] = '';
 
         // 文档路径 (DuckPhp\Component\RouteHookResource)
@@ -292,18 +295,6 @@ class AppWithAllOptions extends DuckPhp
         // ---- 下面是默认未使用的扩展 ----
 
         /*
-        $options['ext']['DuckPhp\\Ext\\AutoReadLineConsole'] = true;
-            // 【共享】命令行,默认调用指令
-            // $options['cli_command_default'] = 'help';
-
-            // 【共享】
-            // $options['cli_command_group'] = array ( );
-
-            // 【共享】
-            // $options['cli_readlines_logfile'] = '';
-
-        //*/
-        /*
         $options['ext']['DuckPhp\\Ext\\CallableView'] = true;
             // CallableView 限定于此类内 callable_view_class 。
             $options['callable_view_class'] = NULL;
@@ -334,6 +325,27 @@ class AppWithAllOptions extends DuckPhp
 
         //*/
         /*
+        $options['ext']['DuckPhp\\Ext\\DuckPhpInstaller'] = true;
+            // 
+            $options['autoloader'] = 'vendor/autoload.php';
+
+            // 
+            $options['force'] = false;
+
+            // 
+            $options['help'] = false;
+
+            // 【共享】命名空间
+            // $options['namespace'] = '';
+
+            // 【共享】工程路径
+            // $options['path'] = '';
+
+            // 
+            $options['verbose'] = false;
+
+        //*/
+        /*
         $options['ext']['DuckPhp\\Ext\\EmptyView'] = true;
             // 空视图扩展，_Show 的时候给的 $data 的key
             $options['empty_view_key_view'] = 'view';
@@ -359,6 +371,9 @@ class AppWithAllOptions extends DuckPhp
         //*/
         /*
         $options['ext']['DuckPhp\\Ext\\ExceptionWrapper'] = true;
+        //*/
+        /*
+        $options['ext']['DuckPhp\\Ext\\FinderForController'] = true;
         //*/
         /*
         $options['ext']['DuckPhp\\Ext\\JsonRpcClientBase'] = true;

@@ -8,6 +8,9 @@
 + **'alias' => NULL,** 
 
     别名，目前只用于视图目录   // [DuckPhp\Core\App](Core-App.md)
++ **'allow_require_ext_app' => true,** 
+
+       // 
 + 'api_server_404_as_exception' => false, 
 
     API服务器， 404 引发异常的模式   // [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md)
@@ -26,6 +29,9 @@
 + **'app' => array ( ),** 
 
     子应用，保存 类名=>选项对   // [DuckPhp\Core\App](Core-App.md)
++ 'autoloader' => 'vendor/autoload.php', 
+
+       // [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md)
 + 'callable_view_class' => NULL, 
 
     CallableView 限定于此类内 callable_view_class 。   // [DuckPhp\Ext\CallableView](Ext-CallableView.md)
@@ -55,10 +61,10 @@
        // [DuckPhp\Core\App](Core-App.md)
 + **'cli_command_default' => 'help',** 
 
-    命令行,默认调用指令   // [DuckPhp\Core\Console](Core-Console.md), [DuckPhp\Ext\AutoReadLineConsole](Ext-AutoReadLineConsole.md)
+    命令行,默认调用指令   // [DuckPhp\Core\Console](Core-Console.md)
 + **'cli_command_group' => array ( ),** 
 
-       // [DuckPhp\Core\Console](Core-Console.md), [DuckPhp\Ext\AutoReadLineConsole](Ext-AutoReadLineConsole.md)
+       // [DuckPhp\Core\Console](Core-Console.md)
 + **'cli_command_method_prefix' => 'command_',** 
 
        // [DuckPhp\Core\App](Core-App.md)
@@ -71,7 +77,7 @@
 + **'cli_command_with_common' => true,** 
 
        // 
-+ **'cli_command_with_fast_installer' => false,** 
++ **'cli_command_with_fast_installer' => true,** 
 
        // 
 + **'cli_enable' => true,** 
@@ -79,7 +85,7 @@
     启用命令行模式   // [DuckPhp\Core\App](Core-App.md)
 + **'cli_readlines_logfile' => '',** 
 
-       // [DuckPhp\Core\Console](Core-Console.md), [DuckPhp\Ext\AutoReadLineConsole](Ext-AutoReadLineConsole.md)
+       // [DuckPhp\Core\Console](Core-Console.md)
 + **'close_resource_at_output' => false,** 
 
     输出时候关闭资源输出（仅供第三方扩展参考   // [DuckPhp\Core\App](Core-App.md)
@@ -203,6 +209,9 @@
 + 'facades_namespace' => 'MyFacades', 
 
     门面扩展，门面类前缀   // [DuckPhp\Ext\MyFacadesAutoLoader](Ext-MyFacadesAutoLoader.md)
++ 'force' => false, 
+
+       // [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md)
 + 'function_route' => false, 
 
     函数模式路由，开关   // [DuckPhp\Ext\RouteHookFunctionRoute](Ext-RouteHookFunctionRoute.md)
@@ -221,6 +230,9 @@
 + **'handle_exception_on_init' => true,** 
 
        // [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
++ 'help' => false, 
+
+       // [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md)
 + **'html_handler' => NULL,** 
 
     HTML编码函数   // [DuckPhp\Core\App](Core-App.md)
@@ -274,7 +286,7 @@
     目录模式的基准路径   // [DuckPhp\Ext\RouteHookDirectoryMode](Ext-RouteHookDirectoryMode.md)
 + **'namespace' => '',** 
 
-    命名空间   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Core\Route](Core-Route.md), [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md), [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md), [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
+    命名空间   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Core\Route](Core-Route.md), [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md), [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md), [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md), [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
 + 'namespace_business' => '', 
 
     严格检查扩展，业务类命名空间   // [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
@@ -295,7 +307,7 @@
     `override_class`切过去的时候会在此保存旧的`override_class`   // [DuckPhp\Core\App](Core-App.md)
 + **'path' => '',** 
 
-    工程路径   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Core\Logger](Core-Logger.md), [DuckPhp\Core\View](Core-View.md), [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md), [DuckPhp\Ext\CallableView](Ext-CallableView.md), [DuckPhp\Ext\EmptyView](Ext-EmptyView.md), [DuckPhp\Ext\JsonView](Ext-JsonView.md), [DuckPhp\Ext\Misc](Ext-Misc.md)
+    工程路径   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Core\Logger](Core-Logger.md), [DuckPhp\Core\View](Core-View.md), [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md), [DuckPhp\Ext\CallableView](Ext-CallableView.md), [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md), [DuckPhp\Ext\EmptyView](Ext-EmptyView.md), [DuckPhp\Ext\JsonView](Ext-JsonView.md), [DuckPhp\Ext\Misc](Ext-Misc.md)
 + **'path_document' => 'public',** 
 
     文档路径   // [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md)
@@ -395,6 +407,9 @@
 + **'use_output_buffer' => false,** 
 
     使用 OB 函数缓冲数据   // [DuckPhp\Core\Runtime](Core-Runtime.md)
++ 'verbose' => false, 
+
+       // [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md)
 + **'view_skip_notice_error' => true,** 
 
     关闭  View 视图的 notice 警告，以避免麻烦的处理。   // [DuckPhp\Core\View](Core-View.md), [DuckPhp\Ext\CallableView](Ext-CallableView.md), [DuckPhp\Ext\EmptyView](Ext-EmptyView.md), [DuckPhp\Ext\JsonView](Ext-JsonView.md)
@@ -408,6 +423,8 @@
 + DuckPhp\DuckPhp
     - 'alias' => NULL,
         别名，目前只用于视图目录
+    - 'allow_require_ext_app' => true,
+        
     - 'app' => array ( ),
         子应用，保存 类名=>选项对
     - 'class_admin' => '',
@@ -424,7 +441,7 @@
         
     - 'cli_command_with_common' => true,
         
-    - 'cli_command_with_fast_installer' => false,
+    - 'cli_command_with_fast_installer' => true,
         
     - 'cli_enable' => true,
         启用命令行模式
@@ -679,13 +696,6 @@
         文档路径
     - 'path_resource' => 'res',
         资源目录
-+ DuckPhp\Ext\AutoReadLineConsole
-    - 'cli_command_default' => 'help',
-        命令行,默认调用指令
-    - 'cli_command_group' => array ( ),
-        
-    - 'cli_readlines_logfile' => '',
-        
 + DuckPhp\Ext\CallableView
     - 'callable_view_class' => NULL,
         CallableView 限定于此类内 callable_view_class 。
@@ -705,6 +715,19 @@
         视图路径
     - 'view_skip_notice_error' => true,
         关闭  View 视图的 notice 警告，以避免麻烦的处理。
++ DuckPhp\Ext\DuckPhpInstaller
+    - 'autoloader' => 'vendor/autoload.php',
+        
+    - 'force' => false,
+        
+    - 'help' => false,
+        
+    - 'namespace' => '',
+        命名空间
+    - 'path' => '',
+        工程路径
+    - 'verbose' => false,
+        
 + DuckPhp\Ext\EmptyView
     - 'empty_view_key_view' => 'view',
         空视图扩展，_Show 的时候给的 $data 的key
@@ -721,6 +744,7 @@
     - 'view_skip_notice_error' => true,
         关闭  View 视图的 notice 警告，以避免麻烦的处理。
 + DuckPhp\Ext\ExceptionWrapper
++ DuckPhp\Ext\FinderForController
 + DuckPhp\Ext\JsonRpcClientBase
 + DuckPhp\Ext\JsonRpcExt
     - 'jsonrpc_backend' => 'https://127.0.0.1',

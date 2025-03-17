@@ -71,3 +71,5 @@ FastInstaller 是 DuckPhp 内置的一个安装系统。
 
     protected function saveExtOptions($ext_options)
 
+        'install_default_options' => [],
+
