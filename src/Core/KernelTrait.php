@@ -260,7 +260,6 @@ trait KernelTrait
     {
         $this->addPublicClassesInRoot([
             Console::class,
-            EventManager::class,
         ]);
         if ($this->is_root) {
             $this->loadSetting();
