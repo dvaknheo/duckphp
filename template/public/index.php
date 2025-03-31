@@ -14,8 +14,6 @@ if (is_file($autoload_file)) {
     }
 }
 ////////////////////////////////////////
-
-// 设置工程命名空间对应的目录，但强烈推荐修改 composer.json 使用 composer 加载
 if (!class_exists(\ProjectNameTemplate\System\App::class)) {
     \DuckPhp\Core\AutoLoader::RunQuickly([
         'path'=>__DIR__.'/../',
@@ -26,5 +24,11 @@ $options = [
     //'is_debug' => true,
     // more options ...
 ];
-
+////[[[[
+//fix path_info
+if($_SERVER['PATH_INFO']===''&&$_SERVER['SCRIPT_NAME']==='/index.php'){
+    $path = parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
+    var_dump($path);
+}
+////]]]]
 \ProjectNameTemplate\System\App::RunQuickly($options);
