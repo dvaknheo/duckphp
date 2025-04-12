@@ -15,7 +15,7 @@ use DuckPhp\GlobalUser\UserControllerInterface;
 //@codeCoverageIgnoreStart
 /**
  * FinderForController 类
- * 
+ *
  * 这是一个用于枚举控制器的扩展类，继承自 ComponentBase。
  * 主要功能包括：
  * - 根据控制器类和方法生成路径信息

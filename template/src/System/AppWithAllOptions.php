@@ -61,7 +61,7 @@ class AppWithAllOptions extends DuckPhp
         //  ()
         // $options['cli_command_with_common'] = true;
 
-        //  ()
+        //         'allow_require_ext_app' => true, ()
         // $options['cli_command_with_fast_installer'] = true;
 
         // 启用命令行模式 (DuckPhp\Core\App)

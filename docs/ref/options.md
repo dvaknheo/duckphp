@@ -79,7 +79,7 @@
        // 
 + **'cli_command_with_fast_installer' => true,** 
 
-       // 
+            'allow_require_ext_app' => true,   // 
 + **'cli_enable' => true,** 
 
     启用命令行模式   // [DuckPhp\Core\App](Core-App.md)
@@ -442,7 +442,7 @@
     - 'cli_command_with_common' => true,
         
     - 'cli_command_with_fast_installer' => true,
-        
+                'allow_require_ext_app' => true,
     - 'cli_enable' => true,
         启用命令行模式
     - 'close_resource_at_output' => false,
