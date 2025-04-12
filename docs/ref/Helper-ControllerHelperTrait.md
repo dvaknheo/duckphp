@@ -46,7 +46,7 @@
     public static function Show404()
 报 404，显示后续页面
 
-    public static function ShowJson($ret)
+    public static function ShowJson($ret, $flags = 0)
 输出 json 结果。
 
 ### 路由相关
@@ -154,6 +154,8 @@
 以上就是所有控制器助手方法    
 
 ## 完毕
+
+
 
 
 

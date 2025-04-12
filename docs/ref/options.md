@@ -31,7 +31,7 @@
     子应用，保存 类名=>选项对   // [DuckPhp\Core\App](Core-App.md)
 + 'autoloader' => 'vendor/autoload.php', 
 
-       // [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md)
+    安装器，自动加载器指向位置   // [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md)
 + 'callable_view_class' => NULL, 
 
     CallableView 限定于此类内 callable_view_class 。   // [DuckPhp\Ext\CallableView](Ext-CallableView.md)
@@ -211,7 +211,7 @@
     门面扩展，门面类前缀   // [DuckPhp\Ext\MyFacadesAutoLoader](Ext-MyFacadesAutoLoader.md)
 + 'force' => false, 
 
-       // [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md)
+    安装器，强制安装，覆盖现有文件   // [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md)
 + 'function_route' => false, 
 
     函数模式路由，开关   // [DuckPhp\Ext\RouteHookFunctionRoute](Ext-RouteHookFunctionRoute.md)
@@ -232,7 +232,7 @@
        // [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
 + 'help' => false, 
 
-       // [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md)
+    安装器，显示帮助   // [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md)
 + **'html_handler' => NULL,** 
 
     HTML编码函数   // [DuckPhp\Core\App](Core-App.md)
@@ -409,7 +409,7 @@
     使用 OB 函数缓冲数据   // [DuckPhp\Core\Runtime](Core-Runtime.md)
 + 'verbose' => false, 
 
-       // [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md)
+    安装器，显示详情   // [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md)
 + **'view_skip_notice_error' => true,** 
 
     关闭  View 视图的 notice 警告，以避免麻烦的处理。   // [DuckPhp\Core\View](Core-View.md), [DuckPhp\Ext\CallableView](Ext-CallableView.md), [DuckPhp\Ext\EmptyView](Ext-EmptyView.md), [DuckPhp\Ext\JsonView](Ext-JsonView.md)
@@ -717,17 +717,17 @@
         关闭  View 视图的 notice 警告，以避免麻烦的处理。
 + DuckPhp\Ext\DuckPhpInstaller
     - 'autoloader' => 'vendor/autoload.php',
-        
+        安装器，自动加载器指向位置
     - 'force' => false,
-        
+        安装器，强制安装，覆盖现有文件
     - 'help' => false,
-        
+        安装器，显示帮助
     - 'namespace' => '',
         命名空间
     - 'path' => '',
         工程路径
     - 'verbose' => false,
-        
+        安装器，显示详情
 + DuckPhp\Ext\EmptyView
     - 'empty_view_key_view' => 'view',
         空视图扩展，_Show 的时候给的 $data 的key

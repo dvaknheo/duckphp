@@ -24,9 +24,9 @@ class CoreHelper extends ComponentBase
     {
         return static::_()->_Hl($str, $args);
     }
-    public static function Json($data)
+    public static function Json($data, $flags = 0)
     {
-        return static::_()->_Json($data);
+        return static::_()->_Json($data, $flags);
     }
     public static function Url($url = null)
     {
@@ -81,9 +81,9 @@ class CoreHelper extends ComponentBase
     {
         return static::_()->_IsAjax();
     }
-    public static function ShowJson($ret)
+    public static function ShowJson($ret, $flags = 0)
     {
-        return static::_()->_ShowJson($ret);
+        return static::_()->_ShowJson($ret, $flags);
     }
     public static function Show302($url)
     {
@@ -166,13 +166,13 @@ class CoreHelper extends ComponentBase
         $t = $this->_L($str, $args);
         return $this->_H($t);
     }
-    public function _Json($data)
+    public function _Json($data, $flags = 0)
     {
-        $flag = JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
+        $flags = $flags | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK;
         if (App::_()->_IsDebug()) {
-            $flag = $flag | JSON_PRETTY_PRINT;
+            $flags = $flags | JSON_PRETTY_PRINT;
         }
-        return json_encode($data, $flag);
+        return json_encode($data, $flags);
     }
     public function _VarLog($var)
     {
@@ -229,11 +229,11 @@ class CoreHelper extends ComponentBase
     {
         App::On404();
     }
-    public function _ShowJson($ret)
+    public function _ShowJson($ret, $flags = 0)
     {
         SystemWrapper::_()->_header('Content-Type:application/json; charset=utf-8');
         SystemWrapper::_()->_header('Cache-Control: no-store, no-cache, must-revalidate');
-        echo static::_()->_Json($ret);
+        echo static::_()->_Json($ret, $flags);
     }
     public function _Show302($url)
     {

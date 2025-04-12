@@ -326,13 +326,13 @@ class AppWithAllOptions extends DuckPhp
         //*/
         /*
         $options['ext']['DuckPhp\\Ext\\DuckPhpInstaller'] = true;
-            // 
+            // 安装器，自动加载器指向位置
             $options['autoloader'] = 'vendor/autoload.php';
 
-            // 
+            // 安装器，强制安装，覆盖现有文件
             $options['force'] = false;
 
-            // 
+            // 安装器，显示帮助
             $options['help'] = false;
 
             // 【共享】命名空间
@@ -341,7 +341,7 @@ class AppWithAllOptions extends DuckPhp
             // 【共享】工程路径
             // $options['path'] = '';
 
-            // 
+            // 安装器，显示详情
             $options['verbose'] = false;
 
         //*/

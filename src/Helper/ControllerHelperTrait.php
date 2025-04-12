@@ -95,9 +95,9 @@ trait ControllerHelperTrait
     {
         return CoreHelper::Show404();
     }
-    public static function ShowJson($ret)
+    public static function ShowJson($ret, $flags = 0)
     {
-        return CoreHelper::ShowJson($ret);
+        return CoreHelper::ShowJson($ret, $flags);
     }
 
     /////////////////

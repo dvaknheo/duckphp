@@ -66,3 +66,17 @@ vendor/bin/duckphp new  --help
 
         function detectedClass($path)
 
+    public function command_new()
+
+    public function command_help()
+
+    public function command_show()
+
+    public function showHelp()
+
+    public function newProject()
+
+    public function runDemo()
+
+    protected function detectedClass($path)
+

@@ -203,3 +203,11 @@
 
     public function recursiveApps(&$arg, $callback, ?string $app_class = null, $auto_switch_phase = true)
 
+    public static function Json($data, $flags = 0)
+
+    public static function ShowJson($ret, $flags = 0)
+
+    public function _Json($data, $flags = 0)
+
+    public function _ShowJson($ret, $flags = 0)
+
