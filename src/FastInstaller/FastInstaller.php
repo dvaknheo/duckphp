@@ -107,6 +107,15 @@ class FastInstaller extends ComponentBase
     {
         return $this->doCommandRemove();
     }
+    public function command_dump_res()
+    {
+        $default = ['new_controller_resource_prefix' => App::Current()->options['controller_resource_prefix'] ?? ''];
+        $desc = "clone res to [{new_controller_resource_prefix}]?\n";
+        $input_options = Console::_()->readLines($default, $desc);
+        App::Current()->options['controller_resource_prefix'] = $input_options['new_controller_resource_prefix'];
+        $info = $this->cloneResource($input_options['new_controller_resource_prefix']);
+        echo $info;
+    }
     
     //////////////////
     protected function initComponents()
@@ -309,9 +318,7 @@ and more ...\n";
             $this->saveExtOptions($ext_options);
             
             if ($input_options['is_clone_resource']) {
-                RouteHookResource::_()->options['controller_resource_prefix'] = $input_options['new_controller_resource_prefix'];
-                $info = '';
-                RouteHookResource::_()->cloneResource(false, $info);
+                $info = $this->cloneResource($input_options['new_controller_resource_prefix']);
                 if ($this->args['verbose'] ?? false) {
                     echo $info;
                 }
@@ -320,6 +327,13 @@ and more ...\n";
         if ($this->options['install_callback']) {
             ($this->options['install_callback'])($input_options);
         }
+    }
+    protected function cloneResource($dest)
+    {
+        $info = '';
+        RouteHookResource::_()->options['controller_resource_prefix'] = $dest;
+        RouteHookResource::_()->cloneResource(false, $info);
+        return $info;
     }
     protected function saveExtOptions($ext_options)
     {
