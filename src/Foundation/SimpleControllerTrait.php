@@ -5,12 +5,13 @@
  */
 namespace DuckPhp\Foundation;
 
-use DuckPhp\Component\PhaseProxy;
+use DuckPhp\Component\ZCallTrait;
 use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Core\Route;
 
 trait SimpleControllerTrait
 {
+    use ZCallTrait;
     public static function _($object = null)
     {
         $route = Route::_();
