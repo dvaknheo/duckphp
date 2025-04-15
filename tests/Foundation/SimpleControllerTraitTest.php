@@ -81,7 +81,7 @@ class SimpleControllerTraitTest extends \PHPUnit\Framework\TestCase
         MyAction::_(MyAction2::_())->foo();
         MyAction::_Z(DuckPhpAllInOne::class)->foo();
         
-        My2Controller::_OverrideParent();
+        My2Controller::OverrideParent();
 
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End();

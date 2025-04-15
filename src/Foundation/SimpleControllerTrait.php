@@ -89,7 +89,7 @@ trait SimpleControllerTrait
     {
         return PhaseProxy::CreatePhaseProxy($phase, static::class);
     }
-    public static function _OverrideParent()
+    public static function OverrideParent()
     {
         $parent = get_parent_class(static::class);
         Route::_()->replaceController($parent,static::class);
