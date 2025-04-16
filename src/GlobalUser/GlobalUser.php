@@ -62,4 +62,8 @@ class GlobalUser extends ComponentBase implements UserActionInterface
     {
         return $this->service()->batchGetUsernames($ids);
     }
+    public function checkAccess($class, string $method, ?string $url = null)
+    {
+        return true;
+    }
 }
