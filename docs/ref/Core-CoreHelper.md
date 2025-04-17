@@ -189,7 +189,7 @@
 
     public function _PathOfRuntime()
 
-    public function recursiveApps(&$arg, $callback, ?string $app_class = null)
+    public function recursiveApps(&$arg, $callback, ?string $app_class = null, $auto_switch_phase = true)
 
     public function getAllAppClass()
 
@@ -199,9 +199,7 @@
 ##
 
 
-    public function recursiveApps(&$arg, $callback, ?string $app_class = null, $auto_switch_phase=true)
 
-    public function recursiveApps(&$arg, $callback, ?string $app_class = null, $auto_switch_phase = true)
 
     public static function Json($data, $flags = 0)
 
