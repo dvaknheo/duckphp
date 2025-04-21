@@ -29,6 +29,8 @@ Event On404
         'exception_reporter' => null,
         
         'exception_for_project' => null,
+
+
 以下是高级的选项。
 
 'skip_exception_check'=>false,
@@ -87,7 +89,7 @@ ExceptionReporterTrait
 'default_exception_do_log' => true,
 'default_exception_self_display' => true,
 
-如果没调用 C::setDefaultExceptionHandler  则由 App::OnDefaultException 处理 exception 。你可以重写 App::\_OnDefaultException 来实现自己的异常管理，如加日志等等。
+如果没调用 ControllerHelper::setDefaultExceptionHandler  则由 App::OnDefaultException 处理 exception 。你可以重写 App::\_OnDefaultException 来实现自己的异常管理，如加日志等等。
 
 ### SimpleExceptionTrait/ThrowOnTrait
 
