@@ -477,6 +477,7 @@ trait Route_UrlManager
         $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         //get basepath.
         $document_root = rtrim($_SERVER['DOCUMENT_ROOT'], '/');
+        $document_root = realpath($document_root);
         //$document_root =  !empty($document_root)?$document_root:'/';
         $basepath = substr(rtrim($_SERVER['SCRIPT_FILENAME'], '/'), strlen($document_root));
         $basepath = str_replace('\\', '/', $basepath);
