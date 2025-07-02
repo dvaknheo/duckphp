@@ -36,6 +36,7 @@ class Route extends ComponentBase
         
         'controller_resource_prefix' => '',
         'controller_url_prefix' => '',
+        'controller_fix_mistake_path_info'=>true,
     ];
 
     public $pre_run_hook_list = [];
@@ -345,6 +346,14 @@ trait Route_Helper
     protected function getPathInfo()
     {
         $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+        
+        if($this->options['controller_fix_mistake_path_info']) {
+            if(($_SERVER['PATH_INFO']==='' || $_SERVER['PATH_INFO'] === null) && $_SERVER['SCRIPT_NAME']==='/index.php') {
+                $path = parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
+                $_SERVER['PATH_INFO'] = $path;
+            }
+        }
+        
         return $_SERVER['PATH_INFO'] ?? '';
     }
     protected function setPathInfo($path_info)
