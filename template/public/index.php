@@ -24,11 +24,4 @@ $options = [
     //'is_debug' => true,
     // more options ...
 ];
-////[[[[
-//fix path_info
-if($_SERVER['PATH_INFO']===''&&$_SERVER['SCRIPT_NAME']==='/index.php'){
-    $path = parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
-    $_SERVER['PATH_INFO'] = $path;
-}
-////]]]]
 \ProjectNameTemplate\System\App::RunQuickly($options);

@@ -24,7 +24,7 @@ trait DbAdvanceTrait
     {
         $a = array();
         foreach ($array as $k => $v) {
-            $a[] = "`$k`=".$this->pdo->quote((string)$v);
+            $a[] = "$k=".$this->pdo->quote((string)$v);
         }
         return implode(',', $a);
     }
@@ -32,7 +32,7 @@ trait DbAdvanceTrait
     {
         $a = array();
         foreach ($array as $k => $v) {
-            $a[] = "`$k`=".$this->pdo->quote((string)$v);
+            $a[] = "$k=".$this->pdo->quote((string)$v);
         }
         return implode('and ', $a);
     }
@@ -45,7 +45,7 @@ trait DbAdvanceTrait
         $pdo = $this->pdo;
         
         $keys = array_map(function ($v) {
-            return '`'.$v.'`';
+            return ''.$v.'';
         }, array_keys($array));
         $values = array_map(function ($v) use ($pdo) {
             return $pdo->quote(''.$v);
