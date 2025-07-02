@@ -18,6 +18,7 @@ class MainController
 {
     public function action_index()
     {
+        throw new \Exception("cgbcgb");
         echo "hello world";
     }
 }

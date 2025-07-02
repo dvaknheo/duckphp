@@ -127,7 +127,8 @@ class SystemWrapper extends ComponentBase
             return;
         }
         $output = $output? $output: '--'; // fix system error;
-        header($output, $replace, $http_response_code);
+        //header($output, $replace, $http_response_code);
+        header("HTTP/1.1 $http_response_code $output",true,$http_response_code); // :(
         return;
         // @codeCoverageIgnoreEnd
     }
