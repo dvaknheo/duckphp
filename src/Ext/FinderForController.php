@@ -12,7 +12,6 @@ use DuckPhp\Foundation\Helper;
 use DuckPhp\GlobalAdmin\AdminControllerInterface;
 use DuckPhp\GlobalUser\UserControllerInterface;
 
-//@codeCoverageIgnoreStart
 class FinderForController extends ComponentBase
 {
     // 暂时没测试，没文档， 是枚举控制器用的扩展。
@@ -192,7 +191,7 @@ class FinderForController extends ComponentBase
         $ret2 = array_filter($ret, function ($key) {
             try {
                 $obj = new \ReflectionClass($key);
-                return $obj->isSubclassOf(\DuckPhp\GlobalAdmin\AdminControllerInterface::class);
+                return $obj->isSubclassOf(AdminControllerInterface::class);
             } catch (\ReflectionException $ex) {
                 return false;
             }
@@ -219,4 +218,4 @@ class FinderForController extends ComponentBase
         }, \ARRAY_FILTER_USE_KEY);
         return array_keys($ret2);
     }
-}//@codeCoverageIgnoreEnd
+}

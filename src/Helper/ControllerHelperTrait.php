@@ -152,7 +152,7 @@ trait ControllerHelperTrait
         return SuperGlobal::_()->_SERVER($key, $default);
     }
     /////////////
-    public static function Pager($new)
+    public static function Pager($new = null)
     {
         return Pager::_($new);
     }
