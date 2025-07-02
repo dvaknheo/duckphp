@@ -131,7 +131,9 @@ class App extends ComponentBase
         $error_view = $this->options['error_500'] ?? null;
         $error_view = $this->is_inited?$error_view:null;
         
-        SystemWrapper::_()->_header('Server Error', true, 500);
+        //SystemWrapper::_()->_header('Server Error', true, 500); //  do not this :c
+        SystemWrapper::_()->_header("HTTP/1.1 500 Server Error",true,500);
+         
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)($ex);
             return;
