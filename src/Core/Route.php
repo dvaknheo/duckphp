@@ -487,8 +487,11 @@ trait Route_UrlManager
         //get basepath.
         $document_root = rtrim($_SERVER['DOCUMENT_ROOT'], '/');
         $document_root = realpath($document_root);
+
         //$document_root =  !empty($document_root)?$document_root:'/';
-        $basepath = substr(rtrim($_SERVER['SCRIPT_FILENAME'], '/'), strlen($document_root));
+        $basepath = substr(rtrim(realpath($_SERVER['SCRIPT_FILENAME']), '/'), strlen($document_root));
+
+
         $basepath = str_replace('\\', '/', $basepath);
         $basepath = ($basepath === '') ? '/' : $basepath;
         /* something wrong ?
@@ -505,7 +508,6 @@ trait Route_UrlManager
         $basepath = ($basepath === '//')?'/': $basepath;
         
         $basepath .= $prefix;
-        
         return $basepath;
     }
     public function setUrlHandler($callback)
