@@ -96,7 +96,7 @@ class App extends ComponentBase
         $error_view = $this->options['error_404'] ?? null;
         $error_view = $this->is_inited?$error_view:null;
         
-        SystemWrapper::_()->_header('404 Not Found', true, 404);
+        SystemWrapper::_()->_header('HTTP/1.1 404 Not Found', true, 404);
         if (!is_string($error_view) && is_callable($error_view)) {
             ($error_view)();
             return;
