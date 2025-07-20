@@ -54,8 +54,8 @@ class DbManager extends ComponentBase
     {
         $setting = $context->_Setting(); /** @phpstan-ignore-line */
         
-        if ($this->options['database_list_reload_by_setting'] && 
-            (empty($this->optioins['database_list']) || !$this->optioins['database'])) {
+        if ($this->options['database_list_reload_by_setting'] &&
+            (empty($this->options['database_list']) || !$this->options['database'])) {
             /** @var mixed */
             $database_list = $setting['database_list'] ?? null;
             if (!isset($database_list) && $this->options['database_list_try_single']) {

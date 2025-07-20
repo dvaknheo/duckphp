@@ -5,6 +5,7 @@
  */
 namespace DuckPhp\Foundation;
 
+use DuckPhp\Component\PhaseProxy;
 use DuckPhp\Component\ZCallTrait;
 use DuckPhp\Core\PhaseContainer;
 use DuckPhp\Core\Route;
@@ -93,6 +94,6 @@ trait SimpleControllerTrait
     public static function OverrideParent()
     {
         $parent = get_parent_class(static::class);
-        Route::_()->replaceController($parent,static::class);
+        Route::_()->replaceController($parent, static::class);
     }
 }

@@ -25,7 +25,7 @@ trait SimpleModelTrait
         $t = explode('\\', $class);
         $class = array_pop($t);
         
-        $table_name = strtolower(substr($class, 0, -strlen('Model')));
+        $table_name = strtolower(substr(''.$class, 0, -strlen('Model')));
         return $table_name;
     }
     

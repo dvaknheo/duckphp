@@ -36,7 +36,7 @@ class Route extends ComponentBase
         
         'controller_resource_prefix' => '',
         'controller_url_prefix' => '',
-        'controller_fix_mistake_path_info'=>true,
+        'controller_fix_mistake_path_info' => true,
     ];
 
     public $pre_run_hook_list = [];
@@ -347,9 +347,9 @@ trait Route_Helper
     {
         $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         
-        if($this->options['controller_fix_mistake_path_info']) {
-            if(($_SERVER['PATH_INFO']==='' || $_SERVER['PATH_INFO'] === null) && $_SERVER['SCRIPT_NAME']==='/index.php') {
-                $path = parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
+        if ($this->options['controller_fix_mistake_path_info']) {
+            if (($_SERVER['PATH_INFO'] === '' || $_SERVER['PATH_INFO'] === null) && $_SERVER['SCRIPT_NAME'] === '/index.php') {
+                $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
                 $_SERVER['PATH_INFO'] = $path;
             }
         }
@@ -486,10 +486,10 @@ trait Route_UrlManager
         $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         //get basepath.
         $document_root = rtrim($_SERVER['DOCUMENT_ROOT'], '/');
-        $document_root = realpath($document_root);
+        $document_root = ''.realpath($document_root);
 
         //$document_root =  !empty($document_root)?$document_root:'/';
-        $basepath = substr(rtrim(realpath($_SERVER['SCRIPT_FILENAME']), '/'), strlen($document_root));
+        $basepath = substr(''.rtrim(''.realpath($_SERVER['SCRIPT_FILENAME']), '/'), strlen($document_root));
 
 
         $basepath = str_replace('\\', '/', $basepath);
