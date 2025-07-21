@@ -9,7 +9,9 @@ use DuckPhp\Core\SingletonTrait as SingletonExTrait;
 
 class FinderForControllerTest extends \PHPUnit\Framework\TestCase
 {
-        \LibCoverage\LibCoverage::BeginFinderForController::class);
+    public function testAll()
+    {
+        \LibCoverage\LibCoverage::Begin(FinderForController::class);
         \LibCoverage\LibCoverage::End();
-
+    }
 }
