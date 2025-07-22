@@ -16,6 +16,7 @@ class Db implements DbInterface
     protected $rowCount;
     protected $beforeQueryHandler = null;
     protected $success = false;
+    protected $driver = null;
     protected $driver_options = [
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
             \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
@@ -34,6 +35,8 @@ class Db implements DbInterface
         $driver_options = $config['driver_options'] ?? [];
         $driver_options = array_replace_recursive($this->driver_options, $driver_options);
         $this->pdo = new \PDO($config['dsn'], $config['username'], $config['password'], $driver_options);
+        [$driver,$_] = explode(":",$config['dsn']);
+        $this->driver = $driver;
     }
     public function close()
     {
@@ -67,6 +70,22 @@ class Db implements DbInterface
         }
         $this->check_connect();
         return $this->pdo->quote($string);
+    }
+    public function qouteScheme($name)
+    {
+        switch($this->driver){
+            case 'mysql':
+                return "`$name`";
+            break;
+            case 'pgsql':
+                return "'$name'";
+            break;
+            case 'sqlite':
+                return "$name";
+            break;
+            default:
+                return $name;
+        }
     }
     public function buildQueryString($sql, ...$args)
     {

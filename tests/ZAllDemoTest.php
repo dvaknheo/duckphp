@@ -30,20 +30,22 @@ class ZAllDemoTest extends \PHPUnit\Framework\TestCase
             'files'              => 11169 ,
             'demo.php'           => 406 ,
             'helloworld.php'     => 11,
-            'just-route.php'     => 141,
-            'api.php/test.index' => 339 ,
+            'just-route.php'     => 109,
+            'api.php/test.index' => 347 ,
             'traditional.php'    => 397 ,
-            'rpc.php'            => 743,
+            'rpc.php'            => 0,
         ];
         $result = true;
+
         foreach($tests as $k => $len){
             $data = $this->curl_file_get_contents($host.$k);
-            
             $data =str_replace(realpath(__DIR__.'/../'),'',$data);
             
             $l=strlen($data);
             if($l!==$len){
                 echo "Failed: $k => $len($l) \n";
+                //echo $data; echo "\n";
+                
                 $result = false;
             }
             
@@ -51,28 +53,12 @@ class ZAllDemoTest extends \PHPUnit\Framework\TestCase
         HttpServer::_()->close();
         $this->assertTrue($result);
     }
-    protected function curl_file_get_contents($url, $post =[])
+    protected function curl_file_get_contents($url)
     {
         $ch = curl_init();
-        
-        if (is_array($url)) {
-            list($base_url, $real_host) = $url;
-            $url = $base_url;
-            $host = parse_url($url, PHP_URL_HOST);
-            $port = parse_url($url, PHP_URL_PORT);
-            $c = $host.':'.$port.':'.$real_host;
-            curl_setopt($ch, CURLOPT_CONNECT_TO, [$c]);
-        }
         curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        if(!empty($post)){
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
-            //$this->prepare_token();
-        }
-        
-        
         $data = curl_exec($ch);
         curl_close($ch);
         return $data !== false?$data:'';

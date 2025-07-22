@@ -24,7 +24,7 @@ trait DbAdvanceTrait
     {
         $a = array();
         foreach ($array as $k => $v) {
-            $a[] = "`$k`=".$this->pdo->quote((string)$v);
+            $a[] = $this->qouteScheme($k)."=".$this->pdo->quote((string)$v);
         }
         return implode(',', $a);
     }
@@ -32,7 +32,7 @@ trait DbAdvanceTrait
     {
         $a = array();
         foreach ($array as $k => $v) {
-            $a[] = "`$k`=".$this->pdo->quote((string)$v);
+            $a[] = $this->qouteScheme($k)."=".$this->pdo->quote((string)$v);
         }
         return implode('and ', $a);
     }
@@ -61,13 +61,13 @@ trait DbAdvanceTrait
 
     public function findData($table_name, $id, $key = 'id')
     {
-        $sql = "select * from `{$table_name}` where {$key}=? limit 1";
+        $sql = "select * from ".$this->qouteScheme($table_name)." where {$key}=? limit 1";
         return $this->fetch($sql, $id);
     }
     
     public function insertData($table_name, $data, $return_last_id = true)
     {
-        $sql = "insert into `{$table_name}` ".$this->qouteInsertArray($data);
+        $sql = "insert into ".$this->qouteScheme($table_name)." ".$this->qouteInsertArray($data);
 
         $ret = $this->execute($sql);
         if (!$return_last_id) {
@@ -79,10 +79,10 @@ trait DbAdvanceTrait
     public function deleteData($table_name, $id, $key = 'id', $key_delete = 'is_deleted')
     {
         if ($key_delete) {
-            $sql = "update `{$table_name}` set {$key_delete}=1 where {$key}=? limit 1";
+            $sql = "update ".$this->qouteScheme($table_name)." set {$key_delete}=1 where {$key}=? limit 1";
             return $this->execute($sql, $id);
         } else {
-            $sql = "delete from `{$table_name}` where {$key}=? limit 1";
+            $sql = "delete from ".$this->qouteScheme($table_name)." where {$key}=? limit 1";
             return $this->execute($sql, $id);
         }
     }
@@ -93,7 +93,7 @@ trait DbAdvanceTrait
             unset($data[$key]);
         }
         $frag = $this->quoteSetArray($data);
-        $sql = "update `{$table_name}` set ".$frag." where {$key}=?";
+        $sql = "update ".$this->qouteScheme($table_name)." set ".$frag." where {$key}=?";
         $ret = $this->execute($sql, $id);
         return $ret;
     }

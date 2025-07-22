@@ -21,9 +21,9 @@ class MainController
 {
     public function action_index()
     {
-        var_dump("这演示只用路由类，其他类都不要的情况");
-        var_dump("Just route test done");
-        var_dump(DATE(DATE_ATOM));
+        echo("这演示只用路由类，其他类都不要的情况<br>\n");
+        echo ("Just route test done<br>\n");
+        echo (DATE(DATE_ATOM));
     }
     public function action_i()
     {

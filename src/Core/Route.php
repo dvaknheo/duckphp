@@ -463,7 +463,7 @@ trait Route_UrlManager
     public function _Domain($use_scheme = false)
     {
         $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-        $scheme = $_SERVER['REQUEST_SCHEME'] ?? '';
+        $scheme = $_SERVER['REQUEST_SCHEME'] ?? 'http';
         //$scheme = $use_scheme ? $scheme :'';
         $host = $_SERVER['HTTP_HOST'] ?? ($_SERVER['SERVER_NAME'] ?? ($_SERVER['SERVER_ADDR'] ?? ''));
         $host = $host ?? '';

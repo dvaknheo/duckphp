@@ -153,6 +153,7 @@ class JsonRpcExt extends ComponentBase
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
         
         $this->prepare_token($ch);
         
