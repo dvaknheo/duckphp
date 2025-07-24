@@ -494,12 +494,7 @@ trait Route_UrlManager
 
         $basepath = str_replace('\\', '/', $basepath);
         $basepath = ($basepath === '') ? '/' : $basepath;
-        /* something wrong ?
-        if (substr($basepath, -strlen('/index.php'))==='/index.php') {
-            $basepath=substr($basepath, 0, -strlen('/index.php'));
-        }
-        */
-        $prefix = $this->options['controller_url_prefix']? trim('/'.$this->options['controller_url_prefix'], '/').'/' : '';
+        
         if ($basepath === '/index.php') {
             $basepath = '/';
         } else {
@@ -507,6 +502,7 @@ trait Route_UrlManager
         }
         $basepath = ($basepath === '//')?'/': $basepath;
         
+        $prefix = $this->options['controller_url_prefix']? trim('/'.$this->options['controller_url_prefix'], '/').'/' : '';
         $basepath .= $prefix;
         return $basepath;
     }

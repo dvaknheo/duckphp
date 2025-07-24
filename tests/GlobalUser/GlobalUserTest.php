@@ -51,7 +51,7 @@ class GlobalUserTest extends \PHPUnit\Framework\TestCase
         try{
         Helper::User()->batchGetUsernames([]);
         }catch(\Exception $ex){}
-        
+        Helper::User()->checkAccess('class','method',null);
         
         \LibCoverage\LibCoverage::End();
     }

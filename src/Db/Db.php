@@ -78,13 +78,13 @@ class Db implements DbInterface
                 return "`$name`";
             break;
             case 'pgsql':
-                return "'$name'";
+                return "'$name'";   //@codeCoverageIgnore
             break;
             case 'sqlite':
-                return "$name";
+                return "$name";     //@codeCoverageIgnore
             break;
             default:
-                return $name;
+                return $name;       //@codeCoverageIgnore
         }
     }
     public function buildQueryString($sql, ...$args)

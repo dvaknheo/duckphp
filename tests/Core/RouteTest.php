@@ -364,6 +364,8 @@ class RouteTest extends \PHPUnit\Framework\TestCase
     }
     protected function doUrl()
     {
+    
+        // remark: realpath!
         echo "zzzzzzzzzzzzzzzzzzzzzzzzzzzzz";
         echo PHP_EOL;
         $_SERVER=[
