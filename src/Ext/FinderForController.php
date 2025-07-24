@@ -14,7 +14,10 @@ use DuckPhp\GlobalUser\UserControllerInterface;
 
 class FinderForController extends ComponentBase
 {
-    // 暂时没测试，没文档， 是枚举控制器用的扩展。
+    // 暂时没测试，没文档， 是枚举控制器用的扩展。 // 还是改名 RouteList 的好
+    public $options =[
+        'classes_to_get_controller_path'=>[],
+    ];
     ////[[[[
     public function pathInfoFromClassAndMethod($class, $method, $adjuster = null)
     {
@@ -45,6 +48,7 @@ class FinderForController extends ComponentBase
             return null; // TODO do_action
         }
         $last = substr($method, strlen($method_prefix));
+        [$first, $last] = $this->doControllerClassAdjust($first, $last);
         
         if ($first === $controller_welcome_class && $last === $controller_welcome_method) {
             return $controller_url_prefix? $controller_url_prefix:'';
@@ -52,7 +56,6 @@ class FinderForController extends ComponentBase
         if ($first === $controller_welcome_class) {
             return $controller_url_prefix.$last.$controller_path_ext;
         }
-        [$first, $method] = $this->doControllerClassAdjust($first, $method);
         
         return $controller_url_prefix.$first. '/' .$last.$controller_path_ext;
     }
@@ -86,10 +89,12 @@ class FinderForController extends ComponentBase
         $classToTest[] = Route::_()->options['controller_welcome_class'].Route::_()->options['controller_class_postfix'];
         $classToTest[] = 'Helper';
         $classToTest[] = 'Base';
+        
+        $classToTest = array_merge($classToTest,$this->options['classes_to_get_controller_path']);
         $path = '';
         foreach ($classToTest as $base_class) {
             try {
-                $class = $prefix.$base_class;
+                $class = $prefix. basename(str_replace("\\",'/',$base_class));
                 // @phpstan-ignore-next-line
                 $path = dirname((new \ReflectionClass($class))->getFileName()).'/';
             } catch (\ReflectionException $ex) {
@@ -97,17 +102,7 @@ class FinderForController extends ComponentBase
             }
             break;
         }
-        if (!$path) {
-            $namespace = App::Current()->options['namespace'];
-            $base_app = App::Current()->getOverridingClass();
-            if (substr($prefix, 0, strlen($namespace.'\\')) === $namespace.'\\') {
-                $reflect = new \ReflectionClass($base_app);
-                $filename = $reflect->getFileName();
-                $filename_relative = str_replace('\\', '/', $base_app).'.php';
-                $base_path = substr($filename.'', 0, -strlen($filename_relative));
-                $path = $base_path.str_replace('\\', '/', $prefix);
-            }
-        }
+
         if (!$path) {
             return [];
         }
