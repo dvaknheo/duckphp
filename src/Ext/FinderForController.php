@@ -15,8 +15,8 @@ use DuckPhp\GlobalUser\UserControllerInterface;
 class FinderForController extends ComponentBase
 {
     // 暂时没测试，没文档， 是枚举控制器用的扩展。 // 还是改名 RouteList 的好
-    public $options =[
-        'classes_to_get_controller_path'=>[],
+    public $options = [
+        'classes_to_get_controller_path' => [],
     ];
     ////[[[[
     public function pathInfoFromClassAndMethod($class, $method, $adjuster = null)
@@ -90,11 +90,11 @@ class FinderForController extends ComponentBase
         $classToTest[] = 'Helper';
         $classToTest[] = 'Base';
         
-        $classToTest = array_merge($classToTest,$this->options['classes_to_get_controller_path']);
+        $classToTest = array_merge($classToTest, $this->options['classes_to_get_controller_path']);
         $path = '';
         foreach ($classToTest as $base_class) {
             try {
-                $class = $prefix. basename(str_replace("\\",'/',$base_class));
+                $class = $prefix. basename(str_replace("\\", '/', $base_class));
                 // @phpstan-ignore-next-line
                 $path = dirname((new \ReflectionClass($class))->getFileName()).'/';
             } catch (\ReflectionException $ex) {

@@ -68,3 +68,5 @@ DuckPhp 尽量避免污染全局环境，这些函数.
 \_\_var_log() 对应 CoreHelper::VarLog();  在日志打印当前变量 
     function __h($str)
 
+    function __json($data, int $options = 0)
+

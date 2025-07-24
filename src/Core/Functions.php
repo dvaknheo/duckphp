@@ -24,9 +24,9 @@ if (! function_exists('__hl')) {
     }
 }
 if (! function_exists('__json')) {
-    function __json($data)
+    function __json($data, int $options = 0)
     {
-        return CoreHelper::Json($data);
+        return CoreHelper::Json($data, $options);
     }
 }
 if (! function_exists('__url')) {

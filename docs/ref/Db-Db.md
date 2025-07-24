@@ -136,3 +136,5 @@ DuckPhp::RunQuickly($options,function(){
 
 
 
+    public function qouteScheme($name)
+

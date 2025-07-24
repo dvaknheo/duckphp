@@ -85,6 +85,9 @@ class AppWithAllOptions extends DuckPhp
         //  (DuckPhp\Core\Route, DuckPhp\Ext\MiniRoute)
         // $options['controller_class_postfix'] = '';
 
+        //  (DuckPhp\Core\Route)
+        // $options['controller_fix_mistake_path_info'] = true;
+
         //  (DuckPhp\Core\Route, DuckPhp\Ext\MiniRoute)
         // $options['controller_method_prefix'] = '';
 
@@ -374,6 +377,9 @@ class AppWithAllOptions extends DuckPhp
         //*/
         /*
         $options['ext']['DuckPhp\\Ext\\FinderForController'] = true;
+            // 
+            $options['classes_to_get_controller_path'] = array ( );
+
         //*/
         /*
         $options['ext']['DuckPhp\\Ext\\JsonRpcClientBase'] = true;
@@ -400,6 +406,9 @@ class AppWithAllOptions extends DuckPhp
 
             // jsonrpc 限定服务命名空间
             $options['jsonrpc_service_namespace'] = '';
+
+            // 
+            $options['jsonrpc_timeout'] = 5;
 
             // jsonrpc 封装调整
             $options['jsonrpc_wrap_auto_adjust'] = true;

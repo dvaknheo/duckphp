@@ -287,3 +287,5 @@ if(!$flag){
 修订版本：
 
 修订时间：
+        'controller_fix_mistake_path_info' => true,
+

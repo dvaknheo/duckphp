@@ -56,6 +56,9 @@
 + **'class_user' => '',** 
 
     用户类名，设置这个类以实现默认的用户类   // 
++ 'classes_to_get_controller_path' => array ( ), 
+
+       // [DuckPhp\Ext\FinderForController](Ext-FinderForController.md)
 + **'cli_command_classes' => array ( ),** 
 
        // [DuckPhp\Core\App](Core-App.md)
@@ -104,6 +107,9 @@
 + **'controller_class_postfix' => '',** 
 
        // [DuckPhp\Core\Route](Core-Route.md), [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md)
++ **'controller_fix_mistake_path_info' => true,** 
+
+       // [DuckPhp\Core\Route](Core-Route.md)
 + **'controller_method_prefix' => '',** 
 
        // [DuckPhp\Core\Route](Core-Route.md), [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md)
@@ -266,6 +272,9 @@
 + 'jsonrpc_service_namespace' => '', 
 
     jsonrpc 限定服务命名空间   // [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md)
++ 'jsonrpc_timeout' => 5, 
+
+       // [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md)
 + 'jsonrpc_wrap_auto_adjust' => true, 
 
     jsonrpc 封装调整   // [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md)
@@ -588,6 +597,8 @@
         
     - 'controller_class_postfix' => 'Controller',
         
+    - 'controller_fix_mistake_path_info' => true,
+        
     - 'controller_method_prefix' => 'action_',
         
     - 'controller_path_ext' => '',
@@ -745,6 +756,8 @@
         关闭  View 视图的 notice 警告，以避免麻烦的处理。
 + DuckPhp\Ext\ExceptionWrapper
 + DuckPhp\Ext\FinderForController
+    - 'classes_to_get_controller_path' => array ( ),
+        
 + DuckPhp\Ext\JsonRpcClientBase
 + DuckPhp\Ext\JsonRpcExt
     - 'jsonrpc_backend' => 'https://127.0.0.1',
@@ -761,6 +774,8 @@
         jsonrpc 限制指定接口或者基类——todo 调整名字
     - 'jsonrpc_service_namespace' => '',
         jsonrpc 限定服务命名空间
+    - 'jsonrpc_timeout' => 5,
+        
     - 'jsonrpc_wrap_auto_adjust' => true,
         jsonrpc 封装调整
 + DuckPhp\Ext\JsonView

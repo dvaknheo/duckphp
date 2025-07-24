@@ -35,7 +35,7 @@ class Db implements DbInterface
         $driver_options = $config['driver_options'] ?? [];
         $driver_options = array_replace_recursive($this->driver_options, $driver_options);
         $this->pdo = new \PDO($config['dsn'], $config['username'], $config['password'], $driver_options);
-        [$driver,$_] = explode(":",$config['dsn']);
+        [$driver,$_] = explode(":", $config['dsn']);
         $this->driver = $driver;
     }
     public function close()
@@ -73,16 +73,13 @@ class Db implements DbInterface
     }
     public function qouteScheme($name)
     {
-        switch($this->driver){
+        switch ($this->driver) {
             case 'mysql':
                 return "`$name`";
-            break;
             case 'pgsql':               //@codeCoverageIgnore
                 return "'$name'";       //@codeCoverageIgnore
-            break;                      //@codeCoverageIgnore
             case 'sqlite':              //@codeCoverageIgnore
                 return "$name";         //@codeCoverageIgnore
-            break;                      //@codeCoverageIgnore
             default:                    //@codeCoverageIgnore
                 return $name;           //@codeCoverageIgnore
         }

@@ -20,3 +20,7 @@
 
 
 
+    public static function _Z($phase = null)
+
+    public static function OverrideParent()
+

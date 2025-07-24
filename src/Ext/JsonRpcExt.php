@@ -19,6 +19,7 @@ class JsonRpcExt extends ComponentBase
         'jsonrpc_wrap_auto_adjust' => true,
         'jsonrpc_service_interface' => '',
         'jsonrpc_service_namespace' => '',
+        'jsonrpc_timeout' => 5,
     ];
     
     protected $prefix;
@@ -153,7 +154,7 @@ class JsonRpcExt extends ComponentBase
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $this->options['jsonrpc_timeout']);
         
         $this->prepare_token($ch);
         

@@ -14,3 +14,5 @@
 
     public function getAllUserController()
 
+        'classes_to_get_controller_path' => [],
+

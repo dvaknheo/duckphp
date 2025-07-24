@@ -132,3 +132,5 @@ DuckPhp::RunQuickly($options,function(){
 如果你要 做自己的权限处理，则重写
 
 
+        'jsonrpc_timeout' => 5,
+

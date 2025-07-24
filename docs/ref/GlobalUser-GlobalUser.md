@@ -27,3 +27,5 @@
 
     public function batchGetUsernames($ids)
 
+    public function checkAccess($class, string $method, ?string $url = null)
+
