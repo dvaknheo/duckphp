@@ -348,7 +348,7 @@ trait Route_Helper
         $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         
         if ($this->options['controller_fix_mistake_path_info']) {
-            if (!empty($_SERVER['PATH_INFO']) && isset($_SERVER['SCRIPT_NAME']) && $_SERVER['SCRIPT_NAME'] === '/index.php') {
+            if (empty($_SERVER['PATH_INFO']) && isset($_SERVER['SCRIPT_NAME']) && $_SERVER['SCRIPT_NAME'] === '/index.php') {
                 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
                 $_SERVER['PATH_INFO'] = $path;
             }

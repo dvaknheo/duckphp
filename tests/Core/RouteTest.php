@@ -391,8 +391,16 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         ];
         //Route::_()->reset();
         echo "--";
-        $_SERVER['SCRIPT_FILENAME']='x/index.php';
-        $_SERVER['DOCUMENT_ROOT']='x';
+        $path = \LibCoverage\LibCoverage::G()->getClassTestPath(Route::class);
+        $_SERVER['SCRIPT_FILENAME']=$path.'index.php';
+        $_SERVER['DOCUMENT_ROOT']=$path;
+        ////[[[[
+        
+        $_SERVER['PATH_INFO'] = '';
+        $_SERVER['REQUEST_URI']='/abc';
+        $_SERVER['SCRIPT_NAME']='/index.php';
+        Route::PathInfo();
+        ////]]]]
         echo Route::URL("");
         echo PHP_EOL;
         echo Route::URL("?11");

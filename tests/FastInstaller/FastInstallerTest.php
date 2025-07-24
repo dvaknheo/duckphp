@@ -152,6 +152,9 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         FastInstaller::_()->forceFail();
         FastInstaller::_()->command_install();
         
+        
+        FastInstaller::_()->command_dump_res();
+        
         $_SERVER = $__SERVER;
         \LibCoverage\LibCoverage::G()->cleanDirectory($path_app);
         \LibCoverage\LibCoverage::End(); return;
