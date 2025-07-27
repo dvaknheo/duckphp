@@ -130,13 +130,18 @@ class DbManager extends ComponentBase
         $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
         return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
     }
+    protected function getDatabaseDriver($db_config)
+    {
+        [$driver,$_] = explode(":", $db_config['dsn']);
+        return $driver;
+    }
     protected function createDatabaseObject($db_config)
     {
         $last_cwd = null;
+        
         // fix
-        if ($this->options['database_driver'] === 'sqlite') {
+        if ($this->getDatabaseDriver($db_config) === 'sqlite') {
             $last_cwd = getcwd();
-
             $path_runtime = $this->getRuntimePath();
             chdir($path_runtime);
         }
@@ -152,7 +157,7 @@ class DbManager extends ComponentBase
             $db->setBeforeQueryHandler([static::class, 'OnQuery']);
         }
         
-        if ($this->options['database_driver'] === 'sqlite') {
+        if ($this->getDatabaseDriver($db_config) === 'sqlite') {
             chdir($last_cwd?$last_cwd:'');
         }
         

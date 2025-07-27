@@ -97,4 +97,19 @@ trait DbAdvanceTrait
         $ret = $this->execute($sql, $id);
         return $ret;
     }
+    public function _SqlForPager($sql, $page_no, $page_size = 10)
+    {
+        $page_size = (int)$page_size;
+        $start = ((int)$page_no - 1) * $page_size;
+        $start = (int)$start;
+        $sql .= " LIMIT $start,$page_size";
+        return $sql;
+    }
+    public function _SqlForCountSimply($sql)
+    {
+        $sql = preg_replace_callback('/^\s*select\s(.*?)\sfrom\s/is', function ($m) {
+            return 'SELECT COUNT(*) as c FROM ';
+        }, $sql);
+        return $sql;
+    }
 }

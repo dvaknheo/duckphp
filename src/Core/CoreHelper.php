@@ -146,7 +146,15 @@ class CoreHelper extends ComponentBase
         if ($handler) {
             return $handler($str, $args);
         }
-        //Override for locale and so do
+        /*
+        if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+            $languages = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+            $firstLanguage = strtolower(substr(trim($languages[0]), 0, 2));
+            echo "当前请求的首选语言是: ". $firstLanguage;
+        } else {
+            echo "未检测到请求语言信息。";
+        }
+        */
         return $this->formatString($str, $args);
     }
     public function formatString($str, $args)

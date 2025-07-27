@@ -18,6 +18,7 @@ class DatabaseInstaller extends ComponentBase
     ];
     public function install($force = false)
     {
+        //这里判断驱动
         $my_driver = App::Current()->options['database_driver'] ?? '';
         if (!$my_driver) {
             return false;
@@ -45,6 +46,7 @@ class DatabaseInstaller extends ComponentBase
     }
     protected function changeDatabase($data)
     {
+        // 我们要设置数据库
         $is_local = (App::Current()->options['local_database'] ?? false) || App::Root()->options['database_driver'] != App::Current()->options['database_driver'];
         
         $app = $is_local ? App::Current() : App::Root();
@@ -100,9 +102,8 @@ class DatabaseInstaller extends ComponentBase
     {
         try {
             $dbm = new DbManager();
-            $database_driver = App::Current()->options['database_driver'] ?? '';
+            [$database_driver,$_] = explode(':',$database['dsn']);
             $dbm->init([
-                'database_driver' => $database_driver,
                 'database_list' => [[
                     'dsn' => $database['dsn'],
                     'username' => $database['username'],
