@@ -60,7 +60,10 @@ $db->execute($sql);
         //$db->pdo=null;
         $db->qouteInsertArray($array);
         
-
+        $sql="Select * from users";
+        $db->_SqlForPager($sql,1,5);
+        $db->_SqlForCountSimply($sql);
+        
         \LibCoverage\LibCoverage::End();
         /*
         $db->quoteIn($array);

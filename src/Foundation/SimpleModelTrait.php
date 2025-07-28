@@ -56,8 +56,8 @@ trait SimpleModelTrait
         $sql = "SELECT * from `'TABLE'` where $sql_where order by id desc";
         $sql = $this->prepare($sql);
         
-        $total = DbManager::_()->_DbForRead()->fetchColumn(CoreHelper::_()->_SqlForCountSimply($sql));
-        $data = DbManager::_()->_DbForRead()->fetchAll(CoreHelper::_()->_SqlForPager($sql, $page, $page_size));
+        $total = DbManager::_()->_DbForRead()->fetchColumn(DbManager::_()->_SqlForCountSimply($sql));
+        $data = DbManager::_()->_DbForRead()->fetchAll(DbManager::_()->_SqlForPager($sql, $page, $page_size));
         return [$total, $data];
     }
 

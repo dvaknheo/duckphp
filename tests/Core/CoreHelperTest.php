@@ -37,9 +37,6 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         CoreHelper::var_dump($args);
         CoreHelper::Logger();
         
-        $sql = "select * from users";
-        echo CoreHelper::_()->_SqlForPager($sql, 1, 10);
-        echo CoreHelper::_()->_SqlForCountSimply($sql);
         
         $options = ['is_debug'=>true];
         App::_(new App())->init($options);
@@ -76,9 +73,7 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         }catch(\Throwable $ex){}
         echo CoreHelper::Json($data);
 
-        $sql="Select * from users";
-        CoreHelper::SqlForPager($sql,1,5);
-        CoreHelper::SqlForCountSimply($sql);   
+
         
         try{
             CoreHelper::BusinessThrowOn(false, "haha",1);

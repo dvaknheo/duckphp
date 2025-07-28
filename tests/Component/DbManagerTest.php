@@ -87,6 +87,11 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         DbManager::_()->options['database_log_sql_query']=false;
         $data=App::Db()->fetchColumn('select ?+? as t',1,2);
 
+
+        $sql="Select * from users";
+        DbManager::_()->_SqlForPager($sql,1,5);
+        DbManager::_()->_SqlForCountSimply($sql);
+        
         
         var_dump($data);
 
@@ -135,6 +140,8 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         App::_()->options['path_runtime'] = $path_runtime;
         DbManager::_(new DbManager())->init($options,App::_());
         App::Db();
+        
+        
         
         @unlink($path_runtime.'database.db');
         \LibCoverage\LibCoverage::End();

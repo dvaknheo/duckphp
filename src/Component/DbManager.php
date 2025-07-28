@@ -189,4 +189,12 @@ class DbManager extends ComponentBase
         }
         Logger::_()->log($this->options['database_log_sql_level'], '[sql]: ' . $sql, $args);
     }
+    public function _SqlForPager($sql, $page_no, $page_size = 10)
+    {
+        return $this->_Db(static::TAG_WRITE)->_SqlForPager($sql, $page_no, $page_size);
+    }
+    public function _SqlForCountSimply($sql)
+    {
+        return $this->_Db(static::TAG_WRITE)->_SqlForCountSimply($sql);
+    }
 }

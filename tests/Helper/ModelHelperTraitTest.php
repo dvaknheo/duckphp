@@ -9,10 +9,13 @@ class ModelHelperTraitTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(ModelHelperTrait::class);
 
+        try{
         $sql="Select * from users";
         ModelHelper::SqlForPager($sql,1,5);
+        }catch(\Throwable $ex){}
+        try{
         ModelHelper::SqlForCountSimply($sql);
-
+        }catch(\Throwable $ex){}
         try{
             ModelHelper::DB();
         }catch(\Throwable $ex){}

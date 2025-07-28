@@ -39,10 +39,10 @@ trait ModelHelperTrait
     }
     public static function SqlForPager(string $sql, int $pageNo, int $pageSize = 10): string
     {
-        return CoreHelper::_()->_SqlForPager($sql, $pageNo, $pageSize);
+        return DbManager::_()->_SqlForPager($sql, $pageNo, $pageSize);
     }
     public static function SqlForCountSimply(string $sql): string
     {
-        return CoreHelper::_()->_SqlForCountSimply($sql);
+        return DbManager::_()->_SqlForCountSimply($sql);
     }
 }

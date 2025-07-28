@@ -89,14 +89,6 @@ class CoreHelper extends ComponentBase
     {
         return static::_()->_Show302($url);
     }
-    public static function SqlForPager($sql, $page_no, $page_size = 10)
-    {
-        return static::_()->_SqlForPager($sql, $page_no, $page_size);
-    }
-    public static function SqlForCountSimply($sql)
-    {
-        return static::_()->_SqlForCountSimply($sql);
-    }
     public static function XpCall($callback, ...$args)
     {
         return static::_()->_XpCall($callback, ...$args);
@@ -271,21 +263,6 @@ class CoreHelper extends ComponentBase
         $ret = ($callback)(...$args);
         App::Phase($current);
         return $ret;
-    }
-    public function _SqlForPager($sql, $page_no, $page_size = 10)
-    {
-        $page_size = (int)$page_size;
-        $start = ((int)$page_no - 1) * $page_size;
-        $start = (int)$start;
-        $sql .= " LIMIT $start,$page_size";
-        return $sql;
-    }
-    public function _SqlForCountSimply($sql)
-    {
-        $sql = preg_replace_callback('/^\s*select\s(.*?)\sfrom\s/is', function ($m) {
-            return 'SELECT COUNT(*) as c FROM ';
-        }, $sql);
-        return $sql;
     }
     public function _BusinessThrowOn(bool $flag, string $message, int $code = 0, $exception_class = null)
     {
