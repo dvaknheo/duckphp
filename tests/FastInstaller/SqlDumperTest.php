@@ -29,9 +29,9 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
         DuckPhp::_(new DuckPhp())->init($options);
         SqlDumper::_()->init(DuckPhp::_()->options,DuckPhp::_());
         
-        DuckPhp::_()->options['database_driver']='';
-        SqlDumper::_()->dump();
-        SqlDumper::_()->install();
+        //DuckPhp::_()->options['database_driver']='';
+        //SqlDumper::_()->dump();
+        //SqlDumper::_()->install();
         DuckPhp::_()->options['database_driver']='mysql';
 
         $sql = "DROP TABLE IF EXISTS `empty`;";
@@ -64,6 +64,7 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
         SqlDumper::_()->install(true);
         
         SqlDumper::_()->dump();
+        
 
 
     $sql= 'DROP TABLE IF EXISTS `empty`';
@@ -71,9 +72,25 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
         $sql= 'DROP TABLE IF EXISTS `new_pty`';
     DbManager::Db()->execute($sql);
         
+        
+        
+        
         $sql_file = $path_app.'config/mysql.sql';
         @unlink($sql_file);
+        ////[[[[
+        $options = [
+        'database_driver' => '',
+        'database' => null,
+        'database_list' => [],
+        'database_list_reload_by_setting' => false,
+        ];
+        DbManager::_(new DbManager())->init($options);
+        $t = DbManager::_()->getDatabaseDriver();
 
+        SqlDumper::_()->dump();
+        //SqlDumper::_()->install();
+        
+        ////]]]]
         ////]]]]
         \LibCoverage\LibCoverage::End();
     }

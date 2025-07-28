@@ -2,6 +2,7 @@
 namespace tests\DuckPhp\FastInstaller;
 
 use DuckPhp\DuckPhp as DuckPhp;
+use DuckPhp\Component\DbManager;
 use DuckPhp\FastInstaller\Supporter;
 //use tests_Data_SqlDumper\Model\EmptyModel;
 
@@ -34,6 +35,17 @@ class SupporterTest extends \PHPUnit\Framework\TestCase
         
         $options =["dsn"=>'mysql:host=127.0.0.1;port=3306',"a"=>"b"];
         Supporter::_()->readDsnSetting($options);
+        
+        
+        
+        $options =[
+            'database_driver'=>'no_exists',
+        ];
+        DuckPhp::_()->init($options);
+        DbManager::_()->options['database_driver']="no_exists";
+        try{
+        Supporter::Current();
+        }catch(\Exception $ex){}
         
         \LibCoverage\LibCoverage::End();
     }

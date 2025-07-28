@@ -69,6 +69,18 @@ class DbManager extends ComponentBase
     {
         return $this->database_config_list;
     }
+    public function getDatabaseDriver()
+    {
+        if ($this->options['database_driver']) {
+            return $this->options['database_driver'];
+        }
+        $configs = $this->database_config_list ? $this->database_config_list : [];
+        foreach ($configs as $v) {
+            [$driver, $_] = explode(':', $v['dsn']);
+            return $driver;
+        }
+        return '';
+    }
     public static function Db($tag = null)
     {
         return static::_()->_Db($tag);
@@ -130,17 +142,13 @@ class DbManager extends ComponentBase
         $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
         return static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
     }
-    protected function getDatabaseDriver($db_config)
-    {
-        [$driver,$_] = explode(":", $db_config['dsn']);
-        return $driver;
-    }
     protected function createDatabaseObject($db_config)
     {
         $last_cwd = null;
         
         // fix
-        if ($this->getDatabaseDriver($db_config) === 'sqlite') {
+        [$driver,$_] = explode(":", $db_config['dsn']);
+        if ($driver === 'sqlite') {
             $last_cwd = getcwd();
             $path_runtime = $this->getRuntimePath();
             chdir($path_runtime);
@@ -157,7 +165,7 @@ class DbManager extends ComponentBase
             $db->setBeforeQueryHandler([static::class, 'OnQuery']);
         }
         
-        if ($this->getDatabaseDriver($db_config) === 'sqlite') {
+        if ($driver === 'sqlite') {
             chdir($last_cwd?$last_cwd:'');
         }
         

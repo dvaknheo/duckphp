@@ -25,8 +25,11 @@ class Supporter extends ComponentBase
     }
     public function getSupporter()
     {
-        $driver = App::Current()->options['database_driver'];
-        $new_class = $this->options['database_driver_supporter_map'][$driver] ?? static::class;
+        $driver = DbManager::_()->getDatabaseDriver();
+        if (!isset($this->options['database_driver_supporter_map'][$driver])) {
+            throw new \Exception("[$driver]  No getSupporter ");
+        }
+        $new_class = $this->options['database_driver_supporter_map'][$driver];
         return $new_class::_();
     }
     
@@ -38,11 +41,11 @@ class Supporter extends ComponentBase
 
     public function readDsnSetting($options)
     {
-        $driver = App::Current()->options['database_driver'];
         if (!isset($options['dsn'])) {
             return $options;
         }
         $dsn = $options['dsn'];
+        [$driver,$_] = explode(':', $dsn);
         $data = substr($dsn, strlen($driver.':'));
         $a = explode(';', trim($data, ';'));
         

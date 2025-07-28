@@ -32,13 +32,14 @@ class SqlDumper extends ComponentBase
     protected $spliter = "\n";
     public function dump()
     {
-        if (!(App::Current()->options['database_driver'])) {
-            return;
+        $driver = DbManager::_()->getDatabaseDriver();
+        if (!$driver) {
+            return false;
         }
         $scheme = $this->getSchemes();
         $data = $this->getInsertTableSql();
         
-        $file = App::Current()->options['database_driver'].'.sql';
+        $file = $driver.'.sql';
         $full_file = $this->extendFullFile($this->options['path'], $this->options['path_sql_dump'], $file);
         $string = $scheme.$this->spliter.$data;
         file_put_contents($full_file, $string);
@@ -47,10 +48,7 @@ class SqlDumper extends ComponentBase
     }
     public function install($force = false)
     {
-        if (!(App::Current()->options['database_driver'])) {
-            return;
-        }
-        $file = App::Current()->options['database_driver'].'.sql';
+        $file = DbManager::_()->getDatabaseDriver().'.sql';
         $full_file = $this->extendFullFile($this->options['path'], $this->options['path_sql_dump'], $file);
         $sql = ''.@file_get_contents($full_file);
         

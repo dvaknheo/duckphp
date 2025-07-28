@@ -141,7 +141,28 @@ class DbManagerTest extends \PHPUnit\Framework\TestCase
         DbManager::_(new DbManager())->init($options,App::_());
         App::Db();
         
+        //////////////[[[[
         
+        
+        DbManager::_(new DbManager())->init([
+            'database_driver' => '',
+            'database_list' =>null,
+            'database_list_reload_by_setting' => false,
+        ])->getDatabaseDriver();
+        
+        
+        DbManager::_(new DbManager())->init([
+            'database_driver' => 'mysql',
+            'database_list' =>[],
+            'database_list_reload_by_setting' => false,
+        ])->getDatabaseDriver();
+        DbManager::_(new DbManager())->init([
+            'database_driver' => '',
+            'database_list' =>[['dsn'=>'mysql:host=127.0.0.1']],
+            'database_list_reload_by_setting' => false,
+        ])->getDatabaseDriver();
+        
+        //////////////]]]]
         
         @unlink($path_runtime.'database.db');
         \LibCoverage\LibCoverage::End();

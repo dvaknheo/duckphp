@@ -5,6 +5,7 @@
  */
 namespace DuckPhp\FastInstaller;
 
+use DuckPhp\Component\DbManager;
 use DuckPhp\Component\ExtOptionsLoader;
 use DuckPhp\Component\RouteHookResource;
 use DuckPhp\Core\App;
@@ -44,7 +45,8 @@ class FastInstaller extends ComponentBase
     {
         $this->initComponents();
         SqlDumper::_()->dump();
-        echo "dumpsql done. see the file `config/\$database_driver.sql` .\n";
+        $driver = DbManager::_()->getDatabaseDriver();
+        echo "dumpsql done. see the file `config/{$driver}.sql` .\n";
         return;
     }
     /**

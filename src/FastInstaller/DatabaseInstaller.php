@@ -102,7 +102,7 @@ class DatabaseInstaller extends ComponentBase
     {
         try {
             $dbm = new DbManager();
-            [$database_driver,$_] = explode(':',$database['dsn']);
+            [$database_driver,$_] = explode(':', $database['dsn']);
             $dbm->init([
                 'database_list' => [[
                     'dsn' => $database['dsn'],
