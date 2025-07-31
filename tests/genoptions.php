@@ -178,7 +178,8 @@ class DocFixer
             $t=explode("\n",$str);
             array_shift($t);
             $z=array_shift($t);
-            preg_match("/'([^']+)/",$str,$m);
+            $flag = preg_match("/'([^']+)/",$str,$m);
+            if(!$flag){  var_dump($file);continue;}
             $k=$m[1];
             $ret[$k]=$z;
         }

@@ -102,3 +102,9 @@ DbForWrite 对应 `database_list[0]`  DbForRead 对应 `database_list[1]`
 
     protected function createDatabaseObject($db_config)
 
+    public function getDatabaseDriver()
+
+    public function _SqlForPager($sql, $page_no, $page_size = 10)
+
+    public function _SqlForCountSimply($sql)
+

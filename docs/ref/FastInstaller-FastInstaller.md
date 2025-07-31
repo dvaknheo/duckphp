@@ -77,3 +77,7 @@ FastInstaller 是 DuckPhp 内置的一个安装系统。
 
     protected function cloneResource($dest)
 
+        'install_support_database_list'=>'',
+
+        'allow_require_ext_app'=>false,
+

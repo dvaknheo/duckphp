@@ -20,3 +20,7 @@ DbAdvanceTrait 这个 trait 给 Db 类提供了常用的 高级的 Db 方法
 ## 详解
 
 
+    public function _SqlForPager($sql, $page_no, $page_size = 10)
+
+    public function _SqlForCountSimply($sql)
+

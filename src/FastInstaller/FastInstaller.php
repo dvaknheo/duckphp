@@ -23,9 +23,8 @@ class FastInstaller extends ComponentBase
         'install_default_options' => [],
         'install_input_desc' => '',
         'install_callback' => null,
-        'install_support_database_list',
-        'install_default_database',
-        //'allow_require_ext_app'=>true,
+        'install_support_database_list'=>'',
+        'allow_require_ext_app'=>false,
     ];
     protected $args = [];
     protected $is_failed = false;
