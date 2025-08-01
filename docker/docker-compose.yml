@@ -1,0 +1,12 @@
+version: "3"
+services:
+  duckphp_demo:
+    image: php:7.4.33-alpine
+    #stdin_open: true
+    #tty: true 
+    working_dir: /DATA
+    command: php /DATA/template/cli.php run --host=0.0.0.0
+    volumes:
+      - ../:/DATA
+    ports:
+      - "8021:8080"
