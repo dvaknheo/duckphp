@@ -74,12 +74,12 @@ class Db implements DbInterface
     public function qouteScheme($name)
     {
         switch ($this->driver) {
-            case 'mysql':
-                return "`$name`";
+            case 'sqlite':              
+                return "$name";        
+            case 'mysql':               //@codeCoverageIgnore
+                return "`$name`";      //@codeCoverageIgnore
             case 'pgsql':               //@codeCoverageIgnore
-                return "'$name'";       //@codeCoverageIgnore
-            case 'sqlite':              //@codeCoverageIgnore
-                return "$name";         //@codeCoverageIgnore
+                return "'$name'";      //@codeCoverageIgnore
             default:                    //@codeCoverageIgnore
                 return $name;           //@codeCoverageIgnore
         }

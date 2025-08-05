@@ -43,7 +43,7 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
 )";
         DbManager::Db()->execute($sql);
 
-        $sql = "INSERT INTO `empty` (`id`, `data`) VALUES (1, '11');";
+        $sql = "INSERT INTO empty (id, data) VALUES (1, '11');";
         DbManager::Db()->execute($sql);
         SqlDumper::_()->dump();
         SqlDumper::_()->options['sql_dump_include_tables_all']=true;

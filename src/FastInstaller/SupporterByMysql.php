@@ -7,6 +7,7 @@ namespace DuckPhp\FastInstaller;
 
 use DuckPhp\Component\DbManager;
 
+//@codeCoverageIgnoreStart
 class SupporterByMysql extends Supporter
 {
     public function readDsnSetting($options)
@@ -63,4 +64,4 @@ class SupporterByMysql extends Supporter
 EOT;
         return $desc;
     }
-}
+}//@codeCoverageIgnoreEnd

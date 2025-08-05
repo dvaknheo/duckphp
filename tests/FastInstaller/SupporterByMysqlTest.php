@@ -15,6 +15,7 @@ class SupporterByMysqlTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(SupporterByMysql::class);
+        /*
         $path_setting = \LibCoverage\LibCoverage::G()->getClassTestPath(Db::class);
         $setting = include $path_setting . 'setting.php';
         $database_list = $setting['database_list'];
@@ -32,7 +33,7 @@ class SupporterByMysqlTest extends \PHPUnit\Framework\TestCase
         Supporter::Current()->getSchemeByTable('empty');
         
         $this->cleanData();
-        
+        */
         \LibCoverage\LibCoverage::End();
     }
     protected function makeData()

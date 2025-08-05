@@ -55,14 +55,20 @@ class DatabaseInstallerTest extends \PHPUnit\Framework\TestCase
         $options = array_merge($options, $new);
         return $options;
     }
-    
+    private function makeFromDsnBySqlite($options)
+    {
+        $dsn = $options['dsn'];
+        [$driver,$file] = explode(':',$dsn);
+        return ['file'=>$file];
+    }
+
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(DatabaseInstaller::class);
         $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
         $path_setting = \LibCoverage\LibCoverage::G()->getClassTestPath(Db::class);
         $setting = include $path_setting . 'setting.php';
-        $db = $this->makeFromDsn( $setting['database_list'][0], 'mysql');
+        $db = $this->makeFromDsnBySqlite( $setting['database_list'][0],);
         ////[[[[
         @unlink($path_app.'DatabaseInstallerApps.config.php');
         DuckPhp::_(new DuckPhp())->init([
@@ -72,12 +78,12 @@ class DatabaseInstallerTest extends \PHPUnit\Framework\TestCase
             'ext'=> [
                 DatabaseInstaller::class => true,
             ],
-            'database_driver'=>'mysql',
+            'database_driver'=>'sqlite',
         ]);
         $options = Console::_()->options;
         Console::_(DbInstallerConsole::_())->reInit($options,DuckPhp::_());
         
-        $str= "{$db['host']}\n{$db['port']}\n{$db['dbname']}\n{$db['username']}\n{$db['password']}\n";
+        $str= "{$db['file']}\n{$db['username']}\n{$db['password']}\n";
         DbInstallerConsole::_()->setFileContents([$str,  'N']);
         DatabaseInstaller::_()->install(false);
        
@@ -85,8 +91,8 @@ class DatabaseInstallerTest extends \PHPUnit\Framework\TestCase
         DatabaseInstaller::_()->install(false);
         
         //*
-        $bstr= "BAD{$db['host']}\n{$db['port']}\n{$db['dbname']}\n{$db['username']}\n{$db['password']}\n";
-        $str= "{$db['host']}\n{$db['port']}\n{$db['dbname']}\n{$db['username']}\n{$db['password']}\n";
+        $bstr= "BAD{$db['file']}\n{$db['username']}\n{$db['password']}\n";
+        $str= "{$db['file']}\n{$db['username']}\n{$db['password']}\n";
         
         DbInstallerConsole::_()->setFileContents([$bstr, $str, 'Y',$str,'N']);
         DatabaseInstaller::_()->install(true);
