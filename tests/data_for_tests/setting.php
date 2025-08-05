@@ -1,4 +1,5 @@
 <?php
+$full_db_file = __DIR__.'/dbtest.sqlite';
 return [
 'redis_list'=>
     [[

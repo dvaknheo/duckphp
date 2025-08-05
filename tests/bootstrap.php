@@ -13,7 +13,7 @@ class MyLibCoverage extends \LibCoverage\LibCoverage
     //
     public function doBegin($class)
     {
-        // echo "[[[[[[[[[[[\n";
+        echo "\n\033[42;30m".$class."\033[0m Test Start\n";
         parent::doBegin($class);
     }
     public function doEnd()
