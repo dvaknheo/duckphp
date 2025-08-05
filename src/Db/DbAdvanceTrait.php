@@ -79,10 +79,10 @@ trait DbAdvanceTrait
     public function deleteData($table_name, $id, $key = 'id', $key_delete = 'is_deleted')
     {
         if ($key_delete) {
-            $sql = "update ".$this->qouteScheme($table_name)." set {$key_delete}=1 where {$key}=? limit 1";
+            $sql = "update ".$this->qouteScheme($table_name)." set {$key_delete}=1 where {$key}=?"; //sqlite do not support limit 1
             return $this->execute($sql, $id);
         } else {
-            $sql = "delete from ".$this->qouteScheme($table_name)." where {$key}=? limit 1";
+            $sql = "delete from ".$this->qouteScheme($table_name)." where {$key}=?";//sqlite do not support limit 1
             return $this->execute($sql, $id);
         }
     }

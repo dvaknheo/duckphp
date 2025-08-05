@@ -16,19 +16,18 @@ class DbAdvanceTraitTest extends \PHPUnit\Framework\TestCase
         
         $db=new Db();
         $db->init($options);
-$sql= 'DROP TABLE IF EXISTS `Users`';
+$sql= 'DROP TABLE IF EXISTS Users';
 $db->execute($sql);
 
-$sql =  'CREATE TABLE `Users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(32) COLLATE utf8_bin NOT NULL,
-  `password` varchar(64) COLLATE utf8_bin NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT=\'用户表\'';
+$sql =  'CREATE TABLE Users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username TEXT NOT NULL COLLATE BINARY,
+  password TEXT NOT NULL COLLATE BINARY,
+  created_at TIMESTAMP,
+  updated_at TIMESTAMP,
+  deleted_at TIMESTAMP,
+  UNIQUE (username)
+)';
 $db->execute($sql);
 
         $array=[];
@@ -55,7 +54,7 @@ $db->execute($sql);
         
         var_dump($db->fetchAll("select * from Users"));
 
-$sql= 'DROP TABLE IF EXISTS `Users`';
+$sql= 'DROP TABLE IF EXISTS Users';
 $db->execute($sql);
         //$db->pdo=null;
         $db->qouteInsertArray($array);

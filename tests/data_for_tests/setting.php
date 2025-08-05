@@ -11,12 +11,12 @@ return [
 
 'database_list' =>
     [[
-        'dsn'=>"mysql:host=mysql;port=3306;dbname=duckphptest2;charset=utf8;",
+        'dsn'=>"sqlite:$full_db_file",
         'username'=>'root',	
         'password'=>'123456'
     ],
     [
-        'dsn'=>"mysql:host=mysql;port=3306;dbname=duckphptest2;charset=utf8;",
+        'dsn'=>"sqlite:$full_db_file",
         'username'=>'root',	
         'password'=>'123456'
     ]],

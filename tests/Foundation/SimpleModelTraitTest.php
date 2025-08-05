@@ -22,19 +22,18 @@ class SimpleModelTraitTest extends \PHPUnit\Framework\TestCase
         DuckPhpAllInOne::_(new DuckPhpAllInOne())->init($options);
         
         echo EmptyModel::_()->table();
-$sql = "DROP TABLE IF EXISTS `empty`;";
+$sql = "DROP TABLE IF EXISTS empty";
         DuckPhpAllInOne::Db()->execute($sql);
 
-        $sql="CREATE TABLE `empty` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `data` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='keep me empty'";
+        $sql="CREATE TABLE empty (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  data INTEGER NOT NULL
+)";
         DuckPhpAllInOne::Db()->execute($sql);
 
         EmptyModel::_()->test($id);
         
-$sql= 'DROP TABLE IF EXISTS `empty`';
+$sql= 'DROP TABLE IF EXISTS empty';
 DuckPhpAllInOne::Db()->execute($sql);
         EmptyModel::_Z(DuckPhpAllInOne::class)->foo();
         \LibCoverage\LibCoverage::End();
