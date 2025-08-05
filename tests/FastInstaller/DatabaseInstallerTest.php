@@ -42,7 +42,8 @@ class DatabaseInstallerTest extends \PHPUnit\Framework\TestCase
             return $options;
         }
         $dsn = $options['dsn'];
-        $data = substr($dsn, strlen($driver)+1);
+        [$driver,$data] = explode(':',$dsn);
+        //$data = substr($dsn, strlen($driver)+1);
         $a = explode(';', trim($data, ';'));
         
         $t = array_map(function ($v) {
@@ -59,11 +60,9 @@ class DatabaseInstallerTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(DatabaseInstaller::class);
         $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
-        
         $path_setting = \LibCoverage\LibCoverage::G()->getClassTestPath(Db::class);
         $setting = include $path_setting . 'setting.php';
         $db = $this->makeFromDsn( $setting['database_list'][0], 'mysql');
-        
         ////[[[[
         @unlink($path_app.'DatabaseInstallerApps.config.php');
         DuckPhp::_(new DuckPhp())->init([
