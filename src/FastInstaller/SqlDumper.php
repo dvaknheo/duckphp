@@ -53,7 +53,8 @@ class SqlDumper extends ComponentBase
         $sql = ''.@file_get_contents($full_file);
         
         if ($force) {
-            $sql = preg_replace('/CREATE TABLE [`"]([^`"]+)[`"]/', 'DROP TABLE IF EXISTS `$1`'.";\n".'CREATE TABLE `$1`', $sql);
+            //$sql = preg_replace('/CREATE TABLE [`"]([^`"]+)[`"]/', 'DROP TABLE IF EXISTS `$1`'.";\n".'CREATE TABLE `$1`', $sql);
+            $sql = preg_replace('/CREATE TABLE (\S+)/', "DROP TABLE IF EXISTS \$1;\nCREATE TABLE \$1", $sql);
         }
 
         if ($this->options['sql_dump_install_replace_prefix']) {
@@ -123,13 +124,13 @@ class SqlDumper extends ComponentBase
     protected function getDataSql($table)
     {
         $ret = '';
-        $sql = "SELECT * FROM `$table`";
+        $sql = "SELECT * FROM ".DbManager::DbForRead()->qouteScheme($table);
         $data = DbManager::DbForRead()->fetchAll($sql);
         //if (empty($data)) {
         //    return '';
         //}
         foreach ($data as $line) {
-            $sql = "INSERT INTO `$table` ".DbManager::DbForRead()->qouteInsertArray($line) .";\n";
+            $sql = "INSERT INTO ".DbManager::DbForRead()->qouteScheme($table)." ".DbManager::DbForRead()->qouteInsertArray($line) .";\n";
             $prefix = App::Current()->options['table_prefix'];
             $sql = str_replace(' `'.$prefix, ' `'.'', ''.$sql);
             $ret .= $sql;

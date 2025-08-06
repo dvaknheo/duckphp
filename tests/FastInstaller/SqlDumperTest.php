@@ -50,10 +50,10 @@ class SqlDumperTest extends \PHPUnit\Framework\TestCase
         SqlDumper::_()->options['sql_dump_include_tables_by_model']=false;
         SqlDumper::_()->options['sql_dump_data_tables']=['empty'];
         SqlDumper::_()->dump();
-try{
+//try{
         SqlDumper::_()->install(true);
-}catch(\Exception $ex){}
-
+//}catch(\Exception $ex){}
+//exit;
         DuckPhp::_()->options['table_prefix']='new_';
         SqlDumper::_()->options['sql_dump_include_tables_all']=true;
         SqlDumper::_()->options['sql_dump_include_tables_by_model']=false;
@@ -61,9 +61,9 @@ try{
 
         SqlDumper::_()->options['sql_dump_install_replace_prefix']=true;
         SqlDumper::_()->options['sql_dump_prefix']='em';
-try{
+//try{
         SqlDumper::_()->install(true);
-}catch(\Exception $ex){}        
+//}catch(\Exception $ex){}        
         SqlDumper::_()->dump();// 这段需要测试通过
         
 
