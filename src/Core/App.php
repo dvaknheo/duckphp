@@ -294,4 +294,20 @@ EOT;
     {
         return $this->options['installed'] ?? false;
     }
+    public function lang($str, $args)
+    {
+        $handler = $this->options['lang_handler'] ?? null;
+        if ($handler) {
+            return $handler($str, $args);
+        }
+        if (empty($args)) {
+            return $str;
+        }
+        $a = [];
+        foreach ($args as $k => $v) {
+            $a["{".$k."}"] = $v;
+        }
+        $ret = str_replace(array_keys($a), array_values($a), $str);
+        return $ret;
+    }
 }

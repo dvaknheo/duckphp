@@ -11,6 +11,7 @@ namespace DuckPhp;
 use DuckPhp\Component\Command;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Component\ExtOptionsLoader;
+use DuckPhp\Component\Locale;
 use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookCheckStatus;
 use DuckPhp\Component\RouteHookPathInfoCompat;
@@ -29,6 +30,7 @@ class DuckPhp extends App
         'ext_options_file_enable' => true,
         'ext_options_file' => 'config/DuckPhpApps.config.php',
         'ext' => [
+            Locale::class => true,
             RouteHookCheckStatus::class => true,
             RouteHookRewrite::class => true,
             RouteHookRouteMap::class => true,
@@ -49,7 +51,7 @@ class DuckPhp extends App
         'cli_command_with_common' => true,
         'cli_command_with_fast_installer' => true,
         'allow_require_ext_app' => true,
-        
+        'default_language' => true,
         //'install_need_database' => true,
         //'install_need_redis' => false,
         
@@ -151,5 +153,9 @@ class DuckPhp extends App
     protected function isLocalRedis()
     {
         return  ($this->options['local_redis'] ?? false) ? true : false;
+    }
+    public function lang($str, $args)
+    {
+        return Locale::_()->lang($str, $args);
     }
 }
