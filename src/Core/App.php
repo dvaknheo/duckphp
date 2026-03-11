@@ -42,6 +42,10 @@ class App extends ComponentBase
         'error_404' => null,          //'_sys/error-404',
         'error_500' => null,          //'_sys/error-500',
         
+        //'path_language' => 'config/lang',
+        //'language_default' => 'zh-cn',
+        //'language_auto_search'=>true,
+        
         //*
         // 'path_log' => 'runtime',
         // 'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
