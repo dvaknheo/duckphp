@@ -18,7 +18,7 @@
 <fieldset>
 <legend>应用的选项</legend>
 <pre>
-<?php var_export(array_diff_assoc(\DuckPhp\Core\App::_()->options,(new \DuckPhp\DuckPhp())->options));?>
+<?php var_export(@array_diff_assoc(\DuckPhp\Core\App::_()->options,(new \DuckPhp\DuckPhp())->options));?>
 </pre>
 </fieldset>
 <fieldset>
