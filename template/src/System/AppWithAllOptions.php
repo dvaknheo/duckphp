@@ -142,6 +142,9 @@ class AppWithAllOptions extends DuckPhp
         // 默认的异常处理回调 (DuckPhp\Core\ExceptionManager)
         // $options['default_exception_handler'] = NULL;
 
+        //  ()
+        // $options['default_language'] = true;
+
         // 调试错误的回调 (DuckPhp\Core\ExceptionManager)
         // $options['dev_error_handler'] = NULL;
 

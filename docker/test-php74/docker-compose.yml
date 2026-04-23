@@ -9,12 +9,13 @@ services:
       - composer-cache:/tmp/composer
     environment:
       - COMPOSER_HOME=/tmp/composer
+    extra_hosts:
+      - "redis:127.0.0.1"
     command: >
       sh -c "
-        echo '127.0.0.1 redis' >> /etc/hosts &&
         redis-server --requirepass 123456 --daemonize yes &&
         composer install --no-interaction --prefer-dist &&
-        composer run-script fulltest
+        composer run-script --timeout=0 fulltest
       "
 
 volumes:

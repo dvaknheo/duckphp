@@ -164,6 +164,9 @@
 + **'default_exception_handler' => NULL,** 
 
     默认的异常处理回调   // [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
++ **'default_language' => true,** 
+
+       // 
 + **'dev_error_handler' => NULL,** 
 
     调试错误的回调   // [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
@@ -460,6 +463,8 @@
         
     - 'default_exception_do_log' => true,
         发生异常时候记录日志
+    - 'default_language' => true,
+        
     - 'error_404' => NULL,
         404 错误处理的View或者回调，仅根应用有效
     - 'error_500' => NULL,
@@ -468,7 +473,7 @@
         异常报告仅针对的异常
     - 'exception_reporter' => NULL,
         异常报告类
-    - 'ext' => array (   'DuckPhp\\Component\\RouteHookCheckStatus' => true,   'DuckPhp\\Component\\RouteHookRewrite' => true,   'DuckPhp\\Component\\RouteHookRouteMap' => true,   'DuckPhp\\Component\\RouteHookResource' => true, ),
+    - 'ext' => array (   'DuckPhp\\Component\\Locale' => true,   'DuckPhp\\Component\\RouteHookCheckStatus' => true,   'DuckPhp\\Component\\RouteHookRewrite' => true,   'DuckPhp\\Component\\RouteHookRouteMap' => true,   'DuckPhp\\Component\\RouteHookResource' => true, ),
         
     - 'ext_options_file' => 'config/DuckPhpApps.config.php',
         配置文件名字
@@ -679,6 +684,7 @@
         无PATH_INFO兼容，替代的 class
     - 'path_info_compact_enable' => true,
         PATH_INFO 兼容模式
++ DuckPhp\Component\Locale
 + DuckPhp\Component\RouteHookCheckStatus
     - 'error_maintain' => NULL,
         维修页面view ，类似 error_404

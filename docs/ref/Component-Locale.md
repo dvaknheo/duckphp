@@ -12,3 +12,7 @@
     
 ## 详解
 
+    protected function getLanguage()
+
+    public function lang($str, $args)
+

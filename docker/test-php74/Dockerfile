@@ -1,9 +1,6 @@
-FROM php:7.4.33-alpine
+FROM dnmp_php74
 
-# 安装测试所需的系统工具及 Redis 服务端
-RUN apk add --no-cache git unzip curl redis
-
-# 安装 Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# 补装测试所需的 git 和 Redis 服务端
+RUN apk add --no-cache git redis
 
 WORKDIR /DATA

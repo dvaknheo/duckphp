@@ -131,3 +131,5 @@ HTML编码函数
     
 ## 说明
 
+    public function lang($str, $args)
+
