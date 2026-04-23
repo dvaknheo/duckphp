@@ -9,14 +9,13 @@ use DuckPhp\Core\ComponentBase;
 
 class Locale extends ComponentBase
 {
-    
-    protected $language='zh-CN';
+    protected $language = 'zh-CN';
     protected function getLanguage()
     {
         //App::Root()->options['default_language'];
         $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         $accept = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? null;
-        
+        return "";
         //$lang = getenv('LANG') ?: getenv('LC_ALL') ?: getenv('LC_MESSAGES');
         //zh-CN, zh;q=0.9, en;q=0.8, en-GB;q=0.7, en-US;q=0.6
         // from CLI
@@ -24,10 +23,10 @@ class Locale extends ComponentBase
     public function lang($str, $args)
     {
         $language = $this->getLanguage();
-        $newstr = Configer::_Config("lang/$lang",$str,null);
+        $newstr = Configer::_()->_Config("lang/$language", $str, null);
         
-        // 
-        if(!isset($str)){
+        //
+        if (!isset($str)) {
             $newstr = $str;
         }
         
@@ -64,4 +63,3 @@ if (extension_loaded('intl')) {
     echo "intl 扩展未安装，无法获取语言信息。\n";
 }
 */
-

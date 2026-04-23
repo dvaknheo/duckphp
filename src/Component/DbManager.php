@@ -149,7 +149,7 @@ class DbManager extends ComponentBase
         // fix
         [$driver,$file] = explode(":", $db_config['dsn']);
         if ($driver === 'sqlite') {
-            if(!static::IsAbsPath($file)){
+            if (!static::IsAbsPath($file)) {
                 $last_cwd = getcwd();
                 $path_runtime = $this->getRuntimePath();
                 chdir($path_runtime);
@@ -167,7 +167,7 @@ class DbManager extends ComponentBase
             $db->setBeforeQueryHandler([static::class, 'OnQuery']);
         }
         
-        if (isset($last_cwd)) {
+        if (isset($last_cwd) && $last_cwd !== false) {
             chdir($last_cwd);
         }
         

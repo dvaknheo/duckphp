@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  fulltest:
+    build: .
+    working_dir: /DATA
+    volumes:
+      - ../../:/DATA
+      - composer-cache:/tmp/composer
+    environment:
+      - COMPOSER_HOME=/tmp/composer
+    command: >
+      sh -c "
+        echo '127.0.0.1 redis' >> /etc/hosts &&
+        redis-server --requirepass 123456 --daemonize yes &&
+        composer install --no-interaction --prefer-dist &&
+        composer run-script fulltest
+      "
+
+volumes:
+  composer-cache:
