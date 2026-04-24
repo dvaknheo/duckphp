@@ -38,11 +38,11 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         \DuckPhp\Core\SystemWrapper::_()->_system_wrapper_replace([
             'exit' =>function(){ echo "change!\n";},
         ]);
-        
+        __l("hello",[]);
         View::_()->_Show([],'block');
         DuckPhp::_()->options['close_resource_at_output']=false;
         View::_()->_Show([],'block');
-
+		DuckPhp::_()->lang("hello",[]);
 
         $options['path'] = $path;
         $options['path_test'] = 'abc';

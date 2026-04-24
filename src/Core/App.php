@@ -16,7 +16,7 @@ use DuckPhp\Core\View;
 /**
  * MAIN FILE
  * dvaknheo@github.com
- * OK，Lazy
+ * OK, Lazy
  *
  */
 class App extends ComponentBase

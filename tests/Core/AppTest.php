@@ -224,13 +224,21 @@ class AppTest extends \PHPUnit\Framework\TestCase
         App::_()->run();
         ////]]]]
         echo "-------111111111111-----------\n";
-
+		App::_()->options['lang_handler']=[static::class,'lang_handler'];
+		App::_()->lang("test",[]);
+		App::_()->options['lang_handler']=null;
+		App::_()->lang("test",[]);
+		App::_()->lang("test{hello}",['hello'=>'world']);
         
         \LibCoverage\LibCoverage::G($this->LibCoverage);
         \LibCoverage\LibCoverage::End();
         return;
 
     }
+	public static function lang_handler($str,$arg=[])
+	{
+		return $str;
+	}
     protected function doFunctions()
     {
         \__h("test");
