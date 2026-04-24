@@ -248,8 +248,8 @@ trait KernelTrait
         $this->onBeforeChildrenInit();
         $this->initExtentions($this->options['app'] ?? [], false);
         
-        $this->onInited();
         $this->is_inited = true;
+        $this->onInited();
         return $this;
     }
     protected function prepareComponents()

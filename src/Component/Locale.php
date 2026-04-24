@@ -9,7 +9,24 @@ use DuckPhp\Core\ComponentBase;
 
 class Locale extends ComponentBase
 {
-    protected $language = 'zh-CN';
+    public $options = [
+        // 默认语言
+        'locale_default' => 'zh_CN',
+        // 语言文件目录
+        'locale_path' => 'config/locale/',
+        
+        // 启用的语言列表
+        'locale_enabled' => ['zh_CN', 'en_US'],
+        
+        // 语言检测方式优先级
+        'locale_detect_order' => ['url', 'cookie', 'header', 'cli', 'default'],
+        // URL 参数名
+        'locale_url_param' => 'lang',
+        // Cookie 名称
+        'locale_cookie_name' => 'duckphp_locale',
+        
+    ];
+    
     protected function getLanguage()
     {
         //App::Root()->options['default_language'];

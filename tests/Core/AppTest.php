@@ -61,6 +61,8 @@ class AppTest extends \PHPUnit\Framework\TestCase
 
         App::_(new App());
         App::RunQuickly($options,function(){
+			$e_old = error_reporting();
+			error_reporting($e_old |E_USER_NOTICE |E_NOTICE |E_STRICT |E_DEPRECATED |E_USER_DEPRECATED);
             $value = $cache[$key]; // trigger notice
             App::_()->options['error_debug']='_sys/error-debug';
             $value = $cache[$key]; 
@@ -71,7 +73,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             App::_()->options['is_debug']=false;
             $value = $cache[$key]; 
             App::_()->options['is_debug']=true;
-
+			error_reporting($e_old);
         });
 
         \DuckPhp\Core\Route::_()->bind('/NOOOOOOOOOOOOOOO'); 
