@@ -112,7 +112,6 @@ class CoreHelperTest extends \PHPUnit\Framework\TestCase
         $str ="<b>{abc}</b>";
         $args = ["abc"=>"def"];
         echo CoreHelper::_()->_Hl($str, $args);
-        echo CoreHelper::_()->formatString($str, $args);
         $ext =[];
         
         

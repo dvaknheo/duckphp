@@ -8,21 +8,22 @@ namespace DuckPhp\Component;
 use DuckPhp\Core\App;
 use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Logger;
+use DuckPhp\Core\SuperGlobal;
 
 class Locale extends ComponentBase
 {
-// 配置只在 root 有效。 或者setting 里？
-// 如果配置无效，那么退回本层默认locale ，如果本层 locale 没有，那么就是空 locale.
+    // 配置只在 root 有效。 或者setting 里？
+    // 如果配置无效，那么退回本层默认locale ，如果本层 locale 没有，那么就是空 locale.
     public $options = [
-		// 最终语言，不再判断
-		'locale_lang_final' => null,
+        // 最终语言，不再判断
+        'locale_lang_final' => null,
         // 默认语言
         'locale_lang_default' => null,
-		
-		'locale_lang_detect_mode' => ['url', 'cookie','header', 'cli','default'],
-		
-		//使用根 app 的语言
-		'locale_lang_follow_root' => true,
+        
+        'locale_lang_detect_mode' => ['url', 'cookie','header', 'cli','default'],
+        
+        //使用根 app 的语言
+        'locale_lang_follow_root' => true,
         // URL 参数名
         'locale_lang_url_param' => 'lang',
         // Cookie 名称
@@ -30,39 +31,39 @@ class Locale extends ComponentBase
     ];
     public function init(array $options, ?object $context = null)
     {
-		parent::init($options, $context);
-		if($this->options['locale_lang_follow_root'] && !App::IsRoot()){
-			return App::Root()->options['locale_lang_final'];
-		}
-		$this->options['locale_lang_final'] = $this->detectLanguage();
-		App::Current()->options['locale_lang_final'] = $this->options['locale_lang_final'];
+        parent::init($options, $context);
+        if ($this->options['locale_lang_follow_root'] && !App::IsRoot()) {
+            return App::Root()->options['locale_lang_final'];
+        }
+        $this->options['locale_lang_final'] = $this->detectLanguage();
+        App::Current()->options['locale_lang_final'] = $this->options['locale_lang_final'];
     }
-	protected function loadlang($str)
-	{
+    protected function loadlang($str)
+    {
         $language = $this->options['locale_lang_final'];
-		if(!isset($language)){
-			Logger::_()->warning("No Language Dectected");
-			return null;
-		}
-		$language=basename($language);
+        if (!isset($language)) {
+            Logger::_()->warning("No Language Dectected");
+            return null;
+        }
+        $language = basename($language);
         $configs = Configer::_()->_Config("lang/$language", null, null);
-		if(!isset($configs)){
-			Logger::_()->warning("No Language File Dectected: $language");
-			return null;
-		}
-		if(!isset($configs[$str])){
-			Logger::_()->warning("No Language Block Dectected $str");
-			return null;
-		}
-		return $configs[$str];
-	}
+        if (!isset($configs)) {
+            Logger::_()->warning("No Language File Dectected: $language");
+            return null;
+        }
+        if (!isset($configs[$str])) {
+            Logger::_()->warning("No Language Block Dectected $str");
+            return null;
+        }
+        return $configs[$str];
+    }
     public function lang($str, $args)
     {
-		$newstr = $this->loadlang($str);
-		return $this->format($newstr ?? $str, $args);
-	}
+        $newstr = $this->loadlang($str);
+        return $this->format($newstr ?? $str, $args);
+    }
     protected function format($str, $args)
-	{
+    {
         $a = [];
         foreach ($args as $k => $v) {
             $a["{".$k."}"] = $v;
@@ -70,7 +71,7 @@ class Locale extends ComponentBase
         $ret = str_replace(array_keys($a), array_values($a), $str);
         return $ret;
     }
-	///////////////////////////////////////////////
+    ///////////////////////////////////////////////
     /**
      * 标准化语言代码
      */
@@ -87,11 +88,11 @@ class Locale extends ComponentBase
         }
         return implode('_', $parts);
     }
-	
+    
     /**
      * 自动检测语言
      */
-    protected function detectLanguage(): string
+    protected function detectLanguage(): ?string
     {
         $methods = [
             'url' => 'detectFromUrl',
@@ -105,23 +106,20 @@ class Locale extends ComponentBase
             if (isset($methods[$method])) {
                 $locale = $this->{$methods[$method]}();
                 if ($locale !== null) {
-                    //$this->detectedLocale = $this->normalizeLocale($locale);
-                    return $locale;//this->detectedLocale;
+                    return $this->normalizeLocale($locale);
                 }
             }
         }
-        
-        $this->detectedLocale = $this->options['locale_default'];
-        return $this->detectedLocale;
+        return null;
     }
-	/**
+    /**
      * 从 URL 参数检测
      */
     protected function detectFromUrl(): ?string
     {
         $param = $this->options['locale_lang_url_param'];
-        $_GET = defined('__SUPERGLOBAL_CONTEXT') 
-            ? (SuperGlobal::_()->_GET ?? []) 
+        $_GET = defined('__SUPERGLOBAL_CONTEXT')
+            ? (SuperGlobal::_()->_GET ?? [])
             : ($_GET ?? []);
         
         return $_GET[$param] ?? null;
@@ -178,19 +176,7 @@ class Locale extends ComponentBase
         foreach ($languages as $lang => $q) {
             // 标准化语言代码
             $normalized = $this->normalizeLocale($lang);
-			
-			return $normalized;
-            if ($this->isValidLocale($normalized)) {
-                return $normalized;
-            }
-			
-            // 尝试匹配主语言 (如 zh-CN -> zh)
-            $primary = explode('_', $normalized)[0];
-            foreach ($this->options['locale_enabled'] as $enabled) {
-                if (strpos($enabled, $primary) === 0) {
-                    return $enabled;
-                }
-            }
+            return $normalized;
         }
         
         return null;
@@ -211,9 +197,7 @@ class Locale extends ComponentBase
             // 格式通常为: zh_CN.UTF-8 或 en_US
             $lang = explode('.', $lang)[0]; // 移除 .UTF-8
             $normalized = $this->normalizeLocale($lang);
-            if ($this->isValidLocale($normalized)) {
-                return $normalized;
-            }
+            return $normalized;
         }
         
         return null;
@@ -227,4 +211,3 @@ class Locale extends ComponentBase
         return $this->options['locale_lang_default'];
     }
 }
-
