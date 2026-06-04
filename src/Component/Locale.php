@@ -5,8 +5,9 @@
  */
 namespace DuckPhp\Component;
 
-use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\App;
+use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\Logger;
 
 class Locale extends ComponentBase
 {
@@ -39,18 +40,25 @@ class Locale extends ComponentBase
 	protected function loadlang($str)
 	{
         $language = $this->options['locale_lang_final'];
-		if(!isset($lang)){
-			//warning ,no langue
+		if(!isset($language)){
+			Logger::_()->warning("No Language Dectected");
 			return null;
 		}
-		
-        $newstr = Configer::_()->_Config("lang/$language", $str, null);
-		return $newstr;
+		$language=basename($language);
+        $configs = Configer::_()->_Config("lang/$language", null, null);
+		if(!isset($configs)){
+			Logger::_()->warning("No Language File Dectected: $language");
+			return null;
+		}
+		if(!isset($configs[$str])){
+			Logger::_()->warning("No Language Block Dectected $str");
+			return null;
+		}
+		return $configs[$str];
 	}
     public function lang($str, $args)
     {
 		$newstr = $this->loadlang($str);
-		// warnning ,no sentens
 		return $this->format($newstr ?? $str, $args);
 	}
     protected function format($str, $args)
