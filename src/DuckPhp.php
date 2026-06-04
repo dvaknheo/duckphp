@@ -51,7 +51,9 @@ class DuckPhp extends App
         'cli_command_with_common' => true,
         'cli_command_with_fast_installer' => true,
         'allow_require_ext_app' => true,
-        'default_language' => true,
+        'locale_lang_default' => null,
+		'locale_lang_final'=>null,
+		
         //'install_need_database' => true,
         //'install_need_redis' => false,
         

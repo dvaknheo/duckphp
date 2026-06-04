@@ -6,6 +6,7 @@
 namespace DuckPhp\Component;
 
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\App;
 
 class Locale extends ComponentBase
 {
@@ -26,38 +27,39 @@ class Locale extends ComponentBase
         // Cookie 名称
         'locale_lang_cookie_name' => 'lang',
     ];
-    protected function initOptions(array $options)
+    public function init(array $options, ?object $context = null)
     {
-		if (isset(App::_()->options['locale_lang_final'])){
-			return;
+		parent::init($options, $context);
+		if($this->options['locale_lang_follow_root'] && !App::IsRoot()){
+			return App::Root()->options['locale_lang_final'];
 		}
-		if(!App::IsRoot() && $this->options['locale_lang_follow_root']) {
-			App::_()->options['locale_lang_final'] = App::Root()->options['locale_lang_final'];
-		}else{
-			App::_()->options['locale_lang_final'] = $this->getLanguage();
-		}
+		$this->options['locale_lang_final'] = $this->detectLanguage();
+		App::Current()->options['locale_lang_final'] = $this->options['locale_lang_final'];
     }
-    protected function getLanguage()
-    {
-		//detectLocale
-    }
-    public function lang($str, $args)
-    {
+	protected function loadlang($str)
+	{
         $language = $this->options['locale_lang_final'];
+		if(!isset($lang)){
+			//warning ,no langue
+			return null;
+		}
 		
         $newstr = Configer::_()->_Config("lang/$language", $str, null);
-		
-		// 如果我们没有得到 lang 文件，那么退化成默认 lang
-        
-        if (!isset($str)) {
-            $newstr = $str;
-        }
-        
+		return $newstr;
+	}
+    public function lang($str, $args)
+    {
+		$newstr = $this->loadlang($str);
+		// warnning ,no sentens
+		return $this->format($newstr ?? $str, $args);
+	}
+    protected function format($str, $args)
+	{
         $a = [];
         foreach ($args as $k => $v) {
             $a["{".$k."}"] = $v;
         }
-        $ret = str_replace(array_keys($a), array_values($a), $newstr);
+        $ret = str_replace(array_keys($a), array_values($a), $str);
         return $ret;
     }
 	///////////////////////////////////////////////
@@ -81,7 +83,7 @@ class Locale extends ComponentBase
     /**
      * 自动检测语言
      */
-    protected function detectLocale(): string
+    protected function detectLanguage(): string
     {
         $methods = [
             'url' => 'detectFromUrl',
@@ -91,12 +93,12 @@ class Locale extends ComponentBase
             'default' => 'detectFromDefault',
         ];
         
-        foreach ($this->options['locale_detect_order'] as $method) {
+        foreach ($this->options['locale_lang_detect_mode'] as $method) {
             if (isset($methods[$method])) {
                 $locale = $this->{$methods[$method]}();
-                if ($locale !== null && $this->isValidLocale($locale)) {
-                    $this->detectedLocale = $this->normalizeLocale($locale);
-                    return $this->detectedLocale;
+                if ($locale !== null) {
+                    //$this->detectedLocale = $this->normalizeLocale($locale);
+                    return $locale;//this->detectedLocale;
                 }
             }
         }
@@ -109,7 +111,7 @@ class Locale extends ComponentBase
      */
     protected function detectFromUrl(): ?string
     {
-        $param = $this->options['locale_url_param'];
+        $param = $this->options['locale_lang_url_param'];
         $_GET = defined('__SUPERGLOBAL_CONTEXT') 
             ? (SuperGlobal::_()->_GET ?? []) 
             : ($_GET ?? []);
@@ -122,7 +124,7 @@ class Locale extends ComponentBase
      */
     protected function detectFromCookie(): ?string
     {
-        $name = $this->options['locale_cookie_name'];
+        $name = $this->options['locale_lang_cookie_name'];
         $_COOKIE = defined('__SUPERGLOBAL_CONTEXT')
             ? (SuperGlobal::_()->_COOKIE ?? [])
             : ($_COOKIE ?? []);
@@ -168,9 +170,12 @@ class Locale extends ComponentBase
         foreach ($languages as $lang => $q) {
             // 标准化语言代码
             $normalized = $this->normalizeLocale($lang);
+			
+			return $normalized;
             if ($this->isValidLocale($normalized)) {
                 return $normalized;
             }
+			
             // 尝试匹配主语言 (如 zh-CN -> zh)
             $primary = explode('_', $normalized)[0];
             foreach ($this->options['locale_enabled'] as $enabled) {
