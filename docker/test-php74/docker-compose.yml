@@ -6,7 +6,7 @@ services:
     working_dir: /DATA
     volumes:
       - ../../:/DATA
-      - /DATA/vendor
+      - vendor:/DATA/vendor
       - composer-cache:/tmp/composer
     environment:
       - COMPOSER_HOME=/tmp/composer
@@ -16,9 +16,10 @@ services:
       sh -c "
         redis-server --requirepass 123456 --daemonize yes &&
         cp composer.lock.docker composer.lock &&
-        composer install --no-interaction --prefer-dist &&
+        ([ -f /DATA/vendor/autoload.php ] || composer install --no-interaction --prefer-dist) &&
         composer run-script --timeout=0 fulltest
       "
 
 volumes:
   composer-cache:
+  vendor:

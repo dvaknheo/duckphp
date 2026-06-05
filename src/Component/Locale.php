@@ -28,6 +28,7 @@ class Locale extends ComponentBase
         'locale_lang_url_param' => 'lang',
         // Cookie 名称
         'locale_lang_cookie_name' => 'lang',
+        'local_lang_file_path' => 'lang/',
     ];
     public function init(array $options, ?object $context = null)
     {
@@ -38,7 +39,7 @@ class Locale extends ComponentBase
         $this->options['locale_lang_final'] = $this->detectLanguage();
         App::Current()->options['locale_lang_final'] = $this->options['locale_lang_final'];
     }
-    protected function loadlang($str)
+    protected function loadLanguage($str)
     {
         $language = $this->options['locale_lang_final'];
         if (!isset($language)) {
@@ -46,7 +47,7 @@ class Locale extends ComponentBase
             return null;
         }
         $language = basename($language);
-        $configs = Configer::_()->_Config("lang/$language", null, null);
+        $configs = Configer::_()->_Config($this->options['local_lang_file_path']."$language", null, null);
         if (!isset($configs)) {
             Logger::_()->warning("No Language File Dectected: $language");
             return null;
@@ -59,7 +60,7 @@ class Locale extends ComponentBase
     }
     public function lang($str, $args)
     {
-        $newstr = $this->loadlang($str);
+        $newstr = $this->loadLanguage($str);
         return $this->format($newstr ?? $str, $args);
     }
     protected function format($str, $args)
