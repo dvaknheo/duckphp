@@ -34,9 +34,10 @@ class Locale extends ComponentBase
     {
         parent::init($options, $context);
         if ($this->options['locale_lang_follow_root'] && !App::IsRoot()) {
-            return App::Root()->options['locale_lang_final'];
-        }
-        $this->options['locale_lang_final'] = $this->detectLanguage();
+			$this->options['locale_lang_final'] = App::Root()->options['locale_lang_final'];
+        }else{
+			$this->options['locale_lang_final'] = $this->detectLanguage();
+		}
         App::Current()->options['locale_lang_final'] = $this->options['locale_lang_final'];
     }
     protected function loadLanguage($str)
@@ -46,9 +47,8 @@ class Locale extends ComponentBase
             Logger::_()->warning("No Language Dectected");
             return null;
         }
-        $language = basename($language);
-        $configs = Configer::_()->_Config($this->options['local_lang_file_path']."$language", null, null);
-        if (!isset($configs)) {
+        $configs = Configer::_()->_Config($this->options['local_lang_file_path'].basename($language), null, null);
+        if (empty($configs)) {
             Logger::_()->warning("No Language File Dectected: $language");
             return null;
         }
