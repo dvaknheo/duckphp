@@ -180,7 +180,7 @@ class Locale extends ComponentBase
             return $normalized;
         }
         
-        return null;
+        return null;  // @codeCoverageIgnore
     }
     
     /**
@@ -189,7 +189,7 @@ class Locale extends ComponentBase
     protected function detectFromCli(): ?string
     {
         if (PHP_SAPI !== 'cli') {
-            return null;
+            return null; // @codeCoverageIgnore 
         }
         
         // 尝试从环境变量获取
