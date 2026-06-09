@@ -8,9 +8,10 @@
   <title>Hello DuckPhp!</title>
 </head>
 <body>
-<h1>Hello DuckPhp</h1>
+<h1>Hello DuckPhp T: <?= __l("hello")?></h1>
 Now is [<?=$var?>]
 <hr/>
+
 <div>
     欢迎使用 DuckPhp ,<?php echo $var;?>
     <a href="<?=__url('test/done')?>">查看 Demo 结果</a>

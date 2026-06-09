@@ -319,3 +319,7 @@ App 类，继承了 DuckPhp\Core\App 的功能，在默认配置里
 
     public function lang($str, $args)
 
+        'locale_lang_default' => null,
+
+        'locale_lang_final' => null,
+

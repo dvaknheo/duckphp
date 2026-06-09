@@ -34,10 +34,10 @@ class Locale extends ComponentBase
     {
         parent::init($options, $context);
         if ($this->options['locale_lang_follow_root'] && !App::IsRoot()) {
-			$this->options['locale_lang_final'] = App::Root()->options['locale_lang_final'];
-        }else{
-			$this->options['locale_lang_final'] = $this->detectLanguage();
-		}
+            $this->options['locale_lang_final'] = App::Root()->options['locale_lang_final'];
+        } else {
+            $this->options['locale_lang_final'] = $this->detectLanguage();
+        }
         App::Current()->options['locale_lang_final'] = $this->options['locale_lang_final'];
     }
     protected function loadLanguage($str)
@@ -189,7 +189,7 @@ class Locale extends ComponentBase
     protected function detectFromCli(): ?string
     {
         if (PHP_SAPI !== 'cli') {
-            return null; // @codeCoverageIgnore 
+            return null; // @codeCoverageIgnore
         }
         
         // 尝试从环境变量获取

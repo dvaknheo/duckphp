@@ -164,9 +164,6 @@
 + **'default_exception_handler' => NULL,** 
 
     默认的异常处理回调   // [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
-+ **'default_language' => true,** 
-
-       // 
 + **'dev_error_handler' => NULL,** 
 
     调试错误的回调   // [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
@@ -284,6 +281,27 @@
 + **'lang_handler' => NULL,** 
 
     语言编码回调   // [DuckPhp\Core\App](Core-App.md)
++ **'local_lang_file_path' => 'lang/',** 
+
+       // [DuckPhp\Component\Locale](Component-Locale.md)
++ **'locale_lang_cookie_name' => 'lang',** 
+
+       // [DuckPhp\Component\Locale](Component-Locale.md)
++ **'locale_lang_default' => NULL,** 
+
+       // [DuckPhp\Component\Locale](Component-Locale.md)
++ **'locale_lang_detect_mode' => array (   0 => 'url',   1 => 'cookie',   2 => 'header',   3 => 'cli',   4 => 'default', ),** 
+
+       // [DuckPhp\Component\Locale](Component-Locale.md)
++ **'locale_lang_final' => NULL,** 
+
+       // [DuckPhp\Component\Locale](Component-Locale.md)
++ **'locale_lang_follow_root' => true,** 
+
+       // [DuckPhp\Component\Locale](Component-Locale.md)
++ **'locale_lang_url_param' => 'lang',** 
+
+       // [DuckPhp\Component\Locale](Component-Locale.md)
 + **'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',** 
 
     日志文件名模板    // [DuckPhp\Core\Logger](Core-Logger.md)
@@ -463,8 +481,6 @@
         
     - 'default_exception_do_log' => true,
         发生异常时候记录日志
-    - 'default_language' => true,
-        
     - 'error_404' => NULL,
         404 错误处理的View或者回调，仅根应用有效
     - 'error_500' => NULL,
@@ -485,6 +501,10 @@
         是否调试模式
     - 'lang_handler' => NULL,
         语言编码回调
+    - 'locale_lang_default' => NULL,
+        
+    - 'locale_lang_final' => NULL,
+        
     - 'namespace' => NULL,
         命名空间
     - 'on_init' => NULL,
@@ -685,6 +705,20 @@
     - 'path_info_compact_enable' => true,
         PATH_INFO 兼容模式
 + DuckPhp\Component\Locale
+    - 'local_lang_file_path' => 'lang/',
+        
+    - 'locale_lang_cookie_name' => 'lang',
+        
+    - 'locale_lang_default' => NULL,
+        
+    - 'locale_lang_detect_mode' => array (   0 => 'url',   1 => 'cookie',   2 => 'header',   3 => 'cli',   4 => 'default', ),
+        
+    - 'locale_lang_final' => NULL,
+        
+    - 'locale_lang_follow_root' => true,
+        
+    - 'locale_lang_url_param' => 'lang',
+        
 + DuckPhp\Component\RouteHookCheckStatus
     - 'error_maintain' => NULL,
         维修页面view ，类似 error_404

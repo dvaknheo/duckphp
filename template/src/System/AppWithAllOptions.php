@@ -142,9 +142,6 @@ class AppWithAllOptions extends DuckPhp
         // 默认的异常处理回调 (DuckPhp\Core\ExceptionManager)
         // $options['default_exception_handler'] = NULL;
 
-        //  ()
-        // $options['default_language'] = true;
-
         // 调试错误的回调 (DuckPhp\Core\ExceptionManager)
         // $options['dev_error_handler'] = NULL;
 
@@ -192,6 +189,27 @@ class AppWithAllOptions extends DuckPhp
 
         // 语言编码回调 (DuckPhp\Core\App)
         // $options['lang_handler'] = NULL;
+
+        //  (DuckPhp\Component\Locale)
+        // $options['local_lang_file_path'] = 'lang/';
+
+        //  (DuckPhp\Component\Locale)
+        // $options['locale_lang_cookie_name'] = 'lang';
+
+        //  (DuckPhp\Component\Locale)
+        // $options['locale_lang_default'] = NULL;
+
+        //  (DuckPhp\Component\Locale)
+        // $options['locale_lang_detect_mode'] = array (   0 => 'url',   1 => 'cookie',   2 => 'header',   3 => 'cli',   4 => 'default', );
+
+        //  (DuckPhp\Component\Locale)
+        // $options['locale_lang_final'] = NULL;
+
+        //  (DuckPhp\Component\Locale)
+        // $options['locale_lang_follow_root'] = true;
+
+        //  (DuckPhp\Component\Locale)
+        // $options['locale_lang_url_param'] = 'lang';
 
         // 日志文件名模板  (DuckPhp\Core\Logger)
         // $options['log_file_template'] = 'log_%Y-%m-%d_%H_%i.log';
