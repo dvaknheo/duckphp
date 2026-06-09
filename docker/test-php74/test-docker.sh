@@ -4,7 +4,7 @@
 cd "$(dirname "$0")"
 
 # 安装依赖的公共逻辑
-INSTALL_CMD="cp composer.lock.docker composer.lock && ([ -f /DATA/vendor/autoload.php ] || composer install --no-interaction --prefer-dist)"
+INSTALL_CMD="cp docker/test-php74/composer.lock.docker composer.lock && ([ -f /DATA/vendor/autoload.php ] || composer install --no-interaction --prefer-dist)"
 
 # 如果没有传参数，跑 fulltest（使用 docker-compose.yml 里默认的 command）
 if [ $# -eq 0 ]; then

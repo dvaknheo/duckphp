@@ -15,7 +15,7 @@ services:
     command: >
       sh -c "
         redis-server --requirepass 123456 --daemonize yes &&
-        cp composer.lock.docker composer.lock &&
+        cp docker/test-php74/composer.lock.docker composer.lock &&
         ([ -f /DATA/vendor/autoload.php ] || composer install --no-interaction --prefer-dist) &&
         composer run-script --timeout=0 fulltest
       "
