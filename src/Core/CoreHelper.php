@@ -134,10 +134,6 @@ class CoreHelper extends ComponentBase
     }
     public function _L($str, $args = [])
     {
-        $handler = App::_()->options['lang_handler'] ?? null;
-        if ($handler) {
-            return $handler($str, $args);
-        }
         return App::_()->lang($str, $args);
     }
     public function _Hl($str, $args)
