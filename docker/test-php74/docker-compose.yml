@@ -2,10 +2,14 @@ version: "3"
 
 services:
   fulltest:
-    build: .
+    build:
+      context: ../..
+      dockerfile: docker/test-php74/Dockerfile
     working_dir: /DATA
     volumes:
       - ../../:/DATA
+      - ../../composer-test-php74.json:/DATA/composer.json
+      - ../../composer-test-php74.lock:/DATA/composer.lock
       - vendor:/DATA/vendor
       - composer-cache:/tmp/composer
     environment:
@@ -15,7 +19,6 @@ services:
     command: >
       sh -c "
         redis-server --requirepass 123456 --daemonize yes &&
-        cp docker/test-php74/composer.lock.docker composer.lock &&
         ([ -f /DATA/vendor/autoload.php ] || composer install --no-interaction --prefer-dist) &&
         composer run-script --timeout=0 fulltest
       "
