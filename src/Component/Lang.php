@@ -10,39 +10,39 @@ use DuckPhp\Core\ComponentBase;
 use DuckPhp\Core\Logger;
 use DuckPhp\Core\SuperGlobal;
 
-class Locale extends ComponentBase
+class Lang extends ComponentBase
 {
     // 配置只在 root 有效。 或者setting 里？
     // 如果配置无效，那么退回本层默认locale ，如果本层 locale 没有，那么就是空 locale.
     public $options = [
         // 最终语言，不再判断
-        'locale_lang_final' => null,
+        'lang_final' => null,
         // 默认语言
-        'locale_lang_default' => null,
+        'lang_default' => null,
         
-        'locale_lang_detect_mode' => ['url', 'cookie','header', 'cli','default'],
+        'lang_detect_mode' => ['url', 'cookie','header', 'cli','default'],
         
         //使用根 app 的语言
-        'locale_lang_follow_root' => true,
+        'lang_follow_root' => true,
         // URL 参数名
-        'locale_lang_url_param' => 'lang',
+        'lang_url_param' => 'lang',
         // Cookie 名称
-        'locale_lang_cookie_name' => 'lang',
+        'lang_cookie_name' => 'lang',
         'local_lang_file_path' => 'lang/',
     ];
     public function init(array $options, ?object $context = null)
     {
         parent::init($options, $context);
-        if ($this->options['locale_lang_follow_root'] && !App::IsRoot()) {
-            $this->options['locale_lang_final'] = App::Root()->options['locale_lang_final'];
+        if ($this->options['lang_follow_root'] && !App::IsRoot()) {
+            $this->options['lang_final'] = App::Root()->options['lang_final'];
         } else {
-            $this->options['locale_lang_final'] = $this->detectLanguage();
+            $this->options['lang_final'] = $this->detectLanguage();
         }
-        App::Current()->options['locale_lang_final'] = $this->options['locale_lang_final'];
+        App::Current()->options['lang_final'] = $this->options['lang_final'];
     }
     protected function loadLanguage($str)
     {
-        $language = $this->options['locale_lang_final'];
+        $language = $this->options['lang_final'];
         if (!isset($language)) {
             Logger::_()->warning("No Language Dectected");
             return null;
@@ -103,7 +103,7 @@ class Locale extends ComponentBase
             'default' => 'detectFromDefault',
         ];
         
-        foreach ($this->options['locale_lang_detect_mode'] as $method) {
+        foreach ($this->options['lang_detect_mode'] as $method) {
             if (isset($methods[$method])) {
                 $locale = $this->{$methods[$method]}();
                 if ($locale !== null) {
@@ -118,7 +118,7 @@ class Locale extends ComponentBase
      */
     protected function detectFromUrl(): ?string
     {
-        $param = $this->options['locale_lang_url_param'];
+        $param = $this->options['lang_url_param'];
         $_GET = defined('__SUPERGLOBAL_CONTEXT')
             ? (SuperGlobal::_()->_GET ?? [])
             : ($_GET ?? []);
@@ -131,7 +131,7 @@ class Locale extends ComponentBase
      */
     protected function detectFromCookie(): ?string
     {
-        $name = $this->options['locale_lang_cookie_name'];
+        $name = $this->options['lang_cookie_name'];
         $_COOKIE = defined('__SUPERGLOBAL_CONTEXT')
             ? (SuperGlobal::_()->_COOKIE ?? [])
             : ($_COOKIE ?? []);
@@ -209,6 +209,6 @@ class Locale extends ComponentBase
      */
     protected function detectFromDefault(): ?string
     {
-        return $this->options['locale_lang_default'];
+        return $this->options['lang_default'];
     }
 }

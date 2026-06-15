@@ -1,4 +1,4 @@
-# DuckPhp\Component\Locale
+# DuckPhp\Component\Lang
 [toc]
 
 ## 简介
@@ -16,17 +16,17 @@
 
     public function lang($str, $args)
 
-        'locale_lang_final' => null,
+        'lang_final' => null,
 
-        'locale_lang_default' => null,
+        'lang_default' => null,
 
-        'locale_lang_detect_mode' => ['url', 'cookie','header', 'cli','default'],
+        'lang_detect_mode' => ['url', 'cookie','header', 'cli','default'],
 
-        'locale_lang_follow_root' => true,
+        'lang_follow_root' => true,
 
-        'locale_lang_url_param' => 'lang',
+        'lang_url_param' => 'lang',
 
-        'locale_lang_cookie_name' => 'lang',
+        'lang_cookie_name' => 'lang',
 
         'local_lang_file_path' => 'lang/',
 

@@ -11,7 +11,7 @@ namespace DuckPhp;
 use DuckPhp\Component\Command;
 use DuckPhp\Component\DbManager;
 use DuckPhp\Component\ExtOptionsLoader;
-use DuckPhp\Component\Locale;
+use DuckPhp\Component\Lang;
 use DuckPhp\Component\RedisManager;
 use DuckPhp\Component\RouteHookCheckStatus;
 use DuckPhp\Component\RouteHookPathInfoCompat;
@@ -30,7 +30,7 @@ class DuckPhp extends App
         'ext_options_file_enable' => true,
         'ext_options_file' => 'config/DuckPhpApps.config.php',
         'ext' => [
-            Locale::class => true,
+            Lang::class => true,
             RouteHookCheckStatus::class => true,
             RouteHookRewrite::class => true,
             RouteHookRouteMap::class => true,
@@ -158,6 +158,6 @@ class DuckPhp extends App
     }
     public function lang($str, $args)
     {
-        return Locale::_()->lang($str, $args);
+        return Lang::_()->lang($str, $args);
     }
 }
