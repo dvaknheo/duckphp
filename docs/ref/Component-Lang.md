@@ -28,7 +28,7 @@
 
         'lang_cookie_name' => 'lang',
 
-        'local_lang_file_path' => 'lang/',
+        'lang_file_path' => 'lang/',
 
     public function init(array $options, ?object $context = null)
 
@@ -49,4 +49,10 @@
     protected function detectFromCli(): ?string
 
     protected function detectFromDefault(): ?string
+
+		'lang_simple_mode_only_sentences'=>[],
+
+	protected function getSentenceFromConfig($language)
+
+    public function lang($str, $args=[])
 

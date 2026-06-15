@@ -51,8 +51,8 @@ class DuckPhp extends App
         'cli_command_with_common' => true,
         'cli_command_with_fast_installer' => true,
         'allow_require_ext_app' => true,
-        'locale_lang_default' => null,
-        'locale_lang_final' => null,
+        'lang_default' => null,
+        'lang_final' => null,
         
         //'install_need_database' => true,
         //'install_need_redis' => false,
@@ -156,7 +156,7 @@ class DuckPhp extends App
     {
         return  ($this->options['local_redis'] ?? false) ? true : false;
     }
-    public function lang($str, $args)
+    public function lang($str, $args=[])
     {
         return Lang::_()->lang($str, $args);
     }

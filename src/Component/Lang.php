@@ -28,7 +28,8 @@ class Lang extends ComponentBase
         'lang_url_param' => 'lang',
         // Cookie 名称
         'lang_cookie_name' => 'lang',
-        'local_lang_file_path' => 'lang/',
+        'lang_file_path' => 'lang/',
+		'lang_simple_mode_only_sentences'=>[],
     ];
     public function init(array $options, ?object $context = null)
     {
@@ -40,25 +41,33 @@ class Lang extends ComponentBase
         }
         App::Current()->options['lang_final'] = $this->options['lang_final'];
     }
+	protected function getSentenceFromConfig($language)
+	{
+		if (!empty($this->options['lang_simple_mode_only_sentences'])) {
+			return $this->options['lang_simple_mode_only_sentences'][$language]??null;
+		}
+		$configs = Configer::_()->_Config($this->options['lang_file_path'].basename($language), null, null);
+		return $configs;
+	}
     protected function loadLanguage($str)
     {
         $language = $this->options['lang_final'];
         if (!isset($language)) {
-            Logger::_()->warning("No Language Dectected");
+            //Logger::_()->warning("No Language Dectected");
             return null;
         }
-        $configs = Configer::_()->_Config($this->options['local_lang_file_path'].basename($language), null, null);
+        $configs = $this->getSentenceFromConfig($language);
         if (empty($configs)) {
-            Logger::_()->warning("No Language File Dectected: $language");
+            Logger::_()->warning("No Language sentences Dectected: $language");
             return null;
         }
         if (!isset($configs[$str])) {
-            Logger::_()->warning("No Language Block Dectected $str");
+            Logger::_()->warning("No Language sentence Dectected $str");
             return null;
         }
         return $configs[$str];
     }
-    public function lang($str, $args)
+    public function lang($str, $args=[])
     {
         $newstr = $this->loadLanguage($str);
         return $this->format($newstr ?? $str, $args);

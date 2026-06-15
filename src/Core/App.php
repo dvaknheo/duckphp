@@ -298,7 +298,7 @@ EOT;
     {
         return $this->options['installed'] ?? false;
     }
-    public function lang($str, $args)
+    public function lang($str, $args=[])
     {
         $handler = $this->options['lang_handler'] ?? null;
         if ($handler) {

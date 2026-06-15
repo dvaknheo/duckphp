@@ -278,30 +278,33 @@
 + 'jsonrpc_wrap_auto_adjust' => true, 
 
     jsonrpc 封装调整   // [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md)
++ **'lang_cookie_name' => 'lang',** 
+
+       // [DuckPhp\Component\Lang](Component-Lang.md)
++ **'lang_default' => NULL,** 
+
+       // [DuckPhp\Component\Lang](Component-Lang.md)
++ **'lang_detect_mode' => array (   0 => 'url',   1 => 'cookie',   2 => 'header',   3 => 'cli',   4 => 'default', ),** 
+
+       // [DuckPhp\Component\Lang](Component-Lang.md)
++ **'lang_file_path' => 'lang/',** 
+
+       // [DuckPhp\Component\Lang](Component-Lang.md)
++ **'lang_final' => NULL,** 
+
+       // [DuckPhp\Component\Lang](Component-Lang.md)
++ **'lang_follow_root' => true,** 
+
+       // [DuckPhp\Component\Lang](Component-Lang.md)
 + **'lang_handler' => NULL,** 
 
     语言编码回调   // [DuckPhp\Core\App](Core-App.md)
-+ **'local_lang_file_path' => 'lang/',** 
++ **'lang_simple_mode_only_sentences' => array ( ),** 
 
-       // [DuckPhp\Component\Locale](Component-Locale.md)
-+ **'locale_lang_cookie_name' => 'lang',** 
+       // [DuckPhp\Component\Lang](Component-Lang.md)
++ **'lang_url_param' => 'lang',** 
 
-       // [DuckPhp\Component\Locale](Component-Locale.md)
-+ **'locale_lang_default' => NULL,** 
-
-       // [DuckPhp\Component\Locale](Component-Locale.md)
-+ **'locale_lang_detect_mode' => array (   0 => 'url',   1 => 'cookie',   2 => 'header',   3 => 'cli',   4 => 'default', ),** 
-
-       // [DuckPhp\Component\Locale](Component-Locale.md)
-+ **'locale_lang_final' => NULL,** 
-
-       // [DuckPhp\Component\Locale](Component-Locale.md)
-+ **'locale_lang_follow_root' => true,** 
-
-       // [DuckPhp\Component\Locale](Component-Locale.md)
-+ **'locale_lang_url_param' => 'lang',** 
-
-       // [DuckPhp\Component\Locale](Component-Locale.md)
+       // [DuckPhp\Component\Lang](Component-Lang.md)
 + **'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',** 
 
     日志文件名模板    // [DuckPhp\Core\Logger](Core-Logger.md)
@@ -489,7 +492,7 @@
         异常报告仅针对的异常
     - 'exception_reporter' => NULL,
         异常报告类
-    - 'ext' => array (   'DuckPhp\\Component\\Locale' => true,   'DuckPhp\\Component\\RouteHookCheckStatus' => true,   'DuckPhp\\Component\\RouteHookRewrite' => true,   'DuckPhp\\Component\\RouteHookRouteMap' => true,   'DuckPhp\\Component\\RouteHookResource' => true, ),
+    - 'ext' => array (   'DuckPhp\\Component\\Lang' => true,   'DuckPhp\\Component\\RouteHookCheckStatus' => true,   'DuckPhp\\Component\\RouteHookRewrite' => true,   'DuckPhp\\Component\\RouteHookRouteMap' => true,   'DuckPhp\\Component\\RouteHookResource' => true, ),
         
     - 'ext_options_file' => 'config/DuckPhpApps.config.php',
         配置文件名字
@@ -499,12 +502,12 @@
         HTML编码函数
     - 'is_debug' => false,
         是否调试模式
+    - 'lang_default' => NULL,
+        
+    - 'lang_final' => NULL,
+        
     - 'lang_handler' => NULL,
         语言编码回调
-    - 'locale_lang_default' => NULL,
-        
-    - 'locale_lang_final' => NULL,
-        
     - 'namespace' => NULL,
         命名空间
     - 'on_init' => NULL,
@@ -704,20 +707,22 @@
         无PATH_INFO兼容，替代的 class
     - 'path_info_compact_enable' => true,
         PATH_INFO 兼容模式
-+ DuckPhp\Component\Locale
-    - 'local_lang_file_path' => 'lang/',
++ DuckPhp\Component\Lang
+    - 'lang_cookie_name' => 'lang',
         
-    - 'locale_lang_cookie_name' => 'lang',
+    - 'lang_default' => NULL,
         
-    - 'locale_lang_default' => NULL,
+    - 'lang_detect_mode' => array (   0 => 'url',   1 => 'cookie',   2 => 'header',   3 => 'cli',   4 => 'default', ),
         
-    - 'locale_lang_detect_mode' => array (   0 => 'url',   1 => 'cookie',   2 => 'header',   3 => 'cli',   4 => 'default', ),
+    - 'lang_file_path' => 'lang/',
         
-    - 'locale_lang_final' => NULL,
+    - 'lang_final' => NULL,
         
-    - 'locale_lang_follow_root' => true,
+    - 'lang_follow_root' => true,
         
-    - 'locale_lang_url_param' => 'lang',
+    - 'lang_simple_mode_only_sentences' => array ( ),
+        
+    - 'lang_url_param' => 'lang',
         
 + DuckPhp\Component\RouteHookCheckStatus
     - 'error_maintain' => NULL,

@@ -62,7 +62,20 @@ class LangTest extends \PHPUnit\Framework\TestCase
 		MyLang::_(new MyLang())->init([
 			//'lang_detect_mode'=>['NoExists'],
 		]);
+	
+		DuckPhp::_()->init([
+			'path'=>$path,
+            'is_debug'=>true,
+			'lang_default'=>'zh_CN',
+			'lang_simple_mode_only_sentences'=>[
+				'zh_CN'=>[
+					'AAA'=>'zh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CNzh_CN',
+				],
+			],
+        ]);
 		
+		
+		echo __l("AAA");
         \LibCoverage\LibCoverage::End();
     }
 }
