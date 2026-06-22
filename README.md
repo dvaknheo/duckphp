@@ -5,12 +5,17 @@
 1.3 版本，最大的变化是增加了相位概念，使得各应用之间相互插入也无影响
 
 作者QQ: 85811616
-
 官方QQ群: 714610448
 
 Gitee 仓库地址：https://gitee.com/dvaknheo/duckphp
-
 Github 仓库地址：https://github.com/dvaknheo/duckphp
+
+## 二、DuckPhp 是什么
+
+DuckPhp 是一个零依赖、全组件可替换、部署与协作都极其灵活的库模式的 PHP 框架。
+
+DuckPhp is a library-style PHP framework that offers zero dependencies, fully replaceable components, and exceptional flexibility in deployment and teamwork.
+
 
 ##  一、教程
 [**快速入门**](docs/tutorial-quickstart.md) ,快速入门页面。
