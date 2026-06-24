@@ -22,7 +22,7 @@ use DuckPhp\Core\View;
 class App extends ComponentBase
 {
     use KernelTrait;
-    const VERSION = '1.3.3';
+    const VERSION = '1.3.4';
 
     const HOOK_PREPEND_OUTTER = 'prepend-outter';
     const HOOK_PREPEND_INNER = 'prepend-inner';
