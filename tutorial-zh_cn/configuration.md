@@ -1,27 +1,17 @@
-# 应用配置
+# 应用选项和应用设置
 
-## 配置传递方式
+## 应用设置
+当你用骨架建立工程的时候，你可以看到 `config/DuckPhpSettings.config.php`
+这文件的配置用于保存敏感信息，将运行时配置（数据库、Redis 等）放在此文件中
 
-DuckPHP 的配置以 PHP 数组形式传递，通过 `App::RunQuickly($options)` 或 `$app->init($options)` 传入。
-
-```php
-\MyProject\System\App::RunQuickly([
-    'is_debug' => true,
-    'path' => __DIR__ . '/../',
-    // 更多选项...
-]);
-```
-
-## 配置文件（推荐方式）
-
-### config/DuckPhpSettings.config.php
-
-将运行时配置（数据库、Redis 等）放在此文件中，框架启动时自动加载：
-
+术语 `应用设置`(`app settings`) 指的就是这些选项。这些选项是全局的。
+一个典型的设置如下：
 ```php
 <?php
 return [
-    'duckphp_is_debug' => true,
+    'duckphp_is_debug' => true,         // 调试模式
+    //'duckphp_platform' => 'default',  // 平台标识
+    //'duckphp_is_maintain' => false,   // 维护模式
     'database_list' => [
         [
             'dsn' => 'mysql:host=127.0.0.1;dbname=test;charset=utf8mb4;',
@@ -31,32 +21,48 @@ return [
     ],
 ];
 ```
+- 调试模式，本地开发的时候开启调试模式。作用很大
+- 平台模式，用于多机部署的时候看是在哪台机器上。
+- 维护模式，开启的时候，会进入 `error_maintain` 应用选项配置的页面。
 
-在 `App` 类中启用配置加载：
+## 应用选项
 
+什么是`应用选项`？ DuckPhp应用的入口类一般如下：
 ```php
 class App extends DuckPhp
 {
     public $options = [
-        'setting_file' => 'config/DuckPhpSettings.config.php',
-        'setting_file_enable' => true,
+        'path' => __DIR__ . '/../../',
+        //'path_info_compact_enable' => false,
+        
+        'error_404' => '_sys/error_404',
+        'error_500' => '_sys/error_500',
+		
+        'exception_for_project'  => ProjectException::class,
+        'exception_for_business'  => BusinessException::class,
+        'exception_for_controller'  => ControllerException::class,
+        'exception_reporter' =>  ExceptionReporter::class,
+        //...
     ];
 }
 ```
+这个 `options` 属性就是`应用选项`(`app options`)
+这些应用选项都有一堆默认值，你把可以把他们 dump 出来。
+通过修改这些应用选项 ，你可以得到不一样的应用效果
 
-### .env 文件支持
+应用设置的默认位置 `config/DuckPhpSettings.config.php` 这个文件是否能移动位置呢？可以。 他们在应用选项的默认值是这样：
+```
+    'setting_file' => 'config/DuckPhpSettings.config.php',
+    'setting_file_enable' => true,
+```
+比如应用选项  `'use_env_file' => true` 后，框架会自动加载项目根目录的 `.env` 作为设置 (settings)。
 
-设置 `'use_env_file' => true` 后，框架会自动加载项目根目录的 `.env` 文件。
+但这不是应用选项的全部。 你可以在这里添加修改组件的选项
+`DuckPhp\Core` `DuckPhp\Component`
 
-## 配置层级（由低到高覆盖）
 
-1. **代码默认值** — 每个类中 `$options` 属性定义的默认值
-2. **继承合并** — `Core\App` → `DuckPhp` → 你的 `App` 类，逐层合并
-3. **配置文件** — `DuckPhpSettings.config.php` 返回的数组
-4. **`.env` 文件** — 若启用
-5. **运行时传入** — `RunQuickly($options)` 或 `init($options)` 的参数
 
-## 核心选项速查
+## 部分应用选项速查
 
 ### 路径相关
 
@@ -67,8 +73,6 @@ class App extends DuckPhp
 | `path_view` | `'view'` | 视图模板目录（相对项目根） |
 | `path_config` | `'config'` | 配置目录 |
 | `path_runtime` | `'runtime'` | 运行时目录（日志等） |
-| `path_resource` | `'res'` | 静态资源目录 |
-| `path_document` | `'public'` | Web 文档根目录 |
 
 ### 调试与错误
 
@@ -98,31 +102,3 @@ class App extends DuckPhp
 | `route_map` | `[]` | 路由映射 |
 | `route_map_important` | `[]` | 优先路由映射 |
 | `skip_404` | `false` | 跳过 404 处理 |
-
-### 数据库
-
-| 选项 | 默认值 | 说明 |
-|---|---|---|
-| `database_list` | `null` | 数据库配置列表 `[{dsn,username,password}]` |
-| `database_driver` | `''` | 数据库驱动 |
-| `database_list_reload_by_setting` | `true` | 是否从配置文件重载数据库配置 |
-| `database_log_sql_query` | `false` | 是否记录 SQL 日志 |
-
-### 扩展
-
-| 选项 | 默认值 | 说明 |
-|---|---|---|
-| `ext` | `[]` | 启用的扩展列表 `[类名 => true]` |
-| `app` | `[]` | 子应用列表 `[类名 => 选项数组]` |
-
-## 全局设置项
-
-在配置文件中定义的设置项，通过 `App::Setting($key)` 读取。框架使用的设置键：
-
-| 键 | 说明 |
-|---|---|
-| `duckphp_is_debug` | 调试模式 |
-| `duckphp_is_maintain` | 维护模式 |
-| `duckphp_platform` | 平台标识 |
-| `database_list` | 数据库配置 |
-| `redis_list` | Redis 配置 |

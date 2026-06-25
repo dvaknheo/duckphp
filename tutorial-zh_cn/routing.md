@@ -72,7 +72,22 @@ POST /user/login
 
 这个特性通过 `controller_prefix_post = 'do_'` 选项控制。
 
-## 路由钩子系统
+## URL 生成
+
+在控制器或视图中生成 URL：
+
+```php
+__url('')            // 当前控制器基 URL
+__url('user/login')  // /user/login
+__url('?page=2')     // 当前路径 + 查询参数
+__url('#section')    // 当前路径 + 锚点
+__url('/absolute/path') // 绝对路径
+
+// 资源 URL（带 controller_resource_prefix 时）
+__res('css/style.css')  // /res/css/style.css 或 CDN 地址
+```
+
+## 高级话题：路由钩子系统
 
 路由过程通过钩子（Hook）串联。钩子执行顺序：
 
@@ -153,20 +168,6 @@ $options = [
 | `@^{regex}$` | 正则匹配（以 `@` 开头） | `@^/api/(\w+)$` |
 | `~Controller\Xxx` | `~` 替换为控制器的命名空间前缀 | `~Controller\MainController` |
 
-## URL 生成
-
-在控制器或视图中生成 URL：
-
-```php
-__url('')            // 当前控制器基 URL
-__url('user/login')  // /user/login
-__url('?page=2')     // 当前路径 + 查询参数
-__url('#section')    // 当前路径 + 锚点
-__url('/absolute/path') // 绝对路径
-
-// 资源 URL（带 controller_resource_prefix 时）
-__res('css/style.css')  // /res/css/style.css 或 CDN 地址
-```
 
 ## 路由参数
 

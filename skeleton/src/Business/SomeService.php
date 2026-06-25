@@ -4,12 +4,12 @@
  */
 namespace YourProjectName\Business;
 
-use DuckPhp\Foundation\SimpleSingletonTrait;
-
-class SomeService
+class SomeService extends Base
 {
-    use SimpleSingletonTrait;
-
+	public function __construct()
+	{
+		//override parent;
+	}
     public function foo()
     {
         //

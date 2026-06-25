@@ -53,10 +53,14 @@ class DuckPhp extends App
         'allow_require_ext_app' => true,
         'lang_default' => null,
         'lang_final' => null,
-        
+
+		//'error_maintain' => null,
+        //'error_need_install' => null,
+
         //'install_need_database' => true,
         //'install_need_redis' => false,
-        
+        //
+		
         //*
         // 'path_config' => 'config',
         // 'database' => null,

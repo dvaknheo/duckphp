@@ -5,11 +5,12 @@
  */
 namespace YourProjectName\Controller;
 
-use DuckPhp\Foundation\SimpleSingletonTrait;
-
-class SomeAction
+class SomeAction extends Base
 {
-    use SimpleSingletonTrait;
+	public function __construct()
+	{
+		//override parent;
+	}
     
     public function foo()
     {

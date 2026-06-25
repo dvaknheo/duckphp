@@ -74,7 +74,7 @@ EOT;
         }
         $this->options = array_merge($this->options, $options);
         
-        $source = __DIR__ .'/../../template';
+        $source = __DIR__ .'/../../skeleton';
         $dest = $this->options['path'];
         $this->dumpDir($source, $dest, $this->options['force']);
     }
@@ -197,7 +197,7 @@ EOT;
         //}
         $str_header = "\$namespace = '$namespace';";
         $data = preg_replace('/^.*?@DUCKPHP_NAMESPACE.*?$/m', $str_header, $data);
-        $data = str_replace("ProjectNameTemplate\\", "{$namespace}\\", $data);
+        $data = str_replace("YourProjectName\\", "{$namespace}\\", $data);
         
         return $data;
     }
