@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 /**
- * Don't change it, guys.
+ * Don't change me.
+ * or you can use DuckPhp\Foundation\Business\Helper directly.
  */
 namespace YourProjectName\Business;
 

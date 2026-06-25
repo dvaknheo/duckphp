@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 /**
- * DuckPhp
+ * Don't change me.
  */
 namespace YourProjectName\System;
 

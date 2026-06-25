@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 /**
  * All session in here
+ * Do not call other class.
  */
 namespace YourProjectName\Controller;
 

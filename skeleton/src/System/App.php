@@ -13,7 +13,7 @@ class App extends DuckPhp
     //@override
     public $options = [
         'path' => __DIR__ . '/../../',
-        'path_info_compact_enable' => true,
+        //'path_info_compact_enable' => false,
         
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
@@ -22,7 +22,6 @@ class App extends DuckPhp
         'exception_for_business'  => BusinessException::class,
         'exception_for_controller'  => ControllerException::class,
         'exception_reporter' =>  ExceptionReporter::class,
-        'app' => [],
         //...
     ];
     //@override

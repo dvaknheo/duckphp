@@ -1,15 +1,15 @@
 <?php declare(strict_types=1);
 /**
- * DuckPhp
+ * Demo for Service. you should delete me.
  */
-namespace YourProjectName\Controller;
+namespace YourProjectName\Business;
 
 use DuckPhp\Foundation\SimpleSingletonTrait;
 
-class CommonAction extends Base
+class SomeService
 {
     use SimpleSingletonTrait;
-    
+
     public function foo()
     {
         //
