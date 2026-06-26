@@ -108,6 +108,12 @@ trait KernelTrait
     protected function initOptions(array $options)
     {
         $this->options = array_replace_recursive($this->options, $options);
+		//if (isset($this->options['path_ext_app_options'])) {
+			// $file = get_real_file($this->options['path_ext_app_options']);
+			// $ext_app_options = include file
+			// $this->options = array_replace_recursive($this->options, $ext_app_options);
+		//}
+		
     }
     protected function getDefaultProjectNameSpace($class)
     {

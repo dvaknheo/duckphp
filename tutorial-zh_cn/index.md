@@ -5,6 +5,7 @@
 ## 目录
 
 - [安装与快速开始](install.md)
+- [项目结构与编码规则](project-structure.md)
 - [应用配置](configuration.md)
 - [路由系统](routing.md)
 - [四层架构（Controller/Business/Model/View）](layers.md)

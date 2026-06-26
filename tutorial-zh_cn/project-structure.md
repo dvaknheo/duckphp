@@ -1,0 +1,110 @@
+# 项目结构与编码规则
+
+## 标准项目结构
+
+使用 Composer 脚本快速创建项目（安装后可用）：
+
+```bash
+php vendor/bin/duckphp new
+```
+
+将会使用 `skeleton/` 目录下的脚手架模板。项目根目录结构：
+
+```
+project/
+├── composer.json
+├── config/
+│   └── DuckPhpSettings.config.php    # 全局设置
+├── public/
+│   └── index.php                     # Web 入口
+├── src/
+│   ├── Controller/                   # 控制器层
+│   │   ├── Base.php
+│   │   ├── ExceptionReporter.php     # 异常报告器
+│   │   ├── Helper.php
+│   │   ├── MainController.php
+│   │   ├── Session.php               # Session 管理
+│   │   ├── SomeAction.php            # Action 示例
+│   │   └── testController.php        # 测试控制器
+│   ├── Business/                     # 业务层
+│   │   ├── Base.php
+│   │   ├── DemoBusiness.php          # Business 示例
+│   │   ├── Helper.php
+│   │   └── SomeService.php           # Service 示例
+│   ├── Model/                        # 模型层
+│   │   ├── Base.php
+│   │   ├── DemoModel.php             # Model 示例
+│   │   └── Helper.php
+│   └── System/                       # 系统层
+│       ├── App.php                   # 应用核心配置
+│       ├── BusinessException.php     # Business 异常
+│       ├── ControllerException.php   # Controller 异常
+│       └── ProjectException.php      # 项目异常基类
+├── view/                             # 视图目录
+│   └── _sys/                         # 系统视图
+│       ├── error_404.php
+│       └── error_500.php
+├── runtime/                          # 运行时目录（日志等）
+├── cli.php                           # CLI 入口
+└── vendor/
+```
+
+### 各层职责
+
+| 层 | 命名空间前缀 | 职责 |
+|---|---|---|
+| `Controller` | `{项目命名空间}\Controller` | HTTP 请求入口，处理输入/输出 |
+| `Business` | `{项目命名空间}\Business` | 业务逻辑编排，调用 Model |
+| `Model` | `{项目命名空间}\Model` | 数据访问层，表操作 |
+| `System` | `{项目命名空间}\System` | 应用配置与生命周期 |
+| `view/` | - | PHP 模板文件 |
+
+## 编码规则
+
+### 层级调用规范
+
+```
+Controller 层 (可处理请求上下文)
+  ├── 可调用: Action, Business, Helper, Session
+  └── 禁止直接调用 Model
+
+Business 层 (纯无状态)
+  ├── 可调用: Model, Service, Helper
+  └── 禁止: 读写 Session, 访问 $_GET/$_POST/$_SERVER
+
+Model 层 (纯无状态)
+  ├── 可调用: 仅数据访问相关
+  └── 禁止: 业务逻辑, 抛异常
+
+System 层
+  └── 处理框架相关调用, 异常定义, 应用配置
+```
+
+### 核心原则
+
+1. **Controller/Business/Model 层** 除基础代码外, 请勿直接调用 `DuckPhp` 命名空间下的类。
+2. 框架相关调用集中在 **System 层** 处理。
+3. Business 层保持**纯无状态**, 可被 CLI、测试、API 等任意环境复用。
+
+### 命名规范
+
+| 类型 | 命名规则 | 示例 |
+|------|---------|------|
+| 控制器类 | `{Name}Controller` | `UserController` |
+| 控制器方法 | `action_{method}` | `action_index()` |
+| Business 类 | `{Name}Business` | `UserBusiness` |
+| Service 类 | `{Name}Service` | `CommonService` |
+| Model 类 | `{Name}Model` | `UserModel` |
+| Action 类 | `{Name}Action` | `UserAction` |
+| Session 类 | `Session` | `Session` |
+| 异常类 | `{Name}Exception` | `ProjectException` |
+
+### 文件组织
+
+```
+src/
+├── Controller/          # HTTP 请求入口
+├── Business/            # 业务逻辑
+├── Model/               # 数据访问
+└── System/              # 应用配置与异常
+```
