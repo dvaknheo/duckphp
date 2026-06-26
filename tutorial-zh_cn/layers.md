@@ -23,8 +23,7 @@ View 层                         ▼
   └── *.php                模板渲染
 ```
 
-编码规则： `Controller`，`Business`，`Model`  除去现有基本代码 请勿调用 `DuckPhp` 命名空间的类。
-集中在 `System` 这一层处理
+> **编码规则**：`Controller`、`Business`、`Model` 层除基础代码外，请勿直接调用 `DuckPhp` 命名空间下的类。框架相关调用集中在 `System` 层处理。
 
 ## 控制器（Controller）
 
@@ -415,6 +414,8 @@ Model 按**数据表**组织。它的职责是：
 ```php
 <?php
 namespace MyProject\Model;
+
+use DuckPhp\Foundation\Model\Base;
 
 class DemoModel extends Base
 {

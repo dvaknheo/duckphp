@@ -269,13 +269,13 @@ EventManager::RemoveEvent('user_registered', $callback);
 框架自身在某些生命周期点触发事件：
 
 ```php
-App::FireEvent(MyApp, 'onPrepare');      // 对应 onPrepare()
-App::FireEvent(MyApp, 'onInit');          // 对应 onInit()
-App::FireEvent(MyApp, 'onInited');       // 对应 onInited()
-App::FireEvent(MyApp, 'onBeforeRun');    // 对应 onBeforeRun()
-App::FireEvent(MyApp, 'onAfterRun');     // 对应 onAfterRun()
-App::FireEvent(MyApp, 'onBeforeOutput'); // 输出前
-App::FireEvent(MyApp, 'On404');          // 404 时
+App::FireEvent('onPrepare');      // 对应 onPrepare()
+App::FireEvent('onInit');          // 对应 onInit()
+App::FireEvent('onInited');       // 对应 onInited()
+App::FireEvent('onBeforeRun');    // 对应 onBeforeRun()
+App::FireEvent('onAfterRun');     // 对应 onAfterRun()
+App::FireEvent('onBeforeOutput'); // 输出前
+App::FireEvent('On404');          // 404 时
 ```
 
 ## 异常处理

@@ -53,7 +53,7 @@ public $options = [
 
 ### 访问非欢迎控制器的默认方法
 
-默认欢迎类是 `Main`。如果直接写 `__url('user')`，会被解析为 `MainController::action_user()`，而不是 `UserController::action_index()`。访问子控制器默认页应写完整路径：
+默认欢迎类是 `Main`。
 
 ```php
 __url('user/index');   // UserController::action_index()
@@ -86,7 +86,7 @@ __url('/absolute/path') // 绝对路径
 // 资源 URL（带 controller_resource_prefix 时）
 __res('css/style.css')  // /res/css/style.css 或 CDN 地址
 ```
-
+如果直接写 `__url('user')`，会被解析为 `MainController::action_user()`，而不是 `UserController::action_index()`。访问子控制器默认页应写完整路径：
 ## 高级话题：路由钩子系统
 
 路由过程通过钩子（Hook）串联。钩子执行顺序：
@@ -154,7 +154,7 @@ $options = [
         '/page/*' => function ($params) {
             // * 匹配剩余路径，$params 为路径段数组
         },
-        '@^/api/(\w+)$' => '~Controller\ApiController@action_$1',  // @ 开头表示正则编译
+        '@^/api/(\w+)$' => '~Controller\ApiController@action_$1',  // @ 开头表示正则编译 ~ 替换为控制器命名空间前缀
     ],
 ];
 ```

@@ -12,9 +12,9 @@
 composer require dvaknheo/duckphp
 ```
 
-## 最小运行示例
+## 最小运行示例（Composer 安装后）
 
-DuckPHP 可以不需要任何第三方 Composer 包即可运行。以下是一个最简的入口文件：
+如果你已通过 Composer 安装，以下是一个最简的入口文件：
 
 ```php
 <?php
@@ -52,7 +52,7 @@ class MainController
 
 ```bash
 php -S localhost:8080 -t public
-php bin/duckphp run    # 或使用框架命令行
+php vendor/bin/duckphp run    # 或使用框架命令行
 ```
 
 访问 `http://localhost:8080/`，看到 "Hello DuckPHP!"。
@@ -64,8 +64,7 @@ php bin/duckphp run    # 或使用框架命令行
 ```bash
 php vendor/bin/duckphp new
 ```
-
-推荐使用 `template/` 目录下的脚手架模板。项目根目录结构：
+将会 使用 `skeleton/` 目录下的脚手架模板。项目根目录结构：
 
 ```
 project/

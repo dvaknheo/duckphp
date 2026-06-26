@@ -21,9 +21,9 @@ return [
     ],
 ];
 ```
-- 调试模式，本地开发的时候开启调试模式。作用很大
-- 平台模式，用于多机部署的时候看是在哪台机器上。
-- 维护模式，开启的时候，会进入 `error_maintain` 应用选项配置的页面。
+> - 调试模式，本地开发的时候开启调试模式。作用很大
+> - 平台模式，用于多机部署的时候看是在哪台机器上。
+> - 维护模式，开启的时候，会进入 `error_maintain` 应用选项配置的页面。
 
 ## 应用选项
 
@@ -82,8 +82,8 @@ class App extends DuckPhp
 | `error_404` | `null` | 404 错误视图，`'_sys/error_404'` 等 |
 | `error_500` | `null` | 500 错误视图 |
 | `exception_for_project` | `\Exception::class` | 项目异常基类 |
-| `exception_for_business` | 继承自 `exception_for_project` | Business 层异常类 |
-| `exception_for_controller` | 继承自 `exception_for_project` | Controller 层异常类 |
+| `exception_for_business` | `null`（继承自 `exception_for_project`） | Business 层异常类 |
+| `exception_for_controller` | `null`（继承自 `exception_for_project`） | Controller 层异常类 |
 | `exception_reporter` | `null` | 异常报告器类名 |
 
 ### 路由相关

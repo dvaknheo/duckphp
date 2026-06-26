@@ -136,17 +136,41 @@ $options = [
 
 ### MiniRoute — 迷你路由
 
-简化的路由模式，适合小项目：
+简化的路由模式，适合小项目。与默认路由相比，去掉了控制器后缀和方法前缀等约定：
 
 ```php
-// TODO: 查看具体实现
+$options = [
+    'ext' => [
+        \DuckPhp\Ext\MiniRoute::class => true,
+    ],
+];
 ```
+
+MiniRoute 的默认选项：
+- `controller_class_postfix` = `''`（无后缀）
+- `controller_method_prefix` = `''`（无前缀）
+- 其他选项与主路由一致
+
+启用后，URL `/user/list` 将直接映射到 `User::list()`，而非 `UserController::action_list()`。
 
 ### JsonRpcExt — JSON-RPC 支持
 
+提供 JSON-RPC 服务端和客户端支持：
+
 ```php
-// TODO: 查看具体实现
+$options = [
+    'ext' => [
+        \DuckPhp\Ext\JsonRpcExt::class => true,
+    ],
+    'jsonrpc_namespace' => 'JsonRpc',           // 服务命名空间
+    'jsonrpc_backend' => 'https://127.0.0.1',     // 后端地址
+    'jsonrpc_is_debug' => false,                // 调试模式
+    'jsonrpc_enable_autoload' => true,            // 自动加载服务
+    'jsonrpc_timeout' => 5,                       // 超时时间
+];
 ```
+
+启用后，框架会自动处理 JSON-RPC 请求，将指定命名空间下的类方法暴露为 RPC 服务。
 
 ### StrictCheck — 严格检查
 

@@ -77,13 +77,17 @@ Helper::DbForRead()->fetchAll(...);
 Helper::DbForWrite()->execute(...);
 ```
 
-### 直接在 Business 中使用
+### 在 Business 中使用
+
+Business 层应通过 `Foundation\Business\Helper` 获取数据库连接，保持层级规范：
 
 ```php
-use DuckPhp\Component\DbManager;
+use DuckPhp\Foundation\Business\Helper;
 
-$rows = DbManager::_()->_DbForRead()->fetchAll("SELECT * FROM users");
+$rows = Helper::DbForRead()->fetchAll("SELECT * FROM users");
 ```
+
+> **注意**：Business 层不应直接调用 `DuckPhp\Component\DbManager`（`DuckPhp` 命名空间下的类），应通过 `Foundation\Business\Helper` 间接使用。
 
 ## Db 类 API
 
