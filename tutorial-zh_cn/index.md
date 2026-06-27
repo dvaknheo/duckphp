@@ -10,6 +10,7 @@
 - [路由系统](routing.md)
 - [四层架构（Controller/Business/Model/View）](layers.md)
 - [数据库](database.md)
+- [异常处理](exception.md)
 - [生命周期与事件](lifecycle.md)
 - [组件与扩展](components.md)
 - [命令行工具](cli.md)
