@@ -15,3 +15,4 @@
 - [组件与扩展](components.md)
 - [命令行工具](cli.md)
 - [附录：全局函数参考](appendix-global-functions.md)
+- [附录：应用选项参考](appendix-options.md)
