@@ -91,6 +91,7 @@ class DuckPhp extends App
     ];
     protected function prepareComponents()
     {
+        parent::prepareComponents();
         if ($this->options['ext_options_file_enable']) {
             ExtOptionsLoader::_()->loadExtOptions(static::class);
         }
