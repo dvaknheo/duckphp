@@ -221,26 +221,3 @@ $data = BlogService::_()->getData();
 // 切回主应用
 App::Phase(App::Root()->getOverridingClass());
 ```
-
-## 全局函数
-
-框架定义了以下全局辅助函数（在 `src/Core/Functions.php` 中）：
-
-| 函数 | 说明 |
-|---|---|
-| `__h($str)` | HTML 转义 |
-| `__l($str, $args)` | 国际化 |
-| `__hl($str, $args)` | 国际化 + HTML 转义 |
-| `__url($url)` | 生成 URL |
-| `__res($url)` | 生成资源 URL |
-| `__domain($use_scheme)` | 获取当前域名 |
-| `__json($data)` | JSON 编码 |
-| `__display($view, $data)` | 渲染视图片段 |
-| `__var_dump(...)` | 调试输出（仅调试模式） |
-| `__var_log($var)` | 调试日志 |
-| `__trace_dump()` | 打印调用栈 |
-| `__debug_log($msg)` | 调试日志 |
-| `__logger()` | 获取日志实例 |
-| `__is_debug()` | 是否调试模式 |
-| `__is_real_debug()` | 是否真实调试模式 |
-| `__platform()` | 获取平台标识 |

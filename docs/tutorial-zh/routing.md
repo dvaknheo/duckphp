@@ -2,6 +2,8 @@
 
 DuckPHP 的路由由 `src/Core/Route.php` 实现，遵循**约定优于配置**的设计。
 
+`DuckPhp` 支持很多种 路由方式，默认最常见最基本的就是文件型路由方式了。
+
 ## 默认路由规则
 
 URL 路径格式：
@@ -187,3 +189,18 @@ class UserController
     }
 }
 ```
+## 无 `PATH_INFO` 的路由
+
+有时候，你只是做个局部项目，不打算修改 web 服务器配置，你可以使用无 PATH_INFO 的路由。
+
+在选项里取消注释的代码加载以下代码
+
+```php
+$options['path_info_compact_action_key'] = "_r";
+$options['path_info_compact_class_key'] = "";
+
+## 相关类参考
+
+- [DuckPhp\\Core\\Route](ref/Core-Route.md)
+- [DuckPhp\\Component\\RouteHookRouteMap](ref/Component-RouteHookRouteMap.md)
+- [DuckPhp\\Component\\RouteHookPathInfoCompat](ref/Component-RouteHookPathInfoCompat.md)

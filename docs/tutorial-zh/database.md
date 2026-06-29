@@ -50,25 +50,7 @@ SQLite 相对路径根目录为 `runtime/`。
 
 ## 用法
 
-### 在 Controller 中使用
-
-```php
-use DuckPhp\Foundation\Controller\Helper;
-
-// 获取读连接
-$rows = Helper::DbForRead()->fetchAll("SELECT * FROM users WHERE status=?", 1);
-
-// 获取写连接
-Helper::DbForWrite()->execute("UPDATE users SET name=? WHERE id=?", 'new_name', 1);
-
-// 指定数据库 tag
-$db = Helper::Db(0);  // 等同于 DbForWrite
-$db = Helper::Db(1);  // 等同于 DbForRead
-```
-
 ### 在 Model 中使用
-
-继承 `Foundation\Model\Base` 后自动获得 `DbForRead`/`DbForWrite`：
 
 ```php
 use DuckPhp\Foundation\Model\Helper;
@@ -76,18 +58,6 @@ use DuckPhp\Foundation\Model\Helper;
 Helper::DbForRead()->fetchAll(...);
 Helper::DbForWrite()->execute(...);
 ```
-
-### 在 Business 中使用
-
-Business 层应通过 `Foundation\Business\Helper` 获取数据库连接，保持层级规范：
-
-```php
-use DuckPhp\Foundation\Business\Helper;
-
-$rows = Helper::DbForRead()->fetchAll("SELECT * FROM users");
-```
-
-> **注意**：Business 层不应直接调用 `DuckPhp\Component\DbManager`（`DuckPhp` 命名空间下的类），应通过 `Foundation\Business\Helper` 间接使用。
 
 ## Db 类 API
 
