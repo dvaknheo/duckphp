@@ -16,3 +16,4 @@
 - [命令行工具](cli.md)
 - [附录：全局函数参考](appendix-global-functions.md)
 - [附录：应用选项参考](appendix-options.md)
+- [高级主题：相位与子应用](advanced-phase.md)
