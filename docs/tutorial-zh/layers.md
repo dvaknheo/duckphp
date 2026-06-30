@@ -364,32 +364,7 @@ class OrderBusiness
 }
 ```
 
-#### Action 与 Service 的对应关系
-
-```
-Controller 层               Business 层
-─────────────────────────────────────────────
-MainController               UserBusiness
-  (路由入口)                   (业务逻辑)
-       │                           │
-       ▼                           ▼
-UserAction                     CommonService
-  (Controller 通用功能)          (Business 通用功能)
-  → 调 Business + Session        → 调 Model + Business
-  → ❌ 不调 Model                → ❌ 不碰 Session
-```
-
 ## 模型层（Model）
-
-Model 层负责数据访问。
-
-Model 按**数据表**组织。它的职责是：
-
-- 封装与当前表相关的所有数据库操作。
-- 提供参数化查询，防止 SQL 注入。
-- 返回原始数据（数组），不做业务判断。
-
-**Model 里不写业务规则、不抛异常。**
 
 ### 继承 Foundation\Model\Base（推荐）
 

@@ -92,8 +92,8 @@ project/
 1. 业务层请勿直接调用 `DuckPhp` 命名空间下的类。
 2. 业务层保持**纯无状态**，可被 CLI、测试、API 等任意环境复用。
 3. 业务类之间共享的操作可封装成 **Service 类**。
-4. 业务类和服务类应继承 `Base` 类。
-5. 业务类和服务类调用 **Model 类**。
+4. 业务类和 Service 类应继承 `Base` 类。
+5. 业务类和 Service 类调用 **Model 类**。
 
 #### 模型层（Model）
 
@@ -111,6 +111,6 @@ project/
 ### 辅助规范
 
 1. 控制器类和动作类使用 `Helper::ControllerThrowOn()` 抛出异常。
-2. 业务层和服务类使用 `Helper::BusinessThrowOn()` 抛出异常。
+2. 业务层和 Service 类使用 `Helper::BusinessThrowOn()` 抛出异常。
 3. 各层级的 `Helper` 类一般情况下不需要增加方法。
 4. 工程规范中，Model 层的 `Helper` 类可以并入 `Base` 类。

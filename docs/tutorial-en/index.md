@@ -6,6 +6,7 @@
 
 - [Installation and Quick Start](install.md)
 - [Project Structure and Coding Rules](project-structure.md)
+- [Helper Classes](helper.md)
 - [Application Configuration](configuration.md)
 - [Routing System](routing.md)
 - [Four-Layer Architecture (Controller/Business/Model/View)](layers.md)

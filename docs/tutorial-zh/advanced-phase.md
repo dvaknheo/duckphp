@@ -45,7 +45,7 @@ $data = AdminService::_()->getData();
 // 切回主应用相位
 App::Phase(App::Root()->getOverridingClass());
 ```
-
+> php cli.php require DuckUser\System\DuckUserApp
 ### 相位隔离的应用场景
 
 1. **多租户系统**：每个租户一个相位，数据完全隔离

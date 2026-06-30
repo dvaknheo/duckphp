@@ -27,7 +27,8 @@ return [
 
 ## 应用选项
 
-什么是`应用选项`？ DuckPhp应用的入口类一般如下：
+什么是 `应用选项`？ DuckPhp应用的入口类一般如下：
+
 ```php
 class App extends DuckPhp
 {
@@ -50,13 +51,12 @@ class App extends DuckPhp
 这些应用选项都有一堆默认值，你可以把他们 dump 出来
 通过修改这些应用选项 ，你可以得到不一样的应用效果
 
-应用设置的默认位置 `config/DuckPhpSettings.config.php` 这个文件是否能移动位置呢？可以。 他们在应用选项的默认值是这样：
+前一节说的 应用设置 的默认位置 `config/DuckPhpSettings.config.php` 这个文件是否能移动位置呢？可以。 他们在应用选项的默认值是这样：
 ```
     'setting_file' => 'config/DuckPhpSettings.config.php',
     'setting_file_enable' => true,
 ```
 比如应用选项  `'use_env_file' => true` 后，框架会自动加载项目根目录的 `.env` 作为设置 (settings)。
-
 但这不是应用选项的全部。框架默认加载的组件也带有自己的选项，你可以在 `App::$options` 中覆盖它们。
 
 ### 默认加载的组件
