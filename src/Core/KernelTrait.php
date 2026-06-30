@@ -114,6 +114,7 @@ trait KernelTrait
     }
     protected function initOptions(array $options)
     {
+        $this->options = array_replace_recursive($this->options, $options);
         if (!$this->options['options_file_enable']) {
             return;
         }
