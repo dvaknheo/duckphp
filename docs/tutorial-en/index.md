@@ -15,6 +15,7 @@
 - [Lifecycle and Events](lifecycle.md)
 - [Components and Extensions](components.md)
 - [Command Line Tools](cli.md)
+- [Deployment](deployment.md)
 - [Appendix: Global Functions Reference](appendix-global-functions.md)
 - [Appendix: Application Options Reference](appendix-options.md)
 - [Advanced Topics: Phase and Sub-Applications](advanced-phase.md)
