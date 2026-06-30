@@ -29,7 +29,7 @@ class Lang extends ComponentBase
         // Cookie 名称
         'lang_cookie_name' => 'lang',
         'lang_file_path' => 'lang/',
-		'lang_simple_mode_only_sentences'=>[],
+        'lang_simple_mode_only_sentences' => [],
     ];
     public function init(array $options, ?object $context = null)
     {
@@ -41,14 +41,14 @@ class Lang extends ComponentBase
         }
         App::Current()->options['lang_final'] = $this->options['lang_final'];
     }
-	protected function getSentenceFromConfig($language)
-	{
-		if (!empty($this->options['lang_simple_mode_only_sentences'])) {
-			return $this->options['lang_simple_mode_only_sentences'][$language]??null;
-		}
-		$configs = Configer::_()->_Config($this->options['lang_file_path'].basename($language), null, null);
-		return $configs;
-	}
+    protected function getSentenceFromConfig($language)
+    {
+        if (!empty($this->options['lang_simple_mode_only_sentences'])) {
+            return $this->options['lang_simple_mode_only_sentences'][$language] ?? null;
+        }
+        $configs = Configer::_()->_Config($this->options['lang_file_path'].basename($language), null, null);
+        return $configs;
+    }
     protected function loadLanguage($str)
     {
         $language = $this->options['lang_final'];
@@ -67,7 +67,7 @@ class Lang extends ComponentBase
         }
         return $configs[$str];
     }
-    public function lang($str, $args=[])
+    public function lang($str, $args = [])
     {
         $newstr = $this->loadLanguage($str);
         return $this->format($newstr ?? $str, $args);
