@@ -14,7 +14,10 @@ class DuckPhpAllInOneTest extends \PHPUnit\Framework\TestCase
         Assert::assertTrue(true);
         
         $LibCoverage = \LibCoverage\LibCoverage::G();
-        new DuckPhpAllInOne();
+		
+        DuckPhpAllInOne::RunQuickly(['cli_enable'=>false]);
+		
+		
         \LibCoverage\LibCoverage::G($LibCoverage);
         \LibCoverage\LibCoverage::End(DuckPhpAllInOne::class);
 

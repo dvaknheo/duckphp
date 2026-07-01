@@ -61,17 +61,19 @@ class DuckPhpAllInOne extends DuckPhp
     }
     public function onInited()
     {
+        static::setViewHeadFoot('head', 'foot');
     }
     /////////////// controller ///////////////
     public function action_index()
     {
-        static::setViewHeadFoot('head', 'foot');
         static::Show(get_defined_vars(), 'index');
     }
     ///////////////
     public function view_head($data)
     {
-        //echo "[[";
+        echo <<<EOT
+<html><head><meta charset="UTF-8"><title>demo</title></head><body>
+EOT;
     }
     public function view_index($data)
     {
@@ -79,6 +81,8 @@ class DuckPhpAllInOne extends DuckPhp
     }
     public function view_foot($data)
     {
-        //echo "]]";
+        echo <<<EOT
+</body></html>
+EOT;
     }
 }

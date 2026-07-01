@@ -31,6 +31,7 @@ class LangTest extends \PHPUnit\Framework\TestCase
 			],
         ]);
         __l("Hello {YOU}", ['YOU'=>'me']);
+		__l("NoExists");
 		Lang::_()->options['lang_final']=null;
 		__l("Hello {YOU}", ['YOU'=>'me']);
 		
@@ -76,6 +77,17 @@ class LangTest extends \PHPUnit\Framework\TestCase
 		
 		
 		echo __l("AAA");
+		
+		
+		/*
+		DuckPhp::_(new DuckPhp())->init(['path'=>$path,
+		'is_debug'=>true,);
+		
+		MyLang::_(new MyLang())->init([
+			'lang_detect_mode'=>['NoExists'],
+		]);
+		echo __l("AAA");
+		*/
         \LibCoverage\LibCoverage::End();
     }
 }
