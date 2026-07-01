@@ -242,6 +242,12 @@
 + **'html_handler' => NULL,** 
 
     HTML编码函数   // [DuckPhp\Core\App](Core-App.md)
++ **'installed_options_enable' => false,** 
+
+       // [DuckPhp\Core\App](Core-App.md)
++ **'installed_options_file' => 'DuckPhpInstalled.config.php',** 
+
+       // [DuckPhp\Core\App](Core-App.md)
 + **'is_debug' => false,** 
 
     是否调试模式   // [DuckPhp\Core\App](Core-App.md), [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md)
@@ -289,7 +295,7 @@
        // [DuckPhp\Component\Lang](Component-Lang.md)
 + **'lang_file_path' => 'lang/',** 
 
-       // [DuckPhp\Component\Lang](Component-Lang.md)
+    		'lang_simple_mode_only_sentences'=>[],   // [DuckPhp\Component\Lang](Component-Lang.md)
 + **'lang_final' => NULL,** 
 
        // [DuckPhp\Component\Lang](Component-Lang.md)
@@ -332,6 +338,12 @@
 + **'on_init' => NULL,** 
 
     初始化完成后处理回调   // [DuckPhp\Core\App](Core-App.md)
++ **'options_file' => 'config/DuckPhpOptions.config.php',** 
+
+       // [DuckPhp\Core\App](Core-App.md)
++ **'options_file_enable' => false,** 
+
+       // [DuckPhp\Core\App](Core-App.md)
 + **'override_class' => NULL,** 
 
     如果这个选项的类存在，则且新建 `override_class` 初始化   // [DuckPhp\Core\App](Core-App.md)
@@ -353,6 +365,9 @@
 + **'path_info_compact_enable' => true,** 
 
     PATH_INFO 兼容模式   // [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)
++ **'path_installed_options' => 'config',** 
+
+       // [DuckPhp\Core\App](Core-App.md)
 + 'path_lib' => 'lib', 
 
     导入的 Import 库目录路径   // [DuckPhp\Ext\Misc](Ext-Misc.md)
@@ -500,6 +515,10 @@
         额外配置文件
     - 'html_handler' => NULL,
         HTML编码函数
+    - 'installed_options_enable' => false,
+        
+    - 'installed_options_file' => 'DuckPhpInstalled.config.php',
+        
     - 'is_debug' => false,
         是否调试模式
     - 'lang_default' => NULL,
@@ -512,6 +531,10 @@
         命名空间
     - 'on_init' => NULL,
         初始化完成后处理回调
+    - 'options_file' => 'config/DuckPhpOptions.config.php',
+        
+    - 'options_file_enable' => false,
+        
     - 'override_class' => NULL,
         如果这个选项的类存在，则且新建 `override_class` 初始化
     - 'override_class_from' => NULL,
@@ -520,6 +543,8 @@
         工程路径
     - 'path_info_compact_enable' => false,
         PATH_INFO 兼容模式
+    - 'path_installed_options' => 'config',
+        
     - 'path_runtime' => 'runtime',
         
     - 'session_prefix' => NULL,
@@ -567,6 +592,10 @@
         
     - 'html_handler' => NULL,
         HTML编码函数
+    - 'installed_options_enable' => false,
+        
+    - 'installed_options_file' => 'DuckPhpInstalled.config.php',
+        
     - 'is_debug' => false,
         是否调试模式
     - 'lang_handler' => NULL,
@@ -575,12 +604,18 @@
         命名空间
     - 'on_init' => NULL,
         初始化完成后处理回调
+    - 'options_file' => 'config/DuckPhpOptions.config.php',
+        
+    - 'options_file_enable' => false,
+        
     - 'override_class' => NULL,
         如果这个选项的类存在，则且新建 `override_class` 初始化
     - 'override_class_from' => NULL,
         `override_class`切过去的时候会在此保存旧的`override_class`
     - 'path' => NULL,
         工程路径
+    - 'path_installed_options' => 'config',
+        
     - 'path_runtime' => 'runtime',
         
     - 'setting_file' => 'config/DuckPhpSettings.config.php',
@@ -715,7 +750,7 @@
     - 'lang_detect_mode' => array (   0 => 'url',   1 => 'cookie',   2 => 'header',   3 => 'cli',   4 => 'default', ),
         
     - 'lang_file_path' => 'lang/',
-        
+        		'lang_simple_mode_only_sentences'=>[],
     - 'lang_final' => NULL,
         
     - 'lang_follow_root' => true,

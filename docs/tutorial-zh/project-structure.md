@@ -55,6 +55,27 @@ project/
 >
 > `runtime/` 目录需要可写权限。
 
+
+
+## 层级调用规范
+
+```
+Controller 层 (可处理请求上下文)
+  ├── 可调用: Action, Business, Helper, Session
+  └── 禁止直接调用 Model
+
+Business 层 (纯无状态)
+  ├── 可调用: Model, Service, Helper
+  └── 禁止: 读写 Session, 访问 $_GET/$_POST/$_SERVER
+
+Model 层 (纯无状态)
+  ├── 可调用: 仅数据访问相关
+  └── 禁止: 业务逻辑, 抛异常
+
+System 层
+  └── 处理框架相关调用, 异常定义, 应用配置
+```
+
 ## 编码规则
 
 ### 命名规范
