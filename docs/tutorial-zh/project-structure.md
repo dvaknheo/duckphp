@@ -53,7 +53,7 @@ project/
 
 > **注意**：`SomeAction.php`、`testController.php`、`DemoBusiness.php`、`SomeService.php`、`DemoModel.php` 是示例文件，实际项目中应删除并根据业务需求编写类似的类。
 >
-> `runtime/` 目录需要可写权限。
+> 通常情况下`runtime/` 目录需要可写权限。
 
 
 
