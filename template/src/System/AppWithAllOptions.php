@@ -184,6 +184,12 @@ class AppWithAllOptions extends DuckPhp
         // HTML编码函数 (DuckPhp\Core\App)
         // $options['html_handler'] = NULL;
 
+        //  (DuckPhp\Core\App)
+        // $options['installed_options_enable'] = false;
+
+        //  (DuckPhp\Core\App)
+        // $options['installed_options_file'] = 'DuckPhpInstalled.config.php';
+
         // 是否调试模式 (DuckPhp\Core\App, DuckPhp\Ext\StrictCheck)
         // $options['is_debug'] = false;
 
@@ -196,7 +202,7 @@ class AppWithAllOptions extends DuckPhp
         //  (DuckPhp\Component\Lang)
         // $options['lang_detect_mode'] = array (   0 => 'url',   1 => 'cookie',   2 => 'header',   3 => 'cli',   4 => 'default', );
 
-        //  (DuckPhp\Component\Lang)
+        // 		'lang_simple_mode_only_sentences'=>[], (DuckPhp\Component\Lang)
         // $options['lang_file_path'] = 'lang/';
 
         //  (DuckPhp\Component\Lang)
@@ -229,6 +235,12 @@ class AppWithAllOptions extends DuckPhp
         // 初始化完成后处理回调 (DuckPhp\Core\App)
         // $options['on_init'] = NULL;
 
+        //  (DuckPhp\Core\App)
+        // $options['options_file'] = 'config/DuckPhpOptions.config.php';
+
+        //  (DuckPhp\Core\App)
+        // $options['options_file_enable'] = false;
+
         // 如果这个选项的类存在，则且新建 `override_class` 初始化 (DuckPhp\Core\App)
         // $options['override_class'] = NULL;
 
@@ -249,6 +261,9 @@ class AppWithAllOptions extends DuckPhp
 
         // PATH_INFO 兼容模式 (DuckPhp\Component\RouteHookPathInfoCompat)
         // $options['path_info_compact_enable'] = true;
+
+        //  (DuckPhp\Core\App)
+        // $options['path_installed_options'] = 'config';
 
         // 日志目录路径 (DuckPhp\Core\Logger)
         // $options['path_log'] = 'runtime';

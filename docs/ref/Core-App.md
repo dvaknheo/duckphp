@@ -135,3 +135,5 @@ HTML编码函数
 
     public function lang($str, $args=[])
 
+    public function lang($str, $args = [])
+

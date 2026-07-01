@@ -299,3 +299,15 @@ init()，一开始填充 path 和 namespace 选项
 
     public function getOverridingClass()
 
+        'options_file' => 'config/DuckPhpOptions.config.php',
+
+        'options_file_enable' => false,
+
+        'path_installed_options' => 'config',
+
+        'installed_options_file' => 'DuckPhpInstalled.config.php',
+
+        'installed_options_enable' => false,
+
+    protected function initInstalledOptions()
+

@@ -5,17 +5,6 @@
 多语言支持
 
 ## 选项
-
-无选项
-
-## 方法
-    
-## 详解
-
-    protected function getLanguage()
-
-    public function lang($str, $args)
-
         'lang_final' => null,
 
         'lang_default' => null,
@@ -29,6 +18,17 @@
         'lang_cookie_name' => 'lang',
 
         'lang_file_path' => 'lang/',
+		'lang_simple_mode_only_sentences'=>[],
+
+
+## 方法
+    
+## 详解
+
+    protected function getLanguage()
+
+    public function lang($str, $args)
+
 
     public function init(array $options, ?object $context = null)
 
@@ -50,9 +50,12 @@
 
     protected function detectFromDefault(): ?string
 
-		'lang_simple_mode_only_sentences'=>[],
 
 	protected function getSentenceFromConfig($language)
 
-    public function lang($str, $args=[])
+    public function lang($str, $args = [])
+
+        'lang_simple_mode_only_sentences' => [],
+
+    protected function getSentenceFromConfig($language)
 
