@@ -232,6 +232,6 @@ class App extends DuckPhp
 
 ## 相关链接
 
-- [Component-Configer](Component-Configer.md)
-- [Core-Logger](Core-Logger.md)
+- [DuckPhp\Component\Configer](Component-Configer.md)
+- [DuckPhp\Component\Core\Logger](Core-Logger.md)
 
