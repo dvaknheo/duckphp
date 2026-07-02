@@ -1,313 +1,363 @@
 # DuckPhp\Core\KernelTrait
-[toc]
+
+应用核心初始化流程 Trait。
 
 ## 简介
-最核心的 Trait，仅完成基本流程。你通过 DuckPhp\DuckPhp 或 DuckPhp\Core\App 类来使用他。
 
-## 引用
+`KernelTrait` 定义了 DuckPHP 应用从初始化到运行结束的完整生命周期流程。它负责：
 
-- 控制台 [DuckPhp\\Core\\Console](Core-Console.md)
-- 异常处理器 [DuckPhp\\Core\\ExceptionManager](Core-ExceptionManager.md)
-- 全局函数 [Functions](Core-Functions.md)
-- 相位容器 [DuckPhp\\Core\\PhaseContainer](Core-PhaseContainer.md)
-- 路由 [DuckPhp\\Core\\Route](Core-Route.md)
-- 运行时 [DuckPhp\\Core\\Runtime](Core-Runtime.md)
+- 选项合并与外部配置加载
+- Phase 容器管理
+- 生命周期事件触发
+- 核心组件（`Console`、`Route`、`Runtime`）初始化
+- 扩展（`ext`）和子应用（`app`）的初始化和运行
+- 404、异常、开发错误处理
 
+`App` 类通过 `use KernelTrait` 获得这些能力。开发者通常不需要直接使用 `KernelTrait`，而是通过继承 `App` 或 `DuckPhp` 来定制应用。
 
 ## 选项
 
-### 基本配置
-
-        'path' => null,
-基准目录，如果没设置，将设置为`$_SERVER['SCRIPT_FILENAME']`的父级目录。
-
-        'override_class' => null,
-如果这个选项的类存在，则且新建 `override_class` 初始化
-
-        'override_class_from' => null,
-`override_class`切过去的时候会在此保存旧的`override_class`
-
-        'cli_enable' => true,
-启用命令行模式
-
-        'is_debug' => false,
-调试模式， 用于 `IsDebug()` 方法。
-
-        'ext' => [],
-扩展，保存 类名=>选项对
-
-        'app' => [],
-子应用，保存 类名=>选项对
-
-        'skip_404' => false,
-不处理 404 ，用于配合其他框架使用。
-
-        'on_init' => null,
-初始化完成后处理回调
-
-        'namespace' => null,
-基准命名空间，如果没设置，将设置为当前类的命名空间的上级命名空间，如MyProject\\System\\App => MyProject
-
-        'skip_exception_check' => false,
-不在 Run 流程检查异常，把异常抛出外面。用于配合其他框架使用
-
-        'setting_file' => 'config/DuckPhpSettings.config.php',
-设置文件名。仅根应用有效
-
-        'setting_file_enable' => true,
-使用设置文件: $path/$path_config/$setting_file.php 仅根应用有效
-
-        'use_env_file' => false,
-使用 .env 文件。 仅根应用有效
-打开这项，可以读取 path 选项下的 env 文件
-
-        'setting_file_ignore_exists' => true,
-如果设置文件不存在也不报错 仅根应用有效
-
-        'exception_reporter' => null,
-异常报告类
-
-        'exception_for_project' => null,
-异常报告仅针对的异常
-
-### 来自控制器的选项
-
-        'namespace_controller' => 'Controller',
-
-        'controller_path_ext' => '',
-
-        'controller_welcome_class' => 'Main',
-
-        'controller_welcome_class_visible' => false,
-
-        'controller_welcome_method' => 'index',
-
-        'controller_class_base' => '',
-
-        'controller_class_postfix' => 'Controller',
-
-        'controller_method_prefix' => 'action_',
-
-        'controller_prefix_post' => 'do_', //TODO remove it
-
-        'controller_class_map' => [],
-
-        'controller_resource_prefix' => '',
-
-        'controller_url_prefix' => '',
-### 来自运行时的选项
-        'use_output_buffer' => false,
-
-        'path_runtime' => 'runtime',
-
-### 来自控制台的选项
-
-        'cli_command_prefix' => null,
-
-        'cli_command_classes' => [],
-
-        'cli_command_method_prefix' => 'command_',
-
-        'cli_command_default' => 'help',
-
-### 来自异常管理器的选项
-
-
-## 方法
-### 静态方法
-
-    public static function RunQuickly(array $options = [], callable $after_init = null): bool
-快速开始，init() 后接 $after_init() 然后 run();
-
-    public static function Current()
-当前App
-
-    public static function Root()
-当前根App
-
-    public static function Setting($key = null, $default = null)
-    public function _Setting($key = null, $default = null)
-获取设置
-
-    public static function Phase($new = null)
-    public function _Phase($new = null)
-当前相位，返回之前相位
-
-    public static function IsRoot()
-
-    public function _IsRoot()
-
-### 主流程
-    public function init(array $options, object $context = null)
-初始化
-
-    public function run(): bool
-运行，如果404，返回false。
-
-
-
-### 默认行为
-    public static function On404(): void
-    public function _On404(): void
-处理 404
-
-    public static function OnDefaultException($ex): void
-    public function _OnDefaultException($ex): void
-处理异常
-
-    public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
-    public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
-处理开发模式错误
-
-### 公开辅助方法
-
-    public function getProjectPathFromClass($class, $use_parent_namespace = true)
-从类中获得默认工程路径
-
-    public function getContainer()
-获得 PhaseContainer 容器
-
-
-    public function isRoot()
-是否是根App
-
-### 流程相关方法
-
-    protected function initOptions(array $options)
-init() 中初始化选项
-
-    protected function reloadFlags($context): void
-init() 中 DefaultComponents() 中从设置读取调试标志和平台标志
-
-
-
-    protected function prepareComponents()
-
-    
-
-    protected function initException($options)
-初始化中，初始化异常
-
-    protected function initExtentions(array $exts): void
-初始化中，初始化扩展
-
-    protected function getDefaultProjectNameSpace($class)
-辅助方法，用于在 init() 中设置 namespace.
-
-    protected function getDefaultProjectPath()
-辅助方法，用于在 init() 中设置 path.
-
-    protected function initContainer($context)
-初始化容器
-
-    protected function initComponents(array $options, object $context = null)
-初始化默认组件
-
-    protected function doInitComponents()
-初始化默认组件，方便继承用
-
-    protected function loadSetting()    
-    protected function dealWithSettingFile()
-    protected function dealWithEnvFile()
-处理设置
-
-    protected function initExtentions(array $exts, $use_main_options): void
-初始化异常处理,ext , 和 app 选项都调用，且use_main_options 不一样
-
-    protected function runExtentions()
-运行 扩展
-    protected function runException($ex)
-处理异常
-
-    protected function loadSetting()
-在初始化中加载设置
-
-    protected function addPublicClassesInRoot($classes)
-如果是root ，添加填充默认全局共享对象
-
-    protected function createLocalObject($class, $object = null)
-用于重载全局
-
-### 事件方法
-
-用于重写的方法默认都是空方法，预留用户功能。用于重写的方法都带有同名属性，可以用同名属性方式赋值
-
-    protected function onBeforeCreatePhases()
-    protected function onAfterCreatePhases()
-创建相位的重载
-
-    protected function onPrepare()
-准备阶段，你可以在这里替换默认类
-
-    protected function onBeforeExtentionInit()
-
-    protected function onBeforeChildrenInit()
-
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `path` | `null` | 项目根路径。未设置时自动根据 `SCRIPT_FILENAME` 推断。 |
+| `override_class` | `null` | 指定用于覆盖当前应用的类名。 |
+| `override_class_from` | `null` | 覆盖类的来源类。 |
+| `cli_enable` | `true` | 是否启用 CLI 命令处理。 |
+| `is_debug` | `false` | 是否开启调试模式。 |
+| `ext` | `[]` | 主扩展列表，初始化顺序在 `onInit` 之后。 |
+| `app` | `[]` | 子应用列表，初始化顺序在 `onBeforeChildrenInit` 之后。 |
+| `skip_404` | `false` | 是否跳过默认 404 处理。 |
+| `skip_exception_check` | `false` | 是否跳过异常捕获检查。 |
+| `on_init` | `null` | 初始化完成后的回调函数。 |
+| `namespace` | `null` | 项目默认命名空间。 |
+| `setting_file` | `'config/DuckPhpSettings.config.php'` | Setting 文件路径。 |
+| `setting_file_ignore_exists` | `true` | Setting 文件不存在时是否忽略。 |
+| `setting_file_enable` | `true` | 是否加载 Setting 文件。 |
+| `use_env_file` | `false` | 是否加载 `.env` 文件。 |
+| `exception_reporter` | `null` | 自定义异常报告器。 |
+| `exception_for_project` | `null` | 自定义异常报告器捕获的异常类。 |
+| `options_file` | `'config/DuckPhpOptions.config.php'` | 额外选项文件路径。 |
+| `options_file_enable` | `false` | 是否加载额外选项文件。 |
+| `path_installed_options` | `'config'` | 已安装选项文件所在目录。 |
+| `installed_options_file` | `'DuckPhpInstalled.config.php'` | 已安装选项文件名。 |
+| `installed_options_enable` | `false` | 是否加载已安装选项文件。 |
+| `cli_command_classes` | `[]` | 注册的 CLI 命令类。 |
+| `cli_command_prefix` | `null` | CLI 命令命名空间前缀。 |
+| `cli_command_method_prefix` | `'command_'` | CLI 命令方法前缀。 |
+
+## 使用方式
+
+### 通过 App 类使用
+
+```php
+use DuckPhp\Core\App;
+
+class MyApp extends App
+{
+    public $options = [
+        'is_debug' => true,
+    ];
+}
+
+MyApp::RunQuickly();
+```
+
+### 运行入口
+
+```php
+$app = MyApp::_()->init([
+    'path' => __DIR__ . '/../',
+    'is_debug' => true,
+]);
+$app->run();
+```
+
+### 生命周期事件
+
+```php
+class MyApp extends App
+{
     protected function onInit()
-初始化完成，加载子应用之前
-
-    protected function onInited()
-初始化完成
-
+    {
+        // 在核心组件初始化完成后、子应用初始化前触发
+        EventManager::FireEvent([static::class, __FUNCTION__]);
+    }
 
     protected function onBeforeRun()
-运行阶段。不建议重写 run ，而是在这里添加运行阶段处理
+    {
+        // 在 run() 开始处理请求前触发
+    }
 
     protected function onAfterRun()
-运行完毕阶段执行的方法
+    {
+        // 在 run() 结束后触发
+    }
+}
+```
 
-## 流程详解
+### 获取当前应用/根应用
 
-Kernel 这个 Trait 一般不直接使用。一般用的是 DuckPhp\Core\App ， 而更直接的 DuckPhp\DuckPhp 类，则是把常见扩展加进去形成完善的框架。
+```php
+$current = MyApp::Current(); // 当前 Phase 下的应用实例
+$root    = MyApp::Root();    // 根应用实例
+$phase   = MyApp::Phase();   // 获取/切换当前 Phase
+```
 
-Kernel 大致分为两个阶段
+## 配置示例
 
-init() 初始化阶段，和 run 阶段
+### 基础应用配置
 
-### init 初始化阶段流程
-#### 开始阶段
-init()，一开始填充 path 和 namespace 选项
-载入 全局函数
-初始化选项
-如果有 override_class 选项，切到 override_class 执行
+```php
+class MyApp extends App
+{
+    public $options = [
+        'path' => __DIR__ . '/../',
+        'is_debug' => true,
+        'namespace' => 'MyApp',
+    ];
+}
+```
 
-检查相位，
+### 加载外部选项文件
 
-#### 检查相位做的工作
-
-检查完相位 调用 onPrepare
-
-#### reloadflags
-
-#### 装载异常管理器
-
-#### initComponets
-
-调用 onBeforeExtentionInit 触发相关事件
-
-#### 加载扩展
-
-
-
-
-### run 阶段
-
-
-
-
-
-
-    public function getOverridingClass()
-
+```php
+class MyApp extends App
+{
+    public $options = [
+        'options_file_enable' => true,
         'options_file' => 'config/DuckPhpOptions.config.php',
+    ];
+}
+```
 
-        'options_file_enable' => false,
+### 加载 .env 文件
 
-        'path_installed_options' => 'config',
+```php
+class MyApp extends App
+{
+    public $options = [
+        'use_env_file' => true,
+    ];
+}
+```
 
-        'installed_options_file' => 'DuckPhpInstalled.config.php',
+### 注册子应用
 
-        'installed_options_enable' => false,
+```php
+class MyApp extends App
+{
+    public $options = [
+        'app' => [
+            \ApiApp\System\ApiApp::class => [
+                'path' => __DIR__ . '/../api',
+            ],
+        ],
+    ];
+}
+```
+
+## 注意事项
+
+1. **初始化顺序**：`init()` 内部按以下顺序执行：
+   - 合并选项并加载 `options_file`
+   - 处理 `override_class`
+   - 初始化容器（`initContainer`）和 Phase 管理
+   - 初始化异常管理（`initException`）
+   - 加载 `installed_options`
+   - 触发 `onPrepare`
+   - 初始化核心组件（`prepareComponents` → `initComponents`）
+   - 初始化 `ext` 扩展（`initExtentions($options['ext'], true)`）
+   - 触发 `onInit` 和 `on_init` 回调
+   - 触发 `onBeforeChildrenInit`
+   - 初始化子应用 `app`（`initExtentions($options['app'], false)`）
+   - 标记完成并触发 `onInited`
+
+2. **Phase 概念**：`Phase` 是 DuckPHP 的多应用切换机制。通过 `PhaseContainer` 切换当前活跃的应用实例，使 `Current()` 和 `::_()` 返回正确的应用对象。
+
+3. **ext 与 app 的区别**：
+   - `ext` 是主扩展，共享主应用的选项，初始化后 Phase 不切换。
+   - `app` 是子应用，拥有独立的命名空间和路径，初始化后 Phase 会切回主应用。
+
+4. **CLI 与 Web 路由**：`run()` 内部根据 `PHP_SAPI` 决定调用 `Console::_()->run()` 还是 `Route::_()->run()`。
+
+5. **404 处理**：当路由匹配失败且子应用也未能处理时，会触发 `On404` 事件，并根据 `skip_404` 决定是否调用 `_On404()`。
+
+6. **异常处理**：`run()` 中捕获的所有异常都会交给 `ExceptionManager` 处理；未处理的异常会触发 `OnDefaultException`。
+
+## 全部选项
+
+```php
+protected $kernel_options = [
+    'path' => null,
+    'override_class' => null,
+    'override_class_from' => null,
+    'cli_enable' => true,
+    'is_debug' => false,
+    'ext' => [],
+    'app' => [],
+    'skip_404' => false,
+    'skip_exception_check' => false,
+    'on_init' => null,
+    'namespace' => null,
+    'setting_file' => 'config/DuckPhpSettings.config.php',
+    'setting_file_ignore_exists' => true,
+    'setting_file_enable' => true,
+    'use_env_file' => false,
+    'exception_reporter' => null,
+    'exception_for_project' => null,
+    'options_file' => 'config/DuckPhpOptions.config.php',
+    'options_file_enable' => false,
+    'path_installed_options' => 'config',
+    'installed_options_file' => 'DuckPhpInstalled.config.php',
+    'installed_options_enable' => false,
+    'cli_command_classes' => [],
+    'cli_command_prefix' => null,
+    'cli_command_method_prefix' => 'command_',
+];
+```
+
+## 方法列表
+
+### 公共方法
+
+    public static function RunQuickly(array $options = [], callable $after_init = null): bool
+快速运行入口：初始化应用，可选执行回调，然后调用 `run()`
+
+    public static function Current()
+返回当前 Phase 下的应用实例
+
+    public static function Root()
+返回根应用实例
+
+    public static function Phase($new = null)
+获取或切换当前 Phase 容器
+
+    public static function Setting($key = null, $default = null)
+通过 `_Setting()` 获取根应用的 Setting 值
+
+    public static function IsRoot()
+判断当前实例是否为根应用
+
+    public function init(array $options, object $context = null)
+应用完整初始化流程
+
+    public function run(): bool
+应用运行入口，处理 CLI 或 Web 请求
+
+    public static function On404(): void
+触发 404 处理
+
+    public static function OnDefaultException($ex): void
+触发默认异常处理
+
+    public static function OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
+触发开发错误处理
+
+    public function _On404(): void
+默认 404 处理，输出 `"no found"`
+
+    public function _OnDefaultException($ex): void
+默认异常处理，输出 `"_OnDefaultException"`
+
+    public function _OnDevErrorHandler($errno, $errstr, $errfile, $errline): void
+默认开发错误处理，输出 `"_OnDevErrorHandler"`
+
+### 受保护方法
+
+    protected function initOptions(array $options)
+合并选项并加载 `options_file`
+
+    protected function getDefaultProjectNameSpace($class)
+根据类名推断默认项目命名空间
+
+    protected function getDefaultProjectPath()
+根据 `SCRIPT_FILENAME` 推断默认项目路径
+
+    protected function _Phase($new = null)
+Phase 容器操作内部实现
+
+    protected function _IsRoot()
+返回当前实例是否为根应用
+
+    protected function getOverridingClass()
+返回当前应用的覆盖类
+
+    protected function initContainer($context)
+初始化 Phase 容器，注册公共类，管理根/子应用状态
+
+    protected function addPublicClassesInRoot($classes)
+在根应用下注册公共类
+
+    protected function createLocalObject($class, $object = null)
+创建局部对象实例
+
+    protected function initException($options)
+初始化 `ExceptionManager`
 
     protected function initInstalledOptions()
+加载并合并 `installed_options_file`
 
+    protected function prepareComponents()
+准备核心组件，子类可覆盖
+
+    protected function initComponents(array $options, object $context = null)
+初始化 `Console`、`Route`、`Runtime` 等核心组件
+
+    protected function doInitComponents()
+子类覆盖以初始化额外核心组件
+
+    protected function loadSetting()
+加载 `.env` 和 Setting 文件
+
+    protected function dealWithEnvFile()
+解析 `.env` 文件
+
+    protected function dealWithSettingFile()
+加载 Setting 文件
+
+    protected function _Setting($key = null, $default = null)
+获取 Setting 值
+
+    protected function initExtentions(array $exts, $use_main_options): void
+初始化扩展或子应用
+
+    protected function runException($ex)
+处理运行期异常
+
+    protected function runExtentions()
+依次运行子应用，直到有一个返回 `true`
+
+    protected function onBeforeCreatePhases()
+生命周期事件：创建 Phase 容器前
+
+    protected function onAfterCreatePhases()
+生命周期事件：创建 Phase 容器后
+
+    protected function onPrepare()
+生命周期事件：选项和容器准备完成后
+
+    protected function onBeforeChildrenInit()
+生命周期事件：子应用初始化前
+
+    protected function onInit()
+生命周期事件：核心组件和扩展初始化完成后
+
+    protected function onInited()
+生命周期事件：全部初始化完成后
+
+    protected function onBeforeRun()
+生命周期事件：运行前
+
+    protected function onAfterRun()
+生命周期事件：运行后
+
+## 相关链接
+
+- [DuckPhp\Core\App](Core-App.md)
+- [DuckPhp\Core\ComponentBase](Core-ComponentBase.md)
+- [DuckPhp\Core\PhaseContainer](Core-PhaseContainer.md)
+- [DuckPhp\Core\Route](Core-Route.md)
+- [DuckPhp\Core\Runtime](Core-Runtime.md)
+- [DuckPhp\Core\Console](Core-Console.md)
+- [DuckPhp\Core\EventManager](Core-EventManager.md)
+- [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md)
