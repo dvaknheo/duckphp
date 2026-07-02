@@ -46,17 +46,14 @@ class DatabaseInstaller extends ComponentBase
     }
     protected function changeDatabase($data)
     {
-        // 我们要设置数据库
         $is_local = (App::Current()->options['local_database'] ?? false) || App::Root()->options['database_driver'] != App::Current()->options['database_driver'];
-        
-        $app = $is_local ? App::Current() : App::Root();
-        
-        $options = ExtOptionsLoader::_()->loadExtOptions(true, $app);
-        $options['database_list'] = $data;
-        $t = App::Root()->options['installing_data'] ?? null;
-        unset(App::Root()->options['installing_data']);
-        ExtOptionsLoader::_()->saveExtOptions($options, $app);
-        App::Root()->options['installing_data'] = $t;
+		
+        if($is_local){
+			ExtOptionsLoader::_()->init(App::Current()->options, App::Current());
+			ExtOptionsLoader::_()->refreshData(['database_list' =>$data]);
+			//App::Current()->options['database_list']=$data;
+		}
+		/////////////
         
         $options = DbManager::_()->options;
         $options['database_list'] = $data;

@@ -79,11 +79,19 @@ class FastInstaller extends ComponentBase
             
             $default_options['controller_url_prefix'] = $this->getDefaultUrlPrefix($object->options['namespace']);
             $input_options = Console::_()->readLines($default_options, $desc, []);
-            
-            $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, App::_());
-            $ext_options['app'][$app] = ['controller_url_prefix' => $input_options['controller_url_prefix']];
-            ExtOptionsLoader::_()->saveExtOptions($ext_options, App::_());
-            App::_()->options['app'][$app] = ['controller_url_prefix' => $input_options['controller_url_prefix']];
+			$controller_url_prefix = $input_options['controller_url_prefix'];
+			
+			$data = [
+				'app'=>[
+					$app =>[
+						'controller_url_prefix' =>$controller_url_prefix,
+					],
+				],
+			];
+			ExtOptionsLoader::_()->init(App::_()->options,App::_());
+			ExtOptionsLoader::_()->refreshData($data);
+            App::_()->options = array_replace_recursive(App::_()->options,$data);
+			
             $object->options['controller_url_prefix'] = $input_options['controller_url_prefix'];
         }
         App::Phase($app);
@@ -340,9 +348,8 @@ and more ...\n";
     }
     protected function saveExtOptions($ext_options)
     {
-        $old_options = ExtOptionsLoader::_()->loadExtOptions(true, App::Current());
-        $ext_options = array_merge($old_options, $ext_options);
-        ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
+		ExtOptionsLoader::_()->init(App::Current()->options, App::Current());
+		ExtOptionsLoader::_()->refreshData($ext_options);
     }
     //////////////////
 }

@@ -27,8 +27,8 @@ use DuckPhp\GlobalUser\GlobalUser;
 class DuckPhp extends App
 {
     protected $common_options = [
-        'ext_options_file_enable' => true,
-        'ext_options_file' => 'config/DuckPhpApps.config.php',
+        //'ext_options_file_enable' => true,
+        //'ext_options_file' => 'config/DuckPhpApps.config.php',
         'ext' => [
             Lang::class => true,
             RouteHookCheckStatus::class => true,
@@ -92,9 +92,9 @@ class DuckPhp extends App
     protected function prepareComponents()
     {
         parent::prepareComponents();
-        if ($this->options['ext_options_file_enable']) {
-            ExtOptionsLoader::_()->loadExtOptions(static::class);
-        }
+        //if ($this->options['ext_options_file_enable']) {
+        //    ExtOptionsLoader::_()->loadExtOptions(static::class);
+        //}
         if ($this->options['cli_command_with_app']) {
             array_unshift($this->options['cli_command_classes'], static::class);
         }

@@ -40,14 +40,13 @@ class RedisInstaller extends ComponentBase
     protected function changeRedis($data)
     {
         $is_local = App::Current()->options['local_redis'] ?? false;
-        $app = $is_local ? App::Current() : App::Root();
-        
-        $options = ExtOptionsLoader::_()->loadExtOptions(true, $app);
-        $options['redis_list'] = $data;
-        $t = App::Root()->options['installing_data'] ?? null;
-        unset(App::Root()->options['installing_data']);
-        ExtOptionsLoader::_()->saveExtOptions($options, $app);
-        App::Root()->options['installing_data'] = $t;
+		
+		$app = App::Current();
+		if($is_local){
+			ExtOptionsLoader::_()->init(App::Current()->options, App::Current());
+			ExtOptionsLoader::_()->refreshData(['redis_list' =>$data]);
+			//App::Current()->options['redis_list']=$data;
+        }
         
         $options = RedisManager::_()->options;
         $options['redis_list'] = $data;
