@@ -1,75 +1,113 @@
 # DuckPhp\Foundation\SimpleModelTrait
 
+简单模型类 Trait。
+
 ## 简介
 
-简单的模型类 Trait, 封装常见操作,帮助你少写代码的
+`DuckPhp\Foundation\SimpleModelTrait` 是模型层类的简化组合 Trait。它提供了基于类名自动推导表名、读写分离数据库访问、常用 CRUD 操作以及 SQL 执行能力，适合快速实现数据模型。
 
 ## 选项
 
-无选项
+### 受保护属性
 
-## 方法
-### 公开方法
-    public function table()
-获得表名，包括前缀
+| 属性 | 默认值 | 说明 |
+|---|---|---|
+| `$table_name` | `null` | 表名。未设置时根据类名自动推导 |
+| `$table_prefix` | `null` | 表前缀。未设置时读取 `App::Current()->options['table_prefix']` |
+| `$table_pk` | `'id'` | 主键名 |
 
-    public function prepare($sql)
-把  `'TABLE'` 转成 表名
+## 使用方式
 
-    protected function getList($where = [], int $page = 1, int $page_size = 10)
-返回数据 ['data','total'=>]; 这样的数据结构
+### 在模型类中使用
 
+```php
+use DuckPhp\Foundation\SimpleModelTrait;
 
-    protected function find($a)
-根据条件查找特定数据,如果 a 为标量，则 按 ID 来
+class UserModel
+{
+    use SimpleModelTrait;
+}
+```
 
-    protected function add($data)
-添加数据，返回 LastInsertId
+### 自动表名
 
-    protected function update($id, $data, $key = null)
-更新
+类名 `UserModel` 会自动推导为 `user`。
 
+### 基础 CRUD
 
-### 内部方法
+```php
+$model = UserModel::_();
 
-    protected function getTablePrefix()
-获取表名前缀, table() 调用到。
+// 获取表名
+$table = $model->table();
 
+// 查询列表
+[$total, $list] = $model->getList(['status' => 1], $page, $pageSize);
 
-    protected function getTableNameByClass($class)
-table() 的内部实现
-    protected function getTablePrefixByClass($class)
-getTablePrefix 的实现
+// 按主键查找
+$row = $model->find(1);
 
-### 查询
-方便使用，把 'TABLE' 转成当前表名。
+// 添加
+$model->add(['name' => 'DuckPhp']);
 
-execute 用的主数据库，其他用的都是从数据库
-fetchObject，fetchObjectAll 返回的是当前数据库类型
+// 更新
+$model->update(1, ['name' => 'Duck']);
+```
 
-    protected function execute($sql, ...$args)
+### 自定义 SQL
 
-    protected function fetchAll($sql, ...$args)
+```php
+$rows = $model->fetchAll('SELECT * FROM `{TABLE}` WHERE status = ?', 1);
+$row = $model->fetch('SELECT * FROM `{TABLE}` WHERE id = ?', 1);
+$count = $model->fetchColumn('SELECT COUNT(*) FROM `{TABLE}`');
+```
 
-    protected function fetch($sql, ...$args)
+## 配置示例
 
-    protected function fetchColumn($sql, ...$args)
+```php
+class App extends DuckPhp
+{
+    public $options = [
+        'table_prefix' => 'dp_',
+    ];
+}
+```
 
-    protected function fetchObject($sql, ...$args)
+## 注意事项
 
-    protected function fetchObjectAll($sql, ...$args)
-## 详解
-简单模型类。适用于不想手写 sql 的情况
+1. 该 Trait 使用 `SingletonTrait` 和 `ZCallTrait`，支持单例和快速调用。
+2. 数据库操作依赖 `DuckPhp\Component\DbManager`，需确保数据库已配置。
+3. `prepare($sql)` 方法会将 SQL 中的 `` `{TABLE}` `` 替换为当前表名。
+4. `find($a)` 支持传入标量（按主键）或关联数组（多条件查询）。
 
-SimpleModelTrait 是帮助你少写代码的，而不是作为 orm 模型用的。复杂 sql 请自己手写
+## 方法列表
 
-你扩展这个  Trait 适应你的场景。
+### 公共方法
 
-SimpleModelTrait  find 的返回结果是 数组，而不是当前类。
+| 方法 | 说明 |
+|---|---|
+| `table()` | 获取完整表名（前缀 + 表名） |
+| `prepare($sql)` | 将 SQL 中的 `` `{TABLE}` `` 替换为当前表名 |
 
-留有 delete 接口，但只是报异常，因为删除操作要谨慎，各地都不同。
-    
+### 受保护方法
 
-    public static function CallInPhase($phase)
+| 方法 | 说明 |
+|---|---|
+| `getTableNameByClass($class)` | 根据类名推导表名 |
+| `getTablePrefixByClass($class)` | 根据配置获取表前缀 |
+| `getList($where = [], int $page = 1, int $page_size = 10)` | 分页查询列表 |
+| `find($a)` | 按主键或条件查找单条记录 |
+| `add($data)` | 插入数据 |
+| `update($id, $data, $key = null)` | 更新数据 |
+| `execute($sql, ...$args)` | 执行写操作 SQL |
+| `fetchAll($sql, ...$args)` | 查询多条 |
+| `fetch($sql, ...$args)` | 查询单条 |
+| `fetchColumn($sql, ...$args)` | 查询单列 |
+| `fetchObject($sql, ...$args)` | 查询单条并映射为对象 |
+| `fetchObjectAll($sql, ...$args)` | 查询多条并映射为对象 |
 
+## 相关链接
 
+- [DuckPhp\Component\DbManager](Component-DbManager.md)
+- [DuckPhp\Component\ZCallTrait](Component-ZCallTrait.md)
+- [DuckPhp\Core\SingletonTrait](Core-SingletonTrait.md)

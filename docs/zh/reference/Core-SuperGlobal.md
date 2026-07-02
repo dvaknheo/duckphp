@@ -1,158 +1,173 @@
 # DuckPhp\Core\SuperGlobal
-[toc]
+
+超级全局变量管理组件。
+
 ## 简介
- 超全局变量包容类
+
+`SuperGlobal` 封装了 PHP 的超级全局变量（`$_GET`、`$_POST`、`$_REQUEST`、`$_SERVER`、`$_COOKIE`、`$_SESSION`、`$_FILES`）。它允许在测试或特定场景下切换全局变量的上下文，并封装了安全读写这些全局变量的方法。
+
+该组件默认通过 `DuckPhp\DuckPhp` 的 `ext` 选项自动加载。
+
 ## 选项
-全部选项
 
-        'superglobal_auto_extend_method' => false,
-自动扩充 SuperGlobalContext 的静态方法
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `superglobal_auto_define` | `false` | 初始化时是否自动定义超级全局上下文并加载所有全局变量。 |
 
-        'superglobal_auto_define' => false,
-初始化时定义  `__SUPERGLOBAL_CONTEXT`宏
+## 使用方式
 
-## 公开方法
+### 定义超级全局上下文
 
+```php
+use DuckPhp\Core\SuperGlobal;
 
-    public function __construct()
-    protected function initOptions(array $options)
-    protected function initContext(object $context)
-重写入口
+SuperGlobal::DefineSuperGlobalContext();
+```
+
+### 加载与保存全局变量
+
+```php
+use DuckPhp\Core\SuperGlobal;
+
+SuperGlobal::LoadSuperGlobalAll();  // 从 PHP 全局变量加载到组件
+SuperGlobal::SaveSuperGlobalAll();  // 将组件中的值写回 PHP 全局变量
+```
+
+### 单个变量加载与保存
+
+```php
+use DuckPhp\Core\SuperGlobal;
+
+SuperGlobal::LoadSuperGlobal('_SERVER');
+SuperGlobal::SaveSuperGlobal('_SERVER');
+```
+
+### 安全读取全局变量
+
+```php
+use DuckPhp\Core\SuperGlobal;
+
+$all = SuperGlobal::_()->_GET();              // 获取全部 $_GET
+$id = SuperGlobal::_()->_GET('id', 0);        // 获取 id，默认 0
+$name = SuperGlobal::_()->_POST('name', '');
+$method = SuperGlobal::_()->_SERVER('REQUEST_METHOD', 'GET');
+```
+
+### 操作 Cookie 和 Session
+
+```php
+use DuckPhp\Core\SuperGlobal;
+
+SuperGlobal::_()->_SessionSet('user_id', 42);
+$userId = SuperGlobal::_()->_SessionGet('user_id');
+SuperGlobal::_()->_SessionUnset('user_id');
+
+SuperGlobal::_()->_CookieSet('theme', 'dark', 3600);
+$theme = SuperGlobal::_()->_CookieGet('theme');
+```
+
+## 配置示例
+
+### 自动加载全局变量
+
+```php
+class App extends \DuckPhp\DuckPhp
+{
+    public $options = [
+        'superglobal_auto_define' => true,
+    ];
+}
+```
+
+## 注意事项
+
+1. 当定义了 `__SUPERGLOBAL_CONTEXT` 常量后，框架内部会优先从该上下文读取超级全局变量。
+2. `_CookieSet()` 通过 `SystemWrapper` 调用 `setcookie`，便于测试和替换。
+3. `_SessionSet()` 会同时更新上下文和 `$_SESSION`。
+4. 初始化选项 `superglobal_auto_define` 为 `true` 时，会调用 `DefineSuperGlobalContext()` 并加载所有全局变量。
+
+## 全部选项
+
+```php
+    'superglobal_auto_define' => false,
+```
+
+## 方法列表
+
+### 公共方法
 
     public static function DefineSuperGlobalContext()
-定义超级变量宏
+定义 `__SUPERGLOBAL_CONTEXT` 常量，指向当前类
 
     public static function LoadSuperGlobalAll()
-    public static function SaveSuperGlobalAll()
-读入/保存所有超全局变量
-
-    public static function LoadSuperGlobal($key)
-    public static function SaveSuperGlobal($key)
-读入/保存超全局变量
-
-    public function _LoadSuperGlobalAll()
-    public function _SaveSuperGlobalAll()
-    public function _LoadSuperGlobal($key)
-    public function _SaveSuperGlobal($key)
-相应内部实现函数
-
-## 详解
-
-内置 trait Core_SuperGlobal 主要用于超全局变量处理
-```php
-    public static function GET($key = null, $default = null)
-    public static function POST($key = null, $default = null)
-    public static function REQUEST($key = null, $default = null)
-    public static function COOKIE($key = null, $default = null)
-    public static function SERVER($key = null, $default = null)
-    public static function SESSION($key = null, $default = null)
-    public static function FILES($key = null, $default = null)
-```
-这些对应于超全局变量 $_GET[$key]??$value; 类推。如果宏 \_\_SUPERGLOBAL_CONTEXT 被定义，那么将 获得 (\_\_SUPERGLOBAL_CONTEXT)()->\_GET 等
-```php
-    public static function SessionSet($key, $value)
-    public static function SessionUnset($key)
-    public static function SessionGet($key, $default = null)
-
-```
-因为 Session 不仅仅读取，还有写入，所以用 SessionGet  /SessionSet 对称方法 。因为 \_\_SUPERGLOBAL_CONTEXT ，还有了 SessionUnset
-
-
-```php
-    public static function CookieSet($key, $value, $expire = 0)
-```
-因为 Cookie 不仅仅读取，还有写入，所以用 CookieSet 。
-
-
-    public static function CookieGet($key, $default = null)
-对称， CookieGet / CookieSet
-
-
-DuckPhp 添加协程支持，
-
-如果启用宏 `__SUPERGLOBAL_CONTEXT` 会在引用到全局变量的地方 如
-
-`$_SERVER =>  (__SUPERGLOBAL_CONTEXT)()->_SERVER `
-
-`SuperGlobalContext` 是对 超全局变量的包裹
-`SuperGlobalContext::DefineSuperGlobalContext()`  则定义这么个指向 SuperGlobalContext::G 的宏。
-`superglobal_auto_extend_method` 把 LoadSuperGlobalAll ， SaveSuperGlobalAll 添加到 App 类的 静态方法
-`superglobal_auto_define` 在 init 的时候 SuperGlobalContext::DefineSuperGlobalContext   
-
-
-
-
-        'superglobal_auto_define' => false,
-
-    protected function initOptions(array $options)
-
-    public static function DefineSuperGlobalContext()
-
-    public static function LoadSuperGlobalAll()
+加载所有超级全局变量到组件实例
 
     public static function SaveSuperGlobalAll()
+将组件实例中的超级全局变量写回 PHP 全局变量
 
     public function _LoadSuperGlobalAll()
+内部实现：复制全部超级全局变量到组件属性
 
     public function _SaveSuperGlobalAll()
+内部实现：将组件属性写回 PHP 超级全局变量
 
     public static function LoadSuperGlobal($key)
+加载单个全局变量到组件
 
     public static function SaveSuperGlobal($key)
+保存单个组件属性到全局变量
 
     public function _LoadSuperGlobal($key)
+内部实现：加载单个全局变量
 
     public function _SaveSuperGlobal($key)
-
-    public static function GET($key = null, $default = null)
-
-    public static function POST($key = null, $default = null)
-
-    public static function REQUEST($key = null, $default = null)
-
-    public static function COOKIE($key = null, $default = null)
-
-    public static function SERVER($key = null, $default = null)
-
-    public static function SESSION($key = null, $default = null)
-
-    public static function FILES($key = null, $default = null)
-
-    public static function SessionSet($key, $value)
-
-    public static function SessionUnset($key)
-
-    public static function SessionGet($key, $default = null)
-
-    public static function CookieSet($key, $value, $expire = 0)
-
-    public static function CookieGet($key, $default = null)
-
-    protected function getSuperGlobalData($superglobal_key, $key, $default)
+内部实现：保存单个全局变量
 
     public function _GET($key = null, $default = null)
+获取 `$_GET` 全部或单个值
 
     public function _POST($key = null, $default = null)
+获取 `$_POST` 全部或单个值
 
     public function _REQUEST($key = null, $default = null)
+获取 `$_REQUEST` 全部或单个值
 
     public function _COOKIE($key = null, $default = null)
+获取 `$_COOKIE` 全部或单个值
 
     public function _SERVER($key = null, $default = null)
+获取 `$_SERVER` 全部或单个值
 
     public function _SESSION($key = null, $default = null)
+获取 `$_SESSION` 全部或单个值
 
     public function _FILES($key = null, $default = null)
+获取 `$_FILES` 全部或单个值
 
     public function _SessionSet($key, $value)
+设置 Session 值
 
     public function _SessionUnset($key)
+删除 Session 值
 
     public function _CookieSet($key, $value, $expire = 0)
+设置 Cookie，过期时间以秒为单位，大于 0 时会自动加上当前时间
 
     public function _SessionGet($key, $default = null)
+获取 Session 值
 
     public function _CookieGet($key, $default = null)
+获取 Cookie 值
 
-##
+### 受保护方法
 
+    protected function initOptions(array $options)
+初始化选项，若开启 `superglobal_auto_define` 则定义上下文并加载全局变量
+
+    protected function getSuperGlobalData($superglobal_key, $key, $default)
+从上下文或全局变量读取指定键的数据
+
+## 相关链接
+
+- [DuckPhp\Core\SystemWrapper](Core-SystemWrapper.md)
+- [DuckPhp\Core\Route](Core-Route.md)

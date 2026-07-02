@@ -1,291 +1,310 @@
 # DuckPhp\Core\Route
-[toc]
+
+路由组件。
 
 ## 简介
 
-`组件类` `入口类`
-很重要的路由类，可以在单独抽出来使用。
+`Route` 负责根据 URL 解析并调用对应的控制器和方法。它支持 URL 前缀、控制器后缀、方法前缀、路径扩展名、控制器类映射等配置，同时提供 URL 生成、资源 URL 生成和路由钩子扩展能力。
 
-##  默认基础路由
-
-`DuckPhp` 支持很多种 路由方式，默认最常见最基本的就是文件型路由方式了。
-
-以 `PATH_INFO 的` / 为切分，最后一个是方法，前面是命名空间和类名.
-
-假定 我们的工程命名空间是 ，即 `$options['namespace'] = 'MyProject'`;
-默认选项 `$options['namespace_controller'] => 'Controller`';
-对应的 类->方法 如下
-
-
-```
-/       => MyProejct\Controller\MainController->action_index
-/test   => MyProejct\Controller\MainController->action_test
-/a/b    => MyProejct\Controller\aController->action_b
-/x/y/z  => MyProejct\Controller\x\yController->action_z
+该组件默认通过 `DuckPhp\DuckPhp` 的 `ext` 选项自动加载。
 
 ## 选项
-所有配置选项如下
 
-        'namespace' => '',
-默认命名空间为空
-
-        'namespace_controller' => 'Controller',
-默认子命名空间为 Controller
-如果是 \ 开头的则忽略 `namespace` 选项。
-
-        'controller_base_class' => '',
-控制器，基类
-
-        'controller_hide_boot_class' => true,
-控制器，隐藏启动的类
-
-        'controller_prefix_post' => 'do_',
-控制器，POST 的方法会在方法名前加前缀 do_
-如果找不到方法名，调用默认方法名。
-
-        'controller_class_postfix' => 'Controller',
-控制器，控制器类名后缀
-
-        'controller_enable_slash' => false,
-控制器，允许结尾的 /
-
-        'controller_path_prefix' => '',
-控制器，路由的前缀，只处理限定前缀的 PATH_INFO
-
-        'controller_path_ext' => '',
-控制器，后缀,如 .html
-
-        'controller_stop_static_method' => true,
-控制器，禁止直接访问控制器静态方法
-
-        'controller_strict_mode' => true,
-控制器，严格模式，区分大小写
-
-        'controller_class_map' => [],
-控制器，类映射，用于替换控制器，类
-
-
-        'controller_url_prefix' => '',
-控制器，资源文件
-
-        'controller_resource_prefix' => '',
-控制器，资源文件前缀
-
-        'controller_welcome_class' => 'Main',
-
-        'controller_welcome_class_visible' => false,
-
-        'controller_welcome_method' => 'index',
-
-        'controller_class_base' => '',
-
-
-        'controller_method_prefix' => 'action_',
-
-        'controller_prefix_post' => 'do_', //TODO remove it
-
-        'controller_class_adjust' => '',
-
-控制器，可选数组，或者以分号分隔的 uc_method uc_class uc_full_class 用于为了美观或者代码规范的控制器名称。
-uc_method: /x/y/z  => MyProejct\Controller\x\yController->action_Z
-uc_class: /x/y/z  => MyProejct\Controller\x\YController->action_z
-uc_full_class: /x/y/z  => MyProejct\Controller\X\YController->action_z
-
-## 公开方法
-
-### 主流程方法
-这里是主要流程的方法
-
-    public static function RunQuickly(array $options = [], callable $after_init = null)
-快速方法，等同于 init([])->run();
-
-    public function reset()
-
-重置，初始化之后的重置
-
-    public function run()
-运行
-
-### 扩展和钩子
-////
-
-    public function addRouteHook($callback, $position = 'append-outter', $once = true)
-
-添加钩子
-
-
-    public function defaulToggleRouteCallback($enable = true)
-切换默认的路由回调
-
-    public function defaultRunRouteCallback($path_info = null)
-运行默认的路由回调
-
-    public function defaultGetRouteCallback($path_info)
-
-运行默认的路由回调
-
-    public function replaceController($old_class, $new_class)
-替换控制器
-
-    public static function Route()
-返回单例，用于 DuckPhp/Route 双兼容给路由钩子使用
-
-    public function forceFail()
-
-强制为失败，用于路由钩子
-
-    public function runtime()
-返回保存运行期数据的类
-
-
-### URL 相关
-这里是路由相关的
-
-    public static function Url($url = null)
-    public function _Url($url = null)
-获得 URL
-
-    public static function Res($url = null)
-    public function _Res($url = null)
-获得资源地址
-
-    public static function Domain($use_scheme = false)
-    public function _Domain($use_scheme = false)
-获得的域名
-
-    public function defaultUrlHandler($url = null)
-默认的 URL 函数
-
-    public function setUrlHandler($callback)
-    public function getUrlHandler()
-设置/获得 URL 回调函数
-
-### 辅助方法
-
-    protected function adjustMethod($method, $ref)
-
-    protected function getCallbackFromClassAndMethod($full_class, $method, $path_info)
-
-    protected function adjustClassBaseName($path_info)
-
-    protected function doControllerClassAdjust($blocks, $method)
-
-其他辅助方法
-
-    public function getRouteError()
-获取路由错误信息
-
-    public function setParameters($parameters)
-设置 Parameter 数组
-
-    public static function Parameter($key = null, $default = null)
-    public function _Parameter($key = null, $default = null)
-读取 Parameter ， Parameter 用于 Url 重构之类
-
-    public static function PathInfo($path_info = null)
-    public function _PathInfo($path_info = null)
-    protected function getPathInfo()
-    protected function setPathInfo($path_info)
-获取和设置 PathInfo
-
-    public function getRouteCallingPath()
-获取调用中的路径
-
-    public function getRouteCallingClass()
-
-获得当前路由调用的类名
-
-    public function getRouteCallingMethod()
-    public function setRouteCallingMethod($calling_method)
-设置当前路由
-
-    public function dumpAllRouteHooksAsString()
-简单 dump 所有钩子
-
-### 其他方法
-
-    public function bind($path_info, $request_method = 'GET')
-
-
- 绑定一个path_info和方法   
-    public function getControllerNamespacePrefix()
-RouteHookRouteMap 用到 获取控制器命名空间
-
-### 内部方法
-以下是内部方法
-
-    protected function initOptions(array $options)
-重写了初始化选项
-
-
-    protected function getRunResult()
-获得运行结果
-
-    protected function createControllerObject($full_class)
-重写用，创建控制器对象
-
-    protected function pathToClassAndMethod($path_info)
-重写用，createControllerObject 会调用这个
-
-    protected function getMethodToCall($object, $method)
-重写用，获得回调方法
-
-    protected function getUrlBasePath()
-获得 URL 基本地址
-
-## 说明
-
-### 示例
-
-这是一个单用 Route 组件的例子
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `namespace` | `''` | 应用命名空间前缀。 |
+| `namespace_controller` | `'Controller'` | 控制器命名空间，相对于 `namespace`。 |
+| `controller_path_ext` | `''` | 路径扩展名，例如 `.html`。设置后只有带此后缀的 URL 会匹配。 |
+| `controller_welcome_class` | `'Main'` | 默认控制器类名，当 URL 为空时使用。 |
+| `controller_welcome_class_visible` | `false` | 是否允许 URL 中显式出现欢迎控制器类名。 |
+| `controller_welcome_method` | `'index'` | 默认方法名。 |
+| `controller_class_adjust` | `''` | 控制器/方法名调整规则，例如 `uc_method;uc_class`。 |
+| `controller_class_base` | `''` | 控制器基类约束，控制器必须继承该基类。支持 `~` 替换为控制器命名空间前缀。 |
+| `controller_class_postfix` | `'Controller'` | 控制器类名后缀。 |
+| `controller_method_prefix` | `'action_'` | 控制器方法前缀。 |
+| `controller_prefix_post` | `'do_'` | POST 请求时额外追加的方法前缀。 |
+| `controller_class_map` | `[]` | 控制器类映射，用于将某个类替换为另一个类。 |
+| `controller_resource_prefix` | `''` | 静态资源前缀，用于生成资源 URL。 |
+| `controller_url_prefix` | `''` | URL 路径前缀，例如 `api/`。 |
+| `controller_fix_mistake_path_info` | `true` | 当 `PATH_INFO` 为空且脚本为 `/index.php` 时，从 `REQUEST_URI` 自动修复。 |
+
+## 使用方式
+
+### 启动路由
 
 ```php
-<?php
 use DuckPhp\Core\Route;
-require(__DIR__.'/vendor/autoload.php');
 
-class MainController
-{
-    public function action_index()
-    {
-        var_dump(DATE(DATE_ATOM));
-    }
-    public function i()
-    {
-        phpinfo();
-    }
-}
-$options=[
-    'namespace_controller'=>'\\',
-];
-$flag=Route::RunQuickly($options);
-if(!$flag){
-    header(404);
-    echo "404!";
-}
-
+Route::RunQuickly([
+    'namespace' => 'MyApp',
+    'controller_path_ext' => '.html',
+]);
 ```
 
-### 钩挂路由流程指南
+### 获取路由参数
 
-    如果你对默认的文件路由不满意，可以安插自己的钩子。
-    $route->addRouteHook($callback, $append=true, $outter=true, $once=true);
-    其中， $callback 为你的钩子函数，符合 callback(string $path_info):bool
-    当你返回 true 的时候，表示成功。 将不再执行后面的函数。
-    一共有4个钩挂点可用。 $append,$outter。
-    defaultRunRouteCallback($path_info);  给做了默认榜样。
-    defaultGetRouteCallback($path_info); 则是获得，但不处理调用。
-    如果你在前面的，想禁止默认路由函数，可以用 defaultToggleRouteCallback(false);
-    
-    add404Handle() 是默认用于后处理的版本。
+```php
+use DuckPhp\Core\Route;
 
-### URL 输出地址重写指南
+$all = Route::Parameter();          // 全部参数
+$id = Route::Parameter('id', 0);     // 获取 id，默认值为 0
+```
 
+### URL 生成
 
+```php
+use DuckPhp\Core\Route;
 
-## 文档信息
-修订版本：
+$url = Route::Url('user/profile');     // 生成 /user/profile
+$res = Route::Res('css/style.css');    // 生成静态资源 URL
+$domain = Route::Domain();              // 当前域名，如 //example.com
+$domainWithScheme = Route::Domain(true); // 当前域名，如 http://example.com
+```
 
-修订时间：
-        'controller_fix_mistake_path_info' => true,
+### 全局函数
 
+```php
+$url = __url('user/profile');
+$res = __res('images/logo.png');
+$domain = __domain();
+```
+
+### 绑定测试路径
+
+```php
+use DuckPhp\Core\Route;
+
+Route::_()->bind('/user/profile', 'GET');
+Route::_()->run();
+```
+
+### 路由钩子
+
+```php
+use DuckPhp\Core\Route;
+
+Route::_()->addRouteHook(function ($path_info) {
+    if ($path_info === '/special') {
+        echo 'special route';
+        return true; // 返回 true 表示已处理
+    }
+    return false;
+}, 'append-outter');
+```
+
+## 路由匹配规则
+
+默认路由规则：
+
+- URL `/foo/bar` 映射到 `MyApp\Controller\FooController->action_bar()`。
+- URL `/` 或空路径映射到 `MyApp\Controller\MainController->action_index()`。
+- POST 请求时，如果存在 `action_do_bar` 方法，则优先调用该方法。
+
+## 配置示例
+
+### 基础配置
+
+```php
+class App extends \DuckPhp\DuckPhp
+{
+    public $options = [
+        'namespace' => 'MyApp',
+        'namespace_controller' => 'Controller',
+        'controller_path_ext' => '.html',
+    ];
+}
+```
+
+### URL 前缀
+
+```php
+class App extends \DuckPhp\DuckPhp
+{
+    public $options = [
+        'controller_url_prefix' => 'api',
+        'namespace' => 'MyApp',
+    ];
+}
+```
+
+### 控制器映射
+
+```php
+class App extends \DuckPhp\DuckPhp
+{
+    public $options = [
+        'controller_class_map' => [
+            'MyApp\Controller\OldController' => 'MyApp\Controller\NewController',
+        ],
+    ];
+}
+```
+
+### 静态资源前缀
+
+```php
+class App extends \DuckPhp\DuckPhp
+{
+    public $options = [
+        'controller_resource_prefix' => 'https://cdn.example.com/',
+    ];
+}
+```
+
+## 注意事项
+
+1. 控制器类名默认会加上 `controller_class_postfix` 后缀，方法名默认会加上 `controller_method_prefix` 前缀。
+2. 控制器方法不能以下划线开头，不能是静态方法。
+3. 如果设置了 `controller_class_base`，目标控制器必须继承该基类。
+4. 路由钩子分为 `prepend-outter`、`prepend-inner`、`append-inner`、`append-outter` 四个位置，返回 `true` 表示已处理并终止后续流程。
+5. 当路由失败时，可通过 `getRouteError()` 获取错误代码和原因。
+
+## 全部选项
+
+```php
+    'namespace' => '',
+    'namespace_controller' => 'Controller',
+
+    'controller_path_ext' => '',
+    'controller_welcome_class' => 'Main',
+    'controller_welcome_class_visible' => false,
+    'controller_welcome_method' => 'index',
+
+    'controller_class_adjust' => '',
+    'controller_class_base' => '',
+    'controller_class_postfix' => 'Controller',
+    'controller_method_prefix' => 'action_',
+    'controller_prefix_post' => 'do_',
+
+    'controller_class_map' => [],
+
+    'controller_resource_prefix' => '',
+    'controller_url_prefix' => '',
+    'controller_fix_mistake_path_info' => true,
+```
+
+## 方法列表
+
+### 公共方法
+
+    public static function RunQuickly(array $options = [], callable $after_init = null)
+快速初始化并运行路由
+
+    public static function Route()
+返回当前路由实例
+
+    public static function Parameter($key = null, $default = null)
+获取路由参数
+
+    public function _Parameter($key = null, $default = null)
+内部实现：获取全部或单个路由参数
+
+    public function bind($path_info, $request_method = 'GET')
+绑定指定路径和请求方法，常用于测试
+
+    public function run()
+执行路由流程，依次运行 pre hooks、默认路由、post hooks
+
+    public function forceFail()
+强制标记路由失败
+
+    public function addRouteHook($callback, $position = 'append-outter', $once = true)
+添加路由钩子，支持四个位置
+
+    public function defaulToggleRouteCallback($enable = true)
+启用或禁用默认路由回调
+
+    public function defaultRunRouteCallback($path_info = null)
+运行默认路由回调
+
+    public function defaultGetRouteCallback($path_info)
+获取默认路由回调，返回 `[对象, 方法名]` 或 `null`
+
+    public function getControllerNamespacePrefix()
+返回控制器命名空间前缀
+
+    public function replaceController($old_class, $new_class)
+在运行时替换控制器类映射
+
+    public static function PathInfo($path_info = null)
+获取或设置当前 `PATH_INFO`
+
+    public static function Url($url = null)
+生成 URL
+
+    public static function Res($url = null)
+生成资源 URL
+
+    public static function Domain($use_scheme = false)
+获取当前域名
+
+    public function _Url($url = null)
+内部实现：生成 URL
+
+    public function _Res($url = null)
+内部实现：生成资源 URL
+
+    public function _Domain($use_scheme = false)
+内部实现：获取当前域名
+
+    public function setParameters($parameters)
+设置路由参数
+
+    public function getRouteError()
+获取最后一次路由错误信息
+
+    public function getRouteCallingPath()
+获取当前路由匹配到的路径
+
+    public function getRouteCallingClass()
+获取当前路由匹配到的控制器类
+
+    public function getRouteCallingMethod()
+获取当前路由匹配到的方法名
+
+    public function setRouteCallingMethod($calling_method)
+设置当前路由匹配到的方法名
+
+    public function dumpAllRouteHooksAsString()
+以字符串形式导出所有路由钩子
+
+    public function setUrlHandler($callback)
+设置自定义 URL 处理器
+
+    public function getUrlHandler()
+获取当前 URL 处理器
+
+### 受保护方法
+
+    protected function getRunResult()
+返回路由运行结果
+
+    protected function pathToClassAndMethod($path_info)
+将 URL 路径转换为控制器类名和方法名
+
+    protected function adjustClassBaseName($path_info)
+调整类基础名，处理欢迎控制器和路径块
+
+    protected function doControllerClassAdjust($blocks, $method)
+根据 `controller_class_adjust` 调整类名和方法名
+
+    protected function getCallbackFromClassAndMethod($full_class, $method, $path_info)
+反射获取控制器对象和方法
+
+    protected function adjustMethod($method, $ref)
+根据请求方法调整实际调用的方法名
+
+    protected function getPathInfo()
+获取当前 `PATH_INFO`，支持自动修复
+
+    protected function setPathInfo($path_info)
+设置 `PATH_INFO` 并同步到全局上下文
+
+    protected function getUrlBasePath()
+获取 URL 基础路径
+
+## 相关链接
+
+- [DuckPhp\Core\SuperGlobal](Core-SuperGlobal.md)
+- [DuckPhp\Core\SystemWrapper](Core-SystemWrapper.md)
+- [DuckPhp\Core\CoreHelper](Core-CoreHelper.md)

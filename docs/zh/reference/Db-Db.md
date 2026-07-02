@@ -1,140 +1,162 @@
 # DuckPhp\Db\Db
-[toc]
+
+数据库操作类。
 
 ## 简介
 
-`伪组件` Db 类是DuckPhp 自带的数据库类。 是 App::Db() 和 M::Db() 的实现。
+`Db` 是 DuckPHP 默认的数据库操作类，基于 PDO 封装。它实现了 `DbInterface` 接口，并混入 `DbAdvanceTrait` 提供额外的辅助方法。通常通过 `DbManager` 获取 `Db` 实例，而不是直接实例化。
 
-## 选项
+## 配置格式
 
-## 公开方法
-
-### sql 方法
-    public function fetchAll($sql, ...$args)
-运行SQL并获得所有行
-
-    public function fetch($sql, ...$args)
-运行SQL并获得单一行
-
-    public function fetchColumn($sql, ...$args)
-运行SQL并获得单个数据
-
-    public function execute($sql, ...$args)
-运行SQL 返回 true false
-
-    protected function exec($sql, ...$args)
-内部执行 sql
-
-    public function fetchObjectAll($sql, ...$args)
-运行SQL并获得所有行(对象数组)
-
-    public function fetchObject($sql, ...$args)
-运行SQL并获得单一行(对象形式)
-
-    public function setObjectResultClass($resultClass)
-设置返回的类，配合 fetchObject fetchObjectAll 使用。
-
-    public function doTableNameMacro($sql)
-默认把执行查询 sql 里的 `{TABLE}` 展开成 table($table_name) 里的设置
-
-    public function table($table_name)
-设置 `'TABLE'` 要替换的表名，并返回 Db 类。拼接 sql 的时候要注意第三方数据可能会有 `'TABLE'` 其实是对 qoute('TABLE');
-
-### 其他方法
-
-    public function init($options = [], $context = null)
-初始化
-
-    protected function check_connect()
-用于 override ，连接的设置。
-
-    public function close()
-关闭数据库
-
-    public function PDO($pdo = null)
-获得/设置 相关 PDO 对象。
-
-    public function setBeforeQueryHandler($handler)
-在 query 前执行。($handler)($this,$sql, ...$args)
-
-    public function quote($string)
-编码
-
-    public function buildQueryString($sql, ...$args)
-合并带参数的sql.
-
-    public function rowCount()
-获得行数
-
-    public function lastInsertId()
-获得插入的ID.
-
-
-### DbAdvanceTrait 的方法
-
-    public function quoteIn($array)
-    public function quoteSetArray($array)
-    public function qouteInsertArray($array)
-    public function findData($table_name, $id, $key = 'id')
-    public function insertData($table_name, $data, $return_last_id = true)
-    public function deleteData($table_name, $id, $key = 'id', $key_delete = 'is_deleted')
-    public function updateData($table_name, $id, $data, $key = 'id')
-
-## 详解
-
-Db()
-    
-#### Db 类的用法
-Db
-    close(); //关闭, 你一般不用关闭,系统会自动关闭
-    PDO($new=null); //获取/设置 PDO 对象
-    quote($string);
-    fetchAll($sql, ...$args);
-    fetch($sql, ...$args);
-    fetchColumn($sql, ...$args);
-#### 示例
-使用数据库，在 设置里正确设置 database_list 这个数组，包含多个数据库配置
-然后在用到的地方调用 DuckPhp::Db($tag=null) 得到的就是 Db 对象，用来做各种数据库操作。
-$tag 对应 $setting['database_list'][$tag]。默认会得到最前面的 tag 的配置。
-
-你不必担心每次框架初始化会连接数据库。只有第一次调用 DuckPhp::Db() 的时候，才进行数据库类的创建。
-
-
-## 示例如下
+`Db` 通过 `init()` 接收配置数组，典型配置如下：
 
 ```php
-<?php
-use DuckPhp\DuckPhp;
-
-require_once('../vendor/autoload.php');
-
-$options=[];
-$options['override_class']='';      // 示例文件不要被子类干扰。
-$options['skip_setting_file']=true; // 不需要配置文件。
-$options['error_exception']=true; // 使用默认的错误视图
-
-$options['database_list']=[[
-    'dsn'=>'mysql:host=127.0.0.1;port=3306;dbname=DnSample;charset=utf8;',
-    'username'=>'root',
-    'password'=>'123456',
-]]; // 这里用选项里的
-DuckPhp::RunQuickly($options,function(){    
-    $sql="select 1+? as t";
-    $data=M::Db()->fetch($sql,2);
-    DuckPhp::var_dump($data);
-    DuckPhp::exit(0);
-});
+[
+    'dsn' => 'mysql:host=127.0.0.1;dbname=test;charset=utf8mb4',
+    'username' => 'root',
+    'password' => 'secret',
+    'driver_options' => [
+        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+    ],
+]
 ```
 
-## 方法索引
+## 使用方式
 
+### 通过 Model Helper 获取
 
-完毕。
+```php
+use DuckPhp\Foundation\Model\Helper;
 
+$db = Helper::Db();
+```
 
+### 通过 DbManager 获取
 
+```php
+use DuckPhp\Component\DbManager;
 
+$db = DbManager::Db();
+```
 
+### 查询数据
+
+```php
+$users = $db->fetchAll("SELECT * FROM users WHERE status = ?", 1);
+$user = $db->fetch("SELECT * FROM users WHERE id = ?", $id);
+$count = $db->fetchColumn("SELECT COUNT(*) FROM users");
+```
+
+### 执行写操作
+
+```php
+$ret = $db->execute("UPDATE users SET name = ? WHERE id = ?", $name, $id);
+$affected = $db->rowCount();
+```
+
+### 使用命名参数
+
+```php
+$sql = "SELECT * FROM users WHERE status = :status AND role = :role";
+$users = $db->fetchAll($sql, ['status' => 1, 'role' => 'admin']);
+```
+
+### 使用表名宏
+
+```php
+$db->table('users');
+$users = $db->fetchAll("SELECT * FROM `'TABLE'` WHERE status = ?", 1);
+```
+
+### 获取原始 PDO
+
+```php
+$pdo = $db->PDO();
+```
+
+### 设置结果类
+
+```php
+$db->setObjectResultClass(User::class);
+$user = $db->fetchObject("SELECT * FROM users WHERE id = ?", $id);
+```
+
+## 注意事项
+
+1. 默认驱动选项设置了 `PDO::ERRMODE_EXCEPTION` 和 `PDO::FETCH_ASSOC`。
+2. `quote()` 支持数组递归转义。
+3. `execute()` 返回的是执行是否成功，`rowCount()` 返回影响行数。
+4. 查询钩子 `beforeQueryHandler` 可用于 SQL 日志记录。
+5. 通过 `database_class` 选项可以替换默认的 `Db` 类。
+
+## 方法列表
+
+### 公共方法
+
+    public function init($options = [], $context = null)
+初始化数据库连接配置
+
+    public function close()
+关闭 PDO 连接
+
+    public function PDO($pdo = null)
+获取或设置 PDO 实例
+
+    public function setBeforeQueryHandler($handler)
+设置查询前回调，签名为 `fn(Db $db, string $sql, ...$args)`
+
+    public function quote($string)
+转义字符串或数组
 
     public function qouteScheme($name)
+根据驱动类型返回标识符引用（如 MySQL 的反引号）
 
+    public function buildQueryString($sql, ...$args)
+构建可直接执行的 SQL 字符串（用于调试，不建议直接执行）
+
+    public function table($table_name)
+设置当前表名宏
+
+    public function doTableNameMacro($sql)
+将 SQL 中的 `'TABLE'` 替换为当前表名
+
+    public function setObjectResultClass($resultClass)
+设置 `fetchObject` 返回的对象类
+
+    public function fetchAll($sql, ...$args)
+执行查询并返回所有行
+
+    public function fetch($sql, ...$args)
+执行查询并返回第一行
+
+    public function fetchColumn($sql, ...$args)
+执行查询并返回第一列
+
+    public function fetchObject($sql, ...$args)
+执行查询并返回单个对象
+
+    public function fetchObjectAll($sql, ...$args)
+执行查询并返回对象数组
+
+    public function execute($sql, ...$args)
+执行写操作 SQL
+
+    public function rowCount()
+返回最近一次写操作影响的行数
+
+    public function lastInsertId()
+返回最后一次插入的自增 ID
+
+### 受保护方法
+
+    protected function check_connect()
+检查并创建 PDO 连接
+
+    protected function exec($sql, ...$args)
+执行 SQL 并返回 PDOStatement
+
+## 相关链接
+
+- [DuckPhp\Db\DbInterface](Db-DbInterface.md)
+- [DuckPhp\Db\DbAdvanceTrait](Db-DbAdvanceTrait.md)
+- [DuckPhp\Component\DbManager](Component-DbManager.md)

@@ -1,113 +1,106 @@
-# DuckPhp\Helper\AppHelperTraitTrait
-[toc]
+# DuckPhp\Helper\AppHelperTrait
+
+应用层 Helper Trait。
 
 ## 简介
 
-`DuckPhp\Helper\AppHelperTrait` App类的助手类。 把各个组件的方法都集中到这里
+`DuckPhp\Helper\AppHelperTrait` 提供应用层通用的静态方法，涵盖异常调用、事件管理、运行状态判断、路由操作、视图数据获取、数据库与 Redis 访问、Session/Cookie 操作、系统包装函数、CLI 参数以及核心辅助功能。
 
-## 公开方法
+## 选项
 
-### 一般方法
+无。
 
-    public static function CallException($ex)
-    
-    public static function isRunning()
-    
-    public static function isInException()
-    
-    public static function addRouteHook($callback, $position = 'append-outter', $once = true)
-    
-    public static function replaceController($old_class, $new_class)
-    
-    public static function getViewData()
+## 使用方式
 
-### 全局和杂项
+### 在类中引入
 
-    public static function SESSION($key = null, $default = null)
-    
-    public static function FILES($key = null, $default = null)
-    
-    public static function SessionSet($key, $value)
-    
-    public static function CookieSet($key, $value, $expire = 0)
-    
-    public static function SessionGet($key, $default = null)
+```php
+use DuckPhp\Helper\AppHelperTrait;
 
-    public static function CookieGet($key, $default = null)
-    
-    public static function SessionUnset($key)
+class MyHelper
+{
+    use AppHelperTrait;
+}
+```
 
+### 常用操作
 
+```php
+use DuckPhp\Foundation\System\Helper;
 
-### 系统替代函数
+// 关闭所有数据库连接
+Helper::DbCloseAll();
 
-这些函数，和系统函数同名，目的是兼容 swoole/workerman 等平台。
+// 获取 Redis 对象
+$redis = Helper::Redis();
 
-    public static function header($output, bool $replace = true, int $http_response_code = 0)
-    
-    public static function setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)
-    
-    public static function exit($code = 0)
-    
-    public static function set_exception_handler(callable $exception_handler)
-    
-    public static function register_shutdown_function(callable $callback, ...$args)
-    
-    public static function session_start(array $options = [])
-    
-    public static function session_id($session_id = null)
-    
-    public static function session_destroy()
-    
-    public static function session_set_save_handler(\SessionHandlerInterface $handler)
+// 获取 CLI 参数
+$params = Helper::getCliParameters();
 
-    public static function mime_content_type($file)
+// 获取项目路径
+$projectPath = Helper::PathOfProject();
+$runtimePath = Helper::PathOfRuntime();
 
-    public static function system_wrapper_replace(array $funcs)
+// 注册扩展命令类
+Helper::regExtCommandClass(\MyApp\Command\MyCommand::class);
+```
 
-    public static function system_wrapper_get_providers():array
+## 注意事项
 
-### 杂项
+1. 该 Trait 使用 `DuckPhp\Core\SingletonTrait`，引入类后具备单例访问能力。
+2. 方法依赖多个核心组件（如 `App`、`Route`、`View`、`DbManager`、`RedisManager`、`SystemWrapper` 等），需确保相关组件已初始化。
+3. `system_wrapper_replace` 等系统包装函数主要用于测试或替换全局函数，需谨慎使用。
 
-    public static function DbCloseAll()
+## 方法列表
 
-    public static function Event()
-    
-    public static function OnEvent($event, $callback)
+### 公共方法
 
-    public static function setBeforeGetDbHandler($db_before_get_object_handler)
+| 方法 | 说明 |
+|---|---|
+| `CallException($ex)` | 调用异常管理器 |
+| `RemoveEvent($event, $callback = null)` | 移除事件监听 |
+| `isRunning()` | 判断应用是否运行中 |
+| `isInException()` | 判断是否处于异常处理中 |
+| `addRouteHook($callback, $position = 'append-outter', $once = true)` | 添加路由钩子 |
+| `replaceController($old_class, $new_class)` | 替换控制器类 |
+| `getViewData()` | 获取视图数据 |
+| `DbCloseAll()` | 关闭所有数据库连接 |
+| `SESSION($key = null, $default = null)` | 获取 `$_SESSION` 数据 |
+| `FILES($key = null, $default = null)` | 获取 `$_FILES` 数据 |
+| `SessionSet($key, $value)` | 设置 Session 值 |
+| `SessionUnset($key)` | 删除 Session 值 |
+| `SessionGet($key, $default = null)` | 获取 Session 值 |
+| `CookieSet($key, $value, $expire = 0)` | 设置 Cookie |
+| `CookieGet($key, $default = null)` | 获取 Cookie |
+| `system_wrapper_replace(array $funcs)` | 替换系统包装函数 |
+| `system_wrapper_get_providers(): array` | 获取系统包装函数提供者 |
+| `header($output, bool $replace = true, int $http_response_code = 0)` | 发送 HTTP 头 |
+| `setcookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false)` | 设置 Cookie |
+| `exit($code = 0)` | 终止程序 |
+| `set_exception_handler(callable $exception_handler)` | 设置异常处理器 |
+| `register_shutdown_function(callable $callback, ...$args)` | 注册关闭函数 |
+| `session_start(array $options = [])` | 启动 Session |
+| `session_id($session_id = null)` | 获取/设置 Session ID |
+| `session_destroy()` | 销毁 Session |
+| `session_set_save_handler(\SessionHandlerInterface $handler)` | 设置 Session 保存处理器 |
+| `mime_content_type($file)` | 获取文件 MIME 类型 |
+| `setBeforeGetDbHandler($db_before_get_object_handler)` | 设置获取数据库前的回调 |
+| `Redis($tag = 0)` | 获取 Redis 对象 |
+| `getRouteMaps()` | 获取路由映射 |
+| `assignRoute($key, $value = null)` | 分配路由映射 |
+| `assignImportantRoute($key, $value = null)` | 分配高优先级路由映射 |
+| `assignRewrite($key, $value = null)` | 分配重写规则 |
+| `getRewrites()` | 获取所有重写规则 |
+| `getCliParameters()` | 获取 CLI 参数 |
+| `FireEvent($event, ...$args)` | 触发事件 |
+| `OnEvent($event, $callback)` | 注册事件监听 |
+| `PathOfProject()` | 获取项目根目录 |
+| `PathOfRuntime()` | 获取运行时目录 |
+| `recursiveApps(&$arg, $callback, ?string $app_class = null)` | 递归遍历应用 |
+| `getAllAppClass()` | 获取所有应用类 |
+| `getAppClassByComponent(string $class)` | 根据组件类获取应用类 |
+| `regExtCommandClass(string $class)` | 注册扩展命令类 |
 
-    public static function Redis($tag = 0)
+## 相关链接
 
-    public static function getRoutes()
-
-    public static function assignRoute($key, $value = null)
-
-    public static function assignImportantRoute($key, $value = null)
-
-    public static function assignRewrite($key, $value = null)
-
-    public static function getRewrites()
-
-    public static function RemoveEvent($event, $callback = null)
-
-    public static function getRouteMaps()
-
-    public static function getCliParameters()
-
-### 完毕
-    public static function FireEvent($event, ...$args)
-
-    public static function PathOfProject()
-
-    public static function PathOfRuntime()
-
-    public static function recursiveApps(&$arg, $callback, ?string $app_class = null)
-
-    public static function getAllAppClass()
-
-    public static function getAppClassByComponent(string $class)
-
-    public static function regExtCommandClass(string $class)
-
-
+- [DuckPhp\Foundation\System\Helper](Foundation-System-Helper.md)

@@ -1,40 +1,95 @@
 # DuckPhp\Ext\ExtendableStaticCallTrait
-[toc]
+
+> ⚠️ 警告：该扩展是实验性的或已废弃，不建议在新项目中使用。
 
 ## 简介
 
-能扩展静态方法的 Trait 。作用是动态扩展类的静态方法，你写自己的扩展的时候会用到。
+`ExtendableStaticCallTrait` 是一个 Trait，用于为类提供可扩展的静态方法调用能力。它允许在运行时为类动态分配静态方法，并通过 `__callStatic` 魔术方法调用这些方法。
 
+该方法主要用于为 facade 或 helper 类提供静态调用扩展点，但实现较为复杂，且容易引入隐藏依赖，因此不建议在新项目中使用。
 
-## 方法
-全部方法如下
+## 选项
+
+无。
+
+## 使用方式
+
+### 在类中使用 Trait
+
+```php
+use DuckPhp\Ext\ExtendableStaticCallTrait;
+
+class MyHelper
+{
+    use ExtendableStaticCallTrait;
+}
+```
+
+### 分配扩展方法
+
+```php
+use DuckPhp\Ext\ExtendableStaticCallTrait;
+
+class MyHelper
+{
+    use ExtendableStaticCallTrait;
+}
+
+MyHelper::AssignExtendStaticMethod('hello', function ($name) {
+    return "Hello, {$name}";
+});
+
+MyHelper::AssignExtendStaticMethod([
+    'foo' => function () { return 'foo'; },
+    'bar' => function () { return 'bar'; },
+]);
+```
+
+### 使用字符串回调
+
+```php
+MyHelper::AssignExtendStaticMethod('foo', 'FooService@doFoo'); // 调用 FooService::_()->doFoo(...)
+MyHelper::AssignExtendStaticMethod('bar', 'BarService->doBar'); // 调用 (new BarService())->doBar(...)
+
+MyHelper::foo();
+MyHelper::bar();
+```
+
+### 获取已分配的扩展方法
+
+```php
+$methods = MyHelper::GetExtendStaticMethodList();
+```
+
+## 配置示例
+
+无。
+
+## 注意事项
+
+1. 扩展方法以静态方式存储，按调用类的实际类名隔离。
+2. 字符串回调支持 `Class@method` 和 `Class->method` 两种格式，分别解析为单例调用和实例调用。
+3. 如果方法不存在或回调无效，调用时会触发 PHP 错误。
+4. 该 Trait 会改变类的静态方法解析行为，应谨慎使用。
+
+## 方法列表
+
+### 公共方法
 
     public static function AssignExtendStaticMethod($key, $value = null)
-    public static function AssignExtendStaticMethod($assoc)
-分配静态方法。第二种模式 assoc 用于批量调用的数组
-其中, $value 为回调。 额外的， $value 还可以用 "MyClass@foo"  相当于回调 MyClass::G()->foo。
+为当前类分配一个或多个扩展静态方法。`$key` 为数组时批量分配。
 
     public static function GetExtendStaticMethodList()
-获得已经扩展的静态方法列表。
-如果一个类 use ExtendableStaticCallTrait . 你可以用 GetExtendStaticMethodList() 得到这个类有什么额外的静态方法。
+获取当前类已分配的所有扩展静态方法。
 
     public static function __callStatic($name, $arguments)
-接管默认的魔术方法
+拦截未定义的静态方法调用，并路由到已分配的扩展方法。
+
+### 受保护方法
 
     protected static function CallExtendStaticMethod($name, $arguments)
-静态魔术方法的实质调用。你可能会重写他。
-## 说明
-无额外说明。
+解析并执行对应的扩展回调。支持字符串形式的 `Class@method` 和 `Class->method` 解析。
 
-## 文档信息
-修订版本：
+## 相关链接
 
-修订时间：
-
-
-
-
-
-
-
-
+- [DuckPhp\Ext\MyFacadesBase](Ext-MyFacadesBase.md)

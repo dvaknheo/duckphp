@@ -1,72 +1,191 @@
-# 全局函数
-[toc]
+# DuckPhp\Core\Functions
 
-需要选项 `user_global_functions`  [DuckPhp\Core\KernelTrait](Core-KernelTrait.md)   （默认开启） 才能用。
+全局函数参考。
 
-DuckPhp 尽量避免污染全局环境，这些函数.
+## 简介
 
-都是以 两条下划线开头。
+`src/Core/Functions.php` 定义了一组以双下划线 `__` 开头的全局函数。这些函数是 `DuckPhp\Core\CoreHelper` 的快捷映射，便于在视图模板和控制器中直接调用。
 
-都是  [DuckPhp\Core\CoreHelper](Core-CoreHelper.md) 类的函数的映射，
+> 注意：这些全局函数需要 `DuckPhp\Core\KernelTrait` 加载后才可以使用，框架默认会自动引入。
 
+## 函数分组
 
-目前一共有：
+### 输出与转义
 
-### 显示
+#### `__h($str)`
 
-    function __h(...$args)
-\_\_h 对应 CoreHelper::H(); HTML 编码
+HTML 实体转义。对应 `CoreHelper::H()`。
 
-    function __l($str, $args = [])
-\_\_l 对应 CoreHelper::L(); 语言处理函数，后面的关联数组替换 '{$key}'
+```php
+$name = '<script>alert(1)</script>';
+echo __h($name);  // 输出 &lt;script&gt;alert(1)&lt;/script&gt;
+```
 
-    function __hl($str, $args = [])
-\_\_hl 对应 CoreHelper::Hl(); 对语言处理后进行 HTML 编码
+#### `__l($str, $args = [])`
 
-    function __json($data)
-\_\_json 对应 CoreHelper::Json(); json 编码，用于向 javascript  传送数据
+多语言翻译。对应 `CoreHelper::L()`。
 
-    function __url($url)
-\_\_url 对应 CoreHelper::URL($url); 获得资源相对 url 地址
+```php
+echo __l('hello');                       // 你好
+echo __l('welcome, {name}', ['name' => 'Duck']);  // 你好, Duck
+```
 
-    function __res($url)
-\_\__res 对应 CoreHelper::__res($url); 获取 外部资源地址
+#### `__hl($str, $args = [])`
 
-    function __domain($use_scheme = false)
-\_\_domain 对应 CoreHelper::domain();  获得带协议头的域名
+先翻译再进行 HTML 转义。对应 `CoreHelper::Hl()`。
 
-    function __display(...$args)
-\_\_display 对应 `CoreHelper::Display()` 包含下一个 `$view` ， 如果 `$data = null` 则带入所有当前作用域的变量。 否则带入 `$data` 关联数组的内容。用于嵌套包含视图。
+```php
+echo __hl('welcome, {name}', ['name' => '<b>Duck</b>']);
+```
 
+#### `__json($data, int $options = 0)`
+
+JSON 编码。对应 `CoreHelper::Json()`。默认启用 `JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK`，调试模式下会美化输出。
+
+```php
+echo __json(['code' => 0, 'data' => $user]);
+```
+
+### URL 与域名
+
+#### `__url($url)`
+
+生成相对 URL。对应 `CoreHelper::Url()`。
+
+```php
+$url = __url('user/profile');  // /user/profile
+```
+
+#### `__res($url)`
+
+生成资源 URL。对应 `CoreHelper::Res()`。
+
+```php
+$url = __res('css/style.css');
+```
+
+#### `__domain($use_scheme = false)`
+
+获取当前域名。对应 `CoreHelper::Domain()`。
+
+```php
+$domain = __domain();       // //example.com
+$domain = __domain(true);   // http://example.com
+```
+
+### 视图渲染
+
+#### `__display(...$args)`
+
+渲染一个视图片段。对应 `CoreHelper::Display()`。
+
+```php
+__display('partials/header', ['title' => '首页']);
+```
 
 ### 调试
 
-调试语句，全局性的
+以下函数仅在调试模式下生效（`is_debug` 为 `true`）。
 
-    function __var_dump(...$args)
-\_\_var_dump() 对应 CoreHelper::var_dump();  var_dump() 调试状态下 Dump 当前变量，替代 var_dump，和 var_dump 类似，实现可以修改
+#### `__var_dump(...$args)`
 
-    function __trace_dump()
-\_\_trace_dump() 对应 CoreHelper::TraceDump(); 调试状态下，查看当前堆栈，打印当前堆栈，类似 debug_print_backtrce(2)
+输出变量信息。对应 `CoreHelper::var_dump()`。
 
-    function __debug_log($str, $args = [])
-\_\_debug_log() 对应 CoreHelper::DebugLog($message, array $context = array()) 对应调试状态下 Log 当前变量。
+```php
+__var_dump($user, $posts);
+```
 
-    function __is_debug()
-\_\_is_debug() 对应 CoreHelper::IsDebug(); 判断是否在调试状态, 默认读取选项 is_debug 和设置字段里的 duckphp_is_debug
+#### `__trace_dump()`
 
-    function __platform()
-\_\_platform() 对应 CoreHelper::Platform(); 获得当前所在平台,默认读取选项和设置字段里的 duckphp_platform，用于判断当前是哪台机器等
+输出当前调用栈。对应 `CoreHelper::TraceDump()`。
 
-    function __is_real_debug()
-\_\_is_real_debug() 对应 CoreHelper::IsRealDebug(); 切莫乱用。用于环境设置为其他。比如线上环境，但是还是要特殊调试的场合。 如果没被接管，和 IsDebug() 一致。
-    
-    function __logger()
-\_\_logger() 对应 CoreHelper::Logger();  获得`Psr\Log\LoggerInterface`日志对象，便于不同级别的调试
+```php
+__trace_dump();
+```
 
-    function __var_log($var)
-\_\_var_log() 对应 CoreHelper::VarLog();  在日志打印当前变量 
-    function __h($str)
+#### `__debug_log($str, $args = [])`
 
-    function __json($data, int $options = 0)
+记录调试日志。对应 `CoreHelper::DebugLog()`。
 
+```php
+__debug_log('query result: {result}', ['result' => $result]);
+```
+
+#### `__var_log($var)`
+
+将变量以日志形式记录。对应 `CoreHelper::VarLog()`。
+
+```php
+__var_log($complexData);
+```
+
+#### `__is_debug()`
+
+判断当前是否处于调试模式。对应 `CoreHelper::IsDebug()`。
+
+```php
+if (__is_debug()) {
+    __var_dump($data);
+}
+```
+
+#### `__is_real_debug()`
+
+判断是否为真实调试模式。对应 `CoreHelper::IsRealDebug()`。通常与 `__is_debug()` 一致，仅在特殊环境配置下有区别。
+
+```php
+if (__is_real_debug()) {
+    // 极其谨慎地使用
+}
+```
+
+### 平台与日志
+
+#### `__platform()`
+
+获取当前平台标识。对应 `CoreHelper::Platform()`。通常读取 `duckphp_platform` 设置，用于判断当前部署机器。
+
+```php
+$platform = __platform();  // 'prod-server-01'
+```
+
+#### `__logger()`
+
+获取日志对象。对应 `CoreHelper::Logger()`，返回 `Logger` 实例。
+
+```php
+__logger()->info('user login: {id}', ['id' => $userId]);
+```
+
+## 全部函数索引
+
+```php
+function __h($str);
+function __l($str, $args = []);
+function __hl($str, $args = []);
+function __json($data, int $options = 0);
+function __url($url);
+function __domain($use_scheme = false);
+function __res($url);
+function __display(...$args);
+function __var_dump(...$args);
+function __var_log($var);
+function __trace_dump();
+function __debug_log($str, $args = []);
+function __logger();
+function __is_debug();
+function __is_real_debug();
+function __platform();
+```
+
+## 注意事项
+
+1. 全局函数以双下划线开头，避免与项目其他函数冲突。
+2. 所有函数都直接映射到 `CoreHelper` 的同名静态方法。
+3. 调试函数（`__var_dump`、`__trace_dump`、`__debug_log`、`__var_log`）在调试模式下才会生效，避免泄露信息到生产环境。
+4. 这些函数在 `KernelTrait` 加载 `Functions.php` 后可用，不需要手动引入。
+
+## 相关链接
+
+- [DuckPhp\Core\CoreHelper](Core-CoreHelper.md)
+- [DuckPhp\Core\KernelTrait](Core-KernelTrait.md)

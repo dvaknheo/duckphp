@@ -1,50 +1,140 @@
 # DuckPhp\Core\Logger
-[toc]
+
+日志组件。
 
 ## 简介
-日志组件 ，满足 psr 标准的日志组件
 
-## 使用于
+`Logger` 提供基础的日志记录能力，支持 PSR-3 风格的日志级别（`emergency`、`alert`、`critical`、`error`、`warning`、`notice`、`info`、`debug`）。日志文件按模板生成，支持上下文参数替换，并自动附加当前请求路径信息。
 
-[DuckPhp\Core\App](Core-App.md)
+该组件默认通过 `DuckPhp\DuckPhp` 的 `ext` 选项自动加载。
 
 ## 选项
 
-        'path' => '',
-基础路径
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `path` | `''` | 项目根路径。相对路径的日志目录会基于该路径计算。 |
+| `path_log` | `'runtime'` | 日志文件所在目录。 |
+| `log_file_template` | `'log_%Y-%m-%d_%H_%i.log'` | 日志文件名模板，支持 `date()` 格式字符。 |
+| `log_prefix` | `'DuckPhpLog'` | 日志前缀，输出在每条日志中。 |
 
-        'path_log' => 'runtime',
-日志目录路径
+## 使用方式
 
-        'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
-日志文件名模板 
+### 全局函数
 
-        'log_prefix' => 'DuckPhpLog',
-日志前缀
-## 方法
-### 主流程方法
-
-### psr-16 标准方法
 ```php
-    public function log($level, $message, array $context = array())
-    public function emergency($message, array $context = array())
-    public function alert($message, array $context = array())
-    public function critical($message, array $context = array())
-    public function error($message, array $context = array())
-    public function warning($message, array $context = array())
-    public function notice($message, array $context = array())
-    public function info($message, array $context = array())
-    public function debug($message, array $context = array())
+__logger()->info('用户 {id} 登录', ['id' => 42]);
+__logger()->error('数据库连接失败');
+
+// 仅在调试模式下输出
+__debug_log('调试信息 {name}', ['name' => 'test']);
 ```
 
-## 说明
+### 通过 Logger 组件
 
-App::Logger() 函数得到的就是这个类
+```php
+use DuckPhp\Core\Logger;
 
-Logger 类初始化的时候就直接调用 init() ，你可调用 reset() 重置
+Logger::_()->info('订单创建成功', ['order_id' => 12345]);
+Logger::_()->error('处理异常: {message}', ['message' => $ex->getMessage()]);
+```
 
-其他方法都遵循 PSR 标准 **但是这个类没实现 PSR 接口。**
+### 日志级别
 
-放在 Core 下是因为 处理默认异常会记录
+```php
+use DuckPhp\Core\Logger;
 
-记录的 相对于 Root 的 path_log 目录。
+Logger::_()->emergency('系统不可用');
+Logger::_()->alert('必须立即处理');
+Logger::_()->critical('严重错误');
+Logger::_()->error('运行时错误');
+Logger::_()->warning('警告信息');
+Logger::_()->notice('普通通知');
+Logger::_()->info('普通信息');
+Logger::_()->debug('调试信息');
+```
+
+## 配置示例
+
+### 基础配置
+
+```php
+class App extends \DuckPhp\DuckPhp
+{
+    public $options = [
+        'path_log' => 'runtime/logs',
+        'log_file_template' => 'log_%Y-%m-%d.log',
+        'log_prefix' => 'MyApp',
+    ];
+}
+```
+
+### 按小时分日志文件
+
+```php
+class App extends \DuckPhp\DuckPhp
+{
+    public $options = [
+        'log_file_template' => 'log_%Y-%m-%d_%H.log',
+    ];
+}
+```
+
+## 日志文件格式
+
+日志文件默认格式如下：
+
+```
+[info][DuckPhpLog][2024-01-01 12:00:00]: /user/login : 用户 42 登录
+```
+
+## 注意事项
+
+1. 日志文件路径为 `path_log` 与 `log_file_template` 组合后的完整路径。`path_log` 为空时，`error_log` 会按系统默认方式输出。
+2. `log_file_template` 中的 `%X` 会被替换为 `date('X')`，例如 `%Y-%m-%d` 会生成 `2024-01-01`。
+3. 上下文参数替换使用 `{key}` 格式，值会被 `var_export()` 后替换。
+4. 日志消息会自动追加 `PATH_INFO` 信息，便于追踪请求上下文。
+
+## 全部选项
+
+```php
+    'path' => '',
+    'path_log' => 'runtime',
+    'log_file_template' => 'log_%Y-%m-%d_%H_%i.log',
+    'log_prefix' => 'DuckPhpLog',
+```
+
+## 方法列表
+
+### 公共方法
+
+    public function log($level, $message, array $context = [])
+写入一条日志。`$level` 为日志级别，`$message` 支持 `{key}` 上下文替换
+
+    public function emergency($message, array $context = [])
+记录 `emergency` 级别日志
+
+    public function alert($message, array $context = [])
+记录 `alert` 级别日志
+
+    public function critical($message, array $context = [])
+记录 `critical` 级别日志
+
+    public function error($message, array $context = [])
+记录 `error` 级别日志
+
+    public function warning($message, array $context = [])
+记录 `warning` 级别日志
+
+    public function notice($message, array $context = [])
+记录 `notice` 级别日志
+
+    public function info($message, array $context = [])
+记录 `info` 级别日志
+
+    public function debug($message, array $context = [])
+记录 `debug` 级别日志
+
+## 相关链接
+
+- [DuckPhp\Core\CoreHelper](Core-CoreHelper.md)
+- [DuckPhp\Core\Functions](Core-Functions.md)
