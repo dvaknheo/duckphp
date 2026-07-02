@@ -1,331 +1,192 @@
-# 参考首页
-[toc]
-## 介绍
+# DuckPhp 参考手册
 
-本参考是所有 DuckPhp 类 的规范参考。不包含内部 trait 。
+DuckPhp 参考手册收录了框架所有类、接口、Trait 以及应用选项的完整说明。本页为目录页，按命名空间分组列出所有参考文档，方便快速定位。
 
+## 全部选项
 
-[所有选项。](options.md)
+所有应用配置选项统一汇总在 [options.md](options.md) 中。
 
-## 架构图
+---
 
-![DuckPhp](../duckphp.gv.svg)
+## 核心类
 
+框架最核心、默认加载或全局可见的类与 Trait。
 
-图解:
+| 类 | 说明 |
+|---|---|
+| [DuckPhp\DuckPhp](DuckPhp.md) | 框架入口类，扩展自 `DuckPhp\Core\App`，默认加载一组常用组件。 |
+| [DuckPhp\DuckPhpAllInOne](DuckPhpAllInOne.md) | 绑定所有助手 Trait 的入口类，适合快速演示或小型项目。 |
+| [DuckPhp\Core\App](Core-App.md) | 核心应用类，组合 `KernelTrait` 并初始化核心组件。 |
+| [DuckPhp\Core\KernelTrait](Core-KernelTrait.md) | 核心应用初始化流程 Trait，定义 `kernel_options` 与生命周期事件。 |
+| [DuckPhp\Core\ComponentBase](Core-ComponentBase.md) | 所有组件的基类，提供选项合并、单例容器等通用机制。 |
+| [DuckPhp\Core\ComponentInterface](Core-ComponentInterface.md) | 组件接口。 |
+| [DuckPhp\Core\SingletonTrait](Core-SingletonTrait.md) | 单例模式 Trait。 |
+| [DuckPhp\Core\PhaseContainer](Core-PhaseContainer.md) | 相位容器，管理应用实例与子应用的单例对象。 |
+| [DuckPhp\Core\Route](Core-Route.md) | 默认 MVC 路由组件，负责解析 PATH_INFO 并调用控制器。 |
+| [DuckPhp\Core\Runtime](Core-Runtime.md) | 运行期数据保存组件，管理输出缓冲与运行状态。 |
+| [DuckPhp\Core\Logger](Core-Logger.md) | 日志组件，按模板写入文件。 |
+| [DuckPhp\Core\View](Core-View.md) | 视图组件，负责模板渲染与视图文件查找。 |
+| [DuckPhp\Core\EventManager](Core-EventManager.md) | 事件管理组件。 |
+| [DuckPhp\Core\ExceptionManager](Core-ExceptionManager.md) | 异常与错误处理组件。 |
+| [DuckPhp\Core\SuperGlobal](Core-SuperGlobal.md) | 超全局变量上下文组件，支持隔离与保存。 |
+| [DuckPhp\Core\SystemWrapper](Core-SystemWrapper.md) | 系统同名函数替换 Trait，便于测试与拦截。 |
+| [DuckPhp\Core\AutoLoader](Core-AutoLoader.md) | 自动加载类，支持 PSR-4 与项目应用命名空间加载。 |
+| [DuckPhp\Core\Console](Core-Console.md) | 命令行模式组件，注册并执行 CLI 命令。 |
+| [DuckPhp\Core\CoreHelper](Core-CoreHelper.md) | 核心助手类，提供 HTML 转义、JSON 输出等工具方法。 |
+| [DuckPhp\Core\Functions](Core-Functions.md) | 框架全局函数列表。 |
+| [DuckPhp\Core\ThrowOnTrait](Core-ThrowOnTrait.md) | 可抛方法 Trait。 |
+| [DuckPhp\Core\ExitException](Core-ExitException.md) | 退出异常。 |
+| [DuckPhp\Core\DuckPhpSystemException](Core-DuckPhpSystemException.md) | DuckPhp 系统异常基类。 |
 
-灰色尖框为可单独使用类
+---
 
-方尖为 Trait
+## 组件
 
-组件类用统一标志
+`DuckPhp\Component` 命名空间下的自带组件。
 
+| 类 | 说明 |
+|---|---|
+| [DuckPhp\Component\Cache](Component-Cache.md) | 缓存组件基类，提供空实现。 |
+| [DuckPhp\Component\Command](Component-Command.md) | 框架默认 CLI 命令集合。 |
+| [DuckPhp\Component\Configer](Component-Configer.md) | 配置读取组件，从 `config/` 目录加载 PHP 配置。 |
+| [DuckPhp\Component\DbManager](Component-DbManager.md) | 数据库管理组件，支持多库与读写分离。 |
+| [DuckPhp\Component\ExtOptionsLoader](Component-ExtOptionsLoader.md) | 额外选项加载组件，支持 `DuckPhpApps.config.php`。 |
+| [DuckPhp\Component\Lang](Component-Lang.md) | 多语言（i18n）组件。 |
+| [DuckPhp\Component\Pager](Component-Pager.md) | 分页组件，渲染 HTML 分页条。 |
+| [DuckPhp\Component\PagerInterface](Component-PagerInterface.md) | 分页接口。 |
+| [DuckPhp\Component\PhaseProxy](Component-PhaseProxy.md) | 相位代理组件。 |
+| [DuckPhp\Component\RedisCache](Component-RedisCache.md) | 基于 Redis 的缓存组件。 |
+| [DuckPhp\Component\RedisManager](Component-RedisManager.md) | Redis 管理器，支持多 Redis 实例。 |
+| [DuckPhp\Component\RouteHookCheckStatus](Component-RouteHookCheckStatus.md) | 路由钩子，检查维护与安装状态。 |
+| [DuckPhp\Component\RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md) | 无 PATH_INFO 兼容模式组件。 |
+| [DuckPhp\Component\RouteHookResource](Component-RouteHookResource.md) | 资源路由钩子，处理静态资源请求。 |
+| [DuckPhp\Component\RouteHookRewrite](Component-RouteHookRewrite.md) | 路由重写组件。 |
+| [DuckPhp\Component\RouteHookRouteMap](Component-RouteHookRouteMap.md) | 路由映射组件，支持正则与占位符路由。 |
+| [DuckPhp\Component\ZCallTrait](Component-ZCallTrait.md) | 调用 Trait。 |
 
-## 按 DuckPhp 文件结构介绍的类
+---
 
-遵循 PSR-4 的文件结构
+## 扩展
 
-链接指向参考文件。
+`DuckPhp\Ext` 命名空间下的可选扩展，非默认加载，可按需启用。
 
-@script filedesc
+| 类 | 说明 |
+|---|---|
+| [DuckPhp\Ext\CallableView](Ext-CallableView.md) | 可接受函数调用的视图组件。 |
+| [DuckPhp\Ext\DuckPhpInstaller](Ext-DuckPhpInstaller.md) | 项目安装器，支持 `new`、`show` 等命令。 |
+| [DuckPhp\Ext\EmptyView](Ext-EmptyView.md) | 空视图组件，仅填充数据不输出。 |
+| [DuckPhp\Ext\ExceptionWrapper](Ext-ExceptionWrapper.md) | 异常包裹组件。 |
+| [DuckPhp\Ext\ExtendableStaticCallTrait](Ext-ExtendableStaticCallTrait.md) | 可扩展静态调用的 Trait。 |
+| [DuckPhp\Ext\FinderForController](Ext-FinderForController.md) | 控制器枚举组件。 |
+| [DuckPhp\Ext\HookChain](Ext-HookChain.md) | 把回调扩展成链的类。 |
+| [DuckPhp\Ext\JsonRpcClientBase](Ext-JsonRpcClientBase.md) | JsonRpc 客户端基类。 |
+| [DuckPhp\Ext\JsonRpcExt](Ext-JsonRpcExt.md) | JsonRpc 远程调用组件。 |
+| [DuckPhp\Ext\JsonView](Ext-JsonView.md) | JSON 视图组件。 |
+| [DuckPhp\Ext\MiniRoute](Ext-MiniRoute.md) | 简化版路由组件。 |
+| [DuckPhp\Ext\Misc](Ext-Misc.md) | 杂项功能组件，如 DI、Import、Recordset 处理。 |
+| [DuckPhp\Ext\MyFacadesAutoLoader](Ext-MyFacadesAutoLoader.md) | 门面自动加载组件。 |
+| [DuckPhp\Ext\MyFacadesBase](Ext-MyFacadesBase.md) | 门面基类。 |
+| [DuckPhp\Ext\MyMiddlewareManager](Ext-MyMiddlewareManager.md) | 中间件管理组件。 |
+| [DuckPhp\Ext\RouteHookApiServer](Ext-RouteHookApiServer.md) | 简易 API 服务器路由钩子。 |
+| [DuckPhp\Ext\RouteHookDirectoryMode](Ext-RouteHookDirectoryMode.md) | 多目录基准模式路由钩子。 |
+| [DuckPhp\Ext\RouteHookFunctionRoute](Ext-RouteHookFunctionRoute.md) | 函数模式路由钩子。 |
+| [DuckPhp\Ext\RouteHookManager](Ext-RouteHookManager.md) | 路由钩子管理器。 |
+| [DuckPhp\Ext\StaticReplacer](Ext-StaticReplacer.md) | 适配协程的静态替换写法类。 |
+| [DuckPhp\Ext\StrictCheck](Ext-StrictCheck.md) | 严格检查模式组件。 |
 
-1. **[DuckPhp](DuckPhp.md)** 入口类，加载了默认扩展的 DuckPhp 入口 ，扩展自 [DuckPhp\\Core\\App](Core-App.md)
-2. **[DuckPhpAllInOne](DuckPhpAllInOne.md)** 入口类，绑定所有助手Trait的入口类;
-3. [AutoLoad\AutoLoader](Core-AutoLoader.md) 自动加载类
-2. `Core` 目录是核心目录，核心框架。基本功能都在 Core 里实现
-    1. **[ComponentBase](Core-ComponentBase.md)** 组件基类
-        1. **[ComponentInterface](Core-ComponentInterface.md)** 组件接口
-        2. **[SingletonTrait](Core-SingletonTrait.md)** 单例模式 
-    2. **[App](Core-App.md)** 核心应用类。引用以下类
-        -  **[KernelTrait](Core-KernelTrait.md)** 核心Trait 以下是 `核心必备组件`
-        -  **[Console](Core-Console.md)** 命令行模式扩展组件
-        -  **[CoreHelp](Core-CoreHelp.md)** 核心助手类
-        -  **[DuckPhpSystemException](Core-DuckPhpSystemException.md)** 核心助手类
-        -  [EventManager](Core-EventManager.md) 事件管理组件
-        -  **[ExceptionManager](Core-ExceptionManager.md)**   异常管理组件
-        -  **[ExitException](Core-ExitException.md)** 退出异常
-        -  **[Functions](Core-Functions.md)** 全局函数列表
-        -  [Logger](Core-Logger.md) 日志组件
-        -  [PhaseContainer](Core-PhaseContainer.md) 容器类，相位容器类
-        -  **[Route](Core-Route.md)** 路由组件
-        -  **[Runtime](Core-Runtime.md)** 运行期数据保存组件
-        -  [SuperGlobal](Ext-SuperGlobal.md) 超全局上下文组件
-        -  [SystemWrapper](Core-SystemWrapper.md) 替换系统同名函数的 trait
-        -  **[ThrownOnTrait](Core-ThrownOnTrait.md)** 可抛方法
-        -  **[View](Core-View.md)** 视图组件
-3. `Component` 目录，自带组件扩展。
-    -  [Cache](Component-Cache.md) 缓存组件
-    -  **[Configer](Core-Configer.md)** 配置组件
-    -  [DbManager](Component-DbManager.md) 数据库管理组件
-    -  [DuckPhpCommand](Component-DuckPhpCommand.md) DuckPhp 的默认指令组件
-    -  [DuckPhpInstaller](Component-DuckPhpInstaller.md) DuckPhp 的安装组件
-    -  [ExtOptionsLoader](Component-ExtOptionsLoader.md) 额外选项组件
-    -  [GlobalAdmin](Component-GlobalAdmin.md) 全局管理员组件
-    -  [GlobalUser](Component-GlobalUser.md) 全局用户组件
-    -  [Pager](Component-Pager.md) 分页类
-        1. [PagerInteface](Component-PagerInteface.md) 分页接口
-    -  [PhaseProxy](Component-PhaseProxy.md) 分页类
-    -  [RedisCache](Component-RedisSimpleCache.md) redis 缓存组件
-    -  [RedisManager](Component-RedisManager.md) Redis管理器组件
-    -  **[RouteHookPathInfoCompat](Component-RouteHookPathInfoCompat.md)** 无程序路由设计模式组件
-    -  **[RouteHookResource](Component-RouteHookResource.md)** 资源组件
-    -  **[RouteHookRouteMap](Component-RouteHookRouteMap.md)** 路由映射组件
-    -  [RouteHookRewrite](Component-RouteHookRewrite.md) 路由重写组件
-    -  [SqlDumper](Component-SqlDumper.md) 数据库加载组件
-4. `Db` 目录，数据库目录
-    1. [DbAdvanceTrait](Db-DbAdvanceTrait.md)  这个 trait 增加了 Db类的高级功能
-    2. [DbInterface](Db-DbInterface.md) Db 类满足 DbInterface 接口
-    3. [Db](Db-Db.md) Db类
-5. `Foundation` 目录。存放高级功能的目录
-    - [ExceptionReporterTrait](Foundation-ExceptionReporterTrait.md) 错误报告Trait
-    - [SimpleBusinessTrait](Foundation-SimpleBusinessTrait.md) 简单的模型Trait
-    - [SimpleControllerTrait](Foundation-SimpleControllerTrait.md) 简单的模型Trait
-    - [SimpleExceptionTrait](Foundation-SimpleExceptionTrait.md) 让类有ThrowOn功能
-    - [SimpleModelTrait](Foundation-SimpleModel.md) 简单的模型Trait
-    - [SimpleSessionTrait](Foundation-SimpleSessionTrait.md) 简单的会话Trait
-    - [SimpleSingletonTrait](Foundation-SimpleSingletonTrait.md) 单例Trait
-    - [Business/Helper](Foundation-Business-Helper.md) 提供业务助手类
-    - [Controller/Helper](Foundation-Helper.md) 控制器助手类
-    - [Model/Helper](Foundation-Helper.md) 模型助手类
-    - [System/Helper](Foundation-Helper.md) 系统助手类
-    - [Helper](Foundation-Helper.md) 集合所有的助手类
-    - [FastInstallerTrait](Foundation-FastInstallerTrait.md) 快速安装器助手类
-    
-6. `Ext` 扩展目录，非默认加载的扩展。按字母排序。
-    -  [CallableView](Ext-CallableView.md) 可接受函数调用的视图组件
-    +  [EmptyView](Ext-EmptyView.md) 空视图组件
-    +  [ExceptionWrapper](Ext-ExceptionWrapper.md) 异常包裹
-    +  [ExtendableStaticCallTrait](Ext-ExtendableStaticCallTrait.md) 扩展静态调用的 trait
-    +  [HookChain](Ext-HookChain.md) 把回调扩展成链的类
-    +  [JsonRpcExt](Ext-JsonRpcExt.md) Json 远程调用组件，把本地调用改为远程调用
-        1. [JsonRpcClientBase](Ext-JsonRpcClientBase.md)
-    +  [JsonView](Ext-JsonView.md) Json 视图组件
-    +  [MiniRoute](Ext-MiniRoute.md) 简化版的路由组件
-    +  [Misc](Ext-Misc.md) 杂项功能组件
-    +  [MyFacadesAutoLoader](Ext-MyFacadesAutoLoader.md) 门面组件，不推荐
-        1. [MyFacadesBase](Ext-MyFacadesBase.md) 门面类的基类，不推荐
-    +  [MyMiddlewareManager](Ext-MyMiddlewareManager.md) 中间件，不推荐
-    +  [RouteHookApiServer](Ext-RouteHookApiServer.md) 简单的 API 服务器插件
-    +  [RouteHookDirectoryMode](Ext-RouteHookDirectoryMode.md) 多个目录基准的模式组件
-    +  [RouteHookManager](Ext-RouteHookManager.md) 路由钩子管理器
-    +  [RouteHookFunctionRoute](Ext-RouteHookFunctionRoute.md) 支持函数调用
-    +  [StaticReplacer](Ext-StaticReplacer.md) 适配协程的语法替换写法类
-    +  [StrictCheck](Ext-StrictCheck.md) 严格检查模式组件
-7. `Helper` 目录，各种助手类。
-    + [AdvanceHelperTrait](Helper-AdvanceHelperTrait.md) 应用助手Trait
-    + [BusinessHelperTrait](Helper-BusinessHelperTrait.md) 业务助手Trait
-    + [ControllerHelperTrait](Helper-ControllerHelperTrait.md) 控制器助手Trait
-    + [ModelHelperTrait](Helper-ModelHelperTrait.md) 模型助手Trait
-8. `HttpServer` 目录
-    2. [HttpServer](HttpServer-HttpServer.md)  Http 服务器
-    3. [HttpServerInterface](HttpServer-HttpServerInterface.md)  Http 服务接口
-6. `FastInstaller` 目录。 一个安装程序.
-    + [FastInstaller](FastInstaller-FastInstaller.md) 安装程序入口
-        - [DatabaseInstaller](Ext-DatabaseInstaller.md) 数据库安装器
-        - [RedisInstaller](Ext-RedisInstaller.md) Redis数据库安装器
-        - [SqlDumper](Ext-SqlDumper.md) 数据库结构导出器
+---
 
+## 数据库
 
-@script filedesc
+`DuckPhp\Db` 命名空间下的数据库相关类与接口。
 
-在本参考中，所有的类的方法都已经用脚本检查，不存在有类的方法无文档的情况
+| 类 | 说明 |
+|---|---|
+| [DuckPhp\Db\Db](Db-Db.md) | 数据库类。 |
+| [DuckPhp\Db\DbAdvanceTrait](Db-DbAdvanceTrait.md) | 为 `Db` 增加高级功能的 Trait。 |
+| [DuckPhp\Db\DbInterface](Db-DbInterface.md) | `Db` 实现的接口。 |
 
-所有的选项也用脚本检查，不存在有类的选项没遗漏的情况
+---
 
-## nginx 配置
+## 命令行安装器
 
+`DuckPhp\FastInstaller` 命名空间下的安装程序相关类。
 
-```
-server {
-    root DUCKPHP_ROOT/template/public;
-    index index.php index.html index.htm;
-    
-    try_files $uri $uri/ /index.php$request_uri;
-    location ~ \.php {
-        fastcgi_pass 127.0.0.1:9000;
-        fastcgi_index index.php;
-        fastcgi_split_path_info ^(.*\.php)(/.*)?$;
-        fastcgi_param PATH_INFO $fastcgi_path_info;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        include fastcgi_params;
-    }
-}
-```
-##  全部文件一览
-### 源代码
-```
-tree src
-src
-├── Component
-│   ├── Cache.php
-│   ├── Command.php
-│   ├── Configer.php
-│   ├── DbManager.php
-│   ├── DuckPhpInstaller.php
-│   ├── ExtOptionsLoader.php
-│   ├── Pager.php
-│   ├── PagerInterface.php
-│   ├── PhaseProxy.php
-│   ├── RedisCache.php
-│   ├── RedisManager.php
-│   ├── RouteHookCheckStatus.php
-│   ├── RouteHookPathInfoCompat.php
-│   ├── RouteHookResource.php
-│   ├── RouteHookRewrite.php
-│   ├── RouteHookRouteMap.php
-│   └── ZCallTrait.php
-├── Core
-│   ├── App.php
-│   ├── AutoLoader.php
-│   ├── ComponentBase.php
-│   ├── ComponentInterface.php
-│   ├── Console.php
-│   ├── CoreHelper.php
-│   ├── DuckPhpSystemException.php
-│   ├── EventManager.php
-│   ├── ExceptionManager.php
-│   ├── ExitException.php
-│   ├── Functions.php
-│   ├── KernelTrait.php
-│   ├── Logger.php
-│   ├── PhaseContainer.php
-│   ├── Route.php
-│   ├── Runtime.php
-│   ├── SingletonTrait.php
-│   ├── SuperGlobal.php
-│   ├── SystemWrapper.php
-│   ├── ThrowOnTrait.php
-│   └── View.php
-├── Db
-│   ├── Db.php
-│   ├── DbAdvanceTrait.php
-│   └── DbInterface.php
-├── DuckPhp.php
-├── DuckPhpAllInOne.php
-├── Ext
-│   ├── AutoReadLineConsole.php
-│   ├── CallableView.php
-│   ├── EmptyView.php
-│   ├── ExceptionWrapper.php
-│   ├── ExtendableStaticCallTrait.php
-│   ├── HookChain.php
-│   ├── JsonRpcClientBase.php
-│   ├── JsonRpcExt.php
-│   ├── JsonView.php
-│   ├── MiniRoute.php
-│   ├── Misc.php
-│   ├── Misc.php.bak
-│   ├── MyFacadesAutoLoader.php
-│   ├── MyFacadesBase.php
-│   ├── MyMiddlewareManager.php
-│   ├── RouteHookApiServer.php
-│   ├── RouteHookDirectoryMode.php
-│   ├── RouteHookFunctionRoute.php
-│   ├── RouteHookManager.php
-│   ├── StaticReplacer.php
-│   └── StrictCheck.php
-├── FastInstaller
-│   ├── DatabaseInstaller.php
-│   ├── FastInstaller.php
-│   ├── RedisInstaller.php
-│   ├── SqlDumper.php
-│   ├── Supporter.php
-│   ├── SupporterByMysql.php
-│   └── SupporterBySqlite.php
-├── Foundation
-│   ├── Business
-│   │   └── Helper.php
-│   ├── Controller
-│   │   └── Helper.php
-│   ├── ExceptionReporterTrait.php
-│   ├── Helper.php
-│   ├── Model
-│   │   └── Helper.php
-│   ├── SimpleBusinessTrait.php
-│   ├── SimpleControllerTrait.php
-│   ├── SimpleExceptionTrait.php
-│   ├── SimpleModelTrait.php
-│   ├── SimpleSessionTrait.php
-│   ├── SimpleSingletonTrait.php
-│   └── System
-│       └── Helper.php
-├── GlobalAdmin
-│   ├── AdminActionInterface.php
-│   ├── AdminControllerInterface.php
-│   ├── AdminServiceInterface.php
-│   └── GlobalAdmin.php
-├── GlobalUser
-│   ├── GlobalUser.php
-│   ├── UserActionInterface.php
-│   ├── UserControllerInterface.php
-│   └── UserServiceInterface.php
-├── Helper
-│   ├── AppHelperTrait.php
-│   ├── BusinessHelperTrait.php
-│   ├── ControllerHelperTrait.php
-│   └── ModelHelperTrait.php
-└── HttpServer
-    ├── HttpServer.php
-    └── HttpServerInterface.php
-```
-模板工程文件
-```
-template
-├── cli.php
-├── config
-│   ├── DuckPhpApps.config.php
-│   └── DuckPhpSettings.config.php
-├── public
-│   ├── api.php
-│   ├── cover_test.php
-│   ├── dbtest.php
-│   ├── demo.php
-│   ├── doc.css
-│   ├── doc.php
-│   ├── helloworld.php
-│   ├── i.php
-│   ├── index.php
-│   ├── just-route.php
-│   ├── rpc.php
-│   └── traditional.php
-├── runtime
-│   └── keepme.txt
-├── src
-│   ├── Business
-│   │   ├── Base.php
-│   │   ├── CommonService.php
-│   │   ├── DemoBusiness.php
-│   │   └── Helper.php
-│   ├── Controller
-│   │   ├── Base.php
-│   │   ├── Commands.php
-│   │   ├── CommonAction.php
-│   │   ├── ExceptionReporter.php
-│   │   ├── Helper.php
-│   │   ├── MainController.php
-│   │   ├── Session.php
-│   │   └── testController.php
-│   ├── Model
-│   │   ├── Base.php
-│   │   ├── CrossModelEx.php
-│   │   ├── DemoModel.php
-│   │   └── Helper.php
-│   └── System
-│       ├── App.php
-│       ├── AppWithAllOptions.php
-│       ├── BusinessException.php
-│       ├── ControllerException.php
-│       └── ProjectException.php
-└── view
-    ├── _sys
-    │   ├── error_404.php
-    │   ├── error_500.php
-    │   ├── error_maintain.php
-    │   └── error_need_install.php
-    ├── files.php
-    ├── main.php
-    └── test
-        └── done.php
+| 类 | 说明 |
+|---|---|
+| [DuckPhp\FastInstaller\FastInstaller](FastInstaller-FastInstaller.md) | 安装程序入口。 |
+| [DuckPhp\FastInstaller\DatabaseInstaller](FastInstaller-DatabaseInstaller.md) | 数据库安装器。 |
+| [DuckPhp\FastInstaller\RedisInstaller](FastInstaller-RedisInstaller.md) | Redis 安装器。 |
+| [DuckPhp\FastInstaller\SqlDumper](FastInstaller-SqlDumper.md) | 数据库结构导出器。 |
+| [DuckPhp\FastInstaller\Supporter](FastInstaller-Supporter.md) | 安装器支持基类。 |
+| [DuckPhp\FastInstaller\SupporterByMysql](FastInstaller-SupporterByMysql.md) | MySQL 支持类。 |
+| [DuckPhp\FastInstaller\SupporterByPgsql](FastInstaller-SupporterByPgsql.md) | PostgreSQL 支持类。 |
+| [DuckPhp\FastInstaller\SupporterBySqlite](FastInstaller-SupporterBySqlite.md) | SQLite 支持类。 |
 
-```
+---
 
+## HTTP 服务器
+
+`DuckPhp\HttpServer` 命名空间下的内嵌 HTTP 服务器。
+
+| 类 | 说明 |
+|---|---|
+| [DuckPhp\HttpServer\HttpServer](HttpServer-HttpServer.md) | 内嵌 HTTP 服务器。 |
+| [DuckPhp\HttpServer\HttpServerInterface](HttpServer-HttpServerInterface.md) | HTTP 服务器接口。 |
+
+---
+
+## 助手
+
+`DuckPhp\Helper` 与 `DuckPhp\Foundation` 命名空间下的助手类与 Trait。
+
+### Helper
+
+| 类 | 说明 |
+|---|---|
+| [DuckPhp\Helper\AppHelperTrait](Helper-AppHelperTrait.md) | 应用助手 Trait。 |
+| [DuckPhp\Helper\BusinessHelperTrait](Helper-BusinessHelperTrait.md) | 业务助手 Trait。 |
+| [DuckPhp\Helper\ControllerHelperTrait](Helper-ControllerHelperTrait.md) | 控制器助手 Trait。 |
+| [DuckPhp\Helper\ModelHelperTrait](Helper-ModelHelperTrait.md) | 模型助手 Trait。 |
+
+### Foundation
+
+| 类 | 说明 |
+|---|---|
+| [DuckPhp\Foundation\Helper](Foundation-Helper.md) | 助手集合类。 |
+| [DuckPhp\Foundation\Business\Helper](Foundation-Business-Helper.md) | 业务助手类。 |
+| [DuckPhp\Foundation\Controller\Helper](Foundation-Controller-Helper.md) | 控制器助手类。 |
+| [DuckPhp\Foundation\Model\Helper](Foundation-Model-Helper.md) | 模型助手类。 |
+| [DuckPhp\Foundation\System\Helper](Foundation-System-Helper.md) | 系统助手类。 |
+| [DuckPhp\Foundation\ExceptionReporterTrait](Foundation-ExceptionReporterTrait.md) | 错误报告 Trait。 |
+| [DuckPhp\Foundation\SimpleBusinessTrait](Foundation-SimpleBusinessTrait.md) | 简单业务 Trait。 |
+| [DuckPhp\Foundation\SimpleControllerTrait](Foundation-SimpleControllerTrait.md) | 简单控制器 Trait。 |
+| [DuckPhp\Foundation\SimpleExceptionTrait](Foundation-SimpleExceptionTrait.md) | 简单异常 Trait。 |
+| [DuckPhp\Foundation\SimpleModelTrait](Foundation-SimpleModelTrait.md) | 简单模型 Trait。 |
+| [DuckPhp\Foundation\SimpleSessionTrait](Foundation-SimpleSessionTrait.md) | 简单会话 Trait。 |
+| [DuckPhp\Foundation\SimpleSingletonTrait](Foundation-SimpleSingletonTrait.md) | 简单单例 Trait。 |
+| [DuckPhp\Foundation\FastInstallerTrait](Foundation-FastInstallerTrait.md) | 快速安装器助手 Trait。 |
+
+---
+
+## 全局管理
+
+`DuckPhp\GlobalAdmin` 与 `DuckPhp\GlobalUser` 命名空间下的全局管理组件。
+
+### GlobalAdmin
+
+| 类 | 说明 |
+|---|---|
+| [DuckPhp\GlobalAdmin\GlobalAdmin](GlobalAdmin-GlobalAdmin.md) | 全局管理员组件。 |
+| [DuckPhp\GlobalAdmin\AdminActionInterface](GlobalAdmin-AdminActionInterface.md) | 管理员操作接口。 |
+| [DuckPhp\GlobalAdmin\AdminControllerInterface](GlobalAdmin-AdminControllerInterface.md) | 管理员控制器接口。 |
+| [DuckPhp\GlobalAdmin\AdminServiceInterface](GlobalAdmin-AdminServiceInterface.md) | 管理员服务接口。 |
+
+### GlobalUser
+
+| 类 | 说明 |
+|---|---|
+| [DuckPhp\GlobalUser\GlobalUser](GlobalUser-GlobalUser.md) | 全局用户组件。 |
+| [DuckPhp\GlobalUser\UserActionInterface](GlobalUser-UserActionInterface.md) | 用户操作接口。 |
+| [DuckPhp\GlobalUser\UserControllerInterface](GlobalUser-UserControllerInterface.md) | 用户控制器接口。 |
+| [DuckPhp\GlobalUser\UserServiceInterface](GlobalUser-UserServiceInterface.md) | 用户服务接口。 |
