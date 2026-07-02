@@ -1,82 +1,141 @@
-# DuckPhp\Component\DuckPhpInstaller
-[toc]
+# DuckPhp\Ext\DuckPhpInstaller
+
+DuckPhp 项目安装器扩展组件。
+
 ## 简介
 
-安装器组件
+`DuckPhpInstaller` 提供命令行工具，用于在当前目录新建项目、显示帮助信息或运行示例 HTTP 服务器。它会把框架自带的 skeleton 目录复制到目标目录，并替换命名空间等占位符。
+
+该组件通常不直接参与 Web 请求处理，而是作为 `bin/duckphp` 或命令行入口使用。
 
 ## 选项
-全部选项
 
+| 选项 | 默认值 | 说明 |
+|---|---|---|
+| `path` | `''` | 目标路径。新项目将被复制到此目录。 |
+| `namespace` | `''` | 项目命名空间。为空时安装器会交互式询问。 |
+| `force` | `false` | 是否覆盖已存在的文件。 |
+| `autoloader` | `'vendor/autoload.php'` | 自动加载文件路径，用于替换 `@DUCKPHP_HEADFILE` 占位符。 |
+| `verbose` | `false` | 是否显示复制进度。 |
+| `help` | `false` | 是否显示帮助信息。 |
+
+## 使用方式
+
+### 命令行入口
+
+```php
+$installer = new \DuckPhp\Ext\DuckPhpInstaller();
+$installer->command_new();  // 创建新项目
+$installer->command_help(); // 显示帮助
+$installer->command_show();  // 运行示例服务器
+```
+
+### 显示帮助
+
+```php
+$installer = new \DuckPhp\Ext\DuckPhpInstaller();
+$installer->showHelp();
+```
+
+输出内容包含可用的命令、参数及说明。
+
+### 创建新项目
+
+```php
+$installer = new \DuckPhp\Ext\DuckPhpInstaller();
+$installer->newProject();
+```
+
+该方法会读取 CLI 参数，如 `--namespace`、`--force`、`--verbose`、`--autoloadfile`、`--path`，然后把 `src/Ext/../../skeleton` 目录复制到目标位置。
+
+### 运行示例服务器
+
+```php
+$installer = new \DuckPhp\Ext\DuckPhpInstaller();
+$installer->runDemo();
+```
+
+默认使用 `template` 目录作为项目路径，端口默认为 `8080`。可以通过 `--port` 指定端口，通过 `--http_server` 指定自定义 HTTP 服务器类。
+
+## 配置示例
+
+安装器通常不需要在 Web 应用配置中加载。命令行用法示例：
+
+```php
+#!/usr/bin/env php
+<?php
+require __DIR__ . '/vendor/autoload.php';
+
+$installer = new \DuckPhp\Ext\DuckPhpInstaller();
+$installer->command_new();
+```
+
+## 注意事项
+
+1. `newProject()` 依赖 `DuckPhp\Core\Console` 获取 CLI 参数，运行环境必须支持命令行。
+2. 如果目标文件已存在且 `force` 为 `false`，安装器会提示使用 `--force` 覆盖并终止。
+3. 复制文件时会替换三个占位符：`@DUCKPHP_HEADFILE`、`@DUCKPHP_DELETE`、`@DUCKPHP_NAMESPACE`。
+4. `runDemo()` 通过 `DuckPhp\HttpServer\HttpServer` 启动服务器，需要单独安装 HTTP 服务器组件。
+
+## 全部选项
+
+```php
+    public $options = [
         'path' => '',
-安装路径
-
         'namespace' => '',
-安装的命名空间
-
         'force' => false,
-安装器，强制安装，覆盖现有文件
-
         'autoloader' => 'vendor/autoload.php',
-安装器，自动加载器指向位置
-
         'verbose' => false,
-安装器，显示详情
-
         'help' => false,
-安装器，显示帮助
-##  方法
-
-    public static function RunQuickly($options)
-    public function init(array $options, $context = null)
-    public function run()
-通用运行方法
-
-    protected function dumpDir($source, $dest, $force = false)
-    
-    protected function checkFilesExist($source, $dest, $files)
-    
-    protected function createDirectories($dest, $files)
-    
-    protected function filteText($data, $is_in_full, $short_file_name)
-    
-    protected function filteMacro($data)
-    
-    protected function filteNamespace($data, $namespace)
-    
-    protected function changeHeadFile($data, $short_file_name, $autoload_file)
-    
-    protected function showHelp()
-
-    protected function genProjectName()
-
-
-## 说明
-
-DuckPhpInstaller 是辅助安装类。
-
-`选项`同时作为`命令行参数`使用
-
-一般不在系统里加载，使用以下命令查看帮助
-
-```
-vendor/bin/duckphp new  --help
+    ];
 ```
 
-## 完毕
+## 方法列表
 
-        function detectedClass($path)
+### 公共方法
 
     public function command_new()
+创建新项目。初始化组件后调用 `newProject()`。
 
     public function command_help()
+显示帮助信息。
 
     public function command_show()
+运行示例服务器。
 
     public function showHelp()
+输出命令行帮助文本。
 
     public function newProject()
+根据 CLI 参数复制 skeleton 目录并替换命名空间。
 
     public function runDemo()
+使用 template 目录运行示例 HTTP 服务器。
 
-    protected function detectedClass($path)
+### 受保护方法
 
+    protected function dumpDir($source, $dest, $force = false)
+递归复制源目录到目标目录，并处理文件过滤。
+
+    protected function checkFilesExist($source, $dest, $files)
+检查目标文件是否已存在。如果存在且未开启 `force`，则返回 `false`。
+
+    protected function createDirectories($dest, $files)
+根据文件列表创建目标目录结构。
+
+    protected function filteText($data, $is_in_full, $short_file_name)
+对单个文件内容进行过滤：替换头文件、删除标记、替换命名空间。
+
+    protected function filteMacro($data)
+删除包含 `@DUCKPHP_DELETE` 的整行。
+
+    protected function filteNamespace($data, $namespace)
+替换 `@DUCKPHP_NAMESPACE` 和 `YourProjectName\` 为指定命名空间。
+
+    protected function changeHeadFile($data, $short_file_name, $autoload_file)
+替换 `@DUCKPHP_HEADFILE` 为相对目录的 `require_once` 语句。
+
+## 相关链接
+
+- [DuckPhp\Core\ComponentBase](Core-ComponentBase.md)
+- [DuckPhp\Core\Console](Core-Console.md)
