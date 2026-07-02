@@ -1,47 +1,45 @@
-# DuckPhp\Foundation\ThrowOnableTrait
+# DuckPhp\Foundation\SimpleExceptionTrait
+
+简单异常类 Trait。
 
 ## 简介
 
-ThrowOnableTrait 提供 ThrowOn 方法，并且隐藏异常方法
-ThrowOnableTrait 需要配合 G 方法使用
+`DuckPhp\Foundation\SimpleExceptionTrait` 是异常类的简化组合 Trait，仅引入了 `DuckPhp\Core\ThrowOnTrait`，使异常类支持快速抛出异常的方法。
 
 ## 选项
 
-## 方法
-### 公开方法
+无。
 
-    public static function ThrowOn($flag, $message, $code = 0)
-如果 $flag 成立， 则抛出内置异常类
+## 使用方式
 
-    public static function ExceptionClass($new_class = null)
-获得或者设置内置异常类
+### 在自定义异常类中使用
 
-## 样例
+```php
+use DuckPhp\Foundation\SimpleExceptionTrait;
+
+class MyException extends \Exception
+{
+    use SimpleExceptionTrait;
+}
 ```
-use DuckPhp\Ext\ThrowOnableTrait;
-use DuckPhp\SingletonEx\SingletonExTrait;
 
-class ThrowOnableTraitTest
-{
-    public function testAll()
-    {
-        ThrowOnObject::ThrowOn(false, "123");
-        ThrowOnObject::ExceptionClass(BaseException::class);
-        try {
-            ThrowOnObject::ThrowOn(true, "Message", 2);
-        } catch (\Throwable $ex) {
-            echo ThrowOnObject::ExceptionClass();
-        }
-        
-    }
-}
-class BaseException extends \Exception
-{
-}
-class ThrowOnObject
-{
-    use SingletonExTrait;
-    use ThrowOnableTrait;
-}
-(new ThrowOnableTraitTest())->testAll();
+### 抛出异常
 
+```php
+MyException::ThrowOn($condition, 'error message', 500);
+```
+
+## 注意事项
+
+1. 该 Trait 本身没有定义方法，所有方法均来自 `ThrowOnTrait`。
+2. 自定义异常类通常继承 `\Exception` 或 `\RuntimeException`。
+
+## 方法列表
+
+### 公共方法
+
+来自引入的 Trait，无自有方法。
+
+## 相关链接
+
+- [DuckPhp\Core\ThrowOnTrait](Core-ThrowOnTrait.md)

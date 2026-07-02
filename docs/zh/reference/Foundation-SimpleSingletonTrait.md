@@ -1,50 +1,50 @@
-# DuckPhp\Fondation\SimpleSingleton
-[toc]
+# DuckPhp\Foundation\SimpleSingletonTrait
+
+简单单例 Trait。
 
 ## 简介
 
-**可变单例类**
-使用 phasecontainer
-## 使用于
+`DuckPhp\Foundation\SimpleSingletonTrait` 是最简单的单例组合 Trait，仅引入了 `DuckPhp\Core\SingletonTrait`，使类具备单例访问能力。
 
-## 方法
+## 选项
 
-    public static function _($object = null)
+无。
 
-如果传入 $object,把当前类设置为 $object。
-如果默认传入空，则创建使用者类。
-    
-## 详解
+## 使用方式
 
-例一
+### 在类中使用
+
 ```php
-class A
+use DuckPhp\Foundation\SimpleSingletonTrait;
+
+class MyService
 {
-    use DuckPhp\Core\SingletonTrait;
-    public function foo()
+    use SimpleSingletonTrait;
+
+    public function doSomething()
     {
-        echo "猪年快乐\n";
+        // ...
     }
 }
-class B extends A
-{
-    public function foo()
-    {
-        echo "鼠年快乐\n";
-    }
-}
-
-B::_()->foo();
-B::_(A::_());
-B::_()->foo();
-```
-输出
-```
-猪年快乐
-鼠年快乐
 ```
 
+### 单例调用
 
+```php
+MyService::_()->doSomething();
+```
 
+## 注意事项
 
+1. 该 Trait 本身没有定义方法，所有方法均来自 `SingletonTrait`。
+2. 需要单例访问能力但不需要额外 Trait 能力的类可使用此 Trait。
 
+## 方法列表
+
+### 公共方法
+
+来自引入的 Trait，无自有方法。
+
+## 相关链接
+
+- [DuckPhp\Core\SingletonTrait](Core-SingletonTrait.md)
