@@ -47,13 +47,12 @@ class DatabaseInstaller extends ComponentBase
     protected function changeDatabase($data)
     {
         $is_local = (App::Current()->options['local_database'] ?? false) || App::Root()->options['database_driver'] != App::Current()->options['database_driver'];
-		
+        
         if($is_local){
-			ExtOptionsLoader::_()->init(App::Current()->options, App::Current());
-			ExtOptionsLoader::_()->refreshData(['database_list' =>$data]);
-			//App::Current()->options['database_list']=$data;
-		}
-		/////////////
+            ExtOptionsLoader::_()->refreshData(['database_list' =>$data]);
+            //App::Current()->options['database_list']=$data;
+        }
+        /////////////
         
         $options = DbManager::_()->options;
         $options['database_list'] = $data;

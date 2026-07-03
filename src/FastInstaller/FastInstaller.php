@@ -67,8 +67,8 @@ class FastInstaller extends ComponentBase
         }
 
         if (!isset(App::_()->options['app'][$app])) {
-            if (!(App::_()->options['allow_require_ext_app'] ?? false)) {
-                echo "You Need  turn on options `allow_require_ext_app`";
+            if (!(App::_()->options['installed_options_enable'] ?? false)) {
+                echo "You Need  turn on options `installed_options_enable`";
                 return;
             }
             $app = (string)$app;
@@ -79,19 +79,18 @@ class FastInstaller extends ComponentBase
             
             $default_options['controller_url_prefix'] = $this->getDefaultUrlPrefix($object->options['namespace']);
             $input_options = Console::_()->readLines($default_options, $desc, []);
-			$controller_url_prefix = $input_options['controller_url_prefix'];
-			
-			$data = [
-				'app'=>[
-					$app =>[
-						'controller_url_prefix' =>$controller_url_prefix,
-					],
-				],
-			];
-			ExtOptionsLoader::_()->init(App::_()->options,App::_());
-			ExtOptionsLoader::_()->refreshData($data);
+            $controller_url_prefix = $input_options['controller_url_prefix'];
+            
+            $data = [
+                'app'=>[
+                    $app =>[
+                        'controller_url_prefix' =>$controller_url_prefix,
+                    ],
+                ],
+            ];
+            ExtOptionsLoader::_()->refreshData($data);
             App::_()->options = array_replace_recursive(App::_()->options,$data);
-			
+            
             $object->options['controller_url_prefix'] = $input_options['controller_url_prefix'];
         }
         App::Phase($app);
@@ -158,16 +157,17 @@ and more ...\n";
     }
     public function doCommandInstall()
     {
-        $this->initComponents();
-        
-        App::Root()->options['installing_data'] = App::Root()->options['installing_data'] ?? [];
-       
         $args = $this->args;
         
         if ($args['help'] ?? false) {
             $this->showHelp();
             return;
         }
+        
+        $this->initComponents();
+        
+        App::Root()->options['installing_data'] = App::Root()->options['installing_data'] ?? [];
+
         $this->doInstall();
     }
     public function doCommandUpdate()
@@ -237,6 +237,7 @@ and more ...\n";
         //////////////////////////
         $install_level = App::Root()->options['installing_data']['install_level'] ?? 0;
         //echo ($install_level <= 0) ? "use --help for more info.\n" : '';
+        ////[[[[
         $url_prefix = App::Current()->options['controller_url_prefix'] ?? '';
         echo str_repeat("\t", $install_level)."\e[32;7mInstalling (".get_class(App::Current()).") to :\033[0m [$url_prefix]\n";
         
@@ -265,6 +266,7 @@ and more ...\n";
         }
         $flag = $this->doInstallAction($input_options);
         
+        ////]]]]
         if ($this->is_failed) {
             echo "\e[32;3mInstalled App (".get_class(App::Current()).") FAILED!;\033[0m\n";
             return;
@@ -276,7 +278,7 @@ and more ...\n";
             EventManager::FireEvent([App::Phase(), 'onBeforeChildrenInstall']);
             $this->installChildren();
         }
-        $this->saveExtOptions(['installed' => DATE(DATE_ATOM)]);
+        ExtOptionsLoader::_()->refreshData(['installed' => DATE(DATE_ATOM)]);
         EventManager::FireEvent([App::Phase(), 'onInstalled']);
         if (method_exists(App::Current(), 'onInstalled')) {
             App::Current()->onInstalled();
@@ -326,7 +328,7 @@ and more ...\n";
             
             $ext_options = [];
             $ext_options['controller_resource_prefix'] = App::Current()->options['controller_resource_prefix'];
-            $this->saveExtOptions($ext_options);
+            ExtOptionsLoader::_()->refreshData($ext_options);
             
             if ($input_options['is_clone_resource']) {
                 $info = $this->cloneResource($input_options['new_controller_resource_prefix']);
@@ -346,10 +348,4 @@ and more ...\n";
         RouteHookResource::_()->cloneResource(false, $info);
         return $info;
     }
-    protected function saveExtOptions($ext_options)
-    {
-		ExtOptionsLoader::_()->init(App::Current()->options, App::Current());
-		ExtOptionsLoader::_()->refreshData($ext_options);
-    }
-    //////////////////
 }
