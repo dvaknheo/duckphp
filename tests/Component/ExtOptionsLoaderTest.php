@@ -8,7 +8,7 @@ class ExtOptionsLoaderTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(ExtOptionsLoader::class);
-        $path=\LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
+        $path=\LibCoverage\LibCoverage::G()->getClassTestPath(ExtOptionsLoader::class);
         @unlink($path.'runtime/DuckPhpExtData.config.json');
         clearstatcache();
         
@@ -33,7 +33,24 @@ class ExtOptionsLoaderTest extends \PHPUnit\Framework\TestCase
         ExtOptionsLoader::$all_ext_options=null;
         ExtOptionsLoader::_(new ExtOptionsLoader());
         DuckPhpEOL::_()->init($options);
+        ////[[[[
         
+        $options['app'] = [
+            DuckPhpEOLChild2::class =>[
+                'ext_options_file_enable' => true,
+            ],
+            DuckPhpEOLChild::class =>[
+                'ext_options_file_enable' => true,
+                'ext_options_allow_init_replace' => false,
+            ],
+        ];
+        DuckPhpEOL::_(new DuckPhpEOL);
+       
+        ExtOptionsLoader::_(new ExtOptionsLoader());
+        ExtOptionsLoader::$all_ext_options=null;
+        
+        DuckPhpEOL::_()->init($options);
+        ////]]]]
         
         
         @unlink($path.'runtime/DuckPhpExtData.config.json');
@@ -45,5 +62,8 @@ class DuckPhpEOL extends DuckPhp
 {
 }
 class DuckPhpEOLChild extends DuckPhp
+{
+}
+class DuckPhpEOLChild2 extends DuckPhp
 {
 }
