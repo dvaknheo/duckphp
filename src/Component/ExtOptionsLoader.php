@@ -26,7 +26,7 @@ class ExtOptionsLoader extends ComponentBase
         
         if (!isset(self::$all_ext_options)) {
             $full_file = $this->get_ext_options_file();
-            if (is_file($full_file)) {
+            if (!is_file($full_file)) {
                 return;
             }
             $this->fill_all_ext_options($full_file);
@@ -52,7 +52,7 @@ class ExtOptionsLoader extends ComponentBase
         }
         foreach ($this->options['ext_options_to_parent_prefix'] as $prefix) {
             foreach ($ext_options as $key => $value) {
-                if (substr($key, 0, strlen($prefix)) !== $prefix) {
+                if (substr($key, 0, strlen($prefix)) === $prefix) {
                     $app->options[$key] = $value;
                 }
             }
@@ -62,13 +62,9 @@ class ExtOptionsLoader extends ComponentBase
     {
         $full_file = App::Root()->options['ext_options_file_name'] ?? $this->options['ext_options_file_name'];
         
-        $path = App::Root()->options['path'];
-        $path = ($path !== '') ? rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR : '';
-        
         $path = static::SlashDir(App::Root()->options['path']);
         $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);
         $path_runtime = static::IsAbsPath($path_runtime) ? $path_runtime : $path.$path_runtime;
-        
         $is_abs = (DIRECTORY_SEPARATOR === '/') ?(substr($full_file, 0, 1) === '/'):(preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $full_file));
         $full_file = $is_abs ? $full_file : static::SlashDir($path_runtime).$full_file;
         
@@ -76,21 +72,16 @@ class ExtOptionsLoader extends ComponentBase
     }
     protected function fill_all_ext_options($full_file)
     {
-        if (!is_file($full_file)) {
-            return [];
-        }
-        $all_ext_options = json_decode($full_file);
-        
+        $all_ext_options = json_decode(file_get_contents($full_file),true);
         self::$all_ext_options = $all_ext_options;
     }
     public function saveData($options)
     {
         $full_file = $this->get_ext_options_file();
-        
         $class = App::Current()->getOverridingClass();
         $ext_options = array_replace_recursive(self::$all_ext_options[$class] ?? [], $options);
         self::$all_ext_options[$class] = $ext_options;
-        $all_ext_options = self::$all_ext_options[$class];
+        $all_ext_options = self::$all_ext_options;
         $all_ext_options['__date'] = date('Y-m-d H:i:s');
         
         $string = json_encode($all_ext_options, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);

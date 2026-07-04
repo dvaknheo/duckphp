@@ -9,28 +9,35 @@ class ExtOptionsLoaderTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(ExtOptionsLoader::class);
         $path=\LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
-        var_dump($path);
+        @unlink($path.'runtime/DuckPhpExtData.config.json');
+        clearstatcache();
+        
         $options= [];
+        
+        
         $options['path'] = $path;
-        $options['ext_options_file']='config/ExtOptionsLoader.config.php';
         $options['app'] = [
             DuckPhpEOLChild::class =>[
-                'path'=> 'no_exists',
                 'ext_options_file_enable' => true,
-                'ext_options_file' =>'no_exists222',
             ],
         ];
         DuckPhpEOL::_()->init($options);
-        DuckPhpEOLChild::Phase(DuckPhpEOLChild::class);
-        ExtOptionsLoader::_()->saveExtOptions(['data'=>DATE(DATE_ATOM)], DuckPhpEOLChild::class);
+        $old_phase = DuckPhpEOL::Phase(DuckPhpEOLChild::class);
+        ExtOptionsLoader::_()->saveData(['xdata'=>DATE(DATE_ATOM),"installed"=>"a","redis_x"=>"b"]);
+            DuckPhpEOLChild::_(new DuckPhpEOLChild());
+            ExtOptionsLoader::_(new ExtOptionsLoader());       
+        DuckPhpEOL::Phase($old_phase);
         
-        ExtOptionsLoader::_()->loadExtOptions(true, DuckPhpEOLChild::class);
-        //DuckPhpEOLChild::_()->install(['d'=>DATE(DATE_ATOM)]);
-        ExtOptionsLoader::_()->loadExtOptions(false, DuckPhpEOLChild::class);
+        DuckPhpEOL::_(new DuckPhpEOL);
+        
+        ExtOptionsLoader::$all_ext_options=null;
+        ExtOptionsLoader::_(new ExtOptionsLoader());
+        DuckPhpEOL::_()->init($options);
         
         
-        @unlink($path.'config/ExtOptionsLoader.config.php');
-        ExtOptionsLoader::_()->loadExtOptions(true, DuckPhpEOLChild::class);
+        
+        @unlink($path.'runtime/DuckPhpExtData.config.json');
+        clearstatcache();
         \LibCoverage\LibCoverage::End();
     }
 }

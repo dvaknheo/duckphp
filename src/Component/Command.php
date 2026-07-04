@@ -95,6 +95,7 @@ EOT;
     {
         echo "decraped.";
         return;
+        /*
         $is_debug = !$off;
         $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, App::Current());
         $ext_options['is_debug'] = $is_debug;
@@ -105,6 +106,7 @@ EOT;
         } else {
             echo "Debug mode has turn off.\n";
         }
+        */
     }
     //////////////////
     protected function getCommandListInfo()
