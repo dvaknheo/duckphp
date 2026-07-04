@@ -42,7 +42,6 @@ class DuckPhp extends App
         'session_prefix' => null,
         'table_prefix' => null,
         
-        'path_info_compact_enable' => false,
         'class_admin' => '',
         'class_user' => '',
         'database_driver' => '',
@@ -50,7 +49,7 @@ class DuckPhp extends App
         'cli_command_with_app' => true,
         'cli_command_with_common' => true,
         'cli_command_with_fast_installer' => true,
-        'allow_require_ext_app' => true,
+
         'lang_default' => null,
         'lang_final' => null,
 
