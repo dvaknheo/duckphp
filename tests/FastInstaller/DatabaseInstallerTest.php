@@ -70,15 +70,15 @@ class DatabaseInstallerTest extends \PHPUnit\Framework\TestCase
         $setting = include $path_setting . 'setting.php';
         $db = $this->makeFromDsnBySqlite( $setting['database_list'][0],);
         ////[[[[
-        @unlink($path_app.'DatabaseInstallerApps.config.php');
         DuckPhp::_(new DuckPhp())->init([
             'path'=>$path_app,
-            'ext_options_file' => 'DatabaseInstallerApps.config.php',
+            'ext_options_file_enable' => true,
             'cli_enable'=>true,
             'ext'=> [
                 DatabaseInstaller::class => true,
             ],
             'database_driver'=>'sqlite',
+            'local_database' =>true,
         ]);
         $options = Console::_()->options;
         Console::_(DbInstallerConsole::_())->reInit($options,DuckPhp::_());
@@ -101,7 +101,6 @@ class DatabaseInstallerTest extends \PHPUnit\Framework\TestCase
         DatabaseInstaller::_()->install(true);
         
         ////]]]]
-        @unlink($path_app.'DatabaseInstallerApps.config.php');
         \LibCoverage\LibCoverage::End(); return;
     }
 }

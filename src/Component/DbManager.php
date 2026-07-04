@@ -150,9 +150,8 @@ class DbManager extends ComponentBase
         [$driver,$file] = explode(":", $db_config['dsn']);
         if ($driver === 'sqlite') {
             if (!static::IsAbsPath($file)) {
-                $last_cwd = getcwd();
                 $path_runtime = $this->getRuntimePath();
-                chdir($path_runtime);
+                $db_config['dsn'] = 'sqlite:'.$path_runtime.$file;
             }
         }
         
@@ -166,11 +165,6 @@ class DbManager extends ComponentBase
         if ($this->options['database_log_sql_query'] && is_callable([$db,'setBeforeQueryHandler'])) {
             $db->setBeforeQueryHandler([static::class, 'OnQuery']);
         }
-        
-        if (isset($last_cwd) && $last_cwd !== false) {
-            chdir($last_cwd);
-        }
-        
         return $db;
     }
     public function _DbForWrite()

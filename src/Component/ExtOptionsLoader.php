@@ -27,6 +27,7 @@ class ExtOptionsLoader extends ComponentBase
         if (!isset(self::$all_ext_options)) {
             $full_file = $this->get_ext_options_file();
             if (!is_file($full_file)) {
+                self::$all_ext_options = [];
                 return;
             }
             $this->fill_all_ext_options($full_file);
@@ -36,9 +37,9 @@ class ExtOptionsLoader extends ComponentBase
         if (empty($ext_options)) {
             return;
         }
-        $this->replaceParentOptions($ext_options);
+        $this->bumpOptions($ext_options);
     }
-    protected function replaceParentOptions($ext_options)
+    public function bumpOptions($ext_options)
     {
         if (!$this->options['ext_options_allow_init_replace']) {
             return;
@@ -78,7 +79,7 @@ class ExtOptionsLoader extends ComponentBase
     public function saveData($options)
     {
         $full_file = $this->get_ext_options_file();
-        $class = App::Current()->getOverridingClass();
+        $class = App::Current()->getOverridingClass(); // todo phasename
         $ext_options = array_replace_recursive(self::$all_ext_options[$class] ?? [], $options);
         self::$all_ext_options[$class] = $ext_options;
         $all_ext_options = self::$all_ext_options;
@@ -88,6 +89,6 @@ class ExtOptionsLoader extends ComponentBase
         file_put_contents($full_file, $string);
         clearstatcache();
 
-        $this->replaceParentOptions($ext_options);
+        $this->bumpOptions($ext_options);
     }
 }
