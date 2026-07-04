@@ -4,7 +4,6 @@
  * From this time, you never be alone~
  */
 //dvaknheo@github.com
-//OK，Lazy
 
 namespace DuckPhp\Foundation;
 

@@ -5,7 +5,6 @@ declare(strict_types=1);
  * DuckPhp
  * From this time, you never be alone~
  */
-
 namespace DuckPhp\Component;
 
 use DuckPhp\Core\App;
@@ -25,7 +24,7 @@ class ExtOptionsLoader extends ComponentBase
     {
         parent::init($options, $context);
         
-        if(!isset(self::$all_ext_options)){
+        if (!isset(self::$all_ext_options)) {
             $full_file = $this->get_ext_options_file();
             if (is_file($full_file)) {
                 return;

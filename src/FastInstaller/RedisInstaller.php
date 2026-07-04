@@ -42,8 +42,8 @@ class RedisInstaller extends ComponentBase
         $is_local = App::Current()->options['local_redis'] ?? false;
         
         $app = App::Current();
-        if($is_local){
-            ExtOptionsLoader::_()->refreshData(['redis_list' =>$data]);
+        if ($is_local) {
+            ExtOptionsLoader::_()->refreshData(['redis_list' => $data]);
         }
         
         $options = RedisManager::_()->options;

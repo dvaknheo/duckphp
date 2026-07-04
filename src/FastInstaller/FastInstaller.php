@@ -82,14 +82,14 @@ class FastInstaller extends ComponentBase
             $controller_url_prefix = $input_options['controller_url_prefix'];
             
             $data = [
-                'app'=>[
-                    $app =>[
-                        'controller_url_prefix' =>$controller_url_prefix,
+                'app' => [
+                    $app => [
+                        'controller_url_prefix' => $controller_url_prefix,
                     ],
                 ],
             ];
             ExtOptionsLoader::_()->refreshData($data);
-            App::_()->options = array_replace_recursive(App::_()->options,$data);
+            App::_()->options = array_replace_recursive(App::_()->options, $data);
             
             $object->options['controller_url_prefix'] = $input_options['controller_url_prefix'];
         }
