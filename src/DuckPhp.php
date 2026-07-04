@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 /**
  * DuckPhp
  * From this time, you never be alone~
@@ -27,9 +29,10 @@ use DuckPhp\GlobalUser\GlobalUser;
 class DuckPhp extends App
 {
     protected $common_options = [
-        //'ext_options_file_enable' => true,
-        //'ext_options_file' => 'config/DuckPhpApps.config.php',
+        'ext_options_file_enable' => false,
+        'ext_options' => [],
         'ext' => [
+            //ExtOptionsLoader::class => false,
             Lang::class => true,
             RouteHookCheckStatus::class => true,
             RouteHookRewrite::class => true,
@@ -91,9 +94,7 @@ class DuckPhp extends App
     protected function prepareComponents()
     {
         parent::prepareComponents();
-        //if ($this->options['ext_options_file_enable']) {
-        //    ExtOptionsLoader::_()->loadExtOptions(static::class);
-        //}
+
         if ($this->options['cli_command_with_app']) {
             array_unshift($this->options['cli_command_classes'], static::class);
         }
@@ -114,7 +115,9 @@ class DuckPhp extends App
             GlobalAdmin::class,
             GlobalUser::class,
         ]);
-        
+        if ($this->options['ext_options_file_enable']) {
+            ExtOptionsLoader::_()->init($this->options, $this);
+        }
         if ($this->is_root) {
             DbManager::_()->init($this->options, $this);
             RedisManager::_()->init($this->options, $this);
@@ -158,7 +161,7 @@ class DuckPhp extends App
     }
     protected function isLocalRedis()
     {
-        return  ($this->options['local_redis'] ?? false) ? true : false;
+        return ($this->options['local_redis'] ?? false) ? true : false;
     }
     public function lang($str, $args = [])
     {
