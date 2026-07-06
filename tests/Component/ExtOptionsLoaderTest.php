@@ -9,7 +9,7 @@ class ExtOptionsLoaderTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(ExtOptionsLoader::class);
         $path=\LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
-        @unlink($path.'runtime/DuckPhpExtData.config.json');
+        @unlink($path.'runtime/DuckPhpData.config.json');
         clearstatcache();
         
         $options= [];
@@ -53,7 +53,7 @@ class ExtOptionsLoaderTest extends \PHPUnit\Framework\TestCase
         ////]]]]
         
         
-        @unlink($path.'runtime/DuckPhpExtData.config.json');
+        @unlink($path.'runtime/DuckPhpData.config.json');
         clearstatcache();
         \LibCoverage\LibCoverage::End();
     }

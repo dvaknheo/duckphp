@@ -45,7 +45,7 @@ class RedisInstallerTest extends \PHPUnit\Framework\TestCase
         $setting = include $path_setting . 'setting.php';
         $db =  $setting['redis_list'][0];
         ////[[[[
-        @unlink($path_app."runtime/DuckPhpExtData.config.json");
+        @unlink($path_app."runtime/DuckPhpData.config.json");
         DuckPhp::_(new DuckPhp())->init([
             'path'=>$path_app,
             'ext_options_file_enable' => true,
@@ -76,7 +76,7 @@ class RedisInstallerTest extends \PHPUnit\Framework\TestCase
         DuckPhp::Current()->options['local_redis']=false;
         RedisInstaller::_()->install(false);
         ////]]]]
-        @unlink($path_app."runtime/DuckPhpExtData.config.json");
+        @unlink($path_app."runtime/DuckPhpData.config.json");
         \LibCoverage\LibCoverage::End();
     }
 }

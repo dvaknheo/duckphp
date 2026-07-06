@@ -14,7 +14,7 @@ class ExtOptionsLoader extends ComponentBase
 {
     public $options = [
         'data_file_enable' => true,
-        'data_file_json_file' => 'DuckPhpExtData.config.json',
+        'data_file_json_file' => 'DuckPhpData.config.json',
         'data_file_bump_allowed' => true,
         'data_file_bump_keys' => ['installed', 'redis', 'database', 'local_redis', 'local_database'],
         'data_file_bump_prefix_keys' => ['redis_', 'database_'],
