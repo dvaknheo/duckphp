@@ -24,7 +24,6 @@ class FastInstaller extends ComponentBase
         'install_input_desc' => '',
         'install_callback' => null,
         'install_support_database_list' => '',
-        'allow_require_ext_app' => false,
     ];
     protected $args = [];
     protected $is_failed = false;
@@ -67,8 +66,8 @@ class FastInstaller extends ComponentBase
         }
 
         if (!isset(App::_()->options['app'][$app])) {
-            if (!(App::_()->options['installed_options_enable'] ?? false)) {
-                echo "You Need  turn on options `installed_options_enable`";
+            if (!(App::_()->options['ext_options_file_enable'] ?? false)) {
+                echo "You Need  turn on options `ext_options_file_enable`";
                 return;
             }
             $app = (string)$app;
@@ -88,7 +87,7 @@ class FastInstaller extends ComponentBase
                     ],
                 ],
             ];
-            ExtOptionsLoader::_()->refreshData($data);
+            ExtOptionsLoader::_()->saveData($data);
             App::_()->options = array_replace_recursive(App::_()->options, $data);
             
             $object->options['controller_url_prefix'] = $input_options['controller_url_prefix'];
@@ -157,14 +156,13 @@ and more ...\n";
     }
     public function doCommandInstall()
     {
+        $this->initComponents();
         $args = $this->args;
         
         if ($args['help'] ?? false) {
             $this->showHelp();
             return;
         }
-        
-        $this->initComponents();
         
         App::Root()->options['installing_data'] = App::Root()->options['installing_data'] ?? [];
 
@@ -278,7 +276,7 @@ and more ...\n";
             EventManager::FireEvent([App::Phase(), 'onBeforeChildrenInstall']);
             $this->installChildren();
         }
-        ExtOptionsLoader::_()->refreshData(['installed' => DATE(DATE_ATOM)]);
+        ExtOptionsLoader::_()->saveData(['installed' => DATE(DATE_ATOM)]);
         EventManager::FireEvent([App::Phase(), 'onInstalled']);
         if (method_exists(App::Current(), 'onInstalled')) {
             App::Current()->onInstalled();
@@ -328,7 +326,7 @@ and more ...\n";
             
             $ext_options = [];
             $ext_options['controller_resource_prefix'] = App::Current()->options['controller_resource_prefix'];
-            ExtOptionsLoader::_()->refreshData($ext_options);
+            ExtOptionsLoader::_()->saveData($ext_options);
             
             if ($input_options['is_clone_resource']) {
                 $info = $this->cloneResource($input_options['new_controller_resource_prefix']);

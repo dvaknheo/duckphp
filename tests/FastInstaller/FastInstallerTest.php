@@ -82,6 +82,8 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         
         $FastInstallerTest = str_replace('\\','/',FastInstallerTest::class);
         $_SERVER['argv']=['-','require',$FastInstallerTest];
+
+        FiParentApp::_()->options['ext_options_file_enable']=true;
         FiParentApp::_()->run();
         
         $FiChildApp = str_replace('\\','/',FiChildApp::class);
@@ -107,33 +109,34 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         
         $FiChildApp2 = str_replace('\\','/',FiChildApp2::class);
         $_SERVER['argv']=['-','require',$FiChildApp2,'--dry'];
-        FiParentApp::_()->options['allow_require_ext_app']=false;
+        FiParentApp::_()->options['ext_options_file_enable']=false;
         FiParentApp::_()->run();
-        FiParentApp::_()->options['allow_require_ext_app']=true;
+        FiParentApp::_()->options['ext_options_file_enable']=true;
         FiParentApp::_()->run();
         
         //////////////////////////////
-        
+
         @mkdir($path_app.'/public');
+         @mkdir($path_app.'/res');
         @mkdir($path_app.'/res2');
         file_put_contents($path_app.'/res2/'.'abc.txt',DATE(DATE_ATOM));
         
         $FiChildAppRes = str_replace('\\','/',FiChildAppRes::class);
+        
         $console_options = Console::_()->options;
         Console::_(InstallerConsole::_(new InstallerConsole))->reInit($console_options, FiParentApp::_());
         Console::_()->readLinesCleanFill();
-        Console::_()->readLinesFill("y\nt1\ny\n");
+        Console::_()->readLinesFill("t1\ny\n");
         $_SERVER['argv']=['-','require',$FiChildAppRes, '--force', '--verbose'];
-        FiParentApp::_()->options['allow_require_ext_app']=true;
+        FiParentApp::_()->options['ext_options_file_enable']=true;
         FiParentApp::_()->run();
         
         Console::_()->readLinesCleanFill();
-        Console::_()->readLinesFill("n\n");
+        //Console::_()->readLinesFill("n\n");
         $_SERVER['argv']=['-','require',$FiChildAppRes, '--dry'];
         FiParentApp::_()->run();
         
         echo "--------------------------------\n";
-        define('XXX',true);
         FiParentApp::_()->options['app']=[
             FiChildAppFailed::class => [
                 'no_empty'=>true,
@@ -151,12 +154,24 @@ class FastInstallerTest extends \PHPUnit\Framework\TestCase
         
         FastInstaller::_()->forceFail();
         FastInstaller::_()->command_install();
-        
-        
+        ////
+        Console::_()->readLinesCleanFill();
+        Console::_()->readLinesFill("myres\n");
         FastInstaller::_()->command_dump_res();
         
+        echo "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n";
+        
+        
+        $console_options = Console::_()->options;
+        Console::_(InstallerConsole::_(new InstallerConsole))->reInit($console_options, FiParentApp::_());
+        Console::_()->readLinesCleanFill();
+        Console::_()->readLinesFill("N\n");
+        FastInstaller::_()->doInstall();
+        //*/
+        
         $_SERVER = $__SERVER;
-        \LibCoverage\LibCoverage::G()->cleanDirectory($path_app);
+        
+        //\LibCoverage\LibCoverage::G()->cleanDirectory($path_app);
         \LibCoverage\LibCoverage::End(); return;
 
     }
@@ -172,7 +187,7 @@ class FiParentApp extends DuckPhp
     
     public $options = [
         'is_debug'=>true,
-        'ext_options_file'=>'FiParent.config.php',
+        'ext_options_file_enable'=> true,
         'app' => [
             FiChildApp::class => [
                 'no_empty'=>true,
@@ -186,6 +201,7 @@ class FiParentApp extends DuckPhp
     {
         $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(FastInstaller::class);
         $this->options['path'] = $path_app;
+        @mkdir($path_app.'runtime');
         parent::__construct();
     }
     public static function OnInstall()
