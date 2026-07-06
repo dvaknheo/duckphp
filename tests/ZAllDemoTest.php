@@ -9,32 +9,16 @@ class ZAllDemoTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         // 这里 开启所有 demo 检测所有 demo 的结果
-        $path_app = realpath(__DIR__.'/../template/').'/';
-        $port = 9529;
-        $server_options=[
-            'path'=>$path_app,
-            'path_document'=>'public',
-            'port'=>$port,
-            'background'=>true,
-            
-        ];
+        $config = require __DIR__.'/data_for_tests/ZAllDemoTest.config.php';
+        $path_app = $config['path_app'];
+        $port = $config['port'];
+        $server_options = $config['server_options'];
         HttpServer::RunQuickly($server_options);
         //echo HttpServer::_()->getPid();
         sleep(1);// ugly
         $host ="http://127.0.0.1:{$port}/";
         
-        $tests = [
-            'test/done'          => 95 ,
-            'doc.php'            => 1329 ,
-            ''                   => 1363 ,
-            'files'              => 11306 ,
-            'demo.php'           => 406 ,
-            'helloworld.php'     => 11,
-            'just-route.php'     => 109,
-            'api.php/test.index' => 347 ,
-            'traditional.php'    => 397 ,
-            'rpc.php'            => 810,
-        ];
+        $tests = $config['tests'];
         $result = true;
 
         foreach($tests as $k => $len){
