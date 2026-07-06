@@ -46,13 +46,13 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
 
         $options['path'] = $path;
         $options['path_test'] = 'abc';
-        $options['ext_options_file_enable']=true;
+        $options['data_file_enable']=true;
         
         @unlink($path.'config/DuckPhpApps.config.php');
         DuckPhp_Sub::_(new DuckPhp_Sub())->init($options);
         echo "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
         //DuckPhp_Sub::_()->install(['test'=>DATE(DATE_ATOM)]);
-        //DuckPhp_Sub::_()->options['ext_options_file_enable'] = false;
+        //DuckPhp_Sub::_()->options['data_file_enable'] = false;
         //DuckPhp_Sub::_()->install(['test'=>DATE(DATE_ATOM)]);
         //die("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
         DuckPhp_Sub::_()->isInstalled();
@@ -125,7 +125,7 @@ class DuckPhpTest extends \PHPUnit\Framework\TestCase
         //*/
         echo ">>>>>>>>>>>>>>>>>>>>>>>";
         $options = [
-            'ext_options_file_enable'=>true,
+            'data_file_enable'=>true,
             'ext_options_file'=>'NoExits.php',
             'cli_enable'=>true,
         ];
