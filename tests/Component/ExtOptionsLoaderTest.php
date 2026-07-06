@@ -8,7 +8,7 @@ class ExtOptionsLoaderTest extends \PHPUnit\Framework\TestCase
     public function testAll()
     {
         \LibCoverage\LibCoverage::Begin(ExtOptionsLoader::class);
-        $path=\LibCoverage\LibCoverage::G()->getClassTestPath(ExtOptionsLoader::class);
+        $path=\LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
         @unlink($path.'runtime/DuckPhpExtData.config.json');
         clearstatcache();
         

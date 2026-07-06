@@ -19,7 +19,7 @@ class LangTest extends \PHPUnit\Framework\TestCase
         \LibCoverage\LibCoverage::Begin(Lang::class);
 		$path=\LibCoverage\LibCoverage::G()->getClassTestPath(Lang::class);
 
-		DuckPhp::_()->init([
+		DuckPhp::_(new DuckPhp())->init([
 			'path'=>$path,
             'is_debug'=>true,
 			'lang_default'=>'en_US',
