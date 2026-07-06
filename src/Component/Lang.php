@@ -141,9 +141,7 @@ class Lang extends ComponentBase
     protected function detectFromCookie(): ?string
     {
         $name = $this->options['lang_cookie_name'];
-        $_COOKIE = defined('__SUPERGLOBAL_CONTEXT')
-            ? (SuperGlobal::_()->_COOKIE ?? [])
-            : ($_COOKIE ?? []);
+        $_COOKIE = defined('__SUPERGLOBAL_CONTEXT') ? (SuperGlobal::_()->_COOKIE ?? []) : ($_COOKIE ?? []);
         
         return $_COOKIE[$name] ?? null;
     }
@@ -153,9 +151,7 @@ class Lang extends ComponentBase
      */
     protected function detectFromHeader(): ?string
     {
-        $_SERVER = defined('__SUPERGLOBAL_CONTEXT')
-            ? (SuperGlobal::_()->_SERVER ?? [])
-            : ($_SERVER ?? []);
+        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (SuperGlobal::_()->_SERVER ?? []) : ($_SERVER ?? []);
         
         $accept = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? null;
         if (!$accept) {
