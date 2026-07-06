@@ -20,7 +20,6 @@ class RedisInstaller extends ComponentBase
     {
         $use_redis = App::Current()->options['use_redis'] ?? false;
         $use_redis = $use_redis || (App::Current()->options['local_redis'] ?? false);
-        
         if (!$use_redis) {
             return;
         }
@@ -43,7 +42,7 @@ class RedisInstaller extends ComponentBase
         
         $app = App::Current();
         if ($is_local) {
-            ExtOptionsLoader::_()->refreshData(['redis_list' => $data]);
+            ExtOptionsLoader::_()->saveData(['redis_list' => $data]);
         }
         
         $options = RedisManager::_()->options;

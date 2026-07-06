@@ -12,13 +12,17 @@ services:
       - ../../composer-test-php74.lock:/DATA/composer.lock
       - vendor:/DATA/vendor
       - composer-cache:/tmp/composer
+    entrypoint:
+      - /bin/sh
+      - -c
+      - redis-server --requirepass 123456 --daemonize yes && exec "$$@"
+      - docker-entrypoint
     environment:
       - COMPOSER_HOME=/tmp/composer
     extra_hosts:
       - "redis:127.0.0.1"
     command: >
       sh -c "
-        redis-server --requirepass 123456 --daemonize yes &&
         ([ -f /DATA/vendor/autoload.php ] || composer install --no-interaction --prefer-dist) &&
         composer run-script --timeout=0 fulltest
       "
