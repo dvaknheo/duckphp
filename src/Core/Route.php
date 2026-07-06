@@ -304,8 +304,8 @@ class Route extends ComponentBase
     protected function adjustMethod($method, $ref)
     {
         if ($this->options['controller_prefix_post']) {
-            $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-            $request_method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+            $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+            $request_method = $my_server['REQUEST_METHOD'] ?? 'GET';
             
             if ($request_method === 'POST') {
                 // action_$method => action_do_$method
@@ -345,16 +345,16 @@ trait Route_Helper
     }
     protected function getPathInfo()
     {
-        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+        $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         
         if ($this->options['controller_fix_mistake_path_info']) {
-            if (empty($_SERVER['PATH_INFO']) && isset($_SERVER['SCRIPT_NAME']) && $_SERVER['SCRIPT_NAME'] === '/index.php') {
-                $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-                $_SERVER['PATH_INFO'] = $path;
+            if (empty($my_server['PATH_INFO']) && isset($my_server['SCRIPT_NAME']) && $my_server['SCRIPT_NAME'] === '/index.php') {
+                $path = parse_url($my_server['REQUEST_URI'], PHP_URL_PATH);
+                $my_server['PATH_INFO'] = $path;
             }
         }
         
-        return $_SERVER['PATH_INFO'] ?? '';
+        return $my_server['PATH_INFO'] ?? '';
     }
     protected function setPathInfo($path_info)
     {
@@ -462,13 +462,13 @@ trait Route_UrlManager
     }
     public function _Domain($use_scheme = false)
     {
-        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-        $scheme = $_SERVER['REQUEST_SCHEME'] ?? 'http';
+        $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+        $scheme = $my_server['REQUEST_SCHEME'] ?? 'http';
         //$scheme = $use_scheme ? $scheme :'';
-        $host = $_SERVER['HTTP_HOST'] ?? ($_SERVER['SERVER_NAME'] ?? ($_SERVER['SERVER_ADDR'] ?? ''));
+        $host = $my_server['HTTP_HOST'] ?? ($my_server['SERVER_NAME'] ?? ($my_server['SERVER_ADDR'] ?? ''));
         $host = $host ?? '';
         
-        $port = $_SERVER['SERVER_PORT'] ?? '';
+        $port = $my_server['SERVER_PORT'] ?? '';
         $port = ($port == 443 && $scheme == 'https')?'':$port;
         $port = ($port == 80 && $scheme == 'http')?'':$port;
         $port = ($port)?(':'.$port):'';
@@ -483,13 +483,13 @@ trait Route_UrlManager
     }
     protected function getUrlBasePath()
     {
-        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+        $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         //get basepath.
-        $document_root = rtrim($_SERVER['DOCUMENT_ROOT'], '/');
+        $document_root = rtrim($my_server['DOCUMENT_ROOT'], '/');
         $document_root = ''.realpath($document_root);
 
         //$document_root =  !empty($document_root)?$document_root:'/';
-        $basepath = substr(''.rtrim(''.realpath($_SERVER['SCRIPT_FILENAME']), '/'), strlen($document_root));
+        $basepath = substr(''.rtrim(''.realpath($my_server['SCRIPT_FILENAME']), '/'), strlen($document_root));
 
 
         $basepath = str_replace('\\', '/', $basepath);

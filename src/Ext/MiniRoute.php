@@ -152,8 +152,8 @@ class MiniRoute extends ComponentBase
     }
     protected function getPathInfo()
     {
-        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-        return $_SERVER['PATH_INFO'] ?? '';
+        $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+        return $my_server['PATH_INFO'] ?? '';
     }
     protected function setPathInfo($path_info)
     {
@@ -235,13 +235,13 @@ class MiniRoute extends ComponentBase
     }
     public function _Domain($use_scheme = false)
     {
-        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-        $scheme = $_SERVER['REQUEST_SCHEME'] ?? '';
+        $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+        $scheme = $my_server['REQUEST_SCHEME'] ?? '';
         //$scheme = $use_scheme ? $scheme :'';
-        $host = $_SERVER['HTTP_HOST'] ?? ($_SERVER['SERVER_NAME'] ?? ($_SERVER['SERVER_ADDR'] ?? ''));
+        $host = $my_server['HTTP_HOST'] ?? ($my_server['SERVER_NAME'] ?? ($my_server['SERVER_ADDR'] ?? ''));
         $host = $host ?? '';
         
-        $port = $_SERVER['SERVER_PORT'] ?? '';
+        $port = $my_server['SERVER_PORT'] ?? '';
         $port = ($port == 443 && $scheme == 'https')?'':$port;
         $port = ($port == 80 && $scheme == 'http')?'':$port;
         $port = ($port)?(':'.$port):'';
@@ -256,11 +256,11 @@ class MiniRoute extends ComponentBase
     }
     protected function getUrlBasePath()
     {
-        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+        $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
         //get basepath.
-        $document_root = rtrim($_SERVER['DOCUMENT_ROOT'], '/');
+        $document_root = rtrim($my_server['DOCUMENT_ROOT'], '/');
         //$document_root =  !empty($document_root)?$document_root:'/';
-        $basepath = substr(rtrim($_SERVER['SCRIPT_FILENAME'], '/'), strlen($document_root));
+        $basepath = substr(rtrim($my_server['SCRIPT_FILENAME'], '/'), strlen($document_root));
         $basepath = ($basepath === '') ? '/' : $basepath;
         /* something wrong ?
         if (substr($basepath, -strlen('/index.php'))==='/index.php') {

@@ -143,8 +143,8 @@ trait KernelTrait
     }
     protected function getDefaultProjectPath()
     {
-        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-        $path = realpath(dirname($_SERVER['SCRIPT_FILENAME']).'/../');
+        $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+        $path = realpath(dirname($my_server['SCRIPT_FILENAME']).'/../');
         $path = (string)$path;
         $path = ($path !== '') ? rtrim($path, '/').'/' : '';
         

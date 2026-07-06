@@ -32,8 +32,8 @@ class RouteHookFunctionRoute extends ComponentBase
         $path_info = empty($path_info) ? 'index' : $path_info;
         $path_info = str_replace('/', '_', $path_info);
         
-        $_POST = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_POST : $_POST;
-        $post_prefix = !empty($_POST)? Route::_()->options['controller_prefix_post'] :'';
+        $my_post = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_POST : $_POST;
+        $post_prefix = !empty($my_post)? Route::_()->options['controller_prefix_post'] :'';
         $prefix = $this->options['function_route_method_prefix'] ?? '';
         
         $callback = $prefix.$post_prefix.$path_info;
@@ -42,7 +42,7 @@ class RouteHookFunctionRoute extends ComponentBase
         if ($flag) {
             return true;
         }
-        if (!empty($_POST) && !empty($post_prefix)) {
+        if (!empty($my_post) && !empty($post_prefix)) {
             $callback = $prefix.$path_info;
             $flag = $this->runCallback($callback);
             if ($flag) {

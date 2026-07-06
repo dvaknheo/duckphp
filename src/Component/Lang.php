@@ -128,11 +128,11 @@ class Lang extends ComponentBase
     protected function detectFromUrl(): ?string
     {
         $param = $this->options['lang_url_param'];
-        $_GET = defined('__SUPERGLOBAL_CONTEXT')
+        $my_get = defined('__SUPERGLOBAL_CONTEXT')
             ? (SuperGlobal::_()->_GET ?? [])
             : ($_GET ?? []);
         
-        return $_GET[$param] ?? null;
+        return $my_get[$param] ?? null;
     }
     
     /**
@@ -141,9 +141,9 @@ class Lang extends ComponentBase
     protected function detectFromCookie(): ?string
     {
         $name = $this->options['lang_cookie_name'];
-        $_COOKIE = defined('__SUPERGLOBAL_CONTEXT') ? (SuperGlobal::_()->_COOKIE ?? []) : ($_COOKIE ?? []);
+        $my_cookie = defined('__SUPERGLOBAL_CONTEXT') ? (SuperGlobal::_()->_COOKIE ?? []) : ($_COOKIE ?? []);
         
-        return $_COOKIE[$name] ?? null;
+        return $my_cookie[$name] ?? null;
     }
     
     /**
@@ -151,9 +151,9 @@ class Lang extends ComponentBase
      */
     protected function detectFromHeader(): ?string
     {
-        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (SuperGlobal::_()->_SERVER ?? []) : ($_SERVER ?? []);
+        $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (SuperGlobal::_()->_SERVER ?? []) : ($_SERVER ?? []);
         
-        $accept = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? null;
+        $accept = $my_server['HTTP_ACCEPT_LANGUAGE'] ?? null;
         if (!$accept) {
             return null;
         }

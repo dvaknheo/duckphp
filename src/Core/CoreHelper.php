@@ -196,8 +196,8 @@ class CoreHelper extends ComponentBase
     ////////////////////////////////////////////
     public function _IsAjax()
     {
-        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-        $ref = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? null;
+        $my_server = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
+        $ref = $my_server['HTTP_X_REQUESTED_WITH'] ?? null;
         return $ref && 'xmlhttprequest' == strtolower($ref) ? true : false;
     }
     public static function Show404()
