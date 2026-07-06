@@ -210,7 +210,7 @@ class Lang extends ComponentBase
             return $normalized;
         }
         
-        return null;
+        return null; // @codeCoverageIgnore
     }
     
     /**

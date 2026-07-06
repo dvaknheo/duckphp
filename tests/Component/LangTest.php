@@ -1,7 +1,11 @@
 <?php 
 namespace tests\DuckPhp\Component;
+
 use DuckPhp\DuckPhp;
+use DuckPhp\Core\App;
+
 use DuckPhp\Component\Lang;
+use DuckPhp\Component\Configer;
 use DuckPhp\Component\RedisManager;
 use DuckPhp\Core\SuperGlobal;;
 
@@ -11,6 +15,15 @@ class LangApp extends DuckPhp
 }
 class MyLang extends Lang
 {
+    public function manual_detectLanguage()
+    {
+        $this->options['lang_detect_mode']=['NoExists'];
+        $this->detectLanguage();
+        
+        $this->options['lang_detect_mode']=['default'];
+        $this->detectLanguage();
+    }
+    
 }
 class LangTest extends \PHPUnit\Framework\TestCase
 {
@@ -77,6 +90,11 @@ class LangTest extends \PHPUnit\Framework\TestCase
 		
 		
 		echo __l("AAA");
+        echo __l("IMNOEXITSADSF");
+        
+        MyLang::_()->manual_detectLanguage();
+        
+        
 		
 		
 		/*

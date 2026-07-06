@@ -1,6 +1,6 @@
 <?php
 require_once realpath (__DIR__.'/../../../../autoload.php');
-use DuckPhp\DuckPhpAllInOne as DuckPhp;
+use DuckPhp\DuckPhpAllInOne;
 use DuckPhp\Core\SingletonTrait as SingletonExTrait;
 use DuckPhp\Ext\JsonRpcExt;
 class TestService
@@ -15,34 +15,38 @@ class TestService
         throw new  \Exception ("serverException",1024);
     }
 }
-class MainController
+class JsonExtApp extends DuckPhpAllInOne
 {
+    public $options = [
+        'is_debug'=>true,
+        //'path_info_compact_enable' => false,
+
+    ];
+    public function __construct()
+    {
+        parent::__construct();
+        $this->options['path_info_compact_enable'] = false;
+    }
     public function action_index()
     {
-        var_dump(DATE(DATE_ATOM));
+        echo (DATE(DATE_ATOM));
     }
     public function action_json_rpc()
     {
-        $post=DuckPhp::POST(null);
+        $post=static::POST(null);
         $method =  $post['method']??null;
         if($method==='TestService.the500'){
             var_dump(DATE(DATE_ATOM));
             return;
         }
-        $ret= JsonRpcExt::_()->onRpcCall(DuckPhp::POST(null));
+        $ret= JsonRpcExt::_()->onRpcCall(static::POST(null));
         
-        DuckPhp::ShowJson($ret);
+        static::ShowJson($ret);
     }
 }
 
 
-$options=[
-    'is_debug'=>true,
-    'namespace_controller'=>'\\',
-//'controller_class_postfix' => 'Controller',
-//'controller_method_prefix' => 'action_',
-];
 
-$flag=DuckPhp::RunQuickly($options);
+$flag=JsonExtApp::RunQuickly([]);
 
 //var_dump(\DuckPhp\Core\Route::_()->options);

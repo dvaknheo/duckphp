@@ -73,7 +73,7 @@ class ExtOptionsLoader extends ComponentBase
     }
     protected function fill_all_ext_options($full_file)
     {
-        $all_ext_options = json_decode(file_get_contents($full_file),true);
+        $all_ext_options = json_decode(''.file_get_contents($full_file), true);
         self::$all_ext_options = $all_ext_options;
     }
     public function saveData($options)
