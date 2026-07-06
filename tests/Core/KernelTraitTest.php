@@ -48,8 +48,6 @@ class KernelTraitTest extends \PHPUnit\Framework\TestCase
             
             'controller_class_postfix' => 'Controller',
             'controller_method_prefix' => 'action_',
-			'options_file_enable'=>true,
-			'installed_options_enable'=>true,
         ];
         $options['ext']=[
             'noclass'=>true,
@@ -98,8 +96,6 @@ echo "-------------------------------------\n";
         //App::_()->clear();
         ///////////////////////////
         $options=[
-			//'path' => $path_app,
-			
             // 'no this path' => $path_app,
             'path_config' => $path_app,
             'override_class'=>'\\'.App::class,
@@ -107,10 +103,7 @@ echo "-------------------------------------\n";
             'is_debug' => true,
             'use_short_functions' => true,
             'setting_file_enable' => true,
-			
-			'options_file_enable'=>true,
-			'options_file' => $path_app.'config/DuckPhpOptions.config.php',
-			'installed_options_enable'=>true,
+
         ];
         View::_(new View());
         Configer::_(new Configer());
