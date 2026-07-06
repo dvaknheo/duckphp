@@ -28,6 +28,7 @@ trait KernelTrait
         'is_debug' => false,
         'ext' => [],
         'app' => [],
+        'data' => [],
         
         'skip_404' => false,
         'skip_exception_check' => false,

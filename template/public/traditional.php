@@ -14,7 +14,9 @@ if (is_file($autoload_file)) {
     }
 }
 ////////////////////////////////////////
-use DuckPhp\DuckPhpAllInOne;
+use DuckPhp\DuckPhp;
+use DuckPhp\Core\View;
+use DuckPhp\Foundation\Controller\Helper;
 
 
 
@@ -30,22 +32,23 @@ function RunByDuckPhp()
 
     $options['ext'][\DuckPhp\Ext\EmptyView::class] = true; // for GetRunResult();
     $options['ext'][\DuckPhp\Ext\RouteHookFunctionRoute::class] = true; // 我们用这个扩展
-    $flag = DuckPhpAllInOne::RunQuickly($options);
+    $flag = DuckPhp::RunQuickly($options);
+    
     return $flag;
 }
 function GetRunResult()
 {
-    $ret = DuckPhpAllInOne::getViewData();
+    $ret = View::_()->getViewData();
     return $ret;
 }
 function POST($k = null, $v = null)
 {
-    return DuckPhpAllInOne::POST($k, $v);
+    return Helper::POST($k, $v);
 }
 if (!function_exists('__show')) {
     function __show(...$args)
     {
-        return DuckPhpAllInOne::Show(...$args);
+        Helper::Show(...$args);
     }
 }
 
@@ -77,7 +80,6 @@ function action_index()
     $token = $_SESSION['token'] = md5(''.mt_rand());
     
     $data['url_del'] = __url('del?token='.$token);
-
     __show($data, 'index');
 }
 function action_add()
@@ -133,7 +135,8 @@ $flag = RunByDuckPhp();
 if (!$flag) {
     // 我们 404 了
 }
-extract(GetRunResult());
+$xxx = GetRunResult();
+extract($xxx);
 
 error_reporting(error_reporting() & ~E_NOTICE);
 

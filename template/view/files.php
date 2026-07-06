@@ -3,7 +3,11 @@
 <!doctype html><html><body>
 <fieldset>
 <legend>执行时间</legend>
-<div>DuckPhp的执行时间到此，约为??? 秒， 内存消耗 ??? </div>
+<div>
+    执行耗时：<strong><?php echo number_format(microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'], 6, '.', ''); ?></strong> 秒
+    &nbsp;|&nbsp;
+    内存消耗：<strong><?php echo number_format(memory_get_peak_usage()); ?></strong> 字节
+</div>
 </fieldset>
 <fieldset>
 <legend>全部单例</legend>

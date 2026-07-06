@@ -15,9 +15,10 @@ if (is_file($autoload_file)) {
 }
 ////////////////////////////////////////
 
-use DuckPhp\DuckPhpAllInOne as DuckPhp;
+use DuckPhp\DuckPhp;
 use DuckPhp\Ext\JsonRpcExt;
 use DuckPhp\Foundation\SimpleBusinessTrait;
+use DuckPhp\Foundation\Controller\Helper;
 
 class CalcService
 {
@@ -67,7 +68,7 @@ $options = [
 ];
 
 DuckPhp::RunQuickly($options, function () {
-    $url = DuckPhp::Domain(true).$_SERVER['SCRIPT_NAME'].'/json_rpc';
+    $url = Helper::Domain(true).$_SERVER['SCRIPT_NAME'].'/json_rpc';
     $ip = ($_SERVER['SERVER_ADDR'] ?? '127.0.0.1').':'.$_SERVER['SERVER_PORT'];
     JsonRpcExt::_()->options['jsonrpc_backend'] = [$url,$ip];
 });
