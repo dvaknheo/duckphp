@@ -26,7 +26,12 @@ class DuckPhpInstaller extends ComponentBase
      */
     public function command_new()
     {
-        $this->init([])->newProject();
+        $options = Console::_()->getCliParameters();
+        if ($options['help'] ?? false) {
+            $this->showHelp();
+            return;
+        }
+        $this->init([])->newProject($options);
     }
     /**
      * show this help.
@@ -59,25 +64,44 @@ Well Come to use DuckPhp Installer ;
 
 EOT;
     }
-    public function newProject()
+    protected function getNameSpaceByComposer($path)
     {
-        $options = Console::_()->getCliParameters();
-        if ($options['help'] ?? false) {
-            $this->showHelp();
-            return;
+        $path = rtrim(''.realpath($path), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        $file = $path.'composer.json';
+        if (!is_file($file)) {
+            return '';
         }
+        
+        $data = json_decode(''.file_get_contents($file), true);
+        $psr = $data['autoload']['psr-4'] ?? [];
+        $psr = array_flip($psr);
+        $namespace = $psr['src/'] ?? $psr['src'] ?? '';
+        return $namespace;
+    }
+    protected function getNamespaceByConsole()
+    {
+        $default = ['namespace' => 'Demo'];
+        $input = Console::_()->readLines($default, "enter your namespace[{namespace}]\n");
+        return $input['namespace'];
+    }
+    public function newProject($options = [])
+    {
         $namespace = $options['namespace'] ?? true;
         if (empty($namespace) || $namespace === true) {
-            $default = ['namespace' => 'Demo'];
-            $input = Console::_()->readLines($default, "enter your namespace[{namespace}]\n");
-            $this->options['namespace'] = $input['namespace'];
+            $namespace = $this->getNameSpaceByComposer($options['path']);
+            if (!$namespace) {
+                $namespace = $this->getNamespaceByConsole();
+            }
         }
-        $this->options = array_merge($this->options, $options);
         
+        $this->options = array_merge($this->options, $options);
+        $this->options['namespace'] = $namespace;
         $source = __DIR__ .'/../../skeleton';
         $dest = $this->options['path'];
+        
         $this->dumpDir($source, $dest, $this->options['force']);
     }
+
     public function runDemo()
     {
         $source = __DIR__ .'/../../template';

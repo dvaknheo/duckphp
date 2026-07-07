@@ -66,30 +66,18 @@ class DuckPhpInstallerTest extends \PHPUnit\Framework\TestCase
         DuckPhpInstaller::_()->command_new();
         Console::_()->readLinesCleanFill();
         
+        $ns = 'NSX';
+        $json = [
+            'autoload' =>[
+                'psr-4' =>[
+                    $ns => 'src',
+                ],
+            ]
+        ];
+        file_put_contents($path.'/composer.json', json_encode($json));
         
+        DuckPhpInstaller::_()->command_new();
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        /*
-        DuckPhpInstaller::RunQuickly(['help'=>true,]);
-        DuckPhpInstaller::_(new DuckPhpInstaller());
-        DuckPhpInstaller::RunQuickly($options);
-        DuckPhpInstaller::RunQuickly($options);
-        $options['force']=true;
-        $options['namespace']='zz';
-        $options['verbose']=false;
-        DuckPhpInstaller::_(new DuckPhpInstaller());
-        DuckPhpInstaller::RunQuickly($options);
-        */
         $_SERVER = $__SERVER;
         \LibCoverage\LibCoverage::G()->cleanDirectory($path_init);
         \LibCoverage\LibCoverage::End();

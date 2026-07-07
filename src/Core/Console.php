@@ -164,12 +164,14 @@ class Console extends ComponentBase
                 if (!isset($ret[$lastkey])) {
                     $ret[$lastkey] = true;
                 }
-                $lastkey = str_replace('-', '_', substr($v, 2)); // camel case?
+                //$lastkey = str_replace('-', '_', substr($v, 2)); // camel case?
+                $lastkey = substr($v, 2);
                 $pos = strpos($lastkey, '=');
                 if ($pos !== false) {
                     $a = substr($lastkey, 0, $pos);
                     $b = substr($lastkey, $pos + 1);
                     $lastkey = $a;
+                    $lastkey = str_replace('-', '_', $lastkey);
                     $ret[$lastkey] = $b;
                 }
             } elseif (!isset($ret[$lastkey])) {
