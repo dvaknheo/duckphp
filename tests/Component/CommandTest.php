@@ -5,6 +5,7 @@ use DuckPhp\Component\Command;
 use DuckPhp\Core\Console;
 use DuckPhp\Ext\AutoReadLineConsole;
 use DuckPhp\Core\ComponentBase;
+use DuckPhp\Core\SuperGlobal;
 
 use DuckPhp\HttpServer\HttpServer;
 use DuckPhp\DuckPhp;
@@ -51,7 +52,6 @@ class CommandTest extends \PHPUnit\Framework\TestCase
             'is_debug'=>true,
             'cli_enable'=>true,
             'path'=>$path_app,
-            'ext_options_file' => 'Command.config.php',
             'app' =>[
                 CommandApp2::class =>['bc'=>'tre'],
                 CommandApp::class =>['a'=>'tre'],
@@ -109,17 +109,14 @@ class CommandTest extends \PHPUnit\Framework\TestCase
             '-','aa:new2',
         ];
         DuckPhp::_()->run();
-        /*
-        $_SERVER['argv']=[
-            '-','new', '--namespace'
+        
+        echo "------------------------------------\n";
+        SuperGlobal::_()->reInit(['superglobal_auto_define'=>true],DuckPhp::_());
+        SuperGlobal::_()->_SERVER['argv']=[
+            '-','fetch', '--uri=/'
         ];
         DuckPhp::_()->run();
-        $_SERVER['argv']=[
-            '-','new'
-        ];
-        DuckPhp::_()->run();
-        */
-        @unlink($path_app.'Command.config.php');
+        DuckPhp::_()->options['cli_enable']=true;
         
         $_SERVER = $__SERVER;
         \LibCoverage\LibCoverage::End();return;

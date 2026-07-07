@@ -65,9 +65,16 @@ EOT;
         
         $uri = !empty($uri) ? $uri : '/';
         // TODO no need uri ,  directrer
-        $_SERVER['REQUEST_URI'] = $uri;
-        $_SERVER['PATH_INFO'] = parse_url($uri, PHP_URL_PATH);
-        $_SERVER['HTTP_METHOD'] = $post ? $post :'GET';
+        if (defined('__SUPERGLOBAL_CONTEXT')) {
+            $sg = (__SUPERGLOBAL_CONTEXT)();
+            $sg->_SERVER['REQUEST_URI'] = $uri;
+            $sg->_SERVER['PATH_INFO'] = parse_url($uri, PHP_URL_PATH);
+            $sg->_SERVER['HTTP_METHOD'] = $post ? $post :'GET';
+        } else {
+            $_SERVER['REQUEST_URI'] = $uri;
+            $_SERVER['PATH_INFO'] = parse_url($uri, PHP_URL_PATH);
+            $_SERVER['HTTP_METHOD'] = $post ? $post :'GET';
+        }
         App::Current()->options['cli_enable'] = false;
         App::Current()->run();
     }

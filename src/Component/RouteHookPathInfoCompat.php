@@ -104,21 +104,21 @@ class RouteHookPathInfoCompat extends ComponentBase
     }
     public function _Hook($path_info)
     {
-        // $path_info = Route::_()::PathInfo();
         $k = $this->options['path_info_compact_action_key'];
         $m = $this->options['path_info_compact_class_key'];
         
-        $_SERVER['PATH_INFO_OLD'] = $_SERVER['PATH_INFO'] ?? '';
         if (defined('__SUPERGLOBAL_CONTEXT')) {
-            (__SUPERGLOBAL_CONTEXT)()->_SERVER = $_SERVER;
+            $sg = (__SUPERGLOBAL_CONTEXT)();
+            $sg->_SERVER['PATH_INFO_OLD'] = $sg->_SERVER['PATH_INFO_OLD'] ?? '';
+            $module = $sg->_REQUEST[$m] ?? '';
+            $path_info = $sg->_REQUEST[$k] ?? '';
+        } else {
+            $_SERVER['PATH_INFO_OLD'] = $_SERVER['PATH_INFO'] ?? '';
+            $module = $_REQUEST[$m] ?? '';
+            $path_info = $_REQUEST[$k] ?? '';
         }
         
-        $_REQUEST = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_REQUEST : $_REQUEST;
-        $module = $_REQUEST[$m] ?? null;
-        $path_info = $_REQUEST[$k] ?? null;
-
         $path_info = $module.'/'.$path_info;
-        
         Route::_()::PathInfo($path_info);
         
         return false;

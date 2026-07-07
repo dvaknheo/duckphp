@@ -79,7 +79,8 @@ if(true){
         
                         RouteHookPathInfoCompat::_()->isInited();
 
-        \DuckPhp\Core\SuperGlobal::DefineSuperGlobalContext();
+        //l::DefineSuperGlobalContext();
+        SuperGlobal::_()->reInit(['superglobal_auto_define'=>true],null);
 Route::_()->bind('Missed','POST');
         Route::_()->run();
         

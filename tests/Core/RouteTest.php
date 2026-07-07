@@ -3,8 +3,8 @@ namespace tests\DuckPhp\Core
 {
 
 use DuckPhp\Core\Route;
+use DuckPhp\Core\SuperGlobal;
 use DuckPhp\Core\SingletonTrait as SingletonExTrait;
-use DuckPhp\Ext\SuperGlobalContext;
 
 class RouteTest extends \PHPUnit\Framework\TestCase
 {
@@ -207,8 +207,10 @@ class RouteTest extends \PHPUnit\Framework\TestCase
         ///////////////////
 
 
-        \DuckPhp\Core\SuperGlobal::DefineSuperGlobalContext();
-        
+        //DuckPhp\Core\SuperGlobal::DefineSuperGlobalContext();
+        //SuperGlobal::DefineSuperGlobalContext();
+        SuperGlobal::_()->reInit(['superglobal_auto_define'=>true],null);
+         
         Route::_()->bind('Main/index','POST')->run();
 
         Route::_()->options['controller_runtime']=[MyRouteRuntime::class,'G'];

@@ -91,9 +91,14 @@ class RouteHookResource extends ComponentBase
         $document_root = App::Root()->extendFullFile(App::Root()->options['path'], App::Root()->options['path_document'] ?? 'public', '', false);
         App::Phase($phase);
         
-        $_SERVER = defined('__SUPERGLOBAL_CONTEXT') ? (__SUPERGLOBAL_CONTEXT)()->_SERVER : $_SERVER;
-        $_SERVER['DOCUMENT_ROOT'] = '';
-        $_SERVER['SCRIPT_FILENAME'] = '/index.php';
+        if (defined('__SUPERGLOBAL_CONTEXT')) {
+            $sg = (__SUPERGLOBAL_CONTEXT)();
+            $sg->_SERVER['DOCUMENT_ROOT'] = '';
+            $sg->_SERVER['SCRIPT_FILENAME'] = '/index.php';
+        } else {
+            $_SERVER['DOCUMENT_ROOT'] = '';
+            $_SERVER['SCRIPT_FILENAME'] = '/index.php';
+        }
         
         Route::_()->options['controller_resource_prefix'] = $this->options['controller_resource_prefix'];
         $path_dest = Route::_()->_Res('');

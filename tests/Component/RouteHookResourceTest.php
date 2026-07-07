@@ -4,6 +4,7 @@ namespace tests\DuckPhp\Component;
 use DuckPhp\Component\RouteHookResource;
 use DuckPhp\Core\App;
 use DuckPhp\Core\Route;
+use DuckPhp\Core\SuperGlobal;
 
 class RouteHookResourceTest extends \PHPUnit\Framework\TestCase
 {
@@ -73,8 +74,16 @@ class RouteHookResourceTest extends \PHPUnit\Framework\TestCase
         
         $options['controller_resource_prefix']= '';
         RouteHookResource::_(new RouteHookResource())->init($options,App::_())->cloneResource(true);
-
+        
+        ////////////////////
+        SuperGlobal::_()->reInit(['superglobal_auto_define'=>true],null);
+        $options['controller_resource_prefix']= 'DATA/';
+        RouteHookResource::_(new RouteHookResource())->init($options,App::_())->cloneResource(true);
+        
+        
         \LibCoverage\LibCoverage::G()->cleanDirectory($path_init);
+        
+        
         ////////////////////////////
        //*/
         \LibCoverage\LibCoverage::End();

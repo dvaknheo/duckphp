@@ -157,10 +157,11 @@ class MiniRoute extends ComponentBase
     }
     protected function setPathInfo($path_info)
     {
-        // TODO protected
-        $_SERVER['PATH_INFO'] = $path_info;
         if (defined('__SUPERGLOBAL_CONTEXT')) {
-            (__SUPERGLOBAL_CONTEXT)()->_SERVER = $_SERVER;
+            $sg = (__SUPERGLOBAL_CONTEXT)();
+            $sg->_SERVER['PATH_INFO'] = $path_info;
+        } else {
+            $_SERVER['PATH_INFO'] = $path_info;
         }
     }
     public function getRouteError()
