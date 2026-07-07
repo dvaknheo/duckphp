@@ -29,8 +29,7 @@ use DuckPhp\GlobalUser\GlobalUser;
 class DuckPhp extends App
 {
     protected $common_options = [
-        'ext_options_file_enable' => false,
-        'ext_options' => [],
+        'data_file_enable' => false,
         'ext' => [
             //ExtOptionsLoader::class => false,
             Lang::class => true,
@@ -115,7 +114,7 @@ class DuckPhp extends App
             GlobalAdmin::class,
             GlobalUser::class,
         ]);
-        if ($this->options['ext_options_file_enable']) {
+        if ($this->options['data_file_enable']) {
             ExtOptionsLoader::_()->init($this->options, $this);
         }
         if ($this->is_root) {

@@ -47,7 +47,7 @@ class CommandTest extends \PHPUnit\Framework\TestCase
         $path_app=\LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
         $__SERVER = $_SERVER;
         $_SERVER['argv']=[];
-
+        @unlink($path_app.'log_file_template.log');
         DuckPhp::_()->init([
             'is_debug'=>true,
             'cli_enable'=>true,
@@ -56,6 +56,10 @@ class CommandTest extends \PHPUnit\Framework\TestCase
                 CommandApp2::class =>['bc'=>'tre'],
                 CommandApp::class =>['a'=>'tre'],
             ],
+            'log_file_template'=> 'CommandTest.log',
+            'data_file_enable' => true,
+            'data_file_bump_allow'=>true,
+            'data_file_bump_keys' => ['is_debug'],
         ])->run();
         
         $_SERVER['argv']=[
@@ -79,12 +83,7 @@ class CommandTest extends \PHPUnit\Framework\TestCase
             '-','run', '--http-server=tests/DuckPhp/Component/Console_HttpServer',
         ];
         DuckPhp::_()->run();
-        
-        $_SERVER['argv']=[
-            '-','routes',
-        ];
-        DuckPhp::_()->run();
-        
+
         $_SERVER['argv']=[
             '-','call',str_replace('\\','/',Console_Command::class).'@command_foo4','A1'
         ];
@@ -95,7 +94,7 @@ class CommandTest extends \PHPUnit\Framework\TestCase
         ];
         DuckPhp::_()->run();
         DuckPhp::_()->options['cli_enable']=true;
-        
+        //////////////////////
         $_SERVER['argv']=[
             '-','debug',
         ];
@@ -103,6 +102,7 @@ class CommandTest extends \PHPUnit\Framework\TestCase
         $_SERVER['argv']=[
             '-','debug', '--off'
         ];
+        DuckPhp::_()->options['data_file_enable'] = false;
         DuckPhp::_()->run();
         
         $_SERVER['argv']=[

@@ -44,13 +44,6 @@ trait KernelTrait
         'exception_reporter' => null,
         'exception_for_project' => null,
         
-        'options_file' => 'config/DuckPhpOptions.config.php',
-        'options_file_enable' => false,
-        
-        'path_installed_options' => 'config',
-        'installed_options_file' => 'DuckPhpInstalled.config.php',
-        'installed_options_enable' => false,
-        
         'cli_command_classes' => [],
         'cli_command_prefix' => null,
         'cli_command_method_prefix' => 'command_',
@@ -116,22 +109,6 @@ trait KernelTrait
     protected function initOptions(array $options)
     {
         $this->options = array_replace_recursive($this->options, $options);
-        if (!$this->options['options_file_enable']) {
-            return;
-        }
-        
-        $path = $this->options['options_file'];
-        $is_abs = (DIRECTORY_SEPARATOR === '/') ? (substr($path, 0, 1) === '/') : preg_match('/^(([a-zA-Z]+:(\\|\/\/?))|\\\\|\/\/)/', $path);
-        if ($is_abs) {
-            $full_file = $this->options['options_file'];
-        } else {
-            $full_file = realpath($this->options['path']).'/'.$this->options['options_file'];
-        }
-        $ext_options = (function ($file) {
-            return require $file;
-        })($full_file);
-        
-        $this->options = array_replace_recursive($this->options, $ext_options);
     }
     protected function getDefaultProjectNameSpace($class)
     {
@@ -240,23 +217,6 @@ trait KernelTrait
             ExceptionManager::_()->assignExceptionHandler($exception_class, [$this->options['exception_reporter'], 'OnException']);
         }
     }
-    protected function initInstalledOptions()
-    {
-        if (!$this->options['installed_options_enable']) {
-            return;
-        }
-        $full_file = $this->extendFullFile($this->options['path'], $this->options['path_installed_options'], $this->options['installed_options_file']);
-        $full_file = realpath($full_file);
-        if (!$full_file) {
-            return;
-        }
-        $ext_options = (function ($file) {
-            return require $file;
-        })($full_file);
-        
-        $this->options = array_replace_recursive($this->options, $ext_options);
-    }
-
     //init
     public function init(array $options, object $context = null)
     {
@@ -277,7 +237,6 @@ trait KernelTrait
         
         $this->initContainer($context);
         $this->initException($options);
-        $this->initInstalledOptions();
         $this->onPrepare();
         
         $this->prepareComponents();

@@ -9,7 +9,7 @@ class ExtOptionsLoaderTest extends \PHPUnit\Framework\TestCase
     {
         \LibCoverage\LibCoverage::Begin(ExtOptionsLoader::class);
         $path=\LibCoverage\LibCoverage::G()->getClassTestPath(DuckPhp::class);
-        @unlink($path.'runtime/DuckPhpExtData.config.json');
+        @unlink($path.'runtime/DuckPhpData.config.json');
         clearstatcache();
         
         $options= [];
@@ -18,7 +18,7 @@ class ExtOptionsLoaderTest extends \PHPUnit\Framework\TestCase
         $options['path'] = $path;
         $options['app'] = [
             DuckPhpEOLChild::class =>[
-                'ext_options_file_enable' => true,
+                'data_file_enable' => true,
             ],
         ];
         DuckPhpEOL::_()->init($options);
@@ -37,11 +37,11 @@ class ExtOptionsLoaderTest extends \PHPUnit\Framework\TestCase
         
         $options['app'] = [
             DuckPhpEOLChild2::class =>[
-                'ext_options_file_enable' => true,
+                'data_file_enable' => true,
             ],
             DuckPhpEOLChild::class =>[
-                'ext_options_file_enable' => true,
-                'ext_options_allow_init_replace' => false,
+                'data_file_enable' => true,
+                'data_file_bump_allowed' => false,
             ],
         ];
         DuckPhpEOL::_(new DuckPhpEOL);
@@ -53,7 +53,7 @@ class ExtOptionsLoaderTest extends \PHPUnit\Framework\TestCase
         ////]]]]
         
         
-        @unlink($path.'runtime/DuckPhpExtData.config.json');
+        @unlink($path.'runtime/DuckPhpData.config.json');
         clearstatcache();
         \LibCoverage\LibCoverage::End();
     }

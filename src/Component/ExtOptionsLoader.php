@@ -13,11 +13,11 @@ use DuckPhp\Core\ComponentBase;
 class ExtOptionsLoader extends ComponentBase
 {
     public $options = [
-        'ext_options_file_enable' => true,
-        'ext_options_file_name' => 'DuckPhpExtData.config.json',
-        'ext_options_allow_init_replace' => true,
-        'ext_options_to_parent_options' => ['installed', 'redis', 'database', 'local_redis', 'local_database'],
-        'ext_options_to_parent_prefix' => ['redis_', 'database_'],
+        'data_file_enable' => true,
+        'data_file_json_file' => 'DuckPhpData.config.json',
+        'data_file_bump_allowed' => true,
+        'data_file_bump_keys' => ['installed', 'redis', 'database', 'local_redis', 'local_database'],
+        'data_file_bump_prefix_keys' => ['redis_', 'database_'],
     ];
     public static $all_ext_options = null;
     public function init(array $options, ?object $context = null)
@@ -41,17 +41,17 @@ class ExtOptionsLoader extends ComponentBase
     }
     public function bumpOptions($ext_options)
     {
-        if (!$this->options['ext_options_allow_init_replace']) {
+        if (!$this->options['data_file_bump_allowed']) {
             return;
         }
         $app = App::Current();
-        $app->options['ext_options'] = $ext_options;
-        foreach ($this->options['ext_options_to_parent_options'] as $key) {
+        $app->options['data'] = $ext_options;
+        foreach ($this->options['data_file_bump_keys'] as $key) {
             if (isset($ext_options[$key])) {
                 $app->options[$key] = $ext_options[$key];
             }
         }
-        foreach ($this->options['ext_options_to_parent_prefix'] as $prefix) {
+        foreach ($this->options['data_file_bump_prefix_keys'] as $prefix) {
             foreach ($ext_options as $key => $value) {
                 if (substr($key, 0, strlen($prefix)) === $prefix) {
                     $app->options[$key] = $value;
@@ -61,7 +61,7 @@ class ExtOptionsLoader extends ComponentBase
     }
     protected function get_ext_options_file()
     {
-        $full_file = App::Root()->options['ext_options_file_name'] ?? $this->options['ext_options_file_name'];
+        $full_file = App::Root()->options['data_file_json_file'] ?? $this->options['data_file_json_file'];
         
         $path = static::SlashDir(App::Root()->options['path']);
         $path_runtime = static::SlashDir(App::Root()->options['path_runtime']);

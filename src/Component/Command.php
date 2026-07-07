@@ -100,20 +100,19 @@ EOT;
      */
     public function command_debug($off = false)
     {
-        echo "decraped.";
-        return;
-        /*
-        $is_debug = !$off;
-        $ext_options = ExtOptionsLoader::_()->loadExtOptions(true, App::Current());
-        $ext_options['is_debug'] = $is_debug;
-        ExtOptionsLoader::_()->saveExtOptions($ext_options, App::Current());
-        App::Current()->options['is_debug'] = $is_debug;
-        if ($is_debug) {
-            echo "Debug mode has turn on. us --off to off\n";
+        $options = ExtOptionsLoader::_()->options;
+        
+        if (App::Current()->options['data_file_enable'] && $options['data_file_bump_allowed'] && in_array('is_debug', $options['data_file_bump_keys'])) {
+            $is_debug = !$off;
+            ExtOptionsLoader::_()->saveData(['is_debug' => $is_debug]);
+            if ($is_debug) {
+                echo "Debug mode has turn on. us --off to off\n";
+            } else {
+                echo "Debug mode has turn off.\n";
+            }
         } else {
-            echo "Debug mode has turn off.\n";
+            echo "You need  turn on : data_file_enable, data_file_bump_allow and data_file_bump_keys ['is_debug'] \n";
         }
-        */
     }
     //////////////////
     protected function getCommandListInfo()
