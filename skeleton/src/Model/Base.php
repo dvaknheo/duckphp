@@ -7,7 +7,7 @@ namespace YourProjectName\Model;
 
 use DuckPhp\Foundation\SimpleModelTrait;
 
-class Base
+abstract class Base
 {
     use SimpleModelTrait;
 }

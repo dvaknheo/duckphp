@@ -6,7 +6,6 @@
 namespace YourProjectName\System;
 
 use DuckPhp\DuckPhp;
-use YourProjectName\Controller\ExceptionReporter;
 
 class App extends DuckPhp
 {
@@ -17,11 +16,8 @@ class App extends DuckPhp
         
         'error_404' => '_sys/error_404',
         'error_500' => '_sys/error_500',
-		
-        'exception_for_project'  => ProjectException::class,
-        'exception_for_business'  => BusinessException::class,
-        'exception_for_controller'  => ControllerException::class,
-        'exception_reporter' =>  ExceptionReporter::class,
+        
+        'controller_method_prefix' => 'action_', // maybe next version  default value is  ''
         //...
     ];
     //@override

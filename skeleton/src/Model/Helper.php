@@ -1,7 +1,8 @@
 <?php declare(strict_types=1);
 /**
  * DuckPhp
- * From this time, you never be alone~
+ * Don't change me.
+ * or you can use DuckPhp\Foundation\ModelHel\Helper directly.
  */
 namespace YourProjectName\Model;
 

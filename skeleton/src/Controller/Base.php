@@ -6,7 +6,7 @@ namespace YourProjectName\Controller;
 
 use DuckPhp\Foundation\SimpleControllerTrait;
 
-class Base
+abstract class Base
 {
     use SimpleControllerTrait;
     public function __construct()
